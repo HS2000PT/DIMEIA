@@ -5,6 +5,26 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 1 — 2026-06-20 — Fase A (Análise de ficheiros de referência)
+**Objetivo:** analisar a dissertação de referência e o template ISEP (benchmark + regras LaTeX).
+
+**Feito:**
+- `docs/analise_referencia.md` — *Distributed Intelligent Management of Citizen Communities* (Rafael Silva, EN,
+  feito em Word): **109 páginas**, 6 capítulos (Intro / State of the art / Methods & Materials / Implementation /
+  Case Studies / Conclusion), front matter i–xv, **~170 referências** (autor-ano), **34 figuras + 6 tabelas**
+  (concentradas em implementação e casos de estudo). Estilo claro/direto, estatísticas concretas, citações inline.
+  Definidos alvos de benchmark para a nossa tese (dimensão, nº refs, ≥30 figuras, tabelas comparativas).
+- `docs/analise_template_latex.md` — classe `meia-style.cls` (book, 11pt, EN, frente-e-verso), pacotes,
+  `biblatex authoryear-comp` + `biber`, convenções de figuras/tabelas/algoritmos/código, glossário
+  `makenoidxglossaries`, build via Makefile/latexmk. **Achado:** `Makefile` refere `latexmk.rc` inexistente
+  (tratar na Fase D; CI não depende dele).
+
+**Notas técnicas:** instalado `pypdf` no venv (gitignored) para extrair estrutura do PDF.
+
+**Próxima ação:** pausar no gate da Fase A; depois Fase C (planeamento). Fase B já coberta pela Fase 0.
+
+---
+
 ## Sessão 0 — 2026-06-20 — Setup & Authorization (Fase 0)
 **Objetivo:** preparar o repositório 100% scaffolded e seguro antes de qualquer trabalho real.
 

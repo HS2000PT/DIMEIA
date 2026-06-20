@@ -7,10 +7,10 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 0 (Setup & Authorization)
+- **Sessão nº:** 1 (mesma sessão de trabalho que a 0; cobriu Fase 0 + Fase A)
 - **Última atualização:** 2026-06-20
-- **Fase atual + último passo concluído:** Fase 0 — scaffold do repositório criado (permissões, ignore/segredos, esqueleto §9, scripts, CI, memória persistente). A aguardar primeiro commit + push.
-- **PRÓXIMA AÇÃO IMEDIATA:** Concluir Fase 0 (verify + commit + push), **pausar no gate de fase** e confirmar com o aluno antes de iniciar a **Fase A** (análise de `dissertação_Rafael Silva.pdf` → `docs/analise_referencia.md` e do template ISEP → `docs/analise_template_latex.md`).
+- **Fase atual + último passo concluído:** **Fase A concluída** — analisada a dissertação de referência (`docs/analise_referencia.md`: 109 pp., 6 caps., 34 figuras, 6 tabelas, ~170 referências) e o template ISEP (`docs/analise_template_latex.md`: classe, pacotes, convenções, achado do `latexmk.rc` em falta). Fase 0 totalmente concluída e publicada (`origin/main`).
+- **PRÓXIMA AÇÃO IMEDIATA:** **pausar no gate da Fase A** e confirmar com o aluno antes de avançar. Fase B (estrutura) já maioritariamente coberta na Fase 0 → próximo bloco real é a **Fase C** (planeamento): 3 títulos, arquitetura, APIs gratuitas, metodologias por componente, `evaluation_design.md`, `risk_register.md` (já semeado) e `PLANO_SESSOES.md` detalhado.
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
@@ -42,8 +42,9 @@
 ---
 
 ## Estado LaTeX
-- **Escrito:** nada ainda (Fase D cria `thesis/` a partir do template ISEP).
+- **Escrito:** nada ainda (Fase D cria `thesis/` a partir do template ISEP). Template **analisado** (`docs/analise_template_latex.md`).
 - **Em falta:** integração do template em `thesis/`; 7 capítulos; `references.bib`.
+- **Achado a tratar na Fase D:** o `Makefile` do template invoca `latexmk -r latexmk.rc` mas o `latexmk.rc` **não existe** — criar mínimo ou ajustar invocação (o CI `xu-cheng/latex-action` não depende dele).
 - **Problemas de compilação:** n/a. (LaTeX local disponível: MiKTeX + biber 2.21; CI compila em cada push após Fase D.)
 
 ## Estado do Código

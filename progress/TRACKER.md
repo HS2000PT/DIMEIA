@@ -15,5 +15,10 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] `verify.sh` verde (testes passam, lint limpo) + primeiro commit + push (`origin/main`)
 - [ ] **Gate de fase:** confirmação do aluno para iniciar a Fase A
 
+## Sessão 1 — Fase A (Análise de ficheiros de referência)
+- [x] Análise de `dissertação_Rafael Silva.pdf` → `docs/analise_referencia.md` (índice completo, 109 pp., ~170 refs, 34 figuras + 6 tabelas, estilo de escrita, benchmark)
+- [x] Análise do template ISEP → `docs/analise_template_latex.md` (estrutura, classe/opções, pacotes, citações, figuras/tabelas/algoritmos/código, glossário, build; achado: `latexmk.rc` em falta)
+- [ ] **Gate de fase:** confirmação do aluno para avançar (Fase B já coberta pela Fase 0 → segue Fase C)
+
 ## Próximas sessões
-- Sessão 1–2: Fase A (análise da dissertação de referência + template) e início da Fase C (planeamento).
+- Fase C (planeamento): 3 títulos; arquitetura; APIs gratuitas (`free_apis.md`); metodologias por componente; `evaluation_design.md`; `PLANO_SESSOES.md` detalhado.
