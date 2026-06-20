@@ -1,0 +1,35 @@
+name: Compile thesis (LaTeX)
+
+# Compila o PDF da dissertação a cada push (fonte de verdade do PDF).
+# Filtrado por caminho: só corre quando há alterações em thesis/ (ativa a partir da Fase D,
+# quando o template ISEP for integrado em thesis/main.tex). Nenhum segredo no YAML.
+
+on:
+  push:
+    paths:
+      - "thesis/**"
+      - ".github/workflows/compile-thesis.yml"
+  pull_request:
+    paths:
+      - "thesis/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compile LaTeX (latexmk + biber)
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: thesis
+          root_file: main.tex
+
+      - name: Upload PDF artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: thesis-pdf
+          path: thesis/main.pdf
+          if-no-files-found: error

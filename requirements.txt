@@ -1,0 +1,22 @@
+# Dependências fixadas (Python 3.12). Estratégia faseada — D-005 em progress/DECISIONS.md.
+# A stack pesada de ML é adicionada (e fixada) nas fases que a usam, para acelerar a Sessão 0
+# e evitar problemas de wheels. Lockfile completo gerado depois: pip freeze > requirements.lock.txt
+
+# ── Ferramentas de desenvolvimento ──────────────────────────
+pytest==8.3.4
+ruff==0.8.6
+
+# ── Base de dados / utilitários ─────────────────────────────
+python-dotenv==1.0.1
+pandas==2.2.3
+numpy==2.1.3
+requests==2.32.3
+PyYAML==6.0.2
+
+# ── A adicionar nas fases respetivas (NÃO instalar ainda) ────
+# yfinance==...            # camada live de mercado
+# huggingface-hub==...     # acesso a datasets/modelos
+# datasets==...            # carregamento do FNSPID
+# sentence-transformers==... # embeddings para o motor de correlação
+# transformers==...        # FinBERT (inferência)
+# torch==...               # backend dos modelos

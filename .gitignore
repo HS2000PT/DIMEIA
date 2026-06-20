@@ -1,0 +1,69 @@
+# ─────────────────────────────────────────────────────────────
+# .gitignore — projeto de dissertação MEIA
+# Regra de ouro: nunca versionar segredos, dados grandes ou modelos.
+# ─────────────────────────────────────────────────────────────
+
+# ── Segredos (NUNCA versionar) ──────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Python ──────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# ── Artefactos LaTeX ────────────────────────────────────────
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.lof
+*.lot
+*.loa
+*.lol
+*.out
+*.toc
+*.run.xml
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.ist
+*.glo
+*.gls
+*.glg
+*.acn
+*.acr
+*.alg
+*.xdy
+build/
+.texpadtmp/
+
+# ── Dados grandes e modelos (recriados por scripts/download_data.py) ──
+data/**
+!data/samples/
+!data/samples/**
+!data/.gitkeep
+models/
+
+# ── Literatura com acesso institucional (fornecida pelo aluno) ──
+data/literature/
+
+# ── Dissertações de referência (terceiros, com direitos de autor) ──
+/dissertação_*.pdf
+/dissertacao_*.pdf
+
+# ── Template LaTeX ISEP (input local; integrado e versionado em thesis/ na Fase D) ──
+/Modelo Dissertacao MEIA_latex v2/
+
+# ── Lixo de sistema operativo ───────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
