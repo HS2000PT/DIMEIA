@@ -9,7 +9,7 @@
 ## Estado Atual
 - **Sessão nº:** 1 (mesma sessão de trabalho que a 0; cobriu Fase 0 + Fase A)
 - **Última atualização:** 2026-06-20
-- **Fase atual + último passo concluído:** **Fase A concluída** — analisada a dissertação de referência (`docs/analise_referencia.md`: 109 pp., 6 caps., 34 figuras, 6 tabelas, ~170 referências) e o template ISEP (`docs/analise_template_latex.md`: classe, pacotes, convenções, achado do `latexmk.rc` em falta). Fase 0 totalmente concluída e publicada (`origin/main`).
+- **Fase atual + último passo concluído:** **Fase A concluída** — analisada a dissertação principal (`docs/analise_referencia.md`: Rafael Silva, 109 pp., 34 figuras, 6 tabelas, ~170 refs) **+ benchmark alargado às 4 dissertações** (Bruno 139pp/40fig/210refs; Helder 133pp/41fig/~200refs; Joana 104pp/20fig/~60refs; todas EN) e o template ISEP (`docs/analise_template_latex.md`: classe, pacotes, convenções, achado do `latexmk.rc` em falta). Alvos refinados: ~110–120 pp., ~30–40 figuras, ~8–14 tabelas, ~150–200 refs, citação `authoryear-comp`. Fase 0 concluída e publicada.
 - **PRÓXIMA AÇÃO IMEDIATA:** **pausar no gate da Fase A** e confirmar com o aluno antes de avançar. Fase B (estrutura) já maioritariamente coberta na Fase 0 → próximo bloco real é a **Fase C** (planeamento): 3 títulos, arquitetura, APIs gratuitas, metodologias por componente, `evaluation_design.md`, `risk_register.md` (já semeado) e `PLANO_SESSOES.md` detalhado.
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 

@@ -19,7 +19,13 @@ A entrada mais recente fica no topo.
   `makenoidxglossaries`, build via Makefile/latexmk. **Achado:** `Makefile` refere `latexmk.rc` inexistente
   (tratar na Fase D; CI não depende dele).
 
-**Notas técnicas:** instalado `pypdf` no venv (gitignored) para extrair estrutura do PDF.
+- **Benchmark alargado** (secção comparativa em `docs/analise_referencia.md`): analisadas as outras 3
+  dissertações — Bruno Ribeiro (139pp, 40 fig, 13 tab, ~210 refs), Helder Pereira (133pp, 41 fig, 14 tab,
+  ~200 refs, citação numérica), Joana Figueiredo (104pp, 20 fig, 5 tab, ~60 refs). Todas EN. Estrutura comum
+  (Intro→Estado da arte/Literatura→…→Conclusão) valida o plano de 7 capítulos. Alvos refinados: ~110–120 pp.,
+  ~30–40 figuras, ~8–14 tabelas, ~150–200 refs, `authoryear-comp`.
+
+**Notas técnicas:** instalado `pypdf` no venv (gitignored) para extrair estrutura dos PDFs.
 
 **Próxima ação:** pausar no gate da Fase A; depois Fase C (planeamento). Fase B já coberta pela Fase 0.
 

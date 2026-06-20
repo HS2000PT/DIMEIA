@@ -1,9 +1,9 @@
 # analise_referencia.md — Análise da dissertação de referência
 
 > **Fase A.** Benchmark de qualidade/dimensão (não é template a copiar).
-> Ficheiro analisado: `dissertação_Rafael Silva.pdf` (input local, gitignored).
-> Existem mais 3 dissertações de referência na raiz (Bruno Ribeiro, Helder Pereira, Joana Figueiredo) — podem
-> ser analisadas como complemento numa sessão futura; a principal é a do Rafael Silva (coorientador).
+> Ficheiro principal analisado: `dissertação_Rafael Silva.pdf` (input local, gitignored; Rafael Silva é o coorientador).
+> As outras 3 dissertações de referência (Bruno Ribeiro, Helder Pereira, Joana Figueiredo) foram analisadas como
+> complemento — ver a secção **"Comparativo (benchmark alargado)"** no fim deste ficheiro.
 
 ## Identificação
 - **Título:** *Distributed Intelligent Management of Citizen Communities*
@@ -103,3 +103,36 @@
   capítulo próprio (como no §9) ou integrada na introdução (como na referência). Registar em `DECISIONS.md`.
 - **Front matter obrigatório** a replicar via template ISEP: Declaração de Integridade (com declaração de uso de
   IA — §6.8), Resumo (PT) + Abstract (EN), Índice, Listas de Figuras/Tabelas, Lista de Acrónimos.
+
+---
+
+## Comparativo (benchmark alargado) — 4 dissertações de referência
+Todas em **Inglês** (Resumo PT + Abstract EN). As 3 complementares têm estrutura típica de LaTeX/ISEP
+(numeração de figuras por capítulo nalguns casos); a do Rafael Silva foi feita em Word.
+
+| Dissertação | Págs | Figuras | Tabelas | Referências | Estilo citação | Tema |
+|---|---|---|---|---|---|---|
+| Rafael Silva | 109 | 34 | 6 | ~170 | autor-ano | Gestão inteligente de comunidades (Caravels) |
+| Bruno Ribeiro | 139 | 40 | 13 | ~210 | autor-ano | Sistemas multi-agente |
+| Helder Pereira | 133 | 41 | 14 | ~200 | numérico (Vancouver) | Multi-agente / smart grids / ML |
+| Joana Figueiredo | 104 | 20 | 5 | ~60 | autor-ano | Data Lakehouse / NLP / LLMs (setor da água) |
+
+> Contagens obtidas das próprias Listas de Figuras/Tabelas e das secções de Referências (estimativas: refs
+> contadas por padrões de entrada/ano/doi). Joana é claramente a mais leve; as outras três são "pesadas".
+
+**Observações transversais:**
+- **Língua:** 4/4 em Inglês → confirma EN como norma do programa.
+- **Estrutura comum:** Cap. 1 *Introduction* (Contextualization · Research Questions & Objectives · Scientific
+  Contributions · Document Organization/Structure) → Cap. 2 *State of the Art / Literature Review* → capítulos de
+  métodos/implementação/casos de estudo/avaliação → *Conclusion*. **Valida o nosso plano de 7 capítulos.**
+- **Front matter consistente:** Resumo + Abstract, Índice, List of Figures, List of Tables, Acronyms (alguns com
+  Acknowledgements).
+- **Estilo de citação:** 3/4 autor-ano (Harvard-like); Helder usa numérico. O default do template ISEP é
+  `authoryear-comp` → escolha natural.
+
+**Alvos de benchmark REFINADOS para a nossa tese:**
+- **Páginas:** ~100–130 (alvo ~110–120; **máx. ISEP = 120**).
+- **Figuras:** **~30–40** (Joana, com 20, é o piso aceitável; o padrão forte é ~34–41).
+- **Tabelas:** **~8–14**, incluindo **várias tabelas comparativas** na revisão de literatura (§6.7).
+- **Referências:** **~150–200** (seminal + recente, peer-reviewed primeiro — §6.2). (Joana com ~60 é exceção por tema.)
+- **Estilo de citação:** **`authoryear-comp`** (alinha com 3/4 e com o template).
