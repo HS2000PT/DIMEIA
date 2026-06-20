@@ -12,7 +12,7 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] Stubs `docs/` (PT-PT)
 - [x] Scripts de automação (setup_env, start_session, end_session, verify, download_data)
 - [x] `requirements.txt`, `.python-version`, CI (`compile-thesis.yml`), `tests/test_smoke.py`
-- [ ] `verify.sh` verde + primeiro commit + push
+- [x] `verify.sh` verde (testes passam, lint limpo) + primeiro commit + push (`origin/main`)
 - [ ] **Gate de fase:** confirmação do aluno para iniciar a Fase A
 
 ## Próximas sessões
