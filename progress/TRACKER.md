@@ -66,4 +66,11 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] **4 tabelas comparativas** (anomalias; XAI; representações de texto; posicionamento das escolhas)
 - [x] Compila (45 pp., 0 erros; 6 overfull triviais 2–6pt)
 - [ ] Revisão do aluno
-- [ ] Próximo: Cap. 4 (Methodology) — com diagrama de arquitetura
+
+## Sessão 7 — Escrita: Capítulo 4 (Methodology)
+- [x] **Cap. 4 redigido** (rascunho EN-GB): arquitetura, 2 camadas, métodos por componente, avaliação, rigor
+- [x] **Diagrama de arquitetura em TikZ** (`fig:architecture`) — reprodutível, versionado no `.tex`
+- [x] Equação do z-score; citações verificadas; compila (47 pp., 0 erros, 16 refs)
+- [x] **Concluídos os 4 capítulos pré-implementação (1–4)**
+- [ ] Revisão do aluno
+- [ ] **Boundary:** Caps. 5–7 exigem sistema construído/avaliado → próximo bloco = implementação (precisa Python 3.12, Telegram, APIs)

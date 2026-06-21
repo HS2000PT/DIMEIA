@@ -5,6 +5,25 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 7 — 2026-06-21 — Escrita: Capítulo 4 (Methodology)
+**Objetivo:** redigir a metodologia com diagrama de arquitetura.
+
+**Feito:**
+- **Cap. 4 redigido** (rascunho EN-GB): (4.1) arquitetura + **diagrama TikZ** (`fig:architecture`, reprodutível);
+  (4.2) 2 camadas de dados; (4.3) deteção de anomalias com a **equação do z-score** [Chandola; contraste Isolation
+  Forest]; (4.4) motor de correlação [SBERT + cosseno + event-study; Brown & Warner; FNSPID]; (4.5) explicação XAI
+  [SHAP; Arrieta/Adadi; FinBERT opcional]; (4.6) design de avaliação; (4.7) rigor (anti-lookahead, reprodutibilidade).
+- Habilitadas bibliotecas TikZ (`positioning`, `arrows.meta`) no `main.tex`. Compila: **47 páginas, 0 erros, 16 refs**.
+- **Marco:** concluídos os 4 capítulos que se podem escrever honestamente antes de o sistema existir.
+
+**Boundary importante:** Caps. 5 (Implementation), 6 (Evaluation) e 7 (Conclusion) só depois de construir/avaliar
+o sistema (sem fabricação). Próximo bloco real = implementação (thin slice), que precisa de Python 3.12, token
+Telegram e chaves de APIs (ações humanas).
+
+**Próxima ação:** decisão do aluno — começar implementação (após setup humano) ou rever/polir Caps. 1–4.
+
+---
+
 ## Sessão 6 — 2026-06-21 — Escrita: Capítulo 3 (Literature Review)
 **Objetivo:** redigir a revisão de literatura com tabelas comparativas (§6.2).
 

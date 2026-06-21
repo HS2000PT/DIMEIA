@@ -7,10 +7,10 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 6 (Escrita — Literature Review; sessão contínua desde a 0)
+- **Sessão nº:** 7 (Escrita — Methodology; sessão contínua desde a 0)
 - **Última atualização:** 2026-06-21
-- **Fase atual + último passo concluído:** **Escrita — Caps. 1, 2 e 3 em rascunho.** Cap.3 (Literature Review, EN-GB): anomalias, XAI, NLP financeiro, event study; **4 tabelas comparativas** (cada obra com o quê/como/limitações) + posicionamento das escolhas. **+5 referências verificadas** (Isolation Forest, LIME, BERT, word2vec, FinBERT-Yang) → **16 refs**. **Compila: 45 pp., 0 erros** (6 overfull triviais 2–6pt).
-- **PRÓXIMA AÇÃO IMEDIATA:** **Cap. 4 (Methodology)** — apoiado em `docs/arquitectura_sistema.md` (arquitetura + metodologias + as 8 refs metodológicas já citadas); incluir diagrama de arquitetura (figura reprodutível). Revisão pendente do Cap.2 (fonte da quota de retalho). Antes da escrita final: **política ISEP de uso de IA** (humano-only).
+- **Fase atual + último passo concluído:** **Escrita — Caps. 1–4 em rascunho** (todos os capítulos "pré-implementação"). Cap.4 (Methodology, EN-GB): arquitetura + **diagrama TikZ reprodutível** (`fig:architecture`), 2 camadas de dados, métodos por componente (z-score com equação; SBERT+cosseno+event-study; XAI), design de avaliação e rigor (anti-lookahead). **Compila: 47 pp., 0 erros, 16 refs.**
+- **PRÓXIMA AÇÃO IMEDIATA:** **BOUNDARY** — Caps. 5 (Implementation), 6 (Evaluation) e 7 (Conclusion) **só podem ser escritos honestamente depois de o sistema ser construído e avaliado** (sem fabricação, §2.2/§6.5). Logo o próximo bloco real é a **implementação** (thin slice → componentes, PLANO_SESSOES S10+), que precisa de **ações humanas**: instalar **Python 3.12**, **token Telegram**, **chaves de APIs**. Alternativas sem dependências: rever/polir Caps. 1–4 (TODO do Cap.2; overfull do Cap.3). Decisão do aluno no gate.
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
@@ -46,7 +46,7 @@
 - **7 capítulos** (esqueleto com secções): Introduction · Contextualization · Literature Review · Methodology · Implementation · Evaluation · Conclusion.
 - **`latexmk.rc` criado** (resolve o achado da Fase A: o `Makefile` invocava-o sem existir).
 - **Temporário:** `\nocite{*}` em `main.tex` (inclui as 8 refs enquanto os capítulos não citam — remover na escrita).
-- **Caps. 1–3 em rascunho** (45 pp. no total); Cap.2 com 1 figura reprodutível; Cap.3 com 4 tabelas comparativas; **16 referências** no `.bib` (8 metodológicas + 3 contextualização + 5 da revisão de literatura).
+- **Caps. 1–4 em rascunho** (47 pp. no total); Cap.2 com 1 figura reprodutível (matplotlib); Cap.3 com 4 tabelas comparativas; Cap.4 com diagrama de arquitetura (TikZ); **16 referências** no `.bib` (8 metodológicas + 3 contextualização + 5 revisão de literatura). Caps. 5–7 dependem da implementação/avaliação.
 - **Pipeline de figuras reprodutíveis estabelecido:** matplotlib; scripts em `scripts/figures/` geram PDF vetorial para `thesis/figures/` (commitado para o CI).
 - **Em falta:** restantes capítulos (escrita); refinar front matter (declaração de integridade, abstract <=200 palavras); remover `\nocite{*}` quando o texto citar todas as fontes.
 - **Problemas de compilação:** nenhum (só aviso cosmético de fonte `T1/cmtl/b/n`). LaTeX local: MiKTeX + biber 2.21; CI (`compile-thesis.yml`) compila em cada push a `thesis/**`.
