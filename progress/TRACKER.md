@@ -149,3 +149,10 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] **`\nocite{*}` removido** — confirmado que o texto cita as 16 referências (conjunto citado = `.bib`); bibliografia renderiza 16 entradas, 0 citações indefinidas
 - [x] **Tese compila: 53 páginas, 0 erros**; `main.pdf` atualizado. **Rascunho completo dos 7 capítulos.**
 - [ ] Próximo (humano/opcional): revisão do aluno; redação ISEP da declaração de IA; (opcional) FNSPID completo + estudo humano de utilidade
+
+## Sessão 16 — Rigor da avaliação: multi-seed + teste de fidelidade
+- [x] `scripts/evaluate.py` agora corre **5 seeds** e reporta **média ± desvio** (P@5 SBERT 0,549±0,014 vs lexical 0,359 vs aleatório 0,241 vs recência 0,105; desvios ~0,01)
+- [x] **Teste automático de fidelidade** (`test_explainer.py`): a explicação reproduz exatamente data/ticker/score de cada precedente recuperado, sem inventar — verificação programática de XAI (RQ3)
+- [x] Cap. 6 (tabela mean±std, secção de fidelidade), Cap. 7 (RQ2) e abstract EN/PT atualizados; removida a limitação "single seed"
+- [x] **41 testes verdes** + 2 gated; lint limpo; tese compila 53 pp., 0 citações indefinidas
+- [ ] Próximo (humano/opcional): revisão do aluno; (opcional) FNSPID completo; estudo humano de utilidade

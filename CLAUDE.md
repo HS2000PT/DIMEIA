@@ -7,9 +7,9 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 15 (Escrita — Cap. 7 + abstract + remoção de `\nocite{*}`; sessão contínua desde a 0)
+- **Sessão nº:** 16 (Rigor da avaliação — multi-seed + teste de fidelidade; sessão contínua desde a 0)
 - **Última atualização:** 2026-06-21
-- **Fase atual + último passo concluído:** **RASCUNHO COMPLETO DA TESE (7 capítulos) — COMPILA 53 pp., 0 erros, 16 refs, 0 citações indefinidas.** Cap. 7 (Conclusion) responde a RQ1 (deteção transparente — afirmativo, com a consistência da taxa de disparo), RQ2 (recuperação análoga sem lookahead — afirmativo para a recuperação, impacto multi-ano = futuro) e RQ3 (explicações fiéis por construção; utilidade por validar com estudo humano), + contribuições + limitações + trabalho futuro. Abstract (EN ~185 palavras) e resumo (PT) refinados com resultados reais. `\nocite{*}` removido (todas as 16 refs citadas no texto). **40 testes verdes** (+2 gated); `verify.sh` ok.
+- **Fase atual + último passo concluído:** **RASCUNHO COMPLETO (7 caps., 53 pp.) + RIGOR REFORÇADO.** Recuperação agora reportada como **média±desvio sobre 5 seeds**: P@5 SBERT **0,549±0,014** vs lexical 0,359 vs aleatório 0,241 vs recência 0,105 (desvios ~0,01 → resultado robusto, não fluke). Adicionado **teste automático de fidelidade** (a explicação reproduz exatamente os precedentes recuperados, sem inventar) → reforça a avaliação XAI (RQ3) com verificação programática. Caps. 6/7 + abstract atualizados para os valores médios; removida a limitação de "single seed". Tese compila 53 pp., 0 citações indefinidas. **41 testes verdes** (+2 gated); lint limpo.
 - **PRÓXIMA AÇÃO IMEDIATA (sobretudo humano/opcional):** (1) **o aluno revê e edita todos os capítulos** (o texto é dele; §6.6); (2) confirmar com o Prof. Luís Gomes a redação ISEP da declaração de IA + data de entrega; (3) opcional técnico: **FNSPID completo** (R2) → KB multi-ano → reavaliar impacto; estudo humano de utilidade (RQ3); (4) polish (agradecimentos, dedicatória). Prosseguir autonomamente nos itens técnicos (D-009).
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
@@ -66,14 +66,14 @@
   - `src/main.py::run_news_trigger` — orquestra notícia → embedding → `KB.find_precedents` → explicação → (opcional) Telegram. Default: KB-amostra + `HashingEmbedder`.
 - **Avaliação (Pergunta A):**
   - `src/evaluation/retrieval_eval.py` — `retrieval_precision_at_k`, `expected_random_precision`, `recency_precision_at_k`, `same_ticker_forbid` (puro NumPy, testado: precision@k por setor cross-ticker + baselines).
-  - `scripts/fetch_finnhub_news.py` (notícias reais → CSV) + `scripts/evaluate.py` (ablação → `docs/evaluation_results.md` + figura). Resultado real P@5: SBERT 0,568 vs lexical 0,357 vs aleatório 0,245.
+  - `scripts/fetch_finnhub_news.py` (notícias reais → CSV) + `scripts/evaluate.py` (ablação multi-seed → `docs/evaluation_results.md` + figura). Resultado real P@5 (média de 5 seeds): SBERT 0,549±0,014 vs lexical 0,359 vs aleatório 0,241 vs recência 0,105.
   - `src/evaluation/anomaly_eval.py` (Pergunta 1: `rolling_zscore_flags`, `fixed_threshold_flags`, `label_extreme_moves`, `precision_recall_f1`, `firing_rate`; puro, testado) + `scripts/evaluate_anomaly.py` (yfinance → `docs/evaluation_anomaly.md` + figura). Taxa de disparo: z-score amplitude 0,017 vs fixo 0,343.
 - **Scripts de dados:** `scripts/download_data.py` (FNSPID em **streaming** + filtro por ticker/janela → `data/` gitignored + amostra de títulos); `scripts/build_kb.py` (notícias CSV + preços yfinance → KB JSONL; `--sbert` para SBERT real). `data/samples/news_sample.csv` (sintético) + `data/samples/kb_sample.jsonl` (gerado) + `data/samples/README.md`.
 - **Testes (22 + 2 gated, verde):** `test_anomaly_detector.py` (4) + `test_event_study.py` (4) + `test_similarity.py` (7) + `test_knowledge_base.py` (5) + `test_smoke.py` (pipeline + Telegram `@telegram` gated) + `test_sbert_embedder.py` (SBERT real, `@sbert` gated).
 - **Smoke/gated:** Telegram (`pytest -m telegram`, envio real confirmado) e SBERT (`pytest -m sbert`, validação semântica) — ambos excluídos do verify por defeito (`-m "not telegram and not sbert"`).
 - **Stack ML instalada e fixada:** torch 2.12.1+cpu (índice CPU), sentence-transformers 5.6.0, transformers 5.12.1, huggingface-hub 1.20.1, scikit-learn 1.9.0; `requirements.txt` atualizado + `requirements.lock.txt` (72 pkgs). numpy/pandas inalterados (2.1.3/2.2.3).
 - **Pipeline KB validado:** `build_kb.py` (HashingEmbedder) → `kb_sample.jsonl` com impactos coerentes (ex.: TSLA −9,75%, MSFT +7,2%); `SbertEmbedder` validado por teste semântico. **Fonte FNSPID verificada** (HTTP 200, ~23,2 GB).
-- **Testes (40 + 2 gated, verde):** anomaly(4) + event_study(4) + similarity(7) + knowledge_base(5) + news_fetcher(3) + explainer(3) + retrieval_eval(5) + anomaly_eval(6) + smoke(3) + gated telegram/sbert.
+- **Testes (41 + 2 gated, verde):** anomaly(4) + event_study(4) + similarity(7) + knowledge_base(5) + news_fetcher(3) + explainer(4, inclui fidelidade XAI) + retrieval_eval(5) + anomaly_eval(6) + smoke(3) + gated telegram/sbert.
 - **Em falta:** escrever Caps. 5–6 com o que está construído/avaliado; (opcional) download completo do FNSPID + KB SBERT multi-ano (job longo, R2); demo Gatilho 2 ao vivo (Finnhub→KB SBERT→Telegram); `impact_analyzer` (opcional, FinBERT).
 
 ## Referências Verificadas

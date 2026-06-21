@@ -62,6 +62,8 @@ def main() -> None:
     parser.add_argument("--queries", type=int, default=500, help="nº de consultas amostradas")
     parser.add_argument("--k", type=int, nargs="+", default=[5, 10])
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--repeats", type=int, default=5,
+                        help="nº de amostragens (seeds) para média ± desvio")
     parser.add_argument("--out", default="docs/evaluation_results.md")
     parser.add_argument("--fig", default="thesis/figures/eval_retrieval_precision.pdf")
     args = parser.parse_args()
@@ -78,34 +80,40 @@ def main() -> None:
     dates = df["date"].astype(str).to_numpy()
     headlines = df["headline"].astype(str).tolist()
 
-    rng = np.random.default_rng(args.seed)
     n_q = min(args.queries, n)
-    q_idx = rng.choice(n, size=n_q, replace=False)
-    forbid = same_ticker_forbid(tickers[q_idx], tickers)  # cross-ticker (exclui a própria empresa)
-
     print("A calcular embeddings (Hashing + SBERT)…")
     emb_hash = _embed(headlines, use_sbert=False)
     emb_sbert = _embed(headlines, use_sbert=True)
 
     ks = sorted(set(args.k))
-    results: dict[str, dict[int, float]] = {"SBERT": {}, "Lexical (baseline)": {},
-                                            "Recency": {}, "Random (base rate)": {}}
-    for k in ks:
-        results["SBERT"][k] = retrieval_precision_at_k(
-            emb_sbert[q_idx], emb_sbert, sectors[q_idx], sectors, k=k, forbid=forbid)
-        results["Lexical (baseline)"][k] = retrieval_precision_at_k(
-            emb_hash[q_idx], emb_hash, sectors[q_idx], sectors, k=k, forbid=forbid)
-        results["Recency"][k] = recency_precision_at_k(
-            sectors[q_idx], sectors, dates, k=k, forbid=forbid)
-        results["Random (base rate)"][k] = expected_random_precision(
-            sectors[q_idx], sectors, forbid)
-        print(f"  k={k}: " + " | ".join(f"{m}={results[m][k]:.3f}" for m in results))
+    methods = ["SBERT", "Lexical (baseline)", "Recency", "Random (base rate)"]
+    # Para cada método/k, acumula o valor de cada seed → média ± desvio.
+    samples: dict[str, dict[int, list[float]]] = {m: {k: [] for k in ks} for m in methods}
+    for rep in range(args.repeats):
+        rng = np.random.default_rng(args.seed + rep)
+        q_idx = rng.choice(n, size=n_q, replace=False)
+        forbid = same_ticker_forbid(tickers[q_idx], tickers)  # cross-ticker (exclui a empresa)
+        for k in ks:
+            samples["SBERT"][k].append(retrieval_precision_at_k(
+                emb_sbert[q_idx], emb_sbert, sectors[q_idx], sectors, k=k, forbid=forbid))
+            samples["Lexical (baseline)"][k].append(retrieval_precision_at_k(
+                emb_hash[q_idx], emb_hash, sectors[q_idx], sectors, k=k, forbid=forbid))
+            samples["Recency"][k].append(recency_precision_at_k(
+                sectors[q_idx], sectors, dates, k=k, forbid=forbid))
+            samples["Random (base rate)"][k].append(expected_random_precision(
+                sectors[q_idx], sectors, forbid))
 
-    _write_markdown(args.out, df, n_q, ks, results, args.seed)
+    results = {m: {k: float(np.mean(samples[m][k])) for k in ks} for m in methods}
+    stds = {m: {k: float(np.std(samples[m][k])) for k in ks} for m in methods}
+    for k in ks:
+        print(f"  k={k}: " + " | ".join(
+            f"{m}={results[m][k]:.3f}±{stds[m][k]:.3f}" for m in methods))
+
+    _write_markdown(args.out, df, n_q, ks, results, stds, args.seed, args.repeats)
     _write_figure(args.fig, ks, results)
 
 
-def _write_markdown(path, df, n_q, ks, results, seed) -> None:
+def _write_markdown(path, df, n_q, ks, results, stds, seed, repeats) -> None:
     n = len(df)
     by_sec = df["sector"].value_counts().to_dict()
     now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
@@ -117,7 +125,8 @@ def _write_markdown(path, df, n_q, ks, results, seed) -> None:
         "## Pergunta A — qualidade da recuperação de precedentes (precision@k por setor)",
         "",
         f"- **Dados:** {n:,} notícias reais (Finnhub), {len(by_sec)} setores: {by_sec}.",
-        f"- **Consultas amostradas:** {n_q} (seed {seed}); recuperação **cross-ticker** "
+        f"- **Consultas amostradas:** {n_q} por repetição; **{repeats} repetições** "
+        f"(seeds {seed}..{seed + repeats - 1}); média ± desvio. Recuperação **cross-ticker** "
         "(exclui a própria empresa).",
         "- **Proxy de relevância:** mesmo setor (data_card.md). "
         "Baselines: recência e taxa-base.",
@@ -128,7 +137,8 @@ def _write_markdown(path, df, n_q, ks, results, seed) -> None:
     ]
     for method in ("SBERT", "Lexical (baseline)", "Recency", "Random (base rate)"):
         lines.append(
-            f"| {method} | " + " | ".join(f"{results[method][k]:.3f}" for k in ks) + " |"
+            f"| {method} | "
+            + " | ".join(f"{results[method][k]:.3f} ± {stds[method][k]:.3f}" for k in ks) + " |"
         )
     k0 = ks[0]
     lift = results["SBERT"][k0] - results["Random (base rate)"][k0]

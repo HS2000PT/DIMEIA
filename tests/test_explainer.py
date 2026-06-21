@@ -26,6 +26,19 @@ def test_sem_precedentes():
     assert "No similar historical precedents" in text
 
 
+def test_explicacao_fiel_aos_precedentes_recuperados():
+    """Fidelidade (XAI): a explicação reflete EXATAMENTE os precedentes e scores recuperados."""
+    precs = _precedents()
+    text = explain_news_impact("NVDA", "Nvidia raises outlook", precs, horizon=3)
+    for rec, score in precs:
+        assert rec.date in text          # cada data aparece
+        assert rec.ticker in text        # cada ticker aparece
+        assert rec.headline in text      # cada título aparece
+        assert f"sim {score:.2f}" in text  # o score exato recuperado aparece
+    # nenhuma data/título inventado: o nº de linhas de precedente == nº de precedentes
+    assert text.count("sim ") == len(precs)
+
+
 def test_media_ignora_nan():
     precs = [
         (NewsRecord(date="2023-01-01", ticker="A", headline="h1",

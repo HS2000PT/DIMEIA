@@ -5,6 +5,31 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 16 — 2026-06-21 — Rigor da avaliação: multi-seed + teste de fidelidade
+**Objetivo:** remover duas limitações declaradas no Cap. 6 — o resultado de recuperação com uma só
+seed e a afirmação de fidelidade não automatizada — sem o download pesado do FNSPID.
+
+**Feito:**
+- **Robustez multi-seed:** `scripts/evaluate.py` corre agora 5 amostragens (seeds 42–46) e reporta
+  **média ± desvio**. P@5: SBERT **0,549±0,014** | lexical 0,359±0,010 | recência 0,105±0,013 |
+  aleatório 0,241±0,004. Os desvios ~0,01 confirmam que a vantagem do SBERT é robusta (separação de
+  >20 desvios face ao acaso), não um artefacto da amostra. (A seed única anterior dava 0,568, ~1,3
+  desvios acima da média — honesto reportar agora a média.)
+- **Fidelidade automatizada (XAI/RQ3):** novo teste em `test_explainer.py` assegura que o texto do
+  alerta reproduz exatamente a data, o ticker e o score de cada precedente recuperado e não introduz
+  nenhum que não tenha sido recuperado — a fidelidade deixa de ser só "por construção" e passa a ser
+  verificada por teste.
+- **Tese atualizada:** Cap. 6 (tabela mean±std + secção de fidelidade com a nota do teste), Cap. 7
+  (números da RQ2) e abstract EN/PT (0,55 vs 0,24); removida a limitação de "single seed". Compila
+  53 pp., 0 citações indefinidas.
+
+**Estado dos testes:** **41 verdes** + 2 *gated*; lint limpo.
+
+**Próxima ação:** sobretudo humano/opcional — revisão do aluno; (opcional técnico) FNSPID completo →
+KB multi-ano → análise de impacto (Pergunta B); estudo humano de utilidade (RQ3). Autónomo (D-009).
+
+---
+
 ## Sessão 15 — 2026-06-21 — Escrita: Cap. 7 (Conclusion) + abstract + remoção de \nocite{*}
 **Objetivo:** fechar o rascunho da tese — escrever a conclusão, refinar o abstract com os resultados
 e remover a inclusão temporária de todas as referências.

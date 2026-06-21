@@ -93,30 +93,33 @@ the $k$ most similar headlines \emph{from other companies} are retrieved, and pr
 fraction sharing the query's sector. Excluding the query's own company prevents the trivial solution
 of matching on the company name and tests thematic analogy instead. SBERT
 \autocite{reimers2019sbert} is compared against a lexical (hashing) baseline and against two trivial
-baselines --- random retrieval (the sector base rate) and recency. Five hundred queries were sampled
-(seed $42$).
+baselines --- random retrieval (the sector base rate) and recency. To guard against sampling
+artefacts, five hundred queries were sampled in each of five independent runs (seeds $42$--$46$);
+Table~\ref{tab:eval_retrieval} reports the mean and standard deviation.
 
 \begin{table}[ht]
-\caption{Cross-ticker precision@$k$ by sector ($3{,}692$ real headlines, five sectors).}
+\caption{Cross-ticker precision@$k$ by sector, mean\,$\pm$\,std over five runs ($3{,}692$ real
+headlines, five sectors).}
 \label{tab:eval_retrieval}
 \centering
 \begin{tabular}{p{0.40\textwidth} c c}
 \toprule
 \tabhead{Method} & \tabhead{P@5} & \tabhead{P@10} \\
 \midrule
-SBERT (semantic) & $\mathbf{0.568}$ & $\mathbf{0.533}$ \\
-Lexical baseline (hashing) & $0.357$ & $0.328$ \\
-Recency & $0.096$ & $0.077$ \\
-Random (base rate) & $0.245$ & $0.245$ \\
+SBERT (semantic) & $\mathbf{0.549 \pm 0.014}$ & $\mathbf{0.516 \pm 0.013}$ \\
+Lexical baseline (hashing) & $0.359 \pm 0.010$ & $0.327 \pm 0.011$ \\
+Recency & $0.105 \pm 0.013$ & $0.081 \pm 0.006$ \\
+Random (base rate) & $0.241 \pm 0.004$ & $0.241 \pm 0.004$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 As Table~\ref{tab:eval_retrieval} and Figure~\ref{fig:eval_retrieval} show, SBERT reaches a
-precision@$5$ of $0.568$ --- about $2.3$ times the random base rate ($0.245$) and well above the
-lexical baseline ($0.357$). Recency performs worst, confirming that simply showing the latest news
-is not a substitute for semantic matching. The lift over both the random and lexical baselines is
-the honest measure of the value added by the embeddings.
+precision@$5$ of $0.549$ --- about $2.3$ times the random base rate ($0.241$) and well above the
+lexical baseline ($0.359$). The small standard deviations (around $0.01$) confirm that the gap is
+robust rather than a sampling artefact. Recency performs worst, confirming that simply showing the
+latest news is not a substitute for semantic matching. The lift over both the random and lexical
+baselines is the honest measure of the value added by the embeddings.
 
 \begin{figure}[ht]
 \centering
@@ -143,8 +146,10 @@ Explanation quality is assessed along two axes. \emph{Faithfulness} is guarantee
 the alert text is rendered directly from the same objects used by the system --- the computed
 \emph{z}-score, window and threshold for the anomaly path, and the exact retrieved precedents with
 their similarity scores and measured impacts for the news path --- so the explanation cannot diverge
-from the underlying computation. This is verifiable programmatically and is the kind of transparent,
-design-time explainability advocated in the XAI literature \autocite{arrieta2020xai}. \emph{Usefulness}
+from the underlying computation. This is checked programmatically by an automated test that asserts
+the rendered alert reproduces exactly each retrieved precedent's date, ticker and similarity score
+and introduces none that were not retrieved; it is the kind of transparent, design-time
+explainability advocated in the XAI literature \autocite{arrieta2020xai}. \emph{Usefulness}
 to a retail investor is inherently subjective; a small rubric-based human assessment (clarity,
 completeness, actionability) on a handful of alerts is planned but has not yet been conducted, and is
 therefore reported as a limitation rather than a result.
@@ -191,7 +196,8 @@ Several limitations are stated honestly. The sector label is an automatic \emph{
 not a human judgement; the news corpus is the recent window available from Finnhub rather than the
 multi-year FNSPID history, and headlines are short, which bounds the semantics that can be captured;
 the anomaly proxy label is volatility-relative, so the firing-rate argument (label-free) is given
-primacy; and results use a single seed and no human usefulness study yet. Crucially, and by design,
+primacy; and, although the retrieval result is averaged over five runs, no human usefulness study has
+yet been conducted. Crucially, and by design,
 the system performs no price prediction: it does not forecast returns or evaluate trading profit
 (out of scope). Addressing these points --- the full FNSPID corpus, a human relevance and usefulness
 study, and a multi-year impact analysis --- defines the main avenues for further work.

@@ -27,8 +27,9 @@ every alert can be explained to the investor.
 \paragraph{RQ2 --- analogous precedents without lookahead.}
 The answer is affirmative for retrieval. Semantic retrieval with Sentence-BERT recovered markedly
 more sector-analogous precedents than every trivial alternative --- a cross-ticker precision@$5$ of
-$0.568$ against $0.357$ for a lexical baseline, $0.245$ for random and $0.096$ for recency --- and the
-end-to-end case study showed it surfacing genuinely topical precedents across different company feeds.
+$0.549 \pm 0.014$ (over five runs) against $0.359$ for a lexical baseline, $0.241$ for random and
+$0.105$ for recency --- and the end-to-end case study showed it surfacing genuinely topical
+precedents across different company feeds.
 Impact is measured strictly after the event, in the style of an event study, so no future information
 leaks into the evidence. The measurement machinery is in place and behaves coherently; a large-scale,
 multi-year validation of impact magnitudes remains for future work.
@@ -63,8 +64,9 @@ from a free API rather than the multi-year FNSPID history, which bounds the impa
 the retrieval figures, while real, are preliminary. The relevance proxy is sector agreement, an
 automatic stand-in for human judgement, and the anomaly proxy label is volatility-relative (hence the
 label-free firing-rate argument is given primacy). News is represented by short headlines only, which
-limits the semantics that can be captured. Results use a single random seed, and no human usefulness
-study has yet been conducted. Finally, and by design, the system performs no price prediction or
+limits the semantics that can be captured. The retrieval result is averaged over five runs, but no
+human usefulness study has yet been conducted. Finally, and by design, the system performs no price
+prediction or
 trading, so profit-based questions are out of scope rather than unanswered.
 
 \section{Future Work}
