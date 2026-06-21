@@ -5,6 +5,29 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 2 — 2026-06-21 — Fase C (Planeamento e decisões técnicas)
+**Objetivo:** planear o sistema e fechar decisões técnicas antes da Fase D.
+
+**Feito:**
+- **Título:** escolhido **T1** pelo aluno — *Explainable Financial Alerts for Retail Investors: Integrating
+  Statistical Anomaly Detection and News–Market Impact Correlation* (D-008).
+- **Arquitetura:** `docs/arquitectura_sistema.md` — diagrama de componentes, 2 camadas (histórica FNSPID vs.
+  live), fluxos dos 2 gatilhos, thin slice, garantias XAI/anti-lookahead; **confirmada pelo aluno**.
+- **Metodologias por componente** com **8 citações verificadas** (Crossref/arXiv, 2026-06-21) em
+  `citation_log.md` + secção 9 da arquitetura: Chandola 2009, Brown & Warner 1985, Reimers & Gurevych 2019,
+  Araci 2019, Lundberg & Lee 2017, Arrieta 2020, Adadi & Berrada 2018, Dong 2024. (MacKinlay 1997 rejeitada —
+  sem DOI resolúvel.)
+- **APIs gratuitas:** `docs/free_apis.md` (verificado 2026-06-21): yfinance+Finnhub (preços), Finnhub news+RSS
+  (notícias), FNSPID (histórico), Telegram (alertas); Alpha Vantage só ocasional (25/dia).
+- **Avaliação:** `docs/evaluation_design.md` detalhado (métricas, baselines, ablções, rubrica XAI).
+- **Plano:** `progress/PLANO_SESSOES.md` detalhado (~30 sessões + buffer, marcos M1–M5).
+- **Aprendizagem:** `learning.md` + `glossary.md` com os conceitos (z-score, embeddings, cosseno, event-study,
+  XAI, lookahead, FinBERT, SHAP), cada um com nota de defesa.
+
+**Próxima ação:** pausar no gate da Fase C; depois Fase D (integrar template ISEP em `thesis/`).
+
+---
+
 ## Sessão 1 — 2026-06-20 — Fase A (Análise de ficheiros de referência)
 **Objetivo:** analisar a dissertação de referência e o template ISEP (benchmark + regras LaTeX).
 

@@ -9,8 +9,8 @@
 ## Estado Atual
 - **Sessão nº:** 2 (Fase C em curso; sessão de trabalho contínua desde a 0)
 - **Última atualização:** 2026-06-20
-- **Fase atual + último passo concluído:** **Fase C em curso.** Feito: (1) arquitetura técnica detalhada (`docs/arquitectura_sistema.md` — diagrama de componentes, 2 camadas de dados, fluxos dos 2 gatilhos, thin slice, garantias anti-lookahead/XAI); (2) **4 títulos candidatos** propostos (`DECISIONS.md` D-007, recomendado **T1**) — **a aguardar escolha do aluno**; (3) `learning.md` + `glossary.md` com os conceitos da arquitetura (z-score, embeddings, similaridade, event-study, XAI, lookahead). Fases 0 e A concluídas e publicadas.
-- **PRÓXIMA AÇÃO IMEDIATA:** terminar a Fase C: **(c)** `evaluation_design.md` detalhado; **(d)** `PLANO_SESSOES.md` (~30 sessões + buffer). Já feitos nesta sessão: título (T1, D-008), arquitetura confirmada + **metodologias por componente com 8 citações verificadas** (secção 9 de `arquitectura_sistema.md` + `citation_log.md`), `learning.md`/`glossary.md`, e `free_apis.md`. Depois: **gate da Fase C** (confirmar com o aluno antes da Fase D — LaTeX).
+- **Fase atual + último passo concluído:** **Fase C CONCLUÍDA.** Entregáveis: título **T1** (D-008); `arquitectura_sistema.md` (arquitetura + 2 camadas + fluxos + thin slice + **metodologias por componente com 8 refs verificadas**); `free_apis.md` (verificado 2026-06-21); `evaluation_design.md` detalhado; `risk_register.md` (semeado); `PLANO_SESSOES.md` detalhado (~30 sessões + buffer); `learning.md`/`glossary.md`/`citation_log.md` atualizados. Fases 0, A, B (coberta pela 0) e C concluídas e publicadas.
+- **PRÓXIMA AÇÃO IMEDIATA:** **pausar no gate da Fase C** e confirmar com o aluno antes da **Fase D (LaTeX)**: integrar o template ISEP em `thesis/`, mapear os 7 capítulos em `chN/`, criar `references.bib` com as 8 refs verificadas, resolver o `latexmk.rc` em falta, e garantir compilação (CI verde). Ação humana relevante para escrita: política ISEP de uso de IA.
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---

@@ -28,6 +28,9 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] Título escolhido pelo aluno (**T1**, D-008) + arquitetura confirmada
 - [x] APIs gratuitas verificadas → `docs/free_apis.md` (verificado 2026-06-21; conjunto aprovado proposto)
 - [x] Metodologias por componente + **8 citações verificadas** (`arquitectura_sistema.md` §9 + `citation_log.md`)
-- [ ] `docs/evaluation_design.md` detalhado
-- [ ] `progress/PLANO_SESSOES.md` (~30 sessões + buffer)
-- [ ] Registar escolha de título do aluno
+- [x] `docs/evaluation_design.md` detalhado (métricas, baselines, ablções, rubrica XAI, anti-lookahead)
+- [x] `progress/PLANO_SESSOES.md` detalhado (~30 sessões + buffer, marcos M1–M5)
+- [x] Escolha de título do aluno registada (T1, D-008)
+- [ ] **Gate da Fase C:** confirmação do aluno antes da Fase D (LaTeX)
+
+> **Fase C concluída.** Próximo: Fase D (setup LaTeX) — Sessão 3.
