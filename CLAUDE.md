@@ -7,10 +7,10 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 7 (Escrita — Methodology; sessão contínua desde a 0)
+- **Sessão nº:** 8 (Implementação — thin slice; sessão contínua desde a 0)
 - **Última atualização:** 2026-06-21
-- **Fase atual + último passo concluído:** **Escrita — Caps. 1–4 em rascunho** (todos os capítulos "pré-implementação"). Cap.4 (Methodology, EN-GB): arquitetura + **diagrama TikZ reprodutível** (`fig:architecture`), 2 camadas de dados, métodos por componente (z-score com equação; SBERT+cosseno+event-study; XAI), design de avaliação e rigor (anti-lookahead). **Compila: 47 pp., 0 erros, 16 refs.**
-- **PRÓXIMA AÇÃO IMEDIATA:** **BOUNDARY** — Caps. 5 (Implementation), 6 (Evaluation) e 7 (Conclusion) **só podem ser escritos honestamente depois de o sistema ser construído e avaliado** (sem fabricação, §2.2/§6.5). Logo o próximo bloco real é a **implementação** (thin slice → componentes, PLANO_SESSOES S10+), que precisa de **ações humanas**: instalar **Python 3.12**, **token Telegram**, **chaves de APIs**. Alternativas sem dependências: rever/polir Caps. 1–4 (TODO do Cap.2; overfull do Cap.3). Decisão do aluno no gate.
+- **Fase atual + último passo concluído:** **THIN SLICE (M1) IMPLEMENTADA E PROVADA.** Pipeline Gatilho 1 end-to-end: `market_data` (yfinance) → `anomaly_detector` (z-score, sem lookahead) → `explanation_engine` (regra transparente) → `telegram_bot`. **Testes unitários verdes** (6) + **envio real ao Telegram confirmado** + caminho live yfinance validado (AAPL). Ambiente canónico **Python 3.12** criado (venv + lockfile 42 pkgs). Também: **autonomia máxima** (D-009, settings alargado, sem gates de rotina); **`thesis/main.pdf` versionado** (via `scripts/build_pdf.sh`); **declaração honesta de uso de IA** no front matter.
+- **PRÓXIMA AÇÃO IMEDIATA:** desenvolver os **componentes** (PLANO_SESSOES S12+): base histórica `historical_kb`/`download_data.py` (FNSPID subset → `data_card.md`), depois `correlation_engine` (SBERT+cosseno+event-study; instalar stack ML faseada), Gatilho 2 (notícias) e `explanation_engine` com precedentes. Prosseguir autonomamente (D-009).
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
@@ -37,6 +37,7 @@
 - **Metodologias de IA por componente:** [APÓS FASE C]
 - **Estrutura de capítulos:** 7 capítulos (Introduction · Contextualization · Literature Review · Methodology · Implementation · Evaluation · Conclusion), mapeados em `thesis/ch1..ch7/` do template ISEP. [Sessão 3 / Fase D]
 - **Layout LaTeX:** usar a estrutura/classe nativa do template ISEP (`meia-style.cls`, `authoryear-comp`, `chN/`); o esboço `thesis/chapters/0X_*.tex` do §9 é ilustrativo e será reconciliado na Fase D. [Sessão 0]
+- **Autonomia máxima (pedido do aluno, 2026-06-21):** **NÃO usar AskUserQuestion para confirmações de rotina** ("Yes, continue"). Prosseguir e decidir sozinho ao longo das fases/sessões, com defaults sensatos. Parar **apenas** para os limites rígidos do §2.2 (operações irreversíveis/destrutivas, gastar dinheiro, segredos) ou decisões académicas mesmo irreversíveis. `.claude/settings.json` alargado em conformidade. [D-009]
 - (Racional completo em `progress/DECISIONS.md`.)
 
 ---
@@ -48,13 +49,16 @@
 - **Temporário:** `\nocite{*}` em `main.tex` (inclui as 8 refs enquanto os capítulos não citam — remover na escrita).
 - **Caps. 1–4 em rascunho** (47 pp. no total); Cap.2 com 1 figura reprodutível (matplotlib); Cap.3 com 4 tabelas comparativas; Cap.4 com diagrama de arquitetura (TikZ); **16 referências** no `.bib` (8 metodológicas + 3 contextualização + 5 revisão de literatura). Caps. 5–7 dependem da implementação/avaliação.
 - **Pipeline de figuras reprodutíveis estabelecido:** matplotlib; scripts em `scripts/figures/` geram PDF vetorial para `thesis/figures/` (commitado para o CI).
-- **Em falta:** restantes capítulos (escrita); refinar front matter (declaração de integridade, abstract <=200 palavras); remover `\nocite{*}` quando o texto citar todas as fontes.
+- **PDF versionado:** `thesis/main.pdf` é gerado por `scripts/build_pdf.sh` e **commitado** (o aluno quer vê-lo no repo); CI continua a compilar também.
+- **Front matter:** declaração de integridade limpa (só EN) + **declaração honesta de uso de IA**; símbolos próprios (z-score). Falta confirmar redação ISEP exata da declaração de IA (humano).
+- **Em falta:** restantes capítulos (5–7, após implementação/avaliação); abstract <=200 palavras; remover `\nocite{*}` quando o texto citar todas as fontes.
 - **Problemas de compilação:** nenhum (só aviso cosmético de fonte `T1/cmtl/b/n`). LaTeX local: MiKTeX + biber 2.21; CI (`compile-thesis.yml`) compila em cada push a `thesis/**`.
 
 ## Estado do Código
-- **Implementado:** esqueleto de pacotes `src/` (stubs com docstrings PT-PT); `src/main.py` stub.
-- **Em falta:** toda a lógica dos componentes; thin slice.
-- **Smoke test da thin slice:** ainda não existe (placeholder `tests/test_smoke.py` a passar).
+- **Implementado (thin slice / Gatilho 1):** `src/config.py` (.env), `src/market_data/prices.py` (yfinance + log-returns), `src/anomaly_detector/detector.py` (z-score sem lookahead, `AnomalyResult`), `src/explanation_engine/explainer.py` (explicação por regra), `src/telegram_bot/sender.py` (Telegram API), `src/main.py` (`run_thin_slice`). Dep ativa: `yfinance==1.4.1`.
+- **Testes:** `tests/test_anomaly_detector.py` (4) + `tests/test_smoke.py` (pipeline + envio Telegram marcado `@telegram`). Verify verde.
+- **Smoke test da thin slice:** **PASSA** (envio real confirmado; `pytest -m telegram`). Excluído do verify por defeito (não enviar a cada commit).
+- **Em falta:** `historical_kb`/FNSPID, `correlation_engine` (stack ML faseada), `news_fetcher` (Gatilho 2), `impact_analyzer` (opcional).
 
 ## Referências Verificadas
 - **16 referências verificadas** em `docs/citation_log.md` e no `thesis/references.bib`:
@@ -67,13 +71,13 @@
 ---
 
 ## Questões em Aberto / À Espera do Aluno (humano-only)
-1. **Instalar Python 3.12** — para `scripts/setup_env.sh` criar o venv canónico (até lá, verify corre no Python disponível).
-2. **Auth GitHub** — o primeiro `git push` abre login do Git Credential Manager no browser; aprovar (não é preciso `gh`).
-3. **Bot Telegram** (@BotFather → token + chat id) → apenas no `.env` local. Necessário antes da thin slice (~Sessão 10).
-4. **Chaves de APIs gratuitas** (Finnhub / Alpha Vantage / GNews) → apenas no `.env`, conforme necessário (Fase C).
-5. **Política ISEP de uso de IA** — texto exato da declaração de uso de IA na MEIA (confirmar com Prof. Luís Gomes se houver dúvida) — para conformidade com §6.8.
-6. **Confirmar conjunto de tickers e janela temporal** do FNSPID (Fase C / data_card).
-7. ~~Escolher o título~~ ✅ RESOLVIDO (T1 — D-008). Arquitetura técnica confirmada pelo aluno.
+1. ~~Instalar Python 3.12~~ ✅ FEITO (3.12.10; venv canónico criado).
+2. ~~Auth GitHub~~ ✅ FEITO (push a funcionar).
+3. ~~Bot Telegram~~ ✅ FEITO (.env preenchido; envio real confirmado).
+4. ~~Chaves de APIs~~ ✅ FEITO (.env: Finnhub/AlphaVantage/GNews preenchidas).
+5. **Política ISEP de uso de IA** — escrita uma declaração **honesta** no front matter; **falta o aluno confirmar a redação/forma exata exigida pela MEIA** com o Prof. Luís Gomes (não fabricar/encobrir — ver memória `honest-ai-declaration`).
+6. **Confirmar conjunto de tickers e janela temporal** do FNSPID (próximo, S12 / `data_card.md`).
+7. ~~Escolher o título~~ ✅ RESOLVIDO (T1 — D-008). Arquitetura confirmada.
 
 ---
 

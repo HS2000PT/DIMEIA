@@ -74,3 +74,13 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] **Concluídos os 4 capítulos pré-implementação (1–4)**
 - [ ] Revisão do aluno
 - [ ] **Boundary:** Caps. 5–7 exigem sistema construído/avaliado → próximo bloco = implementação (precisa Python 3.12, Telegram, APIs)
+
+## Sessão 8 — Implementação: Thin slice (M1) + setup do aluno
+- [x] **Setup humano confirmado:** Python 3.12.10; `.env` completo (Telegram + APIs); venv canónico + lockfile (42 pkgs)
+- [x] **Autonomia máxima** (D-009): `.claude/settings.json` alargado; sem AskUserQuestion de rotina; memória `max-autonomy`
+- [x] **Declaração honesta de uso de IA** no front matter (recusada a versão enganosa; memória `honest-ai-declaration`)
+- [x] **`thesis/main.pdf` versionado** via `scripts/build_pdf.sh` (visível no repo)
+- [x] **Thin slice (M1)** implementada: market_data(yfinance) → anomaly(z-score, sem lookahead) → explanation → telegram
+- [x] Testes: `test_anomaly_detector.py` (4) + `test_smoke.py`; **envio Telegram real confirmado** (`pytest -m telegram`)
+- [x] `yfinance==1.4.1` ativo; verify verde (6 testes, lint limpo)
+- [ ] Próximo: componentes — `historical_kb`/FNSPID (`data_card.md`), depois `correlation_engine` (stack ML faseada) e Gatilho 2

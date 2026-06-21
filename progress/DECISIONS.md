@@ -50,3 +50,9 @@ Cada decisão relevante fica aqui com data e justificação, para defesa e rastr
 - **Decisão:** *Explainable Financial Alerts for Retail Investors: Integrating Statistical Anomaly Detection and News–Market Impact Correlation* (EN-GB).
 - **Porquê:** equilíbrio entre completude e concisão; afirmativo (sem "Towards"); cobre os dois gatilhos e o XAI.
 - **Aplicação:** usar no bloco THESIS INFORMATION de `main.tex` na Fase D. A frase pode ser afinada antes da entrega.
+
+## D-009 · 2026-06-21 · Autonomia máxima (workflow)
+- **Decisão:** o agente prossegue **sem pedir confirmações de rotina** (sem AskUserQuestion para "Yes, continue"); decide sozinho com defaults sensatos e continua o plano entre fases/sessões.
+- **Porquê:** o aluno pediu explicitamente para ser mais autónomo (estava a ter de aprovar opções quase a cada minuto). Alinha com a Autonomy Charter (§2) — "full control, I agree with everything".
+- **Limites mantidos:** continuam a aplicar-se os limites rígidos do §2.2 (nada irreversível/destrutivo sem aviso; sem `--force`/`reset --hard`/`rm -rf`; nunca expor segredos; nunca gastar dinheiro; nunca fabricar). `.claude/settings.json` alargado (allowlist amplo + denylist dos perigosos).
+- **Exceção:** ainda parar para decisões académicas genuinamente irreversíveis (ex.: mudança de título/âmbito) — mas sem o ritual de gate a cada passo.

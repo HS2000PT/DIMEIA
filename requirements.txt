@@ -16,8 +16,10 @@ PyYAML==6.0.2
 # ── Figuras reprodutíveis (§6.7) ─────────────────────────────
 matplotlib==3.11.0
 
+# ── Camada live (mercado) ────────────────────────────────────
+yfinance==1.4.1
+
 # ── A adicionar nas fases respetivas (NÃO instalar ainda) ────
-# yfinance==...            # camada live de mercado
 # huggingface-hub==...     # acesso a datasets/modelos
 # datasets==...            # carregamento do FNSPID
 # sentence-transformers==... # embeddings para o motor de correlação

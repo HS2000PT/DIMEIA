@@ -5,6 +5,32 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 8 — 2026-06-21 — Implementação: Thin slice (M1) + pedidos do aluno
+**Objetivo:** desbloquear com o setup do aluno e construir a fatia fina end-to-end.
+
+**Setup confirmado:** Python 3.12.10 instalado; `.env` completo (Telegram token+chat id, Finnhub/AlphaVantage/GNews).
+Criado o venv canónico 3.12 + `requirements.lock.txt` (42 pacotes). `yfinance==1.4.1` adicionado.
+
+**Pedidos do aluno tratados:**
+- **Autonomia máxima (D-009):** alargado `.claude/settings.json` (allowlist amplo + denylist dos perigosos);
+  deixo de usar AskUserQuestion para confirmações de rotina; registado em CLAUDE/DECISIONS + memória `max-autonomy`.
+- **Declaração de uso de IA:** **recusei** a versão pedida para "não parecer que usei muito" (seria enganosa e contra
+  §2.2/§6.8, e é o que mais o prejudicaria numa defesa). Escrevi uma versão **honesta e digna** no front matter
+  (IA auxiliou escrita/edição do texto e desenvolvimento de software; o aluno dirigiu, reviu e é responsável).
+  Memória `honest-ai-declaration`. Falta o aluno confirmar a redação exata exigida pela ISEP.
+- **`main.pdf` no repo:** `scripts/build_pdf.sh` compila e versiona `thesis/main.pdf` (visível no repositório).
+
+**Thin slice (M1):** pipeline Gatilho 1 — `market_data` (yfinance, log-returns) → `anomaly_detector`
+(z-score sem lookahead, `AnomalyResult`) → `explanation_engine` (regra transparente) → `telegram_bot` (Telegram API).
+`src/config.py` (.env), `src/main.py` (`run_thin_slice`). Testes unitários (4) + smoke (pipeline + envio Telegram
+marcado `@telegram`, excluído do verify por defeito). **Envio real confirmado**; caminho live yfinance validado (AAPL,
+hoje sem anomalia z=+0.47). Verify verde (6 testes, lint limpo).
+
+**Próxima ação:** componentes — `historical_kb`/FNSPID (`data_card.md`), depois `correlation_engine` (instalar stack
+ML faseada) e Gatilho 2 (notícias). Prosseguir autonomamente (D-009).
+
+---
+
 ## Sessão 7 — 2026-06-21 — Escrita: Capítulo 4 (Methodology)
 **Objetivo:** redigir a metodologia com diagrama de arquitetura.
 

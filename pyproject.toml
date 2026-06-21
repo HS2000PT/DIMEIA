@@ -9,5 +9,8 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
-addopts = "-q"
+addopts = ["-q", "-m", "not telegram"]
 testpaths = ["tests"]
+markers = [
+  "telegram: envia mensagem real via Telegram (requer .env; correr com 'pytest -m telegram')",
+]
