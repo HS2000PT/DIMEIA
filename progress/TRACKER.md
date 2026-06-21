@@ -84,3 +84,17 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] Testes: `test_anomaly_detector.py` (4) + `test_smoke.py`; **envio Telegram real confirmado** (`pytest -m telegram`)
 - [x] `yfinance==1.4.1` ativo; verify verde (6 testes, lint limpo)
 - [ ] Próximo: componentes — `historical_kb`/FNSPID (`data_card.md`), depois `correlation_engine` (stack ML faseada) e Gatilho 2
+
+## Sessão 9 — Implementação: KB histórica + motor de correlação (recuperação)
+- [x] `src/correlation_engine/similarity.py` — cosseno + `top_k_similar` (puro NumPy, vetorizado) + 7 testes
+- [x] `src/historical_kb/`: `record.py` (`NewsRecord`/JSON), `embedder.py` (interface `Embedder` + `HashingEmbedder` baseline + `SbertEmbedder` lazy), `knowledge_base.py` (`HistoricalKB.build/save/load/find_precedents`)
+- [x] Alinhamento evento = 1.º dia de negociação ≥ data da notícia (`searchsorted`); impacto medido do fecho (anti-lookahead) → `learning.md` §11
+- [x] `scripts/download_data.py` real (FNSPID **streaming** + filtro ticker/janela → gitignored + amostra de títulos)
+- [x] `scripts/build_kb.py` (notícias CSV + preços yfinance → KB JSONL; `--sbert` opcional) + bootstrap sys.path + stdout UTF-8
+- [x] `data/samples/news_sample.csv` (sintético) + `data/samples/kb_sample.jsonl` (gerado) + `data/samples/README.md`
+- [x] **Pipeline validado ponta-a-ponta** (amostra sintética + preços reais → KB com impactos coerentes com a realidade)
+- [x] 5 testes da KB (build, ignora sem-preços, find_precedents, save/load, guarda da amostra versionada)
+- [x] **Fonte FNSPID verificada** (HTTP 200, ~23,2 GB; colunas `Date/Article_title/Stock_symbol`) → `data_card.md`
+- [x] `learning.md` (§11–12) + `glossary.md` (KB, embedder, baseline, ablação, streaming, top-k) atualizados
+- [x] **22 testes verdes**, lint limpo (src+tests+scripts), `verify.sh` ok
+- [ ] Próximo: instalar stack ML + validar `SbertEmbedder`; download real FNSPID + KB completa; `news_fetcher` (Gatilho 2); explicação com precedentes

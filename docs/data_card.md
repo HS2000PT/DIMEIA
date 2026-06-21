@@ -7,6 +7,11 @@
 - **Fonte:** Hugging Face `Zihan1004/FNSPID`; repo `Zdong104/FNSPID_Financial_News_Dataset`.
 - **Licença:** **CC BY-SA 4.0** — atribuição obrigatória no README e na tese.
 - **Referência:** Dong, Fan & Peng (2024), arXiv:2402.06698 (`dong2024fnspid`).
+- **Ficheiro de notícias (verificado 2026-06-21):** `Stock_news/nasdaq_exteral_data.csv` —
+  HTTP 200, `text/csv`, **~23,2 GB** (daí o streaming). Colunas:
+  `Unnamed: 0, Date, Article_title, Stock_symbol, Url, Publisher, Author, Article,
+  Lsa_summary, Luhn_summary, Textrank_summary, Lexrank_summary`. Mapeamento interno:
+  `Date→date`, `Stock_symbol→ticker`, `Article_title→headline`.
 
 ### Subconjunto escolhido (default proposto — ajustável pelo aluno)
 Para ser tratável num portátil (§5.4 / R2), começamos com um subconjunto pequeno e representativo:
@@ -18,14 +23,23 @@ Para ser tratável num portátil (§5.4 / R2), começamos com um subconjunto peq
   relevante e suficientemente longo para ter precedentes.
 - **Granularidade:** diária (notícias com data; preços de fecho diários).
 
-### Pré-processamento (a aplicar em `historical_kb`/`download_data.py`)
-- Filtrar por ticker e janela acima; remover notícias sem data ou sem ticker associado.
-- Para cada notícia: guardar `data, ticker, título/texto, embedding (SBERT), impacto pós-evento (+1/+3/+5d)`.
-- Impacto medido por `src/correlation_engine/event_study.py` (retornos pós-evento; ver nota anti-lookahead aí).
-- Seeds fixas; decisões registadas aqui à medida que forem tomadas.
+### Pré-processamento (implementado em `download_data.py` + `build_kb.py` + `src/historical_kb/`)
+- `scripts/download_data.py`: lê o CSV de notícias do FNSPID **em streaming** (chunks, sem descarregar os
+  ~dezenas de GB), normaliza colunas (`date, ticker, headline`), filtra por ticker e janela, grava o
+  subconjunto em `data/fnspid_news_subset.csv` (gitignored) e uma amostra de títulos em `data/samples/`.
+- `scripts/build_kb.py`: junta o subconjunto às cotações de fecho (yfinance, índice tz-naive) e constrói a KB:
+  para cada notícia guarda `data, ticker, título, impacto pós-evento (+1/+3/+5d), embedding`. Grava JSONL.
+- **Alinhamento evento↔preço:** dia do evento = 1.º dia de negociação **>= data da notícia** (`searchsorted`);
+  impacto medido a partir do **fecho** desse dia (evita captar o salto já refletido na abertura — ver
+  `learning.md` §11). Impacto via `src/correlation_engine/event_study.py` (nota anti-lookahead aí).
+- **Embedder:** `HashingEmbedder` (baseline determinístico, default) ou `SbertEmbedder` (SBERT, com `--sbert`).
+- Notícias sem cotações para o ticker, ou cuja data ultrapassa a série, são descartadas (sem impacto observável).
 
-> **Estado:** subconjunto **proposto** (decisão autónoma documentada, D-009). O aluno pode ajustar tickers/janela;
-> a metodologia não muda. O download real (via `download_data.py`) e a construção da KB são o próximo passo (S12).
+> **Estado:** pipeline **implementado e validado** ponta-a-ponta com a amostra sintética
+> `data/samples/news_sample.csv` + cotações reais (yfinance) → `data/samples/kb_sample.jsonl` (10 registos,
+> impactos coerentes com a realidade). Falta correr o **download real** do FNSPID (job longo de I/O — R2) e
+> construir a KB completa; depois validar o `SbertEmbedder` (requer instalar a stack ML). O aluno pode ajustar
+> tickers/janela; a metodologia não muda (decisão autónoma documentada, D-009).
 
 ## Camada live
 - **Preços:** yfinance (base) + Finnhub (fallback). **Notícias:** Finnhub news + RSS (ver `free_apis.md`).

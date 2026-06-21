@@ -7,10 +7,10 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 8 (Implementação — thin slice; sessão contínua desde a 0)
+- **Sessão nº:** 9 (Implementação — KB histórica + motor de correlação; sessão contínua desde a 0)
 - **Última atualização:** 2026-06-21
-- **Fase atual + último passo concluído:** **THIN SLICE (M1) IMPLEMENTADA E PROVADA.** Pipeline Gatilho 1 end-to-end: `market_data` (yfinance) → `anomaly_detector` (z-score, sem lookahead) → `explanation_engine` (regra transparente) → `telegram_bot`. **Testes unitários verdes** (6) + **envio real ao Telegram confirmado** + caminho live yfinance validado (AAPL). Ambiente canónico **Python 3.12** criado (venv + lockfile 42 pkgs). Também: **autonomia máxima** (D-009, settings alargado, sem gates de rotina); **`thesis/main.pdf` versionado** (via `scripts/build_pdf.sh`); **declaração honesta de uso de IA** no front matter.
-- **PRÓXIMA AÇÃO IMEDIATA:** desenvolver os **componentes** (PLANO_SESSOES S12+): base histórica `historical_kb`/`download_data.py` (FNSPID subset → `data_card.md`), depois `correlation_engine` (SBERT+cosseno+event-study; instalar stack ML faseada), Gatilho 2 (notícias) e `explanation_engine` com precedentes. Prosseguir autonomamente (D-009).
+- **Fase atual + último passo concluído:** **KB HISTÓRICA + RECUPERAÇÃO DE PRECEDENTES IMPLEMENTADAS E PROVADAS.** `src/correlation_engine/similarity.py` (cosseno + top-k, puro NumPy) e `src/historical_kb/` (`NewsRecord`; interface `Embedder` com `HashingEmbedder` baseline determinístico **e** `SbertEmbedder` lazy; `HistoricalKB` build/save/load/`find_precedents`). Scripts reais: `scripts/download_data.py` (FNSPID em **streaming**+filtro) e `scripts/build_kb.py` (notícias+preços yfinance → KB JSONL). **Pipeline validado ponta-a-ponta** com amostra sintética + preços reais → `data/samples/kb_sample.jsonl` (10 registos, impactos coerentes). **22 testes verdes** + lint limpo + `verify.sh` ok. **Fonte FNSPID verificada** (HTTP 200, ~23,2 GB, colunas confirmadas) — download completo é job longo (R2), por correr. Stack ML pesada **ainda não instalada** (SbertEmbedder por validar).
+- **PRÓXIMA AÇÃO IMEDIATA:** (1) instalar a stack ML faseada (sentence-transformers/torch) e validar `SbertEmbedder` num pequeno conjunto; (2) correr o **download real** do FNSPID (`download_data.py`, job longo) e construir a KB completa (`build_kb.py`); (3) `news_fetcher` (Gatilho 2 — notícias live) e `explanation_engine` com precedentes da KB. Prosseguir autonomamente (D-009).
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
@@ -56,11 +56,15 @@
 
 ## Estado do Código
 - **Implementado (thin slice / Gatilho 1):** `src/config.py` (.env), `src/market_data/prices.py` (yfinance + log-returns), `src/anomaly_detector/detector.py` (z-score sem lookahead, `AnomalyResult`), `src/explanation_engine/explainer.py` (explicação por regra), `src/telegram_bot/sender.py` (Telegram API), `src/main.py` (`run_thin_slice`). Dep ativa: `yfinance==1.4.1`.
-- **Núcleo (parcial):** `src/correlation_engine/event_study.py` — impacto pós-evento (+1/+3/+5d) e impacto médio, puro e testado (nota anti-lookahead: medir o outcome ≠ prever).
-- **Testes (10, verde):** `test_anomaly_detector.py` (4) + `test_event_study.py` (4) + `test_smoke.py` (pipeline + envio Telegram `@telegram`).
+- **Núcleo (motor de correlação):**
+  - `src/correlation_engine/event_study.py` — impacto pós-evento (+1/+3/+5d) e impacto médio (puro; nota anti-lookahead: medir o outcome ≠ prever).
+  - `src/correlation_engine/similarity.py` — similaridade do cosseno + `top_k_similar` (puro NumPy, vetorizado).
+  - `src/historical_kb/` — `record.py` (`NewsRecord`, JSON), `embedder.py` (interface `Embedder` + `HashingEmbedder` baseline determinístico + `SbertEmbedder` lazy), `knowledge_base.py` (`HistoricalKB.build/save/load/find_precedents`; alinhamento evento = 1.º dia de negociação ≥ data da notícia; persistência JSONL).
+- **Scripts de dados:** `scripts/download_data.py` (FNSPID em **streaming** + filtro por ticker/janela → `data/` gitignored + amostra de títulos); `scripts/build_kb.py` (notícias CSV + preços yfinance → KB JSONL; `--sbert` para SBERT real). `data/samples/news_sample.csv` (sintético) + `data/samples/kb_sample.jsonl` (gerado) + `data/samples/README.md`.
+- **Testes (22, verde):** `test_anomaly_detector.py` (4) + `test_event_study.py` (4) + `test_similarity.py` (7) + `test_knowledge_base.py` (5) + `test_smoke.py` (pipeline + envio Telegram `@telegram`).
 - **Smoke test da thin slice:** **PASSA** (envio real confirmado; `pytest -m telegram`). Excluído do verify por defeito.
-- **`data_card.md` definido:** subconjunto FNSPID proposto (15 tickers large-cap multissetorial; janela 2018–2023).
-- **Em falta:** `download_data.py`/`historical_kb` (construir a KB FNSPID), retrieval por embeddings (SBERT — stack ML faseada), `news_fetcher` (Gatilho 2), `impact_analyzer` (opcional).
+- **Pipeline KB validado:** `build_kb.py` corrido com a amostra sintética + preços reais (yfinance) → `kb_sample.jsonl` com impactos coerentes com a realidade (ex.: TSLA −9,75% após margens de Q1; MSFT +7,2% após cloud). **Fonte FNSPID verificada** (HTTP 200, ~23,2 GB; colunas `Date/Article_title/Stock_symbol`).
+- **Em falta:** correr download real do FNSPID + KB completa (job longo, R2); instalar stack ML e validar `SbertEmbedder`; `news_fetcher` (Gatilho 2); `explanation_engine` com precedentes; `impact_analyzer` (opcional).
 
 ## Referências Verificadas
 - **16 referências verificadas** em `docs/citation_log.md` e no `thesis/references.bib`:

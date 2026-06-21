@@ -5,6 +5,44 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 9 — 2026-06-21 — Implementação: KB histórica + motor de correlação (recuperação)
+**Objetivo:** construir o núcleo da correlação notícia–mercado — a base de conhecimento histórica e a
+recuperação de precedentes por similaridade — seguindo "a versão mais simples e defensável primeiro".
+
+**Feito:**
+- **Similaridade** (`src/correlation_engine/similarity.py`): cosseno (1D e vetorizado) + `top_k_similar`,
+  puro NumPy, determinístico (7 testes).
+- **Base de conhecimento** (`src/historical_kb/`): `NewsRecord` (data, ticker, título, impacto, embedding;
+  JSON); interface `Embedder` com duas implementações intermutáveis — `HashingEmbedder` (baseline lexical
+  determinístico, **sem dependências** → permite testar tudo sem torch e serve de baseline para ablação) e
+  `SbertEmbedder` (SBERT real, import **tardio**); `HistoricalKB` com `build/save/load/find_precedents`
+  (persistência JSONL).
+- **Decisão de engenharia (anti-lookahead na prática):** dia do evento = 1.º dia de negociação ≥ data da
+  notícia; impacto medido a partir do **fecho** desse dia → não capta o salto já refletido na abertura
+  (ex.: NVDA 2023-05-25). Documentado em `learning.md` §11.
+- **Scripts reais:** `download_data.py` (FNSPID em **streaming** por chunks + filtro ticker/janela — não
+  descarrega os ~23 GB; só o subconjunto fica em disco, gitignored, + amostra de títulos) e `build_kb.py`
+  (notícias CSV + preços yfinance, índice tz-naive → KB JSONL; `--sbert` para SBERT real).
+- **Validação ponta-a-ponta:** criada amostra **sintética** `data/samples/news_sample.csv` (não são notícias
+  reais); corrido `build_kb.py` com preços reais (yfinance) → `data/samples/kb_sample.jsonl` (10 registos).
+  Impactos coerentes com a realidade (TSLA −9,75% após margens Q1; MSFT +7,2% após cloud).
+- **Fonte FNSPID verificada** (honesto, não fabricado): probe controlado confirmou HTTP 200, `text/csv`,
+  **~23,2 GB**, colunas `Date/Article_title/Stock_symbol` → mapeamento do `download_data.py` correto.
+- Docs: `learning.md` (§11–12), `glossary.md` (KB, embedder, baseline, ablação, JSONL, streaming, top-k),
+  `data_card.md` (pipeline implementado + schema verificado), `data/samples/README.md`.
+
+**Estado dos testes:** **22 verdes**; lint limpo (src+tests+scripts); `verify.sh` ok.
+
+**Notas técnicas:** `build_kb.py` precisou de bootstrap do `sys.path` (correr como script) e de reconfigurar
+o stdout para UTF-8 (consola Windows cp1252 não imprimia acentos/glifos). A stack ML pesada **continua por
+instalar** — o `SbertEmbedder` está pronto mas por validar (próximo passo).
+
+**Próxima ação:** instalar a stack ML faseada e validar o `SbertEmbedder`; correr o download real do FNSPID
+(job longo, R2) e construir a KB completa; depois `news_fetcher` (Gatilho 2) e a explicação com precedentes.
+Prosseguir autonomamente (D-009).
+
+---
+
 ## Sessão 8 — 2026-06-21 — Implementação: Thin slice (M1) + pedidos do aluno
 **Objetivo:** desbloquear com o setup do aluno e construir a fatia fina end-to-end.
 

@@ -83,3 +83,46 @@ explicação local. Usado só se acrescentar clareza defensável. *(Ref. verific
 
 > Referências de enquadramento XAI (verificadas): Arrieta et al. 2020 (`arrieta2020xai`), Adadi & Berrada 2018
 > (`adadi2018peeking`). Todas em `docs/citation_log.md`.
+
+---
+
+## 11. Base de conhecimento histórica e recuperação de precedentes (implementação)
+Esta secção explica o que foi efetivamente **implementado** em `src/historical_kb/` e
+`src/correlation_engine/similarity.py` (Sessão 9).
+
+**O que é a KB:** uma coleção de notícias históricas, cada uma com (i) data e ticker, (ii) o
+título, (iii) o **impacto pós-evento** medido (+1/+3/+5d, via `event_study`) e (iv) o
+**embedding** do título. Guarda-se em JSONL (uma notícia por linha — legível e versionável).
+**Para que serve:** quando chega uma notícia nova, calculamos o seu embedding, comparamos por
+**similaridade do cosseno** com todas as da KB e devolvemos as mais parecidas (`top-k`) com o
+impacto que tiveram. São esses os **precedentes** que a explicação XAI mostra ao investidor.
+
+**Interface `Embedder` (padrão de engenharia):** definimos uma interface mínima
+(`dim` + `encode(textos) -> matriz`) e duas implementações intermutáveis:
+- **`HashingEmbedder`** — *baseline* lexical sem dependências (cada palavra cai numa posição do
+  vetor por *hash*; conta-se e normaliza-se). Não capta significado, mas é **determinístico,
+  reprodutível e rápido**. Permite testar todo o pipeline **sem instalar torch** e serve de
+  **baseline para a ablação** na avaliação (SBERT *vs.* sobreposição de palavras).
+- **`SbertEmbedder`** — SBERT real (`sentence-transformers`), a abordagem metodológica. O import
+  é **tardio** (só quando se cria o objeto), pelo que o núcleo e os testes não dependem da stack
+  pesada de ML. Trocar de embedder não muda mais nada — é a vantagem de programar contra uma
+  interface.
+- **Como explico ao júri em 3 frases:** "Comparo o SBERT com um *baseline* simples de
+  sobreposição de palavras. Programei ambos contra a mesma interface, por isso a troca é
+  transparente e a avaliação é justa. Assim mostro, com números, que o ganho do SBERT vem da
+  semântica e não da implementação."
+
+**Alinhamento evento↔preço (anti-lookahead na prática):** o "dia do evento" é o **primeiro dia
+de negociação >= data da notícia** (`searchsorted`). O impacto mede-se a partir do **fecho desse
+dia**. Consequência importante e defensável: se a notícia já estava refletida na abertura (ex.: a
+subida da NVIDIA em 2023-05-25), o nosso +1d **não** captura o salto já ocorrido — medimos só o
+que um investidor ainda poderia ter apanhado. Isto evita inflacionar o impacto com informação já
+"dentro" do preço.
+
+## 12. *Streaming* de dados grandes (FNSPID)
+**O que é:** o ficheiro de notícias do FNSPID tem dezenas de GB. Em vez de o descarregar inteiro,
+lemo-lo em **blocos (*chunks*)** diretamente do URL e filtramos à medida (só os 15 tickers e a
+janela 2018–2023 do `data_card.md`); só o subconjunto fica em disco. **Porque importa:** torna o
+projeto tratável num portátil (R2 no `risk_register.md`) e mantém a reprodutibilidade — qualquer
+pessoa recria o subconjunto com `scripts/download_data.py`. Os dados grandes ficam *gitignored*;
+só **amostras pequenas** vão para `data/samples/` (e, de notícias de terceiros, só títulos — §5.4).

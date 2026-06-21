@@ -19,6 +19,16 @@
 | Lookahead / fuga de informação | Usar (erradamente) informação do futuro no presente | — |
 | FinBERT | Modelo de linguagem para sentimento em texto financeiro | — |
 | FNSPID | Dataset de notícias financeiras alinhadas a preços (histórico) | — |
+| Base de conhecimento (KB) | Coleção de notícias históricas com impacto medido + embedding | KB |
+| Precedente | Notícia histórica semelhante usada como evidência na explicação | — |
+| Embedder | Componente que converte texto em vetor (interface intermutável) | — |
+| Hashing embedder | Embedding lexical determinístico por hash de palavras (baseline) | — |
+| SBERT | Sentence-BERT; modelo que gera embeddings de frases | SBERT |
+| Baseline | Método simples de referência para comparar (ablação) na avaliação | — |
+| Ablação | Remover/trocar um componente para medir o seu contributo | — |
+| JSONL | Ficheiro com um objeto JSON por linha (formato da KB) | — |
+| Streaming (de dados) | Ler/processar um ficheiro grande em blocos, sem o carregar todo | — |
+| Top-k | Os k itens mais bem classificados (aqui, mais semelhantes) | — |
 | Capitalização de mercado | Valor total das ações de uma empresa/mercado (preço × nº de ações) | market cap |
 | Investidor de retalho | Investidor individual não-profissional (por oposição a institucional) | retail |
 | Liquidez | Facilidade de comprar/vender um ativo sem mover muito o preço | — |

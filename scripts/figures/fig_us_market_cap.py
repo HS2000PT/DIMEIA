@@ -22,7 +22,9 @@ import matplotlib.pyplot as plt
 ANOS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
 CAP_USD_T = [25.1, 27.4, 32.1, 30.4, 34.1, 41.6, 48.5, 40.3, 49.0, 62.2]
 
-SAIDA = pathlib.Path(__file__).resolve().parents[2] / "thesis" / "figures" / "us_equity_market_cap.pdf"
+SAIDA = (
+    pathlib.Path(__file__).resolve().parents[2] / "thesis" / "figures" / "us_equity_market_cap.pdf"
+)
 
 
 def gerar() -> None:
