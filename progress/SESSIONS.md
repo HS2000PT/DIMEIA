@@ -5,6 +5,33 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 17 — 2026-06-21 — FNSPID: correção do downloader + achado de viabilidade
+**Objetivo:** o aluno aprovou o download completo do FNSPID → tentar construir a KB multi-ano e a
+análise de impacto (Pergunta B).
+
+**Feito (e descoberto):**
+- **Bug real corrigido:** o `download_data.py` usava `pd.read_csv(url)`, que **bloqueia** neste
+  endpoint do Hugging Face (confirmado: pendurou várias vezes). Reescrito para fazer *stream* via
+  `requests` (stream=True) + `pd.read_csv(resp.raw, ...)`, lendo só 3 colunas (`usecols`) e com
+  **paragem antecipada** por ordenação de ticker (`early_stop`). **Verificado**: extraiu 379 notícias
+  reais da Agilent (ticker `A`) 2018-2023 e parou cedo, corretamente.
+- **Achado de viabilidade (honesto):** débito medido ~1.300 linhas/s; o ficheiro tem ~15M linhas →
+  **~3,4 h para o varrer todo**. Os 15 tickers vão de `A` a `X`, logo não há atalho por ordenação;
+  uma tentativa com 4 tickers (AAPL/AMZN/BAC/CVX) não completou um único chunk de 100k em 3,5 min.
+  Conclusão: o scan completo do FNSPID **não é praticável neste ambiente** — é um job para a máquina/
+  ligação do aluno (ex.: durante a noite).
+- **Decisão honesta:** mantém-se a avaliação do Cap. 6 com a KB **real do Finnhub** (3.692 notícias,
+  multi-seed); o FNSPID multi-ano fica como **trabalho futuro reprodutível** (script agora pronto e
+  verificado). A tese já descrevia isto, por isso não precisou de alteração.
+- Documentado em `download_data.py` e `docs/data_card.md`; artefactos de teste limpos.
+
+**Estado dos testes:** **41 verdes** + 2 *gated*; lint limpo.
+
+**Próxima ação:** (humano) correr `download_data.py` numa ligação adequada → `build_kb.py --sbert` →
+análise de impacto (Pergunta B). Restante: revisão do aluno; declaração ISEP; estudo de utilidade.
+
+---
+
 ## Sessão 16 — 2026-06-21 — Rigor da avaliação: multi-seed + teste de fidelidade
 **Objetivo:** remover duas limitações declaradas no Cap. 6 — o resultado de recuperação com uma só
 seed e a afirmação de fidelidade não automatizada — sem o download pesado do FNSPID.

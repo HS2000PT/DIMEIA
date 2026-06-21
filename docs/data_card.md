@@ -37,9 +37,20 @@ Para ser tratável num portátil (§5.4 / R2), começamos com um subconjunto peq
 
 > **Estado:** pipeline **implementado e validado** ponta-a-ponta com a amostra sintética
 > `data/samples/news_sample.csv` + cotações reais (yfinance) → `data/samples/kb_sample.jsonl` (10 registos,
-> impactos coerentes com a realidade). Falta correr o **download real** do FNSPID (job longo de I/O — R2) e
-> construir a KB completa; depois validar o `SbertEmbedder` (requer instalar a stack ML). O aluno pode ajustar
-> tickers/janela; a metodologia não muda (decisão autónoma documentada, D-009).
+> impactos coerentes com a realidade). O `SbertEmbedder` foi validado e usado para a KB real do Finnhub
+> (3.692 notícias). O aluno pode ajustar tickers/janela; a metodologia não muda (decisão autónoma, D-009).
+
+### Download do FNSPID — correção e viabilidade (S17)
+- **Correção (bug real):** `download_data.py` passou a fazer *stream* via `requests` — `pd.read_csv(url)`
+  **bloqueava** neste endpoint do Hugging Face. Acrescentado: leitura de só 3 colunas (`usecols`) e
+  **paragem antecipada** por ordenação de ticker (`early_stop`). **Verificado**: extraiu 379 notícias da
+  Agilent (ticker `A`) 2018-2023 e parou cedo, corretamente.
+- **Viabilidade:** débito ~1.300 linhas/s; ~15M linhas → **~3,4 h para varrer tudo**. Como os 15 tickers vão
+  de `A` a `X`, não há atalho por ordenação. **Não é praticável neste ambiente**; é um job para correr numa
+  máquina/ligação adequada (ex.: durante a noite): `python scripts/download_data.py` →
+  `python scripts/build_kb.py --news data/fnspid_news_subset.csv --sbert`.
+- **Decisão honesta:** a avaliação (Cap. 6) usa a KB **real do Finnhub** (3.692 notícias, multi-seed); a KB
+  multi-ano do FNSPID fica como **trabalho futuro reprodutível** (script pronto e verificado).
 
 ## Camada live
 - **Preços:** yfinance (base) + Finnhub (fallback). **Notícias:** Finnhub news + RSS (ver `free_apis.md`).

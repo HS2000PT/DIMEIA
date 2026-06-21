@@ -156,3 +156,11 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] Cap. 6 (tabela mean±std, secção de fidelidade), Cap. 7 (RQ2) e abstract EN/PT atualizados; removida a limitação "single seed"
 - [x] **41 testes verdes** + 2 gated; lint limpo; tese compila 53 pp., 0 citações indefinidas
 - [ ] Próximo (humano/opcional): revisão do aluno; (opcional) FNSPID completo; estudo humano de utilidade
+
+## Sessão 17 — FNSPID: correção do downloader + achado de viabilidade
+- [x] **Bug encontrado e corrigido:** `pd.read_csv(url)` bloqueia no endpoint HF → `download_data.py` reescrito para *stream* via `requests` + `usecols` (3 colunas) + `early_stop` (paragem por ordenação de ticker)
+- [x] **Verificado:** extraiu 379 notícias reais da Agilent (ticker A) 2018-2023 e parou cedo, corretamente
+- [x] **Achado de viabilidade:** ~1.300 linhas/s, ~15M linhas → ~3,4 h para varrer tudo; 15 tickers vão de A a X (sem atalho) → **scan completo inviável neste ambiente**; é job para a máquina/ligação do aluno (de noite)
+- [x] Documentado em `download_data.py` (docstring) e `docs/data_card.md`; artefactos de teste limpos
+- [x] **Decisão honesta:** avaliação fica com a KB real do Finnhub (3.692, multi-seed); FNSPID multi-ano = futuro reprodutível (script pronto). 41 testes verdes; lint limpo
+- [ ] Próximo (humano): correr `download_data.py` numa ligação adequada → KB FNSPID → impacto (Pergunta B)

@@ -4,9 +4,17 @@ Dataset: FNSPID — Financial News and Stock Price Integration Dataset (Dong et 
 - Hugging Face: Zihan1004/FNSPID
 - Licença: CC BY-SA 4.0 — ATRIBUIÇÃO OBRIGATÓRIA no README e na tese.
 
-O ficheiro de notícias do FNSPID é enorme (~dezenas de GB), pelo que NÃO o descarregamos
-inteiro: lemo-lo em *chunks* a partir do URL do Hugging Face e filtramos à medida (apenas os
-tickers e a janela definidos em docs/data_card.md). Só o subconjunto fica em disco.
+O ficheiro de notícias do FNSPID é enorme (~23 GB), pelo que NÃO o descarregamos inteiro:
+fazemos *stream* por *chunks* (via `requests` — `pd.read_csv(url)` BLOQUEIA neste endpoint do
+Hugging Face) e filtramos à medida (apenas os tickers e a janela de docs/data_card.md), lendo só
+3 colunas (`usecols`). Como o ficheiro está ORDENADO por ticker, paramos a varredura assim que
+passamos o maior ticker pedido (`early_stop`). Só o subconjunto fica em disco.
+
+NOTA DE VIABILIDADE (verificado, S17): o débito observado é ~1.300 linhas/s; o ficheiro tem
+~15M linhas → varrer tudo demora ~3,4 h. Validado que o stream funciona (extraiu 379 notícias da
+Agilent 2018-2023 e parou cedo). Para a KB multi-ano completa, correr este script numa máquina/
+ligação adequada (ex.: durante a noite) e depois `build_kb.py --sbert`. A avaliação atual usa a KB
+real do Finnhub (ver docs/evaluation_results.md); o FNSPID multi-ano é trabalho futuro reprodutível.
 
 Governança (§5.4): o subconjunto vai para `data/` (gitignored) e uma AMOSTRA pequena para
 `data/samples/` (versionada, só títulos — não republicar o texto integral de terceiros).
@@ -75,24 +83,49 @@ def normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 def stream_filter(
     url: str, tickers: list[str], start: str, end: str,
-    chunksize: int = 200_000, limit: int | None = None,
+    chunksize: int = 200_000, limit: int | None = None, early_stop: bool = True,
 ) -> pd.DataFrame:
-    """Lê o CSV remoto em chunks e filtra por ticker e janela [start, end]."""
+    """Faz stream do CSV remoto em chunks (via requests) e filtra por ticker e janela [start, end].
+
+    - Usa `requests` (stream=True) em vez de `pd.read_csv(url)`, que NÃO faz stream deste endpoint
+      do Hugging Face (bloqueia). Lê apenas as 3 colunas necessárias (`usecols`), ignorando o corpo
+      do artigo.
+    - `early_stop`: como o ficheiro está ORDENADO por ticker ascendente, paramos a varredura assim
+      que ultrapassamos (alfabeticamente) o maior ticker pedido — evita ler o ficheiro todo.
+    """
+    import requests
+
     wanted = {t.upper() for t in tickers}
+    max_wanted = max(wanted)
     start_d = pd.Timestamp(start).date()
     end_d = pd.Timestamp(end).date()
+    usecols = [_DATE_COLS[0], _TITLE_COLS[0], _TICKER_COLS[0]]  # Date, Article_title, Stock_symbol
+
+    resp = requests.get(url, stream=True, timeout=60)
+    resp.raise_for_status()
+    resp.raw.decode_content = True
     kept: list[pd.DataFrame] = []
     scanned = 0
-    for chunk in pd.read_csv(url, chunksize=chunksize, low_memory=False):
+    seen_any = False
+    reader = pd.read_csv(resp.raw, chunksize=chunksize, usecols=usecols, low_memory=False)
+    for chunk in reader:
         norm = normalize_columns(chunk)
         mask = norm["ticker"].isin(wanted) & (norm["date"] >= start_d) & (norm["date"] <= end_d)
-        kept.append(norm[mask])
+        matched = norm[mask]
+        kept.append(matched)
+        seen_any = seen_any or len(matched) > 0
         scanned += len(chunk)
         total_kept = sum(len(k) for k in kept)
         print(f"  …varridas {scanned:,} linhas | guardadas {total_kept:,}", flush=True)
         if limit is not None and scanned >= limit:
             print(f"  (limite de {limit:,} linhas atingido — paragem antecipada)")
             break
+        # Paragem antecipada: já passámos (alfabeticamente) todos os tickers pedidos.
+        if early_stop and seen_any and not norm["ticker"].empty:
+            if str(norm["ticker"].min()) > max_wanted:
+                print(f"  (passámos '{max_wanted}' — paragem antecipada por ordenação)")
+                break
+    resp.close()
     result = pd.concat(kept, ignore_index=True) if kept else pd.DataFrame(
         columns=["date", "ticker", "headline"]
     )
@@ -108,6 +141,8 @@ def main() -> None:
     parser.add_argument("--chunksize", type=int, default=200_000)
     parser.add_argument("--limit", type=int, default=None,
                         help="máximo de linhas a varrer (para um probe rápido)")
+    parser.add_argument("--no-early-stop", action="store_true",
+                        help="varre o ficheiro todo (sem parar ao passar o maior ticker)")
     parser.add_argument("--out", default="data/fnspid_news_subset.csv")
     parser.add_argument("--sample", default="data/samples/fnspid_news_sample.csv")
     parser.add_argument("--sample-size", type=int, default=50)
@@ -116,7 +151,8 @@ def main() -> None:
     print(f"A descarregar/filtrar FNSPID: {len(args.tickers)} tickers, {args.start}…{args.end}")
     print("Fonte: Zihan1004/FNSPID (CC BY-SA 4.0). Atribuição obrigatória.")
     df = stream_filter(args.news_url, args.tickers, args.start, args.end,
-                       chunksize=args.chunksize, limit=args.limit)
+                       chunksize=args.chunksize, limit=args.limit,
+                       early_stop=not args.no_early_stop)
     print(f"Total de notícias no subconjunto: {len(df):,}")
 
     out = Path(args.out)
