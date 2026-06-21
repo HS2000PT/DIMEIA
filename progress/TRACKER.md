@@ -170,4 +170,5 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] **Ablação corrida** (5 seeds): P@5 SBERT-MiniLM 0,549±0,014, SBERT-MPNet 0,569±0,009, lexical 0,359, aleatório 0,241, recência 0,105 → vantagem robusta ao modelo
 - [x] Cap. 6 atualizado (tabela com MiniLM+MPNet + nota de ablação); figura regenerada (5 métodos); `learning.md` §14 atualizado
 - [x] **41 testes verdes**; lint limpo; tese compila 53 pp., 0 citações indefinidas
+- [x] **README atualizado**: estado real (rascunho completo) + secção "Reproducing the results" (comandos exatos); LaTeX verificado sem overfull boxes nem avisos
 - [ ] Próximo (humano/opcional): revisão do aluno; FNSPID completo (job de noite); estudo humano de utilidade

@@ -17,8 +17,13 @@ sources → historical precedents. No price prediction, no algorithmic trading, 
   price impact; new news is matched to similar past news to provide explanatory evidence.
 
 ## Project status
-Early scaffolding (Session 0 — Setup & Authorization). See `CLAUDE.md` for the current state and the precise
-next action, `progress/PLANO_SESSOES.md` for the session plan, and `docs/` for design/decision records.
+**Working draft complete.** Both triggers are implemented and proven end to end (anomaly detection →
+explanation → Telegram; news → SBERT retrieval of precedents → explanation), with 41 automated tests.
+The two core components are evaluated on **real data** (see `docs/evaluation_results.md` and
+`docs/evaluation_anomaly.md`), and the seven-chapter dissertation is drafted and compiles
+(`thesis/main.pdf`). The full multi-year FNSPID knowledge base is the main remaining item (a long
+download job; the streaming pipeline is implemented and verified). See `CLAUDE.md` for the exact
+current state and `progress/SESSIONS.md` for the per-session history.
 
 ## Repository layout
 See the full structure in `ROOT_PROMPT_CLAUDE_CODE.md` (§9). Key folders: `src/` (system code by component),
@@ -26,10 +31,29 @@ See the full structure in `ROOT_PROMPT_CLAUDE_CODE.md` (§9). Key folders: `src/
 `scripts/` (automation), `data/` (samples committed; large data gitignored and recreated by scripts).
 
 ## Setup (reproducible)
-- Python **3.12** in a virtual environment: `bash scripts/setup_env.sh`.
+- Python **3.12** in a virtual environment: `bash scripts/setup_env.sh` (deps pinned in
+  `requirements.txt` / `requirements.lock.txt`). The ML stack (`torch` CPU, `sentence-transformers`)
+  is needed only for the SBERT paths.
 - Verification loop: `bash scripts/verify.sh` (tests + lint + LaTeX note).
 - Secrets live only in a local, gitignored `.env` (see `.env.example` for variable names).
 - LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push (CI is the source of truth for the PDF).
+
+## Reproducing the results
+Every result and figure is produced by a versioned script with a fixed seed:
+```bash
+# Retrieval (Question A): fetch real news, run the ablation → docs/evaluation_results.md + figure
+python scripts/fetch_finnhub_news.py                         # needs FINNHUB_API_KEY in .env
+python scripts/evaluate.py --news data/finnhub_news.csv \
+    --sbert-models all-MiniLM-L6-v2 all-mpnet-base-v2
+
+# Anomaly detector (Question 1): real prices → docs/evaluation_anomaly.md + figure
+python scripts/evaluate_anomaly.py --period 3y
+
+# Build the dissertation PDF (also built in CI)
+bash scripts/build_pdf.sh
+```
+The full multi-year FNSPID knowledge base (a ~23 GB streaming scan, see `docs/data_card.md`) is built by
+`scripts/download_data.py` followed by `scripts/build_kb.py --sbert`; this is a long, deliberate job.
 
 ## Attributions & licences
 - **FNSPID** (Financial News and Stock Price Integration Dataset) — `Zihan1004/FNSPID`,
