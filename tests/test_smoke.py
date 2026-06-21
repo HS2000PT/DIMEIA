@@ -32,6 +32,18 @@ def test_pipeline_explicacao():
     assert "z-score" in texto
 
 
+def test_gatilho2_precedentes_offline():
+    """Gatilho 2 end-to-end sem rede: notícia -> KB (amostra) -> precedentes -> explicação."""
+    from src.main import run_news_trigger
+
+    precedents, texto = run_news_trigger(
+        "AAPL", "Apple iPhone demand stays strong", send=False
+    )
+    assert precedents  # a amostra da KB tem registos AAPL semelhantes
+    assert "News alert for AAPL" in texto
+    assert "Historical precedents:" in texto
+
+
 @pytest.mark.telegram
 def test_thin_slice_envia_telegram():
     """Envia um alerta real ao Telegram (requer .env). Pulado se não configurado."""

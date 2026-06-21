@@ -124,7 +124,31 @@ subida da NVIDIA em 2023-05-25), o nosso +1d **não** captura o salto já ocorri
 que um investidor ainda poderia ter apanhado. Isto evita inflacionar o impacto com informação já
 "dentro" do preço.
 
-## 12. *Streaming* de dados grandes (FNSPID)
+## 12. Gatilho 2 — notícia → precedentes → explicação (implementação)
+**O que é:** o segundo gatilho do sistema. Quando surge uma notícia financeira, o sistema
+recupera notícias históricas semelhantes (da KB) e mostra o **impacto que tiveram** como
+precedentes — não prevê preços, apenas apresenta evidência passada análoga (restrição §5.2).
+
+**`news_fetcher`** (`src/news_fetcher/fetcher.py`): obtém notícias da camada live (Finnhub
+`/company-news` e feeds RSS) e **normaliza-as para o mesmo esquema da KB** (`date, ticker,
+headline`), para poderem ser comparadas por similaridade com o histórico. Tal como nos outros
+componentes, separámos o **parsing** (puro, testado sem rede) do **HTTP** (invólucro fino, tardio).
+Validado ao vivo (247 notícias AAPL via Finnhub).
+
+**Explicação com precedentes** (`explain_news_impact`): produz um alerta rastreável — a notícia,
+o **impacto médio** observado em eventos passados análogos (no horizonte escolhido) e a lista de
+precedentes (data, ticker, similaridade, impacto e título), terminando sempre com a nota de que
+**o impacto é o resultado observado no passado, não uma previsão**.
+
+**Orquestração** (`src/main.py::run_news_trigger`): notícia → *embedding* → `KB.find_precedents`
+→ `explain_news_impact` → (opcional) Telegram. O embedder usado tem de coincidir com o que
+construiu a KB (a amostra usa `HashingEmbedder`; com `SbertEmbedder` usa-se a KB SBERT).
+- **Como explico ao júri em 3 frases:** "Quando chega uma notícia, represento-a como vetor e
+  procuro na base histórica as mais semelhantes. Mostro ao investidor o que aconteceu ao mercado
+  a seguir a essas notícias passadas, com as fontes. É uma explicação por analogia e evidência —
+  nunca uma previsão de preço."
+
+## 13. *Streaming* de dados grandes (FNSPID)
 **O que é:** o ficheiro de notícias do FNSPID tem dezenas de GB. Em vez de o descarregar inteiro,
 lemo-lo em **blocos (*chunks*)** diretamente do URL e filtramos à medida (só os 15 tickers e a
 janela 2018–2023 do `data_card.md`); só o subconjunto fica em disco. **Porque importa:** torna o

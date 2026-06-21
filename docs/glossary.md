@@ -29,6 +29,9 @@
 | JSONL | Ficheiro com um objeto JSON por linha (formato da KB) | — |
 | Streaming (de dados) | Ler/processar um ficheiro grande em blocos, sem o carregar todo | — |
 | Top-k | Os k itens mais bem classificados (aqui, mais semelhantes) | — |
+| Gatilho 2 | Alerta despoletado por uma notícia nova (vs. Gatilho 1 = movimento) | — |
+| RSS | Formato de feed para distribuir notícias/atualizações de um site | — |
+| Finnhub | API financeira gratuita (preços, notícias de empresa) | — |
 | Capitalização de mercado | Valor total das ações de uma empresa/mercado (preço × nº de ações) | market cap |
 | Investidor de retalho | Investidor individual não-profissional (por oposição a institucional) | retail |
 | Liquidez | Facilidade de comprar/vender um ativo sem mover muito o preço | — |

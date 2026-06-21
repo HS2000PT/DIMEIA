@@ -100,3 +100,14 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] **Stack ML instalada** (torch 2.12.1+cpu via índice CPU, sentence-transformers 5.6.0, transformers 5.12.1, scikit-learn 1.9.0); `requirements.txt` + `requirements.lock.txt` (72 pkgs); numpy/pandas inalterados
 - [x] **`SbertEmbedder` validado** (`pytest -m sbert`): recuperação semântica — consulta sem palavras em comum recupera a notícia certa (vantagem sobre baseline lexical); `FutureWarning` de dimensão corrigido (suporta ST 4.x e 5.x)
 - [ ] Próximo: download real FNSPID + KB completa (`build_kb.py --sbert`); `news_fetcher` (Gatilho 2); explicação com precedentes
+
+## Sessão 10 — Implementação: Gatilho 2 (notícias) + explicação com precedentes
+- [x] `src/news_fetcher/fetcher.py` — `NewsItem`; parsing puro (`parse_finnhub_news`, `parse_rss`, `_rss_date_to_iso`) + HTTP tardio (`fetch_finnhub_company_news`, `fetch_rss_feed`)
+- [x] **Finnhub validado ao vivo** (247 notícias AAPL parseadas para `NewsItem`)
+- [x] `explanation_engine.explain_news_impact` — alerta XAI: notícia + impacto médio (horizonte) + lista de precedentes (data/ticker/sim/impacto/título) + nota "não é previsão" (§5.2)
+- [x] `src/main.py::run_news_trigger` — orquestra notícia→embedding→`KB.find_precedents`→explicação→(opcional)Telegram; default KB-amostra + HashingEmbedder
+- [x] Testes: `test_news_fetcher.py` (3, parsing) + `test_explainer.py` (3, incl. média ignora NaN) + smoke Gatilho 2 offline (1)
+- [x] Demo end-to-end do alerta (precedentes recuperados + texto rastreável)
+- [x] `learning.md` §12 (Gatilho 2) + `glossary.md` (Gatilho 2, RSS, Finnhub)
+- [x] **29 testes verdes** + 2 gated; lint limpo; `verify.sh` ok
+- [ ] Próximo: download real FNSPID + KB SBERT completa; demo Gatilho 2 ao vivo (Finnhub→KB→Telegram); avaliação (Cap. 6)

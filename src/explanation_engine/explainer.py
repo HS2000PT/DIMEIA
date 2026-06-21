@@ -1,12 +1,19 @@
-"""Motor de explicação (XAI) — versão mínima da thin slice (baseada em regra transparente).
+"""Motor de explicação (XAI) — regra transparente + precedentes históricos.
 
 Produz texto rastreável: o utilizador vê exatamente porque é que o alerta disparou.
-Versões futuras juntam precedentes históricos e (opcional) atribuição SHAP.
+- Gatilho 1 (anomalia): `explain_anomaly` / `explain_normal` (z-score, janela, média/desvio).
+- Gatilho 2 (notícia): `explain_news_impact` — a notícia + precedentes históricos semelhantes
+  (recuperados por similaridade) e o impacto que tiveram. (Opcional futuro: atribuição SHAP.)
 """
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from src.anomaly_detector.detector import AnomalyResult
+
+if TYPE_CHECKING:
+    from src.historical_kb.record import NewsRecord
 
 
 def explain_anomaly(ticker: str, result: AnomalyResult) -> str:
@@ -29,3 +36,59 @@ def explain_normal(ticker: str, result: AnomalyResult) -> str:
         f"No anomaly for {ticker} today "
         f"(z-score {result.z_score:+.2f}, within ±{result.threshold:g})."
     )
+
+
+def _mean_precedent_impact(precedents: list[tuple[NewsRecord, float]], horizon: int) -> float:
+    """Impacto médio dos precedentes no horizonte (ignora NaN). NaN se não houver dados."""
+    key = str(horizon)
+    vals = [
+        rec.impacts[key]
+        for rec, _ in precedents
+        if key in rec.impacts and rec.impacts[key] == rec.impacts[key]  # exclui NaN
+    ]
+    return sum(vals) / len(vals) if vals else float("nan")
+
+
+def explain_news_impact(
+    ticker: str,
+    headline: str,
+    precedents: list[tuple[NewsRecord, float]],
+    horizon: int = 3,
+    date: str = "",
+) -> str:
+    """Explicação XAI para o Gatilho 2: notícia nova + precedentes históricos semelhantes.
+
+    Mostra a notícia, o impacto médio observado em eventos passados análogos e a lista de
+    precedentes (data, ticker, similaridade, impacto e título), tudo rastreável. NÃO é uma
+    previsão de preço — é o resultado OBSERVADO no passado (restrição §5.2).
+    """
+    header = f"📰 News alert for {ticker}\n\"{headline}\""
+    if date:
+        header += f" ({date})"
+    if not precedents:
+        return header + "\nNo similar historical precedents found in the knowledge base."
+
+    avg = _mean_precedent_impact(precedents, horizon)
+    avg_line = (
+        f"average {horizon}-day move: {avg * 100:+.2f}%"
+        if avg == avg  # not NaN
+        else f"average {horizon}-day move: n/a"
+    )
+    lines = [
+        header,
+        f"Potential impact (from {len(precedents)} similar past events): {avg_line}",
+        "Historical precedents:",
+    ]
+    key = str(horizon)
+    for rec, score in precedents:
+        imp = rec.impacts.get(key)
+        imp_txt = f"{imp * 100:+.2f}%" if imp is not None and imp == imp else "n/a"
+        lines.append(
+            f"  • {rec.date} {rec.ticker} (sim {score:.2f}) "
+            f"→ {horizon}d {imp_txt}: \"{rec.headline}\""
+        )
+    lines.append(
+        "Note: precedents are retrieved by semantic similarity; the impact is the observed "
+        "past outcome, not a price prediction."
+    )
+    return "\n".join(lines)

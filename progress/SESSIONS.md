@@ -5,6 +5,36 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 10 — 2026-06-21 — Implementação: Gatilho 2 (notícias) + explicação com precedentes
+**Objetivo:** fechar o ciclo XAI do segundo gatilho — de uma notícia nova até um alerta com
+precedentes históricos — escolhendo isto (em vez do download pesado do FNSPID) por dar mais valor
+visível por minuto.
+
+**Feito:**
+- **`news_fetcher`** (`src/news_fetcher/fetcher.py`): `NewsItem` (mesmo esquema da KB); parsing
+  **puro e testado** (`parse_finnhub_news`, `parse_rss`, `_rss_date_to_iso`) separado do HTTP fino
+  e tardio (`fetch_finnhub_company_news`, `fetch_rss_feed`). **Finnhub validado ao vivo** — 247
+  notícias da AAPL na última semana, parseadas corretamente.
+- **Explicação com precedentes** (`explain_news_impact`): alerta rastreável com a notícia, o
+  impacto médio observado em eventos análogos (horizonte configurável), a lista de precedentes
+  (data, ticker, similaridade, impacto, título) e a nota de que **é resultado passado, não
+  previsão** (restrição §5.2). Média ignora NaN.
+- **Orquestração** (`run_news_trigger` em `src/main.py`): notícia → embedding → `KB.find_precedents`
+  → explicação → (opcional) Telegram. Por defeito usa a KB-amostra + `HashingEmbedder` (offline,
+  testável); aceita `SbertEmbedder` + KB SBERT.
+- **Testes:** `test_news_fetcher.py` (3), `test_explainer.py` (3, incluindo média que ignora NaN),
+  e um smoke offline do Gatilho 2 ponta-a-ponta. Total **29 verdes** + 2 *gated* (telegram, sbert).
+- Docs: `learning.md` §12 (Gatilho 2) e `glossary.md` (Gatilho 2, RSS, Finnhub).
+
+**Notas:** os componentes do Gatilho 2 estão todos validados (Finnhub ao vivo; parsing e explicação
+por testes; orquestração por smoke). Falta a demo **ao vivo** ponta-a-ponta com a KB SBERT completa
+(depende do download real do FNSPID — job longo, R2) e a avaliação (Cap. 6).
+
+**Próxima ação:** correr o download real do FNSPID + KB SBERT completa; depois demo Gatilho 2 ao
+vivo (Finnhub → KB → Telegram) e iniciar a avaliação. Prosseguir autonomamente (D-009).
+
+---
+
 ## Sessão 9 — 2026-06-21 — Implementação: KB histórica + motor de correlação (recuperação)
 **Objetivo:** construir o núcleo da correlação notícia–mercado — a base de conhecimento histórica e a
 recuperação de precedentes por similaridade — seguindo "a versão mais simples e defensável primeiro".
