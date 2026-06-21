@@ -5,6 +5,22 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 6 — 2026-06-21 — Escrita: Capítulo 3 (Literature Review)
+**Objetivo:** redigir a revisão de literatura com tabelas comparativas (§6.2).
+
+**Feito:**
+- **+5 referências verificadas** (Crossref/arXiv): Liu et al. 2008 (Isolation Forest), Ribeiro et al. 2016 (LIME),
+  Devlin et al. 2019 (BERT), Mikolov et al. 2013 (word2vec), Yang et al. 2020 (FinBERT). Total: **16 refs**.
+- **Cap. 3 redigido** (rascunho EN-GB): (3.1) deteção de anomalias [Chandola, Isolation Forest]; (3.2) XAI
+  [LIME, SHAP, surveys]; (3.3) NLP financeiro [word2vec, BERT, SBERT, FinBERT]; (3.4) event study [Brown & Warner]
+  + FNSPID; (3.5) análise comparativa/posicionamento; (3.6) lacunas. Cada obra com o quê/como/limitações.
+- **4 tabelas comparativas** (anomalias; XAI; representações de texto; escolhas vs. alternativas).
+- Compila: **45 páginas, 0 erros, 16 referências** (6 overfull triviais 2–6pt, para polir na revisão).
+
+**Próxima ação:** Cap. 4 (Methodology), com diagrama de arquitetura (figura reprodutível).
+
+---
+
 ## Sessão 5 — 2026-06-21 — Escrita: Capítulo 1 (Introduction)
 **Objetivo:** redigir a Introduction, fundacional e apoiada no Cap. 2.
 

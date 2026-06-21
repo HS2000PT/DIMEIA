@@ -1,34 +1,141 @@
 % Capítulo 3 — Literature Review
-% Seminal + recente; peer-reviewed primeiro; TABELAS COMPARATIVAS obrigatórias (§6.2).
-% Citações só verificadas (docs/citation_log.md).
+% RASCUNHO (Sessão 6). EN-GB. Seminal + recente (§6.2); tabelas comparativas; cada obra: o quê/como/limitações.
+% Todas as citações verificadas (docs/citation_log.md). Rever/editar (o texto é teu) — §6.6.
 
 \chapter{Literature Review}
 \label{chap:literature}
 
-This chapter reviews the relevant literature across anomaly detection in financial markets, explainable AI,
-financial natural language processing, and event-study approaches to news--market impact, and positions the
-present work with respect to the state of the art.
+This chapter reviews the literature underpinning the system. It covers anomaly detection in financial markets,
+explainable artificial intelligence, financial natural language processing, and event-study approaches to
+news--market impact. Each area combines seminal and recent work, and comparative tables summarise the
+approaches, their mechanisms and their limitations. The chapter closes by positioning the present work and
+identifying the gap it addresses.
 
 \section{Anomaly Detection in Financial Markets}
 \label{sec:lit_anomaly}
-% TODO: de métodos estatísticos a ML; cf. \autocite{chandola2009anomaly}.
+
+Anomaly detection is a mature field with techniques spanning many domains. The survey of
+\textcite{chandola2009anomaly} provides the standard taxonomy --- point, contextual and collective anomalies ---
+and groups methods into statistical, distance-based, and machine-learning families. For financial returns,
+simple statistical methods (deviations from a rolling mean and standard deviation, i.e. a \emph{z}-score) are
+attractive because they are transparent and easy to justify, which is an advantage for an explainable system.
+More expressive machine-learning detectors exist, such as Isolation Forest \autocite{liu2008isolation}, which
+isolates anomalies through random partitioning and scales well to large, high-dimensional data; the trade-off is
+reduced direct interpretability. Table~\ref{tab:lit_anomaly} compares the two families.
+
+\begin{table}[ht]
+\caption{Anomaly-detection approaches relevant to this work.}
+\label{tab:lit_anomaly}
+\centering
+\begin{tabular}{p{0.24\textwidth} p{0.30\textwidth} p{0.38\textwidth}}
+\toprule
+\tabhead{Approach} & \tabhead{How it works} & \tabhead{Strengths / limitations} \\
+\midrule
+Statistical \emph{z}-score (rolling) \autocite{chandola2009anomaly} & Flags returns that deviate from a rolling mean/standard deviation & Transparent and easy to explain (XAI); assumes locally stable distribution \\
+Isolation Forest \autocite{liu2008isolation} & Isolates points via random partitioning (ensemble) & Scalable, handles high dimensionality; less directly interpretable \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Explainable Artificial Intelligence (XAI)}
 \label{sec:lit_xai}
-% TODO: conceitos e taxonomias; cf. \autocite{arrieta2020xai, adadi2018peeking}; atribuição \autocite{lundberg2017shap}.
 
-\section{Financial NLP and News Sentiment}
+As AI systems are deployed in high-stakes settings, the inability to inspect their reasoning has become a central
+concern. The surveys of \textcite{adadi2018peeking} and \textcite{arrieta2020xai} map the field: its
+motivations, a taxonomy of transparent versus post-hoc methods, and the open challenges toward responsible AI.
+Among post-hoc, model-agnostic techniques, two are widely used. LIME \autocite{ribeiro2016lime} explains a single
+prediction by fitting a simple surrogate model in its local neighbourhood; it is intuitive but its explanations
+can be unstable and are only locally faithful. SHAP \autocite{lundberg2017shap} attributes a prediction to its
+input features using Shapley values, offering consistency and a theoretical grounding at a higher computational
+cost. Table~\ref{tab:lit_xai} summarises these. In this work, explainability is pursued primarily through
+\emph{transparent design} (statistical detection and retrieved precedents), with feature attribution as an
+optional complement.
+
+\begin{table}[ht]
+\caption{Explainability approaches considered.}
+\label{tab:lit_xai}
+\centering
+\begin{tabular}{p{0.24\textwidth} p{0.30\textwidth} p{0.38\textwidth}}
+\toprule
+\tabhead{Method} & \tabhead{Type} & \tabhead{Strengths / limitations} \\
+\midrule
+LIME \autocite{ribeiro2016lime} & Local surrogate, model-agnostic & Intuitive; explanations can be unstable, only locally faithful \\
+SHAP \autocite{lundberg2017shap} & Shapley-value attribution, model-agnostic & Consistent, theoretically grounded; computationally costly \\
+Transparent design \autocite{arrieta2020xai} & Inherently interpretable logic & No post-hoc approximation; constrains model choice \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Financial NLP and News Representation}
 \label{sec:lit_finnlp}
-% TODO: embeddings de frases \autocite{reimers2019sbert}; FinBERT \autocite{araci2019finbert}.
+
+Measuring the similarity between news items requires turning text into vectors. Early work learned static
+word embeddings efficiently with word2vec \autocite{mikolov2013word2vec}, but these assign one vector per word,
+ignoring context. Contextual models based on the Transformer, notably BERT \autocite{devlin2019bert},
+substantially improved language understanding, yet using BERT directly for semantic similarity is expensive
+because it compares sentence pairs jointly. Sentence-BERT \autocite{reimers2019sbert} addresses this by producing
+sentence-level embeddings that can be compared efficiently with cosine similarity --- the property this work
+relies on for precedent retrieval. For the financial domain specifically, FinBERT models fine-tune BERT on
+financial text, for sentiment \autocite{araci2019finbert} and for broader financial communications
+\autocite{yang2020finbert}. Table~\ref{tab:lit_nlp} compares these representations.
+
+\begin{table}[ht]
+\caption{Text-representation models for financial news.}
+\label{tab:lit_nlp}
+\centering
+\begin{tabular}{p{0.22\textwidth} p{0.32\textwidth} p{0.38\textwidth}}
+\toprule
+\tabhead{Model} & \tabhead{Representation} & \tabhead{Strengths / limitations} \\
+\midrule
+word2vec \autocite{mikolov2013word2vec} & Static word vectors & Efficient; no context, word-level only \\
+BERT \autocite{devlin2019bert} & Contextual token embeddings & Strong understanding; pairwise similarity is costly \\
+Sentence-BERT \autocite{reimers2019sbert} & Sentence embeddings (siamese) & Efficient cosine similarity; benefits from fine-tuning data \\
+FinBERT \autocite{araci2019finbert, yang2020finbert} & Financial-domain language model & Domain-adapted; oriented to sentiment / communications \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Event Studies and News--Market Correlation}
 \label{sec:lit_eventstudy}
-% TODO: event study com retornos diários \autocite{brown1985daily}; datasets \autocite{dong2024fnspid}.
 
-\section{Comparative Analysis}
+Quantifying the market impact of an event is the province of the \emph{event study}. The methodology of
+\textcite{brown1985daily} established how to measure abnormal returns around an event using daily stock returns,
+and remains the standard reference for the post-event return windows (e.g.\ $+1$, $+3$ days) used here. Building
+such an analysis historically requires news aligned to prices; the FNSPID dataset \autocite{dong2024fnspid}
+provides exactly this --- financial news time-aligned with prices for thousands of companies --- enabling a
+news-to-impact knowledge base without scraping. The limitations are the usual ones of any dataset: coverage and
+time period, discussed in the data card.
+
+\section{Comparative Analysis and Positioning}
 \label{sec:lit_comparison}
-% TODO: tabela(s) comparativa(s) — abordagens × metodologias × vantagens × limitações.
+
+Across these areas, the literature offers strong individual components but few integrated, explainable,
+retail-facing systems that combine them. The choices made in this work, and the alternatives they were weighed
+against, are summarised in Table~\ref{tab:lit_positioning}. The guiding principle is \emph{defensible
+simplicity}: where two options perform comparably, the more transparent and easier-to-explain one is preferred.
+
+\begin{table}[ht]
+\caption{Component choices in this work versus alternatives.}
+\label{tab:lit_positioning}
+\centering
+\begin{tabular}{p{0.20\textwidth} p{0.26\textwidth} p{0.22\textwidth} p{0.22\textwidth}}
+\toprule
+\tabhead{Component} & \tabhead{Chosen} & \tabhead{Alternative} & \tabhead{Why} \\
+\midrule
+Anomaly detection & \emph{z}-score (rolling) & Isolation Forest & Transparency / explainability \\
+News retrieval & Sentence-BERT + cosine & word2vec / raw BERT & Efficient semantic similarity \\
+Impact measurement & Event-study windows & --- & Standard, reproducible \\
+Explanation & Rules + precedents (+ SHAP) & LIME-only & Faithful, traceable \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Summary and Research Gaps}
 \label{sec:lit_summary}
-% TODO: lacunas que o trabalho preenche.
+
+The reviewed work supplies mature methods for each piece of the problem: transparent anomaly detection, efficient
+semantic similarity, domain language models, feature attribution, and event-study impact measurement. What is
+comparatively scarce is their \emph{integration} into a single, explainable, reproducible system aimed at the
+retail investor --- one that detects events and, for each, retrieves analogous historical news and presents their
+observed impact as traceable evidence. Addressing this gap, as an engineering contribution, is the purpose of the
+chapters that follow.

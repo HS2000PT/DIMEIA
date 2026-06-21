@@ -59,4 +59,11 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] **Cap. 1 redigido** (rascunho EN-GB): motivação, problema, **RQ1–RQ3**, contribuições (Engenharia de IA), estrutura
 - [x] Referências cruzadas aos capítulos + citações verificadas; compila (43 pp., 0 erros)
 - [ ] Revisão do aluno
-- [ ] Próximo: Cap. 3 (Literature Review) — tabelas comparativas + mais citações verificadas
+
+## Sessão 6 — Escrita: Capítulo 3 (Literature Review)
+- [x] +5 referências verificadas (Liu 2008, Ribeiro 2016, Devlin 2019, Mikolov 2013, Yang 2020) → 16 no total
+- [x] **Cap. 3 redigido** (rascunho EN-GB): anomalias, XAI, NLP financeiro, event study; cada obra com o quê/como/limitações
+- [x] **4 tabelas comparativas** (anomalias; XAI; representações de texto; posicionamento das escolhas)
+- [x] Compila (45 pp., 0 erros; 6 overfull triviais 2–6pt)
+- [ ] Revisão do aluno
+- [ ] Próximo: Cap. 4 (Methodology) — com diagrama de arquitetura

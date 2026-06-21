@@ -23,6 +23,15 @@
 | `gallup2025stock` | Gallup (2025), *What Percentage of Americans Own Stock?* | news.gallup.com/poll/266807 (62% em 2025) | 2026-06-21 | Página Gallup | ✅ verificado |
 | `ccaf2026aifs` | CCAF/Cambridge (2026), *Global AI in Financial Services Report* | jbs.cam.ac.uk (81% adoção; 40% avançada; 71% GenAI) | 2026-06-21 | Página CCAF | ✅ verificado |
 
+## Literatura adicional (revisão de literatura, Cap. 3) — verificadas
+| Chave .bib | Referência | Identificador | Verificado em | Fonte | Estado |
+|---|---|---|---|---|---|
+| `liu2008isolation` | Liu, Ting & Zhou (2008), "Isolation Forest", IEEE ICDM | DOI 10.1109/ICDM.2008.17 | 2026-06-21 | Crossref | ✅ verificado |
+| `ribeiro2016lime` | Ribeiro, Singh & Guestrin (2016), "Why Should I Trust You?" (LIME), KDD | DOI 10.1145/2939672.2939778 | 2026-06-21 | Crossref | ✅ verificado |
+| `devlin2019bert` | Devlin et al. (2019), "BERT", NAACL-HLT | arXiv:1810.04805 | 2026-06-21 | arXiv API | ✅ verificado |
+| `mikolov2013word2vec` | Mikolov et al. (2013), "Efficient Estimation of Word Representations" (word2vec) | arXiv:1301.3781 | 2026-06-21 | arXiv API | ✅ verificado |
+| `yang2020finbert` | Yang, Uy & Huang (2020), "FinBERT: A Pretrained Language Model for Financial Communications" | arXiv:2006.08097 | 2026-06-21 | arXiv API | ✅ verificado |
+
 ## Rejeitadas / não verificáveis (NÃO usar)
 | Referência | Motivo | Data |
 |---|---|---|

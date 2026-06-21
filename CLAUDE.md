@@ -7,10 +7,10 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 5 (Escrita — Introduction; sessão contínua desde a 0)
+- **Sessão nº:** 6 (Escrita — Literature Review; sessão contínua desde a 0)
 - **Última atualização:** 2026-06-21
-- **Fase atual + último passo concluído:** **Escrita — Cap. 1 (Introduction) e Cap. 2 (Contextualization) em rascunho.** Cap.1 (EN-GB): motivação, problema, **3 research questions (RQ1–RQ3)**, contribuições (enquadramento Engenharia de IA), estrutura do documento; com referências cruzadas aos capítulos e citações verificadas. **Compila: 43 pp., 0 erros, 11 refs.**
-- **PRÓXIMA AÇÃO IMEDIATA:** **Cap. 3 (Literature Review)** — bloco maior: tabelas comparativas (abordagens × metodologias × vantagens/limitações) + ampliar citações verificadas (anomalias, XAI, NLP financeiro, event study). Revisão pendente do Cap.2: fixar fonte primária para a quota de retalho no volume. Antes da escrita final: **política ISEP de uso de IA** (humano-only).
+- **Fase atual + último passo concluído:** **Escrita — Caps. 1, 2 e 3 em rascunho.** Cap.3 (Literature Review, EN-GB): anomalias, XAI, NLP financeiro, event study; **4 tabelas comparativas** (cada obra com o quê/como/limitações) + posicionamento das escolhas. **+5 referências verificadas** (Isolation Forest, LIME, BERT, word2vec, FinBERT-Yang) → **16 refs**. **Compila: 45 pp., 0 erros** (6 overfull triviais 2–6pt).
+- **PRÓXIMA AÇÃO IMEDIATA:** **Cap. 4 (Methodology)** — apoiado em `docs/arquitectura_sistema.md` (arquitetura + metodologias + as 8 refs metodológicas já citadas); incluir diagrama de arquitetura (figura reprodutível). Revisão pendente do Cap.2 (fonte da quota de retalho). Antes da escrita final: **política ISEP de uso de IA** (humano-only).
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
@@ -46,7 +46,7 @@
 - **7 capítulos** (esqueleto com secções): Introduction · Contextualization · Literature Review · Methodology · Implementation · Evaluation · Conclusion.
 - **`latexmk.rc` criado** (resolve o achado da Fase A: o `Makefile` invocava-o sem existir).
 - **Temporário:** `\nocite{*}` em `main.tex` (inclui as 8 refs enquanto os capítulos não citam — remover na escrita).
-- **Cap. 1 (Introduction) + Cap. 2 (Contextualization) em rascunho** (43 pp. no total); Cap.2 com 1 figura reprodutível; **11 referências** no `.bib` (8 metodológicas + 3 de contextualização: SIFMA, Gallup, CCAF).
+- **Caps. 1–3 em rascunho** (45 pp. no total); Cap.2 com 1 figura reprodutível; Cap.3 com 4 tabelas comparativas; **16 referências** no `.bib` (8 metodológicas + 3 contextualização + 5 da revisão de literatura).
 - **Pipeline de figuras reprodutíveis estabelecido:** matplotlib; scripts em `scripts/figures/` geram PDF vetorial para `thesis/figures/` (commitado para o CI).
 - **Em falta:** restantes capítulos (escrita); refinar front matter (declaração de integridade, abstract <=200 palavras); remover `\nocite{*}` quando o texto citar todas as fontes.
 - **Problemas de compilação:** nenhum (só aviso cosmético de fonte `T1/cmtl/b/n`). LaTeX local: MiKTeX + biber 2.21; CI (`compile-thesis.yml`) compila em cada push a `thesis/**`.
@@ -57,9 +57,10 @@
 - **Smoke test da thin slice:** ainda não existe (placeholder `tests/test_smoke.py` a passar).
 
 ## Referências Verificadas
-- **11 referências verificadas** em `docs/citation_log.md` e no `thesis/references.bib`:
+- **16 referências verificadas** em `docs/citation_log.md` e no `thesis/references.bib`:
   - **8 metodológicas** (DOI/arXiv): Chandola 2009, Brown & Warner 1985, Reimers & Gurevych 2019, Araci 2019, Lundberg & Lee 2017, Arrieta 2020, Adadi & Berrada 2018, Dong 2024.
   - **3 de contextualização** (fonte primária, 2026-06-21): SIFMA 2025 Fact Book, Gallup 2025, CCAF 2026.
+  - **5 da revisão de literatura** (Crossref/arXiv, 2026-06-21): Liu 2008 (Isolation Forest), Ribeiro 2016 (LIME), Devlin 2019 (BERT), Mikolov 2013 (word2vec), Yang 2020 (FinBERT).
 - **Rejeitada:** MacKinlay 1997 (sem DOI resolúvel) → substituída por Brown & Warner 1985.
 - Protocolo §6.4 em vigor: nenhuma entrada no `.bib` sem identificador verificado e registado.
 
