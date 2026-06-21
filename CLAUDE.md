@@ -56,9 +56,11 @@
 
 ## Estado do Código
 - **Implementado (thin slice / Gatilho 1):** `src/config.py` (.env), `src/market_data/prices.py` (yfinance + log-returns), `src/anomaly_detector/detector.py` (z-score sem lookahead, `AnomalyResult`), `src/explanation_engine/explainer.py` (explicação por regra), `src/telegram_bot/sender.py` (Telegram API), `src/main.py` (`run_thin_slice`). Dep ativa: `yfinance==1.4.1`.
-- **Testes:** `tests/test_anomaly_detector.py` (4) + `tests/test_smoke.py` (pipeline + envio Telegram marcado `@telegram`). Verify verde.
-- **Smoke test da thin slice:** **PASSA** (envio real confirmado; `pytest -m telegram`). Excluído do verify por defeito (não enviar a cada commit).
-- **Em falta:** `historical_kb`/FNSPID, `correlation_engine` (stack ML faseada), `news_fetcher` (Gatilho 2), `impact_analyzer` (opcional).
+- **Núcleo (parcial):** `src/correlation_engine/event_study.py` — impacto pós-evento (+1/+3/+5d) e impacto médio, puro e testado (nota anti-lookahead: medir o outcome ≠ prever).
+- **Testes (10, verde):** `test_anomaly_detector.py` (4) + `test_event_study.py` (4) + `test_smoke.py` (pipeline + envio Telegram `@telegram`).
+- **Smoke test da thin slice:** **PASSA** (envio real confirmado; `pytest -m telegram`). Excluído do verify por defeito.
+- **`data_card.md` definido:** subconjunto FNSPID proposto (15 tickers large-cap multissetorial; janela 2018–2023).
+- **Em falta:** `download_data.py`/`historical_kb` (construir a KB FNSPID), retrieval por embeddings (SBERT — stack ML faseada), `news_fetcher` (Gatilho 2), `impact_analyzer` (opcional).
 
 ## Referências Verificadas
 - **16 referências verificadas** em `docs/citation_log.md` e no `thesis/references.bib`:
