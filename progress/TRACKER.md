@@ -54,4 +54,9 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] 1.ª **figura reprodutível** (`scripts/figures/fig_us_market_cap.py` → `thesis/figures/us_equity_market_cap.pdf`); matplotlib fixado
 - [x] **Cap. 2 redigido** (rascunho EN-GB, 4 secções, cada afirmação citada) — compila (43 pp., 0 erros, 11 refs)
 - [ ] Revisão do aluno ao Cap. 2; fixar fonte primária para a quota de retalho no volume (TODO)
-- [ ] Próximo: Cap. 1 (Introduction) e Cap. 3 (Literature Review)
+
+## Sessão 5 — Escrita: Capítulo 1 (Introduction)
+- [x] **Cap. 1 redigido** (rascunho EN-GB): motivação, problema, **RQ1–RQ3**, contribuições (Engenharia de IA), estrutura
+- [x] Referências cruzadas aos capítulos + citações verificadas; compila (43 pp., 0 erros)
+- [ ] Revisão do aluno
+- [ ] Próximo: Cap. 3 (Literature Review) — tabelas comparativas + mais citações verificadas

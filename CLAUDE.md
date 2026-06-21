@@ -7,10 +7,10 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 4 (Escrita — Contextualization; sessão contínua desde a 0)
+- **Sessão nº:** 5 (Escrita — Introduction; sessão contínua desde a 0)
 - **Última atualização:** 2026-06-21
-- **Fase atual + último passo concluído:** **Escrita iniciada — Cap. 2 (Contextualization) em rascunho.** Texto EN-GB com estatísticas US 2025–2026 verificadas em fonte primária (SIFMA $62,2T/49,1% global; Gallup 62% detêm ações; CCAF 81% adoção de IA) + **1.ª figura reprodutível** (`scripts/figures/fig_us_market_cap.py` → `thesis/figures/us_equity_market_cap.pdf`). **Compila: 43 pp., 0 erros, 11 refs.** Setup (Fases 0–D) e Cap.2 publicados.
-- **PRÓXIMA AÇÃO IMEDIATA:** continuar a escrita — **Cap. 1 (Introduction)** e/ou **Cap. 3 (Literature Review)** (tabelas comparativas + mais citações verificadas). Revisão pendente do Cap.2: fixar fonte primária única para a quota de retalho no volume (TODO no texto). Antes da escrita final: **política ISEP de uso de IA** (humano-only).
+- **Fase atual + último passo concluído:** **Escrita — Cap. 1 (Introduction) e Cap. 2 (Contextualization) em rascunho.** Cap.1 (EN-GB): motivação, problema, **3 research questions (RQ1–RQ3)**, contribuições (enquadramento Engenharia de IA), estrutura do documento; com referências cruzadas aos capítulos e citações verificadas. **Compila: 43 pp., 0 erros, 11 refs.**
+- **PRÓXIMA AÇÃO IMEDIATA:** **Cap. 3 (Literature Review)** — bloco maior: tabelas comparativas (abordagens × metodologias × vantagens/limitações) + ampliar citações verificadas (anomalias, XAI, NLP financeiro, event study). Revisão pendente do Cap.2: fixar fonte primária para a quota de retalho no volume. Antes da escrita final: **política ISEP de uso de IA** (humano-only).
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
@@ -46,7 +46,7 @@
 - **7 capítulos** (esqueleto com secções): Introduction · Contextualization · Literature Review · Methodology · Implementation · Evaluation · Conclusion.
 - **`latexmk.rc` criado** (resolve o achado da Fase A: o `Makefile` invocava-o sem existir).
 - **Temporário:** `\nocite{*}` em `main.tex` (inclui as 8 refs enquanto os capítulos não citam — remover na escrita).
-- **Cap. 2 (Contextualization) em rascunho** (43 pp. no total) com 1 figura reprodutível; **11 referências** no `.bib` (8 metodológicas + 3 de contextualização: SIFMA, Gallup, CCAF).
+- **Cap. 1 (Introduction) + Cap. 2 (Contextualization) em rascunho** (43 pp. no total); Cap.2 com 1 figura reprodutível; **11 referências** no `.bib` (8 metodológicas + 3 de contextualização: SIFMA, Gallup, CCAF).
 - **Pipeline de figuras reprodutíveis estabelecido:** matplotlib; scripts em `scripts/figures/` geram PDF vetorial para `thesis/figures/` (commitado para o CI).
 - **Em falta:** restantes capítulos (escrita); refinar front matter (declaração de integridade, abstract <=200 palavras); remover `\nocite{*}` quando o texto citar todas as fontes.
 - **Problemas de compilação:** nenhum (só aviso cosmético de fonte `T1/cmtl/b/n`). LaTeX local: MiKTeX + biber 2.21; CI (`compile-thesis.yml`) compila em cada push a `thesis/**`.

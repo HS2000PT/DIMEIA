@@ -1,29 +1,86 @@
 % Capítulo 1 — Introduction
-% Estrutura baseada na Fase A (dissertações de referência) e no plano §9.
-% TODO (escrita): preencher em EN-GB; cada afirmação com fonte verificada.
+% RASCUNHO (Sessão 5). EN-GB. Cada afirmação com fonte verificada (docs/citation_log.md).
+% Rever/editar (o texto é teu) — §6.6.
 
 \chapter{Introduction}
 \label{chap:introduction}
 
-This chapter introduces the work: its motivation, the problem it addresses, the objectives and research
-questions, the scientific contributions, and the structure of the document.
+This chapter introduces the dissertation. It motivates the work, states the problem, defines the objectives and
+research questions, summarises the scientific contributions, and outlines the structure of the document.
 
 \section{Motivation and Overview}
 \label{sec:intro_motivation}
-% TODO: motivação — sobrecarga de informação para o investidor de retalho; necessidade de alertas explicáveis.
+
+The United States equity market is the largest in the world and is owned, directly or indirectly, by a majority
+of US households: 62\% of Americans reported owning stock in 2025 \autocite{gallup2025stock}, in a market whose
+capitalisation reached US\$62.2~trillion at the end of 2024 \autocite{sifma2025factbook}. At the same time,
+artificial intelligence has been adopted rapidly across financial services \autocite{ccaf2026aifs}, yet many of
+the resulting models behave as opaque ``black boxes'' whose reasoning users cannot inspect
+\autocite{arrieta2020xai}. Chapter~\ref{chap:contextualization} develops this context in detail.
+
+For the non-professional (``retail'') investor, this combination is difficult. Markets move continuously across
+thousands of tickers and financial news arrives without pause, but the tools that help to interpret these
+signals are typically institutional, opaque, or both. This dissertation addresses that gap with an
+\emph{explainable} financial-alert system: one that not only flags relevant events but also explains them in a
+way the investor can follow, verify and act upon.
 
 \section{Problem Statement}
 \label{sec:intro_problem}
-% TODO: enunciar o problema (movimentos abruptos + notícias sem explicação rastreável).
+
+A retail investor who wishes to stay informed faces two distinct problems. First, distinguishing a genuinely
+abnormal price movement from ordinary volatility requires statistical judgement and constant attention. Second,
+when a relevant news item appears, assessing its likely impact requires knowledge of how analogous past events
+affected prices --- information that is rarely at hand. Existing consumer tools tend to deliver alerts without
+explanation, or rely on models whose internal logic is hidden, which is precisely the transparency problem that
+explainable AI seeks to address \autocite{arrieta2020xai, adadi2018peeking}.
+
+The problem this work tackles is therefore not price prediction, but \emph{explanation}: detecting abrupt market
+movements and relevant news, and presenting, for each alert, a traceable account of what was detected, the
+reasoning applied, the sources, and concrete historical precedents of similar events and their observed impact.
 
 \section{Objectives and Research Questions}
 \label{sec:intro_objectives}
-% TODO: objetivos + RQs (deteção de anomalias; correlação notícia–impacto; explicabilidade).
+
+The general objective is to design, implement and evaluate an explainable, reproducible financial-alert system
+for US retail investors, driven by two independent triggers (abrupt market movements and incoming news) and
+delivered through Telegram. This is pursued through three research questions:
+
+\begin{itemize}
+  \item \textbf{RQ1.} Can transparent statistical methods detect abrupt market movements with enough precision
+        to be useful to a retail investor, while remaining explainable?
+  \item \textbf{RQ2.} Can a news--market correlation engine retrieve genuinely analogous historical news and
+        quantify their observed price impact, without lookahead, better than trivial baselines?
+  \item \textbf{RQ3.} Can the resulting explanations be made faithful to the system's actual logic and useful to
+        a retail investor?
+\end{itemize}
+
+The supporting objectives are: (i) build a thin end-to-end slice early; (ii) develop each component in its
+simplest defensible form; (iii) evaluate each component against a design defined beforehand
+(Chapter~\ref{chap:evaluation}); and (iv) keep the whole system reproducible and transparent.
 
 \section{Scientific Contributions}
 \label{sec:intro_contributions}
-% TODO: contribuição de engenharia de IA (integrar/aplicar/avaliar; metodologia de correlação documentada).
+
+This is an Artificial Intelligence \emph{Engineering} dissertation. The contribution is not to invent new
+algorithms but to \emph{integrate, apply and critically evaluate} existing components in a functional,
+explainable and reproducible system. Concretely, the contributions are:
+
+\begin{itemize}
+  \item A documented, reproducible methodology for \textbf{news--market impact correlation}, combining sentence
+        embeddings for retrieval with event-study windows for impact measurement, with explicit choices of
+        similarity metric and window and explicit avoidance of lookahead.
+  \item An \textbf{XAI-first alerting pipeline} that exposes its full reasoning chain (detection, evidence,
+        sources, precedents) to a non-expert user.
+  \item A \textbf{critical evaluation} of each component against baselines and a transparent design, reporting
+        honest results and limitations.
+\end{itemize}
 
 \section{Document Structure}
 \label{sec:intro_structure}
-% TODO: descrever a organização dos capítulos.
+
+The remainder of the document is organised as follows. Chapter~\ref{chap:contextualization} sets the market and
+technological context. Chapter~\ref{chap:literature} reviews the relevant literature on anomaly detection,
+explainable AI and financial NLP, with comparative tables. Chapter~\ref{chap:methodology} describes the system
+architecture and the method chosen for each component. Chapter~\ref{chap:implementation} details the
+implementation. Chapter~\ref{chap:evaluation} reports the evaluation. Chapter~\ref{chap:conclusion} concludes
+with the main findings, limitations and future work.

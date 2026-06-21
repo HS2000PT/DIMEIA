@@ -5,6 +5,21 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 5 — 2026-06-21 — Escrita: Capítulo 1 (Introduction)
+**Objetivo:** redigir a Introduction, fundacional e apoiada no Cap. 2.
+
+**Feito:**
+- **Cap. 1 redigido** (rascunho EN-GB): motivação (com stats do Cap.2 citadas), enunciado do problema (explicação,
+  não previsão), **3 research questions (RQ1 deteção transparente; RQ2 correlação/precedentes sem lookahead vs.
+  baselines; RQ3 explicações fiéis e úteis)**, contribuições (enquadramento de Engenharia de IA: integrar/aplicar/
+  avaliar; metodologia documentada de correlação notícia–impacto; pipeline XAI-first), e estrutura do documento.
+- Referências cruzadas (`\ref` aos capítulos) e citações verificadas (Gallup, SIFMA, CCAF, Arrieta, Adadi).
+- Compila: **43 páginas, 0 erros, 11 referências**.
+
+**Próxima ação:** Cap. 3 (Literature Review) — tabelas comparativas + ampliar citações verificadas.
+
+---
+
 ## Sessão 4 — 2026-06-21 — Escrita: Capítulo 2 (Contextualization)
 **Objetivo:** redigir o capítulo de contextualização com dados US 2025–2026 reais e verificados.
 
