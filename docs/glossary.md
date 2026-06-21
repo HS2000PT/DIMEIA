@@ -19,5 +19,8 @@
 | Lookahead / fuga de informação | Usar (erradamente) informação do futuro no presente | — |
 | FinBERT | Modelo de linguagem para sentimento em texto financeiro | — |
 | FNSPID | Dataset de notícias financeiras alinhadas a preços (histórico) | — |
+| Capitalização de mercado | Valor total das ações de uma empresa/mercado (preço × nº de ações) | market cap |
+| Investidor de retalho | Investidor individual não-profissional (por oposição a institucional) | retail |
+| Liquidez | Facilidade de comprar/vender um ativo sem mover muito o preço | — |
 | OHLCV | Open/High/Low/Close/Volume — dados de preço por período | — |
 | Telegram Bot API | API gratuita para enviar mensagens via bot do Telegram | — |

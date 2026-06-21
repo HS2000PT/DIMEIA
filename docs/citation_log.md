@@ -16,6 +16,13 @@
 | `adadi2018peeking` | Adadi & Berrada (2018), "Peeking Inside the Black-Box: A Survey on XAI", IEEE Access 6 | DOI 10.1109/ACCESS.2018.2870052 | 2026-06-21 | Crossref | ✅ verificado |
 | `dong2024fnspid` | Dong, Fan & Peng (2024), "FNSPID: A Comprehensive Financial News Dataset in Time Series" | arXiv:2402.06698 | 2026-06-21 | arXiv API | ✅ verificado |
 
+## Contextualização — fontes atuais 2025–2026 (§6.1; verificadas em fonte primária)
+| Chave .bib | Referência | Identificador | Verificado em | Fonte | Estado |
+|---|---|---|---|---|---|
+| `sifma2025factbook` | SIFMA (2025), *2025 Capital Markets Fact Book* | PDF oficial SIFMA (cap. ações US = 49,1% global / $62,2T, 2024) | 2026-06-21 | PDF SIFMA (extraído) | ✅ verificado |
+| `gallup2025stock` | Gallup (2025), *What Percentage of Americans Own Stock?* | news.gallup.com/poll/266807 (62% em 2025) | 2026-06-21 | Página Gallup | ✅ verificado |
+| `ccaf2026aifs` | CCAF/Cambridge (2026), *Global AI in Financial Services Report* | jbs.cam.ac.uk (81% adoção; 40% avançada; 71% GenAI) | 2026-06-21 | Página CCAF | ✅ verificado |
+
 ## Rejeitadas / não verificáveis (NÃO usar)
 | Referência | Motivo | Data |
 |---|---|---|

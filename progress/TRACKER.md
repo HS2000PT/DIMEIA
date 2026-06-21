@@ -46,4 +46,12 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [ ] Confirmar compilação no **CI** (após push)
 - [ ] **Gate da Fase D:** confirmação do aluno; depois → escrita (Sessão 4+)
 
-> **Arco de setup (Fases 0→D) concluído.** Próximo: escrita (Contextualization + Literature Review).
+> **Arco de setup (Fases 0→D) concluído.**
+
+## Sessão 4 — Escrita: Capítulo 2 (Contextualization)
+- [x] Investigação de dados US 2025–2026 (mercado, retalho, IA em finanças) — fontes credíveis
+- [x] Fontes verificadas em fonte primária e registadas (`citation_log.md` + `references.bib`): SIFMA 2025, Gallup 2025, CCAF 2026
+- [x] 1.ª **figura reprodutível** (`scripts/figures/fig_us_market_cap.py` → `thesis/figures/us_equity_market_cap.pdf`); matplotlib fixado
+- [x] **Cap. 2 redigido** (rascunho EN-GB, 4 secções, cada afirmação citada) — compila (43 pp., 0 erros, 11 refs)
+- [ ] Revisão do aluno ao Cap. 2; fixar fonte primária para a quota de retalho no volume (TODO)
+- [ ] Próximo: Cap. 1 (Introduction) e Cap. 3 (Literature Review)

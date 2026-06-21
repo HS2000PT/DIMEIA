@@ -5,6 +5,23 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 4 — 2026-06-21 — Escrita: Capítulo 2 (Contextualization)
+**Objetivo:** redigir o capítulo de contextualização com dados US 2025–2026 reais e verificados.
+
+**Feito:**
+- Investigação web + **verificação em fonte primária** de 3 fontes: SIFMA 2025 Fact Book (cap. ações US =
+  $62,2T, 49,1% do global, 5,3× a China; valor extraído do PDF), Gallup 2025 (62% dos americanos detêm ações),
+  CCAF 2026 (81% adoção de IA, 40% avançada, 71% GenAI). Registadas em `citation_log.md` + `references.bib`.
+- **Cap. 2 redigido** (rascunho EN-GB): mercado US (NYSE/NASDAQ), panorama do retalho, IA em finanças +
+  necessidade de XAI, e o problema de sobrecarga de informação. Cada afirmação citada.
+- **1.ª figura reprodutível** (§6.7): `scripts/figures/fig_us_market_cap.py` (matplotlib) gera
+  `thesis/figures/us_equity_market_cap.pdf` (capitalização US 2015–2024). Pipeline de figuras estabelecido.
+- Adicionado acrónimo SIFMA; termos no `glossary.md`. Compila: **43 páginas, 0 erros, 11 referências**.
+
+**Próxima ação:** Cap. 1 (Introduction) e Cap. 3 (Literature Review). Rever Cap. 2 (fonte da quota de retalho).
+
+---
+
 ## Sessão 3 — 2026-06-21 — Fase D (Setup LaTeX)
 **Objetivo:** integrar o template ISEP em `thesis/` e garantir compilação.
 

@@ -7,10 +7,10 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 3 (Fase D; sessão de trabalho contínua desde a 0)
+- **Sessão nº:** 4 (Escrita — Contextualization; sessão contínua desde a 0)
 - **Última atualização:** 2026-06-21
-- **Fase atual + último passo concluído:** **Fase D CONCLUÍDA** (setup LaTeX). `thesis/` integrado a partir do template ISEP; `main.tex` adaptado (T1); 7 capítulos esqueleto; `references.bib` com 8 refs verificadas; `latexmk.rc` criado; abstract/resumo em rascunho. **Compila local: 41 pp., 0 erros.** Fases 0, A, B, C e D concluídas e publicadas. (Falta confirmar compilação no CI após push.)
-- **PRÓXIMA AÇÃO IMEDIATA:** **gate da Fase D** — confirmar com o aluno. Concluído o arco de setup (0→D). Próximo bloco = **escrita** (PLANO_SESSOES Sessão 4+): Contextualization (dados US 2025–2026) e Literature Review (tabelas comparativas, mais refs verificadas). Antes da escrita final: **política ISEP de uso de IA** (humano-only).
+- **Fase atual + último passo concluído:** **Escrita iniciada — Cap. 2 (Contextualization) em rascunho.** Texto EN-GB com estatísticas US 2025–2026 verificadas em fonte primária (SIFMA $62,2T/49,1% global; Gallup 62% detêm ações; CCAF 81% adoção de IA) + **1.ª figura reprodutível** (`scripts/figures/fig_us_market_cap.py` → `thesis/figures/us_equity_market_cap.pdf`). **Compila: 43 pp., 0 erros, 11 refs.** Setup (Fases 0–D) e Cap.2 publicados.
+- **PRÓXIMA AÇÃO IMEDIATA:** continuar a escrita — **Cap. 1 (Introduction)** e/ou **Cap. 3 (Literature Review)** (tabelas comparativas + mais citações verificadas). Revisão pendente do Cap.2: fixar fonte primária única para a quota de retalho no volume (TODO no texto). Antes da escrita final: **política ISEP de uso de IA** (humano-only).
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
@@ -46,7 +46,9 @@
 - **7 capítulos** (esqueleto com secções): Introduction · Contextualization · Literature Review · Methodology · Implementation · Evaluation · Conclusion.
 - **`latexmk.rc` criado** (resolve o achado da Fase A: o `Makefile` invocava-o sem existir).
 - **Temporário:** `\nocite{*}` em `main.tex` (inclui as 8 refs enquanto os capítulos não citam — remover na escrita).
-- **Em falta:** conteúdo dos capítulos (fases de escrita); refinar front matter (declaração de integridade, abstract <=200 palavras).
+- **Cap. 2 (Contextualization) em rascunho** (43 pp. no total) com 1 figura reprodutível; **11 referências** no `.bib` (8 metodológicas + 3 de contextualização: SIFMA, Gallup, CCAF).
+- **Pipeline de figuras reprodutíveis estabelecido:** matplotlib; scripts em `scripts/figures/` geram PDF vetorial para `thesis/figures/` (commitado para o CI).
+- **Em falta:** restantes capítulos (escrita); refinar front matter (declaração de integridade, abstract <=200 palavras); remover `\nocite{*}` quando o texto citar todas as fontes.
 - **Problemas de compilação:** nenhum (só aviso cosmético de fonte `T1/cmtl/b/n`). LaTeX local: MiKTeX + biber 2.21; CI (`compile-thesis.yml`) compila em cada push a `thesis/**`.
 
 ## Estado do Código
@@ -55,9 +57,11 @@
 - **Smoke test da thin slice:** ainda não existe (placeholder `tests/test_smoke.py` a passar).
 
 ## Referências Verificadas
-- **8 referências verificadas (2026-06-21)** em `docs/citation_log.md` (DOI/arXiv via Crossref/arXiv) — base do `references.bib` (criado na Fase D): Chandola 2009 (anomalias), Brown & Warner 1985 (event study), Reimers & Gurevych 2019 (SBERT), Araci 2019 (FinBERT), Lundberg & Lee 2017 (SHAP), Arrieta 2020 + Adadi & Berrada 2018 (XAI), Dong 2024 (FNSPID).
+- **11 referências verificadas** em `docs/citation_log.md` e no `thesis/references.bib`:
+  - **8 metodológicas** (DOI/arXiv): Chandola 2009, Brown & Warner 1985, Reimers & Gurevych 2019, Araci 2019, Lundberg & Lee 2017, Arrieta 2020, Adadi & Berrada 2018, Dong 2024.
+  - **3 de contextualização** (fonte primária, 2026-06-21): SIFMA 2025 Fact Book, Gallup 2025, CCAF 2026.
 - **Rejeitada:** MacKinlay 1997 (sem DOI resolúvel) → substituída por Brown & Warner 1985.
-- Protocolo §6.4 em vigor: nenhuma entrada no `.bib` sem DOI/id verificado e registado.
+- Protocolo §6.4 em vigor: nenhuma entrada no `.bib` sem identificador verificado e registado.
 
 ---
 
