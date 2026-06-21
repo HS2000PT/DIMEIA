@@ -57,37 +57,41 @@ ISEP, Porto, \today % TODO: substituir pela data de entrega; confirmar a redaç�
 
 \begin{abstract}
 
-% Abstract em Inglês (língua principal). RASCUNHO — rever e finalizar (<= 200 palavras) na fase de escrita.
+% Abstract em Inglês (língua principal). <= 200 palavras; alinhado com as conclusões.
 
 This dissertation presents an explainable (XAI-first) financial-alert system for retail investors in the US
 equity market (NYSE and NASDAQ). The system raises Telegram alerts from two independent triggers --- abrupt
 market movements, detected as statistical anomalies, and incoming financial news --- and, for every alert,
 exposes a fully traceable explanation: the detected event, the reasoning applied, the sources, and historical
 precedents. Its core is a news--market correlation engine that, given a news item, retrieves analogous
-historical news from a knowledge base built on the FNSPID dataset and measures the impact those precedents had
-on prices. As an Artificial Intelligence Engineering contribution, the work integrates, applies and critically
-evaluates existing components in a functional, explainable and reproducible system, with a documented
-news-impact correlation methodology.
-
-% TODO (escrita): refinar; confirmar <= 200 palavras; alinhar com as conclusões finais.
+historical news from a knowledge base and measures the impact those precedents had on prices, in the manner of
+an event study and without lookahead. As an Artificial Intelligence Engineering contribution, the work
+integrates, applies and critically evaluates existing components --- sentence-embedding retrieval, statistical
+anomaly detection and transparent explanation --- in a functional, explainable and reproducible system. On real
+data, semantic retrieval clearly outperformed lexical and trivial baselines (cross-ticker precision@5 of $0.57$
+against $0.25$ for random retrieval), and the volatility-normalised detector fired far more consistently across
+stocks than a fixed threshold. The results are honest and reproducible, with limitations and future work stated
+explicitly.
 
 \end{abstract}
 
 \begin{abstractotherlanguage}
-% Resumo em Português (obrigatório para trabalho em Inglês). RASCUNHO — rever e finalizar.
+% Resumo em Português (obrigatório para trabalho em Inglês). Coerente com o Abstract.
 
 Esta dissertação apresenta um sistema de alertas financeiros explicável (XAI-first) para investidores de
 retalho no mercado acionista dos Estados Unidos (NYSE e NASDAQ). O sistema envia alertas via Telegram a partir
 de dois gatilhos independentes --- movimentos abruptos de mercado, detetados como anomalias estatísticas, e
 novas notícias financeiras --- e, para cada alerta, expõe uma explicação totalmente rastreável: o evento
 detetado, o raciocínio aplicado, as fontes e os precedentes históricos. O seu núcleo é um motor de correlação
-notícia--mercado que, dada uma notícia, recupera notícias históricas análogas de uma base de conhecimento
-construída sobre o conjunto de dados FNSPID e mede o impacto que esses precedentes tiveram nos preços. Enquanto
-contribuição de Engenharia de Inteligência Artificial, o trabalho integra, aplica e avalia criticamente
-componentes existentes num sistema funcional, explicável e reproduzível, com uma metodologia documentada de
-correlação notícia--impacto.
-
-% TODO (escrita): refinar; manter coerência com o Abstract em Inglês.
+notícia--mercado que, dada uma notícia, recupera notícias históricas análogas de uma base de conhecimento e
+mede o impacto que esses precedentes tiveram nos preços, à maneira de um estudo de evento e sem lookahead.
+Enquanto contribuição de Engenharia de Inteligência Artificial, o trabalho integra, aplica e avalia
+criticamente componentes existentes --- recuperação por embeddings de frases, deteção estatística de anomalias
+e explicação transparente --- num sistema funcional, explicável e reproduzível. Em dados reais, a recuperação
+semântica superou claramente as baselines lexical e triviais (precision@5 cross-ticker de $0{,}57$ face a
+$0{,}25$ do acaso) e o detetor normalizado pela volatilidade disparou de forma muito mais consistente entre
+ações do que um limiar fixo. Os resultados são honestos e reproduzíveis, com limitações e trabalho futuro
+explícitos.
 
 \end{abstractotherlanguage}
 

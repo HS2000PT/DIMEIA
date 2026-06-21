@@ -5,6 +5,31 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 15 — 2026-06-21 — Escrita: Cap. 7 (Conclusion) + abstract + remoção de \nocite{*}
+**Objetivo:** fechar o rascunho da tese — escrever a conclusão, refinar o abstract com os resultados
+e remover a inclusão temporária de todas as referências.
+
+**Feito:**
+- **Cap. 7 (Conclusion)** redigido (EN-GB): respostas explícitas às três research questions com os
+  resultados reais --- RQ1 (deteção transparente: afirmativo, com a consistência da taxa de disparo),
+  RQ2 (precedentes análogos sem lookahead: afirmativo para a recuperação; impacto multi-ano = futuro),
+  RQ3 (explicações fiéis por construção; utilidade por validar com estudo humano); contribuições
+  revisitadas (engenharia de IA); limitações honestas; trabalho futuro mapeado nas limitações.
+- **Abstract (EN, ~185 palavras, <=200)** e **resumo (PT)** refinados: acrescentam os resultados reais
+  (recuperação SBERT supera baselines; detetor com taxa de disparo consistente) e a nota anti-lookahead.
+- **`\nocite{*}` removido:** verifiquei que o conjunto de chaves citadas no texto é exatamente igual ao
+  do `references.bib` (16 refs), pelo que a bibliografia renderiza as 16 sem nenhuma citação indefinida.
+- **Tese compila: 53 páginas, 0 erros, 16 refs, 0 citações indefinidas**; `main.pdf` atualizado.
+  **Rascunho completo dos 7 capítulos.**
+
+**Estado dos testes:** **40 verdes** + 2 *gated*; `verify.sh` ok.
+
+**Próxima ação:** sobretudo humano/opcional --- revisão e edição do aluno a todos os capítulos (o texto
+é dele, §6.6); confirmar a redação ISEP da declaração de IA e a data de entrega; tecnicamente (opcional):
+FNSPID completo → KB multi-ano → reavaliar impacto, e um pequeno estudo humano de utilidade (RQ3).
+
+---
+
 ## Sessão 14 — 2026-06-21 — Escrita: Capítulo 5 (Implementation)
 **Objetivo:** documentar a engenharia construída (a contribuição de engenharia de IA), sem repetir a
 justificação metodológica do Cap. 4.

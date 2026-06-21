@@ -142,3 +142,10 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] Tabela de módulos (componente→módulo→elementos); citações `dong2024fnspid`/`reimers2019sbert`/`araci2019finbert`; referência ao diagrama `fig:architecture` e ao Cap. 6
 - [x] **Tese compila: 53 páginas, 0 erros**, sem refs indefinidas; `main.pdf` atualizado
 - [ ] Próximo: Cap. 7 (Conclusion); abstract <=200 palavras; remover `\nocite{*}`
+
+## Sessão 15 — Escrita: Capítulo 7 (Conclusion) + abstract + limpeza de citações
+- [x] **Cap. 7 redigido** (EN-GB): conclusões por RQ (RQ1 deteção transparente; RQ2 recuperação sem lookahead; RQ3 fidelidade por construção/utilidade por validar), contribuições revisitadas, limitações honestas, trabalho futuro
+- [x] **Abstract (EN ~185 palavras, <=200)** e **resumo (PT)** refinados com os resultados reais e alinhados com as conclusões
+- [x] **`\nocite{*}` removido** — confirmado que o texto cita as 16 referências (conjunto citado = `.bib`); bibliografia renderiza 16 entradas, 0 citações indefinidas
+- [x] **Tese compila: 53 páginas, 0 erros**; `main.pdf` atualizado. **Rascunho completo dos 7 capítulos.**
+- [ ] Próximo (humano/opcional): revisão do aluno; redação ISEP da declaração de IA; (opcional) FNSPID completo + estudo humano de utilidade

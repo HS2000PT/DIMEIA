@@ -4,21 +4,78 @@
 \chapter{Conclusion}
 \label{chap:conclusion}
 
-This chapter summarises the work, revisits the contributions, acknowledges the limitations, and outlines
-directions for future work.
+This dissertation set out to design, implement and evaluate an explainable, reproducible
+financial-alert system for US retail investors, driven by two independent triggers and delivered
+through Telegram. This chapter summarises what was achieved against the research questions, revisits
+the contributions, and states the limitations and the directions they open.
 
 \section{Main Conclusions}
 \label{sec:concl_main}
-% TODO: principais conclusões face às research questions.
+
+The work is best summarised by returning to the three research questions of
+Chapter~\ref{chap:introduction}.
+
+\paragraph{RQ1 --- transparent detection of abrupt movements.}
+The answer is affirmative. A rolling \emph{z}-score detector, fully transparent by construction,
+detects abnormal returns and --- crucially --- does so \emph{consistently across instruments of very
+different volatility}, where a fixed-percentage threshold cannot. As reported in
+Chapter~\ref{chap:evaluation}, the firing rate varied by only $0.017$ across the fifteen tickers for
+the \emph{z}-score versus $0.343$ for the fixed baseline, and the \emph{z}-score reached an $F_1$ of
+$0.524$ against an extreme-move proxy, more than double the baseline. The method is simple enough that
+every alert can be explained to the investor.
+
+\paragraph{RQ2 --- analogous precedents without lookahead.}
+The answer is affirmative for retrieval. Semantic retrieval with Sentence-BERT recovered markedly
+more sector-analogous precedents than every trivial alternative --- a cross-ticker precision@$5$ of
+$0.568$ against $0.357$ for a lexical baseline, $0.245$ for random and $0.096$ for recency --- and the
+end-to-end case study showed it surfacing genuinely topical precedents across different company feeds.
+Impact is measured strictly after the event, in the style of an event study, so no future information
+leaks into the evidence. The measurement machinery is in place and behaves coherently; a large-scale,
+multi-year validation of impact magnitudes remains for future work.
+
+\paragraph{RQ3 --- faithful and useful explanations.}
+Faithfulness is achieved: because each alert is rendered directly from the same objects the system
+computes (the \emph{z}-score and its parameters, or the retrieved precedents with their scores and
+measured impacts), the explanation cannot diverge from the underlying logic, and every alert closes
+with an explicit no-prediction disclaimer. Usefulness to a retail investor is plausible by design but
+has not yet been measured with a human study, and is therefore reported as an open point rather than a
+settled result.
 
 \section{Contributions Revisited}
 \label{sec:concl_contributions}
-% TODO: reforçar a contribuição de engenharia de IA.
+
+As an Artificial Intelligence \emph{Engineering} dissertation, the contribution is the integration,
+application and critical evaluation of existing components into a working, explainable and
+reproducible whole, rather than a new algorithm. Three concrete contributions stand. First, a
+documented and reproducible methodology for \textbf{news--market impact correlation} that combines
+sentence-embedding retrieval with event-study impact windows, with explicit choices of similarity
+metric and horizon and explicit avoidance of lookahead. Second, an \textbf{XAI-first alerting
+pipeline} whose entire reasoning chain --- detection, evidence, sources and precedents --- is exposed
+to a non-expert user and is faithful by construction. Third, a \textbf{critical, honest evaluation} of
+each core component against trivial and lexical baselines on real data, with results, ablations and
+limitations reported transparently and reproducibly from versioned scripts.
 
 \section{Limitations}
 \label{sec:concl_limitations}
-% TODO: limitações honestas (dados, avaliação, âmbito).
+
+Several limitations are acknowledged honestly. The evaluation used a recent, single-month news corpus
+from a free API rather than the multi-year FNSPID history, which bounds the impact analysis and means
+the retrieval figures, while real, are preliminary. The relevance proxy is sector agreement, an
+automatic stand-in for human judgement, and the anomaly proxy label is volatility-relative (hence the
+label-free firing-rate argument is given primacy). News is represented by short headlines only, which
+limits the semantics that can be captured. Results use a single random seed, and no human usefulness
+study has yet been conducted. Finally, and by design, the system performs no price prediction or
+trading, so profit-based questions are out of scope rather than unanswered.
 
 \section{Future Work}
 \label{sec:concl_future}
-% TODO: extensões possíveis (componentes opcionais, avaliação mais profunda).
+
+The limitations map directly onto future work. The most immediate step is to build the full
+multi-year knowledge base from FNSPID, for which the streaming pipeline is already in place, enabling
+a richer impact analysis with dispersion and direction-consistency statistics. A small human study,
+applying a clarity--completeness--actionability rubric to a set of alerts, would address the open
+question of usefulness (RQ3). The retrieval could be strengthened by embedding full article bodies
+rather than headlines and by comparing alternative embedding models, and the explanation could be
+optionally enriched with financial sentiment or feature attribution where it adds defensible value.
+Together these would turn a sound, honestly evaluated prototype into a more thoroughly validated
+system, without departing from its founding principle of defensible, transparent simplicity.

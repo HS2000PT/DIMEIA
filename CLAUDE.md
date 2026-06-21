@@ -7,10 +7,10 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 14 (Escrita — Cap. 5 (Implementation); sessão contínua desde a 0)
+- **Sessão nº:** 15 (Escrita — Cap. 7 + abstract + remoção de `\nocite{*}`; sessão contínua desde a 0)
 - **Última atualização:** 2026-06-21
-- **Fase atual + último passo concluído:** **CAP. 5 (IMPLEMENTATION) ESCRITO; TESE COMPILA (53 pp., 0 erros).** Descreve a engenharia real: ambiente/tooling (Python 3.12, lockfile, gated tests, verify/CI), estrutura do repo + 3 princípios (thin slice; lógica pura separada de I/O com imports tardios; interfaces — `Embedder`), tabela de módulos, pipeline da KB (alinhamento anti-lookahead, streaming FNSPID, KB Finnhub para avaliação), camada live, detetor, motor de correlação, explicação, orquestração e testes (40+2). Caps. 1–6 escritos. (Antes: Cap. 6 com resultados reais.)
-- **PRÓXIMA AÇÃO IMEDIATA:** (1) **Cap. 7 (Conclusion)** — síntese das contribuições, resposta às RQ, limitações e trabalho futuro; (2) **abstract <=200 palavras** + resumo; (3) **remover `\nocite{*}`** (confirmar que o texto cita todas as 16 refs); (4) opcional: FNSPID completo (R2). Prosseguir autonomamente (D-009).
+- **Fase atual + último passo concluído:** **RASCUNHO COMPLETO DA TESE (7 capítulos) — COMPILA 53 pp., 0 erros, 16 refs, 0 citações indefinidas.** Cap. 7 (Conclusion) responde a RQ1 (deteção transparente — afirmativo, com a consistência da taxa de disparo), RQ2 (recuperação análoga sem lookahead — afirmativo para a recuperação, impacto multi-ano = futuro) e RQ3 (explicações fiéis por construção; utilidade por validar com estudo humano), + contribuições + limitações + trabalho futuro. Abstract (EN ~185 palavras) e resumo (PT) refinados com resultados reais. `\nocite{*}` removido (todas as 16 refs citadas no texto). **40 testes verdes** (+2 gated); `verify.sh` ok.
+- **PRÓXIMA AÇÃO IMEDIATA (sobretudo humano/opcional):** (1) **o aluno revê e edita todos os capítulos** (o texto é dele; §6.6); (2) confirmar com o Prof. Luís Gomes a redação ISEP da declaração de IA + data de entrega; (3) opcional técnico: **FNSPID completo** (R2) → KB multi-ano → reavaliar impacto; estudo humano de utilidade (RQ3); (4) polish (agradecimentos, dedicatória). Prosseguir autonomamente nos itens técnicos (D-009).
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
@@ -46,13 +46,13 @@
 - **Escrito (Fase D):** `thesis/` integrado a partir do template ISEP (classe `meia-style.cls`, `frontmatter/`, `ch1..ch7/`, `appendices/`). `main.tex` adaptado (título T1, autor, nº 1180934, orientador/coorientador, keywords). **Compila localmente: 41 páginas, 0 erros**, biber OK, **8 referências no `references.bib`**. Front matter: abstract (EN) + resumo (PT) em rascunho; acrónimos atualizados (`glossary.tex`).
 - **7 capítulos** (esqueleto com secções): Introduction · Contextualization · Literature Review · Methodology · Implementation · Evaluation · Conclusion.
 - **`latexmk.rc` criado** (resolve o achado da Fase A: o `Makefile` invocava-o sem existir).
-- **Temporário:** `\nocite{*}` em `main.tex` (inclui as 8 refs enquanto os capítulos não citam — remover na escrita).
-- **Caps. 1–6 em rascunho**; Cap.2 com 1 figura reprodutível (matplotlib); Cap.3 com 4 tabelas comparativas; Cap.4 com diagrama de arquitetura (TikZ); **Cap.5 (Implementation) escrito** (engenharia: ambiente/tooling, estrutura do repo + princípios — thin slice, imports tardios, interfaces; pipeline KB; camada live; componentes; orquestração; testes — com tabela de módulos); **Cap.6 (Evaluation) escrito** com resultados reais (2 tabelas + 2 figuras + estudo de caso real NVDA/AI-chips + limitações). **16 referências** no `.bib`. Falta Cap. 7.
+- **`\nocite{*}` REMOVIDO:** confirmado que o texto cita as **16 referências** (conjunto citado = conjunto do `.bib`); bibliografia renderiza 16 entradas, 0 citações indefinidas.
+- **TODOS os 7 capítulos em rascunho**; Cap.2 com 1 figura (matplotlib); Cap.3 com 4 tabelas; Cap.4 com diagrama TikZ; **Cap.5 (Implementation)** (engenharia + tabela de módulos); **Cap.6 (Evaluation)** com resultados reais (2 tabelas + 2 figuras + estudo de caso NVDA/AI-chips); **Cap.7 (Conclusion)** responde a RQ1–RQ3 com os resultados reais + contribuições + limitações + trabalho futuro. **Abstract (EN ~185 palavras, <=200) + resumo (PT)** refinados com resultados.
 - **Pipeline de figuras reprodutíveis estabelecido:** matplotlib; scripts em `scripts/figures/` geram PDF vetorial para `thesis/figures/` (commitado para o CI).
 - **PDF versionado:** `thesis/main.pdf` é gerado por `scripts/build_pdf.sh` e **commitado** (o aluno quer vê-lo no repo); CI continua a compilar também.
 - **Front matter:** declaração de integridade limpa (só EN) + **declaração honesta de uso de IA**; símbolos próprios (z-score). Falta confirmar redação ISEP exata da declaração de IA (humano).
-- **Em falta:** Cap. 7 (Conclusion); abstract <=200 palavras; remover `\nocite{*}` quando o texto citar todas as fontes.
-- **Compila localmente: 53 páginas, 0 erros** (sem refs indefinidas, figuras presentes); só aviso cosmético de fonte. LaTeX local: MiKTeX + biber 2.21; CI (`compile-thesis.yml`) compila em cada push a `thesis/**`.
+- **Em falta:** revisão humana do aluno a todos os capítulos (o texto é dele); confirmar redação ISEP da declaração de IA + data de entrega; (opcional) FNSPID multi-ano; acrónimos/agradecimentos opcionais.
+- **Compila localmente: 53 páginas, 0 erros**, 16 refs na bibliografia, 0 citações indefinidas, figuras presentes; só aviso cosmético de fonte. LaTeX local: MiKTeX + biber 2.21; CI (`compile-thesis.yml`) compila em cada push a `thesis/**`.
 
 ## Estado do Código
 - **Implementado (thin slice / Gatilho 1):** `src/config.py` (.env), `src/market_data/prices.py` (yfinance + log-returns), `src/anomaly_detector/detector.py` (z-score sem lookahead, `AnomalyResult`), `src/explanation_engine/explainer.py` (explicação por regra), `src/telegram_bot/sender.py` (Telegram API), `src/main.py` (`run_thin_slice`). Dep ativa: `yfinance==1.4.1`.
