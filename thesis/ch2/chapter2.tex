@@ -1,42 +1,111 @@
 % Chapter 2 - State of the Art
-% Substantial review (target ~24-28 pp). Seminal + recent, peer-reviewed first; comparative
-% tables with surrounding prose; per-section discussion; chapter conclusions.
+% Substantial review. Seminal + recent, peer-reviewed first; comparative tables with
+% surrounding prose; per-section discussion; chapter conclusions.
 % Every citation verified (docs/citation_log.md). EN-GB.
-% NOTE: Phase 2 expands each section with more sources and taxonomy figures.
 
 \chapter{State of the Art}
 \label{chap:sota}
 
-This chapter reviews the body of work on which the dissertation builds. It begins with the context of
-retail investing and information overload, then surveys, in turn, anomaly detection in financial
-markets, explainable artificial intelligence, financial natural-language processing and text
-representation, and event-study approaches to news--market impact. Each area combines seminal and
-recent contributions; comparative tables summarise the approaches, their mechanisms and their
-limitations. The chapter closes by positioning the present work and identifying the gap it addresses.
+This chapter reviews the body of work on which the dissertation builds. It opens with the behaviour of
+the retail investor and the problem of information overload, which motivate the system, and then
+surveys, in turn, anomaly detection in financial markets, explainable artificial intelligence,
+financial natural-language processing and text representation, and event-study approaches to
+news--market impact. Each area combines seminal and recent contributions, and comparative tables
+summarise the approaches, their mechanisms and their limitations. The chapter closes by positioning the
+present work against the alternatives and identifying the gap it addresses.
 
 \section{Retail Investing and Information Overload}
 \label{sec:sota_retail}
 
-% Phase 2: expand with literature on retail investor behaviour, attention, and the role of news.
-The retail investor operates under conditions of pronounced information asymmetry relative to
-institutional participants. Markets move continuously across thousands of tickers and financial news
-arrives without pause, while the tools that help to interpret these signals are typically
-institutional, opaque, or both. This section reviews the literature on how non-professional investors
-consume market information and react to news, motivating the need for transparent, evidence-backed
-alerting.
+The audience of this work is the non-professional, or ``retail'', investor. Understanding how such
+investors consume information and react to news is therefore the natural starting point, because it
+both motivates the system and constrains what a useful alert should contain.
+
+A central and durable finding of behavioural finance is that individual investors are strongly
+influenced by \emph{attention}. In their seminal study, \textcite{barber2008glitters} show that
+individual investors are net buyers of attention-grabbing stocks --- those in the news, those with
+unusually high trading volume, and those with extreme one-day returns --- whereas they do not face the
+same search problem when selling, because they tend to sell only what they already own. The
+explanation offered is economic: faced with thousands of stocks they could potentially buy, investors
+fall back on the small subset that has captured their attention. This asymmetry matters directly for an
+alerting system: the very events that draw a retail investor's attention --- a sharp price move or a
+salient news item --- are precisely the two triggers around which this work is built, and an alert that
+adds context to such an event is intervening exactly where attention-driven decisions are made.
+
+The role of the media in shaping investor behaviour has likewise been quantified. \textcite{tetlock2007media}
+constructs a daily pessimism measure from a popular Wall Street Journal column and finds that high media
+pessimism predicts downward pressure on prices followed by a reversion to fundamentals, and that
+unusually high or low pessimism predicts elevated trading volume. The study is doubly relevant here: it
+establishes that news content carries measurable, market-moving information, and it is an early
+demonstration that \emph{textual} signals can be extracted and related to market outcomes --- the same
+premise that underlies the news--market correlation engine of this dissertation.
+
+The composition and weight of retail participation have also shifted markedly in recent years, driven by
+commission-free mobile brokerages. Studying a large sample of users of one such platform,
+\textcite{welch2022robinhood} documents that this new cohort of investors increased its holdings during
+the March~2020 bear market rather than panicking, and that an aggregated ``crowd consensus'' portfolio
+exhibited both reasonable timing and positive performance over the period studied. Whatever the
+debate over retail investors' sophistication, the empirical picture is one of a large, active and
+consequential population --- consistent with the broad ownership figures reported by
+\textcite{gallup2025stock} and the scale of the market documented by \textcite{sifma2025factbook} in
+Chapter~\ref{chap:introduction}.
+
+Taken together, this literature frames the problem the system addresses. Retail investors are
+attention-constrained, react to news, and now participate in large numbers, yet they must do so under a
+continuous flood of price movements and headlines that they cannot individually process. The response
+pursued here is not to predict the market for them, but to reduce the cost of \emph{interpreting} the
+events that already command their attention, by attaching to each alert a transparent explanation and
+concrete historical evidence.
 
 \section{Anomaly Detection in Financial Markets}
 \label{sec:sota_anomaly}
 
-Anomaly detection is a mature field with techniques spanning many domains. The survey of
-\textcite{chandola2009anomaly} provides the standard taxonomy --- point, contextual and collective
-anomalies --- and groups methods into statistical, distance-based, and machine-learning families. For
-financial returns, simple statistical methods (deviations from a rolling mean and standard deviation,
-i.e.\ a \emph{z}-score) are attractive because they are transparent and easy to justify, which is an
-advantage for an explainable system. More expressive machine-learning detectors exist, such as
-Isolation Forest \autocite{liu2008isolation}, which isolates anomalies through random partitioning and
-scales well to large, high-dimensional data; the trade-off is reduced direct interpretability.
-Table~\ref{tab:sota_anomaly} compares the two families.
+The first trigger of the system rests on detecting abnormal price movements, which places it within the
+mature field of anomaly detection. The survey of \textcite{chandola2009anomaly} provides the standard
+reference and taxonomy, distinguishing \emph{point} anomalies (an individual observation that is
+abnormal with respect to the rest), \emph{contextual} anomalies (abnormal only in a particular context,
+such as a time of year), and \emph{collective} anomalies (a set of observations that is jointly
+abnormal), and grouping detection methods into statistical, distance- and density-based, and
+machine-learning families. A sharp single-day return is naturally treated as a contextual point anomaly:
+abnormal relative to the asset's own recent behaviour. Figure~\ref{fig:sota_anomaly_taxonomy}
+summarises the families relevant to this work.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  node distance=4mm,
+  root/.style={draw, rounded corners, fill=black!5, align=center, text width=3.2cm, minimum height=0.8cm},
+  fam/.style={draw, rounded corners, align=center, text width=3.0cm, minimum height=1.4cm},
+  >={Stealth[length=2mm]}
+]
+  \node[root] (r) {Anomaly detection methods};
+  \node[fam, below left=10mm and 1.2cm of r] (stat) {\textbf{Statistical}\\ \footnotesize z-score, control charts; transparent, assume a distribution};
+  \node[fam, below=10mm of r] (ml) {\textbf{Distance / density}\\ \footnotesize Isolation Forest, LOF; flexible, less interpretable};
+  \node[fam, below right=10mm and 1.2cm of r] (dl) {\textbf{Deep learning}\\ \footnotesize autoencoders, deep one-class; powerful, opaque, data-hungry};
+  \draw[->] (r) -- (stat);
+  \draw[->] (r) -- (ml);
+  \draw[->] (r) -- (dl);
+\end{tikzpicture}
+\caption[Taxonomy of anomaly-detection methods]{Families of anomaly-detection methods relevant to this
+work, following \textcite{chandola2009anomaly} and \textcite{pang2021deep}. Interpretability decreases,
+and modelling capacity increases, from left to right.}
+\label{fig:sota_anomaly_taxonomy}
+\end{figure}
+
+For financial returns, simple statistical methods --- flagging deviations from a rolling mean and
+standard deviation, that is, a \emph{z}-score --- are attractive precisely because they are transparent
+and easy to justify, an advantage for an explainable system. They do, however, assume a locally stable
+distribution, an assumption that the rolling estimation window is designed to accommodate. More
+expressive unsupervised detectors relax such assumptions: Isolation Forest \autocite{liu2008isolation}
+isolates anomalies through random partitioning, requiring fewer splits to separate an outlier, and
+scales well to large, high-dimensional data. The cost is reduced direct interpretability, since the
+anomaly score is an ensemble property rather than a quantity the user can read off. At the far end of
+the spectrum, the review by \textcite{pang2021deep} surveys deep-learning detectors --- autoencoders,
+deep one-class models and others --- which can capture rich, non-linear structure but are data-hungry
+and largely opaque, and whose advantage is most pronounced in high-dimensional settings such as images
+or complex multivariate streams rather than in a single return series. Table~\ref{tab:sota_anomaly}
+compares the three families.
 
 \begin{table}[ht]
 \caption{Anomaly-detection approaches relevant to this work.}
@@ -46,26 +115,80 @@ Table~\ref{tab:sota_anomaly} compares the two families.
 \toprule
 \tabhead{Approach} & \tabhead{How it works} & \tabhead{Strengths / limitations} \\
 \midrule
-Statistical \emph{z}-score (rolling) \autocite{chandola2009anomaly} & Flags returns that deviate from a rolling mean/standard deviation & Transparent and easy to explain (XAI); assumes locally stable distribution \\
-Isolation Forest \autocite{liu2008isolation} & Isolates points via random partitioning (ensemble) & Scalable, handles high dimensionality; less directly interpretable \\
+Statistical \emph{z}-score (rolling) \autocite{chandola2009anomaly} & Flags returns that deviate from a rolling mean and standard deviation & Transparent and easy to explain; assumes a locally stable distribution \\
+Isolation Forest \autocite{liu2008isolation} & Isolates points via random partitioning (ensemble) & Scalable, handles high dimensionality; score is not directly interpretable \\
+Deep detectors \autocite{pang2021deep} & Learn a model of normality (e.g.\ autoencoders) & High capacity for complex data; opaque, data-hungry, hard to justify \\
 \bottomrule
 \end{tabular}
 \end{table}
 
+The trade-off this table makes explicit --- capacity against interpretability --- is the one that
+governs the design choice in Chapter~\ref{chap:methods}. Because the system must \emph{explain} every
+alert to a non-expert, and because the signal is a single, low-dimensional return series rather than a
+high-dimensional stream, the transparent statistical detector is preferred, with the more expressive
+families noted as alternatives whose opacity is not warranted by the problem at hand.
+
 \section{Explainable Artificial Intelligence}
 \label{sec:sota_xai}
 
-As AI systems are deployed in high-stakes settings, the inability to inspect their reasoning has become
-a central concern. The surveys of \textcite{adadi2018peeking} and \textcite{arrieta2020xai} map the
-field: its motivations, a taxonomy of transparent versus post-hoc methods, and the open challenges
-toward responsible AI. Among post-hoc, model-agnostic techniques, two are widely used. LIME
-\autocite{ribeiro2016lime} explains a single prediction by fitting a simple surrogate model in its
-local neighbourhood; it is intuitive but its explanations can be unstable and are only locally
-faithful. SHAP \autocite{lundberg2017shap} attributes a prediction to its input features using Shapley
-values, offering consistency and a theoretical grounding at a higher computational cost.
-Table~\ref{tab:sota_xai} summarises these. In this work, explainability is pursued primarily through
-\emph{transparent design} (statistical detection and retrieved precedents), with feature attribution as
-an optional complement.
+As AI systems are deployed in consequential settings, the inability to inspect their reasoning has
+become a central concern, and explainable AI (XAI) is the field that addresses it. The surveys of
+\textcite{adadi2018peeking} and \textcite{arrieta2020xai} map the area: its motivations (trust,
+accountability, debugging, regulatory compliance), a taxonomy that separates models that are
+\emph{transparent} (interpretable in their own right) from \emph{post-hoc} methods that explain an
+already-trained black box, and the open challenges on the path to responsible AI. The earlier survey of
+\textcite{guidotti2018survey} organises the post-hoc literature specifically by the problem being
+solved --- explaining a whole model, explaining a single outcome, or inspecting the internals ---
+which is a useful lens for situating the techniques most relevant here. Figure~\ref{fig:sota_xai_taxonomy}
+sketches this division.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  node distance=4mm,
+  root/.style={draw, rounded corners, fill=black!5, align=center, text width=3.0cm, minimum height=0.8cm},
+  br/.style={draw, rounded corners, align=center, text width=3.4cm, minimum height=1.5cm},
+  >={Stealth[length=2mm]}
+]
+  \node[root] (r) {Explainability};
+  \node[br, below left=10mm and 0.6cm of r] (tr) {\textbf{Transparent design}\\ \footnotesize inherently interpretable logic (rules, linear models, retrieved evidence)};
+  \node[br, below right=10mm and 0.6cm of r] (ph) {\textbf{Post-hoc}\\ \footnotesize explain a trained black box (LIME, SHAP, counterfactuals)};
+  \draw[->] (r) -- (tr);
+  \draw[->] (r) -- (ph);
+\end{tikzpicture}
+\caption[Taxonomy of explainability approaches]{The two broad routes to explainability
+\autocite{arrieta2020xai, guidotti2018survey}: building models that are transparent by design, or
+explaining a black box after the fact. This work follows the former.}
+\label{fig:sota_xai_taxonomy}
+\end{figure}
+
+Among post-hoc, model-agnostic techniques, two are widely used. LIME \autocite{ribeiro2016lime} explains
+a single prediction by fitting a simple, interpretable surrogate model in the local neighbourhood of the
+instance; it is intuitive and broadly applicable, but its explanations can be unstable under resampling
+and are only locally faithful. SHAP \autocite{lundberg2017shap} attributes a prediction to its input
+features using Shapley values from cooperative game theory, which gives it desirable consistency
+properties and a unifying theoretical grounding, at a higher computational cost. Both are valuable when
+one is committed to a black-box model and needs to interrogate it after the fact.
+
+A strand of the literature questions that commitment directly. \textcite{rudin2019stop} argues
+forcefully that, for high-stakes decisions, one should \emph{stop explaining} black-box models and
+instead use models that are interpretable in the first place, on the grounds that post-hoc explanations
+are approximations that can mislead and can entrench poor practice. This position is particularly
+pertinent to a tool that a non-expert will act upon financially: an explanation that is itself an
+approximation of an opaque model carries a risk that a transparent design avoids by construction. The
+present work takes this view as a guiding principle, pursuing explainability primarily through
+transparent design --- a statistical detector whose every quantity is exposed, and retrieved historical
+precedents shown as direct evidence --- and treating feature attribution as an optional complement
+rather than the foundation.
+
+Finally, the field has recognised that explanations must themselves be evaluated rather than assumed.
+\textcite{doshivelez2017rigorous} propose a taxonomy for the rigorous evaluation of interpretability,
+distinguishing application-grounded, human-grounded and functionally-grounded assessments, and
+emphasising \emph{fidelity} --- the degree to which an explanation reflects the system's actual
+computation --- as a core criterion. This framing is adopted in Chapter~\ref{chap:casestudies}, where
+the explanation is assessed for faithfulness by construction, with the (human-grounded) question of
+usefulness stated openly as a limitation. Table~\ref{tab:sota_xai} summarises the approaches considered.
 
 \begin{table}[ht]
 \caption{Explainability approaches considered.}
@@ -75,9 +198,9 @@ an optional complement.
 \toprule
 \tabhead{Method} & \tabhead{Type} & \tabhead{Strengths / limitations} \\
 \midrule
-LIME \autocite{ribeiro2016lime} & Local surrogate, model-agnostic & Intuitive; explanations can be unstable, only locally faithful \\
-SHAP \autocite{lundberg2017shap} & Shapley-value attribution, model-agnostic & Consistent, theoretically grounded; computationally costly \\
-Transparent design \autocite{arrieta2020xai} & Inherently interpretable logic & No post-hoc approximation; constrains model choice \\
+LIME \autocite{ribeiro2016lime} & Local surrogate, post-hoc & Intuitive, model-agnostic; explanations can be unstable, only locally faithful \\
+SHAP \autocite{lundberg2017shap} & Shapley-value attribution, post-hoc & Consistent, theoretically grounded; computationally costly \\
+Transparent design \autocite{rudin2019stop, arrieta2020xai} & Inherently interpretable logic & No approximation, faithful by construction; constrains model choice \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -85,52 +208,96 @@ Transparent design \autocite{arrieta2020xai} & Inherently interpretable logic & 
 \section{Financial NLP and Text Representation}
 \label{sec:sota_finnlp}
 
-Measuring the similarity between news items requires turning text into vectors. Early work learned
-static word embeddings efficiently with word2vec \autocite{mikolov2013word2vec}, but these assign one
-vector per word, ignoring context. Contextual models based on the Transformer, notably BERT
-\autocite{devlin2019bert}, substantially improved language understanding, yet using BERT directly for
-semantic similarity is expensive because it compares sentence pairs jointly. Sentence-BERT
-\autocite{reimers2019sbert} addresses this by producing sentence-level embeddings that can be compared
-efficiently with cosine similarity --- the property this work relies on for precedent retrieval. For
-the financial domain specifically, FinBERT models fine-tune BERT on financial text, for sentiment
-\autocite{araci2019finbert} and for broader financial communications \autocite{yang2020finbert}.
-Table~\ref{tab:sota_nlp} compares these representations.
+The news trigger depends on comparing the meaning of news items, which requires representing text
+numerically. The literature on financial natural-language processing spans three broad generations:
+hand-crafted lexicons, learned word embeddings, and contextual neural language models.
+
+The earliest and still-influential approach in finance is the domain dictionary. \textcite{loughran2011liability}
+show that general-purpose sentiment word lists misclassify ordinary financial vocabulary --- words such
+as ``liability'' or ``tax'' that are negative in everyday language but neutral in a financial report ---
+and develop finance-specific word lists that better capture tone in regulatory filings, relating them to
+returns, volume and volatility. Lexicon methods are fully transparent and remain a strong baseline, but
+they are bounded by their vocabulary and cannot capture meaning that is not expressed by listed words.
+
+Learned embeddings address this limitation by placing words in a continuous vector space where proximity
+reflects distributional similarity. Word2vec \autocite{mikolov2013word2vec} learns such vectors
+efficiently from local context windows, and GloVe \autocite{pennington2014glove} obtains comparable
+representations from global word--word co-occurrence statistics. Both, however, assign a single vector to
+each word irrespective of context, so they cannot distinguish the different senses a word takes in
+different sentences. The Transformer architecture \autocite{vaswani2017attention}, built entirely on
+attention mechanisms and dispensing with recurrence, removed this limitation and reshaped the field:
+BERT \autocite{devlin2019bert} uses it to produce deeply \emph{contextual} token representations that
+substantially advanced language understanding. Using BERT directly to compare two texts is nonetheless
+expensive, because it processes sentence pairs jointly; Sentence-BERT \autocite{reimers2019sbert}
+resolves this by producing a single fixed-length embedding per sentence that can be compared with a cheap
+cosine similarity --- exactly the property on which precedent retrieval in this work relies.
+
+Two further developments are relevant. First, domain adaptation: FinBERT models fine-tune BERT on
+financial text, for sentiment classification \autocite{araci2019finbert} and for broader financial
+communications \autocite{yang2020finbert}, improving on general-purpose models within the domain.
+Second, the recent rise of large language models, exemplified in finance by BloombergGPT
+\autocite{wu2023bloomberggpt}, a fifty-billion-parameter model trained on a large financial corpus that
+outperforms comparable general models on financial tasks. Such models are powerful but costly to run and
+opaque, and they fall outside this work's constraint of free, transparent and reproducible components;
+they are noted as part of the landscape and as future work rather than as a chosen tool.
+Table~\ref{tab:sota_nlp} compares the representations.
 
 \begin{table}[ht]
-\caption{Text-representation models for financial news.}
+\caption{Text-representation approaches for financial news.}
 \label{tab:sota_nlp}
 \centering
 \begin{tabular}{p{0.22\textwidth} p{0.32\textwidth} p{0.38\textwidth}}
 \toprule
-\tabhead{Model} & \tabhead{Representation} & \tabhead{Strengths / limitations} \\
+\tabhead{Approach} & \tabhead{Representation} & \tabhead{Strengths / limitations} \\
 \midrule
-word2vec \autocite{mikolov2013word2vec} & Static word vectors & Efficient; no context, word-level only \\
-BERT \autocite{devlin2019bert} & Contextual token embeddings & Strong understanding; pairwise similarity is costly \\
-Sentence-BERT \autocite{reimers2019sbert} & Sentence embeddings (siamese) & Efficient cosine similarity; benefits from fine-tuning data \\
-FinBERT \autocite{araci2019finbert, yang2020finbert} & Financial-domain language model & Domain-adapted; oriented to sentiment / communications \\
+Finance lexicons \autocite{loughran2011liability} & Curated word lists / tone & Fully transparent; bounded by vocabulary \\
+word2vec / GloVe \autocite{mikolov2013word2vec, pennington2014glove} & Static word vectors & Efficient; one vector per word, no context \\
+BERT \autocite{vaswani2017attention, devlin2019bert} & Contextual token embeddings & Strong understanding; pairwise similarity is costly \\
+Sentence-BERT \autocite{reimers2019sbert} & Sentence embeddings (siamese) & Efficient cosine similarity; the choice in this work \\
+FinBERT \autocite{araci2019finbert, yang2020finbert} & Domain-adapted language model & Finance-tuned; oriented to sentiment / communications \\
+Financial LLMs \autocite{wu2023bloomberggpt} & Large generative model & Very capable; costly, opaque, outside free-tier scope \\
 \bottomrule
 \end{tabular}
 \end{table}
 
+The progression in Table~\ref{tab:sota_nlp} clarifies the design choice. Sentence-BERT occupies the
+sweet spot for this work: it captures contextual meaning well beyond lexicons and static embeddings,
+yet, unlike raw BERT or large language models, it yields directly comparable sentence vectors at low
+cost, which keeps the retrieval step both reproducible and free to run.
+
 \section{Event Studies and News--Market Impact}
 \label{sec:sota_eventstudy}
 
-Quantifying the market impact of an event is the province of the \emph{event study}. The methodology
-of \textcite{brown1985daily} established how to measure abnormal returns around an event using daily
-stock returns, and remains the standard reference for the post-event return windows (e.g.\ $+1$, $+3$
-days) used here. Building such an analysis historically requires news aligned to prices; the FNSPID
-dataset \autocite{dong2024fnspid} provides exactly this --- financial news time-aligned with prices for
-thousands of companies --- enabling a news-to-impact knowledge base without scraping. The limitations
-are the usual ones of any dataset: coverage and time period, discussed in the data card.
+Having retrieved analogous past news, the system must quantify the impact those events had, which is the
+province of the \emph{event study}. The methodology originates with \textcite{fama1969adjustment}, whose
+study of stock-price adjustment to new information introduced the event-study design and provided an
+early test of market efficiency by measuring returns around an event date.
+\textcite{brown1985daily} subsequently established the now-standard practice for event studies based on
+daily returns, characterising how abnormal returns should be measured and tested over short post-event
+windows --- the basis for the $+1$, $+3$ and $+5$-day horizons used in this work. Crucially for the
+honesty of the present design, the event-study impact is measured strictly \emph{after} the event, so it
+characterises an outcome rather than forecasting one.
+
+Relating \emph{news text} to such impact is the subject of a growing literature, of which
+\textcite{tetlock2007media} is an early and influential example, demonstrating a measurable link between
+media tone and subsequent market behaviour. Conducting such an analysis historically and at scale
+requires news aligned to prices, which is the contribution of the FNSPID dataset
+\autocite{dong2024fnspid}: financial news time-aligned with daily prices for thousands of companies,
+enabling a news-to-impact knowledge base without bespoke scraping. Its limitations are those of any
+corpus --- coverage and time period --- and are documented in the data card of Chapter~\ref{chap:methods}.
+The combination of a semantic retrieval step with an event-study impact measurement over such a corpus
+is the methodological core of this dissertation.
 
 \section{Comparative Analysis and Positioning}
 \label{sec:sota_positioning}
 
 Across these areas, the literature offers strong individual components but few integrated, explainable,
-retail-facing systems that combine them. The choices made in this work, and the alternatives they were
-weighed against, are summarised in Table~\ref{tab:sota_positioning}. The guiding principle is
-\emph{defensible simplicity}: where two options perform comparably, the more transparent and
-easier-to-explain one is preferred.
+retail-facing systems that combine them. The choices made in this work, and the alternatives against
+which they were weighed, are summarised in Table~\ref{tab:sota_positioning}. The guiding principle is
+\emph{defensible simplicity}, aligned with the interpretable-by-design argument of
+\textcite{rudin2019stop}: where two options perform comparably, the more transparent and
+easier-to-explain one is preferred, because the system's purpose is to be understood and acted upon by a
+non-expert.
 
 \begin{table}[ht]
 \caption{Component choices in this work versus alternatives.}
@@ -140,20 +307,30 @@ easier-to-explain one is preferred.
 \toprule
 \tabhead{Component} & \tabhead{Chosen} & \tabhead{Alternative} & \tabhead{Why} \\
 \midrule
-Anomaly detection & \emph{z}-score (rolling) & Isolation Forest & Transparency / explainability \\
-News retrieval & Sentence-BERT + cosine & word2vec / raw BERT & Efficient semantic similarity \\
-Impact measurement & Event-study windows & --- & Standard, reproducible \\
-Explanation & Rules + precedents (+ SHAP) & LIME-only & Faithful, traceable \\
+Anomaly detection & \emph{z}-score (rolling) & Isolation Forest, deep detectors & Transparency; low-dimensional signal \\
+News retrieval & Sentence-BERT + cosine & Lexicons, word2vec, LLMs & Contextual yet cheap and reproducible \\
+Impact measurement & Event-study windows & --- & Standard, reproducible, no forecasting \\
+Explanation & Transparent design + precedents & LIME / SHAP only & Faithful by construction \\
 \bottomrule
 \end{tabular}
 \end{table}
 
+This positioning also clarifies the nature of the contribution. None of the individual building blocks
+is novel; what is comparatively scarce, and what this work provides, is their disciplined integration
+into a single explainable system for the retail investor, with each choice justified against the
+alternatives reviewed above.
+
 \section{Chapter Conclusions}
 \label{sec:sota_summary}
 
-The reviewed work supplies mature methods for each piece of the problem: transparent anomaly detection,
-efficient semantic similarity, domain language models, feature attribution, and event-study impact
-measurement. What is comparatively scarce is their \emph{integration} into a single, explainable,
-reproducible system aimed at the retail investor --- one that detects events and, for each, retrieves
-analogous historical news and presents their observed impact as traceable evidence. Addressing this
-gap, as an engineering contribution, is the purpose of the chapters that follow.
+This chapter reviewed the foundations of the work across four areas. The behavioural-finance literature
+established that retail investors are attention- and news-driven, motivating an explainable alerting tool
+rather than a predictive one. The anomaly-detection literature supplied a clear capacity--interpretability
+trade-off that favours a transparent statistical detector for a low-dimensional return series. The XAI
+literature, and in particular the interpretable-by-design argument, supported pursuing explainability
+through transparent design and assessing it by fidelity. The financial-NLP literature traced the path
+from lexicons to sentence embeddings and identified Sentence-BERT as the appropriate, reproducible choice
+for semantic retrieval, while event-study methodology and the FNSPID dataset provided the means to
+measure news impact honestly and at scale. What the literature offers in mature individual components, it
+largely lacks as an \emph{integrated}, explainable, retail-facing system --- the gap this dissertation
+addresses, and which the following chapters develop.

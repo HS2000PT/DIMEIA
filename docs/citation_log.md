@@ -32,6 +32,22 @@
 | `mikolov2013word2vec` | Mikolov et al. (2013), "Efficient Estimation of Word Representations" (word2vec) | arXiv:1301.3781 | 2026-06-21 | arXiv API | ✅ verificado |
 | `yang2020finbert` | Yang, Uy & Huang (2020), "FinBERT: A Pretrained Language Model for Financial Communications" | arXiv:2006.08097 | 2026-06-21 | arXiv API | ✅ verificado |
 
+## Expansão do Estado da Arte (Cap. 2) — verificadas (2026-06-22)
+| Chave .bib | Referência | Identificador | Verificado em | Fonte | Estado |
+|---|---|---|---|---|---|
+| `barber2008glitters` | Barber & Odean (2008), "All That Glitters…", Review of Financial Studies 21(2):785–818 | DOI 10.1093/rfs/hhm079 | 2026-06-22 | Oxford Academic / DOI | ✅ verificado |
+| `tetlock2007media` | Tetlock (2007), "Giving Content to Investor Sentiment…", Journal of Finance 62(3):1139–1168 | DOI 10.1111/j.1540-6261.2007.01232.x | 2026-06-22 | Wiley / DOI | ✅ verificado |
+| `welch2022robinhood` | Welch (2022), "The Wisdom of the Robinhood Crowd", Journal of Finance 77(3):1489–1527 | DOI 10.1111/jofi.13128 | 2026-06-22 | Wiley / DOI | ✅ verificado |
+| `fama1969adjustment` | Fama, Fisher, Jensen & Roll (1969), "The Adjustment of Stock Prices to New Information", Int. Economic Review 10(1):1–21 | DOI 10.2307/2525569 (JSTOR) | 2026-06-22 | JSTOR / múltiplas fontes | ✅ verificado |
+| `loughran2011liability` | Loughran & McDonald (2011), "When Is a Liability Not a Liability?…", Journal of Finance 66(1):35–65 | DOI 10.1111/j.1540-6261.2010.01625.x | 2026-06-22 | Wiley / DOI | ✅ verificado |
+| `pang2021deep` | Pang, Shen, Cao & van den Hengel (2021), "Deep Learning for Anomaly Detection: A Review", ACM Comput. Surv. 54(2) | DOI 10.1145/3439950 | 2026-06-22 | ACM DL / DOI | ✅ verificado |
+| `guidotti2018survey` | Guidotti et al. (2018), "A Survey of Methods for Explaining Black Box Models", ACM Comput. Surv. 51(5) | DOI 10.1145/3236009 (arXiv:1802.01933) | 2026-06-22 | ACM DL / DOI | ✅ verificado |
+| `rudin2019stop` | Rudin (2019), "Stop Explaining Black Box ML Models for High Stakes…", Nature Machine Intelligence 1(5):206–215 | DOI 10.1038/s42256-019-0048-x | 2026-06-22 | Nature / DOI | ✅ verificado |
+| `doshivelez2017rigorous` | Doshi-Velez & Kim (2017), "Towards A Rigorous Science of Interpretable Machine Learning" | arXiv:1702.08608 | 2026-06-22 | arXiv | ✅ verificado |
+| `vaswani2017attention` | Vaswani et al. (2017), "Attention Is All You Need", NeurIPS | arXiv:1706.03762 | 2026-06-22 | arXiv / NeurIPS | ✅ verificado |
+| `pennington2014glove` | Pennington, Socher & Manning (2014), "GloVe: Global Vectors…", EMNLP:1532–1543 | DOI 10.3115/v1/D14-1162 | 2026-06-22 | ACL Anthology / DOI | ✅ verificado |
+| `wu2023bloomberggpt` | Wu et al. (2023), "BloombergGPT: A Large Language Model for Finance" | arXiv:2303.17564 | 2026-06-22 | arXiv | ✅ verificado |
+
 ## Rejeitadas / não verificáveis (NÃO usar)
 | Referência | Motivo | Data |
 |---|---|---|
