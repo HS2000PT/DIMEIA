@@ -1,0 +1,175 @@
+"""Avalia a recuperação de precedentes: SBERT vs baseline lexical vs aleatório/recência.
+
+Pergunta A (docs/evaluation_design.md §2): os precedentes recuperados são mesmo análogos?
+Métrica: precision@k por SETOR em recuperação cross-ticker (ver src/evaluation/retrieval_eval.py).
+
+Entrada: CSV de notícias (date, ticker, headline) — ex.: o de scripts/fetch_finnhub_news.py.
+Saída: tabela em docs/evaluation_results.md + figura em thesis/figures/eval_retrieval_precision.pdf.
+
+Uso:
+    python scripts/evaluate.py --news data/finnhub_news.csv
+    python scripts/evaluate.py --news data/finnhub_news.csv --queries 500 --k 5 10
+"""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from datetime import UTC, datetime
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
+from src.evaluation.retrieval_eval import (  # noqa: E402
+    expected_random_precision,
+    recency_precision_at_k,
+    retrieval_precision_at_k,
+    same_ticker_forbid,
+)
+
+# Setores dos 15 tickers (data_card.md). Proxy automático de "analogia".
+SECTORS = {
+    "AAPL": "tech", "MSFT": "tech", "AMZN": "tech", "GOOGL": "tech", "NVDA": "tech",
+    "TSLA": "tech", "META": "tech",
+    "JPM": "banking", "BAC": "banking",
+    "XOM": "energy", "CVX": "energy",
+    "JNJ": "health", "PFE": "health",
+    "WMT": "consumer", "KO": "consumer",
+}
+
+REPO = Path(__file__).resolve().parent.parent
+
+
+def _embed(headlines: list[str], use_sbert: bool, dim: int = 512) -> np.ndarray:
+    if use_sbert:
+        from src.historical_kb.embedder import SbertEmbedder
+
+        return SbertEmbedder().encode(headlines)
+    from src.historical_kb.embedder import HashingEmbedder
+
+    return HashingEmbedder(dim=dim).encode(headlines)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Avaliação da recuperação de precedentes.")
+    parser.add_argument("--news", required=True)
+    parser.add_argument("--queries", type=int, default=500, help="nº de consultas amostradas")
+    parser.add_argument("--k", type=int, nargs="+", default=[5, 10])
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--out", default="docs/evaluation_results.md")
+    parser.add_argument("--fig", default="thesis/figures/eval_retrieval_precision.pdf")
+    args = parser.parse_args()
+
+    df = pd.read_csv(args.news).dropna(subset=["date", "ticker", "headline"])
+    df["ticker"] = df["ticker"].astype(str).str.upper()
+    df = df[df["ticker"].isin(SECTORS)].reset_index(drop=True)
+    df["sector"] = df["ticker"].map(SECTORS)
+    n = len(df)
+    print(f"Notícias com setor conhecido: {n:,} | tickers: {sorted(df['ticker'].unique())}")
+
+    tickers = df["ticker"].to_numpy()
+    sectors = df["sector"].to_numpy()
+    dates = df["date"].astype(str).to_numpy()
+    headlines = df["headline"].astype(str).tolist()
+
+    rng = np.random.default_rng(args.seed)
+    n_q = min(args.queries, n)
+    q_idx = rng.choice(n, size=n_q, replace=False)
+    forbid = same_ticker_forbid(tickers[q_idx], tickers)  # cross-ticker (exclui a própria empresa)
+
+    print("A calcular embeddings (Hashing + SBERT)…")
+    emb_hash = _embed(headlines, use_sbert=False)
+    emb_sbert = _embed(headlines, use_sbert=True)
+
+    ks = sorted(set(args.k))
+    results: dict[str, dict[int, float]] = {"SBERT": {}, "Lexical (baseline)": {},
+                                            "Recency": {}, "Random (base rate)": {}}
+    for k in ks:
+        results["SBERT"][k] = retrieval_precision_at_k(
+            emb_sbert[q_idx], emb_sbert, sectors[q_idx], sectors, k=k, forbid=forbid)
+        results["Lexical (baseline)"][k] = retrieval_precision_at_k(
+            emb_hash[q_idx], emb_hash, sectors[q_idx], sectors, k=k, forbid=forbid)
+        results["Recency"][k] = recency_precision_at_k(
+            sectors[q_idx], sectors, dates, k=k, forbid=forbid)
+        results["Random (base rate)"][k] = expected_random_precision(
+            sectors[q_idx], sectors, forbid)
+        print(f"  k={k}: " + " | ".join(f"{m}={results[m][k]:.3f}" for m in results))
+
+    _write_markdown(args.out, df, n_q, ks, results, args.seed)
+    _write_figure(args.fig, ks, results)
+
+
+def _write_markdown(path, df, n_q, ks, results, seed) -> None:
+    n = len(df)
+    by_sec = df["sector"].value_counts().to_dict()
+    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
+    lines = [
+        "# evaluation_results.md — Resultados da avaliação (reprodutível)",
+        "",
+        "> Gerado por `scripts/evaluate.py`. **Não editar à mão.** Ver os caveats no fim.",
+        "",
+        "## Pergunta A — qualidade da recuperação de precedentes (precision@k por setor)",
+        "",
+        f"- **Dados:** {n:,} notícias reais (Finnhub), {len(by_sec)} setores: {by_sec}.",
+        f"- **Consultas amostradas:** {n_q} (seed {seed}); recuperação **cross-ticker** "
+        "(exclui a própria empresa).",
+        "- **Proxy de relevância:** mesmo setor (data_card.md). "
+        "Baselines: recência e taxa-base.",
+        f"- **Gerado:** {now}.",
+        "",
+        "| Método | " + " | ".join(f"P@{k}" for k in ks) + " |",
+        "|---|" + "|".join("---" for _ in ks) + "|",
+    ]
+    for method in ("SBERT", "Lexical (baseline)", "Recency", "Random (base rate)"):
+        lines.append(
+            f"| {method} | " + " | ".join(f"{results[method][k]:.3f}" for k in ks) + " |"
+        )
+    k0 = ks[0]
+    lift = results["SBERT"][k0] - results["Random (base rate)"][k0]
+    lines += [
+        "",
+        f"**Leitura:** a P@{k0} do SBERT é {results['SBERT'][k0]:.3f} vs "
+        f"{results['Random (base rate)'][k0]:.3f} da taxa-base aleatória "
+        f"(lift {lift:+.3f}); baseline lexical {results['Lexical (baseline)'][k0]:.3f}.",
+        "",
+        "**Caveats (honestos):** o setor é um *proxy* automático de analogia (não um julgamento "
+        "humano de relevância); os dados são do último período disponível no Finnhub (não o "
+        "histórico multi-ano do FNSPID); títulos curtos limitam a semântica captável. Estes "
+        "números são uma avaliação **preliminar** e reprodutível, não a avaliação final da tese.",
+    ]
+    Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(f"Resultados escritos em {path}")
+
+
+def _write_figure(path, ks, results) -> None:
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    methods = ["SBERT", "Lexical (baseline)", "Recency", "Random (base rate)"]
+    x = np.arange(len(ks))
+    width = 0.2
+    fig, ax = plt.subplots(figsize=(7, 4))
+    for i, m in enumerate(methods):
+        ax.bar(x + (i - 1.5) * width, [results[m][k] for k in ks], width, label=m)
+    ax.set_xticks(x, [f"P@{k}" for k in ks])
+    ax.set_ylabel("Precision (mesmo setor, cross-ticker)")
+    ax.set_title("Recuperação de precedentes: SBERT vs baselines")
+    ax.legend(fontsize=8)
+    ax.grid(axis="y", alpha=0.3)
+    fig.tight_layout()
+    out = REPO / path if not Path(path).is_absolute() else Path(path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out)
+    print(f"Figura escrita em {out}")
+
+
+if __name__ == "__main__":
+    main()

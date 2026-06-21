@@ -32,6 +32,10 @@
 | Gatilho 2 | Alerta despoletado por uma notícia nova (vs. Gatilho 1 = movimento) | — |
 | RSS | Formato de feed para distribuir notícias/atualizações de um site | — |
 | Finnhub | API financeira gratuita (preços, notícias de empresa) | — |
+| Precision@k | Fração dos k itens recuperados que são relevantes | P@k |
+| Taxa-base | Precisão esperada por acaso (fração de candidatos relevantes) | base rate |
+| Lift | Ganho de um método sobre a taxa-base/baseline | — |
+| Cross-ticker | Recuperação que exclui a própria empresa (testa analogia temática) | — |
 | Capitalização de mercado | Valor total das ações de uma empresa/mercado (preço × nº de ações) | market cap |
 | Investidor de retalho | Investidor individual não-profissional (por oposição a institucional) | retail |
 | Liquidez | Facilidade de comprar/vender um ativo sem mover muito o preço | — |

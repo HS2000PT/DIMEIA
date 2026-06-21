@@ -45,6 +45,13 @@ Para ser tratável num portátil (§5.4 / R2), começamos com um subconjunto peq
 - **Preços:** yfinance (base) + Finnhub (fallback). **Notícias:** Finnhub news + RSS (ver `free_apis.md`).
 - Tratamento: mesmos campos da camada histórica para permitir comparação por similaridade.
 
+### Conjunto de avaliação preliminar (Finnhub, S11)
+- `scripts/fetch_finnhub_news.py` recolheu **3.692 notícias reais** dos 15 tickers (Finnhub
+  `/company-news`, ~250 recentes por ticker; gitignored em `data/finnhub_news.csv`, amostra em
+  `data/samples/`). Usado pela avaliação da recuperação (`scripts/evaluate.py` →
+  `docs/evaluation_results.md`). **É real mas recente** (não o histórico multi-ano do FNSPID, que
+  continua a ser a fonte mais rica para a avaliação final).
+
 ## Governança (ambas as camadas)
 - Dados grandes **gitignored** e recriados por `scripts/download_data.py`; só **amostras pequenas** em
   `data/samples/`. **Não republicar** texto integral de notícias de terceiros na tese — citar minimamente (§5.4).

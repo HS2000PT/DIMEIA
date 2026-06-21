@@ -111,3 +111,12 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] `learning.md` §12 (Gatilho 2) + `glossary.md` (Gatilho 2, RSS, Finnhub)
 - [x] **29 testes verdes** + 2 gated; lint limpo; `verify.sh` ok
 - [ ] Próximo: download real FNSPID + KB SBERT completa; demo Gatilho 2 ao vivo (Finnhub→KB→Telegram); avaliação (Cap. 6)
+
+## Sessão 11 — Avaliação: recuperação de precedentes (Pergunta A) em dados reais
+- [x] `src/evaluation/retrieval_eval.py` — precision@k por setor (cross-ticker) + baselines aleatório/recência (puro, 5 testes)
+- [x] `scripts/fetch_finnhub_news.py` — **3.692 notícias reais** (Finnhub, 15 tickers/5 setores) → CSV + amostra
+- [x] `scripts/evaluate.py` — ablação SBERT vs lexical vs recência vs aleatório → `docs/evaluation_results.md` + figura reprodutível
+- [x] **Resultado real (P@5):** SBERT 0,568 > lexical 0,357 > aleatório 0,245 > recência 0,096 (lift +0,323) — hipótese central validada
+- [x] `learning.md` §14 (precision@k/lift/baselines) + `glossary.md` (P@k, taxa-base, lift, cross-ticker) + `data_card.md` (dataset Finnhub)
+- [x] **34 testes verdes** + 2 gated; lint limpo; `verify.sh` ok
+- [ ] Próximo: escrever Cap. 6 (Evaluation) com estes resultados + detetor de anomalias; Cap. 5 (Implementation); (opcional) FNSPID completo

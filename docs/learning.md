@@ -155,3 +155,25 @@ janela 2018–2023 do `data_card.md`); só o subconjunto fica em disco. **Porque
 projeto tratável num portátil (R2 no `risk_register.md`) e mantém a reprodutibilidade — qualquer
 pessoa recria o subconjunto com `scripts/download_data.py`. Os dados grandes ficam *gitignored*;
 só **amostras pequenas** vão para `data/samples/` (e, de notícias de terceiros, só títulos — §5.4).
+
+## 14. Avaliação da recuperação — precision@k, baselines e *lift*
+**O que é:** para medir se os precedentes recuperados são mesmo análogos, usamos **precision@k**:
+de entre os k mais semelhantes a uma notícia, que fração é relevante. Como "relevante" é caro de
+julgar à mão, usamos um *proxy* automático: **mesmo setor** (data_card.md). Para não ser trivial
+(o nome da empresa apareceria no título), fazemos recuperação **cross-ticker** (excluímos a própria
+empresa) — isto testa analogia **temática**, não o nome.
+
+**Baselines (essenciais para honestidade):** comparamos sempre com alternativas triviais —
+**aleatório** (taxa-base = fração de candidatos do mesmo setor; o que se obteria por acaso) e
+**recência** (os mais recentes). O *lift* = precisão do método − taxa-base mostra o valor
+**acrescentado** pelos embeddings.
+
+**Resultado real (preliminar, `docs/evaluation_results.md`):** em 3.692 notícias reais (Finnhub,
+5 setores), **P@5: SBERT 0,568 vs baseline lexical 0,357 vs aleatório 0,245 vs recência 0,096**.
+- **Como explico ao júri em 3 frases:** "Para avaliar a recuperação, pergunto se os precedentes
+  vêm do mesmo setor, em modo cross-empresa para não ser trivial. O SBERT acerta ~57% no top-5,
+  contra ~25% do acaso e ~36% de um baseline de palavras — ou seja, capta analogia temática real.
+  Comparo sempre com baselines triviais para o ganho ser honesto e não um número solto."
+- **Caveats (assumidos):** o setor é um *proxy* (não relevância humana); dados recentes do Finnhub
+  (não o histórico multi-ano do FNSPID); títulos curtos limitam a semântica. Avaliação preliminar,
+  reprodutível por `scripts/evaluate.py` (seed fixa).

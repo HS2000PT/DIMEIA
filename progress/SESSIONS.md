@@ -5,6 +5,37 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 11 — 2026-06-21 — Avaliação: recuperação de precedentes (Pergunta A) em dados reais
+**Objetivo:** produzir resultados de avaliação **reais e honestos** para a peça central da tese
+(o motor de correlação), sem o download de 23 GB do FNSPID, usando a fonte real e gratuita já
+validada (Finnhub).
+
+**Feito:**
+- **Métrica** (`src/evaluation/retrieval_eval.py`): **precision@k por setor** em recuperação
+  **cross-ticker** (exclui a própria empresa → testa analogia temática, não o nome). Baselines
+  **aleatório** (taxa-base exata) e **recência**. Puro NumPy, determinístico, 5 testes.
+- **Dados reais** (`scripts/fetch_finnhub_news.py`): **3.692 notícias** dos 15 tickers (Finnhub,
+  ~250 recentes/ticker; 5 setores). Gitignored; amostra versionada.
+- **Ablação** (`scripts/evaluate.py`): embeddings SBERT vs HashingEmbedder (lexical), 500 consultas
+  (seed 42). **P@5 — SBERT 0,568 | lexical 0,357 | aleatório 0,245 | recência 0,096**
+  (P@10 — 0,533 / 0,328 / 0,245 / 0,077). O SBERT está ~2,3× acima do acaso e claramente acima do
+  baseline lexical → **a hipótese central (recuperação semântica encontra precedentes mais
+  análogos) verifica-se em dados reais.** Resultados em `docs/evaluation_results.md`; figura
+  reprodutível em `thesis/figures/eval_retrieval_precision.pdf`.
+- Docs: `learning.md` §14, `glossary.md` (P@k, taxa-base, lift, cross-ticker), `data_card.md`.
+
+**Honestidade:** o setor é um *proxy* automático (não julgamento humano); dados recentes do
+Finnhub (não o histórico multi-ano do FNSPID); títulos curtos limitam a semântica. Resultados
+**preliminares**, reprodutíveis com seed fixa — explicitamente assumido nos caveats.
+
+**Estado dos testes:** **34 verdes** + 2 *gated*; lint limpo; `verify.sh` ok.
+
+**Próxima ação:** escrever o Cap. 6 (Evaluation) com estes resultados (tabela + figura + caveats)
+e o detetor de anomalias; depois Cap. 5 (Implementation). Opcional: FNSPID completo (R2) para uma
+avaliação multi-ano mais rica. Prosseguir autonomamente (D-009).
+
+---
+
 ## Sessão 10 — 2026-06-21 — Implementação: Gatilho 2 (notícias) + explicação com precedentes
 **Objetivo:** fechar o ciclo XAI do segundo gatilho — de uma notícia nova até um alerta com
 precedentes históricos — escolhendo isto (em vez do download pesado do FNSPID) por dar mais valor
