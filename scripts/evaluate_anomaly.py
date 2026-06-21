@@ -1,0 +1,179 @@
+"""Avalia o detetor de anomalias (Pergunta 1) em preços reais (yfinance).
+
+Evidências (ver src/evaluation/anomaly_eval.py e docs/evaluation_design.md §1):
+1. **Consistência da taxa de disparo** entre tickers — z-score (normaliza volatilidade) vs limiar
+   fixo em % (ingénuo). Reporta o intervalo/dispersão das taxas entre tickers.
+2. **Precision/recall/F1** vs rótulo-proxy (movimento extremo por ticker), agregado (pooled).
+3. **Ablação** ao tamanho da janela (10/20/60).
+
+Saída: docs/evaluation_anomaly.md + figura thesis/figures/eval_anomaly_firing_rate.pdf.
+
+Uso: python scripts/evaluate_anomaly.py [--period 3y] [--window 20] [--threshold 3.0]
+"""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from datetime import UTC, datetime
+from pathlib import Path
+
+import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
+from src.evaluation.anomaly_eval import (  # noqa: E402
+    firing_rate,
+    fixed_threshold_flags,
+    label_extreme_moves,
+    precision_recall_f1,
+    rolling_zscore_flags,
+)
+
+REPO = Path(__file__).resolve().parent.parent
+TICKERS = [
+    "AAPL", "MSFT", "AMZN", "GOOGL", "NVDA", "TSLA", "META", "JPM",
+    "BAC", "XOM", "CVX", "JNJ", "PFE", "WMT", "KO",
+]
+
+
+def _returns(period: str) -> dict[str, np.ndarray]:
+    import yfinance as yf
+
+    out: dict[str, np.ndarray] = {}
+    for t in TICKERS:
+        df = yf.Ticker(t).history(period=period, interval="1d")
+        if df is None or df.empty:
+            print(f"  [!] sem dados: {t}")
+            continue
+        close = df["Close"].to_numpy()
+        r = np.diff(np.log(close))  # log-returns
+        out[t] = r
+        print(f"  [ok] {t}: {len(r)} retornos")
+    return out
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Avaliação do detetor de anomalias.")
+    parser.add_argument("--period", default="3y")
+    parser.add_argument("--window", type=int, default=20)
+    parser.add_argument("--threshold", type=float, default=3.0)
+    parser.add_argument("--fixed-pct", type=float, default=0.03)
+    parser.add_argument("--quantile", type=float, default=0.99)
+    parser.add_argument("--out", default="docs/evaluation_anomaly.md")
+    parser.add_argument("--fig", default="thesis/figures/eval_anomaly_firing_rate.pdf")
+    args = parser.parse_args()
+
+    print(f"A obter preços (yfinance, {args.period})…")
+    rets = _returns(args.period)
+
+    z_pred_all, fx_pred_all, label_all = [], [], []
+    fire_z, fire_fx = {}, {}
+    for t, r in rets.items():
+        label = label_extreme_moves(r, q=args.quantile)
+        zf = rolling_zscore_flags(r, args.window, args.threshold)
+        ff = fixed_threshold_flags(r, args.fixed_pct)
+        z_pred_all.append(zf)
+        fx_pred_all.append(ff)
+        label_all.append(label)
+        fire_z[t] = firing_rate(zf)
+        fire_fx[t] = firing_rate(ff)
+
+    z_pred = np.concatenate(z_pred_all)
+    fx_pred = np.concatenate(fx_pred_all)
+    label = np.concatenate(label_all)
+    z_prf = precision_recall_f1(z_pred, label)
+    fx_prf = precision_recall_f1(fx_pred, label)
+
+    # Ablação à janela (F1 pooled).
+    ablation = {}
+    for w in (10, 20, 60):
+        preds = np.concatenate([rolling_zscore_flags(r, w, args.threshold) for r in rets.values()])
+        ablation[w] = precision_recall_f1(preds, label)[2]
+
+    fz = np.array(list(fire_z.values()))
+    ff_ = np.array(list(fire_fx.values()))
+    print(f"Firing rate z-score: {fz.min():.3f}-{fz.max():.3f} (spread {fz.max()-fz.min():.3f})")
+    print(f"Firing rate fixo: {ff_.min():.3f}-{ff_.max():.3f} (spread {ff_.max()-ff_.min():.3f})")
+    print(f"F1 z-score={z_prf[2]:.3f} | F1 fixo={fx_prf[2]:.3f}")
+
+    _write_md(args, rets, fire_z, fire_fx, z_prf, fx_prf, ablation)
+    _write_fig(args.fig, fire_z, fire_fx)
+
+
+def _write_md(args, rets, fire_z, fire_fx, z_prf, fx_prf, ablation) -> None:
+    fz = np.array(list(fire_z.values()))
+    ff_ = np.array(list(fire_fx.values()))
+    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
+    lines = [
+        "# evaluation_anomaly.md — Avaliação do detetor de anomalias (reprodutível)",
+        "",
+        "> Gerado por `scripts/evaluate_anomaly.py`. **Não editar à mão.** Ver caveats no fim.",
+        "",
+        f"- **Dados:** {len(rets)} tickers, preços reais (yfinance, {args.period}).",
+        f"- **z-score:** janela {args.window}d, limiar ±{args.threshold:g} (sem lookahead). "
+        f"**Baseline fixo:** |retorno| ≥ {args.fixed_pct*100:g}%. "
+        f"**Rótulo-proxy:** |retorno| ≥ percentil {args.quantile:g} por ticker.",
+        f"- **Gerado:** {now}.",
+        "",
+        "## 1. Consistência da taxa de disparo entre tickers (argumento principal)",
+        "",
+        "| Método | Taxa mín | Taxa máx | Amplitude |",
+        "|---|---|---|---|",
+        f"| z-score | {fz.min():.3f} | {fz.max():.3f} | **{fz.max()-fz.min():.3f}** |",
+        f"| Limiar fixo (%) | {ff_.min():.3f} | {ff_.max():.3f} | **{ff_.max()-ff_.min():.3f}** |",
+        "",
+        f"**Leitura:** o z-score dispara a uma taxa quase constante entre tickers "
+        f"(amplitude {fz.max()-fz.min():.3f}), enquanto o limiar fixo varia muito "
+        f"(amplitude {ff_.max()-ff_.min():.3f}) — confirma que normaliza a volatilidade.",
+        "",
+        "## 2. Precision / recall / F1 vs rótulo-proxy (suporte)",
+        "",
+        "| Método | Precision | Recall | F1 |",
+        "|---|---|---|---|",
+        f"| z-score | {z_prf[0]:.3f} | {z_prf[1]:.3f} | {z_prf[2]:.3f} |",
+        f"| Limiar fixo (%) | {fx_prf[0]:.3f} | {fx_prf[1]:.3f} | {fx_prf[2]:.3f} |",
+        "",
+        "## 3. Ablação à janela (F1 pooled)",
+        "",
+        "| Janela | F1 |",
+        "|---|---|",
+        *[f"| {w}d | {f1:.3f} |" for w, f1 in ablation.items()],
+        "",
+        "**Caveats (honestos):** o rótulo é um *proxy* (percentil de movimento), não verdade "
+        "absoluta, e é volatilidade-relativo como o z-score (alguma circularidade — por isso o "
+        "argumento principal é a **consistência da taxa de disparo**, que não depende do rótulo). "
+        "Avaliação reprodutível (`scripts/evaluate_anomaly.py`).",
+    ]
+    Path(args.out).write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(f"Resultados escritos em {args.out}")
+
+
+def _write_fig(path, fire_z, fire_fx) -> None:
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    tickers = list(fire_z.keys())
+    x = np.arange(len(tickers))
+    fig, ax = plt.subplots(figsize=(9, 4))
+    ax.bar(x - 0.2, [fire_fx[t] for t in tickers], 0.4, label="Limiar fixo (%)")
+    ax.bar(x + 0.2, [fire_z[t] for t in tickers], 0.4, label="z-score")
+    ax.set_xticks(x, tickers, rotation=45, ha="right", fontsize=8)
+    ax.set_ylabel("Taxa de disparo")
+    ax.set_title("Taxa de disparo por ticker: limiar fixo vs z-score")
+    ax.legend()
+    ax.grid(axis="y", alpha=0.3)
+    fig.tight_layout()
+    out = REPO / path if not Path(path).is_absolute() else Path(path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out)
+    print(f"Figura escrita em {out}")
+
+
+if __name__ == "__main__":
+    main()

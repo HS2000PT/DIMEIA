@@ -177,3 +177,21 @@ empresa) — isto testa analogia **temática**, não o nome.
 - **Caveats (assumidos):** o setor é um *proxy* (não relevância humana); dados recentes do Finnhub
   (não o histórico multi-ano do FNSPID); títulos curtos limitam a semântica. Avaliação preliminar,
   reprodutível por `scripts/evaluate.py` (seed fixa).
+
+## 15. Avaliação do detetor de anomalias — consistência da taxa de disparo
+**O que é:** como mostrar, sem circularidade, que o z-score é melhor que um limiar fixo em %?
+O argumento mais limpo é a **taxa de disparo entre tickers**: um limiar fixo (ex.: |retorno|≥3%)
+dispara ~1% das vezes numa ação calma (KO) e ~35% numa volátil (TSLA/NVDA) — não é um detetor
+universal. O z-score normaliza pela volatilidade recente, pelo que dispara a uma taxa quase
+constante (~2%) em todos. Medimos a **amplitude** (máx−mín) da taxa entre tickers.
+
+**Resultado real (`docs/evaluation_anomaly.md`, yfinance 3 anos, 15 tickers):** amplitude da taxa
+de disparo **z-score 0,017 vs limiar fixo 0,343** (20× mais consistente). Como suporte, contra um
+rótulo-proxy (movimento no percentil 99 por ticker): **F1 z-score 0,524 vs fixo 0,216**; ablação à
+janela: F1 sobe com a janela (10d 0,385 → 20d 0,524 → 60d 0,687).
+- **Como explico ao júri em 3 frases:** "Um limiar fixo em percentagem é injusto entre ações: numa
+  volátil dispara a toda a hora, numa calma quase nunca. O meu z-score normaliza pela volatilidade
+  recente, por isso deteta movimentos *invulgares para aquela ação*, com taxa de disparo estável.
+  Mostro isto pela amplitude da taxa entre tickers (0,02 vs 0,34) — não depende de nenhum rótulo."
+- **Caveat:** o rótulo-proxy é volatilidade-relativo como o z-score (alguma circularidade), por isso
+  o argumento principal é a consistência da taxa, que **não** depende do rótulo.

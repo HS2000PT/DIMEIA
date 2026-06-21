@@ -5,6 +5,32 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 12 — 2026-06-21 — Avaliação: detetor de anomalias (Pergunta 1) em preços reais
+**Objetivo:** dar ao detetor de anomalias uma avaliação real e honesta (a par da recuperação),
+para o Cap. 6 assentar em DUAS experiências quantitativas.
+
+**Feito:**
+- **Métrica** (`src/evaluation/anomaly_eval.py`, puro, 6 testes): `rolling_zscore_flags` (sem
+  lookahead), `fixed_threshold_flags` (baseline), `label_extreme_moves` (rótulo-proxy por percentil),
+  `precision_recall_f1`, `firing_rate`.
+- **Argumento principal (não circular): consistência da taxa de disparo entre tickers.** Em preços
+  reais (yfinance, 3 anos, 15 tickers): amplitude da taxa **z-score 0,017 vs limiar fixo 0,343** —
+  o limiar fixo dispara ~1% na KO e ~35% na TSLA/NVDA; o z-score ~2% em todos (normaliza
+  volatilidade). Suporte: **F1 z-score 0,524 vs fixo 0,216** (rótulo-proxy); ablação à janela
+  10/20/60d → F1 0,385/0,524/0,687. Resultados em `docs/evaluation_anomaly.md`; figura
+  `thesis/figures/eval_anomaly_firing_rate.pdf`.
+- Docs: `learning.md` §15 (com nota de defesa e caveat de circularidade do rótulo).
+
+**Honestidade:** o rótulo-proxy é volatilidade-relativo como o z-score (alguma circularidade),
+por isso o argumento central é a consistência da taxa de disparo, que não depende do rótulo.
+
+**Estado dos testes:** **40 verdes** + 2 *gated*; lint limpo; `verify.sh` ok.
+
+**Próxima ação:** escrever o Cap. 6 (Evaluation) integrando recuperação + anomalias (tabelas, as 2
+figuras, caveats) e um estudo de caso ponta-a-ponta; depois Cap. 5 (Implementation). Autónomo (D-009).
+
+---
+
 ## Sessão 11 — 2026-06-21 — Avaliação: recuperação de precedentes (Pergunta A) em dados reais
 **Objetivo:** produzir resultados de avaliação **reais e honestos** para a peça central da tese
 (o motor de correlação), sem o download de 23 GB do FNSPID, usando a fonte real e gratuita já

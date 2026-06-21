@@ -7,10 +7,10 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 11 (Implementação — avaliação da recuperação (Pergunta A); sessão contínua desde a 0)
+- **Sessão nº:** 12 (Implementação — avaliação do detetor de anomalias (Pergunta 1); sessão contínua desde a 0)
 - **Última atualização:** 2026-06-21
-- **Fase atual + último passo concluído:** **AVALIAÇÃO DA RECUPERAÇÃO IMPLEMENTADA E CORRIDA EM DADOS REAIS.** `src/evaluation/retrieval_eval.py` (precision@k por setor, cross-ticker; baselines aleatório/recência — puro, testado). `scripts/fetch_finnhub_news.py` recolheu **3.692 notícias reais** (Finnhub, 15 tickers/5 setores); `scripts/evaluate.py` corre a ablação e escreve `docs/evaluation_results.md` + figura `thesis/figures/eval_retrieval_precision.pdf`. **Resultado real (P@5):** SBERT **0,568** > baseline lexical 0,357 > aleatório 0,245 > recência 0,096 (lift +0,323 sobre o acaso) — valida a hipótese central com dados reais. **34 testes verdes** (+2 gated) + lint limpo + `verify.sh` ok. (Antes: Gatilho 1, KB+SBERT, Gatilho 2 — todos provados.)
-- **PRÓXIMA AÇÃO IMEDIATA:** (1) **escrever o Cap. 6 (Evaluation)** com estes resultados reais (tabela + figura + caveats) e o detetor de anomalias (Pergunta 1); (2) opcional: download completo do FNSPID + KB SBERT multi-ano (job longo, R2) para resultados mais ricos; (3) Cap. 5 (Implementation) com a arquitetura já construída. Prosseguir autonomamente (D-009).
+- **Fase atual + último passo concluído:** **AVALIAÇÃO COMPLETA EM DADOS REAIS PARA AS DUAS PEÇAS-CHAVE.** Recuperação (Pergunta A): SBERT P@5 0,568 > lexical 0,357 > aleatório 0,245 (3.692 notícias reais Finnhub). Detetor de anomalias (Pergunta 1): `src/evaluation/anomaly_eval.py` (puro, testado) + `scripts/evaluate_anomaly.py` em preços reais (yfinance 3 anos, 15 tickers) → **amplitude da taxa de disparo z-score 0,017 vs limiar fixo 0,343** (20× mais consistente); F1 z-score 0,524 vs fixo 0,216; ablação à janela (10/20/60d → F1 0,385/0,524/0,687). Resultados em `docs/evaluation_anomaly.md` + figura `thesis/figures/eval_anomaly_firing_rate.pdf`. **40 testes verdes** (+2 gated) + lint limpo + `verify.sh` ok.
+- **PRÓXIMA AÇÃO IMEDIATA:** (1) **escrever o Cap. 6 (Evaluation)** integrando AMBOS os resultados reais (tabelas + 2 figuras + caveats) + estudo de caso ponta-a-ponta; (2) **Cap. 5 (Implementation)** com a arquitetura construída; (3) opcional: FNSPID completo (R2) para avaliação multi-ano. Prosseguir autonomamente (D-009).
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
@@ -67,12 +67,13 @@
 - **Avaliação (Pergunta A):**
   - `src/evaluation/retrieval_eval.py` — `retrieval_precision_at_k`, `expected_random_precision`, `recency_precision_at_k`, `same_ticker_forbid` (puro NumPy, testado: precision@k por setor cross-ticker + baselines).
   - `scripts/fetch_finnhub_news.py` (notícias reais → CSV) + `scripts/evaluate.py` (ablação → `docs/evaluation_results.md` + figura). Resultado real P@5: SBERT 0,568 vs lexical 0,357 vs aleatório 0,245.
+  - `src/evaluation/anomaly_eval.py` (Pergunta 1: `rolling_zscore_flags`, `fixed_threshold_flags`, `label_extreme_moves`, `precision_recall_f1`, `firing_rate`; puro, testado) + `scripts/evaluate_anomaly.py` (yfinance → `docs/evaluation_anomaly.md` + figura). Taxa de disparo: z-score amplitude 0,017 vs fixo 0,343.
 - **Scripts de dados:** `scripts/download_data.py` (FNSPID em **streaming** + filtro por ticker/janela → `data/` gitignored + amostra de títulos); `scripts/build_kb.py` (notícias CSV + preços yfinance → KB JSONL; `--sbert` para SBERT real). `data/samples/news_sample.csv` (sintético) + `data/samples/kb_sample.jsonl` (gerado) + `data/samples/README.md`.
 - **Testes (22 + 2 gated, verde):** `test_anomaly_detector.py` (4) + `test_event_study.py` (4) + `test_similarity.py` (7) + `test_knowledge_base.py` (5) + `test_smoke.py` (pipeline + Telegram `@telegram` gated) + `test_sbert_embedder.py` (SBERT real, `@sbert` gated).
 - **Smoke/gated:** Telegram (`pytest -m telegram`, envio real confirmado) e SBERT (`pytest -m sbert`, validação semântica) — ambos excluídos do verify por defeito (`-m "not telegram and not sbert"`).
 - **Stack ML instalada e fixada:** torch 2.12.1+cpu (índice CPU), sentence-transformers 5.6.0, transformers 5.12.1, huggingface-hub 1.20.1, scikit-learn 1.9.0; `requirements.txt` atualizado + `requirements.lock.txt` (72 pkgs). numpy/pandas inalterados (2.1.3/2.2.3).
 - **Pipeline KB validado:** `build_kb.py` (HashingEmbedder) → `kb_sample.jsonl` com impactos coerentes (ex.: TSLA −9,75%, MSFT +7,2%); `SbertEmbedder` validado por teste semântico. **Fonte FNSPID verificada** (HTTP 200, ~23,2 GB).
-- **Testes (34 + 2 gated, verde):** anomaly(4) + event_study(4) + similarity(7) + knowledge_base(5) + news_fetcher(3) + explainer(3) + retrieval_eval(5) + smoke(3) + gated telegram/sbert.
+- **Testes (40 + 2 gated, verde):** anomaly(4) + event_study(4) + similarity(7) + knowledge_base(5) + news_fetcher(3) + explainer(3) + retrieval_eval(5) + anomaly_eval(6) + smoke(3) + gated telegram/sbert.
 - **Em falta:** escrever Caps. 5–6 com o que está construído/avaliado; (opcional) download completo do FNSPID + KB SBERT multi-ano (job longo, R2); demo Gatilho 2 ao vivo (Finnhub→KB SBERT→Telegram); `impact_analyzer` (opcional, FinBERT).
 
 ## Referências Verificadas

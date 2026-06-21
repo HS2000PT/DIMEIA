@@ -120,3 +120,11 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] `learning.md` §14 (precision@k/lift/baselines) + `glossary.md` (P@k, taxa-base, lift, cross-ticker) + `data_card.md` (dataset Finnhub)
 - [x] **34 testes verdes** + 2 gated; lint limpo; `verify.sh` ok
 - [ ] Próximo: escrever Cap. 6 (Evaluation) com estes resultados + detetor de anomalias; Cap. 5 (Implementation); (opcional) FNSPID completo
+
+## Sessão 12 — Avaliação: detetor de anomalias (Pergunta 1) em preços reais
+- [x] `src/evaluation/anomaly_eval.py` — z-score flags (sem lookahead), baseline fixo, rótulo-proxy por percentil, P/R/F1, taxa de disparo (puro, 6 testes)
+- [x] `scripts/evaluate_anomaly.py` — corre em yfinance (3 anos, 15 tickers) → `docs/evaluation_anomaly.md` + figura reprodutível
+- [x] **Resultado real:** amplitude da taxa de disparo z-score **0,017** vs limiar fixo **0,343** (20× mais consistente); F1 z-score 0,524 vs fixo 0,216; ablação janela 10/20/60d → F1 0,385/0,524/0,687
+- [x] `learning.md` §15 (consistência da taxa de disparo, com nota de defesa)
+- [x] **40 testes verdes** + 2 gated; lint limpo; `verify.sh` ok
+- [ ] Próximo: escrever Cap. 6 (Evaluation) com ambos os resultados + estudo de caso; Cap. 5 (Implementation)
