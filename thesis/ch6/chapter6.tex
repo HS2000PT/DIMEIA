@@ -91,11 +91,12 @@ The central claim of this work is that semantic retrieval finds genuinely analog
 is measured as precision@$k$ with a sector proxy, in a \emph{cross-ticker} setting: for each query
 the $k$ most similar headlines \emph{from other companies} are retrieved, and precision is the
 fraction sharing the query's sector. Excluding the query's own company prevents the trivial solution
-of matching on the company name and tests thematic analogy instead. SBERT
-\autocite{reimers2019sbert} is compared against a lexical (hashing) baseline and against two trivial
-baselines --- random retrieval (the sector base rate) and recency. To guard against sampling
-artefacts, five hundred queries were sampled in each of five independent runs (seeds $42$--$46$);
-Table~\ref{tab:eval_retrieval} reports the mean and standard deviation.
+of matching on the company name and tests thematic analogy instead. To check that the result is not
+tied to one model, \emph{two} SBERT models \autocite{reimers2019sbert} --- the default, lightweight
+\texttt{all-MiniLM-L6-v2} and the larger \texttt{all-mpnet-base-v2} --- are compared against a lexical
+(hashing) baseline and two trivial baselines: random retrieval (the sector base rate) and recency. To
+guard against sampling artefacts, five hundred queries were sampled in each of five independent runs
+(seeds $42$--$46$); Table~\ref{tab:eval_retrieval} reports the mean and standard deviation.
 
 \begin{table}[ht]
 \caption{Cross-ticker precision@$k$ by sector, mean\,$\pm$\,std over five runs ($3{,}692$ real
@@ -106,7 +107,8 @@ headlines, five sectors).}
 \toprule
 \tabhead{Method} & \tabhead{P@5} & \tabhead{P@10} \\
 \midrule
-SBERT (semantic) & $\mathbf{0.549 \pm 0.014}$ & $\mathbf{0.516 \pm 0.013}$ \\
+SBERT --- MiniLM (default) & $0.549 \pm 0.014$ & $0.516 \pm 0.013$ \\
+SBERT --- MPNet & $\mathbf{0.569 \pm 0.009}$ & $\mathbf{0.538 \pm 0.009}$ \\
 Lexical baseline (hashing) & $0.359 \pm 0.010$ & $0.327 \pm 0.011$ \\
 Recency & $0.105 \pm 0.013$ & $0.081 \pm 0.006$ \\
 Random (base rate) & $0.241 \pm 0.004$ & $0.241 \pm 0.004$ \\
@@ -114,12 +116,14 @@ Random (base rate) & $0.241 \pm 0.004$ & $0.241 \pm 0.004$ \\
 \end{tabular}
 \end{table}
 
-As Table~\ref{tab:eval_retrieval} and Figure~\ref{fig:eval_retrieval} show, SBERT reaches a
-precision@$5$ of $0.549$ --- about $2.3$ times the random base rate ($0.241$) and well above the
-lexical baseline ($0.359$). The small standard deviations (around $0.01$) confirm that the gap is
-robust rather than a sampling artefact. Recency performs worst, confirming that simply showing the
-latest news is not a substitute for semantic matching. The lift over both the random and lexical
-baselines is the honest measure of the value added by the embeddings.
+As Table~\ref{tab:eval_retrieval} and Figure~\ref{fig:eval_retrieval} show, the default MiniLM model
+reaches a precision@$5$ of $0.549$ --- about $2.3$ times the random base rate ($0.241$) and well above
+the lexical baseline ($0.359$). The stronger MPNet model does slightly better ($0.569$), confirming
+that the advantage is a property of semantic embeddings in general and not of one particular model;
+the small standard deviations (around $0.01$) confirm the gap is robust rather than a sampling
+artefact. Recency performs worst, showing that simply surfacing the latest news is no substitute for
+semantic matching. The lift over both the random and lexical baselines is the honest measure of the
+value added by the embeddings.
 
 \begin{figure}[ht]
 \centering

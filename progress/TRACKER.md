@@ -164,3 +164,10 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] Documentado em `download_data.py` (docstring) e `docs/data_card.md`; artefactos de teste limpos
 - [x] **Decisão honesta:** avaliação fica com a KB real do Finnhub (3.692, multi-seed); FNSPID multi-ano = futuro reprodutível (script pronto). 41 testes verdes; lint limpo
 - [ ] Próximo (humano): correr `download_data.py` numa ligação adequada → KB FNSPID → impacto (Pergunta B)
+
+## Sessão 18 — Avaliação: ablação de modelo de embeddings
+- [x] `evaluate.py` generalizado para comparar N modelos SBERT (`--sbert-models`) + tabela/figura dinâmicas
+- [x] **Ablação corrida** (5 seeds): P@5 SBERT-MiniLM 0,549±0,014, SBERT-MPNet 0,569±0,009, lexical 0,359, aleatório 0,241, recência 0,105 → vantagem robusta ao modelo
+- [x] Cap. 6 atualizado (tabela com MiniLM+MPNet + nota de ablação); figura regenerada (5 métodos); `learning.md` §14 atualizado
+- [x] **41 testes verdes**; lint limpo; tese compila 53 pp., 0 citações indefinidas
+- [ ] Próximo (humano/opcional): revisão do aluno; FNSPID completo (job de noite); estudo humano de utilidade

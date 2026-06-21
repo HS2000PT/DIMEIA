@@ -5,6 +5,27 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 18 — 2026-06-21 — Avaliação: ablação de modelo de embeddings
+**Objetivo:** reforçar a avaliação da recuperação com a ablação prevista no design (§2: "modelo de
+embeddings, 1 alternativo"), mostrando que a vantagem do SBERT não depende de um modelo específico.
+
+**Feito:**
+- **`evaluate.py` generalizado** para comparar uma lista de modelos SBERT (`--sbert-models`), com
+  tabela e figura dinâmicas (N métodos). Mantém multi-seed (média ± desvio).
+- **Ablação corrida** (MiniLM vs MPNet, 5 seeds): P@5 — **SBERT-MiniLM 0,549±0,014**,
+  **SBERT-MPNet 0,569±0,009**, lexical 0,359, aleatório 0,241, recência 0,105. Ambos os modelos
+  batem largamente os baselines; o MPNet (maior) dá um ganho modesto. **Conclusão: a vantagem é uma
+  propriedade dos embeddings semânticos, não de um modelo específico.**
+- **Cap. 6 atualizado**: tabela com as duas linhas SBERT + nota da ablação; figura regenerada
+  (5 métodos). `learning.md` §14 atualizado. Tese compila 53 pp., 0 citações indefinidas.
+
+**Estado dos testes:** **41 verdes** + 2 *gated*; lint limpo.
+
+**Próxima ação:** (humano/opcional) revisão do aluno; FNSPID completo (job de noite na máquina do
+aluno) → impacto (Pergunta B); estudo humano de utilidade (RQ3).
+
+---
+
 ## Sessão 17 — 2026-06-21 — FNSPID: correção do downloader + achado de viabilidade
 **Objetivo:** o aluno aprovou o download completo do FNSPID → tentar construir a KB multi-ano e a
 análise de impacto (Pergunta B).

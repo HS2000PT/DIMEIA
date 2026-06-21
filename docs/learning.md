@@ -168,8 +168,10 @@ empresa) — isto testa analogia **temática**, não o nome.
 **recência** (os mais recentes). O *lift* = precisão do método − taxa-base mostra o valor
 **acrescentado** pelos embeddings.
 
-**Resultado real (preliminar, `docs/evaluation_results.md`):** em 3.692 notícias reais (Finnhub,
-5 setores), **P@5: SBERT 0,568 vs baseline lexical 0,357 vs aleatório 0,245 vs recência 0,096**.
+**Resultado real (`docs/evaluation_results.md`, média±desvio de 5 seeds):** em 3.692 notícias reais
+(Finnhub, 5 setores), **P@5: SBERT-MiniLM 0,549±0,014 e SBERT-MPNet 0,569±0,009 vs lexical 0,359 vs
+aleatório 0,241 vs recência 0,105**. A **ablação de modelo** (MiniLM vs MPNet) mostra que a vantagem
+não depende de um modelo específico — ambos batem largamente os baselines.
 - **Como explico ao júri em 3 frases:** "Para avaliar a recuperação, pergunto se os precedentes
   vêm do mesmo setor, em modo cross-empresa para não ser trivial. O SBERT acerta ~57% no top-5,
   contra ~25% do acaso e ~36% de um baseline de palavras — ou seja, capta analogia temática real.

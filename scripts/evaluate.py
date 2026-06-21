@@ -46,14 +46,14 @@ SECTORS = {
 REPO = Path(__file__).resolve().parent.parent
 
 
-def _embed(headlines: list[str], use_sbert: bool, dim: int = 512) -> np.ndarray:
-    if use_sbert:
-        from src.historical_kb.embedder import SbertEmbedder
-
-        return SbertEmbedder().encode(headlines)
-    from src.historical_kb.embedder import HashingEmbedder
-
-    return HashingEmbedder(dim=dim).encode(headlines)
+def _short(model: str) -> str:
+    """Nome curto do modelo para rótulos (ex.: all-MiniLM-L6-v2 → MiniLM)."""
+    m = model.lower()
+    if "minilm" in m:
+        return "MiniLM"
+    if "mpnet" in m:
+        return "MPNet"
+    return model.split("/")[-1]
 
 
 def main() -> None:
@@ -64,6 +64,8 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--repeats", type=int, default=5,
                         help="nº de amostragens (seeds) para média ± desvio")
+    parser.add_argument("--sbert-models", nargs="+", default=["all-MiniLM-L6-v2"],
+                        help="modelos SBERT a comparar (ablação)")
     parser.add_argument("--out", default="docs/evaluation_results.md")
     parser.add_argument("--fig", default="thesis/figures/eval_retrieval_precision.pdf")
     args = parser.parse_args()
@@ -81,12 +83,18 @@ def main() -> None:
     headlines = df["headline"].astype(str).tolist()
 
     n_q = min(args.queries, n)
-    print("A calcular embeddings (Hashing + SBERT)…")
-    emb_hash = _embed(headlines, use_sbert=False)
-    emb_sbert = _embed(headlines, use_sbert=True)
+    print("A calcular embeddings…")
+    from src.historical_kb.embedder import HashingEmbedder, SbertEmbedder
+
+    # Métodos baseados em embeddings: um ou mais modelos SBERT (ablação) + baseline lexical.
+    emb_methods: dict[str, np.ndarray] = {}
+    for model in args.sbert_models:
+        print(f"  SBERT: {model}")
+        emb_methods[f"SBERT ({_short(model)})"] = SbertEmbedder(model).encode(headlines)
+    emb_methods["Lexical (baseline)"] = HashingEmbedder(dim=512).encode(headlines)
 
     ks = sorted(set(args.k))
-    methods = ["SBERT", "Lexical (baseline)", "Recency", "Random (base rate)"]
+    methods = list(emb_methods.keys()) + ["Recency", "Random (base rate)"]
     # Para cada método/k, acumula o valor de cada seed → média ± desvio.
     samples: dict[str, dict[int, list[float]]] = {m: {k: [] for k in ks} for m in methods}
     for rep in range(args.repeats):
@@ -94,10 +102,9 @@ def main() -> None:
         q_idx = rng.choice(n, size=n_q, replace=False)
         forbid = same_ticker_forbid(tickers[q_idx], tickers)  # cross-ticker (exclui a empresa)
         for k in ks:
-            samples["SBERT"][k].append(retrieval_precision_at_k(
-                emb_sbert[q_idx], emb_sbert, sectors[q_idx], sectors, k=k, forbid=forbid))
-            samples["Lexical (baseline)"][k].append(retrieval_precision_at_k(
-                emb_hash[q_idx], emb_hash, sectors[q_idx], sectors, k=k, forbid=forbid))
+            for label, emb in emb_methods.items():
+                samples[label][k].append(retrieval_precision_at_k(
+                    emb[q_idx], emb, sectors[q_idx], sectors, k=k, forbid=forbid))
             samples["Recency"][k].append(recency_precision_at_k(
                 sectors[q_idx], sectors, dates, k=k, forbid=forbid))
             samples["Random (base rate)"][k].append(expected_random_precision(
@@ -109,11 +116,11 @@ def main() -> None:
         print(f"  k={k}: " + " | ".join(
             f"{m}={results[m][k]:.3f}±{stds[m][k]:.3f}" for m in methods))
 
-    _write_markdown(args.out, df, n_q, ks, results, stds, args.seed, args.repeats)
-    _write_figure(args.fig, ks, results)
+    _write_markdown(args.out, df, n_q, ks, results, stds, methods, args.seed, args.repeats)
+    _write_figure(args.fig, ks, results, methods)
 
 
-def _write_markdown(path, df, n_q, ks, results, stds, seed, repeats) -> None:
+def _write_markdown(path, df, n_q, ks, results, stds, methods, seed, repeats) -> None:
     n = len(df)
     by_sec = df["sector"].value_counts().to_dict()
     now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
@@ -135,16 +142,17 @@ def _write_markdown(path, df, n_q, ks, results, stds, seed, repeats) -> None:
         "| Método | " + " | ".join(f"P@{k}" for k in ks) + " |",
         "|---|" + "|".join("---" for _ in ks) + "|",
     ]
-    for method in ("SBERT", "Lexical (baseline)", "Recency", "Random (base rate)"):
+    for method in methods:
         lines.append(
             f"| {method} | "
             + " | ".join(f"{results[method][k]:.3f} ± {stds[method][k]:.3f}" for k in ks) + " |"
         )
     k0 = ks[0]
-    lift = results["SBERT"][k0] - results["Random (base rate)"][k0]
+    primary = methods[0]  # 1.º modelo SBERT (resultado principal)
+    lift = results[primary][k0] - results["Random (base rate)"][k0]
     lines += [
         "",
-        f"**Leitura:** a P@{k0} do SBERT é {results['SBERT'][k0]:.3f} vs "
+        f"**Leitura:** a P@{k0} do {primary} é {results[primary][k0]:.3f} vs "
         f"{results['Random (base rate)'][k0]:.3f} da taxa-base aleatória "
         f"(lift {lift:+.3f}); baseline lexical {results['Lexical (baseline)'][k0]:.3f}.",
         "",
@@ -157,18 +165,18 @@ def _write_markdown(path, df, n_q, ks, results, stds, seed, repeats) -> None:
     print(f"Resultados escritos em {path}")
 
 
-def _write_figure(path, ks, results) -> None:
+def _write_figure(path, ks, results, methods) -> None:
     import matplotlib
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    methods = ["SBERT", "Lexical (baseline)", "Recency", "Random (base rate)"]
     x = np.arange(len(ks))
-    width = 0.2
-    fig, ax = plt.subplots(figsize=(7, 4))
+    width = 0.8 / len(methods)
+    fig, ax = plt.subplots(figsize=(8, 4))
     for i, m in enumerate(methods):
-        ax.bar(x + (i - 1.5) * width, [results[m][k] for k in ks], width, label=m)
+        offset = (i - (len(methods) - 1) / 2) * width
+        ax.bar(x + offset, [results[m][k] for k in ks], width, label=m)
     ax.set_xticks(x, [f"P@{k}" for k in ks])
     ax.set_ylabel("Precision (mesmo setor, cross-ticker)")
     ax.set_title("Recuperação de precedentes: SBERT vs baselines")
