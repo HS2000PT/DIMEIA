@@ -97,4 +97,6 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] **Fonte FNSPID verificada** (HTTP 200, ~23,2 GB; colunas `Date/Article_title/Stock_symbol`) → `data_card.md`
 - [x] `learning.md` (§11–12) + `glossary.md` (KB, embedder, baseline, ablação, streaming, top-k) atualizados
 - [x] **22 testes verdes**, lint limpo (src+tests+scripts), `verify.sh` ok
-- [ ] Próximo: instalar stack ML + validar `SbertEmbedder`; download real FNSPID + KB completa; `news_fetcher` (Gatilho 2); explicação com precedentes
+- [x] **Stack ML instalada** (torch 2.12.1+cpu via índice CPU, sentence-transformers 5.6.0, transformers 5.12.1, scikit-learn 1.9.0); `requirements.txt` + `requirements.lock.txt` (72 pkgs); numpy/pandas inalterados
+- [x] **`SbertEmbedder` validado** (`pytest -m sbert`): recuperação semântica — consulta sem palavras em comum recupera a notícia certa (vantagem sobre baseline lexical); `FutureWarning` de dimensão corrigido (suporta ST 4.x e 5.x)
+- [ ] Próximo: download real FNSPID + KB completa (`build_kb.py --sbert`); `news_fetcher` (Gatilho 2); explicação com precedentes

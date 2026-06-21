@@ -9,8 +9,9 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
-addopts = ["-q", "-m", "not telegram"]
+addopts = ["-q", "-m", "not telegram and not sbert"]
 testpaths = ["tests"]
 markers = [
   "telegram: envia mensagem real via Telegram (requer .env; correr com 'pytest -m telegram')",
+  "sbert: usa o SBERT real (descarrega modelo; pesado — correr com 'pytest -m sbert')",
 ]

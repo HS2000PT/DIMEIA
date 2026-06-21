@@ -111,6 +111,11 @@ impacto que tiveram. São esses os **precedentes** que a explicação XAI mostra
   sobreposição de palavras. Programei ambos contra a mesma interface, por isso a troca é
   transparente e a avaliação é justa. Assim mostro, com números, que o ganho do SBERT vem da
   semântica e não da implementação."
+- **Validação empírica (S9):** com o SBERT real (`all-MiniLM-L6-v2`, 384 dim.), uma consulta
+  *sem nenhuma palavra em comum* com a notícia ("Graphics processor maker lifts outlook on AI
+  accelerator sales") recupera na mesma a notícia da NVIDIA sobre chips de IA como precedente nº 1.
+  O baseline lexical não conseguiria (não há sobreposição de palavras) — é a prova concreta de que
+  o SBERT capta **significado**, não apenas vocabulário. (Teste `tests/test_sbert_embedder.py`.)
 
 **Alinhamento evento↔preço (anti-lookahead na prática):** o "dia do evento" é o **primeiro dia
 de negociação >= data da notícia** (`searchsorted`). O impacto mede-se a partir do **fecho desse

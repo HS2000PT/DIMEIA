@@ -19,9 +19,15 @@ matplotlib==3.11.0
 # ── Camada live (mercado) ────────────────────────────────────
 yfinance==1.4.1
 
-# ── A adicionar nas fases respetivas (NÃO instalar ainda) ────
-# huggingface-hub==...     # acesso a datasets/modelos
-# datasets==...            # carregamento do FNSPID
-# sentence-transformers==... # embeddings para o motor de correlação
-# transformers==...        # FinBERT (inferência)
-# torch==...               # backend dos modelos
+# ── Motor de correlação: embeddings (SBERT) ─────────────────
+# torch (CPU) instala-se a partir do índice dedicado da PyTorch:
+#   pip install torch==2.12.1+cpu --index-url https://download.pytorch.org/whl/cpu
+torch==2.12.1+cpu
+sentence-transformers==5.6.0
+transformers==5.12.1
+huggingface-hub==1.20.1
+scikit-learn==1.9.0
+
+# ── A adicionar quando usado (NÃO instalar ainda) ────────────
+# datasets==...            # (opcional) carregamento alternativo do FNSPID via API datasets
+# (FinBERT, se usado, vem de transformers já listado — só inferência)

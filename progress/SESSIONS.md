@@ -41,6 +41,15 @@ instalar** — o `SbertEmbedder` está pronto mas por validar (próximo passo).
 (job longo, R2) e construir a KB completa; depois `news_fetcher` (Gatilho 2) e a explicação com precedentes.
 Prosseguir autonomamente (D-009).
 
+**(cont.) Stack ML + validação do SBERT:** instalada a stack pesada — torch 2.12.1+cpu (índice CPU dedicado),
+sentence-transformers 5.6.0, transformers 5.12.1, huggingface-hub 1.20.1, scikit-learn 1.9.0; `requirements.txt`
+atualizado e `requirements.lock.txt` regenerado (72 pacotes; numpy/pandas inalterados). **`SbertEmbedder`
+validado** com teste *gated* `-m sbert`: uma consulta semanticamente próxima mas **sem palavras em comum**
+("Graphics processor maker lifts outlook on AI accelerator sales") recupera corretamente a notícia da NVIDIA
+sobre chips de IA como top-1 (similaridade > 0,3) — a vantagem do SBERT sobre o baseline lexical, demonstrada.
+Corrigido um `FutureWarning` (método de dimensão renomeado no ST 5.x; agora suporta 4.x e 5.x). Testes:
+22 verdes por defeito + 2 *gated* (telegram, sbert).
+
 ---
 
 ## Sessão 8 — 2026-06-21 — Implementação: Thin slice (M1) + pedidos do aluno
