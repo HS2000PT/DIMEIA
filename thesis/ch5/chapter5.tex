@@ -1,167 +1,206 @@
-% Capítulo 5 — Implementation
-% Decisões de engenharia, integração e reprodutibilidade (a contribuição é de engenharia de IA).
+% Chapter 5 - Case Studies
+% Evaluation framed as named case studies on real data. Honest results, reproducible figures.
+% No code/script identifiers in the body. EN-GB.
+% NOTE: Phase 5 adds the Telegram alert mockup figure and extra result figures.
 
-\chapter{Implementation}
-\label{chap:implementation}
+\chapter{Case Studies}
+\label{chap:casestudies}
 
-This chapter describes how the system was built. Whereas Chapter~\ref{chap:methodology} justified
-\emph{what} methods were chosen and \emph{why}, this chapter documents the \emph{engineering}: the
-environment and tooling, the repository structure and the design principles that keep it testable,
-the data pipelines, the individual components, and the orchestration of the two end-to-end flows.
-Consistent with the framing of the work as AI \emph{engineering}, the contribution lies in
-integrating and applying existing models and tools into a coherent, explainable and reproducible
-system, not in inventing new algorithms.
+This chapter evaluates CLARION through three case studies on real data, following the methodology fixed
+in advance in Chapter~\ref{chap:methods}. The first studies the anomaly trigger across US equities of
+very different volatility; the second studies the news--market correlation engine and its retrieval of
+analogous precedents; the third walks through an end-to-end alert and examines the faithfulness of the
+explanation. Following the principle that modest but honest results are preferable to inflated ones,
+every number reported here is produced by a versioned script with a fixed random seed, and the
+limitations of each study are stated explicitly.
 
-\section{Environment and Tooling}
-\label{sec:impl_env}
+\section{Common Experimental Setup}
+\label{sec:cs_setup}
 
-The system is implemented in Python~3.12, chosen for the maturity of its wheels for the machine
-learning stack. Dependencies are pinned in \texttt{requirements.txt} and frozen in a lock file
-(\texttt{requirements.lock.txt}, $72$ packages) so the environment is reproducible across machines.
-The numerical and data stack is \texttt{numpy} and \texttt{pandas}; the embedding stack is
-\texttt{sentence-transformers}~5.6 on \texttt{torch}~2.12 (the CPU build, installed from PyTorch's
-dedicated index to avoid the much larger CUDA download); figures are produced with \texttt{matplotlib}.
+Two real datasets are used. For the anomaly trigger, daily closing prices for the fifteen
+large-capitalisation tickers listed in the data card were retrieved from a free market-data service
+over a three-year window, yielding $752$ daily log-returns per ticker. For the correlation engine,
+$3{,}692$ real financial-news headlines for the same tickers were collected through a free company-news
+service --- the most recent month available on the free tier --- spanning five sectors (technology,
+banking, energy, health and consumer staples). News headlines and prices are normalised to a common
+schema so that the live and historical layers are directly comparable. This recent, single-month window
+is sufficient for the retrieval experiment but is the reason a multi-year corpus (FNSPID) is left as
+future work for a full impact analysis. The no-lookahead, reproducibility and honesty guarantees of
+Section~\ref{sec:met_evaluation} apply to every study below.
 
-Quality is enforced by two always-on gates collected in a single \texttt{verify.sh} script: the
-\texttt{pytest} suite and the \texttt{ruff} linter (line length $100$, with import-order and
-modernisation rules). Tests that require network access or heavy models are marked and excluded by
-default --- \texttt{telegram} (sends a real message) and \texttt{sbert} (downloads a model) --- so
-the default run is fast, deterministic and offline, while the marked tests can be invoked explicitly.
-Secrets live only in a git-ignored \texttt{.env} file loaded through \texttt{src/config.py}; the
-session-closing script scans the staged changes for secret-like patterns before every commit. The
-thesis itself is compiled in continuous integration on every change to \texttt{thesis/}, and the PDF
-is also produced locally by \texttt{scripts/build\_pdf.sh}.
+\section{Case Study 1: Transparent Anomaly Detection on US Equities}
+\label{sec:cs_anomaly}
 
-\section{Repository Structure and Design Principles}
-\label{sec:impl_structure}
+The question is whether the rolling \emph{z}-score \autocite{chandola2009anomaly} is a better universal
+detector of abrupt moves than a na\"ive fixed-percentage threshold. The proxy label for a ``true''
+anomaly is a daily move in the upper percentile of \emph{that ticker}'s own return distribution
+($|r|\ge$ the $99$th percentile); the baseline is a single global threshold ($|r|\ge 3\%$) applied to
+every ticker.
 
-The code is organised as a package per component under \texttt{src/}, mirroring the architecture of
-Figure~\ref{fig:architecture}; Table~\ref{tab:impl_modules} maps each component to its module and key
-elements. Three engineering principles recur throughout and are worth highlighting because they are
-what make the system both testable and defensible.
+\paragraph{Firing-rate consistency (main argument).}
+The strongest evidence is independent of any label. A good universal detector should fire at a
+comparable rate across instruments; a volatility-blind threshold cannot. Table~\ref{tab:cs_firing} and
+Figure~\ref{fig:cs_anomaly} show that the fixed threshold fires on roughly $1\%$ of days for a calm
+stock (KO) but on about $35\%$ of days for a volatile one (TSLA, NVDA), whereas the \emph{z}-score fires
+at a near-constant rate ($\approx 2\%$) for all tickers. The range of firing rates across tickers is
+twenty times tighter for the \emph{z}-score, confirming that normalising by recent volatility makes
+detection comparable across the market.
 
 \begin{table}[ht]
-\caption{Mapping of components to modules.}
-\label{tab:impl_modules}
+\caption{Firing rate across the fifteen tickers (three years of daily data).}
+\label{tab:cs_firing}
 \centering
-\begin{tabular}{p{0.26\textwidth} p{0.30\textwidth} p{0.36\textwidth}}
+\begin{tabular}{p{0.34\textwidth} c c c}
 \toprule
-\tabhead{Component} & \tabhead{Module} & \tabhead{Key elements} \\
+\tabhead{Method} & \tabhead{Min rate} & \tabhead{Max rate} & \tabhead{Range} \\
 \midrule
-Configuration & \texttt{config.py} & loads \texttt{.env}; secrets never in code \\
-Market data (live) & \texttt{market\_data/prices.py} & \texttt{get\_price\_history}, \texttt{log\_returns} \\
-News fetcher (live) & \texttt{news\_fetcher/fetcher.py} & \texttt{NewsItem}; \texttt{parse\_finnhub\_news}, \texttt{parse\_rss} \\
-Anomaly detector & \texttt{anomaly\_detector/detector.py} & \texttt{detect\_latest}, \texttt{AnomalyResult} \\
-Correlation engine & \texttt{correlation\_engine/} & \texttt{event\_study.py}, \texttt{similarity.py} \\
-Historical KB & \texttt{historical\_kb/} & \texttt{NewsRecord}, \texttt{Embedder}, \texttt{HistoricalKB} \\
-Explanation engine & \texttt{explanation\_engine/explainer.py} & \texttt{explain\_anomaly}, \texttt{explain\_news\_impact} \\
-Delivery & \texttt{telegram\_bot/sender.py} & \texttt{send\_message} \\
-Orchestration & \texttt{main.py} & \texttt{run\_thin\_slice}, \texttt{run\_news\_trigger} \\
+\emph{z}-score (window $20$, $\pm 3$) & $0.015$ & $0.032$ & $\mathbf{0.017}$ \\
+Fixed threshold ($|r|\ge 3\%$) & $0.011$ & $0.354$ & $\mathbf{0.343}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-First, \textbf{a thin end-to-end slice was built before breadth}: the market-movement trigger was
-implemented and proven end to end (price retrieval through to a real Telegram alert) before the
-heavier correlation engine was added, reducing integration risk. Second, \textbf{pure logic is
-separated from input/output}, and heavy dependencies are imported lazily. Network and model imports
-(\texttt{yfinance}, \texttt{requests}, \texttt{sentence-transformers}) happen inside the functions
-that need them, and parsing is split from fetching (for example \texttt{parse\_finnhub\_news} is a
-pure function tested offline, while \texttt{fetch\_finnhub\_company\_news} is a thin HTTP wrapper).
-As a result the numerical core is unit-tested without a network connection or the machine learning
-stack. Third, \textbf{components are programmed against interfaces}: the embedding step is defined by
-an \texttt{Embedder} protocol with two interchangeable implementations --- a dependency-free
-\texttt{HashingEmbedder} (a lexical baseline, also used as the offline test double) and the
-\texttt{SbertEmbedder} (the real Sentence-BERT model). Swapping one for the other changes nothing
-else, which is exactly what makes the ablation in Chapter~\ref{chap:evaluation} a fair comparison.
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/eval_anomaly_firing_rate.pdf}
+\caption[Firing rate per ticker: fixed threshold versus \emph{z}-score]{Firing rate per ticker. The
+fixed percentage threshold varies dramatically with each stock's volatility, while the \emph{z}-score
+is stable across all tickers.}
+\label{fig:cs_anomaly}
+\end{figure}
 
-\section{Historical Knowledge Base and Data Pipeline}
-\label{sec:impl_pipeline}
+\paragraph{Agreement with the proxy label (supporting).}
+Against the per-ticker extreme-move label, the \emph{z}-score attains an $F_1$ of $0.524$ (precision
+$0.388$, recall $0.808$) versus $0.216$ for the fixed threshold (precision $0.121$, recall $1.000$): the
+fixed rule trivially catches every large raw move but at very low precision. A window ablation shows
+$F_1$ rising with the estimation window ($0.385$, $0.524$ and $0.687$ for $10$, $20$ and $60$ days),
+indicating that a longer volatility estimate yields a steadier baseline. This label is itself
+volatility-relative, so some circularity is unavoidable; that is precisely why the firing-rate
+consistency above --- which depends on no label --- is treated as the primary evidence.
 
-The historical layer is a knowledge base of past news, each entry storing its date, ticker,
-headline, sentence embedding and measured post-event impact, persisted as JSON Lines (one record per
-line, human-readable and diff-friendly). The builder, \texttt{HistoricalKB.build}, aligns each news
-item to the market by taking the first trading day \emph{on or after} the news date (via a sorted
-search over the price index) and measures impact only from that day's close onward; this is the
-no-lookahead rule made concrete in code, and it also avoids crediting the system with a jump already
-embedded in the opening price.
+\section{Case Study 2: News--Market Precedent Retrieval}
+\label{sec:cs_retrieval}
 
-The intended primary source is FNSPID \autocite{dong2024fnspid}. Its news file was verified to be
-roughly $23$\,GB, so \texttt{scripts/download\_data.py} reads it in a streaming fashion, filtering by
-ticker and date window chunk by chunk and writing only the selected subset to disk; large data is
-git-ignored and recreated by the script, while only small samples are versioned. Because downloading
-and scanning the full corpus is a long, one-off job, the evaluation in Chapter~\ref{chap:evaluation}
-uses an initial knowledge base built from real Finnhub news through the same builder
-(\texttt{scripts/build\_kb.py}); the full FNSPID build is identified as future work. Either way the
-build is identical, differing only in the news source.
+The central claim of this work is that semantic retrieval finds genuinely analogous precedents. This is
+measured as precision@$k$ with a sector proxy, in a \emph{cross-ticker} setting: for each query the $k$
+most similar headlines \emph{from other companies} are retrieved, and precision is the fraction sharing
+the query's sector. Excluding the query's own company prevents the trivial solution of matching on the
+company name and tests thematic analogy instead. To check that the result is not tied to one model,
+\emph{two} Sentence-BERT models \autocite{reimers2019sbert} --- the lightweight default, MiniLM, and the
+larger MPNet --- are compared against a lexical (hashing) baseline and two trivial baselines: random
+retrieval (the sector base rate) and recency. To guard against sampling artefacts, five hundred queries
+were sampled in each of five independent runs (seeds $42$--$46$); Table~\ref{tab:cs_retrieval} reports
+the mean and standard deviation.
 
-\section{Live Layer: Market Data and News}
-\label{sec:impl_live}
+\begin{table}[ht]
+\caption{Cross-ticker precision@$k$ by sector, mean\,$\pm$\,std over five runs ($3{,}692$ real
+headlines, five sectors).}
+\label{tab:cs_retrieval}
+\centering
+\begin{tabular}{p{0.40\textwidth} c c}
+\toprule
+\tabhead{Method} & \tabhead{P@5} & \tabhead{P@10} \\
+\midrule
+SBERT --- MiniLM (default) & $0.549 \pm 0.014$ & $0.516 \pm 0.013$ \\
+SBERT --- MPNet & $\mathbf{0.569 \pm 0.009}$ & $\mathbf{0.538 \pm 0.009}$ \\
+Lexical baseline (hashing) & $0.359 \pm 0.010$ & $0.327 \pm 0.011$ \\
+Recency & $0.105 \pm 0.013$ & $0.081 \pm 0.006$ \\
+Random (base rate) & $0.241 \pm 0.004$ & $0.241 \pm 0.004$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-The live layer reuses the same schema as the historical layer so the two are directly comparable.
-Market data is obtained from \texttt{yfinance}, from which daily log-returns are computed; the import
-is lazy so that unit tests do not touch the network. News is obtained from the Finnhub
-\emph{company-news} endpoint and from RSS feeds: \texttt{parse\_finnhub\_news} converts the JSON
-response into \texttt{NewsItem} objects (normalising the epoch timestamp to an ISO date), and
-\texttt{parse\_rss} extracts items from a feed using only the standard library. Both were validated
-against the live Finnhub service. Throughout, the API key is read from the environment and never
-written to disk or logs.
+As Table~\ref{tab:cs_retrieval} and Figure~\ref{fig:cs_retrieval} show, the default MiniLM model reaches
+a precision@$5$ of $0.549$ --- about $2.3$ times the random base rate ($0.241$) and well above the
+lexical baseline ($0.359$). The stronger MPNet model does slightly better ($0.569$), confirming that the
+advantage is a property of semantic embeddings in general and not of one particular model; the small
+standard deviations (around $0.01$) confirm the gap is robust rather than a sampling artefact. Recency
+performs worst, showing that simply surfacing the latest news is no substitute for semantic matching.
+The lift over both the random and lexical baselines is the honest measure of the value added by the
+embeddings.
 
-\section{Anomaly Detector}
-\label{sec:impl_anomaly}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/eval_retrieval_precision.pdf}
+\caption[Precedent retrieval: SBERT versus baselines]{Cross-ticker precision@$k$ by sector. SBERT
+clearly exceeds the lexical, recency and random baselines.}
+\label{fig:cs_retrieval}
+\end{figure}
 
-The detector implements Equation~\ref{eq:zscore} directly. \texttt{detect\_latest} computes the mean
-and (sample) standard deviation over the window of days \emph{strictly preceding} the evaluated day,
-forms the $z$-score of the latest return, and returns an \texttt{AnomalyResult} dataclass carrying
-the decision together with every quantity that produced it (the $z$-score, window, threshold, mean
-and standard deviation). Exposing these values is what allows the explanation engine to be faithful
-by construction. The evaluation harness applies the same rule across an entire series
-(\texttt{rolling\_zscore\_flags}) so that the firing-rate and ablation experiments of
-Chapter~\ref{chap:evaluation} use exactly the production logic.
+\paragraph{Impact measurement.}
+For each retrieved precedent the engine reports the observed post-event return at $+1$, $+3$ and $+5$
+trading days, measured from the event-day close in the style of an event study \autocite{brown1985daily}.
+These figures are observed outcomes presented as evidence, never a prediction. On the worked knowledge
+base the measured impacts are coherent with reality --- for example, a price-cut headline for one carmaker
+is followed by a sizable negative three-day return, and a cloud-growth earnings headline by a clear
+positive one --- which provides face validity for the measurement; a rigorous multi-year impact study on
+the full FNSPID corpus is identified as future work.
 
-\section{Correlation Engine}
-\label{sec:impl_correlation}
+\section{Case Study 3: End-to-End Alert and Explanation Faithfulness}
+\label{sec:cs_endtoend}
 
-The correlation engine has two pure, vectorised parts. Similarity is computed with cosine over
-(L2-normalised) embeddings: \texttt{top\_k\_similar} returns the indices and scores of the nearest
-historical items in a single matrix operation. Impact is computed by \texttt{post\_event\_returns},
-which returns the cumulative return at each horizon ($+1$, $+3$, $+5$ days) measured from the event
-close, with horizons that fall outside the available series reported as \texttt{n/a} rather than
-silently dropped. Given a new item, \texttt{HistoricalKB.find\_precedents} embeds it with the chosen
-embedder, ranks the knowledge base by cosine similarity and returns the top precedents with their
-scores --- the evidence later shown to the user.
+To illustrate the news trigger end to end, consider a new headline for NVIDIA, \emph{``Nvidia raises
+guidance on surging demand for AI data-centre accelerators''}. The system embeds it, retrieves the most
+similar precedents from the knowledge base built from the real news corpus, and renders the alert below
+(top five precedents, one-day horizon):
 
-\section{Explanation Engine}
-\label{sec:impl_explanation}
+\begin{quote}\ttfamily\small\raggedright
+News alert for NVDA\\
+"Nvidia raises guidance on surging demand for AI data-centre accelerators"\\[2pt]
+Potential impact (from 5 similar past events): average 1-day move: $-1.78\%$\\
+Historical precedents:\\
+- 2026-06-16 META (sim 0.64) +1d $-5.44\%$: "Nvidia Latest Big Borrower: AI Data Centers..."\\
+- 2026-06-01 BAC (sim 0.63) +1d $+1.88\%$: "Nvidia expands AI platform with new CPU and PC..."\\
+- 2026-06-18 AMZN (sim 0.61) +1d n/a: "Amazon hopes to challenge Nvidia by selling AI chips"\\
+- 2026-06-18 AMZN (sim 0.61) +1d n/a: "Amazon's New Weapon: Selling Custom AI Chips..."\\
+- 2026-06-18 AMZN (sim 0.60) +1d n/a: "Amazon explores selling AI chips to challenge Nvidia"\\[2pt]
+Note: precedents are retrieved by semantic similarity; the impact is the observed past outcome,
+not a price prediction.
+\end{quote}
 
-The explanation engine renders alerts directly from the objects produced upstream, which guarantees
-that the text never diverges from the computation. For the market trigger, \texttt{explain\_anomaly}
-states the move, the $z$-score, the threshold and window, and the recent mean and standard deviation.
-For the news trigger, \texttt{explain\_news\_impact} lists the retrieved precedents (date, ticker,
-similarity score, measured impact and headline) and the average impact across them, and it always
-ends with an explicit disclaimer that the figures are observed past outcomes, not a prediction ---
-keeping the system within its no-forecasting scope. Financial sentiment (FinBERT
-\autocite{araci2019finbert}) remains an optional enrichment and is not required by the current flow.
+Every retrieved precedent is thematically about NVIDIA and AI accelerators, even though the articles
+were filed under different company feeds (Meta, Bank of America, Amazon). This is direct evidence that
+retrieval is driven by \emph{meaning} rather than the company name or exact keywords --- the very
+behaviour the correlation engine is designed for. Where a precedent is too recent for its forward window
+to fall within the available prices, the impact is shown as not available; this is an honest artefact of
+the one-month free-tier window and further motivates the multi-year corpus. The alert ends with an
+explicit disclaimer, keeping the system within its no-forecasting scope.
 
-\section{Orchestration and Delivery}
-\label{sec:impl_bot}
+\paragraph{Explanation faithfulness.}
+Faithfulness is guaranteed by construction: the alert text is rendered directly from the same objects
+the system computes --- the $z$-score, window and threshold for the anomaly path, and the exact retrieved
+precedents with their similarity scores and measured impacts for the news path --- so the explanation
+cannot diverge from the underlying computation. This is checked programmatically by an automated test
+that asserts the rendered alert reproduces exactly each retrieved precedent's date, ticker and
+similarity score and introduces none that were not retrieved; it is the kind of transparent, design-time
+explainability advocated in the XAI literature \autocite{arrieta2020xai}. Usefulness to a retail
+investor is inherently subjective; a small rubric-based human assessment (clarity, completeness,
+actionability) is planned but has not yet been conducted, and is therefore reported as a limitation
+rather than a result.
 
-Two entry points in \texttt{main.py} wire the components into the end-to-end flows of
-Figure~\ref{fig:architecture}. \texttt{run\_thin\_slice} drives the market trigger --- retrieve
-prices, compute returns, detect, explain and (optionally) send --- and \texttt{run\_news\_trigger}
-drives the news trigger --- embed the item, retrieve precedents from the knowledge base, explain and
-(optionally) send. Delivery is handled by \texttt{telegram\_bot.send\_message}, a thin wrapper over
-the Telegram Bot API; a real alert was successfully delivered during testing. Periodic scheduling and
-deployment are deliberately left outside the present scope, as the entry points already encapsulate a
-complete run.
+\section{Discussion and Threats to Validity}
+\label{sec:cs_discussion}
 
-\section{Testing and Reproducibility}
-\label{sec:impl_testing}
+The three case studies support the core design: volatility-normalised detection is consistent across the
+market where a fixed threshold is not, semantic retrieval surfaces markedly more sector-analogous
+precedents than lexical or trivial baselines, and the end-to-end alert is faithful to its own
+computation. All results rest on real data and are reproducible from versioned scripts.
 
-The system is covered by $40$ automated tests (plus the two gated tests above), spanning the anomaly
-detector, the event study, similarity, the knowledge base, the news parser, the explanation engine
-and both evaluation modules, together with an offline end-to-end smoke test of the news trigger. The
-emphasis on pure functions means the great majority of the logic is verified deterministically and
-offline. All experimental results in Chapter~\ref{chap:evaluation} are regenerated by scripts with a
-fixed seed, and the result figures are written directly into the thesis figure directory, closing the
-loop between code and document.
+Several threats to validity are stated honestly. The sector label is an automatic \emph{proxy} for
+relevance, not a human judgement; the news corpus is the recent window available from a free service
+rather than the multi-year FNSPID history, and headlines are short, which bounds the semantics that can
+be captured; the anomaly proxy label is volatility-relative, so the firing-rate argument (label-free) is
+given primacy; and, although the retrieval result is averaged over five runs, no human usefulness study
+has yet been conducted. Crucially, and by design, the system performs no price prediction: it does not
+forecast returns or evaluate trading profit (out of scope). Addressing these points --- the full FNSPID
+corpus, a human relevance and usefulness study, and a multi-year impact analysis --- defines the main
+avenues for further work.
+
+\section{Chapter Conclusions}
+\label{sec:cs_summary}
+
+Across three case studies on real data, CLARION's anomaly trigger fired far more consistently than a
+fixed threshold, its correlation engine retrieved sector-analogous precedents well above every baseline
+and independently of the embedding model, and its explanations were faithful to the underlying
+computation by construction. The next chapter draws these findings together against the research
+questions.

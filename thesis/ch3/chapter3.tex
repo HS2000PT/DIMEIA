@@ -1,141 +1,128 @@
-% Capítulo 3 — Literature Review
-% RASCUNHO (Sessão 6). EN-GB. Seminal + recente (§6.2); tabelas comparativas; cada obra: o quê/como/limitações.
-% Todas as citações verificadas (docs/citation_log.md). Rever/editar (o texto é teu) — §6.6.
+% Chapter 3 - Methods and Materials
+% Methodology, datasets, models/techniques (conceptual), tools, responsible AI, evaluation design.
+% No code identifiers in the body (engineering described at design level). EN-GB.
+% NOTE: Phase 3 expands datasets/data card, responsible-AI and evaluation methodology.
 
-\chapter{Literature Review}
-\label{chap:literature}
+\chapter{Methods and Materials}
+\label{chap:methods}
 
-This chapter reviews the literature underpinning the system. It covers anomaly detection in financial markets,
-explainable artificial intelligence, financial natural language processing, and event-study approaches to
-news--market impact. Each area combines seminal and recent work, and comparative tables summarise the
-approaches, their mechanisms and their limitations. The chapter closes by positioning the present work and
-identifying the gap it addresses.
+This chapter describes the methods, materials and methodology used in the dissertation. It states the
+overall approach, the datasets and data sources, the models and techniques selected for each component
+(with their justification), the supporting tools, the responsible-AI considerations, and the evaluation
+methodology defined in advance. Throughout, the guiding principle is \emph{defensible simplicity}:
+where options perform comparably, the more transparent and explainable one is preferred. The system
+that realises these methods is presented in Chapter~\ref{chap:clarion}, and the experiments that apply
+this methodology are reported in Chapter~\ref{chap:casestudies}.
 
-\section{Anomaly Detection in Financial Markets}
-\label{sec:lit_anomaly}
+\section{Approach and Methodology}
+\label{sec:met_approach}
 
-Anomaly detection is a mature field with techniques spanning many domains. The survey of
-\textcite{chandola2009anomaly} provides the standard taxonomy --- point, contextual and collective anomalies ---
-and groups methods into statistical, distance-based, and machine-learning families. For financial returns,
-simple statistical methods (deviations from a rolling mean and standard deviation, i.e. a \emph{z}-score) are
-attractive because they are transparent and easy to justify, which is an advantage for an explainable system.
-More expressive machine-learning detectors exist, such as Isolation Forest \autocite{liu2008isolation}, which
-isolates anomalies through random partitioning and scales well to large, high-dimensional data; the trade-off is
-reduced direct interpretability. Table~\ref{tab:lit_anomaly} compares the two families.
+The work follows an engineering methodology centred on incremental, end-to-end delivery. A thin slice
+of the system was built and proven end to end before breadth was added, so that integration risk was
+controlled early; each component was then developed in its simplest defensible form and only made more
+sophisticated where the added complexity was justified. This reflects the framing of the work as
+Artificial Intelligence \emph{engineering}: the contribution lies in the integration, application and
+critical evaluation of existing components, not in the invention of new algorithms.
 
-\begin{table}[ht]
-\caption{Anomaly-detection approaches relevant to this work.}
-\label{tab:lit_anomaly}
-\centering
-\begin{tabular}{p{0.24\textwidth} p{0.30\textwidth} p{0.38\textwidth}}
-\toprule
-\tabhead{Approach} & \tabhead{How it works} & \tabhead{Strengths / limitations} \\
-\midrule
-Statistical \emph{z}-score (rolling) \autocite{chandola2009anomaly} & Flags returns that deviate from a rolling mean/standard deviation & Transparent and easy to explain (XAI); assumes locally stable distribution \\
-Isolation Forest \autocite{liu2008isolation} & Isolates points via random partitioning (ensemble) & Scalable, handles high dimensionality; less directly interpretable \\
-\bottomrule
-\end{tabular}
-\end{table}
+\section{Datasets and Data Sources}
+\label{sec:met_data}
 
-\section{Explainable Artificial Intelligence (XAI)}
-\label{sec:lit_xai}
+The system uses two clearly separated data layers. The \textbf{historical} layer is built offline from
+FNSPID \autocite{dong2024fnspid}, which provides financial news already time-aligned with prices; for
+each historical news item the system stores its text, date, ticker, a sentence embedding, and the
+observed post-event price impact. The \textbf{live} layer provides, in real time, prices (from a free
+market-data service, with a second free provider as fallback) and news (from a free company-news
+service and from financial syndication feeds). Free news services are not used to build history because
+their free tiers are typically limited to recent windows and are delayed; the exact ticker subset, time
+window and preprocessing are documented in the data card.
 
-As AI systems are deployed in high-stakes settings, the inability to inspect their reasoning has become a central
-concern. The surveys of \textcite{adadi2018peeking} and \textcite{arrieta2020xai} map the field: its
-motivations, a taxonomy of transparent versus post-hoc methods, and the open challenges toward responsible AI.
-Among post-hoc, model-agnostic techniques, two are widely used. LIME \autocite{ribeiro2016lime} explains a single
-prediction by fitting a simple surrogate model in its local neighbourhood; it is intuitive but its explanations
-can be unstable and are only locally faithful. SHAP \autocite{lundberg2017shap} attributes a prediction to its
-input features using Shapley values, offering consistency and a theoretical grounding at a higher computational
-cost. Table~\ref{tab:lit_xai} summarises these. In this work, explainability is pursued primarily through
-\emph{transparent design} (statistical detection and retrieved precedents), with feature attribution as an
-optional complement.
+\section{Models and Techniques}
+\label{sec:met_techniques}
 
-\begin{table}[ht]
-\caption{Explainability approaches considered.}
-\label{tab:lit_xai}
-\centering
-\begin{tabular}{p{0.24\textwidth} p{0.30\textwidth} p{0.38\textwidth}}
-\toprule
-\tabhead{Method} & \tabhead{Type} & \tabhead{Strengths / limitations} \\
-\midrule
-LIME \autocite{ribeiro2016lime} & Local surrogate, model-agnostic & Intuitive; explanations can be unstable, only locally faithful \\
-SHAP \autocite{lundberg2017shap} & Shapley-value attribution, model-agnostic & Consistent, theoretically grounded; computationally costly \\
-Transparent design \autocite{arrieta2020xai} & Inherently interpretable logic & No post-hoc approximation; constrains model choice \\
-\bottomrule
-\end{tabular}
-\end{table}
+\subsection{Statistical Anomaly Detection}
+\label{sec:met_anomaly}
 
-\section{Financial NLP and News Representation}
-\label{sec:lit_finnlp}
+Abrupt movements are detected with a transparent statistical rule. Let $r_t$ be the (log-)return of an
+asset on day $t$, and let $\mu_t$ and $\sigma_t$ be the mean and standard deviation of returns over a
+trailing window of $w$ days. The day is flagged as anomalous when the absolute $z$-score exceeds a
+threshold $k$:
+\begin{equation}
+z_t = \frac{r_t - \mu_t}{\sigma_t}, \qquad \text{anomaly} \iff |z_t| > k .
+\label{eq:zscore}
+\end{equation}
+This statistical family is standard \autocite{chandola2009anomaly} and is chosen for its transparency:
+the user can see exactly why an alert fired. More expressive detectors such as Isolation Forest
+\autocite{liu2008isolation} were considered but not adopted as the default, because their reduced
+interpretability conflicts with the XAI-first goal; the window $w$ and threshold $k$ are documented
+design choices, evaluated in Chapter~\ref{chap:casestudies}.
 
-Measuring the similarity between news items requires turning text into vectors. Early work learned static
-word embeddings efficiently with word2vec \autocite{mikolov2013word2vec}, but these assign one vector per word,
-ignoring context. Contextual models based on the Transformer, notably BERT \autocite{devlin2019bert},
-substantially improved language understanding, yet using BERT directly for semantic similarity is expensive
-because it compares sentence pairs jointly. Sentence-BERT \autocite{reimers2019sbert} addresses this by producing
-sentence-level embeddings that can be compared efficiently with cosine similarity --- the property this work
-relies on for precedent retrieval. For the financial domain specifically, FinBERT models fine-tune BERT on
-financial text, for sentiment \autocite{araci2019finbert} and for broader financial communications
-\autocite{yang2020finbert}. Table~\ref{tab:lit_nlp} compares these representations.
+\subsection{Semantic Retrieval and Impact Measurement}
+\label{sec:met_correlation}
 
-\begin{table}[ht]
-\caption{Text-representation models for financial news.}
-\label{tab:lit_nlp}
-\centering
-\begin{tabular}{p{0.22\textwidth} p{0.32\textwidth} p{0.38\textwidth}}
-\toprule
-\tabhead{Model} & \tabhead{Representation} & \tabhead{Strengths / limitations} \\
-\midrule
-word2vec \autocite{mikolov2013word2vec} & Static word vectors & Efficient; no context, word-level only \\
-BERT \autocite{devlin2019bert} & Contextual token embeddings & Strong understanding; pairwise similarity is costly \\
-Sentence-BERT \autocite{reimers2019sbert} & Sentence embeddings (siamese) & Efficient cosine similarity; benefits from fine-tuning data \\
-FinBERT \autocite{araci2019finbert, yang2020finbert} & Financial-domain language model & Domain-adapted; oriented to sentiment / communications \\
-\bottomrule
-\end{tabular}
-\end{table}
+The news--market correlation engine is the core of the work. Each news item is encoded into a sentence
+embedding using a Sentence-BERT model \autocite{reimers2019sbert}, chosen because it allows efficient
+comparison of texts through cosine similarity. Given a new item, the engine retrieves the $k$ most
+similar historical news items from the knowledge base and reports the impact those precedents had.
+Impact is measured in the manner of an event study \autocite{brown1985daily}: the asset's return is
+computed over fixed post-event windows (e.g.\ $+1$, $+3$ days), measured strictly after the event so
+that no future information leaks into the evidence. The similarity metric and the impact windows are
+explicit design choices and form part of the contribution.
 
-\section{Event Studies and News--Market Correlation}
-\label{sec:lit_eventstudy}
+\subsection{Explanation Techniques}
+\label{sec:met_xai}
 
-Quantifying the market impact of an event is the province of the \emph{event study}. The methodology of
-\textcite{brown1985daily} established how to measure abnormal returns around an event using daily stock returns,
-and remains the standard reference for the post-event return windows (e.g.\ $+1$, $+3$ days) used here. Building
-such an analysis historically requires news aligned to prices; the FNSPID dataset \autocite{dong2024fnspid}
-provides exactly this --- financial news time-aligned with prices for thousands of companies --- enabling a
-news-to-impact knowledge base without scraping. The limitations are the usual ones of any dataset: coverage and
-time period, discussed in the data card.
+Explanation is pursued primarily through transparent design, following the principles set out in the
+XAI literature \autocite{arrieta2020xai, adadi2018peeking}: an explanation the user can follow step by
+step. For every alert the system combines (i) the rule or measure that produced the detection (the
+$z$-score and its parameters), (ii) the retrieved historical precedents and their observed impact as
+evidence, and (iii), optionally, feature attribution over the detector using SHAP
+\autocite{lundberg2017shap}. Financial sentiment from FinBERT \autocite{araci2019finbert} is an
+optional enrichment that is cuttable if it does not add defensible value.
 
-\section{Comparative Analysis and Positioning}
-\label{sec:lit_comparison}
+\section{Tools and Frameworks}
+\label{sec:met_tools}
 
-Across these areas, the literature offers strong individual components but few integrated, explainable,
-retail-facing systems that combine them. The choices made in this work, and the alternatives they were weighed
-against, are summarised in Table~\ref{tab:lit_positioning}. The guiding principle is \emph{defensible
-simplicity}: where two options perform comparably, the more transparent and easier-to-explain one is preferred.
+% Phase 3: brief conceptual description of the supporting ecosystem (no code identifiers).
+The system is implemented in the Python ecosystem, using established open-source libraries for
+numerical computing, market-data access, sentence embeddings and figure generation. The choice favours
+mature, well-documented and freely available tools, consistent with the project's constraint of using
+only free resources and with the goal of reproducibility. The concrete engineering --- environment,
+repository organisation and testing --- is described at design level in Chapter~\ref{chap:clarion} and
+in Appendix~\ref{app:reproducibility}.
 
-\begin{table}[ht]
-\caption{Component choices in this work versus alternatives.}
-\label{tab:lit_positioning}
-\centering
-\begin{tabular}{p{0.20\textwidth} p{0.26\textwidth} p{0.22\textwidth} p{0.22\textwidth}}
-\toprule
-\tabhead{Component} & \tabhead{Chosen} & \tabhead{Alternative} & \tabhead{Why} \\
-\midrule
-Anomaly detection & \emph{z}-score (rolling) & Isolation Forest & Transparency / explainability \\
-News retrieval & Sentence-BERT + cosine & word2vec / raw BERT & Efficient semantic similarity \\
-Impact measurement & Event-study windows & --- & Standard, reproducible \\
-Explanation & Rules + precedents (+ SHAP) & LIME-only & Faithful, traceable \\
-\bottomrule
-\end{tabular}
-\end{table}
+\section{Responsible AI and Ethics}
+\label{sec:met_ethics}
 
-\section{Summary and Research Gaps}
-\label{sec:lit_summary}
+% Phase 3: expand with responsible-AI considerations (transparency, no advice, data licensing).
+The work is bound by several responsible-AI commitments. The system performs no price prediction and
+gives no investment advice: it surfaces observed past outcomes as evidence and states this explicitly
+in every alert. All data sources are used within their free tiers and licences, with the FNSPID dataset
+attributed as required by its CC~BY-SA~4.0 licence. No personal data is processed, and no secret or
+credential is stored in the project's versioned files.
 
-The reviewed work supplies mature methods for each piece of the problem: transparent anomaly detection, efficient
-semantic similarity, domain language models, feature attribution, and event-study impact measurement. What is
-comparatively scarce is their \emph{integration} into a single, explainable, reproducible system aimed at the
-retail investor --- one that detects events and, for each, retrieves analogous historical news and presents their
-observed impact as traceable evidence. Addressing this gap, as an engineering contribution, is the purpose of the
-chapters that follow.
+\section{Evaluation Methodology}
+\label{sec:met_evaluation}
+
+The evaluation is defined in advance, to avoid fishing for favourable results, and is reported in
+Chapter~\ref{chap:casestudies}. In summary: the anomaly detector is assessed by the consistency of its
+firing rate across instruments of differing volatility (a label-free argument) and by agreement with an
+explicit extreme-move proxy, with an ablation over the estimation window; the correlation engine is
+assessed on retrieval quality (cross-ticker precision@$k$ with a sector relevance proxy, against
+random, recency and lexical baselines, over multiple random samples and two embedding models) and on
+the measured event-study impact; and the explanation engine is assessed for fidelity to the actual
+logic and, as a stated limitation, for usefulness. Because the system performs neither price prediction
+nor trading, profit-based metrics are explicitly out of scope.
+
+Three guarantees apply throughout. First, \textbf{no lookahead}: features at any instant use only
+information available at or before that instant, and historical impact uses only post-event windows.
+Second, \textbf{reproducibility}: random seeds are fixed, dependencies are pinned, and every data and
+results figure is produced by a script in the repository. Third, \textbf{honesty}: only results that
+can be reproduced and explained are reported, and no data, metric or citation is fabricated.
+
+\section{Chapter Conclusions}
+\label{sec:met_summary}
+
+This chapter set out the methodology of defensible simplicity, the two-layer data architecture, the
+models and techniques chosen for detection, retrieval, impact measurement and explanation, and the
+evaluation methodology and rigour guarantees fixed in advance. The next chapter shows how these methods
+are integrated into CLARION, the proposed system.

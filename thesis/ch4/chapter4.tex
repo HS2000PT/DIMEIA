@@ -1,23 +1,36 @@
-% Capítulo 4 — Methodology
-% RASCUNHO (Sessão 7). EN-GB. Base: docs/arquitectura_sistema.md + docs/evaluation_design.md.
-% Diagrama de arquitetura em TikZ (reprodutível). Citações verificadas. Rever/editar — §6.6.
+% Chapter 4 - CLARION (the proposed system)
+% Design-level description of the artifact. NO code identifiers (no filenames, functions, src/).
+% Architecture + flow diagrams + Telegram alert mockups. EN-GB.
+% NOTE: Phase 4 redraws the diagrams cleanly and adds the Telegram alert mockups.
 
-\chapter{Methodology}
-\label{chap:methodology}
+\chapter{CLARION: An Explainable Financial-Alert System for Retail Investors}
+\label{chap:clarion}
 
-This chapter describes how the system is built. It presents the overall architecture and the two triggers, the
-two data layers, the method chosen for each component (with its justification), the evaluation design, and the
-rigour guarantees. Throughout, the guiding principle is \emph{defensible simplicity}: where options perform
-comparably, the more transparent and explainable one is preferred.
+This chapter presents \textsc{Clarion}, the system designed and built in this dissertation. Whereas
+Chapter~\ref{chap:methods} justified \emph{what} methods were chosen and \emph{why}, this chapter
+describes \emph{how} they are integrated into a coherent system: its overall architecture, the
+historical knowledge base and correlation engine at its core, the anomaly trigger, the explanation
+engine that makes every alert traceable, and the delivery of alerts to the investor. Consistent with
+the framing of the work as AI engineering, the contribution lies in integrating existing models and
+techniques into a functional, explainable and reproducible whole.
 
-\section{System Overview and Architecture}
-\label{sec:met_architecture}
+\section{Overview}
+\label{sec:clarion_overview}
 
-The system is organised as a pipeline driven by two independent triggers: an abrupt market movement and an
-incoming news item. Figure~\ref{fig:architecture} shows the components and the flow of data between them. The
-live layer supplies real-time prices and news; the historical knowledge base, built from FNSPID, supplies the
-precedents; the anomaly detector and the correlation engine produce the evidence; the explanation engine
-assembles a traceable account; and the Telegram bot delivers the alert.
+\textsc{Clarion} watches the US equity market on behalf of a retail investor and raises an alert
+whenever one of two independent triggers fires: an abrupt price movement, or a relevant incoming news
+item. Each alert is accompanied by a full, traceable explanation rather than a bare notification. The
+system is organised as a pipeline of well-separated components, each with a single responsibility,
+connected by a common data schema so that the live and historical layers are directly comparable.
+
+\section{Architecture}
+\label{sec:clarion_architecture}
+
+The system is driven by the two triggers and converges on a single explanation step before delivery.
+Figure~\ref{fig:architecture} shows the components and the flow of data between them. The live layer
+supplies real-time prices and news; the historical knowledge base supplies the precedents; the anomaly
+detector and the correlation engine produce the evidence; the explanation engine assembles a traceable
+account; and the delivery component sends the alert to the investor.
 
 \begin{figure}[ht]
 \centering
@@ -26,13 +39,13 @@ assembles a traceable account; and the Telegram bot delivers the alert.
   >={Stealth[length=2mm]},
   node distance=0.95cm and 1.0cm
 ]
-  \node[box] (live1) {Market data\\ \footnotesize (yfinance / Finnhub)};
-  \node[box, right=of live1] (live2) {News fetcher\\ \footnotesize (Finnhub / RSS)};
+  \node[box] (live1) {Market data\\ \footnotesize (live prices)};
+  \node[box, right=of live1] (live2) {News feed\\ \footnotesize (live news)};
   \node[box, below=of live1] (anom) {Anomaly detector\\ \footnotesize (\emph{z}-score)};
-  \node[box, below=of live2] (corr) {Correlation engine\\ \footnotesize (SBERT, cosine, event-study)};
-  \node[box, right=of corr] (kb) {Historical KB\\ \footnotesize (FNSPID)};
-  \node[box, below=of corr, xshift=-1.5cm] (expl) {Explanation engine\\ \footnotesize (rules, precedents, SHAP)};
-  \node[box, below=of expl] (bot) {Telegram bot\\ \footnotesize (alert)};
+  \node[box, below=of live2] (corr) {Correlation engine\\ \footnotesize (embeddings, event study)};
+  \node[box, right=of corr] (kb) {Historical knowledge base};
+  \node[box, below=of corr, xshift=-1.5cm] (expl) {Explanation engine\\ \footnotesize (rules, precedents)};
+  \node[box, below=of expl] (bot) {Alert delivery\\ \footnotesize (Telegram)};
   \draw[->] (live1) -- (anom);
   \draw[->] (live2) -- (corr);
   \draw[->] (kb) -- (corr);
@@ -41,78 +54,76 @@ assembles a traceable account; and the Telegram bot delivers the alert.
   \draw[->] (corr) -- (expl);
   \draw[->] (expl) -- (bot);
 \end{tikzpicture}
-\caption[System architecture and data flow]{System architecture. Solid arrows show the data flow; the dashed
-arrow shows the anomaly providing context to the correlation engine. The two triggers (market movement via the
-anomaly detector; news via the correlation engine) converge on the explanation engine.}
+\caption[System architecture and data flow]{Architecture of \textsc{Clarion}. Solid arrows show the
+data flow; the dashed arrow shows the anomaly providing context to the correlation engine. The two
+triggers (market movement via the anomaly detector; news via the correlation engine) converge on the
+explanation engine before delivery.}
 \label{fig:architecture}
 \end{figure}
 
-\section{Data Architecture: Historical vs. Live}
-\label{sec:met_data}
+Three engineering principles recur throughout and make the system both testable and defensible. First,
+\textbf{a thin end-to-end slice was built before breadth}: the market-movement trigger was implemented
+and proven end to end --- from price retrieval to a real alert --- before the heavier correlation
+engine was added, reducing integration risk. Second, \textbf{pure logic is separated from
+input/output}, so the numerical core can be verified deterministically and offline, without a network
+connection or the heavy model stack. Third, \textbf{components are programmed against interfaces}: the
+embedding step is defined abstractly, with two interchangeable implementations --- a dependency-free
+lexical baseline and the real Sentence-BERT model --- so that one can be substituted for the other
+without changing anything else, which is what makes the embedding-model comparison in
+Chapter~\ref{chap:casestudies} a fair one.
 
-The system uses two clearly separated data layers. The \textbf{historical} layer is built offline from FNSPID
-\autocite{dong2024fnspid}, which provides financial news already time-aligned with prices; for each historical
-news item the system stores its text, date, ticker, a sentence embedding, and the observed post-event price
-impact. The \textbf{live} layer provides, in real time, prices (yfinance, with Finnhub as a fallback) and news
-(Finnhub and financial RSS feeds). Free news APIs are not used to build history because their free tiers are
-typically limited to recent windows and are delayed; the exact ticker subset, time window and preprocessing are
-documented in the data card.
+\section{Historical Knowledge Base and Correlation Engine}
+\label{sec:clarion_kb}
 
-\section{Statistical Anomaly Detection}
-\label{sec:met_anomaly}
+The historical layer is a knowledge base of past news, each entry storing its date, ticker, headline,
+sentence embedding and measured post-event impact. Each news item is aligned to the market by taking
+the first trading day on or after the news date and measuring impact only from that day's close onward;
+this is the no-lookahead rule made concrete, and it avoids crediting the system with a jump already
+embedded in the opening price. The intended primary source is the FNSPID corpus
+\autocite{dong2024fnspid}; because building the full multi-year corpus is a long one-off job, the
+evaluation in Chapter~\ref{chap:casestudies} uses an initial knowledge base built from real recent news
+through the identical build process, and the full build is identified as future work.
 
-Abrupt movements are detected with a transparent statistical rule. Let $r_t$ be the (log-)return of an asset on
-day $t$, and let $\mu_t$ and $\sigma_t$ be the mean and standard deviation of returns over a trailing window of
-$w$ days. The day is flagged as anomalous when the absolute $z$-score exceeds a threshold $k$:
-\begin{equation}
-z_t = \frac{r_t - \mu_t}{\sigma_t}, \qquad \text{anomaly} \iff |z_t| > k .
-\label{eq:zscore}
-\end{equation}
-This statistical family is standard \autocite{chandola2009anomaly} and is chosen for its transparency: the user
-can see exactly why an alert fired. More expressive detectors such as Isolation Forest
-\autocite{liu2008isolation} were considered but not adopted as the default, because their reduced
-interpretability conflicts with the XAI-first goal; the window $w$ and threshold $k$ are documented design
-choices, evaluated in Chapter~\ref{chap:evaluation}.
+The correlation engine has two parts. Similarity is computed with cosine over the (normalised)
+embeddings, returning the nearest historical items to a query. Impact is computed as the cumulative
+return at each horizon ($+1$, $+3$, $+5$ days) measured from the event close, with horizons that fall
+outside the available series reported as not available rather than silently dropped. Given a new item,
+the engine embeds it, ranks the knowledge base by similarity, and returns the top precedents with their
+scores --- the evidence later shown to the user.
 
-\section{News--Market Correlation Engine}
-\label{sec:met_correlation}
+\section{Anomaly Trigger}
+\label{sec:clarion_anomaly}
 
-This is the core of the work. Each news item is encoded into a sentence embedding using a Sentence-BERT model
-\autocite{reimers2019sbert}, chosen because it allows efficient comparison of texts through cosine similarity.
-Given a new item, the engine retrieves the $k$ most similar historical news items from the FNSPID-based knowledge
-base and reports the impact those precedents had. Impact is measured in the manner of an event study
-\autocite{brown1985daily}: the asset's return is computed over fixed post-event windows (e.g. $+1$, $+3$ days).
-The similarity metric and the impact windows are explicit design choices and form part of the contribution.
-Crucially, impact is measured strictly after the event, so no future information leaks into the features
-(Section~\ref{sec:met_rigour}).
+The anomaly trigger applies Equation~\ref{eq:zscore} directly. For the day under evaluation it computes
+the mean and standard deviation over the window of strictly preceding days, forms the $z$-score of the
+latest return, and returns the decision together with every quantity that produced it --- the
+$z$-score, window, threshold, mean and standard deviation. Exposing these values is what allows the
+explanation engine to be faithful by construction, and the evaluation applies exactly this rule across
+entire price series so that the experiments use the same logic as production.
 
-\section{Explanation Engine (XAI)}
-\label{sec:met_xai}
+\section{Explanation Engine}
+\label{sec:clarion_xai}
 
-The explanation engine assembles a traceable account for every alert, combining three transparent ingredients:
-(i) the rule or measure that produced the detection (e.g. the $z$-score and threshold), (ii) the retrieved
-historical precedents and their observed impact as evidence, and (iii), optionally, feature attribution over the
-detector using SHAP \autocite{lundberg2017shap}. This combination follows the explainability principles set out
-in the XAI literature \autocite{arrieta2020xai, adadi2018peeking}: the goal is an explanation the user can follow
-step by step. Optionally, financial sentiment from FinBERT \autocite{araci2019finbert} may enrich the
-explanation; this component is cuttable if it does not add defensible value.
+The explanation engine renders alerts directly from the objects produced upstream, which guarantees
+that the text never diverges from the computation. For the market trigger, it states the move, the
+$z$-score, the threshold and window, and the recent mean and standard deviation. For the news trigger,
+it lists the retrieved precedents (date, ticker, similarity score, measured impact and headline) and
+the average impact across them, and it always ends with an explicit disclaimer that the figures are
+observed past outcomes, not a prediction --- keeping the system within its no-forecasting scope.
 
-\section{Evaluation Design}
-\label{sec:met_evaluation}
+\section{Alert Delivery}
+\label{sec:clarion_delivery}
 
-The evaluation is defined in advance, to avoid fishing for favourable results, and is reported in
-Chapter~\ref{chap:evaluation}. In summary: the anomaly detector is assessed with precision, recall and F1 against
-an explicit definition of ``true'' anomalies, with a baseline and an ablation over window and threshold; the
-correlation engine is assessed on retrieval quality (precision@$k$ with a relevance rubric, against random and
-recency baselines) and on the measured event-study impact; and the explanation engine is assessed for fidelity
-to the actual logic and for usefulness, via a small human-judgement rubric. Because the system performs neither
-price prediction nor trading, profit-based metrics are explicitly out of scope.
+Alerts are delivered to the investor through the Telegram messaging platform, chosen because it offers a
+free, widely used bot interface. The two end-to-end flows --- retrieve, detect, explain and send for the
+market trigger; embed, retrieve precedents, explain and send for the news trigger --- each encapsulate a
+complete run; periodic scheduling and deployment are deliberately left outside the present scope. A real
+alert was successfully delivered during testing, illustrated in Chapter~\ref{chap:casestudies}.
 
-\section{Methodological Rigour}
-\label{sec:met_rigour}
+\section{Chapter Conclusions}
+\label{sec:clarion_summary}
 
-Three guarantees apply throughout. First, \textbf{no lookahead}: features at any instant use only information
-available at or before that instant, and historical impact uses only post-event windows; this is documented per
-experiment. Second, \textbf{reproducibility}: random seeds are fixed, dependencies are pinned, and every
-data/results figure is produced by a script in the repository. Third, \textbf{honesty}: only results that can be
-reproduced and explained are reported, and no data, metric or citation is fabricated.
+This chapter described CLARION at the level of its architecture and design: a two-trigger, two-layer
+pipeline whose components are separated by responsibility and connected by a common schema, with
+explainability built in by rendering every alert directly from the system's own computation. The next
+chapter evaluates the system's two core components and its end-to-end behaviour on real data.

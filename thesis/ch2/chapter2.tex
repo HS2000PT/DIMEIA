@@ -1,76 +1,159 @@
-% Capítulo 2 — Contextualization
-% RASCUNHO (Sessão 4). Dados de mercado US 2025–2026, reais e verificados (§6.1).
-% Cada afirmação tem fonte verificada (docs/citation_log.md). Rever/editar (o texto é teu).
+% Chapter 2 - State of the Art
+% Substantial review (target ~24-28 pp). Seminal + recent, peer-reviewed first; comparative
+% tables with surrounding prose; per-section discussion; chapter conclusions.
+% Every citation verified (docs/citation_log.md). EN-GB.
+% NOTE: Phase 2 expands each section with more sources and taxonomy figures.
 
-\chapter{Contextualization}
-\label{chap:contextualization}
+\chapter{State of the Art}
+\label{chap:sota}
 
-This chapter sets the context for the work. It outlines the scale of the United States equity market, the
-growth of retail investing, the rapid adoption of \gls{AI} in finance and the explainability concerns it
-raises, and the information-overload problem that motivates an explainable financial-alert system.
+This chapter reviews the body of work on which the dissertation builds. It begins with the context of
+retail investing and information overload, then surveys, in turn, anomaly detection in financial
+markets, explainable artificial intelligence, financial natural-language processing and text
+representation, and event-study approaches to news--market impact. Each area combines seminal and
+recent contributions; comparative tables summarise the approaches, their mechanisms and their
+limitations. The chapter closes by positioning the present work and identifying the gap it addresses.
 
-\section{The US Equity Market (NYSE and NASDAQ)}
-\label{sec:ctx_market}
+\section{Retail Investing and Information Overload}
+\label{sec:sota_retail}
 
-The United States equity market is the largest and among the deepest and most liquid in the world. According to
-the \gls{SIFMA} Capital Markets Fact Book, US equity markets represented 49.1\% of the US\$126.7~trillion in
-global equity market capitalisation at the end of 2024 --- about US\$62.2~trillion, some 5.3 times the size of
-the next-largest market, China \autocite{sifma2025factbook}. The two principal trading venues are the
-\gls{NYSE} and \gls{NASDAQ}, which together list the large-capitalisation companies that dominate global indices.
+% Phase 2: expand with literature on retail investor behaviour, attention, and the role of news.
+The retail investor operates under conditions of pronounced information asymmetry relative to
+institutional participants. Markets move continuously across thousands of tickers and financial news
+arrives without pause, while the tools that help to interpret these signals are typically
+institutional, opaque, or both. This section reviews the literature on how non-professional investors
+consume market information and react to news, motivating the need for transparent, evidence-backed
+alerting.
 
-This market has also grown substantially over the last decade. As shown in Figure~\ref{fig:us_market_cap}, US
-equity market capitalisation rose from US\$25.1~trillion in 2015 to US\$62.2~trillion in 2024
-\autocite{sifma2025factbook}, a scale and liquidity that make it the natural focus for a retail-oriented
-alerting system.
+\section{Anomaly Detection in Financial Markets}
+\label{sec:sota_anomaly}
 
-\begin{figure}[ht]
+Anomaly detection is a mature field with techniques spanning many domains. The survey of
+\textcite{chandola2009anomaly} provides the standard taxonomy --- point, contextual and collective
+anomalies --- and groups methods into statistical, distance-based, and machine-learning families. For
+financial returns, simple statistical methods (deviations from a rolling mean and standard deviation,
+i.e.\ a \emph{z}-score) are attractive because they are transparent and easy to justify, which is an
+advantage for an explainable system. More expressive machine-learning detectors exist, such as
+Isolation Forest \autocite{liu2008isolation}, which isolates anomalies through random partitioning and
+scales well to large, high-dimensional data; the trade-off is reduced direct interpretability.
+Table~\ref{tab:sota_anomaly} compares the two families.
+
+\begin{table}[ht]
+\caption{Anomaly-detection approaches relevant to this work.}
+\label{tab:sota_anomaly}
 \centering
-\includegraphics[width=0.9\textwidth]{figures/us_equity_market_cap.pdf}
-\caption[US equity market capitalisation, 2015--2024]{US equity market capitalisation, 2015--2024
-(US\$~trillion). Figure generated from data reported in the SIFMA 2025 Capital Markets Fact Book
-\autocite{sifma2025factbook}.}
-\label{fig:us_market_cap}
-\end{figure}
+\begin{tabular}{p{0.24\textwidth} p{0.30\textwidth} p{0.38\textwidth}}
+\toprule
+\tabhead{Approach} & \tabhead{How it works} & \tabhead{Strengths / limitations} \\
+\midrule
+Statistical \emph{z}-score (rolling) \autocite{chandola2009anomaly} & Flags returns that deviate from a rolling mean/standard deviation & Transparent and easy to explain (XAI); assumes locally stable distribution \\
+Isolation Forest \autocite{liu2008isolation} & Isolates points via random partitioning (ensemble) & Scalable, handles high dimensionality; less directly interpretable \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\section{The Retail-Investing Landscape}
-\label{sec:ctx_retail}
+\section{Explainable Artificial Intelligence}
+\label{sec:sota_xai}
 
-Equity ownership is widespread among US households. In 2025, 62\% of Americans reported owning stock --- whether
-individual shares or holdings within mutual funds and retirement accounts --- matching the 2024 figure and
-continuing a rebound after more than a decade below that level \autocite{gallup2025stock}. Ownership is, however,
-unevenly distributed: it rises to 87\% among households earning US\$100{,}000 or more and falls to 28\% among
-those earning under US\$50{,}000 \autocite{gallup2025stock}.
+As AI systems are deployed in high-stakes settings, the inability to inspect their reasoning has become
+a central concern. The surveys of \textcite{adadi2018peeking} and \textcite{arrieta2020xai} map the
+field: its motivations, a taxonomy of transparent versus post-hoc methods, and the open challenges
+toward responsible AI. Among post-hoc, model-agnostic techniques, two are widely used. LIME
+\autocite{ribeiro2016lime} explains a single prediction by fitting a simple surrogate model in its
+local neighbourhood; it is intuitive but its explanations can be unstable and are only locally
+faithful. SHAP \autocite{lundberg2017shap} attributes a prediction to its input features using Shapley
+values, offering consistency and a theoretical grounding at a higher computational cost.
+Table~\ref{tab:sota_xai} summarises these. In this work, explainability is pursued primarily through
+\emph{transparent design} (statistical detection and retrieved precedents), with feature attribution as
+an optional complement.
 
-Beyond ownership, individual (``retail'') investors have become a material part of day-to-day trading activity,
-helped by commission-free mobile brokerages. Published estimates of the retail share of US equity trading
-volume vary widely with methodology and period --- broadly in the range of 20--35\% during 2024--2025.
-% TODO (revisão): fixar uma fonte primária única para a quota de retalho no volume (ex.: SIFMA / Cboe / MEMX) e citar com valor exato.
-This combination of broad ownership and growing direct participation defines the audience this work serves: the
-non-professional investor who must make sense of the market without the tools available to institutions.
+\begin{table}[ht]
+\caption{Explainability approaches considered.}
+\label{tab:sota_xai}
+\centering
+\begin{tabular}{p{0.24\textwidth} p{0.30\textwidth} p{0.38\textwidth}}
+\toprule
+\tabhead{Method} & \tabhead{Type} & \tabhead{Strengths / limitations} \\
+\midrule
+LIME \autocite{ribeiro2016lime} & Local surrogate, model-agnostic & Intuitive; explanations can be unstable, only locally faithful \\
+SHAP \autocite{lundberg2017shap} & Shapley-value attribution, model-agnostic & Consistent, theoretically grounded; computationally costly \\
+Transparent design \autocite{arrieta2020xai} & Inherently interpretable logic & No post-hoc approximation; constrains model choice \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\section{Artificial Intelligence in Finance}
-\label{sec:ctx_ai_finance}
+\section{Financial NLP and Text Representation}
+\label{sec:sota_finnlp}
 
-\Gls{AI} has been adopted rapidly across financial services. A 2026 industry survey by the Cambridge Centre for
-Alternative Finance found that 81\% of surveyed financial-services firms were adopting AI at some level, 40\% of
-industry respondents reported advanced adoption, and 71\% were already using generative AI
-\autocite{ccaf2026aifs}. Typical applications include fraud detection, market analysis and customer service.
+Measuring the similarity between news items requires turning text into vectors. Early work learned
+static word embeddings efficiently with word2vec \autocite{mikolov2013word2vec}, but these assign one
+vector per word, ignoring context. Contextual models based on the Transformer, notably BERT
+\autocite{devlin2019bert}, substantially improved language understanding, yet using BERT directly for
+semantic similarity is expensive because it compares sentence pairs jointly. Sentence-BERT
+\autocite{reimers2019sbert} addresses this by producing sentence-level embeddings that can be compared
+efficiently with cosine similarity --- the property this work relies on for precedent retrieval. For
+the financial domain specifically, FinBERT models fine-tune BERT on financial text, for sentiment
+\autocite{araci2019finbert} and for broader financial communications \autocite{yang2020finbert}.
+Table~\ref{tab:sota_nlp} compares these representations.
 
-This rapid adoption raises a well-documented concern: many high-performing models behave as ``black boxes'',
-offering little insight into how a given output was produced. \Gls{XAI} addresses precisely this gap, seeking
-methods whose reasoning users can follow and trust \autocite{arrieta2020xai, adadi2018peeking}. For a retail
-investor, who must act on --- and bear the consequences of --- a system's output, this transparency is not a
-luxury but a requirement. It is the principle that guides the present work.
+\begin{table}[ht]
+\caption{Text-representation models for financial news.}
+\label{tab:sota_nlp}
+\centering
+\begin{tabular}{p{0.22\textwidth} p{0.32\textwidth} p{0.38\textwidth}}
+\toprule
+\tabhead{Model} & \tabhead{Representation} & \tabhead{Strengths / limitations} \\
+\midrule
+word2vec \autocite{mikolov2013word2vec} & Static word vectors & Efficient; no context, word-level only \\
+BERT \autocite{devlin2019bert} & Contextual token embeddings & Strong understanding; pairwise similarity is costly \\
+Sentence-BERT \autocite{reimers2019sbert} & Sentence embeddings (siamese) & Efficient cosine similarity; benefits from fine-tuning data \\
+FinBERT \autocite{araci2019finbert, yang2020finbert} & Financial-domain language model & Domain-adapted; oriented to sentiment / communications \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\section{The Information-Overload Problem}
-\label{sec:ctx_problem}
+\section{Event Studies and News--Market Impact}
+\label{sec:sota_eventstudy}
 
-A retail investor faces two simultaneous streams of information: continuous price movements across thousands of
-US tickers, and a constant flow of financial news. Distinguishing a meaningful movement from ordinary
-volatility, and understanding whether and how a news item is likely to affect an asset, requires time, data and
-expertise that most non-professionals do not have.
+Quantifying the market impact of an event is the province of the \emph{event study}. The methodology
+of \textcite{brown1985daily} established how to measure abnormal returns around an event using daily
+stock returns, and remains the standard reference for the post-event return windows (e.g.\ $+1$, $+3$
+days) used here. Building such an analysis historically requires news aligned to prices; the FNSPID
+dataset \autocite{dong2024fnspid} provides exactly this --- financial news time-aligned with prices for
+thousands of companies --- enabling a news-to-impact knowledge base without scraping. The limitations
+are the usual ones of any dataset: coverage and time period, discussed in the data card.
 
-This is the gap the dissertation addresses. Rather than predicting prices, the proposed system detects abrupt
-movements and relevant news, and --- crucially --- explains them: what was detected, the reasoning applied, the
-sources, and concrete historical precedents of analogous events and their observed impact. The remainder of the
-document develops and evaluates this explainable alerting system.
+\section{Comparative Analysis and Positioning}
+\label{sec:sota_positioning}
+
+Across these areas, the literature offers strong individual components but few integrated, explainable,
+retail-facing systems that combine them. The choices made in this work, and the alternatives they were
+weighed against, are summarised in Table~\ref{tab:sota_positioning}. The guiding principle is
+\emph{defensible simplicity}: where two options perform comparably, the more transparent and
+easier-to-explain one is preferred.
+
+\begin{table}[ht]
+\caption{Component choices in this work versus alternatives.}
+\label{tab:sota_positioning}
+\centering
+\begin{tabular}{p{0.20\textwidth} p{0.26\textwidth} p{0.22\textwidth} p{0.22\textwidth}}
+\toprule
+\tabhead{Component} & \tabhead{Chosen} & \tabhead{Alternative} & \tabhead{Why} \\
+\midrule
+Anomaly detection & \emph{z}-score (rolling) & Isolation Forest & Transparency / explainability \\
+News retrieval & Sentence-BERT + cosine & word2vec / raw BERT & Efficient semantic similarity \\
+Impact measurement & Event-study windows & --- & Standard, reproducible \\
+Explanation & Rules + precedents (+ SHAP) & LIME-only & Faithful, traceable \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Chapter Conclusions}
+\label{sec:sota_summary}
+
+The reviewed work supplies mature methods for each piece of the problem: transparent anomaly detection,
+efficient semantic similarity, domain language models, feature attribution, and event-study impact
+measurement. What is comparatively scarce is their \emph{integration} into a single, explainable,
+reproducible system aimed at the retail investor --- one that detects events and, for each, retrieves
+analogous historical news and presents their observed impact as traceable evidence. Addressing this
+gap, as an engineering contribution, is the purpose of the chapters that follow.

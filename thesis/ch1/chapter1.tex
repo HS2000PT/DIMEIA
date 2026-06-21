@@ -1,86 +1,125 @@
-% Capítulo 1 — Introduction
-% RASCUNHO (Sessão 5). EN-GB. Cada afirmação com fonte verificada (docs/citation_log.md).
-% Rever/editar (o texto é teu) — §6.6.
+% Chapter 1 - Introduction
+% Canonical MEIA structure: Contextualization folded in as 1.1, then Problem,
+% Research Questions & Objectives, Scientific Contributions, Document Structure.
+% EN-GB. Every claim carries a verified source (docs/citation_log.md).
 
 \chapter{Introduction}
 \label{chap:introduction}
 
-This chapter introduces the dissertation. It motivates the work, states the problem, defines the objectives and
-research questions, summarises the scientific contributions, and outlines the structure of the document.
+This chapter introduces the dissertation. It first sets the context --- the scale of the United States
+equity market, the growth of retail investing, and the rapid yet opaque adoption of artificial
+intelligence in finance --- and then states the problem the work addresses, the objectives and research
+questions that guide it, the scientific contributions it claims, and the structure of the remaining
+document.
 
-\section{Motivation and Overview}
-\label{sec:intro_motivation}
+\section{Contextualization}
+\label{sec:intro_context}
 
-The United States equity market is the largest in the world and is owned, directly or indirectly, by a majority
-of US households: 62\% of Americans reported owning stock in 2025 \autocite{gallup2025stock}, in a market whose
-capitalisation reached US\$62.2~trillion at the end of 2024 \autocite{sifma2025factbook}. At the same time,
-artificial intelligence has been adopted rapidly across financial services \autocite{ccaf2026aifs}, yet many of
-the resulting models behave as opaque ``black boxes'' whose reasoning users cannot inspect
-\autocite{arrieta2020xai}. Chapter~\ref{chap:contextualization} develops this context in detail.
+The United States equity market is the largest and among the deepest and most liquid in the world.
+According to the \gls{SIFMA} Capital Markets Fact Book, US equity markets represented 49.1\% of the
+US\$126.7~trillion in global equity market capitalisation at the end of 2024 --- about
+US\$62.2~trillion, some 5.3 times the size of the next-largest market, China
+\autocite{sifma2025factbook}. The two principal trading venues are the \gls{NYSE} and \gls{NASDAQ},
+which together list the large-capitalisation companies that dominate global indices. As shown in
+Figure~\ref{fig:us_market_cap}, this market has grown markedly over the last decade, from
+US\$25.1~trillion in 2015 to US\$62.2~trillion in 2024 \autocite{sifma2025factbook} --- a scale and
+liquidity that make it the natural focus for a retail-oriented alerting system.
 
-For the non-professional (``retail'') investor, this combination is difficult. Markets move continuously across
-thousands of tickers and financial news arrives without pause, but the tools that help to interpret these
-signals are typically institutional, opaque, or both. This dissertation addresses that gap with an
-\emph{explainable} financial-alert system: one that not only flags relevant events but also explains them in a
-way the investor can follow, verify and act upon.
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/us_equity_market_cap.pdf}
+\caption[US equity market capitalisation, 2015--2024]{US equity market capitalisation, 2015--2024
+(US\$~trillion). Figure generated from data reported in the SIFMA 2025 Capital Markets Fact Book
+\autocite{sifma2025factbook}.}
+\label{fig:us_market_cap}
+\end{figure}
+
+Equity ownership is also widespread among US households. In 2025, 62\% of Americans reported owning
+stock --- whether individual shares or holdings within mutual funds and retirement accounts ---
+matching the 2024 figure and continuing a rebound after more than a decade below that level
+\autocite{gallup2025stock}. Ownership is unevenly distributed, rising to 87\% among households earning
+US\$100{,}000 or more and falling to 28\% among those earning under US\$50{,}000
+\autocite{gallup2025stock}. Beyond ownership, non-professional (``retail'') investors have become a
+material part of day-to-day trading, helped by commission-free mobile brokerages. This combination of
+broad ownership and growing direct participation defines the audience this work serves: the
+non-professional investor who must make sense of the market without the tools available to
+institutions.
+
+In parallel, artificial intelligence has been adopted rapidly across financial services. A 2026
+industry survey by the Cambridge Centre for Alternative Finance found that 81\% of surveyed
+financial-services firms were adopting \gls{AI} at some level, 40\% reported advanced adoption, and
+71\% were already using generative AI \autocite{ccaf2026aifs}. Yet many high-performing models behave
+as opaque ``black boxes'', offering little insight into how a given output was produced
+\autocite{arrieta2020xai, adadi2018peeking}. For a retail investor, who must act on --- and bear the
+consequences of --- a system's output, this lack of transparency is not a minor inconvenience but a
+barrier to trust and to informed action. It is the principle that guides the present work.
 
 \section{Problem Statement}
 \label{sec:intro_problem}
 
-A retail investor who wishes to stay informed faces two distinct problems. First, distinguishing a genuinely
-abnormal price movement from ordinary volatility requires statistical judgement and constant attention. Second,
-when a relevant news item appears, assessing its likely impact requires knowledge of how analogous past events
-affected prices --- information that is rarely at hand. Existing consumer tools tend to deliver alerts without
-explanation, or rely on models whose internal logic is hidden, which is precisely the transparency problem that
-explainable AI seeks to address \autocite{arrieta2020xai, adadi2018peeking}.
+A retail investor who wishes to stay informed faces two simultaneous streams of information:
+continuous price movements across thousands of US tickers, and a constant flow of financial news.
+Two distinct problems follow. First, distinguishing a genuinely abnormal price movement from ordinary
+volatility requires statistical judgement and constant attention. Second, when a relevant news item
+appears, assessing its likely impact requires knowledge of how analogous past events affected prices
+--- information that is rarely at hand. Existing consumer tools tend to deliver alerts without
+explanation, or rely on models whose internal logic is hidden, which is precisely the transparency
+problem that explainable AI seeks to address \autocite{arrieta2020xai, adadi2018peeking}.
 
-The problem this work tackles is therefore not price prediction, but \emph{explanation}: detecting abrupt market
-movements and relevant news, and presenting, for each alert, a traceable account of what was detected, the
-reasoning applied, the sources, and concrete historical precedents of similar events and their observed impact.
+The problem this work tackles is therefore not price prediction, but \emph{explanation}: detecting
+abrupt market movements and relevant news, and presenting, for each alert, a traceable account of what
+was detected, the reasoning applied, the sources consulted, and concrete historical precedents of
+similar events together with their observed impact.
 
-\section{Objectives and Research Questions}
+\section{Research Questions and Objectives}
 \label{sec:intro_objectives}
 
-The general objective is to design, implement and evaluate an explainable, reproducible financial-alert system
-for US retail investors, driven by two independent triggers (abrupt market movements and incoming news) and
-delivered through Telegram. This is pursued through three research questions:
+The general objective is to design, implement and evaluate an explainable, reproducible financial-alert
+system for US retail investors, driven by two independent triggers (abrupt market movements and
+incoming news) and delivered through Telegram. This is pursued through three research questions:
 
 \begin{itemize}
-  \item \textbf{RQ1.} Can transparent statistical methods detect abrupt market movements with enough precision
-        to be useful to a retail investor, while remaining explainable?
-  \item \textbf{RQ2.} Can a news--market correlation engine retrieve genuinely analogous historical news and
-        quantify their observed price impact, without lookahead, better than trivial baselines?
-  \item \textbf{RQ3.} Can the resulting explanations be made faithful to the system's actual logic and useful to
-        a retail investor?
+  \item \textbf{\gls{RQ}1.} Can transparent statistical methods detect abrupt market movements with
+        enough consistency to be useful to a retail investor, while remaining explainable?
+  \item \textbf{\gls{RQ}2.} Can a news--market correlation engine retrieve genuinely analogous
+        historical news and quantify their observed price impact, without lookahead, better than
+        trivial baselines?
+  \item \textbf{\gls{RQ}3.} Can the resulting explanations be made faithful to the system's actual
+        logic and useful to a retail investor?
 \end{itemize}
 
-The supporting objectives are: (i) build a thin end-to-end slice early; (ii) develop each component in its
-simplest defensible form; (iii) evaluate each component against a design defined beforehand
-(Chapter~\ref{chap:evaluation}); and (iv) keep the whole system reproducible and transparent.
+The supporting objectives are: (i) build a thin end-to-end slice early to control integration risk;
+(ii) develop each component in its simplest defensible form; (iii) evaluate each component against a
+design defined beforehand (Chapter~\ref{chap:casestudies}); and (iv) keep the whole system
+reproducible and transparent.
 
 \section{Scientific Contributions}
 \label{sec:intro_contributions}
 
-This is an Artificial Intelligence \emph{Engineering} dissertation. The contribution is not to invent new
-algorithms but to \emph{integrate, apply and critically evaluate} existing components in a functional,
-explainable and reproducible system. Concretely, the contributions are:
+This is an Artificial Intelligence \emph{Engineering} dissertation. The contribution is not to invent
+new algorithms but to \emph{integrate, apply and critically evaluate} existing components in a
+functional, explainable and reproducible system. Concretely, the contributions are:
 
 \begin{itemize}
-  \item A documented, reproducible methodology for \textbf{news--market impact correlation}, combining sentence
-        embeddings for retrieval with event-study windows for impact measurement, with explicit choices of
+  \item A documented, reproducible methodology for \textbf{news--market impact correlation}, combining
+        sentence-embedding retrieval with event-study impact windows, with explicit choices of
         similarity metric and window and explicit avoidance of lookahead.
-  \item An \textbf{XAI-first alerting pipeline} that exposes its full reasoning chain (detection, evidence,
-        sources, precedents) to a non-expert user.
-  \item A \textbf{critical evaluation} of each component against baselines and a transparent design, reporting
-        honest results and limitations.
+  \item \textbf{CLARION}, an \textbf{XAI-first alerting system} that exposes its full reasoning chain
+        (detection, evidence, sources, precedents) to a non-expert user and is faithful to its own
+        computation by construction.
+  \item A \textbf{critical evaluation} of each component against baselines and a transparent design,
+        on real data, reporting honest results and limitations.
 \end{itemize}
 
 \section{Document Structure}
 \label{sec:intro_structure}
 
-The remainder of the document is organised as follows. Chapter~\ref{chap:contextualization} sets the market and
-technological context. Chapter~\ref{chap:literature} reviews the relevant literature on anomaly detection,
-explainable AI and financial NLP, with comparative tables. Chapter~\ref{chap:methodology} describes the system
-architecture and the method chosen for each component. Chapter~\ref{chap:implementation} details the
-implementation. Chapter~\ref{chap:evaluation} reports the evaluation. Chapter~\ref{chap:conclusion} concludes
-with the main findings, limitations and future work.
+The remainder of the document is organised as follows. Chapter~\ref{chap:sota} reviews the state of
+the art on anomaly detection, explainable AI, financial natural-language processing and event-study
+approaches to news--market impact, with comparative tables and a positioning of this work.
+Chapter~\ref{chap:methods} describes the methods, datasets and materials used, together with the
+evaluation methodology and the responsible-AI considerations. Chapter~\ref{chap:clarion} presents
+CLARION, the proposed system, at the level of its architecture and design decisions.
+Chapter~\ref{chap:casestudies} reports the evaluation as a set of case studies on real data. Finally,
+Chapter~\ref{chap:conclusions} draws the main conclusions, revisits the research questions and
+contributions, and states the limitations and future work.
