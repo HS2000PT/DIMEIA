@@ -35,29 +35,35 @@ account; and the delivery component sends the alert to the investor.
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[
-  box/.style={draw, rounded corners, align=center, minimum height=0.95cm, text width=3.0cm, font=\small},
-  >={Stealth[length=2mm]},
-  node distance=0.95cm and 1.0cm
+  font=\small,
+  >={Stealth[length=2.2mm]},
+  src/.style={draw, rounded corners, align=center, text width=2.9cm, minimum height=1.0cm, fill=black!8},
+  comp/.style={draw, rounded corners, align=center, text width=2.9cm, minimum height=1.0cm, fill=black!3},
+  node distance=1.15cm and 1.35cm
 ]
-  \node[box] (live1) {Market data\\ \footnotesize (live prices)};
-  \node[box, right=of live1] (live2) {News feed\\ \footnotesize (live news)};
-  \node[box, below=of live1] (anom) {Anomaly detector\\ \footnotesize (\emph{z}-score)};
-  \node[box, below=of live2] (corr) {Correlation engine\\ \footnotesize (embeddings, event study)};
-  \node[box, right=of corr] (kb) {Historical knowledge base};
-  \node[box, below=of corr, xshift=-1.5cm] (expl) {Explanation engine\\ \footnotesize (rules, precedents)};
-  \node[box, below=of expl] (bot) {Alert delivery\\ \footnotesize (Telegram)};
-  \draw[->] (live1) -- (anom);
-  \draw[->] (live2) -- (corr);
-  \draw[->] (kb) -- (corr);
-  \draw[->, dashed] (anom) -- (corr) node[midway, above, font=\scriptsize] {context};
-  \draw[->] (anom) |- (expl);
-  \draw[->] (corr) -- (expl);
-  \draw[->] (expl) -- (bot);
+  % data sources (top)
+  \node[src] (md) {Market data\\ \footnotesize live prices};
+  \node[src, right=of md] (nf) {News feed\\ \footnotesize live news};
+  \node[src, right=of nf] (kb) {Historical\\ knowledge base};
+  % engines
+  \node[comp, below=of md] (an) {Anomaly detector\\ \footnotesize \emph{z}-score};
+  \node[comp, below=of nf] (ce) {Correlation engine\\ \footnotesize embeddings + event study};
+  % explanation (centred between the two engines)
+  \node[comp] (ex) at ($(an)!0.5!(ce) + (0,-1.7)$) {Explanation engine\\ \footnotesize transparent, faithful};
+  % delivery
+  \node[comp, below=1.15cm of ex] (tg) {Alert delivery\\ \footnotesize Telegram};
+  % flows
+  \draw[->] (md) -- (an);
+  \draw[->] (nf) -- (ce);
+  \draw[->] (kb) -- (ce);
+  \draw[->] (an) -- (ex);
+  \draw[->] (ce) -- (ex);
+  \draw[->] (ex) -- (tg);
 \end{tikzpicture}
-\caption[System architecture and data flow]{Architecture of \textsc{Clarion}. Solid arrows show the
-data flow; the dashed arrow shows the anomaly providing context to the correlation engine. The two
-triggers (market movement via the anomaly detector; news via the correlation engine) converge on the
-explanation engine before delivery.}
+\caption[System architecture and data flow]{Architecture of \textsc{Clarion}. The live layer (market
+data, news feed) and the historical knowledge base feed two engines --- the anomaly detector and the
+correlation engine --- whose evidence converges on the explanation engine before an alert is delivered
+through Telegram. The market-movement trigger follows the left path; the news trigger the right.}
 \label{fig:architecture}
 \end{figure}
 
@@ -89,7 +95,36 @@ embeddings, returning the nearest historical items to a query. Impact is compute
 return at each horizon ($+1$, $+3$, $+5$ days) measured from the event close, with horizons that fall
 outside the available series reported as not available rather than silently dropped. Given a new item,
 the engine embeds it, ranks the knowledge base by similarity, and returns the top precedents with their
-scores --- the evidence later shown to the user.
+scores --- the evidence later shown to the user. Figure~\ref{fig:news_flow} traces these steps for the
+news trigger end to end.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=2mm]},
+  stp/.style={draw, rounded corners, align=center, text width=1.7cm, minimum height=1.0cm, fill=black!3},
+  node distance=4mm
+]
+  \node[stp] (a) {New\\ headline};
+  \node[stp, right=of a] (b) {Sentence\\ embedding};
+  \node[stp, right=of b] (c) {Similarity\\ search};
+  \node[stp, right=of c] (d) {Top-$k$\\ precedents};
+  \node[stp, right=of d] (e) {Event-study\\ impact};
+  \node[stp, right=of e] (f) {Explanation\\ and alert};
+  \draw[->] (a)--(b);
+  \draw[->] (b)--(c);
+  \draw[->] (c)--(d);
+  \draw[->] (d)--(e);
+  \draw[->] (e)--(f);
+  \node[draw, rounded corners, fill=black!8, below=8mm of c, text width=2.0cm, align=center] (kb) {Historical\\ knowledge base};
+  \draw[->] (kb) -- (c);
+\end{tikzpicture}
+\caption[The news trigger end to end]{The news trigger from an incoming headline to a delivered alert.
+The headline is embedded, matched against the historical knowledge base by similarity, and its nearest
+precedents are returned; their post-event impact is measured and assembled, with the headline itself,
+into a single explained alert.}
+\label{fig:news_flow}
+\end{figure}
 
 \section{Anomaly Trigger}
 \label{sec:clarion_anomaly}
@@ -118,7 +153,38 @@ Alerts are delivered to the investor through the Telegram messaging platform, ch
 free, widely used bot interface. The two end-to-end flows --- retrieve, detect, explain and send for the
 market trigger; embed, retrieve precedents, explain and send for the news trigger --- each encapsulate a
 complete run; periodic scheduling and deployment are deliberately left outside the present scope. A real
-alert was successfully delivered during testing, illustrated in Chapter~\ref{chap:casestudies}.
+alert was successfully delivered during testing; Figure~\ref{fig:telegram_mockup} reproduces the format
+the investor receives, with the full reasoning chain visible in a single message.
+
+\begin{figure}[ht]
+\centering
+\footnotesize
+\setlength{\fboxsep}{6pt}%
+\colorbox{black!4}{%
+  \begin{minipage}{9.2cm}
+    \colorbox{black!15}{\makebox[\linewidth][l]{\textbf{CLARION}\, \textemdash{}\, financial alerts bot}}\\[5pt]
+    \fcolorbox{black!30}{white}{%
+      \begin{minipage}{8.4cm}
+        \medskip
+        \textbf{News alert \textemdash{} NVDA}\\[2pt]
+        \textit{``Nvidia raises guidance on surging demand for AI data-centre accelerators''}\\[4pt]
+        \textbf{Potential impact} (from 5 similar past events): average 1-day move \textbf{$-1.8\%$}\\[4pt]
+        \textbf{Historical precedents:}\\
+        $\bullet$~2026-06-16 \ META \ (sim 0.64) \ +1d $-5.4\%$\\
+        $\bullet$~2026-06-01 \ BAC \ (sim 0.63) \ +1d $+1.9\%$\\
+        $\bullet$~2026-06-18 \ AMZN \ (sim 0.61) \ +1d \ n/a\\[4pt]
+        {\scriptsize\emph{Precedents are retrieved by semantic similarity; the impact is the observed
+        past outcome, not a price prediction.}}
+        \medskip
+      \end{minipage}}
+  \end{minipage}}
+\normalsize
+\caption[Telegram alert as received by the investor]{A CLARION news alert as delivered through Telegram.
+A single message carries the full, traceable reasoning chain: the detected event, the average observed
+impact of analogous past events, the individual precedents with their similarity scores and measured
+impact, and an explicit no-prediction disclaimer.}
+\label{fig:telegram_mockup}
+\end{figure}
 
 \section{Chapter Conclusions}
 \label{sec:clarion_summary}
