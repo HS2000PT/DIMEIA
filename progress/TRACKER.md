@@ -27,7 +27,7 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] `learning.md` + `glossary.md` com conceitos da arquitetura (PT-PT, com notas de defesa)
 - [x] Título escolhido pelo aluno (**T1**, D-008) + arquitetura confirmada
 - [x] APIs gratuitas verificadas → `docs/free_apis.md` (verificado 2026-06-21; conjunto aprovado proposto)
-- [ ] Metodologias por componente + citações verificadas (`citation_log.md`)
+- [x] Metodologias por componente + **8 citações verificadas** (`arquitectura_sistema.md` §9 + `citation_log.md`)
 - [ ] `docs/evaluation_design.md` detalhado
 - [ ] `progress/PLANO_SESSOES.md` (~30 sessões + buffer)
 - [ ] Registar escolha de título do aluno

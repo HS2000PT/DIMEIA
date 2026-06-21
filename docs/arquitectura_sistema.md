@@ -125,3 +125,21 @@ Sem correlação/precedentes ainda. Valida o caminho completo e o `tests/test_sm
 - Modelo de embeddings concreto + métrica/janela do event-study (tarefa de metodologias).
 - Subconjunto de tickers + janela temporal do FNSPID (`data_card.md`).
 - Incluir ou não `impact_analyzer` (opcional) e análise de sentimento (FinBERT) — decidir por defensibilidade.
+
+## 9. Metodologias por componente — justificação e referências (verificadas)
+> Enquadramento (§3): a contribuição é de **engenharia de IA** — integrar, aplicar e avaliar criticamente
+> componentes existentes. Todas as referências abaixo estão **verificadas** em `docs/citation_log.md`
+> (DOI/arXiv, 2026-06-21). Entram no `references.bib` na Fase D. Princípio: **simplicidade defensável** (§5.5).
+
+| Componente | Método escolhido | Justificação (porquê este, e não mais complexo) | Referência verificada |
+|---|---|---|---|
+| **Deteção de anomalias** | z-score de retornos vs. média/desvio móveis | Estatístico e **transparente** → vantagem XAI; é o baseline padrão antes de métodos opacos (Isolation Forest etc., só se justificado) | Chandola et al. (2009) — taxonomia de deteção de anomalias `chandola2009anomaly` |
+| **Embeddings de notícias** | Sentence-BERT (modelo open-source), **inferência apenas** | Padrão para similaridade semântica de frases; integrar (não treinar) é o trabalho de engenharia | Reimers & Gurevych (2019) `reimers2019sbert` |
+| **Correlação / precedentes (núcleo)** | Recuperação top-k por **similaridade do cosseno** + **event-study** (retornos pós-evento +1d/+3d) | Event-study com retornos diários é o método seminal e reproduzível para medir impacto; janelas/métrica documentadas = nossa contribuição; **sem lookahead** (§6.5) | Brown & Warner (1985) — event studies com retornos diários `brown1985daily` |
+| **Sentimento (OPCIONAL)** | FinBERT, **inferência apenas** | Padrão de domínio citável; sinal adicional para a explicação; cortável se não acrescentar valor | Araci (2019) `araci2019finbert` |
+| **Motor de explicação (XAI)** | Regras transparentes + precedentes como evidência + atribuição **SHAP** (opcional) sobre o detetor | Combinar lógica transparente com atribuição local dá explicações que o utilizador segue passo a passo | Lundberg & Lee (2017) SHAP `lundberg2017shap`; enquadramento XAI: Arrieta et al. (2020) `arrieta2020xai`, Adadi & Berrada (2018) `adadi2018peeking` |
+| **Base histórica** | FNSPID (subconjunto de tickers + janela) | Notícias já alinhadas a preços → permite construir histórico sem scraping; **CC BY-SA 4.0** (atribuição) | Dong et al. (2024) `dong2024fnspid` |
+
+> Mistura **seminal + recente** (§6.2): Brown & Warner 1985, Chandola 2009, Lundberg & Lee 2017, Adadi & Berrada
+> 2018, Reimers & Gurevych 2019, Araci 2019, Arrieta 2020, Dong 2024. Tabelas comparativas de abordagens (com
+> vantagens/limitações) serão construídas na revisão de literatura (fase de escrita).

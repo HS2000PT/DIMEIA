@@ -10,7 +10,7 @@
 - **Sessão nº:** 2 (Fase C em curso; sessão de trabalho contínua desde a 0)
 - **Última atualização:** 2026-06-20
 - **Fase atual + último passo concluído:** **Fase C em curso.** Feito: (1) arquitetura técnica detalhada (`docs/arquitectura_sistema.md` — diagrama de componentes, 2 camadas de dados, fluxos dos 2 gatilhos, thin slice, garantias anti-lookahead/XAI); (2) **4 títulos candidatos** propostos (`DECISIONS.md` D-007, recomendado **T1**) — **a aguardar escolha do aluno**; (3) `learning.md` + `glossary.md` com os conceitos da arquitetura (z-score, embeddings, similaridade, event-study, XAI, lookahead). Fases 0 e A concluídas e publicadas.
-- **PRÓXIMA AÇÃO IMEDIATA:** continuar a Fase C: **(b)** metodologias por componente com **citações verificadas** (`citation_log.md`) — tarefa académica mais sensível (FinBERT, SBERT/sentence-transformers, event study, z-score/anomalias, XAI/SHAP); **(c)** `evaluation_design.md` detalhado; **(d)** `PLANO_SESSOES.md` (~30 sessões). Já feitos nesta sessão: título (T1, D-008), arquitetura confirmada, `learning.md`/`glossary.md`, e **(a)** `free_apis.md` (verificado 2026-06-21).
+- **PRÓXIMA AÇÃO IMEDIATA:** terminar a Fase C: **(c)** `evaluation_design.md` detalhado; **(d)** `PLANO_SESSOES.md` (~30 sessões + buffer). Já feitos nesta sessão: título (T1, D-008), arquitetura confirmada + **metodologias por componente com 8 citações verificadas** (secção 9 de `arquitectura_sistema.md` + `citation_log.md`), `learning.md`/`glossary.md`, e `free_apis.md`. Depois: **gate da Fase C** (confirmar com o aluno antes da Fase D — LaTeX).
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
@@ -53,7 +53,9 @@
 - **Smoke test da thin slice:** ainda não existe (placeholder `tests/test_smoke.py` a passar).
 
 ## Referências Verificadas
-- Nenhuma ainda. Protocolo de integridade de citações (§6.4) em vigor: nenhuma entrada no `.bib` sem DOI/id verificado e registado em `docs/citation_log.md`.
+- **8 referências verificadas (2026-06-21)** em `docs/citation_log.md` (DOI/arXiv via Crossref/arXiv) — base do `references.bib` (criado na Fase D): Chandola 2009 (anomalias), Brown & Warner 1985 (event study), Reimers & Gurevych 2019 (SBERT), Araci 2019 (FinBERT), Lundberg & Lee 2017 (SHAP), Arrieta 2020 + Adadi & Berrada 2018 (XAI), Dong 2024 (FNSPID).
+- **Rejeitada:** MacKinlay 1997 (sem DOI resolúvel) → substituída por Brown & Warner 1985.
+- Protocolo §6.4 em vigor: nenhuma entrada no `.bib` sem DOI/id verificado e registado.
 
 ---
 

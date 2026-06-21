@@ -73,4 +73,13 @@ e documentamos isto explicitamente (§6.5); é uma das perguntas prováveis do j
 **O que é:** o FinBERT (`ProsusAI/finbert`) é um modelo de linguagem afinado para texto financeiro que
 classifica o *sentimento* (positivo/negativo/neutro). **Porque (talvez) o usamos:** apenas em **inferência**
 (sem treino), como sinal adicional na explicação. É padrão e citável. **Cortável** se não acrescentar valor
-defensável (§5.3) — decidir na tarefa de metodologias.
+defensável (§5.3) — decidir na tarefa de metodologias. *(Ref. verificada: Araci 2019 — `araci2019finbert`.)*
+
+## 10. (Opcional) SHAP — atribuição de importância
+**O que é:** SHAP (*SHapley Additive exPlanations*) é um método que atribui a cada variável de entrada um valor
+de "quanto contribuiu" para uma decisão do modelo, com base nos valores de Shapley da teoria de jogos. **Porque
+(talvez) o usamos:** para, no detetor de anomalias, mostrar **que fatores** mais pesaram num alerta — reforça a
+explicação local. Usado só se acrescentar clareza defensável. *(Ref. verificada: Lundberg & Lee 2017 — `lundberg2017shap`.)*
+
+> Referências de enquadramento XAI (verificadas): Arrieta et al. 2020 (`arrieta2020xai`), Adadi & Berrada 2018
+> (`adadi2018peeking`). Todas em `docs/citation_log.md`.
