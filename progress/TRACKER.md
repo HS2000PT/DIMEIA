@@ -33,4 +33,17 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] Escolha de título do aluno registada (T1, D-008)
 - [ ] **Gate da Fase C:** confirmação do aluno antes da Fase D (LaTeX)
 
-> **Fase C concluída.** Próximo: Fase D (setup LaTeX) — Sessão 3.
+> **Fase C concluída.**
+
+## Sessão 3 — Fase D (Setup LaTeX)
+- [x] Template ISEP integrado em `thesis/` (classe, frontmatter, ch1..ch7, appendices, assets)
+- [x] `thesis/main.tex` adaptado (título T1, autor, nº 1180934, orientador/coorientador, keywords)
+- [x] 7 capítulos esqueleto com estrutura de secções (EN-GB; comentários PT-PT)
+- [x] `thesis/references.bib` com as **8 referências verificadas** (`\nocite{*}` temporário)
+- [x] `thesis/latexmk.rc` criado (resolve o achado da Fase A) + acrónimos em `glossary.tex`
+- [x] Front matter: abstract (EN) + resumo (PT) em rascunho; exemplos do template removidos
+- [x] **Compila localmente: 41 páginas, 0 erros, biber OK, 8 refs no `.bib`**
+- [ ] Confirmar compilação no **CI** (após push)
+- [ ] **Gate da Fase D:** confirmação do aluno; depois → escrita (Sessão 4+)
+
+> **Arco de setup (Fases 0→D) concluído.** Próximo: escrita (Contextualization + Literature Review).

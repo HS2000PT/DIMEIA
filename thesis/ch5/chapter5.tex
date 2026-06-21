@@ -1,0 +1,36 @@
+% Capítulo 5 — Implementation
+% Decisões de engenharia, integração e reprodutibilidade (a contribuição é de engenharia de IA).
+
+\chapter{Implementation}
+\label{chap:implementation}
+
+This chapter details the implementation of the system: the environment and tooling, the historical data
+pipeline, the live layer, the core components, and the orchestration of the end-to-end flows.
+
+\section{Environment and Tooling}
+\label{sec:impl_env}
+% TODO: Python 3.12, venv, dependências fixadas, reprodutibilidade.
+
+\section{Historical Data Pipeline (FNSPID)}
+\label{sec:impl_pipeline}
+% TODO: download_data.py; subconjunto; embeddings + impacto pré-calculado.
+
+\section{Live Layer: Market Data and News}
+\label{sec:impl_live}
+% TODO: market_data (yfinance/Finnhub) e news_fetcher (Finnhub/RSS).
+
+\section{Anomaly Detector}
+\label{sec:impl_anomaly}
+% TODO: implementação do z-score; limiares; testes.
+
+\section{Correlation Engine}
+\label{sec:impl_correlation}
+% TODO: recuperação por similaridade + medição de impacto.
+
+\section{Explanation Engine}
+\label{sec:impl_explanation}
+% TODO: montagem da explicação rastreável.
+
+\section{Telegram Bot and Orchestration}
+\label{sec:impl_bot}
+% TODO: envio de alertas; main.py; agendamento.

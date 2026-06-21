@@ -1,0 +1,93 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Dissertação MEIA — ISEP
+% Baseada no template oficial (meia-style.cls, L. Faria / N. Pereira / P. Baltarejo, DEI/ISEP)
+% Adaptada para esta dissertação na Fase D (ver progress/DECISIONS.md D-004).
+% Comentários em PT-PT; texto da tese em Inglês (EN-GB).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[
+11pt,            % corpo de letra (regra ISEP)
+english,         % língua do documento
+singlespacing,   % espaçamento simples
+parskip,         % espaço entre parágrafos
+nohyperreflinkcolor, % links sem cor
+headsepline,     % linha sob o cabeçalho
+]{meia-style}
+
+\usepackage{tikz}      % diagramas programáticos (arquitetura)
+\usepackage{pgfplots}  % gráficos de alta qualidade
+\pgfplotsset{compat=newest}
+
+% Estilo de citação recomendado pelo template (Harvard-like) + backend biber
+\usepackage[style=authoryear-comp,backend=biber]{biblatex}
+
+\usepackage{makecell}
+
+\addbibresource{references.bib} % bibliografia (só entradas verificadas — docs/citation_log.md)
+
+\makenoidxglossaries            % glossário/acrónimos (compatível Overleaf)
+\input{frontmatter/glossary}    % entradas de acrónimos definidas no preâmbulo
+
+%----------------------------------------------------------------------------------------
+%	INFORMAÇÃO DA DISSERTAÇÃO
+%----------------------------------------------------------------------------------------
+
+\thesistitle{Explainable Financial Alerts for Retail Investors: Integrating Statistical Anomaly Detection and News--Market Impact Correlation}
+
+% sem subtítulo (não definir \thesissubtitle — a classe omite a linha se \tsubtitle não existir)
+
+\author{Henrique José da Silva Santos}
+
+\studentnumber{1180934}
+
+\supervisor{Luís Gomes}
+
+\cosupervisor{Rafael Silva}
+
+\committeepresident{[A definir]}
+
+\committeemembers{[A definir]\\}
+
+\keywords{Explainable AI, Financial Alerts, Anomaly Detection, News Impact, Retail Investors, Financial NLP}
+
+\university{\href{https://www.isep.ipp.pt}{Instituto Superior de Engenharia do Porto (ISEP)}}
+
+\department{\href{https://www.dei.isep.ipp.pt}{Departamento de Engenharia Informática (DEI)}}
+
+\thesisdate{Porto, \today}
+
+\hypersetup{pdftitle=\ttitle}
+\hypersetup{pdfauthor=\authorname}
+\hypersetup{pdfkeywords=\keywordnames}
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+%	FRONT MATTER
+%----------------------------------------------------------------------------------------
+\input{frontmatter/frontmatter}
+
+%----------------------------------------------------------------------------------------
+%	CORPO
+%----------------------------------------------------------------------------------------
+\input{ch1/chapter1} % Introduction
+\input{ch2/chapter2} % Contextualization
+\input{ch3/chapter3} % Literature Review
+\input{ch4/chapter4} % Methodology
+\input{ch5/chapter5} % Implementation
+\input{ch6/chapter6} % Evaluation
+\input{ch7/chapter7} % Conclusion
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAFIA
+%----------------------------------------------------------------------------------------
+\nocite{*} % TEMPORÁRIO (Fase D): inclui todas as refs verificadas enquanto os capítulos não citam. Remover quando o texto citar as fontes.
+\printbibliography[heading=bibintoc]
+
+%----------------------------------------------------------------------------------------
+%	APÊNDICES
+%----------------------------------------------------------------------------------------
+\appendix
+\input{appendices/appendixA}
+
+\end{document}

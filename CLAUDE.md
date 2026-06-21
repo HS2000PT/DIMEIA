@@ -7,10 +7,10 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 2 (Fase C em curso; sessão de trabalho contínua desde a 0)
-- **Última atualização:** 2026-06-20
-- **Fase atual + último passo concluído:** **Fase C CONCLUÍDA.** Entregáveis: título **T1** (D-008); `arquitectura_sistema.md` (arquitetura + 2 camadas + fluxos + thin slice + **metodologias por componente com 8 refs verificadas**); `free_apis.md` (verificado 2026-06-21); `evaluation_design.md` detalhado; `risk_register.md` (semeado); `PLANO_SESSOES.md` detalhado (~30 sessões + buffer); `learning.md`/`glossary.md`/`citation_log.md` atualizados. Fases 0, A, B (coberta pela 0) e C concluídas e publicadas.
-- **PRÓXIMA AÇÃO IMEDIATA:** **pausar no gate da Fase C** e confirmar com o aluno antes da **Fase D (LaTeX)**: integrar o template ISEP em `thesis/`, mapear os 7 capítulos em `chN/`, criar `references.bib` com as 8 refs verificadas, resolver o `latexmk.rc` em falta, e garantir compilação (CI verde). Ação humana relevante para escrita: política ISEP de uso de IA.
+- **Sessão nº:** 3 (Fase D; sessão de trabalho contínua desde a 0)
+- **Última atualização:** 2026-06-21
+- **Fase atual + último passo concluído:** **Fase D CONCLUÍDA** (setup LaTeX). `thesis/` integrado a partir do template ISEP; `main.tex` adaptado (T1); 7 capítulos esqueleto; `references.bib` com 8 refs verificadas; `latexmk.rc` criado; abstract/resumo em rascunho. **Compila local: 41 pp., 0 erros.** Fases 0, A, B, C e D concluídas e publicadas. (Falta confirmar compilação no CI após push.)
+- **PRÓXIMA AÇÃO IMEDIATA:** **gate da Fase D** — confirmar com o aluno. Concluído o arco de setup (0→D). Próximo bloco = **escrita** (PLANO_SESSOES Sessão 4+): Contextualization (dados US 2025–2026) e Literature Review (tabelas comparativas, mais refs verificadas). Antes da escrita final: **política ISEP de uso de IA** (humano-only).
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
@@ -35,17 +35,19 @@
 - **Título escolhido:** **T1** — *Explainable Financial Alerts for Retail Investors: Integrating Statistical Anomaly Detection and News–Market Impact Correlation* (EN-GB). [Sessão 2 / D-008]
 - **APIs aprovadas:** proposta (Fase C, `docs/free_apis.md`, verificado 2026-06-21) — preços: yfinance (base) + Finnhub (fallback, 60/min); notícias: Finnhub news + RSS (+ GNews/Marketaux opcional); histórico: FNSPID; alertas: Telegram Bot API. Alpha Vantage só ocasional (25/dia).
 - **Metodologias de IA por componente:** [APÓS FASE C]
-- **Estrutura de capítulos:** [APÓS FASE A]
+- **Estrutura de capítulos:** 7 capítulos (Introduction · Contextualization · Literature Review · Methodology · Implementation · Evaluation · Conclusion), mapeados em `thesis/ch1..ch7/` do template ISEP. [Sessão 3 / Fase D]
 - **Layout LaTeX:** usar a estrutura/classe nativa do template ISEP (`meia-style.cls`, `authoryear-comp`, `chN/`); o esboço `thesis/chapters/0X_*.tex` do §9 é ilustrativo e será reconciliado na Fase D. [Sessão 0]
 - (Racional completo em `progress/DECISIONS.md`.)
 
 ---
 
 ## Estado LaTeX
-- **Escrito:** nada ainda (Fase D cria `thesis/` a partir do template ISEP). Template **analisado** (`docs/analise_template_latex.md`).
-- **Em falta:** integração do template em `thesis/`; 7 capítulos; `references.bib`.
-- **Achado a tratar na Fase D:** o `Makefile` do template invoca `latexmk -r latexmk.rc` mas o `latexmk.rc` **não existe** — criar mínimo ou ajustar invocação (o CI `xu-cheng/latex-action` não depende dele).
-- **Problemas de compilação:** n/a. (LaTeX local disponível: MiKTeX + biber 2.21; CI compila em cada push após Fase D.)
+- **Escrito (Fase D):** `thesis/` integrado a partir do template ISEP (classe `meia-style.cls`, `frontmatter/`, `ch1..ch7/`, `appendices/`). `main.tex` adaptado (título T1, autor, nº 1180934, orientador/coorientador, keywords). **Compila localmente: 41 páginas, 0 erros**, biber OK, **8 referências no `references.bib`**. Front matter: abstract (EN) + resumo (PT) em rascunho; acrónimos atualizados (`glossary.tex`).
+- **7 capítulos** (esqueleto com secções): Introduction · Contextualization · Literature Review · Methodology · Implementation · Evaluation · Conclusion.
+- **`latexmk.rc` criado** (resolve o achado da Fase A: o `Makefile` invocava-o sem existir).
+- **Temporário:** `\nocite{*}` em `main.tex` (inclui as 8 refs enquanto os capítulos não citam — remover na escrita).
+- **Em falta:** conteúdo dos capítulos (fases de escrita); refinar front matter (declaração de integridade, abstract <=200 palavras).
+- **Problemas de compilação:** nenhum (só aviso cosmético de fonte `T1/cmtl/b/n`). LaTeX local: MiKTeX + biber 2.21; CI (`compile-thesis.yml`) compila em cada push a `thesis/**`.
 
 ## Estado do Código
 - **Implementado:** esqueleto de pacotes `src/` (stubs com docstrings PT-PT); `src/main.py` stub.

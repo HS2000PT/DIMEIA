@@ -1,0 +1,36 @@
+% Capítulo 4 — Methodology
+% Base: docs/arquitectura_sistema.md (arquitetura + metodologias) e docs/evaluation_design.md.
+
+\chapter{Methodology}
+\label{chap:methodology}
+
+This chapter describes the system architecture, the two data layers, the method chosen for each component, the
+evaluation design, and the methodological-rigour guarantees (no lookahead, reproducibility).
+
+\section{System Overview and Architecture}
+\label{sec:met_architecture}
+% TODO: diagrama de arquitetura (figura reprodutível) + os dois gatilhos.
+
+\section{Data Architecture: Historical vs. Live}
+\label{sec:met_data}
+% TODO: FNSPID (histórico) vs. APIs gratuitas (live); ver data_card.md.
+
+\section{Statistical Anomaly Detection}
+\label{sec:met_anomaly}
+% TODO: z-score com média/desvio móveis; justificação (transparência) \autocite{chandola2009anomaly}.
+
+\section{News--Market Correlation Engine}
+\label{sec:met_correlation}
+% TODO: embeddings \autocite{reimers2019sbert} + cosseno; event-study \autocite{brown1985daily}; janelas +1d/+3d.
+
+\section{Explanation Engine (XAI)}
+\label{sec:met_xai}
+% TODO: regras + precedentes + SHAP \autocite{lundberg2017shap}; enquadramento \autocite{arrieta2020xai}.
+
+\section{Evaluation Design}
+\label{sec:met_evaluation}
+% TODO: métricas, baselines, ablções por componente (ver evaluation_design.md).
+
+\section{Methodological Rigour}
+\label{sec:met_rigour}
+% TODO: sem lookahead; seeds fixas; reprodutibilidade (§6.5).

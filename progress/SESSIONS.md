@@ -5,6 +5,24 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 3 — 2026-06-21 — Fase D (Setup LaTeX)
+**Objetivo:** integrar o template ISEP em `thesis/` e garantir compilação.
+
+**Feito:**
+- Template ISEP copiado para `thesis/` (classe `meia-style.cls`, `frontmatter/`, `appendices/`, assets) e criados
+  `ch1..ch7/`. `main.tex` adaptado: título **T1**, autor, nº 1180934, orientador Luís Gomes, coorientador Rafael
+  Silva, keywords; `\addbibresource{references.bib}`; `authoryear-comp` + biber; `makenoidxglossaries`.
+- **7 capítulos** com estrutura de secções (Introduction · Contextualization · Literature Review · Methodology ·
+  Implementation · Evaluation · Conclusion).
+- `references.bib` com as **8 referências verificadas**; `latexmk.rc` criado (resolve o achado da Fase A);
+  acrónimos próprios em `glossary.tex`; abstract (EN) + resumo (PT) em rascunho (exemplos do template removidos).
+- **Compila localmente: 41 páginas, 0 erros**, biber OK, 8 refs no `.bbl` (só aviso cosmético de fonte).
+- Correção: removido `\thesissubtitle{}` vazio (causava "There's no line here to end"). `\nocite{*}` temporário.
+
+**Próxima ação:** gate da Fase D; confirmar compilação no CI após push; depois escrita (Sessão 4+).
+
+---
+
 ## Sessão 2 — 2026-06-21 — Fase C (Planeamento e decisões técnicas)
 **Objetivo:** planear o sistema e fechar decisões técnicas antes da Fase D.
 
