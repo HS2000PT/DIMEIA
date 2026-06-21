@@ -29,3 +29,19 @@ Cada decisão relevante fica aqui com data e justificação, para defesa e rastr
 ## D-006 · 2026-06-20 · PDFs de dissertações de referência = gitignored
 - **Decisão:** os PDFs `dissertação_*.pdf` não são versionados (apenas locais, como `data/literature/`).
 - **Porquê:** são obras de terceiros com direitos de autor (§5.4 "não republicar texto de terceiros") e binários grandes. São re-fornecidos por dispositivo pelo aluno.
+
+## D-007 (PROPOSTA — decisão do aluno) · 2026-06-20 · Título da dissertação
+> §4: a decisão final é do aluno. Variante EN-GB. Candidatos (T0 = sugestão do ROOT PROMPT):
+
+- **T0 (baseline §4):** *Towards Transparent Financial Alerts: An Explainable AI System for Retail Investors Integrating Market Anomaly Detection and News Impact Correlation*
+  - **Prós:** completo; cobre XAI + os dois gatilhos + público. **Contras:** longo; "Towards" pode soar preliminar.
+- **T1:** *Explainable Financial Alerts for Retail Investors: Integrating Statistical Anomaly Detection and News–Market Impact Correlation*
+  - **Prós:** conciso, afirmativo (sem "Towards"), mantém ambos os componentes + XAI + público. **Contras:** menos ênfase na reprodutibilidade/engenharia.
+- **T2:** *An Explainable AI System for Retail Investors: Correlating Financial News with Historical Market Impact for Transparent Alerts*
+  - **Prós:** destaca o **núcleo** (correlação notícia–impacto histórico) e a explicabilidade. **Contras:** a deteção de anomalias fica implícita.
+- **T3:** *Transparent and Reproducible Financial Alerting: Engineering an Explainable AI Pipeline for Market Anomalies and News Impact on US Equities*
+  - **Prós:** evidencia a **contribuição de engenharia** + reprodutibilidade + foco mercado US. **Contras:** o mais longo.
+
+- **Recomendação:** **T1** (equilíbrio entre completude e concisão; afirmativo; cobre os dois gatilhos e o XAI).
+  T2 se quisermos enfatizar o núcleo de correlação; T3 se quisermos enfatizar a engenharia/reprodutibilidade.
+- **Estado:** A AGUARDAR ESCOLHA DO ALUNO. Após decisão → registar como D-00X confirmada e usar em `main.tex` (Fase D).

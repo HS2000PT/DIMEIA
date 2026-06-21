@@ -21,5 +21,12 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] Benchmark alargado às outras 3 dissertações (Bruno Ribeiro, Helder Pereira, Joana Figueiredo) → secção comparativa em `docs/analise_referencia.md`
 - [ ] **Gate de fase:** confirmação do aluno para avançar (Fase B já coberta pela Fase 0 → segue Fase C)
 
-## Próximas sessões
-- Fase C (planeamento): 3 títulos; arquitetura; APIs gratuitas (`free_apis.md`); metodologias por componente; `evaluation_design.md`; `PLANO_SESSOES.md` detalhado.
+## Sessão 2 — Fase C (Planeamento) — EM CURSO
+- [x] Arquitetura técnica detalhada → `docs/arquitectura_sistema.md` (diagrama de componentes, 2 camadas de dados, fluxos dos 2 gatilhos, thin slice, garantias XAI/anti-lookahead)
+- [x] 4 títulos candidatos (T0–T3) → `DECISIONS.md` D-007 (recomendado T1); **a aguardar escolha do aluno**
+- [x] `learning.md` + `glossary.md` com conceitos da arquitetura (PT-PT, com notas de defesa)
+- [ ] APIs gratuitas verificadas → `docs/free_apis.md` (limites 2025–2026)
+- [ ] Metodologias por componente + citações verificadas (`citation_log.md`)
+- [ ] `docs/evaluation_design.md` detalhado
+- [ ] `progress/PLANO_SESSOES.md` (~30 sessões + buffer)
+- [ ] Registar escolha de título do aluno

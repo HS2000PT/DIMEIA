@@ -7,10 +7,10 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 1 (mesma sessão de trabalho que a 0; cobriu Fase 0 + Fase A)
+- **Sessão nº:** 2 (Fase C em curso; sessão de trabalho contínua desde a 0)
 - **Última atualização:** 2026-06-20
-- **Fase atual + último passo concluído:** **Fase A concluída** — analisada a dissertação principal (`docs/analise_referencia.md`: Rafael Silva, 109 pp., 34 figuras, 6 tabelas, ~170 refs) **+ benchmark alargado às 4 dissertações** (Bruno 139pp/40fig/210refs; Helder 133pp/41fig/~200refs; Joana 104pp/20fig/~60refs; todas EN) e o template ISEP (`docs/analise_template_latex.md`: classe, pacotes, convenções, achado do `latexmk.rc` em falta). Alvos refinados: ~110–120 pp., ~30–40 figuras, ~8–14 tabelas, ~150–200 refs, citação `authoryear-comp`. Fase 0 concluída e publicada.
-- **PRÓXIMA AÇÃO IMEDIATA:** **pausar no gate da Fase A** e confirmar com o aluno antes de avançar. Fase B (estrutura) já maioritariamente coberta na Fase 0 → próximo bloco real é a **Fase C** (planeamento): 3 títulos, arquitetura, APIs gratuitas, metodologias por componente, `evaluation_design.md`, `risk_register.md` (já semeado) e `PLANO_SESSOES.md` detalhado.
+- **Fase atual + último passo concluído:** **Fase C em curso.** Feito: (1) arquitetura técnica detalhada (`docs/arquitectura_sistema.md` — diagrama de componentes, 2 camadas de dados, fluxos dos 2 gatilhos, thin slice, garantias anti-lookahead/XAI); (2) **4 títulos candidatos** propostos (`DECISIONS.md` D-007, recomendado **T1**) — **a aguardar escolha do aluno**; (3) `learning.md` + `glossary.md` com os conceitos da arquitetura (z-score, embeddings, similaridade, event-study, XAI, lookahead). Fases 0 e A concluídas e publicadas.
+- **PRÓXIMA AÇÃO IMEDIATA:** continuar a Fase C: **(a)** investigar e documentar APIs gratuitas (`free_apis.md`, com verificação web dos limites 2025–2026); **(b)** metodologias por componente com **citações verificadas** (`citation_log.md`); **(c)** `evaluation_design.md` detalhado; **(d)** `PLANO_SESSOES.md` (~30 sessões). E **registar a escolha de título** do aluno quando chegar.
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
@@ -64,6 +64,7 @@
 4. **Chaves de APIs gratuitas** (Finnhub / Alpha Vantage / GNews) → apenas no `.env`, conforme necessário (Fase C).
 5. **Política ISEP de uso de IA** — texto exato da declaração de uso de IA na MEIA (confirmar com Prof. Luís Gomes se houver dúvida) — para conformidade com §6.8.
 6. **Confirmar conjunto de tickers e janela temporal** do FNSPID (Fase C / data_card).
+7. **Escolher o título** entre os candidatos T0–T3 (`DECISIONS.md` D-007; recomendado T1) — decisão do aluno (§4).
 
 ---
 
