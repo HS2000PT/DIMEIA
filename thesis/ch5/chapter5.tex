@@ -4,33 +4,164 @@
 \chapter{Implementation}
 \label{chap:implementation}
 
-This chapter details the implementation of the system: the environment and tooling, the historical data
-pipeline, the live layer, the core components, and the orchestration of the end-to-end flows.
+This chapter describes how the system was built. Whereas Chapter~\ref{chap:methodology} justified
+\emph{what} methods were chosen and \emph{why}, this chapter documents the \emph{engineering}: the
+environment and tooling, the repository structure and the design principles that keep it testable,
+the data pipelines, the individual components, and the orchestration of the two end-to-end flows.
+Consistent with the framing of the work as AI \emph{engineering}, the contribution lies in
+integrating and applying existing models and tools into a coherent, explainable and reproducible
+system, not in inventing new algorithms.
 
 \section{Environment and Tooling}
 \label{sec:impl_env}
-% TODO: Python 3.12, venv, dependências fixadas, reprodutibilidade.
 
-\section{Historical Data Pipeline (FNSPID)}
+The system is implemented in Python~3.12, chosen for the maturity of its wheels for the machine
+learning stack. Dependencies are pinned in \texttt{requirements.txt} and frozen in a lock file
+(\texttt{requirements.lock.txt}, $72$ packages) so the environment is reproducible across machines.
+The numerical and data stack is \texttt{numpy} and \texttt{pandas}; the embedding stack is
+\texttt{sentence-transformers}~5.6 on \texttt{torch}~2.12 (the CPU build, installed from PyTorch's
+dedicated index to avoid the much larger CUDA download); figures are produced with \texttt{matplotlib}.
+
+Quality is enforced by two always-on gates collected in a single \texttt{verify.sh} script: the
+\texttt{pytest} suite and the \texttt{ruff} linter (line length $100$, with import-order and
+modernisation rules). Tests that require network access or heavy models are marked and excluded by
+default --- \texttt{telegram} (sends a real message) and \texttt{sbert} (downloads a model) --- so
+the default run is fast, deterministic and offline, while the marked tests can be invoked explicitly.
+Secrets live only in a git-ignored \texttt{.env} file loaded through \texttt{src/config.py}; the
+session-closing script scans the staged changes for secret-like patterns before every commit. The
+thesis itself is compiled in continuous integration on every change to \texttt{thesis/}, and the PDF
+is also produced locally by \texttt{scripts/build\_pdf.sh}.
+
+\section{Repository Structure and Design Principles}
+\label{sec:impl_structure}
+
+The code is organised as a package per component under \texttt{src/}, mirroring the architecture of
+Figure~\ref{fig:architecture}; Table~\ref{tab:impl_modules} maps each component to its module and key
+elements. Three engineering principles recur throughout and are worth highlighting because they are
+what make the system both testable and defensible.
+
+\begin{table}[ht]
+\caption{Mapping of components to modules.}
+\label{tab:impl_modules}
+\centering
+\begin{tabular}{p{0.26\textwidth} p{0.30\textwidth} p{0.36\textwidth}}
+\toprule
+\tabhead{Component} & \tabhead{Module} & \tabhead{Key elements} \\
+\midrule
+Configuration & \texttt{config.py} & loads \texttt{.env}; secrets never in code \\
+Market data (live) & \texttt{market\_data/prices.py} & \texttt{get\_price\_history}, \texttt{log\_returns} \\
+News fetcher (live) & \texttt{news\_fetcher/fetcher.py} & \texttt{NewsItem}; \texttt{parse\_finnhub\_news}, \texttt{parse\_rss} \\
+Anomaly detector & \texttt{anomaly\_detector/detector.py} & \texttt{detect\_latest}, \texttt{AnomalyResult} \\
+Correlation engine & \texttt{correlation\_engine/} & \texttt{event\_study.py}, \texttt{similarity.py} \\
+Historical KB & \texttt{historical\_kb/} & \texttt{NewsRecord}, \texttt{Embedder}, \texttt{HistoricalKB} \\
+Explanation engine & \texttt{explanation\_engine/explainer.py} & \texttt{explain\_anomaly}, \texttt{explain\_news\_impact} \\
+Delivery & \texttt{telegram\_bot/sender.py} & \texttt{send\_message} \\
+Orchestration & \texttt{main.py} & \texttt{run\_thin\_slice}, \texttt{run\_news\_trigger} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+First, \textbf{a thin end-to-end slice was built before breadth}: the market-movement trigger was
+implemented and proven end to end (price retrieval through to a real Telegram alert) before the
+heavier correlation engine was added, reducing integration risk. Second, \textbf{pure logic is
+separated from input/output}, and heavy dependencies are imported lazily. Network and model imports
+(\texttt{yfinance}, \texttt{requests}, \texttt{sentence-transformers}) happen inside the functions
+that need them, and parsing is split from fetching (for example \texttt{parse\_finnhub\_news} is a
+pure function tested offline, while \texttt{fetch\_finnhub\_company\_news} is a thin HTTP wrapper).
+As a result the numerical core is unit-tested without a network connection or the machine learning
+stack. Third, \textbf{components are programmed against interfaces}: the embedding step is defined by
+an \texttt{Embedder} protocol with two interchangeable implementations --- a dependency-free
+\texttt{HashingEmbedder} (a lexical baseline, also used as the offline test double) and the
+\texttt{SbertEmbedder} (the real Sentence-BERT model). Swapping one for the other changes nothing
+else, which is exactly what makes the ablation in Chapter~\ref{chap:evaluation} a fair comparison.
+
+\section{Historical Knowledge Base and Data Pipeline}
 \label{sec:impl_pipeline}
-% TODO: download_data.py; subconjunto; embeddings + impacto pré-calculado.
+
+The historical layer is a knowledge base of past news, each entry storing its date, ticker,
+headline, sentence embedding and measured post-event impact, persisted as JSON Lines (one record per
+line, human-readable and diff-friendly). The builder, \texttt{HistoricalKB.build}, aligns each news
+item to the market by taking the first trading day \emph{on or after} the news date (via a sorted
+search over the price index) and measures impact only from that day's close onward; this is the
+no-lookahead rule made concrete in code, and it also avoids crediting the system with a jump already
+embedded in the opening price.
+
+The intended primary source is FNSPID \autocite{dong2024fnspid}. Its news file was verified to be
+roughly $23$\,GB, so \texttt{scripts/download\_data.py} reads it in a streaming fashion, filtering by
+ticker and date window chunk by chunk and writing only the selected subset to disk; large data is
+git-ignored and recreated by the script, while only small samples are versioned. Because downloading
+and scanning the full corpus is a long, one-off job, the evaluation in Chapter~\ref{chap:evaluation}
+uses an initial knowledge base built from real Finnhub news through the same builder
+(\texttt{scripts/build\_kb.py}); the full FNSPID build is identified as future work. Either way the
+build is identical, differing only in the news source.
 
 \section{Live Layer: Market Data and News}
 \label{sec:impl_live}
-% TODO: market_data (yfinance/Finnhub) e news_fetcher (Finnhub/RSS).
+
+The live layer reuses the same schema as the historical layer so the two are directly comparable.
+Market data is obtained from \texttt{yfinance}, from which daily log-returns are computed; the import
+is lazy so that unit tests do not touch the network. News is obtained from the Finnhub
+\emph{company-news} endpoint and from RSS feeds: \texttt{parse\_finnhub\_news} converts the JSON
+response into \texttt{NewsItem} objects (normalising the epoch timestamp to an ISO date), and
+\texttt{parse\_rss} extracts items from a feed using only the standard library. Both were validated
+against the live Finnhub service. Throughout, the API key is read from the environment and never
+written to disk or logs.
 
 \section{Anomaly Detector}
 \label{sec:impl_anomaly}
-% TODO: implementação do z-score; limiares; testes.
+
+The detector implements Equation~\ref{eq:zscore} directly. \texttt{detect\_latest} computes the mean
+and (sample) standard deviation over the window of days \emph{strictly preceding} the evaluated day,
+forms the $z$-score of the latest return, and returns an \texttt{AnomalyResult} dataclass carrying
+the decision together with every quantity that produced it (the $z$-score, window, threshold, mean
+and standard deviation). Exposing these values is what allows the explanation engine to be faithful
+by construction. The evaluation harness applies the same rule across an entire series
+(\texttt{rolling\_zscore\_flags}) so that the firing-rate and ablation experiments of
+Chapter~\ref{chap:evaluation} use exactly the production logic.
 
 \section{Correlation Engine}
 \label{sec:impl_correlation}
-% TODO: recuperação por similaridade + medição de impacto.
+
+The correlation engine has two pure, vectorised parts. Similarity is computed with cosine over
+(L2-normalised) embeddings: \texttt{top\_k\_similar} returns the indices and scores of the nearest
+historical items in a single matrix operation. Impact is computed by \texttt{post\_event\_returns},
+which returns the cumulative return at each horizon ($+1$, $+3$, $+5$ days) measured from the event
+close, with horizons that fall outside the available series reported as \texttt{n/a} rather than
+silently dropped. Given a new item, \texttt{HistoricalKB.find\_precedents} embeds it with the chosen
+embedder, ranks the knowledge base by cosine similarity and returns the top precedents with their
+scores --- the evidence later shown to the user.
 
 \section{Explanation Engine}
 \label{sec:impl_explanation}
-% TODO: montagem da explicação rastreável.
 
-\section{Telegram Bot and Orchestration}
+The explanation engine renders alerts directly from the objects produced upstream, which guarantees
+that the text never diverges from the computation. For the market trigger, \texttt{explain\_anomaly}
+states the move, the $z$-score, the threshold and window, and the recent mean and standard deviation.
+For the news trigger, \texttt{explain\_news\_impact} lists the retrieved precedents (date, ticker,
+similarity score, measured impact and headline) and the average impact across them, and it always
+ends with an explicit disclaimer that the figures are observed past outcomes, not a prediction ---
+keeping the system within its no-forecasting scope. Financial sentiment (FinBERT
+\autocite{araci2019finbert}) remains an optional enrichment and is not required by the current flow.
+
+\section{Orchestration and Delivery}
 \label{sec:impl_bot}
-% TODO: envio de alertas; main.py; agendamento.
+
+Two entry points in \texttt{main.py} wire the components into the end-to-end flows of
+Figure~\ref{fig:architecture}. \texttt{run\_thin\_slice} drives the market trigger --- retrieve
+prices, compute returns, detect, explain and (optionally) send --- and \texttt{run\_news\_trigger}
+drives the news trigger --- embed the item, retrieve precedents from the knowledge base, explain and
+(optionally) send. Delivery is handled by \texttt{telegram\_bot.send\_message}, a thin wrapper over
+the Telegram Bot API; a real alert was successfully delivered during testing. Periodic scheduling and
+deployment are deliberately left outside the present scope, as the entry points already encapsulate a
+complete run.
+
+\section{Testing and Reproducibility}
+\label{sec:impl_testing}
+
+The system is covered by $40$ automated tests (plus the two gated tests above), spanning the anomaly
+detector, the event study, similarity, the knowledge base, the news parser, the explanation engine
+and both evaluation modules, together with an offline end-to-end smoke test of the news trigger. The
+emphasis on pure functions means the great majority of the logic is verified deterministically and
+offline. All experimental results in Chapter~\ref{chap:evaluation} are regenerated by scripts with a
+fixed seed, and the result figures are written directly into the thesis figure directory, closing the
+loop between code and document.

@@ -7,10 +7,10 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 13 (Escrita — Cap. 6 (Evaluation); sessão contínua desde a 0)
+- **Sessão nº:** 14 (Escrita — Cap. 5 (Implementation); sessão contínua desde a 0)
 - **Última atualização:** 2026-06-21
-- **Fase atual + último passo concluído:** **CAP. 6 (EVALUATION) ESCRITO COM RESULTADOS REAIS; TESE COMPILA (51 pp., 0 erros).** Integra: detetor de anomalias (amplitude taxa de disparo z-score 0,017 vs fixo 0,343; F1 0,524 vs 0,216; ablação janela) + recuperação (SBERT P@5 0,568 > lexical 0,357 > aleatório 0,245), com 2 tabelas, as 2 figuras reprodutíveis, **estudo de caso real** (KB SBERT de 2.964 registos de notícias Finnhub reais; consulta NVDA/AI-chips recupera precedentes temáticos cross-empresa) e limitações honestas. Descoberta importante: Finnhub free só dá **~1 mês** de notícias (3.692 itens) — corrigido no texto; FNSPID multi-ano = trabalho futuro. **40 testes verdes** (+2 gated) + lint limpo.
-- **PRÓXIMA AÇÃO IMEDIATA:** (1) **Cap. 5 (Implementation)** — descrever a arquitetura construída (componentes, fluxos, decisões de engenharia, anti-lookahead); (2) **Cap. 7 (Conclusion)**; (3) abstract <=200 palavras + remover `\nocite{*}`; (4) opcional: FNSPID completo (R2). Prosseguir autonomamente (D-009).
+- **Fase atual + último passo concluído:** **CAP. 5 (IMPLEMENTATION) ESCRITO; TESE COMPILA (53 pp., 0 erros).** Descreve a engenharia real: ambiente/tooling (Python 3.12, lockfile, gated tests, verify/CI), estrutura do repo + 3 princípios (thin slice; lógica pura separada de I/O com imports tardios; interfaces — `Embedder`), tabela de módulos, pipeline da KB (alinhamento anti-lookahead, streaming FNSPID, KB Finnhub para avaliação), camada live, detetor, motor de correlação, explicação, orquestração e testes (40+2). Caps. 1–6 escritos. (Antes: Cap. 6 com resultados reais.)
+- **PRÓXIMA AÇÃO IMEDIATA:** (1) **Cap. 7 (Conclusion)** — síntese das contribuições, resposta às RQ, limitações e trabalho futuro; (2) **abstract <=200 palavras** + resumo; (3) **remover `\nocite{*}`** (confirmar que o texto cita todas as 16 refs); (4) opcional: FNSPID completo (R2). Prosseguir autonomamente (D-009).
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
@@ -47,12 +47,12 @@
 - **7 capítulos** (esqueleto com secções): Introduction · Contextualization · Literature Review · Methodology · Implementation · Evaluation · Conclusion.
 - **`latexmk.rc` criado** (resolve o achado da Fase A: o `Makefile` invocava-o sem existir).
 - **Temporário:** `\nocite{*}` em `main.tex` (inclui as 8 refs enquanto os capítulos não citam — remover na escrita).
-- **Caps. 1–4 + 6 em rascunho**; Cap.2 com 1 figura reprodutível (matplotlib); Cap.3 com 4 tabelas comparativas; Cap.4 com diagrama de arquitetura (TikZ); **Cap.6 (Evaluation) escrito** com resultados reais (2 tabelas + 2 figuras: `eval_anomaly_firing_rate.pdf`, `eval_retrieval_precision.pdf` + estudo de caso real NVDA/AI-chips + limitações honestas). **16 referências** no `.bib`. Caps. 5 e 7 dependem da escrita restante.
+- **Caps. 1–6 em rascunho**; Cap.2 com 1 figura reprodutível (matplotlib); Cap.3 com 4 tabelas comparativas; Cap.4 com diagrama de arquitetura (TikZ); **Cap.5 (Implementation) escrito** (engenharia: ambiente/tooling, estrutura do repo + princípios — thin slice, imports tardios, interfaces; pipeline KB; camada live; componentes; orquestração; testes — com tabela de módulos); **Cap.6 (Evaluation) escrito** com resultados reais (2 tabelas + 2 figuras + estudo de caso real NVDA/AI-chips + limitações). **16 referências** no `.bib`. Falta Cap. 7.
 - **Pipeline de figuras reprodutíveis estabelecido:** matplotlib; scripts em `scripts/figures/` geram PDF vetorial para `thesis/figures/` (commitado para o CI).
 - **PDF versionado:** `thesis/main.pdf` é gerado por `scripts/build_pdf.sh` e **commitado** (o aluno quer vê-lo no repo); CI continua a compilar também.
 - **Front matter:** declaração de integridade limpa (só EN) + **declaração honesta de uso de IA**; símbolos próprios (z-score). Falta confirmar redação ISEP exata da declaração de IA (humano).
-- **Em falta:** Caps. 5 (Implementation) e 7 (Conclusion); abstract <=200 palavras; remover `\nocite{*}` quando o texto citar todas as fontes.
-- **Compila localmente: 51 páginas, 0 erros** (sem refs indefinidas, figuras presentes); só aviso cosmético de fonte. LaTeX local: MiKTeX + biber 2.21; CI (`compile-thesis.yml`) compila em cada push a `thesis/**`.
+- **Em falta:** Cap. 7 (Conclusion); abstract <=200 palavras; remover `\nocite{*}` quando o texto citar todas as fontes.
+- **Compila localmente: 53 páginas, 0 erros** (sem refs indefinidas, figuras presentes); só aviso cosmético de fonte. LaTeX local: MiKTeX + biber 2.21; CI (`compile-thesis.yml`) compila em cada push a `thesis/**`.
 
 ## Estado do Código
 - **Implementado (thin slice / Gatilho 1):** `src/config.py` (.env), `src/market_data/prices.py` (yfinance + log-returns), `src/anomaly_detector/detector.py` (z-score sem lookahead, `AnomalyResult`), `src/explanation_engine/explainer.py` (explicação por regra), `src/telegram_bot/sender.py` (Telegram API), `src/main.py` (`run_thin_slice`). Dep ativa: `yfinance==1.4.1`.

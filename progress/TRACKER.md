@@ -136,3 +136,9 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] Honestidade: corrigido que Finnhub free só dá ~1 mês de notícias; impactos `n/a` em notícias recentes; FNSPID multi-ano = futuro
 - [x] **Tese compila: 51 páginas, 0 erros**, sem refs indefinidas, figuras presentes; `main.pdf` atualizado
 - [ ] Próximo: Cap. 5 (Implementation); Cap. 7 (Conclusion); abstract; remover `\nocite{*}`
+
+## Sessão 14 — Escrita: Capítulo 5 (Implementation)
+- [x] **Cap. 5 redigido** (EN-GB): ambiente/tooling; estrutura do repo + 3 princípios de engenharia (thin slice; lógica pura vs I/O com imports tardios; interfaces `Embedder`); pipeline da KB (alinhamento anti-lookahead, streaming FNSPID, KB Finnhub p/ avaliação); camada live; detetor; motor de correlação; explicação; orquestração; testes
+- [x] Tabela de módulos (componente→módulo→elementos); citações `dong2024fnspid`/`reimers2019sbert`/`araci2019finbert`; referência ao diagrama `fig:architecture` e ao Cap. 6
+- [x] **Tese compila: 53 páginas, 0 erros**, sem refs indefinidas; `main.pdf` atualizado
+- [ ] Próximo: Cap. 7 (Conclusion); abstract <=200 palavras; remover `\nocite{*}`

@@ -5,6 +5,33 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 14 — 2026-06-21 — Escrita: Capítulo 5 (Implementation)
+**Objetivo:** documentar a engenharia construída (a contribuição de engenharia de IA), sem repetir a
+justificação metodológica do Cap. 4.
+
+**Feito:**
+- **Cap. 5 redigido** (EN-GB): ambiente e tooling (Python 3.12, lockfile de 72 pacotes, torch CPU,
+  testes gated telegram/sbert, `verify.sh`, CI, scan de segredos); estrutura do repositório com uma
+  **tabela de módulos** (componente→módulo→elementos) e **3 princípios** — (i) fatia fina end-to-end
+  primeiro, (ii) lógica pura separada de I/O com imports tardios (parsing vs HTTP), (iii) programar
+  contra interfaces (`Embedder` com `HashingEmbedder`/`SbertEmbedder`); pipeline da KB (alinhamento
+  anti-lookahead no código, streaming do FNSPID ~23 GB, KB Finnhub usada na avaliação); camada live;
+  detetor; motor de correlação; explicação fiel por construção; orquestração (`run_thin_slice`,
+  `run_news_trigger`) e entrega; testes e reprodutibilidade.
+- Citações `dong2024fnspid`, `reimers2019sbert`, `araci2019finbert`; referência ao diagrama
+  `fig:architecture` e ao Cap. 6.
+- **Tese compila: 53 páginas, 0 erros**, sem referências indefinidas; `main.pdf` atualizado.
+
+**Honestidade:** não inventei capacidades — agendamento/deploy explicitamente fora de âmbito; a KB
+completa do FNSPID continua como trabalho futuro (a avaliação usou a KB Finnhub real).
+
+**Estado dos testes:** **40 verdes** + 2 *gated*; lint limpo.
+
+**Próxima ação:** Cap. 7 (Conclusion); abstract <=200 palavras; remover `\nocite{*}` após confirmar
+que o texto cita as 16 referências. Autónomo (D-009).
+
+---
+
 ## Sessão 13 — 2026-06-21 — Escrita: Capítulo 6 (Evaluation)
 **Objetivo:** escrever o Cap. 6 assente nos resultados reais já produzidos (zero fabricação), com
 tabelas, as figuras reprodutíveis e um estudo de caso ponta-a-ponta real.
