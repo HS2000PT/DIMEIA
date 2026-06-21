@@ -5,6 +5,35 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 13 — 2026-06-21 — Escrita: Capítulo 6 (Evaluation)
+**Objetivo:** escrever o Cap. 6 assente nos resultados reais já produzidos (zero fabricação), com
+tabelas, as figuras reprodutíveis e um estudo de caso ponta-a-ponta real.
+
+**Feito:**
+- **Cap. 6 redigido** (EN-GB) com seis secções: setup experimental; detetor de anomalias
+  (consistência da taxa de disparo como argumento principal + P/R/F1 + ablação à janela);
+  motor de correlação (precision@k cross-ticker + baselines + medição de impacto); qualidade da
+  explicação (fidelidade por construção; rubrica humana assumida como limitação/futuro); estudo de
+  caso; discussão e limitações honestas.
+- **2 tabelas** (taxa de disparo; precision@k) + **2 figuras** reprodutíveis já geradas; citações
+  metodológicas (`chandola2009anomaly`, `brown1985daily`, `reimers2019sbert`, `arrieta2020xai`).
+- **KB SBERT real** construída de 3.692 notícias Finnhub + preços yfinance (2.964 registos);
+  estudo de caso real: consulta "Nvidia raises guidance on AI data-centre accelerators" recupera 5
+  precedentes todos temáticos de Nvidia/AI-chips, vindos de feeds de empresas diferentes (META, BAC,
+  AMZN) → prova de recuperação por significado, não por nome/keyword.
+- **Honestidade:** descobri que o Finnhub free só devolve ~1 mês de notícias (não o ano pedido);
+  corrigi o texto do setup; impactos `n/a` em notícias muito recentes (janela além dos preços
+  disponíveis) — assumido e motiva o FNSPID multi-ano como trabalho futuro.
+- **Tese compila: 51 páginas, 0 erros**, sem referências indefinidas nem figuras em falta;
+  `thesis/main.pdf` atualizado e versionado.
+
+**Estado dos testes:** **40 verdes** + 2 *gated*; lint limpo.
+
+**Próxima ação:** escrever o Cap. 5 (Implementation) com a arquitetura construída; depois Cap. 7
+(Conclusion), abstract <=200 palavras e remoção do `\nocite{*}`. Autónomo (D-009).
+
+---
+
 ## Sessão 12 — 2026-06-21 — Avaliação: detetor de anomalias (Pergunta 1) em preços reais
 **Objetivo:** dar ao detetor de anomalias uma avaliação real e honesta (a par da recuperação),
 para o Cap. 6 assentar em DUAS experiências quantitativas.

@@ -128,3 +128,11 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] `learning.md` §15 (consistência da taxa de disparo, com nota de defesa)
 - [x] **40 testes verdes** + 2 gated; lint limpo; `verify.sh` ok
 - [ ] Próximo: escrever Cap. 6 (Evaluation) com ambos os resultados + estudo de caso; Cap. 5 (Implementation)
+
+## Sessão 13 — Escrita: Capítulo 6 (Evaluation)
+- [x] **Cap. 6 redigido** (EN-GB): setup, detetor de anomalias (consistência da taxa de disparo + P/R/F1 + ablação), recuperação (precision@k + baselines), qualidade da explicação (fidelidade por construção), estudo de caso ponta-a-ponta, discussão/limitações
+- [x] 2 tabelas de resultados + 2 figuras reprodutíveis (`eval_anomaly_firing_rate.pdf`, `eval_retrieval_precision.pdf`); citações `chandola2009anomaly`/`brown1985daily`/`reimers2019sbert`/`arrieta2020xai`
+- [x] **KB SBERT real** construída de 3.692 notícias Finnhub (2.964 registos) → estudo de caso real NVDA/AI-chips (precedentes temáticos cross-empresa)
+- [x] Honestidade: corrigido que Finnhub free só dá ~1 mês de notícias; impactos `n/a` em notícias recentes; FNSPID multi-ano = futuro
+- [x] **Tese compila: 51 páginas, 0 erros**, sem refs indefinidas, figuras presentes; `main.pdf` atualizado
+- [ ] Próximo: Cap. 5 (Implementation); Cap. 7 (Conclusion); abstract; remover `\nocite{*}`
