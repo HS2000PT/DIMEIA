@@ -44,4 +44,9 @@ Cada decisão relevante fica aqui com data e justificação, para defesa e rastr
 
 - **Recomendação:** **T1** (equilíbrio entre completude e concisão; afirmativo; cobre os dois gatilhos e o XAI).
   T2 se quisermos enfatizar o núcleo de correlação; T3 se quisermos enfatizar a engenharia/reprodutibilidade.
-- **Estado:** A AGUARDAR ESCOLHA DO ALUNO. Após decisão → registar como D-00X confirmada e usar em `main.tex` (Fase D).
+- **Estado:** **RESOLVIDO (2026-06-21)** → escolhido **T1** pelo aluno (ver D-008).
+
+## D-008 · 2026-06-21 · Título escolhido = T1
+- **Decisão:** *Explainable Financial Alerts for Retail Investors: Integrating Statistical Anomaly Detection and News–Market Impact Correlation* (EN-GB).
+- **Porquê:** equilíbrio entre completude e concisão; afirmativo (sem "Towards"); cobre os dois gatilhos e o XAI.
+- **Aplicação:** usar no bloco THESIS INFORMATION de `main.tex` na Fase D. A frase pode ser afinada antes da entrega.

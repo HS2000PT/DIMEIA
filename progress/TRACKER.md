@@ -25,7 +25,8 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] Arquitetura técnica detalhada → `docs/arquitectura_sistema.md` (diagrama de componentes, 2 camadas de dados, fluxos dos 2 gatilhos, thin slice, garantias XAI/anti-lookahead)
 - [x] 4 títulos candidatos (T0–T3) → `DECISIONS.md` D-007 (recomendado T1); **a aguardar escolha do aluno**
 - [x] `learning.md` + `glossary.md` com conceitos da arquitetura (PT-PT, com notas de defesa)
-- [ ] APIs gratuitas verificadas → `docs/free_apis.md` (limites 2025–2026)
+- [x] Título escolhido pelo aluno (**T1**, D-008) + arquitetura confirmada
+- [x] APIs gratuitas verificadas → `docs/free_apis.md` (verificado 2026-06-21; conjunto aprovado proposto)
 - [ ] Metodologias por componente + citações verificadas (`citation_log.md`)
 - [ ] `docs/evaluation_design.md` detalhado
 - [ ] `progress/PLANO_SESSOES.md` (~30 sessões + buffer)

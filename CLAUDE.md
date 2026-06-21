@@ -10,7 +10,7 @@
 - **Sessão nº:** 2 (Fase C em curso; sessão de trabalho contínua desde a 0)
 - **Última atualização:** 2026-06-20
 - **Fase atual + último passo concluído:** **Fase C em curso.** Feito: (1) arquitetura técnica detalhada (`docs/arquitectura_sistema.md` — diagrama de componentes, 2 camadas de dados, fluxos dos 2 gatilhos, thin slice, garantias anti-lookahead/XAI); (2) **4 títulos candidatos** propostos (`DECISIONS.md` D-007, recomendado **T1**) — **a aguardar escolha do aluno**; (3) `learning.md` + `glossary.md` com os conceitos da arquitetura (z-score, embeddings, similaridade, event-study, XAI, lookahead). Fases 0 e A concluídas e publicadas.
-- **PRÓXIMA AÇÃO IMEDIATA:** continuar a Fase C: **(a)** investigar e documentar APIs gratuitas (`free_apis.md`, com verificação web dos limites 2025–2026); **(b)** metodologias por componente com **citações verificadas** (`citation_log.md`); **(c)** `evaluation_design.md` detalhado; **(d)** `PLANO_SESSOES.md` (~30 sessões). E **registar a escolha de título** do aluno quando chegar.
+- **PRÓXIMA AÇÃO IMEDIATA:** continuar a Fase C: **(b)** metodologias por componente com **citações verificadas** (`citation_log.md`) — tarefa académica mais sensível (FinBERT, SBERT/sentence-transformers, event study, z-score/anomalias, XAI/SHAP); **(c)** `evaluation_design.md` detalhado; **(d)** `PLANO_SESSOES.md` (~30 sessões). Já feitos nesta sessão: título (T1, D-008), arquitetura confirmada, `learning.md`/`glossary.md`, e **(a)** `free_apis.md` (verificado 2026-06-21).
 - **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
@@ -32,8 +32,8 @@
 - **Variante de Inglês (tese):** **EN-GB** (bloqueada; nunca misturar). [Sessão 0]
 - **Idioma docs de aprendizagem/internos:** **PT-PT** (o único toggle do §0). Tese em Inglês. [Sessão 0]
 - **Versão de Python fixada:** **3.12** (estabilidade para torch/transformers/sentence-transformers; 3.14 corre risco de faltar wheels). [Sessão 0]
-- **Título escolhido:** [APÓS FASE C]
-- **APIs aprovadas:** [APÓS FASE C]
+- **Título escolhido:** **T1** — *Explainable Financial Alerts for Retail Investors: Integrating Statistical Anomaly Detection and News–Market Impact Correlation* (EN-GB). [Sessão 2 / D-008]
+- **APIs aprovadas:** proposta (Fase C, `docs/free_apis.md`, verificado 2026-06-21) — preços: yfinance (base) + Finnhub (fallback, 60/min); notícias: Finnhub news + RSS (+ GNews/Marketaux opcional); histórico: FNSPID; alertas: Telegram Bot API. Alpha Vantage só ocasional (25/dia).
 - **Metodologias de IA por componente:** [APÓS FASE C]
 - **Estrutura de capítulos:** [APÓS FASE A]
 - **Layout LaTeX:** usar a estrutura/classe nativa do template ISEP (`meia-style.cls`, `authoryear-comp`, `chN/`); o esboço `thesis/chapters/0X_*.tex` do §9 é ilustrativo e será reconciliado na Fase D. [Sessão 0]
@@ -64,7 +64,7 @@
 4. **Chaves de APIs gratuitas** (Finnhub / Alpha Vantage / GNews) → apenas no `.env`, conforme necessário (Fase C).
 5. **Política ISEP de uso de IA** — texto exato da declaração de uso de IA na MEIA (confirmar com Prof. Luís Gomes se houver dúvida) — para conformidade com §6.8.
 6. **Confirmar conjunto de tickers e janela temporal** do FNSPID (Fase C / data_card).
-7. **Escolher o título** entre os candidatos T0–T3 (`DECISIONS.md` D-007; recomendado T1) — decisão do aluno (§4).
+7. ~~Escolher o título~~ ✅ RESOLVIDO (T1 — D-008). Arquitetura técnica confirmada pelo aluno.
 
 ---
 
