@@ -37,14 +37,14 @@ account; and the delivery component sends the alert to the investor.
 \begin{tikzpicture}[
   font=\small,
   >={Stealth[length=2.2mm]},
-  src/.style={draw, rounded corners, align=center, text width=2.9cm, minimum height=1.0cm, fill=black!8},
+  srcbox/.style={draw, rounded corners, align=center, text width=2.9cm, minimum height=1.0cm, fill=black!8},
   comp/.style={draw, rounded corners, align=center, text width=2.9cm, minimum height=1.0cm, fill=black!3},
   node distance=1.15cm and 1.35cm
 ]
   % data sources (top)
-  \node[src] (md) {Market data\\ \footnotesize live prices};
-  \node[src, right=of md] (nf) {News feed\\ \footnotesize live news};
-  \node[src, right=of nf] (kb) {Historical\\ knowledge base};
+  \node[srcbox] (md) {Market data\\ \footnotesize live prices};
+  \node[srcbox, right=of md] (nf) {News feed\\ \footnotesize live news};
+  \node[srcbox, right=of nf] (kb) {Historical\\ knowledge base};
   % engines
   \node[comp, below=of md] (an) {Anomaly detector\\ \footnotesize \emph{z}-score};
   \node[comp, below=of nf] (ce) {Correlation engine\\ \footnotesize embeddings + event study};

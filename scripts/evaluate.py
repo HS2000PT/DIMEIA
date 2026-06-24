@@ -178,8 +178,8 @@ def _write_figure(path, ks, results, methods) -> None:
         offset = (i - (len(methods) - 1) / 2) * width
         ax.bar(x + offset, [results[m][k] for k in ks], width, label=m)
     ax.set_xticks(x, [f"P@{k}" for k in ks])
-    ax.set_ylabel("Precision (mesmo setor, cross-ticker)")
-    ax.set_title("Recuperação de precedentes: SBERT vs baselines")
+    ax.set_ylabel("Precision (same sector, cross-ticker)")
+    ax.set_title("Precedent retrieval: SBERT versus baselines")
     ax.legend(fontsize=8)
     ax.grid(axis="y", alpha=0.3)
     fig.tight_layout()
