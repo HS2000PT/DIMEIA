@@ -196,7 +196,11 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
   - [x] Cap. 3 aprofundado: **data card FNSPID** (tabela: fonte, licença CC BY-SA 4.0, 15 tickers, janela 2018–2023, governança), pré-processamento + alinhamento anti-lookahead, camada live + dataset de avaliação, **IA responsável/ética** alargada, metodologia de avaliação + rigor
   - [x] Cap. 1 confirmado bem-escopado (contexto de alto nível; literatura profunda fica no Estado da Arte)
   - [x] Compila 62 pp, 0 erros, 0 citações indefinidas, sem overfull; corpo sem identificadores de código/PT
-- [ ] **S3 — CLARION (Cap. 4)** ao nível de desenho + Apêndice de reprodutibilidade
+- [x] **S3 — CLARION (Cap. 4)** ao nível de desenho + Apêndice de reprodutibilidade
+  - [x] Novo **diagrama de fluxo do gatilho de mercado** (preço→janela→z-score→limiar→alerta; nó de decisão losango)
+  - [x] **Tabela de decisões de desenho** (decisão/escolha/racional) — torna explícito o juízo de engenharia
+  - [x] Apêndice A (Reproducibility) confirmado ao nível certo; corpo sem identificadores de código
+  - [x] Compila 64 pp, 0 erros, 0 citações indefinidas, sem overfull
 - [ ] **S4 — Estudos de Caso (Cap. 5)** + novas figuras de resultados
 - [ ] **S5 — Estado da Arte (2.ª expansão) + Conclusões (Cap. 6)**
 - [ ] **S6 — Front matter + consistência global + auditoria de citações**

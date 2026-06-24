@@ -78,6 +78,30 @@ lexical baseline and the real Sentence-BERT model --- so that one can be substit
 without changing anything else, which is what makes the embedding-model comparison in
 Chapter~\ref{chap:casestudies} a fair one.
 
+Table~\ref{tab:clarion_decisions} gathers the principal design decisions and the rationale behind each,
+making explicit the engineering judgement that, in a work of this kind, \emph{is} the contribution.
+Every decision follows the guiding principle of defensible simplicity established in
+Chapter~\ref{chap:methods}.
+
+\begin{table}[ht]
+\caption{Principal design decisions in \textsc{Clarion} and their rationale.}
+\label{tab:clarion_decisions}
+\centering
+\begin{tabular}{p{0.27\textwidth} p{0.30\textwidth} p{0.33\textwidth}}
+\toprule
+\tabhead{Decision} & \tabhead{Choice} & \tabhead{Rationale} \\
+\midrule
+Detection method & Rolling \emph{z}-score & Transparent; every alert is explainable to a non-expert \\
+News representation & Sentence-BERT embeddings & Contextual meaning, yet cheap and reproducible to compare \\
+Impact measurement & Event-study windows & Standard, reproducible; characterises an outcome, not a forecast \\
+Explanation strategy & Transparent design + precedents & Faithful by construction, not a post-hoc approximation \\
+Data architecture & Shared schema, two layers & Live and historical evidence are directly comparable \\
+Component coupling & Programmed to interfaces & Testable offline; enables fair model substitution \\
+Delivery channel & Telegram bot & Free, ubiquitous, no bespoke client needed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Historical Knowledge Base and Correlation Engine}
 \label{sec:clarion_kb}
 
@@ -135,6 +159,32 @@ latest return, and returns the decision together with every quantity that produc
 $z$-score, window, threshold, mean and standard deviation. Exposing these values is what allows the
 explanation engine to be faithful by construction, and the evaluation applies exactly this rule across
 entire price series so that the experiments use the same logic as production.
+Figure~\ref{fig:market_flow} traces the market trigger from a daily price update to a delivered alert.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=2mm]},
+  stp/.style={draw, rounded corners, align=center, text width=1.7cm, minimum height=1.0cm, fill=black!3},
+  dec/.style={draw, diamond, aspect=2, align=center, inner sep=1pt, text width=1.5cm, fill=black!5},
+  node distance=5mm
+]
+  \node[stp] (a) {Daily\\ price};
+  \node[stp, right=of a] (b) {Rolling\\ window};
+  \node[stp, right=of b] (c) {\emph{z}-score};
+  \node[dec, right=of c] (d) {$|z|>k$?};
+  \node[stp, right=of d] (e) {Explanation\\ and alert};
+  \draw[->] (a)--(b);
+  \draw[->] (b)--(c);
+  \draw[->] (c)--(d);
+  \draw[->] (d)-- node[above, font=\tiny] {yes} (e);
+\end{tikzpicture}
+\caption[The market-movement trigger end to end]{The market-movement trigger. The latest daily return is
+standardised against the rolling mean and standard deviation of the preceding window; if the absolute
+$z$-score exceeds the threshold $k$, the move and all the quantities behind it are passed to the
+explanation engine and delivered.}
+\label{fig:market_flow}
+\end{figure}
 
 \section{Explanation Engine}
 \label{sec:clarion_xai}
