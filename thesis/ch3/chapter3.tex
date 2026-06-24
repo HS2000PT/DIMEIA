@@ -1,40 +1,119 @@
 % Chapter 3 - Methods and Materials
-% Methodology, datasets, models/techniques (conceptual), tools, responsible AI, evaluation design.
+% Methodology, datasets (data card), models/techniques (conceptual), tools, responsible AI, evaluation design.
 % No code identifiers in the body (engineering described at design level). EN-GB.
-% NOTE: Phase 3 expands datasets/data card, responsible-AI and evaluation methodology.
 
 \chapter{Methods and Materials}
 \label{chap:methods}
 
 This chapter describes the methods, materials and methodology used in the dissertation. It states the
-overall approach, the datasets and data sources, the models and techniques selected for each component
-(with their justification), the supporting tools, the responsible-AI considerations, and the evaluation
-methodology defined in advance. Throughout, the guiding principle is \emph{defensible simplicity}:
-where options perform comparably, the more transparent and explainable one is preferred. The system
-that realises these methods is presented in Chapter~\ref{chap:clarion}, and the experiments that apply
-this methodology are reported in Chapter~\ref{chap:casestudies}.
+overall approach, documents the datasets and data sources in a reproducible data card, presents the
+models and techniques selected for each component with their justification, describes the supporting
+tools, sets out the responsible-AI considerations, and defines, in advance, the evaluation methodology
+and the guarantees of rigour. Throughout, the guiding principle is \emph{defensible simplicity}: where
+options perform comparably, the more transparent and explainable one is preferred. The system that
+realises these methods is presented in Chapter~\ref{chap:clarion}, and the experiments that apply this
+methodology are reported in Chapter~\ref{chap:casestudies}.
 
 \section{Approach and Methodology}
 \label{sec:met_approach}
 
-The work follows an engineering methodology centred on incremental, end-to-end delivery. A thin slice
-of the system was built and proven end to end before breadth was added, so that integration risk was
-controlled early; each component was then developed in its simplest defensible form and only made more
-sophisticated where the added complexity was justified. This reflects the framing of the work as
-Artificial Intelligence \emph{engineering}: the contribution lies in the integration, application and
-critical evaluation of existing components, not in the invention of new algorithms.
+The work follows an incremental, end-to-end engineering methodology. Rather than building each component
+to completion in isolation, a thin slice of the system was first built and proven end to end --- from
+data acquisition through to a delivered alert --- so that integration risk was identified and controlled
+early. Each component was then developed in its simplest defensible form and made more sophisticated only
+where the added complexity was justified by a measurable or clearly-argued benefit. This reflects the
+framing of the work as Artificial Intelligence \emph{engineering}: as discussed in
+Chapter~\ref{chap:sota}, the individual building blocks already exist in the literature, so the
+contribution lies in their disciplined integration, application and critical evaluation, not in the
+invention of new algorithms.
+
+Two consequences of this methodology recur throughout the design. First, every component is specified by
+its \emph{responsibility} and its \emph{interface} rather than by a particular implementation, which
+keeps the system testable and makes principled substitution possible (for example, exchanging one
+embedding model for another). Second, the methods chosen are constrained by the project's non-negotiable
+requirements: only free and reproducible resources, a focus on the US market, transparency at every step,
+and no price prediction or trading. These requirements act as a filter on the design space before any
+performance consideration.
 
 \section{Datasets and Data Sources}
 \label{sec:met_data}
 
-The system uses two clearly separated data layers. The \textbf{historical} layer is built offline from
-FNSPID \autocite{dong2024fnspid}, which provides financial news already time-aligned with prices; for
-each historical news item the system stores its text, date, ticker, a sentence embedding, and the
-observed post-event price impact. The \textbf{live} layer provides, in real time, prices (from a free
-market-data service, with a second free provider as fallback) and news (from a free company-news
-service and from financial syndication feeds). Free news services are not used to build history because
-their free tiers are typically limited to recent windows and are delayed; the exact ticker subset, time
-window and preprocessing are documented in the data card.
+The system uses two clearly separated data layers, sharing a common schema so that they are directly
+comparable: a \textbf{historical} layer, built offline, that supplies the precedents, and a
+\textbf{live} layer that supplies real-time prices and news. This separation is deliberate: the
+historical layer must be rich and stable, whereas the live layer must be timely and inexpensive.
+
+\subsection{Historical Layer: the FNSPID Corpus}
+\label{sec:met_data_fnspid}
+
+The intended primary source for the historical layer is the FNSPID dataset \autocite{dong2024fnspid},
+which provides financial news time-aligned with daily prices for thousands of US companies --- precisely
+the alignment required to relate news to subsequent price impact without bespoke scraping. The dataset's
+news component is large (on the order of tens of gigabytes), which directly motivates the streaming,
+filtered ingestion described below. Table~\ref{tab:met_datacard} records the data card: the choices that
+make the historical subset reproducible.
+
+\begin{table}[ht]
+\caption{Data card for the historical layer (FNSPID).}
+\label{tab:met_datacard}
+\centering
+\begin{tabular}{p{0.30\textwidth} p{0.62\textwidth}}
+\toprule
+\tabhead{Item} & \tabhead{Value} \\
+\midrule
+Source & FNSPID \autocite{dong2024fnspid} (financial news time-aligned with prices) \\
+Licence & Creative Commons BY-SA 4.0 (attribution required) \\
+Fields used & date, ticker, headline (mapped to a common schema) \\
+Tickers (15) & AAPL, MSFT, AMZN, GOOGL, NVDA, TSLA, META, JPM, BAC, XOM, CVX, JNJ, PFE, WMT, KO \\
+Sectors (5) & Technology, banking, energy, health, consumer staples \\
+Time window & 2018--2023 (daily granularity) \\
+Prices & Daily closing prices for the same tickers \\
+Governance & Large data not versioned (recreated by script); only small samples committed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The fifteen large-capitalisation tickers were chosen to span five economic sectors, which is what makes
+the cross-sector evaluation of Chapter~\ref{chap:casestudies} meaningful while keeping the corpus
+tractable on a modest machine; the six-year window (2018--2023, the extent of the dataset) is recent
+enough to be relevant yet long enough to contain precedents. These choices are documented rather than
+fixed: a different ticker set or window can be substituted without any change to the methodology.
+
+\subsection{Preprocessing and Event Alignment}
+\label{sec:met_data_prep}
+
+Building the historical knowledge base from the corpus involves three steps. First, the news file is read
+in a streaming fashion and filtered to the chosen tickers and window, so that only the relevant subset is
+materialised rather than the full multi-gigabyte corpus. Second, each retained news item is normalised to
+the common schema (date, ticker, headline). Third, each item is aligned to the market and its impact is
+measured. The alignment rule is important for honesty: the event day is taken to be the first trading day
+\emph{on or after} the news date, and the price impact is measured from that day's closing price onward.
+Measuring from the close, rather than the open, avoids crediting the system with a move already embedded
+in the opening price, and measuring strictly forward enforces the no-lookahead guarantee of
+Section~\ref{sec:met_evaluation}. Items for which no aligned price series is available, or whose forward
+window extends beyond the available data, are discarded rather than imputed.
+
+\subsection{Live Layer and Evaluation Dataset}
+\label{sec:met_data_live}
+
+The live layer provides, in real time, prices from a free market-data service (with a second free
+provider as a fallback) and news from a free company-news service and from financial syndication feeds.
+Free news services are deliberately \emph{not} used to construct the historical layer, because their free
+tiers are typically restricted to a short, recent window and are delayed; they are, however, entirely
+adequate as the live trigger and as a source of \emph{real} news for a preliminary evaluation. For the
+latter purpose, a set of $3{,}692$ real headlines for the fifteen tickers was collected from the free
+company-news service (the most recent month available), and is used for the retrieval study in
+Chapter~\ref{chap:casestudies}. This set is genuinely real but recent, which is why the full multi-year
+FNSPID build remains the richer source identified as future work.
+
+\subsection{Data Governance and Attribution}
+\label{sec:met_data_gov}
+
+Two governance rules apply to both layers. First, large data and models are never versioned: they are
+recreated by the ingestion process, and only small illustrative samples are kept under version control.
+Second, third-party news text is not republished: the dataset is cited and attributed as required by its
+Creative Commons BY-SA 4.0 licence \autocite{dong2024fnspid}, and only minimal headline excerpts appear
+in this document.
 
 \section{Models and Techniques}
 \label{sec:met_techniques}
@@ -44,85 +123,101 @@ window and preprocessing are documented in the data card.
 
 Abrupt movements are detected with a transparent statistical rule. Let $r_t$ be the (log-)return of an
 asset on day $t$, and let $\mu_t$ and $\sigma_t$ be the mean and standard deviation of returns over a
-trailing window of $w$ days. The day is flagged as anomalous when the absolute $z$-score exceeds a
-threshold $k$:
+trailing window of $w$ days that ends strictly before $t$. The day is flagged as anomalous when the
+absolute $z$-score exceeds a threshold $k$:
 \begin{equation}
 z_t = \frac{r_t - \mu_t}{\sigma_t}, \qquad \text{anomaly} \iff |z_t| > k .
 \label{eq:zscore}
 \end{equation}
-This statistical family is standard \autocite{chandola2009anomaly} and is chosen for its transparency:
-the user can see exactly why an alert fired. More expressive detectors such as Isolation Forest
-\autocite{liu2008isolation} were considered but not adopted as the default, because their reduced
-interpretability conflicts with the XAI-first goal; the window $w$ and threshold $k$ are documented
-design choices, evaluated in Chapter~\ref{chap:casestudies}.
+This belongs to the statistical family of detectors \autocite{chandola2009anomaly} and is chosen for its
+transparency: the investor can be shown exactly why an alert fired, in terms of how many standard
+deviations the move represented. As established in Chapter~\ref{chap:sota}, more expressive detectors such
+as Isolation Forest \autocite{liu2008isolation} or deep models \autocite{pang2021deep} exist, but their
+reduced interpretability is not warranted for a single, low-dimensional return series whose alerts must be
+explained to a non-expert. The window $w$ and threshold $k$ are explicit design choices, and their effect
+is examined by ablation in Chapter~\ref{chap:casestudies}.
 
 \subsection{Semantic Retrieval and Impact Measurement}
 \label{sec:met_correlation}
 
-The news--market correlation engine is the core of the work. Each news item is encoded into a sentence
-embedding using a Sentence-BERT model \autocite{reimers2019sbert}, chosen because it allows efficient
-comparison of texts through cosine similarity. Given a new item, the engine retrieves the $k$ most
-similar historical news items from the knowledge base and reports the impact those precedents had.
-Impact is measured in the manner of an event study \autocite{brown1985daily}: the asset's return is
-computed over fixed post-event windows (e.g.\ $+1$, $+3$ days), measured strictly after the event so
-that no future information leaks into the evidence. The similarity metric and the impact windows are
-explicit design choices and form part of the contribution.
+The news--market correlation engine is the core of the work and combines two techniques. For retrieval,
+each news item is encoded into a sentence embedding with a Sentence-BERT model \autocite{reimers2019sbert},
+chosen (Section~\ref{sec:sota_finnlp}) because it captures contextual meaning yet produces directly
+comparable fixed-length vectors, so that the nearest historical items to a query can be found efficiently
+with cosine similarity. For impact, the cumulative return of the asset is measured over fixed post-event
+windows ($+1$, $+3$ and $+5$ trading days) in the manner of an event study
+\autocite{fama1969adjustment, brown1985daily}. Both the similarity metric and the impact windows are
+explicit, documented choices and together constitute the methodological contribution; crucially, impact
+is measured strictly after the event, so the evidence characterises an outcome rather than forecasting
+one.
 
 \subsection{Explanation Techniques}
 \label{sec:met_xai}
 
-Explanation is pursued primarily through transparent design, following the principles set out in the
-XAI literature \autocite{arrieta2020xai, adadi2018peeking}: an explanation the user can follow step by
-step. For every alert the system combines (i) the rule or measure that produced the detection (the
-$z$-score and its parameters), (ii) the retrieved historical precedents and their observed impact as
-evidence, and (iii), optionally, feature attribution over the detector using SHAP
-\autocite{lundberg2017shap}. Financial sentiment from FinBERT \autocite{araci2019finbert} is an
-optional enrichment that is cuttable if it does not add defensible value.
+Explanation is pursued primarily through transparent design, following the interpretable-by-design
+argument reviewed in Section~\ref{sec:sota_xai} \autocite{rudin2019stop, arrieta2020xai}. For every alert
+the system assembles three transparent ingredients: the rule or measure that produced the detection (the
+$z$-score together with its window and threshold); the retrieved historical precedents and their observed
+impact, shown as direct evidence; and, optionally, feature attribution over the detector using SHAP
+\autocite{lundberg2017shap}. Financial sentiment from a domain language model \autocite{araci2019finbert}
+is an optional enrichment that is included only if it adds defensible value. Because each alert is
+rendered directly from these computed objects, the explanation is faithful to the system's actual logic by
+construction --- a property assessed explicitly in Chapter~\ref{chap:casestudies}.
 
 \section{Tools and Frameworks}
 \label{sec:met_tools}
 
-% Phase 3: brief conceptual description of the supporting ecosystem (no code identifiers).
-The system is implemented in the Python ecosystem, using established open-source libraries for
-numerical computing, market-data access, sentence embeddings and figure generation. The choice favours
-mature, well-documented and freely available tools, consistent with the project's constraint of using
-only free resources and with the goal of reproducibility. The concrete engineering --- environment,
-repository organisation and testing --- is described at design level in Chapter~\ref{chap:clarion} and
-in Appendix~\ref{app:reproducibility}.
+The system is built on the open-source scientific-Python ecosystem, using mature, well-documented and
+freely available libraries for numerical computing, market-data access, sentence embeddings and figure
+generation. This choice is consistent with the project's constraint of using only free resources and with
+its emphasis on reproducibility: pinned dependencies and fixed random seeds mean the environment and the
+results can be recreated on another machine. The concrete engineering --- the environment, the
+organisation of the code by component, and the automated tests --- is documented at the appropriate level
+in Appendix~\ref{app:reproducibility}, deliberately kept out of the main text so that this chapter
+remains a description of \emph{methods} rather than of software.
 
 \section{Responsible AI and Ethics}
 \label{sec:met_ethics}
 
-% Phase 3: expand with responsible-AI considerations (transparency, no advice, data licensing).
-The work is bound by several responsible-AI commitments. The system performs no price prediction and
-gives no investment advice: it surfaces observed past outcomes as evidence and states this explicitly
-in every alert. All data sources are used within their free tiers and licences, with the FNSPID dataset
-attributed as required by its CC~BY-SA~4.0 licence. No personal data is processed, and no secret or
-credential is stored in the project's versioned files.
+The work is bound by several responsible-AI commitments that follow directly from its purpose and its
+audience. \textbf{No advice and no prediction:} the system performs neither price prediction nor trading
+recommendation; it surfaces observed past outcomes as evidence and states this explicitly in every alert,
+so that the investor is informed rather than instructed. \textbf{Transparency:} every alert exposes its
+full reasoning chain, in keeping with the explainability principles of Chapter~\ref{chap:sota}, so that a
+user can verify rather than merely trust the output. \textbf{Honest evidence:} only results that can be
+reproduced and explained are reported, and no data, metric or citation is fabricated. \textbf{Data
+stewardship:} all sources are used within their free tiers and licences, the FNSPID dataset is attributed
+as its Creative Commons licence requires \autocite{dong2024fnspid}, third-party news text is not
+republished, and no personal data is processed. \textbf{Security:} credentials are never stored in
+versioned files. Finally, the system is positioned as a decision-support aid for a non-professional
+investor, not as a substitute for professional advice --- a limitation stated plainly rather than
+obscured.
 
 \section{Evaluation Methodology}
 \label{sec:met_evaluation}
 
-The evaluation is defined in advance, to avoid fishing for favourable results, and is reported in
-Chapter~\ref{chap:casestudies}. In summary: the anomaly detector is assessed by the consistency of its
-firing rate across instruments of differing volatility (a label-free argument) and by agreement with an
-explicit extreme-move proxy, with an ablation over the estimation window; the correlation engine is
-assessed on retrieval quality (cross-ticker precision@$k$ with a sector relevance proxy, against
-random, recency and lexical baselines, over multiple random samples and two embedding models) and on
-the measured event-study impact; and the explanation engine is assessed for fidelity to the actual
+The evaluation is defined in advance, before any experiment is run, to avoid selecting metrics that
+flatter the result; it is reported in full in Chapter~\ref{chap:casestudies}. The anomaly detector is
+assessed primarily by the \emph{consistency of its firing rate} across instruments of differing
+volatility --- an argument that depends on no label --- and secondarily by agreement with an explicit
+extreme-move proxy, with an ablation over the estimation window. The correlation engine is assessed on
+retrieval quality, measured as cross-ticker precision@$k$ against a sector relevance proxy and compared
+with random, recency and lexical baselines over multiple random samples and two embedding models, and on
+the event-study impact it measures. The explanation engine is assessed for fidelity to the system's actual
 logic and, as a stated limitation, for usefulness. Because the system performs neither price prediction
 nor trading, profit-based metrics are explicitly out of scope.
 
-Three guarantees apply throughout. First, \textbf{no lookahead}: features at any instant use only
-information available at or before that instant, and historical impact uses only post-event windows.
-Second, \textbf{reproducibility}: random seeds are fixed, dependencies are pinned, and every data and
-results figure is produced by a script in the repository. Third, \textbf{honesty}: only results that
-can be reproduced and explained are reported, and no data, metric or citation is fabricated.
+Three guarantees underpin every experiment. First, \textbf{no lookahead}: any feature computed at an
+instant uses only information available at or before that instant, and historical impact uses only
+post-event windows. Second, \textbf{reproducibility}: random seeds are fixed, dependencies are pinned, and
+every data and results figure is produced by a versioned script. Third, \textbf{honesty}: results are
+reported with their caveats, and modest but genuine findings are preferred to inflated ones.
 
 \section{Chapter Conclusions}
 \label{sec:met_summary}
 
-This chapter set out the methodology of defensible simplicity, the two-layer data architecture, the
-models and techniques chosen for detection, retrieval, impact measurement and explanation, and the
-evaluation methodology and rigour guarantees fixed in advance. The next chapter shows how these methods
-are integrated into CLARION, the proposed system.
+This chapter set out the methodology of defensible simplicity and incremental delivery, documented the
+two-layer data architecture in a reproducible data card, justified the models and techniques chosen for
+detection, retrieval, impact measurement and explanation, stated the responsible-AI commitments, and
+fixed the evaluation methodology and rigour guarantees in advance. The next chapter shows how these
+methods are integrated into CLARION, the proposed system.

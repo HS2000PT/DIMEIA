@@ -192,7 +192,10 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
   - [x] Identificadores de código removidos do corpo (0 `\texttt{}` de código); CLARION no abstract/resumo
   - [x] **Declutter:** removidos `notebooks/`, `presentation/`, `src/impact_analyzer/` (stub); .py compilam; sem importações pendentes
   - [x] TRACKER semeado; CLAUDE.md + SESSIONS.md atualizados
-- [ ] **S2 — Introdução (Cap. 1) + Métodos e Materiais (Cap. 3)** (aprofundar, data card, IA responsável)
+- [x] **S2 — Introdução (Cap. 1) + Métodos e Materiais (Cap. 3)**
+  - [x] Cap. 3 aprofundado: **data card FNSPID** (tabela: fonte, licença CC BY-SA 4.0, 15 tickers, janela 2018–2023, governança), pré-processamento + alinhamento anti-lookahead, camada live + dataset de avaliação, **IA responsável/ética** alargada, metodologia de avaliação + rigor
+  - [x] Cap. 1 confirmado bem-escopado (contexto de alto nível; literatura profunda fica no Estado da Arte)
+  - [x] Compila 62 pp, 0 erros, 0 citações indefinidas, sem overfull; corpo sem identificadores de código/PT
 - [ ] **S3 — CLARION (Cap. 4)** ao nível de desenho + Apêndice de reprodutibilidade
 - [ ] **S4 — Estudos de Caso (Cap. 5)** + novas figuras de resultados
 - [ ] **S5 — Estado da Arte (2.ª expansão) + Conclusões (Cap. 6)**
