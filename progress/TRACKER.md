@@ -210,7 +210,10 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
   - [x] +8 fontes verificadas → **36 refs** (Breunig LOF, Ahmed survey financeiro, Miller, Lipton, Da/Engelberg/Gao, Kearney&Liu, Ding 2015, Johnson FAISS); integradas em §2.1–2.5
   - [x] Compila 66 pp, 0 erros, 0 indefinidas; todas registadas em citation_log
   - [ ] (restante) afinar Conclusões (Cap. 6) — números já atualizados na S4; prosa OK
-- [ ] **S6 — Front matter + consistência global + auditoria de citações**
+- [x] **S6 — Front matter + consistência global + auditoria de citações**
+  - [x] Auditoria de citações: **36 citadas = 36 no .bib = 36 renderizadas**, 0 órfãs, 0 indefinidas; todas em citation_log
+  - [x] Consistência: sem números de anomalia antigos; sem PT no corpo; 0 overfull >15pt; acrónimos todos definidos (0 avisos de glossário)
+  - [x] Front matter: abstract/resumo com CLARION e números finais (P@5 0.55 vs 0.24); declarações honestas; comentário da data em EN
 - [ ] **S7 — Reorganização do repositório** (consolidação moderada), validada (testes/CI verdes)
 - [ ] **S8 — Caderno de Defesa (PT-PT)** (`docs/defence/caderno_de_defesa.md`)
 - [ ] **S9 — Validação final & sign-off** (leitura integral, compilar no alvo, verify+CI verdes)
