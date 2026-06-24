@@ -7,6 +7,5 @@ Estrutura por componente (cada subpacote é uma peça do pipeline):
 - anomaly_detector   : deteção de movimentos abruptos
 - correlation_engine : correlação notícia–mercado / precedentes históricos
 - explanation_engine : motor de explicação (XAI)
-- impact_analyzer    : impacto setorial em tickers relacionados (OPCIONAL)
 - telegram_bot       : envio de alertas via Telegram Bot API
 """
