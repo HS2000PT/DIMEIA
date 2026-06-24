@@ -220,7 +220,15 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
   - [x] Corrigidos 6 E501 resultantes; **41 testes verdes, ruff limpo**; .pyc ignorados; README com novo mapa do repositório
 - [x] **S8 — Caderno de Defesa (PT-PT)** (`docs/defence/caderno_de_defesa.md`)
   - [x] Documento de estudo PT-PT: problema/âmbito/contribuição; decisões+porquês; cada componente + "defesa em 3 frases"; resultados+limitações honestas; mapa do repo; **perguntas difíceis do júri + respostas**
-- [ ] **S9 — Validação final & sign-off** (leitura integral, compilar no alvo, verify+CI verdes)
+- [x] **S9 — Validação final & sign-off**
+  - [x] Build limpo: **66 pp, 0 erros, 0 citações indefinidas, 0 overfull >15pt, 36 entradas na bibliografia**
+  - [x] **41 testes verdes + ruff limpo**; 0 identificadores de código e 0 PT no corpo dos capítulos; 5 figuras presentes
+  - [x] Continuidade atualizada (CLAUDE/TRACKER/SESSIONS); tudo commitado e enviado
+  - [ ] (HUMANO) decisão de extensão (66 pp vs ~90–120): 3.ª expansão SoTA / estudos de caso mais profundos / aceitar tese mais curta — sem encher
+
+> **REWORK S1–S9 CONCLUÍDO.** Tese transformada (53→66 pp): estrutura canónica, literatura forte (36 refs
+> verificadas), figuras limpas em EN, sem identificadores de código nem PT no corpo, repo arrumado, Caderno
+> de Defesa PT-PT. Resta sobretudo trabalho **humano** (revisão do aluno; decisão de extensão; declaração ISEP).
 
 > **Nota de ambiente:** o venv 3.12 não está presente neste ambiente (foi recriado/limpo entre turnos).
 > A compilação LaTeX corre sem venv; para regenerar figuras/correr pytest é preciso recriar o venv

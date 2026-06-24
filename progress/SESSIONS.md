@@ -35,7 +35,22 @@ moderada; defesa = guia único PT-PT; sequência = declutter já, reorganizaçã
 **Validação:** LaTeX compila limpo; .py compilam (py_compile); sem importações dos módulos removidos.
 Nota: **venv 3.12 ausente** neste ambiente (recriar para pytest/figuras; CI é o backstop dos testes).
 
-**Próxima ação:** S2 — aprofundar Cap. 1 (Introduction) e Cap. 3 (Methods and Materials).
+**Feito (S2–S9, mesma sessão contínua):**
+- S2: Cap. 3 (Methods and Materials) aprofundado — data card FNSPID, IA responsável, metodologia de avaliação.
+- S3: Cap. 4 (CLARION) ao nível de desenho — arquitetura limpa + fluxos dos 2 gatilhos + mockup Telegram +
+  tabela de decisões; detalhe técnico no Apêndice A.
+- S4: Case Studies com 2 figuras reais novas (série temporal de anomalias TSLA; ablação à janela).
+- S5: Estado da Arte com +8 fontes (→ **36 refs verificadas**), todas em citation_log.
+- **Achado importante:** um reset de ambiente reverteu um lote não-commitado (as figuras de avaliação tinham
+  voltado a PT no PDF!). Reaplicado e re-protegido; figuras regeneradas em EN; janela de anomalia **fixada**
+  (2023-06..2026-06) para reprodutibilidade; números da tese atualizados (z-score 0.015 vs 0.344; F1 0.516).
+- S6: auditoria de citações (36=36=36, 0 indefinidas) + consistência global.
+- S7: `docs/` reorganizado em `design/ evaluation/ decisions/ defence/ _archive/`; todos os caminhos atualizados.
+- S8: **Caderno de Defesa (PT-PT)** — `docs/defence/caderno_de_defesa.md`.
+- S9: validação final — **66 pp, 0 erros, 0 indefinidas, 0 overfull; 41 testes + ruff verdes**; 0 código/PT no corpo.
+
+**Estado:** REWORK S1–S9 concluído; venv 3.12 recriado (stack leve). **Próxima ação (humano):** o aluno lê/edita
+a tese e estuda pelo Caderno de Defesa; decidir extensão (66 pp vs ~90–120, sem encher); confirmar declaração ISEP.
 
 ---
 
