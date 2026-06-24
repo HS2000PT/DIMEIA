@@ -218,7 +218,8 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
   - [x] `docs/` agrupado: `design/` (arquitetura, data card, APIs, eval design, setup, riscos), `evaluation/` (resultados auto-gerados), `decisions/` (citation_log, glossary, learning), `_archive/` (analises de fase inicial), `defence/` (para o Caderno S8)
   - [x] Atualizadas TODAS as referências de caminho (defaults dos scripts evaluate*, docstrings src/scripts, README, CLAUDE, links inter-docs); progress/ histórico preservado
   - [x] Corrigidos 6 E501 resultantes; **41 testes verdes, ruff limpo**; .pyc ignorados; README com novo mapa do repositório
-- [ ] **S8 — Caderno de Defesa (PT-PT)** (`docs/defence/caderno_de_defesa.md`)
+- [x] **S8 — Caderno de Defesa (PT-PT)** (`docs/defence/caderno_de_defesa.md`)
+  - [x] Documento de estudo PT-PT: problema/âmbito/contribuição; decisões+porquês; cada componente + "defesa em 3 frases"; resultados+limitações honestas; mapa do repo; **perguntas difíceis do júri + respostas**
 - [ ] **S9 — Validação final & sign-off** (leitura integral, compilar no alvo, verify+CI verdes)
 
 > **Nota de ambiente:** o venv 3.12 não está presente neste ambiente (foi recriado/limpo entre turnos).
