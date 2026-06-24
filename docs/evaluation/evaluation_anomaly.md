@@ -4,7 +4,7 @@
 
 - **Dados:** 15 tickers, preços reais (yfinance, 2023-06-01 a 2026-06-01).
 - **z-score:** janela 20d, limiar ±3 (sem lookahead). **Baseline fixo:** |retorno| ≥ 3%. **Rótulo-proxy:** |retorno| ≥ percentil 0.99 por ticker.
-- **Gerado:** 2026-06-24 20:13 UTC.
+- **Gerado:** 2026-06-24 20:23 UTC.
 
 ## 1. Consistência da taxa de disparo entre tickers (argumento principal)
 

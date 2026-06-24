@@ -4,7 +4,7 @@
 > antes ter aqui um parágrafo claro em PT-PT — o que é e porque o usamos. Cada componente fecha com a nota
 > "como explico isto ao júri em 3 frases".
 >
-> Conceitos introduzidos pela arquitetura (`docs/arquitectura_sistema.md`, Fase C). A justificação académica
+> Conceitos introduzidos pela arquitetura (`docs/design/arquitectura_sistema.md`, Fase C). A justificação académica
 > aprofundada e as citações verificadas entram com a tarefa de metodologias (Fase C).
 
 ---
@@ -82,7 +82,7 @@ de "quanto contribuiu" para uma decisão do modelo, com base nos valores de Shap
 explicação local. Usado só se acrescentar clareza defensável. *(Ref. verificada: Lundberg & Lee 2017 — `lundberg2017shap`.)*
 
 > Referências de enquadramento XAI (verificadas): Arrieta et al. 2020 (`arrieta2020xai`), Adadi & Berrada 2018
-> (`adadi2018peeking`). Todas em `docs/citation_log.md`.
+> (`adadi2018peeking`). Todas em `docs/decisions/citation_log.md`.
 
 ---
 
@@ -168,7 +168,7 @@ empresa) — isto testa analogia **temática**, não o nome.
 **recência** (os mais recentes). O *lift* = precisão do método − taxa-base mostra o valor
 **acrescentado** pelos embeddings.
 
-**Resultado real (`docs/evaluation_results.md`, média±desvio de 5 seeds):** em 3.692 notícias reais
+**Resultado real (`docs/evaluation/evaluation_results.md`, média±desvio de 5 seeds):** em 3.692 notícias reais
 (Finnhub, 5 setores), **P@5: SBERT-MiniLM 0,549±0,014 e SBERT-MPNet 0,569±0,009 vs lexical 0,359 vs
 aleatório 0,241 vs recência 0,105**. A **ablação de modelo** (MiniLM vs MPNet) mostra que a vantagem
 não depende de um modelo específico — ambos batem largamente os baselines.
@@ -187,7 +187,7 @@ dispara ~1% das vezes numa ação calma (KO) e ~35% numa volátil (TSLA/NVDA) �
 universal. O z-score normaliza pela volatilidade recente, pelo que dispara a uma taxa quase
 constante (~2%) em todos. Medimos a **amplitude** (máx−mín) da taxa entre tickers.
 
-**Resultado real (`docs/evaluation_anomaly.md`, yfinance 3 anos, 15 tickers):** amplitude da taxa
+**Resultado real (`docs/evaluation/evaluation_anomaly.md`, yfinance 3 anos, 15 tickers):** amplitude da taxa
 de disparo **z-score 0,017 vs limiar fixo 0,343** (20× mais consistente). Como suporte, contra um
 rótulo-proxy (movimento no percentil 99 por ticker): **F1 z-score 0,524 vs fixo 0,216**; ablação à
 janela: F1 sobe com a janela (10d 0,385 → 20d 0,524 → 60d 0,687).

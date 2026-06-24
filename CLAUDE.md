@@ -19,7 +19,7 @@
 ## Contexto do Projeto (resumo compacto do ROOT PROMPT)
 - **Aluno:** Henrique José da Silva Santos — MEIA (ISEP), 2.º ano, fase de dissertação. Nº 1180934.
 - **Orientador:** Prof. Luís Gomes. **Coorientador:** Rafael Silva.
-- **Perfil do aluno (§3):** não é especialista em IA, tem lacunas de base; objetivo central = **terminar uma dissertação sólida e defendê-la com calma** (pessoa nervosa). **Regra de ouro: ensinar à medida que se avança** (explicar cada conceito em PT-PT em `docs/learning.md` + `docs/glossary.md`, com nota de "como explico ao júri em 3 frases" por componente). **Simplicidade defensável > sofisticação.**
+- **Perfil do aluno (§3):** não é especialista em IA, tem lacunas de base; objetivo central = **terminar uma dissertação sólida e defendê-la com calma** (pessoa nervosa). **Regra de ouro: ensinar à medida que se avança** (explicar cada conceito em PT-PT em `docs/decisions/learning.md` + `docs/decisions/glossary.md`, com nota de "como explico ao júri em 3 frases" por componente). **Simplicidade defensável > sofisticação.**
 - **Contribuição (enquadramento permanente):** tese de **Engenharia de IA**. A contribuição NÃO é inventar algoritmos — é **integrar, aplicar e avaliar criticamente** componentes existentes num sistema funcional, explicável e reproduzível, com uma metodologia documentada de correlação notícia–impacto. Usar modelos/ferramentas existentes **é** o trabalho de engenharia.
 - **Tema:** sistema inteligente de alertas financeiros para investidores de retalho, **XAI-first** (toda a lógica transparente e rastreável). Dois gatilhos: (1) movimento abrupto de mercado (NYSE/NASDAQ) → anomalia estatística → alerta + explicação; (2) nova notícia financeira → alerta + impacto potencial + precedentes históricos. **Núcleo:** motor de correlação notícia–mercado baseado em histórico (FNSPID). **Saída:** alertas via Telegram com evento + explicação + fontes + precedentes.
 - **Restrições não negociáveis (§5.2):** apenas APIs gratuitas; foco mercado US (NYSE/NASDAQ); XAI-first; útil a um investidor real; rigor académico. ❌ Sem previsão de preços, sem trading algorítmico, sem APIs pagas, sem conteúdo de enchimento.
@@ -34,7 +34,7 @@
 - **Idioma docs de aprendizagem/internos:** **PT-PT** (o único toggle do §0). Tese em Inglês. [Sessão 0]
 - **Versão de Python fixada:** **3.12** (estabilidade para torch/transformers/sentence-transformers; 3.14 corre risco de faltar wheels). [Sessão 0]
 - **Título escolhido:** **T1** — *Explainable Financial Alerts for Retail Investors: Integrating Statistical Anomaly Detection and News–Market Impact Correlation* (EN-GB). [Sessão 2 / D-008]
-- **APIs aprovadas:** proposta (Fase C, `docs/free_apis.md`, verificado 2026-06-21) — preços: yfinance (base) + Finnhub (fallback, 60/min); notícias: Finnhub news + RSS (+ GNews/Marketaux opcional); histórico: FNSPID; alertas: Telegram Bot API. Alpha Vantage só ocasional (25/dia).
+- **APIs aprovadas:** proposta (Fase C, `docs/design/free_apis.md`, verificado 2026-06-21) — preços: yfinance (base) + Finnhub (fallback, 60/min); notícias: Finnhub news + RSS (+ GNews/Marketaux opcional); histórico: FNSPID; alertas: Telegram Bot API. Alpha Vantage só ocasional (25/dia).
 - **Metodologias de IA por componente:** [APÓS FASE C]
 - **Estrutura de capítulos:** 7 capítulos (Introduction · Contextualization · Literature Review · Methodology · Implementation · Evaluation · Conclusion), mapeados em `thesis/ch1..ch7/` do template ISEP. [Sessão 3 / Fase D]
 - **Layout LaTeX:** usar a estrutura/classe nativa do template ISEP (`meia-style.cls`, `authoryear-comp`, `chN/`); o esboço `thesis/chapters/0X_*.tex` do §9 é ilustrativo e será reconciliado na Fase D. [Sessão 0]
@@ -71,8 +71,8 @@
   - `src/main.py::run_news_trigger` — orquestra notícia → embedding → `KB.find_precedents` → explicação → (opcional) Telegram. Default: KB-amostra + `HashingEmbedder`.
 - **Avaliação (Pergunta A):**
   - `src/evaluation/retrieval_eval.py` — `retrieval_precision_at_k`, `expected_random_precision`, `recency_precision_at_k`, `same_ticker_forbid` (puro NumPy, testado: precision@k por setor cross-ticker + baselines).
-  - `scripts/fetch_finnhub_news.py` (notícias reais → CSV) + `scripts/evaluate.py` (multi-seed + ablação de modelo via `--sbert-models` → `docs/evaluation_results.md` + figura). P@5 (média 5 seeds): SBERT-MiniLM 0,549±0,014, SBERT-MPNet 0,569±0,009, lexical 0,359, aleatório 0,241, recência 0,105.
-  - `src/evaluation/anomaly_eval.py` (Pergunta 1: `rolling_zscore_flags`, `fixed_threshold_flags`, `label_extreme_moves`, `precision_recall_f1`, `firing_rate`; puro, testado) + `scripts/evaluate_anomaly.py` (yfinance → `docs/evaluation_anomaly.md` + figura). Taxa de disparo: z-score amplitude 0,017 vs fixo 0,343.
+  - `scripts/fetch_finnhub_news.py` (notícias reais → CSV) + `scripts/evaluate.py` (multi-seed + ablação de modelo via `--sbert-models` → `docs/evaluation/evaluation_results.md` + figura). P@5 (média 5 seeds): SBERT-MiniLM 0,549±0,014, SBERT-MPNet 0,569±0,009, lexical 0,359, aleatório 0,241, recência 0,105.
+  - `src/evaluation/anomaly_eval.py` (Pergunta 1: `rolling_zscore_flags`, `fixed_threshold_flags`, `label_extreme_moves`, `precision_recall_f1`, `firing_rate`; puro, testado) + `scripts/evaluate_anomaly.py` (yfinance → `docs/evaluation/evaluation_anomaly.md` + figura). Taxa de disparo: z-score amplitude 0,017 vs fixo 0,343.
 - **Scripts de dados:** `scripts/download_data.py` (FNSPID em **streaming** + filtro por ticker/janela → `data/` gitignored + amostra de títulos); `scripts/build_kb.py` (notícias CSV + preços yfinance → KB JSONL; `--sbert` para SBERT real). `data/samples/news_sample.csv` (sintético) + `data/samples/kb_sample.jsonl` (gerado) + `data/samples/README.md`.
 - **Testes (22 + 2 gated, verde):** `test_anomaly_detector.py` (4) + `test_event_study.py` (4) + `test_similarity.py` (7) + `test_knowledge_base.py` (5) + `test_smoke.py` (pipeline + Telegram `@telegram` gated) + `test_sbert_embedder.py` (SBERT real, `@sbert` gated).
 - **Smoke/gated:** Telegram (`pytest -m telegram`, envio real confirmado) e SBERT (`pytest -m sbert`, validação semântica) — ambos excluídos do verify por defeito (`-m "not telegram and not sbert"`).
@@ -82,7 +82,7 @@
 - **Em falta:** escrever Caps. 5–6 com o que está construído/avaliado; (opcional) download completo do FNSPID + KB SBERT multi-ano (job longo, R2); demo Gatilho 2 ao vivo (Finnhub→KB SBERT→Telegram); `impact_analyzer` (opcional, FinBERT).
 
 ## Referências Verificadas
-- **16 referências verificadas** em `docs/citation_log.md` e no `thesis/references.bib`:
+- **16 referências verificadas** em `docs/decisions/citation_log.md` e no `thesis/references.bib`:
   - **8 metodológicas** (DOI/arXiv): Chandola 2009, Brown & Warner 1985, Reimers & Gurevych 2019, Araci 2019, Lundberg & Lee 2017, Arrieta 2020, Adadi & Berrada 2018, Dong 2024.
   - **3 de contextualização** (fonte primária, 2026-06-21): SIFMA 2025 Fact Book, Gallup 2025, CCAF 2026.
   - **5 da revisão de literatura** (Crossref/arXiv, 2026-06-21): Liu 2008 (Isolation Forest), Ribeiro 2016 (LIME), Devlin 2019 (BERT), Mikolov 2013 (word2vec), Yang 2020 (FinBERT).

@@ -1,4 +1,4 @@
-"""Avaliação do detetor de anomalias (Pergunta 1, docs/evaluation_design.md §1).
+"""Avaliação do detetor de anomalias (Pergunta 1, docs/design/evaluation_design.md §1).
 
 Duas evidências honestas:
 1. **Consistência da taxa de disparo entre tickers** (argumento principal, não circular): um limiar

@@ -1,7 +1,7 @@
 # glossary.md — Glossário de termos técnicos (PT-PT)
 
 > Termo · definição curta em PT-PT · (sigla, se aplicável). Cresce ao longo do projeto.
-> Explicações desenvolvidas em `docs/learning.md`.
+> Explicações desenvolvidas em `docs/decisions/learning.md`.
 
 | Termo | Definição curta | Sigla |
 |---|---|---|

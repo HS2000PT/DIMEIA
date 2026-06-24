@@ -5,7 +5,8 @@ rede) do **HTTP** (invólucros finos, import/chamada tardios). Cada notícia é 
 MESMO esquema da KB histórica (`date`, `ticker`, `headline`) para poder ser comparada por
 similaridade com os precedentes (ver `src/historical_kb/`).
 
-APIs gratuitas (ver docs/free_apis.md): Finnhub `/company-news` (60 req/min) e feeds RSS públicos.
+APIs gratuitas (ver docs/design/free_apis.md): Finnhub `/company-news` (60 req/min)
+e feeds RSS públicos.
 A chave do Finnhub vive só no `.env` (`FINNHUB_API_KEY`).
 """
 

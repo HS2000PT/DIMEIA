@@ -1,10 +1,11 @@
 """Avalia a recuperação de precedentes: SBERT vs baseline lexical vs aleatório/recência.
 
-Pergunta A (docs/evaluation_design.md §2): os precedentes recuperados são mesmo análogos?
+Pergunta A (docs/design/evaluation_design.md §2): os precedentes recuperados são mesmo análogos?
 Métrica: precision@k por SETOR em recuperação cross-ticker (ver src/evaluation/retrieval_eval.py).
 
 Entrada: CSV de notícias (date, ticker, headline) — ex.: o de scripts/fetch_finnhub_news.py.
-Saída: tabela em docs/evaluation_results.md + figura em thesis/figures/eval_retrieval_precision.pdf.
+Saída: tabela em docs/evaluation/evaluation_results.md
+       + figura em thesis/figures/eval_retrieval_precision.pdf.
 
 Uso:
     python scripts/evaluate.py --news data/finnhub_news.csv
@@ -66,7 +67,7 @@ def main() -> None:
                         help="nº de amostragens (seeds) para média ± desvio")
     parser.add_argument("--sbert-models", nargs="+", default=["all-MiniLM-L6-v2"],
                         help="modelos SBERT a comparar (ablação)")
-    parser.add_argument("--out", default="docs/evaluation_results.md")
+    parser.add_argument("--out", default="docs/evaluation/evaluation_results.md")
     parser.add_argument("--fig", default="thesis/figures/eval_retrieval_precision.pdf")
     args = parser.parse_args()
 

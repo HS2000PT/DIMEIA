@@ -1,1 +1,1 @@
-"""Avaliação reprodutível dos componentes (ver docs/evaluation_design.md)."""
+"""Avaliação reprodutível dos componentes (ver docs/design/evaluation_design.md)."""

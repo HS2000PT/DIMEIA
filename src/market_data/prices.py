@@ -1,6 +1,6 @@
 """Camada live: preços de mercado (NYSE/NASDAQ) via yfinance.
 
-A deteção de anomalias trabalha sobre RETORNOS (não preços) — ver docs/learning.md.
+A deteção de anomalias trabalha sobre RETORNOS (não preços) — ver docs/decisions/learning.md.
 O import do yfinance é tardio (dentro da função) para os testes unitários não dependerem da rede.
 """
 

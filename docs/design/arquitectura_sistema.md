@@ -2,8 +2,8 @@
 
 > **Fase C.** Arquitetura detalhada (diagrama textual de componentes + as duas camadas de dados).
 > Princípio orientador: **XAI-first** (toda a lógica exposta e rastreável) e **simplicidade defensável** (§5.5).
-> Conceitos novos explicados em PT-PT em `docs/learning.md`. Justificação académica detalhada das metodologias
-> e citações verificadas entram na tarefa seguinte da Fase C (metodologias) e em `docs/citation_log.md`.
+> Conceitos novos explicados em PT-PT em `docs/decisions/learning.md`. Justificação académica detalhada das metodologias
+> e citações verificadas entram na tarefa seguinte da Fase C (metodologias) e em `docs/decisions/citation_log.md`.
 
 ## 1. Visão geral
 O sistema gera **alertas financeiros explicáveis** para investidores de retalho no mercado US (NYSE/NASDAQ),
@@ -128,7 +128,7 @@ Sem correlação/precedentes ainda. Valida o caminho completo e o `tests/test_sm
 
 ## 9. Metodologias por componente — justificação e referências (verificadas)
 > Enquadramento (§3): a contribuição é de **engenharia de IA** — integrar, aplicar e avaliar criticamente
-> componentes existentes. Todas as referências abaixo estão **verificadas** em `docs/citation_log.md`
+> componentes existentes. Todas as referências abaixo estão **verificadas** em `docs/decisions/citation_log.md`
 > (DOI/arXiv, 2026-06-21). Entram no `references.bib` na Fase D. Princípio: **simplicidade defensável** (§5.5).
 
 | Componente | Método escolhido | Justificação (porquê este, e não mais complexo) | Referência verificada |

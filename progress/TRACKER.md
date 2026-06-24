@@ -214,7 +214,10 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
   - [x] Auditoria de citações: **36 citadas = 36 no .bib = 36 renderizadas**, 0 órfãs, 0 indefinidas; todas em citation_log
   - [x] Consistência: sem números de anomalia antigos; sem PT no corpo; 0 overfull >15pt; acrónimos todos definidos (0 avisos de glossário)
   - [x] Front matter: abstract/resumo com CLARION e números finais (P@5 0.55 vs 0.24); declarações honestas; comentário da data em EN
-- [ ] **S7 — Reorganização do repositório** (consolidação moderada), validada (testes/CI verdes)
+- [x] **S7 — Reorganização do repositório** (consolidação moderada), validada
+  - [x] `docs/` agrupado: `design/` (arquitetura, data card, APIs, eval design, setup, riscos), `evaluation/` (resultados auto-gerados), `decisions/` (citation_log, glossary, learning), `_archive/` (analises de fase inicial), `defence/` (para o Caderno S8)
+  - [x] Atualizadas TODAS as referências de caminho (defaults dos scripts evaluate*, docstrings src/scripts, README, CLAUDE, links inter-docs); progress/ histórico preservado
+  - [x] Corrigidos 6 E501 resultantes; **41 testes verdes, ruff limpo**; .pyc ignorados; README com novo mapa do repositório
 - [ ] **S8 — Caderno de Defesa (PT-PT)** (`docs/defence/caderno_de_defesa.md`)
 - [ ] **S9 — Validação final & sign-off** (leitura integral, compilar no alvo, verify+CI verdes)
 

@@ -19,16 +19,27 @@ sources → historical precedents. No price prediction, no algorithmic trading, 
 ## Project status
 **Working draft complete.** Both triggers are implemented and proven end to end (anomaly detection →
 explanation → Telegram; news → SBERT retrieval of precedents → explanation), with 41 automated tests.
-The two core components are evaluated on **real data** (see `docs/evaluation_results.md` and
-`docs/evaluation_anomaly.md`), and the seven-chapter dissertation is drafted and compiles
+The two core components are evaluated on **real data** (see `docs/evaluation/evaluation_results.md` and
+`docs/evaluation/evaluation_anomaly.md`), and the seven-chapter dissertation is drafted and compiles
 (`thesis/main.pdf`). The full multi-year FNSPID knowledge base is the main remaining item (a long
 download job; the streaming pipeline is implemented and verified). See `CLAUDE.md` for the exact
 current state and `progress/SESSIONS.md` for the per-session history.
 
 ## Repository layout
-See the full structure in `ROOT_PROMPT_CLAUDE_CODE.md` (§9). Key folders: `src/` (system code by component),
-`thesis/` (LaTeX), `docs/` (design, decisions, learning notes — PT-PT), `progress/` (continuity logs),
-`scripts/` (automation), `data/` (samples committed; large data gitignored and recreated by scripts).
+```
+thesis/        LaTeX dissertation (6 chapters + front matter + appendix)
+src/           system code, one package per component
+scripts/       data, figures, build/verify/session automation
+tests/         automated tests
+docs/          PT-PT documentation, grouped:
+  design/        architecture, data card, free APIs, evaluation design, setup, risks
+  evaluation/    auto-generated evaluation results (do not edit by hand)
+  decisions/     decisions rationale, citation log, glossary, learning notes
+  defence/       PT-PT study guide for the defence
+  _archive/      early-phase analyses kept for provenance
+data/samples/  small committed samples (large data gitignored, recreated by scripts)
+progress/      continuity logs (TRACKER, SESSIONS)
+```
 
 ## Setup (reproducible)
 - Python **3.12** in a virtual environment: `bash scripts/setup_env.sh` (deps pinned in
@@ -41,18 +52,18 @@ See the full structure in `ROOT_PROMPT_CLAUDE_CODE.md` (§9). Key folders: `src/
 ## Reproducing the results
 Every result and figure is produced by a versioned script with a fixed seed:
 ```bash
-# Retrieval (Question A): fetch real news, run the ablation → docs/evaluation_results.md + figure
+# Retrieval (Question A): fetch real news, run the ablation → docs/evaluation/evaluation_results.md + figure
 python scripts/fetch_finnhub_news.py                         # needs FINNHUB_API_KEY in .env
 python scripts/evaluate.py --news data/finnhub_news.csv \
     --sbert-models all-MiniLM-L6-v2 all-mpnet-base-v2
 
-# Anomaly detector (Question 1): real prices → docs/evaluation_anomaly.md + figure
+# Anomaly detector (Question 1): real prices → docs/evaluation/evaluation_anomaly.md + figure
 python scripts/evaluate_anomaly.py --period 3y
 
 # Build the dissertation PDF (also built in CI)
 bash scripts/build_pdf.sh
 ```
-The full multi-year FNSPID knowledge base (a ~23 GB streaming scan, see `docs/data_card.md`) is built by
+The full multi-year FNSPID knowledge base (a ~23 GB streaming scan, see `docs/design/data_card.md`) is built by
 `scripts/download_data.py` followed by `scripts/build_kb.py --sbert`; this is a long, deliberate job.
 
 ## Attributions & licences
@@ -61,8 +72,8 @@ The full multi-year FNSPID knowledge base (a ~23 GB streaming scan, see `docs/da
 - **FinBERT** — `ProsusAI/finbert` (via `transformers`), inference only.
 - **ISEP MEIA LaTeX template** — `meia-style.cls`, licence **CC BY-NC-SA 3.0** (adapted by L. Faria, N. Pereira,
   P. Baltarejo, DEI/ISEP; based on the Masters/Doctoral Thesis template from LaTeXTemplates.com).
-- **yfinance**, **Telegram Bot API**, and other free-tier APIs documented in `docs/free_apis.md`.
+- **yfinance**, **Telegram Bot API**, and other free-tier APIs documented in `docs/design/free_apis.md`.
 
 ## Academic integrity
 This dissertation is produced with AI assistance (Claude Code), declared per ISEP/MEIA rules. Every citation is
-verified against a real source and logged in `docs/citation_log.md` — no fabricated references.
+verified against a real source and logged in `docs/decisions/citation_log.md` — no fabricated references.

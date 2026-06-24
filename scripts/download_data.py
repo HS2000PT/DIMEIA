@@ -6,7 +6,7 @@ Dataset: FNSPID — Financial News and Stock Price Integration Dataset (Dong et 
 
 O ficheiro de notícias do FNSPID é enorme (~23 GB), pelo que NÃO o descarregamos inteiro:
 fazemos *stream* por *chunks* (via `requests` — `pd.read_csv(url)` BLOQUEIA neste endpoint do
-Hugging Face) e filtramos à medida (apenas os tickers e a janela de docs/data_card.md), lendo só
+Hugging Face) e filtramos à medida (apenas os tickers e a janela escolhida), lendo só
 3 colunas (`usecols`). Como o ficheiro está ORDENADO por ticker, paramos a varredura assim que
 passamos o maior ticker pedido (`early_stop`). Só o subconjunto fica em disco.
 
@@ -14,7 +14,7 @@ NOTA DE VIABILIDADE (verificado, S17): o débito observado é ~1.300 linhas/s; o
 ~15M linhas → varrer tudo demora ~3,4 h. Validado que o stream funciona (extraiu 379 notícias da
 Agilent 2018-2023 e parou cedo). Para a KB multi-ano completa, correr este script numa máquina/
 ligação adequada (ex.: durante a noite) e depois `build_kb.py --sbert`. A avaliação atual usa a KB
-real do Finnhub (ver docs/evaluation_results.md); o FNSPID multi-ano é trabalho futuro reprodutível.
+real do Finnhub; o FNSPID multi-ano é trabalho futuro reprodutível.
 
 Governança (§5.4): o subconjunto vai para `data/` (gitignored) e uma AMOSTRA pequena para
 `data/samples/` (versionada, só títulos — não republicar o texto integral de terceiros).
@@ -32,7 +32,7 @@ from pathlib import Path
 
 import pandas as pd
 
-# Subconjunto default — tem de coincidir com docs/data_card.md.
+# Subconjunto default — tem de coincidir com docs/design/data_card.md.
 DEFAULT_TICKERS = [
     "AAPL", "MSFT", "AMZN", "GOOGL", "NVDA", "TSLA", "META", "JPM",
     "BAC", "XOM", "CVX", "JNJ", "PFE", "WMT", "KO",

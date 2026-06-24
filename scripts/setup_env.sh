@@ -1,6 +1,6 @@
 #!/bin/bash
 # Cria o ambiente virtual (Python 3.12), instala dependências fixadas e verifica imports-chave.
-# Ver docs/setup.md e decisões D-003 / D-005 em progress/DECISIONS.md.
+# Ver docs/design/setup.md e decisões D-003 / D-005 em progress/DECISIONS.md.
 set -euo pipefail
 
 # 1) Localiza um interpretador Python 3.12.
@@ -14,7 +14,7 @@ done
 
 if [ -z "$PYTHON" ]; then
   echo "❌ Python 3.12 não encontrado. Instala o Python 3.12 e corre de novo."
-  echo "   (Ver docs/setup.md e CLAUDE.md → Questões em Aberto.)"
+  echo "   (Ver docs/design/setup.md e CLAUDE.md → Questões em Aberto.)"
   exit 1
 fi
 echo "ℹ️ A usar interpretador: $PYTHON"

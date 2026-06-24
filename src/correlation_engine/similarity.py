@@ -3,7 +3,8 @@
 Puro NumPy, sem dependências pesadas, para ser determinístico, rápido e testável.
 A similaridade do cosseno mede o ângulo entre dois vetores (1 = mesma direção/idênticos,
 0 = ortogonais/não relacionados, -1 = opostos). É a métrica padrão para comparar embeddings
-de texto (ver docs/learning.md). Aqui usamo-la para encontrar notícias históricas semelhantes
+de texto (ver docs/decisions/learning.md). Aqui usamo-la para encontrar notícias
+históricas semelhantes
 a uma notícia nova (recuperação de precedentes).
 """
 

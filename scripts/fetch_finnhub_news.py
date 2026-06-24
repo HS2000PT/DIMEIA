@@ -1,7 +1,8 @@
 """Recolhe notícias reais (Finnhub /company-news) para os tickers do data_card → CSV.
 
 Fonte de notícias REAL e gratuita para uma primeira avaliação, sem o download de ~23 GB do
-FNSPID. O FNSPID continua a ser a fonte histórica mais rica (multi-ano) — ver docs/data_card.md.
+FNSPID. O FNSPID continua a ser a fonte histórica mais rica (multi-ano)
+— ver docs/design/data_card.md.
 
 Saída: CSV com colunas `date, ticker, headline` (compatível com `build_kb.py` e `evaluate.py`).
 Dados grandes ficam gitignored; só uma amostra pequena vai para data/samples/.

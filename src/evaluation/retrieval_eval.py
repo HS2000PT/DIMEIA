@@ -1,4 +1,4 @@
-"""Avaliação da recuperação de precedentes (Pergunta A, docs/evaluation_design.md §2).
+"""Avaliação da recuperação de precedentes (Pergunta A, docs/design/evaluation_design.md §2).
 
 Métrica: **precision@k por setor**, em recuperação **cross-ticker** — para cada notícia
 (consulta) recuperam-se os k vizinhos mais semelhantes vindos de OUTRAS empresas e mede-se a

@@ -1,12 +1,12 @@
 """Avalia o detetor de anomalias (Pergunta 1) em preços reais (yfinance).
 
-Evidências (ver src/evaluation/anomaly_eval.py e docs/evaluation_design.md §1):
+Evidências (ver src/evaluation/anomaly_eval.py e docs/design/evaluation_design.md §1):
 1. **Consistência da taxa de disparo** entre tickers — z-score (normaliza volatilidade) vs limiar
    fixo em % (ingénuo). Reporta o intervalo/dispersão das taxas entre tickers.
 2. **Precision/recall/F1** vs rótulo-proxy (movimento extremo por ticker), agregado (pooled).
 3. **Ablação** ao tamanho da janela (10/20/60).
 
-Saída: docs/evaluation_anomaly.md + figura thesis/figures/eval_anomaly_firing_rate.pdf.
+Saída: docs/evaluation/evaluation_anomaly.md + figura thesis/figures/eval_anomaly_firing_rate.pdf.
 
 Uso: python scripts/evaluate_anomaly.py [--period 3y] [--window 20] [--threshold 3.0]
 """
@@ -65,7 +65,7 @@ def main() -> None:
     parser.add_argument("--threshold", type=float, default=3.0)
     parser.add_argument("--fixed-pct", type=float, default=0.03)
     parser.add_argument("--quantile", type=float, default=0.99)
-    parser.add_argument("--out", default="docs/evaluation_anomaly.md")
+    parser.add_argument("--out", default="docs/evaluation/evaluation_anomaly.md")
     parser.add_argument("--fig", default="thesis/figures/eval_anomaly_firing_rate.pdf")
     parser.add_argument("--ablation-fig", default="thesis/figures/eval_anomaly_window_ablation.pdf")
     args = parser.parse_args()
