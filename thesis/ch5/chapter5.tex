@@ -19,7 +19,7 @@ limitations of each study are stated explicitly.
 
 Two real datasets are used. For the anomaly trigger, daily closing prices for the fifteen
 large-capitalisation tickers listed in the data card were retrieved from a free market-data service
-over a three-year window, yielding $752$ daily log-returns per ticker. For the correlation engine,
+over a fixed three-year window (June~2023 to June~2026), yielding $750$ daily log-returns per ticker. For the correlation engine,
 $3{,}692$ real financial-news headlines for the same tickers were collected through a free company-news
 service --- the most recent month available on the free tier --- spanning five sectors (technology,
 banking, energy, health and consumer staples). News headlines and prices are normalised to a common
@@ -42,9 +42,9 @@ The strongest evidence is independent of any label. A good universal detector sh
 comparable rate across instruments; a volatility-blind threshold cannot. Table~\ref{tab:cs_firing} and
 Figure~\ref{fig:cs_anomaly} show that the fixed threshold fires on roughly $1\%$ of days for a calm
 stock (KO) but on about $35\%$ of days for a volatile one (TSLA, NVDA), whereas the \emph{z}-score fires
-at a near-constant rate ($\approx 2\%$) for all tickers. The range of firing rates across tickers is
-twenty times tighter for the \emph{z}-score, confirming that normalising by recent volatility makes
-detection comparable across the market.
+at a near-constant rate ($\approx 2\text{--}3\%$) for all tickers. The range of firing rates across tickers is
+more than twenty times tighter for the \emph{z}-score ($0.015$ versus $0.344$), confirming that normalising by
+recent volatility makes detection comparable across the market.
 
 \begin{table}[ht]
 \caption{Firing rate across the fifteen tickers (three years of daily data).}
@@ -54,8 +54,8 @@ detection comparable across the market.
 \toprule
 \tabhead{Method} & \tabhead{Min rate} & \tabhead{Max rate} & \tabhead{Range} \\
 \midrule
-\emph{z}-score (window $20$, $\pm 3$) & $0.015$ & $0.032$ & $\mathbf{0.017}$ \\
-Fixed threshold ($|r|\ge 3\%$) & $0.011$ & $0.354$ & $\mathbf{0.343}$ \\
+\emph{z}-score (window $20$, $\pm 3$) & $0.016$ & $0.031$ & $\mathbf{0.015}$ \\
+Fixed threshold ($|r|\ge 3\%$) & $0.009$ & $0.353$ & $\mathbf{0.344}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -70,10 +70,10 @@ is stable across all tickers.}
 \end{figure}
 
 \paragraph{Agreement with the proxy label (supporting).}
-Against the per-ticker extreme-move label, the \emph{z}-score attains an $F_1$ of $0.524$ (precision
-$0.388$, recall $0.808$) versus $0.216$ for the fixed threshold (precision $0.121$, recall $1.000$): the
-fixed rule trivially catches every large raw move but at very low precision. A window ablation shows
-$F_1$ rising with the estimation window ($0.385$, $0.524$ and $0.687$ for $10$, $20$ and $60$ days),
+Against the per-ticker extreme-move label, the \emph{z}-score attains an $F_1$ of $0.516$ (precision
+$0.381$, recall $0.800$) versus $0.218$ for the fixed threshold (precision $0.122$, recall $0.992$): the
+fixed rule catches almost every large raw move but at very low precision. A window ablation shows
+$F_1$ rising with the estimation window ($0.385$, $0.516$ and $0.678$ for $10$, $20$ and $60$ days),
 indicating that a longer volatility estimate yields a steadier baseline. This label is itself
 volatility-relative, so some circularity is unavoidable; that is precisely why the firing-rate
 consistency above --- which depends on no label --- is treated as the primary evidence.

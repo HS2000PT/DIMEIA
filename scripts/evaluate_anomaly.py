@@ -40,12 +40,12 @@ TICKERS = [
 ]
 
 
-def _returns(period: str) -> dict[str, np.ndarray]:
+def _returns(start: str, end: str) -> dict[str, np.ndarray]:
     import yfinance as yf
 
     out: dict[str, np.ndarray] = {}
     for t in TICKERS:
-        df = yf.Ticker(t).history(period=period, interval="1d")
+        df = yf.Ticker(t).history(start=start, end=end, interval="1d")
         if df is None or df.empty:
             print(f"  [!] sem dados: {t}")
             continue
@@ -58,7 +58,9 @@ def _returns(period: str) -> dict[str, np.ndarray]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Avaliação do detetor de anomalias.")
-    parser.add_argument("--period", default="3y")
+    # Janela FIXA (reprodutível): evita o desvio de `period=3y` relativo à data de hoje.
+    parser.add_argument("--start", default="2023-06-01")
+    parser.add_argument("--end", default="2026-06-01")
     parser.add_argument("--window", type=int, default=20)
     parser.add_argument("--threshold", type=float, default=3.0)
     parser.add_argument("--fixed-pct", type=float, default=0.03)
@@ -67,8 +69,8 @@ def main() -> None:
     parser.add_argument("--fig", default="thesis/figures/eval_anomaly_firing_rate.pdf")
     args = parser.parse_args()
 
-    print(f"A obter preços (yfinance, {args.period})…")
-    rets = _returns(args.period)
+    print(f"A obter preços (yfinance, {args.start}..{args.end})…")
+    rets = _returns(args.start, args.end)
 
     z_pred_all, fx_pred_all, label_all = [], [], []
     fire_z, fire_fx = {}, {}
@@ -113,7 +115,7 @@ def _write_md(args, rets, fire_z, fire_fx, z_prf, fx_prf, ablation) -> None:
         "",
         "> Gerado por `scripts/evaluate_anomaly.py`. **Não editar à mão.** Ver caveats no fim.",
         "",
-        f"- **Dados:** {len(rets)} tickers, preços reais (yfinance, {args.period}).",
+        f"- **Dados:** {len(rets)} tickers, preços reais (yfinance, {args.start} a {args.end}).",
         f"- **z-score:** janela {args.window}d, limiar ±{args.threshold:g} (sem lookahead). "
         f"**Baseline fixo:** |retorno| ≥ {args.fixed_pct*100:g}%. "
         f"**Rótulo-proxy:** |retorno| ≥ percentil {args.quantile:g} por ticker.",
