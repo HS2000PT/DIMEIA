@@ -67,6 +67,7 @@ def main() -> None:
     parser.add_argument("--quantile", type=float, default=0.99)
     parser.add_argument("--out", default="docs/evaluation_anomaly.md")
     parser.add_argument("--fig", default="thesis/figures/eval_anomaly_firing_rate.pdf")
+    parser.add_argument("--ablation-fig", default="thesis/figures/eval_anomaly_window_ablation.pdf")
     args = parser.parse_args()
 
     print(f"A obter preços (yfinance, {args.start}..{args.end})…")
@@ -90,11 +91,15 @@ def main() -> None:
     z_prf = precision_recall_f1(z_pred, label)
     fx_prf = precision_recall_f1(fx_pred, label)
 
-    # Ablação à janela (F1 pooled).
+    # Ablação à janela (F1 pooled). Tabela = 3 pontos representativos; curva = conjunto alargado.
     ablation = {}
     for w in (10, 20, 60):
         preds = np.concatenate([rolling_zscore_flags(r, w, args.threshold) for r in rets.values()])
         ablation[w] = precision_recall_f1(preds, label)[2]
+    ablation_curve = {}
+    for w in (5, 10, 15, 20, 30, 40, 60, 90):
+        preds = np.concatenate([rolling_zscore_flags(r, w, args.threshold) for r in rets.values()])
+        ablation_curve[w] = precision_recall_f1(preds, label)[2]
 
     fz = np.array(list(fire_z.values()))
     ff_ = np.array(list(fire_fx.values()))
@@ -104,6 +109,7 @@ def main() -> None:
 
     _write_md(args, rets, fire_z, fire_fx, z_prf, fx_prf, ablation)
     _write_fig(args.fig, fire_z, fire_fx)
+    _write_ablation_fig(args.ablation_fig, ablation_curve)
 
 
 def _write_md(args, rets, fire_z, fire_fx, z_prf, fx_prf, ablation) -> None:
@@ -170,6 +176,27 @@ def _write_fig(path, fire_z, fire_fx) -> None:
     ax.set_title("Firing rate per ticker: fixed threshold versus z-score")
     ax.legend()
     ax.grid(axis="y", alpha=0.3)
+    fig.tight_layout()
+    out = REPO / path if not Path(path).is_absolute() else Path(path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out)
+    print(f"Figura escrita em {out}")
+
+
+def _write_ablation_fig(path, ablation_curve) -> None:
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    windows = sorted(ablation_curve)
+    f1s = [ablation_curve[w] for w in windows]
+    fig, ax = plt.subplots(figsize=(7, 4))
+    ax.plot(windows, f1s, marker="o", color="black")
+    ax.set_xlabel("Estimation window (trading days)")
+    ax.set_ylabel(r"$F_1$ vs extreme-move proxy")
+    ax.set_title("Anomaly detector: window-size ablation")
+    ax.grid(alpha=0.3)
     fig.tight_layout()
     out = REPO / path if not Path(path).is_absolute() else Path(path)
     out.parent.mkdir(parents=True, exist_ok=True)

@@ -201,7 +201,11 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
   - [x] **Tabela de decisões de desenho** (decisão/escolha/racional) — torna explícito o juízo de engenharia
   - [x] Apêndice A (Reproducibility) confirmado ao nível certo; corpo sem identificadores de código
   - [x] Compila 64 pp, 0 erros, 0 citações indefinidas, sem overfull
-- [ ] **S4 — Estudos de Caso (Cap. 5)** + novas figuras de resultados
+- [x] **S4 — Estudos de Caso (Cap. 5)** + novas figuras de resultados
+  - [x] Nova figura: **série temporal de anomalias** (TSLA real, 16 de 750 dias sinalizados; `scripts/figures/fig_anomaly_timeseries.py`)
+  - [x] Nova figura: **ablação à janela** (curva F1 vs janela; gerada por `evaluate_anomaly.py`)
+  - [x] CS1 enriquecido com exemplo trabalhado + ambas as figuras referenciadas
+  - [x] Compila 64 pp, 0 erros, 0 indefinidas; ruff limpo
 - [ ] **S5 — Estado da Arte (2.ª expansão) + Conclusões (Cap. 6)**
 - [ ] **S6 — Front matter + consistência global + auditoria de citações**
 - [ ] **S7 — Reorganização do repositório** (consolidação moderada), validada (testes/CI verdes)

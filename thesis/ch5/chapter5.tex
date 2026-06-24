@@ -69,14 +69,41 @@ is stable across all tickers.}
 \label{fig:cs_anomaly}
 \end{figure}
 
+\paragraph{A worked example.}
+Figure~\ref{fig:cs_timeseries} shows the detector at work on a single volatile stock (Tesla) over the
+three-year window. The flagged days are not simply the largest raw moves: they are the moves that are
+large \emph{relative to the asset's own recent volatility}, which is exactly the behaviour a fixed
+percentage threshold cannot reproduce. Over this period the detector flags sixteen of the seven hundred
+and fifty trading days (about $2\%$), consistent with the near-constant firing rate reported above.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/anomaly_timeseries.pdf}
+\caption[Worked example: \emph{z}-score anomalies on a volatile stock]{Daily log-returns of a volatile
+stock (Tesla) over the evaluation window, with the days flagged by the \emph{z}-score detector (window
+$20$, $k=3$) marked. The detector responds to volatility-relative surprise rather than to absolute
+move size.}
+\label{fig:cs_timeseries}
+\end{figure}
+
 \paragraph{Agreement with the proxy label (supporting).}
 Against the per-ticker extreme-move label, the \emph{z}-score attains an $F_1$ of $0.516$ (precision
 $0.381$, recall $0.800$) versus $0.218$ for the fixed threshold (precision $0.122$, recall $0.992$): the
-fixed rule catches almost every large raw move but at very low precision. A window ablation shows
-$F_1$ rising with the estimation window ($0.385$, $0.516$ and $0.678$ for $10$, $20$ and $60$ days),
-indicating that a longer volatility estimate yields a steadier baseline. This label is itself
-volatility-relative, so some circularity is unavoidable; that is precisely why the firing-rate
-consistency above --- which depends on no label --- is treated as the primary evidence.
+fixed rule catches almost every large raw move but at very low precision. A window ablation
+(Figure~\ref{fig:cs_ablation}) shows $F_1$ rising with the estimation window ($0.385$, $0.516$ and
+$0.678$ for $10$, $20$ and $60$ days), indicating that a longer volatility estimate yields a steadier
+baseline before it begins to saturate. This label is itself volatility-relative, so some circularity is
+unavoidable; that is precisely why the firing-rate consistency above --- which depends on no label ---
+is treated as the primary evidence.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/eval_anomaly_window_ablation.pdf}
+\caption[Window-size ablation for the anomaly detector]{Effect of the estimation-window length on the
+detector's $F_1$ against the extreme-move proxy. A longer window yields a steadier volatility baseline
+and higher agreement, with diminishing returns at the longest windows.}
+\label{fig:cs_ablation}
+\end{figure}
 
 \section{Case Study 2: News--Market Precedent Retrieval}
 \label{sec:cs_retrieval}
