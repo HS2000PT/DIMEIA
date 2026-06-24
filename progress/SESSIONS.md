@@ -5,6 +5,40 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 19 — 2026-06-24 — REWORK: plano definitivo multi-sessão + reestruturação (S1)
+**Contexto:** o aluno leu o PDF e ficou desiludido — demasiado técnico/"software-ish", curto, desorganizado,
+revisão de literatura fraca, poucas figuras e confusas, nomes de pastas e **português visível** no documento;
+"é um documento de dissertação, não uma especificação de software". Pediu reescrita orientada à dissertação,
+limpeza/reorganização do repositório, e um **Caderno de Defesa em PT-PT**, num plano definitivo multi-sessão.
+
+**Decisões (esta sessão):** estrutura canónica MEIA de 6 capítulos; sistema **CLARION**; cleanup = consolidação
+moderada; defesa = guia único PT-PT; sequência = declutter já, reorganização estrutural perto do fim.
+
+**Feito (S1):**
+- Estudadas as 4 dissertações de referência (104–139 pp): estrutura idêntica (Intro · State of the Art ·
+  Methods and Materials · [Sistema nomeado] · Case Studies · Conclusions). Tese antiga = 53 pp, 7 caps finos.
+- **Reestruturação para 6 capítulos** (`main.tex` + `ch1..ch6`; removido `ch7`); conteúdo redistribuído.
+- **Estado da Arte** reescrito em prosa académica: +12 fontes **verificadas** (Barber&Odean, Tetlock, Welch,
+  Fama et al. 1969, Loughran&McDonald, Pang, Guidotti, Rudin, Doshi-Velez, Vaswani, GloVe, BloombergGPT) → 28
+  no total; 2 figuras de taxonomia; discussão por secção + conclusões de capítulo. Todas registadas em
+  `citation_log.md`.
+- **Figuras/artefactos:** diagrama de arquitetura redesenhado (camadas, Y convergente, sem cruzamentos);
+  novo fluxo do gatilho de notícias; **mockup do alerta Telegram** (caixas LaTeX robustas).
+- **Português no PDF corrigido:** as figuras de avaliação tinham etiquetas/títulos PT → reescritos em EN e
+  **regenerados com números idênticos** (anomalia spread 0.017/0.343, F1 0.524; retrieval P@5 0.549/0.569).
+- **De-tech:** removidos todos os identificadores de código do corpo (0 `\texttt{}` de código; era 72 no Cap. 5);
+  detalhe técnico movido para o Apêndice A (Reproducibility). CLARION no abstract/resumo.
+- **Declutter:** removidos `notebooks/`, `presentation/`, `src/impact_analyzer/` (stub nunca usado).
+- **Plano mestre** aprovado e registado (`.claude/plans/…`; checklist em `TRACKER.md`).
+- Compila: **60 pp, 0 erros, 0 citações/refs indefinidas**.
+
+**Validação:** LaTeX compila limpo; .py compilam (py_compile); sem importações dos módulos removidos.
+Nota: **venv 3.12 ausente** neste ambiente (recriar para pytest/figuras; CI é o backstop dos testes).
+
+**Próxima ação:** S2 — aprofundar Cap. 1 (Introduction) e Cap. 3 (Methods and Materials).
+
+---
+
 ## Sessão 18 — 2026-06-21 — Avaliação: ablação de modelo de embeddings
 **Objetivo:** reforçar a avaliação da recuperação com a ablação prevista no design (§2: "modelo de
 embeddings, 1 alternativo"), mostrando que a vantagem do SBERT não depende de um modelo específico.

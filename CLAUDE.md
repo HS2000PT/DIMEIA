@@ -7,11 +7,12 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 18 (Avaliação — ablação de modelo de embeddings; sessão contínua desde a 0)
-- **Última atualização:** 2026-06-21
-- **Fase atual + último passo concluído:** **ABLAÇÃO DE MODELO DE EMBEDDINGS ADICIONADA (Cap. 6).** `evaluate.py` generalizado para comparar vários modelos SBERT; corrido MiniLM vs MPNet vs lexical vs baselines (5 seeds). **P@5: SBERT-MiniLM 0,549±0,014, SBERT-MPNet 0,569±0,009, lexical 0,359, aleatório 0,241, recência 0,105** → a vantagem do SBERT é robusta ao modelo (não específica de um). Cap. 6: tabela com 2 modelos + nota; figura regenerada (5 métodos). Tese compila 53 pp., 0 citações indefinidas. **41 testes verdes**; lint limpo. (Antes: downloader FNSPID corrigido/verificado mas scan completo inviável aqui — job para a máquina do aluno.)
-- **PRÓXIMA AÇÃO IMEDIATA (sobretudo humano/opcional):** (1) **o aluno revê e edita todos os capítulos** (o texto é dele; §6.6); (2) confirmar com o Prof. Luís Gomes a redação ISEP da declaração de IA + data de entrega; (3) **correr o `download_data.py` numa máquina/ligação adequada (job de noite)** → KB FNSPID multi-ano → análise de impacto (Pergunta B) — script pronto e verificado, mas inviável neste ambiente; (4) estudo humano de utilidade (RQ3); polish (agradecimentos). Prosseguir autonomamente nos itens técnicos viáveis (D-009).
-- **Verificação de integridade da sessão:** confirmar que este ficheiro e `progress/SESSIONS.md` foram lidos nesta sessão.
+- **Sessão nº:** 19 (REWORK — revisão do aluno; plano definitivo multi-sessão S1–S9; sessão contínua desde a 0)
+- **Última atualização:** 2026-06-24
+- **Fase atual + último passo concluído:** **REWORK EM CURSO (S1 concluída).** O aluno leu o PDF e ficou desiludido (demasiado técnico/"software-ish", curto, desorganizado, revisão de literatura fraca, poucas figuras e confusas, nomes de pastas e **português visível** no documento). Aprovado um **plano definitivo multi-sessão (S1–S9)** — ver `.claude/plans/…squishy-yeti.md` e `progress/TRACKER.md` (checklist mestre). **Feito na S1:** (1) reestruturação para a **estrutura canónica MEIA de 6 capítulos** (Introduction · State of the Art · Methods and Materials · **CLARION** · Case Studies · Conclusions; removido o Cap. 7); (2) **Estado da Arte expandido** (+12 fontes verificadas → **28**; 2 figuras de taxonomia; prosa académica + discussão por secção); (3) **figuras** — arquitetura redesenhada (sem setas cruzadas) + fluxo do gatilho de notícias + **mockup do alerta Telegram**; (4) **figuras de avaliação PT→EN** (números idênticos — era o "português" visível no PDF); (5) **identificadores de código removidos do corpo** (0 `\texttt{}` de código; detalhe técnico → Apêndice); (6) sistema **nomeado CLARION**; (7) **declutter** do repo (removidos `notebooks/`, `presentation/`, `src/impact_analyzer/`). Compila **60 pp, 0 erros, 0 citações indefinidas**.
+- **PRÓXIMA AÇÃO IMEDIATA (autónoma, D-009):** **S2 — aprofundar Cap. 1 (Introduction) e Cap. 3 (Methods and Materials)** ao nível académico (data card FNSPID, IA responsável/ética, metodologia de avaliação; sem identificadores de código; calibrar tom/extensão pelas 4 dissertações de referência). Depois S3→S9 conforme o checklist. **Humano/opcional (em paralelo):** o aluno revê e edita o texto (é dele, §6.6); confirmar redação ISEP da declaração de IA; correr FNSPID completo numa ligação adequada.
+- **Nota de ambiente:** o **venv 3.12 não está presente** neste ambiente (recriado/limpo entre turnos). LaTeX compila sem venv; para regenerar figuras/correr pytest, recriar com `scripts/setup_env.sh`. O CI corre os testes a cada push (backstop).
+- **Verificação de integridade da sessão:** confirmar que este ficheiro, `progress/TRACKER.md` e `progress/SESSIONS.md` foram lidos nesta sessão.
 
 ---
 
@@ -43,6 +44,10 @@
 ---
 
 ## Estado LaTeX
+> ⚠️ **EM REWORK (S1–S9).** As notas abaixo são pré-rework (7 capítulos, 53 pp, 16 refs). **Estado atual real:**
+> 6 capítulos canónicos MEIA (Introduction · State of the Art · Methods and Materials · CLARION · Case Studies ·
+> Conclusions), **28 referências verificadas**, **compila 60 pp, 0 erros, 0 citações indefinidas**; figuras de
+> avaliação em EN; arquitetura redesenhada + fluxo + mockup Telegram. Esta secção será reescrita por completo na S9.
 - **Escrito (Fase D):** `thesis/` integrado a partir do template ISEP (classe `meia-style.cls`, `frontmatter/`, `ch1..ch7/`, `appendices/`). `main.tex` adaptado (título T1, autor, nº 1180934, orientador/coorientador, keywords). **Compila localmente: 41 páginas, 0 erros**, biber OK, **8 referências no `references.bib`**. Front matter: abstract (EN) + resumo (PT) em rascunho; acrónimos atualizados (`glossary.tex`).
 - **7 capítulos** (esqueleto com secções): Introduction · Contextualization · Literature Review · Methodology · Implementation · Evaluation · Conclusion.
 - **`latexmk.rc` criado** (resolve o achado da Fase A: o `Makefile` invocava-o sem existir).

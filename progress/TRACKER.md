@@ -172,3 +172,35 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] **41 testes verdes**; lint limpo; tese compila 53 pp., 0 citações indefinidas
 - [x] **README atualizado**: estado real (rascunho completo) + secção "Reproducing the results" (comandos exatos); LaTeX verificado sem overfull boxes nem avisos
 - [ ] Próximo (humano/opcional): revisão do aluno; FNSPID completo (job de noite); estudo humano de utilidade
+
+---
+
+# REWORK (a partir da revisão do aluno) — Plano definitivo multi-sessão
+
+> O aluno leu o PDF e ficou desiludido: demasiado técnico/"software-ish", curto, desorganizado,
+> revisão de literatura fraca, poucas figuras e confusas, nomes de pastas e português no documento.
+> Objetivo: dissertação académica limpa e clara (estilo das 4 de referência, ~90–120 pp), repositório
+> arrumado, e um **Caderno de Defesa em PT-PT**. Trabalho deliberado, multi-sessão, validado passo a passo.
+> **Checklist mestre completo:** ver plano aprovado (`.claude/plans/…squishy-yeti.md`).
+
+## Roadmap S1–S9 (estado)
+- [x] **S1 — Plano + declutter + consolidar ganhos**
+  - [x] Reestruturação para 6 capítulos canónicos MEIA (remoção do Cap. 7); compila
+  - [x] Estado da Arte expandido (+12 fontes verificadas → 28; 2 figuras de taxonomia; discussão por secção)
+  - [x] Diagrama de arquitetura redesenhado (sem cruzamentos) + fluxo do gatilho de notícias + **mockup do alerta Telegram**
+  - [x] Figuras de avaliação PT→EN (números idênticos): era o "português" visível no PDF
+  - [x] Identificadores de código removidos do corpo (0 `\texttt{}` de código); CLARION no abstract/resumo
+  - [x] **Declutter:** removidos `notebooks/`, `presentation/`, `src/impact_analyzer/` (stub); .py compilam; sem importações pendentes
+  - [x] TRACKER semeado; CLAUDE.md + SESSIONS.md atualizados
+- [ ] **S2 — Introdução (Cap. 1) + Métodos e Materiais (Cap. 3)** (aprofundar, data card, IA responsável)
+- [ ] **S3 — CLARION (Cap. 4)** ao nível de desenho + Apêndice de reprodutibilidade
+- [ ] **S4 — Estudos de Caso (Cap. 5)** + novas figuras de resultados
+- [ ] **S5 — Estado da Arte (2.ª expansão) + Conclusões (Cap. 6)**
+- [ ] **S6 — Front matter + consistência global + auditoria de citações**
+- [ ] **S7 — Reorganização do repositório** (consolidação moderada), validada (testes/CI verdes)
+- [ ] **S8 — Caderno de Defesa (PT-PT)** (`docs/defence/caderno_de_defesa.md`)
+- [ ] **S9 — Validação final & sign-off** (leitura integral, compilar no alvo, verify+CI verdes)
+
+> **Nota de ambiente:** o venv 3.12 não está presente neste ambiente (foi recriado/limpo entre turnos).
+> A compilação LaTeX corre sem venv; para regenerar figuras/correr pytest é preciso recriar o venv
+> (`scripts/setup_env.sh`). Backstop: o CI corre os testes a cada push.
