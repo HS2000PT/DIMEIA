@@ -67,9 +67,13 @@ Usar modelos/ferramentas existentes **é** o trabalho de engenharia.
   impacto que tiveram.
 - **Como funciona:** cada notícia → embedding SBERT; semelhança por cosseno; impacto por estudo de evento
   a partir do **fecho** do 1.º dia de negociação ≥ data da notícia (anti-lookahead).
+- **Enquadramento académico (forte!):** isto é **Raciocínio Baseado em Casos** (CBR — Aamodt & Plaza 1994).
+  Cada notícia histórica + o seu impacto é um *caso*; a notícia nova é a consulta; a semelhança faz o
+  *retrieve*; o impacto dos precedentes é o *reuse*. Paro de propósito no retrieve+reuse (não faço *revise*
+  → não há previsão). Saber dizer "o meu motor é o núcleo de um sistema CBR" mostra domínio do paradigma.
 - **Defesa em 3 frases:** "Transformo cada notícia num vetor que capta o significado e procuro as mais
-  parecidas no histórico. Para cada precedente mostro o que aconteceu ao preço a seguir, medido sempre
-  *depois* do evento. É recuperação de evidência, não previsão."
+  parecidas no histórico — é raciocínio baseado em casos. Para cada precedente mostro o que aconteceu ao
+  preço a seguir, medido sempre *depois* do evento. É recuperação de evidência, não previsão."
 
 ### 3.3 Motor de explicação (XAI)
 - **O que faz:** monta o texto do alerta a partir dos objetos calculados a montante.
@@ -118,6 +122,8 @@ progress/  TRACKER (checklist) + SESSIONS (registo)
 ```
 - Resultados reprodutíveis: `scripts/evaluate.py` (recuperação) e `scripts/evaluate_anomaly.py` (anomalia)
   escrevem `docs/evaluation/*` e as figuras em `thesis/figures/`.
+- Análise extra pronta: `scripts/evaluate_per_sector.py` dá a recuperação **por setor** (precision@k +
+  *lift* por setor) — basta o corpus Finnhub (re-obter com a `FINNHUB_API_KEY` na `.env`).
 - Tudo o que é número na tese sai de um script com seed fixa.
 
 ---
@@ -127,7 +133,9 @@ progress/  TRACKER (checklist) + SESSIONS (registo)
 **P: Isto não é só usar bibliotecas existentes?**
 R: Sim — e numa tese de *Engenharia* de IA é isso que se pede: a contribuição é a integração, a metodologia
 de correlação notícia–impacto, as escolhas justificadas e a avaliação crítica honesta. O valor está no
-*sistema coerente e explicável*, não num algoritmo novo.
+*sistema coerente e explicável*, não num algoritmo novo. Além disso, o núcleo assenta num paradigma
+reconhecido — **Raciocínio Baseado em Casos** (Aamodt & Plaza 1994): recuperar casos análogos e reusar o
+seu resultado como evidência. Não é ad hoc; é CBR aplicado a notícias–mercado, com explicação por exemplos.
 
 **P: Porque não usaram um LLM / deep learning, que dá melhores resultados?**
 R: Por defensibilidade. O objetivo é explicabilidade para um não-especialista; um modelo opaco contraria
