@@ -206,7 +206,10 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
   - [x] Nova figura: **ablação à janela** (curva F1 vs janela; gerada por `evaluate_anomaly.py`)
   - [x] CS1 enriquecido com exemplo trabalhado + ambas as figuras referenciadas
   - [x] Compila 64 pp, 0 erros, 0 indefinidas; ruff limpo
-- [ ] **S5 — Estado da Arte (2.ª expansão) + Conclusões (Cap. 6)**
+- [x] **S5 — Estado da Arte (2.ª expansão) + Conclusões (Cap. 6)** (parcial: SoTA expandido)
+  - [x] +8 fontes verificadas → **36 refs** (Breunig LOF, Ahmed survey financeiro, Miller, Lipton, Da/Engelberg/Gao, Kearney&Liu, Ding 2015, Johnson FAISS); integradas em §2.1–2.5
+  - [x] Compila 66 pp, 0 erros, 0 indefinidas; todas registadas em citation_log
+  - [ ] (restante) afinar Conclusões (Cap. 6) — números já atualizados na S4; prosa OK
 - [ ] **S6 — Front matter + consistência global + auditoria de citações**
 - [ ] **S7 — Reorganização do repositório** (consolidação moderada), validada (testes/CI verdes)
 - [ ] **S8 — Caderno de Defesa (PT-PT)** (`docs/defence/caderno_de_defesa.md`)

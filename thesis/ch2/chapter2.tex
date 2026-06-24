@@ -30,7 +30,11 @@ explanation offered is economic: faced with thousands of stocks they could poten
 fall back on the small subset that has captured their attention. This asymmetry matters directly for an
 alerting system: the very events that draw a retail investor's attention --- a sharp price move or a
 salient news item --- are precisely the two triggers around which this work is built, and an alert that
-adds context to such an event is intervening exactly where attention-driven decisions are made.
+adds context to such an event is intervening exactly where attention-driven decisions are made. That
+attention is now measurable directly: \textcite{da2011attention} show that internet search volume is a
+timely proxy for investor attention that captures, in particular, the attention of \emph{retail}
+investors, reinforcing the link between salient events and the behaviour of the population this work
+serves.
 
 The role of the media in shaping investor behaviour has likewise been quantified. \textcite{tetlock2007media}
 constructs a daily pessimism measure from a popular Wall Street Journal column and finds that high media
@@ -100,12 +104,18 @@ distribution, an assumption that the rolling estimation window is designed to ac
 expressive unsupervised detectors relax such assumptions: Isolation Forest \autocite{liu2008isolation}
 isolates anomalies through random partitioning, requiring fewer splits to separate an outlier, and
 scales well to large, high-dimensional data. The cost is reduced direct interpretability, since the
-anomaly score is an ensemble property rather than a quantity the user can read off. At the far end of
+anomaly score is an ensemble property rather than a quantity the user can read off. Density-based
+detectors such as the Local Outlier Factor \autocite{breunig2000lof} take a related route, scoring a
+point by how isolated it is relative to the density of its neighbourhood; they capture \emph{local}
+anomalies well but, again, at the expense of a directly readable justification. At the far end of
 the spectrum, the review by \textcite{pang2021deep} surveys deep-learning detectors --- autoencoders,
 deep one-class models and others --- which can capture rich, non-linear structure but are data-hungry
 and largely opaque, and whose advantage is most pronounced in high-dimensional settings such as images
-or complex multivariate streams rather than in a single return series. Table~\ref{tab:sota_anomaly}
-compares the three families.
+or complex multivariate streams rather than in a single return series. Within finance specifically, the
+survey of \textcite{ahmed2016financial} notes that detection is dominated by \emph{unsupervised} methods,
+precisely because labelled anomalies are scarce --- a constraint that also shapes the evaluation strategy
+adopted in this work, where a label-free consistency argument is given primacy
+(Chapter~\ref{chap:casestudies}). Table~\ref{tab:sota_anomaly} compares the families.
 
 \begin{table}[ht]
 \caption{Anomaly-detection approaches relevant to this work.}
@@ -140,7 +150,12 @@ already-trained black box, and the open challenges on the path to responsible AI
 \textcite{guidotti2018survey} organises the post-hoc literature specifically by the problem being
 solved --- explaining a whole model, explaining a single outcome, or inspecting the internals ---
 which is a useful lens for situating the techniques most relevant here. Figure~\ref{fig:sota_xai_taxonomy}
-sketches this division.
+sketches this division. A recurring caution in the field is that ``interpretability'' is not a single,
+well-defined property: \textcite{lipton2018mythos} argues that the term conflates several distinct
+desiderata (simulatability, decomposability, post-hoc justification) that serve different stakeholders,
+so a system should state \emph{which} notion it provides. This work is explicit on that point: it offers
+transparency of the decision logic and traceable evidence, rather than a contested claim of total
+interpretability.
 
 \begin{figure}[ht]
 \centering
@@ -182,6 +197,13 @@ transparent design --- a statistical detector whose every quantity is exposed, a
 precedents shown as direct evidence --- and treating feature attribution as an optional complement
 rather than the foundation.
 
+What makes an explanation \emph{good} is, moreover, not purely a technical matter.
+\textcite{miller2019explanation} draws on the social sciences to argue that human explanations are
+contrastive, selective and social --- people want to know why \emph{this} rather than \emph{that}, and
+expect a few relevant causes, not an exhaustive account. The alerts in this work are designed in that
+spirit: each presents a small set of the most relevant precedents and the specific quantities behind the
+decision, rather than an exhaustive model dump.
+
 Finally, the field has recognised that explanations must themselves be evaluated rather than assumed.
 \textcite{doshivelez2017rigorous} propose a taxonomy for the rigorous evaluation of interpretability,
 distinguishing application-grounded, human-grounded and functionally-grounded assessments, and
@@ -210,7 +232,10 @@ Transparent design \autocite{rudin2019stop, arrieta2020xai} & Inherently interpr
 
 The news trigger depends on comparing the meaning of news items, which requires representing text
 numerically. The literature on financial natural-language processing spans three broad generations:
-hand-crafted lexicons, learned word embeddings, and contextual neural language models.
+hand-crafted lexicons, learned word embeddings, and contextual neural language models. The survey of
+\textcite{kearney2014textual} provides a useful map of the financial-text literature, organising it by
+information source, content-analysis method and empirical model, and documents the field's steady move
+from dictionaries towards machine-learned representations --- the same trajectory this section follows.
 
 The earliest and still-influential approach in finance is the domain dictionary. \textcite{loughran2011liability}
 show that general-purpose sentiment word lists misclassify ordinary financial vocabulary --- words such
@@ -230,7 +255,10 @@ BERT \autocite{devlin2019bert} uses it to produce deeply \emph{contextual} token
 substantially advanced language understanding. Using BERT directly to compare two texts is nonetheless
 expensive, because it processes sentence pairs jointly; Sentence-BERT \autocite{reimers2019sbert}
 resolves this by producing a single fixed-length embedding per sentence that can be compared with a cheap
-cosine similarity --- exactly the property on which precedent retrieval in this work relies.
+cosine similarity --- exactly the property on which precedent retrieval in this work relies. Should the
+knowledge base grow to millions of items, this exact search can be replaced by an approximate
+nearest-neighbour index such as those of \textcite{johnson2021faiss} without changing the representation,
+a scalability path noted here and revisited as future work.
 
 Two further developments are relevant. First, domain adaptation: FinBERT models fine-tune BERT on
 financial text, for sentiment classification \autocite{araci2019finbert} and for broader financial
@@ -280,7 +308,12 @@ characterises an outcome rather than forecasting one.
 
 Relating \emph{news text} to such impact is the subject of a growing literature, of which
 \textcite{tetlock2007media} is an early and influential example, demonstrating a measurable link between
-media tone and subsequent market behaviour. Conducting such an analysis historically and at scale
+media tone and subsequent market behaviour. A more recent strand goes further and attempts to
+\emph{predict} price movements from news: \textcite{ding2015deep}, for instance, learn event embeddings
+from headlines with a deep network to forecast index movements. This dissertation deliberately stops
+short of prediction --- it \emph{measures} the impact that analogous past events had and presents it as
+evidence, which keeps the system within its no-forecasting scope and avoids the opacity and over-claiming
+that price-prediction models invite. Conducting such an impact analysis historically and at scale
 requires news aligned to prices, which is the contribution of the FNSPID dataset
 \autocite{dong2024fnspid}: financial news time-aligned with daily prices for thousands of companies,
 enabling a news-to-impact knowledge base without bespoke scraping. Its limitations are those of any

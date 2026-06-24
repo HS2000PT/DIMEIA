@@ -48,6 +48,18 @@
 | `pennington2014glove` | Pennington, Socher & Manning (2014), "GloVe: Global Vectors…", EMNLP:1532–1543 | DOI 10.3115/v1/D14-1162 | 2026-06-22 | ACL Anthology / DOI | ✅ verificado |
 | `wu2023bloomberggpt` | Wu et al. (2023), "BloombergGPT: A Large Language Model for Finance" | arXiv:2303.17564 | 2026-06-22 | arXiv | ✅ verificado |
 
+## 2.ª expansão do Estado da Arte (Cap. 2) — verificadas (2026-06-24)
+| Chave .bib | Referência | Identificador | Verificado em | Fonte | Estado |
+|---|---|---|---|---|---|
+| `breunig2000lof` | Breunig, Kriegel, Ng & Sander (2000), "LOF: Identifying Density-Based Local Outliers", ACM SIGMOD:93–104 | DOI 10.1145/335191.335388 | 2026-06-24 | ACM DL / DOI | ✅ verificado |
+| `ahmed2016financial` | Ahmed, Mahmood & Islam (2016), "A survey of anomaly detection techniques in financial domain", Future Gen. Comp. Syst. 55:278–288 | DOI 10.1016/j.future.2015.01.001 | 2026-06-24 | ScienceDirect / DOI | ✅ verificado |
+| `miller2019explanation` | Miller (2019), "Explanation in AI: Insights from the Social Sciences", Artificial Intelligence 267:1–38 | DOI 10.1016/j.artint.2018.07.007 | 2026-06-24 | Elsevier / DOI | ✅ verificado |
+| `lipton2018mythos` | Lipton (2018), "The Mythos of Model Interpretability", Communications of the ACM 61(10):36–43 | arXiv:1606.03490 | 2026-06-24 | arXiv | ✅ verificado |
+| `da2011attention` | Da, Engelberg & Gao (2011), "In Search of Attention", Journal of Finance 66(5):1461–1499 | DOI 10.1111/j.1540-6261.2011.01679.x | 2026-06-24 | Wiley / DOI | ✅ verificado |
+| `kearney2014textual` | Kearney & Liu (2014), "Textual sentiment in finance: A survey…", Int. Review of Financial Analysis 33:171–185 | DOI 10.1016/j.irfa.2014.02.006 | 2026-06-24 | ScienceDirect / DOI | ✅ verificado |
+| `ding2015deep` | Ding, Zhang, Liu & Duan (2015), "Deep Learning for Event-Driven Stock Prediction", IJCAI:2327–2333 | Atas IJCAI 2015 (ijcai.org/Proceedings/15/Papers/329) | 2026-06-24 | IJCAI proceedings | ✅ verificado |
+| `johnson2021faiss` | Johnson, Douze & Jégou (2021), "Billion-Scale Similarity Search with GPUs" (FAISS), IEEE Trans. Big Data 7(3):535–547 | DOI 10.1109/TBDATA.2019.2921572 | 2026-06-24 | IEEE / DOI | ✅ verificado |
+
 ## Rejeitadas / não verificáveis (NÃO usar)
 | Referência | Motivo | Data |
 |---|---|---|
