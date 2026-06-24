@@ -21,7 +21,14 @@ The audience of this work is the non-professional, or ``retail'', investor. Unde
 investors consume information and react to news is therefore the natural starting point, because it
 both motivates the system and constrains what a useful alert should contain.
 
-A central and durable finding of behavioural finance is that individual investors are strongly
+Behavioural finance documents that real investors deviate systematically from the fully-rational ideal;
+the survey of \textcite{barberis2003behavioral} catalogues these deviations and their two pillars, limits
+to arbitrage and human psychology. A foundational element of that psychology is prospect theory
+\autocite{kahneman1979prospect}, whose central insight --- \emph{loss aversion}, the asymmetric weighting
+of losses against equivalent gains --- helps explain why investors are especially sensitive to salient,
+potentially adverse news, and therefore why a timely, well-explained alert is valuable.
+
+A central and durable finding of this literature is that individual investors are strongly
 influenced by \emph{attention}. In their seminal study, \textcite{barber2008glitters} show that
 individual investors are net buyers of attention-grabbing stocks --- those in the news, those with
 unusually high trading volume, and those with extreme one-day returns --- whereas they do not face the
@@ -309,8 +316,9 @@ characterises an outcome rather than forecasting one.
 Relating \emph{news text} to such impact is the subject of a growing literature, of which
 \textcite{tetlock2007media} is an early and influential example, demonstrating a measurable link between
 media tone and subsequent market behaviour. A more recent strand goes further and attempts to
-\emph{predict} price movements from news: \textcite{ding2015deep}, for instance, learn event embeddings
-from headlines with a deep network to forecast index movements. This dissertation deliberately stops
+\emph{predict} price movements from news --- a body of work surveyed by \textcite{xing2018nlffsurvey};
+\textcite{ding2015deep}, for instance, learn event embeddings from headlines with a deep network to
+forecast index movements. This dissertation deliberately stops
 short of prediction --- it \emph{measures} the impact that analogous past events had and presents it as
 evidence, which keeps the system within its no-forecasting scope and avoids the opacity and over-claiming
 that price-prediction models invite. Conducting such an impact analysis historically and at scale
@@ -320,6 +328,26 @@ enabling a news-to-impact knowledge base without bespoke scraping. Its limitatio
 corpus --- coverage and time period --- and are documented in the data card of Chapter~\ref{chap:methods}.
 The combination of a semantic retrieval step with an event-study impact measurement over such a corpus
 is the methodological core of this dissertation.
+
+\section{Case-Based Reasoning and Precedent Retrieval}
+\label{sec:sota_cbr}
+
+The way this work \emph{uses} retrieved news --- as analogous past cases whose outcomes inform the
+present --- corresponds to a well-established artificial-intelligence paradigm: case-based reasoning
+(CBR). In the foundational account of \textcite{aamodt1994cbr}, a CBR system solves a new problem by
+\emph{retrieving} the most similar past cases, \emph{reusing} their solutions, and (optionally)
+\emph{revising} and \emph{retaining} the outcome. The correlation engine of this dissertation is, in
+these terms, the retrieve-and-reuse core of a CBR system: each historical news item, paired with its
+observed price impact, is a \emph{case}; a new headline is the query; semantic similarity performs
+retrieval; and the precedents' observed impact is reused as evidence.
+
+This framing matters for two reasons. First, it situates the contribution within a recognised paradigm
+rather than presenting precedent retrieval as ad hoc. Second, CBR is intrinsically aligned with the
+explainability goal of this work: an explanation of the form ``this resembles these specific past
+cases, which behaved thus'' is example-based and immediately intelligible to a non-expert, in contrast
+to the feature-attribution explanations of opaque models discussed in Section~\ref{sec:sota_xai}. The
+system deliberately stops at retrieve-and-reuse --- it presents the precedents as evidence and does not
+automatically \emph{revise} them into a prediction --- which keeps it within its no-forecasting scope.
 
 \section{Comparative Analysis and Positioning}
 \label{sec:sota_positioning}
@@ -364,6 +392,8 @@ literature, and in particular the interpretable-by-design argument, supported pu
 through transparent design and assessing it by fidelity. The financial-NLP literature traced the path
 from lexicons to sentence embeddings and identified Sentence-BERT as the appropriate, reproducible choice
 for semantic retrieval, while event-study methodology and the FNSPID dataset provided the means to
-measure news impact honestly and at scale. What the literature offers in mature individual components, it
-largely lacks as an \emph{integrated}, explainable, retail-facing system --- the gap this dissertation
-addresses, and which the following chapters develop.
+measure news impact honestly and at scale. Finally, case-based reasoning supplied the paradigm that ties
+these together --- retrieving analogous past cases and reusing their outcomes as transparent evidence.
+What the literature offers in mature individual components, it largely lacks as an \emph{integrated},
+explainable, retail-facing system --- the gap this dissertation addresses, and which the following
+chapters develop.

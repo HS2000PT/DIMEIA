@@ -60,6 +60,14 @@
 | `ding2015deep` | Ding, Zhang, Liu & Duan (2015), "Deep Learning for Event-Driven Stock Prediction", IJCAI:2327–2333 | Atas IJCAI 2015 (ijcai.org/Proceedings/15/Papers/329) | 2026-06-24 | IJCAI proceedings | ✅ verificado |
 | `johnson2021faiss` | Johnson, Douze & Jégou (2021), "Billion-Scale Similarity Search with GPUs" (FAISS), IEEE Trans. Big Data 7(3):535–547 | DOI 10.1109/TBDATA.2019.2921572 | 2026-06-24 | IEEE / DOI | ✅ verificado |
 
+## 3.ª expansão do Estado da Arte (Cap. 2) — verificadas (2026-06-24)
+| Chave .bib | Referência | Identificador | Verificado em | Fonte | Estado |
+|---|---|---|---|---|---|
+| `aamodt1994cbr` | Aamodt & Plaza (1994), "Case-Based Reasoning: Foundational Issues…", AI Communications 7(1):39–59 | AI Communications 7(1):39–59 (id bibliográfico; múltiplas fontes) | 2026-06-24 | AI Communications / IIIA-CSIC | ✅ verificado |
+| `kahneman1979prospect` | Kahneman & Tversky (1979), "Prospect Theory: An Analysis of Decision under Risk", Econometrica 47(2):263–291 | DOI 10.2307/1914185 | 2026-06-24 | Econometric Society / JSTOR | ✅ verificado |
+| `barberis2003behavioral` | Barberis & Thaler (2003), "A Survey of Behavioral Finance", Handbook of the Economics of Finance, vol. 1, cap. 18:1053–1128 | DOI 10.1016/S1574-0102(03)01027-6 | 2026-06-24 | Elsevier / ScienceDirect | ✅ verificado |
+| `xing2018nlffsurvey` | Xing, Cambria & Welsch (2018), "Natural Language Based Financial Forecasting: A Survey", Artificial Intelligence Review 50(1):49–73 | DOI 10.1007/s10462-017-9588-9 | 2026-06-24 | Springer | ✅ verificado |
+
 ## Rejeitadas / não verificáveis (NÃO usar)
 | Referência | Motivo | Data |
 |---|---|---|
