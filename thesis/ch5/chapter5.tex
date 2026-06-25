@@ -143,11 +143,11 @@ Random (base rate) & $0.240 \pm 0.004$ & $0.240 \pm 0.004$ \\
 
 As Table~\ref{tab:cs_retrieval} and Figure~\ref{fig:cs_retrieval} show, the default MiniLM model reaches
 a precision@$5$ of $0.514$ --- about $2.1$ times the random base rate ($0.240$) and well above the
-lexical baseline ($0.346$). The stronger MPNet model does slightly better ($0.538$), confirming that the
-advantage is a property of semantic embeddings in general and not of one particular model; the small
-standard deviations (around $0.01$) confirm the gap is robust rather than a sampling artefact. Recency
-performs worst --- below even the random base rate --- showing that simply surfacing the latest news is
-no substitute for semantic matching. The lift over both the random and lexical baselines is the honest
+lexical baseline ($0.346$). The stronger MPNet model does slightly better ($0.538$), which suggests the
+advantage belongs to semantic embeddings in general rather than to one particular model; the small
+standard deviations (around $0.01$) show the gap is robust rather than a sampling artefact. Recency
+performs worst, below even the random base rate, so simply surfacing the latest news is no substitute for
+semantic matching. The lift over both the random and lexical baselines is the honest
 measure of the value added by the embeddings.
 
 \begin{figure}[ht]
