@@ -118,7 +118,7 @@ def main() -> None:
             f"{m}={results[m][k]:.3f}±{stds[m][k]:.3f}" for m in methods))
 
     _write_markdown(args.out, df, n_q, ks, results, stds, methods, args.seed, args.repeats)
-    _write_figure(args.fig, ks, results, methods)
+    _write_figure(args.fig, ks, results, stds, methods)
 
 
 def _write_markdown(path, df, n_q, ks, results, stds, methods, seed, repeats) -> None:
@@ -166,7 +166,7 @@ def _write_markdown(path, df, n_q, ks, results, stds, methods, seed, repeats) ->
     print(f"Resultados escritos em {path}")
 
 
-def _write_figure(path, ks, results, methods) -> None:
+def _write_figure(path, ks, results, stds, methods) -> None:
     import matplotlib
 
     matplotlib.use("Agg")
@@ -177,7 +177,8 @@ def _write_figure(path, ks, results, methods) -> None:
     fig, ax = plt.subplots(figsize=(8, 4))
     for i, m in enumerate(methods):
         offset = (i - (len(methods) - 1) / 2) * width
-        ax.bar(x + offset, [results[m][k] for k in ks], width, label=m)
+        ax.bar(x + offset, [results[m][k] for k in ks], width, label=m,
+               yerr=[stds[m][k] for k in ks], capsize=3, error_kw={"elinewidth": 0.8})
     ax.set_xticks(x, [f"P@{k}" for k in ks])
     ax.set_ylabel("Precision (same sector, cross-ticker)")
     ax.set_title("Precedent retrieval: SBERT versus baselines")

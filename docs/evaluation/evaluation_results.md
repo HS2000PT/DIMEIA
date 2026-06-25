@@ -7,7 +7,7 @@
 - **Dados:** 3,714 notícias reais (Finnhub), 5 setores: {'tech': 1736, 'energy': 497, 'banking': 496, 'health': 494, 'consumer': 491}.
 - **Consultas amostradas:** 500 por repetição; **5 repetições** (seeds 42..46); média ± desvio. Recuperação **cross-ticker** (exclui a própria empresa).
 - **Proxy de relevância:** mesmo setor (data_card.md). Baselines: recência e taxa-base.
-- **Gerado:** 2026-06-24 21:46 UTC.
+- **Gerado:** 2026-06-25 21:57 UTC.
 
 | Método | P@5 | P@10 |
 |---|---|---|
