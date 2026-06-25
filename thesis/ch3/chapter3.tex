@@ -5,14 +5,13 @@
 \chapter{Methods and Materials}
 \label{chap:methods}
 
-This chapter describes the methods, materials and methodology used in the dissertation. It states the
-overall approach, documents the datasets and data sources in a reproducible data card, presents the
-models and techniques selected for each component with their justification, describes the supporting
-tools, sets out the responsible-AI considerations, and defines, in advance, the evaluation methodology
-and the guarantees of rigour. Throughout, the guiding principle is \emph{defensible simplicity}: where
-options perform comparably, the more transparent and explainable one is preferred. The system that
-realises these methods is presented in Chapter~\ref{chap:clarion}, and the experiments that apply this
-methodology are reported in Chapter~\ref{chap:casestudies}.
+This chapter sets out how the system was built and how it is judged: the overall approach, the datasets
+(documented in a reproducible data card), the models behind each component, the responsible-AI
+considerations, and the evaluation design, which was fixed before any experiment was run. One idea runs
+through all of it: keep things as simple as they can defensibly be, so that where two options perform
+about the same, the more transparent one wins. CLARION, the system these methods produce, is described in
+Chapter~\ref{chap:clarion}; the experiments that apply them are reported in
+Chapter~\ref{chap:casestudies}.
 
 \section{Approach and Methodology}
 \label{sec:met_approach}
@@ -40,8 +39,28 @@ performance consideration.
 
 The system uses two clearly separated data layers, sharing a common schema so that they are directly
 comparable: a \textbf{historical} layer, built offline, that supplies the precedents, and a
-\textbf{live} layer that supplies real-time prices and news. This separation is deliberate: the
-historical layer must be rich and stable, whereas the live layer must be timely and inexpensive.
+\textbf{live} layer that supplies real-time prices and news (Figure~\ref{fig:data_layers}). This
+separation is deliberate: the historical layer must be rich and stable, whereas the live layer must be
+timely and inexpensive.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\small, >={Stealth[length=2.2mm]},
+  box/.style={draw, rounded corners, align=center, text width=3.0cm, minimum height=1.0cm},
+  src/.style={box, fill=black!8}, proc/.style={box, fill=black!3}]
+  \node[src] (fnspid) {\textbf{Historical:} FNSPID\\ \footnotesize news aligned to prices};
+  \node[proc, right=1.6cm of fnspid] (kb) {Knowledge base\\ \footnotesize past news $+$ observed impact};
+  \node[src, below=1.0cm of fnspid] (live) {\textbf{Live:} free feeds\\ \footnotesize prices $+$ news};
+  \node[proc, right=1.6cm of live] (now) {Current input\\ \footnotesize new move or headline};
+  \draw[->] (fnspid) -- node[above,font=\scriptsize]{align, embed} (kb);
+  \draw[->] (live) -- node[above,font=\scriptsize]{normalise} (now);
+  \draw[<->, dashed] (kb) -- node[right,font=\scriptsize,text width=2.7cm]{common schema:\\ directly comparable} (now);
+\end{tikzpicture}
+\caption[The two data layers]{The two data layers. The historical layer turns the FNSPID corpus into a
+knowledge base of past news and its observed price impact; the live layer normalises real-time prices and
+news into the same fields, so a current event can be compared directly against the precedents.}
+\label{fig:data_layers}
+\end{figure}
 
 \subsection{Historical Layer: the FNSPID Corpus}
 \label{sec:met_data_fnspid}

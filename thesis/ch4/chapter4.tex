@@ -6,13 +6,10 @@
 \chapter{CLARION: An Explainable Financial-Alert System for Retail Investors}
 \label{chap:clarion}
 
-This chapter presents \textsc{Clarion}, the system designed and built in this dissertation. Whereas
-Chapter~\ref{chap:methods} justified \emph{what} methods were chosen and \emph{why}, this chapter
-describes \emph{how} they are integrated into a coherent system: its overall architecture, the
-historical knowledge base and correlation engine at its core, the anomaly trigger, the explanation
-engine that makes every alert traceable, and the delivery of alerts to the investor. Consistent with
-the framing of the work as AI engineering, the contribution lies in integrating existing models and
-techniques into a functional, explainable and reproducible whole.
+This chapter presents \textsc{Clarion}, the system built in this dissertation: its architecture, the
+historical knowledge base and correlation engine at its core, the anomaly trigger, the explanation engine
+that makes every alert traceable, and the way alerts reach the investor. Chapter~\ref{chap:methods}
+argued for the individual methods; the focus here is how they fit together into one working system.
 
 \section{Overview}
 \label{sec:clarion_overview}
@@ -218,11 +215,11 @@ the investor receives, with the full reasoning chain visible in a single message
         \medskip
         \textbf{News alert \textemdash{} NVDA}\\[2pt]
         \textit{``Nvidia raises guidance on surging demand for AI data-centre accelerators''}\\[4pt]
-        \textbf{Potential impact} (from 5 similar past events): average 1-day move \textbf{$-1.8\%$}\\[4pt]
+        \textbf{Potential impact} (from 5 similar past events): average 1-day move \textbf{$-2.0\%$}\\[4pt]
         \textbf{Historical precedents:}\\
-        $\bullet$~2026-06-16 \ META \ (sim 0.64) \ +1d $-5.4\%$\\
-        $\bullet$~2026-06-01 \ BAC \ (sim 0.63) \ +1d $+1.9\%$\\
-        $\bullet$~2026-06-18 \ AMZN \ (sim 0.61) \ +1d \ n/a\\[4pt]
+        $\bullet$~2026-06-24 \ MSFT \ (sim 0.68) \ +1d $-3.5\%$\\
+        $\bullet$~2026-06-24 \ META \ (sim 0.68) \ +1d $-2.7\%$\\
+        $\bullet$~2026-06-24 \ GOOGL \ (sim 0.64) \ +1d $-0.5\%$\\[4pt]
         {\scriptsize\emph{Precedents are retrieved by semantic similarity; the impact is the observed
         past outcome, not a price prediction.}}
         \medskip

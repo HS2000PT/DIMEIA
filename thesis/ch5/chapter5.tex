@@ -6,13 +6,11 @@
 \chapter{Case Studies}
 \label{chap:casestudies}
 
-This chapter evaluates CLARION through three case studies on real data, following the methodology fixed
-in advance in Chapter~\ref{chap:methods}. The first studies the anomaly trigger across US equities of
-very different volatility; the second studies the news--market correlation engine and its retrieval of
-analogous precedents; the third walks through an end-to-end alert and examines the faithfulness of the
-explanation. Following the principle that modest but honest results are preferable to inflated ones,
-every number reported here is produced by a versioned script with a fixed random seed, and the
-limitations of each study are stated explicitly.
+This chapter evaluates CLARION through three case studies on real data. The first looks at the anomaly
+trigger across stocks of very different volatility; the second at the correlation engine and the
+precedents it retrieves; the third walks through a complete alert and asks whether its explanation is
+faithful. Every number below comes from a versioned script with a fixed seed, the evaluation followed the
+plan set out in Chapter~\ref{chap:methods}, and each study states its own limitations.
 
 \section{Common Experimental Setup}
 \label{sec:cs_setup}
@@ -23,9 +21,9 @@ over a fixed three-year window (June~2023 to June~2026), yielding $750$ daily lo
 $3{,}714$ real financial-news headlines for the same tickers were collected through a free company-news
 service --- the most recent months available on the free tier --- spanning five sectors (technology,
 banking, energy, health and consumer staples). News headlines and prices are normalised to a common
-schema so that the live and historical layers are directly comparable. This recent, single-month window
-is sufficient for the retrieval experiment but is the reason a multi-year corpus (FNSPID) is left as
-future work for a full impact analysis. The no-lookahead, reproducibility and honesty guarantees of
+schema so that the live and historical layers are directly comparable. This recent window of a few months
+is enough for the retrieval experiment; a full impact analysis still needs the multi-year FNSPID corpus,
+left as future work. The no-lookahead, reproducibility and honesty guarantees of
 Section~\ref{sec:met_evaluation} apply to every study below.
 
 \section{Case Study 1: Transparent Anomaly Detection on US Equities}
