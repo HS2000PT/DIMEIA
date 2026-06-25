@@ -33,7 +33,9 @@ The question is whether the rolling \emph{z}-score \autocite{chandola2009anomaly
 detector of abrupt moves than a na\"ive fixed-percentage threshold. The proxy label for a ``true''
 anomaly is a daily move in the upper percentile of \emph{that ticker}'s own return distribution
 ($|r|\ge$ the $99$th percentile); the baseline is a single global threshold ($|r|\ge 3\%$) applied to
-every ticker.
+every ticker. This label is itself volatility-relative, so any agreement score it produces is only
+supporting evidence; the primary argument, made first below, is the firing-rate consistency, which needs
+no label at all.
 
 \paragraph{Firing-rate consistency (main argument).}
 The strongest evidence is independent of any label. A good universal detector should fire at a
@@ -110,7 +112,11 @@ The central claim of this work is that semantic retrieval finds genuinely analog
 measured as precision@$k$ with a sector proxy, in a \emph{cross-ticker} setting: for each query the $k$
 most similar headlines \emph{from other companies} are retrieved, and precision is the fraction sharing
 the query's sector. Excluding the query's own company prevents the trivial solution of matching on the
-company name and tests thematic analogy instead. To check that the result is not tied to one model,
+company name and tests thematic analogy instead. It is worth being clear about what this measures: same
+sector is an automatic stand-in for relevance, so the metric shows whether retrieved news is thematically
+related, not whether a person would judge it a useful precedent. That gap is real, and a human relevance
+study is left as future work; the proxy's merit is that it is objective and reproducible, which is what a
+first evaluation needs. To check that the result is not tied to one model,
 \emph{two} Sentence-BERT models \autocite{reimers2019sbert} --- the lightweight default, MiniLM, and the
 larger MPNet --- are compared against a lexical (hashing) baseline and two trivial baselines: random
 retrieval (the sector base rate) and recency. To guard against sampling artefacts, five hundred queries
@@ -252,15 +258,14 @@ market where a fixed threshold is not, semantic retrieval surfaces markedly more
 precedents than lexical or trivial baselines, and the end-to-end alert is faithful to its own
 computation. All results rest on real data and are reproducible from versioned scripts.
 
-Several threats to validity are stated honestly. The sector label is an automatic \emph{proxy} for
-relevance, not a human judgement; the news corpus is the recent window available from a free service
-rather than the multi-year FNSPID history, and headlines are short, which bounds the semantics that can
-be captured; the anomaly proxy label is volatility-relative, so the firing-rate argument (label-free) is
-given primacy; and, although the retrieval result is averaged over five runs, no human usefulness study
-has yet been conducted. Crucially, and by design, the system performs no price prediction: it does not
-forecast returns or evaluate trading profit (out of scope). Addressing these points --- the full FNSPID
-corpus, a human relevance and usefulness study, and a multi-year impact analysis --- defines the main
-avenues for further work.
+The results also have clear limits. The sector label is an automatic proxy for relevance, not a human
+judgement. The news corpus is a recent window from a free service rather than the multi-year FNSPID
+history, and the headlines are short, which caps the meaning that can be captured. The anomaly proxy
+label is volatility-relative, which is why the label-free firing-rate argument is the one to lean on. And
+while the retrieval figures are averaged over five runs, no human has yet judged the alerts useful. One
+limit is deliberate: the system makes no price prediction and evaluates no trading profit, so those
+questions are out of scope rather than unanswered. The full FNSPID corpus, a human relevance and
+usefulness study, and a multi-year impact analysis are the natural next steps.
 
 \section{Chapter Conclusions}
 \label{sec:cs_summary}
