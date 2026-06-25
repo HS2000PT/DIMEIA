@@ -109,9 +109,9 @@ def _write_md(path, rows, ks, order) -> None:
     lines += [
         "",
         "**Leitura:** a recuperação semântica supera a taxa-base aleatória em todos os setores; "
-        "o *lift* é maior nos setores de vocabulário mais distintivo (ex.: energia, banca) e menor "
-        "no setor tecnológico, que é o mais amplo e heterogéneo. Avaliação preliminar "
-        "(corpus recente do Finnhub).",
+        "o *lift* é maior na energia e na saúde (vocabulário distintivo) e menor no consumo. "
+        "A tecnologia tem a P@5 bruta mais alta apenas por dominar o corpus (taxa-base elevada). "
+        "Avaliação preliminar (corpus recente do Finnhub).",
     ]
     Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"Resultados escritos em {path}")

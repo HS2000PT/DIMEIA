@@ -93,10 +93,12 @@ Usar modelos/ferramentas existentes **é** o trabalho de engenharia.
 
 ## 4. Resultados e limitações (honestos)
 
-**Recuperação de precedentes (RQ2).** Precision@5 *cross-ticker* por setor, média de 5 seeds:
-- SBERT-MiniLM **0,549 ± 0,014**; SBERT-MPNet **0,569 ± 0,009**; lexical 0,359; aleatório 0,241; recência 0,105.
-- **Leitura:** ~2,3× acima do acaso e bem acima do lexical; a vantagem é do *embedding semântico* (robusta
+**Recuperação de precedentes (RQ2).** Precision@5 *cross-ticker* por setor, média de 5 seeds (3.714 notícias):
+- SBERT-MiniLM **0,514 ± 0,015**; SBERT-MPNet **0,538 ± 0,011**; lexical 0,346; aleatório 0,240; recência 0,126.
+- **Leitura:** ~2,1× acima do acaso e bem acima do lexical; a vantagem é do *embedding semântico* (robusta
   ao modelo). É uma avaliação **preliminar** (notícias recentes do Finnhub, não o FNSPID multi-ano).
+- **Por setor:** o *lift* é maior na energia (+0,377) e saúde (+0,348) — vocabulário distintivo — e menor no
+  consumo (+0,100). A tecnologia tem a P@5 bruta mais alta (0,712) mas porque domina o corpus (taxa-base 0,429).
 
 **Detetor de anomalias (RQ1).** Janela fixa 2023-06 a 2026-06, 15 tickers:
 - Amplitude da taxa de disparo entre ações: **z-score 0,015** vs **limiar fixo 0,344** (>20× mais consistente).

@@ -20,8 +20,8 @@ limitations of each study are stated explicitly.
 Two real datasets are used. For the anomaly trigger, daily closing prices for the fifteen
 large-capitalisation tickers listed in the data card were retrieved from a free market-data service
 over a fixed three-year window (June~2023 to June~2026), yielding $750$ daily log-returns per ticker. For the correlation engine,
-$3{,}692$ real financial-news headlines for the same tickers were collected through a free company-news
-service --- the most recent month available on the free tier --- spanning five sectors (technology,
+$3{,}714$ real financial-news headlines for the same tickers were collected through a free company-news
+service --- the most recent months available on the free tier --- spanning five sectors (technology,
 banking, energy, health and consumer staples). News headlines and prices are normalised to a common
 schema so that the live and historical layers are directly comparable. This recent, single-month window
 is sufficient for the retrieval experiment but is the reason a multi-year corpus (FNSPID) is left as
@@ -120,7 +120,7 @@ were sampled in each of five independent runs (seeds $42$--$46$); Table~\ref{tab
 the mean and standard deviation.
 
 \begin{table}[ht]
-\caption{Cross-ticker precision@$k$ by sector, mean\,$\pm$\,std over five runs ($3{,}692$ real
+\caption{Cross-ticker precision@$k$ by sector, mean\,$\pm$\,std over five runs ($3{,}714$ real
 headlines, five sectors).}
 \label{tab:cs_retrieval}
 \centering
@@ -128,23 +128,23 @@ headlines, five sectors).}
 \toprule
 \tabhead{Method} & \tabhead{P@5} & \tabhead{P@10} \\
 \midrule
-SBERT --- MiniLM (default) & $0.549 \pm 0.014$ & $0.516 \pm 0.013$ \\
-SBERT --- MPNet & $\mathbf{0.569 \pm 0.009}$ & $\mathbf{0.538 \pm 0.009}$ \\
-Lexical baseline (hashing) & $0.359 \pm 0.010$ & $0.327 \pm 0.011$ \\
-Recency & $0.105 \pm 0.013$ & $0.081 \pm 0.006$ \\
-Random (base rate) & $0.241 \pm 0.004$ & $0.241 \pm 0.004$ \\
+SBERT --- MiniLM (default) & $0.514 \pm 0.015$ & $0.478 \pm 0.011$ \\
+SBERT --- MPNet & $\mathbf{0.538 \pm 0.011}$ & $\mathbf{0.506 \pm 0.010}$ \\
+Lexical baseline (hashing) & $0.346 \pm 0.011$ & $0.314 \pm 0.008$ \\
+Recency & $0.126 \pm 0.006$ & $0.106 \pm 0.005$ \\
+Random (base rate) & $0.240 \pm 0.004$ & $0.240 \pm 0.004$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 As Table~\ref{tab:cs_retrieval} and Figure~\ref{fig:cs_retrieval} show, the default MiniLM model reaches
-a precision@$5$ of $0.549$ --- about $2.3$ times the random base rate ($0.241$) and well above the
-lexical baseline ($0.359$). The stronger MPNet model does slightly better ($0.569$), confirming that the
+a precision@$5$ of $0.514$ --- about $2.1$ times the random base rate ($0.240$) and well above the
+lexical baseline ($0.346$). The stronger MPNet model does slightly better ($0.538$), confirming that the
 advantage is a property of semantic embeddings in general and not of one particular model; the small
 standard deviations (around $0.01$) confirm the gap is robust rather than a sampling artefact. Recency
-performs worst, showing that simply surfacing the latest news is no substitute for semantic matching.
-The lift over both the random and lexical baselines is the honest measure of the value added by the
-embeddings.
+performs worst --- below even the random base rate --- showing that simply surfacing the latest news is
+no substitute for semantic matching. The lift over both the random and lexical baselines is the honest
+measure of the value added by the embeddings.
 
 \begin{figure}[ht]
 \centering
@@ -158,10 +158,48 @@ clearly exceeds the lexical, recency and random baselines.}
 For each retrieved precedent the engine reports the observed post-event return at $+1$, $+3$ and $+5$
 trading days, measured from the event-day close in the style of an event study \autocite{brown1985daily}.
 These figures are observed outcomes presented as evidence, never a prediction. On the worked knowledge
-base the measured impacts are coherent with reality --- for example, a price-cut headline for one carmaker
-is followed by a sizable negative three-day return, and a cloud-growth earnings headline by a clear
-positive one --- which provides face validity for the measurement; a rigorous multi-year impact study on
-the full FNSPID corpus is identified as future work.
+base the measured impacts are directionally coherent --- for example, the competitive-threat news cluster
+in the end-to-end case study below is followed by uniformly negative one-day returns --- which provides
+face validity for the measurement; a rigorous multi-year impact study on the full FNSPID corpus is
+identified as future work.
+
+\paragraph{Retrieval by sector.}
+The aggregate figure hides useful variation across sectors. Table~\ref{tab:cs_persector} and
+Figure~\ref{fig:cs_persector} break the retrieval down by the query's sector, using the whole population
+of each sector as queries (so the figures are exact rather than sampled). Two readings matter. The raw
+precision@$5$ is highest for technology ($0.712$), but largely because technology dominates the corpus
+($47\%$ of headlines) and therefore has a high random base rate ($0.429$); the fair cross-sector measure
+is the \emph{lift} over that base rate. By that measure the engine adds the most value in
+\textbf{energy} ($+0.377$) and \textbf{health} ($+0.348$) --- sectors whose vocabulary is distinctive
+(production, output, barrels; trial, drug, approval) --- and the least in \textbf{consumer} ($+0.100$),
+whose headlines are more generic and thematically overlap with other sectors. Retrieval is positive in
+every sector, but its benefit is greatest where the domain language is most specific.
+
+\begin{table}[ht]
+\caption{Cross-ticker precision@$k$ per sector (whole-population queries, MiniLM).}
+\label{tab:cs_persector}
+\centering
+\begin{tabular}{p{0.22\textwidth} c c c c c}
+\toprule
+\tabhead{Sector} & \tabhead{N} & \tabhead{P@5} & \tabhead{P@10} & \tabhead{Random} & \tabhead{Lift P@5} \\
+\midrule
+Technology & $1736$ & $0.712$ & $0.675$ & $0.429$ & $+0.283$ \\
+Energy & $497$ & $0.448$ & $0.408$ & $0.072$ & $\mathbf{+0.377}$ \\
+Health & $494$ & $0.419$ & $0.379$ & $0.071$ & $+0.348$ \\
+Banking & $496$ & $0.272$ & $0.228$ & $0.072$ & $+0.200$ \\
+Consumer & $491$ & $0.171$ & $0.150$ & $0.071$ & $+0.100$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/eval_retrieval_per_sector.pdf}
+\caption[Precedent retrieval by sector]{Precision@$5$ per sector against the random base rate. Retrieval
+exceeds the base rate in every sector; the gap (lift) is largest for energy and health, whose vocabulary
+is most distinctive, and smallest for the broad consumer sector.}
+\label{fig:cs_persector}
+\end{figure}
 
 \section{Case Study 3: End-to-End Alert and Explanation Faithfulness}
 \label{sec:cs_endtoend}
@@ -174,24 +212,26 @@ similar precedents from the knowledge base built from the real news corpus, and 
 \begin{quote}\ttfamily\small\raggedright
 News alert for NVDA\\
 "Nvidia raises guidance on surging demand for AI data-centre accelerators"\\[2pt]
-Potential impact (from 5 similar past events): average 1-day move: $-1.78\%$\\
+Potential impact (from 5 similar past events): average 1-day move: $-1.97\%$\\
 Historical precedents:\\
-- 2026-06-16 META (sim 0.64) +1d $-5.44\%$: "Nvidia Latest Big Borrower: AI Data Centers..."\\
-- 2026-06-01 BAC (sim 0.63) +1d $+1.88\%$: "Nvidia expands AI platform with new CPU and PC..."\\
-- 2026-06-18 AMZN (sim 0.61) +1d n/a: "Amazon hopes to challenge Nvidia by selling AI chips"\\
-- 2026-06-18 AMZN (sim 0.61) +1d n/a: "Amazon's New Weapon: Selling Custom AI Chips..."\\
-- 2026-06-18 AMZN (sim 0.60) +1d n/a: "Amazon explores selling AI chips to challenge Nvidia"\\[2pt]
+- 2026-06-24 MSFT (sim 0.68) +1d $-3.46\%$: "Qualcomm debuts line of AI data center chips..."\\
+- 2026-06-24 NVDA (sim 0.68) +1d $-1.64\%$: "Qualcomm debuts line of AI data center chips..."\\
+- 2026-06-24 META (sim 0.68) +1d $-2.65\%$: "Qualcomm debuts line of AI data center chips..."\\
+- 2026-06-24 GOOGL (sim 0.64) +1d $-0.46\%$: "This AI Infrastructure Stock Could Be Bigger Than Nvidia..."\\
+- 2026-06-24 NVDA (sim 0.58) +1d $-1.64\%$: "Tecan Accelerates Data-Driven Lab Journey... NVIDIA"\\[2pt]
 Note: precedents are retrieved by semantic similarity; the impact is the observed past outcome,
 not a price prediction.
 \end{quote}
 
-Every retrieved precedent is thematically about NVIDIA and AI accelerators, even though the articles
-were filed under different company feeds (Meta, Bank of America, Amazon). This is direct evidence that
+Every retrieved precedent concerns AI data-centre chips and competition for NVIDIA, even though the
+articles were filed under different company feeds (Microsoft, Meta, Alphabet and NVIDIA itself).
+Strikingly, the same story --- a rival entering the AI data-centre chip market --- surfaces across three
+different company feeds, which the engine correctly groups as one theme. This is direct evidence that
 retrieval is driven by \emph{meaning} rather than the company name or exact keywords --- the very
-behaviour the correlation engine is designed for. Where a precedent is too recent for its forward window
-to fall within the available prices, the impact is shown as not available; this is an honest artefact of
-the one-month free-tier window and further motivates the multi-year corpus. The alert ends with an
-explicit disclaimer, keeping the system within its no-forecasting scope.
+behaviour the correlation engine is designed for. In this instance the precedents happen to be uniformly
+negative (a competitive-threat cluster), and their average is reported as an observed past outcome, not a
+prediction. The alert ends with an explicit disclaimer, keeping the system within its no-forecasting
+scope.
 
 \paragraph{Explanation faithfulness.}
 Faithfulness is guaranteed by construction: the alert text is rendered directly from the same objects
