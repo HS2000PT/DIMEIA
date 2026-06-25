@@ -8,13 +8,12 @@
 \section{Contextualization}
 \label{sec:intro_context}
 
-Most people in the United States now own stock. In 2025, 62\% of Americans reported holding shares,
-either directly or through mutual funds and retirement accounts \autocite{gallup2025stock}, in a market
-whose total value reached US\$62.2~trillion at the end of 2024, the largest and most liquid in the world
-\autocite{sifma2025factbook}. Figure~\ref{fig:us_market_cap} shows how fast that market has grown, more
-than doubling since 2015. Trading takes place mainly on two venues, the \gls{NYSE} and \gls{NASDAQ}, and
-an increasing share of it now comes from ordinary people using commission-free mobile apps rather than
-from professional institutions.
+Most Americans now own stock, either directly or through retirement accounts and mutual funds
+\autocite{gallup2025stock}. At the same time, the US equity market has grown into the world's largest and
+most liquid, reaching US\$62.2~trillion at the end of 2024 \autocite{sifma2025factbook}
+(Figure~\ref{fig:us_market_cap}). Trading takes place mainly on the \gls{NYSE} and \gls{NASDAQ}, and a
+growing share of it now comes from ordinary people using commission-free mobile apps rather than from
+professional institutions.
 
 \begin{figure}[ht]
 \centering
@@ -27,9 +26,9 @@ from professional institutions.
 
 These non-professional, or ``retail'', investors are the audience of this work. Stock ownership among
 them is wide but uneven: it rises to 87\% of households earning above US\$100{,}000 and falls to 28\%
-below US\$50{,}000 \autocite{gallup2025stock}. What they share is a hard position. The market never stops
-moving across thousands of stocks, financial news never stops arriving, and they have none of the tools
-that banks and funds take for granted.
+below US\$50{,}000 \autocite{gallup2025stock}. What they share is a hard position. Markets move continuously
+across thousands of securities and relevant news arrives throughout the trading day, yet retail investors
+have none of the tools that banks and funds take for granted.
 
 Artificial intelligence has, meanwhile, spread quickly through finance. A 2026 survey found that 81\% of
 financial firms were adopting \gls{AI} in some form and 71\% were already using generative AI
@@ -41,11 +40,12 @@ was raised is what this dissertation sets out to do.
 \section{Problem Statement}
 \label{sec:intro_problem}
 
-A retail investor who wants to stay informed has two problems, not one. The first is telling a genuinely
-unusual price move apart from ordinary daily volatility, which takes statistical judgement and constant
-attention. The second is reading what a news item might mean, which takes knowledge of how similar events
-played out in the past, knowledge most people do not have to hand. Consumer apps tend to make both
-problems worse. They push alerts with no explanation, or they hide their reasoning inside a black box.
+A retail investor who wants to stay informed faces two distinct challenges. The first is telling a
+genuinely unusual price move apart from ordinary daily volatility, which takes statistical judgement and
+constant attention. The second is reading what a news item might mean, which takes knowledge of how
+similar events played out in the past, knowledge most people do not have to hand. Existing consumer
+applications often provide alerts with little explanation, or rely on models whose reasoning is hidden
+from the user.
 
 This work does not try to predict prices. It tries to \emph{explain}. For each abrupt move or relevant
 news item, the system shows what it detected, how it reached that conclusion, where the information came
@@ -92,9 +92,11 @@ Telegram. Three research questions guide the work:
         computes, and useful to a retail investor?
 \end{itemize}
 
-Four supporting objectives shape how the system is built: deliver a thin end-to-end slice first, so that
-integration problems surface early; keep each component as simple as it can defensibly be; evaluate every
-component against a plan fixed before any experiment is run; and make the whole system reproducible.
+These questions translate into four objectives: to develop an explainable alerting pipeline driven by the
+two triggers; to evaluate the anomaly detector against transparent baselines; to evaluate the retrieval
+of historical news against trivial baselines; and to assess the faithfulness and usefulness of the
+explanations. The incremental, simplicity-first way the system is built is a methodological choice,
+described in Chapter~\ref{chap:methods}.
 
 \section{Scientific Contributions}
 \label{sec:intro_contributions}
@@ -107,9 +109,10 @@ can be reproduced. Three contributions stand out:
   \item A reproducible method for relating news to market impact, pairing sentence-embedding retrieval
         with event-study windows, where the similarity measure and the time horizons are stated
         explicitly and no information about the future is allowed to leak in.
-  \item \textbf{CLARION}, an alerting system whose whole reasoning chain --- the detected event, the
-        evidence, the sources and the precedents --- is shown to a non-expert, and whose explanation is
-        generated from the same quantities it computes, so the text and the computation cannot disagree.
+  \item \textbf{CLARION}, an alerting system that exposes its complete reasoning chain to the user: the
+        detected event, the supporting evidence, the sources, and the relevant historical precedents.
+        Because each explanation is generated directly from the quantities the system computes, the text
+        cannot diverge from the underlying computation.
   \item A critical evaluation of each core component on real data, against simple and lexical baselines,
         with the results, the ablations and the limitations all reported plainly.
 \end{itemize}
@@ -117,8 +120,9 @@ can be reproduced. Three contributions stand out:
 \section{Document Structure}
 \label{sec:intro_structure}
 
-Chapter~\ref{chap:sota} reviews the state of the art behind the work: anomaly detection, explainable AI,
-financial natural-language processing, event studies, and case-based reasoning. Chapter~\ref{chap:methods}
+The remainder of this dissertation is organised as follows. Chapter~\ref{chap:sota} reviews the state of
+the art behind the work: anomaly detection, explainable AI, financial natural-language processing, event
+studies, and case-based reasoning. Chapter~\ref{chap:methods}
 sets out the methods, the datasets and the evaluation design. Chapter~\ref{chap:clarion} presents CLARION
 itself, at the level of its architecture and the decisions behind it. Chapter~\ref{chap:casestudies}
 evaluates the system through three case studies on real data, and Chapter~\ref{chap:conclusions} returns
