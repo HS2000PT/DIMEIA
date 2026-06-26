@@ -82,6 +82,14 @@
 | `manning2008ir` | Manning, Raghavan & Schütze (2008), "Introduction to Information Retrieval", Cambridge UP, 482 pp | ISBN 978-0-521-86571-5 | 2026-06-26 | Cambridge UP / ACM / Springer | ✅ verificado |
 | `fama1970efficient` | Fama (1970), "Efficient Capital Markets: A Review of Theory and Empirical Work", J. of Finance 25(2):383–417 | DOI 10.2307/2325486 | 2026-06-26 | Crossref (DOI resolve; 11k+ citações) | ✅ verificado |
 
+## Confiança/automação + modelação de volatilidade (Cap. 2) — verificadas (2026-06-26)
+| Chave .bib | Referência | Identificador | Verificado em | Fonte | Estado |
+|---|---|---|---|---|---|
+| `lee2004trust` | Lee & See (2004), "Trust in Automation: Designing for Appropriate Reliance", Human Factors 46(1):50–80 | DOI 10.1518/hfes.46.1.50_30392 | 2026-06-26 | Crossref (DOI resolve) | ✅ verificado |
+| `bansal2021whole` | Bansal et al. (2021), "Does the Whole Exceed its Parts? ...", Proc. CHI 2021 | DOI 10.1145/3411764.3445717 | 2026-06-26 | Crossref (DOI resolve) | ✅ verificado |
+| `engle1982arch` | Engle (1982), "Autoregressive Conditional Heteroscedasticity...", Econometrica 50(4):987–1007 | DOI 10.2307/1912773 | 2026-06-26 | Crossref (DOI resolve) | ✅ verificado |
+| `bollerslev1986garch` | Bollerslev (1986), "Generalized Autoregressive Conditional Heteroskedasticity", J. Econometrics 31(3):307–327 | DOI 10.1016/0304-4076(86)90063-1 | 2026-06-26 | Crossref (DOI resolve) | ✅ verificado |
+
 ## Rejeitadas / não verificáveis (NÃO usar)
 | Referência | Motivo | Data |
 |---|---|---|

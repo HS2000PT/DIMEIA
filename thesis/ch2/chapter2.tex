@@ -9,9 +9,9 @@
 CLARION draws on several fields, and this chapter reviews them with one purpose: to justify each design
 choice against the alternatives. It begins with what is known about how retail investors behave and why
 they are exposed to information overload, since that is what the system responds to. It then works through
-anomaly detection, explainable AI, financial text representation, information retrieval, event studies,
-and case-based reasoning, preferring seminal and recent peer-reviewed work and summarising each area in a
-comparative table. The
+anomaly detection, explainable AI, human trust in automation, financial text representation, information
+retrieval, event studies, and case-based reasoning, preferring seminal and recent peer-reviewed work and
+summarising each area in a comparative table. The
 recurring finding is that the individual pieces are mature, but an integrated, explainable system aimed at
 the retail investor is still rare.
 
@@ -106,7 +106,16 @@ and modelling capacity increases, from left to right.}
 For financial returns, simple statistical methods --- flagging deviations from a rolling mean and
 standard deviation, that is, a \emph{z}-score --- are attractive precisely because they are transparent
 and easy to justify, an advantage for an explainable system. They do, however, assume a locally stable
-distribution, an assumption that the rolling estimation window is designed to accommodate. More
+distribution, an assumption that the rolling estimation window is designed to accommodate. The need for
+that window is itself well understood in financial econometrics: returns exhibit \emph{volatility
+clustering} --- calm and turbulent periods arrive in runs --- formalised by the ARCH model of
+\textcite{engle1982arch} and its generalisation GARCH \autocite{bollerslev1986garch}, which model
+time-varying variance explicitly. The rolling standard deviation used in this work is, in effect, a
+deliberately simpler, non-parametric estimate of that same time-varying volatility: it adapts to the
+current regime without fitting a parametric model, which keeps the detector transparent and free of
+estimation choices a non-expert could not scrutinise. A full GARCH estimate is a more sophisticated
+alternative, declined here under the principle of defensible simplicity because the transparent rolling
+estimate suffices to flag volatility-relative surprise. More
 expressive unsupervised detectors relax such assumptions: Isolation Forest \autocite{liu2008isolation}
 isolates anomalies through random partitioning, requiring fewer splits to separate an outlier, and
 scales well to large, high-dimensional data. The cost is reduced direct interpretability, since the
@@ -232,6 +241,31 @@ Transparent design \autocite{rudin2019stop, arrieta2020xai} & Inherently interpr
 \bottomrule
 \end{tabular}
 \end{table}
+
+\section{Trust and Appropriate Reliance in Decision Support}
+\label{sec:sota_trust}
+
+Explainability is, ultimately, in service of a human decision, so the literature on how people rely on
+automated aids is directly relevant. An alert is only useful if the investor relies on it
+\emph{appropriately} --- neither dismissing a sound warning nor acting blindly on a fallible one. The
+human-factors account of \textcite{lee2004trust} frames this precisely: trust is the attitude that an aid
+will help achieve one's goals under uncertainty, and the design goal is \emph{calibrated} trust ---
+reliance matched to the system's actual competence --- rather than maximal trust. Two failure modes follow:
+\emph{disuse}, ignoring a capable aid, and \emph{misuse}, over-relying on a fallible one. For a tool acted
+upon with real money, both are costly, which raises the stakes for how alerts are presented.
+
+Explanations are the principal means of calibration. By exposing why an alert fired and what evidence
+supports it, the system lets the user judge \emph{when} to rely on it, which is the human-side rationale
+for the transparent-by-design choice of Section~\ref{sec:sota_xai}: transparency is not only an ethical or
+regulatory desideratum but a mechanism for appropriate reliance. Recent empirical work tempers this hope,
+however. \textcite{bansal2021whole} show that explanations do not automatically improve human--AI team
+performance and can even induce \emph{over-reliance}, with users accepting confident explanations of
+incorrect outputs. The lesson adopted here is concrete: the system explains with \emph{verifiable
+evidence} --- the actual $z$-score and its parameters, and real retrieved precedents with their measured
+impact --- rather than persuasive narrative, and every alert states plainly that it reports past outcomes,
+not predictions. These are deliberate choices aimed at appropriate, not maximal, reliance, and they connect
+the explainability goal of this work to the responsible-AI commitments set out in
+Chapter~\ref{chap:methods}.
 
 \section{Financial NLP and Text Representation}
 \label{sec:sota_finnlp}
@@ -495,7 +529,8 @@ established that retail investors are attention- and news-driven, motivating an 
 rather than a predictive one. The anomaly-detection literature supplied a clear capacity--interpretability
 trade-off that favours a transparent statistical detector for a low-dimensional return series. The XAI
 literature, and in particular the interpretable-by-design argument, supported pursuing explainability
-through transparent design and assessing it by fidelity. The financial-NLP literature traced the path
+through transparent design and assessing it by fidelity, while the trust-in-automation literature reframed
+that transparency as a means to \emph{appropriate reliance} by a non-expert. The financial-NLP literature traced the path
 from lexicons to sentence embeddings and identified Sentence-BERT as the appropriate, reproducible choice
 for semantic retrieval, which information-retrieval theory frames as a representation-then-rank task to be
 judged by precision@$k$. Event-study methodology and the FNSPID dataset, in turn, provided the means to
