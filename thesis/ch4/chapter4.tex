@@ -274,8 +274,8 @@ explanation engine and delivered.}
 
 As with the news trigger, the same flow can be read as an interaction over time
 (Figure~\ref{fig:market_sequence}): the scheduler requests prices, the detector standardises the latest
-return against its rolling window, and --- only when the absolute $z$-score exceeds the threshold --- it
-hands the move together with every quantity behind it to the explanation engine for delivery.
+return against its rolling window, and hands the move, together with every quantity behind it, to the
+explanation engine for delivery, but only when the absolute $z$-score exceeds the threshold.
 
 \begin{figure}[ht]
 \centering
@@ -365,8 +365,8 @@ CLARION runs as two entry points, one per trigger, each of which performs a comp
 trigger fetches recent prices, computes returns, detects, explains and sends; the news trigger takes a
 headline, embeds it, retrieves precedents, explains and sends. In day-to-day use these would be invoked
 on a schedule --- the market trigger once per trading day after the close, the news trigger whenever a
-watched feed publishes --- but the scheduler and the hosting are deliberately outside the project's
-scope. The entry points already encapsulate everything such a scheduler would call.
+watched feed publishes --- but the scheduler and the hosting fall outside the project's scope. The entry
+points already encapsulate everything such a scheduler would call.
 
 Running the system needs three things, all free: a market-data source for prices, a company-news or RSS
 source for headlines (an API key, kept out of version control), and the historical knowledge base, built
