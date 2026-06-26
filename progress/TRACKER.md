@@ -247,8 +247,9 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
       - [x] figura do fluxo mestre de dados/passos (Cap. 4) · figura conceito de embeddings + linha temporal event study (Cap. 3)
       - [x] exemplos trabalhados: z-score hipotético (Cap. 3) · recuperação REAL reproduzível sobre KB-amostra (Cap. 3) · anomalia REAL TSLA 24-10-2024 (Cap. 5)
       - [x] Cap. 2 §2.7 "Existing Tools for the Retail Investor" (+ 2 citações verificadas: dacunto2019robo, cardillo2024robo) · Cap. 5 "Threats to Validity" por taxonomia
-      - [ ] mais prosa genuína p/ ~80 pp (candidatos: diagrama de sequência por gatilho; aprofundar Estado da Arte; how_to_run) — SEM encher
-      - [ ] diagrama de sequência por gatilho (o aluno quer "visualizar o workflow")
+      - [x] diagrama de sequência (UML) do gatilho de notícias (Cap. 4) — vista de interação no tempo
+      - [x] `docs/design/how_to_run.md` — guia do operador (responde a "como correr?"; também groundwork da Fase D)
+      - [ ] mais prosa genuína p/ ~80 pp (candidatos: aprofundar 1–2 áreas do Estado da Arte com fontes verificadas; diagrama de sequência do gatilho de mercado) — SEM encher
 - [ ] **Fase B** — terminar passagem de naturalidade/consistência (todo o corpo)
 - [ ] **Fase C** — revisão crítica independente da tese (do zero) + correções
 - [ ] **Fase D** — revisão crítica da implementação/desenho + viabilidade real + guia "como correr" + validar estatística
