@@ -387,19 +387,72 @@ obscured.
 \section{Evaluation Methodology}
 \label{sec:met_evaluation}
 
-The evaluation is defined in advance, before any experiment is run, to avoid selecting metrics that
-flatter the result; it is reported in full in Chapter~\ref{chap:casestudies}. The anomaly detector is
-assessed primarily by the \emph{consistency of its firing rate} across instruments of differing
-volatility --- an argument that depends on no label --- and secondarily by agreement with an explicit
-extreme-move proxy, with an ablation over the estimation window. The correlation engine is assessed on
-retrieval quality, measured as cross-ticker precision@$k$ against a sector relevance proxy and compared
-with random, recency and lexical baselines over multiple random samples and two embedding models, and on
-the event-study impact it measures. The explanation engine is assessed for fidelity to the system's actual
-logic and, as a stated limitation, for usefulness. Because the system performs neither price prediction
-nor trading, profit-based metrics are explicitly out of scope.
+The evaluation is defined in advance, before any experiment is run. Fixing the metrics, baselines and
+protocol beforehand is a deliberate guard against the temptation to choose, after the fact, the measure
+that flatters the result --- a form of pre-registration in miniature. The full results are reported in
+Chapter~\ref{chap:casestudies}; what follows is the protocol they obey.
 
-Three guarantees underpin every experiment. First, \textbf{no lookahead}: any feature computed at an
-instant uses only information available at or before that instant, and historical impact uses only
+\subsection{Retrieval metric and relevance}
+\label{sec:met_eval_retrieval}
+
+The correlation engine is evaluated as an information-retrieval task (Section~\ref{sec:sota_ir}), using
+precision@$k$ --- the share of the top $k$ retrieved precedents that are relevant. Writing $Q$ for the set
+of query headlines and $R_k(q)$ for the top $k$ items returned for query $q$,
+\begin{equation}
+\text{precision@}k = \frac{1}{|Q|}\sum_{q\in Q}\frac{1}{k}\sum_{d\in R_k(q)} \mathrm{rel}(q,d),
+\qquad
+\mathrm{rel}(q,d)=\mathbf{1}\big[\,\mathrm{sector}(d)=\mathrm{sector}(q)\,\big].
+\label{eq:precatk}
+\end{equation}
+Relevance is approximated by \emph{sector agreement}: a precedent is counted as relevant when its company
+belongs to the same economic sector as the query's. This is an automatic proxy for the human judgement of
+``analogous'', adopted because no labelled relevance set exists; its limits are stated openly with the
+results. Two design choices make the metric demanding rather than flattering. First, a strict
+\emph{cross-ticker} constraint removes from the candidate pool every precedent that shares the query's
+ticker, so the system cannot score by trivially matching a company to its own past news --- it must
+generalise \emph{across} companies within a sector. Second, $k$ is kept small (the headline figure uses
+$k=5$), reflecting that an alert can show only a handful of precedents, so the test is whether the very
+top results are relevant.
+
+\subsection{Baselines}
+\label{sec:met_eval_baselines}
+
+A single precision number means little in isolation, so semantic retrieval is compared against three
+baselines, each chosen to control for a specific rival explanation. The \textbf{random} baseline draws $k$
+precedents uniformly at random; its expected precision is just the base rate of same-sector items, and it
+therefore marks the ``no-skill'' floor. The \textbf{recency} baseline returns the $k$ most recent items,
+testing whether simply surfacing the newest news --- a tempting and cheap strategy --- would do as well.
+The \textbf{lexical} baseline ranks by a bag-of-words, term-overlap representation under the same cosine
+ranking, so that the difference between it and the embedding model isolates the marginal value of
+\emph{semantic} meaning over surface word matching --- the central claim of the engine. Because each query
+sample is drawn at random, the whole comparison is repeated over five random seeds and reported as a mean
+with its standard deviation, so that a single lucky or unlucky draw cannot drive the conclusion; the
+embedding model itself is varied between two Sentence-BERT variants to show the result is a property of
+semantic retrieval, not of one specific model.
+
+\subsection{Anomaly-detection protocol}
+\label{sec:met_eval_anomaly}
+
+The anomaly detector is judged primarily by an argument that needs \emph{no label}: a good universal
+detector should fire at a comparable rate across instruments of very different volatility, whereas a
+volatility-blind rule cannot. Consistency is therefore measured as the range (maximum minus minimum) of
+per-ticker firing rates --- the smaller the range, the more uniform the detector. Only secondarily is the
+detector scored against an explicit \emph{extreme-move} proxy (a daily move at or beyond the $99$th
+percentile of that ticker's own returns), via precision, recall and $F_1$; because this proxy is itself
+volatility-relative, it is treated as supporting rather than primary evidence. An ablation over the
+estimation-window length completes the picture by exposing the detector's sensitivity to its one main
+parameter.
+
+\subsection{Explanation, scope, and rigour guarantees}
+\label{sec:met_eval_rigour}
+
+The explanation engine is assessed for \emph{fidelity} --- whether the alert text reflects the system's
+actual computation, which holds by construction because each alert is rendered directly from the computed
+objects --- while its \emph{usefulness} to a real investor is acknowledged as requiring a human study not
+yet conducted, and is reported as a limitation rather than a claim. Because the system performs neither
+price prediction nor trading, profit-based metrics are out of scope by design, not omitted by convenience.
+Underpinning every experiment are three guarantees. First, \textbf{no lookahead}: any feature computed at
+an instant uses only information available at or before that instant, and historical impact uses only
 post-event windows. Second, \textbf{reproducibility}: random seeds are fixed, dependencies are pinned, and
 every data and results figure is produced by a versioned script. Third, \textbf{honesty}: results are
 reported with their caveats, and modest but genuine findings are preferred to inflated ones.
