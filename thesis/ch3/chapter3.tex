@@ -284,14 +284,14 @@ Three choices fix \emph{how} that impact is measured, and each is made for trans
 rigour. The first is the \emph{horizons}: cumulative returns are taken over short windows of $+1$, $+3$
 and $+5$ trading days. Short windows are standard practice for daily event studies
 \autocite{brown1985daily} and limit the chance that unrelated, market-wide moves come to dominate the
-measured reaction --- the longer the window, the more confounding creeps in. The second is the
+measured reaction: the longer the window, the more confounding creeps in. The second is the
 \emph{baseline against which the move is read}. This work reports the \emph{raw} cumulative return rather
-than a market-adjusted \emph{abnormal} return --- the return in excess of a market or expected-return
-model, as in a classical cumulative-abnormal-return study. Raw returns are chosen deliberately: they are
-directly observable and require no estimated market model that a non-expert could not scrutinise. The
-cost, stated plainly, is that a raw return conflates the news reaction with any market-wide move on the
-same days, which is precisely the confounding threat examined in Chapter~\ref{chap:casestudies}; market
-adjustment is a sound refinement and is recorded as future work. The third choice is \emph{aggregation}:
+than a market-adjusted \emph{abnormal} return (the return in excess of a market or expected-return model,
+as in a classical cumulative-abnormal-return study). Raw returns are chosen because they are directly
+observable and need no estimated market model that a non-expert could not scrutinise. The cost, stated
+plainly, is that a raw return conflates the news reaction with any market-wide move on the same days, which
+is the confounding threat examined in Chapter~\ref{chap:casestudies}; market adjustment is a sound
+refinement, recorded as future work. The third choice is \emph{aggregation}:
 the headline figure an alert shows is the \emph{mean} impact across the retrieved precedents, a simple and
 interpretable summary. Because a mean can mask disagreement, the individual precedents and their impacts
 are always displayed alongside it, so the investor sees the spread rather than a single number in
@@ -335,7 +335,7 @@ base bundled with the system. To keep the walk-through fully reproducible withou
 uses a transparent baseline encoder whose similarity reflects word overlap directly; the deployed system
 uses the Sentence-BERT encoder described above, whose retrieval quality is evaluated in
 Chapter~\ref{chap:casestudies}. For the query \emph{``Nvidia demand surges on AI chip orders''}, the three
-nearest precedents are all AI-themed and --- importantly --- not all of the same company: a Microsoft
+nearest precedents are all AI-themed and, importantly, not all from the same company: a Microsoft
 cloud-AI item is retrieved alongside the two Nvidia items, illustrating the \emph{cross-ticker}
 generalisation on which the evaluation rests. Reusing their observed outcomes gives a mean $+5$-day impact
 of $+6.5\%$, which the alert presents as evidence, with the explicit caveat that it records what followed
@@ -405,8 +405,8 @@ obscured.
 \label{sec:met_evaluation}
 
 The evaluation is defined in advance, before any experiment is run. Fixing the metrics, baselines and
-protocol beforehand is a deliberate guard against the temptation to choose, after the fact, the measure
-that flatters the result --- a form of pre-registration in miniature. The full results are reported in
+protocol beforehand guards against the temptation to choose, after the fact, the measure that flatters the
+result; it is a small-scale form of pre-registration. The full results are reported in
 Chapter~\ref{chap:casestudies}; what follows is the protocol they obey.
 
 \subsection{Retrieval metric and relevance}
@@ -438,10 +438,10 @@ A single precision number means little in isolation, so semantic retrieval is co
 baselines, each chosen to control for a specific rival explanation. The \textbf{random} baseline draws $k$
 precedents uniformly at random; its expected precision is just the base rate of same-sector items, and it
 therefore marks the ``no-skill'' floor. The \textbf{recency} baseline returns the $k$ most recent items,
-testing whether simply surfacing the newest news --- a tempting and cheap strategy --- would do as well.
-The \textbf{lexical} baseline ranks by a bag-of-words, term-overlap representation under the same cosine
+testing whether simply surfacing the newest news (a tempting, cheap strategy) would do as well. The
+\textbf{lexical} baseline ranks by a bag-of-words, term-overlap representation under the same cosine
 ranking, so that the difference between it and the embedding model isolates the marginal value of
-\emph{semantic} meaning over surface word matching --- the central claim of the engine. Because each query
+\emph{semantic} meaning over surface word matching, the central claim of the engine. Because each query
 sample is drawn at random, the whole comparison is repeated over five random seeds and reported as a mean
 with its standard deviation, so that a single lucky or unlucky draw cannot drive the conclusion; the
 embedding model itself is varied between two Sentence-BERT variants to show the result is a property of
