@@ -347,6 +347,68 @@ to the feature-attribution explanations of opaque models discussed in Section~\r
 system deliberately stops at retrieve-and-reuse --- it presents the precedents as evidence and does not
 automatically \emph{revise} them into a prediction --- which keeps it within its no-forecasting scope.
 
+\section{Existing Tools for the Retail Investor}
+\label{sec:sota_tools}
+
+The sections above reviewed the academic foundations; it is equally important to ask what the retail
+investor can already use in practice, since that is the baseline any new system must improve upon. Three
+broad categories of tool are widely available today, and each addresses a part of the problem this work
+targets while leaving a characteristic gap.
+
+The first and most ubiquitous category is the \emph{price alert} offered by virtually every brokerage and
+market-data application. The investor sets a threshold --- a target price, or a percentage move --- and is
+notified when it is crossed. Such alerts are immediate, free and simple, and they map naturally onto the
+attention-driven behaviour documented by \textcite{barber2008glitters}: they fire precisely on the extreme
+moves that capture attention. Their limitation is equally clear. A fixed threshold is not calibrated to
+each asset's own volatility, so it fires constantly on volatile stocks and rarely on calm ones --- the very
+inconsistency that the volatility-normalised detector of this work is designed to remove
+(Chapter~\ref{chap:casestudies}). More fundamentally, a price alert reports only \emph{that} a level was
+crossed; it offers no explanation of \emph{why} and no context for judging whether the move is unusual.
+
+The second category comprises \emph{news aggregators and sentiment dashboards}, which collect headlines for
+a watchlist and, increasingly, attach a sentiment score to each item. These tools build directly on the
+finding that textual tone carries market-relevant information \autocite{tetlock2007media} and on
+finance-specific sentiment lexicons \autocite{loughran2011liability}. They are valuable for surfacing
+\emph{what} is being said, but two gaps remain. A single sentiment polarity (positive / negative) is a thin
+summary that says little about likely magnitude or about whether comparable news has mattered before; and
+the scoring is often proprietary and opaque, so the user cannot see why an item was labelled as it was ---
+the opposite of the transparency this work requires. Crucially, such tools rarely connect a current headline
+to concrete \emph{historical precedents} and their measured outcomes, which is the core of the engine
+proposed here.
+
+The third category is the \emph{robo-advisor}, the most studied retail-fintech tool of the last decade.
+\textcite{dacunto2019robo} show, on real adopters, that automated advice can deliver genuine benefits ---
+improved diversification and reduced behavioural biases such as the disposition effect and trend chasing ---
+and the systematic review of \textcite{cardillo2024robo} confirms a mature and fast-growing literature.
+Robo-advisors, however, operate at a different altitude and with a different philosophy from this work. They
+\emph{act on the investor's behalf}, allocating and rebalancing a portfolio, whereas the system proposed
+here neither advises nor trades; it explains discrete events and leaves every decision to the user. And
+their allocation logic is typically proprietary, so the investor delegates rather than understands ---
+again the reverse of an explanation-first design. Table~\ref{tab:sota_tools} positions the three categories
+against the system of this dissertation.
+
+\begin{table}[ht]
+\caption{Existing retail tools versus the system proposed in this work.}
+\label{tab:sota_tools}
+\centering
+\begin{tabular}{p{0.20\textwidth} p{0.20\textwidth} p{0.16\textwidth} p{0.16\textwidth} p{0.13\textwidth}}
+\toprule
+\tabhead{Tool} & \tabhead{What it does} & \tabhead{Explains why?} & \tabhead{Shows precedents?} & \tabhead{Acts for user?} \\
+\midrule
+Brokerage price alert & Fires on a fixed price / \% threshold & No & No & No \\
+News / sentiment app \autocite{tetlock2007media} & Aggregates news, scores sentiment & Partly (opaque score) & No & No \\
+Robo-advisor \autocite{dacunto2019robo} & Allocates and rebalances a portfolio & Rarely (proprietary) & No & Yes \\
+\textbf{This work (CLARION)} & Explains events, shows evidence & Yes, by design & Yes (measured impact) & No \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The pattern in Table~\ref{tab:sota_tools} is the practical counterpart of the academic gap identified
+throughout this chapter. Each existing tool occupies one corner of the problem --- alerting, news, or
+allocation --- but none combines volatility-aware detection, transparent explanation, and concrete
+historical evidence in a single tool that informs rather than decides. That combination is the niche this
+work sets out to fill.
+
 \section{Comparative Analysis and Positioning}
 \label{sec:sota_positioning}
 

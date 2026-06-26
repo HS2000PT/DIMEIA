@@ -68,6 +68,12 @@
 | `barberis2003behavioral` | Barberis & Thaler (2003), "A Survey of Behavioral Finance", Handbook of the Economics of Finance, vol. 1, cap. 18:1053–1128 | DOI 10.1016/S1574-0102(03)01027-6 | 2026-06-24 | Elsevier / ScienceDirect | ✅ verificado |
 | `xing2018nlffsurvey` | Xing, Cambria & Welsch (2018), "Natural Language Based Financial Forecasting: A Survey", Artificial Intelligence Review 50(1):49–73 | DOI 10.1007/s10462-017-9588-9 | 2026-06-24 | Springer | ✅ verificado |
 
+## Comparação com sistemas existentes (Cap. 2, §2.7) — verificadas (2026-06-26)
+| Chave .bib | Referência | Identificador | Verificado em | Fonte | Estado |
+|---|---|---|---|---|---|
+| `dacunto2019robo` | D'Acunto, Prabhala & Rossi (2019), "The Promises and Pitfalls of Robo-Advising", Review of Financial Studies 32(5):1983–2020 | DOI 10.1093/rfs/hhz014 | 2026-06-26 | Oxford Academic / DOI | ✅ verificado |
+| `cardillo2024robo` | Cardillo & Chiappini (2024), "Robo-advisors: A Systematic Literature Review", Finance Research Letters 62:105119 | DOI 10.1016/j.frl.2024.105119 | 2026-06-26 | Crossref / DOI (Elsevier) | ✅ verificado |
+
 ## Rejeitadas / não verificáveis (NÃO usar)
 | Referência | Motivo | Data |
 |---|---|---|
