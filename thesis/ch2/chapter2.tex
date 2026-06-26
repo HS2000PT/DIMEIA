@@ -245,27 +245,26 @@ Transparent design \autocite{rudin2019stop, arrieta2020xai} & Inherently interpr
 \section{Trust and Appropriate Reliance in Decision Support}
 \label{sec:sota_trust}
 
-Explainability is, ultimately, in service of a human decision, so the literature on how people rely on
-automated aids is directly relevant. An alert is only useful if the investor relies on it
-\emph{appropriately} --- neither dismissing a sound warning nor acting blindly on a fallible one. The
-human-factors account of \textcite{lee2004trust} frames this precisely: trust is the attitude that an aid
-will help achieve one's goals under uncertainty, and the design goal is \emph{calibrated} trust ---
-reliance matched to the system's actual competence --- rather than maximal trust. Two failure modes follow:
-\emph{disuse}, ignoring a capable aid, and \emph{misuse}, over-relying on a fallible one. For a tool acted
-upon with real money, both are costly, which raises the stakes for how alerts are presented.
+Explainability ultimately serves a human decision, so the literature on how people rely on automated aids
+is directly relevant. An alert is only useful if the investor relies on it \emph{appropriately}: neither
+dismissing a sound warning nor acting blindly on a fallible one. The human-factors account of
+\textcite{lee2004trust} puts this clearly: trust is the attitude that an aid will help achieve one's goals
+under uncertainty, and the design goal is \emph{calibrated} trust, that is, reliance matched to the
+system's actual competence, rather than maximal trust. Two failure modes follow: \emph{disuse}, ignoring a
+capable aid, and \emph{misuse}, over-relying on a fallible one. For a tool acted upon with real money, both
+are costly, which raises the stakes for how alerts are presented.
 
 Explanations are the principal means of calibration. By exposing why an alert fired and what evidence
-supports it, the system lets the user judge \emph{when} to rely on it, which is the human-side rationale
-for the transparent-by-design choice of Section~\ref{sec:sota_xai}: transparency is not only an ethical or
+supports it, the system lets the user judge \emph{when} to rely on it. This is the human-side rationale for
+the transparent-by-design choice of Section~\ref{sec:sota_xai}: transparency is not only an ethical or
 regulatory desideratum but a mechanism for appropriate reliance. Recent empirical work tempers this hope,
 however. \textcite{bansal2021whole} show that explanations do not automatically improve human--AI team
 performance and can even induce \emph{over-reliance}, with users accepting confident explanations of
-incorrect outputs. The lesson adopted here is concrete: the system explains with \emph{verifiable
-evidence} --- the actual $z$-score and its parameters, and real retrieved precedents with their measured
-impact --- rather than persuasive narrative, and every alert states plainly that it reports past outcomes,
-not predictions. These are deliberate choices aimed at appropriate, not maximal, reliance, and they connect
-the explainability goal of this work to the responsible-AI commitments set out in
-Chapter~\ref{chap:methods}.
+incorrect outputs. The lesson taken here is concrete: the system explains with \emph{verifiable evidence}
+(the actual $z$-score and its parameters, and real retrieved precedents with their measured impact) rather
+than persuasive narrative, and every alert states plainly that it reports past outcomes, not predictions.
+These choices aim at appropriate, not maximal, reliance, and connect the explainability goal of this work
+to the responsible-AI commitments set out in Chapter~\ref{chap:methods}.
 
 \section{Financial NLP and Text Representation}
 \label{sec:sota_finnlp}
@@ -336,38 +335,36 @@ cost, which keeps the retrieval step both reproducible and free to run.
 \section{Information Retrieval and Ranking Evaluation}
 \label{sec:sota_ir}
 
-Representing news as vectors (Section~\ref{sec:sota_finnlp}) is only half of the news trigger; the other
+Representing news as vectors (Section~\ref{sec:sota_finnlp}) is only half of the news trigger. The other
 half is to \emph{rank} a corpus of past news by relevance to a query, which is the defining problem of
-information retrieval (IR). Grounding the engine and, crucially, its evaluation in this field is what
-makes the metric used later defensible rather than arbitrary.
+information retrieval (IR). Grounding the engine, and especially its evaluation, in this field is what
+makes the metric used later a defensible choice.
 
-The lineage is direct. The vector-space model of \textcite{salton1975vsm} established the idea that
-documents and queries can be represented as vectors and ranked by their similarity, classically the
-cosine of the angle between them. Embedding-based retrieval, as used in this work, is the same ranking
-paradigm with a richer representation: dense sentence embeddings replace sparse term vectors, but the
-ranking step --- cosine similarity, take the top results --- is unchanged. Classical \emph{lexical}
-ranking refines the term-vector view by weighting terms according to their informativeness, from TF-IDF
-weighting in the vector-space model to the probabilistic BM25 framework of
-\textcite{robertson2009bm25}, which remains a strong baseline in modern IR. The well-known weakness of
-all such lexical methods is the \emph{vocabulary-mismatch} problem: a query and a genuinely relevant
-document that happen to use different words score as dissimilar. Overcoming this mismatch is precisely
-the motivation for semantic retrieval, and it is why this work pits dense embeddings against a lexical,
-term-overlap baseline of exactly this family (Chapter~\ref{chap:casestudies}).
+The lineage is direct. The vector-space model of \textcite{salton1975vsm} established that documents and
+queries can be represented as vectors and ranked by their similarity, classically the cosine of the angle
+between them. Embedding-based retrieval, as used in this work, is the same ranking paradigm with a richer
+representation: dense sentence embeddings replace sparse term vectors, but the ranking step is unchanged,
+namely to compute cosine similarity and take the top results. Classical \emph{lexical} ranking refines the
+term-vector view by weighting terms according to their informativeness, from TF-IDF weighting in the
+vector-space model to the probabilistic BM25 framework of \textcite{robertson2009bm25}, which remains a
+strong baseline in modern IR. The known weakness of all such lexical methods is the
+\emph{vocabulary-mismatch} problem: a query and a genuinely relevant document that use different words
+score as dissimilar. Overcoming this mismatch is the motivation for semantic retrieval, and it is why this
+work compares dense embeddings against a lexical, term-overlap baseline of the same family
+(Chapter~\ref{chap:casestudies}).
 
-Because retrieval returns a \emph{ranked list} rather than a single answer, it is evaluated with
-rank-aware measures. The standard reference \autocite{manning2008ir} sets out the common family ---
-precision and recall, mean average precision, and normalised discounted cumulative gain --- of which
-\emph{precision@$k$}, the fraction of the top $k$ results that are relevant, is the most direct and
-interpretable. This work adopts precision@$k$ deliberately: an alert can only show the investor a handful
-of precedents, so what matters is whether the \emph{top few} retrieved cases are relevant, exactly what
-precision@$k$ measures. Reporting it against random, recency and lexical baselines, as the standard
-methodology advises, is what turns an isolated number into an interpretable one.
+Because retrieval returns a \emph{ranked list} rather than a single answer, it is evaluated with rank-aware
+measures. The standard reference \autocite{manning2008ir} sets out the common family (precision and recall,
+mean average precision, and normalised discounted cumulative gain), of which \emph{precision@$k$}, the
+fraction of the top $k$ results that are relevant, is the most direct. This work adopts it because an alert
+can show the investor only a handful of precedents, so what matters is whether the \emph{top few} retrieved
+cases are relevant. Reporting it against random, recency and lexical baselines, as the standard methodology
+advises, is what makes the number interpretable.
 
 In these terms, the retrieval component of this dissertation is a domain application of mature IR: it
 reuses an established representation-then-rank pipeline and an established evaluation metric, and applies
-them to the specific problem of finding analogous financial news. The contribution is that application
-and the pairing of retrieval with measured market impact, not a new retrieval algorithm --- consistent
-with the engineering framing of the work as a whole.
+them to the specific problem of finding analogous financial news. The contribution is that application,
+and the pairing of retrieval with measured market impact, not a new retrieval algorithm.
 
 \section{Event Studies and News--Market Impact}
 \label{sec:sota_eventstudy}
