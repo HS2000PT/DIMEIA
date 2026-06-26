@@ -7,8 +7,13 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 19 (REWORK — revisão do aluno; plano definitivo multi-sessão S1–S9; sessão contínua desde a 0)
-- **Última atualização:** 2026-06-24
+- **Sessão nº:** 20 (REWORK concluído S1–S9 + revisão de examinador do Cap. 1 + análise por setor; agora **MASTER PLAN A–H** definido)
+- **Última atualização:** 2026-06-26
+- **MASTER PLAN (estrada longa até submissão, publicação e defesa):** ver **`progress/MASTER_PLAN.md`** —
+  Fases A (conteúdo+visuais → ~80 pp) · B (naturalidade) · C (revisão crítica do zero) · D (revisão crítica
+  da implementação + "como correr") · **E (validação ultra-rigorosa página-a-página + RE-VERIFICAR TODAS as
+  citações — porta de submissão)** · F (publicação IEEE) · G (slides de defesa) · H (caderno de defesa visual).
+  Continuidade multi-dispositivo: este ficheiro + `MASTER_PLAN.md` + `TRACKER.md`, commit/push por sessão.
 - **Fase atual + último passo concluído:** **REWORK COMPLETO — plano S1–S9 concluído.** O aluno leu o PDF e ficou desiludido (demasiado técnico/"software-ish", curto, desorganizado, literatura fraca, poucas figuras e confusas, nomes de pastas e **português visível**). Executado o plano definitivo multi-sessão (`.claude/plans/…squishy-yeti.md`; checklist em `progress/TRACKER.md`):
   **S1** estrutura canónica MEIA de 6 capítulos (Introduction · State of the Art · Methods and Materials · **CLARION** · Case Studies · Conclusions) + declutter (removidos `notebooks/`, `presentation/`, `impact_analyzer/`).
   **S2** Cap. 3 aprofundado (data card FNSPID, IA responsável, metodologia de avaliação).
@@ -19,7 +24,7 @@
   **S7** reorganização de `docs/` em subpastas (`design/ evaluation/ decisions/ defence/ _archive/`); caminhos atualizados.
   **S8** **Caderno de Defesa (PT-PT)** em `docs/defence/caderno_de_defesa.md`.
   **S9** validação final. **Estado: compila 66 pp, 0 erros, 0 citações indefinidas, 0 overfull >15pt; 41 testes verdes + ruff limpo; 0 identificadores de código e 0 PT no corpo; 5 figuras; figuras de avaliação em EN; números reprodutíveis (janela de anomalia fixa).**
-- **PRÓXIMA AÇÃO IMEDIATA (sobretudo HUMANO):** (1) **o aluno lê e edita a tese** (`thesis/main.pdf`) — o texto é dele e tem de o dominar (§6.6); estudar pelo **Caderno de Defesa**. (2) **Decisão de extensão:** estão 66 pp vs banda ~90–120 das de referência; opções honestas = 3.ª expansão do SoTA / estudos de caso mais profundos / aceitar uma tese rigorosa mais curta (não encher). (3) Confirmar redação ISEP da declaração de IA + data de entrega. (4) Opcional: FNSPID multi-ano (job de noite); estudo humano de utilidade (RQ3).
+- **PRÓXIMA AÇÃO IMEDIATA:** **Fase A do MASTER_PLAN** — conteúdo + visuais para ~80 pp (estão 68): A1 algoritmos em pseudocódigo (preenche a Lista de Algoritmos, hoje VAZIA) · A2 figura do fluxo completo de dados/passos · A3 diagrama de sequência + figura conceito de embeddings + linha temporal do event study · A4 exemplos numéricos trabalhados (z-score) · A5 remover a Lista de Código (vazia). Depois B→H. **Achado:** Lista de Algoritmos e Lista de Código estão vazias (0 no corpo) → páginas desperdiçadas; `twoside` cria versos em branco. **Humano (em paralelo):** confirmar redação ISEP da declaração de IA + data; ler/rever a tese (§6.6).
 - **Nota de ambiente:** o venv 3.12 foi **recriado** neste ambiente com a stack leve (numpy/pandas/matplotlib/yfinance/pytest/ruff). Para os testes `@sbert` e re-correr a recuperação completa (SBERT/torch), correr `scripts/setup_env.sh` (stack pesada). CI corre testes a cada push.
 - **Verificação de integridade da sessão:** confirmar que este ficheiro, `progress/TRACKER.md` e `progress/SESSIONS.md` foram lidos nesta sessão.
 

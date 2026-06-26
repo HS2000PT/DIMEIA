@@ -233,3 +233,21 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 > **Nota de ambiente:** o venv 3.12 não está presente neste ambiente (foi recriado/limpo entre turnos).
 > A compilação LaTeX corre sem venv; para regenerar figuras/correr pytest é preciso recriar o venv
 > (`scripts/setup_env.sh`). Backstop: o CI corre os testes a cada push.
+
+---
+
+# MASTER PLAN A–H (estrada longa) — ver `progress/MASTER_PLAN.md`
+
+> Pós-rework: definido o plano-mestre da estrada longa até submissão, publicação IEEE e defesa.
+> Marcar progresso aqui e em `MASTER_PLAN.md`. Porta crítica: **Fase E** (validação ultra-rigorosa
+> página-a-página + re-verificação de TODAS as citações).
+
+- [ ] **Fase A** — conteúdo + visuais para ~80 pp (algoritmos, figura de fluxo completo, sequência,
+      conceito de embeddings, linha temporal event study, exemplos numéricos; remover listas vazias)
+- [ ] **Fase B** — terminar passagem de naturalidade/consistência (todo o corpo)
+- [ ] **Fase C** — revisão crítica independente da tese (do zero) + correções
+- [ ] **Fase D** — revisão crítica da implementação/desenho + viabilidade real + guia "como correr" + validar estatística
+- [ ] **Fase E** — VALIDAÇÃO ULTRA-RIGOROSA (página-a-página + re-verificar todas as citações) — porta de submissão
+- [ ] **Fase F** — publicação IEEE (só depois de D+E)
+- [ ] **Fase G** — slides de defesa
+- [ ] **Fase H** — caderno de defesa visual (fluxo de dados/passos)
