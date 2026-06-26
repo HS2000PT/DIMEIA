@@ -348,6 +348,15 @@ windows --- the basis for the $+1$, $+3$ and $+5$-day horizons used in this work
 honesty of the present design, the event-study impact is measured strictly \emph{after} the event, so it
 characterises an outcome rather than forecasting one.
 
+This restraint is not merely cautious; it rests on finance theory. The efficient-market hypothesis of
+\textcite{fama1970efficient} holds that prices already reflect available information, so that consistently
+forecasting returns from public news is, by construction, very hard: new information is impounded into
+prices rapidly, which is precisely why an event study measures a short-window \emph{reaction} rather than
+a predictable, exploitable signal. Read this way, the theory reframes the design choice of this work ---
+rather than competing with market efficiency by trying to predict prices, the system measures and explains
+the reactions that have \emph{already} followed comparable news, which is both more honest and more
+defensible for a non-expert audience.
+
 Relating \emph{news text} to such impact is the subject of a growing literature, of which
 \textcite{tetlock2007media} is an early and influential example, demonstrating a measurable link between
 media tone and subsequent market behaviour. A more recent strand goes further and attempts to

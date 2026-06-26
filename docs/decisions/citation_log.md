@@ -80,6 +80,7 @@
 | `salton1975vsm` | Salton, Wong & Yang (1975), "A Vector Space Model for Automatic Indexing", CACM 18(11):613–620 | DOI 10.1145/361219.361220 | 2026-06-26 | Crossref / ACM | ✅ verificado |
 | `robertson2009bm25` | Robertson & Zaragoza (2009), "The Probabilistic Relevance Framework: BM25 and Beyond", Found. Trends IR 4(1–2):1–174 | DOI 10.1561/1500000019 | 2026-06-26 | Crossref / now publishers | ✅ verificado |
 | `manning2008ir` | Manning, Raghavan & Schütze (2008), "Introduction to Information Retrieval", Cambridge UP, 482 pp | ISBN 978-0-521-86571-5 | 2026-06-26 | Cambridge UP / ACM / Springer | ✅ verificado |
+| `fama1970efficient` | Fama (1970), "Efficient Capital Markets: A Review of Theory and Empirical Work", J. of Finance 25(2):383–417 | DOI 10.2307/2325486 | 2026-06-26 | Crossref (DOI resolve; 11k+ citações) | ✅ verificado |
 
 ## Rejeitadas / não verificáveis (NÃO usar)
 | Referência | Motivo | Data |
