@@ -280,6 +280,23 @@ are used, so no future information enters.}
 \label{fig:eventwindow}
 \end{figure}
 
+Three choices fix \emph{how} that impact is measured, and each is made for transparency as much as for
+rigour. The first is the \emph{horizons}: cumulative returns are taken over short windows of $+1$, $+3$
+and $+5$ trading days. Short windows are standard practice for daily event studies
+\autocite{brown1985daily} and limit the chance that unrelated, market-wide moves come to dominate the
+measured reaction --- the longer the window, the more confounding creeps in. The second is the
+\emph{baseline against which the move is read}. This work reports the \emph{raw} cumulative return rather
+than a market-adjusted \emph{abnormal} return --- the return in excess of a market or expected-return
+model, as in a classical cumulative-abnormal-return study. Raw returns are chosen deliberately: they are
+directly observable and require no estimated market model that a non-expert could not scrutinise. The
+cost, stated plainly, is that a raw return conflates the news reaction with any market-wide move on the
+same days, which is precisely the confounding threat examined in Chapter~\ref{chap:casestudies}; market
+adjustment is a sound refinement and is recorded as future work. The third choice is \emph{aggregation}:
+the headline figure an alert shows is the \emph{mean} impact across the retrieved precedents, a simple and
+interpretable summary. Because a mean can mask disagreement, the individual precedents and their impacts
+are always displayed alongside it, so the investor sees the spread rather than a single number in
+isolation.
+
 A worked example makes the retrieve-and-reuse step concrete. The intuition is conveyed first by
 Figure~\ref{fig:embedding_concept}: the embedding places each headline in a vector space where texts on
 the same theme fall close together, so a query lands near the precedents that resemble it and far from
