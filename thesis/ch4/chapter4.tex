@@ -272,6 +272,42 @@ explanation engine and delivered.}
 \label{fig:market_flow}
 \end{figure}
 
+As with the news trigger, the same flow can be read as an interaction over time
+(Figure~\ref{fig:market_sequence}): the scheduler requests prices, the detector standardises the latest
+return against its rolling window, and --- only when the absolute $z$-score exceeds the threshold --- it
+hands the move together with every quantity behind it to the explanation engine for delivery.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=1.8mm]},
+  head/.style={draw, rounded corners, fill=black!5, align=center, text width=1.9cm, minimum height=0.7cm},
+  msg/.style={->, thick},
+  ret/.style={->, dashed},
+  lab/.style={midway, above, font=\tiny, fill=white, inner sep=1pt},
+]
+  \def\yt{-0.5}\def\yb{-4.2}
+  \foreach \x/\nme/\lbl in {%
+      0/S/{Scheduler\\(daily)}, 2.7/M/{Market data\\(prices)}, 5.4/D/{Anomaly\\detector},
+      8.1/E/{Explanation\\engine}} {
+    \node[head] (\nme) at (\x,0) {\lbl};
+    \draw[dashed, black!40] (\x,\yt) -- (\x,\yb);
+  }
+  \draw[msg] (0,-1.0) -- (2.7,-1.0) node[lab]{request prices};
+  \draw[ret] (2.7,-1.6) -- (5.4,-1.6) node[lab]{daily returns};
+  \draw[msg] (5.4,-2.2) -- ++(0.55,0) -- ++(0,-0.4) -- (5.4,-2.6);
+  \node[right, font=\tiny] at (6.0,-2.4) {$z$-score over window};
+  \draw[msg] (5.4,-3.1) -- (8.1,-3.1) node[lab]{if $|z|>k$: move $+$ $(z,\mu,\sigma,w,k)$};
+  \draw[msg] (8.1,-3.7) -- ++(1.7,0) node[right, font=\tiny]{alert $\to$ investor};
+\end{tikzpicture}
+\caption[Sequence of the market trigger]{The market-movement trigger as an interaction over time. Solid
+arrows are calls, dashed arrows returns; time runs downward. The detector standardises the latest return
+against its rolling window and forwards the move --- with the $z$-score, window, threshold, mean and
+standard deviation --- to the explanation engine only when the threshold is exceeded. This complements the
+data-flow view of Figure~\ref{fig:market_flow}.}
+\label{fig:market_sequence}
+\end{figure}
+
 \section{Explanation Engine}
 \label{sec:clarion_xai}
 
