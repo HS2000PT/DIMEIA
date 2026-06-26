@@ -249,7 +249,9 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
       - [x] Cap. 2 §2.7 "Existing Tools for the Retail Investor" (+ 2 citações verificadas: dacunto2019robo, cardillo2024robo) · Cap. 5 "Threats to Validity" por taxonomia
       - [x] diagrama de sequência (UML) do gatilho de notícias (Cap. 4) — vista de interação no tempo
       - [x] `docs/design/how_to_run.md` — guia do operador (responde a "como correr?"; também groundwork da Fase D)
-      - [ ] mais prosa genuína p/ ~80 pp (candidatos: aprofundar 1–2 áreas do Estado da Arte com fontes verificadas; diagrama de sequência do gatilho de mercado) — SEM encher
+      - [x] Estado da Arte: §2.5 "Information Retrieval and Ranking Evaluation" (fundamenta precision@k; +3 refs verificadas) → 70→72 pp
+      - [x] Estado da Arte: EMH (Fama 1970) fundamenta a recusa de previsão (+1 ref verificada)
+      - [ ] mais prosa genuína p/ ~80 pp (aprofundar mais o Estado da Arte com fontes verificadas; diagrama de sequência do gatilho de mercado) — SEM encher; CONFIRMADO que prosa no SoTA transborda para páginas novas
 - [ ] **Fase B** — terminar passagem de naturalidade/consistência (todo o corpo)
 - [ ] **Fase C** — revisão crítica independente da tese (do zero) + correções
 - [ ] **Fase D** — revisão crítica da implementação/desenho + viabilidade real + guia "como correr" + validar estatística
