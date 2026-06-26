@@ -9,8 +9,9 @@
 CLARION draws on several fields, and this chapter reviews them with one purpose: to justify each design
 choice against the alternatives. It begins with what is known about how retail investors behave and why
 they are exposed to information overload, since that is what the system responds to. It then works through
-anomaly detection, explainable AI, financial text representation, event studies, and case-based reasoning,
-preferring seminal and recent peer-reviewed work and summarising each area in a comparative table. The
+anomaly detection, explainable AI, financial text representation, information retrieval, event studies,
+and case-based reasoning, preferring seminal and recent peer-reviewed work and summarising each area in a
+comparative table. The
 recurring finding is that the individual pieces are mature, but an integrated, explainable system aimed at
 the retail investor is still rare.
 
@@ -298,6 +299,42 @@ sweet spot for this work: it captures contextual meaning well beyond lexicons an
 yet, unlike raw BERT or large language models, it yields directly comparable sentence vectors at low
 cost, which keeps the retrieval step both reproducible and free to run.
 
+\section{Information Retrieval and Ranking Evaluation}
+\label{sec:sota_ir}
+
+Representing news as vectors (Section~\ref{sec:sota_finnlp}) is only half of the news trigger; the other
+half is to \emph{rank} a corpus of past news by relevance to a query, which is the defining problem of
+information retrieval (IR). Grounding the engine and, crucially, its evaluation in this field is what
+makes the metric used later defensible rather than arbitrary.
+
+The lineage is direct. The vector-space model of \textcite{salton1975vsm} established the idea that
+documents and queries can be represented as vectors and ranked by their similarity, classically the
+cosine of the angle between them. Embedding-based retrieval, as used in this work, is the same ranking
+paradigm with a richer representation: dense sentence embeddings replace sparse term vectors, but the
+ranking step --- cosine similarity, take the top results --- is unchanged. Classical \emph{lexical}
+ranking refines the term-vector view by weighting terms according to their informativeness, from TF-IDF
+weighting in the vector-space model to the probabilistic BM25 framework of
+\textcite{robertson2009bm25}, which remains a strong baseline in modern IR. The well-known weakness of
+all such lexical methods is the \emph{vocabulary-mismatch} problem: a query and a genuinely relevant
+document that happen to use different words score as dissimilar. Overcoming this mismatch is precisely
+the motivation for semantic retrieval, and it is why this work pits dense embeddings against a lexical,
+term-overlap baseline of exactly this family (Chapter~\ref{chap:casestudies}).
+
+Because retrieval returns a \emph{ranked list} rather than a single answer, it is evaluated with
+rank-aware measures. The standard reference \autocite{manning2008ir} sets out the common family ---
+precision and recall, mean average precision, and normalised discounted cumulative gain --- of which
+\emph{precision@$k$}, the fraction of the top $k$ results that are relevant, is the most direct and
+interpretable. This work adopts precision@$k$ deliberately: an alert can only show the investor a handful
+of precedents, so what matters is whether the \emph{top few} retrieved cases are relevant, exactly what
+precision@$k$ measures. Reporting it against random, recency and lexical baselines, as the standard
+methodology advises, is what turns an isolated number into an interpretable one.
+
+In these terms, the retrieval component of this dissertation is a domain application of mature IR: it
+reuses an established representation-then-rank pipeline and an established evaluation metric, and applies
+them to the specific problem of finding analogous financial news. The contribution is that application
+and the pairing of retrieval with measured market impact, not a new retrieval algorithm --- consistent
+with the engineering framing of the work as a whole.
+
 \section{Event Studies and News--Market Impact}
 \label{sec:sota_eventstudy}
 
@@ -444,14 +481,15 @@ alternatives reviewed above.
 \section{Chapter Conclusions}
 \label{sec:sota_summary}
 
-This chapter reviewed the foundations of the work across four areas. The behavioural-finance literature
+This chapter reviewed the foundations of the work across several connected areas. The behavioural-finance literature
 established that retail investors are attention- and news-driven, motivating an explainable alerting tool
 rather than a predictive one. The anomaly-detection literature supplied a clear capacity--interpretability
 trade-off that favours a transparent statistical detector for a low-dimensional return series. The XAI
 literature, and in particular the interpretable-by-design argument, supported pursuing explainability
 through transparent design and assessing it by fidelity. The financial-NLP literature traced the path
 from lexicons to sentence embeddings and identified Sentence-BERT as the appropriate, reproducible choice
-for semantic retrieval, while event-study methodology and the FNSPID dataset provided the means to
+for semantic retrieval, which information-retrieval theory frames as a representation-then-rank task to be
+judged by precision@$k$. Event-study methodology and the FNSPID dataset, in turn, provided the means to
 measure news impact honestly and at scale. Finally, case-based reasoning supplied the paradigm that ties
 these together --- retrieving analogous past cases and reusing their outcomes as transparent evidence.
 What the literature offers in mature individual components, it largely lacks as an \emph{integrated},

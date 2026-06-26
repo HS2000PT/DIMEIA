@@ -74,6 +74,13 @@
 | `dacunto2019robo` | D'Acunto, Prabhala & Rossi (2019), "The Promises and Pitfalls of Robo-Advising", Review of Financial Studies 32(5):1983–2020 | DOI 10.1093/rfs/hhz014 | 2026-06-26 | Oxford Academic / DOI | ✅ verificado |
 | `cardillo2024robo` | Cardillo & Chiappini (2024), "Robo-advisors: A Systematic Literature Review", Finance Research Letters 62:105119 | DOI 10.1016/j.frl.2024.105119 | 2026-06-26 | Crossref / DOI (Elsevier) | ✅ verificado |
 
+## Grounding em Recuperação de Informação (Cap. 2, §2.5) — verificadas (2026-06-26)
+| Chave .bib | Referência | Identificador | Verificado em | Fonte | Estado |
+|---|---|---|---|---|---|
+| `salton1975vsm` | Salton, Wong & Yang (1975), "A Vector Space Model for Automatic Indexing", CACM 18(11):613–620 | DOI 10.1145/361219.361220 | 2026-06-26 | Crossref / ACM | ✅ verificado |
+| `robertson2009bm25` | Robertson & Zaragoza (2009), "The Probabilistic Relevance Framework: BM25 and Beyond", Found. Trends IR 4(1–2):1–174 | DOI 10.1561/1500000019 | 2026-06-26 | Crossref / now publishers | ✅ verificado |
+| `manning2008ir` | Manning, Raghavan & Schütze (2008), "Introduction to Information Retrieval", Cambridge UP, 482 pp | ISBN 978-0-521-86571-5 | 2026-06-26 | Cambridge UP / ACM / Springer | ✅ verificado |
+
 ## Rejeitadas / não verificáveis (NÃO usar)
 | Referência | Motivo | Data |
 |---|---|---|
