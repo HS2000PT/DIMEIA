@@ -5,6 +5,43 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 20 — 2026-06-26 — MASTER PLAN A–H + Fase A (conteúdo+visuais)
+**Contexto:** pós-rework, o aluno definiu a estrada longa até submissão/IEEE/defesa. Criado
+`progress/MASTER_PLAN.md` (Fases A–H; porta de submissão = Fase E: validação página-a-página +
+re-verificar TODAS as citações). Pedido central da Fase A: ~80 pp por **conteúdo genuíno** (sem encher),
+mais visuais, e "visualizar o workflow de dados/passos".
+
+**Feito (Fase A, conteúdo genuíno — 4 commits):**
+- **Cap. 3 (Methods):** figura conceptual do espaço de embeddings + **exemplo de recuperação REAL e
+  reproduzível** sobre a KB-amostra commitada (query "Nvidia demand surges on AI chip orders" → 3
+  precedentes AI; inclui match **cross-ticker** MSFT; impacto médio +5d = **+6.5%**). Encoder transparente
+  baseline para reprodutibilidade sem download de modelo; o sistema implantado usa SBERT (avaliado no Cap. 5).
+- **Cap. 5 (CS1):** **exemplo numérico de anomalia REAL** — TSLA 24-10-2024 (reação a resultados):
+  μ=−0.92%, σ=2.73%, r=+19.82% (log; ≈+22% em preço) → **z=+7.61**, sinalizado a k=3 (yfinance, janela fixada).
+- **Cap. 2 §2.7 "Existing Tools for the Retail Investor":** posiciona o CLARION vs alertas de corretora /
+  apps de notícias-sentimento / robo-advisors (tabela em 4 dimensões). **2 citações novas verificadas**
+  (DOI resolúvel, registadas em `citation_log.md`): `dacunto2019robo` (RFS 2019), `cardillo2024robo` (FRL 2024).
+- **Cap. 5 "Threats to Validity"** reescrito pela taxonomia clássica (construct / internal / external /
+  statistical-conclusion), com mitigação de cada ameaça (proxy de setor, restrição cross-ticker,
+  no-lookahead, confounding, generalização, 5 seeds).
+- (Sessões anteriores da Fase A, já commitadas: 3 algoritmos + Lista de Algoritmos; figura de fluxo mestre;
+  exemplo z-score hipotético; secção de deployment; análise qualitativa de recuperações; Lista de Código removida.)
+
+**Achado medido (não suposição):** das **70 pp** físicas, **16 são páginas em branco** (versos do
+`twoside`/`openright`; sobretudo front matter) → **conteúdo real ≈ 53 pp**. O documento é muito denso em
+floats: cada acréscimo é re-empacotado e só "transborda" quando acumula → daí 68→70 apesar de ~5 pp novas.
+**Chegar a ~80 exige mais prosa genuína ao longo de várias sessões — sem encher** (Conclusões/Introdução já
+completas; aprofundá-las seria encher).
+
+**Estado:** compila **70 pp**, 0 erros, 0 citações indefinidas, 0 overfull >15pt; **42 refs**; 41 testes
+verdes + ruff limpo. Tudo commitado e pushed.
+
+**Próxima ação:** continuar Fase A com conteúdo genuíno (diagrama de sequência por gatilho; aprofundar 1–2
+áreas do Estado da Arte com fontes verificadas; `docs/design/how_to_run.md`) **ou** seguir para Fase B
+(naturalidade) se o aluno aceitar ~70 pp densas. **Humano:** confirmar redação ISEP da declaração de IA + data.
+
+---
+
 ## Sessão 19 — 2026-06-24 — REWORK: plano definitivo multi-sessão + reestruturação (S1)
 **Contexto:** o aluno leu o PDF e ficou desiludido — demasiado técnico/"software-ish", curto, desorganizado,
 revisão de literatura fraca, poucas figuras e confusas, nomes de pastas e **português visível** no documento;

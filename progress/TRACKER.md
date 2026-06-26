@@ -242,8 +242,13 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 > Marcar progresso aqui e em `MASTER_PLAN.md`. Porta crítica: **Fase E** (validação ultra-rigorosa
 > página-a-página + re-verificação de TODAS as citações).
 
-- [ ] **Fase A** — conteúdo + visuais para ~80 pp (algoritmos, figura de fluxo completo, sequência,
-      conceito de embeddings, linha temporal event study, exemplos numéricos; remover listas vazias)
+- [~] **Fase A** — conteúdo + visuais para ~80 pp (EM CURSO; está em **70 pp**, conteúdo real ≈53 pp; 16 pp são versos em branco)
+      - [x] 3 algoritmos em pseudocódigo (Lista de Algoritmos preenchida) · Lista de Código removida
+      - [x] figura do fluxo mestre de dados/passos (Cap. 4) · figura conceito de embeddings + linha temporal event study (Cap. 3)
+      - [x] exemplos trabalhados: z-score hipotético (Cap. 3) · recuperação REAL reproduzível sobre KB-amostra (Cap. 3) · anomalia REAL TSLA 24-10-2024 (Cap. 5)
+      - [x] Cap. 2 §2.7 "Existing Tools for the Retail Investor" (+ 2 citações verificadas: dacunto2019robo, cardillo2024robo) · Cap. 5 "Threats to Validity" por taxonomia
+      - [ ] mais prosa genuína p/ ~80 pp (candidatos: diagrama de sequência por gatilho; aprofundar Estado da Arte; how_to_run) — SEM encher
+      - [ ] diagrama de sequência por gatilho (o aluno quer "visualizar o workflow")
 - [ ] **Fase B** — terminar passagem de naturalidade/consistência (todo o corpo)
 - [ ] **Fase C** — revisão crítica independente da tese (do zero) + correções
 - [ ] **Fase D** — revisão crítica da implementação/desenho + viabilidade real + guia "como correr" + validar estatística
