@@ -221,6 +221,10 @@ Banking & $496$ & $0.272$ & $0.228$ & $0.072$ & $+0.200$ \\
 Consumer & $491$ & $0.171$ & $0.150$ & $0.071$ & $+0.100$ \\
 \bottomrule
 \end{tabular}
+
+\smallskip
+{\footnotesize\emph{Note:} the lift is precision@$5$ minus the random base rate, computed from
+unrounded values; it may differ from the rounded columns by $\pm 0.001$.}
 \end{table}
 
 \begin{figure}[ht]
@@ -236,10 +240,12 @@ is most distinctive, and smallest for the broad consumer sector.}
 The per-sector gap has a concrete explanation, visible in individual queries. In technology, different
 companies genuinely share themes: a headline about NVIDIA's data-centre accelerators retrieves, from the
 Microsoft, Meta and Alphabet feeds, articles about the same wave of AI-chip competition (Case Study~3),
-so cross-ticker precision is high. The consumer sector behaves differently. A query about Walmart's
-grocery guidance retrieves mostly Walmart's own items plus a macro ``US retail sales'' story that happens
-to be carried on bank feeds --- adjacent in theme, but not a consumer analogue from another consumer
-company. A query about Coca-Cola retrieves almost only other Coca-Cola items, about its pricing power and
+so cross-ticker precision is high. The consumer sector behaves differently. Looking at the raw
+neighbourhood (before the cross-ticker constraint is applied), a query about Walmart's grocery guidance
+retrieves mostly Walmart's own items plus a macro ``US retail sales'' story carried on bank feeds:
+adjacent in theme, but not a consumer analogue from another consumer company. Once the query's own ticker
+is excluded, as the metric requires, little genuinely relevant material is left, which is why the
+cross-ticker lift for consumer is low. A query about Coca-Cola retrieves almost only other Coca-Cola items, about its pricing power and
 beverage volumes, which simply do not resemble Walmart's store-traffic news. The shared label
 ``consumer'' is too broad: its members' news is idiosyncratic, so cross-ticker analogues are scarce and
 the lift over the base rate is small. This is the pattern the numbers show, and it points to a clear
@@ -268,8 +274,10 @@ not a price prediction.
 \end{quote}
 
 Every retrieved precedent concerns AI data-centre chips and competition for NVIDIA, even though the
-articles were filed under different company feeds (Microsoft, Meta, Alphabet and NVIDIA itself).
-Strikingly, the same story --- a rival entering the AI data-centre chip market --- surfaces across three
+articles were filed under different company feeds (Microsoft, Meta, Alphabet and NVIDIA itself). Unlike
+the retrieval metric of Section~\ref{sec:cs_retrieval}, the live alert does not exclude the query's own
+ticker: that exclusion exists only to keep the evaluation non-trivial, whereas a real user is well served
+by the most similar precedents, whichever company they concern. Strikingly, the same story --- a rival entering the AI data-centre chip market --- surfaces across three
 different company feeds, which the engine correctly groups as one theme. This is direct evidence that
 retrieval is driven by \emph{meaning} rather than the company name or exact keywords --- the very
 behaviour the correlation engine is designed for. In this instance the precedents happen to be uniformly
