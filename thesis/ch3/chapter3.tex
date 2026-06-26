@@ -280,6 +280,68 @@ are used, so no future information enters.}
 \label{fig:eventwindow}
 \end{figure}
 
+A worked example makes the retrieve-and-reuse step concrete. The intuition is conveyed first by
+Figure~\ref{fig:embedding_concept}: the embedding places each headline in a vector space where texts on
+the same theme fall close together, so a query lands near the precedents that resemble it and far from
+unrelated news.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\scriptsize, >={Stealth[length=2mm]}]
+  \draw[rounded corners, draw=black!25] (-0.3,-0.3) rectangle (8.8,4.3);
+  \node[font=\tiny, text=black!55] at (4.2,4.05) {embedding space (schematic, 2-D for intuition)};
+  % AI-themed cluster (filled = retrieved)
+  \fill (5.3,2.95) circle (2pt) node[right, font=\tiny] {NVDA guidance (AI chips)};
+  \fill (4.95,2.45) circle (2pt) node[right, font=\tiny] {NVDA AI accelerator};
+  \fill (5.55,2.40) circle (2pt) node[right, font=\tiny] {MSFT cloud (AI demand)};
+  % query
+  \node[star, star points=5, star point ratio=2.3, fill=black, inner sep=1.3pt] at (4.95,3.15) {};
+  \node[above, font=\tiny] at (4.95,3.28) {query};
+  % neighbourhood
+  \draw[dashed, black!55] (5.25,2.8) ellipse (1.05 and 0.95);
+  \node[font=\tiny, text=black!55] at (5.25,1.65) {top-$k$ neighbourhood};
+  % unrelated (hollow)
+  \draw (1.15,0.7) circle (2pt) node[right, font=\tiny] {TSLA recall};
+  \draw (0.95,2.5) circle (2pt) node[right, font=\tiny] {XOM oil-price move};
+  \draw (1.55,3.4) circle (2pt) node[right, font=\tiny] {JPM rate outlook};
+\end{tikzpicture}
+\caption[Conceptual illustration of semantic retrieval]{Conceptual illustration of semantic retrieval.
+Each headline becomes a point in a high-dimensional embedding space (drawn in two dimensions for intuition
+only). Texts on the same theme lie close together, so a query (star) falls near its semantically similar
+precedents (filled), which form the top-$k$ neighbourhood, and far from unrelated news (hollow). The next
+table makes this concrete with real numbers.}
+\label{fig:embedding_concept}
+\end{figure}
+
+Table~\ref{tab:retrieval_worked} then carries the step through end to end on the small sample knowledge
+base bundled with the system. To keep the walk-through fully reproducible without downloading any model, it
+uses a transparent baseline encoder whose similarity reflects word overlap directly; the deployed system
+uses the Sentence-BERT encoder described above, whose retrieval quality is evaluated in
+Chapter~\ref{chap:casestudies}. For the query \emph{``Nvidia demand surges on AI chip orders''}, the three
+nearest precedents are all AI-themed and --- importantly --- not all of the same company: a Microsoft
+cloud-AI item is retrieved alongside the two Nvidia items, illustrating the \emph{cross-ticker}
+generalisation on which the evaluation rests. Reusing their observed outcomes gives a mean $+5$-day impact
+of $+6.5\%$, which the alert presents as evidence, with the explicit caveat that it records what followed
+comparable past news rather than a forecast.
+
+\begin{table}[ht]
+\caption{Worked retrieval example on the bundled sample knowledge base. Query:
+\emph{``Nvidia demand surges on AI chip orders''}; similarities and impacts are real and reproducible.}
+\label{tab:retrieval_worked}
+\centering
+\begin{tabular}{c c c p{0.44\textwidth}}
+\toprule
+\tabhead{Similarity} & \tabhead{+5-day impact} & \tabhead{Ticker / date} & \tabhead{Retrieved headline (excerpt)} \\
+\midrule
+$0.60$ & $+3.5\%$  & NVDA, 2023-05-25 & Nvidia guidance surges on soaring demand for AI data-centre chips \\
+$0.38$ & $+10.9\%$ & MSFT, 2023-04-25 & Microsoft cloud growth accelerates on AI demand \\
+$0.38$ & $+4.9\%$  & NVDA, 2023-06-13 & Nvidia unveils new AI accelerator to extend data-centre lead \\
+\midrule
+\multicolumn{4}{l}{\textbf{Mean $+5$-day impact across the retrieved precedents: $+6.5\%$}} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Explanation Techniques}
 \label{sec:met_xai}
 

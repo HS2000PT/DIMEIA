@@ -271,14 +271,44 @@ market where a fixed threshold is not, semantic retrieval surfaces markedly more
 precedents than lexical or trivial baselines, and the end-to-end alert is faithful to its own
 computation. All results rest on real data and are reproducible from versioned scripts.
 
-The results also have clear limits. The sector label is an automatic proxy for relevance, not a human
-judgement. The news corpus is a recent window from a free service rather than the multi-year FNSPID
-history, and the headlines are short, which caps the meaning that can be captured. The anomaly proxy
-label is volatility-relative, which is why the label-free firing-rate argument is the one to lean on. And
-while the retrieval figures are averaged over five runs, no human has yet judged the alerts useful. One
-limit is deliberate: the system makes no price prediction and evaluates no trading profit, so those
-questions are out of scope rather than unanswered. The full FNSPID corpus, a human relevance and
-usefulness study, and a multi-year impact analysis are the natural next steps.
+The results also have clear limits, which are set out below under the four standard categories of
+validity so that nothing is glossed over.
+
+\paragraph{Construct validity --- do the metrics measure what is claimed?} Two proxies carry weight here.
+Retrieval relevance is judged by a \emph{sector} label, an automatic stand-in for the human judgement of
+``analogous'', so a same-sector precedent on an unrelated topic counts as a hit; the qualitative inspection
+in Section~\ref{sec:cs_retrieval} shows this proxy is reasonable but imperfect. Likewise, the anomaly
+``extreme move'' label is volatility-relative, so it is not an independent ground truth --- which is
+precisely why the primary anomaly argument is the label-free \emph{firing-rate consistency}, not agreement
+with that label. Finally, the event-study figure measures the price change that \emph{followed} a news
+item, which is an outcome, not a causal effect of the news; it is reported as evidence, never as a forecast.
+
+\paragraph{Internal validity --- could something else explain the effect?} The retrieval advantage might,
+in principle, be inflated by trivially matching a company's news to its own past news; this is removed by
+construction, because the evaluation forbids same-ticker precedents and measures \emph{cross-ticker}
+precision only. Lookahead is excluded throughout: every quantity uses information available at the time,
+and impacts are accumulated strictly forward from the event-day close. The main residual threat is
+confounding --- a price move in a post-event window may be driven by market-wide factors rather than the
+news --- which the short windows ($+1$, $+3$, $+5$ days) limit but do not eliminate, and which the
+no-causation framing acknowledges openly.
+
+\paragraph{External validity --- how far do the findings generalise?} The study covers fifteen
+large-capitalisation US tickers across five sectors over a recent window, so the numbers need not transfer
+to small-capitalisation stocks, to other markets, or to other periods, and news coverage is thinner outside
+large caps. The corpus is a recent window from a free service rather than the multi-year FNSPID history;
+the full corpus is identified as the natural way to broaden this scope.
+
+\paragraph{Statistical-conclusion validity --- are the comparisons sound?} The retrieval results are
+averaged over five random samples with standard deviations reported (the error bars in
+Figure~\ref{fig:cs_retrieval}), and the gap between semantic retrieval and every baseline is large
+relative to that spread; still, five runs on one corpus is a modest sample, and no formal significance
+test is claimed. The anomaly comparison is reported descriptively, as a difference in firing rates across
+instruments, rather than as a hypothesis test.
+
+One limit is deliberate rather than a weakness: the system makes no price prediction and evaluates no
+trading profit, so those questions are out of scope by design. The full FNSPID corpus, a human relevance
+and usefulness study, and a multi-year impact analysis are the natural next steps, and are carried forward
+to the conclusions.
 
 \section{Chapter Conclusions}
 \label{sec:cs_summary}
