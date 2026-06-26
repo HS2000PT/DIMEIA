@@ -2,6 +2,9 @@
 
 Objetivo: reconstruir o ambiente com um comando, em qualquer dispositivo.
 
+> Para **correr** o sistema (gatilhos, KB, avaliações, testes, compilar a tese), ver
+> [`how_to_run.md`](how_to_run.md). Este ficheiro trata só do **ambiente**.
+
 ## Python
 - **Versão fixada: 3.12** (ver `.python-version`). Decisão D-003 (`progress/DECISIONS.md`).
 - **Ambiente virtual:** `.venv/` (gitignored). Nunca instalar no Python do sistema.
