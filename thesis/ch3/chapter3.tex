@@ -110,7 +110,29 @@ measured. The alignment rule is important for honesty: the event day is taken to
 Measuring from the close, rather than the open, avoids crediting the system with a move already embedded
 in the opening price, and measuring strictly forward enforces the no-lookahead guarantee of
 Section~\ref{sec:met_evaluation}. Items for which no aligned price series is available, or whose forward
-window extends beyond the available data, are discarded rather than imputed.
+window extends beyond the available data, are discarded rather than imputed. Algorithm~\ref{alg:kbbuild}
+collects these steps into the build procedure.
+
+\begin{algorithm}[ht]
+\caption{Knowledge-base construction with event alignment.}
+\label{alg:kbbuild}
+\begin{algorithmic}[1]
+\Require news items $\{(d_i,c_i,h_i)\}$; daily close prices $P_c$ per ticker; horizons $H=\{1,3,5\}$
+\Ensure knowledge base $\mathcal{K}$ of cases $(d,c,h,\mathbf{e},\text{impact})$
+\State $\mathcal{K} \gets \emptyset$
+\For{each news item $(d_i,c_i,h_i)$}
+  \State $e_i \gets$ first trading day $\ge d_i$ in $P_{c_i}$ \Comment{event alignment}
+  \If{$e_i$ exists}
+    \State $\mathbf{e}_i \gets \mathrm{embed}(h_i)$ \Comment{Sentence-BERT}
+    \For{$\tau \in H$}
+      \State $\text{impact}_i[\tau] \gets$ return from close($e_i$) to close($e_i{+}\tau$), or \textsc{n/a} if unavailable
+    \EndFor
+    \State $\mathcal{K} \gets \mathcal{K} \cup \{(d_i,c_i,h_i,\mathbf{e}_i,\text{impact}_i)\}$
+  \EndIf
+\EndFor
+\State \Return $\mathcal{K}$
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Live Layer and Evaluation Dataset}
 \label{sec:met_data_live}
@@ -154,7 +176,49 @@ deviations the move represented. As established in Chapter~\ref{chap:sota}, more
 as Isolation Forest \autocite{liu2008isolation} or deep models \autocite{pang2021deep} exist, but their
 reduced interpretability is not warranted for a single, low-dimensional return series whose alerts must be
 explained to a non-expert. The window $w$ and threshold $k$ are explicit design choices, and their effect
-is examined by ablation in Chapter~\ref{chap:casestudies}.
+is examined by ablation in Chapter~\ref{chap:casestudies}. Algorithm~\ref{alg:zscore} states the rule
+precisely; note that the window for day $t$ uses only days strictly before $t$, so no future information
+enters the decision.
+
+\begin{algorithm}[ht]
+\caption{Rolling \emph{z}-score anomaly detection (no lookahead).}
+\label{alg:zscore}
+\begin{algorithmic}[1]
+\Require return series $r_1,\dots,r_T$; window $w$; threshold $k$
+\Ensure flag $a_t$ for each day, with the quantities behind it
+\For{$t \gets w+1$ \textbf{to} $T$}
+  \State $W \gets (r_{t-w},\dots,r_{t-1})$ \Comment{strictly earlier days}
+  \State $\mu_t \gets \mathrm{mean}(W)$;\quad $\sigma_t \gets \mathrm{std}(W)$
+  \State $z_t \gets (r_t - \mu_t)\,/\,\sigma_t$
+  \State $a_t \gets \big(|z_t| > k\big)$
+\EndFor
+\State \Return for each flagged $t$, the tuple $(z_t,\mu_t,\sigma_t,w,k)$ \Comment{exposed to the explanation engine}
+\end{algorithmic}
+\end{algorithm}
+
+A small worked example shows why this normalisation matters. Suppose two stocks both fall $3.2\%$ today.
+The first has been calm lately (recent mean $\mu \approx 0.04\%$, standard deviation $\sigma \approx
+0.40\%$); the second is volatile ($\mu \approx 0.10\%$, $\sigma \approx 1.50\%$). The same raw move
+produces very different $z$-scores (Table~\ref{tab:zscore_worked}): for the calm stock $z \approx -8.1$,
+a clear anomaly, but for the volatile stock $z \approx -2.2$, an ordinary day. A fixed percentage
+threshold would flag both identically; the $z$-score does not, which is exactly the behaviour wanted.
+
+\begin{table}[ht]
+\caption{Worked example: the same $-3.2\%$ move on a calm and a volatile stock.}
+\label{tab:zscore_worked}
+\centering
+\begin{tabular}{p{0.42\textwidth} c c}
+\toprule
+\tabhead{Quantity} & \tabhead{Calm stock} & \tabhead{Volatile stock} \\
+\midrule
+Recent mean $\mu$ & $0.04\%$ & $0.10\%$ \\
+Recent standard deviation $\sigma$ & $0.40\%$ & $1.50\%$ \\
+Today's return $r$ & $-3.2\%$ & $-3.2\%$ \\
+$z$-score $(r-\mu)/\sigma$ & $\mathbf{-8.1}$ & $\mathbf{-2.2}$ \\
+Flagged at $k=3$? & yes & no \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Semantic Retrieval and Impact Measurement}
 \label{sec:met_correlation}
@@ -166,9 +230,55 @@ comparable fixed-length vectors, so that the nearest historical items to a query
 with cosine similarity. For impact, the cumulative return of the asset is measured over fixed post-event
 windows ($+1$, $+3$ and $+5$ trading days) in the manner of an event study
 \autocite{fama1969adjustment, brown1985daily}. Both the similarity metric and the impact windows are
-explicit, documented choices and together constitute the methodological contribution; crucially, impact
-is measured strictly after the event, so the evidence characterises an outcome rather than forecasting
-one.
+explicit, documented choices and together constitute the methodological contribution. Impact is measured
+strictly after the event, so the evidence characterises an outcome rather than forecasting one.
+Algorithm~\ref{alg:retrieval} sets out the retrieval-and-reuse step --- the case-based-reasoning core of
+Section~\ref{sec:sota_cbr} --- for an incoming headline.
+
+\begin{algorithm}[ht]
+\caption{Precedent retrieval and impact reporting (news trigger).}
+\label{alg:retrieval}
+\begin{algorithmic}[1]
+\Require headline $h$; knowledge base $\mathcal{K}=\{(d_j,c_j,h_j,\mathbf{e}_j,\text{impact}_j)\}$; neighbours $k$; horizon $\tau$
+\Ensure top-$k$ precedents with similarity and observed impact, and their mean impact
+\State $\mathbf{q} \gets \mathrm{embed}(h)$ \Comment{same Sentence-BERT model as the KB}
+\For{each case $j \in \mathcal{K}$}
+  \State $s_j \gets \cos(\mathbf{q}, \mathbf{e}_j)$ \Comment{cosine over L2-normalised vectors}
+\EndFor
+\State $S \gets$ indices of the $k$ largest $s_j$
+\State \Return $\{(d_j,c_j,h_j,s_j,\text{impact}_j[\tau]) : j \in S\}$ and $\mathrm{mean}_{j\in S}\,\text{impact}_j[\tau]$
+\end{algorithmic}
+\end{algorithm}
+
+The impact itself is read off a short window after the event, as Figure~\ref{fig:eventwindow} shows. The
+news may arrive on a non-trading day, so the \emph{event day} is the first trading day on or after it;
+the return is then accumulated from that day's close to the close $+1$, $+3$ and $+5$ trading days later.
+Anchoring on the close, and looking only forward, is what keeps the measure free of lookahead: it records
+what happened \emph{after} the event became actionable, never before.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\scriptsize, >={Stealth[length=2.2mm]}]
+  \draw[->] (-1.8,0) -- (7.2,0) node[right, font=\tiny]{trading days};
+  \foreach \x in {0,1,3,5} {\draw (\x,0.12) -- (\x,-0.12);}
+  \node[above, font=\tiny] at (-1.2,0.12) {news $d_i$ (maybe non-trading)};
+  \node[below=2pt, align=center, font=\tiny] at (0,-0.12) {event day $e_i$\\ (first trading day $\ge d_i$)};
+  \node[below=2pt, font=\tiny] at (1,-0.12) {$+1$};
+  \node[below=2pt, font=\tiny] at (3,-0.12) {$+3$};
+  \node[below=2pt, font=\tiny] at (5,-0.12) {$+5$};
+  \filldraw (0,0) circle (1.4pt);
+  \draw[dashed] (-1.2,0.0) -- (-1.2,0.45);
+  \draw[->, thick] (0,0.45) -- (1,0.45);
+  \draw[->, thick] (0,0.7) -- (3,0.7);
+  \draw[->, thick] (0,0.95) -- (5,0.95);
+  \node[right, font=\tiny] at (5,0.95) {cumulative return from close($e_i$)};
+\end{tikzpicture}
+\caption[Event-study impact windows]{How impact is measured. The news date $d_i$ may fall on a
+non-trading day; the event day $e_i$ is the first trading day on or after it. The return is then
+accumulated forward from the close of $e_i$ over $+1$, $+3$ and $+5$ trading days. Only post-event days
+are used, so no future information enters.}
+\label{fig:eventwindow}
+\end{figure}
 
 \subsection{Explanation Techniques}
 \label{sec:met_xai}

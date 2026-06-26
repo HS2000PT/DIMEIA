@@ -99,6 +99,54 @@ Delivery channel & Telegram bot & Free, ubiquitous, no bespoke client needed \\
 \end{tabular}
 \end{table}
 
+Where Figure~\ref{fig:architecture} shows the components, Figure~\ref{fig:workflow} traces the same
+system as a flow of data and processing steps: the offline knowledge-base build (top), the market
+trigger (middle) and the news trigger (bottom), converging on the explanation engine and the alert.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=2mm]},
+  node distance=4.5mm and 5mm,
+  db/.style={draw, rounded corners, align=center, text width=1.75cm, minimum height=0.85cm, fill=black!8},
+  pr/.style={draw, rounded corners, align=center, text width=1.75cm, minimum height=0.85cm, fill=black!3},
+  dec/.style={draw, diamond, aspect=2.2, align=center, inner sep=0pt, text width=1.1cm, fill=black!5},
+]
+  % offline build (top)
+  \node[db] (o1) {FNSPID\\ news $+$ prices};
+  \node[pr, right=of o1] (o2) {align to\\ event day};
+  \node[pr, right=of o2] (o3) {SBERT\\ embed};
+  \node[db, right=of o3] (o4) {Knowledge\\ base};
+  \draw[->] (o1)--(o2); \draw[->] (o2)--(o3); \draw[->] (o3)--(o4);
+  % market trigger (middle)
+  \node[db, below=1.3cm of o1] (m1) {Live\\ prices};
+  \node[pr, right=of m1] (m2) {log-\\ returns};
+  \node[pr, right=of m2] (m3) {rolling\\ \emph{z}-score};
+  \node[dec, right=of m3] (m4) {$|z|{>}k$?};
+  \draw[->] (m1)--(m2); \draw[->] (m2)--(m3); \draw[->] (m3)--(m4);
+  % news trigger (bottom)
+  \node[db, below=1.0cm of m1] (n1) {Live\\ news};
+  \node[pr, right=of n1] (n2) {SBERT\\ embed};
+  \node[pr, right=of n2] (n3) {cosine\\ top-$k$};
+  \node[pr, right=of n3] (n4) {precedents\\ $+$ impact};
+  \draw[->] (n1)--(n2); \draw[->] (n2)--(n3); \draw[->] (n3)--(n4);
+  \draw[->] (o4) -- (n3) node[midway, sloped, above, font=\tiny]{precedents};
+  % converge on explanation + delivery
+  \node[pr] (ex) at ($(m4)!0.5!(n4) + (2.5,0)$) {Explanation\\ engine};
+  \node[pr, right=of ex] (tg) {Telegram\\ alert};
+  \draw[->] (m4) -- (ex) node[midway, above, font=\tiny]{yes};
+  \draw[->] (n4) -- (ex);
+  \draw[->] (ex) -- (tg);
+\end{tikzpicture}
+\caption[End-to-end data and processing flow]{The end-to-end flow of \textsc{Clarion}. Offline (top),
+FNSPID news is aligned to prices and embedded into the knowledge base. Online, the market trigger
+(middle) turns live prices into a \emph{z}-score and fires when it exceeds the threshold; the news
+trigger (bottom) embeds an incoming headline, finds its nearest precedents in the knowledge base, and
+attaches their observed impact. Both converge on the explanation engine, which delivers a single
+explained alert.}
+\label{fig:workflow}
+\end{figure}
+
 \section{Historical Knowledge Base and Correlation Engine}
 \label{sec:clarion_kb}
 
