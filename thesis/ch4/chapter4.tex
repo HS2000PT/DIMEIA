@@ -281,6 +281,29 @@ impact, and an explicit no-prediction disclaimer.}
 \label{fig:telegram_mockup}
 \end{figure}
 
+\section{Deployment and Practical Use}
+\label{sec:clarion_deploy}
+
+CLARION runs as two entry points, one per trigger, each of which performs a complete cycle. The market
+trigger fetches recent prices, computes returns, detects, explains and sends; the news trigger takes a
+headline, embeds it, retrieves precedents, explains and sends. In day-to-day use these would be invoked
+on a schedule --- the market trigger once per trading day after the close, the news trigger whenever a
+watched feed publishes --- but the scheduler and the hosting are deliberately outside the project's
+scope. The entry points already encapsulate everything such a scheduler would call.
+
+Running the system needs three things, all free: a market-data source for prices, a company-news or RSS
+source for headlines (an API key, kept out of version control), and the historical knowledge base, built
+once from the corpus. Appendix~\ref{app:reproducibility} gives the exact steps. A real alert was
+delivered to a Telegram account during testing, so the path from raw data to the investor's phone is
+proven end to end, not just designed.
+
+Two practical limits are worth stating plainly. First, the free news tier returns only a recent window,
+so the knowledge base is shallower than the multi-year build it is designed for; this affects coverage,
+not the method. Second, CLARION is a decision-support prototype rather than a production service: it has
+no user accounts, no persistence beyond the knowledge-base file, and no automatic recovery from a
+provider outage. None of these is a research limitation; each is a known, ordinary step on the road from
+prototype to product, and is recorded here for honesty rather than hidden.
+
 \section{Chapter Conclusions}
 \label{sec:clarion_summary}
 

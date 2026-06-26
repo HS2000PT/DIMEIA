@@ -206,6 +206,19 @@ is most distinctive, and smallest for the broad consumer sector.}
 \label{fig:cs_persector}
 \end{figure}
 
+\paragraph{Why some sectors retrieve better: a qualitative look.}
+The per-sector gap has a concrete explanation, visible in individual queries. In technology, different
+companies genuinely share themes: a headline about NVIDIA's data-centre accelerators retrieves, from the
+Microsoft, Meta and Alphabet feeds, articles about the same wave of AI-chip competition (Case Study~3),
+so cross-ticker precision is high. The consumer sector behaves differently. A query about Walmart's
+grocery guidance retrieves mostly Walmart's own items plus a macro ``US retail sales'' story that happens
+to be carried on bank feeds --- adjacent in theme, but not a consumer analogue from another consumer
+company. A query about Coca-Cola retrieves almost only other Coca-Cola items, about its pricing power and
+beverage volumes, which simply do not resemble Walmart's store-traffic news. The shared label
+``consumer'' is too broad: its members' news is idiosyncratic, so cross-ticker analogues are scarce and
+the lift over the base rate is small. This is exactly the pattern the numbers show, and it points to a
+clear refinement for future work: grouping by finer-grained themes rather than by sector.
+
 \section{Case Study 3: End-to-End Alert and Explanation Faithfulness}
 \label{sec:cs_endtoend}
 
