@@ -1,9 +1,10 @@
 # Caderno de Defesa — CLARION (PT-PT)
 
 > Documento de estudo para a defesa. Reúne, em português, **o que foi feito e porquê**, para o aluno
-> dominar todo o trabalho. Não é a tese (essa é em EN-GB); é o guião para a preparar e defender com calma.
-> Atualizar à medida que a tese evolui. Fontes internas: `docs/decisions/learning.md`,
-> `docs/decisions/glossary.md`, `progress/DECISIONS.md`, `progress/SESSIONS.md`.
+> dominar todo o trabalho e **visualizar o fluxo de dados e passos** (§2). Não é a tese (essa é em EN-GB);
+> é o guião para a preparar e defender com calma. Estudar a par com os `slides/` (apresentação) e com a
+> própria tese. Fontes internas: `docs/decisions/learning.md`, `docs/decisions/glossary.md`,
+> `progress/DECISIONS.md`, `progress/SESSIONS.md`.
 
 ---
 
@@ -36,7 +37,56 @@ Usar modelos/ferramentas existentes **é** o trabalho de engenharia.
 
 ---
 
-## 2. Decisões e porquês (as que tenho de saber defender)
+## 2. O workflow visual (dados e passos)
+
+> O pedido central: **ver** todo o fluxo de dados e passos. Aqui está, em diagramas. As versões
+> "bonitas" estão na tese (figura da arquitetura, do fluxo mestre e os **diagramas de sequência** dos dois
+> gatilhos, Cap. 4) e nos `slides/`.
+
+**(A) Construção offline da Base de Conhecimento (uma só vez):**
+```
+FNSPID: noticia + precos diarios
+   |  alinhar ao 1.o dia de negociacao >= data da noticia  (evento e_i)
+   v
+ embedding SBERT do titulo   +   impacto do FECHO de e_i  (+1d, +3d, +5d)
+   |
+   v
+ Base de Conhecimento  =  um "caso" por noticia
+   caso = { data, ticker, titulo, vetor, impacto[+1/+3/+5] }
+```
+
+**(B) Gatilho 1 — movimento de mercado (a cada dia):**
+```
+precos live (yfinance) -> log-returns r_t
+   |  janela de 20 dias ANTERIORES -> media (mu), desvio (sigma)
+   v
+ z = (r_t - mu) / sigma
+   |
+   v
+ |z| > k (=3) ?  --nao-->  (sem alerta)
+   | sim
+   v
+ explicacao { z, mu, sigma, janela, limiar }  ->  Telegram
+```
+
+**(C) Gatilho 2 — notícia nova (quando há notícia):**
+```
+noticia live (Finnhub/RSS)
+   |  embedding SBERT do titulo
+   v
+ cosseno vs Base de Conhecimento  ->  top-k precedentes (mais semelhantes)
+   |  impacto de cada um (+1/+3/+5d, do FECHO do evento)   [anti-lookahead]
+   v
+ explicacao { precedentes + impacto medio + aviso de nao-previsao }  ->  Telegram
+```
+
+> **Explicar o fluxo ao júri (1 frase):** "Offline construo uma memória de casos (notícia→impacto); em
+> produção, cada gatilho transforma dados *live* em evidência e converge num único passo de explicação
+> antes de enviar — e nada usa informação do futuro."
+
+---
+
+## 3. Decisões e porquês (as que tenho de saber defender)
 
 | Decisão | Porquê (defesa curta) |
 |---|---|
@@ -52,9 +102,9 @@ Usar modelos/ferramentas existentes **é** o trabalho de engenharia.
 
 ---
 
-## 3. Componentes — o que faz, como funciona, e "como explico ao júri em 3 frases"
+## 4. Componentes — o que faz, como funciona, e "como explico ao júri em 3 frases"
 
-### 3.1 Detetor de anomalias (Gatilho 1)
+### 4.1 Detetor de anomalias (Gatilho 1)
 - **O que faz:** assinala o retorno diário de hoje como anormal se o |z-score| ultrapassar um limiar *k*.
 - **Como funciona:** z = (retorno − média móvel) / desvio-padrão móvel, calculados na janela de dias
   **estritamente anteriores** (sem lookahead). Devolve a decisão + todas as quantidades que a produziram.
@@ -62,7 +112,7 @@ Usar modelos/ferramentas existentes **é** o trabalho de engenharia.
   um detetor único é justo entre ações calmas e voláteis — algo que um limiar fixo em % não consegue.
   E como exponho o z-score, a janela e o limiar, o alerta é auto-explicativo."
 
-### 3.2 Base de conhecimento histórica + motor de correlação (núcleo, Gatilho 2)
+### 4.2 Base de conhecimento histórica + motor de correlação (núcleo, Gatilho 2)
 - **O que faz:** dada uma notícia nova, recupera as *k* notícias passadas mais semelhantes e mostra o
   impacto que tiveram.
 - **Como funciona:** cada notícia → embedding SBERT; semelhança por cosseno; impacto por estudo de evento
@@ -75,7 +125,7 @@ Usar modelos/ferramentas existentes **é** o trabalho de engenharia.
   parecidas no histórico — é raciocínio baseado em casos. Para cada precedente mostro o que aconteceu ao
   preço a seguir, medido sempre *depois* do evento. É recuperação de evidência, não previsão."
 
-### 3.3 Motor de explicação (XAI)
+### 4.3 Motor de explicação (XAI)
 - **O que faz:** monta o texto do alerta a partir dos objetos calculados a montante.
 - **Como funciona:** para o gatilho de mercado, indica o movimento, z-score, limiar e janela; para o de
   notícias, lista os precedentes (data/ticker/semelhança/impacto/título) + impacto médio + aviso de
@@ -84,14 +134,35 @@ Usar modelos/ferramentas existentes **é** o trabalho de engenharia.
   sistema calculou, por isso não pode divergir da lógica. Chamo a isto *fidelidade por construção*.
   Um teste automático confirma que nenhum precedente é inventado nem omitido."
 
-### 3.4 Entrega (Telegram)
+### 4.4 Entrega (Telegram)
 - **O que faz:** envia o alerta completo numa única mensagem.
 - **Defesa em 1 frase:** "Escolhi o Telegram por ser gratuito, ubíquo e com API de bot simples; um alerta
   real foi entregue com sucesso nos testes."
 
+### 4.5 Exemplos reais, traçados passo a passo (saber recitar!)
+
+**Gatilho 1 (anomalia) — TSLA, 24-10-2024 (reação a resultados):**
+1. Preços live → log-return do dia: **r = +19,82%** (≈ +22% em preço).
+2. Janela dos 20 dias **anteriores** → **μ = −0,92%**, **σ = 2,73%**.
+3. z = (19,82 − (−0,92)) / 2,73 = **+7,61**.
+4. |7,61| > 3 → **anomalia**; o alerta expõe r, μ, σ, janela e limiar.
+   *Reprodutível:* `scripts/evaluate_anomaly.py` (janela fixa).
+
+**Gatilho 2 (notícia) — consulta "Nvidia demand surges on AI chip orders":**
+1. Embedding do título → cosseno vs Base de Conhecimento → top-3:
+   - NVDA "Nvidia guidance surges…" (sem. 0,60) → +5d **+3,5%**
+   - MSFT "Microsoft cloud growth… AI demand" (sem. 0,38) → +5d **+10,9%**  ← **cross-ticker!**
+   - NVDA "Nvidia unveils new AI accelerator…" (sem. 0,38) → +5d **+4,9%**
+2. Impacto médio +5d ≈ **+6,5%**; o alerta lista os precedentes + média + aviso "resultado passado, não
+   previsão". *Reprodutível:* sobre `data/samples/kb_sample.jsonl` (encoder transparente); em produção, SBERT.
+
+> **Porque é que o MSFT aparece numa consulta sobre a NVIDIA?** Porque a recuperação é por **significado**
+> (tema "procura de IA / data-center"), não por nome de empresa — é a generalização *cross-ticker* que a
+> avaliação mede. Saber explicar isto mostra que domino o núcleo do sistema.
+
 ---
 
-## 4. Resultados e limitações (honestos)
+## 5. Resultados e limitações (honestos)
 
 **Recuperação de precedentes (RQ2).** Precision@5 *cross-ticker* por setor, média de 5 seeds (3.714 notícias):
 - SBERT-MiniLM **0,514 ± 0,015**; SBERT-MPNet **0,538 ± 0,011**; lexical 0,346; aleatório 0,240; recência 0,126.
@@ -112,16 +183,42 @@ investidor: **ainda não medida** com estudo humano → reportada como limitaç�
 (não FNSPID multi-ano); títulos curtos limitam a semântica; rótulo de anomalia é volatilidade-relativo;
 sem estudo humano de utilidade; **por desenho, sem previsão/trading**.
 
+### 5.5 Mapa dos números validados (de onde vem cada um)
+
+> **Re-corridos na Fase E (2026-06-27):** os scripts reproduzem **exatamente** estes números (a única
+> diferença ao re-correr é o carimbo temporal). É a resposta mais forte a "isto é reprodutível?".
+
+| Número | Valor | Script | Output / local na tese |
+|---|---|---|---|
+| P@5 SBERT-MiniLM | 0,514 ± 0,015 | `evaluate.py` | `evaluation_results.md` · Cap. 5 (CS2) |
+| P@5 SBERT-MPNet | 0,538 ± 0,011 | `evaluate.py` | idem |
+| P@5 lexical / aleatório / recência | 0,346 / 0,240 / 0,126 | `evaluate.py` | idem |
+| Lift por setor: energia / saúde / consumo | +0,377 / +0,348 / +0,100 | `evaluate_per_sector.py` | `evaluation_per_sector.md` · Cap. 5 |
+| Amplitude de disparo: z-score vs fixo | 0,015 vs 0,344 | `evaluate_anomaly.py` | `evaluation_anomaly.md` · Cap. 5 (CS1) |
+| F1: z-score vs fixo | 0,516 vs 0,218 | `evaluate_anomaly.py` | idem |
+| Ablação de janela (10/20/60 d) | 0,385 / 0,516 / 0,678 | `evaluate_anomaly.py` | idem |
+| Anomalia real TSLA (24-10-2024) | z = +7,61 | (yfinance, janela fixa) | Cap. 5 (CS1), tabela trabalhada |
+| Contexto: mercado US / posse de ações / IA | US\$62,2T · 62/87/28% · 81/71% | fontes primárias (Fase E) | Cap. 1 |
+
 ---
 
-## 5. Mapa do repositório (para navegar e mostrar)
+## 6. Mapa do repositório (para navegar e mostrar)
 ```
 thesis/    a dissertação (LaTeX, EN-GB) — 6 capítulos + front matter + apêndice
+paper/     artigo IEEE (IEEEtran) destilado da tese validada
+slides/    slides de defesa (Beamer, 14 frames)
 src/       o sistema, um pacote por componente
 scripts/   dados, figuras, build/verify/sessão
-docs/      design/ · evaluation/ · decisions/ · defence/ (este ficheiro) · _archive/
+docs/      design/ (how_to_run, arquitetura, data_card, APIs) ·
+           evaluation/ (resultados reprodutíveis) ·
+           decisions/ (citation_log, learning, glossary, review_log,
+                       implementation_review, page_audit) ·
+           defence/ (este ficheiro) · _archive/
 progress/  TRACKER (checklist) + SESSIONS (registo)
 ```
+- **Como correr o sistema:** `docs/design/how_to_run.md` (guia do operador, testado).
+- **Provas de rigor (Fases C/D/E):** `review_log.md` (revisão crítica), `implementation_review.md`
+  (estatística re-validada), `page_audit.md` (50 citações re-verificadas).
 - Resultados reprodutíveis: `scripts/evaluate.py` (recuperação) e `scripts/evaluate_anomaly.py` (anomalia)
   escrevem `docs/evaluation/*` e as figuras em `thesis/figures/`.
 - Análise extra pronta: `scripts/evaluate_per_sector.py` dá a recuperação **por setor** (precision@k +
@@ -130,7 +227,7 @@ progress/  TRACKER (checklist) + SESSIONS (registo)
 
 ---
 
-## 6. Perguntas difíceis do júri (e respostas preparadas)
+## 7. Perguntas difíceis do júri (e respostas preparadas)
 
 **P: Isto não é só usar bibliotecas existentes?**
 R: Sim — e numa tese de *Engenharia* de IA é isso que se pede: a contribuição é a integração, a metodologia
@@ -145,10 +242,11 @@ isso (Rudin 2019). Para o sinal em causa (uma série de retornos; títulos curto
 perda de transparência e o custo. Deixo LLMs como trabalho futuro, com a infraestrutura pronta (FAISS para
 escala).
 
-**P: A precision@5 de 0,55 é boa?**
-R: É ~2,3× o acaso (0,24) e bem acima do baseline lexical (0,36), com desvio pequeno (5 seeds). É uma
-medida *honesta* do valor acrescentado, e **preliminar** — assumo que o corpus é recente; o FNSPID
-multi-ano é o passo seguinte.
+**P: A precision@5 de ~0,51 é boa?**
+R: É ~2,1× o acaso (0,240) e bem acima do baseline lexical (0,346), com desvio pequeno (~0,01, 5 seeds).
+É uma medida *honesta* do valor acrescentado, e **preliminar** — assumo que o corpus é recente; o FNSPID
+multi-ano é o passo seguinte. (O MPNet chega a 0,538, o que mostra que a vantagem é dos *embeddings*
+semânticos, não de um modelo específico.)
 
 **P: O proxy de setor não é fraco?**
 R: É um proxy automático, sim — por isso é uma limitação explícita e por isso dou primazia ao argumento
@@ -161,6 +259,17 @@ dia de negociação ≥ data da notícia. Está em código e testado.
 **P: Como sei que a explicação é verdadeira?**
 R: É renderizada dos mesmos objetos calculados → fiel por construção; e há um teste automático que verifica
 que reproduz exatamente os precedentes recuperados, sem inventar.
+
+**P: Porque excluem o próprio ticker na avaliação (cross-ticker)?**
+R: É uma escolha de **avaliação**, não do sistema. Se deixasse a NVIDIA recuperar as suas próprias
+notícias, ganhava por correspondência trivial de nome; ao excluir o próprio ticker, obrigo o motor a
+**generalizar entre empresas** (analogia temática), que é o que interessa. Em produção, o alerta mostra os
+precedentes mais semelhantes — incluindo do mesmo ticker, que são legítimos para o utilizador.
+
+**P: Isto é mesmo reprodutível?**
+R: Sim. Seeds fixas, dependências fixadas e cada número sai de um script versionado. Na validação final
+(Fase E) **voltei a correr os três scripts e obtive exatamente os mesmos números** — a única diferença foi
+o carimbo temporal. Está em `docs/decisions/implementation_review.md` e `page_audit.md`.
 
 **P: Usaram IA para escrever a tese?**
 R: Sim, declarado honestamente no front matter (assistência do Claude Code); dirigi o trabalho, revi e
