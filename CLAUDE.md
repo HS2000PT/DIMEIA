@@ -7,7 +7,7 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 21 (MASTER PLAN A–H: **Fases A, B, C, D, E concluídas** nesta sessão; **Fase F (IEEE) é a próxima**)
+- **Sessão nº:** 21 (MASTER PLAN A–H: **Fases A, B, C, D, E, F concluídas** nesta sessão; **Fase G (slides de defesa) é a próxima**)
 - **Última atualização:** 2026-06-27
 - **MASTER PLAN (estrada longa até submissão, publicação e defesa):** ver **`progress/MASTER_PLAN.md`** —
   Fases A (conteúdo+visuais → ~80 pp) · B (naturalidade) · C (revisão crítica do zero) · D (revisão crítica
@@ -28,7 +28,8 @@
 - **CONTAGEM DE PÁGINAS:** 76 pp (alvo do aluno: "80-ish" → atingido com conteúdo genuíno, SEM encher). ~16 são versos em branco (`twoside`/`openright`) → conteúdo real ≈ 60 pp. Confirmado: prosa em zonas pouco densas (SoTA/Métodos) transborda para páginas novas; figuras em capítulos densos são re-empacotadas. **Não forçar mais páginas** (risco de bloat que o aluno proíbe).
 - **FASES B, C, D CONCLUÍDAS nesta sessão.** **B (naturalidade):** voz académica/natural em todo o conteúdo novo (menos travessões/tics de IA); resto já passado. **C (revisão crítica do zero):** `docs/decisions/review_log.md` — achados C-1..C-5 corrigidos (lista do SoTA no Cap. 1; nota do *lift*; clareza cross-ticker no consumo; mockup como ilustração; cross-ticker é escolha de avaliação). **D (revisão de implementação + estatística):** `docs/decisions/implementation_review.md` — **os 3 scripts de avaliação foram RE-CORRIDOS hoje (SBERT 5.6.0 + corpus presentes) e reproduzem EXATAMENTE os números da tese**; 42 testes verdes (inclui `@sbert`) + ruff; guarda R1 (dimensão embedder–KB) adicionada. Veredito: desenho certo, sem mudanças necessárias.
 - **FASE E CONCLUÍDA (porta de submissão passada).** `docs/decisions/page_audit.md`: as **50 citações foram re-verificadas independentemente hoje** (script → Crossref/arXiv + ISBN + fontes primárias); **50/50 OK**, 0 fabricação. Melhorias: +DOI `aamodt1994cbr` e `lipton2018mythos`, +URL `ding2015deep`. Fontes primárias confirmadas nas páginas oficiais com os números exatos (Gallup 62/87/28%, SIFMA US$62,2T, CCAF 81/71%). PDF: 76 pp, 0 erros, 0 citações/refs indefinidas, 0 `??`, 50 na bibliografia (=50 citadas), 0 overfull >15pt. **Superfície de ataque sobre fontes = ZERO.**
-- **PRÓXIMO (FASE F — publicação IEEE):** preparar paper IEEE (formato de conferência/journal) a partir da tese, em `paper/`; depois G (slides de defesa) e H (caderno de defesa visual). **Humano (única pendência de submissão da tese):** confirmar redação ISEP da declaração de IA + data; leitura final do aluno (§6.6).
+- **FASE F CONCLUÍDA:** `paper/` — artigo IEEE (IEEEtran conference) destilado da tese **validada**; compila 3 pp, 0 erros, 0 citações indefinidas; 23 refs (subconjunto verificado); reutiliza figuras validadas; só sobre implementação/estatística já validadas. README com nota de expansão para um *venue*.
+- **PRÓXIMO (FASE G — slides de defesa):** construir slides (beamer) da defesa a partir da tese — problema, contribuição, sistema (visuais), resultados validados, limitações, Q&A; reutilizar figuras. Depois H (caderno de defesa visual, PT-PT, fluxo de dados/passos). **Humano (única pendência de submissão da tese):** confirmar redação ISEP da declaração de IA + data; leitura final do aluno (§6.6).
 - **Nota de ambiente:** o venv 3.12 foi **recriado** neste ambiente com a stack leve (numpy/pandas/matplotlib/yfinance/pytest/ruff). Para os testes `@sbert` e re-correr a recuperação completa (SBERT/torch), correr `scripts/setup_env.sh` (stack pesada). CI corre testes a cada push.
 - **Verificação de integridade da sessão:** confirmar que este ficheiro, `progress/TRACKER.md` e `progress/SESSIONS.md` foram lidos nesta sessão.
 
