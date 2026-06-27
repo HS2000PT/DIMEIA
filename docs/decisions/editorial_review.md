@@ -141,3 +141,31 @@ ameaças à validade.
 
 **Verificação:** compila 78 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
 **Resultado:** resultados e rigor idênticos; a narrativa à volta lê-se de forma mais limpa.
+
+---
+
+## Capítulo 6 — Conclusions
+
+**Estado inicial:** capítulo curto (RQ1–RQ3, contribuições, limitações, trabalho futuro). Passagem leve.
+
+**Problemas encontrados e correções:**
+1. *Travessões conectores.* Dois pares em prosa → dois-pontos + frase nova (RQ2) e parênteses
+   (contribuições). ch6: **2 → 0**.
+2. *Frase longa (RQ2).* A frase dos números da recuperação partida em duas (números preservados exatamente).
+3. *Pequenas asperezas.* "Three concrete contributions stand." → "stand out."; "addressing… risks…
+   head on." → "directly addressing… risks…".
+
+**Não alterado (de propósito):** todos os números (0,015/0,344; F1 0,516; 0,514±0,015; etc.), o mapeamento
+RQ→resultado, as contribuições e os compostos en-dash ("clarity--completeness--actionability", "news--market").
+
+**Verificação:** compila 78 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
+
+---
+
+## Balanço (Cap. 1–6)
+
+Travessões conectores em prosa: **117 → 1** em todo o corpo (o que resta é uma célula "—" de
+não-aplicável na tabela de posicionamento do Cap. 2). Todos os capítulos compilam sem erros, sem citações
+indefinidas e sem overfull >15pt; nenhum número, citação, equação, algoritmo, tabela ou figura foi alterado.
+Falta: front matter (abstract/resumo + declarações) e Apêndice A; depois, coerência global + sincronizar
+paper/slides/caderno.
