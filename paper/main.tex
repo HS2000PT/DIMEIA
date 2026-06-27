@@ -1,0 +1,182 @@
+% IEEE conference paper distilled from the dissertation.
+% Builds on the VALIDATED implementation, experiments and statistics (Phase D/E).
+% Only verified citations (see references.bib; mirror of the thesis's verified set).
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\usepackage{url}
+\graphicspath{{../thesis/figures/}}
+
+\begin{document}
+
+\title{Explainable Financial Alerts for Retail Investors:\\
+Integrating Statistical Anomaly Detection and\\ News--Market Impact Correlation}
+
+\author{\IEEEauthorblockN{Henrique J.\ S.\ Santos, Lu\'is Gomes, Rafael Silva}
+\IEEEauthorblockA{\textit{Instituto Superior de Engenharia do Porto (ISEP)}\\
+Porto, Portugal\\
+1180934@isep.ipp.pt}}
+
+\maketitle
+
+\begin{abstract}
+Retail investors face a continuous flood of price movements and financial news but lack the interpretive
+tools available to institutions. We present CLARION, an explainable (XAI-first) financial-alert system for
+the US equity market that raises Telegram alerts from two independent triggers --- abrupt price movements,
+detected as statistical anomalies, and incoming news --- and attaches to every alert a fully traceable
+explanation. The core is a news--market correlation engine that retrieves analogous historical news with
+sentence embeddings and measures the impact those precedents had, in the manner of an event study and
+without lookahead. As an Artificial Intelligence Engineering contribution, the work integrates, applies
+and critically evaluates existing components in a functional, reproducible system. On real data, semantic
+retrieval reaches a cross-ticker precision@5 of $0.514\pm0.015$ against $0.240$ for random and $0.346$ for
+a lexical baseline, and a volatility-normalised detector fires far more consistently across instruments
+(firing-rate range $0.015$) than a fixed threshold ($0.344$). All results are reproducible from versioned
+scripts, with limitations stated explicitly.
+\end{abstract}
+
+\begin{IEEEkeywords}
+explainable AI, retail investing, anomaly detection, sentence embeddings, information retrieval, event
+study, financial NLP
+\end{IEEEkeywords}
+
+\section{Introduction}
+Most Americans now own stock, and a growing share trade through commission-free mobile apps rather than
+through professional institutions \cite{gallup2025stock}; the US equity market reached US\$62.2~trillion at
+the end of 2024 \cite{sifma2025factbook}. Yet the non-professional, or \emph{retail}, investor must contend
+with continuous price movements and a constant stream of news without the tools that banks and funds take
+for granted. Meanwhile, the AI now spreading through finance is largely opaque \cite{arrieta2020xai}, which
+is a poor fit for someone who must act on an alert and live with the result.
+
+This paper presents \textbf{CLARION}, an explainable financial-alert system that does \emph{not} attempt to
+predict prices. Instead, for each abrupt move or relevant news item, it shows what it detected, how it
+reached that conclusion, the sources, and which past events resemble the current one, alongside what
+happened to prices afterwards. The contribution is one of Artificial Intelligence \emph{Engineering}: not a
+new algorithm, but the disciplined integration, application and critical evaluation of existing components
+into a working, explainable and reproducible system, together with a documented methodology for relating
+news to market impact.
+
+\section{Related Work}
+\textbf{Anomaly detection.} Financial anomaly detection is dominated by unsupervised methods because
+labelled anomalies are scarce \cite{chandola2009anomaly}. A rolling \emph{z}-score is a transparent
+statistical detector; more expressive alternatives such as Isolation Forest \cite{liu2008isolation} or deep
+detectors \cite{pang2021deep} trade interpretability for capacity. The need to normalise by recent
+volatility reflects volatility clustering, formalised by the ARCH/GARCH family
+\cite{engle1982arch,bollerslev1986garch}; we use a non-parametric rolling estimate for transparency.
+
+\textbf{Explainability and trust.} Surveys map the field and its transparent-versus-post-hoc divide
+\cite{arrieta2020xai}; a influential position argues for models that are interpretable by design in
+high-stakes settings \cite{rudin2019stop}, rather than post-hoc explanations of black boxes
+\cite{lundberg2017shap,ribeiro2016lime}. Human-factors work frames the goal as \emph{appropriate reliance}
+\cite{lee2004trust}, and recent evidence warns that explanations can induce over-reliance
+\cite{bansal2021whole}; we therefore explain with verifiable evidence rather than persuasive narrative.
+
+\textbf{Text representation and retrieval.} Financial text analysis has moved from lexicons to learned
+representations; Sentence-BERT \cite{reimers2019sbert}, built on the Transformer \cite{devlin2019bert},
+yields directly comparable sentence vectors. Retrieval and its evaluation belong to information retrieval:
+the vector-space model \cite{salton1975vsm}, lexical ranking such as BM25 \cite{robertson2009bm25}, and
+precision@$k$ as the standard ranked-retrieval metric \cite{manning2008ir}.
+
+\textbf{Event studies and case-based reasoning.} The event-study design measures returns around an event
+\cite{fama1969adjustment,brown1985daily}; market efficiency \cite{fama1970efficient} explains why we
+\emph{measure} reactions rather than predict them. Using retrieved past cases as evidence is case-based
+reasoning \cite{aamodt1994cbr}. The FNSPID dataset \cite{dong2024fnspid} time-aligns news with prices,
+enabling a news-to-impact knowledge base.
+
+\section{The CLARION System}
+CLARION is a pipeline of single-responsibility components linked by a common schema. Two data layers share
+that schema: a \emph{historical} layer (a knowledge base of past news, each entry storing date, ticker,
+headline, sentence embedding and measured post-event impact) and a \emph{live} layer (free price and news
+feeds). Two triggers converge on one explanation step before delivery via Telegram.
+
+\textbf{Market trigger.} Let $r_t$ be the log-return on day $t$ and let $\mu_t,\sigma_t$ be the mean and
+standard deviation over a trailing window of $w$ days ending strictly before $t$. The day is flagged when
+$|z_t|>k$ with $z_t=(r_t-\mu_t)/\sigma_t$. Every quantity behind the decision is exposed to the explanation
+engine, so the alert is faithful by construction.
+
+\textbf{News trigger.} An incoming headline is embedded with Sentence-BERT and compared by cosine
+similarity against the knowledge base; the top-$k$ precedents are returned with their observed impact at
+$+1$, $+3$ and $+5$ trading days, measured from the event-day close. The event day is the first trading day
+on or after the news date, and impact is accumulated strictly forward, which enforces a no-lookahead
+guarantee. This retrieve-and-reuse step is the case-based-reasoning core of the system.
+
+\textbf{Explanation.} Each alert is rendered directly from the computed objects --- the $z$-score with its
+window and threshold, or the retrieved precedents with their similarity scores and measured impact --- and
+ends with an explicit no-prediction disclaimer.
+
+\section{Evaluation}
+The evaluation is fixed in advance. The anomaly detector is assessed primarily by the \emph{consistency} of
+its firing rate across instruments of different volatility (a label-free argument) and secondarily against
+an extreme-move proxy. The correlation engine is assessed as an information-retrieval task by cross-ticker
+precision@$k$ against a same-sector relevance proxy, compared with random, recency and lexical baselines
+over five random seeds. All numbers below are reproduced by versioned scripts.
+
+\subsection{Anomaly detection}
+Over three years of daily data for fifteen large-cap US tickers, the fixed $3\%$ threshold fires on $\sim
+1\%$ of days for a calm stock but $\sim 35\%$ for a volatile one, whereas the \emph{z}-score fires at a
+near-constant $2$--$3\%$ for all. The range of firing rates across tickers is more than twenty times
+tighter for the \emph{z}-score ($0.015$ vs $0.344$; Fig.~\ref{fig:anom}). Against the extreme-move proxy the
+\emph{z}-score reaches $F_1=0.516$ versus $0.218$ for the fixed rule, and a window ablation gives $F_1$ of
+$0.385$, $0.516$ and $0.678$ for $10$-, $20$- and $60$-day windows.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\columnwidth]{eval_anomaly_firing_rate.pdf}
+\caption{Firing rate per ticker: a fixed percentage threshold varies dramatically with each stock's
+volatility, while the volatility-normalised \emph{z}-score is stable across all tickers.}
+\label{fig:anom}
+\end{figure}
+
+\subsection{Precedent retrieval}
+On $3{,}714$ real headlines across five sectors, semantic retrieval clearly outperforms every baseline
+(Table~\ref{tab:retr}). MiniLM reaches a cross-ticker precision@5 of $0.514$ (about $2.1\times$ the random
+base rate), the larger MPNet slightly more ($0.538$), and both far exceed the lexical baseline ($0.346$);
+recency is worst, below the random rate. Small standard deviations ($\sim 0.01$) show the gap is robust.
+Per sector, the lift over the base rate is largest where vocabulary is distinctive --- energy ($+0.377$)
+and health ($+0.348$) --- and smallest for the broad consumer sector ($+0.100$).
+
+\begin{table}[t]
+\caption{Cross-ticker precision@$k$, mean\,$\pm$\,std over five runs.}
+\label{tab:retr}
+\centering
+\begin{tabular}{lcc}
+\toprule
+Method & P@5 & P@10 \\
+\midrule
+SBERT (MiniLM) & $0.514\pm0.015$ & $0.478\pm0.011$ \\
+SBERT (MPNet) & $\mathbf{0.538\pm0.011}$ & $\mathbf{0.506\pm0.010}$ \\
+Lexical (hashing) & $0.346\pm0.011$ & $0.314\pm0.008$ \\
+Recency & $0.126\pm0.006$ & $0.106\pm0.005$ \\
+Random (base rate) & $0.240\pm0.004$ & $0.240\pm0.004$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Faithfulness}
+Because each alert is rendered from the same objects the system computes, the explanation cannot diverge
+from the underlying computation; this is checked by an automated test that asserts the rendered alert
+reproduces each retrieved precedent's date, ticker and measured impact.
+
+\section{Discussion and Limitations}
+The results support the design: transparent volatility-normalised detection is consistent where a fixed
+threshold is not, and semantic retrieval surfaces markedly more sector-analogous precedents than lexical or
+trivial baselines. The limitations are stated plainly. Relevance is a same-sector proxy, not a human
+judgement; the corpus is a recent window from a free service rather than the multi-year FNSPID history;
+impact is a raw post-event return, not a market-adjusted abnormal return; and no human usefulness study has
+yet been run. By design, the system performs no price prediction or trading, so profit-based metrics are
+out of scope.
+
+\section{Conclusion}
+CLARION shows that useful financial alerting for retail investors can be both transparent and reproducible:
+a volatility-normalised detector that explains every flag, and a news--market correlation engine that
+retrieves analogous precedents and reports their measured impact as evidence rather than prediction. Future
+work is the full multi-year knowledge base, a human relevance and usefulness study, and market-adjusted
+impact measurement.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
