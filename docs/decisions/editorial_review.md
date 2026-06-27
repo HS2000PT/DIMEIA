@@ -38,3 +38,35 @@ estrutura do documento — todos preservados.
 
 **Verificação:** compila 78 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
 **Resultado:** capítulo mais direto e humano, mesmo conteúdo e rigor.
+
+---
+
+## Capítulo 2 — State of the Art
+
+**Estado inicial:** o capítulo mais denso e "académico-pesado", com 23 travessões e várias frases/parágrafos
+longos. Passagem **profunda** (continua a ser copy-edit, não reescrita de conteúdo).
+
+**Problemas encontrados e correções:**
+1. *Travessões como conectores (tique de IA).* Convertidos **todos** os 23 em prosa para vírgulas,
+   parênteses ou dois-pontos (ch2: **23 → 0** em prosa; resta 1 célula de tabela com "—" = não-aplicável).
+2. *Parágrafos demasiado longos.* Dividido o bloco enorme da deteção de anomalias em dois (estatística
+   transparente/GARCH | detetores mais expressivos) e separado o parágrafo dos *embeddings* (estáticos |
+   Transformer/BERT). Frase-taxonomia de \textcite{chandola2009anomaly} partida em duas.
+3. *Jargão evitável.* "desiderata" → "different goals"; "impounded into prices rapidly" → "absorbed into
+   prices quickly"; "the asymmetric weighting of losses against equivalent gains" → "we weigh losses more
+   heavily than equivalent gains".
+4. *Advérbios/tiques de sinalização.* Removidos "Crucially", "moreover", "in effect", "and durable", "And"
+   (início de frase), "precisely why" → "why".
+5. *Construção invertida nas conclusões.* "What the literature offers… it largely lacks…" → duas frases
+   simples: "The literature thus provides mature individual components but not an integrated… system. That
+   gap is what this dissertation addresses…".
+6. *Pequenas asperezas.* "has likewise been quantified" → "has also been measured"; "intervenes exactly
+   where" → "arrives exactly where"; "a contested claim of total interpretability" → "claiming full
+   interpretability"; "response pursued here is not… but…" → "response here is not… but…".
+
+**Não alterado (de propósito):** todas as citações (mesmo conjunto), tabelas e figuras (taxonomias),
+compostos com en-dash ("capacity--interpretability", "news--market", "word--word", "human--AI") e a célula
+"—" de não-aplicável na tabela de posicionamento.
+
+**Verificação:** compila 78 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
+**Resultado:** mesmo rigor e mesma literatura, leitura bastante mais leve e humana.

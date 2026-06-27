@@ -25,11 +25,11 @@ useful alert must contain.
 Behavioural finance documents that real investors deviate systematically from the fully-rational ideal;
 the survey of \textcite{barberis2003behavioral} catalogues these deviations and their two pillars, limits
 to arbitrage and human psychology. A foundational element of that psychology is prospect theory
-\autocite{kahneman1979prospect}, whose central insight (\emph{loss aversion}, the asymmetric weighting
-of losses against equivalent gains) helps explain why investors are especially sensitive to salient,
-potentially adverse news, and therefore why a timely, well-explained alert is valuable.
+\autocite{kahneman1979prospect}. Its central insight, \emph{loss aversion} (we weigh losses more heavily
+than equivalent gains), helps explain why investors are especially sensitive to salient, potentially
+adverse news, and so why a timely, well-explained alert is valuable.
 
-A central and durable finding of this literature is that individual investors are strongly
+A central finding of this literature is that individual investors are strongly
 influenced by \emph{attention}. In their seminal study, \textcite{barber2008glitters} show that
 individual investors are net buyers of attention-grabbing stocks (those in the news, those with
 unusually high trading volume, and those with extreme one-day returns), whereas they do not face the
@@ -37,17 +37,17 @@ same search problem when selling, because they tend to sell only what they alrea
 explanation offered is economic: faced with thousands of stocks they could potentially buy, investors
 fall back on the small subset that has captured their attention. This matters directly here. The events that
 grab a retail investor's attention, a sharp price move or a salient headline, are the two triggers this
-work is built on, so an alert that adds context to them intervenes exactly where attention-driven
+work is built on, so an alert that adds context to them arrives exactly where attention-driven
 decisions are made. Attention can also be measured: \textcite{da2011attention} show that internet search
 volume is a timely proxy for it, one that captures retail attention in particular, reinforcing the link
 between salient events and the investors this work serves.
 
-The role of the media in shaping investor behaviour has likewise been quantified. \textcite{tetlock2007media}
+The media's influence on investor behaviour has also been measured. \textcite{tetlock2007media}
 constructs a daily pessimism measure from a popular Wall Street Journal column and finds that high media
 pessimism predicts downward pressure on prices followed by a reversion to fundamentals, and that
 unusually high or low pessimism predicts elevated trading volume. The study is doubly relevant here: it
 establishes that news content carries measurable, market-moving information, and it is an early
-demonstration that \emph{textual} signals can be extracted and related to market outcomes --- the same
+demonstration that \emph{textual} signals can be extracted and related to market outcomes, the same
 premise that underlies the news--market correlation engine of this dissertation.
 
 The composition and weight of retail participation have also shifted markedly in recent years, driven by
@@ -56,16 +56,16 @@ commission-free mobile brokerages. Studying a large sample of users of one such 
 the March~2020 bear market rather than panicking, and that an aggregated ``crowd consensus'' portfolio
 exhibited both reasonable timing and positive performance over the period studied. Whatever the
 debate over retail investors' sophistication, the empirical picture is one of a large, active and
-consequential population --- consistent with the broad ownership figures reported by
+consequential population, consistent with the broad ownership figures reported by
 \textcite{gallup2025stock} and the scale of the market documented by \textcite{sifma2025factbook} in
 Chapter~\ref{chap:introduction}.
 
 Taken together, this literature frames the problem the system addresses. Retail investors are
 attention-constrained, react to news, and now participate in large numbers, yet they must do so under a
 continuous flood of price movements and headlines that they cannot individually process. The response
-pursued here is not to predict the market for them, but to reduce the cost of \emph{interpreting} the
-events that already command their attention, by attaching to each alert a transparent explanation and
-concrete historical evidence.
+here is not to predict the market for them but to reduce the cost of \emph{interpreting} the events that
+already command their attention, attaching to each alert a transparent explanation and concrete
+historical evidence.
 
 \section{Anomaly Detection in Financial Markets}
 \label{sec:sota_anomaly}
@@ -75,7 +75,7 @@ mature field of anomaly detection. The survey of \textcite{chandola2009anomaly} 
 reference and taxonomy, distinguishing \emph{point} anomalies (an individual observation that is
 abnormal with respect to the rest), \emph{contextual} anomalies (abnormal only in a particular context,
 such as a time of year), and \emph{collective} anomalies (a set of observations that is jointly
-abnormal), and grouping detection methods into statistical, distance- and density-based, and
+abnormal). It also groups detection methods into statistical, distance- and density-based, and
 machine-learning families. A sharp single-day return is naturally treated as a contextual point anomaly:
 abnormal relative to the asset's own recent behaviour. Figure~\ref{fig:sota_anomaly_taxonomy}
 summarises the families relevant to this work.
@@ -110,13 +110,14 @@ distribution, an assumption that the rolling estimation window is designed to ac
 that window is itself well understood in financial econometrics: returns exhibit \emph{volatility
 clustering} (calm and turbulent periods arrive in runs), formalised by the ARCH model of
 \textcite{engle1982arch} and its generalisation GARCH \autocite{bollerslev1986garch}, which model
-time-varying variance explicitly. The rolling standard deviation used in this work is, in effect, a
+time-varying variance explicitly. The rolling standard deviation used in this work is a
 deliberately simpler, non-parametric estimate of that same time-varying volatility: it adapts to the
 current regime without fitting a parametric model, which keeps the detector transparent and free of
 estimation choices a non-expert could not scrutinise. A full GARCH estimate is a more sophisticated
 alternative, declined here under the principle of defensible simplicity because the transparent rolling
-estimate suffices to flag volatility-relative surprise. More
-expressive unsupervised detectors relax such assumptions: Isolation Forest \autocite{liu2008isolation}
+estimate suffices to flag volatility-relative surprise.
+
+More expressive unsupervised detectors relax such assumptions: Isolation Forest \autocite{liu2008isolation}
 isolates anomalies through random partitioning, requiring fewer splits to separate an outlier, and
 scales well to large, high-dimensional data. The cost is reduced direct interpretability, since the
 anomaly score is an ensemble property rather than a quantity the user can read off. Density-based
@@ -128,7 +129,7 @@ deep one-class models and others) that can capture rich, non-linear structure bu
 and largely opaque, and whose advantage is most pronounced in high-dimensional settings such as images
 or complex multivariate streams rather than in a single return series. Within finance specifically, the
 survey of \textcite{ahmed2016financial} notes that detection is dominated by \emph{unsupervised} methods,
-precisely because labelled anomalies are scarce --- a constraint that also shapes the evaluation strategy
+precisely because labelled anomalies are scarce, a constraint that also shapes the evaluation strategy
 adopted in this work, where a label-free consistency argument is given primacy
 (Chapter~\ref{chap:casestudies}). Table~\ref{tab:sota_anomaly} compares the families.
 
@@ -166,11 +167,10 @@ already-trained black box, and the open challenges on the path to responsible AI
 solved (explaining a whole model, explaining a single outcome, or inspecting the internals), which
 is a useful lens for situating the techniques most relevant here. Figure~\ref{fig:sota_xai_taxonomy}
 sketches this division. A recurring caution in the field is that ``interpretability'' is not a single,
-well-defined property: \textcite{lipton2018mythos} argues that the term conflates several distinct
-desiderata (simulatability, decomposability, post-hoc justification) that serve different stakeholders,
-so a system should state \emph{which} notion it provides. This work is explicit on that point: it offers
-transparency of the decision logic and traceable evidence, rather than a contested claim of total
-interpretability.
+well-defined property: \textcite{lipton2018mythos} argues that the term conflates several different goals
+(simulatability, decomposability, post-hoc justification) that serve different stakeholders, so a system
+should state \emph{which} notion it provides. This work is explicit on that point: it offers transparency
+of the decision logic and traceable evidence, rather than claiming full interpretability.
 
 \begin{figure}[ht]
 \centering
@@ -208,11 +208,11 @@ are approximations that can mislead and can entrench poor practice. This positio
 pertinent to a tool that a non-expert will act upon financially: an explanation that is itself an
 approximation of an opaque model carries a risk that a transparent design avoids by construction. The
 present work takes this view as a guiding principle, pursuing explainability primarily through
-transparent design --- a statistical detector whose every quantity is exposed, and retrieved historical
-precedents shown as direct evidence --- and treating feature attribution as an optional complement
-rather than the foundation.
+transparent design (a statistical detector whose every quantity is exposed, and retrieved historical
+precedents shown as direct evidence), and treating feature attribution as an optional complement rather
+than the foundation.
 
-What makes an explanation \emph{good} is, moreover, not purely a technical matter.
+What counts as a \emph{good} explanation is not purely a technical matter.
 \textcite{miller2019explanation} draws on the social sciences to argue that human explanations are
 contrastive, selective and social: people want to know why \emph{this} rather than \emph{that}, and
 expect a few relevant causes, not an exhaustive account. The alerts in this work are designed in that
@@ -222,8 +222,8 @@ decision, rather than an exhaustive model dump.
 Finally, the field has recognised that explanations must themselves be evaluated rather than assumed.
 \textcite{doshivelez2017rigorous} propose a taxonomy for the rigorous evaluation of interpretability,
 distinguishing application-grounded, human-grounded and functionally-grounded assessments, and
-emphasising \emph{fidelity} --- the degree to which an explanation reflects the system's actual
-computation --- as a core criterion. This framing is adopted in Chapter~\ref{chap:casestudies}, where
+emphasising \emph{fidelity}, the degree to which an explanation reflects the system's actual
+computation, as a core criterion. This framing is adopted in Chapter~\ref{chap:casestudies}, where
 the explanation is assessed for faithfulness by construction, with the (human-grounded) question of
 usefulness stated openly as a limitation. Table~\ref{tab:sota_xai} summarises the approaches considered.
 
@@ -277,8 +277,8 @@ information source, content-analysis method and empirical model, and documents t
 from dictionaries towards machine-learned representations, the same trajectory this section follows.
 
 The earliest and still-influential approach in finance is the domain dictionary. \textcite{loughran2011liability}
-show that general-purpose sentiment word lists misclassify ordinary financial vocabulary --- words such
-as ``liability'' or ``tax'' that are negative in everyday language but neutral in a financial report ---
+show that general-purpose sentiment word lists misclassify ordinary financial vocabulary (words such
+as ``liability'' or ``tax'' that are negative in everyday language but neutral in a financial report),
 and develop finance-specific word lists that better capture tone in regulatory filings, relating them to
 returns, volume and volatility. Lexicon methods are fully transparent and remain a strong baseline, but
 they are bounded by their vocabulary and cannot capture meaning that is not expressed by listed words.
@@ -288,7 +288,9 @@ reflects distributional similarity. Word2vec \autocite{mikolov2013word2vec} lear
 efficiently from local context windows, and GloVe \autocite{pennington2014glove} obtains comparable
 representations from global word--word co-occurrence statistics. Both, however, assign a single vector to
 each word irrespective of context, so they cannot distinguish the different senses a word takes in
-different sentences. The Transformer architecture \autocite{vaswani2017attention}, built entirely on
+different sentences.
+
+The Transformer architecture \autocite{vaswani2017attention}, built entirely on
 attention mechanisms and dispensing with recurrence, removed this limitation and reshaped the field:
 BERT \autocite{devlin2019bert} uses it to produce deeply \emph{contextual} token representations that
 substantially advanced language understanding. Using BERT directly to compare two texts is nonetheless
@@ -375,15 +377,15 @@ study of stock-price adjustment to new information introduced the event-study de
 early test of market efficiency by measuring returns around an event date.
 \textcite{brown1985daily} subsequently established the now-standard practice for event studies based on
 daily returns, characterising how abnormal returns should be measured and tested over short post-event
-windows --- the basis for the $+1$, $+3$ and $+5$-day horizons used in this work. Crucially for the
-honesty of the present design, the event-study impact is measured strictly \emph{after} the event, so it
-characterises an outcome rather than forecasting one.
+windows, the basis for the $+1$, $+3$ and $+5$-day horizons used in this work. For the honesty of the
+present design, the impact is measured strictly \emph{after} the event, so it characterises an outcome
+rather than forecasting one.
 
 This restraint is not merely cautious; it rests on finance theory. The efficient-market hypothesis of
 \textcite{fama1970efficient} holds that prices already reflect available information, so that consistently
-forecasting returns from public news is, by construction, very hard: new information is impounded into
-prices rapidly, which is precisely why an event study measures a short-window \emph{reaction} rather than
-a predictable, exploitable signal. Read this way, the theory reframes the design choice of this work ---
+forecasting returns from public news is, by construction, very hard: new information is absorbed into
+prices quickly, which is why an event study measures a short-window \emph{reaction} rather than
+a predictable, exploitable signal. Read this way, the theory reframes the design choice of this work:
 rather than competing with market efficiency by trying to predict prices, the system measures and explains
 the reactions that have \emph{already} followed comparable news, which is both more honest and more
 defensible for a non-expert audience.
@@ -391,10 +393,10 @@ defensible for a non-expert audience.
 Relating \emph{news text} to such impact is the subject of a growing literature, of which
 \textcite{tetlock2007media} is an early and influential example, demonstrating a measurable link between
 media tone and subsequent market behaviour. A more recent strand goes further and attempts to
-\emph{predict} price movements from news --- a body of work surveyed by \textcite{xing2018nlffsurvey};
+\emph{predict} price movements from news, a body of work surveyed by \textcite{xing2018nlffsurvey};
 \textcite{ding2015deep}, for instance, learn event embeddings from headlines with a deep network to
 forecast index movements. This dissertation deliberately stops
-short of prediction --- it \emph{measures} the impact that analogous past events had and presents it as
+short of prediction: it \emph{measures} the impact that analogous past events had and presents it as
 evidence, which keeps the system within its no-forecasting scope and avoids the opacity and over-claiming
 that price-prediction models invite. Conducting such an impact analysis historically and at scale
 requires news aligned to prices, which is the contribution of the FNSPID dataset
@@ -407,8 +409,8 @@ is the methodological core of this dissertation.
 \section{Case-Based Reasoning and Precedent Retrieval}
 \label{sec:sota_cbr}
 
-The way this work \emph{uses} retrieved news --- as analogous past cases whose outcomes inform the
-present --- corresponds to a well-established artificial-intelligence paradigm: case-based reasoning
+The way this work \emph{uses} retrieved news, as analogous past cases whose outcomes inform the
+present, corresponds to a well-established artificial-intelligence paradigm: case-based reasoning
 (CBR). In the foundational account of \textcite{aamodt1994cbr}, a CBR system solves a new problem by
 \emph{retrieving} the most similar past cases, \emph{reusing} their solutions, and (optionally)
 \emph{revising} and \emph{retaining} the outcome. The correlation engine of this dissertation is, in
@@ -421,8 +423,8 @@ rather than presenting precedent retrieval as ad hoc. Second, CBR is intrinsical
 explainability goal of this work: an explanation of the form ``this resembles these specific past
 cases, which behaved thus'' is example-based and immediately intelligible to a non-expert, in contrast
 to the feature-attribution explanations of opaque models discussed in Section~\ref{sec:sota_xai}. The
-system deliberately stops at retrieve-and-reuse --- it presents the precedents as evidence and does not
-automatically \emph{revise} them into a prediction --- which keeps it within its no-forecasting scope.
+system deliberately stops at retrieve-and-reuse: it presents the precedents as evidence and does not
+automatically \emph{revise} them into a prediction, which keeps it within its no-forecasting scope.
 
 \section{Existing Tools for the Retail Investor}
 \label{sec:sota_tools}
@@ -437,7 +439,7 @@ market-data application. The investor sets a threshold (a target price, or a per
 notified when it is crossed. Such alerts are immediate, free and simple, and they map naturally onto the
 attention-driven behaviour documented by \textcite{barber2008glitters}: they fire precisely on the extreme
 moves that capture attention. Their limitation is equally clear. A fixed threshold is not calibrated to
-each asset's own volatility, so it fires constantly on volatile stocks and rarely on calm ones --- the very
+each asset's own volatility, so it fires constantly on volatile stocks and rarely on calm ones, the very
 inconsistency that the volatility-normalised detector of this work is designed to remove
 (Chapter~\ref{chap:casestudies}). More fundamentally, a price alert reports only \emph{that} a level was
 crossed; it offers no explanation of \emph{why} and no context for judging whether the move is unusual.
@@ -448,8 +450,8 @@ finding that textual tone carries market-relevant information \autocite{tetlock2
 finance-specific sentiment lexicons \autocite{loughran2011liability}. They are valuable for surfacing
 \emph{what} is being said, but two gaps remain. A single sentiment polarity (positive / negative) is a thin
 summary that says little about likely magnitude or about whether comparable news has mattered before; and
-the scoring is often proprietary and opaque, so the user cannot see why an item was labelled as it was ---
-the opposite of the transparency this work requires. Crucially, such tools rarely connect a current headline
+the scoring is often proprietary and opaque, so the user cannot see why an item was labelled as it was,
+the opposite of the transparency this work requires. Such tools also rarely connect a current headline
 to concrete \emph{historical precedents} and their measured outcomes, which is the core of the engine
 proposed here.
 
@@ -459,8 +461,8 @@ The third category is the \emph{robo-advisor}, the most studied retail-fintech t
 and the systematic review of \textcite{cardillo2024robo} confirms a mature and fast-growing literature.
 Robo-advisors, however, operate at a different altitude and with a different philosophy from this work. They
 \emph{act on the investor's behalf}, allocating and rebalancing a portfolio, whereas the system proposed
-here neither advises nor trades; it explains discrete events and leaves every decision to the user. And
-their allocation logic is typically proprietary, so the investor delegates rather than understands ---
+here neither advises nor trades; it explains discrete events and leaves every decision to the user. Their
+allocation logic is also typically proprietary, so the investor delegates rather than understands,
 again the reverse of an explanation-first design. Table~\ref{tab:sota_tools} positions the three categories
 against the system of this dissertation.
 
@@ -532,7 +534,7 @@ from lexicons to sentence embeddings and identified Sentence-BERT as the appropr
 for semantic retrieval, which information-retrieval theory frames as a representation-then-rank task to be
 judged by precision@$k$. Event-study methodology and the FNSPID dataset, in turn, provided the means to
 measure news impact honestly and at scale. Finally, case-based reasoning supplied the paradigm that ties
-these together --- retrieving analogous past cases and reusing their outcomes as transparent evidence.
-What the literature offers in mature individual components, it largely lacks as an \emph{integrated},
-explainable, retail-facing system --- the gap this dissertation addresses, and which the following
-chapters develop.
+these together: retrieving analogous past cases and reusing their outcomes as transparent evidence.
+The literature thus provides mature individual components but not an \emph{integrated}, explainable,
+retail-facing system. That gap is what this dissertation addresses, and what the following chapters
+develop.
