@@ -169,3 +169,23 @@ não-aplicável na tabela de posicionamento do Cap. 2). Todos os capítulos comp
 indefinidas e sem overfull >15pt; nenhum número, citação, equação, algoritmo, tabela ou figura foi alterado.
 Falta: front matter (abstract/resumo + declarações) e Apêndice A; depois, coerência global + sincronizar
 paper/slides/caderno.
+
+---
+
+## Front matter (abstract + resumo) e Apêndice A
+
+**Abstract (EN) e resumo (PT):**
+- *Travessões conectores.* Dois pares em cada (a delimitar os dois gatilhos e a lista de componentes) →
+  parênteses, em ambas as línguas. Prosa do abstract/resumo: **0** travessões.
+- Abstract mantém-se com **192 palavras** (≤ 200); todos os números preservados (0,51 / 0,35 / 0,24).
+- **Declarações (integridade + uso de IA) NÃO tocadas:** são texto formal; a redação da declaração de IA
+  fica como está, a aguardar confirmação do aluno com o orientador (memória `honest-ai-declaration`).
+
+**Apêndice A (Reproducibility):** revisto e **deixado como está** — já é uma secção de referência limpa,
+sem travessões e com prosa clara (tabela de versões + 3 comandos de reprodução). Não se reescreve o que já
+está bom.
+
+**Nota:** os `---` que restam no `frontmatter.tex` são comentários `%----` (não renderizados) e as células
+"—" da lista de símbolos (grandezas adimensionais = sem unidade), ambos usos corretos.
+
+**Verificação:** compila 78 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
