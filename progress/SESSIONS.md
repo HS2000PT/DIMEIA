@@ -5,6 +5,39 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 21 — 2026-06-27 — MASTER PLAN A–H COMPLETO (B→H, e fecho da A)
+**Objetivo:** executar o resto da estrada longa após a Fase A, até deixar tudo pronto para submissão,
+publicação e defesa.
+
+**Feito (todas as fases, commit a commit, com build/verify verdes e push por incremento):**
+- **A (fecho):** Estado da Arte elevado a **50 refs verificadas** (IR + precision@k; EMH/Fama 1970;
+  trust/reliance Lee&See 2004 + Bansal 2021; volatilidade Engle 1982/Bollerslev 1986; ferramentas
+  existentes dacunto/cardillo); protocolo de avaliação formalizado; diagrama de sequência do gatilho de
+  mercado; `docs/design/how_to_run.md`. **76 pp** (alvo "80-ish" atingido com conteúdo genuíno).
+- **B (naturalidade):** voz académica/natural no conteúdo novo (menos travessões/tics de IA).
+- **C (revisão crítica do zero):** `docs/decisions/review_log.md`; achados C-1..C-5 corrigidos (lista do
+  SoTA no Cap. 1; nota do *lift*; clareza cross-ticker no consumo; mockup ilustrativo; cross-ticker é de
+  avaliação).
+- **D (implementação + estatística):** `implementation_review.md`. **Re-corri os 3 scripts de avaliação
+  (SBERT 5.6.0 + corpus presentes) e reproduzem EXATAMENTE os números da tese** (única diferença = carimbo
+  temporal); 42 testes verdes (inclui `@sbert`) + ruff; guarda R1 (dimensão embedder–KB).
+- **E (porta de submissão):** `page_audit.md`. **50/50 citações re-verificadas** (script → Crossref/arXiv;
+  ISBN; fontes primárias confirmadas nas páginas oficiais com os números exatos — Gallup 62/87/28%, SIFMA
+  US$62,2T, CCAF 81/71%). +DOI aamodt/lipton, +URL ding. PDF: 0 erros, 0 indefinidas, 0 `??`, 50 na
+  bibliografia, 0 overfull. **Ataque do júri sobre fontes = ZERO.**
+- **F (IEEE):** `paper/` (IEEEtran) destilado da tese validada; 23 refs (subconjunto verificado); compila.
+- **G (slides):** `slides/` (Beamer, 14 frames); compila; último frame = perguntas do júri.
+- **H (caderno visual):** `docs/defence/caderno_de_defesa.md` com workflow em diagramas, exemplos reais
+  passo-a-passo e mapa dos números validados; números desatualizados corrigidos.
+
+**Estado:** tese 76 pp (0 erros/indefinidas/órfãs/overfull; 50 refs re-verificadas); estatística
+reprodutível; paper/ e slides/ compilam; tudo commitado e **pushed**.
+
+**Próxima ação (só HUMANO):** confirmar redação ISEP da declaração de IA + data de entrega; leitura final
+do aluno (§6.6). Opcional futuro: FNSPID multi-ano; estudo humano de utilidade; expandir o paper.
+
+---
+
 ## Sessão 20 — 2026-06-26 — MASTER PLAN A–H + Fase A (conteúdo+visuais)
 **Contexto:** pós-rework, o aluno definiu a estrada longa até submissão/IEEE/defesa. Criado
 `progress/MASTER_PLAN.md` (Fases A–H; porta de submissão = Fase E: validação página-a-página +

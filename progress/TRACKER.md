@@ -242,20 +242,15 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 > Marcar progresso aqui e em `MASTER_PLAN.md`. Porta crítica: **Fase E** (validação ultra-rigorosa
 > página-a-página + re-verificação de TODAS as citações).
 
-- [~] **Fase A** — conteúdo + visuais para ~80 pp (EM CURSO; está em **70 pp**, conteúdo real ≈53 pp; 16 pp são versos em branco)
-      - [x] 3 algoritmos em pseudocódigo (Lista de Algoritmos preenchida) · Lista de Código removida
-      - [x] figura do fluxo mestre de dados/passos (Cap. 4) · figura conceito de embeddings + linha temporal event study (Cap. 3)
-      - [x] exemplos trabalhados: z-score hipotético (Cap. 3) · recuperação REAL reproduzível sobre KB-amostra (Cap. 3) · anomalia REAL TSLA 24-10-2024 (Cap. 5)
-      - [x] Cap. 2 §2.7 "Existing Tools for the Retail Investor" (+ 2 citações verificadas: dacunto2019robo, cardillo2024robo) · Cap. 5 "Threats to Validity" por taxonomia
-      - [x] diagrama de sequência (UML) do gatilho de notícias (Cap. 4) — vista de interação no tempo
-      - [x] `docs/design/how_to_run.md` — guia do operador (responde a "como correr?"; também groundwork da Fase D)
-      - [x] Estado da Arte: §2.5 "Information Retrieval and Ranking Evaluation" (fundamenta precision@k; +3 refs verificadas) → 70→72 pp
-      - [x] Estado da Arte: EMH (Fama 1970) fundamenta a recusa de previsão (+1 ref verificada)
-      - [ ] mais prosa genuína p/ ~80 pp (aprofundar mais o Estado da Arte com fontes verificadas; diagrama de sequência do gatilho de mercado) — SEM encher; CONFIRMADO que prosa no SoTA transborda para páginas novas
-- [ ] **Fase B** — terminar passagem de naturalidade/consistência (todo o corpo)
-- [ ] **Fase C** — revisão crítica independente da tese (do zero) + correções
-- [ ] **Fase D** — revisão crítica da implementação/desenho + viabilidade real + guia "como correr" + validar estatística
-- [ ] **Fase E** — VALIDAÇÃO ULTRA-RIGOROSA (página-a-página + re-verificar todas as citações) — porta de submissão
-- [ ] **Fase F** — publicação IEEE (só depois de D+E)
-- [ ] **Fase G** — slides de defesa
-- [ ] **Fase H** — caderno de defesa visual (fluxo de dados/passos)
+> **MASTER PLAN A–H COMPLETO (sessão 21, 2026-06-27).** Tese 76 pp; 50 refs re-verificadas; estatística
+> re-corrida idêntica; paper/ + slides/ compilam; documentos de rigor commitados. Só faltam tarefas humanas.
+
+- [x] **Fase A** — conteúdo + visuais (**76 pp**, alvo "80-ish"): 3 algoritmos; figuras de fluxo/sequência/embeddings; exemplos reais (TSLA z=7.61; recuperação Nvidia cross-ticker); SoTA 40→**50 refs verificadas** (IR, EMH, trust, volatilidade, ferramentas existentes); protocolo de avaliação formalizado; `how_to_run.md`.
+- [x] **Fase B** — passagem de naturalidade/voz académica (conteúdo novo + corpo); menos travessões/tics de IA.
+- [x] **Fase C** — revisão crítica independente (`docs/decisions/review_log.md`); achados C-1..C-5 corrigidos.
+- [x] **Fase D** — revisão de implementação (`implementation_review.md`); **estatística RE-CORRIDA hoje = idêntica**; 42 testes; guarda R1.
+- [x] **Fase E** — porta de submissão (`page_audit.md`): **50/50 citações re-verificadas** (DOI/arXiv/ISBN/fontes primárias); PDF sem `??`/indefinidas/overfull. Ataque sobre fontes = 0.
+- [x] **Fase F** — artigo IEEE (`paper/`, IEEEtran) destilado da tese validada; compila.
+- [x] **Fase G** — slides de defesa (`slides/`, Beamer 14 frames); compila.
+- [x] **Fase H** — caderno de defesa **visual** (`docs/defence/caderno_de_defesa.md`): workflow em diagramas, exemplos passo-a-passo, mapa dos números validados.
+- [ ] **HUMANO** — confirmar redação ISEP da declaração de IA + data de entrega; leitura final do aluno (§6.6).
