@@ -135,8 +135,18 @@ On $3{,}714$ real headlines across five sectors, semantic retrieval clearly outp
 (Table~\ref{tab:retr}). MiniLM reaches a cross-ticker precision@5 of $0.514$ (about $2.1\times$ the random
 base rate), the larger MPNet slightly more ($0.538$), and both far exceed the lexical baseline ($0.346$);
 recency is worst, below the random rate. Small standard deviations ($\sim 0.01$) show the gap is robust.
-Per sector, the lift over the base rate is largest where vocabulary is distinctive --- energy ($+0.377$)
-and health ($+0.348$) --- and smallest for the broad consumer sector ($+0.100$).
+Per sector (Fig.~\ref{fig:persector}), the lift over the base rate is largest where vocabulary is
+distinctive --- energy ($+0.377$) and health ($+0.348$) --- and smallest for the broad consumer sector
+($+0.100$); technology has the highest raw precision ($0.712$) only because it dominates the corpus and so
+has a high base rate ($0.429$).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\columnwidth]{eval_retrieval_per_sector.pdf}
+\caption{Per-sector cross-ticker precision@5 against the random base rate. Retrieval beats the base rate in
+every sector; the lift is largest where the domain vocabulary is most distinctive.}
+\label{fig:persector}
+\end{figure}
 
 \begin{table}[t]
 \caption{Cross-ticker precision@$k$, mean\,$\pm$\,std over five runs.}
