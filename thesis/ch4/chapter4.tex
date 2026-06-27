@@ -313,7 +313,9 @@ data-flow view of Figure~\ref{fig:market_flow}.}
 
 The explanation engine renders alerts directly from the objects produced upstream, which guarantees
 that the text never diverges from the computation. For the market trigger, it states the move, the
-$z$-score, the threshold and window, and the recent mean and standard deviation. For the news trigger,
+$z$-score, the threshold and window, and the recent mean and standard deviation, and it renders the
+$z$-score in plain language (how many times a typical day's move it represents), so that a non-expert can
+interpret the alert rather than merely see the numbers. For the news trigger,
 it lists the retrieved precedents (date, ticker, similarity score, measured impact and headline) and
 the average impact across them, and it always ends with an explicit disclaimer that the figures are
 observed past outcomes, not a prediction, keeping the system within its no-forecasting scope.

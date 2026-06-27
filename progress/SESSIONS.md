@@ -644,3 +644,16 @@ destilados da tese, para não sobre-afirmarem onde a tese passou a ressalvar:
   preparada sobre o exemplo −1,97% (tema vs direção; evidência verificável vs over-reliance; de-dup + sinalizar
   discordância de direção; nota +6,5% vs −1,97% = KBs/horizontes/encoders diferentes).
 Abstract da tese já citava o lexical no `paper` — alinhado. Todos os artefactos coerentes com a tese.
+
+### Sessão 22 — 4.ª passagem (Pass 5: revisão de produto / UX) + melhoria implementada
+- **Deliverable:** `docs/decisions/product_review.md` (PT-PT) — crítica de produto/UX com severidades
+  (PM/UX/arquiteto/utilizador), honesta e sem funcionalidades irreais; companheiro de review_log/implementation_review/page_audit.
+- **Achado-chave (P-1, Maior):** estatística em bruto (z-score, σ, similaridade) é *transparente* mas não
+  *compreensível* para o não-especialista. **Implementado:** `explain_anomaly` passa a render­izar o z-score
+  em linguagem simples ("cerca de 7,6× a oscilação diária típica … muito além da volatilidade normal");
+  +teste `test_explica_anomalia_em_linguagem_simples`; cláusula no Cap. 4. Recomendada banda qualitativa
+  para a similaridade (futuro).
+- Restantes achados (fadiga de alertas, sobre-confiança/clusters de direção mista, casos-limite, escala,
+  acessibilidade/privacidade) já refletidos na tese como desenho/trabalho futuro ou são limites de desenho.
+- **Validação:** ruff limpo; **43 testes verdes** (+1); tese compila 78 pp, 0 erros/indefinidas/overfull/`??`.
+  Código intocado nos números (gloss só acrescenta prosa; estatística inalterada).

@@ -26,7 +26,9 @@ def explain_anomaly(ticker: str, result: AnomalyResult) -> str:
         f"(threshold ±{result.threshold:g}, window {result.window}d)\n"
         f"Why: the return is {abs(result.z_score):.1f} standard deviations from the "
         f"{result.window}-day norm (mean {result.mean * 100:+.2f}%, "
-        f"std {result.std * 100:.2f}%)."
+        f"std {result.std * 100:.2f}%).\n"
+        f"In plain terms: about {abs(result.z_score):.1f}x this stock's typical daily swing, "
+        f"well beyond ordinary day-to-day volatility."
     )
 
 

@@ -1,6 +1,7 @@
 """Testes do motor de explicação para o Gatilho 2 (notícia + precedentes)."""
 
-from src.explanation_engine.explainer import explain_news_impact
+from src.anomaly_detector.detector import AnomalyResult
+from src.explanation_engine.explainer import explain_anomaly, explain_news_impact
 from src.historical_kb.record import NewsRecord
 
 
@@ -24,6 +25,19 @@ def test_explica_impacto_com_precedentes():
 def test_sem_precedentes():
     text = explain_news_impact("XYZ", "Algo novo", [], horizon=3)
     assert "No similar historical precedents" in text
+
+
+def test_explica_anomalia_em_linguagem_simples():
+    """Gatilho 1: z-score + leitura em linguagem simples para o não-especialista."""
+    res = AnomalyResult(
+        is_anomaly=True, z_score=7.61, last_return=0.1982,
+        mean=-0.0092, std=0.0273, window=20, threshold=3.0,
+    )
+    text = explain_anomaly("TSLA", res)
+    assert "Anomaly detected for TSLA" in text
+    assert "z-score: +7.61" in text
+    assert "7.6 standard deviations" in text                 # rigor (mantém a estatística)
+    assert "7.6x this stock's typical daily swing" in text   # leitura em linguagem simples
 
 
 def test_explicacao_fiel_aos_precedentes_recuperados():
