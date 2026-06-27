@@ -101,8 +101,13 @@ class HistoricalKB:
         usable = [r for r in self.records if r.embedding is not None]
         if not usable:
             return []
-        query = embedder.encode([query_text])[0]
+        query = np.asarray(embedder.encode([query_text])[0], dtype="float64")
         matrix = np.array([r.embedding for r in usable], dtype="float64")
+        if query.shape[0] != matrix.shape[1]:
+            raise ValueError(
+                f"Embedding dim mismatch: query has {query.shape[0]} dims but the knowledge base "
+                f"stores {matrix.shape[1]}. Query with the same embedder used to build the KB."
+            )
         hits = top_k_similar(query, matrix, k=top_k)
         return [(usable[i], score) for i, score in hits]
 

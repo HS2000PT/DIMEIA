@@ -64,6 +64,14 @@ def test_find_precedents_recupera_o_mais_semelhante():
     assert top_score == pytest.approx(1.0)  # consulta idêntica ao título → cosseno 1
 
 
+def test_find_precedents_rejeita_embedder_de_dimensao_diferente():
+    """Guarda (R1): consultar com um embedder de dimensão diferente da KB falha com erro claro."""
+    news, prices = _sample_inputs()
+    kb = HistoricalKB.build(news, prices, HashingEmbedder(dim=64))
+    with pytest.raises(ValueError, match="dim mismatch"):
+        kb.find_precedents("Apple unveils new iPhone", HashingEmbedder(dim=32), top_k=1)
+
+
 def test_save_load_roundtrip(tmp_path):
     news, prices = _sample_inputs()
     kb = HistoricalKB.build(news, prices, HashingEmbedder(dim=16))
