@@ -181,7 +181,8 @@ investidor: **ainda não medida** com estudo humano → reportada como limitaç�
 
 **Limitações (dizer antes que o júri pergunte):** proxy de setor (não julgamento humano); corpus recente
 (não FNSPID multi-ano); títulos curtos limitam a semântica; rótulo de anomalia é volatilidade-relativo;
-sem estudo humano de utilidade; **por desenho, sem previsão/trading**.
+a semelhança capta **tema, não direção** (um *cluster* pode misturar subidas e descidas → a média é
+evidência sobre um tema, não previsão); sem estudo humano de utilidade; **por desenho, sem previsão/trading**.
 
 ### 5.5 Mapa dos números validados (de onde vem cada um)
 
@@ -265,6 +266,17 @@ R: É uma escolha de **avaliação**, não do sistema. Se deixasse a NVIDIA recu
 notícias, ganhava por correspondência trivial de nome; ao excluir o próprio ticker, obrigo o motor a
 **generalizar entre empresas** (analogia temática), que é o que interessa. Em produção, o alerta mostra os
 precedentes mais semelhantes — incluindo do mesmo ticker, que são legítimos para o utilizador.
+
+**P: No exemplo real, um título *positivo* da NVIDIA recuperou notícias de ameaça competitiva e mostrou impacto médio −1,97%. Isso não engana o utilizador?**
+R: É a pergunta certa, e respondê-la mostra que percebo o método. A semelhança por *embeddings* capta o
+**tema** ("chips de IA para data-center"), não a **direção** (o sentimento): por isso um título positivo
+pode recuperar um *cluster* de ameaça competitiva cujos desfechos foram negativos. A média é evidência sobre
+*como um tema se moveu*, **não uma previsão** para este caso — por isso mostro sempre os precedentes um a um
+e termino com o aviso de não-previsão. É também a razão para explicar com **evidência verificável** e não com
+narrativa persuasiva (Lee & See 2004; Bansal 2021, sobre *over-reliance*). Melhorias de produto já
+identificadas: de-duplicar precedentes quase iguais e **sinalizar quando o cluster discorda na direção**,
+para o utilizador ver incerteza em vez de falso consenso. (Nota: o +6,5% do exemplo do Cap. 3 e o −1,97%
+aqui não se contradizem — são bases de conhecimento, horizontes e *encoders* diferentes, e nenhum é previsão.)
 
 **P: Isto é mesmo reprodutível?**
 R: Sim. Seeds fixas, dependências fixadas e cada número sai de um script versionado. Na validação final

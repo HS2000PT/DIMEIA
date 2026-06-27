@@ -179,7 +179,7 @@ Random & $0.240$ & $0.240$ \\
 \tiny\ttfamily
 News alert --- NVDA\\
 ``Nvidia raises guidance\ldots AI data-centre''\\
-Avg 1-day move: $-1.97\%$ (5 precedents)\\
+Avg 1-day move: $-1.97\%$ (over 5; 3 shown)\\
 - MSFT (0.68) +1d $-3.46\%$\\
 - META (0.68) +1d $-2.65\%$\\
 - GOOGL (0.64) +1d $-0.46\%$\\
@@ -193,6 +193,7 @@ Avg 1-day move: $-1.97\%$ (5 precedents)\\
   \item Relevance is a \textbf{same-sector proxy}, not a human judgement.
   \item Corpus is a \textbf{recent} free-tier window, not the multi-year FNSPID history.
   \item Impact is a \textbf{raw} post-event return, not market-adjusted (CAR).
+  \item Similarity is \textbf{thematic, not directional}: a cluster can mix up/down moves, so the mean is theme-level \emph{evidence}, not a forecast.
   \item \textbf{No human usefulness study} yet (RQ3 usefulness open).
   \item By design: \textbf{no price prediction, no trading} --- profit metrics out of scope.
 \end{itemize}
@@ -228,6 +229,7 @@ A working, \textbf{explainable, reproducible} financial-alert system for retail 
   \item \textbf{Why \emph{z}-score, not Isolation Forest/GARCH?} Transparency for a low-dimensional signal explained to a non-expert; defensible simplicity.
   \item \textbf{Why precision@$k$ and a sector proxy?} Standard ranked-retrieval metric; objective, reproducible; human relevance is future work.
   \item \textbf{Cross-ticker constraint?} An \emph{evaluation} choice to avoid trivial self-matches; the live alert shows the most similar precedents regardless.
+  \item \textbf{A positive headline retrieved negative precedents ($-1.97\%$) --- misleading?} Similarity matches \emph{theme}, not direction; the mean is theme-level \textbf{evidence}, shown with every precedent and a no-prediction disclaimer. Future work: de-duplicate precedents and flag directional disagreement.
   \item \textbf{Is it reproducible?} Yes --- fixed seeds, pinned deps, versioned scripts; re-running reproduces every number.
 \end{itemize}
 \end{frame}

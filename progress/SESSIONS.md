@@ -632,3 +632,15 @@ integridade de citações **50/50** (0 órfãs, 0 indefinidas, 0 novas chaves). 
 - **Consistência cruzada:** confirmado que todos os números-chave (0,514 / 0,346 / 0,240 / 0,126 / 0,516 /
   0,015 / 0,344) são idênticos no Cap. 5 e Cap. 6; +6,5% coerente entre Cap. 3 e Cap. 5. Sem deriva.
 - Compila 78 pp, 0 erros/indefinidas/overfull/`??`.
+
+### Sessão 22 — 3.ª passagem (consistência dos artefactos derivados com a tese)
+Propagadas as correções da revisão (sobretudo M1: recuperação capta tema, não direção) para os artefactos
+destilados da tese, para não sobre-afirmarem onde a tese passou a ressalvar:
+- **`paper/main.tex`** (IEEE): +frase de limitação conceptual (tema≠direção) na Discussion. Compila 3 pp, 0 erros.
+- **`slides/main.tex`** (Beamer): +bullet de limitação (thematic, not directional); +pergunta antecipada do
+  júri ("título positivo recuperou precedentes negativos −1,97% — engana?") com resposta; rótulo do alerta
+  "(5 precedents)" → "(over 5; 3 shown)". Compila 14 pp, 0 erros.
+- **`docs/defence/caderno_de_defesa.md`** (PT-PT): +linha de limitação (tema≠direção) e +**P&R do júri**
+  preparada sobre o exemplo −1,97% (tema vs direção; evidência verificável vs over-reliance; de-dup + sinalizar
+  discordância de direção; nota +6,5% vs −1,97% = KBs/horizontes/encoders diferentes).
+Abstract da tese já citava o lexical no `paper` — alinhado. Todos os artefactos coerentes com a tese.

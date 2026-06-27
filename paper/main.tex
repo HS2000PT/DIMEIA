@@ -176,8 +176,11 @@ threshold is not, and semantic retrieval surfaces markedly more sector-analogous
 trivial baselines. The limitations are stated plainly. Relevance is a same-sector proxy, not a human
 judgement; the corpus is a recent window from a free service rather than the multi-year FNSPID history;
 impact is a raw post-event return, not a market-adjusted abnormal return; and no human usefulness study has
-yet been run. By design, the system performs no price prediction or trading, so profit-based metrics are
-out of scope.
+yet been run. A further, conceptual limitation is that embedding similarity captures \emph{theme} rather
+than \emph{direction}: a retrieved cluster can mix positive and negative outcomes (a positive headline may
+retrieve a competitive-threat cluster), so the reported mean is evidence about a theme, not a directional
+forecast, which is why precedents are always shown individually and every alert disclaims prediction. By
+design, the system performs no price prediction or trading, so profit-based metrics are out of scope.
 
 \section{Conclusion}
 CLARION shows that useful financial alerting for retail investors can be both transparent and reproducible:
