@@ -622,3 +622,13 @@ integridade de citações **50/50** (0 órfãs, 0 indefinidas, 0 novas chaves). 
 **A precisar do aluno (humano):** confirmar redação ISEP da declaração de IA + data; leitura final do aluno (§6.6).
 
 **Próxima ação:** nenhuma autónoma pendente — à espera de input humano (declaração ISEP) ou de nova direção.
+
+### Sessão 22 — 2.ª passagem de revisão (verificação numérica + honestidade do abstract)
+- **Honestidade do abstract/resumo:** a recuperação era quantificada só face ao acaso (0,24, a comparação
+  mais lisonjeira); agora cita também a baseline lexical (0,35), a comparação significativa. EN 192 palavras (≤200).
+- **Rigor (Cap. 3):** verificado contra o `kb_sample.jsonl` que a média +5d do exemplo trabalhado é
+  6,456% → **+6,5%** (correta a partir de valores não-arredondados; os componentes arredondados somam 6,43%);
+  adicionada nota de "média a partir de valores não-arredondados" (consistente com a tabela por-setor).
+- **Consistência cruzada:** confirmado que todos os números-chave (0,514 / 0,346 / 0,240 / 0,126 / 0,516 /
+  0,015 / 0,344) são idênticos no Cap. 5 e Cap. 6; +6,5% coerente entre Cap. 3 e Cap. 5. Sem deriva.
+- Compila 78 pp, 0 erros/indefinidas/overfull/`??`.
