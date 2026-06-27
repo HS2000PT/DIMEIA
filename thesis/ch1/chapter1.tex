@@ -12,7 +12,7 @@ Most Americans now own stock, either directly or through retirement accounts and
 \autocite{gallup2025stock}. At the same time, the US equity market has grown into the world's largest and
 most liquid, reaching US\$62.2~trillion at the end of 2024 \autocite{sifma2025factbook}
 (Figure~\ref{fig:us_market_cap}). Trading takes place mainly on the \gls{NYSE} and \gls{NASDAQ}, and a
-growing share of it now comes from ordinary people using commission-free mobile apps rather than from
+growing share of it now comes from ordinary people using commission-free mobile apps, not from
 professional institutions.
 
 \begin{figure}[ht]
@@ -26,26 +26,25 @@ professional institutions.
 
 These non-professional, or ``retail'', investors are the audience of this work. Stock ownership among
 them is wide but uneven: it rises to 87\% of households earning above US\$100{,}000 and falls to 28\%
-below US\$50{,}000 \autocite{gallup2025stock}. What they share is a hard position. Markets move continuously
-across thousands of securities and relevant news arrives throughout the trading day, yet retail investors
-have none of the tools that banks and funds take for granted.
+below US\$50{,}000 \autocite{gallup2025stock}. Whatever their income, they face the same difficulty.
+Markets move continuously across thousands of securities and relevant news arrives throughout the trading
+day, yet retail investors have none of the tools that banks and funds take for granted.
 
-Artificial intelligence has, meanwhile, spread quickly through finance. A 2026 survey found that 81\% of
+Meanwhile, artificial intelligence has spread quickly through finance. A 2026 survey found that 81\% of
 financial firms were adopting \gls{AI} in some form and 71\% were already using generative AI
 \autocite{ccaf2026aifs}. Much of this technology is opaque: the strongest models rarely reveal how they
 reach a conclusion \autocite{arrieta2020xai, adadi2018peeking}. For someone who has to act on an alert
-and live with the result, that opacity is a real obstacle. Letting the investor see \emph{why} an alert
-was raised is what this dissertation sets out to do.
+and live with the result, that opacity is a real obstacle. This dissertation sets out to let the investor
+see \emph{why} an alert was raised.
 
 \section{Problem Statement}
 \label{sec:intro_problem}
 
-A retail investor who wants to stay informed faces two distinct challenges. The first is telling a
-genuinely unusual price move apart from ordinary daily volatility, which takes statistical judgement and
-constant attention. The second is reading what a news item might mean, which takes knowledge of how
-similar events played out in the past, knowledge most people do not have to hand. Existing consumer
-applications often provide alerts with little explanation, or rely on models whose reasoning is hidden
-from the user.
+A retail investor who wants to stay informed faces two challenges. The first is telling a genuinely
+unusual price move from ordinary daily volatility, which takes statistical judgement and constant
+attention. The second is reading what a news item might mean, which takes knowing how similar events
+played out before, and most people have no easy way to do that. Existing consumer applications often send
+alerts with little explanation, or rely on models whose reasoning is hidden from the user.
 
 This work does not try to predict prices. It tries to \emph{explain}. For each abrupt move or relevant
 news item, the system shows what it detected, how it reached that conclusion, where the information came
@@ -70,9 +69,8 @@ from, and which past events resemble the current one, alongside what happened to
   \draw[->] (sys) -- (out);
   \draw[->] (out) -- (inv);
 \end{tikzpicture}
-\caption[What CLARION does]{In one picture: two triggers --- a sudden market move or a relevant news item
---- feed CLARION, which replies not with a bare notification but with an explained alert that the
-investor can follow and check.}
+\caption[What CLARION does]{The two triggers, a sudden market move or a relevant news item, feed CLARION,
+which answers with an explained alert the investor can follow and check, not just a bare notification.}
 \label{fig:concept}
 \end{figure}
 
@@ -96,8 +94,8 @@ Telegram. Three research questions guide the work:
 These questions translate into four objectives: to develop an explainable alerting pipeline driven by the
 two triggers; to evaluate the anomaly detector against transparent baselines; to evaluate the retrieval
 of historical news against trivial baselines; and to assess the faithfulness and usefulness of the
-explanations. The incremental, simplicity-first way the system is built is a methodological choice,
-described in Chapter~\ref{chap:methods}.
+explanations. The system is built incrementally, in its simplest defensible form first; that is a
+deliberate methodological choice, described in Chapter~\ref{chap:methods}.
 
 \section{Scientific Contributions}
 \label{sec:intro_contributions}
