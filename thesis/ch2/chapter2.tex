@@ -25,14 +25,14 @@ useful alert must contain.
 Behavioural finance documents that real investors deviate systematically from the fully-rational ideal;
 the survey of \textcite{barberis2003behavioral} catalogues these deviations and their two pillars, limits
 to arbitrage and human psychology. A foundational element of that psychology is prospect theory
-\autocite{kahneman1979prospect}, whose central insight --- \emph{loss aversion}, the asymmetric weighting
-of losses against equivalent gains --- helps explain why investors are especially sensitive to salient,
+\autocite{kahneman1979prospect}, whose central insight (\emph{loss aversion}, the asymmetric weighting
+of losses against equivalent gains) helps explain why investors are especially sensitive to salient,
 potentially adverse news, and therefore why a timely, well-explained alert is valuable.
 
 A central and durable finding of this literature is that individual investors are strongly
 influenced by \emph{attention}. In their seminal study, \textcite{barber2008glitters} show that
-individual investors are net buyers of attention-grabbing stocks --- those in the news, those with
-unusually high trading volume, and those with extreme one-day returns --- whereas they do not face the
+individual investors are net buyers of attention-grabbing stocks (those in the news, those with
+unusually high trading volume, and those with extreme one-day returns), whereas they do not face the
 same search problem when selling, because they tend to sell only what they already own. The
 explanation offered is economic: faced with thousands of stocks they could potentially buy, investors
 fall back on the small subset that has captured their attention. This matters directly here. The events that
@@ -103,12 +103,12 @@ and modelling capacity increases, from left to right.}
 \label{fig:sota_anomaly_taxonomy}
 \end{figure}
 
-For financial returns, simple statistical methods --- flagging deviations from a rolling mean and
-standard deviation, that is, a \emph{z}-score --- are attractive precisely because they are transparent
+For financial returns, simple statistical methods (flagging deviations from a rolling mean and
+standard deviation, that is, a \emph{z}-score) are attractive precisely because they are transparent
 and easy to justify, an advantage for an explainable system. They do, however, assume a locally stable
 distribution, an assumption that the rolling estimation window is designed to accommodate. The need for
 that window is itself well understood in financial econometrics: returns exhibit \emph{volatility
-clustering} --- calm and turbulent periods arrive in runs --- formalised by the ARCH model of
+clustering} (calm and turbulent periods arrive in runs), formalised by the ARCH model of
 \textcite{engle1982arch} and its generalisation GARCH \autocite{bollerslev1986garch}, which model
 time-varying variance explicitly. The rolling standard deviation used in this work is, in effect, a
 deliberately simpler, non-parametric estimate of that same time-varying volatility: it adapts to the
@@ -120,11 +120,11 @@ expressive unsupervised detectors relax such assumptions: Isolation Forest \auto
 isolates anomalies through random partitioning, requiring fewer splits to separate an outlier, and
 scales well to large, high-dimensional data. The cost is reduced direct interpretability, since the
 anomaly score is an ensemble property rather than a quantity the user can read off. Density-based
-detectors such as the Local Outlier Factor \autocite{breunig2000lof} take a related route, scoring a
+detectors such as the Local Outlier Factor (LOF) \autocite{breunig2000lof} take a related route, scoring a
 point by how isolated it is relative to the density of its neighbourhood; they capture \emph{local}
 anomalies well but, again, at the expense of a directly readable justification. At the far end of
-the spectrum, the review by \textcite{pang2021deep} surveys deep-learning detectors --- autoencoders,
-deep one-class models and others --- which can capture rich, non-linear structure but are data-hungry
+the spectrum, the review by \textcite{pang2021deep} surveys deep-learning detectors (autoencoders,
+deep one-class models and others) that can capture rich, non-linear structure but are data-hungry
 and largely opaque, and whose advantage is most pronounced in high-dimensional settings such as images
 or complex multivariate streams rather than in a single return series. Within finance specifically, the
 survey of \textcite{ahmed2016financial} notes that detection is dominated by \emph{unsupervised} methods,
@@ -147,7 +147,7 @@ Deep detectors \autocite{pang2021deep} & Learn a model of normality (e.g.\ autoe
 \end{tabular}
 \end{table}
 
-The trade-off this table makes explicit --- capacity against interpretability --- is the one that
+The trade-off this table makes explicit, capacity against interpretability, is the one that
 governs the design choice in Chapter~\ref{chap:methods}. Because the system must \emph{explain} every
 alert to a non-expert, and because the signal is a single, low-dimensional return series rather than a
 high-dimensional stream, the transparent statistical detector is preferred, with the more expressive
@@ -163,8 +163,8 @@ accountability, debugging, regulatory compliance), a taxonomy that separates mod
 \emph{transparent} (interpretable in their own right) from \emph{post-hoc} methods that explain an
 already-trained black box, and the open challenges on the path to responsible AI. The earlier survey of
 \textcite{guidotti2018survey} organises the post-hoc literature specifically by the problem being
-solved --- explaining a whole model, explaining a single outcome, or inspecting the internals ---
-which is a useful lens for situating the techniques most relevant here. Figure~\ref{fig:sota_xai_taxonomy}
+solved (explaining a whole model, explaining a single outcome, or inspecting the internals), which
+is a useful lens for situating the techniques most relevant here. Figure~\ref{fig:sota_xai_taxonomy}
 sketches this division. A recurring caution in the field is that ``interpretability'' is not a single,
 well-defined property: \textcite{lipton2018mythos} argues that the term conflates several distinct
 desiderata (simulatability, decomposability, post-hoc justification) that serve different stakeholders,
@@ -214,7 +214,7 @@ rather than the foundation.
 
 What makes an explanation \emph{good} is, moreover, not purely a technical matter.
 \textcite{miller2019explanation} draws on the social sciences to argue that human explanations are
-contrastive, selective and social --- people want to know why \emph{this} rather than \emph{that}, and
+contrastive, selective and social: people want to know why \emph{this} rather than \emph{that}, and
 expect a few relevant causes, not an exhaustive account. The alerts in this work are designed in that
 spirit: each presents a small set of the most relevant precedents and the specific quantities behind the
 decision, rather than an exhaustive model dump.
@@ -274,7 +274,7 @@ numerically. The literature on financial natural-language processing spans three
 hand-crafted lexicons, learned word embeddings, and contextual neural language models. The survey of
 \textcite{kearney2014textual} provides a useful map of the financial-text literature, organising it by
 information source, content-analysis method and empirical model, and documents the field's steady move
-from dictionaries towards machine-learned representations --- the same trajectory this section follows.
+from dictionaries towards machine-learned representations, the same trajectory this section follows.
 
 The earliest and still-influential approach in finance is the domain dictionary. \textcite{loughran2011liability}
 show that general-purpose sentiment word lists misclassify ordinary financial vocabulary --- words such
@@ -294,7 +294,7 @@ BERT \autocite{devlin2019bert} uses it to produce deeply \emph{contextual} token
 substantially advanced language understanding. Using BERT directly to compare two texts is nonetheless
 expensive, because it processes sentence pairs jointly; Sentence-BERT \autocite{reimers2019sbert}
 resolves this by producing a single fixed-length embedding per sentence that can be compared with a cheap
-cosine similarity --- exactly the property on which precedent retrieval in this work relies. Should the
+cosine similarity, exactly the property on which precedent retrieval in this work relies. Should the
 knowledge base grow to millions of items, this exact search can be replaced by an approximate
 nearest-neighbour index such as those of \textcite{johnson2021faiss} without changing the representation,
 a scalability path noted here and revisited as future work.
@@ -400,7 +400,7 @@ that price-prediction models invite. Conducting such an impact analysis historic
 requires news aligned to prices, which is the contribution of the FNSPID dataset
 \autocite{dong2024fnspid}: financial news time-aligned with daily prices for thousands of companies,
 enabling a news-to-impact knowledge base without bespoke scraping. Its limitations are those of any
-corpus --- coverage and time period --- and are documented in the data card of Chapter~\ref{chap:methods}.
+corpus (coverage and time period) and are documented in the data card of Chapter~\ref{chap:methods}.
 The combination of a semantic retrieval step with an event-study impact measurement over such a corpus
 is the methodological core of this dissertation.
 
@@ -433,7 +433,7 @@ broad categories of tool are widely available today, and each addresses a part o
 targets while leaving a characteristic gap.
 
 The first and most ubiquitous category is the \emph{price alert} offered by virtually every brokerage and
-market-data application. The investor sets a threshold --- a target price, or a percentage move --- and is
+market-data application. The investor sets a threshold (a target price, or a percentage move) and is
 notified when it is crossed. Such alerts are immediate, free and simple, and they map naturally onto the
 attention-driven behaviour documented by \textcite{barber2008glitters}: they fire precisely on the extreme
 moves that capture attention. Their limitation is equally clear. A fixed threshold is not calibrated to
@@ -454,8 +454,8 @@ to concrete \emph{historical precedents} and their measured outcomes, which is t
 proposed here.
 
 The third category is the \emph{robo-advisor}, the most studied retail-fintech tool of the last decade.
-\textcite{dacunto2019robo} show, on real adopters, that automated advice can deliver genuine benefits ---
-improved diversification and reduced behavioural biases such as the disposition effect and trend chasing ---
+\textcite{dacunto2019robo} show, on real adopters, that automated advice can deliver genuine benefits
+(improved diversification and reduced behavioural biases such as the disposition effect and trend chasing),
 and the systematic review of \textcite{cardillo2024robo} confirms a mature and fast-growing literature.
 Robo-advisors, however, operate at a different altitude and with a different philosophy from this work. They
 \emph{act on the investor's behalf}, allocating and rebalancing a portfolio, whereas the system proposed
@@ -481,8 +481,8 @@ Robo-advisor \autocite{dacunto2019robo} & Allocates and rebalances a portfolio &
 \end{table}
 
 The pattern in Table~\ref{tab:sota_tools} is the practical counterpart of the academic gap identified
-throughout this chapter. Each existing tool occupies one corner of the problem --- alerting, news, or
-allocation --- but none combines volatility-aware detection, transparent explanation, and concrete
+throughout this chapter. Each existing tool occupies one corner of the problem (alerting, news, or
+allocation), but none combines volatility-aware detection, transparent explanation, and concrete
 historical evidence in a single tool that informs rather than decides. That combination is the niche this
 work sets out to fill.
 

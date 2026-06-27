@@ -254,3 +254,21 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] **Fase G** — slides de defesa (`slides/`, Beamer 14 frames); compila.
 - [x] **Fase H** — caderno de defesa **visual** (`docs/defence/caderno_de_defesa.md`): workflow em diagramas, exemplos passo-a-passo, mapa dos números validados.
 - [ ] **HUMANO** — confirmar redação ISEP da declaração de IA + data de entrega; leitura final do aluno (§6.6).
+
+---
+
+# Revisão tipo-júri (Sessão 22, 2026-06-27)
+
+> Passagem de revisão orientador/revisor/examinador sobre a tese inteira. **0 fabricação** (nenhuma
+> citação/número alterado). Relatório completo (severidades + scorecard por capítulo) em
+> `.claude/plans/root-prompt-claude-code-md-squishy-yeti.md`.
+
+- [x] **M1** — Cap. 5/CS3: recuperação capta tema, não direção; artefactos nomeados; liga a trust/over-reliance.
+- [x] **M2** — *data card* (Cap. 3) marcado como FNSPID **desenhada** + ponteiro para o corpus real avaliado (Cap. 5).
+- [x] **M3** — travessões `---` 117 → 39 (sentido preservado).
+- [x] **Mo2** — mockup do Telegram consistente (3 precedentes → −2,2%).
+- [x] **Mo4** — Cap. 4 produto responsável (fadiga/over-reliance) + Cap. 6 trabalho futuro.
+- [x] **Mo3** — Apêndice A: versões fixadas + comandos de reprodução; LOF expandido.
+- [x] **Mi1** — fraseado da RQ2.
+- [x] **Validação** — 78 pp, 0 erros/indefinidas/overfull/`??`; 42 testes + ruff; citações 50/50.
+- [ ] **HUMANO** — declaração ISEP de IA + data; leitura final do aluno (§6.6).

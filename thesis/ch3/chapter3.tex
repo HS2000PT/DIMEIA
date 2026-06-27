@@ -17,8 +17,8 @@ Chapter~\ref{chap:casestudies}.
 \label{sec:met_approach}
 
 The work follows an incremental, end-to-end engineering methodology. Rather than building each component
-to completion in isolation, a thin slice of the system was first built and proven end to end --- from
-data acquisition through to a delivered alert --- so that integration risk was identified and controlled
+to completion in isolation, a thin slice of the system was first built and proven end to end (from
+data acquisition through to a delivered alert), so that integration risk was identified and controlled
 early. Each component was then developed in its simplest defensible form and made more sophisticated only
 where the added complexity was justified by a measurable or clearly-argued benefit. This reflects the
 framing of the work as Artificial Intelligence \emph{engineering}: as discussed in
@@ -73,7 +73,7 @@ filtered ingestion described below. Table~\ref{tab:met_datacard} records the dat
 make the historical subset reproducible.
 
 \begin{table}[ht]
-\caption{Data card for the historical layer (FNSPID).}
+\caption{Data card for the \emph{designed} historical layer (FNSPID).}
 \label{tab:met_datacard}
 \centering
 \begin{tabular}{p{0.30\textwidth} p{0.62\textwidth}}
@@ -90,6 +90,12 @@ Prices & Daily closing prices for the same tickers \\
 Governance & Large data not versioned (recreated by script); only small samples committed \\
 \bottomrule
 \end{tabular}
+
+\smallskip
+{\footnotesize\emph{Note:} this card documents the \emph{intended} FNSPID-based historical layer. The
+retrieval study of Chapter~\ref{chap:casestudies} is run on the real recent-news evaluation corpus
+described in Section~\ref{sec:met_data_live} (3{,}714 headlines for the same fifteen tickers, built through
+the identical process); the full multi-year FNSPID build is identified as future work.}
 \end{table}
 
 The fifteen large-capitalisation tickers were chosen to span five economic sectors, which is what makes
@@ -232,8 +238,8 @@ windows ($+1$, $+3$ and $+5$ trading days) in the manner of an event study
 \autocite{fama1969adjustment, brown1985daily}. Both the similarity metric and the impact windows are
 explicit, documented choices and together constitute the methodological contribution. Impact is measured
 strictly after the event, so the evidence characterises an outcome rather than forecasting one.
-Algorithm~\ref{alg:retrieval} sets out the retrieval-and-reuse step --- the case-based-reasoning core of
-Section~\ref{sec:sota_cbr} --- for an incoming headline.
+Algorithm~\ref{alg:retrieval} sets out the retrieval-and-reuse step (the case-based-reasoning core of
+Section~\ref{sec:sota_cbr}) for an incoming headline.
 
 \begin{algorithm}[ht]
 \caption{Precedent retrieval and impact reporting (news trigger).}
@@ -379,8 +385,8 @@ The system is built on the open-source scientific-Python ecosystem, using mature
 freely available libraries for numerical computing, market-data access, sentence embeddings and figure
 generation. This choice is consistent with the project's constraint of using only free resources and with
 its emphasis on reproducibility: pinned dependencies and fixed random seeds mean the environment and the
-results can be recreated on another machine. The concrete engineering --- the environment, the
-organisation of the code by component, and the automated tests --- is documented at the appropriate level
+results can be recreated on another machine. The concrete engineering (the environment, the
+organisation of the code by component, and the automated tests) is documented at the appropriate level
 in Appendix~\ref{app:reproducibility}, deliberately kept out of the main text so that this chapter
 remains a description of \emph{methods} rather than of software.
 
@@ -413,7 +419,7 @@ Chapter~\ref{chap:casestudies}; what follows is the protocol they obey.
 \label{sec:met_eval_retrieval}
 
 The correlation engine is evaluated as an information-retrieval task (Section~\ref{sec:sota_ir}), using
-precision@$k$ --- the share of the top $k$ retrieved precedents that are relevant. Writing $Q$ for the set
+precision@$k$, the share of the top $k$ retrieved precedents that are relevant. Writing $Q$ for the set
 of query headlines and $R_k(q)$ for the top $k$ items returned for query $q$,
 \begin{equation}
 \text{precision@}k = \frac{1}{|Q|}\sum_{q\in Q}\frac{1}{k}\sum_{d\in R_k(q)} \mathrm{rel}(q,d),
@@ -453,7 +459,7 @@ semantic retrieval, not of one specific model.
 The anomaly detector is judged primarily by an argument that needs \emph{no label}: a good universal
 detector should fire at a comparable rate across instruments of very different volatility, whereas a
 volatility-blind rule cannot. Consistency is therefore measured as the range (maximum minus minimum) of
-per-ticker firing rates --- the smaller the range, the more uniform the detector. Only secondarily is the
+per-ticker firing rates: the smaller the range, the more uniform the detector. Only secondarily is the
 detector scored against an explicit \emph{extreme-move} proxy (a daily move at or beyond the $99$th
 percentile of that ticker's own returns), via precision, recall and $F_1$; because this proxy is itself
 volatility-relative, it is treated as supporting rather than primary evidence. An ablation over the

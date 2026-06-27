@@ -591,3 +591,34 @@ chaves de APIs, política ISEP de uso de IA.
 
 **Próxima ação:** pausar no gate da Fase 0 e confirmar com o aluno antes de iniciar a Fase A (análise de
 referência + template).
+
+## Sessão 22 — 2026-06-27 — Revisão tipo-júri da tese inteira + correções genuínas
+**Objetivo:** atuar como orientador/revisor/editor/examinador, ler a tese do início ao fim, questionar tudo,
+encontrar fraquezas (com severidade) e **implementar melhorias genuínas** — sem encher, sem soar a IA/PhD,
+**0 fabricação** (nenhuma citação/número alterado).
+
+**Feito (correções, por severidade):**
+- **M1 (Major).** Cap. 5 (CS3): novo parágrafo honesto — a recuperação semântica capta *tema*, não *direção*,
+  por isso um título positivo recupera um *cluster* de ameaça competitiva com impacto médio negativo (−1,97%);
+  a média é evidência sobre um tema, não previsão (precedentes mostrados um a um + disclaimer). Artefactos do
+  corpus recente nomeados (mesma data de recolha; ticker duplicado partilha impacto). Liga a `lee2004trust`/`bansal2021whole`.
+- **M2 (Major, transparência).** *Data card* (Cap. 3) anotado como camada FNSPID **desenhada**, com nota a
+  apontar para o corpus real avaliado (3 714 títulos recentes) usado no Cap. 5; cláusula correspondente no Cap. 5.
+- **M3 (Major, leitura).** Travessões `---` reduzidos de **117 → 39** (Cap. 2 48→23, Cap. 3 14→6, Cap. 4 18→2,
+  Cap. 5 26→2, Cap. 6 9→4), preservando sentido (vírgulas/parênteses/dois-pontos; cabeçalhos `\paragraph` com `:`).
+- **Mo2.** Mockup do Telegram (Cap. 4) internamente consistente (3 precedentes mostrados → média −2,2%; datas-artefacto removidas).
+- **Mo4.** Cap. 4: parágrafo de produto responsável (fadiga de alertas; over-reliance; ranking por severidade,
+  de-dup de precedentes, sinalizar discordância de direção) + linha de trabalho futuro no Cap. 6.
+- **Mo3.** Apêndice A: tabela de versões fixadas (do `requirements.lock.txt`) + 3 comandos exatos de reprodução; LOF expandido no Cap. 2.
+- **Mi1.** Fraseado da RQ2 (Cap. 1): baselines aplicam-se à recuperação, não à medição de impacto.
+- Comentário desatualizado em `main.tex` corrigido (42→50 refs).
+
+**Validação:** compila **78 pp**, 0 erros, 0 citações indefinidas, 0 overfull >15pt, 0 `??`; **42 testes + ruff verdes**;
+integridade de citações **50/50** (0 órfãs, 0 indefinidas, 0 novas chaves). Código intocado.
+
+**Entregável:** relatório de revisão completo (severidades + scorecard por capítulo + avaliação global) em
+`.claude/plans/root-prompt-claude-code-md-squishy-yeti.md`.
+
+**A precisar do aluno (humano):** confirmar redação ISEP da declaração de IA + data; leitura final do aluno (§6.6).
+
+**Próxima ação:** nenhuma autónoma pendente — à espera de input humano (declaração ISEP) ou de nova direção.

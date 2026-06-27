@@ -19,8 +19,10 @@ Two real datasets are used. For the anomaly trigger, daily closing prices for th
 large-capitalisation tickers listed in the data card were retrieved from a free market-data service
 over a fixed three-year window (June~2023 to June~2026), yielding $750$ daily log-returns per ticker. For the correlation engine,
 $3{,}714$ real financial-news headlines for the same tickers were collected through a free company-news
-service --- the most recent months available on the free tier --- spanning five sectors (technology,
-banking, energy, health and consumer staples). News headlines and prices are normalised to a common
+service (the most recent months available on the free tier), spanning five sectors (technology,
+banking, energy, health and consumer staples). This is the evaluation corpus actually used here, distinct
+from the designed FNSPID layer documented in the data card of Chapter~\ref{chap:methods}.
+News headlines and prices are normalised to a common
 schema so that the live and historical layers are directly comparable. This recent window of a few months
 is enough for the retrieval experiment; a full impact analysis still needs the multi-year FNSPID corpus,
 left as future work. The no-lookahead, reproducibility and honesty guarantees of
@@ -87,7 +89,7 @@ move size.}
 \end{figure}
 
 To make this concrete, consider the single largest surprise in the window. On 24~October~2024, following
-its quarterly earnings, Tesla's daily log-return was $+0.198$ --- a price move of about $+22\%$. Measured
+its quarterly earnings, Tesla's daily log-return was $+0.198$, a price move of about $+22\%$. Measured
 against the preceding twenty days, whose mean log-return was $-0.92\%$ and standard deviation $2.73\%$,
 this is a $z$-score of $+7.6$, far beyond the threshold $k=3$ (Table~\ref{tab:cs_zscore_real}). The same
 rule that leaves an ordinary two-percent wobble unflagged identifies this earnings reaction at once, and
@@ -119,7 +121,7 @@ fixed rule catches almost every large raw move but at very low precision. A wind
 (Figure~\ref{fig:cs_ablation}) shows $F_1$ rising with the estimation window ($0.385$, $0.516$ and
 $0.678$ for $10$, $20$ and $60$ days), indicating that a longer volatility estimate yields a steadier
 baseline before it begins to saturate. This label is itself volatility-relative, so some circularity is
-unavoidable; that is precisely why the firing-rate consistency above --- which depends on no label ---
+unavoidable; that is precisely why the firing-rate consistency above, which depends on no label,
 is treated as the primary evidence.
 
 \begin{figure}[ht]
@@ -143,8 +145,8 @@ sector is an automatic stand-in for relevance, so the metric shows whether retri
 related, not whether a person would judge it a useful precedent. That gap is real, and a human relevance
 study is left as future work; the proxy's merit is that it is objective and reproducible, which is what a
 first evaluation needs. To check that the result is not tied to one model,
-\emph{two} Sentence-BERT models \autocite{reimers2019sbert} --- the lightweight default, MiniLM, and the
-larger MPNet --- are compared against a lexical (hashing) baseline and two trivial baselines: random
+\emph{two} Sentence-BERT models \autocite{reimers2019sbert} (the lightweight default, MiniLM, and the
+larger MPNet) are compared against a lexical (hashing) baseline and two trivial baselines: random
 retrieval (the sector base rate) and recency. To guard against sampling artefacts, five hundred queries
 were sampled in each of five independent runs (seeds $42$--$46$); Table~\ref{tab:cs_retrieval} reports
 the mean and standard deviation.
@@ -168,7 +170,7 @@ Random (base rate) & $0.240 \pm 0.004$ & $0.240 \pm 0.004$ \\
 \end{table}
 
 As Table~\ref{tab:cs_retrieval} and Figure~\ref{fig:cs_retrieval} show, the default MiniLM model reaches
-a precision@$5$ of $0.514$ --- about $2.1$ times the random base rate ($0.240$) and well above the
+a precision@$5$ of $0.514$, about $2.1$ times the random base rate ($0.240$) and well above the
 lexical baseline ($0.346$). The stronger MPNet model does slightly better ($0.538$), which suggests the
 advantage belongs to semantic embeddings in general rather than to one particular model; the small
 standard deviations (around $0.01$) show the gap is robust rather than a sampling artefact. Recency
@@ -189,8 +191,8 @@ over the five runs.}
 For each retrieved precedent the engine reports the observed post-event return at $+1$, $+3$ and $+5$
 trading days, measured from the event-day close in the style of an event study \autocite{brown1985daily}.
 These figures are observed outcomes presented as evidence, never a prediction. On the worked knowledge
-base the measured impacts are directionally coherent --- for example, the competitive-threat news cluster
-in the end-to-end case study below is followed by uniformly negative one-day returns --- which provides
+base the measured impacts are directionally coherent (for example, the competitive-threat news cluster
+in the end-to-end case study below is followed by uniformly negative one-day returns), which provides
 face validity for the measurement; a rigorous multi-year impact study on the full FNSPID corpus is
 identified as future work.
 
@@ -201,8 +203,8 @@ of each sector as queries (so the figures are exact rather than sampled). Two re
 precision@$5$ is highest for technology ($0.712$), but largely because technology dominates the corpus
 ($47\%$ of headlines) and therefore has a high random base rate ($0.429$); the fair cross-sector measure
 is the \emph{lift} over that base rate. By that measure the engine adds the most value in
-\textbf{energy} ($+0.377$) and \textbf{health} ($+0.348$) --- sectors whose vocabulary is distinctive
-(production, output, barrels; trial, drug, approval) --- and the least in \textbf{consumer} ($+0.100$),
+\textbf{energy} ($+0.377$) and \textbf{health} ($+0.348$), sectors whose vocabulary is distinctive
+(production, output, barrels; trial, drug, approval), and the least in \textbf{consumer} ($+0.100$),
 whose headlines are more generic and thematically overlap with other sectors. Retrieval is positive in
 every sector, but its benefit is greatest where the domain language is most specific.
 
@@ -277,18 +279,39 @@ Every retrieved precedent concerns AI data-centre chips and competition for NVID
 articles were filed under different company feeds (Microsoft, Meta, Alphabet and NVIDIA itself). Unlike
 the retrieval metric of Section~\ref{sec:cs_retrieval}, the live alert does not exclude the query's own
 ticker: that exclusion exists only to keep the evaluation non-trivial, whereas a real user is well served
-by the most similar precedents, whichever company they concern. Strikingly, the same story --- a rival entering the AI data-centre chip market --- surfaces across three
-different company feeds, which the engine correctly groups as one theme. This is direct evidence that
-retrieval is driven by \emph{meaning} rather than the company name or exact keywords --- the very
+by the most similar precedents, whichever company they concern. Strikingly, the same story (a rival
+entering the AI data-centre chip market) surfaces across three different company feeds, which the engine
+correctly groups as one theme. This is direct evidence that
+retrieval is driven by \emph{meaning} rather than the company name or exact keywords, the very
 behaviour the correlation engine is designed for. In this instance the precedents happen to be uniformly
 negative (a competitive-threat cluster), and their average is reported as an observed past outcome, not a
 prediction. The alert ends with an explicit disclaimer, keeping the system within its no-forecasting
 scope.
 
+\paragraph{What the retrieval does and does not capture.}
+This example also exposes an honest limitation. The query headline reads as positive (guidance raised),
+yet the precedents it retrieves form a competitive-threat cluster whose one-day outcomes are uniformly
+negative. There is no contradiction once the mechanism is clear: sentence-embedding similarity matches on
+\emph{theme}, here ``AI data-centre chips'', and not on sentiment or expected direction. The mean impact
+the alert reports is therefore evidence about how a theme has tended to move, not a directional forecast
+for this particular item, which is exactly why the alert always lists the individual precedents and closes
+with a no-prediction disclaimer rather than leaning on a single averaged number. Treating that average as a
+prediction would be the over-reliance that the trust literature warns against
+\autocite{lee2004trust, bansal2021whole}, and the design guards against it by showing the evidence rather
+than issuing a verdict. Two cosmetic artefacts of the shallow recent corpus are also visible and worth
+naming plainly: the precedents share a single retrieval date, because the free news tier returns only a
+recent window and there is little genuine history to draw on, and the same ticker can appear twice with an
+identical impact, because same-ticker precedents aligned to the same event day necessarily share their
+forward return. Both follow from corpus depth, not from the method, and both disappear once the full
+multi-year knowledge base is built. For the same reason, the positive mean impact obtained for a similar
+Nvidia query on the bundled sample base in Section~\ref{sec:met_correlation} ($+6.5\%$ at five days) and
+the negative mean here ($-1.97\%$ at one day) are not in tension: they use different knowledge bases,
+horizons and encoders, and neither is a forecast.
+
 \paragraph{Explanation faithfulness.}
 Faithfulness is guaranteed by construction: the alert text is rendered directly from the same objects
-the system computes --- the $z$-score, window and threshold for the anomaly path, and the exact retrieved
-precedents with their similarity scores and measured impacts for the news path --- so the explanation
+the system computes (the $z$-score, window and threshold for the anomaly path, and the exact retrieved
+precedents with their similarity scores and measured impacts for the news path), so the explanation
 cannot diverge from the underlying computation. This is checked programmatically by an automated test
 that asserts the rendered alert reproduces exactly each retrieved precedent's date, ticker and
 similarity score and introduces none that were not retrieved; it is the kind of transparent, design-time
@@ -308,31 +331,31 @@ computation. All results rest on real data and are reproducible from versioned s
 The results also have clear limits, which are set out below under the four standard categories of
 validity so that nothing is glossed over.
 
-\paragraph{Construct validity --- do the metrics measure what is claimed?} Two proxies carry weight here.
+\paragraph{Construct validity: do the metrics measure what is claimed?} Two proxies carry weight here.
 Retrieval relevance is judged by a \emph{sector} label, an automatic stand-in for the human judgement of
 ``analogous'', so a same-sector precedent on an unrelated topic counts as a hit; the qualitative inspection
 in Section~\ref{sec:cs_retrieval} shows this proxy is reasonable but imperfect. Likewise, the anomaly
-``extreme move'' label is volatility-relative, so it is not an independent ground truth --- which is
+``extreme move'' label is volatility-relative, so it is not an independent ground truth, which is
 precisely why the primary anomaly argument is the label-free \emph{firing-rate consistency}, not agreement
 with that label. Finally, the event-study figure measures the price change that \emph{followed} a news
 item, which is an outcome, not a causal effect of the news; it is reported as evidence, never as a forecast.
 
-\paragraph{Internal validity --- could something else explain the effect?} The retrieval advantage might,
+\paragraph{Internal validity: could something else explain the effect?} The retrieval advantage might,
 in principle, be inflated by trivially matching a company's news to its own past news; this is removed by
 construction, because the evaluation forbids same-ticker precedents and measures \emph{cross-ticker}
 precision only. Lookahead is excluded throughout: every quantity uses information available at the time,
 and impacts are accumulated strictly forward from the event-day close. The main residual threat is
-confounding --- a price move in a post-event window may be driven by market-wide factors rather than the
-news --- which the short windows ($+1$, $+3$, $+5$ days) limit but do not eliminate, and which the
+confounding (a price move in a post-event window may be driven by market-wide factors rather than the
+news), which the short windows ($+1$, $+3$, $+5$ days) limit but do not eliminate, and which the
 no-causation framing acknowledges openly.
 
-\paragraph{External validity --- how far do the findings generalise?} The study covers fifteen
+\paragraph{External validity: how far do the findings generalise?} The study covers fifteen
 large-capitalisation US tickers across five sectors over a recent window, so the numbers need not transfer
 to small-capitalisation stocks, to other markets, or to other periods, and news coverage is thinner outside
 large caps. The corpus is a recent window from a free service rather than the multi-year FNSPID history;
 the full corpus is identified as the natural way to broaden this scope.
 
-\paragraph{Statistical-conclusion validity --- are the comparisons sound?} The retrieval results are
+\paragraph{Statistical-conclusion validity: are the comparisons sound?} The retrieval results are
 averaged over five random samples with standard deviations reported (the error bars in
 Figure~\ref{fig:cs_retrieval}), and the gap between semantic retrieval and every baseline is large
 relative to that spread; still, five runs on one corpus is a modest sample, and no formal significance

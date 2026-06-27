@@ -15,7 +15,7 @@ states the limitations and the directions they open.
 The work is best summarised by returning to the three research questions of
 Chapter~\ref{chap:introduction}.
 
-\paragraph{RQ1 --- transparent detection of abrupt movements.}
+\paragraph{RQ1: transparent detection of abrupt movements.}
 The answer is yes. A rolling \emph{z}-score detector flags abnormal returns and, more importantly, does
 so at a steady rate \emph{across stocks of very different volatility}, where a fixed-percentage threshold
 cannot. As reported in
@@ -24,7 +24,7 @@ Chapter~\ref{chap:casestudies}, the firing rate varied by only $0.015$ across th
 against an extreme-move proxy, more than double the baseline. The method is simple enough that every
 alert can be explained to the investor.
 
-\paragraph{RQ2 --- analogous precedents without lookahead.}
+\paragraph{RQ2: analogous precedents without lookahead.}
 The answer is affirmative for retrieval. Semantic retrieval with Sentence-BERT recovered markedly more
 sector-analogous precedents than every trivial alternative --- a cross-ticker precision@$5$ of
 $0.514 \pm 0.015$ (over five runs) against $0.346$ for a lexical baseline, $0.240$ for random and $0.126$
@@ -34,7 +34,7 @@ different company feeds. Impact is measured strictly after the event, in the sty
 no future information leaks into the evidence. The measurement machinery is in place and behaves
 coherently; a large-scale, multi-year validation of impact magnitudes remains for future work.
 
-\paragraph{RQ3 --- faithful and useful explanations.}
+\paragraph{RQ3: faithful and useful explanations.}
 Faithfulness is achieved: because each alert is rendered directly from the same objects the system
 computes (the \emph{z}-score and its parameters, or the retrieved precedents with their scores and
 measured impacts), the explanation cannot diverge from the underlying logic, and every alert closes with
@@ -45,8 +45,8 @@ result.
 \section{Research Questions and Objectives Achieved}
 \label{sec:concl_objectives}
 
-The general objective --- to design, implement and evaluate an explainable, reproducible alerting system
-driven by two triggers --- was met: CLARION is a working system whose two triggers were proven end to
+The general objective, to design, implement and evaluate an explainable, reproducible alerting system
+driven by two triggers, was met: CLARION is a working system whose two triggers were proven end to
 end and whose two core components were evaluated on real data. The supporting objectives were also met:
 a thin end-to-end slice was delivered first; each component was kept in its simplest defensible form; the
 evaluation followed a design fixed in advance; and the whole system is reproducible from versioned
@@ -75,8 +75,10 @@ rather than the multi-year FNSPID history, which bounds the impact analysis and 
 figures, though real, preliminary. The relevance proxy is sector agreement, an automatic
 stand-in for human judgement, and the anomaly proxy label is volatility-relative (hence the label-free
 firing-rate argument is given primacy). News is represented by short headlines only, which limits the
-semantics that can be captured. The retrieval result is averaged over five runs, but no human usefulness
-study has yet been conducted. Finally, and by design, the system performs no price prediction or trading,
+semantics that can be captured. Because embedding similarity captures theme rather than direction, a
+retrieved cluster can mix positive and negative outcomes, so the mean impact is evidence about a theme
+and not a directional signal, which is why the individual precedents are always shown alongside it. The
+retrieval result is averaged over five runs, but no human usefulness study has yet been conducted. Finally, and by design, the system performs no price prediction or trading,
 so profit-based questions are out of scope rather than unanswered.
 
 \section{Future Work}
@@ -88,6 +90,9 @@ analysis with dispersion and direction-consistency statistics. A small human stu
 clarity--completeness--actionability rubric to a set of alerts, would address the open question of
 usefulness (RQ3). The retrieval could be strengthened by embedding full article bodies rather than
 headlines and by comparing further embedding models, and the explanation could be optionally enriched
-with financial sentiment or feature attribution where it adds value. Together these would turn a sound
+with financial sentiment or feature attribution where it adds value. As a product, the system would also
+rank alerts by severity and rate-limit the least important, de-duplicate near-identical precedents, and
+flag directional disagreement within a retrieved cluster, addressing the alert-fatigue and over-reliance
+risks discussed in Chapter~\ref{chap:clarion} head on. Together these would turn a sound
 prototype into a more thoroughly validated system, without giving up the simplicity and transparency that
 make it defensible in the first place.
