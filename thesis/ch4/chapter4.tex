@@ -25,9 +25,9 @@ connected by a common data schema so that the live and historical layers are dir
 
 The system is driven by the two triggers and converges on a single explanation step before delivery.
 Figure~\ref{fig:architecture} shows the components and the flow of data between them. The live layer
-supplies real-time prices and news; the historical knowledge base supplies the precedents; the anomaly
-detector and the correlation engine produce the evidence; the explanation engine assembles a traceable
-account; and the delivery component sends the alert to the investor.
+supplies real-time prices and news, and the historical knowledge base supplies the precedents. The
+anomaly detector and the correlation engine turn these into evidence, the explanation engine assembles a
+traceable account, and the delivery component sends the alert to the investor.
 
 \begin{figure}[ht]
 \centering
@@ -229,9 +229,9 @@ base is consulted but never decides: the reasoning stays in the open.
   \draw[msg] (8.8,-4.9) -- ++(1.7,0) node[right, font=\tiny]{alert $\to$ investor};
 \end{tikzpicture}
 \caption[Sequence of the news trigger]{The news trigger as an interaction over time. Solid arrows are
-calls, dashed arrows are returns; time runs downward. The correlation engine orchestrates the work ---
-embedding the headline, consulting the knowledge base, and assembling the retrieved precedents and their
-measured impact --- before the explanation engine renders and delivers the alert. This complements the
+calls, dashed arrows are returns; time runs downward. The correlation engine orchestrates the work: it
+embeds the headline, consults the knowledge base, and assembles the retrieved precedents and their
+measured impact, before the explanation engine renders and delivers the alert. This complements the
 data-flow view of Figure~\ref{fig:news_flow}.}
 \label{fig:news_sequence}
 \end{figure}
@@ -301,7 +301,7 @@ explanation engine for delivery, but only when the absolute $z$-score exceeds th
   \draw[msg] (8.1,-3.7) -- ++(1.7,0) node[right, font=\tiny]{alert $\to$ investor};
 \end{tikzpicture}
 \caption[Sequence of the market trigger]{The market-movement trigger as an interaction over time. Solid
-arrows are calls, dashed arrows returns; time runs downward. The detector standardises the latest return
+arrows are calls, dashed arrows are returns; time runs downward. The detector standardises the latest return
 against its rolling window and forwards the move (with the $z$-score, window, threshold, mean and
 standard deviation) to the explanation engine only when the threshold is exceeded. This complements the
 data-flow view of Figure~\ref{fig:market_flow}.}
@@ -373,16 +373,16 @@ points already encapsulate everything such a scheduler would call.
 
 Running the system needs three things, all free: a market-data source for prices, a company-news or RSS
 source for headlines (an API key, kept out of version control), and the historical knowledge base, built
-once from the corpus. Appendix~\ref{app:reproducibility} gives the exact steps. A real alert was
-delivered to a Telegram account during testing, so the path from raw data to the investor's phone is
-proven end to end, not just designed.
+once from the corpus. Appendix~\ref{app:reproducibility} gives the exact steps. The real alert delivered
+during testing shows that the path from raw data to the investor's phone works end to end, not just on
+paper.
 
 Two practical limits are worth stating plainly. First, the free news tier returns only a recent window,
 so the knowledge base is shallower than the multi-year build it is designed for; this affects coverage,
 not the method. Second, CLARION is a decision-support prototype rather than a production service: it has
 no user accounts, no persistence beyond the knowledge-base file, and no automatic recovery from a
 provider outage. None of these is a research limitation; each is a known, ordinary step on the road from
-prototype to product, and is recorded here for honesty rather than hidden.
+prototype to product, and is recorded here openly rather than hidden.
 
 Beyond these engineering gaps, an alerting tool aimed at non-experts raises two responsible-design
 questions that the prototype surfaces rather than solves. The first is alert fatigue: a tool that fires

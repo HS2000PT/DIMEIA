@@ -92,3 +92,28 @@ a tabela do z-score, a tabela de recuperação e respetiva nota, todas as figura
 
 **Verificação:** compila 78 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
 **Resultado:** mesma técnica e rigor; a prosa de ligação ficou mais simples e direta.
+
+---
+
+## Capítulo 4 — CLARION
+
+**Estado inicial:** capítulo de desenho do sistema, com 7 figuras (arquitetura, fluxo end-to-end, fluxo e
+sequência de cada gatilho, mockup do Telegram). Passagem de prosa + legendas; **lógica dos diagramas
+intocada**.
+
+**Problemas encontrados e correções:**
+1. *Travessões conectores.* Par numa legenda (sequência da notícia) → dois-pontos + vírgula (ch4: prosa
+   **0**; o mockup mantém `\textemdash` como separador de UI, que é correto).
+2. *Enumeração mecânica.* A frase com cadeia de 5 pontos-e-vírgula na introdução da arquitetura partida em
+   duas frases mais naturais.
+3. *Repetição.* "A real alert was delivered to a Telegram account during testing" aparecia em duas secções;
+   a segunda foi reescrita para referir o mesmo facto sem repetir ("works end to end, not just on paper").
+4. *Pequenas asperezas.* Legenda da sequência do gatilho de mercado: "dashed arrows returns" → "dashed
+   arrows are returns" (paralelismo); "recorded here for honesty rather than hidden" → "recorded here
+   openly rather than hidden".
+
+**Não alterado (de propósito):** todos os diagramas TikZ e a sua lógica, a tabela de decisões, o mockup do
+Telegram (números já consistentes), e a cláusula de linguagem simples do motor de explicação.
+
+**Verificação:** compila 78 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
+**Resultado:** prosa e legendas mais limpas; o desenho do sistema lê-se de forma mais fluida.
