@@ -17,17 +17,23 @@ sources → historical precedents. No price prediction, no algorithmic trading, 
   price impact; new news is matched to similar past news to provide explanatory evidence.
 
 ## Project status
-**Working draft complete.** Both triggers are implemented and proven end to end (anomaly detection →
-explanation → Telegram; news → SBERT retrieval of precedents → explanation), with 41 automated tests.
-The two core components are evaluated on **real data** (see `docs/evaluation/evaluation_results.md` and
-`docs/evaluation/evaluation_anomaly.md`), and the seven-chapter dissertation is drafted and compiles
-(`thesis/main.pdf`). The full multi-year FNSPID knowledge base is the main remaining item (a long
-download job; the streaming pipeline is implemented and verified). See `CLAUDE.md` for the exact
-current state and `progress/SESSIONS.md` for the per-session history.
+**Validated and submission-ready (pending human sign-off).** Both triggers are implemented and proven end
+to end (anomaly detection → explanation → Telegram; news → SBERT retrieval of precedents → explanation),
+with **42 automated tests** + lint green. The two core components are evaluated on **real data**; the
+statistics were **independently re-run** and reproduce the thesis figures exactly. The **six-chapter
+dissertation** compiles cleanly (`thesis/main.pdf`, ~76 pp, 0 errors), with **50 references each verified
+by DOI/arXiv/ISBN or primary source** (audit in `docs/decisions/page_audit.md`). An **IEEE paper**
+(`paper/`) and **defence slides** (`slides/`) are drafted and compile, and a PT-PT **visual defence guide**
+is in `docs/defence/caderno_de_defesa.md`. Remaining items are human-only: confirm the exact ISEP AI-use
+declaration wording + submission date, and the author's final read. The full multi-year FNSPID knowledge
+base is optional future work (a long download; the streaming pipeline is implemented and verified). See
+`CLAUDE.md` for the exact state and `progress/SESSIONS.md` for per-session history.
 
 ## Repository layout
 ```
 thesis/        LaTeX dissertation (6 chapters + front matter + appendix)
+paper/         IEEE paper (IEEEtran) distilled from the validated thesis
+slides/        defence slides (Beamer, 14 frames)
 src/           system code, one package per component
 scripts/       data, figures, build/verify/session automation
 tests/         automated tests
@@ -57,12 +63,19 @@ python scripts/fetch_finnhub_news.py                         # needs FINNHUB_API
 python scripts/evaluate.py --news data/finnhub_news.csv \
     --sbert-models all-MiniLM-L6-v2 all-mpnet-base-v2
 
-# Anomaly detector (Question 1): real prices → docs/evaluation/evaluation_anomaly.md + figure
-python scripts/evaluate_anomaly.py --period 3y
+# Per-sector retrieval breakdown → docs/evaluation/evaluation_per_sector.md + figure
+python scripts/evaluate_per_sector.py --news data/finnhub_news.csv
 
-# Build the dissertation PDF (also built in CI)
-bash scripts/build_pdf.sh
+# Anomaly detector (Question 1): real prices, pinned window → docs/evaluation/evaluation_anomaly.md + figure
+python scripts/evaluate_anomaly.py
+
+# Build the dissertation, the IEEE paper, and the slides
+bash scripts/build_pdf.sh            # thesis/main.pdf (also built in CI)
+cd paper && latexmk -pdf main.tex    # paper/main.pdf
+cd slides && latexmk -pdf main.tex   # slides/main.pdf
 ```
+Re-running these reproduces the thesis numbers exactly (validated 2026-06-27; see
+`docs/decisions/implementation_review.md`).
 The full multi-year FNSPID knowledge base (a ~23 GB streaming scan, see `docs/design/data_card.md`) is built by
 `scripts/download_data.py` followed by `scripts/build_kb.py --sbert`; this is a long, deliberate job.
 
