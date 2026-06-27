@@ -66,8 +66,8 @@ news into the same fields, so a current event can be compared directly against t
 \label{sec:met_data_fnspid}
 
 The intended primary source for the historical layer is the FNSPID dataset \autocite{dong2024fnspid},
-which provides financial news time-aligned with daily prices for thousands of US companies --- precisely
-the alignment required to relate news to subsequent price impact without bespoke scraping. The dataset's
+which provides financial news time-aligned with daily prices for thousands of US companies. That alignment
+is exactly what is needed to relate news to subsequent price impact without custom scraping. The dataset's
 news component is large (on the order of tens of gigabytes), which directly motivates the streaming,
 filtered ingestion described below. Table~\ref{tab:met_datacard} records the data card: the choices that
 make the historical subset reproducible.
@@ -380,7 +380,7 @@ impact, shown as direct evidence; and, optionally, feature attribution over the 
 \autocite{lundberg2017shap}. Financial sentiment from a domain language model \autocite{araci2019finbert}
 is an optional enrichment that is included only if it adds defensible value. Because each alert is
 rendered directly from these computed objects, the explanation is faithful to the system's actual logic by
-construction --- a property assessed explicitly in Chapter~\ref{chap:casestudies}.
+construction, a property assessed explicitly in Chapter~\ref{chap:casestudies}.
 
 \section{Tools and Frameworks}
 \label{sec:met_tools}
@@ -408,8 +408,8 @@ stewardship:} all sources are used within their free tiers and licences, the FNS
 as its Creative Commons licence requires \autocite{dong2024fnspid}, third-party news text is not
 republished, and no personal data is processed. \textbf{Security:} credentials are never stored in
 versioned files. Finally, the system is positioned as a decision-support aid for a non-professional
-investor, not as a substitute for professional advice --- a limitation stated plainly rather than
-obscured.
+investor, not as a substitute for professional advice, a limitation stated plainly rather than
+hidden.
 
 \section{Evaluation Methodology}
 \label{sec:met_evaluation}
@@ -436,7 +436,7 @@ belongs to the same economic sector as the query's. This is an automatic proxy f
 ``analogous'', adopted because no labelled relevance set exists; its limits are stated openly with the
 results. Two design choices make the metric demanding rather than flattering. First, a strict
 \emph{cross-ticker} constraint removes from the candidate pool every precedent that shares the query's
-ticker, so the system cannot score by trivially matching a company to its own past news --- it must
+ticker, so the system cannot score by trivially matching a company to its own past news. It must
 generalise \emph{across} companies within a sector. Second, $k$ is kept small (the headline figure uses
 $k=5$), reflecting that an alert can show only a handful of precedents, so the test is whether the very
 top results are relevant.
@@ -473,9 +473,9 @@ parameter.
 \subsection{Explanation, scope, and rigour guarantees}
 \label{sec:met_eval_rigour}
 
-The explanation engine is assessed for \emph{fidelity} --- whether the alert text reflects the system's
-actual computation, which holds by construction because each alert is rendered directly from the computed
-objects --- while its \emph{usefulness} to a real investor is acknowledged as requiring a human study not
+The explanation engine is assessed for \emph{fidelity}: whether the alert text reflects the system's
+actual computation. This holds by construction, because each alert is rendered directly from the computed
+objects. Its \emph{usefulness} to a real investor is a separate matter, which would need a human study not
 yet conducted, and is reported as a limitation rather than a claim. Because the system performs neither
 price prediction nor trading, profit-based metrics are out of scope by design, not omitted by convenience.
 Underpinning every experiment are three guarantees. First, \textbf{no lookahead}: any feature computed at

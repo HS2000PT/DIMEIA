@@ -70,3 +70,25 @@ compostos com en-dash ("capacity--interpretability", "news--market", "word--word
 
 **Verificação:** compila 78 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
 **Resultado:** mesmo rigor e mesma literatura, leitura bastante mais leve e humana.
+
+---
+
+## Capítulo 3 — Methods and Materials
+
+**Estado inicial:** capítulo técnico (3 equações, 3 algoritmos, data card, exemplos trabalhados). Passagem
+**deliberadamente leve e cuidadosa**: só prosa à volta; **nada** de equações, pseudocódigo, valores de
+tabela ou números tocado.
+
+**Problemas encontrados e correções:**
+1. *Travessões conectores.* Os 5 em prosa convertidos para vírgula, dois-pontos, ponto ou parênteses
+   (ch3: **5 → 0**). Inclui partir uma frase longa do protocolo cross-ticker em duas.
+2. *Frase longa (fidelidade).* O parágrafo sobre fidelidade/utilidade, antes uma única frase com par de
+   travessões, foi partido em três frases curtas e claras.
+3. *Palavras desnecessariamente sofisticadas.* "bespoke scraping" → "custom scraping"; "stated plainly
+   rather than obscured" → "rather than hidden".
+
+**Não alterado (de propósito):** equações (\ref{eq:zscore}, \ref{eq:precatk}), os 3 algoritmos, a data card,
+a tabela do z-score, a tabela de recuperação e respetiva nota, todas as figuras, e todos os números.
+
+**Verificação:** compila 78 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
+**Resultado:** mesma técnica e rigor; a prosa de ligação ficou mais simples e direta.
