@@ -189,3 +189,24 @@ está bom.
 "—" da lista de símbolos (grandezas adimensionais = sem unidade), ambos usos corretos.
 
 **Verificação:** compila 78 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
+
+---
+
+## Gate final — coerência global + artefactos
+
+**Coerência global (tese):** verificado de ponta a ponta —
+- **0 espaços duplos** e **0 artefactos** de pontuação introduzidos pelas conversões (vírgulas/parênteses).
+- **Terminologia consistente:** "Sentence-BERT" (14×, sempre capitalizado), "cross-ticker" sempre
+  hifenizado, "precision@$k$", "no-lookahead" (adjetivo) vs "no lookahead" (rótulo) usados corretamente.
+- **Referências cruzadas:** 0 indefinidas, 0 `??` (build limpo).
+- **Travessões conectores em prosa: 117 → 1** (1 célula de tabela "não-aplicável" no Cap. 2).
+- Abstract EN: **192 palavras** (≤ 200).
+
+**Artefactos derivados:** o copy-edit mudou só a prosa da tese; o `paper/` (IEEE, 3 pp) e os `slides/`
+(14 pp) **compilam sem erros** e continuam **factualmente alinhados** (mesmos números e a mesma mensagem
+"tema, não direção", já sincronizada antes). Não foram reescritos: o registo do artigo IEEE aceita
+travessões e a sincronização exigida aqui é de coerência, não de estilo. (Opcional, a pedido: aplicar a
+mesma passagem de naturalidade ao caderno de defesa PT-PT e aos slides.)
+
+**Conclusão:** corpo da tese 100% revisto; mesmo rigor, conteúdo e números; leitura mais natural, simples e
+humana. `verify.sh` verde (43 testes + ruff). Faltam só as tarefas humanas (declaração ISEP + leitura do aluno).

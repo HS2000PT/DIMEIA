@@ -657,3 +657,30 @@ Abstract da tese já citava o lexical no `paper` — alinhado. Todos os artefact
   acessibilidade/privacidade) já refletidos na tese como desenho/trabalho futuro ou são limites de desenho.
 - **Validação:** ruff limpo; **43 testes verdes** (+1); tese compila 78 pp, 0 erros/indefinidas/overfull/`??`.
   Código intocado nos números (gloss só acrescenta prosa; estatística inalterada).
+
+## Sessão 23 — 2026-06-28 — Revisão editorial TOTAL da tese (copy-edit humano)
+**Objetivo:** atuar como editor académico/revisor de texto: tornar a tese natural, simples, fluida e
+credível em EN-GB, sem tiques de IA, **sem mexer em conteúdo/números** e sem inventar nada. Capítulo a
+capítulo, com pausa no fim de cada um (plano aprovado; registo em `docs/decisions/editorial_review.md`).
+
+**Decisões (confirmadas com o aluno):** manter EN-GB (resumo PT também revisto); pausar após cada capítulo;
+só a tese agora (artefactos sincronizados no fim).
+
+**Feito:** Ch1–Ch6 + front matter (abstract/resumo) + Apêndice A. Por capítulo: identificar problemas →
+explicar → aplicar → compilar/verificar → resumir → commit/push → pausa.
+- **Travessões conectores em prosa: 117 → 1** em todo o corpo (resta 1 célula de tabela "não-aplicável").
+- Frases/parágrafos longos partidos; jargão simplificado (desiderata→goals; impounded→absorbed; loss
+  aversion explicada); tiques removidos (Crucially/moreover/in effect/precisely why/head on); construções
+  invertidas reescritas; rótulos de tabela harmonizados; pequenas asperezas limadas.
+- **Não tocado:** números, citações, equações, algoritmos, tabelas, figuras, declarações (integridade+IA),
+  Apêndice A (já limpo).
+- **Gate final:** coerência global verificada (terminologia, 0 espaços duplos, 0 artefactos, cross-refs OK,
+  abstract 192 palavras); paper (3pp) e slides (14pp) compilam e ficam alinhados.
+
+**Validação:** compila 78 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`; 43 testes + ruff verdes.
+
+**Commits:** Cap.1 06ad896 · Cap.2 771dc29 · Cap.3 2356f2a · Cap.4 cd5458b · Cap.5 0314c21 · Cap.6 862e3c3 ·
+front matter c2bc093 · gate final (este).
+
+**A precisar do aluno (humano):** declaração ISEP de IA + data; leitura final do aluno (§6.6).
+**Próxima ação:** nenhuma autónoma pendente; opcional (a pedido) estender a naturalidade ao caderno/slides.
