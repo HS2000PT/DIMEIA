@@ -117,3 +117,27 @@ Telegram (números já consistentes), e a cláusula de linguagem simples do moto
 
 **Verificação:** compila 78 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
 **Resultado:** prosa e legendas mais limpas; o desenho do sistema lê-se de forma mais fluida.
+
+---
+
+## Capítulo 5 — Case Studies
+
+**Estado inicial:** capítulo de resultados (tabelas de números, figuras de avaliação, exemplo TSLA, alerta
+CS3 literal, ameaças à validade). Passagem **muito cuidadosa**: só narrativa; **nenhum número, valor de
+tabela, figura ou o bloco literal do alerta CS3** tocado.
+
+**Problemas encontrados e correções:**
+1. *Rótulos da tabela inconsistentes.* "SBERT --- MiniLM (default)" / "SBERT --- MPNet" → "SBERT (MiniLM,
+   default)" / "SBERT (MPNet)", harmonizando com "Lexical (hashing)" / "Random (base rate)" na mesma tabela
+   (remove travessões; valores inalterados).
+2. *Números por extenso pesados.* "sixteen of the seven hundred and fifty trading days" → "16 of the 750
+   trading days" (mesmos valores, leitura mais leve).
+3. *Tique "precisely why".* Duas ocorrências → "why".
+4. *Parágrafo longo (M1, tema vs direção).* Partido em dois (análise da recuperação | artefactos do corpus).
+
+**Não alterado (de propósito):** todos os números e ±desvios, as 4 tabelas, as 5 figuras de avaliação, o
+exemplo TSLA, o **bloco literal do alerta CS3** (5 precedentes), a nota da *lift* e as quatro categorias de
+ameaças à validade.
+
+**Verificação:** compila 78 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
+**Resultado:** resultados e rigor idênticos; a narrativa à volta lê-se de forma mais limpa.

@@ -75,8 +75,8 @@ is stable across all tickers.}
 Figure~\ref{fig:cs_timeseries} shows the detector at work on a single volatile stock (Tesla) over the
 three-year window. The flagged days are not simply the largest raw moves: they are the moves that are
 large \emph{relative to the asset's own recent volatility}, which is exactly the behaviour a fixed
-percentage threshold cannot reproduce. Over this period the detector flags sixteen of the seven hundred
-and fifty trading days (about $2\%$), consistent with the near-constant firing rate reported above.
+percentage threshold cannot reproduce. Over this period the detector flags 16 of the 750 trading days
+(about $2\%$), consistent with the near-constant firing rate reported above.
 
 \begin{figure}[ht]
 \centering
@@ -121,7 +121,7 @@ fixed rule catches almost every large raw move but at very low precision. A wind
 (Figure~\ref{fig:cs_ablation}) shows $F_1$ rising with the estimation window ($0.385$, $0.516$ and
 $0.678$ for $10$, $20$ and $60$ days), indicating that a longer volatility estimate yields a steadier
 baseline before it begins to saturate. This label is itself volatility-relative, so some circularity is
-unavoidable; that is precisely why the firing-rate consistency above, which depends on no label,
+unavoidable; that is why the firing-rate consistency above, which depends on no label,
 is treated as the primary evidence.
 
 \begin{figure}[ht]
@@ -160,8 +160,8 @@ headlines, five sectors).}
 \toprule
 \tabhead{Method} & \tabhead{P@5} & \tabhead{P@10} \\
 \midrule
-SBERT --- MiniLM (default) & $0.514 \pm 0.015$ & $0.478 \pm 0.011$ \\
-SBERT --- MPNet & $\mathbf{0.538 \pm 0.011}$ & $\mathbf{0.506 \pm 0.010}$ \\
+SBERT (MiniLM, default) & $0.514 \pm 0.015$ & $0.478 \pm 0.011$ \\
+SBERT (MPNet) & $\mathbf{0.538 \pm 0.011}$ & $\mathbf{0.506 \pm 0.010}$ \\
 Lexical baseline (hashing) & $0.346 \pm 0.011$ & $0.314 \pm 0.008$ \\
 Recency & $0.126 \pm 0.006$ & $0.106 \pm 0.005$ \\
 Random (base rate) & $0.240 \pm 0.004$ & $0.240 \pm 0.004$ \\
@@ -298,7 +298,9 @@ for this particular item, which is exactly why the alert always lists the indivi
 with a no-prediction disclaimer rather than leaning on a single averaged number. Treating that average as a
 prediction would be the over-reliance that the trust literature warns against
 \autocite{lee2004trust, bansal2021whole}, and the design guards against it by showing the evidence rather
-than issuing a verdict. Two cosmetic artefacts of the shallow recent corpus are also visible and worth
+than issuing a verdict.
+
+Two cosmetic artefacts of the shallow recent corpus are also visible and worth
 naming plainly: the precedents share a single retrieval date, because the free news tier returns only a
 recent window and there is little genuine history to draw on, and the same ticker can appear twice with an
 identical impact, because same-ticker precedents aligned to the same event day necessarily share their
@@ -336,7 +338,7 @@ Retrieval relevance is judged by a \emph{sector} label, an automatic stand-in fo
 ``analogous'', so a same-sector precedent on an unrelated topic counts as a hit; the qualitative inspection
 in Section~\ref{sec:cs_retrieval} shows this proxy is reasonable but imperfect. Likewise, the anomaly
 ``extreme move'' label is volatility-relative, so it is not an independent ground truth, which is
-precisely why the primary anomaly argument is the label-free \emph{firing-rate consistency}, not agreement
+why the primary anomaly argument is the label-free \emph{firing-rate consistency}, not agreement
 with that label. Finally, the event-study figure measures the price change that \emph{followed} a news
 item, which is an outcome, not a causal effect of the news; it is reported as evidence, never as a forecast.
 
