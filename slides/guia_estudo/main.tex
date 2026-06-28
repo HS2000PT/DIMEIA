@@ -841,4 +841,206 @@ o \emph{"e se mudássemos\ldots?"} e as \emph{perguntas do júri}.}
 \vfill
 \end{frame}
 
+% ====================================================================
+\section{Avaliação}
+
+\begin{frame}{Como avaliamos --- sem nos enganarmos}
+\footnotesize
+\begin{itemize}
+  \item O plano foi \key{fixado antes} de correr qualquer experiência (uma mini "pré-registo"): não se
+        escolhe a métrica depois para favorecer o resultado.
+  \item \key{Recuperação:} \emph{precision@k} (acerto nas $k$ melhores), contra \key{3 baselines}
+        (aleatório, recência, lexical), média de \key{5 seeds}.
+  \item \key{Anomalias:} argumento \key{sem rótulo} (consistência da taxa de disparo entre ações);
+        o $F_1$ contra um proxy é só \emph{suporte}.
+  \item \key{Honestidade:} sem previsão nem trading $\Rightarrow$ métricas de lucro estão \emph{fora de
+        âmbito} por desenho.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Recuperação: SBERT bate todas as baselines}
+\begin{columns}[T]
+\column{0.56\textwidth}
+\centering\includegraphics[width=\linewidth]{eval_retrieval_precision.pdf}
+\column{0.44\textwidth}
+\footnotesize
+P@5 (cross-ticker):
+\begin{itemize}
+  \item SBERT-MiniLM \key{0,514}
+  \item SBERT-MPNet \key{0,538}
+  \item lexical 0,346
+  \item aleatório 0,240
+  \item recência 0,126
+\end{itemize}
+\key{Leitura:} $\approx 2{,}1\times$ o acaso e bem acima do lexical $\Rightarrow$ o valor vem do
+\emph{significado}, não de palavras iguais. Desvios pequenos ($\sim 0{,}01$) $\Rightarrow$ robusto.
+\end{columns}
+\end{frame}
+
+\begin{frame}{Recuperação por setor: onde acrescenta mais}
+\begin{columns}[T]
+\column{0.56\textwidth}
+\centering\includegraphics[width=\linewidth]{eval_retrieval_per_sector.pdf}
+\column{0.44\textwidth}
+\footnotesize
+O justo é o \key{lift} (ganho sobre o acaso), não o valor bruto:
+\begin{itemize}
+  \item energia \key{+0,377}, saúde \key{+0,348} (vocabulário distintivo)
+  \item consumo \key{+0,100} (notícias genéricas)
+\end{itemize}
+A tecnologia tem P@5 bruta alta (0,712) só porque \key{domina o corpus} (taxa-base 0,429).
+\end{columns}
+\end{frame}
+
+\begin{frame}{Anomalias: consistente em todo o mercado}
+\begin{columns}[T]
+\column{0.56\textwidth}
+\centering\includegraphics[width=\linewidth]{eval_anomaly_firing_rate.pdf}
+\column{0.44\textwidth}
+\footnotesize
+O limiar fixo dispara $\sim 1\%$ numa ação calma e $\sim 35\%$ numa volátil; o \key{z-score} fica
+$\sim 2$--$3\%$ em \emph{todas}.
+\vspace{1mm}
+
+Amplitude da taxa: \key{0,015} (z-score) vs \key{0,344} (fixo) $\Rightarrow$ $>20\times$ mais consistente.
+Este é o argumento \key{sem rótulo}. O $F_1$ ($0{,}516$ vs $0{,}218$) é suporte.
+\end{columns}
+\end{frame}
+
+\begin{frame}{Ameaças à validade (ditas antes que perguntem)}
+\footnotesize
+\begin{itemize}
+  \item \key{Construção:} relevância por \emph{setor} é um proxy; o rótulo de anomalia é
+        volatilidade-relativo (por isso a consistência sem-rótulo tem primazia).
+  \item \key{Interna:} match trivial é removido (cross-ticker); sem lookahead; resta o \emph{confundimento}
+        (mercado global), que as janelas curtas limitam.
+  \item \key{Externa:} 15 ações grandes, US, janela recente $\Rightarrow$ não generaliza a small-caps/outros
+        mercados sem mais dados.
+  \item \key{Estatística:} 5 seeds, desvios reportados; gap grande face ao desvio, mas é amostra modesta.
+\end{itemize}
+\end{frame}
+
+% ====================================================================
+\section{Decisões}
+
+\begin{frame}{Decisões de desenho: porquê isto e não outra coisa}
+\centering\scriptsize
+\begin{tabular}{@{}p{2.6cm} p{2.9cm} p{2.6cm} p{2.9cm}@{}}
+\toprule
+\textbf{Decisão} & \textbf{Escolhido} & \textbf{Alternativa} & \textbf{Porquê (rejeição)} \\
+\midrule
+Deteção & \emph{z}-score (rolling) & Isolation Forest, deep & transparência; sinal 1-D não justifica opacidade \\
+Recuperação & SBERT $+$ cosseno & léxico, word2vec, LLM & significado, barato, reproduzível \\
+Impacto & event study (retorno \emph{raw}) & CAR (ajustado) & observável; sem modelo opaco a explicar \\
+Explicação & transparente $+$ precedentes & só LIME/SHAP & fiel por construção, não aproximação \\
+Avaliação & precision@k \emph{cross-ticker} & --- & padrão; evita match trivial pelo nome \\
+\bottomrule
+\end{tabular}
+\vspace{1mm}
+
+\footnotesize Princípio único: \key{simplicidade defensável}. Onde duas opções empatam, escolhe-se a mais
+\emph{transparente}, porque o sistema é para um não-especialista.
+\end{frame}
+
+% ====================================================================
+\section{E se...}
+
+\begin{frame}{"E se mudássemos\ldots?" (sensibilidade dos parâmetros)}
+\footnotesize
+\begin{itemize}
+  \item \key{Janela do z-score} (10/20/60 dias): $F_1$ vs proxy $= 0{,}385 / 0{,}516 / 0{,}678$. Janela maior
+        $\Rightarrow$ baseline de volatilidade mais estável (mas acaba por saturar).
+  \item \key{Limiar $k$} (=3): maior $\Rightarrow$ menos alertas (mais seletivo); menor $\Rightarrow$ mais
+        alertas (mais ruído).
+  \item \key{top-$k$} (=5): quantos precedentes mostrar; um alerta só comporta uns poucos.
+  \item \key{Horizonte} ($+1/+3/+5$): janelas curtas limitam o confundimento de mercado; mais longo
+        $\Rightarrow$ mais ruído alheio à notícia.
+\end{itemize}
+\vspace{1mm}
+\centering\footnotesize Saber estes \emph{trade-offs} é a melhor resposta a "e se aumentasse este valor?".
+\end{frame}
+
+% ====================================================================
+\section{Defesa}
+
+\begin{frame}{Perguntas difíceis do júri (1/2)}
+\scriptsize
+\textbf{Isto não é só usar bibliotecas?}\\
+Sim, e numa tese de \emph{Engenharia} de IA é isso que se pede: a contribuição é a integração, a metodologia
+notícia$\to$impacto e a avaliação honesta. O núcleo é \key{CBR} (raciocínio baseado em casos), não ad hoc.
+\vspace{1mm}
+
+\textbf{Porquê não um LLM / deep learning?}\\
+Defensibilidade: para uma série de retornos e títulos curtos, o ganho não compensa a perda de transparência
+e o custo. LLMs ficam como trabalho futuro (infraestrutura pronta: FAISS para escala).
+\vspace{1mm}
+
+\textbf{A precision@5 de $\sim$0,51 é boa?}\\
+É $\sim 2{,}1\times$ o acaso e acima do lexical, com desvio pequeno (5 seeds). É honesta e \key{preliminar}
+(corpus recente; FNSPID multi-ano é o passo seguinte).
+\vspace{1mm}
+
+\textbf{O proxy de setor não é fraco?}\\
+É automático, sim --- por isso é limitação explícita e por isso dou primazia ao argumento \key{sem rótulo}.
+\end{frame}
+
+\begin{frame}{Perguntas difíceis do júri (2/2)}
+\scriptsize
+\textbf{Como garantem que não há lookahead?}\\
+O z-score usa só dias anteriores; o impacto mede-se só \emph{depois} do evento, do fecho do 1.\textsuperscript{o}
+dia de negociação $\ge$ data. Está em código e testado.
+\vspace{1mm}
+
+\textbf{Como sei que a explicação é verdadeira?}\\
+É renderizada dos mesmos objetos calculados $\Rightarrow$ \key{fiel por construção}; um teste automático
+confirma que reproduz exatamente os precedentes, sem inventar.
+\vspace{1mm}
+
+\textbf{Um título positivo deu precedentes negativos. Engana?}\\
+A semelhança capta \key{tema, não direção}; a média é evidência sobre um tema, não previsão. Mostro os
+precedentes um a um e aviso que não é previsão (evita sobre-confiança).
+\vspace{1mm}
+
+\textbf{Usaram IA para escrever a tese?}\\
+Sim, declarado honestamente; dirigi o trabalho, revi e validei tudo; as decisões e o conteúdo são da minha
+responsabilidade.
+\end{frame}
+
+\begin{frame}{Checklist final: defender com calma}
+\footnotesize
+Consigo responder a tudo isto?
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{itemize}
+  \item O que é a tese? (3 frases)
+  \item Porque importa o problema?
+  \item Porquê esta metodologia?
+  \item O que acontece em cada fase?
+\end{itemize}
+\column{0.5\textwidth}
+\begin{itemize}
+  \item Porque o código faz isto?
+  \item E se mudasse este parâmetro?
+  \item Porque bate as baselines?
+  \item Limitações e trabalho futuro?
+\end{itemize}
+\end{columns}
+\vspace{2mm}
+\begin{block}{Defesa em 3 frases (decorar)}
+\scriptsize Construí um sistema que avisa o investidor de retalho e \key{explica} cada alerta com
+precedentes reais. A contribuição é de \key{engenharia de IA}: integrar, aplicar e avaliar componentes num
+todo explicável e reproduzível. \key{Não prevejo}; mostro evidência do passado, com honestidade sobre os
+limites.
+\end{block}
+\end{frame}
+
+\begin{frame}{Fim do guia}
+\centering\vfill
+{\Large Agora conheces a tese \key{de fio a pavio}.}\\[3mm]
+{\normalsize Problema $\cdot$ bases de IA $\cdot$ dados $\cdot$ código $\cdot$ workflow $\cdot$ avaliação
+$\cdot$ decisões $\cdot$ defesa.}\\[5mm]
+{\footnotesize Estuda a par da tese e dos slides; volta às partes que precisares. Boa defesa.}
+\vfill
+\end{frame}
+
 \end{document}
