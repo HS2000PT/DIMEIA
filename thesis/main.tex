@@ -16,6 +16,8 @@ headsepline,     % linha sob o cabeçalho
 
 \usepackage{tikz}      % diagramas programáticos (arquitetura)
 \usetikzlibrary{positioning, arrows.meta, calc, fit, backgrounds, shapes.geometric} % posicionamento, setas, midpoints, molduras, losangos
+% Em nós de diagrama, nunca cortar palavras a meio: quebrar só em espaços (legibilidade das figuras).
+\tikzset{every node/.append style={execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000\relax}}}
 \usepackage{pgfplots}  % gráficos de alta qualidade
 \pgfplotsset{compat=newest}
 

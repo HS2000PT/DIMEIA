@@ -341,3 +341,15 @@ Reorganizado para responder, por ordem, às perguntas do núcleo:
   número, equação, algoritmo, tabela, figura ou citação alterado.
 
 **Verificação final:** compila 72 pp, 0 erros, 0 indefinidas, 0 overfull >15pt, 0 `??`.
+
+## Polimento visual (Sessão 25) — figuras presentation-quality
+- **Quebra de palavras a meio (bug confirmado: fig:concept "Abrupt mar-ket move"):** corrigido com uma
+  regra global em `main.tex` — em qualquer nó de diagrama, `hyphenpenalty/exhyphenpenalty=10000`, ou seja,
+  as palavras só quebram em espaços. fig:concept passa a "Abrupt / market move" (sem corte). 0 overfull.
+- **Auditoria de todas as figuras (render):** os 9 diagramas TikZ (conceito, 2 taxonomias, camadas de dados,
+  janela de evento, espaço de embeddings, arquitetura, modelo de dados, fluxo conectado) sem cortes a meio,
+  sem colisões, rótulos legíveis. Os 6 gráficos matplotlib (market cap, série TSLA, ablação, recuperação,
+  por-setor, taxa de disparo) são vetoriais, alta resolução, legíveis. Tabelas: 0 overfull >15pt.
+- Nenhum número/dado alterado.
+
+**Verificação:** compila 72 pp, 0 erros, 0 indefinidas, 0 overfull >15pt, 0 `??`; citações 50/50.
