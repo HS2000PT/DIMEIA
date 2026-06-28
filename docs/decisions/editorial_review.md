@@ -273,3 +273,14 @@ mesmo sistema). Decisão do aluno: **consolidar num mapa único**.
 - Figuras (market cap, conceito), números (62,2T; 87/28; 81/71) e citações preservados; 0 travessões.
 
 **Verificação:** compila 76 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
+
+## Capítulo 2 — State of the Art (reescrito para clareza)
+- **Cada secção abre com a sua pergunta** (ex.: "Como distinguir um movimento anormal de ruído normal?") e
+  **fecha com uma linha "For CLARION:"** (o que o sistema retira daquele campo). Parágrafos muito mais curtos.
+- Densidade cortada: prosa reduzida de forma substancial; **−4 páginas** (76 → 72).
+- **Integridade de citações preservada: 50 citadas = 50 no .bib, 0 órfãs, 0 indefinidas.** Nenhuma citação,
+  tabela ou figura removida (o corte é em palavras, não em referências).
+- Conclusões do capítulo encurtadas (os takeaways por secção já resumem), reduzindo redundância.
+- 0 travessões em prosa (resta 1 célula de tabela "—" não-aplicável).
+
+**Verificação:** compila 72 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
