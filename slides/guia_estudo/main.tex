@@ -635,4 +635,210 @@ com exemplos reais.}
 \vfill
 \end{frame}
 
+% ====================================================================
+\section{O código}
+
+\begin{frame}{O código num relance}
+\footnotesize
+\begin{itemize}
+  \item \key{Um pacote por componente} (mercado, deteção, correlação, base de conhecimento, explicação,
+        entrega). Cada um faz \emph{uma} coisa.
+  \item \key{Lógica pura separada de I/O}: os cálculos (z-score, cosseno, impacto) não precisam de rede nem
+        do modelo pesado $\Rightarrow$ testam-se offline e rápido.
+  \item \key{Programado a interfaces}: o \texttt{Embedder} é abstrato, com 2 implementações trocáveis.
+\end{itemize}
+\vspace{1mm}
+\centering\footnotesize Nos slides seguintes: cada módulo com um \emph{snippet simplificado mas fiel}, linha
+a linha, e um exemplo concreto de valores.
+\end{frame}
+
+\begin{frame}[fragile]{Detetor de anomalias --- o \emph{z}-score}
+\scriptsize
+\begin{verbatim}
+def detect_latest(returns, window=20, threshold=3.0):
+    recent = returns[-window-1 : -1]     # 20 dias ANTERIORES (sem hoje)
+    mu, sigma = mean(recent), std(recent)
+    z = (returns[-1] - mu) / sigma       # quantos desvios-padrao e' hoje
+    return AnomalyResult(is_anomaly = abs(z) > threshold,
+                         z_score=z, mean=mu, std=sigma, window=window, ...)
+\end{verbatim}
+\footnotesize
+\begin{itemize}
+  \item \key{recebe} a série de retornos; \key{devolve} um \texttt{AnomalyResult} (decisão $+$ todas as
+        quantidades).
+  \item \key{recent}: só dias \emph{antes} de hoje $\Rightarrow$ \key{sem lookahead}.
+  \item \key{Exemplo (TSLA):} $\mu=-0{,}92\%$, $\sigma=2{,}73\%$, hoje $=+19{,}82\% \Rightarrow z=+7{,}61
+        \Rightarrow$ anomalia.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Similaridade do cosseno $+$ top-$k$}
+\scriptsize
+\begin{verbatim}
+def cosine_similarities(query, matrix):     # query: 1 vetor; matrix: N vetores
+    return (matrix @ query) / (row_norms(matrix) * norm(query))
+
+def top_k_similar(query, matrix, k=5):
+    sims = cosine_similarities(query, matrix)
+    return indices_of_largest(sims, k)      # os k mais parecidos (+ score)
+\end{verbatim}
+\footnotesize
+\begin{itemize}
+  \item \key{recebe} o vetor da notícia nova e a matriz de vetores da KB; \key{devolve} os índices dos
+        \key{$k$ mais semelhantes} e o seu score (0 a 1).
+  \item \texttt{matrix @ query} é o produto interno; dividir pelas normas dá o \key{cosseno} (o ângulo).
+  \item \key{Exemplo:} para a consulta da Nvidia, os 5 maiores scores apontam para notícias de chips de IA.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Event study --- o impacto pós-evento}
+\scriptsize
+\begin{verbatim}
+def post_event_returns(close, event_idx, horizons=(1,3,5)):
+    p0 = close[event_idx]                      # fecho do dia do evento
+    return { h: close[event_idx + h]/p0 - 1    # retorno acumulado a +h dias
+             for h in horizons }
+\end{verbatim}
+\footnotesize
+\begin{itemize}
+  \item \key{recebe} a série de fechos e a posição do evento; \key{devolve} \texttt{\{1:.., 3:.., 5:..\}}.
+  \item Mede sempre \key{para a frente}, a partir do \key{fecho} ($p_0$). Se faltar dados $\Rightarrow$ NaN
+        (não inventa).
+  \item \key{Exemplo (AAPL):} $+1$d $=+0{,}45\%$, $+3$d $=+2{,}50\%$, $+5$d $=+4{,}45\%$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Embedder --- uma interface, duas implementações}
+\scriptsize
+\begin{verbatim}
+class Embedder(Protocol):           # "contrato": tem dim e encode()
+    dim: int
+    def encode(self, texts) -> matriz (n, dim): ...
+
+class HashingEmbedder:   # baseline SEM dependencias (reprodutivel, p/ testes)
+class SbertEmbedder:     # SBERT pre-treinado (a abordagem da tese, inferencia)
+\end{verbatim}
+\footnotesize
+\begin{itemize}
+  \item Ambos cumprem o mesmo contrato $\Rightarrow$ a KB e a recuperação funcionam com qualquer um.
+  \item Por isso podemos \key{comparar} MiniLM vs MPNet vs lexical de forma \key{justa} (só troca o embedder).
+  \item O \texttt{HashingEmbedder} permite correr tudo \key{sem a stack pesada} (torch).
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Base de conhecimento --- construir e recuperar}
+\scriptsize
+\begin{verbatim}
+class HistoricalKB:
+    def build(news, prices, embedder):      # 1 "caso" por noticia
+        for (date, ticker, headline) in news:
+            e = first_trading_day >= date            # alinhar ao evento
+            impacts = post_event_returns(prices[ticker], e)
+            emb     = embedder.encode([headline])[0]
+            add NewsRecord(date, ticker, headline, impacts, emb)
+
+    def find_precedents(query_text, embedder, top_k=5):
+        q = embedder.encode([query_text])[0]
+        return top_k_similar(q, all_embeddings)  # -> [(NewsRecord, score), ...]
+\end{verbatim}
+\footnotesize
+\key{build} (offline) cria a memória de casos; \key{find\_precedents} (live) devolve os mais parecidos com a
+notícia nova. É o \key{núcleo} do sistema (raciocínio baseado em casos).
+\end{frame}
+
+\begin{frame}[fragile]{Motor de explicação --- o alerta \emph{fiel}}
+\scriptsize
+\begin{verbatim}
+def explain_news_impact(ticker, headline, precedents, horizon=1):
+    avg = mean(impacto[horizon] de cada precedente)   # so a media
+    linhas = [f"impacto medio {horizon}d: {avg:.2%}"]
+    for (rec, score) in precedents:                    # mostra CADA precedente
+        linhas += [f"{rec.date} {rec.ticker} (sim {score:.2f}) {rec.impacts[...]:.2%}"]
+    linhas += ["Nota: resultado passado, NAO e' previsao."]
+    return "\n".join(linhas)
+\end{verbatim}
+\footnotesize
+\begin{itemize}
+  \item O texto é montado \key{a partir dos próprios objetos calculados} $\Rightarrow$ \key{fiel por
+        construção} (não pode divergir da lógica).
+  \item Mostra \key{cada} precedente (não só a média) e termina sempre com o \key{aviso de não-previsão}.
+\end{itemize}
+\end{frame}
+
+% ====================================================================
+\section{Workflow}
+
+\begin{frame}{Workflow (1/3): construir a memória, uma vez (offline)}
+\centering
+\begin{tikzpicture}[font=\scriptsize,>={Stealth[length=2mm]},node distance=6mm,
+  b/.style={draw,rounded corners,fill=black!4,align=center,text width=2.0cm,minimum height=0.7cm},
+  db/.style={draw,rounded corners,fill=black!8,align=center,text width=2.0cm,minimum height=0.7cm}]
+  \node[db](f){FNSPID\\ notícias $+$ preços};
+  \node[b,right=of f](al){alinhar ao\\ dia do evento};
+  \node[b,right=of al](im){impacto\\ $+1/+3/+5$};
+  \node[b,right=of im](em){embedding\\ do título};
+  \node[db,right=of em](kb){Base de\\ conhecimento};
+  \draw[->](f)--(al);\draw[->](al)--(im);\draw[->](im)--(em);\draw[->](em)--(kb);
+\end{tikzpicture}
+\vspace{3mm}
+
+\footnotesize Resultado: uma base de \key{casos} (\emph{notícia $\to$ impacto $+$ vetor}), pronta a ser
+consultada. Feita \key{uma vez}; depois é só usar.
+\end{frame}
+
+\begin{frame}{Workflow (2/3): gatilho de mercado --- TSLA, 24-10-2024 (real)}
+\footnotesize
+\begin{enumerate}
+  \item Preços live $\to$ log-return de hoje: \key{$r=+19{,}82\%$} (movimento de $\approx +22\%$).
+  \item Janela dos 20 dias \key{anteriores}: \key{$\mu=-0{,}92\%$}, \key{$\sigma=2{,}73\%$}.
+  \item $z = (19{,}82-(-0{,}92))/2{,}73 = \mathbf{+7{,}61}$.
+  \item $|7{,}61|>3 \Rightarrow$ \key{anomalia}. O alerta expõe $r,\mu,\sigma$, janela e limiar, e traduz:
+        \emph{"$\approx 7{,}6\times$ a oscilação diária típica desta ação"}.
+\end{enumerate}
+\vspace{1mm}
+\begin{block}{Porque é convincente}
+\scriptsize Reprodutível por \texttt{scripts/evaluate\_anomaly.py} (janela fixa). O mesmo valor sai sempre.
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Workflow (3/3): gatilho de notícia --- Nvidia (real)}
+\scriptsize
+Consulta: \emph{``Nvidia raises guidance on surging demand for AI data-centre accelerators''} $\to$ embedding
+$\to$ cosseno top-5 $\to$ alerta:
+\begin{verbatim}
+Alerta NVDA  | impacto medio 1 dia: -1,97%
+ - MSFT  (sim 0.68)  +1d -3,46%  "Qualcomm debuts AI data center chips..."
+ - NVDA  (sim 0.68)  +1d -1,64%  "Qualcomm debuts AI data center chips..."
+ - META  (sim 0.68)  +1d -2,65%  "Qualcomm debuts AI data center chips..."
+ - GOOGL (sim 0.64)  +1d -0,46%  "...bigger than Nvidia..."
+ - NVDA  (sim 0.58)  +1d -1,64%  "...NVIDIA..."
+Nota: precedentes por semelhanca; impacto observado, NAO previsao.
+\end{verbatim}
+\footnotesize Todos falam de \key{chips de IA para data-center}, mesmo vindo de empresas diferentes
+(\key{cross-ticker}): a recuperação é por \key{significado}, não pelo nome da empresa.
+\end{frame}
+
+\begin{frame}{A nota mais honesta (e a pergunta certa do júri)}
+\footnotesize
+\begin{block}{Um título \emph{positivo} deu precedentes \emph{negativos} ($-1{,}97\%$). Engana?}
+A semelhança capta o \key{tema} ("chips de IA"), \key{não a direção} (o sentimento). Por isso um título
+positivo pode recuperar um \emph{cluster} de ameaça competitiva, com desfechos negativos.
+\end{block}
+A média é \key{evidência sobre um tema}, \key{não uma previsão} para este caso. É por isso que o alerta:
+\begin{itemize}
+  \item mostra sempre os precedentes \key{um a um} (não só a média);
+  \item termina com o \key{aviso de não-previsão} (evita a \emph{sobre-confiança}).
+\end{itemize}
+\centering\footnotesize Melhorias futuras: de-duplicar precedentes e \key{sinalizar quando o cluster discorda
+na direção}.
+\end{frame}
+
+\begin{frame}{Fim das Partes 5--6}
+\centering\vfill
+{\Large Já viste \key{o código} e o \key{workflow} com exemplos reais.}\\[4mm]
+{\normalsize A seguir: \emph{a avaliação} (o que cada número significa), as \emph{decisões de desenho},
+o \emph{"e se mudássemos\ldots?"} e as \emph{perguntas do júri}.}
+\vfill
+\end{frame}
+
 \end{document}
