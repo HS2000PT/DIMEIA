@@ -272,3 +272,15 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] **Mi1** — fraseado da RQ2.
 - [x] **Validação** — 78 pp, 0 erros/indefinidas/overfull/`??`; 42 testes + ruff; citações 50/50.
 - [ ] **HUMANO** — declaração ISEP de IA + data; leitura final do aluno (§6.6).
+
+---
+
+# Reescrita profunda para clareza (Sessão 24, 2026-06-28)
+- [x] Ch1 — secções por pergunta + mapa do leitor (`78c9819`)
+- [x] Ch2 — pergunta + takeaway "For CLARION"; −4 pp (`17448dd`)
+- [x] Ch3 — concept-first; "três escolhas" → lista (`d11212e`)
+- [x] Ch4 — **System Design**: modelo de dados + componentes + Decision Logic (`e60604b`)
+- [x] Ch5 — cada estudo abre com pergunta + resposta (`f4021ff`)
+- [x] Ch6 — vereditos RQ + listas (`99001f4`)
+- [x] Validação global: 72 pp, 0 erros/indefinidas/overfull/`??`; 0 travessões em prosa; citações 50/50
+- [ ] (opcional) sincronizar paper/slides/caderno; leitura do aluno; declaração ISEP (humano)

@@ -684,3 +684,27 @@ front matter c2bc093 · gate final (este).
 
 **A precisar do aluno (humano):** declaração ISEP de IA + data; leitura final do aluno (§6.6).
 **Próxima ação:** nenhuma autónoma pendente; opcional (a pedido) estender a naturalidade ao caderno/slides.
+
+## Sessão 24 — 2026-06-28 — Reescrita PROFUNDA da tese para clareza (Cap. 1–6)
+**Objetivo:** o aluno achou a tese ainda densa/cansativa e o núcleo (modelo de dados, arquitetura, fluxo,
+objetos/relações, componentes/responsabilidades, decisão) pouco claro. Reescrita de raiz para **clareza
+progressiva**, dentro dos 6 capítulos canónicos. Decisões confirmadas: (1) reescrever a própria tese
+(EN-GB); (2) manter 6 capítulos, reconstruir por dentro; (3) **foreground do system design no corpo**.
+
+**Princípios:** cada secção responde a UMA pergunta; conceito antes de implementação; parágrafos curtos;
+relações explícitas; clareza > completude; **sem inventar nada** (números/citações/equações preservados).
+
+**Feito (commit por capítulo, com pausa):**
+- **Ch1** (`78c9819`): secções guiadas por pergunta; objetivos em lista; "Document Structure" → **mapa do leitor**.
+- **Ch2** (`17448dd`): cada secção abre com pergunta + fecha com "For CLARION:"; densidade **−4 pp**; citações/tabelas/figuras intactas.
+- **Ch3** (`d11212e`): **concept-first** (cada técnica abre por "What it is for:"); "três escolhas" → lista; equações/algoritmos/data card/números intocados.
+- **Ch4 = System Design** (`e60604b`): reconstruído — NOVO diagrama do **modelo de dados**, NOVA tabela **componente|responsabilidade|entrada→saída**, secção **Decision Logic**; reutiliza arquitetura/fluxo/mockup.
+- **Ch5** (`f4021ff`): cada estudo abre com **pergunta+resposta**; números/tabelas/figuras/bloco do alerta CS3 intactos.
+- **Ch6** (`99001f4`): vereditos RQ a negrito; limitações e trabalho futuro em listas.
+
+**Validação:** compila **72 pp** (era 78), 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`;
+**travessões conectores em prosa = 0**; **citações 50/50** (0 órfãs/indefinidas); 43 testes + ruff verdes.
+Diagramas verificados por render (incl. novo modelo de dados).
+
+**A precisar do aluno (humano):** leitura da tese reescrita (validar voz/estrutura); declaração ISEP de IA + data.
+**Próxima ação:** (opcional) sincronizar paper/slides/caderno com a tese reescrita, se o aluno quiser.
