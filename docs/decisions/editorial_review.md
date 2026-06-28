@@ -312,3 +312,14 @@ Reorganizado para responder, por ordem, às perguntas do núcleo:
 - 0 travessões conectores; citação `dong2024fnspid` preservada; 50/50 citações.
 
 **Verificação:** compila 72 pp, 0 erros, 0 indefinidas, 0 overfull >15pt, 0 `??`; Cap. 4 = 4 figuras + 2 tabelas.
+
+## Capítulo 5 — Case Studies (reescrito, lead com pergunta+resposta)
+- Cada estudo de caso **abre com a sua pergunta E a resposta** (a negrito), antes da evidência:
+  CS1 "Is a rolling z-score a better universal detector…? **Yes, and clearly so**"; CS2 "Does semantic
+  retrieval find genuinely analogous precedents…? **Yes**"; CS3 "…is its explanation faithful?
+  **Yes, faithful by construction.**"
+- Prosa de enquadramento encurtada; "naïve" → "simple".
+- **Intocado:** todos os números/±desvios, as 4 tabelas, as 5 figuras, o **bloco literal do alerta CS3**
+  (5 precedentes), a nota da *lift*, e as 4 categorias de ameaças à validade. Citações 50/50.
+
+**Verificação:** compila 72 pp, 0 erros, 0 indefinidas, 0 overfull >15pt, 0 `??`.
