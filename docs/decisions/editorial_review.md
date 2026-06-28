@@ -323,3 +323,21 @@ Reorganizado para responder, por ordem, às perguntas do núcleo:
   (5 precedentes), a nota da *lift*, e as 4 categorias de ameaças à validade. Citações 50/50.
 
 **Verificação:** compila 72 pp, 0 erros, 0 indefinidas, 0 overfull >15pt, 0 `??`.
+
+## Capítulo 6 — Conclusions (reescrito, crisp)
+- Cada RQ abre com o **veredito a negrito**: RQ1 "**Yes.**"; RQ2 "**Yes, for retrieval.**"; RQ3
+  "**Faithful, yes; useful, still open.**".
+- **Limitações** e **trabalho futuro** convertidos de parágrafos densos para **listas** scannable.
+- Removida a re-afirmação redundante das RQ na secção de objetivos (já respondidas nas Main Conclusions).
+- Números preservados (0,015/0,344; F1 0,516; 0,514±0,015; 0,346/0,240/0,126; lifts).
+
+## Balanço da REESCRITA PROFUNDA (Cap. 1–6)
+- Todos os 6 capítulos reconstruídos para clareza progressiva: cada secção responde a uma pergunta; Cap. 2
+  com takeaways "For CLARION"; Cap. 3 concept-first; **Cap. 4 = System Design** (modelo de dados +
+  componentes + fluxo + decisão, com diagrama novo do modelo de dados e tabela de componentes); Cap. 5 cada
+  estudo abre com pergunta+resposta; Cap. 6 vereditos + listas.
+- **Travessões conectores em prosa: 0** em todo o corpo (resta 1 célula de tabela e comentários TikZ).
+- **Integridade preservada:** 78 → **72 pp**; 0 erros/indefinidas/overfull/`??`; **citações 50/50**; nenhum
+  número, equação, algoritmo, tabela, figura ou citação alterado.
+
+**Verificação final:** compila 72 pp, 0 erros, 0 indefinidas, 0 overfull >15pt, 0 `??`.

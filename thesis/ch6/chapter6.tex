@@ -16,7 +16,7 @@ The work is best summarised by returning to the three research questions of
 Chapter~\ref{chap:introduction}.
 
 \paragraph{RQ1: transparent detection of abrupt movements.}
-The answer is yes. A rolling \emph{z}-score detector flags abnormal returns and, more importantly, does
+\textbf{Yes.} A rolling \emph{z}-score detector flags abnormal returns and, more importantly, does
 so at a steady rate \emph{across stocks of very different volatility}, where a fixed-percentage threshold
 cannot. As reported in
 Chapter~\ref{chap:casestudies}, the firing rate varied by only $0.015$ across the fifteen tickers for the
@@ -25,7 +25,7 @@ against an extreme-move proxy, more than double the baseline. The method is simp
 alert can be explained to the investor.
 
 \paragraph{RQ2: analogous precedents without lookahead.}
-The answer is affirmative for retrieval. Semantic retrieval with Sentence-BERT recovered markedly more
+\textbf{Yes, for retrieval.} Semantic retrieval with Sentence-BERT recovered markedly more
 sector-analogous precedents than every trivial alternative: a cross-ticker precision@$5$ of
 $0.514 \pm 0.015$ (over five runs), against $0.346$ for a lexical baseline, $0.240$ for random and $0.126$
 for recency. A per-sector breakdown showed the lift is greatest where domain vocabulary is most
@@ -35,7 +35,7 @@ no future information leaks into the evidence. The measurement machinery is in p
 coherently; a large-scale, multi-year validation of impact magnitudes remains for future work.
 
 \paragraph{RQ3: faithful and useful explanations.}
-Faithfulness is achieved: because each alert is rendered directly from the same objects the system
+\textbf{Faithful, yes; useful, still open.} Because each alert is rendered directly from the same objects the system
 computes (the \emph{z}-score and its parameters, or the retrieved precedents with their scores and
 measured impacts), the explanation cannot diverge from the underlying logic, and every alert closes with
 an explicit no-prediction disclaimer. Usefulness to a retail investor is plausible by design but has not
@@ -50,8 +50,7 @@ driven by two triggers, was met: CLARION is a working system whose two triggers 
 end and whose two core components were evaluated on real data. The supporting objectives were also met:
 a thin end-to-end slice was delivered first; each component was kept in its simplest defensible form; the
 evaluation followed a design fixed in advance; and the whole system is reproducible from versioned
-scripts. RQ1 and RQ2 are answered affirmatively on real data, while RQ3 is answered for faithfulness and
-left partly open for usefulness, pending a human study.
+scripts.
 
 \section{Contributions Revisited}
 \label{sec:concl_contributions}
@@ -70,29 +69,36 @@ reported transparently and reproducibly from versioned scripts.
 \section{Limitations}
 \label{sec:concl_limitations}
 
-Several limitations remain. The evaluation used a recent, few-month news corpus from a free service
-rather than the multi-year FNSPID history, which bounds the impact analysis and makes the retrieval
-figures, though real, preliminary. The relevance proxy is sector agreement, an automatic
-stand-in for human judgement, and the anomaly proxy label is volatility-relative (hence the label-free
-firing-rate argument is given primacy). News is represented by short headlines only, which limits the
-semantics that can be captured. Because embedding similarity captures theme rather than direction, a
-retrieved cluster can mix positive and negative outcomes, so the mean impact is evidence about a theme
-and not a directional signal, which is why the individual precedents are always shown alongside it. The
-retrieval result is averaged over five runs, but no human usefulness study has yet been conducted. Finally, and by design, the system performs no price prediction or trading,
-so profit-based questions are out of scope rather than unanswered.
+Several limitations remain, stated plainly:
+\begin{itemize}
+  \item \textbf{Corpus.} The evaluation used a recent, few-month news corpus from a free service, not the
+        multi-year FNSPID history, which bounds the impact analysis and makes the retrieval figures, though
+        real, preliminary.
+  \item \textbf{Proxies.} Relevance is proxied by sector agreement, and the anomaly label is
+        volatility-relative, which is why the label-free firing-rate argument is given primacy.
+  \item \textbf{Short text.} News is represented by headlines only, which limits the semantics captured.
+  \item \textbf{Theme, not direction.} Embedding similarity captures theme, not direction, so a retrieved
+        cluster can mix up and down moves; the mean impact is theme-level evidence, not a directional
+        signal, which is why the precedents are always shown individually.
+  \item \textbf{No human study.} Usefulness to a real investor has not yet been measured.
+  \item \textbf{By design.} The system makes no price prediction and no trade, so profit-based questions
+        are out of scope, not unanswered.
+\end{itemize}
 
 \section{Future Work}
 \label{sec:concl_future}
 
-The limitations map directly onto future work. The most immediate step is to build the full multi-year
-knowledge base from FNSPID, for which the streaming pipeline is already in place, enabling a richer impact
-analysis with dispersion and direction-consistency statistics. A small human study, applying a
-clarity--completeness--actionability rubric to a set of alerts, would address the open question of
-usefulness (RQ3). The retrieval could be strengthened by embedding full article bodies rather than
-headlines and by comparing further embedding models, and the explanation could be optionally enriched
-with financial sentiment or feature attribution where it adds value. As a product, the system would also
-rank alerts by severity and rate-limit the least important, de-duplicate near-identical precedents, and
-flag directional disagreement within a retrieved cluster, directly addressing the alert-fatigue and
-over-reliance risks discussed in Chapter~\ref{chap:clarion}. Together these would turn a sound
-prototype into a more thoroughly validated system, without giving up the simplicity and transparency that
-make it defensible in the first place.
+The limitations map directly onto future work:
+\begin{itemize}
+  \item Build the full multi-year knowledge base from FNSPID (the streaming pipeline is already in place),
+        enabling a richer impact analysis with dispersion and direction-consistency statistics.
+  \item Run a small human study, applying a clarity, completeness and actionability rubric to a set of
+        alerts, to settle the open usefulness question (RQ3).
+  \item Strengthen retrieval by embedding full article bodies rather than headlines, and compare further
+        embedding models; optionally enrich the explanation with financial sentiment or feature attribution.
+  \item As a product, rank alerts by severity and rate-limit the least important, de-duplicate
+        near-identical precedents, and flag directional disagreement within a cluster, addressing the
+        alert-fatigue and over-reliance risks of Chapter~\ref{chap:clarion}.
+\end{itemize}
+Together these would turn a sound prototype into a more thoroughly validated system, without giving up the
+simplicity and transparency that make it defensible.
