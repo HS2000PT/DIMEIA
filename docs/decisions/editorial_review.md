@@ -363,3 +363,13 @@ Reorganizado para responder, por ordem, às perguntas do núcleo:
 - Visuais TikZ próprios (espaço de embeddings, cosseno, fluxo SBERT, linha do event study), verificados por
   render; sem sobreposições. Sem babel/ulem (ambiente mínimo) → hifenização desligada no deck.
 - Honestidade: só conceitos reais; números da tese; nada inventado. Compila **14 pp, 0 erros**.
+
+## Guia de estudo — Partes 2–4 (28 frames no total)
+- **P2 (problema/contribuição):** para quem é + sobrecarga de informação; os dois gatilhos → alerta
+  explicado; faz/não faz; contribuição = Engenharia de IA (3 contribuições) + defesa em 1 frase.
+- **P3 (o sistema):** arquitetura num relance; **modelo de dados** (NewsItem/NewsRecord=caso/KB/Embedder/
+  AnomalyResult, relações); tabela componente|responsabilidade|entrada→saída; os dois gatilhos lado a lado.
+- **P4 (os dados, a olho):** duas camadas + data card; **estrutura de pastas** (verbatim); **CSV real**
+  (`news_sample.csv`) e **um caso JSON real** (`kb_sample.jsonl`: AAPL, impacts 0,0045/0,0250/0,0445,
+  embedding 64 dims) campo a campo; como nasce um caso (alinhamento ao evento + impacto, anti-lookahead).
+- Exemplos 100% reais (lidos de `data/samples/`). Compila 28 pp, 0 erros, 0 overfull.
