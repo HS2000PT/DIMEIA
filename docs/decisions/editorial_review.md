@@ -353,3 +353,13 @@ Reorganizado para responder, por ordem, às perguntas do núcleo:
 - Nenhum número/dado alterado.
 
 **Verificação:** compila 72 pp, 0 erros, 0 indefinidas, 0 overfull >15pt, 0 `??`; citações 50/50.
+
+## Guia de estudo (PT-PT, Beamer) — `slides/guia_estudo/` — Parte 0 + 1
+- Novo deck visual que **ENSINA do zero** (não resume), a pedido do aluno (sem base em IA).
+- **P0:** capa, "como usar", a tese em 3 frases (pitch).
+- **P1 — IA do zero, só o que a tese usa:** IA/ML (intuição); **slide honesto "o que NÃO usa e porquê"**
+  (sem treino/CNN/visão computacional); embeddings; cosseno; SBERT pré-treinado; z-score/volatilidade;
+  event study + anti-lookahead; recuperação + precision@k; XAI/fidelidade/CBR; **glossário**. 14 frames.
+- Visuais TikZ próprios (espaço de embeddings, cosseno, fluxo SBERT, linha do event study), verificados por
+  render; sem sobreposições. Sem babel/ulem (ambiente mínimo) → hifenização desligada no deck.
+- Honestidade: só conceitos reais; números da tese; nada inventado. Compila **14 pp, 0 erros**.

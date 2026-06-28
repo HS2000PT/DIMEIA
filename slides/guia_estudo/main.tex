@@ -1,0 +1,359 @@
+% Guia de Estudo (PT-PT) — CLARION: da estaca zero à defesa
+% Beamer -> PDF. Deck VISUAL e progressivo que ENSINA (não resume).
+% Honestidade: só conceitos/código/números reais da tese; a tese NÃO treina modelos nem usa visão
+% computacional (usa SBERT pré-treinado + estatística + recuperação + XAI).
+% Construído por partes: P0 (capa/como usar) + P1 (IA do zero, só o que a tese usa) + glossário.
+\documentclass[aspectratio=169,11pt]{beamer}
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, calc, fit, backgrounds, shapes.geometric}
+% Nos diagramas, nunca cortar palavras a meio (quebrar só em espaços).
+\tikzset{every node/.append style={execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000\relax}}}
+% Sem babel-PT neste ambiente: linhas curtas de slide, desligar hifenização para não cortar mal as palavras.
+\hyphenpenalty=10000 \exhyphenpenalty=10000
+\graphicspath{{../../thesis/figures/}}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+\setbeamertemplate{itemize items}[circle]
+
+% atalhos de cor para destacar
+\definecolor{good}{RGB}{30,120,60}
+\definecolor{bad}{RGB}{170,40,40}
+\newcommand{\key}[1]{\textbf{\structure{#1}}}
+
+\title[Guia de Estudo: CLARION]{Guia de Estudo --- CLARION}
+\subtitle{Da estaca zero à defesa: aprender a tese como se a tivesse escrito}
+\author[H.\ Santos]{Henrique J.\ S.\ Santos \\ \footnotesize Orientador: Prof.\ Luís Gomes \quad Coorientador: Rafael Silva}
+\institute[ISEP]{MEIA, Instituto Superior de Engenharia do Porto}
+\date{\footnotesize Material de preparação para a defesa}
+
+\begin{document}
+
+\begin{frame}\titlepage\end{frame}
+
+% ====================================================================
+\section{Como usar}
+
+\begin{frame}{Como usar este guia}
+\begin{columns}[T]
+\column{0.58\textwidth}
+\begin{itemize}
+  \item Foi feito para quem \key{não sabe nada de IA}. Começa do zero.
+  \item \key{Uma ideia por slide.} Primeiro a \emph{intuição} (com analogias), só depois o detalhe.
+  \item Lê \key{pela ordem}: cada parte prepara a seguinte.
+  \item No fim, deves conseguir responder com confiança a "porquê isto?" em cada passo da tese.
+\end{itemize}
+\vspace{2mm}
+\footnotesize Estuda este guia a par com a própria tese e com os slides de defesa (\texttt{slides/}).
+\column{0.42\textwidth}
+\begin{block}{O percurso}
+\footnotesize
+\begin{enumerate}
+  \item IA do zero (só o que a tese usa)
+  \item O problema e a contribuição
+  \item O sistema (dados, partes, fluxo)
+  \item Os dados, a olho
+  \item O código, módulo a módulo
+  \item Workflow ponta a ponta
+  \item Avaliação e decisões
+  \item Perguntas do júri
+\end{enumerate}
+\end{block}
+\end{columns}
+\end{frame}
+
+\begin{frame}{A tese em três frases (o teu \emph{pitch})}
+\begin{block}{Se só decorares isto, já defendes a ideia central}
+\begin{enumerate}
+  \item Construí o \key{CLARION}, um sistema que avisa um investidor de retalho quando há um \emph{movimento
+        de mercado invulgar} ou uma \emph{notícia relevante}, e \key{explica} cada alerta de forma
+        rastreável (evento, raciocínio, fontes, precedentes históricos).
+  \item A contribuição é de \key{Engenharia de IA}: não inventei algoritmos; \emph{integrei, apliquei e
+        avaliei criticamente} componentes existentes num sistema funcional, explicável e reproduzível.
+  \item \key{Não prevejo preços.} Mostro o que aconteceu \emph{depois} de notícias parecidas no passado,
+        como evidência, com honestidade sobre as limitações.
+\end{enumerate}
+\end{block}
+\end{frame}
+
+% ====================================================================
+\section{IA do zero}
+
+\begin{frame}{O que é Inteligência Artificial? E \emph{Machine Learning}?}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\key{Inteligência Artificial (IA)}\\
+Fazer com que um computador resolva tarefas que pareceriam precisar de "inteligência" humana (decidir,
+reconhecer, recomendar).
+\vspace{3mm}
+
+\key{Machine Learning (ML)}\\
+Em vez de escrever \emph{regras} à mão, o computador \emph{aprende padrões a partir de dados}.
+\column{0.5\textwidth}
+\begin{block}{Analogia}
+\footnotesize
+\emph{Regras à mão:} explicar a alguém, passo a passo, como reconhecer um gato.\\[2mm]
+\emph{ML:} mostrar mil fotos de gatos e deixar a pessoa aprender o padrão sozinha.
+\end{block}
+\vspace{1mm}
+{\footnotesize Nesta tese, a "aprendizagem" já vem \key{pronta} (modelos pré-treinados). Ver o slide
+seguinte.}
+\end{columns}
+\end{frame}
+
+\begin{frame}{O que esta tese É --- e o que \key{NÃO} é (muito importante)}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{\textcolor{good}{O que usa}}
+\footnotesize
+\begin{itemize}
+  \item Um \key{embedder de texto pré-treinado} (SBERT) --- só para \emph{usar}, não para treinar.
+  \item \key{Estatística} simples (z-score: média e desvio-padrão).
+  \item \key{Similaridade do cosseno} (comparar vetores).
+  \item \key{Event study} (aritmética de retornos).
+  \item Métricas de \key{recuperação} (precision@k).
+  \item \key{Explicabilidade} (mostrar a evidência).
+\end{itemize}
+\end{block}
+\column{0.5\textwidth}
+\begin{block}{\textcolor{bad}{O que NÃO usa (e porquê)}}
+\footnotesize
+\begin{itemize}
+  \item \textcolor{bad}{$\times$}~Treinar modelos / redes neuronais
+  \item \textcolor{bad}{$\times$}~Visão computacional, imagens, segmentação
+  \item \textcolor{bad}{$\times$}~Épocas, batches, backpropagation, CNNs
+\end{itemize}
+\vspace{1mm}
+\emph{Porquê?} A contribuição é \key{integrar componentes existentes}, não treinar nada. Isto torna o
+sistema gratuito, reproduzível e fácil de explicar.
+\end{block}
+\end{columns}
+\vspace{1mm}
+\centering\footnotesize Se o júri perguntar por treino/CNN: "não se aplica --- o meu trabalho é de engenharia/integração."
+\end{frame}
+
+\begin{frame}{Ideia-chave 1: transformar texto em \emph{números} (\emph{embeddings})}
+\begin{columns}[T]
+\column{0.46\textwidth}
+\footnotesize
+Um computador não "lê" palavras; compara \emph{números}. Um \key{embedding} transforma cada título de
+notícia num \key{vetor} (uma lista de números = um ponto num espaço).
+\vspace{2mm}
+
+A magia: títulos com \key{significado parecido} ficam \key{perto} uns dos outros nesse espaço.
+\column{0.54\textwidth}
+\centering
+\begin{tikzpicture}[font=\scriptsize, >={Stealth[length=1.6mm]}, scale=0.95]
+  \draw[rounded corners, draw=black!25] (-0.2,-0.2) rectangle (6.6,3.7);
+  % cluster "IA": tres pontos proximos, rotulados como grupo (sem sobreposicao)
+  \fill[blue!70] (3.5,2.55) circle (1.8pt);
+  \fill[blue!70] (3.85,2.25) circle (1.8pt);
+  \fill[blue!70] (3.5,1.95) circle (1.8pt);
+  \draw[dashed,black!50] (3.62,2.25) circle (0.62);
+  \node[right, font=\tiny, align=left, black!70] at (4.4,2.25){notícias sobre\\ "IA / data-center"\\ (ficam perto)};
+  % nao relacionadas (longe)
+  \fill[black!55] (0.7,0.7) circle (1.8pt) node[right=1pt, font=\tiny]{Tesla: recall};
+  \fill[black!55] (0.8,3.1) circle (1.8pt) node[right=1pt, font=\tiny]{JPM: taxas de juro};
+\end{tikzpicture}
+\end{columns}
+\vspace{1mm}
+\footnotesize \key{Porquê isto importa:} para encontrar notícias passadas \emph{parecidas} com uma nova,
+basta procurar os pontos \emph{mais próximos}.
+\end{frame}
+
+\begin{frame}{Como medir "perto"? \emph{Similaridade do cosseno}}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\footnotesize
+Mede-se o \key{ângulo} entre dois vetores:
+\begin{itemize}
+  \item ângulo pequeno $\Rightarrow$ cosseno \key{$\approx 1$} (muito parecidos);
+  \item ângulo reto $\Rightarrow$ cosseno \key{$\approx 0$} (não relacionados).
+\end{itemize}
+\vspace{2mm}
+Usa-se o ângulo (e não a distância) porque só interessa a \emph{direção} do significado, não o tamanho do
+vetor.
+\column{0.5\textwidth}
+\centering
+\begin{tikzpicture}[font=\scriptsize, >={Stealth[length=2mm]}, scale=1.0]
+  \draw[->] (0,0)--(3.2,0);
+  \draw[->] (0,0)--(0,3.0);
+  \draw[->, very thick, blue!70] (0,0)--(2.6,1.4) node[right]{notícia A};
+  \draw[->, very thick, blue!40] (0,0)--(2.2,1.9) node[above right]{notícia B};
+  \draw[black!55] (0.9,0.48) arc (28:41:1.0);
+  \node[black!60] at (1.35,0.95){\tiny ângulo pequeno};
+  \node[align=center, black!60] at (1.7,-0.45){\tiny cosseno $\approx 1$ $\Rightarrow$ parecidas};
+\end{tikzpicture}
+\end{columns}
+\end{frame}
+
+\begin{frame}{De onde vêm os vetores? \emph{SBERT} (e \emph{Transformer}), em intuição}
+\begin{columns}[T]
+\column{0.54\textwidth}
+\footnotesize
+\key{SBERT} (Sentence-BERT) é um modelo \key{já treinado} por outros, que lê uma frase e devolve o seu
+vetor de significado. O \key{Transformer} é a arquitetura que o tornou possível (lê a frase inteira e
+"presta atenção" às palavras que importam).
+\vspace{2mm}
+
+\key{Nesta tese usamo-lo pronto} (inferência): damos-lhe um título, recebemos o vetor. Não o treinamos.
+\vspace{2mm}
+
+\emph{Porquê SBERT e não um LLM gigante?} Capta significado, é \key{barato}, \key{reproduzível} e
+\key{gratuito}, e dá vetores diretamente comparáveis.
+\column{0.46\textwidth}
+\centering
+\begin{tikzpicture}[font=\scriptsize, >={Stealth[length=2mm]}, node distance=5mm,
+  b/.style={draw, rounded corners, align=center, fill=black!4, text width=3.2cm, minimum height=0.8cm}]
+  \node[b] (h){``Nvidia sobe com procura de IA''};
+  \node[b, below=of h, fill=blue!10] (m){SBERT \\ \scriptsize (pré-treinado)};
+  \node[b, below=of m] (v){vetor \\ \scriptsize [0.12, -0.4, \ldots, 0.7]};
+  \draw[->] (h)--(m); \draw[->] (m)--(v);
+\end{tikzpicture}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Ideia-chave 2: estatística para "isto é invulgar?"}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\footnotesize
+\key{Média} ($\mu$): o valor típico dos últimos dias.\\
+\key{Desvio-padrão} ($\sigma$): o quanto costuma oscilar (a \emph{volatilidade}).\\[2mm]
+\key{z-score}: a quantos desvios-padrão está o movimento de hoje:
+\[ z=\frac{r-\mu}{\sigma} \]
+\emph{Normalizar} pela volatilidade é o truque: a mesma queda de $-3{,}2\%$ é dramática numa ação calma e
+banal numa volátil.
+\column{0.48\textwidth}
+\begin{block}{Exemplo (da tese)}
+\footnotesize
+Queda de $-3{,}2\%$ hoje:
+\begin{itemize}
+  \item ação \key{calma} ($\sigma=0{,}40\%$): $z\approx \mathbf{-8{,}1}$ $\Rightarrow$ anomalia clara
+  \item ação \key{volátil} ($\sigma=1{,}50\%$): $z\approx \mathbf{-2{,}2}$ $\Rightarrow$ dia normal
+\end{itemize}
+\vspace{1mm}
+Um limiar fixo em \% trataria as duas igual; o z-score não.
+\end{block}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Ideia-chave 3: \emph{retornos} e \emph{event study} (medir o impacto, sem ver o futuro)}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\footnotesize
+\key{Log-return}: a variação diária do preço (em \%).\\[1mm]
+\key{Event study}: depois de uma notícia, medimos o retorno acumulado a \key{+1, +3 e +5 dias} a partir do
+\emph{fecho} do primeiro dia de negociação.
+\vspace{2mm}
+
+\key{Anti-lookahead} (regra de ouro de honestidade): só olhamos para \emph{depois} do evento. Nunca usamos o
+futuro para "prever". Medimos um \emph{resultado}, não uma previsão.
+\column{0.5\textwidth}
+\centering
+\begin{tikzpicture}[font=\scriptsize, >={Stealth[length=2mm]}]
+  \draw[->] (-0.3,0)--(5.2,0) node[right]{dias};
+  \foreach \x in {0,1,3} {\draw (\x,0.08)--(\x,-0.08);}
+  \filldraw (0,0) circle (1.3pt);
+  \node[below=2pt, align=center] at (0,-0.1){\scriptsize evento};
+  \node[below=2pt] at (1,-0.1){\scriptsize +1};
+  \node[below=2pt] at (3,-0.1){\scriptsize +3};
+  \node[below=2pt] at (4.6,-0.1){\scriptsize +5};
+  \draw (4.6,0.08)--(4.6,-0.08);
+  \draw[->,thick] (0,0.5)--(1,0.5);
+  \draw[->,thick] (0,0.85)--(3,0.85);
+  \draw[->,thick] (0,1.2)--(4.6,1.2);
+  \node[above, black!70] at (2.3,1.3){\scriptsize retorno acumulado (só para a frente)};
+\end{tikzpicture}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Ideia-chave 4: \emph{recuperação} e como se mede (precision@k)}
+\begin{columns}[T]
+\column{0.54\textwidth}
+\footnotesize
+\key{Recuperação} (Information Retrieval): ordenar notícias passadas pela semelhança a uma nova e mostrar as
+\key{$k$ melhores} (ex.: $k=5$).
+\vspace{2mm}
+
+\key{precision@k}: das $k$ recuperadas, que fração é \emph{relevante}? Usamos "mesmo setor" como proxy
+automático de relevância.
+\vspace{2mm}
+
+Comparamos sempre com \key{baselines} para o número ter significado:
+\begin{itemize}
+  \item \key{aleatório} (o "chão" sem perícia),
+  \item \key{recência} (só as mais recentes),
+  \item \key{lexical} (sobreposição de palavras).
+\end{itemize}
+\column{0.46\textwidth}
+\begin{block}{Intuição}
+\footnotesize
+"Das 5 notícias passadas que mostrei, quantas eram mesmo do mesmo tema?"\\[2mm]
+Bater o aleatório e o lexical é a prova de que os \emph{embeddings} acrescentam valor real.
+\end{block}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Ideia-chave 5: explicabilidade (XAI) e confiança}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\footnotesize
+\key{Transparente vs caixa-preta:} ou o modelo é interpretável por desenho, ou é opaco e explicamo-lo
+\emph{a posteriori} (LIME/SHAP). O CLARION escolhe \key{transparente por desenho}.
+\vspace{2mm}
+
+\key{Fidelidade:} a explicação reflete \emph{exatamente} o que o sistema calculou (não é uma aproximação).
+\vspace{2mm}
+
+\key{Confiança calibrada:} queremos que o utilizador confie \emph{na medida certa} --- nem ignorar um bom
+aviso, nem confiar cegamente. Por isso mostramos \emph{evidência verificável}, não uma narrativa.
+\column{0.5\textwidth}
+\begin{block}{Raciocínio Baseado em Casos (CBR)}
+\footnotesize
+A ideia familiar por trás do motor: como um médico que se lembra de \emph{doentes parecidos} do passado.\\[2mm]
+\key{Recuperar} casos semelhantes $\to$ \key{reutilizar} o que aconteceu como evidência. Paramos aqui (não
+"prevemos").
+\end{block}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Glossário (os termos que vais ouvir)}
+\footnotesize
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{itemize}
+  \item \key{Embedding}: texto $\to$ vetor de significado.
+  \item \key{Cosseno}: medida de semelhança (ângulo).
+  \item \key{SBERT}: modelo pré-treinado que cria embeddings de frases.
+  \item \key{z-score}: nº de desvios-padrão face à norma recente.
+  \item \key{Volatilidade}: o quanto uma ação costuma oscilar ($\sigma$).
+\end{itemize}
+\column{0.5\textwidth}
+\begin{itemize}
+  \item \key{Event study}: medir o retorno após um evento.
+  \item \key{Anti-lookahead}: nunca usar o futuro.
+  \item \key{precision@k}: acerto nas $k$ melhores.
+  \item \key{Baseline}: método simples de comparação.
+  \item \key{XAI / fidelidade}: explicação fiel ao cálculo.
+  \item \key{CBR}: raciocínio por casos análogos.
+\end{itemize}
+\end{columns}
+\vspace{2mm}
+\centering\footnotesize Tens agora as bases. As próximas partes aplicam \emph{exatamente} estes conceitos à tese.
+\end{frame}
+
+\begin{frame}{Fim da Parte 1}
+\centering
+\vfill
+{\Large Já tens as \key{bases de IA} de que esta tese precisa.}\\[4mm]
+{\normalsize A seguir: \emph{o problema e a contribuição}, depois \emph{o sistema} (dados, partes, fluxo),
+o \emph{código} e a \emph{avaliação}.}
+\vfill
+\end{frame}
+
+\end{document}
