@@ -210,3 +210,22 @@ mesma passagem de naturalidade ao caderno de defesa PT-PT e aos slides.)
 
 **Conclusão:** corpo da tese 100% revisto; mesmo rigor, conteúdo e números; leitura mais natural, simples e
 humana. `verify.sh` verde (43 testes + ruff). Faltam só as tarefas humanas (declaração ISEP + leitura do aluno).
+
+---
+
+## Artefactos — slides + caderno de defesa (a pedido do aluno)
+
+Aplicada a mesma passagem de naturalidade aos artefactos derivados (o `paper/` IEEE ficou como está: o
+registo de artigo aceita travessões).
+
+**`slides/main.tex` (Beamer, EN-GB):** travessões conectores 16 → 1 (resta só o "News alert --- NVDA" do
+mock de UI). Títulos de frame/bloco passaram a dois-pontos ("Result 1: ..."); bullets com travessão
+conector passaram a vírgula/dois-pontos. Compila 14 pp, 0 erros. Nenhum número alterado.
+
+**`docs/defence/caderno_de_defesa.md` (PT-PT):** travessões em prosa `—` 28 → 7; os 7 que restam são
+separadores de título/cabeçalho (ex.: "Gatilho 1 — movimento de mercado") e uma linha de bloco de código,
+usos estruturais legítimos. Os 7 divisores de secção `---` (regra horizontal markdown) e os diagramas ASCII
+foram preservados. Nenhum número, citação ou facto alterado.
+
+**Resultado:** tese, slides e caderno partilham agora a mesma voz natural; o paper IEEE mantém-se alinhado
+em conteúdo.

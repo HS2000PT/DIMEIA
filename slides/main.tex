@@ -15,7 +15,7 @@
 \title[CLARION]{Explainable Financial Alerts for Retail Investors}
 \subtitle{Integrating Statistical Anomaly Detection and News--Market Impact Correlation}
 \author[H.\ Santos]{Henrique J.\ S.\ Santos \\ \footnotesize Advisor: Prof.\ Lu\'is Gomes \quad Co-advisor: Rafael Silva}
-\institute[ISEP]{MEIA --- Instituto Superior de Engenharia do Porto}
+\institute[ISEP]{MEIA, Instituto Superior de Engenharia do Porto}
 \date{\footnotesize Defence}
 
 \begin{document}
@@ -29,7 +29,7 @@
   \item Most Americans own stock; many now trade through commission-free apps.
   \item The US equity market reached \textbf{US\$62.2\,trillion} (end 2024).
   \item Retail investors face \emph{continuous} price moves and news, \textbf{without} the tools of banks and funds.
-  \item The AI spreading through finance is largely \textbf{opaque} --- a poor fit for someone who must act and live with the result.
+  \item The AI spreading through finance is largely \textbf{opaque}, a poor fit for someone who must act and live with the result.
 \end{itemize}
 \column{0.42\textwidth}
 \begin{block}{Two distinct challenges}
@@ -42,9 +42,9 @@
 \end{columns}
 \end{frame}
 
-\begin{frame}{What CLARION does --- and does not do}
+\begin{frame}{What CLARION does (and does not do)}
 \begin{block}{It does \emph{not} predict prices. It \textbf{explains}.}
-For each abrupt move or relevant news item, it shows \emph{what} was detected, \emph{how}, the \emph{sources}, and which \emph{past events} resemble it --- with what happened to prices afterwards.
+For each abrupt move or relevant news item, it shows \emph{what} was detected, \emph{how}, the \emph{sources}, and which \emph{past events} resemble it, with what happened to prices afterwards.
 \end{block}
 \centering
 \begin{tikzpicture}[font=\small, >={Stealth[length=2mm]},
@@ -66,7 +66,7 @@ For each abrupt move or relevant news item, it shows \emph{what} was detected, \
   \item[\textbf{RQ3}] Can the explanations be \textbf{faithful} to what the system computes, and useful to a retail investor?
 \end{enumerate}
 \vfill
-\begin{block}{Contribution --- Artificial Intelligence \emph{Engineering}}
+\begin{block}{Contribution: Artificial Intelligence \emph{Engineering}}
 Not a new algorithm: the \textbf{disciplined integration, application and critical evaluation} of existing components into a working, explainable, reproducible system, with a documented news-to-impact methodology.
 \end{block}
 \end{frame}
@@ -90,7 +90,7 @@ Not a new algorithm: the \textbf{disciplined integration, application and critic
 \footnotesize Single-responsibility components, common schema; two triggers converge on one explanation step.
 \end{frame}
 
-\begin{frame}{Market trigger --- transparent by design}
+\begin{frame}{Market trigger: transparent by design}
 \begin{columns}
 \column{0.5\textwidth}
 Rolling \emph{z}-score, no lookahead:
@@ -106,7 +106,7 @@ A fixed \% threshold would treat a calm and a volatile stock alike; the \emph{z}
 \end{columns}
 \end{frame}
 
-\begin{frame}{News trigger --- retrieve analogous precedents, measure impact}
+\begin{frame}{News trigger: retrieve analogous precedents, measure impact}
 \begin{columns}
 \column{0.52\textwidth}
 \begin{enumerate}\small
@@ -127,21 +127,21 @@ $\to$ NVDA accelerator (sim 0.38) +5d $+4.9\%$\\[2pt]
 \end{columns}
 \end{frame}
 
-\begin{frame}{Result 1 --- anomaly detection is consistent across the market}
+\begin{frame}{Result 1: anomaly detection is consistent across the market}
 \begin{columns}
 \column{0.54\textwidth}
 \centering\includegraphics[width=\linewidth]{eval_anomaly_firing_rate.pdf}
 \column{0.46\textwidth}
 \begin{itemize}\small
   \item Firing-rate range across 15 tickers: \textbf{0.015} (\emph{z}-score) vs \textbf{0.344} (fixed \%).
-  \item $>20\times$ more consistent --- a \textbf{label-free} argument.
+  \item $>20\times$ more consistent, a \textbf{label-free} argument.
   \item Vs extreme-move proxy: $F_1=\mathbf{0.516}$ vs $0.218$.
   \item Window ablation: $F_1$ 0.385 / 0.516 / 0.678 (10/20/60 d).
 \end{itemize}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Result 2 --- semantic retrieval beats every baseline}
+\begin{frame}{Result 2: semantic retrieval beats every baseline}
 \begin{columns}
 \column{0.5\textwidth}
 \centering
@@ -165,7 +165,7 @@ Random & $0.240$ & $0.240$ \\
 \end{columns}
 \end{frame}
 
-\begin{frame}{Result 3 --- explanations are faithful by construction}
+\begin{frame}{Result 3: explanations are faithful by construction}
 \begin{columns}
 \column{0.52\textwidth}
 \begin{itemize}\small
@@ -195,7 +195,7 @@ Avg 1-day move: $-1.97\%$ (over 5; 3 shown)\\
   \item Impact is a \textbf{raw} post-event return, not market-adjusted (CAR).
   \item Similarity is \textbf{thematic, not directional}: a cluster can mix up/down moves, so the mean is theme-level \emph{evidence}, not a forecast.
   \item \textbf{No human usefulness study} yet (RQ3 usefulness open).
-  \item By design: \textbf{no price prediction, no trading} --- profit metrics out of scope.
+  \item By design: \textbf{no price prediction, no trading}, so profit metrics are out of scope.
 \end{itemize}
 \vfill
 \footnotesize All results are reproducible from versioned scripts (re-run: identical numbers).
@@ -209,7 +209,7 @@ Avg 1-day move: $-1.97\%$ (over 5; 3 shown)\\
 \end{itemize}
 \vfill
 \begin{block}{Contribution}
-A working, \textbf{explainable, reproducible} financial-alert system for retail investors --- engineering existing components into a transparent whole, with an honest evaluation.
+A working, \textbf{explainable, reproducible} financial-alert system for retail investors, engineering existing components into a transparent whole, with an honest evaluation.
 \end{block}
 \end{frame}
 
@@ -229,8 +229,8 @@ A working, \textbf{explainable, reproducible} financial-alert system for retail 
   \item \textbf{Why \emph{z}-score, not Isolation Forest/GARCH?} Transparency for a low-dimensional signal explained to a non-expert; defensible simplicity.
   \item \textbf{Why precision@$k$ and a sector proxy?} Standard ranked-retrieval metric; objective, reproducible; human relevance is future work.
   \item \textbf{Cross-ticker constraint?} An \emph{evaluation} choice to avoid trivial self-matches; the live alert shows the most similar precedents regardless.
-  \item \textbf{A positive headline retrieved negative precedents ($-1.97\%$) --- misleading?} Similarity matches \emph{theme}, not direction; the mean is theme-level \textbf{evidence}, shown with every precedent and a no-prediction disclaimer. Future work: de-duplicate precedents and flag directional disagreement.
-  \item \textbf{Is it reproducible?} Yes --- fixed seeds, pinned deps, versioned scripts; re-running reproduces every number.
+  \item \textbf{A positive headline retrieved negative precedents ($-1.97\%$). Misleading?} Similarity matches \emph{theme}, not direction; the mean is theme-level \textbf{evidence}, shown with every precedent and a no-prediction disclaimer. Future work: de-duplicate precedents and flag directional disagreement.
+  \item \textbf{Is it reproducible?} Yes: fixed seeds, pinned deps, versioned scripts; re-running reproduces every number.
 \end{itemize}
 \end{frame}
 

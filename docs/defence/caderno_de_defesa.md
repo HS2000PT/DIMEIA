@@ -13,7 +13,7 @@
 **Problema.** O investidor de retalho (não profissional) vive sob *sobrecarga de informação*: milhares de
 ações mexem-se em contínuo e as notícias financeiras chegam sem pausa. As ferramentas que ajudam a
 interpretar estes sinais são institucionais, opacas, ou ambas. O comportamento deste investidor é guiado
-pela **atenção** (compra o que está nas notícias / com movimentos extremos) — logo, faz sentido intervir
+pela **atenção** (compra o que está nas notícias / com movimentos extremos); logo, faz sentido intervir
 exatamente nesses momentos, com **contexto e explicação**, e não com mais ruído.
 
 **O que o sistema faz (CLARION).** Vigia o mercado US (NYSE/NASDAQ) e dispara um alerta quando: (1) há um
@@ -25,12 +25,12 @@ históricos** (notícias análogas do passado e o impacto que tiveram). Entrega 
 **passado** como evidência; nunca prevê. Isto é uma escolha de honestidade e de defensibilidade.
 
 **Contribuição (enquadramento permanente).** É uma tese de **Engenharia de IA**. A contribuição **não** é
-inventar algoritmos — é **integrar, aplicar e avaliar criticamente** componentes existentes num sistema
+inventar algoritmos: é **integrar, aplicar e avaliar criticamente** componentes existentes num sistema
 funcional, explicável e reproduzível, com uma **metodologia documentada de correlação notícia–impacto**.
 Usar modelos/ferramentas existentes **é** o trabalho de engenharia.
 
 > **Defesa em 3 frases:** "Construí um sistema que avisa o investidor de retalho de movimentos de mercado
-> e notícias relevantes, e — ao contrário das apps comuns — explica cada alerta de forma rastreável, com
+> e notícias relevantes, e, ao contrário das apps comuns, explica cada alerta de forma rastreável, com
 > precedentes históricos reais. A contribuição é de engenharia de IA: integrei deteção estatística,
 > recuperação semântica e estudo de evento num todo coerente, explicável e reproduzível. Não prevejo
 > preços; mostro evidência do passado, com honestidade sobre as limitações."
@@ -82,7 +82,7 @@ noticia live (Finnhub/RSS)
 
 > **Explicar o fluxo ao júri (1 frase):** "Offline construo uma memória de casos (notícia→impacto); em
 > produção, cada gatilho transforma dados *live* em evidência e converge num único passo de explicação
-> antes de enviar — e nada usa informação do futuro."
+> antes de enviar, e nada usa informação do futuro."
 
 ---
 
@@ -109,7 +109,7 @@ noticia live (Finnhub/RSS)
 - **Como funciona:** z = (retorno − média móvel) / desvio-padrão móvel, calculados na janela de dias
   **estritamente anteriores** (sem lookahead). Devolve a decisão + todas as quantidades que a produziram.
 - **Defesa em 3 frases:** "Normalizo o movimento de hoje pela volatilidade recente da própria ação. Assim,
-  um detetor único é justo entre ações calmas e voláteis — algo que um limiar fixo em % não consegue.
+  um detetor único é justo entre ações calmas e voláteis, algo que um limiar fixo em % não consegue.
   E como exponho o z-score, a janela e o limiar, o alerta é auto-explicativo."
 
 ### 4.2 Base de conhecimento histórica + motor de correlação (núcleo, Gatilho 2)
@@ -117,12 +117,12 @@ noticia live (Finnhub/RSS)
   impacto que tiveram.
 - **Como funciona:** cada notícia → embedding SBERT; semelhança por cosseno; impacto por estudo de evento
   a partir do **fecho** do 1.º dia de negociação ≥ data da notícia (anti-lookahead).
-- **Enquadramento académico (forte!):** isto é **Raciocínio Baseado em Casos** (CBR — Aamodt & Plaza 1994).
+- **Enquadramento académico (forte!):** isto é **Raciocínio Baseado em Casos** (CBR, Aamodt & Plaza 1994).
   Cada notícia histórica + o seu impacto é um *caso*; a notícia nova é a consulta; a semelhança faz o
   *retrieve*; o impacto dos precedentes é o *reuse*. Paro de propósito no retrieve+reuse (não faço *revise*
   → não há previsão). Saber dizer "o meu motor é o núcleo de um sistema CBR" mostra domínio do paradigma.
 - **Defesa em 3 frases:** "Transformo cada notícia num vetor que capta o significado e procuro as mais
-  parecidas no histórico — é raciocínio baseado em casos. Para cada precedente mostro o que aconteceu ao
+  parecidas no histórico; é raciocínio baseado em casos. Para cada precedente mostro o que aconteceu ao
   preço a seguir, medido sempre *depois* do evento. É recuperação de evidência, não previsão."
 
 ### 4.3 Motor de explicação (XAI)
@@ -130,7 +130,7 @@ noticia live (Finnhub/RSS)
 - **Como funciona:** para o gatilho de mercado, indica o movimento, z-score, limiar e janela; para o de
   notícias, lista os precedentes (data/ticker/semelhança/impacto/título) + impacto médio + aviso de
   não-previsão. Testado automaticamente: a explicação reproduz exatamente cada precedente recuperado.
-- **Defesa em 3 frases:** "A explicação não é gerada à parte — é renderizada dos mesmos números que o
+- **Defesa em 3 frases:** "A explicação não é gerada à parte: é renderizada dos mesmos números que o
   sistema calculou, por isso não pode divergir da lógica. Chamo a isto *fidelidade por construção*.
   Um teste automático confirma que nenhum precedente é inventado nem omitido."
 
@@ -157,7 +157,7 @@ noticia live (Finnhub/RSS)
    previsão". *Reprodutível:* sobre `data/samples/kb_sample.jsonl` (encoder transparente); em produção, SBERT.
 
 > **Porque é que o MSFT aparece numa consulta sobre a NVIDIA?** Porque a recuperação é por **significado**
-> (tema "procura de IA / data-center"), não por nome de empresa — é a generalização *cross-ticker* que a
+> (tema "procura de IA / data-center"), não por nome de empresa; é a generalização *cross-ticker* que a
 > avaliação mede. Saber explicar isto mostra que domino o núcleo do sistema.
 
 ---
@@ -168,7 +168,7 @@ noticia live (Finnhub/RSS)
 - SBERT-MiniLM **0,514 ± 0,015**; SBERT-MPNet **0,538 ± 0,011**; lexical 0,346; aleatório 0,240; recência 0,126.
 - **Leitura:** ~2,1× acima do acaso e bem acima do lexical; a vantagem é do *embedding semântico* (robusta
   ao modelo). É uma avaliação **preliminar** (notícias recentes do Finnhub, não o FNSPID multi-ano).
-- **Por setor:** o *lift* é maior na energia (+0,377) e saúde (+0,348) — vocabulário distintivo — e menor no
+- **Por setor:** o *lift* é maior na energia (+0,377) e saúde (+0,348), de vocabulário distintivo, e menor no
   consumo (+0,100). A tecnologia tem a P@5 bruta mais alta (0,712) mas porque domina o corpus (taxa-base 0,429).
 
 **Detetor de anomalias (RQ1).** Janela fixa 2023-06 a 2026-06, 15 tickers:
@@ -223,7 +223,7 @@ progress/  TRACKER (checklist) + SESSIONS (registo)
 - Resultados reprodutíveis: `scripts/evaluate.py` (recuperação) e `scripts/evaluate_anomaly.py` (anomalia)
   escrevem `docs/evaluation/*` e as figuras em `thesis/figures/`.
 - Análise extra pronta: `scripts/evaluate_per_sector.py` dá a recuperação **por setor** (precision@k +
-  *lift* por setor) — basta o corpus Finnhub (re-obter com a `FINNHUB_API_KEY` na `.env`).
+  *lift* por setor); basta o corpus Finnhub (re-obter com a `FINNHUB_API_KEY` na `.env`).
 - Tudo o que é número na tese sai de um script com seed fixa.
 
 ---
@@ -231,10 +231,10 @@ progress/  TRACKER (checklist) + SESSIONS (registo)
 ## 7. Perguntas difíceis do júri (e respostas preparadas)
 
 **P: Isto não é só usar bibliotecas existentes?**
-R: Sim — e numa tese de *Engenharia* de IA é isso que se pede: a contribuição é a integração, a metodologia
+R: Sim, e numa tese de *Engenharia* de IA é isso que se pede: a contribuição é a integração, a metodologia
 de correlação notícia–impacto, as escolhas justificadas e a avaliação crítica honesta. O valor está no
 *sistema coerente e explicável*, não num algoritmo novo. Além disso, o núcleo assenta num paradigma
-reconhecido — **Raciocínio Baseado em Casos** (Aamodt & Plaza 1994): recuperar casos análogos e reusar o
+reconhecido, o **Raciocínio Baseado em Casos** (Aamodt & Plaza 1994): recuperar casos análogos e reusar o
 seu resultado como evidência. Não é ad hoc; é CBR aplicado a notícias–mercado, com explicação por exemplos.
 
 **P: Porque não usaram um LLM / deep learning, que dá melhores resultados?**
@@ -245,12 +245,12 @@ escala).
 
 **P: A precision@5 de ~0,51 é boa?**
 R: É ~2,1× o acaso (0,240) e bem acima do baseline lexical (0,346), com desvio pequeno (~0,01, 5 seeds).
-É uma medida *honesta* do valor acrescentado, e **preliminar** — assumo que o corpus é recente; o FNSPID
+É uma medida *honesta* do valor acrescentado, e **preliminar**: assumo que o corpus é recente; o FNSPID
 multi-ano é o passo seguinte. (O MPNet chega a 0,538, o que mostra que a vantagem é dos *embeddings*
 semânticos, não de um modelo específico.)
 
 **P: O proxy de setor não é fraco?**
-R: É um proxy automático, sim — por isso é uma limitação explícita e por isso dou primazia ao argumento
+R: É um proxy automático, sim, por isso é uma limitação explícita e por isso dou primazia ao argumento
 *sem rótulo* (consistência da taxa de disparo). Um estudo humano de relevância é trabalho futuro.
 
 **P: Como garantem que não há lookahead?**
@@ -265,22 +265,22 @@ que reproduz exatamente os precedentes recuperados, sem inventar.
 R: É uma escolha de **avaliação**, não do sistema. Se deixasse a NVIDIA recuperar as suas próprias
 notícias, ganhava por correspondência trivial de nome; ao excluir o próprio ticker, obrigo o motor a
 **generalizar entre empresas** (analogia temática), que é o que interessa. Em produção, o alerta mostra os
-precedentes mais semelhantes — incluindo do mesmo ticker, que são legítimos para o utilizador.
+precedentes mais semelhantes, incluindo do mesmo ticker, que são legítimos para o utilizador.
 
 **P: No exemplo real, um título *positivo* da NVIDIA recuperou notícias de ameaça competitiva e mostrou impacto médio −1,97%. Isso não engana o utilizador?**
 R: É a pergunta certa, e respondê-la mostra que percebo o método. A semelhança por *embeddings* capta o
 **tema** ("chips de IA para data-center"), não a **direção** (o sentimento): por isso um título positivo
 pode recuperar um *cluster* de ameaça competitiva cujos desfechos foram negativos. A média é evidência sobre
-*como um tema se moveu*, **não uma previsão** para este caso — por isso mostro sempre os precedentes um a um
+*como um tema se moveu*, **não uma previsão** para este caso; por isso mostro sempre os precedentes um a um
 e termino com o aviso de não-previsão. É também a razão para explicar com **evidência verificável** e não com
 narrativa persuasiva (Lee & See 2004; Bansal 2021, sobre *over-reliance*). Melhorias de produto já
 identificadas: de-duplicar precedentes quase iguais e **sinalizar quando o cluster discorda na direção**,
 para o utilizador ver incerteza em vez de falso consenso. (Nota: o +6,5% do exemplo do Cap. 3 e o −1,97%
-aqui não se contradizem — são bases de conhecimento, horizontes e *encoders* diferentes, e nenhum é previsão.)
+aqui não se contradizem: são bases de conhecimento, horizontes e *encoders* diferentes, e nenhum é previsão.)
 
 **P: Isto é mesmo reprodutível?**
 R: Sim. Seeds fixas, dependências fixadas e cada número sai de um script versionado. Na validação final
-(Fase E) **voltei a correr os três scripts e obtive exatamente os mesmos números** — a única diferença foi
+(Fase E) **voltei a correr os três scripts e obtive exatamente os mesmos números**; a única diferença foi
 o carimbo temporal. Está em `docs/decisions/implementation_review.md` e `page_audit.md`.
 
 **P: Usaram IA para escrever a tese?**
