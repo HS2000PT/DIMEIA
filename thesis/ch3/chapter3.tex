@@ -5,43 +5,36 @@
 \chapter{Methods and Materials}
 \label{chap:methods}
 
-This chapter sets out how the system was built and how it is judged: the overall approach, the datasets
-(documented in a reproducible data card), the models behind each component, the responsible-AI
-considerations, and the evaluation design, which was fixed before any experiment was run. One idea runs
-through all of it: keep things as simple as they can defensibly be, so that where two options perform
-about the same, the more transparent one wins. CLARION, the system these methods produce, is described in
-Chapter~\ref{chap:clarion}; the experiments that apply them are reported in
-Chapter~\ref{chap:casestudies}.
+This chapter answers two questions: how is the system built, and how is it judged? It covers the approach,
+the data (in a reproducible data card), the techniques behind each component, the responsible-AI
+commitments, and the evaluation design, which was fixed before any experiment was run. One idea runs
+through all of it: keep things as simple as they can defensibly be, so that when two options perform about
+the same, the more transparent one wins. CLARION itself is described in Chapter~\ref{chap:clarion}; the
+experiments are reported in Chapter~\ref{chap:casestudies}.
 
 \section{Approach and Methodology}
 \label{sec:met_approach}
 
-The work follows an incremental, end-to-end engineering methodology. Rather than building each component
-to completion in isolation, a thin slice of the system was first built and proven end to end (from
-data acquisition through to a delivered alert), so that integration risk was identified and controlled
-early. Each component was then developed in its simplest defensible form and made more sophisticated only
-where the added complexity was justified by a measurable or clearly-argued benefit. This reflects the
-framing of the work as Artificial Intelligence \emph{engineering}: as discussed in
-Chapter~\ref{chap:sota}, the individual building blocks already exist in the literature, so the
-contribution lies in their disciplined integration, application and critical evaluation, not in the
-invention of new algorithms.
+\emph{How was the system built?} Incrementally, end to end. Rather than finishing each component in
+isolation, a thin slice was built and proven first, from data acquisition to a delivered alert, so that
+integration risk surfaced early. Each component then started in its simplest defensible form and grew only
+where the extra complexity earned its place. This is what Artificial Intelligence \emph{engineering} means
+here: the building blocks already exist in the literature (Chapter~\ref{chap:sota}), so the contribution is
+their disciplined integration, application and critical evaluation, not a new algorithm.
 
-Two consequences of this methodology recur throughout the design. First, every component is specified by
-its \emph{responsibility} and its \emph{interface} rather than by a particular implementation, which
-keeps the system testable and makes principled substitution possible (for example, exchanging one
-embedding model for another). Second, the methods chosen are constrained by the project's non-negotiable
-requirements: only free and reproducible resources, a focus on the US market, transparency at every step,
-and no price prediction or trading. These requirements act as a filter on the design space before any
-performance consideration.
+Two habits follow. First, every component is defined by its \emph{responsibility} and its \emph{interface},
+not by a particular implementation, which keeps it testable and swappable (one embedding model for another,
+say). Second, the project's non-negotiable constraints, only free and reproducible resources, the US
+market, transparency, and no prediction or trading, filter the design space before any performance
+question.
 
 \section{Datasets and Data Sources}
 \label{sec:met_data}
 
-The system uses two clearly separated data layers, sharing a common schema so that they are directly
-comparable: a \textbf{historical} layer, built offline, that supplies the precedents, and a
-\textbf{live} layer that supplies real-time prices and news (Figure~\ref{fig:data_layers}). This
-separation is deliberate: the historical layer must be rich and stable, whereas the live layer must be
-timely and inexpensive.
+\emph{What data does the system use?} Two clearly separated layers that share one schema, so they are
+directly comparable (Figure~\ref{fig:data_layers}): a \textbf{historical} layer, built offline, that
+supplies the precedents, and a \textbf{live} layer that supplies real-time prices and news. The split is
+deliberate: the historical layer must be rich and stable, the live layer timely and cheap.
 
 \begin{figure}[ht]
 \centering
@@ -98,26 +91,23 @@ described in Section~\ref{sec:met_data_live} (3{,}714 headlines for the same fif
 the identical process); the full multi-year FNSPID build is identified as future work.}
 \end{table}
 
-The fifteen large-capitalisation tickers were chosen to span five economic sectors, which is what makes
-the cross-sector evaluation of Chapter~\ref{chap:casestudies} meaningful while keeping the corpus
-tractable on a modest machine; the six-year window (2018--2023, the extent of the dataset) is recent
-enough to be relevant yet long enough to contain precedents. These choices are documented rather than
-fixed: a different ticker set or window can be substituted without any change to the methodology.
+The fifteen large-cap tickers span five sectors, which makes the cross-sector evaluation of
+Chapter~\ref{chap:casestudies} meaningful while keeping the corpus tractable; the 2018--2023 window (the
+dataset's extent) is recent yet long enough to hold precedents. These are documented choices, not fixed
+ones: a different ticker set or window can be substituted without changing the method.
 
 \subsection{Preprocessing and Event Alignment}
 \label{sec:met_data_prep}
 
-Building the historical knowledge base from the corpus involves three steps. First, the news file is read
-in a streaming fashion and filtered to the chosen tickers and window, so that only the relevant subset is
-materialised rather than the full multi-gigabyte corpus. Second, each retained news item is normalised to
-the common schema (date, ticker, headline). Third, each item is aligned to the market and its impact is
-measured. The alignment rule is important for honesty: the event day is taken to be the first trading day
-\emph{on or after} the news date, and the price impact is measured from that day's closing price onward.
-Measuring from the close, rather than the open, avoids crediting the system with a move already embedded
-in the opening price, and measuring strictly forward enforces the no-lookahead guarantee of
-Section~\ref{sec:met_evaluation}. Items for which no aligned price series is available, or whose forward
-window extends beyond the available data, are discarded rather than imputed. Algorithm~\ref{alg:kbbuild}
-collects these steps into the build procedure.
+\emph{How is a news item turned into a historical case?} In three steps. First, the news file is read in a
+stream and filtered to the chosen tickers and window, so only the relevant subset is materialised. Second,
+each item is normalised to the common schema (date, ticker, headline). Third, each item is aligned to the
+market and its impact measured. The alignment rule matters for honesty: the event day is the first trading
+day \emph{on or after} the news date, and impact is measured from that day's \emph{close} onward. Measuring
+from the close, not the open, avoids crediting a move already in the opening price, and measuring strictly
+forward enforces the no-lookahead guarantee of Section~\ref{sec:met_evaluation}. Items with no aligned
+prices, or whose window runs past the data, are dropped rather than imputed. Algorithm~\ref{alg:kbbuild}
+states the build.
 
 \begin{algorithm}[ht]
 \caption{Knowledge-base construction with event alignment.}
@@ -143,15 +133,13 @@ collects these steps into the build procedure.
 \subsection{Live Layer and Evaluation Dataset}
 \label{sec:met_data_live}
 
-The live layer provides, in real time, prices from a free market-data service (with a second free
-provider as a fallback) and news from a free company-news service and from financial syndication feeds.
-Free news services are deliberately \emph{not} used to construct the historical layer, because their free
-tiers are typically restricted to a short, recent window and are delayed; they are, however, entirely
-adequate as the live trigger and as a source of \emph{real} news for a preliminary evaluation. For the
-latter purpose, a set of $3{,}714$ real headlines for the fifteen tickers was collected from the free
-company-news service (the most recent months available), and is used for the retrieval study in
-Chapter~\ref{chap:casestudies}. This set is genuinely real but recent, which is why the full multi-year
-FNSPID build remains the richer source identified as future work.
+The live layer provides real-time prices from a free market-data service (with a free fallback) and news
+from a free company-news service and RSS feeds. Free news is deliberately \emph{not} used to build the
+historical layer, because free tiers cover only a short, recent, delayed window; but it is fine as the live
+trigger and as a source of \emph{real} news for a first evaluation. For that, a set of $3{,}714$ real
+headlines for the fifteen tickers was collected from the free company-news service (the most recent months
+available), and is used for the retrieval study in Chapter~\ref{chap:casestudies}. This corpus is real but
+recent, which is why the full multi-year FNSPID build remains the richer source, identified as future work.
 
 \subsection{Data Governance and Attribution}
 \label{sec:met_data_gov}
@@ -165,26 +153,27 @@ in this document.
 \section{Models and Techniques}
 \label{sec:met_techniques}
 
+Three techniques do the work: a detector, a retrieval-and-impact engine, and an explanation step. Each is
+introduced by what it is \emph{for}, then how it works.
+
 \subsection{Statistical Anomaly Detection}
 \label{sec:met_anomaly}
 
-Abrupt movements are detected with a transparent statistical rule. Let $r_t$ be the (log-)return of an
-asset on day $t$, and let $\mu_t$ and $\sigma_t$ be the mean and standard deviation of returns over a
-trailing window of $w$ days that ends strictly before $t$. The day is flagged as anomalous when the
-absolute $z$-score exceeds a threshold $k$:
+\emph{What it is for:} to flag a daily move that is unusual \emph{for that stock}, not just large in
+absolute terms. \emph{How it works:} let $r_t$ be the day's (log-)return and $\mu_t,\sigma_t$ the mean and
+standard deviation of returns over a trailing window of $w$ days ending strictly before $t$. The day is
+flagged when the absolute $z$-score exceeds a threshold $k$:
 \begin{equation}
 z_t = \frac{r_t - \mu_t}{\sigma_t}, \qquad \text{anomaly} \iff |z_t| > k .
 \label{eq:zscore}
 \end{equation}
-This belongs to the statistical family of detectors \autocite{chandola2009anomaly} and is chosen for its
-transparency: the investor can be shown exactly why an alert fired, in terms of how many standard
-deviations the move represented. As established in Chapter~\ref{chap:sota}, more expressive detectors such
-as Isolation Forest \autocite{liu2008isolation} or deep models \autocite{pang2021deep} exist, but their
-reduced interpretability is not warranted for a single, low-dimensional return series whose alerts must be
-explained to a non-expert. The window $w$ and threshold $k$ are explicit design choices, and their effect
-is examined by ablation in Chapter~\ref{chap:casestudies}. Algorithm~\ref{alg:zscore} states the rule
-precisely; note that the window for day $t$ uses only days strictly before $t$, so no future information
-enters the decision.
+This is the statistical family of detectors \autocite{chandola2009anomaly}, chosen for transparency: the
+investor can be shown exactly how many standard deviations the move was. More expressive detectors exist,
+Isolation Forest \autocite{liu2008isolation} or deep models \autocite{pang2021deep}, but their opacity is
+not warranted for a single return series explained to a non-expert (Chapter~\ref{chap:sota}). The window
+$w$ and threshold $k$ are explicit choices, examined by ablation in Chapter~\ref{chap:casestudies}.
+Algorithm~\ref{alg:zscore} states the rule; the window for day $t$ uses only earlier days, so no future
+information enters.
 
 \begin{algorithm}[ht]
 \caption{Rolling \emph{z}-score anomaly detection (no lookahead).}
@@ -202,12 +191,11 @@ enters the decision.
 \end{algorithmic}
 \end{algorithm}
 
-A small worked example shows why this normalisation matters. Suppose two stocks both fall $3.2\%$ today.
-The first has been calm lately (recent mean $\mu \approx 0.04\%$, standard deviation $\sigma \approx
-0.40\%$); the second is volatile ($\mu \approx 0.10\%$, $\sigma \approx 1.50\%$). The same raw move
-produces very different $z$-scores (Table~\ref{tab:zscore_worked}): for the calm stock $z \approx -8.1$,
-a clear anomaly, but for the volatile stock $z \approx -2.2$, an ordinary day. A fixed percentage
-threshold would flag both identically; the $z$-score does not, which is exactly the behaviour wanted.
+A small example shows why this matters. Two stocks both fall $3.2\%$ today. One has been calm
+($\sigma \approx 0.40\%$), the other volatile ($\sigma \approx 1.50\%$). The same move is a clear anomaly
+for the calm stock ($z \approx -8.1$) but an ordinary day for the volatile one ($z \approx -2.2$), as
+Table~\ref{tab:zscore_worked} shows. A fixed percentage threshold would flag both; the $z$-score does not,
+which is exactly what we want.
 
 \begin{table}[ht]
 \caption{Worked example: the same $-3.2\%$ move on a calm and a volatile stock.}
@@ -229,17 +217,17 @@ Flagged at $k=3$? & yes & no \\
 \subsection{Semantic Retrieval and Impact Measurement}
 \label{sec:met_correlation}
 
-The news--market correlation engine is the core of the work and combines two techniques. For retrieval,
-each news item is encoded into a sentence embedding with a Sentence-BERT model \autocite{reimers2019sbert},
-chosen (Section~\ref{sec:sota_finnlp}) because it captures contextual meaning yet produces directly
-comparable fixed-length vectors, so that the nearest historical items to a query can be found efficiently
-with cosine similarity. For impact, the cumulative return of the asset is measured over fixed post-event
-windows ($+1$, $+3$ and $+5$ trading days) in the manner of an event study
-\autocite{fama1969adjustment, brown1985daily}. Both the similarity metric and the impact windows are
-explicit, documented choices and together constitute the methodological contribution. Impact is measured
-strictly after the event, so the evidence characterises an outcome rather than forecasting one.
-Algorithm~\ref{alg:retrieval} sets out the retrieval-and-reuse step (the case-based-reasoning core of
-Section~\ref{sec:sota_cbr}) for an incoming headline.
+\emph{What it is for:} given a new headline, find the most similar past headlines and show what happened to
+their prices. This news--market correlation engine is the heart of the work, and it combines two
+techniques. \emph{Retrieval:} each headline becomes a sentence embedding with Sentence-BERT
+\autocite{reimers2019sbert}, chosen (Section~\ref{sec:sota_finnlp}) because it captures meaning yet yields
+directly comparable vectors, so the nearest past items are found cheaply by cosine similarity.
+\emph{Impact:} for each precedent, the cumulative return is measured over fixed post-event windows
+($+1$, $+3$ and $+5$ trading days), in the manner of an event study
+\autocite{fama1969adjustment, brown1985daily}. Both the similarity metric and the windows are explicit,
+documented choices, and together they are the methodological contribution. Impact is measured strictly
+after the event, so it is an outcome, not a forecast. Algorithm~\ref{alg:retrieval} states the
+retrieve-and-reuse step (the case-based-reasoning core of Section~\ref{sec:sota_cbr}).
 
 \begin{algorithm}[ht]
 \caption{Precedent retrieval and impact reporting (news trigger).}
@@ -292,27 +280,23 @@ are used, so no future information enters.}
 \label{fig:eventwindow}
 \end{figure}
 
-Three choices fix \emph{how} that impact is measured, and each is made for transparency as much as for
-rigour. The first is the \emph{horizons}: cumulative returns are taken over short windows of $+1$, $+3$
-and $+5$ trading days. Short windows are standard practice for daily event studies
-\autocite{brown1985daily} and limit the chance that unrelated, market-wide moves come to dominate the
-measured reaction: the longer the window, the more confounding creeps in. The second is the
-\emph{baseline against which the move is read}. This work reports the \emph{raw} cumulative return rather
-than a market-adjusted \emph{abnormal} return (the return in excess of a market or expected-return model,
-as in a classical cumulative-abnormal-return study). Raw returns are chosen because they are directly
-observable and need no estimated market model that a non-expert could not scrutinise. The cost, stated
-plainly, is that a raw return conflates the news reaction with any market-wide move on the same days, which
-is the confounding threat examined in Chapter~\ref{chap:casestudies}; market adjustment is a sound
-refinement, recorded as future work. The third choice is \emph{aggregation}:
-the headline figure an alert shows is the \emph{mean} impact across the retrieved precedents, a simple and
-interpretable summary. Because a mean can mask disagreement, the individual precedents and their impacts
-are always displayed alongside it, so the investor sees the spread rather than a single number in
-isolation.
+Three choices fix \emph{how} impact is measured, each made for transparency as much as rigour:
+\begin{itemize}
+  \item \textbf{Horizons.} Short windows ($+1$, $+3$, $+5$ days), standard for daily event studies
+        \autocite{brown1985daily}; longer windows let unrelated, market-wide moves creep in.
+  \item \textbf{Baseline.} The \emph{raw} cumulative return, not a market-adjusted abnormal return, because
+        it is directly observable and needs no estimated market model a non-expert could not check. The
+        cost, stated plainly, is that a raw return mixes the news reaction with any market-wide move on the
+        same days (the confounding threat examined in Chapter~\ref{chap:casestudies}); market adjustment is
+        future work.
+  \item \textbf{Aggregation.} The headline figure is the \emph{mean} impact across the retrieved
+        precedents, but the individual precedents are always shown too, so the investor sees the spread, not
+        just one number.
+\end{itemize}
 
-A worked example makes the retrieve-and-reuse step concrete. The intuition is conveyed first by
-Figure~\ref{fig:embedding_concept}: the embedding places each headline in a vector space where texts on
-the same theme fall close together, so a query lands near the precedents that resemble it and far from
-unrelated news.
+A worked example makes it concrete. Figure~\ref{fig:embedding_concept} gives the intuition: the embedding
+places each headline in a space where similar themes fall close together, so a query lands near its
+matches and far from unrelated news.
 
 \begin{figure}[ht]
 \centering
@@ -352,16 +336,13 @@ table makes this concrete with real numbers.}
 \label{fig:embedding_concept}
 \end{figure}
 
-Table~\ref{tab:retrieval_worked} then carries the step through end to end on the small sample knowledge
-base bundled with the system. To keep the walk-through fully reproducible without downloading any model, it
-uses a transparent baseline encoder whose similarity reflects word overlap directly; the deployed system
-uses the Sentence-BERT encoder described above, whose retrieval quality is evaluated in
-Chapter~\ref{chap:casestudies}. For the query \emph{``Nvidia demand surges on AI chip orders''}, the three
-nearest precedents are all AI-themed and, importantly, not all from the same company: a Microsoft
-cloud-AI item is retrieved alongside the two Nvidia items, illustrating the \emph{cross-ticker}
-generalisation on which the evaluation rests. Reusing their observed outcomes gives a mean $+5$-day impact
-of $+6.5\%$, which the alert presents as evidence, with the explicit caveat that it records what followed
-comparable past news rather than a forecast.
+Table~\ref{tab:retrieval_worked} runs the step end to end on the small sample knowledge base shipped with
+the system. To keep it reproducible without downloading a model, it uses a transparent word-overlap encoder
+(the deployed system uses Sentence-BERT, evaluated in Chapter~\ref{chap:casestudies}). For the query
+\emph{``Nvidia demand surges on AI chip orders''}, the three nearest precedents are all AI-themed and not
+all from the same company: a Microsoft cloud-AI item is retrieved alongside two Nvidia items, showing the
+\emph{cross-ticker} generalisation the evaluation rests on. Their mean $+5$-day impact is $+6.5\%$, shown
+as evidence, with the explicit caveat that it records what followed comparable past news, not a forecast.
 
 \begin{table}[ht]
 \caption{Worked retrieval example on the bundled sample knowledge base. Query:
@@ -388,27 +369,23 @@ average of the rounded values shown.}
 \subsection{Explanation Techniques}
 \label{sec:met_xai}
 
-Explanation is pursued primarily through transparent design, following the interpretable-by-design
-argument reviewed in Section~\ref{sec:sota_xai} \autocite{rudin2019stop, arrieta2020xai}. For every alert
-the system assembles three transparent ingredients: the rule or measure that produced the detection (the
-$z$-score together with its window and threshold); the retrieved historical precedents and their observed
-impact, shown as direct evidence; and, optionally, feature attribution over the detector using SHAP
-\autocite{lundberg2017shap}. Financial sentiment from a domain language model \autocite{araci2019finbert}
-is an optional enrichment that is included only if it adds defensible value. Because each alert is
-rendered directly from these computed objects, the explanation is faithful to the system's actual logic by
-construction, a property assessed explicitly in Chapter~\ref{chap:casestudies}.
+\emph{What it is for:} to turn the computed objects into a message the investor can check. Explanation is
+pursued by transparent design (Section~\ref{sec:sota_xai}) \autocite{rudin2019stop, arrieta2020xai}. Each
+alert is assembled from three transparent ingredients: the rule that fired (the $z$-score with its window
+and threshold); the retrieved precedents with their observed impact; and, optionally, feature attribution
+over the detector with SHAP \autocite{lundberg2017shap}. Financial sentiment from a domain model
+\autocite{araci2019finbert} is an optional enrichment, used only if it adds defensible value. Because every
+alert is rendered directly from these objects, the explanation is faithful to the computation by
+construction, a property tested in Chapter~\ref{chap:casestudies}.
 
 \section{Tools and Frameworks}
 \label{sec:met_tools}
 
-The system is built on the open-source scientific-Python ecosystem, using mature, well-documented and
-freely available libraries for numerical computing, market-data access, sentence embeddings and figure
-generation. This choice is consistent with the project's constraint of using only free resources and with
-its emphasis on reproducibility: pinned dependencies and fixed random seeds mean the environment and the
-results can be recreated on another machine. The concrete engineering (the environment, the
-organisation of the code by component, and the automated tests) is documented at the appropriate level
-in Appendix~\ref{app:reproducibility}, deliberately kept out of the main text so that this chapter
-remains a description of \emph{methods} rather than of software.
+The system is built on the open-source scientific-Python ecosystem: mature, free libraries for numerical
+computing, market-data access, sentence embeddings and figures. This fits the free-resources constraint and
+reproducibility, since pinned dependencies and fixed seeds let the environment and results be recreated
+elsewhere. The concrete engineering (environment, code organisation, tests) is kept in
+Appendix~\ref{app:reproducibility}, so this chapter stays a description of \emph{methods}, not software.
 
 \section{Responsible AI and Ethics}
 \label{sec:met_ethics}
@@ -430,48 +407,40 @@ hidden.
 \section{Evaluation Methodology}
 \label{sec:met_evaluation}
 
-The evaluation is defined in advance, before any experiment is run. Fixing the metrics, baselines and
-protocol beforehand guards against the temptation to choose, after the fact, the measure that flatters the
-result; it is a small-scale form of pre-registration. The full results are reported in
-Chapter~\ref{chap:casestudies}; what follows is the protocol they obey.
+\emph{How is the system judged?} By a plan fixed before any experiment ran, so the metric cannot be chosen
+after the fact to flatter the result, a small-scale pre-registration. The results are in
+Chapter~\ref{chap:casestudies}; here is the protocol they follow.
 
 \subsection{Retrieval metric and relevance}
 \label{sec:met_eval_retrieval}
 
-The correlation engine is evaluated as an information-retrieval task (Section~\ref{sec:sota_ir}), using
-precision@$k$, the share of the top $k$ retrieved precedents that are relevant. Writing $Q$ for the set
-of query headlines and $R_k(q)$ for the top $k$ items returned for query $q$,
+Retrieval is evaluated as an information-retrieval task (Section~\ref{sec:sota_ir}) with precision@$k$, the
+share of the top $k$ precedents that are relevant. Writing $Q$ for the set of query headlines and $R_k(q)$
+for the top $k$ items returned for query $q$,
 \begin{equation}
 \text{precision@}k = \frac{1}{|Q|}\sum_{q\in Q}\frac{1}{k}\sum_{d\in R_k(q)} \mathrm{rel}(q,d),
 \qquad
 \mathrm{rel}(q,d)=\mathbf{1}\big[\,\mathrm{sector}(d)=\mathrm{sector}(q)\,\big].
 \label{eq:precatk}
 \end{equation}
-Relevance is approximated by \emph{sector agreement}: a precedent is counted as relevant when its company
-belongs to the same economic sector as the query's. This is an automatic proxy for the human judgement of
-``analogous'', adopted because no labelled relevance set exists; its limits are stated openly with the
-results. Two design choices make the metric demanding rather than flattering. First, a strict
-\emph{cross-ticker} constraint removes from the candidate pool every precedent that shares the query's
-ticker, so the system cannot score by trivially matching a company to its own past news. It must
-generalise \emph{across} companies within a sector. Second, $k$ is kept small (the headline figure uses
-$k=5$), reflecting that an alert can show only a handful of precedents, so the test is whether the very
-top results are relevant.
+Relevance is approximated by \emph{sector agreement}: a precedent counts as relevant if its company is in
+the query's sector. This is an automatic stand-in for ``analogous'', used because no labelled set exists;
+its limits are stated with the results. Two choices make the metric demanding, not flattering. First, a
+strict \emph{cross-ticker} constraint drops every precedent sharing the query's ticker, so the system
+cannot win by matching a company to its own past news; it must generalise \emph{across} companies in a
+sector. Second, $k$ is small (the headline figure uses $k=5$), reflecting that an alert shows only a few
+precedents.
 
 \subsection{Baselines}
 \label{sec:met_eval_baselines}
 
-A single precision number means little in isolation, so semantic retrieval is compared against three
-baselines, each chosen to control for a specific rival explanation. The \textbf{random} baseline draws $k$
-precedents uniformly at random; its expected precision is just the base rate of same-sector items, and it
-therefore marks the ``no-skill'' floor. The \textbf{recency} baseline returns the $k$ most recent items,
-testing whether simply surfacing the newest news (a tempting, cheap strategy) would do as well. The
-\textbf{lexical} baseline ranks by a bag-of-words, term-overlap representation under the same cosine
-ranking, so that the difference between it and the embedding model isolates the marginal value of
-\emph{semantic} meaning over surface word matching, the central claim of the engine. Because each query
-sample is drawn at random, the whole comparison is repeated over five random seeds and reported as a mean
-with its standard deviation, so that a single lucky or unlucky draw cannot drive the conclusion; the
-embedding model itself is varied between two Sentence-BERT variants to show the result is a property of
-semantic retrieval, not of one specific model.
+A single number means little alone, so semantic retrieval is compared against three baselines, each
+controlling for a rival explanation. \textbf{Random} draws $k$ precedents at random; its precision is the
+sector base rate, the no-skill floor. \textbf{Recency} returns the newest items, testing whether simply
+surfacing fresh news would do as well. \textbf{Lexical} ranks by word overlap under the same cosine, so the
+gap to the embedding model isolates the value of \emph{meaning} over surface words. Each comparison is
+repeated over five random seeds (mean with standard deviation), and two Sentence-BERT variants are tried,
+so the result reflects semantic retrieval in general, not one lucky draw or one model.
 
 \subsection{Anomaly-detection protocol}
 \label{sec:met_eval_anomaly}
@@ -503,8 +472,7 @@ reported with their caveats, and modest but genuine findings are preferred to in
 \section{Chapter Conclusions}
 \label{sec:met_summary}
 
-This chapter set out the methodology of defensible simplicity and incremental delivery, documented the
-two-layer data architecture in a reproducible data card, justified the models and techniques chosen for
-detection, retrieval, impact measurement and explanation, stated the responsible-AI commitments, and
-fixed the evaluation methodology and rigour guarantees in advance. The next chapter shows how these
-methods are integrated into CLARION, the proposed system.
+This chapter set the method: defensible simplicity and incremental delivery; a two-layer data architecture
+in a reproducible data card; the techniques for detection, retrieval, impact and explanation, each
+introduced by its purpose; and an evaluation fixed in advance. The next chapter assembles these into
+CLARION.

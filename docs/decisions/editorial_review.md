@@ -284,3 +284,14 @@ mesmo sistema). Decisão do aluno: **consolidar num mapa único**.
 - 0 travessões em prosa (resta 1 célula de tabela "—" não-aplicável).
 
 **Verificação:** compila 72 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.
+
+## Capítulo 3 — Methods and Materials (reescrito, concept-first)
+- **Cada técnica abre por "What it is for:"** (propósito em linguagem simples) **antes** da equação/algoritmo
+  (deteção, recuperação+impacto, explicação). Secções abrem com a pergunta ("How is a news item turned into
+  a historical case?", "How is the system judged?").
+- **Parágrafo denso das "três escolhas" (horizontes/baseline/agregação) → lista** scannable.
+- Prosa encurtada em todo o capítulo; conclusões crisp.
+- **Intocado:** as 3 equações, os 3 algoritmos, a data card, as tabelas trabalhadas, as 3 figuras, e TODOS
+  os números (3,2%; z −8,1/−2,2; 3 714; +6,5%; 0,60/0,38; k=5; etc.). Citações 50/50 (0 órfãs/indefinidas).
+
+**Verificação:** compila 72 pp, 0 erros, 0 indefinidas, 0 overfull >15pt, 0 `??`.
