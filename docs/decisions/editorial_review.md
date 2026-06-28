@@ -255,3 +255,21 @@ mesmo sistema). Decisão do aluno: **consolidar num mapa único**.
 
 **Resultado:** tese **76 pp** (era 78; menos 4 figuras redundantes), 0 erros, 0 refs indefinidas,
 0 overfull >15pt, 0 `??`. Figuras totais 19 → 15; Cap. 4 de 7 → 3. Nenhum número/dado alterado.
+
+---
+
+# REESCRITA PROFUNDA (clareza, capítulo a capítulo) — Sessão 24
+
+> Pedido do aluno: a tese ainda lê densa/cansativa e o núcleo não fica claro. Reescrita de raiz para
+> **clareza progressiva**, dentro dos 6 capítulos canónicos; cada secção responde a UMA pergunta; conceito
+> antes de implementação; parágrafos curtos; **sem inventar nada**, números/citações preservados.
+
+## Capítulo 1 — Introduction (reescrito)
+- Cada secção passa a responder a uma pergunta clara; parágrafos curtos.
+- **Objetivos** convertidos de frase corrida para **lista**; contribuições mais nítidas.
+- **"Document Structure" → mapa do leitor:** lista com a pergunta que cada capítulo responde (prepara a
+  leitura progressiva). Ex.: Cap. 4 (CLARION) = "o que é o sistema, e como encaixam os seus dados, partes,
+  fluxo e decisões?".
+- Figuras (market cap, conceito), números (62,2T; 87/28; 81/71) e citações preservados; 0 travessões.
+
+**Verificação:** compila 76 pp, 0 erros, 0 citações/refs indefinidas, 0 overfull >15pt, 0 `??`.

@@ -1,6 +1,5 @@
 % Chapter 1 - Introduction
-% Canonical MEIA structure: Contextualization, Problem, Research Questions & Objectives,
-% Scientific Contributions, Document Structure. EN-GB. Every claim carries a verified source.
+% Canonical MEIA structure. EN-GB. Plain, progressive: each section answers one question.
 
 \chapter{Introduction}
 \label{chap:introduction}
@@ -8,12 +7,11 @@
 \section{Contextualization}
 \label{sec:intro_context}
 
-Most Americans now own stock, either directly or through retirement accounts and mutual funds
-\autocite{gallup2025stock}. At the same time, the US equity market has grown into the world's largest and
-most liquid, reaching US\$62.2~trillion at the end of 2024 \autocite{sifma2025factbook}
-(Figure~\ref{fig:us_market_cap}). Trading takes place mainly on the \gls{NYSE} and \gls{NASDAQ}, and a
-growing share of it now comes from ordinary people using commission-free mobile apps, not from
-professional institutions.
+Most Americans now own stock, directly or through retirement accounts and mutual funds
+\autocite{gallup2025stock}, and they invest in the world's largest equity market, worth
+US\$62.2~trillion at the end of 2024 \autocite{sifma2025factbook} (Figure~\ref{fig:us_market_cap}).
+Trading happens mainly on the \gls{NYSE} and \gls{NASDAQ}, and a growing share of it now comes from
+ordinary people using commission-free mobile apps, not from professional institutions.
 
 \begin{figure}[ht]
 \centering
@@ -24,32 +22,32 @@ professional institutions.
 \label{fig:us_market_cap}
 \end{figure}
 
-These non-professional, or ``retail'', investors are the audience of this work. Stock ownership among
-them is wide but uneven: it rises to 87\% of households earning above US\$100{,}000 and falls to 28\%
-below US\$50{,}000 \autocite{gallup2025stock}. Whatever their income, they face the same difficulty.
-Markets move continuously across thousands of securities and relevant news arrives throughout the trading
-day, yet retail investors have none of the tools that banks and funds take for granted.
+These non-professional, or ``retail'', investors are the audience of this work, and their position is
+hard. Markets move continuously across thousands of securities, and relevant news arrives all through the
+trading day, yet retail investors have none of the tools that banks and funds take for granted. Ownership
+is uneven too: it reaches 87\% of households earning above US\$100{,}000 but only 28\% below
+US\$50{,}000 \autocite{gallup2025stock}.
 
-Meanwhile, artificial intelligence has spread quickly through finance. A 2026 survey found that 81\% of
-financial firms were adopting \gls{AI} in some form and 71\% were already using generative AI
-\autocite{ccaf2026aifs}. Much of this technology is opaque: the strongest models rarely reveal how they
-reach a conclusion \autocite{arrieta2020xai, adadi2018peeking}. For someone who has to act on an alert
-and live with the result, that opacity is a real obstacle. This dissertation sets out to let the investor
-see \emph{why} an alert was raised.
+Meanwhile, artificial intelligence has spread quickly through finance: a 2026 survey found 81\% of
+financial firms adopting \gls{AI} and 71\% already using generative AI \autocite{ccaf2026aifs}. But most
+of this technology is opaque, rarely showing how it reaches a conclusion
+\autocite{arrieta2020xai, adadi2018peeking}. For someone who must act on an alert and live with the
+result, that opacity is the obstacle this dissertation removes: it lets the investor see \emph{why} an
+alert was raised.
 
 \section{Problem Statement}
 \label{sec:intro_problem}
 
-A retail investor who wants to stay informed faces two challenges. The first is telling a genuinely
-unusual price move from ordinary daily volatility, which takes statistical judgement and constant
-attention. The second is reading what a news item might mean, which takes knowing how similar events
-played out before, and most people have no easy way to do that. Existing consumer applications often send
-alerts with little explanation, or rely on models whose reasoning is hidden from the user.
+A retail investor who wants to stay informed faces two everyday problems. The first is telling a genuinely
+unusual price move from ordinary volatility, which takes statistical judgement and constant attention. The
+second is reading what a news item might mean, which takes knowing how similar events played out before.
+Most people can do neither at scale, and the consumer apps that promise to help usually send bare alerts
+or hide their reasoning inside an opaque model.
 
-This work does not try to predict prices. It tries to \emph{explain}. For each abrupt move or relevant
-news item, the system shows what it detected, how it reached that conclusion, where the information came
-from, and which past events resemble the current one, alongside what happened to prices afterwards
-(Figure~\ref{fig:concept}).
+This work takes a deliberately different stance: it does not predict prices, it \emph{explains} events.
+For each abrupt move or relevant news item, the system shows what it detected, how, where the information
+came from, and which past events resemble the current one, together with what happened to prices
+afterwards (Figure~\ref{fig:concept}).
 
 \begin{figure}[ht]
 \centering
@@ -91,39 +89,47 @@ Telegram. Three research questions guide the work:
         computes, and useful to a retail investor?
 \end{itemize}
 
-These questions translate into four objectives: to develop an explainable alerting pipeline driven by the
-two triggers; to evaluate the anomaly detector against transparent baselines; to evaluate the retrieval
-of historical news against trivial baselines; and to assess the faithfulness and usefulness of the
-explanations. The system is built incrementally, in its simplest defensible form first; that is a
-deliberate methodological choice, described in Chapter~\ref{chap:methods}.
+These questions map onto four concrete objectives:
+\begin{itemize}
+  \item build an explainable alerting pipeline driven by the two triggers;
+  \item evaluate the anomaly detector against transparent baselines;
+  \item evaluate the retrieval of historical news against trivial baselines;
+  \item assess whether the explanations are faithful and useful.
+\end{itemize}
+The system is built incrementally, in its simplest defensible form first, a methodological choice
+explained in Chapter~\ref{chap:methods}.
 
 \section{Scientific Contributions}
 \label{sec:intro_contributions}
 
-This is a dissertation in Artificial Intelligence \emph{Engineering}. Its contribution is not a new
-algorithm but the disciplined assembly of existing ones into a system that works, explains itself, and
-can be reproduced. Three contributions stand out:
+This is a dissertation in Artificial Intelligence \emph{Engineering}: the contribution is not a new
+algorithm but the disciplined assembly of existing ones into a system that works, explains itself, and can
+be reproduced. Three contributions stand out:
 
 \begin{itemize}
   \item A reproducible method for relating news to market impact, pairing sentence-embedding retrieval
-        with event-study windows, where the similarity measure and the time horizons are stated
-        explicitly and no information about the future is allowed to leak in.
-  \item \textbf{CLARION}, an alerting system that exposes its complete reasoning chain to the user: the
-        detected event, the supporting evidence, the sources, and the relevant historical precedents.
-        Because each explanation is generated directly from the quantities the system computes, the text
-        cannot diverge from the underlying computation.
-  \item A critical evaluation of each core component on real data, against simple and lexical baselines,
-        with the results, the ablations and the limitations all reported plainly.
+        with event-study windows, with the similarity measure and the time horizons stated explicitly and
+        no information about the future allowed to leak in.
+  \item \textbf{CLARION}, an alerting system that shows its whole reasoning chain: the detected event, the
+        supporting evidence, the sources, and the relevant historical precedents. Because each explanation
+        is built directly from the quantities the system computes, the text cannot drift from the
+        computation.
+  \item A critical, honest evaluation of each core component on real data, against simple and lexical
+        baselines, with the results, the ablations and the limitations all reported plainly.
 \end{itemize}
 
 \section{Document Structure}
 \label{sec:intro_structure}
 
-The remainder of this dissertation is organised as follows. Chapter~\ref{chap:sota} reviews the state of
-the art behind the work: retail investing, anomaly detection, explainable AI and trust in automation,
-financial natural-language processing and information retrieval, event studies, and case-based reasoning.
-Chapter~\ref{chap:methods}
-sets out the methods, the datasets and the evaluation design. Chapter~\ref{chap:clarion} presents CLARION
-itself, at the level of its architecture and the decisions behind it. Chapter~\ref{chap:casestudies}
-evaluates the system through three case studies on real data, and Chapter~\ref{chap:conclusions} returns
-to the research questions, states what was and was not achieved, and points to future work.
+The rest of the dissertation is written to be read in order, each chapter answering one question:
+
+\begin{itemize}
+  \item \textbf{Chapter~\ref{chap:sota} (State of the Art):} what is already known, and what does this
+        work choose?
+  \item \textbf{Chapter~\ref{chap:methods} (Methods and Materials):} how is the system built, and how is
+        it judged?
+  \item \textbf{Chapter~\ref{chap:clarion} (CLARION):} what is the system, and how do its data, parts,
+        flow and decisions fit together?
+  \item \textbf{Chapter~\ref{chap:casestudies} (Case Studies):} does it work on real data?
+  \item \textbf{Chapter~\ref{chap:conclusions} (Conclusions):} what was learned, and what comes next?
+\end{itemize}
