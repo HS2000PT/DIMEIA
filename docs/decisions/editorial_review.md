@@ -229,3 +229,29 @@ foram preservados. Nenhum número, citação ou facto alterado.
 
 **Resultado:** tese, slides e caderno partilham agora a mesma voz natural; o paper IEEE mantém-se alinhado
 em conteúdo.
+
+---
+
+## Revisão de figuras/diagramas (a pedido: "tornar claro, transparente, ligado, conectado")
+
+Revistas **todas** as figuras visualmente (render). As figuras de dados (matplotlib) já estavam limpas; o
+problema era os **diagramas TikZ** (sobreposições/bugs) e a **fragmentação do Cap. 4** (6 diagramas para o
+mesmo sistema). Decisão do aluno: **consolidar num mapa único**.
+
+**Bugs de renderização corrigidos (Cap. 3):**
+- *Espaço de embeddings* (era o pior): os rótulos do cluster sobrepunham-se. Redesenhado com **linhas-guia**
+  para rótulos à direita, pontos bem separados, "não-relacionados" à esquerda. Legível.
+- *Janela de evento*: as setas de retorno cumulativo e o rótulo colidiam com "news (non-trading)".
+  Redesenhado com setas bem separadas, rótulo único por cima, data da notícia à esquerda sem colisão.
+- *Camadas de dados*: rótulo "common schema" afastado da seta (sem sobreposição).
+
+**Cap. 4 consolidado (6 → 2 diagramas + mockup):**
+- **Mantido:** mapa de arquitetura (componentes) e o mockup do Telegram.
+- **Redesenhado:** o diagrama end-to-end passou a ser **um único mapa conectado** com 3 faixas rotuladas
+  (offline · news · market) que convergem na explicação → Telegram; seta vertical "precedents" da base de
+  conhecimento para o passo de cosseno; corrigida a sobreposição do rótulo "align, embed".
+- **Removidos:** os 4 diagramas redundantes (fluxo + sequência de cada gatilho). A prosa do Cap. 4 passou a
+  remeter para as faixas (middle/bottom) do mapa único, ficando "mais conectada".
+
+**Resultado:** tese **76 pp** (era 78; menos 4 figuras redundantes), 0 erros, 0 refs indefinidas,
+0 overfull >15pt, 0 `??`. Figuras totais 19 → 15; Cap. 4 de 7 → 3. Nenhum número/dado alterado.

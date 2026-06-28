@@ -1,7 +1,6 @@
 % Chapter 4 - CLARION (the proposed system)
 % Design-level description of the artifact. NO code identifiers (no filenames, functions, src/).
-% Architecture + flow diagrams + Telegram alert mockups. EN-GB.
-% NOTE: Phase 4 redraws the diagrams cleanly and adds the Telegram alert mockups.
+% Two diagrams only: a component architecture map and a single connected end-to-end flow. EN-GB.
 
 \chapter{CLARION: An Explainable Financial-Alert System for Retail Investors}
 \label{chap:clarion}
@@ -100,50 +99,54 @@ Delivery channel & Telegram bot & Free, ubiquitous, no bespoke client needed \\
 \end{table}
 
 Where Figure~\ref{fig:architecture} shows the components, Figure~\ref{fig:workflow} traces the same
-system as a flow of data and processing steps: the offline knowledge-base build (top), the market
-trigger (middle) and the news trigger (bottom), converging on the explanation engine and the alert.
+system as one connected flow of data and processing steps: the offline knowledge-base build (top), the
+news trigger (middle) and the market trigger (bottom), all converging on the explanation engine and the
+alert.
 
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[
   font=\scriptsize, >={Stealth[length=2mm]},
-  node distance=4.5mm and 5mm,
-  db/.style={draw, rounded corners, align=center, text width=1.75cm, minimum height=0.85cm, fill=black!8},
-  pr/.style={draw, rounded corners, align=center, text width=1.75cm, minimum height=0.85cm, fill=black!3},
-  dec/.style={draw, diamond, aspect=2.2, align=center, inner sep=0pt, text width=1.1cm, fill=black!5},
+  box/.style={draw, rounded corners, align=center, text width=1.7cm, minimum height=0.8cm},
+  db/.style={box, fill=black!8},
+  pr/.style={box, fill=black!3},
+  dec/.style={draw, diamond, aspect=2, align=center, inner sep=1pt, text width=1.0cm, fill=black!5},
+  lane/.style={font=\itshape, text=black!55, anchor=east},
 ]
   % offline build (top)
-  \node[db] (o1) {FNSPID\\ news $+$ prices};
-  \node[pr, right=of o1] (o2) {align to\\ event day};
-  \node[pr, right=of o2] (o3) {SBERT\\ embed};
-  \node[db, right=of o3] (o4) {Knowledge\\ base};
-  \draw[->] (o1)--(o2); \draw[->] (o2)--(o3); \draw[->] (o3)--(o4);
-  % market trigger (middle)
-  \node[db, below=1.3cm of o1] (m1) {Live\\ prices};
-  \node[pr, right=of m1] (m2) {log-\\ returns};
-  \node[pr, right=of m2] (m3) {rolling\\ \emph{z}-score};
-  \node[dec, right=of m3] (m4) {$|z|{>}k$?};
-  \draw[->] (m1)--(m2); \draw[->] (m2)--(m3); \draw[->] (m3)--(m4);
-  % news trigger (bottom)
-  \node[db, below=1.0cm of m1] (n1) {Live\\ news};
-  \node[pr, right=of n1] (n2) {SBERT\\ embed};
-  \node[pr, right=of n2] (n3) {cosine\\ top-$k$};
-  \node[pr, right=of n3] (n4) {precedents\\ $+$ impact};
+  \node[db] (o1) at (2.3,0) {FNSPID\\ news $+$ prices};
+  \node[db] (kb) at (5.5,0) {Knowledge\\ base};
+  \draw[->] (o1) -- node[midway, above, font=\tiny, align=center]{align,\\ embed} (kb);
+  % news trigger (middle)
+  \node[db] (n1) at (0.9,-1.9) {Live\\ news};
+  \node[pr] (n2) at (3.2,-1.9) {SBERT\\ embed};
+  \node[pr] (n3) at (5.5,-1.9) {cosine\\ top-$k$};
+  \node[pr] (n4) at (7.8,-1.9) {precedents\\ $+$ impact};
   \draw[->] (n1)--(n2); \draw[->] (n2)--(n3); \draw[->] (n3)--(n4);
-  \draw[->] (o4) -- (n3) node[midway, sloped, above, font=\tiny]{precedents};
+  \draw[->] (kb) -- node[right, font=\tiny]{precedents} (n3);
+  % market trigger (bottom)
+  \node[db] (m1) at (0.9,-3.8) {Live\\ prices};
+  \node[pr] (m2) at (3.2,-3.8) {log-returns};
+  \node[pr] (m3) at (5.5,-3.8) {rolling\\ \emph{z}-score};
+  \node[dec] (m4) at (7.8,-3.8) {$|z|{>}k$?};
+  \draw[->] (m1)--(m2); \draw[->] (m2)--(m3); \draw[->] (m3)--(m4);
   % converge on explanation + delivery
-  \node[pr] (ex) at ($(m4)!0.5!(n4) + (2.5,0)$) {Explanation\\ engine};
-  \node[pr, right=of ex] (tg) {Telegram\\ alert};
-  \draw[->] (m4) -- (ex) node[midway, above, font=\tiny]{yes};
+  \node[pr] (ex) at (10.1,-2.85) {Explanation\\ engine};
+  \node[pr] (tg) at (10.1,-4.35) {Telegram\\ alert};
   \draw[->] (n4) -- (ex);
+  \draw[->] (m4) -- node[below=1pt, font=\tiny]{yes} (ex);
   \draw[->] (ex) -- (tg);
+  % lane labels
+  \node[lane] at (-0.2,0)    {offline};
+  \node[lane] at (-0.2,-1.9) {news};
+  \node[lane] at (-0.2,-3.8) {market};
 \end{tikzpicture}
-\caption[End-to-end data and processing flow]{The end-to-end flow of \textsc{Clarion}. Offline (top),
-FNSPID news is aligned to prices and embedded into the knowledge base. Online, the market trigger
-(middle) turns live prices into a \emph{z}-score and fires when it exceeds the threshold; the news
-trigger (bottom) embeds an incoming headline, finds its nearest precedents in the knowledge base, and
-attaches their observed impact. Both converge on the explanation engine, which delivers a single
-explained alert.}
+\caption[End-to-end data and processing flow]{The end-to-end flow of \textsc{Clarion} as one connected
+pipeline. \emph{Offline} (top), FNSPID news is aligned to prices and embedded into the knowledge base.
+The \emph{news trigger} (middle) embeds an incoming headline, finds its nearest precedents in the
+knowledge base and attaches their observed impact; the \emph{market trigger} (bottom) turns live prices
+into a \emph{z}-score and fires only when it exceeds the threshold. Both paths converge on the
+explanation engine, which delivers one explained alert through Telegram.}
 \label{fig:workflow}
 \end{figure}
 
@@ -164,77 +167,11 @@ embeddings, returning the nearest historical items to a query. Impact is compute
 return at each horizon ($+1$, $+3$, $+5$ days) measured from the event close, with horizons that fall
 outside the available series reported as not available rather than silently dropped. Given a new item,
 the engine embeds it, ranks the knowledge base by similarity, and returns the top precedents with their
-scores, the evidence later shown to the user. Figure~\ref{fig:news_flow} traces these steps for the
-news trigger end to end.
-
-\begin{figure}[ht]
-\centering
-\begin{tikzpicture}[
-  font=\scriptsize, >={Stealth[length=2mm]},
-  stp/.style={draw, rounded corners, align=center, text width=1.7cm, minimum height=1.0cm, fill=black!3},
-  node distance=4mm
-]
-  \node[stp] (a) {New\\ headline};
-  \node[stp, right=of a] (b) {Sentence\\ embedding};
-  \node[stp, right=of b] (c) {Similarity\\ search};
-  \node[stp, right=of c] (d) {Top-$k$\\ precedents};
-  \node[stp, right=of d] (e) {Event-study\\ impact};
-  \node[stp, right=of e] (f) {Explanation\\ and alert};
-  \draw[->] (a)--(b);
-  \draw[->] (b)--(c);
-  \draw[->] (c)--(d);
-  \draw[->] (d)--(e);
-  \draw[->] (e)--(f);
-  \node[draw, rounded corners, fill=black!8, below=8mm of c, text width=2.0cm, align=center] (kb) {Historical\\ knowledge base};
-  \draw[->] (kb) -- (c);
-\end{tikzpicture}
-\caption[The news trigger end to end]{The news trigger from an incoming headline to a delivered alert.
-The headline is embedded, matched against the historical knowledge base by similarity, and its nearest
-precedents are returned; their post-event impact is measured and assembled, with the headline itself,
-into a single explained alert.}
-\label{fig:news_flow}
-\end{figure}
-
-Where Figure~\ref{fig:news_flow} shows \emph{what} transforms the data, Figure~\ref{fig:news_sequence}
-shows the same trigger as an interaction \emph{over time}: which component calls which, in what order, and
-what each one returns. Reading top to bottom, the trigger polls the live feed; a new headline is handed to
-the correlation engine, which embeds it and queries the knowledge base; the base returns the nearest
-precedents with their measured impact; and the engine passes that evidence to the explanation engine,
-which renders and delivers the alert. The dashed arrows are returns, making explicit that the knowledge
-base is consulted but never decides: the reasoning stays in the open.
-
-\begin{figure}[ht]
-\centering
-\begin{tikzpicture}[
-  font=\scriptsize, >={Stealth[length=1.8mm]},
-  head/.style={draw, rounded corners, fill=black!5, align=center, text width=1.8cm, minimum height=0.7cm},
-  msg/.style={->, thick},
-  ret/.style={->, dashed},
-  lab/.style={midway, above, font=\tiny, fill=white, inner sep=1pt},
-]
-  \def\yt{-0.5}\def\yb{-5.2}
-  \foreach \x/\nme/\lbl in {%
-      0/S/{Scheduler\\(trigger)}, 2.2/N/{News feed\\(live)}, 4.4/C/{Correlation\\engine},
-      6.6/K/{Knowledge\\base}, 8.8/E/{Explanation\\engine}} {
-    \node[head] (\nme) at (\x,0) {\lbl};
-    \draw[dashed, black!40] (\x,\yt) -- (\x,\yb);
-  }
-  \draw[msg] (0,-1.0) -- (2.2,-1.0) node[lab]{poll feed};
-  \draw[ret] (2.2,-1.6) -- (4.4,-1.6) node[lab]{new headline};
-  \draw[msg] (4.4,-2.2) -- ++(0.55,0) -- ++(0,-0.4) -- (4.4,-2.6);
-  \node[right, font=\tiny] at (5.0,-2.4) {embed (SBERT)};
-  \draw[msg] (4.4,-3.1) -- (6.6,-3.1) node[lab]{query nearest};
-  \draw[ret] (6.6,-3.7) -- (4.4,-3.7) node[lab]{top-$k$ $+$ impact};
-  \draw[msg] (4.4,-4.3) -- (8.8,-4.3) node[lab]{precedents $+$ mean impact};
-  \draw[msg] (8.8,-4.9) -- ++(1.7,0) node[right, font=\tiny]{alert $\to$ investor};
-\end{tikzpicture}
-\caption[Sequence of the news trigger]{The news trigger as an interaction over time. Solid arrows are
-calls, dashed arrows are returns; time runs downward. The correlation engine orchestrates the work: it
-embeds the headline, consults the knowledge base, and assembles the retrieved precedents and their
-measured impact, before the explanation engine renders and delivers the alert. This complements the
-data-flow view of Figure~\ref{fig:news_flow}.}
-\label{fig:news_sequence}
-\end{figure}
+scores, the evidence later shown to the user. The middle lane of Figure~\ref{fig:workflow} traces these
+steps end to end, from an incoming headline to the delivered alert: the headline is embedded, matched
+against the knowledge base by similarity, and its nearest precedents are returned with their measured
+impact, ready for the explanation engine. The dashed precedents arrow makes plain that the knowledge
+base is consulted but never decides; the reasoning stays in the open.
 
 \section{Anomaly Trigger}
 \label{sec:clarion_anomaly}
@@ -244,69 +181,10 @@ the mean and standard deviation over the window of strictly preceding days, form
 latest return, and returns the decision together with every quantity that produced it: the
 $z$-score, window, threshold, mean and standard deviation. Exposing these values is what allows the
 explanation engine to be faithful by construction, and the evaluation applies exactly this rule across
-entire price series so that the experiments use the same logic as production.
-Figure~\ref{fig:market_flow} traces the market trigger from a daily price update to a delivered alert.
-
-\begin{figure}[ht]
-\centering
-\begin{tikzpicture}[
-  font=\scriptsize, >={Stealth[length=2mm]},
-  stp/.style={draw, rounded corners, align=center, text width=1.7cm, minimum height=1.0cm, fill=black!3},
-  dec/.style={draw, diamond, aspect=2, align=center, inner sep=1pt, text width=1.5cm, fill=black!5},
-  node distance=5mm
-]
-  \node[stp] (a) {Daily\\ price};
-  \node[stp, right=of a] (b) {Rolling\\ window};
-  \node[stp, right=of b] (c) {\emph{z}-score};
-  \node[dec, right=of c] (d) {$|z|>k$?};
-  \node[stp, right=of d] (e) {Explanation\\ and alert};
-  \draw[->] (a)--(b);
-  \draw[->] (b)--(c);
-  \draw[->] (c)--(d);
-  \draw[->] (d)-- node[above, font=\tiny] {yes} (e);
-\end{tikzpicture}
-\caption[The market-movement trigger end to end]{The market-movement trigger. The latest daily return is
-standardised against the rolling mean and standard deviation of the preceding window; if the absolute
-$z$-score exceeds the threshold $k$, the move and all the quantities behind it are passed to the
-explanation engine and delivered.}
-\label{fig:market_flow}
-\end{figure}
-
-As with the news trigger, the same flow can be read as an interaction over time
-(Figure~\ref{fig:market_sequence}): the scheduler requests prices, the detector standardises the latest
-return against its rolling window, and hands the move, together with every quantity behind it, to the
-explanation engine for delivery, but only when the absolute $z$-score exceeds the threshold.
-
-\begin{figure}[ht]
-\centering
-\begin{tikzpicture}[
-  font=\scriptsize, >={Stealth[length=1.8mm]},
-  head/.style={draw, rounded corners, fill=black!5, align=center, text width=1.9cm, minimum height=0.7cm},
-  msg/.style={->, thick},
-  ret/.style={->, dashed},
-  lab/.style={midway, above, font=\tiny, fill=white, inner sep=1pt},
-]
-  \def\yt{-0.5}\def\yb{-4.2}
-  \foreach \x/\nme/\lbl in {%
-      0/S/{Scheduler\\(daily)}, 2.7/M/{Market data\\(prices)}, 5.4/D/{Anomaly\\detector},
-      8.1/E/{Explanation\\engine}} {
-    \node[head] (\nme) at (\x,0) {\lbl};
-    \draw[dashed, black!40] (\x,\yt) -- (\x,\yb);
-  }
-  \draw[msg] (0,-1.0) -- (2.7,-1.0) node[lab]{request prices};
-  \draw[ret] (2.7,-1.6) -- (5.4,-1.6) node[lab]{daily returns};
-  \draw[msg] (5.4,-2.2) -- ++(0.55,0) -- ++(0,-0.4) -- (5.4,-2.6);
-  \node[right, font=\tiny] at (6.0,-2.4) {$z$-score over window};
-  \draw[msg] (5.4,-3.1) -- (8.1,-3.1) node[lab]{if $|z|>k$: move $+$ $(z,\mu,\sigma,w,k)$};
-  \draw[msg] (8.1,-3.7) -- ++(1.7,0) node[right, font=\tiny]{alert $\to$ investor};
-\end{tikzpicture}
-\caption[Sequence of the market trigger]{The market-movement trigger as an interaction over time. Solid
-arrows are calls, dashed arrows are returns; time runs downward. The detector standardises the latest return
-against its rolling window and forwards the move (with the $z$-score, window, threshold, mean and
-standard deviation) to the explanation engine only when the threshold is exceeded. This complements the
-data-flow view of Figure~\ref{fig:market_flow}.}
-\label{fig:market_sequence}
-\end{figure}
+entire price series so that the experiments use the same logic as production. The bottom lane of
+Figure~\ref{fig:workflow} traces the market trigger from a daily price to the delivered alert: the
+latest return is standardised against its rolling window, and the move, with all the quantities behind
+it, is passed on only when the absolute $z$-score exceeds the threshold.
 
 \section{Explanation Engine}
 \label{sec:clarion_xai}
