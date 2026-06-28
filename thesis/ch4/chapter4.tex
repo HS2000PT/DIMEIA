@@ -1,32 +1,26 @@
-% Chapter 4 - CLARION (the proposed system)
-% Design-level description of the artifact. NO code identifiers (no filenames, functions, src/).
-% Two diagrams only: a component architecture map and a single connected end-to-end flow. EN-GB.
+% Chapter 4 - CLARION (System Design)
+% Question-led: one picture, the data model, the components, the flow, the decisions, the alert.
+% Design-level (no code dumps). Reuses architecture/workflow/mockup; adds a data-model diagram + component table.
 
 \chapter{CLARION: An Explainable Financial-Alert System for Retail Investors}
 \label{chap:clarion}
 
-This chapter presents \textsc{Clarion}, the system built in this dissertation: its architecture, the
-historical knowledge base and correlation engine at its core, the anomaly trigger, the explanation engine
-that makes every alert traceable, and the way alerts reach the investor. Chapter~\ref{chap:methods}
-argued for the individual methods; the focus here is how they fit together into one working system.
+This chapter answers five questions, in order: \emph{What is the system, in one picture? What objects does
+it work with? What are its parts, and who does what? How does data flow through it? And how does it decide?}
+Chapter~\ref{chap:methods} argued for the individual methods; here they fit together into one working
+system, \textsc{Clarion}.
 
 \section{Overview}
 \label{sec:clarion_overview}
 
-\textsc{Clarion} watches the US equity market on behalf of a retail investor and raises an alert
-whenever one of two independent triggers fires: an abrupt price movement, or a relevant incoming news
-item. Each alert is accompanied by a full, traceable explanation rather than a bare notification. The
-system is organised as a pipeline of well-separated components, each with a single responsibility,
-connected by a common data schema so that the live and historical layers are directly comparable.
+\emph{What is the system, in one picture?}
 
-\section{Architecture}
-\label{sec:clarion_architecture}
-
-The system is driven by the two triggers and converges on a single explanation step before delivery.
-Figure~\ref{fig:architecture} shows the components and the flow of data between them. The live layer
-supplies real-time prices and news, and the historical knowledge base supplies the precedents. The
-anomaly detector and the correlation engine turn these into evidence, the explanation engine assembles a
-traceable account, and the delivery component sends the alert to the investor.
+\textsc{Clarion} watches the US equity market for a retail investor and raises an alert when one of two
+independent triggers fires: an abrupt price movement, or a relevant incoming news item. Every alert carries
+a full, traceable explanation, not a bare notification. The system is a pipeline of single-responsibility
+components linked by a common data schema, so the live and historical layers are directly comparable.
+Figure~\ref{fig:architecture} is the one-picture view: two data sources and the knowledge base feed two
+engines, whose evidence converges on one explanation step before delivery.
 
 \begin{figure}[ht]
 \centering
@@ -63,21 +57,14 @@ through Telegram. The market-movement trigger follows the left path; the news tr
 \label{fig:architecture}
 \end{figure}
 
-Three engineering principles recur throughout and make the system both testable and defensible. First,
-\textbf{a thin end-to-end slice was built before breadth}: the market-movement trigger was implemented
-and proven end to end (from price retrieval to a real alert) before the heavier correlation
-engine was added, reducing integration risk. Second, \textbf{pure logic is separated from
-input/output}, so the numerical core can be verified deterministically and offline, without a network
-connection or the heavy model stack. Third, \textbf{components are programmed against interfaces}: the
-embedding step is defined abstractly, with two interchangeable implementations (a dependency-free
-lexical baseline and the real Sentence-BERT model), so that one can be substituted for the other
-without changing anything else, which is what makes the embedding-model comparison in
-Chapter~\ref{chap:casestudies} a fair one.
-
-Table~\ref{tab:clarion_decisions} gathers the principal design decisions and the rationale behind each,
-making explicit the engineering judgement that, in a work of this kind, \emph{is} the contribution.
-Every decision follows the guiding principle of defensible simplicity established in
-Chapter~\ref{chap:methods}.
+Three engineering principles keep the system testable and defensible. First, \textbf{a thin slice was built
+end to end before breadth}: the market trigger worked from price to delivered alert before the heavier
+correlation engine was added, which controlled integration risk. Second, \textbf{pure logic is separated
+from input/output}, so the numerical core runs and is tested offline, without a network or the model stack.
+Third, \textbf{components are programmed to interfaces}: the embedding step has two interchangeable
+implementations (a dependency-free lexical baseline and Sentence-BERT), which is what makes the model
+comparison in Chapter~\ref{chap:casestudies} fair. Table~\ref{tab:clarion_decisions} gathers the principal
+design decisions; in a work of this kind, that engineering judgement \emph{is} the contribution.
 
 \begin{table}[ht]
 \caption{Principal design decisions in \textsc{Clarion} and their rationale.}
@@ -98,10 +85,93 @@ Delivery channel & Telegram bot & Free, ubiquitous, no bespoke client needed \\
 \end{tabular}
 \end{table}
 
-Where Figure~\ref{fig:architecture} shows the components, Figure~\ref{fig:workflow} traces the same
-system as one connected flow of data and processing steps: the offline knowledge-base build (top), the
-news trigger (middle) and the market trigger (bottom), all converging on the explanation engine and the
-alert.
+\section{The Data Model}
+\label{sec:clarion_datamodel}
+
+\emph{What objects does the system work with, and how do they relate?}
+
+The central object is a \emph{case}: one past news item together with what happened to its price afterwards.
+Everything else exists to build cases, store them, and retrieve them. Figure~\ref{fig:datamodel} shows the
+objects and their relationships.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=2mm]},
+  ent/.style={draw, rounded corners, align=center, fill=black!3, text width=3.0cm, inner sep=3pt},
+  store/.style={draw, rounded corners, align=center, fill=black!8, text width=2.6cm, inner sep=3pt},
+  lbl/.style={midway, font=\tiny, fill=white, inner sep=1pt},
+]
+  \node[ent]   (ni)  at (0,0)      {\textbf{NewsItem} (live)\\[1pt] date $\cdot$ ticker $\cdot$ headline};
+  \node[ent]   (nr)  at (4.7,0)    {\textbf{NewsRecord} (a \emph{case})\\[1pt] date $\cdot$ ticker $\cdot$ headline\\ $+$ embedding\\ $+$ impact $+1/+3/+5$d};
+  \node[store] (kb)  at (9.3,0)    {\textbf{Knowledge base}\\[1pt] many cases};
+  \node[ent]   (emb) at (4.7,-2.6) {\textbf{Embedder}\\[1pt] headline $\to$ vector};
+  \node[store] (res) at (9.3,-2.6) {\textbf{Retrieve}\\[1pt] top-$k$ cases $+$ similarity};
+  \node[ent]   (ar)  at (0,-2.6)   {\textbf{AnomalyResult}\\[1pt] (market trigger)\\ $z \cdot \mu \cdot \sigma \cdot$ window $\cdot k$};
+  \draw[->] (ni)  -- node[lbl]{normalise, align} (nr);
+  \draw[->] (emb) -- node[lbl]{embedding} (nr);
+  \draw[->] (nr)  -- node[lbl]{stored as $1{..}*$} (kb);
+  \draw[->] (kb)  -- node[lbl]{cosine top-$k$} (res);
+\end{tikzpicture}
+\caption[CLARION's data model]{The objects CLARION works with. A live \textbf{NewsItem} and a historical
+\textbf{NewsRecord} share the same schema (date, ticker, headline); a NewsRecord is a \emph{case}, adding
+the headline's embedding and its measured post-event impact. The \textbf{Embedder} produces those vectors;
+the \textbf{Knowledge base} holds many cases; a query headline retrieves the top-$k$ most similar cases with
+their similarity scores. The market trigger produces a separate \textbf{AnomalyResult}.}
+\label{fig:datamodel}
+\end{figure}
+
+Two points make the model easy to hold in mind. First, the \emph{shared schema}: a live \textbf{NewsItem}
+and a historical \textbf{NewsRecord} carry the same date, ticker and headline, so a fresh headline can be
+compared directly against the stored cases. A NewsRecord is simply a NewsItem that has been enriched with
+its headline \emph{embedding} and its measured \emph{impact} at $+1$, $+3$ and $+5$ trading days. Second,
+the \emph{knowledge base} is just a collection of cases; asking it for precedents returns the top-$k$ most
+similar cases with their similarity scores. The market side is simpler still: the detector emits one
+\textbf{AnomalyResult} holding the move and every quantity behind it ($z$, $\mu$, $\sigma$, window,
+threshold). These few objects are all the explanation engine ever needs.
+
+\section{Components and Responsibilities}
+\label{sec:clarion_components}
+
+\emph{What are the parts, and who does what?}
+
+CLARION is one package per component, each with a single responsibility and a small interface, which is what
+lets the numerical core be tested offline and one implementation be swapped for another.
+Table~\ref{tab:clarion_components} lists them with their one job and the data they turn into.
+
+\begin{table}[ht]
+\caption{CLARION's components, each with a single responsibility.}
+\label{tab:clarion_components}
+\centering
+\begin{tabular}{p{0.24\textwidth} p{0.40\textwidth} p{0.28\textwidth}}
+\toprule
+\tabhead{Component} & \tabhead{Responsibility} & \tabhead{Input $\to$ output} \\
+\midrule
+Market data & Fetch prices, compute log-returns & ticker $\to$ daily returns \\
+News feed & Fetch and normalise live news & ticker $\to$ NewsItem(s) \\
+Embedder & Turn a headline into a vector & headline $\to$ embedding \\
+Knowledge base & Hold past cases; retrieve the nearest & headline $\to$ top-$k$ cases \\
+Anomaly detector & Flag volatility-relative moves & returns $\to$ AnomalyResult \\
+Correlation engine & Cosine similarity $+$ event-study impact & headline, KB $\to$ precedents $+$ impact \\
+Explanation engine & Render a faithful alert from the objects & objects $\to$ alert text \\
+Alert delivery & Send the alert to the investor & alert text $\to$ Telegram \\
+Orchestration & Run each trigger end to end & trigger $\to$ delivered alert \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Data Flow}
+\label{sec:clarion_flow}
+
+\emph{How does data move through the system, end to end?}
+
+Figure~\ref{fig:workflow} traces the whole pipeline as three lanes that converge. The \emph{offline} lane
+(top) is run once: FNSPID news is aligned to prices and embedded into the knowledge base
+\autocite{dong2024fnspid}. The two live triggers run online. The \emph{news} lane (middle) embeds an
+incoming headline, finds its nearest cases in the knowledge base, and attaches their measured impact. The
+\emph{market} lane (bottom) turns live prices into a \emph{z}-score and fires only when it crosses the
+threshold. Both lanes hand their evidence to the explanation engine, which delivers one alert through
+Telegram.
 
 \begin{figure}[ht]
 \centering
@@ -150,63 +220,43 @@ explanation engine, which delivers one explained alert through Telegram.}
 \label{fig:workflow}
 \end{figure}
 
-\section{Historical Knowledge Base and Correlation Engine}
-\label{sec:clarion_kb}
+One detail in the offline build matters for honesty: each news item is aligned to the first trading day on
+or after its date, and impact is measured only from that day's close onward, so a jump already in the
+opening price is never credited to the system. Building the full multi-year corpus is a long one-off job, so
+the evaluation in Chapter~\ref{chap:casestudies} uses a knowledge base built from real recent news through
+the identical process, with the full build left as future work.
 
-The historical layer is a knowledge base of past news, each entry storing its date, ticker, headline,
-sentence embedding and measured post-event impact. Each news item is aligned to the market by taking
-the first trading day on or after the news date and measuring impact only from that day's close onward;
-this is the no-lookahead rule made concrete, and it avoids crediting the system with a jump already
-embedded in the opening price. The intended primary source is the FNSPID corpus
-\autocite{dong2024fnspid}; because building the full multi-year corpus is a long one-off job, the
-evaluation in Chapter~\ref{chap:casestudies} uses an initial knowledge base built from real recent news
-through the identical build process, and the full build is identified as future work.
+\section{Decision Logic}
+\label{sec:clarion_logic}
 
-The correlation engine has two parts. Similarity is computed with cosine over the (normalised)
-embeddings, returning the nearest historical items to a query. Impact is computed as the cumulative
-return at each horizon ($+1$, $+3$, $+5$ days) measured from the event close, with horizons that fall
-outside the available series reported as not available rather than silently dropped. Given a new item,
-the engine embeds it, ranks the knowledge base by similarity, and returns the top precedents with their
-scores, the evidence later shown to the user. The middle lane of Figure~\ref{fig:workflow} traces these
-steps end to end, from an incoming headline to the delivered alert: the headline is embedded, matched
-against the knowledge base by similarity, and its nearest precedents are returned with their measured
-impact, ready for the explanation engine. The dashed precedents arrow makes plain that the knowledge
-base is consulted but never decides; the reasoning stays in the open.
+\emph{How does the system actually decide?} Each trigger applies one simple, transparent rule.
 
-\section{Anomaly Trigger}
-\label{sec:clarion_anomaly}
+\paragraph{Market trigger.} Flag the day when the absolute \emph{z}-score crosses the threshold,
+$|z_t|>k$, with $z_t$ computed from the trailing window as in Equation~\ref{eq:zscore}. The detector returns
+not just the yes/no decision but every quantity behind it ($z$, $\mu$, $\sigma$, window, threshold), which
+is exactly what makes the explanation faithful. The same rule is applied across whole price series in the
+evaluation, so the experiments use the production logic.
 
-The anomaly trigger applies Equation~\ref{eq:zscore} directly. For the day under evaluation it computes
-the mean and standard deviation over the window of strictly preceding days, forms the $z$-score of the
-latest return, and returns the decision together with every quantity that produced it: the
-$z$-score, window, threshold, mean and standard deviation. Exposing these values is what allows the
-explanation engine to be faithful by construction, and the evaluation applies exactly this rule across
-entire price series so that the experiments use the same logic as production. The bottom lane of
-Figure~\ref{fig:workflow} traces the market trigger from a daily price to the delivered alert: the
-latest return is standardised against its rolling window, and the move, with all the quantities behind
-it, is passed on only when the absolute $z$-score exceeds the threshold.
+\paragraph{News trigger.} Embed the incoming headline, rank the knowledge base by cosine similarity, and
+take the top-$k$ cases. For each, report the observed impact at $+1$, $+3$ and $+5$ days, measured from the
+event-day close, and show their mean as evidence. Nothing here forecasts: the figures are what \emph{did}
+happen after comparable past news, and the knowledge base is consulted but never decides.
 
-\section{Explanation Engine}
+\section{Explanation and Delivery}
 \label{sec:clarion_xai}
 
-The explanation engine renders alerts directly from the objects produced upstream, which guarantees
-that the text never diverges from the computation. For the market trigger, it states the move, the
-$z$-score, the threshold and window, and the recent mean and standard deviation, and it renders the
-$z$-score in plain language (how many times a typical day's move it represents), so that a non-expert can
-interpret the alert rather than merely see the numbers. For the news trigger,
-it lists the retrieved precedents (date, ticker, similarity score, measured impact and headline) and
-the average impact across them, and it always ends with an explicit disclaimer that the figures are
-observed past outcomes, not a prediction, keeping the system within its no-forecasting scope.
+\emph{How is the alert explained, and how does it reach the investor?}
 
-\section{Alert Delivery}
-\label{sec:clarion_delivery}
+The explanation engine renders every alert directly from the objects above, so the text cannot diverge from
+the computation. For the market trigger it states the move, the $z$-score, the threshold and window, and the
+recent mean and standard deviation, and it puts the $z$-score in plain language (how many times a typical
+day's move it represents) so a non-expert can read it. For the news trigger it lists the retrieved
+precedents (date, ticker, similarity, measured impact, headline) and their average impact, and always ends
+with an explicit disclaimer that these are observed past outcomes, not a prediction.
 
-Alerts are delivered to the investor through the Telegram messaging platform, chosen because it offers a
-free, widely used bot interface. The two end-to-end flows (retrieve, detect, explain and send for the
-market trigger; embed, retrieve precedents, explain and send for the news trigger) each encapsulate a
-complete run; periodic scheduling and deployment are deliberately left outside the present scope. A real
-alert was successfully delivered during testing; Figure~\ref{fig:telegram_mockup} reproduces the format
-the investor receives, with the full reasoning chain visible in a single message.
+Delivery is over Telegram, chosen for its free, ubiquitous bot interface. A real alert was delivered during
+testing; Figure~\ref{fig:telegram_mockup} shows the format the investor receives, with the whole reasoning
+chain in one message.
 
 \begin{figure}[ht]
 \centering
@@ -239,45 +289,38 @@ illustration; the full real end-to-end output appears in Chapter~\ref{chap:cases
 \label{fig:telegram_mockup}
 \end{figure}
 
-\section{Deployment and Practical Use}
+\section{Practical Use and Responsible Design}
 \label{sec:clarion_deploy}
 
-CLARION runs as two entry points, one per trigger, each of which performs a complete cycle. The market
-trigger fetches recent prices, computes returns, detects, explains and sends; the news trigger takes a
-headline, embeds it, retrieves precedents, explains and sends. In day-to-day use these would be invoked
-on a schedule (the market trigger once per trading day after the close, the news trigger whenever a
-watched feed publishes), but the scheduler and the hosting fall outside the project's scope. The entry
-points already encapsulate everything such a scheduler would call.
+\emph{What does it take to run, and what does responsible use require?}
 
-Running the system needs three things, all free: a market-data source for prices, a company-news or RSS
-source for headlines (an API key, kept out of version control), and the historical knowledge base, built
-once from the corpus. Appendix~\ref{app:reproducibility} gives the exact steps. The real alert delivered
-during testing shows that the path from raw data to the investor's phone works end to end, not just on
-paper.
+CLARION runs as two entry points, one per trigger, each performing a complete cycle. In day-to-day use they
+would run on a schedule (the market trigger once per trading day after the close, the news trigger whenever
+a watched feed publishes), but the scheduler and hosting are outside this project's scope; the entry points
+already encapsulate everything a scheduler would call. Running the system needs only free resources: a
+market-data source, a company-news or RSS source (an API key kept out of version control), and the
+knowledge base built once from the corpus. Appendix~\ref{app:reproducibility} gives the exact steps. The
+real alert delivered during testing shows the path from raw data to the investor's phone works end to end.
 
-Two practical limits are worth stating plainly. First, the free news tier returns only a recent window,
-so the knowledge base is shallower than the multi-year build it is designed for; this affects coverage,
-not the method. Second, CLARION is a decision-support prototype rather than a production service: it has
-no user accounts, no persistence beyond the knowledge-base file, and no automatic recovery from a
-provider outage. None of these is a research limitation; each is a known, ordinary step on the road from
-prototype to product, and is recorded here openly rather than hidden.
+Two practical limits are worth stating plainly. The free news tier returns only a recent window, so the
+knowledge base is shallower than the multi-year build it is designed for (a coverage limit, not a method
+one). And CLARION is a decision-support prototype, not a production service: no user accounts, no
+persistence beyond the knowledge-base file, no automatic recovery from a provider outage. These are ordinary
+steps from prototype to product, recorded openly rather than hidden.
 
-Beyond these engineering gaps, an alerting tool aimed at non-experts raises two responsible-design
-questions that the prototype surfaces rather than solves. The first is alert fatigue: a tool that fires
-too often trains the user to ignore it, defeating its purpose. A production version would rank alerts by
-severity (for the market trigger, the magnitude of the $z$-score) and rate-limit the least important
-notifications, so that attention is reserved for genuinely unusual events. The second is over-reliance: a
-confident-looking explanation can be trusted more than its evidence warrants, the failure mode reviewed in
-Section~\ref{sec:sota_trust}. The present design mitigates this by showing the individual precedents and
-their spread rather than a lone averaged number, and by disclaiming prediction on every alert; natural
-extensions are to de-duplicate near-identical precedents and to flag when a retrieved cluster disagrees in
-direction, so the user sees genuine uncertainty instead of false consensus. Both are recorded as design
-considerations and future work, not as implemented features.
+A tool aimed at non-experts also raises two responsible-design questions, surfaced here rather than solved.
+The first is \emph{alert fatigue}: a tool that fires too often trains the user to ignore it, so a production
+version would rank alerts by severity (for the market trigger, the size of the $z$-score) and rate-limit the
+least important. The second is \emph{over-reliance}: a confident explanation can be trusted more than its
+evidence warrants (Section~\ref{sec:sota_trust}). The present design mitigates this by showing the
+individual precedents and their spread rather than a lone number, and by disclaiming prediction on every
+alert; natural extensions are to de-duplicate near-identical precedents and to flag when a retrieved cluster
+disagrees in direction. Both are design considerations and future work, not implemented features.
 
 \section{Chapter Conclusions}
 \label{sec:clarion_summary}
 
-This chapter described CLARION at the level of its architecture and design: a two-trigger, two-layer
-pipeline whose components are separated by responsibility and connected by a common schema, with
-explainability built in by rendering every alert directly from the system's own computation. The next
-chapter evaluates the system's two core components and its end-to-end behaviour on real data.
+CLARION is a two-trigger, two-layer pipeline built from a few clear objects (a \emph{case}, the knowledge
+base, an anomaly result) and single-responsibility components, with explainability built in by rendering
+every alert directly from the system's own computation. The next chapter puts the two core components to the
+test on real data.

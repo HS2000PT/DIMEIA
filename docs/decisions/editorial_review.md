@@ -295,3 +295,20 @@ mesmo sistema). Decisão do aluno: **consolidar num mapa único**.
   os números (3,2%; z −8,1/−2,2; 3 714; +6,5%; 0,60/0,38; k=5; etc.). Citações 50/50 (0 órfãs/indefinidas).
 
 **Verificação:** compila 72 pp, 0 erros, 0 indefinidas, 0 overfull >15pt, 0 `??`.
+
+## Capítulo 4 — System Design (RECONSTRUÍDO — pedido central do aluno)
+Reorganizado para responder, por ordem, às perguntas do núcleo:
+1. **O que é o sistema, numa imagem?** Overview + diagrama de arquitetura + tabela de decisões.
+2. **Que objetos, e como se relacionam?** NOVA secção "The Data Model" com **diagrama novo do modelo de
+   dados** (NewsItem · NewsRecord=caso · Knowledge base · Embedder · AnomalyResult; esquema partilhado;
+   KB tem 1..* casos; find precedents → top-k) + prosa curta.
+3. **Quais as partes, e quem faz o quê?** NOVA **tabela componente | responsabilidade | entrada→saída** (9 componentes).
+4. **Como flui a informação?** O mapa conectado (offline/news/market) + alinhamento de evento.
+5. **Como decide?** Secção "Decision Logic": regra |z|>k (market) e retrieve-and-reuse (news), em linguagem simples.
+6. **Como explica e entrega?** Motor de explicação (fiel por construção + gloss em linguagem simples) + mockup Telegram.
++ Uso prático e desenho responsável (fadiga de alertas, over-reliance).
+
+- Reutilizadas as figuras existentes (arquitetura, fluxo conectado, mockup) e a tabela de decisões.
+- 0 travessões conectores; citação `dong2024fnspid` preservada; 50/50 citações.
+
+**Verificação:** compila 72 pp, 0 erros, 0 indefinidas, 0 overfull >15pt, 0 `??`; Cap. 4 = 4 figuras + 2 tabelas.
