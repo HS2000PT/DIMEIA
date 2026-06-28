@@ -708,3 +708,22 @@ Diagramas verificados por render (incl. novo modelo de dados).
 
 **A precisar do aluno (humano):** leitura da tese reescrita (validar voz/estrutura); declaração ISEP de IA + data.
 **Próxima ação:** (opcional) sincronizar paper/slides/caderno com a tese reescrita, se o aluno quiser.
+
+## Sessão 25 — 2026-06-28 — Polimento visual + Guia de Estudo do zero (PT-PT)
+**Pedido:** (1) pôr todas as figuras com qualidade de apresentação (sem cortes de palavras a meio, sem
+colisões); (2) o aluno não sabe nada de IA — criar um guia visual que o ensine do zero a defender a tese.
+
+**Feito:**
+- **Polimento (commit f4b0ac3):** regra global em `main.tex` (nós de diagrama não hifenizam) corrige
+  "Abrupt mar-ket move" e qualquer corte a meio; auditadas por render as 15 figuras (9 TikZ + 6 gráficos),
+  todas limpas; tabelas 0 overfull. Nenhum número alterado; tese 72 pp, 0 erros.
+- **Guia de estudo `slides/guia_estudo/` (Beamer PT-PT, 51 slides):** ensina do zero, scoped ao que a tese
+  usa, com slide honesto sobre o que NÃO usa (sem treino/CNN/visão computacional). P0 pitch · P1 IA do zero
+  + glossário · P2 problema/contribuição · P3 sistema (modelo de dados, componentes) · P4 dados reais (CSV +
+  JSON de `data/samples/`) · P5 código módulo-a-módulo (fiel ao `src/`, linha a linha) · P6 workflow real
+  (TSLA z=+7,61; Nvidia + tema≠direção) · P7 avaliação (gráficos validados) · P8 decisões · P9 sensibilidade
+  · P10 perguntas do júri + checklist. Commits: P0/1 5175c47 · P2-4 1645644 · P5-6 9033843 · P7-10 6e90ccd.
+  Só conceitos/código/números reais; 0 fabricação; compila 51 pp, 0 erros.
+
+**A precisar do aluno (humano):** ler a tese reescrita e o guia; declaração ISEP de IA + data.
+**Próxima ação:** (opcional) sincronizar paper/slides/caderno; estender o guia se o aluno quiser.

@@ -284,3 +284,14 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] Ch6 — vereditos RQ + listas (`99001f4`)
 - [x] Validação global: 72 pp, 0 erros/indefinidas/overfull/`??`; 0 travessões em prosa; citações 50/50
 - [ ] (opcional) sincronizar paper/slides/caderno; leitura do aluno; declaração ISEP (humano)
+
+---
+
+# Polimento visual + Guia de estudo (Sessão 25, 2026-06-28)
+- [x] Figuras: regra global anti-hifenização; 15 figuras auditadas por render; tese 72 pp, 0 erros (f4b0ac3)
+- [x] Guia de estudo PT-PT (Beamer) `slides/guia_estudo/` — 51 slides, do zero, só o que a tese usa
+  - [x] P0/P1 capa + IA do zero + glossário (5175c47)
+  - [x] P2-P4 problema + sistema + dados reais (1645644)
+  - [x] P5-P6 código módulo-a-módulo + workflow real (9033843)
+  - [x] P7-P10 avaliação + decisões + sensibilidade + júri (6e90ccd)
+- [ ] (opcional) sincronizar paper/slides/caderno; leitura do aluno; declaração ISEP (humano)
