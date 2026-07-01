@@ -17,9 +17,9 @@ $PY -m pytest -q || { echo "❌ Testes falharam"; exit 1; }
 
 echo "—— Lint ——"
 if command -v ruff >/dev/null 2>&1; then
-  ruff check src tests || echo "⚠️ Avisos de lint (não bloqueante)."
+  ruff check src tests app || echo "⚠️ Avisos de lint (não bloqueante)."
 elif $PY -m ruff --version >/dev/null 2>&1; then
-  $PY -m ruff check src tests || echo "⚠️ Avisos de lint (não bloqueante)."
+  $PY -m ruff check src tests app || echo "⚠️ Avisos de lint (não bloqueante)."
 else
   echo "ℹ️ ruff não instalado — lint ignorado nesta fase."
 fi

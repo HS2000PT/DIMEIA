@@ -34,6 +34,18 @@ You should see the **news trigger** (offline, deterministic — reproduces the t
 Full operator guide (Telegram, live news, building your own KB): **`docs/design/how_to_run.md`** (start at
 §0.0).
 
+## 🔎 Or click through it — the dashboard
+A clickable, visual demo of both triggers and the evaluation (no keys, nothing sent):
+
+```bash
+pip install -r requirements.txt -r requirements-app.txt
+streamlit run app/streamlit_app.py
+```
+
+Free public hosting (Streamlit Community Cloud) and a URL you can cite are described in
+**`docs/design/deployment.md`**. It runs the offline baseline embedder; the SBERT numbers are on the
+dashboard's *Evaluation* page. _(Live URL: to be added after the first deploy.)_
+
 ## Learn it / prepare the defence
 - **From-zero visual study guide (PT-PT):** **`slides/guia_estudo/main.pdf`** — teaches the whole thesis
   assuming *no* AI background (60 slides): the AI ideas actually used, the data shown, the code line by line,
@@ -59,6 +71,7 @@ paper/         IEEE paper (IEEEtran) distilled from the thesis
 slides/        defence slides (Beamer, 15 frames)
   guia_estudo/   from-zero PT-PT study guide (Beamer, 60 slides)
 src/           system code, one package per component
+app/           streamlit_app.py — interactive dashboard (thin UI over src/)
 scripts/       demo.py (run it) + data / figures / evaluation / build automation
 tests/         automated tests
 docs/          documentation (see docs/README.md for the full index), grouped:

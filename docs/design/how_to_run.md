@@ -36,6 +36,18 @@ Alerta NVDA | impacto medio 5 dias: +6,46%
 > força `UTF-8`. Se correres o teu próprio `print(...)` e vires `UnicodeEncodeError`, define
 > `PYTHONIOENCODING=utf-8`.
 
+### 0.1 Ver a app num **dashboard** (Streamlit) — clicável
+
+Alternativa visual à demo de consola: os dois gatilhos + a avaliação, numa interface web local.
+
+```bash
+pip install -r requirements.txt -r requirements-app.txt
+streamlit run app/streamlit_app.py     # abre http://localhost:8501
+```
+
+Não envia nada e não precisa de chaves. Para publicar de graça (URL público), ver
+[`deployment.md`](deployment.md).
+
 ---
 
 ## 0. Segredos (`.env`) — uma só vez

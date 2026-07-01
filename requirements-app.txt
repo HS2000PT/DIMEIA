@@ -1,0 +1,12 @@
+# Dependência EXTRA para correr o dashboard Streamlit LOCALMENTE.
+# A stack leve (requirements.txt) já cobre o resto (pandas, numpy, yfinance, ...).
+#
+# Uso local:
+#   pip install -r requirements.txt -r requirements-app.txt
+#   streamlit run app/streamlit_app.py
+#
+# No Streamlit Community Cloud o `streamlit` já vem pré-instalado e a plataforma instala o
+# requirements.txt (leve) automaticamente — não é preciso este ficheiro no deploy.
+# A app corre com o embedder baseline (offline); o SBERT/torch não é usado na nuvem (stack pesada).
+
+streamlit==1.41.1
