@@ -27,6 +27,10 @@ desenho** — manter: sem treino, sem previsão de preços).
   `requirements-app.txt` + `docs/design/deployment.md`. Validado por boot headless (`ok`) e **AppTest**
   ponta-a-ponta (sem exceções; clique devolve 3 precedentes). ruff cobre `app/`.
 
+**Correr por cliques (P3 UX):** para quem evita a consola — `.vscode/` (Run & Debug ▶ + tarefas: demo,
+dashboard, testes, compilar tese/slides/guia/paper, setup), `run/*.bat` (duplo-clique), guia
+`docs/design/run_in_vscode.md`, e **`CHECKLIST.md`** (lista viva do que está feito/por fazer). Aditivo.
+
 **Deferido (com razão):** `src/`→`clarion/` (pacote instalável) — grande churn de docs; sessão dedicada.
 Verificado que **nem a tese nem o paper** referenciam `src/` (rework tirou identificadores) → o rename não
 afetará a tese.
