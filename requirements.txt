@@ -1,33 +1,27 @@
-# Dependências fixadas (Python 3.12). Estratégia faseada — D-005 em progress/DECISIONS.md.
-# A stack pesada de ML é adicionada (e fixada) nas fases que a usam, para acelerar a Sessão 0
-# e evitar problemas de wheels. Lockfile completo gerado depois: pip freeze > requirements.lock.txt
+# Dependências BASE (stack leve, Python 3.12). Instala-se com:  bash scripts/setup_env.sh
+#
+# Esta lista chega para TUDO o que um examinador precisa de correr sem descarregar modelos:
+#   - a demo (scripts/demo.py: gatilho de notícia offline + gatilho de mercado ao vivo),
+#   - os testes (bash scripts/verify.sh — exclui @sbert e @telegram),
+#   - as avaliações sobre dados já guardados e as figuras.
+#
+# A stack pesada de ML (torch/SBERT) está em requirements-ml.txt e SÓ é precisa para a
+# recuperação semântica real (SbertEmbedder) e os testes @sbert. Instala-se com:
+#   bash scripts/setup_env.sh --ml      (usa o índice CPU da PyTorch — ver requirements-ml.txt)
 
 # ── Ferramentas de desenvolvimento ──────────────────────────
 pytest==8.3.4
 ruff==0.8.6
 
-# ── Base de dados / utilitários ─────────────────────────────
+# ── Núcleo / utilitários ────────────────────────────────────
 python-dotenv==1.0.1
 pandas==2.2.3
 numpy==2.1.3
 requests==2.32.3
 PyYAML==6.0.2
 
-# ── Figuras reprodutíveis (§6.7) ─────────────────────────────
+# ── Figuras reprodutíveis ───────────────────────────────────
 matplotlib==3.11.0
 
-# ── Camada live (mercado) ────────────────────────────────────
+# ── Camada live (mercado) ───────────────────────────────────
 yfinance==1.4.1
-
-# ── Motor de correlação: embeddings (SBERT) ─────────────────
-# torch (CPU) instala-se a partir do índice dedicado da PyTorch:
-#   pip install torch==2.12.1+cpu --index-url https://download.pytorch.org/whl/cpu
-torch==2.12.1+cpu
-sentence-transformers==5.6.0
-transformers==5.12.1
-huggingface-hub==1.20.1
-scikit-learn==1.9.0
-
-# ── A adicionar quando usado (NÃO instalar ainda) ────────────
-# datasets==...            # (opcional) carregamento alternativo do FNSPID via API datasets
-# (FinBERT, se usado, vem de transformers já listado — só inferência)

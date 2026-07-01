@@ -4,7 +4,9 @@
 > (que trata do ambiente). Tudo aqui reflete o código real do repositório; quando algo ainda não
 > tem interface de linha de comandos, é dito explicitamente.
 >
-> **Pré-requisito:** ambiente criado com `bash scripts/setup_env.sh` (Python 3.12, `.venv/`).
+> **Pré-requisito:** ambiente criado com `bash scripts/setup_env.sh` (Python 3.12, `.venv/`, **stack leve** —
+> chega para a demo, os testes e as avaliações). Para a recuperação SBERT real, usar
+> `bash scripts/setup_env.sh --ml` (acrescenta torch CPU + sentence-transformers).
 > Correr sempre com o Python do venv: `./.venv/Scripts/python.exe` (Windows) ou `.venv/bin/python` (Linux/macOS).
 
 ---
@@ -98,8 +100,8 @@ for rec, score in precedents:
     print(f"{score:.3f}  {rec.ticker} {rec.date}  +5d={rec.impacts.get('5'):+.2%}  {rec.headline}")
 ```
 
-**Com SBERT (recuperação semântica real):** requer a stack pesada (`scripts/setup_env.sh` instala
-torch/sentence-transformers) **e** uma KB construída com o mesmo embedder (ver §4). Depois:
+**Com SBERT (recuperação semântica real):** requer a stack pesada (`bash scripts/setup_env.sh --ml`
+instala torch CPU + sentence-transformers) **e** uma KB construída com o mesmo embedder (ver §4). Depois:
 ```python
 from src.main import run_news_trigger
 from src.historical_kb.embedder import SbertEmbedder

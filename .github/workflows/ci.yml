@@ -1,0 +1,41 @@
+name: CI (tests + lint)
+
+# Corre os testes e o lint a cada push/PR que toque em código ou dependências.
+# Prova que o repositório arranca e passa num ambiente LIMPO (não só na máquina do autor),
+# usando apenas a stack leve (requirements.txt) — a demo e os testes não precisam de torch/SBERT.
+# Os testes @telegram e @sbert são excluídos por defeito (ver pyproject.toml). Nenhum segredo no YAML.
+
+on:
+  push:
+    paths-ignore:
+      - "thesis/**"
+      - "slides/**"
+      - "paper/**"
+      - "docs/**"
+      - "**/*.md"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install light dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint (ruff)
+        run: ruff check src tests
+
+      - name: Tests (pytest — excludes @telegram and @sbert)
+        run: pytest

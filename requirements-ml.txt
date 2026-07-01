@@ -1,0 +1,21 @@
+# Stack PESADA de ML (Python 3.12) — SÓ necessária para a recuperação semântica real
+# (SbertEmbedder) e para os testes marcados @sbert. NÃO é preciso para a demo nem para
+# `bash scripts/verify.sh`.
+#
+# ⚠️ IMPORTANTE — o torch CPU vem do índice dedicado da PyTorch, NÃO do PyPI.
+# O identificador local "+cpu" só existe em https://download.pytorch.org/whl/cpu, por isso
+# um simples `pip install -r requirements-ml.txt` FALHA sem o índice extra. Instalar assim:
+#
+#   pip install -r requirements-ml.txt --extra-index-url https://download.pytorch.org/whl/cpu
+#
+# ou, mais simples, deixar o script tratar disto:
+#
+#   bash scripts/setup_env.sh --ml
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+torch==2.12.1+cpu
+sentence-transformers==5.6.0
+transformers==5.12.1
+huggingface-hub==1.20.1
+scikit-learn==1.9.0
