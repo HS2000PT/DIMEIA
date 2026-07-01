@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: "If you use CLARION or refer to this dissertation, please cite it as below."
+type: software
+title: "CLARION — Explainable Financial Alerts for Retail Investors"
+abstract: >-
+  An explainable (XAI-first) financial-alert system for retail investors in the US
+  market. It detects abrupt market moves as statistical anomalies (rolling z-score,
+  no lookahead) and matches new financial news to analogous historical cases
+  (sentence-embedding retrieval) to show their observed event-study impact — as
+  evidence, never a price prediction. Accompanies the MEIA (ISEP) master's dissertation.
+authors:
+  - family-names: "Santos"
+    given-names: "Henrique José da Silva"
+    affiliation: "Instituto Superior de Engenharia do Porto (ISEP)"
+    email: "1180934@isep.ipp.pt"
+repository-code: "https://github.com/HS2000PT/DIMEIA"
+keywords:
+  - explainable AI
+  - financial alerts
+  - anomaly detection
+  - sentence embeddings
+  - event study
+  - retail investors
+date-released: "2026-07-01"
+preferred-citation:
+  type: thesis
+  title: "Explainable Financial Alerts for Retail Investors: Integrating Statistical Anomaly Detection and News–Market Impact Correlation"
+  authors:
+    - family-names: "Santos"
+      given-names: "Henrique José da Silva"
+  year: 2026
+  thesis-type: "Master's dissertation"
+  institution:
+    name: "Instituto Superior de Engenharia do Porto (ISEP)"

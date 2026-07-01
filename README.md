@@ -1,5 +1,9 @@
 # CLARION — Explainable Financial Alerts for Retail Investors
 
+[![CI (tests + lint)](https://github.com/HS2000PT/DIMEIA/actions/workflows/ci.yml/badge.svg)](https://github.com/HS2000PT/DIMEIA/actions/workflows/ci.yml)
+[![Compile thesis (LaTeX)](https://github.com/HS2000PT/DIMEIA/actions/workflows/compile-thesis.yml/badge.svg)](https://github.com/HS2000PT/DIMEIA/actions/workflows/compile-thesis.yml)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
+
 > MSc in Artificial Intelligence Engineering (MEIA) — ISEP — Master's Dissertation
 > Author: **Henrique José da Silva Santos** (nº 1180934) · Supervisor: Prof. Luís Gomes · Co-supervisor: Rafael Silva
 
@@ -57,20 +61,23 @@ slides/        defence slides (Beamer, 15 frames)
 src/           system code, one package per component
 scripts/       demo.py (run it) + data / figures / evaluation / build automation
 tests/         automated tests
-docs/          documentation, grouped:
+docs/          documentation (see docs/README.md for the full index), grouped:
   design/        how_to_run, architecture, data card, free APIs, setup
   evaluation/    auto-generated evaluation results (do not edit by hand)
   decisions/     decisions rationale, citation log, glossary, reviews
   defence/       PT-PT defence companion
+  internal/      internal continuity docs (e.g. the original root prompt)
   _archive/      early-phase analyses kept for provenance
 data/samples/  small committed samples (large data gitignored, recreated by scripts)
-progress/      continuity logs (TRACKER, SESSIONS)
+progress/      continuity logs (TRACKER, SESSIONS, DECISIONS, MASTER_PLAN)
+CITATION.cff   how to cite this work    requirements.txt (light) / requirements-ml.txt (torch+SBERT)
 ```
 
 ## Setup & verify (reproducible)
-- Python **3.12** in a virtual environment: `bash scripts/setup_env.sh` (deps pinned in
-  `requirements.txt` / `requirements.lock.txt`). The ML stack (`torch` CPU, `sentence-transformers`) is
-  needed only for the SBERT paths; the demo and tests run without it.
+- Python **3.12** in a virtual environment: `bash scripts/setup_env.sh` installs the **light** stack
+  (`requirements.txt`) — enough for the demo, the tests and the evaluations. The heavy ML stack (`torch` CPU,
+  `sentence-transformers`, in `requirements-ml.txt`) is needed only for the real SBERT paths and installs with
+  `bash scripts/setup_env.sh --ml` (it pulls `torch` from the PyTorch CPU index, not PyPI).
 - Verification loop: `bash scripts/verify.sh` (43 tests + lint + LaTeX note).
 - Secrets live only in a local, gitignored `.env` (see `.env.example` for variable names).
 - LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push.
@@ -94,6 +101,10 @@ The full multi-year FNSPID knowledge base (a ~23 GB streaming scan, see `docs/de
 by `scripts/download_data.py` then `scripts/build_kb.py --sbert`; this is a long, deliberate job.
 
 ## Attributions & licences
+- **Code licence — to be confirmed.** No `LICENSE` file is committed yet: the licence for this repository's
+  own code should be chosen **with the supervisor**, after confirming ISEP's policy on IP over thesis code
+  (a common, permissive choice for academic code is MIT or Apache-2.0). Until then, default copyright applies.
+- **How to cite:** see `CITATION.cff` (GitHub shows a "Cite this repository" button).
 - **FNSPID** (Financial News and Stock Price Integration Dataset) — `Zihan1004/FNSPID`,
   repo `Zdong104/FNSPID_Financial_News_Dataset`. Licence **CC BY-SA 4.0** — attribution mandatory.
 - **FinBERT** — `ProsusAI/finbert` (via `transformers`), inference only.
