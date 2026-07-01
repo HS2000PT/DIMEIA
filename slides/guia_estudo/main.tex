@@ -836,9 +836,104 @@ na direção}.
 \begin{frame}{Fim das Partes 5--6}
 \centering\vfill
 {\Large Já viste \key{o código} e o \key{workflow} com exemplos reais.}\\[4mm]
-{\normalsize A seguir: \emph{a avaliação} (o que cada número significa), as \emph{decisões de desenho},
-o \emph{"e se mudássemos\ldots?"} e as \emph{perguntas do júri}.}
+{\normalsize A seguir: \emph{correr a app} tu mesmo (1 comando), depois \emph{a avaliação}, as
+\emph{decisões} e as \emph{perguntas do júri}.}
 \vfill
+\end{frame}
+
+% ====================================================================
+\section{Correr a app}
+
+\begin{frame}{Deixar de ser "caixa preta": a app são \emph{duas funções}}
+\footnotesize
+Não há magia. A app é dois pontos de entrada (funções que já viste):
+\begin{itemize}
+  \item \key{Gatilho de notícia} --- corre \key{offline}, com a base de conhecimento de amostra que está no
+        repositório. \key{Não precisa de chaves nem de internet.} É o melhor para experimentar.
+  \item \key{Gatilho de mercado} --- busca preços ao vivo (precisa de internet); não envia nada.
+\end{itemize}
+\vspace{1mm}
+\begin{block}{O mais importante}
+\scriptsize Fiz-te um comando único que corre os dois e mostra o resultado, \key{sem configurar nada}:
+\texttt{python scripts/demo.py}. Vê o próximo slide.
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Passo 1: um comando, e vês a app a funcionar}
+\scriptsize A partir da pasta do projeto:
+\begin{verbatim}
+$ python scripts/demo.py
+
+==== GATILHO DE NOTICIA  (offline, base de conhecimento de amostra) ====
+Alerta NVDA | impacto medio 5 dias: +6,46%
+ - 2023-05-25 NVDA (sim 0.60) +5d  +3,55%  "Nvidia guidance surges..."
+ - 2023-04-25 MSFT (sim 0.38) +5d +10,89%  "Microsoft cloud growth..."
+ - 2023-06-13 NVDA (sim 0.38) +5d  +4,93%  "Nvidia unveils new AI..."
+ Nota: impacto observado, NAO e' previsao.
+
+==== GATILHO DE MERCADO  (precos ao vivo; nao envia) ====
+ No anomaly for AAPL today (z-score +0.89, within +-3).
+\end{verbatim}
+\footnotesize \key{Nada é enviado.} O gatilho de notícia dá \emph{sempre} o mesmo resultado (determinístico).
+\end{frame}
+
+\begin{frame}{Passo 1 explicado: o que aconteceu, linha a linha}
+\footnotesize
+\begin{enumerate}
+  \item A consulta \emph{``Nvidia demand surges on AI chip orders''} virou um \key{vetor} (embedding).
+  \item Comparou-se por \key{cosseno} com todos os casos da base $\to$ os \key{3 mais parecidos}.
+  \item Para cada um, leu-se o \key{impacto +5d} já guardado (evidência do passado).
+  \item Média $= +6{,}46\%$ (o mesmo $+6{,}5\%$ do exemplo do Cap. 3!), com o \key{aviso de não-previsão}.
+\end{enumerate}
+\vspace{1mm}
+\centering\footnotesize É \emph{exatamente} o pipeline dos slides anteriores --- agora a correr no teu computador.
+\end{frame}
+
+\begin{frame}[fragile]{Passo 2: mudar um parâmetro e ver mudar (o "e se?")}
+\scriptsize Mesma consulta, mas \texttt{top\_k=5, horizon=1}:
+\begin{verbatim}
+Alerta NVDA | impacto medio 1 dia: +3,40%
+ - NVDA  (sim 0.60) +1d +2,54%  "Nvidia guidance surges..."
+ - MSFT  (sim 0.38) +1d +7,24%  "Microsoft cloud growth..."
+ - NVDA  (sim 0.38) +1d +4,81%  "Nvidia unveils new AI..."
+ - JPM   (sim 0.31) +1d +1,95%  "JPMorgan acquires..."       <- menos parecido
+ - AAPL  (sim 0.25) +1d +0,45%  "Apple expands services..."  <- menos parecido
+\end{verbatim}
+\footnotesize \key{O que mudou:} \texttt{top\_k=5} $\Rightarrow$ 5 precedentes (os 2 últimos com semelhança
+\emph{baixa}); \texttt{horizon=1} $\Rightarrow$ olha a $+1$ dia (média $+3{,}40\%$). Assim respondes a
+\emph{"e se aumentasse o k?"} com um facto, não um palpite.
+\end{frame}
+
+\begin{frame}[fragile]{Passo 3: ver que tudo funciona (os testes)}
+\scriptsize
+\begin{verbatim}
+$ bash scripts/verify.sh
+  ....................................  [100%]   43 passed
+  All checks passed!                              (ruff: estilo OK)
+\end{verbatim}
+\footnotesize
+\begin{itemize}
+  \item Cada peça (z-score, cosseno, event study, KB, explicação) tem \key{testes automáticos} que correm
+        \key{offline}, rápido.
+  \item Se o júri perguntar "como sei que não inventaste?", a resposta é: \key{os testes} e os \key{scripts
+        de avaliação} reproduzem os números.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{E o Telegram / notícias ao vivo?}
+\footnotesize
+\begin{itemize}
+  \item Enviar para o \key{Telegram} e buscar \key{notícias ao vivo} precisa de chaves (gratuitas) num
+        ficheiro \texttt{.env} (nunca versionado). Passos exatos: \texttt{docs/design/how\_to\_run.md}.
+  \item Mas \key{não precisas disso para estudar}: a demo acima já prova o caminho todo, offline.
+  \item \key{Dica (Windows):} a consola pode rebentar com os emojis do alerta; a demo já força \texttt{UTF-8}
+        para isso não acontecer.
+\end{itemize}
+\vspace{1mm}
+\begin{block}{Resumo de "como corro a app"}
+\scriptsize \texttt{python scripts/demo.py} (ver a app) $\cdot$ \texttt{bash scripts/verify.sh} (ver que
+funciona) $\cdot$ \texttt{docs/design/how\_to\_run.md} (tudo o resto, incluindo Telegram).
+\end{block}
 \end{frame}
 
 % ====================================================================

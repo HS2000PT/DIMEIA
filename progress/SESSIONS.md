@@ -727,3 +727,15 @@ colisões); (2) o aluno não sabe nada de IA — criar um guia visual que o ensi
 
 **A precisar do aluno (humano):** ler a tese reescrita e o guia; declaração ISEP de IA + data.
 **Próxima ação:** (opcional) sincronizar paper/slides/caderno; estender o guia se o aluno quiser.
+
+### Sessão 25 — adenda: "como corro a app?" + demo executável + mais exemplos
+Pedido do aluno: continuava sem saber correr a app (sentia caixa preta) e queria mais exemplos.
+- **`scripts/demo.py` (novo):** um comando único — `python scripts/demo.py` — corre os dois gatilhos
+  **offline, sem chaves**, Windows-safe (força UTF-8). Corrido de verdade: reproduz o exemplo do Cap. 3
+  (média +6,46% ≈ +6,5%) e o gatilho de mercado ao vivo (AAPL, z=+0,89). ruff limpo; 43 testes verdes.
+- **Guia (`slides/guia_estudo/`): nova parte "Correr a app"** (6 slides) com o **output real** da demo,
+  explicação linha a linha, um **exemplo de mudar parâmetros** (top_k=5/horizon=1 → +3,40%, com precedentes
+  menos parecidos JPM/AAPL), correr os testes, e a nota Windows/UTF-8. Guia agora **57 slides, 0 erros**.
+- **`docs/design/how_to_run.md`:** novo §0.0 "ver a app a funcionar (1 comando)" com a demo + nota UTF-8.
+Descobertos e documentados 2 gotchas reais: emoji vs consola cp1252 (Windows); `-m src.main` precisa de
+Telegram (por isso a demo usa `send=False`). Nada de números/conteúdo da tese alterado.

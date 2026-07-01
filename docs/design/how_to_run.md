@@ -9,6 +9,33 @@
 
 ---
 
+## 0.0 Ver a app a funcionar — **1 comando, sem configurar nada**
+
+O ponto de partida. Corre os **dois gatilhos** e mostra o resultado, **offline** (o gatilho de notícia usa
+a KB de amostra; não precisa de chaves nem, para essa parte, de internet). É Windows-safe (força UTF-8).
+
+```bash
+./.venv/Scripts/python.exe scripts/demo.py
+```
+
+Saída real (determinística no gatilho de notícia):
+
+```
+==== GATILHO DE NOTICIA  (offline, base de conhecimento de amostra) ====
+Alerta NVDA | impacto medio 5 dias: +6,46%
+ - 2023-05-25 NVDA (sim 0.60) +5d  +3,55%  "Nvidia guidance surges..."
+ - 2023-04-25 MSFT (sim 0.38) +5d +10,89%  "Microsoft cloud growth..."
+ - 2023-06-13 NVDA (sim 0.38) +5d  +4,93%  "Nvidia unveils new AI..."
+==== GATILHO DE MERCADO  (precos ao vivo; nao envia) ====
+ No anomaly for AAPL today (z-score +0.89, within +-3).
+```
+
+> **Nota (Windows):** os alertas têm emojis (📰, ⚠️); a consola `cp1252` rebenta ao imprimi-los. A demo já
+> força `UTF-8`. Se correres o teu próprio `print(...)` e vires `UnicodeEncodeError`, define
+> `PYTHONIOENCODING=utf-8`.
+
+---
+
 ## 0. Segredos (`.env`) — uma só vez
 
 O envio para o Telegram e a recolha de notícias do Finnhub precisam de chaves. **Nunca** vão para o
