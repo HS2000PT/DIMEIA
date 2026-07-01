@@ -5,6 +5,27 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 26 — 2026-07-01 — Organização & sincronização (README + slides + guia)
+**Objetivo:** fechar o pedido "correr a app / organização e qualidade" — pôr o repo apresentável e alinhar
+os artefactos de defesa com a tese reescrita, com mais exemplos.
+
+**Feito (com build/verify verdes):**
+- **README como porta de entrada:** bloco "▶ Run it in one command" (`setup_env.sh` → `scripts/demo.py`),
+  secção "Learn it / prepare the defence" (guia 60 slides + slides 15 frames + caderno), números corrigidos
+  (43 testes, ~72 pp), layout do repo e comandos de build de todos os artefactos.
+- **Slides de defesa (`slides/main.tex`) sincronizados:** `\tikzset` anti-hifenização global (sem cortes de
+  palavra, igual à tese) + **novo frame "The data model — the objects"** a seguir à arquitetura. Render
+  confirmado limpo → **15 páginas, 0 erros**.
+- **Guia de estudo (`slides/guia_estudo/`): +3 frames** → **60 slides, 0 erros**: (a) exemplo honesto de
+  quando o **baseline falha** (consulta de banca JPM → scores baixos porque o HashingEmbedder só vê palavras
+  → motiva o SBERT / problema de vocabulário); (b) "**Constrói a tua própria KB**" (`build_kb.py` baseline vs
+  `--sbert`); (c) "**Onde continuar a estudar**" (cross-links demo↔how_to_run↔tese↔slides↔caderno).
+
+**Estado:** 43 testes + ruff verdes; demo reproduz +6,46%; números da tese inalterados; citações 50/50.
+Nada de conteúdo/números/citações alterado. Falta só o humano (declaração ISEP + leitura final).
+
+---
+
 ## Sessão 21 — 2026-06-27 — MASTER PLAN A–H COMPLETO (B→H, e fecho da A)
 **Objetivo:** executar o resto da estrada longa após a Fase A, até deixar tudo pronto para submissão,
 publicação e defesa.
