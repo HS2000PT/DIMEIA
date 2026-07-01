@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "▶ Dashboard (Streamlit)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "streamlit",
+      "args": ["run", "app/streamlit_app.py"],
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "linux": { "python": "${workspaceFolder}/.venv/bin/python" },
+      "osx": { "python": "${workspaceFolder}/.venv/bin/python" }
+    },
+    {
+      "name": "▶ Demo (both triggers)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/demo.py",
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "console": "integratedTerminal",
+      "env": { "PYTHONIOENCODING": "utf-8" },
+      "linux": { "python": "${workspaceFolder}/.venv/bin/python" },
+      "osx": { "python": "${workspaceFolder}/.venv/bin/python" }
+    },
+    {
+      "name": "▶ Current Python file",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "console": "integratedTerminal",
+      "env": { "PYTHONIOENCODING": "utf-8" },
+      "linux": { "python": "${workspaceFolder}/.venv/bin/python" },
+      "osx": { "python": "${workspaceFolder}/.venv/bin/python" }
+    }
+  ]
+}

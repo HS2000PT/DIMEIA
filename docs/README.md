@@ -7,7 +7,9 @@ se só queres correr o sistema.
 | Ficheiro | Para quê |
 |----------|----------|
 | [design/how_to_run.md](design/how_to_run.md) | **Como correr** o sistema de ponta a ponta (começa no §0.0: 1 comando). |
+| [design/run_in_vscode.md](design/run_in_vscode.md) | **Correr por cliques** (duplo-clique em `run/` ou botões do VS Code). |
 | [design/setup.md](design/setup.md) | Ambiente: venv 3.12, stack leve vs `--ml`, torch do índice CPU. |
+| [design/deployment.md](design/deployment.md) | Publicar o **dashboard** de graça (Streamlit Community Cloud). |
 | [design/arquitectura_sistema.md](design/arquitectura_sistema.md) | Arquitetura e componentes. |
 | [design/data_card.md](design/data_card.md) | Origem/estrutura dos dados (FNSPID + camada live). |
 | [design/free_apis.md](design/free_apis.md) | APIs gratuitas usadas (preços, notícias, Telegram). |

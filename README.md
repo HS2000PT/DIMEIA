@@ -46,6 +46,12 @@ Free public hosting (Streamlit Community Cloud) and a URL you can cite are descr
 **`docs/design/deployment.md`**. It runs the offline baseline embedder; the SBERT numbers are on the
 dashboard's *Evaluation* page. _(Live URL: to be added after the first deploy.)_
 
+## 🖱️ Prefer clicking? (no console)
+- **Double-click** a launcher in **`run/`** (`dashboard.bat`, `demo.bat`, `tests.bat`, `thesis-pdf.bat`).
+- Or use the **VS Code** buttons: *Run and Debug* ▶ (Dashboard / Demo) and *Terminal → Run Task* (tests,
+  compile thesis/slides/paper). Full guide: **`docs/design/run_in_vscode.md`**.
+- Track what's done vs pending in **[`CHECKLIST.md`](CHECKLIST.md)**.
+
 ## Learn it / prepare the defence
 - **From-zero visual study guide (PT-PT):** **`slides/guia_estudo/main.pdf`** — teaches the whole thesis
   assuming *no* AI background (60 slides): the AI ideas actually used, the data shown, the code line by line,
@@ -72,6 +78,8 @@ slides/        defence slides (Beamer, 15 frames)
   guia_estudo/   from-zero PT-PT study guide (Beamer, 60 slides)
 src/           system code, one package per component
 app/           streamlit_app.py — interactive dashboard (thin UI over src/)
+run/           double-click launchers (dashboard/demo/tests/thesis)
+.vscode/       click-to-run: Run & Debug configs + tasks + recommended extensions
 scripts/       demo.py (run it) + data / figures / evaluation / build automation
 tests/         automated tests
 docs/          documentation (see docs/README.md for the full index), grouped:
