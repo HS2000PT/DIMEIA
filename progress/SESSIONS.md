@@ -5,6 +5,37 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 27 — 2026-07-02 — Auditoria ao repositório + polimento seguro + flagship Streamlit
+**Objetivo:** auditoria profunda ao **repositório** (pedido do aluno, prompt tipo "team de arquiteto/
+staff eng/reviewer"). Runway: meses até submeter → autorizado **relatório + polimento seguro + 1 feature**.
+
+**Relatório de auditoria** (no plano `.claude/plans/…squishy-yeti.md`): scorecard honesto, Top-25,
+críticos/altos/médios, e desenhos de Streamlit/cloud/Telegram-onboarding/multi-mercado como trabalho
+futuro. Desafiado o prompt genérico (assume training/prediction/DB/scheduler que a tese **não tem por
+desenho** — manter: sem treino, sem previsão de preços).
+
+**Feito (43 testes + ruff verdes; números da tese inalterados; sem fabricação):**
+- **C1 (reprodutibilidade):** `requirements.txt` → **leve**; nova `requirements-ml.txt` (torch CPU +
+  SBERT, com `--extra-index-url` da PyTorch dentro do ficheiro); `setup_env.sh` leve por defeito +
+  `--ml`. Corrige o "correr num comando" que **falhava numa máquina limpa** (torch `+cpu` não está no
+  PyPI e o script não passava o índice).
+- **C2/C3 (CI):** novo `.github/workflows/ci.yml` (pytest+ruff, runner limpo, cada push de código). O CI
+  antes só compilava a tese; a afirmação "CI corre testes" era falsa → corrigida.
+- **Organização:** `CITATION.cff`; `docs/README.md` (índice); `ROOT_PROMPT_CLAUDE_CODE.md` →
+  `docs/internal/`; badges no README; **licença de código deixada por decidir com o orientador**.
+- **Flagship:** `app/streamlit_app.py` (dashboard: Home, News, Market, Evaluation, How it works, About) +
+  `requirements-app.txt` + `docs/design/deployment.md`. Validado por boot headless (`ok`) e **AppTest**
+  ponta-a-ponta (sem exceções; clique devolve 3 precedentes). ruff cobre `app/`.
+
+**Deferido (com razão):** `src/`→`clarion/` (pacote instalável) — grande churn de docs; sessão dedicada.
+Verificado que **nem a tese nem o paper** referenciam `src/` (rework tirou identificadores) → o rename não
+afetará a tese.
+
+**Próximo humano:** declaração ISEP + data; leitura final; **escolher a licença** com o orientador;
+(opcional) publicar o dashboard e colar o URL.
+
+---
+
 ## Sessão 26 — 2026-07-01 — Organização & sincronização (README + slides + guia)
 **Objetivo:** fechar o pedido "correr a app / organização e qualidade" — pôr o repo apresentável e alinhar
 os artefactos de defesa com a tese reescrita, com mais exemplos.
