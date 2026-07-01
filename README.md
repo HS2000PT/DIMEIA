@@ -1,30 +1,49 @@
-# Transparent Financial Alerts — Explainable AI for Retail Investors
+# CLARION — Explainable Financial Alerts for Retail Investors
 
 > MSc in Artificial Intelligence Engineering (MEIA) — ISEP — Master's Dissertation
 > Author: **Henrique José da Silva Santos** (nº 1180934) · Supervisor: Prof. Luís Gomes · Co-supervisor: Rafael Silva
 
-This repository hosts an **explainable (XAI-first)** financial-alert system for retail investors, focused on the
-US market (NYSE/NASDAQ), and the LaTeX dissertation that documents it. The system raises alerts via the
-**Telegram Bot API** and, for every alert, exposes the full reasoning chain: detected event → explanation →
-sources → historical precedents. No price prediction, no algorithmic trading, free APIs only.
+**CLARION** is an **explainable (XAI-first)** financial-alert system for retail investors in the US market
+(NYSE/NASDAQ), together with the LaTeX dissertation that documents it. For every alert it exposes the full
+reasoning chain — detected event → explanation → sources → historical precedents — and delivers it over the
+**Telegram Bot API**. No price prediction, no algorithmic trading, free APIs only.
 
 ## What it does
-- **Trigger 1 — Abrupt market move:** detects a statistical anomaly in a US asset and explains it (probable
-  causes, historical context, coinciding news).
-- **Trigger 2 — New financial news:** detects relevant news, assesses potential impact, and retrieves
-  analogous historical news with the impact those precedents had.
-- **News–market correlation engine (core):** a historical knowledge base (FNSPID) of past news + observed
-  price impact; new news is matched to similar past news to provide explanatory evidence.
+- **Trigger 1 — Abrupt market move:** flags a statistical anomaly (rolling *z*-score, no lookahead) and
+  explains it in plain language.
+- **Trigger 2 — New financial news:** finds analogous historical news (sentence-embedding retrieval) and
+  shows the impact those precedents had (event study), as **evidence, never a prediction**.
+- **News–market correlation engine (core):** a knowledge base of past news + observed price impact; a new
+  headline is matched to similar past cases (case-based reasoning).
+
+## ▶ Run it in one command
+No keys, no configuration — the news trigger runs fully offline on a bundled sample knowledge base
+(Windows-safe: forces UTF-8):
+
+```bash
+bash scripts/setup_env.sh     # once: Python 3.12 venv (light stack)
+python scripts/demo.py        # runs BOTH triggers; nothing is sent
+```
+
+You should see the **news trigger** (offline, deterministic — reproduces the thesis worked example, mean
+`+6.46%`) and the **market trigger** on live prices (e.g. `No anomaly for AAPL today (z-score +0.89)`).
+Full operator guide (Telegram, live news, building your own KB): **`docs/design/how_to_run.md`** (start at
+§0.0).
+
+## Learn it / prepare the defence
+- **From-zero visual study guide (PT-PT):** **`slides/guia_estudo/main.pdf`** — teaches the whole thesis
+  assuming *no* AI background (60 slides): the AI ideas actually used, the data shown, the code line by line,
+  the end-to-end workflow with real examples, the evaluation, and prepared jury questions.
+- **Defence slides (EN):** `slides/main.pdf` (15 frames).
+- **PT-PT defence companion (prose):** `docs/defence/caderno_de_defesa.md`.
 
 ## Project status
-**Validated and submission-ready (pending human sign-off).** Both triggers are implemented and proven end
-to end (anomaly detection → explanation → Telegram; news → SBERT retrieval of precedents → explanation),
-with **42 automated tests** + lint green. The two core components are evaluated on **real data**; the
-statistics were **independently re-run** and reproduce the thesis figures exactly. The **six-chapter
-dissertation** compiles cleanly (`thesis/main.pdf`, ~76 pp, 0 errors), with **50 references each verified
-by DOI/arXiv/ISBN or primary source** (audit in `docs/decisions/page_audit.md`). An **IEEE paper**
-(`paper/`) and **defence slides** (`slides/`) are drafted and compile, and a PT-PT **visual defence guide**
-is in `docs/defence/caderno_de_defesa.md`. Remaining items are human-only: confirm the exact ISEP AI-use
+**Validated and submission-ready (pending human sign-off).** Both triggers are proven end to end;
+**43 automated tests** + lint green. The two core components are evaluated on **real data**, and the
+statistics were independently re-run and reproduce the thesis figures exactly. The **six-chapter
+dissertation** compiles cleanly (`thesis/main.pdf`, ~72 pp, 0 errors), with **50 references each verified by
+DOI/arXiv/ISBN or primary source** (audit in `docs/decisions/page_audit.md`). An **IEEE paper** (`paper/`)
+and **defence slides** (`slides/`) compile. Remaining items are human-only: confirm the exact ISEP AI-use
 declaration wording + submission date, and the author's final read. The full multi-year FNSPID knowledge
 base is optional future work (a long download; the streaming pipeline is implemented and verified). See
 `CLAUDE.md` for the exact state and `progress/SESSIONS.md` for per-session history.
@@ -32,52 +51,47 @@ base is optional future work (a long download; the streaming pipeline is impleme
 ## Repository layout
 ```
 thesis/        LaTeX dissertation (6 chapters + front matter + appendix)
-paper/         IEEE paper (IEEEtran) distilled from the validated thesis
-slides/        defence slides (Beamer, 14 frames)
+paper/         IEEE paper (IEEEtran) distilled from the thesis
+slides/        defence slides (Beamer, 15 frames)
+  guia_estudo/   from-zero PT-PT study guide (Beamer, 60 slides)
 src/           system code, one package per component
-scripts/       data, figures, build/verify/session automation
+scripts/       demo.py (run it) + data / figures / evaluation / build automation
 tests/         automated tests
-docs/          PT-PT documentation, grouped:
-  design/        architecture, data card, free APIs, evaluation design, setup, risks
+docs/          documentation, grouped:
+  design/        how_to_run, architecture, data card, free APIs, setup
   evaluation/    auto-generated evaluation results (do not edit by hand)
-  decisions/     decisions rationale, citation log, glossary, learning notes
-  defence/       PT-PT study guide for the defence
+  decisions/     decisions rationale, citation log, glossary, reviews
+  defence/       PT-PT defence companion
   _archive/      early-phase analyses kept for provenance
 data/samples/  small committed samples (large data gitignored, recreated by scripts)
 progress/      continuity logs (TRACKER, SESSIONS)
 ```
 
-## Setup (reproducible)
+## Setup & verify (reproducible)
 - Python **3.12** in a virtual environment: `bash scripts/setup_env.sh` (deps pinned in
-  `requirements.txt` / `requirements.lock.txt`). The ML stack (`torch` CPU, `sentence-transformers`)
-  is needed only for the SBERT paths.
-- Verification loop: `bash scripts/verify.sh` (tests + lint + LaTeX note).
+  `requirements.txt` / `requirements.lock.txt`). The ML stack (`torch` CPU, `sentence-transformers`) is
+  needed only for the SBERT paths; the demo and tests run without it.
+- Verification loop: `bash scripts/verify.sh` (43 tests + lint + LaTeX note).
 - Secrets live only in a local, gitignored `.env` (see `.env.example` for variable names).
-- LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push (CI is the source of truth for the PDF).
+- LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push.
 
 ## Reproducing the results
 Every result and figure is produced by a versioned script with a fixed seed:
 ```bash
-# Retrieval (Question A): fetch real news, run the ablation → docs/evaluation/evaluation_results.md + figure
-python scripts/fetch_finnhub_news.py                         # needs FINNHUB_API_KEY in .env
+python scripts/fetch_finnhub_news.py                    # real news CSV (needs FINNHUB_API_KEY)
 python scripts/evaluate.py --news data/finnhub_news.csv \
-    --sbert-models all-MiniLM-L6-v2 all-mpnet-base-v2
+    --sbert-models all-MiniLM-L6-v2 all-mpnet-base-v2   # retrieval vs baselines (multi-seed)
+python scripts/evaluate_per_sector.py --news data/finnhub_news.csv   # per-sector precision
+python scripts/evaluate_anomaly.py                      # anomaly firing-rate + window ablation (pinned window)
 
-# Per-sector retrieval breakdown → docs/evaluation/evaluation_per_sector.md + figure
-python scripts/evaluate_per_sector.py --news data/finnhub_news.csv
-
-# Anomaly detector (Question 1): real prices, pinned window → docs/evaluation/evaluation_anomaly.md + figure
-python scripts/evaluate_anomaly.py
-
-# Build the dissertation, the IEEE paper, and the slides
-bash scripts/build_pdf.sh            # thesis/main.pdf (also built in CI)
-cd paper && latexmk -pdf main.tex    # paper/main.pdf
-cd slides && latexmk -pdf main.tex   # slides/main.pdf
+bash scripts/build_pdf.sh                               # thesis/main.pdf (also built in CI)
+cd paper   && latexmk -pdf main.tex                     # paper/main.pdf
+cd slides  && latexmk -pdf main.tex                     # slides/main.pdf
+cd slides/guia_estudo && latexmk -pdf main.tex          # the study guide
 ```
-Re-running these reproduces the thesis numbers exactly (validated 2026-06-27; see
-`docs/decisions/implementation_review.md`).
-The full multi-year FNSPID knowledge base (a ~23 GB streaming scan, see `docs/design/data_card.md`) is built by
-`scripts/download_data.py` followed by `scripts/build_kb.py --sbert`; this is a long, deliberate job.
+Re-running these reproduces the thesis numbers exactly (see `docs/decisions/implementation_review.md`).
+The full multi-year FNSPID knowledge base (a ~23 GB streaming scan, see `docs/design/data_card.md`) is built
+by `scripts/download_data.py` then `scripts/build_kb.py --sbert`; this is a long, deliberate job.
 
 ## Attributions & licences
 - **FNSPID** (Financial News and Stock Price Integration Dataset) — `Zihan1004/FNSPID`,
@@ -88,5 +102,5 @@ The full multi-year FNSPID knowledge base (a ~23 GB streaming scan, see `docs/de
 - **yfinance**, **Telegram Bot API**, and other free-tier APIs documented in `docs/design/free_apis.md`.
 
 ## Academic integrity
-This dissertation is produced with AI assistance (Claude Code), declared per ISEP/MEIA rules. Every citation is
-verified against a real source and logged in `docs/decisions/citation_log.md` — no fabricated references.
+This dissertation is produced with AI assistance (Claude Code), declared per ISEP/MEIA rules. Every citation
+is verified against a real source and logged in `docs/decisions/citation_log.md` — no fabricated references.
