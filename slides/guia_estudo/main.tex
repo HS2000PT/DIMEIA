@@ -936,6 +936,38 @@ funciona) $\cdot$ \texttt{docs/design/how\_to\_run.md} (tudo o resto, incluindo 
 \end{block}
 \end{frame}
 
+\begin{frame}[fragile]{Mais um exemplo: quando o baseline \emph{falha} (e porquê)}
+\scriptsize Consulta de \key{banca}, com o encoder \emph{baseline} (só palavras) da demo:
+\begin{verbatim}
+run_news_trigger('JPM', 'Bank profits jump as interest rates rise', top_k=3)
+Alerta JPM | impacto medio 5 dias: -2,99%
+ - AAPL (sim 0.25) +5d  +4,45%  "Apple expands services..."
+ - JPM  (sim 0.15) +5d  +1,44%  "JPMorgan acquires failed bank..."
+ - TSLA (sim 0.14) +5d -14,86%  "Tesla margins narrow..."
+\end{verbatim}
+\footnotesize Os scores são \key{baixos} e os precedentes \key{maus}. Porquê? O baseline só vê
+\key{sobreposição de palavras}: "Bank profits\ldots interest rates" não partilha palavras com "JPMorgan\ldots
+banking turmoil". É o \key{problema de vocabulário} --- e é \emph{exatamente} isto que o \key{SBERT} resolve
+(capta \emph{significado}, não palavras iguais). Por isso a versão real da tese usa SBERT.
+\end{frame}
+
+\begin{frame}[fragile]{Constrói a tua própria base de conhecimento}
+\scriptsize Queres os teus exemplos? Constrói uma KB a partir de um CSV \texttt{date,ticker,headline}:
+\begin{verbatim}
+# baseline (rapido, offline):
+python scripts/build_kb.py --news data/finnhub_news.csv --out data/kb.jsonl
+# SBERT (significado real; precisa da stack pesada de ML):
+python scripts/build_kb.py --news ... --out data/kb_sbert.jsonl --sbert
+\end{verbatim}
+\footnotesize
+\begin{itemize}
+  \item Para cada título: alinha ao 1.\textsuperscript{o} dia de negociação, busca preços, mede o impacto
+        $+1/+3/+5$ e gera o embedding $\Rightarrow$ \key{um caso por título}.
+  \item Consulta depois com \texttt{run\_news\_trigger(..., kb\_path=..., embedder=...)}.
+  \item \key{Regra:} consulta com o \emph{mesmo} embedder com que construíste (mesma dimensão/modelo).
+\end{itemize}
+\end{frame}
+
 % ====================================================================
 \section{Avaliação}
 
@@ -1126,6 +1158,24 @@ Consigo responder a tudo isto?
 precedentes reais. A contribuição é de \key{engenharia de IA}: integrar, aplicar e avaliar componentes num
 todo explicável e reproduzível. \key{Não prevejo}; mostro evidência do passado, com honestidade sobre os
 limites.
+\end{block}
+\end{frame}
+
+\begin{frame}{Onde continuar a estudar (mapa dos materiais)}
+\footnotesize Este guia não vive sozinho. Cada peça abre uma porta diferente:
+\begin{itemize}
+  \item \key{Ver a app:} \texttt{python scripts/demo.py} --- os dois gatilhos, offline, num comando.
+  \item \key{Correr tudo o resto:} \texttt{docs/design/how\_to\_run.md} (Telegram, notícias ao vivo,
+        construir a KB) --- começa no §0.0.
+  \item \key{A tese:} \texttt{thesis/main.pdf} --- o documento que vais defender (os números vêm daqui).
+  \item \key{Slides da defesa (EN):} \texttt{slides/main.pdf} --- a versão curta para o dia.
+  \item \key{Caderno de defesa (PT):} \texttt{docs/defence/caderno\_de\_defesa.md} --- respostas em prosa,
+        número $\rightarrow$ script $\rightarrow$ tese.
+\end{itemize}
+\begin{block}{Sugestão de estudo}
+\scriptsize Lê este guia $\rightarrow$ corre \texttt{demo.py} $\rightarrow$ relê o capítulo da tese sobre a
+parte que correste $\rightarrow$ pratica as \key{perguntas do júri}. Repete nas partes que ainda parecem
+"caixa preta".
 \end{block}
 \end{frame}
 
