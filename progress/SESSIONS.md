@@ -31,6 +31,16 @@ desenho** — manter: sem treino, sem previsão de preços).
 dashboard, testes, compilar tese/slides/guia/paper, setup), `run/*.bat` (duplo-clique), guia
 `docs/design/run_in_vscode.md`, e **`CHECKLIST.md`** (lista viva do que está feito/por fazer). Aditivo.
 
+**Going-live 24/7 (P4, grátis, sem servidor):** pedido "app sempre up + notificações no telemóvel +
+webpage a qualquer hora, tudo grátis". Faseado (confirmado): **Fase A** construída — `config/alerts.yaml`
+(watchlist/limiares, sem segredos), `scripts/run_alerts.py` (varredura → z-score → alerta explicável →
+canal Telegram; `--dry-run`; no-op seguro sem segredos), `.github/workflows/alerts.yml` (cron pós-fecho US
++ botão manual; segredos só em Actions Secrets), `tests/test_run_alerts.py` (4 testes), runbook
+`docs/design/going_live.md` (canal + 3 segredos + caveats; **Fase B** — bot interativo por utilizador com
+host do Student Pack + BD — desenhada, não construída). Clarificado ao aluno: **não há modelo treinado**
+(por desenho), não havia timer/servidor, e push agendado não precisa de servidor always-on. **Validado:**
+dry-run ao vivo apanhou anomalia real (META +8,44%, z=+3,31) sem enviar; **47 testes** (43+4) + ruff verdes.
+
 **Deferido (com razão):** `src/`→`clarion/` (pacote instalável) — grande churn de docs; sessão dedicada.
 Verificado que **nem a tese nem o paper** referenciam `src/` (rework tirou identificadores) → o rename não
 afetará a tese.
