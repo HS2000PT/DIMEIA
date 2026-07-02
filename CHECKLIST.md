@@ -15,10 +15,18 @@
 - [x] Índice `docs/README.md`, `ROOT_PROMPT` → `docs/internal/`, badges no README.
 - [x] **Dashboard Streamlit** `app/streamlit_app.py` + guia de deploy `docs/design/deployment.md`.
 - [x] **Correr por cliques**: `.vscode/` (Run & Debug ▶ + tarefas) + `run/*.bat` (duplo-clique).
+- [x] **Sistema de alertas 24/7 (código)**: `scripts/run_alerts.py` + `config/alerts.yaml` + timer
+      `.github/workflows/alerts.yml` + runbook `docs/design/going_live.md` (validado: dry-run encontrou
+      anomalia real ao vivo; não envia). *Falta só os cliques humanos abaixo.*
 
 ---
 
 ## ⏳ A fazer — EU (humano; ninguém pode fazer por ti)
+### Pôr o sistema 24/7 ao vivo (grátis) — ver [docs/design/going_live.md](docs/design/going_live.md)
+- [ ] Criar um **canal de Telegram** e adicionar o bot como **administrador**.
+- [ ] Definir **3 segredos** no GitHub (Settings → Secrets → Actions): `TELEGRAM_BOT_TOKEN`,
+      `TELEGRAM_CHAT_ID` (= canal), `FINNHUB_API_KEY` (opcional).
+- [ ] Correr o workflow **"Alerts (scheduled scan)"** uma vez (Actions → Run workflow) para testar.
 - [ ] **Publicar o dashboard** (grátis) seguindo [docs/design/deployment.md](docs/design/deployment.md)
       e **colar o URL** no README e na tese.
 - [ ] **Escolher a licença do código** com o Prof. Luís Gomes (MIT/Apache; confirmar política de IP do

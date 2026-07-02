@@ -46,6 +46,17 @@ Free public hosting (Streamlit Community Cloud) and a URL you can cite are descr
 **`docs/design/deployment.md`**. It runs the offline baseline embedder; the SBERT numbers are on the
 dashboard's *Evaluation* page. _(Live URL: to be added after the first deploy.)_
 
+## 📡 Live 24/7 (free, no server)
+Turn CLARION into a running service without paying or babysitting a server:
+- **Scheduled alerts** → `scripts/run_alerts.py` scans a watchlist (`config/alerts.yaml`) and posts
+  explainable alerts to a **Telegram channel**; a free **GitHub Actions timer**
+  (`.github/workflows/alerts.yml`) runs it after the US close. Users just **join the channel**.
+- **The webpage, any time** → the dashboard on Streamlit Community Cloud (`docs/design/deployment.md`).
+- Try the scan now (sends nothing): `python scripts/run_alerts.py --dry-run`.
+
+Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/going_live.md`**.
+The interactive per-user bot (users DM `/watch TSLA`) is designed there as a later, hosted phase.
+
 ## 🖱️ Prefer clicking? (no console)
 - **Double-click** a launcher in **`run/`** (`dashboard.bat`, `demo.bat`, `tests.bat`, `thesis-pdf.bat`).
 - Or use the **VS Code** buttons: *Run and Debug* ▶ (Dashboard / Demo) and *Terminal → Run Task* (tests,
@@ -80,7 +91,8 @@ src/           system code, one package per component
 app/           streamlit_app.py — interactive dashboard (thin UI over src/)
 run/           double-click launchers (dashboard/demo/tests/thesis)
 .vscode/       click-to-run: Run & Debug configs + tasks + recommended extensions
-scripts/       demo.py (run it) + data / figures / evaluation / build automation
+scripts/       demo.py (run it) + run_alerts.py (24/7 scan) + data / figures / build automation
+config/        alerts.yaml — watchlist + thresholds for the scheduled alert runner
 tests/         automated tests
 docs/          documentation (see docs/README.md for the full index), grouped:
   design/        how_to_run, architecture, data card, free APIs, setup

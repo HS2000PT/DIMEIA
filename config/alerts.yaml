@@ -1,0 +1,22 @@
+# alerts.yaml — definições do sistema de alertas agendado (scripts/run_alerts.py)
+#
+# SÓ definições (não-secretas). Os segredos (token do bot, id do canal, chave do Finnhub) vivem
+# em GitHub Actions Secrets ou no .env local — NUNCA aqui. Ver docs/design/going_live.md.
+#
+# O gatilho de mercado corre 1x/dia (após o fecho dos EUA) e avisa dos tickers com movimento
+# anómalo (z-score fora de ±limiar) — sem estado, um alerta por ticker por dia.
+
+market:
+  enabled: true
+  # A tua watchlist. Edita à vontade (símbolos NYSE/NASDAQ suportados pelo yfinance).
+  tickers: [AAPL, MSFT, NVDA, TSLA, AMZN, GOOGL, META, JPM, AMD, NFLX]
+  window: 20        # dias anteriores usados para média/desvio (a "norma")
+  threshold: 3.0    # |z| acima do qual é anomalia
+
+# Gatilho de notícias (opcional): precisa de FINNHUB_API_KEY. É "best-effort" — sem memória do
+# que já foi enviado nesta fase, por isso pode repetir. Deixa 'false' até quereres experimentar.
+news:
+  enabled: false
+  tickers: [AAPL, NVDA, TSLA]
+  horizon: 5        # horizonte do impacto dos precedentes (+5 dias)
+  top_k: 3          # nº de precedentes a mostrar

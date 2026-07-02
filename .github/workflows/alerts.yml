@@ -1,0 +1,42 @@
+name: Alerts (scheduled scan)
+
+# Varre a watchlist (config/alerts.yaml) e envia alertas explicáveis para o Telegram.
+# Free: em repositório público os minutos do GitHub Actions são gratuitos. NÃO precisa de servidor.
+# Seguro: se os segredos do Telegram não estiverem definidos, o runner imprime e sai 0 (job verde,
+# nada é enviado). Define os segredos em Settings -> Secrets and variables -> Actions.
+# Ver docs/design/going_live.md. Nenhum segredo no YAML.
+
+on:
+  schedule:
+    # ~ depois do fecho do mercado dos EUA, dias úteis. Cron é UTC e "best-effort" (pode atrasar).
+    - cron: "30 21 * * 1-5"
+  workflow_dispatch: {}   # botão "Run workflow" para testar à mão
+
+# Sem permissões de escrita: o job só lê o repo e fala com o Telegram/APIs.
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install light dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run the alert scan
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+        run: python scripts/run_alerts.py
