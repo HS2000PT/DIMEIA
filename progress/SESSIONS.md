@@ -5,6 +5,26 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 28 — 2026-07-03 — Rebranding total CLARION → InvestiGator + go-live
+**Objetivo:** o aluno escolheu o nome público **InvestiGator** (investigate+alligator, mascote
+jacaré-detetive) e, depois de avisado do peso académico (Cap. 4, abstracts, o júri vê o trocadilho),
+decidiu **renomear tudo, incluindo a tese**.
+
+**Feito:**
+- **Rename completo** em tese/paper/slides/guia/caderno/app/README/docs/scripts/CITATION/config.
+  Técnica: só texto visível (CAPS + `\textsc`); labels LaTeX internos intactos (0 refs partidas);
+  "A CLARION"→"An InvestiGator". História (`progress/`, `docs/decisions/*`) mantém CLARION (verdade).
+- **Rebuilds validados:** tese 72 pp / paper 3 pp / slides 15 pp / guia 60 pp — todos 0 erros; 0 citações
+  indefinidas; 47 testes + ruff verdes; AppTest sem exceções.
+- **Mascote:** `app/assets/investigator.svg` (deerstalker + monóculo + lupa) em `st.logo` + Home + README;
+  favicon 🐊; tagline "Investigate. Don't speculate."
+- **Go-live:** repo tornado **público** pelo aluno (antes: API 404 = privado — era a causa do dashboard
+  inacessível); **história auditada antes de publicar** (128 commits, 0 segredos). Canal + segredos +
+  workflow feitos pelo aluno. **URL vivo:** <https://investigator.streamlit.app> (no README/CHECKLIST).
+  Falta 1 clique: tornar a app pública no Streamlit (Sharing) — foi implantada com o repo privado.
+
+---
+
 ## Sessão 27 — 2026-07-02 — Auditoria ao repositório + polimento seguro + flagship Streamlit
 **Objetivo:** auditoria profunda ao **repositório** (pedido do aluno, prompt tipo "team de arquiteto/
 staff eng/reviewer"). Runway: meses até submeter → autorizado **relatório + polimento seguro + 1 feature**.
