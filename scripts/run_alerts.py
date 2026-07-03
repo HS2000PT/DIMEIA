@@ -1,9 +1,9 @@
 """Runner de alertas agendado — varre uma watchlist e envia alertas explicáveis para o Telegram.
 
 Lê `config/alerts.yaml` (definições não-secretas) e reutiliza as funções já validadas do
-InvestiGator. Corre na **stack leve** (sem torch). Seguro por defeito: se o Telegram não estiver configurado,
-imprime os alertas e sai com código 0 — assim um job agendado fica verde antes de definires os
-segredos.
+InvestiGator. Corre na **stack leve** (sem torch). Seguro por defeito: se o Telegram não estiver
+configurado, imprime os alertas e sai com código 0 — assim um job agendado fica verde antes de
+definires os segredos.
 
 Uso:
     python scripts/run_alerts.py            # varre + envia (se o Telegram estiver configurado)
@@ -24,15 +24,9 @@ import yaml
 # Permitir correr como `python scripts/run_alerts.py` a partir da raiz do repo.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from src.console import force_utf8_stdout  # noqa: E402  (depois do sys.path)
+
 _CONFIG = Path(__file__).resolve().parents[1] / "config" / "alerts.yaml"
-
-
-def _stdout_utf8() -> None:
-    """No Windows a consola é cp1252 e rebenta com os emojis dos alertas; forçar UTF-8."""
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-    except (AttributeError, ValueError):
-        pass
 
 
 def load_config(path: str | Path = _CONFIG) -> dict:
@@ -101,7 +95,7 @@ def scan_news(cfg: dict) -> list[str]:
 
 
 def main() -> int:
-    _stdout_utf8()
+    force_utf8_stdout()
     parser = argparse.ArgumentParser(description="InvestiGator — runner de alertas agendado")
     parser.add_argument("--dry-run", action="store_true", help="varre e imprime; nunca envia")
     args = parser.parse_args()

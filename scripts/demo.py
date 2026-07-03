@@ -16,13 +16,7 @@ from pathlib import Path
 # Permitir "python scripts/demo.py" a partir da raiz do repo (põe a raiz no sys.path).
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-
-def _stdout_utf8() -> None:
-    """No Windows a consola é cp1252 e rebenta com os emojis do alerta; forçar UTF-8."""
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-    except (AttributeError, ValueError):
-        pass
+from src.console import force_utf8_stdout  # noqa: E402  (depois do sys.path)
 
 
 def _rule(title: str) -> None:
@@ -65,7 +59,7 @@ def demo_mercado() -> None:
 
 
 def main() -> None:
-    _stdout_utf8()
+    force_utf8_stdout()
     demo_noticia()
     demo_mercado()
     print()
