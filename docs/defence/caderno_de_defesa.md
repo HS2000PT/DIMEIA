@@ -1,4 +1,4 @@
-# Caderno de Defesa — CLARION (PT-PT)
+# Caderno de Defesa — InvestiGator (PT-PT)
 
 > Documento de estudo para a defesa. Reúne, em português, **o que foi feito e porquê**, para o aluno
 > dominar todo o trabalho e **visualizar o fluxo de dados e passos** (§2). Não é a tese (essa é em EN-GB);
@@ -16,7 +16,7 @@ interpretar estes sinais são institucionais, opacas, ou ambas. O comportamento 
 pela **atenção** (compra o que está nas notícias / com movimentos extremos); logo, faz sentido intervir
 exatamente nesses momentos, com **contexto e explicação**, e não com mais ruído.
 
-**O que o sistema faz (CLARION).** Vigia o mercado US (NYSE/NASDAQ) e dispara um alerta quando: (1) há um
+**O que o sistema faz (InvestiGator).** Vigia o mercado US (NYSE/NASDAQ) e dispara um alerta quando: (1) há um
 **movimento abrupto** de preço (anomalia estatística), ou (2) chega uma **notícia relevante**. Cada alerta
 traz a **cadeia de raciocínio completa**: o evento detetado, o raciocínio, as fontes e **precedentes
 históricos** (notícias análogas do passado e o impacto que tiveram). Entrega via **Telegram**.

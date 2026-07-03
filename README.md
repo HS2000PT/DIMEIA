@@ -1,4 +1,10 @@
-# CLARION — Explainable Financial Alerts for Retail Investors
+<img src="app/assets/investigator.svg" width="150" align="right" alt="InvestiGator mascot — a friendly detective alligator">
+
+# InvestiGator 🐊🔍 — Explainable Financial Alerts for Retail Investors
+
+*Investigate. Don't speculate.*
+
+**▶ Try it live: <https://investigator.streamlit.app>**
 
 [![CI (tests + lint)](https://github.com/HS2000PT/DIMEIA/actions/workflows/ci.yml/badge.svg)](https://github.com/HS2000PT/DIMEIA/actions/workflows/ci.yml)
 [![Compile thesis (LaTeX)](https://github.com/HS2000PT/DIMEIA/actions/workflows/compile-thesis.yml/badge.svg)](https://github.com/HS2000PT/DIMEIA/actions/workflows/compile-thesis.yml)
@@ -7,7 +13,7 @@
 > MSc in Artificial Intelligence Engineering (MEIA) — ISEP — Master's Dissertation
 > Author: **Henrique José da Silva Santos** (nº 1180934) · Supervisor: Prof. Luís Gomes · Co-supervisor: Rafael Silva
 
-**CLARION** is an **explainable (XAI-first)** financial-alert system for retail investors in the US market
+**InvestiGator** is an **explainable (XAI-first)** financial-alert system for retail investors in the US market
 (NYSE/NASDAQ), together with the LaTeX dissertation that documents it. For every alert it exposes the full
 reasoning chain — detected event → explanation → sources → historical precedents — and delivers it over the
 **Telegram Bot API**. No price prediction, no algorithmic trading, free APIs only.
@@ -35,19 +41,19 @@ Full operator guide (Telegram, live news, building your own KB): **`docs/design/
 §0.0).
 
 ## 🔎 Or click through it — the dashboard
-A clickable, visual demo of both triggers and the evaluation (no keys, nothing sent):
+**Live at <https://investigator.streamlit.app>** — both triggers plus the evaluation, in the browser,
+nothing to install. To run it locally instead (no keys, nothing sent):
 
 ```bash
 pip install -r requirements.txt -r requirements-app.txt
 streamlit run app/streamlit_app.py
 ```
 
-Free public hosting (Streamlit Community Cloud) and a URL you can cite are described in
-**`docs/design/deployment.md`**. It runs the offline baseline embedder; the SBERT numbers are on the
-dashboard's *Evaluation* page. _(Live URL: to be added after the first deploy.)_
+Hosting details (Streamlit Community Cloud, free): **`docs/design/deployment.md`**. The app runs the
+offline baseline embedder; the SBERT numbers are on the dashboard's *Evaluation* page.
 
 ## 📡 Live 24/7 (free, no server)
-Turn CLARION into a running service without paying or babysitting a server:
+Turn InvestiGator into a running service without paying or babysitting a server:
 - **Scheduled alerts** → `scripts/run_alerts.py` scans a watchlist (`config/alerts.yaml`) and posts
   explainable alerts to a **Telegram channel**; a free **GitHub Actions timer**
   (`.github/workflows/alerts.yml`) runs it after the US close. Users just **join the channel**.

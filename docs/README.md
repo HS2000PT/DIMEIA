@@ -1,6 +1,6 @@
 # docs/ — índice da documentação
 
-Mapa de toda a documentação do CLARION, agrupada por finalidade. Começa por **`design/how_to_run.md`**
+Mapa de toda a documentação do InvestiGator, agrupada por finalidade. Começa por **`design/how_to_run.md`**
 se só queres correr o sistema.
 
 ## design/ — para quem quer *usar* / *reconstruir* o sistema (porta de entrada)

@@ -1,4 +1,4 @@
-"""Demo do CLARION — corre os dois gatilhos SEM chaves nem configuração.
+"""Demo do InvestiGator — corre os dois gatilhos SEM chaves nem configuração.
 
 Correr:  python scripts/demo.py   (ou ./.venv/Scripts/python.exe scripts/demo.py)
 

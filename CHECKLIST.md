@@ -1,4 +1,4 @@
-# CHECKLIST — CLARION (o que está feito / o que falta)
+# CHECKLIST — InvestiGator (o que está feito / o que falta)
 
 > Lista viva para acompanhar o estado, com caixas de seleção. É a **lista de tarefas acionável** —
 > o histórico detalhado está em [progress/TRACKER.md](progress/TRACKER.md) e
@@ -23,12 +23,16 @@
 
 ## ⏳ A fazer — EU (humano; ninguém pode fazer por ti)
 ### Pôr o sistema 24/7 ao vivo (grátis) — ver [docs/design/going_live.md](docs/design/going_live.md)
-- [ ] Criar um **canal de Telegram** e adicionar o bot como **administrador**.
-- [ ] Definir **3 segredos** no GitHub (Settings → Secrets → Actions): `TELEGRAM_BOT_TOKEN`,
+- [x] Criar um **canal de Telegram** e adicionar o bot como **administrador**.
+- [x] Definir **3 segredos** no GitHub (Settings → Secrets → Actions): `TELEGRAM_BOT_TOKEN`,
       `TELEGRAM_CHAT_ID` (= canal), `FINNHUB_API_KEY` (opcional).
-- [ ] Correr o workflow **"Alerts (scheduled scan)"** uma vez (Actions → Run workflow) para testar.
-- [ ] **Publicar o dashboard** (grátis) seguindo [docs/design/deployment.md](docs/design/deployment.md)
-      e **colar o URL** no README e na tese.
+- [x] Correr o workflow **"Alerts (scheduled scan)"** uma vez (Actions → Run workflow) para testar.
+- [x] Tornar o **repositório público** (necessário para o dashboard público + Actions ilimitados).
+- [x] **Publicar o dashboard**: <https://investigator.streamlit.app> (URL já no README).
+- [ ] **Tornar a app pública no Streamlit** (ainda pede login): share.streamlit.io → a app → **⋮ →
+      Settings → Sharing → tornar pública** (foi implantada quando o repo era privado).
+- [ ] (Opcional) Renomear o repositório GitHub `DIMEIA` → `InvestiGator` (Settings → Rename; o GitHub
+      redireciona os URLs antigos; depois avisar para atualizar badges e re-ligar o Streamlit).
 - [ ] **Escolher a licença do código** com o Prof. Luís Gomes (MIT/Apache; confirmar política de IP do
       ISEP) e adicionar o ficheiro `LICENSE`.
 - [ ] Confirmar a **redação exata da declaração de uso de IA** exigida pela MEIA/ISEP + a **data de entrega**.
@@ -38,7 +42,7 @@
 ---
 
 ## 🧰 Polimento opcional (seguro, quando quiseres)
-- [ ] Renomear `src/` → `clarion/` (pacote instalável; tirar o `sys.path`) — **sessão dedicada** com
+- [ ] Renomear `src/` → `investigator/` (pacote instalável; tirar o `sys.path`) — **sessão dedicada** com
       sincronização dos docs (a tese/paper não referem `src/`, por isso não são afetados).
 - [ ] Relatório de cobertura (`pytest --cov`) + o número no README/CI.
 - [ ] Ajuda de **horas de mercado** (mercado aberto/fechado) — também vira figura de "framework geral".

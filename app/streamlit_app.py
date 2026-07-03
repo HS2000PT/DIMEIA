@@ -1,6 +1,6 @@
-"""CLARION — interactive dashboard (Streamlit).
+"""InvestiGator — interactive dashboard (Streamlit).
 
-A thin, stateless UI over the *validated* CLARION functions. It demonstrates the two triggers
+A thin, stateless UI over the *validated* InvestiGator functions. It demonstrates the two triggers
 (news precedents; market anomaly) and shows the evaluation, so an examiner can click through the
 XAI story without installing anything.
 
@@ -29,8 +29,12 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 st.set_page_config(
-    page_title="CLARION — Explainable Financial Alerts", page_icon="🔎", layout="wide"
+    page_title="InvestiGator — Explainable Financial Alerts", page_icon="🐊", layout="wide"
 )
+
+_MASCOT = Path(__file__).resolve().parent / "assets" / "investigator.svg"
+if _MASCOT.exists():
+    st.logo(str(_MASCOT), size="large")
 
 # Validated evaluation numbers (source: docs/evaluation/, reproducible via scripts/evaluate*.py).
 # Shown for display only — not recomputed here.
@@ -76,11 +80,15 @@ def _disclaimer() -> None:
 # ── Pages ──────────────────────────────────────────────────────────────────────
 
 def page_home() -> None:
-    st.title("CLARION — Explainable Financial Alerts for Retail Investors")
+    col_logo, col_title = st.columns([1, 4])
+    if _MASCOT.exists():
+        col_logo.image(str(_MASCOT), width=150)
+    col_title.title("InvestiGator — Explainable Financial Alerts for Retail Investors")
+    col_title.caption("_Investigate. Don't speculate._ 🐊🔍")
     _disclaimer()
     st.markdown(
         """
-**CLARION** watches the US market for a retail investor and **explains** every alert.
+**InvestiGator** watches the US market for a retail investor and **explains** every alert.
 There are two triggers:
 
 1. **Abrupt market move** → a statistical anomaly (rolling *z*-score, no lookahead), explained in
@@ -92,7 +100,7 @@ Use the sidebar to try each trigger, explore the evaluation, or read how it work
         """
     )
     c1, c2, c3 = st.columns(3)
-    c1.metric("Automated tests", "43 ✓")
+    c1.metric("Automated tests", "47 ✓")
     c2.metric("Verified citations", "50 / 50")
     c3.metric("Price predictions made", "0 (by design)")
 
@@ -103,8 +111,8 @@ def page_news() -> None:
     st.header("News trigger — precedents and their impact")
     _disclaimer()
     st.markdown(
-        "Type a headline and a ticker. CLARION finds the most **similar past headlines** in its "
-        "knowledge base and shows what happened to the price afterwards."
+        "Type a headline and a ticker. InvestiGator finds the most **similar past headlines** "
+        "in its knowledge base and shows what happened to the price afterwards."
     )
     col = st.columns([3, 1])
     headline = col[0].text_input("Headline", value="Nvidia demand surges on AI chip orders")
@@ -152,7 +160,7 @@ def page_market() -> None:
     st.header("Market trigger — is today an anomaly?")
     _disclaimer()
     st.markdown(
-        "CLARION compares the latest daily return against this stock's own recent behaviour "
+        "InvestiGator compares the latest daily return against this stock's own recent behaviour "
         "(rolling *z*-score). A large |z| means the move is unusual **for this stock**."
     )
     c1, c2, c3 = st.columns(3)
@@ -219,9 +227,9 @@ def page_how() -> None:
     _disclaimer()
     st.markdown(
         """
-CLARION integrates existing, transparent components — it **trains no model** and uses **no computer
-vision**. It uses a pre-trained sentence embedder (SBERT, inference only), a statistical *z*-score,
-cosine similarity, and event-study arithmetic.
+InvestiGator integrates existing, transparent components — it **trains no model** and uses **no
+computer vision**. It uses a pre-trained sentence embedder (SBERT, inference only), a statistical
+*z*-score, cosine similarity, and event-study arithmetic.
         """
     )
     st.graphviz_chart(
@@ -255,7 +263,7 @@ def page_about() -> None:
     st.header("About & how to cite")
     st.markdown(
         """
-**CLARION** accompanies the MEIA (ISEP) master's dissertation
+**InvestiGator** accompanies the MEIA (ISEP) master's dissertation
 *"Explainable Financial Alerts for Retail Investors: Integrating Statistical Anomaly Detection and
 News–Market Impact Correlation."*
 
@@ -288,7 +296,7 @@ PAGES = {
 
 
 def main() -> None:
-    st.sidebar.title("CLARION")
+    st.sidebar.title("InvestiGator")
     st.sidebar.caption("Explainable financial alerts")
     choice = st.sidebar.radio("Go to", list(PAGES.keys()))
     st.sidebar.markdown("---")

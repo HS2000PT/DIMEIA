@@ -1,7 +1,7 @@
 """Runner de alertas agendado — varre uma watchlist e envia alertas explicáveis para o Telegram.
 
-Lê `config/alerts.yaml` (definições não-secretas) e reutiliza as funções já validadas do CLARION.
-Corre na **stack leve** (sem torch). Seguro por defeito: se o Telegram não estiver configurado,
+Lê `config/alerts.yaml` (definições não-secretas) e reutiliza as funções já validadas do
+InvestiGator. Corre na **stack leve** (sem torch). Seguro por defeito: se o Telegram não estiver configurado,
 imprime os alertas e sai com código 0 — assim um job agendado fica verde antes de definires os
 segredos.
 
@@ -102,7 +102,7 @@ def scan_news(cfg: dict) -> list[str]:
 
 def main() -> int:
     _stdout_utf8()
-    parser = argparse.ArgumentParser(description="CLARION — runner de alertas agendado")
+    parser = argparse.ArgumentParser(description="InvestiGator — runner de alertas agendado")
     parser.add_argument("--dry-run", action="store_true", help="varre e imprime; nunca envia")
     args = parser.parse_args()
 

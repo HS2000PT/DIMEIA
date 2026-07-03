@@ -1,4 +1,4 @@
-# how_to_run.md — Como correr o CLARION (guia do operador)
+# how_to_run.md — Como correr o InvestiGator (guia do operador)
 
 > Guia prático e **honesto** de como correr o sistema de ponta a ponta. Complementa o `setup.md`
 > (que trata do ambiente). Tudo aqui reflete o código real do repositório; quando algo ainda não

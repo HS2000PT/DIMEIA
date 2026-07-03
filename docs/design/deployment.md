@@ -1,11 +1,11 @@
-# deployment.md — Publicar o dashboard CLARION (Streamlit Community Cloud)
+# deployment.md — Publicar o dashboard InvestiGator (Streamlit Community Cloud)
 
 > Guia para pôr o **dashboard interativo** (`app/streamlit_app.py`) online, de graça, com um URL
 > público que se pode citar na tese. É a forma mais simples de um examinador **clicar** e ver o
 > sistema a funcionar sem instalar nada.
 
 ## O que é o dashboard
-Uma interface fina e **sem estado** por cima das funções já validadas do CLARION (gatilho de
+Uma interface fina e **sem estado** por cima das funções já validadas do InvestiGator (gatilho de
 notícia, gatilho de mercado, avaliação). Não treina nada, não prevê preços, não envia nada.
 Corre com o **embedder baseline** (offline, determinístico) — o SBERT/torch não é usado na nuvem
 (stack pesada); a vantagem medida do SBERT está na página *Evaluation* (números da tese).

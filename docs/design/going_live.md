@@ -1,4 +1,4 @@
-# going_live.md — Pôr o CLARION a funcionar 24/7 (grátis)
+# going_live.md — Pôr o InvestiGator a funcionar 24/7 (grátis)
 
 > Duas coisas: (1) uma **webpage sempre disponível** (o dashboard) e (2) **alertas no telemóvel**
 > (um canal de Telegram + um temporizador). **Sem servidor** para gerir. Tudo grátis.
@@ -21,10 +21,10 @@
 ## Fase A — ao vivo, grátis, sem servidor
 
 ### 1) Criar o canal do Telegram
-1. No Telegram: **New Channel** → público → dá-lhe um nome (ex.: *CLARION Alerts*) e um `@username`
-   (ex.: `@clarion_alerts`).
+1. No Telegram: **New Channel** → público → dá-lhe um nome (ex.: *InvestiGator Alerts*) e um `@username`
+   (ex.: `@investigator_alerts`).
 2. Abre o canal → **Manage channel → Administrators → Add Administrator** → adiciona o **teu bot**.
-3. O "id do canal" para enviar: usa o `@username` (`@clarion_alerts`) — é o mais simples. (Alternativa:
+3. O "id do canal" para enviar: usa o `@username` (`@investigator_alerts`) — é o mais simples. (Alternativa:
    o id numérico `-100…`, obtido reencaminhando uma mensagem do canal para o `@userinfobot`.)
 
 ### 2) Definir os segredos no GitHub (nunca no código)
@@ -32,7 +32,7 @@ Repo → **Settings → Secrets and variables → Actions → New repository sec
 | Nome | Valor |
 |------|-------|
 | `TELEGRAM_BOT_TOKEN` | o token do `@BotFather` |
-| `TELEGRAM_CHAT_ID` | `@clarion_alerts` (ou `-100…`) |
+| `TELEGRAM_CHAT_ID` | `@investigator_alerts` (ou `-100…`) |
 | `FINNHUB_API_KEY` | só se ligares o gatilho de notícias (opcional) |
 
 ### 3) Testar já (botão manual)

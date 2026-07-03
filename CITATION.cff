@@ -1,7 +1,7 @@
 cff-version: 1.2.0
-message: "If you use CLARION or refer to this dissertation, please cite it as below."
+message: "If you use InvestiGator or refer to this dissertation, please cite it as below."
 type: software
-title: "CLARION — Explainable Financial Alerts for Retail Investors"
+title: "InvestiGator — Explainable Financial Alerts for Retail Investors"
 abstract: >-
   An explainable (XAI-first) financial-alert system for retail investors in the US
   market. It detects abrupt market moves as statistical anomalies (rolling z-score,
