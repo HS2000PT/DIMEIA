@@ -21,6 +21,19 @@
 
 ---
 
+## 🤖 EM CURSO — componente de ML treinado (triagem de materialidade; RQ4)
+> Plano completo no plano de sessão; proposta ao orientador em
+> [docs/internal/proposta_ml_orientador.md](docs/internal/proposta_ml_orientador.md).
+> **Regra:** o texto da tese só muda depois do OK do Prof. Luís Gomes (M7).
+- [ ] **HUMANO: enviar a proposta ao Prof. Luís Gomes** (email; o ficheiro acima é o corpo).
+- [ ] M1 — Rótulos (retorno anormal vs SPY) + `scripts/build_dataset.py` + testes anti-lookahead.
+- [ ] M2 — `src/triage/` + `scripts/train_triage.py` (LR + GBM, split temporal, calibração, seeds).
+- [ ] M3 — Estudo honesto no corpus Finnhub → `docs/evaluation/evaluation_triage.md` + figuras.
+- [ ] M4 — Isolation Forest vs z-score (números z-score congelados intactos).
+- [ ] M5 — Integração off-by-default (linha no alerta, gate no runner, severidade na app).
+- [ ] M6 — **HUMANO: deixar o download FNSPID a correr uma noite** (tarefa/click preparado) → retreinar.
+- [ ] M7 — Tese (RQ4, Cap. 2/3/4/5/6) — **gated no OK do orientador**; depois sync paper/slides/guia.
+
 ## ⏳ A fazer — EU (humano; ninguém pode fazer por ti)
 ### Pôr o sistema 24/7 ao vivo (grátis) — ver [docs/design/going_live.md](docs/design/going_live.md)
 - [x] Criar um **canal de Telegram** e adicionar o bot como **administrador**.
