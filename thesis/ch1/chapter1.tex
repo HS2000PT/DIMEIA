@@ -59,7 +59,7 @@ afterwards (Figure~\ref{fig:concept}).
 ]
   \node[trig] (t1) {Abrupt market move};
   \node[trig, below=6mm of t1] (t2) {Relevant news};
-  \node[sys] (sys) at ($(t1)!0.5!(t2) + (3.6,0)$) {\textbf{CLARION}};
+  \node[sys] (sys) at ($(t1)!0.5!(t2) + (3.6,0)$) {\textbf{InvestiGator}};
   \node[outbox, right=1.2cm of sys] (out) {Explained alert\\ \footnotesize event $\cdot$ reasoning\\ \footnotesize sources $\cdot$ precedents};
   \node[right=0.9cm of out] (inv) {\footnotesize investor};
   \draw[->] (t1) -- (sys);
@@ -67,7 +67,7 @@ afterwards (Figure~\ref{fig:concept}).
   \draw[->] (sys) -- (out);
   \draw[->] (out) -- (inv);
 \end{tikzpicture}
-\caption[What CLARION does]{The two triggers, a sudden market move or a relevant news item, feed CLARION,
+\caption[What InvestiGator does]{The two triggers, a sudden market move or a relevant news item, feed InvestiGator,
 which answers with an explained alert the investor can follow and check, not just a bare notification.}
 \label{fig:concept}
 \end{figure}
@@ -110,7 +110,7 @@ be reproduced. Three contributions stand out:
   \item A reproducible method for relating news to market impact, pairing sentence-embedding retrieval
         with event-study windows, with the similarity measure and the time horizons stated explicitly and
         no information about the future allowed to leak in.
-  \item \textbf{CLARION}, an alerting system that shows its whole reasoning chain: the detected event, the
+  \item \textbf{InvestiGator}, an alerting system that shows its whole reasoning chain: the detected event, the
         supporting evidence, the sources, and the relevant historical precedents. Because each explanation
         is built directly from the quantities the system computes, the text cannot drift from the
         computation.
@@ -128,7 +128,7 @@ The rest of the dissertation is written to be read in order, each chapter answer
         work choose?
   \item \textbf{Chapter~\ref{chap:methods} (Methods and Materials):} how is the system built, and how is
         it judged?
-  \item \textbf{Chapter~\ref{chap:clarion} (CLARION):} what is the system, and how do its data, parts,
+  \item \textbf{Chapter~\ref{chap:clarion} (InvestiGator):} what is the system, and how do its data, parts,
         flow and decisions fit together?
   \item \textbf{Chapter~\ref{chap:casestudies} (Case Studies):} does it work on real data?
   \item \textbf{Chapter~\ref{chap:conclusions} (Conclusions):} what was learned, and what comes next?

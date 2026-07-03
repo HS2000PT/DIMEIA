@@ -1,12 +1,12 @@
 % Chapter 2 - State of the Art
-% Rebuilt for clarity: each section asks one question and ends with a "For CLARION" takeaway.
+% Rebuilt for clarity: each section asks one question and ends with a "For InvestiGator" takeaway.
 % All citations, tables and figures preserved. EN-GB.
 
 \chapter{State of the Art}
 \label{chap:sota}
 
-This chapter has one job: to justify every design choice in CLARION against the alternatives. Each section
-asks what a field offers and ends with what CLARION takes from it. The order is: how retail investors
+This chapter has one job: to justify every design choice in InvestiGator against the alternatives. Each section
+asks what a field offers and ends with what InvestiGator takes from it. The order is: how retail investors
 behave; anomaly detection; explainable AI; trust in automation; financial text representation; information
 retrieval; event studies; and case-based reasoning. The recurring finding is simple. The building blocks
 are mature, but an integrated, explainable system for the retail investor is still rare.
@@ -25,18 +25,18 @@ The strongest pattern is \emph{attention}. \textcite{barber2008glitters} show th
 buyers of attention-grabbing stocks (those in the news, with unusual volume, or extreme one-day returns):
 facing thousands of choices, they fall back on whatever caught their eye. Attention can even be measured
 through search volume \autocite{da2011attention}. This is decisive for the design, because a sharp price
-move and a salient headline are exactly CLARION's two triggers, so an alert that adds context lands where
+move and a salient headline are exactly InvestiGator's two triggers, so an alert that adds context lands where
 attention-driven decisions are made.
 
 News also moves markets, and its text can be measured. \textcite{tetlock2007media} builds a daily
 pessimism index from a newspaper column and links it to price pressure and trading volume, an early proof
-that textual signals relate to market outcomes, which is the premise of CLARION's news engine. This
+that textual signals relate to market outcomes, which is the premise of InvestiGator's news engine. This
 audience is large and active too: even through the March~2020 crash, retail investors on one
 commission-free platform added to their holdings rather than panicking \autocite{welch2022robinhood},
 consistent with the broad ownership and market scale reported in Chapter~\ref{chap:introduction}
 \autocite{gallup2025stock, sifma2025factbook}.
 
-\textbf{For CLARION:} retail investors are attention-constrained and news-driven, so the system does not
+\textbf{For InvestiGator:} retail investors are attention-constrained and news-driven, so the system does not
 predict the market; it lowers the cost of \emph{interpreting} the events that already grab attention, with
 a transparent explanation and real historical evidence.
 
@@ -45,7 +45,7 @@ a transparent explanation and real historical evidence.
 
 \emph{How do you tell an abnormal price move from ordinary noise?}
 
-CLARION's first trigger is an anomaly detector, so it sits in the mature field of anomaly detection. The
+InvestiGator's first trigger is an anomaly detector, so it sits in the mature field of anomaly detection. The
 standard taxonomy \autocite{chandola2009anomaly} separates \emph{point}, \emph{contextual} and
 \emph{collective} anomalies, and groups methods into statistical, distance/density, and machine-learning
 families (Figure~\ref{fig:sota_anomaly_taxonomy}). A sharp single-day return is a contextual point
@@ -89,7 +89,7 @@ scores how isolated a point is within its neighbourhood \autocite{breunig2000lof
 model of normality \autocite{pang2021deep}. All are powerful but harder to read off, and their edge shows
 most in high-dimensional data, not a single return series. In finance, detection is anyway dominated by
 \emph{unsupervised} methods, because labelled anomalies are scarce \autocite{ahmed2016financial}, a
-constraint that also shapes how CLARION is evaluated (Chapter~\ref{chap:casestudies}).
+constraint that also shapes how InvestiGator is evaluated (Chapter~\ref{chap:casestudies}).
 Table~\ref{tab:sota_anomaly} compares the families.
 
 \begin{table}[ht]
@@ -107,7 +107,7 @@ Deep detectors \autocite{pang2021deep} & Learn a model of normality (e.g.\ autoe
 \end{tabular}
 \end{table}
 
-\textbf{For CLARION:} the signal is one low-dimensional return series that must be explained to a
+\textbf{For InvestiGator:} the signal is one low-dimensional return series that must be explained to a
 non-expert, so the transparent \emph{z}-score wins; the more expressive families are noted as alternatives
 whose opacity the problem does not justify.
 
@@ -121,7 +121,7 @@ and its central split \autocite{adadi2018peeking, arrieta2020xai}: \emph{transpa
 in themselves, versus \emph{post-hoc} methods that explain a trained black box, which can be organised by
 what they explain \autocite{guidotti2018survey} (Figure~\ref{fig:sota_xai_taxonomy}). A useful caution:
 ``interpretability'' is not one thing \autocite{lipton2018mythos}, so a system should say which kind it
-offers. CLARION offers transparency of its decision logic and traceable evidence, not a claim of full
+offers. InvestiGator offers transparency of its decision logic and traceable evidence, not a claim of full
 interpretability.
 
 \begin{figure}[ht]
@@ -150,14 +150,14 @@ Two post-hoc techniques are widely used: LIME fits a simple local surrogate arou
 \autocite{lundberg2017shap}. Both are valuable when one is committed to a black box. But for high-stakes
 decisions, \textcite{rudin2019stop} argues for dropping that commitment and using models that are
 interpretable in the first place, since a post-hoc explanation is itself an approximation that can mislead.
-CLARION follows this: it explains primarily by transparent design (every quantity exposed, real precedents
+InvestiGator follows this: it explains primarily by transparent design (every quantity exposed, real precedents
 shown as evidence), with feature attribution as an optional extra.
 
 Good explanations are also a human matter. People want \emph{contrastive}, selective reasons, not an
 exhaustive dump \autocite{miller2019explanation}, which is why each alert shows a few relevant precedents
 and the exact quantities behind the decision. Explanations must also be evaluated, not assumed:
 \textcite{doshivelez2017rigorous} make \emph{fidelity}, how well an explanation reflects the real
-computation, a core criterion, and fidelity is the property CLARION can guarantee
+computation, a core criterion, and fidelity is the property InvestiGator can guarantee
 (Chapter~\ref{chap:casestudies}). Table~\ref{tab:sota_xai} summarises the options.
 
 \begin{table}[ht]
@@ -175,7 +175,7 @@ Transparent design \autocite{rudin2019stop, arrieta2020xai} & Inherently interpr
 \end{tabular}
 \end{table}
 
-\textbf{For CLARION:} pursue explainability by transparent design and judge it by fidelity; treat post-hoc
+\textbf{For InvestiGator:} pursue explainability by transparent design and judge it by fidelity; treat post-hoc
 attribution as a complement, not the foundation.
 
 \section{Trust and Appropriate Reliance in Decision Support}
@@ -191,10 +191,10 @@ are costly.
 
 Explanations are how trust gets calibrated, but they are not magic. \textcite{bansal2021whole} show that
 explanations can even cause \emph{over-reliance}, with people accepting confident explanations of wrong
-answers. CLARION's response is concrete: explain with \emph{verifiable evidence} (the actual $z$-score and
+answers. InvestiGator's response is concrete: explain with \emph{verifiable evidence} (the actual $z$-score and
 its parameters; real precedents with their measured impact), and disclaim prediction on every alert.
 
-\textbf{For CLARION:} transparency is not decoration but the mechanism for appropriate reliance, so the
+\textbf{For InvestiGator:} transparency is not decoration but the mechanism for appropriate reliance, so the
 system shows checkable evidence rather than a persuasive story.
 
 \section{Financial NLP and Text Representation}
@@ -239,7 +239,7 @@ Financial LLMs \autocite{wu2023bloomberggpt} & Large generative model & Very cap
 \end{tabular}
 \end{table}
 
-\textbf{For CLARION:} Sentence-BERT is the sweet spot, contextual meaning beyond lexicons and static
+\textbf{For InvestiGator:} Sentence-BERT is the sweet spot, contextual meaning beyond lexicons and static
 vectors, yet cheap, comparable and free to run.
 
 \section{Information Retrieval and Ranking Evaluation}
@@ -249,18 +249,18 @@ vectors, yet cheap, comparable and free to run.
 
 Ranking a corpus by relevance to a query is the defining problem of information retrieval (IR). The
 vector-space model \autocite{salton1975vsm} represents documents and queries as vectors ranked by cosine
-similarity; CLARION's embedding retrieval is the same idea with richer vectors. Classical \emph{lexical}
+similarity; InvestiGator's embedding retrieval is the same idea with richer vectors. Classical \emph{lexical}
 ranking weights informative terms, from TF-IDF to BM25 \autocite{robertson2009bm25}, still a strong
 baseline. Its known weakness is \emph{vocabulary mismatch}: a relevant document that uses different words
-scores as dissimilar. Semantic embeddings overcome exactly that, which is why CLARION compares against a
+scores as dissimilar. Semantic embeddings overcome exactly that, which is why InvestiGator compares against a
 lexical baseline (Chapter~\ref{chap:casestudies}).
 
 Because retrieval returns a ranked list, it is judged with rank-aware measures \autocite{manning2008ir}; the
-most direct is \emph{precision@$k$}, the fraction of the top $k$ results that are relevant. CLARION adopts
+most direct is \emph{precision@$k$}, the fraction of the top $k$ results that are relevant. InvestiGator adopts
 it because an alert can show only a handful of precedents, so what matters is whether the top few are
 relevant, reported against random, recency and lexical baselines.
 
-\textbf{For CLARION:} retrieval reuses a mature representation-then-rank pipeline and the standard
+\textbf{For InvestiGator:} retrieval reuses a mature representation-then-rank pipeline and the standard
 precision@$k$ metric; the contribution is the application and the pairing with measured impact, not a new
 algorithm.
 
@@ -271,22 +271,22 @@ algorithm.
 
 The tool is the \emph{event study}, introduced by \textcite{fama1969adjustment} and standardised for daily
 returns by \textcite{brown1985daily}, who set the practice of measuring returns over short post-event
-windows, the basis for CLARION's $+1$, $+3$ and $+5$-day horizons. The impact is measured strictly
+windows, the basis for InvestiGator's $+1$, $+3$ and $+5$-day horizons. The impact is measured strictly
 \emph{after} the event, so it describes an outcome, not a forecast.
 
 Why not just predict the price? Because public news is absorbed into prices almost at once, the
 efficient-market hypothesis \autocite{fama1970efficient}, so forecasting returns from public news is very
-hard by construction. CLARION therefore does not compete with market efficiency; it measures and explains
+hard by construction. InvestiGator therefore does not compete with market efficiency; it measures and explains
 the reactions that \emph{already} followed comparable news, which is both more honest and more defensible
 for a non-expert.
 
 Relating news \emph{text} to impact is an active area: \textcite{tetlock2007media} is an early example, and
 a more recent strand tries to \emph{predict} moves from news \autocite{xing2018nlffsurvey, ding2015deep}.
-CLARION deliberately stops short of prediction. Doing this at scale needs news aligned to prices, which is
+InvestiGator deliberately stops short of prediction. Doing this at scale needs news aligned to prices, which is
 the contribution of the FNSPID dataset \autocite{dong2024fnspid}, used to build the knowledge base; its
 coverage and period limits are noted in the data card of Chapter~\ref{chap:methods}.
 
-\textbf{For CLARION:} pairing semantic retrieval with event-study impact over FNSPID is the methodological
+\textbf{For InvestiGator:} pairing semantic retrieval with event-study impact over FNSPID is the methodological
 core, evidence about the past, never a forecast.
 
 \section{Case-Based Reasoning and Precedent Retrieval}
@@ -296,11 +296,11 @@ core, evidence about the past, never a forecast.
 
 It is \emph{case-based reasoning} (CBR). In the classic account \autocite{aamodt1994cbr}, a CBR system
 \emph{retrieves} similar past cases, \emph{reuses} their outcomes, and optionally \emph{revises} and
-\emph{retains} them. CLARION is the retrieve-and-reuse core: each past headline plus its measured impact is
+\emph{retains} them. InvestiGator is the retrieve-and-reuse core: each past headline plus its measured impact is
 a \emph{case}; a new headline is the query; cosine similarity retrieves; the precedents' impact is reused as
 evidence. It stops before \emph{revise}, so it never turns evidence into a prediction.
 
-\textbf{For CLARION:} naming the engine as CBR shows it is a recognised paradigm, not ad hoc, and its
+\textbf{For InvestiGator:} naming the engine as CBR shows it is a recognised paradigm, not ad hoc, and its
 ``this resembles these past cases'' explanations are naturally intelligible to a non-expert.
 
 \section{Existing Tools for the Retail Investor}
@@ -309,7 +309,7 @@ evidence. It stops before \emph{revise}, so it never turns evidence into a predi
 \emph{What can a retail investor already use, and what is missing?}
 
 Three kinds of tool are common today, and each leaves a gap. \emph{Price alerts}, in every brokerage app,
-fire when a price or percentage threshold is crossed; they ride the same attention behaviour CLARION
+fire when a price or percentage threshold is crossed; they ride the same attention behaviour InvestiGator
 targets \autocite{barber2008glitters}, but a fixed threshold ignores each stock's own volatility (firing
 constantly on volatile names, rarely on calm ones) and says only \emph{that} a level was crossed, never
 \emph{why}. \emph{News and sentiment apps} aggregate headlines and attach a sentiment score, building on the
@@ -319,7 +319,7 @@ headline to concrete historical precedents and their outcomes. \emph{Robo-adviso
 retail-fintech tool, genuinely help by improving diversification and curbing biases
 \autocite{dacunto2019robo, cardillo2024robo}, but they \emph{act for} the investor with proprietary logic,
 the opposite of an explanation-first tool that leaves the decision to the user. Table~\ref{tab:sota_tools}
-positions all three against CLARION.
+positions all three against InvestiGator.
 
 \begin{table}[ht]
 \caption{Existing retail tools versus the system proposed in this work.}
@@ -332,19 +332,19 @@ positions all three against CLARION.
 Brokerage price alert & Fires on a fixed price / \% threshold & No & No & No \\
 News / sentiment app \autocite{tetlock2007media} & Aggregates news, scores sentiment & Partly (opaque score) & No & No \\
 Robo-advisor \autocite{dacunto2019robo} & Allocates and rebalances a portfolio & Rarely (proprietary) & No & Yes \\
-\textbf{This work (CLARION)} & Explains events, shows evidence & Yes, by design & Yes (measured impact) & No \\
+\textbf{This work (InvestiGator)} & Explains events, shows evidence & Yes, by design & Yes (measured impact) & No \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{For CLARION:} each existing tool covers one corner, alerting, news, or allocation, but none combines
+\textbf{For InvestiGator:} each existing tool covers one corner, alerting, news, or allocation, but none combines
 volatility-aware detection, transparent explanation and concrete historical evidence in one tool that
 informs rather than decides. That gap is the niche this work fills.
 
 \section{Comparative Analysis and Positioning}
 \label{sec:sota_positioning}
 
-\emph{So what does CLARION choose, and why?}
+\emph{So what does InvestiGator choose, and why?}
 
 Table~\ref{tab:sota_positioning} gathers the choices against their alternatives. The rule throughout is
 \emph{defensible simplicity} \autocite{rudin2019stop}: when two options perform comparably, prefer the more

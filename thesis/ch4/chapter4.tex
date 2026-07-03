@@ -1,21 +1,21 @@
-% Chapter 4 - CLARION (System Design)
+% Chapter 4 - InvestiGator (System Design)
 % Question-led: one picture, the data model, the components, the flow, the decisions, the alert.
 % Design-level (no code dumps). Reuses architecture/workflow/mockup; adds a data-model diagram + component table.
 
-\chapter{CLARION: An Explainable Financial-Alert System for Retail Investors}
+\chapter{InvestiGator: An Explainable Financial-Alert System for Retail Investors}
 \label{chap:clarion}
 
 This chapter answers five questions, in order: \emph{What is the system, in one picture? What objects does
 it work with? What are its parts, and who does what? How does data flow through it? And how does it decide?}
 Chapter~\ref{chap:methods} argued for the individual methods; here they fit together into one working
-system, \textsc{Clarion}.
+system, \textsc{InvestiGator}.
 
 \section{Overview}
 \label{sec:clarion_overview}
 
 \emph{What is the system, in one picture?}
 
-\textsc{Clarion} watches the US equity market for a retail investor and raises an alert when one of two
+\textsc{InvestiGator} watches the US equity market for a retail investor and raises an alert when one of two
 independent triggers fires: an abrupt price movement, or a relevant incoming news item. Every alert carries
 a full, traceable explanation, not a bare notification. The system is a pipeline of single-responsibility
 components linked by a common data schema, so the live and historical layers are directly comparable.
@@ -50,7 +50,7 @@ engines, whose evidence converges on one explanation step before delivery.
   \draw[->] (ce) -- (ex);
   \draw[->] (ex) -- (tg);
 \end{tikzpicture}
-\caption[System architecture and data flow]{Architecture of \textsc{Clarion}. The live layer (market
+\caption[System architecture and data flow]{Architecture of \textsc{InvestiGator}. The live layer (market
 data, news feed) and the historical knowledge base feed two engines (the anomaly detector and the
 correlation engine) whose evidence converges on the explanation engine before an alert is delivered
 through Telegram. The market-movement trigger follows the left path; the news trigger the right.}
@@ -67,7 +67,7 @@ comparison in Chapter~\ref{chap:casestudies} fair. Table~\ref{tab:clarion_decisi
 design decisions; in a work of this kind, that engineering judgement \emph{is} the contribution.
 
 \begin{table}[ht]
-\caption{Principal design decisions in \textsc{Clarion} and their rationale.}
+\caption{Principal design decisions in \textsc{InvestiGator} and their rationale.}
 \label{tab:clarion_decisions}
 \centering
 \begin{tabular}{p{0.27\textwidth} p{0.30\textwidth} p{0.33\textwidth}}
@@ -113,7 +113,7 @@ objects and their relationships.
   \draw[->] (nr)  -- node[lbl]{stored as $1{..}*$} (kb);
   \draw[->] (kb)  -- node[lbl]{cosine top-$k$} (res);
 \end{tikzpicture}
-\caption[CLARION's data model]{The objects CLARION works with. A live \textbf{NewsItem} and a historical
+\caption[InvestiGator's data model]{The objects InvestiGator works with. A live \textbf{NewsItem} and a historical
 \textbf{NewsRecord} share the same schema (date, ticker, headline); a NewsRecord is a \emph{case}, adding
 the headline's embedding and its measured post-event impact. The \textbf{Embedder} produces those vectors;
 the \textbf{Knowledge base} holds many cases; a query headline retrieves the top-$k$ most similar cases with
@@ -135,12 +135,12 @@ threshold). These few objects are all the explanation engine ever needs.
 
 \emph{What are the parts, and who does what?}
 
-CLARION is one package per component, each with a single responsibility and a small interface, which is what
+InvestiGator is one package per component, each with a single responsibility and a small interface, which is what
 lets the numerical core be tested offline and one implementation be swapped for another.
 Table~\ref{tab:clarion_components} lists them with their one job and the data they turn into.
 
 \begin{table}[ht]
-\caption{CLARION's components, each with a single responsibility.}
+\caption{InvestiGator's components, each with a single responsibility.}
 \label{tab:clarion_components}
 \centering
 \begin{tabular}{p{0.24\textwidth} p{0.40\textwidth} p{0.28\textwidth}}
@@ -211,7 +211,7 @@ Telegram.
   \node[lane] at (-0.2,-1.9) {news};
   \node[lane] at (-0.2,-3.8) {market};
 \end{tikzpicture}
-\caption[End-to-end data and processing flow]{The end-to-end flow of \textsc{Clarion} as one connected
+\caption[End-to-end data and processing flow]{The end-to-end flow of \textsc{InvestiGator} as one connected
 pipeline. \emph{Offline} (top), FNSPID news is aligned to prices and embedded into the knowledge base.
 The \emph{news trigger} (middle) embeds an incoming headline, finds its nearest precedents in the
 knowledge base and attaches their observed impact; the \emph{market trigger} (bottom) turns live prices
@@ -264,7 +264,7 @@ chain in one message.
 \setlength{\fboxsep}{6pt}%
 \colorbox{black!4}{%
   \begin{minipage}{9.2cm}
-    \colorbox{black!15}{\makebox[\linewidth][l]{\textbf{CLARION}\, \textemdash{}\, financial alerts bot}}\\[5pt]
+    \colorbox{black!15}{\makebox[\linewidth][l]{\textbf{InvestiGator}\, \textemdash{}\, financial alerts bot}}\\[5pt]
     \fcolorbox{black!30}{white}{%
       \begin{minipage}{8.4cm}
         \medskip
@@ -281,7 +281,7 @@ chain in one message.
       \end{minipage}}
   \end{minipage}}
 \normalsize
-\caption[Telegram alert as received by the investor]{A CLARION news alert as delivered through Telegram.
+\caption[Telegram alert as received by the investor]{An InvestiGator news alert as delivered through Telegram.
 A single message carries the full, traceable reasoning chain: the detected event, the average observed
 impact of analogous past events, the individual precedents with their similarity scores and measured
 impact, and an explicit no-prediction disclaimer. The figures shown are a representative, rounded
@@ -294,7 +294,7 @@ illustration; the full real end-to-end output appears in Chapter~\ref{chap:cases
 
 \emph{What does it take to run, and what does responsible use require?}
 
-CLARION runs as two entry points, one per trigger, each performing a complete cycle. In day-to-day use they
+InvestiGator runs as two entry points, one per trigger, each performing a complete cycle. In day-to-day use they
 would run on a schedule (the market trigger once per trading day after the close, the news trigger whenever
 a watched feed publishes), but the scheduler and hosting are outside this project's scope; the entry points
 already encapsulate everything a scheduler would call. Running the system needs only free resources: a
@@ -304,7 +304,7 @@ real alert delivered during testing shows the path from raw data to the investor
 
 Two practical limits are worth stating plainly. The free news tier returns only a recent window, so the
 knowledge base is shallower than the multi-year build it is designed for (a coverage limit, not a method
-one). And CLARION is a decision-support prototype, not a production service: no user accounts, no
+one). And InvestiGator is a decision-support prototype, not a production service: no user accounts, no
 persistence beyond the knowledge-base file, no automatic recovery from a provider outage. These are ordinary
 steps from prototype to product, recorded openly rather than hidden.
 
@@ -320,7 +320,7 @@ disagrees in direction. Both are design considerations and future work, not impl
 \section{Chapter Conclusions}
 \label{sec:clarion_summary}
 
-CLARION is a two-trigger, two-layer pipeline built from a few clear objects (a \emph{case}, the knowledge
+InvestiGator is a two-trigger, two-layer pipeline built from a few clear objects (a \emph{case}, the knowledge
 base, an anomaly result) and single-responsibility components, with explainability built in by rendering
 every alert directly from the system's own computation. The next chapter puts the two core components to the
 test on real data.

@@ -25,7 +25,7 @@ Porto, Portugal\\
 
 \begin{abstract}
 Retail investors face a continuous flood of price movements and financial news but lack the interpretive
-tools available to institutions. We present CLARION, an explainable (XAI-first) financial-alert system for
+tools available to institutions. We present InvestiGator, an explainable (XAI-first) financial-alert system for
 the US equity market that raises Telegram alerts from two independent triggers --- abrupt price movements,
 detected as statistical anomalies, and incoming news --- and attaches to every alert a fully traceable
 explanation. The core is a news--market correlation engine that retrieves analogous historical news with
@@ -51,7 +51,7 @@ with continuous price movements and a constant stream of news without the tools 
 for granted. Meanwhile, the AI now spreading through finance is largely opaque \cite{arrieta2020xai}, which
 is a poor fit for someone who must act on an alert and live with the result.
 
-This paper presents \textbf{CLARION}, an explainable financial-alert system that does \emph{not} attempt to
+This paper presents \textbf{InvestiGator}, an explainable financial-alert system that does \emph{not} attempt to
 predict prices. Instead, for each abrupt move or relevant news item, it shows what it detected, how it
 reached that conclusion, the sources, and which past events resemble the current one, alongside what
 happened to prices afterwards. The contribution is one of Artificial Intelligence \emph{Engineering}: not a
@@ -86,8 +86,8 @@ precision@$k$ as the standard ranked-retrieval metric \cite{manning2008ir}.
 reasoning \cite{aamodt1994cbr}. The FNSPID dataset \cite{dong2024fnspid} time-aligns news with prices,
 enabling a news-to-impact knowledge base.
 
-\section{The CLARION System}
-CLARION is a pipeline of single-responsibility components linked by a common schema. Two data layers share
+\section{The InvestiGator System}
+InvestiGator is a pipeline of single-responsibility components linked by a common schema. Two data layers share
 that schema: a \emph{historical} layer (a knowledge base of past news, each entry storing date, ticker,
 headline, sentence embedding and measured post-event impact) and a \emph{live} layer (free price and news
 feeds). Two triggers converge on one explanation step before delivery via Telegram.
@@ -183,7 +183,7 @@ forecast, which is why precedents are always shown individually and every alert 
 design, the system performs no price prediction or trading, so profit-based metrics are out of scope.
 
 \section{Conclusion}
-CLARION shows that useful financial alerting for retail investors can be both transparent and reproducible:
+InvestiGator shows that useful financial alerting for retail investors can be both transparent and reproducible:
 a volatility-normalised detector that explains every flag, and a news--market correlation engine that
 retrieves analogous precedents and reports their measured impact as evidence rather than prediction. Future
 work is the full multi-year knowledge base, a human relevance and usefulness study, and market-adjusted

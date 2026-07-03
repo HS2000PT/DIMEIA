@@ -1,4 +1,4 @@
-% Guia de Estudo (PT-PT) — CLARION: da estaca zero à defesa
+% Guia de Estudo (PT-PT) — InvestiGator: da estaca zero à defesa
 % Beamer -> PDF. Deck VISUAL e progressivo que ENSINA (não resume).
 % Honestidade: só conceitos/código/números reais da tese; a tese NÃO treina modelos nem usa visão
 % computacional (usa SBERT pré-treinado + estatística + recuperação + XAI).
@@ -26,7 +26,7 @@
 \definecolor{bad}{RGB}{170,40,40}
 \newcommand{\key}[1]{\textbf{\structure{#1}}}
 
-\title[Guia de Estudo: CLARION]{Guia de Estudo --- CLARION}
+\title[Guia de Estudo: InvestiGator]{Guia de Estudo --- InvestiGator}
 \subtitle{Da estaca zero à defesa: aprender a tese como se a tivesse escrito}
 \author[H.\ Santos]{Henrique J.\ S.\ Santos \\ \footnotesize Orientador: Prof.\ Luís Gomes \quad Coorientador: Rafael Silva}
 \institute[ISEP]{MEIA, Instituto Superior de Engenharia do Porto}
@@ -70,7 +70,7 @@
 \begin{frame}{A tese em três frases (o teu \emph{pitch})}
 \begin{block}{Se só decorares isto, já defendes a ideia central}
 \begin{enumerate}
-  \item Construí o \key{CLARION}, um sistema que avisa um investidor de retalho quando há um \emph{movimento
+  \item Construí o \key{InvestiGator}, um sistema que avisa um investidor de retalho quando há um \emph{movimento
         de mercado invulgar} ou uma \emph{notícia relevante}, e \key{explica} cada alerta de forma
         rastreável (evento, raciocínio, fontes, precedentes históricos).
   \item A contribuição é de \key{Engenharia de IA}: não inventei algoritmos; \emph{integrei, apliquei e
@@ -304,7 +304,7 @@ Bater o aleatório e o lexical é a prova de que os \emph{embeddings} acrescenta
 \column{0.5\textwidth}
 \footnotesize
 \key{Transparente vs caixa-preta:} ou o modelo é interpretável por desenho, ou é opaco e explicamo-lo
-\emph{a posteriori} (LIME/SHAP). O CLARION escolhe \key{transparente por desenho}.
+\emph{a posteriori} (LIME/SHAP). O InvestiGator escolhe \key{transparente por desenho}.
 \vspace{2mm}
 
 \key{Fidelidade:} a explicação reflete \emph{exatamente} o que o sistema calculou (não é uma aproximação).
@@ -392,7 +392,7 @@ sentido intervir \emph{exatamente nesses momentos}, com \key{contexto e explica�
   o/.style={draw,rounded corners,fill=green!10,align=center,text width=3.4cm,minimum height=1.2cm}]
   \node[t](t1){\textbf{Movimento} abrupto de mercado};
   \node[t,below=6mm of t1](t2){\textbf{Notícia} relevante};
-  \node[s] (sys) at ($(t1)!0.5!(t2)+(4.2,0)$){\textbf{CLARION}};
+  \node[s] (sys) at ($(t1)!0.5!(t2)+(4.2,0)$){\textbf{InvestiGator}};
   \node[o,right=1.0cm of sys](out){Alerta \textbf{explicado}\\ \scriptsize evento $\cdot$ raciocínio\\ \scriptsize fontes $\cdot$ precedentes};
   \draw[->](t1)--(sys);\draw[->](t2)--(sys);\draw[->](sys)--(out);
 \end{tikzpicture}
@@ -435,7 +435,7 @@ existentes num sistema funcional, explicável e reproduzível. Três contribuiç
 \begin{enumerate}
   \item Uma \key{metodologia} reproduzível de correlação notícia$\to$impacto (embeddings $+$ event study,
         sem lookahead).
-  \item O \key{CLARION}, um sistema de alertas \key{explicável} cuja cadeia de raciocínio é toda exposta ao
+  \item O \key{InvestiGator}, um sistema de alertas \key{explicável} cuja cadeia de raciocínio é toda exposta ao
         utilizador e \emph{fiel por construção}.
   \item Uma \key{avaliação crítica e honesta} de cada componente em dados reais, contra baselines, com
         limitações reportadas.

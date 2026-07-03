@@ -3,7 +3,7 @@
 Apresentação de defesa (**Beamer**, tema Madrid) destilada da tese **validada**. 14 frames.
 
 ## Conteúdo (fluxo da defesa)
-Problema → o que o CLARION faz (e não faz) → RQ + contribuição → arquitetura → gatilho de mercado
+Problema → o que o InvestiGator faz (e não faz) → RQ + contribuição → arquitetura → gatilho de mercado
 (exemplo real TSLA, z=7,61) → gatilho de notícias (exemplo real Nvidia, match cross-ticker) →
 Resultado 1 (consistência da anomalia, 0,015 vs 0,344) → Resultado 2 (recuperação, P@5 0,514 vs baselines)
 → Resultado 3 (fidelidade + alerta real) → limitações → conclusões (RQ1–RQ3) → obrigado → **perguntas

@@ -14,7 +14,7 @@
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{caption}{\raggedright\insertcaption\par}
 
-\title[CLARION]{Explainable Financial Alerts for Retail Investors}
+\title[InvestiGator]{Explainable Financial Alerts for Retail Investors}
 \subtitle{Integrating Statistical Anomaly Detection and News--Market Impact Correlation}
 \author[H.\ Santos]{Henrique J.\ S.\ Santos \\ \footnotesize Advisor: Prof.\ Lu\'is Gomes \quad Co-advisor: Rafael Silva}
 \institute[ISEP]{MEIA, Instituto Superior de Engenharia do Porto}
@@ -44,7 +44,7 @@
 \end{columns}
 \end{frame}
 
-\begin{frame}{What CLARION does (and does not do)}
+\begin{frame}{What InvestiGator does (and does not do)}
 \begin{block}{It does \emph{not} predict prices. It \textbf{explains}.}
 For each abrupt move or relevant news item, it shows \emph{what} was detected, \emph{how}, the \emph{sources}, and which \emph{past events} resemble it, with what happened to prices afterwards.
 \end{block}
@@ -55,7 +55,7 @@ For each abrupt move or relevant news item, it shows \emph{what} was detected, \
   outbox/.style={draw, rounded corners, fill=green!8, align=center, text width=3.2cm, minimum height=1.2cm}]
   \node[trig] (t1) {Abrupt market move};
   \node[trig, below=4mm of t1] (t2) {Relevant news};
-  \node[sys] (s) at ($(t1)!0.5!(t2)+(3.4,0)$) {\textbf{CLARION}};
+  \node[sys] (s) at ($(t1)!0.5!(t2)+(3.4,0)$) {\textbf{InvestiGator}};
   \node[outbox, right=1.0cm of s] (o) {Explained alert\\ \footnotesize event $\cdot$ reasoning\\ \footnotesize sources $\cdot$ precedents};
   \draw[->] (t1)--(s); \draw[->] (t2)--(s); \draw[->] (s)--(o);
 \end{tikzpicture}
@@ -238,7 +238,7 @@ A working, \textbf{explainable, reproducible} financial-alert system for retail 
 \begin{frame}{Thank you}
 \vfill
 \centering
-{\Huge \textbf{CLARION}} \\[4mm]
+{\Huge \textbf{InvestiGator}} \\[4mm]
 {\large Explainable financial alerts for retail investors} \\[8mm]
 {\footnotesize Questions welcome.}
 \vfill

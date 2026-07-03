@@ -4,7 +4,7 @@ Artigo de conferência (formato **IEEEtran**) destilado da dissertação, constr
 implementação, experiências e estatística já validadas** (Fases D/E).
 
 ## Conteúdo
-- `main.tex` — artigo IEEE (conference): introdução, trabalho relacionado, sistema CLARION, avaliação
+- `main.tex` — artigo IEEE (conference): introdução, trabalho relacionado, sistema InvestiGator, avaliação
   (anomalia + recuperação + fidelidade), discussão/limitações, conclusão.
 - `references.bib` — **subconjunto verificado** das referências da tese (23 entradas; espelho de
   `thesis/references.bib`; entradas *online/report* convertidas para *misc* para o BibTeX clássico).
