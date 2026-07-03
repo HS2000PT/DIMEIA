@@ -1,4 +1,4 @@
-# MASTER PLAN — DIMEIA / CLARION (the long road to submission, publication & defence)
+# MASTER PLAN — DIMEIA / InvestiGator (the long road to submission, publication & defence)
 
 > **Purpose.** One committed roadmap for the whole remaining mission, so work can continue **on any device,
 > any day**, always picking up where it stopped. This file is the spine; `progress/TRACKER.md` holds the
@@ -46,7 +46,7 @@
 ## PHASE B — Finish the naturalness / consistency pass
 *Goal: the whole document reads like Ch1 (examiner-validated), consistently.*
 - [ ] B1. Ch2 body (technical sections kept formal; transitions/topic sentences naturalised).
-- [ ] B2. Ch3 (Methods), Ch4 (CLARION), Ch5 (Case Studies) narrative prose to the same standard.
+- [ ] B2. Ch3 (Methods), Ch4 (InvestiGator), Ch5 (Case Studies) narrative prose to the same standard.
 - [ ] B3. Global: em-dash density down, no pet-phrase clusters, no meta-signposting, short-sentence rhythm kept.
 - **Done when:** a read-through finds no "AI tells"; the student confirms the voice on a sampled chapter.
 
@@ -87,7 +87,7 @@
 ## PHASE F — IEEE publication (only after D + E validated)
 *Goal: a conference/journal paper derived from the validated work.*
 - [ ] F1. New `paper/` dir with the IEEE template (IEEEtran); pick target venue/format.
-- [ ] F2. Condense the validated thesis into the paper (8-ish pp): problem, method (CLARION), evaluation, results.
+- [ ] F2. Condense the validated thesis into the paper (8-ish pp): problem, method (InvestiGator), evaluation, results.
 - [ ] F3. Every claim/number traced to the validated experiments; citations verified (same guardrail).
 - [ ] F4. Compile clean; co-author/supervisor review.
 - **Done when:** a complete, honest, compiling IEEE paper exists, consistent with the thesis.

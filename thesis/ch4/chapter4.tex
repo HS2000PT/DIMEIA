@@ -3,19 +3,19 @@
 % Design-level (no code dumps). Reuses architecture/workflow/mockup; adds a data-model diagram + component table.
 
 \chapter{InvestiGator: An Explainable Financial-Alert System for Retail Investors}
-\label{chap:clarion}
+\label{chap:investigator}
 
 This chapter answers five questions, in order: \emph{What is the system, in one picture? What objects does
 it work with? What are its parts, and who does what? How does data flow through it? And how does it decide?}
 Chapter~\ref{chap:methods} argued for the individual methods; here they fit together into one working
-system, \textsc{InvestiGator}.
+system, InvestiGator.
 
 \section{Overview}
-\label{sec:clarion_overview}
+\label{sec:investigator_overview}
 
 \emph{What is the system, in one picture?}
 
-\textsc{InvestiGator} watches the US equity market for a retail investor and raises an alert when one of two
+InvestiGator watches the US equity market for a retail investor and raises an alert when one of two
 independent triggers fires: an abrupt price movement, or a relevant incoming news item. Every alert carries
 a full, traceable explanation, not a bare notification. The system is a pipeline of single-responsibility
 components linked by a common data schema, so the live and historical layers are directly comparable.
@@ -50,7 +50,7 @@ engines, whose evidence converges on one explanation step before delivery.
   \draw[->] (ce) -- (ex);
   \draw[->] (ex) -- (tg);
 \end{tikzpicture}
-\caption[System architecture and data flow]{Architecture of \textsc{InvestiGator}. The live layer (market
+\caption[System architecture and data flow]{Architecture of InvestiGator. The live layer (market
 data, news feed) and the historical knowledge base feed two engines (the anomaly detector and the
 correlation engine) whose evidence converges on the explanation engine before an alert is delivered
 through Telegram. The market-movement trigger follows the left path; the news trigger the right.}
@@ -63,12 +63,12 @@ correlation engine was added, which controlled integration risk. Second, \textbf
 from input/output}, so the numerical core runs and is tested offline, without a network or the model stack.
 Third, \textbf{components are programmed to interfaces}: the embedding step has two interchangeable
 implementations (a dependency-free lexical baseline and Sentence-BERT), which is what makes the model
-comparison in Chapter~\ref{chap:casestudies} fair. Table~\ref{tab:clarion_decisions} gathers the principal
+comparison in Chapter~\ref{chap:casestudies} fair. Table~\ref{tab:investigator_decisions} gathers the principal
 design decisions; in a work of this kind, that engineering judgement \emph{is} the contribution.
 
 \begin{table}[ht]
-\caption{Principal design decisions in \textsc{InvestiGator} and their rationale.}
-\label{tab:clarion_decisions}
+\caption{Principal design decisions in InvestiGator and their rationale.}
+\label{tab:investigator_decisions}
 \centering
 \begin{tabular}{p{0.27\textwidth} p{0.30\textwidth} p{0.33\textwidth}}
 \toprule
@@ -86,7 +86,7 @@ Delivery channel & Telegram bot & Free, ubiquitous, no bespoke client needed \\
 \end{table}
 
 \section{The Data Model}
-\label{sec:clarion_datamodel}
+\label{sec:investigator_datamodel}
 
 \emph{What objects does the system work with, and how do they relate?}
 
@@ -131,17 +131,17 @@ similar cases with their similarity scores. The market side is simpler still: th
 threshold). These few objects are all the explanation engine ever needs.
 
 \section{Components and Responsibilities}
-\label{sec:clarion_components}
+\label{sec:investigator_components}
 
 \emph{What are the parts, and who does what?}
 
 InvestiGator is one package per component, each with a single responsibility and a small interface, which is what
 lets the numerical core be tested offline and one implementation be swapped for another.
-Table~\ref{tab:clarion_components} lists them with their one job and the data they turn into.
+Table~\ref{tab:investigator_components} lists them with their one job and the data they turn into.
 
 \begin{table}[ht]
 \caption{InvestiGator's components, each with a single responsibility.}
-\label{tab:clarion_components}
+\label{tab:investigator_components}
 \centering
 \begin{tabular}{p{0.24\textwidth} p{0.40\textwidth} p{0.28\textwidth}}
 \toprule
@@ -161,7 +161,7 @@ Orchestration & Run each trigger end to end & trigger $\to$ delivered alert \\
 \end{table}
 
 \section{Data Flow}
-\label{sec:clarion_flow}
+\label{sec:investigator_flow}
 
 \emph{How does data move through the system, end to end?}
 
@@ -211,7 +211,7 @@ Telegram.
   \node[lane] at (-0.2,-1.9) {news};
   \node[lane] at (-0.2,-3.8) {market};
 \end{tikzpicture}
-\caption[End-to-end data and processing flow]{The end-to-end flow of \textsc{InvestiGator} as one connected
+\caption[End-to-end data and processing flow]{The end-to-end flow of InvestiGator as one connected
 pipeline. \emph{Offline} (top), FNSPID news is aligned to prices and embedded into the knowledge base.
 The \emph{news trigger} (middle) embeds an incoming headline, finds its nearest precedents in the
 knowledge base and attaches their observed impact; the \emph{market trigger} (bottom) turns live prices
@@ -227,7 +227,7 @@ the evaluation in Chapter~\ref{chap:casestudies} uses a knowledge base built fro
 the identical process, with the full build left as future work.
 
 \section{Decision Logic}
-\label{sec:clarion_logic}
+\label{sec:investigator_logic}
 
 \emph{How does the system actually decide?} Each trigger applies one simple, transparent rule.
 
@@ -243,7 +243,7 @@ event-day close, and show their mean as evidence. Nothing here forecasts: the fi
 happen after comparable past news, and the knowledge base is consulted but never decides.
 
 \section{Explanation and Delivery}
-\label{sec:clarion_xai}
+\label{sec:investigator_xai}
 
 \emph{How is the alert explained, and how does it reach the investor?}
 
@@ -290,7 +290,7 @@ illustration; the full real end-to-end output appears in Chapter~\ref{chap:cases
 \end{figure}
 
 \section{Practical Use and Responsible Design}
-\label{sec:clarion_deploy}
+\label{sec:investigator_deploy}
 
 \emph{What does it take to run, and what does responsible use require?}
 
@@ -318,7 +318,7 @@ alert; natural extensions are to de-duplicate near-identical precedents and to f
 disagrees in direction. Both are design considerations and future work, not implemented features.
 
 \section{Chapter Conclusions}
-\label{sec:clarion_summary}
+\label{sec:investigator_summary}
 
 InvestiGator is a two-trigger, two-layer pipeline built from a few clear objects (a \emph{case}, the knowledge
 base, an anomaly result) and single-responsibility components, with explainability built in by rendering

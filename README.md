@@ -78,7 +78,7 @@ The interactive per-user bot (users DM `/watch TSLA`) is designed there as a lat
 
 ## Project status
 **Validated and submission-ready (pending human sign-off).** Both triggers are proven end to end;
-**43 automated tests** + lint green. The two core components are evaluated on **real data**, and the
+**47 automated tests** + lint green. The two core components are evaluated on **real data**, and the
 statistics were independently re-run and reproduce the thesis figures exactly. The **six-chapter
 dissertation** compiles cleanly (`thesis/main.pdf`, ~72 pp, 0 errors), with **50 references each verified by
 DOI/arXiv/ISBN or primary source** (audit in `docs/decisions/page_audit.md`). An **IEEE paper** (`paper/`)
@@ -117,7 +117,7 @@ CITATION.cff   how to cite this work    requirements.txt (light) / requirements-
   (`requirements.txt`) — enough for the demo, the tests and the evaluations. The heavy ML stack (`torch` CPU,
   `sentence-transformers`, in `requirements-ml.txt`) is needed only for the real SBERT paths and installs with
   `bash scripts/setup_env.sh --ml` (it pulls `torch` from the PyTorch CPU index, not PyPI).
-- Verification loop: `bash scripts/verify.sh` (43 tests + lint + LaTeX note).
+- Verification loop: `bash scripts/verify.sh` (47 tests + lint + LaTeX note).
 - Secrets live only in a local, gitignored `.env` (see `.env.example` for variable names).
 - LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push.
 

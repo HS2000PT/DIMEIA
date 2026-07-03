@@ -1,6 +1,6 @@
 # slides/ — Slides de defesa (Fase G)
 
-Apresentação de defesa (**Beamer**, tema Madrid) destilada da tese **validada**. 14 frames.
+Apresentação de defesa (**Beamer**, tema Madrid) destilada da tese **validada**. 15 frames.
 
 ## Conteúdo (fluxo da defesa)
 Problema → o que o InvestiGator faz (e não faz) → RQ + contribuição → arquitetura → gatilho de mercado

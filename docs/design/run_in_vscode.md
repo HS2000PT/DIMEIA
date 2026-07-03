@@ -28,7 +28,7 @@ A janela fica aberta no fim para leres o resultado. (Detalhes em [`run/README.md
 1. Menu **Terminal → Run Task…** (ou `Ctrl+Shift+P` → *Tasks: Run Task*).
 2. Escolhe:
    - **Demo — both triggers** / **Dashboard — Streamlit**
-   - **Tests + lint (verify)** — os 43 testes + ruff (é a *test task* por defeito: `Ctrl+Shift+P` →
+   - **Tests + lint (verify)** — os 47 testes + ruff (é a *test task* por defeito: `Ctrl+Shift+P` →
      *Run Test Task*).
    - **Thesis — compile PDF** — compila a tese (é a *build task* por defeito: `Ctrl+Shift+B`).
    - **Slides / Study guide / Paper — compile PDF**.

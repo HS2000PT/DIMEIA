@@ -1,4 +1,4 @@
-# Revisão de Produto / UX — CLARION (Pass 5)
+# Revisão de Produto / UX — InvestiGator (Pass 5)
 
 > Avaliação crítica do **produto** (não da escrita), nas vozes de gestor de produto, especialista de UX,
 > arquiteto de software e utilizador real. Objetivo: encontrar o que ajudaria/frustaria um investidor de
@@ -8,7 +8,7 @@
 > `page_audit.md` (citações). Data: 2026-06-27.
 
 ## Resumo
-CLARION resolve um problema real (dar **contexto** aos eventos que já captam a atenção do investidor) e tem
+InvestiGator resolve um problema real (dar **contexto** aos eventos que já captam a atenção do investidor) e tem
 uma postura de produto saudável: **informa, não aconselha**; é transparente; é gratuito; entrega por um canal
 ubíquo (Telegram). O principal risco de produto não é a falta de funcionalidades — é a **compreensão**: expor
 estatísticas em bruto a um não-especialista é *transparente* mas não necessariamente *compreensível*. Abaixo,

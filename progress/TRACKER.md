@@ -189,14 +189,14 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
   - [x] Estado da Arte expandido (+12 fontes verificadas → 28; 2 figuras de taxonomia; discussão por secção)
   - [x] Diagrama de arquitetura redesenhado (sem cruzamentos) + fluxo do gatilho de notícias + **mockup do alerta Telegram**
   - [x] Figuras de avaliação PT→EN (números idênticos): era o "português" visível no PDF
-  - [x] Identificadores de código removidos do corpo (0 `\texttt{}` de código); CLARION no abstract/resumo
+  - [x] Identificadores de código removidos do corpo (0 `\texttt{}` de código); InvestiGator no abstract/resumo
   - [x] **Declutter:** removidos `notebooks/`, `presentation/`, `src/impact_analyzer/` (stub); .py compilam; sem importações pendentes
   - [x] TRACKER semeado; CLAUDE.md + SESSIONS.md atualizados
 - [x] **S2 — Introdução (Cap. 1) + Métodos e Materiais (Cap. 3)**
   - [x] Cap. 3 aprofundado: **data card FNSPID** (tabela: fonte, licença CC BY-SA 4.0, 15 tickers, janela 2018–2023, governança), pré-processamento + alinhamento anti-lookahead, camada live + dataset de avaliação, **IA responsável/ética** alargada, metodologia de avaliação + rigor
   - [x] Cap. 1 confirmado bem-escopado (contexto de alto nível; literatura profunda fica no Estado da Arte)
   - [x] Compila 62 pp, 0 erros, 0 citações indefinidas, sem overfull; corpo sem identificadores de código/PT
-- [x] **S3 — CLARION (Cap. 4)** ao nível de desenho + Apêndice de reprodutibilidade
+- [x] **S3 — InvestiGator (Cap. 4)** ao nível de desenho + Apêndice de reprodutibilidade
   - [x] Novo **diagrama de fluxo do gatilho de mercado** (preço→janela→z-score→limiar→alerta; nó de decisão losango)
   - [x] **Tabela de decisões de desenho** (decisão/escolha/racional) — torna explícito o juízo de engenharia
   - [x] Apêndice A (Reproducibility) confirmado ao nível certo; corpo sem identificadores de código
@@ -213,7 +213,7 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] **S6 — Front matter + consistência global + auditoria de citações**
   - [x] Auditoria de citações: **36 citadas = 36 no .bib = 36 renderizadas**, 0 órfãs, 0 indefinidas; todas em citation_log
   - [x] Consistência: sem números de anomalia antigos; sem PT no corpo; 0 overfull >15pt; acrónimos todos definidos (0 avisos de glossário)
-  - [x] Front matter: abstract/resumo com CLARION e números finais (P@5 0.55 vs 0.24); declarações honestas; comentário da data em EN
+  - [x] Front matter: abstract/resumo com InvestiGator e números finais (P@5 0.55 vs 0.24); declarações honestas; comentário da data em EN
 - [x] **S7 — Reorganização do repositório** (consolidação moderada), validada
   - [x] `docs/` agrupado: `design/` (arquitetura, data card, APIs, eval design, setup, riscos), `evaluation/` (resultados auto-gerados), `decisions/` (citation_log, glossary, learning), `_archive/` (analises de fase inicial), `defence/` (para o Caderno S8)
   - [x] Atualizadas TODAS as referências de caminho (defaults dos scripts evaluate*, docstrings src/scripts, README, CLAUDE, links inter-docs); progress/ histórico preservado
@@ -277,7 +277,7 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 
 # Reescrita profunda para clareza (Sessão 24, 2026-06-28)
 - [x] Ch1 — secções por pergunta + mapa do leitor (`78c9819`)
-- [x] Ch2 — pergunta + takeaway "For CLARION"; −4 pp (`17448dd`)
+- [x] Ch2 — pergunta + takeaway "For InvestiGator"; −4 pp (`17448dd`)
 - [x] Ch3 — concept-first; "três escolhas" → lista (`d11212e`)
 - [x] Ch4 — **System Design**: modelo de dados + componentes + Decision Logic (`e60604b`)
 - [x] Ch5 — cada estudo abre com pergunta + resposta (`f4021ff`)

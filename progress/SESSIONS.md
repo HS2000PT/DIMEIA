@@ -5,7 +5,7 @@ A entrada mais recente fica no topo.
 
 ---
 
-## Sessão 28 — 2026-07-03 — Rebranding total CLARION → InvestiGator + go-live
+## Sessão 28 — 2026-07-03 — Rebranding total do nome antigo → InvestiGator + go-live
 **Objetivo:** o aluno escolheu o nome público **InvestiGator** (investigate+alligator, mascote
 jacaré-detetive) e, depois de avisado do peso académico (Cap. 4, abstracts, o júri vê o trocadilho),
 decidiu **renomear tudo, incluindo a tese**.
@@ -13,7 +13,8 @@ decidiu **renomear tudo, incluindo a tese**.
 **Feito:**
 - **Rename completo** em tese/paper/slides/guia/caderno/app/README/docs/scripts/CITATION/config.
   Técnica: só texto visível (CAPS + `\textsc`); labels LaTeX internos intactos (0 refs partidas);
-  "A CLARION"→"An InvestiGator". História (`progress/`, `docs/decisions/*`) mantém CLARION (verdade).
+  artigo EN corrigido ("A …"→"An InvestiGator"). História: depois renomeada também pelo próprio aluno
+  (replace global no editor); o nome antigo fica preservado na história do git.
 - **Rebuilds validados:** tese 72 pp / paper 3 pp / slides 15 pp / guia 60 pp — todos 0 erros; 0 citações
   indefinidas; 47 testes + ruff verdes; AppTest sem exceções.
 - **Mascote:** `app/assets/investigator.svg` (deerstalker + monóculo + lupa) em `st.logo` + Home + README;
@@ -22,6 +23,15 @@ decidiu **renomear tudo, incluindo a tese**.
   inacessível); **história auditada antes de publicar** (128 commits, 0 segredos). Canal + segredos +
   workflow feitos pelo aluno. **URL vivo:** <https://investigator.streamlit.app> (no README/CHECKLIST).
   Falta 1 clique: tornar a app pública no Streamlit (Sharing) — foi implantada com o repo privado.
+- **Revisão pós-rebrand (mesma sessão):** (1) **história reparada** — um replace global tinha mangled as
+  entradas de continuidade (o par "nome antigo→nome novo" tinha virado "nome novo→nome novo");
+  redação restaurada e tornada à prova de replaces futuros. (2) **Coerência de números:** 43→47 testes (README ×2,
+  run_in_vscode, run/README, slide do guia) e 14→15 frames (slides/README); guia recompilado (60 pp,
+  0 erros). (3) **Limpeza:** removidos `.gitkeep` obsoletos (tests/, thesis/figures/, data/samples/;
+  data/.gitkeep fica — pasta gitignored). (4) **Reciclagem:** novo `src/console.py::force_utf8_stdout`
+  usado por demo.py e run_alerts.py (scripts de avaliação congelados ficam como estão — reproduzem os
+  números da tese; churn cosmético lá é só risco). 0 lixo versionado (sem .bak/.tmp); 0 TODOs no código.
+  Validação: 47 testes + ruff; demo reproduz +6,46%; dry-run ok; AppTest sem exceções.
 
 ---
 
@@ -61,7 +71,7 @@ host do Student Pack + BD — desenhada, não construída). Clarificado ao aluno
 (por desenho), não havia timer/servidor, e push agendado não precisa de servidor always-on. **Validado:**
 dry-run ao vivo apanhou anomalia real (META +8,44%, z=+3,31) sem enviar; **47 testes** (43+4) + ruff verdes.
 
-**Deferido (com razão):** `src/`→`clarion/` (pacote instalável) — grande churn de docs; sessão dedicada.
+**Deferido (com razão):** `src/`→`investigator/` (pacote instalável) — grande churn de docs; sessão dedicada.
 Verificado que **nem a tese nem o paper** referenciam `src/` (rework tirou identificadores) → o rename não
 afetará a tese.
 
@@ -137,7 +147,7 @@ mais visuais, e "visualizar o workflow de dados/passos".
   baseline para reprodutibilidade sem download de modelo; o sistema implantado usa SBERT (avaliado no Cap. 5).
 - **Cap. 5 (CS1):** **exemplo numérico de anomalia REAL** — TSLA 24-10-2024 (reação a resultados):
   μ=−0.92%, σ=2.73%, r=+19.82% (log; ≈+22% em preço) → **z=+7.61**, sinalizado a k=3 (yfinance, janela fixada).
-- **Cap. 2 §2.7 "Existing Tools for the Retail Investor":** posiciona o CLARION vs alertas de corretora /
+- **Cap. 2 §2.7 "Existing Tools for the Retail Investor":** posiciona o InvestiGator vs alertas de corretora /
   apps de notícias-sentimento / robo-advisors (tabela em 4 dimensões). **2 citações novas verificadas**
   (DOI resolúvel, registadas em `citation_log.md`): `dacunto2019robo` (RFS 2019), `cardillo2024robo` (FRL 2024).
 - **Cap. 5 "Threats to Validity"** reescrito pela taxonomia clássica (construct / internal / external /
@@ -167,7 +177,7 @@ revisão de literatura fraca, poucas figuras e confusas, nomes de pastas e **por
 "é um documento de dissertação, não uma especificação de software". Pediu reescrita orientada à dissertação,
 limpeza/reorganização do repositório, e um **Caderno de Defesa em PT-PT**, num plano definitivo multi-sessão.
 
-**Decisões (esta sessão):** estrutura canónica MEIA de 6 capítulos; sistema **CLARION**; cleanup = consolidação
+**Decisões (esta sessão):** estrutura canónica MEIA de 6 capítulos; sistema **InvestiGator**; cleanup = consolidação
 moderada; defesa = guia único PT-PT; sequência = declutter já, reorganização estrutural perto do fim.
 
 **Feito (S1):**
@@ -183,7 +193,7 @@ moderada; defesa = guia único PT-PT; sequência = declutter já, reorganizaçã
 - **Português no PDF corrigido:** as figuras de avaliação tinham etiquetas/títulos PT → reescritos em EN e
   **regenerados com números idênticos** (anomalia spread 0.017/0.343, F1 0.524; retrieval P@5 0.549/0.569).
 - **De-tech:** removidos todos os identificadores de código do corpo (0 `\texttt{}` de código; era 72 no Cap. 5);
-  detalhe técnico movido para o Apêndice A (Reproducibility). CLARION no abstract/resumo.
+  detalhe técnico movido para o Apêndice A (Reproducibility). InvestiGator no abstract/resumo.
 - **Declutter:** removidos `notebooks/`, `presentation/`, `src/impact_analyzer/` (stub nunca usado).
 - **Plano mestre** aprovado e registado (`.claude/plans/…`; checklist em `TRACKER.md`).
 - Compila: **60 pp, 0 erros, 0 citações/refs indefinidas**.
@@ -193,7 +203,7 @@ Nota: **venv 3.12 ausente** neste ambiente (recriar para pytest/figuras; CI é o
 
 **Feito (S2–S9, mesma sessão contínua):**
 - S2: Cap. 3 (Methods and Materials) aprofundado — data card FNSPID, IA responsável, metodologia de avaliação.
-- S3: Cap. 4 (CLARION) ao nível de desenho — arquitetura limpa + fluxos dos 2 gatilhos + mockup Telegram +
+- S3: Cap. 4 (InvestiGator) ao nível de desenho — arquitetura limpa + fluxos dos 2 gatilhos + mockup Telegram +
   tabela de decisões; detalhe técnico no Apêndice A.
 - S4: Case Studies com 2 figuras reais novas (série temporal de anomalias TSLA; ablação à janela).
 - S5: Estado da Arte com +8 fontes (→ **36 refs verificadas**), todas em citation_log.
@@ -782,7 +792,7 @@ relações explícitas; clareza > completude; **sem inventar nada** (números/ci
 
 **Feito (commit por capítulo, com pausa):**
 - **Ch1** (`78c9819`): secções guiadas por pergunta; objetivos em lista; "Document Structure" → **mapa do leitor**.
-- **Ch2** (`17448dd`): cada secção abre com pergunta + fecha com "For CLARION:"; densidade **−4 pp**; citações/tabelas/figuras intactas.
+- **Ch2** (`17448dd`): cada secção abre com pergunta + fecha com "For InvestiGator:"; densidade **−4 pp**; citações/tabelas/figuras intactas.
 - **Ch3** (`d11212e`): **concept-first** (cada técnica abre por "What it is for:"); "três escolhas" → lista; equações/algoritmos/data card/números intocados.
 - **Ch4 = System Design** (`e60604b`): reconstruído — NOVO diagrama do **modelo de dados**, NOVA tabela **componente|responsabilidade|entrada→saída**, secção **Decision Logic**; reutiliza arquitetura/fluxo/mockup.
 - **Ch5** (`f4021ff`): cada estudo abre com **pergunta+resposta**; números/tabelas/figuras/bloco do alerta CS3 intactos.

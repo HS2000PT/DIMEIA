@@ -15,10 +15,10 @@
 reescrever; foco em naturalidade e simplicidade.
 
 **Problemas encontrados e correções:**
-1. *Tique de IA — travessões na legenda da Figura 1.2 (conceito).* "two triggers --- … --- feed CLARION,
+1. *Tique de IA — travessões na legenda da Figura 1.2 (conceito).* "two triggers --- … --- feed InvestiGator,
    which replies **not with** a bare notification **but with** an explained alert". → Reescrita sem
    travessões e com a antítese aligeirada: "The two triggers, a sudden market move or a relevant news item,
-   feed CLARION, which answers with an explained alert the investor can follow and check, not just a bare
+   feed InvestiGator, which answers with an explained alert the investor can follow and check, not just a bare
    notification." (ch1: 2 → **0** travessões.)
 2. *Construções "cleft" (indiretas).* "Letting the investor see why an alert was raised is what this
    dissertation sets out to do." → ativa e direta: "This dissertation sets out to let the investor see why
@@ -95,7 +95,7 @@ a tabela do z-score, a tabela de recuperação e respetiva nota, todas as figura
 
 ---
 
-## Capítulo 4 — CLARION
+## Capítulo 4 — InvestiGator
 
 **Estado inicial:** capítulo de desenho do sistema, com 7 figuras (arquitetura, fluxo end-to-end, fluxo e
 sequência de cada gatilho, mockup do Telegram). Passagem de prosa + legendas; **lógica dos diagramas
@@ -268,7 +268,7 @@ mesmo sistema). Decisão do aluno: **consolidar num mapa único**.
 - Cada secção passa a responder a uma pergunta clara; parágrafos curtos.
 - **Objetivos** convertidos de frase corrida para **lista**; contribuições mais nítidas.
 - **"Document Structure" → mapa do leitor:** lista com a pergunta que cada capítulo responde (prepara a
-  leitura progressiva). Ex.: Cap. 4 (CLARION) = "o que é o sistema, e como encaixam os seus dados, partes,
+  leitura progressiva). Ex.: Cap. 4 (InvestiGator) = "o que é o sistema, e como encaixam os seus dados, partes,
   fluxo e decisões?".
 - Figuras (market cap, conceito), números (62,2T; 87/28; 81/71) e citações preservados; 0 travessões.
 
@@ -276,7 +276,7 @@ mesmo sistema). Decisão do aluno: **consolidar num mapa único**.
 
 ## Capítulo 2 — State of the Art (reescrito para clareza)
 - **Cada secção abre com a sua pergunta** (ex.: "Como distinguir um movimento anormal de ruído normal?") e
-  **fecha com uma linha "For CLARION:"** (o que o sistema retira daquele campo). Parágrafos muito mais curtos.
+  **fecha com uma linha "For InvestiGator:"** (o que o sistema retira daquele campo). Parágrafos muito mais curtos.
 - Densidade cortada: prosa reduzida de forma substancial; **−4 páginas** (76 → 72).
 - **Integridade de citações preservada: 50 citadas = 50 no .bib, 0 órfãs, 0 indefinidas.** Nenhuma citação,
   tabela ou figura removida (o corte é em palavras, não em referências).
@@ -333,7 +333,7 @@ Reorganizado para responder, por ordem, às perguntas do núcleo:
 
 ## Balanço da REESCRITA PROFUNDA (Cap. 1–6)
 - Todos os 6 capítulos reconstruídos para clareza progressiva: cada secção responde a uma pergunta; Cap. 2
-  com takeaways "For CLARION"; Cap. 3 concept-first; **Cap. 4 = System Design** (modelo de dados +
+  com takeaways "For InvestiGator"; Cap. 3 concept-first; **Cap. 4 = System Design** (modelo de dados +
   componentes + fluxo + decisão, com diagrama novo do modelo de dados e tabela de componentes); Cap. 5 cada
   estudo abre com pergunta+resposta; Cap. 6 vereditos + listas.
 - **Travessões conectores em prosa: 0** em todo o corpo (resta 1 célula de tabela e comentários TikZ).

@@ -7,7 +7,7 @@ Abre uma janela, corre, e fica aberta no fim (`pause`) para leres o resultado.
 |----------|-----------|
 | `dashboard.bat` | Abre o **dashboard** InvestiGator no browser (os dois gatilhos + avaliação). |
 | `demo.bat` | Corre a **demo** de consola (notícia offline + mercado ao vivo). Não envia nada. |
-| `tests.bat` | Corre os **testes + lint** (43 testes + ruff). |
+| `tests.bat` | Corre os **testes + lint** (47 testes + ruff). |
 | `thesis-pdf.bat` | Compila a **tese** → `thesis/main.pdf` (precisa de LaTeX/MiKTeX). |
 
 > **Pré-requisito (uma vez):** ter o ambiente criado (`bash scripts/setup_env.sh`). Para o dashboard,
