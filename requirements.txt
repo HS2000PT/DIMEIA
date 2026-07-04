@@ -25,3 +25,9 @@ matplotlib==3.11.0
 
 # ── Camada live (mercado) ───────────────────────────────────
 yfinance==1.4.1
+
+# ── Triagem de materialidade (modelos treinados; CPU, leve) ─
+# O treino com embeddings SBERT precisa da stack pesada (--ml); mas treinar/inferir com o
+# bloco de contexto (e correr os testes) funciona só com isto.
+scikit-learn==1.9.0
+joblib==1.5.3
