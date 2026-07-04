@@ -5,7 +5,7 @@ A entrada mais recente fica no topo.
 
 ---
 
-## Sessão 29 — 2026-07-03/04 — WORKSTREAM ML: o aluno passa a ter modelos TREINADOS (M0–M3)
+## Sessão 29 — 2026-07-03/04 — WORKSTREAM ML: o aluno passa a ter modelos TREINADOS (M0–M5)
 **Objetivo:** responder à preocupação do aluno ("não posso só aplicar; tenho de mostrar engenharia de
 ML minha") com um componente treinado **honesto**: triagem/materialidade de notícias (RQ4), sem nunca
 prever direção/preço. Ideia "RL" do aluno traduzida para o **loop de pós-validação** (M5.5).
@@ -28,9 +28,21 @@ enviar**).
   0,357)** — coerente com o regime shift; motiva o FNSPID (M6). `docs/evaluation/evaluation_triage.md`
   + 2 figuras + **modelos versionados** (`models/triage_lr.joblib` 18 KB, `triage_gbm.joblib` 1,1 MB).
 - Testes: 47 → **64** (17 novos), ruff verde; números congelados intactos.
+- **M4 IF vs z-score (fbf01c1):** Isolation Forest causal (mesma informação, mesma região pontuada)
+  **perde** para o z-score — F1 0,271 vs 0,530; amplitude de taxa de disparo 0,135 vs 0,015. A escolha
+  estatística da tese fica validada por comparação com um detetor aprendido; secções congeladas do
+  relatório de anomalia byte-idênticas.
+- **M5 integração off-by-default:** a stack leve (runner/app na nuvem) não tem SBERT ⇒ o treino grava
+  também a variante **só-contexto** (`models/triage_context_lr.joblib`, 1,8 KB) e é essa que a produção
+  pontua (`src/triage/infer.py`, com guarda de compatibilidade de features). `news.min_materiality` no
+  `config/alerts.yaml` (null = tudo como antes; **fail-open**: sem modelo/histórico o alerta segue);
+  linha de materialidade opcional no `explain_news_impact`; página News da app ganha severidade +
+  contribuições (graciosa sem `models/`; AppTest verde com e sem). Retreino de verificação: joblib
+  principais **bit-idênticos**. Validado ao vivo (dry-run): NVDA real P=36% com linha; gate 0,99
+  suprime com aviso; modelo ausente ⇒ "gate ignorado". Testes 64 → **81**; ruff verde.
 
-**Próximo (ver ML_PLAN §3):** M4 Isolation Forest vs z-score → M5 integração off-by-default →
-M5.5 loop de pós-validação → M6 FNSPID overnight (**click do aluno**) → M7 (gated).
+**Próximo (ver ML_PLAN §3):** M5.5 loop de pós-validação (a ideia "RL" do aluno) → M6 FNSPID overnight
+(**click do aluno**) → M7 (gated no OK do orientador).
 
 ---
 

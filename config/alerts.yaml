@@ -20,3 +20,8 @@ news:
   tickers: [AAPL, NVDA, TSLA]
   horizon: 5        # horizonte do impacto dos precedentes (+5 dias)
   top_k: 3          # nº de precedentes a mostrar
+  # Triagem APRENDIDA (RQ4; off por defeito). Se definires um número em [0,1], cada alerta
+  # de notícia é pontuado pelo modelo só-contexto (models/triage_context_lr.joblib, stack
+  # leve) e só é enviado se P(movimento anormal) ≥ min_materiality; a linha de materialidade
+  # passa a acompanhar o alerta. null = desligado (comportamento de sempre, sem modelo).
+  min_materiality: null

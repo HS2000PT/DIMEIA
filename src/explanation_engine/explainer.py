@@ -57,18 +57,23 @@ def explain_news_impact(
     precedents: list[tuple[NewsRecord, float]],
     horizon: int = 3,
     date: str = "",
+    materiality: str | None = None,
 ) -> str:
     """Explicação XAI para o Gatilho 2: notícia nova + precedentes históricos semelhantes.
 
     Mostra a notícia, o impacto médio observado em eventos passados análogos e a lista de
     precedentes (data, ticker, similaridade, impacto e título), tudo rastreável. NÃO é uma
     previsão de preço — é o resultado OBSERVADO no passado (restrição §5.2).
+
+    `materiality` (opcional, off por defeito): linha da triagem aprendida (RQ4), já composta
+    por `src.triage.explain.materiality_line`. None ⇒ saída exatamente igual à de sempre.
     """
     header = f"📰 News alert for {ticker}\n\"{headline}\""
     if date:
         header += f" ({date})"
     if not precedents:
-        return header + "\nNo similar historical precedents found in the knowledge base."
+        out = header + "\nNo similar historical precedents found in the knowledge base."
+        return f"{out}\n{materiality}" if materiality else out
 
     avg = _mean_precedent_impact(precedents, horizon)
     avg_line = (
@@ -79,8 +84,10 @@ def explain_news_impact(
     lines = [
         header,
         f"Potential impact (from {len(precedents)} similar past events): {avg_line}",
-        "Historical precedents:",
     ]
+    if materiality:
+        lines.append(materiality)
+    lines.append("Historical precedents:")
     key = str(horizon)
     for rec, score in precedents:
         imp = rec.impacts.get(key)

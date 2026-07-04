@@ -62,6 +62,24 @@ def scan_market(cfg: dict) -> list[str]:
     return build_market_alerts(results)
 
 
+def apply_materiality(text: str, scored: tuple | None, gate: float) -> str | None:
+    """Puro: aplica o gate da triagem aprendida a um alerta de notícia (ML_PLAN M5).
+
+    `scored` = (probabilidade, contribuições) do modelo só-contexto, ou None quando não foi
+    possível pontuar (sem histórico suficiente) — nesse caso FAIL-OPEN: o alerta segue como
+    sempre, sem linha. Devolve None se o gate suprimir o alerta; caso contrário o texto com
+    a linha de materialidade (honesta: "triage evidence, not a forecast").
+    """
+    if scored is None:
+        return text
+    from src.triage.explain import materiality_line
+
+    prob, contribs = scored
+    if prob < gate:
+        return None
+    return text + "\n" + materiality_line(prob, contribs)
+
+
 def scan_news(cfg: dict) -> list[str]:
     """Opcional: notícias recentes por ticker -> precedentes (best-effort, pode repetir)."""
     n = cfg.get("news", {})
@@ -76,6 +94,20 @@ def scan_news(cfg: dict) -> list[str]:
         return []
     horizon = int(n.get("horizon", 5))
     top_k = int(n.get("top_k", 3))
+
+    # Triagem aprendida (off por defeito): só ativa com min_materiality definido E modelo
+    # presente. Sem modelo, avisa e segue com o comportamento de sempre.
+    gate = n.get("min_materiality")
+    bundle = None
+    if gate is not None:
+        from src.triage.infer import load_context_bundle
+
+        bundle = load_context_bundle()
+        if bundle is None:
+            print("[triagem] models/triage_context_lr.joblib em falta — gate ignorado.")
+        else:
+            gate = float(gate)
+
     end = date.today().isoformat()
     start = (date.today() - timedelta(days=7)).isoformat()
     alerts: list[str] = []
@@ -88,6 +120,19 @@ def scan_news(cfg: dict) -> list[str]:
             _, text = run_news_trigger(
                 ticker=ticker, headline=latest.headline, top_k=top_k, horizon=horizon, send=False
             )
+            if bundle is not None:
+                from src.market_data.prices import get_price_history
+                from src.triage.infer import score_latest
+
+                scored = score_latest(
+                    bundle, get_price_history(ticker)["Close"], latest.headline, ticker
+                )
+                gated = apply_materiality(text, scored, gate)
+                if gated is None:
+                    print(f"[triagem {ticker}] P(anormal)={scored[0]:.0%} < {gate:.0%} "
+                          "— alerta de noticia suprimido.")
+                    continue
+                text = gated
             alerts.append(text)
         except Exception as exc:  # noqa: BLE001
             print(f"[saltar noticias {ticker}] {type(exc).__name__}: {exc}")

@@ -105,6 +105,43 @@ Use the sidebar to try each trigger, explore the evaluation, or read how it work
     c3.metric("Price predictions made", "0 (by design)")
 
 
+def _render_severity(ticker: str, headline: str) -> None:
+    """Learned triage severity (RQ4) — shown only when models/ is present; silent otherwise.
+
+    Uses the context-only logistic regression (light stack, no SBERT). Honest framing: the
+    probability is triage evidence over historical cases, never a forecast.
+    """
+    from src.triage.infer import load_context_bundle, score_latest
+
+    bundle = load_context_bundle()
+    if bundle is None:
+        return  # graceful absence: no models/ → the page simply has no severity section
+    try:
+        scored = score_latest(bundle, _cached_close(ticker), headline, ticker)
+    except Exception:
+        st.caption("Learned severity unavailable (price history could not be fetched).")
+        return
+    if scored is None:
+        st.caption("Learned severity unavailable (not enough price history for this ticker).")
+        return
+    prob, contribs = scored
+    st.subheader("Learned severity (materiality triage)")
+    c1, c2 = st.columns([1, 2])
+    c1.metric("P(abnormal move follows)", f"{prob:.0%}")
+    c2.dataframe(
+        pd.DataFrame(
+            [{"Factor": name, "Pushes": "up" if c >= 0 else "down",
+              "Logit contribution": round(c, 2)} for name, c in contribs],
+        ),
+        use_container_width=True, hide_index=True,
+    )
+    st.caption(
+        "Context-only logistic regression trained by the author (RQ4) — the exact additive "
+        "contributions above are the model's whole reasoning. Triage evidence, **not a "
+        "forecast**; methodology and honest results in `docs/evaluation/evaluation_triage.md`."
+    )
+
+
 def page_news() -> None:
     from src.main import run_news_trigger
 
@@ -154,6 +191,7 @@ def page_news() -> None:
             "Baseline embedder (word overlap). The thesis's real method is **SBERT** (semantic); "
             "see the Evaluation page for its measured advantage."
         )
+        _render_severity(ticker.strip().upper(), headline.strip())
 
 
 def page_market() -> None:

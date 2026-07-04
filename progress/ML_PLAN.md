@@ -51,9 +51,14 @@ volatilidade, reporta-se na mesma (o contributo metodológico mantém-se).
       como *smoke* (corpus de 4 semanas — ver §4); figuras PR/calibração.
 - [x] **M4** — Isolation Forest vs z-score no harness de `evaluate_anomaly.py` (linhas z-score
       byte-idênticas; IF é comparação, não substituto salvo vitória clara).
-- [ ] **M5** — Integração **off-by-default**: linha de materialidade no `explain_news_impact` (redação
-      honesta "evidência de triagem, não previsão"), `min_materiality` no `config/alerts.yaml`,
-      severidade na página News da app (ausência do models/ é graciosa).
+- [x] **M5** — Integração **off-by-default**: linha de materialidade no `explain_news_impact` (redação
+      honesta "evidência de triagem, não previsão"), `min_materiality` no `config/alerts.yaml`
+      (gate no runner, fail-open), severidade na página News da app (ausência do models/ é graciosa).
+      *Decisão de produção:* a stack leve (runner/app na nuvem) não tem SBERT ⇒ o treino grava também
+      a variante **só-contexto** (`models/triage_context_lr.joblib`, 1,8 KB) e é ESSA que a produção
+      pontua (`src/triage/infer.py`, com guarda de compatibilidade de features); o texto identifica
+      sempre a variante. Retreino de verificação: modelos principais **bit-idênticos** (reprodutível).
+      AppTest verde com e sem `models/`. *(2026-07-04)*
 - [ ] **M5.5** — **Loop de pós-validação** (a visão "RL" do aluno, na forma defensável — ver §5):
       o runner regista cada decisão em `data/predictions_log.jsonl`; um job agendado rotula as decisões
       **maturadas** (d+3 já passou) com o resultado real, calcula métricas ao vivo (precisão, calibração,

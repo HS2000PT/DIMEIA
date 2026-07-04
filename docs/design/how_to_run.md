@@ -167,6 +167,19 @@ Todos os números do Cap. 5 são gerados por scripts com seed fixa; as figuras v
 ./.venv/Scripts/python.exe scripts/evaluate_anomaly.py    # anomalia: taxa de disparo + ablação (janela fixada)
 ```
 
+### 5.1 Triagem de materialidade — o modelo TREINADO (RQ4)
+
+```bash
+./.venv/Scripts/python.exe scripts/build_dataset.py   # dataset com rótulos anti-lookahead (cache em data/prices/)
+./.venv/Scripts/python.exe scripts/train_triage.py    # treina as 6 famílias (SBERT; precisa da stack --ml)
+```
+
+Grava `models/*.joblib` (versionados; mesma seed ⇒ ficheiros bit-idênticos), a tabela em
+`docs/evaluation/evaluation_triage.md` e as figuras PR/calibração. Em produção (runner de alertas
+e app, stack leve) pontua-se a variante **só-contexto** (`models/triage_context_lr.joblib`) via
+`src/triage/infer.py` — sem SBERT. Para ligar o gate nos alertas: `news.min_materiality` no
+`config/alerts.yaml` (off por defeito). Plano e estado: `progress/ML_PLAN.md`.
+
 ---
 
 ## 6. Testes e qualidade

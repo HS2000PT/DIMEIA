@@ -7,17 +7,24 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 29 (**WORKSTREAM ML M0–M3 FEITOS**: o aluno tem modelos treinados por ele, reprodutíveis e versionados)
+- **Sessão nº:** 29 (**WORKSTREAM ML M0–M5 FEITOS**: modelos treinados pelo aluno, versionados, comparados e INTEGRADOS off-by-default)
 - **Última atualização:** 2026-07-04
-- **🤖 WORKSTREAM ATIVO — ML treinado (RQ4, triagem de materialidade). Estado: M0–M3 FEITOS, próximo M4.**
+- **🤖 WORKSTREAM ATIVO — ML treinado (RQ4, triagem de materialidade). Estado: M0–M5 FEITOS, próximo M5.5.**
   Plano-mestre multi-dispositivo: **`progress/ML_PLAN.md`** (caixas de estado no §3). Feito: dataset com
   rótulos anti-lookahead (testado por mutação do futuro), 6 famílias treinadas com SBERT real, calibração
-  Platt, reproduzível (2 corridas = métricas idênticas), **modelos versionados em `models/`** (LR 18 KB +
-  GBM 1,1 MB). Smoke honesto (corpus 4 semanas, regime shift): GBM PR-AUC 0,461 > vol 0,445; texto ainda
-  não ajuda (0,357) → motiva FNSPID (M6). 64 testes + ruff verdes. **Falta:** M4 (Isolation Forest) →
-  M5 (integração off-by-default) → M5.5 (loop de pós-validação = a ideia "RL" do aluno) → M6 (FNSPID
-  overnight, **click do aluno**) → M7 (tese/guia/slides, **gated no OK do Prof. Luís Gomes** — proposta
-  pronta em `docs/internal/proposta_ml_orientador.md`, **o aluno tem de a enviar**).
+  Platt, reproduzível (2 corridas = métricas idênticas; retreino do M5 = joblib **bit-idênticos**),
+  **modelos versionados em `models/`** (LR 18 KB + GBM 1,1 MB + **contexto-só 1,8 KB de produção**).
+  Smoke honesto (corpus 4 semanas, regime shift): GBM PR-AUC 0,461 > vol 0,445; texto ainda não ajuda
+  (0,357) → motiva FNSPID (M6). **M4:** Isolation Forest causal PERDE para o z-score (F1 0,271 vs 0,530)
+  — a escolha estatística fica validada por comparação. **M5 (integração off-by-default):** produção
+  (runner/app, stack leve, sem SBERT) pontua a variante só-contexto via `src/triage/infer.py`;
+  `news.min_materiality` no `config/alerts.yaml` (null = comportamento de sempre; fail-open sem
+  modelo/histórico); linha de materialidade opcional no `explain_news_impact`; severidade +
+  contribuições na página News da app (graciosa sem `models/`; AppTest verde com e sem). Validado ao
+  vivo em dry-run (NVDA real: P=36% com linha; gate 0,99 suprime; sem modelo avisa e segue). 81 testes
+  + ruff verdes. **Falta:** M5.5 (loop de pós-validação = a ideia "RL" do aluno) → M6 (FNSPID overnight,
+  **click do aluno**) → M7 (tese/guia/slides, **gated no OK do Prof. Luís Gomes** — proposta pronta em
+  `docs/internal/proposta_ml_orientador.md`, **o aluno tem de a enviar**).
 - **REBRANDING InvestiGator (Sessão 28, 2026-07-03):** o aluno escolheu o nome **"InvestiGator"** (investigate+alligator; mascote jacaré-detetive à Sherlock) e, avisado do peso académico (Cap. 4, abstracts, figuras, júri vê o trocadilho), **decidiu explicitamente: renomear TUDO, incluindo a tese**. Executado: **renomeação total do nome antigo → InvestiGator** em tese (96 menções; Ch4 = "InvestiGator: An Explainable Financial-Alert System…"), paper, slides de defesa, guia de estudo, caderno, app, README, docs de design, scripts, CITATION, config. **Técnica segura:** primeiro só o texto VISÍVEL (CAPS/small-caps→plain), com os *labels* LaTeX internos intactos (zero refs partidas); gramática EN corrigida ("A …"→"An InvestiGator"). **História:** o aluno correu depois um replace global próprio que renomeou também os registos datados (`progress/`, `docs/decisions/*`) e os labels LaTeX (consistente — verificado); o nome antigo fica preservado na história do git. **Validado:** tese recompila **72 pp, 0 erros, 0 citações/refs indefinidas** (TOC confirma o novo título do Cap. 4); paper 3 pp, slides 15 pp, guia 60 pp — todos 0 erros; **47 testes + ruff verdes**; AppTest sem exceções. **Mascote:** `app/assets/investigator.svg` (SVG desenhado à mão: jacaré com deerstalker, monóculo, lupa, laço) no `st.logo` + Home da app + topo do README; favicon 🐊; tagline *"Investigate. Don't speculate."* **Go-live (estado):** repo **público** (verificado por API; história limpa — scan de segredos aos 128 commits: 0), canal Telegram criado, 3 segredos definidos, workflow corrido; **URL vivo** <https://investigator.streamlit.app> no README/CHECKLIST. **Falta 1 clique humano:** a app ainda pede login (foi implantada com o repo privado) → share.streamlit.io → app → ⋮ → Settings → **Sharing → pública**. Opcional: renomear o repo GitHub `DIMEIA`→`InvestiGator` (redireciona; depois atualizar badges + re-ligar Streamlit).
 - **AUDITORIA + POLIMENTO + FLAGSHIP (Sessão 27, 2026-07-02):** o aluno pediu uma auditoria profunda ("team de arquiteto/staff eng/reviewer…") ao repositório (não à tese) e autorizou **relatório + polimento seguro + 1 feature** (runway: meses até submeter). **Relatório de auditoria** escrito no plano (`.claude/plans/…squishy-yeti.md`): scorecard honesto (Overall 8.5, Arch 9, Docs 9, Thesis 9.5, Reprodutibilidade 7, Deploy 3, UX 6, Maint 8.5, Debt baixo), Top-25, críticos/altos/médios, e desenhos de Streamlit/cloud/Telegram-onboarding/multi-mercado como **trabalho futuro** (desafiando o prompt genérico: a tese NÃO treina modelos nem prevê preços — manter assim). **Executado (tudo com 43 testes + ruff verdes, números da tese inalterados):**
   **(P0 reprodutibilidade/CI/organização)** — (C1) `requirements.txt` passou a **leve**; nova `requirements-ml.txt` (torch CPU + SBERT, com `--extra-index-url` da PyTorch no próprio ficheiro); `setup_env.sh` leve por defeito + flag `--ml` — **corrige o "correr num comando" que falhava numa máquina limpa** (torch `+cpu` não está no PyPI). (C2/C3) novo **`.github/workflows/ci.yml`** (pytest+ruff em runner limpo a cada push de código) — o CI antes só compilava a tese; afirmação "CI corre testes" corrigida. **CITATION.cff** novo; **`docs/README.md`** índice; `ROOT_PROMPT_CLAUDE_CODE.md` → `docs/internal/`; badges no README; **licença de código deixada por decidir com o orientador** (nota honesta, sem escolher IP).

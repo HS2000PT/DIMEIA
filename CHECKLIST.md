@@ -32,7 +32,8 @@
       *(Ablação sentimento FinBERT: hook desenhado, adiada para M6 — só entra se ajudar na validação.)*
 - [x] M3 — *Smoke evaluation* no corpus Finnhub → `docs/evaluation/evaluation_triage.md` + figuras.
 - [x] M4 — Isolation Forest vs z-score (números z-score congelados intactos).
-- [ ] M5 — Integração off-by-default (linha no alerta, gate no runner, severidade na app).
+- [x] M5 — Integração off-by-default (linha no alerta, gate `min_materiality` no runner, severidade na
+      app; produção usa a variante só-contexto `models/triage_context_lr.joblib` — stack leve, sem SBERT).
 - [ ] M5.5 — **Loop de pós-validação** (regista decisões → rotula ao maturar (d+3) → métricas ao vivo →
       retreino) — a forma defensável da ideia "RL" do aluno.
 - [ ] M6 — **HUMANO: deixar o download FNSPID a correr uma noite** (tarefa/click preparado) → retreinar.

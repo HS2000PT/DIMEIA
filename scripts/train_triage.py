@@ -3,6 +3,8 @@
 Lê o dataset de scripts/build_dataset.py, treina as famílias (always/vol/context/text/full/gbm)
 com split temporal, calibra na validação (Platt) e avalia no teste. Grava:
 - models/triage_lr.joblib (+ .json) e models/triage_gbm.joblib (+ .json)
+- models/triage_context_lr.joblib (+ .json) — variante SÓ-CONTEXTO para a stack leve
+  (runner/app na nuvem não têm SBERT; ver src/triage/infer.py)
 - docs/evaluation/evaluation_triage.md  (tabela de resultados; NÃO editar à mão)
 - thesis/figures/eval_triage_pr.pdf e eval_triage_calibration.pdf
 
@@ -127,7 +129,8 @@ def main() -> int:
         "embedder": args.embedder,
         "nota": args.note,
     }
-    for name, fname in [("full", "triage_lr.joblib"), ("gbm", "triage_gbm.joblib")]:
+    for name, fname in [("full", "triage_lr.joblib"), ("gbm", "triage_gbm.joblib"),
+                        ("context", "triage_context_lr.joblib")]:
         model, cal, names, _ = bundles[name]
         save_bundle(REPO / "models" / fname, model, cal, names,
                     {**meta_common, "modelo": name, "metricas_teste": results[name]})
@@ -204,7 +207,7 @@ def main() -> int:
     md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"\nEscrito: {md}")
     print("Figuras: thesis/figures/eval_triage_pr.pdf + eval_triage_calibration.pdf")
-    print("Modelos: models/triage_lr.joblib + models/triage_gbm.joblib")
+    print("Modelos: models/triage_lr.joblib + triage_gbm.joblib + triage_context_lr.joblib")
     return 0
 
 

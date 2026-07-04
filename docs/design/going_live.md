@@ -50,6 +50,12 @@ Corre **segunda a sexta, ~após o fecho dos EUA** (cron `30 21 * * 1-5`, em UTC)
 `config/alerts.yaml`: a **watchlist** (`tickers`), a `window` e o `threshold` do z-score; e ligar/desligar
 o gatilho de notícias. Sem segredos aqui.
 
+**Triagem aprendida (opcional, off por defeito).** Se definires `news.min_materiality` (ex.: `0.4`),
+cada alerta de notícia é pontuado pelo modelo treinado só-contexto (`models/triage_context_lr.joblib`,
+corre na stack leve) e só é enviado se P(movimento anormal) ≥ esse valor; o alerta passa a incluir a
+linha de materialidade ("triage evidence, not a forecast"). Sem o ficheiro do modelo, o gate é ignorado
+com aviso — o runner nunca fica vermelho por causa da triagem. Detalhes: `progress/ML_PLAN.md` (M5).
+
 ### 6) A webpage (dashboard) sempre disponível
 Publica `app/streamlit_app.py` no **Streamlit Community Cloud** — passos em
 [`deployment.md`](deployment.md). Depois cola o URL no `README.md` e na tese.
