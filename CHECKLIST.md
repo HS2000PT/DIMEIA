@@ -28,8 +28,8 @@
 > **Regra:** o texto da tese só muda depois do OK do Prof. Luís Gomes (M7).
 - [ ] **HUMANO: enviar a proposta ao Prof. Luís Gomes** (email; o ficheiro acima é o corpo).
 - [x] M1 — Rótulos (retorno anormal vs SPY) + `scripts/build_dataset.py` + testes anti-lookahead.
-- [x] M2 — `src/triage/` + `scripts/train_triage.py` (LR + GBM, split temporal, calibração, seeds;
-      ablação sentimento FinBERT).
+- [x] M2 — `src/triage/` + `scripts/train_triage.py` (LR + GBM, split temporal, calibração, seeds).
+      *(Ablação sentimento FinBERT: hook desenhado, adiada para M6 — só entra se ajudar na validação.)*
 - [x] M3 — *Smoke evaluation* no corpus Finnhub → `docs/evaluation/evaluation_triage.md` + figuras.
 - [ ] M4 — Isolation Forest vs z-score (números z-score congelados intactos).
 - [ ] M5 — Integração off-by-default (linha no alerta, gate no runner, severidade na app).

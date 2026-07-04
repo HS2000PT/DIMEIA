@@ -5,6 +5,35 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 29 — 2026-07-03/04 — WORKSTREAM ML: o aluno passa a ter modelos TREINADOS (M0–M3)
+**Objetivo:** responder à preocupação do aluno ("não posso só aplicar; tenho de mostrar engenharia de
+ML minha") com um componente treinado **honesto**: triagem/materialidade de notícias (RQ4), sem nunca
+prever direção/preço. Ideia "RL" do aluno traduzida para o **loop de pós-validação** (M5.5).
+
+**Plano-mestre (fonte de verdade multi-dispositivo): `progress/ML_PLAN.md`** (desenho fixado, fases
+M0–M7 com caixas de estado, dados, avaliação honesta das áreas de IA). Tese/guia/slides SÓ mudam após
+o OK do orientador (proposta pronta em `docs/internal/proposta_ml_orientador.md` — **o aluno tem de a
+enviar**).
+
+**Feito (M0–M3, tudo committado e pushed):**
+- **M1 rótulos+dataset:** `abnormal_returns` (ticker−SPY) puro; `src/triage/dataset.py` (features com
+  convenção anti-lookahead TESTADA por mutação do futuro; split temporal por dias únicos + embargo);
+  `scripts/build_dataset.py` (cache de preços; grelha τ×h). Corpus real: 3.714 notícias → 0 descartes.
+  **Achado honesto:** corpus-fumo de 4 semanas tem regime shift (treino 67,8% vs teste 37,2% positivos).
+- **M2 treino:** `src/triage/{features,model,explain}.py` + `scripts/train_triage.py` — 6 famílias
+  (always/vol/context/text/full/gbm), calibração Platt própria na validação, PR-AUC/ROC/Brier +
+  precisão@orçamento/dia, XAI por decomposição aditiva exata da LR, persistência joblib+JSON.
+- **M3 smoke com SBERT real:** reproduzível (2 corridas = métricas idênticas). Resultado honesto no
+  corpus-fumo: **GBM 0,461 > vol 0,445 ≈ context 0,447 > always 0,372; texto ainda não ajuda (full LR
+  0,357)** — coerente com o regime shift; motiva o FNSPID (M6). `docs/evaluation/evaluation_triage.md`
+  + 2 figuras + **modelos versionados** (`models/triage_lr.joblib` 18 KB, `triage_gbm.joblib` 1,1 MB).
+- Testes: 47 → **64** (17 novos), ruff verde; números congelados intactos.
+
+**Próximo (ver ML_PLAN §3):** M4 Isolation Forest vs z-score → M5 integração off-by-default →
+M5.5 loop de pós-validação → M6 FNSPID overnight (**click do aluno**) → M7 (gated).
+
+---
+
 ## Sessão 28 — 2026-07-03 — Rebranding total do nome antigo → InvestiGator + go-live
 **Objetivo:** o aluno escolheu o nome público **InvestiGator** (investigate+alligator, mascote
 jacaré-detetive) e, depois de avisado do peso académico (Cap. 4, abstracts, o júri vê o trocadilho),
