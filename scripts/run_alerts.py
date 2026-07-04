@@ -27,6 +27,21 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src.console import force_utf8_stdout  # noqa: E402  (depois do sys.path)
 
 _CONFIG = Path(__file__).resolve().parents[1] / "config" / "alerts.yaml"
+_PRED_LOG = Path(__file__).resolve().parents[1] / "data" / "predictions_log.jsonl"
+
+
+def _log_decision_safe(news_date: str, ticker: str, headline: str,
+                       scored: tuple | None, gate: float | None, kept: bool) -> None:
+    """Regista a decisão de notícia para o loop de pós-validação (M5.5, `scripts/
+    post_validate.py`). Ficheiro local gitignored; uma falha aqui NUNCA pára o runner."""
+    try:
+        from src.triage.postval import log_decision
+
+        log_decision(_PRED_LOG, news_date=news_date, ticker=ticker, headline=headline,
+                     prob=(float(scored[0]) if scored is not None else None),
+                     gate=(gate if scored is not None else None), kept=kept)
+    except Exception as exc:  # noqa: BLE001
+        print(f"[postval] registo falhou (ignorado): {type(exc).__name__}: {exc}")
 
 
 def load_config(path: str | Path = _CONFIG) -> dict:
@@ -128,11 +143,16 @@ def scan_news(cfg: dict) -> list[str]:
                     bundle, get_price_history(ticker)["Close"], latest.headline, ticker
                 )
                 gated = apply_materiality(text, scored, gate)
+                _log_decision_safe(latest.date, ticker, latest.headline,
+                                   scored, gate, kept=gated is not None)
                 if gated is None:
                     print(f"[triagem {ticker}] P(anormal)={scored[0]:.0%} < {gate:.0%} "
                           "— alerta de noticia suprimido.")
                     continue
                 text = gated
+            else:
+                _log_decision_safe(latest.date, ticker, latest.headline,
+                                   None, None, kept=True)
             alerts.append(text)
         except Exception as exc:  # noqa: BLE001
             print(f"[saltar noticias {ticker}] {type(exc).__name__}: {exc}")

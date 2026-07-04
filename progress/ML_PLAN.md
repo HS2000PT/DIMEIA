@@ -59,12 +59,15 @@ volatilidade, reporta-se na mesma (o contributo metodológico mantém-se).
       pontua (`src/triage/infer.py`, com guarda de compatibilidade de features); o texto identifica
       sempre a variante. Retreino de verificação: modelos principais **bit-idênticos** (reprodutível).
       AppTest verde com e sem `models/`. *(2026-07-04)*
-- [ ] **M5.5** — **Loop de pós-validação** (a visão "RL" do aluno, na forma defensável — ver §5):
-      o runner regista cada decisão em `data/predictions_log.jsonl`; um job agendado rotula as decisões
-      **maturadas** (d+3 já passou) com o resultado real, calcula métricas ao vivo (precisão, calibração,
-      deriva) → `docs/evaluation/live_monitoring.md`; retreino periódico com os dados acumulados
-      (comando; opcionalmente agendado). MLOps real: monitorização + aprendizagem contínua com rótulos
-      atrasados.
+- [x] **M5.5** — **Loop de pós-validação** (a visão "RL" do aluno, na forma defensável — ver §5):
+      o runner regista cada decisão em `data/predictions_log.jsonl` (`src/triage/postval.py::log_decision`,
+      fail-safe — nunca pára a varredura); `scripts/post_validate.py` rotula as decisões **maturadas**
+      (janela (d, d+3] fechada) com o resultado REAL — mesma regra `abnormal_label` do treino, preços
+      frescos — e escreve `docs/evaluation/live_monitoring.md` (precisão das mantidas vs base rate,
+      Brier, calibração em 3 faixas, receita de retreino, caveats: runner do Actions é efémero ⇒ o loop
+      completo corre na máquina do aluno; persistência na nuvem = Fase B). Validado ao vivo: 3 decisões
+      reais registadas (pendentes, correto — hoje ainda não maturou) + sonda com data antiga maturou
+      contra preços reais (label 1; Brier 0,25 = (0,5−1)² exato). 12 testes puros novos. *(2026-07-04)*
 - [ ] **M6** — **FNSPID 2018–2023** (números finais da tese): download overnight (~3,4 h;
       `scripts/download_data.py`, tarefa/click preparado para o aluno) → rebuild dataset → retreinar →
       regenerar docs/figuras. **HUMANO: deixar a correr uma noite.**

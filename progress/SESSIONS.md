@@ -41,8 +41,17 @@ enviar**).
   principais **bit-idênticos**. Validado ao vivo (dry-run): NVDA real P=36% com linha; gate 0,99
   suprime com aviso; modelo ausente ⇒ "gate ignorado". Testes 64 → **81**; ruff verde.
 
-**Próximo (ver ML_PLAN §3):** M5.5 loop de pós-validação (a ideia "RL" do aluno) → M6 FNSPID overnight
-(**click do aluno**) → M7 (gated no OK do orientador).
+- **M5.5 loop de pós-validação (a ideia "RL" do aluno, forma defensável):** `src/triage/postval.py`
+  (log JSONL fail-safe, dedup, rotulagem ao maturar com a MESMA `abnormal_label` do treino, métricas
+  ao vivo) + `scripts/post_validate.py` (preços frescos → `docs/evaluation/live_monitoring.md`:
+  precisão das mantidas vs base rate, Brier, calibração, receita de retreino, caveat do runner
+  efémero no Actions). Runner regista cada decisão de notícia. **Validado ao vivo:** 3 decisões reais
+  registadas hoje (pendentes — correto, a janela não fechou) e uma sonda com data antiga maturou
+  contra preços reais (label 1; Brier 0,25 = (0,5−1)² exato). Testes 81 → **93**; ruff verde.
+
+**Próximo (ver ML_PLAN §3):** M6 FNSPID overnight (**click do aluno**) → M7 (gated no OK do
+orientador). O loop M5.5 fica armado: com notícias ligadas, correr `scripts/post_validate.py`
+dias depois.
 
 ---
 

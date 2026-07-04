@@ -56,6 +56,13 @@ corre na stack leve) e só é enviado se P(movimento anormal) ≥ esse valor; o 
 linha de materialidade ("triage evidence, not a forecast"). Sem o ficheiro do modelo, o gate é ignorado
 com aviso — o runner nunca fica vermelho por causa da triagem. Detalhes: `progress/ML_PLAN.md` (M5).
 
+**Loop de pós-validação (M5.5).** Com o gatilho de notícias ligado, o runner regista cada decisão em
+`data/predictions_log.jsonl` (local, gitignored). Dias depois corre `python scripts/post_validate.py`:
+rotula as decisões maturadas com o que REALMENTE aconteceu e escreve
+`docs/evaluation/live_monitoring.md`. Nota honesta: no cron do GitHub Actions o runner é efémero
+(o log não persiste entre corridas) — o loop completo corre na tua máquina; persistir o log na
+nuvem fica para a Fase B.
+
 ### 6) A webpage (dashboard) sempre disponível
 Publica `app/streamlit_app.py` no **Streamlit Community Cloud** — passos em
 [`deployment.md`](deployment.md). Depois cola o URL no `README.md` e na tese.

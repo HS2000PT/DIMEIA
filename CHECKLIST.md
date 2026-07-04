@@ -34,8 +34,10 @@
 - [x] M4 — Isolation Forest vs z-score (números z-score congelados intactos).
 - [x] M5 — Integração off-by-default (linha no alerta, gate `min_materiality` no runner, severidade na
       app; produção usa a variante só-contexto `models/triage_context_lr.joblib` — stack leve, sem SBERT).
-- [ ] M5.5 — **Loop de pós-validação** (regista decisões → rotula ao maturar (d+3) → métricas ao vivo →
-      retreino) — a forma defensável da ideia "RL" do aluno.
+- [x] M5.5 — **Loop de pós-validação** (runner regista decisões → `scripts/post_validate.py` rotula ao
+      maturar (d+3) com o resultado real → `docs/evaluation/live_monitoring.md` → receita de retreino)
+      — a forma defensável da ideia "RL" do aluno. O loop já está armado: correr o post_validate
+      dias depois de o runner correr com notícias ligadas.
 - [ ] M6 — **HUMANO: deixar o download FNSPID a correr uma noite** (tarefa/click preparado) → retreinar.
 - [ ] M7 — Tese + guia + slides + caderno (RQ4, Cap. 2/3/4/5/6) — **gated no OK do orientador**; fica
       para o fim (decisão do aluno: primeiro melhorar a solução).

@@ -180,6 +180,11 @@ e app, stack leve) pontua-se a variante **só-contexto** (`models/triage_context
 `src/triage/infer.py` — sem SBERT. Para ligar o gate nos alertas: `news.min_materiality` no
 `config/alerts.yaml` (off por defeito). Plano e estado: `progress/ML_PLAN.md`.
 
+**Loop de pós-validação (M5.5):** o runner regista cada decisão de notícia em
+`data/predictions_log.jsonl`; dias depois, `python scripts/post_validate.py` rotula as decisões
+maturadas com o resultado REAL (mesmo rótulo do treino) e escreve
+`docs/evaluation/live_monitoring.md` (precisão ao vivo, Brier, calibração + receita de retreino).
+
 ---
 
 ## 6. Testes e qualidade

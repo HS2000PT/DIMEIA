@@ -7,9 +7,9 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 29 (**WORKSTREAM ML M0–M5 FEITOS**: modelos treinados pelo aluno, versionados, comparados e INTEGRADOS off-by-default)
+- **Sessão nº:** 29 (**WORKSTREAM ML M0–M5.5 FEITOS**: modelos treinados, integrados off-by-default e com loop de pós-validação armado)
 - **Última atualização:** 2026-07-04
-- **🤖 WORKSTREAM ATIVO — ML treinado (RQ4, triagem de materialidade). Estado: M0–M5 FEITOS, próximo M5.5.**
+- **🤖 WORKSTREAM ATIVO — ML treinado (RQ4, triagem de materialidade). Estado: M0–M5.5 FEITOS, próximo M6 (FNSPID overnight, click do aluno).**
   Plano-mestre multi-dispositivo: **`progress/ML_PLAN.md`** (caixas de estado no §3). Feito: dataset com
   rótulos anti-lookahead (testado por mutação do futuro), 6 famílias treinadas com SBERT real, calibração
   Platt, reproduzível (2 corridas = métricas idênticas; retreino do M5 = joblib **bit-idênticos**),
@@ -21,8 +21,13 @@
   `news.min_materiality` no `config/alerts.yaml` (null = comportamento de sempre; fail-open sem
   modelo/histórico); linha de materialidade opcional no `explain_news_impact`; severidade +
   contribuições na página News da app (graciosa sem `models/`; AppTest verde com e sem). Validado ao
-  vivo em dry-run (NVDA real: P=36% com linha; gate 0,99 suprime; sem modelo avisa e segue). 81 testes
-  + ruff verdes. **Falta:** M5.5 (loop de pós-validação = a ideia "RL" do aluno) → M6 (FNSPID overnight,
+  vivo em dry-run (NVDA real: P=36% com linha; gate 0,99 suprime; sem modelo avisa e segue).
+  **M5.5 (loop de pós-validação = a ideia "RL" do aluno, forma defensável):** o runner regista cada
+  decisão de notícia em `data/predictions_log.jsonl` (fail-safe); `scripts/post_validate.py` rotula as
+  maturadas (janela (d,d+3] fechada) com o resultado REAL (mesma regra do treino, preços frescos) →
+  `docs/evaluation/live_monitoring.md` (precisão ao vivo, Brier, calibração, receita de retreino).
+  Validado: 3 decisões reais registadas (pendentes, correto) + sonda antiga maturou contra preços
+  reais (Brier 0,25 = (0,5−1)² exato). **93 testes + ruff verdes.** **Falta:** M6 (FNSPID overnight,
   **click do aluno**) → M7 (tese/guia/slides, **gated no OK do Prof. Luís Gomes** — proposta pronta em
   `docs/internal/proposta_ml_orientador.md`, **o aluno tem de a enviar**).
 - **REBRANDING InvestiGator (Sessão 28, 2026-07-03):** o aluno escolheu o nome **"InvestiGator"** (investigate+alligator; mascote jacaré-detetive à Sherlock) e, avisado do peso académico (Cap. 4, abstracts, figuras, júri vê o trocadilho), **decidiu explicitamente: renomear TUDO, incluindo a tese**. Executado: **renomeação total do nome antigo → InvestiGator** em tese (96 menções; Ch4 = "InvestiGator: An Explainable Financial-Alert System…"), paper, slides de defesa, guia de estudo, caderno, app, README, docs de design, scripts, CITATION, config. **Técnica segura:** primeiro só o texto VISÍVEL (CAPS/small-caps→plain), com os *labels* LaTeX internos intactos (zero refs partidas); gramática EN corrigida ("A …"→"An InvestiGator"). **História:** o aluno correu depois um replace global próprio que renomeou também os registos datados (`progress/`, `docs/decisions/*`) e os labels LaTeX (consistente — verificado); o nome antigo fica preservado na história do git. **Validado:** tese recompila **72 pp, 0 erros, 0 citações/refs indefinidas** (TOC confirma o novo título do Cap. 4); paper 3 pp, slides 15 pp, guia 60 pp — todos 0 erros; **47 testes + ruff verdes**; AppTest sem exceções. **Mascote:** `app/assets/investigator.svg` (SVG desenhado à mão: jacaré com deerstalker, monóculo, lupa, laço) no `st.logo` + Home da app + topo do README; favicon 🐊; tagline *"Investigate. Don't speculate."* **Go-live (estado):** repo **público** (verificado por API; história limpa — scan de segredos aos 128 commits: 0), canal Telegram criado, 3 segredos definidos, workflow corrido; **URL vivo** <https://investigator.streamlit.app> no README/CHECKLIST. **Falta 1 clique humano:** a app ainda pede login (foi implantada com o repo privado) → share.streamlit.io → app → ⋮ → Settings → **Sharing → pública**. Opcional: renomear o repo GitHub `DIMEIA`→`InvestiGator` (redireciona; depois atualizar badges + re-ligar Streamlit).
