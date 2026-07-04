@@ -40,7 +40,7 @@ volatilidade, reporta-se na mesma (o contributo metodológico mantém-se).
 
 - [x] **M0** — Proposta ao orientador escrita (`docs/internal/proposta_ml_orientador.md`) + CHECKLIST. *(2026-07-03)*
 - [x] **M0.5** — Este plano persistido no repo (checkpoint multi-dispositivo). *(2026-07-03)*
-- [ ] **M1** — Rótulos + dataset: `abnormal_returns` puro em `src/correlation_engine/event_study.py`;
+- [x] **M1** — Rótulos + dataset: `abnormal_returns` puro em `src/correlation_engine/event_study.py`;
       `src/triage/dataset.py` (event_features, abnormal_label, assign_splits, SECTORS);
       `scripts/build_dataset.py` (cache de preços em `data/prices/`, incl. SPY; amostra committada);
       testes anti-lookahead + embargo + rótulo à mão.

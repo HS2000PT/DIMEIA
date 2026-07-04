@@ -39,3 +39,23 @@ def mean_impact(impacts: list[dict[int, float]], horizon: int) -> float:
     if not vals:
         return float("nan")
     return sum(vals) / len(vals)
+
+
+def abnormal_returns(close: pd.Series, market_close: pd.Series, event_idx: int,
+                     horizons: tuple[int, ...] = (1, 3, 5)) -> dict[int, float]:
+    """Retorno ANORMAL pós-evento: retorno do ticker menos o retorno do mercado (ajuste de mercado).
+
+    Operacionaliza a discussão raw-vs-CAR do Cap. 3: subtrair o movimento do mercado (ex.: SPY)
+    isola o que é específico da empresa. As duas séries têm de estar ALINHADAS pelo chamador
+    (mesmas datas, mesmo comprimento, índice posicional) — ver scripts/build_dataset.py.
+
+    Returns:
+        dict {h: retorno_ticker − retorno_mercado}; NaN propaga se qualquer janela sair da série.
+    """
+    if len(close) != len(market_close):
+        raise ValueError(
+            f"Séries desalinhadas: ticker tem {len(close)} pontos, mercado tem {len(market_close)}."
+        )
+    own = post_event_returns(close, event_idx, horizons)
+    mkt = post_event_returns(market_close, event_idx, horizons)
+    return {h: own[h] - mkt[h] for h in horizons}

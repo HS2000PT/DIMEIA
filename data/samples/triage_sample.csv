@@ -1,0 +1,26 @@
+date,news_date,ticker,sector,headline,headline_len,vol20,mom5,ret_event,label,label_t0.015_h1,label_t0.015_h3,label_t0.015_h5,label_t0.02_h1,label_t0.02_h3,label_t0.02_h5,label_t0.03_h1,label_t0.03_h3,label_t0.03_h5,split
+2026-05-28,2026-05-28,KO,consumer,Bank of America says Coca-Cola is hard for consumers to quit,60,0.007476312710977204,-0.003668797756882917,-0.014935807870177988,1,1,1,1,0,1,1,0,1,1,train
+2026-05-28,2026-05-28,KO,consumer,Analysts Express Bullish Sentiment on Coca-Cola (KO),52,0.007476312710977204,-0.003668797756882917,-0.014935807870177988,1,1,1,1,0,1,1,0,1,1,train
+2026-05-28,2026-05-28,KO,consumer,Which dow jones stocks are moving on Thursday?,46,0.007476312710977204,-0.003668797756882917,-0.014935807870177988,1,1,1,1,0,1,1,0,1,1,train
+2026-05-29,2026-05-29,KO,consumer,Bonds May Finally Be Ready to Give Stocks a Run for Their Money,63,0.008291484485232037,-0.014077824240834228,-0.017564152265007914,0,0,0,1,0,0,1,0,0,1,train
+2026-05-29,2026-05-29,KO,consumer,Which dow jones stocks are moving on Friday?,44,0.008291484485232037,-0.014077824240834228,-0.017564152265007914,0,0,0,1,0,0,1,0,0,1,train
+2026-05-29,2026-05-29,KO,consumer,Coca-Cola’s America250 Push Highlights Packaging Rewards And Plastic Risks,74,0.008291484485232037,-0.014077824240834228,-0.017564152265007914,0,0,0,1,0,0,1,0,0,1,train
+2026-05-29,2026-05-29,KO,consumer,National Beverage: Insider Dominance And Alignment Risks,56,0.008291484485232037,-0.014077824240834228,-0.017564152265007914,0,0,0,1,0,0,1,0,0,1,train
+2026-05-29,2026-05-29,KO,consumer,VYM Climbs 26% In a Year While Its Core Dividend Payers Extend Their Streaks,76,0.008291484485232037,-0.014077824240834228,-0.017564152265007914,0,0,0,1,0,0,1,0,0,1,train
+2026-05-29,2026-05-29,KO,consumer,"Want $1,400 in Passive Income? Invest $10,000 Into These 4 Dividend Stocks",74,0.008291484485232037,-0.014077824240834228,-0.017564152265007914,0,0,0,1,0,0,1,0,0,1,train
+2026-05-29,2026-05-29,KO,consumer,5 Warren Buffett Stocks to Hold Forever,39,0.008291484485232037,-0.014077824240834228,-0.017564152265007914,0,0,0,1,0,0,1,0,0,1,train
+2026-05-29,2026-05-29,KO,consumer,I'm Betting Big On This Near-Perfect Retirement Strategy That Most Investors Miss,81,0.008291484485232037,-0.014077824240834228,-0.017564152265007914,0,0,0,1,0,0,1,0,0,1,train
+2026-05-29,2026-05-29,KO,consumer,Pepsi makes big change to counter Coca-Cola,43,0.008291484485232037,-0.014077824240834228,-0.017564152265007914,0,0,0,1,0,0,1,0,0,1,train
+2026-05-29,2026-05-29,PFE,health,Arvinas to Present at Jefferies Global Healthcare Conference,60,0.008977871977893993,0.013479829454174606,0.0015290872918399326,1,1,1,1,1,1,0,0,0,0,train
+2026-05-29,2026-05-29,PFE,health,Pfizer's $10.5 Billion Oncology Bet Sends Innovent Shares Surging,65,0.008977871977893993,0.013479829454174606,0.0015290872918399326,1,1,1,1,1,1,0,0,0,0,train
+2026-05-29,2026-05-29,PFE,health,Portal Innovations' Flavin on M&A activity in the pharma space,62,0.008977871977893993,0.013479829454174606,0.0015290872918399326,1,1,1,1,1,1,0,0,0,0,train
+2026-05-29,2026-05-29,PFE,health,Pfizer Expands Oncology Pipeline in $10.5B Innovent Deal,56,0.008977871977893993,0.013479829454174606,0.0015290872918399326,1,1,1,1,1,1,0,0,0,0,train
+2026-05-29,2026-05-29,PFE,health,Healthcare ETFs to Buy as Eli Lily Steps Into Vaccine Market With $4B Bet,73,0.008977871977893993,0.013479829454174606,0.0015290872918399326,1,1,1,1,1,1,0,0,0,0,train
+2026-05-29,2026-05-29,PFE,health,Seven-Year Analysis from Pfizer’s LORBRENA CROWN Trial Shows Longest Progression-Free Survival Reported to Date in Advanced Non-Small Cell Lung Cancer,150,0.008977871977893993,0.013479829454174606,0.0015290872918399326,1,1,1,1,1,1,0,0,0,0,train
+2026-05-29,2026-05-29,PFE,health,Pfizer and Innovent Biologics sign $10.5B cancer drug deal,58,0.008977871977893993,0.013479829454174606,0.0015290872918399326,1,1,1,1,1,1,0,0,0,0,train
+2026-05-29,2026-05-29,PFE,health,Pfizer and Innovent Biologics sign $10.5bn cancer drug development deal,71,0.008977871977893993,0.013479829454174606,0.0015290872918399326,1,1,1,1,1,1,0,0,0,0,train
+2026-06-01,2026-06-01,KO,consumer,"The Coca-Cola Company Exploring Potential Public Listing in India for Hindustan Coca-Cola Holdings Pvt. Ltd., Parent Company of its Largest Bottler in India",156,0.009265022659825371,-0.026971259831233132,-0.004693898286363712,1,0,1,1,0,1,1,0,0,1,train
+2026-06-01,2026-06-01,KO,consumer,Can Brand Restaging Meaningfully Lift PepsiCo's Organic Sales Outlook?,70,0.009265022659825371,-0.026971259831233132,-0.004693898286363712,1,0,1,1,0,1,1,0,0,1,train
+2026-06-01,2026-06-01,KO,consumer,Top dow jones movers in Monday's session,40,0.009265022659825371,-0.026971259831233132,-0.004693898286363712,1,0,1,1,0,1,1,0,0,1,train
+2026-06-01,2026-06-01,KO,consumer,Coca Cola Stock Will Hit a New All-Time High On This Date,57,0.009265022659825371,-0.026971259831233132,-0.004693898286363712,1,0,1,1,0,1,1,0,0,1,train
+2026-06-01,2026-06-01,KO,consumer,Walmart’s Pullback Has Created a Compelling Technical Setup,59,0.009265022659825371,-0.026971259831233132,-0.004693898286363712,1,0,1,1,0,1,1,0,0,1,train
