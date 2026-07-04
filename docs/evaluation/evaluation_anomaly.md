@@ -4,7 +4,7 @@
 
 - **Dados:** 15 tickers, preços reais (yfinance, 2023-06-01 a 2026-06-01).
 - **z-score:** janela 20d, limiar ±3 (sem lookahead). **Baseline fixo:** |retorno| ≥ 3%. **Rótulo-proxy:** |retorno| ≥ percentil 0.99 por ticker.
-- **Gerado:** 2026-06-24 20:23 UTC.
+- **Gerado:** 2026-07-04 12:11 UTC.
 
 ## 1. Consistência da taxa de disparo entre tickers (argumento principal)
 
@@ -31,3 +31,14 @@
 | 60d | 0.678 |
 
 **Caveats (honestos):** o rótulo é um *proxy* (percentil de movimento), não verdade absoluta, e é volatilidade-relativo como o z-score (alguma circularidade — por isso o argumento principal é a **consistência da taxa de disparo**, que não depende do rótulo). Avaliação reprodutível (`scripts/evaluate_anomaly.py`).
+
+## 4. Estatístico vs APRENDIDO — Isolation Forest causal (M4)
+
+IF não-supervisionado (200 árvores, contaminação 0.02, seed 42) com features causais [retorno, vol20 anterior]; treina nos primeiros 250 dias válidos e pontua os seguintes (nunca vê o futuro). Comparação na MESMA região pontuada:
+
+| Método (região pontuada) | Precision | Recall | F1 | Amplitude da taxa |
+|---|---|---|---|---|
+| Isolation Forest | 0.159 | 0.913 | 0.271 | 0.135 |
+| z-score (mesma região) | 0.407 | 0.761 | 0.530 | — |
+
+**Leitura:** comparação 'regra estatística vs detetor aprendido' com a mesma informação e sem lookahead. O z-score continua a ser o detetor de produção salvo vantagem clara do IF — a própria comparação é o contributo (RQ4/M4).

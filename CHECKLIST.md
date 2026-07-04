@@ -31,7 +31,7 @@
 - [x] M2 — `src/triage/` + `scripts/train_triage.py` (LR + GBM, split temporal, calibração, seeds).
       *(Ablação sentimento FinBERT: hook desenhado, adiada para M6 — só entra se ajudar na validação.)*
 - [x] M3 — *Smoke evaluation* no corpus Finnhub → `docs/evaluation/evaluation_triage.md` + figuras.
-- [ ] M4 — Isolation Forest vs z-score (números z-score congelados intactos).
+- [x] M4 — Isolation Forest vs z-score (números z-score congelados intactos).
 - [ ] M5 — Integração off-by-default (linha no alerta, gate no runner, severidade na app).
 - [ ] M5.5 — **Loop de pós-validação** (regista decisões → rotula ao maturar (d+3) → métricas ao vivo →
       retreino) — a forma defensável da ideia "RL" do aluno.

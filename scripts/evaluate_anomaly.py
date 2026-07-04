@@ -28,6 +28,7 @@ if hasattr(sys.stdout, "reconfigure"):
 from src.evaluation.anomaly_eval import (  # noqa: E402
     firing_rate,
     fixed_threshold_flags,
+    isolation_forest_flags,
     label_extreme_moves,
     precision_recall_f1,
     rolling_zscore_flags,
@@ -68,6 +69,10 @@ def main() -> None:
     parser.add_argument("--out", default="docs/evaluation/evaluation_anomaly.md")
     parser.add_argument("--fig", default="thesis/figures/eval_anomaly_firing_rate.pdf")
     parser.add_argument("--ablation-fig", default="thesis/figures/eval_anomaly_window_ablation.pdf")
+    # Comparação estatístico vs APRENDIDO (M4): IF causal (treina no passado, pontua o futuro).
+    parser.add_argument("--if-train-days", type=int, default=250)
+    parser.add_argument("--if-contamination", type=float, default=0.02)
+    parser.add_argument("--if-seed", type=int, default=42)
     args = parser.parse_args()
 
     print(f"A obter preços (yfinance, {args.start}..{args.end})…")
@@ -101,18 +106,40 @@ def main() -> None:
         preds = np.concatenate([rolling_zscore_flags(r, w, args.threshold) for r in rets.values()])
         ablation_curve[w] = precision_recall_f1(preds, label)[2]
 
+    # ── M4: Isolation Forest (aprendido, causal) vs z-score NA MESMA REGIÃO pontuada ─────
+    if_pred_all, z_same_all, lbl_same_all, fire_if = [], [], [], {}
+    for t, r in rets.items():
+        iff, scored = isolation_forest_flags(
+            r, args.window, args.if_train_days, args.if_contamination, args.if_seed
+        )
+        if not scored.any():
+            continue
+        zf = rolling_zscore_flags(r, args.window, args.threshold)
+        lbl = label_extreme_moves(r, q=args.quantile)
+        if_pred_all.append(iff[scored])
+        z_same_all.append(zf[scored])
+        lbl_same_all.append(lbl[scored])
+        fire_if[t] = firing_rate(iff[scored])
+    if_prf = precision_recall_f1(np.concatenate(if_pred_all), np.concatenate(lbl_same_all))
+    z_same_prf = precision_recall_f1(np.concatenate(z_same_all), np.concatenate(lbl_same_all))
+    fi = np.array(list(fire_if.values()))
+
     fz = np.array(list(fire_z.values()))
     ff_ = np.array(list(fire_fx.values()))
     print(f"Firing rate z-score: {fz.min():.3f}-{fz.max():.3f} (spread {fz.max()-fz.min():.3f})")
     print(f"Firing rate fixo: {ff_.min():.3f}-{ff_.max():.3f} (spread {ff_.max()-ff_.min():.3f})")
     print(f"F1 z-score={z_prf[2]:.3f} | F1 fixo={fx_prf[2]:.3f}")
+    print(f"[M4] IF: F1={if_prf[2]:.3f} vs z-score(mesma região)={z_same_prf[2]:.3f} | "
+          f"spread taxas IF={fi.max()-fi.min():.3f}")
 
-    _write_md(args, rets, fire_z, fire_fx, z_prf, fx_prf, ablation)
+    _write_md(args, rets, fire_z, fire_fx, z_prf, fx_prf, ablation,
+              if_prf=if_prf, z_same_prf=z_same_prf, fire_if=fire_if)
     _write_fig(args.fig, fire_z, fire_fx)
     _write_ablation_fig(args.ablation_fig, ablation_curve)
 
 
-def _write_md(args, rets, fire_z, fire_fx, z_prf, fx_prf, ablation) -> None:
+def _write_md(args, rets, fire_z, fire_fx, z_prf, fx_prf, ablation,
+              if_prf=None, z_same_prf=None, fire_if=None) -> None:
     fz = np.array(list(fire_z.values()))
     ff_ = np.array(list(fire_fx.values()))
     now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
@@ -156,6 +183,28 @@ def _write_md(args, rets, fire_z, fire_fx, z_prf, fx_prf, ablation) -> None:
         "argumento principal é a **consistência da taxa de disparo**, que não depende do rótulo). "
         "Avaliação reprodutível (`scripts/evaluate_anomaly.py`).",
     ]
+    if if_prf is not None:
+        fi = np.array(list(fire_if.values()))
+        lines += [
+            "",
+            "## 4. Estatístico vs APRENDIDO — Isolation Forest causal (M4)",
+            "",
+            f"IF não-supervisionado (200 árvores, contaminação {args.if_contamination:g}, "
+            f"seed {args.if_seed}) com features causais [retorno, vol20 anterior]; treina nos "
+            f"primeiros {args.if_train_days} dias válidos e pontua os seguintes (nunca vê o "
+            "futuro). Comparação na MESMA região pontuada:",
+            "",
+            "| Método (região pontuada) | Precision | Recall | F1 | Amplitude da taxa |",
+            "|---|---|---|---|---|",
+            f"| Isolation Forest | {if_prf[0]:.3f} | {if_prf[1]:.3f} | {if_prf[2]:.3f} | "
+            f"{fi.max()-fi.min():.3f} |",
+            f"| z-score (mesma região) | {z_same_prf[0]:.3f} | {z_same_prf[1]:.3f} | "
+            f"{z_same_prf[2]:.3f} | — |",
+            "",
+            "**Leitura:** comparação 'regra estatística vs detetor aprendido' com a mesma "
+            "informação e sem lookahead. O z-score continua a ser o detetor de produção salvo "
+            "vantagem clara do IF — a própria comparação é o contributo (RQ4/M4).",
+        ]
     Path(args.out).write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"Resultados escritos em {args.out}")
 

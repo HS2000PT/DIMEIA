@@ -63,3 +63,38 @@ def firing_rate(flags) -> float:
     """Fração de dias sinalizados."""
     f = np.asarray(flags, dtype=bool)
     return float(f.mean()) if len(f) else 0.0
+
+
+def isolation_forest_flags(returns, window: int = 20, train_days: int = 250,
+                           contamination: float = 0.02, seed: int = 42,
+                           ) -> tuple[np.ndarray, np.ndarray]:
+    """Detetor APRENDIDO (Isolation Forest, não-supervisionado) — causal e comparável (M4).
+
+    Comparação "estatístico vs aprendido" com a mesma informação do z-score: cada dia i tem
+    features [retorno_i, vol20_i] (vol dos 20 dias ANTERIORES — causal). O modelo treina nos
+    primeiros `train_days` dias válidos (só passado) e pontua os dias seguintes — nunca vê o
+    futuro, como o z-score. `contamination` fixa a taxa de disparo alvo (comparável ao z-score).
+
+    Returns:
+        (flags, scored): flags[i] True se anomalia; scored[i] True nos dias efetivamente
+        pontuados (após janela + treino). Métricas devem comparar SÓ na região `scored`.
+    """
+    from sklearn.ensemble import IsolationForest  # import tardio (evita custo quando não usado)
+
+    r = np.asarray(returns, dtype="float64")
+    n = len(r)
+    flags = np.zeros(n, dtype=bool)
+    scored = np.zeros(n, dtype=bool)
+    if n < window + train_days + 1:
+        return flags, scored
+    feats = np.zeros((n, 2), dtype="float64")
+    for i in range(window, n):
+        w = r[i - window : i]
+        feats[i] = (r[i], w.std(ddof=1))
+    train_idx = np.arange(window, window + train_days)
+    model = IsolationForest(n_estimators=200, contamination=contamination, random_state=seed)
+    model.fit(feats[train_idx])
+    test_idx = np.arange(window + train_days, n)
+    flags[test_idx] = model.predict(feats[test_idx]) == -1
+    scored[test_idx] = True
+    return flags, scored

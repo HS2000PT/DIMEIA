@@ -49,7 +49,7 @@ volatilidade, reporta-se na mesma (o contributo metodológico mantém-se).
       FinBERT (inferência; só entra se ajudar na validação).
 - [x] **M3** — **Smoke evaluation** no corpus Finnhub → `docs/evaluation/evaluation_triage.md` marcado
       como *smoke* (corpus de 4 semanas — ver §4); figuras PR/calibração.
-- [ ] **M4** — Isolation Forest vs z-score no harness de `evaluate_anomaly.py` (linhas z-score
+- [x] **M4** — Isolation Forest vs z-score no harness de `evaluate_anomaly.py` (linhas z-score
       byte-idênticas; IF é comparação, não substituto salvo vitória clara).
 - [ ] **M5** — Integração **off-by-default**: linha de materialidade no `explain_news_impact` (redação
       honesta "evidência de triagem, não previsão"), `min_materiality` no `config/alerts.yaml`,
