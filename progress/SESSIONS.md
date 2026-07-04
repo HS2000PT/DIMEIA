@@ -49,9 +49,22 @@ enviar**).
   registadas hoje (pendentes — correto, a janela não fechou) e uma sonda com data antiga maturou
   contra preços reais (label 1; Brier 0,25 = (0,5−1)² exato). Testes 81 → **93**; ruff verde.
 
-**Próximo (ver ML_PLAN §3):** M6 FNSPID overnight (**click do aluno**) → M7 (gated no OK do
-orientador). O loop M5.5 fica armado: com notícias ligadas, correr `scripts/post_validate.py`
-dias depois.
+- **GATE M7 ABERTO (2026-07-04):** o Prof. Luís Gomes deu o OK a tudo (confia no aluno; férias).
+- **M6 lançado em background** na máquina do aluno (cadeia download FNSPID 2018–2023 → limpar cache
+  de preços → dataset embargo 5 → retreino SBERT; log `data/fnspid_overnight.log`).
+- **M7 parte 1 (8dcb1b1):** RQ4 integrada nos Caps. 1–5 sem números por chegar — Ch1 (RQ4 + 5.º
+  objetivo + 4.ª contribuição), Ch2 (secção "Learned Alert Triage"; +2 citações VERIFICADAS
+  Crossref: friedman2001gbm, niculescu2005calibration → 52/52), Ch3 (modelo + "Triage protocol" +
+  desafio IF no protocolo), Ch4 (componente, "Learned severity", correções de honestidade: ranking
+  já implementado; deploy agendado real), Ch5 (IF vs z-score, números M4 finais). 3 overfulls
+  >15pt PRÉ-EXISTENTES eliminados (Apêndice A ×2 + tabela worked example, herança do rebrand;
+  verificado por rebuild com o ch3 de HEAD). Compila 72 pp, 0 erros, 0 cit. indefinidas;
+  compile-thesis CI verde. learning.md: §15 corrigido para números congelados; +§16–18 (triagem,
+  IF, pós-validação) com notas de júri. Smoke preservada: `evaluation_triage_smoke.md`.
+
+**Próximo:** quando o M6 terminar → M7h: validar números FNSPID → Ch5 estudo de triagem + Ch6
+veredicto RQ4 ("three→four questions") + abstract → recompilar → commit. Depois sync
+paper/slides/guia/caderno + extensão do page-audit (sessão dedicada se preciso).
 
 ---
 

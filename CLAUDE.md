@@ -7,9 +7,9 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 29 (**WORKSTREAM ML M0–M5.5 FEITOS**: modelos treinados, integrados off-by-default e com loop de pós-validação armado)
+- **Sessão nº:** 29 (**GATE M7 ABERTO pelo orientador (2026-07-04)**; M0–M5.5 feitos; **M6 A CORRER** em background; **M7 parte 1 na tese FEITA**)
 - **Última atualização:** 2026-07-04
-- **🤖 WORKSTREAM ATIVO — ML treinado (RQ4, triagem de materialidade). Estado: M0–M5.5 FEITOS, próximo M6 (FNSPID overnight, click do aluno).**
+- **🤖 WORKSTREAM ATIVO — ML treinado (RQ4). Estado: OK do Prof. Luís Gomes DADO (confia no aluno; de férias) ⇒ gate M7 aberto. M6 (FNSPID 2018–2023) a correr em background na máquina do aluno (cadeia download→cache-limpa→dataset→retreino; log `data/fnspid_overnight.log`; iniciado 15:11 UTC). M7 parte 1 COMMITTED (8dcb1b1): RQ4 nos Caps. 1–5 (Ch1 RQ4+objetivo+contribuição; Ch2 secção triagem com friedman2001gbm + niculescu2005calibration verificadas, 52/52; Ch3 modelo+protocolo; Ch4 componente+decision logic+honestidade deploy; Ch5 IF vs z-score com números M4 finais), 3 overfulls >15pt pré-existentes eliminados, compila 72 pp 0 erros 0 cit. indefinidas (compile-thesis CI verde), learning.md §15 corrigido + §16–18 novos. Smoke preservada em `evaluation_triage_smoke.md`. **FALTA (M7h, quando o M6 acabar):** validar números FNSPID → Ch5 estudo de triagem + Ch6 veredicto RQ4 (e "three→four questions") + abstract → recompilar → commit; depois sync paper/slides/guia/caderno + page-audit (sessão dedicada se preciso).**
   Plano-mestre multi-dispositivo: **`progress/ML_PLAN.md`** (caixas de estado no §3). Feito: dataset com
   rótulos anti-lookahead (testado por mutação do futuro), 6 famílias treinadas com SBERT real, calibração
   Platt, reproduzível (2 corridas = métricas idênticas; retreino do M5 = joblib **bit-idênticos**),
