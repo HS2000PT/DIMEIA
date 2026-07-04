@@ -9,6 +9,7 @@ Abre uma janela, corre, e fica aberta no fim (`pause`) para leres o resultado.
 | `demo.bat` | Corre a **demo** de consola (notícia offline + mercado ao vivo). Não envia nada. |
 | `tests.bat` | Corre os **testes + lint** (47 testes + ruff). |
 | `thesis-pdf.bat` | Compila a **tese** → `thesis/main.pdf` (precisa de LaTeX/MiKTeX). |
+| `fnspid-overnight.bat` | **M6 (deixar UMA NOITE):** download FNSPID 2018–2023 + dataset + retreino (log em `data/fnspid_overnight.log`; precisa da stack `--ml`). |
 
 > **Pré-requisito (uma vez):** ter o ambiente criado (`bash scripts/setup_env.sh`). Para o dashboard,
 > instalar também o Streamlit: `pip install -r requirements-app.txt`.

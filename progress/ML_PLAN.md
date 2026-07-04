@@ -68,9 +68,11 @@ volatilidade, reporta-se na mesma (o contributo metodológico mantém-se).
       completo corre na máquina do aluno; persistência na nuvem = Fase B). Validado ao vivo: 3 decisões
       reais registadas (pendentes, correto — hoje ainda não maturou) + sonda com data antiga maturou
       contra preços reais (label 1; Brier 0,25 = (0,5−1)² exato). 12 testes puros novos. *(2026-07-04)*
-- [ ] **M6** — **FNSPID 2018–2023** (números finais da tese): download overnight (~3,4 h;
-      `scripts/download_data.py`, tarefa/click preparado para o aluno) → rebuild dataset → retreinar →
-      regenerar docs/figuras. **HUMANO: deixar a correr uma noite.**
+- [ ] **M6** — **FNSPID 2018–2023** (números finais da tese): **click preparado** —
+      `run/fnspid-overnight.bat` (ou tarefa VS Code "FNSPID overnight (M6)") corre em cadeia
+      download (~3,4 h) → limpa a cache de preços (era 2026) → dataset (embargo 5) → retreino SBERT;
+      log em `data/fnspid_overnight.log`. **HUMANO: deixar a correr uma noite** (stack `--ml`).
+      Na manhã seguinte: testes verdes + commit dos modelos/docs/figuras regenerados.
 - [ ] **M7** — **Tese e materiais (GATED no OK do orientador):** RQ4 no Cap. 1; Cap. 2 fundamentação curta
       (event study com ajuste de mercado; materialidade — citações verificadas como as 50 existentes);
       Cap. 3 secção (tarefa/rótulos/protocolo/ameaças); Cap. 4 componente + figuras; Cap. 5 estudo;

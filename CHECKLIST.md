@@ -38,7 +38,10 @@
       maturar (d+3) com o resultado real → `docs/evaluation/live_monitoring.md` → receita de retreino)
       — a forma defensável da ideia "RL" do aluno. O loop já está armado: correr o post_validate
       dias depois de o runner correr com notícias ligadas.
-- [ ] M6 — **HUMANO: deixar o download FNSPID a correr uma noite** (tarefa/click preparado) → retreinar.
+- [ ] M6 — **HUMANO: deixar a correr UMA NOITE** → duplo-clique em `run/fnspid-overnight.bat` (ou a
+      tarefa VS Code "FNSPID overnight (M6)"): download 2018–2023 + dataset + retreino, tudo em cadeia
+      (log em `data/fnspid_overnight.log`; precisa da stack `--ml`). Na manhã seguinte: `run/tests.bat`
+      + commit dos modelos/docs novos (ou pedir ao Claude para validar/committar).
 - [ ] M7 — Tese + guia + slides + caderno (RQ4, Cap. 2/3/4/5/6) — **gated no OK do orientador**; fica
       para o fim (decisão do aluno: primeiro melhorar a solução).
 - [ ] (futuro) S-APP — sessão dedicada: app + comandos/config do Telegram para utilizadores (Fase B).
