@@ -64,14 +64,16 @@ the US equity market (NYSE and NASDAQ). The system raises Telegram alerts from t
 market movements, detected as statistical anomalies, and incoming financial news) and, for every alert,
 exposes a fully traceable explanation: the detected event, the reasoning applied, the sources, and historical
 precedents. Its core is a news--market correlation engine that, given a news item, retrieves analogous
-historical news from a knowledge base and measures the impact those precedents had on prices, in the manner of
-an event study and without lookahead. As an Artificial Intelligence Engineering contribution, the work
+historical news from a knowledge base and measures the impact those precedents had on prices, event-study
+style and without lookahead. As an Artificial Intelligence Engineering contribution, the work
 integrates, applies and critically evaluates existing components (sentence-embedding retrieval, statistical
-anomaly detection and transparent explanation) in a functional, explainable and reproducible system. On real
-data, semantic retrieval clearly outperformed lexical and trivial baselines (cross-ticker precision@5 of $0.51$,
-versus $0.35$ for a lexical baseline and $0.24$ for random retrieval), and the volatility-normalised detector
-fired far more consistently across stocks than a fixed threshold. The results are honest and reproducible, with limitations and future work stated
-explicitly.
+anomaly detection, supervised triage and transparent explanation) in a functional, explainable and reproducible system. On real
+data, semantic retrieval clearly outperformed lexical and trivial baselines (cross-ticker precision@5 of $0.51$
+against $0.35$ lexical and $0.24$ random), and the volatility-normalised detector
+fired far more consistently across stocks than a fixed threshold. A materiality-triage model trained on
+$79{,}753$ multi-year news--market examples nearly quadrupled within-budget alert precision, yet no text
+model beat the volatility-only baseline, a finding reported as it stands. Limitations and future work are
+stated explicitly.
 
 \end{abstract}
 
@@ -86,12 +88,14 @@ detetado, o raciocínio aplicado, as fontes e os precedentes históricos. O seu 
 notícia--mercado que, dada uma notícia, recupera notícias históricas análogas de uma base de conhecimento e
 mede o impacto que esses precedentes tiveram nos preços, à maneira de um estudo de evento e sem lookahead.
 Enquanto contribuição de Engenharia de Inteligência Artificial, o trabalho integra, aplica e avalia
-criticamente componentes existentes (recuperação por embeddings de frases, deteção estatística de anomalias
-e explicação transparente) num sistema funcional, explicável e reproduzível. Em dados reais, a recuperação
+criticamente componentes existentes (recuperação por embeddings de frases, deteção estatística de anomalias,
+triagem supervisionada e explicação transparente) num sistema funcional, explicável e reproduzível. Em dados reais, a recuperação
 semântica superou claramente as baselines lexical e triviais (precision@5 cross-ticker de $0{,}51$, face a
 $0{,}35$ de uma baseline lexical e $0{,}24$ do acaso) e o detetor normalizado pela volatilidade disparou de forma muito mais consistente entre
-ações do que um limiar fixo. Os resultados são honestos e reproduzíveis, com limitações e trabalho futuro
-explícitos.
+ações do que um limiar fixo. Um modelo de triagem de materialidade treinado em $79\,753$ exemplos
+notícia--mercado de vários anos quase quadruplicou a precisão dos alertas dentro do orçamento diário, mas
+nenhum modelo com texto bateu a baseline de só-volatilidade, resultado reportado tal como é. As limitações
+e o trabalho futuro ficam explícitos.
 
 \end{abstractotherlanguage}
 

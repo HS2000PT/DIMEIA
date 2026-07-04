@@ -69,17 +69,25 @@ volatilidade, reporta-se na mesma (o contributo metodológico mantém-se).
       completo corre na máquina do aluno; persistência na nuvem = Fase B). Validado ao vivo: 3 decisões
       reais registadas (pendentes, correto — hoje ainda não maturou) + sonda com data antiga maturou
       contra preços reais (label 1; Brier 0,25 = (0,5−1)² exato). 12 testes puros novos. *(2026-07-04)*
-- [ ] **M6** — **FNSPID 2018–2023** (números finais da tese): **click preparado** —
-      `run/fnspid-overnight.bat` (ou tarefa VS Code "FNSPID overnight (M6)") corre em cadeia
-      download (~3,4 h) → limpa a cache de preços (era 2026) → dataset (embargo 5) → retreino SBERT;
-      log em `data/fnspid_overnight.log`. **HUMANO: deixar a correr uma noite** (stack `--ml`).
-      Na manhã seguinte: testes verdes + commit dos modelos/docs/figuras regenerados.
-- [ ] **M7** — **Tese e materiais (gate ABERTO 2026-07-04 — OK do orientador):** RQ4 no Cap. 1; Cap. 2 fundamentação curta
-      (event study com ajuste de mercado; materialidade — citações verificadas como as 50 existentes);
-      Cap. 3 secção (tarefa/rótulos/protocolo/ameaças); Cap. 4 componente + figuras; Cap. 5 estudo;
-      Cap. 6 veredicto RQ4; abstract. Depois: paper, slides de defesa, **guia de estudo** (novas partes
-      ensinadas do zero), caderno. Auditoria de páginas estendida. **Deixar para o fim, por decisão do
-      aluno — primeiro melhorar a solução.**
+- [x] **M6** — **FNSPID 2018–2023 FEITO** *(2026-07-05, madrugada; corrido pelo Claude como processo
+      destacado — o download afinal levou ~1h)*: 79.753 exemplos, 1.501 dias únicos, **0 descartes**;
+      14/15 tickers (META = "FB" no corpus — reportado, não remapeado); positivos 38,5/47,0/37,8%
+      (sem o regime shift do fumo). **Resultado (teste):** PR-AUC vol **0,542** > contexto 0,538 >
+      full 0,496 > GBM 0,469 > texto 0,439 > sempre 0,378 — **nenhum modelo com texto bate a
+      volatilidade** (resultado pré-comprometido, reportado tal como é); MAS precisão@5/dia
+      **0,632 vs 0,163** (quase 4×) e Brier 0,218 vs 0,622 ⇒ a triagem vale como mecanismo.
+      Modelos/figuras/md regenerados; 93 testes verdes. *(Nota: o retreino exigiu HF_HUB_OFFLINE=1 —
+      o hub falhou com o modelo já em cache.)*
+- [~] **M7** — **TESE FEITA (2026-07-05); faltam os materiais.** Feito: RQ4 no Cap. 1 (+5.º objetivo,
+      4.ª contribuição); Cap. 2 secção "Learned Alert Triage" (+friedman2001gbm e
+      niculescu2005calibration verificadas → 52/52); Cap. 3 modelo+protocolo+data card atualizado;
+      Cap. 4 componente+decision logic+honestidade de deploy; Cap. 5 **Case Study 4** (tabela 6
+      famílias, figuras PR+calibração, leitura honesta) + IF vs z-score no CS1 + setup "four studies";
+      Cap. 6 veredicto RQ4 ("No on the text hypothesis; yes on the mechanism") + 4 contribuições +
+      limitações/futuro atualizados; abstract EN (197≤200 palavras) + resumo PT. **Compila 74 pp,
+      0 erros, 0 cit. indefinidas, overfull máx. 12pt.**
+      **FALTA (sessão dedicada):** paper IEEE, slides de defesa, guia de estudo (ensinar as partes
+      novas do zero), caderno de defesa; auditoria de páginas estendida às páginas novas.
 
 **Sessões futuras dedicadas (registadas, não agora):**
 - [ ] **S-APP** — melhorar app + comandos/configuração do Telegram para utilizadores (Fase B desenhada em

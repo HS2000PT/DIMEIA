@@ -62,9 +62,25 @@ enviar**).
   compile-thesis CI verde. learning.md: §15 corrigido para números congelados; +§16–18 (triagem,
   IF, pós-validação) com notas de júri. Smoke preservada: `evaluation_triage_smoke.md`.
 
-**Próximo:** quando o M6 terminar → M7h: validar números FNSPID → Ch5 estudo de triagem + Ch6
-veredicto RQ4 ("three→four questions") + abstract → recompilar → commit. Depois sync
-paper/slides/guia/caderno + extensão do page-audit (sessão dedicada se preciso).
+- **M6 FEITO (madrugada de 05/07):** a 1.ª cadeia (background Bash) morreu com a sessão → relançada
+  como processo DESTACADO (Start-Process; lição em memória). Download afinal ~1h. Dataset FNSPID:
+  **79.753 exemplos**, 1.501 dias, 0 descartes, 14/15 tickers (META="FB" no corpus), positivos
+  38,5/47,0/37,8%. Retreino falhou 1.ª vez num erro httpx do HF hub (modelo JÁ em cache) → retry com
+  HF_HUB_OFFLINE=1 ⇒ OK. **Resultado final (teste):** PR-AUC vol 0,542 > contexto 0,538 > full 0,496
+  > GBM 0,469 > texto 0,439 > sempre 0,378; precisão@5/dia 0,632 vs 0,163; Brier 0,218 vs 0,622.
+  93 testes verdes com os modelos novos.
+- **M7-TESE COMPLETA (madrugada de 05/07):** Ch5 Case Study 4 (corpus+setup, tabela 6 famílias,
+  figuras PR/calibração, leitura em 3 observações, caveats) + setup "four studies" + conclusões do
+  capítulo; Ch3 data card atualizado (subset FNSPID CONSTRUÍDO e usado na triagem; KB de recuperação
+  multi-ano continua futuro); Ch6 "four questions" + veredicto RQ4 ("No on the text hypothesis; yes
+  on the mechanism") + 4 contribuições + limitações + futuro (gap de texto, FB→META, bandits);
+  abstract EN 197 palavras + resumo PT com a frase da triagem. **74 pp, 0 erros, 0 cit. indefinidas,
+  overfull máx 12pt.** learning.md §16 ganhou os números finais + nota de júri do resultado.
+
+**Próximo (sessão dedicada — M7-materiais):** sincronizar paper IEEE + slides de defesa + guia de
+estudo (ensinar do zero: triagem/calibração/PR-AUC/pós-validação) + caderno de defesa com a RQ4;
+estender o page-audit às páginas novas. Loop M5.5: as 3 decisões reais maturam ~08-09/07 →
+`python scripts/post_validate.py`.
 
 ---
 

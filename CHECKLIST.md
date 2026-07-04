@@ -39,12 +39,13 @@
       maturar (d+3) com o resultado real → `docs/evaluation/live_monitoring.md` → receita de retreino)
       — a forma defensável da ideia "RL" do aluno. O loop já está armado: correr o post_validate
       dias depois de o runner correr com notícias ligadas.
-- [ ] M6 — **HUMANO: deixar a correr UMA NOITE** → duplo-clique em `run/fnspid-overnight.bat` (ou a
-      tarefa VS Code "FNSPID overnight (M6)"): download 2018–2023 + dataset + retreino, tudo em cadeia
-      (log em `data/fnspid_overnight.log`; precisa da stack `--ml`). Na manhã seguinte: `run/tests.bat`
-      + commit dos modelos/docs novos (ou pedir ao Claude para validar/committar).
-- [ ] M7 — Tese + guia + slides + caderno (RQ4, Cap. 2/3/4/5/6) — **gated no OK do orientador**; fica
-      para o fim (decisão do aluno: primeiro melhorar a solução).
+- [x] M6 — **FEITO (madrugada de 2026-07-05)**: FNSPID 2018–2023 → 79.753 exemplos (0 descartes,
+      14/15 tickers — META="FB" no corpus) → retreino. Resultado: vol PR-AUC 0,542 imbatível pelo
+      texto; triagem quase 4× melhor que alertar-sempre no orçamento diário (0,632 vs 0,163).
+- [x] M7 (tese) — RQ4 integrada de ponta a ponta (Caps. 1–6 + abstract; 74 pp, 0 erros, 52/52
+      citações; gate aberto pelo orientador em 2026-07-04).
+- [ ] M7 (materiais) — paper IEEE + slides de defesa + guia de estudo + caderno sincronizados com a
+      RQ4 (**sessão dedicada**); estender a auditoria de páginas às páginas novas.
 - [ ] (futuro) S-APP — sessão dedicada: app + comandos/config do Telegram para utilizadores (Fase B).
 
 ## ⏳ A fazer — EU (humano; ninguém pode fazer por ti)

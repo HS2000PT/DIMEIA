@@ -85,10 +85,13 @@ Governance & Large data not versioned (recreated by script); only small samples 
 \end{tabular}
 
 \smallskip
-{\footnotesize\emph{Note:} this card documents the \emph{intended} FNSPID-based historical layer. The
-retrieval study of Chapter~\ref{chap:casestudies} is run on the real recent-news evaluation corpus
-described in Section~\ref{sec:met_data_live} (3{,}714 headlines for the same fifteen tickers, built through
-the identical process); the full multi-year FNSPID build is identified as future work.}
+{\footnotesize\emph{Note:} this card documents the FNSPID-based historical layer. The multi-year
+subset \emph{was} built by the streaming pipeline and drives the materiality-triage study of
+Chapter~\ref{chap:casestudies} ($79{,}753$ examples, 2018--2023; fourteen of the fifteen tickers, as
+the corpus indexes Meta under its former symbol). The retrieval study is run on the real recent-news
+evaluation corpus described in Section~\ref{sec:met_data_live} (3{,}714 headlines for the same
+tickers, built through the identical process); rebuilding the retrieval knowledge base from the
+multi-year corpus remains future work.}
 \end{table}
 
 The fifteen large-cap tickers span five sectors, which makes the cross-sector evaluation of

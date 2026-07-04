@@ -227,6 +227,18 @@ gradient boosting (Friedman 2001; teto de capacidade).
   agregadas em "conteúdo do título") — cada score vem com os fatores principais e a frase fixa
   "Triage evidence, not a forecast."
 
+**Resultado FINAL (FNSPID 2018–2023, 79.753 exemplos, teste com prevalência 37,8% —
+`docs/evaluation/evaluation_triage.md`):** PR-AUC — só-volatilidade **0,542** > só-contexto 0,538 >
+contexto+texto 0,496 > GBM 0,469 > só-texto 0,439 > alertar-sempre 0,378. **Nenhum modelo com texto
+bateu a baseline de volatilidade** (o resultado honesto pré-comprometido). MAS a triagem vale como
+mecanismo de produto: **precisão@5 alertas/dia 0,632 vs 0,163** do alertar-sempre (quase 4×), com
+probabilidades calibradas (Brier 0,218 vs 0,622).
+- **Como explico ao júri em 3 frases (o resultado):** "Com 6 anos de dados, todos os modelos treinados
+  ficam muito acima do chão alertar-sempre — dentro de um orçamento de 5 alertas/dia, a triagem quase
+  quadruplica a precisão. Mas nenhum modelo que lê o texto do título bateu a baseline de
+  só-volatilidade, portanto o sinal está no contexto de mercado, não nas palavras. Reporto isso tal
+  como caiu — foi a segunda comparação justa 'aprendido vs simples' que a escolha transparente venceu."
+
 ## 17. Estatístico vs APRENDIDO — Isolation Forest perde para o z-score (M4)
 **O que é:** desafiámos a nossa regra transparente com um detetor aprendido em igualdade: Isolation
 Forest causal (features = retorno do dia + vol20 anterior; treina nos primeiros 250 dias; nunca vê o

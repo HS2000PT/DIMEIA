@@ -1,24 +1,24 @@
 {
-  "gerado": "2026-07-04T12:42:42+00:00",
+  "gerado": "2026-07-04T23:36:29+00:00",
   "dataset": "C:\\Users\\henri\\Desktop\\DIMEIA\\data\\triage_dataset.csv",
   "linhas": {
-    "train": 990,
-    "val": 333,
-    "test": 1515
+    "train": 28574,
+    "val": 17710,
+    "test": 32649
   },
   "positivos": {
-    "train": 0.6777777777777778,
-    "val": 0.4924924924924925,
-    "test": 0.3716171617161716
+    "train": 0.38542031217190453,
+    "val": 0.470412196499153,
+    "test": 0.3780513951422708
   },
   "seed": 42,
   "embedder": "sbert",
-  "nota": "SMOKE — corpus Finnhub de 4 semanas (embargo 1); números finais virão do FNSPID (M6).",
+  "nota": "FNSPID 2018-2023 (M6)",
   "modelo": "context",
   "metricas_teste": {
-    "pr_auc": 0.4467704731875659,
-    "roc_auc": 0.47279542367568694,
-    "brier": 0.2299817117156932,
-    "p_at_budget": 0.0
+    "pr_auc": 0.5384788504706477,
+    "roc_auc": 0.6580584296750043,
+    "brier": 0.22405218360456047,
+    "p_at_budget": 0.6316742081447964
   }
 }

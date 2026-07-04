@@ -12,7 +12,7 @@ states the limitations and the directions they open.
 \section{Main Conclusions}
 \label{sec:concl_main}
 
-The work is best summarised by returning to the three research questions of
+The work is best summarised by returning to the four research questions of
 Chapter~\ref{chap:introduction}.
 
 \paragraph{RQ1: transparent detection of abrupt movements.}
@@ -42,12 +42,24 @@ an explicit no-prediction disclaimer. Usefulness to a retail investor is plausib
 yet been measured with a human study, and is therefore reported as an open point rather than a settled
 result.
 
+\paragraph{RQ4: learned triage beyond volatility baselines.}
+\textbf{No on the text hypothesis; yes on the mechanism.} A supervised materiality model was trained,
+calibrated and tested on $79{,}753$ FNSPID examples (2018--2023) under a strict temporal protocol. As a
+product mechanism, learned triage is clearly worthwhile: within a five-alerts-per-day budget it raised
+the share of material alerts from $0.163$ to $0.632$, with calibrated probabilities. But the
+pre-committed decisive comparison went the other way: no model reading the headline text beat the
+volatility-only baseline (PR-AUC $0.542$ against $0.496$ for the main context$+$text model), so on this
+corpus the triage signal lives in market context, not headline wording. Together with the Isolation
+Forest comparison of the anomaly study, this is the second fair, causal test in which the transparent
+choice won, and both results are reported exactly as they fell.
+
 \section{Research Questions and Objectives Achieved}
 \label{sec:concl_objectives}
 
 The general objective, to design, implement and evaluate an explainable, reproducible alerting system
 driven by two triggers, was met: InvestiGator is a working system whose two triggers were proven end to
-end and whose two core components were evaluated on real data. The supporting objectives were also met:
+end and whose core components, including the trained triage model, were evaluated on real data. The
+supporting objectives were also met:
 a thin end-to-end slice was delivered first; each component was kept in its simplest defensible form; the
 evaluation followed a design fixed in advance; and the whole system is reproducible from versioned
 scripts.
@@ -57,23 +69,28 @@ scripts.
 
 As an Artificial Intelligence \emph{Engineering} dissertation, the contribution is the integration,
 application and critical evaluation of existing components into a working, explainable and reproducible
-whole, rather than a new algorithm. Three concrete contributions stand out. First, a documented and
+whole, rather than a new algorithm. Four concrete contributions stand out. First, a documented and
 reproducible methodology for \textbf{news--market impact correlation} that combines sentence-embedding
 retrieval with event-study impact windows, with explicit choices of similarity metric and horizon and
 explicit avoidance of lookahead. Second, \textbf{InvestiGator}, an \textbf{XAI-first alerting system} whose
 entire reasoning chain (detection, evidence, sources and precedents) is exposed to a non-expert
-user and is faithful by construction. Third, a \textbf{critical, honest evaluation} of each core
-component against trivial and lexical baselines on real data, with results, ablations and limitations
-reported transparently and reproducibly from versioned scripts.
+user and is faithful by construction. Third, a trained and calibrated \textbf{materiality-triage
+model}, labelled by the system's own event-study code over the multi-year corpus, integrated into the
+alerts off by default as ranked and explained evidence, and continually post-validated in deployment
+against the outcomes that actually followed. Fourth, a \textbf{critical, honest evaluation} of each
+core component against trivial, lexical and volatility baselines on real data, including two
+pre-committed statistical-versus-learned comparisons that the transparent methods won, with results,
+ablations and limitations reported transparently and reproducibly from versioned scripts.
 
 \section{Limitations}
 \label{sec:concl_limitations}
 
 Several limitations remain, stated plainly:
 \begin{itemize}
-  \item \textbf{Corpus.} The evaluation used a recent, few-month news corpus from a free service, not the
-        multi-year FNSPID history, which bounds the impact analysis and makes the retrieval figures, though
-        real, preliminary.
+  \item \textbf{Corpus.} The retrieval evaluation used a recent, few-month news corpus from a free
+        service, which bounds the impact analysis and makes the retrieval figures, though real,
+        preliminary. The triage study did use the multi-year FNSPID subset, but with fourteen of the
+        fifteen tickers (Meta is indexed under its former symbol in the corpus) and headline text only.
   \item \textbf{Proxies.} Relevance is proxied by sector agreement, and the anomaly label is
         volatility-relative, which is why the label-free firing-rate argument is given primacy.
   \item \textbf{Short text.} News is represented by headlines only, which limits the semantics captured.
@@ -90,15 +107,18 @@ Several limitations remain, stated plainly:
 
 The limitations map directly onto future work:
 \begin{itemize}
-  \item Build the full multi-year knowledge base from FNSPID (the streaming pipeline is already in place),
-        enabling a richer impact analysis with dispersion and direction-consistency statistics.
+  \item Rebuild the \emph{retrieval} knowledge base from the multi-year FNSPID corpus (the subset and
+        the streaming pipeline are already in place, proven by the triage study), enabling a richer
+        impact analysis with dispersion and direction-consistency statistics.
   \item Run a small human study, applying a clarity, completeness and actionability rubric to a set of
         alerts, to settle the open usefulness question (RQ3).
-  \item Strengthen retrieval by embedding full article bodies rather than headlines, and compare further
-        embedding models; optionally enrich the explanation with financial sentiment or feature attribution.
-  \item As a product, rank alerts by severity and rate-limit the least important, de-duplicate
-        near-identical precedents, and flag directional disagreement within a cluster, addressing the
-        alert-fatigue and over-reliance risks of Chapter~\ref{chap:investigator}.
+  \item Attack the open text gap of RQ4: richer text than headlines (article bodies, financial
+        sentiment as a feature), the missing ticker recovered under its former symbol, and the live
+        post-validation loop accumulating fresh labelled decisions for periodic retraining; a
+        contextual-bandit treatment of the alert threshold is the natural learned extension.
+  \item As a product, de-duplicate near-identical precedents and flag directional disagreement within
+        a retrieved cluster, complementing the severity ranking that triage already provides against
+        the alert-fatigue and over-reliance risks of Chapter~\ref{chap:investigator}.
 \end{itemize}
 Together these would turn a sound prototype into a more thoroughly validated system, without giving up the
 simplicity and transparency that make it defensible.

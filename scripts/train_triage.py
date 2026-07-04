@@ -201,8 +201,8 @@ def main() -> int:
         "",
         "**Caveats:** rótulo = |retorno anormal vs SPY| ≥ τ no horizonte primário (proxy "
         "de materialidade, não julgamento humano); títulos do mesmo (ticker, dia) partilham "
-        "o rótulo (clustering — split por dias únicos mitiga fuga, não a correlação); corpus "
-        "recente curto ⇒ possível desvio de regime entre blocos (ver positivos por split).",
+        "o rótulo (clustering — split por dias únicos mitiga fuga, não a correlação); "
+        "verificar sempre os positivos por split (desvio de regime possível em qualquer corpus).",
     ]
     md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"\nEscrito: {md}")

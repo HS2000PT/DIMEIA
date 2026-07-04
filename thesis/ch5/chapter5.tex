@@ -6,26 +6,29 @@
 \chapter{Case Studies}
 \label{chap:casestudies}
 
-This chapter evaluates InvestiGator through three case studies on real data. The first looks at the anomaly
+This chapter evaluates InvestiGator through four case studies on real data. The first looks at the anomaly
 trigger across stocks of very different volatility; the second at the correlation engine and the
 precedents it retrieves; the third walks through a complete alert and asks whether its explanation is
-faithful. Every number below comes from a versioned script with a fixed seed, the evaluation followed the
+faithful; the fourth trains and tests the materiality-triage model on the multi-year corpus. Every
+number below comes from a versioned script with a fixed seed, the evaluation followed the
 plan set out in Chapter~\ref{chap:methods}, and each study states its own limitations.
 
 \section{Common Experimental Setup}
 \label{sec:cs_setup}
 
-\emph{What do the three studies share?} Two real datasets are used. For the anomaly trigger, daily closing prices for the fifteen
+\emph{What do the four studies share?} Three real datasets are used. For the anomaly trigger, daily closing prices for the fifteen
 large-capitalisation tickers listed in the data card were retrieved from a free market-data service
 over a fixed three-year window (June~2023 to June~2026), yielding $750$ daily log-returns per ticker. For the correlation engine,
 $3{,}714$ real financial-news headlines for the same tickers were collected through a free company-news
 service (the most recent months available on the free tier), spanning five sectors (technology,
-banking, energy, health and consumer staples). This is the evaluation corpus actually used here, distinct
+banking, energy, health and consumer staples). This is the retrieval evaluation corpus, distinct
 from the designed FNSPID layer documented in the data card of Chapter~\ref{chap:methods}.
-News headlines and prices are normalised to a common
-schema so that the live and historical layers are directly comparable. This recent window of a few months
-is enough for the retrieval experiment; a full impact analysis still needs the multi-year FNSPID corpus,
-left as future work. The no-lookahead, reproducibility and honesty guarantees of
+For the materiality-triage study (Case Study~4), the multi-year FNSPID subset of the data card
+\emph{was} built, by the streaming pipeline, and aligned to prices: $79{,}753$ (headline, ticker,
+event-day) examples over 2018--2023. News headlines and prices are normalised to a common
+schema so that the live and historical layers are directly comparable. The recent corpus
+is enough for the retrieval experiment; a multi-year impact analysis over the retrieval knowledge
+base remains future work. The no-lookahead, reproducibility and honesty guarantees of
 Section~\ref{sec:met_evaluation} apply to every study below.
 
 \section{Case Study 1: Transparent Anomaly Detection on US Equities}
@@ -337,13 +340,101 @@ investor is inherently subjective; a small rubric-based human assessment (clarit
 actionability) is planned but has not yet been conducted, and is therefore reported as a limitation
 rather than a result.
 
+\section{Case Study 4: Learned Materiality Triage}
+\label{sec:cs_triage}
+
+\emph{Question: can the trained triage model of Section~\ref{sec:met_triage} prioritise news better
+than simple volatility evidence (\gls{RQ}4)? Answer: every trained ranker clears the always-alert
+floor by a wide margin, and within a realistic alert budget triage nearly quadruples precision; but
+none of the models that read the headline text beats the volatility-only baseline. On this evidence,
+the triage signal lives in market context, not in headline wording, and the dissertation reports that
+finding as it stands.}
+
+\paragraph{Corpus and setup.} The FNSPID subset was streamed and aligned to prices exactly as designed:
+$79{,}753$ examples over $1{,}501$ unique trading days (January~2018 to December~2023), with zero
+discarded rows. Fourteen of the fifteen tickers are represented; Meta is absent because the corpus
+indexes it under its former symbol (FB) for most of the window, a coverage note rather than a method
+change. The temporal split by unique days (70/15/15, five-day embargo) yields $28{,}574$ training,
+$17{,}710$ validation and $32{,}649$ test rows, with material examples at $38.5\%$, $47.0\%$ and
+$37.8\%$ respectively. Two corpus properties matter for reading the results: news density grows over
+time (2023 alone holds $44\%$ of the examples), so the later blocks hold more rows than their share of
+days; and headlines from the same (ticker, day) share one label, so rows are clustered, which the
+split by unique days prevents from leaking across blocks.
+
+\paragraph{Results.} Table~\ref{tab:cs_triage} reports the test block; Figure~\ref{fig:cs_triage_pr}
+shows the precision--recall curves and Figure~\ref{fig:cs_triage_cal} the calibration of the main
+interpretable model.
+
+\begin{table}[ht]
+\caption{Materiality triage on the FNSPID corpus (test block; prevalence $0.378$). PR-AUC is the
+primary metric; precision@budget admits at most five alerts per day.}
+\label{tab:cs_triage}
+\centering
+\begin{tabular}{l c c c c}
+\toprule
+\tabhead{Model} & \tabhead{PR-AUC} & \tabhead{ROC-AUC} & \tabhead{Brier} & \tabhead{Prec.@budget} \\
+\midrule
+Always alert (floor)            & 0.378 & 0.500 & 0.622 & 0.163 \\
+Volatility-only LR (baseline)   & \textbf{0.542} & \textbf{0.665} & \textbf{0.218} & \textbf{0.632} \\
+Context-only LR                 & 0.538 & 0.658 & 0.224 & \textbf{0.632} \\
+Text-only LR                    & 0.439 & 0.564 & 0.240 & 0.572 \\
+Context$+$text LR (main)        & 0.496 & 0.622 & 0.229 & 0.585 \\
+Gradient boosting (context$+$text) & 0.469 & 0.624 & 0.228 & 0.551 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/eval_triage_pr.pdf}
+\caption[Precision--recall curves for materiality triage]{Precision--recall curves on the test block.
+All trained models sit well above the always-alert floor (dashed line at the prevalence); the
+volatility-only baseline is not overtaken by any model that uses the headline text.}
+\label{fig:cs_triage_pr}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/eval_triage_calibration.pdf}
+\caption[Calibration of the triage probabilities]{Calibration of the main interpretable model after
+Platt scaling on the validation block: predicted probabilities track observed frequencies, which is
+what makes the score honest to show to an end user.}
+\label{fig:cs_triage_cal}
+\end{figure}
+
+\paragraph{Reading the result.} Three observations, in decreasing order of practical weight. First,
+\emph{triage works as a product mechanism}: within a budget of five alerts per day, ranking by any
+trained score raises the share of material alerts from $0.163$ (picking blindly) to $0.632$, nearly
+four times better, with calibrated probabilities (Brier $0.218$ against $0.622$ for the floor). This
+is precisely the alert-fatigue payoff the component was built for. Second, \emph{the signal is market
+context, not text}: the volatility-only baseline attains the best PR-AUC ($0.542$), the context-only
+model matches it in budgeted precision, and adding the headline embedding \emph{lowers} the linear
+model to $0.496$; the gradient-boosted ensemble does not recover the gap ($0.469$). Headlines alone
+are far above the floor ($0.439$) but well below volatility. Third, the answer to \gls{RQ}4 as posed
+is therefore \emph{negative on the text hypothesis and positive on the mechanism}: a supervised,
+calibrated ranker adds real product value over naive alerting, but on this corpus and with this text
+representation it does not beat the simple volatility baseline it was required to beat. This is the
+second time in this chapter that a learned method was given a fair, causal comparison against the
+transparent choice and lost (Case Study~1); both comparisons were pre-committed in
+Section~\ref{sec:met_evaluation}, and both validate the dissertation's simplicity-first design with
+evidence rather than assumption. The deployed variant (context-only, Section~\ref{sec:investigator_logic})
+is consistent with this finding: it uses exactly the features that carry the signal.
+
+\paragraph{Caveats.} The label is a proxy (market-adjusted move size, not human judgement of
+materiality); same-day headlines share one label, so effective sample size is smaller than the row
+count; the corpus's news density grows over the window; and headlines are short, so a richer text
+representation (article bodies, financial sentiment) might yet close the text gap, which is recorded
+as future work rather than assumed.
+
 \section{Discussion and Threats to Validity}
 \label{sec:cs_discussion}
 
-The three case studies support the core design: volatility-normalised detection is consistent across the
+The four case studies support the core design: volatility-normalised detection is consistent across the
 market where a fixed threshold is not, semantic retrieval surfaces markedly more sector-analogous
-precedents than lexical or trivial baselines, and the end-to-end alert is faithful to its own
-computation. All results rest on real data and are reproducible from versioned scripts.
+precedents than lexical or trivial baselines, the end-to-end alert is faithful to its own
+computation, and the learned triage adds a large budgeted-precision gain while confirming, against
+its own text features, that the transparent volatility evidence carries the signal. All results rest
+on real data and are reproducible from versioned scripts.
 
 The results also have clear limits, which are set out below under the four standard categories of
 validity so that nothing is glossed over.
@@ -387,8 +478,9 @@ to the conclusions.
 \section{Chapter Conclusions}
 \label{sec:cs_summary}
 
-Across three case studies on real data, InvestiGator's anomaly trigger fired far more consistently than a
+Across four case studies on real data, InvestiGator's anomaly trigger fired far more consistently than a
 fixed threshold, its correlation engine retrieved sector-analogous precedents well above every baseline
-and independently of the embedding model, and its explanations were faithful to the underlying
-computation by construction. The next chapter draws these findings together against the research
-questions.
+and independently of the embedding model, its explanations were faithful to the underlying
+computation by construction, and its trained triage model nearly quadrupled within-budget alert
+precision while honestly failing to beat the volatility-only baseline with text. The next chapter
+draws these findings together against the research questions.
