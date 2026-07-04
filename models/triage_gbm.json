@@ -1,0 +1,24 @@
+{
+  "gerado": "2026-07-04T10:52:11+00:00",
+  "dataset": "C:\\Users\\henri\\Desktop\\DIMEIA\\data\\triage_dataset.csv",
+  "linhas": {
+    "train": 990,
+    "val": 333,
+    "test": 1515
+  },
+  "positivos": {
+    "train": 0.6777777777777778,
+    "val": 0.4924924924924925,
+    "test": 0.3716171617161716
+  },
+  "seed": 42,
+  "embedder": "sbert",
+  "nota": "SMOKE — corpus Finnhub de 4 semanas (embargo 1); números finais virão do FNSPID (M6).",
+  "modelo": "gbm",
+  "metricas_teste": {
+    "pr_auc": 0.46109009305447907,
+    "roc_auc": 0.4995708763078944,
+    "brier": 0.22507791466716764,
+    "p_at_budget": 0.5
+  }
+}

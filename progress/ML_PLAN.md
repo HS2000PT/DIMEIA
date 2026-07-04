@@ -44,10 +44,10 @@ volatilidade, reporta-se na mesma (o contributo metodológico mantém-se).
       `src/triage/dataset.py` (event_features, abnormal_label, assign_splits, SECTORS);
       `scripts/build_dataset.py` (cache de preços em `data/prices/`, incl. SPY; amostra committada);
       testes anti-lookahead + embargo + rótulo à mão.
-- [ ] **M2** — Treino: `src/triage/{features,model,explain}.py` + `scripts/train_triage.py`
+- [x] **M2** — Treino: `src/triage/{features,model,explain}.py` + `scripts/train_triage.py`
       (split temporal, 4 modelos, calibração, seeds; grava models/ + md + figuras). Ablação sentimento
       FinBERT (inferência; só entra se ajudar na validação).
-- [ ] **M3** — **Smoke evaluation** no corpus Finnhub → `docs/evaluation/evaluation_triage.md` marcado
+- [x] **M3** — **Smoke evaluation** no corpus Finnhub → `docs/evaluation/evaluation_triage.md` marcado
       como *smoke* (corpus de 4 semanas — ver §4); figuras PR/calibração.
 - [ ] **M4** — Isolation Forest vs z-score no harness de `evaluate_anomaly.py` (linhas z-score
       byte-idênticas; IF é comparação, não substituto salvo vitória clara).

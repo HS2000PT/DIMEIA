@@ -51,7 +51,10 @@ data/**
 !data/samples/
 !data/samples/**
 !data/.gitkeep
-models/
+models/*
+!models/*.joblib
+!models/*.json
+!models/README.md
 
 # ── Literatura com acesso institucional (fornecida pelo aluno) ──
 data/literature/
