@@ -22,17 +22,23 @@
 ---
 
 ## 🤖 EM CURSO — componente de ML treinado (triagem de materialidade; RQ4)
-> Plano completo no plano de sessão; proposta ao orientador em
+> **Plano-mestre e checkpoint multi-dispositivo: [progress/ML_PLAN.md](progress/ML_PLAN.md)** (desenho
+> fixado, fases, dados, áreas de IA incl. a tradução honesta do "RL" do aluno). Proposta ao orientador:
 > [docs/internal/proposta_ml_orientador.md](docs/internal/proposta_ml_orientador.md).
 > **Regra:** o texto da tese só muda depois do OK do Prof. Luís Gomes (M7).
 - [ ] **HUMANO: enviar a proposta ao Prof. Luís Gomes** (email; o ficheiro acima é o corpo).
 - [ ] M1 — Rótulos (retorno anormal vs SPY) + `scripts/build_dataset.py` + testes anti-lookahead.
-- [ ] M2 — `src/triage/` + `scripts/train_triage.py` (LR + GBM, split temporal, calibração, seeds).
-- [ ] M3 — Estudo honesto no corpus Finnhub → `docs/evaluation/evaluation_triage.md` + figuras.
+- [ ] M2 — `src/triage/` + `scripts/train_triage.py` (LR + GBM, split temporal, calibração, seeds;
+      ablação sentimento FinBERT).
+- [ ] M3 — *Smoke evaluation* no corpus Finnhub → `docs/evaluation/evaluation_triage.md` + figuras.
 - [ ] M4 — Isolation Forest vs z-score (números z-score congelados intactos).
 - [ ] M5 — Integração off-by-default (linha no alerta, gate no runner, severidade na app).
+- [ ] M5.5 — **Loop de pós-validação** (regista decisões → rotula ao maturar (d+3) → métricas ao vivo →
+      retreino) — a forma defensável da ideia "RL" do aluno.
 - [ ] M6 — **HUMANO: deixar o download FNSPID a correr uma noite** (tarefa/click preparado) → retreinar.
-- [ ] M7 — Tese (RQ4, Cap. 2/3/4/5/6) — **gated no OK do orientador**; depois sync paper/slides/guia.
+- [ ] M7 — Tese + guia + slides + caderno (RQ4, Cap. 2/3/4/5/6) — **gated no OK do orientador**; fica
+      para o fim (decisão do aluno: primeiro melhorar a solução).
+- [ ] (futuro) S-APP — sessão dedicada: app + comandos/config do Telegram para utilizadores (Fase B).
 
 ## ⏳ A fazer — EU (humano; ninguém pode fazer por ti)
 ### Pôr o sistema 24/7 ao vivo (grátis) — ver [docs/design/going_live.md](docs/design/going_live.md)
