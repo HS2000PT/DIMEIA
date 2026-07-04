@@ -153,6 +153,7 @@ Embedder & Turn a headline into a vector & headline $\to$ embedding \\
 Knowledge base & Hold past cases; retrieve the nearest & headline $\to$ top-$k$ cases \\
 Anomaly detector & Flag volatility-relative moves & returns $\to$ AnomalyResult \\
 Correlation engine & Cosine similarity $+$ event-study impact & headline, KB $\to$ precedents $+$ impact \\
+Triage model & Learned severity: calibrated $P(\text{abnormal move follows})$ & headline $+$ context $\to$ probability $+$ contributions \\
 Explanation engine & Render a faithful alert from the objects & objects $\to$ alert text \\
 Alert delivery & Send the alert to the investor & alert text $\to$ Telegram \\
 Orchestration & Run each trigger end to end & trigger $\to$ delivered alert \\
@@ -242,6 +243,15 @@ take the top-$k$ cases. For each, report the observed impact at $+1$, $+3$ and $
 event-day close, and show their mean as evidence. Nothing here forecasts: the figures are what \emph{did}
 happen after comparable past news, and the knowledge base is consulted but never decides.
 
+\paragraph{Learned severity (triage).} On top of the two transparent rules sits the optional trained
+component of Section~\ref{sec:met_triage}: each incoming news item is scored with the calibrated
+probability that an abnormal move follows, and the alert can be \emph{gated}, sent only when the score
+clears a configured threshold, and \emph{annotated} with the score and its top additive contributions.
+The gate ships off by default and fails open: with no model file, or too little price history to compute
+the context features, the pipeline behaves exactly as before. The deployed variant uses context features
+only, so it runs without the heavy embedding stack, and the alert line always names the evidence for what
+it is: triage over historical cases, not a forecast.
+
 \section{Explanation and Delivery}
 \label{sec:investigator_xai}
 
@@ -295,12 +305,15 @@ illustration; the full real end-to-end output appears in Chapter~\ref{chap:cases
 \emph{What does it take to run, and what does responsible use require?}
 
 InvestiGator runs as two entry points, one per trigger, each performing a complete cycle. In day-to-day use they
-would run on a schedule (the market trigger once per trading day after the close, the news trigger whenever
-a watched feed publishes), but the scheduler and hosting are outside this project's scope; the entry points
-already encapsulate everything a scheduler would call. Running the system needs only free resources: a
-market-data source, a company-news or RSS source (an API key kept out of version control), and the
-knowledge base built once from the corpus. Appendix~\ref{app:reproducibility} gives the exact steps. The
-real alert delivered during testing shows the path from raw data to the investor's phone works end to end.
+run on a schedule: a reference deployment exists in which a free continuous-integration timer scans a
+watchlist once per trading day after the US close and delivers any alerts to a Telegram channel, with an
+interactive dashboard published alongside. Running the system needs only free resources: a market-data
+source, a company-news or RSS source (an API key kept out of version control), and the knowledge base
+built once from the corpus. Appendix~\ref{app:reproducibility} gives the exact steps. Real alerts
+delivered during testing and by the scheduled scan show the path from raw data to the investor's phone
+works end to end. Once live, the triage decisions are also \emph{post-validated}: each logged decision is
+labelled days later with the outcome that actually followed, giving live precision and calibration
+monitoring and fresh training data (Section~\ref{sec:met_triage}).
 
 Two practical limits are worth stating plainly. The free news tier returns only a recent window, so the
 knowledge base is shallower than the multi-year build it is designed for (a coverage limit, not a method
@@ -308,19 +321,23 @@ one). And InvestiGator is a decision-support prototype, not a production service
 persistence beyond the knowledge-base file, no automatic recovery from a provider outage. These are ordinary
 steps from prototype to product, recorded openly rather than hidden.
 
-A tool aimed at non-experts also raises two responsible-design questions, surfaced here rather than solved.
-The first is \emph{alert fatigue}: a tool that fires too often trains the user to ignore it, so a production
-version would rank alerts by severity (for the market trigger, the size of the $z$-score) and rate-limit the
-least important. The second is \emph{over-reliance}: a confident explanation can be trusted more than its
-evidence warrants (Section~\ref{sec:sota_trust}). The present design mitigates this by showing the
-individual precedents and their spread rather than a lone number, and by disclaiming prediction on every
-alert; natural extensions are to de-duplicate near-identical precedents and to flag when a retrieved cluster
-disagrees in direction. Both are design considerations and future work, not implemented features.
+A tool aimed at non-experts also raises two responsible-design questions. The first is \emph{alert
+fatigue}: a tool that fires too often trains the user to ignore it. The market trigger addresses it by
+firing only on volatility-relative extremes, and the news side is addressed by the triage model, whose
+severity score exists precisely to rank the stream and gate the least material items
+(Section~\ref{sec:investigator_logic}); the evaluation of Chapter~\ref{chap:casestudies} therefore
+includes a precision-within-daily-budget metric that measures this cost directly. The second is
+\emph{over-reliance}: a confident explanation can be trusted more than its evidence warrants
+(Section~\ref{sec:sota_trust}). The present design mitigates this by showing the individual precedents
+and their spread rather than a lone number, and by disclaiming prediction on every alert; natural
+extensions are to de-duplicate near-identical precedents and to flag when a retrieved cluster disagrees
+in direction.
 
 \section{Chapter Conclusions}
 \label{sec:investigator_summary}
 
 InvestiGator is a two-trigger, two-layer pipeline built from a few clear objects (a \emph{case}, the knowledge
 base, an anomaly result) and single-responsibility components, with explainability built in by rendering
-every alert directly from the system's own computation. The next chapter puts the two core components to the
-test on real data.
+every alert directly from the system's own computation, and an optional trained triage score, off by
+default and honestly labelled, layered on top. The next chapter puts the core components to the test on
+real data.

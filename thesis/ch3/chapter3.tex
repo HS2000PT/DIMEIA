@@ -349,7 +349,7 @@ as evidence, with the explicit caveat that it records what followed comparable p
 \emph{``Nvidia demand surges on AI chip orders''}; similarities and impacts are real and reproducible.}
 \label{tab:retrieval_worked}
 \centering
-\begin{tabular}{c c c p{0.44\textwidth}}
+\begin{tabular}{c c c p{0.38\textwidth}}
 \toprule
 \tabhead{Similarity} & \tabhead{+5-day impact} & \tabhead{Ticker / date} & \tabhead{Retrieved headline (excerpt)} \\
 \midrule
@@ -365,6 +365,47 @@ $0.38$ & $+4.9\%$  & NVDA, 2023-06-13 & Nvidia unveils new AI accelerator to ext
 {\footnotesize\emph{Note:} the mean is computed from the unrounded impacts, so it need not equal the
 average of the rounded values shown.}
 \end{table}
+
+\subsection{Materiality Triage: a Trained Severity Model}
+\label{sec:met_triage}
+
+\emph{What it is for:} to rank the incoming news stream, so that the user's limited attention goes to
+the headlines most likely to matter (Section~\ref{sec:sota_triage}), answering \gls{RQ}4.
+
+The unit is one (headline, ticker, event day) triple, where the event day $d$ is the first trading day
+on or after the news date, the same alignment rule the knowledge base uses. The label asks a deliberately
+direction-free question: did an abnormal move of unusual size follow? Formally, the example is
+\emph{material} when $|r^{\mathrm{tkr}}_{(d,\,d+h]} - r^{\mathrm{mkt}}_{(d,\,d+h]}| \ge \tau$, the
+ticker's return over the $h$ trading days after the event minus the market's (an index proxy), the
+market-adjusted outcome of Section~\ref{sec:sota_eventstudy}. The primary setting is $\tau = 2\%$ at
+$h = 3$; a sensitivity grid over $\tau \in \{1.5\%, 2\%, 3\%\}$ and $h \in \{1, 3, 5\}$ is reported so
+the conclusion does not hinge on one threshold. Labels are produced by the system's own event-study
+code; no manual annotation is involved.
+
+Features respect a strict timing convention, all computable at the close of day $d$, before the label
+window opens: the pre-event volatility (standard deviation of the twenty daily log-returns ending the
+day \emph{before} the event), the five-day momentum to the same point, the event-day return itself
+(known at the close of $d$), the headline length, a sector indicator, and the sentence embedding of the
+headline. A unit test enforces the convention by mutating prices \emph{after} the event window and
+asserting that no feature changes while the label does.
+
+Model families span the interpretability--capacity trade-off of Section~\ref{sec:sota_triage}: an
+always-alert floor, a volatility-only logistic regression (the strong naive rule any reviewer would ask
+about), logistic regressions on context features, text features, and both (the main interpretable
+model), and a gradient-boosted ensemble \autocite{friedman2001gbm} as the capacity ceiling. Scores are
+turned into honest probabilities by Platt scaling fitted on validation data only
+\autocite{niculescu2005calibration}. For explanations, the logistic regression's log-odds decompose into
+an exact additive sum of contributions; the embedding dimensions are grouped into a single ``headline
+content'' term so the message stays readable, and every score is delivered with the fixed clause
+\emph{``triage evidence, not a forecast''}.
+
+Deployment is deliberately conservative. The score enters the alert pipeline off by default, behind a
+configuration gate; the deployed variant uses context features only, so it runs on the light software
+stack, and the alert text names the variant used. Once live, every triage decision is logged, and a
+post-validation step later labels each matured decision with what actually happened, using the same
+label rule, yielding live precision and calibration monitoring and fresh training data. This is
+continual learning with delayed labels, not reinforcement learning: there is no action--environment
+feedback loop, because the system's alerts do not move the market.
 
 \subsection{Explanation Techniques}
 \label{sec:met_xai}
@@ -453,7 +494,28 @@ detector scored against an explicit \emph{extreme-move} proxy (a daily move at o
 percentile of that ticker's own returns), via precision, recall and $F_1$; because this proxy is itself
 volatility-relative, it is treated as supporting rather than primary evidence. An ablation over the
 estimation-window length completes the picture by exposing the detector's sensitivity to its one main
-parameter.
+parameter. Finally, the transparent rule is challenged by a \emph{learned} detector on equal terms: an
+Isolation Forest \autocite{liu2008isolation} trained causally on the same information (each day's return
+and the volatility of the twenty preceding days, fitted only on an initial past segment) is scored on the
+same evaluation region, so the choice of a statistical rule over a learned one is tested, not assumed.
+
+\subsection{Triage protocol}
+\label{sec:met_eval_triage}
+
+The materiality model of Section~\ref{sec:met_triage} is evaluated under a strict temporal protocol.
+Examples are split into training, validation and test blocks chronologically, by \emph{unique event day}
+(70/15/15), so that all headlines from one day land in the same block, and an embargo of several trading
+days is removed after each boundary so that no label window can straddle two blocks. Calibration is
+fitted on the validation block only; the test block is touched once, to report. The primary metric is
+the area under the precision--recall curve, whose floor is the test prevalence (an always-alert
+strategy); the area under the ROC curve and the Brier score complete the picture, and a product-shaped
+metric, precision within a budget of $N$ alerts per day, measures what the user actually experiences.
+The decisive comparison is against the volatility-only logistic regression: the learned model is claimed
+useful only where it beats that baseline, and the feature ablations (context only, text only, both)
+attribute any gain to its source. Sensitivity over the $\tau \times h$ label grid is reported alongside.
+Two further guarantees are pre-committed. Training is deterministic given the seed, and rerunning it
+reproduces the stored artefacts exactly. And the result is reported whichever way it falls: if the
+trained model fails to beat the volatility baseline on a given corpus, that finding stands as stated.
 
 \subsection{Explanation, scope, and rigour guarantees}
 \label{sec:met_eval_rigour}

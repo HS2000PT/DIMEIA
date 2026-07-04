@@ -188,12 +188,67 @@ universal. O z-score normaliza pela volatilidade recente, pelo que dispara a uma
 constante (~2%) em todos. Medimos a **amplitude** (máx−mín) da taxa entre tickers.
 
 **Resultado real (`docs/evaluation/evaluation_anomaly.md`, yfinance 3 anos, 15 tickers):** amplitude da taxa
-de disparo **z-score 0,017 vs limiar fixo 0,343** (20× mais consistente). Como suporte, contra um
-rótulo-proxy (movimento no percentil 99 por ticker): **F1 z-score 0,524 vs fixo 0,216**; ablação à
-janela: F1 sobe com a janela (10d 0,385 → 20d 0,524 → 60d 0,687).
+de disparo **z-score 0,015 vs limiar fixo 0,344** (>20× mais consistente). Como suporte, contra um
+rótulo-proxy (movimento no percentil 99 por ticker): **F1 z-score 0,516 vs fixo 0,218**; ablação à
+janela: F1 sobe com a janela (10d 0,385 → 20d 0,516 → 60d 0,678). *(Números congelados da corrida
+final — a mesma da tese.)*
 - **Como explico ao júri em 3 frases:** "Um limiar fixo em percentagem é injusto entre ações: numa
   volátil dispara a toda a hora, numa calma quase nunca. O meu z-score normaliza pela volatilidade
   recente, por isso deteta movimentos *invulgares para aquela ação*, com taxa de disparo estável.
-  Mostro isto pela amplitude da taxa entre tickers (0,02 vs 0,34) — não depende de nenhum rótulo."
+  Mostro isto pela amplitude da taxa entre tickers (0,015 vs 0,344) — não depende de nenhum rótulo."
 - **Caveat:** o rótulo-proxy é volatilidade-relativo como o z-score (alguma circularidade), por isso
   o argumento principal é a consistência da taxa, que **não** depende do rótulo.
+
+## 16. Triagem de materialidade — o modelo TREINADO (RQ4)
+**O que é:** um classificador supervisionado que responde a "esta notícia merece alerta?". Para cada
+(título, ticker, dia do evento) estima **P(segue-se um movimento anormal)** — anormal = |retorno do
+ticker − retorno do SPY| ≥ τ na janela (d, d+h] (primário: τ=2%, h=3). O rótulo vem do NOSSO event
+study (não há anotação manual). **Nunca prevê direção nem preço** — só se o mercado reagiu com
+tamanho invulgar, em qualquer direção.
+
+**Anti-lookahead (a pergunta nº 1 do júri):** todas as features usam só dados ≤ fecho do dia d:
+vol20 (desvio dos 20 retornos que TERMINAM em d−1), momentum 5d até d−1, retorno d−1→d (conhecido no
+fecho de d; a janela do rótulo só começa aí), comprimento do título, setor, embedding SBERT. Um teste
+unitário **muta os preços do futuro** e verifica que as features não mudam (e o rótulo sim).
+
+**Protocolo honesto:** split TEMPORAL por dias únicos (70/15/15) + embargo (nenhuma janela de rótulo
+atravessa blocos); **calibração de Platt** ajustada só na validação (sigmóide que transforma scores em
+probabilidades honestas — cito Niculescu-Mizil & Caruana 2005); métricas PR-AUC (principal; o chão é a
+prevalência = "alertar sempre"), ROC-AUC, Brier e **precisão@orçamento** (5 alertas/dia — mede a fadiga
+de alertas). A comparação decisiva é contra a **LR só-volatilidade**: o modelo só é útil onde a bate.
+6 famílias: alertar-sempre, LR-vol, LR-contexto, LR-texto, LR-completa (principal, interpretável),
+gradient boosting (Friedman 2001; teto de capacidade).
+- **Como explico ao júri em 3 frases:** "Treinei um classificador que estima a probabilidade de uma
+  notícia ser seguida por um movimento anormal — materialidade, não direção; os rótulos vêm do meu
+  próprio event study contra o SPY. O protocolo é temporal com embargo e calibração na validação, e um
+  teste unitário prova que nenhuma feature vê o futuro. Só confio no modelo onde ele bate a baseline
+  de só-volatilidade — e reporto o resultado seja ele qual for."
+- **XAI:** na LR, o logit é uma soma EXATA de contribuições por feature (as dimensões do embedding
+  agregadas em "conteúdo do título") — cada score vem com os fatores principais e a frase fixa
+  "Triage evidence, not a forecast."
+
+## 17. Estatístico vs APRENDIDO — Isolation Forest perde para o z-score (M4)
+**O que é:** desafiámos a nossa regra transparente com um detetor aprendido em igualdade: Isolation
+Forest causal (features = retorno do dia + vol20 anterior; treina nos primeiros 250 dias; nunca vê o
+futuro), avaliado na MESMA região que o z-score.
+
+**Resultado real:** o IF perde claramente — **F1 0,271 (P 0,159 / R 0,913) vs z-score 0,530 na mesma
+região**; e a taxa de disparo do IF varia entre tickers com amplitude **0,135 vs 0,015** do z-score
+(falha o requisito de consistência que motivou o desenho).
+- **Como explico ao júri em 3 frases:** "Não assumi que a regra estatística era melhor — testei-a
+  contra um Isolation Forest com a mesma informação e sem lookahead. O modelo aprendido teve F1 de
+  0,27 contra 0,53 do z-score e disparou de forma muito menos consistente entre ações. A comparação
+  é que valida a escolha: com informação idêntica, o detetor interpretável foi não só mais simples
+  como melhor."
+
+## 18. Loop de pós-validação — a forma defensável do "reinforcement learning"
+**O que é:** o runner regista cada decisão de triagem (probabilidade, gate, mantida/suprimida) em
+`data/predictions_log.jsonl`; dias depois, `scripts/post_validate.py` rotula cada decisão **maturada**
+(a janela (d, d+3] já fechou) com o que REALMENTE aconteceu — a mesma regra do treino — e escreve
+métricas ao vivo (precisão das mantidas vs base rate, Brier, calibração) + a receita de retreino.
+É **aprendizagem contínua com rótulos atrasados + monitorização (MLOps)** — não é RL clássico.
+- **Como explico ao júri em 3 frases:** "As decisões de hoje são validadas com a realidade de daqui a
+  três dias: registo cada decisão e, quando a janela fecha, comparo com o que aconteceu de facto.
+  Isso dá-me precisão e calibração ao vivo e dados novos para retreinar. Não é reinforcement learning
+  clássico porque não há ciclo ação-ambiente — os meus alertas não movem o mercado; é aprendizagem
+  contínua com rótulos atrasados."

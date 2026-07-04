@@ -4,6 +4,7 @@
 > (+ `CHECKLIST.md` + `CLAUDE.md`), sem depender de nenhum chat aberto.
 > Proposta ao orientador: [docs/internal/proposta_ml_orientador.md](../docs/internal/proposta_ml_orientador.md).
 > **Regra de ouro: o texto da tese só muda depois do OK do Prof. Luís Gomes (gate M7).**
+> ✅ **GATE ABERTO em 2026-07-04:** o orientador deu o OK a tudo (confia no aluno; está de férias).
 
 ---
 
@@ -73,7 +74,7 @@ volatilidade, reporta-se na mesma (o contributo metodológico mantém-se).
       download (~3,4 h) → limpa a cache de preços (era 2026) → dataset (embargo 5) → retreino SBERT;
       log em `data/fnspid_overnight.log`. **HUMANO: deixar a correr uma noite** (stack `--ml`).
       Na manhã seguinte: testes verdes + commit dos modelos/docs/figuras regenerados.
-- [ ] **M7** — **Tese e materiais (GATED no OK do orientador):** RQ4 no Cap. 1; Cap. 2 fundamentação curta
+- [ ] **M7** — **Tese e materiais (gate ABERTO 2026-07-04 — OK do orientador):** RQ4 no Cap. 1; Cap. 2 fundamentação curta
       (event study com ajuste de mercado; materialidade — citações verificadas como as 50 existentes);
       Cap. 3 secção (tarefa/rótulos/protocolo/ameaças); Cap. 4 componente + figuras; Cap. 5 estudo;
       Cap. 6 veredicto RQ4; abstract. Depois: paper, slides de defesa, **guia de estudo** (novas partes

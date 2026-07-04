@@ -303,6 +303,37 @@ evidence. It stops before \emph{revise}, so it never turns evidence into a predi
 \textbf{For InvestiGator:} naming the engine as CBR shows it is a recognised paradigm, not ad hoc, and its
 ``this resembles these past cases'' explanations are naturally intelligible to a non-expert.
 
+\section{Learned Alert Triage: Supervised Materiality Classification}
+\label{sec:sota_triage}
+
+\emph{When dozens of headlines arrive in a day, which ones deserve an alert?}
+
+Retrieval answers ``what does this resemble?'', and the event study answers ``what followed similar
+news?''. Neither ranks the incoming stream. That is a \emph{triage} problem, and it can be posed as
+supervised classification without breaking the no-forecast rule: estimate the probability that an
+\emph{abnormal move of unusual size, in either direction}, follows a news item, where the label is
+produced by the system's own event-study measurement, the market-adjusted return of
+\textcite{brown1985daily} against an index proxy. The target is \emph{materiality}, whether the market
+reacted at all, never the direction or magnitude of a price path, so the task sits deliberately on the
+defensible side of the efficient-market line drawn earlier in this chapter.
+
+Two model families cover the interpretability--capacity trade-off. Logistic regression is the
+transparent choice: with standardised inputs, its log-odds are an exact additive sum of per-feature
+contributions, which is precisely the kind of inherently interpretable model that
+\textcite{rudin2019stop} argues should be preferred when explanations matter. Gradient-boosted decision
+ensembles \autocite{friedman2001gbm} are the stronger nonlinear learner and serve as the ceiling the
+interpretable model is compared against. For an end user, the score is only honest if it is a
+\emph{probability}: raw classifier scores are typically miscalibrated, and post-hoc calibration, such as
+fitting a sigmoid on held-out validation data (Platt scaling), corrects this
+\autocite{niculescu2005calibration}. Under class imbalance, evaluation uses the area under the
+precision--recall curve rather than accuracy, together with a budget-shaped precision (how many of the
+$N$ alerts a user can absorb per day were material), which measures exactly the alert-fatigue cost the
+triage exists to reduce.
+
+\textbf{For InvestiGator:} triage adds a \emph{trained} severity score on top of the transparent pipeline,
+ranked and gated per day, explained by its additive contributions, calibrated on validation data, and
+always compared against a volatility-only baseline before it is allowed to matter.
+
 \section{Existing Tools for the Retail Investor}
 \label{sec:sota_tools}
 
@@ -325,7 +356,7 @@ positions all three against InvestiGator.
 \caption{Existing retail tools versus the system proposed in this work.}
 \label{tab:sota_tools}
 \centering
-\begin{tabular}{p{0.20\textwidth} p{0.20\textwidth} p{0.16\textwidth} p{0.16\textwidth} p{0.13\textwidth}}
+\begin{tabular}{p{0.24\textwidth} p{0.18\textwidth} p{0.16\textwidth} p{0.16\textwidth} p{0.11\textwidth}}
 \toprule
 \tabhead{Tool} & \tabhead{What it does} & \tabhead{Explains why?} & \tabhead{Shows precedents?} & \tabhead{Acts for user?} \\
 \midrule

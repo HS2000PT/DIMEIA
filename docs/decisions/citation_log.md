@@ -90,6 +90,17 @@
 | `engle1982arch` | Engle (1982), "Autoregressive Conditional Heteroscedasticity...", Econometrica 50(4):987–1007 | DOI 10.2307/1912773 | 2026-06-26 | Crossref (DOI resolve) | ✅ verificado |
 | `bollerslev1986garch` | Bollerslev (1986), "Generalized Autoregressive Conditional Heteroskedasticity", J. Econometrics 31(3):307–327 | DOI 10.1016/0304-4076(86)90063-1 | 2026-06-26 | Crossref (DOI resolve) | ✅ verificado |
 
+## Triagem de materialidade — RQ4 (Caps. 2–3, M7) — verificadas (2026-07-04)
+| Chave .bib | Referência | Identificador | Verificado em | Fonte | Estado |
+|---|---|---|---|---|---|
+| `friedman2001gbm` | Friedman (2001), "Greedy Function Approximation: A Gradient Boosting Machine", Annals of Statistics 29(5):1189–1232 | DOI 10.1214/aos/1013203451 | 2026-07-04 | Crossref (título/autor/vol/issue confirmados) | ✅ verificado |
+| `niculescu2005calibration` | Niculescu-Mizil & Caruana (2005), "Predicting Good Probabilities with Supervised Learning", Proc. ICML '05:625–632 | DOI 10.1145/1102351.1102430 | 2026-07-04 | Crossref (título/autores/páginas confirmados) | ✅ verificado |
+
+> Nota: a calibração implementada é a de Platt (sigmóide ajustada na validação). O artigo original de
+> Platt (1999, "Probabilistic Outputs for Support Vector Machines…") não tem DOI resolúvel (capítulo de
+> livro MIT Press) — pela regra deste log (ver MacKinlay), cita-se `niculescu2005calibration`, que avalia
+> exatamente o método de Platt, e o método é descrito por extenso no texto.
+
 ## Rejeitadas / não verificáveis (NÃO usar)
 | Referência | Motivo | Data |
 |---|---|---|

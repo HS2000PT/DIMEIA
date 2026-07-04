@@ -77,7 +77,7 @@ which answers with an explained alert the investor can follow and check, not jus
 
 The aim is to design, build and evaluate an explainable financial-alert system for US retail investors,
 driven by two independent triggers, a sudden market move and an incoming news item, and delivered over
-Telegram. Three research questions guide the work:
+Telegram. Four research questions guide the work:
 
 \begin{itemize}
   \item \textbf{\gls{RQ}1.} Can transparent statistical methods detect abrupt market movements
@@ -87,14 +87,18 @@ Telegram. Three research questions guide the work:
         without lookahead?
   \item \textbf{\gls{RQ}3.} Can the resulting explanations be made faithful to what the system actually
         computes, and useful to a retail investor?
+  \item \textbf{\gls{RQ}4.} Can a supervised model, trained on historical news and market context,
+        usefully prioritise which news items deserve an alert, beyond simple volatility baselines,
+        while never predicting price direction?
 \end{itemize}
 
-These questions map onto four concrete objectives:
+These questions map onto five concrete objectives:
 \begin{itemize}
   \item build an explainable alerting pipeline driven by the two triggers;
   \item evaluate the anomaly detector against transparent baselines;
   \item evaluate the retrieval of historical news against trivial baselines;
-  \item assess whether the explanations are faithful and useful.
+  \item assess whether the explanations are faithful and useful;
+  \item train, calibrate and honestly evaluate a materiality-triage model that ranks news alerts.
 \end{itemize}
 The system is built incrementally, in its simplest defensible form first, a methodological choice
 explained in Chapter~\ref{chap:methods}.
@@ -104,7 +108,7 @@ explained in Chapter~\ref{chap:methods}.
 
 This is a dissertation in Artificial Intelligence \emph{Engineering}: the contribution is not a new
 algorithm but the disciplined assembly of existing ones into a system that works, explains itself, and can
-be reproduced. Three contributions stand out:
+be reproduced. Four contributions stand out:
 
 \begin{itemize}
   \item A reproducible method for relating news to market impact, pairing sentence-embedding retrieval
@@ -114,6 +118,10 @@ be reproduced. Three contributions stand out:
         supporting evidence, the sources, and the relevant historical precedents. Because each explanation
         is built directly from the quantities the system computes, the text cannot drift from the
         computation.
+  \item A trained and calibrated \emph{materiality-triage} model: supervised learning over historical
+        news and market context that estimates how often news with a given profile was followed by an
+        abnormal move, labelled by the system's own event-study code, evaluated against a volatility
+        baseline, and integrated into the alerts as ranked, explained evidence rather than a forecast.
   \item A critical, honest evaluation of each core component on real data, against simple and lexical
         baselines, with the results, the ablations and the limitations all reported plainly.
 \end{itemize}

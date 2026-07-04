@@ -26,7 +26,8 @@
 > fixado, fases, dados, áreas de IA incl. a tradução honesta do "RL" do aluno). Proposta ao orientador:
 > [docs/internal/proposta_ml_orientador.md](docs/internal/proposta_ml_orientador.md).
 > **Regra:** o texto da tese só muda depois do OK do Prof. Luís Gomes (M7).
-- [ ] **HUMANO: enviar a proposta ao Prof. Luís Gomes** (email; o ficheiro acima é o corpo).
+- [x] **HUMANO: proposta ao Prof. Luís Gomes** — **OK dado em 2026-07-04** (o orientador confia no
+      aluno e deu luz verde a tudo; está de férias). **Gate do M7 ABERTO.**
 - [x] M1 — Rótulos (retorno anormal vs SPY) + `scripts/build_dataset.py` + testes anti-lookahead.
 - [x] M2 — `src/triage/` + `scripts/train_triage.py` (LR + GBM, split temporal, calibração, seeds).
       *(Ablação sentimento FinBERT: hook desenhado, adiada para M6 — só entra se ajudar na validação.)*
