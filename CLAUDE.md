@@ -7,7 +7,7 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 29 (**WORKSTREAM ML 100% COMPLETO: M0–M7** + continuação: **PLANO FINAL P1–P2 FEITOS**)
+- **Sessão nº:** 29 (**WORKSTREAM ML 100% COMPLETO: M0–M7** + continuação: **PLANO FINAL P1–P4 COMPLETO**)
 - **Última atualização:** 2026-07-05 (continuação da mesma sessão, após /compact)
 - **🎯 PLANO FINAL (as 4 frentes pós-ML)** — o aluno pediu "fazer TUDO": polimento da escrita da tese,
   rename `src/`→`investigator/`, KB FNSPID multi-ano e S-APP Fase B, pela ordem que fizesse mais sentido.
@@ -31,7 +31,32 @@
   linhas que descrevem o próprio rename preservadas como `src/`→`investigator/`). Validação: **93
   testes + ruff verdes; demo reproduz +6,46%; guia recompila 63 slides 0 erros**. Caderno: mapa do
   repo ganhou `models/`+`app/` e "14 frames"→16.
-  **SEGUE-SE:** P3 (KB FNSPID multi-ano — artefacto local, números da tese intocados) e P4 (S-APP Fase B).
+  **P3 FEITO (commit `f6553a2` — KB de retrieval FNSPID multi-ano como ARTEFACTO local):** build
+  destacado (`run/kb-fnspid.cmd` + tarefa VS Code; log `data/kb_build.log`; HF offline) →
+  **79.753 registos** SBERT 384-d em `data/kb_fnspid_sbert.jsonl` (~691 MB, gitignored); amostra de
+  50 em `data/samples/kb_fnspid_sample.jsonl` — caminho NOVO de propósito (o `--sample` por defeito
+  esmagaria a `kb_sample.jsonl` da demo/tese, dim 384≠64). Validação honesta em
+  `docs/evaluation/kb_fnspid_build.md`: 14/15 tickers (META="FB"), 2023=44%, impactos ±1/3d
+  completos, **200 registos (0,25%) com +5d=NaN** (fim da janela de preços, documentado); consultas
+  AI/Fed/recalls devolvem os clusters certos (sim 0,62–0,85, cross-ticker OK). **Consumo:** produção
+  na nuvem fica na stack leve (números da tese e deploy INTOCADOS); avaliação de retrieval multi-ano
+  continua trabalho futuro (Cap. 6), agora com a base pronta. Data card atualizado.
+  **P4 FEITO (S-APP Fase B — bot interativo SEM servidor):** decisão-chave = **long-polling**
+  (getUpdates) em vez de webhook → grátis, sem host, atrás de NAT. Novo:
+  `investigator/telegram_bot/{store,commands,interactive}.py` (lógica pura separada do transporte;
+  SQLite stdlib em `data/bot_users.db` gitignored), `scripts/run_bot.py`, `run/bot.bat`, tarefa
+  VS Code "Bot interativo"; comandos `/start /watch /unwatch /list /stop /help`. Runner: scanners
+  devolvem (ticker, texto) e `_fanout_safe` distribui por subscritor — **`bot.enabled` no
+  alerts.yaml, off por defeito, fail-open provado** (sem base → "fan-out saltado"; dry-run por
+  defeito = comportamento de sempre, verificado ao vivo). Produto responsável: limite 20
+  tickers/utilizador, `/stop` reversível, validação sintática de tickers, moldura "evidência do
+  passado, nunca previsão". **10 testes novos → 103 no total** (todos offline); app Home com
+  expander "Get the alerts on your phone" + métrica 103; README 103; going_live.md Fase B
+  ✅ CONSTRUÍDA (webhook/host = evolução futura); how_to_run §2.5.
+  **PLANO FINAL P1–P4: COMPLETO.** Restam APENAS os cliques humanos do CHECKLIST (app pública no
+  Streamlit; licença + declaração ISEP com o Prof. Luís Gomes; leitura final; a 08-09/07 correr
+  `python scripts/post_validate.py`; opcional renomear o repo GitHub). Para o bot ao vivo: correr
+  `scripts/run_bot.py` numa máquina + `bot.enabled: true` no alerts.yaml.
 - **🤖 WORKSTREAM ML (RQ4) — M0–M6 + M7-TESE COMPLETOS.** Gate aberto pelo orientador (2026-07-04; confia no aluno, de férias). **M6 FEITO (madrugada de 05/07, processo destacado):** FNSPID 2018–2023 → **79.753 exemplos** (1.501 dias únicos, 0 descartes; **14/15 tickers** — META="FB" no corpus, reportado; positivos 38,5/47,0/37,8% — sem regime shift; densidade cresce: 2023=44% das linhas); retreino SBERT com HF_HUB_OFFLINE=1 (o hub falhou com o modelo em cache — 1.ª tentativa de retreino morreu nisso). **RESULTADO FINAL (teste, prevalência 0,378):** PR-AUC **vol 0,542** > contexto 0,538 > full 0,496 > GBM 0,469 > texto 0,439 > sempre 0,378 ⇒ **nenhum modelo com texto bate a volatilidade** (pré-comprometido, reportado tal como é); **MAS precisão@5/dia 0,632 vs 0,163** (quase 4×), Brier 0,218 vs 0,622 ⇒ triagem vale como mecanismo. 2.ª comparação "aprendido vs simples" ganha pela escolha transparente (1.ª = IF vs z-score). **M7-TESE FEITA:** RQ4 de ponta a ponta — Ch1 (RQ4+objetivo+contribuição), Ch2 (secção triagem; 52/52 citações verificadas), Ch3 (modelo+protocolo+data card FNSPID atualizado), Ch4 (componente+decision logic+deploy honesto), Ch5 (**Case Study 4** com tabela/figuras + IF no CS1 + "four studies"), Ch6 (veredicto RQ4 "No on the text hypothesis; yes on the mechanism" + 4 contribuições + limitações/futuro), abstract EN 197≤200 + resumo PT. **Compila 74 pp, 0 erros, 0 cit. indefinidas, overfull máx 12pt; 93 testes + ruff verdes.** learning.md §16 com números finais. **M7-MATERIAIS FEITOS (05/07):** paper IEEE **4 pp** (+2 refs; subsecção "Materiality triage"; abstract/related/system/discussão/conclusão), slides de defesa **16 frames** (+RQ4 no frame das perguntas, +frame "Result 4", limitações/conclusões atualizadas, +3 perguntas de júri sobre triagem/lookahead/RL), guia de estudo **63 slides** (+3 frames que ENSINAM a triagem do zero — tarefa/rótulo/split/calibração/métricas/resultado + loop de pós-validação; slide "o que usa/NÃO usa" corrigido: JÁ treina um modelo, deep learning continua fora), caderno de defesa (§5 secção RQ4 completa + 5 linhas novas no mapa de números + 4 perguntas de júri novas incl. "o vosso modelo perdeu — é um fracasso?"), app (métricas 93✓/52/52; "trains no model" corrigido para "one model trained by the author") e README (93 testes, 52 refs, ~74 pp, layout com models/ e investigator/triage/). Page-audit estendido (secção "Extensão M7"). Tudo compila 0 erros; 93 testes + ruff verdes. **O workstream ML está 100% fechado (M0–M7).** Loop M5.5 armado (3 decisões reais pendentes maturam ~08-09/07 → `python scripts/post_validate.py`).**
   Plano-mestre multi-dispositivo: **`progress/ML_PLAN.md`** (caixas de estado no §3). Feito: dataset com
   rótulos anti-lookahead (testado por mutação do futuro), 6 famílias treinadas com SBERT real, calibração

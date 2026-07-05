@@ -128,6 +128,19 @@ precedents, text = run_news_trigger(
 
 ---
 
+## 2.5 Bot interativo — watchlist pessoal por utilizador (Fase B)
+
+```bash
+./.venv/Scripts/python.exe scripts/run_bot.py    # ou duplo-clique em run/bot.bat
+```
+Requer `TELEGRAM_BOT_TOKEN` no `.env`. Enquanto corre (long-polling, sem servidor), qualquer
+pessoa pode falar com o bot: `/start`, `/watch TSLA`, `/unwatch TSLA`, `/list`, `/stop`.
+Subscrições em `data/bot_users.db` (SQLite, gitignored). Para o runner agendado distribuir os
+alertas por subscritor: `bot.enabled: true` no `config/alerts.yaml` (fail-open — sem base ou
+sem a flag, comportamento de sempre). Detalhes e evolução (webhook/host): `going_live.md`, Fase B.
+
+---
+
 ## 3. Recolher notícias ao vivo (Finnhub) — opcional
 
 ```bash

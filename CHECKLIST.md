@@ -48,7 +48,7 @@
       +Result 4 + 3 perguntas de júri), guia de estudo (63 slides, +3 frames que ensinam a triagem do
       zero + slide "o que usa" corrigido), caderno (§5 RQ4 + mapa de números + 4 perguntas), app/README
       (93 testes, 52/52, claim "trains no model" corrigido), page-audit estendido.
-- [ ] (futuro) S-APP — sessão dedicada: app + comandos/config do Telegram para utilizadores (Fase B).
+- [x] S-APP — FEITA como P4 do plano final (ver secção seguinte).
 
 ## 🎯 EM CURSO — as 4 frentes finais (plano: [progress/PLANO_FINAL.md](progress/PLANO_FINAL.md))
 > Ordem decidida em 2026-07-05 (pedido do aluno: "fazer tudo"): P1 polimento da escrita da tese →
@@ -59,7 +59,9 @@
       probe idêntico, docs sincronizados; 93 testes + ruff + demo verdes).
 - [x] P3 — KB de retrieval FNSPID 2018–2023 FEITA (79.753 registos SBERT, ~691 MB local; validação
       em docs/evaluation/kb_fnspid_build.md; números da tese e deploy intocados).
-- [ ] P4 — S-APP Fase B (Telegram interativo por utilizador + UX da app).
+- [x] P4 — S-APP Fase B FEITA (bot long-polling sem servidor: /start /watch /unwatch /list /stop;
+      SQLite; fan-out no runner off por defeito e fail-open; 10 testes novos → 103; app com
+      secção "alerts no telemóvel"). Ligar: scripts/run_bot.py + bot.enabled no alerts.yaml.
 
 ## ⏳ A fazer — EU (humano; ninguém pode fazer por ti)
 ### Pôr o sistema 24/7 ao vivo (grátis) — ver [docs/design/going_live.md](docs/design/going_live.md)
@@ -101,8 +103,8 @@
 ---
 
 ## 🚀 Trabalho futuro (pós-submissão, opcional)
-- [ ] Onboarding self-service no **Telegram** (webhooks + utilizadores em SQLite + `/start`, `/watch`…).
+- [x] Onboarding self-service no **Telegram** — FEITO (P4; long-polling + SQLite; webhook/host = evolução).
 - [ ] Alojamento **24/7 na nuvem** (Fly.io / Render / Oracle Free).
 - [ ] **Multi-mercado** (registo de bolsas + calendários).
-- [ ] Construir a **KB FNSPID** multi-ano completa (o pipeline de streaming já existe).
+- [x] Construir a **KB FNSPID** multi-ano — FEITA (P3; 79.753 registos; avaliação multi-ano = futuro).
 - [ ] Estudo de **utilidade com humanos** (confiança apropriada).

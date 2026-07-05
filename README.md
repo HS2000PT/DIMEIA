@@ -78,7 +78,7 @@ The interactive per-user bot (users DM `/watch TSLA`) is designed there as a lat
 
 ## Project status
 **Validated and submission-ready (pending human sign-off).** Both triggers are proven end to end;
-**93 automated tests** + lint green. The core components — including a **materiality-triage model trained
+**103 automated tests** + lint green. The core components — including a **materiality-triage model trained
 by the author** on 79,753 multi-year FNSPID examples (RQ4; triage evidence, never a forecast) — are
 evaluated on **real data**, and the statistics reproduce exactly from versioned scripts. The **six-chapter
 dissertation** compiles cleanly (`thesis/main.pdf`, ~76 pp, 0 errors), with **52 references each verified by
@@ -119,7 +119,7 @@ CITATION.cff   how to cite this work    requirements.txt (light) / requirements-
   (`requirements.txt`) — enough for the demo, the tests and the evaluations. The heavy ML stack (`torch` CPU,
   `sentence-transformers`, in `requirements-ml.txt`) is needed only for the real SBERT paths and installs with
   `bash scripts/setup_env.sh --ml` (it pulls `torch` from the PyTorch CPU index, not PyPI).
-- Verification loop: `bash scripts/verify.sh` (93 tests + lint + LaTeX note).
+- Verification loop: `bash scripts/verify.sh` (103 tests + lint + LaTeX note).
 - Secrets live only in a local, gitignored `.env` (see `.env.example` for variable names).
 - LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push.
 

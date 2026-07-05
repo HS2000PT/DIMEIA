@@ -77,18 +77,30 @@ Varre a watchlist com preços ao vivo e **imprime** os alertas (não envia). Cor
 
 ---
 
-## Fase B — bot interativo por utilizador (mais tarde; precisa de servidor)
-Quando quiseres que **cada pessoa fale com o bot** e escolha os seus próprios tickers (`/start`,
-`/watch TSLA`, `/unwatch`, `/stop`), o bot tem de **ouvir** mensagens → aí sim precisa de um **host sempre
-ligado** + uma **base de dados** de utilizadores.
-- **Host grátis (Student Pack):** Fly.io / Render (free), **DigitalOcean** ($200/ano de crédito),
-  **Azure** ($100), **Heroku** ($13/mês × 24 meses).
-- **Utilizadores:** SQLite (num volume pequeno) ou **MongoDB Atlas** (free tier / $50 de crédito).
-- **Biblioteca:** `python-telegram-bot` (webhook). Rate-limit por chat; segredos no cofre do host.
-- **Reutiliza** o que já existe: `send_message` → `send_to(chat_id, text)`; a lógica de varredura da Fase A;
-  um agendador (APScheduler no host, ou manter o cron do GitHub) a distribuir por subscritores.
-- **Produto responsável:** limitar frequência/severidade (fadiga de alertas), validar tickers, nunca
-  ecoar segredos.
+## Fase B — bot interativo por utilizador ✅ CONSTRUÍDA (versão sem servidor)
+
+**Já funciona, de graça e sem host** (P4 do `progress/PLANO_FINAL.md`): o bot usa *long-polling*
+(`getUpdates`), por isso corre em qualquer máquina atrás de NAT — não precisa de webhook nem de
+servidor público.
+
+**Como ligar (2 passos):**
+1. `python scripts/run_bot.py` (ou duplo-clique em `run/bot.bat`, ou a tarefa VS Code
+   "Bot interativo"). Requer `TELEGRAM_BOT_TOKEN` no `.env`. Qualquer pessoa pode então falar com
+   o bot: `/start`, `/watch TSLA`, `/unwatch TSLA`, `/list`, `/stop`, `/help`. As subscrições
+   ficam em `data/bot_users.db` (SQLite, stdlib, gitignored).
+2. Em `config/alerts.yaml`, põe `bot.enabled: true` — o runner agendado passa a entregar cada
+   alerta TAMBÉM aos subscritores desse ticker (fan-out **fail-open**: sem base ou com erro, o
+   runner comporta-se como sempre, só canal).
+
+**Produto responsável (implementado):** limite de 20 tickers por utilizador (fadiga de alertas),
+validação sintática dos tickers, `/stop` reversível (pausa sem apagar a watchlist), respostas
+sempre com a moldura "evidência do passado, nunca previsão"; nenhum segredo sai do `.env`.
+
+**Evolução futura (quando houver host):** webhook em vez de polling num host do Student Pack
+(Fly.io/Render/DigitalOcean $200, Azure $100), a mesma base SQLite num volume pequeno (ou
+MongoDB Atlas free) e um agendador no host (APScheduler) — o código atual já separa a
+interpretação pura dos comandos (`investigator/telegram_bot/commands.py`) do transporte, por
+isso a troca polling→webhook não mexe na lógica.
 
 ---
 

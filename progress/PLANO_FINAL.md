@@ -51,11 +51,17 @@
 - [x] Gate: números da tese intocados (demo continua a reproduzir +6,46%); testes verdes.
 
 ### P4 — S-APP — Fase B (Telegram interativo + app UX)
-- [ ] Desenho fino a partir de `going_live.md` Fase B: `/start`, `/watch`, `/unwatch`, `/list`,
-      utilizadores em SQLite, webhook vs polling, host grátis (Student Pack) — decidir o mínimo defensável.
-- [ ] Implementação incremental com testes; segredos só em `.env`/Actions.
-- [ ] UX da app (Streamlit): melhorias da lista de polimento que fizerem sentido.
-- [ ] Runbook atualizado; CHECKLIST com os cliques humanos.
+- [x] Decisão: **long-polling** em vez de webhook (funciona sem servidor/host, de graça, atrás de
+      NAT); utilizadores em **SQLite stdlib** (`data/bot_users.db`, gitignored); webhook/host fica
+      documentado como evolução (o transporte está separado da lógica pura).
+- [x] Implementado: `investigator/telegram_bot/{store,commands,interactive}.py` +
+      `scripts/run_bot.py` + `run/bot.bat` + tarefa VS Code; runner com fan-out por subscritor
+      (`bot.enabled` no alerts.yaml, off por defeito, fail-open provado); **10 testes novos**
+      (store/comandos/parsing, offline) → 103 no total; segredos só no `.env`.
+- [x] UX da app: expander "Get the alerts on your phone" na Home (canal + bot, moldura honesta);
+      métrica de testes 93→103.
+- [x] Runbook: going_live.md Fase B marcada CONSTRUÍDA (2 passos para ligar) + how_to_run §2.5;
+      produto responsável implementado (limite 20 tickers, /stop reversível, validação de tickers).
 
 ## Guardrails (herdados, sempre em vigor)
 Zero fabricação; números validados nunca editados à mão; sem previsão de preço/direção; só compute

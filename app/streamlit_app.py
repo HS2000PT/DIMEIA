@@ -100,9 +100,21 @@ Use the sidebar to try each trigger, explore the evaluation, or read how it work
         """
     )
     c1, c2, c3 = st.columns(3)
-    c1.metric("Automated tests", "93 ✓")
+    c1.metric("Automated tests", "103 ✓")
     c2.metric("Verified citations", "52 / 52")
     c3.metric("Price predictions made", "0 (by design)")
+
+    with st.expander("📱 Get the alerts on your phone (free)"):
+        st.markdown(
+            """
+- **Channel:** join the Telegram channel the scheduled scan posts to (one alert per anomalous
+  ticker per day, after US close).
+- **Personal watchlist (bot):** when the operator runs the interactive bot
+  (`python scripts/run_bot.py`), talk to it on Telegram — `/watch TSLA`, `/list`, `/stop` —
+  and the scan also delivers *your* tickers to you. Subscriptions stay in a local SQLite file.
+- Everything explains **past evidence** (z-score, precedents). No forecasts, no advice.
+            """
+        )
 
 
 def _render_severity(ticker: str, headline: str) -> None:

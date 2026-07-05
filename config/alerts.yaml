@@ -25,3 +25,11 @@ news:
   # leve) e só é enviado se P(movimento anormal) ≥ min_materiality; a linha de materialidade
   # passa a acompanhar o alerta. null = desligado (comportamento de sempre, sem modelo).
   min_materiality: null
+
+# Fase B (opcional; off por defeito): distribuir os alertas TAMBÉM por subscritor do bot
+# interativo. Os utilizadores registam-se falando com o bot (/start, /watch TSLA) enquanto
+# `python scripts/run_bot.py` estiver a correr (long-polling; não precisa de servidor).
+# Sem base de subscritores, ou com enabled: false, o runner comporta-se como sempre (só canal).
+bot:
+  enabled: false
+  # db: data/bot_users.db   # caminho da base (defeito; gitignored)

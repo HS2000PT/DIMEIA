@@ -50,6 +50,19 @@
       }
     },
     {
+      "label": "Bot interativo (Fase B) — /watch /list /stop",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "args": [
+        "scripts/run_bot.py"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Tests",
       "type": "process",
       "command": "${workspaceFolder}/.venv/Scripts/python.exe",

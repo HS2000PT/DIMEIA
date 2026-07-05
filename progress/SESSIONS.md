@@ -32,8 +32,28 @@ Reflow legítimo 74→76 pp (densidade verificada página a página — sem pág
   como `src/`→`investigator/`. Caderno: mapa do repo ganhou `models/`+`app/` e "14 frames"→16.
 - **Validação:** 93 testes + ruff verdes; demo reproduz +6,46%; guia recompila (63 slides, 0 erros).
 
-**Segue-se:** P3 (KB de retrieval FNSPID 2018–2023 — artefacto local; números da tese intocados) e
-P4 (S-APP Fase B).
+**P3 — KB de retrieval FNSPID multi-ano (commit f6553a2):** build destacado (`run/kb-fnspid.cmd`,
+log `data/kb_build.log`, HF offline) → **79.753 registos** SBERT 384-d (~691 MB, gitignored);
+amostra de 50 num caminho NOVO (o `--sample` por defeito esmagaria a `kb_sample.jsonl` da
+demo/tese com dim 384≠64 — armadilha apanhada antes de disparar). Validação honesta em
+`docs/evaluation/kb_fnspid_build.md`: 14/15 tickers (META="FB"), impactos ±1/3d completos,
+**200 registos (0,25%) com +5d=NaN** (fim da janela — documentado), consultas AI/Fed/recalls
+devolvem os clusters certos (sim 0,62–0,85). Consumo: produção fica na stack leve; números da
+tese e deploy intocados; avaliação multi-ano continua futuro (Cap. 6), agora com a base pronta.
+
+**P4 — S-APP Fase B (bot interativo, sem servidor):** decisão-chave = **long-polling** (getUpdates)
+em vez de webhook → corre em qualquer máquina, grátis, sem host; utilizadores em SQLite stdlib
+(`data/bot_users.db`). Novo: `investigator/telegram_bot/{store,commands,interactive}.py` (lógica
+pura separada do transporte), `scripts/run_bot.py`, `run/bot.bat`, tarefa VS Code; runner ganha
+fan-out por subscritor (`bot.enabled` no alerts.yaml, **off por defeito, fail-open provado** —
+sem base: "fan-out saltado", nunca vermelho). Produto responsável: limite 20 tickers, /stop
+reversível, validação sintática, moldura "evidência, nunca previsão". **10 testes novos → 103
+no total**; app Home com "Get the alerts on your phone" e métrica 103; going_live.md Fase B
+marcada CONSTRUÍDA; how_to_run §2.5. Dry-run do runner com config por defeito = comportamento
+de sempre (verificado).
+
+**PLANO FINAL P1–P4: COMPLETO.** Restam os cliques humanos do CHECKLIST (app pública no
+Streamlit, licença/declaração com o orientador, leitura final, post_validate a 08-09/07).
 
 ## Sessão 29 — 2026-07-03/04 — WORKSTREAM ML: o aluno passa a ter modelos TREINADOS (M0–M5)
 **Objetivo:** responder à preocupação do aluno ("não posso só aplicar; tenho de mostrar engenharia de

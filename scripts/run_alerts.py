@@ -54,8 +54,8 @@ def build_market_alerts(results: list[tuple[str, object]]) -> list[str]:
     return [explain_anomaly(ticker, res) for ticker, res in results if res.is_anomaly]
 
 
-def scan_market(cfg: dict) -> list[str]:
-    """Busca preços de cada ticker, deteta anomalias e devolve os textos de alerta."""
+def scan_market(cfg: dict) -> list[tuple[str, str]]:
+    """Busca preços de cada ticker, deteta anomalias e devolve pares (ticker, texto de alerta)."""
     from investigator.anomaly_detector.detector import detect_latest
     from investigator.market_data.prices import get_price_history, log_returns
 
@@ -71,7 +71,9 @@ def scan_market(cfg: dict) -> list[str]:
             results.append((ticker, detect_latest(returns, window=window, threshold=threshold)))
         except Exception as exc:  # noqa: BLE001  (um ticker/rede a falhar não pode parar a varredura)
             print(f"[saltar {ticker}] {type(exc).__name__}: {exc}")
-    return build_market_alerts(results)
+    # Mesmo filtro e mesma ordem de build_market_alerts (puro, testado) → zip alinha por construção.
+    tickers_anomalos = [t for t, r in results if r.is_anomaly]
+    return list(zip(tickers_anomalos, build_market_alerts(results), strict=True))
 
 
 def apply_materiality(text: str, scored: tuple | None, gate: float) -> str | None:
@@ -92,8 +94,8 @@ def apply_materiality(text: str, scored: tuple | None, gate: float) -> str | Non
     return text + "\n" + materiality_line(prob, contribs)
 
 
-def scan_news(cfg: dict) -> list[str]:
-    """Opcional: notícias recentes por ticker -> precedentes (best-effort, pode repetir)."""
+def scan_news(cfg: dict) -> list[tuple[str, str]]:
+    """Opcional: notícias recentes por ticker -> pares (ticker, alerta) (best-effort)."""
     n = cfg.get("news", {})
     if not n.get("enabled", False):
         return []
@@ -122,7 +124,7 @@ def scan_news(cfg: dict) -> list[str]:
 
     end = date.today().isoformat()
     start = (date.today() - timedelta(days=7)).isoformat()
-    alerts: list[str] = []
+    alerts: list[tuple[str, str]] = []
     for ticker in n.get("tickers", []):
         try:
             items = fetch_finnhub_company_news(ticker, start, end)
@@ -150,10 +152,42 @@ def scan_news(cfg: dict) -> list[str]:
             else:
                 _log_decision_safe(latest.date, ticker, latest.headline,
                                    None, None, kept=True)
-            alerts.append(text)
+            alerts.append((ticker, text))
         except Exception as exc:  # noqa: BLE001
             print(f"[saltar noticias {ticker}] {type(exc).__name__}: {exc}")
     return alerts
+
+
+def _fanout_safe(alerts: list[tuple[str, str]], bot_cfg: dict, *, dry_run: bool) -> None:
+    """Fase B (off por defeito): distribui cada alerta pelos subscritores do ticker.
+
+    Fail-open total: sem `bot.enabled`, sem base de subscritores ou com qualquer erro, o
+    runner comporta-se exatamente como sempre (só canal). Nunca levanta exceção.
+    """
+    if not bot_cfg.get("enabled", False):
+        return
+    try:
+        from investigator.telegram_bot import store
+
+        db = Path(bot_cfg.get("db", store.DEFAULT_DB))
+        if not db.exists():
+            print("[bot] sem base de subscritores (corre scripts/run_bot.py) — fan-out saltado.")
+            return
+        conn = store.connect(db)
+        enviados = 0
+        for ticker, text in alerts:
+            for chat in store.subscribers_of(conn, ticker):
+                if dry_run:
+                    print(f"[bot dry-run] enviaria {ticker} a {chat}")
+                    continue
+                from investigator.telegram_bot.sender import send_message
+
+                send_message(text, chat_id=chat)
+                enviados += 1
+        if not dry_run:
+            print(f"[bot] fan-out: {enviados} envio(s) a subscritores.")
+    except Exception as exc:  # noqa: BLE001  (o fan-out nunca pode partir o runner)
+        print(f"[bot] fan-out falhou (ignorado): {type(exc).__name__}: {exc}")
 
 
 def main() -> int:
@@ -172,13 +206,15 @@ def main() -> int:
     from investigator import config
 
     can_send = bool(config.TELEGRAM_BOT_TOKEN and config.TELEGRAM_CHAT_ID) and not args.dry_run
-    for text in alerts:
+    for _ticker, text in alerts:
         print("-" * 60)
         print(text)
         if can_send:
             from investigator.telegram_bot.sender import send_message
 
             send_message(text)
+
+    _fanout_safe(alerts, cfg.get("bot", {}) or {}, dry_run=args.dry_run)
 
     if can_send:
         print(f"\n[{len(alerts)} alerta(s) enviado(s) para o Telegram]")
