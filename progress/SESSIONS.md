@@ -5,6 +5,36 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 29 (continuação) — 2026-07-05 — PLANO FINAL: P1 escrita + P2 rename src/→investigator/
+**Pedido do aluno:** "fazer TUDO" — polimento da escrita da tese, rename, KB multi-ano e S-APP, pela
+ordem que fizesse mais sentido. Ordem fixada em **`progress/PLANO_FINAL.md`**: P1 escrita → P2 rename →
+P3 KB FNSPID → P4 S-APP.
+
+**P1 — passe editorial (commit 5c4c099):** as secções novas da RQ4 (M7) nunca tinham recebido o passe
+das Sessões 23–24. Diagnóstico: 0 travessões-conectores, 0 tiques de IA → o trabalho foi partir
+frases-comboio (Ch2 §triage, Ch3 §met_triage, Ch5 CS4 corpus/caveats, Ch6 4.ª contribuição) e limar
+ecos ("deliberately", "precisely", "transparent(ly)"). **Nenhum número/citação/equação alterado.**
+Reflow legítimo 74→76 pp (densidade verificada página a página — sem páginas vazias); 0 erros,
+0 cit. indefinidas, 0 overfull >15pt; 93 testes + ruff verdes.
+
+**P2 — rename `src/`→`investigator/` (o item deferido da Sessão 27, agora executado):**
+- `git mv` (história preservada); pyproject ganha empacotamento (`[project] name=investigator`) e o
+  requirements.txt ganha **`-e .`** → CI, workflow de alertas e Streamlit Cloud herdam o pacote sem
+  hacks. Hacks `sys.path` removidos dos 12 scripts; o guard do `app/streamlit_app.py` fica de
+  propósito (robustez no deploy). Imports reescritos em todos os .py; ci.yml/verify.sh/tasks.json/
+  tests.bat passam a `ruff check .`.
+- **Gotcha real encontrado e resolvido SEM retreino:** os bundles joblib guardavam
+  `src.triage.model.PlattCalibrator` no pickle (load partiria após o rename). Solução: shim
+  temporário em `sys.modules` + re-dump; **probe numérico byte-a-byte idêntico** (a/b do calibrador,
+  p_raw/p_cal em vetor-zero, n.º de features) e load limpo sem shim; sidecars JSON intocados.
+- Docs sincronizados (README, how_to_run, arquitectura, data_card, models/README, learning, caderno,
+  guia, ML_PLAN, TRACKER, SESSIONS, CLAUDE) com as linhas que descrevem o próprio rename preservadas
+  como `src/`→`investigator/`. Caderno: mapa do repo ganhou `models/`+`app/` e "14 frames"→16.
+- **Validação:** 93 testes + ruff verdes; demo reproduz +6,46%; guia recompila (63 slides, 0 erros).
+
+**Segue-se:** P3 (KB de retrieval FNSPID 2018–2023 — artefacto local; números da tese intocados) e
+P4 (S-APP Fase B).
+
 ## Sessão 29 — 2026-07-03/04 — WORKSTREAM ML: o aluno passa a ter modelos TREINADOS (M0–M5)
 **Objetivo:** responder à preocupação do aluno ("não posso só aplicar; tenho de mostrar engenharia de
 ML minha") com um componente treinado **honesto**: triagem/materialidade de notícias (RQ4), sem nunca
@@ -16,11 +46,11 @@ o OK do orientador (proposta pronta em `docs/internal/proposta_ml_orientador.md`
 enviar**).
 
 **Feito (M0–M3, tudo committado e pushed):**
-- **M1 rótulos+dataset:** `abnormal_returns` (ticker−SPY) puro; `src/triage/dataset.py` (features com
+- **M1 rótulos+dataset:** `abnormal_returns` (ticker−SPY) puro; `investigator/triage/dataset.py` (features com
   convenção anti-lookahead TESTADA por mutação do futuro; split temporal por dias únicos + embargo);
   `scripts/build_dataset.py` (cache de preços; grelha τ×h). Corpus real: 3.714 notícias → 0 descartes.
   **Achado honesto:** corpus-fumo de 4 semanas tem regime shift (treino 67,8% vs teste 37,2% positivos).
-- **M2 treino:** `src/triage/{features,model,explain}.py` + `scripts/train_triage.py` — 6 famílias
+- **M2 treino:** `investigator/triage/{features,model,explain}.py` + `scripts/train_triage.py` — 6 famílias
   (always/vol/context/text/full/gbm), calibração Platt própria na validação, PR-AUC/ROC/Brier +
   precisão@orçamento/dia, XAI por decomposição aditiva exata da LR, persistência joblib+JSON.
 - **M3 smoke com SBERT real:** reproduzível (2 corridas = métricas idênticas). Resultado honesto no
@@ -34,14 +64,14 @@ enviar**).
   relatório de anomalia byte-idênticas.
 - **M5 integração off-by-default:** a stack leve (runner/app na nuvem) não tem SBERT ⇒ o treino grava
   também a variante **só-contexto** (`models/triage_context_lr.joblib`, 1,8 KB) e é essa que a produção
-  pontua (`src/triage/infer.py`, com guarda de compatibilidade de features). `news.min_materiality` no
+  pontua (`investigator/triage/infer.py`, com guarda de compatibilidade de features). `news.min_materiality` no
   `config/alerts.yaml` (null = tudo como antes; **fail-open**: sem modelo/histórico o alerta segue);
   linha de materialidade opcional no `explain_news_impact`; página News da app ganha severidade +
   contribuições (graciosa sem `models/`; AppTest verde com e sem). Retreino de verificação: joblib
   principais **bit-idênticos**. Validado ao vivo (dry-run): NVDA real P=36% com linha; gate 0,99
   suprime com aviso; modelo ausente ⇒ "gate ignorado". Testes 64 → **81**; ruff verde.
 
-- **M5.5 loop de pós-validação (a ideia "RL" do aluno, forma defensável):** `src/triage/postval.py`
+- **M5.5 loop de pós-validação (a ideia "RL" do aluno, forma defensável):** `investigator/triage/postval.py`
   (log JSONL fail-safe, dedup, rotulagem ao maturar com a MESMA `abnormal_label` do treino, métricas
   ao vivo) + `scripts/post_validate.py` (preços frescos → `docs/evaluation/live_monitoring.md`:
   precisão das mantidas vs base rate, Brier, calibração, receita de retreino, caveat do runner
@@ -114,7 +144,7 @@ decidiu **renomear tudo, incluindo a tese**.
   redação restaurada e tornada à prova de replaces futuros. (2) **Coerência de números:** 43→47 testes (README ×2,
   run_in_vscode, run/README, slide do guia) e 14→15 frames (slides/README); guia recompilado (60 pp,
   0 erros). (3) **Limpeza:** removidos `.gitkeep` obsoletos (tests/, thesis/figures/, data/samples/;
-  data/.gitkeep fica — pasta gitignored). (4) **Reciclagem:** novo `src/console.py::force_utf8_stdout`
+  data/.gitkeep fica — pasta gitignored). (4) **Reciclagem:** novo `investigator/console.py::force_utf8_stdout`
   usado por demo.py e run_alerts.py (scripts de avaliação congelados ficam como estão — reproduzem os
   números da tese; churn cosmético lá é só risco). 0 lixo versionado (sem .bak/.tmp); 0 TODOs no código.
   Validação: 47 testes + ruff; demo reproduz +6,46%; dry-run ok; AppTest sem exceções.
@@ -158,7 +188,7 @@ host do Student Pack + BD — desenhada, não construída). Clarificado ao aluno
 dry-run ao vivo apanhou anomalia real (META +8,44%, z=+3,31) sem enviar; **47 testes** (43+4) + ruff verdes.
 
 **Deferido (com razão):** `src/`→`investigator/` (pacote instalável) — grande churn de docs; sessão dedicada.
-Verificado que **nem a tese nem o paper** referenciam `src/` (rework tirou identificadores) → o rename não
+Verificado que **nem a tese nem o paper** referenciam `investigator/` (rework tirou identificadores) → o rename não
 afetará a tese.
 
 **Próximo humano:** declaração ISEP + data; leitura final; **escolher a licença** com o orientador;
@@ -280,7 +310,7 @@ moderada; defesa = guia único PT-PT; sequência = declutter já, reorganizaçã
   **regenerados com números idênticos** (anomalia spread 0.017/0.343, F1 0.524; retrieval P@5 0.549/0.569).
 - **De-tech:** removidos todos os identificadores de código do corpo (0 `\texttt{}` de código; era 72 no Cap. 5);
   detalhe técnico movido para o Apêndice A (Reproducibility). InvestiGator no abstract/resumo.
-- **Declutter:** removidos `notebooks/`, `presentation/`, `src/impact_analyzer/` (stub nunca usado).
+- **Declutter:** removidos `notebooks/`, `presentation/`, `investigator/impact_analyzer/` (stub nunca usado).
 - **Plano mestre** aprovado e registado (`.claude/plans/…`; checklist em `TRACKER.md`).
 - Compila: **60 pp, 0 erros, 0 citações/refs indefinidas**.
 
@@ -465,7 +495,7 @@ tabelas, as figuras reprodutíveis e um estudo de caso ponta-a-ponta real.
 para o Cap. 6 assentar em DUAS experiências quantitativas.
 
 **Feito:**
-- **Métrica** (`src/evaluation/anomaly_eval.py`, puro, 6 testes): `rolling_zscore_flags` (sem
+- **Métrica** (`investigator/evaluation/anomaly_eval.py`, puro, 6 testes): `rolling_zscore_flags` (sem
   lookahead), `fixed_threshold_flags` (baseline), `label_extreme_moves` (rótulo-proxy por percentil),
   `precision_recall_f1`, `firing_rate`.
 - **Argumento principal (não circular): consistência da taxa de disparo entre tickers.** Em preços
@@ -492,7 +522,7 @@ figuras, caveats) e um estudo de caso ponta-a-ponta; depois Cap. 5 (Implementati
 validada (Finnhub).
 
 **Feito:**
-- **Métrica** (`src/evaluation/retrieval_eval.py`): **precision@k por setor** em recuperação
+- **Métrica** (`investigator/evaluation/retrieval_eval.py`): **precision@k por setor** em recuperação
   **cross-ticker** (exclui a própria empresa → testa analogia temática, não o nome). Baselines
   **aleatório** (taxa-base exata) e **recência**. Puro NumPy, determinístico, 5 testes.
 - **Dados reais** (`scripts/fetch_finnhub_news.py`): **3.692 notícias** dos 15 tickers (Finnhub,
@@ -523,7 +553,7 @@ precedentes históricos — escolhendo isto (em vez do download pesado do FNSPID
 visível por minuto.
 
 **Feito:**
-- **`news_fetcher`** (`src/news_fetcher/fetcher.py`): `NewsItem` (mesmo esquema da KB); parsing
+- **`news_fetcher`** (`investigator/news_fetcher/fetcher.py`): `NewsItem` (mesmo esquema da KB); parsing
   **puro e testado** (`parse_finnhub_news`, `parse_rss`, `_rss_date_to_iso`) separado do HTTP fino
   e tardio (`fetch_finnhub_company_news`, `fetch_rss_feed`). **Finnhub validado ao vivo** — 247
   notícias da AAPL na última semana, parseadas corretamente.
@@ -531,7 +561,7 @@ visível por minuto.
   impacto médio observado em eventos análogos (horizonte configurável), a lista de precedentes
   (data, ticker, similaridade, impacto, título) e a nota de que **é resultado passado, não
   previsão** (restrição §5.2). Média ignora NaN.
-- **Orquestração** (`run_news_trigger` em `src/main.py`): notícia → embedding → `KB.find_precedents`
+- **Orquestração** (`run_news_trigger` em `investigator/main.py`): notícia → embedding → `KB.find_precedents`
   → explicação → (opcional) Telegram. Por defeito usa a KB-amostra + `HashingEmbedder` (offline,
   testável); aceita `SbertEmbedder` + KB SBERT.
 - **Testes:** `test_news_fetcher.py` (3), `test_explainer.py` (3, incluindo média que ignora NaN),
@@ -552,9 +582,9 @@ vivo (Finnhub → KB → Telegram) e iniciar a avaliação. Prosseguir autonomam
 recuperação de precedentes por similaridade — seguindo "a versão mais simples e defensável primeiro".
 
 **Feito:**
-- **Similaridade** (`src/correlation_engine/similarity.py`): cosseno (1D e vetorizado) + `top_k_similar`,
+- **Similaridade** (`investigator/correlation_engine/similarity.py`): cosseno (1D e vetorizado) + `top_k_similar`,
   puro NumPy, determinístico (7 testes).
-- **Base de conhecimento** (`src/historical_kb/`): `NewsRecord` (data, ticker, título, impacto, embedding;
+- **Base de conhecimento** (`investigator/historical_kb/`): `NewsRecord` (data, ticker, título, impacto, embedding;
   JSON); interface `Embedder` com duas implementações intermutáveis — `HashingEmbedder` (baseline lexical
   determinístico, **sem dependências** → permite testar tudo sem torch e serve de baseline para ablação) e
   `SbertEmbedder` (SBERT real, import **tardio**); `HistoricalKB` com `build/save/load/find_precedents`
@@ -611,7 +641,7 @@ Criado o venv canónico 3.12 + `requirements.lock.txt` (42 pacotes). `yfinance==
 
 **Thin slice (M1):** pipeline Gatilho 1 — `market_data` (yfinance, log-returns) → `anomaly_detector`
 (z-score sem lookahead, `AnomalyResult`) → `explanation_engine` (regra transparente) → `telegram_bot` (Telegram API).
-`src/config.py` (.env), `src/main.py` (`run_thin_slice`). Testes unitários (4) + smoke (pipeline + envio Telegram
+`investigator/config.py` (.env), `investigator/main.py` (`run_thin_slice`). Testes unitários (4) + smoke (pipeline + envio Telegram
 marcado `@telegram`, excluído do verify por defeito). **Envio real confirmado**; caminho live yfinance validado (AAPL,
 hoje sem anomalia z=+0.47). Verify verde (6 testes, lint limpo).
 
@@ -902,7 +932,7 @@ colisões); (2) o aluno não sabe nada de IA — criar um guia visual que o ensi
 - **Guia de estudo `slides/guia_estudo/` (Beamer PT-PT, 51 slides):** ensina do zero, scoped ao que a tese
   usa, com slide honesto sobre o que NÃO usa (sem treino/CNN/visão computacional). P0 pitch · P1 IA do zero
   + glossário · P2 problema/contribuição · P3 sistema (modelo de dados, componentes) · P4 dados reais (CSV +
-  JSON de `data/samples/`) · P5 código módulo-a-módulo (fiel ao `src/`, linha a linha) · P6 workflow real
+  JSON de `data/samples/`) · P5 código módulo-a-módulo (fiel ao `investigator/`, linha a linha) · P6 workflow real
   (TSLA z=+7,61; Nvidia + tema≠direção) · P7 avaliação (gráficos validados) · P8 decisões · P9 sensibilidade
   · P10 perguntas do júri + checklist. Commits: P0/1 5175c47 · P2-4 1645644 · P5-6 9033843 · P7-10 6e90ccd.
   Só conceitos/código/números reais; 0 fabricação; compila 51 pp, 0 erros.
@@ -919,5 +949,5 @@ Pedido do aluno: continuava sem saber correr a app (sentia caixa preta) e queria
   explicação linha a linha, um **exemplo de mudar parâmetros** (top_k=5/horizon=1 → +3,40%, com precedentes
   menos parecidos JPM/AAPL), correr os testes, e a nota Windows/UTF-8. Guia agora **57 slides, 0 erros**.
 - **`docs/design/how_to_run.md`:** novo §0.0 "ver a app a funcionar (1 comando)" com a demo + nota UTF-8.
-Descobertos e documentados 2 gotchas reais: emoji vs consola cp1252 (Windows); `-m src.main` precisa de
+Descobertos e documentados 2 gotchas reais: emoji vs consola cp1252 (Windows); `-m investigator.main` precisa de
 Telegram (por isso a demo usa `send=False`). Nada de números/conteúdo da tese alterado.

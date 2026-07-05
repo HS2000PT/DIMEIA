@@ -10,8 +10,8 @@ import importlib
 
 import pytest
 
-from src.anomaly_detector.detector import detect_latest
-from src.explanation_engine.explainer import explain_anomaly
+from investigator.anomaly_detector.detector import detect_latest
+from investigator.explanation_engine.explainer import explain_anomaly
 
 
 def _serie_anomala() -> list[float]:
@@ -20,7 +20,7 @@ def _serie_anomala() -> list[float]:
 
 
 def test_pacote_src_importavel():
-    assert importlib.import_module("src") is not None
+    assert importlib.import_module("investigator") is not None
 
 
 def test_pipeline_explicacao():
@@ -34,7 +34,7 @@ def test_pipeline_explicacao():
 
 def test_gatilho2_precedentes_offline():
     """Gatilho 2 end-to-end sem rede: notícia -> KB (amostra) -> precedentes -> explicação."""
-    from src.main import run_news_trigger
+    from investigator.main import run_news_trigger
 
     precedents, texto = run_news_trigger(
         "AAPL", "Apple iPhone demand stays strong", send=False
@@ -47,8 +47,8 @@ def test_gatilho2_precedentes_offline():
 @pytest.mark.telegram
 def test_thin_slice_envia_telegram():
     """Envia um alerta real ao Telegram (requer .env). Pulado se não configurado."""
-    from src import config
-    from src.telegram_bot.sender import send_message
+    from investigator import config
+    from investigator.telegram_bot.sender import send_message
 
     if not config.telegram_ready():
         pytest.skip("Telegram não configurado no .env.")

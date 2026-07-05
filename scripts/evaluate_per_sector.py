@@ -20,12 +20,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-from src.evaluation.retrieval_eval import (  # noqa: E402
+from investigator.evaluation.retrieval_eval import (
     expected_random_precision,
     retrieval_precision_at_k,
     same_ticker_forbid,
@@ -62,7 +60,7 @@ def main() -> None:
     headlines = df["headline"].astype(str).tolist()
     print(f"Notícias: {len(df):,} | setores: {sorted(set(sectors))}")
 
-    from src.historical_kb.embedder import SbertEmbedder
+    from investigator.historical_kb.embedder import SbertEmbedder
     print(f"A calcular embeddings ({args.model})…")
     emb = SbertEmbedder(args.model).encode(headlines)
 

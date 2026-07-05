@@ -75,17 +75,17 @@ A fatia fina (`run_thin_slice`) busca preços ao vivo de um ticker, calcula log-
 
 **Correr com os defaults (AAPL, janela 20, limiar 3):**
 ```bash
-./.venv/Scripts/python.exe -m src.main
+./.venv/Scripts/python.exe -m investigator.main
 ```
 Imprime o texto do alerta/explicação e a linha `[is_anomaly=... z=...]`.
 
-> ⚠️ O ponto de entrada `-m src.main` corre `run_thin_slice` com `send=True`, por isso **tenta enviar
+> ⚠️ O ponto de entrada `-m investigator.main` corre `run_thin_slice` com `send=True`, por isso **tenta enviar
 > para o Telegram** e dá erro (`RuntimeError`) se o `.env` não tiver `TELEGRAM_BOT_TOKEN`/`CHAT_ID`.
 > Para correr **offline** (sem enviar), usar `send=False` em Python (abaixo).
 
 **Correr para outro ticker / parâmetros, sem enviar (em Python):**
 ```python
-from src.main import run_thin_slice
+from investigator.main import run_thin_slice
 result, text = run_thin_slice(ticker="TSLA", window=20, threshold=3.0, send=False)
 print(text, result.is_anomaly, result.z_score)
 ```
@@ -101,7 +101,7 @@ impacto observado desses precedentes. **Ainda não tem CLI**; corre-se programat
 **Por defeito** usa o `HashingEmbedder` (dim 64) e a KB-amostra commitada
 (`data/samples/kb_sample.jsonl`) — totalmente offline e reproduzível, sem descarregar modelos:
 ```python
-from src.main import run_news_trigger
+from investigator.main import run_news_trigger
 precedents, text = run_news_trigger(
     ticker="NVDA",
     headline="Nvidia demand surges on AI chip orders",
@@ -115,8 +115,8 @@ for rec, score in precedents:
 **Com SBERT (recuperação semântica real):** requer a stack pesada (`bash scripts/setup_env.sh --ml`
 instala torch CPU + sentence-transformers) **e** uma KB construída com o mesmo embedder (ver §4). Depois:
 ```python
-from src.main import run_news_trigger
-from src.historical_kb.embedder import SbertEmbedder
+from investigator.main import run_news_trigger
+from investigator.historical_kb.embedder import SbertEmbedder
 precedents, text = run_news_trigger(
     ticker="NVDA", headline="...", kb_path="data/kb_sbert.jsonl",
     embedder=SbertEmbedder(), top_k=5, horizon=3, send=False,
@@ -177,7 +177,7 @@ Todos os números do Cap. 5 são gerados por scripts com seed fixa; as figuras v
 Grava `models/*.joblib` (versionados; mesma seed ⇒ ficheiros bit-idênticos), a tabela em
 `docs/evaluation/evaluation_triage.md` e as figuras PR/calibração. Em produção (runner de alertas
 e app, stack leve) pontua-se a variante **só-contexto** (`models/triage_context_lr.joblib`) via
-`src/triage/infer.py` — sem SBERT. Para ligar o gate nos alertas: `news.min_materiality` no
+`investigator/triage/infer.py` — sem SBERT. Para ligar o gate nos alertas: `news.min_materiality` no
 `config/alerts.yaml` (off por defeito). Plano e estado: `progress/ML_PLAN.md`.
 
 **Loop de pós-validação (M5.5):** o runner regista cada decisão de notícia em

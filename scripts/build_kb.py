@@ -2,7 +2,7 @@
 
 Junta o subconjunto de notícias do FNSPID (CSV: date, ticker, headline) aos preços de fecho
 históricos (yfinance) e produz a KB (JSONL) com impacto pós-evento e embeddings — ver
-src/historical_kb/knowledge_base.py.
+investigator/historical_kb/knowledge_base.py.
 
 Embedder: por defeito o `HashingEmbedder` (sem dependências; baseline e reprodutível). Com
 `--sbert` usa o `SbertEmbedder` (SBERT real; requer sentence-transformers/torch instalados).
@@ -21,13 +21,11 @@ from pathlib import Path
 
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # repo root no sys.path
-
 if hasattr(sys.stdout, "reconfigure"):  # consola Windows (cp1252) → UTF-8 para acentos/glifos
     sys.stdout.reconfigure(encoding="utf-8")
 
-from src.historical_kb.embedder import HashingEmbedder  # noqa: E402
-from src.historical_kb.knowledge_base import HistoricalKB  # noqa: E402
+from investigator.historical_kb.embedder import HashingEmbedder
+from investigator.historical_kb.knowledge_base import HistoricalKB
 
 
 def load_prices(tickers: list[str], start: str, end: str) -> dict[str, pd.Series]:
@@ -72,7 +70,7 @@ def main() -> None:
     prices = load_prices(tickers, start, end)
 
     if args.sbert:
-        from src.historical_kb.embedder import SbertEmbedder
+        from investigator.historical_kb.embedder import SbertEmbedder
 
         embedder = SbertEmbedder()
         print(f"Embedder: SBERT ({embedder.model_name}, dim={embedder.dim})")

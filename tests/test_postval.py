@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 
 import scripts.run_alerts as runner
-from src.triage.postval import (
+from investigator.triage.postval import (
     dedup_decisions,
     label_decision,
     live_report,

@@ -15,16 +15,13 @@ Pensado para ser chamado por `.github/workflows/alerts.yml` (cron) — ver docs/
 from __future__ import annotations
 
 import argparse
-import sys
 from datetime import date, timedelta
 from pathlib import Path
 
 import yaml
 
 # Permitir correr como `python scripts/run_alerts.py` a partir da raiz do repo.
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from src.console import force_utf8_stdout  # noqa: E402  (depois do sys.path)
+from investigator.console import force_utf8_stdout
 
 _CONFIG = Path(__file__).resolve().parents[1] / "config" / "alerts.yaml"
 _PRED_LOG = Path(__file__).resolve().parents[1] / "data" / "predictions_log.jsonl"
@@ -35,7 +32,7 @@ def _log_decision_safe(news_date: str, ticker: str, headline: str,
     """Regista a decisão de notícia para o loop de pós-validação (M5.5, `scripts/
     post_validate.py`). Ficheiro local gitignored; uma falha aqui NUNCA pára o runner."""
     try:
-        from src.triage.postval import log_decision
+        from investigator.triage.postval import log_decision
 
         log_decision(_PRED_LOG, news_date=news_date, ticker=ticker, headline=headline,
                      prob=(float(scored[0]) if scored is not None else None),
@@ -52,15 +49,15 @@ def load_config(path: str | Path = _CONFIG) -> dict:
 
 def build_market_alerts(results: list[tuple[str, object]]) -> list[str]:
     """Puro: dado [(ticker, AnomalyResult)], devolve os textos de alerta só das anomalias."""
-    from src.explanation_engine.explainer import explain_anomaly
+    from investigator.explanation_engine.explainer import explain_anomaly
 
     return [explain_anomaly(ticker, res) for ticker, res in results if res.is_anomaly]
 
 
 def scan_market(cfg: dict) -> list[str]:
     """Busca preços de cada ticker, deteta anomalias e devolve os textos de alerta."""
-    from src.anomaly_detector.detector import detect_latest
-    from src.market_data.prices import get_price_history, log_returns
+    from investigator.anomaly_detector.detector import detect_latest
+    from investigator.market_data.prices import get_price_history, log_returns
 
     m = cfg.get("market", {})
     if not m.get("enabled", False):
@@ -87,7 +84,7 @@ def apply_materiality(text: str, scored: tuple | None, gate: float) -> str | Non
     """
     if scored is None:
         return text
-    from src.triage.explain import materiality_line
+    from investigator.triage.explain import materiality_line
 
     prob, contribs = scored
     if prob < gate:
@@ -100,9 +97,9 @@ def scan_news(cfg: dict) -> list[str]:
     n = cfg.get("news", {})
     if not n.get("enabled", False):
         return []
-    from src import config
-    from src.main import run_news_trigger
-    from src.news_fetcher.fetcher import fetch_finnhub_company_news
+    from investigator import config
+    from investigator.main import run_news_trigger
+    from investigator.news_fetcher.fetcher import fetch_finnhub_company_news
 
     if not config.FINNHUB_API_KEY:
         print("[noticias] FINNHUB_API_KEY em falta — a saltar o scan de noticias.")
@@ -115,7 +112,7 @@ def scan_news(cfg: dict) -> list[str]:
     gate = n.get("min_materiality")
     bundle = None
     if gate is not None:
-        from src.triage.infer import load_context_bundle
+        from investigator.triage.infer import load_context_bundle
 
         bundle = load_context_bundle()
         if bundle is None:
@@ -136,8 +133,8 @@ def scan_news(cfg: dict) -> list[str]:
                 ticker=ticker, headline=latest.headline, top_k=top_k, horizon=horizon, send=False
             )
             if bundle is not None:
-                from src.market_data.prices import get_price_history
-                from src.triage.infer import score_latest
+                from investigator.market_data.prices import get_price_history
+                from investigator.triage.infer import score_latest
 
                 scored = score_latest(
                     bundle, get_price_history(ticker)["Close"], latest.headline, ticker
@@ -172,14 +169,14 @@ def main() -> int:
         print("Sem alertas hoje (nenhuma anomalia acima do limiar).")
         return 0
 
-    from src import config
+    from investigator import config
 
     can_send = bool(config.TELEGRAM_BOT_TOKEN and config.TELEGRAM_CHAT_ID) and not args.dry_run
     for text in alerts:
         print("-" * 60)
         print(text)
         if can_send:
-            from src.telegram_bot.sender import send_message
+            from investigator.telegram_bot.sender import send_message
 
             send_message(text)
 

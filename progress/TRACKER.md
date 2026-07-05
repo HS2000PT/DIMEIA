@@ -6,7 +6,7 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] Verificação de ambiente (Git, Python, Node, LaTeX, remote GitHub)
 - [x] `.claude/settings.json` (allow/deny de permissões)
 - [x] `.gitignore`, `.gitattributes`, `.env.example`
-- [x] Esqueleto do repositório (§9): `src/`, `tests/`, `thesis/`, `docs/`, `progress/`, `scripts/`, `data/`, `notebooks/`, `presentation/`, `.github/`
+- [x] Esqueleto do repositório (§9): `investigator/`, `tests/`, `thesis/`, `docs/`, `progress/`, `scripts/`, `data/`, `notebooks/`, `presentation/`, `.github/`
 - [x] `CLAUDE.md` (memória persistente) + `README.md`
 - [x] Ficheiros `progress/` (TRACKER, SESSIONS, DECISIONS, PLANO_SESSOES, QUESTIONS)
 - [x] Stubs `docs/` (PT-PT)
@@ -86,8 +86,8 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [ ] Próximo: componentes — `historical_kb`/FNSPID (`data_card.md`), depois `correlation_engine` (stack ML faseada) e Gatilho 2
 
 ## Sessão 9 — Implementação: KB histórica + motor de correlação (recuperação)
-- [x] `src/correlation_engine/similarity.py` — cosseno + `top_k_similar` (puro NumPy, vetorizado) + 7 testes
-- [x] `src/historical_kb/`: `record.py` (`NewsRecord`/JSON), `embedder.py` (interface `Embedder` + `HashingEmbedder` baseline + `SbertEmbedder` lazy), `knowledge_base.py` (`HistoricalKB.build/save/load/find_precedents`)
+- [x] `investigator/correlation_engine/similarity.py` — cosseno + `top_k_similar` (puro NumPy, vetorizado) + 7 testes
+- [x] `investigator/historical_kb/`: `record.py` (`NewsRecord`/JSON), `embedder.py` (interface `Embedder` + `HashingEmbedder` baseline + `SbertEmbedder` lazy), `knowledge_base.py` (`HistoricalKB.build/save/load/find_precedents`)
 - [x] Alinhamento evento = 1.º dia de negociação ≥ data da notícia (`searchsorted`); impacto medido do fecho (anti-lookahead) → `learning.md` §11
 - [x] `scripts/download_data.py` real (FNSPID **streaming** + filtro ticker/janela → gitignored + amostra de títulos)
 - [x] `scripts/build_kb.py` (notícias CSV + preços yfinance → KB JSONL; `--sbert` opcional) + bootstrap sys.path + stdout UTF-8
@@ -102,10 +102,10 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [ ] Próximo: download real FNSPID + KB completa (`build_kb.py --sbert`); `news_fetcher` (Gatilho 2); explicação com precedentes
 
 ## Sessão 10 — Implementação: Gatilho 2 (notícias) + explicação com precedentes
-- [x] `src/news_fetcher/fetcher.py` — `NewsItem`; parsing puro (`parse_finnhub_news`, `parse_rss`, `_rss_date_to_iso`) + HTTP tardio (`fetch_finnhub_company_news`, `fetch_rss_feed`)
+- [x] `investigator/news_fetcher/fetcher.py` — `NewsItem`; parsing puro (`parse_finnhub_news`, `parse_rss`, `_rss_date_to_iso`) + HTTP tardio (`fetch_finnhub_company_news`, `fetch_rss_feed`)
 - [x] **Finnhub validado ao vivo** (247 notícias AAPL parseadas para `NewsItem`)
 - [x] `explanation_engine.explain_news_impact` — alerta XAI: notícia + impacto médio (horizonte) + lista de precedentes (data/ticker/sim/impacto/título) + nota "não é previsão" (§5.2)
-- [x] `src/main.py::run_news_trigger` — orquestra notícia→embedding→`KB.find_precedents`→explicação→(opcional)Telegram; default KB-amostra + HashingEmbedder
+- [x] `investigator/main.py::run_news_trigger` — orquestra notícia→embedding→`KB.find_precedents`→explicação→(opcional)Telegram; default KB-amostra + HashingEmbedder
 - [x] Testes: `test_news_fetcher.py` (3, parsing) + `test_explainer.py` (3, incl. média ignora NaN) + smoke Gatilho 2 offline (1)
 - [x] Demo end-to-end do alerta (precedentes recuperados + texto rastreável)
 - [x] `learning.md` §12 (Gatilho 2) + `glossary.md` (Gatilho 2, RSS, Finnhub)
@@ -113,7 +113,7 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [ ] Próximo: download real FNSPID + KB SBERT completa; demo Gatilho 2 ao vivo (Finnhub→KB→Telegram); avaliação (Cap. 6)
 
 ## Sessão 11 — Avaliação: recuperação de precedentes (Pergunta A) em dados reais
-- [x] `src/evaluation/retrieval_eval.py` — precision@k por setor (cross-ticker) + baselines aleatório/recência (puro, 5 testes)
+- [x] `investigator/evaluation/retrieval_eval.py` — precision@k por setor (cross-ticker) + baselines aleatório/recência (puro, 5 testes)
 - [x] `scripts/fetch_finnhub_news.py` — **3.692 notícias reais** (Finnhub, 15 tickers/5 setores) → CSV + amostra
 - [x] `scripts/evaluate.py` — ablação SBERT vs lexical vs recência vs aleatório → `docs/evaluation_results.md` + figura reprodutível
 - [x] **Resultado real (P@5):** SBERT 0,568 > lexical 0,357 > aleatório 0,245 > recência 0,096 (lift +0,323) — hipótese central validada
@@ -122,7 +122,7 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [ ] Próximo: escrever Cap. 6 (Evaluation) com estes resultados + detetor de anomalias; Cap. 5 (Implementation); (opcional) FNSPID completo
 
 ## Sessão 12 — Avaliação: detetor de anomalias (Pergunta 1) em preços reais
-- [x] `src/evaluation/anomaly_eval.py` — z-score flags (sem lookahead), baseline fixo, rótulo-proxy por percentil, P/R/F1, taxa de disparo (puro, 6 testes)
+- [x] `investigator/evaluation/anomaly_eval.py` — z-score flags (sem lookahead), baseline fixo, rótulo-proxy por percentil, P/R/F1, taxa de disparo (puro, 6 testes)
 - [x] `scripts/evaluate_anomaly.py` — corre em yfinance (3 anos, 15 tickers) → `docs/evaluation_anomaly.md` + figura reprodutível
 - [x] **Resultado real:** amplitude da taxa de disparo z-score **0,017** vs limiar fixo **0,343** (20× mais consistente); F1 z-score 0,524 vs fixo 0,216; ablação janela 10/20/60d → F1 0,385/0,524/0,687
 - [x] `learning.md` §15 (consistência da taxa de disparo, com nota de defesa)
@@ -190,7 +190,7 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
   - [x] Diagrama de arquitetura redesenhado (sem cruzamentos) + fluxo do gatilho de notícias + **mockup do alerta Telegram**
   - [x] Figuras de avaliação PT→EN (números idênticos): era o "português" visível no PDF
   - [x] Identificadores de código removidos do corpo (0 `\texttt{}` de código); InvestiGator no abstract/resumo
-  - [x] **Declutter:** removidos `notebooks/`, `presentation/`, `src/impact_analyzer/` (stub); .py compilam; sem importações pendentes
+  - [x] **Declutter:** removidos `notebooks/`, `presentation/`, `investigator/impact_analyzer/` (stub); .py compilam; sem importações pendentes
   - [x] TRACKER semeado; CLAUDE.md + SESSIONS.md atualizados
 - [x] **S2 — Introdução (Cap. 1) + Métodos e Materiais (Cap. 3)**
   - [x] Cap. 3 aprofundado: **data card FNSPID** (tabela: fonte, licença CC BY-SA 4.0, 15 tickers, janela 2018–2023, governança), pré-processamento + alinhamento anti-lookahead, camada live + dataset de avaliação, **IA responsável/ética** alargada, metodologia de avaliação + rigor
@@ -216,7 +216,7 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
   - [x] Front matter: abstract/resumo com InvestiGator e números finais (P@5 0.55 vs 0.24); declarações honestas; comentário da data em EN
 - [x] **S7 — Reorganização do repositório** (consolidação moderada), validada
   - [x] `docs/` agrupado: `design/` (arquitetura, data card, APIs, eval design, setup, riscos), `evaluation/` (resultados auto-gerados), `decisions/` (citation_log, glossary, learning), `_archive/` (analises de fase inicial), `defence/` (para o Caderno S8)
-  - [x] Atualizadas TODAS as referências de caminho (defaults dos scripts evaluate*, docstrings src/scripts, README, CLAUDE, links inter-docs); progress/ histórico preservado
+  - [x] Atualizadas TODAS as referências de caminho (defaults dos scripts evaluate*, docstrings investigator/scripts, README, CLAUDE, links inter-docs); progress/ histórico preservado
   - [x] Corrigidos 6 E501 resultantes; **41 testes verdes, ruff limpo**; .pyc ignorados; README com novo mapa do repositório
 - [x] **S8 — Caderno de Defesa (PT-PT)** (`docs/defence/caderno_de_defesa.md`)
   - [x] Documento de estudo PT-PT: problema/âmbito/contribuição; decisões+porquês; cada componente + "defesa em 3 frases"; resultados+limitações honestas; mapa do repo; **perguntas difíceis do júri + respostas**

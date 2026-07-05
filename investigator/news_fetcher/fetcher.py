@@ -3,7 +3,7 @@
 Desenho (igual ao `market_data`/`telegram_bot`): separamos o **parsing** (puro, testável sem
 rede) do **HTTP** (invólucros finos, import/chamada tardios). Cada notícia é normalizada para o
 MESMO esquema da KB histórica (`date`, `ticker`, `headline`) para poder ser comparada por
-similaridade com os precedentes (ver `src/historical_kb/`).
+similaridade com os precedentes (ver `investigator/historical_kb/`).
 
 APIs gratuitas (ver docs/design/free_apis.md): Finnhub `/company-news` (60 req/min)
 e feeds RSS públicos.
@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from email.utils import parsedate_to_datetime
 
-from src import config
+from investigator import config
 
 
 @dataclass

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.evaluation.anomaly_eval import isolation_forest_flags
+from investigator.evaluation.anomaly_eval import isolation_forest_flags
 
 
 def _returns_com_pico(n: int = 400, pico_em: int = 350, seed: int = 3) -> np.ndarray:

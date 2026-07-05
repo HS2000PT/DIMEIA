@@ -17,12 +17,10 @@ from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-from src.evaluation.anomaly_eval import rolling_zscore_flags  # noqa: E402
+from investigator.evaluation.anomaly_eval import rolling_zscore_flags
 
 REPO = Path(__file__).resolve().parent.parent.parent
 

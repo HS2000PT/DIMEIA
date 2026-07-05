@@ -5,8 +5,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from src.historical_kb.embedder import HashingEmbedder
-from src.historical_kb.knowledge_base import HistoricalKB
+from investigator.historical_kb.embedder import HashingEmbedder
+from investigator.historical_kb.knowledge_base import HistoricalKB
 
 KB_SAMPLE = Path(__file__).resolve().parent.parent / "data" / "samples" / "kb_sample.jsonl"
 

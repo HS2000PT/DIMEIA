@@ -22,10 +22,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from src.correlation_engine.event_study import post_event_returns
-from src.correlation_engine.similarity import top_k_similar
-from src.historical_kb.embedder import Embedder
-from src.historical_kb.record import NewsRecord
+from investigator.correlation_engine.event_study import post_event_returns
+from investigator.correlation_engine.similarity import top_k_similar
+from investigator.historical_kb.embedder import Embedder
+from investigator.historical_kb.record import NewsRecord
 
 
 class HistoricalKB:

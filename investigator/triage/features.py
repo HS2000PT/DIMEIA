@@ -10,8 +10,8 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from src.historical_kb.embedder import Embedder
-from src.triage.dataset import SECTORS
+from investigator.historical_kb.embedder import Embedder
+from investigator.triage.dataset import SECTORS
 
 # Ordem fixa (determinística) das colunas de contexto e dos setores no one-hot.
 CONTEXT_COLS = ["vol20", "mom5", "ret_event", "headline_len"]

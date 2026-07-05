@@ -16,9 +16,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.triage.dataset import SECTORS, event_features
-from src.triage.explain import lr_group_contributions
-from src.triage.features import context_block
+from investigator.triage.dataset import SECTORS, event_features
+from investigator.triage.explain import lr_group_contributions
+from investigator.triage.features import context_block
 
 _REPO = Path(__file__).resolve().parents[2]
 DEFAULT_BUNDLE = _REPO / "models" / "triage_context_lr.joblib"
@@ -29,7 +29,7 @@ def load_context_bundle(path: str | Path = DEFAULT_BUNDLE) -> dict | None:
     p = Path(path)
     if not p.exists():
         return None
-    from src.triage.model import load_bundle  # import tardio (joblib/sklearn)
+    from investigator.triage.model import load_bundle  # import tardio (joblib/sklearn)
 
     return load_bundle(p)
 

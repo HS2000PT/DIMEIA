@@ -17,16 +17,13 @@ mais recentes por definição. Sem log ainda, sai com 0 e explica o que falta.
 from __future__ import annotations
 
 import argparse
-import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from src.console import force_utf8_stdout  # noqa: E402
-from src.triage.postval import (  # noqa: E402
+from investigator.console import force_utf8_stdout
+from investigator.triage.postval import (
     dedup_decisions,
     label_decision,
     live_report,

@@ -6,10 +6,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.historical_kb.embedder import HashingEmbedder
-from src.triage.explain import lr_group_contributions, materiality_line
-from src.triage.features import CONTEXT_COLS, assemble
-from src.triage.model import (
+from investigator.historical_kb.embedder import HashingEmbedder
+from investigator.triage.explain import lr_group_contributions, materiality_line
+from investigator.triage.features import CONTEXT_COLS, assemble
+from investigator.triage.model import (
     fit_platt,
     load_bundle,
     make_model,

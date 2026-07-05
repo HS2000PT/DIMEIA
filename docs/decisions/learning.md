@@ -87,8 +87,8 @@ explicação local. Usado só se acrescentar clareza defensável. *(Ref. verific
 ---
 
 ## 11. Base de conhecimento histórica e recuperação de precedentes (implementação)
-Esta secção explica o que foi efetivamente **implementado** em `src/historical_kb/` e
-`src/correlation_engine/similarity.py` (Sessão 9).
+Esta secção explica o que foi efetivamente **implementado** em `investigator/historical_kb/` e
+`investigator/correlation_engine/similarity.py` (Sessão 9).
 
 **O que é a KB:** uma coleção de notícias históricas, cada uma com (i) data e ticker, (ii) o
 título, (iii) o **impacto pós-evento** medido (+1/+3/+5d, via `event_study`) e (iv) o
@@ -129,7 +129,7 @@ que um investidor ainda poderia ter apanhado. Isto evita inflacionar o impacto c
 recupera notícias históricas semelhantes (da KB) e mostra o **impacto que tiveram** como
 precedentes — não prevê preços, apenas apresenta evidência passada análoga (restrição §5.2).
 
-**`news_fetcher`** (`src/news_fetcher/fetcher.py`): obtém notícias da camada live (Finnhub
+**`news_fetcher`** (`investigator/news_fetcher/fetcher.py`): obtém notícias da camada live (Finnhub
 `/company-news` e feeds RSS) e **normaliza-as para o mesmo esquema da KB** (`date, ticker,
 headline`), para poderem ser comparadas por similaridade com o histórico. Tal como nos outros
 componentes, separámos o **parsing** (puro, testado sem rede) do **HTTP** (invólucro fino, tardio).
@@ -140,7 +140,7 @@ o **impacto médio** observado em eventos passados análogos (no horizonte escol
 precedentes (data, ticker, similaridade, impacto e título), terminando sempre com a nota de que
 **o impacto é o resultado observado no passado, não uma previsão**.
 
-**Orquestração** (`src/main.py::run_news_trigger`): notícia → *embedding* → `KB.find_precedents`
+**Orquestração** (`investigator/main.py::run_news_trigger`): notícia → *embedding* → `KB.find_precedents`
 → `explain_news_impact` → (opcional) Telegram. O embedder usado tem de coincidir com o que
 construiu a KB (a amostra usa `HashingEmbedder`; com `SbertEmbedder` usa-se a KB SBERT).
 - **Como explico ao júri em 3 frases:** "Quando chega uma notícia, represento-a como vetor e

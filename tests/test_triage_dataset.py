@@ -7,8 +7,8 @@ import math
 import pandas as pd
 import pytest
 
-from src.correlation_engine.event_study import abnormal_returns
-from src.triage.dataset import abnormal_label, assign_splits, event_features
+from investigator.correlation_engine.event_study import abnormal_returns
+from investigator.triage.dataset import abnormal_label, assign_splits, event_features
 
 
 def _serie(valores) -> pd.Series:

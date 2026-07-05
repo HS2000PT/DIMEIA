@@ -232,17 +232,19 @@ evidência sobre um tema, não previsão); sem estudo humano de utilidade; **por
 
 ## 6. Mapa do repositório (para navegar e mostrar)
 ```
-thesis/    a dissertação (LaTeX, EN-GB) — 6 capítulos + front matter + apêndice
-paper/     artigo IEEE (IEEEtran) destilado da tese validada
-slides/    slides de defesa (Beamer, 14 frames)
-src/       o sistema, um pacote por componente
-scripts/   dados, figuras, build/verify/sessão
-docs/      design/ (how_to_run, arquitetura, data_card, APIs) ·
-           evaluation/ (resultados reprodutíveis) ·
-           decisions/ (citation_log, learning, glossary, review_log,
-                       implementation_review, page_audit) ·
-           defence/ (este ficheiro) · _archive/
-progress/  TRACKER (checklist) + SESSIONS (registo)
+thesis/        a dissertação (LaTeX, EN-GB) — 6 capítulos + front matter + apêndice
+paper/         artigo IEEE (IEEEtran) destilado da tese validada
+slides/        slides de defesa (Beamer, 16 frames) + guia_estudo/
+investigator/  o sistema, um pacote por componente (triage/ = o modelo treinado, RQ4)
+models/        modelos de triagem treinados (joblib versionados)
+app/           dashboard Streamlit (UI fina sobre o pacote)
+scripts/       dados, figuras, build/verify/sessão
+docs/          design/ (how_to_run, arquitetura, data_card, APIs) ·
+               evaluation/ (resultados reprodutíveis) ·
+               decisions/ (citation_log, learning, glossary, review_log,
+                           implementation_review, page_audit) ·
+               defence/ (este ficheiro) · _archive/
+progress/      TRACKER (checklist) + SESSIONS (registo)
 ```
 - **Como correr o sistema:** `docs/design/how_to_run.md` (guia do operador, testado).
 - **Provas de rigor (Fases C/D/E):** `review_log.md` (revisão crítica), `implementation_review.md`

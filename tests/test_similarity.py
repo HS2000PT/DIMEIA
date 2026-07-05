@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from src.correlation_engine.similarity import (
+from investigator.correlation_engine.similarity import (
     cosine_similarities,
     cosine_similarity,
     top_k_similar,

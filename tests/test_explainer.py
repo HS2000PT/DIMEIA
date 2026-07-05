@@ -1,8 +1,8 @@
 """Testes do motor de explicação para o Gatilho 2 (notícia + precedentes)."""
 
-from src.anomaly_detector.detector import AnomalyResult
-from src.explanation_engine.explainer import explain_anomaly, explain_news_impact
-from src.historical_kb.record import NewsRecord
+from investigator.anomaly_detector.detector import AnomalyResult
+from investigator.explanation_engine.explainer import explain_anomaly, explain_news_impact
+from investigator.historical_kb.record import NewsRecord
 
 
 def _precedents():

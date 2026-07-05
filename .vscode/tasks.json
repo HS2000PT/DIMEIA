@@ -37,7 +37,7 @@
       "label": "Lint (ruff)",
       "type": "process",
       "command": "${workspaceFolder}/.venv/Scripts/python.exe",
-      "args": ["-m", "ruff", "check", "src", "tests", "app"],
+      "args": ["-m", "ruff", "check", "."],
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": [],
       "linux": { "command": "${workspaceFolder}/.venv/bin/python" },

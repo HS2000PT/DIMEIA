@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from src.evaluation.retrieval_eval import (
+from investigator.evaluation.retrieval_eval import (
     expected_random_precision,
     recency_precision_at_k,
     retrieval_precision_at_k,

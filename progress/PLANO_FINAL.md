@@ -19,19 +19,22 @@
 ### P1 — Polimento da escrita da tese
 - [x] Diagnóstico: travessões-conectores em prosa = **0** (só 2 comentários TikZ + 1 célula de tabela
       aceite); tiques clássicos de IA = **0**. O trabalho é nas secções novas da RQ4.
-- [ ] Passe editorial às secções RQ4: Ch2 §triage, Ch3 §met_triage + §protocolo, Ch4 §learned severity,
+- [x] Passe editorial às secções RQ4: Ch2 §triage, Ch3 §met_triage + §protocolo, Ch4 §learned severity,
       Ch5 CS4, Ch6 (RQ4/contribuições), Ch1/abstract (frases longas partidas, ecos de palavras
       removidos, voz natural). **Regra: nenhum número, citação, equação, tabela ou figura muda.**
-- [ ] Passe rápido de coerência ao resto (grep de tiques, EN-GB, consistência de rótulos).
-- [ ] Recompilar: 0 erros, 0 citações indefinidas, overfull ≤15pt, abstract ≤200 palavras. Commit.
+- [x] Passe rápido de coerência ao resto (grep de tiques, EN-GB, consistência de rótulos).
+- [x] Recompilar: 0 erros, 0 citações indefinidas, overfull ≤15pt, abstract ≤200 palavras.
+      Commit `5c4c099` (reflow legítimo 74→76 pp, sem páginas vazias).
 
 ### P2 — Rename `src/` → `investigator/`
-- [ ] Pacote instalável (`pyproject.toml` ou pelo menos layout de pacote); remover os hacks `sys.path`.
-- [ ] Migrar imports em `src/`, `scripts/`, `tests/`, `app/`; CI e `.vscode/` e `run/*.bat` atualizados.
-- [ ] Sync de docs internos que citam `src/…`: CLAUDE.md (inventário), caderno de defesa, learning.md,
+- [x] Pacote instalável (pyproject `[project] investigator` + `-e .` no requirements.txt); hacks
+      `sys.path` removidos dos scripts (guard do app fica — robustez no Streamlit Cloud). Bundles
+      joblib re-serializados (pickle referia `src.triage.model`) com probe numérico idêntico.
+- [x] Imports migrados em todos os .py; ci.yml/verify.sh/tasks.json/tests.bat → `ruff check .`.
+- [x] Sync de docs internos que citavam `src/…`: CLAUDE.md (inventário), caderno de defesa, learning.md,
       glossary.md, guia de estudo (frames P5 com caminhos), README (layout), how_to_run.
-- [ ] Gates: 93 testes + ruff verdes; AppTest verde; demo reproduz +6,46%; CI verde no push; deploy
-      Streamlit continua a funcionar (entrypoint `app/streamlit_app.py` não muda de caminho).
+- [x] Gates: 93 testes + ruff verdes; AppTest verde; demo reproduz +6,46%; guia recompila (63
+      slides, 0 erros). CI a verificar no push.
 
 ### P3 — KB FNSPID multi-ano (retrieval)
 - [ ] `scripts/build_kb.py --sbert` sobre `data/fnspid_news_subset.csv` (stack ML local; KB local

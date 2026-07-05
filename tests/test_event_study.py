@@ -3,7 +3,7 @@
 import pandas as pd
 import pytest
 
-from src.correlation_engine.event_study import mean_impact, post_event_returns
+from investigator.correlation_engine.event_study import mean_impact, post_event_returns
 
 
 def test_retornos_pos_evento():

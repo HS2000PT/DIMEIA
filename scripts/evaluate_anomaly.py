@@ -1,6 +1,6 @@
 """Avalia o detetor de anomalias (Pergunta 1) em preços reais (yfinance).
 
-Evidências (ver src/evaluation/anomaly_eval.py e docs/design/evaluation_design.md §1):
+Evidências (ver investigator/evaluation/anomaly_eval.py e docs/design/evaluation_design.md §1):
 1. **Consistência da taxa de disparo** entre tickers — z-score (normaliza volatilidade) vs limiar
    fixo em % (ingénuo). Reporta o intervalo/dispersão das taxas entre tickers.
 2. **Precision/recall/F1** vs rótulo-proxy (movimento extremo por ticker), agregado (pooled).
@@ -20,12 +20,10 @@ from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-from src.evaluation.anomaly_eval import (  # noqa: E402
+from investigator.evaluation.anomaly_eval import (
     firing_rate,
     fixed_threshold_flags,
     isolation_forest_flags,

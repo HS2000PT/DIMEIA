@@ -17,10 +17,10 @@ def run_thin_slice(ticker: str = "AAPL", window: int = 20, threshold: float = 3.
 
     Devolve o resultado da deteção e o texto da explicação/alerta.
     """
-    from src.anomaly_detector.detector import detect_latest
-    from src.explanation_engine.explainer import explain_anomaly, explain_normal
-    from src.market_data.prices import get_price_history, log_returns
-    from src.telegram_bot.sender import send_message
+    from investigator.anomaly_detector.detector import detect_latest
+    from investigator.explanation_engine.explainer import explain_anomaly, explain_normal
+    from investigator.market_data.prices import get_price_history, log_returns
+    from investigator.telegram_bot.sender import send_message
 
     df = get_price_history(ticker)
     returns = log_returns(df["Close"])
@@ -49,9 +49,9 @@ def run_news_trigger(
 
     Devolve a lista de precedentes (registo, score) e o texto do alerta.
     """
-    from src.explanation_engine.explainer import explain_news_impact
-    from src.historical_kb.embedder import HashingEmbedder
-    from src.historical_kb.knowledge_base import HistoricalKB
+    from investigator.explanation_engine.explainer import explain_news_impact
+    from investigator.historical_kb.embedder import HashingEmbedder
+    from investigator.historical_kb.knowledge_base import HistoricalKB
 
     if embedder is None:
         embedder = HashingEmbedder(dim=64)
@@ -59,7 +59,7 @@ def run_news_trigger(
     precedents = kb.find_precedents(headline, embedder, top_k=top_k)
     text = explain_news_impact(ticker, headline, precedents, horizon=horizon, date=date)
     if send:
-        from src.telegram_bot.sender import send_message
+        from investigator.telegram_bot.sender import send_message
 
         send_message(text)
     return precedents, text

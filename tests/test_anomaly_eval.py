@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from src.evaluation.anomaly_eval import (
+from investigator.evaluation.anomaly_eval import (
     firing_rate,
     fixed_threshold_flags,
     label_extreme_moves,

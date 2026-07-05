@@ -4,7 +4,7 @@ Lê o dataset de scripts/build_dataset.py, treina as famílias (always/vol/conte
 com split temporal, calibra na validação (Platt) e avalia no teste. Grava:
 - models/triage_lr.joblib (+ .json) e models/triage_gbm.joblib (+ .json)
 - models/triage_context_lr.joblib (+ .json) — variante SÓ-CONTEXTO para a stack leve
-  (runner/app na nuvem não têm SBERT; ver src/triage/infer.py)
+  (runner/app na nuvem não têm SBERT; ver investigator/triage/infer.py)
 - docs/evaluation/evaluation_triage.md  (tabela de resultados; NÃO editar à mão)
 - thesis/figures/eval_triage_pr.pdf e eval_triage_calibration.pdf
 
@@ -17,18 +17,15 @@ Uso:
 from __future__ import annotations
 
 import argparse
-import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from src.console import force_utf8_stdout  # noqa: E402
-from src.triage.features import assemble  # noqa: E402
-from src.triage.model import (  # noqa: E402
+from investigator.console import force_utf8_stdout
+from investigator.triage.features import assemble
+from investigator.triage.model import (
     fit_platt,
     make_model,
     metrics,
@@ -53,10 +50,10 @@ LABELS = {
 
 def _get_embedder(name: str):
     if name == "hashing":
-        from src.historical_kb.embedder import HashingEmbedder
+        from investigator.historical_kb.embedder import HashingEmbedder
 
         return HashingEmbedder(dim=64)
-    from src.historical_kb.embedder import SbertEmbedder
+    from investigator.historical_kb.embedder import SbertEmbedder
 
     return SbertEmbedder()
 

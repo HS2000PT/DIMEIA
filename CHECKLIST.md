@@ -29,7 +29,7 @@
 - [x] **HUMANO: proposta ao Prof. Luís Gomes** — **OK dado em 2026-07-04** (o orientador confia no
       aluno e deu luz verde a tudo; está de férias). **Gate do M7 ABERTO.**
 - [x] M1 — Rótulos (retorno anormal vs SPY) + `scripts/build_dataset.py` + testes anti-lookahead.
-- [x] M2 — `src/triage/` + `scripts/train_triage.py` (LR + GBM, split temporal, calibração, seeds).
+- [x] M2 — `investigator/triage/` + `scripts/train_triage.py` (LR + GBM, split temporal, calibração, seeds).
       *(Ablação sentimento FinBERT: hook desenhado, adiada para M6 — só entra se ajudar na validação.)*
 - [x] M3 — *Smoke evaluation* no corpus Finnhub → `docs/evaluation/evaluation_triage.md` + figuras.
 - [x] M4 — Isolation Forest vs z-score (números z-score congelados intactos).
@@ -55,7 +55,8 @@
 > P2 rename `src/`→`investigator/` → P3 KB FNSPID multi-ano → P4 S-APP (Fase B).
 - [x] P1 — Polimento editorial das secções novas da RQ4 + coerência global (0 números alterados;
       frases-comboio partidas em Ch2/Ch3/Ch5/Ch6, ecos removidos; 76 pp, 0 erros, 0 overfull >15pt).
-- [ ] P2 — Rename `src/`→`investigator/` (pacote + sync completo de docs internos).
+- [x] P2 — Rename `src/`→`investigator/` FEITO (pacote instalável, -e ., bundles re-serializados com
+      probe idêntico, docs sincronizados; 93 testes + ruff + demo verdes).
 - [ ] P3 — KB de retrieval FNSPID 2018–2023 (artefacto local; números da tese intocados).
 - [ ] P4 — S-APP Fase B (Telegram interativo por utilizador + UX da app).
 

@@ -1,7 +1,8 @@
 """Avalia a recuperação de precedentes: SBERT vs baseline lexical vs aleatório/recência.
 
 Pergunta A (docs/design/evaluation_design.md §2): os precedentes recuperados são mesmo análogos?
-Métrica: precision@k por SETOR em recuperação cross-ticker (ver src/evaluation/retrieval_eval.py).
+Métrica: precision@k por SETOR em recuperação cross-ticker
+(ver investigator/evaluation/retrieval_eval.py).
 
 Entrada: CSV de notícias (date, ticker, headline) — ex.: o de scripts/fetch_finnhub_news.py.
 Saída: tabela em docs/evaluation/evaluation_results.md
@@ -22,12 +23,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-from src.evaluation.retrieval_eval import (  # noqa: E402
+from investigator.evaluation.retrieval_eval import (
     expected_random_precision,
     recency_precision_at_k,
     retrieval_precision_at_k,
@@ -85,7 +84,7 @@ def main() -> None:
 
     n_q = min(args.queries, n)
     print("A calcular embeddings…")
-    from src.historical_kb.embedder import HashingEmbedder, SbertEmbedder
+    from investigator.historical_kb.embedder import HashingEmbedder, SbertEmbedder
 
     # Métodos baseados em embeddings: um ou mais modelos SBERT (ablação) + baseline lexical.
     emb_methods: dict[str, np.ndarray] = {}

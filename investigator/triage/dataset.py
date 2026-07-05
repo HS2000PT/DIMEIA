@@ -20,7 +20,7 @@ import math
 import numpy as np
 import pandas as pd
 
-from src.correlation_engine.event_study import abnormal_returns
+from investigator.correlation_engine.event_study import abnormal_returns
 
 # Mapa canónico ticker → setor (igual a scripts/evaluate.py — não alterar um sem o outro).
 SECTORS = {

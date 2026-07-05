@@ -4,9 +4,10 @@ Entrada:  CSV de notícias (date,ticker,headline) — ex.: data/finnhub_news.csv
 Saída:    data/triage_dataset.csv (gitignored) + amostra pequena em data/samples/triage_sample.csv.
 
 Para cada notícia: alinha ao 1.º dia de negociação ≥ data (regra da KB), calcula as features de
-contexto (vol20/mom5/ret_event — convenção anti-lookahead em src/triage/dataset.py), e o rótulo
-de materialidade |retorno anormal vs SPY em (d,d+h]| ≥ τ para a grelha τ×h. Divisão temporal por
-dias únicos com embargo. Preços via yfinance com cache em data/prices/ (apagar para refrescar).
+contexto (vol20/mom5/ret_event — convenção anti-lookahead em investigator/triage/dataset.py) e o
+rótulo de materialidade |retorno anormal vs SPY em (d,d+h]| ≥ τ para a grelha τ×h. Divisão
+temporal por dias únicos com embargo. Preços via yfinance com cache em data/prices/ (apagar
+para refrescar).
 
 Uso:
     python scripts/build_dataset.py                       # defaults (corpus Finnhub; embargo 5)
@@ -16,15 +17,12 @@ Uso:
 from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
 
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from src.console import force_utf8_stdout  # noqa: E402
-from src.triage.dataset import (  # noqa: E402
+from investigator.console import force_utf8_stdout
+from investigator.triage.dataset import (
     MIN_HISTORY,
     SECTORS,
     abnormal_label,

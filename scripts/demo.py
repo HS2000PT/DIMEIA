@@ -10,13 +10,7 @@ Correr:  python scripts/demo.py   (ou ./.venv/Scripts/python.exe scripts/demo.py
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-# Permitir "python scripts/demo.py" a partir da raiz do repo (põe a raiz no sys.path).
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from src.console import force_utf8_stdout  # noqa: E402  (depois do sys.path)
+from investigator.console import force_utf8_stdout
 
 
 def _rule(title: str) -> None:
@@ -27,7 +21,7 @@ def _rule(title: str) -> None:
 
 def demo_noticia() -> None:
     """Gatilho 2 (notícia): recupera precedentes da KB de amostra e explica o impacto."""
-    from src.main import run_news_trigger
+    from investigator.main import run_news_trigger
 
     _rule("GATILHO DE NOTÍCIA  (offline, base de conhecimento de amostra)")
     _, text = run_news_trigger(
@@ -45,9 +39,9 @@ def demo_mercado() -> None:
     print()
     _rule("GATILHO DE MERCADO  (preços ao vivo; não envia)")
     try:
-        from src.anomaly_detector.detector import detect_latest
-        from src.explanation_engine.explainer import explain_anomaly, explain_normal
-        from src.market_data.prices import get_price_history, log_returns
+        from investigator.anomaly_detector.detector import detect_latest
+        from investigator.explanation_engine.explainer import explain_anomaly, explain_normal
+        from investigator.market_data.prices import get_price_history, log_returns
 
         returns = log_returns(get_price_history("AAPL")["Close"])
         res = detect_latest(returns, window=20, threshold=3.0)

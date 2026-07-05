@@ -10,10 +10,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from src.anomaly_detector.detector import AnomalyResult
+from investigator.anomaly_detector.detector import AnomalyResult
 
 if TYPE_CHECKING:
-    from src.historical_kb.record import NewsRecord
+    from investigator.historical_kb.record import NewsRecord
 
 
 def explain_anomaly(ticker: str, result: AnomalyResult) -> str:
@@ -66,7 +66,7 @@ def explain_news_impact(
     previsão de preço — é o resultado OBSERVADO no passado (restrição §5.2).
 
     `materiality` (opcional, off por defeito): linha da triagem aprendida (RQ4), já composta
-    por `src.triage.explain.materiality_line`. None ⇒ saída exatamente igual à de sempre.
+    por `investigator.triage.explain.materiality_line`. None ⇒ saída exatamente igual à de sempre.
     """
     header = f"📰 News alert for {ticker}\n\"{headline}\""
     if date:

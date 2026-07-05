@@ -24,7 +24,7 @@ def _fake_history(ticker: str, period: str = "6mo") -> pd.DataFrame:
 
 
 def _abrir_news_e_clicar(monkeypatch) -> AppTest:
-    import src.market_data.prices as prices
+    import investigator.market_data.prices as prices
 
     monkeypatch.setattr(prices, "get_price_history", _fake_history)
     at = AppTest.from_file(APP)
@@ -42,7 +42,7 @@ def test_news_com_models_mostra_severidade(monkeypatch):
 
 
 def test_news_sem_models_e_gracioso(monkeypatch):
-    import src.triage.infer as infer
+    import investigator.triage.infer as infer
 
     monkeypatch.setattr(infer, "load_context_bundle", lambda path=None: None)
     at = _abrir_news_e_clicar(monkeypatch)

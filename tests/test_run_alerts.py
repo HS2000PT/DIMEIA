@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from investigator.anomaly_detector.detector import AnomalyResult
 from scripts.run_alerts import build_market_alerts, load_config, scan_market
-from src.anomaly_detector.detector import AnomalyResult
 
 
 def _res(is_anomaly: bool, z: float) -> AnomalyResult:

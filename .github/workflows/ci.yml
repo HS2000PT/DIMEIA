@@ -35,7 +35,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Lint (ruff)
-        run: ruff check src tests app
+        run: ruff check .
 
       - name: Tests (pytest — excludes @telegram and @sbert)
         run: pytest

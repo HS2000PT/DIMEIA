@@ -21,12 +21,10 @@ from pathlib import Path
 
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-from src.news_fetcher.fetcher import fetch_finnhub_company_news  # noqa: E402
+from investigator.news_fetcher.fetcher import fetch_finnhub_company_news
 
 DEFAULT_TICKERS = [
     "AAPL", "MSFT", "AMZN", "GOOGL", "NVDA", "TSLA", "META", "JPM",

@@ -23,7 +23,7 @@ Para ser tratável num portátil (§5.4 / R2), começamos com um subconjunto peq
   relevante e suficientemente longo para ter precedentes.
 - **Granularidade:** diária (notícias com data; preços de fecho diários).
 
-### Pré-processamento (implementado em `download_data.py` + `build_kb.py` + `src/historical_kb/`)
+### Pré-processamento (implementado em `download_data.py` + `build_kb.py` + `investigator/historical_kb/`)
 - `scripts/download_data.py`: lê o CSV de notícias do FNSPID **em streaming** (chunks, sem descarregar os
   ~dezenas de GB), normaliza colunas (`date, ticker, headline`), filtra por ticker e janela, grava o
   subconjunto em `data/fnspid_news_subset.csv` (gitignored) e uma amostra de títulos em `data/samples/`.
@@ -31,7 +31,7 @@ Para ser tratável num portátil (§5.4 / R2), começamos com um subconjunto peq
   para cada notícia guarda `data, ticker, título, impacto pós-evento (+1/+3/+5d), embedding`. Grava JSONL.
 - **Alinhamento evento↔preço:** dia do evento = 1.º dia de negociação **>= data da notícia** (`searchsorted`);
   impacto medido a partir do **fecho** desse dia (evita captar o salto já refletido na abertura — ver
-  `learning.md` §11). Impacto via `src/correlation_engine/event_study.py` (nota anti-lookahead aí).
+  `learning.md` §11). Impacto via `investigator/correlation_engine/event_study.py` (nota anti-lookahead aí).
 - **Embedder:** `HashingEmbedder` (baseline determinístico, default) ou `SbertEmbedder` (SBERT, com `--sbert`).
 - Notícias sem cotações para o ticker, ou cuja data ultrapassa a série, são descartadas (sem impacto observável).
 

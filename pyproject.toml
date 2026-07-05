@@ -1,4 +1,21 @@
-# Configuração de ferramentas (ruff + pytest). Sem empacotamento — projeto baseado em scripts.
+# Empacotamento (pacote `investigator`, instalação editável) + ferramentas (ruff + pytest).
+# O `pip install -e .` (feito por scripts/setup_env.sh e pelos requirements) torna o pacote
+# importável sem hacks de sys.path nos scripts.
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "investigator"
+version = "1.0.0"
+description = "InvestiGator — explainable financial alerts for retail investors (MEIA/ISEP dissertation)"
+requires-python = ">=3.12"
+# Dependências geridas pelos ficheiros requirements*.txt (leve/app/ml); o pacote em si não puxa nada.
+dependencies = []
+
+[tool.setuptools.packages.find]
+include = ["investigator*"]
 
 [tool.ruff]
 target-version = "py312"

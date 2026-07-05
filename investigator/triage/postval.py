@@ -20,7 +20,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from src.triage.dataset import abnormal_label
+from investigator.triage.dataset import abnormal_label
 
 
 def log_decision(path: str | Path, *, news_date: str, ticker: str, headline: str,

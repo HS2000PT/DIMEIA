@@ -94,9 +94,9 @@ thesis/        LaTeX dissertation (6 chapters + front matter + appendix)
 paper/         IEEE paper (IEEEtran) distilled from the thesis
 slides/        defence slides (Beamer, 15 frames)
   guia_estudo/   from-zero PT-PT study guide (Beamer, 60 slides)
-src/           system code, one package per component (src/triage/ = the trained ML component, RQ4)
+investigator/  system code, one package per component (investigator/triage/ = the trained ML component, RQ4)
 models/        trained triage models (joblib, versioned; context-only variant runs in production)
-app/           streamlit_app.py — interactive dashboard (thin UI over src/)
+app/           streamlit_app.py — interactive dashboard (thin UI over investigator/)
 run/           double-click launchers (dashboard/demo/tests/thesis)
 .vscode/       click-to-run: Run & Debug configs + tasks + recommended extensions
 scripts/       demo.py (run it) + run_alerts.py (24/7 scan) + data / figures / build automation

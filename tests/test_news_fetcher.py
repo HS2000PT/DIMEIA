@@ -1,6 +1,6 @@
 """Testes do news_fetcher (parsing puro, sem rede)."""
 
-from src.news_fetcher.fetcher import (
+from investigator.news_fetcher.fetcher import (
     NewsItem,
     _rss_date_to_iso,
     parse_finnhub_news,

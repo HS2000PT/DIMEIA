@@ -41,8 +41,8 @@ def _news() -> pd.DataFrame:
 
 @pytest.mark.skipif(not _HAS_ST, reason="sentence-transformers não instalado")
 def test_sbert_recupera_por_semantica_nao_por_palavras():
-    from src.historical_kb.embedder import SbertEmbedder
-    from src.historical_kb.knowledge_base import HistoricalKB
+    from investigator.historical_kb.embedder import SbertEmbedder
+    from investigator.historical_kb.knowledge_base import HistoricalKB
 
     embedder = SbertEmbedder()
     assert embedder.dim >= 256  # all-MiniLM-L6-v2 → 384

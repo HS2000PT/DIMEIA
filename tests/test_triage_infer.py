@@ -6,13 +6,18 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from investigator.explanation_engine.explainer import explain_news_impact
+from investigator.historical_kb.record import NewsRecord
+from investigator.triage.explain import materiality_line
+from investigator.triage.features import context_block
+from investigator.triage.infer import (
+    DEFAULT_BUNDLE,
+    load_context_bundle,
+    score_context,
+    score_latest,
+)
+from investigator.triage.model import fit_platt, make_model, save_bundle
 from scripts.run_alerts import apply_materiality
-from src.explanation_engine.explainer import explain_news_impact
-from src.historical_kb.record import NewsRecord
-from src.triage.explain import materiality_line
-from src.triage.features import context_block
-from src.triage.infer import DEFAULT_BUNDLE, load_context_bundle, score_context, score_latest
-from src.triage.model import fit_platt, make_model, save_bundle
 
 
 def _tiny_bundle(tmp_path) -> dict:

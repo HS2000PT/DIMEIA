@@ -2,7 +2,7 @@
 
 import pytest
 
-from src.anomaly_detector.detector import detect_latest
+from investigator.anomaly_detector.detector import detect_latest
 
 
 def _base_returns(n: int = 30) -> list[float]:

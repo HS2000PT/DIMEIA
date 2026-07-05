@@ -31,3 +31,6 @@ yfinance==1.4.1
 # bloco de contexto (e correr os testes) funciona só com isto.
 scikit-learn==1.9.0
 joblib==1.5.3
+
+# O próprio pacote (editável): torna `investigator` importável sem hacks de sys.path.
+-e .

@@ -23,13 +23,13 @@ semelhantes (FNSPID) e mede o impacto que tiveram nos preços, usando-as como **
 │     → para cada notícia: texto + data + ticker + impacto observado nos     │
 │       preços (janelas pós-notícia: +1d, +3d, …) e embedding do texto       │
 │     → índice de similaridade (vetores) consultável                        │
-│   Construída por: scripts/download_data.py + src/historical_kb/           │
+│   Construída por: scripts/download_data.py + investigator/historical_kb/           │
 ├──────────────────────────────────────────────────────────────────────────┤
 │ CAMADA LIVE (online, tempo real) — acionar os gatilhos                     │
 │   Preços: yfinance (base) [+ Finnhub/Alpha Vantage a confirmar — Fase C]  │
 │   Notícias: RSS financeiro / Finnhub / GNews (free tier — a confirmar)    │
 │   Alertas: Telegram Bot API (gratuito)                                     │
-│   Servida por: src/market_data/, src/news_fetcher/, src/telegram_bot/     │
+│   Servida por: investigator/market_data/, investigator/news_fetcher/, investigator/telegram_bot/     │
 └──────────────────────────────────────────────────────────────────────────┘
 ```
 > **Porque o histórico vem do FNSPID e não de APIs de notícias:** os free tiers de APIs de notícias dão
@@ -39,41 +39,41 @@ semelhantes (FNSPID) e mede o impacto que tiveram nos preços, usando-as como **
 ## 3. Diagrama de componentes (textual)
 ```
                          ┌───────────────────────────┐
-        GATILHO 1        │   src/market_data (LIVE)  │
+        GATILHO 1        │   investigator/market_data (LIVE)  │
    (movimento abrupto)   │   preços OHLCV (yfinance)  │
                          └─────────────┬─────────────┘
                                        ▼
                          ┌───────────────────────────┐
-                         │  src/anomaly_detector     │  z-score de retornos vs.
+                         │  investigator/anomaly_detector     │  z-score de retornos vs.
                          │  (estatística transparente)│  média/desvio móveis
                          └─────────────┬─────────────┘
                                        │ anomalia + contexto
                                        ▼
         GATILHO 2        ┌───────────────────────────┐     ┌────────────────────────┐
-   (nova notícia)        │  src/correlation_engine   │◄────│ src/historical_kb       │
+   (nova notícia)        │  investigator/correlation_engine   │◄────│ investigator/historical_kb       │
  ┌────────────────┐      │  embeddings + similaridade │     │ (FNSPID: embeddings +   │
- │ src/news_fetcher│────►│  → precedentes + impacto   │     │  impacto pré-calculado) │
+ │ investigator/news_fetcher│────►│  → precedentes + impacto   │     │  impacto pré-calculado) │
  │   (LIVE)        │      │    (event-study)          │     └────────────────────────┘
  └────────────────┘      └─────────────┬─────────────┘
                                        │ precedentes + impacto medido
                                        │           (opcional) ▼
                                        │            ┌────────────────────────┐
-                                       │            │ src/impact_analyzer    │ tickers do mesmo
+                                       │            │ investigator/impact_analyzer    │ tickers do mesmo
                                        │            │ (impacto setorial)      │ setor (OPCIONAL)
                                        │            └───────────┬────────────┘
                                        ▼                        │
                          ┌───────────────────────────┐         │
-                         │  src/explanation_engine   │◄────────┘
+                         │  investigator/explanation_engine   │◄────────┘
                          │  (XAI: regras + precedentes│
                          │   + atribuição opcional)  │
                          └─────────────┬─────────────┘
                                        │ alerta + explicação + fontes + precedentes
                                        ▼
                          ┌───────────────────────────┐
-                         │  src/telegram_bot (LIVE)  │  → utilizador
+                         │  investigator/telegram_bot (LIVE)  │  → utilizador
                          └───────────────────────────┘
 
-           Orquestração: src/main.py   ·   Configuração/segredos: .env
+           Orquestração: investigator/main.py   ·   Configuração/segredos: .env
 ```
 
 ## 4. Componentes (responsabilidade · entrada → saída · método simples e defensável)

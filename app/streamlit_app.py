@@ -111,7 +111,7 @@ def _render_severity(ticker: str, headline: str) -> None:
     Uses the context-only logistic regression (light stack, no SBERT). Honest framing: the
     probability is triage evidence over historical cases, never a forecast.
     """
-    from src.triage.infer import load_context_bundle, score_latest
+    from investigator.triage.infer import load_context_bundle, score_latest
 
     bundle = load_context_bundle()
     if bundle is None:
@@ -143,7 +143,7 @@ def _render_severity(ticker: str, headline: str) -> None:
 
 
 def page_news() -> None:
-    from src.main import run_news_trigger
+    from investigator.main import run_news_trigger
 
     st.header("News trigger — precedents and their impact")
     _disclaimer()
@@ -208,9 +208,9 @@ def page_market() -> None:
 
     if st.button("Check latest move", type="primary"):
         try:
-            from src.anomaly_detector.detector import detect_latest
-            from src.explanation_engine.explainer import explain_anomaly, explain_normal
-            from src.market_data.prices import log_returns
+            from investigator.anomaly_detector.detector import detect_latest
+            from investigator.explanation_engine.explainer import explain_anomaly, explain_normal
+            from investigator.market_data.prices import log_returns
 
             close = _cached_close(ticker)
             returns = log_returns(close)
@@ -321,7 +321,7 @@ Attributions: FNSPID (CC BY-SA 4.0), yfinance, Telegram Bot API, ISEP MEIA LaTeX
 @st.cache_data(show_spinner=False)
 def _cached_close(ticker: str) -> pd.Series:
     """Cached close-price series (avoids refetching on every widget interaction)."""
-    from src.market_data.prices import get_price_history
+    from investigator.market_data.prices import get_price_history
 
     return get_price_history(ticker)["Close"]
 

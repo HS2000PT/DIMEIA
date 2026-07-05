@@ -41,11 +41,11 @@ volatilidade, reporta-se na mesma (o contributo metodológico mantém-se).
 
 - [x] **M0** — Proposta ao orientador escrita (`docs/internal/proposta_ml_orientador.md`) + CHECKLIST. *(2026-07-03)*
 - [x] **M0.5** — Este plano persistido no repo (checkpoint multi-dispositivo). *(2026-07-03)*
-- [x] **M1** — Rótulos + dataset: `abnormal_returns` puro em `src/correlation_engine/event_study.py`;
-      `src/triage/dataset.py` (event_features, abnormal_label, assign_splits, SECTORS);
+- [x] **M1** — Rótulos + dataset: `abnormal_returns` puro em `investigator/correlation_engine/event_study.py`;
+      `investigator/triage/dataset.py` (event_features, abnormal_label, assign_splits, SECTORS);
       `scripts/build_dataset.py` (cache de preços em `data/prices/`, incl. SPY; amostra committada);
       testes anti-lookahead + embargo + rótulo à mão.
-- [x] **M2** — Treino: `src/triage/{features,model,explain}.py` + `scripts/train_triage.py`
+- [x] **M2** — Treino: `investigator/triage/{features,model,explain}.py` + `scripts/train_triage.py`
       (split temporal, 4 modelos, calibração, seeds; grava models/ + md + figuras). Ablação sentimento
       FinBERT (inferência; só entra se ajudar na validação).
 - [x] **M3** — **Smoke evaluation** no corpus Finnhub → `docs/evaluation/evaluation_triage.md` marcado
@@ -57,11 +57,11 @@ volatilidade, reporta-se na mesma (o contributo metodológico mantém-se).
       (gate no runner, fail-open), severidade na página News da app (ausência do models/ é graciosa).
       *Decisão de produção:* a stack leve (runner/app na nuvem) não tem SBERT ⇒ o treino grava também
       a variante **só-contexto** (`models/triage_context_lr.joblib`, 1,8 KB) e é ESSA que a produção
-      pontua (`src/triage/infer.py`, com guarda de compatibilidade de features); o texto identifica
+      pontua (`investigator/triage/infer.py`, com guarda de compatibilidade de features); o texto identifica
       sempre a variante. Retreino de verificação: modelos principais **bit-idênticos** (reprodutível).
       AppTest verde com e sem `models/`. *(2026-07-04)*
 - [x] **M5.5** — **Loop de pós-validação** (a visão "RL" do aluno, na forma defensável — ver §5):
-      o runner regista cada decisão em `data/predictions_log.jsonl` (`src/triage/postval.py::log_decision`,
+      o runner regista cada decisão em `data/predictions_log.jsonl` (`investigator/triage/postval.py::log_decision`,
       fail-safe — nunca pára a varredura); `scripts/post_validate.py` rotula as decisões **maturadas**
       (janela (d, d+3] fechada) com o resultado REAL — mesma regra `abnormal_label` do treino, preços
       frescos — e escreve `docs/evaluation/live_monitoring.md` (precisão das mantidas vs base rate,

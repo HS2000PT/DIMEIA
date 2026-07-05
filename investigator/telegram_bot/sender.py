@@ -1,10 +1,10 @@
-"""Envio de alertas via Telegram Bot API (gratuito). Segredos só do .env (src/config)."""
+"""Envio de alertas via Telegram Bot API (gratuito). Segredos só do .env (investigator/config)."""
 
 from __future__ import annotations
 
 import requests
 
-from src import config
+from investigator import config
 
 
 def send_message(text: str, token: str | None = None, chat_id: str | None = None,

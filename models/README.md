@@ -8,7 +8,7 @@ idênticas; verificado). Cada `.joblib` contém {modelo, calibrador Platt, nomes
 |----------|-------|
 | `triage_lr.joblib` | Regressão logística contexto+texto (principal, interpretável) |
 | `triage_gbm.joblib` | HistGradientBoosting contexto+texto (comparação) |
-| `triage_context_lr.joblib` | LR SÓ-CONTEXTO — a variante de PRODUÇÃO (stack leve, sem SBERT): é a que o runner de alertas e a app na nuvem pontuam (`src/triage/infer.py`) |
+| `triage_context_lr.joblib` | LR SÓ-CONTEXTO — a variante de PRODUÇÃO (stack leve, sem SBERT): é a que o runner de alertas e a app na nuvem pontuam (`investigator/triage/infer.py`) |
 
 Retreinar: `python scripts/train_triage.py` (SBERT; precisa da stack `--ml`).
 Resultados/tabela: `docs/evaluation/evaluation_triage.md`. Plano: `progress/ML_PLAN.md`.
