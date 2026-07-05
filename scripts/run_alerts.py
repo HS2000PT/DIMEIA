@@ -47,6 +47,29 @@ def load_config(path: str | Path = _CONFIG) -> dict:
         return yaml.safe_load(f) or {}
 
 
+def news_is_fresh(news_date: str, today: date, max_age_days: int = 2) -> bool:
+    """Puro: só alertamos notícias recentes.
+
+    O scan apanha "a mais recente da última semana"; sem este filtro a MESMA manchete
+    podia alertar dias a fio (spam = fadiga de alertas). 2 dias por defeito cobre o
+    fim de semana (notícia de sábado ainda alerta na segunda).
+    """
+    try:
+        d = date.fromisoformat(str(news_date)[:10])
+    except ValueError:
+        return False
+    return 0 <= (today - d).days <= max_age_days
+
+
+def bar_is_fresh(last_bar: date, today: date) -> bool:
+    """Puro: só perguntamos "hoje é anómalo?" se a última barra de preços é de HOJE.
+
+    Evita dois defeitos reais: repetir num feriado de segunda o alerta da barra de sexta
+    (já enviado na sexta) e "avaliar" dados estagnados quando o mercado não abriu.
+    """
+    return last_bar >= today
+
+
 def build_market_alerts(results: list[tuple[str, object]]) -> list[str]:
     """Puro: dado [(ticker, AnomalyResult)], devolve os textos de alerta só das anomalias."""
     from investigator.explanation_engine.explainer import explain_anomaly
@@ -64,10 +87,17 @@ def scan_market(cfg: dict) -> list[tuple[str, str]]:
         return []
     window = int(m.get("window", 20))
     threshold = float(m.get("threshold", 3.0))
+    require_fresh = bool(m.get("require_fresh_bar", True))
     results: list[tuple[str, object]] = []
     for ticker in m.get("tickers", []):
         try:
-            returns = log_returns(get_price_history(ticker)["Close"])
+            hist = get_price_history(ticker)
+            last_bar = hist.index[-1].date()
+            if require_fresh and not bar_is_fresh(last_bar, date.today()):
+                print(f"[{ticker}] última barra é de {last_bar} (sem sessão nova hoje) "
+                      "— sem avaliação (anti-duplicado).")
+                continue
+            returns = log_returns(hist["Close"])
             results.append((ticker, detect_latest(returns, window=window, threshold=threshold)))
         except Exception as exc:  # noqa: BLE001  (um ticker/rede a falhar não pode parar a varredura)
             print(f"[saltar {ticker}] {type(exc).__name__}: {exc}")
@@ -131,8 +161,17 @@ def scan_news(cfg: dict) -> list[tuple[str, str]]:
             if not items:
                 continue
             latest = max(items, key=lambda it: it.date)  # o mais recente
+            max_age = int(n.get("max_age_days", 2))
+            if not news_is_fresh(latest.date, date.today(), max_age):
+                print(f"[noticias {ticker}] mais recente é de {latest.date} (>{max_age} dias) "
+                      "— sem alerta (anti-repetição).")
+                continue
+            from investigator.main import kb_query_embedder, preferred_light_kb
+
+            kb_path = preferred_light_kb()
             _, text = run_news_trigger(
-                ticker=ticker, headline=latest.headline, top_k=top_k, horizon=horizon, send=False
+                ticker=ticker, headline=latest.headline, kb_path=kb_path,
+                embedder=kb_query_embedder(kb_path), top_k=top_k, horizon=horizon, send=False,
             )
             if bundle is not None:
                 from investigator.market_data.prices import get_price_history

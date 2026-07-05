@@ -29,22 +29,10 @@ from investigator.historical_kb.knowledge_base import HistoricalKB
 
 
 def load_prices(tickers: list[str], start: str, end: str) -> dict[str, pd.Series]:
-    """Preços de fecho diários por ticker (yfinance), índice tz-naive e ordenado."""
-    import yfinance as yf
+    """Preços de fecho diários por ticker — delega na camada de mercado do pacote."""
+    from investigator.market_data.prices import load_close_series
 
-    prices: dict[str, pd.Series] = {}
-    for ticker in tickers:
-        df = yf.Ticker(ticker).history(start=start, end=end, interval="1d")
-        if df is None or df.empty:
-            print(f"  [!] sem precos para {ticker} - ignorado")
-            continue
-        close = df["Close"].copy()
-        # yfinance devolve índice tz-aware (America/New_York); normalizamos para naive
-        # para o `searchsorted` comparar com a data da notícia.
-        close.index = pd.to_datetime(close.index).tz_localize(None)
-        prices[ticker] = close.sort_index()
-        print(f"  [ok] {ticker}: {len(close)} dias")
-    return prices
+    return load_close_series(tickers, start, end)
 
 
 def main() -> None:

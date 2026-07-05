@@ -10,9 +10,10 @@ Run locally:
 
 Honesty notes (mirrors the thesis):
 - No price prediction, no trading signals. Explanations only — evidence from the past.
-- The interactive news trigger uses the offline baseline embedder (HashingEmbedder) and the small
-  sample knowledge base, so it runs anywhere with no downloads. The thesis's real method is SBERT;
-  its measured advantage is on the Evaluation page.
+- The interactive news trigger uses the offline baseline embedder (HashingEmbedder) over a
+  curated multi-year FNSPID knowledge base (falls back to the small sample), so it runs anywhere
+  with no downloads. The thesis's real method is SBERT; its measured advantage is on the
+  Evaluation page.
 """
 
 from __future__ import annotations
@@ -100,7 +101,7 @@ Use the sidebar to try each trigger, explore the evaluation, or read how it work
         """
     )
     c1, c2, c3 = st.columns(3)
-    c1.metric("Automated tests", "103 ✓")
+    c1.metric("Automated tests", "106 ✓")
     c2.metric("Verified citations", "52 / 52")
     c3.metric("Price predictions made", "0 (by design)")
 
@@ -155,13 +156,21 @@ def _render_severity(ticker: str, headline: str) -> None:
 
 
 def page_news() -> None:
-    from investigator.main import run_news_trigger
+    from investigator.main import kb_query_embedder, preferred_light_kb, run_news_trigger
 
     st.header("News trigger — precedents and their impact")
     _disclaimer()
     st.markdown(
         "Type a headline and a ticker. InvestiGator finds the most **similar past headlines** "
         "in its knowledge base and shows what happened to the price afterwards."
+    )
+    kb_path = preferred_light_kb()
+    st.caption(
+        f"Knowledge base in use: **{_kb_size(str(kb_path)):,} historical headlines** "
+        f"({'FNSPID 2018–2023, curated' if 'fnspid' in kb_path.name else 'small sample'}). "
+        "This interactive demo matches by **word overlap** (offline baseline) — weaker than the "
+        "thesis's SBERT method, so off-topic matches can appear; the measured gap is on the "
+        "Evaluation page."
     )
     col = st.columns([3, 1])
     headline = col[0].text_input("Headline", value="Nvidia demand surges on AI chip orders")
@@ -174,12 +183,14 @@ def page_news() -> None:
         precedents, text = run_news_trigger(
             ticker=ticker.strip().upper(),
             headline=headline.strip(),
+            kb_path=kb_path,
+            embedder=kb_query_embedder(kb_path),
             top_k=top_k,
             horizon=horizon,
             send=False,
         )
         if not precedents:
-            st.warning("No precedents found in the sample knowledge base.")
+            st.warning("No precedents found in the knowledge base.")
             return
         rows = []
         for rec, score in precedents:
@@ -336,6 +347,13 @@ def _cached_close(ticker: str) -> pd.Series:
     from investigator.market_data.prices import get_price_history
 
     return get_price_history(ticker)["Close"]
+
+
+@st.cache_data(show_spinner=False)
+def _kb_size(kb_path: str) -> int:
+    """Cached record count of the knowledge base (one JSONL line per record)."""
+    with open(kb_path, encoding="utf-8") as f:
+        return sum(1 for line in f if line.strip())
 
 
 PAGES = {

@@ -9,6 +9,35 @@ from __future__ import annotations
 from pathlib import Path
 
 _DEFAULT_KB = Path(__file__).resolve().parent.parent / "data" / "samples" / "kb_sample.jsonl"
+_LIGHT_KB = Path(__file__).resolve().parent.parent / "data" / "samples" / "kb_fnspid_light.jsonl"
+
+
+def preferred_light_kb() -> Path:
+    """KB para o PRODUTO (app/runner, stack leve): a curada multi-ano FNSPID se existir,
+    senão a amostra de sempre. O DEFAULT de `run_news_trigger` não muda — a demo e o
+    exemplo do Cap. 3 (+6,46%) continuam a usar `kb_sample.jsonl`, reprodutíveis."""
+    return _LIGHT_KB if _LIGHT_KB.exists() else _DEFAULT_KB
+
+
+def kb_query_embedder(kb_path: str | Path):
+    """HashingEmbedder com a dimensão DA PRÓPRIA KB (lida do 1.º registo do ficheiro).
+
+    Auto-coerência sem configuração: a regra "o embedder da consulta tem de coincidir com o
+    da construção" (guarda R1) fica garantida por construção, seja a KB 64-d ou 256-d.
+    """
+    import json
+
+    from investigator.historical_kb.embedder import HashingEmbedder
+
+    with open(kb_path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                emb = json.loads(line).get("embedding")
+                if emb:
+                    return HashingEmbedder(dim=len(emb))
+                break
+    return HashingEmbedder(dim=64)
 
 
 def run_thin_slice(ticker: str = "AAPL", window: int = 20, threshold: float = 3.0,

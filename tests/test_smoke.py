@@ -56,3 +56,25 @@ def test_thin_slice_envia_telegram():
     texto = "[smoke test] " + explain_anomaly("TEST", res)
     resp = send_message(texto)
     assert resp.get("ok") is True
+
+
+def test_preferred_light_kb_existe_e_responde():
+    """O produto (app/runner) usa a KB leve multi-ano quando presente; a demo fica na amostra."""
+    from pathlib import Path
+
+    import pytest
+
+    from investigator.main import kb_query_embedder, preferred_light_kb, run_news_trigger
+
+    kb = Path(preferred_light_kb())
+    assert kb.exists()
+    if kb.name != "kb_fnspid_light.jsonl":
+        pytest.skip("KB leve não construída neste checkout (fallback para a amostra é válido)")
+    embedder = kb_query_embedder(kb)
+    assert embedder.dim == 256  # auto-coerência: a dimensão vem do próprio ficheiro
+    precedents, text = run_news_trigger(
+        ticker="NVDA", headline="Nvidia earnings beat expectations on AI demand",
+        kb_path=kb, embedder=embedder, top_k=3, send=False,
+    )
+    assert len(precedents) == 3
+    assert "not a price prediction" in text
