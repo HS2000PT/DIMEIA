@@ -22,7 +22,11 @@ se só queres correr o sistema.
 |----------|----------|
 | [evaluation/evaluation_results.md](evaluation/evaluation_results.md) | Recuperação: SBERT vs baselines (multi-seed). |
 | [evaluation/evaluation_per_sector.md](evaluation/evaluation_per_sector.md) | Precisão por setor. |
-| [evaluation/evaluation_anomaly.md](evaluation/evaluation_anomaly.md) | Anomalia: taxa de disparo + ablação. |
+| [evaluation/evaluation_anomaly.md](evaluation/evaluation_anomaly.md) | Anomalia: taxa de disparo + ablação (+ IF vs z-score). |
+| [evaluation/evaluation_triage.md](evaluation/evaluation_triage.md) | Triagem de materialidade (RQ4): números finais FNSPID. |
+| [evaluation/evaluation_triage_smoke.md](evaluation/evaluation_triage_smoke.md) | Triagem: smoke no corpus Finnhub (congelado; regime shift). |
+| [evaluation/live_monitoring.md](evaluation/live_monitoring.md) | Loop de pós-validação: precisão/calibração ao vivo. |
+| [evaluation/kb_fnspid_build.md](evaluation/kb_fnspid_build.md) | KB de retrieval multi-ano: build + validação do artefacto (P3). |
 
 ## decisions/ — porquê das decisões, aprendizagem e revisões (rigor académico)
 | Ficheiro | Para quê |
