@@ -376,11 +376,12 @@ average of the rounded values shown.}
 the headlines most likely to matter (Section~\ref{sec:sota_triage}), answering \gls{RQ}4.
 
 The unit is one (headline, ticker, event day) triple, where the event day $d$ is the first trading day
-on or after the news date, the same alignment rule the knowledge base uses. The label asks a deliberately
-direction-free question: did an abnormal move of unusual size follow? Formally, the example is
-\emph{material} when $|r^{\mathrm{tkr}}_{(d,\,d+h]} - r^{\mathrm{mkt}}_{(d,\,d+h]}| \ge \tau$, the
-ticker's return over the $h$ trading days after the event minus the market's (an index proxy), the
-market-adjusted outcome of Section~\ref{sec:sota_eventstudy}. The primary setting is $\tau = 2\%$ at
+on or after the news date, the same alignment rule the knowledge base uses. The label asks a
+direction-free question by construction: did an abnormal move of unusual size follow? Formally, the
+example is \emph{material} when $|r^{\mathrm{tkr}}_{(d,\,d+h]} - r^{\mathrm{mkt}}_{(d,\,d+h]}| \ge \tau$.
+The quantity inside the absolute value is the ticker's return over the $h$ trading days after the
+event minus the market's (an index proxy): the market-adjusted outcome of
+Section~\ref{sec:sota_eventstudy}. The primary setting is $\tau = 2\%$ at
 $h = 3$; a sensitivity grid over $\tau \in \{1.5\%, 2\%, 3\%\}$ and $h \in \{1, 3, 5\}$ is reported so
 the conclusion does not hinge on one threshold. Labels are produced by the system's own event-study
 code; no manual annotation is involved.
@@ -394,8 +395,9 @@ asserting that no feature changes while the label does.
 
 Model families span the interpretability--capacity trade-off of Section~\ref{sec:sota_triage}: an
 always-alert floor, a volatility-only logistic regression (the strong naive rule any reviewer would ask
-about), logistic regressions on context features, text features, and both (the main interpretable
-model), and a gradient-boosted ensemble \autocite{friedman2001gbm} as the capacity ceiling. Scores are
+about), logistic regressions on context features only, on text features only, and on both together
+(the main interpretable model), and a gradient-boosted ensemble \autocite{friedman2001gbm} as the
+capacity ceiling. Scores are
 turned into honest probabilities by Platt scaling fitted on validation data only
 \autocite{niculescu2005calibration}. For explanations, the logistic regression's log-odds decompose into
 an exact additive sum of contributions; the embedding dimensions are grouped into a single ``headline

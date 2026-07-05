@@ -81,7 +81,7 @@ The interactive per-user bot (users DM `/watch TSLA`) is designed there as a lat
 **93 automated tests** + lint green. The core components — including a **materiality-triage model trained
 by the author** on 79,753 multi-year FNSPID examples (RQ4; triage evidence, never a forecast) — are
 evaluated on **real data**, and the statistics reproduce exactly from versioned scripts. The **six-chapter
-dissertation** compiles cleanly (`thesis/main.pdf`, ~74 pp, 0 errors), with **52 references each verified by
+dissertation** compiles cleanly (`thesis/main.pdf`, ~76 pp, 0 errors), with **52 references each verified by
 DOI/arXiv/ISBN or primary source** (audit in `docs/decisions/page_audit.md`). An **IEEE paper** (`paper/`)
 and **defence slides** (`slides/`) compile. Remaining items are human-only: confirm the exact ISEP AI-use
 declaration wording + submission date, and the author's final read. Rebuilding the *retrieval* knowledge

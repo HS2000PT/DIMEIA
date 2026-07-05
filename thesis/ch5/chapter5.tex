@@ -356,10 +356,10 @@ discarded rows. Fourteen of the fifteen tickers are represented; Meta is absent 
 indexes it under its former symbol (FB) for most of the window, a coverage note rather than a method
 change. The temporal split by unique days (70/15/15, five-day embargo) yields $28{,}574$ training,
 $17{,}710$ validation and $32{,}649$ test rows, with material examples at $38.5\%$, $47.0\%$ and
-$37.8\%$ respectively. Two corpus properties matter for reading the results: news density grows over
+$37.8\%$ respectively. Two corpus properties matter for reading the results. News density grows over
 time (2023 alone holds $44\%$ of the examples), so the later blocks hold more rows than their share of
-days; and headlines from the same (ticker, day) share one label, so rows are clustered, which the
-split by unique days prevents from leaking across blocks.
+days. And headlines from the same (ticker, day) pair share one label, so rows come in clusters; the
+split by unique days keeps each cluster inside a single block.
 
 \paragraph{Results.} Table~\ref{tab:cs_triage} reports the test block; Figure~\ref{fig:cs_triage_pr}
 shows the precision--recall curves and Figure~\ref{fig:cs_triage_cal} the calibration of the main
@@ -406,7 +406,7 @@ what makes the score honest to show to an end user.}
 \emph{triage works as a product mechanism}: within a budget of five alerts per day, ranking by any
 trained score raises the share of material alerts from $0.163$ (picking blindly) to $0.632$, nearly
 four times better, with calibrated probabilities (Brier $0.218$ against $0.622$ for the floor). This
-is precisely the alert-fatigue payoff the component was built for. Second, \emph{the signal is market
+is the alert-fatigue payoff the component was built for. Second, \emph{the signal is market
 context, not text}: the volatility-only baseline attains the best PR-AUC ($0.542$), the context-only
 model matches it in budgeted precision, and adding the headline embedding \emph{lowers} the linear
 model to $0.496$; the gradient-boosted ensemble does not recover the gap ($0.469$). Headlines alone
@@ -420,11 +420,11 @@ Section~\ref{sec:met_evaluation}, and both validate the dissertation's simplicit
 evidence rather than assumption. The deployed variant (context-only, Section~\ref{sec:investigator_logic})
 is consistent with this finding: it uses exactly the features that carry the signal.
 
-\paragraph{Caveats.} The label is a proxy (market-adjusted move size, not human judgement of
-materiality); same-day headlines share one label, so effective sample size is smaller than the row
-count; the corpus's news density grows over the window; and headlines are short, so a richer text
-representation (article bodies, financial sentiment) might yet close the text gap, which is recorded
-as future work rather than assumed.
+\paragraph{Caveats.} The label is a proxy: market-adjusted move size, not human judgement of
+materiality. Same-day headlines share one label, so the effective sample size is smaller than the row
+count, and the corpus's news density grows over the window. Headlines are short, so a richer text
+representation (article bodies, financial sentiment) might yet close the text gap; that possibility
+is recorded as future work rather than assumed.
 
 \section{Discussion and Threats to Validity}
 \label{sec:cs_discussion}

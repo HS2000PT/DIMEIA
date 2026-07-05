@@ -42,13 +42,22 @@
 - [x] M6 — **FEITO (madrugada de 2026-07-05)**: FNSPID 2018–2023 → 79.753 exemplos (0 descartes,
       14/15 tickers — META="FB" no corpus) → retreino. Resultado: vol PR-AUC 0,542 imbatível pelo
       texto; triagem quase 4× melhor que alertar-sempre no orçamento diário (0,632 vs 0,163).
-- [x] M7 (tese) — RQ4 integrada de ponta a ponta (Caps. 1–6 + abstract; 74 pp, 0 erros, 52/52
+- [x] M7 (tese) — RQ4 integrada de ponta a ponta (Caps. 1–6 + abstract; 74→76 pp após o passe editorial, 0 erros, 52/52
       citações; gate aberto pelo orientador em 2026-07-04).
 - [x] M7 (materiais) — **FEITO (2026-07-05)**: paper IEEE (4 pp, +2 refs), slides de defesa (16 frames,
       +Result 4 + 3 perguntas de júri), guia de estudo (63 slides, +3 frames que ensinam a triagem do
       zero + slide "o que usa" corrigido), caderno (§5 RQ4 + mapa de números + 4 perguntas), app/README
       (93 testes, 52/52, claim "trains no model" corrigido), page-audit estendido.
 - [ ] (futuro) S-APP — sessão dedicada: app + comandos/config do Telegram para utilizadores (Fase B).
+
+## 🎯 EM CURSO — as 4 frentes finais (plano: [progress/PLANO_FINAL.md](progress/PLANO_FINAL.md))
+> Ordem decidida em 2026-07-05 (pedido do aluno: "fazer tudo"): P1 polimento da escrita da tese →
+> P2 rename `src/`→`investigator/` → P3 KB FNSPID multi-ano → P4 S-APP (Fase B).
+- [x] P1 — Polimento editorial das secções novas da RQ4 + coerência global (0 números alterados;
+      frases-comboio partidas em Ch2/Ch3/Ch5/Ch6, ecos removidos; 76 pp, 0 erros, 0 overfull >15pt).
+- [ ] P2 — Rename `src/`→`investigator/` (pacote + sync completo de docs internos).
+- [ ] P3 — KB de retrieval FNSPID 2018–2023 (artefacto local; números da tese intocados).
+- [ ] P4 — S-APP Fase B (Telegram interativo por utilizador + UX da app).
 
 ## ⏳ A fazer — EU (humano; ninguém pode fazer por ti)
 ### Pôr o sistema 24/7 ao vivo (grátis) — ver [docs/design/going_live.md](docs/design/going_live.md)
