@@ -1170,6 +1170,29 @@ Avaliação & precision@k \emph{cross-ticker} & --- & padrão; evita match trivi
 % ====================================================================
 \section{Defesa}
 
+\begin{frame}{O produto, HOJE — o que está ao vivo (e como mostrar)}
+\footnotesize
+Não é só uma tese em papel: o sistema \key{corre} em produção, de graça, sem servidor próprio.
+\vspace{1mm}
+\begin{itemize}
+  \item \key{Dashboard público} — \texttt{investigator.streamlit.app}: os dois gatilhos e a
+        avaliação, no browser. (Usa o embedder \emph{baseline} sobre uma fatia curada de 2.016
+        manchetes FNSPID 2018--2023; o SBERT e o seu ganho medido estão na página Evaluation.)
+  \item \key{Canal Telegram + timer} — o GitHub Actions varre a watchlist seg--sex após o fecho
+        US e publica alertas explicados no canal. Anti-repetição de notícias ($\leq 2$ dias) e
+        anti-duplicado em feriados (só avalia com sessão nova).
+  \item \key{Bot interativo} — \texttt{/watch TSLA}, \texttt{/list}, \texttt{/stop}: cada
+        utilizador gere a sua watchlist (SQLite local; \emph{long-polling}, sem servidor).
+        Off por defeito no runner; fail-open (nunca parte a produção).
+  \item \key{À prova de wifi} — se a demo ao vivo falhar: \texttt{python scripts/demo.py} é
+        offline e determinística (reproduz o $+6{,}46\%$ do Cap.~3).
+\end{itemize}
+\vspace{1mm}
+\centering \emph{Uma frase para o júri:} "o desenho de produção é conservador: tudo o que é
+opcional está desligado por defeito e falha aberto — a produção nunca depende de um componente
+opcional estar vivo."
+\end{frame}
+
 \begin{frame}{Perguntas difíceis do júri (1/2)}
 \scriptsize
 \textbf{Isto não é só usar bibliotecas?}\\

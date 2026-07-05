@@ -8,6 +8,60 @@
 
 ---
 
+## 0. O guião oral — abertura de 3 minutos + 15 segundos por pergunta
+
+> Para decorar a ESTRUTURA (não as palavras). Todos os números são os congelados da tese.
+> Lê em voz alta 3× antes da defesa; ajusta às tuas palavras.
+
+**Abertura (±3 minutos):**
+
+"Um investidor de retalho vive em sobrecarga: milhares de ações e notícias em contínuo, e as
+ferramentas que interpretam esses sinais são institucionais ou opacas. A minha dissertação constrói
+e avalia o **InvestiGator**: um sistema de alertas financeiros **explicável por desenho**, para o
+mercado norte-americano, entregue no Telegram.
+
+Tem dois gatilhos. Um **movimento abrupto** dispara uma anomalia estatística — um z-score rolante
+sem lookahead — explicada em linguagem simples. Uma **notícia nova** é comparada, por embeddings de
+frases, com uma base de notícias históricas, e o alerta mostra os precedentes mais parecidos e o
+impacto que **de facto** tiveram nos preços: evidência do passado, nunca previsão. Este motor de
+correlação notícia–mercado é o núcleo da tese.
+
+Avaliei cada componente contra baselines em dados reais. A recuperação semântica atinge
+precision@5 de 0,51 contra 0,35 da baseline lexical e 0,24 do acaso. O detetor normalizado pela
+volatilidade dispara de forma consistente entre ações onde um limiar fixo não consegue. E fui além
+de aplicar componentes: **treinei e calibrei um modelo de triagem de materialidade** sobre 79.753
+exemplos notícia–mercado de seis anos. O resultado é honesto nos dois sentidos: nenhum modelo que
+lê o texto bateu a baseline de só-volatilidade — e reporto isso tal como caiu — mas, dentro de um
+orçamento realista de cinco alertas por dia, a triagem quase **quadruplica** a precisão face a
+alertar às cegas. Duas vezes dei a um método aprendido uma comparação justa contra a escolha
+transparente, e duas vezes a escolha transparente venceu: o desenho 'simplicidade defensável'
+ficou validado com evidência, não com fé.
+
+O sistema não é só papel: está **ao vivo** — um dashboard público, um canal Telegram alimentado por
+uma varredura agendada, e um bot interativo onde cada utilizador gere a sua watchlist. Tudo com
+APIs gratuitas, tudo reproduzível por scripts versionados, e com as limitações declaradas na tese."
+
+**Se só tiveres 15 segundos por pergunta:**
+
+- **RQ1 (deteção transparente)** — "Sim. O z-score rolante tem taxa de disparo consistente entre
+  ações (amplitude 0,015 vs 0,344 de um limiar fixo) e explica-se com média, desvio e janela.
+  Desafiei-o com um método aprendido — Isolation Forest — e o z-score venceu (F1 0,530 vs 0,271)."
+- **RQ2 (recuperação + impacto)** — "Sim. SBERT dá precision@5 de 0,51 cross-ticker, contra 0,35
+  lexical e 0,24 aleatório; o impacto é medido com janelas de estudo de evento (+1/+3/+5 dias),
+  sem lookahead, e mostrado como evidência, não como previsão."
+- **RQ3 (explicações)** — "Fiéis **por construção**: o texto do alerta é gerado diretamente dos
+  objetos calculados, por isso não pode divergir da computação. A utilidade para investidores
+  reais precisa de um estudo humano, que declaro como limitação, não como resultado."
+- **RQ4 (triagem aprendida)** — "Não na hipótese do texto; sim no mecanismo. Nenhum modelo com
+  texto bateu a só-volatilidade (PR-AUC 0,542 contra 0,496 do meu modelo principal). Mas com
+  orçamento de 5 alertas/dia a triagem sobe a precisão de 0,163 para 0,632, com probabilidades
+  calibradas — treinei, avaliei com protocolo temporal estrito, e reportei o resultado tal como é."
+
+> **A frase que fecha qualquer pergunta difícil:** "Preferi um resultado modesto e verdadeiro a um
+> impressionante e frágil — e é por isso que consigo defender cada número desta tese."
+
+---
+
 ## 1. O problema, o âmbito e a contribuição
 
 **Problema.** O investidor de retalho (não profissional) vive sob *sobrecarga de informação*: milhares de
@@ -254,6 +308,27 @@ progress/      TRACKER (checklist) + SESSIONS (registo)
 - Análise extra pronta: `scripts/evaluate_per_sector.py` dá a recuperação **por setor** (precision@k +
   *lift* por setor); basta o corpus Finnhub (re-obter com a `FINNHUB_API_KEY` na `.env`).
 - Tudo o que é número na tese sai de um script com seed fixa.
+
+---
+
+## 6.5 O produto HOJE — o que está ao vivo (para mostrar ao júri, se pedirem)
+
+| Peça | Estado | Como mostrar em 30 segundos |
+|------|--------|------------------------------|
+| **Dashboard público** | <https://investigator.streamlit.app> (falta 1 clique meu para tirar o login) | Abrir no browser → News trigger → "Find precedents" |
+| **Canal Telegram + varredura agendada** | GitHub Actions corre seg–sex após o fecho US (badge "Alerts" no README) | Mostrar o badge verde + uma mensagem real no canal |
+| **Bot interativo (watchlist pessoal)** | Construído; corre em qualquer máquina (`run/bot.bat`), sem servidor | `/watch TSLA` → `/list` no telemóvel, ao vivo |
+| **Demo offline (à prova de wifi)** | `python scripts/demo.py` — determinística, sem chaves | Reproduz o exemplo do Cap. 3: média **+6,46%** |
+| **KB multi-ano** | 79.753 registos SBERT (artefacto local) + fatia curada de 2.016 na app | `docs/evaluation/kb_fnspid_build.md` |
+
+**Honestidades prontas a dizer:** a app pública usa o embedder baseline (word overlap) sobre a fatia
+curada — o SBERT e o seu ganho medido estão na página Evaluation; a varredura de notícias tem
+anti-repetição (≤2 dias) e o mercado só é avaliado com sessão nova (anti-duplicado em feriados);
+o gate de triagem e o fan-out do bot são **off por defeito** e fail-open — a produção nunca depende
+de um componente opcional estar vivo.
+
+**Se a demo ao vivo falhar** (wifi, projetor): o guia de estudo tem o output real da demo captado
+em slides, e a tese tem os exemplos trabalhados — nada na defesa depende de rede.
 
 ---
 

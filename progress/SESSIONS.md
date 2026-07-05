@@ -5,6 +5,40 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 30 — 2026-07-06 — PRODUTO REAL + SINCRONIA TOTAL para a defesa
+**Pedido do aluno (verbatim no espírito):** "turn this into a real product, public, for everyone…
+no bullshit… thesis/slides/guide/caderno completely in sync… the most important thing is I dominate
+everything… so I can be confident in my oral defence."
+
+**Produto (defeitos reais corrigidos + melhorias, commit a941674):**
+- **Anti-spam:** `news_is_fresh` (≤2 dias, `news.max_age_days`) — o scan olhava 7 dias para trás e a
+  mesma manchete podia alertar dias a fio. **Anti-duplicado:** `bar_is_fresh`
+  (`market.require_fresh_bar`, true por defeito) — num feriado o cron repetia o alerta da sessão
+  anterior. Ambos puros e testados.
+- **App pública com precedentes reais:** `scripts/curate_kb_light.py` (estratificação determinística
+  do FNSPID 2018–2023, ≤36 por ticker×ano, só impactos completos) → `data/samples/kb_fnspid_light.jsonl`
+  (**2.016 registos, 3,4 MB, versionada**). Decisão 256-d tomada COM evidência (64-d: consulta de
+  recall da TSLA devolvia KO/XOM; 256-d devolve o precedente certo). `kb_query_embedder()` lê a
+  dimensão do próprio ficheiro → coerência consulta↔KB por construção. Caption honesta na app
+  ("word overlap, mais fraco que o SBERT da tese"). Demo/Cap. 3 (+6,46%) intocados.
+- Badge "Alerts (scheduled scan)" no README; `load_prices` promovido a
+  `investigator.market_data.load_close_series`.
+
+**Sincronia + defesa:**
+- **Tese (1 bullet, Cap. 6):** "rebuild da KB = futuro" ficou desatualizado após o P3 → agora diz,
+  com precisão, que a KB JÁ foi reconstruída (depois de congelados os case studies) e que o trabalho
+  futuro é a AVALIAÇÃO sobre ela. Recompila: 76 pp, 0 erros, 0 refs indefinidas, 0 overfull >15pt.
+- **Caderno:** novo **§0 — guião oral** (abertura de 3 minutos + resposta de 15 segundos por RQ,
+  só números congelados, com a frase-fecho "modesto e verdadeiro > impressionante e frágil") e novo
+  **§6.5 — O produto HOJE** (tabela "como mostrar em 30s", honestidades prontas, plano B sem wifi).
+- **Guia:** frame "O produto, HOJE — o que está ao vivo" → **64 slides, 0 erros**. Slides de defesa
+  verificados (sem staleness). README: bot já construído, 16 frames/63 slides, KB como artefacto.
+- **106 testes** (+3: frescura, barra fresca, KB leve end-to-end) + ruff verdes.
+- Registado no CHECKLIST o próximo passo de produto desenhado: retrieval semântico na nuvem com
+  MiniLM-ONNX (~23 MB, sem torch) para fechar o fosso word-overlap↔SBERT na app pública.
+
+---
+
 ## Sessão 29 (continuação) — 2026-07-05 — PLANO FINAL: P1 escrita + P2 rename src/→investigator/
 **Pedido do aluno:** "fazer TUDO" — polimento da escrita da tese, rename, KB multi-ano e S-APP, pela
 ordem que fizesse mais sentido. Ordem fixada em **`progress/PLANO_FINAL.md`**: P1 escrita → P2 rename →

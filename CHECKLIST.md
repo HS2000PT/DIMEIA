@@ -84,12 +84,14 @@
 ---
 
 ## 🧰 Polimento opcional (seguro, quando quiseres)
-- [ ] Renomear `src/` → `investigator/` (pacote instalável; tirar o `sys.path`) — **sessão dedicada** com
-      sincronização dos docs (a tese/paper não referem `src/`, por isso não são afetados).
+- [x] Renomear `src/` → `investigator/` — **FEITO no P2 do plano final** (pacote instalável via
+      pyproject + `-e .`; hacks `sys.path` removidos; docs sincronizados; bundles re-serializados).
 - [ ] Relatório de cobertura (`pytest --cov`) + o número no README/CI.
 - [ ] Ajuda de **horas de mercado** (mercado aberto/fechado) — também vira figura de "framework geral".
 - [ ] Camada de **logging** (`logging` em vez de `print` no código de biblioteca).
 - [ ] SBERT em singleton + matriz da KB pré-calculada (desempenho, quando a KB/UI crescer).
+- [ ] Retrieval SEMÂNTICO na nuvem: MiniLM em ONNX (onnxruntime, ~23 MB, sem torch) na app pública —
+      fecha o fosso word-overlap↔SBERT mantido honesto na caption da página News.
 - [ ] CLI para o Gatilho 2 (`python -m …`) a espelhar o Gatilho 1.
 
 ---

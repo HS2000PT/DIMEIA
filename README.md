@@ -62,7 +62,9 @@ Turn InvestiGator into a running service without paying or babysitting a server:
 - Try the scan now (sends nothing): `python scripts/run_alerts.py --dry-run`.
 
 Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/going_live.md`**.
-The interactive per-user bot (users DM `/watch TSLA`) is designed there as a later, hosted phase.
+- **Personal watchlists (interactive bot, no server needed)** → run `python scripts/run_bot.py`
+  (long-polling) and anyone can DM the bot `/watch TSLA`, `/list`, `/stop`; the scheduled scan then
+  also delivers each subscriber's tickers (`bot.enabled` in `config/alerts.yaml`, off by default).
 
 ## 🖱️ Prefer clicking? (no console)
 - **Double-click** a launcher in **`run/`** (`dashboard.bat`, `demo.bat`, `tests.bat`, `thesis-pdf.bat`).
@@ -72,9 +74,9 @@ The interactive per-user bot (users DM `/watch TSLA`) is designed there as a lat
 
 ## Learn it / prepare the defence
 - **From-zero visual study guide (PT-PT):** **`slides/guia_estudo/main.pdf`** — teaches the whole thesis
-  assuming *no* AI background (60 slides): the AI ideas actually used, the data shown, the code line by line,
+  assuming *no* AI background (64 slides): the AI ideas actually used, the data shown, the code line by line,
   the end-to-end workflow with real examples, the evaluation, and prepared jury questions.
-- **Defence slides (EN):** `slides/main.pdf` (15 frames).
+- **Defence slides (EN):** `slides/main.pdf` (16 frames).
 - **PT-PT defence companion (prose):** `docs/defence/caderno_de_defesa.md`.
 
 ## Project status
@@ -85,16 +87,17 @@ evaluated on **real data**, and the statistics reproduce exactly from versioned 
 dissertation** compiles cleanly (`thesis/main.pdf`, ~76 pp, 0 errors), with **52 references each verified by
 DOI/arXiv/ISBN or primary source** (audit in `docs/decisions/page_audit.md`). An **IEEE paper** (`paper/`)
 and **defence slides** (`slides/`) compile. Remaining items are human-only: confirm the exact ISEP AI-use
-declaration wording + submission date, and the author's final read. Rebuilding the *retrieval* knowledge
-base from the multi-year corpus is optional future work (the triage study already uses it). See
+declaration wording + submission date, and the author's final read. The multi-year *retrieval* knowledge
+base is built as a local artefact (validated in `docs/evaluation/kb_fnspid_build.md`; a curated slice
+powers the public app) — evaluating retrieval on it stays future work, as the thesis states. See
 `CLAUDE.md` for the exact state and `progress/SESSIONS.md` for per-session history.
 
 ## Repository layout
 ```
 thesis/        LaTeX dissertation (6 chapters + front matter + appendix)
 paper/         IEEE paper (IEEEtran) distilled from the thesis
-slides/        defence slides (Beamer, 15 frames)
-  guia_estudo/   from-zero PT-PT study guide (Beamer, 60 slides)
+slides/        defence slides (Beamer, 16 frames)
+  guia_estudo/   from-zero PT-PT study guide (Beamer, 64 slides)
 investigator/  system code, one package per component (investigator/triage/ = the trained ML component, RQ4)
 models/        trained triage models (joblib, versioned; context-only variant runs in production)
 app/           streamlit_app.py — interactive dashboard (thin UI over investigator/)

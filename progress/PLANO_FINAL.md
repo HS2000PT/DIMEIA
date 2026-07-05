@@ -63,6 +63,25 @@
 - [x] Runbook: going_live.md Fase B marcada CONSTRUÍDA (2 passos para ligar) + how_to_run §2.5;
       produto responsável implementado (limite 20 tickers, /stop reversível, validação de tickers).
 
+### P5 — Produto real + sincronia total p/ defesa (pedido de 2026-07-06: "real product, no bullshit; tudo em sync; eu domino tudo")
+- [x] Runner endurecido com defeitos REAIS corrigidos: anti-repetição de notícias (`news_is_fresh`,
+      ≤2 dias) e anti-duplicado em feriados (`bar_is_fresh`, só avalia com sessão nova) — testados.
+- [x] App pública com precedentes REAIS: KB leve curada do FNSPID (2.016 registos 2018–2023, 3,4 MB,
+      versionada; `scripts/curate_kb_light.py`, determinística) + `kb_query_embedder()` lê a dimensão
+      do próprio ficheiro (coerência por construção); decisão 256-d COM evidência (menos colisões);
+      caption honesta ("word overlap, mais fraco que o SBERT da tese"). Demo/Cap. 3 intocados.
+- [x] Badge do workflow Alerts no README (o cron vivo, à vista); factos do README atualizados
+      (bot construído, 16 frames, 63→64 slides, KB como artefacto).
+- [x] Tese: bullet de trabalho futuro do Cap. 6 atualizado com honestidade (a KB JÁ foi reconstruída;
+      futuro = a avaliação sobre ela). 76 pp, 0 erros, 0 refs indefinidas, 0 overfull >15pt.
+- [x] Caderno: **§0 guião oral** (abertura de 3 min + resposta de 15s por RQ, só números congelados)
+      + **§6.5 O produto hoje** (tabela "como mostrar em 30s" + honestidades prontas + plano B sem wifi).
+- [x] Guia: frame "O produto, HOJE" (64 slides, 0 erros). Slides de defesa verificados (sem staleness).
+- [x] 106 testes + ruff verdes; demo reproduz +6,46%.
+- **Próximo desenhado (não construído):** retrieval semântico na nuvem via MiniLM-ONNX
+      (onnxruntime, ~23 MB) para fechar o fosso word-overlap↔SBERT na app pública — registado
+      no CHECKLIST como melhoria futura.
+
 ## Guardrails (herdados, sempre em vigor)
 Zero fabricação; números validados nunca editados à mão; sem previsão de preço/direção; só compute
 grátis; segredos nunca em ficheiros versionados; commits PT-PT com

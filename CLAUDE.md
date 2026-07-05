@@ -7,8 +7,26 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 29 (**WORKSTREAM ML 100% COMPLETO: M0–M7** + continuação: **PLANO FINAL P1–P4 COMPLETO**)
-- **Última atualização:** 2026-07-05 (continuação da mesma sessão, após /compact)
+- **Sessão nº:** 30 (**PRODUTO REAL + SINCRONIA TOTAL p/ defesa** — após P1–P4 completos na S29)
+- **Última atualização:** 2026-07-06
+- **🚀 SESSÃO 30 (produto + sync, pedido: "real product, no bullshit; tudo em sync; eu domino tudo"):**
+  **Produto (commit `a941674`):** runner endurecido — `news_is_fresh` (anti-spam ≤2 dias; o scan
+  olhava 7 dias e repetia a mesma manchete) e `bar_is_fresh` (anti-duplicado em feriados; só avalia
+  com sessão nova), ambos puros/testados/configuráveis no alerts.yaml. **App pública com precedentes
+  REAIS:** `scripts/curate_kb_light.py` → `data/samples/kb_fnspid_light.jsonl` (2.016 registos FNSPID
+  2018–2023, 3,4 MB, VERSIONADA; estratificação determinística ≤36 por ticker×ano, só impactos
+  completos); decisão **256-d com evidência** (a 64-d a consulta de recall da TSLA devolvia KO/XOM;
+  a 256-d devolve o precedente certo); `kb_query_embedder()` lê a dim do próprio ficheiro (coerência
+  por construção, guarda R1); caption honesta ("word overlap < SBERT da tese, gap na página
+  Evaluation"). **Default de `run_news_trigger` INTOCADO** → demo/Cap. 3 (+6,46%) reproduzem.
+  `load_prices`→`investigator.market_data.load_close_series` (build_kb + curadoria reutilizam).
+  Badge "Alerts" no README. **Sincronia p/ defesa:** tese Cap. 6 — bullet futuro atualizado com
+  honestidade (KB JÁ reconstruída; futuro = avaliação sobre ela; 76 pp, 0 erros, gates verdes);
+  **caderno §0 = guião oral** (abertura 3 min + 15s por RQ, só números congelados) + **§6.5 =
+  O produto HOJE** (como mostrar em 30s + plano B sem wifi); **guia 64 slides** (novo frame
+  "O produto, HOJE", 0 erros); README sem staleness (bot construído, 16 frames/63 slides→agora 64
+  no guia, KB artefacto). **106 testes + ruff verdes.** Próximo passo de produto DESENHADO (não
+  construído): MiniLM-ONNX na nuvem (CHECKLIST, polimento).
 - **🎯 PLANO FINAL (as 4 frentes pós-ML)** — o aluno pediu "fazer TUDO": polimento da escrita da tese,
   rename `src/`→`investigator/`, KB FNSPID multi-ano e S-APP Fase B, pela ordem que fizesse mais sentido.
   Ordem fixada e registada em **`progress/PLANO_FINAL.md`** (checkpoint multi-dispositivo): P1 escrita →
