@@ -78,13 +78,14 @@ The interactive per-user bot (users DM `/watch TSLA`) is designed there as a lat
 
 ## Project status
 **Validated and submission-ready (pending human sign-off).** Both triggers are proven end to end;
-**47 automated tests** + lint green. The two core components are evaluated on **real data**, and the
-statistics were independently re-run and reproduce the thesis figures exactly. The **six-chapter
-dissertation** compiles cleanly (`thesis/main.pdf`, ~72 pp, 0 errors), with **50 references each verified by
+**93 automated tests** + lint green. The core components — including a **materiality-triage model trained
+by the author** on 79,753 multi-year FNSPID examples (RQ4; triage evidence, never a forecast) — are
+evaluated on **real data**, and the statistics reproduce exactly from versioned scripts. The **six-chapter
+dissertation** compiles cleanly (`thesis/main.pdf`, ~74 pp, 0 errors), with **52 references each verified by
 DOI/arXiv/ISBN or primary source** (audit in `docs/decisions/page_audit.md`). An **IEEE paper** (`paper/`)
 and **defence slides** (`slides/`) compile. Remaining items are human-only: confirm the exact ISEP AI-use
-declaration wording + submission date, and the author's final read. The full multi-year FNSPID knowledge
-base is optional future work (a long download; the streaming pipeline is implemented and verified). See
+declaration wording + submission date, and the author's final read. Rebuilding the *retrieval* knowledge
+base from the multi-year corpus is optional future work (the triage study already uses it). See
 `CLAUDE.md` for the exact state and `progress/SESSIONS.md` for per-session history.
 
 ## Repository layout
@@ -93,7 +94,8 @@ thesis/        LaTeX dissertation (6 chapters + front matter + appendix)
 paper/         IEEE paper (IEEEtran) distilled from the thesis
 slides/        defence slides (Beamer, 15 frames)
   guia_estudo/   from-zero PT-PT study guide (Beamer, 60 slides)
-src/           system code, one package per component
+src/           system code, one package per component (src/triage/ = the trained ML component, RQ4)
+models/        trained triage models (joblib, versioned; context-only variant runs in production)
 app/           streamlit_app.py — interactive dashboard (thin UI over src/)
 run/           double-click launchers (dashboard/demo/tests/thesis)
 .vscode/       click-to-run: Run & Debug configs + tasks + recommended extensions
@@ -117,7 +119,7 @@ CITATION.cff   how to cite this work    requirements.txt (light) / requirements-
   (`requirements.txt`) — enough for the demo, the tests and the evaluations. The heavy ML stack (`torch` CPU,
   `sentence-transformers`, in `requirements-ml.txt`) is needed only for the real SBERT paths and installs with
   `bash scripts/setup_env.sh --ml` (it pulls `torch` from the PyTorch CPU index, not PyPI).
-- Verification loop: `bash scripts/verify.sh` (47 tests + lint + LaTeX note).
+- Verification loop: `bash scripts/verify.sh` (93 tests + lint + LaTeX note).
 - Secrets live only in a local, gitignored `.env` (see `.env.example` for variable names).
 - LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push.
 

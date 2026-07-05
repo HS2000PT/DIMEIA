@@ -66,10 +66,11 @@ For each abrupt move or relevant news item, it shows \emph{what} was detected, \
   \item[\textbf{RQ1}] Can \textbf{transparent} statistical methods detect abrupt moves consistently enough to be useful, while staying explainable?
   \item[\textbf{RQ2}] Can a news--market engine retrieve \textbf{genuinely analogous} precedents and quantify their impact \textbf{without lookahead}, better than trivial baselines?
   \item[\textbf{RQ3}] Can the explanations be \textbf{faithful} to what the system computes, and useful to a retail investor?
+  \item[\textbf{RQ4}] Can a \textbf{supervised model}, trained on historical news and market context, usefully \textbf{prioritise} which news deserve an alert, beyond volatility baselines --- \textbf{never} predicting direction?
 \end{enumerate}
 \vfill
 \begin{block}{Contribution: Artificial Intelligence \emph{Engineering}}
-Not a new algorithm: the \textbf{disciplined integration, application and critical evaluation} of existing components into a working, explainable, reproducible system, with a documented news-to-impact methodology.
+Not a new algorithm: the \textbf{disciplined integration, application and critical evaluation} of existing components --- plus \textbf{one model trained by the author} (materiality triage) --- into a working, explainable, reproducible system.
 \end{block}
 \end{frame}
 
@@ -210,11 +211,39 @@ Avg 1-day move: $-1.97\%$ (over 5; 3 shown)\\
 \end{columns}
 \end{frame}
 
+\begin{frame}{Result 4: learned triage --- trained, calibrated, honest}
+\begin{columns}
+\column{0.55\textwidth}
+\begin{itemize}\small
+  \item \textbf{Task:} $P(\text{abnormal move follows news})$ --- materiality, \textbf{never} direction. Labels from our own event study ($|$ticker $-$ SPY$| \ge 2\%$ over $(d,d{+}3]$).
+  \item \textbf{Corpus:} FNSPID 2018--2023, $79{,}753$ examples; temporal split by day + embargo; calibration on validation only.
+  \item \textbf{Anti-lookahead:} a unit test \emph{mutates future prices} --- features unchanged, label changes.
+\end{itemize}
+\column{0.45\textwidth}
+\scriptsize
+\begin{tabular}{l c c}
+\toprule
+Model & PR-AUC & P@5/day \\
+\midrule
+Always (floor) & 0.378 & 0.163 \\
+\textbf{Volatility LR} & \textbf{0.542} & \textbf{0.632} \\
+Context LR & 0.538 & 0.632 \\
+Context$+$text LR & 0.496 & 0.585 \\
+Gradient boosting & 0.469 & 0.551 \\
+\bottomrule
+\end{tabular}
+\end{columns}
+\vfill
+\begin{block}{\small The honest verdict (pre-committed)}
+\small Within a 5-alerts/day budget, triage nearly \textbf{quadruples precision} ($0.632$ vs $0.163$) --- but \textbf{no text model beat volatility}. The signal is market context; reported as it fell.
+\end{block}
+\end{frame}
+
 \begin{frame}{Limitations (stated plainly)}
 \begin{itemize}
   \item Relevance is a \textbf{same-sector proxy}, not a human judgement.
-  \item Corpus is a \textbf{recent} free-tier window, not the multi-year FNSPID history.
-  \item Impact is a \textbf{raw} post-event return, not market-adjusted (CAR).
+  \item Retrieval corpus is a \textbf{recent} free-tier window; the \emph{triage} study did use multi-year FNSPID (14/15 tickers --- Meta is ``FB'' in the corpus).
+  \item Displayed precedent impact is a \textbf{raw} post-event return (triage labels \emph{are} market-adjusted).
   \item Similarity is \textbf{thematic, not directional}: a cluster can mix up/down moves, so the mean is theme-level \emph{evidence}, not a forecast.
   \item \textbf{No human usefulness study} yet (RQ3 usefulness open).
   \item By design: \textbf{no price prediction, no trading}, so profit metrics are out of scope.
@@ -228,10 +257,11 @@ Avg 1-day move: $-1.97\%$ (over 5; 3 shown)\\
   \item \textbf{RQ1 (yes):} transparent \emph{z}-score detects consistently across the market and explains every flag.
   \item \textbf{RQ2 (yes, retrieval):} semantic retrieval finds analogous precedents far above baselines; impact measured without lookahead.
   \item \textbf{RQ3 (faithful yes; useful open):} explanations cannot diverge from the computation; human usefulness is future work.
+  \item \textbf{RQ4 (no on text; yes on mechanism):} triage $\approx 4\times$ within-budget precision, but volatility stayed unbeaten --- the \emph{second} fair ``learned vs simple'' test the transparent choice won (first: Isolation Forest vs \emph{z}-score, $F_1$ $0.271$ vs $0.530$).
 \end{itemize}
 \vfill
 \begin{block}{Contribution}
-A working, \textbf{explainable, reproducible} financial-alert system for retail investors, engineering existing components into a transparent whole, with an honest evaluation.
+A working, \textbf{explainable, reproducible} financial-alert system for retail investors --- existing components plus one author-trained triage model, engineered into a transparent whole, with an honest evaluation.
 \end{block}
 \end{frame}
 
@@ -248,7 +278,9 @@ A working, \textbf{explainable, reproducible} financial-alert system for retail 
 \footnotesize
 \begin{itemize}
   \item \textbf{Why not predict prices?} Market efficiency (Fama 1970): public news is impounded fast; we \emph{measure} reactions, honestly.
-  \item \textbf{Why \emph{z}-score, not Isolation Forest/GARCH?} Transparency for a low-dimensional signal explained to a non-expert; defensible simplicity.
+  \item \textbf{Why \emph{z}-score, not Isolation Forest/GARCH?} Transparency for a low-dimensional signal --- and we \emph{tested} it: a causal Isolation Forest on the same information lost ($F_1$ $0.271$ vs $0.530$).
+  \item \textbf{Your trained model lost to the volatility baseline. Failure?} No: the comparison was \emph{pre-committed} and answers RQ4 with evidence; triage still $\approx 4\times$ within-budget precision vs alerting always, and the deployed variant uses exactly the features that carry the signal.
+  \item \textbf{How do you know the triage model never sees the future?} A unit test mutates post-event prices and asserts features are unchanged while the label changes; temporal split by unique day with a five-day embargo.
   \item \textbf{Why precision@$k$ and a sector proxy?} Standard ranked-retrieval metric; objective, reproducible; human relevance is future work.
   \item \textbf{Cross-ticker constraint?} An \emph{evaluation} choice to avoid trivial self-matches; the live alert shows the most similar precedents regardless.
   \item \textbf{A positive headline retrieved negative precedents ($-1.97\%$). Misleading?} Similarity matches \emph{theme}, not direction; the mean is theme-level \textbf{evidence}, shown with every precedent and a no-prediction disclaimer. Future work: de-duplicate precedents and flag directional disagreement.

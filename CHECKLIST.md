@@ -44,8 +44,10 @@
       texto; triagem quase 4× melhor que alertar-sempre no orçamento diário (0,632 vs 0,163).
 - [x] M7 (tese) — RQ4 integrada de ponta a ponta (Caps. 1–6 + abstract; 74 pp, 0 erros, 52/52
       citações; gate aberto pelo orientador em 2026-07-04).
-- [ ] M7 (materiais) — paper IEEE + slides de defesa + guia de estudo + caderno sincronizados com a
-      RQ4 (**sessão dedicada**); estender a auditoria de páginas às páginas novas.
+- [x] M7 (materiais) — **FEITO (2026-07-05)**: paper IEEE (4 pp, +2 refs), slides de defesa (16 frames,
+      +Result 4 + 3 perguntas de júri), guia de estudo (63 slides, +3 frames que ensinam a triagem do
+      zero + slide "o que usa" corrigido), caderno (§5 RQ4 + mapa de números + 4 perguntas), app/README
+      (93 testes, 52/52, claim "trains no model" corrigido), page-audit estendido.
 - [ ] (futuro) S-APP — sessão dedicada: app + comandos/config do Telegram para utilizadores (Fase B).
 
 ## ⏳ A fazer — EU (humano; ninguém pode fazer por ti)

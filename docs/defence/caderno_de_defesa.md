@@ -179,8 +179,31 @@ noticia live (Finnhub/RSS)
 **Explicação (RQ3).** Fidelidade **conseguida** (por construção + teste automático). Utilidade para o
 investidor: **ainda não medida** com estudo humano → reportada como limitação, não como resultado.
 
-**Limitações (dizer antes que o júri pergunte):** proxy de setor (não julgamento humano); corpus recente
-(não FNSPID multi-ano); títulos curtos limitam a semântica; rótulo de anomalia é volatilidade-relativo;
+**Triagem de materialidade (RQ4) — o modelo que EU treinei.** Corpus FNSPID 2018–2023: **79.753**
+exemplos (título, ticker, dia do evento), 1.501 dias únicos, 14/15 tickers (a Meta é "FB" no corpus);
+split temporal por dias únicos + embargo 5; calibração de Platt só na validação; teste com prevalência
+0,378.
+- PR-AUC (teste): **só-volatilidade 0,542** > só-contexto 0,538 > contexto+texto 0,496 > GBM 0,469 >
+  só-texto 0,439 > alertar-sempre 0,378.
+- **Precisão@5 alertas/dia: 0,632 vs 0,163** do alertar-sempre (quase 4×); Brier 0,218 vs 0,622.
+- **Veredicto (pré-comprometido, na tese):** *"No on the text hypothesis; yes on the mechanism"* — a
+  triagem vale como mecanismo de produto, mas nenhum modelo que lê o texto bateu a baseline de
+  volatilidade ⇒ o sinal está no contexto de mercado. É a **2.ª** comparação justa "aprendido vs
+  simples" que a escolha transparente vence (a 1.ª: Isolation Forest causal perde para o z-score,
+  F1 0,271 vs 0,530 na mesma região).
+- **Em produção:** a variante só-contexto (1,8 KB, stack leve) pontua no runner/app, off por defeito
+  (`news.min_materiality`); cada decisão é registada e **pós-validada** dias depois com o resultado
+  real (`scripts/post_validate.py` → `live_monitoring.md`) — aprendizagem contínua com rótulos
+  atrasados, não RL clássico.
+- **Como explico ao júri em 3 frases:** "Treinei um classificador que estima a probabilidade de uma
+  notícia ser seguida por um movimento anormal — materialidade, não direção; os rótulos vêm do meu
+  próprio event study contra o SPY. O protocolo é temporal com embargo, a calibração é só na validação,
+  e um teste unitário muta o futuro para provar que não há lookahead. Dentro de 5 alertas/dia quase
+  quadruplica a precisão, mas nenhum modelo com texto bateu a volatilidade — e reporto isso tal como caiu."
+
+**Limitações (dizer antes que o júri pergunte):** proxy de setor (não julgamento humano); corpus de
+recuperação recente (a **triagem** já usa o FNSPID multi-ano; a KB de recuperação multi-ano é futuro);
+títulos curtos limitam a semântica; rótulo de anomalia é volatilidade-relativo;
 a semelhança capta **tema, não direção** (um *cluster* pode misturar subidas e descidas → a média é
 evidência sobre um tema, não previsão); sem estudo humano de utilidade; **por desenho, sem previsão/trading**.
 
@@ -199,6 +222,10 @@ evidência sobre um tema, não previsão); sem estudo humano de utilidade; **por
 | F1: z-score vs fixo | 0,516 vs 0,218 | `evaluate_anomaly.py` | idem |
 | Ablação de janela (10/20/60 d) | 0,385 / 0,516 / 0,678 | `evaluate_anomaly.py` | idem |
 | Anomalia real TSLA (24-10-2024) | z = +7,61 | (yfinance, janela fixa) | Cap. 5 (CS1), tabela trabalhada |
+| IF causal vs z-score (mesma região) | F1 0,271 vs 0,530 | `evaluate_anomaly.py` | `evaluation_anomaly.md` §4 · Cap. 5 (CS1) |
+| Triagem: PR-AUC das 6 famílias | 0,542/0,538/0,496/0,469/0,439/0,378 | `train_triage.py` | `evaluation_triage.md` · Cap. 5 (CS4) |
+| Triagem: precisão@5/dia · Brier | 0,632 vs 0,163 · 0,218 vs 0,622 | `train_triage.py` | idem |
+| Dataset de triagem | 79.753 exemplos, 0 descartes | `build_dataset.py` | `data/triage_dataset.csv` · Cap. 5 (CS4) |
 | Contexto: mercado US / posse de ações / IA | US\$62,2T · 62/87/28% · 81/71% | fontes primárias (Fase E) | Cap. 1 |
 
 ---
@@ -236,6 +263,31 @@ de correlação notícia–impacto, as escolhas justificadas e a avaliação cr�
 *sistema coerente e explicável*, não num algoritmo novo. Além disso, o núcleo assenta num paradigma
 reconhecido, o **Raciocínio Baseado em Casos** (Aamodt & Plaza 1994): recuperar casos análogos e reusar o
 seu resultado como evidência. Não é ad hoc; é CBR aplicado a notícias–mercado, com explicação por exemplos.
+E não fico só pela integração: **treinei um modelo** (triagem de materialidade, RQ4) com ciclo de ML
+completo — rótulos do meu event study, protocolo temporal, calibração, avaliação contra baselines e
+pós-validação em produção.
+
+**P: O vosso modelo treinado perdeu para a baseline de volatilidade. Isso não é um fracasso?**
+R: Não — é o resultado de uma comparação **pré-comprometida** no protocolo (Cap. 3): eu escrevi, antes de
+treinar, que se o modelo não batesse a volatilidade isso seria reportado tal como é. A RQ4 fica respondida
+com evidência: o sinal de materialidade está no contexto de mercado, não no texto do título (com esta
+representação). E a triagem vale na mesma como mecanismo: quase 4× a precisão dentro do orçamento diário
+(0,632 vs 0,163), com probabilidades calibradas. Uma tese que só mostra vitórias é menos credível do que
+uma que mostra o teste justo e o desfecho real.
+
+**P: Como garantem que o modelo de triagem não vê o futuro (lookahead)?**
+R: Três camadas: (1) convenção de features fixada — tudo calculável no fecho do dia do evento (vol20 e
+momentum terminam no dia ANTERIOR; a janela do rótulo começa no fecho do próprio dia); (2) split temporal
+por dias únicos com embargo de 5 dias (nenhuma janela de rótulo atravessa blocos); (3) um **teste unitário
+que muta os preços do futuro** e verifica que nenhuma feature muda (e que o rótulo muda). É verificação
+executável, não uma promessa.
+
+**P: A ideia de "reinforcement learning" que refere no trabalho futuro — porquê não RL a sério?**
+R: Porque não há MDP: os meus alertas não afetam o mercado, logo não existe o ciclo ação→ambiente→recompensa
+do RL clássico. A forma defensável da ideia está implementada: o **loop de pós-validação** — cada decisão é
+registada e, quando a janela fecha, rotulada com o que realmente aconteceu, dando métricas ao vivo e dados
+para retreino (aprendizagem contínua com rótulos atrasados). *Contextual bandits* para afinar o limiar de
+alerta ficam documentados como a extensão aprendida natural.
 
 **P: Porque não usaram um LLM / deep learning, que dá melhores resultados?**
 R: Por defensibilidade. O objetivo é explicabilidade para um não-especialista; um modelo opaco contraria

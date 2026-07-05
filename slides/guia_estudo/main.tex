@@ -116,7 +116,7 @@ seguinte.}
   \item \key{Estatística} simples (z-score: média e desvio-padrão).
   \item \key{Similaridade do cosseno} (comparar vetores).
   \item \key{Event study} (aritmética de retornos).
-  \item Métricas de \key{recuperação} (precision@k).
+  \item \key{UM modelo treinado por mim}: a \emph{triagem de materialidade} (regressão logística; RQ4). Simples de propósito --- ver a parte da Avaliação.
   \item \key{Explicabilidade} (mostrar a evidência).
 \end{itemize}
 \end{block}
@@ -124,17 +124,17 @@ seguinte.}
 \begin{block}{\textcolor{bad}{O que NÃO usa (e porquê)}}
 \footnotesize
 \begin{itemize}
-  \item \textcolor{bad}{$\times$}~Treinar modelos / redes neuronais
+  \item \textcolor{bad}{$\times$}~Treinar redes neuronais profundas (épocas, backprop, CNNs)
   \item \textcolor{bad}{$\times$}~Visão computacional, imagens, segmentação
-  \item \textcolor{bad}{$\times$}~Épocas, batches, backpropagation, CNNs
+  \item \textcolor{bad}{$\times$}~Prever preços ou direção (nunca!)
 \end{itemize}
 \vspace{1mm}
-\emph{Porquê?} A contribuição é \key{integrar componentes existentes}, não treinar nada. Isto torna o
-sistema gratuito, reproduzível e fácil de explicar.
+\emph{Porquê?} A contribuição principal é \key{integrar componentes existentes}; o modelo que treino é
+pequeno, transparente e avaliado contra baselines --- não é deep learning, é ML clássico defensável.
 \end{block}
 \end{columns}
 \vspace{1mm}
-\centering\footnotesize Se o júri perguntar por treino/CNN: "não se aplica --- o meu trabalho é de engenharia/integração."
+\centering\footnotesize Se o júri perguntar por treino: "treino UM classificador de triagem (RQ4), com protocolo temporal e anti-lookahead testado --- e reporto que a baseline de volatilidade ganhou."
 \end{frame}
 
 \begin{frame}{Ideia-chave 1: transformar texto em \emph{números} (\emph{embeddings})}
@@ -1031,7 +1031,87 @@ $\sim 2$--$3\%$ em \emph{todas}.
 
 Amplitude da taxa: \key{0,015} (z-score) vs \key{0,344} (fixo) $\Rightarrow$ $>20\times$ mais consistente.
 Este é o argumento \key{sem rótulo}. O $F_1$ ($0{,}516$ vs $0{,}218$) é suporte.
+\vspace{1mm}
+
+E desafiámos a regra com um detetor \key{aprendido} (Isolation Forest, causal, mesma informação):
+perdeu --- $F_1$ \key{0,271 vs 0,530}. A escolha simples fica validada por \emph{comparação}.
 \end{columns}
+\end{frame}
+
+\begin{frame}{Triagem de materialidade --- o modelo que EU treinei (RQ4)}
+\footnotesize
+\begin{block}{A pergunta que o modelo responde}
+Chegam dezenas de notícias por dia. \key{Quais merecem alerta?} O modelo estima
+$P(\text{segue-se um movimento ANORMAL})$ --- \emph{materialidade}, nunca direção nem preço.
+\end{block}
+\begin{itemize}
+  \item \key{Rótulo (sem anotar à mão):} material se $|$retorno do ticker $-$ retorno do SPY$| \ge 2\%$
+        nos 3 dias úteis \emph{depois} do evento --- calculado pelo NOSSO event study.
+  \item \key{Features (só passado):} volatilidade dos 20 dias \emph{antes}, momentum 5d, retorno do
+        próprio dia, comprimento do título, setor, embedding SBERT do título.
+  \item \key{Anti-batota testado:} um teste unitário \emph{muda os preços do futuro} e verifica que
+        as features NÃO mudam (e o rótulo sim). É a resposta pronta à pergunta nº 1 do júri.
+\end{itemize}
+\centering\scriptsize Corpus: FNSPID 2018--2023, \key{79\,753} exemplos, 14/15 tickers (a Meta é "FB" no corpus).
+\end{frame}
+
+\begin{frame}{Como se treina sem batota --- e como se mede}
+\footnotesize
+\begin{columns}[T]
+\column{0.52\textwidth}
+\begin{itemize}
+  \item \key{Split temporal} por dias únicos (70/15/15): treino no passado, teste no futuro ---
+        nunca ao contrário. \key{Embargo} de 5 dias entre blocos (nenhuma janela de rótulo atravessa).
+  \item \key{Calibração (Platt):} uma sigmóide ajustada SÓ na validação transforma scores em
+        \emph{probabilidades honestas} ("70\%" acontece $\sim$70\% das vezes).
+  \item \key{6 famílias:} alertar-sempre (chão) $\cdot$ LR só-volatilidade (a baseline decisiva)
+        $\cdot$ LR contexto/texto/ambos $\cdot$ gradient boosting (teto).
+\end{itemize}
+\column{0.48\textwidth}
+\begin{block}{As métricas, em palavras}
+\scriptsize
+\key{PR-AUC}: qualidade do ranking com classes desequilibradas; o chão é a prevalência.\\[1mm]
+\key{Precisão@5/dia}: das 5 melhores por dia (o que um humano aguenta), quantas foram materiais ---
+mede a \emph{fadiga de alertas}.\\[1mm]
+\key{Brier}: erro quadrático das probabilidades (menor = mais honesto).
+\end{block}
+\emph{Pré-compromisso:} se o modelo não bater a baseline de volatilidade, \key{reporta-se na mesma}.
+\end{columns}
+\end{frame}
+
+\begin{frame}{O resultado honesto --- e porque é BOM para a defesa}
+\footnotesize
+\begin{columns}[T]
+\column{0.46\textwidth}
+\scriptsize
+\begin{tabular}{l c c}
+\toprule
+Modelo & PR-AUC & P@5/dia \\
+\midrule
+Alertar-sempre & 0,378 & 0,163 \\
+\key{LR só-volatilidade} & \key{0,542} & \key{0,632} \\
+LR só-contexto & 0,538 & 0,632 \\
+LR contexto+texto & 0,496 & 0,585 \\
+Gradient boosting & 0,469 & 0,551 \\
+LR só-texto & 0,439 & 0,572 \\
+\bottomrule
+\end{tabular}
+\column{0.54\textwidth}
+\begin{itemize}
+  \item \key{Como mecanismo, funciona:} dentro de 5 alertas/dia, a precisão quase \key{quadruplica}
+        (0,632 vs 0,163), com probabilidades calibradas (Brier 0,218 vs 0,622).
+  \item \key{O veredicto:} nenhum modelo que lê o texto bateu a volatilidade $\Rightarrow$ o sinal
+        está no \emph{contexto de mercado}, não nas palavras do título.
+  \item É a \key{2.ª} comparação justa "aprendido vs simples" que a escolha transparente vence
+        (a 1.ª foi IF vs z-score) --- honestidade que \emph{fortalece} a tese.
+\end{itemize}
+\end{columns}
+\vspace{1mm}
+\begin{block}{\scriptsize E depois do deploy? O loop de pós-validação (a minha ideia de "RL", na forma defensável)}
+\scriptsize Cada decisão fica registada; dias depois, quando a janela fecha, é rotulada com o que
+\emph{realmente} aconteceu $\Rightarrow$ precisão/calibração ao vivo + dados novos para retreinar.
+Não é RL clássico (os alertas não movem o mercado) --- é aprendizagem contínua com rótulos atrasados.
+\end{block}
 \end{frame}
 
 \begin{frame}{Ameaças à validade (ditas antes que perguntem)}

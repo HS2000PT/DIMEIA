@@ -100,8 +100,8 @@ Use the sidebar to try each trigger, explore the evaluation, or read how it work
         """
     )
     c1, c2, c3 = st.columns(3)
-    c1.metric("Automated tests", "47 ✓")
-    c2.metric("Verified citations", "50 / 50")
+    c1.metric("Automated tests", "93 ✓")
+    c2.metric("Verified citations", "52 / 52")
     c3.metric("Price predictions made", "0 (by design)")
 
 
@@ -265,9 +265,12 @@ def page_how() -> None:
     _disclaimer()
     st.markdown(
         """
-InvestiGator integrates existing, transparent components — it **trains no model** and uses **no
-computer vision**. It uses a pre-trained sentence embedder (SBERT, inference only), a statistical
-*z*-score, cosine similarity, and event-study arithmetic.
+InvestiGator integrates existing, transparent components: a pre-trained sentence embedder (SBERT,
+inference only), a statistical *z*-score, cosine similarity, and event-study arithmetic. On top of
+those sits **one model trained by the author** — the materiality-triage logistic regression (RQ4):
+it estimates the probability that an *abnormal move* follows a news item (**never** direction or
+price), with labels produced by the system's own event-study code. No computer vision, no deep
+training, no forecasting.
         """
     )
     st.graphviz_chart(

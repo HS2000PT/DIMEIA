@@ -77,9 +77,16 @@ enviar**).
   abstract EN 197 palavras + resumo PT com a frase da triagem. **74 pp, 0 erros, 0 cit. indefinidas,
   overfull máx 12pt.** learning.md §16 ganhou os números finais + nota de júri do resultado.
 
-**Próximo (sessão dedicada — M7-materiais):** sincronizar paper IEEE + slides de defesa + guia de
-estudo (ensinar do zero: triagem/calibração/PR-AUC/pós-validação) + caderno de defesa com a RQ4;
-estender o page-audit às páginas novas. Loop M5.5: as 3 decisões reais maturam ~08-09/07 →
+- **M7-MATERIAIS FEITOS (manhã de 05/07):** paper IEEE 4 pp (subsecção de triagem + IF; +2 refs
+  espelhadas; discussão corrigida — "triage labels ARE market-adjusted"); slides 16 frames (+RQ4,
+  +"Result 4" com tabela e veredicto, +3 perguntas de júri); guia 63 slides (+3 frames a ensinar
+  triagem do zero; slide "o que usa/NÃO usa" corrigido — JÁ treina um modelo); caderno (§5 RQ4 com a
+  resposta de júri em 3 frases, mapa de números +5 linhas, +4 perguntas difíceis); app 93✓/52-52 +
+  "one model trained by the author"; README atualizado; page-audit "Extensão M7". Tudo 0 erros;
+  93 testes + ruff verdes. **Workstream ML fechado: M0–M7 a 100%.**
+
+**Restam (humano):** Streamlit Sharing→público; licença de código com o orientador; declaração ISEP de
+IA + data; leitura final da tese. Loop M5.5: as 3 decisões reais maturam ~08-09/07 →
 `python scripts/post_validate.py`.
 
 ---

@@ -34,8 +34,11 @@ without lookahead. As an Artificial Intelligence Engineering contribution, the w
 and critically evaluates existing components in a functional, reproducible system. On real data, semantic
 retrieval reaches a cross-ticker precision@5 of $0.514\pm0.015$ against $0.240$ for random and $0.346$ for
 a lexical baseline, and a volatility-normalised detector fires far more consistently across instruments
-(firing-rate range $0.015$) than a fixed threshold ($0.344$). All results are reproducible from versioned
-scripts, with limitations stated explicitly.
+(firing-rate range $0.015$) than a fixed threshold ($0.344$). A supervised materiality-triage model,
+trained on $79{,}753$ multi-year news--market examples, nearly quadruples within-budget alert precision
+($0.632$ vs $0.163$), although no model reading the headline text beat a volatility-only baseline --- a
+finding we report as it stands. All results are reproducible from versioned scripts, with limitations
+stated explicitly.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -57,7 +60,8 @@ reached that conclusion, the sources, and which past events resemble the current
 happened to prices afterwards. The contribution is one of Artificial Intelligence \emph{Engineering}: not a
 new algorithm, but the disciplined integration, application and critical evaluation of existing components
 into a working, explainable and reproducible system, together with a documented methodology for relating
-news to market impact.
+news to market impact and a trained, calibrated materiality-triage model that ranks alerts without ever
+predicting price direction.
 
 \section{Related Work}
 \textbf{Anomaly detection.} Financial anomaly detection is dominated by unsupervised methods because
@@ -86,6 +90,12 @@ precision@$k$ as the standard ranked-retrieval metric \cite{manning2008ir}.
 reasoning \cite{aamodt1994cbr}. The FNSPID dataset \cite{dong2024fnspid} time-aligns news with prices,
 enabling a news-to-impact knowledge base.
 
+\textbf{Learned triage.} Deciding \emph{which} news deserves an alert can be posed as supervised
+classification with event-study labels, without predicting direction. We use logistic regression,
+interpretable by design in the sense of \cite{rudin2019stop}, against gradient boosting
+\cite{friedman2001gbm} as a capacity ceiling, with probabilities calibrated by a sigmoid fitted on
+validation data (Platt scaling) \cite{niculescu2005calibration}.
+
 \section{The InvestiGator System}
 InvestiGator is a pipeline of single-responsibility components linked by a common schema. Two data layers share
 that schema: a \emph{historical} layer (a knowledge base of past news, each entry storing date, ticker,
@@ -102,6 +112,18 @@ similarity against the knowledge base; the top-$k$ precedents are returned with 
 $+1$, $+3$ and $+5$ trading days, measured from the event-day close. The event day is the first trading day
 on or after the news date, and impact is accumulated strictly forward, which enforces a no-lookahead
 guarantee. This retrieve-and-reuse step is the case-based-reasoning core of the system.
+
+\textbf{Learned triage.} On top of the two transparent rules, a supervised model estimates the
+probability that an abnormal move of unusual size, in either direction, follows a news item. Labels come
+from the system's own event-study code: an example is material when the magnitude of the ticker's return
+minus the market's over the three trading days after the event exceeds $2\%$. Features respect a strict
+timing convention (pre-event volatility and momentum, the event-day return, headline length, sector, and
+the headline embedding), enforced by a unit test that mutates post-event prices and asserts that no
+feature changes while the label does. The deployed variant uses context features only, ships off by
+default behind a configuration gate, and each score is delivered with its additive per-feature
+contributions and a fixed clause: triage evidence, not a forecast. Once live, every decision is logged
+and later post-validated against the outcome that actually followed, yielding live precision and
+calibration monitoring.
 
 \textbf{Explanation.} Each alert is rendered directly from the computed objects --- the $z$-score with its
 window and threshold, or the retrieved precedents with their similarity scores and measured impact --- and
@@ -170,13 +192,28 @@ Because each alert is rendered from the same objects the system computes, the ex
 from the underlying computation; this is checked by an automated test that asserts the rendered alert
 reproduces each retrieved precedent's date, ticker and measured impact.
 
+\subsection{Materiality triage}
+On the multi-year FNSPID corpus \cite{dong2024fnspid} ($79{,}753$ examples over 2018--2023, fourteen of
+the fifteen tickers, temporal split by unique days with a five-day embargo; test prevalence $0.378$),
+every trained ranker clears the always-alert floor by a wide margin, but no model that reads the headline
+text beats the volatility-only baseline: PR-AUC $0.542$ for a volatility-only logistic regression,
+against $0.538$ (context-only), $0.496$ (context$+$text), $0.469$ (gradient boosting) and $0.439$
+(text-only), floor $0.378$. As a product mechanism, however, triage is clearly worthwhile: within a
+budget of five alerts per day it raises the share of material alerts from $0.163$ to $0.632$, with
+calibrated probabilities (Brier $0.218$ against $0.622$). The same discipline was applied on the anomaly
+side, where an Isolation Forest \cite{liu2008isolation} trained causally on identical information lost to
+the $z$-score on the identical evaluation region ($F_1$ $0.271$ vs $0.530$). Both
+statistical-versus-learned comparisons were pre-committed, and both favoured the transparent choice.
+
 \section{Discussion and Limitations}
 The results support the design: transparent volatility-normalised detection is consistent where a fixed
-threshold is not, and semantic retrieval surfaces markedly more sector-analogous precedents than lexical or
-trivial baselines. The limitations are stated plainly. Relevance is a same-sector proxy, not a human
-judgement; the corpus is a recent window from a free service rather than the multi-year FNSPID history;
-impact is a raw post-event return, not a market-adjusted abnormal return; and no human usefulness study has
-yet been run. A further, conceptual limitation is that embedding similarity captures \emph{theme} rather
+threshold is not, semantic retrieval surfaces markedly more sector-analogous precedents than lexical or
+trivial baselines, and learned triage adds a large budgeted-precision gain while confirming, against its
+own text features, that the transparent volatility evidence carries the signal. The limitations are
+stated plainly. Relevance is a same-sector proxy, not a human judgement; the retrieval corpus is a recent
+window from a free service rather than the multi-year FNSPID history (the triage study did use the
+multi-year corpus); the displayed precedent impact is a raw post-event return, whereas the triage labels
+are market-adjusted; and no human usefulness study has yet been run. A further, conceptual limitation is that embedding similarity captures \emph{theme} rather
 than \emph{direction}: a retrieved cluster can mix positive and negative outcomes (a positive headline may
 retrieve a competitive-threat cluster), so the reported mean is evidence about a theme, not a directional
 forecast, which is why precedents are always shown individually and every alert disclaims prediction. By
@@ -184,10 +221,12 @@ design, the system performs no price prediction or trading, so profit-based metr
 
 \section{Conclusion}
 InvestiGator shows that useful financial alerting for retail investors can be both transparent and reproducible:
-a volatility-normalised detector that explains every flag, and a news--market correlation engine that
-retrieves analogous precedents and reports their measured impact as evidence rather than prediction. Future
-work is the full multi-year knowledge base, a human relevance and usefulness study, and market-adjusted
-impact measurement.
+a volatility-normalised detector that explains every flag, a news--market correlation engine that
+retrieves analogous precedents and reports their measured impact as evidence rather than prediction, and
+a trained, calibrated triage model that nearly quadruples within-budget alert precision while honestly
+failing to beat a volatility-only baseline with text. Future work is the multi-year retrieval knowledge
+base, a human relevance and usefulness study, and closing the triage text gap with richer text than
+headlines.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

@@ -66,3 +66,21 @@ superfície de ataque do júri sobre integridade de fontes é **zero**.
 
 **Humano (única pendência de submissão):** confirmar a redação exata da declaração de uso de IA exigida
 pela MEIA/ISEP e a data de entrega (ver `honest-ai-declaration`).
+
+---
+
+## Extensão M7 (2026-07-05) — páginas novas da RQ4 (triagem de materialidade)
+
+**Âmbito:** Cap. 1 (RQ4/objetivo/contribuição), Cap. 2 (secção "Learned Alert Triage"), Cap. 3
+(subsecções do modelo + protocolo; data card atualizado), Cap. 4 (componente/decision logic/deploy),
+Cap. 5 (Case Study 4 + IF vs z-score no CS1), Cap. 6 (veredicto RQ4), abstract EN/resumo PT.
+Tese agora com **74 pp, 0 erros, 0 citações/refs indefinidas, overfull máx. 12pt**.
+
+| Verificação | Estado |
+|---|---|
+| Citações novas | 2 (`friedman2001gbm` DOI 10.1214/aos/1013203451; `niculescu2005calibration` DOI 10.1145/1102351.1102430) — verificadas por Crossref em 2026-07-04 (`citation_log.md`) ⇒ **52/52** |
+| Números do CS4 | todos gerados por `scripts/train_triage.py` (FNSPID 2018–2023; `docs/evaluation/evaluation_triage.md` + figuras `eval_triage_pr.pdf`/`eval_triage_calibration.pdf`) — nenhum número editado à mão |
+| Números do IF vs z-score | `scripts/evaluate_anomaly.py` §4 (secções congeladas 1–3 byte-idênticas, verificado no M4) |
+| Anti-fabricação | rótulos derivados do event study próprio; corpus e descartes documentados (79.753 / 0); META ausente reportado ("FB" no corpus), não remapeado silenciosamente |
+| Overfulls | 3 pré-existentes >15pt eliminados (Apêndice A ×2; tabela do exemplo do Cap. 3); nenhum novo |
+| Artefactos | paper 4 pp · slides 16 · guia 63 · caderno — todos sincronizados com a RQ4 e a compilar com 0 erros |

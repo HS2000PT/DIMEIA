@@ -78,7 +78,7 @@ volatilidade, reporta-se na mesma (o contributo metodológico mantém-se).
       **0,632 vs 0,163** (quase 4×) e Brier 0,218 vs 0,622 ⇒ a triagem vale como mecanismo.
       Modelos/figuras/md regenerados; 93 testes verdes. *(Nota: o retreino exigiu HF_HUB_OFFLINE=1 —
       o hub falhou com o modelo já em cache.)*
-- [~] **M7** — **TESE FEITA (2026-07-05); faltam os materiais.** Feito: RQ4 no Cap. 1 (+5.º objetivo,
+- [x] **M7** — **COMPLETO (2026-07-05, tese + materiais).** Feito: RQ4 no Cap. 1 (+5.º objetivo,
       4.ª contribuição); Cap. 2 secção "Learned Alert Triage" (+friedman2001gbm e
       niculescu2005calibration verificadas → 52/52); Cap. 3 modelo+protocolo+data card atualizado;
       Cap. 4 componente+decision logic+honestidade de deploy; Cap. 5 **Case Study 4** (tabela 6
@@ -86,8 +86,12 @@ volatilidade, reporta-se na mesma (o contributo metodológico mantém-se).
       Cap. 6 veredicto RQ4 ("No on the text hypothesis; yes on the mechanism") + 4 contribuições +
       limitações/futuro atualizados; abstract EN (197≤200 palavras) + resumo PT. **Compila 74 pp,
       0 erros, 0 cit. indefinidas, overfull máx. 12pt.**
-      **FALTA (sessão dedicada):** paper IEEE, slides de defesa, guia de estudo (ensinar as partes
-      novas do zero), caderno de defesa; auditoria de páginas estendida às páginas novas.
+      **Materiais (2026-07-05):** paper IEEE 4 pp (+2 refs, subsecção de triagem, abstract/discussão/
+      conclusão); slides de defesa 16 frames (+RQ4, +"Result 4", limitações/conclusões, +3 perguntas de
+      júri); guia de estudo 63 slides (+3 frames a ensinar triagem/protocolo/resultado do zero; slide
+      "o que usa/não usa" corrigido — JÁ treina um modelo); caderno de defesa (§5 RQ4 + mapa de números
+      + 4 perguntas novas); app/README com números atuais (93 testes, 52/52; claim "trains no model"
+      corrigido); page-audit estendido. Tudo compila com 0 erros.
 
 **Sessões futuras dedicadas (registadas, não agora):**
 - [ ] **S-APP** — melhorar app + comandos/configuração do Telegram para utilizadores (Fase B desenhada em
