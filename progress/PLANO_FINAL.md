@@ -37,13 +37,18 @@
       slides, 0 erros). CI a verificar no push.
 
 ### P3 — KB FNSPID multi-ano (retrieval)
-- [ ] `scripts/build_kb.py --sbert` sobre `data/fnspid_news_subset.csv` (stack ML local; KB local
-      gitignored — grande demais para versionar; amostra curada pequena para `data/samples/` se útil).
-- [ ] Validação honesta: cobertura por ticker/ano, sanidade de impactos, 3 consultas de exemplo.
-- [ ] Decidir o que usa a KB nova (demo local/app local) SEM tocar nos números congelados da tese;
-      docs atualizados (data card já diz que o rebuild da KB de retrieval é trabalho futuro → passa a
-      "feito como artefacto de produto, avaliação de retrieval multi-ano continua futuro" se for o caso).
-- [ ] Gate: números da tese intocados; testes verdes.
+- [x] Build FEITO (destacado, `run/kb-fnspid.cmd` + tarefa VS Code; log `data/kb_build.log`):
+      79.753 registos, SBERT 384-d, ~691 MB gitignored; amostra de 50 em
+      `data/samples/kb_fnspid_sample.jsonl`. ⚠️ `--sample` apontada a um caminho NOVO — o defeito
+      esmagaria a `kb_sample.jsonl` da demo/tese (e com dim 384≠64).
+- [x] Validação honesta em `docs/evaluation/kb_fnspid_build.md`: 14/15 tickers (META="FB"),
+      2023=44%, impactos ±1/3d completos e plausíveis; **200 registos (0,25%) com +5d=NaN**
+      (fim da janela de preços — documentado); consultas AI/Fed/recalls devolvem os clusters certos
+      (sim 0,62–0,85, cross-ticker a funcionar).
+- [x] Decisão de consumo: produção na nuvem fica na stack leve com a KB-amostra (números da tese e
+      deploy intocados); a KB multi-ano é artefacto local para SBERT + base do trabalho futuro do
+      Cap. 6. Data card atualizado ("construída como artefacto; avaliação multi-ano continua futuro").
+- [x] Gate: números da tese intocados (demo continua a reproduzir +6,46%); testes verdes.
 
 ### P4 — S-APP — Fase B (Telegram interativo + app UX)
 - [ ] Desenho fino a partir de `going_live.md` Fase B: `/start`, `/watch`, `/unwatch`, `/list`,

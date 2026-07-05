@@ -57,7 +57,8 @@
       frases-comboio partidas em Ch2/Ch3/Ch5/Ch6, ecos removidos; 76 pp, 0 erros, 0 overfull >15pt).
 - [x] P2 — Rename `src/`→`investigator/` FEITO (pacote instalável, -e ., bundles re-serializados com
       probe idêntico, docs sincronizados; 93 testes + ruff + demo verdes).
-- [ ] P3 — KB de retrieval FNSPID 2018–2023 (artefacto local; números da tese intocados).
+- [x] P3 — KB de retrieval FNSPID 2018–2023 FEITA (79.753 registos SBERT, ~691 MB local; validação
+      em docs/evaluation/kb_fnspid_build.md; números da tese e deploy intocados).
 - [ ] P4 — S-APP Fase B (Telegram interativo por utilizador + UX da app).
 
 ## ⏳ A fazer — EU (humano; ninguém pode fazer por ti)

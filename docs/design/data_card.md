@@ -51,6 +51,10 @@ Para ser tratável num portátil (§5.4 / R2), começamos com um subconjunto peq
   `python scripts/build_kb.py --news data/fnspid_news_subset.csv --sbert`.
 - **Decisão honesta:** a avaliação (Cap. 6) usa a KB **real do Finnhub** (3.692 notícias, multi-seed); a KB
   multi-ano do FNSPID fica como **trabalho futuro reprodutível** (script pronto e verificado).
+- **Atualização (P3 do PLANO_FINAL, 2026-07-05):** a KB multi-ano **foi construída** como artefacto
+  local — 79.753 registos (FNSPID 2018–2023, 14/15 tickers, SBERT 384-d, ~691 MB gitignored;
+  validação em `docs/evaluation/kb_fnspid_build.md`). A **avaliação** de retrieval multi-ano continua
+  trabalho futuro; os números da tese não mudam, e a produção na nuvem continua na stack leve.
 
 ## Camada live
 - **Preços:** yfinance (base) + Finnhub (fallback). **Notícias:** Finnhub news + RSS (ver `free_apis.md`).

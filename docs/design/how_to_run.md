@@ -154,6 +154,24 @@ busca preços (yfinance), mede o impacto (+1/+3/+5d) e gera os embeddings.
 > O FNSPID completo (multi-ano) descarrega-se com `scripts/download_data.py` (streaming + filtro por
 > ticker/janela). É um trabalho longo e os dados grandes **nunca** são versionados (ver `data_card.md`).
 
+**KB multi-ano FNSPID (P3 do plano final) — por clique ou comando:**
+
+- VS Code: tarefa **"KB FNSPID (P3)"** (Terminal → Run Task), ou duplo-clique em `run/kb-fnspid.cmd`.
+- Equivalente em linha de comandos (o `.cmd` faz isto, destacado e com log em `data/kb_build.log`):
+```bash
+HF_HUB_OFFLINE=1 ./.venv/Scripts/python.exe scripts/build_kb.py \
+  --news data/fnspid_news_subset.csv --sbert \
+  --out data/kb_fnspid_sbert.jsonl --sample data/samples/kb_fnspid_sample.jsonl
+```
+
+> ⚠️ **Não uses o `--sample` por defeito neste caso**: o defeito escreveria por cima de
+> `data/samples/kb_sample.jsonl`, a amostra versionada de que a demo e o exemplo do Cap. 3 (+6,46%)
+> dependem — e com dimensão incompatível (SBERT 384 vs baseline 64). O `.cmd` já aponta a amostra
+> para `data/samples/kb_fnspid_sample.jsonl`.
+> A KB grande (`data/kb_fnspid_sbert.jsonl`) é um **artefacto local** (gitignored): a produção na
+> nuvem (runner/app) continua de propósito na stack leve com a KB-amostra; os números da tese não
+> mudam com este build.
+
 ---
 
 ## 5. Reproduzir as experiências da tese

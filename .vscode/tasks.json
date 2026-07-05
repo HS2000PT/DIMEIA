@@ -5,91 +5,194 @@
       "label": "Demo — both triggers",
       "type": "process",
       "command": "${workspaceFolder}/.venv/Scripts/python.exe",
-      "args": ["scripts/demo.py"],
-      "options": { "env": { "PYTHONIOENCODING": "utf-8" } },
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "args": [
+        "scripts/demo.py"
+      ],
+      "options": {
+        "env": {
+          "PYTHONIOENCODING": "utf-8"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
       "problemMatcher": [],
-      "linux": { "command": "${workspaceFolder}/.venv/bin/python" },
-      "osx": { "command": "${workspaceFolder}/.venv/bin/python" }
+      "linux": {
+        "command": "${workspaceFolder}/.venv/bin/python"
+      },
+      "osx": {
+        "command": "${workspaceFolder}/.venv/bin/python"
+      }
     },
     {
       "label": "Dashboard — Streamlit",
       "type": "process",
       "command": "${workspaceFolder}/.venv/Scripts/python.exe",
-      "args": ["-m", "streamlit", "run", "app/streamlit_app.py"],
-      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "args": [
+        "-m",
+        "streamlit",
+        "run",
+        "app/streamlit_app.py"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
       "isBackground": true,
       "problemMatcher": [],
-      "linux": { "command": "${workspaceFolder}/.venv/bin/python" },
-      "osx": { "command": "${workspaceFolder}/.venv/bin/python" }
+      "linux": {
+        "command": "${workspaceFolder}/.venv/bin/python"
+      },
+      "osx": {
+        "command": "${workspaceFolder}/.venv/bin/python"
+      }
     },
     {
       "label": "Tests",
       "type": "process",
       "command": "${workspaceFolder}/.venv/Scripts/python.exe",
-      "args": ["-m", "pytest"],
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "args": [
+        "-m",
+        "pytest"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
       "problemMatcher": [],
-      "linux": { "command": "${workspaceFolder}/.venv/bin/python" },
-      "osx": { "command": "${workspaceFolder}/.venv/bin/python" }
+      "linux": {
+        "command": "${workspaceFolder}/.venv/bin/python"
+      },
+      "osx": {
+        "command": "${workspaceFolder}/.venv/bin/python"
+      }
     },
     {
       "label": "Lint (ruff)",
       "type": "process",
       "command": "${workspaceFolder}/.venv/Scripts/python.exe",
-      "args": ["-m", "ruff", "check", "."],
-      "presentation": { "reveal": "always", "panel": "shared" },
+      "args": [
+        "-m",
+        "ruff",
+        "check",
+        "."
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
       "problemMatcher": [],
-      "linux": { "command": "${workspaceFolder}/.venv/bin/python" },
-      "osx": { "command": "${workspaceFolder}/.venv/bin/python" }
+      "linux": {
+        "command": "${workspaceFolder}/.venv/bin/python"
+      },
+      "osx": {
+        "command": "${workspaceFolder}/.venv/bin/python"
+      }
     },
     {
       "label": "Tests + lint (verify)",
       "dependsOrder": "sequence",
-      "dependsOn": ["Tests", "Lint (ruff)"],
-      "group": { "kind": "test", "isDefault": true },
+      "dependsOn": [
+        "Tests",
+        "Lint (ruff)"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
       "problemMatcher": []
     },
     {
       "label": "Thesis — compile PDF",
       "type": "process",
       "command": "latexmk",
-      "args": ["-pdf", "-interaction=nonstopmode", "main.tex"],
-      "options": { "cwd": "${workspaceFolder}/thesis" },
-      "group": { "kind": "build", "isDefault": true },
-      "presentation": { "reveal": "always", "panel": "shared" },
+      "args": [
+        "-pdf",
+        "-interaction=nonstopmode",
+        "main.tex"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/thesis"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
       "problemMatcher": []
     },
     {
       "label": "Slides — compile PDF",
       "type": "process",
       "command": "latexmk",
-      "args": ["-pdf", "-interaction=nonstopmode", "main.tex"],
-      "options": { "cwd": "${workspaceFolder}/slides" },
+      "args": [
+        "-pdf",
+        "-interaction=nonstopmode",
+        "main.tex"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/slides"
+      },
       "problemMatcher": []
     },
     {
       "label": "Study guide — compile PDF",
       "type": "process",
       "command": "latexmk",
-      "args": ["-pdf", "-interaction=nonstopmode", "main.tex"],
-      "options": { "cwd": "${workspaceFolder}/slides/guia_estudo" },
+      "args": [
+        "-pdf",
+        "-interaction=nonstopmode",
+        "main.tex"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/slides/guia_estudo"
+      },
       "problemMatcher": []
     },
     {
       "label": "Paper — compile PDF",
       "type": "process",
       "command": "latexmk",
-      "args": ["-pdf", "-interaction=nonstopmode", "main.tex"],
-      "options": { "cwd": "${workspaceFolder}/paper" },
+      "args": [
+        "-pdf",
+        "-interaction=nonstopmode",
+        "main.tex"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/paper"
+      },
       "problemMatcher": []
     },
     {
       "label": "FNSPID overnight (M6) — download + dataset + retrain",
       "type": "shell",
       "command": "${workspaceFolder}/run/fnspid-overnight.bat",
-      "windows": { "command": "${workspaceFolder}\\run\\fnspid-overnight.bat" },
-      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "windows": {
+        "command": "${workspaceFolder}\\run\\fnspid-overnight.bat"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "KB FNSPID (P3) — reconstruir a KB de retrieval multi-ano (SBERT)",
+      "type": "shell",
+      "command": "${workspaceFolder}/run/kb-fnspid.cmd",
+      "windows": {
+        "command": "${workspaceFolder}\\run\\kb-fnspid.cmd"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
       "problemMatcher": []
     },
     {
