@@ -60,5 +60,5 @@ def test_live_board_offline_e_default(monkeypatch):
     at.run(timeout=120)
     assert not at.exception
     headers = [h.value for h in at.header]
-    assert any("Live board" in h for h in headers)
+    assert any("Markets now" in h for h in headers)
     assert len(at.dataframe) >= 1  # a tabela da watchlist está lá

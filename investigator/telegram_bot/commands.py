@@ -12,14 +12,16 @@ import sqlite3
 from investigator.telegram_bot import store
 
 HELP = (
-    "InvestiGator - explainable market alerts. Investigate. Don't speculate.\n\n"
-    "/watch TSLA - add a ticker to YOUR watchlist\n"
-    "/unwatch TSLA - remove it\n"
-    "/list - show your watchlist\n"
-    "/stop - pause your alerts (watchlist is kept)\n"
-    "/start - (re)activate\n"
-    "/help - this message\n\n"
-    "Alerts explain PAST evidence (z-score, precedents). Never a forecast, never advice."
+    "🐊 <b>InvestiGator</b> — market alerts that explain themselves.\n\n"
+    "<b>Your watchlist</b>\n"
+    "/watch TSLA — add a ticker\n"
+    "/unwatch TSLA — remove it\n"
+    "/list — see your list\n\n"
+    "<b>Alerts</b>\n"
+    "/stop — pause (your list is kept)\n"
+    "/start — resume\n\n"
+    "<i>Every alert shows its evidence (unusual move or similar past news). "
+    "Never a forecast, never advice.</i>"
 )
 
 MAX_WATCH = 20  # produto responsável: limita a fadiga de alertas (e abusos)
@@ -50,7 +52,9 @@ def handle_command(text: str, chat_id: str, conn: sqlite3.Connection) -> str:
         if not arg:
             return "Usage: /watch TSLA"
         if not store.valid_ticker(arg):
-            return f"'{arg}' does not look like a US ticker (e.g. TSLA, BRK.B)."
+            import html
+
+            return f"'{html.escape(arg)}' does not look like a US ticker (e.g. TSLA, BRK.B)."
         if len(store.watchlist(conn, chat_id)) >= MAX_WATCH:
             return f"Limit of {MAX_WATCH} tickers reached - /unwatch one first."
         novo = store.subscribe(conn, chat_id, arg)

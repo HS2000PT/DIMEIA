@@ -100,6 +100,23 @@
       não têm boas-vindas automáticas — limitação da plataforma, documentada).
 - [x] 109 testes + ruff verdes; render real do Live board verificado (10 tickers, 0 exceções).
 
+### P7 — Revisão DURA de usabilidade: mensagens Telegram + app (pedido de 2026-07-06: "pasta de palavras; amador; refaz")
+- [x] **Mensagens reescritas em camadas** (facto primeiro, lista, método em nota curta) com
+      **HTML no Telegram** (negrito/itálico; sender com parse_mode + fallback texto puro;
+      conteúdo dinâmico escapado, incl. eco de comandos do bot). Alerta de mercado: 5 linhas
+      repetitivas → 3 em camadas. Alerta de notícia: **INTERVALO dos precedentes antes da média**
+      (a média sozinha esconde direções mistas — coerente com o CS3 da tese); manchetes truncadas
+      a 100 chars; nota final curta. TODOS os números calculados preservados (fidelidade XAI
+      testada). `plain_text()` para consola/app/logs.
+- [x] **App deslastrada**: disclaimer 1× (sidebar), knobs → expander "Advanced" (top_k/horizon/
+      window/threshold), métricas dev (testes/citações) fora da cara do utilizador, Live board
+      com colunas/captions enxutas, /help do bot agrupado. 5 páginas renderizam sem exceções.
+- [x] **Sincronia**: demo/how_to_run/guia (frames de output atualizados ao formato novo, valores
+      congelados intactos; 64 slides 0 erros); tese Cap. 4 = 1 frase honesta ("formato compactado
+      depois; campos idênticos; fidelidade inalterada" — CS3 fica como registo congelado);
+      caderno §7 com a pergunta do júri sobre a evolução do formato. 76 pp, 0 erros.
+- [x] 109 testes + ruff verdes.
+
 ## Guardrails (herdados, sempre em vigor)
 Zero fabricação; números validados nunca editados à mão; sem previsão de preço/direção; só compute
 grátis; segredos nunca em ficheiros versionados; commits PT-PT com

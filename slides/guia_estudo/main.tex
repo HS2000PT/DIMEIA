@@ -750,8 +750,8 @@ notícia nova. É o \key{núcleo} do sistema (raciocínio baseado em casos).
 \scriptsize
 \begin{verbatim}
 def explain_news_impact(ticker, headline, precedents, horizon=1):
-    avg = mean(impacto[horizon] de cada precedente)   # so a media
-    linhas = [f"impacto medio {horizon}d: {avg:.2%}"]
+    vals = [impacto[horizon] de cada precedente]
+    linhas = [f"intervalo {min(vals):.2%}...{max(vals):.2%} (media {mean(vals):.2%})"]
     for (rec, score) in precedents:                    # mostra CADA precedente
         linhas += [f"{rec.date} {rec.ticker} (sim {score:.2f}) {rec.impacts[...]:.2%}"]
     linhas += ["Nota: resultado passado, NAO e' previsao."]
@@ -806,13 +806,14 @@ consultada. Feita \key{uma vez}; depois é só usar.
 Consulta: \emph{``Nvidia raises guidance on surging demand for AI data-centre accelerators''} $\to$ embedding
 $\to$ cosseno top-5 $\to$ alerta:
 \begin{verbatim}
-Alerta NVDA  | impacto medio 1 dia: -1,97%
- - MSFT  (sim 0.68)  +1d -3,46%  "Qualcomm debuts AI data center chips..."
- - NVDA  (sim 0.68)  +1d -1,64%  "Qualcomm debuts AI data center chips..."
- - META  (sim 0.68)  +1d -2,65%  "Qualcomm debuts AI data center chips..."
- - GOOGL (sim 0.64)  +1d -0,46%  "...bigger than Nvidia..."
- - NVDA  (sim 0.58)  +1d -1,64%  "...NVIDIA..."
-Nota: precedentes por semelhanca; impacto observado, NAO previsao.
+News alert NVDA - 5 manchetes semelhantes
+intervalo 1d: -3,46%...-0,46%  (media -1,97%)
+ > -3,46% 1d  MSFT  (sim 0.68)  "Qualcomm debuts AI data center chips..."
+ > -1,64% 1d  NVDA  (sim 0.68)  "Qualcomm debuts AI data center chips..."
+ > -2,65% 1d  META  (sim 0.68)  "Qualcomm debuts AI data center chips..."
+ > -0,46% 1d  GOOGL (sim 0.64)  "...bigger than Nvidia..."
+ > -1,64% 1d  NVDA  (sim 0.58)  "...NVIDIA..."
+Resultados passados observados - NAO e' previsao.
 \end{verbatim}
 \footnotesize Todos falam de \key{chips de IA para data-center}, mesmo vindo de empresas diferentes
 (\key{cross-ticker}): a recuperação é por \key{significado}, não pelo nome da empresa.
@@ -865,14 +866,17 @@ Não há magia. A app é dois pontos de entrada (funções que já viste):
 $ python scripts/demo.py
 
 ==== GATILHO DE NOTICIA  (offline, base de conhecimento de amostra) ====
-Alerta NVDA | impacto medio 5 dias: +6,46%
- - 2023-05-25 NVDA (sim 0.60) +5d  +3,55%  "Nvidia guidance surges..."
- - 2023-04-25 MSFT (sim 0.38) +5d +10,89%  "Microsoft cloud growth..."
- - 2023-06-13 NVDA (sim 0.38) +5d  +4,93%  "Nvidia unveils new AI..."
- Nota: impacto observado, NAO e' previsao.
+News alert for NVDA
+"Nvidia demand surges on AI chip orders"
+3 similar past headlines - 5-day moves ranged +3,55%...+10,89%
+(average +6,46%):
+ > +3,55% 5d  NVDA 2023-05-25  "Nvidia guidance surges..." (sim 0.60)
+ > +10,89% 5d MSFT 2023-04-25  "Microsoft cloud growth..." (sim 0.38)
+ > +4,93% 5d  NVDA 2023-06-13  "Nvidia unveils new AI..." (sim 0.38)
+Observed past outcomes - not a price prediction.
 
 ==== GATILHO DE MERCADO  (precos ao vivo; nao envia) ====
- No anomaly for AAPL today (z-score +0.89, within +-3).
+No anomaly for AAPL today (z-score +0.89, within +-3).
 \end{verbatim}
 \footnotesize \key{Nada é enviado.} O gatilho de notícia dá \emph{sempre} o mesmo resultado (determinístico).
 \end{frame}
@@ -883,7 +887,8 @@ Alerta NVDA | impacto medio 5 dias: +6,46%
   \item A consulta \emph{``Nvidia demand surges on AI chip orders''} virou um \key{vetor} (embedding).
   \item Comparou-se por \key{cosseno} com todos os casos da base $\to$ os \key{3 mais parecidos}.
   \item Para cada um, leu-se o \key{impacto +5d} já guardado (evidência do passado).
-  \item Média $= +6{,}46\%$ (o mesmo $+6{,}5\%$ do exemplo do Cap. 3!), com o \key{aviso de não-previsão}.
+  \item Intervalo $+3{,}55\%\ldots+10{,}89\%$ e média $= +6{,}46\%$ (o mesmo $+6{,}5\%$ do
+        Cap.~3!), com o \key{aviso de não-previsão}.
 \end{enumerate}
 \vspace{1mm}
 \centering\footnotesize É \emph{exatamente} o pipeline dos slides anteriores --- agora a correr no teu computador.
@@ -892,7 +897,7 @@ Alerta NVDA | impacto medio 5 dias: +6,46%
 \begin{frame}[fragile]{Passo 2: mudar um parâmetro e ver mudar (o "e se?")}
 \scriptsize Mesma consulta, mas \texttt{top\_k=5, horizon=1}:
 \begin{verbatim}
-Alerta NVDA | impacto medio 1 dia: +3,40%
+News alert NVDA - 5 manchetes; 1d: +0,45%...+7,24% (media +3,40%)
  - NVDA  (sim 0.60) +1d +2,54%  "Nvidia guidance surges..."
  - MSFT  (sim 0.38) +1d +7,24%  "Microsoft cloud growth..."
  - NVDA  (sim 0.38) +1d +4,81%  "Nvidia unveils new AI..."
@@ -940,7 +945,7 @@ funciona) $\cdot$ \texttt{docs/design/how\_to\_run.md} (tudo o resto, incluindo 
 \scriptsize Consulta de \key{banca}, com o encoder \emph{baseline} (só palavras) da demo:
 \begin{verbatim}
 run_news_trigger('JPM', 'Bank profits jump as interest rates rise', top_k=3)
-Alerta JPM | impacto medio 5 dias: -2,99%
+News alert JPM - 3 manchetes; 5d: -14,86%...+4,45% (media -2,99%)
  - AAPL (sim 0.25) +5d  +4,45%  "Apple expands services..."
  - JPM  (sim 0.15) +5d  +1,44%  "JPMorgan acquires failed bank..."
  - TSLA (sim 0.14) +5d -14,86%  "Tesla margins narrow..."

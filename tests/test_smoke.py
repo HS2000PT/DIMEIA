@@ -41,7 +41,7 @@ def test_gatilho2_precedentes_offline():
     )
     assert precedents  # a amostra da KB tem registos AAPL semelhantes
     assert "News alert for AAPL" in texto
-    assert "Historical precedents:" in texto
+    assert "similar past headlines" in texto  # linha-resumo da revisão UX (intervalo + média)
 
 
 @pytest.mark.telegram

@@ -350,9 +350,11 @@ def main() -> int:
     from investigator import config
 
     can_send = bool(config.TELEGRAM_BOT_TOKEN and config.TELEGRAM_CHAT_ID) and not args.dry_run
+    from investigator.explanation_engine.explainer import plain_text
+
     for _ticker, text in alerts:
         print("-" * 60)
-        print(text)
+        print(plain_text(text))
         if can_send:
             from investigator.telegram_bot.sender import send_message
 

@@ -23,14 +23,20 @@ a KB de amostra; não precisa de chaves nem, para essa parte, de internet). É W
 Saída real (determinística no gatilho de notícia):
 
 ```
-==== GATILHO DE NOTICIA  (offline, base de conhecimento de amostra) ====
-Alerta NVDA | impacto medio 5 dias: +6,46%
- - 2023-05-25 NVDA (sim 0.60) +5d  +3,55%  "Nvidia guidance surges..."
- - 2023-04-25 MSFT (sim 0.38) +5d +10,89%  "Microsoft cloud growth..."
- - 2023-06-13 NVDA (sim 0.38) +5d  +4,93%  "Nvidia unveils new AI..."
-==== GATILHO DE MERCADO  (precos ao vivo; nao envia) ====
- No anomaly for AAPL today (z-score +0.89, within +-3).
+==== GATILHO DE NOTÍCIA  (offline, base de conhecimento de amostra) ====
+📰 News alert for NVDA
+"Nvidia demand surges on AI chip orders"
+3 similar past headlines — their 5-day moves ranged +3.55%…+10.89% (average +6.46%):
+▸ +3.55% in 5d · NVDA 2023-05-25 · "Nvidia guidance surges..." (sim 0.60)
+▸ +10.89% in 5d · MSFT 2023-04-25 · "Microsoft cloud growth..." (sim 0.38)
+▸ +4.93% in 5d · NVDA 2023-06-13 · "Nvidia unveils new AI..." (sim 0.38)
+Observed past outcomes after similar news — not a price prediction, not advice.
+==== GATILHO DE MERCADO  (preços ao vivo; não envia) ====
+No anomaly for AAPL today (z-score +0.89, within ±3).
 ```
+
+> No Telegram a mesma mensagem chega **formatada** (manchete a negrito, método em itálico):
+> o texto é o mesmo, com `<b>/<i>` interpretados pela app do Telegram.
 
 > **Nota (Windows):** os alertas têm emojis (📰, ⚠️); a consola `cp1252` rebenta ao imprimi-los. A demo já
 > força `UTF-8`. Se correres o teu próprio `print(...)` e vires `UnicodeEncodeError`, define

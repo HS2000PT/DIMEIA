@@ -334,6 +334,17 @@ em slides, e a tese tem os exemplos trabalhados — nada na defesa depende de re
 
 ## 7. Perguntas difíceis do júri (e respostas preparadas)
 
+**P: O alerta que o vosso canal envia hoje não é igual ao da figura da tese (Cap. 4) nem ao do
+Case Study 3. Porquê?**
+R: O formato de PRODUÇÃO foi compactado depois de os estudos ficarem congelados — revisão de
+usabilidade: o facto mais forte primeiro, o método numa nota curta, e o INTERVALO dos resultados
+dos precedentes ao lado da média (a média sozinha esconde direções mistas — a própria tese discute
+isso no CS3). Os CAMPOS são exatamente os mesmos (evento, números do método, precedentes um a um
+com similaridade e impacto, aviso de não-previsão), por isso o argumento de fidelidade não muda —
+o texto continua a ser gerado dos próprios objetos calculados, e os testes de fidelidade
+continuam a exigir cada número. O Cap. 4 regista esta evolução numa frase; o CS3 é o registo
+experimental congelado e fica intocado.
+
 **P: Isto não é só usar bibliotecas existentes?**
 R: Sim, e numa tese de *Engenharia* de IA é isso que se pede: a contribuição é a integração, a metodologia
 de correlação notícia–impacto, as escolhas justificadas e a avaliação crítica honesta. O valor está no

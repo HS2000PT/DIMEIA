@@ -7,6 +7,19 @@ A entrada mais recente fica no topo.
 
 ## Sessão 30 — 2026-07-06 — PRODUTO REAL + SINCRONIA TOTAL para a defesa
 
+### Sessão 30 — adenda REVISÃO DURA (mensagens + usabilidade; "pasta de palavras; amador")
+Crítica aceite e verificada contra os artefactos reais (imprimi as mensagens como o utilizador
+as recebe). **Mensagens Telegram reescritas em camadas** com HTML (negrito na manchete, método
+em itálico curto; sender parse_mode + fallback; escapes em todo o conteúdo dinâmico): mercado
+5→3 linhas sem repetição; notícia com INTERVALO antes da média (média sozinha esconde direções
+mistas — a lição do CS3 aplicada ao produto), manchetes truncadas, `plain_text()` para
+consola/app. Fidelidade XAI intacta (testes exigem cada número). **App deslastrada**: disclaimer
+só na sidebar, knobs em "Advanced", métricas dev fora, Live board enxuto, /help agrupado.
+**Sincronia**: demo/how_to_run/guia com o output novo (valores congelados intactos; 64 slides
+0 erros); tese Cap. 4 +1 frase honesta (formato compactado depois; campos idênticos; CS3 =
+registo congelado, intocado); caderno com a pergunta de júri sobre a evolução do formato.
+109 testes + ruff verdes; 76 pp 0 erros.
+
 ### Sessão 30 — adenda UX ("a app continua confusa; estuda o mercado; refaz para utilizadores reais")
 Rebranding da navegação para TAREFAS (padrão Yahoo/Google Finance): **📊 Markets now** (landing,
 o Live board) · **🔎 Ticker check** (o antigo "Market trigger", cabeçalho em linguagem de

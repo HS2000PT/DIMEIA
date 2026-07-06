@@ -124,22 +124,21 @@ def _live_board() -> None:
                 n_anom += 1
                 status = f"🔺 ANOMALY (|z| ≥ {threshold:g})"
             elif not fresh:
-                status = "· closed (last session shown)"
+                status = f"closed · last session {bar_date}" if bar_date else "closed"
             else:
-                status = "· normal"
+                status = "normal"
             rows.append({
                 "Ticker": ticker,
                 "Price": round(float(close.iloc[-1]), 2),
-                "Move (last session)": float(close.iloc[-1] / close.iloc[-2] - 1.0),
+                "Move": float(close.iloc[-1] / close.iloc[-2] - 1.0),
                 "z-score": round(float(res.z_score), 2),
                 "Status": status,
                 "Last 30 sessions": [float(x) for x in close.iloc[-30:]],
-                "Session": str(bar_date) if bar_date else "—",
             })
         except Exception:
-            rows.append({"Ticker": ticker, "Price": None, "Move (last session)": None,
+            rows.append({"Ticker": ticker, "Price": None, "Move": None,
                          "z-score": None, "Status": "⚠ no data right now",
-                         "Last 30 sessions": None, "Session": "—"})
+                         "Last 30 sessions": None})
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Tickers watched", len(tickers))
     c2.metric("Anomalies (today)", n_anom)
@@ -152,32 +151,23 @@ def _live_board() -> None:
         df,
         use_container_width=True, hide_index=True,
         column_config={
-            "Move (last session)": st.column_config.NumberColumn(format="percent"),
+            "Move": st.column_config.NumberColumn(
+                format="percent", help="Last session's close-to-close change."),
             "z-score": st.column_config.NumberColumn(
-                help="How unusual the move is vs the previous 20 sessions (rolling z-score)."),
+                help="How unusual the move is vs this stock's previous 20 sessions."),
             "Last 30 sessions": st.column_config.LineChartColumn(width="medium"),
         },
     )
-    st.caption(
-        "Auto-refreshes every 2 minutes · prices via yfinance (about 15 minutes delayed) · "
-        "an **anomaly** means |z| crossed the threshold on a fresh session — the same rule the "
-        "Telegram channel alerts on. Educational evidence, never advice."
-    )
+    st.caption("Auto-refreshes every 2 min · yfinance prices (~15 min delay) · "
+               "same rule the Telegram alerts use.")
 
 
 def page_live() -> None:
-    st.header("Live board — the watchlist right now")
-    _disclaimer()
-    st.markdown(
-        "The same watchlist the alert scanner watches, scored with the same transparent rule "
-        "(rolling *z*-score, no lookahead). **Sorted by |z|** — the most unusual movers first."
-    )
+    st.header("Markets now")
+    st.caption("The watchlist, scored by how unusual today's move is — biggest movers first.")
     _live_board()
-    st.info(
-        "📱 Want this as push alerts? The scanner posts to a Telegram channel every 30 minutes "
-        "during US market hours — see **📡 Get alerts** in the sidebar.",
-        icon="📡",
-    )
+    st.info("Get these as push alerts on your phone → **📡 Get alerts** in the sidebar.",
+            icon="📡")
 
 
 def page_home() -> None:
@@ -186,7 +176,6 @@ def page_home() -> None:
         col_logo.image(str(_MASCOT), width=150)
     col_title.title("InvestiGator — Explainable Financial Alerts for Retail Investors")
     col_title.caption("_Investigate. Don't speculate._ 🐊🔍")
-    _disclaimer()
     st.markdown(
         """
 **InvestiGator** watches the US market for a retail investor and **explains** every alert.
@@ -200,22 +189,7 @@ There are two triggers:
 Use the sidebar to try each trigger, explore the evaluation, or read how it works.
         """
     )
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Automated tests", "109 ✓")
-    c2.metric("Verified citations", "52 / 52")
-    c3.metric("Price predictions made", "0 (by design)")
-
-    with st.expander("📱 Get the alerts on your phone (free)"):
-        st.markdown(
-            """
-- **Channel:** join the Telegram channel the scheduled scan posts to (one alert per anomalous
-  ticker per day, after US close).
-- **Personal watchlist (bot):** when the operator runs the interactive bot
-  (`python scripts/run_bot.py`), talk to it on Telegram — `/watch TSLA`, `/list`, `/stop` —
-  and the scan also delivers *your* tickers to you. Subscriptions stay in a local SQLite file.
-- Everything explains **past evidence** (z-score, precedents). No forecasts, no advice.
-            """
-        )
+    st.markdown("**Want it on your phone?** See **📡 Get alerts** in the sidebar.")
 
 
 def _render_severity(ticker: str, headline: str) -> None:
@@ -256,28 +230,27 @@ def _render_severity(ticker: str, headline: str) -> None:
 
 
 def page_news() -> None:
+    from investigator.explanation_engine.explainer import plain_text
     from investigator.main import kb_query_embedder, preferred_light_kb, run_news_trigger
 
-    st.header("Check a headline — what happened after similar news?")
-    _disclaimer()
-    st.markdown(
-        "Type a headline and a ticker. InvestiGator finds the most **similar past headlines** "
-        "in its knowledge base and shows what happened to the price afterwards."
+    st.header("Check a headline")
+    st.caption(
+        "Paste a headline — see the most similar past headlines and what the price did after."
     )
     kb_path = preferred_light_kb()
-    st.caption(
-        f"Knowledge base in use: **{_kb_size(str(kb_path)):,} historical headlines** "
-        f"({'FNSPID 2018–2023, curated' if 'fnspid' in kb_path.name else 'small sample'}). "
-        "This interactive demo matches by **word overlap** (offline baseline) — weaker than the "
-        "thesis's SBERT method, so off-topic matches can appear; the measured gap is on the "
-        "Evaluation page."
-    )
     col = st.columns([3, 1])
     headline = col[0].text_input("Headline", value="Nvidia demand surges on AI chip orders")
     ticker = col[1].text_input("Ticker", value="NVDA")
-    c1, c2 = st.columns(2)
-    top_k = c1.slider("How many precedents (k)", 1, 5, 3)
-    horizon = c2.selectbox("Impact horizon (trading days)", [1, 3, 5], index=2)
+    top_k, horizon = 3, 5
+    with st.expander("Advanced"):
+        top_k = st.slider("How many precedents (k)", 1, 5, 3)
+        horizon = st.selectbox("Impact horizon (trading days)", [1, 3, 5], index=2)
+        st.caption(
+            f"Knowledge base: {_kb_size(str(kb_path)):,} historical headlines "
+            f"({'FNSPID 2018–2023, curated' if 'fnspid' in kb_path.name else 'small sample'}); "
+            "matching is word-overlap (offline baseline) — weaker than the thesis's SBERT, so "
+            "off-topic matches can appear (measured gap: About & method → Evaluation)."
+        )
 
     if st.button("Find precedents", type="primary"):
         precedents, text = run_news_trigger(
@@ -309,7 +282,7 @@ def page_news() -> None:
         for c in ["+1d", "+3d", "+5d"]:
             df[c] = df[c].map(lambda v: f"{v:+.2%}" if v is not None else "—")
         st.dataframe(df, use_container_width=True, hide_index=True)
-        st.text(text)
+        st.text(plain_text(text))
         st.info(
             "Baseline embedder (word overlap). The thesis's real method is **SBERT** (semantic); "
             "see the Evaluation page for its measured advantage."
@@ -318,21 +291,25 @@ def page_news() -> None:
 
 
 def page_market() -> None:
-    st.header("Ticker check — is the latest move unusual?")
-    _disclaimer()
-    st.markdown(
-        "InvestiGator compares the latest daily return against this stock's own recent behaviour "
-        "(rolling *z*-score). A large |z| means the move is unusual **for this stock**."
+    st.header("Ticker check")
+    st.caption(
+        "Is the latest move unusual **for this stock**? Compared against its own recent "
+        "behaviour — not a fixed percentage."
     )
-    c1, c2, c3 = st.columns(3)
-    ticker = c1.text_input("Ticker", value="AAPL").strip().upper()
-    window = c2.slider("Window (days)", 10, 60, 20)
-    threshold = c3.slider("Threshold |z|", 2.0, 4.0, 3.0, step=0.5)
+    ticker = st.text_input("Ticker", value="AAPL").strip().upper()
+    window, threshold = 20, 3.0
+    with st.expander("Advanced"):
+        window = st.slider("Window (days)", 10, 60, 20)
+        threshold = st.slider("Threshold |z|", 2.0, 4.0, 3.0, step=0.5)
 
     if st.button("Check latest move", type="primary"):
         try:
             from investigator.anomaly_detector.detector import detect_latest
-            from investigator.explanation_engine.explainer import explain_anomaly, explain_normal
+            from investigator.explanation_engine.explainer import (
+                explain_anomaly,
+                explain_normal,
+                plain_text,
+            )
             from investigator.market_data.prices import log_returns
 
             close = _cached_close(ticker)
@@ -347,7 +324,7 @@ def page_market() -> None:
         m2.metric("Anomaly?", "YES" if res.is_anomaly else "no")
         m3.metric("Latest return", f"{res.last_return:+.2%}")
         text = explain_anomaly(ticker, res) if res.is_anomaly else explain_normal(ticker, res)
-        st.text(text)
+        st.text(plain_text(text))
 
         # Show the recent returns with the ±threshold·σ band around the rolling mean.
         band = pd.DataFrame({"return": returns.tail(60).reset_index(drop=True)})
@@ -360,7 +337,6 @@ def page_market() -> None:
 
 def page_evaluation() -> None:
     st.header("Evaluation — what the numbers mean")
-    _disclaimer()
     st.markdown(
         "All figures below come from `docs/evaluation/` and are reproducible with fixed seeds via "
         "`scripts/evaluate.py` / `scripts/evaluate_anomaly.py`."
@@ -385,7 +361,6 @@ def page_evaluation() -> None:
 
 def page_how() -> None:
     st.header("How it works")
-    _disclaimer()
     st.markdown(
         """
 InvestiGator integrates existing, transparent components: a pre-trained sentence embedder (SBERT,
@@ -470,7 +445,6 @@ def _channel_url() -> str | None:
 
 def page_alerts() -> None:
     st.header("Get alerts on your phone — nothing to install")
-    _disclaimer()
     st.markdown(
         """
 InvestiGator scans the watchlist **every 30 minutes during US market hours** and posts to a public
@@ -544,10 +518,13 @@ PAGES = {
 
 def main() -> None:
     st.sidebar.title("InvestiGator")
-    st.sidebar.caption("Explainable financial alerts")
-    choice = st.sidebar.radio("Go to", list(PAGES.keys()))
+    st.sidebar.caption("Market alerts that explain themselves.")
+    choice = st.sidebar.radio("Go to", list(PAGES.keys()), label_visibility="collapsed")
     st.sidebar.markdown("---")
-    st.sidebar.caption("No predictions · free APIs · every alert explained.")
+    st.sidebar.caption(
+        "⚠️ Research tool (MSc dissertation, ISEP). Explains past evidence — "
+        "**not** financial advice, **no** price predictions."
+    )
     PAGES[choice]()
 
 

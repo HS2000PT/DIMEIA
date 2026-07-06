@@ -31,7 +31,9 @@ def demo_noticia() -> None:
         horizon=5,
         send=False,
     )
-    print(text)
+    from investigator.explanation_engine.explainer import plain_text
+
+    print(plain_text(text))
 
 
 def demo_mercado() -> None:
@@ -45,7 +47,10 @@ def demo_mercado() -> None:
 
         returns = log_returns(get_price_history("AAPL")["Close"])
         res = detect_latest(returns, window=20, threshold=3.0)
-        print(explain_anomaly("AAPL", res) if res.is_anomaly else explain_normal("AAPL", res))
+        from investigator.explanation_engine.explainer import plain_text
+
+        print(plain_text(explain_anomaly("AAPL", res) if res.is_anomaly
+                         else explain_normal("AAPL", res)))
         print(f"[is_anomaly={res.is_anomaly}  z={res.z_score:+.2f}]")
     except Exception as exc:  # noqa: BLE001  (rede pode falhar; a demo continua útil)
         print(f"(Sem internet ou erro: {type(exc).__name__}.")
