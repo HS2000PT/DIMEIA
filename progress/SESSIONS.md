@@ -7,6 +7,17 @@ A entrada mais recente fica no topo.
 
 ## Sessão 30 — 2026-07-06 — PRODUTO REAL + SINCRONIA TOTAL para a defesa
 
+### Sessão 30 — adenda UX ("a app continua confusa; estuda o mercado; refaz para utilizadores reais")
+Rebranding da navegação para TAREFAS (padrão Yahoo/Google Finance): **📊 Markets now** (landing,
+o Live board) · **🔎 Ticker check** (o antigo "Market trigger", cabeçalho em linguagem de
+utilizador) · **📰 Check a headline** · **📡 Get alerts** (página NOVA: botão do canal via
+`public.channel_url` no alerts.yaml — não-secreto, o canal é público —, tabela de comandos do
+bot, exemplo REAL de alerta do demo determinístico) · **🎓 About & method** (Home/How-it-works/
+Evaluation/About agrupados em tabs — o académico sai do caminho do utilizador). Testes
+atualizados; as 5 páginas renderizam sem exceções (verificado com AppTest, dados reais).
+Log real do Streamlit Cloud registado em deployment.md: Python 3.14 no cloud (leve OK; recriar
+com 3.12 se quiseres coerência), aviso uv/pyproject benigno. 109 testes + ruff verdes.
+
 ### Sessão 30 — adenda ZERO-OPS (o aluno: "não quero fazer nada; tempo real; painel vivo; sê crítico")
 Auditoria crítica honesta: o canal era um digest 1×/dia (não tempo real), notícias nunca ligadas,
 bot exigia a máquina do aluno, canais não têm boas-vindas automáticas, app era demo clicável.

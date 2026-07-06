@@ -72,6 +72,8 @@
 - [x] Tornar o **repositório público** (necessário para o dashboard público + Actions ilimitados).
 - [x] **Publicar o dashboard**: <https://investigator.streamlit.app> (URL já no README).
 - [x] **Tornar a app pública no Streamlit** — feito pelo aluno (2026-07-06).
+- [ ] **Preencher `public.channel_url`** no `config/alerts.yaml` (link do canal; não-secreto) —
+      ativa o botão "Open the Telegram channel" na página 📡 Get alerts da app.
 - [ ] **Afixar a mensagem de onboarding no canal** + colar a descrição (textos prontos a copiar
       em `docs/design/going_live.md` §1b — canais não têm boas-vindas automáticas; o pin é o padrão).
 - [ ] (Verificação, 1 min) Abrir <https://investigator.streamlit.app> em janela anónima e ver o

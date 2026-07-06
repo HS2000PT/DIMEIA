@@ -29,7 +29,7 @@ def _abrir_news_e_clicar(monkeypatch) -> AppTest:
     monkeypatch.setattr(prices, "get_price_history", _fake_history)
     at = AppTest.from_file(APP)
     at.run(timeout=120)
-    at.sidebar.radio[0].set_value("News trigger").run(timeout=120)
+    at.sidebar.radio[0].set_value("📰 Check a headline").run(timeout=120)
     at.button[0].click().run(timeout=120)
     return at
 

@@ -40,3 +40,14 @@ streamlit run app/streamlit_app.py
 ## Depois de publicado
 - Colocar o URL no `README.md` (secção "Try it") e na tese (como artefacto + captura de ecrã).
 - Alternativa equivalente: **Hugging Face Spaces** (também gratuito; ver `docs/design/…` futuro).
+
+
+## Notas do deploy real (observadas no log do Streamlit Cloud, 2026-07-06)
+- O Streamlit Cloud usou **Python 3.14** (o projeto pinna 3.12). A stack leve + streamlit
+  funciona em 3.14 (a app boota; 47 pacotes resolvidos com uv), mas por coerência com o projeto,
+  se recriares a app escolhe **3.12** em "Advanced settings". Os testes/CI continuam em 3.12.
+- Aviso `More than one requirements file (uv requirements.txt vs poetry pyproject.toml)` é
+  **benigno**: o pyproject é para o pacote/ferramentas; o Cloud usa o requirements.txt (correto,
+  e a linha `-e .` instala o pacote `investigator`).
+- Para o botão "Open the Telegram channel" na página **📡 Get alerts**: preenche
+  `public.channel_url` no `config/alerts.yaml` (não é segredo — o canal é público).

@@ -174,8 +174,8 @@ def page_live() -> None:
     )
     _live_board()
     st.info(
-        "📱 Want this as push alerts? Join the Telegram channel (scans every 30 min during US "
-        "market hours) — or DM the bot `/watch TSLA` for your own watchlist. See **Home**.",
+        "📱 Want this as push alerts? The scanner posts to a Telegram channel every 30 minutes "
+        "during US market hours — see **📡 Get alerts** in the sidebar.",
         icon="📡",
     )
 
@@ -258,7 +258,7 @@ def _render_severity(ticker: str, headline: str) -> None:
 def page_news() -> None:
     from investigator.main import kb_query_embedder, preferred_light_kb, run_news_trigger
 
-    st.header("News trigger — precedents and their impact")
+    st.header("Check a headline — what happened after similar news?")
     _disclaimer()
     st.markdown(
         "Type a headline and a ticker. InvestiGator finds the most **similar past headlines** "
@@ -318,7 +318,7 @@ def page_news() -> None:
 
 
 def page_market() -> None:
-    st.header("Market trigger — is today an anomaly?")
+    st.header("Ticker check — is the latest move unusual?")
     _disclaimer()
     st.markdown(
         "InvestiGator compares the latest daily return against this stock's own recent behaviour "
@@ -456,14 +456,89 @@ def _kb_size(kb_path: str) -> int:
         return sum(1 for line in f if line.strip())
 
 
+def _channel_url() -> str | None:
+    """Optional public channel URL from config/alerts.yaml (non-secret; the channel is public)."""
+    try:
+        import yaml
+
+        cfg = yaml.safe_load((_ROOT / "config" / "alerts.yaml").read_text(encoding="utf-8"))
+        url = (cfg.get("public", {}) or {}).get("channel_url")
+        return str(url) if url else None
+    except Exception:
+        return None
+
+
+def page_alerts() -> None:
+    st.header("Get alerts on your phone — nothing to install")
+    _disclaimer()
+    st.markdown(
+        """
+InvestiGator scans the watchlist **every 30 minutes during US market hours** and posts to a public
+Telegram channel — automatically, no action needed from you. Each alert explains itself: the rule
+that fired, the numbers behind it, and (for news) the historical precedents.
+        """
+    )
+    url = _channel_url()
+    c1, c2 = st.columns(2)
+    with c1:
+        st.subheader("1 · Join the channel")
+        if url:
+            st.link_button("📡 Open the Telegram channel", url, type="primary")
+        else:
+            st.markdown("Open Telegram and search for the **InvestiGator Alerts** channel.")
+        st.caption("One alert per unusual move or material headline per day — no spam by design.")
+    with c2:
+        st.subheader("2 · Optional: your own watchlist")
+        st.markdown(
+            """
+Send the bot a direct message:
+
+| Command | What it does |
+|---|---|
+| `/watch TSLA` | add a ticker to *your* list |
+| `/list` | see your list |
+| `/unwatch TSLA` | remove it |
+| `/stop` | pause (list is kept) |
+            """
+        )
+        st.caption("Replies arrive with the next scan (≤30 min in market hours).")
+    st.subheader("What an alert looks like (real output)")
+    st.code(
+        '📰 News alert for NVDA\n'
+        '"Nvidia demand surges on AI chip orders"\n'
+        "Potential impact (from 3 similar past events): average 5-day move: +6.46%\n"
+        "Historical precedents:\n"
+        '  • 2023-05-25 NVDA (sim 0.60) → 5d +3.55%: "Nvidia guidance surges..."\n'
+        '  • 2023-04-25 MSFT (sim 0.38) → 5d +10.89%: "Microsoft cloud growth..."\n'
+        '  • 2023-06-13 NVDA (sim 0.38) → 5d +4.93%: "Nvidia unveils new AI..."\n'
+        "Note: precedents are retrieved by semantic similarity; the impact is the observed past\n"
+        "outcome, not a price prediction.",
+        language=None,
+    )
+    st.caption("Produced by the system's own offline demo (`python scripts/demo.py`) — "
+               "deterministic and reproducible.")
+
+
+def page_method() -> None:
+    tab_what, tab_how, tab_eval, tab_cite = st.tabs(
+        ["What is this?", "How it works", "Evaluation", "About & cite"]
+    )
+    with tab_what:
+        page_home()
+    with tab_how:
+        page_how()
+    with tab_eval:
+        page_evaluation()
+    with tab_cite:
+        page_about()
+
+
 PAGES = {
-    "📊 Live board": page_live,
-    "Home": page_home,
-    "News trigger": page_news,
-    "Market trigger": page_market,
-    "Evaluation": page_evaluation,
-    "How it works": page_how,
-    "About": page_about,
+    "📊 Markets now": page_live,
+    "🔎 Ticker check": page_market,
+    "📰 Check a headline": page_news,
+    "📡 Get alerts": page_alerts,
+    "🎓 About & method": page_method,
 }
 
 
