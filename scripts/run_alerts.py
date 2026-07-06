@@ -25,6 +25,63 @@ from investigator.console import force_utf8_stdout
 
 _CONFIG = Path(__file__).resolve().parents[1] / "config" / "alerts.yaml"
 _PRED_LOG = Path(__file__).resolve().parents[1] / "data" / "predictions_log.jsonl"
+_STATE = Path(__file__).resolve().parents[1] / "data" / "alerts_state.json"
+
+
+# ── Estado entre corridas (intradiário, anti-duplicado) ───────────────────────
+# Com o cron a correr de 30 em 30 min durante o mercado, o runner tem de se lembrar do que
+# JÁ alertou hoje (o job do Actions é efémero; o workflow persiste este ficheiro via cache).
+def load_state(path: str | Path = _STATE, today: date | None = None) -> dict:
+    """Lê o estado; se for de outro dia, zera as listas do dia mas PRESERVA o offset do bot."""
+    import json
+
+    today = today or date.today()
+    state = {"date": today.isoformat(), "alerted_market": [], "alerted_news": [],
+             "bot_offset": None}
+    try:
+        raw = json.loads(Path(path).read_text(encoding="utf-8"))
+        state["bot_offset"] = raw.get("bot_offset")
+        if raw.get("date") == today.isoformat():
+            state["alerted_market"] = list(raw.get("alerted_market", []))
+            state["alerted_news"] = list(raw.get("alerted_news", []))
+    except (OSError, ValueError):
+        pass  # sem estado (1.ª corrida do dia/da cache) → começa limpo
+    return state
+
+
+def save_state(state: dict, path: str | Path = _STATE) -> None:
+    import json
+
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(state, ensure_ascii=False, indent=1), encoding="utf-8")
+
+
+def news_key(ticker: str, text: str) -> str:
+    """Chave estável de um alerta de notícia (para não repetir a mesma manchete no mesmo dia)."""
+    import hashlib
+
+    return hashlib.sha1(f"{ticker}|{text}".encode()).hexdigest()[:12]
+
+
+def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]],
+                      state: dict) -> list[tuple[str, str]]:
+    """Puro: mantém só o que ainda NÃO foi alertado hoje e marca-o no estado."""
+    keep: list[tuple[str, str]] = []
+    for ticker, text in market:
+        if ticker not in state["alerted_market"]:
+            state["alerted_market"].append(ticker)
+            keep.append((ticker, text))
+        else:
+            print(f"[{ticker}] já alertado hoje — sem repetição.")
+    for ticker, text in news:
+        k = news_key(ticker, text)
+        if k not in state["alerted_news"]:
+            state["alerted_news"].append(k)
+            keep.append((ticker, text))
+        else:
+            print(f"[noticias {ticker}] já alertada hoje — sem repetição.")
+    return keep
 
 
 def _log_decision_safe(news_date: str, ticker: str, headline: str,
@@ -197,6 +254,46 @@ def scan_news(cfg: dict) -> list[tuple[str, str]]:
     return alerts
 
 
+def process_bot_commands(state: dict, bot_cfg: dict, *, dry_run: bool) -> None:
+    """Fase B SEM servidor: processa em lote os comandos enviados ao bot desde a última corrida.
+
+    Com o cron intradiário, quem escrever /watch TSLA recebe a resposta na corrida seguinte
+    (≤30 min em horário de mercado). Não é instantâneo e dizemo-lo com honestidade — mas
+    funciona sem nenhuma máquina do operador. (Para respostas imediatas: scripts/run_bot.py.)
+    Fail-open: qualquer erro deixa o runner seguir; o offset fica no estado partilhado.
+    """
+    if not bot_cfg.get("enabled", False):
+        return
+    if dry_run:
+        print("[bot] dry-run — comandos pendentes não são processados nem respondidos.")
+        return
+    try:
+        from investigator import config
+        from investigator.telegram_bot import store
+        from investigator.telegram_bot.commands import handle_command
+        from investigator.telegram_bot.interactive import extract_command, poll_updates
+        from investigator.telegram_bot.sender import send_message
+
+        if not config.TELEGRAM_BOT_TOKEN:
+            print("[bot] sem TELEGRAM_BOT_TOKEN — comandos saltados.")
+            return
+        updates = poll_updates(config.TELEGRAM_BOT_TOKEN, state.get("bot_offset"), timeout_s=1)
+        if not updates:
+            return
+        conn = store.connect(Path(bot_cfg.get("db", store.DEFAULT_DB)))
+        for upd in updates:
+            state["bot_offset"] = int(upd.get("update_id", 0)) + 1
+            par = extract_command(upd)
+            if par is None:
+                continue
+            chat_id, text = par
+            reply = handle_command(text, chat_id, conn)
+            send_message(reply, chat_id=chat_id)
+        print(f"[bot] {len(updates)} update(s) processado(s) em lote.")
+    except Exception as exc:  # noqa: BLE001  (os comandos nunca podem partir o runner)
+        print(f"[bot] processamento de comandos falhou (ignorado): {type(exc).__name__}: {exc}")
+
+
 def _fanout_safe(alerts: list[tuple[str, str]], bot_cfg: dict, *, dry_run: bool) -> None:
     """Fase B (off por defeito): distribui cada alerta pelos subscritores do ticker.
 
@@ -236,10 +333,18 @@ def main() -> int:
     args = parser.parse_args()
 
     cfg = load_config()
-    alerts = scan_market(cfg) + scan_news(cfg)
+    bot_cfg = cfg.get("bot", {}) or {}
+    state = load_state()
+    process_bot_commands(state, bot_cfg, dry_run=args.dry_run)
+
+    alerts = filter_new_alerts(scan_market(cfg), scan_news(cfg), state)
+    if not args.dry_run:
+        save_state(state)  # persiste marcas do dia + offset do bot (cache no Actions)
+    else:
+        print("[estado] dry-run — estado não gravado (não interfere com a corrida real).")
 
     if not alerts:
-        print("Sem alertas hoje (nenhuma anomalia acima do limiar).")
+        print("Sem alertas novos nesta corrida (nenhuma anomalia nova acima do limiar).")
         return 0
 
     from investigator import config
@@ -253,7 +358,7 @@ def main() -> int:
 
             send_message(text)
 
-    _fanout_safe(alerts, cfg.get("bot", {}) or {}, dry_run=args.dry_run)
+    _fanout_safe(alerts, bot_cfg, dry_run=args.dry_run)
 
     if can_send:
         print(f"\n[{len(alerts)} alerta(s) enviado(s) para o Telegram]")

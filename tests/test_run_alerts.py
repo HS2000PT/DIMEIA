@@ -54,3 +54,34 @@ def test_bar_is_fresh_anti_duplicado():
 
     assert bar_is_fresh(date(2026, 7, 6), date(2026, 7, 6)) is True   # sessão de hoje
     assert bar_is_fresh(date(2026, 7, 3), date(2026, 7, 6)) is False  # feriado: barra de sexta
+
+
+def test_load_state_reset_diario_preserva_offset(tmp_path):
+    from datetime import date
+
+    from scripts.run_alerts import load_state, save_state
+
+    p = tmp_path / "state.json"
+    ontem = {"date": "2026-07-05", "alerted_market": ["TSLA"], "alerted_news": ["abc"],
+             "bot_offset": 77}
+    save_state(ontem, p)
+    st = load_state(p, today=date(2026, 7, 6))  # dia novo
+    assert st["alerted_market"] == [] and st["alerted_news"] == []  # listas zeradas
+    assert st["bot_offset"] == 77  # offset do bot sobrevive à meia-noite
+    st2 = load_state(p, today=date(2026, 7, 5))  # mesmo dia
+    assert st2["alerted_market"] == ["TSLA"]
+
+
+def test_filter_new_alerts_nao_repete(tmp_path):
+    from datetime import date
+
+    from scripts.run_alerts import filter_new_alerts, load_state
+
+    st = load_state(tmp_path / "none.json", today=date(2026, 7, 6))
+    market = [("TSLA", "alerta tsla"), ("NVDA", "alerta nvda")]
+    news = [("AAPL", "noticia aapl")]
+    primeira = filter_new_alerts(market, news, st)
+    assert len(primeira) == 3
+    # 2.a corrida do dia: tudo igual -> nada novo; uma manchete nova -> só essa passa
+    segunda = filter_new_alerts(market, [("AAPL", "noticia aapl"), ("AAPL", "OUTRA")], st)
+    assert segunda == [("AAPL", "OUTRA")]

@@ -82,6 +82,24 @@
       (onnxruntime, ~23 MB) para fechar o fosso word-overlap↔SBERT na app pública — registado
       no CHECKLIST como melhoria futura.
 
+### P6 — Zero-ops REAL (pedido de 2026-07-06: "não quero fazer nada; tempo real; painel vivo")
+- [x] **Intradiário:** alerts.yml corre de 30 em 30 min em horário de mercado US (Actions grátis
+      em repo público) + concurrency (nunca 2 em paralelo).
+- [x] **Estado entre corridas:** `load_state/save_state/filter_new_alerts` (reset diário preserva
+      o offset do bot) via cache do Actions — a mesma anomalia/manchete nunca repete no dia; testes.
+- [x] **Notícias LIGADAS no canal** (10 tickers) com o **gate de triagem treinado (0.5) como
+      controlo de fadiga** — o mecanismo da RQ4 em produção real (dry-run ao vivo: suprimiu 7
+      manchetes 26–49%, deixou passar TSLA).
+- [x] **Bot sem máquina do aluno:** comandos processados EM LOTE em cada corrida (resposta ≤30 min,
+      documentado); `bot_users.db` + estado persistidos na cache (falha crítica do runner efémero
+      apanhada antes de morder); aviso "um consumidor getUpdates de cada vez".
+- [x] **Live board na app** (landing): watchlist com preço, movimento, z-score, badge de anomalia
+      (ícone+texto, nunca só cor), sparkline 30 sessões, tiles, auto-refresh 120s (fragment),
+      ordenado por |z|; offline nos testes (usa a seam get_price_history); AppTest dedicado.
+- [x] Onboarding do canal: mensagem afixada + descrição prontas a colar (going_live §1b; canais
+      não têm boas-vindas automáticas — limitação da plataforma, documentada).
+- [x] 109 testes + ruff verdes; render real do Live board verificado (10 tickers, 0 exceções).
+
 ## Guardrails (herdados, sempre em vigor)
 Zero fabricação; números validados nunca editados à mão; sem previsão de preço/direção; só compute
 grátis; segredos nunca em ficheiros versionados; commits PT-PT com

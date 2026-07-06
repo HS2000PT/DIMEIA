@@ -80,6 +80,106 @@ def _disclaimer() -> None:
 
 # ── Pages ──────────────────────────────────────────────────────────────────────
 
+def _watchlist_config() -> tuple[list[str], int, float]:
+    """Watchlist + parâmetros do z-score, da mesma fonte que o runner (config/alerts.yaml)."""
+    try:
+        import yaml
+
+        cfg = yaml.safe_load((_ROOT / "config" / "alerts.yaml").read_text(encoding="utf-8"))
+        m = cfg.get("market", {})
+        return (list(m.get("tickers", [])) or ["AAPL"], int(m.get("window", 20)),
+                float(m.get("threshold", 3.0)))
+    except Exception:
+        return (["AAPL", "MSFT", "NVDA", "TSLA", "AMZN"], 20, 3.0)
+
+
+@st.cache_data(ttl=120, show_spinner=False)
+def _live_close(ticker: str) -> pd.Series:
+    """Close series with a short TTL so the live board refreshes (yfinance, ~15 min delay)."""
+    from investigator.market_data.prices import get_price_history
+
+    return get_price_history(ticker)["Close"]
+
+
+@st.fragment(run_every="120s")
+def _live_board() -> None:
+    from datetime import UTC, date, datetime
+
+    from investigator.anomaly_detector.detector import detect_latest
+    from investigator.market_data.prices import log_returns
+
+    tickers, window, threshold = _watchlist_config()
+    rows, n_anom, n_fresh = [], 0, 0
+    for ticker in tickers:
+        try:
+            close = _live_close(ticker)
+            if len(close) < window + 2:
+                raise ValueError("not enough history")
+            res = detect_latest(log_returns(close), window=window, threshold=threshold)
+            last_idx = close.index[-1]
+            bar_date = last_idx.date() if isinstance(last_idx, pd.Timestamp) else None
+            fresh = bar_date == date.today() if bar_date else False
+            n_fresh += int(fresh)
+            if res.is_anomaly and fresh:
+                n_anom += 1
+                status = f"🔺 ANOMALY (|z| ≥ {threshold:g})"
+            elif not fresh:
+                status = "· closed (last session shown)"
+            else:
+                status = "· normal"
+            rows.append({
+                "Ticker": ticker,
+                "Price": round(float(close.iloc[-1]), 2),
+                "Move (last session)": float(close.iloc[-1] / close.iloc[-2] - 1.0),
+                "z-score": round(float(res.z_score), 2),
+                "Status": status,
+                "Last 30 sessions": [float(x) for x in close.iloc[-30:]],
+                "Session": str(bar_date) if bar_date else "—",
+            })
+        except Exception:
+            rows.append({"Ticker": ticker, "Price": None, "Move (last session)": None,
+                         "z-score": None, "Status": "⚠ no data right now",
+                         "Last 30 sessions": None, "Session": "—"})
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Tickers watched", len(tickers))
+    c2.metric("Anomalies (today)", n_anom)
+    c3.metric("Market state", "open/fresh" if n_fresh else "closed")
+    c4.metric("Updated (UTC)", datetime.now(UTC).strftime("%H:%M"))
+    df = pd.DataFrame(rows).sort_values(
+        "z-score", key=lambda s: s.abs(), ascending=False, na_position="last"
+    )
+    st.dataframe(
+        df,
+        use_container_width=True, hide_index=True,
+        column_config={
+            "Move (last session)": st.column_config.NumberColumn(format="percent"),
+            "z-score": st.column_config.NumberColumn(
+                help="How unusual the move is vs the previous 20 sessions (rolling z-score)."),
+            "Last 30 sessions": st.column_config.LineChartColumn(width="medium"),
+        },
+    )
+    st.caption(
+        "Auto-refreshes every 2 minutes · prices via yfinance (about 15 minutes delayed) · "
+        "an **anomaly** means |z| crossed the threshold on a fresh session — the same rule the "
+        "Telegram channel alerts on. Educational evidence, never advice."
+    )
+
+
+def page_live() -> None:
+    st.header("Live board — the watchlist right now")
+    _disclaimer()
+    st.markdown(
+        "The same watchlist the alert scanner watches, scored with the same transparent rule "
+        "(rolling *z*-score, no lookahead). **Sorted by |z|** — the most unusual movers first."
+    )
+    _live_board()
+    st.info(
+        "📱 Want this as push alerts? Join the Telegram channel (scans every 30 min during US "
+        "market hours) — or DM the bot `/watch TSLA` for your own watchlist. See **Home**.",
+        icon="📡",
+    )
+
+
 def page_home() -> None:
     col_logo, col_title = st.columns([1, 4])
     if _MASCOT.exists():
@@ -101,7 +201,7 @@ Use the sidebar to try each trigger, explore the evaluation, or read how it work
         """
     )
     c1, c2, c3 = st.columns(3)
-    c1.metric("Automated tests", "106 ✓")
+    c1.metric("Automated tests", "109 ✓")
     c2.metric("Verified citations", "52 / 52")
     c3.metric("Price predictions made", "0 (by design)")
 
@@ -357,6 +457,7 @@ def _kb_size(kb_path: str) -> int:
 
 
 PAGES = {
+    "📊 Live board": page_live,
     "Home": page_home,
     "News trigger": page_news,
     "Market trigger": page_market,

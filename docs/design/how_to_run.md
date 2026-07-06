@@ -137,7 +137,12 @@ Requer `TELEGRAM_BOT_TOKEN` no `.env`. Enquanto corre (long-polling, sem servido
 pessoa pode falar com o bot: `/start`, `/watch TSLA`, `/unwatch TSLA`, `/list`, `/stop`.
 Subscrições em `data/bot_users.db` (SQLite, gitignored). Para o runner agendado distribuir os
 alertas por subscritor: `bot.enabled: true` no `config/alerts.yaml` (fail-open — sem base ou
-sem a flag, comportamento de sempre). Detalhes e evolução (webhook/host): `going_live.md`, Fase B.
+sem a flag, comportamento de sempre).
+
+**Zero-ops (defeito atual):** com `bot.enabled: true`, o próprio runner do Actions processa os
+comandos EM LOTE em cada varredura intradiária — resposta em ≤30 min sem nenhuma máquina tua.
+O `run_bot.py` é o modo "respostas imediatas" (não corras os dois ao mesmo tempo — um consumidor
+`getUpdates` de cada vez). Detalhes: `going_live.md`, Fase A §4 e Fase B.
 
 ---
 

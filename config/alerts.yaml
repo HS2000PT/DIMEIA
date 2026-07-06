@@ -19,15 +19,17 @@ market:
 # Gatilho de notícias (opcional): precisa de FINNHUB_API_KEY. É "best-effort" — sem memória do
 # que já foi enviado nesta fase, por isso pode repetir. Deixa 'false' até quereres experimentar.
 news:
-  enabled: false
-  tickers: [AAPL, NVDA, TSLA]
+  enabled: true            # canal com notícias (ligado no "produto zero-ops", 2026-07-06)
+  tickers: [AAPL, MSFT, NVDA, TSLA, AMZN, GOOGL, META, JPM, AMD, NFLX]
   horizon: 5        # horizonte do impacto dos precedentes (+5 dias)
   top_k: 3          # nº de precedentes a mostrar
   # Triagem APRENDIDA (RQ4; off por defeito). Se definires um número em [0,1], cada alerta
   # de notícia é pontuado pelo modelo só-contexto (models/triage_context_lr.joblib, stack
   # leve) e só é enviado se P(movimento anormal) ≥ min_materiality; a linha de materialidade
   # passa a acompanhar o alerta. null = desligado (comportamento de sempre, sem modelo).
-  min_materiality: null
+  # LIGADO em produção como controlo de fadiga de alertas: só passa notícia com
+  # P(movimento anormal) ≥ 0.5 segundo o modelo treinado (RQ4). Fail-open sem modelo.
+  min_materiality: 0.5
   # Anti-repetição: só alerta notícias com ≤ este nº de dias (o scan olha 7 dias para trás,
   # mas sem isto a MESMA manchete podia alertar dias a fio). 2 cobre o fim de semana.
   # max_age_days: 2
@@ -37,5 +39,5 @@ news:
 # `python scripts/run_bot.py` estiver a correr (long-polling; não precisa de servidor).
 # Sem base de subscritores, ou com enabled: false, o runner comporta-se como sempre (só canal).
 bot:
-  enabled: false
+  enabled: true   # comandos processados em lote em cada varredura + fan-out por subscritor
   # db: data/bot_users.db   # caminho da base (defeito; gitignored)

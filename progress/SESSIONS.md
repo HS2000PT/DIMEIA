@@ -6,6 +6,27 @@ A entrada mais recente fica no topo.
 ---
 
 ## Sessão 30 — 2026-07-06 — PRODUTO REAL + SINCRONIA TOTAL para a defesa
+
+### Sessão 30 — adenda ZERO-OPS (o aluno: "não quero fazer nada; tempo real; painel vivo; sê crítico")
+Auditoria crítica honesta: o canal era um digest 1×/dia (não tempo real), notícias nunca ligadas,
+bot exigia a máquina do aluno, canais não têm boas-vindas automáticas, app era demo clicável.
+**Construído:**
+- **Intradiário zero-ops:** cron de 30 em 30 min em horário de mercado (`0,30 13-21 * * 1-5`) +
+  `concurrency`; estado do dia (`load_state/filter_new_alerts`, reset diário preserva offset) na
+  cache do Actions → a mesma anomalia/manchete nunca repete no dia.
+- **Notícias no canal LIGADAS** (10 tickers) com o gate de triagem treinado a 0.5 como controlo de
+  fadiga — validado ao vivo em dry-run: suprimiu 7 manchetes (26–49%), passou TSLA. A RQ4 em produção.
+- **Bot sem máquina:** comandos processados em lote em cada corrida (`process_bot_commands`,
+  fail-open; resposta ≤30 min documentada); **bot_users.db persistida na cache** (falha crítica do
+  runner efémero apanhada em revisão própria antes do deploy); aviso de consumidor único getUpdates;
+  nota honesta de durabilidade (cache é best-effort → host/BD continua como evolução).
+- **Live board na app (landing):** watchlist com preço/movimento/z-score/badge (ícone+texto)/
+  sparkline 30 sessões/tiles, auto-refresh 120s, ordenado por |z|; testável offline pela seam
+  `get_price_history`; AppTest dedicado; render real verificado (10 tickers, 0 exceções).
+- Onboarding do canal: mensagem afixada + descrição prontas a colar (going_live §1b).
+- **109 testes + ruff verdes.** CHECKLIST: app pública ✅ (clique do aluno); novos cliques: afixar
+  a mensagem no canal + verificação de 1 min do Live board/Actions.
+
 **Pedido do aluno (verbatim no espírito):** "turn this into a real product, public, for everyone…
 no bullshit… thesis/slides/guide/caderno completely in sync… the most important thing is I dominate
 everything… so I can be confident in my oral defence."

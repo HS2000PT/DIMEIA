@@ -71,8 +71,12 @@
 - [x] Correr o workflow **"Alerts (scheduled scan)"** uma vez (Actions → Run workflow) para testar.
 - [x] Tornar o **repositório público** (necessário para o dashboard público + Actions ilimitados).
 - [x] **Publicar o dashboard**: <https://investigator.streamlit.app> (URL já no README).
-- [ ] **Tornar a app pública no Streamlit** (ainda pede login): share.streamlit.io → a app → **⋮ →
-      Settings → Sharing → tornar pública** (foi implantada quando o repo era privado).
+- [x] **Tornar a app pública no Streamlit** — feito pelo aluno (2026-07-06).
+- [ ] **Afixar a mensagem de onboarding no canal** + colar a descrição (textos prontos a copiar
+      em `docs/design/going_live.md` §1b — canais não têm boas-vindas automáticas; o pin é o padrão).
+- [ ] (Verificação, 1 min) Abrir <https://investigator.streamlit.app> em janela anónima e ver o
+      **Live board**; e no dia útil seguinte confirmar no separador Actions que o workflow "Alerts"
+      corre de 30 em 30 min e que o canal recebe sem repetições.
 - [ ] (Opcional) Renomear o repositório GitHub `DIMEIA` → `InvestiGator` (Settings → Rename; o GitHub
       redireciona os URLs antigos; depois avisar para atualizar badges e re-ligar o Streamlit).
 - [ ] **Escolher a licença do código** com o Prof. Luís Gomes (MIT/Apache; confirmar política de IP do

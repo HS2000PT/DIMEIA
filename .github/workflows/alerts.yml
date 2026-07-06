@@ -5,16 +5,27 @@ name: Alerts (scheduled scan)
 # Seguro: se os segredos do Telegram não estiverem definidos, o runner imprime e sai 0 (job verde,
 # nada é enviado). Define os segredos em Settings -> Secrets and variables -> Actions.
 # Ver docs/design/going_live.md. Nenhum segredo no YAML.
+#
+# INTRADIÁRIO (zero-ops): corre de 30 em 30 min durante o horário de mercado US (13:00–21:30 UTC
+# cobre verão e inverno) + a varredura de fecho. O runner lembra-se do que JÁ alertou hoje via
+# data/alerts_state.json, persistido entre corridas pela cache do Actions (jobs são efémeros) —
+# a mesma anomalia/manchete nunca repete no mesmo dia. Os comandos do bot (/watch …) também são
+# processados em cada corrida (resposta ≤30 min; para respostas imediatas: scripts/run_bot.py).
+# Cron é UTC e "best-effort" (pode atrasar alguns minutos); pausa após 60 dias sem commits.
 
 on:
   schedule:
-    # ~ depois do fecho do mercado dos EUA, dias úteis. Cron é UTC e "best-effort" (pode atrasar).
-    - cron: "30 21 * * 1-5"
+    # De 30 em 30 min, 13:00–21:30 UTC, dias úteis (mercado US: 13:30/14:30 → 20:00/21:00 UTC).
+    - cron: "0,30 13-21 * * 1-5"
   workflow_dispatch: {}   # botão "Run workflow" para testar à mão
 
-# Sem permissões de escrita: o job só lê o repo e fala com o Telegram/APIs.
+# Sem permissões de escrita no repo: o job lê o repo, usa a cache e fala com o Telegram/APIs.
 permissions:
   contents: read
+
+concurrency:
+  group: alerts-scan
+  cancel-in-progress: false   # corridas em fila, nunca duas em paralelo (estado consistente)
 
 jobs:
   scan:
@@ -34,9 +45,32 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # Estado intradiário entre corridas (caches são imutáveis → chave única por corrida,
+      # restore-keys apanha a mais recente; o próprio ficheiro zera as listas ao mudar o dia).
+      # Persiste ENTRE corridas: o estado do dia + a base de subscritores do bot
+      # (o runner é efémero — sem isto, os /watch dos utilizadores perder-se-iam).
+      - name: Restore intraday state + subscribers
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/alerts_state.json
+            data/bot_users.db
+          key: alerts-state-${{ github.run_id }}
+          restore-keys: |
+            alerts-state-
+
       - name: Run the alert scan
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
         run: python scripts/run_alerts.py
+
+      - name: Save intraday state + subscribers
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            data/alerts_state.json
+            data/bot_users.db
+          key: alerts-state-${{ github.run_id }}

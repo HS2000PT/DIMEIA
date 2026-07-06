@@ -27,6 +27,24 @@
 3. O "id do canal" para enviar: usa o `@username` (`@investigator_alerts`) — é o mais simples. (Alternativa:
    o id numérico `-100…`, obtido reencaminhando uma mensagem do canal para o `@userinfobot`.)
 
+### 1b) Onboarding do canal (1 clique: afixar a mensagem)
+Canais do Telegram **não têm** "mensagem de boas-vindas" a novos membros (limitação da
+plataforma) — o padrão certo é a **mensagem afixada** + a descrição. Copia/cola:
+
+**Mensagem para afixar (Manage channel → depois afixa-a):**
+> 🐊 **InvestiGator — explainable market alerts** (research tool, not advice)
+> • Posts are **automatic**: abnormal market moves (checked every 30 min during US market
+>   hours) and material news for the watchlist — each alert shows its full reasoning
+>   (z-score / historical precedents).
+> • Want **your own** watchlist? DM the bot: `/watch TSLA` · `/list` · `/stop`
+>   (replies within ~30 min).
+> • Live dashboard: <https://investigator.streamlit.app>
+> • Everything is **evidence from the past** — never a forecast, never financial advice.
+
+**Descrição do canal (Manage channel → Description):**
+> Explainable US-market alerts, automated: abnormal moves + material news, each with its
+> reasoning. Not advice. Dashboard: investigator.streamlit.app
+
 ### 2) Definir os segredos no GitHub (nunca no código)
 Repo → **Settings → Secrets and variables → Actions → New repository secret**:
 | Nome | Valor |
@@ -40,9 +58,13 @@ Repo → **Actions → "Alerts (scheduled scan)" → Run workflow**. Vê o log; 
 mensagem chega ao canal (e ao telemóvel de quem estiver no canal).
 > Antes de definires os segredos, o job **corre na mesma e fica verde** — só não envia nada. Sem erros vermelhos.
 
-### 4) O temporizador (já configurado)
-Corre **segunda a sexta, ~após o fecho dos EUA** (cron `30 21 * * 1-5`, em UTC). Muda em
-`.github/workflows/alerts.yml`.
+### 4) O temporizador (já configurado — INTRADIÁRIO, zero-ops)
+Corre **de 30 em 30 minutos durante o horário de mercado US** (cron `0,30 13-21 * * 1-5`, UTC),
+mais a varredura de fecho. O runner lembra-se do que **já alertou hoje** (estado em
+`data/alerts_state.json`, persistido entre corridas pela cache do Actions) — a mesma anomalia ou
+manchete **nunca repete** no mesmo dia. Os **comandos do bot** (`/watch`…) também são processados
+em cada corrida (resposta em ≤30 min; para respostas imediatas corre `scripts/run_bot.py`).
+Muda em `.github/workflows/alerts.yml`.
 > Notas honestas: o cron do GitHub é **UTC** e **best-effort** (pode atrasar alguns minutos); e **pausa
 > após 60 dias sem atividade** no repo (qualquer commit volta a armá-lo).
 
@@ -82,6 +104,16 @@ Varre a watchlist com preços ao vivo e **imprime** os alertas (não envia). Cor
 **Já funciona, de graça e sem host** (P4 do `progress/PLANO_FINAL.md`): o bot usa *long-polling*
 (`getUpdates`), por isso corre em qualquer máquina atrás de NAT — não precisa de webhook nem de
 servidor público.
+
+> **Nota de durabilidade (honesta):** no modo zero-ops, a base de subscritores vive na
+> **cache do GitHub Actions** — sobrevive entre corridas (é tocada todos os dias úteis), mas a
+> cache é *best-effort* (LRU/7 dias sem uso podem despejá-la). Para durabilidade a sério, o
+> passo seguinte é o host+BD da "evolução futura" abaixo.
+>
+> **Nota (um consumidor de cada vez):** com o processamento EM LOTE do Actions ligado
+> (`bot.enabled: true` — o defeito atual), **não corras o `run_bot.py` ao mesmo tempo**: o
+> Telegram só permite um consumidor `getUpdates`. Se acontecer, o runner apanha o erro e segue
+> (fail-open), mas as respostas ficam baralhadas entre os dois. Escolhe um modo.
 
 **Como ligar (2 passos):**
 1. `python scripts/run_bot.py` (ou duplo-clique em `run/bot.bat`, ou a tarefa VS Code

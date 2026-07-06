@@ -49,3 +49,16 @@ def test_news_sem_models_e_gracioso(monkeypatch):
     assert not at.exception
     subheaders = [s.value for s in at.subheader]
     assert not any("Learned severity" in s for s in subheaders)
+
+
+def test_live_board_offline_e_default(monkeypatch):
+    """O Live board é a página inicial; renderiza offline (preços simulados) sem exceções."""
+    import investigator.market_data.prices as prices
+
+    monkeypatch.setattr(prices, "get_price_history", _fake_history)
+    at = AppTest.from_file(APP)
+    at.run(timeout=120)
+    assert not at.exception
+    headers = [h.value for h in at.header]
+    assert any("Live board" in h for h in headers)
+    assert len(at.dataframe) >= 1  # a tabela da watchlist está lá
