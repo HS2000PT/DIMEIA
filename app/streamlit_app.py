@@ -144,8 +144,10 @@ def _live_board() -> None:
     c2.metric("Anomalies (today)", n_anom)
     c3.metric("Market state", "open/fresh" if n_fresh else "closed")
     c4.metric("Updated (UTC)", datetime.now(UTC).strftime("%H:%M"))
+    # to_numeric: se todos os tickers falharem a coluna é object (só None) e .abs() rebentava.
     df = pd.DataFrame(rows).sort_values(
-        "z-score", key=lambda s: s.abs(), ascending=False, na_position="last"
+        "z-score", key=lambda s: pd.to_numeric(s, errors="coerce").abs(),
+        ascending=False, na_position="last",
     )
     st.dataframe(
         df,

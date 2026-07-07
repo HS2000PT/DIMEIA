@@ -62,3 +62,18 @@ def test_live_board_offline_e_default(monkeypatch):
     headers = [h.value for h in at.header]
     assert any("Markets now" in h for h in headers)
     assert len(at.dataframe) >= 1  # a tabela da watchlist está lá
+
+
+def test_live_board_sem_dados_nao_rebenta(monkeypatch):
+    """Todos os tickers sem preços (yfinance bloqueado no Cloud): a coluna z-score fica
+    toda None/object e o sort por .abs() rebentava com TypeError. Tem de degradar com graça."""
+    import investigator.market_data.prices as prices
+
+    def _sem_dados(ticker: str, period: str = "6mo") -> pd.DataFrame:
+        raise RuntimeError("rate limited")
+
+    monkeypatch.setattr(prices, "get_price_history", _sem_dados)
+    at = AppTest.from_file(APP)
+    at.run(timeout=120)
+    assert not at.exception
+    assert len(at.dataframe) >= 1  # a tabela renderiza com as linhas "no data"
