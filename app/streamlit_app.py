@@ -10,10 +10,13 @@ Run locally:
 
 Honesty notes (mirrors the thesis):
 - No price prediction, no trading signals. Explanations only — evidence from the past.
-- The interactive news trigger uses the offline baseline embedder (HashingEmbedder) over a
-  curated multi-year FNSPID knowledge base (falls back to the small sample), so it runs anywhere
-  with no downloads. The thesis's real method is SBERT; its measured advantage is on the
-  Evaluation page.
+- The news trigger retrieves precedents SEMANTICALLY: the thesis's MiniLM model in ONNX
+  (~23 MB, downloaded once, SHA256-pinned) over a curated multi-year FNSPID knowledge base;
+  numerical parity vs SBERT is verified in docs/evaluation/onnx_minilm_validation.md. If the
+  model is unavailable it falls back to the word-overlap baseline and says so.
+- The Markets now page uses the SAME config, detector and message text as the Telegram
+  channel (config/alerts.yaml + detect_latest + explain_anomaly) — what you see is what
+  the channel gets.
 """
 
 from __future__ import annotations
@@ -109,7 +112,7 @@ def _live_board() -> None:
     from investigator.market_data.prices import log_returns
 
     tickers, window, threshold = _watchlist_config()
-    rows, n_anom, n_fresh = [], 0, 0
+    rows, anomalias, n_fresh = [], [], 0
     for ticker in tickers:
         try:
             close = _live_close(ticker)
@@ -121,7 +124,7 @@ def _live_board() -> None:
             fresh = bar_date == date.today() if bar_date else False
             n_fresh += int(fresh)
             if res.is_anomaly and fresh:
-                n_anom += 1
+                anomalias.append((ticker, res))
                 status = f"🔺 ANOMALY (|z| ≥ {threshold:g})"
             elif not fresh:
                 status = f"closed · last session {bar_date}" if bar_date else "closed"
@@ -141,7 +144,7 @@ def _live_board() -> None:
                          "Last 30 sessions": None})
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Tickers watched", len(tickers))
-    c2.metric("Anomalies (today)", n_anom)
+    c2.metric("Anomalies (today)", len(anomalias))
     c3.metric("Market state", "open/fresh" if n_fresh else "closed")
     c4.metric("Updated (UTC)", datetime.now(UTC).strftime("%H:%M"))
     # to_numeric: se todos os tickers falharem a coluna é object (só None) e .abs() rebentava.
@@ -162,6 +165,23 @@ def _live_board() -> None:
     )
     st.caption("Auto-refreshes every 2 min · yfinance prices (~15 min delay) · "
                "same rule the Telegram alerts use.")
+
+    # Espelho do canal: o MESMO detetor, config e texto que o runner envia ao Telegram
+    # (detect_latest + explain_anomaly sobre config/alerts.yaml) — o que se vê é o que chega.
+    st.subheader("Today's alerts (as sent to the Telegram channel)")
+    if anomalias:
+        from investigator.explanation_engine.explainer import explain_anomaly, plain_text
+
+        for ticker, res in anomalias:
+            st.warning(plain_text(explain_anomaly(ticker, res)), icon="🔺")
+        st.caption("Same detection rule, same message text as the channel "
+                   "(which additionally never repeats an alert within the same day).")
+    else:
+        st.caption(
+            "No market alerts right now — the channel is quiet too. News alerts (similar-headline "
+            "precedents, the same format as **📰 Check a headline**) also go to the channel when a "
+            "fresh headline passes the materiality gate."
+        )
 
 
 def page_live() -> None:

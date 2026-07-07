@@ -85,6 +85,10 @@
       corre de 30 em 30 min e que o canal recebe sem repetições.
 - [ ] (Opcional) Renomear o repositório GitHub `DIMEIA` → `InvestiGator` (Settings → Rename; o GitHub
       redireciona os URLs antigos; depois avisar para atualizar badges e re-ligar o Streamlit).
+- [ ] (Se decidires) **Migrar para repo novo SEM história** — procedimento + trade-offs honestos
+      (Actions em privado tem limite de minutos que o cron intradiário consome; Streamlit e badges
+      têm de ser religados) em [docs/design/migrar_repo.md](docs/design/migrar_repo.md).
+      Alternativa sem riscos se for só pelo nome: o rename acima.
 - [ ] **Escolher a licença do código** com o Prof. Luís Gomes (MIT/Apache; confirmar política de IP do
       ISEP) e adicionar o ficheiro `LICENSE`.
 - [ ] Confirmar a **redação exata da declaração de uso de IA** exigida pela MEIA/ISEP + a **data de entrega**.

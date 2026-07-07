@@ -27,6 +27,20 @@ A entrada mais recente fica no topo.
   login) — item reaberto no CHECKLIST (clique humano); Alerts correu 2× hoje com sucesso (o GitHub
   salta crons de 30 min sob carga — best-effort, documentado).
 
+### Sessão 32 — adenda FECHO ("organize everything and put an end to this")
+- **Sync Telegram↔Streamlit:** "Markets now" ganhou "Today's alerts (as sent to the Telegram
+  channel)" — mesmo detetor, config e texto (`plain_text(explain_anomaly)`); AppTest exige a secção.
+- **`RELATORIO_FINAL.md` (raiz):** relatório de 10 min para o orientador (tudo o que existe + mapa
+  do repo + números verificados + o que falta).
+- **Guia de estudo em 2 camadas:** 64 slides atualizados (ONNX/paridade/intradiário; 0 erros) +
+  NOVO `docs/defence/guia_rapido.md` (versão de bolso; números todos verificados contra os
+  ficheiros congelados).
+- **`docs/design/migrar_repo.md`:** repo novo sem história — procedimento + trade-offs honestos
+  (minutos do Actions em privado; religação Streamlit/badges; tese verificada sem URLs). Nada
+  migrado — decisão/cliques do aluno.
+- Veredicto de submissão dado: tecnicamente pronto; falta só o lado humano (leitura final,
+  licença+declaração IA, app pública, pin do canal, post_validate 08-09/07).
+
 ## Sessão 31 — 2026-07-07 — HOTFIX Cloud: Live board (registo retroativo; detalhe no CLAUDE.md)
 `TypeError` no Streamlit Cloud quando o yfinance falhava para TODOS os tickers (coluna z-score
 toda `None` → `sort_values(key=s.abs())` rebentava). Fix `pd.to_numeric(...).abs()` + teste de

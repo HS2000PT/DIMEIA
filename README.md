@@ -76,11 +76,15 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 - Track what's done vs pending in **[`CHECKLIST.md`](CHECKLIST.md)**.
 
 ## Learn it / prepare the defence
-- **From-zero visual study guide (PT-PT):** **`slides/guia_estudo/main.pdf`** — teaches the whole thesis
-  assuming *no* AI background (64 slides): the AI ideas actually used, the data shown, the code line by line,
-  the end-to-end workflow with real examples, the evaluation, and prepared jury questions.
+- **Final report (PT-PT, for the supervisor/jury):** **[`RELATORIO_FINAL.md`](RELATORIO_FINAL.md)** —
+  everything in this repository and where it lives, in a 10-minute read.
+- **From-zero visual study guide (PT-PT, detailed):** **`slides/guia_estudo/main.pdf`** — teaches the whole
+  thesis assuming *no* AI background (64 slides): the AI ideas actually used, the data shown, the code line
+  by line, the end-to-end workflow with real examples, the evaluation, and prepared jury questions.
+- **Quick defence guide (PT-PT, simplified):** `docs/defence/guia_rapido.md` — the pocket version:
+  pitch, the frozen numbers table, each component in 3 sentences, top jury Q&A.
 - **Defence slides (EN):** `slides/main.pdf` (16 frames).
-- **PT-PT defence companion (prose):** `docs/defence/caderno_de_defesa.md`.
+- **PT-PT defence companion (prose + oral script):** `docs/defence/caderno_de_defesa.md`.
 
 ## Project status
 **Validated and submission-ready (pending human sign-off).** Both triggers are proven end to end;

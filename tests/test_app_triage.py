@@ -62,6 +62,9 @@ def test_live_board_offline_e_default(monkeypatch):
     headers = [h.value for h in at.header]
     assert any("Markets now" in h for h in headers)
     assert len(at.dataframe) >= 1  # a tabela da watchlist está lá
+    # Espelho do canal: a secção "alertas de agora" renderiza sempre (com ou sem anomalias)
+    subheaders = [s.value for s in at.subheader]
+    assert any("Today's alerts" in s for s in subheaders)
 
 
 def test_live_board_sem_dados_nao_rebenta(monkeypatch):

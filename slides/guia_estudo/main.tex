@@ -715,14 +715,18 @@ class Embedder(Protocol):           # "contrato": tem dim e encode()
     dim: int
     def encode(self, texts) -> matriz (n, dim): ...
 
-class HashingEmbedder:   # baseline SEM dependencias (reprodutivel, p/ testes)
-class SbertEmbedder:     # SBERT pre-treinado (a abordagem da tese, inferencia)
+class HashingEmbedder:    # baseline SEM dependencias (reprodutivel, p/ testes)
+class SbertEmbedder:      # SBERT pre-treinado (a abordagem da tese, inferencia)
+class OnnxMiniLMEmbedder: # o MESMO MiniLM em ONNX (producao: leve, sem torch)
 \end{verbatim}
 \footnotesize
 \begin{itemize}
-  \item Ambos cumprem o mesmo contrato $\Rightarrow$ a KB e a recuperação funcionam com qualquer um.
+  \item Todos cumprem o mesmo contrato $\Rightarrow$ a KB e a recuperação funcionam com qualquer um.
   \item Por isso podemos \key{comparar} MiniLM vs MPNet vs lexical de forma \key{justa} (só troca o embedder).
   \item O \texttt{HashingEmbedder} permite correr tudo \key{sem a stack pesada} (torch).
+  \item O \texttt{OnnxMiniLMEmbedder} leva o modelo da tese para a \key{produção} ($\sim$23 MB,
+        CPU): paridade com o SBERT \key{validada} (cosseno médio 0,992; 96\% dos vizinhos top-3
+        comuns — \texttt{docs/evaluation/onnx\_minilm\_validation.md}).
 \end{itemize}
 \end{frame}
 
@@ -1181,10 +1185,13 @@ Não é só uma tese em papel: o sistema \key{corre} em produção, de graça, s
 \vspace{1mm}
 \begin{itemize}
   \item \key{Dashboard público} — \texttt{investigator.streamlit.app}: os dois gatilhos e a
-        avaliação, no browser. (Usa o embedder \emph{baseline} sobre uma fatia curada de 2.016
-        manchetes FNSPID 2018--2023; o SBERT e o seu ganho medido estão na página Evaluation.)
-  \item \key{Canal Telegram + timer} — o GitHub Actions varre a watchlist seg--sex após o fecho
-        US e publica alertas explicados no canal. Anti-repetição de notícias ($\leq 2$ dias) e
+        avaliação, no browser. O retrieval é \key{semântico}: o MESMO MiniLM da tese em
+        \key{ONNX} ($\sim$23 MB, sem torch; paridade com o SBERT validada — cosseno médio 0,992)
+        sobre uma fatia curada de 2.016 manchetes FNSPID 2018--2023. A página "Markets now"
+        mostra os \key{mesmos alertas} que o canal recebe (mesma config, detetor e texto).
+  \item \key{Canal Telegram + timer} — o GitHub Actions varre a watchlist \key{de 30 em 30 min}
+        em horário de mercado US (best-effort) e publica alertas explicados no canal.
+        Anti-repetição no dia + anti-repetição de notícias ($\leq 2$ dias) e
         anti-duplicado em feriados (só avalia com sessão nova).
   \item \key{Bot interativo} — \texttt{/watch TSLA}, \texttt{/list}, \texttt{/stop}: cada
         utilizador gere a sua watchlist (SQLite local; \emph{long-polling}, sem servidor).

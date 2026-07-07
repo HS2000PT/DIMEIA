@@ -34,6 +34,25 @@
   login; provável efeito do redeploy de hoje) — reaberto no CHECKLIST com os passos. Workflow
   Alerts correu hoje 2× com sucesso (15:40/17:53 UTC; o GitHub salta crons quando os runners
   partilhados enchem — best-effort documentado).
+- **📦 SESSÃO 32 — adenda FECHO ("organize everything now and put an end to this"):**
+  (1) **Sync Telegram↔Streamlit**: a página "Markets now" ganhou a secção *"Today's alerts (as
+  sent to the Telegram channel)"* — o MESMO detetor, config (alerts.yaml) e TEXTO
+  (`plain_text(explain_anomaly(...))`) que o canal recebe; estado vazio honesto; AppTest
+  atualizado exige a secção; docstring da app corrigido (dizia "baseline embedder", agora ONNX).
+  (2) **`RELATORIO_FINAL.md` na RAIZ** — relatório de 10 min para o orientador/júri: o que existe,
+  números congelados (verificados contra os .md de avaliação), mapa do repo, o que falta (humano).
+  (3) **Guia de estudo em 2 versões**: detalhado = 64 slides (atualizado: frame do produto com
+  ONNX/paridade 0,992 + intradiário; frame do Embedder com OnnxMiniLMEmbedder; recompila 0 erros);
+  **simplificado NOVO = `docs/defence/guia_rapido.md`** (pitch 30s, tabela de números congelados
+  todos verificados, 3 frases por componente, 8 perguntas do júri, plano B).
+  (4) **`docs/design/migrar_repo.md`** — o aluno quer repo novo SEM história: procedimento
+  `git archive` + religação (segredos/Streamlit/badges/CITATION) + trade-offs honestos (repo
+  privado ≈ limite de minutos do Actions que o cron intradiário consome; verificado que a TESE
+  não referencia URLs do repo/app → migração não toca na tese; alternativa sem risco = rename).
+  NADA foi migrado — cliques do aluno. (5) Índices/README/caderno com cross-links das 3 camadas
+  de estudo (rápido → caderno → 64 slides). **Veredicto de submissão dado ao aluno: o repo/tese
+  estão prontos tecnicamente (gates todos verdes); falta APENAS o lado humano** (leitura final,
+  licença+declaração IA com o orientador, app pública, pin do canal, post_validate 08-09/07).
 - **🔧 SESSÃO 31 (hotfix, commit `ab14cda`):** a página "Markets now" rebentava no Streamlit Cloud
   com `TypeError: bad operand type for abs(): 'NoneType'` — quando o yfinance falha para TODOS os
   tickers (rate-limit nos IPs partilhados do Cloud), a coluna z-score fica toda `None` (dtype

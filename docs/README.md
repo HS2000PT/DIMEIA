@@ -16,6 +16,7 @@ se só queres correr o sistema.
 | [design/free_apis.md](design/free_apis.md) | APIs gratuitas usadas (preços, notícias, Telegram). |
 | [design/evaluation_design.md](design/evaluation_design.md) | Metodologia de avaliação (precision@k, anomalia). |
 | [design/risk_register.md](design/risk_register.md) | Riscos do projeto e mitigações. |
+| [design/migrar_repo.md](design/migrar_repo.md) | Migrar para um repo novo sem história (procedimento + trade-offs). |
 
 ## evaluation/ — resultados (gerados por script; não editar à mão)
 | Ficheiro | Para quê |
@@ -44,9 +45,11 @@ se só queres correr o sistema.
 ## defence/ — preparar a defesa
 | Ficheiro | Para quê |
 |----------|----------|
-| [defence/caderno_de_defesa.md](defence/caderno_de_defesa.md) | Caderno de defesa (PT-PT): respostas, número→script→tese. |
+| [defence/guia_rapido.md](defence/guia_rapido.md) | **Guia RÁPIDO (simplificado):** pitch, números congelados, 3 frases por componente, júri. |
+| [defence/caderno_de_defesa.md](defence/caderno_de_defesa.md) | Caderno de defesa (PT-PT): guião oral, respostas, número→script→tese. |
 
-> Para o **guia de estudo do zero** (slides), ver `slides/guia_estudo/main.pdf`.
+> Para o **guia de estudo DETALHADO do zero** (64 slides), ver `slides/guia_estudo/main.pdf`.
+> O **relatório final** (tudo o que o repo contém, para orientador/júri) está na raiz: `RELATORIO_FINAL.md`.
 
 ## internal/ — documentos internos de continuidade (não são "porta de entrada" para examinadores)
 | Ficheiro | Para quê |

@@ -5,6 +5,8 @@
 > é o guião para a preparar e defender com calma. Estudar a par com os `slides/` (apresentação) e com a
 > própria tese. Fontes internas: `docs/decisions/learning.md`, `docs/decisions/glossary.md`,
 > `progress/DECISIONS.md`, `progress/SESSIONS.md`.
+> **Versão de bolso (10 min):** `docs/defence/guia_rapido.md` · **Versão detalhada do zero (64 slides):**
+> `slides/guia_estudo/main.pdf` · **Relatório final do repo:** `RELATORIO_FINAL.md` (raiz).
 
 ---
 
