@@ -45,4 +45,4 @@ bot:
 # Dados PÚBLICOS do produto (não-secretos; o canal é público por definição).
 # Preenche com o link do teu canal para a app mostrar o botão "Open the Telegram channel".
 public:
-  channel_url: null   # ex.: https://t.me/investigator_alerts
+  channel_url: https://t.me/InvestiGatorMEIA
