@@ -7,8 +7,10 @@
 ## O que é o dashboard
 Uma interface fina e **sem estado** por cima das funções já validadas do InvestiGator (gatilho de
 notícia, gatilho de mercado, avaliação). Não treina nada, não prevê preços, não envia nada.
-Corre com o **embedder baseline** (offline, determinístico) — o SBERT/torch não é usado na nuvem
-(stack pesada); a vantagem medida do SBERT está na página *Evaluation* (números da tese).
+O retrieval de precedentes é **semântico**: o MESMO MiniLM da tese exportado em **ONNX**
+(~23 MB, `onnxruntime` CPU, sem torch), descarregado uma vez no arranque com SHA256 pinado
+(paridade numérica com o SBERT verificada em `docs/evaluation/onnx_minilm_validation.md`).
+Se o modelo não estiver disponível, degrada para o baseline word-overlap — a app nunca cai.
 
 ## Correr localmente (para testar antes de publicar)
 ```bash
@@ -34,8 +36,9 @@ streamlit run app/streamlit_app.py
 - **Rede:** a página *Market trigger* usa o yfinance ao vivo — funciona na nuvem (tem internet).
 - **Adormecer:** as apps gratuitas hibernam quando inativas e acordam ao primeiro acesso (alguns
   segundos). É normal.
-- **SBERT:** deliberadamente fora da nuvem (torch é pesado para o tier gratuito). A app di-lo e
-  aponta para a página *Evaluation* com os números reais do SBERT.
+- **SBERT/torch:** continua fora da nuvem (pesado para o tier gratuito) — mas desde 2026-07-07
+  a app usa o **mesmo modelo MiniLM em ONNX** (leve), pelo que o retrieval na nuvem já é
+  semântico; a página *Evaluation* mantém os números da tese (medidos com o SbertEmbedder).
 
 ## Depois de publicado
 - Colocar o URL no `README.md` (secção "Try it") e na tese (como artefacto + captura de ecrã).

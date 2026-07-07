@@ -19,25 +19,52 @@ def preferred_light_kb() -> Path:
     return _LIGHT_KB if _LIGHT_KB.exists() else _DEFAULT_KB
 
 
-def kb_query_embedder(kb_path: str | Path):
-    """HashingEmbedder com a dimensão DA PRÓPRIA KB (lida do 1.º registo do ficheiro).
+def kb_query_embedder(kb_path: str | Path, auto_download: bool = False):
+    """Embedder coerente com a PRÓPRIA KB (dimensão lida do 1.º registo do ficheiro).
 
-    Auto-coerência sem configuração: a regra "o embedder da consulta tem de coincidir com o
-    da construção" (guarda R1) fica garantida por construção, seja a KB 64-d ou 256-d.
+    Auto-coerência sem configuração (guarda R1): 384-d ⇒ KB semântica MiniLM ⇒
+    `OnnxMiniLMEmbedder` (o MESMO modelo da tese, em ONNX, sem torch) — NUNCA se consulta
+    uma KB semântica com hashing (espaços diferentes dariam vizinhos plausíveis mas errados);
+    se o modelo ONNX não estiver disponível, LEVANTA (quem quer fail-open usa
+    `product_retrieval`). Qualquer outra dimensão ⇒ `HashingEmbedder(dim)`.
     """
     import json
 
     from investigator.historical_kb.embedder import HashingEmbedder
 
+    dim = 64
     with open(kb_path, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line:
                 emb = json.loads(line).get("embedding")
                 if emb:
-                    return HashingEmbedder(dim=len(emb))
+                    dim = len(emb)
                 break
-    return HashingEmbedder(dim=64)
+    if dim == 384:
+        from investigator.historical_kb.onnx_embedder import OnnxMiniLMEmbedder
+
+        return OnnxMiniLMEmbedder(auto_download=auto_download)
+    return HashingEmbedder(dim=dim)
+
+
+def product_retrieval(auto_download: bool = True) -> tuple[Path, object]:
+    """(kb_path, embedder) para o PRODUTO (app/runner), com fail-open honesto.
+
+    Caminho feliz: KB curada FNSPID 384-d + MiniLM em ONNX (descarrega ~23 MB na primeira
+    vez, SHA256 pinado). Se o embedder semântico não estiver disponível (sem onnxruntime,
+    sem rede, sem cache), degrada para a KB-amostra word-overlap — o produto responde
+    sempre, e a UI descreve o motor em uso (atributo `semantic` do embedder).
+    """
+    from investigator.historical_kb.embedder import HashingEmbedder
+
+    kb_path = preferred_light_kb()
+    try:
+        return kb_path, kb_query_embedder(kb_path, auto_download=auto_download)
+    except Exception as exc:  # noqa: BLE001 — fail-open deliberado (produto nunca cai)
+        print(f"[retrieval] embedder semântico indisponível ({type(exc).__name__}: {exc}) "
+              "— fallback para a KB-amostra (word overlap).")
+        return _DEFAULT_KB, HashingEmbedder(dim=64)
 
 
 def run_thin_slice(ticker: str = "AAPL", window: int = 20, threshold: float = 3.0,

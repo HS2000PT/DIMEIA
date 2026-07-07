@@ -5,6 +5,34 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 32 — 2026-07-07 — Retrieval SEMÂNTICO na nuvem (MiniLM em ONNX) — produto fechado
+**Pedido:** "continue with the pendings and plan" → o último pendente de código do CHECKLIST.
+- **Novo `investigator/historical_kb/onnx_embedder.py`:** o MESMO `all-MiniLM-L6-v2` da tese em
+  ONNX quantizado (~23 MB; `onnxruntime==1.27.0` + `tokenizers`, sem torch), download sob demanda
+  com **SHA256 pinado**, cache `models/onnx/` gitignored; pipeline igual ao sentence-transformers
+  (truncation 256, mean pooling com máscara, L2).
+- **KB do produto recurada a 384-d:** `curate_kb_light.py --sbert-kb` reutiliza os embeddings da
+  KB grande (79.753) → 2.016 registos versionados (7,7 MB; arredondados a 5 casas).
+- **Validação (docs/evaluation/onnx_minilm_validation.md):** cosseno ONNX↔SBERT médio 0,992
+  (mín 0,987; 63 manchetes reais); top-3 idênticos 20/23, 96 % vizinhos comuns; recall TSLA →
+  precedente NTSB exato (sim 0,73).
+- **Fail-open:** `product_retrieval()` (main.py) — sem modelo degrada para a amostra word-overlap
+  e a UI di-lo; uma KB 384-d NUNCA é consultada por hashing (levanta). App: `st.cache_resource`;
+  testes com `INVESTIGATOR_OFFLINE=1` (conftest novo) — nunca descarregam. Workflow Alerts com
+  cache do modelo (chave `onnx-minilm-quint8-v1`).
+- **Gates:** 117 testes (+7/+atualizado e2e) + ruff verdes; demo +6,46% intacta; dry-run ao vivo
+  com precedentes genuinamente on-topic (AMD→TSMC/semis 0,51–0,55). Tese intocada (verificado:
+  só refere o baseline lexical na avaliação).
+- **⚠️ Achados operacionais:** a app do Streamlit **voltou a privada** após o redeploy (anónimo →
+  login) — item reaberto no CHECKLIST (clique humano); Alerts correu 2× hoje com sucesso (o GitHub
+  salta crons de 30 min sob carga — best-effort, documentado).
+
+## Sessão 31 — 2026-07-07 — HOTFIX Cloud: Live board (registo retroativo; detalhe no CLAUDE.md)
+`TypeError` no Streamlit Cloud quando o yfinance falhava para TODOS os tickers (coluna z-score
+toda `None` → `sort_values(key=s.abs())` rebentava). Fix `pd.to_numeric(...).abs()` + teste de
+regressão provado contra o código antigo; verificado também com pandas 3.0.2 (stack do Cloud).
+Commits `ab14cda`/`6cd8c2e`; canal público no alerts.yaml (`df7a714`).
+
 ## Sessão 30 — 2026-07-06 — PRODUTO REAL + SINCRONIA TOTAL para a defesa
 
 ### Sessão 30 — adenda REVISÃO DURA (mensagens + usabilidade; "pasta de palavras; amador")

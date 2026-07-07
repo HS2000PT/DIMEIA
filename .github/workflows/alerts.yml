@@ -45,6 +45,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # Modelo semântico MiniLM em ONNX (~23 MB, imutável — chave constante): com a cache
+      # quente o download nunca acontece; num miss o runner descarrega-o UMA vez, com SHA256
+      # verificado. Se tudo falhar, o retrieval degrada para word-overlap (fail-open no código).
+      - name: Cache the ONNX semantic model
+        uses: actions/cache@v4
+        with:
+          path: models/onnx
+          key: onnx-minilm-quint8-v1
+
       # Estado intradiário entre corridas (caches são imutáveis → chave única por corrida,
       # restore-keys apanha a mais recente; o próprio ficheiro zera as listas ao mudar o dia).
       # Persiste ENTRE corridas: o estado do dia + a base de subscritores do bot

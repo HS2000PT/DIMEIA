@@ -7,8 +7,33 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 31 (**HOTFIX Cloud: Live board** — sessão curta de correção)
+- **Sessão nº:** 32 (**Retrieval SEMÂNTICO na nuvem: MiniLM em ONNX** — o último item de produto do CHECKLIST)
 - **Última atualização:** 2026-07-07
+- **🧠 SESSÃO 32 (produto, "continue with the pendings and plan"):** o único pendente de código
+  registado (CHECKLIST §polimento) foi construído: **a app pública e o runner passam a recuperar
+  precedentes SEMANTICAMENTE** com o MESMO modelo da tese (`all-MiniLM-L6-v2`) exportado em ONNX
+  quantizado (~23 MB, `onnxruntime` CPU + `tokenizers`, SEM torch). Novo
+  `investigator/historical_kb/onnx_embedder.py` (download sob demanda com **SHA256 pinado**,
+  cache `models/onnx/` gitignored; mean-pooling+L2 igual ao sentence-transformers; testado).
+  **KB light recurada a 384-d**: `curate_kb_light.py --sbert-kb` REUTILIZA os embeddings SBERT da
+  KB grande (zero re-embedding; arredonda a 5 casas) → `kb_fnspid_light.jsonl` 2.016 registos,
+  7,7 MB versionada. **Validação honesta** (`docs/evaluation/onnx_minilm_validation.md`): cosseno
+  ONNX↔SBERT médio 0,992 (mín 0,987, n=63 manchetes reais); top-3 idênticos 20/23 queries, 96 %
+  vizinhos comuns (divergências = empates no 3.º); query recall TSLA devolve o precedente NTSB
+  exato (sim 0,73). **Fail-open**: `product_retrieval()` em `main.py` — sem modelo/rede degrada
+  para a KB-amostra word-overlap (a UI descreve o motor em uso; KB 384-d NUNCA é consultada por
+  hashing — levanta). App usa `st.cache_resource` + env `INVESTIGATOR_OFFLINE=1` nos testes
+  (conftest novo; testes nunca descarregam). Runner decide o par (KB, embedder) 1× antes do loop;
+  workflow Alerts ganhou cache do modelo (chave constante `onnx-minilm-quint8-v1`).
+  `requirements.txt` + `onnxruntime==1.27.0`/`tokenizers==0.22.2` (wheels cp312–cp314 confirmadas
+  → instala no Cloud mesmo em Python 3.14). **Validado:** 117 testes + ruff verdes; demo reproduz
+  +6,46%; **dry-run ao vivo com 3 alertas reais e precedentes genuinamente on-topic** (AMD
+  semicondutores → TSMC/semis, sims 0,51–0,55) com linha de triagem. Números da tese INTOCADOS
+  (a tese só fala do baseline lexical na avaliação — verificado; nada a mudar).
+  **⚠️ Achado para o aluno:** a app no Streamlit voltou a ficar PRIVADA (visitante anónimo →
+  login; provável efeito do redeploy de hoje) — reaberto no CHECKLIST com os passos. Workflow
+  Alerts correu hoje 2× com sucesso (15:40/17:53 UTC; o GitHub salta crons quando os runners
+  partilhados enchem — best-effort documentado).
 - **🔧 SESSÃO 31 (hotfix, commit `ab14cda`):** a página "Markets now" rebentava no Streamlit Cloud
   com `TypeError: bad operand type for abs(): 'NoneType'` — quando o yfinance falha para TODOS os
   tickers (rate-limit nos IPs partilhados do Cloud), a coluna z-score fica toda `None` (dtype

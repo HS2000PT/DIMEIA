@@ -32,5 +32,12 @@ yfinance==1.4.1
 scikit-learn==1.9.0
 joblib==1.5.3
 
+# ── Retrieval SEMÂNTICO leve (produto: app pública + runner) ─
+# O MESMO MiniLM da tese, exportado em ONNX (~23 MB descarregados sob demanda com SHA256
+# pinado — o modelo NÃO é versionado). Sem torch: onnxruntime CPU + tokenizers (Rust).
+# Se faltar (sem rede/sem cache), o produto degrada para word-overlap — nada parte.
+onnxruntime==1.27.0
+tokenizers==0.22.2
+
 # O próprio pacote (editável): torna `investigator` importável sem hacks de sys.path.
 -e .

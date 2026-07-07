@@ -27,6 +27,7 @@ se só queres correr o sistema.
 | [evaluation/evaluation_triage_smoke.md](evaluation/evaluation_triage_smoke.md) | Triagem: smoke no corpus Finnhub (congelado; regime shift). |
 | [evaluation/live_monitoring.md](evaluation/live_monitoring.md) | Loop de pós-validação: precisão/calibração ao vivo. |
 | [evaluation/kb_fnspid_build.md](evaluation/kb_fnspid_build.md) | KB de retrieval multi-ano: build + validação do artefacto (P3). |
+| [evaluation/onnx_minilm_validation.md](evaluation/onnx_minilm_validation.md) | Produto: paridade do MiniLM-ONNX vs SBERT (embeddings + retrieval top-k). |
 
 ## decisions/ — porquê das decisões, aprendizagem e revisões (rigor académico)
 | Ficheiro | Para quê |

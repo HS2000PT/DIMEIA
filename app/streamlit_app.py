@@ -231,15 +231,28 @@ def _render_severity(ticker: str, headline: str) -> None:
     )
 
 
+@st.cache_resource(show_spinner="Loading the semantic model (first time only)…")
+def _retrieval_engine() -> tuple:
+    """(kb_path, embedder) do produto, uma vez por processo. Semântico (MiniLM em ONNX,
+    ~23 MB descarregados na 1.ª vez) com fail-open para a amostra word-overlap.
+    INVESTIGATOR_OFFLINE=1 desliga o download (testes/CI ficam determinísticos)."""
+    import os
+
+    from investigator.main import product_retrieval
+
+    return product_retrieval(auto_download=os.environ.get("INVESTIGATOR_OFFLINE") != "1")
+
+
 def page_news() -> None:
     from investigator.explanation_engine.explainer import plain_text
-    from investigator.main import kb_query_embedder, preferred_light_kb, run_news_trigger
+    from investigator.main import run_news_trigger
 
     st.header("Check a headline")
     st.caption(
         "Paste a headline — see the most similar past headlines and what the price did after."
     )
-    kb_path = preferred_light_kb()
+    kb_path, embedder = _retrieval_engine()
+    semantic = bool(getattr(embedder, "semantic", False))
     col = st.columns([3, 1])
     headline = col[0].text_input("Headline", value="Nvidia demand surges on AI chip orders")
     ticker = col[1].text_input("Ticker", value="NVDA")
@@ -247,11 +260,16 @@ def page_news() -> None:
     with st.expander("Advanced"):
         top_k = st.slider("How many precedents (k)", 1, 5, 3)
         horizon = st.selectbox("Impact horizon (trading days)", [1, 3, 5], index=2)
+        engine = (
+            "semantic matching — MiniLM (the thesis's SBERT model) running in ONNX"
+            if semantic
+            else "word-overlap matching (offline fallback) — weaker than the thesis's SBERT, "
+            "so off-topic matches can appear (measured gap: About & method → Evaluation)"
+        )
         st.caption(
             f"Knowledge base: {_kb_size(str(kb_path)):,} historical headlines "
             f"({'FNSPID 2018–2023, curated' if 'fnspid' in kb_path.name else 'small sample'}); "
-            "matching is word-overlap (offline baseline) — weaker than the thesis's SBERT, so "
-            "off-topic matches can appear (measured gap: About & method → Evaluation)."
+            f"{engine}."
         )
 
     if st.button("Find precedents", type="primary"):
@@ -259,7 +277,7 @@ def page_news() -> None:
             ticker=ticker.strip().upper(),
             headline=headline.strip(),
             kb_path=kb_path,
-            embedder=kb_query_embedder(kb_path),
+            embedder=embedder,
             top_k=top_k,
             horizon=horizon,
             send=False,
@@ -285,10 +303,17 @@ def page_news() -> None:
             df[c] = df[c].map(lambda v: f"{v:+.2%}" if v is not None else "—")
         st.dataframe(df, use_container_width=True, hide_index=True)
         st.text(plain_text(text))
-        st.info(
-            "Baseline embedder (word overlap). The thesis's real method is **SBERT** (semantic); "
-            "see the Evaluation page for its measured advantage."
-        )
+        if semantic:
+            st.info(
+                "Semantic retrieval: **MiniLM in ONNX** — the same model the thesis evaluated "
+                "as SBERT (numerical parity checked in "
+                "`docs/evaluation/onnx_minilm_validation.md`)."
+            )
+        else:
+            st.info(
+                "Fallback embedder (word overlap). The thesis's real method is **SBERT** "
+                "(semantic); see the Evaluation page for its measured advantage."
+            )
         _render_severity(ticker.strip().upper(), headline.strip())
 
 

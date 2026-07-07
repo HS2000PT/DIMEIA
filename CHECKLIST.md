@@ -71,7 +71,10 @@
 - [x] Correr o workflow **"Alerts (scheduled scan)"** uma vez (Actions → Run workflow) para testar.
 - [x] Tornar o **repositório público** (necessário para o dashboard público + Actions ilimitados).
 - [x] **Publicar o dashboard**: <https://investigator.streamlit.app> (URL já no README).
-- [x] **Tornar a app pública no Streamlit** — feito pelo aluno (2026-07-06).
+- [ ] **Tornar a app pública no Streamlit** — foi feito a 2026-07-06, mas **regrediu** (verificado
+      2026-07-07: visitantes anónimos são mandados para o login — provável efeito do redeploy).
+      share.streamlit.io → app → ⋮ Settings → **Sharing → "This app is public"**. Verificar em
+      janela anónima.
 - [x] **Preencher `public.channel_url`** no `config/alerts.yaml` (link do canal; não-secreto) —
       ativa o botão "Open the Telegram channel" na página 📡 Get alerts da app.
       Feito (2026-07-07): <https://t.me/InvestiGatorMEIA>.
@@ -97,8 +100,10 @@
 - [ ] Ajuda de **horas de mercado** (mercado aberto/fechado) — também vira figura de "framework geral".
 - [ ] Camada de **logging** (`logging` em vez de `print` no código de biblioteca).
 - [ ] SBERT em singleton + matriz da KB pré-calculada (desempenho, quando a KB/UI crescer).
-- [ ] Retrieval SEMÂNTICO na nuvem: MiniLM em ONNX (onnxruntime, ~23 MB, sem torch) na app pública —
-      fecha o fosso word-overlap↔SBERT mantido honesto na caption da página News.
+- [x] Retrieval SEMÂNTICO na nuvem — **FEITO (2026-07-07)**: MiniLM em ONNX (`onnx_embedder.py`,
+      SHA256 pinado, fail-open) + KB light recurada a 384-d SBERT (2.016 registos, embeddings
+      reutilizados). Paridade com o SBERT validada (cosseno médio 0,992; 96 % vizinhos top-3
+      comuns): `docs/evaluation/onnx_minilm_validation.md`.
 - [ ] CLI para o Gatilho 2 (`python -m …`) a espelhar o Gatilho 1.
 
 ---

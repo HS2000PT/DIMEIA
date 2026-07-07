@@ -209,6 +209,12 @@ def scan_news(cfg: dict) -> list[tuple[str, str]]:
         else:
             gate = float(gate)
 
+    # KB + embedder decididos UMA vez (semântico MiniLM-ONNX com fail-open para a amostra;
+    # em Actions o modelo vem da cache do workflow, senão desce ~23 MB na primeira corrida).
+    from investigator.main import product_retrieval
+
+    kb_path, embedder = product_retrieval(auto_download=True)
+
     end = date.today().isoformat()
     start = (date.today() - timedelta(days=7)).isoformat()
     alerts: list[tuple[str, str]] = []
@@ -223,12 +229,9 @@ def scan_news(cfg: dict) -> list[tuple[str, str]]:
                 print(f"[noticias {ticker}] mais recente é de {latest.date} (>{max_age} dias) "
                       "— sem alerta (anti-repetição).")
                 continue
-            from investigator.main import kb_query_embedder, preferred_light_kb
-
-            kb_path = preferred_light_kb()
             _, text = run_news_trigger(
                 ticker=ticker, headline=latest.headline, kb_path=kb_path,
-                embedder=kb_query_embedder(kb_path), top_k=top_k, horizon=horizon, send=False,
+                embedder=embedder, top_k=top_k, horizon=horizon, send=False,
             )
             if bundle is not None:
                 from investigator.market_data.prices import get_price_history

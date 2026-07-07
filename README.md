@@ -50,8 +50,10 @@ pip install -r requirements.txt -r requirements-app.txt
 streamlit run app/streamlit_app.py
 ```
 
-Hosting details (Streamlit Community Cloud, free): **`docs/design/deployment.md`**. The app runs the
-offline baseline embedder; the SBERT numbers are on the dashboard's *Evaluation* page.
+Hosting details (Streamlit Community Cloud, free): **`docs/design/deployment.md`**. The app retrieves
+precedents **semantically** — the thesis's MiniLM model exported to ONNX (~23 MB, CPU, no torch;
+numerical parity vs SBERT verified in `docs/evaluation/onnx_minilm_validation.md`) — falling back to
+the word-overlap baseline only if the model is unavailable.
 
 ## 📡 Live 24/7 (free, no server)
 Turn InvestiGator into a running service without paying or babysitting a server:
@@ -82,7 +84,7 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 
 ## Project status
 **Validated and submission-ready (pending human sign-off).** Both triggers are proven end to end;
-**109 automated tests** + lint green. The core components — including a **materiality-triage model trained
+**117 automated tests** + lint green. The core components — including a **materiality-triage model trained
 by the author** on 79,753 multi-year FNSPID examples (RQ4; triage evidence, never a forecast) — are
 evaluated on **real data**, and the statistics reproduce exactly from versioned scripts. The **six-chapter
 dissertation** compiles cleanly (`thesis/main.pdf`, ~76 pp, 0 errors), with **52 references each verified by
@@ -124,7 +126,7 @@ CITATION.cff   how to cite this work    requirements.txt (light) / requirements-
   (`requirements.txt`) — enough for the demo, the tests and the evaluations. The heavy ML stack (`torch` CPU,
   `sentence-transformers`, in `requirements-ml.txt`) is needed only for the real SBERT paths and installs with
   `bash scripts/setup_env.sh --ml` (it pulls `torch` from the PyTorch CPU index, not PyPI).
-- Verification loop: `bash scripts/verify.sh` (109 tests + lint + LaTeX note).
+- Verification loop: `bash scripts/verify.sh` (117 tests + lint + LaTeX note).
 - Secrets live only in a local, gitignored `.env` (see `.env.example` for variable names).
 - LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push.
 

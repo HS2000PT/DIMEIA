@@ -192,9 +192,21 @@ HF_HUB_OFFLINE=1 ./.venv/Scripts/python.exe scripts/build_kb.py \
 > `data/samples/kb_sample.jsonl`, a amostra versionada de que a demo e o exemplo do Cap. 3 (+6,46%)
 > dependem — e com dimensão incompatível (SBERT 384 vs baseline 64). O `.cmd` já aponta a amostra
 > para `data/samples/kb_fnspid_sample.jsonl`.
-> A KB grande (`data/kb_fnspid_sbert.jsonl`) é um **artefacto local** (gitignored): a produção na
-> nuvem (runner/app) continua de propósito na stack leve com a KB-amostra; os números da tese não
-> mudam com este build.
+> A KB grande (`data/kb_fnspid_sbert.jsonl`) é um **artefacto local** (gitignored); os números da
+> tese não mudam com este build.
+
+**KB do produto (app pública + runner) — curadoria semântica a partir da KB grande:**
+
+```bash
+./.venv/Scripts/python.exe scripts/curate_kb_light.py --sbert-kb data/kb_fnspid_sbert.jsonl
+```
+
+Seleciona 2.016 registos (estratificação determinística ≤36 por ticker×ano, só impactos completos)
+**reutilizando os embeddings SBERT 384-d** já calculados → `data/samples/kb_fnspid_light.jsonl`
+(7,7 MB, versionada). A app e o runner consultam-na com o **mesmo MiniLM em ONNX** (~23 MB,
+descarregado sob demanda com SHA256 pinado, sem torch; paridade com o SBERT validada em
+`docs/evaluation/onnx_minilm_validation.md`). Sem o modelo (sem rede), degradam para a
+KB-amostra word-overlap — fail-open, nada parte.
 
 ---
 

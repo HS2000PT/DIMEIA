@@ -321,8 +321,10 @@ progress/      TRACKER (checklist) + SESSIONS (registo)
 | **Demo offline (à prova de wifi)** | `python scripts/demo.py` — determinística, sem chaves | Reproduz o exemplo do Cap. 3: média **+6,46%** |
 | **KB multi-ano** | 79.753 registos SBERT (artefacto local) + fatia curada de 2.016 na app | `docs/evaluation/kb_fnspid_build.md` |
 
-**Honestidades prontas a dizer:** a app pública usa o embedder baseline (word overlap) sobre a fatia
-curada — o SBERT e o seu ganho medido estão na página Evaluation; a varredura de notícias tem
+**Honestidades prontas a dizer:** a app pública recupera precedentes **semanticamente** — o MESMO
+MiniLM da tese, exportado para ONNX (paridade com o SBERT verificada: cosseno médio 0,992, 96 % dos
+vizinhos top-3 comuns — `docs/evaluation/onnx_minilm_validation.md`); o word-overlap fica só como
+fallback se o modelo não estiver disponível; a varredura de notícias tem
 anti-repetição (≤2 dias) e o mercado só é avaliado com sessão nova (anti-duplicado em feriados);
 o gate de triagem e o fan-out do bot são **off por defeito** e fail-open — a produção nunca depende
 de um componente opcional estar vivo.

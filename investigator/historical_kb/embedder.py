@@ -41,6 +41,8 @@ class HashingEmbedder:
     não significado. Útil para reprodutibilidade, testes e comparação na avaliação.
     """
 
+    semantic = False  # baseline lexical — a UI descreve o motor em uso com honestidade
+
     def __init__(self, dim: int = 64):
         self.dim = int(dim)
 
@@ -65,6 +67,8 @@ class SbertEmbedder:
 
     Embeddings normalizados (L2) → o produto interno já é a similaridade do cosseno.
     """
+
+    semantic = True
 
     def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
         from sentence_transformers import SentenceTransformer  # import tardio (stack pesada)
