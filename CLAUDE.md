@@ -7,8 +7,20 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 30 (**PRODUTO REAL + SINCRONIA TOTAL p/ defesa** — após P1–P4 completos na S29)
-- **Última atualização:** 2026-07-06
+- **Sessão nº:** 31 (**HOTFIX Cloud: Live board** — sessão curta de correção)
+- **Última atualização:** 2026-07-07
+- **🔧 SESSÃO 31 (hotfix, commit `ab14cda`):** a página "Markets now" rebentava no Streamlit Cloud
+  com `TypeError: bad operand type for abs(): 'NoneType'` — quando o yfinance falha para TODOS os
+  tickers (rate-limit nos IPs partilhados do Cloud), a coluna z-score fica toda `None` (dtype
+  object) e o `sort_values(key=s.abs())` explode; localmente nunca acontecia porque ≥1 ticker
+  respondia (coluna float). Fix: `key=lambda s: pd.to_numeric(s, errors="coerce").abs()` +
+  teste de regressão `test_live_board_sem_dados_nao_rebenta` (provado: falha no código antigo com
+  o erro exato do Cloud, verde com o fix; 107 testes no total). Verificado também contra
+  pandas 3.0.2 (o Cloud corre Python 3.14 + pandas recente, não a stack pinada). Com o fix a
+  página degrada com graça: linhas "⚠ no data right now" quando o Yahoo tranca — comportamento
+  desenhado. **Nota de ambiente DESTE dispositivo:** não tem `.venv` nem Python 3.12 (só
+  3.13/3.14); verificação feita com o Python 3.13 do sistema (`PYTHONPATH=repo` + AppTest);
+  o CI valida na stack leve pinada. Para trabalho a sério aqui: instalar 3.12 + `setup_env.sh`.
 - **🚀 SESSÃO 30 (produto + sync, pedido: "real product, no bullshit; tudo em sync; eu domino tudo"):**
   **Produto (commit `a941674`):** runner endurecido — `news_is_fresh` (anti-spam ≤2 dias; o scan
   olhava 7 dias e repetia a mesma manchete) e `bar_is_fresh` (anti-duplicado em feriados; só avalia
