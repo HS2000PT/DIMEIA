@@ -114,12 +114,12 @@ def _precedentes() -> list[tuple[NewsRecord, float]]:
 def test_explainer_sem_materialidade_e_identico():
     a = explain_news_impact("NVDA", "t", _precedentes(), horizon=3)
     b = explain_news_impact("NVDA", "t", _precedentes(), horizon=3, materiality=None)
-    assert a == b and "Materiality" not in a
+    assert a == b and "Risk estimate" not in a
 
 
 def test_explainer_com_materialidade_inclui_linha_nos_dois_ramos():
     linha = materiality_line(0.7, [("recent volatility (20d)", 0.5)])
     com = explain_news_impact("NVDA", "t", _precedentes(), horizon=3, materiality=linha)
     sem_prec = explain_news_impact("NVDA", "t", [], horizon=3, materiality=linha)
-    assert "Materiality (learned triage)" in com and "not a forecast" in com
-    assert "Materiality (learned triage)" in sem_prec
+    assert "Risk estimate (learned triage)" in com and "not a forecast" in com
+    assert "Risk estimate (learned triage)" in sem_prec

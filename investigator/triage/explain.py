@@ -43,11 +43,21 @@ def lr_group_contributions(pipeline, x_row: np.ndarray,
 
 
 def materiality_line(prob: float, contributions: list[tuple[str, float]], top: int = 2) -> str:
-    """Linha honesta para o alerta: probabilidade + principais fatores. Nunca é previsão."""
-    factors = ", ".join(
-        f"{name} ({'+' if c >= 0 else '-'})" for name, c in contributions[:top]
-    )
+    """Linha honesta para o alerta: risco em linguagem simples + porquê. Nunca é previsão.
+
+    Revisão UX (2026-07-08): a versão anterior ("Top factors: sector (+)") era jargão
+    ilegível para um leigo. Agora separa-se em "sobe o risco" / "desce o risco" com os
+    nomes das features já amigáveis (ver `_FRIENDLY`); sem fatores fortes, di-lo.
+    """
+    ups = [name for name, c in contributions if c > 0][:top]
+    downs = [name for name, c in contributions if c < 0][:top]
+    bits = []
+    if ups:
+        bits.append("raised by " + " and ".join(ups))
+    if downs:
+        bits.append("lowered by " + " and ".join(downs))
+    why = "; ".join(bits) if bits else "no single factor dominates"
     return (
-        f"Materiality (learned triage): {prob:.0%} of historically similar cases were followed "
-        f"by an abnormal move. Top factors: {factors}. Triage evidence, not a forecast."
+        f"Risk estimate (learned triage): {prob:.0%} chance of a bigger-than-usual move in the "
+        f"next few days, based on similar past cases — {why}. Triage evidence, not a forecast."
     )

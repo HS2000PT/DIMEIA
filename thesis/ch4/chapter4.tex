@@ -308,8 +308,8 @@ illustration; the full real end-to-end output appears in Chapter~\ref{chap:cases
 \emph{What does it take to run, and what does responsible use require?}
 
 InvestiGator runs as two entry points, one per trigger, each performing a complete cycle. In day-to-day use they
-run on a schedule: a reference deployment exists in which a free continuous-integration timer scans a
-watchlist once per trading day after the US close and delivers any alerts to a Telegram channel, with an
+run on a schedule: a reference deployment exists in which a free continuous-integration timer repeatedly
+scans a watchlist through US market hours and delivers any alerts to a Telegram channel, with an
 interactive dashboard published alongside. Running the system needs only free resources: a market-data
 source, a company-news or RSS source (an API key kept out of version control), and the knowledge base
 built once from the corpus. Appendix~\ref{app:reproducibility} gives the exact steps. Real alerts
