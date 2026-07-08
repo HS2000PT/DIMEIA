@@ -41,9 +41,13 @@ You should see the **news trigger** (offline, deterministic — reproduces the t
 Full operator guide (Telegram, live news, building your own KB): **`docs/design/how_to_run.md`** (start at
 §0.0).
 
-## 🔎 Or click through it — the dashboard
-**Live at <https://investigator.streamlit.app>** — both triggers plus the evaluation, in the browser,
-nothing to install. To run it locally instead (no keys, nothing sent):
+## 🔎 Or click through it — the live dashboard
+**Live at <https://investigator.streamlit.app>** — one page, a tab per watchlist ticker: the
+trained triage model's risk score (background, no headline needed), a live price chart annotated
+with every detected event, and the same alert history the Telegram channel received (never
+recomputed independently). "Method & evaluation" (how it works, the thesis's numbers, a headline/
+ticker sandbox, citation) collapses into one section at the bottom. To run it locally (no keys,
+nothing sent):
 
 ```bash
 pip install -r requirements.txt -r requirements-app.txt
@@ -54,6 +58,10 @@ Hosting details (Streamlit Community Cloud, free): **`docs/design/deployment.md`
 precedents **semantically** — the thesis's MiniLM model exported to ONNX (~23 MB, CPU, no torch;
 numerical parity vs SBERT verified in `docs/evaluation/onnx_minilm_validation.md`) — falling back to
 the word-overlap baseline only if the model is unavailable.
+
+**Prefer a notebook?** `notebooks/investigator_walkthrough.ipynb` — the same three components
+(anomaly detector, retrieval, the trained triage model), one hands-on cell at a time; see
+`docs/design/how_to_run.md` §5.2.
 
 ## 📡 Live 24/7 (free, no server)
 Turn InvestiGator into a running service without paying or babysitting a server:
@@ -88,7 +96,7 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 
 ## Project status
 **Validated and submission-ready (pending human sign-off).** Both triggers are proven end to end;
-**117 automated tests** + lint green. The core components — including a **materiality-triage model trained
+**132 automated tests** + lint green. The core components — including a **materiality-triage model trained
 by the author** on 79,753 multi-year FNSPID examples (RQ4; triage evidence, never a forecast) — are
 evaluated on **real data**, and the statistics reproduce exactly from versioned scripts. The **six-chapter
 dissertation** compiles cleanly (`thesis/main.pdf`, ~76 pp, 0 errors), with **52 references each verified by
@@ -107,7 +115,8 @@ slides/        defence slides (Beamer, 16 frames)
   guia_estudo/   from-zero PT-PT study guide (Beamer, 64 slides)
 investigator/  system code, one package per component (investigator/triage/ = the trained ML component, RQ4)
 models/        trained triage models (joblib, versioned; context-only variant runs in production)
-app/           streamlit_app.py — interactive dashboard (thin UI over investigator/)
+notebooks/     investigator_walkthrough.ipynb — hands-on tour of the 3 components, executed & committed
+app/           streamlit_app.py — single-page live dashboard (tabs per ticker) over investigator/
 run/           double-click launchers (dashboard/demo/tests/thesis)
 .vscode/       click-to-run: Run & Debug configs + tasks + recommended extensions
 scripts/       demo.py (run it) + run_alerts.py (24/7 scan) + data / figures / build automation
@@ -130,7 +139,7 @@ CITATION.cff   how to cite this work    requirements.txt (light) / requirements-
   (`requirements.txt`) — enough for the demo, the tests and the evaluations. The heavy ML stack (`torch` CPU,
   `sentence-transformers`, in `requirements-ml.txt`) is needed only for the real SBERT paths and installs with
   `bash scripts/setup_env.sh --ml` (it pulls `torch` from the PyTorch CPU index, not PyPI).
-- Verification loop: `bash scripts/verify.sh` (117 tests + lint + LaTeX note).
+- Verification loop: `bash scripts/verify.sh` (132 tests + lint + LaTeX note).
 - Secrets live only in a local, gitignored `.env` (see `.env.example` for variable names).
 - LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push.
 

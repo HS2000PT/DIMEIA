@@ -239,6 +239,22 @@ e app, stack leve) pontua-se a variante **só-contexto** (`models/triage_context
 maturadas com o resultado REAL (mesmo rótulo do treino) e escreve
 `docs/evaluation/live_monitoring.md` (precisão ao vivo, Brier, calibração + receita de retreino).
 
+### 5.2 Notebook — mexer nos três componentes com as tuas mãos
+
+`notebooks/investigator_walkthrough.ipynb` (didático, corre na stack leve — sem torch):
+deteção de anomalias, recuperação semântica (KB curada + MiniLM em ONNX) e o **modelo de
+triagem que TU treinaste** (RQ4), com um exemplo real pontuado passo a passo. NÃO re-deriva
+os números da tese — esses ficam em `docs/evaluation/`; o notebook é o "toca-lhe" para estudar/
+demonstrar.
+
+```bash
+pip install -r requirements.txt -r requirements-notebook.txt
+jupyter notebook notebooks/investigator_walkthrough.ipynb
+
+# Para regenerar os outputs (nunca escrever números à mão):
+jupyter nbconvert --to notebook --execute --inplace notebooks/investigator_walkthrough.ipynb
+```
+
 ---
 
 ## 6. Testes e qualidade

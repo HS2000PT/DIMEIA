@@ -1,0 +1,14 @@
+# Dependência EXTRA só para abrir/re-executar notebooks/investigator_walkthrough.ipynb.
+# A stack leve (requirements.txt) já cobre tudo o resto (pandas, matplotlib, onnxruntime, ...) —
+# o notebook corre no light stack, sem torch.
+#
+# Uso:
+#   pip install -r requirements.txt -r requirements-notebook.txt
+#   jupyter notebook notebooks/investigator_walkthrough.ipynb
+#
+# Para regenerar os outputs (reproduzir, nunca escrever à mão):
+#   jupyter nbconvert --to notebook --execute --inplace notebooks/investigator_walkthrough.ipynb
+
+jupyter==1.1.1
+nbconvert==7.17.1
+nbformat==5.10.4
