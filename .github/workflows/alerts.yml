@@ -12,6 +12,11 @@ name: Alerts (scheduled scan)
 # a mesma anomalia/manchete nunca repete no mesmo dia. Os comandos do bot (/watch …) também são
 # processados em cada corrida (resposta ≤30 min; para respostas imediatas: scripts/run_bot.py).
 # Cron é UTC e "best-effort" (pode atrasar alguns minutos); pausa após 60 dias sem commits.
+#
+# HISTÓRICO PARTILHADO (sync com a app pública): cada alerta realmente enviado é acrescentado a
+# `alerts_history.jsonl` na branch `alerts-history` (dados, não código — mantém a história do
+# `main` limpa). A app Streamlit lê esse ficheiro ao vivo via raw.githubusercontent.com — nunca
+# recalcula, só mostra o que já foi enviado. Ver investigator/alerts_history.py.
 
 on:
   schedule:
@@ -19,9 +24,9 @@ on:
     - cron: "0,30 13-21 * * 1-5"
   workflow_dispatch: {}   # botão "Run workflow" para testar à mão
 
-# Sem permissões de escrita no repo: o job lê o repo, usa a cache e fala com o Telegram/APIs.
+# Escrita necessária para publicar o histórico partilhado na branch `alerts-history` (dados).
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: alerts-scan
@@ -33,6 +38,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Checkout à parte da branch de dados (nunca a de código) — a única escrita deste
+      # workflow acontece aqui dentro, isolada do checkout principal.
+      - name: Checkout shared alert history
+        uses: actions/checkout@v4
+        continue-on-error: true   # se falhar (branch em falta/renomeada), o runner segue sem histórico partilhado
+        with:
+          ref: alerts-history
+          path: history
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
@@ -73,6 +87,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+          INVESTIGATOR_HISTORY_PATH: history/alerts_history.jsonl
         run: python scripts/run_alerts.py
 
       - name: Save intraday state + subscribers
@@ -83,3 +98,24 @@ jobs:
             data/alerts_state.json
             data/bot_users.db
           key: alerts-state-${{ github.run_id }}
+
+      # Publica o histórico partilhado só se houve algo novo E o checkout acima correu bem
+      # (fail-open total: nunca impede o resto do job nem falha por si só).
+      - name: Publish updated alert history
+        if: always()
+        continue-on-error: true
+        run: |
+          if [ ! -d history/.git ]; then
+            echo "[historico] checkout da branch de dados indisponível — nada a publicar."
+            exit 0
+          fi
+          cd history
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add alerts_history.jsonl
+            git commit -m "Alertas: atualização automática do histórico partilhado"
+            git push
+          else
+            echo "[historico] sem alterações — nada para publicar."
+          fi

@@ -15,6 +15,7 @@ Pensado para ser chamado por `.github/workflows/alerts.yml` (cron) — ver docs/
 from __future__ import annotations
 
 import argparse
+import os
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -26,6 +27,12 @@ from investigator.console import force_utf8_stdout
 _CONFIG = Path(__file__).resolve().parents[1] / "config" / "alerts.yaml"
 _PRED_LOG = Path(__file__).resolve().parents[1] / "data" / "predictions_log.jsonl"
 _STATE = Path(__file__).resolve().parents[1] / "data" / "alerts_state.json"
+# No workflow, INVESTIGATOR_HISTORY_PATH aponta para o checkout da branch `alerts-history`
+# (ver .github/workflows/alerts.yml); localmente cai num ficheiro gitignored inofensivo.
+_HISTORY = Path(os.environ.get(
+    "INVESTIGATOR_HISTORY_PATH",
+    str(Path(__file__).resolve().parents[1] / "data" / "alerts_history.jsonl"),
+))
 
 
 # ── Estado entre corridas (intradiário, anti-duplicado) ───────────────────────
@@ -257,6 +264,34 @@ def scan_news(cfg: dict) -> list[tuple[str, str]]:
     return alerts
 
 
+def _record_history_safe(alerts: list[tuple[str, str]], today: str,
+                         path: str | Path = _HISTORY) -> None:
+    """Regista os alertas REALMENTE enviados no histórico partilhado — a app lê este ficheiro
+    em vez de recalcular, garantindo que mostra exatamente o que o Telegram recebeu.
+
+    Fail-open (mesmo padrão de `_log_decision_safe`): um erro aqui nunca pode impedir o envio
+    real ao Telegram nem derrubar o runner.
+    """
+    try:
+        from investigator.alerts_history import (
+            HistoryEntry,
+            append_and_trim,
+            classify_kind,
+            load_jsonl,
+            save_jsonl,
+        )
+        from investigator.explanation_engine.explainer import plain_text
+
+        new = [
+            HistoryEntry(date=today, ticker=ticker, kind=classify_kind(text),
+                        text=plain_text(text))
+            for ticker, text in alerts
+        ]
+        save_jsonl(append_and_trim(load_jsonl(path), new), path)
+    except Exception as exc:  # noqa: BLE001
+        print(f"[historico] registo falhou (ignorado): {type(exc).__name__}: {exc}")
+
+
 def process_bot_commands(state: dict, bot_cfg: dict, *, dry_run: bool) -> None:
     """Fase B SEM servidor: processa em lote os comandos enviados ao bot desde a última corrida.
 
@@ -366,6 +401,7 @@ def main() -> int:
     _fanout_safe(alerts, bot_cfg, dry_run=args.dry_run)
 
     if can_send:
+        _record_history_safe(alerts, date.today().isoformat())
         print(f"\n[{len(alerts)} alerta(s) enviado(s) para o Telegram]")
     else:
         why = "modo --dry-run" if args.dry_run else "Telegram nao configurado (nada enviado)"

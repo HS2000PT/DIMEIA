@@ -85,3 +85,27 @@ def test_filter_new_alerts_nao_repete(tmp_path):
     # 2.a corrida do dia: tudo igual -> nada novo; uma manchete nova -> só essa passa
     segunda = filter_new_alerts(market, [("AAPL", "noticia aapl"), ("AAPL", "OUTRA")], st)
     assert segunda == [("AAPL", "OUTRA")]
+
+
+def test_record_history_safe_regista_o_texto_exato_enviado(tmp_path):
+    """A app lê este ficheiro em vez de recalcular — tem de guardar o texto EXATO (sem HTML)."""
+    from investigator.alerts_history import load_jsonl
+    from scripts.run_alerts import _record_history_safe
+
+    path = tmp_path / "history.jsonl"
+    alertas = [
+        ("TSLA", "<b>Anomaly detected for TSLA: +7.61 std</b>"),
+        ("NVDA", "📰 <b>News alert for NVDA</b>"),
+    ]
+    _record_history_safe(alertas, "2026-07-08", path=path)
+    entries = load_jsonl(path)
+    assert [e.kind for e in entries] == ["market", "news"]
+    assert entries[0].text == "Anomaly detected for TSLA: +7.61 std"  # HTML removido
+    assert all(e.date == "2026-07-08" for e in entries)
+
+
+def test_record_history_safe_nunca_rebenta_com_caminho_invalido():
+    """Fail-open: um caminho impossível de escrever não pode derrubar o runner."""
+    from scripts.run_alerts import _record_history_safe
+
+    _record_history_safe([("AAPL", "texto")], "2026-07-08", path="\0/invalido")  # não levanta
