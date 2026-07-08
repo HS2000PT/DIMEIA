@@ -63,3 +63,14 @@ def score_latest(bundle: dict, close: pd.Series, headline: str, ticker: str,
         return None
     return score_context(bundle, feats["vol20"], feats["mom5"], feats["ret_event"],
                          headline, ticker)
+
+
+def score_background(bundle: dict, close: pd.Series, ticker: str,
+                     ) -> tuple[float, list[tuple[str, float]]] | None:
+    """Risco de "fundo" do ticker HOJE, sem nenhuma notícia concreta (painel ao vivo).
+
+    Mesmo modelo, mesmas features de contexto (volatilidade/momento/reação/setor); o título
+    é uma string vazia (`headline_len=0`) — um placeholder honesto e explícito, não uma
+    notícia inventada. Distingue-se sempre na UI de um score "para esta notícia".
+    """
+    return score_latest(bundle, close, "", ticker)

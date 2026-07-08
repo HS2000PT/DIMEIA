@@ -13,6 +13,7 @@ from investigator.triage.features import context_block
 from investigator.triage.infer import (
     DEFAULT_BUNDLE,
     load_context_bundle,
+    score_background,
     score_context,
     score_latest,
 )
@@ -75,6 +76,19 @@ def test_score_latest_fail_open_sem_historico(tmp_path):
     rng = np.random.default_rng(2)
     longa = pd.Series(100 * np.exp(np.cumsum(rng.normal(0, 0.01, 60))))
     assert score_latest(b, longa, "abc", "NVDA") is not None
+
+
+def test_score_background_pontua_sem_manchete(tmp_path):
+    """O 'risco de fundo' (painel ao vivo) pontua qualquer dia, mesmo sem notícia nenhuma."""
+    b = _tiny_bundle(tmp_path)
+    rng = np.random.default_rng(3)
+    close = pd.Series(100 * np.exp(np.cumsum(rng.normal(0, 0.01, 60))))
+    scored = score_background(b, close, "NVDA")
+    assert scored is not None
+    prob, contribs = scored
+    assert 0.0 <= prob <= 1.0
+    # Mesma matemática que score_latest com título vazio (headline_len=0) — não é magia à parte.
+    assert scored == score_latest(b, close, "", "NVDA")
 
 
 def test_bundle_do_repo_carrega_na_stack_leve():

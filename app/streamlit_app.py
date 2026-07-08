@@ -1,8 +1,11 @@
-"""InvestiGator — interactive dashboard (Streamlit).
+"""InvestiGator — live control room (Streamlit).
 
-A thin, stateless UI over the *validated* InvestiGator functions. It demonstrates the two triggers
-(news precedents; market anomaly) and shows the evaluation, so an examiner can click through the
-XAI story without installing anything.
+ONE page: a tab per watchlist ticker, each with the trained risk model, a live price chart
+annotated with every detected event, and the history table — all built from the SAME shared
+record the Telegram channel already sent (never recalculated independently). "Method &
+evaluation" (how it works, the thesis's evaluation numbers, a free-text headline/ticker
+sandbox, how to get alerts, citation) collapses into one section at the bottom, out of the
+way but one click away.
 
 Run locally:
     pip install -r requirements-app.txt          # streamlit (light stack already covers the rest)
@@ -14,9 +17,11 @@ Honesty notes (mirrors the thesis):
   (~23 MB, downloaded once, SHA256-pinned) over a curated multi-year FNSPID knowledge base;
   numerical parity vs SBERT is verified in docs/evaluation/onnx_minilm_validation.md. If the
   model is unavailable it falls back to the word-overlap baseline and says so.
-- The Markets now page uses the SAME config, detector and message text as the Telegram
-  channel (config/alerts.yaml + detect_latest + explain_anomaly) — what you see is what
-  the channel gets.
+- Every ticker tab also shows a "background risk" score from the materiality-triage model the
+  author trained (RQ4) — it scores every day, even with no fresh headline (context features
+  only; the thesis numbers for this model are in docs/evaluation/evaluation_triage.md).
+- The history shown (chart markers + table) is read from the same file the Telegram channel's
+  runner writes to (investigator/alerts_history.py) — not recomputed here.
 """
 
 from __future__ import annotations
@@ -25,6 +30,7 @@ import sys
 from pathlib import Path
 
 import pandas as pd
+import plotly.graph_objects as go
 import streamlit as st
 
 # Allow `streamlit run app/streamlit_app.py` from the repo root (put the root on sys.path).
@@ -39,6 +45,10 @@ st.set_page_config(
 _MASCOT = Path(__file__).resolve().parent / "assets" / "investigator.svg"
 if _MASCOT.exists():
     st.logo(str(_MASCOT), size="large")
+
+_DEFAULT_HISTORY_URL = (
+    "https://raw.githubusercontent.com/HS2000PT/DIMEIA/alerts-history/alerts_history.jsonl"
+)
 
 # Validated evaluation numbers (source: docs/evaluation/, reproducible via scripts/evaluate*.py).
 # Shown for display only — not recomputed here.
@@ -81,174 +91,54 @@ def _disclaimer() -> None:
     )
 
 
-# ── Pages ──────────────────────────────────────────────────────────────────────
+def _read_yaml_config() -> dict:
+    import yaml
+
+    return yaml.safe_load((_ROOT / "config" / "alerts.yaml").read_text(encoding="utf-8")) or {}
+
 
 def _watchlist_config() -> tuple[list[str], int, float]:
     """Watchlist + parâmetros do z-score, da mesma fonte que o runner (config/alerts.yaml)."""
     try:
-        import yaml
-
-        cfg = yaml.safe_load((_ROOT / "config" / "alerts.yaml").read_text(encoding="utf-8"))
-        m = cfg.get("market", {})
+        m = _read_yaml_config().get("market", {})
         return (list(m.get("tickers", [])) or ["AAPL"], int(m.get("window", 20)),
                 float(m.get("threshold", 3.0)))
     except Exception:
         return (["AAPL", "MSFT", "NVDA", "TSLA", "AMZN"], 20, 3.0)
 
 
+def _channel_url() -> str | None:
+    """Optional public channel URL from config/alerts.yaml (non-secret; the channel is public)."""
+    try:
+        url = (_read_yaml_config().get("public", {}) or {}).get("channel_url")
+        return str(url) if url else None
+    except Exception:
+        return None
+
+
+def _history_url() -> str:
+    """URL raw do histórico partilhado (branch `alerts-history`) — configurável, com defeito."""
+    try:
+        url = (_read_yaml_config().get("public", {}) or {}).get("history_url")
+        return str(url) if url else _DEFAULT_HISTORY_URL
+    except Exception:
+        return _DEFAULT_HISTORY_URL
+
+
 @st.cache_data(ttl=120, show_spinner=False)
 def _live_close(ticker: str) -> pd.Series:
-    """Close series with a short TTL so the live board refreshes (yfinance, ~15 min delay)."""
+    """Close series with a short TTL so the board refreshes (yfinance, ~15 min delay)."""
     from investigator.market_data.prices import get_price_history
 
     return get_price_history(ticker)["Close"]
 
 
-@st.fragment(run_every="120s")
-def _live_board() -> None:
-    from datetime import UTC, date, datetime
+@st.cache_data(ttl=60, show_spinner=False)
+def _read_shared_history() -> list:
+    """O MESMO histórico que o Telegram recebeu — nunca recalculado, só lido (fail-open)."""
+    from investigator.alerts_history import fetch_remote
 
-    from investigator.anomaly_detector.detector import detect_latest
-    from investigator.market_data.prices import log_returns
-
-    tickers, window, threshold = _watchlist_config()
-    rows, anomalias, n_fresh = [], [], 0
-    for ticker in tickers:
-        try:
-            close = _live_close(ticker)
-            if len(close) < window + 2:
-                raise ValueError("not enough history")
-            res = detect_latest(log_returns(close), window=window, threshold=threshold)
-            last_idx = close.index[-1]
-            bar_date = last_idx.date() if isinstance(last_idx, pd.Timestamp) else None
-            fresh = bar_date == date.today() if bar_date else False
-            n_fresh += int(fresh)
-            if res.is_anomaly and fresh:
-                anomalias.append((ticker, res))
-                status = f"🔺 ANOMALY (|z| ≥ {threshold:g})"
-            elif not fresh:
-                status = f"closed · last session {bar_date}" if bar_date else "closed"
-            else:
-                status = "normal"
-            rows.append({
-                "Ticker": ticker,
-                "Price": round(float(close.iloc[-1]), 2),
-                "Move": float(close.iloc[-1] / close.iloc[-2] - 1.0),
-                "z-score": round(float(res.z_score), 2),
-                "Status": status,
-                "Last 30 sessions": [float(x) for x in close.iloc[-30:]],
-            })
-        except Exception:
-            rows.append({"Ticker": ticker, "Price": None, "Move": None,
-                         "z-score": None, "Status": "⚠ no data right now",
-                         "Last 30 sessions": None})
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Tickers watched", len(tickers))
-    c2.metric("Anomalies (today)", len(anomalias))
-    c3.metric("Market state", "open/fresh" if n_fresh else "closed")
-    c4.metric("Updated (UTC)", datetime.now(UTC).strftime("%H:%M"))
-    # to_numeric: se todos os tickers falharem a coluna é object (só None) e .abs() rebentava.
-    df = pd.DataFrame(rows).sort_values(
-        "z-score", key=lambda s: pd.to_numeric(s, errors="coerce").abs(),
-        ascending=False, na_position="last",
-    )
-    st.dataframe(
-        df,
-        use_container_width=True, hide_index=True,
-        column_config={
-            "Move": st.column_config.NumberColumn(
-                format="percent", help="Last session's close-to-close change."),
-            "z-score": st.column_config.NumberColumn(
-                help="How unusual the move is vs this stock's previous 20 sessions."),
-            "Last 30 sessions": st.column_config.LineChartColumn(width="medium"),
-        },
-    )
-    st.caption("Auto-refreshes every 2 min · yfinance prices (~15 min delay) · "
-               "same rule the Telegram alerts use.")
-
-    # Espelho do canal: o MESMO detetor, config e texto que o runner envia ao Telegram
-    # (detect_latest + explain_anomaly sobre config/alerts.yaml) — o que se vê é o que chega.
-    st.subheader("Today's alerts (as sent to the Telegram channel)")
-    if anomalias:
-        from investigator.explanation_engine.explainer import explain_anomaly, plain_text
-
-        for ticker, res in anomalias:
-            st.warning(plain_text(explain_anomaly(ticker, res)), icon="🔺")
-        st.caption("Same detection rule, same message text as the channel "
-                   "(which additionally never repeats an alert within the same day).")
-    else:
-        st.caption(
-            "No market alerts right now — the channel is quiet too. News alerts (similar-headline "
-            "precedents, the same format as **📰 Check a headline**) also go to the channel when a "
-            "fresh headline passes the materiality gate."
-        )
-
-
-def page_live() -> None:
-    st.header("Markets now")
-    st.caption("The watchlist, scored by how unusual today's move is — biggest movers first.")
-    _live_board()
-    st.info("Get these as push alerts on your phone → **📡 Get alerts** in the sidebar.",
-            icon="📡")
-
-
-def page_home() -> None:
-    col_logo, col_title = st.columns([1, 4])
-    if _MASCOT.exists():
-        col_logo.image(str(_MASCOT), width=150)
-    col_title.title("InvestiGator — Explainable Financial Alerts for Retail Investors")
-    col_title.caption("_Investigate. Don't speculate._ 🐊🔍")
-    st.markdown(
-        """
-**InvestiGator** watches the US market for a retail investor and **explains** every alert.
-There are two triggers:
-
-1. **Abrupt market move** → a statistical anomaly (rolling *z*-score, no lookahead), explained in
-   plain language.
-2. **New financial news** → the most similar past headlines (sentence-embedding retrieval) and the
-   impact those precedents actually had (event study) — **evidence, never a prediction**.
-
-Use the sidebar to try each trigger, explore the evaluation, or read how it works.
-        """
-    )
-    st.markdown("**Want it on your phone?** See **📡 Get alerts** in the sidebar.")
-
-
-def _render_severity(ticker: str, headline: str) -> None:
-    """Learned triage severity (RQ4) — shown only when models/ is present; silent otherwise.
-
-    Uses the context-only logistic regression (light stack, no SBERT). Honest framing: the
-    probability is triage evidence over historical cases, never a forecast.
-    """
-    from investigator.triage.infer import load_context_bundle, score_latest
-
-    bundle = load_context_bundle()
-    if bundle is None:
-        return  # graceful absence: no models/ → the page simply has no severity section
-    try:
-        scored = score_latest(bundle, _cached_close(ticker), headline, ticker)
-    except Exception:
-        st.caption("Learned severity unavailable (price history could not be fetched).")
-        return
-    if scored is None:
-        st.caption("Learned severity unavailable (not enough price history for this ticker).")
-        return
-    prob, contribs = scored
-    st.subheader("Learned severity (materiality triage)")
-    c1, c2 = st.columns([1, 2])
-    c1.metric("P(abnormal move follows)", f"{prob:.0%}")
-    c2.dataframe(
-        pd.DataFrame(
-            [{"Factor": name, "Pushes": "up" if c >= 0 else "down",
-              "Logit contribution": round(c, 2)} for name, c in contribs],
-        ),
-        use_container_width=True, hide_index=True,
-    )
-    st.caption(
-        "Context-only logistic regression trained by the author (RQ4) — the exact additive "
-        "contributions above are the model's whole reasoning. Triage evidence, **not a "
-        "forecast**; methodology and honest results in `docs/evaluation/evaluation_triage.md`."
-    )
+    return fetch_remote(_history_url())
 
 
 @st.cache_resource(show_spinner="Loading the semantic model (first time only)…")
@@ -263,159 +153,129 @@ def _retrieval_engine() -> tuple:
     return product_retrieval(auto_download=os.environ.get("INVESTIGATOR_OFFLINE") != "1")
 
 
-def page_news() -> None:
-    from investigator.explanation_engine.explainer import plain_text
-    from investigator.main import run_news_trigger
+@st.cache_resource(show_spinner=False)
+def _triage_bundle():
+    """O modelo de triagem TREINADO PELO AUTOR (RQ4) — None se `models/` não estiver presente
+    (ausência graciosa: o resto da app funciona na mesma, só sem o medidor de risco)."""
+    from investigator.triage.infer import load_context_bundle
 
-    st.header("Check a headline")
-    st.caption(
-        "Paste a headline — see the most similar past headlines and what the price did after."
+    return load_context_bundle()
+
+
+@st.cache_data(show_spinner=False)
+def _kb_size(kb_path: str) -> int:
+    """Cached record count of the knowledge base (one JSONL line per record)."""
+    with open(kb_path, encoding="utf-8") as f:
+        return sum(1 for line in f if line.strip())
+
+
+# ── Painel por ticker ───────────────────────────────────────────────────────────
+
+def _risk_gauge(ticker: str, close: pd.Series) -> None:
+    """Risco de fundo do TEU modelo treinado — todos os dias, sem precisar de notícia."""
+    bundle = _triage_bundle()
+    if bundle is None:
+        return
+    from investigator.triage.infer import score_background
+
+    try:
+        scored = score_background(bundle, close, ticker)
+    except Exception:
+        return
+    if scored is None:
+        return
+    prob, contribs = scored
+    factors = ", ".join(name for name, _ in contribs[:2])
+    c1, c2 = st.columns([1, 3])
+    c1.metric(
+        "Background risk", f"{prob:.0%}",
+        help="P(an abnormal move follows), estimated by your trained triage model (RQ4) from "
+             "price/volatility/sector context alone — no specific headline needed.",
     )
-    kb_path, embedder = _retrieval_engine()
-    semantic = bool(getattr(embedder, "semantic", False))
-    col = st.columns([3, 1])
-    headline = col[0].text_input("Headline", value="Nvidia demand surges on AI chip orders")
-    ticker = col[1].text_input("Ticker", value="NVDA")
-    top_k, horizon = 3, 5
-    with st.expander("Advanced"):
-        top_k = st.slider("How many precedents (k)", 1, 5, 3)
-        horizon = st.selectbox("Impact horizon (trading days)", [1, 3, 5], index=2)
-        engine = (
-            "semantic matching — MiniLM (the thesis's SBERT model) running in ONNX"
-            if semantic
-            else "word-overlap matching (offline fallback) — weaker than the thesis's SBERT, "
-            "so off-topic matches can appear (measured gap: About & method → Evaluation)"
-        )
-        st.caption(
-            f"Knowledge base: {_kb_size(str(kb_path)):,} historical headlines "
-            f"({'FNSPID 2018–2023, curated' if 'fnspid' in kb_path.name else 'small sample'}); "
-            f"{engine}."
-        )
-
-    if st.button("Find precedents", type="primary"):
-        precedents, text = run_news_trigger(
-            ticker=ticker.strip().upper(),
-            headline=headline.strip(),
-            kb_path=kb_path,
-            embedder=embedder,
-            top_k=top_k,
-            horizon=horizon,
-            send=False,
-        )
-        if not precedents:
-            st.warning("No precedents found in the knowledge base.")
-            return
-        rows = []
-        for rec, score in precedents:
-            rows.append(
-                {
-                    "Date": rec.date,
-                    "Ticker": rec.ticker,
-                    "Similarity": round(float(score), 3),
-                    "+1d": rec.impacts.get("1"),
-                    "+3d": rec.impacts.get("3"),
-                    "+5d": rec.impacts.get("5"),
-                    "Headline": rec.headline,
-                }
-            )
-        df = pd.DataFrame(rows)
-        for c in ["+1d", "+3d", "+5d"]:
-            df[c] = df[c].map(lambda v: f"{v:+.2%}" if v is not None else "—")
-        st.dataframe(df, use_container_width=True, hide_index=True)
-        st.text(plain_text(text))
-        if semantic:
-            st.info(
-                "Semantic retrieval: **MiniLM in ONNX** — the same model the thesis evaluated "
-                "as SBERT (numerical parity checked in "
-                "`docs/evaluation/onnx_minilm_validation.md`)."
-            )
-        else:
-            st.info(
-                "Fallback embedder (word overlap). The thesis's real method is **SBERT** "
-                "(semantic); see the Evaluation page for its measured advantage."
-            )
-        _render_severity(ticker.strip().upper(), headline.strip())
+    c2.caption(f"Mainly driven by: {factors}. Triage evidence, not a forecast — the same model "
+               "that gates the news alerts.")
 
 
-def page_market() -> None:
-    st.header("Ticker check")
-    st.caption(
-        "Is the latest move unusual **for this stock**? Compared against its own recent "
-        "behaviour — not a fixed percentage."
+def _ticker_chart(ticker: str, close: pd.Series, history: list) -> go.Figure:
+    """Preço de fecho + um marcador por evento detetado (hover = o texto exato do alerta)."""
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=close.index, y=close.to_numpy(), mode="lines", name="Close",
+        line={"width": 1.6, "color": "#4c78a8"},
+    ))
+    close_by_date = {idx.date().isoformat(): float(v) for idx, v in close.items()}
+    xs, ys, texts, colors, symbols = [], [], [], [], []
+    for h in history:
+        if h.ticker != ticker:
+            continue
+        y = close_by_date.get(h.date)
+        if y is None:
+            continue  # fora da janela do gráfico — continua a aparecer na tabela abaixo
+        xs.append(h.date)
+        ys.append(y)
+        texts.append(h.text if len(h.text) <= 220 else h.text[:219] + "…")
+        colors.append("#d62728" if h.kind == "market" else "#2ca02c")
+        symbols.append("triangle-up" if h.kind == "market" else "circle")
+    if xs:
+        fig.add_trace(go.Scatter(
+            x=xs, y=ys, mode="markers", name="Alerts",
+            marker={"size": 13, "color": colors, "symbol": symbols,
+                    "line": {"width": 1, "color": "white"}},
+            text=texts, hoverinfo="text",
+        ))
+    fig.update_layout(
+        height=380, margin={"l": 10, "r": 10, "t": 20, "b": 10},
+        showlegend=False, hovermode="closest",
+        yaxis_title="Close ($)",
     )
-    ticker = st.text_input("Ticker", value="AAPL").strip().upper()
-    window, threshold = 20, 3.0
-    with st.expander("Advanced"):
-        window = st.slider("Window (days)", 10, 60, 20)
-        threshold = st.slider("Threshold |z|", 2.0, 4.0, 3.0, step=0.5)
-
-    if st.button("Check latest move", type="primary"):
-        try:
-            from investigator.anomaly_detector.detector import detect_latest
-            from investigator.explanation_engine.explainer import (
-                explain_anomaly,
-                explain_normal,
-                plain_text,
-            )
-            from investigator.market_data.prices import log_returns
-
-            close = _cached_close(ticker)
-            returns = log_returns(close)
-            res = detect_latest(returns, window=window, threshold=threshold)
-        except Exception as exc:  # noqa: BLE001  (network/ticker errors shouldn't crash the UI)
-            st.error(f"Could not fetch/evaluate '{ticker}': {type(exc).__name__}: {exc}")
-            return
-
-        m1, m2, m3 = st.columns(3)
-        m1.metric("z-score", f"{res.z_score:+.2f}")
-        m2.metric("Anomaly?", "YES" if res.is_anomaly else "no")
-        m3.metric("Latest return", f"{res.last_return:+.2%}")
-        text = explain_anomaly(ticker, res) if res.is_anomaly else explain_normal(ticker, res)
-        st.text(plain_text(text))
-
-        # Show the recent returns with the ±threshold·σ band around the rolling mean.
-        band = pd.DataFrame({"return": returns.tail(60).reset_index(drop=True)})
-        band["mean"] = res.mean
-        band["+band"] = res.mean + threshold * res.std
-        band["-band"] = res.mean - threshold * res.std
-        st.line_chart(band, use_container_width=True)
-        st.caption("Last ~60 daily log-returns with the anomaly band (mean ± threshold·σ).")
+    return fig
 
 
-def page_evaluation() -> None:
-    st.header("Evaluation — what the numbers mean")
-    st.markdown(
-        "All figures below come from `docs/evaluation/` and are reproducible with fixed seeds via "
-        "`scripts/evaluate.py` / `scripts/evaluate_anomaly.py`."
-    )
+def _ticker_tab(ticker: str, history: list) -> None:
+    try:
+        close = _live_close(ticker)
+    except Exception as exc:  # noqa: BLE001  (network/ticker errors shouldn't crash the tab)
+        st.warning(f"No data right now for {ticker}: {type(exc).__name__}")
+        return
+    if len(close) < 2:
+        st.warning(f"Not enough price history for {ticker} yet.")
+        return
 
-    st.subheader("1 · News retrieval beats every baseline (precision@5)")
-    st.bar_chart(RETRIEVAL_P5, use_container_width=True)
-    st.caption(
-        "SBERT (MiniLM) P@5 = 0.514 vs 0.240 random base rate (lift +0.273). Lexical = 0.346."
-    )
+    ticker_hist = [h for h in history if h.ticker == ticker]
+    move = float(close.iloc[-1] / close.iloc[-2] - 1.0)
+    c1, c2 = st.columns(2)
+    c1.metric(f"{ticker} last close", f"${close.iloc[-1]:.2f}", f"{move:+.2%}")
+    c2.metric("Alerts on record", len(ticker_hist))
 
-    st.subheader("2 · Retrieval quality per sector (SBERT vs random)")
-    st.bar_chart(PER_SECTOR, use_container_width=True)
+    _risk_gauge(ticker, close)
+    st.plotly_chart(_ticker_chart(ticker, close, history), use_container_width=True,
+                    config={"displayModeBar": False}, key=f"chart_{ticker}")
 
-    st.subheader("3 · The z-score fires at a near-constant rate across stocks")
-    st.dataframe(FIRING_RATE, use_container_width=True)
-    st.caption(
-        "The z-score's firing-rate spread across tickers is 0.015 vs 0.344 for a fixed % "
-        "threshold — it normalises volatility. (F1 vs a proxy label: z-score 0.516 vs 0.218.)"
-    )
+    st.subheader("History — same alerts sent to the Telegram channel")
+    if ticker_hist:
+        rows = [
+            {"Date": h.date, "Type": "🔺 Market" if h.kind == "market" else "📰 News",
+             "Alert": h.text}
+            for h in reversed(ticker_hist)
+        ]
+        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True,
+                    column_config={"Alert": st.column_config.TextColumn(width="large")})
+    else:
+        st.caption(f"No alerts recorded yet for {ticker} — this fills in as the scheduled "
+                   "scan (every 30 min in US market hours) sends real alerts.")
 
 
-def page_how() -> None:
-    st.header("How it works")
+# ── Método & avaliação (tudo o que não é o painel ao vivo, num só sítio) ────────
+
+def _section_how() -> None:
     st.markdown(
         """
 InvestiGator integrates existing, transparent components: a pre-trained sentence embedder (SBERT,
 inference only), a statistical *z*-score, cosine similarity, and event-study arithmetic. On top of
 those sits **one model trained by the author** — the materiality-triage logistic regression (RQ4):
 it estimates the probability that an *abnormal move* follows a news item (**never** direction or
-price), with labels produced by the system's own event-study code. No computer vision, no deep
-training, no forecasting.
+price), with labels produced by the system's own event-study code. It is the "Background risk"
+gauge shown on every ticker tab above. No computer vision, no deep training, no forecasting.
         """
     )
     st.graphviz_chart(
@@ -445,8 +305,165 @@ training, no forecasting.
     )
 
 
-def page_about() -> None:
-    st.header("About & how to cite")
+def _section_evaluation() -> None:
+    st.markdown(
+        "All figures below come from `docs/evaluation/` and are reproducible with fixed seeds via "
+        "`scripts/evaluate.py` / `scripts/evaluate_anomaly.py`."
+    )
+    st.subheader("1 · News retrieval beats every baseline (precision@5)")
+    st.bar_chart(RETRIEVAL_P5, use_container_width=True)
+    st.caption(
+        "SBERT (MiniLM) P@5 = 0.514 vs 0.240 random base rate (lift +0.273). Lexical = 0.346."
+    )
+    st.subheader("2 · Retrieval quality per sector (SBERT vs random)")
+    st.bar_chart(PER_SECTOR, use_container_width=True)
+    st.subheader("3 · The z-score fires at a near-constant rate across stocks")
+    st.dataframe(FIRING_RATE, use_container_width=True)
+    st.caption(
+        "The z-score's firing-rate spread across tickers is 0.015 vs 0.344 for a fixed % "
+        "threshold — it normalises volatility. (F1 vs a proxy label: z-score 0.516 vs 0.218.)"
+    )
+
+
+def _section_try_headline() -> None:
+    from investigator.explanation_engine.explainer import plain_text
+    from investigator.main import run_news_trigger
+
+    st.caption("Paste any headline — see the most similar past headlines and what the price "
+               "did after. Uses the same retrieval engine as the live board.")
+    kb_path, embedder = _retrieval_engine()
+    semantic = bool(getattr(embedder, "semantic", False))
+    col = st.columns([3, 1])
+    headline = col[0].text_input("Headline", value="Nvidia demand surges on AI chip orders",
+                                 key="try_headline_text")
+    ticker = col[1].text_input("Ticker", value="NVDA", key="try_headline_ticker")
+    engine = (
+        "semantic matching — MiniLM (the thesis's SBERT model) running in ONNX"
+        if semantic
+        else "word-overlap matching (offline fallback) — weaker than the thesis's SBERT"
+    )
+    st.caption(f"Knowledge base: {_kb_size(str(kb_path)):,} historical headlines; {engine}.")
+
+    if st.button("Find precedents", type="primary", key="try_headline_button"):
+        precedents, text = run_news_trigger(
+            ticker=ticker.strip().upper(), headline=headline.strip(),
+            kb_path=kb_path, embedder=embedder, top_k=3, horizon=5, send=False,
+        )
+        if not precedents:
+            st.warning("No precedents found in the knowledge base.")
+            return
+        rows = [
+            {"Date": rec.date, "Ticker": rec.ticker, "Similarity": round(float(score), 3),
+             "+1d": rec.impacts.get("1"), "+3d": rec.impacts.get("3"),
+             "+5d": rec.impacts.get("5"), "Headline": rec.headline}
+            for rec, score in precedents
+        ]
+        df = pd.DataFrame(rows)
+        for c in ["+1d", "+3d", "+5d"]:
+            df[c] = df[c].map(lambda v: f"{v:+.2%}" if v is not None else "—")
+        st.dataframe(df, use_container_width=True, hide_index=True)
+        st.text(plain_text(text))
+        _render_news_risk(ticker.strip().upper(), headline.strip())
+
+
+def _render_news_risk(ticker: str, headline: str) -> None:
+    """Risco de triagem PARA ESTA notícia concreta (distinto do "background risk" do painel)."""
+    bundle = _triage_bundle()
+    if bundle is None:
+        return
+    from investigator.triage.infer import score_latest
+
+    try:
+        scored = score_latest(bundle, _live_close(ticker), headline, ticker)
+    except Exception:
+        st.caption("Risk estimate unavailable (price history could not be fetched).")
+        return
+    if scored is None:
+        st.caption("Risk estimate unavailable (not enough price history for this ticker).")
+        return
+    prob, contribs = scored
+    st.subheader("Risk estimate for this headline (learned triage)")
+    c1, c2 = st.columns([1, 2])
+    c1.metric("P(abnormal move follows)", f"{prob:.0%}")
+    c2.dataframe(
+        pd.DataFrame([{"Factor": name, "Pushes": "up" if c >= 0 else "down",
+                       "Logit contribution": round(c, 2)} for name, c in contribs]),
+        use_container_width=True, hide_index=True,
+    )
+    st.caption(
+        "Context-only logistic regression trained by the author (RQ4) — the exact additive "
+        "contributions above are the model's whole reasoning. Triage evidence, **not a "
+        "forecast**; methodology and honest results in `docs/evaluation/evaluation_triage.md`."
+    )
+
+
+def _section_check_ticker() -> None:
+    from investigator.anomaly_detector.detector import detect_latest
+    from investigator.explanation_engine.explainer import (
+        explain_anomaly,
+        explain_normal,
+        plain_text,
+    )
+    from investigator.market_data.prices import log_returns
+
+    st.caption("Check any ticker, not just the watchlist above — is its latest move unusual "
+               "**for that stock** (compared with its own recent behaviour)?")
+    ticker = st.text_input("Ticker", value="AAPL", key="check_ticker_input").strip().upper()
+    c1, c2 = st.columns(2)
+    window = c1.slider("Window (days)", 10, 60, 20, key="check_ticker_window")
+    threshold = c2.slider("Threshold |z|", 2.0, 4.0, 3.0, step=0.5, key="check_ticker_thr")
+
+    if st.button("Check latest move", type="primary", key="check_ticker_button"):
+        try:
+            close = _live_close(ticker)
+            returns = log_returns(close)
+            res = detect_latest(returns, window=window, threshold=threshold)
+        except Exception as exc:  # noqa: BLE001  (network/ticker errors shouldn't crash the UI)
+            st.error(f"Could not fetch/evaluate '{ticker}': {type(exc).__name__}: {exc}")
+            return
+        m1, m2, m3 = st.columns(3)
+        m1.metric("z-score", f"{res.z_score:+.2f}")
+        m2.metric("Anomaly?", "YES" if res.is_anomaly else "no")
+        m3.metric("Latest return", f"{res.last_return:+.2%}")
+        text = explain_anomaly(ticker, res) if res.is_anomaly else explain_normal(ticker, res)
+        st.text(plain_text(text))
+        band = pd.DataFrame({"return": returns.tail(60).reset_index(drop=True)})
+        band["mean"] = res.mean
+        band["+band"] = res.mean + threshold * res.std
+        band["-band"] = res.mean - threshold * res.std
+        st.line_chart(band, use_container_width=True)
+        st.caption("Last ~60 daily log-returns with the anomaly band (mean ± threshold·σ).")
+
+
+def _section_get_alerts() -> None:
+    url = _channel_url()
+    c1, c2 = st.columns(2)
+    with c1:
+        st.subheader("1 · Join the channel")
+        if url:
+            st.link_button("📡 Open the Telegram channel", url, type="primary")
+        else:
+            st.markdown("Open Telegram and search for the **InvestiGator Alerts** channel.")
+        st.caption("Scans every 30 min during US market hours — no spam by design "
+                   "(one alert per unusual move or material headline per day per ticker).")
+    with c2:
+        st.subheader("2 · Optional: your own watchlist")
+        st.markdown(
+            """
+Send the bot a direct message:
+
+| Command | What it does |
+|---|---|
+| `/watch TSLA` | add a ticker to *your* list |
+| `/list` | see your list |
+| `/unwatch TSLA` | remove it |
+| `/stop` | pause (list is kept) |
+            """
+        )
+        st.caption("Replies arrive with the next scan (≤30 min in market hours).")
+
+
+def _section_about() -> None:
     st.markdown(
         """
 **InvestiGator** accompanies the MEIA (ISEP) master's dissertation
@@ -463,116 +480,49 @@ Attributions: FNSPID (CC BY-SA 4.0), yfinance, Telegram Bot API, ISEP MEIA LaTeX
     _disclaimer()
 
 
-@st.cache_data(show_spinner=False)
-def _cached_close(ticker: str) -> pd.Series:
-    """Cached close-price series (avoids refetching on every widget interaction)."""
-    from investigator.market_data.prices import get_price_history
-
-    return get_price_history(ticker)["Close"]
-
-
-@st.cache_data(show_spinner=False)
-def _kb_size(kb_path: str) -> int:
-    """Cached record count of the knowledge base (one JSONL line per record)."""
-    with open(kb_path, encoding="utf-8") as f:
-        return sum(1 for line in f if line.strip())
-
-
-def _channel_url() -> str | None:
-    """Optional public channel URL from config/alerts.yaml (non-secret; the channel is public)."""
-    try:
-        import yaml
-
-        cfg = yaml.safe_load((_ROOT / "config" / "alerts.yaml").read_text(encoding="utf-8"))
-        url = (cfg.get("public", {}) or {}).get("channel_url")
-        return str(url) if url else None
-    except Exception:
-        return None
-
-
-def page_alerts() -> None:
-    st.header("Get alerts on your phone — nothing to install")
-    st.markdown(
-        """
-InvestiGator scans the watchlist **every 30 minutes during US market hours** and posts to a public
-Telegram channel — automatically, no action needed from you. Each alert explains itself: the rule
-that fired, the numbers behind it, and (for news) the historical precedents.
-        """
-    )
-    url = _channel_url()
-    c1, c2 = st.columns(2)
-    with c1:
-        st.subheader("1 · Join the channel")
-        if url:
-            st.link_button("📡 Open the Telegram channel", url, type="primary")
-        else:
-            st.markdown("Open Telegram and search for the **InvestiGator Alerts** channel.")
-        st.caption("One alert per unusual move or material headline per day — no spam by design.")
-    with c2:
-        st.subheader("2 · Optional: your own watchlist")
-        st.markdown(
-            """
-Send the bot a direct message:
-
-| Command | What it does |
-|---|---|
-| `/watch TSLA` | add a ticker to *your* list |
-| `/list` | see your list |
-| `/unwatch TSLA` | remove it |
-| `/stop` | pause (list is kept) |
-            """
-        )
-        st.caption("Replies arrive with the next scan (≤30 min in market hours).")
-    st.subheader("What an alert looks like (real output)")
-    st.code(
-        '📰 News alert for NVDA\n'
-        '"Nvidia demand surges on AI chip orders"\n'
-        "Potential impact (from 3 similar past events): average 5-day move: +6.46%\n"
-        "Historical precedents:\n"
-        '  • 2023-05-25 NVDA (sim 0.60) → 5d +3.55%: "Nvidia guidance surges..."\n'
-        '  • 2023-04-25 MSFT (sim 0.38) → 5d +10.89%: "Microsoft cloud growth..."\n'
-        '  • 2023-06-13 NVDA (sim 0.38) → 5d +4.93%: "Nvidia unveils new AI..."\n'
-        "Note: precedents are retrieved by semantic similarity; the impact is the observed past\n"
-        "outcome, not a price prediction.",
-        language=None,
-    )
-    st.caption("Produced by the system's own offline demo (`python scripts/demo.py`) — "
-               "deterministic and reproducible.")
-
-
-def page_method() -> None:
-    tab_what, tab_how, tab_eval, tab_cite = st.tabs(
-        ["What is this?", "How it works", "Evaluation", "About & cite"]
-    )
-    with tab_what:
-        page_home()
-    with tab_how:
-        page_how()
-    with tab_eval:
-        page_evaluation()
-    with tab_cite:
-        page_about()
-
-
-PAGES = {
-    "📊 Markets now": page_live,
-    "🔎 Ticker check": page_market,
-    "📰 Check a headline": page_news,
-    "📡 Get alerts": page_alerts,
-    "🎓 About & method": page_method,
-}
+def _method_and_evaluation() -> None:
+    label = "📖 Method, evaluation & more (how it works, cite it, get it on your phone)"
+    with st.expander(label):
+        tabs = st.tabs(["How it works", "Evaluation", "Try a headline", "Check any ticker",
+                       "Get alerts", "About"])
+        with tabs[0]:
+            _section_how()
+        with tabs[1]:
+            _section_evaluation()
+        with tabs[2]:
+            _section_try_headline()
+        with tabs[3]:
+            _section_check_ticker()
+        with tabs[4]:
+            _section_get_alerts()
+        with tabs[5]:
+            _section_about()
 
 
 def main() -> None:
     st.sidebar.title("InvestiGator")
-    st.sidebar.caption("Market alerts that explain themselves.")
-    choice = st.sidebar.radio("Go to", list(PAGES.keys()), label_visibility="collapsed")
+    st.sidebar.caption("_Investigate. Don't speculate._ 🐊🔍")
     st.sidebar.markdown("---")
-    st.sidebar.caption(
-        "⚠️ Research tool (MSc dissertation, ISEP). Explains past evidence — "
-        "**not** financial advice, **no** price predictions."
-    )
-    PAGES[choice]()
+    with st.sidebar:
+        _disclaimer()
+
+    st.title("Markets now")
+    st.caption("Same watchlist, same detector, same alerts as the Telegram channel — "
+               "pick a ticker below.")
+
+    tickers, _window, _threshold = _watchlist_config()
+    history = _read_shared_history()
+    if not history:
+        st.caption("⚠ No shared alert history available right now (network, or none sent yet) "
+                   "— the charts below still show live prices; alerts will appear once the "
+                   "scheduled scan records them.")
+
+    tabs = st.tabs(tickers)
+    for tab, ticker in zip(tabs, tickers, strict=True):
+        with tab:
+            _ticker_tab(ticker, history)
+
+    _method_and_evaluation()
 
 
 if __name__ == "__main__":

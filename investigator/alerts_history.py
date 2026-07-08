@@ -31,22 +31,42 @@ def classify_kind(text: str) -> str:
     return "market" if "Anomaly detected for" in text else "news"
 
 
+def parse_jsonl_lines(lines: list[str]) -> list[HistoryEntry]:
+    """Interpreta linhas JSONL já em memória; linhas inválidas são ignoradas (fail-open)."""
+    entries: list[HistoryEntry] = []
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            entries.append(HistoryEntry(**json.loads(line)))
+        except (json.JSONDecodeError, TypeError):
+            continue
+    return entries
+
+
 def load_jsonl(path: str | Path) -> list[HistoryEntry]:
-    """Lê o histórico; ficheiro em falta ou linha inválida não são erro fatal (fail-open)."""
+    """Lê o histórico local; ficheiro em falta não é erro fatal (fail-open)."""
     p = Path(path)
     if not p.exists():
         return []
-    entries: list[HistoryEntry] = []
-    with p.open(encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                entries.append(HistoryEntry(**json.loads(line)))
-            except (json.JSONDecodeError, TypeError):
-                continue
-    return entries
+    return parse_jsonl_lines(p.read_text(encoding="utf-8").splitlines())
+
+
+def fetch_remote(url: str, timeout: float = 5.0) -> list[HistoryEntry]:
+    """Vai buscar o histórico partilhado a um URL raw (ex.: GitHub) — é o que a app pública usa.
+
+    Fail-open TOTAL: rede em baixo, 404, timeout ou JSON inválido devolvem lista vazia em vez
+    de levantar — a app tem de continuar a funcionar mesmo sem histórico partilhado disponível.
+    """
+    import requests
+
+    try:
+        resp = requests.get(url, timeout=timeout)
+        resp.raise_for_status()
+        return parse_jsonl_lines(resp.text.splitlines())
+    except Exception:
+        return []
 
 
 def save_jsonl(entries: list[HistoryEntry], path: str | Path) -> None:

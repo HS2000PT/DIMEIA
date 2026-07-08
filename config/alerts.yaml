@@ -49,6 +49,9 @@ bot:
   # db: data/bot_users.db   # caminho da base (defeito; gitignored)
 
 # Dados PÚBLICOS do produto (não-secretos; o canal é público por definição).
-# Preenche com o link do teu canal para a app mostrar o botão "Open the Telegram channel".
 public:
+  # Link do canal — a app mostra o botão "Open the Telegram channel".
   channel_url: https://t.me/InvestiGatorMEIA
+  # URL raw do histórico partilhado (branch `alerts-history`, escrita pelo workflow) — a app
+  # lê-o ao vivo em vez de recalcular alertas; muda só se migrares/renomeares o repositório.
+  history_url: https://raw.githubusercontent.com/HS2000PT/DIMEIA/alerts-history/alerts_history.jsonl

@@ -39,5 +39,9 @@ joblib==1.5.3
 onnxruntime==1.27.0
 tokenizers==0.22.2
 
+# ── Gráfico interativo da app (marcadores com hover no painel ao vivo) ───────
+# Puro Python (sem binários pesados) — instala em qualquer versão do Python.
+plotly==6.8.0
+
 # O próprio pacote (editável): torna `investigator` importável sem hacks de sys.path.
 -e .
