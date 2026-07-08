@@ -63,6 +63,30 @@
       SQLite; fan-out no runner off por defeito e fail-open; 10 testes novos → 103; app com
       secção "alerts no telemóvel"). Ligar: scripts/run_bot.py + bot.enabled no alerts.yaml.
 
+## 🖥️ FEITO — Sessão 33 (redesenho de produto: painel único ao vivo)
+> Pedido do aluno após uso real ("we need hard changes and renew"): alertas de mercado raros
+> demais, materialidade em jargão, Streamlit com "muito lixo" e sem mostrar o modelo TREINADO.
+> Plano aprovado em modo de planeamento; executado em 4 fases — ver
+> `docs/decisions/product_review.md` (Pass 6) para o relatório completo.
+- [x] Sensibilidade de produção: `threshold` 3,0→2,0 (divulgado, distinto da avaliação); linha
+      de materialidade reescrita em linguagem simples.
+- [x] **Histórico partilhado** `investigator/alerts_history.py` + branch de dados `alerts-history`
+      (workflow escreve, app lê via raw URL) — Telegram e Streamlit deixam de poder divergir.
+- [x] **App reescrita**: painel único, uma aba por ticker, "Background risk" do TEU modelo (RQ4)
+      todos os dias (novo `score_background`), gráfico Plotly anotado, tabela de histórico;
+      "Method & evaluation" num expander no fundo. 2 bugs reais apanhados pelos testes antes de
+      produção (IDs de gráfico duplicados; expander aninhado).
+- [x] **Notebook** `notebooks/investigator_walkthrough.ipynb` — os 3 componentes (anomalia,
+      retrieval, o modelo treinado) executado de ponta a ponta, 0 erros.
+- [x] **Screenshots reais** (não mockups) capturados e inseridos: tese Cap. 4 (Fig. 4.5, 78 pp),
+      slides de defesa (novo frame, 17 pp), guia de estudo (frame "produto, HOJE", 64 pp) — todos
+      0 erros/citações indefinidas.
+- [x] Documentação sincronizada (README, CHECKLIST, going_live, deployment, caderno, guia rápido,
+      RELATORIO_FINAL, product_review) — 132 testes + ruff verdes.
+- [ ] **HUMANO (opcional, 10s):** Actions → "Alerts (scheduled scan)" → Run workflow — confirma
+      a branch `alerts-history` a receber o primeiro registo real (ou espera a corrida agendada
+      de amanhã em horário de mercado; não bloqueia nada).
+
 ## ⏳ A fazer — EU (humano; ninguém pode fazer por ti)
 ### Pôr o sistema 24/7 ao vivo (grátis) — ver [docs/design/going_live.md](docs/design/going_live.md)
 - [x] Criar um **canal de Telegram** e adicionar o bot como **administrador**.

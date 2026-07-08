@@ -68,6 +68,14 @@ Muda em `.github/workflows/alerts.yml`.
 > Notas honestas: o cron do GitHub é **UTC** e **best-effort** (pode atrasar alguns minutos); e **pausa
 > após 60 dias sem atividade** no repo (qualquer commit volta a armá-lo).
 
+**Histórico partilhado (sync com a app, 2026-07-08).** Cada alerta REALMENTE enviado fica registado
+(`investigator/alerts_history.py`) e publicado numa branch de dados só para isso — **`alerts-history`**
+(nunca a `main`, para não sujar a história do código/tese) — via um passo dedicado do workflow
+(checkout à parte + commit + push; por isso o workflow tem `permissions: contents: write`, só para
+essa branch). A app Streamlit lê esse ficheiro ao vivo (raw.githubusercontent.com, cache de 60s) —
+nunca recalcula. Fail-open total: se o checkout ou o push falharem, o runner e o envio ao Telegram
+continuam normalmente, só o histórico partilhado fica por publicar dessa vez.
+
 ### 5) Escolher o que é vigiado
 `config/alerts.yaml`: a **watchlist** (`tickers`), a `window` e o `threshold` do z-score; e ligar/desligar
 o gatilho de notícias. Sem segredos aqui.
@@ -85,9 +93,10 @@ rotula as decisões maturadas com o que REALMENTE aconteceu e escreve
 (o log não persiste entre corridas) — o loop completo corre na tua máquina; persistir o log na
 nuvem fica para a Fase B.
 
-### 6) A webpage (dashboard) sempre disponível
+### 6) A webpage (painel único) sempre disponível
 Publica `app/streamlit_app.py` no **Streamlit Community Cloud** — passos em
-[`deployment.md`](deployment.md). Depois cola o URL no `README.md` e na tese.
+[`deployment.md`](deployment.md). Uma página, uma aba por ticker, os mesmos alertas do canal.
+Depois cola o URL no `README.md` e na tese.
 *(Opcional: uma página GitHub Pages a ligar o dashboard + o canal, com um domínio grátis do Student Pack.)*
 
 ### Experimentar na tua máquina (sem enviar)

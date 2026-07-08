@@ -1182,23 +1182,25 @@ Avaliação & precision@k \emph{cross-ticker} & --- & padrão; evita match trivi
 \begin{frame}{O produto, HOJE — o que está ao vivo (e como mostrar)}
 \footnotesize
 Não é só uma tese em papel: o sistema \key{corre} em produção, de graça, sem servidor próprio.
-\vspace{1mm}
+\begin{columns}
+\column{0.5\textwidth}
+\includegraphics[width=\linewidth]{app_dashboard.png}
+\column{0.5\textwidth}
 \begin{itemize}
-  \item \key{Dashboard público} — \texttt{investigator.streamlit.app}: os dois gatilhos e a
-        avaliação, no browser. O retrieval é \key{semântico}: o MESMO MiniLM da tese em
-        \key{ONNX} ($\sim$23 MB, sem torch; paridade com o SBERT validada — cosseno médio 0,992)
-        sobre uma fatia curada de 2.016 manchetes FNSPID 2018--2023. A página "Markets now"
-        mostra os \key{mesmos alertas} que o canal recebe (mesma config, detetor e texto).
+  \item \key{Painel único} — \texttt{investigator.streamlit.app}: UMA página, uma \key{aba por
+        ticker} da watchlist. Cada aba mostra o "background risk" (o TEU modelo de triagem, RQ4,
+        pontua TODOS os dias, mesmo sem notícia), o gráfico anotado com cada evento detetado, e a
+        tabela de histórico — tudo lido do MESMO registo que o canal recebeu (nunca recalculado).
+  \item \key{Retrieval semântico} — o MESMO MiniLM da tese em \key{ONNX} ($\sim$23 MB, sem torch;
+        paridade com o SBERT validada — cosseno médio 0,992) sobre uma fatia curada de 2.016
+        manchetes FNSPID 2018--2023.
   \item \key{Canal Telegram + timer} — o GitHub Actions varre a watchlist \key{de 30 em 30 min}
-        em horário de mercado US (best-effort) e publica alertas explicados no canal.
-        Anti-repetição no dia + anti-repetição de notícias ($\leq 2$ dias) e
-        anti-duplicado em feriados (só avalia com sessão nova).
-  \item \key{Bot interativo} — \texttt{/watch TSLA}, \texttt{/list}, \texttt{/stop}: cada
-        utilizador gere a sua watchlist (SQLite local; \emph{long-polling}, sem servidor).
-        Off por defeito no runner; fail-open (nunca parte a produção).
-  \item \key{À prova de wifi} — se a demo ao vivo falhar: \texttt{python scripts/demo.py} é
-        offline e determinística (reproduz o $+6{,}46\%$ do Cap.~3).
+        em horário de mercado US e publica alertas explicados no canal.
+  \item \key{Bot interativo} — \texttt{/watch TSLA}, \texttt{/list}, \texttt{/stop}, sem servidor.
+  \item \key{À prova de wifi} — \texttt{python scripts/demo.py} é offline e determinística
+        (reproduz o $+6{,}46\%$ do Cap.~3).
 \end{itemize}
+\end{columns}
 \vspace{1mm}
 \centering \emph{Uma frase para o júri:} "o desenho de produção é conservador: tudo o que é
 opcional está desligado por defeito e falha aberto — a produção nunca depende de um componente

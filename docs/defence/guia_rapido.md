@@ -40,7 +40,7 @@ por scripts versionados."
 | **0,632 vs 0,163** | MAS: precisão@5-alertas/dia da triagem vs alertar-sempre (quase 4×) — o mecanismo vale | idem |
 | **79.753 / 2.016** | Exemplos FNSPID 2018–23 do treino / fatia curada que serve a app pública | `kb_fnspid_build.md` |
 | **0,992 / 96%** | Paridade ONNX↔SBERT na produção (cosseno médio; vizinhos top-3 comuns) | `onnx_minilm_validation.md` |
-| **117 testes; 76 pp; 52/52** | Testes+ruff verdes; tese 0 erros; todas as citações verificadas | CI, `page_audit.md` |
+| **132 testes; 78 pp; 52/52** | Testes+ruff verdes; tese 0 erros; todas as citações verificadas | CI, `page_audit.md` |
 
 ## 4. Cada componente em 3 frases
 
@@ -73,4 +73,4 @@ por scripts versionados."
 
 - **Detalhado (ensina do zero):** `slides/guia_estudo/main.pdf` (64 slides).
 - **Guião oral + perguntas do júri completas:** `docs/defence/caderno_de_defesa.md` (§0 e §7).
-- **A tese em si:** `thesis/main.pdf` (76 pp) — a leitura final é insubstituível.
+- **A tese em si:** `thesis/main.pdf` (78 pp) — a leitura final é insubstituível.

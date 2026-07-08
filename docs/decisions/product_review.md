@@ -66,9 +66,56 @@ pessoais processados. É um ponto **positivo** do desenho que vale a pena saber 
 
 ---
 
-## Veredito
+## Veredito (Pass 5)
 O produto é coerente com o seu propósito e honesto sobre os seus limites. A melhoria de produto de maior
 alavancagem é a **compreensão para leigos** (P-1), agora parcialmente implementada (gloss do z-score) e
 recomendada para a similaridade. As restantes (fadiga, sobre-confiança, casos-limite) já estão refletidas na
 tese como considerações de desenho/trabalho futuro, sem sobre-afirmar o que não foi construído. Nenhuma
 funcionalidade irreal foi proposta.
+
+---
+
+## Pass 6 (2026-07-08/09) — Redesenho para painel único, uso real ao vivo
+
+**Motivo.** Depois de dias a usar o sistema a sério, o aluno reportou 3 problemas concretos: (1) quase nunca
+recebia alertas de mercado; (2) a linha de materialidade era jargão ilegível; (3) o Streamlit tinha "lixo a
+mais" (8 páginas) e não refletia o modelo TREINADO por ele — sentia que o produto tinha ido por um caminho
+diferente do que a tese/visão pedia. Pergunta direta feita e respondida com evidência: a tese **não** prende
+nenhuma estrutura de UI específica (verificado: só menciona "an interactive dashboard" uma vez + um mockup
+desenhado do Telegram) — o pivô de produto não invalida nada da ciência avaliada.
+
+### P-8 — Threshold de produção longe de "vivo" — **Crítico, corrigido**
+`threshold=3.0` é o valor AVALIADO na tese (frozen) mas estatisticamente raro num board de 10 tickers em
+produção (~1-3%/ticker/dia). **Corrigido:** `config/alerts.yaml` → `threshold=2.0`, divulgado como parâmetro
+de implantação distinto da avaliação académica (que nunca muda). Validado ao vivo (dry-run disparou um
+alerta real).
+
+### P-9 — Jargão na linha de materialidade — **Maior, corrigido**
+"Top factors: sector (+)" não é legível por um leigo. **Corrigido:** `materiality_line` reescrita em
+linguagem simples ("raised by X and Y; lowered by Z").
+
+### P-10 — Telegram e Streamlit podiam divergir silenciosamente — **Crítico, corrigido**
+Cada superfície recalculava os alertas de forma independente — sem histórico partilhado, podiam discordar, e
+a app não tinha memória de dias anteriores. **Corrigido:** novo `investigator/alerts_history.py` + branch
+`alerts-history` (dados, escrita pelo workflow) + `fetch_remote()` na app — as duas superfícies leem o MESMO
+registo; nunca recalculam.
+
+### P-11 — O modelo treinado ficava escondido — **Maior, corrigido**
+A triagem (RQ4, o único componente treinado pelo aluno) só aparecia num painel secundário, só para notícias.
+**Corrigido:** novo `score_background()` pontua TODOS os dias, sem notícia — "Background risk" é agora um
+elemento permanente de cada aba de ticker no painel único.
+
+### P-12 — Demasiadas páginas, navegação confusa — **Maior, corrigido**
+8 páginas (Home/Live/News/Market/Evaluation/How/About/Alerts) reescritas para **UMA** página com abas por
+ticker (gráfico Plotly anotado + tabela de histórico + risco); "Method & evaluation" fica num único
+`st.expander` no fundo, decisão confirmada com o aluno (não removido — só decluttered).
+
+**2 bugs reais apanhados pelos testes ANTES de produção:** IDs de gráfico Plotly colidiam entre abas
+(mesma chave auto-gerada); `st.expander` aninhado dentro de outro (Streamlit não permite). Ambos só
+apareceram ao correr o AppTest a sério — reforça o valor de testar a UI, não só a lógica.
+
+## Veredito (Pass 6)
+O pivô de produto é legítimo e não custa nada à ciência da tese (verificado, nada reescrito no Cap. 1-6 além
+de uma frase de cadência já desatualizada). Os 5 achados críticos/maiores reportados pelo aluno foram
+corrigidos e validados (testes + AppTest + arranque real do servidor + captura de ecrã genuína). Continua
+sem funcionalidade irreal proposta; o histórico partilhado só mostra o que foi realmente enviado.

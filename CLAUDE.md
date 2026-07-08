@@ -7,8 +7,47 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 32 (**Retrieval SEMÂNTICO na nuvem: MiniLM em ONNX** — o último item de produto do CHECKLIST)
-- **Última atualização:** 2026-07-07
+- **Sessão nº:** 33 (**Redesenho de produto: painel único ao vivo** — "we need hard changes and renew")
+- **Última atualização:** 2026-07-09
+- **🖥️ SESSÃO 33 (redesenho de produto, feedback real do aluno após dias de uso):** o aluno reportou
+  3 problemas concretos depois de usar o sistema a sério — quase nunca recebia alertas de mercado,
+  a linha de materialidade era jargão, e o Streamlit (8 páginas) "não parecia refletir o meu
+  trabalho treinado". Pediu mudanças fortes + um plano de vários dias, e perguntou diretamente se o
+  projeto tinha ido por um caminho errado.
+  **Resposta verificada:** não — a tese nunca prende nenhuma estrutura de UI específica (só
+  menciona "an interactive dashboard" uma vez + um mockup desenhado do Telegram); o pivô é de
+  produto, não de ciência. **Entrei em modo de planeamento** (2 agentes Explore + 3 perguntas
+  AskUserQuestion ao aluno: conteúdo secundário → expander no fundo; risco sempre visível → sim;
+  notebook → âmbito alargado) e produzi um plano de 5 fases, aprovado antes de codificar.
+  **Fixes rápidos (antes do plano):** `threshold` de mercado 3,0→2,0 em produção (divulgado,
+  distinto da avaliação da tese, que fica intocada) — validado ao vivo (dry-run disparou um
+  alerta real); `materiality_line` reescrita em linguagem simples ("raised by X and Y").
+  **Fase 1 — histórico partilhado:** novo `investigator/alerts_history.py` (puro, testado) +
+  branch de dados **`alerts-history`** (bootstrap via git plumbing, sem tocar na árvore de
+  trabalho) — o workflow escreve, a app lê via raw.githubusercontent.com (cache 60s, fail-open) —
+  Telegram e Streamlit deixam de poder divergir silenciosamente.
+  **Fase 2 — app reescrita por completo:** painel único, uma aba por ticker; "Background risk"
+  do modelo TREINADO pelo aluno (RQ4) pontua TODOS os dias, mesmo sem notícia (novo
+  `score_background`); gráfico Plotly anotado (hover = texto exato do alerta); tabela de
+  histórico; "Method & evaluation" num único expander no fundo (decisão confirmada com o aluno).
+  **2 bugs reais apanhados pelos testes ANTES de produção:** IDs de gráfico Plotly colidiam entre
+  abas (mesma chave auto-gerada); `st.expander` aninhado (Streamlit não permite) — ambos só
+  apareceram ao correr o AppTest a sério, e foram confirmados também com um arranque REAL do
+  servidor Streamlit (não só AppTest), health 200.
+  **Fase 3 — notebook:** `notebooks/investigator_walkthrough.ipynb` (âmbito alargado, confirmado
+  com o aluno): anomalia + retrieval + o modelo treinado, executado de ponta a ponta
+  (`jupyter nbconvert --execute`), 0 erros, outputs reais (2 caminhos locais que escaparam para
+  os outputs foram limpos antes do commit).
+  **Fase 4 — screenshots reais:** capturados com Playwright (servidor Streamlit local real, não
+  a app pública — que continua privada) e inseridos como figuras genuínas (não mockups) na tese
+  (Cap. 4, Fig. 4.5), nos slides de defesa (novo frame "The product, live") e no guia de estudo
+  (frame "produto, HOJE") — todos recompilados 0 erros (78/17/64 pp). Caption honesto: captura
+  cedo, histórico ainda vazio (o mecanismo tinha acabado de ser construído) — não fabricado.
+  Documentação sincronizada de ponta a ponta (README, CHECKLIST, going_live, deployment, caderno
+  de defesa +1 pergunta de júri nova, guia rápido, RELATORIO_FINAL, `product_review.md` Pass 6).
+  **Validado: 132 testes + ruff verdes** em todas as fases. **Pendente (não bloqueia): confirmar
+  a branch `alerts-history` a receber o 1.º registo real** — ou clique do aluno em "Run workflow",
+  ou a corrida agendada do dia seguinte em horário de mercado.
 - **🧠 SESSÃO 32 (produto, "continue with the pendings and plan"):** o único pendente de código
   registado (CHECKLIST §polimento) foi construído: **a app pública e o runner passam a recuperar
   precedentes SEMANTICAMENTE** com o MESMO modelo da tese (`all-MiniLM-L6-v2`) exportado em ONNX

@@ -317,8 +317,8 @@ progress/      TRACKER (checklist) + SESSIONS (registo)
 
 | Peça | Estado | Como mostrar em 30 segundos |
 |------|--------|------------------------------|
-| **Dashboard público** | <https://investigator.streamlit.app> (falta 1 clique meu para tirar o login) | Abrir no browser → News trigger → "Find precedents" |
-| **Canal Telegram + varredura agendada** | GitHub Actions corre seg–sex após o fecho US (badge "Alerts" no README) | Mostrar o badge verde + uma mensagem real no canal |
+| **Painel único público** | <https://investigator.streamlit.app> (falta 1 clique meu para tirar o login) | Abrir no browser → escolher uma aba de ticker → ver o "Background risk" + o gráfico anotado |
+| **Canal Telegram + varredura intradiária** | GitHub Actions corre de 30 em 30 min em horário de mercado US (badge "Alerts" no README) | Mostrar o badge verde + uma mensagem real no canal |
 | **Bot interativo (watchlist pessoal)** | Construído; corre em qualquer máquina (`run/bot.bat`), sem servidor | `/watch TSLA` → `/list` no telemóvel, ao vivo |
 | **Demo offline (à prova de wifi)** | `python scripts/demo.py` — determinística, sem chaves | Reproduz o exemplo do Cap. 3: média **+6,46%** |
 | **KB multi-ano** | 79.753 registos SBERT (artefacto local) + fatia curada de 2.016 na app | `docs/evaluation/kb_fnspid_build.md` |
@@ -348,6 +348,15 @@ com similaridade e impacto, aviso de não-previsão), por isso o argumento de fi
 o texto continua a ser gerado dos próprios objetos calculados, e os testes de fidelidade
 continuam a exigir cada número. O Cap. 4 regista esta evolução numa frase; o CS3 é o registo
 experimental congelado e fica intocado.
+
+**P: A app pública mudou de 8 páginas para um painel único — isso não invalida o que estava na tese?**
+R: Não, e verifiquei isso explicitamente antes de mudar nada: a tese menciona "an interactive
+dashboard published alongside" apenas uma vez e usa um mockup DESENHADO do Telegram para ilustrar
+o formato da mensagem — nunca descreve páginas ou navegação específicas. O redesenho é um pivô de
+**produto** (uso real ao vivo revelou que o formato de "visita guiada para examinador" não servia
+para uso diário), não de ciência: os mesmos componentes validados (z-score, retrieval, triagem)
+continuam por baixo, agora com o modelo treinado (RQ4) muito mais visível — pontua todos os dias
+em cada aba, não só quando há notícia.
 
 **P: Isto não é só usar bibliotecas existentes?**
 R: Sim, e numa tese de *Engenharia* de IA é isso que se pede: a contribuição é a integração, a metodologia

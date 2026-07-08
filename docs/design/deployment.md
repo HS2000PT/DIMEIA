@@ -5,8 +5,14 @@
 > sistema a funcionar sem instalar nada.
 
 ## O que é o dashboard
-Uma interface fina e **sem estado** por cima das funções já validadas do InvestiGator (gatilho de
-notícia, gatilho de mercado, avaliação). Não treina nada, não prevê preços, não envia nada.
+**Painel único ao vivo** (redesenho de produto, 2026-07-08): uma aba por ticker da watchlist,
+cada uma com o "background risk" do modelo de triagem TREINADO pelo autor (RQ4; pontua todos os
+dias, mesmo sem notícia), um gráfico Plotly do preço anotado com cada evento detetado, e a
+tabela de histórico — tudo lido do MESMO registo partilhado que o canal Telegram recebeu
+(`investigator/alerts_history.py`, branch `alerts-history`), nunca recalculado de forma
+independente. "Method & evaluation" (como funciona, os números da tese, uma sandbox de
+manchete/ticker, como receber alertas, citação) fica num único `st.expander` no fundo.
+Não treina nada em produção, não prevê preços, não envia nada.
 O retrieval de precedentes é **semântico**: o MESMO MiniLM da tese exportado em **ONNX**
 (~23 MB, `onnxruntime` CPU, sem torch), descarregado uma vez no arranque com SHA256 pinado
 (paridade numérica com o SBERT verificada em `docs/evaluation/onnx_minilm_validation.md`).
@@ -52,5 +58,6 @@ streamlit run app/streamlit_app.py
 - Aviso `More than one requirements file (uv requirements.txt vs poetry pyproject.toml)` é
   **benigno**: o pyproject é para o pacote/ferramentas; o Cloud usa o requirements.txt (correto,
   e a linha `-e .` instala o pacote `investigator`).
-- Para o botão "Open the Telegram channel" na página **📡 Get alerts**: preenche
-  `public.channel_url` no `config/alerts.yaml` (não é segredo — o canal é público).
+- Para o botão "Open the Telegram channel" (agora dentro do expander **Method & evaluation → Get
+  alerts**): preenche `public.channel_url` no `config/alerts.yaml` (não é segredo — o canal é
+  público). O histórico partilhado usa `public.history_url` (tem um valor por defeito sensato).

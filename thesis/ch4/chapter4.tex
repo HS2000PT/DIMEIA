@@ -302,6 +302,24 @@ illustration; the full real end-to-end output appears in Chapter~\ref{chap:cases
 \label{fig:telegram_mockup}
 \end{figure}
 
+The same reasoning is also published as a live, single-page dashboard (Figure~\ref{fig:app_dashboard}):
+one tab per watchlist ticker, each showing the current price, a background risk score from the
+trained triage model (Section~\ref{sec:met_triage}) computed every day even without a fresh
+headline, a price chart annotated with every detected event, and a table with the same alert text
+delivered to the Telegram channel — both surfaces read from one shared, versioned record, so they
+cannot silently disagree.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/app_dashboard.png}
+\caption[The live dashboard, a genuine capture]{The public dashboard (a genuine screenshot, not a
+mockup): one page, a tab per ticker, the trained triage model's background risk, an annotated
+price chart, and the alert history. This capture was taken shortly after the shared-history
+mechanism was deployed, before the scheduled scan had accumulated entries for this ticker — the
+history panel is honestly empty rather than fabricated; it fills in as real alerts are sent.}
+\label{fig:app_dashboard}
+\end{figure}
+
 \section{Practical Use and Responsible Design}
 \label{sec:investigator_deploy}
 

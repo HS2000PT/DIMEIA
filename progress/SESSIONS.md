@@ -5,6 +5,27 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 33 — 2026-07-09 — Redesenho de produto: painel único ao vivo
+**Pedido:** feedback real após dias de uso — alertas de mercado raros, materialidade em jargão,
+Streamlit "com muito lixo" e sem mostrar o modelo treinado; "we need hard changes and renew" +
+pedido de um plano de vários dias + pergunta direta "fomos por um caminho errado?".
+- **Resposta verificada:** não — a tese não prende nenhuma UI específica; pivô de produto, não de
+  ciência. Entrei em modo de planeamento (2 Explore + 3 AskUserQuestion) antes de codificar.
+- **Fixes imediatos:** threshold de mercado 3,0→2,0 (produção, divulgado); materiality_line em
+  linguagem simples.
+- **Fase 1:** `investigator/alerts_history.py` + branch de dados `alerts-history` — Telegram e
+  Streamlit passam a ler o MESMO registo, nunca recalculam.
+- **Fase 2:** app reescrita — painel único, aba por ticker, "Background risk" do modelo TREINADO
+  (RQ4, novo `score_background`) todos os dias, gráfico Plotly anotado, histórico, "Method &
+  evaluation" num expander. 2 bugs reais (IDs de gráfico duplicados; expander aninhado) apanhados
+  pelos testes antes de produção; confirmado também com arranque real do servidor.
+- **Fase 3:** `notebooks/investigator_walkthrough.ipynb` (anomalia+retrieval+modelo treinado),
+  executado de ponta a ponta, 0 erros.
+- **Fase 4:** screenshots reais (Playwright, servidor local) inseridos na tese (Fig. 4.5, 78 pp),
+  slides (17 pp) e guia (64 pp) — 0 erros em todos; documentação toda sincronizada.
+- **132 testes + ruff verdes** em todas as fases. Pendente não-bloqueante: confirmar a branch
+  `alerts-history` a receber o 1.º registo real (clique do aluno ou corrida agendada de amanhã).
+
 ## Sessão 32 — 2026-07-07 — Retrieval SEMÂNTICO na nuvem (MiniLM em ONNX) — produto fechado
 **Pedido:** "continue with the pendings and plan" → o último pendente de código do CHECKLIST.
 - **Novo `investigator/historical_kb/onnx_embedder.py`:** o MESMO `all-MiniLM-L6-v2` da tese em
