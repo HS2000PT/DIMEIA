@@ -26,12 +26,25 @@ Honesty notes (mirrors the thesis):
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
 import pandas as pd
-import plotly.graph_objects as go
 import streamlit as st
+
+# Plotly é um "nice-to-have" (gráfico interativo com marcadores): a app NUNCA pode cair por
+# causa dele. Se faltar no ambiente (ex.: deploy em Python sem wheels para a stack pinada —
+# ver docs/design/deployment.md), degradamos para st.line_chart e dizemo-lo.
+# INVESTIGATOR_NO_PLOTLY=1 força o fallback (testes).
+_HAS_PLOTLY = os.environ.get("INVESTIGATOR_NO_PLOTLY") != "1"
+if _HAS_PLOTLY:
+    try:
+        import plotly.graph_objects as go
+    except ModuleNotFoundError:
+        _HAS_PLOTLY = False
+if not _HAS_PLOTLY:
+    go = None
 
 # Allow `streamlit run app/streamlit_app.py` from the repo root (put the root on sys.path).
 _ROOT = Path(__file__).resolve().parents[1]
@@ -196,7 +209,7 @@ def _risk_gauge(ticker: str, close: pd.Series) -> None:
                "that gates the news alerts.")
 
 
-def _ticker_chart(ticker: str, close: pd.Series, history: list) -> go.Figure:
+def _ticker_chart(ticker: str, close: pd.Series, history: list):
     """Preço de fecho + um marcador por evento detetado (hover = o texto exato do alerta)."""
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -248,8 +261,15 @@ def _ticker_tab(ticker: str, history: list) -> None:
     c2.metric("Alerts on record", len(ticker_hist))
 
     _risk_gauge(ticker, close)
-    st.plotly_chart(_ticker_chart(ticker, close, history), use_container_width=True,
-                    config={"displayModeBar": False}, key=f"chart_{ticker}")
+    if _HAS_PLOTLY:
+        st.plotly_chart(_ticker_chart(ticker, close, history), use_container_width=True,
+                        config={"displayModeBar": False}, key=f"chart_{ticker}")
+    else:
+        # Fallback: a app nunca cai por causa do gráfico interativo. Preço simples +
+        # os eventos continuam TODOS na tabela abaixo (a mesma informação, sem hover).
+        st.line_chart(close, use_container_width=True)
+        st.caption("Interactive chart unavailable in this environment (plotly not installed) "
+                   "— all detected events remain in the table below.")
 
     st.subheader("History — same alerts sent to the Telegram channel")
     if ticker_hist:

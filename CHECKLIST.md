@@ -8,11 +8,11 @@
 ## 🧑 Cliques só teus (ninguém pode fazer por ti)
 
 ### Produto ao vivo
-- [ ] **Streamlit: Reboot app** — o deploy ficou preso num pull antigo (o `plotly` não está
-      instalado no ambiente). "Manage app" → ⋮ → **Reboot app**; se não resolver, apagar o
-      deployment e recriar (mesmo repo, `app/streamlit_app.py`, Python 3.12).
-- [ ] **Streamlit: Sharing → público** — a app regrediu para privada num redeploy anterior;
-      verificar em janela anónima depois do reboot.
+- [ ] **Streamlit: apagar e recriar a app com Python 3.12** (Advanced settings ao criar —
+      NÃO é o defeito). Causa confirmada (2026-07-11): em Python 3.14 os pins pandas/numpy
+      não têm wheels, a instalação falha em silêncio (~45 min) e a app arranca sem plotly
+      no ambiente base da plataforma. Detalhe: `docs/design/deployment.md` (aviso no topo).
+- [ ] **Streamlit: Sharing → público** — logo a seguir a recriar; verificar em janela anónima.
 - [ ] **VM Oracle Free (para alertas em minutos)** — criar conta + VM e correr
       `bash deploy/setup_vm.sh` (guia passo-a-passo: `docs/design/vm_watch.md`). Até lá, o cron
       do GitHub cobre com latência ~1-2 h. *Testável já no teu PC:*

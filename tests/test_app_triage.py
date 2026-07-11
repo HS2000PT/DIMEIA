@@ -115,3 +115,19 @@ def test_expander_method_e_evaluation_presente(monkeypatch):
     assert len(at.expander) >= 1
     headers_and_labels = [e.label for e in at.expander]
     assert any("Method" in lbl for lbl in headers_and_labels)
+
+
+def test_app_boota_sem_plotly(monkeypatch):
+    """A app NUNCA cai por causa do gráfico interativo: sem plotly, degrada para line_chart.
+    (Caso real: deploy em Python 3.14 sem wheels para a stack pinada → plotly ausente.)"""
+    import investigator.alerts_history as alerts_history
+    import investigator.market_data.prices as prices
+
+    monkeypatch.setenv("INVESTIGATOR_NO_PLOTLY", "1")
+    monkeypatch.setattr(prices, "get_price_history", _fake_history)
+    monkeypatch.setattr(alerts_history, "fetch_remote", lambda url, timeout=5.0: [])
+    at = AppTest.from_file(APP)
+    at.run(timeout=120)
+    assert not at.exception
+    captions = [c.value for c in at.caption]
+    assert any("Interactive chart unavailable" in c for c in captions)

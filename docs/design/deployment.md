@@ -26,10 +26,18 @@ streamlit run app/streamlit_app.py
 ```
 
 ## Publicar no Streamlit Community Cloud (grátis)
+
+> ⚠️ **OBRIGATÓRIO: Python 3.12 em "Advanced settings" ao criar a app.** Com o defeito
+> (3.14), os pins `pandas==2.2.3`/`numpy==2.1.3` NÃO têm wheels → o uv tenta compilar do
+> código-fonte durante ~45 min, FALHA em silêncio, e a plataforma arranca a app com o ambiente
+> base dela (pandas 3.x, **sem plotly**) → `ModuleNotFoundError` e comportamentos diferentes
+> dos testados. Diagnóstico confirmado 2026-07-11 (logs reais de dois deploys). A versão de
+> Python de uma app existente NÃO se muda — é preciso apagar e recriar.
+
 1. Garantir que o repositório está no GitHub e **público** (o tier gratuito exige repo acessível).
 2. Ir a <https://share.streamlit.io> e autenticar com o GitHub.
 3. **New app** → escolher o repositório `HS2000PT/DIMEIA`, o branch `main` e o ficheiro principal
-   **`app/streamlit_app.py`**.
+   **`app/streamlit_app.py`** → **Advanced settings → Python 3.12**.
 4. *Deploy*. A plataforma:
    - já traz o `streamlit` pré-instalado;
    - instala automaticamente o **`requirements.txt`** (stack leve) para o resto das dependências
