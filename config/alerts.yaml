@@ -21,6 +21,13 @@ market:
   # Só avaliar quando a última barra de preços é de HOJE (true por defeito): evita repetir
   # num feriado o alerta da sessão anterior e "avaliar" dados estagnados.
   # require_fresh_bar: true
+  # Deteção INTRADIÁRIA (só tem efeito no modo --watch, ex.: na VM): o retorno de HOJE em
+  # curso (cotação Finnhub em tempo real vs fecho anterior) avaliado contra a norma diária —
+  # o mesmo z-score, mais cedo. "Caiu 4,8% em 12 min" alerta em minutos, não ao fecho.
+  intraday:
+    enabled: true
+    # threshold próprio (defeito: o threshold de cima)
+    # threshold: 2.0
 
 # Gatilho de notícias (opcional): precisa de FINNHUB_API_KEY. É "best-effort" — sem memória do
 # que já foi enviado nesta fase, por isso pode repetir. Deixa 'false' até quereres experimentar.

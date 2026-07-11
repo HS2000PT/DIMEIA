@@ -124,3 +124,29 @@ def fetch_rss_feed(feed_url: str, ticker: str = "", timeout: int = 10) -> list[N
     resp = requests.get(feed_url, timeout=timeout)
     resp.raise_for_status()
     return parse_rss(resp.text, ticker)
+
+
+def fetch_finnhub_quote(ticker: str, api_key: str | None = None,
+                        timeout: int = 10) -> tuple[float, float]:
+    """Cotação em (quase) tempo real do Finnhub `/quote`: (preço atual, fecho anterior).
+
+    É a fonte da deteção INTRADIÁRIA no modo --watch: cotações US em tempo real no free
+    tier (60/min — 10 tickers/ciclo fica muito abaixo). Levanta em erro/sem chave — quem
+    chama decide o fail-open.
+    """
+    import requests
+
+    api_key = api_key or config.FINNHUB_API_KEY
+    if not api_key:
+        raise RuntimeError("FINNHUB_API_KEY não configurada (ver .env).")
+    resp = requests.get(
+        "https://finnhub.io/api/v1/quote",
+        params={"symbol": ticker, "token": api_key},
+        timeout=timeout,
+    )
+    resp.raise_for_status()
+    d = resp.json()
+    atual, fecho_anterior = float(d.get("c") or 0.0), float(d.get("pc") or 0.0)
+    if atual <= 0 or fecho_anterior <= 0:
+        raise RuntimeError(f"Cotação inválida para {ticker}: c={atual}, pc={fecho_anterior}")
+    return atual, fecho_anterior

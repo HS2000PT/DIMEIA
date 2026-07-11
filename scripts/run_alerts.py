@@ -467,6 +467,65 @@ def _mature_live_safe(today: date | None = None) -> None:
         print(f"[kb-viva] maturação falhou (ignorada): {type(exc).__name__}: {exc}")
 
 
+def is_us_market_session(now_utc) -> bool:
+    """Puro: estamos dentro da sessão US (com folga)? Seg-sex, 13:00–21:30 UTC.
+
+    Fora da sessão, a cotação `c` do Finnhub é o ÚLTIMO negócio (ex.: o fecho de sexta) —
+    avaliar isso ao sábado re-alertaria o movimento de ontem como se fosse "em curso".
+    A janela cobre verão e inverno (abertura 13:30/14:30, fecho 20:00/21:00 UTC).
+    """
+    if now_utc.weekday() >= 5:
+        return False
+    minutos = now_utc.hour * 60 + now_utc.minute
+    return 13 * 60 <= minutos <= 21 * 60 + 30
+
+
+def scan_intraday(cfg: dict) -> list[tuple[str, str]]:
+    """Deteção intradiária (modo --watch): o retorno DE HOJE em curso vs a norma diária.
+
+    Fonte: cotação em tempo real do Finnhub (`/quote`, free tier). O mesmo z-score
+    transparente da tese, avaliado a meio do dia — "caiu 4,8% em 12 minutos" não espera
+    pelo fecho. Dedup pelo `alerted_market` de sempre (1 alerta de mercado/ticker/dia).
+    Fail-open por ticker; sem chave, salta em silêncio (o cron close-based cobre).
+    """
+    from datetime import UTC, datetime
+
+    m = cfg.get("market", {})
+    intra = (m.get("intraday") or {})
+    if not (m.get("enabled", False) and intra.get("enabled", False)):
+        return []
+    if not is_us_market_session(datetime.now(UTC)):
+        return []  # fora da sessão, a cotação é estagnada — nada "em curso" a avaliar
+    from investigator import config
+    from investigator.anomaly_detector.detector import detect_intraday
+    from investigator.explanation_engine.explainer import explain_intraday
+    from investigator.market_data.prices import get_price_history, log_returns
+    from investigator.news_fetcher.fetcher import fetch_finnhub_quote
+
+    if not config.FINNHUB_API_KEY:
+        return []
+    window = int(m.get("window", 20))
+    threshold = float(intra.get("threshold", m.get("threshold", 3.0)))
+    alerts: list[tuple[str, str]] = []
+    for ticker in m.get("tickers", []):
+        try:
+            atual, fecho_anterior = fetch_finnhub_quote(ticker)
+            running = atual / fecho_anterior - 1.0
+            hist = get_price_history(ticker)
+            close = hist["Close"]
+            # A norma usa só dias COMPLETOS: se a última barra é a de hoje (parcial,
+            # durante a sessão), sai da série antes de calcular retornos.
+            if close.index[-1].date() >= date.today():
+                close = close.iloc[:-1]
+            returns = log_returns(close)
+            res = detect_intraday(running, returns, window=window, threshold=threshold)
+            if res.is_anomaly:
+                alerts.append((ticker, explain_intraday(ticker, res)))
+        except Exception as exc:  # noqa: BLE001  (um ticker a falhar não pára a varredura)
+            print(f"[intradiario {ticker}] {type(exc).__name__}: {exc}")
+    return alerts
+
+
 def _investigate_anomaly_safe(ticker: str, alert_text: str) -> str:
     """Investigação cruzada: procura a notícia relevante mais recente (48h) que possa
     explicar a anomalia e anexa-a ao alerta; sem notícia, di-lo honestamente.
@@ -640,11 +699,12 @@ def _fanout_safe(alerts: list[tuple[str, str]], bot_cfg: dict, *, dry_run: bool)
         print(f"[bot] fan-out falhou (ignorado): {type(exc).__name__}: {exc}")
 
 
-def run_cycle(cfg: dict, *, dry_run: bool) -> int:
+def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     """Um ciclo completo de varredura (comandos do bot → scans → filtros → envio → registo).
 
     Reutilizado pelo modo agendado (1 ciclo por invocação — Actions) e pelo modo --watch
-    (loop contínuo na VM/PC). Devolve o nº de mensagens desta corrida.
+    (loop contínuo na VM/PC; `watch=True` liga a deteção intradiária). Devolve o nº de
+    mensagens desta corrida.
     """
     from datetime import UTC, datetime
 
@@ -664,6 +724,11 @@ def run_cycle(cfg: dict, *, dry_run: bool) -> int:
     tickers_anomalos = [t for t, r in market_results if r.is_anomaly]
     market_alerts = list(zip(tickers_anomalos, build_market_alerts(market_results),
                              strict=True))
+    # Deteção intradiária (só no --watch): o movimento EM CURSO via cotação ao vivo.
+    # O dedup do filter_new_alerts (1 alerta de mercado/ticker/dia) evita que o alerta de
+    # fecho repita o intradiário do mesmo dia.
+    if watch:
+        market_alerts.extend(scan_intraday(cfg))
     # Investigação cruzada (anomalia → notícia): o comportamento do trader profissional —
     # vê o movimento, procura a causa. Fail-open: sem rede/chave, o alerta segue sem contexto.
     market_alerts = [(t, _investigate_anomaly_safe(t, text)) for t, text in market_alerts]
@@ -729,7 +794,8 @@ def watch_loop(interval_s: int, *, dry_run: bool) -> None:
     print(f"[watch] vigia contínuo: 1 ciclo a cada ~{interval_s}s (SIGTERM/Ctrl+C para parar)")
     while not stop["flag"]:
         try:
-            run_cycle(load_config(), dry_run=dry_run)  # reler config permite ajustar a quente
+            # reler config permite ajustar a quente; watch=True liga a deteção intradiária
+            run_cycle(load_config(), dry_run=dry_run, watch=True)
         except Exception as exc:  # noqa: BLE001  (um ciclo falhado nunca mata o vigia)
             print(f"[watch] ciclo falhou (continua): {type(exc).__name__}: {exc}")
         fim = time.monotonic() + interval_s + random.uniform(0, interval_s * 0.2)

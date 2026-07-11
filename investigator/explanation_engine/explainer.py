@@ -49,6 +49,25 @@ def explain_anomaly(ticker: str, result: AnomalyResult) -> str:
     )
 
 
+def explain_intraday(ticker: str, result: AnomalyResult) -> str:
+    """Explicação de uma anomalia INTRADIÁRIA: o movimento em curso, sem esperar o fecho.
+
+    Mesmo formato em camadas do alerta diário; wording explícito de "so far today" e da
+    fonte (cotação ao vivo vs fecho anterior) — o utilizador sabe que o dia não acabou.
+    """
+    arrow = "🔺" if result.last_return >= 0 else "🔻"
+    return (
+        f"{arrow} <b>Unusual intraday move for {html.escape(ticker, quote=False)}: "
+        f"{result.last_return * 100:+.2f}% so far today</b>\n"
+        f"About {abs(result.z_score):.1f}x this stock's typical daily swing "
+        f"({result.window}-day norm) — and the session is not over.\n"
+        f"<i>Method: live quote vs yesterday's close; z-score: {result.z_score:+.2f} vs "
+        f"threshold ±{result.threshold:g} against the {result.window}d daily norm "
+        f"({result.mean * 100:+.2f}%, std {result.std * 100:.2f}%). "
+        f"An observed move in progress, not advice.</i>"
+    )
+
+
 def attach_news_context(alert_text: str, headline: str | None,
                         news_date: str = "", today: str = "") -> str:
     """Investigação cruzada (anomalia → notícia): anexa a explicação candidata ao alerta.
