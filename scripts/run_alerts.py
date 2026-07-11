@@ -39,18 +39,20 @@ _HISTORY = Path(os.environ.get(
 # Com o cron a correr de 30 em 30 min durante o mercado, o runner tem de se lembrar do que
 # JÁ alertou hoje (o job do Actions é efémero; o workflow persiste este ficheiro via cache).
 def load_state(path: str | Path = _STATE, today: date | None = None) -> dict:
-    """Lê o estado; se for de outro dia, zera as listas do dia mas PRESERVA o offset do bot."""
+    """Lê o estado; se for de outro dia, zera as marcas do dia mas PRESERVA o offset do bot."""
     import json
 
     today = today or date.today()
     state = {"date": today.isoformat(), "alerted_market": [], "alerted_news": [],
-             "bot_offset": None}
+             "news_count": {}, "summary_sent": False, "bot_offset": None}
     try:
         raw = json.loads(Path(path).read_text(encoding="utf-8"))
         state["bot_offset"] = raw.get("bot_offset")
         if raw.get("date") == today.isoformat():
             state["alerted_market"] = list(raw.get("alerted_market", []))
             state["alerted_news"] = list(raw.get("alerted_news", []))
+            state["news_count"] = dict(raw.get("news_count", {}))
+            state["summary_sent"] = bool(raw.get("summary_sent", False))
     except (OSError, ValueError):
         pass  # sem estado (1.ª corrida do dia/da cache) → começa limpo
     return state
@@ -65,15 +67,44 @@ def save_state(state: dict, path: str | Path = _STATE) -> None:
 
 
 def news_key(ticker: str, text: str) -> str:
-    """Chave estável de um alerta de notícia (para não repetir a mesma manchete no mesmo dia)."""
+    """Chave estável de um alerta de notícia, calculada sobre o texto SEM tags (plain_text)
+    — assim a VM, o Actions e o histórico partilhado produzem sempre a mesma chave."""
     import hashlib
 
-    return hashlib.sha1(f"{ticker}|{text}".encode()).hexdigest()[:12]
+    from investigator.explanation_engine.explainer import plain_text
+
+    return hashlib.sha1(f"{ticker}|{plain_text(text)}".encode()).hexdigest()[:12]
+
+
+def seed_state_from_shared_history(state: dict, entries: list, today: str) -> None:
+    """Puro: semeia o estado com o que QUALQUER produtor já enviou hoje.
+
+    Com dois produtores possíveis (a VM em modo --watch e o cron do Actions como rede de
+    segurança), o estado local de cada um não chega — o histórico partilhado (branch
+    `alerts-history`) é a memória comum que impede alertas duplicados no canal.
+    """
+    for e in entries:
+        if e.date != today:
+            continue
+        if e.kind == "market" and e.ticker not in state["alerted_market"]:
+            state["alerted_market"].append(e.ticker)
+        elif e.kind == "news":
+            k = e.key or news_key(e.ticker, e.text)
+            if k not in state["alerted_news"]:
+                state["alerted_news"].append(k)
+                state["news_count"][e.ticker] = state["news_count"].get(e.ticker, 0) + 1
+        elif e.kind == "summary":
+            state["summary_sent"] = True
 
 
 def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]],
-                      state: dict) -> list[tuple[str, str]]:
-    """Puro: mantém só o que ainda NÃO foi alertado hoje e marca-o no estado."""
+                      state: dict, max_per_ticker: int = 2) -> list[tuple[str, str]]:
+    """Puro: mantém só o que ainda NÃO foi alertado hoje e marca-o no estado.
+
+    Notícias têm um TETO por ticker por dia (`max_per_ticker`, config
+    `news.max_per_ticker_per_day`) — anti-fadiga: 12 alertas/dia do mesmo ticker treinam
+    o utilizador a ignorar o canal.
+    """
     keep: list[tuple[str, str]] = []
     for ticker, text in market:
         if ticker not in state["alerted_market"]:
@@ -83,11 +114,16 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
             print(f"[{ticker}] já alertado hoje — sem repetição.")
     for ticker, text in news:
         k = news_key(ticker, text)
-        if k not in state["alerted_news"]:
-            state["alerted_news"].append(k)
-            keep.append((ticker, text))
-        else:
+        if k in state["alerted_news"]:
             print(f"[noticias {ticker}] já alertada hoje — sem repetição.")
+            continue
+        if state["news_count"].get(ticker, 0) >= max_per_ticker:
+            print(f"[noticias {ticker}] teto diário atingido ({max_per_ticker}) "
+                  "— sem mais alertas deste ticker hoje.")
+            continue
+        state["alerted_news"].append(k)
+        state["news_count"][ticker] = state["news_count"].get(ticker, 0) + 1
+        keep.append((ticker, text))
     return keep
 
 
@@ -141,8 +177,12 @@ def build_market_alerts(results: list[tuple[str, object]]) -> list[str]:
     return [explain_anomaly(ticker, res) for ticker, res in results if res.is_anomaly]
 
 
-def scan_market(cfg: dict) -> list[tuple[str, str]]:
-    """Busca preços de cada ticker, deteta anomalias e devolve pares (ticker, texto de alerta)."""
+def collect_market_results(cfg: dict) -> list[tuple[str, object]]:
+    """Busca preços e avalia cada ticker; devolve [(ticker, AnomalyResult)] dos dias frescos.
+
+    Base tanto dos alertas de anomalia como do resumo diário de fecho — uma só passagem
+    pelos preços por corrida.
+    """
     from investigator.anomaly_detector.detector import detect_latest
     from investigator.market_data.prices import get_price_history, log_returns
 
@@ -165,9 +205,51 @@ def scan_market(cfg: dict) -> list[tuple[str, str]]:
             results.append((ticker, detect_latest(returns, window=window, threshold=threshold)))
         except Exception as exc:  # noqa: BLE001  (um ticker/rede a falhar não pode parar a varredura)
             print(f"[saltar {ticker}] {type(exc).__name__}: {exc}")
+    return results
+
+
+def scan_market(cfg: dict) -> list[tuple[str, str]]:
+    """Deteta anomalias e devolve pares (ticker, texto de alerta)."""
+    results = collect_market_results(cfg)
     # Mesmo filtro e mesma ordem de build_market_alerts (puro, testado) → zip alinha por construção.
     tickers_anomalos = [t for t, r in results if r.is_anomaly]
     return list(zip(tickers_anomalos, build_market_alerts(results), strict=True))
+
+
+def build_daily_summary(results: list[tuple[str, object]], threshold: float) -> str:
+    """Puro: a mensagem única de fecho — o batimento cardíaco diário do canal.
+
+    Sem isto, em dias calmos o canal ficava mudo sobre o mercado e o utilizador não via o
+    detetor a trabalhar. Uma mensagem por dia: cada ticker com o movimento e o z-score,
+    anomalias destacadas; honesto quando não há nenhuma.
+    """
+    if not results:
+        return ""
+    ordenados = sorted(results, key=lambda tr: -abs(tr[1].z_score))
+    linhas = ["📊 <b>Daily close summary</b>"]
+    for ticker, r in ordenados:
+        marca = "🔺" if r.is_anomaly else "•"
+        linhas.append(f"{marca} {ticker}: {r.last_return * 100:+.2f}% (z {r.z_score:+.2f})")
+    n_anom = sum(1 for _, r in results if r.is_anomaly)
+    if n_anom:
+        linhas.append(f"{n_anom} anomaly(ies) today (|z| ≥ {threshold:g}) — alerted above.")
+    else:
+        linhas.append(f"No anomalies today (threshold |z| ≥ {threshold:g}) — a normal day.")
+    linhas.append("<i>An observed snapshot of the watchlist, not advice.</i>")
+    return "\n".join(linhas)
+
+
+def maybe_daily_summary(state: dict, results: list[tuple[str, object]],
+                        threshold: float, hour_utc: int) -> str | None:
+    """Puro: devolve o resumo de fecho na 1.ª corrida com hora UTC ≥ 21, uma vez por dia.
+
+    Marca `summary_sent` no estado (partilhado entre corridas e, via histórico, entre
+    produtores). Sem resultados frescos (mercado fechado) não há nada a resumir.
+    """
+    if hour_utc < 21 or state.get("summary_sent") or not results:
+        return None
+    state["summary_sent"] = True
+    return build_daily_summary(results, threshold)
 
 
 def apply_materiality(text: str, scored: tuple | None, gate: float) -> str | None:
@@ -188,20 +270,37 @@ def apply_materiality(text: str, scored: tuple | None, gate: float) -> str | Non
     return text + "\n" + materiality_line(prob, contribs)
 
 
+def precedents_are_strong(precedents: list, min_similarity: float) -> bool:
+    """Puro: há pelo menos um precedente com similaridade ≥ chão?
+
+    Evidência fraca (sim ~0,35-0,45) parecia aleatória ao utilizador — com razão. Sem um
+    precedente forte, é mais honesto NÃO alertar do que mostrar vizinhos irrelevantes.
+    """
+    return any(score >= min_similarity for _, score in precedents)
+
+
 def scan_news(cfg: dict) -> list[tuple[str, str]]:
-    """Opcional: notícias recentes por ticker -> pares (ticker, alerta) (best-effort)."""
+    """Opcional: notícias recentes por ticker -> pares (ticker, alerta) (best-effort).
+
+    Qualidade primeiro (revisão 2026-07-11, sobre 27 alertas reais): (1) filtro de
+    RELEVÂNCIA — a manchete tem de mencionar a empresa e não pode ser boilerplate de
+    mercado; (2) chão de SIMILARIDADE — sem um precedente forte, não há alerta; (3) o
+    gate de materialidade regista o P de cada ticker no log (diagnóstico visível).
+    """
     n = cfg.get("news", {})
     if not n.get("enabled", False):
         return []
     from investigator import config
     from investigator.main import run_news_trigger
     from investigator.news_fetcher.fetcher import fetch_finnhub_company_news
+    from investigator.news_fetcher.relevance import is_relevant
 
     if not config.FINNHUB_API_KEY:
         print("[noticias] FINNHUB_API_KEY em falta — a saltar o scan de noticias.")
         return []
     horizon = int(n.get("horizon", 5))
     top_k = int(n.get("top_k", 3))
+    min_sim = float(n.get("min_similarity", 0.45))
 
     # Triagem aprendida (off por defeito): só ativa com min_materiality definido E modelo
     # presente. Sem modelo, avisa e segue com o comportamento de sempre.
@@ -228,18 +327,29 @@ def scan_news(cfg: dict) -> list[tuple[str, str]]:
     for ticker in n.get("tickers", []):
         try:
             items = fetch_finnhub_company_news(ticker, start, end)
-            if not items:
+            # Filtro de relevância ANTES de escolher: mata as manchetes mal etiquetadas do
+            # Finnhub (lei/escritórios, resumos "S&P500 movers"…) que sujavam o canal.
+            relevantes = [i for i in items if is_relevant(i.headline, ticker)]
+            if items and not relevantes:
+                print(f"[noticias {ticker}] {len(items)} manchete(s), nenhuma relevante "
+                      "(mal etiquetadas/boilerplate) — sem alerta.")
+            if not relevantes:
                 continue
-            latest = max(items, key=lambda it: it.date)  # o mais recente
+            latest = max(relevantes, key=lambda it: it.date)  # a mais recente RELEVANTE
             max_age = int(n.get("max_age_days", 2))
             if not news_is_fresh(latest.date, date.today(), max_age):
                 print(f"[noticias {ticker}] mais recente é de {latest.date} (>{max_age} dias) "
                       "— sem alerta (anti-repetição).")
                 continue
-            _, text = run_news_trigger(
+            precedents, text = run_news_trigger(
                 ticker=ticker, headline=latest.headline, kb_path=kb_path,
                 embedder=embedder, top_k=top_k, horizon=horizon, send=False,
             )
+            if not precedents_are_strong(precedents, min_sim):
+                best = max((s for _, s in precedents), default=0.0)
+                print(f"[noticias {ticker}] melhor precedente sim {best:.2f} < {min_sim:.2f} "
+                      "— evidência fraca demais, sem alerta.")
+                continue
             if bundle is not None:
                 from investigator.market_data.prices import get_price_history
                 from investigator.triage.infer import score_latest
@@ -247,12 +357,14 @@ def scan_news(cfg: dict) -> list[tuple[str, str]]:
                 scored = score_latest(
                     bundle, get_price_history(ticker)["Close"], latest.headline, ticker
                 )
+                if scored is not None:
+                    print(f"[triagem {ticker}] P(anormal)={scored[0]:.0%} "
+                          f"(gate {gate:.0%})")
                 gated = apply_materiality(text, scored, gate)
                 _log_decision_safe(latest.date, ticker, latest.headline,
                                    scored, gate, kept=gated is not None)
                 if gated is None:
-                    print(f"[triagem {ticker}] P(anormal)={scored[0]:.0%} < {gate:.0%} "
-                          "— alerta de noticia suprimido.")
+                    print(f"[triagem {ticker}] alerta de noticia suprimido pelo gate.")
                     continue
                 text = gated
             else:
@@ -282,14 +394,58 @@ def _record_history_safe(alerts: list[tuple[str, str]], today: str,
         )
         from investigator.explanation_engine.explainer import plain_text
 
-        new = [
-            HistoryEntry(date=today, ticker=ticker, kind=classify_kind(text),
-                        text=plain_text(text))
-            for ticker, text in alerts
-        ]
+        new = []
+        for ticker, text in alerts:
+            kind = classify_kind(text)
+            new.append(HistoryEntry(
+                date=today, ticker=ticker, kind=kind, text=plain_text(text),
+                key=news_key(ticker, text) if kind == "news" else "",
+            ))
         save_jsonl(append_and_trim(load_jsonl(path), new), path)
     except Exception as exc:  # noqa: BLE001
         print(f"[historico] registo falhou (ignorado): {type(exc).__name__}: {exc}")
+
+
+def _push_history_safe(path: str | Path = _HISTORY) -> None:
+    """Publica o histórico na branch `alerts-history` a partir de uma máquina própria (VM).
+
+    Só ativo com INVESTIGATOR_HISTORY_GIT=1 e com o ficheiro dentro de um checkout git da
+    branch de dados (ver docs/design/vm_watch.md). No Actions este passo é feito pelo próprio
+    workflow — aqui é o equivalente para o modo --watch. Fail-open total.
+    """
+    import os
+
+    if os.environ.get("INVESTIGATOR_HISTORY_GIT") != "1":
+        return
+    import subprocess
+
+    d = Path(path).resolve().parent
+    try:
+        def git(*a: str) -> None:
+            subprocess.run(["git", *a], cwd=d, check=True, capture_output=True, timeout=60)
+
+        status = subprocess.run(["git", "status", "--porcelain"], cwd=d, check=True,
+                                capture_output=True, text=True, timeout=30)
+        if not status.stdout.strip():
+            return
+        git("add", Path(path).name)
+        git("commit", "-m", "Alertas: atualização automática do histórico partilhado")
+        git("pull", "--rebase")
+        git("push")
+        print("[historico] publicado na branch alerts-history.")
+    except Exception as exc:  # noqa: BLE001
+        print(f"[historico] push falhou (ignorado): {type(exc).__name__}: {exc}")
+
+
+def _fetch_shared_history_safe(cfg: dict) -> list:
+    """Histórico partilhado (fail-open) — a memória comum entre VM e Actions."""
+    try:
+        from investigator.alerts_history import fetch_remote
+
+        url = (cfg.get("public", {}) or {}).get("history_url")
+        return fetch_remote(str(url)) if url else []
+    except Exception:  # noqa: BLE001
+        return []
 
 
 def process_bot_commands(state: dict, bot_cfg: dict, *, dry_run: bool) -> None:
@@ -364,33 +520,49 @@ def _fanout_safe(alerts: list[tuple[str, str]], bot_cfg: dict, *, dry_run: bool)
         print(f"[bot] fan-out falhou (ignorado): {type(exc).__name__}: {exc}")
 
 
-def main() -> int:
-    force_utf8_stdout()
-    parser = argparse.ArgumentParser(description="InvestiGator — runner de alertas agendado")
-    parser.add_argument("--dry-run", action="store_true", help="varre e imprime; nunca envia")
-    args = parser.parse_args()
+def run_cycle(cfg: dict, *, dry_run: bool) -> int:
+    """Um ciclo completo de varredura (comandos do bot → scans → filtros → envio → registo).
 
-    cfg = load_config()
+    Reutilizado pelo modo agendado (1 ciclo por invocação — Actions) e pelo modo --watch
+    (loop contínuo na VM/PC). Devolve o nº de mensagens desta corrida.
+    """
+    from datetime import UTC, datetime
+
     bot_cfg = cfg.get("bot", {}) or {}
     state = load_state()
-    process_bot_commands(state, bot_cfg, dry_run=args.dry_run)
+    process_bot_commands(state, bot_cfg, dry_run=dry_run)
 
-    alerts = filter_new_alerts(scan_market(cfg), scan_news(cfg), state)
-    if not args.dry_run:
+    # Memória partilhada entre produtores (VM + Actions): o que QUALQUER um já enviou hoje
+    # não se repete — sem isto, dois produtores duplicariam alertas no canal.
+    seed_state_from_shared_history(state, _fetch_shared_history_safe(cfg), state["date"])
+
+    market_results = collect_market_results(cfg)
+    tickers_anomalos = [t for t, r in market_results if r.is_anomaly]
+    market_alerts = list(zip(tickers_anomalos, build_market_alerts(market_results),
+                             strict=True))
+    max_per = int((cfg.get("news") or {}).get("max_per_ticker_per_day", 2))
+    alerts = filter_new_alerts(market_alerts, scan_news(cfg), state, max_per)
+
+    threshold = float((cfg.get("market") or {}).get("threshold", 3.0))
+    summary = maybe_daily_summary(state, market_results, threshold,
+                                  datetime.now(UTC).hour)
+
+    if not dry_run:
         save_state(state)  # persiste marcas do dia + offset do bot (cache no Actions)
     else:
         print("[estado] dry-run — estado não gravado (não interfere com a corrida real).")
 
-    if not alerts:
+    mensagens = alerts + ([("MARKET", summary)] if summary else [])
+    if not mensagens:
         print("Sem alertas novos nesta corrida (nenhuma anomalia nova acima do limiar).")
         return 0
 
     from investigator import config
 
-    can_send = bool(config.TELEGRAM_BOT_TOKEN and config.TELEGRAM_CHAT_ID) and not args.dry_run
+    can_send = bool(config.TELEGRAM_BOT_TOKEN and config.TELEGRAM_CHAT_ID) and not dry_run
     from investigator.explanation_engine.explainer import plain_text
 
-    for _ticker, text in alerts:
+    for _ticker, text in mensagens:
         print("-" * 60)
         print(plain_text(text))
         if can_send:
@@ -398,14 +570,61 @@ def main() -> int:
 
             send_message(text)
 
-    _fanout_safe(alerts, bot_cfg, dry_run=args.dry_run)
+    _fanout_safe(alerts, bot_cfg, dry_run=dry_run)  # fan-out só de alertas por ticker
 
     if can_send:
-        _record_history_safe(alerts, date.today().isoformat())
-        print(f"\n[{len(alerts)} alerta(s) enviado(s) para o Telegram]")
+        _record_history_safe(mensagens, date.today().isoformat())
+        _push_history_safe()  # só ativo na VM (INVESTIGATOR_HISTORY_GIT=1); fail-open
+        print(f"\n[{len(mensagens)} mensagem(ns) enviada(s) para o Telegram]")
     else:
-        why = "modo --dry-run" if args.dry_run else "Telegram nao configurado (nada enviado)"
-        print(f"\n[{len(alerts)} alerta(s); {why}]")
+        why = "modo --dry-run" if dry_run else "Telegram nao configurado (nada enviado)"
+        print(f"\n[{len(mensagens)} mensagem(ns); {why}]")
+    return len(mensagens)
+
+
+def watch_loop(interval_s: int, *, dry_run: bool) -> None:
+    """Modo vigia (VM/PC): ciclo contínuo a cada ~interval_s com jitter e paragem limpa.
+
+    Latência de minutos em vez do cron best-effort do GitHub (~1-2h na prática). O estado
+    local persiste no disco e o dedup partilhado impede duplicados com o cron de segurança.
+    """
+    import random
+    import signal
+    import time
+
+    stop = {"flag": False}
+
+    def _parar(_sig, _frame) -> None:
+        stop["flag"] = True
+
+    signal.signal(signal.SIGINT, _parar)
+    signal.signal(signal.SIGTERM, _parar)
+    print(f"[watch] vigia contínuo: 1 ciclo a cada ~{interval_s}s (SIGTERM/Ctrl+C para parar)")
+    while not stop["flag"]:
+        try:
+            run_cycle(load_config(), dry_run=dry_run)  # reler config permite ajustar a quente
+        except Exception as exc:  # noqa: BLE001  (um ciclo falhado nunca mata o vigia)
+            print(f"[watch] ciclo falhou (continua): {type(exc).__name__}: {exc}")
+        fim = time.monotonic() + interval_s + random.uniform(0, interval_s * 0.2)
+        while not stop["flag"] and time.monotonic() < fim:
+            time.sleep(1)
+    print("[watch] terminado com graça.")
+
+
+def main() -> int:
+    force_utf8_stdout()
+    parser = argparse.ArgumentParser(description="InvestiGator — runner de alertas")
+    parser.add_argument("--dry-run", action="store_true", help="varre e imprime; nunca envia")
+    parser.add_argument("--watch", action="store_true",
+                        help="modo vigia: loop contínuo (VM/PC) em vez de 1 ciclo")
+    parser.add_argument("--interval", type=int, default=300,
+                        help="segundos entre ciclos no modo --watch (defeito: 300)")
+    args = parser.parse_args()
+
+    if args.watch:
+        watch_loop(max(60, args.interval), dry_run=args.dry_run)
+        return 0
+    run_cycle(load_config(), dry_run=args.dry_run)
     return 0
 
 

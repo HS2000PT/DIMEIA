@@ -119,6 +119,13 @@ def explain_news_impact(
             f"▸ {imp_txt} in {horizon}d · {quem} · "
             f'"{html.escape(_clip(rec.headline), quote=False)}" (sim {score:.2f})'
         )
+    # Aviso de direção mista (a lição do CS3 da tese, agora no produto): a semelhança capta
+    # o TEMA, não a direção — quando os precedentes divergem em sinal, a média esconde
+    # desacordo real e induz sobre-confiança. Dizemo-lo explicitamente.
+    if vals and min(vals) < 0 < max(vals):
+        lines.append(
+            "⚠ Similar past cases moved in BOTH directions — treat the average with caution."
+        )
     if materiality:
         lines.append(materiality)
     lines.append(

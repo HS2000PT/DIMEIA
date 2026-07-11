@@ -352,6 +352,19 @@ def _section_try_headline() -> None:
         if not precedents:
             st.warning("No precedents found in the knowledge base.")
             return
+        # Mesmo chão de similaridade que o canal usa (config news.min_similarity):
+        # aqui na sandbox mostramos na mesma, mas dizemos que o canal NÃO alertaria.
+        min_sim = 0.45
+        try:
+            min_sim = float((_read_yaml_config().get("news", {}) or {})
+                            .get("min_similarity", 0.45))
+        except Exception:
+            pass
+        best = max(float(s) for _, s in precedents)
+        if best < min_sim:
+            st.info(f"Weak precedents (best similarity {best:.2f} < {min_sim:.2f} floor) — "
+                    "the live channel would **not** alert on this headline. "
+                    "Shown here for exploration only.")
         rows = [
             {"Date": rec.date, "Ticker": rec.ticker, "Similarity": round(float(score), 3),
              "+1d": rec.impacts.get("1"), "+3d": rec.impacts.get("3"),
@@ -516,6 +529,13 @@ def main() -> None:
         st.caption("⚠ No shared alert history available right now (network, or none sent yet) "
                    "— the charts below still show live prices; alerts will appear once the "
                    "scheduled scan records them.")
+
+    # O resumo diário de fecho (o mesmo enviado ao canal) — visão de mercado num relance.
+    summaries = [h for h in history if h.kind == "summary"]
+    if summaries:
+        with st.expander(f"📊 Daily close summary ({summaries[-1].date}) — as sent to the "
+                        "Telegram channel"):
+            st.text(summaries[-1].text)
 
     tabs = st.tabs(tickers)
     for tab, ticker in zip(tabs, tickers, strict=True):

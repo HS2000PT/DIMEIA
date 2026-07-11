@@ -17,17 +17,24 @@ from pathlib import Path
 @dataclass(frozen=True)
 class HistoryEntry:
     """Um alerta realmente enviado. `text` é o texto EXATO (plain_text) que o Telegram
-    recebeu — nem a app nem ninguém o recalcula, só o mostram."""
+    recebeu — nem a app nem ninguém o recalcula, só o mostram.
+
+    `key` (opcional) é a chave de dedup entre produtores (VM + Actions): a mesma que
+    `scripts/run_alerts.py::news_key` calcula — sha1(ticker|plain_text)[:12]. Entradas
+    antigas sem key continuam válidas (a leitura recalcula quando precisa)."""
 
     date: str  # ISO (YYYY-MM-DD), dia do evento
     ticker: str
-    kind: str  # "market" | "news"
+    kind: str  # "market" | "news" | "summary"
     text: str
+    key: str = ""
 
 
 def classify_kind(text: str) -> str:
     """Deriva o tipo a partir de marcadores estáveis do próprio texto (já testados em
     tests/test_explainer.py — fidelidade XAI exige exatamente estas frases)."""
+    if "Daily close summary" in text:
+        return "summary"
     return "market" if "Anomaly detected for" in text else "news"
 
 

@@ -109,3 +109,85 @@ def test_record_history_safe_nunca_rebenta_com_caminho_invalido():
     from scripts.run_alerts import _record_history_safe
 
     _record_history_safe([("AAPL", "texto")], "2026-07-08", path="\0/invalido")  # não levanta
+
+
+def test_teto_diario_por_ticker_nas_noticias(tmp_path):
+    """Anti-fadiga: no máximo N alertas de notícia por ticker por dia (config)."""
+    from datetime import date
+
+    from scripts.run_alerts import filter_new_alerts, load_state
+
+    st = load_state(tmp_path / "none.json", today=date(2026, 7, 11))
+    news = [("TSLA", "manchete 1"), ("TSLA", "manchete 2"), ("TSLA", "manchete 3")]
+    keep = filter_new_alerts([], news, st, max_per_ticker=2)
+    assert len(keep) == 2  # a 3.ª cai no teto
+    # outro ticker não é afetado pelo teto da TSLA
+    keep2 = filter_new_alerts([], [("NVDA", "manchete nvda")], st, max_per_ticker=2)
+    assert keep2 == [("NVDA", "manchete nvda")]
+
+
+def test_seed_do_historico_partilhado_impede_duplicados_entre_produtores(tmp_path):
+    """VM e Actions partilham memória via alerts-history: o que UM enviou, o outro não repete."""
+    from datetime import date
+
+    from investigator.alerts_history import HistoryEntry
+    from scripts.run_alerts import (
+        filter_new_alerts,
+        load_state,
+        news_key,
+        seed_state_from_shared_history,
+    )
+
+    st = load_state(tmp_path / "none.json", today=date(2026, 7, 11))
+    entries = [
+        HistoryEntry(date="2026-07-11", ticker="TSLA", kind="market", text="Anomaly detected"),
+        HistoryEntry(date="2026-07-11", ticker="NVDA", kind="news", text="News alert for NVDA",
+                     key=news_key("NVDA", "News alert for NVDA")),
+        HistoryEntry(date="2026-07-10", ticker="AAPL", kind="market", text="ontem"),
+        HistoryEntry(date="2026-07-11", ticker="MARKET", kind="summary",
+                     text="Daily close summary"),
+    ]
+    seed_state_from_shared_history(st, entries, "2026-07-11")
+    assert st["summary_sent"] is True
+    assert "AAPL" not in st["alerted_market"]  # entradas de outros dias não contam
+    keep = filter_new_alerts(
+        [("TSLA", "Anomaly detected"), ("AAPL", "Anomaly detected for AAPL")],
+        [("NVDA", "News alert for NVDA")], st)
+    assert keep == [("AAPL", "Anomaly detected for AAPL")]  # TSLA e a notícia NVDA já foram
+
+
+def test_build_daily_summary_com_e_sem_anomalias():
+    from scripts.run_alerts import build_daily_summary
+
+    calmo = build_daily_summary([("AAPL", _res(False, 0.5)), ("TSLA", _res(False, -1.2))], 2.0)
+    assert "Daily close summary" in calmo
+    assert "No anomalies today" in calmo and "±" not in calmo
+    assert "not advice" in calmo
+    agitado = build_daily_summary([("TSLA", _res(True, 2.6))], 2.0)
+    assert "🔺 TSLA" in agitado and "anomaly" in agitado.lower()
+    assert build_daily_summary([], 2.0) == ""
+
+
+def test_maybe_daily_summary_uma_vez_por_dia_apos_21utc(tmp_path):
+    from datetime import date
+
+    from scripts.run_alerts import load_state, maybe_daily_summary
+
+    st = load_state(tmp_path / "none.json", today=date(2026, 7, 11))
+    resultados = [("AAPL", _res(False, 0.5))]
+    assert maybe_daily_summary(st, resultados, 2.0, hour_utc=15) is None  # cedo demais
+    texto = maybe_daily_summary(st, resultados, 2.0, hour_utc=21)
+    assert texto and "Daily close summary" in texto
+    assert maybe_daily_summary(st, resultados, 2.0, hour_utc=22) is None  # já enviado hoje
+    st2 = load_state(tmp_path / "none.json", today=date(2026, 7, 11))
+    assert maybe_daily_summary(st2, [], 2.0, hour_utc=22) is None  # sem resultados, nada a dizer
+
+
+def test_precedents_are_strong_aplica_o_chao():
+    from scripts.run_alerts import precedents_are_strong
+
+    fracos = [(object(), 0.38), (object(), 0.35)]
+    fortes = [(object(), 0.61), (object(), 0.35)]
+    assert not precedents_are_strong(fracos, 0.45)
+    assert precedents_are_strong(fortes, 0.45)
+    assert not precedents_are_strong([], 0.45)

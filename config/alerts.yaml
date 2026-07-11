@@ -39,6 +39,12 @@ news:
   # Anti-repetição: só alerta notícias com ≤ este nº de dias (o scan olha 7 dias para trás,
   # mas sem isto a MESMA manchete podia alertar dias a fio). 2 cobre o fim de semana.
   # max_age_days: 2
+  # Chão de similaridade (qualidade > volume, 2026-07-11): sem UM precedente com cosseno
+  # ≥ este valor, o alerta é suprimido — evidência fraca parecia aleatória, com razão.
+  min_similarity: 0.45
+  # Teto de alertas de notícia por ticker por dia (anti-fadiga; 12/dia do mesmo ticker
+  # ensinam o utilizador a ignorar o canal). O filtro de relevância corta o resto.
+  max_per_ticker_per_day: 2
 
 # Fase B (opcional; off por defeito): distribuir os alertas TAMBÉM por subscritor do bot
 # interativo. Os utilizadores registam-se falando com o bot (/start, /watch TSLA) enquanto

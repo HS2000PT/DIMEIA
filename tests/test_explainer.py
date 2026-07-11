@@ -63,3 +63,20 @@ def test_media_ignora_nan():
     text = explain_news_impact("A", "consulta", precs, horizon=3)
     assert "+4.00%" in text   # média ignora o NaN → só 0.04
     assert "n/a" in text       # o precedente com NaN aparece como n/a na lista
+
+
+def test_aviso_de_direcao_mista_quando_precedentes_divergem():
+    """A lição do CS3 no produto: sinais mistos nos precedentes → aviso explícito."""
+    mistos = [
+        (NewsRecord(date="2023-01-01", ticker="A", headline="h1", impacts={"3": 0.05}), 0.9),
+        (NewsRecord(date="2023-01-02", ticker="A", headline="h2", impacts={"3": -0.03}), 0.8),
+    ]
+    texto = explain_news_impact("A", "consulta", mistos, horizon=3)
+    assert "BOTH directions" in texto
+
+    concordantes = [
+        (NewsRecord(date="2023-01-01", ticker="A", headline="h1", impacts={"3": 0.05}), 0.9),
+        (NewsRecord(date="2023-01-02", ticker="A", headline="h2", impacts={"3": 0.02}), 0.8),
+    ]
+    texto2 = explain_news_impact("A", "consulta", concordantes, horizon=3)
+    assert "BOTH directions" not in texto2

@@ -22,6 +22,11 @@ on:
   schedule:
     # De 30 em 30 min, 13:00–21:30 UTC, dias úteis (mercado US: 13:30/14:30 → 20:00/21:00 UTC).
     - cron: "0,30 13-21 * * 1-5"
+    # Manhãs úteis (pré-mercado): notícias de madrugada/abertura europeia alertam cedo.
+    - cron: "0 7,10 * * 1-5"
+    # Fins de semana (3×/dia): notícias de sábado/domingo alertam NO PRÓPRIO DIA — o scan
+    # de mercado auto-salta em dias sem sessão nova (bar_is_fresh), só as notícias fluem.
+    - cron: "0 9,15,21 * * 0,6"
   workflow_dispatch: {}   # botão "Run workflow" para testar à mão
 
 # Escrita necessária para publicar o histórico partilhado na branch `alerts-history` (dados).
