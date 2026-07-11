@@ -1,7 +1,7 @@
 # RELATÓRIO FINAL — InvestiGator 🐊
 
 > **Dissertação MEIA/ISEP** — Henrique José da Silva Santos (nº 1180934)
-> Orientador: Prof. Luís Gomes · Coorientador: Rafael Silva · Data: 2026-07-07
+> Orientador: Prof. Luís Gomes · Coorientador: Rafael Silva · Data: 2026-07-11
 > Este documento resume TUDO o que existe neste repositório e onde está — pensado para
 > uma leitura de 10 minutos pelo orientador ou pelo júri.
 
@@ -37,9 +37,12 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   `/watch`), Finnhub/RSS para notícias ao vivo.
 
 ### 2.2 Produto ao vivo (grátis, sem servidor próprio)
-- **Canal Telegram** (<https://t.me/InvestiGatorMEIA>): o GitHub Actions varre a watchlist
-  **de 30 em 30 min em horário de mercado** (`.github/workflows/alerts.yml`), com
-  anti-repetição no dia, anti-duplicado em feriados e gate de triagem — zero operação manual.
+- **Canal Telegram** (<https://t.me/InvestiGatorMEIA>): alertas com **qualidade primeiro** —
+  filtro de relevância (manchetes mal etiquetadas/boilerplate rejeitadas), chão de similaridade,
+  teto de 2 alertas de notícia por ticker/dia, gate de triagem, aviso de direção mista, e um
+  **resumo diário ao fecho** (os 10 tickers, honesto em dias calmos). Corre também de manhã e
+  aos fins de semana (só notícias). Produtores: modo vigia (VM, ~5 min) + cron do GitHub como
+  rede de segurança, com dedup partilhado (`docs/design/vm_watch.md`).
 - **Painel único público** (<https://investigator.streamlit.app>): uma aba por ticker da
   watchlist — "background risk" do modelo treinado (RQ4, todos os dias, mesmo sem notícia),
   gráfico anotado com cada evento, e o histórico lido do MESMO registo que o canal recebeu
@@ -65,14 +68,14 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   screenshot genuíno do painel único (Cap. 4, Fig. 4.5).
 - **Paper IEEE** (`paper/`): 4 pp, compila 0 erros (destilado da tese validada).
 - **Slides de defesa** (`slides/`): 17 frames (+"The product, live", com o mesmo screenshot).
-- **Guia de estudo detalhado** (`slides/guia_estudo/`): 64 slides PT-PT que ensinam do zero.
-- **Guia rápido simplificado** (`docs/defence/guia_rapido.md`): a versão de bolso.
-- **Caderno de defesa** (`docs/defence/caderno_de_defesa.md`): guião oral (§0) + números + júri.
+- **Guia de estudo ÚNICO** (`slides/guia_estudo/main.pdf`): 71 slides PT-PT — ensina do zero
+  E contém o guião oral, as perguntas do júri, o mapa dos números congelados e o plano B
+  (fonte única de estudo; os antigos caderno/guia rápido foram absorvidos e arquivados).
 - **Notebook** (`notebooks/investigator_walkthrough.ipynb`): os 3 componentes com as próprias
   mãos, executado e commitado com outputs reais.
 
 ### 2.5 Qualidade de engenharia
-- **132 testes automáticos + ruff**, verdes localmente e no CI (runner limpo a cada push).
+- **145 testes automáticos + ruff**, verdes localmente e no CI (runner limpo a cada push).
 - **Reprodutibilidade:** demo offline num comando (`python scripts/demo.py` reproduz o
   exemplo do Cap. 3, +6,46%); todas as figuras/números da tese saem de scripts versionados;
   ambiente fixado (Python 3.12, `requirements*.txt`).
@@ -84,11 +87,11 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
 ```
 RELATORIO_FINAL.md      ← este documento
 README.md               porta de entrada (badges, como correr, estado)
-CHECKLIST.md            o que está feito / o que falta (caixas)
+CHECKLIST.md            SÓ o que falta (lista mínima)
 CLAUDE.md               memória de continuidade entre sessões
 thesis/main.pdf         A TESE (78 pp)               thesis/main.tex + ch1..ch6/
 paper/                  artigo IEEE (4 pp)
-slides/main.pdf         slides de defesa (17)        slides/guia_estudo/main.pdf (guia, 64)
+slides/main.pdf         slides de defesa (17)        slides/guia_estudo/main.pdf (guia único, 71)
 investigator/           o pacote do sistema (instalável; um subpacote por componente)
 models/                 modelos de triagem treinados (joblib versionados + metadados JSON)
 notebooks/              investigator_walkthrough.ipynb — os 3 componentes, executado
@@ -97,13 +100,12 @@ scripts/                demo.py · run_alerts.py (produção) · run_bot.py · e
                         build_dataset.py · train_triage.py · post_validate.py · build_kb.py
 config/alerts.yaml      watchlist + limiares + gates (a MESMA fonte para runner e app)
 .github/workflows/      ci.yml (testes) · compile-thesis.yml · alerts.yml (varredura 30/30)
-tests/                  132 testes
+tests/                  145 testes
 data/samples/           amostras versionadas (KB curada 2.016 registos 384-d incluída)
 docs/design/            how_to_run · going_live · deployment · arquitetura · data card
 docs/evaluation/        TODOS os resultados (gerados por script; não editados à mão)
 docs/decisions/         page_audit (52/52 citações) · reviews · learning.md · glossário
-docs/defence/           caderno + guia rápido
-progress/               MASTER_PLAN · ML_PLAN · PLANO_FINAL · TRACKER · SESSIONS
+progress/               MASTER_PLAN · TRACKER · SESSIONS · DECISIONS (continuidade)
 ```
 
 ## 4. Como ver tudo a funcionar em 10 minutos
@@ -112,7 +114,7 @@ progress/               MASTER_PLAN · ML_PLAN · PLANO_FINAL · TRACKER · SESS
 2. Abrir <https://investigator.streamlit.app> — escolher uma aba de ticker, ver o "Background risk".
 3. Entrar no canal <https://t.me/InvestiGatorMEIA> — alertas reais em horário de mercado.
 4. Abrir `thesis/main.pdf` — a tese; `docs/evaluation/` — os números com os scripts ao lado.
-5. GitHub → Actions — CI verde + varreduras "Alerts" de 30 em 30 min.
+5. GitHub → Actions — CI verde + varreduras "Alerts" automáticas (+ branch alerts-history a crescer).
 
 ## 5. O que falta (apenas ações humanas)
 

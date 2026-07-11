@@ -1,152 +1,40 @@
-# CHECKLIST — InvestiGator (o que está feito / o que falta)
+# CHECKLIST — o que FALTA (só isso)
 
-> Lista viva para acompanhar o estado, com caixas de seleção. É a **lista de tarefas acionável** —
-> o histórico detalhado está em [progress/TRACKER.md](progress/TRACKER.md) e
-> [progress/SESSIONS.md](progress/SESSIONS.md); o racional de cada item está no relatório de
-> auditoria (plano). Marca `[x]` à medida que fechas cada ponto.
+> Lista viva, mínima de propósito: **apenas o que ainda não está feito.** O histórico completo
+> do que já foi construído vive em `progress/SESSIONS.md` (por sessão) e `progress/TRACKER.md`
+> (por fase); o estado técnico detalhado em `CLAUDE.md`; o resumo para o júri em
+> `RELATORIO_FINAL.md`. Última limpeza: 2026-07-11.
 
----
+## 🧑 Cliques só teus (ninguém pode fazer por ti)
 
-## ✅ Feito — Sessão 27 (auditoria + polimento + flagship)
-- [x] **Correr num comando** volta a funcionar numa máquina limpa: `requirements.txt` leve +
-      `requirements-ml.txt` + `setup_env.sh --ml` (o torch `+cpu` já resolve). *(C1)*
-- [x] **CI corre os testes**: `.github/workflows/ci.yml` (pytest + ruff a cada push de código). *(C2/C3)*
-- [x] `CITATION.cff` (botão "Cite this repository" no GitHub).
-- [x] Índice `docs/README.md`, `ROOT_PROMPT` → `docs/internal/`, badges no README.
-- [x] **Dashboard Streamlit** `app/streamlit_app.py` + guia de deploy `docs/design/deployment.md`.
-- [x] **Correr por cliques**: `.vscode/` (Run & Debug ▶ + tarefas) + `run/*.bat` (duplo-clique).
-- [x] **Sistema de alertas 24/7 (código)**: `scripts/run_alerts.py` + `config/alerts.yaml` + timer
-      `.github/workflows/alerts.yml` + runbook `docs/design/going_live.md` (validado: dry-run encontrou
-      anomalia real ao vivo; não envia). *Falta só os cliques humanos abaixo.*
+### Produto ao vivo
+- [ ] **Streamlit: Reboot app** — o deploy ficou preso num pull antigo (o `plotly` não está
+      instalado no ambiente). "Manage app" → ⋮ → **Reboot app**; se não resolver, apagar o
+      deployment e recriar (mesmo repo, `app/streamlit_app.py`, Python 3.12).
+- [ ] **Streamlit: Sharing → público** — a app regrediu para privada num redeploy anterior;
+      verificar em janela anónima depois do reboot.
+- [ ] **VM Oracle Free (para alertas em minutos)** — criar conta + VM e correr
+      `bash deploy/setup_vm.sh` (guia passo-a-passo: `docs/design/vm_watch.md`). Até lá, o cron
+      do GitHub cobre com latência ~1-2 h. *Testável já no teu PC:*
+      `python scripts/run_alerts.py --watch`.
+- [ ] **Afixar a mensagem de onboarding no canal** + descrição (textos prontos:
+      `docs/design/going_live.md` §1b).
 
----
+### Académico (bloqueia a submissão)
+- [ ] **Leitura final da tese** (`thesis/main.pdf`, 78 pp) — o texto é teu para defender.
+- [ ] **Licença do código** com o Prof. Luís Gomes (MIT/Apache; política de IP do ISEP) +
+      ficheiro `LICENSE`.
+- [ ] **Redação exata da declaração de uso de IA** (MEIA/ISEP) + **data de entrega** — confirmar
+      com o Prof. Luís Gomes.
+- [ ] Correr `python scripts/post_validate.py` (rotula as decisões reais maturadas do loop de
+      pós-validação — repetir de vez em quando enquanto o canal está vivo).
 
-## 🤖 EM CURSO — componente de ML treinado (triagem de materialidade; RQ4)
-> **Plano-mestre e checkpoint multi-dispositivo: [progress/ML_PLAN.md](progress/ML_PLAN.md)** (desenho
-> fixado, fases, dados, áreas de IA incl. a tradução honesta do "RL" do aluno). Proposta ao orientador:
-> [docs/internal/proposta_ml_orientador.md](docs/internal/proposta_ml_orientador.md).
-> **Regra:** o texto da tese só muda depois do OK do Prof. Luís Gomes (M7).
-- [x] **HUMANO: proposta ao Prof. Luís Gomes** — **OK dado em 2026-07-04** (o orientador confia no
-      aluno e deu luz verde a tudo; está de férias). **Gate do M7 ABERTO.**
-- [x] M1 — Rótulos (retorno anormal vs SPY) + `scripts/build_dataset.py` + testes anti-lookahead.
-- [x] M2 — `investigator/triage/` + `scripts/train_triage.py` (LR + GBM, split temporal, calibração, seeds).
-      *(Ablação sentimento FinBERT: hook desenhado, adiada para M6 — só entra se ajudar na validação.)*
-- [x] M3 — *Smoke evaluation* no corpus Finnhub → `docs/evaluation/evaluation_triage.md` + figuras.
-- [x] M4 — Isolation Forest vs z-score (números z-score congelados intactos).
-- [x] M5 — Integração off-by-default (linha no alerta, gate `min_materiality` no runner, severidade na
-      app; produção usa a variante só-contexto `models/triage_context_lr.joblib` — stack leve, sem SBERT).
-- [x] M5.5 — **Loop de pós-validação** (runner regista decisões → `scripts/post_validate.py` rotula ao
-      maturar (d+3) com o resultado real → `docs/evaluation/live_monitoring.md` → receita de retreino)
-      — a forma defensável da ideia "RL" do aluno. O loop já está armado: correr o post_validate
-      dias depois de o runner correr com notícias ligadas.
-- [x] M6 — **FEITO (madrugada de 2026-07-05)**: FNSPID 2018–2023 → 79.753 exemplos (0 descartes,
-      14/15 tickers — META="FB" no corpus) → retreino. Resultado: vol PR-AUC 0,542 imbatível pelo
-      texto; triagem quase 4× melhor que alertar-sempre no orçamento diário (0,632 vs 0,163).
-- [x] M7 (tese) — RQ4 integrada de ponta a ponta (Caps. 1–6 + abstract; 74→76 pp após o passe editorial, 0 erros, 52/52
-      citações; gate aberto pelo orientador em 2026-07-04).
-- [x] M7 (materiais) — **FEITO (2026-07-05)**: paper IEEE (4 pp, +2 refs), slides de defesa (16 frames,
-      +Result 4 + 3 perguntas de júri), guia de estudo (63 slides, +3 frames que ensinam a triagem do
-      zero + slide "o que usa" corrigido), caderno (§5 RQ4 + mapa de números + 4 perguntas), app/README
-      (93 testes, 52/52, claim "trains no model" corrigido), page-audit estendido.
-- [x] S-APP — FEITA como P4 do plano final (ver secção seguinte).
+### Opcional
+- [ ] Migrar/renomear o repositório (procedimento + trade-offs: `docs/design/migrar_repo.md`;
+      a alternativa sem risco é o rename `DIMEIA`→`InvestiGator`).
 
-## 🎯 EM CURSO — as 4 frentes finais (plano: [progress/PLANO_FINAL.md](progress/PLANO_FINAL.md))
-> Ordem decidida em 2026-07-05 (pedido do aluno: "fazer tudo"): P1 polimento da escrita da tese →
-> P2 rename `src/`→`investigator/` → P3 KB FNSPID multi-ano → P4 S-APP (Fase B).
-- [x] P1 — Polimento editorial das secções novas da RQ4 + coerência global (0 números alterados;
-      frases-comboio partidas em Ch2/Ch3/Ch5/Ch6, ecos removidos; 76 pp, 0 erros, 0 overfull >15pt).
-- [x] P2 — Rename `src/`→`investigator/` FEITO (pacote instalável, -e ., bundles re-serializados com
-      probe idêntico, docs sincronizados; 93 testes + ruff + demo verdes).
-- [x] P3 — KB de retrieval FNSPID 2018–2023 FEITA (79.753 registos SBERT, ~691 MB local; validação
-      em docs/evaluation/kb_fnspid_build.md; números da tese e deploy intocados).
-- [x] P4 — S-APP Fase B FEITA (bot long-polling sem servidor: /start /watch /unwatch /list /stop;
-      SQLite; fan-out no runner off por defeito e fail-open; 10 testes novos → 103; app com
-      secção "alerts no telemóvel"). Ligar: scripts/run_bot.py + bot.enabled no alerts.yaml.
-
-## 🖥️ FEITO — Sessão 33 (redesenho de produto: painel único ao vivo)
-> Pedido do aluno após uso real ("we need hard changes and renew"): alertas de mercado raros
-> demais, materialidade em jargão, Streamlit com "muito lixo" e sem mostrar o modelo TREINADO.
-> Plano aprovado em modo de planeamento; executado em 4 fases — ver
-> `docs/decisions/product_review.md` (Pass 6) para o relatório completo.
-- [x] Sensibilidade de produção: `threshold` 3,0→2,0 (divulgado, distinto da avaliação); linha
-      de materialidade reescrita em linguagem simples.
-- [x] **Histórico partilhado** `investigator/alerts_history.py` + branch de dados `alerts-history`
-      (workflow escreve, app lê via raw URL) — Telegram e Streamlit deixam de poder divergir.
-- [x] **App reescrita**: painel único, uma aba por ticker, "Background risk" do TEU modelo (RQ4)
-      todos os dias (novo `score_background`), gráfico Plotly anotado, tabela de histórico;
-      "Method & evaluation" num expander no fundo. 2 bugs reais apanhados pelos testes antes de
-      produção (IDs de gráfico duplicados; expander aninhado).
-- [x] **Notebook** `notebooks/investigator_walkthrough.ipynb` — os 3 componentes (anomalia,
-      retrieval, o modelo treinado) executado de ponta a ponta, 0 erros.
-- [x] **Screenshots reais** (não mockups) capturados e inseridos: tese Cap. 4 (Fig. 4.5, 78 pp),
-      slides de defesa (novo frame, 17 pp), guia de estudo (frame "produto, HOJE", 64 pp) — todos
-      0 erros/citações indefinidas.
-- [x] Documentação sincronizada (README, CHECKLIST, going_live, deployment, caderno, guia rápido,
-      RELATORIO_FINAL, product_review) — 132 testes + ruff verdes.
-- [ ] **HUMANO (opcional, 10s):** Actions → "Alerts (scheduled scan)" → Run workflow — confirma
-      a branch `alerts-history` a receber o primeiro registo real (ou espera a corrida agendada
-      de amanhã em horário de mercado; não bloqueia nada).
-
-## ⏳ A fazer — EU (humano; ninguém pode fazer por ti)
-### Pôr o sistema 24/7 ao vivo (grátis) — ver [docs/design/going_live.md](docs/design/going_live.md)
-- [x] Criar um **canal de Telegram** e adicionar o bot como **administrador**.
-- [x] Definir **3 segredos** no GitHub (Settings → Secrets → Actions): `TELEGRAM_BOT_TOKEN`,
-      `TELEGRAM_CHAT_ID` (= canal), `FINNHUB_API_KEY` (opcional).
-- [x] Correr o workflow **"Alerts (scheduled scan)"** uma vez (Actions → Run workflow) para testar.
-- [x] Tornar o **repositório público** (necessário para o dashboard público + Actions ilimitados).
-- [x] **Publicar o dashboard**: <https://investigator.streamlit.app> (URL já no README).
-- [ ] **Tornar a app pública no Streamlit** — foi feito a 2026-07-06, mas **regrediu** (verificado
-      2026-07-07: visitantes anónimos são mandados para o login — provável efeito do redeploy).
-      share.streamlit.io → app → ⋮ Settings → **Sharing → "This app is public"**. Verificar em
-      janela anónima.
-- [x] **Preencher `public.channel_url`** no `config/alerts.yaml` (link do canal; não-secreto) —
-      ativa o botão "Open the Telegram channel" na página 📡 Get alerts da app.
-      Feito (2026-07-07): <https://t.me/InvestiGatorMEIA>.
-- [ ] **Afixar a mensagem de onboarding no canal** + colar a descrição (textos prontos a copiar
-      em `docs/design/going_live.md` §1b — canais não têm boas-vindas automáticas; o pin é o padrão).
-- [ ] (Verificação, 1 min) Abrir <https://investigator.streamlit.app> em janela anónima e ver o
-      **Live board**; e no dia útil seguinte confirmar no separador Actions que o workflow "Alerts"
-      corre de 30 em 30 min e que o canal recebe sem repetições.
-- [ ] (Opcional) Renomear o repositório GitHub `DIMEIA` → `InvestiGator` (Settings → Rename; o GitHub
-      redireciona os URLs antigos; depois avisar para atualizar badges e re-ligar o Streamlit).
-- [ ] (Se decidires) **Migrar para repo novo SEM história** — procedimento + trade-offs honestos
-      (Actions em privado tem limite de minutos que o cron intradiário consome; Streamlit e badges
-      têm de ser religados) em [docs/design/migrar_repo.md](docs/design/migrar_repo.md).
-      Alternativa sem riscos se for só pelo nome: o rename acima.
-- [ ] **Escolher a licença do código** com o Prof. Luís Gomes (MIT/Apache; confirmar política de IP do
-      ISEP) e adicionar o ficheiro `LICENSE`.
-- [ ] Confirmar a **redação exata da declaração de uso de IA** exigida pela MEIA/ISEP + a **data de entrega**.
-- [ ] **Leitura final** de toda a tese (o texto é teu para defender).
-- [ ] Ver no GitHub → separador **Actions** que o CI novo está verde.
-
----
-
-## 🧰 Polimento opcional (seguro, quando quiseres)
-- [x] Renomear `src/` → `investigator/` — **FEITO no P2 do plano final** (pacote instalável via
-      pyproject + `-e .`; hacks `sys.path` removidos; docs sincronizados; bundles re-serializados).
-- [ ] Relatório de cobertura (`pytest --cov`) + o número no README/CI.
-- [ ] Ajuda de **horas de mercado** (mercado aberto/fechado) — também vira figura de "framework geral".
-- [ ] Camada de **logging** (`logging` em vez de `print` no código de biblioteca).
-- [ ] SBERT em singleton + matriz da KB pré-calculada (desempenho, quando a KB/UI crescer).
-- [x] Retrieval SEMÂNTICO na nuvem — **FEITO (2026-07-07)**: MiniLM em ONNX (`onnx_embedder.py`,
-      SHA256 pinado, fail-open) + KB light recurada a 384-d SBERT (2.016 registos, embeddings
-      reutilizados). Paridade com o SBERT validada (cosseno médio 0,992; 96 % vizinhos top-3
-      comuns): `docs/evaluation/onnx_minilm_validation.md`.
-- [ ] CLI para o Gatilho 2 (`python -m …`) a espelhar o Gatilho 1.
-
----
-
-## 📝 Conteúdo da tese (precisa da tua caneta)
-- [ ] Parágrafo + figura de **generalização** (o *framework* é agnóstico ao mercado; NASDAQ/NYSE é a
-      *instância de avaliação*).
-- [ ] Apêndice de **reprodutibilidade** melhorado (receita leve/ML, badge de CI, "como reproduzir os números").
-- [ ] Secção de **Trabalho Futuro** (integrar Streamlit/Telegram/nuvem/multi-mercado).
-
----
-
-## 🚀 Trabalho futuro (pós-submissão, opcional)
-- [x] Onboarding self-service no **Telegram** — FEITO (P4; long-polling + SQLite; webhook/host = evolução).
-- [ ] Alojamento **24/7 na nuvem** (Fly.io / Render / Oracle Free).
-- [ ] **Multi-mercado** (registo de bolsas + calendários).
-- [x] Construir a **KB FNSPID** multi-ano — FEITA (P3; 79.753 registos; avaliação multi-ano = futuro).
-- [ ] Estudo de **utilidade com humanos** (confiança apropriada).
+## 🤖 Pendentes do código (nenhum bloqueia)
+- [ ] Confirmar no próximo dia útil: filtros de qualidade ao vivo (menos alertas, só relevantes),
+      resumo diário ao fecho no canal, e a branch `alerts-history` a crescer sem duplicados.
+- [ ] Polimento futuro (quando quiseres): cobertura `pytest --cov` no README; camada `logging`;
+      CLI do Gatilho 2; de-dup de precedentes quase iguais.

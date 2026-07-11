@@ -178,10 +178,8 @@ busca preços (yfinance), mede o impacto (+1/+3/+5d) e gera os embeddings.
 > O FNSPID completo (multi-ano) descarrega-se com `scripts/download_data.py` (streaming + filtro por
 > ticker/janela). É um trabalho longo e os dados grandes **nunca** são versionados (ver `data_card.md`).
 
-**KB multi-ano FNSPID (P3 do plano final) — por clique ou comando:**
+**KB multi-ano FNSPID (SBERT — trabalho longo, correr destacado):**
 
-- VS Code: tarefa **"KB FNSPID (P3)"** (Terminal → Run Task), ou duplo-clique em `run/kb-fnspid.cmd`.
-- Equivalente em linha de comandos (o `.cmd` faz isto, destacado e com log em `data/kb_build.log`):
 ```bash
 HF_HUB_OFFLINE=1 ./.venv/Scripts/python.exe scripts/build_kb.py \
   --news data/fnspid_news_subset.csv --sbert \
@@ -190,8 +188,7 @@ HF_HUB_OFFLINE=1 ./.venv/Scripts/python.exe scripts/build_kb.py \
 
 > ⚠️ **Não uses o `--sample` por defeito neste caso**: o defeito escreveria por cima de
 > `data/samples/kb_sample.jsonl`, a amostra versionada de que a demo e o exemplo do Cap. 3 (+6,46%)
-> dependem — e com dimensão incompatível (SBERT 384 vs baseline 64). O `.cmd` já aponta a amostra
-> para `data/samples/kb_fnspid_sample.jsonl`.
+> dependem — e com dimensão incompatível (SBERT 384 vs baseline 64).
 > A KB grande (`data/kb_fnspid_sbert.jsonl`) é um **artefacto local** (gitignored); os números da
 > tese não mudam com este build.
 
@@ -232,7 +229,7 @@ Grava `models/*.joblib` (versionados; mesma seed ⇒ ficheiros bit-idênticos), 
 `docs/evaluation/evaluation_triage.md` e as figuras PR/calibração. Em produção (runner de alertas
 e app, stack leve) pontua-se a variante **só-contexto** (`models/triage_context_lr.joblib`) via
 `investigator/triage/infer.py` — sem SBERT. Para ligar o gate nos alertas: `news.min_materiality` no
-`config/alerts.yaml` (off por defeito). Plano e estado: `progress/ML_PLAN.md`.
+`config/alerts.yaml` (off por defeito).
 
 **Loop de pós-validação (M5.5):** o runner regista cada decisão de notícia em
 `data/predictions_log.jsonl`; dias depois, `python scripts/post_validate.py` rotula as decisões

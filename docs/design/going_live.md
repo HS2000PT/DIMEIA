@@ -76,15 +76,20 @@ essa branch). A app Streamlit lê esse ficheiro ao vivo (raw.githubusercontent.c
 nunca recalcula. Fail-open total: se o checkout ou o push falharem, o runner e o envio ao Telegram
 continuam normalmente, só o histórico partilhado fica por publicar dessa vez.
 
-### 5) Escolher o que é vigiado
+### 5) Escolher o que é vigiado (e a qualidade dos alertas)
 `config/alerts.yaml`: a **watchlist** (`tickers`), a `window` e o `threshold` do z-score; e ligar/desligar
-o gatilho de notícias. Sem segredos aqui.
+o gatilho de notícias. Sem segredos aqui. **Botões de qualidade das notícias (2026-07-11):**
+`news.min_similarity` (chão: sem UM precedente com cosseno ≥ este valor, não há alerta),
+`news.max_per_ticker_per_day` (teto anti-fadiga), e o filtro de relevância
+(`investigator/news_fetcher/relevance.py` — a manchete tem de mencionar a empresa; boilerplate
+de mercado é rejeitado; edita os aliases lá se mudares a watchlist). O canal também envia um
+**resumo diário ao fecho** (1 msg ≥21h UTC) e corre aos fins de semana (só notícias).
 
 **Triagem aprendida (opcional, off por defeito).** Se definires `news.min_materiality` (ex.: `0.4`),
 cada alerta de notícia é pontuado pelo modelo treinado só-contexto (`models/triage_context_lr.joblib`,
 corre na stack leve) e só é enviado se P(movimento anormal) ≥ esse valor; o alerta passa a incluir a
 linha de materialidade ("triage evidence, not a forecast"). Sem o ficheiro do modelo, o gate é ignorado
-com aviso — o runner nunca fica vermelho por causa da triagem. Detalhes: `progress/ML_PLAN.md` (M5).
+com aviso — o runner nunca fica vermelho por causa da triagem.
 
 **Loop de pós-validação (M5.5).** Com o gatilho de notícias ligado, o runner regista cada decisão em
 `data/predictions_log.jsonl` (local, gitignored). Dias depois corre `python scripts/post_validate.py`:
@@ -110,7 +115,7 @@ Varre a watchlist com preços ao vivo e **imprime** os alertas (não envia). Cor
 
 ## Fase B — bot interativo por utilizador ✅ CONSTRUÍDA (versão sem servidor)
 
-**Já funciona, de graça e sem host** (P4 do `progress/PLANO_FINAL.md`): o bot usa *long-polling*
+**Já funciona, de graça e sem host**: o bot usa *long-polling*
 (`getUpdates`), por isso corre em qualquer máquina atrás de NAT — não precisa de webhook nem de
 servidor público.
 

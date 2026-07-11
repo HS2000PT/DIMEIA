@@ -11,6 +11,7 @@ se só queres correr o sistema.
 | [design/setup.md](design/setup.md) | Ambiente: venv 3.12, stack leve vs `--ml`, torch do índice CPU. |
 | [design/deployment.md](design/deployment.md) | Publicar o **dashboard** de graça (Streamlit Community Cloud). |
 | [design/going_live.md](design/going_live.md) | Pôr o sistema **24/7** (canal Telegram + timer do GitHub, sem servidor). |
+| [design/vm_watch.md](design/vm_watch.md) | Alertas em **quase-tempo-real**: modo vigia numa VM gratuita (Oracle Free). |
 | [design/arquitectura_sistema.md](design/arquitectura_sistema.md) | Arquitetura e componentes. |
 | [design/data_card.md](design/data_card.md) | Origem/estrutura dos dados (FNSPID + camada live). |
 | [design/free_apis.md](design/free_apis.md) | APIs gratuitas usadas (preços, notícias, Telegram). |
@@ -37,19 +38,13 @@ se só queres correr o sistema.
 | [decisions/glossary.md](decisions/glossary.md) | Glossário de termos. |
 | [decisions/citation_log.md](decisions/citation_log.md) | Registo de **cada citação verificada** (zero fabricação). |
 | [decisions/page_audit.md](decisions/page_audit.md) | Auditoria página-a-página + re-verificação das 50 fontes. |
-| [decisions/implementation_review.md](decisions/implementation_review.md) | Revisão crítica da implementação/estatística. |
-| [decisions/review_log.md](decisions/review_log.md) | Revisão crítica do zero (achados C-1..C-5). |
-| [decisions/editorial_review.md](decisions/editorial_review.md) | Registo da revisão editorial / reescrita / polimento. |
-| [decisions/product_review.md](decisions/product_review.md) | Revisão de produto/UX. |
+| [decisions/product_review.md](decisions/product_review.md) | Revisão de produto/UX (Pass 5 + Pass 6 do redesenho). |
 
-## defence/ — preparar a defesa
-| Ficheiro | Para quê |
-|----------|----------|
-| [defence/guia_rapido.md](defence/guia_rapido.md) | **Guia RÁPIDO (simplificado):** pitch, números congelados, 3 frases por componente, júri. |
-| [defence/caderno_de_defesa.md](defence/caderno_de_defesa.md) | Caderno de defesa (PT-PT): guião oral, respostas, número→script→tese. |
-
-> Para o **guia de estudo DETALHADO do zero** (64 slides), ver `slides/guia_estudo/main.pdf`.
-> O **relatório final** (tudo o que o repo contém, para orientador/júri) está na raiz: `RELATORIO_FINAL.md`.
+## Preparar a defesa — UMA fonte
+> **`slides/guia_estudo/main.pdf` (71 slides)** é a fonte única de estudo: ensina a tese do
+> zero E contém o guião oral, as perguntas do júri, o mapa dos números congelados e o plano B.
+> O relatório para orientador/júri está na raiz: `RELATORIO_FINAL.md`. (Os antigos caderno de
+> defesa e guia rápido foram absorvidos no guia e arquivados em `_archive/`.)
 
 ## internal/ — documentos internos de continuidade (não são "porta de entrada" para examinadores)
 | Ficheiro | Para quê |
@@ -59,8 +54,7 @@ se só queres correr o sistema.
 > Outros ficheiros internos de continuidade vivem em `progress/` (TRACKER, SESSIONS, DECISIONS, MASTER_PLAN)
 > e na raiz (`CLAUDE.md` — memória de trabalho do projeto).
 
-## _archive/ — análises de fases iniciais, mantidas por proveniência
-| Ficheiro | Para quê |
-|----------|----------|
-| [_archive/analise_referencia.md](_archive/analise_referencia.md) | Análise inicial de dissertações de referência. |
-| [_archive/analise_template_latex.md](_archive/analise_template_latex.md) | Análise inicial do template LaTeX ISEP. |
+## _archive/ — documentos absorvidos/superados, mantidos por proveniência
+Análises de fases iniciais (`analise_referencia`, `analise_template_latex`), a proposta de ML ao
+orientador (aprovada 2026-07-04), e os documentos de estudo absorvidos pelo guia único
+(`caderno_de_defesa`, `guia_rapido`, `QUESTIONS`).

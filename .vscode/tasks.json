@@ -183,32 +183,6 @@
       "problemMatcher": []
     },
     {
-      "label": "FNSPID overnight (M6) — download + dataset + retrain",
-      "type": "shell",
-      "command": "${workspaceFolder}/run/fnspid-overnight.bat",
-      "windows": {
-        "command": "${workspaceFolder}\\run\\fnspid-overnight.bat"
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "KB FNSPID (P3) — reconstruir a KB de retrieval multi-ano (SBERT)",
-      "type": "shell",
-      "command": "${workspaceFolder}/run/kb-fnspid.cmd",
-      "windows": {
-        "command": "${workspaceFolder}\\run\\kb-fnspid.cmd"
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated"
-      },
-      "problemMatcher": []
-    },
-    {
       "label": "Setup — light venv (needs Git Bash)",
       "type": "shell",
       "command": "bash scripts/setup_env.sh",

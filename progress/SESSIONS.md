@@ -5,6 +5,38 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 34 — 2026-07-11 — Grande limpeza + qualidade dos alertas + quase-tempo-real + guia único
+**Pedido:** "full repository cleanup… the product sucks… similarity not working… only news, no
+market triggers… alerts on weekends… near real time… single study source". Diagnóstico com provas
+(27 alertas reais do canal + logs do Actions) ANTES de mexer; plano aprovado em modo de planeamento.
+- **Diagnóstico:** o Finnhub etiqueta lixo (escritório de advogados como "AMD"; "S&P500 movers"
+  para vários tickers) e não havia filtro de relevância — a similaridade parecia má porque a
+  ENTRADA era má; zero |z|≥2 nesses 2 dias + canal mudo em dias calmos; cron do GitHub na prática
+  de 1,5-2h em 1,5-2h (medido); só TSLA/META/AMD passavam o gate (volatilidade domina o modelo).
+- **F1 qualidade:** `investigator/news_fetcher/relevance.py` (menção obrigatória da empresa +
+  rejeição de boilerplate — testado com os casos reais do canal); chão `news.min_similarity: 0.45`;
+  aviso "⚠ BOTH directions" (a lição do CS3 no produto — P-3 implementado); teto 2 notícias/
+  ticker/dia; P da triagem de cada ticker no log.
+- **F2 presença de mercado:** resumo diário ao fecho (`build_daily_summary`, kind=summary no
+  histórico e na app); crons alargados (manhãs úteis + fins de semana, só notícias — o mercado
+  auto-salta via bar_is_fresh); dedup ENTRE produtores via histórico partilhado (campo `key`).
+- **F3 quase-tempo-real:** `run_alerts.py --watch` (loop ~5 min, SIGTERM limpo) + push git
+  opcional do histórico (INVESTIGATOR_HISTORY_GIT=1) + runbook `docs/design/vm_watch.md` +
+  systemd + `deploy/setup_vm.sh` — decisão do aluno: VM Oracle Free; cron fica de rede de segurança.
+- **F4 limpeza:** APAGADOS (git preserva) ML_PLAN/PLANO_FINAL/PLANO_SESSOES (planos concluídos),
+  editorial_review/review_log/implementation_review (auditorias one-off), start/end_session.sh,
+  fnspid-overnight.bat/kb-fnspid.cmd; ARQUIVADOS caderno_de_defesa/guia_rapido/QUESTIONS/proposta_ml
+  (absorvidos no guia). Referências ativas corrigidas; README com mapa "6 sítios"; CHECKLIST
+  reescrito para SÓ o que falta; docs/README refeito.
+- **F5 guia ÚNICO:** guia_estudo 64→**71 slides** (+guião oral 3 min e por-RQ, +2 frames de
+  perguntas do júri, +mapa dos números congelados, +plano B; "Onde estudar" atualizado) — fonte
+  única de estudo, 0 erros.
+- **Validado:** 145 testes + ruff verdes; dry-run ao vivo com os filtros (lixo rejeitado no log,
+  AAPL suprimida por precedente fraco, aviso de direção mista a aparecer, P de todos visível).
+- **Achado para o aluno:** o deploy do Streamlit está PRESO num pull antigo (4 falhas "Updating
+  the app files has failed" no log dele) — precisa de **Reboot app** manual (plotly ausente do
+  ambiente é sintoma, não causa).
+
 ## Sessão 33 — 2026-07-09 — Redesenho de produto: painel único ao vivo
 **Pedido:** feedback real após dias de uso — alertas de mercado raros, materialidade em jargão,
 Streamlit "com muito lixo" e sem mostrar o modelo treinado; "we need hard changes and renew" +

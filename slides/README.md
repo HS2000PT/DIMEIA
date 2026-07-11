@@ -18,6 +18,6 @@ Estado: **compila, 14 pp, 0 erros**. Reutiliza as figuras validadas via `\graphi
 
 ## Notas
 - **Inglês**, para coincidir com a tese (EN-GB) e reutilizar as figuras diretamente. O apoio de estudo em
-  PT-PT é o `docs/defence/caderno_de_defesa.md` (a melhorar na Fase H).
+  PT-PT é o guia único `slides/guia_estudo/main.pdf` (71 slides).
 - Números idênticos aos da tese e reproduzíveis (Fases D/E). Só conteúdo já validado.
-- O último slide ("Anticipated questions") espelha as perguntas difíceis preparadas no caderno de defesa.
+- O último slide ("Anticipated questions") espelha as perguntas difíceis preparadas no guia de estudo (secção Defesa).

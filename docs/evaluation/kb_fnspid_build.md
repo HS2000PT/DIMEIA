@@ -1,4 +1,4 @@
-# KB de retrieval FNSPID multi-ano — build + validação do artefacto (P3 do PLANO_FINAL)
+# KB de retrieval FNSPID multi-ano — build + validação do artefacto
 
 > **O que isto É:** a validação do ARTEFACTO (a base de conhecimento multi-ano construída).
 > **O que isto NÃO é:** uma avaliação de retrieval — não há aqui precision@k novo; os números
@@ -6,8 +6,8 @@
 > retrieval multi-ano (com dispersão e consistência de direção) continua como trabalho futuro,
 > tal como o Cap. 6 a descreve.
 
-**Data do build:** 2026-07-05 · **Comando:** `run/kb-fnspid.cmd` (ou tarefa VS Code "KB FNSPID
-(P3)"); log em `data/kb_build.log`. Fonte: `data/fnspid_news_subset.csv` (FNSPID 2018–2023,
+**Data do build:** 2026-07-05 · **Comando:** `scripts/build_kb.py --sbert` destacado (ver
+how_to_run §4); log em `data/kb_build.log`. Fonte: `data/fnspid_news_subset.csv` (FNSPID 2018–2023,
 15 tickers configurados) + preços yfinance; embedder **SBERT all-MiniLM-L6-v2 (dim 384)** com
 `HF_HUB_OFFLINE=1` (modelo em cache).
 

@@ -19,6 +19,16 @@
 reasoning chain — detected event → explanation → sources → historical precedents — and delivers it over the
 **Telegram Bot API**. No price prediction, no algorithmic trading, free APIs only.
 
+## The 6 places that matter
+| I want to… | Go to |
+|---|---|
+| Read the dissertation | `thesis/main.pdf` (78 pp) |
+| Study for the defence | `slides/guia_estudo/main.pdf` — **the** single study source (71 slides) |
+| See it live | <https://investigator.streamlit.app> + Telegram <https://t.me/InvestiGatorMEIA> |
+| Show it to the supervisor | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) (10-min read) |
+| Run it myself | `python scripts/demo.py` · full guide `docs/design/how_to_run.md` |
+| See what's left to do | [`CHECKLIST.md`](CHECKLIST.md) |
+
 ## What it does
 - **Trigger 1 — Abrupt market move:** flags a statistical anomaly (rolling *z*-score, no lookahead) and
   explains it in plain language.
@@ -63,13 +73,18 @@ the word-overlap baseline only if the model is unavailable.
 (anomaly detector, retrieval, the trained triage model), one hands-on cell at a time; see
 `docs/design/how_to_run.md` §5.2.
 
-## 📡 Live 24/7 (free, no server)
-Turn InvestiGator into a running service without paying or babysitting a server:
-- **Intraday alerts, zero-ops** → `scripts/run_alerts.py` scans the watchlist (`config/alerts.yaml`)
-  **every 30 minutes during US market hours** (free GitHub Actions timer) and posts explainable
-  alerts to a **Telegram channel** — market anomalies and material news (gated by the trained
-  triage model), never repeating the same alert in a day. Users just **join the channel**.
-- **The webpage, any time** → the dashboard on Streamlit Community Cloud (`docs/design/deployment.md`).
+## 📡 Live 24/7 (free)
+Quality-first alerting to a **Telegram channel**, with honest engineering:
+- **Relevance-filtered news** — a headline must actually mention the company (mistagged and
+  boilerplate items are rejected), needs at least one strong historical precedent (similarity
+  floor), is capped at 2 news alerts per ticker per day, and is gated by the **trained triage
+  model**. Mixed-direction precedent sets carry an explicit warning.
+- **Market presence every day** — anomaly alerts (rolling z-score) plus a **daily close
+  summary** (all 10 tickers with move + z-score, anomalies highlighted — honest on calm days).
+- **Two producers, one memory** — a near-real-time **watch mode** (`run_alerts.py --watch`,
+  runs on any always-on machine/VM; `docs/design/vm_watch.md`) plus the GitHub Actions cron as
+  a safety net (weekday market hours, mornings and weekends for news); both share the
+  `alerts-history` branch so nothing is ever duplicated.
 - Try the scan now (sends nothing): `python scripts/run_alerts.py --dry-run`.
 
 Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/going_live.md`**.
@@ -83,23 +98,21 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
   compile thesis/slides/paper). Full guide: **`docs/design/run_in_vscode.md`**.
 - Track what's done vs pending in **[`CHECKLIST.md`](CHECKLIST.md)**.
 
-## Learn it / prepare the defence
+## Learn it / prepare the defence — ONE source
+- **THE study guide (PT-PT):** **`slides/guia_estudo/main.pdf`** — the single, consolidated source
+  (71 slides): teaches the whole thesis from zero, the code line by line, the evaluation, **the oral
+  script (3-min opening + per-RQ answers), the complete jury Q&A, the frozen-numbers table and the
+  defence plan B**. Everything previously scattered across companion documents now lives here.
 - **Final report (PT-PT, for the supervisor/jury):** **[`RELATORIO_FINAL.md`](RELATORIO_FINAL.md)** —
   everything in this repository and where it lives, in a 10-minute read.
-- **From-zero visual study guide (PT-PT, detailed):** **`slides/guia_estudo/main.pdf`** — teaches the whole
-  thesis assuming *no* AI background (64 slides): the AI ideas actually used, the data shown, the code line
-  by line, the end-to-end workflow with real examples, the evaluation, and prepared jury questions.
-- **Quick defence guide (PT-PT, simplified):** `docs/defence/guia_rapido.md` — the pocket version:
-  pitch, the frozen numbers table, each component in 3 sentences, top jury Q&A.
-- **Defence slides (EN):** `slides/main.pdf` (16 frames).
-- **PT-PT defence companion (prose + oral script):** `docs/defence/caderno_de_defesa.md`.
+- **Defence slides (EN):** `slides/main.pdf` (17 frames) — the short deck for the day itself.
 
 ## Project status
 **Validated and submission-ready (pending human sign-off).** Both triggers are proven end to end;
-**132 automated tests** + lint green. The core components — including a **materiality-triage model trained
+**145 automated tests** + lint green. The core components — including a **materiality-triage model trained
 by the author** on 79,753 multi-year FNSPID examples (RQ4; triage evidence, never a forecast) — are
 evaluated on **real data**, and the statistics reproduce exactly from versioned scripts. The **six-chapter
-dissertation** compiles cleanly (`thesis/main.pdf`, ~76 pp, 0 errors), with **52 references each verified by
+dissertation** compiles cleanly (`thesis/main.pdf`, 78 pp, 0 errors), with **52 references each verified by
 DOI/arXiv/ISBN or primary source** (audit in `docs/decisions/page_audit.md`). An **IEEE paper** (`paper/`)
 and **defence slides** (`slides/`) compile. Remaining items are human-only: confirm the exact ISEP AI-use
 declaration wording + submission date, and the author's final read. The multi-year *retrieval* knowledge
@@ -109,26 +122,26 @@ powers the public app) — evaluating retrieval on it stays future work, as the 
 
 ## Repository layout
 ```
-thesis/        LaTeX dissertation (6 chapters + front matter + appendix)
+thesis/        LaTeX dissertation (6 chapters + front matter + appendix; 78 pp)
 paper/         IEEE paper (IEEEtran) distilled from the thesis
-slides/        defence slides (Beamer, 16 frames)
-  guia_estudo/   from-zero PT-PT study guide (Beamer, 64 slides)
+slides/        defence slides (Beamer, 17 frames)
+  guia_estudo/   THE study guide (PT-PT, Beamer, 71 slides — single study source)
 investigator/  system code, one package per component (investigator/triage/ = the trained ML component, RQ4)
 models/        trained triage models (joblib, versioned; context-only variant runs in production)
 notebooks/     investigator_walkthrough.ipynb — hands-on tour of the 3 components, executed & committed
 app/           streamlit_app.py — single-page live dashboard (tabs per ticker) over investigator/
+deploy/        VM watch mode: systemd unit + setup script (docs/design/vm_watch.md)
 run/           double-click launchers (dashboard/demo/tests/thesis)
 .vscode/       click-to-run: Run & Debug configs + tasks + recommended extensions
-scripts/       demo.py (run it) + run_alerts.py (24/7 scan) + data / figures / build automation
-config/        alerts.yaml — watchlist + thresholds for the scheduled alert runner
+scripts/       demo.py (run it) + run_alerts.py (alerts runner, --watch mode) + evaluation/build scripts
+config/        alerts.yaml — watchlist + thresholds + quality knobs for the alert runner
 tests/         automated tests
 docs/          documentation (see docs/README.md for the full index), grouped:
-  design/        how_to_run, architecture, data card, free APIs, setup
+  design/        how_to_run, going_live, vm_watch, deployment, architecture, data card
   evaluation/    auto-generated evaluation results (do not edit by hand)
-  decisions/     decisions rationale, citation log, glossary, reviews
-  defence/       PT-PT defence companion
-  internal/      internal continuity docs (e.g. the original root prompt)
-  _archive/      early-phase analyses kept for provenance
+  decisions/     citation log, page audit, product review, learning notes, glossary
+  internal/      provenance (the original root prompt)
+  _archive/      superseded/absorbed documents kept for provenance
 data/samples/  small committed samples (large data gitignored, recreated by scripts)
 progress/      continuity logs (TRACKER, SESSIONS, DECISIONS, MASTER_PLAN)
 CITATION.cff   how to cite this work    requirements.txt (light) / requirements-ml.txt (torch+SBERT)
@@ -139,7 +152,7 @@ CITATION.cff   how to cite this work    requirements.txt (light) / requirements-
   (`requirements.txt`) — enough for the demo, the tests and the evaluations. The heavy ML stack (`torch` CPU,
   `sentence-transformers`, in `requirements-ml.txt`) is needed only for the real SBERT paths and installs with
   `bash scripts/setup_env.sh --ml` (it pulls `torch` from the PyTorch CPU index, not PyPI).
-- Verification loop: `bash scripts/verify.sh` (132 tests + lint + LaTeX note).
+- Verification loop: `bash scripts/verify.sh` (145 tests + lint + LaTeX note).
 - Secrets live only in a local, gitignored `.env` (see `.env.example` for variable names).
 - LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push.
 
@@ -157,7 +170,7 @@ cd paper   && latexmk -pdf main.tex                     # paper/main.pdf
 cd slides  && latexmk -pdf main.tex                     # slides/main.pdf
 cd slides/guia_estudo && latexmk -pdf main.tex          # the study guide
 ```
-Re-running these reproduces the thesis numbers exactly (see `docs/decisions/implementation_review.md`).
+Re-running these reproduces the thesis numbers exactly (independently re-verified; audit trail in `docs/decisions/page_audit.md`).
 The full multi-year FNSPID knowledge base (a ~23 GB streaming scan, see `docs/design/data_card.md`) is built
 by `scripts/download_data.py` then `scripts/build_kb.py --sbert`; this is a long, deliberate job.
 

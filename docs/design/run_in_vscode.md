@@ -10,7 +10,6 @@ Na pasta [`run/`](../../run/), faz **duplo-clique**:
 - `demo.bat` → corre a demo (notícia + mercado).
 - `tests.bat` → corre testes + lint.
 - `thesis-pdf.bat` → compila a tese.
-- `fnspid-overnight.bat` → **M6**: download FNSPID + dataset + retreino (deixar uma noite).
 
 A janela fica aberta no fim para leres o resultado. (Detalhes em [`run/README.md`](../../run/README.md).)
 

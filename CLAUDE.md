@@ -7,8 +7,45 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 33 (**Redesenho de produto: painel único ao vivo** — "we need hard changes and renew")
-- **Última atualização:** 2026-07-09
+- **Sessão nº:** 34 (**Grande limpeza + qualidade dos alertas + quase-tempo-real + guia único**)
+- **Última atualização:** 2026-07-11
+- **🧹 SESSÃO 34 ("full repository cleanup… the product sucks… rethink from scratch"):** o aluno
+  estava sobrecarregado (repo "uma confusão") e insatisfeito com o produto real. **Diagnóstico com
+  provas ANTES de mexer** (li os 27 alertas reais do canal via branch alerts-history + logs do
+  Actions): (1) a "similaridade má" era LIXO À ENTRADA — o Finnhub etiqueta mal (notícia de
+  escritório de advogados como "AMD"; "Top S&P500 movers" para vários tickers) e não havia filtro
+  de relevância; (2) zero alertas de mercado = nenhum |z|≥2 real + canal mudo em dias calmos + só
+  TSLA/META/AMD passavam o gate de materialidade (volatilidade domina); (3) cron do GitHub na
+  prática corre de **1,5-2h em 1,5-2h** (medido), não 30 min. Plano aprovado em modo de
+  planeamento; decisões do aluno: VM Oracle Free; guia de 64 slides = fonte ÚNICA; apagar lixo;
+  resumo diário sim.
+  **F1 (commit 8fc045e):** `investigator/news_fetcher/relevance.py` (menção obrigatória da
+  empresa + boilerplate rejeitado — testado com os casos reais); chão `news.min_similarity 0.45`
+  (sem precedente forte → sem alerta); aviso "⚠ BOTH directions" nos precedentes de sinal misto
+  (P-3 implementado); teto `max_per_ticker_per_day: 2`; P da triagem no log por ticker.
+  **F2:** resumo diário ao fecho (1 msg ≥21h UTC, kind=summary no histórico partilhado e na app);
+  crons alargados (manhãs úteis 7/10 UTC + fins de semana 9/15/21 — mercado auto-salta, notícias
+  fluem); **dedup entre produtores** via histórico partilhado (campo `key` no HistoryEntry;
+  `seed_state_from_shared_history`; `news_key` agora sobre plain_text).
+  **F3:** `run_alerts.py --watch --interval 300` (loop com jitter, SIGTERM limpo, config a
+  quente; `run_cycle()` extraído e reutilizado) + `_push_history_safe` (INVESTIGATOR_HISTORY_GIT=1,
+  PAT só na VM) + `docs/design/vm_watch.md` + `deploy/investigator-watch.service` +
+  `deploy/setup_vm.sh`. Cron do GitHub fica de rede de segurança (dedup impede duplicados).
+  **F4 limpeza:** APAGADOS ML_PLAN/PLANO_FINAL/PLANO_SESSOES + editorial_review/review_log/
+  implementation_review + start/end_session.sh + fnspid-overnight.bat/kb-fnspid.cmd (git preserva;
+  citation_log/page_audit/product_review/learning/glossary/ROOT_PROMPT INTOCÁVEIS — proveniência);
+  ARQUIVADOS em docs/_archive: caderno_de_defesa, guia_rapido, QUESTIONS, proposta_ml (absorvidos).
+  Referências ativas todas corrigidas; README com mapa "6 sítios que interessam" no topo;
+  **CHECKLIST reescrito para SÓ o que falta**; docs/README refeito.
+  **F5 guia ÚNICO:** `slides/guia_estudo/` 64→**71 slides** (+guião oral de 3 min e por-RQ,
+  +2 frames de perguntas do júri (modelo perdeu?/anti-lookahead da triagem/formato evoluiu/painel
+  único/RL/cross-ticker/reprodutível/citações), +mapa dos números congelados (tabela verificada),
+  +plano B; frame "produto HOJE" atualizado) — compila 0 erros; é A fonte de estudo.
+  **Validado: 145 testes + ruff verdes; dry-run ao vivo** — lixo rejeitado no log, AAPL suprimida
+  por precedente fraco (sim<0,45), aviso de direção mista presente, P de todos os tickers visível.
+  **⚠️ Para o aluno:** o deploy do Streamlit está PRESO num pull antigo (4× "Updating the app
+  files has failed" no log) — precisa de **Manage app → Reboot app** (o "plotly em falta" é
+  sintoma, não causa); depois Sharing→público. VM Oracle: cliques dele (runbook pronto).
 - **🖥️ SESSÃO 33 (redesenho de produto, feedback real do aluno após dias de uso):** o aluno reportou
   3 problemas concretos depois de usar o sistema a sério — quase nunca recebia alertas de mercado,
   a linha de materialidade era jargão, e o Streamlit (8 páginas) "não parecia refletir o meu

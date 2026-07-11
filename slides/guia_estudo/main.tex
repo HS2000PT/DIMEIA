@@ -1194,8 +1194,11 @@ Não é só uma tese em papel: o sistema \key{corre} em produção, de graça, s
   \item \key{Retrieval semântico} — o MESMO MiniLM da tese em \key{ONNX} ($\sim$23 MB, sem torch;
         paridade com o SBERT validada — cosseno médio 0,992) sobre uma fatia curada de 2.016
         manchetes FNSPID 2018--2023.
-  \item \key{Canal Telegram + timer} — o GitHub Actions varre a watchlist \key{de 30 em 30 min}
-        em horário de mercado US e publica alertas explicados no canal.
+  \item \key{Canal Telegram} — varredura automática com \key{filtro de relevância} (manchetes
+        mal etiquetadas/boilerplate rejeitadas), chão de similaridade, teto de 2 alertas de
+        notícia por ticker/dia e um \key{resumo diário ao fecho}; corre também fins de semana
+        (só notícias). Produtores: VM em modo vigia ($\sim$5 min) + cron do GitHub como rede
+        de segurança, com dedup partilhado.
   \item \key{Bot interativo} — \texttt{/watch TSLA}, \texttt{/list}, \texttt{/stop}, sem servidor.
   \item \key{À prova de wifi} — \texttt{python scripts/demo.py} é offline e determinística
         (reproduz o $+6{,}46\%$ do Cap.~3).
@@ -1250,6 +1253,157 @@ Sim, declarado honestamente; dirigi o trabalho, revi e validei tudo; as decisõe
 responsabilidade.
 \end{frame}
 
+\begin{frame}{Guião oral — a abertura de 3 minutos (1/2)}
+\footnotesize
+Para decorar a \key{estrutura}, não as palavras. Lê em voz alta 3$\times$ antes da defesa.
+\begin{block}{\scriptsize Problema + o que é (\(\approx\)1 min)}
+\scriptsize "Um investidor de retalho vive em sobrecarga: milhares de ações e notícias em contínuo,
+e as ferramentas que interpretam esses sinais são institucionais ou opacas. A minha dissertação
+constrói e avalia o \textbf{InvestiGator}: um sistema de alertas financeiros \textbf{explicável
+por desenho}, para o mercado norte-americano, entregue no Telegram.
+
+Tem dois gatilhos. Um \textbf{movimento abrupto} dispara uma anomalia estatística --- um z-score
+rolante sem lookahead --- explicada em linguagem simples. Uma \textbf{notícia nova} é comparada,
+por embeddings de frases, com uma base de notícias históricas, e o alerta mostra os precedentes
+mais parecidos e o impacto que \textbf{de facto} tiveram: evidência do passado, nunca previsão.
+Este motor de correlação notícia--mercado é o núcleo da tese."
+\end{block}
+\end{frame}
+
+\begin{frame}{Guião oral — a abertura de 3 minutos (2/2)}
+\begin{block}{\scriptsize Avaliação + honestidade (\(\approx\)1 min)}
+\scriptsize "Avaliei cada componente contra baselines em dados reais. A recuperação semântica
+atinge precision@5 de 0,51 contra 0,35 da baseline lexical e 0,24 do acaso. O detetor normalizado
+pela volatilidade dispara de forma consistente onde um limiar fixo não consegue. E fui além de
+aplicar componentes: \textbf{treinei e calibrei um modelo de triagem de materialidade} sobre
+79.753 exemplos de seis anos. O resultado é honesto nos dois sentidos: nenhum modelo que lê o
+texto bateu a baseline de só-volatilidade --- e reporto isso tal como caiu --- mas, dentro de um
+orçamento realista de cinco alertas por dia, a triagem quase \textbf{quadruplica} a precisão.
+Duas vezes dei a um método aprendido uma comparação justa contra a escolha transparente, e duas
+vezes a escolha transparente venceu: o desenho `simplicidade defensável' ficou validado com
+evidência, não com fé."
+\end{block}
+\begin{block}{\scriptsize Produto (\(\approx\)30 s) + fecho}
+\scriptsize "O sistema está \textbf{ao vivo}: painel público, canal Telegram com varredura
+automática, bot interativo. Tudo com APIs gratuitas, tudo reproduzível por scripts versionados,
+com as limitações declaradas." \quad \emph{Fecho universal:} "Preferi um resultado modesto e
+verdadeiro a um impressionante e frágil --- por isso consigo defender cada número desta tese."
+\end{block}
+\end{frame}
+
+\begin{frame}{Guião oral — 15 segundos por pergunta de investigação}
+\scriptsize
+\textbf{RQ1 (deteção transparente)} --- "Sim. O z-score rolante tem taxa de disparo consistente
+entre ações (amplitude 0,015 vs 0,344 de um limiar fixo) e explica-se com média, desvio e janela.
+Desafiei-o com um método aprendido --- Isolation Forest --- e o z-score venceu (F1 0,530 vs 0,271)."
+\vspace{1mm}
+
+\textbf{RQ2 (recuperação + impacto)} --- "Sim. SBERT dá precision@5 de 0,51 cross-ticker, contra
+0,35 lexical e 0,24 aleatório; o impacto é medido com janelas de estudo de evento (+1/+3/+5 dias),
+sem lookahead, e mostrado como evidência, não como previsão."
+\vspace{1mm}
+
+\textbf{RQ3 (explicações)} --- "Fiéis \key{por construção}: o texto do alerta é gerado diretamente
+dos objetos calculados, por isso não pode divergir da computação. A utilidade para investidores
+reais precisa de um estudo humano, que declaro como limitação, não como resultado."
+\vspace{1mm}
+
+\textbf{RQ4 (triagem aprendida)} --- "Não na hipótese do texto; sim no mecanismo. Nenhum modelo
+com texto bateu a só-volatilidade (PR-AUC 0,542 contra 0,496). Mas com orçamento de 5 alertas/dia
+a triagem sobe a precisão de 0,163 para 0,632, com probabilidades calibradas --- treinei, avaliei
+com protocolo temporal estrito, e reportei o resultado tal como é."
+\end{frame}
+
+\begin{frame}{Perguntas difíceis do júri (3/4) — o modelo e o produto}
+\scriptsize
+\textbf{O vosso modelo treinado perdeu para a volatilidade. É um fracasso?}\\
+Não --- a comparação foi \key{pré-comprometida} no protocolo: escrevi, antes de treinar, que o
+resultado seria reportado tal como caísse. A RQ4 fica respondida com evidência (o sinal está no
+contexto de mercado, não no texto, com esta representação); e a triagem vale como mecanismo
+(0,632 vs 0,163 no orçamento diário). Uma tese que só mostra vitórias é menos credível.
+\vspace{1mm}
+
+\textbf{Como garantem que a triagem não vê o futuro?}\\
+Três camadas: (1) convenção de features fixada --- tudo calculável no fecho do dia do evento;
+(2) split temporal por dias únicos com embargo de 5 dias; (3) um \key{teste unitário que muta os
+preços do futuro} e verifica que nenhuma feature muda (e que o rótulo muda). Verificação
+executável, não promessa.
+\vspace{1mm}
+
+\textbf{O alerta de hoje não é igual à figura da tese. Porquê?}\\
+O formato de produção foi \key{compactado depois} de os estudos ficarem congelados (revisão de
+usabilidade); os CAMPOS são os mesmos, por isso a fidelidade não muda. O Cap.~4 regista a
+evolução numa frase; o CS3 é registo experimental congelado.
+\vspace{1mm}
+
+\textbf{A app mudou para um painel único --- invalida a tese?}\\
+Não: a tese nunca prende uma estrutura de UI (verificado: menciona "an interactive dashboard"
+uma vez + um mockup do formato de mensagem). O pivô é de produto; a ciência avaliada é a mesma.
+\end{frame}
+
+\begin{frame}{Perguntas difíceis do júri (4/4) — método e integridade}
+\scriptsize
+\textbf{Porquê não "RL a sério" (a ideia do trabalho futuro)?}\\
+Porque não há MDP: os meus alertas não afetam o mercado --- não existe o ciclo
+ação$\to$ambiente$\to$recompensa. A forma defensável da ideia é o \key{loop de pós-validação}:
+cada decisão real é rotulada dias depois com o desfecho verdadeiro e alimenta retreino.
+\vspace{1mm}
+
+\textbf{Porquê cross-ticker na avaliação de retrieval?}\\
+É uma \key{escolha de avaliação} deliberada: proibir o próprio ticker força o teste a medir
+semelhança \emph{temática} (o que interessa), não memorização do nome da empresa.
+\vspace{1mm}
+
+\textbf{Isto é mesmo reprodutível?}\\
+Cada número da tese sai de um script versionado com seed fixa; re-corremos os 3 scripts de
+avaliação e os números reproduziram-se exatamente; o retreino do modelo produz ficheiros
+bit-idênticos; o CI corre 145 testes em runner limpo a cada push.
+\vspace{1mm}
+
+\textbf{Como sei que as citações são reais?}\\
+Protocolo de verificação: as 52 referências foram verificadas uma a uma (DOI/arXiv/ISBN/fonte
+primária) com registo em \texttt{docs/decisions/page\_audit.md} --- zero fabricação.
+\end{frame}
+
+\begin{frame}{O mapa dos números congelados (decorar esta tabela)}
+\tiny
+\begin{tabular}{l l l}
+\toprule
+\textbf{Número} & \textbf{O que é} & \textbf{Onde} \\
+\midrule
+P@5 \textbf{0,514} $\pm$ 0,015 & SBERT-MiniLM vs 0,346 lexical / 0,240 acaso / 0,126 recência & Cap.~5, evaluation\_results \\
+0,538 & P@5 do SBERT-MPNet (melhor, mais pesado) & idem \\
+\textbf{0,015 vs 0,344} & amplitude da taxa de disparo: z-score vs limiar fixo & Cap.~5, evaluation\_anomaly \\
+F1 \textbf{0,530 vs 0,271} & z-score vs Isolation Forest causal (o simples ganha) & idem \\
+z = \textbf{+7,61} & anomalia real TSLA 24-10-2024 (exemplo trabalhado) & Cap.~5 (CS1) \\
+\textbf{+6,46\%} & impacto médio +5d do exemplo Nvidia/AI (demo reproduz) & Cap.~3, scripts/demo.py \\
+\textbf{$-$1,97\%} & CS3: título positivo, cluster negativo (tema $\neq$ direção) & Cap.~5 \\
+PR-AUC \textbf{0,542 vs 0,496} & RQ4: só-volatilidade bate todos os modelos com texto & Cap.~5 (CS4) \\
+\textbf{0,632 vs 0,163} & precisão@5-alertas/dia: triagem vs alertar-sempre ($\approx$4$\times$) & idem \\
+\textbf{79.753} / 2.016 & exemplos FNSPID do treino / fatia curada na app pública & kb\_fnspid\_build \\
+\textbf{0,992} / 96\% & paridade ONNX$\leftrightarrow$SBERT (cosseno médio; vizinhos top-3) & onnx\_minilm\_validation \\
+\textbf{78 pp; 52/52} & tese 0 erros; todas as citações verificadas & page\_audit \\
+\bottomrule
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Plano B — se algo falhar no dia da defesa}
+\footnotesize
+\begin{itemize}
+  \item \key{Sem wifi/projetor:} \texttt{python scripts/demo.py} é offline e determinística
+        (reproduz o $+6{,}46\%$); este guia tem o output real captado em slides.
+  \item \key{App dormente ou privada:} mostrar o canal Telegram no telemóvel (mensagens reais,
+        com data) ou o screenshot genuíno da tese (Fig.~4.5).
+  \item \key{Branco sobre um número:} a tabela do slide anterior; cada linha diz o ficheiro
+        de avaliação onde o número vive.
+  \item \key{Pergunta impossível:} "Não tenho esse resultado medido; a metodologia para o obter
+        seria [...] --- e prefiro dizer isso a inventar um número." (Honestidade é a marca da tese.)
+\end{itemize}
+\vspace{2mm}
+\centering \emph{O fecho universal:} "Preferi um resultado modesto e verdadeiro a um
+impressionante e frágil."
+\end{frame}
+
 \begin{frame}{Checklist final: defender com calma}
 \footnotesize
 Consigo responder a tudo isto?
@@ -1279,20 +1433,21 @@ limites.
 \end{frame}
 
 \begin{frame}{Onde continuar a estudar (mapa dos materiais)}
-\footnotesize Este guia não vive sozinho. Cada peça abre uma porta diferente:
+\footnotesize \key{Este guia é a fonte ÚNICA de estudo} (decisão de 2026-07-11: guião oral,
+perguntas do júri, números e plano B vivem AQUI). As outras peças:
 \begin{itemize}
   \item \key{Ver a app:} \texttt{python scripts/demo.py} --- os dois gatilhos, offline, num comando.
   \item \key{Correr tudo o resto:} \texttt{docs/design/how\_to\_run.md} (Telegram, notícias ao vivo,
         construir a KB) --- começa no §0.0.
   \item \key{A tese:} \texttt{thesis/main.pdf} --- o documento que vais defender (os números vêm daqui).
   \item \key{Slides da defesa (EN):} \texttt{slides/main.pdf} --- a versão curta para o dia.
-  \item \key{Caderno de defesa (PT):} \texttt{docs/defence/caderno\_de\_defesa.md} --- respostas em prosa,
-        número $\rightarrow$ script $\rightarrow$ tese.
+  \item \key{Notebook:} \texttt{notebooks/investigator\_walkthrough.ipynb} --- os 3 componentes
+        com as tuas mãos, célula a célula.
 \end{itemize}
 \begin{block}{Sugestão de estudo}
 \scriptsize Lê este guia $\rightarrow$ corre \texttt{demo.py} $\rightarrow$ relê o capítulo da tese sobre a
-parte que correste $\rightarrow$ pratica as \key{perguntas do júri}. Repete nas partes que ainda parecem
-"caixa preta".
+parte que correste $\rightarrow$ pratica o \key{guião oral} e as \key{perguntas do júri} (secção
+Defesa). Repete nas partes que ainda parecem "caixa preta".
 \end{block}
 \end{frame}
 

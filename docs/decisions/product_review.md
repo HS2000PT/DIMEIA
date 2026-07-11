@@ -4,7 +4,7 @@
 > arquiteto de software e utilizador real. Objetivo: encontrar o que ajudaria/frustaria um investidor de
 > retalho **não-especialista**, com **honestidade** — nada de funcionalidades irreais, nada de prometer o
 > que não está construído. Severidade: Crítico / Maior / Moderado / Menor.
-> Companheiro de `review_log.md` (revisão crítica), `implementation_review.md` (implementação/estatística) e
+> Companheiro de
 > `page_audit.md` (citações). Data: 2026-06-27.
 
 ## Resumo
