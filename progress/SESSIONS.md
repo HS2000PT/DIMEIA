@@ -5,6 +5,26 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 35 — 2026-07-12 — Evolução "sensor-first": KB viva + investigação cruzada + intradiário
+**Pedido:** o aluno partilhou uma visão ChatGPT (sistema por eventos, sensores, tempo quase-real)
+e delegou a decisão. **Análise devolvida:** ~80% da visão JÁ é o sistema (2 gatilhos→motor único;
+"priorização inteligente"=RQ4; "aprendizagem contínua"=M5.5); construído o delta genuíno,
+rejeitados com razões a reescrita da tese, redes sociais e scores preditivos de "confiança".
+- **V1 KB viva (e62cf56):** `investigator/live_kb.py` — manchetes relevantes capturadas (embedding
+  na captura; summary só em memória, §5.4), maturadas ≥8d com preços reais → `live_kb.jsonl` na
+  branch alerts-history; retrieval fundido com decaimento por idade (a sim mostrada é o cosseno
+  real; idade visível "3y ago"); botões `recency_half_life_days`/`max_precedent_age_days`.
+  846 pendentes capturados na 1.ª varredura real.
+- **V2 investigação cruzada (a5fbf4a):** anomalia→notícia ("Possible explanation (Xh ago)" ou
+  "no public explanation yet"); direção dos precedentes descritiva ("3 of 3 moved down — an
+  observed pattern, not a forecast").
+- **V3 intradiário (6ebb9f9):** cotação Finnhub em tempo real vs norma diária (mesmo z-score,
+  sem lookahead) no --watch; wording "so far today"; bug real apanhado antes de produção
+  (cotação estagnada ao fim de semana) → guarda `is_us_market_session`.
+- **V4:** tese Cap. 6 +1 parágrafo (iteração pós-avaliação, avaliação formal=futuro; 78 pp,
+  0 erros); guia 71 slides (+pergunta júri "KB desatualizada?"); product_review Pass 7
+  (P-13/14/15); vm_watch/going_live/README/RELATORIO em sync. **167 testes + ruff verdes.**
+
 ## Sessão 34 — 2026-07-11 — Grande limpeza + qualidade dos alertas + quase-tempo-real + guia único
 **Pedido:** "full repository cleanup… the product sucks… similarity not working… only news, no
 market triggers… alerts on weekends… near real time… single study source". Diagnóstico com provas

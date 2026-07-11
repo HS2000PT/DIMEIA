@@ -79,8 +79,14 @@ Quality-first alerting to a **Telegram channel**, with honest engineering:
   boilerplate items are rejected), needs at least one strong historical precedent (similarity
   floor), is capped at 2 news alerts per ticker per day, and is gated by the **trained triage
   model**. Mixed-direction precedent sets carry an explicit warning.
-- **Market presence every day** — anomaly alerts (rolling z-score) plus a **daily close
-  summary** (all 10 tickers with move + z-score, anomalies highlighted — honest on calm days).
+- **Market presence every day** — anomaly alerts (rolling z-score), **intraday detection**
+  in watch mode (today's move in progress from a real-time quote, same transparent z-score),
+  and a **daily close summary** (all 10 tickers, anomalies highlighted — honest on calm days).
+  When an anomaly fires, the system **investigates**: it attaches the freshest relevant
+  headline as a possible explanation — or honestly says none was found.
+- **A living knowledge base** — every relevant scanned headline becomes a precedent days
+  later (impact measured at +5d against real prices); retrieval merges the live KB with the
+  historical one using age decay, and every precedent shows its age ("3y ago").
 - **Two producers, one memory** — a near-real-time **watch mode** (`run_alerts.py --watch`,
   runs on any always-on machine/VM; `docs/design/vm_watch.md`) plus the GitHub Actions cron as
   a safety net (weekday market hours, mornings and weekends for news); both share the
@@ -109,7 +115,7 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 
 ## Project status
 **Validated and submission-ready (pending human sign-off).** Both triggers are proven end to end;
-**145 automated tests** + lint green. The core components — including a **materiality-triage model trained
+**167 automated tests** + lint green. The core components — including a **materiality-triage model trained
 by the author** on 79,753 multi-year FNSPID examples (RQ4; triage evidence, never a forecast) — are
 evaluated on **real data**, and the statistics reproduce exactly from versioned scripts. The **six-chapter
 dissertation** compiles cleanly (`thesis/main.pdf`, 78 pp, 0 errors), with **52 references each verified by
@@ -152,7 +158,7 @@ CITATION.cff   how to cite this work    requirements.txt (light) / requirements-
   (`requirements.txt`) — enough for the demo, the tests and the evaluations. The heavy ML stack (`torch` CPU,
   `sentence-transformers`, in `requirements-ml.txt`) is needed only for the real SBERT paths and installs with
   `bash scripts/setup_env.sh --ml` (it pulls `torch` from the PyTorch CPU index, not PyPI).
-- Verification loop: `bash scripts/verify.sh` (145 tests + lint + LaTeX note).
+- Verification loop: `bash scripts/verify.sh` (167 tests + lint + LaTeX note).
 - Secrets live only in a local, gitignored `.env` (see `.env.example` for variable names).
 - LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push.
 

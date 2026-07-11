@@ -41,8 +41,12 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   filtro de relevância (manchetes mal etiquetadas/boilerplate rejeitadas), chão de similaridade,
   teto de 2 alertas de notícia por ticker/dia, gate de triagem, aviso de direção mista, e um
   **resumo diário ao fecho** (os 10 tickers, honesto em dias calmos). Corre também de manhã e
-  aos fins de semana (só notícias). Produtores: modo vigia (VM, ~5 min) + cron do GitHub como
-  rede de segurança, com dedup partilhado (`docs/design/vm_watch.md`).
+  aos fins de semana (só notícias). Produtores: modo vigia (VM, ~5 min, com **deteção
+  intradiária** via cotação em tempo real) + cron do GitHub como rede de segurança, com dedup
+  partilhado (`docs/design/vm_watch.md`). **KB viva:** cada manchete relevante vira precedente
+  dias depois (impacto real a +5d); retrieval com decaimento por idade e idade visível;
+  anomalias com **investigação cruzada** ("Possible explanation: …" ou "no public explanation
+  yet").
 - **Painel único público** (<https://investigator.streamlit.app>): uma aba por ticker da
   watchlist — "background risk" do modelo treinado (RQ4, todos os dias, mesmo sem notícia),
   gráfico anotado com cada evento, e o histórico lido do MESMO registo que o canal recebeu
@@ -75,7 +79,7 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   mãos, executado e commitado com outputs reais.
 
 ### 2.5 Qualidade de engenharia
-- **145 testes automáticos + ruff**, verdes localmente e no CI (runner limpo a cada push).
+- **167 testes automáticos + ruff**, verdes localmente e no CI (runner limpo a cada push).
 - **Reprodutibilidade:** demo offline num comando (`python scripts/demo.py` reproduz o
   exemplo do Cap. 3, +6,46%); todas as figuras/números da tese saem de scripts versionados;
   ambiente fixado (Python 3.12, `requirements*.txt`).
@@ -100,7 +104,7 @@ scripts/                demo.py · run_alerts.py (produção) · run_bot.py · e
                         build_dataset.py · train_triage.py · post_validate.py · build_kb.py
 config/alerts.yaml      watchlist + limiares + gates (a MESMA fonte para runner e app)
 .github/workflows/      ci.yml (testes) · compile-thesis.yml · alerts.yml (varredura 30/30)
-tests/                  145 testes
+tests/                  167 testes
 data/samples/           amostras versionadas (KB curada 2.016 registos 384-d incluída)
 docs/design/            how_to_run · going_live · deployment · arquitetura · data card
 docs/evaluation/        TODOS os resultados (gerados por script; não editados à mão)

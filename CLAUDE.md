@@ -7,8 +7,38 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 34 (**Grande limpeza + qualidade dos alertas + quase-tempo-real + guia único**)
-- **Última atualização:** 2026-07-11
+- **Sessão nº:** 35 (**Evolução "sensor-first": KB viva + investigação cruzada + intradiário**)
+- **Última atualização:** 2026-07-12
+- **🌱 SESSÃO 35 (o aluno partilhou a visão ChatGPT e delegou: "decide a melhor forma; acredito
+  em ti"):** análise honesta devolvida — a visão descreve ~80% do sistema JÁ construído (2
+  sensores→motor único = a arquitetura da tese; "priorização inteligente" = RQ4; "aprendizagem
+  contínua" = M5.5); adotado o delta genuíno, rejeitado com razões (reescrita da tese/repo novo,
+  redes sociais sem API free, scores de "confiança" preditivos — contradiriam a restrição
+  fundadora e o próprio resultado da RQ4). Plano V1–V4 aprovado e executado por fases:
+  **V1 — KB VIVA (e62cf56):** novo `investigator/live_kb.py` (puro) — toda a manchete RELEVANTE
+  do scan entra em `live_pending.jsonl` (embedding NA CAPTURA com manchete+summary; o summary
+  do Finnhub NUNCA é persistido — governança §5.4; NewsRecord intocado); maturação ≥8 dias
+  com preços reais (+1/+3/+5d, alinhamento anti-lookahead da tese) → `live_kb.jsonl`; ambos na
+  branch alerts-history (workflow git add -A; VM cobre). Retrieval FUNDIDO com decaimento:
+  `merged_precedents` ordena por cosseno × 0.5^(idade/365d) — o decaimento SÓ ordena, a sim
+  mostrada é o cosseno real, e cada precedente mostra a idade ("3y ago"; `_age_label`, só com
+  `today=` — demo/tese byte-iguais). Config: `news.recency_half_life_days`,
+  `news.max_precedent_age_days` (o "botão dos 6 meses", null até a KB viva ter meses).
+  Validado ao vivo: 846 pendentes capturados numa varredura; decaimento confirmado a reordenar.
+  **V2 — investigação cruzada (a5fbf4a):** anomalia → busca notícia relevante (48h) →
+  "Possible explanation (Xh ago)" ou "No relevant news found… no public explanation yet"
+  (`attach_news_context` puro; fail-open). Direção dos precedentes SEMPRE descritiva
+  ("3 of 3 shown cases moved down — an observed pattern, not a forecast"); mantém ⚠ BOTH
+  quando misto.
+  **V3 — intradiário (6ebb9f9):** no --watch, `fetch_finnhub_quote` (tempo real, free) +
+  `detect_intraday` (o MESMO z-score vs norma diária de dias COMPLETOS, sem lookahead) +
+  `explain_intraday` ("so far today… the session is not over"). **Bug real apanhado antes de
+  produção:** ao fim de semana a cotação estagnada re-alertaria sexta → guarda pura
+  `is_us_market_session` (seg-sex 13:00-21:30 UTC), testada. `market.intraday.enabled`.
+  **V4:** tese Cap. 6 +1 parágrafo honesto (iteração pós-avaliação; avaliação formal = futuro;
+  78 pp, 0 erros); guia 71 slides (frame produto + pergunta júri "KB desatualizada?"); docs
+  (vm_watch, going_live, README, RELATORIO, product_review Pass 7 com P-13/14/15).
+  **167 testes + ruff verdes; demo +6,46% intacta.**
 - **🧹 SESSÃO 34 ("full repository cleanup… the product sucks… rethink from scratch"):** o aluno
   estava sobrecarregado (repo "uma confusão") e insatisfeito com o produto real. **Diagnóstico com
   provas ANTES de mexer** (li os 27 alertas reais do canal via branch alerts-history + logs do

@@ -35,6 +35,9 @@
 
 ## 🤖 Pendentes do código (nenhum bloqueia)
 - [ ] Confirmar no próximo dia útil: filtros de qualidade ao vivo (menos alertas, só relevantes),
-      resumo diário ao fecho no canal, e a branch `alerts-history` a crescer sem duplicados.
+      resumo diário ao fecho, investigação cruzada nas anomalias ("Possible explanation"), e a
+      branch `alerts-history` a crescer sem duplicados (incl. `live_pending.jsonl`).
+- [ ] Daqui a ~8 dias: confirmar os primeiros casos MATURADOS na KB viva (`live_kb.jsonl` na
+      branch alerts-history) e precedentes de 2026 a aparecer nos alertas com "(Xd ago)".
 - [ ] Polimento futuro (quando quiseres): cobertura `pytest --cov` no README; camada `logging`;
       CLI do Gatilho 2; de-dup de precedentes quase iguais.

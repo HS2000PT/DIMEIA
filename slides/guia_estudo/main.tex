@@ -1194,11 +1194,16 @@ Não é só uma tese em papel: o sistema \key{corre} em produção, de graça, s
   \item \key{Retrieval semântico} — o MESMO MiniLM da tese em \key{ONNX} ($\sim$23 MB, sem torch;
         paridade com o SBERT validada — cosseno médio 0,992) sobre uma fatia curada de 2.016
         manchetes FNSPID 2018--2023.
-  \item \key{Canal Telegram} — varredura automática com \key{filtro de relevância} (manchetes
-        mal etiquetadas/boilerplate rejeitadas), chão de similaridade, teto de 2 alertas de
-        notícia por ticker/dia e um \key{resumo diário ao fecho}; corre também fins de semana
-        (só notícias). Produtores: VM em modo vigia ($\sim$5 min) + cron do GitHub como rede
-        de segurança, com dedup partilhado.
+  \item \key{Canal Telegram} — varredura automática com \key{filtro de relevância}, chão de
+        similaridade, teto de 2 alertas/ticker/dia e \key{resumo diário ao fecho}; corre
+        também fins de semana (só notícias). Produtores: VM em modo vigia ($\sim$5 min, com
+        \key{deteção intradiária} via cotação em tempo real) + cron do GitHub como rede de
+        segurança, com dedup partilhado.
+  \item \key{KB viva} — cada manchete relevante vista pelo runner vira precedente dias
+        depois (impacto medido a +5d); o retrieval funde KB viva + histórica com
+        \key{decaimento por idade} e mostra a idade de cada precedente ("3y ago"). Anomalias
+        levam a \key{investigação cruzada}: "Possible explanation" com a notícia recente, ou
+        "no public explanation yet" — a ausência também é informação.
   \item \key{Bot interativo} — \texttt{/watch TSLA}, \texttt{/list}, \texttt{/stop}, sem servidor.
   \item \key{À prova de wifi} — \texttt{python scripts/demo.py} é offline e determinística
         (reproduz o $+6{,}46\%$ do Cap.~3).
@@ -1363,6 +1368,14 @@ bit-idênticos; o CI corre 145 testes em runner limpo a cada push.
 \textbf{Como sei que as citações são reais?}\\
 Protocolo de verificação: as 52 referências foram verificadas uma a uma (DOI/arXiv/ISBN/fonte
 primária) com registo em \texttt{docs/decisions/page\_audit.md} --- zero fabricação.
+\vspace{1mm}
+
+\textbf{A vossa KB é de 2018--2023 --- os precedentes não estão desatualizados?}\\
+Era a limitação mais sentida em produção, e foi corrigida como \key{iteração informada pelo
+uso}: o sistema agora cresce uma \key{KB viva} (cada manchete relevante vira caso dias
+depois, com o impacto real), ordena com \key{decaimento por idade} e mostra a idade de cada
+precedente. A avaliação formal da KB viva fica como trabalho futuro (Cap.~6 di-lo) --- mas o
+mecanismo está construído e a correr.
 \end{frame}
 
 \begin{frame}{O mapa dos números congelados (decorar esta tabela)}

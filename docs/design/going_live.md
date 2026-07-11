@@ -73,7 +73,10 @@ Muda em `.github/workflows/alerts.yml`.
 (nunca a `main`, para não sujar a história do código/tese) — via um passo dedicado do workflow
 (checkout à parte + commit + push; por isso o workflow tem `permissions: contents: write`, só para
 essa branch). A app Streamlit lê esse ficheiro ao vivo (raw.githubusercontent.com, cache de 60s) —
-nunca recalcula. Fail-open total: se o checkout ou o push falharem, o runner e o envio ao Telegram
+nunca recalcula. A MESMA branch carrega a **KB viva** (`live_pending.jsonl` +
+`live_kb.jsonl`): cada manchete relevante vista pelo scan vira precedente dias depois, com o
+impacto real medido a +5d — é o que permite precedentes de 2026 em vez de só 2018-2023.
+Fail-open total: se o checkout ou o push falharem, o runner e o envio ao Telegram
 continuam normalmente, só o histórico partilhado fica por publicar dessa vez.
 
 ### 5) Escolher o que é vigiado (e a qualidade dos alertas)

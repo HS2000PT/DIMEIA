@@ -119,3 +119,38 @@ O pivô de produto é legítimo e não custa nada à ciência da tese (verificad
 de uma frase de cadência já desatualizada). Os 5 achados críticos/maiores reportados pelo aluno foram
 corrigidos e validados (testes + AppTest + arranque real do servidor + captura de ecrã genuína). Continua
 sem funcionalidade irreal proposta; o histórico partilhado só mostra o que foi realmente enviado.
+
+---
+
+## Pass 7 (2026-07-11/12) — Evolução "sensor-first" (visão do aluno, análise crítica aplicada)
+
+**Motivo.** O aluno partilhou uma visão (conversa externa) de sistema orientado a eventos com
+sensores de mercado e notícias, investigação cruzada e tempo quase-real, perguntando se era
+preciso "mudar tudo". **Análise honesta devolvida:** ~80% da visão descreve o sistema JÁ
+construído (2 gatilhos → motor único = arquitetura da tese; "priorização inteligente" = RQ4;
+"aprendizagem contínua" = M5.5). Adotado o delta genuíno; rejeitado com razões o resto
+(reescrita da tese, redes sociais sem API free, scores de "confiança" preditivos).
+
+### P-13 — Precedentes de outro regime de mercado ("timeline matters") — **Crítico, corrigido**
+KB congelada em 2018-2023 → precedente mais fresco com 2,5 anos. **Corrigido (V1):** KB VIVA —
+captura de toda a manchete relevante (embedding na captura, com summary só em memória),
+maturação a +5d com preços reais, fusão com decaimento por idade (só ordena; a sim mostrada é
+o cosseno real), idade visível em cada precedente, botão `max_precedent_age_days`.
+
+### P-14 — Gatilhos independentes demais — **Maior, corrigido**
+Anomalia disparava sem procurar a causa. **Corrigido (V2):** investigação cruzada — a anomalia
+procura a notícia relevante mais recente (48h) e anexa "Possible explanation (Xh ago)"; sem
+notícia, di-lo ("no public explanation yet" — a ausência é informação). Direção dos
+precedentes agora SEMPRE descritiva ("3 of 3 moved down — an observed pattern, not a
+forecast"); a forma preditiva ("confiança: 82%") foi rejeitada.
+
+### P-15 — Deteção só ao fecho — **Maior, corrigido**
+"Caiu 4,8% em 12 min" esperava pelo fecho. **Corrigido (V3):** no modo --watch, cotação em
+tempo real (Finnhub /quote) avaliada contra a norma diária com o MESMO z-score (novo
+detect_intraday, sem lookahead); wording honesto ("so far today"); guarda de sessão US (bug
+real apanhado antes de produção: ao fim de semana a cotação estagnada re-alertaria sexta).
+
+## Veredicto (Pass 7)
+A visão do aluno validou a arquitetura existente e o delta foi construído como evolução, não
+reescrita — com a fronteira previsão/descrição defendida explicitamente. A avaliação formal da
+KB viva e do intradiário fica declarada como trabalho futuro (Cap. 6).
