@@ -45,6 +45,14 @@ news:
   # Teto de alertas de notícia por ticker por dia (anti-fadiga; 12/dia do mesmo ticker
   # ensinam o utilizador a ignorar o canal). O filtro de relevância corta o resto.
   max_per_ticker_per_day: 2
+  # KB VIVA + decaimento por idade ("timeline matters", 2026-07-11): o retrieval funde a
+  # KB viva (casos capturados pelo próprio runner e maturados a +5d) com a KB histórica,
+  # ordenando por cosseno × 0.5^(idade/half_life). A similaridade MOSTRADA é sempre o
+  # cosseno real; a idade aparece em cada precedente.
+  recency_half_life_days: 365
+  # Corte duro de idade (dias). null = sem corte. NOTA: só faz sentido definir (ex.: 180)
+  # quando a KB viva já tiver meses de casos — antes disso cortaria quase tudo.
+  max_precedent_age_days: null
 
 # Fase B (opcional; off por defeito): distribuir os alertas TAMBÉM por subscritor do bot
 # interativo. Os utilizadores registam-se falando com o bot (/start, /watch TSLA) enquanto

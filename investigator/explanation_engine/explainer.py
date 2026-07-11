@@ -57,6 +57,27 @@ def explain_normal(ticker: str, result: AnomalyResult) -> str:
     )
 
 
+def _age_label(rec_date: str, today: str) -> str:
+    """Idade legível de um precedente ('18d ago', '7mo ago', '2y ago'); '' se indisponível.
+
+    "Timeline matters" (feedback real do aluno): o utilizador tem de VER a idade de cada
+    precedente sem fazer contas de datas.
+    """
+    from datetime import date as _date
+
+    try:
+        dias = (_date.fromisoformat(today) - _date.fromisoformat(rec_date)).days
+    except ValueError:
+        return ""
+    if dias < 0:
+        return ""
+    if dias < 60:
+        return f"{dias}d ago"
+    if dias < 540:
+        return f"{round(dias / 30)}mo ago"
+    return f"{round(dias / 365)}y ago"
+
+
 def _impacts(precedents: list[tuple[NewsRecord, float]], horizon: int) -> list[float]:
     """Impactos não-NaN dos precedentes no horizonte, pela ordem recebida."""
     key = str(horizon)
@@ -80,6 +101,7 @@ def explain_news_impact(
     horizon: int = 3,
     date: str = "",
     materiality: str | None = None,
+    today: str = "",
 ) -> str:
     """Explicação XAI para o Gatilho 2: notícia nova + precedentes históricos semelhantes.
 
@@ -89,6 +111,8 @@ def explain_news_impact(
 
     `materiality` (opcional, off por defeito): linha da triagem aprendida (RQ4), já composta
     por `investigator.triage.explain.materiality_line`. None ⇒ sem essa linha.
+    `today` (opcional): quando dado (produção/app), cada precedente mostra a idade
+    ("2y ago") — sem ele (demo/tese), o output histórico fica byte-igual.
     """
     header = f"📰 <b>News alert for {html.escape(ticker, quote=False)}</b>"
     if date:
@@ -115,6 +139,9 @@ def explain_news_impact(
         imp = rec.impacts.get(key)
         imp_txt = f"{imp * 100:+.2f}%" if imp is not None and imp == imp else "n/a"
         quem = f"{html.escape(rec.ticker, quote=False)} {html.escape(rec.date, quote=False)}"
+        idade = _age_label(rec.date, today) if today else ""
+        if idade:
+            quem += f" ({idade})"
         lines.append(
             f"▸ {imp_txt} in {horizon}d · {quem} · "
             f'"{html.escape(_clip(rec.headline), quote=False)}" (sim {score:.2f})'

@@ -182,6 +182,31 @@ def _kb_size(kb_path: str) -> int:
         return sum(1 for line in f if line.strip())
 
 
+def _live_kb_url() -> str:
+    """URL raw da KB viva (mesma branch de dados do histórico)."""
+    return _history_url().rsplit("/", 1)[0] + "/live_kb.jsonl"
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def _retrieval_kbs(kb_path: str) -> list:
+    """[KB viva (remota, se existir), KB histórica local] — a fusão prefere o recente.
+
+    A KB viva é publicada pelo runner na branch `alerts-history`; a app lê-a por raw URL
+    (fail-open: sem rede/404 → só a KB histórica, como sempre)."""
+    from investigator.historical_kb.knowledge_base import HistoricalKB
+    from investigator.live_kb import fetch_remote_records
+
+    kbs = []
+    import os as _os
+
+    if _os.environ.get("INVESTIGATOR_OFFLINE") != "1":
+        vivos = fetch_remote_records(_live_kb_url())
+        if vivos:
+            kbs.append(HistoricalKB(vivos))
+    kbs.append(HistoricalKB.load(kb_path))
+    return kbs
+
+
 # ── Painel por ticker ───────────────────────────────────────────────────────────
 
 def _risk_gauge(ticker: str, close: pd.Series) -> None:
@@ -347,7 +372,6 @@ def _section_evaluation() -> None:
 
 def _section_try_headline() -> None:
     from investigator.explanation_engine.explainer import plain_text
-    from investigator.main import run_news_trigger
 
     st.caption("Paste any headline — see the most similar past headlines and what the price "
                "did after. Uses the same retrieval engine as the live board.")
@@ -365,10 +389,21 @@ def _section_try_headline() -> None:
     st.caption(f"Knowledge base: {_kb_size(str(kb_path)):,} historical headlines; {engine}.")
 
     if st.button("Find precedents", type="primary", key="try_headline_button"):
-        precedents, text = run_news_trigger(
-            ticker=ticker.strip().upper(), headline=headline.strip(),
-            kb_path=kb_path, embedder=embedder, top_k=3, horizon=5, send=False,
+        from datetime import date as _date
+
+        from investigator.explanation_engine.explainer import explain_news_impact
+        from investigator.live_kb import merged_precedents
+
+        news_cfg = _read_yaml_config().get("news", {}) or {}
+        max_age_cfg = news_cfg.get("max_precedent_age_days")
+        precedents = merged_precedents(
+            headline.strip(), _retrieval_kbs(str(kb_path)), embedder, top_k=3,
+            today=_date.today(),
+            half_life_days=float(news_cfg.get("recency_half_life_days", 365)),
+            max_age_days=int(max_age_cfg) if max_age_cfg is not None else None,
         )
+        text = explain_news_impact(ticker.strip().upper(), headline.strip(), precedents,
+                                   horizon=5, today=_date.today().isoformat())
         if not precedents:
             st.warning("No precedents found in the knowledge base.")
             return

@@ -33,6 +33,10 @@ _HISTORY = Path(os.environ.get(
     "INVESTIGATOR_HISTORY_PATH",
     str(Path(__file__).resolve().parents[1] / "data" / "alerts_history.jsonl"),
 ))
+# KB VIVA: vive ao lado do histórico partilhado (mesma branch de dados `alerts-history`),
+# por isso é publicada/lida pelos mesmos mecanismos (workflow + VM + app via raw URL).
+_LIVE_PENDING = _HISTORY.parent / "live_pending.jsonl"
+_LIVE_KB = _HISTORY.parent / "live_kb.jsonl"
 
 
 # ── Estado entre corridas (intradiário, anti-duplicado) ───────────────────────
@@ -291,7 +295,9 @@ def scan_news(cfg: dict) -> list[tuple[str, str]]:
     if not n.get("enabled", False):
         return []
     from investigator import config
-    from investigator.main import run_news_trigger
+    from investigator.explanation_engine.explainer import explain_news_impact
+    from investigator.historical_kb.knowledge_base import HistoricalKB
+    from investigator.live_kb import merged_precedents
     from investigator.news_fetcher.fetcher import fetch_finnhub_company_news
     from investigator.news_fetcher.relevance import is_relevant
 
@@ -301,6 +307,9 @@ def scan_news(cfg: dict) -> list[tuple[str, str]]:
     horizon = int(n.get("horizon", 5))
     top_k = int(n.get("top_k", 3))
     min_sim = float(n.get("min_similarity", 0.45))
+    half_life = float(n.get("recency_half_life_days", 365))
+    max_prec_age = n.get("max_precedent_age_days")
+    max_prec_age = int(max_prec_age) if max_prec_age is not None else None
 
     # Triagem aprendida (off por defeito): só ativa com min_materiality definido E modelo
     # presente. Sem modelo, avisa e segue com o comportamento de sempre.
@@ -317,9 +326,21 @@ def scan_news(cfg: dict) -> list[tuple[str, str]]:
 
     # KB + embedder decididos UMA vez (semântico MiniLM-ONNX com fail-open para a amostra;
     # em Actions o modelo vem da cache do workflow, senão desce ~23 MB na primeira corrida).
+    # A KB VIVA (casos recentes maturados neste próprio runner) entra em primeiro na fusão:
+    # "timeline matters" — a idade desempata a favor do recente, o cosseno decide o tema.
     from investigator.main import product_retrieval
 
     kb_path, embedder = product_retrieval(auto_download=True)
+    kbs = []
+    if _LIVE_KB.exists():
+        try:
+            kb_viva = HistoricalKB.load(_LIVE_KB)
+            if len(kb_viva):
+                kbs.append(kb_viva)
+                print(f"[kb-viva] {len(kb_viva)} caso(s) recente(s) em uso.")
+        except Exception as exc:  # noqa: BLE001
+            print(f"[kb-viva] ilegível (ignorada): {type(exc).__name__}: {exc}")
+    kbs.append(HistoricalKB.load(kb_path))
 
     end = date.today().isoformat()
     start = (date.today() - timedelta(days=7)).isoformat()
@@ -335,15 +356,22 @@ def scan_news(cfg: dict) -> list[tuple[str, str]]:
                       "(mal etiquetadas/boilerplate) — sem alerta.")
             if not relevantes:
                 continue
+            # KB viva: toda a manchete relevante é candidata a precedente futuro (captura
+            # fail-open; matura dias depois, quando o impacto for observável).
+            _capture_live_safe(relevantes, embedder)
             latest = max(relevantes, key=lambda it: it.date)  # a mais recente RELEVANTE
             max_age = int(n.get("max_age_days", 2))
             if not news_is_fresh(latest.date, date.today(), max_age):
                 print(f"[noticias {ticker}] mais recente é de {latest.date} (>{max_age} dias) "
                       "— sem alerta (anti-repetição).")
                 continue
-            precedents, text = run_news_trigger(
-                ticker=ticker, headline=latest.headline, kb_path=kb_path,
-                embedder=embedder, top_k=top_k, horizon=horizon, send=False,
+            precedents = merged_precedents(
+                latest.headline, kbs, embedder, top_k=top_k, today=date.today(),
+                half_life_days=half_life, max_age_days=max_prec_age,
+            )
+            text = explain_news_impact(
+                ticker, latest.headline, precedents, horizon=horizon,
+                date=latest.date, today=date.today().isoformat(),
             )
             if not precedents_are_strong(precedents, min_sim):
                 best = max((s for _, s in precedents), default=0.0)
@@ -374,6 +402,69 @@ def scan_news(cfg: dict) -> list[tuple[str, str]]:
         except Exception as exc:  # noqa: BLE001
             print(f"[saltar noticias {ticker}] {type(exc).__name__}: {exc}")
     return alerts
+
+
+def _capture_live_safe(items: list, embedder) -> None:
+    """Captura manchetes relevantes para a KB viva (pendentes de maturação). Fail-open.
+
+    Só captura com o embedder SEMÂNTICO (guarda R1: embeddings hashing 64-d misturados com
+    a KB 384-d dariam vizinhos errados). O summary do Finnhub entra SÓ no embedding, nunca
+    é persistido (governança §5.4).
+    """
+    try:
+        if not getattr(embedder, "semantic", False):
+            return
+        from investigator.live_kb import (
+            PendingNews,
+            add_pending,
+            embed_text,
+            load_pending,
+            save_pending,
+        )
+
+        existentes = load_pending(_LIVE_PENDING)
+        chaves = {e.key for e in existentes}
+        novos_items = [i for i in items if news_key(i.ticker, i.headline) not in chaves]
+        if not novos_items:
+            return
+        textos = [embed_text(i.headline, getattr(i, "summary", "")) for i in novos_items]
+        vetores = embedder.encode(textos)
+        novos = [
+            PendingNews(date=i.date, ticker=i.ticker, headline=i.headline,
+                        key=news_key(i.ticker, i.headline),
+                        embedding=[round(float(x), 5) for x in vec])
+            for i, vec in zip(novos_items, vetores, strict=True)
+        ]
+        save_pending(add_pending(existentes, novos), _LIVE_PENDING)
+        print(f"[kb-viva] +{len(novos)} pendente(s) capturado(s).")
+    except Exception as exc:  # noqa: BLE001
+        print(f"[kb-viva] captura falhou (ignorada): {type(exc).__name__}: {exc}")
+
+
+def _mature_live_safe(today: date | None = None) -> None:
+    """Matura pendentes cujo impacto já é observável e move-os para a KB viva. Fail-open."""
+    try:
+        from investigator.live_kb import append_records, load_pending, mature_ready, save_pending
+        from investigator.market_data.prices import load_close_series
+
+        today = today or date.today()
+        pending = load_pending(_LIVE_PENDING)
+        prontos = [e for e in pending
+                   if (today - date.fromisoformat(e.date)).days >= 8]
+        if not prontos:
+            return
+        tickers = sorted({e.ticker for e in prontos})
+        start = (min(date.fromisoformat(e.date) for e in prontos)
+                 - timedelta(days=5)).isoformat()
+        closes = load_close_series(tickers, start, (today + timedelta(days=1)).isoformat())
+        matured, still = mature_ready(pending, closes, today)
+        if matured:
+            append_records(matured, _LIVE_KB)
+            save_pending(still, _LIVE_PENDING)
+            print(f"[kb-viva] {len(matured)} caso(s) maturado(s) → live_kb.jsonl "
+                  f"({len(still)} pendente(s)).")
+    except Exception as exc:  # noqa: BLE001
+        print(f"[kb-viva] maturação falhou (ignorada): {type(exc).__name__}: {exc}")
 
 
 def _record_history_safe(alerts: list[tuple[str, str]], today: str,
@@ -535,6 +626,10 @@ def run_cycle(cfg: dict, *, dry_run: bool) -> int:
     # Memória partilhada entre produtores (VM + Actions): o que QUALQUER um já enviou hoje
     # não se repete — sem isto, dois produtores duplicariam alertas no canal.
     seed_state_from_shared_history(state, _fetch_shared_history_safe(cfg), state["date"])
+
+    # KB viva: maturar pendentes cujo impacto (+5d) já é observável — ANTES dos scans,
+    # para os casos recém-maturados contarem já como precedentes nesta corrida.
+    _mature_live_safe()
 
     market_results = collect_market_results(cfg)
     tickers_anomalos = [t for t, r in market_results if r.is_anomaly]

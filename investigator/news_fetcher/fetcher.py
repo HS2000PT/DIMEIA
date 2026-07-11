@@ -21,21 +21,26 @@ from investigator import config
 
 @dataclass
 class NewsItem:
-    """Notícia normalizada (mesmo esquema da KB: data ISO, ticker, título)."""
+    """Notícia normalizada (mesmo esquema da KB: data ISO, ticker, título).
+
+    `summary` (opcional): o resumo curto que o Finnhub devolve — não é mostrado ao
+    utilizador, mas enriquece o EMBEDDING na KB viva (uma frase de manchete sozinha é
+    pouca informação semântica)."""
 
     date: str  # 'YYYY-MM-DD'
     ticker: str
     headline: str
     url: str = ""
     source: str = ""
+    summary: str = ""
 
 
 # ── Parsing (puro, testável) ───────────────────────────────────────────────────
 def parse_finnhub_news(payload: list[dict], ticker: str) -> list[NewsItem]:
     """Converte a resposta JSON do Finnhub `/company-news` numa lista de `NewsItem`.
 
-    Campos usados: `datetime` (epoch em segundos, UTC), `headline`, `url`, `source`.
-    Entradas sem data ou sem título são ignoradas.
+    Campos usados: `datetime` (epoch em segundos, UTC), `headline`, `url`, `source`,
+    `summary`. Entradas sem data ou sem título são ignoradas.
     """
     items: list[NewsItem] = []
     for art in payload:
@@ -51,6 +56,7 @@ def parse_finnhub_news(payload: list[dict], ticker: str) -> list[NewsItem]:
                 headline=headline,
                 url=str(art.get("url", "")),
                 source=str(art.get("source", "finnhub")),
+                summary=str(art.get("summary", "") or "").strip(),
             )
         )
     return items
