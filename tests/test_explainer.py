@@ -80,3 +80,41 @@ def test_aviso_de_direcao_mista_quando_precedentes_divergem():
     ]
     texto2 = explain_news_impact("A", "consulta", concordantes, horizon=3)
     assert "BOTH directions" not in texto2
+
+
+def test_direcao_unanime_e_descritiva_nunca_previsao():
+    todos_sobem = [
+        (NewsRecord(date="2023-01-01", ticker="A", headline="h1", impacts={"3": 0.05}), 0.9),
+        (NewsRecord(date="2023-01-02", ticker="A", headline="h2", impacts={"3": 0.02}), 0.8),
+    ]
+    texto = explain_news_impact("A", "consulta", todos_sobem, horizon=3)
+    assert "2 of 2 shown cases moved up" in texto
+    assert "not a forecast" in texto
+    todos_descem = [
+        (NewsRecord(date="2023-01-01", ticker="A", headline="h1", impacts={"3": -0.05}), 0.9),
+    ]
+    texto2 = explain_news_impact("A", "consulta", todos_descem, horizon=3)
+    assert "1 of 1 shown cases moved down" in texto2
+
+
+def test_idade_dos_precedentes_so_com_today():
+    precs = [
+        (NewsRecord(date="2023-01-01", ticker="A", headline="h1", impacts={"3": 0.05}), 0.9),
+    ]
+    sem_idade = explain_news_impact("A", "consulta", precs, horizon=3)
+    assert "ago)" not in sem_idade  # demo/tese: byte-igual ao histórico
+    com_idade = explain_news_impact("A", "consulta", precs, horizon=3, today="2026-07-11")
+    assert "(4y ago)" in com_idade  # 2023-01-01 → ~3,5 anos → arredonda a 4
+
+
+def test_attach_news_context_com_e_sem_noticia():
+    from investigator.explanation_engine.explainer import attach_news_context
+
+    base = "🔺 Anomaly detected for TSLA: +5.00% today"
+    com = attach_news_context(base, "Tesla recalls vehicles", news_date="2026-07-10",
+                              today="2026-07-11")
+    assert base in com
+    assert 'Possible explanation (1d ago): "Tesla recalls vehicles"' in com
+    sem = attach_news_context(base, None)
+    assert "No relevant news found in the last 48h" in sem
+    assert base in sem

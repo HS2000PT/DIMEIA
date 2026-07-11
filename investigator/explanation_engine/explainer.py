@@ -49,6 +49,27 @@ def explain_anomaly(ticker: str, result: AnomalyResult) -> str:
     )
 
 
+def attach_news_context(alert_text: str, headline: str | None,
+                        news_date: str = "", today: str = "") -> str:
+    """Investigação cruzada (anomalia → notícia): anexa a explicação candidata ao alerta.
+
+    O comportamento do "trader profissional": vê o movimento, procura a causa. Com notícia
+    relevante recente, o alerta ganha a linha "Possible explanation"; SEM notícia, diz que
+    não há explicação pública conhecida — a ausência também é informação útil (e honesta).
+    A hipótese nunca é afirmada como causa provada — é a manchete mais recente relevante.
+    """
+    if headline:
+        quando = ""
+        if news_date and today:
+            idade = _age_label(news_date, today)
+            quando = f" ({idade})" if idade else ""
+        return (alert_text +
+                f'\nPossible explanation{quando}: '
+                f'"{html.escape(_clip(headline), quote=False)}"')
+    return (alert_text +
+            "\nNo relevant news found in the last 48h — no public explanation yet.")
+
+
 def explain_normal(ticker: str, result: AnomalyResult) -> str:
     """Mensagem quando não há anomalia (útil para testes/diagnóstico)."""
     return (
@@ -146,13 +167,19 @@ def explain_news_impact(
             f"▸ {imp_txt} in {horizon}d · {quem} · "
             f'"{html.escape(_clip(rec.headline), quote=False)}" (sim {score:.2f})'
         )
-    # Aviso de direção mista (a lição do CS3 da tese, agora no produto): a semelhança capta
-    # o TEMA, não a direção — quando os precedentes divergem em sinal, a média esconde
-    # desacordo real e induz sobre-confiança. Dizemo-lo explicitamente.
-    if vals and min(vals) < 0 < max(vals):
+    # Direção dos precedentes — SEMPRE descritiva (frequência observada nos casos mostrados),
+    # NUNCA preditiva: a lição do CS3 (tema ≠ direção) aplicada ao produto. Com sinal misto,
+    # o aviso explícito; com sinal unânime, a contagem simples ("3 of 3 moved down").
+    subiram = sum(1 for v in vals if v > 0)
+    desceram = sum(1 for v in vals if v < 0)
+    if subiram and desceram:
         lines.append(
             "⚠ Similar past cases moved in BOTH directions — treat the average with caution."
         )
+    elif vals and (subiram == len(vals) or desceram == len(vals)):
+        rumo = "up" if subiram else "down"
+        lines.append(f"{len(vals)} of {len(vals)} shown cases moved {rumo} "
+                     "— an observed pattern, not a forecast.")
     if materiality:
         lines.append(materiality)
     lines.append(

@@ -467,6 +467,35 @@ def _mature_live_safe(today: date | None = None) -> None:
         print(f"[kb-viva] maturação falhou (ignorada): {type(exc).__name__}: {exc}")
 
 
+def _investigate_anomaly_safe(ticker: str, alert_text: str) -> str:
+    """Investigação cruzada: procura a notícia relevante mais recente (48h) que possa
+    explicar a anomalia e anexa-a ao alerta; sem notícia, di-lo honestamente.
+
+    Fail-open: sem FINNHUB_API_KEY ou com erro de rede, devolve o alerta original intacto.
+    """
+    try:
+        from investigator import config
+        from investigator.explanation_engine.explainer import attach_news_context
+        from investigator.news_fetcher.fetcher import fetch_finnhub_company_news
+        from investigator.news_fetcher.relevance import is_relevant
+
+        if not config.FINNHUB_API_KEY:
+            return alert_text
+        end = date.today().isoformat()
+        start = (date.today() - timedelta(days=2)).isoformat()
+        items = fetch_finnhub_company_news(ticker, start, end)
+        relevantes = [i for i in items if is_relevant(i.headline, ticker)]
+        if relevantes:
+            recente = max(relevantes, key=lambda it: it.date)
+            return attach_news_context(alert_text, recente.headline,
+                                       news_date=recente.date, today=end)
+        return attach_news_context(alert_text, None)
+    except Exception as exc:  # noqa: BLE001
+        print(f"[investigar {ticker}] falhou (alerta segue sem contexto): "
+              f"{type(exc).__name__}: {exc}")
+        return alert_text
+
+
 def _record_history_safe(alerts: list[tuple[str, str]], today: str,
                          path: str | Path = _HISTORY) -> None:
     """Regista os alertas REALMENTE enviados no histórico partilhado — a app lê este ficheiro
@@ -635,6 +664,9 @@ def run_cycle(cfg: dict, *, dry_run: bool) -> int:
     tickers_anomalos = [t for t, r in market_results if r.is_anomaly]
     market_alerts = list(zip(tickers_anomalos, build_market_alerts(market_results),
                              strict=True))
+    # Investigação cruzada (anomalia → notícia): o comportamento do trader profissional —
+    # vê o movimento, procura a causa. Fail-open: sem rede/chave, o alerta segue sem contexto.
+    market_alerts = [(t, _investigate_anomaly_safe(t, text)) for t, text in market_alerts]
     max_per = int((cfg.get("news") or {}).get("max_per_ticker_per_day", 2))
     alerts = filter_new_alerts(market_alerts, scan_news(cfg), state, max_per)
 
