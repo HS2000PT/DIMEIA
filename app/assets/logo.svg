@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- InvestiGator — marca profissional (2026-07-12): quadrado navy, linha de mercado
+       ascendente em esmeralda que termina num "olho" de vigilância (o gator, abstraído).
+       Minimal, geométrico, legível de 16px a 512px. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B1F2E"/>
+      <stop offset="1" stop-color="#123247"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#0EA5A0"/>
+      <stop offset="1" stop-color="#34D399"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="url(#bg)"/>
+  <!-- grelha subtil -->
+  <g stroke="#1E4258" stroke-width="2" opacity="0.55">
+    <line x1="40" y1="178" x2="216" y2="178"/>
+    <line x1="40" y1="128" x2="216" y2="128"/>
+    <line x1="40" y1="78"  x2="216" y2="78"/>
+  </g>
+  <!-- linha de mercado -->
+  <path d="M 40 186 L 84 150 L 112 166 L 150 108 L 172 122 L 204 72"
+        fill="none" stroke="url(#line)" stroke-width="14"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- o "olho" vigilante no último ponto -->
+  <circle cx="204" cy="72" r="17" fill="#34D399"/>
+  <circle cx="204" cy="72" r="8" fill="#0B1F2E"/>
+  <circle cx="207" cy="69" r="3" fill="#E7FFF6"/>
+</svg>

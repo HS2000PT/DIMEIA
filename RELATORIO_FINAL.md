@@ -47,11 +47,13 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   dias depois (impacto real a +5d); retrieval com decaimento por idade e idade visível;
   anomalias com **investigação cruzada** ("Possible explanation: …" ou "no public explanation
   yet").
-- **Painel único público** (<https://investigator.streamlit.app>): uma aba por ticker da
-  watchlist — "background risk" do modelo treinado (RQ4, todos os dias, mesmo sem notícia),
-  gráfico anotado com cada evento, e o histórico lido do MESMO registo que o canal recebeu
-  (nunca recalculado). Retrieval **semântico** (MiniLM em ONNX, ~23 MB, sem torch); "Method &
-  evaluation" (como funciona, números, sandbox, citação) num único expander no fundo.
+- **Dashboard público** (<https://investigator.streamlit.app>): estilo Google Finance — uma
+  aba por empresa, UM gráfico grande (1D/5D/1M/6M) com os eventos detetados marcados na curva
+  (hover = o alerta exato do canal; nunca recalculado), a mesma lista em tabela, e o
+  "background risk" do modelo treinado (RQ4). Read-only; método/avaliação/citação numa vista
+  About separada. Identidade profissional nova (logo + "Market intelligence, explained.").
+  Keep-alive automático via workflow; opção 24/7 sem hibernação na VM
+  (`deploy/investigator-app.service`).
 - **Bot interativo** (`scripts/run_bot.py`): watchlist pessoal por utilizador, SQLite,
   long-polling — sem custos de alojamento.
 

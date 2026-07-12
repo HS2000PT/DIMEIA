@@ -65,6 +65,19 @@ sudo systemctl enable --now investigator-watch
 journalctl -u investigator-watch -f        # ver os ciclos ao vivo
 ```
 
+## Bónus: o dashboard SEMPRE online na mesma VM
+
+O Streamlit Community Cloud (grátis) hiberna sem visitas. Para um site 24/7 sem hibernação:
+
+```bash
+sudo cp deploy/investigator-app.service /etc/systemd/system/
+sudo sed -i "s|/home/investigator|$HOME|g; s|^User=investigator|User=$(whoami)|"   /etc/systemd/system/investigator-app.service
+sudo systemctl daemon-reload && sudo systemctl enable --now investigator-app
+```
+Depois: Oracle Cloud → VCN → Security List → permitir TCP 8501 (e `sudo ufw allow 8501` na
+VM, se ativo). O site fica em `http://<ip-da-vm>:8501`. (HTTPS/domínio: Caddy é o passo
+seguinte natural — opcional.)
+
 ## Operação e honestidades
 
 - **Ver estado:** `systemctl status investigator-watch` · **parar:** `sudo systemctl stop …`

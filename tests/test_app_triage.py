@@ -1,9 +1,8 @@
-"""AppTest do painel único (redesenho de produto): abas por ticker, risco de fundo (RQ4),
-gráfico anotado, e o histórico partilhado (o MESMO que o Telegram recebeu).
+"""AppTest do dashboard (visão 2026-07-12): vista Live (uma aba por empresa, gráfico grande
+com eventos + tabela) e vista About (tudo o resto). Read-only por desenho.
 
 Corre só onde o streamlit está instalado (local, stack app); no CI leve é saltado.
-Os preços são simulados (monkeypatch) e o histórico partilhado NUNCA toca a rede real —
-tudo isolado via `investigator.alerts_history.fetch_remote`.
+Os preços são simulados (monkeypatch) e o histórico partilhado NUNCA toca a rede real.
 """
 
 from __future__ import annotations
@@ -22,10 +21,14 @@ from investigator.alerts_history import HistoryEntry  # noqa: E402
 APP = "app/streamlit_app.py"
 
 
-def _fake_history(ticker: str, period: str = "6mo") -> pd.DataFrame:
+def _fake_history(ticker: str, period: str = "6mo", interval: str = "1d") -> pd.DataFrame:
     rng = np.random.default_rng(1)
-    close = 100 * np.exp(np.cumsum(rng.normal(0, 0.01, 60)))
-    idx = pd.date_range(end=pd.Timestamp.today().normalize(), periods=60, freq="D")
+    n = 60
+    close = 100 * np.exp(np.cumsum(rng.normal(0, 0.01, n)))
+    if interval.endswith(("m", "h")):  # intraday: barras de hoje
+        idx = pd.date_range(end=pd.Timestamp.now().floor("5min"), periods=n, freq="5min")
+    else:
+        idx = pd.date_range(end=pd.Timestamp.today().normalize(), periods=n, freq="D")
     return pd.DataFrame({"Close": close}, index=idx)
 
 
@@ -51,7 +54,6 @@ def _run(monkeypatch, history: list[HistoryEntry] | None = None) -> AppTest:
 
 
 def _todos_dataframes_texto(at: AppTest) -> str:
-    """Concatena o conteúdo de todos os dataframes renderizados (procura ampla, ignora onde)."""
     partes = []
     for el in at.dataframe:
         try:
@@ -61,40 +63,33 @@ def _todos_dataframes_texto(at: AppTest) -> str:
     return "\n".join(partes)
 
 
-def test_board_sem_excecoes_com_uma_aba_por_ticker(monkeypatch):
+def test_vista_live_sem_excecoes_uma_aba_por_empresa(monkeypatch):
     at = _run(monkeypatch)
     assert not at.exception
-    # 10 tickers no watchlist (config/alerts.yaml) — uma aba principal por cada.
-    assert len(at.tabs) >= 10
+    assert len(at.tabs) >= 10  # 10 tickers da watchlist (config/alerts.yaml)
+    # navegação mínima: exatamente 1 radio na sidebar com as 2 vistas
+    assert len(at.sidebar.radio) == 1
+    assert list(at.sidebar.radio[0].options) == ["📊 Live", "ℹ️ About"]
 
 
-def test_titulo_e_disclaimer_presentes_sem_navegacao_lateral(monkeypatch):
+def test_risco_de_fundo_e_caption_compacta(monkeypatch):
     at = _run(monkeypatch)
     assert not at.exception
-    titles = [t.value for t in at.title]
-    assert any("Markets now" in t for t in titles)
-    # já não há radio de navegação (painel único, não multi-página)
-    assert len(at.sidebar.radio) == 0
+    captions = [c.value for c in at.caption]
+    assert any("Background risk" in c for c in captions)
 
 
-def test_risco_de_fundo_aparece_quando_ha_modelo(monkeypatch):
-    at = _run(monkeypatch)
-    assert not at.exception
-    metric_labels = [m.label for m in at.metric]
-    assert any("Background risk" in lbl for lbl in metric_labels)
-
-
-def test_risco_de_fundo_ausente_sem_modelo(monkeypatch):
+def test_risco_ausente_sem_modelo_nao_rebenta(monkeypatch):
     import investigator.triage.infer as infer
 
     monkeypatch.setattr(infer, "load_context_bundle", lambda path=None: None)
     at = _run(monkeypatch)
     assert not at.exception
-    metric_labels = [m.label for m in at.metric]
-    assert not any("Background risk" in lbl for lbl in metric_labels)
+    captions = [c.value for c in at.caption]
+    assert not any("Background risk" in c for c in captions)
 
 
-def test_historico_partilhado_aparece_na_tabela_do_ticker(monkeypatch):
+def test_eventos_do_canal_aparecem_na_tabela(monkeypatch):
     hist = [HistoryEntry(date="2026-07-08", ticker="AAPL", kind="market",
                          text="Anomaly detected for AAPL: a very specific unique marker text")]
     at = _run(monkeypatch, history=hist)
@@ -102,24 +97,36 @@ def test_historico_partilhado_aparece_na_tabela_do_ticker(monkeypatch):
     assert "a very specific unique marker text" in _todos_dataframes_texto(at)
 
 
-def test_sem_historico_mostra_aviso_gracioso_e_nao_rebenta(monkeypatch):
+def test_sem_historico_mostra_aviso_gracioso(monkeypatch):
     at = _run(monkeypatch, history=[])
     assert not at.exception
     captions = [c.value for c in at.caption]
-    assert any("No shared alert history available" in c for c in captions)
+    assert any("No shared event history reachable" in c for c in captions)
 
 
-def test_expander_method_e_evaluation_presente(monkeypatch):
-    at = _run(monkeypatch)
+def test_resumo_diario_do_canal_em_expander(monkeypatch):
+    hist = [HistoryEntry(date="2026-07-10", ticker="MARKET", kind="summary",
+                         text="Daily close summary\n• AAPL: +0.10% (z +0.05)")]
+    at = _run(monkeypatch, history=hist)
     assert not at.exception
-    assert len(at.expander) >= 1
-    headers_and_labels = [e.label for e in at.expander]
-    assert any("Method" in lbl for lbl in headers_and_labels)
+    labels = [e.label for e in at.expander]
+    assert any("Daily close summary" in lbl for lbl in labels)
+
+
+def test_vista_about_tem_metodo_avaliacao_e_demo(monkeypatch):
+    at = _run(monkeypatch)
+    at.sidebar.radio[0].set_value("ℹ️ About").run(timeout=120)
+    assert not at.exception
+    titles = [t.value for t in at.title]
+    assert any("About" in t for t in titles)
+    headers = [h.value for h in at.header]
+    assert any("Evaluation" in h for h in headers)
+    labels = [e.label for e in at.expander]
+    assert any("retrieval engine" in lbl for lbl in labels)  # a única "ação", fora da Live
 
 
 def test_app_boota_sem_plotly(monkeypatch):
-    """A app NUNCA cai por causa do gráfico interativo: sem plotly, degrada para line_chart.
-    (Caso real: deploy em Python 3.14 sem wheels para a stack pinada → plotly ausente.)"""
+    """A app NUNCA cai por causa do gráfico: sem plotly, degrada para line_chart."""
     import investigator.alerts_history as alerts_history
     import investigator.market_data.prices as prices
 

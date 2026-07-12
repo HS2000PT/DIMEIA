@@ -1,8 +1,8 @@
-<img src="app/assets/investigator.svg" width="150" align="right" alt="InvestiGator mascot — a friendly detective alligator">
+<img src="app/assets/logo.svg" width="120" align="right" alt="InvestiGator — market line ending in a watchful eye">
 
-# InvestiGator 🐊🔍 — Explainable Financial Alerts for Retail Investors
+# InvestiGator — Explainable Financial Alerts for Retail Investors
 
-*Investigate. Don't speculate.*
+*Market intelligence, explained.*
 
 **▶ Try it live: <https://investigator.streamlit.app>**
 
@@ -52,11 +52,11 @@ Full operator guide (Telegram, live news, building your own KB): **`docs/design/
 §0.0).
 
 ## 🔎 Or click through it — the live dashboard
-**Live at <https://investigator.streamlit.app>** — one page, a tab per watchlist ticker: the
-trained triage model's risk score (background, no headline needed), a live price chart annotated
-with every detected event, and the same alert history the Telegram channel received (never
-recomputed independently). "Method & evaluation" (how it works, the thesis's numbers, a headline/
-ticker sandbox, citation) collapses into one section at the bottom. To run it locally (no keys,
+**Live at <https://investigator.streamlit.app>** — a Google-Finance-style board: one tab per
+company, one big ranged chart (1D/5D/1M/6M) with every detected event **marked on the curve**
+(hover for the full alert — exactly what the Telegram channel received, never recomputed), the
+same events tabled below, and the author-trained model's background risk. Read-only by design;
+method/evaluation/citation live on a separate About view. To run it locally (no keys,
 nothing sent):
 
 ```bash

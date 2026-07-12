@@ -1,0 +1,24 @@
+# systemd unit — dashboard InvestiGator SEMPRE online, na mesma VM do vigia.
+# O Streamlit Community Cloud (grátis) adormece apps sem visitas e não dá SLA; para um
+# "site a sério" 24/7, a própria VM Oracle Free serve o dashboard:
+#   sudo cp deploy/investigator-app.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now investigator-app
+#   (abrir a porta 8501 na VCN da Oracle + firewall; ver docs/design/vm_watch.md)
+
+[Unit]
+Description=InvestiGator — dashboard Streamlit (sempre online)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=investigator
+WorkingDirectory=/home/investigator/DIMEIA
+Environment=PYTHONIOENCODING=utf-8
+ExecStart=/home/investigator/DIMEIA/.venv/bin/streamlit run app/streamlit_app.py \
+  --server.headless true --server.port 8501 --server.address 0.0.0.0
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target

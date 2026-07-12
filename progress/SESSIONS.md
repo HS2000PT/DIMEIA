@@ -5,6 +5,21 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 36 — 2026-07-12 — Dashboard final (a visão realizada) + identidade profissional
+**Pedido:** "one tab per company; main = one very big chart with real-time movements and the
+events signalized there (hover = details) + the same in a table below; the rest on another
+page; read-only; better logo/slogan; guarantee always-online or an alternative."
+- **App reescrita — 2 vistas:** 📊 Live (aba por empresa → gráfico grande 1D/5D/1M/6M com
+  eventos do canal marcados na curva + tabela + risco RQ4 compacto; read-only) e ℹ️ About
+  (tudo o resto + a única ação, a demo de retrieval, num expander). 8 AppTests novos.
+- **Identidade:** logo.svg profissional (linha de mercado → "olho" vigilante) + slogan
+  "Market intelligence, explained." (app + README).
+- **Sempre-online honesto:** keep-alive no workflow (ping por corrida) + alternativa 24/7
+  real na VM (deploy/investigator-app.service, porta 8501; vm_watch.md §Bónus).
+- **Screenshot real novo** (TSLA, marcadores visíveis) → Fig. 4.5 atualizada (frase+caption);
+  tese 78 pp/slides 17/guia 71 recompilam 0 erros. Docs deployment/RELATORIO/README em sync.
+- **167 testes + ruff verdes.**
+
 ## Sessão 35 — 2026-07-12 — Evolução "sensor-first": KB viva + investigação cruzada + intradiário
 **Pedido:** o aluno partilhou uma visão ChatGPT (sistema por eventos, sensores, tempo quase-real)
 e delegou a decisão. **Análise devolvida:** ~80% da visão JÁ é o sistema (2 gatilhos→motor único;

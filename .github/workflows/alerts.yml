@@ -104,6 +104,14 @@ jobs:
             data/bot_users.db
           key: alerts-state-${{ github.run_id }}
 
+      # Keep-alive do dashboard: o Streamlit Community Cloud adormece apps sem visitas;
+      # como este workflow corre várias vezes por dia (semana + fim de semana), um ping
+      # barato mantém a app acordada para visitantes reais. Fail-open (|| true).
+      - name: Keep the dashboard awake
+        if: always()
+        continue-on-error: true
+        run: curl -s -o /dev/null --max-time 30 https://investigator.streamlit.app/ || true
+
       # Publica o histórico partilhado só se houve algo novo E o checkout acima correu bem
       # (fail-open total: nunca impede o resto do job nem falha por si só).
       - name: Publish updated alert history

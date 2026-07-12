@@ -7,8 +7,33 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 35 (**Evolução "sensor-first": KB viva + investigação cruzada + intradiário**)
+- **Sessão nº:** 36 (**Dashboard final: a visão do aluno realizada + identidade profissional**)
 - **Última atualização:** 2026-07-12
+- **🎨 SESSÃO 36 ("one tab per company, one big chart with events, the rest elsewhere"):**
+  app REESCRITA para exatamente a visão dele: **2 vistas e só 2** — 📊 Live (uma aba por
+  empresa; UM gráfico grande estilo Google Finance com intervalos 1D/5D/1M/6M via yfinance
+  `period/interval`, eventos do canal MARCADOS na curva com hover = texto exato do alerta,
+  mesma lista em tabela por baixo, risco de fundo do modelo RQ4 numa caption compacta;
+  read-only) e ℹ️ About (o que é, como funciona, avaliação, get-alerts, citação + a ÚNICA
+  ação da app — a demo de retrieval — num expander; decisão minha: mantida para a demo do
+  júri). Removidos: "Check any ticker", páginas antigas.
+  **Identidade profissional:** novo `app/assets/logo.svg` (quadrado navy, linha de mercado
+  esmeralda que termina num "olho" — o gator abstraído) + slogan **"Market intelligence,
+  explained."** (README + app; mascote antiga fica como asset histórico do guia).
+  **Sempre-online (resposta honesta ao "guarantee me"):** Community Cloud hiberna sem visitas
+  e não tem SLA → (1) passo **keep-alive** no workflow Alerts (ping à app em cada corrida,
+  semana+fim de semana — na prática mantém-na acordada); (2) alternativa 24/7 A SÉRIO:
+  `deploy/investigator-app.service` (o dashboard na MESMA VM Oracle do vigia, porta 8501;
+  instruções no vm_watch.md §Bónus). Docs deployment/vm_watch atualizados.
+  **Detalhe técnico:** `_event_positions` mapeia eventos a posições no intervalo atual (em
+  intraday, ao 1.º bar do dia); markers só com data (HistoryEntry não tem hora — limitação
+  aceitável). Fallback sem plotly mantido (`INVESTIGATOR_NO_PLOTLY`).
+  **Screenshot REAL novo** (Playwright, aba TSLA com marcadores de eventos visíveis) →
+  substitui `thesis/figures/app_dashboard.png`; frase+caption da Fig. 4.5 atualizadas
+  (honestas, design atual); tese 78 pp + slides 17 + guia 71 recompilam 0 erros (mesmos
+  ficheiros de figura → slides/guia atualizam sozinhos).
+  **Testes reescritos** (test_app_triage: 8 testes da estrutura nova — radio 2 vistas, risco
+  como caption, About com demo, resumo em expander, fallback). **167 testes + ruff verdes.**
 - **🌱 SESSÃO 35 (o aluno partilhou a visão ChatGPT e delegou: "decide a melhor forma; acredito
   em ti"):** análise honesta devolvida — a visão descreve ~80% do sistema JÁ construído (2
   sensores→motor único = a arquitetura da tese; "priorização inteligente" = RQ4; "aprendizagem

@@ -5,14 +5,14 @@
 > sistema a funcionar sem instalar nada.
 
 ## O que é o dashboard
-**Painel único ao vivo** (redesenho de produto, 2026-07-08): uma aba por ticker da watchlist,
-cada uma com o "background risk" do modelo de triagem TREINADO pelo autor (RQ4; pontua todos os
-dias, mesmo sem notícia), um gráfico Plotly do preço anotado com cada evento detetado, e a
-tabela de histórico — tudo lido do MESMO registo partilhado que o canal Telegram recebeu
-(`investigator/alerts_history.py`, branch `alerts-history`), nunca recalculado de forma
-independente. "Method & evaluation" (como funciona, os números da tese, uma sandbox de
-manchete/ticker, como receber alertas, citação) fica num único `st.expander` no fundo.
-Não treina nada em produção, não prevê preços, não envia nada.
+**Duas vistas, e só duas** (visão final do aluno, 2026-07-12). **📊 Live:** uma aba por
+empresa; em cada aba UM gráfico grande estilo Google Finance (intervalos 1D/5D/1M/6M,
+intraday via yfinance ~15 min de atraso) com os EVENTOS detetados (anomalias 🔺 + notícias ●,
+exatamente os que o canal Telegram recebeu — branch `alerts-history`, nunca recalculados)
+marcados no gráfico com hover, a mesma lista numa tabela por baixo, e o "background risk" do
+modelo treinado pelo autor (RQ4) numa linha compacta. Read-only. **ℹ️ About:** o que é, como
+funciona, avaliação, como receber alertas, citação, e a única "ação" da app (a demo de
+retrieval por manchete) num expander. Não treina nada em produção, não prevê preços, não envia nada.
 O retrieval de precedentes é **semântico**: o MESMO MiniLM da tese exportado em **ONNX**
 (~23 MB, `onnxruntime` CPU, sem torch), descarregado uma vez no arranque com SHA256 pinado
 (paridade numérica com o SBERT verificada em `docs/evaluation/onnx_minilm_validation.md`).
@@ -48,8 +48,12 @@ streamlit run app/streamlit_app.py
 - **Segredos:** o dashboard não precisa de nenhum (não envia Telegram, não usa Finnhub). Se um dia
   precisar, usar *Streamlit secrets* (nunca commitar chaves).
 - **Rede:** a página *Market trigger* usa o yfinance ao vivo — funciona na nuvem (tem internet).
-- **Adormecer:** as apps gratuitas hibernam quando inativas e acordam ao primeiro acesso (alguns
-  segundos). É normal.
+- **Adormecer / "sempre online" (honesto):** as apps gratuitas do Community Cloud hibernam
+  quando ficam sem visitas e acordam ao primeiro acesso (~30-60s) — não há SLA. Mitigações:
+  (1) o workflow Alerts faz um **ping keep-alive** à app em cada corrida (semana + fim de
+  semana), o que na prática a mantém acordada; (2) para um site 24/7 A SÉRIO, a mesma VM
+  Oracle Free do vigia pode servir o dashboard (`deploy/investigator-app.service` + abrir a
+  porta 8501 — ver `vm_watch.md`), sem hibernação nenhuma.
 - **SBERT/torch:** continua fora da nuvem (pesado para o tier gratuito) — mas desde 2026-07-07
   a app usa o **mesmo modelo MiniLM em ONNX** (leve), pelo que o retrieval na nuvem já é
   semântico; a página *Evaluation* mantém os números da tese (medidos com o SbertEmbedder).
@@ -66,6 +70,6 @@ streamlit run app/streamlit_app.py
 - Aviso `More than one requirements file (uv requirements.txt vs poetry pyproject.toml)` é
   **benigno**: o pyproject é para o pacote/ferramentas; o Cloud usa o requirements.txt (correto,
   e a linha `-e .` instala o pacote `investigator`).
-- Para o botão "Open the Telegram channel" (agora dentro do expander **Method & evaluation → Get
-  alerts**): preenche `public.channel_url` no `config/alerts.yaml` (não é segredo — o canal é
-  público). O histórico partilhado usa `public.history_url` (tem um valor por defeito sensato).
+- Para o botão "Open the Telegram channel" (vista **ℹ️ About → Get the alerts**): preenche
+  `public.channel_url` no `config/alerts.yaml` (não é segredo — o canal é público). O
+  histórico partilhado usa `public.history_url` (tem um valor por defeito sensato).
