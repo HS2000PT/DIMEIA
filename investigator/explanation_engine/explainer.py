@@ -24,6 +24,21 @@ if TYPE_CHECKING:
 _MAX_HEADLINE = 100  # truncagem SÓ de apresentação (os objetos calculados ficam intactos)
 
 
+def _nome(ticker: str) -> str:
+    """Sufixo ' (Apple)' quando há nome amigável ≠ ticker — leigos não sabem símbolos.
+
+    Aditivo por desenho: os tokens de fidelidade XAI ('Anomaly detected for {T}', 'News
+    alert for {T}') ficam intactos; tickers fora do mapa (ex.: testes) não ganham sufixo.
+    """
+    try:
+        from investigator.news_fetcher.relevance import display_name
+
+        nome = display_name(ticker)
+        return f" ({nome})" if nome.upper() != ticker.upper() else ""
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def plain_text(alert: str) -> str:
     """Versão sem tags para consola/app (o Telegram recebe o HTML canónico)."""
     out = alert.replace("<b>", "").replace("</b>", "").replace("<i>", "").replace("</i>", "")
@@ -38,7 +53,8 @@ def explain_anomaly(ticker: str, result: AnomalyResult) -> str:
     """Explicação de uma anomalia: o facto primeiro, o método numa nota curta no fim."""
     arrow = "🔺" if result.last_return >= 0 else "🔻"
     return (
-        f"{arrow} <b>Anomaly detected for {html.escape(ticker, quote=False)}: "
+        f"{arrow} <b>Anomaly detected for {html.escape(ticker, quote=False)}"
+        f"{html.escape(_nome(ticker), quote=False)}: "
         f"{result.last_return * 100:+.2f}% today</b>\n"
         f"About {abs(result.z_score):.1f}x this stock's typical daily swing "
         f"({result.window}-day norm).\n"
@@ -57,7 +73,8 @@ def explain_intraday(ticker: str, result: AnomalyResult) -> str:
     """
     arrow = "🔺" if result.last_return >= 0 else "🔻"
     return (
-        f"{arrow} <b>Unusual intraday move for {html.escape(ticker, quote=False)}: "
+        f"{arrow} <b>Unusual intraday move for {html.escape(ticker, quote=False)}"
+        f"{html.escape(_nome(ticker), quote=False)}: "
         f"{result.last_return * 100:+.2f}% so far today</b>\n"
         f"About {abs(result.z_score):.1f}x this stock's typical daily swing "
         f"({result.window}-day norm) — and the session is not over.\n"
@@ -154,7 +171,8 @@ def explain_news_impact(
     `today` (opcional): quando dado (produção/app), cada precedente mostra a idade
     ("2y ago") — sem ele (demo/tese), o output histórico fica byte-igual.
     """
-    header = f"📰 <b>News alert for {html.escape(ticker, quote=False)}</b>"
+    header = (f"📰 <b>News alert for {html.escape(ticker, quote=False)}"
+              f"{html.escape(_nome(ticker), quote=False)}</b>")
     if date:
         header += f" ({html.escape(date, quote=False)})"
     header += f'\n"{html.escape(_clip(headline), quote=False)}"'

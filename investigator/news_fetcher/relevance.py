@@ -17,6 +17,20 @@ from __future__ import annotations
 
 import re
 
+# Nome de exibição por ticker — usado nos alertas e na app ("Apple (AAPL)"): um leigo não
+# devia precisar de saber símbolos de bolsa para ler um alerta.
+COMPANY_DISPLAY: dict[str, str] = {
+    "AAPL": "Apple", "MSFT": "Microsoft", "NVDA": "NVIDIA", "TSLA": "Tesla",
+    "AMZN": "Amazon", "GOOGL": "Alphabet", "META": "Meta", "JPM": "JPMorgan",
+    "AMD": "AMD", "NFLX": "Netflix",
+}
+
+
+def display_name(ticker: str) -> str:
+    """Nome amigável ('Apple'); o próprio símbolo quando não há mapeamento."""
+    return COMPANY_DISPLAY.get(ticker.upper(), ticker.upper())
+
+
 # Aliases por ticker (minúsculas; comparação é case-insensitive). Cobre a watchlist do
 # produto (config/alerts.yaml) + SPY. Um ticker fora do mapa cai no fallback honesto:
 # só o próprio símbolo conta como menção.

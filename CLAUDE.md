@@ -7,8 +7,31 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 36 (**Dashboard final: a visão do aluno realizada + identidade profissional**)
+- **Sessão nº:** 37 (**Passe premium de UX: velocidade 10×, alertas para leigos, polimento**)
 - **Última atualização:** 2026-07-12
+- **✨ SESSÃO 37 ("cleaner, faster, premium; full critical review"):** revisão crítica feita e
+  executada. **Performance (o achado nº 1):** `st.tabs` renderiza TODAS as abas a cada
+  interação (10× yfinance + 10× scoring — a app arrastava-se) → substituído por seletor
+  horizontal (radio) que renderiza SÓ a empresa escolhida (~10× mais leve; teste garante
+  len(at.metric)==1). Nota técnica: `st.segmented_control` foi tentado primeiro mas tem bug
+  de serialização no AppTest 1.41 (itera caracteres do valor) — radio horizontal é
+  equivalente e seguro. Risco de fundo cacheado 10 min (`_risk_score`).
+  **Alertas para leigos:** headers com nome de empresa — "Anomaly detected for TSLA (Tesla)"
+  — via `COMPANY_DISPLAY/display_name` em relevance.py e `_nome()` aditivo no explainer
+  (tokens de fidelidade intactos; tickers fora do mapa sem sufixo → testes de fidelidade
+  passam sem mudança, exceto 1 assert intradiário atualizado). Demo mudou o header →
+  blocos congelados sincronizados em how_to_run §0.0 e guia (frame demo); **CS3 do Cap. 5
+  INTOCADO** (registo experimental congelado — a evolução já está documentada no Cap. 4).
+  **Resumo diário compacto:** movers (≥1% ou anomalia) um por linha com ⬆⬇/🔺; calmos
+  comprimidos numa linha "Quiet: …" — hierarquia visual em vez de 10 linhas monótonas.
+  **Premium:** crosshair/spikes no gráfico + hovertemplate "$Y · X"; default 1M (mais
+  "live" que 6M); métrica "Tesla (TSLA)"; tabela de eventos mostra SÓ a 1.ª linha (o facto
+  forte) + expander "Full alert texts"; CTA "📡 Get alerts on Telegram" na sidebar; About
+  reordenado (Get the alerts logo após a introdução).
+  **Lição de ferramenta:** o AppTest ENGOLE SyntaxErrors (árvore vazia, sem exceção) — um
+  heredoc partiu uma string e os testes "falharam sem erro"; diagnóstico via py_compile.
+  **Screenshot v4 real** (seletor + CTA + 1M) → Fig. 4.5; tese 78 pp + slides 17 + guia 71
+  recompilam 0 erros. **167 testes + ruff verdes.**
 - **🎨 SESSÃO 36 ("one tab per company, one big chart with events, the rest elsewhere"):**
   app REESCRITA para exatamente a visão dele: **2 vistas e só 2** — 📊 Live (uma aba por
   empresa; UM gráfico grande estilo Google Finance com intervalos 1D/5D/1M/6M via yfinance

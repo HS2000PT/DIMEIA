@@ -24,7 +24,7 @@ Saída real (determinística no gatilho de notícia):
 
 ```
 ==== GATILHO DE NOTÍCIA  (offline, base de conhecimento de amostra) ====
-📰 News alert for NVDA
+📰 News alert for NVDA (NVIDIA)
 "Nvidia demand surges on AI chip orders"
 3 similar past headlines — their 5-day moves ranged +3.55%…+10.89% (average +6.46%):
 ▸ +3.55% in 5d · NVDA 2023-05-25 · "Nvidia guidance surges..." (sim 0.60)

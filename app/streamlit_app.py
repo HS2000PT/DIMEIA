@@ -194,17 +194,23 @@ def _retrieval_kbs(kb_path: str) -> list:
 
 # ── Vista LIVE: o gráfico grande + eventos ──────────────────────────────────────
 
-def _risk_line(ticker: str) -> None:
-    """Risco de fundo do modelo treinado (RQ4) — uma linha compacta, read-only."""
+@st.cache_data(ttl=600, show_spinner=False)
+def _risk_score(ticker: str):
+    """Risco de fundo cacheado (10 min): o modelo não muda ao minuto; a app fica leve."""
     bundle = _triage_bundle()
     if bundle is None:
-        return
+        return None
     from investigator.triage.infer import score_background
 
     try:
-        scored = score_background(bundle, _daily_close(ticker), ticker)
+        return score_background(bundle, _daily_close(ticker), ticker)
     except Exception:
-        return
+        return None
+
+
+def _risk_line(ticker: str) -> None:
+    """Risco de fundo do modelo treinado (RQ4) — uma linha compacta, read-only."""
+    scored = _risk_score(ticker)
     if scored is None:
         return
     prob, contribs = scored
@@ -262,14 +268,17 @@ def _big_chart(ticker: str, closes: pd.Series, events: list, intraday: bool):
         height=520, margin={"l": 10, "r": 10, "t": 16, "b": 10}, showlegend=False,
         hovermode="closest", yaxis={"range": [ymin - folga, ymax + folga],
                                     "title": "Price ($)"},
-        xaxis={"rangeslider": {"visible": False}},
+        xaxis={"rangeslider": {"visible": False}, "showspikes": True,
+               "spikemode": "across", "spikethickness": 1, "spikedash": "dot",
+               "spikecolor": "#94A3B8"},
     )
+    fig.data[0].hovertemplate = "$%{y:.2f} · %{x}<extra></extra>"
     return fig
 
 
 def _ticker_tab(ticker: str, history: list) -> None:
     eventos = [h for h in history if h.ticker == ticker]
-    intervalo = st.radio("Range", list(_RANGES), index=3, horizontal=True,
+    intervalo = st.radio("Range", list(_RANGES), index=2, horizontal=True,
                          key=f"range_{ticker}", label_visibility="collapsed")
     try:
         closes = _range_prices(ticker, intervalo)
@@ -280,9 +289,13 @@ def _ticker_tab(ticker: str, history: list) -> None:
         st.warning(f"Not enough data for {ticker} in this range yet.")
         return
 
+    from investigator.news_fetcher.relevance import display_name
+
     var = float(closes.iloc[-1] / closes.iloc[0] - 1.0)
+    nome = display_name(ticker)
+    rotulo = f"{nome} ({ticker})" if nome != ticker else ticker
     c1, c2 = st.columns([1, 3])
-    c1.metric(ticker, f"${float(closes.iloc[-1]):.2f}", f"{var:+.2%} ({intervalo})")
+    c1.metric(rotulo, f"${float(closes.iloc[-1]):.2f}", f"{var:+.2%} ({intervalo})")
     with c2:
         _risk_line(ticker)
 
@@ -302,11 +315,17 @@ def _ticker_tab(ticker: str, history: list) -> None:
     if eventos:
         rows = [
             {"Date": h.date, "Type": "🔺 Market" if h.kind == "market" else "📰 News",
-             "Alert": h.text}
+             # só o facto forte (1.ª linha) — legível num relance; o texto completo fica
+             # no hover do gráfico e no expander abaixo
+             "Alert": h.text.split("\n")[0]}
             for h in reversed(eventos)
         ]
         st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True,
                     column_config={"Alert": st.column_config.TextColumn(width="large")})
+        with st.expander("Full alert texts"):
+            for h in reversed(eventos):
+                st.text(f"[{h.date}]\n{h.text}")
+                st.divider()
     else:
         st.caption(f"No events recorded yet for {ticker} — this fills in as the automated "
                    "scan detects anomalies and material news.")
@@ -324,10 +343,12 @@ def _live_view() -> None:
                         "Telegram channel"):
             st.text(summaries[-1].text)
     tickers = _watchlist()
-    tabs = st.tabs(tickers)
-    for tab, ticker in zip(tabs, tickers, strict=True):
-        with tab:
-            _ticker_tab(ticker, history)
+    # Seletor de empresa em vez de st.tabs: o Streamlit renderiza TODAS as tabs a cada
+    # interação (10× fetch/scoring — a app arrastava-se). Assim só a empresa escolhida é
+    # renderizada — o aspeto de tabs mantém-se, a app fica ~10× mais leve por interação.
+    escolhido = st.radio("Company", tickers, index=0, horizontal=True,
+                         key="ticker_sel", label_visibility="collapsed")
+    _ticker_tab(escolhido or tickers[0], history)
 
 
 # ── Vista ABOUT: tudo o resto, fora do caminho ──────────────────────────────────
@@ -352,6 +373,18 @@ On top sits the one model **trained by the author** (RQ4): a calibrated material
 classifier that scores every ticker daily and gates news alerts against noise.
         """
     )
+
+    st.header("Get the alerts")
+    url = _channel_url()
+    c1, c2 = st.columns(2)
+    with c1:
+        if url:
+            st.link_button("📡 Open the Telegram channel", url, type="primary")
+        st.caption("Automatic alerts: anomalies (with investigation), material news (quality-"
+                   "filtered), and a daily close summary. No spam by design.")
+    with c2:
+        st.markdown("**Personal watchlist (bot):** `/watch TSLA` · `/list` · `/unwatch` · "
+                    "`/stop` — replies with the next scan.")
 
     st.header("How it works")
     st.graphviz_chart(
@@ -389,18 +422,6 @@ classifier that scores every ticker daily and gates news alerts against noise.
         st.caption("Firing-rate spread 0.015 vs 0.344 for a fixed % threshold.")
         st.subheader("Per sector (SBERT vs random)")
         st.bar_chart(PER_SECTOR, use_container_width=True)
-
-    st.header("Get the alerts")
-    url = _channel_url()
-    c1, c2 = st.columns(2)
-    with c1:
-        if url:
-            st.link_button("📡 Open the Telegram channel", url, type="primary")
-        st.caption("Automatic alerts: anomalies (with investigation), material news (quality-"
-                   "filtered), and a daily close summary. No spam by design.")
-    with c2:
-        st.markdown("**Personal watchlist (bot):** `/watch TSLA` · `/list` · `/unwatch` · "
-                    "`/stop` — replies with the next scan.")
 
     with st.expander("🔬 Try the retrieval engine on any headline (demo)"):
         _try_headline()
@@ -465,6 +486,9 @@ def main() -> None:
     st.sidebar.title("InvestiGator")
     st.sidebar.caption("_Market intelligence, explained._")
     vista = st.sidebar.radio("View", ["📊 Live", "ℹ️ About"], label_visibility="collapsed")
+    url = _channel_url()
+    if url:
+        st.sidebar.link_button("📡 Get alerts on Telegram", url, use_container_width=True)
     st.sidebar.markdown("---")
     with st.sidebar:
         _disclaimer()

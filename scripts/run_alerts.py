@@ -231,9 +231,19 @@ def build_daily_summary(results: list[tuple[str, object]], threshold: float) -> 
         return ""
     ordenados = sorted(results, key=lambda tr: -abs(tr[1].z_score))
     linhas = ["📊 <b>Daily close summary</b>"]
+    # Hierarquia visual (UX 2026-07-12): movers em destaque, um por linha; os calmos
+    # (<1% e sem anomalia) comprimidos numa linha só — 10 linhas monótonas não se leem.
+    calmos: list[str] = []
     for ticker, r in ordenados:
-        marca = "🔺" if r.is_anomaly else "•"
-        linhas.append(f"{marca} {ticker}: {r.last_return * 100:+.2f}% (z {r.z_score:+.2f})")
+        if r.is_anomaly:
+            linhas.append(f"🔺 {ticker}: {r.last_return * 100:+.2f}% (z {r.z_score:+.2f})")
+        elif abs(r.last_return) >= 0.01:
+            seta = "⬆" if r.last_return > 0 else "⬇"
+            linhas.append(f"{seta} {ticker}: {r.last_return * 100:+.2f}% (z {r.z_score:+.2f})")
+        else:
+            calmos.append(f"{ticker} {r.last_return * 100:+.1f}%")
+    if calmos:
+        linhas.append("• Quiet: " + " · ".join(calmos))
     n_anom = sum(1 for _, r in results if r.is_anomaly)
     if n_anom:
         linhas.append(f"{n_anom} anomaly(ies) today (|z| ≥ {threshold:g}) — alerted above.")

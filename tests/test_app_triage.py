@@ -66,10 +66,14 @@ def _todos_dataframes_texto(at: AppTest) -> str:
 def test_vista_live_sem_excecoes_uma_aba_por_empresa(monkeypatch):
     at = _run(monkeypatch)
     assert not at.exception
-    assert len(at.tabs) >= 10  # 10 tickers da watchlist (config/alerts.yaml)
-    # navegação mínima: exatamente 1 radio na sidebar com as 2 vistas
+    # seletor de empresa (substitui st.tabs: só a escolhida é renderizada → app leve);
+    # o radio das vistas fica na sidebar, o de empresa + o de intervalo no corpo
+    radios = {tuple(r.options) for r in at.radio}
+    assert any(len(ops) >= 10 for ops in radios)  # 10 tickers da watchlist
     assert len(at.sidebar.radio) == 1
     assert list(at.sidebar.radio[0].options) == ["📊 Live", "ℹ️ About"]
+    # só UMA empresa renderizada por interação (a razão do ganho de velocidade)
+    assert len(at.metric) == 1
 
 
 def test_risco_de_fundo_e_caption_compacta(monkeypatch):

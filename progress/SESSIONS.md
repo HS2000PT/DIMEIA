@@ -5,6 +5,22 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 37 — 2026-07-12 — Passe premium de UX: velocidade 10×, alertas para leigos
+**Pedido:** "cleaner, faster, premium; upgrade the output; full critical review."
+- **Velocidade (achado nº 1):** st.tabs renderizava as 10 abas a cada interação → seletor
+  horizontal renderiza SÓ a empresa escolhida (~10× menos fetch/scoring; teste garante 1
+  métrica por render). segmented_control rejeitado (bug de serialização no AppTest 1.41).
+  Risco de fundo cacheado 10 min.
+- **Alertas para leigos:** "Anomaly detected for TSLA (Tesla)" — nome de empresa em todos os
+  headers (aditivo; fidelidade intacta); demo/how_to_run/guia sincronizados; CS3 congelado
+  intocado. Resumo diário com hierarquia: movers um por linha, calmos numa linha "Quiet:".
+- **Premium:** crosshair + hover "$Y · X"; default 1M; métrica "Tesla (TSLA)"; tabela de
+  eventos só com o facto forte + expander "Full alert texts"; CTA Telegram na sidebar;
+  About com "Get the alerts" no topo.
+- **Lição:** AppTest engole SyntaxErrors (árvore vazia sem exceção) — diagnosticar com
+  py_compile. Screenshot v4 → Fig. 4.5; tese/slides/guia recompilam 0 erros.
+- **167 testes + ruff verdes.**
+
 ## Sessão 36 — 2026-07-12 — Dashboard final (a visão realizada) + identidade profissional
 **Pedido:** "one tab per company; main = one very big chart with real-time movements and the
 events signalized there (hover = details) + the same in a table below; the rest on another

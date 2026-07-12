@@ -41,7 +41,8 @@ def test_serie_curta_levanta():
 def test_explicacao_intradiaria_e_fiel_e_diz_em_curso():
     res = detect_intraday(-0.048, _retornos_calmos(), window=20, threshold=2.0)
     texto = plain_text(explain_intraday("TSLA", res))
-    assert "Unusual intraday move for TSLA: -4.80% so far today" in texto
+    # UX 2026-07-12: o header ganhou o nome da empresa ("(Tesla)") — leigos não sabem símbolos
+    assert "Unusual intraday move for TSLA (Tesla): -4.80% so far today" in texto
     assert "the session is not over" in texto
     assert f"z-score: {res.z_score:+.2f}" in texto  # fidelidade: o número exato
     assert "not advice" in texto
