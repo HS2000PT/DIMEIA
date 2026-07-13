@@ -1,18 +1,20 @@
 """InvestiGator — live market dashboard (Streamlit).
 
 Design (2026-07-12, visão do aluno): DUAS vistas, e só duas.
-- 📊 Live: uma aba por empresa; em cada aba UM gráfico grande (estilo Google Finance) com
-  intervalos 1D/5D/1M/6M, os EVENTOS detetados (anomalias + notícias, exatamente os que o
-  canal Telegram recebeu) marcados no gráfico com hover, e a mesma lista numa tabela por
-  baixo. Read-only: visualização, sem ações.
+- 📊 Live: faixa "Market now" (o dia dos 10 tickers num relance — 1 download em lote,
+  cache 10 min, fail-open) + uma aba por empresa; em cada aba UM gráfico grande (estilo
+  Google Finance) com intervalos 1D/5D/1M/6M, os EVENTOS detetados (anomalias + notícias,
+  exatamente os que o canal Telegram recebeu) marcados no gráfico com hover, e a mesma
+  lista numa tabela por baixo. Read-only: visualização, sem ações.
 - ℹ️ About: o que é, como funciona, avaliação, como receber alertas, citação — tudo o que
-  não é o painel vivo mora aqui.
+  não é o painel vivo mora aqui (texto curto; detalhe em expanders — 2026-07-13).
 
 Honesty notes (mirrors the thesis):
 - No price prediction, no trading signals. Explanations only — evidence from the past.
 - The history shown (chart markers + table) is read from the same shared record the Telegram
   channel's runner writes (branch alerts-history) — never recomputed here.
-- Prices are yfinance (free): intraday bars have ~15 min delay; the caption says so.
+- Prices: yfinance first (intraday bars ~15 min delayed), with the multi-source daily
+  fallback chain of the runner (Tiingo/Polygon/…) — see investigator/market_data/prices.py.
 - Retrieval (About → try a headline) is semantic: the thesis's MiniLM in ONNX, with the
   word-overlap fallback and the live KB + age decay of the production runner.
 """
@@ -195,6 +197,54 @@ def _retrieval_kbs(kb_path: str) -> list:
 # ── Vista LIVE: o gráfico grande + eventos ──────────────────────────────────────
 
 @st.cache_data(ttl=600, show_spinner=False)
+def _overview_moves(tickers: tuple[str, ...]) -> dict[str, float]:
+    """Movimento do dia por ticker — UM download em lote (leve; cache 10 min; fail-open).
+
+    "Quero ver como está o resto do mercado": a faixa dá o dia inteiro num relance sem
+    repetir o problema de performance das tabs (1 chamada, não 10). Se o lote falhar,
+    devolve {} e a faixa simplesmente não aparece. Em modo offline (testes/CI) nunca
+    toca a rede — determinismo primeiro.
+    """
+    if os.environ.get("INVESTIGATOR_OFFLINE") == "1":
+        return {}
+    try:
+        import yfinance as yf
+
+        df = yf.download(list(tickers), period="5d", interval="1d",
+                         progress=False, group_by="ticker", threads=True)
+        moves: dict[str, float] = {}
+        for t in tickers:
+            close = (df[t]["Close"] if isinstance(df.columns, pd.MultiIndex)
+                     else df["Close"]).dropna()
+            if len(close) >= 2:
+                moves[t] = float(close.iloc[-1] / close.iloc[-2] - 1.0)
+        return moves
+    except Exception:  # noqa: BLE001  (a faixa é um extra — nunca pode derrubar a app)
+        return {}
+
+
+def _overview_line(moves: dict[str, float], tickers: list[str]) -> str:
+    """Puro: a linha markdown da faixa (chips coloridos por direção; testável sem rede)."""
+    chips = []
+    for t in tickers:
+        m = moves.get(t)
+        if m is None:
+            continue
+        cor = "green" if m >= 0 else "red"
+        chips.append(f":{cor}[**{t}** {m * 100:+.1f}%]")
+    return " · ".join(chips)
+
+
+def _overview_strip() -> None:
+    moves = _overview_moves(tuple(_watchlist()))
+    linha = _overview_line(moves, _watchlist())
+    if linha:
+        st.markdown(f"**Market now** · {linha}")
+        st.caption("Today's move per watchlist name (batch quote, ~10 min cache) — "
+                   "companies in the same sector often move together.")
+
+
+@st.cache_data(ttl=600, show_spinner=False)
 def _risk_score(ticker: str):
     """Risco de fundo cacheado (10 min): o modelo não muda ao minuto; a app fica leve."""
     bundle = _triage_bundle()
@@ -308,8 +358,9 @@ def _ticker_tab(ticker: str, history: list) -> None:
         st.line_chart(closes, use_container_width=True)
         st.caption("Interactive chart unavailable in this environment (plotly not installed) "
                    "— all detected events remain in the table below.")
-    st.caption("yfinance prices (intraday bars ~15 min delayed) · auto-refreshes · "
-               "🔻/🔺 market anomaly · ● news event — hover a marker for the full alert.")
+    st.caption("Prices: yfinance + multi-source daily fallback (intraday ~15 min delayed) · "
+               "auto-refreshes · 🔻/🔺 market anomaly · ● news event — hover a marker for "
+               "the full alert.")
 
     st.subheader("Events — exactly as sent to the Telegram channel")
     if eventos:
@@ -334,6 +385,7 @@ def _ticker_tab(ticker: str, history: list) -> None:
 @st.fragment(run_every="120s")
 def _live_view() -> None:
     history = _read_shared_history()
+    _overview_strip()
     if not history:
         st.caption("⚠ No shared event history reachable right now — charts still show live "
                    "prices; events appear as the automated scan records them.")
@@ -357,20 +409,12 @@ def _about_view() -> None:
     st.title("About InvestiGator")
     st.markdown(
         """
-**InvestiGator** watches the US market and **explains** every alert it sends. Two independent
-sensors feed one intelligence engine:
-
-1. **Abrupt market moves** — a transparent statistical anomaly detector (rolling *z*-score,
-   no lookahead), evaluated intraday from real-time quotes in watch mode. When it fires, the
-   system *investigates*: it attaches the freshest relevant headline as a possible explanation
-   — or honestly reports that none was found.
-2. **Material news** — each relevant headline is compared semantically against a knowledge
-   base of past cases (including a **living KB** that grows from the news the system itself
-   scans, with impacts measured against real prices days later). Precedents are ranked with
-   age decay and always show their age. **Evidence, never a prediction.**
-
-On top sits the one model **trained by the author** (RQ4): a calibrated materiality-triage
-classifier that scores every ticker daily and gates news alerts against noise.
+**InvestiGator** watches the US market and **explains** every alert it sends:
+**abrupt moves** (transparent rolling *z*-score with severity levels, a sector check and a
+cross-investigation for the explaining headline) and **material news** (semantic precedents
+from historical + living knowledge bases, ranked with age decay). On top sits the one model
+**trained by the author** (RQ4): a calibrated triage classifier that gates news alerts
+against noise. **Evidence, never a prediction.**
         """
     )
 
@@ -409,8 +453,8 @@ classifier that scores every ticker daily and gates news alerts against noise.
     )
 
     st.header("Evaluation (frozen thesis numbers)")
-    st.markdown("Reproducible with fixed seeds via `scripts/evaluate*.py`; "
-                "full tables in `docs/evaluation/`.")
+    st.caption("Reproducible with fixed seeds via `scripts/evaluate*.py`; "
+               "full tables in `docs/evaluation/`.")
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Retrieval beats every baseline")
@@ -426,16 +470,16 @@ classifier that scores every ticker daily and gates news alerts against noise.
     with st.expander("🔬 Try the retrieval engine on any headline (demo)"):
         _try_headline()
 
-    st.header("Cite / credits")
-    st.markdown(
-        """
+    with st.expander("📖 Cite / credits"):
+        st.markdown(
+            """
 Master's dissertation (MEIA, ISEP): *"Explainable Financial Alerts for Retail Investors:
 Integrating Statistical Anomaly Detection and News–Market Impact Correlation."*
 **Author:** Henrique José da Silva Santos · **Supervisor:** Prof. Luís Gomes ·
 **Co-supervisor:** Rafael Silva · Repository: <https://github.com/HS2000PT/DIMEIA>
 (see `CITATION.cff`). Attributions: FNSPID (CC BY-SA 4.0), yfinance, Finnhub, Telegram Bot API.
-        """
-    )
+            """
+        )
     _disclaimer()
 
 
