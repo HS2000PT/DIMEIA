@@ -8,14 +8,13 @@
 ## 🧑 Cliques só teus (ninguém pode fazer por ti)
 
 ### Produto ao vivo
-- [ ] **Chaves de preços (2026-07-13, corrige os 0 alertas de mercado):** criar contas grátis
-      em <https://www.tiingo.com> e <https://polygon.io>, e adicionar 3 segredos no GitHub
-      (Settings → Secrets and variables → Actions): `TIINGO_API_KEY`, `POLYGON_API_KEY` e
-      `ALPHAVANTAGE_API_KEY` (esta já a tens no .env do outro PC). Porquê: o yfinance está
-      bloqueado nos runners do GitHub — foi por isso que NUNCA houve alertas de mercado nem
-      resumo diário; a cadeia de fallback nova usa estas fontes. (O Stooq, sem chave, ganhou
-      anti-bot e já não serve — testado ao vivo.) Depois: 1 clique em "Run workflow" no
-      workflow Alerts num dia útil e confirmar no log `[precos …] servido por …`.
+- [ ] **Chaves de preços — faltam 2 (Tiingo/Polygon), robustez:** ✅ `ALPHAVANTAGE_API_KEY`
+      já adicionada (confirmado no log de 13/07) e **o mercado JÁ está vivo** — 1.º alerta de
+      mercado de sempre enviado a 13/07 (NVDA −3,53%, "notable", Sector check + Possible
+      explanation), com o yfinance a responder nos runners nessa corrida. Falta só robustez:
+      criar contas grátis em <https://www.tiingo.com> e <https://polygon.io> e adicionar
+      `TIINGO_API_KEY` + `POLYGON_API_KEY` nos segredos do GitHub — quando o Yahoo voltar a
+      bloquear, sem elas só resta a Alpha Vantage (25 pedidos/dia, curto para 10 tickers).
 - [ ] **Streamlit: apagar e recriar a app com Python 3.12** (Advanced settings ao criar —
       NÃO é o defeito). Causa confirmada (2026-07-11): em Python 3.14 os pins pandas/numpy
       não têm wheels, a instalação falha em silêncio (~45 min) e a app arranca sem plotly
@@ -34,20 +33,27 @@
       ficheiro `LICENSE`.
 - [ ] **Redação exata da declaração de uso de IA** (MEIA/ISEP) + **data de entrega** — confirmar
       com o Prof. Luís Gomes.
-- [ ] Correr `python scripts/post_validate.py` (rotula as decisões reais maturadas do loop de
-      pós-validação — repetir de vez em quando enquanto o canal está vivo).
+- [ ] Correr `python scripts/post_validate.py` de vez em quando enquanto o canal está vivo
+      (última corrida: 13/07 — 33 decisões maturadas; precisão das mantidas 0,667 vs base
+      0,455; Brier 0,229 → `docs/evaluation/live_monitoring.md`).
 
 ### Opcional
 - [ ] Migrar/renomear o repositório (procedimento + trade-offs: `docs/design/migrar_repo.md`;
       a alternativa sem risco é o rename `DIMEIA`→`InvestiGator`).
 
 ## 🤖 Pendentes do código (nenhum bloqueia)
-- [ ] Confirmar no próximo dia útil (após as chaves de preços): alertas de MERCADO a aparecer
-      (intradiário via Finnhub corre agora também no Actions; severidade notable/strong/extreme;
-      linha "Sector check"), resumo diário ao fecho, investigação cruzada ("Possible
-      explanation"), e a branch `alerts-history` a crescer sem duplicados.
-- [ ] ~17/07: confirmar os primeiros casos MATURADOS na KB viva (`live_kb.jsonl` na branch
-      alerts-history) e precedentes de 2026 a aparecer nos alertas com "(Xd ago)".
+- [x] ~~Confirmar alertas de MERCADO~~ ✅ **CONFIRMADO 13/07** (verificação nos logs reais do
+      Actions): 1.º alerta de mercado de sempre (NVDA −3,53% intradiário, z=−1,67 vs ±1,5,
+      severidade "notable"), linha "Sector check" (AMD −4,1%, TSLA −3,8% → sector-wide),
+      "Possible explanation (0d ago)", dedup ("já alertado hoje — sem repetição"), enviado ao
+      Telegram; branch `alerts-history` a crescer (44 alertas: 43 news + 1 market).
+- [ ] Confirmar o 1.º RESUMO DIÁRIO na corrida ≥21h UTC de um dia útil (13/07 à noite ou dia
+      útil seguinte) — agora há resultados de mercado para o alimentar.
+- [x] ~~17/07: confirmar maturação da KB viva~~ ✅ **CONFIRMADO 13/07 (4 dias antes do
+      previsto)**: 13 casos maturados em `live_kb.jsonl` com impactos reais (JPM/NFLX de
+      04-05/07, alinhados ao 1.º dia de negociação 06/07), 1.043 pendentes, e o log do scan
+      diz "[kb-viva] 13 caso(s) recente(s) em uso" — os precedentes de 2026 já entram no
+      retrieval.
 - [ ] ~Agosto: quando a KB viva tiver semanas de casos, definir `news.max_precedent_age_days`
       (proposta: 730) no alerts.yaml — o corte duro de idade dos precedentes.
 - [ ] No PC com o dataset FNSPID (691 MB): corrida empírica Platt vs isotonic (a tese justifica

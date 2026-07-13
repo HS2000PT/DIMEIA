@@ -5,6 +5,24 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 39 — 2026-07-13 (noite) — Verificação ao vivo: o mercado ACORDOU
+**Pedido:** "continue" (pós-sessão 38; máxima autonomia).
+- **Confirmado nos logs reais do Actions** (API GitHub + credencial git local; sem `gh` neste PC):
+  **1.º alerta de MERCADO de sempre** (13/07, NVDA −3,53% intradiário, z=−1,67 vs ±1,5,
+  "notable") com Sector check (sector-wide), Possible explanation, dedup e envio Telegram —
+  tudo da sessão 38 a funcionar em produção. Histórico: 44 alertas (43 news + 1 market).
+- **Segredos:** ALPHAVANTAGE_API_KEY adicionada pelo aluno; TIINGO/POLYGON ainda vazios
+  (CHECKLIST reescrito: robustez, não bloqueia — o yfinance respondeu nos runners hoje).
+- **KB viva maturou cedo (13/07, previsto ~17/07):** 13 casos com impactos reais em
+  live_kb.jsonl (JPM/NFLX 04-05/07 → 1.º dia de negociação 06/07), 1.043 pendentes,
+  "13 caso(s) em uso" no retrieval.
+- **Pós-validação corrida** (venv 3.12 deste PC): 33 decisões maturadas → precisão das
+  mantidas 0,667 vs base 0,455, Brier 0,229 → live_monitoring.md regenerado.
+- **Fica 1 confirmação pendente:** 1.º resumo diário (corrida ≥21h UTC de dia útil).
+  Sem código tocado; CHECKLIST com 2 pendentes fechados.
+
+---
+
 ## Sessão 38 — 2026-07-13 — Tese: IA a fundo; produto: o mercado estava CEGO (não insensível)
 **Pedido:** "improve a lot the thesis (AI part weak; workflows/examples/tables/justificações);
 0 market events → more sensitive; app cleaner; recent data first; be critical; novas APIs ok."

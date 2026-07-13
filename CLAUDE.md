@@ -7,8 +7,27 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 38 (**"A parte de IA está fraca" + "0 alertas de mercado" — tese a fundo + mercado destapado**)
-- **Última atualização:** 2026-07-13
+- **Sessão nº:** 39 (**"continue" — verificação ao vivo da sessão 38: O MERCADO ACORDOU**)
+- **Última atualização:** 2026-07-13 (noite)
+- **🟢 SESSÃO 39 (verificação, sem código novo):** confirmado nos logs REAIS do Actions (lidos
+  via API com a credencial git local; `gh` não existe neste PC) que a sessão 38 funcionou em
+  produção. **(1) 1.º alerta de MERCADO de sempre** no canal (13/07: NVDA −3,53% intradiário,
+  z=−1,67 vs ±1,5, severidade "notable") com TODAS as peças novas visíveis no log: linha
+  "Sector check" (AMD −4,1%, TSLA −3,8%, META −1,3% → sector-wide), "Possible explanation
+  (0d ago)", dedup ("já alertado hoje"), envio Telegram OK; histórico agora 44 alertas
+  (43 news + 1 market). Nota: nesta corrida o yfinance RESPONDEU nos runners (sem linha
+  `[precos … servido por …]` — a cadeia de fallback não foi precisa). **(2) Segredos:** o aluno
+  adicionou `ALPHAVANTAGE_API_KEY` (✱✱✱ no log); `TIINGO/POLYGON` continuam vazios → item do
+  CHECKLIST reescrito como robustez (não bloqueia — mas sem elas, Yahoo bloqueado = só AV
+  25/dia). **(3) KB viva maturou 4 dias ANTES do previsto:** 13 casos em `live_kb.jsonl` com
+  impactos reais (JPM +0,44/−0,67/−1,35%; NFLX +0,21/−0,72/−1,68%; notícias de 04-05/07
+  alinhadas ao 1.º dia de negociação 06/07 — o desenho anti-lookahead a funcionar), 1.043
+  pendentes, e "[kb-viva] 13 caso(s) em uso" no scan. **(4) Pós-validação corrida neste PC**
+  (`post_validate.py`, venv 3.12): 33 decisões maturadas → **precisão das mantidas 0,667 vs
+  base rate 0,455, Brier 0,229** (`live_monitoring.md` regenerado) — o mecanismo de triagem
+  confirma-se AO VIVO, coerente com o 0,632 vs 0,163 offline da tese. **Falta 1 confirmação:**
+  o 1.º resumo diário (corrida ≥21h UTC de dia útil; hoje à noite ou próximo dia útil).
+  Gates verdes intactos (sem código tocado). CHECKLIST atualizado (2 pendentes fechados).
 - **🔬 SESSÃO 38 ("improve a lot the thesis; AI part is weak; 0 market events; be critical"):**
   plano aprovado em modo de planeamento (aluno escolheu TODAS as fontes de preços e
   "Actions agora + VM depois"). **Diagnóstico com provas ANTES de mexer:** os 0 alertas de
