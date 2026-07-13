@@ -25,7 +25,11 @@ se só queres correr o sistema.
 | [evaluation/evaluation_results.md](evaluation/evaluation_results.md) | Recuperação: SBERT vs baselines (multi-seed). |
 | [evaluation/evaluation_per_sector.md](evaluation/evaluation_per_sector.md) | Precisão por setor. |
 | [evaluation/evaluation_anomaly.md](evaluation/evaluation_anomaly.md) | Anomalia: taxa de disparo + ablação (+ IF vs z-score). |
+| [evaluation/evaluation_anomaly_ext.md](evaluation/evaluation_anomaly_ext.md) | CS1-ext: LOF causal + z-score com σ EWMA (aditivo; congelados intactos). |
 | [evaluation/evaluation_triage.md](evaluation/evaluation_triage.md) | Triagem de materialidade (RQ4): números finais FNSPID. |
+| [evaluation/calibration_platt_vs_isotonic.md](evaluation/calibration_platt_vs_isotonic.md) | Extensão: Platt vs isotónica no mesmo protocolo (aditivo). |
+| [evaluation/triage_worked_example.md](evaluation/triage_worked_example.md) | Exemplo trabalhado REAL da triagem (alerta META → p=0,539 reproduzido). |
+| [evaluation/alert_funnel.md](evaluation/alert_funnel.md) | Funil de produção real: manchetes → alertas (22:1). |
 | [evaluation/evaluation_triage_smoke.md](evaluation/evaluation_triage_smoke.md) | Triagem: smoke no corpus Finnhub (congelado; regime shift). |
 | [evaluation/live_monitoring.md](evaluation/live_monitoring.md) | Loop de pós-validação: precisão/calibração ao vivo. |
 | [evaluation/kb_fnspid_build.md](evaluation/kb_fnspid_build.md) | KB de retrieval multi-ano: build + validação do artefacto (P3). |

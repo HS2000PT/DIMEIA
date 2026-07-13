@@ -33,6 +33,18 @@
   confirma-se AO VIVO, coerente com o 0,632 vs 0,163 offline da tese. **Falta 1 confirmação:**
   o 1.º resumo diário (corrida ≥21h UTC de dia útil; hoje à noite ou próximo dia útil).
   Gates verdes intactos (sem código tocado). CHECKLIST atualizado (2 pendentes fechados).
+  **(5) Platt vs isotónica FEITO (o "pendente do PC do FNSPID" — afinal é ESTE PC, que tem o
+  dataset 691 MB + triage_dataset.csv + stack ML no venv):** novo
+  `scripts/evaluate_calibration_ext.py` (aditivo, padrão da sessão 38; models/ e
+  evaluation_triage.md intocados) — reproduz o protocolo congelado **5/5 famílias ao milésimo**
+  (PR-AUC e Brier; fumo hashing prova que vol/context nem dependem do embedder) e compara na
+  MESMA validação (17.710 pts): **Platt ganha ou empata no Brier em TODAS as famílias**
+  (vol 0,2183 vs 0,2231; context 0,2241 vs 0,2259; text/full ~empate; gbm 0,2276 vs 0,2298),
+  ECE misto com margens pequenas ⇒ a justificação conceptual da tese
+  (niculescu2005calibration) fica validada EMPIRICAMENTE; produção continua Platt, sem caso
+  para mudar → `docs/evaluation/calibration_platt_vs_isotonic.md` (veredicto gerado dos
+  próprios números). Gotcha evitado: HF_HUB_OFFLINE=1 no lançamento destacado (a lição do M6).
+  docs/README.md: índice ganhou os 3 .md da sessão 38 que faltavam + o novo.
 - **🔬 SESSÃO 38 ("improve a lot the thesis; AI part is weak; 0 market events; be critical"):**
   plano aprovado em modo de planeamento (aluno escolheu TODAS as fontes de preços e
   "Actions agora + VM depois"). **Diagnóstico com provas ANTES de mexer:** os 0 alertas de

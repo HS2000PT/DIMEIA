@@ -56,8 +56,11 @@
       retrieval.
 - [ ] ~Agosto: quando a KB viva tiver semanas de casos, definir `news.max_precedent_age_days`
       (proposta: 730) no alerts.yaml — o corte duro de idade dos precedentes.
-- [ ] No PC com o dataset FNSPID (691 MB): corrida empírica Platt vs isotonic (a tese justifica
-      conceptualmente; a comparação numérica fica como extensão) e, opcional, re-curadoria da
-      KB light com peso maior em 2022-23.
+- [x] ~~Platt vs isotonic no PC do FNSPID~~ ✅ **FEITO 13/07** (afinal ESTE PC tem o dataset):
+      `scripts/evaluate_calibration_ext.py` reproduz o protocolo congelado 5/5 ao milésimo e
+      compara — **a Platt ganha ou empata no Brier em TODAS as famílias** (ECE misto, margens
+      pequenas), mesmo com 17.710 pontos de calibração; a escolha da tese fica validada
+      empiricamente → `docs/evaluation/calibration_platt_vs_isotonic.md`. Fica em aberto só
+      o opcional: re-curadoria da KB light com peso maior em 2022-23.
 - [ ] Polimento futuro (quando quiseres): cobertura `pytest --cov` no README; camada `logging`;
       CLI do Gatilho 2; de-dup de precedentes quase iguais.

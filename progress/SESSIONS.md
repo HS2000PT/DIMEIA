@@ -20,6 +20,14 @@ A entrada mais recente fica no topo.
   mantidas 0,667 vs base 0,455, Brier 0,229 → live_monitoring.md regenerado.
 - **Fica 1 confirmação pendente:** 1.º resumo diário (corrida ≥21h UTC de dia útil).
   Sem código tocado; CHECKLIST com 2 pendentes fechados.
+- **Adenda 1 — chaves fechadas:** o aluno criou TIINGO/POLYGON às 19:10; workflow_dispatch
+  via API às 19:27 confirmou os 3 segredos (`***`) e scan saudável; fallback fica de reserva.
+- **Adenda 2 — Platt vs isotónica FEITO** (este PC é o do FNSPID): novo
+  `scripts/evaluate_calibration_ext.py` reproduz o congelado 5/5 ao milésimo e mostra que a
+  **Platt ganha/empata no Brier em todas as famílias** (ECE misto, margens pequenas) mesmo
+  com 17.710 pts de calibração → `docs/evaluation/calibration_platt_vs_isotonic.md`;
+  escolha da tese validada empiricamente; produção intocada. docs/README.md ressincronizado
+  (+4 linhas de avaliação).
 
 ---
 
