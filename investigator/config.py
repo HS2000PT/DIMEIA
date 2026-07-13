@@ -15,6 +15,12 @@ TELEGRAM_BOT_TOKEN: str | None = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID: str | None = os.environ.get("TELEGRAM_CHAT_ID")
 FINNHUB_API_KEY: str | None = os.environ.get("FINNHUB_API_KEY")
 
+# Cadeia de fallback de preços diários (yfinance → Stooq → Tiingo → Polygon → Alpha Vantage).
+# Todas opcionais: fontes sem chave são saltadas (o Stooq nem precisa de chave).
+TIINGO_API_KEY: str | None = os.environ.get("TIINGO_API_KEY")
+POLYGON_API_KEY: str | None = os.environ.get("POLYGON_API_KEY")
+ALPHAVANTAGE_API_KEY: str | None = os.environ.get("ALPHAVANTAGE_API_KEY")
+
 
 def telegram_ready() -> bool:
     """Verdadeiro se o token e o chat id do Telegram estão configurados."""

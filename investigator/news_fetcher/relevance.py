@@ -31,6 +31,26 @@ def display_name(ticker: str) -> str:
     return COMPANY_DISPLAY.get(ticker.upper(), ticker.upper())
 
 
+# Setor por ticker — a MESMA taxonomia de 5 setores usada na tese (avaliação de retrieval e
+# dataset da triagem, investigator/triage/dataset.py::SECTORS), estendida aos tickers da
+# watchlist do produto que não estão nesse mapa (AMD, NFLX). Serve a linha "Sector check"
+# dos alertas de mercado: empresas do mesmo setor movem-se juntas — ver docs §sector.
+SECTOR_OF: dict[str, str] = {
+    "AAPL": "tech", "MSFT": "tech", "AMZN": "tech", "GOOGL": "tech", "NVDA": "tech",
+    "TSLA": "tech", "META": "tech", "AMD": "tech", "NFLX": "tech",
+    "JPM": "banking", "BAC": "banking",
+    "XOM": "energy", "CVX": "energy",
+    "JNJ": "health", "PFE": "health",
+    "WMT": "consumer", "KO": "consumer",
+}
+
+# Rótulo legível do setor (para o texto do alerta).
+SECTOR_LABEL: dict[str, str] = {
+    "tech": "technology", "banking": "banking", "energy": "energy",
+    "health": "healthcare", "consumer": "consumer",
+}
+
+
 # Aliases por ticker (minúsculas; comparação é case-insensitive). Cobre a watchlist do
 # produto (config/alerts.yaml) + SPY. Um ticker fora do mapa cai no fallback honesto:
 # só o próprio símbolo conta como menção.

@@ -13,17 +13,21 @@ market:
   window: 20        # dias anteriores usados para média/desvio (a "norma")
   # |z| acima do qual é anomalia. A tese AVALIA e congela os números em threshold=3.0
   # (docs/evaluation/evaluation_anomaly.md — nunca mudam). Este é um parâmetro de
-  # IMPLANTAÇÃO, separado da avaliação: 3.0 quase nunca dispara em produção (10
-  # tickers, ~1-3%/dia cada) — "silencioso demais" para um produto vivo. 2.0 (~2
-  # desvios-padrão) é ainda estatisticamente significativo e dispara com mais
-  # frequência (decisão de produto, divulgada; ajusta à vontade).
-  threshold: 2.0
+  # IMPLANTAÇÃO, separado da avaliação (decisão de produto, divulgada; ajusta à vontade).
+  # 2026-07-13: 1.5 — o pedido real do investidor é "alertas frequentes para acompanhar";
+  # o texto do alerta compensa com NÍVEIS de severidade (notable ≥1.5 < strong ≥2.0 <
+  # extreme ≥3.0 — o congelado da tese é o degrau máximo), para 1.6 nunca parecer 3.2.
+  threshold: 1.5
   # Só avaliar quando a última barra de preços é de HOJE (true por defeito): evita repetir
-  # num feriado o alerta da sessão anterior e "avaliar" dados estagnados.
-  # require_fresh_bar: true
-  # Deteção INTRADIÁRIA (só tem efeito no modo --watch, ex.: na VM): o retorno de HOJE em
-  # curso (cotação Finnhub em tempo real vs fecho anterior) avaliado contra a norma diária —
-  # o mesmo z-score, mais cedo. "Caiu 4,8% em 12 min" alerta em minutos, não ao fecho.
+  # num feriado o alerta da sessão anterior e "avaliar" dados estagnados. NOTA: as fontes
+  # de fallback (Tiingo/Polygon/…) podem atrasar a barra de hoje — nesses ciclos o caminho
+  # de fecho salta e o INTRADIÁRIO cobre (a cotação Finnhub é sempre fresca).
+  require_fresh_bar: true
+  # Deteção INTRADIÁRIA: o retorno de HOJE em curso (cotação Finnhub em tempo real vs fecho
+  # anterior) avaliado contra a norma diária — o mesmo z-score, mais cedo. "Caiu 4,8% em
+  # 12 min" alerta em minutos, não ao fecho. Desde 2026-07-13 corre TAMBÉM nas corridas
+  # agendadas do Actions (30 em 30 min em horário de mercado), não só no --watch — é o
+  # caminho de mercado que não depende do yfinance.
   intraday:
     enabled: true
     # threshold próprio (defeito: o threshold de cima)
@@ -56,9 +60,14 @@ news:
   # KB viva (casos capturados pelo próprio runner e maturados a +5d) com a KB histórica,
   # ordenando por cosseno × 0.5^(idade/half_life). A similaridade MOSTRADA é sempre o
   # cosseno real; a idade aparece em cada precedente.
-  recency_half_life_days: 365
-  # Corte duro de idade (dias). null = sem corte. NOTA: só faz sentido definir (ex.: 180)
+  # 2026-07-13: 365 → 120 ("só o presente interessa"): um caso de 2018 cai para peso
+  # ~0.000004 vs ~0.6 de um caso de 3 meses — precedentes recentes ganham SEMPRE o
+  # desempate quando a KB viva tiver casos; os históricos continuam a aparecer quando são
+  # os únicos no tema (decisão de produto, divulgada).
+  recency_half_life_days: 120
+  # Corte duro de idade (dias). null = sem corte. NOTA: só faz sentido definir (ex.: 730)
   # quando a KB viva já tiver meses de casos — antes disso cortaria quase tudo.
+  # Rever ~agosto/2026 (a KB viva começa a maturar ~2026-07-17).
   max_precedent_age_days: null
 
 # Fase B (opcional; off por defeito): distribuir os alertas TAMBÉM por subscritor do bot

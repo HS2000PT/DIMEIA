@@ -49,6 +49,28 @@ def _clip(text: str, limit: int = _MAX_HEADLINE) -> str:
     return text if len(text) <= limit else text[: limit - 1].rstrip() + "…"
 
 
+def severity_label(z_score: float) -> str:
+    """Nível do movimento por |z| (produto, 2026-07-13): notable < strong < extreme.
+
+    Com o limiar de implantação em 1,5 o canal ganha vida — mas nem todos os alertas pesam
+    o mesmo, e um leigo não lê z-scores. Os degraus são os limiares clássicos: ≥3 desvios
+    (o congelado da tese) = extreme; ≥2 = strong; o resto acima do limiar = notable.
+    """
+    az = abs(z_score)
+    if az >= 3.0:
+        return "extreme"
+    if az >= 2.0:
+        return "strong"
+    return "notable"
+
+
+def _severity_prefix(z_score: float) -> str:
+    """'An extreme move' / 'A strong move' / 'A notable move' (artigo correto)."""
+    label = severity_label(z_score)
+    art = "An" if label[0] in "aeiou" else "A"
+    return f"{art} {label} move:"
+
+
 def explain_anomaly(ticker: str, result: AnomalyResult) -> str:
     """Explicação de uma anomalia: o facto primeiro, o método numa nota curta no fim."""
     arrow = "🔺" if result.last_return >= 0 else "🔻"
@@ -56,7 +78,8 @@ def explain_anomaly(ticker: str, result: AnomalyResult) -> str:
         f"{arrow} <b>Anomaly detected for {html.escape(ticker, quote=False)}"
         f"{html.escape(_nome(ticker), quote=False)}: "
         f"{result.last_return * 100:+.2f}% today</b>\n"
-        f"About {abs(result.z_score):.1f}x this stock's typical daily swing "
+        f"{_severity_prefix(result.z_score)} "
+        f"about {abs(result.z_score):.1f}x this stock's typical daily swing "
         f"({result.window}-day norm).\n"
         f"<i>Method: z-score: {result.z_score:+.2f} vs threshold ±{result.threshold:g} — "
         f"{abs(result.z_score):.1f} standard deviations from the {result.window}d mean "
@@ -76,7 +99,8 @@ def explain_intraday(ticker: str, result: AnomalyResult) -> str:
         f"{arrow} <b>Unusual intraday move for {html.escape(ticker, quote=False)}"
         f"{html.escape(_nome(ticker), quote=False)}: "
         f"{result.last_return * 100:+.2f}% so far today</b>\n"
-        f"About {abs(result.z_score):.1f}x this stock's typical daily swing "
+        f"{_severity_prefix(result.z_score)} "
+        f"about {abs(result.z_score):.1f}x this stock's typical daily swing "
         f"({result.window}-day norm) — and the session is not over.\n"
         f"<i>Method: live quote vs yesterday's close; z-score: {result.z_score:+.2f} vs "
         f"threshold ±{result.threshold:g} against the {result.window}d daily norm "
@@ -104,6 +128,39 @@ def attach_news_context(alert_text: str, headline: str | None,
                 f'"{html.escape(_clip(headline), quote=False)}"')
     return (alert_text +
             "\nNo relevant news found in the last 48h — no public explanation yet.")
+
+
+def sector_context_line(ticker: str, moves: dict[str, float],
+                        min_move: float = 0.01, top_n: int = 3) -> str:
+    """Puro: 1 linha descritiva sobre o setor no MESMO dia — nunca causa nem previsão.
+
+    O pedido real do investidor: "a NVIDIA está correlacionada com o setor; uma notícia
+    noutra empresa pode afetá-la". Se outros nomes do mesmo setor (taxonomia da tese,
+    relevance.SECTOR_OF) também mexeram ≥1% na MESMA direção, o movimento parece setorial;
+    se estiveram parados, parece específico da empresa. `moves` = retornos do dia por ticker
+    (só os já buscados na varredura — zero chamadas extra). '' quando não há o que dizer.
+    """
+    from investigator.news_fetcher.relevance import SECTOR_LABEL, SECTOR_OF
+
+    tkr = ticker.upper()
+    sec = SECTOR_OF.get(tkr)
+    my_move = moves.get(tkr)
+    if sec is None or my_move is None or my_move == 0:
+        return ""
+    peers = {t: m for t, m in moves.items()
+             if t != tkr and m is not None and SECTOR_OF.get(t) == sec}
+    if not peers:
+        return ""
+    label = SECTOR_LABEL.get(sec, sec)
+    same_dir = {t: m for t, m in peers.items()
+                if abs(m) >= min_move and (m > 0) == (my_move > 0)}
+    if same_dir:
+        tops = sorted(same_dir.items(), key=lambda kv: -abs(kv[1]))[:top_n]
+        listagem = ", ".join(f"{t} {m * 100:+.1f}%" for t, m in tops)
+        return (f"Sector check: other {label} names moved the same way today ({listagem}) "
+                "— looks sector-wide, not company-specific.")
+    return (f"Sector check: other {label} names were quiet today "
+            f"— this move looks specific to {tkr}.")
 
 
 def explain_normal(ticker: str, result: AnomalyResult) -> str:

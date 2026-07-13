@@ -48,11 +48,26 @@ def test_explicacao_intradiaria_e_fiel_e_diz_em_curso():
     assert "not advice" in texto
 
 
-def test_scan_intraday_desligado_devolve_vazio():
-    from scripts.run_alerts import scan_intraday
+def test_collect_intraday_desligado_devolve_vazio():
+    from scripts.run_alerts import collect_intraday_results
 
-    assert scan_intraday({"market": {"enabled": True, "intraday": {"enabled": False}}}) == []
-    assert scan_intraday({"market": {"enabled": False}}) == []
+    cfg_off = {"market": {"enabled": True, "intraday": {"enabled": False}}}
+    assert collect_intraday_results(cfg_off) == []
+    assert collect_intraday_results({"market": {"enabled": False}}) == []
+
+
+def test_build_intraday_alerts_so_para_anomalias():
+    from investigator.anomaly_detector.detector import AnomalyResult
+    from scripts.run_alerts import build_intraday_alerts
+
+    calmo = AnomalyResult(is_anomaly=False, z_score=0.4, last_return=0.002,
+                          mean=0.0, std=0.01, window=20, threshold=1.5)
+    agitado = AnomalyResult(is_anomaly=True, z_score=-3.2, last_return=-0.048,
+                            mean=0.0, std=0.015, window=20, threshold=1.5)
+    alerts = build_intraday_alerts([("AAPL", calmo), ("TSLA", agitado)])
+    assert len(alerts) == 1
+    assert alerts[0][0] == "TSLA"
+    assert "Unusual intraday move" in alerts[0][1]
 
 
 def test_janela_de_sessao_us():

@@ -8,6 +8,14 @@
 ## 🧑 Cliques só teus (ninguém pode fazer por ti)
 
 ### Produto ao vivo
+- [ ] **Chaves de preços (2026-07-13, corrige os 0 alertas de mercado):** criar contas grátis
+      em <https://www.tiingo.com> e <https://polygon.io>, e adicionar 3 segredos no GitHub
+      (Settings → Secrets and variables → Actions): `TIINGO_API_KEY`, `POLYGON_API_KEY` e
+      `ALPHAVANTAGE_API_KEY` (esta já a tens no .env do outro PC). Porquê: o yfinance está
+      bloqueado nos runners do GitHub — foi por isso que NUNCA houve alertas de mercado nem
+      resumo diário; a cadeia de fallback nova usa estas fontes. (O Stooq, sem chave, ganhou
+      anti-bot e já não serve — testado ao vivo.) Depois: 1 clique em "Run workflow" no
+      workflow Alerts num dia útil e confirmar no log `[precos …] servido por …`.
 - [ ] **Streamlit: apagar e recriar a app com Python 3.12** (Advanced settings ao criar —
       NÃO é o defeito). Causa confirmada (2026-07-11): em Python 3.14 os pins pandas/numpy
       não têm wheels, a instalação falha em silêncio (~45 min) e a app arranca sem plotly
@@ -34,10 +42,16 @@
       a alternativa sem risco é o rename `DIMEIA`→`InvestiGator`).
 
 ## 🤖 Pendentes do código (nenhum bloqueia)
-- [ ] Confirmar no próximo dia útil: filtros de qualidade ao vivo (menos alertas, só relevantes),
-      resumo diário ao fecho, investigação cruzada nas anomalias ("Possible explanation"), e a
-      branch `alerts-history` a crescer sem duplicados (incl. `live_pending.jsonl`).
-- [ ] Daqui a ~8 dias: confirmar os primeiros casos MATURADOS na KB viva (`live_kb.jsonl` na
-      branch alerts-history) e precedentes de 2026 a aparecer nos alertas com "(Xd ago)".
+- [ ] Confirmar no próximo dia útil (após as chaves de preços): alertas de MERCADO a aparecer
+      (intradiário via Finnhub corre agora também no Actions; severidade notable/strong/extreme;
+      linha "Sector check"), resumo diário ao fecho, investigação cruzada ("Possible
+      explanation"), e a branch `alerts-history` a crescer sem duplicados.
+- [ ] ~17/07: confirmar os primeiros casos MATURADOS na KB viva (`live_kb.jsonl` na branch
+      alerts-history) e precedentes de 2026 a aparecer nos alertas com "(Xd ago)".
+- [ ] ~Agosto: quando a KB viva tiver semanas de casos, definir `news.max_precedent_age_days`
+      (proposta: 730) no alerts.yaml — o corte duro de idade dos precedentes.
+- [ ] No PC com o dataset FNSPID (691 MB): corrida empírica Platt vs isotonic (a tese justifica
+      conceptualmente; a comparação numérica fica como extensão) e, opcional, re-curadoria da
+      KB light com peso maior em 2022-23.
 - [ ] Polimento futuro (quando quiseres): cobertura `pytest --cov` no README; camada `logging`;
       CLI do Gatilho 2; de-dup de precedentes quase iguais.

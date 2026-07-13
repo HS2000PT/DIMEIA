@@ -92,6 +92,12 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+          # Fallback de preços diários (o Yahoo bloqueia IPs de runners partilhados — foi a
+          # causa REAL de 0 alertas de mercado até 2026-07-13). Todas opcionais: a cadeia
+          # salta as que faltarem; Tiingo/Polygon são as recomendadas (grátis, com chave).
+          TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+          ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
           INVESTIGATOR_HISTORY_PATH: history/alerts_history.jsonl
         run: python scripts/run_alerts.py
 

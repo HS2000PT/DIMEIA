@@ -107,6 +107,61 @@ def test_idade_dos_precedentes_so_com_today():
     assert "(4y ago)" in com_idade  # 2023-01-01 → ~3,5 anos → arredonda a 4
 
 
+def test_severidade_em_niveis_no_alerta_de_mercado():
+    """Produto 2026-07-13: com o limiar de implantação em 1.5, o texto distingue os níveis
+    (notable < strong < extreme) — 1.6 não pode ler-se como 3.2. Tokens de fidelidade
+    ('Anomaly detected for', 'x this stock's typical daily swing') intactos."""
+    from investigator.explanation_engine.explainer import severity_label
+
+    assert severity_label(1.6) == "notable"
+    assert severity_label(-2.4) == "strong"
+    assert severity_label(3.0) == "extreme"
+
+    def _res(z):
+        return AnomalyResult(is_anomaly=True, z_score=z, last_return=0.03,
+                             mean=0.0, std=0.01, window=20, threshold=1.5)
+
+    assert "A notable move:" in explain_anomaly("TSLA", _res(1.6))
+    assert "A strong move:" in explain_anomaly("TSLA", _res(2.4))
+    extremo = explain_anomaly("TSLA", _res(7.61))
+    assert "An extreme move:" in extremo
+    assert "7.6x this stock's typical daily swing" in extremo  # token de sempre
+
+
+def test_sector_context_line_descreve_o_dia_sem_prever():
+    from investigator.explanation_engine.explainer import sector_context_line
+
+    # pares do setor mexeram na MESMA direção ≥1% → padrão setorial (top por |movimento|)
+    moves = {"NVDA": -0.045, "AMD": -0.038, "MSFT": -0.012, "AAPL": -0.002, "JPM": 0.01}
+    linha = sector_context_line("NVDA", moves)
+    assert "technology" in linha and "AMD -3.8%" in linha and "MSFT -1.2%" in linha
+    assert "sector-wide" in linha
+    assert "AAPL" not in linha  # <1% não conta como "mexeu"
+    assert "JPM" not in linha   # outro setor nunca entra
+
+    # pares parados → movimento específico da empresa
+    sozinho = sector_context_line("NVDA", {"NVDA": -0.045, "AMD": 0.001, "MSFT": -0.002})
+    assert "specific to NVDA" in sozinho
+
+    # sem pares no mapa/na varredura → sem linha (fail-quiet)
+    assert sector_context_line("NVDA", {"NVDA": -0.045}) == ""
+    assert sector_context_line("ZZZZ", {"ZZZZ": -0.05, "NVDA": -0.04}) == ""
+
+    # direção OPOSTA nos pares não conta como confirmação setorial
+    oposto = sector_context_line("NVDA", {"NVDA": -0.045, "AMD": 0.03})
+    assert "specific to NVDA" in oposto
+
+
+def test_attach_sector_safe_anexa_e_e_failopen():
+    from scripts.run_alerts import _attach_sector_safe
+
+    base = "🔺 Anomaly detected for NVDA: +5.00% today"
+    com = _attach_sector_safe("NVDA", base, {"NVDA": 0.05, "AMD": 0.04})
+    assert base in com and "Sector check:" in com
+    sem = _attach_sector_safe("NVDA", base, {})  # sem movimentos → intacto
+    assert sem == base
+
+
 def test_attach_news_context_com_e_sem_noticia():
     from investigator.explanation_engine.explainer import attach_news_context
 
