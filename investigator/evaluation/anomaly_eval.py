@@ -65,6 +65,65 @@ def firing_rate(flags) -> float:
     return float(f.mean()) if len(f) else 0.0
 
 
+def ewma_zscore_flags(returns, lam: float = 0.94, threshold: float = 3.0,
+                      window: int = 20) -> np.ndarray:
+    """z-score com volatilidade EWMA (RiskMetrics, λ=0.94) — o degrau entre a σ rolling e
+    um GARCH completo (CS1-ext, 2026-07-13).
+
+    Responde empiricamente ao "porquê rolling-std e não GARCH?": o EWMA pondera o passado
+    recente exponencialmente (reage mais depressa a mudanças de regime) sem estimar
+    parâmetros por ticker. Causal como o rolling: σ²_i usa APENAS retornos ≤ i−1
+    (σ²_i = λ·σ²_{i−1} + (1−λ)·r²_{i−1}, média zero como no RiskMetrics clássico);
+    inicializa com a variância dos primeiros `window` dias e só sinaliza a partir daí
+    (mesma região do rolling → comparável).
+    """
+    r = np.asarray(returns, dtype="float64")
+    n = len(r)
+    flags = np.zeros(n, dtype=bool)
+    if n <= window:
+        return flags
+    var = float(np.var(r[:window], ddof=1))
+    for i in range(window, n):
+        var = lam * var + (1.0 - lam) * r[i - 1] ** 2
+        sd = np.sqrt(var)
+        if sd > 0 and abs(r[i] / sd) > threshold:
+            flags[i] = True
+    return flags
+
+
+def lof_flags(returns, window: int = 20, train_days: int = 250,
+              contamination: float = 0.02, n_neighbors: int = 20,
+              ) -> tuple[np.ndarray, np.ndarray]:
+    """Detetor APRENDIDO nº 2 — Local Outlier Factor, causal e comparável (CS1-ext).
+
+    A tese citava o LOF como alternativa mas só o Isolation Forest tinha sido testado.
+    MESMO protocolo do IF (isolation_forest_flags): features causais [retorno, vol20
+    anterior], treino nos primeiros `train_days` dias válidos, pontuação dos seguintes
+    (novelty=True — o modelo nunca vê o futuro), `contamination` igual. Determinístico
+    (o LOF não tem aleatoriedade). Devolve (flags, scored) como o IF.
+    """
+    from sklearn.neighbors import LocalOutlierFactor  # import tardio
+
+    r = np.asarray(returns, dtype="float64")
+    n = len(r)
+    flags = np.zeros(n, dtype=bool)
+    scored = np.zeros(n, dtype=bool)
+    if n < window + train_days + 1:
+        return flags, scored
+    feats = np.zeros((n, 2), dtype="float64")
+    for i in range(window, n):
+        w = r[i - window : i]
+        feats[i] = (r[i], w.std(ddof=1))
+    train_idx = np.arange(window, window + train_days)
+    model = LocalOutlierFactor(n_neighbors=n_neighbors, contamination=contamination,
+                               novelty=True)
+    model.fit(feats[train_idx])
+    test_idx = np.arange(window + train_days, n)
+    flags[test_idx] = model.predict(feats[test_idx]) == -1
+    scored[test_idx] = True
+    return flags, scored
+
+
 def isolation_forest_flags(returns, window: int = 20, train_days: int = 250,
                            contamination: float = 0.02, seed: int = 42,
                            ) -> tuple[np.ndarray, np.ndarray]:
