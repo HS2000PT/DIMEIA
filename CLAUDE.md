@@ -7,8 +7,63 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 37 (**Passe premium de UX: velocidade 10×, alertas para leigos, polimento**)
-- **Última atualização:** 2026-07-12
+- **Sessão nº:** 38 (**"A parte de IA está fraca" + "0 alertas de mercado" — tese a fundo + mercado destapado**)
+- **Última atualização:** 2026-07-13
+- **🔬 SESSÃO 38 ("improve a lot the thesis; AI part is weak; 0 market events; be critical"):**
+  plano aprovado em modo de planeamento (aluno escolheu TODAS as fontes de preços e
+  "Actions agora + VM depois"). **Diagnóstico com provas ANTES de mexer:** os 0 alertas de
+  mercado NÃO eram sensibilidade — o pipeline estava CEGO: histórico real do canal com 42
+  alertas todos news, **0 market E 0 summary** (o resumo dispara com qualquer resultado ≥21h
+  ⇒ `collect_market_results` vazio SEMPRE); yfinance bloqueado nos runners do Actions sem
+  fallback; intradiário (Finnhub) só corria na VM nunca ligada. **Produto (5280c64):** cadeia
+  de fallback `yfinance→Tiingo→Polygon→Stooq→AV` em prices.py (parsing puro + HTTP tardio;
+  sem chave = salta; **Stooq testado ao vivo: anti-bot PoW → despromovido**; chaves novas
+  TIINGO/POLYGON_API_KEY no .env.example+workflow — segredos = clique do aluno, CHECKLIST);
+  **intradiário corre TAMBÉM no Actions** (insight: a norma do z-score só precisa de dias
+  COMPLETOS — só o movimento de hoje precisa de frescura, e a cotação Finnhub dá isso);
+  resumo diário cai para resultados intradiários quando o fecho está cego; 1 busca de
+  preços/ticker/ciclo (cache partilhada); threshold implantação 2.0→**1.5 com níveis de
+  severidade** (notable≥1.5<strong≥2<extreme≥3; tese congela 3.0 intacta); linha
+  **"Sector check"** descritiva (pares do setor no mesmo dia, mapa da tese estendido
+  AMD/NFLX→tech, zero chamadas extra); recência half-life 365→**120d**;
+  `require_fresh_bar` exposto. **App (e8bcdea):** faixa **"Market now"** (10 tickers num
+  relance; 1 `yf.download` em lote, cache 10 min, offline-aware, chips markdown — o teste
+  len(metric)==1 sobrevive); About emagrecida (~60 palavras; citação em expander); tema de
+  marca `.streamlit/config.toml` (navy+esmeralda). **Ciência ADITIVA (congelados
+  byte-iguais; ficheiros de avaliação NOVOS):** `evaluate_anomaly_ext.py` (LOF causal +
+  z-score com σ EWMA λ=0.94) → z 0.530 REPRODUZ o congelado e bate IF 0.269 e LOF 0.280;
+  **achado honesto: EWMA F1 0.664 > rolling 0.516** (mesmo recall, ~metade dos FP;
+  clustering de volatilidade) — reportado como caiu, produção fica rolling (explicabilidade),
+  adoção = futuro JÁ validado (Cap. 6); projeção **PCA real** da KB (2016×384-d, estrela da
+  query + top-3 NVDA sims 0.58-0.61) → embedding_projection.pdf; **exemplo trabalhado REAL
+  da triagem** (alerta META 12/07 'Zuckerberg AI bets': contribuições exatas → logit +0.699
+  → σ 0.668 → Platt(3.700,−2.313) → **p=0.539 = o 54% ENVIADO ao canal — reprodução
+  exata**) → triage_contributions.pdf + triage_worked_example.md; **funil de produção
+  real** 944 manchetes relevantes capturadas → 42 alertas (22:1, 3 tickers) →
+  alert_funnel.pdf/md. **TESE 78→86 pp, 0 erros/0 cit. indef./0 overfull:** ch3 = mean
+  pooling + cosseno (L2 ⇒ cos=dot e ordem euclidiana igual — fecha o "porquê cosseno"),
+  bi-vs-cross-encoder, reconciliação raw-return (evidência) vs market-adjusted (rótulo),
+  LR+Platt em equações, Platt-vs-isotonic (niculescu2005calibration, já verificada), Brier
+  + porquê PR-AUC, TABELA do exemplo real; ch2 = GARCH/LOF empíricos (remetem p/ CS1-ext),
+  linha LOF na tabela, nota honesta word2vec/FinBERT; ch4 = **secção nova "The Life of One
+  Alert"** (9 gates com valores reais do alerta META) + figura do funil + lição de
+  implantação honesta; ch5 aditivo = CS1-ext (tabela+figura), projeção real no CS2, figura
+  de contribuições no CS4 (**CS3 byte-igual**); ch6 = lição de deploy + EWMA como futuro
+  validado; **Apêndice: 1.ª figura ROTADA** (sidewaysfigure; pipeline completo numa página,
+  todos os gates+valores; cuidado: estilo TikZ não pode chamar-se `out` — colide com
+  /tikz/out) + 4 comandos de reprodução novos; órfã app_method_expander.png removida.
+  **Screenshot real novo** (Playwright: faixa + TSLA com 3 eventos reais na curva; clicar
+  radio da empresa = `label:has-text(...)`, o input está fora do viewport). Guia
+  **73 slides** (+CS1-ext/EWMA, +vida-de-um-alerta/funil, produto-HOJE e mapa de números
+  atualizados; extensões marcadas como NÃO-congeladas). Docs sync (free_apis com
+  Tiingo/Polygon/Stooq-caiu + incidente; going_live +3 segredos; vm_watch = VM é upgrade de
+  latência; product_review Pass 8; README 189 testes/86 pp/73 slides; CHECKLIST: chaves +
+  rever max_precedent_age ~agosto + isotonic no PC do FNSPID). **Ambiente DESTE PC mudou:**
+  agora TEM Python 3.12 (venv criado via setup_env.sh + requirements-app) e MiKTeX completo
+  — a nota da sessão 31 ficou obsoleta. **189 testes + ruff verdes; demo +6,46% intacta.**
+  ⚠️ Pendente humano: segredos TIINGO/POLYGON/ALPHAVANTAGE no GitHub → 1 "Run workflow" num
+  dia útil para ver o mercado vivo (o log deve dizer `[precos …] servido por …` se o Yahoo
+  bloquear, e `[intradiario]`/resumo a aparecer).
 - **✨ SESSÃO 37 ("cleaner, faster, premium; full critical review"):** revisão crítica feita e
   executada. **Performance (o achado nº 1):** `st.tabs` renderiza TODAS as abas a cada
   interação (10× yfinance + 10× scoring — a app arrastava-se) → substituído por seletor

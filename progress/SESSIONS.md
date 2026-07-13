@@ -5,6 +5,30 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 38 — 2026-07-13 — Tese: IA a fundo; produto: o mercado estava CEGO (não insensível)
+**Pedido:** "improve a lot the thesis (AI part weak; workflows/examples/tables/justificações);
+0 market events → more sensitive; app cleaner; recent data first; be critical; novas APIs ok."
+- **Diagnóstico com provas:** 42 alertas reais, todos news, 0 market E 0 summary ⇒
+  `collect_market_results` vazio SEMPRE (yfinance bloqueado no Actions, sem fallback; VM do
+  intradiário nunca ligada). O limiar nunca foi o problema.
+- **Produto:** cadeia de preços yfinance→Tiingo→Polygon→Stooq→AV (Stooq caiu: anti-bot PoW,
+  testado ao vivo); intradiário também no Actions (a norma só precisa de dias completos);
+  resumo cai para intradiário; threshold 1.5 COM severidade (notable/strong/extreme);
+  linha "Sector check"; recência 120d; require_fresh_bar exposto.
+- **App:** faixa "Market now" (lote único, fail-open), About curta, tema navy+esmeralda.
+- **Ciência aditiva (congelados intactos):** LOF (F1 0,280, perde) + EWMA (F1 0,664 >
+  rolling 0,516 — achado honesto, produção fica rolling, futuro validado); projeção PCA real;
+  exemplo trabalhado META que reproduz o 54% enviado; funil real 944→42 (22:1).
+- **Tese 78→86 pp, 0 erros:** equações (pooling/cosseno/LR/Platt/Brier), reconciliação
+  raw-vs-market-adjusted, Platt-vs-isotonic, tabela do exemplo real (ch3); GARCH/LOF/FinBERT
+  endurecidos (ch2); secção "The Life of One Alert" + funil + lição de deploy (ch4); CS1-ext
+  + projeção + contribuições (ch5, CS3 intocado); EWMA no futuro (ch6); apêndice com a 1.ª
+  figura ROTADA (pipeline completo, todos os gates); screenshot real novo (faixa + eventos).
+- **Sync:** guia 73 slides; README/RELATORIO 189 testes/86 pp; free_apis/going_live/vm_watch;
+  product_review Pass 8; CHECKLIST (chaves de preços = clique do aluno).
+- **Gates:** 189 testes + ruff verdes; demo +6,46%; tese e guia 0 erros; dry-run validado.
+- **Nota de ambiente:** este PC agora TEM 3.12+MiKTeX (venv criado); sessão 31 obsoleta.
+
 ## Sessão 37 — 2026-07-12 — Passe premium de UX: velocidade 10×, alertas para leigos
 **Pedido:** "cleaner, faster, premium; upgrade the output; full critical review."
 - **Velocidade (achado nº 1):** st.tabs renderizava as 10 abas a cada interação → seletor

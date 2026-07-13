@@ -1196,9 +1196,13 @@ Não é só uma tese em papel: o sistema \key{corre} em produção, de graça, s
         manchetes FNSPID 2018--2023.
   \item \key{Canal Telegram} — varredura automática com \key{filtro de relevância}, chão de
         similaridade, teto de 2 alertas/ticker/dia e \key{resumo diário ao fecho}; corre
-        também fins de semana (só notícias). Produtores: VM em modo vigia ($\sim$5 min, com
-        \key{deteção intradiária} via cotação em tempo real) + cron do GitHub como rede de
-        segurança, com dedup partilhado.
+        também fins de semana (só notícias). \key{Intradiário no Actions} (30 em 30 min,
+        cotação Finnhub em tempo real); a VM vigia é o upgrade de latência ($\sim$5 min).
+        Alertas de mercado com \key{severidade} (notable $\geq$1{,}5 < strong $\geq$2 <
+        extreme $\geq$3) e linha \key{"Sector check"} (pares do setor no mesmo dia).
+  \item \key{Preços à prova de falha} — lição real de produção: o Yahoo bloqueou os runners
+        e o mercado ficou CEGO uma semana (0 alertas; diagnóstico pelo próprio histórico do
+        canal) $\to$ cadeia \key{yfinance $\to$ Tiingo $\to$ Polygon $\to$ Stooq $\to$ AV}.
   \item \key{KB viva} — cada manchete relevante vista pelo runner vira precedente dias
         depois (impacto medido a +5d); o retrieval funde KB viva + histórica com
         \key{decaimento por idade} e mostra a idade de cada precedente ("3y ago"). Anomalias
@@ -1395,9 +1399,60 @@ PR-AUC \textbf{0,542 vs 0,496} & RQ4: só-volatilidade bate todos os modelos com
 \textbf{0,632 vs 0,163} & precisão@5-alertas/dia: triagem vs alertar-sempre ($\approx$4$\times$) & idem \\
 \textbf{79.753} / 2.016 & exemplos FNSPID do treino / fatia curada na app pública & kb\_fnspid\_build \\
 \textbf{0,992} / 96\% & paridade ONNX$\leftrightarrow$SBERT (cosseno médio; vizinhos top-3) & onnx\_minilm\_validation \\
-\textbf{78 pp; 52/52} & tese 0 erros; todas as citações verificadas & page\_audit \\
+\textbf{86 pp; 52/52} & tese 0 erros; todas as citações verificadas & page\_audit \\
+\midrule
+\multicolumn{3}{l}{\emph{Extensão CS1 (2026-07-13; corrida nova, protocolo congelado reutilizado — não muda os de cima):}} \\
+F1 \textbf{0,280} & LOF causal (o 2.º detetor aprendido; também perde para 0,530) & evaluation\_anomaly\_ext \\
+F1 \textbf{0,664 vs 0,516} & $\sigma$ EWMA bate $\sigma$ rolling no proxy (achado honesto!) & idem \\
+\textbf{944 $\to$ 42} & funil real de produção em 5 dias (seletividade 22:1) & alert\_funnel \\
+\textbf{54\%} & exemplo trabalhado: P do alerta META real = o valor enviado & triage\_worked\_example \\
 \bottomrule
 \end{tabular}
+\end{frame}
+
+\begin{frame}{Extensão do CS1 — LOF e EWMA (e um achado honesto)}
+\scriptsize
+\textbf{Porquê:} o júri podia perguntar "citaram o LOF mas não o testaram" e "porquê não GARCH?".
+Resposta nova: \key{testámos} (mesmo protocolo causal congelado; ficheiros de avaliação NOVOS —
+os congelados ficam intactos).
+\vspace{1mm}
+\begin{itemize}
+  \item \key{LOF} (density-based): recall altíssimo (0,989) mas precisão 0,163 $\to$ F1 \key{0,280};
+        taxas inconsistentes entre tickers (amplitude 0,183). O z-score transparente (0,530)
+        \key{ganha aos DOIS} detetores aprendidos com a mesma informação.
+  \item \key{EWMA} ($\lambda=0{,}94$, RiskMetrics — o 1.º passo na direção do GARCH):
+        \key{surpresa honesta} — com o MESMO recall, quase elimina metade dos falsos positivos
+        (precisão 0,568 vs 0,381) $\to$ F1 \key{0,664 vs 0,516}. Mecanismo: com clustering de
+        volatilidade, a janela rolling dilui um choque por 20 pesos iguais; a EWMA absorve-o
+        logo e não re-alerta os dias seguintes.
+  \item \key{Decisão:} a regra implantada continua a rolling ("média e desvio de 20 dias"
+        explica-se a um leigo numa frase); o ganho fica REGISTADO como trabalho futuro
+        \key{já validado} — a adoção é 1 linha de config. É a marca da tese: reportar o que
+        os dados dizem, mesmo quando contraria a expectativa.
+\end{itemize}
+\vspace{1mm}
+\centering\emph{Se o júri perguntar "porquê não GARCH?": "Testámos o primeiro degrau (EWMA) —
+melhora o proxy e está registado; o degrau completo perde a explicabilidade que é o requisito nº 1."}
+\end{frame}
+
+\begin{frame}{A vida de UM alerta real (decorar este fio) + o funil}
+\scriptsize
+O alerta \key{META, 12-07-2026} ("Zuckerberg: AI bets haven't come to fruition yet"), do feed ao telemóvel
+(tese: Tabela 4.3 + Tabela 3.4):
+\begin{enumerate}\itemsep0.2mm
+  \item \key{Fetch} Finnhub $\to$ \key{relevância} (menciona a empresa; não é boilerplate)
+  \item \key{Captura} na KB viva (embedding MiniLM 384-d; matura a +5d) $\to$ \key{frescura} $\leq$2d
+  \item \key{Retrieval} cosseno $\times$ decaimento de idade $\to$ top-3 (sims 0,46--0,51) $\to$
+        \key{chão} 0,51 $\geq$ 0,45 $\to$ aviso "BOTH directions" (sinais mistos)
+  \item \key{Triagem}: vol20 (+0,409) + setor (+0,303) $\to$ logit +0,699 $\to$ $\sigma$ $\to$
+        Platt $\to$ \key{P = 54\% $\geq$ 0,5} — o MESMO valor que saiu no canal (reprodução exata)
+  \item \key{Teto/dedup} $\to$ enviado + registado no histórico partilhado $\to$ o dashboard marca-o no gráfico
+\end{enumerate}
+\vspace{1mm}
+\textbf{O funil em agregado (números reais, 5 dias ao vivo):} \key{944} manchetes relevantes capturadas
+(nos 10 tickers) $\to$ gates $\to$ \key{42} alertas (3 tickers) = \key{seletividade 22:1}. As notícias
+fluem para todos; os alertas só acontecem onde há precedente forte E triagem material — anti-fadiga
+por desenho. \emph{(Tese: Fig.~4.6, o funil; Apêndice A: o pipeline completo numa página rotada.)}
 \end{frame}
 
 \begin{frame}{Plano B — se algo falhar no dia da defesa}

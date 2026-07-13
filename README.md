@@ -22,8 +22,8 @@ reasoning chain — detected event → explanation → sources → historical pr
 ## The 6 places that matter
 | I want to… | Go to |
 |---|---|
-| Read the dissertation | `thesis/main.pdf` (78 pp) |
-| Study for the defence | `slides/guia_estudo/main.pdf` — **the** single study source (71 slides) |
+| Read the dissertation | `thesis/main.pdf` (86 pp) |
+| Study for the defence | `slides/guia_estudo/main.pdf` — **the** single study source (73 slides) |
 | See it live | <https://investigator.streamlit.app> + Telegram <https://t.me/InvestiGatorMEIA> |
 | Show it to the supervisor | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) (10-min read) |
 | Run it myself | `python scripts/demo.py` · full guide `docs/design/how_to_run.md` |
@@ -106,7 +106,7 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 
 ## Learn it / prepare the defence — ONE source
 - **THE study guide (PT-PT):** **`slides/guia_estudo/main.pdf`** — the single, consolidated source
-  (71 slides): teaches the whole thesis from zero, the code line by line, the evaluation, **the oral
+  (73 slides): teaches the whole thesis from zero, the code line by line, the evaluation, **the oral
   script (3-min opening + per-RQ answers), the complete jury Q&A, the frozen-numbers table and the
   defence plan B**. Everything previously scattered across companion documents now lives here.
 - **Final report (PT-PT, for the supervisor/jury):** **[`RELATORIO_FINAL.md`](RELATORIO_FINAL.md)** —
@@ -115,10 +115,10 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 
 ## Project status
 **Validated and submission-ready (pending human sign-off).** Both triggers are proven end to end;
-**167 automated tests** + lint green. The core components — including a **materiality-triage model trained
+**189 automated tests** + lint green. The core components — including a **materiality-triage model trained
 by the author** on 79,753 multi-year FNSPID examples (RQ4; triage evidence, never a forecast) — are
 evaluated on **real data**, and the statistics reproduce exactly from versioned scripts. The **six-chapter
-dissertation** compiles cleanly (`thesis/main.pdf`, 78 pp, 0 errors), with **52 references each verified by
+dissertation** compiles cleanly (`thesis/main.pdf`, 86 pp, 0 errors), with **52 references each verified by
 DOI/arXiv/ISBN or primary source** (audit in `docs/decisions/page_audit.md`). An **IEEE paper** (`paper/`)
 and **defence slides** (`slides/`) compile. Remaining items are human-only: confirm the exact ISEP AI-use
 declaration wording + submission date, and the author's final read. The multi-year *retrieval* knowledge
@@ -128,10 +128,10 @@ powers the public app) — evaluating retrieval on it stays future work, as the 
 
 ## Repository layout
 ```
-thesis/        LaTeX dissertation (6 chapters + front matter + appendix; 78 pp)
+thesis/        LaTeX dissertation (6 chapters + front matter + appendix; 86 pp)
 paper/         IEEE paper (IEEEtran) distilled from the thesis
 slides/        defence slides (Beamer, 17 frames)
-  guia_estudo/   THE study guide (PT-PT, Beamer, 71 slides — single study source)
+  guia_estudo/   THE study guide (PT-PT, Beamer, 73 slides — single study source)
 investigator/  system code, one package per component (investigator/triage/ = the trained ML component, RQ4)
 models/        trained triage models (joblib, versioned; context-only variant runs in production)
 notebooks/     investigator_walkthrough.ipynb — hands-on tour of the 3 components, executed & committed
@@ -158,7 +158,7 @@ CITATION.cff   how to cite this work    requirements.txt (light) / requirements-
   (`requirements.txt`) — enough for the demo, the tests and the evaluations. The heavy ML stack (`torch` CPU,
   `sentence-transformers`, in `requirements-ml.txt`) is needed only for the real SBERT paths and installs with
   `bash scripts/setup_env.sh --ml` (it pulls `torch` from the PyTorch CPU index, not PyPI).
-- Verification loop: `bash scripts/verify.sh` (167 tests + lint + LaTeX note).
+- Verification loop: `bash scripts/verify.sh` (189 tests + lint + LaTeX note).
 - Secrets live only in a local, gitignored `.env` (see `.env.example` for variable names).
 - LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push.
 

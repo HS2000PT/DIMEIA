@@ -18,10 +18,12 @@ GitHub Actions (cron, rede de segurança) ────────────�
 
 - `--watch`: loop contínuo (1 ciclo a cada ~5 min + jitter), paragem limpa com SIGTERM,
   estado persistente no disco da VM, config relida a cada ciclo (ajustes a quente).
-- **Deteção intradiária (só neste modo):** em cada ciclo, a cotação em TEMPO REAL do Finnhub
+- **Deteção intradiária:** em cada ciclo, a cotação em TEMPO REAL do Finnhub
   (`/quote`) avalia o retorno de hoje em curso contra a norma diária (o mesmo z-score) —
   "caiu 4,8% em 12 min" alerta em minutos. Guarda de sessão US (fora de horas não avalia
-  cotações estagnadas). `market.intraday.enabled` no alerts.yaml.
+  cotações estagnadas). `market.intraday.enabled` no alerts.yaml. **Desde 2026-07-13 corre
+  também nas corridas agendadas do Actions** (30 em 30 min) — a VM deixa de ser a única
+  porta do intradiário e passa a ser o upgrade de LATÊNCIA (~5 min vs ~30-120 min do cron).
 - Antes de cada ciclo, o estado é **semeado com o histórico partilhado** — o que o Actions já
   enviou hoje, a VM não repete (e vice-versa).
 - Com `INVESTIGATOR_HISTORY_GIT=1`, a VM também **publica** o histórico na branch de dados

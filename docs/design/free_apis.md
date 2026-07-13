@@ -10,8 +10,18 @@
 |---|---|---|---|---|---|
 | **yfinance** (Yahoo Finance, não-oficial) | sem chave; limites **não documentados**, sujeito a 429 / `YFRateLimitError` / bloqueio de IP | intradiário + longo histórico | excelente | **frágil** (scraping; Yahoo apertou em 2024–25; pode partir) | **Aprovado como base**, com cache + backoff |
 | **Finnhub** | **60 chamadas/min** (cap 30/seg); inclui cotações US em tempo real, **company news**, fundamentais básicos, SEC filings, WebSocket 50 símbolos; sem cartão | limitado no free | boa (US) | boa (API oficial) | **Aprovado como fallback/secundária** |
-| **Alpha Vantage** | **25 pedidos/dia** (e ~5/min) — reduzido ao longo do tempo (500→100→25) | EOD/algum histórico | boa | boa | **Terciária/ocasional** (25/dia é pouco para polling) |
-| *(alternativas)* Polygon.io (free ~5/min, EOD), Tiingo (free EOD+news) | — | — | — | — | reserva, se necessário |
+| **Alpha Vantage** | **25 pedidos/dia** (e ~5/min) — reduzido ao longo do tempo (500→100→25) | EOD/algum histórico | boa | boa | **Último recurso na cadeia** (25/dia é pouco para polling) |
+| **Tiingo** | free: ~1.000 req/dia, 50 símbolos/h; EOD ajustado, JSON limpo | EOD multi-ano | boa | boa (API oficial) | **Aprovado (1.º fallback do yfinance, 2026-07-13)** |
+| **Polygon.io** | free: 5 req/min; aggregates diários, 2 anos | EOD 2 anos | boa | boa (API oficial) | **Aprovado (2.º fallback, 2026-07-13)** |
+| **Stooq** | CSV sem chave | EOD longo | boa | **caiu**: desde ~2026-07 serve um desafio anti-bot JavaScript (proof-of-work) a clientes script — testado ao vivo a 2026-07-13 | Fica na cadeia como tentativa oportunista (3.º) |
+
+> **Incidente de produção (2026-07-13):** o yfinance esteve BLOQUEADO nos runners partilhados
+> do GitHub Actions durante toda a primeira semana ao vivo → 0 alertas de mercado e 0 resumos
+> diários (provado pelo histórico do canal). Resposta: cadeia de fallback
+> `yfinance → Tiingo → Polygon → Stooq → Alpha Vantage` em `investigator/market_data/prices.py`
+> (fontes sem chave são saltadas) + o check intradiário (cotação Finnhub, autenticada) passou a
+> correr também no Actions. Chaves: `TIINGO_API_KEY`, `POLYGON_API_KEY`, `ALPHAVANTAGE_API_KEY`
+> (segredos do Actions; cliques do aluno — ver CHECKLIST).
 
 ## Notícias (camada LIVE)
 | Fonte | Free tier (limites verificados) | Notas | Estado |

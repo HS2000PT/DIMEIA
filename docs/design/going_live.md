@@ -52,6 +52,9 @@ Repo → **Settings → Secrets and variables → Actions → New repository sec
 | `TELEGRAM_BOT_TOKEN` | o token do `@BotFather` |
 | `TELEGRAM_CHAT_ID` | `@investigator_alerts` (ou `-100…`) |
 | `FINNHUB_API_KEY` | só se ligares o gatilho de notícias (opcional) |
+| `TIINGO_API_KEY` | **preços (2026-07-13):** conta grátis em tiingo.com — o 1.º fallback quando o Yahoo bloqueia os runners (foi a causa real de 0 alertas de mercado) |
+| `POLYGON_API_KEY` | idem, polygon.io (2.º fallback; opcional mas recomendado) |
+| `ALPHAVANTAGE_API_KEY` | a chave que já tens no .env (último recurso, 25/dia) |
 
 ### 3) Testar já (botão manual)
 Repo → **Actions → "Alerts (scheduled scan)" → Run workflow**. Vê o log; se houver anomalia hoje, a

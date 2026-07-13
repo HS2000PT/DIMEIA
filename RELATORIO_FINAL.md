@@ -68,7 +68,7 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
 | Loop de pós-validação ao vivo | decisões reais registadas e rotuladas ao maturar | `live_monitoring.md` |
 
 ### 2.4 Documentos académicos
-- **Tese** (`thesis/`, EN-GB): 6 capítulos canónicos MEIA, **78 pp, 0 erros, 0 citações
+- **Tese** (`thesis/`, EN-GB): 6 capítulos canónicos MEIA, **86 pp, 0 erros, 0 citações
   indefinidas, 52/52 referências verificadas uma a uma** (auditoria em
   `docs/decisions/page_audit.md`). RQ1–RQ4 respondidas com os números acima; inclui um
   screenshot genuíno do painel único (Cap. 4, Fig. 4.5).
@@ -95,7 +95,7 @@ RELATORIO_FINAL.md      ← este documento
 README.md               porta de entrada (badges, como correr, estado)
 CHECKLIST.md            SÓ o que falta (lista mínima)
 CLAUDE.md               memória de continuidade entre sessões
-thesis/main.pdf         A TESE (78 pp)               thesis/main.tex + ch1..ch6/
+thesis/main.pdf         A TESE (86 pp)               thesis/main.tex + ch1..ch6/
 paper/                  artigo IEEE (4 pp)
 slides/main.pdf         slides de defesa (17)        slides/guia_estudo/main.pdf (guia único, 71)
 investigator/           o pacote do sistema (instalável; um subpacote por componente)

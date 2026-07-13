@@ -154,3 +154,36 @@ real apanhado antes de produção: ao fim de semana a cotação estagnada re-ale
 A visão do aluno validou a arquitetura existente e o delta foi construído como evolução, não
 reescrita — com a fronteira previsão/descrição defendida explicitamente. A avaliação formal da
 KB viva e do intradiário fica declarada como trabalho futuro (Cap. 6).
+
+## Pass 8 (2026-07-13) — "O mercado estava cego" + sensibilidade + IA da tese a fundo
+
+**Diagnóstico com provas (o achado nº 1 do pass):** o utilizador reportou "0 alertas de
+mercado" e pediu mais sensibilidade — mas a causa NÃO era o limiar: o histórico real do canal
+tinha 42 alertas todos `news`, **0 market E 0 summary**, e como o resumo diário dispara com
+QUALQUER resultado de mercado às 21h+, a lista esteve vazia em todas as corridas: o yfinance
+está bloqueado nos IPs partilhados do Actions (sem fallback) e o caminho intradiário (Finnhub,
+fiável) só corria no modo --watch da VM, nunca ligada. Lição de produto: instrumentação
+primeiro — o sintoma ("é pouco sensível") apontava para o botão errado.
+
+**Correções (produto):** (1) cadeia de fallback de preços yfinance→Tiingo→Polygon→Stooq→AV
+(Stooq testado ao vivo: ganhou anti-bot PoW → despromovido; fontes sem chave saltadas);
+(2) intradiário passa a correr TAMBÉM no Actions (a norma nunca precisa da barra de hoje —
+só o movimento precisa de frescura, e a cotação Finnhub dá isso de graça); o resumo diário
+cai para os resultados intradiários quando o fecho está cego; (3) sensibilidade 2.0→1.5 COM
+níveis de severidade (notable/strong/extreme) para 1,6 nunca se ler como 3,2; (4) linha
+"Sector check" descritiva (pares do setor no mesmo dia, zero chamadas extra) — o pedido real
+"a NVDA mexe com o setor"; (5) recência half-life 365→120d ("só o presente interessa").
+
+**App:** faixa "Market now" (10 tickers num relance, 1 download em lote, fail-open), About
+emagrecida, tema de marca. **Ciência nova (aditiva, congelados intactos):** LOF e EWMA no
+protocolo do CS1 (achado honesto: EWMA F1 0,664 > rolling 0,516 — reportado como caiu),
+projeção PCA real do espaço, exemplo trabalhado da triagem que reproduz EXATAMENTE o 54%
+enviado ao canal, funil de produção 944→42 (22:1).
+
+## Veredicto (Pass 8)
+O produto deixou de estar cego para o mercado por engenharia (fontes redundantes + caminho
+autenticado), não por afinar limiares às cegas; a sensibilidade subiu COM linguagem de
+severidade para não degradar a confiança; e a tese ganhou a espessura de IA que faltava
+(equações + exemplos reais ponta-a-ponta + comparações A-vs-B empíricas). Pendente humano:
+chaves Tiingo/Polygon/AV nos segredos do Actions (CHECKLIST) — até lá, o intradiário via
+Finnhub já destapa o mercado sozinho.
