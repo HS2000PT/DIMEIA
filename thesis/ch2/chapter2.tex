@@ -80,17 +80,23 @@ locally stable distribution, is handled by the rolling window, which tracks \emp
 the well-known tendency of calm and turbulent periods to arrive in runs
 \autocite{engle1982arch, bollerslev1986garch}. The rolling standard deviation is, in effect, a simpler
 non-parametric version of that idea: it adapts to the current regime without fitting a model the user
-could not scrutinise. A full GARCH estimate is the more sophisticated option, declined here under
-defensible simplicity.
+could not scrutinise. Between the two sits the exponentially weighted moving average of squared returns
+(the RiskMetrics estimator), which weights the recent past more heavily than the distant past but still
+estimates no parameters per instrument. A full GARCH fit is declined here under defensible simplicity,
+but the claim is not left as opinion: the EWMA variant, the first step on the road to GARCH, is put
+through the same evaluation protocol in Chapter~\ref{chap:casestudies}, so the trade-off is measured
+rather than asserted.
 
 More expressive detectors trade interpretability for capacity. Isolation Forest isolates outliers by
 random partitioning and scales to high dimensions \autocite{liu2008isolation}; the Local Outlier Factor
 scores how isolated a point is within its neighbourhood \autocite{breunig2000lof}; deep detectors learn a
 model of normality \autocite{pang2021deep}. All are powerful but harder to read off, and their edge shows
-most in high-dimensional data, not a single return series. In finance, detection is anyway dominated by
-\emph{unsupervised} methods, because labelled anomalies are scarce \autocite{ahmed2016financial}, a
-constraint that also shapes how InvestiGator is evaluated (Chapter~\ref{chap:casestudies}).
-Table~\ref{tab:sota_anomaly} compares the families.
+most in high-dimensional data, not a single return series. Rather than dismissing them on those grounds
+alone, Chapter~\ref{chap:casestudies} evaluates both Isolation Forest and the Local Outlier Factor under
+the same causal protocol as the statistical rule, so the comparison is empirical. In finance, detection
+is anyway dominated by \emph{unsupervised} methods, because labelled anomalies are scarce
+\autocite{ahmed2016financial}, a constraint that also shapes how InvestiGator is evaluated
+(Chapter~\ref{chap:casestudies}). Table~\ref{tab:sota_anomaly} compares the families.
 
 \begin{table}[ht]
 \caption{Anomaly-detection approaches relevant to this work.}
@@ -102,6 +108,7 @@ Table~\ref{tab:sota_anomaly} compares the families.
 \midrule
 Statistical \emph{z}-score (rolling) \autocite{chandola2009anomaly} & Flags returns that deviate from a rolling mean and standard deviation & Transparent and easy to explain; assumes a locally stable distribution \\
 Isolation Forest \autocite{liu2008isolation} & Isolates points via random partitioning (ensemble) & Scalable, handles high dimensionality; score is not directly interpretable \\
+Local Outlier Factor \autocite{breunig2000lof} & Scores isolation within a local density neighbourhood & Captures local structure; sensitive to neighbourhood size, score hard to read \\
 Deep detectors \autocite{pang2021deep} & Learn a model of normality (e.g.\ autoencoders) & High capacity for complex data; opaque, data-hungry, hard to justify \\
 \bottomrule
 \end{tabular}
@@ -240,7 +247,13 @@ Financial LLMs \autocite{wu2023bloomberggpt} & Large generative model & Very cap
 \end{table}
 
 \textbf{For InvestiGator:} Sentence-BERT is the sweet spot, contextual meaning beyond lexicons and static
-vectors, yet cheap, comparable and free to run.
+vectors, yet cheap, comparable and free to run. One honesty note on the comparison: the evaluation in
+Chapter~\ref{chap:casestudies} measures Sentence-BERT against a \emph{lexical} baseline, which brackets
+the question that matters (does meaning beat surface words?); word2vec and FinBERT variants are not run
+empirically, because static word vectors are strictly dominated by contextual sentence embeddings for
+sentence comparison, and domain-tuned FinBERT is oriented to sentiment classification rather than
+sentence similarity, at a cost this work's free-and-reproducible constraint excludes. Where a claim is
+cheap to test, this work tests it; where it would buy little, the reason is stated instead.
 
 \section{Information Retrieval and Ranking Evaluation}
 \label{sec:sota_ir}

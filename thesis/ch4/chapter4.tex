@@ -302,12 +302,13 @@ illustration; the full real end-to-end output appears in Chapter~\ref{chap:cases
 \label{fig:telegram_mockup}
 \end{figure}
 
-The same reasoning is also published as a live dashboard (Figure~\ref{fig:app_dashboard}):
-one tab per watchlist ticker, each dominated by a large price chart with selectable ranges, on
-which every detected event (market anomalies and material news — exactly the alerts delivered to
-the Telegram channel, read from one shared, versioned record and never recomputed) is marked and
-can be hovered for the full alert text; the same events are listed in a table below, and a compact
-line reports the background risk from the trained triage model (Section~\ref{sec:met_triage}),
+The same reasoning is also published as a live dashboard (Figure~\ref{fig:app_dashboard}): a
+``market now'' strip summarises the whole watchlist's day at a glance (companies in one sector often
+move together, so the context matters); below it, one selected company at a time is shown with a large
+price chart on which every detected event (market anomalies and material news — exactly the alerts
+delivered to the Telegram channel, read from one shared, versioned record and never recomputed) is
+marked and can be hovered for the full alert text; the same events are listed in a table below, and a
+compact line reports the background risk from the trained triage model (Section~\ref{sec:met_triage}),
 computed every day even without a fresh headline. Everything else (method, evaluation, citation)
 lives on a separate secondary view, keeping the main surface read-only and minimal.
 
@@ -315,11 +316,63 @@ lives on a separate secondary view, keeping the main surface read-only and minim
 \centering
 \includegraphics[width=0.95\textwidth]{figures/app_dashboard.png}
 \caption[The live dashboard, a genuine capture]{The public dashboard (a genuine screenshot, not a
-mockup): one tab per ticker, a large ranged price chart with detected events marked on the curve
-(hover shows the full alert), the same events tabled below exactly as sent to the Telegram
-channel, and the trained triage model's background risk. Captured from the deployed codebase
-during live operation; the events shown are real alerts from the shared history record.}
+mockup): the watchlist-wide ``market now'' strip, one company selected at a time, a large ranged price
+chart with detected events marked on the curve (hover shows the full alert; the markers here are real
+news alerts from the public channel), and the trained triage model's background risk. Captured from
+the deployed codebase during live operation.}
 \label{fig:app_dashboard}
+\end{figure}
+
+\section{The Life of One Alert}
+\label{sec:investigator_lifecycle}
+
+\emph{What does the whole pipeline do, concretely, from raw feed to phone?} The cleanest answer is to
+follow one \emph{real} alert through every stage. The case is the same production decision decomposed in
+Table~\ref{tab:triage_worked}: on 12~July~2026 the public channel received an alert for Meta on the
+headline \emph{``Mark Zuckerberg Said Meta's AI Bets `Haven't Come to Fruition Yet' as Shares Fell
+5\%''}. Table~\ref{tab:alert_lifecycle} walks the stages with the values the system actually computed;
+every row is verifiable in the shared history record the dashboard reads.
+
+\begin{table}[ht]
+\caption[The life of one real alert, stage by stage]{The life of one real alert (META, 12 July 2026),
+stage by stage. Every value is real: the message is preserved verbatim in the shared alert history, and
+the triage score is decomposed term by term in Table~\ref{tab:triage_worked}.}
+\label{tab:alert_lifecycle}
+\centering
+\small
+\begin{tabular}{p{0.26\textwidth} p{0.64\textwidth}}
+\toprule
+\tabhead{Stage (gate)} & \tabhead{What happened for this alert} \\
+\midrule
+1. Fetch & The scheduled scan pulls the week's company news for each watchlist ticker from the free news API. \\
+2. Relevance filter & The headline names the company (``Meta'', ``Mark Zuckerberg'' are in the ticker's alias list) and matches no market-roundup boilerplate pattern: kept. \\
+3. Capture (living KB) & The headline is embedded (MiniLM, $384$-d) and stored as a \emph{pending} case; it matures into a precedent once its own $+5$-day impact becomes observable. \\
+4. Freshness & Dated within the two-day window: eligible (the same story cannot re-alert for days). \\
+5. Retrieval & Knowledge bases are ranked by cosine with age decay; top three: MSFT 2023-11-07 ($s=0.46$, $+2.70\%$ in 5\,d), NVDA 2023-08-02 ($s=0.51$, $-3.87\%$), NVDA 2023-09-21 ($s=0.46$, $+5.05\%$). \\
+6. Evidence floor & Best cosine $0.51 \ge 0.45$: strong enough to show. The precedents disagree in direction, so the message carries the explicit \emph{``moved in BOTH directions''} warning. \\
+7. Learned triage & The deployed context-only model scores $p = 0.54 \ge 0.5$ (decomposed in Table~\ref{tab:triage_worked}): not gated out. \\
+8. Caps and dedup & Under the two-alerts-per-ticker-per-day cap; not previously sent by any producer (shared-history dedup): kept. \\
+9. Delivery and record & Sent to the public Telegram channel with the fixed no-prediction clause; appended verbatim to the shared history, from which the dashboard marks it on the price chart. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The same gates, seen in aggregate, are the system's answer to alert fatigue.
+Figure~\ref{fig:alert_funnel} shows the first five days of live operation: the scan captured $944$
+distinct relevant headlines across all ten watchlist names, and the channel received $42$ alerts, a
+$22{:}1$ selectivity concentrated on the three names where the evidence cleared every gate. News flowed
+for every company; alerts happened only where a strong precedent \emph{and} a material triage score
+coincided. (One honest note: the per-ticker daily cap entered production on 11~July, so the two earliest
+days show more alerts per name than the steady state.)
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/alert_funnel.pdf}
+\caption[Production selectivity: captured headlines versus sent alerts]{Production selectivity over the
+first five live days: relevant headlines captured (light) versus alerts actually sent (dark), per
+watchlist ticker. All counts are real, read from the shared data branch; the gap between the two bars is
+the work of the quality gates of Table~\ref{tab:alert_lifecycle}.}
+\label{fig:alert_funnel}
 \end{figure}
 
 \section{Practical Use and Responsible Design}
@@ -341,8 +394,19 @@ monitoring and fresh training data (Section~\ref{sec:met_triage}).
 Two practical limits are worth stating plainly. The free news tier returns only a recent window, so the
 knowledge base is shallower than the multi-year build it is designed for (a coverage limit, not a method
 one). And InvestiGator is a decision-support prototype, not a production service: no user accounts, no
-persistence beyond the knowledge-base file, no automatic recovery from a provider outage. These are ordinary
-steps from prototype to product, recorded openly rather than hidden.
+persistence beyond the knowledge-base file. These are ordinary steps from prototype to product, recorded
+openly rather than hidden.
+
+Live operation also taught one engineering lesson the honest way. During the first days of continuous
+deployment the market path went silent: the free price source blocks the shared network addresses of
+hosted runners, and with a single source and no fallback, the scan simply received no data. The failure
+was diagnosed from the system's own records (news alerts kept flowing while not one market summary
+appeared, which isolated the price feed as the cause) and answered with engineering rather than with a
+parameter change: daily prices now come through a chain of free providers tried in order, and the
+real-time quote check, which uses an authenticated and therefore reliable source, was promoted from the
+optional watcher into every scheduled scan. The episode is reported because it is instructive: a
+single free data source is a single point of failure, and a system that logs its own behaviour is what
+makes such a failure diagnosable at all.
 
 A tool aimed at non-experts also raises two responsible-design questions. The first is \emph{alert
 fatigue}: a tool that fires too often trains the user to ignore it. The market trigger addresses it by

@@ -51,6 +51,109 @@ input/output, and heavy or networked dependencies are loaded lazily, so the nume
 without a network connection or the model stack. Secrets are read only from a local, ignored environment
 file and are never written to versioned files.
 
+\section{The Complete Pipeline on One Page}
+\label{app:repro_pipeline}
+
+The body of the dissertation deliberately presents the system through several small, simple diagrams
+(architecture, data model, per-trigger flows, the life of one alert). Figure~\ref{fig:master_pipeline}
+is the opposite view, kept in the appendix precisely because it is dense: the \emph{complete} deployed
+pipeline on a single landscape page, with every gate and its production configuration value annotated.
+Each value is a disclosed deployment parameter (the evaluation of Chapter~\ref{chap:casestudies} freezes
+its own, stricter settings, as noted on the figure).
+
+\begin{sidewaysfigure}[p]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=2mm]},
+  box/.style={draw, rounded corners, align=center, minimum height=0.78cm, inner sep=2.5pt},
+  db/.style={box, fill=black!8},
+  pr/.style={box, fill=black!3},
+  gate/.style={box, dashed, fill=yellow!8},
+  dlv/.style={box, fill=black!14},
+  note/.style={font=\tiny, text=black!55, align=center},
+  lane/.style={font=\itshape\scriptsize, text=black!55, anchor=west},
+]
+  % ── lane: offline KB (top) ─────────────────────────────────────────────
+  \node[lane] at (-0.4,12.9) {offline build};
+  \node[db]  (o1) at (1.6,12.2)  {FNSPID 2018--23\\ news $+$ prices};
+  \node[pr]  (o2) at (5.0,12.2)  {align to event day;\\ measure $+1/+3/+5$\,d};
+  \node[pr]  (o3) at (8.4,12.2)  {embed\\ (MiniLM, $384$-d)};
+  \node[db]  (kb) at (11.6,12.2) {historical KB};
+  \draw[->] (o1)--(o2); \draw[->] (o2)--(o3); \draw[->] (o3)--(kb);
+
+  % ── lane: living KB ────────────────────────────────────────────────────
+  \node[lane] at (-0.4,10.6) {living KB};
+  \node[pr]  (l1) at (5.0,10.0)  {pending case\\ (embedded at capture)};
+  \node[gate](l2) at (8.4,10.0)  {mature: age $\ge 8$\,d\\ and $+5$\,d bar observable};
+  \node[db]  (l3) at (11.6,10.0) {living KB};
+  \draw[->] (l1)--(l2); \draw[->] (l2)--(l3);
+
+  % ── lane: news trigger ─────────────────────────────────────────────────
+  \node[lane] at (-0.4,8.4) {news trigger};
+  \node[db]  (n1) at (1.6,7.7)  {company news\\ (Finnhub, 7-day scan)};
+  \node[gate](n2) at (5.0,7.7)  {relevance: names the\\ company; no boilerplate};
+  \node[gate](n3) at (8.4,7.7)  {fresh\\ $\le 2$ days};
+  \node[pr]  (n4) at (11.6,7.7) {retrieve top-3:\\ cosine $\times\,0.5^{\text{age}/120\text{d}}$};
+  \node[gate](n5) at (14.8,7.7) {floor: best\\ cosine $\ge 0.45$};
+  \node[gate](n6) at (17.9,7.7) {triage LR $+$ Platt\\ $p \ge 0.5$};
+  \draw[->] (n1)--(n2); \draw[->] (n2)--(n3); \draw[->] (n3)--(n4);
+  \draw[->] (n4)--(n5); \draw[->] (n5)--(n6);
+  \draw[->] (n2) -- node[right, note]{capture} (l1);
+  \draw[->] (kb) -- (n4);
+  \draw[->] (l3) -- (n4);
+
+  % ── lane: market trigger (close) ───────────────────────────────────────
+  \node[lane] at (-0.4,5.9) {market trigger (close)};
+  \node[db]  (m1) at (1.6,5.2)  {daily closes:\\ yfinance $\to$ Tiingo $\to$\\ Polygon $\to$ Stooq $\to$ AV};
+  \node[gate](m2) at (5.0,5.2)  {fresh bar\\ (today's session)};
+  \node[gate](m3) at (8.4,5.2)  {$|z| > 1.5$ vs 20-d norm\\ \tiny (eval.\ freezes $3.0$)};
+  \node[pr]  (m4) at (11.6,5.2) {severity: notable $\ge$1.5\\ strong $\ge$2 · extreme $\ge$3};
+  \node[pr]  (m5) at (14.8,5.2) {sector check\\ (same-day peers)};
+  \node[pr]  (m6) at (17.9,5.2) {cross-investigate:\\ explaining news (48\,h)};
+  \draw[->] (m1)--(m2); \draw[->] (m2)--(m3); \draw[->] (m3)--(m4);
+  \draw[->] (m4)--(m5); \draw[->] (m5)--(m6);
+
+  % ── lane: market trigger (intraday) ────────────────────────────────────
+  \node[lane] at (-0.4,3.4) {market trigger (intraday)};
+  \node[gate](i1) at (1.6,2.7)  {US session?\\ Mon--Fri 13:00--21:30 UTC};
+  \node[db]  (i2) at (5.0,2.7)  {live quote\\ (Finnhub, real-time)};
+  \node[pr]  (i3) at (8.4,2.7)  {running return vs\\ 20-d norm (complete days)};
+  \draw[->] (i1)--(i2); \draw[->] (i2)--(i3);
+  \draw[->] (i3) -- (m4);
+
+  % ── outputs (right) ────────────────────────────────────────────────────
+  \node[gate](dd) at (20.9,6.5) {dedup $+$ caps:\\ 1 market/ticker/day;\\ $\le 2$ news/ticker/day};
+  \node[pr]  (ex) at (20.9,4.4) {explanation engine\\ \tiny (facts $+$ method $+$\\ \tiny no-prediction clause)};
+  \node[dlv] (tg) at (20.9,2.6) {Telegram channel\\ $+$ bot subscribers};
+  \node[dlv] (hi) at (17.9,1.0) {shared history\\ (data branch)};
+  \node[dlv] (da) at (14.8,1.0) {public dashboard\\ (reads, never recomputes)};
+  \draw[->] (n6.east) -- (dd.west);
+  \draw[->] (m6.east) -- (dd.west);
+  \draw[->] (dd)--(ex); \draw[->] (ex)--(tg);
+  \draw[->] (tg.south) |- (hi.east);
+  \draw[->] (hi)--(da);
+
+  % ── daily summary ──────────────────────────────────────────────────────
+  \node[pr] (su) at (11.6,3.9) {daily summary\\ (first run $\ge$ 21:00 UTC)};
+  \draw[->] (m3.south) |- (su.west);
+  \draw[->] (su.east) -- (ex.west);
+
+  % legenda
+  \node[gate, minimum height=0.5cm] (lg1) at (1.6,0.6) {\tiny gate (drops items)};
+  \node[pr, minimum height=0.5cm, right=3mm of lg1] (lg2) {\tiny computation};
+  \node[db, minimum height=0.5cm, right=3mm of lg2] (lg3) {\tiny data source};
+  \node[dlv, minimum height=0.5cm, right=3mm of lg3] (lg4) {\tiny delivery};
+\end{tikzpicture}
+\caption[The complete deployed pipeline, with every gate annotated]{The complete deployed pipeline on
+one page: the offline and living knowledge bases, the news trigger with its five quality gates, the
+close-based and intraday market triggers with the multi-source price fallback chain, and the shared
+outputs. Dashed boxes are gates that drop items; the annotated values (thresholds, caps, decay
+half-life) are the disclosed production configuration, distinct from the frozen evaluation settings of
+Chapter~\ref{chap:casestudies}. The body chapters present the same system as several simpler views;
+this figure exists so that no stage is left implicit.}
+\label{fig:master_pipeline}
+\end{sidewaysfigure}
+
 \section{Tests and Reproducible Results}
 \label{app:repro_tests}
 
@@ -69,6 +172,14 @@ and figures into the evaluation and figure directories:
   \item Anomaly firing-rate and window ablation (Case Study~1):\\ \texttt{python scripts/evaluate\_anomaly.py}
   \item Materiality triage: dataset build and training (Case Study~4):\\
         \texttt{python scripts/build\_dataset.py} followed by \texttt{python scripts/train\_triage.py}
+  \item Extended detector and volatility comparison (Case Study~1):\\
+        \texttt{python scripts/evaluate\_anomaly\_ext.py}
+  \item Real embedding-space projection (Case Study~2):\\
+        \texttt{python scripts/figures/fig\_embedding\_projection.py}
+  \item Worked triage decomposition and production funnel (Chapters~\ref{chap:methods}
+        and~\ref{chap:investigator}):\\
+        \texttt{python scripts/figures/fig\_triage\_worked.py} and
+        \texttt{python scripts/figures/fig\_alert\_funnel.py}
 \end{itemize}
 
 \noindent The data-fetch step that precedes them, and the full build of the historical knowledge base, are

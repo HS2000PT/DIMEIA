@@ -247,6 +247,38 @@ retrieve-and-reuse step (the case-based-reasoning core of Section~\ref{sec:sota_
 \end{algorithmic}
 \end{algorithm}
 
+Two details of the embedding step deserve to be explicit, because each answers a question an examiner
+would rightly ask. The first is what $\mathrm{embed}(h)$ actually computes. Sentence-BERT is a
+\emph{bi-encoder}: a pre-trained transformer reads the headline once and outputs one contextual vector
+per token, and the sentence embedding is the mean of those token vectors (mean pooling), scaled to unit
+length:
+\begin{equation}
+\mathbf{e} \;=\; \frac{1}{n}\sum_{i=1}^{n} \mathbf{t}_i,
+\qquad
+\hat{\mathbf{e}} \;=\; \frac{\mathbf{e}}{\lVert \mathbf{e} \rVert_2},
+\label{eq:pooling}
+\end{equation}
+where $\mathbf{t}_1,\dots,\mathbf{t}_n$ are the token vectors of the final transformer layer. The
+deployed encoder (MiniLM) is a distilled six-layer transformer producing $384$-dimensional embeddings,
+small enough for free infrastructure. The bi-encoder design is what makes a knowledge base practical:
+every stored case is embedded \emph{once}, and a new headline costs a single forward pass plus cheap
+vector comparisons. The more accurate cross-encoder alternative, which re-reads query and candidate
+together, would need one full transformer pass per (query, case) pair, which at the scale of
+Chapter~\ref{chap:casestudies} means tens of thousands of passes for every incoming headline. The second
+detail is the similarity itself. For embeddings $\mathbf{q}$ and $\mathbf{e}$,
+\begin{equation}
+\cos(\mathbf{q},\mathbf{e}) \;=\;
+\frac{\mathbf{q}\cdot\mathbf{e}}{\lVert\mathbf{q}\rVert_2\,\lVert\mathbf{e}\rVert_2},
+\qquad
+\lVert \hat{\mathbf{q}} - \hat{\mathbf{e}} \rVert_2^2 \;=\; 2 - 2\cos(\hat{\mathbf{q}},\hat{\mathbf{e}}),
+\label{eq:cosine}
+\end{equation}
+and the identity on the right settles the ``why cosine?'' question: on unit-length vectors the cosine
+equals the dot product, and Euclidean distance is a monotone function of it, so the three natural
+similarity measures induce exactly the same ranking. The choice of cosine is therefore canonical rather
+than arbitrary; what matters is the L2 normalisation, which stops longer texts from looking artificially
+``bigger'' than short ones.
+
 The impact itself is read off a short window after the event, as Figure~\ref{fig:eventwindow} shows. The
 news may arrive on a non-trading day, so the \emph{event day} is the first trading day on or after it;
 the return is then accumulated from that day's close to the close $+1$, $+3$ and $+5$ trading days later.
@@ -296,6 +328,17 @@ Three choices fix \emph{how} impact is measured, each made for transparency as m
         precedents, but the individual precedents are always shown too, so the investor sees the spread, not
         just one number.
 \end{itemize}
+
+One apparent inconsistency is worth resolving here, because two parts of the system measure the
+aftermath of an event differently, and both are right for their job. The \emph{displayed} impact of a
+precedent uses the raw return, as chosen above: it is what the investor would actually have experienced,
+and it can be checked against any public price chart. The \emph{label} of the materiality-triage model
+(Section~\ref{sec:met_triage}) instead uses the market-adjusted difference
+$\lvert r^{\mathrm{tkr}} - r^{\mathrm{mkt}} \rvert$, because a training target must isolate the
+ticker-specific move from market-wide swings; otherwise the model would learn to predict the index
+rather than the consequences of the news. It is the same event-study machinery answering two different
+questions: ``what happened to this stock?'' for evidence shown to a person, and ``did this stock move
+for its own reasons?'' for a label a model learns from.
 
 A worked example makes it concrete. Figure~\ref{fig:embedding_concept} gives the intuition: the embedding
 places each headline in a space where similar themes fall close together, so a query lands near its
@@ -397,12 +440,71 @@ Model families span the interpretability--capacity trade-off of Section~\ref{sec
 always-alert floor, a volatility-only logistic regression (the strong naive rule any reviewer would ask
 about), logistic regressions on context features only, on text features only, and on both together
 (the main interpretable model), and a gradient-boosted ensemble \autocite{friedman2001gbm} as the
-capacity ceiling. Scores are
-turned into honest probabilities by Platt scaling fitted on validation data only
-\autocite{niculescu2005calibration}. For explanations, the logistic regression's log-odds decompose into
-an exact additive sum of contributions; the embedding dimensions are grouped into a single ``headline
-content'' term so the message stays readable, and every score is delivered with the fixed clause
-\emph{``triage evidence, not a forecast''}.
+capacity ceiling.
+
+The interpretable member of that family deserves its mathematics in full, because the deployed
+explanations decompose it term by term. With standardised features $\tilde{x}_1,\dots,\tilde{x}_m$, the
+logistic regression scores an example as
+\begin{equation}
+u \;=\; b_0 + \sum_{j=1}^{m} w_j\,\tilde{x}_j,
+\qquad
+p_{\text{raw}} \;=\; \sigma(u) \;=\; \frac{1}{1+e^{-u}},
+\label{eq:logistic}
+\end{equation}
+so each product $w_j\tilde{x}_j$ is an \emph{exact} additive contribution to the log-odds $u$: no
+surrogate model and no approximation, the property that makes the alert's ``why'' line faithful by
+construction. Because a discriminative score is not automatically an honest probability, a Platt
+calibration is fitted on the validation block only,
+\begin{equation}
+p \;=\; \sigma\!\big(a\,p_{\text{raw}} + c\big),
+\label{eq:platt}
+\end{equation}
+with just two scalars $(a, c)$. The parametric form is a deliberate choice over the non-parametric
+alternative, isotonic regression: a two-parameter sigmoid cannot overfit a modest validation block,
+whereas isotonic regression needs substantially more calibration data before its extra flexibility pays
+off \autocite{niculescu2005calibration}. An isotonic comparison on the full corpus is noted as future
+work rather than assumed either way.
+
+Table~\ref{tab:triage_worked} makes the whole computation concrete by decomposing one \emph{real}
+production decision: a Meta headline sent to the public alert channel on 12 July 2026, scored by the
+deployed context-only bundle. Reading the table top to bottom is reading
+Equations~\eqref{eq:logistic} and~\eqref{eq:platt} with numbers in place: elevated recent volatility and
+the sector indicator push the log-odds up, the near-zero terms barely move it, the sum gives
+$u = +0.699$, the sigmoid turns it into $p_{\text{raw}} = 0.668$, and the Platt map (fitted values
+$a = 3.700$, $c = -2.313$) yields the calibrated $p = 0.539$, which clears the deployment gate of
+$0.5$. The message actually delivered to the channel that day read \emph{``Risk estimate (learned
+triage): 54\% \dots raised by recent volatility (20d) and sector''}: the decomposition reproduces the
+production number and its dominant factors exactly. For explanations,
+the embedding dimensions (when the text variant is used) are grouped into a single ``headline content''
+term so the message stays readable, and every score is delivered with the fixed clause \emph{``triage
+evidence, not a forecast''}.
+
+\begin{table}[ht]
+\caption[Worked triage example: one real production alert decomposed]{Worked triage example: the
+deployed context-only model scoring a real alert (META, 12 July 2026, \emph{``Mark Zuckerberg Said
+Meta's AI Bets `Haven't Come to Fruition Yet' as Shares Fell 5\%''}). Contributions are the exact
+additive terms $w_j\tilde{x}_j$ of Equation~\eqref{eq:logistic}; the decomposition is reproducible via
+\texttt{scripts/figures/fig\_triage\_worked.py}.}
+\label{tab:triage_worked}
+\centering
+\begin{tabular}{l r}
+\toprule
+\tabhead{Term} & \tabhead{Contribution to log-odds} \\
+\midrule
+Intercept $b_0$ & $-0.025$ \\
+Recent volatility (20\,d) & $+0.409$ \\
+Sector indicator & $+0.303$ \\
+Event-day return & $+0.010$ \\
+Headline length & $+0.002$ \\
+Recent momentum (5\,d) & $+0.000$ \\
+\midrule
+Log-odds $u$ (sum) & $\mathbf{+0.699}$ \\
+Raw probability $\sigma(u)$ & $0.668$ \\
+Calibrated $p = \sigma(3.700\,p_{\text{raw}} - 2.313)$ & $\mathbf{0.539}$ \\
+Deployment gate $p \ge 0.5$ & passed (alert sent) \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 Deployment is deliberately conservative. The score enters the alert pipeline off by default, behind a
 configuration gate; the deployed variant uses context features only, so it runs on the light software
@@ -503,6 +605,12 @@ parameter. Finally, the transparent rule is challenged by a \emph{learned} detec
 Isolation Forest \autocite{liu2008isolation} trained causally on the same information (each day's return
 and the volatility of the twenty preceding days, fitted only on an initial past segment) is scored on the
 same evaluation region, so the choice of a statistical rule over a learned one is tested, not assumed.
+Two extensions harden that comparison further. The Local Outlier Factor \autocite{breunig2000lof}, cited
+in Chapter~\ref{chap:sota} as the density-based alternative, is evaluated under the identical causal
+protocol, so the statistical rule faces \emph{two} learned detectors rather than one. And the rolling
+volatility estimate is challenged by an exponentially weighted variant (RiskMetrics-style,
+$\lambda = 0.94$), the first empirical step toward the GARCH family of Section~\ref{sec:sota_anomaly},
+so the natural ``why not GARCH?'' question receives evidence rather than opinion.
 
 \subsection{Triage protocol}
 \label{sec:met_eval_triage}
@@ -515,6 +623,20 @@ fitted on the validation block only; the test block is touched once, to report. 
 the area under the precision--recall curve, whose floor is the test prevalence (an always-alert
 strategy); the area under the ROC curve and the Brier score complete the picture, and a product-shaped
 metric, precision within a budget of $N$ alerts per day, measures what the user actually experiences.
+The metrics themselves are standard but worth fixing precisely. Sweeping a threshold $s$ over the
+scores traces $\big(\mathrm{recall}(s), \mathrm{precision}(s)\big)$; PR-AUC is the area under that
+curve, and a scorer with no skill earns exactly the prevalence $\pi$, which anchors every comparison.
+ROC-AUC is the probability that a random positive outscores a random negative; it is reported for
+completeness but not used as primary, because it rewards ranking the abundant easy negatives and so
+flatters a triage model whose user only ever sees the top of the ranking. Calibration is measured by
+the Brier score,
+\begin{equation}
+\mathrm{Brier} \;=\; \frac{1}{N}\sum_{i=1}^{N}\big(p_i - y_i\big)^2 ,
+\label{eq:brier}
+\end{equation}
+the mean squared gap between the stated probability $p_i$ and the outcome $y_i \in \{0,1\}$: it is low
+only when the probabilities can be taken at face value, which is exactly what a user reading ``$57\%$''
+deserves.
 The decisive comparison is against the volatility-only logistic regression: the learned model is claimed
 useful only where it beats that baseline, and the feature ablations (context only, text only, both)
 attribute any gain to its source. Sensitivity over the $\tau \times h$ label grid is reported alongside.

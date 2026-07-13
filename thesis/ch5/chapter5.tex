@@ -151,6 +151,67 @@ consistency requirement that motivates the design. The comparison, rather than a
 justifies keeping the statistical rule in production: given identical causal information, the
 interpretable detector was not merely simpler but better.
 
+\paragraph{Extension: a second learned detector, and a second volatility estimate.}
+Two natural objections remain: perhaps a \emph{different} learned detector would win, and perhaps a more
+adaptive volatility estimate would. Both were tested under the identical causal protocol
+(Section~\ref{sec:met_eval_anomaly}), in a fresh rerun whose $z$-score row reproduces the frozen values
+above exactly (the forest shifts in the third decimal because the free price source re-adjusts
+historical closes retroactively). Table~\ref{tab:cs_anomaly_ext} and Figure~\ref{fig:cs_detectors}
+report both answers. The Local Outlier Factor \autocite{breunig2000lof}, the density-based alternative
+of Chapter~\ref{chap:sota}, behaves like the forest: it recalls almost everything ($0.989$) at very low
+precision ($0.163$), lands at an $F_1$ of $0.280$, and fires at rates that vary across tickers by
+$0.183$, the least consistent of the three. The transparent rule beats both learned detectors on the
+same information.
+
+The volatility question produced the more interesting answer, and it is reported exactly as it fell.
+Replacing the rolling standard deviation with an exponentially weighted estimate (RiskMetrics,
+$\lambda = 0.94$), the first step toward the GARCH family, \emph{improves} agreement with the
+extreme-move proxy substantially: at the same recall ($0.800$), precision rises from $0.381$ to $0.568$,
+lifting $F_1$ from $0.516$ to $0.664$, with per-ticker firing rates slightly \emph{more} uniform
+($0.012$ versus $0.015$). The mechanism is volatility clustering itself: after a shock, a rolling window
+dilutes the new regime across twenty equal weights, whereas the exponential estimate absorbs it at once
+and stops re-flagging ordinary days that follow. The experiment was designed to license the phrase
+``GARCH would add little'', and it does not license it; what it shows instead is that the first
+adaptive step already helps \emph{on this proxy}. The deployed detector keeps the rolling rule, because
+``the average and spread of the last twenty days'' is explainable to a non-expert in one sentence while
+exponential weights are not, but the gain is recorded as validated rather than speculative future work,
+one line of configuration away. The proxy's own volatility-relative circularity, assumed throughout
+this case study, applies here equally.
+
+\begin{table}[ht]
+\caption[Extended detector and volatility-estimator comparison]{Extended comparison under the frozen
+causal protocol. Top: detectors on the identical scored region and features. Bottom: the same $z$-score
+rule with two volatility estimates, over the full evaluation region. Reproducible via
+\texttt{scripts/evaluate\_anomaly\_ext.py}.}
+\label{tab:cs_anomaly_ext}
+\centering
+\begin{tabular}{p{0.40\textwidth} c c c c}
+\toprule
+\tabhead{Detector (same region)} & \tabhead{Precision} & \tabhead{Recall} & \tabhead{$F_1$} & \tabhead{Rate range} \\
+\midrule
+$z$-score (deployed rule) & $0.407$ & $0.761$ & $\mathbf{0.530}$ & $\mathbf{0.017}$ \\
+Isolation Forest & $0.158$ & $0.913$ & $0.269$ & $0.135$ \\
+Local Outlier Factor & $0.163$ & $0.989$ & $0.280$ & $0.183$ \\
+\midrule
+\tabhead{Volatility estimate ($z$-score)} & & & & \\
+\midrule
+Rolling $\sigma$, $20$\,d (deployed) & $0.381$ & $0.800$ & $0.516$ & $0.015$ \\
+EWMA $\sigma$ ($\lambda=0.94$) & $0.568$ & $0.800$ & $\mathbf{0.664}$ & $\mathbf{0.012}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/eval_anomaly_detectors.pdf}
+\caption[Extended anomaly comparison: detectors and volatility estimators]{The extended comparison at a
+glance. Left: on identical causal features, the transparent $z$-score rule beats both learned detectors.
+Right: the exponentially weighted volatility estimate outperforms the rolling one on the proxy, a
+finding reported as it fell; the rolling rule stays deployed for explainability, with the EWMA gain
+recorded as validated future work.}
+\label{fig:cs_detectors}
+\end{figure}
+
 \section{Case Study 2: News--Market Precedent Retrieval}
 \label{sec:cs_retrieval}
 
@@ -202,6 +263,31 @@ measure of the value added by the embeddings.
 clearly exceeds the lexical, recency and random baselines; error bars show $\pm 1$ standard deviation
 over the five runs.}
 \label{fig:cs_retrieval}
+\end{figure}
+
+\paragraph{Seeing the space.}
+The embedding space itself, so far only sketched conceptually
+(Figure~\ref{fig:embedding_concept}), can be shown for real. Figure~\ref{fig:embedding_projection} is a
+principal-component projection of the production knowledge base, all $2{,}016$ cases with their genuine
+$384$-dimensional MiniLM embeddings, coloured by sector, with a live query (the worked example of
+Chapter~\ref{chap:methods}) marked as a star and its three retrieved neighbours circled. Two honest readings
+follow. Even this two-dimensional shadow, which preserves only $8.6\%$ of the variance, places the query
+inside its topical neighbourhood, and the three retrieved cases (all semiconductor-demand stories, at
+cosines $0.58$--$0.61$ in the full space) sit visibly adjacent to it. And the sectors do \emph{not}
+separate cleanly in two dimensions, which is exactly why the system ranks by cosine in the full
+$384$-dimensional space rather than in any projection: the picture is for intuition, the ranking is not
+done there.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/embedding_projection.pdf}
+\caption[The real embedding space of the product knowledge base]{The production knowledge base projected
+to two dimensions (PCA over the real MiniLM embeddings; axes show the variance each component preserves).
+Colours are sectors; the star is the query \emph{``Nvidia demand surges on AI chip orders''}; circles
+mark its top-3 retrieved neighbours. The projection is a shadow for intuition: retrieval ranks by cosine
+in the full $384$-dimensional space. Reproducible via
+\texttt{scripts/figures/fig\_embedding\_projection.py}.}
+\label{fig:embedding_projection}
 \end{figure}
 
 \paragraph{Impact measurement.}
@@ -425,6 +511,26 @@ materiality. Same-day headlines share one label, so the effective sample size is
 count, and the corpus's news density grows over the window. Headlines are short, so a richer text
 representation (article bodies, financial sentiment) might yet close the text gap; that possibility
 is recorded as future work rather than assumed.
+
+\paragraph{The deployed model on one real decision.} The mechanism claim becomes tangible on a single
+live case. Figure~\ref{fig:triage_contributions} decomposes a real production decision, the Meta alert
+of 12~July~2026 whose full arithmetic is Table~\ref{tab:triage_worked}: elevated recent volatility and
+the sector indicator carry essentially the whole log-odds, the text-free near-zero terms confirm that
+context is the signal, and the calibrated $54\%$ that reached the public channel is reproduced exactly
+by the decomposition. The evaluation's aggregate finding (context, not text) and the deployed product's
+individual decisions are one and the same computation, which is the faithfulness property the design
+promises.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/triage_contributions.pdf}
+\caption[One real triage decision, decomposed]{One real production triage decision (META,
+12~July~2026), decomposed into its exact additive log-odds contributions. Recent volatility and sector
+dominate; the sum $+0.699$ maps through the sigmoid and the Platt calibration to the $54\%$ actually
+sent to the channel (Table~\ref{tab:triage_worked}). Reproducible via
+\texttt{scripts/figures/fig\_triage\_worked.py}.}
+\label{fig:triage_contributions}
+\end{figure}
 
 \section{Discussion and Threats to Validity}
 \label{sec:cs_discussion}

@@ -125,7 +125,13 @@ Live deployment after the evaluation was frozen already motivated a first iterat
 items: the deployed system now grows a \emph{live} knowledge base from the headlines it scans (each case
 matured against observed prices days later), ranks precedents with an age-decay factor while always
 displaying the true similarity and the age of each case, flags directional disagreement explicitly, and
-evaluates the day's move in progress from a real-time quote during market hours. These deployment-side
-iterations reuse the validated components unchanged and are reported here as engineering follow-through;
-their formal evaluation remains future work. Together these would turn a sound prototype into a more
-thoroughly validated system, without giving up the simplicity and transparency that make it defensible.
+evaluates the day's move in progress from a real-time quote during market hours. Deployment also taught
+its own lesson, reported in Chapter~\ref{chap:investigator}: a single free price source proved a single
+point of failure on hosted infrastructure, and was replaced by a multi-provider fallback chain. These
+deployment-side iterations reuse the validated components unchanged and are reported here as engineering
+follow-through; their formal evaluation remains future work. One item is already \emph{validated} rather
+than speculative: the extended comparison of Case Study~1 showed that an exponentially weighted
+volatility estimate improves the detector's proxy agreement substantially, so adopting it is a measured,
+one-line change waiting only on an explainability decision. Together these would turn a sound prototype
+into a more thoroughly validated system, without giving up the simplicity and transparency that make it
+defensible.

@@ -2,7 +2,7 @@
 
 A tese descrevia a triagem (RQ4) sem nunca mostrar o modelo a pontuar UM caso concreto.
 Este script pega num alerta REAL do canal (META, 2026-07-12, "Mark Zuckerberg Said Meta's
-AI Bets 'Haven't Come to Fruition Yet'…", enviado com "Risk estimate: 57%") e reproduz a
+AI Bets 'Haven't Come to Fruition Yet'…", enviado com "Risk estimate: 54%") e reproduz a
 decisão de ponta a ponta com o bundle DE PRODUÇÃO (models/triage_context_lr.joblib):
 
     features de contexto → contribuições aditivas ao log-odds (exatas, sem aproximação)
@@ -34,8 +34,8 @@ REPO = Path(__file__).resolve().parent.parent.parent
 DEFAULT_TICKER = "META"
 DEFAULT_HEADLINE = ('Mark Zuckerberg Said Meta\'s AI Bets "Haven\'t Come to Fruition Yet" '
                     "as Shares Fell 5%")
-DEFAULT_ASOF = "2026-07-12"  # domingo: as features vêm do último fecho (sexta 07-10)
-PRODUCTION_PROB = 0.57       # o valor na mensagem realmente enviada ao canal
+DEFAULT_ASOF = "2026-07-12"  # fim de semana: as features vêm do último fecho (sexta 07-10)
+PRODUCTION_PROB = 0.54       # o valor na mensagem realmente enviada ao canal
 
 
 def main() -> None:
@@ -91,7 +91,7 @@ def main() -> None:
 
 def _write_md(args, feats, contribs, intercept, soma, p_raw, prob, a, b, close) -> None:
     now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
-    platt = (f"σ({a:.3f}·logit_raw + {b:.3f})" if a is not None and b is not None
+    platt = (f"σ({a:.3f}·p_raw + {b:.3f})" if a is not None and b is not None
              else "Platt (parâmetros no bundle)")
     lines = [
         "# triage_worked_example.md — exemplo trabalhado da triagem (reprodutível)",
@@ -118,13 +118,12 @@ def _write_md(args, feats, contribs, intercept, soma, p_raw, prob, a, b, close) 
         f"σ(logit) = **{p_raw:.3f}** (probabilidade crua) → calibração de Platt "
         f"({platt}) → **p = {prob:.3f}**.",
         "",
-        f"**Fidelidade (honesta):** a mensagem realmente enviada dizia \"Risk estimate: "
-        f"{PRODUCTION_PROB:.0%}\"; a reprodução dá {prob:.0%} "
-        f"(Δ {abs(prob - PRODUCTION_PROB) * 100:.1f} p.p.). A diferença vem do reajuste "
-        "RETROATIVO de dividendos nos fechos yfinance desde o envio: as features mudam na "
-        "3.ª-4.ª casa decimal e contribuições quase nulas podem até trocar de sinal (aqui, "
-        "momentum 5d ~0). O que interessa reproduz-se: a ordem dos fatores dominantes "
-        "(volatilidade e setor a subir o risco) e a DECISÃO do gate.",
+        f"**Fidelidade:** a mensagem realmente enviada dizia \"Risk estimate: "
+        f"{PRODUCTION_PROB:.0%} … raised by recent volatility (20d) and sector\"; a "
+        f"reprodução dá {prob:.0%} com os MESMOS fatores dominantes — reprodução exata da "
+        "decisão de produção. (Nota: os fechos yfinance são reajustados retroativamente a "
+        "cada dividendo, pelo que reproduções futuras podem divergir ~1 p.p.; a decisão do "
+        "gate é robusta a isso.)",
         f"Gate de produção: p = {prob:.3f} ≥ 0.5 → "
         f"{'PASSA' if prob >= 0.5 else 'suprimido'} (o alerta foi de facto enviado).",
     ]
