@@ -8,13 +8,13 @@
 ## 🧑 Cliques só teus (ninguém pode fazer por ti)
 
 ### Produto ao vivo
-- [ ] **Chaves de preços — faltam 2 (Tiingo/Polygon), robustez:** ✅ `ALPHAVANTAGE_API_KEY`
-      já adicionada (confirmado no log de 13/07) e **o mercado JÁ está vivo** — 1.º alerta de
-      mercado de sempre enviado a 13/07 (NVDA −3,53%, "notable", Sector check + Possible
-      explanation), com o yfinance a responder nos runners nessa corrida. Falta só robustez:
-      criar contas grátis em <https://www.tiingo.com> e <https://polygon.io> e adicionar
-      `TIINGO_API_KEY` + `POLYGON_API_KEY` nos segredos do GitHub — quando o Yahoo voltar a
-      bloquear, sem elas só resta a Alpha Vantage (25 pedidos/dia, curto para 10 tickers).
+- [x] ~~Chaves de preços~~ ✅ **FECHADO 13/07:** os 3 segredos existem no GitHub
+      (`TIINGO_API_KEY` + `POLYGON_API_KEY` criados 13/07 19:10; `ALPHAVANTAGE_API_KEY` desde
+      03/07) e uma corrida manual do Alerts às 19:27 confirmou-os visíveis no runner (`***`).
+      **O mercado JÁ está vivo** — 1.º alerta de mercado de sempre a 13/07 (NVDA −3,53%,
+      "notable", Sector check + Possible explanation). Nota: o yfinance está a responder nos
+      runners neste momento, por isso a cadeia de fallback fica de reserva silenciosa — se o
+      Yahoo voltar a bloquear, o log dirá `[precos …] servido por …`.
 - [ ] **Streamlit: apagar e recriar a app com Python 3.12** (Advanced settings ao criar —
       NÃO é o defeito). Causa confirmada (2026-07-11): em Python 3.14 os pins pandas/numpy
       não têm wheels, a instalação falha em silêncio (~45 min) e a app arranca sem plotly

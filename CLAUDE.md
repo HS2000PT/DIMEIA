@@ -19,7 +19,12 @@
   `[precos … servido por …]` — a cadeia de fallback não foi precisa). **(2) Segredos:** o aluno
   adicionou `ALPHAVANTAGE_API_KEY` (✱✱✱ no log); `TIINGO/POLYGON` continuam vazios → item do
   CHECKLIST reescrito como robustez (não bloqueia — mas sem elas, Yahoo bloqueado = só AV
-  25/dia). **(3) KB viva maturou 4 dias ANTES do previsto:** 13 casos em `live_kb.jsonl` com
+  25/dia). **(2b) — adenda: FECHADO na mesma noite.** O aluno criou `TIINGO_API_KEY` e
+  `POLYGON_API_KEY` às 19:10 UTC (correção: a ALPHAVANTAGE já existia desde 03/07); disparei
+  o workflow via API (workflow_dispatch, o "1 clique" do CHECKLIST) e a corrida das 19:27
+  confirmou os 3 segredos visíveis (`***`) e o scan saudável (gates, dedup ×2, "Sem alertas
+  novos" honesto). O yfinance continua a responder nos runners ⇒ a cadeia de fallback fica de
+  reserva silenciosa. Item das chaves FECHADO no CHECKLIST. **(3) KB viva maturou 4 dias ANTES do previsto:** 13 casos em `live_kb.jsonl` com
   impactos reais (JPM +0,44/−0,67/−1,35%; NFLX +0,21/−0,72/−1,68%; notícias de 04-05/07
   alinhadas ao 1.º dia de negociação 06/07 — o desenho anti-lookahead a funcionar), 1.043
   pendentes, e "[kb-viva] 13 caso(s) em uso" no scan. **(4) Pós-validação corrida neste PC**
