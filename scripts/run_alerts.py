@@ -25,7 +25,6 @@ import yaml
 from investigator.console import force_utf8_stdout
 
 _CONFIG = Path(__file__).resolve().parents[1] / "config" / "alerts.yaml"
-_PRED_LOG = Path(__file__).resolve().parents[1] / "data" / "predictions_log.jsonl"
 _STATE = Path(__file__).resolve().parents[1] / "data" / "alerts_state.json"
 # No workflow, INVESTIGATOR_HISTORY_PATH aponta para o checkout da branch `alerts-history`
 # (ver .github/workflows/alerts.yml); localmente cai num ficheiro gitignored inofensivo.
@@ -37,6 +36,11 @@ _HISTORY = Path(os.environ.get(
 # por isso é publicada/lida pelos mesmos mecanismos (workflow + VM + app via raw URL).
 _LIVE_PENDING = _HISTORY.parent / "live_pending.jsonl"
 _LIVE_KB = _HISTORY.parent / "live_kb.jsonl"
+# LOG DE PREDIÇÕES (loop de pós-validação M5.5): também na branch partilhada, para PERSISTIR
+# entre corridas do Actions (o runner é efémero — antes o log era gitignored em data/ e nunca
+# acumulava na nuvem; o loop de pós-fecho só corria no PC do aluno). Agora `git add -A` do
+# workflow publica-o e o post_validate corre em cima dele ao fecho.
+_PRED_LOG = _HISTORY.parent / "predictions_log.jsonl"
 
 
 # ── Estado entre corridas (intradiário, anti-duplicado) ───────────────────────
@@ -48,7 +52,7 @@ def load_state(path: str | Path = _STATE, today: date | None = None) -> dict:
 
     today = today or date.today()
     state = {"date": today.isoformat(), "alerted_market": [], "alerted_news": [],
-             "news_count": {}, "summary_sent": False, "bot_offset": None}
+             "news_count": {}, "opening_sent": False, "summary_sent": False, "bot_offset": None}
     try:
         raw = json.loads(Path(path).read_text(encoding="utf-8"))
         state["bot_offset"] = raw.get("bot_offset")
@@ -56,6 +60,7 @@ def load_state(path: str | Path = _STATE, today: date | None = None) -> dict:
             state["alerted_market"] = list(raw.get("alerted_market", []))
             state["alerted_news"] = list(raw.get("alerted_news", []))
             state["news_count"] = dict(raw.get("news_count", {}))
+            state["opening_sent"] = bool(raw.get("opening_sent", False))
             state["summary_sent"] = bool(raw.get("summary_sent", False))
     except (OSError, ValueError):
         pass  # sem estado (1.ª corrida do dia/da cache) → começa limpo
@@ -99,6 +104,8 @@ def seed_state_from_shared_history(state: dict, entries: list, today: str) -> No
                 state["news_count"][e.ticker] = state["news_count"].get(e.ticker, 0) + 1
         elif e.kind == "summary":
             state["summary_sent"] = True
+        elif e.kind == "open":
+            state["opening_sent"] = True
 
 
 def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]],
@@ -267,6 +274,46 @@ def build_daily_summary(results: list[tuple[str, object]], threshold: float) -> 
         linhas.append(f"No anomalies today (threshold |z| ≥ {threshold:g}); a normal day.")
     linhas.append("<i>An observed snapshot of the watchlist, not advice.</i>")
     return "\n".join(linhas)
+
+
+def build_opening_note(results: list[tuple[str, object]]) -> str:
+    """Puro: a mensagem de ABERTURA — como a watchlist está a abrir vs o fecho de ontem.
+
+    O par matinal do resumo de fecho (o aluno pediu "um alerta de abertura"): dá o pulso da
+    manhã (gaps overnight + primeiros minutos da sessão) a partir dos resultados INTRADIÁRIOS
+    (cotação ao vivo vs fecho anterior). Sem previsão — só o que já se observa.
+    """
+    if not results:
+        return ""
+    from investigator.explanation_engine.explainer import direction_icon
+
+    ordenados = sorted(results, key=lambda tr: -abs(tr[1].last_return))
+    linhas = ["🔔 <b>Market open · watchlist snapshot</b>"]
+    calmos: list[str] = []
+    for ticker, r in ordenados:
+        if abs(r.last_return) >= 0.01:
+            icon = direction_icon(r.last_return)
+            linhas.append(f"{icon} {ticker}: {r.last_return * 100:+.2f}% vs yesterday's close")
+        else:
+            calmos.append(f"{ticker} {r.last_return * 100:+.1f}%")
+    if calmos:
+        linhas.append("• Flat at the open: " + " · ".join(calmos))
+    linhas.append("<i>How the US session is opening vs yesterday's close. "
+                  "An observed snapshot, not advice.</i>")
+    return "\n".join(linhas)
+
+
+def maybe_opening_note(state: dict, results: list[tuple[str, object]],
+                       hour_utc: int) -> str | None:
+    """Puro: a nota de abertura na 1.ª corrida da janela de abertura (14–15 UTC), 1×/dia.
+
+    A janela cobre verão (abertura 13:30 UTC ⇒ já aberto às 14h) e inverno (abertura 14:30 ⇒
+    aberto às 15h). Marca `opening_sent` (partilhado entre corridas e produtores, como o resumo).
+    """
+    if hour_utc not in (14, 15) or state.get("opening_sent") or not results:
+        return None
+    state["opening_sent"] = True
+    return build_opening_note(results)
 
 
 def maybe_daily_summary(state: dict, results: list[tuple[str, object]],
@@ -794,18 +841,21 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     alerts = filter_new_alerts(market_alerts, scan_news(cfg), state, max_per)
 
     threshold = float((cfg.get("market") or {}).get("threshold", 3.0))
-    # Resumo diário: preferir os resultados de FECHO; quando o fecho está cego (fontes
+    hora_utc = datetime.now(UTC).hour
+    # Nota de ABERTURA (o par matinal do resumo): como a watchlist abriu vs o fecho de ontem,
+    # a partir da cotação intradiária. 1×/dia na janela de abertura (14–15 UTC).
+    opening = maybe_opening_note(state, intra_results, hora_utc)
+    # Resumo de FECHO: preferir os resultados de fecho; quando o fecho está cego (fontes
     # diárias sem a barra de hoje), os resultados intradiários servem — às 21h+ UTC a
     # sessão já fechou e a cotação Finnhub É o fecho do dia.
-    summary = maybe_daily_summary(state, market_results or intra_results, threshold,
-                                  datetime.now(UTC).hour)
+    summary = maybe_daily_summary(state, market_results or intra_results, threshold, hora_utc)
 
     if not dry_run:
         save_state(state)  # persiste marcas do dia + offset do bot (cache no Actions)
     else:
         print("[estado] dry-run — estado não gravado (não interfere com a corrida real).")
 
-    mensagens = alerts + ([("MARKET", summary)] if summary else [])
+    mensagens = alerts + [("MARKET", m) for m in (opening, summary) if m]
     if not mensagens:
         print("Sem alertas novos nesta corrida (nenhuma anomalia nova acima do limiar).")
         return 0

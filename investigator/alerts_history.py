@@ -25,7 +25,7 @@ class HistoryEntry:
 
     date: str  # ISO (YYYY-MM-DD), dia do evento
     ticker: str
-    kind: str  # "market" | "news" | "summary"
+    kind: str  # "market" | "news" | "summary" | "open"
     text: str
     key: str = ""
 
@@ -38,6 +38,8 @@ def classify_kind(text: str) -> str:
     t = text.lstrip()
     if t.startswith("📊"):
         return "summary"
+    if t.startswith("🔔"):
+        return "open"
     if t.startswith(("🔺", "🔻")):
         return "market"
     if t.startswith("📰"):
@@ -45,6 +47,8 @@ def classify_kind(text: str) -> str:
     # Legado / textos sem emoji (histórico antigo, literais de teste)
     if "Daily close summary" in text:
         return "summary"
+    if "Market open" in text:
+        return "open"
     if "Anomaly detected for" in text or "intraday move for" in text:
         return "market"
     return "news"

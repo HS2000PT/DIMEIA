@@ -97,12 +97,15 @@ corre na stack leve) e só é enviado se P(movimento anormal) ≥ esse valor; o 
 linha de materialidade ("triage evidence, not a forecast"). Sem o ficheiro do modelo, o gate é ignorado
 com aviso — o runner nunca fica vermelho por causa da triagem.
 
-**Loop de pós-validação (M5.5).** Com o gatilho de notícias ligado, o runner regista cada decisão em
-`data/predictions_log.jsonl` (local, gitignored). Dias depois corre `python scripts/post_validate.py`:
-rotula as decisões maturadas com o que REALMENTE aconteceu e escreve
-`docs/evaluation/live_monitoring.md`. Nota honesta: no cron do GitHub Actions o runner é efémero
-(o log não persiste entre corridas) — o loop completo corre na tua máquina; persistir o log na
-nuvem fica para a Fase B.
+**Loop de pós-validação (M5.5) — agora zero-ops.** Com o gatilho de notícias ligado, o runner
+regista cada decisão em `predictions_log.jsonl`. Desde 2026-07-22 esse log vive na **branch
+partilhada `alerts-history`** (não em `data/` gitignored), por isso PERSISTE entre corridas do
+Actions e ACUMULA na nuvem. Ao **fecho** (≥21 UTC), o workflow corre `scripts/post_validate.py`:
+rotula as decisões maturadas com o que REALMENTE aconteceu (janela (d, d+3] fechada, preços via a
+cadeia de fallback) e regenera `live_monitoring.md` na mesma branch — a app pública mostra-o em
+*"How our alerts are doing"*. Localmente continuas a poder correr `python scripts/post_validate.py`
+à mão (escreve `docs/evaluation/live_monitoring.md`). Enquadramento honesto: é **monitorização**
+do mecanismo de triagem (precisão das mantidas vs base rate, Brier), não avaliação nem previsão.
 
 ### 6) A webpage (painel único) sempre disponível
 Publica `app/streamlit_app.py` no **Streamlit Community Cloud** — passos em

@@ -139,6 +139,25 @@ def _read_shared_history() -> list:
     return fetch_remote(_history_url())
 
 
+@st.cache_data(ttl=300, show_spinner=False)
+def _live_monitoring_md() -> str | None:
+    """Relatório de pós-validação ao vivo (live_monitoring.md na branch partilhada), fail-open.
+
+    O loop de pós-fecho tornado VISÍVEL: como as decisões de triagem correram face à base
+    rate (precisão das mantidas, Brier). Só leitura; ausente/offline/rede em baixo → None."""
+    if os.environ.get("INVESTIGATOR_OFFLINE") == "1":
+        return None
+    import requests
+
+    url = _history_url().rsplit("/", 1)[0] + "/live_monitoring.md"
+    try:
+        r = requests.get(url, timeout=5)
+        r.raise_for_status()
+        return r.text if r.text.strip() else None
+    except Exception:  # noqa: BLE001
+        return None
+
+
 @st.cache_data(ttl=60, show_spinner=False)
 def _range_prices(ticker: str, range_key: str) -> pd.Series:
     """Fechos para o intervalo escolhido (yfinance; intraday ~15 min de atraso)."""
@@ -439,13 +458,20 @@ def _live_view() -> None:
     history = _read_shared_history()
     _overview_strip()
     if not history:
-        st.caption("⚠ No shared event history reachable right now — charts still show live "
+        st.caption("⚠ No shared event history reachable right now. Charts still show live "
                    "prices; events appear as the automated scan records them.")
+    openings = [h for h in history if h.kind == "open"]
     summaries = [h for h in history if h.kind == "summary"]
+    if openings:
+        with st.expander(f"🔔 Market open snapshot ({openings[-1].date})"):
+            st.text(openings[-1].text)
     if summaries:
-        with st.expander(f"📊 Daily close summary ({summaries[-1].date}) — as sent to the "
-                        "Telegram channel"):
+        with st.expander(f"📊 Daily close summary ({summaries[-1].date})"):
             st.text(summaries[-1].text)
+    monitoring = _live_monitoring_md()
+    if monitoring:
+        with st.expander("📈 How our alerts are doing (live monitoring)"):
+            st.markdown(monitoring)
     tickers = _watchlist()
     # Seletor de empresa em vez de st.tabs: o Streamlit renderiza TODAS as tabs a cada
     # interação (10× fetch/scoring — a app arrastava-se). Assim só a empresa escolhida é

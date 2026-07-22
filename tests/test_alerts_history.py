@@ -15,7 +15,12 @@ from investigator.alerts_history import (
 
 def test_classify_kind_deteta_mercado_e_noticia():
     assert classify_kind("🔺 Anomaly detected for AAPL: +2.10% today") == "market"
+    assert classify_kind("🔻 TSLA (Tesla) · -8.40% today") == "market"   # setas ambas
     assert classify_kind("📰 News alert for NVDA") == "news"
+    assert classify_kind("📊 Daily close summary\n🔺 AAPL ...") == "summary"
+    assert classify_kind("🔔 Market open — watchlist snapshot") == "open"   # nota de abertura
+    # bug latente corrigido: intradiário sem "Anomaly detected for" já não vai para "news"
+    assert classify_kind("Unusual intraday move for TSLA") == "market"
 
 
 def test_append_and_trim_apara_ao_limite_mantendo_recentes():

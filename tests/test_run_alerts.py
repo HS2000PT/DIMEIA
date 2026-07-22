@@ -183,6 +183,40 @@ def test_maybe_daily_summary_uma_vez_por_dia_apos_21utc(tmp_path):
     assert maybe_daily_summary(st2, [], 2.0, hour_utc=22) is None  # sem resultados, nada a dizer
 
 
+def _r(last_return: float) -> AnomalyResult:
+    """AnomalyResult com o retorno que eu quiser (o _res fixa last_return=0.05)."""
+    return AnomalyResult(is_anomaly=False, z_score=0.0, last_return=last_return,
+                         mean=0.0, std=0.01, window=20, threshold=1.5)
+
+
+def test_build_opening_note_snapshot():
+    from scripts.run_alerts import build_opening_note
+
+    note = build_opening_note([("NVDA", _r(0.024)), ("AAPL", _r(0.004)), ("TSLA", _r(-0.018))])
+    assert "Market open" in note
+    assert "🔺 NVDA: +2.40% vs yesterday's close" in note   # seta certa (sobe)
+    assert "🔻 TSLA: -1.80% vs yesterday's close" in note    # seta certa (desce)
+    assert "Flat at the open: AAPL +0.4%" in note            # <1% comprimido
+    assert note.index("NVDA") < note.index("TSLA")           # ordenado por |movimento|
+    assert "not advice" in note
+    assert build_opening_note([]) == ""
+
+
+def test_maybe_opening_note_uma_vez_por_dia_na_abertura(tmp_path):
+    from datetime import date
+
+    from scripts.run_alerts import load_state, maybe_opening_note
+
+    st = load_state(tmp_path / "none.json", today=date(2026, 7, 13))
+    res = [("AAPL", _r(0.02))]
+    assert maybe_opening_note(st, res, hour_utc=13) is None   # antes da janela de abertura
+    txt = maybe_opening_note(st, res, hour_utc=14)
+    assert txt and "Market open" in txt
+    assert maybe_opening_note(st, res, hour_utc=15) is None   # já enviado hoje
+    st2 = load_state(tmp_path / "none.json", today=date(2026, 7, 13))
+    assert maybe_opening_note(st2, [], hour_utc=14) is None   # sem resultados → nada a dizer
+
+
 def test_precedents_are_strong_aplica_o_chao():
     from scripts.run_alerts import precedents_are_strong
 

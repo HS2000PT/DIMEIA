@@ -101,6 +101,26 @@ jobs:
           INVESTIGATOR_HISTORY_PATH: history/alerts_history.jsonl
         run: python scripts/run_alerts.py
 
+      # Loop de pós-fecho (M5.5): ao fecho (≥21 UTC), rotula as decisões de triagem já
+      # maturadas (janela (d, d+3] fechada) com o resultado REAL e regenera
+      # history/live_monitoring.md — a app mostra-o ("How our alerts are doing"). Preços via
+      # a cadeia de fallback (o yfinance bloqueia nos runners). O log de decisões vive na
+      # branch partilhada, por isso ACUMULA entre corridas. Fail-open: nunca quebra o job.
+      - name: Post-close validation (once per day, at close)
+        if: always()
+        continue-on-error: true
+        env:
+          TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+          ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
+          INVESTIGATOR_HISTORY_PATH: history/alerts_history.jsonl
+        run: |
+          if [ "$(date -u +%H)" -ge 21 ] && [ -d history/.git ]; then
+            python scripts/post_validate.py
+          else
+            echo "[post-validate] fora da janela de fecho (ou sem branch de dados) — a saltar."
+          fi
+
       - name: Save intraday state + subscribers
         if: always()
         uses: actions/cache/save@v4
