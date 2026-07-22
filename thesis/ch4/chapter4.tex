@@ -217,7 +217,9 @@ pipeline. \emph{Offline} (top), FNSPID news is aligned to prices and embedded in
 The \emph{news trigger} (middle) embeds an incoming headline, finds its nearest precedents in the
 knowledge base and attaches their observed impact; the \emph{market trigger} (bottom) turns live prices
 into a \emph{z}-score and fires only when it exceeds the threshold. Both paths converge on the
-explanation engine, which delivers one explained alert through Telegram.}
+explanation engine, which delivers one explained alert through Telegram. This is the simplified view;
+the complete pipeline, with every decision gate and its live configuration value, is
+Figure~\ref{fig:master_pipeline} in Appendix~\ref{app:reproducibility}.}
 \label{fig:workflow}
 \end{figure}
 
@@ -316,10 +318,11 @@ lives on a separate secondary view, keeping the main surface read-only and minim
 \centering
 \includegraphics[width=0.95\textwidth]{figures/app_dashboard.png}
 \caption[The live dashboard, a genuine capture]{The public dashboard (a genuine screenshot, not a
-mockup): the watchlist-wide ``market now'' strip, one company selected at a time, a large ranged price
-chart with detected events marked on the curve (hover shows the full alert; the markers here are real
-news alerts from the public channel), and the trained triage model's background risk. Captured from
-the deployed codebase during live operation.}
+mockup): the watchlist-wide ``market now'' strip, the morning open and previous-close summaries as
+collapsible notes, one company selected at a time, a large ranged price chart with detected events
+marked on the curve (hover shows the full alert; the marker here is a real alert from the public
+channel), and the trained triage model's background risk. Captured from the deployed codebase during
+live operation.}
 \label{fig:app_dashboard}
 \end{figure}
 

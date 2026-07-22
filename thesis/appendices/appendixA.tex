@@ -185,6 +185,48 @@ and figures into the evaluation and figure directories:
 \noindent The data-fetch step that precedes them, and the full build of the historical knowledge base, are
 documented in the repository's operator guide.
 
+\section{Proof of Work: Every Number Traced to Its Source}
+\label{app:repro_proof}
+
+No result in this dissertation is typed by hand. Each script writes its numbers and figures directly
+into a frozen file under \texttt{docs/evaluation/}, and the thesis quotes those files, so the loop
+between code and document is closed and auditable. Table~\ref{tab:proof_of_work} lists, for every
+headline result, the value as reported, and the frozen file that a single command from
+Section~\ref{app:repro_tests} regenerates. An examiner can reproduce any one number in isolation.
+
+\begin{table}[ht]
+\caption{Each reported result, its value, and the frozen file one command regenerates.}
+\label{tab:proof_of_work}
+\centering
+\small
+\begin{tabular}{p{6.1cm} l l}
+\toprule
+\tabhead{Result} & \tabhead{Value} & \tabhead{Frozen file} \\
+\midrule
+Precedent retrieval, precision@5 (MiniLM / MPNet / lexical) & 0.514 / 0.538 / 0.346 & evaluation\_results.md \\
+Anomaly detection, $F_1$ (z-score vs fixed threshold) & 0.516 vs 0.218 & evaluation\_anomaly.md \\
+Statistical rule vs learned detectors, $F_1$ (z-score / IF / LOF) & 0.530 / 0.269 / 0.280 & evaluation\_anomaly\_ext.md \\
+EWMA volatility (validated future), $F_1$ vs rolling & 0.664 vs 0.516 & evaluation\_anomaly\_ext.md \\
+Materiality triage, PR-AUC (volatility / context / full) & 0.542 / 0.538 / 0.496 & evaluation\_triage.md \\
+Triage precision@5 per day vs alert-always & 0.632 vs 0.163 & evaluation\_triage.md \\
+Extended feature ablation, PR-AUC (context $+$ 5 signals) & 0.535 ($\Delta{-}0.002$) & evaluation\_triage\_ext.md \\
+Worked triage decision (META, 12 Jul 2026) & $p = 0.539$ (54\%) & triage\_worked\_example.md \\
+Production selectivity (headlines : alerts sent) & 22\,:\,1 & alert\_funnel.md \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{The system really ran.} Beyond reproducibility on demand, InvestiGator operated live. A
+scheduled workflow scanned the watchlist after each US market close and delivered explained alerts to a
+public Telegram channel; the shared, versioned alert record accumulated dozens of real alerts, including
+the first genuine market anomaly (NVDA, 13~July~2026). The live knowledge base matured its captured
+headlines against the real prices that followed, and the post-validation loop labelled real past
+decisions with their observed outcome, reporting a kept-alert precision of $0.667$ against a base rate of
+$0.455$ --- out-of-sample evidence that the triage mechanism holds. The automated suite of $199$ tests,
+offline and deterministic, runs on every push through continuous integration, and the work is recorded
+across more than two hundred commits. Regenerable numbers, a live deployment, and a green test suite
+together are the dissertation's proof of work.
+
 \section{Data and Attribution}
 \label{app:repro_data}
 

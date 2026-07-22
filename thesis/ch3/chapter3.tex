@@ -133,6 +133,64 @@ states the build.
 \end{algorithmic}
 \end{algorithm}
 
+To make the abstract concrete, Figure~\ref{fig:data_journey} follows \emph{one real headline} through
+every stage of the system: the raw record as retrieved, the cleaning and no-lookahead alignment, the
+representation step where the ``AI'' actually happens (the headline becomes a $384$-dimensional
+embedding, the event becomes a small vector of market-context features, and the outcome becomes a
+binary materiality label), and the two things those representations are finally used and measured for.
+Every value shown is genuine, taken from the dataset for Nvidia on 10~May~2018.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=2mm]},
+  stage/.style={draw, rounded corners, align=left, text width=3.0cm, inner sep=4pt,
+                minimum height=4.3cm, anchor=north},
+  raw/.style={stage, fill=blue!4, draw=blue!45},
+  clean/.style={stage, fill=teal!6, draw=teal!55},
+  rep/.style={stage, fill=orange!8, draw=orange!65, line width=0.9pt},
+  learn/.style={stage, fill=green!7, draw=green!55},
+]
+  \node[raw] (s1) at (0,0) {%
+    \textcolor{blue!60}{\textbf{1\, \textbullet\, RAW}}\\
+    \emph{what we retrieve}\\[3pt]
+    FNSPID / news row:\\
+    {\ttfamily\tiny{}2018-05-10}\\ {\ttfamily\tiny{}NVDA}\\
+    {\ttfamily\tiny{}"Nvidia Blows Out Q1}\\ {\ttfamily\tiny{}Estimates, Raises Q2..."}\\[3pt]
+    $+$ daily close prices\\ (yfinance)};
+  \node[clean] (s2) at (3.55,0) {%
+    \textcolor{teal!65}{\textbf{2\, \textbullet\, CLEAN \& ALIGN}}\\
+    \emph{no lookahead}\\[3pt]
+    event day $=$ 1st trading\\ day $\ge$ news date\\ $\to$ 2018-05-10\\[3pt]
+    closes $\to$ log-returns\\[3pt]
+    keep headline; drop the\\ live summary (governance)};
+  \node[rep] (s3) at (7.1,0) {%
+    \textcolor{orange!75!black}{\textbf{3\, \textbullet\, REPRESENT}}~%
+    \colorbox{orange!70!black}{\textcolor{white}{\tiny\bfseries AI}}\\
+    \emph{the model's view}\\[3pt]
+    text $\to$ SBERT \textbf{384-d}, norm 1:\\
+    {\ttfamily\tiny{}[-.005, .004, .049, ...]}\\[3pt]
+    context: vol20 .021,\\ mom5 $+$.122, ret $+$.017\\[3pt]
+    label: $|$abn.\ vs SPY, $+$3d$|$\\ $\ge 2\%\ \to\ $\textbf{1} (material)};
+  \node[learn] (s4) at (10.65,0) {%
+    \textcolor{green!55!black}{\textbf{4\, \textbullet\, LEARN \& MEASURE}}\\
+    \emph{two questions}\\[3pt]
+    \textbf{triage:} features $\to$\\ LogReg $+$ Platt $\to$\\ $p$(material) \textbullet\ PR-AUC\\[4pt]
+    \textbf{retrieval:} embedding\\ $\to$ cosine top-$k$ $\to$\\ precedents $+$ impact\\ \textbullet\ precision@$k$};
+  \draw[->, thick] (s1.east) -- (s2.west);
+  \draw[->, thick] (s2.east) -- (s3.west);
+  \draw[->, thick] (s3.east) -- (s4.west);
+\end{tikzpicture}
+\caption[One real headline through the whole system]{One real headline (Nvidia, 10~May~2018)
+travelling through every stage. It is retrieved as a plain row plus prices (1), cleaned and aligned to
+the first trading day with impact measured strictly forward (2), then \emph{represented} for the models
+(3): the text becomes a $384$-dimensional Sentence-BERT embedding, the market context becomes a handful
+of features, and the observed outcome becomes a binary materiality label. Those representations feed the
+two things the system measures (4): a calibrated triage probability and precedent retrieval. Every value
+is genuine, read from the dataset.}
+\label{fig:data_journey}
+\end{figure}
+
 \subsection{Live Layer and Evaluation Dataset}
 \label{sec:met_data_live}
 
