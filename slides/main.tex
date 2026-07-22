@@ -113,6 +113,43 @@ Not a new algorithm: the \textbf{disciplined integration, application and critic
 historical \textbf{NewsRecord} share the schema, so a new headline is directly comparable.
 \end{frame}
 
+\begin{frame}{The data, at every stage --- one real headline}
+\centering
+\begin{tikzpicture}[font=\scriptsize, >={Stealth[length=2mm]},
+  stage/.style={draw, rounded corners, align=left, text width=2.75cm, inner sep=4pt,
+                minimum height=3.2cm, anchor=north},
+  raw/.style={stage, fill=blue!5, draw=blue!45},
+  clean/.style={stage, fill=teal!8, draw=teal!55},
+  rep/.style={stage, fill=orange!12, draw=orange!70, line width=1pt},
+  learn/.style={stage, fill=green!10, draw=green!55}]
+  \node[raw] (s1) at (0,0){%
+    \textcolor{blue!60}{\textbf{1 \textbullet\ RAW}}\\ \emph{retrieved}\\[2pt]
+    {\tiny\ttfamily 2018-05-10}\\ {\tiny\ttfamily NVDA}\\ {\tiny\ttfamily "Nvidia Blows}\\ {\tiny\ttfamily Out Q1..."}\\[2pt]
+    $+$ daily prices};
+  \node[clean] (s2) at (3.25,0){%
+    \textcolor{teal!65}{\textbf{2 \textbullet\ CLEAN}}\\ \emph{no lookahead}\\[2pt]
+    align to 1st\\ trading day\\[2pt]
+    prices $\to$\\ log-returns\\[2pt]
+    drop live summary};
+  \node[rep] (s3) at (6.5,0){%
+    \textcolor{orange!75!black}{\textbf{3 \textbullet\ REPRESENT}}~\colorbox{orange!70!black}{\textcolor{white}{\tiny\bfseries AI}}\\ \emph{model's view}\\[2pt]
+    text $\to$ SBERT\\ \textbf{384-d} vector\\[2pt]
+    context: vol20,\\ mom5, ret\\[2pt]
+    label: material?\ \textbf{yes}};
+  \node[learn] (s4) at (9.75,0){%
+    \textcolor{green!55!black}{\textbf{4 \textbullet\ MEASURE}}\\ \emph{two questions}\\[2pt]
+    \textbf{triage} $\to$\\ $p$(material)\\[2pt]
+    \textbf{retrieval} $\to$\\ precedents\\[2pt]
+    PR-AUC $\cdot$ prec@$k$};
+  \draw[->,thick] (s1.east)--(s2.west);
+  \draw[->,thick] (s2.east)--(s3.west);
+  \draw[->,thick] (s3.east)--(s4.west);
+\end{tikzpicture}
+\par\vspace{1mm}
+\footnotesize Every value is genuine (Nvidia, 10 May 2018). The ``AI'' is the \textbf{REPRESENT} step:
+text becomes a $384$-dimensional embedding, the event becomes context features, the outcome becomes a label.
+\end{frame}
+
 \begin{frame}{Market trigger: transparent by design}
 \begin{columns}
 \column{0.5\textwidth}
@@ -235,7 +272,7 @@ Gradient boosting & 0.469 & 0.551 \\
 \end{columns}
 \vfill
 \begin{block}{\small The honest verdict (pre-committed)}
-\small Within a 5-alerts/day budget, triage nearly \textbf{quadruples precision} ($0.632$ vs $0.163$) --- but \textbf{no text model beat volatility}. The signal is market context; reported as it fell.
+\small Within a 5-alerts/day budget, triage nearly \textbf{quadruples precision} ($0.632$ vs $0.163$) --- but \textbf{no text model beat volatility}. A follow-up ablation added \emph{five} more cheap context features (market regime, momentum, standardised reaction, downside risk): PR-AUC $0.535$, again \textbf{no gain}. The signal is market context; reported as it fell.
 \end{block}
 \end{frame}
 
@@ -252,6 +289,25 @@ Gradient boosting & 0.469 & 0.551 \\
   \item Free tier only: GitHub Actions (cron) + Streamlit Community Cloud.
 \end{itemize}
 \end{columns}
+\end{frame}
+
+\newcommand{\techbadge}[2]{{\setlength{\fboxsep}{3pt}\colorbox{#1!13}{\small\strut #2}}}
+\newcommand{\techcat}[1]{\smallskip\par\textbf{\footnotesize #1}\par\smallskip}
+\begin{frame}{Built with --- free tools and open data, end to end}
+\centering\vspace{1mm}
+\techcat{\textcolor{blue!60}{Data sources \& APIs}}
+\techbadge{blue}{FNSPID (Hugging Face)}\ \techbadge{blue}{yfinance}\ \techbadge{blue}{Finnhub}\ %
+\techbadge{blue}{RSS feeds}\ \techbadge{blue}{SPY (market proxy)}
+\techcat{\textcolor{orange!75!black}{Machine learning}}
+\techbadge{orange}{Sentence-BERT / MiniLM}\ \techbadge{orange}{scikit-learn}\ %
+\techbadge{orange}{PyTorch (CPU)}\ \techbadge{orange}{Platt calibration}\ \techbadge{orange}{ONNX Runtime}
+\techcat{\textcolor{green!55!black}{Product \& delivery}}
+\techbadge{green}{Telegram Bot API}\ \techbadge{green}{Streamlit}\ \techbadge{green}{Plotly}
+\techcat{\textcolor{purple!70}{Engineering \& infrastructure}}
+\techbadge{purple}{Python 3.12}\ \techbadge{purple}{GitHub Actions (cron)}\ \techbadge{purple}{pytest $+$ ruff}\ %
+\techbadge{purple}{joblib}
+\par\bigskip
+{\footnotesize No paid APIs, no GPUs, no always-on server --- reproducible on a laptop.}
 \end{frame}
 
 \begin{frame}{Limitations (stated plainly)}
