@@ -23,7 +23,7 @@ reasoning chain — detected event → explanation → sources → historical pr
 | I want to… | Go to |
 |---|---|
 | Read the dissertation | `thesis/main.pdf` (86 pp) |
-| Study for the defence | `slides/guia_estudo/main.pdf` — **the** single study source (73 slides) |
+| Study for the defence | `slides/guia_estudo/main.pdf` — **the** single study source (76 slides) |
 | See it live | <https://investigator.streamlit.app> + Telegram <https://t.me/InvestiGatorMEIA> |
 | Show it to the supervisor | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) (10-min read) |
 | Run it myself | `python scripts/demo.py` · full guide `docs/design/how_to_run.md` |
@@ -106,7 +106,7 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 
 ## Learn it / prepare the defence — ONE source
 - **THE study guide (PT-PT):** **`slides/guia_estudo/main.pdf`** — the single, consolidated source
-  (73 slides): teaches the whole thesis from zero, the code line by line, the evaluation, **the oral
+  (76 slides): teaches the whole thesis from zero, the code line by line, the evaluation, **the oral
   script (3-min opening + per-RQ answers), the complete jury Q&A, the frozen-numbers table and the
   defence plan B**. Everything previously scattered across companion documents now lives here.
 - **Final report (PT-PT, for the supervisor/jury):** **[`RELATORIO_FINAL.md`](RELATORIO_FINAL.md)** —
@@ -131,7 +131,7 @@ powers the public app) — evaluating retrieval on it stays future work, as the 
 thesis/        LaTeX dissertation (6 chapters + front matter + appendix; 86 pp)
 paper/         IEEE paper (IEEEtran) distilled from the thesis
 slides/        defence slides (Beamer, 17 frames)
-  guia_estudo/   THE study guide (PT-PT, Beamer, 73 slides — single study source)
+  guia_estudo/   THE study guide (PT-PT, Beamer, 76 slides — single study source)
 investigator/  system code, one package per component (investigator/triage/ = the trained ML component, RQ4)
 models/        trained triage models (joblib, versioned; context-only variant runs in production)
 notebooks/     investigator_walkthrough.ipynb — hands-on tour of the 3 components, executed & committed
