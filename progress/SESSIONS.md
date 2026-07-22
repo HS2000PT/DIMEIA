@@ -27,6 +27,10 @@ moderno/simples/jovem, em tese e apresentação.
 - **Gates:** 199 testes (+4) + ruff verdes; tese 90 pp/paper/slides 19/guia 76 = 0 erros; congelados
   byte-iguais; 0 fabricação. Commits SEM trailer de IA (instrução do aluno). Pendente = humano (licença,
   declaração ISEP, leitura final, publicar o bundle).
+- **Adenda (25e1988) — o aluno reforçou "logos + snapshots dos dados":** (1) infraestrutura de LOGOS
+  reais nos frames "Built with"/"Feito com" (`\techlogo`/`\glogo` + `\IfFileExists` → logo se o PNG
+  existir em `slides/logos/`, senão badge; README com nomes+fontes). (2) **Tabela 3.4** na tese (+frame
+  no guia, 77 slides): cada coluna que a triagem lê + valor real (NVDA) + que métrica usa que colunas.
 
 ---
 

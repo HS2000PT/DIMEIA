@@ -113,8 +113,18 @@
   21 internos excluídos, scan limpo, 1 commit "Initial public release of InvestiGator".
   **GATES:** 199 testes (+4) + ruff verdes; tese 90 pp / paper / slides 19 / guia 76 — todos 0 erros;
   congelados byte-iguais; números novos gerados dos dados (0 fabricação).
+  **✅ ADENDA (commit 25e1988) — logos reais + dicionário de colunas (o aluno reforçou o pedido):**
+  (1) **Logos:** os frames "Built with"/"Feito com" passam a mostrar o LOGO REAL se existir o PNG em
+  `slides/logos/`, senão o badge de nome (`\techlogo`/`\glogo` com `\IfFileExists` — degrada com graça,
+  sem mexer no .tex); `slides/logos/README.md` lista os nomes de ficheiro + fontes oficiais. Decisão:
+  no CORPO da tese ficam badges/figura (logos de marca são incomuns numa tese); os logos vivem nos
+  slides+guia. (2) **Snapshots dos dados:** nova **Tabela 3.4** na tese — CADA coluna que a triagem lê
+  + o VALOR REAL do exemplo NVDA + que métrica usa que colunas (contexto→triagem/PR-AUC;
+  embedding→retrieval/prec@k); frame gémeo no guia (73→**77 slides**). Responde ao "que dados, o que
+  lhes acontece, e que métrica com que colunas". Tese 90 pp / slides 19 / guia 77 = 0 erros.
   **PENDENTE HUMANO:** licença de código + declaração ISEP (com o orientador); leitura final; publicar
-  o bundle (cliques). **Ambiente:** este PC tem venv 3.12 + torch + MiKTeX + Playwright(chromium).
+  o bundle (cliques); **opcional: largar os PNG dos logos em `slides/logos/`** (aparecem sozinhos).
+  **Ambiente:** este PC tem venv 3.12 + torch + MiKTeX + Playwright(chromium).
 - **🟢 SESSÃO 39 (verificação, sem código novo):** confirmado nos logs REAIS do Actions (lidos
   via API com a credencial git local; `gh` não existe neste PC) que a sessão 38 funcionou em
   produção. **(1) 1.º alerta de MERCADO de sempre** no canal (13/07: NVDA −3,53% intradiário,
