@@ -47,12 +47,20 @@
   bloqueia) + defaults sensíveis ao ambiente, passo novo no workflow ao fecho (≥21 UTC) regenera
   `live_monitoring.md`, e a app mostra "How our alerts are doing" (fail-open). `classify_kind`
   ganhou "open". going_live.md ressincronizado. **191 testes (+2) + ruff verdes.**
-  **FALTAM (por ordem aprovada):** F4 RQ4-ext (novos critérios + ablação de features — tarefa ML
-  grande, stack `--ml` + FNSPID) · F5 logo/slogan (apresentar 2-3 conceitos p/ o aluno escolher) ·
-  F6 revisão de escrita natural (tese + IEEE) · F7 figuras + apêndice proof-of-work · F8 guias de
-  estudo VISUAIS (o + crítico p/ o aluno) · F9 manifesto do bundle público (isolar app/tese).
+  **🟡 FASE 4 GROUNDWORK FEITA (commit 8f8e65b) — RQ4-ext, corrida BLOQUEADA por falta de dados:**
+  ⚠️ **CORREÇÃO de nota desatualizada:** este PC (`ruif`) **NÃO tem os dados** — `data/` só tem
+  amostras (sem `triage_dataset.csv`/FNSPID/`finnhub_news.csv`, sem `.env`) e **não tem `torch`**.
+  O congelado foi treinado noutra máquina (`C:\Users\henri\…`, cabeçalho de `evaluation_triage.md`).
+  ⇒ a ablação não corre aqui e NÃO se fabricam números. Entregue o MECANISMO testado:
+  `event_features_ext` (5 features novas aditivas e anti-lookahead: market_vol20, mom20, vol_ratio,
+  ret_event_z, downside_vol20) + `build_dataset.py --ext` (ficheiro separado; congelado byte-igual)
+  + roteiro honesto `docs/evaluation/roadmap_rq4.md`. **195 testes (+4) + ruff verdes.** Números:
+  correr na máquina com corpus + `setup_env.sh --ml`.
+  **FALTAM:** F5 logo/slogan (apresentar 2-3 conceitos p/ o aluno escolher) · F6 revisão de escrita
+  natural (tese + IEEE) · F7 figuras + apêndice proof-of-work · F8 guias de estudo VISUAIS
+  (o + crítico p/ o aluno) · F9 manifesto do bundle público (isolar app/tese).
   **⚠️ Para o aluno VER as Fases 1-3 ao vivo:** correr o workflow "Alerts" (1 clique) e reabrir a
-  app. **4 commits locais em `main` NÃO empurrados** (o aluno não pediu push; dar luz verde).
+  app. **7 commits locais em `main` NÃO empurrados** (o aluno não pediu push; dar luz verde).
 - **🟢 SESSÃO 39 (verificação, sem código novo):** confirmado nos logs REAIS do Actions (lidos
   via API com a credencial git local; `gh` não existe neste PC) que a sessão 38 funcionou em
   produção. **(1) 1.º alerta de MERCADO de sempre** no canal (13/07: NVDA −3,53% intradiário,
