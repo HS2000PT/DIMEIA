@@ -56,11 +56,19 @@
   ret_event_z, downside_vol20) + `build_dataset.py --ext` (ficheiro separado; congelado byte-igual)
   + roteiro honesto `docs/evaluation/roadmap_rq4.md`. **195 testes (+4) + ruff verdes.** Números:
   correr na máquina com corpus + `setup_env.sh --ml`.
-  **FALTAM:** F5 logo/slogan (apresentar 2-3 conceitos p/ o aluno escolher) · F6 revisão de escrita
-  natural (tese + IEEE) · F7 figuras + apêndice proof-of-work · F8 guias de estudo VISUAIS
-  (o + crítico p/ o aluno) · F9 manifesto do bundle público (isolar app/tese).
-  **⚠️ Para o aluno VER as Fases 1-3 ao vivo:** correr o workflow "Alerts" (1 clique) e reabrir a
-  app. **7 commits locais em `main` NÃO empurrados** (o aluno não pediu push; dar luz verde).
+  **✅ FASE 5 FEITA (commit 5483dbf, PUSHED) — logo + slogan:** o aluno escolheu o **Conceito 3
+  "The Stare"** dos 3 que apresentei num artifact (olho de crocodilo — íris dourada, pupila em
+  fenda, sobrolho — sobre linha de mercado; funde Invest/Investigate/alliGator). `logo.svg`
+  reescrito; slogan novo **"Every move investigated, never predicted."** (personalidade + honesto
+  ao "não prever"; sem travessão) em app/README/RELATORIO; page_icon 🐊; tema config.toml
+  verde-pântano+dourado. ⚠️ Screenshot da app na tese (Fig. 4.5) + logo nos slides ainda ANTIGOS
+  → regenerar na F7.
+  **PUSH:** o aluno autorizou; `origin/main` em `5483dbf` (Fases 1-5 no remoto).
+  **FALTAM:** F6 revisão de escrita natural (tese + IEEE — sem tokens de IA, sem travessões a
+  meio de frases) · F7 figuras (simplificada no corpo + completa no apêndice) + apêndice
+  proof-of-work + regen screenshot · F8 guias de estudo VISUAIS (o + crítico p/ o aluno) · F9
+  manifesto do bundle público (isolar app/tese p/ repo público de 1 commit).
+  **⚠️ Para o aluno VER Fases 1-5 ao vivo:** correr o workflow "Alerts" + redeploy/reabrir a app.
 - **🟢 SESSÃO 39 (verificação, sem código novo):** confirmado nos logs REAIS do Actions (lidos
   via API com a credencial git local; `gh` não existe neste PC) que a sessão 38 funcionou em
   produção. **(1) 1.º alerta de MERCADO de sempre** no canal (13/07: NVDA −3,53% intradiário,
