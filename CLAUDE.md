@@ -37,12 +37,22 @@
   modernos (cartão multi-linha formatado com hoverlabel claro, em vez do texto cru de 220
   chars); cabeçalho "Alert history" + linha "num relance" (N market · K news + legenda);
   AppTest reescrito. **189 testes + ruff verdes em ambas as fases; números congelados intactos.**
-  **FALTAM (por ordem aprovada):** F3 timing abertura/fecho + loop de pós-fecho · F4 RQ4-ext
-  (novos critérios + ablação de features) · F5 logo/slogan (apresentar 2-3 conceitos p/ o aluno
-  escolher) · F6 revisão de escrita natural (tese + IEEE) · F7 figuras + apêndice proof-of-work ·
-  F8 guias de estudo VISUAIS (o + crítico p/ o aluno) · F9 manifesto do bundle público (isolar
-  app/tese). **⚠️ Para o aluno VER as Fases 1-2 ao vivo:** correr o workflow "Alerts" (1 clique)
-  e reabrir a app — o dashboard e os próximos alertas já saem no formato novo.
+  **✅ FASE 3 FEITA (commit 16dd405) — timing abertura/fecho + loop de pós-fecho zero-ops:**
+  (a) NOTA DE ABERTURA nova (`build_opening_note`/`maybe_opening_note`, 1×/dia 14-15 UTC via
+  cotação intradiária: como a watchlist abriu vs fecho de ontem; kind "open"/🔔; a app mostra-a
+  num expander) — o par matinal do resumo de FECHO (que já dispara ~21 UTC). (b) LOOP DE
+  PÓS-FECHO tornado REAL e zero-ops: o `predictions_log.jsonl` passou de `data/` gitignored para
+  a **branch `alerts-history`** (PERSISTE entre corridas do Actions), o `post_validate.py`
+  reescrito para usar a cadeia de fallback de preços (funciona nos runners onde o yfinance
+  bloqueia) + defaults sensíveis ao ambiente, passo novo no workflow ao fecho (≥21 UTC) regenera
+  `live_monitoring.md`, e a app mostra "How our alerts are doing" (fail-open). `classify_kind`
+  ganhou "open". going_live.md ressincronizado. **191 testes (+2) + ruff verdes.**
+  **FALTAM (por ordem aprovada):** F4 RQ4-ext (novos critérios + ablação de features — tarefa ML
+  grande, stack `--ml` + FNSPID) · F5 logo/slogan (apresentar 2-3 conceitos p/ o aluno escolher) ·
+  F6 revisão de escrita natural (tese + IEEE) · F7 figuras + apêndice proof-of-work · F8 guias de
+  estudo VISUAIS (o + crítico p/ o aluno) · F9 manifesto do bundle público (isolar app/tese).
+  **⚠️ Para o aluno VER as Fases 1-3 ao vivo:** correr o workflow "Alerts" (1 clique) e reabrir a
+  app. **4 commits locais em `main` NÃO empurrados** (o aluno não pediu push; dar luz verde).
 - **🟢 SESSÃO 39 (verificação, sem código novo):** confirmado nos logs REAIS do Actions (lidos
   via API com a credencial git local; `gh` não existe neste PC) que a sessão 38 funcionou em
   produção. **(1) 1.º alerta de MERCADO de sempre** no canal (13/07: NVDA −3,53% intradiário,
