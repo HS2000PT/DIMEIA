@@ -22,7 +22,17 @@ PR-AUC — reportado tal como é. **MAS** como *mecanismo de triagem*, a precis�
 de 0,163 (alertar sempre) para **0,632** (≈4×): o modelo vale para **priorizar**, não para
 prever. É daqui que partimos. Há margem — e cada passo abaixo é defensável e ensina.
 
-## Eixo 1 — Novos critérios (features) + estudo de ablação  🧭 código pronto
+## Eixo 1 — Novos critérios (features) + estudo de ablação  ✅ FEITO (2026-07-22)
+
+> **Resultado (honesto, na máquina com o corpus FNSPID):** os 5 sinais novos **NÃO ajudam** a
+> triagem. Âncora `context` v1 = PR-AUC **0,537** (reproduz o congelado 0,538); `context+5` =
+> **0,535** (Δ −0,002). Na ablação *leave-one-in/out*, só `ret_event_z` (a reação padronizada =
+> o \|z\| do detetor) tem sinal positivo, e só +0,001; os restantes são planos ou ligeiramente
+> negativos. **Leitura:** a volatilidade rolante já absorve quase tudo o que estes sinais baratos
+> carregam — a MESMA lição do texto, alcançada pelo lado oposto: a materialidade de curto prazo
+> resume-se notavelmente bem a UM número. Reportado tal como caiu; nada muda na produção.
+> Artefactos: `docs/evaluation/evaluation_triage_ext.md` + `thesis/figures/eval_triage_ext.pdf`
+> (via `scripts/train_triage_ext.py`); secção nova na tese (Cap. 5, Fig. da contribuição marginal).
 
 A hipótese: a triagem só via `{vol20, mom5, ret_event}`. Sinais baratos (sem novas fontes,
 todos anti-lookahead) que podem ajudar — e uma **ablação** que responde honestamente "quais
@@ -48,21 +58,20 @@ esperado e honesto: provavelmente `ret_event_z` e `market_vol20` ajudam mais; al
 **Valor para a tese:** uma secção nova de *feature ablation* (Cap. 5) + figura de contribuição —
 transforma "adicionámos features" em ciência ("estes sinais ajudam, estes não, e porquê").
 
-### Como correr (quando os dados estiverem presentes)
+### Como correr (reprodutível na máquina com o corpus)
 ```
-python scripts/build_dataset.py --ext          # → data/triage_dataset_ext.csv (colunas novas)
-# wiring pequeno (aditivo) a fazer no run: incluir o bloco "context_ext" em
-# investigator/triage/features.py::assemble e as famílias context_ext/ablação em
-# scripts/train_triage.py --dataset data/triage_dataset_ext.csv
-# → docs/evaluation/evaluation_triage_ext.md + figura (padrão dos *_ext das sessões 38/39)
+python scripts/build_dataset.py --ext --news data/fnspid_news_subset.csv  # → triage_dataset_ext.csv
+python scripts/train_triage_ext.py                                        # ablação de contexto
+# → docs/evaluation/evaluation_triage_ext.md + thesis/figures/eval_triage_ext.pdf
 ```
+O bloco `context_ext` foi acrescentado (aditivo) a `investigator/triage/features.py` (o caminho
+congelado fica byte-idêntico: o dataset da tese não tem as colunas estendidas). A ablação corre em
+segundos, offline e determinística (só features de contexto; sem SBERT). **Não toca** em `models/`
+nem em `evaluation_triage.md`.
 
-> **Estado honesto (2026-07-22):** a CORRIDA está pendente de dados. Este PC tem só amostras
-> (`data/samples/*`) — **não** o corpus FNSPID/Finnhub completo nem o `triage_dataset.csv`
-> (gitignored; foi treinado noutra máquina — ver o caminho `C:\Users\henri\…` no cabeçalho
-> congelado) — e **não** tem `torch` instalado. O código das features está feito e testado;
-> os NÚMEROS geram-se ao correr o acima na máquina com o corpus + `setup_env.sh --ml`. Nada é
-> fabricado: sem dados, sem números.
+> **Estado (2026-07-22):** CORRIDO nesta máquina (a do corpus FNSPID + `torch`; o mesmo PC do
+> cabeçalho congelado `C:\Users\henri\…`). Resultado acima. Nada fabricado — números gerados dos
+> próprios dados; a âncora `context` reproduz o congelado (0,537 vs 0,538).
 
 ## Eixo 2 — Extensões já VALIDADAS (adotar como "futuro já provado")
 
@@ -88,6 +97,7 @@ dados para um **retreino periódico** com rótulos atrasados (MLOps, não RL cl�
 - **Sentimento (FinBERT)**: pesado (transformer dedicado); documentado como extensão, não base.
 
 ## Definição de pronto (deste roteiro)
-Eixo 1 corrido na máquina com dados ⇒ `evaluation_triage_ext.md` + figura + parágrafo honesto na
-tese (o que ajudou, o que não). Eixos 2–3 já entram na tese como validados. Eixo 4 fica em
-"trabalho futuro" com fontes identificadas. **Sem números fabricados em nenhum ponto.**
+Eixo 1 ✅ corrido ⇒ `evaluation_triage_ext.md` + figura + parágrafo honesto na tese (nenhum dos 5
+sinais ajudou — reportado como caiu). Eixos 2–3 já na tese como validados. Eixo 4 fica em "trabalho
+futuro" com fontes identificadas (volume/OHLCV, earnings, FinBERT). **Sem números fabricados em
+nenhum ponto.**

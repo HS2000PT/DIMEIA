@@ -532,6 +532,37 @@ sent to the channel (Table~\ref{tab:triage_worked}). Reproducible via
 \label{fig:triage_contributions}
 \end{figure}
 
+\paragraph{Do more market features help? A feature ablation.} The result above says the signal
+lives in market context rather than headline text, which invites the natural follow-up: would
+\emph{more} context help? Five additional signals were engineered, all cheap (no new data source)
+and all under the same causal convention as the originals, so that nothing after the event day can
+leak into them: the broad market's own volatility regime (on the market index), the stock's
+twenty-day momentum, the ratio of short to long volatility, the standardised immediate reaction
+(the detector's own $z$), and a downside-only volatility. The context-only model was retrained on
+these under the frozen protocol (temporal split, Platt calibration on validation, seed~$42$). The
+volatility anchor reproduces the frozen number ($0.537$ against the frozen $0.538$, the tiny gap
+coming only from the stricter sixty-day history the extended features require). Adding all five
+signals moves PR-AUC to $0.535$ --- no improvement. A leave-one-in / leave-one-out sweep
+(Figure~\ref{fig:triage_ablation})
+explains why: the standardised reaction is the only signal with a positive sign, and only by $0.001$;
+the others are flat or slightly negative. Rolling volatility already absorbs almost everything these
+cheap features carry, which is the same lesson as the text result, reached from the opposite
+direction: on this corpus, near-term materiality is remarkably well summarised by one number.
+The finding is reported exactly as it fell and changes nothing in production; the full table is in
+\texttt{docs/evaluation/evaluation\_triage\_ext.md}, reproducible via
+\texttt{scripts/train\_triage\_ext.py}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/eval_triage_ext.pdf}
+\caption[Marginal contribution of extended context features]{Marginal PR-AUC contribution of
+each extended context feature on the test block, measured two ways: added on its own to the
+volatility model (leave-one-in) and removed from the full set (leave-one-out). All effects are within
+$\pm 0.005$ of zero: the cheap engineered signals are redundant given rolling volatility. Reproducible
+via \texttt{scripts/train\_triage\_ext.py}.}
+\label{fig:triage_ablation}
+\end{figure}
+
 \section{Discussion and Threats to Validity}
 \label{sec:cs_discussion}
 

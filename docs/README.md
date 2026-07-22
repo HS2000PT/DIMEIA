@@ -27,8 +27,9 @@ se só queres correr o sistema.
 | [evaluation/evaluation_anomaly.md](evaluation/evaluation_anomaly.md) | Anomalia: taxa de disparo + ablação (+ IF vs z-score). |
 | [evaluation/evaluation_anomaly_ext.md](evaluation/evaluation_anomaly_ext.md) | CS1-ext: LOF causal + z-score com σ EWMA (aditivo; congelados intactos). |
 | [evaluation/evaluation_triage.md](evaluation/evaluation_triage.md) | Triagem de materialidade (RQ4): números finais FNSPID. |
+| [evaluation/evaluation_triage_ext.md](evaluation/evaluation_triage_ext.md) | RQ4-ext: ablação de 5 features de contexto (aditivo; nenhuma ajudou — reportado como caiu). |
 | [evaluation/calibration_platt_vs_isotonic.md](evaluation/calibration_platt_vs_isotonic.md) | Extensão: Platt vs isotónica no mesmo protocolo (aditivo). |
-| [evaluation/roadmap_rq4.md](evaluation/roadmap_rq4.md) | Roteiro RQ4 ("não estamos no fim da linha"): features estendidas + ablação (código pronto; corrida pendente de dados). |
+| [evaluation/roadmap_rq4.md](evaluation/roadmap_rq4.md) | Roteiro RQ4 ("não estamos no fim da linha"): features estendidas + ablação (Eixo 1 ✅ corrido). |
 | [evaluation/triage_worked_example.md](evaluation/triage_worked_example.md) | Exemplo trabalhado REAL da triagem (alerta META → p=0,539 reproduzido). |
 | [evaluation/alert_funnel.md](evaluation/alert_funnel.md) | Funil de produção real: manchetes → alertas (22:1). |
 | [evaluation/evaluation_triage_smoke.md](evaluation/evaluation_triage_smoke.md) | Triagem: smoke no corpus Finnhub (congelado; regime shift). |
