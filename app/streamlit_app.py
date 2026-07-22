@@ -46,7 +46,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 st.set_page_config(
-    page_title="InvestiGator — Market intelligence, explained", page_icon="📈", layout="wide"
+    page_title="InvestiGator — explainable market alerts", page_icon="🐊", layout="wide"
 )
 
 _LOGO = Path(__file__).resolve().parent / "assets" / "logo.svg"
@@ -606,7 +606,7 @@ def _try_headline() -> None:
 
 def main() -> None:
     st.sidebar.title("InvestiGator")
-    st.sidebar.caption("_Market intelligence, explained._")
+    st.sidebar.caption("_Every move investigated, never predicted._")
     vista = st.sidebar.radio("View", ["📊 Live", "ℹ️ About"], label_visibility="collapsed")
     url = _channel_url()
     if url:

@@ -51,7 +51,8 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   aba por empresa, UM gráfico grande (1D/5D/1M/6M) com os eventos detetados marcados na curva
   (hover = o alerta exato do canal; nunca recalculado), a mesma lista em tabela, e o
   "background risk" do modelo treinado (RQ4). Read-only; método/avaliação/citação numa vista
-  About separada. Identidade profissional nova (logo + "Market intelligence, explained.").
+  About separada. Identidade "The Stare" (olho de crocodilo sobre linha de mercado) + slogan
+  "Every move investigated, never predicted.".
   Keep-alive automático via workflow; opção 24/7 sem hibernação na VM
   (`deploy/investigator-app.service`).
 - **Bot interativo** (`scripts/run_bot.py`): watchlist pessoal por utilizador, SQLite,

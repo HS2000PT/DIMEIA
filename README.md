@@ -1,8 +1,8 @@
-<img src="app/assets/logo.svg" width="120" align="right" alt="InvestiGator — market line ending in a watchful eye">
+<img src="app/assets/logo.svg" width="120" align="right" alt="InvestiGator — an alligator's watchful eye over a rising market line">
 
 # InvestiGator — Explainable Financial Alerts for Retail Investors
 
-*Market intelligence, explained.*
+*Every move investigated, never predicted.*
 
 **▶ Try it live: <https://investigator.streamlit.app>**
 

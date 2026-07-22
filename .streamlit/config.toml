@@ -1,10 +1,10 @@
-# Tema de marca do InvestiGator (2026-07-13): navy + esmeralda do logo (app/assets/logo.svg).
-# Só cores — sem CSS hacks; o Streamlit Cloud lê este ficheiro automaticamente.
+# Tema de marca do InvestiGator (2026-07-22): verde-pântano + dourado do logo "The Stare"
+# (app/assets/logo.svg). Só cores — sem CSS hacks; o Streamlit Cloud lê este ficheiro sozinho.
 [theme]
-primaryColor = "#10B981"            # esmeralda (a linha de mercado do logo)
+primaryColor = "#E7B24C"             # dourado investigador (a íris do olho / botões)
 backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F1F5F9" # slate-100 (painéis/sidebar, discreto)
-textColor = "#0F172A"               # navy-quase-preto (o quadrado do logo)
+secondaryBackgroundColor = "#EEF3EF" # verde muito claro (painéis/sidebar, discreto)
+textColor = "#0E2A20"                # verde-pântano quase-preto (o fundo do logo)
 
 [browser]
 gatherUsageStats = false

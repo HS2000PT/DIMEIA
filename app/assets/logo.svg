@@ -1,30 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
-  <!-- InvestiGator — marca profissional (2026-07-12): quadrado navy, linha de mercado
-       ascendente em esmeralda que termina num "olho" de vigilância (o gator, abstraído).
-       Minimal, geométrico, legível de 16px a 512px. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="InvestiGator — an alligator's watchful eye over a rising market line">
+  <!-- InvestiGator — marca "The Stare" (2026-07-22): um olho de crocodilo (íris dourada,
+       pupila em fenda, sobrolho pesado) a vigiar uma linha de mercado ascendente. Funde
+       Invest (a linha), Investigate (o olhar) e alliGator (o olho de réptil). Cores fixas
+       (uma marca não muda com o tema do leitor). Legível de 16px a 512px. -->
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0B1F2E"/>
-      <stop offset="1" stop-color="#123247"/>
-    </linearGradient>
-    <linearGradient id="line" x1="0" y1="1" x2="1" y2="0">
-      <stop offset="0" stop-color="#0EA5A0"/>
-      <stop offset="1" stop-color="#34D399"/>
+    <linearGradient id="ig-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0E2A20"/>
+      <stop offset="1" stop-color="#0A1D16"/>
     </linearGradient>
   </defs>
-  <rect x="8" y="8" width="240" height="240" rx="52" fill="url(#bg)"/>
-  <!-- grelha subtil -->
-  <g stroke="#1E4258" stroke-width="2" opacity="0.55">
-    <line x1="40" y1="178" x2="216" y2="178"/>
-    <line x1="40" y1="128" x2="216" y2="128"/>
-    <line x1="40" y1="78"  x2="216" y2="78"/>
-  </g>
-  <!-- linha de mercado -->
-  <path d="M 40 186 L 84 150 L 112 166 L 150 108 L 172 122 L 204 72"
-        fill="none" stroke="url(#line)" stroke-width="14"
+  <rect x="10" y="10" width="236" height="236" rx="61" fill="url(#ig-bg)"/>
+  <!-- sobrolho investigativo (pesado, angular) -->
+  <path d="M62 106 L128 80 L194 106" fill="none" stroke="#78D3A2" stroke-width="15"
         stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- o "olho" vigilante no último ponto -->
-  <circle cx="204" cy="72" r="17" fill="#34D399"/>
-  <circle cx="204" cy="72" r="8" fill="#0B1F2E"/>
-  <circle cx="207" cy="69" r="3" fill="#E7FFF6"/>
+  <!-- olho amendoado de crocodilo -->
+  <path d="M67 137 Q128 101 189 137 Q128 173 67 137 Z" fill="#78D3A2"/>
+  <!-- íris dourada + pupila em fenda vertical (réptil) + brilho -->
+  <circle cx="128" cy="137" r="27" fill="#E7B24C"/>
+  <rect x="121" y="114" width="14" height="46" rx="7" fill="#0B1F17"/>
+  <circle cx="119" cy="128" r="4.5" fill="#FBE8BE"/>
+  <!-- linha de mercado a subir na base -->
+  <polyline points="56,206 104,206 134,206 160,188 190,198 216,170" fill="none"
+            stroke="#2FD07A" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
