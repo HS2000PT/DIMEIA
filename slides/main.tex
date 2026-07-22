@@ -293,19 +293,24 @@ Gradient boosting & 0.469 & 0.551 \\
 
 \newcommand{\techbadge}[2]{{\setlength{\fboxsep}{3pt}\colorbox{#1!13}{\small\strut #2}}}
 \newcommand{\techcat}[1]{\smallskip\par\textbf{\footnotesize #1}\par\smallskip}
+% Real logo if slides/logos/<file>.png exists; otherwise a clean name-badge (see logos/README.md).
+\newcommand{\techlogo}[3]{\IfFileExists{logos/#1.png}%
+  {\raisebox{-3pt}{\includegraphics[height=13pt]{logos/#1.png}}~}{}\techbadge{#2}{#3}}
 \begin{frame}{Built with --- free tools and open data, end to end}
 \centering\vspace{1mm}
 \techcat{\textcolor{blue!60}{Data sources \& APIs}}
-\techbadge{blue}{FNSPID (Hugging Face)}\ \techbadge{blue}{yfinance}\ \techbadge{blue}{Finnhub}\ %
-\techbadge{blue}{RSS feeds}\ \techbadge{blue}{SPY (market proxy)}
+\techlogo{huggingface}{blue}{FNSPID (Hugging Face)}\ \techlogo{yfinance}{blue}{yfinance}\ %
+\techlogo{finnhub}{blue}{Finnhub}\ \techlogo{rss}{blue}{RSS feeds}\ \techbadge{blue}{SPY (market proxy)}
 \techcat{\textcolor{orange!75!black}{Machine learning}}
-\techbadge{orange}{Sentence-BERT / MiniLM}\ \techbadge{orange}{scikit-learn}\ %
-\techbadge{orange}{PyTorch (CPU)}\ \techbadge{orange}{Platt calibration}\ \techbadge{orange}{ONNX Runtime}
+\techlogo{sbert}{orange}{Sentence-BERT / MiniLM}\ \techlogo{scikit-learn}{orange}{scikit-learn}\ %
+\techlogo{pytorch}{orange}{PyTorch (CPU)}\ \techbadge{orange}{Platt calibration}\ %
+\techlogo{onnx}{orange}{ONNX Runtime}
 \techcat{\textcolor{green!55!black}{Product \& delivery}}
-\techbadge{green}{Telegram Bot API}\ \techbadge{green}{Streamlit}\ \techbadge{green}{Plotly}
+\techlogo{telegram}{green}{Telegram Bot API}\ \techlogo{streamlit}{green}{Streamlit}\ %
+\techlogo{plotly}{green}{Plotly}
 \techcat{\textcolor{purple!70}{Engineering \& infrastructure}}
-\techbadge{purple}{Python 3.12}\ \techbadge{purple}{GitHub Actions (cron)}\ \techbadge{purple}{pytest $+$ ruff}\ %
-\techbadge{purple}{joblib}
+\techlogo{python}{purple}{Python 3.12}\ \techlogo{githubactions}{purple}{GitHub Actions (cron)}\ %
+\techlogo{pytest}{purple}{pytest $+$ ruff}\ \techbadge{purple}{joblib}
 \par\bigskip
 {\footnotesize No paid APIs, no GPUs, no always-on server --- reproducible on a laptop.}
 \end{frame}

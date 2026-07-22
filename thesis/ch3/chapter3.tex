@@ -494,6 +494,35 @@ day \emph{before} the event), the five-day momentum to the same point, the event
 headline. A unit test enforces the convention by mutating prices \emph{after} the event window and
 asserting that no feature changes while the label does.
 
+Table~\ref{tab:met_features} makes those columns concrete: it lists every feature, what it is, and its
+actual value for the worked example of Figure~\ref{fig:data_journey} (Nvidia, 10~May~2018), together
+with the target label. This is exactly the data on which the metrics are computed.
+
+\begin{table}[ht]
+\caption[The triage feature columns, with real values]{The columns the triage model reads, with their
+real values for one example (Nvidia, 10~May~2018). Rows 1--6 are the features; the last row is the
+supervised target. The context columns (1--5) feed the logistic regressions and the gradient-boosted
+ensemble, scored by PR-AUC and precision@5/day; the embedding (6) also feeds precedent retrieval, scored
+by precision@$k$. Every feature is computable at the close of day $d$, before the label window opens.}
+\label{tab:met_features}
+\centering
+\small
+\begin{tabular}{l p{6.4cm} l}
+\toprule
+\tabhead{Column} & \tabhead{What it is} & \tabhead{Example value} \\
+\midrule
+\texttt{vol20} & pre-event volatility: sd of the 20 daily log-returns ending at $d{-}1$ & $0.021$ \\
+\texttt{mom5} & five-day momentum to $d{-}1$ (cumulative log-return) & $+0.122$ \\
+\texttt{ret\_event} & event-day log-return, known at the close of $d$ & $+0.017$ \\
+\texttt{headline\_len} & number of characters in the headline & $55$ \\
+\texttt{sector} & one-hot sector indicator & tech \\
+\texttt{embedding} & $384$-d Sentence-BERT vector of the headline & $[-0.005, 0.004, \dots]$ \\
+\midrule
+\texttt{label} \emph{(target)} & $|$abnormal return vs SPY over $(d,d{+}3]| \ge 2\%$ & $1$ (material) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 Model families span the interpretability--capacity trade-off of Section~\ref{sec:sota_triage}: an
 always-alert floor, a volatility-only logistic regression (the strong naive rule any reviewer would ask
 about), logistic regressions on context features only, on text features only, and on both together

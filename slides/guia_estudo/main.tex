@@ -1084,6 +1084,30 @@ perdeu --- $F_1$ \key{0,271 vs 0,530}. A escolha simples fica validada por \emph
 \end{columns}
 \end{frame}
 
+\begin{frame}[fragile]{Com que COLUNAS se constrói a métrica (features da triagem)}
+\footnotesize O modelo de triagem lê estas colunas (valores reais do exemplo NVDA, 10 Mai 2018):
+\smallskip
+\scriptsize
+\begin{tabular}{l l l}
+\toprule
+Coluna & O que é & Valor \\
+\midrule
+\texttt{vol20} & volatilidade pré-evento (20 dias até $d{-}1$) & 0,021 \\
+\texttt{mom5} & momento de 5 dias até $d{-}1$ & $+0{,}122$ \\
+\texttt{ret\_event} & retorno do dia do evento (fecho de $d$) & $+0{,}017$ \\
+\texttt{headline\_len} & n.\textsuperscript{o} de caracteres do título & 55 \\
+\texttt{sector} & setor (one-hot) & tech \\
+\texttt{embedding} & vetor SBERT 384-d do título & $[-0{,}005; 0{,}004; \dots]$ \\
+\midrule
+\texttt{label} \emph{(alvo)} & $|$anormal vs SPY em $(d,d{+}3]| \ge 2\%$ & \textbf{1} (material) \\
+\bottomrule
+\end{tabular}
+\smallskip
+\par\footnotesize As colunas 1--5 (contexto) alimentam a \key{triagem} $\to$ PR-AUC e precisão@5/dia;
+o \texttt{embedding} alimenta também o \key{retrieval} $\to$ precisão@$k$. Tudo calculável no fecho
+de $d$, \emph{antes} de a janela do rótulo abrir (anti-lookahead).
+\end{frame}
+
 \begin{frame}{Triagem de materialidade --- o modelo que EU treinei (RQ4)}
 \footnotesize
 \begin{block}{A pergunta que o modelo responde}
@@ -1531,19 +1555,22 @@ por desenho. \emph{(Tese: Fig.~4.6, o funil; Apêndice A: o pipeline completo nu
 
 \newcommand{\gbadge}[2]{{\setlength{\fboxsep}{3pt}\colorbox{#1!13}{\small\strut #2}}}
 \newcommand{\gcat}[1]{\smallskip\par\textbf{\footnotesize #1}\par\smallskip}
+% Logo real se ../logos/<ficheiro>.png existir; senão fica só o badge (ver ../logos/README.md).
+\newcommand{\glogo}[3]{\IfFileExists{../logos/#1.png}%
+  {\raisebox{-3pt}{\includegraphics[height=13pt]{../logos/#1.png}}~}{}\gbadge{#2}{#3}}
 \begin{frame}{Feito com --- só ferramentas gratuitas e dados abertos}
 \centering\vspace{1mm}
 \gcat{\textcolor{blue!60}{Fontes de dados \& APIs}}
-\gbadge{blue}{FNSPID (Hugging Face)}\ \gbadge{blue}{yfinance}\ \gbadge{blue}{Finnhub}\ %
-\gbadge{blue}{RSS}\ \gbadge{blue}{SPY (proxy do mercado)}
+\glogo{huggingface}{blue}{FNSPID (Hugging Face)}\ \glogo{yfinance}{blue}{yfinance}\ %
+\glogo{finnhub}{blue}{Finnhub}\ \glogo{rss}{blue}{RSS}\ \gbadge{blue}{SPY (proxy do mercado)}
 \gcat{\textcolor{orange!75!black}{Aprendizagem automática}}
-\gbadge{orange}{Sentence-BERT / MiniLM}\ \gbadge{orange}{scikit-learn}\ %
-\gbadge{orange}{PyTorch (CPU)}\ \gbadge{orange}{calibração Platt}\ \gbadge{orange}{ONNX Runtime}
+\glogo{sbert}{orange}{Sentence-BERT / MiniLM}\ \glogo{scikit-learn}{orange}{scikit-learn}\ %
+\glogo{pytorch}{orange}{PyTorch (CPU)}\ \gbadge{orange}{calibração Platt}\ \glogo{onnx}{orange}{ONNX Runtime}
 \gcat{\textcolor{green!55!black}{Produto \& entrega}}
-\gbadge{green}{Telegram Bot API}\ \gbadge{green}{Streamlit}\ \gbadge{green}{Plotly}
+\glogo{telegram}{green}{Telegram Bot API}\ \glogo{streamlit}{green}{Streamlit}\ \glogo{plotly}{green}{Plotly}
 \gcat{\textcolor{purple!70}{Engenharia \& infraestrutura}}
-\gbadge{purple}{Python 3.12}\ \gbadge{purple}{GitHub Actions (cron)}\ \gbadge{purple}{pytest $+$ ruff}\ %
-\gbadge{purple}{joblib}
+\glogo{python}{purple}{Python 3.12}\ \glogo{githubactions}{purple}{GitHub Actions (cron)}\ %
+\glogo{pytest}{purple}{pytest $+$ ruff}\ \gbadge{purple}{joblib}
 \par\bigskip
 {\footnotesize \key{Sem APIs pagas, sem GPUs, sem servidor sempre ligado} --- reproduzível num portátil.}
 \end{frame}
