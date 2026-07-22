@@ -4,11 +4,17 @@ from __future__ import annotations
 
 import math
 
+import numpy as np
 import pandas as pd
 import pytest
 
 from investigator.correlation_engine.event_study import abnormal_returns
-from investigator.triage.dataset import abnormal_label, assign_splits, event_features
+from investigator.triage.dataset import (
+    abnormal_label,
+    assign_splits,
+    event_features,
+    event_features_ext,
+)
 
 
 def _serie(valores) -> pd.Series:
@@ -87,6 +93,50 @@ def test_anti_lookahead_mutar_o_futuro_muda_o_rotulo_mas_nao_as_features():
     assert event_features(sobe, d) == event_features(plano, d)          # features iguais
     assert abnormal_label(sobe, mercado, d, 0.02, 3) == 1               # rótulos diferentes
     assert abnormal_label(plano, mercado, d, 0.02, 3) == 0
+
+
+# ── Features estendidas (RQ4-ext) — aditivas e anti-lookahead ─────────────────
+
+def test_features_ext_sao_aditivas():
+    rng = np.random.default_rng(0)
+    close = list(100 * np.exp(np.cumsum(rng.normal(0, 0.01, 80))))
+    mkt = list(100 * np.exp(np.cumsum(rng.normal(0, 0.008, 80))))
+    f = event_features_ext(_serie(close), _serie(mkt), event_idx=65)
+    assert {"vol20", "mom5", "ret_event"} <= set(f)  # inclui as base
+    assert {"market_vol20", "mom20", "vol_ratio", "ret_event_z", "downside_vol20"} <= set(f)
+    # a parte base é IDÊNTICA à de event_features (aditividade real)
+    base = event_features(_serie(close), event_idx=65)
+    for k, v in base.items():
+        assert f[k] == pytest.approx(v)
+
+
+def test_features_ext_none_sem_historico():
+    # long_window=60 ⇒ precisa de ≥ 61 fechos antes do evento
+    assert event_features_ext(_serie([100.0] * 40), _serie([100.0] * 40), event_idx=30) is None
+
+
+def test_features_ext_anti_lookahead():
+    """A garantia central (§6.5) também para as features novas: o futuro não vaza."""
+    rng = np.random.default_rng(1)
+    close = list(100 * np.exp(np.cumsum(rng.normal(0, 0.01, 80))))
+    mkt = list(100 * np.exp(np.cumsum(rng.normal(0, 0.008, 80))))
+    d = 65
+    a = event_features_ext(_serie(close[: d + 1] + [999.0] * 14),
+                           _serie(mkt[: d + 1] + [999.0] * 14), d)
+    b = event_features_ext(_serie(close[: d + 1] + [1.0] * 14),
+                           _serie(mkt[: d + 1] + [1.0] * 14), d)
+    assert a == b  # mutar o futuro não muda nenhuma feature
+
+
+def test_features_ext_valores_degenerados():
+    closes = [100.0] * 65 + [110.0]   # constante até d−1, salto no dia do evento
+    mkt = [100.0] * 66
+    f = event_features_ext(_serie(closes), _serie(mkt), event_idx=65)
+    assert f["market_vol20"] == 0.0    # mercado parado
+    assert f["vol_ratio"] == 0.0       # vol60=0 → guarda
+    assert f["ret_event_z"] == 0.0     # vol20=0 → guarda
+    assert f["downside_vol20"] == 0.0  # sem retornos negativos
+    assert f["ret_event"] == pytest.approx(math.log(110 / 100))  # o salto do evento entra
 
 
 # ── Divisão temporal com embargo ──────────────────────────────────────────────

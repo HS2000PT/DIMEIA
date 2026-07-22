@@ -28,6 +28,7 @@ from investigator.triage.dataset import (
     abnormal_label,
     assign_splits,
     event_features,
+    event_features_ext,
 )
 
 REPO = Path(__file__).resolve().parents[1]
@@ -54,8 +55,13 @@ def fetch_closes(ticker: str, start: str, end: str) -> pd.Series:
 
 
 def build(news: pd.DataFrame, taus: list[float], horizons: list[int],
-          primary_tau: float, primary_h: int, embargo: int) -> tuple[pd.DataFrame, dict]:
-    """Constrói o dataset; devolve (df, contadores de descartes)."""
+          primary_tau: float, primary_h: int, embargo: int,
+          ext: bool = False) -> tuple[pd.DataFrame, dict]:
+    """Constrói o dataset; devolve (df, contadores de descartes).
+
+    `ext=True` (RQ4-ext) inclui as features estendidas (`event_features_ext`); default False
+    reproduz o dataset congelado da tese byte-a-byte (as colunas novas nem aparecem).
+    """
     news = news[news["ticker"].isin(SECTORS)].copy()
     news["date"] = pd.to_datetime(news["date"])
     start = (news["date"].min() - pd.DateOffset(days=60)).strftime("%Y-%m-%d")
@@ -79,7 +85,8 @@ def build(news: pd.DataFrame, taus: list[float], horizons: list[int],
             if idx >= len(dates):
                 drops["fora_da_serie"] += 1
                 continue
-            feats = event_features(aligned["t"], idx)
+            feats = (event_features_ext(aligned["t"], aligned["m"], idx) if ext
+                     else event_features(aligned["t"], idx))
             if feats is None:
                 drops["sem_historico"] += 1
                 continue
@@ -119,13 +126,18 @@ def main() -> int:
     ap.add_argument("--primary-horizon", type=int, default=3)
     ap.add_argument("--embargo", type=int, default=5,
                     help="dias únicos de embargo entre blocos (corpus-fumo de 4 semanas: usar 1)")
+    ap.add_argument("--ext", action="store_true",
+                    help="inclui features estendidas (RQ4-ext; ver docs/evaluation/roadmap_rq4.md)")
     args = ap.parse_args()
 
     news = pd.read_csv(args.news)
     print(f"Notícias lidas: {len(news)}  (tickers no mapa de setores: {len(SECTORS)})")
     df, drops = build(news, args.taus, args.horizons, args.primary_tau,
-                      args.primary_horizon, args.embargo)
+                      args.primary_horizon, args.embargo, ext=args.ext)
 
+    # Com --ext, escrever num ficheiro SEPARADO por defeito (nunca esmagar o dataset congelado).
+    if args.ext and args.out == str(REPO / "data" / "triage_dataset.csv"):
+        args.out = str(REPO / "data" / "triage_dataset_ext.csv")
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(out, index=False, encoding="utf-8")

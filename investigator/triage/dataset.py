@@ -54,6 +54,48 @@ def event_features(close: pd.Series, event_idx: int,
     return {"vol20": vol20, "mom5": mom5, "ret_event": ret_event}
 
 
+def event_features_ext(close: pd.Series, market_close: pd.Series, event_idx: int,
+                       vol_window: int = 20, mom_window: int = 20,
+                       long_window: int = 60) -> dict[str, float] | None:
+    """Features de contexto ESTENDIDAS (RQ4-ext) — ADITIVAS às de `event_features`, TODAS
+    calculadas com dados ≤ fecho de event_idx (mesma convenção anti-lookahead, testada).
+
+    Motivam o estudo de ablação ("que sinais AJUDAM de facto?" — ver
+    docs/evaluation/roadmap_rq4.md); baratas, sem novas fontes de dados:
+      - market_vol20:   regime do MERCADO (desvio dos 20 log-retornos do SPY até d−1);
+      - mom20:          momento de 20 dias da ação (log-retorno até d−1);
+      - vol_ratio:      vol20 / vol60 (>1 ⇒ volatilidade da ação a expandir);
+      - ret_event_z:    ret_event / vol20 (a reação imediata PADRONIZADA — o |z| do detetor);
+      - downside_vol20: desvio só dos retornos negativos da janela (risco de queda).
+
+    `market_close` tem de estar ALINHADO com `close` (mesmo índice) — em build_dataset.py ambas
+    vêm do mesmo `aligned` (inner-join por data). None sem histórico suficiente (≥ long_window+1).
+    """
+    base = event_features(close, event_idx, vol_window=vol_window)
+    if base is None or event_idx < long_window + 1 or event_idx >= len(close):
+        return None
+    c = np.asarray(close, dtype="float64")
+    m = np.asarray(market_close, dtype="float64")
+    if len(m) != len(c):
+        return None
+    log_r = np.diff(np.log(c))
+    mlog = np.diff(np.log(m))
+    pre = log_r[event_idx - 1 - vol_window : event_idx - 1]
+    pre_long = log_r[event_idx - 1 - long_window : event_idx - 1]
+    mpre = mlog[event_idx - 1 - vol_window : event_idx - 1]
+    vol20 = base["vol20"]
+    vol60 = float(np.std(pre_long, ddof=1))
+    neg = pre[pre < 0.0]
+    ext = {
+        "market_vol20": float(np.std(mpre, ddof=1)),
+        "mom20": float(math.log(c[event_idx - 1] / c[event_idx - 1 - mom_window])),
+        "vol_ratio": float(vol20 / vol60) if vol60 > 0 else 0.0,
+        "ret_event_z": float(base["ret_event"] / vol20) if vol20 > 0 else 0.0,
+        "downside_vol20": float(np.std(neg, ddof=1)) if neg.size > 1 else 0.0,
+    }
+    return {**base, **ext}
+
+
 def abnormal_label(close: pd.Series, market_close: pd.Series, event_idx: int,
                    tau: float, horizon: int) -> int | None:
     """Rótulo binário: 1 se |retorno anormal em (d, d+h]| ≥ τ; None se o futuro não existe."""
