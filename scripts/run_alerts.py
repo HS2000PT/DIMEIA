@@ -240,14 +240,19 @@ def build_daily_summary(results: list[tuple[str, object]], threshold: float) -> 
     """
     if not results:
         return ""
+    from investigator.explanation_engine.explainer import direction_icon
+
     ordenados = sorted(results, key=lambda tr: -abs(tr[1].z_score))
     linhas = ["📊 <b>Daily close summary</b>"]
     # Hierarquia visual (UX 2026-07-12): movers em destaque, um por linha; os calmos
     # (<1% e sem anomalia) comprimidos numa linha só — 10 linhas monótonas não se leem.
+    # A seta segue SEMPRE o sinal do movimento (direction_icon, fonte única): anomalias
+    # levam os triângulos de alerta 🔺/🔻; os movers normais as setas finas ⬆/⬇.
     calmos: list[str] = []
     for ticker, r in ordenados:
         if r.is_anomaly:
-            linhas.append(f"🔺 {ticker}: {r.last_return * 100:+.2f}% (z {r.z_score:+.2f})")
+            icon = direction_icon(r.last_return)
+            linhas.append(f"{icon} {ticker}: {r.last_return * 100:+.2f}% (z {r.z_score:+.2f})")
         elif abs(r.last_return) >= 0.01:
             seta = "⬆" if r.last_return > 0 else "⬇"
             linhas.append(f"{seta} {ticker}: {r.last_return * 100:+.2f}% (z {r.z_score:+.2f})")
@@ -257,9 +262,9 @@ def build_daily_summary(results: list[tuple[str, object]], threshold: float) -> 
         linhas.append("• Quiet: " + " · ".join(calmos))
     n_anom = sum(1 for _, r in results if r.is_anomaly)
     if n_anom:
-        linhas.append(f"{n_anom} anomaly(ies) today (|z| ≥ {threshold:g}) — alerted above.")
+        linhas.append(f"{n_anom} anomaly(ies) today (|z| ≥ {threshold:g}); alerted above.")
     else:
-        linhas.append(f"No anomalies today (threshold |z| ≥ {threshold:g}) — a normal day.")
+        linhas.append(f"No anomalies today (threshold |z| ≥ {threshold:g}); a normal day.")
     linhas.append("<i>An observed snapshot of the watchlist, not advice.</i>")
     return "\n".join(linhas)
 

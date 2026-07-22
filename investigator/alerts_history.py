@@ -31,11 +31,23 @@ class HistoryEntry:
 
 
 def classify_kind(text: str) -> str:
-    """Deriva o tipo a partir de marcadores estáveis do próprio texto (já testados em
-    tests/test_explainer.py — fidelidade XAI exige exatamente estas frases)."""
+    """Deriva o tipo a partir do EMOJI de cabeçalho (marcador estável e robusto à reescrita
+    do texto): 📊 resumo · 🔺/🔻 mercado · 📰 notícia. Isto corrige um bug latente — os
+    alertas intradiários ("Unusual intraday move for…") não continham "Anomaly detected for"
+    e eram classificados como notícia. Fallback por frase para entradas antigas sem emoji."""
+    t = text.lstrip()
+    if t.startswith("📊"):
+        return "summary"
+    if t.startswith(("🔺", "🔻")):
+        return "market"
+    if t.startswith("📰"):
+        return "news"
+    # Legado / textos sem emoji (histórico antigo, literais de teste)
     if "Daily close summary" in text:
         return "summary"
-    return "market" if "Anomaly detected for" in text else "news"
+    if "Anomaly detected for" in text or "intraday move for" in text:
+        return "market"
+    return "news"
 
 
 def parse_jsonl_lines(lines: list[str]) -> list[HistoryEntry]:

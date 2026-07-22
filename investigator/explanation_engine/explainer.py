@@ -45,6 +45,12 @@ def plain_text(alert: str) -> str:
     return html.unescape(out)
 
 
+def direction_icon(value: float) -> str:
+    """Ícone de direção — a FONTE ÚNICA (o bug das setas vinha de lógica duplicada em 3
+    sítios: aqui, no resumo diário e no dashboard). 🔺 sobe, 🔻 desce."""
+    return "🔺" if value >= 0 else "🔻"
+
+
 def _clip(text: str, limit: int = _MAX_HEADLINE) -> str:
     return text if len(text) <= limit else text[: limit - 1].rstrip() + "…"
 
@@ -64,46 +70,41 @@ def severity_label(z_score: float) -> str:
     return "notable"
 
 
-def _severity_prefix(z_score: float) -> str:
-    """'An extreme move' / 'A strong move' / 'A notable move' (artigo correto)."""
-    label = severity_label(z_score)
-    art = "An" if label[0] in "aeiou" else "A"
-    return f"{art} {label} move:"
-
-
 def explain_anomaly(ticker: str, result: AnomalyResult) -> str:
-    """Explicação de uma anomalia: o facto primeiro, o método numa nota curta no fim."""
-    arrow = "🔺" if result.last_return >= 0 else "🔻"
+    """Alerta de anomalia em CAMADAS, legível num relance (revisão UX 2026-07-22).
+
+    Linha 1 (o facto, a negrito): direção + empresa + movimento de hoje.
+    Linha 2: quão grande em palavras simples (severidade + múltiplo da oscilação típica).
+    Linha final (nota curta): porque disparou (a estatística, para quem quiser).
+    """
+    icon = direction_icon(result.last_return)
+    sev = severity_label(result.z_score).capitalize()
     return (
-        f"{arrow} <b>Anomaly detected for {html.escape(ticker, quote=False)}"
-        f"{html.escape(_nome(ticker), quote=False)}: "
+        f"{icon} <b>{html.escape(ticker, quote=False)}"
+        f"{html.escape(_nome(ticker), quote=False)} · "
         f"{result.last_return * 100:+.2f}% today</b>\n"
-        f"{_severity_prefix(result.z_score)} "
-        f"about {abs(result.z_score):.1f}x this stock's typical daily swing "
+        f"{sev} move · about {abs(result.z_score):.1f}× its typical daily swing "
         f"({result.window}-day norm).\n"
-        f"<i>Method: z-score: {result.z_score:+.2f} vs threshold ±{result.threshold:g} — "
-        f"{abs(result.z_score):.1f} standard deviations from the {result.window}d mean "
+        f"<i>Why flagged: z-score {result.z_score:+.2f} vs threshold ±{result.threshold:g}, "
+        f"i.e. {abs(result.z_score):.1f} standard deviations from the {result.window}-day mean "
         f"({result.mean * 100:+.2f}%, std {result.std * 100:.2f}%). "
         f"An observed move, not advice.</i>"
     )
 
 
 def explain_intraday(ticker: str, result: AnomalyResult) -> str:
-    """Explicação de uma anomalia INTRADIÁRIA: o movimento em curso, sem esperar o fecho.
-
-    Mesmo formato em camadas do alerta diário; wording explícito de "so far today" e da
-    fonte (cotação ao vivo vs fecho anterior) — o utilizador sabe que o dia não acabou.
-    """
-    arrow = "🔺" if result.last_return >= 0 else "🔻"
+    """Anomalia INTRADIÁRIA (movimento em curso, sem esperar o fecho) — mesmas camadas do
+    alerta diário, com "so far today" e a fonte (cotação ao vivo vs fecho anterior)."""
+    icon = direction_icon(result.last_return)
+    sev = severity_label(result.z_score).capitalize()
     return (
-        f"{arrow} <b>Unusual intraday move for {html.escape(ticker, quote=False)}"
-        f"{html.escape(_nome(ticker), quote=False)}: "
+        f"{icon} <b>{html.escape(ticker, quote=False)}"
+        f"{html.escape(_nome(ticker), quote=False)} · "
         f"{result.last_return * 100:+.2f}% so far today</b>\n"
-        f"{_severity_prefix(result.z_score)} "
-        f"about {abs(result.z_score):.1f}x this stock's typical daily swing "
-        f"({result.window}-day norm) — and the session is not over.\n"
-        f"<i>Method: live quote vs yesterday's close; z-score: {result.z_score:+.2f} vs "
-        f"threshold ±{result.threshold:g} against the {result.window}d daily norm "
+        f"{sev} move in progress · about {abs(result.z_score):.1f}× its typical daily swing "
+        f"({result.window}-day norm) · the session is not over.\n"
+        f"<i>Why flagged: live quote vs yesterday's close · z-score {result.z_score:+.2f} vs "
+        f"threshold ±{result.threshold:g} against the {result.window}-day daily norm "
         f"({result.mean * 100:+.2f}%, std {result.std * 100:.2f}%). "
         f"An observed move in progress, not advice.</i>"
     )
@@ -127,7 +128,7 @@ def attach_news_context(alert_text: str, headline: str | None,
                 f'\nPossible explanation{quando}: '
                 f'"{html.escape(_clip(headline), quote=False)}"')
     return (alert_text +
-            "\nNo relevant news found in the last 48h — no public explanation yet.")
+            "\nNo relevant news found in the last 48h. No public explanation yet.")
 
 
 def sector_context_line(ticker: str, moves: dict[str, float],
@@ -157,10 +158,10 @@ def sector_context_line(ticker: str, moves: dict[str, float],
     if same_dir:
         tops = sorted(same_dir.items(), key=lambda kv: -abs(kv[1]))[:top_n]
         listagem = ", ".join(f"{t} {m * 100:+.1f}%" for t, m in tops)
-        return (f"Sector check: other {label} names moved the same way today ({listagem}) "
-                "— looks sector-wide, not company-specific.")
-    return (f"Sector check: other {label} names were quiet today "
-            f"— this move looks specific to {tkr}.")
+        return (f"Sector check: other {label} names moved the same way today ({listagem}). "
+                "Looks sector-wide, not company-specific.")
+    return (f"Sector check: other {label} names were quiet today. "
+            f"This move looks specific to {tkr}.")
 
 
 def explain_normal(ticker: str, result: AnomalyResult) -> str:
@@ -241,13 +242,12 @@ def explain_news_impact(
     avg = _mean_precedent_impact(precedents, horizon)
     if vals:
         resumo = (
-            f"<b>{len(precedents)} similar past headlines</b> — their {horizon}-day moves "
-            f"ranged {min(vals) * 100:+.2f}%…{max(vals) * 100:+.2f}% "
-            f"(average {avg * 100:+.2f}%):"
+            f"<b>{len(precedents)} similar past headlines.</b> Their {horizon}-day move ranged "
+            f"{min(vals) * 100:+.2f}% to {max(vals) * 100:+.2f}% (average {avg * 100:+.2f}%):"
         )
     else:
-        resumo = (f"<b>{len(precedents)} similar past headlines</b> — "
-                  f"average {horizon}-day move: n/a:")
+        resumo = (f"<b>{len(precedents)} similar past headlines.</b> "
+                  f"Average {horizon}-day move: n/a:")
     lines = [header, "", resumo]
     key = str(horizon)
     for rec, score in precedents:
@@ -268,16 +268,15 @@ def explain_news_impact(
     desceram = sum(1 for v in vals if v < 0)
     if subiram and desceram:
         lines.append(
-            "⚠ Similar past cases moved in BOTH directions — treat the average with caution."
+            "⚠ Similar past cases moved in BOTH directions. Treat the average with caution."
         )
     elif vals and (subiram == len(vals) or desceram == len(vals)):
         rumo = "up" if subiram else "down"
         lines.append(f"{len(vals)} of {len(vals)} shown cases moved {rumo} "
-                     "— an observed pattern, not a forecast.")
+                     "(an observed pattern, not a forecast).")
     if materiality:
         lines.append(materiality)
     lines.append(
-        "<i>Observed past outcomes after similar news — not a price prediction, "
-        "not advice.</i>"
+        "<i>Observed past outcomes after similar news, not a price prediction and not advice.</i>"
     )
     return "\n".join(lines)

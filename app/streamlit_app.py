@@ -22,6 +22,7 @@ Honesty notes (mirrors the thesis):
 from __future__ import annotations
 
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -269,6 +270,19 @@ def _risk_line(ticker: str) -> None:
                f"author-trained triage model; mainly {factors}. Evidence, not a forecast.")
 
 
+_SIGNED_PCT = re.compile(r"([+-]\d[\d.]*)%")
+
+
+def _market_down(text: str) -> bool:
+    """Direção de um evento de mercado a partir do NÚMERO guardado (o sinal do 1.º '%').
+
+    Robusto a entradas antigas que gravaram o emoji errado (o bug das setas): lemos o valor,
+    não o ícone. Sem '%' no texto (ex.: entradas de teste) → assume subida (default seguro).
+    """
+    m = _SIGNED_PCT.search(text)
+    return bool(m) and m.group(1).startswith("-")
+
+
 def _event_positions(events: list, closes: pd.Series, intraday: bool):
     """Mapeia eventos (com data) a posições (x, y) no gráfico do intervalo atual."""
     xs, ys, texts, colors, symbols = [], [], [], [], []
@@ -288,8 +302,15 @@ def _event_positions(events: list, closes: pd.Series, intraday: bool):
         xs.append(x)
         ys.append(y)
         texts.append(h.text if len(h.text) <= 220 else h.text[:219] + "…")
-        colors.append("#EF4444" if h.kind == "market" else "#10B981")
-        symbols.append("triangle-up" if h.kind == "market" else "circle")
+        if h.kind == "market":
+            # Direção pelo sinal do movimento (fonte única do bug das setas): vermelho a
+            # descer, verde a subir; o símbolo do triângulo acompanha.
+            down = _market_down(h.text)
+            colors.append("#EF4444" if down else "#10B981")
+            symbols.append("triangle-down" if down else "triangle-up")
+        else:
+            colors.append("#3B82F6")  # notícia: azul neutro, círculo
+            symbols.append("circle")
     return xs, ys, texts, colors, symbols
 
 
@@ -365,7 +386,9 @@ def _ticker_tab(ticker: str, history: list) -> None:
     st.subheader("Events — exactly as sent to the Telegram channel")
     if eventos:
         rows = [
-            {"Date": h.date, "Type": "🔺 Market" if h.kind == "market" else "📰 News",
+            {"Date": h.date,
+             "Type": (("🔻 Market" if _market_down(h.text) else "🔺 Market")
+                      if h.kind == "market" else "📰 News"),
              # só o facto forte (1.ª linha) — legível num relance; o texto completo fica
              # no hover do gráfico e no expander abaixo
              "Alert": h.text.split("\n")[0]}

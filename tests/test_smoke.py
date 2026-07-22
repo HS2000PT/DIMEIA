@@ -28,7 +28,7 @@ def test_pipeline_explicacao():
     res = detect_latest(_serie_anomala(), window=20, threshold=3.0)
     texto = explain_anomaly("TEST", res)
     assert res.is_anomaly is True
-    assert "Anomaly detected for TEST" in texto
+    assert "TEST" in texto and "today" in texto
     assert "z-score" in texto
 
 

@@ -34,10 +34,11 @@ def test_explica_anomalia_em_linguagem_simples():
         mean=-0.0092, std=0.0273, window=20, threshold=3.0,
     )
     text = explain_anomaly("TSLA", res)
-    assert "Anomaly detected for TSLA" in text
-    assert "z-score: +7.61" in text
+    assert "TSLA" in text
+    assert "+19.82% today" in text                           # o facto, legível num relance
+    assert "z-score +7.61" in text
     assert "7.6 standard deviations" in text                 # rigor (mantém a estatística)
-    assert "7.6x this stock's typical daily swing" in text   # leitura em linguagem simples
+    assert "7.6× its typical daily swing" in text            # leitura em linguagem simples
 
 
 def test_explicacao_fiel_aos_precedentes_recuperados():
@@ -121,11 +122,11 @@ def test_severidade_em_niveis_no_alerta_de_mercado():
         return AnomalyResult(is_anomaly=True, z_score=z, last_return=0.03,
                              mean=0.0, std=0.01, window=20, threshold=1.5)
 
-    assert "A notable move:" in explain_anomaly("TSLA", _res(1.6))
-    assert "A strong move:" in explain_anomaly("TSLA", _res(2.4))
+    assert "Notable move" in explain_anomaly("TSLA", _res(1.6))
+    assert "Strong move" in explain_anomaly("TSLA", _res(2.4))
     extremo = explain_anomaly("TSLA", _res(7.61))
-    assert "An extreme move:" in extremo
-    assert "7.6x this stock's typical daily swing" in extremo  # token de sempre
+    assert "Extreme move" in extremo
+    assert "7.6× its typical daily swing" in extremo  # token de sempre
 
 
 def test_sector_context_line_descreve_o_dia_sem_prever():
