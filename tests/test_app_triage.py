@@ -53,13 +53,13 @@ def _run(monkeypatch, history: list[HistoryEntry] | None = None) -> AppTest:
     return at
 
 
-def _todos_dataframes_texto(at: AppTest) -> str:
-    partes = []
-    for el in at.dataframe:
-        try:
-            partes.append(el.value.to_csv())
-        except Exception:  # noqa: BLE001
-            partes.append(str(el.value))
+def _texto_visivel(at: AppTest) -> str:
+    """Todo o texto renderizado (markdown + labels de expander + captions) — a tabela de
+    eventos passou a ser uma lista expansível (2026-07-22), já não um dataframe."""
+    partes: list[str] = []
+    partes += [str(m.value) for m in at.markdown]
+    partes += [str(e.label) for e in at.expander]
+    partes += [str(c.value) for c in at.caption]
     return "\n".join(partes)
 
 
@@ -93,12 +93,14 @@ def test_risco_ausente_sem_modelo_nao_rebenta(monkeypatch):
     assert not any("Background risk" in c for c in captions)
 
 
-def test_eventos_do_canal_aparecem_na_tabela(monkeypatch):
+def test_eventos_do_canal_aparecem_na_lista_expansivel(monkeypatch):
     hist = [HistoryEntry(date="2026-07-08", ticker="AAPL", kind="market",
                          text="Anomaly detected for AAPL: a very specific unique marker text")]
     at = _run(monkeypatch, history=hist)
     assert not at.exception
-    assert "a very specific unique marker text" in _todos_dataframes_texto(at)
+    # tabela única expansível: o facto está no cabeçalho da linha (label do expander)
+    assert "a very specific unique marker text" in _texto_visivel(at)
+    assert any("Alert history" in c.value for c in at.subheader)
 
 
 def test_sem_historico_mostra_aviso_gracioso(monkeypatch):

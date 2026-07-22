@@ -283,9 +283,25 @@ def _market_down(text: str) -> bool:
     return bool(m) and m.group(1).startswith("-")
 
 
+def _event_hover(h) -> str:
+    """Cartão de hover formatado (moderno, multi-linha) para o marcador do gráfico.
+
+    O hover cru (texto até 220 chars numa linha) era ilegível. Agora: o facto a negrito,
+    a linha de severidade por baixo, e uma nota discreta com a data. Plotly aceita um
+    subconjunto de HTML (<b>, <br>, <span>)."""
+    linhas = [ln.strip() for ln in h.text.split("\n") if ln.strip()]
+    head = linhas[0] if linhas else ""
+    partes = [f"<b>{head}</b>"]
+    if len(linhas) > 1:
+        partes.append(linhas[1])
+    partes.append(f"<span style='font-size:11px;opacity:0.65'>{h.date} · "
+                  "open the list below for the full alert</span>")
+    return "<br>".join(partes)
+
+
 def _event_positions(events: list, closes: pd.Series, intraday: bool):
     """Mapeia eventos (com data) a posições (x, y) no gráfico do intervalo atual."""
-    xs, ys, texts, colors, symbols = [], [], [], [], []
+    xs, ys, hovers, colors, symbols = [], [], [], [], []
     if intraday:
         primeiro_do_dia: dict[str, object] = {}
         for idx in closes.index:
@@ -301,7 +317,7 @@ def _event_positions(events: list, closes: pd.Series, intraday: bool):
         x, y = par
         xs.append(x)
         ys.append(y)
-        texts.append(h.text if len(h.text) <= 220 else h.text[:219] + "…")
+        hovers.append(_event_hover(h))
         if h.kind == "market":
             # Direção pelo sinal do movimento (fonte única do bug das setas): vermelho a
             # descer, verde a subir; o símbolo do triângulo acompanha.
@@ -311,7 +327,7 @@ def _event_positions(events: list, closes: pd.Series, intraday: bool):
         else:
             colors.append("#3B82F6")  # notícia: azul neutro, círculo
             symbols.append("circle")
-    return xs, ys, texts, colors, symbols
+    return xs, ys, hovers, colors, symbols
 
 
 def _big_chart(ticker: str, closes: pd.Series, events: list, intraday: bool):
@@ -325,13 +341,13 @@ def _big_chart(ticker: str, closes: pd.Series, events: list, intraday: bool):
         fill="tozeroy", fillcolor=("rgba(16,185,129,0.08)" if subiu
                                    else "rgba(239,68,68,0.08)"),
     ))
-    xs, ys, texts, colors, symbols = _event_positions(events, closes, intraday)
+    xs, ys, hovers, colors, symbols = _event_positions(events, closes, intraday)
     if xs:
         fig.add_trace(go.Scatter(
             x=xs, y=ys, mode="markers", name="Events",
-            marker={"size": 14, "color": colors, "symbol": symbols,
-                    "line": {"width": 1.5, "color": "white"}},
-            text=texts, hoverinfo="text",
+            marker={"size": 15, "color": colors, "symbol": symbols,
+                    "line": {"width": 1.6, "color": "white"}},
+            hovertext=hovers, hovertemplate="%{hovertext}<extra></extra>",
         ))
     ymin, ymax = float(closes.min()), float(closes.max())
     folga = (ymax - ymin) * 0.08 or ymax * 0.01
@@ -342,9 +358,32 @@ def _big_chart(ticker: str, closes: pd.Series, events: list, intraday: bool):
         xaxis={"rangeslider": {"visible": False}, "showspikes": True,
                "spikemode": "across", "spikethickness": 1, "spikedash": "dot",
                "spikecolor": "#94A3B8"},
+        # Tooltip moderno: cartão claro, alinhado à esquerda, legível em ambos os temas.
+        hoverlabel={"align": "left", "bgcolor": "rgba(255,255,255,0.97)",
+                    "bordercolor": "#CBD5E1", "font": {"size": 12, "color": "#0B1F2E"}},
     )
-    fig.data[0].hovertemplate = "$%{y:.2f} · %{x}<extra></extra>"
+    fig.data[0].hovertemplate = "<b>$%{y:.2f}</b> · %{x|%b %d, %Y}<extra></extra>"
     return fig
+
+
+def _kind_label(h) -> str:
+    """Rótulo humano do tipo de evento (com direção correta para o mercado)."""
+    if h.kind == "news":
+        return "📰 News event"
+    if h.kind == "summary":
+        return "📊 Daily summary"
+    return "🔻 Market anomaly (down)" if _market_down(h.text) else "🔺 Market anomaly (up)"
+
+
+def _events_list(eventos: list) -> None:
+    """A tabela ÚNICA e expansível (substitui as 2 tabelas antigas): cada evento é uma linha
+    — a info principal no cabeçalho (data + facto), os detalhes (texto completo do alerta)
+    ao expandir. Read-only: espelho exato do que o canal Telegram recebeu."""
+    for h in reversed(eventos):  # mais recente primeiro
+        facto = h.text.split("\n", 1)[0].strip()
+        with st.expander(f"{h.date}  ·  {facto}"):
+            st.markdown(h.text.replace("\n", "  \n"))
+            st.caption(f"{_kind_label(h)} · sent to the Telegram channel")
 
 
 def _ticker_tab(ticker: str, history: list) -> None:
@@ -377,31 +416,21 @@ def _ticker_tab(ticker: str, history: list) -> None:
                         key=f"chart_{ticker}_{intervalo}")
     else:
         st.line_chart(closes, use_container_width=True)
-        st.caption("Interactive chart unavailable in this environment (plotly not installed) "
-                   "— all detected events remain in the table below.")
-    st.caption("Prices: yfinance + multi-source daily fallback (intraday ~15 min delayed) · "
-               "auto-refreshes · 🔻/🔺 market anomaly · ● news event — hover a marker for "
-               "the full alert.")
+        st.caption("Interactive chart unavailable in this environment (plotly not installed). "
+                   "All detected events remain in the list below.")
+    st.caption("Prices: yfinance + multi-source daily fallback (intraday ~15 min delayed). "
+               "Auto-refreshes. Hover a marker for the alert.")
 
-    st.subheader("Events — exactly as sent to the Telegram channel")
+    st.subheader("Alert history")
     if eventos:
-        rows = [
-            {"Date": h.date,
-             "Type": (("🔻 Market" if _market_down(h.text) else "🔺 Market")
-                      if h.kind == "market" else "📰 News"),
-             # só o facto forte (1.ª linha) — legível num relance; o texto completo fica
-             # no hover do gráfico e no expander abaixo
-             "Alert": h.text.split("\n")[0]}
-            for h in reversed(eventos)
-        ]
-        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True,
-                    column_config={"Alert": st.column_config.TextColumn(width="large")})
-        with st.expander("Full alert texts"):
-            for h in reversed(eventos):
-                st.text(f"[{h.date}]\n{h.text}")
-                st.divider()
+        n_mkt = sum(1 for h in eventos if h.kind == "market")
+        n_news = sum(1 for h in eventos if h.kind == "news")
+        st.caption(f"{len(eventos)} on record · {n_mkt} market · {n_news} news · "
+                   "🔺 up · 🔻 down · 📰 news. Open a row for the full alert, "
+                   "exactly as sent to the Telegram channel.")
+        _events_list(eventos)
     else:
-        st.caption(f"No events recorded yet for {ticker} — this fills in as the automated "
+        st.caption(f"No events recorded yet for {ticker}. This fills in as the automated "
                    "scan detects anomalies and material news.")
 
 
