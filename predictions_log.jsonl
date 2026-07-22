@@ -38,3 +38,13 @@
 {"ts": "2026-07-22T19:01:01+00:00", "news_date": "2026-07-22", "ticker": "JPM", "headline": "JPMorgan CEO cuts to the chase on stock market danger", "prob": 0.2468918750315518, "gate": 0.5, "kept": false}
 {"ts": "2026-07-22T19:01:02+00:00", "news_date": "2026-07-22", "ticker": "AMD", "headline": "AMD, Cerebras Strike AI Chip Deals", "prob": 0.5617724381111757, "gate": 0.5, "kept": true}
 {"ts": "2026-07-22T19:01:03+00:00", "news_date": "2026-07-22", "ticker": "NFLX", "headline": "What Wall Street Pushed NFLX To Explain", "prob": 0.42330693765475547, "gate": 0.5, "kept": false}
+{"ts": "2026-07-22T20:15:53+00:00", "news_date": "2026-07-22", "ticker": "AAPL", "headline": "Apple rewrites how Americans pay for iPhones", "prob": 0.4678000579362573, "gate": 0.5, "kept": false}
+{"ts": "2026-07-22T20:15:54+00:00", "news_date": "2026-07-22", "ticker": "MSFT", "headline": "Oklo stock jumps after Microsoft, Nvidia join $200M nuclear AI initiative", "prob": 0.4543573217734203, "gate": 0.5, "kept": false}
+{"ts": "2026-07-22T20:15:55+00:00", "news_date": "2026-07-22", "ticker": "NVDA", "headline": "Nvidia Stock Rises as BofA Sees $170 Billion AI CPU Market by 2030", "prob": 0.4710915999685324, "gate": 0.5, "kept": false}
+{"ts": "2026-07-22T20:15:56+00:00", "news_date": "2026-07-22", "ticker": "TSLA", "headline": "Update: US Equity Indexes Mixed as Crude Oil Jumps While Investors Await Alphabet, Tesla's Earnings", "prob": 0.5647909352322921, "gate": 0.5, "kept": true}
+{"ts": "2026-07-22T20:15:57+00:00", "news_date": "2026-07-22", "ticker": "AMZN", "headline": "Amazon Cuts Jobs in AGI Group", "prob": 0.4125893312724538, "gate": 0.5, "kept": false}
+{"ts": "2026-07-22T20:15:58+00:00", "news_date": "2026-07-22", "ticker": "GOOGL", "headline": "Options strategist reveals how he'd trading Alphabet ahead of earnings", "prob": 0.44647368628210915, "gate": 0.5, "kept": false}
+{"ts": "2026-07-22T20:15:58+00:00", "news_date": "2026-07-22", "ticker": "META", "headline": "Meta Platforms vs. Reddit: Which Social Media Stock Is the Better Buy", "prob": 0.5292924354448642, "gate": 0.5, "kept": true}
+{"ts": "2026-07-22T20:15:59+00:00", "news_date": "2026-07-22", "ticker": "JPM", "headline": "Jamie Dimon's JPMorgan Posted a Record $21.2 Billion Quarterly Profit, Up 41%", "prob": 0.2475034450318063, "gate": 0.5, "kept": false}
+{"ts": "2026-07-22T20:16:00+00:00", "news_date": "2026-07-22", "ticker": "AMD", "headline": "AMD Lands Multibillion-Dollar Anthropic Deal", "prob": 0.5618062916940441, "gate": 0.5, "kept": true}
+{"ts": "2026-07-22T20:16:01+00:00", "news_date": "2026-07-22", "ticker": "NFLX", "headline": "What Wall Street Pushed NFLX To Explain", "prob": 0.42328200463807447, "gate": 0.5, "kept": false}
