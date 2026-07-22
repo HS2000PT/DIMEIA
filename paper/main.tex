@@ -26,8 +26,8 @@ Porto, Portugal\\
 \begin{abstract}
 Retail investors face a continuous flood of price movements and financial news but lack the interpretive
 tools available to institutions. We present InvestiGator, an explainable (XAI-first) financial-alert system for
-the US equity market that raises Telegram alerts from two independent triggers --- abrupt price movements,
-detected as statistical anomalies, and incoming news --- and attaches to every alert a fully traceable
+the US equity market that raises Telegram alerts from two independent triggers (abrupt price movements,
+detected as statistical anomalies, and incoming news) and attaches to every alert a fully traceable
 explanation. The core is a news--market correlation engine that retrieves analogous historical news with
 sentence embeddings and measures the impact those precedents had, in the manner of an event study and
 without lookahead. As an Artificial Intelligence Engineering contribution, the work integrates, applies
@@ -36,7 +36,7 @@ retrieval reaches a cross-ticker precision@5 of $0.514\pm0.015$ against $0.240$ 
 a lexical baseline, and a volatility-normalised detector fires far more consistently across instruments
 (firing-rate range $0.015$) than a fixed threshold ($0.344$). A supervised materiality-triage model,
 trained on $79{,}753$ multi-year news--market examples, nearly quadruples within-budget alert precision
-($0.632$ vs $0.163$), although no model reading the headline text beat a volatility-only baseline --- a
+($0.632$ vs $0.163$), although no model reading the headline text beat a volatility-only baseline, a
 finding we report as it stands. All results are reproducible from versioned scripts, with limitations
 stated explicitly.
 \end{abstract}
@@ -125,8 +125,8 @@ contributions and a fixed clause: triage evidence, not a forecast. Once live, ev
 and later post-validated against the outcome that actually followed, yielding live precision and
 calibration monitoring.
 
-\textbf{Explanation.} Each alert is rendered directly from the computed objects --- the $z$-score with its
-window and threshold, or the retrieved precedents with their similarity scores and measured impact --- and
+\textbf{Explanation.} Each alert is rendered directly from the computed objects (the $z$-score with its
+window and threshold, or the retrieved precedents with their similarity scores and measured impact) and
 ends with an explicit no-prediction disclaimer.
 
 \section{Evaluation}
@@ -158,7 +158,7 @@ On $3{,}714$ real headlines across five sectors, semantic retrieval clearly outp
 base rate), the larger MPNet slightly more ($0.538$), and both far exceed the lexical baseline ($0.346$);
 recency is worst, below the random rate. Small standard deviations ($\sim 0.01$) show the gap is robust.
 Per sector (Fig.~\ref{fig:persector}), the lift over the base rate is largest where vocabulary is
-distinctive --- energy ($+0.377$) and health ($+0.348$) --- and smallest for the broad consumer sector
+distinctive, in energy ($+0.377$) and health ($+0.348$), and smallest for the broad consumer sector
 ($+0.100$); technology has the highest raw precision ($0.712$) only because it dominates the corpus and so
 has a high base rate ($0.429$).
 
