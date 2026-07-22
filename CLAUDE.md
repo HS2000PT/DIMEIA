@@ -63,11 +63,18 @@
   ao "não prever"; sem travessão) em app/README/RELATORIO; page_icon 🐊; tema config.toml
   verde-pântano+dourado. ⚠️ Screenshot da app na tese (Fig. 4.5) + logo nos slides ainda ANTIGOS
   → regenerar na F7.
-  **PUSH:** o aluno autorizou; `origin/main` em `5483dbf` (Fases 1-5 no remoto).
-  **FALTAM:** F6 revisão de escrita natural (tese + IEEE — sem tokens de IA, sem travessões a
-  meio de frases) · F7 figuras (simplificada no corpo + completa no apêndice) + apêndice
-  proof-of-work + regen screenshot · F8 guias de estudo VISUAIS (o + crítico p/ o aluno) · F9
-  manifesto do bundle público (isolar app/tese p/ repo público de 1 commit).
+  **PUSH:** o aluno autorizou; Fases 1-6 no remoto.
+  **✅ FASE 6 FEITA (commit deaefab, PUSHED) — escrita natural (anti-deteção-de-IA):** descoberta
+  honesta com provas — o CORPO da tese JÁ está limpo (0 travessões conectores em prosa; os "---"
+  são células de tabela "n/a"; 0 tic-words; lê-se humano/com voz, ex. ch6 "Yes."/"reported exactly
+  as they fell") ⇒ NÃO reescrevi o corpo validado (mais risco que benefício; o aluno pediu "sem
+  exagero, manter rigor"). O único tell real era no PAPER IEEE: 6 travessões conectores →
+  parênteses/vírgulas; recompila LIMPO (0 erros, 0 cit. indefinidas via bibtex/IEEEtran 25 refs,
+  4 pp; nenhum número alterado). A voz jovem/brincalhona vai para os GUIAS (F8). LaTeX confirmado
+  neste PC (MiKTeX + latexmk 4.87 + biber/bibtex).
+  **FALTAM:** F7 figuras (simplificada no corpo + completa no apêndice) + apêndice proof-of-work +
+  regen do screenshot da app com o logo NOVO (Playwright) · F8 guias de estudo VISUAIS (o + crítico
+  p/ o aluno) · F9 manifesto do bundle público (isolar app/tese p/ repo público de 1 commit).
   **⚠️ Para o aluno VER Fases 1-5 ao vivo:** correr o workflow "Alerts" + redeploy/reabrir a app.
 - **🟢 SESSÃO 39 (verificação, sem código novo):** confirmado nos logs REAIS do Actions (lidos
   via API com a credencial git local; `gh` não existe neste PC) que a sessão 38 funcionou em
