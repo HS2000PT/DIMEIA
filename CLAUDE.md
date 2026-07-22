@@ -7,8 +7,42 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 39 (**"continue" — verificação ao vivo da sessão 38: O MERCADO ACORDOU**)
-- **Última atualização:** 2026-07-13 (noite)
+- **Sessão nº:** 40 (**batch grande do aluno: produto + tese + marca + aprendizagem — plano-mestre aprovado**)
+- **Última atualização:** 2026-07-22
+- **🔧 SESSÃO 40 (EM CURSO — plano de 9 fases aprovado em modo de planeamento):** o aluno
+  devolveu ~18 pedidos (bug das setas; alertas ilegíveis "num relance"; dashboard fraco/tralha;
+  timing abertura/fecho; mais info nos alertas; loop de pós-fecho; novos critérios de triagem;
+  logo/slogan que odeia — quer crocodilo, Invest+Investigate+Aligator; revisão de escrita
+  anti-deteção-de-IA sem travessões; guias de estudo VISUAIS "de escola"; figuras melhores
+  (simplificada no corpo + completa no apêndice); apêndice "proof of work"; declaração de IA
+  mínima; app/tese isoladas p/ futuro repo público de 1 commit). **Plano-mestre** em
+  `C:\Users\ruifa\.claude\plans\serene-marinating-squid.md` (9 fases, respostas às perguntas
+  estratégicas embebidas). **Decisão fechada (a única pausa académica):** declaração de IA =
+  **honesta, sem nomear o produto** (o aluno escolheu a minha recomendação); fora dessa secção
+  a IA não é mencionada em lado nenhum. **Nota de trabalho:** commits SEM trailer Co-Authored-By
+  (instrução explícita do aluno "nunca mencionar IA/Claude"; decisão dele, registada).
+  **✅ FASE 1 FEITA (commit ab5759f) — bug das setas + alertas legíveis:** a direção estava
+  DUPLICADA e divergente em 3 sítios → nova fonte ÚNICA `direction_icon(value)` no explainer.
+  Corrigido: resumo diário (run_alerts usava SEMPRE 🔺 mesmo a descer — o bug do aluno) +
+  dashboard (marcadores sempre triangle-up e coluna "Type" sempre 🔺 → agora acompanham a
+  direção, derivada do NÚMERO guardado via `_market_down`, robusto a emojis antigos errados).
+  `explain_anomaly`/`explain_intraday` reescritos em CAMADAS legíveis num relance (linha 1 = o
+  facto a negrito; linha 2 = severidade em palavras; nota final "Why flagged" = a estatística;
+  todos os números intactos, fidelidade XAI testada). Travessões conectores (—) removidos dos
+  textos de produto. `classify_kind` agora robusto por emoji (📊/🔺🔻/📰) → **corrige bug
+  latente: alertas INTRADIÁRIOS eram classificados como notícia**. Testes de fidelidade
+  atualizados para os novos tokens. **✅ FASE 2 FEITA (commit 3e7d2b8) — dashboard:** as 2
+  tabelas (dataframe + expander "Full alert texts") fundidas numa **tabela ÚNICA e expansível**
+  (linha = data + facto; expande = texto completo; read-only, espelho do canal); tooltips
+  modernos (cartão multi-linha formatado com hoverlabel claro, em vez do texto cru de 220
+  chars); cabeçalho "Alert history" + linha "num relance" (N market · K news + legenda);
+  AppTest reescrito. **189 testes + ruff verdes em ambas as fases; números congelados intactos.**
+  **FALTAM (por ordem aprovada):** F3 timing abertura/fecho + loop de pós-fecho · F4 RQ4-ext
+  (novos critérios + ablação de features) · F5 logo/slogan (apresentar 2-3 conceitos p/ o aluno
+  escolher) · F6 revisão de escrita natural (tese + IEEE) · F7 figuras + apêndice proof-of-work ·
+  F8 guias de estudo VISUAIS (o + crítico p/ o aluno) · F9 manifesto do bundle público (isolar
+  app/tese). **⚠️ Para o aluno VER as Fases 1-2 ao vivo:** correr o workflow "Alerts" (1 clique)
+  e reabrir a app — o dashboard e os próximos alertas já saem no formato novo.
 - **🟢 SESSÃO 39 (verificação, sem código novo):** confirmado nos logs REAIS do Actions (lidos
   via API com a credencial git local; `gh` não existe neste PC) que a sessão 38 funcionou em
   produção. **(1) 1.º alerta de MERCADO de sempre** no canal (13/07: NVDA −3,53% intradiário,
