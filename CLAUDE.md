@@ -7,9 +7,9 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 40 (**batch grande do aluno: produto + tese + marca + aprendizagem — plano-mestre aprovado**)
+- **Sessão nº:** 40 (**COMPLETA — plano de 9 fases + visuais novos; F4/F7/F8/F9 nesta corrida na máquina do FNSPID**)
 - **Última atualização:** 2026-07-22
-- **🔧 SESSÃO 40 (EM CURSO — plano de 9 fases aprovado em modo de planeamento):** o aluno
+- **🔧 SESSÃO 40 (plano de 9 fases aprovado em modo de planeamento):** o aluno
   devolveu ~18 pedidos (bug das setas; alertas ilegíveis "num relance"; dashboard fraco/tralha;
   timing abertura/fecho; mais info nos alertas; loop de pós-fecho; novos critérios de triagem;
   logo/slogan que odeia — quer crocodilo, Invest+Investigate+Aligator; revisão de escrita
@@ -72,10 +72,49 @@
   parênteses/vírgulas; recompila LIMPO (0 erros, 0 cit. indefinidas via bibtex/IEEEtran 25 refs,
   4 pp; nenhum número alterado). A voz jovem/brincalhona vai para os GUIAS (F8). LaTeX confirmado
   neste PC (MiKTeX + latexmk 4.87 + biber/bibtex).
-  **FALTAM:** F7 figuras (simplificada no corpo + completa no apêndice) + apêndice proof-of-work +
-  regen do screenshot da app com o logo NOVO (Playwright) · F8 guias de estudo VISUAIS (o + crítico
-  p/ o aluno) · F9 manifesto do bundle público (isolar app/tese p/ repo público de 1 commit).
+  **✅ SESSÃO 40 COMPLETA (F4+F7+F8+F9 nesta corrida; F1-F6 em corridas anteriores) — ver o bloco
+  abaixo "SESSÃO 40 (fecho)".**
   **⚠️ Para o aluno VER Fases 1-5 ao vivo:** correr o workflow "Alerts" + redeploy/reabrir a app.
+- **✅ SESSÃO 40 (FECHO — "continue with the plan; i'm already on the best pc"):** o aluno estava
+  AGORA na máquina do FNSPID (`C:\Users\henri`, a do cabeçalho congelado) — a que TEM os dados
+  (`triage_dataset.csv`, `kb_fnspid_sbert.jsonl`, `fnspid_news_subset.csv`, `.env`) e `torch`. Isso
+  DESBLOQUEOU a F4 (a ablação estava só groundwork por falta de dados no outro PC). **Feito nesta
+  corrida (5 commits, todos SEM trailer de IA por instrução do aluno):**
+  **✅ F4 (commit 7ae5390) — ablação RQ4-ext CORRIDA (a "IA fraca" fica mais forte):** wiring aditivo
+  `context_ext` em `features.py` (caminho de produção byte-idêntico — o dataset congelado não tem as
+  colunas ⇒ `assemble` nunca produz o bloco novo); novo `scripts/train_triage_ext.py` (padrão *_ext,
+  NÃO toca em `models/` nem `evaluation_triage.md`); `build_dataset.py --ext` correu offline (cache de
+  preços) → `triage_dataset_ext.csv` (79.453 linhas). **Resultado honesto:** contexto v1 = PR-AUC
+  **0,537** (reproduz o congelado 0,538); +5 features = **0,535** (Δ −0,002, NENHUMA ajuda);
+  leave-one-in/out: só `ret_event_z` (+0,001) tem sinal positivo, resto plano/negativo → a volatilidade
+  rolante já absorve o sinal (mesma lição do texto, pelo lado oposto). → `evaluation_triage_ext.md` +
+  figura `eval_triage_ext.pdf` + secção nova na tese (Cap. 5) + `roadmap_rq4.md` Eixo 1 ✅ +4 testes
+  (199 total). **Congelados intactos (diff vazio).**
+  **✅ F7 (commit 6f199e3):** (a) Fig. 4.5 recapturada via Playwright (`scripts/screenshot_app.py`) com
+  a MARCA NOVA — logo "The Stare", slogan "Every move investigated, never predicted.", tema
+  verde-pântano+dourado, e as notas de abertura/fecho (F3) visíveis; caption atualizada. (b) a figura
+  simplificada do corpo (fluxo) passa a APONTAR para a figura completa do apêndice (pipeline com todos
+  os gates). (c) apêndice novo **"Proof of Work"** — tabela que liga CADA número da tese ao comando que
+  o regenera e ao ficheiro congelado + evidência de operação ao vivo (alertas reais, KB a maturar,
+  pós-validação 0,667 vs 0,455, 199 testes, 200+ commits). Tese **90 pp**, 0 erros, 0 refs indefinidas.
+  **✅ VISUAIS NOVOS (pedido do aluno a meio da sessão — "adoro visuais; snapshots reais dos objetos de
+  dados; todas as fases da IA; moderno, simples, jovem"):** nova **Fig. 3.2 "jornada dos dados"** — UM
+  headline REAL (NVDA, 10 Mai 2018, valores genuínos incl. embedding SBERT 384-d real) por 4 cartões
+  coloridos: RAW → CLEAN&ALIGN (anti-lookahead) → **REPRESENT (a fase "AI"** com badge: SBERT + features
+  + rótulo) → LEARN&MEASURE. Espelhada nos SLIDES (commit 775462a, +frame "The data, at every stage")
+  e no GUIA (commit 8f0291b, PT-PT). **+ visual "Built with"** (badges por categoria: fontes/APIs, ML,
+  produto, infra; "no paid APIs, no GPUs, no always-on server") nos slides e no guia — a resposta ao
+  pedido dos "logos das tecnologias/APIs" (badges de NOME, offline-safe, sem imagens de marca). Slides
+  17→19 frames; guia 73→**76 slides**; Result 4 dos slides + frame do guia ganham a ablação RQ4-ext.
+  **✅ F9 (commit 106ed97) — bundle público:** `scripts/make_public_bundle.py` (parte de `git ls-files`
+  ⇒ nunca inclui `.env`/segredos/corpora; remove os caminhos só-internos: progress/, CLAUDE.md,
+  .claude/, docs/internal|_archive|defence/, slides/, CHECKLIST/RELATORIO; scan de segredos; `--git` =
+  1 commit; **NUNCA faz push**) + manifesto `docs/design/public_bundle.md`. Testado: 210 ficheiros,
+  21 internos excluídos, scan limpo, 1 commit "Initial public release of InvestiGator".
+  **GATES:** 199 testes (+4) + ruff verdes; tese 90 pp / paper / slides 19 / guia 76 — todos 0 erros;
+  congelados byte-iguais; números novos gerados dos dados (0 fabricação).
+  **PENDENTE HUMANO:** licença de código + declaração ISEP (com o orientador); leitura final; publicar
+  o bundle (cliques). **Ambiente:** este PC tem venv 3.12 + torch + MiKTeX + Playwright(chromium).
 - **🟢 SESSÃO 39 (verificação, sem código novo):** confirmado nos logs REAIS do Actions (lidos
   via API com a credencial git local; `gh` não existe neste PC) que a sessão 38 funcionou em
   produção. **(1) 1.º alerta de MERCADO de sempre** no canal (13/07: NVDA −3,53% intradiário,

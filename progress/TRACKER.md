@@ -295,3 +295,19 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
   - [x] P5-P6 código módulo-a-módulo + workflow real (9033843)
   - [x] P7-P10 avaliação + decisões + sensibilidade + júri (6e90ccd)
 - [ ] (opcional) sincronizar paper/slides/caderno; leitura do aluno; declaração ISEP (humano)
+
+---
+
+# Plano de 9 fases + visuais (Sessão 40, 2026-07-22) — na máquina do FNSPID
+- [x] **F4** ablação RQ4-ext CORRIDA (7ae5390): `context_ext` aditivo + `train_triage_ext.py`; contexto
+  v1 0,537 ≈ congelado, +5 features 0,535 (Δ −0,002, nenhuma ajuda); evaluation_triage_ext.md + figura
+  + secção Cap. 5; congelados intactos; +4 testes (199)
+- [x] **F7** screenshot com marca nova (Playwright) + figura corpo→apêndice + apêndice "Proof of Work"
+  (6f199e3); tese 90 pp, 0 erros
+- [x] **Visuais** Fig. 3.2 "jornada dos dados" (1 headline real por RAW→CLEAN→REPRESENT/AI→MEASURE) na
+  tese + slides (775462a) + guia (8f0291b); "Built with" (badges) nos slides+guia
+- [x] **F8** guia 73→76 slides (jornada dos dados + ablação RQ4-ext + "feito com"); README 73→76
+- [x] **F9** `make_public_bundle.py` + `public_bundle.md` (106ed97): git ls-files − internos, scan de
+  segredos, --git=1 commit, nunca faz push; testado (210 ficheiros, 21 fora, limpo)
+- [x] Gates: 199 testes + ruff; tese 90 pp/paper/slides 19/guia 76 = 0 erros
+- [ ] (HUMANO) licença + declaração ISEP; leitura final; publicar o bundle (cliques)

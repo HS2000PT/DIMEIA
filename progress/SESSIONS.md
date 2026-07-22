@@ -5,6 +5,31 @@ A entrada mais recente fica no topo.
 
 ---
 
+## Sessão 40 (fecho) — 2026-07-22 — Plano de 9 fases: F4/F7/F8/F9 na máquina do FNSPID + visuais
+**Pedido:** "continue with the plan. i'm already on the best pc as well." (o aluno estava AGORA no
+PC `C:\Users\henri` — o do corpus FNSPID + torch — o que DESBLOQUEIA a F4.) A meio, pediu mais
+visuais: snapshots reais dos objetos de dados por todas as fases da IA + logos das tecnologias/APIs,
+moderno/simples/jovem, em tese e apresentação.
+- **F4 (7ae5390) — ablação RQ4-ext CORRIDA:** wiring aditivo `context_ext` (produção byte-idêntica);
+  novo `train_triage_ext.py` (não toca models/ nem evaluation_triage.md); `build_dataset.py --ext`
+  offline → 79.453 linhas. **Resultado honesto:** contexto v1 0,537 (≈ congelado 0,538); +5 features
+  0,535 (Δ −0,002, nenhuma ajuda); só `ret_event_z` +0,001. A volatilidade já absorve o sinal — mesma
+  lição do texto. → evaluation_triage_ext.md + figura + secção Cap. 5 + roadmap Eixo 1 ✅. +4 testes.
+- **F7 (6f199e3):** Fig. 4.5 recapturada (Playwright) com a marca nova (logo/slogan/tema + notas
+  abertura/fecho); figura do corpo aponta para a completa do apêndice; apêndice novo "Proof of Work"
+  (cada número → comando → ficheiro congelado + evidência ao vivo). Tese 90 pp, 0 erros.
+- **Visuais novos:** Fig. 3.2 "jornada dos dados" — 1 headline real (NVDA, embedding SBERT real) por
+  RAW→CLEAN→REPRESENT(a fase "AI")→MEASURE; espelhada nos slides (775462a) e no guia (8f0291b, PT).
+  + visual "Built with" (badges de nome por categoria — offline-safe) nos slides e guia. Slides 17→19,
+  guia 73→76; ablação RQ4-ext adicionada ao Result 4 e ao guia.
+- **F9 (106ed97):** `make_public_bundle.py` (git ls-files − internos; scan de segredos; --git = 1 commit;
+  nunca faz push) + manifesto `public_bundle.md`. Testado: 210 ficheiros, 21 internos fora, scan limpo.
+- **Gates:** 199 testes (+4) + ruff verdes; tese 90 pp/paper/slides 19/guia 76 = 0 erros; congelados
+  byte-iguais; 0 fabricação. Commits SEM trailer de IA (instrução do aluno). Pendente = humano (licença,
+  declaração ISEP, leitura final, publicar o bundle).
+
+---
+
 ## Sessão 39 — 2026-07-13 (noite) — Verificação ao vivo: o mercado ACORDOU
 **Pedido:** "continue" (pós-sessão 38; máxima autonomia).
 - **Confirmado nos logs reais do Actions** (API GitHub + credencial git local; sem `gh` neste PC):
