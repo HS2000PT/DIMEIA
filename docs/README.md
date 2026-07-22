@@ -18,6 +18,7 @@ se só queres correr o sistema.
 | [design/evaluation_design.md](design/evaluation_design.md) | Metodologia de avaliação (precision@k, anomalia). |
 | [design/risk_register.md](design/risk_register.md) | Riscos do projeto e mitigações. |
 | [design/migrar_repo.md](design/migrar_repo.md) | Migrar para um repo novo sem história (procedimento + trade-offs). |
+| [design/public_bundle.md](design/public_bundle.md) | Bundle público (app + tese + código) num repo de 1 commit; enacted por `scripts/make_public_bundle.py`. |
 
 ## evaluation/ — resultados (gerados por script; não editar à mão)
 | Ficheiro | Para quê |
