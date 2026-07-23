@@ -1,0 +1,148 @@
+% Capítulo 1 - Introdução  (PT-PT; espelho de ../thesis/ch1/chapter1.tex)
+% Estrutura canónica MEIA. Tradução pura: labels/refs/citações idênticos; só a língua muda.
+
+\chapter{Introdução}
+\label{chap:introduction}
+
+\section{Contextualização}
+\label{sec:intro_context}
+
+A maioria dos norte-americanos possui hoje ações, diretamente ou através de contas de reforma e fundos de
+investimento \autocite{gallup2025stock}, e investe no maior mercado acionista do mundo, avaliado em
+62,2~biliões de dólares no final de 2024 \autocite{sifma2025factbook} (Figura~\ref{fig:us_market_cap}).
+A negociação decorre sobretudo na \gls{NYSE} e na \gls{NASDAQ}, e uma fração crescente vem agora de pessoas
+comuns que usam aplicações móveis sem comissões, e não de instituições profissionais.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/us_equity_market_cap.pdf}
+\caption[Capitalização do mercado acionista dos EUA, 2015--2024]{Capitalização do mercado acionista dos
+EUA, 2015--2024 (biliões de dólares). Elaborada a partir dos dados reportados no SIFMA 2025 Capital
+Markets Fact Book \autocite{sifma2025factbook}.}
+\label{fig:us_market_cap}
+\end{figure}
+
+Estes investidores não profissionais, ou ``de retalho'', são o público deste trabalho, e a sua posição é
+difícil. Os mercados movem-se continuamente ao longo de milhares de títulos, e chegam notícias relevantes
+durante todo o dia de negociação, mas os investidores de retalho não têm nenhuma das ferramentas que os
+bancos e os fundos tomam como garantidas. A posse também é desigual: chega a 87\% dos agregados que ganham
+acima de 100\,000 dólares, mas apenas a 28\% dos que ganham abaixo de 50\,000 dólares
+\autocite{gallup2025stock}.
+
+Entretanto, a inteligência artificial espalhou-se depressa pelas finanças: um inquérito de 2026 encontrou
+81\% das empresas financeiras a adotar \gls{AI} e 71\% já a usar IA generativa \autocite{ccaf2026aifs}. Mas
+grande parte desta tecnologia é opaca, raramente mostrando como chega a uma conclusão
+\autocite{arrieta2020xai, adadi2018peeking}. Para quem tem de agir sobre um alerta e viver com o resultado,
+essa opacidade é o obstáculo que esta dissertação remove: permite ao investidor ver \emph{porquê} um alerta
+foi emitido.
+
+\section{Definição do Problema}
+\label{sec:intro_problem}
+
+Um investidor de retalho que queira manter-se informado enfrenta dois problemas do dia a dia. O primeiro é
+distinguir um movimento de preço genuinamente invulgar da volatilidade comum, o que exige juízo estatístico
+e atenção constante. O segundo é interpretar o que uma notícia pode significar, o que exige saber como
+eventos semelhantes se desenrolaram no passado. A maioria das pessoas não consegue fazer nenhum dos dois em
+escala, e as aplicações de consumo que prometem ajudar costumam enviar alertas secos ou esconder o seu
+raciocínio dentro de um modelo opaco.
+
+Este trabalho assume uma postura deliberadamente diferente: não prevê preços, \emph{explica} eventos. Para
+cada movimento abrupto ou notícia relevante, o sistema mostra o que detetou, como, de onde veio a
+informação, e quais os eventos passados que se assemelham ao atual, juntamente com o que aconteceu aos
+preços depois (Figura~\ref{fig:concept}).
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small, >={Stealth[length=2.2mm]},
+  trig/.style={draw, rounded corners, fill=black!8, align=center, text width=2.7cm, minimum height=0.9cm},
+  sys/.style={draw, rounded corners, fill=black!3, align=center, text width=2.2cm, minimum height=1.4cm},
+  outbox/.style={draw, rounded corners, fill=black!3, align=center, text width=3.4cm, minimum height=1.4cm},
+]
+  \node[trig] (t1) {Movimento abrupto de mercado};
+  \node[trig, below=6mm of t1] (t2) {Notícia relevante};
+  \node[sys] (sys) at ($(t1)!0.5!(t2) + (3.6,0)$) {\textbf{InvestiGator}};
+  \node[outbox, right=1.2cm of sys] (out) {Alerta explicado\\ \footnotesize evento $\cdot$ raciocínio\\ \footnotesize fontes $\cdot$ precedentes};
+  \node[right=0.9cm of out] (inv) {\footnotesize investidor};
+  \draw[->] (t1) -- (sys);
+  \draw[->] (t2) -- (sys);
+  \draw[->] (sys) -- (out);
+  \draw[->] (out) -- (inv);
+\end{tikzpicture}
+\caption[O que o InvestiGator faz]{Os dois gatilhos, um movimento súbito de mercado ou uma notícia
+relevante, alimentam o InvestiGator, que responde com um alerta explicado que o investidor pode seguir e
+verificar, e não apenas uma notificação seca.}
+\label{fig:concept}
+\end{figure}
+
+\section{Questões de Investigação e Objetivos}
+\label{sec:intro_objectives}
+
+O objetivo é conceber, construir e avaliar um sistema de alertas financeiros explicável para investidores de
+retalho dos EUA, movido por dois gatilhos independentes, um movimento súbito de mercado e uma notícia
+recebida, e entregue por Telegram. Quatro questões de investigação guiam o trabalho:
+
+\begin{itemize}
+  \item \textbf{\gls{RQ}1.} Conseguem métodos estatísticos transparentes detetar movimentos abruptos de
+        mercado de forma suficientemente consistente para serem úteis a um investidor de retalho,
+        mantendo-se explicáveis?
+  \item \textbf{\gls{RQ}2.} Consegue um motor de correlação notícia--mercado recuperar notícias históricas
+        genuinamente análogas melhor do que baselines triviais, e quantificar o impacto observado nos preços
+        desses precedentes sem lookahead?
+  \item \textbf{\gls{RQ}3.} Podem as explicações resultantes ser fiéis ao que o sistema realmente calcula, e
+        úteis a um investidor de retalho?
+  \item \textbf{\gls{RQ}4.} Consegue um modelo supervisionado, treinado em notícias históricas e contexto de
+        mercado, priorizar utilmente que notícias merecem um alerta, para além de baselines simples de
+        volatilidade, sem nunca prever a direção do preço?
+\end{itemize}
+
+Estas questões traduzem-se em cinco objetivos concretos:
+\begin{itemize}
+  \item construir um pipeline de alertas explicável, movido pelos dois gatilhos;
+  \item avaliar o detetor de anomalias face a baselines transparentes;
+  \item avaliar a recuperação de notícias históricas face a baselines triviais;
+  \item aferir se as explicações são fiéis e úteis;
+  \item treinar, calibrar e avaliar honestamente um modelo de triagem de materialidade que ordena os alertas
+        de notícias.
+\end{itemize}
+O sistema é construído de forma incremental, primeiro na sua forma mais simples e defensável, uma escolha
+metodológica explicada no Capítulo~\ref{chap:methods}.
+
+\section{Contribuições Científicas}
+\label{sec:intro_contributions}
+
+Esta é uma dissertação em \emph{Engenharia} de Inteligência Artificial: a contribuição não é um algoritmo
+novo, mas a montagem disciplinada de algoritmos existentes num sistema que funciona, se explica a si próprio
+e pode ser reproduzido. Quatro contribuições destacam-se:
+
+\begin{itemize}
+  \item Um método reprodutível para relacionar notícias com o impacto no mercado, que junta recuperação por
+        embeddings de frases com janelas de estudo de evento, com a medida de similaridade e os horizontes
+        temporais declarados de forma explícita e sem deixar entrar qualquer informação sobre o futuro.
+  \item O \textbf{InvestiGator}, um sistema de alertas que mostra toda a sua cadeia de raciocínio: o evento
+        detetado, a evidência de apoio, as fontes e os precedentes históricos relevantes. Como cada
+        explicação é construída diretamente a partir das quantidades que o sistema calcula, o texto não pode
+        divergir do cálculo.
+  \item Um modelo de \emph{triagem de materialidade} treinado e calibrado: aprendizagem supervisionada sobre
+        notícias históricas e contexto de mercado que estima com que frequência notícias com um dado perfil
+        foram seguidas de um movimento anormal, rotuladas pelo próprio código de estudo de evento do sistema,
+        avaliadas face a uma baseline de volatilidade, e integradas nos alertas como evidência ordenada e
+        explicada, e não como uma previsão.
+  \item Uma avaliação crítica e honesta de cada componente central em dados reais, face a baselines simples e
+        lexicais, com os resultados, as ablações e as limitações todos reportados com clareza.
+\end{itemize}
+
+\section{Estrutura do Documento}
+\label{sec:intro_structure}
+
+O resto da dissertação foi escrito para ser lido por ordem, cada capítulo respondendo a uma pergunta:
+
+\begin{itemize}
+  \item \textbf{Capítulo~\ref{chap:sota} (Estado da Arte):} o que já se sabe, e o que escolhe este trabalho?
+  \item \textbf{Capítulo~\ref{chap:methods} (Métodos e Materiais):} como é construído o sistema, e como é
+        avaliado?
+  \item \textbf{Capítulo~\ref{chap:investigator} (InvestiGator):} o que é o sistema, e como se encaixam os
+        seus dados, partes, fluxo e decisões?
+  \item \textbf{Capítulo~\ref{chap:casestudies} (Estudos de Caso):} funciona em dados reais?
+  \item \textbf{Capítulo~\ref{chap:conclusions} (Conclusões):} o que se aprendeu, e o que vem a seguir?
+\end{itemize}

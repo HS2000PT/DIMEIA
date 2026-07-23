@@ -570,7 +570,15 @@
 
 ## Decisões Confirmadas
 - **Variante de Inglês (tese):** **EN-GB** (bloqueada; nunca misturar). [Sessão 0]
-- **Idioma docs de aprendizagem/internos:** **PT-PT** (o único toggle do §0). Tese em Inglês. [Sessão 0]
+- **⚠️ TESE BILINGUE (Sessão 40):** existem **DUAS** teses — `thesis/` (EN-GB) e `thesis-pt/` (PT-PT)
+  — com o MESMO conteúdo (tradução pura, mesmo estilo). **REGRA DE SINCRONIA:** qualquer alteração de
+  conteúdo a uma língua TEM de ser espelhada (traduzida) na outra, no mesmo sítio — prosa, legendas,
+  texto de figuras TikZ, tabelas, front matter. Números/citações/labels/estrutura idênticos; só a
+  língua muda. Gráficos de dados (matplotlib `eval_*.pdf`) ficam EN nas duas (autorizado). Detalhe +
+  tracker por capítulo em `progress/BILINGUAL_PLAN.md`. **Verificar sempre:** as duas compilam a 0
+  erros e têm a mesma contagem de secções/figuras/tabelas.
+- **Idioma docs de aprendizagem/internos:** **PT-PT** (o único toggle do §0). Tese em EN **e** PT
+  (bilingue, ver acima). [Sessão 0; revisto Sessão 40]
 - **Versão de Python fixada:** **3.12** (estabilidade para torch/transformers/sentence-transformers; 3.14 corre risco de faltar wheels). [Sessão 0]
 - **Título escolhido:** **T1** — *Explainable Financial Alerts for Retail Investors: Integrating Statistical Anomaly Detection and News–Market Impact Correlation* (EN-GB). [Sessão 2 / D-008]
 - **APIs aprovadas:** proposta (Fase C, `docs/design/free_apis.md`, verificado 2026-06-21) — preços: yfinance (base) + Finnhub (fallback, 60/min); notícias: Finnhub news + RSS (+ GNews/Marketaux opcional); histórico: FNSPID; alertas: Telegram Bot API. Alpha Vantage só ocasional (25/dia).

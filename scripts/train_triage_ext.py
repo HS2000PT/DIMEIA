@@ -146,14 +146,14 @@ def main() -> int:
     loo_d = [marginal[f]["loo_delta"] for f in order]
     fig, ax = plt.subplots(figsize=(6.6, 3.8))
     h = 0.38
-    ax.barh(ypos + h / 2, loi_d, height=h, color="#4C78A8", label="leave-one-in (sobre v1)")
+    ax.barh(ypos + h / 2, loi_d, height=h, color="#4C78A8", label="leave-one-in (over v1)")
     ax.barh(ypos - h / 2, loo_d, height=h, color="#F58518",
-            label="leave-one-out (custo de remover)")
+            label="leave-one-out (removal cost)")
     ax.axvline(0.0, color="grey", lw=0.8)
     ax.set_yticks(ypos)
     ax.set_yticklabels([f.replace("_", "\n", 1) for f in order], fontsize=8)
     ax.set_xlabel("Δ PR-AUC")
-    ax.set_title("RQ4-ext: contribuição marginal de cada sinal de contexto (teste)")
+    ax.set_title("RQ4-ext: marginal contribution of each context signal (test)")
     ax.legend(fontsize=8, loc="lower right")
     fig.tight_layout()
     figpath = REPO / "thesis" / "figures" / "eval_triage_ext.pdf"

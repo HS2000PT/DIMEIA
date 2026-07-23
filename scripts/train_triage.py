@@ -46,6 +46,15 @@ LABELS = {
     "full": "LR contexto+texto (principal)",
     "gbm": "Gradient boosting (contexto+texto)",
 }
+# Rótulos EN para as FIGURAS (a tese é EN-GB). O `evaluation_triage.md` continua a usar LABELS (PT).
+FIG_LABELS = {
+    "always": "Alert-always (floor)",
+    "vol": "Volatility-only LR (baseline)",
+    "context": "Context-only LR",
+    "text": "Text-only LR",
+    "full": "Context+text LR (main)",
+    "gbm": "Gradient boosting (context+text)",
+}
 
 
 def _get_embedder(name: str):
@@ -143,11 +152,11 @@ def main() -> int:
     for name in ["vol", "context", "text", "full", "gbm"]:
         s = bundles[name][3]
         prec, rec, _ = precision_recall_curve(y["test"], s)
-        ax.plot(rec, prec, label=f"{LABELS[name]} (AP={results[name]['pr_auc']:.3f})")
+        ax.plot(rec, prec, label=f"{FIG_LABELS[name]} (AP={results[name]['pr_auc']:.3f})")
     ax.axhline(y["test"].mean(), ls="--", c="grey",
-               label=f"Alertar-sempre (prevalência={y['test'].mean():.3f})")
+               label=f"Alert-always (prevalence={y['test'].mean():.3f})")
     ax.set_xlabel("Recall"), ax.set_ylabel("Precision")
-    ax.set_title("Triagem de materialidade — curvas PR (teste)")
+    ax.set_title("Materiality triage — PR curves (test)")
     ax.legend(fontsize=7), fig.tight_layout()
     fig.savefig(REPO / "thesis" / "figures" / "eval_triage_pr.pdf")
 
@@ -159,10 +168,10 @@ def main() -> int:
         m = (s_full >= lo) & (s_full < hi)
         if m.sum() >= 5:
             mids.append(s_full[m].mean()), fracs.append(y["test"][m].mean())
-    ax2.plot([0, 1], [0, 1], "--", c="grey", label="calibração perfeita")
-    ax2.plot(mids, fracs, "o-", label="LR contexto+texto (calibrada)")
-    ax2.set_xlabel("Probabilidade prevista"), ax2.set_ylabel("Fração observada")
-    ax2.set_title("Curva de calibração (teste)")
+    ax2.plot([0, 1], [0, 1], "--", c="grey", label="perfect calibration")
+    ax2.plot(mids, fracs, "o-", label="Context+text LR (calibrated)")
+    ax2.set_xlabel("Predicted probability"), ax2.set_ylabel("Observed frequency")
+    ax2.set_title("Calibration curve (test)")
     ax2.legend(), fig2.tight_layout()
     fig2.savefig(REPO / "thesis" / "figures" / "eval_triage_calibration.pdf")
 

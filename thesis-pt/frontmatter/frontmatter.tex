@@ -1,0 +1,154 @@
+% Front matter — versão PT-PT. Espelho de ../thesis/frontmatter/frontmatter.tex (mesmo conteúdo).
+
+\frontmatter % numeração romana (i, ii, iii, ...) nas páginas pré-conteúdo
+
+\pagestyle{plain}
+
+%----------------------------------------------------------------------------------------
+%	PÁGINA DE TÍTULO
+%----------------------------------------------------------------------------------------
+
+\maketitlepage
+
+%----------------------------------------------------------------------------------------
+%	DECLARAÇÃO DE INTEGRIDADE
+%----------------------------------------------------------------------------------------
+
+\begin{soi}
+
+\vspace{1cm}
+
+Declaro que realizei este trabalho académico com integridade.
+
+Não plagiei nem apliquei qualquer forma de uso indevido de informação ou de falsificação de resultados
+ao longo do processo que conduziu à sua elaboração.
+
+Assim, o trabalho apresentado neste documento é original e da minha autoria, não tendo sido anteriormente
+utilizado para qualquer outro fim.
+
+Declaro ainda que tomei pleno conhecimento do Código de Conduta Ética do P.PORTO.
+
+\vspace{0.5cm}
+
+\textbf{Uso de Inteligência Artificial.} Em conformidade com as orientações do P.PORTO/ISEP, declaro que
+foram utilizadas ferramentas de inteligência artificial (nomeadamente o Claude Code) durante o
+desenvolvimento deste trabalho, para apoiar a redação e edição do texto e o desenvolvimento de software.
+Dirigi o trabalho e revi e validei criticamente todos os resultados; as ideias, as decisões e o conteúdo
+final são meus e da minha responsabilidade.
+
+\vspace{1cm}
+
+ISEP, Porto, \today % NOTA: substituir pela data de entrega; confirmar a redação exata exigida pela MEIA/ISEP.
+
+\end{soi}
+
+%----------------------------------------------------------------------------------------
+%	DEDICATÓRIA (opcional)
+%----------------------------------------------------------------------------------------
+\begin{dedicatory}
+% TODO (opcional): dedicatória.
+\end{dedicatory}
+
+%----------------------------------------------------------------------------------------
+%	RESUMO (língua principal: Português)
+%----------------------------------------------------------------------------------------
+
+\begin{abstract}
+
+Esta dissertação apresenta o InvestiGator, um sistema de alertas financeiros explicável (XAI-first) para
+investidores de retalho no mercado acionista dos Estados Unidos (NYSE e NASDAQ). O sistema envia alertas via Telegram a partir
+de dois gatilhos independentes (movimentos abruptos de mercado, detetados como anomalias estatísticas, e
+novas notícias financeiras) e, para cada alerta, expõe uma explicação totalmente rastreável: o evento
+detetado, o raciocínio aplicado, as fontes e os precedentes históricos. O seu núcleo é um motor de correlação
+notícia--mercado que, dada uma notícia, recupera notícias históricas análogas de uma base de conhecimento e
+mede o impacto que esses precedentes tiveram nos preços, à maneira de um estudo de evento e sem lookahead.
+Enquanto contribuição de Engenharia de Inteligência Artificial, o trabalho integra, aplica e avalia
+criticamente componentes existentes (recuperação por embeddings de frases, deteção estatística de anomalias,
+triagem supervisionada e explicação transparente) num sistema funcional, explicável e reproduzível. Em dados reais, a recuperação
+semântica superou claramente as baselines lexical e triviais (precision@5 cross-ticker de $0{,}51$, face a
+$0{,}35$ de uma baseline lexical e $0{,}24$ do acaso) e o detetor normalizado pela volatilidade disparou de forma muito mais consistente entre
+ações do que um limiar fixo. Um modelo de triagem de materialidade treinado em $79\,753$ exemplos
+notícia--mercado de vários anos quase quadruplicou a precisão dos alertas dentro do orçamento diário, mas
+nenhum modelo com texto bateu a baseline de só-volatilidade, resultado reportado tal como é. As limitações
+e o trabalho futuro ficam explícitos.
+
+\end{abstract}
+
+\begin{abstractotherlanguage}
+
+This dissertation presents InvestiGator, an explainable (XAI-first) financial-alert system for retail investors in
+the US equity market (NYSE and NASDAQ). The system raises Telegram alerts from two independent triggers (abrupt
+market movements, detected as statistical anomalies, and incoming financial news) and, for every alert,
+exposes a fully traceable explanation: the detected event, the reasoning applied, the sources, and historical
+precedents. Its core is a news--market correlation engine that, given a news item, retrieves analogous
+historical news from a knowledge base and measures the impact those precedents had on prices, event-study
+style and without lookahead. As an Artificial Intelligence Engineering contribution, the work
+integrates, applies and critically evaluates existing components (sentence-embedding retrieval, statistical
+anomaly detection, supervised triage and transparent explanation) in a functional, explainable and reproducible system. On real
+data, semantic retrieval clearly outperformed lexical and trivial baselines (cross-ticker precision@5 of $0.51$
+against $0.35$ lexical and $0.24$ random), and the volatility-normalised detector
+fired far more consistently across stocks than a fixed threshold. A materiality-triage model trained on
+$79{,}753$ multi-year news--market examples nearly quadrupled within-budget alert precision, yet no text
+model beat the volatility-only baseline, a finding reported as it stands. Limitations and future work are
+stated explicitly.
+
+\end{abstractotherlanguage}
+
+%----------------------------------------------------------------------------------------
+%	AGRADECIMENTOS (opcional)
+%----------------------------------------------------------------------------------------
+
+\begin{acknowledgements}
+% TODO (opcional): agradecimentos.
+\end{acknowledgements}
+
+%----------------------------------------------------------------------------------------
+%	ÍNDICES
+%----------------------------------------------------------------------------------------
+
+\tableofcontents
+
+\listoffigures
+
+\listoftables
+
+\iflanguage{portuguese}{
+\renewcommand{\listalgorithmname}{Lista de Algor\'itmos}
+}
+\listofalgorithms
+\addchaptertocentry{\listalgorithmname}
+
+%----------------------------------------------------------------------------------------
+%	SÍMBOLOS
+%----------------------------------------------------------------------------------------
+
+\begin{symbols}{lll} % Lista de símbolos (três colunas)
+
+$r_t$ & retorno logarítmico de um ativo no dia $t$ & --- \\
+$\mu_t$ & média móvel dos retornos & --- \\
+$\sigma_t$ & desvio-padrão móvel dos retornos & --- \\
+$z_t$ & z-score do retorno no dia $t$ & --- \\
+$k$ & limiar de anomalia (em desvios-padrão) & --- \\
+$w$ & comprimento da janela móvel & \si{\day} \\
+
+\end{symbols}
+
+%----------------------------------------------------------------------------------------
+%	ACRÓNIMOS
+%----------------------------------------------------------------------------------------
+
+\newcommand{\listacronymname}{List of Acronyms}
+\iflanguage{portuguese}{
+\renewcommand{\listacronymname}{Lista de Acr\'onimos}
+}
+
+\glsresetall
+
+\printnoidxglossary[title=\listacronymname,type=\acronymtype,style=long]
+
+%----------------------------------------------------------------------------------------
+%	FIM DO FRONT MATTER
+%----------------------------------------------------------------------------------------
+
+\mainmatter
+\pagestyle{thesis}
