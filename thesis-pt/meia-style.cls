@@ -142,7 +142,7 @@
 %	REQUIRED PACKAGES
 %----------------------------------------------------------------------------------------
 
-\RequirePackage{babel} % Required for automatically changing names of document elements to languages besides english
+\RequirePackage[main=portuguese,english]{babel} % PT-PT como língua principal (EN p/ o abstract secundário). Cópia divergente da versão EN — ver progress/BILINGUAL_PLAN.md.
 
 \RequirePackage{scrbase} % Required for handling language-dependent names of sections/document elements
 
@@ -353,15 +353,15 @@ KOMA-script documentation for details.}]{fancyhdr}
 	\begin{titlepage}
 	\begin{minipage}[b]{0.4\textwidth}
 	\centering
-	\includegraphics[width=5.5cm]{/frontmatter/assets/isep-logo-new.jpeg} \\
+	\includegraphics[width=5.5cm]{frontmatter/assets/isep-logo-new.jpeg} \\
 	\end{minipage}
 	\begin{minipage}[b]{0.2\textwidth}
 	\centering
-	\includegraphics[width=2.8cm]{/frontmatter/assets/Logotype_MEIA-19.png}
+	\includegraphics[width=2.8cm]{frontmatter/assets/Logotype_MEIA-19.png}
 	\end{minipage}
 	\begin{minipage}[b]{0.4\textwidth}
 	\centering
-	\includegraphics[width=5.5cm]{/frontmatter/assets/logo_DEI_big_transparente.png}
+	\includegraphics[width=5.5cm]{frontmatter/assets/logo_DEI_big_transparente.png}
 	\end{minipage}
 
 	

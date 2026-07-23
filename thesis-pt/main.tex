@@ -7,8 +7,9 @@
 
 \documentclass[
 11pt,            % corpo de letra (regra ISEP)
-portuguese,      % língua do documento (PT-PT)
 singlespacing,   % espaçamento simples
+% Nota: a língua (PT-PT) é definida na classe via \RequirePackage[main=portuguese]{babel}
+% (babel 26.x rejeita 'portuguese' como opção global de classe).
 parskip,         % espaço entre parágrafos
 nohyperreflinkcolor, % links sem cor
 headsepline,     % linha sob o cabeçalho
@@ -22,8 +23,8 @@ headsepline,     % linha sob o cabeçalho
 \pgfplotsset{compat=newest}
 \usepackage{rotating}  % sidewaysfigure: o diagrama-mestre do pipeline (Apêndice A) em paisagem
 
-% Figuras partilhadas com a versão EN (um único conjunto).
-\graphicspath{{../thesis/figures/}{frontmatter/assets/}}
+% Figuras e assets partilhados com a versão EN (um único conjunto): `figures/x` -> ../thesis/figures/x.
+\graphicspath{{../thesis/}{./}}
 
 % Estilo de citação recomendado pelo template (Harvard-like) + backend biber
 \usepackage[style=authoryear-comp,backend=biber]{biblatex}
