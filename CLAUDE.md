@@ -46,7 +46,31 @@
   **ch2–ch6 são scaffolds vazios** no thesis-pt (EN: ch2 27k/ch3 46k/ch4 27k/ch5 41k/ch6 9k
   chars → PT ~0). Tradução de ch2–ch6 = trabalho académico do aluno (não fabricar; ele tem de
   ler/defender). **Gates:** 202 testes + ruff verdes; app timedelta gate limpo (test_app_triage
-  passa sob -W error da deprecação). **Não commitei nem fiz push para main** — trabalho na branch.
+  passa sob -W error da deprecação). **PUSH + PR:** o aluno autorizou ("commit and push everything
+  auto"); branch `claude/general-improvements-0ba2e9` no remoto, **PR #1**
+  (<https://github.com/HS2000PT/DIMEIA/pull/1>). `gh` não existe neste PC → PR criado via API
+  com a credencial git local.
+  **🗺️ ROADMAP GRANDE (o aluno expandiu MUITO o âmbito a meio da sessão):** pediu um plano e
+  "go ahead" para: (WS1) integridade do apêndice — tirar nomes de scripts/ficheiros
+  `python scripts/x.py` e frases tipo-software "reads as a dissertation rather than a software
+  specification" (parecem esconder uso de IA; júri não vê o git); refazer o apêndice com
+  SNAPSHOTS/relatórios, não listas de ficheiros. (WS2) **tese bilingue EN↔PT em sincronia total
+  = REGRA** (já em "Decisões Confirmadas"); medido: só ch1+frontmatter traduzidos, **ch2–ch6 são
+  scaffolds vazios** → traduzir tudo, fiel, mesmo estilo, incluindo legendas/figuras; varrer
+  mistura EN/PT. (WS3) **snapshots reais dos objetos de dados** (bruto→limpo→representado→medido,
+  "todas as fases da IA"; que métrica com que colunas) na tese E slides; mais figuras "tipo
+  slides" na tese; logos das fontes/APIs/tecnologias na apresentação. (WS4) app: **setas para
+  cima estão VERMELHAS (🔺), devem ser VERDES**; estado do mercado aberto/fechado ao vivo; mais
+  bolsas/horários europeus (Xetra…); intradiário por defeito + gráfico mais tempo-real; tema
+  claro/escuro por hora + mascote crocodilo dia/noite + fundos; logo/interface mais polémico;
+  **auth admin/guest** com definições editáveis por cliques que refletem nos alertas Telegram;
+  marketing/apelo. (WS5) **resultados desiludem** — "notícias positivas mas precedentes de
+  queda" (tema≠direção, já no CS3; melhorar PRODUTO/clareza, NÃO fabricar número), critério de
+  alerta mais sensível/customizável, história aparece tarde, ser crítico. (WS6) futuro: chatbot-
+  mascote (RAG nos dados → net), multi-bolsa, auth robusta. **Plano completo, priorizado, com a
+  minha análise crítica e sugestões: [`progress/PLANO_MELHORIAS.md`](progress/PLANO_MELHORIAS.md).**
+  **Fase 1 = WS1 (apêndice) + setas verdes + estado do mercado.** REGRA DURA em todo o roadmap:
+  não fabricar; congelados byte-iguais; bilingue em sincronia; sem trailer de IA nos commits.
 - **🔧 SESSÃO 40 (plano de 9 fases aprovado em modo de planeamento):** o aluno
   devolveu ~18 pedidos (bug das setas; alertas ilegíveis "num relance"; dashboard fraco/tralha;
   timing abertura/fecho; mais info nos alertas; loop de pós-fecho; novos critérios de triagem;
