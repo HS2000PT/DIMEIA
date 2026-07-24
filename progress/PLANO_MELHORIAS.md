@@ -152,11 +152,21 @@ Estes ficam DESENHADOS no plano; construção faseada e só com decisão do alun
 6. **App marketing:** hero com a mascote + slogan + 3 provas ("explicável", "grátis", "ao
    vivo"), e um mini-tour de 20s.
 
-## Decisões que preciso do aluno (não bloqueiam o arranque)
-- Glifo das setas (proponho 📈 subir / 📉 descer como default; ou ▲/▼ coloridos no dashboard e
-  📈/📉 no texto). 
-- Bolsas europeias a incluir primeiro (Xetra? Euronext Lisboa? LSE?).
-- Auth: guest/admin simples com password única de admin (persistida como segredo) — OK?
+## Decisões do aluno (2026-07-25) ✅
+- **Próximo foco:** **App value + clarity** (corrigir a confusão dos precedentes, alertas mais
+  sensíveis/customizáveis, estado do mercado ao vivo, painel de saúde, marketing).
+- **Setas:** **manter 📈 / 📉** (já aplicado).
+- **Auth do painel:** **guest + password de admin** (guest read-only; admin desbloqueia edição
+  das definições, que persistem e alimentam os alertas Telegram).
+- (Ainda em aberto: que bolsa europeia primeiro — Xetra/Euronext/LSE.)
+
+## Registo de progresso
+- **Sessão 41 (feito, PR #1):** robustez (10 correções + 5 testes); contagens de teste;
+  WS1 integridade do apêndice ✅; WS4-1 setas 📈/📉 ✅; **clareza dos precedentes** (split de
+  direção + "not a prediction for this news") ✅.
+- **A seguir (App value + clarity):** WS4-2 estado do mercado ao vivo; thresholds
+  sensíveis/customizáveis + painel guest/admin; painel de saúde ("está vivo": pós-validação
+  0,667 vs 0,455, KB a maturar, contagem de alertas); marketing/hero.
 
 ## Ordem de execução proposta
 **Fase 1 (já):** WS1 (integridade do apêndice) + WS4-1 (setas verdes) + WS4-2 (estado do
