@@ -164,9 +164,20 @@ Estes ficam DESENHADOS no plano; construção faseada e só com decisão do alun
 - **Sessão 41 (feito, PR #1):** robustez (10 correções + 5 testes); contagens de teste;
   WS1 integridade do apêndice ✅; WS4-1 setas 📈/📉 ✅; **clareza dos precedentes** (split de
   direção + "not a prediction for this news") ✅.
-- **A seguir (App value + clarity):** WS4-2 estado do mercado ao vivo; thresholds
-  sensíveis/customizáveis + painel guest/admin; painel de saúde ("está vivo": pós-validação
-  0,667 vs 0,455, KB a maturar, contagem de alertas); marketing/hero.
+- **App value + clarity — FEITO nesta corrida (PR #1):**
+  - ✅ **Clareza dos precedentes:** split de direção + "not a prediction for this news".
+  - ✅ **Estado do mercado US ao vivo** (🟢/🔴 + contagem, DST via zoneinfo).
+  - ✅ **Badge de prova de vida** ao topo (alertas entregues + precisão vs base rate).
+  - ✅ **Painel guest/admin + overrides ajustáveis** que chegam aos alertas: núcleo puro
+    `investigator/settings_overrides.py` (valida/limita, fail-open) + runner `effective_config()`
+    (base + local + branch) + painel na app (password de admin → sliders → publica na branch).
+  - ⏳ Marketing/hero e nudge de defaults: o painel já torna os critérios customizáveis pelo
+    admin; a identidade (mascote/logo/tema por hora) é o foco "App fun + identity", ainda não
+    escolhido.
+- **🧑 PASSO HUMANO p/ ativar o painel de admin:** no Streamlit (Manage app → Settings →
+  Secrets) definir `admin_password = "..."` (desbloqueia a edição) e, para aplicar ao vivo sem
+  copiar à mão, `github_token = "<PAT com repo:contents write>"` (o repo é derivado do
+  history_url). Sem estes segredos, a app fica em guest (read-only) — comportamento seguro.
 
 ## Ordem de execução proposta
 **Fase 1 (já):** WS1 (integridade do apêndice) + WS4-1 (setas verdes) + WS4-2 (estado do
