@@ -470,10 +470,32 @@ def _ticker_tab(ticker: str, history: list) -> None:
 # run_every numérico (segundos): evita o caminho pd.Timedelta(str) do Streamlit, que
 # sob numpy>=2.5 emite a deprecação "generic unit for timedelta" (e falha num numpy futuro).
 # 120 segundos, comportamento idêntico.
+def _health_strip(history, monitoring) -> None:
+    """Prova de vida AO TOPO: quantos alertas explicados já saíram e — se a pós-validação
+    existir — a precisão das decisões MANTIDAS vs a base rate, fora da amostra. Combate o
+    'parece parado/ignorado'. Fail-open; sem st.metric (a guarda de performance conta metrics)."""
+    from investigator.evaluation.monitoring import parse_live_monitoring
+
+    n = sum(1 for h in history if h.kind in ("market", "news"))
+    bits = []
+    if n:
+        bits.append(f"**{n}** explained alerts delivered")
+    health = parse_live_monitoring(monitoring)
+    if health:
+        bits.append(
+            f"kept-alert precision **{health.kept_precision:.0%}** vs "
+            f"{health.base_rate:.0%} base rate (+{health.lift_points:.0f} pts, out-of-sample)"
+        )
+    if bits:
+        st.success("✅ Live & tracked — " + " · ".join(bits))
+
+
 @st.fragment(run_every=120)
 def _live_view() -> None:
     history = _read_shared_history()
     _overview_strip()
+    monitoring = _live_monitoring_md()
+    _health_strip(history, monitoring)
     if not history:
         st.caption("⚠ No shared event history reachable right now. Charts still show live "
                    "prices; events appear as the automated scan records them.")
@@ -485,7 +507,6 @@ def _live_view() -> None:
     if summaries:
         with st.expander(f"📊 Daily close summary ({summaries[-1].date})"):
             st.text(summaries[-1].text)
-    monitoring = _live_monitoring_md()
     if monitoring:
         with st.expander("📈 How our alerts are doing (live monitoring)"):
             st.markdown(monitoring)
