@@ -47,8 +47,9 @@ def plain_text(alert: str) -> str:
 
 def direction_icon(value: float) -> str:
     """Ícone de direção — a FONTE ÚNICA (o bug das setas vinha de lógica duplicada em 3
-    sítios: aqui, no resumo diário e no dashboard). 🔺 sobe, 🔻 desce."""
-    return "🔺" if value >= 0 else "🔻"
+    sítios: aqui, no resumo diário e no dashboard). Cor certa: 📈 sobe (verde), 📉 desce
+    (vermelho) — o antigo 🔺/🔻 era vermelho nos dois sentidos e confundia."""
+    return "📈" if value >= 0 else "📉"
 
 
 def _clip(text: str, limit: int = _MAX_HEADLINE) -> str:

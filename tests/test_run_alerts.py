@@ -164,7 +164,7 @@ def test_build_daily_summary_com_e_sem_anomalias():
     assert "No anomalies today" in calmo and "±" not in calmo
     assert "not advice" in calmo
     agitado = build_daily_summary([("TSLA", _res(True, 2.6))], 2.0)
-    assert "🔺 TSLA" in agitado and "anomaly" in agitado.lower()
+    assert "📈 TSLA" in agitado and "anomaly" in agitado.lower()
     assert build_daily_summary([], 2.0) == ""
 
 
@@ -194,8 +194,8 @@ def test_build_opening_note_snapshot():
 
     note = build_opening_note([("NVDA", _r(0.024)), ("AAPL", _r(0.004)), ("TSLA", _r(-0.018))])
     assert "Market open" in note
-    assert "🔺 NVDA: +2.40% vs yesterday's close" in note   # seta certa (sobe)
-    assert "🔻 TSLA: -1.80% vs yesterday's close" in note    # seta certa (desce)
+    assert "📈 NVDA: +2.40% vs yesterday's close" in note   # verde a subir
+    assert "📉 TSLA: -1.80% vs yesterday's close" in note    # vermelho a descer
     assert "Flat at the open: AAPL +0.4%" in note            # <1% comprimido
     assert note.index("NVDA") < note.index("TSLA")           # ordenado por |movimento|
     assert "not advice" in note

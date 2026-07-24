@@ -391,7 +391,7 @@ def _kind_label(h) -> str:
         return "📰 News event"
     if h.kind == "summary":
         return "📊 Daily summary"
-    return "🔻 Market anomaly (down)" if _market_down(h.text) else "🔺 Market anomaly (up)"
+    return "📉 Market anomaly (down)" if _market_down(h.text) else "📈 Market anomaly (up)"
 
 
 def _events_list(eventos: list) -> None:
@@ -445,7 +445,7 @@ def _ticker_tab(ticker: str, history: list) -> None:
         n_mkt = sum(1 for h in eventos if h.kind == "market")
         n_news = sum(1 for h in eventos if h.kind == "news")
         st.caption(f"{len(eventos)} on record · {n_mkt} market · {n_news} news · "
-                   "🔺 up · 🔻 down · 📰 news. Open a row for the full alert, "
+                   "📈 up · 📉 down · 📰 news. Open a row for the full alert, "
                    "exactly as sent to the Telegram channel.")
         _events_list(eventos)
     else:

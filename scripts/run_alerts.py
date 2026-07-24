@@ -254,7 +254,7 @@ def build_daily_summary(results: list[tuple[str, object]], threshold: float) -> 
     # Hierarquia visual (UX 2026-07-12): movers em destaque, um por linha; os calmos
     # (<1% e sem anomalia) comprimidos numa linha só — 10 linhas monótonas não se leem.
     # A seta segue SEMPRE o sinal do movimento (direction_icon, fonte única): anomalias
-    # levam os triângulos de alerta 🔺/🔻; os movers normais as setas finas ⬆/⬇.
+    # levam 📈 (sobe, verde) / 📉 (desce, vermelho); os movers normais as setas finas ⬆/⬇.
     calmos: list[str] = []
     for ticker, r in ordenados:
         if r.is_anomaly:
