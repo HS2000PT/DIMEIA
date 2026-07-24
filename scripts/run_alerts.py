@@ -865,20 +865,30 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     can_send = bool(config.TELEGRAM_BOT_TOKEN and config.TELEGRAM_CHAT_ID) and not dry_run
     from investigator.explanation_engine.explainer import plain_text
 
+    falhas = 0
     for _ticker, text in mensagens:
         print("-" * 60)
         print(plain_text(text))
         if can_send:
             from investigator.telegram_bot.sender import send_message
 
-            send_message(text)
+            # Um envio falhado (rede/Telegram intermitente) não pode abortar o ciclo nem
+            # impedir as mensagens seguintes: o modo agendado (Actions) sairia com código
+            # de erro e as restantes ficariam por entregar. Falha-suave e continua.
+            try:
+                send_message(text)
+            except Exception as exc:  # noqa: BLE001
+                falhas += 1
+                print(f"[!] Falha ao enviar (o ciclo continua): {exc}")
 
     _fanout_safe(alerts, bot_cfg, dry_run=dry_run)  # fan-out só de alertas por ticker
 
     if can_send:
         _record_history_safe(mensagens, date.today().isoformat())
         _push_history_safe()  # só ativo na VM (INVESTIGATOR_HISTORY_GIT=1); fail-open
-        print(f"\n[{len(mensagens)} mensagem(ns) enviada(s) para o Telegram]")
+        entregues = len(mensagens) - falhas
+        extra = f" ({falhas} falha[s] de envio)" if falhas else ""
+        print(f"\n[{entregues}/{len(mensagens)} mensagem(ns) enviada(s) para o Telegram{extra}]")
     else:
         why = "modo --dry-run" if dry_run else "Telegram nao configurado (nada enviado)"
         print(f"\n[{len(mensagens)} mensagem(ns); {why}]")

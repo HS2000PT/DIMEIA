@@ -453,7 +453,10 @@ def _ticker_tab(ticker: str, history: list) -> None:
                    "scan detects anomalies and material news.")
 
 
-@st.fragment(run_every="120s")
+# run_every numérico (segundos): evita o caminho pd.Timedelta(str) do Streamlit, que
+# sob numpy>=2.5 emite a deprecação "generic unit for timedelta" (e falha num numpy futuro).
+# 120 segundos, comportamento idêntico.
+@st.fragment(run_every=120)
 def _live_view() -> None:
     history = _read_shared_history()
     _overview_strip()

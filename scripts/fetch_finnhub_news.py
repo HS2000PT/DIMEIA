@@ -49,12 +49,15 @@ def main() -> None:
     rows: list[dict] = []
     for ticker in args.tickers:
         items = fetch_finnhub_company_news(ticker, start.isoformat(), end.isoformat())
+        bruto = len(items)  # antes do teto — para tornar a truncagem visível no log
         if args.max_per_ticker:
             items = items[: args.max_per_ticker]
         for it in items:
             if it.date:  # precisa de data para o event study
                 rows.append({"date": it.date, "ticker": it.ticker, "headline": it.headline})
-        print(f"  {ticker}: {len(items)} notícias")
+        descartadas = bruto - len(items)
+        aviso = f"  ⚠ teto: {descartadas} manchetes mais antigas descartadas" if descartadas else ""
+        print(f"  {ticker}: {len(items)}/{bruto} notícias{aviso}")
 
     df = pd.DataFrame(rows).drop_duplicates(subset=["ticker", "headline"]).reset_index(drop=True)
     print(f"Total (após dedupe): {len(df):,} notícias")

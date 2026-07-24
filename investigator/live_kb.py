@@ -188,6 +188,17 @@ def recency_weight(record_date: str, today: date, half_life_days: float) -> floa
     return math.pow(0.5, age / max(1.0, half_life_days))
 
 
+def _within_age(record_date: str, today: date, max_age_days: int) -> bool:
+    """True se `record_date` (ISO) está dentro de [hoje-max_age_days, hoje]. Fail-open:
+    uma data corrompida na KB é descartada (False), como em `recency_weight` — nunca
+    derruba a recuperação (o mesmo padrão tolerante do resto do módulo)."""
+    try:
+        age = (today - date.fromisoformat(record_date)).days
+    except ValueError:
+        return False
+    return 0 <= age <= max_age_days
+
+
 def merged_precedents(query: str, kbs: list, embedder, top_k: int, today: date,
                       half_life_days: float = 365.0,
                       max_age_days: int | None = None) -> list[tuple[NewsRecord, float]]:
@@ -209,7 +220,6 @@ def merged_precedents(query: str, kbs: list, embedder, top_k: int, today: date,
             vistos.add(chave)
             unicos.append((rec, score))
     if max_age_days is not None:
-        unicos = [(r, s) for r, s in unicos
-                  if 0 <= (today - date.fromisoformat(r.date)).days <= max_age_days]
+        unicos = [(r, s) for r, s in unicos if _within_age(r.date, today, max_age_days)]
     unicos.sort(key=lambda rs: -(rs[1] * recency_weight(rs[0].date, today, half_life_days)))
     return unicos[:top_k]

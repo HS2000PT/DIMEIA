@@ -174,7 +174,14 @@ def fetch_alphavantage_daily(ticker: str, start: str, end: str,
     )
     resp.raise_for_status()
     df = parse_alphavantage_json(resp.json())
-    return df.loc[(df.index >= pd.to_datetime(start)) & (df.index <= pd.to_datetime(end))]
+    janela = df.loc[(df.index >= pd.to_datetime(start)) & (df.index <= pd.to_datetime(end))]
+    # Contrato da cadeia de fallback: "sem dados" LEVANTA (para o `fallback_daily` tentar a
+    # próxima fonte ou falhar com diagnóstico). O 'compact' do AV traz só ~100 dias; se a
+    # janela pedida cair toda fora, o slice fica vazio — não o devolver como sucesso, senão
+    # preços vazios propagam-se em silêncio (é a ÚLTIMA fonte da cadeia).
+    if janela.empty:
+        raise RuntimeError("Alpha Vantage: sem dados na janela pedida.")
+    return janela
 
 
 # A ordem É a política: do mais generoso/estável para o mais escasso (Alpha Vantage tem só
