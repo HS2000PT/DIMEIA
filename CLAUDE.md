@@ -7,8 +7,46 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 40 (**COMPLETA — plano de 9 fases + visuais novos; F4/F7/F8/F9 nesta corrida na máquina do FNSPID**)
-- **Última atualização:** 2026-07-22
+- **Sessão nº:** 41 (**"improve everything" — varredura de qualidade multi-agente; correções aplicadas na branch `claude/general-improvements-0ba2e9`**)
+- **Última atualização:** 2026-07-24
+- **🔎 SESSÃO 41 ("improve everything" — worktree `general-improvements-0ba2e9`):** varredura
+  de melhoria em modo Ultracode. Baseline verde (197→202 testes, ruff limpo). Lancei um
+  **workflow multi-agente find→verify** (7 finders × verificação adversária) sobre
+  investigator/, app/, scripts/ — os finders correram (11 achados com prova) mas os
+  verificadores **bateram no limite de sessão da conta** (reset 00:10 Lisboa), por isso os
+  **verifiquei eu próprio** contra o código real e apliquei só os seguros. **2 commits (SEM
+  trailer de IA):** `045abe1` (10 correções + 5 testes) e `f135d14` (contagens de teste).
+  **10 correções (congelados byte-iguais — models/, docs/evaluation/, data/, thesis*/, paper/,
+  slides/ intactos):** (1) app `@st.fragment(run_every="120s"→120)` — o caminho
+  `pd.Timedelta(str)` do Streamlit emite a deprecação "generic unit for timedelta" sob
+  numpy≥2.5 e falharia num numpy futuro (era a origem do aviso que abortava test_app_triage
+  sob -W error). (2) `parse_rss` a partir de bytes — feeds reais com declaração de codificação
+  faziam `ET.fromstring(str)` levantar ValueError (RSS cego). (3) `merged_precedents` tolera
+  data corrompida quando `max_age_days` está ativo (helper `_within_age`, fail-open como
+  `recency_weight`). (4) `kb_query_embedder` só decide a dimensão com um embedding REAL (salta
+  registos sem ele) — não escolhe HashingEmbedder(64) por engano numa KB 384-d. (5)
+  `fetch_alphavantage_daily` LEVANTA na janela vazia (mantém o contrato da cadeia). (6)
+  `run_cycle`: `send_message` em try/except — envio intermitente já não aborta o ciclo. (7)
+  `evaluate_per_sector` generaliza o `p5` hard-coded para ks[0] (byte-igual com `--k` default;
+  sem KeyError quando --k omite 5). (8) `fetch_finnhub_news` mostra bruto/limitado (truncagem
+  visível). (9) `build_dataset.fetch_closes` cache por (ticker,start,end) (sem reuso silencioso
+  de série estreita). (10) `fig_alert_funnel` janela "n/a" na história vazia (sem IndexError).
+  **+5 testes de regressão** (RSS bytes; max_age data inválida; AV janela vazia; kb_query
+  embedder ×2). **Contagens de teste** no README/RELATORIO 189/167→202. **⚠️ ADVISORY p/ humano
+  (NÃO aplicado — toca congelado / semântica de produção):** (a) **numpy drift** — o venv deste
+  PC está em **numpy 2.5.0 / pandas 2.3.3** mas `requirements.txt` fixa **2.1.3 / 2.2.3**; os
+  bundles joblib congelados emitem a deprecação "Setting the shape" ao carregar sob 2.5 e
+  **falharão** num numpy futuro → recriar o venv a partir do pin, OU re-serializar os modelos
+  com probe numérico byte-igual (procedimento de sessões anteriores; toca congelado). (b) `run_cycle`
+  **grava o estado ANTES do envio** e o estado mistura marcas-do-dia + offset do bot: apliquei só
+  a metade segura (try/except); a semântica mais funda (não queimar marcas sem entrega; separar
+  offset das marcas) fica para revisão humana. **PENDENTE do workflow (limite de conta):** as
+  dimensões **simplify / test-gaps / docs-bilingue** não completaram — re-correr após o reset.
+  **📊 Paridade bilingue medida (thesis vs thesis-pt):** só **ch1 + frontmatter TRADUZIDOS**;
+  **ch2–ch6 são scaffolds vazios** no thesis-pt (EN: ch2 27k/ch3 46k/ch4 27k/ch5 41k/ch6 9k
+  chars → PT ~0). Tradução de ch2–ch6 = trabalho académico do aluno (não fabricar; ele tem de
+  ler/defender). **Gates:** 202 testes + ruff verdes; app timedelta gate limpo (test_app_triage
+  passa sob -W error da deprecação). **Não commitei nem fiz push para main** — trabalho na branch.
 - **🔧 SESSÃO 40 (plano de 9 fases aprovado em modo de planeamento):** o aluno
   devolveu ~18 pedidos (bug das setas; alertas ilegíveis "num relance"; dashboard fraco/tralha;
   timing abertura/fecho; mais info nos alertas; loop de pós-fecho; novos critérios de triagem;
