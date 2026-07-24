@@ -642,6 +642,139 @@ def _try_headline() -> None:
 
 # ── Entrada ─────────────────────────────────────────────────────────────────────
 
+# ── Painel de admin (guest por defeito; password de admin desbloqueia a edição) ──────────
+def _secret(name: str):
+    """Lê um segredo do Streamlit sem rebentar quando não há secrets.toml."""
+    try:
+        return st.secrets.get(name)
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _admin_unlocked() -> bool:
+    return bool(st.session_state.get("admin_ok"))
+
+
+def _repo_slug() -> str | None:
+    """Deriva OWNER/REPO do history_url (raw.githubusercontent.com/OWNER/REPO/branch/...)."""
+    parts = (_history_url() or "").split("/")
+    try:
+        i = parts.index("raw.githubusercontent.com")
+        return f"{parts[i + 1]}/{parts[i + 2]}"
+    except (ValueError, IndexError):
+        return None
+
+
+@st.cache_data(ttl=30, show_spinner=False)
+def _fetch_branch_overrides() -> dict:
+    """Overrides já aplicados (branch), para pré-preencher o formulário. Fail-open."""
+    if os.environ.get("INVESTIGATOR_OFFLINE") == "1":
+        return {}
+    url = _history_url()
+    if not url:
+        return {}
+    import json
+
+    import requests
+    try:
+        r = requests.get(url.rsplit("/", 1)[0] + "/alerts_overrides.json", timeout=5)
+        if r.status_code == 404:
+            return {}
+        r.raise_for_status()
+        return json.loads(r.text) or {}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _put_branch_file(repo: str, token: str, content: str) -> tuple[bool, str]:
+    """Cria/atualiza alerts_overrides.json na branch partilhada via GitHub API. Server-side."""
+    import base64
+
+    import requests
+    api = f"https://api.github.com/repos/{repo}/contents/alerts_overrides.json"
+    headers = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"}
+    try:
+        g = requests.get(api, params={"ref": "alerts-history"}, headers=headers, timeout=10)
+        sha = g.json().get("sha") if g.status_code == 200 else None
+        body = {"message": "admin: update alert overrides", "branch": "alerts-history",
+                "content": base64.b64encode(content.encode()).decode()}
+        if sha:
+            body["sha"] = sha
+        p = requests.put(api, json=body, headers=headers, timeout=10)
+        if p.status_code in (200, 201):
+            return True, "ok"
+        return False, f"HTTP {p.status_code}: {p.json().get('message', '')[:120]}"
+    except Exception as exc:  # noqa: BLE001
+        return False, str(exc)[:120]
+
+
+def _admin_login_sidebar() -> None:
+    with st.sidebar.expander("🔒 Admin", expanded=False):
+        if _admin_unlocked():
+            st.caption("Admin mode — settings apply to the live channel.")
+            if st.button("Log out"):
+                st.session_state["admin_ok"] = False
+                st.rerun()
+            return
+        secret = _secret("admin_password")
+        if not secret:
+            st.caption("Guest (read-only). Set an `admin_password` secret to enable editing.")
+            return
+        pw = st.text_input("Admin password", type="password", key="admin_pw")
+        if st.button("Unlock") and pw:
+            if pw == secret:
+                st.session_state["admin_ok"] = True
+                st.rerun()
+            else:
+                st.error("Wrong password.")
+
+
+def _admin_settings_panel() -> None:
+    """Editor dos parâmetros de alerta (admin). Publica na branch → o scanner usa na próxima
+    corrida. Sem token, mostra o JSON para copiar para o runner."""
+    from investigator.settings_overrides import (
+        TUNABLES,
+        current_values,
+        merge_overrides,
+        validate_overrides,
+    )
+
+    effective = merge_overrides(_read_yaml_config(), _fetch_branch_overrides())
+    cur = current_values(effective)
+    st.caption("These are deployment settings (the thesis evaluation stays frozen at 3.0). "
+               "Changes take effect on the scanner's next run.")
+    chosen: dict = {}
+    for t in TUNABLES:
+        val = cur.get(t.key)
+        if t.kind == "bool":
+            chosen[t.key] = st.checkbox(t.label, value=bool(val), help=t.help or None)
+        elif t.kind == "int":
+            chosen[t.key] = st.slider(t.label, int(t.lo), int(t.hi),
+                                      int(val if val is not None else t.lo), help=t.help or None)
+        else:
+            chosen[t.key] = st.slider(t.label, float(t.lo), float(t.hi),
+                                      float(val if val is not None else t.lo), step=0.05,
+                                      help=t.help or None)
+    if st.button("Apply to live alerts", type="primary"):
+        import json
+
+        clean = validate_overrides(chosen)
+        payload = json.dumps(clean, indent=2)
+        token, repo = _secret("github_token"), _repo_slug()
+        if token and repo:
+            ok, msg = _put_branch_file(repo, token, payload)
+            if ok:
+                _fetch_branch_overrides.clear()
+                st.success("Applied. The scanner will use these on its next run.")
+            else:
+                st.error(f"Could not publish ({msg}). Copy this to the runner instead:")
+                st.code(payload, language="json")
+        else:
+            st.info("No write token — set a `github_token` secret to apply remotely, or paste "
+                    "this into `config/alerts_overrides.yaml` on the runner:")
+            st.code(payload, language="json")
+
+
 def main() -> None:
     st.sidebar.title("InvestiGator")
     st.sidebar.caption("_Every move investigated, never predicted._")
@@ -650,8 +783,13 @@ def main() -> None:
     if url:
         st.sidebar.link_button("📡 Get alerts on Telegram", url, use_container_width=True)
     st.sidebar.markdown("---")
+    _admin_login_sidebar()
     with st.sidebar:
         _disclaimer()
+
+    if _admin_unlocked():
+        with st.expander("⚙️ Alert settings — changes apply to the live channel", expanded=True):
+            _admin_settings_panel()
 
     if vista == "📊 Live":
         _live_view()
