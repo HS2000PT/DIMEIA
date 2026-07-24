@@ -217,6 +217,24 @@ def test_maybe_opening_note_uma_vez_por_dia_na_abertura(tmp_path):
     assert maybe_opening_note(st2, [], hour_utc=14) is None   # sem resultados → nada a dizer
 
 
+def test_overrides_failopen_sem_ficheiro_e_sem_url():
+    """Fail-open: sem ficheiro local e sem history_url, os overrides são {} (comportamento base)."""
+    from scripts.run_alerts import _branch_overrides, _local_overrides
+
+    assert _local_overrides() == {}          # não há config/alerts_overrides.yaml no repo
+    assert _branch_overrides({}) == {}       # sem public.history_url → sem fetch
+
+
+def test_effective_config_merge_local(tmp_path, monkeypatch):
+    """effective_config funde overrides locais válidos sobre a base, limitando a valores sãos."""
+    import scripts.run_alerts as ra
+
+    monkeypatch.setattr(ra, "_local_overrides", lambda: {"market_threshold": 99})  # acima do teto
+    monkeypatch.setattr(ra, "_branch_overrides", lambda cfg: {})
+    cfg = ra.effective_config()
+    assert cfg["market"]["threshold"] == 5.0  # limitado ao máximo são (não 99)
+
+
 def test_precedents_are_strong_aplica_o_chao():
     from scripts.run_alerts import precedents_are_strong
 

@@ -153,9 +153,53 @@ def _log_decision_safe(news_date: str, ticker: str, headline: str,
 
 
 def load_config(path: str | Path = _CONFIG) -> dict:
-    """Carrega o ficheiro de definições YAML."""
+    """Carrega o ficheiro de definições YAML (base, sem overrides)."""
     with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
+
+
+def _local_overrides() -> dict:
+    """Overrides do operador no disco (VM/PC): `config/alerts_overrides.yaml`. Fail-open."""
+    p = _CONFIG.parent / "alerts_overrides.yaml"
+    if not p.exists():
+        return {}
+    try:
+        with open(p, encoding="utf-8") as f:
+            return yaml.safe_load(f) or {}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _branch_overrides(cfg: dict) -> dict:
+    """Overrides definidos no PAINEL DE ADMIN da app, publicados na branch partilhada
+    (`alerts_overrides.json`, ao lado do histórico). Fail-open: rede/404/JSON mau ⇒ {}."""
+    url = ((cfg.get("public") or {}).get("history_url")) or ""
+    if not url:
+        return {}
+    try:
+        import json
+
+        import requests
+
+        r = requests.get(url.rsplit("/", 1)[0] + "/alerts_overrides.json", timeout=5)
+        if r.status_code == 404:
+            return {}
+        r.raise_for_status()
+        return json.loads(r.text) or {}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def effective_config(path: str | Path = _CONFIG) -> dict:
+    """Config base + overrides (operador local, depois admin da app). O admin ganha o desempate.
+    Estritamente FAIL-OPEN e limitado a valores sãos (`settings_overrides`): um override mau
+    nunca altera o comportamento nem inunda o canal."""
+    from investigator.settings_overrides import merge_overrides
+
+    cfg = load_config(path)
+    cfg = merge_overrides(cfg, _local_overrides())
+    cfg = merge_overrides(cfg, _branch_overrides(cfg))
+    return cfg
 
 
 def news_is_fresh(news_date: str, today: date, max_age_days: int = 2) -> bool:
@@ -916,7 +960,7 @@ def watch_loop(interval_s: int, *, dry_run: bool) -> None:
     while not stop["flag"]:
         try:
             # reler config permite ajustar a quente; watch=True liga a deteção intradiária
-            run_cycle(load_config(), dry_run=dry_run, watch=True)
+            run_cycle(effective_config(), dry_run=dry_run, watch=True)
         except Exception as exc:  # noqa: BLE001  (um ciclo falhado nunca mata o vigia)
             print(f"[watch] ciclo falhou (continua): {type(exc).__name__}: {exc}")
         fim = time.monotonic() + interval_s + random.uniform(0, interval_s * 0.2)
@@ -938,7 +982,7 @@ def main() -> int:
     if args.watch:
         watch_loop(max(60, args.interval), dry_run=args.dry_run)
         return 0
-    run_cycle(load_config(), dry_run=args.dry_run)
+    run_cycle(effective_config(), dry_run=args.dry_run)
     return 0
 
 
