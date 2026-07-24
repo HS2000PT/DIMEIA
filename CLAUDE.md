@@ -71,6 +71,18 @@
   minha análise crítica e sugestões: [`progress/PLANO_MELHORIAS.md`](progress/PLANO_MELHORIAS.md).**
   **Fase 1 = WS1 (apêndice) + setas verdes + estado do mercado.** REGRA DURA em todo o roadmap:
   não fabricar; congelados byte-iguais; bilingue em sincronia; sem trailer de IA nos commits.
+  **✅ FEITO nesta corrida (PR #1, 13 commits, push direto autorizado "always push directly"):**
+  robustez (10 correções + 5 testes); WS1 apêndice sem nomes de scripts/software-spec; setas
+  📈/📉; **App value + clarity** — clareza dos precedentes (split de direção + "not a prediction
+  for this news"), **estado do mercado US ao vivo** (`investigator/market_data/market_hours.py`,
+  DST via zoneinfo), **badge de prova de vida** (precisão vs base rate,
+  `investigator/evaluation/monitoring.py`), e **painel guest/admin** que ajusta os alertas ao
+  vivo (`investigator/settings_overrides.py` puro + runner `effective_config()` = base+local+
+  branch, fail-open + painel na app com password → publica overrides na branch via GitHub API).
+  **219 testes + ruff verdes; congelados byte-iguais; tese 90 pp.** Decisões do aluno: próximo
+  foco = App value; setas 📈/📉; auth guest+admin. **Passo humano p/ ativar o painel:** segredos
+  `admin_password` (+ opcional `github_token`) no Streamlit — sem eles, guest read-only (seguro).
+  Plano vivo: [`progress/PLANO_MELHORIAS.md`](progress/PLANO_MELHORIAS.md).
 - **🔧 SESSÃO 40 (plano de 9 fases aprovado em modo de planeamento):** o aluno
   devolveu ~18 pedidos (bug das setas; alertas ilegíveis "num relance"; dashboard fraco/tralha;
   timing abertura/fecho; mais info nos alertas; loop de pós-fecho; novos critérios de triagem;
