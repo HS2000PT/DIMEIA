@@ -49,13 +49,15 @@ Números/citações/labels/estrutura idênticos; só a língua muda. Gráficos d
 (`eval_*.pdf`) ficam EN nas duas (autorizado; legenda/caption traduzidas). Qualquer alteração
 a uma língua É espelhada na outra no mesmo commit. Verificar sempre: as duas compilam 0 erros e
 têm a MESMA contagem de secções/figuras/tabelas.
-**Estado (2026-07-25):** **ch1 + ch2 + ch4 + ch6 + APÊNDICE + frontmatter TRADUZIDOS** + **slides
-de defesa PT** (`slides/main-pt.tex`). ch2/ch4/ch6/apêndice feitos nesta sessão (labels/refs/
-citações byte-iguais — diff vazio; figuras/tabelas/diagramas traduzidos, incl. a sidewaysfigure
-master_pipeline; thesis-pt compila **64 pp, 0 erros**). **Faltam ch3 / ch5** (scaffolds; EN:
-ch3 46k / ch5 41k caracteres — os dois maiores; ambos têm figuras novas a espelhar). **⚠️ 3 ??
-transitórios** (eq:zscore, sec:met_triage, tab:triage_worked → todos em ch3) — resolvem quando
-ch3 for traduzido. **Próximo: ch3** (o maior; limpa os 3 ?? + espelha Fig 3.3/3.4 novas), depois ch5. **Padrão de tradução PROVADO** (ver ch6): traduzir
+**Estado (2026-07-25):** **ch1 + ch2 + ch3 + ch4 + ch6 + APÊNDICE + frontmatter TRADUZIDOS** +
+**slides de defesa PT** (`slides/main-pt.tex`). ch2/ch3/ch4/ch6/apêndice feitos nesta sessão
+(labels/refs/citações byte-iguais — diff vazio; figuras/tabelas/diagramas/equações/algoritmos
+traduzidos, incl. as figuras novas e a sidewaysfigure master_pipeline; **thesis-pt compila 78 pp,
+0 erros, ZERO refs indefinidas**). FIX: `meia-style.cls` PT com `shorthands=off` (aspas retas dos
+snapshots do ch3). **Falta SÓ ch5** (Estudos de Caso, EN 41k — tem figuras novas: Fig 5.8
+tema≠direção + as da RQ4-ext/projeção; a espelhar). Depois disso a tese bilingue está COMPLETA.
+**NOTA:** a branch foi fundida em main via PR #2 (tudo até ao commit do default 1D); o commit de
+ch3 fica 1 à frente. **Próximo e último: ch5.** **Padrão de tradução PROVADO** (ver ch6): traduzir
 prosa + captions + texto de figuras TikZ + células de tabela; manter labels/refs/citações/math/
 números idênticos; ajustar só o espaçamento de figuras ao texto PT mais longo; compilar +
 verificar render + `diff` dos labels vazio.
