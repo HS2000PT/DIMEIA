@@ -1,5 +1,467 @@
-% Capítulo 2 - Estado da Arte (PT-PT). STUB — tradução por fazer (ver progress/BILINGUAL_PLAN.md).
+% Capítulo 2 - Estado da Arte (PT-PT; espelho de ../thesis/ch2/chapter2.tex)
+% Tradução pura: citações/tabelas/figuras/labels/números idênticos; só a língua muda.
+
 \chapter{Estado da Arte}
 \label{chap:sota}
 
-\emph{[Tradução em curso. O conteúdo deste capítulo espelha \texttt{../thesis/ch2/chapter2.tex}.]}
+Este capítulo tem uma tarefa: justificar cada escolha de desenho do InvestiGator face às alternativas.
+Cada secção pergunta o que um campo oferece e termina com o que o InvestiGator lhe retira. A ordem é:
+como se comportam os investidores de retalho; deteção de anomalias; IA explicável; confiança na
+automação; representação de texto financeiro; recuperação de informação; estudos de evento; e raciocínio
+baseado em casos. O achado recorrente é simples. Os blocos de construção são maduros, mas um sistema
+integrado e explicável para o investidor de retalho continua raro.
+
+\section{Investimento de Retalho e Sobrecarga de Informação}
+\label{sec:sota_retail}
+
+\emph{Como se comportam os investidores de retalho, e o que deve um alerta dar-lhes?}
+
+As finanças comportamentais mostram que os investidores reais se afastam sistematicamente do ideal
+racional \autocite{barberis2003behavioral}. Uma causa de raiz é a \emph{aversão à perda}: sentimos as
+perdas mais do que ganhos iguais \autocite{kahneman1979prospect}, o que torna os investidores
+especialmente sensíveis a más notícias, e um alerta atempado e bem explicado valioso.
+
+O padrão mais forte é a \emph{atenção}. \textcite{barber2008glitters} mostram que os indivíduos são
+compradores líquidos de ações que captam a atenção (as que estão nas notícias, com volume invulgar, ou
+retornos extremos de um dia): perante milhares de escolhas, recorrem ao que lhes chamou a atenção. A
+atenção pode até ser medida através do volume de pesquisas \autocite{da2011attention}. Isto é decisivo
+para o desenho, porque um movimento de preço acentuado e uma manchete saliente são exatamente os dois
+gatilhos do InvestiGator, pelo que um alerta que acrescenta contexto chega onde as decisões movidas pela
+atenção são tomadas.
+
+As notícias também movem os mercados, e o seu texto pode ser medido. \textcite{tetlock2007media}
+constrói um índice diário de pessimismo a partir de uma coluna de jornal e liga-o à pressão sobre os
+preços e ao volume de negociação, uma prova precoce de que os sinais textuais se relacionam com os
+resultados de mercado, que é a premissa do motor de notícias do InvestiGator. Este público também é
+grande e ativo: mesmo durante o crash de março de 2020, os investidores de retalho de uma plataforma sem
+comissões reforçaram as suas posições em vez de entrar em pânico \autocite{welch2022robinhood},
+consistente com a posse alargada e a escala de mercado reportadas no Capítulo~\ref{chap:introduction}
+\autocite{gallup2025stock, sifma2025factbook}.
+
+\textbf{Para o InvestiGator:} os investidores de retalho são limitados pela atenção e movidos pelas
+notícias, pelo que o sistema não prevê o mercado; baixa o custo de \emph{interpretar} os eventos que já
+captam a atenção, com uma explicação transparente e evidência histórica real.
+
+\section{Deteção de Anomalias em Mercados Financeiros}
+\label{sec:sota_anomaly}
+
+\emph{Como se distingue um movimento de preço anormal do ruído comum?}
+
+O primeiro gatilho do InvestiGator é um detetor de anomalias, pelo que assenta no campo maduro da deteção
+de anomalias. A taxonomia padrão \autocite{chandola2009anomaly} separa anomalias de \emph{ponto},
+\emph{contextuais} e \emph{coletivas}, e agrupa os métodos em famílias estatística, de distância/densidade
+e de aprendizagem automática (Figura~\ref{fig:sota_anomaly_taxonomy}). Um retorno acentuado de um só dia é
+uma anomalia contextual de ponto: anormal face ao comportamento recente do próprio ativo.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  node distance=4mm,
+  root/.style={draw, rounded corners, fill=black!5, align=center, text width=3.2cm, minimum height=0.8cm},
+  fam/.style={draw, rounded corners, align=center, text width=3.0cm, minimum height=1.4cm},
+  >={Stealth[length=2mm]}
+]
+  \node[root] (r) {Métodos de deteção de anomalias};
+  \node[fam, below left=10mm and 1.2cm of r] (stat) {\textbf{Estatística}\\ \footnotesize z-score, cartas de controlo; transparente, assume uma distribuição};
+  \node[fam, below=10mm of r] (ml) {\textbf{Distância / densidade}\\ \footnotesize Isolation Forest, LOF; flexível, menos interpretável};
+  \node[fam, below right=10mm and 1.2cm of r] (dl) {\textbf{Deep learning}\\ \footnotesize autoencoders, one-class profundo; poderoso, opaco, ávido de dados};
+  \draw[->] (r) -- (stat);
+  \draw[->] (r) -- (ml);
+  \draw[->] (r) -- (dl);
+\end{tikzpicture}
+\caption[Taxonomia dos métodos de deteção de anomalias]{Famílias de métodos de deteção de anomalias
+relevantes para este trabalho, seguindo \textcite{chandola2009anomaly} e \textcite{pang2021deep}. A
+interpretabilidade diminui, e a capacidade de modelação aumenta, da esquerda para a direita.}
+\label{fig:sota_anomaly_taxonomy}
+\end{figure}
+
+O detetor mais simples é um \emph{z}-score deslizante: assinalar um retorno que se desvia muito da sua
+média e desvio-padrão recentes. É atrativo por ser transparente e fácil de justificar. O seu único
+pressuposto, uma distribuição localmente estável, é tratado pela janela deslizante, que acompanha o
+\emph{agrupamento de volatilidade}, a conhecida tendência de períodos calmos e turbulentos chegarem em
+séries \autocite{engle1982arch, bollerslev1986garch}. O desvio-padrão deslizante é, com efeito, uma versão
+não-paramétrica mais simples dessa ideia: adapta-se ao regime atual sem ajustar um modelo que o
+utilizador não pudesse escrutinar. Entre os dois situa-se a média móvel ponderada exponencialmente dos
+retornos ao quadrado (o estimador RiskMetrics), que pondera o passado recente mais do que o distante mas
+mesmo assim não estima parâmetros por instrumento. Um ajuste GARCH completo é recusado aqui sob a
+simplicidade defensável, mas a afirmação não fica como opinião: a variante EWMA, o primeiro passo no
+caminho para o GARCH, é submetida ao mesmo protocolo de avaliação no
+Capítulo~\ref{chap:casestudies}, pelo que o compromisso é medido e não afirmado.
+
+Detetores mais expressivos trocam a interpretabilidade por capacidade. A Isolation Forest isola outliers
+por partição aleatória e escala para dimensões elevadas \autocite{liu2008isolation}; o Local Outlier
+Factor pontua o quão isolado está um ponto na sua vizinhança \autocite{breunig2000lof}; os detetores
+profundos aprendem um modelo de normalidade \autocite{pang2021deep}. Todos são poderosos mas mais difíceis
+de ler, e a sua vantagem mostra-se sobretudo em dados de dimensão elevada, não numa única série de
+retornos. Em vez de os descartar só por esses motivos, o Capítulo~\ref{chap:casestudies} avalia tanto a
+Isolation Forest como o Local Outlier Factor sob o mesmo protocolo causal da regra estatística, pelo que a
+comparação é empírica. Nas finanças, a deteção é de qualquer modo dominada por métodos \emph{não
+supervisionados}, porque as anomalias rotuladas são escassas \autocite{ahmed2016financial}, uma restrição
+que também molda a forma como o InvestiGator é avaliado (Capítulo~\ref{chap:casestudies}). A
+Tabela~\ref{tab:sota_anomaly} compara as famílias.
+
+\begin{table}[ht]
+\caption{Abordagens de deteção de anomalias relevantes para este trabalho.}
+\label{tab:sota_anomaly}
+\centering
+\begin{tabular}{p{0.24\textwidth} p{0.30\textwidth} p{0.38\textwidth}}
+\toprule
+\tabhead{Abordagem} & \tabhead{Como funciona} & \tabhead{Vantagens / limitações} \\
+\midrule
+\emph{z}-score estatístico (deslizante) \autocite{chandola2009anomaly} & Assinala retornos que se desviam de uma média e desvio-padrão deslizantes & Transparente e fácil de explicar; assume uma distribuição localmente estável \\
+Isolation Forest \autocite{liu2008isolation} & Isola pontos por partição aleatória (ensemble) & Escalável, lida com dimensionalidade elevada; a pontuação não é diretamente interpretável \\
+Local Outlier Factor \autocite{breunig2000lof} & Pontua o isolamento numa vizinhança de densidade local & Capta estrutura local; sensível ao tamanho da vizinhança, pontuação difícil de ler \\
+Detetores profundos \autocite{pang2021deep} & Aprendem um modelo de normalidade (ex.\ autoencoders) & Alta capacidade para dados complexos; opacos, ávidos de dados, difíceis de justificar \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Para o InvestiGator:} o sinal é uma única série de retornos de baixa dimensão que tem de ser
+explicada a um não-especialista, pelo que o \emph{z}-score transparente vence; as famílias mais expressivas
+ficam anotadas como alternativas cuja opacidade o problema não justifica.
+
+\section{Inteligência Artificial Explicável}
+\label{sec:sota_xai}
+
+\emph{Que tipo de explicação deve o sistema dar?}
+
+A IA Explicável (XAI) existe porque os modelos mais fortes raramente mostram o seu raciocínio. As
+revisões mapeiam o campo e a sua divisão central \autocite{adadi2018peeking, arrieta2020xai}: modelos
+\emph{transparentes}, interpretáveis em si mesmos, versus métodos \emph{post-hoc} que explicam uma caixa
+preta já treinada, que podem ser organizados por aquilo que explicam \autocite{guidotti2018survey}
+(Figura~\ref{fig:sota_xai_taxonomy}). Uma cautela útil: ``interpretabilidade'' não é uma coisa só
+\autocite{lipton2018mythos}, pelo que um sistema deve dizer qual delas oferece. O InvestiGator oferece
+transparência da sua lógica de decisão e evidência rastreável, não uma pretensão de interpretabilidade
+plena.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  node distance=4mm,
+  root/.style={draw, rounded corners, fill=black!5, align=center, text width=3.0cm, minimum height=0.8cm},
+  br/.style={draw, rounded corners, align=center, text width=3.4cm, minimum height=1.5cm},
+  >={Stealth[length=2mm]}
+]
+  \node[root] (r) {Explicabilidade};
+  \node[br, below left=10mm and 0.6cm of r] (tr) {\textbf{Desenho transparente}\\ \footnotesize lógica inerentemente interpretável (regras, modelos lineares, evidência recuperada)};
+  \node[br, below right=10mm and 0.6cm of r] (ph) {\textbf{Post-hoc}\\ \footnotesize explicar uma caixa preta já treinada (LIME, SHAP, contrafactuais)};
+  \draw[->] (r) -- (tr);
+  \draw[->] (r) -- (ph);
+\end{tikzpicture}
+\caption[Taxonomia das abordagens de explicabilidade]{Os dois grandes caminhos para a explicabilidade
+\autocite{arrieta2020xai, guidotti2018survey}: construir modelos transparentes por desenho, ou explicar
+uma caixa preta a posteriori. Este trabalho segue o primeiro.}
+\label{fig:sota_xai_taxonomy}
+\end{figure}
+
+Duas técnicas post-hoc são amplamente usadas: o LIME ajusta um substituto local simples em torno de uma
+previsão \autocite{ribeiro2016lime}, e o SHAP atribui uma previsão às suas features usando valores de
+Shapley \autocite{lundberg2017shap}. Ambas são valiosas quando se está comprometido com uma caixa preta.
+Mas para decisões de alto risco, \textcite{rudin2019stop} defende abandonar esse compromisso e usar
+modelos que sejam interpretáveis à partida, já que uma explicação post-hoc é ela própria uma aproximação
+que pode enganar. O InvestiGator segue isto: explica sobretudo por desenho transparente (cada quantidade
+exposta, precedentes reais mostrados como evidência), com atribuição de features como um extra opcional.
+
+Boas explicações são também uma questão humana. As pessoas querem razões \emph{contrastivas} e seletivas,
+não um despejo exaustivo \autocite{miller2019explanation}, razão pela qual cada alerta mostra alguns
+precedentes relevantes e as quantidades exatas por detrás da decisão. As explicações têm também de ser
+avaliadas, não assumidas: \textcite{doshivelez2017rigorous} fazem da \emph{fidelidade}, o quão bem uma
+explicação reflete o cálculo real, um critério central, e a fidelidade é a propriedade que o InvestiGator
+consegue garantir (Capítulo~\ref{chap:casestudies}). A Tabela~\ref{tab:sota_xai} resume as opções.
+
+\begin{table}[ht]
+\caption{Abordagens de explicabilidade consideradas.}
+\label{tab:sota_xai}
+\centering
+\begin{tabular}{p{0.24\textwidth} p{0.30\textwidth} p{0.38\textwidth}}
+\toprule
+\tabhead{Método} & \tabhead{Tipo} & \tabhead{Vantagens / limitações} \\
+\midrule
+LIME \autocite{ribeiro2016lime} & Substituto local, post-hoc & Intuitivo, agnóstico ao modelo; as explicações podem ser instáveis, só localmente fiéis \\
+SHAP \autocite{lundberg2017shap} & Atribuição por valores de Shapley, post-hoc & Consistente, teoricamente fundamentado; computacionalmente custoso \\
+Desenho transparente \autocite{rudin2019stop, arrieta2020xai} & Lógica inerentemente interpretável & Sem aproximação, fiel por construção; restringe a escolha do modelo \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Para o InvestiGator:} procurar a explicabilidade por desenho transparente e julgá-la pela
+fidelidade; tratar a atribuição post-hoc como um complemento, não a fundação.
+
+\section{Confiança e Dependência Apropriada no Apoio à Decisão}
+\label{sec:sota_trust}
+
+\emph{Quando deve o investidor confiar de facto num alerta?}
+
+Uma explicação só ajuda se produzir uma dependência \emph{apropriada}: nem descartar um aviso sólido, nem
+agir cegamente sobre um falível. A perspetiva dos fatores humanos \autocite{lee2004trust} chama ao
+objetivo confiança \emph{calibrada}, dependência ajustada à competência real do sistema, e nomeia dois
+modos de falha, a \emph{subutilização} (ignorar um bom auxílio) e o \emph{uso indevido} (confiar em
+excesso num falho). Com dinheiro real, ambos são custosos.
+
+As explicações são a forma como a confiança se calibra, mas não são mágicas. \textcite{bansal2021whole}
+mostram que as explicações podem até causar \emph{dependência excessiva}, com as pessoas a aceitar
+explicações confiantes de respostas erradas. A resposta do InvestiGator é concreta: explicar com
+\emph{evidência verificável} (o próprio $z$-score e os seus parâmetros; precedentes reais com o seu impacto
+medido), e recusar a previsão em cada alerta.
+
+\textbf{Para o InvestiGator:} a transparência não é decoração mas o mecanismo para a dependência
+apropriada, pelo que o sistema mostra evidência verificável em vez de uma história persuasiva.
+
+\section{PLN Financeiro e Representação de Texto}
+\label{sec:sota_finnlp}
+
+\emph{Como deve o sistema representar o significado de uma manchete?}
+
+Para comparar manchetes, o texto tem de se tornar números. A literatura de PLN financeiro atravessa três
+gerações \autocite{kearney2014textual}: léxicos, embeddings de palavras e modelos neuronais contextuais.
+
+Os léxicos vieram primeiro. Listas de palavras específicas de finanças corrigem o facto de os dicionários
+de sentimento gerais lerem mal palavras financeiras comuns como ``liability'' ou ``tax''
+\autocite{loughran2011liability}; são totalmente transparentes mas limitados pelo seu vocabulário. Os
+embeddings de palavras colocaram depois as palavras num espaço vetorial onde a proximidade significa uso
+semelhante: o word2vec a partir do contexto local \autocite{mikolov2013word2vec}, o GloVe a partir da
+co-ocorrência global \autocite{pennington2014glove}. Ambos dão a cada palavra um único vetor, cego ao
+contexto.
+
+O Transformer \autocite{vaswani2017attention} removeu esse limite, e o BERT \autocite{devlin2019bert}
+produziu representações profundamente \emph{contextuais}. Comparar dois textos com o BERT diretamente é,
+porém, custoso; o Sentence-BERT \autocite{reimers2019sbert} resolve isto dando a cada frase um único vetor
+de comprimento fixo, comparável por um cosseno barato, exatamente o que a recuperação de precedentes
+precisa. A uma escala muito grande, a pesquisa exata pode ser trocada por um índice aproximado
+\autocite{johnson2021faiss} sem mudar a representação (trabalho futuro). Existem também duas opções mais
+pesadas: modelos FinBERT afinados ao domínio \autocite{araci2019finbert, yang2020finbert} e grandes LLMs
+financeiros como o BloombergGPT \autocite{wu2023bloomberggpt}, ambos poderosos mas mais custosos, menos
+transparentes, e fora da restrição gratuita e reprodutível deste trabalho. A Tabela~\ref{tab:sota_nlp}
+compara-os.
+
+\begin{table}[ht]
+\caption{Abordagens de representação de texto para notícias financeiras.}
+\label{tab:sota_nlp}
+\centering
+\begin{tabular}{p{0.22\textwidth} p{0.32\textwidth} p{0.38\textwidth}}
+\toprule
+\tabhead{Abordagem} & \tabhead{Representação} & \tabhead{Vantagens / limitações} \\
+\midrule
+Léxicos financeiros \autocite{loughran2011liability} & Listas de palavras / tom curadas & Totalmente transparente; limitado pelo vocabulário \\
+word2vec / GloVe \autocite{mikolov2013word2vec, pennington2014glove} & Vetores de palavra estáticos & Eficiente; um vetor por palavra, sem contexto \\
+BERT \autocite{vaswani2017attention, devlin2019bert} & Embeddings contextuais de token & Forte compreensão; a similaridade par a par é custosa \\
+Sentence-BERT \autocite{reimers2019sbert} & Embeddings de frase (siamês) & Similaridade do cosseno eficiente; a escolha deste trabalho \\
+FinBERT \autocite{araci2019finbert, yang2020finbert} & Modelo de língua adaptado ao domínio & Afinado a finanças; orientado a sentimento / comunicações \\
+LLMs financeiros \autocite{wu2023bloomberggpt} & Grande modelo generativo & Muito capaz; custoso, opaco, fora do âmbito da camada gratuita \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize, >={Stealth[length=2.4mm]},
+  gen/.style={draw, rounded corners, align=center, text width=2.7cm, inner sep=4pt,
+              minimum height=2.5cm, anchor=south},
+]
+  \node[gen, fill=blue!4, draw=blue!40] (g1) at (0,0)
+    {\textbf{Léxicos}\\[2pt] listas de palavras\\[4pt] \emph{transparente, mas}\\ \emph{limitado ao vocabulário}};
+  \node[gen, fill=teal!6, draw=teal!45] (g2) at (3.3,0)
+    {\textbf{word2vec / GloVe}\\[2pt] vetores estáticos\\[4pt] \emph{um vetor por}\\ \emph{palavra, sem contexto}};
+  \node[gen, fill=orange!8, draw=orange!55] (g3) at (6.6,0)
+    {\textbf{BERT}\\[2pt] embeddings de token\\ contextuais\\[4pt] \emph{contexto profundo, mas}\\ \emph{custoso comparar}};
+  \node[gen, fill=green!12, draw=green!55!black, line width=1pt] (g4) at (9.9,0)
+    {\textbf{Sentence-BERT} $\star$\\[2pt] um vetor por\\ frase\\[4pt] \emph{cosseno barato,}\\ \emph{a escolha aqui}};
+  \draw[->, thick, black!55] (-1.45,-0.7) -- (11.35,-0.7);
+  \node[below, font=\small, black!65] at (4.95,-0.75)
+    {significado cada vez mais contextual; o Sentence-BERT mantém a comparação barata};
+\end{tikzpicture}
+\caption[Três gerações de representação de texto]{Três gerações de transformar texto financeiro em
+números. Os léxicos financeiros são transparentes mas limitados pelo seu vocabulário; os vetores de
+palavra estáticos acrescentam similaridade de uso mas sem contexto; os modelos contextuais (BERT) captam
+o significado mas são custosos de comparar par a par; o Sentence-BERT dá a cada manchete um único vetor
+comparável por um cosseno barato, exatamente o que a recuperação de precedentes precisa, e é a
+representação escolhida aqui. Detalhes na Tabela~\ref{tab:sota_nlp}.}
+\label{fig:sota_nlp_ladder}
+\end{figure}
+
+\textbf{Para o InvestiGator:} o Sentence-BERT é o ponto ideal (Figura~\ref{fig:sota_nlp_ladder}),
+significado contextual para além dos léxicos e dos vetores estáticos, e ainda barato, comparável e
+gratuito de correr. Uma nota de honestidade sobre a comparação: a avaliação no
+Capítulo~\ref{chap:casestudies} mede o Sentence-BERT contra uma linha de base \emph{lexical}, o que
+delimita a questão que interessa (o significado bate as palavras de superfície?); as variantes word2vec e
+FinBERT não são corridas empiricamente, porque os vetores de palavra estáticos são estritamente dominados
+pelos embeddings de frase contextuais na comparação de frases, e o FinBERT afinado ao domínio está
+orientado à classificação de sentimento e não à similaridade de frases, a um custo que a restrição
+gratuita-e-reprodutível deste trabalho exclui. Onde uma afirmação é barata de testar, este trabalho
+testa-a; onde compraria pouco, enuncia-se antes a razão.
+
+\section{Recuperação de Informação e Avaliação de Ordenação}
+\label{sec:sota_ir}
+
+\emph{Uma vez que as manchetes são vetores, como se ordenam as notícias passadas, e como se sabe se a
+ordenação é boa?}
+
+Ordenar um corpus por relevância a uma consulta é o problema definidor da recuperação de informação (IR).
+O modelo de espaço vetorial \autocite{salton1975vsm} representa documentos e consultas como vetores
+ordenados por similaridade do cosseno; a recuperação por embeddings do InvestiGator é a mesma ideia com
+vetores mais ricos. A ordenação \emph{lexical} clássica pondera os termos informativos, do TF-IDF ao BM25
+\autocite{robertson2009bm25}, ainda uma linha de base forte. A sua fraqueza conhecida é o \emph{desencontro
+de vocabulário}: um documento relevante que usa palavras diferentes pontua como dissemelhante. Os
+embeddings semânticos ultrapassam exatamente isso, razão pela qual o InvestiGator compara contra uma linha
+de base lexical (Capítulo~\ref{chap:casestudies}).
+
+Como a recuperação devolve uma lista ordenada, é julgada com medidas sensíveis à ordem
+\autocite{manning2008ir}; a mais direta é a \emph{precisão@$k$}, a fração dos $k$ primeiros resultados que
+são relevantes. O InvestiGator adota-a porque um alerta só pode mostrar um punhado de precedentes, pelo que
+o que interessa é se os primeiros são relevantes, reportado contra linhas de base aleatória, de recência e
+lexical.
+
+\textbf{Para o InvestiGator:} a recuperação reutiliza uma pipeline madura de representar-depois-ordenar e a
+métrica padrão precisão@$k$; a contribuição é a aplicação e o emparelhamento com o impacto medido, não um
+novo algoritmo.
+
+\section{Estudos de Evento e Impacto Notícia--Mercado}
+\label{sec:sota_eventstudy}
+
+\emph{Tendo encontrado notícias análogas, como se mede o que fizeram ao preço, honestamente?}
+
+A ferramenta é o \emph{estudo de evento}, introduzido por \textcite{fama1969adjustment} e padronizado para
+retornos diários por \textcite{brown1985daily}, que fixou a prática de medir retornos sobre janelas curtas
+pós-evento, a base para os horizontes de $+1$, $+3$ e $+5$ dias do InvestiGator. O impacto é medido
+estritamente \emph{depois} do evento, pelo que descreve um resultado, não uma previsão.
+
+Porquê não prever simplesmente o preço? Porque as notícias públicas são absorvidas nos preços quase de
+imediato, a hipótese do mercado eficiente \autocite{fama1970efficient}, pelo que prever retornos a partir
+de notícias públicas é, por construção, muito difícil. O InvestiGator não compete, portanto, com a
+eficiência do mercado; mede e explica as reações que \emph{já} se seguiram a notícias comparáveis, o que é
+simultaneamente mais honesto e mais defensável para um não-especialista.
+
+Relacionar o \emph{texto} das notícias com o impacto é uma área ativa: \textcite{tetlock2007media} é um
+exemplo precoce, e uma linha mais recente tenta \emph{prever} movimentos a partir das notícias
+\autocite{xing2018nlffsurvey, ding2015deep}. O InvestiGator deliberadamente fica aquém da previsão. Fazer
+isto em escala precisa de notícias alinhadas aos preços, que é a contribuição do conjunto de dados FNSPID
+\autocite{dong2024fnspid}, usado para construir a base de conhecimento; os seus limites de cobertura e
+período são notados no data card do Capítulo~\ref{chap:methods}.
+
+\textbf{Para o InvestiGator:} emparelhar a recuperação semântica com o impacto de estudo de evento sobre o
+FNSPID é o núcleo metodológico, evidência sobre o passado, nunca uma previsão.
+
+\section{Raciocínio Baseado em Casos e Recuperação de Precedentes}
+\label{sec:sota_cbr}
+
+\emph{O que é o motor, numa ideia familiar?}
+
+É o \emph{raciocínio baseado em casos} (CBR). Na descrição clássica \autocite{aamodt1994cbr}, um sistema
+CBR \emph{recupera} casos passados semelhantes, \emph{reutiliza} os seus resultados, e opcionalmente
+\emph{revê} e \emph{retém}-nos. O InvestiGator é o núcleo recuperar-e-reutilizar: cada manchete passada mais
+o seu impacto medido é um \emph{caso}; uma manchete nova é a consulta; a similaridade do cosseno recupera;
+o impacto dos precedentes é reutilizado como evidência. Para antes de \emph{rever}, pelo que nunca
+transforma a evidência numa previsão.
+
+\textbf{Para o InvestiGator:} nomear o motor como CBR mostra que é um paradigma reconhecido, não ad hoc, e
+as suas explicações ``isto assemelha-se a estes casos passados'' são naturalmente inteligíveis para um
+não-especialista.
+
+\section{Triagem Aprendida de Alertas: Classificação Supervisionada de Materialidade}
+\label{sec:sota_triage}
+
+\emph{Quando dezenas de manchetes chegam num dia, quais merecem um alerta?}
+
+A recuperação responde a ``a que é que isto se assemelha?'', e o estudo de evento responde a ``o que se
+seguiu a notícias semelhantes?''. Nenhum ordena o fluxo de entrada. Isso é um problema de \emph{triagem}, e
+pode ser posto como classificação supervisionada sem quebrar a regra de não-previsão. O modelo estima a
+probabilidade de um \emph{movimento anormal de tamanho invulgar, em qualquer direção}, se seguir a uma
+notícia; o rótulo é produzido pela própria medição de estudo de evento do sistema, o retorno ajustado ao
+mercado de \textcite{brown1985daily} contra um proxy de índice. O alvo é a \emph{materialidade}, se o
+mercado reagiu de todo. A direção e a magnitude da trajetória do preço nunca são previstas, pelo que a
+tarefa fica do lado defensável da linha do mercado eficiente traçada antes neste capítulo.
+
+Duas famílias de modelos cobrem o compromisso interpretabilidade--capacidade. A regressão logística é a
+escolha transparente: com entradas padronizadas, os seus log-odds são uma soma aditiva exata das
+contribuições por feature. Isso torna-a o tipo de modelo inerentemente interpretável que
+\textcite{rudin2019stop} defende dever ser preferido quando as explicações importam. Os ensembles de
+árvores de decisão com gradient boosting \autocite{friedman2001gbm} são o aprendiz não-linear mais forte e
+servem de teto contra o qual o modelo interpretável é comparado. Para um utilizador final, a pontuação só
+é honesta se for uma \emph{probabilidade}: as pontuações cruas de um classificador estão tipicamente mal
+calibradas, e a calibração post-hoc, como ajustar uma sigmoide sobre dados de validação retidos
+(escalonamento de Platt), corrige isto \autocite{niculescu2005calibration}. Sob desequilíbrio de classes,
+a avaliação usa a área sob a curva de precisão-recall em vez da exatidão. Uma precisão em forma de
+orçamento completa o quadro (quantos dos $N$ alertas que um utilizador consegue absorver por dia eram
+materiais), porque esse orçamento é exatamente o custo de fadiga de alertas que a triagem existe para
+reduzir.
+
+\textbf{Para o InvestiGator:} a triagem acrescenta uma pontuação de severidade \emph{treinada} por cima da
+pipeline transparente, ordenada e limitada por dia, explicada pelas suas contribuições aditivas, calibrada
+sobre dados de validação, e sempre comparada contra uma linha de base só-volatilidade antes de lhe ser
+permitido pesar.
+
+\section{Ferramentas Existentes para o Investidor de Retalho}
+\label{sec:sota_tools}
+
+\emph{O que pode um investidor de retalho já usar, e o que falta?}
+
+Três tipos de ferramenta são comuns hoje, e cada um deixa uma lacuna. Os \emph{alertas de preço}, em todas
+as aplicações de corretora, disparam quando um limiar de preço ou percentagem é ultrapassado; aproveitam o
+mesmo comportamento de atenção que o InvestiGator visa \autocite{barber2008glitters}, mas um limiar fixo
+ignora a volatilidade própria de cada ação (disparando constantemente em nomes voláteis, raramente em
+calmos) e diz apenas \emph{que} um nível foi ultrapassado, nunca \emph{porquê}. As \emph{aplicações de
+notícias e sentimento} agregam manchetes e anexam uma pontuação de sentimento, apoiando-se na ligação
+entre o tom e os mercados \autocite{tetlock2007media} e nos léxicos financeiros
+\autocite{loughran2011liability}; mas uma única polaridade é fina, muitas vezes proprietária, e raramente
+liga uma manchete a precedentes históricos concretos e aos seus resultados. Os \emph{robo-advisors}, a
+ferramenta de fintech de retalho mais estudada, ajudam genuinamente ao melhorar a diversificação e refrear
+os enviesamentos \autocite{dacunto2019robo, cardillo2024robo}, mas \emph{agem por} o investidor com lógica
+proprietária, o oposto de uma ferramenta explicação-primeiro que deixa a decisão ao utilizador. A
+Tabela~\ref{tab:sota_tools} posiciona os três face ao InvestiGator.
+
+\begin{table}[ht]
+\caption{Ferramentas de retalho existentes versus o sistema proposto neste trabalho.}
+\label{tab:sota_tools}
+\centering
+\begin{tabular}{p{0.24\textwidth} p{0.18\textwidth} p{0.16\textwidth} p{0.16\textwidth} p{0.11\textwidth}}
+\toprule
+\tabhead{Ferramenta} & \tabhead{O que faz} & \tabhead{Explica porquê?} & \tabhead{Mostra precedentes?} & \tabhead{Age pelo utilizador?} \\
+\midrule
+Alerta de preço de corretora & Dispara num limiar fixo de preço / \% & Não & Não & Não \\
+App de notícias / sentimento \autocite{tetlock2007media} & Agrega notícias, pontua sentimento & Em parte (pontuação opaca) & Não & Não \\
+Robo-advisor \autocite{dacunto2019robo} & Aloca e reequilibra uma carteira & Raramente (proprietário) & Não & Sim \\
+\textbf{Este trabalho (InvestiGator)} & Explica eventos, mostra evidência & Sim, por desenho & Sim (impacto medido) & Não \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Para o InvestiGator:} cada ferramenta existente cobre um canto, alertar, notícias ou alocação, mas
+nenhuma combina deteção sensível à volatilidade, explicação transparente e evidência histórica concreta
+numa só ferramenta que informa em vez de decidir. Essa lacuna é o nicho que este trabalho preenche.
+
+\section{Análise Comparativa e Posicionamento}
+\label{sec:sota_positioning}
+
+\emph{Então o que escolhe o InvestiGator, e porquê?}
+
+A Tabela~\ref{tab:sota_positioning} reúne as escolhas face às suas alternativas. A regra ao longo de todo o
+trabalho é a \emph{simplicidade defensável} \autocite{rudin2019stop}: quando duas opções têm desempenho
+comparável, preferir a mais transparente, porque o sistema tem de ser compreendido e usado por um
+não-especialista.
+
+\begin{table}[ht]
+\caption{Escolhas de componentes neste trabalho versus alternativas.}
+\label{tab:sota_positioning}
+\centering
+\begin{tabular}{p{0.20\textwidth} p{0.26\textwidth} p{0.22\textwidth} p{0.22\textwidth}}
+\toprule
+\tabhead{Componente} & \tabhead{Escolhido} & \tabhead{Alternativa} & \tabhead{Porquê} \\
+\midrule
+Deteção de anomalias & \emph{z}-score (deslizante) & Isolation Forest, detetores profundos & Transparência; sinal de baixa dimensão \\
+Recuperação de notícias & Sentence-BERT + cosseno & Léxicos, word2vec, LLMs & Contextual mas barato e reprodutível \\
+Medição de impacto & Janelas de estudo de evento & --- & Padrão, reprodutível, sem previsão \\
+Explicação & Desenho transparente + precedentes & Só LIME / SHAP & Fiel por construção \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Conclusões do Capítulo}
+\label{sec:sota_summary}
+
+Nenhum destes blocos de construção é novo. O que é escasso, e o que este trabalho constrói, é a sua
+integração disciplinada num único sistema explicável para o investidor de retalho: um detetor
+transparente, recuperação semântica emparelhada com o impacto de estudo de evento, e explicações fiéis por
+construção. O próximo capítulo transforma estas escolhas num método.
