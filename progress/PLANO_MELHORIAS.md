@@ -43,8 +43,13 @@ Números/citações/labels/estrutura idênticos; só a língua muda. Gráficos d
 (`eval_*.pdf`) ficam EN nas duas (autorizado; legenda/caption traduzidas). Qualquer alteração
 a uma língua É espelhada na outra no mesmo commit. Verificar sempre: as duas compilam 0 erros e
 têm a MESMA contagem de secções/figuras/tabelas.
-**Estado medido (2026-07-24):** só **ch1 + frontmatter TRADUZIDOS**; **ch2–ch6 são scaffolds
-vazios** no thesis-pt (EN: ch2 27k / ch3 46k / ch4 27k / ch5 41k / ch6 9k caracteres → PT ~0).
+**Estado (2026-07-25):** **ch1 + frontmatter + ch6 TRADUZIDOS** (ch6 feito nesta sessão, PR #1:
+inclui as 2 figuras novas traduzidas; labels/refs/math byte-iguais; thesis-pt compila 43 pp,
+0 erros; verificado ao render). **Faltam ch2 / ch3 / ch4 / ch5** (scaffolds; EN: ch2 27k /
+ch3 46k / ch4 27k / ch5 41k caracteres). **Padrão de tradução PROVADO** (ver ch6): traduzir
+prosa + captions + texto de figuras TikZ + células de tabela; manter labels/refs/citações/math/
+números idênticos; ajustar só o espaçamento de figuras ao texto PT mais longo; compilar +
+verificar render + `diff` dos labels vazio.
 Também: **há PT-PT à mistura no EN** — pelo menos o resumo PT no `thesis/frontmatter` (isso é
 esperado: o resumo PT faz parte do front matter EN) — VERIFICAR se há prosa PT no corpo EN.
 **Fazer (por capítulo, com pausa de verificação):**
