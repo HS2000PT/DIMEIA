@@ -191,6 +191,56 @@ is genuine, read from the dataset.}
 \label{fig:data_journey}
 \end{figure}
 
+Figure~\ref{fig:data_journey} is deliberately schematic. Figure~\ref{fig:data_objects} shows the
+very same journey as the \emph{actual objects}, verbatim, so there is no doubt about what the
+system stores and reads at each step.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\ttfamily\scriptsize, >={Stealth[length=2mm]},
+  obj/.style={draw, rounded corners, align=left, text width=3.55cm, inner sep=5pt,
+              minimum height=3.6cm, anchor=north, fill=black!2},
+]
+  \node[obj, draw=blue!45] (a) at (0,0) {%
+    {\sffamily\bfseries\textcolor{blue!60}{1 $\cdot$ raw row}}\\[3pt]
+    date,ticker,headline\\
+    2020-03-09,AAPL,\\
+    "Crude Awakening:\\
+    Energy Sector Takes\\
+    A 20\% Spill ..."\\[2pt]
+    $+$ daily closes};
+  \node[obj, draw=teal!55] (b) at (4.15,0) {%
+    {\sffamily\bfseries\textcolor{teal!65}{2 $\cdot$ structured record}}\\[3pt]
+    \{\\
+    \ "date": "2020-03-09",\\
+    \ "ticker": "AAPL",\\
+    \ "headline": "Crude...",\\
+    \ "impacts": \{\\
+    \ \ "1": $+$0.072,\\
+    \ \ "3": $-$0.067,\\
+    \ \ "5": $-$0.090 \}\\
+    \}};
+  \node[obj, draw=orange!65, line width=0.9pt] (c) at (8.3,0) {%
+    {\sffamily\bfseries\textcolor{orange!75!black}{3 $\cdot$ embedding}}\\[3pt]
+    Sentence-BERT, 384-d,\\
+    L2-normalised:\\[2pt]
+    [$-$0.011, 0.024,\\
+    \ 0.130, 0.129, ...]\\
+    (384 dimensions)};
+  \draw[->, thick] (a.east) -- (b.west);
+  \draw[->, thick] (b.east) -- (c.west);
+\end{tikzpicture}
+\caption[The data objects, as they really are]{The same real record at three stages, shown
+verbatim. A plain news row (1) becomes a structured record once cleaned, aligned to its event
+day and annotated with the measured forward impact (2), and is finally represented as a
+$384$-dimensional Sentence-BERT vector (3). The impacts make the theme-versus-direction point
+concrete in one object: the same oil-shock headline is followed by a $+7.2\%$ bounce at one day
+but a $-9.0\%$ slide by five days. Values are read directly from the dataset (impacts rounded to
+three decimals).}
+\label{fig:data_objects}
+\end{figure}
+
 \subsection{Live Layer and Evaluation Dataset}
 \label{sec:met_data_live}
 
