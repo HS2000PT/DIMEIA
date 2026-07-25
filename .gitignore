@@ -70,3 +70,4 @@ data/literature/
 .DS_Store
 Thumbs.db
 desktop.ini
+config/alerts_overrides.yaml

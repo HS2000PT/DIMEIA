@@ -73,6 +73,9 @@ def main() -> None:
 
 def _write_md(args, cap, env, total_cap, total_env, datas) -> None:
     now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
+    # Cedo na janela viva (sem pendentes maturados e sem histórico de notícias) `datas`
+    # vem vazio — degradar com graça em vez de rebentar com IndexError.
+    janela = f"{datas[0]} a {datas[-1]}" if datas else "n/a (sem dados ainda)"
     lines = [
         "# alert_funnel.md — funil de produção real (snapshot)",
         "",
@@ -80,7 +83,7 @@ def _write_md(args, cap, env, total_cap, total_env, datas) -> None:
         "> `alerts-history` (a mesma fonte da app). **Não editar à mão.** Snapshot com data:",
         "> os números crescem com o canal vivo; a tese cita ESTE snapshot.",
         "",
-        f"- **Janela coberta:** notícias datadas de {datas[0]} a {datas[-1]}.",
+        f"- **Janela coberta:** notícias datadas de {janela}.",
         f"- **Capturadas (relevantes, únicas):** {total_cap} manchetes "
         f"(passaram o filtro de relevância; TODAS entram na KB viva como pendentes).",
         f"- **Alertas de notícia enviados ao canal:** {total_env} "

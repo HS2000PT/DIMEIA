@@ -153,9 +153,53 @@ def _log_decision_safe(news_date: str, ticker: str, headline: str,
 
 
 def load_config(path: str | Path = _CONFIG) -> dict:
-    """Carrega o ficheiro de definições YAML."""
+    """Carrega o ficheiro de definições YAML (base, sem overrides)."""
     with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
+
+
+def _local_overrides() -> dict:
+    """Overrides do operador no disco (VM/PC): `config/alerts_overrides.yaml`. Fail-open."""
+    p = _CONFIG.parent / "alerts_overrides.yaml"
+    if not p.exists():
+        return {}
+    try:
+        with open(p, encoding="utf-8") as f:
+            return yaml.safe_load(f) or {}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _branch_overrides(cfg: dict) -> dict:
+    """Overrides definidos no PAINEL DE ADMIN da app, publicados na branch partilhada
+    (`alerts_overrides.json`, ao lado do histórico). Fail-open: rede/404/JSON mau ⇒ {}."""
+    url = ((cfg.get("public") or {}).get("history_url")) or ""
+    if not url:
+        return {}
+    try:
+        import json
+
+        import requests
+
+        r = requests.get(url.rsplit("/", 1)[0] + "/alerts_overrides.json", timeout=5)
+        if r.status_code == 404:
+            return {}
+        r.raise_for_status()
+        return json.loads(r.text) or {}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def effective_config(path: str | Path = _CONFIG) -> dict:
+    """Config base + overrides (operador local, depois admin da app). O admin ganha o desempate.
+    Estritamente FAIL-OPEN e limitado a valores sãos (`settings_overrides`): um override mau
+    nunca altera o comportamento nem inunda o canal."""
+    from investigator.settings_overrides import merge_overrides
+
+    cfg = load_config(path)
+    cfg = merge_overrides(cfg, _local_overrides())
+    cfg = merge_overrides(cfg, _branch_overrides(cfg))
+    return cfg
 
 
 def news_is_fresh(news_date: str, today: date, max_age_days: int = 2) -> bool:
@@ -254,7 +298,7 @@ def build_daily_summary(results: list[tuple[str, object]], threshold: float) -> 
     # Hierarquia visual (UX 2026-07-12): movers em destaque, um por linha; os calmos
     # (<1% e sem anomalia) comprimidos numa linha só — 10 linhas monótonas não se leem.
     # A seta segue SEMPRE o sinal do movimento (direction_icon, fonte única): anomalias
-    # levam os triângulos de alerta 🔺/🔻; os movers normais as setas finas ⬆/⬇.
+    # levam 📈 (sobe, verde) / 📉 (desce, vermelho); os movers normais as setas finas ⬆/⬇.
     calmos: list[str] = []
     for ticker, r in ordenados:
         if r.is_anomaly:
@@ -865,20 +909,30 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     can_send = bool(config.TELEGRAM_BOT_TOKEN and config.TELEGRAM_CHAT_ID) and not dry_run
     from investigator.explanation_engine.explainer import plain_text
 
+    falhas = 0
     for _ticker, text in mensagens:
         print("-" * 60)
         print(plain_text(text))
         if can_send:
             from investigator.telegram_bot.sender import send_message
 
-            send_message(text)
+            # Um envio falhado (rede/Telegram intermitente) não pode abortar o ciclo nem
+            # impedir as mensagens seguintes: o modo agendado (Actions) sairia com código
+            # de erro e as restantes ficariam por entregar. Falha-suave e continua.
+            try:
+                send_message(text)
+            except Exception as exc:  # noqa: BLE001
+                falhas += 1
+                print(f"[!] Falha ao enviar (o ciclo continua): {exc}")
 
     _fanout_safe(alerts, bot_cfg, dry_run=dry_run)  # fan-out só de alertas por ticker
 
     if can_send:
         _record_history_safe(mensagens, date.today().isoformat())
         _push_history_safe()  # só ativo na VM (INVESTIGATOR_HISTORY_GIT=1); fail-open
-        print(f"\n[{len(mensagens)} mensagem(ns) enviada(s) para o Telegram]")
+        entregues = len(mensagens) - falhas
+        extra = f" ({falhas} falha[s] de envio)" if falhas else ""
+        print(f"\n[{entregues}/{len(mensagens)} mensagem(ns) enviada(s) para o Telegram{extra}]")
     else:
         why = "modo --dry-run" if dry_run else "Telegram nao configurado (nada enviado)"
         print(f"\n[{len(mensagens)} mensagem(ns); {why}]")
@@ -906,7 +960,7 @@ def watch_loop(interval_s: int, *, dry_run: bool) -> None:
     while not stop["flag"]:
         try:
             # reler config permite ajustar a quente; watch=True liga a deteção intradiária
-            run_cycle(load_config(), dry_run=dry_run, watch=True)
+            run_cycle(effective_config(), dry_run=dry_run, watch=True)
         except Exception as exc:  # noqa: BLE001  (um ciclo falhado nunca mata o vigia)
             print(f"[watch] ciclo falhou (continua): {type(exc).__name__}: {exc}")
         fim = time.monotonic() + interval_s + random.uniform(0, interval_s * 0.2)
@@ -928,7 +982,7 @@ def main() -> int:
     if args.watch:
         watch_loop(max(60, args.interval), dry_run=args.dry_run)
         return 0
-    run_cycle(load_config(), dry_run=args.dry_run)
+    run_cycle(effective_config(), dry_run=args.dry_run)
     return 0
 
 

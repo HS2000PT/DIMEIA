@@ -63,6 +63,23 @@ def _texto_visivel(at: AppTest) -> str:
     return "\n".join(partes)
 
 
+def test_admin_desbloqueado_mostra_painel_de_definicoes(monkeypatch):
+    """Com admin desbloqueado, o painel de definições renderiza os sliders dos tunables
+    (guest, o default dos outros testes, não os mostra)."""
+    import investigator.alerts_history as alerts_history
+    import investigator.market_data.prices as prices
+
+    monkeypatch.setattr(prices, "get_price_history", _fake_history)
+    monkeypatch.setattr(alerts_history, "fetch_remote", lambda url, timeout=5.0: [])
+    at = AppTest.from_file(APP)
+    at.session_state["admin_ok"] = True   # já autenticado (salta o botão Unlock)
+    at.secrets["admin_password"] = "x"
+    at.run(timeout=120)
+    assert not at.exception
+    assert len(at.slider) >= 5   # threshold, similaridade, materialidade, teto, half-life
+    assert any("Alert settings" in str(e.label) for e in at.expander)
+
+
 def test_vista_live_sem_excecoes_uma_aba_por_empresa(monkeypatch):
     at = _run(monkeypatch)
     assert not at.exception

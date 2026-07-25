@@ -47,8 +47,9 @@ def plain_text(alert: str) -> str:
 
 def direction_icon(value: float) -> str:
     """Ícone de direção — a FONTE ÚNICA (o bug das setas vinha de lógica duplicada em 3
-    sítios: aqui, no resumo diário e no dashboard). 🔺 sobe, 🔻 desce."""
-    return "🔺" if value >= 0 else "🔻"
+    sítios: aqui, no resumo diário e no dashboard). Cor certa: 📈 sobe (verde), 📉 desce
+    (vermelho) — o antigo 🔺/🔻 era vermelho nos dois sentidos e confundia."""
+    return "📈" if value >= 0 else "📉"
 
 
 def _clip(text: str, limit: int = _MAX_HEADLINE) -> str:
@@ -267,13 +268,19 @@ def explain_news_impact(
     subiram = sum(1 for v in vals if v > 0)
     desceram = sum(1 for v in vals if v < 0)
     if subiram and desceram:
+        # Direções mistas: mostrar o SPLIT (não uma média enganadora) e enquadrar como TEMA.
         lines.append(
-            "⚠ Similar past cases moved in BOTH directions. Treat the average with caution."
+            f"⚠ These cases moved in BOTH directions ({subiram} up, {desceram} down) — "
+            "similar in TOPIC, not in direction. Context, never a forecast."
         )
     elif vals and (subiram == len(vals) or desceram == len(vals)):
+        # Unânime (inclui o caso confuso: notícia positiva mas casos passados caíram) — deixar
+        # explícito que estes são casos do mesmo TEMA, não uma previsão para esta notícia.
         rumo = "up" if subiram else "down"
-        lines.append(f"{len(vals)} of {len(vals)} shown cases moved {rumo} "
-                     "(an observed pattern, not a forecast).")
+        lines.append(
+            f"{len(vals)} of {len(vals)} shown cases moved {rumo} — topic-similar past cases, "
+            "not a prediction for this news (an observed pattern, not a forecast)."
+        )
     if materiality:
         lines.append(materiality)
     lines.append(

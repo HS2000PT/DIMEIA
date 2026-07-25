@@ -49,3 +49,21 @@ def test_rss_date_invalida_da_vazio():
     assert _rss_date_to_iso("") == ""
     assert _rss_date_to_iso("não é uma data") == ""
     assert _rss_date_to_iso("Wed, 02 Oct 2002 13:00:00 GMT") == "2002-10-02"
+
+
+def test_parse_rss_aceita_bytes_com_declaracao_de_codificacao():
+    """Regressão: feeds RSS reais abrem com `<?xml ... encoding="UTF-8"?>`. Passar a str
+    crua a ET.fromstring levanta ValueError; a partir de bytes (o `resp.content` que o
+    fetch_rss_feed agora usa) funciona — provado aqui com uma declaração de codificação."""
+    xml_bytes = (
+        b'<?xml version="1.0" encoding="UTF-8"?>'
+        b'<rss version="2.0"><channel>'
+        b"<item><title>Tesla recalls vehicles</title>"
+        b"<pubDate>Wed, 02 Oct 2002 13:00:00 GMT</pubDate><link>http://t</link></item>"
+        b"</channel></rss>"
+    )
+    items = parse_rss(xml_bytes, ticker="tsla")
+    assert len(items) == 1
+    assert items[0].headline == "Tesla recalls vehicles"
+    assert items[0].ticker == "TSLA"
+    assert items[0].date == "2002-10-02"

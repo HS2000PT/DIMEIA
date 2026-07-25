@@ -37,9 +37,14 @@ MARKET = "SPY"  # proxy de mercado para o retorno anormal
 
 
 def fetch_closes(ticker: str, start: str, end: str) -> pd.Series:
-    """Fechos diários [start, end], com cache CSV em data/prices/ (apagar o ficheiro refresca)."""
+    """Fechos diários [start, end], com cache CSV em data/prices/ (apagar o ficheiro refresca).
+
+    A cache é indexada por (ticker, start, end): re-correr sobre uma janela DIFERENTE não
+    reutiliza em silêncio uma série mais estreita — o que faria cair eventos fora do intervalo
+    antes cacheado. Cada janela tem o seu ficheiro.
+    """
     PRICES_DIR.mkdir(parents=True, exist_ok=True)
-    cache = PRICES_DIR / f"{ticker}.csv"
+    cache = PRICES_DIR / f"{ticker}_{start}_{end}.csv"
     if cache.exists():
         s = pd.read_csv(cache, index_col=0, parse_dates=True)["Close"]
         return s

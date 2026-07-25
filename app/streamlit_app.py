@@ -49,9 +49,24 @@ st.set_page_config(
     page_title="InvestiGator — explainable market alerts", page_icon="🐊", layout="wide"
 )
 
-_LOGO = Path(__file__).resolve().parent / "assets" / "logo.svg"
+_ASSETS = Path(__file__).resolve().parent / "assets"
+_LOGO = _ASSETS / "logo.svg"
+
+
+def _phase_asset() -> Path:
+    """Mascote sensível à hora (dia/noite), sincronizada com a hora local do aluno; cai no
+    logo base se a mascote faltar ou algo falhar. Fun functionality, sempre on-brand."""
+    try:
+        from investigator.market_data.market_hours import day_phase
+
+        cand = _ASSETS / ("mascot_night.svg" if day_phase().is_night else "mascot_day.svg")
+        return cand if cand.exists() else _LOGO
+    except Exception:  # noqa: BLE001
+        return _LOGO
+
+
 if _LOGO.exists():
-    st.logo(str(_LOGO), size="large")
+    st.logo(str(_phase_asset()), size="large")
 
 _DEFAULT_HISTORY_URL = (
     "https://raw.githubusercontent.com/HS2000PT/DIMEIA/alerts-history/alerts_history.jsonl"
@@ -255,7 +270,21 @@ def _overview_line(moves: dict[str, float], tickers: list[str]) -> str:
     return " · ".join(chips)
 
 
+def _market_state_pill() -> None:
+    """Estado da sessão US ao vivo (🟢 aberto / 🔴 fechado) com contagem para a próxima
+    mudança. Refresca com o fragmento `_live_view` (run_every). Fail-open: nunca derruba."""
+    try:
+        from investigator.market_data.market_hours import us_market_status
+
+        s = us_market_status()
+        dot = "🟢" if s.is_open else "🔴"
+        st.markdown(f"{dot} **US market {s.label.lower()}** · {s.detail}")
+    except Exception:  # noqa: BLE001 — um indicador nunca pode partir a página
+        pass
+
+
 def _overview_strip() -> None:
+    _market_state_pill()
     moves = _overview_moves(tuple(_watchlist()))
     linha = _overview_line(moves, _watchlist())
     if linha:
@@ -391,7 +420,7 @@ def _kind_label(h) -> str:
         return "📰 News event"
     if h.kind == "summary":
         return "📊 Daily summary"
-    return "🔻 Market anomaly (down)" if _market_down(h.text) else "🔺 Market anomaly (up)"
+    return "📉 Market anomaly (down)" if _market_down(h.text) else "📈 Market anomaly (up)"
 
 
 def _events_list(eventos: list) -> None:
@@ -445,7 +474,7 @@ def _ticker_tab(ticker: str, history: list) -> None:
         n_mkt = sum(1 for h in eventos if h.kind == "market")
         n_news = sum(1 for h in eventos if h.kind == "news")
         st.caption(f"{len(eventos)} on record · {n_mkt} market · {n_news} news · "
-                   "🔺 up · 🔻 down · 📰 news. Open a row for the full alert, "
+                   "📈 up · 📉 down · 📰 news. Open a row for the full alert, "
                    "exactly as sent to the Telegram channel.")
         _events_list(eventos)
     else:
@@ -453,10 +482,35 @@ def _ticker_tab(ticker: str, history: list) -> None:
                    "scan detects anomalies and material news.")
 
 
-@st.fragment(run_every="120s")
+# run_every numérico (segundos): evita o caminho pd.Timedelta(str) do Streamlit, que
+# sob numpy>=2.5 emite a deprecação "generic unit for timedelta" (e falha num numpy futuro).
+# 120 segundos, comportamento idêntico.
+def _health_strip(history, monitoring) -> None:
+    """Prova de vida AO TOPO: quantos alertas explicados já saíram e — se a pós-validação
+    existir — a precisão das decisões MANTIDAS vs a base rate, fora da amostra. Combate o
+    'parece parado/ignorado'. Fail-open; sem st.metric (a guarda de performance conta metrics)."""
+    from investigator.evaluation.monitoring import parse_live_monitoring
+
+    n = sum(1 for h in history if h.kind in ("market", "news"))
+    bits = []
+    if n:
+        bits.append(f"**{n}** explained alerts delivered")
+    health = parse_live_monitoring(monitoring)
+    if health:
+        bits.append(
+            f"kept-alert precision **{health.kept_precision:.0%}** vs "
+            f"{health.base_rate:.0%} base rate (+{health.lift_points:.0f} pts, out-of-sample)"
+        )
+    if bits:
+        st.success("✅ Live & tracked — " + " · ".join(bits))
+
+
+@st.fragment(run_every=120)
 def _live_view() -> None:
     history = _read_shared_history()
     _overview_strip()
+    monitoring = _live_monitoring_md()
+    _health_strip(history, monitoring)
     if not history:
         st.caption("⚠ No shared event history reachable right now. Charts still show live "
                    "prices; events appear as the automated scan records them.")
@@ -468,7 +522,6 @@ def _live_view() -> None:
     if summaries:
         with st.expander(f"📊 Daily close summary ({summaries[-1].date})"):
             st.text(summaries[-1].text)
-    monitoring = _live_monitoring_md()
     if monitoring:
         with st.expander("📈 How our alerts are doing (live monitoring)"):
             st.markdown(monitoring)
@@ -484,7 +537,17 @@ def _live_view() -> None:
 # ── Vista ABOUT: tudo o resto, fora do caminho ──────────────────────────────────
 
 def _about_view() -> None:
-    st.title("About InvestiGator")
+    c1, c2 = st.columns([1, 5])
+    with c1:
+        try:
+            st.image(str(_phase_asset()), width=96)  # mascote dia/noite (sincronizada)
+        except Exception:  # noqa: BLE001
+            pass
+    with c2:
+        st.title("About InvestiGator")
+        saud = _gator_greeting()
+        if saud:
+            st.caption(saud)
     st.markdown(
         """
 **InvestiGator** watches the US market and **explains** every alert it sends:
@@ -531,8 +594,8 @@ against noise. **Evidence, never a prediction.**
     )
 
     st.header("Evaluation (frozen thesis numbers)")
-    st.caption("Reproducible with fixed seeds via `scripts/evaluate*.py`; "
-               "full tables in `docs/evaluation/`.")
+    st.caption("Every number below is regenerated deterministically from the frozen inputs "
+               "with a fixed seed, so it can be reproduced and audited in isolation.")
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Retrieval beats every baseline")
@@ -604,16 +667,168 @@ def _try_headline() -> None:
 
 # ── Entrada ─────────────────────────────────────────────────────────────────────
 
+# ── Painel de admin (guest por defeito; password de admin desbloqueia a edição) ──────────
+def _secret(name: str):
+    """Lê um segredo do Streamlit sem rebentar quando não há secrets.toml."""
+    try:
+        return st.secrets.get(name)
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _admin_unlocked() -> bool:
+    return bool(st.session_state.get("admin_ok"))
+
+
+def _repo_slug() -> str | None:
+    """Deriva OWNER/REPO do history_url (raw.githubusercontent.com/OWNER/REPO/branch/...)."""
+    parts = (_history_url() or "").split("/")
+    try:
+        i = parts.index("raw.githubusercontent.com")
+        return f"{parts[i + 1]}/{parts[i + 2]}"
+    except (ValueError, IndexError):
+        return None
+
+
+@st.cache_data(ttl=30, show_spinner=False)
+def _fetch_branch_overrides() -> dict:
+    """Overrides já aplicados (branch), para pré-preencher o formulário. Fail-open."""
+    if os.environ.get("INVESTIGATOR_OFFLINE") == "1":
+        return {}
+    url = _history_url()
+    if not url:
+        return {}
+    import json
+
+    import requests
+    try:
+        r = requests.get(url.rsplit("/", 1)[0] + "/alerts_overrides.json", timeout=5)
+        if r.status_code == 404:
+            return {}
+        r.raise_for_status()
+        return json.loads(r.text) or {}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _put_branch_file(repo: str, token: str, content: str) -> tuple[bool, str]:
+    """Cria/atualiza alerts_overrides.json na branch partilhada via GitHub API. Server-side."""
+    import base64
+
+    import requests
+    api = f"https://api.github.com/repos/{repo}/contents/alerts_overrides.json"
+    headers = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"}
+    try:
+        g = requests.get(api, params={"ref": "alerts-history"}, headers=headers, timeout=10)
+        sha = g.json().get("sha") if g.status_code == 200 else None
+        body = {"message": "admin: update alert overrides", "branch": "alerts-history",
+                "content": base64.b64encode(content.encode()).decode()}
+        if sha:
+            body["sha"] = sha
+        p = requests.put(api, json=body, headers=headers, timeout=10)
+        if p.status_code in (200, 201):
+            return True, "ok"
+        return False, f"HTTP {p.status_code}: {p.json().get('message', '')[:120]}"
+    except Exception as exc:  # noqa: BLE001
+        return False, str(exc)[:120]
+
+
+def _admin_login_sidebar() -> None:
+    with st.sidebar.expander("🔒 Admin", expanded=False):
+        if _admin_unlocked():
+            st.caption("Admin mode — settings apply to the live channel.")
+            if st.button("Log out"):
+                st.session_state["admin_ok"] = False
+                st.rerun()
+            return
+        secret = _secret("admin_password")
+        if not secret:
+            st.caption("Guest (read-only). Set an `admin_password` secret to enable editing.")
+            return
+        pw = st.text_input("Admin password", type="password", key="admin_pw")
+        if st.button("Unlock") and pw:
+            if pw == secret:
+                st.session_state["admin_ok"] = True
+                st.rerun()
+            else:
+                st.error("Wrong password.")
+
+
+def _admin_settings_panel() -> None:
+    """Editor dos parâmetros de alerta (admin). Publica na branch → o scanner usa na próxima
+    corrida. Sem token, mostra o JSON para copiar para o runner."""
+    from investigator.settings_overrides import (
+        TUNABLES,
+        current_values,
+        merge_overrides,
+        validate_overrides,
+    )
+
+    effective = merge_overrides(_read_yaml_config(), _fetch_branch_overrides())
+    cur = current_values(effective)
+    st.caption("These are deployment settings (the thesis evaluation stays frozen at 3.0). "
+               "Changes take effect on the scanner's next run.")
+    chosen: dict = {}
+    for t in TUNABLES:
+        val = cur.get(t.key)
+        if t.kind == "bool":
+            chosen[t.key] = st.checkbox(t.label, value=bool(val), help=t.help or None)
+        elif t.kind == "int":
+            chosen[t.key] = st.slider(t.label, int(t.lo), int(t.hi),
+                                      int(val if val is not None else t.lo), help=t.help or None)
+        else:
+            chosen[t.key] = st.slider(t.label, float(t.lo), float(t.hi),
+                                      float(val if val is not None else t.lo), step=0.05,
+                                      help=t.help or None)
+    if st.button("Apply to live alerts", type="primary"):
+        import json
+
+        clean = validate_overrides(chosen)
+        payload = json.dumps(clean, indent=2)
+        token, repo = _secret("github_token"), _repo_slug()
+        if token and repo:
+            ok, msg = _put_branch_file(repo, token, payload)
+            if ok:
+                _fetch_branch_overrides.clear()
+                st.success("Applied. The scanner will use these on its next run.")
+            else:
+                st.error(f"Could not publish ({msg}). Copy this to the runner instead:")
+                st.code(payload, language="json")
+        else:
+            st.info("No write token — set a `github_token` secret to apply remotely, or paste "
+                    "this into `config/alerts_overrides.yaml` on the runner:")
+            st.code(payload, language="json")
+
+
+def _gator_greeting() -> str:
+    """Saudação do investigador sincronizada com a hora (☀️/🌙). Fail-open → sem saudação."""
+    try:
+        from investigator.market_data.market_hours import day_phase
+
+        ph = day_phase()
+        return f"{ph.emoji} {ph.greeting}"
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def main() -> None:
     st.sidebar.title("InvestiGator")
     st.sidebar.caption("_Every move investigated, never predicted._")
+    saudacao = _gator_greeting()
+    if saudacao:
+        st.sidebar.caption(saudacao)
     vista = st.sidebar.radio("View", ["📊 Live", "ℹ️ About"], label_visibility="collapsed")
     url = _channel_url()
     if url:
         st.sidebar.link_button("📡 Get alerts on Telegram", url, use_container_width=True)
     st.sidebar.markdown("---")
+    _admin_login_sidebar()
     with st.sidebar:
         _disclaimer()
+
+    if _admin_unlocked():
+        with st.expander("⚙️ Alert settings — changes apply to the live channel", expanded=True):
+            _admin_settings_panel()
 
     if vista == "📊 Live":
         _live_view()

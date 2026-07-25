@@ -73,10 +73,13 @@ def _rss_date_to_iso(pub_date: str) -> str:
         return ""
 
 
-def parse_rss(xml_text: str, ticker: str = "") -> list[NewsItem]:
+def parse_rss(xml_text: str | bytes, ticker: str = "") -> list[NewsItem]:
     """Extrai itens de um feed RSS 2.0 (`<item>`: `title`, `pubDate`, `link`).
 
     Parsing com a biblioteca padrão (sem dependências novas). Itens sem título são ignorados.
+    Aceita `bytes` (o corpo cru da resposta): feeds reais abrem com uma declaração de
+    codificação `<?xml ... encoding="UTF-8"?>`, que o ElementTree rejeita se lhe passarem
+    uma `str` mas aceita a partir de `bytes`.
     """
     import xml.etree.ElementTree as ET
 
@@ -123,7 +126,9 @@ def fetch_rss_feed(feed_url: str, ticker: str = "", timeout: int = 10) -> list[N
 
     resp = requests.get(feed_url, timeout=timeout)
     resp.raise_for_status()
-    return parse_rss(resp.text, ticker)
+    # `resp.content` (bytes), não `resp.text`: um feed conforme abre com uma declaração de
+    # codificação, e ET.fromstring levanta ValueError se receber uma str que a contenha.
+    return parse_rss(resp.content, ticker)
 
 
 def fetch_finnhub_quote(ticker: str, api_key: str | None = None,

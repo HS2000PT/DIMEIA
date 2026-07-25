@@ -32,15 +32,16 @@ class HistoryEntry:
 
 def classify_kind(text: str) -> str:
     """Deriva o tipo a partir do EMOJI de cabeçalho (marcador estável e robusto à reescrita
-    do texto): 📊 resumo · 🔺/🔻 mercado · 📰 notícia. Isto corrige um bug latente — os
+    do texto): 📊 resumo · 📈/📉 mercado · 📰 notícia. Isto corrige um bug latente — os
     alertas intradiários ("Unusual intraday move for…") não continham "Anomaly detected for"
-    e eram classificados como notícia. Fallback por frase para entradas antigas sem emoji."""
+    e eram classificados como notícia. Fallback por frase para entradas antigas sem emoji.
+    Aceita ainda o 🔺/🔻 legado (histórico antigo, antes das setas verdes/vermelhas)."""
     t = text.lstrip()
     if t.startswith("📊"):
         return "summary"
     if t.startswith("🔔"):
         return "open"
-    if t.startswith(("🔺", "🔻")):
+    if t.startswith(("📈", "📉", "🔺", "🔻")):
         return "market"
     if t.startswith("📰"):
         return "news"

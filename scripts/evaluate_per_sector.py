@@ -80,7 +80,7 @@ def main() -> None:
               " ".join(f"P@{k}={rec[f'p{k}']:.3f}" for k in ks) + f" (random {rec['random']:.3f})")
 
     _write_md(args.out, rows, ks, order)
-    _write_fig(args.fig, rows, order)
+    _write_fig(args.fig, rows, order, ks[0])
 
 
 def _write_md(path, rows, ks, order) -> None:
@@ -93,12 +93,14 @@ def _write_md(path, rows, ks, order) -> None:
         f"- **Gerado:** {now}. Modelo: SBERT all-MiniLM-L6-v2. População completa por setor "
         "(cross-ticker, sem amostragem).",
         "",
-        "| Setor | N | " + " | ".join(f"P@{k}" for k in ks) + " | Aleatório (base) | Lift P@5 |",
+        # Lift sobre o 1.º k pedido (ks[0]); com o --k por defeito [5, 10] é P@5 (inalterado).
+        "| Setor | N | " + " | ".join(f"P@{k}" for k in ks)
+        + f" | Aleatório (base) | Lift P@{ks[0]} |",
         "|---|---|" + "|".join("---" for _ in ks) + "|---|---|",
     ]
     for sec in order:
         r = rows[sec]
-        lift = r["p5"] - r["random"]
+        lift = r[f"p{ks[0]}"] - r["random"]
         lines.append(
             f"| {SECTOR_LABEL[sec]} | {r['n']} | "
             + " | ".join(f"{r[f'p{k}']:.3f}" for k in ks)
@@ -115,18 +117,18 @@ def _write_md(path, rows, ks, order) -> None:
     print(f"Resultados escritos em {path}")
 
 
-def _write_fig(path, rows, order) -> None:
+def _write_fig(path, rows, order, k0=5) -> None:
     import matplotlib
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
     labels = [SECTOR_LABEL[s] for s in order]
-    p5 = [rows[s]["p5"] for s in order]
+    p5 = [rows[s][f"p{k0}"] for s in order]
     rnd = [rows[s]["random"] for s in order]
     x = np.arange(len(order))
     fig, ax = plt.subplots(figsize=(8, 4))
-    ax.bar(x - 0.2, p5, 0.4, label="SBERT (MiniLM) P@5")
+    ax.bar(x - 0.2, p5, 0.4, label=f"SBERT (MiniLM) P@{k0}")
     ax.bar(x + 0.2, rnd, 0.4, label="Random (base rate)")
     ax.set_xticks(x, labels, rotation=20, ha="right")
     ax.set_ylabel("Precision@5 (same sector, cross-ticker)")

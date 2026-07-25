@@ -93,6 +93,28 @@ def test_parse_alphavantage_e_rate_limit():
         parse_alphavantage_json({"Information": "rate limit"})
 
 
+def test_alphavantage_janela_fora_do_intervalo_levanta(monkeypatch):
+    """Regressão do contrato da cadeia: o 'compact' do AV traz só ~100 dias; se a janela
+    pedida cai toda fora, o slice fica vazio → tem de LEVANTAR (senão preços vazios
+    propagavam-se como 'sucesso' por ser a última fonte da cadeia)."""
+    from investigator import config
+
+    class _Resp:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return AV_JSON  # série de 2026-07-09/10
+
+    monkeypatch.setattr(config, "ALPHAVANTAGE_API_KEY", "chave-de-teste", raising=False)
+    monkeypatch.setattr("requests.get", lambda *a, **k: _Resp())
+    with pytest.raises(RuntimeError):
+        prices.fetch_alphavantage_daily("NVDA", "2020-01-01", "2020-02-01")
+    # janela que CONTÉM os dados devolve normalmente
+    df = prices.fetch_alphavantage_daily("NVDA", "2026-07-01", "2026-07-31")
+    assert df["Close"].iloc[-1] == pytest.approx(161.20)
+
+
 def _df_ok() -> pd.DataFrame:
     idx = pd.to_datetime(["2026-07-09", "2026-07-10"])
     return pd.DataFrame({"Close": [162.5, 161.2]}, index=idx)

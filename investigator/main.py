@@ -36,10 +36,11 @@ def kb_query_embedder(kb_path: str | Path, auto_download: bool = False):
     with open(kb_path, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
-            if line:
-                emb = json.loads(line).get("embedding")
-                if emb:
-                    dim = len(emb)
+            if not line:
+                continue
+            emb = json.loads(line).get("embedding")
+            if emb:  # só decide a dimensão com um embedding REAL; salta registos sem ele
+                dim = len(emb)
                 break
     if dim == 384:
         from investigator.historical_kb.onnx_embedder import OnnxMiniLMEmbedder

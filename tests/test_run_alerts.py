@@ -164,7 +164,7 @@ def test_build_daily_summary_com_e_sem_anomalias():
     assert "No anomalies today" in calmo and "±" not in calmo
     assert "not advice" in calmo
     agitado = build_daily_summary([("TSLA", _res(True, 2.6))], 2.0)
-    assert "🔺 TSLA" in agitado and "anomaly" in agitado.lower()
+    assert "📈 TSLA" in agitado and "anomaly" in agitado.lower()
     assert build_daily_summary([], 2.0) == ""
 
 
@@ -194,8 +194,8 @@ def test_build_opening_note_snapshot():
 
     note = build_opening_note([("NVDA", _r(0.024)), ("AAPL", _r(0.004)), ("TSLA", _r(-0.018))])
     assert "Market open" in note
-    assert "🔺 NVDA: +2.40% vs yesterday's close" in note   # seta certa (sobe)
-    assert "🔻 TSLA: -1.80% vs yesterday's close" in note    # seta certa (desce)
+    assert "📈 NVDA: +2.40% vs yesterday's close" in note   # verde a subir
+    assert "📉 TSLA: -1.80% vs yesterday's close" in note    # vermelho a descer
     assert "Flat at the open: AAPL +0.4%" in note            # <1% comprimido
     assert note.index("NVDA") < note.index("TSLA")           # ordenado por |movimento|
     assert "not advice" in note
@@ -215,6 +215,24 @@ def test_maybe_opening_note_uma_vez_por_dia_na_abertura(tmp_path):
     assert maybe_opening_note(st, res, hour_utc=15) is None   # já enviado hoje
     st2 = load_state(tmp_path / "none.json", today=date(2026, 7, 13))
     assert maybe_opening_note(st2, [], hour_utc=14) is None   # sem resultados → nada a dizer
+
+
+def test_overrides_failopen_sem_ficheiro_e_sem_url():
+    """Fail-open: sem ficheiro local e sem history_url, os overrides são {} (comportamento base)."""
+    from scripts.run_alerts import _branch_overrides, _local_overrides
+
+    assert _local_overrides() == {}          # não há config/alerts_overrides.yaml no repo
+    assert _branch_overrides({}) == {}       # sem public.history_url → sem fetch
+
+
+def test_effective_config_merge_local(tmp_path, monkeypatch):
+    """effective_config funde overrides locais válidos sobre a base, limitando a valores sãos."""
+    import scripts.run_alerts as ra
+
+    monkeypatch.setattr(ra, "_local_overrides", lambda: {"market_threshold": 99})  # acima do teto
+    monkeypatch.setattr(ra, "_branch_overrides", lambda cfg: {})
+    cfg = ra.effective_config()
+    assert cfg["market"]["threshold"] == 5.0  # limitado ao máximo são (não 99)
 
 
 def test_precedents_are_strong_aplica_o_chao():

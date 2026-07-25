@@ -135,6 +135,21 @@ def test_merged_precedents_max_age_corta_antigos():
     assert len(sem_corte) == 1
 
 
+def test_merged_precedents_max_age_tolera_data_corrompida():
+    """Regressão (fail-open): com max_age_days ativo, um registo com data não-ISO na KB
+    não pode rebentar a recuperação — é descartado, como já fazia `recency_weight`. Antes
+    da correção, `date.fromisoformat` levantava ValueError e a consulta abortava."""
+    emb = HashingEmbedder(dim=16)
+    vec = [float(x) for x in emb.encode(["apple sobe forte"])[0]]
+    bom = NewsRecord(date="2026-06-30", ticker="MSFT", headline="apple sobe forte",
+                     impacts={"5": 0.02}, embedding=vec)
+    corrompido = NewsRecord(date="2026/06/30", ticker="AAPL", headline="apple sobe forte",
+                            impacts={}, embedding=vec)
+    out = merged_precedents("apple sobe forte", [HistoricalKB([bom, corrompido])], emb,
+                            top_k=3, today=date(2026, 7, 11), max_age_days=180)
+    assert [r.ticker for r, _ in out] == ["MSFT"]  # data inválida cai; o registo bom fica
+
+
 def test_merged_precedents_kb_vazia_fail_open():
     emb = HashingEmbedder(dim=16)
     assert merged_precedents("q", [HistoricalKB([]), None], emb, top_k=3,
