@@ -178,6 +178,15 @@ Estes ficam DESENHADOS no plano; construção faseada e só com decisão do alun
   Secrets) definir `admin_password = "..."` (desbloqueia a edição) e, para aplicar ao vivo sem
   copiar à mão, `github_token = "<PAT com repo:contents write>"` (o repo é derivado do
   history_url). Sem estes segredos, a app fica em guest (read-only) — comportamento seguro.
+- **✅ App fun + identity (FEITO, PR #1):** mascote crocodilo dia/noite on-brand
+  (`app/assets/mascot_day.svg` sol + olho acordado; `mascot_night.svg` lua crescente + estrelas
+  + olho sonolento), sincronizada com a hora local (Lisboa) via `day_phase()`; logo do canto +
+  herói do About + saudação do "investigador" sensíveis à hora. Verificado ao vivo (Playwright):
+  renderiza, mantém o toggle de tema. **Crítica honesta** em `docs/design/product_critique.md`.
+  **Também:** About sem nomes de scripts/ficheiros (integridade, coerente com o apêndice).
+  **⏳ Ainda em aberto (para escolher):** figuras de snapshot de dados na tese (WS3); tradução
+  PT ch2–ch6 (WS2); mais bolsas europeias; chatbot-mascote (WS6). Bolsa europeia primeiro:
+  decisão do aluno.
 
 ## Ordem de execução proposta
 **Fase 1 (já):** WS1 (integridade do apêndice) + WS4-1 (setas verdes) + WS4-2 (estado do
