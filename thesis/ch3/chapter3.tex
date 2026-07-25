@@ -325,6 +325,43 @@ Flagged at $k=3$? & yes & no \\
 \end{tabular}
 \end{table}
 
+The same numbers are easier to feel as a picture. Figure~\ref{fig:zscore_curves} draws both stocks'
+day-to-day return distributions with today's $-3.2\%$ move marked on each: the identical move lands
+far out in the tail of the calm stock but inside the ordinary range of the volatile one.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=12cm, height=6.2cm,
+  xlabel={Daily return (\%)}, xmin=-5, xmax=5,
+  ymin=0, ymax=1.28, ytick=\empty,
+  axis y line=none, axis x line=bottom,
+  xtick={-3.2,0}, xticklabels={$-3.2$,$0$},
+  every axis plot/.append style={very thick}, samples=220,
+  legend style={at={(0.98,0.98)}, anchor=north east, draw=none, fill=none, font=\small},
+]
+  \addplot[blue!65, domain=-5:5]{exp(-(x-0.04)^2/(2*0.40^2))};
+  \addlegendentry{calm stock ($\sigma=0.40\%$)}
+  \addplot[orange!80!black, domain=-5:5]{exp(-(x-0.10)^2/(2*1.50^2))};
+  \addlegendentry{volatile stock ($\sigma=1.50\%$)}
+  \draw[dashed, black!70, thick] (axis cs:-3.2,0) -- (axis cs:-3.2,1.14);
+  \node[anchor=south, font=\small] at (axis cs:-3.2,1.14) {today's $-3.2\%$ move};
+  \node[blue!60!black, anchor=west, align=left, font=\footnotesize, fill=white, inner sep=1.5pt]
+       at (axis cs:-4.9,0.86) {Calm stock:\\ far out in the tail\\ ($z=-8.1$, flagged)};
+  \node[orange!70!black, anchor=west, align=left, font=\footnotesize, fill=white, inner sep=1.5pt]
+       at (axis cs:0.5,0.55) {Volatile stock:\\ an ordinary day\\ ($z=-2.2$, not flagged)};
+\end{axis}
+\end{tikzpicture}
+\caption[The same move, two different stocks]{Why a fixed percentage threshold is rejected. Both
+stocks fall $-3.2\%$ today (dashed line). For the calm stock (narrow distribution) that move lies far
+out in the tail ($z=-8.1$) and is flagged; for the volatile stock (wide distribution) the identical
+move sits inside its ordinary day-to-day range ($z=-2.2$) and is not. The rolling $z$-score asks
+``unusual \emph{for this stock}?'', which a percentage cannot. Values from
+Table~\ref{tab:zscore_worked}.}
+\label{fig:zscore_curves}
+\end{figure}
+
 \subsection{Semantic Retrieval and Impact Measurement}
 \label{sec:met_correlation}
 
