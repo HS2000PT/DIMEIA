@@ -246,8 +246,35 @@ Financial LLMs \autocite{wu2023bloomberggpt} & Large generative model & Very cap
 \end{tabular}
 \end{table}
 
-\textbf{For InvestiGator:} Sentence-BERT is the sweet spot, contextual meaning beyond lexicons and static
-vectors, yet cheap, comparable and free to run. One honesty note on the comparison: the evaluation in
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize, >={Stealth[length=2.4mm]},
+  gen/.style={draw, rounded corners, align=center, text width=2.7cm, inner sep=4pt,
+              minimum height=2.5cm, anchor=south},
+]
+  \node[gen, fill=blue!4, draw=blue!40] (g1) at (0,0)
+    {\textbf{Lexicons}\\[2pt] curated word lists\\[4pt] \emph{transparent, but}\\ \emph{vocabulary-bound}};
+  \node[gen, fill=teal!6, draw=teal!45] (g2) at (3.3,0)
+    {\textbf{word2vec / GloVe}\\[2pt] static word vectors\\[4pt] \emph{one vector per}\\ \emph{word, no context}};
+  \node[gen, fill=orange!8, draw=orange!55] (g3) at (6.6,0)
+    {\textbf{BERT}\\[2pt] contextual token\\ embeddings\\[4pt] \emph{deep context, but}\\ \emph{costly to compare}};
+  \node[gen, fill=green!12, draw=green!55!black, line width=1pt] (g4) at (9.9,0)
+    {\textbf{Sentence-BERT} $\star$\\[2pt] one vector per\\ sentence\\[4pt] \emph{cheap cosine,}\\ \emph{the choice here}};
+  \draw[->, thick, black!55] (-1.45,-0.7) -- (11.35,-0.7);
+  \node[below, font=\small, black!65] at (4.95,-0.75)
+    {increasingly contextual meaning; Sentence-BERT keeps comparison cheap};
+\end{tikzpicture}
+\caption[Three generations of text representation]{Three generations of turning financial text into
+numbers. Finance lexicons are transparent but bounded by their vocabulary; static word vectors add
+similarity of use but no context; contextual models (BERT) capture meaning yet are costly to compare
+pairwise; Sentence-BERT gives each headline a single vector comparable by a cheap cosine, exactly what
+precedent retrieval needs, and is the representation chosen here. Details in Table~\ref{tab:sota_nlp}.}
+\label{fig:sota_nlp_ladder}
+\end{figure}
+
+\textbf{For InvestiGator:} Sentence-BERT is the sweet spot (Figure~\ref{fig:sota_nlp_ladder}),
+contextual meaning beyond lexicons and static vectors, yet cheap, comparable and free to run. One honesty note on the comparison: the evaluation in
 Chapter~\ref{chap:casestudies} measures Sentence-BERT against a \emph{lexical} baseline, which brackets
 the question that matters (does meaning beat surface words?); word2vec and FinBERT variants are not run
 empirically, because static word vectors are strictly dominated by contextual sentence embeddings for
