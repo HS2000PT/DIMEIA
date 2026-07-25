@@ -1,5 +1,448 @@
-% Capítulo 4 - InvestiGator (PT-PT). STUB — tradução por fazer.
-\chapter{InvestiGator}
+% Capítulo 4 - InvestiGator (Desenho do Sistema) (PT-PT; espelho de ../thesis/ch4/chapter4.tex)
+% Tradução pura: labels/refs/citações/números/estrutura idênticos; só a língua muda. O conteúdo
+% do alerta Telegram e o screenshot da app ficam em EN (é a saída real do produto), legendas em PT.
+
+\chapter{InvestiGator: Um Sistema de Alertas Financeiros Explicável para Investidores de Retalho}
 \label{chap:investigator}
 
-\emph{[Tradução em curso. O conteúdo deste capítulo espelha \texttt{../thesis/ch4/chapter4.tex}.]}
+Este capítulo responde a cinco perguntas, por ordem: \emph{O que é o sistema, numa imagem? Com que objetos
+trabalha? Quais são as suas partes, e quem faz o quê? Como flui os dados por ele? E como decide?}
+O Capítulo~\ref{chap:methods} argumentou a favor dos métodos individuais; aqui eles encaixam-se num único
+sistema funcional, o InvestiGator.
+
+\section{Visão Geral}
+\label{sec:investigator_overview}
+
+\emph{O que é o sistema, numa imagem?}
+
+O InvestiGator vigia o mercado acionista dos EUA por um investidor de retalho e levanta um alerta quando um
+de dois gatilhos independentes dispara: um movimento de preço abrupto, ou uma notícia relevante que chega.
+Cada alerta traz uma explicação completa e rastreável, não uma mera notificação. O sistema é uma pipeline de
+componentes de responsabilidade única ligados por um esquema de dados comum, pelo que as camadas viva e
+histórica são diretamente comparáveis. A Figura~\ref{fig:architecture} é a vista numa imagem: duas fontes de
+dados e a base de conhecimento alimentam dois motores, cuja evidência converge num só passo de explicação
+antes da entrega.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  >={Stealth[length=2.2mm]},
+  srcbox/.style={draw, rounded corners, align=center, text width=2.9cm, minimum height=1.0cm, fill=black!8},
+  comp/.style={draw, rounded corners, align=center, text width=2.9cm, minimum height=1.0cm, fill=black!3},
+  node distance=1.15cm and 1.35cm
+]
+  % fontes de dados (topo)
+  \node[srcbox] (md) {Dados de mercado\\ \footnotesize preços ao vivo};
+  \node[srcbox, right=of md] (nf) {Fonte de notícias\\ \footnotesize notícias ao vivo};
+  \node[srcbox, right=of nf] (kb) {Base de conhecimento\\ histórica};
+  % motores
+  \node[comp, below=of md] (an) {Detetor de anomalias\\ \footnotesize \emph{z}-score};
+  \node[comp, below=of nf] (ce) {Motor de correlação\\ \footnotesize embeddings + estudo de evento};
+  % explicação (centrada entre os dois motores)
+  \node[comp] (ex) at ($(an)!0.5!(ce) + (0,-1.7)$) {Motor de explicação\\ \footnotesize transparente, fiel};
+  % entrega
+  \node[comp, below=1.15cm of ex] (tg) {Entrega de alertas\\ \footnotesize Telegram};
+  % fluxos
+  \draw[->] (md) -- (an);
+  \draw[->] (nf) -- (ce);
+  \draw[->] (kb) -- (ce);
+  \draw[->] (an) -- (ex);
+  \draw[->] (ce) -- (ex);
+  \draw[->] (ex) -- (tg);
+\end{tikzpicture}
+\caption[Arquitetura do sistema e fluxo de dados]{Arquitetura do InvestiGator. A camada viva (dados de
+mercado, fonte de notícias) e a base de conhecimento histórica alimentam dois motores (o detetor de
+anomalias e o motor de correlação) cuja evidência converge no motor de explicação antes de um alerta ser
+entregue através do Telegram. O gatilho de movimento de mercado segue o caminho da esquerda; o gatilho de
+notícias o da direita.}
+\label{fig:architecture}
+\end{figure}
+
+Três princípios de engenharia mantêm o sistema testável e defensável. Primeiro, \textbf{uma fatia fina foi
+construída de ponta a ponta antes da largura}: o gatilho de mercado funcionou do preço ao alerta entregue
+antes de o motor de correlação mais pesado ser acrescentado, o que controlou o risco de integração.
+Segundo, \textbf{a lógica pura é separada da entrada/saída}, pelo que o núcleo numérico corre e é testado
+offline, sem rede nem a stack de modelos. Terceiro, \textbf{os componentes são programados a interfaces}: o
+passo de embedding tem duas implementações intermutáveis (uma linha de base lexical sem dependências e o
+Sentence-BERT), que é o que torna a comparação de modelos do Capítulo~\ref{chap:casestudies} justa. A
+Tabela~\ref{tab:investigator_decisions} reúne as principais decisões de desenho; num trabalho deste tipo,
+esse juízo de engenharia \emph{é} a contribuição.
+
+\begin{table}[ht]
+\caption{Principais decisões de desenho no InvestiGator e a sua justificação.}
+\label{tab:investigator_decisions}
+\centering
+\begin{tabular}{p{0.27\textwidth} p{0.30\textwidth} p{0.33\textwidth}}
+\toprule
+\tabhead{Decisão} & \tabhead{Escolha} & \tabhead{Justificação} \\
+\midrule
+Método de deteção & \emph{z}-score deslizante & Transparente; cada alerta é explicável a um não-especialista \\
+Representação de notícias & Embeddings Sentence-BERT & Significado contextual, mas barato e reprodutível de comparar \\
+Medição de impacto & Janelas de estudo de evento & Padrão, reprodutível; caracteriza um resultado, não uma previsão \\
+Estratégia de explicação & Desenho transparente + precedentes & Fiel por construção, não uma aproximação post-hoc \\
+Arquitetura de dados & Esquema partilhado, duas camadas & A evidência viva e histórica é diretamente comparável \\
+Acoplamento de componentes & Programados a interfaces & Testável offline; permite substituição justa de modelos \\
+Canal de entrega & Bot de Telegram & Gratuito, ubíquo, sem cliente à medida \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{O Modelo de Dados}
+\label{sec:investigator_datamodel}
+
+\emph{Com que objetos trabalha o sistema, e como se relacionam?}
+
+O objeto central é um \emph{caso}: uma notícia passada juntamente com o que aconteceu ao seu preço a seguir.
+Tudo o resto existe para construir casos, guardá-los e recuperá-los. A Figura~\ref{fig:datamodel} mostra os
+objetos e as suas relações.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=2mm]},
+  ent/.style={draw, rounded corners, align=center, fill=black!3, text width=3.0cm, inner sep=3pt},
+  store/.style={draw, rounded corners, align=center, fill=black!8, text width=2.6cm, inner sep=3pt},
+  lbl/.style={midway, font=\tiny, fill=white, inner sep=1pt},
+]
+  \node[ent]   (ni)  at (0,0)      {\textbf{NewsItem} (ao vivo)\\[1pt] data $\cdot$ ticker $\cdot$ manchete};
+  \node[ent]   (nr)  at (4.7,0)    {\textbf{NewsRecord} (um \emph{caso})\\[1pt] data $\cdot$ ticker $\cdot$ manchete\\ $+$ embedding\\ $+$ impacto $+1/+3/+5$d};
+  \node[store] (kb)  at (9.3,0)    {\textbf{Base de conhecimento}\\[1pt] muitos casos};
+  \node[ent]   (emb) at (4.7,-2.6) {\textbf{Embedder}\\[1pt] manchete $\to$ vetor};
+  \node[store] (res) at (9.3,-2.6) {\textbf{Recuperar}\\[1pt] top-$k$ casos $+$ similaridade};
+  \node[ent]   (ar)  at (0,-2.6)   {\textbf{AnomalyResult}\\[1pt] (gatilho de mercado)\\ $z \cdot \mu \cdot \sigma \cdot$ janela $\cdot k$};
+  \draw[->] (ni)  -- node[lbl]{normalizar, alinhar} (nr);
+  \draw[->] (emb) -- node[lbl]{embedding} (nr);
+  \draw[->] (nr)  -- node[lbl]{guardado como $1{..}*$} (kb);
+  \draw[->] (kb)  -- node[lbl]{cosseno top-$k$} (res);
+\end{tikzpicture}
+\caption[O modelo de dados do InvestiGator]{Os objetos com que o InvestiGator trabalha. Um \textbf{NewsItem} ao
+vivo e um \textbf{NewsRecord} histórico partilham o mesmo esquema (data, ticker, manchete); um NewsRecord é
+um \emph{caso}, acrescentando o embedding da manchete e o seu impacto medido pós-evento. O \textbf{Embedder}
+produz esses vetores; a \textbf{Base de conhecimento} guarda muitos casos; uma manchete de consulta recupera
+os top-$k$ casos mais similares com as suas pontuações de similaridade. O gatilho de mercado produz um
+\textbf{AnomalyResult} separado.}
+\label{fig:datamodel}
+\end{figure}
+
+Dois pontos tornam o modelo fácil de reter. Primeiro, o \emph{esquema partilhado}: um \textbf{NewsItem} ao
+vivo e um \textbf{NewsRecord} histórico carregam a mesma data, ticker e manchete, pelo que uma manchete
+fresca pode ser comparada diretamente com os casos guardados. Um NewsRecord é simplesmente um NewsItem que
+foi enriquecido com o \emph{embedding} da sua manchete e o seu \emph{impacto} medido a $+1$, $+3$ e $+5$
+dias de negociação. Segundo, a \emph{base de conhecimento} é apenas uma coleção de casos; pedir-lhe
+precedentes devolve os top-$k$ casos mais similares com as suas pontuações de similaridade. O lado do
+mercado é ainda mais simples: o detetor emite um \textbf{AnomalyResult} contendo o movimento e cada
+quantidade por detrás dele ($z$, $\mu$, $\sigma$, janela, limiar). Estes poucos objetos são tudo o que o
+motor de explicação alguma vez precisa.
+
+\section{Componentes e Responsabilidades}
+\label{sec:investigator_components}
+
+\emph{Quais são as partes, e quem faz o quê?}
+
+O InvestiGator é um pacote por componente, cada um com uma responsabilidade única e uma interface pequena, que
+é o que permite testar o núcleo numérico offline e trocar uma implementação por outra. A
+Tabela~\ref{tab:investigator_components} lista-os com a sua única função e os dados em que a transformam.
+
+\begin{table}[ht]
+\caption{Os componentes do InvestiGator, cada um com uma responsabilidade única.}
+\label{tab:investigator_components}
+\centering
+\begin{tabular}{p{0.24\textwidth} p{0.40\textwidth} p{0.28\textwidth}}
+\toprule
+\tabhead{Componente} & \tabhead{Responsabilidade} & \tabhead{Entrada $\to$ saída} \\
+\midrule
+Dados de mercado & Obter preços, calcular log-retornos & ticker $\to$ retornos diários \\
+Fonte de notícias & Obter e normalizar notícias ao vivo & ticker $\to$ NewsItem(s) \\
+Embedder & Transformar uma manchete num vetor & manchete $\to$ embedding \\
+Base de conhecimento & Guardar casos passados; recuperar o mais próximo & manchete $\to$ top-$k$ casos \\
+Detetor de anomalias & Assinalar movimentos relativos à volatilidade & retornos $\to$ AnomalyResult \\
+Motor de correlação & Similaridade do cosseno $+$ impacto de estudo de evento & manchete, KB $\to$ precedentes $+$ impacto \\
+Modelo de triagem & Severidade aprendida: $P(\text{segue-se movimento anormal})$ calibrada & manchete $+$ contexto $\to$ probabilidade $+$ contribuições \\
+Motor de explicação & Compor um alerta fiel a partir dos objetos & objetos $\to$ texto do alerta \\
+Entrega de alertas & Enviar o alerta ao investidor & texto do alerta $\to$ Telegram \\
+Orquestração & Correr cada gatilho de ponta a ponta & gatilho $\to$ alerta entregue \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Fluxo de Dados}
+\label{sec:investigator_flow}
+
+\emph{Como se move os dados pelo sistema, de ponta a ponta?}
+
+A Figura~\ref{fig:workflow} traça toda a pipeline como três faixas que convergem. A faixa \emph{offline}
+(topo) corre uma vez: as notícias FNSPID são alinhadas aos preços e embebidas na base de conhecimento
+\autocite{dong2024fnspid}. Os dois gatilhos vivos correm online. A faixa de \emph{notícias} (meio) embebe
+uma manchete que chega, encontra os seus casos mais próximos na base de conhecimento, e anexa o seu impacto
+medido. A faixa de \emph{mercado} (fundo) transforma preços ao vivo num \emph{z}-score e dispara apenas
+quando este cruza o limiar. Ambas as faixas entregam a sua evidência ao motor de explicação, que entrega um
+alerta através do Telegram.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=2mm]},
+  box/.style={draw, rounded corners, align=center, text width=1.7cm, minimum height=0.8cm},
+  db/.style={box, fill=black!8},
+  pr/.style={box, fill=black!3},
+  dec/.style={draw, diamond, aspect=2, align=center, inner sep=1pt, text width=1.0cm, fill=black!5},
+  lane/.style={font=\itshape, text=black!55, anchor=east},
+]
+  % construção offline (topo)
+  \node[db] (o1) at (2.3,0) {FNSPID\\ notícias $+$ preços};
+  \node[db] (kb) at (5.5,0) {Base de\\ conhecimento};
+  \draw[->] (o1) -- node[midway, above, font=\tiny, align=center]{alinhar,\\ embed} (kb);
+  % gatilho de notícias (meio)
+  \node[db] (n1) at (0.9,-1.9) {Notícias\\ ao vivo};
+  \node[pr] (n2) at (3.2,-1.9) {SBERT\\ embed};
+  \node[pr] (n3) at (5.5,-1.9) {cosseno\\ top-$k$};
+  \node[pr] (n4) at (7.8,-1.9) {precedentes\\ $+$ impacto};
+  \draw[->] (n1)--(n2); \draw[->] (n2)--(n3); \draw[->] (n3)--(n4);
+  \draw[->] (kb) -- node[right, font=\tiny]{precedentes} (n3);
+  % gatilho de mercado (fundo)
+  \node[db] (m1) at (0.9,-3.8) {Preços\\ ao vivo};
+  \node[pr] (m2) at (3.2,-3.8) {log-retornos};
+  \node[pr] (m3) at (5.5,-3.8) {\emph{z}-score\\ deslizante};
+  \node[dec] (m4) at (7.8,-3.8) {$|z|{>}k$?};
+  \draw[->] (m1)--(m2); \draw[->] (m2)--(m3); \draw[->] (m3)--(m4);
+  % convergir na explicação + entrega
+  \node[pr] (ex) at (10.1,-2.85) {Motor de\\ explicação};
+  \node[pr] (tg) at (10.1,-4.35) {Alerta\\ Telegram};
+  \draw[->] (n4) -- (ex);
+  \draw[->] (m4) -- node[below=1pt, font=\tiny]{sim} (ex);
+  \draw[->] (ex) -- (tg);
+  % rótulos das faixas
+  \node[lane] at (-0.2,0)    {offline};
+  \node[lane] at (-0.2,-1.9) {notícias};
+  \node[lane] at (-0.2,-3.8) {mercado};
+\end{tikzpicture}
+\caption[Fluxo de dados e processamento de ponta a ponta]{O fluxo de ponta a ponta do InvestiGator como uma
+pipeline conectada. \emph{Offline} (topo), as notícias FNSPID são alinhadas aos preços e embebidas na base
+de conhecimento. O \emph{gatilho de notícias} (meio) embebe uma manchete que chega, encontra os seus
+precedentes mais próximos na base de conhecimento e anexa o seu impacto observado; o \emph{gatilho de
+mercado} (fundo) transforma preços ao vivo num \emph{z}-score e dispara apenas quando excede o limiar. Ambos
+os caminhos convergem no motor de explicação, que entrega um alerta explicado através do Telegram. Esta é a
+vista simplificada; a pipeline completa, com cada porta de decisão e o seu valor de configuração em
+produção, é a Figura~\ref{fig:master_pipeline} no Apêndice~\ref{app:reproducibility}.}
+\label{fig:workflow}
+\end{figure}
+
+Um detalhe na construção offline importa para a honestidade: cada notícia é alinhada ao primeiro dia de
+negociação em ou após a sua data, e o impacto é medido apenas a partir do fecho desse dia em diante, pelo
+que um salto já no preço de abertura nunca é creditado ao sistema. Construir o corpus multi-ano completo é
+um trabalho pontual longo, pelo que a avaliação do Capítulo~\ref{chap:casestudies} usa uma base de
+conhecimento construída a partir de notícias reais recentes pelo processo idêntico, com a construção
+completa deixada para trabalho futuro.
+
+\section{Lógica de Decisão}
+\label{sec:investigator_logic}
+
+\emph{Como decide o sistema, de facto?} Cada gatilho aplica uma regra simples e transparente.
+
+\paragraph{Gatilho de mercado.} Assinalar o dia em que o \emph{z}-score absoluto cruza o limiar,
+$|z_t|>k$, com $z_t$ calculado a partir da janela anterior como na Equação~\ref{eq:zscore}. O detetor
+devolve não só a decisão sim/não mas cada quantidade por detrás dela ($z$, $\mu$, $\sigma$, janela,
+limiar), que é exatamente o que torna a explicação fiel. A mesma regra é aplicada a séries de preços
+inteiras na avaliação, pelo que as experiências usam a lógica de produção.
+
+\paragraph{Gatilho de notícias.} Embeber a manchete que chega, ordenar a base de conhecimento por
+similaridade do cosseno, e tomar os top-$k$ casos. Para cada um, reportar o impacto observado a $+1$, $+3$ e
+$+5$ dias, medido a partir do fecho do dia do evento, e mostrar a sua média como evidência. Nada aqui prevê:
+os números são o que \emph{de facto} aconteceu depois de notícias passadas comparáveis, e a base de
+conhecimento é consultada mas nunca decide.
+
+\paragraph{Severidade aprendida (triagem).} Por cima das duas regras transparentes assenta o componente
+treinado opcional da Secção~\ref{sec:met_triage}: cada notícia que chega é pontuada com a probabilidade
+calibrada de se seguir um movimento anormal, e o alerta pode ser \emph{filtrado} (gated), enviado só quando
+a pontuação ultrapassa um limiar configurado, e \emph{anotado} com a pontuação e as suas principais
+contribuições aditivas. O gate vem desligado por defeito e falha-aberto: sem ficheiro de modelo, ou com
+histórico de preços insuficiente para calcular as features de contexto, a pipeline comporta-se exatamente
+como antes. A variante em produção usa apenas features de contexto, pelo que corre sem a stack pesada de
+embeddings, e a linha do alerta nomeia sempre a evidência pelo que ela é: triagem sobre casos históricos,
+não uma previsão.
+
+\section{Explicação e Entrega}
+\label{sec:investigator_xai}
+
+\emph{Como é o alerta explicado, e como chega ao investidor?}
+
+O motor de explicação compõe cada alerta diretamente a partir dos objetos acima, pelo que o texto não pode
+divergir do cálculo. Para o gatilho de mercado, enuncia o movimento, o $z$-score, o limiar e a janela, e a
+média e desvio-padrão recentes, e põe o $z$-score em linguagem simples (quantas vezes o movimento de um dia
+típico representa) para que um não-especialista o consiga ler. Para o gatilho de notícias, lista os
+precedentes recuperados (data, ticker, similaridade, impacto medido, manchete) e o seu impacto médio, e
+termina sempre com um aviso explícito de que estes são resultados passados observados, não uma previsão.
+
+A entrega é por Telegram, escolhido pela sua interface de bot gratuita e ubíqua. Um alerta real foi entregue
+durante os testes; a Figura~\ref{fig:telegram_mockup} mostra o formato que o investidor recebe, com toda a
+cadeia de raciocínio numa só mensagem. No sistema em produção o formato da mensagem foi depois compactado
+para legibilidade (o facto mais forte primeiro, o método numa nota de rodapé curta, e o intervalo dos
+resultados dos precedentes mostrado a par da sua média); os campos transportados são exatamente os de cima,
+pelo que o argumento da fidelidade não muda.
+
+\begin{figure}[ht]
+\centering
+\footnotesize
+\setlength{\fboxsep}{6pt}%
+\colorbox{black!4}{%
+  \begin{minipage}{9.2cm}
+    \colorbox{black!15}{\makebox[\linewidth][l]{\textbf{InvestiGator}\, \textemdash{}\, financial alerts bot}}\\[5pt]
+    \fcolorbox{black!30}{white}{%
+      \begin{minipage}{8.4cm}
+        \medskip
+        \textbf{News alert \textemdash{} NVDA}\\[2pt]
+        \textit{``Nvidia raises guidance on surging demand for AI data-centre accelerators''}\\[4pt]
+        \textbf{Potential impact} (across the 3 precedents shown): average 1-day move \textbf{$-2.2\%$}\\[4pt]
+        \textbf{Historical precedents:}\\
+        $\bullet$~MSFT \ (sim 0.68) \ +1d $-3.5\%$\\
+        $\bullet$~META \ (sim 0.68) \ +1d $-2.7\%$\\
+        $\bullet$~GOOGL \ (sim 0.64) \ +1d $-0.5\%$\\[4pt]
+        {\scriptsize\emph{Precedents are retrieved by semantic similarity; the impact is the observed
+        past outcome, not a price prediction.}}
+        \medskip
+      \end{minipage}}
+  \end{minipage}}
+\normalsize
+\caption[Alerta Telegram tal como recebido pelo investidor]{Um alerta de notícias do InvestiGator tal como
+entregue através do Telegram (a mensagem é a saída real do produto, em inglês). Uma única mensagem carrega a
+cadeia de raciocínio completa e rastreável: o evento detetado, o impacto médio observado de eventos passados
+análogos, os precedentes individuais com as suas pontuações de similaridade e impacto medido, e um aviso
+explícito de não-previsão. Os números mostrados são uma ilustração representativa e arredondada; a saída
+real completa de ponta a ponta aparece no Capítulo~\ref{chap:casestudies} (Estudo de Caso~3).}
+\label{fig:telegram_mockup}
+\end{figure}
+
+O mesmo raciocínio é também publicado como um dashboard ao vivo (Figura~\ref{fig:app_dashboard}): uma faixa
+``market now'' resume o dia de toda a watchlist num relance (empresas de um mesmo setor movem-se muitas
+vezes em conjunto, pelo que o contexto importa); por baixo, uma empresa selecionada de cada vez é mostrada
+com um grande gráfico de preços no qual cada evento detetado (anomalias de mercado e notícias materiais —
+exatamente os alertas entregues ao canal Telegram, lidos de um único registo partilhado e versionado e
+nunca recalculados) é marcado e pode ser sobrevoado para o texto completo do alerta; os mesmos eventos são
+listados numa tabela em baixo, e uma linha compacta reporta o risco de fundo do modelo de triagem treinado
+(Secção~\ref{sec:met_triage}), calculado todos os dias mesmo sem uma manchete fresca. Tudo o resto (método,
+avaliação, citação) vive numa vista secundária separada, mantendo a superfície principal só de leitura e
+mínima.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/app_dashboard.png}
+\caption[O dashboard ao vivo, uma captura genuína]{O dashboard público (uma captura genuína, não um
+mockup): a faixa ``market now'' de toda a watchlist, as notas da abertura da manhã e do fecho anterior como
+notas recolhíveis, uma empresa selecionada de cada vez, um grande gráfico de preços por intervalo com os
+eventos detetados marcados na curva (sobrevoar mostra o alerta completo; o marcador aqui é um alerta real do
+canal público), e o risco de fundo do modelo de triagem treinado. Capturado da base de código em produção
+durante a operação ao vivo.}
+\label{fig:app_dashboard}
+\end{figure}
+
+\section{A Vida de Um Alerta}
+\label{sec:investigator_lifecycle}
+
+\emph{O que faz toda a pipeline, concretamente, da fonte bruta ao telemóvel?} A resposta mais limpa é seguir
+um alerta \emph{real} por cada fase. O caso é a mesma decisão de produção decomposta na
+Tabela~\ref{tab:triage_worked}: a 12~de~julho~de~2026 o canal público recebeu um alerta para a Meta sobre a
+manchete \emph{``Mark Zuckerberg Said Meta's AI Bets `Haven't Come to Fruition Yet' as Shares Fell
+5\%''}. A Tabela~\ref{tab:alert_lifecycle} percorre as fases com os valores que o sistema efetivamente
+calculou; cada linha é verificável no registo de histórico partilhado que o dashboard lê.
+
+\begin{table}[ht]
+\caption[A vida de um alerta real, fase a fase]{A vida de um alerta real (META, 12 de julho de 2026), fase a
+fase. Cada valor é real: a mensagem é preservada verbatim no histórico de alertas partilhado, e a pontuação
+de triagem é decomposta termo a termo na Tabela~\ref{tab:triage_worked}.}
+\label{tab:alert_lifecycle}
+\centering
+\small
+\begin{tabular}{p{0.26\textwidth} p{0.64\textwidth}}
+\toprule
+\tabhead{Fase (porta)} & \tabhead{O que aconteceu para este alerta} \\
+\midrule
+1. Obter & A varredura agendada puxa as notícias de empresa da semana para cada ticker da watchlist da API de notícias gratuita. \\
+2. Filtro de relevância & A manchete nomeia a empresa (``Meta'', ``Mark Zuckerberg'' estão na lista de aliases do ticker) e não corresponde a nenhum padrão de boilerplate de resumo de mercado: mantida. \\
+3. Captura (KB viva) & A manchete é embebida (MiniLM, $384$-d) e guardada como um caso \emph{pendente}; matura em precedente quando o seu próprio impacto a $+5$ dias se torna observável. \\
+4. Frescura & Datada dentro da janela de dois dias: elegível (a mesma história não pode voltar a alertar durante dias). \\
+5. Recuperação & As bases de conhecimento são ordenadas por cosseno com decaimento por idade; top três: MSFT 2023-11-07 ($s=0.46$, $+2.70\%$ em 5\,d), NVDA 2023-08-02 ($s=0.51$, $-3.87\%$), NVDA 2023-09-21 ($s=0.46$, $+5.05\%$). \\
+6. Chão de evidência & Melhor cosseno $0.51 \ge 0.45$: forte o suficiente para mostrar. Os precedentes discordam na direção, pelo que a mensagem carrega o aviso explícito \emph{``moved in BOTH directions''}. \\
+7. Triagem aprendida & O modelo só-contexto em produção pontua $p = 0.54 \ge 0.5$ (decomposto na Tabela~\ref{tab:triage_worked}): não filtrado. \\
+8. Tetos e dedup & Dentro do teto de dois alertas por ticker por dia; não enviado antes por nenhum produtor (dedup do histórico partilhado): mantido. \\
+9. Entrega e registo & Enviado ao canal público de Telegram com a cláusula fixa de não-previsão; anexado verbatim ao histórico partilhado, a partir do qual o dashboard o marca no gráfico de preços. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+As mesmas portas, vistas em agregado, são a resposta do sistema à fadiga de alertas. A
+Figura~\ref{fig:alert_funnel} mostra os primeiros cinco dias de operação ao vivo: a varredura capturou $944$
+manchetes relevantes distintas em todos os dez nomes da watchlist, e o canal recebeu $42$ alertas, uma
+seletividade de $22{:}1$ concentrada nos três nomes onde a evidência passou todas as portas. As notícias
+fluíram para todas as empresas; os alertas aconteceram apenas onde um precedente forte \emph{e} uma
+pontuação de triagem material coincidiram. (Uma nota honesta: o teto diário por ticker entrou em produção a
+11~de julho, pelo que os dois dias mais precoces mostram mais alertas por nome do que o estado
+estacionário.)
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/alert_funnel.pdf}
+\caption[Seletividade de produção: manchetes capturadas versus alertas enviados]{Seletividade de produção
+sobre os primeiros cinco dias ao vivo: manchetes relevantes capturadas (claro) versus alertas efetivamente
+enviados (escuro), por ticker da watchlist. Todas as contagens são reais, lidas da branch de dados
+partilhada; a diferença entre as duas barras é o trabalho das portas de qualidade da
+Tabela~\ref{tab:alert_lifecycle}.}
+\label{fig:alert_funnel}
+\end{figure}
+
+\section{Uso Prático e Desenho Responsável}
+\label{sec:investigator_deploy}
+
+\emph{O que é preciso para o correr, e o que exige o uso responsável?}
+
+O InvestiGator corre como dois pontos de entrada, um por gatilho, cada um a executar um ciclo completo. No uso
+diário correm num horário: existe uma implantação de referência em que um temporizador de integração
+contínua gratuito varre repetidamente uma watchlist durante o horário do mercado dos EUA e entrega quaisquer
+alertas a um canal de Telegram, com um dashboard interativo publicado a par. Correr o sistema precisa apenas
+de recursos gratuitos: uma fonte de dados de mercado, uma fonte de notícias de empresa ou RSS (uma chave de
+API mantida fora do controlo de versões), e a base de conhecimento construída uma vez a partir do corpus. O
+Apêndice~\ref{app:reproducibility} dá os passos exatos. Os alertas reais entregues durante os testes e pela
+varredura agendada mostram que o caminho dos dados brutos ao telemóvel do investidor funciona de ponta a
+ponta. Uma vez ao vivo, as decisões de triagem são também \emph{pós-validadas}: cada decisão registada é
+rotulada dias depois com o resultado que efetivamente se seguiu, dando monitorização de precisão e
+calibração ao vivo e dados de treino frescos (Secção~\ref{sec:met_triage}).
+
+Dois limites práticos merecem ser enunciados com clareza. A camada gratuita de notícias devolve apenas uma
+janela recente, pelo que a base de conhecimento é mais rasa do que a construção multi-ano para a qual foi
+desenhada (um limite de cobertura, não de método). E o InvestiGator é um protótipo de apoio à decisão, não um
+serviço de produção: sem contas de utilizador, sem persistência para além do ficheiro da base de
+conhecimento. Estes são passos ordinários de protótipo a produto, registados abertamente em vez de
+escondidos.
+
+A operação ao vivo também ensinou uma lição de engenharia da forma honesta. Durante os primeiros dias de
+implantação contínua o caminho de mercado ficou em silêncio: a fonte de preços gratuita bloqueia os
+endereços de rede partilhados dos runners alojados, e com uma única fonte e sem fallback, a varredura
+simplesmente não recebia dados. A falha foi diagnosticada a partir dos próprios registos do sistema (os
+alertas de notícias continuavam a fluir enquanto nem um resumo de mercado aparecia, o que isolou a fonte de
+preços como a causa) e respondida com engenharia e não com uma mudança de parâmetro: os preços diários vêm
+agora através de uma cadeia de fornecedores gratuitos tentados por ordem, e a verificação de cotação em
+tempo real, que usa uma fonte autenticada e por isso fiável, foi promovida do vigia opcional para cada
+varredura agendada. O episódio é reportado porque é instrutivo: uma única fonte de dados gratuita é um ponto
+único de falha, e um sistema que regista o seu próprio comportamento é o que torna tal falha diagnosticável
+de todo.
+
+Uma ferramenta destinada a não-especialistas levanta também duas questões de desenho responsável. A primeira
+é a \emph{fadiga de alertas}: uma ferramenta que dispara demasiadas vezes ensina o utilizador a ignorá-la. O
+gatilho de mercado trata disto ao disparar apenas em extremos relativos à volatilidade, e o lado das
+notícias é tratado pelo modelo de triagem, cuja pontuação de severidade existe precisamente para ordenar o
+fluxo e filtrar os itens menos materiais (Secção~\ref{sec:investigator_logic}); a avaliação do
+Capítulo~\ref{chap:casestudies} inclui, portanto, uma métrica de precisão-dentro-do-orçamento-diário que
+mede este custo diretamente. A segunda é a \emph{dependência excessiva}: uma explicação confiante pode ser
+merecedora de mais confiança do que a sua evidência justifica (Secção~\ref{sec:sota_trust}). O desenho atual
+mitiga isto ao mostrar os precedentes individuais e a sua dispersão em vez de um número solitário, e ao
+recusar a previsão em cada alerta; extensões naturais são de-duplicar precedentes quase idênticos e
+sinalizar quando um agrupamento recuperado discorda na direção.
+
+\section{Conclusões do Capítulo}
+\label{sec:investigator_summary}
+
+O InvestiGator é uma pipeline de dois gatilhos e duas camadas construída a partir de alguns objetos claros (um
+\emph{caso}, a base de conhecimento, um resultado de anomalia) e componentes de responsabilidade única, com
+a explicabilidade embutida ao compor cada alerta diretamente a partir do próprio cálculo do sistema, e uma
+pontuação de triagem treinada opcional, desligada por defeito e honestamente rotulada, sobreposta por cima.
+O próximo capítulo põe os componentes centrais à prova sobre dados reais.
