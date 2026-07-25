@@ -23,6 +23,7 @@ venv/
 *.aux
 *.bbl
 *.bcf
+*-SAVE-ERROR
 *.blg
 *.log
 *.lof
