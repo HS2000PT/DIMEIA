@@ -1,5 +1,648 @@
-% Capítulo 5 - Estudos de Caso (PT-PT). STUB — tradução por fazer.
+% Capítulo 5 - Estudos de Caso (PT-PT; espelho de ../thesis/ch5/chapter5.tex)
+% Tradução pura: labels/refs/citações/números/estrutura idênticos; só a língua muda. Os gráficos
+% matplotlib (eval_*.pdf etc.) ficam EN (autorizado), legendas em PT; o alerta do CS3 é a saída
+% real do produto (EN).
+
 \chapter{Estudos de Caso}
 \label{chap:casestudies}
 
-\emph{[Tradução em curso. O conteúdo deste capítulo espelha \texttt{../thesis/ch5/chapter5.tex}.]}
+Este capítulo avalia o InvestiGator através de quatro estudos de caso sobre dados reais. O primeiro olha para
+o gatilho de anomalias em ações de volatilidade muito diferente; o segundo para o motor de correlação e os
+precedentes que recupera; o terceiro percorre um alerta completo e pergunta se a sua explicação é fiel; o
+quarto treina e testa o modelo de triagem de materialidade sobre o corpus multi-ano. Cada número abaixo vem
+de um script versionado com uma semente fixa, a avaliação seguiu o plano estabelecido no
+Capítulo~\ref{chap:methods}, e cada estudo enuncia as suas próprias limitações.
+
+\section{Montagem Experimental Comum}
+\label{sec:cs_setup}
+
+\emph{O que partilham os quatro estudos?} São usados três conjuntos de dados reais. Para o gatilho de
+anomalias, os preços de fecho diários dos quinze tickers de grande capitalização listados na data card foram
+obtidos de um serviço de dados de mercado gratuito sobre uma janela fixa de três anos (junho~de~2023 a
+junho~de~2026), produzindo $750$ log-retornos diários por ticker. Para o motor de correlação, $3{,}714$
+manchetes reais de notícias financeiras para os mesmos tickers foram recolhidas através de um serviço de
+notícias de empresa gratuito (os meses mais recentes disponíveis na camada gratuita), abrangendo cinco
+setores (tecnologia, banca, energia, saúde e consumo de base). Este é o corpus de avaliação de recuperação,
+distinto da camada FNSPID desenhada documentada na data card do Capítulo~\ref{chap:methods}. Para o estudo de
+triagem de materialidade (Estudo de Caso~4), o subconjunto multi-ano do FNSPID da data card \emph{foi}
+construído, pela pipeline de streaming, e alinhado aos preços: $79{,}753$ exemplos (manchete, ticker, dia do
+evento) sobre 2018--2023. As manchetes de notícias e os preços são normalizados para um esquema comum para
+que as camadas viva e histórica sejam diretamente comparáveis. O corpus recente é suficiente para a
+experiência de recuperação; uma análise de impacto multi-ano sobre a base de conhecimento de recuperação fica
+para trabalho futuro. As garantias de sem-lookahead, reprodutibilidade e honestidade da
+Secção~\ref{sec:met_evaluation} aplicam-se a cada estudo abaixo.
+
+\section{Estudo de Caso 1: Deteção Transparente de Anomalias em Ações dos EUA}
+\label{sec:cs_anomaly}
+
+\emph{Será um \emph{z}-score deslizante um melhor detetor universal de movimentos abruptos do que um simples
+limiar de percentagem fixa?} \textbf{Sim, e claramente}: o \emph{z}-score \autocite{chandola2009anomaly}
+dispara a uma taxa quase-constante em ações de volatilidade muito diferente, onde a regra fixa não.
+
+A montagem é a seguinte. Uma anomalia ``verdadeira'' é aproximada por um movimento diário no percentil
+superior dos próprios retornos \emph{daquele ticker} ($|r|\ge$ o percentil $99$); a linha de base é um único
+limiar global ($|r|\ge 3\%$) aplicado a cada ticker. Como esse rótulo é ele próprio relativo à volatilidade,
+é apenas evidência de apoio; o argumento primário, feito primeiro abaixo, não precisa de rótulo algum.
+
+\paragraph{Consistência da taxa de disparo (argumento principal).}
+A evidência mais forte é independente de qualquer rótulo. Um bom detetor universal deve disparar a uma taxa
+comparável entre instrumentos; um limiar cego à volatilidade não consegue. A Tabela~\ref{tab:cs_firing} e a
+Figura~\ref{fig:cs_anomaly} mostram que o limiar fixo dispara em cerca de $1\%$ dos dias para uma ação calma
+(KO) mas em cerca de $35\%$ dos dias para uma volátil (TSLA, NVDA), ao passo que o \emph{z}-score dispara a
+uma taxa quase-constante ($\approx 2\text{--}3\%$) para todos os tickers. A amplitude das taxas de disparo
+entre tickers é mais de vinte vezes mais apertada para o \emph{z}-score ($0.015$ versus $0.344$), confirmando
+que normalizar pela volatilidade recente torna a deteção comparável em todo o mercado.
+
+\begin{table}[ht]
+\caption{Taxa de disparo entre os quinze tickers (três anos de dados diários).}
+\label{tab:cs_firing}
+\centering
+\begin{tabular}{p{0.34\textwidth} c c c}
+\toprule
+\tabhead{Método} & \tabhead{Taxa mín.} & \tabhead{Taxa máx.} & \tabhead{Amplitude} \\
+\midrule
+\emph{z}-score (janela $20$, $\pm 3$) & $0.016$ & $0.031$ & $\mathbf{0.015}$ \\
+Limiar fixo ($|r|\ge 3\%$) & $0.009$ & $0.353$ & $\mathbf{0.344}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/eval_anomaly_firing_rate.pdf}
+\caption[Taxa de disparo por ticker: limiar fixo versus \emph{z}-score]{Taxa de disparo por ticker. O limiar
+de percentagem fixa varia dramaticamente com a volatilidade de cada ação, enquanto o \emph{z}-score é estável
+em todos os tickers.}
+\label{fig:cs_anomaly}
+\end{figure}
+
+\paragraph{Um exemplo trabalhado.}
+A Figura~\ref{fig:cs_timeseries} mostra o detetor a trabalhar numa única ação volátil (Tesla) sobre a janela
+de três anos. Os dias assinalados não são simplesmente os maiores movimentos brutos: são os movimentos que
+são grandes \emph{relativamente à própria volatilidade recente do ativo}, que é exatamente o comportamento
+que um limiar de percentagem fixa não consegue reproduzir. Sobre este período o detetor assinala 16 dos 750
+dias de negociação (cerca de $2\%$), consistente com a taxa de disparo quase-constante reportada acima.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/anomaly_timeseries.pdf}
+\caption[Exemplo trabalhado: anomalias por \emph{z}-score numa ação volátil]{Log-retornos diários de uma ação
+volátil (Tesla) sobre a janela de avaliação, com os dias assinalados pelo detetor de \emph{z}-score (janela
+$20$, $k=3$) marcados. O detetor responde à surpresa relativa à volatilidade em vez do tamanho absoluto do
+movimento.}
+\label{fig:cs_timeseries}
+\end{figure}
+
+Para o tornar concreto, considere-se a maior surpresa da janela. A 24~de~outubro~de~2024, na sequência dos
+seus resultados trimestrais, o log-retorno diário da Tesla foi $+0.198$, um movimento de preço de cerca de
+$+22\%$. Medido contra os vinte dias anteriores, cujo log-retorno médio foi $-0.92\%$ e desvio-padrão
+$2.73\%$, isto é um $z$-score de $+7.6$, muito para além do limiar $k=3$ (Tabela~\ref{tab:cs_zscore_real}). A
+mesma regra que deixa uma oscilação comum de dois por cento por assinalar identifica esta reação a resultados
+de imediato, e expõe as quantidades que justificam o alerta: o movimento, a norma recente contra a qual é
+julgado, e o $z$-score resultante, que é o que o motor de explicação mostra depois ao investidor.
+
+\begin{table}[ht]
+\caption{Anomalia trabalhada: o movimento pós-resultados da Tesla a 24~de~outubro~de~2024 (janela $20$,
+$k=3$); números reais e reprodutíveis.}
+\label{tab:cs_zscore_real}
+\centering
+\begin{tabular}{p{0.54\textwidth} c}
+\toprule
+\tabhead{Quantidade} & \tabhead{Valor} \\
+\midrule
+Média dos log-retornos dos $20$ dias anteriores, $\mu$ & $-0.92\%$ \\
+Desvio-padrão dos $20$ dias anteriores, $\sigma$ & $2.73\%$ \\
+Log-retorno do dia, $r$ (um movimento de preço de $\approx +22\%$) & $+19.82\%$ \\
+$z$-score, $(r-\mu)/\sigma$ & $\mathbf{+7.61}$ \\
+Assinalado a $k=3$? & sim \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Concordância com o rótulo-proxy (apoio).}
+Contra o rótulo de movimentos extremos por ticker, o \emph{z}-score atinge um $F_1$ de $0.516$ (precisão
+$0.381$, recall $0.800$) versus $0.218$ do limiar fixo (precisão $0.122$, recall $0.992$): a regra fixa apanha
+quase todos os grandes movimentos brutos mas a precisão muito baixa. Uma ablação de janela
+(Figura~\ref{fig:cs_ablation}) mostra o $F_1$ a subir com a janela de estimação ($0.385$, $0.516$ e $0.678$
+para $10$, $20$ e $60$ dias), indicando que uma estimativa de volatilidade mais longa produz uma linha de base
+mais estável antes de começar a saturar. Este rótulo é ele próprio relativo à volatilidade, pelo que alguma
+circularidade é inevitável; é por isso que a consistência da taxa de disparo acima, que não depende de rótulo,
+é tratada como a evidência primária.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/eval_anomaly_window_ablation.pdf}
+\caption[Ablação do tamanho da janela para o detetor de anomalias]{Efeito do comprimento da janela de
+estimação no $F_1$ do detetor contra o proxy de movimentos extremos. Uma janela mais longa produz uma linha de
+base de volatilidade mais estável e maior concordância, com retornos decrescentes nas janelas mais longas.}
+\label{fig:cs_ablation}
+\end{figure}
+
+\paragraph{Regra estatística versus detetor aprendido.}
+O protocolo da Secção~\ref{sec:met_eval_anomaly} fecha com um desafio: será que um detetor \emph{aprendido},
+dada exatamente a mesma informação, bateria a regra transparente? Uma Isolation Forest
+\autocite{liu2008isolation} foi treinada causalmente por ticker sobre o retorno de cada dia e a volatilidade
+dos vinte dias anteriores, ajustada apenas sobre um segmento inicial de 250 dias, e ambos os detetores foram
+pontuados sobre a região restante idêntica. O modelo aprendido perde claramente: contra o proxy de movimentos
+extremos atinge um $F_1$ de $0.271$ (precisão $0.159$, recall $0.913$), enquanto o $z$-score na mesma região
+atinge $0.530$ (precisão $0.407$, recall $0.761$); a floresta também dispara a taxas que variam entre tickers
+por $0.135$, duas ordens de grandeza menos uniforme do que os $0.015$ do \emph{z}-score, falhando o requisito
+de consistência que motiva o desenho. A comparação, e não qualquer pressuposto, é o que justifica manter a
+regra estatística em produção: dada informação causal idêntica, o detetor interpretável não foi apenas mais
+simples mas melhor.
+
+\paragraph{Extensão: um segundo detetor aprendido, e uma segunda estimativa de volatilidade.}
+Restam duas objeções naturais: talvez um detetor aprendido \emph{diferente} vencesse, e talvez uma estimativa
+de volatilidade mais adaptativa vencesse. Ambas foram testadas sob o protocolo causal idêntico
+(Secção~\ref{sec:met_eval_anomaly}), numa nova corrida cuja linha do \emph{z}-score reproduz os valores
+congelados acima exatamente (a floresta desloca-se na terceira casa decimal porque a fonte de preços gratuita
+reajusta os fechos históricos retroativamente). A Tabela~\ref{tab:cs_anomaly_ext} e a
+Figura~\ref{fig:cs_detectors} reportam ambas as respostas. O Local Outlier Factor \autocite{breunig2000lof}, a
+alternativa baseada em densidade do Capítulo~\ref{chap:sota}, comporta-se como a floresta: recupera quase tudo
+($0.989$) com precisão muito baixa ($0.163$), fica num $F_1$ de $0.280$, e dispara a taxas que variam entre
+tickers por $0.183$, o menos consistente dos três. A regra transparente bate ambos os detetores aprendidos
+sobre a mesma informação.
+
+A questão da volatilidade produziu a resposta mais interessante, e é reportada exatamente como se revelou.
+Substituir o desvio-padrão deslizante por uma estimativa ponderada exponencialmente (RiskMetrics,
+$\lambda = 0.94$), o primeiro passo rumo à família GARCH, \emph{melhora} substancialmente a concordância com o
+proxy de movimentos extremos: com o mesmo recall ($0.800$), a precisão sobe de $0.381$ para $0.568$, elevando
+o $F_1$ de $0.516$ para $0.664$, com as taxas de disparo por ticker ligeiramente \emph{mais} uniformes
+($0.012$ versus $0.015$). O mecanismo é o próprio agrupamento de volatilidade: depois de um choque, uma janela
+deslizante dilui o novo regime por vinte pesos iguais, ao passo que a estimativa exponencial absorve-o de
+imediato e deixa de re-assinalar dias comuns que se seguem. A experiência foi desenhada para licenciar a frase
+``o GARCH acrescentaria pouco'', e não a licencia; o que mostra, em vez disso, é que o primeiro passo
+adaptativo já ajuda \emph{neste proxy}. O detetor em produção mantém a regra deslizante, porque ``a média e a
+dispersão dos últimos vinte dias'' é explicável a um não-especialista numa frase enquanto os pesos
+exponenciais não o são, mas o ganho é registado como trabalho futuro validado e não especulativo, a uma linha
+de configuração de distância. A própria circularidade relativa à volatilidade do proxy, assumida ao longo
+deste estudo de caso, aplica-se aqui igualmente.
+
+\begin{table}[ht]
+\caption[Comparação estendida de detetores e estimadores de volatilidade]{Comparação estendida sob o protocolo
+causal congelado. Topo: detetores sobre a região pontuada e as features idênticas. Fundo: a mesma regra de
+\emph{z}-score com duas estimativas de volatilidade, sobre a região de avaliação completa. Regenerada
+deterministicamente.}
+\label{tab:cs_anomaly_ext}
+\centering
+\begin{tabular}{p{0.40\textwidth} c c c c}
+\toprule
+\tabhead{Detetor (mesma região)} & \tabhead{Precisão} & \tabhead{Recall} & \tabhead{$F_1$} & \tabhead{Amplitude da taxa} \\
+\midrule
+\emph{z}-score (regra em produção) & $0.407$ & $0.761$ & $\mathbf{0.530}$ & $\mathbf{0.017}$ \\
+Isolation Forest & $0.158$ & $0.913$ & $0.269$ & $0.135$ \\
+Local Outlier Factor & $0.163$ & $0.989$ & $0.280$ & $0.183$ \\
+\midrule
+\tabhead{Estimativa de volatilidade (\emph{z}-score)} & & & & \\
+\midrule
+$\sigma$ deslizante, $20$\,d (em produção) & $0.381$ & $0.800$ & $0.516$ & $0.015$ \\
+$\sigma$ EWMA ($\lambda=0.94$) & $0.568$ & $0.800$ & $\mathbf{0.664}$ & $\mathbf{0.012}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/eval_anomaly_detectors.pdf}
+\caption[Comparação estendida de anomalias: detetores e estimadores de volatilidade]{A comparação estendida
+num relance. Esquerda: sobre features causais idênticas, a regra transparente do \emph{z}-score bate ambos os
+detetores aprendidos. Direita: a estimativa de volatilidade ponderada exponencialmente supera a deslizante no
+proxy, um achado reportado como se revelou; a regra deslizante mantém-se em produção pela explicabilidade, com
+o ganho da EWMA registado como trabalho futuro validado.}
+\label{fig:cs_detectors}
+\end{figure}
+
+\section{Estudo de Caso 2: Recuperação de Precedentes Notícia--Mercado}
+\label{sec:cs_retrieval}
+
+\emph{Será que a recuperação semântica encontra precedentes genuinamente análogos, melhor do que linhas de
+base triviais?} \textbf{Sim}: sobre dados reais os embeddings batem todas as linhas de base por uma margem
+larga.
+
+A métrica é a precisão@$k$ com um proxy de setor, num cenário \emph{cross-ticker}: para cada consulta as $k$
+manchetes mais similares \emph{de outras empresas} são recuperadas, e a precisão é a fração que corresponde ao
+setor da consulta. Excluir a própria empresa da consulta descarta a vitória trivial de emparelhar uma empresa
+com as suas próprias notícias, e testa antes a analogia temática. Mesmo-setor é um substituto automático para
+``análogo'', pelo que a métrica mostra se as notícias recuperadas são on-theme, não se uma pessoa as chamaria
+úteis; essa lacuna é real, e um estudo humano é trabalho futuro. Para mostrar que o resultado não está ligado
+a um só modelo, dois modelos Sentence-BERT \autocite{reimers2019sbert} (o leve MiniLM e o maior MPNet) são
+comparados contra uma linha de base lexical (hashing) e duas triviais, aleatória (a taxa-base do setor) e
+recência. Quinhentas consultas foram amostradas em cada uma de cinco corridas (sementes $42$--$46$); a
+Tabela~\ref{tab:cs_retrieval} reporta a média e o desvio-padrão.
+
+\begin{table}[ht]
+\caption{Precisão@$k$ cross-ticker por setor, média\,$\pm$\,dp sobre cinco corridas ($3{,}714$ manchetes
+reais, cinco setores).}
+\label{tab:cs_retrieval}
+\centering
+\begin{tabular}{p{0.40\textwidth} c c}
+\toprule
+\tabhead{Método} & \tabhead{P@5} & \tabhead{P@10} \\
+\midrule
+SBERT (MiniLM, por defeito) & $0.514 \pm 0.015$ & $0.478 \pm 0.011$ \\
+SBERT (MPNet) & $\mathbf{0.538 \pm 0.011}$ & $\mathbf{0.506 \pm 0.010}$ \\
+Linha de base lexical (hashing) & $0.346 \pm 0.011$ & $0.314 \pm 0.008$ \\
+Recência & $0.126 \pm 0.006$ & $0.106 \pm 0.005$ \\
+Aleatória (taxa-base) & $0.240 \pm 0.004$ & $0.240 \pm 0.004$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Como a Tabela~\ref{tab:cs_retrieval} e a Figura~\ref{fig:cs_retrieval} mostram, o modelo MiniLM por defeito
+atinge uma precisão@$5$ de $0.514$, cerca de $2.1$ vezes a taxa-base aleatória ($0.240$) e bem acima da linha
+de base lexical ($0.346$). O modelo MPNet mais forte faz ligeiramente melhor ($0.538$), o que sugere que a
+vantagem pertence aos embeddings semânticos em geral e não a um modelo particular; os pequenos desvios-padrão
+(cerca de $0.01$) mostram que a diferença é robusta e não um artefacto de amostragem. A recência tem o pior
+desempenho, abaixo até da taxa-base aleatória, pelo que simplesmente trazer as notícias mais recentes à
+superfície não substitui a correspondência semântica. O ganho sobre as linhas de base aleatória e lexical é a
+medida honesta do valor acrescentado pelos embeddings.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/eval_retrieval_precision.pdf}
+\caption[Recuperação de precedentes: SBERT versus linhas de base]{Precisão@$k$ cross-ticker por setor. O SBERT
+excede claramente as linhas de base lexical, de recência e aleatória; as barras de erro mostram $\pm 1$
+desvio-padrão sobre as cinco corridas.}
+\label{fig:cs_retrieval}
+\end{figure}
+
+\paragraph{Ver o espaço.}
+O próprio espaço de embeddings, até aqui apenas esboçado conceptualmente (Figura~\ref{fig:embedding_concept}),
+pode ser mostrado a sério. A Figura~\ref{fig:embedding_projection} é uma projeção por componentes principais da
+base de conhecimento em produção, todos os $2{,}016$ casos com os seus genuínos embeddings MiniLM de $384$
+dimensões, coloridos por setor, com uma consulta ao vivo (o exemplo trabalhado do Capítulo~\ref{chap:methods})
+marcada como uma estrela e os seus três vizinhos recuperados circulados. Seguem-se duas leituras honestas.
+Mesmo esta sombra bidimensional, que preserva apenas $8.6\%$ da variância, coloca a consulta dentro da sua
+vizinhança temática, e os três casos recuperados (todas histórias de procura de semicondutores, com cossenos
+$0.58$--$0.61$ no espaço completo) situam-se visivelmente adjacentes a ela. E os setores \emph{não} se separam
+com nitidez em duas dimensões, que é exatamente por que o sistema ordena por cosseno no espaço completo de
+$384$ dimensões e não em qualquer projeção: a imagem é para intuição, a ordenação não é feita aí.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/embedding_projection.pdf}
+\caption[O espaço de embeddings real da base de conhecimento do produto]{A base de conhecimento em produção
+projetada em duas dimensões (PCA sobre os embeddings MiniLM reais; os eixos mostram a variância que cada
+componente preserva). As cores são setores; a estrela é a consulta \emph{``Nvidia demand surges on AI chip
+orders''}; os círculos marcam os seus 3 vizinhos recuperados de topo. A projeção é uma sombra para intuição: a
+recuperação ordena por cosseno no espaço completo de $384$ dimensões. Regenerada deterministicamente.}
+\label{fig:embedding_projection}
+\end{figure}
+
+\paragraph{Medição de impacto.}
+Para cada precedente recuperado o motor reporta o retorno pós-evento observado a $+1$, $+3$ e $+5$ dias de
+negociação, medido a partir do fecho do dia do evento ao estilo de um estudo de evento
+\autocite{brown1985daily}. Estes números são resultados observados apresentados como evidência, nunca uma
+previsão. Sobre a base de conhecimento trabalhada os impactos medidos são direcionalmente coerentes (por
+exemplo, o cluster de notícias de ameaça competitiva no estudo de caso ponta a ponta abaixo é seguido de
+retornos de um dia uniformemente negativos), o que dá validade aparente à medição; um estudo de impacto
+multi-ano rigoroso sobre o corpus FNSPID completo é identificado como trabalho futuro.
+
+\paragraph{Recuperação por setor.}
+O número agregado esconde variação útil entre setores. A Tabela~\ref{tab:cs_persector} e a
+Figura~\ref{fig:cs_persector} decompõem a recuperação pelo setor da consulta, usando toda a população de cada
+setor como consultas (para que os números sejam exatos e não amostrados). Duas leituras importam. A precisão@$5$
+bruta é mais alta na tecnologia ($0.712$), mas em grande parte porque a tecnologia domina o corpus ($47\%$ das
+manchetes) e por isso tem uma taxa-base aleatória alta ($0.429$); a medida cross-setor justa é o \emph{lift}
+sobre essa taxa-base. Por essa medida o motor acrescenta mais valor na \textbf{energia} ($+0.377$) e na
+\textbf{saúde} ($+0.348$), setores cujo vocabulário é distintivo (produção, output, barris; ensaio, fármaco,
+aprovação), e o menos no \textbf{consumo} ($+0.100$), cujas manchetes são mais genéricas e se sobrepõem
+tematicamente a outros setores. A recuperação é positiva em todos os setores, mas o seu benefício é maior onde
+a linguagem do domínio é mais específica.
+
+\begin{table}[ht]
+\caption{Precisão@$k$ cross-ticker por setor (consultas de toda a população, MiniLM).}
+\label{tab:cs_persector}
+\centering
+\begin{tabular}{p{0.22\textwidth} c c c c c}
+\toprule
+\tabhead{Setor} & \tabhead{N} & \tabhead{P@5} & \tabhead{P@10} & \tabhead{Aleatório} & \tabhead{Lift P@5} \\
+\midrule
+Tecnologia & $1736$ & $0.712$ & $0.675$ & $0.429$ & $+0.283$ \\
+Energia & $497$ & $0.448$ & $0.408$ & $0.072$ & $\mathbf{+0.377}$ \\
+Saúde & $494$ & $0.419$ & $0.379$ & $0.071$ & $+0.348$ \\
+Banca & $496$ & $0.272$ & $0.228$ & $0.072$ & $+0.200$ \\
+Consumo & $491$ & $0.171$ & $0.150$ & $0.071$ & $+0.100$ \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+{\footnotesize\emph{Nota:} o lift é a precisão@$5$ menos a taxa-base aleatória, calculado a partir de valores
+não arredondados; pode diferir das colunas arredondadas por $\pm 0.001$.}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/eval_retrieval_per_sector.pdf}
+\caption[Recuperação de precedentes por setor]{Precisão@$5$ por setor contra a taxa-base aleatória. A
+recuperação excede a taxa-base em todos os setores; a diferença (lift) é maior na energia e na saúde, cujo
+vocabulário é mais distintivo, e menor no setor amplo do consumo.}
+\label{fig:cs_persector}
+\end{figure}
+
+\paragraph{Porque alguns setores recuperam melhor: um olhar qualitativo.}
+A diferença por setor tem uma explicação concreta, visível em consultas individuais. Na tecnologia, empresas
+diferentes partilham genuinamente temas: uma manchete sobre os aceleradores de data-center da NVIDIA recupera,
+dos feeds da Microsoft, Meta e Alphabet, artigos sobre a mesma vaga de competição por chips de IA (Estudo de
+Caso~3), pelo que a precisão cross-ticker é alta. O setor do consumo comporta-se de forma diferente. Olhando
+para a vizinhança bruta (antes de a restrição cross-ticker ser aplicada), uma consulta sobre o guidance de
+mercearia da Walmart recupera sobretudo itens da própria Walmart mais uma história macro de ``vendas a retalho
+nos EUA'' veiculada em feeds bancários: adjacente no tema, mas não um análogo de consumo de outra empresa de
+consumo. Uma vez excluído o próprio ticker da consulta, como a métrica exige, resta pouco material genuinamente
+relevante, que é por que o lift cross-ticker do consumo é baixo. Uma consulta sobre a Coca-Cola recupera quase
+só outros itens da Coca-Cola, sobre o seu poder de fixação de preços e volumes de bebidas, que simplesmente não
+se assemelham às notícias de tráfego de loja da Walmart. O rótulo partilhado ``consumo'' é demasiado amplo: as
+notícias dos seus membros são idiossincráticas, pelo que os análogos cross-ticker são escassos e o lift sobre a
+taxa-base é pequeno. Este é o padrão que os números mostram, e aponta para um refinamento claro para trabalho
+futuro: agrupar por temas mais finos em vez de por setor.
+
+\section{Estudo de Caso 3: Alerta de Ponta a Ponta e Fidelidade da Explicação}
+\label{sec:cs_endtoend}
+
+\emph{Será que um alerta completo se sustenta, e a sua explicação é fiel?} \textbf{Sim, fiel por construção.}
+Para ver o gatilho de notícias de ponta a ponta, tome-se uma manchete nova da NVIDIA, \emph{``Nvidia raises
+guidance on surging demand for AI data-centre accelerators''}. O sistema embebe-a, recupera os precedentes mais
+similares da base de conhecimento construída sobre o corpus de notícias reais, e compõe o alerta abaixo (cinco
+precedentes de topo, horizonte de um dia):
+
+\begin{quote}\ttfamily\small\raggedright
+News alert for NVDA\\
+"Nvidia raises guidance on surging demand for AI data-centre accelerators"\\[2pt]
+Potential impact (from 5 similar past events): average 1-day move: $-1.97\%$\\
+Historical precedents:\\
+- 2026-06-24 MSFT (sim 0.68) +1d $-3.46\%$: "Qualcomm debuts line of AI data center chips..."\\
+- 2026-06-24 NVDA (sim 0.68) +1d $-1.64\%$: "Qualcomm debuts line of AI data center chips..."\\
+- 2026-06-24 META (sim 0.68) +1d $-2.65\%$: "Qualcomm debuts line of AI data center chips..."\\
+- 2026-06-24 GOOGL (sim 0.64) +1d $-0.46\%$: "This AI Infrastructure Stock Could Be Bigger Than Nvidia..."\\
+- 2026-06-24 NVDA (sim 0.58) +1d $-1.64\%$: "Tecan Accelerates Data-Driven Lab Journey... NVIDIA"\\[2pt]
+Note: precedents are retrieved by semantic similarity; the impact is the observed past outcome,
+not a price prediction.
+\end{quote}
+
+Cada precedente recuperado diz respeito a chips de data-center de IA e à competição pela NVIDIA, mesmo que os
+artigos tenham sido arquivados sob feeds de empresas diferentes (Microsoft, Meta, Alphabet e a própria NVIDIA).
+Ao contrário da métrica de recuperação da Secção~\ref{sec:cs_retrieval}, o alerta ao vivo não exclui o próprio
+ticker da consulta: essa exclusão existe apenas para manter a avaliação não-trivial, ao passo que um utilizador
+real é bem servido pelos precedentes mais similares, seja qual for a empresa que digam respeito. De forma
+notável, a mesma história (um rival a entrar no mercado de chips de data-center de IA) surge em três feeds de
+empresas diferentes, que o motor agrupa corretamente como um só tema. Esta é evidência direta de que a
+recuperação é movida pelo \emph{significado} e não pelo nome da empresa ou por palavras-chave exatas, o próprio
+comportamento para que o motor de correlação é desenhado. Nesta instância os precedentes calham ser
+uniformemente negativos (um cluster de ameaça competitiva), e a sua média é reportada como um resultado passado
+observado, não uma previsão. O alerta termina com um aviso explícito, mantendo o sistema dentro do seu âmbito
+de não-previsão.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  xbar, bar width=11pt, width=11.5cm, height=5.4cm,
+  enlarge y limits=0.18, xmin=-4.2, xmax=0.4,
+  xlabel={Movimento observado a 1 dia após cada precedente recuperado (\%)},
+  ytick={1,2,3,4,5},
+  yticklabels={NVDA \, $-1.64$, GOOGL \, $-0.46$, META \, $-2.65$, NVDA \, $-1.64$, MSFT \, $-3.46$},
+  y tick label style={font=\small}, xtick={-4,-3,-2,-1,0},
+]
+  \addplot[fill=red!45, draw=red!65] coordinates {(-1.64,1) (-0.46,2) (-2.65,3) (-1.64,4) (-3.46,5)};
+  \draw[dashed, thick, black!70] (axis cs:-1.97,0.4) -- (axis cs:-1.97,5.65);
+  \node[above, font=\scriptsize, fill=white, inner sep=1pt] at (axis cs:-1.97,5.65)
+       {média $-1.97\%$};
+\end{axis}
+\end{tikzpicture}
+\caption[Mesmo tema, direção oposta]{A lição tema-versus-direção num alerta real. A manchete de consulta
+\emph{``Nvidia raises guidance on surging demand for AI data-centre accelerators''} lê-se claramente positiva,
+e no entanto as cinco manchetes passadas mais similares pertencem todas a um tema de ameaça competitiva de
+chips de IA e todas caíram no dia seguinte (média $-1.97\%$, tracejada). A recuperação corresponde ao
+\emph{significado}, não ao sentimento ou à direção, pelo que a média reportada é evidência sobre como um tema se
+moveu, nunca uma previsão para este item. Valores do alerta trabalhado acima.}
+\label{fig:theme_direction}
+\end{figure}
+
+\paragraph{O que a recuperação capta e não capta.}
+Este exemplo expõe também uma limitação honesta. A manchete de consulta lê-se como positiva (guidance
+aumentado), e no entanto os precedentes que recupera formam um cluster de ameaça competitiva cujos resultados
+de um dia são uniformemente negativos (Figura~\ref{fig:theme_direction}). Não há contradição uma vez claro o
+mecanismo: a similaridade por embeddings de frase corresponde ao \emph{tema}, aqui ``chips de data-center de
+IA'', e não ao sentimento ou à direção esperada. O impacto médio que o alerta reporta é, portanto, evidência
+sobre como um tema tendeu a mover-se, não uma previsão direcional para este item particular, que é exatamente
+por que o alerta lista sempre os precedentes individuais e termina com um aviso de não-previsão em vez de se
+apoiar num único número médio. Tratar essa média como uma previsão seria a dependência excessiva de que a
+literatura da confiança avisa \autocite{lee2004trust, bansal2021whole}, e o desenho protege-se disso ao mostrar
+a evidência em vez de emitir um veredicto.
+
+Dois artefactos cosméticos do corpus recente e raso são também visíveis e vale a pena nomear com clareza: os
+precedentes partilham uma única data de recuperação, porque a camada gratuita de notícias devolve apenas uma
+janela recente e há pouco histórico genuíno de onde extrair, e o mesmo ticker pode aparecer duas vezes com um
+impacto idêntico, porque precedentes do mesmo ticker alinhados ao mesmo dia de evento partilham necessariamente
+o seu retorno para a frente. Ambos decorrem da profundidade do corpus, não do método, e ambos desaparecem uma
+vez construída a base de conhecimento multi-ano completa. Pela mesma razão, o impacto médio positivo obtido
+para uma consulta Nvidia semelhante sobre a base de amostra incluída na Secção~\ref{sec:met_correlation}
+($+6.5\%$ a cinco dias) e a média negativa aqui ($-1.97\%$ a um dia) não estão em tensão: usam bases de
+conhecimento, horizontes e encoders diferentes, e nenhuma é uma previsão.
+
+\paragraph{Fidelidade da explicação.}
+A fidelidade é garantida por construção: o texto do alerta é composto diretamente a partir dos mesmos objetos
+que o sistema calcula (o $z$-score, a janela e o limiar para o caminho de anomalias, e os precedentes
+recuperados exatos com as suas pontuações de similaridade e impactos medidos para o caminho de notícias), pelo
+que a explicação não pode divergir do cálculo subjacente. Isto é verificado programaticamente por um teste
+automático que assegura que o alerta composto reproduz exatamente a data, ticker e pontuação de similaridade de
+cada precedente recuperado e não introduz nenhum que não tenha sido recuperado; é o tipo de explicabilidade
+transparente, em tempo de desenho, defendida na literatura de XAI \autocite{arrieta2020xai}. A utilidade para
+um investidor de retalho é inerentemente subjetiva; uma pequena avaliação humana com rubrica (clareza,
+completude, acionabilidade) está planeada mas ainda não foi conduzida, sendo por isso reportada como uma
+limitação e não como um resultado.
+
+\section{Estudo de Caso 4: Triagem de Materialidade Aprendida}
+\label{sec:cs_triage}
+
+\emph{Pergunta: será que o modelo de triagem treinado da Secção~\ref{sec:met_triage} consegue priorizar as
+notícias melhor do que a simples evidência de volatilidade (\gls{RQ}4)? Resposta: cada ranker treinado
+ultrapassa o chão de alertar-sempre por uma margem larga, e dentro de um orçamento de alertas realista a
+triagem quase quadruplica a precisão; mas nenhum dos modelos que lê o texto da manchete bate a linha de base
+só-volatilidade. Com esta evidência, o sinal da triagem vive no contexto de mercado, não na redação da
+manchete, e a dissertação reporta esse achado tal como está.}
+
+\paragraph{Corpus e montagem.} O subconjunto FNSPID foi transmitido em stream e alinhado aos preços exatamente
+como desenhado: $79{,}753$ exemplos sobre $1{,}501$ dias de negociação únicos (janeiro~de~2018 a
+dezembro~de~2023), com zero linhas descartadas. Catorze dos quinze tickers estão representados; a Meta está
+ausente porque o corpus a indexa sob o seu símbolo antigo (FB) durante a maior parte da janela, uma nota de
+cobertura e não uma mudança de método. A divisão temporal por dias únicos (70/15/15, embargo de cinco dias)
+produz $28{,}574$ linhas de treino, $17{,}710$ de validação e $32{,}649$ de teste, com exemplos materiais a
+$38.5\%$, $47.0\%$ e $37.8\%$ respetivamente. Duas propriedades do corpus importam para a leitura dos
+resultados. A densidade de notícias cresce ao longo do tempo (só 2023 detém $44\%$ dos exemplos), pelo que os
+blocos mais tardios detêm mais linhas do que a sua fração de dias. E as manchetes do mesmo par (ticker, dia)
+partilham um rótulo, pelo que as linhas vêm em clusters; a divisão por dias únicos mantém cada cluster dentro de
+um só bloco.
+
+\paragraph{Resultados.} A Tabela~\ref{tab:cs_triage} reporta o bloco de teste; a Figura~\ref{fig:cs_triage_pr}
+mostra as curvas de precisão-recall e a Figura~\ref{fig:cs_triage_cal} a calibração do principal modelo
+interpretável.
+
+\begin{table}[ht]
+\caption{Triagem de materialidade sobre o corpus FNSPID (bloco de teste; prevalência $0.378$). A PR-AUC é a
+métrica primária; a precisão@orçamento admite no máximo cinco alertas por dia.}
+\label{tab:cs_triage}
+\centering
+\begin{tabular}{l c c c c}
+\toprule
+\tabhead{Modelo} & \tabhead{PR-AUC} & \tabhead{ROC-AUC} & \tabhead{Brier} & \tabhead{Prec.@orçamento} \\
+\midrule
+Alertar sempre (chão)            & 0.378 & 0.500 & 0.622 & 0.163 \\
+LR só-volatilidade (linha de base)   & \textbf{0.542} & \textbf{0.665} & \textbf{0.218} & \textbf{0.632} \\
+LR só-contexto                 & 0.538 & 0.658 & 0.224 & \textbf{0.632} \\
+LR só-texto                    & 0.439 & 0.564 & 0.240 & 0.572 \\
+LR contexto$+$texto (principal)        & 0.496 & 0.622 & 0.229 & 0.585 \\
+Gradient boosting (contexto$+$texto) & 0.469 & 0.624 & 0.228 & 0.551 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/eval_triage_pr.pdf}
+\caption[Curvas de precisão-recall para a triagem de materialidade]{Curvas de precisão-recall no bloco de
+teste. Todos os modelos treinados situam-se bem acima do chão de alertar-sempre (linha tracejada na
+prevalência); a linha de base só-volatilidade não é ultrapassada por nenhum modelo que use o texto da
+manchete.}
+\label{fig:cs_triage_pr}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/eval_triage_calibration.pdf}
+\caption[Calibração das probabilidades da triagem]{Calibração do principal modelo interpretável após o
+escalonamento de Platt sobre o bloco de validação: as probabilidades previstas acompanham as frequências
+observadas, que é o que torna a pontuação honesta de mostrar a um utilizador final.}
+\label{fig:cs_triage_cal}
+\end{figure}
+
+\paragraph{Ler o resultado.} Três observações, por ordem decrescente de peso prático. Primeiro, \emph{a triagem
+funciona como mecanismo de produto}: dentro de um orçamento de cinco alertas por dia, ordenar por qualquer
+pontuação treinada eleva a fração de alertas materiais de $0.163$ (escolhendo às cegas) para $0.632$, quase
+quatro vezes melhor, com probabilidades calibradas (Brier $0.218$ contra $0.622$ do chão). Este é o retorno de
+combate à fadiga de alertas para que o componente foi construído. Segundo, \emph{o sinal é o contexto de
+mercado, não o texto}: a linha de base só-volatilidade atinge a melhor PR-AUC ($0.542$), o modelo só-contexto
+iguala-a na precisão orçamentada, e acrescentar o embedding da manchete \emph{baixa} o modelo linear para
+$0.496$; o ensemble com gradient boosting não recupera a diferença ($0.469$). As manchetes sozinhas estão bem
+acima do chão ($0.439$) mas bem abaixo da volatilidade. Terceiro, a resposta à \gls{RQ}4 tal como colocada é,
+portanto, \emph{negativa na hipótese do texto e positiva no mecanismo}: um ranker supervisionado e calibrado
+acrescenta valor de produto real sobre o alerta ingénuo, mas neste corpus e com esta representação de texto não
+bate a simples linha de base da volatilidade que era obrigado a bater. Esta é a segunda vez neste capítulo que
+um método aprendido recebeu uma comparação justa e causal contra a escolha transparente e perdeu (Estudo de
+Caso~1); ambas as comparações foram pré-comprometidas na Secção~\ref{sec:met_evaluation}, e ambas validam o
+desenho simplicidade-primeiro da dissertação com evidência e não com pressuposto. A variante em produção
+(só-contexto, Secção~\ref{sec:investigator_logic}) é consistente com este achado: usa exatamente as features
+que carregam o sinal.
+
+\paragraph{Ressalvas.} O rótulo é um proxy: o tamanho do movimento ajustado ao mercado, não o juízo humano de
+materialidade. As manchetes do mesmo dia partilham um rótulo, pelo que o tamanho efetivo da amostra é menor do
+que a contagem de linhas, e a densidade de notícias do corpus cresce ao longo da janela. As manchetes são
+curtas, pelo que uma representação de texto mais rica (corpos de artigos, sentimento financeiro) poderia ainda
+fechar a lacuna do texto; essa possibilidade é registada como trabalho futuro e não assumida.
+
+\paragraph{O modelo em produção numa decisão real.} A afirmação do mecanismo torna-se tangível num único caso
+ao vivo. A Figura~\ref{fig:triage_contributions} decompõe uma decisão de produção real, o alerta da Meta de
+12~de~julho~de~2026 cuja aritmética completa é a Tabela~\ref{tab:triage_worked}: a volatilidade recente elevada
+e o indicador de setor carregam essencialmente todos os log-odds, os termos quase-zero livres de texto
+confirmam que o contexto é o sinal, e os $54\%$ calibrados que chegaram ao canal público são reproduzidos
+exatamente pela decomposição. O achado agregado da avaliação (contexto, não texto) e as decisões individuais do
+produto em produção são um só e o mesmo cálculo, que é a propriedade de fidelidade que o desenho promete.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/triage_contributions.pdf}
+\caption[Uma decisão de triagem real, decomposta]{Uma decisão de triagem de produção real (META,
+12~de~julho~de~2026), decomposta nas suas contribuições aditivas exatas para os log-odds. A volatilidade
+recente e o setor dominam; a soma $+0.699$ mapeia através da sigmoide e da calibração de Platt para os $54\%$
+efetivamente enviados ao canal (Tabela~\ref{tab:triage_worked}). Regenerada deterministicamente.}
+\label{fig:triage_contributions}
+\end{figure}
+
+\paragraph{Mais features de mercado ajudam? Uma ablação de features.} O resultado acima diz que o sinal vive no
+contexto de mercado e não no texto da manchete, o que convida ao seguimento natural: será que \emph{mais}
+contexto ajudaria? Cinco sinais adicionais foram engendrados, todos baratos (sem nova fonte de dados) e todos
+sob a mesma convenção causal que os originais, para que nada após o dia do evento possa fugir para eles: o
+próprio regime de volatilidade do mercado amplo (sobre o índice de mercado), o momentum de vinte dias da ação,
+o rácio de volatilidade curta para longa, a reação imediata padronizada (o próprio $z$ do detetor), e uma
+volatilidade só-de-queda. O modelo só-contexto foi re-treinado sobre estas sob o protocolo congelado (divisão
+temporal, calibração de Platt na validação, semente~$42$). A âncora de volatilidade reproduz o número congelado
+($0.537$ contra o congelado $0.538$, a pequena diferença vindo apenas do histórico mais estrito de sessenta dias
+que as features estendidas exigem). Acrescentar os cinco sinais move a PR-AUC para $0.535$ --- nenhuma
+melhoria. Uma varredura leave-one-in / leave-one-out (Figura~\ref{fig:triage_ablation}) explica porquê: a reação
+padronizada é o único sinal com sinal positivo, e apenas por $0.001$; os outros são planos ou ligeiramente
+negativos. A volatilidade deslizante já absorve quase tudo o que estas features baratas carregam, que é a mesma
+lição do resultado do texto, alcançada pela direção oposta: neste corpus, a materialidade de curto prazo é
+notavelmente bem resumida por um número. O achado é reportado exatamente como se revelou e não muda nada em
+produção; a tabela completa das features estendidas é reproduzida deterministicamente a partir dos inputs
+congelados.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/eval_triage_ext.pdf}
+\caption[Contribuição marginal das features de contexto estendidas]{Contribuição marginal de PR-AUC de cada
+feature de contexto estendida no bloco de teste, medida de duas formas: acrescentada isoladamente ao modelo de
+volatilidade (leave-one-in) e removida do conjunto completo (leave-one-out). Todos os efeitos estão dentro de
+$\pm 0.005$ de zero: os sinais engendrados baratos são redundantes dada a volatilidade deslizante. Regenerada
+deterministicamente.}
+\label{fig:triage_ablation}
+\end{figure}
+
+\section{Discussão e Ameaças à Validade}
+\label{sec:cs_discussion}
+
+Os quatro estudos de caso sustentam o desenho central: a deteção normalizada pela volatilidade é consistente em
+todo o mercado onde um limiar fixo não é, a recuperação semântica traz à superfície muito mais precedentes
+análogos por setor do que as linhas de base lexical ou triviais, o alerta ponta a ponta é fiel ao seu próprio
+cálculo, e a triagem aprendida acrescenta um grande ganho de precisão orçamentada enquanto confirma, contra as
+suas próprias features de texto, que a evidência transparente da volatilidade carrega o sinal. Todos os
+resultados assentam em dados reais e são reprodutíveis a partir de scripts versionados.
+
+Os resultados também têm limites claros, que são expostos abaixo sob as quatro categorias padrão de validade
+para que nada seja passado por cima.
+
+\paragraph{Validade de construto: medem as métricas o que é afirmado?} Dois proxies pesam aqui. A relevância da
+recuperação é julgada por um rótulo de \emph{setor}, um substituto automático para o juízo humano de
+``análogo'', pelo que um precedente do mesmo setor sobre um tópico não relacionado conta como acerto; a
+inspeção qualitativa na Secção~\ref{sec:cs_retrieval} mostra que este proxy é razoável mas imperfeito. De igual
+modo, o rótulo de anomalia de ``movimento extremo'' é relativo à volatilidade, pelo que não é uma verdade de
+base independente, que é por que o argumento primário das anomalias é a \emph{consistência da taxa de disparo}
+sem-rótulo, e não a concordância com esse rótulo. Por fim, o número de estudo de evento mede a variação de
+preço que se \emph{seguiu} a uma notícia, que é um resultado, não um efeito causal da notícia; é reportado como
+evidência, nunca como uma previsão.
+
+\paragraph{Validade interna: poderia outra coisa explicar o efeito?} A vantagem da recuperação poderia, em
+princípio, ser inflacionada ao corresponder trivialmente as notícias de uma empresa às suas próprias notícias
+passadas; isto é removido por construção, porque a avaliação proíbe precedentes do mesmo ticker e mede apenas a
+precisão \emph{cross-ticker}. O lookahead é excluído em todo o lado: cada quantidade usa informação disponível
+na altura, e os impactos são acumulados estritamente para a frente a partir do fecho do dia do evento. A
+principal ameaça residual é o confundimento (um movimento de preço numa janela pós-evento pode ser movido por
+fatores de todo o mercado em vez da notícia), que as janelas curtas ($+1$, $+3$, $+5$ dias) limitam mas não
+eliminam, e que o enquadramento de não-causalidade reconhece abertamente.
+
+\paragraph{Validade externa: até onde generalizam os achados?} O estudo cobre quinze tickers de grande
+capitalização dos EUA em cinco setores sobre uma janela recente, pelo que os números não têm de transferir-se
+para ações de pequena capitalização, para outros mercados, ou para outros períodos, e a cobertura de notícias é
+mais rala fora das grandes capitalizações. O corpus é uma janela recente de um serviço gratuito e não o
+histórico multi-ano do FNSPID; o corpus completo é identificado como a forma natural de alargar este âmbito.
+
+\paragraph{Validade de conclusão estatística: são as comparações sólidas?} Os resultados da recuperação são
+médias sobre cinco amostras aleatórias com desvios-padrão reportados (as barras de erro na
+Figura~\ref{fig:cs_retrieval}), e a diferença entre a recuperação semântica e cada linha de base é grande
+relativamente a essa dispersão; ainda assim, cinco corridas sobre um corpus é uma amostra modesta, e nenhum
+teste formal de significância é reclamado. A comparação das anomalias é reportada descritivamente, como uma
+diferença nas taxas de disparo entre instrumentos, e não como um teste de hipótese.
+
+Um limite é deliberado e não uma fraqueza: o sistema não faz previsão de preços e não avalia lucro de
+negociação, pelo que essas questões estão fora de âmbito por desenho. O corpus FNSPID completo, um estudo humano
+de relevância e utilidade, e uma análise de impacto multi-ano são os passos seguintes naturais, e são levados
+para as conclusões.
+
+\section{Conclusões do Capítulo}
+\label{sec:cs_summary}
+
+Ao longo de quatro estudos de caso sobre dados reais, o gatilho de anomalias do InvestiGator disparou muito mais
+consistentemente do que um limiar fixo, o seu motor de correlação recuperou precedentes análogos por setor bem
+acima de todas as linhas de base e independentemente do modelo de embedding, as suas explicações foram fiéis ao
+cálculo subjacente por construção, e o seu modelo de triagem treinado quase quadruplicou a precisão de alertas
+dentro do orçamento enquanto honestamente não conseguiu bater a linha de base só-volatilidade com texto. O
+próximo capítulo reúne estes achados face às questões de investigação.
