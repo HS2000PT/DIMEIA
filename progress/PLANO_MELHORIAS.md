@@ -184,9 +184,19 @@ Estes ficam DESENHADOS no plano; construção faseada e só com decisão do alun
   herói do About + saudação do "investigador" sensíveis à hora. Verificado ao vivo (Playwright):
   renderiza, mantém o toggle de tema. **Crítica honesta** em `docs/design/product_critique.md`.
   **Também:** About sem nomes de scripts/ficheiros (integridade, coerente com o apêndice).
-  **⏳ Ainda em aberto (para escolher):** figuras de snapshot de dados na tese (WS3); tradução
-  PT ch2–ch6 (WS2); mais bolsas europeias; chatbot-mascote (WS6). Bolsa europeia primeiro:
-  decisão do aluno.
+- **✅ WS3 figuras de tese (arrancado, PR #1):** (1) **Fig 3.3 "objetos de dados reais"** —
+  bruto→registo→embedding com um registo REAL (AAPL 2020-03-09 "Crude Awakening"; impactos
+  +7,2%/−6,7%/−9,0% = tema≠direção num objeto). (2) **Fig 3.4 "duas curvas" do z-score** —
+  ação calma vs volátil, mesmo −3,2% na cauda vs no corpo (z=−8,1 vs −2,2), da Tabela 3.2.
+  Ambas verificadas ao render (pp. 18/20), 90 pp 0 erros. **Auditoria multi-agente** deu um
+  BACKLOG de figuras grounded (verificação bateu no limite da conta, reset 05:30 Lisboa) —
+  candidatas fortes por implementar (verificar grounding eu próprio antes):
+  ch5 "tema≠direção (notícia positiva → precedentes negativos)"; ch6 "scorecard dos veredictos
+  das RQ"; ch4 "a vida de um alerta pelos gates"; ch5 "4 estudos de caso num relance";
+  ch2 "3 gerações de representação de texto → SBERT"; ch3 "split cronológico com embargo".
+  **Espelhar no thesis-pt quando o ch3 for traduzido (WS2).**
+  **⏳ Ainda em aberto (para escolher):** resto do backlog de figuras; tradução PT ch2–ch6 (WS2);
+  mais bolsas europeias; chatbot-mascote (WS6). Bolsa europeia primeiro: decisão do aluno.
 
 ## Ordem de execução proposta
 **Fase 1 (já):** WS1 (integridade do apêndice) + WS4-1 (setas verdes) + WS4-2 (estado do
