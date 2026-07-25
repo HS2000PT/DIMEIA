@@ -184,11 +184,14 @@ Estes ficam DESENHADOS no plano; construção faseada e só com decisão do alun
   herói do About + saudação do "investigador" sensíveis à hora. Verificado ao vivo (Playwright):
   renderiza, mantém o toggle de tema. **Crítica honesta** em `docs/design/product_critique.md`.
   **Também:** About sem nomes de scripts/ficheiros (integridade, coerente com o apêndice).
-- **✅ WS3 figuras de tese (arrancado, PR #1):** (1) **Fig 3.3 "objetos de dados reais"** —
-  bruto→registo→embedding com um registo REAL (AAPL 2020-03-09 "Crude Awakening"; impactos
-  +7,2%/−6,7%/−9,0% = tema≠direção num objeto). (2) **Fig 3.4 "duas curvas" do z-score** —
-  ação calma vs volátil, mesmo −3,2% na cauda vs no corpo (z=−8,1 vs −2,2), da Tabela 3.2.
-  Ambas verificadas ao render (pp. 18/20), 90 pp 0 erros. **Auditoria multi-agente** deu um
+- **✅ WS3 figuras de tese (4 novas, PR #1, todas verificadas ao render + grounded):**
+  (1) **Fig 3.3 "objetos de dados reais"** — bruto→registo→embedding (AAPL 2020-03-09 "Crude
+  Awakening"; impactos +7,2%/−6,7%/−9,0%). (2) **Fig 3.4 "duas curvas" do z-score** — calma vs
+  volátil, mesmo −3,2% na cauda vs no corpo (z=−8,1 vs −2,2), da Tabela 3.2. (3) **Fig 5.8
+  "tema≠direção"** — barras dos 5 precedentes reais do alerta NVDA positivo, todas vermelhas
+  (média −1,97%). (4) **Fig 6.1 "scorecard das RQ"** — 4 veredictos honestos (verde/amarelo) +
+  um número cada. Tese 90 pp, 0 erros. **⚠️ falta espelhar as 4 no thesis-pt (WS2, quando ch3/
+  ch5/ch6 forem traduzidos).** **Auditoria multi-agente** deu um
   BACKLOG de figuras grounded (verificação bateu no limite da conta, reset 05:30 Lisboa) —
   candidatas fortes por implementar (verificar grounding eu próprio antes):
   ch5 "tema≠direção (notícia positiva → precedentes negativos)"; ch6 "scorecard dos veredictos
