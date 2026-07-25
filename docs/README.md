@@ -47,9 +47,15 @@ se só queres correr o sistema.
 | [decisions/page_audit.md](decisions/page_audit.md) | Auditoria página-a-página + re-verificação das 50 fontes. |
 | [decisions/product_review.md](decisions/product_review.md) | Revisão de produto/UX (Pass 5 + Pass 6 do redesenho). |
 
-## Preparar a defesa — UMA fonte
-> **`slides/guia_estudo/main.pdf` (71 slides)** é a fonte única de estudo: ensina a tese do
-> zero E contém o guião oral, as perguntas do júri, o mapa dos números congelados e o plano B.
+## Preparar a defesa — duas camadas
+> **1. ESTUDAR (ensina do zero):** `slides/guia_estudo/main.pdf` (77 slides) é a fonte única de
+> estudo — ensina a tese do zero E contém o guião oral, o mapa dos números congelados e o plano B.
+>
+> **2. ENSAIAR (recall rápido):** [defence/guiao_de_defesa.md](defence/guiao_de_defesa.md) — os
+> números de cor, o veredicto+guião por RQ, e as **perguntas mais duras do júri com respostas-modelo**
+> focadas nos pontos fracos (corpus fino da RQ2; "o modelo perdeu" da RQ4; utilidade da RQ3; proxy
+> de setor). É o que se lê na véspera.
+>
 > O relatório para orientador/júri está na raiz: `RELATORIO_FINAL.md`. (Os antigos caderno de
 > defesa e guia rápido foram absorvidos no guia e arquivados em `_archive/`.)
 
