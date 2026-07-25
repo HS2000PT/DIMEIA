@@ -53,3 +53,18 @@ def test_fim_de_semana_fechado_abre_segunda():
 def test_naive_datetime_tratado_como_utc():
     s = us_market_status(datetime(2026, 7, 15, 14, 0))  # sem tzinfo
     assert s.is_open
+
+
+def test_day_phase_manha_tarde_noite():
+    from investigator.market_data.market_hours import day_phase
+
+    # 09:00 Lisboa (verão = UTC+1) → 08:00 UTC = manhã, não noite.
+    manha = day_phase(_utc(2026, 7, 15, 8, 0))
+    assert manha.phase == "morning" and not manha.is_night
+    # 15:00 Lisboa = 14:00 UTC → tarde.
+    assert day_phase(_utc(2026, 7, 15, 14, 0)).phase == "afternoon"
+    # 23:00 Lisboa = 22:00 UTC → noite (mascote noturna).
+    noite = day_phase(_utc(2026, 7, 15, 22, 0))
+    assert noite.phase == "night" and noite.is_night
+    # 20:00 Lisboa = 19:00 UTC → fim de tarde, já conta como noite para a mascote.
+    assert day_phase(_utc(2026, 7, 15, 19, 0)).is_night

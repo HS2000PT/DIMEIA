@@ -49,9 +49,24 @@ st.set_page_config(
     page_title="InvestiGator — explainable market alerts", page_icon="🐊", layout="wide"
 )
 
-_LOGO = Path(__file__).resolve().parent / "assets" / "logo.svg"
+_ASSETS = Path(__file__).resolve().parent / "assets"
+_LOGO = _ASSETS / "logo.svg"
+
+
+def _phase_asset() -> Path:
+    """Mascote sensível à hora (dia/noite), sincronizada com a hora local do aluno; cai no
+    logo base se a mascote faltar ou algo falhar. Fun functionality, sempre on-brand."""
+    try:
+        from investigator.market_data.market_hours import day_phase
+
+        cand = _ASSETS / ("mascot_night.svg" if day_phase().is_night else "mascot_day.svg")
+        return cand if cand.exists() else _LOGO
+    except Exception:  # noqa: BLE001
+        return _LOGO
+
+
 if _LOGO.exists():
-    st.logo(str(_LOGO), size="large")
+    st.logo(str(_phase_asset()), size="large")
 
 _DEFAULT_HISTORY_URL = (
     "https://raw.githubusercontent.com/HS2000PT/DIMEIA/alerts-history/alerts_history.jsonl"
@@ -522,7 +537,17 @@ def _live_view() -> None:
 # ── Vista ABOUT: tudo o resto, fora do caminho ──────────────────────────────────
 
 def _about_view() -> None:
-    st.title("About InvestiGator")
+    c1, c2 = st.columns([1, 5])
+    with c1:
+        try:
+            st.image(str(_phase_asset()), width=96)  # mascote dia/noite (sincronizada)
+        except Exception:  # noqa: BLE001
+            pass
+    with c2:
+        st.title("About InvestiGator")
+        saud = _gator_greeting()
+        if saud:
+            st.caption(saud)
     st.markdown(
         """
 **InvestiGator** watches the US market and **explains** every alert it sends:
@@ -775,9 +800,23 @@ def _admin_settings_panel() -> None:
             st.code(payload, language="json")
 
 
+def _gator_greeting() -> str:
+    """Saudação do investigador sincronizada com a hora (☀️/🌙). Fail-open → sem saudação."""
+    try:
+        from investigator.market_data.market_hours import day_phase
+
+        ph = day_phase()
+        return f"{ph.emoji} {ph.greeting}"
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def main() -> None:
     st.sidebar.title("InvestiGator")
     st.sidebar.caption("_Every move investigated, never predicted._")
+    saudacao = _gator_greeting()
+    if saudacao:
+        st.sidebar.caption(saudacao)
     vista = st.sidebar.radio("View", ["📊 Live", "ℹ️ About"], label_visibility="collapsed")
     url = _channel_url()
     if url:

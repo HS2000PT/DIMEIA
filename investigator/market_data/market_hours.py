@@ -86,3 +86,32 @@ def us_market_status(now_utc: datetime | None = None) -> MarketStatus:
     else:
         detalhe = f"opens {nxt:%a} 09:30 ET (in {_humanize(mins)})"
     return MarketStatus(False, "Closed", detalhe, nxt.astimezone(_UTC), mins)
+
+
+# ── Fase do dia (para o "vibe" da app: mascote e saudação sincronizadas com a hora) ──────
+@dataclass(frozen=True)
+class DayPhase:
+    phase: str        # "morning" | "afternoon" | "evening" | "night"
+    is_night: bool    # escolhe a mascote (noite = crocodilo a dormitar + lua)
+    emoji: str        # ☀️/🌅/🌆/🌙
+    greeting: str     # saudação com personalidade do "investigador"
+
+
+def day_phase(now_utc: datetime | None = None, tz: str = "Europe/Lisbon") -> DayPhase:
+    """Fase do dia na hora LOCAL do aluno (default Lisboa). Puro; `now_utc` para testes."""
+    if now_utc is None:
+        now_utc = datetime.now(tz=_UTC)
+    elif now_utc.tzinfo is None:
+        now_utc = now_utc.replace(tzinfo=_UTC)
+    h = now_utc.astimezone(ZoneInfo(tz)).hour
+    if 5 <= h < 12:
+        return DayPhase("morning", False, "🌅",
+                        "Good morning — the gator's eyeing the open.")
+    if 12 <= h < 18:
+        return DayPhase("afternoon", False, "☀️",
+                        "Good afternoon — the gator's on watch.")
+    if 18 <= h < 21:
+        return DayPhase("evening", True, "🌆",
+                        "Good evening — winding down the session.")
+    return DayPhase("night", True, "🌙",
+                    "Night watch — the gator never really sleeps.")
