@@ -49,15 +49,15 @@ Números/citações/labels/estrutura idênticos; só a língua muda. Gráficos d
 (`eval_*.pdf`) ficam EN nas duas (autorizado; legenda/caption traduzidas). Qualquer alteração
 a uma língua É espelhada na outra no mesmo commit. Verificar sempre: as duas compilam 0 erros e
 têm a MESMA contagem de secções/figuras/tabelas.
-**Estado (2026-07-25):** **ch1 + ch2 + ch3 + ch4 + ch6 + APÊNDICE + frontmatter TRADUZIDOS** +
-**slides de defesa PT** (`slides/main-pt.tex`). ch2/ch3/ch4/ch6/apêndice feitos nesta sessão
-(labels/refs/citações byte-iguais — diff vazio; figuras/tabelas/diagramas/equações/algoritmos
-traduzidos, incl. as figuras novas e a sidewaysfigure master_pipeline; **thesis-pt compila 78 pp,
-0 erros, ZERO refs indefinidas**). FIX: `meia-style.cls` PT com `shorthands=off` (aspas retas dos
-snapshots do ch3). **Falta SÓ ch5** (Estudos de Caso, EN 41k — tem figuras novas: Fig 5.8
-tema≠direção + as da RQ4-ext/projeção; a espelhar). Depois disso a tese bilingue está COMPLETA.
-**NOTA:** a branch foi fundida em main via PR #2 (tudo até ao commit do default 1D); o commit de
-ch3 fica 1 à frente. **Próximo e último: ch5.** **Padrão de tradução PROVADO** (ver ch6): traduzir
+**✅ ESTADO (2026-07-25): TESE BILINGUE COMPLETA.** ch1+ch2+ch3+ch4+ch5+ch6 + APÊNDICE +
+frontmatter TRADUZIDOS + **slides de defesa PT** (`slides/main-pt.tex`) + guia (já era PT).
+ch2/ch3/ch4/ch5/ch6/apêndice feitos nesta sessão (labels/refs/citações/math BYTE-IDÊNTICOS —
+diffs vazios; figuras/tabelas/diagramas/equações/algoritmos traduzidos, incl. as figuras novas,
+a master_pipeline e a Fig 5.8; gráficos matplotlib ficam EN c/ legendas PT; alertas reais do
+produto ficam EN). **thesis-pt compila 92 pp, 0 erros, ZERO refs indefinidas** (EN: 90 pp). FIX:
+`meia-style.cls` PT com `shorthands=off`. **REGRA DE SINCRONIA em vigor:** qualquer alteração de
+conteúdo a EN espelha-se em PT no mesmo commit. **Passo humano:** o aluno reler/aprovar o PT (voz
+e terminologia) antes da defesa — é o texto dele. **Padrão de tradução PROVADO** (ver ch6): traduzir
 prosa + captions + texto de figuras TikZ + células de tabela; manter labels/refs/citações/math/
 números idênticos; ajustar só o espaçamento de figuras ao texto PT mais longo; compilar +
 verificar render + `diff` dos labels vazio.
