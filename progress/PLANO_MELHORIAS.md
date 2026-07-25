@@ -198,8 +198,16 @@ Estes ficam DESENHADOS no plano; construção faseada e só com decisão do alun
   das RQ"; ch4 "a vida de um alerta pelos gates"; ch5 "4 estudos de caso num relance";
   ch2 "3 gerações de representação de texto → SBERT"; ch3 "split cronológico com embargo".
   **Espelhar no thesis-pt quando o ch3 for traduzido (WS2).**
-  **⏳ Ainda em aberto (para escolher):** resto do backlog de figuras; tradução PT ch2–ch6 (WS2);
-  mais bolsas europeias; chatbot-mascote (WS6). Bolsa europeia primeiro: decisão do aluno.
+- **✅ Bolsas europeias (FEITO, PR #1):** `market_hours` generalizado (Exchange + EXCHANGES:
+  US/Xetra/Euronext/LSE; `exchange_status` DST via zoneinfo com abreviatura de fuso dinâmica;
+  `all_exchange_status`; `us_market_status` = wrapper compat). App mostra a pílula US + "Other
+  exchanges: 🟢/🔴 Xetra · Euronext · London". As europeias são informativas (watchlist = US).
+  **+ robustez:** preços NaN degradam com graça (sem "$nan"; `closes.dropna()`). Verificado ao
+  vivo (Playwright): pílula multi-bolsa + mascote DIA (sincronia dia/noite confirmada a mudar
+  entre corridas). 224 testes + ruff verdes.
+  **⏳ Ainda em aberto (para escolher):** resto do backlog de figuras (ch5 4-casos, ch3 split,
+  ch6 limitações→futuro, ch4 vida-de-alerta); tradução PT ch2–ch6 (WS2) + espelhar as 5 figuras
+  novas; alertas multi-bolsa (dados de preços europeus); chatbot-mascote (WS6).
 
 ## Ordem de execução proposta
 **Fase 1 (já):** WS1 (integridade do apêndice) + WS4-1 (setas verdes) + WS4-2 (estado do
