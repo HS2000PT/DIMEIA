@@ -274,11 +274,15 @@ def _market_state_pill() -> None:
     """Estado da sessão US ao vivo (🟢 aberto / 🔴 fechado) com contagem para a próxima
     mudança. Refresca com o fragmento `_live_view` (run_every). Fail-open: nunca derruba."""
     try:
-        from investigator.market_data.market_hours import us_market_status
+        from investigator.market_data.market_hours import all_exchange_status
 
-        s = us_market_status()
-        dot = "🟢" if s.is_open else "🔴"
-        st.markdown(f"{dot} **US market {s.label.lower()}** · {s.detail}")
+        rows = all_exchange_status()
+        _us_ex, us_s = rows[0]
+        dot = "🟢" if us_s.is_open else "🔴"
+        st.markdown(f"{dot} **US market {us_s.label.lower()}** · {us_s.detail}")
+        outros = " · ".join(f"{'🟢' if s.is_open else '🔴'} {ex.name}" for ex, s in rows[1:])
+        if outros:
+            st.caption(f"Other exchanges: {outros}")
     except Exception:  # noqa: BLE001 — um indicador nunca pode partir a página
         pass
 

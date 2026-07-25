@@ -55,6 +55,35 @@ def test_naive_datetime_tratado_como_utc():
     assert s.is_open
 
 
+def test_exchanges_europeias_abrem_quando_us_ainda_fechada():
+    from investigator.market_data.market_hours import all_exchange_status
+
+    # Quarta de verão, 10:00 UTC: NY 06:00 EDT (fechado), mas as europeias já abriram.
+    by = {ex.code: s for ex, s in all_exchange_status(_utc(2026, 7, 15, 10, 0))}
+    assert set(by) == {"US", "XETRA", "EURONEXT", "LSE"}
+    assert not by["US"].is_open        # abre às 09:30 ET
+    assert by["XETRA"].is_open         # 12:00 CEST
+    assert by["EURONEXT"].is_open      # 12:00 CEST
+    assert by["LSE"].is_open           # 11:00 BST
+
+
+def test_xetra_respeita_fecho_local_e_dst():
+    from investigator.market_data.market_hours import EXCHANGES, exchange_status
+
+    xetra = next(e for e in EXCHANGES if e.code == "XETRA")
+    # 16:00 UTC = 18:00 CEST (verão) → depois do fecho (17:30) → fechado.
+    assert not exchange_status(xetra, _utc(2026, 7, 15, 16, 0)).is_open
+    # 08:00 UTC = 10:00 CEST → aberto.
+    assert exchange_status(xetra, _utc(2026, 7, 15, 8, 0)).is_open
+
+
+def test_us_market_status_continua_a_ser_a_primeira_bolsa():
+    from investigator.market_data.market_hours import EXCHANGES, exchange_status, us_market_status
+
+    t = _utc(2026, 7, 15, 14, 0)
+    assert us_market_status(t) == exchange_status(EXCHANGES[0], t)  # compat preservada
+
+
 def test_day_phase_manha_tarde_noite():
     from investigator.market_data.market_hours import day_phase
 
