@@ -594,8 +594,8 @@ against noise. **Evidence, never a prediction.**
     )
 
     st.header("Evaluation (frozen thesis numbers)")
-    st.caption("Reproducible with fixed seeds via `scripts/evaluate*.py`; "
-               "full tables in `docs/evaluation/`.")
+    st.caption("Every number below is regenerated deterministically from the frozen inputs "
+               "with a fixed seed, so it can be reproduced and audited in isolation.")
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Retrieval beats every baseline")
