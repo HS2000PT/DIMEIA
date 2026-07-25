@@ -35,7 +35,13 @@ notas `\texttt{scripts/…py}`. Contagem "199 tests" desatualizada (agora 202).
 apêndice PT é scaffold, sincroniza-se na tradução.
 **Estado:** ⬜ a fazer nesta fase.
 
-## WORKSTREAM 2 — Tese bilingue EN ↔ PT-PT (REGRA + tradução) 🔴
+## WORKSTREAM 2 — Bilingue EN ↔ PT-PT (tese + SLIDES) (REGRA + tradução) 🔴
+**REGRA estendida (2026-07-25, pedido do aluno):** a sincronia bilingue inclui os SLIDES DE
+DEFESA. `slides/main.tex` (EN) ↔ `slides/main-pt.tex` (PT-PT, feito nesta sessão: mesmo
+diretório → figuras/logos resolvem; 19 frames == EN; compila 0 erros; verificado ao render). O
+guia de estudo (`slides/guia_estudo/`) já é PT-PT. Qualquer alteração a um deck espelha-se no
+outro. **Build:** `cd slides && latexmk -pdf main-pt.tex`.
+
 **REGRA (agora explícita, ver CLAUDE.md "Decisões Confirmadas"):** existem DUAS teses com o
 MESMO conteúdo — `thesis/` (EN-GB) e `thesis-pt/` (PT-PT), tradução PURA, MESMO estilo de
 escrita, tudo em sincronia (prosa, legendas, texto de figuras TikZ, tabelas, front matter).
