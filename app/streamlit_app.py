@@ -440,7 +440,8 @@ def _events_list(eventos: list) -> None:
 
 def _ticker_tab(ticker: str, history: list) -> None:
     eventos = [h for h in history if h.ticker == ticker]
-    intervalo = st.radio("Range", list(_RANGES), index=2, horizontal=True,
+    # Default 1D (today / live, intraday): o investidor quer o AGORA primeiro.
+    intervalo = st.radio("Range", list(_RANGES), index=0, horizontal=True,
                          key=f"range_{ticker}", label_visibility="collapsed")
     try:
         closes = _range_prices(ticker, intervalo)
