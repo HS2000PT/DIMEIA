@@ -190,8 +190,11 @@ Estes ficam DESENHADOS no plano; construção faseada e só com decisão do alun
   volátil, mesmo −3,2% na cauda vs no corpo (z=−8,1 vs −2,2), da Tabela 3.2. (3) **Fig 5.8
   "tema≠direção"** — barras dos 5 precedentes reais do alerta NVDA positivo, todas vermelhas
   (média −1,97%). (4) **Fig 6.1 "scorecard das RQ"** — 4 veredictos honestos (verde/amarelo) +
-  um número cada. Tese 90 pp, 0 erros. **⚠️ falta espelhar as 4 no thesis-pt (WS2, quando ch3/
-  ch5/ch6 forem traduzidos).** **Auditoria multi-agente** deu um
+  um número cada. (5) **Fig 2.3 "3 gerações de texto → SBERT"** — escada Lexicons/word2vec/BERT/
+  Sentence-BERT (a escolha, ★). (6) **Fig 6.2 "limitações → trabalho futuro"** — mapa de 2
+  colunas. Tese 90 pp, 0 erros; todas grounded + verificadas ao render (pp. 10/18/20/48/55/58).
+  **⚠️ falta espelhar as 6 no thesis-pt (WS2, quando ch2/ch3/ch5/ch6 forem traduzidos).**
+  **Auditoria multi-agente** deu um
   BACKLOG de figuras grounded (verificação bateu no limite da conta, reset 05:30 Lisboa) —
   candidatas fortes por implementar (verificar grounding eu próprio antes):
   ch5 "tema≠direção (notícia positiva → precedentes negativos)"; ch6 "scorecard dos veredictos
