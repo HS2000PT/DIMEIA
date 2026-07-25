@@ -1,5 +1,217 @@
-% Capítulo 6 - Conclusões (PT-PT). STUB — tradução por fazer.
+% Capítulo 6 - Conclusões (PT-PT; espelho de ../thesis/ch6/chapter6.tex)
+% Tradução pura: labels/refs/citações/números/estrutura idênticos; só a língua muda.
+
 \chapter{Conclusões}
 \label{chap:conclusions}
 
-\emph{[Tradução em curso. O conteúdo deste capítulo espelha \texttt{../thesis/ch6/chapter6.tex}.]}
+Esta dissertação propôs-se desenhar, implementar e avaliar um sistema de alertas financeiros
+explicável e reprodutível para investidores de retalho dos EUA, movido por dois gatilhos
+independentes e entregue através do Telegram. Este capítulo resume o que foi alcançado face às
+questões de investigação, revisita as contribuições, e enuncia as limitações e as direções que elas
+abrem.
+
+\section{Conclusões Principais}
+\label{sec:concl_main}
+
+O trabalho resume-se melhor voltando às quatro questões de investigação do
+Capítulo~\ref{chap:introduction}, reunidas num relance na Figura~\ref{fig:rq_scorecard} e depois
+tomadas uma a uma.
+
+\begin{figure}[ht]
+\centering
+\small
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{p{4.4cm} l p{5.0cm}}
+\toprule
+\tabhead{Questão de investigação} & \tabhead{Veredicto} & \tabhead{Um número} \\
+\midrule
+RQ1: detetar movimentos abruptos de forma transparente
+  & \colorbox{green!20}{\textbf{Sim}}
+  & taxa de disparo $0.015$ vs $0.344$; $F_1$ $0.516$ \\
+RQ2: precedentes análogos, sem lookahead
+  & \colorbox{green!20}{\textbf{Sim} (recuperação)}
+  & P@5 $0.514$ vs $0.346$ lexical, $0.240$ aleatório \\
+RQ3: explicações fiéis e úteis
+  & \colorbox{yellow!25}{Fiel; utilidade em aberto}
+  & fiel por construção; ainda sem estudo humano \\
+RQ4: triagem para além da volatilidade
+  & \colorbox{yellow!25}{Mecanismo sim, texto não}
+  & quota $0.163 \to 0.632$; PR-AUC $0.542$ vs $0.496$ \\
+\bottomrule
+\end{tabular}
+\caption[As quatro questões de investigação num relance]{As quatro questões de investigação e os seus
+veredictos, reportados exatamente como se revelaram. Duas são um sim sem reservas; duas são divisões
+honestas: as explicações são fiéis por construção mas a sua utilidade aguarda um estudo humano, e a
+triagem aprendida ajuda como mecanismo de produto embora nenhum modelo de texto de manchetes tenha
+batido a linha de base da volatilidade neste corpus. Os números são do
+Capítulo~\ref{chap:casestudies}.}
+\label{fig:rq_scorecard}
+\end{figure}
+
+\paragraph{RQ1: deteção transparente de movimentos abruptos.}
+\textbf{Sim.} Um detetor de \emph{z}-score deslizante assinala retornos anormais e, mais importante,
+fá-lo a um ritmo estável \emph{em ações de volatilidade muito diferente}, onde um limiar de
+percentagem fixa não consegue. Como reportado no
+Capítulo~\ref{chap:casestudies}, a taxa de disparo variou apenas $0.015$ entre os quinze tickers no
+\emph{z}-score, contra $0.344$ na linha de base fixa, e o \emph{z}-score atingiu um $F_1$ de $0.516$
+contra um indicador de movimentos extremos, mais do dobro da linha de base. O método é simples o
+suficiente para que cada alerta possa ser explicado ao investidor.
+
+\paragraph{RQ2: precedentes análogos sem lookahead.}
+\textbf{Sim, para a recuperação.} A recuperação semântica com Sentence-BERT recuperou muito mais
+precedentes análogos por setor do que qualquer alternativa trivial: uma precisão@$5$ cross-ticker de
+$0.514 \pm 0.015$ (em cinco corridas), contra $0.346$ de uma linha de base lexical, $0.240$ do
+aleatório e $0.126$ da recência. Uma decomposição por setor mostrou que o ganho é maior onde o
+vocabulário do domínio é mais distintivo (energia, saúde). O estudo de caso ponta a ponta mostrou-a a
+trazer à superfície precedentes genuinamente temáticos a partir de fontes de empresas diferentes. O
+impacto é medido estritamente após o evento, ao estilo de um estudo de evento, pelo que nenhuma
+informação futura se infiltra na evidência. A maquinaria de medição está montada e comporta-se de
+forma coerente; uma validação em larga escala e multi-ano das magnitudes de impacto fica para
+trabalho futuro.
+
+\paragraph{RQ3: explicações fiéis e úteis.}
+\textbf{Fiéis, sim; úteis, ainda em aberto.} Como cada alerta é composto diretamente a partir dos
+mesmos objetos que o sistema calcula (o \emph{z}-score e os seus parâmetros, ou os precedentes
+recuperados com as suas pontuações e impactos medidos), a explicação não pode divergir da lógica
+subjacente, e cada alerta termina com um aviso explícito de não-previsão. A utilidade para um
+investidor de retalho é plausível por desenho mas ainda não foi medida com um estudo humano, sendo
+por isso reportada como um ponto em aberto e não como um resultado assente.
+
+\paragraph{RQ4: triagem aprendida para além das linhas de base de volatilidade.}
+\textbf{Não na hipótese do texto; sim no mecanismo.} Um modelo de materialidade supervisionado foi
+treinado, calibrado e testado em $79{,}753$ exemplos do FNSPID (2018--2023) sob um protocolo temporal
+estrito. Como mecanismo de produto, a triagem aprendida é claramente valiosa: dentro de um orçamento
+de cinco alertas por dia, elevou a quota de alertas materiais de $0.163$ para $0.632$, com
+probabilidades calibradas. Mas a comparação decisiva pré-comprometida foi noutro sentido: nenhum
+modelo que lê o texto da manchete bateu a linha de base só-volatilidade (PR-AUC $0.542$ contra $0.496$
+do modelo principal contexto$+$texto), pelo que neste corpus o sinal da triagem vive no contexto de
+mercado, não na redação da manchete. Juntamente com a comparação com a Isolation Forest do estudo de
+anomalias, este é o segundo teste justo e causal em que a escolha transparente venceu, e ambos os
+resultados são reportados exatamente como se revelaram.
+
+\section{Questões de Investigação e Objetivos Alcançados}
+\label{sec:concl_objectives}
+
+O objetivo geral, desenhar, implementar e avaliar um sistema de alertas explicável e reprodutível
+movido por dois gatilhos, foi cumprido: o InvestiGator é um sistema funcional cujos dois gatilhos
+foram provados de ponta a ponta e cujos componentes centrais, incluindo o modelo de triagem treinado,
+foram avaliados sobre dados reais. Os objetivos de apoio também foram cumpridos:
+uma fatia fina de ponta a ponta foi entregue primeiro; cada componente foi mantido na sua forma mais
+simples e defensável; a avaliação seguiu um desenho fixado à partida; e todo o sistema é reprodutível
+a partir de scripts versionados.
+
+\section{Contribuições Revisitadas}
+\label{sec:concl_contributions}
+
+Enquanto dissertação de \emph{Engenharia} de Inteligência Artificial, a contribuição é a integração,
+aplicação e avaliação crítica de componentes existentes num todo funcional, explicável e reprodutível,
+e não um novo algoritmo. Destacam-se quatro contribuições concretas. Primeira, uma metodologia
+documentada e reprodutível para \textbf{correlação notícia--mercado} que combina recuperação por
+embeddings de frase com janelas de impacto de estudo de evento, com escolhas explícitas de métrica de
+similaridade e horizonte e evitação explícita de lookahead. Segunda, o \textbf{InvestiGator}, um
+\textbf{sistema de alertas XAI-first} cuja cadeia de raciocínio inteira (deteção, evidência, fontes e
+precedentes) é exposta a um utilizador não-especialista e é fiel por construção. Terceira, um
+\textbf{modelo de triagem de materialidade} treinado e calibrado, rotulado pelo próprio código de
+estudo de evento do sistema sobre o corpus multi-ano, integrado nos alertas desligado por defeito como
+evidência ordenada e explicada, e continuamente pós-validado em produção contra os resultados que
+efetivamente se seguiram. Quarta, uma \textbf{avaliação crítica e honesta} de cada componente central
+contra linhas de base triviais, lexicais e de volatilidade sobre dados reais, incluindo duas
+comparações pré-comprometidas estatística-versus-aprendida que os métodos transparentes venceram; os
+resultados, ablações e limitações são todos reportados com clareza e regenerados a partir de scripts
+versionados.
+
+\section{Limitações}
+\label{sec:concl_limitations}
+
+Restam várias limitações, enunciadas com clareza:
+\begin{itemize}
+  \item \textbf{Corpus.} A avaliação de recuperação usou um corpus de notícias recente, de poucos
+        meses, de um serviço gratuito, o que limita a análise de impacto e torna os números de
+        recuperação, embora reais, preliminares. O estudo de triagem usou de facto o subconjunto
+        multi-ano do FNSPID, mas com catorze dos quinze tickers (a Meta está indexada sob o seu
+        símbolo antigo no corpus) e apenas o texto da manchete.
+  \item \textbf{Indicadores aproximados.} A relevância é aproximada por concordância de setor, e o
+        rótulo de anomalia é relativo à volatilidade, razão pela qual o argumento da taxa de disparo
+        sem rótulos tem primazia.
+  \item \textbf{Texto curto.} As notícias são representadas apenas por manchetes, o que limita a
+        semântica captada.
+  \item \textbf{Tema, não direção.} A similaridade por embeddings capta o tema, não a direção, pelo
+        que um agrupamento recuperado pode misturar movimentos de subida e de descida; o impacto médio
+        é evidência ao nível do tema, não um sinal direcional, razão pela qual os precedentes são
+        sempre mostrados individualmente.
+  \item \textbf{Sem estudo humano.} A utilidade para um investidor real ainda não foi medida.
+  \item \textbf{Por desenho.} O sistema não faz previsão de preços nem negociação, pelo que as
+        questões baseadas em lucro estão fora de âmbito, não por responder.
+\end{itemize}
+
+\section{Trabalho Futuro}
+\label{sec:concl_future}
+
+As limitações mapeiam diretamente em trabalho futuro, resumido na
+Figura~\ref{fig:limitations_future}.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize, >={Stealth[length=2.6mm]},
+  lim/.style={draw, rounded corners, align=left, text width=4.5cm, inner sep=4pt,
+              fill=orange!8, draw=orange!55, minimum height=1.05cm, anchor=west},
+  fut/.style={draw, rounded corners, align=left, text width=6.2cm, inner sep=4pt,
+              fill=green!9, draw=green!50!black, minimum height=1.05cm, anchor=west},
+]
+  \node[font=\small\bfseries, text=orange!65!black, anchor=west] at (0.1,0.95) {Limitação};
+  \node[font=\small\bfseries, text=green!45!black, anchor=west] at (5.4,0.95) {Passo concreto seguinte};
+  \node[lim] (l0) at (0,0) {Corpus recente, de poucos meses};
+  \node[fut] (f0) at (5.3,0) {Avaliar a recuperação no corpus FNSPID multi-ano (já reconstruído)};
+  \node[lim] (l1) at (0,-1.45) {Só manchetes (texto curto)};
+  \node[fut] (f1) at (5.3,-1.45) {Texto mais rico: corpo dos artigos e uma feature de sentimento};
+  \node[lim] (l2) at (0,-2.9) {Sem estudo humano de utilidade};
+  \node[fut] (f2) at (5.3,-2.9) {Pequeno estudo com rubrica: clareza, completude, acionabilidade (RQ3)};
+  \node[lim] (l3) at (0,-4.35) {Tema, não direção};
+  \node[fut] (f3) at (5.3,-4.35) {De-duplicar precedentes e sinalizar divergência de direção};
+  \draw[->, thick, black!55] (l0.east) -- (f0.west);
+  \draw[->, thick, black!55] (l1.east) -- (f1.west);
+  \draw[->, thick, black!55] (l2.east) -- (f2.west);
+  \draw[->, thick, black!55] (l3.east) -- (f3.west);
+\end{tikzpicture}
+\caption[As limitações mapeiam em trabalho futuro]{Cada limitação enunciada mapeia diretamente num
+passo concreto seguinte. Várias já viram uma primeira iteração do lado da produção (uma base de
+conhecimento viva maturada contra preços observados, sinalização explícita de divergência de direção,
+e uma cotação intradiária durante o horário de mercado), reportadas como seguimento de engenharia cuja
+avaliação formal fica para trabalho futuro.}
+\label{fig:limitations_future}
+\end{figure}
+
+\begin{itemize}
+  \item Avaliar a \emph{recuperação} no corpus FNSPID multi-ano. A própria base de conhecimento já foi
+        reconstruída a partir desse corpus (depois de os estudos de caso aqui terem sido congelados),
+        pelo que o trabalho em aberto é a avaliação: uma análise de impacto mais rica, com estatísticas
+        de dispersão e de consistência de direção sobre os precedentes multi-ano.
+  \item Realizar um pequeno estudo humano, aplicando uma rubrica de clareza, completude e
+        acionabilidade a um conjunto de alertas, para resolver a questão em aberto da utilidade (RQ3).
+  \item Atacar a lacuna de texto em aberto da RQ4: texto mais rico do que manchetes (corpo dos
+        artigos, sentimento financeiro como feature), o ticker em falta recuperado sob o seu símbolo
+        antigo, e o ciclo de pós-validação ao vivo a acumular decisões rotuladas frescas para
+        re-treino periódico; um tratamento por contextual-bandit do limiar do alerta é a extensão
+        aprendida natural.
+  \item Como produto, de-duplicar precedentes quase idênticos e sinalizar a divergência de direção
+        dentro de um agrupamento recuperado, complementando a ordenação por severidade que a triagem já
+        fornece contra os riscos de fadiga de alertas e de confiança excessiva do
+        Capítulo~\ref{chap:investigator}.
+\end{itemize}
+A produção ao vivo, depois de a avaliação ter sido congelada, já motivou uma primeira iteração de
+vários destes pontos: o sistema em produção faz agora crescer uma base de conhecimento \emph{viva} a
+partir das manchetes que varre (cada caso maturado contra preços observados dias depois), ordena os
+precedentes com um fator de decaimento por idade mostrando sempre a similaridade verdadeira e a idade
+de cada caso, sinaliza explicitamente a divergência de direção, e avalia o movimento do dia em curso a
+partir de uma cotação em tempo real durante o horário de mercado. A produção também ensinou a sua
+própria lição, reportada no Capítulo~\ref{chap:investigator}: uma única fonte de preços gratuita
+provou ser um ponto único de falha em infraestrutura alojada, e foi substituída por uma cadeia de
+fallback multi-fornecedor. Estas iterações do lado da produção reutilizam os componentes validados sem
+alterações e são aqui reportadas como seguimento de engenharia; a sua avaliação formal fica para
+trabalho futuro. Um ponto está já \emph{validado} em vez de especulativo: a comparação estendida do
+Estudo de Caso~1 mostrou que uma estimativa de volatilidade com ponderação exponencial melhora
+substancialmente a concordância do detetor com o indicador, pelo que adotá-la é uma mudança medida, de
+uma linha, à espera apenas de uma decisão de explicabilidade. Em conjunto, estas mudanças transformariam
+um protótipo sólido num sistema mais exaustivamente validado, sem abdicar da simplicidade e
+transparência que o tornam defensável.
