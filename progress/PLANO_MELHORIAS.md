@@ -49,10 +49,11 @@ Números/citações/labels/estrutura idênticos; só a língua muda. Gráficos d
 (`eval_*.pdf`) ficam EN nas duas (autorizado; legenda/caption traduzidas). Qualquer alteração
 a uma língua É espelhada na outra no mesmo commit. Verificar sempre: as duas compilam 0 erros e
 têm a MESMA contagem de secções/figuras/tabelas.
-**Estado (2026-07-25):** **ch1 + frontmatter + ch6 TRADUZIDOS** (ch6 feito nesta sessão, PR #1:
-inclui as 2 figuras novas traduzidas; labels/refs/math byte-iguais; thesis-pt compila 43 pp,
-0 erros; verificado ao render). **Faltam ch2 / ch3 / ch4 / ch5** (scaffolds; EN: ch2 27k /
-ch3 46k / ch4 27k / ch5 41k caracteres). **Padrão de tradução PROVADO** (ver ch6): traduzir
+**Estado (2026-07-25):** **ch1 + ch2 + ch6 + frontmatter TRADUZIDOS** + **slides de defesa PT**
+(`slides/main-pt.tex`). ch2/ch6 feitos nesta sessão (labels/refs/citações byte-iguais — diff
+vazio; figuras/tabelas traduzidas incl. as novas; thesis-pt compila **53 pp, 0 erros**;
+verificado ao render). **Faltam ch3 / ch4 / ch5** (scaffolds; EN: ch3 46k / ch4 27k / ch5 41k
+caracteres — os maiores; ch3/ch5 têm figuras novas a espelhar). **Padrão de tradução PROVADO** (ver ch6): traduzir
 prosa + captions + texto de figuras TikZ + células de tabela; manter labels/refs/citações/math/
 números idênticos; ajustar só o espaçamento de figuras ao texto PT mais longo; compilar +
 verificar render + `diff` dos labels vazio.
