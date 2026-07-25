@@ -390,10 +390,36 @@ negative (a competitive-threat cluster), and their average is reported as an obs
 prediction. The alert ends with an explicit disclaimer, keeping the system within its no-forecasting
 scope.
 
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  xbar, bar width=11pt, width=11.5cm, height=5.4cm,
+  enlarge y limits=0.18, xmin=-4.2, xmax=0.4,
+  xlabel={Observed 1-day move after each retrieved precedent (\%)},
+  ytick={1,2,3,4,5},
+  yticklabels={NVDA \, $-1.64$, GOOGL \, $-0.46$, META \, $-2.65$, NVDA \, $-1.64$, MSFT \, $-3.46$},
+  y tick label style={font=\small}, xtick={-4,-3,-2,-1,0},
+]
+  \addplot[fill=red!45, draw=red!65] coordinates {(-1.64,1) (-0.46,2) (-2.65,3) (-1.64,4) (-3.46,5)};
+  \draw[dashed, thick, black!70] (axis cs:-1.97,0.4) -- (axis cs:-1.97,5.65);
+  \node[above, font=\scriptsize, fill=white, inner sep=1pt] at (axis cs:-1.97,5.65)
+       {average $-1.97\%$};
+\end{axis}
+\end{tikzpicture}
+\caption[Same theme, opposite direction]{The theme-versus-direction lesson on one real alert. The query
+headline \emph{``Nvidia raises guidance on surging demand for AI data-centre accelerators''} reads
+clearly positive, yet the five most similar past headlines all belong to an AI-chip competitive-threat
+theme and every one fell the next day (average $-1.97\%$, dashed). Retrieval matches \emph{meaning}, not
+sentiment or direction, so the reported average is evidence about how a theme has moved, never a forecast
+for this item. Values from the worked alert above.}
+\label{fig:theme_direction}
+\end{figure}
+
 \paragraph{What the retrieval does and does not capture.}
 This example also exposes an honest limitation. The query headline reads as positive (guidance raised),
 yet the precedents it retrieves form a competitive-threat cluster whose one-day outcomes are uniformly
-negative. There is no contradiction once the mechanism is clear: sentence-embedding similarity matches on
+negative (Figure~\ref{fig:theme_direction}). There is no contradiction once the mechanism is clear: sentence-embedding similarity matches on
 \emph{theme}, here ``AI data-centre chips'', and not on sentiment or expected direction. The mean impact
 the alert reports is therefore evidence about how a theme has tended to move, not a directional forecast
 for this particular item, which is exactly why the alert always lists the individual precedents and closes

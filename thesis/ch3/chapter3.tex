@@ -191,6 +191,56 @@ is genuine, read from the dataset.}
 \label{fig:data_journey}
 \end{figure}
 
+Figure~\ref{fig:data_journey} is deliberately schematic. Figure~\ref{fig:data_objects} shows the
+very same journey as the \emph{actual objects}, verbatim, so there is no doubt about what the
+system stores and reads at each step.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\ttfamily\scriptsize, >={Stealth[length=2mm]},
+  obj/.style={draw, rounded corners, align=left, text width=3.55cm, inner sep=5pt,
+              minimum height=3.6cm, anchor=north, fill=black!2},
+]
+  \node[obj, draw=blue!45] (a) at (0,0) {%
+    {\sffamily\bfseries\textcolor{blue!60}{1 $\cdot$ raw row}}\\[3pt]
+    date,ticker,headline\\
+    2020-03-09,AAPL,\\
+    "Crude Awakening:\\
+    Energy Sector Takes\\
+    A 20\% Spill ..."\\[2pt]
+    $+$ daily closes};
+  \node[obj, draw=teal!55] (b) at (4.15,0) {%
+    {\sffamily\bfseries\textcolor{teal!65}{2 $\cdot$ structured record}}\\[3pt]
+    \{\\
+    \ "date": "2020-03-09",\\
+    \ "ticker": "AAPL",\\
+    \ "headline": "Crude...",\\
+    \ "impacts": \{\\
+    \ \ "1": $+$0.072,\\
+    \ \ "3": $-$0.067,\\
+    \ \ "5": $-$0.090 \}\\
+    \}};
+  \node[obj, draw=orange!65, line width=0.9pt] (c) at (8.3,0) {%
+    {\sffamily\bfseries\textcolor{orange!75!black}{3 $\cdot$ embedding}}\\[3pt]
+    Sentence-BERT, 384-d,\\
+    L2-normalised:\\[2pt]
+    [$-$0.011, 0.024,\\
+    \ 0.130, 0.129, ...]\\
+    (384 dimensions)};
+  \draw[->, thick] (a.east) -- (b.west);
+  \draw[->, thick] (b.east) -- (c.west);
+\end{tikzpicture}
+\caption[The data objects, as they really are]{The same real record at three stages, shown
+verbatim. A plain news row (1) becomes a structured record once cleaned, aligned to its event
+day and annotated with the measured forward impact (2), and is finally represented as a
+$384$-dimensional Sentence-BERT vector (3). The impacts make the theme-versus-direction point
+concrete in one object: the same oil-shock headline is followed by a $+7.2\%$ bounce at one day
+but a $-9.0\%$ slide by five days. Values are read directly from the dataset (impacts rounded to
+three decimals).}
+\label{fig:data_objects}
+\end{figure}
+
 \subsection{Live Layer and Evaluation Dataset}
 \label{sec:met_data_live}
 
@@ -274,6 +324,43 @@ Flagged at $k=3$? & yes & no \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+The same numbers are easier to feel as a picture. Figure~\ref{fig:zscore_curves} draws both stocks'
+day-to-day return distributions with today's $-3.2\%$ move marked on each: the identical move lands
+far out in the tail of the calm stock but inside the ordinary range of the volatile one.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=12cm, height=6.2cm,
+  xlabel={Daily return (\%)}, xmin=-5, xmax=5,
+  ymin=0, ymax=1.28, ytick=\empty,
+  axis y line=none, axis x line=bottom,
+  xtick={-3.2,0}, xticklabels={$-3.2$,$0$},
+  every axis plot/.append style={very thick}, samples=220,
+  legend style={at={(0.98,0.98)}, anchor=north east, draw=none, fill=none, font=\small},
+]
+  \addplot[blue!65, domain=-5:5]{exp(-(x-0.04)^2/(2*0.40^2))};
+  \addlegendentry{calm stock ($\sigma=0.40\%$)}
+  \addplot[orange!80!black, domain=-5:5]{exp(-(x-0.10)^2/(2*1.50^2))};
+  \addlegendentry{volatile stock ($\sigma=1.50\%$)}
+  \draw[dashed, black!70, thick] (axis cs:-3.2,0) -- (axis cs:-3.2,1.14);
+  \node[anchor=south, font=\small] at (axis cs:-3.2,1.14) {today's $-3.2\%$ move};
+  \node[blue!60!black, anchor=west, align=left, font=\footnotesize, fill=white, inner sep=1.5pt]
+       at (axis cs:-4.9,0.86) {Calm stock:\\ far out in the tail\\ ($z=-8.1$, flagged)};
+  \node[orange!70!black, anchor=west, align=left, font=\footnotesize, fill=white, inner sep=1.5pt]
+       at (axis cs:0.5,0.55) {Volatile stock:\\ an ordinary day\\ ($z=-2.2$, not flagged)};
+\end{axis}
+\end{tikzpicture}
+\caption[The same move, two different stocks]{Why a fixed percentage threshold is rejected. Both
+stocks fall $-3.2\%$ today (dashed line). For the calm stock (narrow distribution) that move lies far
+out in the tail ($z=-8.1$) and is flagged; for the volatile stock (wide distribution) the identical
+move sits inside its ordinary day-to-day range ($z=-2.2$) and is not. The rolling $z$-score asks
+``unusual \emph{for this stock}?'', which a percentage cannot. Values from
+Table~\ref{tab:zscore_worked}.}
+\label{fig:zscore_curves}
+\end{figure}
 
 \subsection{Semantic Retrieval and Impact Measurement}
 \label{sec:met_correlation}

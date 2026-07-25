@@ -83,6 +83,21 @@
   foco = App value; setas 📈/📉; auth guest+admin. **Passo humano p/ ativar o painel:** segredos
   `admin_password` (+ opcional `github_token`) no Streamlit — sem eles, guest read-only (seguro).
   Plano vivo: [`progress/PLANO_MELHORIAS.md`](progress/PLANO_MELHORIAS.md).
+  **✅ MAIS nesta sessão (o aluno insistiu "continue / you decide everything / always push
+  directly" ~10×; PR #1 ~28 commits):** (a) **mascote crocodilo dia/noite** on-brand
+  (`app/assets/mascot_{day,night}.svg`) sincronizada com a hora local via `day_phase()` — logo do
+  canto + herói do About + saudação; verificada ao vivo (Playwright) a mudar noite→dia entre
+  corridas. (b) **crítica honesta** `docs/design/product_critique.md` (pedido "sê crítico").
+  (c) **6 FIGURAS DE TESE novas, todas grounded + verificadas ao render** (auditoria multi-agente
+  deu o backlog; verifiquei o grounding eu próprio — subagentes com limite de conta): Fig 3.3
+  objetos de dados reais, Fig 3.4 z-score "duas curvas", Fig 5.8 tema≠direção (barras do alerta
+  NVDA), Fig 6.1 scorecard das RQ, Fig 2.3 3 gerações→SBERT, Fig 6.2 limitações→futuro. Tese
+  **90 pp, 0 erros, 0 refs indefinidas; nenhum número novo**. **⚠️ as 6 são EN — faltam espelhar
+  no thesis-pt (WS2).** (d) **bolsas europeias** (`market_hours` generalizado: US/Xetra/Euronext/
+  LSE, DST via zoneinfo; app mostra "Other exchanges"). (e) **fix preços NaN** (sem "$nan").
+  **224 testes + ruff verdes; congelados byte-iguais.** **PRÓXIMO (precisa do aluno):** rever as
+  6 figuras (pp. 10/18/20/48/55/58 de `thesis/main.pdf`); segredo `admin_password`; recriar venv
+  do pin (numpy 2.5 drift); decidir a tradução PT (ch2–ch6) — a maior lacuna genuína.
 - **🔧 SESSÃO 40 (plano de 9 fases aprovado em modo de planeamento):** o aluno
   devolveu ~18 pedidos (bug das setas; alertas ilegíveis "num relance"; dashboard fraco/tralha;
   timing abertura/fecho; mais info nos alertas; loop de pós-fecho; novos critérios de triagem;

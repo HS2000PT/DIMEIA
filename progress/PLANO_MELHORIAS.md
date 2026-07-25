@@ -35,7 +35,13 @@ notas `\texttt{scripts/…py}`. Contagem "199 tests" desatualizada (agora 202).
 apêndice PT é scaffold, sincroniza-se na tradução.
 **Estado:** ⬜ a fazer nesta fase.
 
-## WORKSTREAM 2 — Tese bilingue EN ↔ PT-PT (REGRA + tradução) 🔴
+## WORKSTREAM 2 — Bilingue EN ↔ PT-PT (tese + SLIDES) (REGRA + tradução) 🔴
+**REGRA estendida (2026-07-25, pedido do aluno):** a sincronia bilingue inclui os SLIDES DE
+DEFESA. `slides/main.tex` (EN) ↔ `slides/main-pt.tex` (PT-PT, feito nesta sessão: mesmo
+diretório → figuras/logos resolvem; 19 frames == EN; compila 0 erros; verificado ao render). O
+guia de estudo (`slides/guia_estudo/`) já é PT-PT. Qualquer alteração a um deck espelha-se no
+outro. **Build:** `cd slides && latexmk -pdf main-pt.tex`.
+
 **REGRA (agora explícita, ver CLAUDE.md "Decisões Confirmadas"):** existem DUAS teses com o
 MESMO conteúdo — `thesis/` (EN-GB) e `thesis-pt/` (PT-PT), tradução PURA, MESMO estilo de
 escrita, tudo em sincronia (prosa, legendas, texto de figuras TikZ, tabelas, front matter).
@@ -43,8 +49,16 @@ Números/citações/labels/estrutura idênticos; só a língua muda. Gráficos d
 (`eval_*.pdf`) ficam EN nas duas (autorizado; legenda/caption traduzidas). Qualquer alteração
 a uma língua É espelhada na outra no mesmo commit. Verificar sempre: as duas compilam 0 erros e
 têm a MESMA contagem de secções/figuras/tabelas.
-**Estado medido (2026-07-24):** só **ch1 + frontmatter TRADUZIDOS**; **ch2–ch6 são scaffolds
-vazios** no thesis-pt (EN: ch2 27k / ch3 46k / ch4 27k / ch5 41k / ch6 9k caracteres → PT ~0).
+**Estado (2026-07-25):** **ch1 + ch2 + ch4 + ch6 + APÊNDICE + frontmatter TRADUZIDOS** + **slides
+de defesa PT** (`slides/main-pt.tex`). ch2/ch4/ch6/apêndice feitos nesta sessão (labels/refs/
+citações byte-iguais — diff vazio; figuras/tabelas/diagramas traduzidos, incl. a sidewaysfigure
+master_pipeline; thesis-pt compila **64 pp, 0 erros**). **Faltam ch3 / ch5** (scaffolds; EN:
+ch3 46k / ch5 41k caracteres — os dois maiores; ambos têm figuras novas a espelhar). **⚠️ 3 ??
+transitórios** (eq:zscore, sec:met_triage, tab:triage_worked → todos em ch3) — resolvem quando
+ch3 for traduzido. **Próximo: ch3** (o maior; limpa os 3 ?? + espelha Fig 3.3/3.4 novas), depois ch5. **Padrão de tradução PROVADO** (ver ch6): traduzir
+prosa + captions + texto de figuras TikZ + células de tabela; manter labels/refs/citações/math/
+números idênticos; ajustar só o espaçamento de figuras ao texto PT mais longo; compilar +
+verificar render + `diff` dos labels vazio.
 Também: **há PT-PT à mistura no EN** — pelo menos o resumo PT no `thesis/frontmatter` (isso é
 esperado: o resumo PT faz parte do front matter EN) — VERIFICAR se há prosa PT no corpo EN.
 **Fazer (por capítulo, com pausa de verificação):**
@@ -184,9 +198,33 @@ Estes ficam DESENHADOS no plano; construção faseada e só com decisão do alun
   herói do About + saudação do "investigador" sensíveis à hora. Verificado ao vivo (Playwright):
   renderiza, mantém o toggle de tema. **Crítica honesta** em `docs/design/product_critique.md`.
   **Também:** About sem nomes de scripts/ficheiros (integridade, coerente com o apêndice).
-  **⏳ Ainda em aberto (para escolher):** figuras de snapshot de dados na tese (WS3); tradução
-  PT ch2–ch6 (WS2); mais bolsas europeias; chatbot-mascote (WS6). Bolsa europeia primeiro:
-  decisão do aluno.
+- **✅ WS3 figuras de tese (4 novas, PR #1, todas verificadas ao render + grounded):**
+  (1) **Fig 3.3 "objetos de dados reais"** — bruto→registo→embedding (AAPL 2020-03-09 "Crude
+  Awakening"; impactos +7,2%/−6,7%/−9,0%). (2) **Fig 3.4 "duas curvas" do z-score** — calma vs
+  volátil, mesmo −3,2% na cauda vs no corpo (z=−8,1 vs −2,2), da Tabela 3.2. (3) **Fig 5.8
+  "tema≠direção"** — barras dos 5 precedentes reais do alerta NVDA positivo, todas vermelhas
+  (média −1,97%). (4) **Fig 6.1 "scorecard das RQ"** — 4 veredictos honestos (verde/amarelo) +
+  um número cada. (5) **Fig 2.3 "3 gerações de texto → SBERT"** — escada Lexicons/word2vec/BERT/
+  Sentence-BERT (a escolha, ★). (6) **Fig 6.2 "limitações → trabalho futuro"** — mapa de 2
+  colunas. Tese 90 pp, 0 erros; todas grounded + verificadas ao render (pp. 10/18/20/48/55/58).
+  **⚠️ falta espelhar as 6 no thesis-pt (WS2, quando ch2/ch3/ch5/ch6 forem traduzidos).**
+  **Auditoria multi-agente** deu um
+  BACKLOG de figuras grounded (verificação bateu no limite da conta, reset 05:30 Lisboa) —
+  candidatas fortes por implementar (verificar grounding eu próprio antes):
+  ch5 "tema≠direção (notícia positiva → precedentes negativos)"; ch6 "scorecard dos veredictos
+  das RQ"; ch4 "a vida de um alerta pelos gates"; ch5 "4 estudos de caso num relance";
+  ch2 "3 gerações de representação de texto → SBERT"; ch3 "split cronológico com embargo".
+  **Espelhar no thesis-pt quando o ch3 for traduzido (WS2).**
+- **✅ Bolsas europeias (FEITO, PR #1):** `market_hours` generalizado (Exchange + EXCHANGES:
+  US/Xetra/Euronext/LSE; `exchange_status` DST via zoneinfo com abreviatura de fuso dinâmica;
+  `all_exchange_status`; `us_market_status` = wrapper compat). App mostra a pílula US + "Other
+  exchanges: 🟢/🔴 Xetra · Euronext · London". As europeias são informativas (watchlist = US).
+  **+ robustez:** preços NaN degradam com graça (sem "$nan"; `closes.dropna()`). Verificado ao
+  vivo (Playwright): pílula multi-bolsa + mascote DIA (sincronia dia/noite confirmada a mudar
+  entre corridas). 224 testes + ruff verdes.
+  **⏳ Ainda em aberto (para escolher):** resto do backlog de figuras (ch5 4-casos, ch3 split,
+  ch6 limitações→futuro, ch4 vida-de-alerta); tradução PT ch2–ch6 (WS2) + espelhar as 5 figuras
+  novas; alertas multi-bolsa (dados de preços europeus); chatbot-mascote (WS6).
 
 ## Ordem de execução proposta
 **Fase 1 (já):** WS1 (integridade do apêndice) + WS4-1 (setas verdes) + WS4-2 (estado do

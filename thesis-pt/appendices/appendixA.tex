@@ -1,5 +1,231 @@
-% Apêndice A - Reprodutibilidade (PT-PT). STUB — tradução por fazer.
-\chapter{Reprodutibilidade e Prova de Trabalho}
+% Apêndice A - Reprodutibilidade (PT-PT; espelho de ../thesis/appendices/appendixA.tex)
+% Tradução pura: labels/refs/citações/números/estrutura idênticos; só a língua muda.
+
+\chapter{Reprodutibilidade}
 \label{app:reproducibility}
 
-\emph{[Tradução em curso. O conteúdo deste apêndice espelha \texttt{../thesis/appendices/appendixA.tex}.]}
+Este apêndice reúne o material que permite reproduzir e inspecionar os resultados: o ambiente de
+software, os dados em cada fase, e as saídas de avaliação por detrás dos números reportados no corpo.
+
+\section{Ambiente}
+\label{app:repro_env}
+
+O sistema é implementado em Python~3.12, escolhido pela maturidade dos seus pacotes para a stack de
+aprendizagem automática. As dependências são fixadas e congeladas num ficheiro de lock para que o
+ambiente possa ser recriado entre máquinas. O tratamento numérico e de dados assenta em bibliotecas
+open-source estabelecidas; os embeddings de frase usam a framework Sentence-BERT sobre uma build CPU da
+biblioteca de deep learning subjacente, instalada a partir de um índice dedicado para evitar o download de
+GPU muito maior; as figuras são produzidas com uma biblioteca de plotting padrão. A
+Tabela~\ref{tab:repro_versions} lista as versões fixadas das dependências centrais; o conjunto completo
+está congelado no ficheiro de lock do repositório.
+
+\begin{table}[ht]
+\caption{Versões fixadas das dependências centrais (Python~3.12).}
+\label{tab:repro_versions}
+\centering
+\begin{tabular}{l l}
+\toprule
+\tabhead{Biblioteca} & \tabhead{Versão} \\
+\midrule
+numpy & 2.1.3 \\
+pandas & 2.2.3 \\
+matplotlib & 3.11.0 \\
+scikit-learn & 1.9.0 \\
+yfinance & 1.4.1 \\
+sentence-transformers & 5.6.0 \\
+transformers & 5.12.1 \\
+torch (build CPU) & 2.12.1 \\
+pytest & 8.3.4 \\
+ruff & 0.8.6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Organização do Repositório}
+\label{app:repro_repo}
+
+O código está organizado como um pacote por componente, espelhando a arquitetura da
+Figura~\ref{fig:architecture}: dados de mercado, recuperação de notícias, deteção de anomalias, o motor de
+correlação (similaridade e estudo de evento), a base de conhecimento histórica, o motor de explicação e a
+entrega de alertas, com uma pequena camada de orquestração a ligá-los nos dois fluxos de ponta a ponta. A
+lógica pura é separada da entrada/saída, e as dependências pesadas ou de rede são carregadas de forma
+tardia, pelo que o núcleo numérico é testado unitariamente sem ligação de rede nem a stack de modelos. Os
+segredos são lidos apenas de um ficheiro de ambiente local e ignorado, e nunca são escritos em ficheiros
+versionados.
+
+\section{A Pipeline Completa numa Página}
+\label{app:repro_pipeline}
+
+O corpo da dissertação apresenta deliberadamente o sistema através de vários diagramas pequenos e simples
+(arquitetura, modelo de dados, fluxos por gatilho, a vida de um alerta). A Figura~\ref{fig:master_pipeline}
+é a vista oposta, mantida no apêndice precisamente por ser densa: a pipeline \emph{completa} em produção
+numa única página em paisagem, com cada porta e o seu valor de configuração de produção anotado. Cada valor
+é um parâmetro de implantação divulgado (a avaliação do Capítulo~\ref{chap:casestudies} congela as suas
+próprias definições, mais estritas, como notado na figura).
+
+\begin{sidewaysfigure}[p]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=2mm]},
+  box/.style={draw, rounded corners, align=center, minimum height=0.78cm, inner sep=2.5pt},
+  db/.style={box, fill=black!8},
+  pr/.style={box, fill=black!3},
+  gate/.style={box, dashed, fill=yellow!8},
+  dlv/.style={box, fill=black!14},
+  note/.style={font=\tiny, text=black!55, align=center},
+  lane/.style={font=\itshape\scriptsize, text=black!55, anchor=west},
+]
+  % ── faixa: KB offline (topo) ───────────────────────────────────────────
+  \node[lane] at (-0.4,12.9) {construção offline};
+  \node[db]  (o1) at (1.6,12.2)  {FNSPID 2018--23\\ notícias $+$ preços};
+  \node[pr]  (o2) at (5.0,12.2)  {alinhar ao dia do evento;\\ medir $+1/+3/+5$\,d};
+  \node[pr]  (o3) at (8.4,12.2)  {embed\\ (MiniLM, $384$-d)};
+  \node[db]  (kb) at (11.6,12.2) {KB histórica};
+  \draw[->] (o1)--(o2); \draw[->] (o2)--(o3); \draw[->] (o3)--(kb);
+
+  % ── faixa: KB viva ─────────────────────────────────────────────────────
+  \node[lane] at (-0.4,10.6) {KB viva};
+  \node[pr]  (l1) at (5.0,10.0)  {caso pendente\\ (embebido na captura)};
+  \node[gate](l2) at (8.4,10.0)  {maturar: idade $\ge 8$\,d\\ e barra $+5$\,d observável};
+  \node[db]  (l3) at (11.6,10.0) {KB viva};
+  \draw[->] (l1)--(l2); \draw[->] (l2)--(l3);
+
+  % ── faixa: gatilho de notícias ─────────────────────────────────────────
+  \node[lane] at (-0.4,8.4) {gatilho de notícias};
+  \node[db]  (n1) at (1.6,7.7)  {notícias de empresa\\ (Finnhub, varredura 7 dias)};
+  \node[gate](n2) at (5.0,7.7)  {relevância: nomeia a\\ empresa; sem boilerplate};
+  \node[gate](n3) at (8.4,7.7)  {fresca\\ $\le 2$ dias};
+  \node[pr]  (n4) at (11.6,7.7) {recuperar top-3:\\ cosseno $\times\,0.5^{\text{idade}/120\text{d}}$};
+  \node[gate](n5) at (14.8,7.7) {chão: melhor\\ cosseno $\ge 0.45$};
+  \node[gate](n6) at (17.9,7.7) {triagem LR $+$ Platt\\ $p \ge 0.5$};
+  \draw[->] (n1)--(n2); \draw[->] (n2)--(n3); \draw[->] (n3)--(n4);
+  \draw[->] (n4)--(n5); \draw[->] (n5)--(n6);
+  \draw[->] (n2) -- node[right, note]{captura} (l1);
+  \draw[->] (kb) -- (n4);
+  \draw[->] (l3) -- (n4);
+
+  % ── faixa: gatilho de mercado (fecho) ──────────────────────────────────
+  \node[lane] at (-0.4,5.9) {gatilho de mercado (fecho)};
+  \node[db]  (m1) at (1.6,5.2)  {fechos diários:\\ yfinance $\to$ Tiingo $\to$\\ Polygon $\to$ Stooq $\to$ AV};
+  \node[gate](m2) at (5.0,5.2)  {barra fresca\\ (sessão de hoje)};
+  \node[gate](m3) at (8.4,5.2)  {$|z| > 1.5$ vs norma 20-d\\ \tiny (aval.\ congela $3.0$)};
+  \node[pr]  (m4) at (11.6,5.2) {severidade: notable $\ge$1.5\\ strong $\ge$2 · extreme $\ge$3};
+  \node[pr]  (m5) at (14.8,5.2) {verificação de setor\\ (pares do mesmo dia)};
+  \node[pr]  (m6) at (17.9,5.2) {investigar cruzado:\\ notícia explicativa (48\,h)};
+  \draw[->] (m1)--(m2); \draw[->] (m2)--(m3); \draw[->] (m3)--(m4);
+  \draw[->] (m4)--(m5); \draw[->] (m5)--(m6);
+
+  % ── faixa: gatilho de mercado (intradiário) ────────────────────────────
+  \node[lane] at (-0.4,3.4) {gatilho de mercado (intradiário)};
+  \node[gate](i1) at (1.6,2.7)  {sessão US?\\ Seg--Sex 13:00--21:30 UTC};
+  \node[db]  (i2) at (5.0,2.7)  {cotação ao vivo\\ (Finnhub, tempo real)};
+  \node[pr]  (i3) at (8.4,2.7)  {retorno em curso vs\\ norma 20-d (dias completos)};
+  \draw[->] (i1)--(i2); \draw[->] (i2)--(i3);
+  \draw[->] (i3) -- (m4);
+
+  % ── saídas (direita) ───────────────────────────────────────────────────
+  \node[gate](dd) at (20.9,6.5) {dedup $+$ tetos:\\ 1 mercado/ticker/dia;\\ $\le 2$ notícias/ticker/dia};
+  \node[pr]  (ex) at (20.9,4.4) {motor de explicação\\ \tiny (factos $+$ método $+$\\ \tiny cláusula de não-previsão)};
+  \node[dlv] (tg) at (20.9,2.6) {canal Telegram\\ $+$ subscritores do bot};
+  \node[dlv] (hi) at (17.9,1.0) {histórico partilhado\\ (branch de dados)};
+  \node[dlv] (da) at (14.8,1.0) {dashboard público\\ (lê, nunca recalcula)};
+  \draw[->] (n6.east) -- (dd.west);
+  \draw[->] (m6.east) -- (dd.west);
+  \draw[->] (dd)--(ex); \draw[->] (ex)--(tg);
+  \draw[->] (tg.south) |- (hi.east);
+  \draw[->] (hi)--(da);
+
+  % ── resumo diário ──────────────────────────────────────────────────────
+  \node[pr] (su) at (11.6,3.9) {resumo diário\\ (1.ª corrida $\ge$ 21:00 UTC)};
+  \draw[->] (m3.south) |- (su.west);
+  \draw[->] (su.east) -- (ex.west);
+
+  % legenda
+  \node[gate, minimum height=0.5cm] (lg1) at (1.6,0.6) {\tiny porta (descarta itens)};
+  \node[pr, minimum height=0.5cm, right=3mm of lg1] (lg2) {\tiny cálculo};
+  \node[db, minimum height=0.5cm, right=3mm of lg2] (lg3) {\tiny fonte de dados};
+  \node[dlv, minimum height=0.5cm, right=3mm of lg3] (lg4) {\tiny entrega};
+\end{tikzpicture}
+\caption[A pipeline completa em produção, com cada porta anotada]{A pipeline completa em produção numa
+página: as bases de conhecimento offline e viva, o gatilho de notícias com as suas cinco portas de
+qualidade, os gatilhos de mercado de fecho e intradiário com a cadeia de fallback de preços
+multi-fonte, e as saídas partilhadas. As caixas tracejadas são portas que descartam itens; os valores
+anotados (limiares, tetos, half-life de decaimento) são a configuração de produção divulgada, distinta das
+definições de avaliação congeladas do Capítulo~\ref{chap:casestudies}. Os capítulos do corpo apresentam o
+mesmo sistema como várias vistas mais simples; esta figura existe para que nenhuma fase fique implícita.}
+\label{fig:master_pipeline}
+\end{sidewaysfigure}
+
+\section{Testes e Resultados Reprodutíveis}
+\label{app:repro_tests}
+
+O sistema é coberto por uma suíte de testes automáticos que abrange o detetor de anomalias, o estudo de
+evento, a similaridade, a base de conhecimento, o parser de notícias, o motor de explicação e os módulos de
+avaliação, juntamente com um smoke test offline de ponta a ponta do gatilho de notícias. Os testes que
+exigem acesso à rede ou modelos pesados são marcados e excluídos da corrida por defeito para que esta seja
+rápida, determinística e offline.
+
+Cada resultado experimental do Capítulo~\ref{chap:casestudies} é regenerado por um procedimento
+determinístico de semente fixa que escreve as suas tabelas e figuras diretamente nos diretórios de
+avaliação e de figuras, pelo que o ciclo entre computação e documento é fechado e auditável. Cada um dos
+quatro estudos de caso tem um desses procedimentos --- a recuperação de precedentes e a sua decomposição
+por setor, a taxa de disparo de anomalias e a ablação de janela, a comparação de detetores
+estatístico-versus-aprendido, e a construção e treino do conjunto de dados de triagem de materialidade ---
+e a decomposição de triagem trabalhada, a projeção do espaço de embeddings e o funil de produção são
+produzidos da mesma forma. Cada número de destaque no corpo é o valor escrito por um destes procedimentos;
+nenhum é digitado à mão. O passo de obtenção de dados que os precede, e a construção completa da base de
+conhecimento histórica, seguem a mesma receita determinística.
+
+\section{Prova de Trabalho: Cada Número Rastreado à Sua Fonte}
+\label{app:repro_proof}
+
+Nenhum resultado nesta dissertação é digitado à mão. Cada número é escrito pelo seu procedimento
+determinístico num registo de resultados congelado, e a tese cita esse registo verbatim, pelo que o ciclo
+entre computação e documento é fechado e auditável. A Tabela~\ref{tab:proof_of_work} reúne cada resultado de
+destaque com o valor como reportado e o estudo de caso a que pertence; cada um pode ser regenerado, e
+verificado, isoladamente.
+
+\begin{table}[ht]
+\caption{Cada resultado de destaque, o seu valor reportado, e o estudo a que pertence.}
+\label{tab:proof_of_work}
+\centering
+\small
+\begin{tabular}{p{7.0cm} l l}
+\toprule
+\tabhead{Resultado} & \tabhead{Valor} & \tabhead{Estudo} \\
+\midrule
+Recuperação de precedentes, precisão@5 (MiniLM / MPNet / lexical) & 0.514 / 0.538 / 0.346 & CS2 \\
+Deteção de anomalias, $F_1$ (z-score vs limiar fixo) & 0.516 vs 0.218 & CS1 \\
+Regra estatística vs detetores aprendidos, $F_1$ (z-score / IF / LOF) & 0.530 / 0.269 / 0.280 & CS1 \\
+Volatilidade EWMA (futuro validado), $F_1$ vs deslizante & 0.664 vs 0.516 & CS1 \\
+Triagem de materialidade, PR-AUC (volatilidade / contexto / completo) & 0.542 / 0.538 / 0.496 & CS4 \\
+Precisão@5 da triagem por dia vs alertar-sempre & 0.632 vs 0.163 & CS4 \\
+Ablação de features estendida, PR-AUC (contexto $+$ 5 sinais) & 0.535 ($\Delta{-}0.002$) & CS4 \\
+Decisão de triagem trabalhada (META, 12 Jul 2026) & $p = 0.539$ (54\%) & CS4 \\
+Seletividade de produção (manchetes : alertas enviados) & 22\,:\,1 & CS2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{O sistema correu mesmo.} Para além da reprodutibilidade a pedido, o InvestiGator operou ao vivo.
+Um workflow agendado varreu a watchlist após cada fecho do mercado dos EUA e entregou alertas explicados a
+um canal público de Telegram; o registo de alertas partilhado e versionado acumulou dezenas de alertas
+reais, incluindo a primeira anomalia de mercado genuína (NVDA, 13~de~julho~de~2026). A base de conhecimento
+viva maturou as suas manchetes capturadas contra os preços reais que se seguiram, e o ciclo de
+pós-validação rotulou decisões passadas reais com o seu resultado observado, reportando uma precisão de
+alertas mantidos de $0.667$ contra uma taxa-base de $0.455$ --- evidência fora da amostra de que o mecanismo
+de triagem se sustenta. Uma grande suíte automática de testes, offline e determinística, corre em cada push
+através de integração contínua, e o trabalho está registado ao longo de mais de duzentos commits. Números
+regeneráveis, uma implantação ao vivo e uma suíte de testes verde são, em conjunto, a prova de trabalho da
+dissertação.
+
+\section{Dados e Atribuição}
+\label{app:repro_data}
+
+Os ficheiros de dados grandes nunca são versionados; são recriados pelos scripts de dados, e apenas
+pequenas amostras são commitadas. Os modelos de triagem treinados são a exceção por desenho: são pequenos,
+pelo que os bundles ajustados são versionados no repositório juntamente com metadados JSON (janela de
+treino, semente, limiar e métricas), o que torna o próprio modelo em produção inspecionável e reprodutível.
+O conjunto de dados FNSPID \autocite{dong2024fnspid} é usado sob a sua licença CC~BY-SA~4.0, com atribuição
+conforme exigido; os serviços de dados de mercado e de notícias ao vivo são usados dentro das suas camadas
+gratuitas.

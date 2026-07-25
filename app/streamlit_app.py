@@ -274,11 +274,15 @@ def _market_state_pill() -> None:
     """Estado da sessão US ao vivo (🟢 aberto / 🔴 fechado) com contagem para a próxima
     mudança. Refresca com o fragmento `_live_view` (run_every). Fail-open: nunca derruba."""
     try:
-        from investigator.market_data.market_hours import us_market_status
+        from investigator.market_data.market_hours import all_exchange_status
 
-        s = us_market_status()
-        dot = "🟢" if s.is_open else "🔴"
-        st.markdown(f"{dot} **US market {s.label.lower()}** · {s.detail}")
+        rows = all_exchange_status()
+        _us_ex, us_s = rows[0]
+        dot = "🟢" if us_s.is_open else "🔴"
+        st.markdown(f"{dot} **US market {us_s.label.lower()}** · {us_s.detail}")
+        outros = " · ".join(f"{'🟢' if s.is_open else '🔴'} {ex.name}" for ex, s in rows[1:])
+        if outros:
+            st.caption(f"Other exchanges: {outros}")
     except Exception:  # noqa: BLE001 — um indicador nunca pode partir a página
         pass
 
@@ -436,13 +440,15 @@ def _events_list(eventos: list) -> None:
 
 def _ticker_tab(ticker: str, history: list) -> None:
     eventos = [h for h in history if h.ticker == ticker]
-    intervalo = st.radio("Range", list(_RANGES), index=2, horizontal=True,
+    # Default 1D (today / live, intraday): o investidor quer o AGORA primeiro.
+    intervalo = st.radio("Range", list(_RANGES), index=0, horizontal=True,
                          key=f"range_{ticker}", label_visibility="collapsed")
     try:
         closes = _range_prices(ticker, intervalo)
     except Exception as exc:  # noqa: BLE001
         st.warning(f"No price data right now for {ticker}: {type(exc).__name__}")
         return
+    closes = closes.dropna()  # sem isto, um fetch a devolver NaN mostrava "$nan / +nan%"
     if len(closes) < 2:
         st.warning(f"Not enough data for {ticker} in this range yet.")
         return

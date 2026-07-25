@@ -13,7 +13,38 @@ states the limitations and the directions they open.
 \label{sec:concl_main}
 
 The work is best summarised by returning to the four research questions of
-Chapter~\ref{chap:introduction}.
+Chapter~\ref{chap:introduction}, gathered at a glance in Figure~\ref{fig:rq_scorecard} and then taken
+one at a time.
+
+\begin{figure}[ht]
+\centering
+\small
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{p{4.4cm} l p{5.0cm}}
+\toprule
+\tabhead{Research question} & \tabhead{Verdict} & \tabhead{One number} \\
+\midrule
+RQ1: detect abrupt moves transparently
+  & \colorbox{green!20}{\textbf{Yes}}
+  & firing rate $0.015$ vs $0.344$; $F_1$ $0.516$ \\
+RQ2: analogous precedents, no lookahead
+  & \colorbox{green!20}{\textbf{Yes} (retrieval)}
+  & P@5 $0.514$ vs $0.346$ lexical, $0.240$ random \\
+RQ3: faithful and useful explanations
+  & \colorbox{yellow!25}{Faithful; useful open}
+  & faithful by construction; no human study yet \\
+RQ4: triage beyond volatility
+  & \colorbox{yellow!25}{Mechanism yes, text no}
+  & share $0.163 \to 0.632$; PR-AUC $0.542$ vs $0.496$ \\
+\bottomrule
+\end{tabular}
+\caption[The four research questions at a glance]{The four research questions and their verdicts,
+reported exactly as they fell. Two are an unqualified yes; two are honest splits: explanations are
+faithful by construction but their usefulness awaits a human study, and learned triage helps as a
+product mechanism yet no headline-text model beat the volatility baseline on this corpus. Numbers
+are from Chapter~\ref{chap:casestudies}.}
+\label{fig:rq_scorecard}
+\end{figure}
 
 \paragraph{RQ1: transparent detection of abrupt movements.}
 \textbf{Yes.} A rolling \emph{z}-score detector flags abnormal returns and, more importantly, does
@@ -105,7 +136,39 @@ Several limitations remain, stated plainly:
 \section{Future Work}
 \label{sec:concl_future}
 
-The limitations map directly onto future work:
+The limitations map directly onto future work, summarised in Figure~\ref{fig:limitations_future}.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize, >={Stealth[length=2.6mm]},
+  lim/.style={draw, rounded corners, align=left, text width=4.5cm, inner sep=4pt,
+              fill=orange!8, draw=orange!55, minimum height=1.05cm, anchor=west},
+  fut/.style={draw, rounded corners, align=left, text width=6.2cm, inner sep=4pt,
+              fill=green!9, draw=green!50!black, minimum height=1.05cm, anchor=west},
+]
+  \node[font=\small\bfseries, text=orange!65!black, anchor=west] at (0.1,0.95) {Limitation};
+  \node[font=\small\bfseries, text=green!45!black, anchor=west] at (5.4,0.95) {Concrete next step};
+  \node[lim] (l0) at (0,0) {Recent, few-month corpus};
+  \node[fut] (f0) at (5.3,0) {Evaluate retrieval on the multi-year FNSPID corpus (already rebuilt)};
+  \node[lim] (l1) at (0,-1.3) {Headlines only (short text)};
+  \node[fut] (f1) at (5.3,-1.3) {Richer text: article bodies and a sentiment feature};
+  \node[lim] (l2) at (0,-2.6) {No human study of usefulness};
+  \node[fut] (f2) at (5.3,-2.6) {Small rubric study: clarity, completeness, actionability (RQ3)};
+  \node[lim] (l3) at (0,-3.9) {Theme, not direction};
+  \node[fut] (f3) at (5.3,-3.9) {De-duplicate precedents and flag directional disagreement};
+  \draw[->, thick, black!55] (l0.east) -- (f0.west);
+  \draw[->, thick, black!55] (l1.east) -- (f1.west);
+  \draw[->, thick, black!55] (l2.east) -- (f2.west);
+  \draw[->, thick, black!55] (l3.east) -- (f3.west);
+\end{tikzpicture}
+\caption[Limitations map onto future work]{Each stated limitation maps directly onto a concrete next
+step. Several have already seen a first deployment-side iteration (a live knowledge base matured against
+observed prices, explicit directional-disagreement flags, and an intraday quote during market hours),
+reported as engineering follow-through whose formal evaluation remains future work.}
+\label{fig:limitations_future}
+\end{figure}
+
 \begin{itemize}
   \item Evaluate \emph{retrieval} on the multi-year FNSPID corpus. The knowledge base itself has
         already been rebuilt from that corpus (after the case studies here were frozen), so the open
