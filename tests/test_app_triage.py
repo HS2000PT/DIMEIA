@@ -80,6 +80,24 @@ def test_admin_desbloqueado_mostra_painel_de_definicoes(monkeypatch):
     assert any("Alert settings" in str(e.label) for e in at.expander)
 
 
+def test_precos_nan_degrada_com_graca(monkeypatch):
+    """Um fetch de preços a devolver NaN não pode mostrar '$nan / +nan%': cai no aviso
+    gracioso 'Not enough data' (bug visto num screenshot ao vivo com o yfinance a falhar)."""
+    import investigator.alerts_history as alerts_history
+    import investigator.market_data.prices as prices
+
+    def nan_hist(ticker, **kw):
+        idx = pd.date_range(end=pd.Timestamp.today().normalize(), periods=30, freq="D")
+        return pd.DataFrame({"Close": [np.nan] * 30}, index=idx)
+
+    monkeypatch.setattr(prices, "get_price_history", nan_hist)
+    monkeypatch.setattr(alerts_history, "fetch_remote", lambda url, timeout=5.0: [])
+    at = AppTest.from_file(APP)
+    at.run(timeout=120)
+    assert not at.exception
+    assert any("Not enough data" in str(w.value) for w in at.warning)
+
+
 def test_vista_live_sem_excecoes_uma_aba_por_empresa(monkeypatch):
     at = _run(monkeypatch)
     assert not at.exception

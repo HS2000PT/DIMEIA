@@ -447,6 +447,7 @@ def _ticker_tab(ticker: str, history: list) -> None:
     except Exception as exc:  # noqa: BLE001
         st.warning(f"No price data right now for {ticker}: {type(exc).__name__}")
         return
+    closes = closes.dropna()  # sem isto, um fetch a devolver NaN mostrava "$nan / +nan%"
     if len(closes) < 2:
         st.warning(f"Not enough data for {ticker} in this range yet.")
         return
