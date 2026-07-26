@@ -8,7 +8,28 @@
 
 ## Estado Atual
 - **Sessão nº:** 41 (**"improve everything" — varredura de qualidade multi-agente; correções aplicadas na branch `claude/general-improvements-0ba2e9`**)
-- **Última atualização:** 2026-07-26
+- **Última atualização:** 2026-07-27
+- **🎓 SESSÃO 41 (cont. — modo coorientador exigente; "tese primeiro"):** iterações pequenas.
+  (1) **Sincronização documental:** contagens frágeis de testes (145/202 → **"200+"** estável;
+  reais 228 `def test_`), slides (71/76 → **77**), páginas (86 → **90/92**) corrigidas em
+  guia/README/RELATORIO; paper verificado **sincronizado nos números** (0.514/0.542/0.496/0.271…).
+  (2) **Limpeza do repo (267→258 ficheiros):** removidos `docs/_archive/` (6), `product_critique.md`,
+  `ROOT_PROMPT_CLAUDE_CODE.md`, `evaluation_triage_smoke.md` + refs corrigidas; **scripts/evaluation/
+  models MANTIDOS** (= reprodutibilidade da tese, não lixo). `INDEX.md` mapeia o repo.
+  (3) **Alertas — decisão tese-primeiro: NÃO reescrever agora.** O CS3 mostra um formato limpo que o
+  código já não produz (derivou verboso), mas reescrever `explain_news_impact` obrigava a mexer em
+  testes que **não consigo correr aqui** (venv fora do PATH) + exemplo congelado bilingue → risco
+  desproporcionado dias antes da entrega, e é *produto* (abaixo da linha de prioridades). Redesign
+  (antes→depois já esboçado) fica **pós-submissão**. O reframe importante: notícia positiva →
+  precedentes de queda **é o CS3 (tema≠direção), uma FORÇA**, não uma fraqueza.
+  (4) **Leitura crítica (prioridade nº1):** abstract + ch6 (veredictos RQ + limitações) + RQ ch1↔ch6
+  **honestos, examiner-ready, 0 sobre-afirmação** — dito claramente ao aluno.
+  (5) **Declaração de IA alinhada à decisão registada** ("sem nomear o produto"): removido
+  "(notably Claude Code)"/"(nomeadamente o Claude Code)" da tese EN+PT + README — continua honesta
+  (declara o uso de IA, sem subestimar); **0 menções ao produto em conteúdo visível**. Gates: teses
+  **90/92 pp 0 erros**, slides 19/19, guia 77, 0 `.py` tocado. **Estado: no ponto de entrega ao
+  orientador** nos eixos que controlo (consistência/organização/honestidade); resto = humano (redação
+  da declaração + data + licença + leitura final) e fase de defesa.
 - **🧹 SESSÃO 41 (cont. — limpeza para entrega ao orientador):** o aluno pediu (a) apagar qualquer
   frase de *gestão de impressão* nos OUTPUTS (tese/slides/paper/README/RELATÓRIO/apêndice) — nada que
   sugira conteúdo feito para *parecer* não-IA ou "apresentável de propósito"; (b) um índice claro do
