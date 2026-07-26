@@ -56,8 +56,8 @@ se só queres correr o sistema.
 > focadas nos pontos fracos (corpus fino da RQ2; "o modelo perdeu" da RQ4; utilidade da RQ3; proxy
 > de setor). É o que se lê na véspera.
 >
-> O relatório para orientador/júri está na raiz: `RELATORIO_FINAL.md`. (Os antigos caderno de
-> defesa e guia rápido foram absorvidos no guia e arquivados em `_archive/`.)
+> O resumo do projeto está na raiz: `RELATORIO_FINAL.md`. (Os antigos caderno de defesa e guia
+> rápido foram absorvidos no guia de estudo.)
 
 ## internal/ — documentos internos de continuidade (não são "porta de entrada" para examinadores)
 | Ficheiro | Para quê |
@@ -66,8 +66,3 @@ se só queres correr o sistema.
 
 > Outros ficheiros internos de continuidade vivem em `progress/` (TRACKER, SESSIONS, DECISIONS, MASTER_PLAN)
 > e na raiz (`CLAUDE.md` — memória de trabalho do projeto).
-
-## _archive/ — documentos absorvidos/superados, mantidos por proveniência
-Análises de fases iniciais (`analise_referencia`, `analise_template_latex`), a proposta de ML ao
-orientador (aprovada 2026-07-04), e os documentos de estudo absorvidos pelo guia único
-(`caderno_de_defesa`, `guia_rapido`, `QUESTIONS`).

@@ -148,7 +148,6 @@ docs/          documentation (see docs/README.md for the full index), grouped:
   evaluation/    auto-generated evaluation results (do not edit by hand)
   decisions/     citation log, page audit, product review, learning notes, glossary
   internal/      provenance (the original root prompt)
-  _archive/      superseded/absorbed documents kept for provenance
 data/samples/  small committed samples (large data gitignored, recreated by scripts)
 progress/      continuity logs (TRACKER, SESSIONS, DECISIONS, MASTER_PLAN)
 CITATION.cff   how to cite this work    requirements.txt (light) / requirements-ml.txt (torch+SBERT)
