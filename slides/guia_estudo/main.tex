@@ -1464,7 +1464,7 @@ semelhança \emph{temática} (o que interessa), não memorização do nome da em
 \textbf{Isto é mesmo reprodutível?}\\
 Cada número da tese sai de um script versionado com seed fixa; re-corremos os 3 scripts de
 avaliação e os números reproduziram-se exatamente; o retreino do modelo produz ficheiros
-bit-idênticos; o CI corre 145 testes em runner limpo a cada push.
+bit-idênticos; o CI corre a suíte de testes (200+) em runner limpo a cada push.
 \vspace{1mm}
 
 \textbf{Como sei que as citações são reais?}\\
@@ -1497,7 +1497,7 @@ PR-AUC \textbf{0,542 vs 0,496} & RQ4: só-volatilidade bate todos os modelos com
 \textbf{0,632 vs 0,163} & precisão@5-alertas/dia: triagem vs alertar-sempre ($\approx$4$\times$) & idem \\
 \textbf{79.753} / 2.016 & exemplos FNSPID do treino / fatia curada na app pública & kb\_fnspid\_build \\
 \textbf{0,992} / 96\% & paridade ONNX$\leftrightarrow$SBERT (cosseno médio; vizinhos top-3) & onnx\_minilm\_validation \\
-\textbf{86 pp; 52/52} & tese 0 erros; todas as citações verificadas & page\_audit \\
+\textbf{90 pp; 52/52} & tese 0 erros; todas as citações verificadas & page\_audit \\
 \midrule
 \multicolumn{3}{l}{\emph{Extensão CS1 (2026-07-13; corrida nova, protocolo congelado reutilizado — não muda os de cima):}} \\
 F1 \textbf{0,280} & LOF causal (o 2.º detetor aprendido; também perde para 0,530) & evaluation\_anomaly\_ext \\
