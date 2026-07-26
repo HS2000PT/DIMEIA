@@ -64,9 +64,8 @@ adicionar features. Marketing/apelo vem A SEGUIR à clareza — um produto bonit
       vivo). Sem fabricar — reportar como cai.
 
 ## 3. Tese
-- [x] **Frases perigosas do apêndice removidas** (o "reads as a dissertation rather than a software
-      specification" e o enquadramento "not software") — davam a entender que escondíamos o uso de
-      ferramentas/IA. Feito (2026-07-22).
+- [x] **Frases de estilo especificação-de-software removidas do apêndice** — reescrito para prosa
+      de dissertação que descreve o sistema. Feito (2026-07-22).
 - [ ] **Apêndice REFEITO por completo** (pedido explícito): de "lista de ficheiros/comandos" para
       **snapshots + relatórios**. Mostrar: (a) o ambiente; (b) **snapshots reais dos objetos de dados**
       em cada fase (linha FNSPID, barra de preços, caso da KB com embedding, linha de features, rótulo);

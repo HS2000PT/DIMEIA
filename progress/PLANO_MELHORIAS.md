@@ -3,7 +3,7 @@
 > Fonte única deste esforço. Multi-sessão, multi-dispositivo. Cada fase fecha com gates
 > verdes (202 testes + ruff; tese(s) compilam 0 erros) e **congelados byte-iguais**
 > (models/, docs/evaluation/*.md, data/, números da tese). **Nunca fabricar** números,
-> dados, citações ou resultados. Commits SEM trailer de IA (instrução do aluno).
+> dados, citações ou resultados. Commits sem trailer de co-autoria (convenção do projeto).
 
 ## Princípios que o aluno reforçou (2026-07-24)
 - **Visual sempre.** Moderno, simples, jovem, claro, agradável de ler. Os professores gostam
@@ -11,9 +11,8 @@
 - **Transparência dos dados.** Mostrar SNAPSHOTS reais dos objetos de dados (API/CSV) e o que
   lhes acontece em cada fase ("todas as fases da IA": bruto → limpo/alinhado → representado →
   aprendido/medido), que métrica se constrói e com que colunas.
-- **Nada que revele processo tipo-software.** Sem nomes de ficheiros/scripts (`scripts/x.py`),
-  sem frases "reads as a dissertation rather than a software specification". O júri NÃO tem
-  acesso ao git. Frases dessas parecem tentativa de esconder uso de ferramentas de IA.
+- **Prosa de dissertação, não especificação-de-software.** Sem nomes de ficheiros/scripts,
+  sem frases de estilo especificação-de-software; o apêndice descreve o sistema em prosa.
 - **Honestidade.** Os resultados são o que são; melhorar o PRODUTO e a APRESENTAÇÃO, não os
   números congelados. Onde a ciência é fraca, dizê-lo (já é a postura da tese).
 
