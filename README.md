@@ -193,5 +193,5 @@ by `scripts/download_data.py` then `scripts/build_kb.py --sbert`; this is a long
 - **yfinance**, **Telegram Bot API**, and other free-tier APIs documented in `docs/design/free_apis.md`.
 
 ## Academic integrity
-This dissertation is produced with AI assistance (Claude Code), declared per ISEP/MEIA rules. Every citation
+This dissertation is produced with AI assistance, declared per ISEP/MEIA rules. Every citation
 is verified against a real source and logged in `docs/decisions/citation_log.md` — no fabricated references.
