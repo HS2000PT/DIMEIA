@@ -146,3 +146,80 @@ fraqueza.
 2. **Avaliação de recuperação no FNSPID multi-ano (RQ2):** sobe a RQ2 de "preliminar" a "validada em
    escala" — mas é uma experiência NOVA numa tese perto da defesa; só com o teu 'ok' (muda o que
    tens de defender, e pode não mudar a história).
+
+---
+
+## 8. As fórmulas — intuição, porquê, e como as dizes em voz alta
+
+> Não decorar matemática. Perceber o que cada uma FAZ e dizê-la numa frase. São 7, na notação da tese.
+
+### 8.1 z-score — `z_t = (r_t − μ_t) / σ_t`, anomalia se `|z_t| > k`
+- **O que faz:** diz quantos desvios-padrão o retorno de hoje está fora do retorno médio recente **daquela** ação.
+- **Intuição:** "grande" é relativo. +3% numa ação calma é enorme; numa volátil é rotina. Divido pela volatilidade de cada ação para ser justo.
+- **Porque existe:** um limiar fixo em % dispara demais nas voláteis e de menos nas calmas. O z-score normaliza isso — e não precisa de rótulos.
+- **Oral:** *"Pego no retorno de hoje, tiro a média recente e divido pelo desvio-padrão recente. Dá quantos desvios-padrão o movimento está fora do normal daquela ação. Acima de 3, é anomalia. Assim +3% conta como enorme numa ação calma e normal numa volátil."*
+
+### 8.2 Embedding da frase — `e = (1/n) Σ tᵢ`, depois `ê = e / ‖e‖`
+- **O que faz:** transforma uma notícia num vetor de números (a média dos vetores dos seus tokens), escalado para comprimento 1.
+- **Intuição:** o SBERT dá um vetor por palavra (o sentido no contexto); a média resume a frase toda num só vetor. Normalizar põe todas as frases "à mesma escala" para as comparar por direção.
+- **Porque existe:** preciso de UM vetor por notícia; a média (mean pooling) é a forma simples e padrão; a normalização L2 faz "comparar por cosseno" = "ordenar por distância".
+- **Oral:** *"Cada notícia vira um vetor: o modelo lê a frase, dá um vetor por palavra, e eu faço a média — um vetor que resume o significado. Escalo-o a comprimento 1 para comparar notícias pelo ângulo."*
+
+### 8.3 Cosseno — `cos(q,e) = (q·e) / (‖q‖‖e‖)`
+- **O que faz:** mede o ângulo entre dois vetores. Perto de 1 = mesma direção (muito parecidos); 0 = nada a ver.
+- **Intuição:** duas notícias do mesmo tema apontam na mesma direção no espaço de significado, mesmo que uma seja "maior". O cosseno ignora o tamanho, foca o tema.
+- **Porque existe (a resposta ao "porquê cosseno?"):** quero similaridade de TEMA. E em vetores de comprimento 1, `‖q̂−ê‖² = 2 − 2·cos` — ordenar por cosseno é o mesmo que ordenar por distância. A escolha é **canónica, não arbitrária**.
+- **Oral:** *"Comparo pelo cosseno — o ângulo entre os vetores. Perto de 1, mesmo tema. Como normalizei, é equivalente a medir a distância entre eles, por isso a escolha do cosseno é a natural, não uma preferência."*
+
+### 8.4 Regressão logística — `p_raw = σ(u) = 1/(1+e^−u)`, com `u = w·x + b`
+- **O que faz:** combina as features numa pontuação linear `u` e a sigmoide esmaga-a para um número entre 0 e 1.
+- **Intuição:** `u` pode ser qualquer número; a sigmoide comprime-o em forma de S para [0,1]. Features que aumentam a materialidade puxam `u` para cima, `p` para perto de 1.
+- **Porque existe:** quero uma probabilidade **interpretável** — cada peso `w` diz quanto cada feature contribui (é XAI). Simples de propósito, ao contrário de uma rede opaca.
+- **Oral:** *"Somo as features com pesos — cada peso diz o quanto essa feature importa — e a sigmoide transforma a soma num número entre 0 e 1. Consigo decompor a decisão termo a termo."*
+
+### 8.5 Calibração de Platt — `p = σ(a·p_raw + c)`
+- **O que faz:** uma segunda sigmoide, com 2 parâmetros (a, c) ajustados em validação, que corrige as probabilidades cruas para serem honestas.
+- **Intuição:** o score cru pode dizer "0.67" quando a frequência real é outra. O Platt estica/desloca a curva para que "p=0.6" signifique mesmo ~60% das vezes.
+- **Porque existe:** um score discriminativo não é automaticamente uma probabilidade fiável. 2 parâmetros = não sobre-ajusta (mais seguro que a isotónica num bloco pequeno).
+- **Oral (com o exemplo real):** *"O modelo deu logit u = +0,699 → sigmoide → 0,668. Mas 0,668 cru não é fiável, por isso aplico o Platt: σ(3,700·0,668 − 2,313) = **0,539** — os 54% que o canal recebeu. É o passo que torna a probabilidade honesta."*
+
+### 8.6 precision@k — `precision@k = (1/|Q|) Σ_q (1/k) Σ_{d∈R_k(q)} rel(q,d)`
+- **O que faz:** das k notícias recuperadas para cada consulta, que fração é relevante? Média sobre todas as consultas.
+- **Intuição:** mostro 5 precedentes, 3 são do mesmo tema → precision@5 = 0,6. Mede a qualidade do **topo** da lista (o que o utilizador vê).
+- **Porque existe:** numa recuperação, importa o topo, não a lista toda.
+- **Oral:** *"Para cada notícia recupero as 5 mais parecidas e vejo quantas são mesmo do mesmo tema. A média é a precision@5: o meu SBERT dá 0,51 vs 0,24 do acaso — mais do dobro."*
+
+### 8.7 PR-AUC (área sob a curva precisão–recall)
+- **O que faz:** varro o limiar de decisão de 0 a 1; para cada um marco (recall, precisão); a área sob essa curva é a PR-AUC.
+- **Intuição:** um número que resume o compromisso precisão↔recall em TODOS os limiares. Maior = melhor. O "chão" (alertar sempre) = a prevalência.
+- **Porque existe:** com poucos casos materiais (classes desequilibradas), a ROC-AUC engana; a PR-AUC foca a classe rara.
+- **Oral:** *"Como há poucos casos materiais, uso a PR-AUC — resume precisão vs recall em todos os limiares, e o chão é a própria prevalência. A volatilidade deu 0,542; nenhum modelo com texto passou disso — e reporto-o tal como é."*
+
+---
+
+## 9. O guião dos 15 minutos
+
+> ~13 slides, ~1 min cada. Ensaia para **13–14 min** (buffer). Um facto por slide; fala, não leias.
+
+| # | Slide | Tempo | O essencial a dizer |
+|---|-------|-------|---------------------|
+| 1 | Título + 1 frase | 0:30 | Quem sou, o título, e "alertas financeiros explicáveis; nunca prevejo". |
+| 2 | O problema | 1:30 | Sobrecarga de informação; o investidor de retalho; **porque NÃO prever** (eficiência de mercado). |
+| 3 | A ideia central | 1:00 | 2 gatilhos (movimento / notícia), XAI-first, engenharia de IA (integrar+avaliar, não inventar). |
+| 4 | Arquitetura | 1:30 | O diagrama: sensores → motor único → explicação → Telegram/painel. |
+| 5 | Deteção (RQ1) | 2:00 | z-score (8.1, em 1 frase) → **firing rate 0,015 vs 0,344**; bateu a Isolation Forest (teste justo nº1). |
+| 6 | Recuperação (RQ2) | 2:30 | embeddings+cosseno → **P@5 0,514 vs 0,346/0,240**; + o **CS3 (tema≠direção)** como honestidade. |
+| 7 | Triagem (RQ4) | 2:00 | o veredicto confiante: **mecanismo sim (0,163→0,632), texto não (0,542 vs 0,496)** — teste justo nº2. |
+| 8 | Demo ao vivo | 1:30 | a app **sóbria**: um alerta real no canal + o painel. **Plano B: screenshot** se falhar o wifi. |
+| 9 | Contribuições | 1:00 | as 4; o fio condutor: **"a simplicidade defensável venceu dois testes justos e pré-comprometidos"**. |
+| 10 | Limitações + futuro | 1:00 | corpus fino, utilidade por medir, tema≠direção — ditas com naturalidade (mostra domínio). |
+| 11 | Conclusão | 0:30 | "um sistema que corre, honesto e reprodutível; mede e explica, nunca prevê." |
+| — | **Backup** | — | scorecard das RQ; exemplo trabalhado META (p=0,539); ablação RQ4-ext; EWMA. |
+
+**Ordem — porquê:** problema → ideia → arquitetura → os 3 componentes pela ordem das RQ → prova ao vivo → síntese. O júri segue a mesma lógica da tese, sem saltos.
+
+**Estratégia de comunicação:**
+- **Lidera com o argumento, não com a app.** A mascote/temas ficam de fora; mostra a app sóbria como prova de que corre (1 slide).
+- **Na RQ4, diz o veredicto com confiança** — é um resultado honesto, não um fracasso (ver §4).
+- **Se não sabes:** *"Não medi isso; seria trabalho futuro"* é uma resposta forte. Nunca inventes um número.
+- **Gestão do tempo:** se atrasares, corta a demo (o slide 8 tem o screenshot). Nunca cortes as limitações — é onde ganhas credibilidade.
