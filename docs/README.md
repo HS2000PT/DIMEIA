@@ -33,7 +33,6 @@ se só queres correr o sistema.
 | [evaluation/roadmap_rq4.md](evaluation/roadmap_rq4.md) | Roteiro RQ4 ("não estamos no fim da linha"): features estendidas + ablação (Eixo 1 ✅ corrido). |
 | [evaluation/triage_worked_example.md](evaluation/triage_worked_example.md) | Exemplo trabalhado REAL da triagem (alerta META → p=0,539 reproduzido). |
 | [evaluation/alert_funnel.md](evaluation/alert_funnel.md) | Funil de produção real: manchetes → alertas (22:1). |
-| [evaluation/evaluation_triage_smoke.md](evaluation/evaluation_triage_smoke.md) | Triagem: smoke no corpus Finnhub (congelado; regime shift). |
 | [evaluation/live_monitoring.md](evaluation/live_monitoring.md) | Loop de pós-validação: precisão/calibração ao vivo. |
 | [evaluation/kb_fnspid_build.md](evaluation/kb_fnspid_build.md) | KB de retrieval multi-ano: build + validação do artefacto (P3). |
 | [evaluation/onnx_minilm_validation.md](evaluation/onnx_minilm_validation.md) | Produto: paridade do MiniLM-ONNX vs SBERT (embeddings + retrieval top-k). |
@@ -59,10 +58,6 @@ se só queres correr o sistema.
 > O resumo do projeto está na raiz: `RELATORIO_FINAL.md`. (Os antigos caderno de defesa e guia
 > rápido foram absorvidos no guia de estudo.)
 
-## internal/ — documentos internos de continuidade (não são "porta de entrada" para examinadores)
-| Ficheiro | Para quê |
-|----------|----------|
-| [internal/ROOT_PROMPT_CLAUDE_CODE.md](internal/ROOT_PROMPT_CLAUDE_CODE.md) | O enunciado/root prompt original do projeto (proveniência honesta). |
-
-> Outros ficheiros internos de continuidade vivem em `progress/` (TRACKER, SESSIONS, DECISIONS, MASTER_PLAN)
-> e na raiz (`CLAUDE.md` — memória de trabalho do projeto).
+## Notas internas de continuidade
+> Vivem em `progress/` (TRACKER, SESSIONS, DECISIONS, MASTER_PLAN) e na raiz (`CLAUDE.md` — memória
+> de trabalho do projeto).

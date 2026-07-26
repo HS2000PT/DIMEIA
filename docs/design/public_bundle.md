@@ -43,7 +43,6 @@ encontrar algo), (5) com `--git`, inicia um repo com **1 commit** (sem remote, s
 | `progress/` | planeamento multi-sessão (TRACKER/SESSIONS/DECISIONS/MASTER_PLAN) |
 | `CLAUDE.md` | memória de continuidade (processo interno) |
 | `.claude/` | settings + planos internos |
-| `docs/internal/` | ROOT_PROMPT + proposta ao orientador |
 | `docs/defence/` | caderno de defesa + guia rápido (estudo **privado**) |
 | `slides/` | slides de defesa + guia de estudo (preparação **privada**) |
 | `CHECKLIST.md`, `RELATORIO_FINAL.md` | listas/relatório internos para o orientador |
