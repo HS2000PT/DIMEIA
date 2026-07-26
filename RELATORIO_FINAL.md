@@ -2,8 +2,8 @@
 
 > **Dissertação MEIA/ISEP** — Henrique José da Silva Santos (nº 1180934)
 > Orientador: Prof. Luís Gomes · Coorientador: Rafael Silva · Data: 2026-07-11
-> Este documento resume TUDO o que existe neste repositório e onde está — pensado para
-> uma leitura de 10 minutos pelo orientador ou pelo júri.
+> Este documento resume o que existe neste repositório e onde está, numa leitura de cerca de
+> 10 minutos.
 
 ---
 
@@ -69,14 +69,14 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
 | Loop de pós-validação ao vivo | decisões reais registadas e rotuladas ao maturar | `live_monitoring.md` |
 
 ### 2.4 Documentos académicos
-- **Tese** (`thesis/`, EN-GB): 6 capítulos canónicos MEIA, **86 pp, 0 erros, 0 citações
+- **Tese** (`thesis/`, EN-GB): 6 capítulos canónicos MEIA, **90 pp, 0 erros, 0 citações
   indefinidas, 52/52 referências verificadas uma a uma** (auditoria em
   `docs/decisions/page_audit.md`). RQ1–RQ4 respondidas com os números acima; inclui um
   screenshot genuíno do painel único (Cap. 4, Fig. 4.5).
 - **Paper IEEE** (`paper/`): 4 pp, compila 0 erros (destilado da tese validada).
 - **Slides de defesa** (`slides/`): 17 frames (+"The product, live", com o mesmo screenshot).
 - **Guia de estudo ÚNICO** (`slides/guia_estudo/main.pdf`): 71 slides PT-PT — ensina do zero
-  E contém o guião oral, as perguntas do júri, o mapa dos números congelados e o plano B
+  E contém o guião oral, as perguntas de defesa antecipadas, o mapa dos números congelados e o plano B
   (fonte única de estudo; os antigos caderno/guia rápido foram absorvidos e arquivados).
 - **Notebook** (`notebooks/investigator_walkthrough.ipynb`): os 3 componentes com as próprias
   mãos, executado e commitado com outputs reais.
@@ -96,7 +96,7 @@ RELATORIO_FINAL.md      ← este documento
 README.md               porta de entrada (badges, como correr, estado)
 CHECKLIST.md            SÓ o que falta (lista mínima)
 CLAUDE.md               memória de continuidade entre sessões
-thesis/main.pdf         A TESE (86 pp)               thesis/main.tex + ch1..ch6/
+thesis/main.pdf         A TESE (90 pp)               thesis/main.tex + ch1..ch6/
 paper/                  artigo IEEE (4 pp)
 slides/main.pdf         slides de defesa (17)        slides/guia_estudo/main.pdf (guia único, 71)
 investigator/           o pacote do sistema (instalável; um subpacote por componente)
@@ -133,7 +133,6 @@ progress/               MASTER_PLAN · TRACKER · SESSIONS · DECISIONS (continu
 | 4 | Tornar a app Streamlit **pública** de novo (regrediu no último redeploy) | autor (1 clique) |
 | 5 | Afixar a mensagem de onboarding no canal (textos prontos em `going_live.md` §1b) | autor |
 | 6 | 08–09/07: `python scripts/post_validate.py` (maturação das decisões reais) | autor (1 comando) |
-| 7 | (Opcional) migrar para repositório novo sem história — ver `docs/design/migrar_repo.md` | autor |
 
 ## 6. Nota de integridade
 

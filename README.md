@@ -19,13 +19,14 @@
 reasoning chain — detected event → explanation → sources → historical precedents — and delivers it over the
 **Telegram Bot API**. No price prediction, no algorithmic trading, free APIs only.
 
-## The 6 places that matter
+## Where things are
 | I want to… | Go to |
 |---|---|
-| Read the dissertation | `thesis/main.pdf` (86 pp) |
-| Study for the defence | `slides/guia_estudo/main.pdf` — **the** single study source (76 slides) |
+| Navigate the whole repo | [`INDEX.md`](INDEX.md) — the repository map |
+| Read the dissertation | `thesis/main.pdf` (English) · `thesis-pt/main.pdf` (Português) |
+| Study for the defence | `slides/guia_estudo/main.pdf` — the single study source |
 | See it live | <https://investigator.streamlit.app> + Telegram <https://t.me/InvestiGatorMEIA> |
-| Show it to the supervisor | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) (10-min read) |
+| Get a 10-minute overview | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) |
 | Run it myself | `python scripts/demo.py` · full guide `docs/design/how_to_run.md` |
 | See what's left to do | [`CHECKLIST.md`](CHECKLIST.md) |
 
@@ -107,10 +108,10 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 ## Learn it / prepare the defence — ONE source
 - **THE study guide (PT-PT):** **`slides/guia_estudo/main.pdf`** — the single, consolidated source
   (76 slides): teaches the whole thesis from zero, the code line by line, the evaluation, **the oral
-  script (3-min opening + per-RQ answers), the complete jury Q&A, the frozen-numbers table and the
-  defence plan B**. Everything previously scattered across companion documents now lives here.
-- **Final report (PT-PT, for the supervisor/jury):** **[`RELATORIO_FINAL.md`](RELATORIO_FINAL.md)** —
-  everything in this repository and where it lives, in a 10-minute read.
+  script (3-min opening + per-RQ answers), the anticipated defence questions, the frozen-numbers table
+  and the defence plan B**. Everything previously scattered across companion documents now lives here.
+- **Project summary (PT-PT):** **[`RELATORIO_FINAL.md`](RELATORIO_FINAL.md)** — everything in this
+  repository and where it lives, in a 10-minute read.
 - **Defence slides (EN):** `slides/main.pdf` (17 frames) — the short deck for the day itself.
 
 ## Project status
@@ -118,7 +119,7 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 **202 automated tests** + lint green. The core components — including a **materiality-triage model trained
 by the author** on 79,753 multi-year FNSPID examples (RQ4; triage evidence, never a forecast) — are
 evaluated on **real data**, and the statistics reproduce exactly from versioned scripts. The **six-chapter
-dissertation** compiles cleanly (`thesis/main.pdf`, 86 pp, 0 errors), with **52 references each verified by
+dissertation** compiles cleanly (`thesis/main.pdf`, 90 pp, 0 errors), with **52 references each verified by
 DOI/arXiv/ISBN or primary source** (audit in `docs/decisions/page_audit.md`). An **IEEE paper** (`paper/`)
 and **defence slides** (`slides/`) compile. Remaining items are human-only: confirm the exact ISEP AI-use
 declaration wording + submission date, and the author's final read. The multi-year *retrieval* knowledge
@@ -128,7 +129,7 @@ powers the public app) — evaluating retrieval on it stays future work, as the 
 
 ## Repository layout
 ```
-thesis/        LaTeX dissertation (6 chapters + front matter + appendix; 86 pp)
+thesis/        LaTeX dissertation (6 chapters + front matter + appendix; 90 pp)
 paper/         IEEE paper (IEEEtran) distilled from the thesis
 slides/        defence slides (Beamer, 17 frames)
   guia_estudo/   THE study guide (PT-PT, Beamer, 76 slides — single study source)

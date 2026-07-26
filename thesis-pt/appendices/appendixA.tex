@@ -172,11 +172,11 @@ quatro estudos de caso tem um desses procedimentos --- a recuperação de preced
 por setor, a taxa de disparo de anomalias e a ablação de janela, a comparação de detetores
 estatístico-versus-aprendido, e a construção e treino do conjunto de dados de triagem de materialidade ---
 e a decomposição de triagem trabalhada, a projeção do espaço de embeddings e o funil de produção são
-produzidos da mesma forma. Cada número de destaque no corpo é o valor escrito por um destes procedimentos;
-nenhum é digitado à mão. O passo de obtenção de dados que os precede, e a construção completa da base de
+produzidos da mesma forma. Cada número de destaque no corpo é o valor escrito por um destes procedimentos.
+O passo de obtenção de dados que os precede, e a construção completa da base de
 conhecimento histórica, seguem a mesma receita determinística.
 
-\section{Prova de Trabalho: Cada Número Rastreado à Sua Fonte}
+\section{Cada Número Rastreado à Sua Fonte}
 \label{app:repro_proof}
 
 Nenhum resultado nesta dissertação é digitado à mão. Cada número é escrito pelo seu procedimento
@@ -207,7 +207,7 @@ Seletividade de produção (manchetes : alertas enviados) & 22\,:\,1 & CS2 \\
 \end{tabular}
 \end{table}
 
-\paragraph{O sistema correu mesmo.} Para além da reprodutibilidade a pedido, o InvestiGator operou ao vivo.
+\paragraph{Operação ao vivo.} Para além da reprodutibilidade a pedido, o InvestiGator operou ao vivo.
 Um workflow agendado varreu a watchlist após cada fecho do mercado dos EUA e entregou alertas explicados a
 um canal público de Telegram; o registo de alertas partilhado e versionado acumulou dezenas de alertas
 reais, incluindo a primeira anomalia de mercado genuína (NVDA, 13~de~julho~de~2026). A base de conhecimento
@@ -215,9 +215,9 @@ viva maturou as suas manchetes capturadas contra os preços reais que se seguira
 pós-validação rotulou decisões passadas reais com o seu resultado observado, reportando uma precisão de
 alertas mantidos de $0.667$ contra uma taxa-base de $0.455$ --- evidência fora da amostra de que o mecanismo
 de triagem se sustenta. Uma grande suíte automática de testes, offline e determinística, corre em cada push
-através de integração contínua, e o trabalho está registado ao longo de mais de duzentos commits. Números
-regeneráveis, uma implantação ao vivo e uma suíte de testes verde são, em conjunto, a prova de trabalho da
-dissertação.
+através de integração contínua. Números regeneráveis, uma implantação ao vivo e uma suíte de testes verde
+documentam, em conjunto, um sistema que
+corre de ponta a ponta e cuja cada figura reportada pode ser reproduzida isoladamente.
 
 \section{Dados e Atribuição}
 \label{app:repro_data}

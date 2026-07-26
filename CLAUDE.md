@@ -8,7 +8,25 @@
 
 ## Estado Atual
 - **Sessão nº:** 41 (**"improve everything" — varredura de qualidade multi-agente; correções aplicadas na branch `claude/general-improvements-0ba2e9`**)
-- **Última atualização:** 2026-07-24
+- **Última atualização:** 2026-07-26
+- **🧹 SESSÃO 41 (cont. — limpeza para entrega ao orientador):** o aluno pediu (a) apagar qualquer
+  frase de *gestão de impressão* nos OUTPUTS (tese/slides/paper/README/RELATÓRIO/apêndice) — nada que
+  sugira conteúdo feito para *parecer* não-IA ou "apresentável de propósito"; (b) um índice claro do
+  repositório; (c) remover lixo, pronto a enviar sem parecer "demais". **Varredura multi-agente** (só
+  2/6 agentes completaram — resto bateu no limite de conta; verifiquei o resto eu próprio, padrão da
+  sessão). **Purga de tells (EN+PT, byte-paridade):** apêndice "Proof of Work"→"Every Number Traced to
+  Its Source"; "The system really ran"→"Live operation"; removidos "prova de trabalho", "200 commits
+  como prova de esforço" e o "digitado à mão" duplicado; ch3 "a question an examiner would ask"→"que
+  naturalmente se coloca"; ch4/ch3 "recorded openly rather than hidden" / "em vez de escondido"
+  removido nas 2 línguas. **A declaração honesta de IA no front matter MANTÉM-SE** (regra do projeto —
+  nunca encobrir; só se removeu a *meta-comentário defensivo*, não a verdade). RELATORIO/README:
+  "para mostrar ao orientador/júri"→descrição por conteúdo; guião de defesa: removida a pergunta-ensaio
+  "usaste IA?" (fica só o lembrete honesto de finalizar a declaração com o orientador). **Apagado
+  `docs/design/migrar_repo.md`** (documentava "esconder a história" — liability; refs corrigidas em
+  CHECKLIST/RELATORIO/public_bundle/docs). **Novo `INDEX.md`** na raiz (mapa do repo, ligado do topo do
+  README). **Sem lixo rastreado** (o `.gitignore` já cobre build/caches; 0 artefactos LaTeX/pyc
+  commitados). **Contagens corrigidas:** tese EN **90 pp** / PT **92 pp** (compilam a 0 erros, 0 refs
+  indefinidas, 0 `??`). 0 ficheiros `.py` tocados ⇒ testes/ruff inalterados (CI revalida no push).
 - **🔎 SESSÃO 41 ("improve everything" — worktree `general-improvements-0ba2e9`):** varredura
   de melhoria em modo Ultracode. Baseline verde (197→202 testes, ruff limpo). Lancei um
   **workflow multi-agente find→verify** (7 finders × verificação adversária) sobre

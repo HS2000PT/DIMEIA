@@ -397,8 +397,8 @@ recuperar-e-reutilizar (o núcleo de raciocínio baseado em casos da Secção~\r
 \end{algorithmic}
 \end{algorithm}
 
-Dois detalhes do passo de embedding merecem ser explícitos, porque cada um responde a uma pergunta que um
-examinador faria com razão. O primeiro é o que $\mathrm{embed}(h)$ de facto calcula. O Sentence-BERT é um
+Dois detalhes do passo de embedding merecem ser explícitos, porque cada um responde a uma pergunta que
+naturalmente se coloca. O primeiro é o que $\mathrm{embed}(h)$ de facto calcula. O Sentence-BERT é um
 \emph{bi-encoder}: um transformer pré-treinado lê a manchete uma vez e produz um vetor contextual por token,
 e o embedding de frase é a média desses vetores de token (mean pooling), escalado para comprimento
 unitário:
@@ -734,7 +734,7 @@ suas camadas gratuitas e licenças, o conjunto de dados FNSPID é atribuído com
 Commons exige \autocite{dong2024fnspid}, o texto de notícias de terceiros não é republicado, e nenhum dado
 pessoal é processado. \textbf{Segurança:} as credenciais nunca são guardadas em ficheiros versionados. Por
 fim, o sistema é posicionado como um auxílio ao apoio à decisão para um investidor não-profissional, não
-como substituto de aconselhamento profissional, uma limitação enunciada com clareza em vez de escondida.
+como substituto de aconselhamento profissional, uma limitação enunciada com clareza.
 
 \section{Metodologia de Avaliação}
 \label{sec:met_evaluation}

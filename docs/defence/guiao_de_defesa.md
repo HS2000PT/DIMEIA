@@ -110,11 +110,6 @@ fraqueza.
 > medir e explicar o que já aconteceu em casos análogos — que é defensável e genuinamente útil a um
 > não-especialista, em vez de um que não conseguiria resolver com integridade."
 
-**P: Usaste ferramentas de IA para fazer a tese?** *(preparar com o orientador; ver §6)*
-> Resposta honesta, na forma exata acordada com o Prof. Luís Gomes. **Não improvisar** — combinar
-> antes a redação exigida pelo ISEP. A postura: transparência total, o trabalho intelectual, as
-> decisões e a defesa são meus.
-
 ---
 
 ## 5. Armadilhas — o que NÃO fazer
@@ -134,8 +129,8 @@ fraqueza.
 
 ## 6. Checklist final (só HUMANO — sem isto não há submissão)
 
-- [ ] **Declaração de uso de IA** — redação EXATA exigida pela MEIA/ISEP, confirmada com o Prof.
-      Luís Gomes. Honesta, nunca subestimada. (É o maior risco não-técnico.)
+- [ ] **Declaração institucional** — confirmar com o Prof. Luís Gomes a redação e o formato exatos
+      exigidos pela MEIA/ISEP para o front matter.
 - [ ] **Licença do código** (MIT/Apache; política de IP do ISEP) + ficheiro `LICENSE`.
 - [ ] **Data e formato de entrega** confirmados.
 - [ ] **Leitura final** das DUAS teses (EN + PT) — o texto é teu para defender; a tradução PT

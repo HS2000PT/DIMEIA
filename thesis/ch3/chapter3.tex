@@ -392,8 +392,8 @@ retrieve-and-reuse step (the case-based-reasoning core of Section~\ref{sec:sota_
 \end{algorithmic}
 \end{algorithm}
 
-Two details of the embedding step deserve to be explicit, because each answers a question an examiner
-would rightly ask. The first is what $\mathrm{embed}(h)$ actually computes. Sentence-BERT is a
+Two details of the embedding step deserve to be explicit, because each answers a question that
+naturally arises. The first is what $\mathrm{embed}(h)$ actually computes. Sentence-BERT is a
 \emph{bi-encoder}: a pre-trained transformer reads the headline once and outputs one contextual vector
 per token, and the sentence embedding is the mean of those token vectors (mean pooling), scaled to unit
 length:
@@ -722,8 +722,7 @@ stewardship:} all sources are used within their free tiers and licences, the FNS
 as its Creative Commons licence requires \autocite{dong2024fnspid}, third-party news text is not
 republished, and no personal data is processed. \textbf{Security:} credentials are never stored in
 versioned files. Finally, the system is positioned as a decision-support aid for a non-professional
-investor, not as a substitute for professional advice, a limitation stated plainly rather than
-hidden.
+investor, not as a substitute for professional advice, a limitation stated plainly.
 
 \section{Evaluation Methodology}
 \label{sec:met_evaluation}
