@@ -134,3 +134,39 @@ Participante: P__   Ordem: [A→B | B→A]   Data: ____
   Q1_ Q2_ Q3_ Q4_ Q5_
 ── Aberta: "O que faltou ou confundiu?" ____________________
 ```
+
+---
+
+## Anexo B — kit de execução turn-key (para correres numa tarde)
+
+> Sem fabricar nada: os estímulos são **alertas reais** (do teu canal Telegram + os dois exemplos
+> documentados abaixo). Regra: cada alerta tem uma versão **A (só o facto)** e **B (o alerta completo)**.
+> A versão A constrói-se tirando ao alerta real tudo menos a 1.ª linha (o facto).
+
+**Guião do facilitador (30 s):** *"Vais ver alertas financeiros. Não precisas de saber de bolsa.
+Para cada um, responde ao que percebeste — não te ajudo durante. Não há respostas 'erradas' sobre ti."*
+
+**Selecionar os 6 alertas:** 3 de mercado + 3 de notícia, tirados do canal real; **inclui pelo menos um
+caso tema≠direção** (notícia com sentido positivo mas precedentes que caíram — é o teste mais duro e o
+mais revelador). Contrabalança a ordem (metade A→B, metade B→A), alertas diferentes em cada condição.
+
+**Exemplo trabalhado 1 — mercado (TSLA, real, 24 Out 2024):**
+- **A (só o facto):** *"A TSLA subiu 19,8% no dia 24 de outubro de 2024."*
+- **B (completo):** *"📈 TSLA · +19,82% hoje. Movimento extremo — cerca de 7,6× a oscilação diária
+  típica. Porquê: z-score +7,61 vs limiar ±3 (norma de 20 dias: μ −0,92%, σ 2,73%). Movimento
+  observado, não previsão."*
+
+**Exemplo trabalhado 2 — notícia com tema≠direção (NVDA, real, CS3 da tese):**
+- **A (só o facto):** *"Notícia sobre a NVDA: 'Qualcomm apresenta linha de chips de IA para data
+  centers.'"*
+- **B (completo):** *"📰 NVDA — 'Qualcomm apresenta linha de chips de IA para data centers.' Impacto
+  potencial (5 eventos passados semelhantes): movimento médio a 1 dia −1,97%. Precedentes: MSFT
+  (sim 0,68) −3,46%; NVDA (sim 0,68) −1,64%; META (sim 0,68) −2,65%; GOOGL (sim 0,64) −0,46%; NVDA
+  (sim 0,58) −1,64%. Nota: precedentes recuperados por similaridade; impacto = resultado passado
+  observado, não previsão."*
+  → **este é o caso-chave:** a Q1.3 ("isto é uma previsão?") deve dar **NÃO**, e a Q4 (calibração de
+  confiança) mede se o participante percebe que um cluster de quedas **não** prevê esta notícia.
+
+**Analisar (10 min, à mão):** conta os acertos da Parte 1 (B vs A) e a média das Likert (B vs A). Com
+N pequeno, reporta descritivo + 2–3 citações da Parte 3. Isto dá-te o **Case Study 5** (ou a nota da
+RQ3 "com evidência de um piloto de N=…") — reportado como piloto, sem inflar.
