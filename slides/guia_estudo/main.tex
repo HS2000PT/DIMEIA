@@ -1330,8 +1330,8 @@ e o custo. LLMs ficam como trabalho futuro (infraestrutura pronta: FAISS para es
 \vspace{1mm}
 
 \textbf{A precision@5 de $\sim$0,51 é boa?}\\
-É $\sim 2{,}1\times$ o acaso e acima do lexical, com desvio pequeno (5 seeds). É honesta e \key{preliminar}
-(corpus recente; FNSPID multi-ano é o passo seguinte).
+É $\sim 2{,}1\times$ o acaso e acima do lexical, com desvio pequeno (5 seeds). E \key{validada à escala}:
+no FNSPID multi-ano (${\sim}$80k manchetes) a P@5 sobe a \key{0,595}.
 \vspace{1mm}
 
 \textbf{O proxy de setor não é fraco?}\\
@@ -1405,9 +1405,9 @@ entre ações (amplitude 0,015 vs 0,344 de um limiar fixo) e explica-se com méd
 Desafiei-o com um método aprendido --- Isolation Forest --- e o z-score venceu (F1 0,530 vs 0,271)."
 \vspace{1mm}
 
-\textbf{RQ2 (recuperação + impacto)} --- "Sim. SBERT dá precision@5 de 0,51 cross-ticker, contra
-0,35 lexical e 0,24 aleatório; o impacto é medido com janelas de estudo de evento (+1/+3/+5 dias),
-sem lookahead, e mostrado como evidência, não como previsão."
+\textbf{RQ2 (recuperação + impacto)} --- "Sim, e validada à escala. SBERT dá precision@5 de 0,51
+cross-ticker (\key{0,595} no FNSPID multi-ano de 80k), contra 0,35 lexical e 0,24 aleatório; o impacto
+é medido com janelas de estudo de evento (+1/+3/+5 dias), sem lookahead, e mostrado como evidência."
 \vspace{1mm}
 
 \textbf{RQ3 (explicações)} --- "Fiéis \key{por construção}: o texto do alerta é gerado diretamente
@@ -1418,7 +1418,8 @@ reais precisa de um estudo humano, que declaro como limitação, não como resul
 \textbf{RQ4 (triagem aprendida)} --- "Não na hipótese do texto; sim no mecanismo. Nenhum modelo
 com texto bateu a só-volatilidade (PR-AUC 0,542 contra 0,496). Mas com orçamento de 5 alertas/dia
 a triagem sobe a precisão de 0,163 para 0,632, com probabilidades calibradas --- treinei, avaliei
-com protocolo temporal estrito, e reportei o resultado tal como é."
+com protocolo temporal estrito, e reportei o resultado tal como é. E testei a própria crítica: um
+re-teste justo (C afinado, PCA, FinBERT) confirma que o negativo é \key{robusto}, não sub-ajuste."
 \end{frame}
 
 \begin{frame}{Perguntas difíceis do júri (3/4) — o modelo e o produto}
@@ -1487,6 +1488,7 @@ mecanismo está construído e a correr.
 \textbf{Número} & \textbf{O que é} & \textbf{Onde} \\
 \midrule
 P@5 \textbf{0,514} $\pm$ 0,015 & SBERT-MiniLM vs 0,346 lexical / 0,240 acaso / 0,126 recência & Cap.~5, evaluation\_results \\
+P@5 \textbf{0,595} (80k) & recuperação validada à escala no FNSPID multi-ano & Cap.~6, retrieval\_fnspid \\
 0,538 & P@5 do SBERT-MPNet (melhor, mais pesado) & idem \\
 \textbf{0,015 vs 0,344} & amplitude da taxa de disparo: z-score vs limiar fixo & Cap.~5, evaluation\_anomaly \\
 F1 \textbf{0,530 vs 0,271} & z-score vs Isolation Forest causal (o simples ganha) & idem \\
