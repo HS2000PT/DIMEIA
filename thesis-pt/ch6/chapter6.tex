@@ -65,9 +65,11 @@ aleatório e $0.126$ da recência. Uma decomposição por setor mostrou que o ga
 vocabulário do domínio é mais distintivo (energia, saúde). O estudo de caso ponta a ponta mostrou-a a
 trazer à superfície precedentes genuinamente temáticos a partir de fontes de empresas diferentes. O
 impacto é medido estritamente após o evento, ao estilo de um estudo de evento, pelo que nenhuma
-informação futura se infiltra na evidência. A maquinaria de medição está montada e comporta-se de
-forma coerente; uma validação em larga escala e multi-ano das magnitudes de impacto fica para
-trabalho futuro.
+informação futura se infiltra na evidência. Isto foi depois validado à escala: no corpus FNSPID
+multi-ano (cerca de oitenta mil manchetes) o mesmo protocolo cross-ticker atingiu uma precision@$5$
+de $0.595$, acima do valor preliminar, e a propriedade tema-não-direção foi quantificada diretamente,
+já que a consistência de direção dos clusters recuperados ($0.71$) fica logo acima do seu chão do
+acaso de $0.69$.
 
 \paragraph{RQ3: explicações fiéis e úteis.}
 \textbf{Fiéis, sim; úteis, ainda em aberto.} Como cada alerta é composto diretamente a partir dos
@@ -87,7 +89,12 @@ modelo que lê o texto da manchete bateu a linha de base só-volatilidade (PR-AU
 do modelo principal contexto$+$texto), pelo que neste corpus o sinal da triagem vive no contexto de
 mercado, não na redação da manchete. Juntamente com a comparação com a Isolation Forest do estudo de
 anomalias, este é o segundo teste justo e causal em que a escolha transparente venceu, e ambos os
-resultados são reportados exatamente como se revelaram.
+resultados são reportados exatamente como se revelaram. O resultado negativo no texto foi ainda
+sujeito a stress: um bootstrap por cluster (ticker, dia) confirma que adicionar o texto da manchete
+baixa a precisão de forma robusta e não por acaso, e um re-teste deliberadamente justo, com
+regularização afinada, um bloco de texto reduzido em dimensão e um encoder de domínio financeiro,
+recupera o texto apenas até ao nível do contexto de mercado, nunca acima. O resultado é robusto, não
+um artefacto de um pipeline de texto sub-ajustado.
 
 \section{Questões de Investigação e Objetivos Alcançados}
 \label{sec:concl_objectives}
@@ -125,9 +132,9 @@ versionados.
 
 Restam várias limitações, enunciadas com clareza:
 \begin{itemize}
-  \item \textbf{Corpus.} A avaliação de recuperação usou um corpus de notícias recente, de poucos
-        meses, de um serviço gratuito, o que limita a análise de impacto e torna os números de
-        recuperação, embora reais, preliminares. O estudo de triagem usou de facto o subconjunto
+  \item \textbf{Corpus.} A avaliação de recuperação primária usou um corpus de notícias recente, de
+        poucos meses, de um serviço gratuito, o que torna esses números preliminares; um seguimento no
+        corpus FNSPID multi-ano validou a recuperação à escala (precision@$5$ de $0.595$). O estudo de triagem usou de facto o subconjunto
         multi-ano do FNSPID, mas com catorze dos quinze tickers (a Meta está indexada sob o seu
         símbolo antigo no corpus) e apenas o texto da manchete.
   \item \textbf{Indicadores aproximados.} A relevância é aproximada por concordância de setor, e o
@@ -162,7 +169,7 @@ Figura~\ref{fig:limitations_future}.
   \node[font=\small\bfseries, text=orange!65!black, anchor=west] at (0.1,0.95) {Limitação};
   \node[font=\small\bfseries, text=green!45!black, anchor=west] at (5.4,0.95) {Passo concreto seguinte};
   \node[lim] (l0) at (0,0) {Corpus recente, de poucos meses};
-  \node[fut] (f0) at (5.3,0) {Avaliar a recuperação no corpus FNSPID multi-ano (já reconstruído)};
+  \node[fut] (f0) at (5.3,0) {Estudo das magnitudes de impacto à escala (recuperação já validada no FNSPID)};
   \node[lim] (l1) at (0,-1.45) {Só manchetes (texto curto)};
   \node[fut] (f1) at (5.3,-1.45) {Texto mais rico: corpo dos artigos e uma feature de sentimento};
   \node[lim] (l2) at (0,-2.9) {Sem estudo humano de utilidade};
@@ -183,10 +190,10 @@ avaliação formal fica para trabalho futuro.}
 \end{figure}
 
 \begin{itemize}
-  \item Avaliar a \emph{recuperação} no corpus FNSPID multi-ano. A própria base de conhecimento já foi
-        reconstruída a partir desse corpus (depois de os estudos de caso aqui terem sido congelados),
-        pelo que o trabalho em aberto é a avaliação: uma análise de impacto mais rica, com estatísticas
-        de dispersão e de consistência de direção sobre os precedentes multi-ano.
+  \item Avaliar as \emph{magnitudes de impacto} no corpus FNSPID multi-ano. A própria recuperação já
+        foi validada aí (precision@$5$ de $0.595$, com estatísticas de dispersão e de consistência de
+        direção); o que resta é o estudo das magnitudes de impacto ajustadas ao mercado sobre esses
+        precedentes multi-ano.
   \item Realizar um pequeno estudo humano, aplicando uma rubrica de clareza, completude e
         acionabilidade a um conjunto de alertas, para resolver a questão em aberto da utilidade (RQ3).
   \item Atacar a lacuna de texto em aberto da RQ4: texto mais rico do que manchetes (corpo dos

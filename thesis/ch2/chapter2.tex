@@ -276,11 +276,12 @@ precedent retrieval needs, and is the representation chosen here. Details in Tab
 \textbf{For InvestiGator:} Sentence-BERT is the sweet spot (Figure~\ref{fig:sota_nlp_ladder}),
 contextual meaning beyond lexicons and static vectors, yet cheap, comparable and free to run. One honesty note on the comparison: the evaluation in
 Chapter~\ref{chap:casestudies} measures Sentence-BERT against a \emph{lexical} baseline, which brackets
-the question that matters (does meaning beat surface words?); word2vec and FinBERT variants are not run
-empirically, because static word vectors are strictly dominated by contextual sentence embeddings for
-sentence comparison, and domain-tuned FinBERT is oriented to sentiment classification rather than
-sentence similarity, at a cost this work's free-and-reproducible constraint excludes. Where a claim is
-cheap to test, this work tests it; where it would buy little, the reason is stated instead.
+the question that matters (does meaning beat surface words?); the embedder choice itself was also
+benchmarked on the same protocol. A domain-tuned FinBERT, mean-pooled into sentence embeddings, reaches
+only a precision@5 of $0.420$, below MiniLM's $0.514$ and consistent with its sentiment orientation,
+while current general encoders (E5-small, BGE-small) tie MiniLM (around $0.51$) rather than beating it.
+The small, free, general encoder is therefore the sweet spot by measurement, not merely by argument;
+only static word vectors, strictly dominated for sentence comparison, are left to argument.
 
 \section{Information Retrieval and Ranking Evaluation}
 \label{sec:sota_ir}
