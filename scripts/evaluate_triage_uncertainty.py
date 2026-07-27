@@ -12,8 +12,8 @@ de linhas esconde. Reporta IC 95% por família e diferenças emparelhadas (vol�
 vol−full, contexto−full) com P(Δ>0).
 
 Uso:
-    python scripts/evaluate_triage_uncertainty.py --dataset <triage_dataset.csv>          # vol/context (rápido, sem SBERT)
-    python scripts/evaluate_triage_uncertainty.py --dataset <...> --with-text             # + text/full/gbm (SBERT)
+    python scripts/evaluate_triage_uncertainty.py --dataset <csv>  # vol/context (sem SBERT)
+    python scripts/evaluate_triage_uncertainty.py --dataset <csv> --with-text  # + text/gbm (SBERT)
 """
 
 from __future__ import annotations
@@ -33,8 +33,12 @@ from investigator.triage.model import fit_platt, make_model, scores_of
 REPO = Path(__file__).resolve().parents[1]
 FROZEN = {"vol": 0.542, "context": 0.538, "text": 0.439, "full": 0.496, "gbm": 0.469}
 LABELS = {
-    "always": "Alert-always (floor)", "vol": "Volatility-only LR", "context": "Context-only LR",
-    "text": "Text-only LR", "full": "Context+text LR", "gbm": "Gradient boosting",
+    "always": "Alert-always (floor)",
+    "vol": "Volatility-only LR",
+    "context": "Context-only LR",
+    "text": "Text-only LR",
+    "full": "Context+text LR",
+    "gbm": "Gradient boosting",
 }
 
 
@@ -46,7 +50,9 @@ def main() -> int:
     force_utf8_stdout()
     ap = argparse.ArgumentParser(description="Incerteza da triagem (bootstrap por cluster)")
     ap.add_argument("--dataset", default=str(REPO / "data" / "triage_dataset.csv"))
-    ap.add_argument("--with-text", action="store_true", help="inclui text/full/gbm (precisa de SBERT)")
+    ap.add_argument(
+        "--with-text", action="store_true", help="inclui text/full/gbm (precisa de SBERT)"
+    )
     ap.add_argument("--embedder", choices=["sbert", "hashing"], default="sbert")
     ap.add_argument("--boot", type=int, default=1000)
     ap.add_argument("--seed", type=int, default=42)
@@ -61,32 +67,40 @@ def main() -> int:
 
     # ── Blocos de features ────────────────────────────────────────────────────
     families = ["vol", "context"]
-    ctx = {s: context_block(parts[s]) for s in parts}          # (X, nomes) — sem SBERT
+    ctx = {s: context_block(parts[s]) for s in parts}  # (X, nomes) — sem SBERT
     blocks = {"context": ctx, "vol": {s: (ctx[s][0][:, :1], ctx[s][1][:1]) for s in parts}}
     if args.with_text:
         families += ["text", "full", "gbm"]
         if args.embedder == "hashing":
             from investigator.historical_kb.embedder import HashingEmbedder
+
             emb = HashingEmbedder(dim=64)
         else:
             from investigator.historical_kb.embedder import SbertEmbedder
+
             emb = SbertEmbedder()
         print("A embeder o bloco de texto (SBERT)…" if args.embedder == "sbert" else "hashing…")
         txt = {s: text_block(parts[s], emb) for s in parts}
         blocks["text"] = txt
-        blocks["full"] = {s: (np.hstack([ctx[s][0], txt[s][0]]), ctx[s][1] + txt[s][1]) for s in parts}
+        blocks["full"] = {
+            s: (np.hstack([ctx[s][0], txt[s][0]]), ctx[s][1] + txt[s][1]) for s in parts
+        }
         blocks["gbm"] = blocks["full"]
 
     # ── Treinar+calibrar cada família → scores de teste fixos ─────────────────
     s_te: dict[str, np.ndarray] = {}
     for name in families:
-        xtr = blocks[name]["train"][0]; xva = blocks[name]["val"][0]; xte = blocks[name]["test"][0]
+        xtr = blocks[name]["train"][0]
+        xva = blocks[name]["val"][0]
+        xte = blocks[name]["test"][0]
         model = make_model(name, seed=args.seed)
         model.fit(xtr, y["train"])
         cal = fit_platt(scores_of(model, xva), y["val"], seed=args.seed)
         s_te[name] = cal(scores_of(model, xte))
         pt = _prauc(y["test"], s_te[name])
-        tag = f" (congelado {FROZEN[name]:.3f}, Δ {pt - FROZEN[name]:+.3f})" if name in FROZEN else ""
+        tag = (
+            f" (congelado {FROZEN[name]:.3f}, Δ {pt - FROZEN[name]:+.3f})" if name in FROZEN else ""
+        )
         print(f"  {name:8s} PR-AUC ponto = {pt:.3f}{tag}")
 
     # ── Bootstrap por cluster (ticker, dia) ───────────────────────────────────
@@ -123,12 +137,13 @@ def main() -> int:
     L = [
         "# evaluation_triage_uncertainty.md — Incerteza da triagem (RQ4; bootstrap por cluster)",
         "",
-        "> Gerado por `scripts/evaluate_triage_uncertainty.py` (ADITIVO; não altera os congelados).",
-        "> Responde à crítica: as PR-AUC da RQ4 vinham single-seed, a 3 casas, sem intervalos e com",
+        "> Gerado por `scripts/evaluate_triage_uncertainty.py` (ADITIVO; não altera congelados).",
+        "> Responde à crítica: as PR-AUC vinham single-seed, a 3 casas, sem intervalos e com",
         "> amostras correlacionadas. Aqui os modelos ficam fixos (train+val) e reamostram-se os",
         f"> CLUSTERS (ticker,dia) do teste com reposição ({args.boot}×), IC 95% percentil.",
         "",
-        f"- **Teste:** {len(test)} linhas em {n_cl} clusters (ticker,dia); prevalência {y['test'].mean():.3f}.",
+        f"- **Teste:** {len(test)} linhas em {n_cl} clusters (ticker,dia); "
+        f"prevalência {y['test'].mean():.3f}.",
         f"- **Gerado:** {datetime.now(UTC).strftime('%Y-%m-%d %H:%M')} UTC · seed {args.seed}"
         f"{' · SBERT' if args.with_text and args.embedder == 'sbert' else ''}.",
         "",
@@ -138,8 +153,13 @@ def main() -> int:
     for f in families:
         m, lo, hi = ci(boot[f])
         L.append(f"| {LABELS[f]} | {_prauc(y['test'], s_te[f]):.3f} | [{lo:.3f}, {hi:.3f}] |")
-    L += ["", "## Diferenças emparelhadas (o que a comparação decisiva realmente suporta)", "",
-          "| Diferença | Δ médio | IC 95% | P(Δ>0) |", "|---|---|---|---|"]
+    L += [
+        "",
+        "## Diferenças emparelhadas (o que a comparação decisiva realmente suporta)",
+        "",
+        "| Diferença | Δ médio | IC 95% | P(Δ>0) |",
+        "|---|---|---|---|",
+    ]
     for name, v in diffs.items():
         if not v:
             continue
@@ -148,15 +168,16 @@ def main() -> int:
         L.append(f"| {name} | {m:+.4f} | [{lo:+.4f}, {hi:+.4f}] | {float((a > 0).mean()):.2f} |")
     L += [
         "",
-        "**Leitura honesta:** as barras marginais (coluna IC 95%) são largas, por isso reportar as "
-        "PR-AUC a 3 casas como pontos precisos não era defensável — o honesto é o par (ponto, IC). "
-        "Mas o bootstrap é EMPARELHADO (mesma reamostragem para todas as famílias), e são as "
-        "DIFERENÇAS que sustentam a comparação decisiva: quando `vol−full` e `context−full` são "
-        "positivos com IC a excluir 0 e P(Δ>0)=1, adicionar o bloco de texto PIORA de forma robusta "
-        "(não é ruído de uma seed) — o veredicto 'o texto não acrescenta sobre o contexto de mercado' "
-        "fica estatisticamente sustentado, cluster-robusto. Fica em aberto para o re-teste justo da "
-        "RQ4 (fase D) se a degradação reflete 'texto sem sinal' ou sub-ajuste do pipeline de texto "
-        "(penalização não afinada; bloco 384-d a diluir 5 escalares).",
+        "**Leitura honesta:** as barras marginais (coluna IC 95%) são largas, por isso "
+        "reportar as PR-AUC a 3 casas como pontos precisos não era defensável — o honesto é "
+        "o par (ponto, IC). Mas o bootstrap é EMPARELHADO (mesma reamostragem para todas as "
+        "famílias), e são as DIFERENÇAS que sustentam a comparação decisiva: quando `vol−full` "
+        "e `context−full` são positivos com IC a excluir 0 e P(Δ>0)=1, adicionar o bloco de "
+        "texto PIORA de forma robusta (não é ruído de uma seed) — o veredicto 'o texto não "
+        "acrescenta sobre o contexto de mercado' fica estatisticamente sustentado, "
+        "cluster-robusto. Fica em aberto para o re-teste justo da RQ4 (fase D) se a degradação "
+        "reflete 'texto sem sinal' ou sub-ajuste do pipeline de texto (penalização não "
+        "afinada; bloco 384-d a diluir 5 escalares).",
     ]
     out.write_text("\n".join(L) + "\n", encoding="utf-8")
     print(f"\nEscrito: {out}")
