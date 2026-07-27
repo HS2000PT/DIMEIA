@@ -51,9 +51,12 @@ se só queres correr o sistema.
 > estudo — ensina a tese do zero E contém o guião oral, o mapa dos números congelados e o plano B.
 >
 > **2. ENSAIAR (recall rápido):** [defence/guiao_de_defesa.md](defence/guiao_de_defesa.md) — os
-> números de cor, o veredicto+guião por RQ, e as **perguntas mais duras do júri com respostas-modelo**
-> focadas nos pontos fracos (corpus fino da RQ2; "o modelo perdeu" da RQ4; utilidade da RQ3; proxy
-> de setor). É o que se lê na véspera.
+> números de cor, o veredicto+guião por RQ, o guião dos 15 min, as fórmulas explicadas, e as
+> perguntas duras com respostas-modelo. É o que se lê na véspera.
+>
+> **3. SIMULAR (treino de arguição):** [defence/simulacro_defesa.md](defence/simulacro_defesa.md) —
+> as **cadeias de pressão** (pergunta → resposta → o júri aperta → resposta) para as 8 perguntas mais
+> perigosas. Treina em voz alta até a 3.ª pergunta sair sem hesitar.
 >
 > O resumo do projeto está na raiz: `RELATORIO_FINAL.md`. (Os antigos caderno de defesa e guia
 > rápido foram absorvidos no guia de estudo.)
