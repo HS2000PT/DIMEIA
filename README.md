@@ -124,7 +124,7 @@ DOI/arXiv/ISBN or primary source** (audit in `docs/decisions/page_audit.md`). An
 and **defence slides** (`slides/`) compile. Remaining items are human-only: confirm the exact ISEP AI-use
 declaration wording + submission date, and the author's final read. The multi-year *retrieval* knowledge
 base is built as a local artefact (validated in `docs/evaluation/kb_fnspid_build.md`; a curated slice
-powers the public app) — evaluating retrieval on it stays future work, as the thesis states. See
+powers the public app) — retrieval on it has now been evaluated at scale (precision@5 0.595; see `docs/evaluation/evaluation_retrieval_fnspid.md`), leaving the market-adjusted impact-magnitude study as the open item. See
 `CLAUDE.md` for the exact state and `progress/SESSIONS.md` for per-session history.
 
 ## Repository layout
