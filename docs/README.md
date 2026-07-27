@@ -39,6 +39,7 @@ se só queres correr o sistema.
 | [evaluation/evaluation_triage_uncertainty.md](evaluation/evaluation_triage_uncertainty.md) | **RQ4 incerteza:** bootstrap por cluster (ticker,dia) → IC 95% + Δ emparelhados (o texto piora de forma robusta). |
 | [evaluation/evaluation_retrieval_fnspid.md](evaluation/evaluation_retrieval_fnspid.md) | **RQ2 à escala:** retrieval no FNSPID multi-ano (P@5 0.595 em 80k) + tema≠direção quantificado. |
 | [evaluation/evaluation_retrieval_embedders.md](evaluation/evaluation_retrieval_embedders.md) | **Benchmark de embedders:** MiniLM vs FinBERT/E5/BGE (valida a escolha do embedder por medição). |
+| [evaluation/evaluation_triage_fairtext.md](evaluation/evaluation_triage_fairtext.md) | **RQ4 re-teste justo:** C afinado + PCA do texto + FinBERT → o texto continua a não bater a volatilidade (negativo robusto; PCA recupera até ao contexto). |
 
 ## decisions/ — porquê das decisões, aprendizagem e revisões (rigor académico)
 | Ficheiro | Para quê |
