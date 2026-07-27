@@ -9,6 +9,26 @@
 ## Estado Atual
 - **Sessão nº:** 41 (**"improve everything" — varredura de qualidade multi-agente; correções aplicadas na branch `claude/general-improvements-0ba2e9`**)
 - **Última atualização:** 2026-07-27
+- **🔬 SESSÃO 41 (cont. — reforço de ENGENHARIA DE IA; programa A+B+C+D no PC com FNSPID+torch):**
+  avaliação adversária multi-agente (5 arguentes → veredicto "solid") identificou os pontos finos;
+  executei 4 melhorias REAIS (aditivas; congelados intactos; reproduzem os pontos ao milésimo; 0
+  fabricação; venv `.venv` 3.12 tem torch/sbert; embeddings MiniLM/FinBERT em cache
+  `data/_cache_triage_*.npy`). **A** incerteza — `scripts/evaluate_triage_uncertainty.py`: bootstrap
+  por cluster (ticker,dia) → IC 95% + Δ emparelhados; o "texto piora" é **cluster-robusto**
+  (context−full +0,043, IC exclui 0, P=1,00), mas as marginais são largas (±0,05) → reportar 3 casas
+  era enganador. **B** embedders — `scripts/evaluate_retrieval_embedders.py`: FinBERT **0,420** (pior),
+  E5 0,504 / BGE 0,513 (empatam) vs MiniLM 0,514 → escolha do embedder validada por MEDIÇÃO (fecha
+  "evitaste o FinBERT / fronteira datada"). **C** RQ2 à escala — `scripts/evaluate_retrieval_fnspid.py`:
+  P@5 **0,595** em 80k (> 0,514 preliminar) valida o retrieval à escala; consistência de direção 0,708
+  quase no chão do acaso 0,688 → **tema≠direção quantificado**. **D** RQ4 re-teste justo —
+  `scripts/evaluate_triage_fairtext.py`: C afinado + PCA do bloco de texto + FinBERT → o texto **NÃO**
+  bate a volatilidade (melhor texto 0,533 < vol 0,542); o PCA recupera o full de 0,499→0,533 (o
+  congelado 0,496 estava EM PARTE deprimido por dimensionalidade — nuance honesta, o arguente tinha
+  razão nesse ponto), mas nunca acima do contexto → **negativo da RQ4 robusto, não sub-ajuste**. Docs
+  novos: `docs/evaluation/evaluation_{triage_uncertainty,retrieval_fnspid,retrieval_embedders,triage_fairtext}.md`.
+  **PENDENTE: integrar A/B/C/D na TESE (bilingue EN+PT)** — RQ2 sobe de "preliminar" a "validada à
+  escala"; RQ4 ganha ICs + o re-teste justo (negativo robusto); Cap.2/3 ganha o benchmark de embedders.
+  A narrativa "simplicidade venceu" NÃO virou (o texto continua a perder) → integração é aditiva, sem reversão.
 - **🎓 SESSÃO 41 (cont. — modo coorientador exigente; "tese primeiro"):** iterações pequenas.
   (1) **Sincronização documental:** contagens frágeis de testes (145/202 → **"200+"** estável;
   reais 228 `def test_`), slides (71/76 → **77**), páginas (86 → **90/92**) corrigidas em
