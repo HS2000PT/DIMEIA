@@ -156,7 +156,9 @@ volatility, while the volatility-normalised \emph{z}-score is stable across all 
 On $3{,}714$ real headlines across five sectors, semantic retrieval clearly outperforms every baseline
 (Table~\ref{tab:retr}). MiniLM reaches a cross-ticker precision@5 of $0.514$ (about $2.1\times$ the random
 base rate), the larger MPNet slightly more ($0.538$), and both far exceed the lexical baseline ($0.346$);
-recency is worst, below the random rate. Small standard deviations ($\sim 0.01$) show the gap is robust.
+recency is worst, below the random rate. Small standard deviations ($\sim 0.01$) show the gap is robust;
+a follow-up on the multi-year FNSPID corpus ($\sim 80{,}000$ headlines) lifts precision@5 to $0.595$,
+confirming the retrieval at scale.
 Per sector (Fig.~\ref{fig:persector}), the lift over the base rate is largest where vocabulary is
 distinctive, in energy ($+0.377$) and health ($+0.348$), and smallest for the broad consumer sector
 ($+0.100$); technology has the highest raw precision ($0.712$) only because it dominates the corpus and so
@@ -203,16 +205,18 @@ budget of five alerts per day it raises the share of material alerts from $0.163
 calibrated probabilities (Brier $0.218$ against $0.622$). The same discipline was applied on the anomaly
 side, where an Isolation Forest \cite{liu2008isolation} trained causally on identical information lost to
 the $z$-score on the identical evaluation region ($F_1$ $0.271$ vs $0.530$). Both
-statistical-versus-learned comparisons were pre-committed, and both favoured the transparent choice.
+statistical-versus-learned comparisons were pre-committed, and both favoured the transparent choice. A
+cluster bootstrap and a fair re-test (tuned regularisation, a PCA-reduced text block, a finance-domain
+encoder) confirm the negative-on-text result is robust rather than an under-fit artefact.
 
 \section{Discussion and Limitations}
 The results support the design: transparent volatility-normalised detection is consistent where a fixed
 threshold is not, semantic retrieval surfaces markedly more sector-analogous precedents than lexical or
 trivial baselines, and learned triage adds a large budgeted-precision gain while confirming, against its
 own text features, that the transparent volatility evidence carries the signal. The limitations are
-stated plainly. Relevance is a same-sector proxy, not a human judgement; the retrieval corpus is a recent
-window from a free service rather than the multi-year FNSPID history (the triage study did use the
-multi-year corpus); the displayed precedent impact is a raw post-event return, whereas the triage labels
+stated plainly. Relevance is a same-sector proxy, not a human judgement; the primary retrieval corpus is
+a recent window from a free service, though a follow-up validated the retrieval at scale on FNSPID (the
+triage study also used the multi-year corpus); the displayed precedent impact is a raw post-event return, whereas the triage labels
 are market-adjusted; and no human usefulness study has yet been run. A further, conceptual limitation is that embedding similarity captures \emph{theme} rather
 than \emph{direction}: a retrieved cluster can mix positive and negative outcomes (a positive headline may
 retrieve a competitive-threat cluster), so the reported mean is evidence about a theme, not a directional
