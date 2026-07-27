@@ -36,6 +36,9 @@ se só queres correr o sistema.
 | [evaluation/live_monitoring.md](evaluation/live_monitoring.md) | Loop de pós-validação: precisão/calibração ao vivo. |
 | [evaluation/kb_fnspid_build.md](evaluation/kb_fnspid_build.md) | KB de retrieval multi-ano: build + validação do artefacto (P3). |
 | [evaluation/onnx_minilm_validation.md](evaluation/onnx_minilm_validation.md) | Produto: paridade do MiniLM-ONNX vs SBERT (embeddings + retrieval top-k). |
+| [evaluation/evaluation_triage_uncertainty.md](evaluation/evaluation_triage_uncertainty.md) | **RQ4 incerteza:** bootstrap por cluster (ticker,dia) → IC 95% + Δ emparelhados (o texto piora de forma robusta). |
+| [evaluation/evaluation_retrieval_fnspid.md](evaluation/evaluation_retrieval_fnspid.md) | **RQ2 à escala:** retrieval no FNSPID multi-ano (P@5 0.595 em 80k) + tema≠direção quantificado. |
+| [evaluation/evaluation_retrieval_embedders.md](evaluation/evaluation_retrieval_embedders.md) | **Benchmark de embedders:** MiniLM vs FinBERT/E5/BGE (valida a escolha do embedder por medição). |
 
 ## decisions/ — porquê das decisões, aprendizagem e revisões (rigor académico)
 | Ficheiro | Para quê |
