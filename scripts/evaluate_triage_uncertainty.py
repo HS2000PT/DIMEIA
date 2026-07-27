@@ -148,10 +148,15 @@ def main() -> int:
         L.append(f"| {name} | {m:+.4f} | [{lo:+.4f}, {hi:+.4f}] | {float((a > 0).mean()):.2f} |")
     L += [
         "",
-        "**Leitura honesta:** se o IC de `vol−context` contém 0, então volatilidade e contexto são "
-        "**estatisticamente indistinguíveis** — a ordenação a 3 casas não era defensável, mas o "
-        "veredicto qualitativo (o texto não acrescenta) mantém-se se `vol−full` e `context−full` "
-        "ficarem ≥0 com P(Δ>0) alto. Reportado tal como cai.",
+        "**Leitura honesta:** as barras marginais (coluna IC 95%) são largas, por isso reportar as "
+        "PR-AUC a 3 casas como pontos precisos não era defensável — o honesto é o par (ponto, IC). "
+        "Mas o bootstrap é EMPARELHADO (mesma reamostragem para todas as famílias), e são as "
+        "DIFERENÇAS que sustentam a comparação decisiva: quando `vol−full` e `context−full` são "
+        "positivos com IC a excluir 0 e P(Δ>0)=1, adicionar o bloco de texto PIORA de forma robusta "
+        "(não é ruído de uma seed) — o veredicto 'o texto não acrescenta sobre o contexto de mercado' "
+        "fica estatisticamente sustentado, cluster-robusto. Fica em aberto para o re-teste justo da "
+        "RQ4 (fase D) se a degradação reflete 'texto sem sinal' ou sub-ajuste do pipeline de texto "
+        "(penalização não afinada; bloco 384-d a diluir 5 escalares).",
     ]
     out.write_text("\n".join(L) + "\n", encoding="utf-8")
     print(f"\nEscrito: {out}")
