@@ -224,6 +224,7 @@ Aleatório & $0.240$ & $0.240$ \\
 \centering\includegraphics[width=\linewidth]{eval_retrieval_per_sector.pdf}
 \par\scriptsize Ganho maior onde o vocabulário é distintivo (energia, saúde).
 \end{columns}
+\vspace{1mm}\par\centering\footnotesize Validado à escala no FNSPID multi-ano (${\sim}80$k manchetes): \textbf{P@5 $0.595$}; consistência de direção $0.71$ no chão do acaso $0.69$ (tema, não direção).
 \end{frame}
 
 \begin{frame}{Resultado 3: as explicações são fiéis por construção}
@@ -273,7 +274,7 @@ Gradient boosting & 0.469 & 0.551 \\
 \end{columns}
 \vfill
 \begin{block}{\small O veredicto honesto (pré-comprometido)}
-\small Dentro de um orçamento de 5 alertas/dia, a triagem quase \textbf{quadruplica a precisão} ($0.632$ vs $0.163$) --- mas \textbf{nenhum modelo de texto bateu a volatilidade}. Uma ablação de seguimento juntou \emph{cinco} features de contexto baratas (regime de mercado, momentum, reação padronizada, risco de queda): PR-AUC $0.535$, de novo \textbf{sem ganho}. O sinal é o contexto de mercado; reportado tal como se revelou.
+\small Dentro de um orçamento de 5 alertas/dia, a triagem quase \textbf{quadruplica a precisão} ($0.632$ vs $0.163$) --- mas \textbf{nenhum modelo de texto bateu a volatilidade}. Uma ablação de seguimento juntou \emph{cinco} features de contexto baratas (regime de mercado, momentum, reação padronizada, risco de queda): PR-AUC $0.535$, de novo \textbf{sem ganho}. Um re-teste \emph{justo} (C afinado, texto reduzido por PCA, um encoder de domínio FinBERT) continua a não bater a volatilidade, pelo que o negativo é \textbf{robusto}, não um artefacto de sub-ajuste. O sinal é o contexto de mercado; reportado tal como se revelou.
 \end{block}
 \end{frame}
 
@@ -319,7 +320,7 @@ Gradient boosting & 0.469 & 0.551 \\
 \begin{frame}{Limitações (enunciadas com clareza)}
 \begin{itemize}
   \item A relevância é um \textbf{indicador aproximado por mesmo setor}, não um juízo humano.
-  \item O corpus de recuperação é uma janela \textbf{recente} da camada gratuita; o estudo de \emph{triagem} usou de facto o FNSPID multi-ano (14/15 tickers --- a Meta é ``FB'' no corpus).
+  \item O corpus de recuperação é uma janela \textbf{recente} da camada gratuita (entretanto validada à escala no FNSPID, P@5 $0.595$); o estudo de \emph{triagem} usou de facto o FNSPID multi-ano (14/15 tickers --- a Meta é ``FB'' no corpus).
   \item O impacto de precedente mostrado é um retorno pós-evento \textbf{bruto} (os rótulos de triagem \emph{são} ajustados ao mercado).
   \item A similaridade é \textbf{temática, não direcional}: um agrupamento pode misturar movimentos de subida/descida, pelo que a média é \emph{evidência} ao nível do tema, não uma previsão.
   \item \textbf{Ainda sem estudo humano de utilidade} (utilidade da RQ3 em aberto).
@@ -332,7 +333,7 @@ Gradient boosting & 0.469 & 0.551 \\
 \begin{frame}{Conclusões}
 \begin{itemize}
   \item \textbf{RQ1 (sim):} o \emph{z}-score transparente deteta de forma consistente em todo o mercado e explica cada marca.
-  \item \textbf{RQ2 (sim, recuperação):} a recuperação semântica encontra precedentes análogos muito acima das linhas de base; impacto medido sem lookahead.
+  \item \textbf{RQ2 (sim, validada à escala):} a recuperação semântica muito acima das linhas de base (P@5 $0.595$ no FNSPID multi-ano); impacto medido sem lookahead.
   \item \textbf{RQ3 (fiel sim; útil em aberto):} as explicações não podem divergir do cálculo; a utilidade para humanos é trabalho futuro.
   \item \textbf{RQ4 (não no texto; sim no mecanismo):} a triagem $\approx 4\times$ de precisão dentro do orçamento, mas a volatilidade ficou imbatida --- o \emph{segundo} teste justo ``aprendido vs simples'' que a escolha transparente venceu (o primeiro: Isolation Forest vs \emph{z}-score, $F_1$ $0.271$ vs $0.530$).
 \end{itemize}

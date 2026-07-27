@@ -16,9 +16,9 @@ se só queres correr o sistema.
 | [design/data_card.md](design/data_card.md) | Origem/estrutura dos dados (FNSPID + camada live). |
 | [design/free_apis.md](design/free_apis.md) | APIs gratuitas usadas (preços, notícias, Telegram). |
 | [design/evaluation_design.md](design/evaluation_design.md) | Metodologia de avaliação (precision@k, anomalia). |
+| [design/usefulness_study.md](design/usefulness_study.md) | **Protocolo de estudo de utilidade (RQ3)**: rubrica + desenho executável para fechar a lacuna "útil = em aberto". |
 | [design/risk_register.md](design/risk_register.md) | Riscos do projeto e mitigações. |
-| [design/migrar_repo.md](design/migrar_repo.md) | Migrar para um repo novo sem história (procedimento + trade-offs). |
-| [design/public_bundle.md](design/public_bundle.md) | Bundle público (app + tese + código) num repo de 1 commit; enacted por `scripts/make_public_bundle.py`. |
+| [design/public_bundle.md](design/public_bundle.md) | Publicar um bundle limpo (app + tese + código), sem segredos nem dados grandes; enacted por `scripts/make_public_bundle.py`. |
 
 ## evaluation/ — resultados (gerados por script; não editar à mão)
 | Ficheiro | Para quê |
@@ -33,10 +33,13 @@ se só queres correr o sistema.
 | [evaluation/roadmap_rq4.md](evaluation/roadmap_rq4.md) | Roteiro RQ4 ("não estamos no fim da linha"): features estendidas + ablação (Eixo 1 ✅ corrido). |
 | [evaluation/triage_worked_example.md](evaluation/triage_worked_example.md) | Exemplo trabalhado REAL da triagem (alerta META → p=0,539 reproduzido). |
 | [evaluation/alert_funnel.md](evaluation/alert_funnel.md) | Funil de produção real: manchetes → alertas (22:1). |
-| [evaluation/evaluation_triage_smoke.md](evaluation/evaluation_triage_smoke.md) | Triagem: smoke no corpus Finnhub (congelado; regime shift). |
 | [evaluation/live_monitoring.md](evaluation/live_monitoring.md) | Loop de pós-validação: precisão/calibração ao vivo. |
 | [evaluation/kb_fnspid_build.md](evaluation/kb_fnspid_build.md) | KB de retrieval multi-ano: build + validação do artefacto (P3). |
 | [evaluation/onnx_minilm_validation.md](evaluation/onnx_minilm_validation.md) | Produto: paridade do MiniLM-ONNX vs SBERT (embeddings + retrieval top-k). |
+| [evaluation/evaluation_triage_uncertainty.md](evaluation/evaluation_triage_uncertainty.md) | **RQ4 incerteza:** bootstrap por cluster (ticker,dia) → IC 95% + Δ emparelhados (o texto piora de forma robusta). |
+| [evaluation/evaluation_retrieval_fnspid.md](evaluation/evaluation_retrieval_fnspid.md) | **RQ2 à escala:** retrieval no FNSPID multi-ano (P@5 0.595 em 80k) + tema≠direção quantificado. |
+| [evaluation/evaluation_retrieval_embedders.md](evaluation/evaluation_retrieval_embedders.md) | **Benchmark de embedders:** MiniLM vs FinBERT/E5/BGE (valida a escolha do embedder por medição). |
+| [evaluation/evaluation_triage_fairtext.md](evaluation/evaluation_triage_fairtext.md) | **RQ4 re-teste justo:** C afinado + PCA do texto + FinBERT → o texto continua a não bater a volatilidade (negativo robusto; PCA recupera até ao contexto). |
 
 ## decisions/ — porquê das decisões, aprendizagem e revisões (rigor académico)
 | Ficheiro | Para quê |
@@ -47,21 +50,21 @@ se só queres correr o sistema.
 | [decisions/page_audit.md](decisions/page_audit.md) | Auditoria página-a-página + re-verificação das 50 fontes. |
 | [decisions/product_review.md](decisions/product_review.md) | Revisão de produto/UX (Pass 5 + Pass 6 do redesenho). |
 
-## Preparar a defesa — UMA fonte
-> **`slides/guia_estudo/main.pdf` (71 slides)** é a fonte única de estudo: ensina a tese do
-> zero E contém o guião oral, as perguntas do júri, o mapa dos números congelados e o plano B.
-> O relatório para orientador/júri está na raiz: `RELATORIO_FINAL.md`. (Os antigos caderno de
-> defesa e guia rápido foram absorvidos no guia e arquivados em `_archive/`.)
+## Preparar a defesa — duas camadas
+> **1. ESTUDAR (ensina do zero):** `slides/guia_estudo/main.pdf` (77 slides) é a fonte única de
+> estudo — ensina a tese do zero E contém o guião oral, o mapa dos números congelados e o plano B.
+>
+> **2. ENSAIAR (recall rápido):** [defence/guiao_de_defesa.md](defence/guiao_de_defesa.md) — os
+> números de cor, o veredicto+guião por RQ, o guião dos 15 min, as fórmulas explicadas, e as
+> perguntas duras com respostas-modelo. É o que se lê na véspera.
+>
+> **3. SIMULAR (treino de arguição):** [defence/simulacro_defesa.md](defence/simulacro_defesa.md) —
+> as **cadeias de pressão** (pergunta → resposta → o júri aperta → resposta) para as 8 perguntas mais
+> perigosas. Treina em voz alta até a 3.ª pergunta sair sem hesitar.
+>
+> O resumo do projeto está na raiz: `RELATORIO_FINAL.md`. (Os antigos caderno de defesa e guia
+> rápido foram absorvidos no guia de estudo.)
 
-## internal/ — documentos internos de continuidade (não são "porta de entrada" para examinadores)
-| Ficheiro | Para quê |
-|----------|----------|
-| [internal/ROOT_PROMPT_CLAUDE_CODE.md](internal/ROOT_PROMPT_CLAUDE_CODE.md) | O enunciado/root prompt original do projeto (proveniência honesta). |
-
-> Outros ficheiros internos de continuidade vivem em `progress/` (TRACKER, SESSIONS, DECISIONS, MASTER_PLAN)
-> e na raiz (`CLAUDE.md` — memória de trabalho do projeto).
-
-## _archive/ — documentos absorvidos/superados, mantidos por proveniência
-Análises de fases iniciais (`analise_referencia`, `analise_template_latex`), a proposta de ML ao
-orientador (aprovada 2026-07-04), e os documentos de estudo absorvidos pelo guia único
-(`caderno_de_defesa`, `guia_rapido`, `QUESTIONS`).
+## Notas internas de continuidade
+> Vivem em `progress/` (TRACKER, SESSIONS, DECISIONS, MASTER_PLAN) e na raiz (`CLAUDE.md` — memória
+> de trabalho do projeto).

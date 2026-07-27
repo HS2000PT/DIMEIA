@@ -90,8 +90,9 @@ subset \emph{was} built by the streaming pipeline and drives the materiality-tri
 Chapter~\ref{chap:casestudies} ($79{,}753$ examples, 2018--2023; fourteen of the fifteen tickers, as
 the corpus indexes Meta under its former symbol). The retrieval study is run on the real recent-news
 evaluation corpus described in Section~\ref{sec:met_data_live} (3{,}714 headlines for the same
-tickers, built through the identical process); rebuilding the retrieval knowledge base from the
-multi-year corpus remains future work.}
+tickers, built through the identical process); the retrieval was later re-run at scale on the
+multi-year corpus (Chapter~\ref{chap:conclusions}), leaving the market-adjusted impact-magnitude study
+as future work.}
 \end{table}
 
 The fifteen large-cap tickers span five sectors, which makes the cross-sector evaluation of
@@ -392,8 +393,8 @@ retrieve-and-reuse step (the case-based-reasoning core of Section~\ref{sec:sota_
 \end{algorithmic}
 \end{algorithm}
 
-Two details of the embedding step deserve to be explicit, because each answers a question an examiner
-would rightly ask. The first is what $\mathrm{embed}(h)$ actually computes. Sentence-BERT is a
+Two details of the embedding step deserve to be explicit, because each answers a question that
+naturally arises. The first is what $\mathrm{embed}(h)$ actually computes. Sentence-BERT is a
 \emph{bi-encoder}: a pre-trained transformer reads the headline once and outputs one contextual vector
 per token, and the sentence embedding is the mean of those token vectors (mean pooling), scaled to unit
 length:
@@ -722,8 +723,7 @@ stewardship:} all sources are used within their free tiers and licences, the FNS
 as its Creative Commons licence requires \autocite{dong2024fnspid}, third-party news text is not
 republished, and no personal data is processed. \textbf{Security:} credentials are never stored in
 versioned files. Finally, the system is positioned as a decision-support aid for a non-professional
-investor, not as a substitute for professional advice, a limitation stated plainly rather than
-hidden.
+investor, not as a substitute for professional advice, a limitation stated plainly.
 
 \section{Evaluation Methodology}
 \label{sec:met_evaluation}

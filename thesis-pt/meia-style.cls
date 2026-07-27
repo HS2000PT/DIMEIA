@@ -142,7 +142,7 @@
 %	REQUIRED PACKAGES
 %----------------------------------------------------------------------------------------
 
-\RequirePackage[main=portuguese,english]{babel} % PT-PT como língua principal (EN p/ o abstract secundário). Cópia divergente da versão EN — ver progress/BILINGUAL_PLAN.md.
+\RequirePackage[main=portuguese,english,shorthands=off]{babel} % PT-PT como língua principal (EN p/ o abstract secundário). shorthands=off: o "s" ativo do babel PT chocava com as aspas retas nos snapshots de dados (JSON/manchetes) do ch3. Cópia divergente da versão EN — ver progress/BILINGUAL_PLAN.md.
 
 \RequirePackage{scrbase} % Required for handling language-dependent names of sections/document elements
 

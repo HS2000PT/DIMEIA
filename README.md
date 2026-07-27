@@ -19,13 +19,14 @@
 reasoning chain — detected event → explanation → sources → historical precedents — and delivers it over the
 **Telegram Bot API**. No price prediction, no algorithmic trading, free APIs only.
 
-## The 6 places that matter
+## Where things are
 | I want to… | Go to |
 |---|---|
-| Read the dissertation | `thesis/main.pdf` (86 pp) |
-| Study for the defence | `slides/guia_estudo/main.pdf` — **the** single study source (76 slides) |
+| Navigate the whole repo | [`INDEX.md`](INDEX.md) — the repository map |
+| Read the dissertation | `thesis/main.pdf` (English) · `thesis-pt/main.pdf` (Português) |
+| Study for the defence | `slides/guia_estudo/main.pdf` — the single study source |
 | See it live | <https://investigator.streamlit.app> + Telegram <https://t.me/InvestiGatorMEIA> |
-| Show it to the supervisor | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) (10-min read) |
+| Get a 10-minute overview | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) |
 | Run it myself | `python scripts/demo.py` · full guide `docs/design/how_to_run.md` |
 | See what's left to do | [`CHECKLIST.md`](CHECKLIST.md) |
 
@@ -106,11 +107,11 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 
 ## Learn it / prepare the defence — ONE source
 - **THE study guide (PT-PT):** **`slides/guia_estudo/main.pdf`** — the single, consolidated source
-  (76 slides): teaches the whole thesis from zero, the code line by line, the evaluation, **the oral
-  script (3-min opening + per-RQ answers), the complete jury Q&A, the frozen-numbers table and the
-  defence plan B**. Everything previously scattered across companion documents now lives here.
-- **Final report (PT-PT, for the supervisor/jury):** **[`RELATORIO_FINAL.md`](RELATORIO_FINAL.md)** —
-  everything in this repository and where it lives, in a 10-minute read.
+  (77 slides): teaches the whole thesis from zero, the code line by line, the evaluation, **the oral
+  script (3-min opening + per-RQ answers), the anticipated defence questions, the frozen-numbers table
+  and the defence plan B**. Everything previously scattered across companion documents now lives here.
+- **Project summary (PT-PT):** **[`RELATORIO_FINAL.md`](RELATORIO_FINAL.md)** — everything in this
+  repository and where it lives, in a 10-minute read.
 - **Defence slides (EN):** `slides/main.pdf` (17 frames) — the short deck for the day itself.
 
 ## Project status
@@ -118,20 +119,20 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 **202 automated tests** + lint green. The core components — including a **materiality-triage model trained
 by the author** on 79,753 multi-year FNSPID examples (RQ4; triage evidence, never a forecast) — are
 evaluated on **real data**, and the statistics reproduce exactly from versioned scripts. The **six-chapter
-dissertation** compiles cleanly (`thesis/main.pdf`, 86 pp, 0 errors), with **52 references each verified by
+dissertation** compiles cleanly (`thesis/main.pdf`, 90 pp, 0 errors), with **52 references each verified by
 DOI/arXiv/ISBN or primary source** (audit in `docs/decisions/page_audit.md`). An **IEEE paper** (`paper/`)
 and **defence slides** (`slides/`) compile. Remaining items are human-only: confirm the exact ISEP AI-use
 declaration wording + submission date, and the author's final read. The multi-year *retrieval* knowledge
 base is built as a local artefact (validated in `docs/evaluation/kb_fnspid_build.md`; a curated slice
-powers the public app) — evaluating retrieval on it stays future work, as the thesis states. See
+powers the public app) — retrieval on it has now been evaluated at scale (precision@5 0.595; see `docs/evaluation/evaluation_retrieval_fnspid.md`), leaving the market-adjusted impact-magnitude study as the open item. See
 `CLAUDE.md` for the exact state and `progress/SESSIONS.md` for per-session history.
 
 ## Repository layout
 ```
-thesis/        LaTeX dissertation (6 chapters + front matter + appendix; 86 pp)
+thesis/        LaTeX dissertation (6 chapters + front matter + appendix; 90 pp)
 paper/         IEEE paper (IEEEtran) distilled from the thesis
 slides/        defence slides (Beamer, 17 frames)
-  guia_estudo/   THE study guide (PT-PT, Beamer, 76 slides — single study source)
+  guia_estudo/   THE study guide (PT-PT, Beamer, 77 slides — single study source)
 investigator/  system code, one package per component (investigator/triage/ = the trained ML component, RQ4)
 models/        trained triage models (joblib, versioned; context-only variant runs in production)
 notebooks/     investigator_walkthrough.ipynb — hands-on tour of the 3 components, executed & committed
@@ -147,7 +148,6 @@ docs/          documentation (see docs/README.md for the full index), grouped:
   evaluation/    auto-generated evaluation results (do not edit by hand)
   decisions/     citation log, page audit, product review, learning notes, glossary
   internal/      provenance (the original root prompt)
-  _archive/      superseded/absorbed documents kept for provenance
 data/samples/  small committed samples (large data gitignored, recreated by scripts)
 progress/      continuity logs (TRACKER, SESSIONS, DECISIONS, MASTER_PLAN)
 CITATION.cff   how to cite this work    requirements.txt (light) / requirements-ml.txt (torch+SBERT)
@@ -158,7 +158,7 @@ CITATION.cff   how to cite this work    requirements.txt (light) / requirements-
   (`requirements.txt`) — enough for the demo, the tests and the evaluations. The heavy ML stack (`torch` CPU,
   `sentence-transformers`, in `requirements-ml.txt`) is needed only for the real SBERT paths and installs with
   `bash scripts/setup_env.sh --ml` (it pulls `torch` from the PyTorch CPU index, not PyPI).
-- Verification loop: `bash scripts/verify.sh` (202 tests + lint + LaTeX note).
+- Verification loop: `bash scripts/verify.sh` (200+ tests + lint + LaTeX note).
 - Secrets live only in a local, gitignored `.env` (see `.env.example` for variable names).
 - LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push.
 
@@ -193,5 +193,5 @@ by `scripts/download_data.py` then `scripts/build_kb.py --sbert`; this is a long
 - **yfinance**, **Telegram Bot API**, and other free-tier APIs documented in `docs/design/free_apis.md`.
 
 ## Academic integrity
-This dissertation is produced with AI assistance (Claude Code), declared per ISEP/MEIA rules. Every citation
+This dissertation is produced with AI assistance, declared per ISEP/MEIA rules. Every citation
 is verified against a real source and logged in `docs/decisions/citation_log.md` — no fabricated references.

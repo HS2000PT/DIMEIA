@@ -168,14 +168,14 @@ case studies has one such procedure --- precedent retrieval and its per-sector b
 firing-rate and window ablation, the statistical-versus-learned detector comparison, and the
 materiality-triage dataset build and training --- and the worked triage decomposition, the
 embedding-space projection and the production funnel are produced the same way. Every headline number in
-the body is the value written by one of these procedures; none is typed by hand. The data-fetch step
+the body is the value written by one of these procedures. The data-fetch step
 that precedes them, and the full build of the historical knowledge base, follow the same deterministic
 recipe.
 
-\section{Proof of Work: Every Number Traced to Its Source}
+\section{Every Number Traced to Its Source}
 \label{app:repro_proof}
 
-No result in this dissertation is typed by hand. Each number is written by its deterministic procedure
+Each number is written by its deterministic procedure
 into a frozen results record, and the thesis quotes that record verbatim, so the loop between
 computation and document is closed and auditable. Table~\ref{tab:proof_of_work} gathers every headline
 result with the value as reported and the case study it belongs to; each can be regenerated, and
@@ -203,16 +203,17 @@ Production selectivity (headlines : alerts sent) & 22\,:\,1 & CS2 \\
 \end{tabular}
 \end{table}
 
-\paragraph{The system really ran.} Beyond reproducibility on demand, InvestiGator operated live. A
+\paragraph{Live operation.} Beyond reproducibility on demand, InvestiGator operated live. A
 scheduled workflow scanned the watchlist after each US market close and delivered explained alerts to a
 public Telegram channel; the shared, versioned alert record accumulated dozens of real alerts, including
 the first genuine market anomaly (NVDA, 13~July~2026). The live knowledge base matured its captured
 headlines against the real prices that followed, and the post-validation loop labelled real past
 decisions with their observed outcome, reporting a kept-alert precision of $0.667$ against a base rate of
 $0.455$ --- out-of-sample evidence that the triage mechanism holds. A large automated suite of tests,
-offline and deterministic, runs on every push through continuous integration, and the work is recorded
-across more than two hundred commits. Regenerable numbers, a live deployment, and a green test suite
-together are the dissertation's proof of work.
+offline and deterministic, runs on every push through continuous integration. Regenerable numbers, a
+live deployment, and a green test suite
+together document a system that runs end to end and whose every reported figure can be reproduced in
+isolation.
 
 \section{Data and Attribution}
 \label{app:repro_data}

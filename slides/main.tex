@@ -223,6 +223,7 @@ Random & $0.240$ & $0.240$ \\
 \centering\includegraphics[width=\linewidth]{eval_retrieval_per_sector.pdf}
 \par\scriptsize Lift largest where vocabulary is distinctive (energy, health).
 \end{columns}
+\vspace{1mm}\par\centering\footnotesize Validated at scale on multi-year FNSPID (${\sim}80$k headlines): \textbf{P@5 $0.595$}; direction consistency $0.71$ sits at the $0.69$ chance floor (theme, not direction).
 \end{frame}
 
 \begin{frame}{Result 3: explanations are faithful by construction}
@@ -272,7 +273,7 @@ Gradient boosting & 0.469 & 0.551 \\
 \end{columns}
 \vfill
 \begin{block}{\small The honest verdict (pre-committed)}
-\small Within a 5-alerts/day budget, triage nearly \textbf{quadruples precision} ($0.632$ vs $0.163$) --- but \textbf{no text model beat volatility}. A follow-up ablation added \emph{five} more cheap context features (market regime, momentum, standardised reaction, downside risk): PR-AUC $0.535$, again \textbf{no gain}. The signal is market context; reported as it fell.
+\small Within a 5-alerts/day budget, triage nearly \textbf{quadruples precision} ($0.632$ vs $0.163$) --- but \textbf{no text model beat volatility}. A follow-up ablation added \emph{five} more cheap context features (market regime, momentum, standardised reaction, downside risk): PR-AUC $0.535$, again \textbf{no gain}. A \emph{fair} re-test (tuned $C$, PCA-reduced text, a FinBERT domain encoder) still never beat volatility, so the negative is \textbf{robust}, not an under-fit artefact. The signal is market context; reported as it fell.
 \end{block}
 \end{frame}
 
@@ -318,7 +319,7 @@ Gradient boosting & 0.469 & 0.551 \\
 \begin{frame}{Limitations (stated plainly)}
 \begin{itemize}
   \item Relevance is a \textbf{same-sector proxy}, not a human judgement.
-  \item Retrieval corpus is a \textbf{recent} free-tier window; the \emph{triage} study did use multi-year FNSPID (14/15 tickers --- Meta is ``FB'' in the corpus).
+  \item Retrieval corpus is a \textbf{recent} free-tier window (since validated at scale on FNSPID, P@5 $0.595$); the \emph{triage} study did use multi-year FNSPID (14/15 tickers --- Meta is ``FB'' in the corpus).
   \item Displayed precedent impact is a \textbf{raw} post-event return (triage labels \emph{are} market-adjusted).
   \item Similarity is \textbf{thematic, not directional}: a cluster can mix up/down moves, so the mean is theme-level \emph{evidence}, not a forecast.
   \item \textbf{No human usefulness study} yet (RQ3 usefulness open).
@@ -331,7 +332,7 @@ Gradient boosting & 0.469 & 0.551 \\
 \begin{frame}{Conclusions}
 \begin{itemize}
   \item \textbf{RQ1 (yes):} transparent \emph{z}-score detects consistently across the market and explains every flag.
-  \item \textbf{RQ2 (yes, retrieval):} semantic retrieval finds analogous precedents far above baselines; impact measured without lookahead.
+  \item \textbf{RQ2 (yes, validated at scale):} semantic retrieval far above baselines (P@5 $0.595$ on multi-year FNSPID); impact measured without lookahead.
   \item \textbf{RQ3 (faithful yes; useful open):} explanations cannot diverge from the computation; human usefulness is future work.
   \item \textbf{RQ4 (no on text; yes on mechanism):} triage $\approx 4\times$ within-budget precision, but volatility stayed unbeaten --- the \emph{second} fair ``learned vs simple'' test the transparent choice won (first: Isolation Forest vs \emph{z}-score, $F_1$ $0.271$ vs $0.530$).
 \end{itemize}

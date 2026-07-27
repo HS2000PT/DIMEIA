@@ -5,8 +5,7 @@
 > (que tem 200+ commits, planeamento interno e material de estudo privado). Um único commit,
 > história limpa.
 >
-> Isto é **diferente** de `migrar_repo.md`: aquele move o repo INTEIRO para um repo novo sem
-> história; **este** publica só um SUBCONJUNTO curado (app + tese + código), deixando o material
+> Publica só um SUBCONJUNTO curado (app + tese + código), deixando o material
 > interno de fora. Enacted por `scripts/make_public_bundle.py` (parte de `git ls-files`, por isso
 > nunca inclui `.env`, segredos ou os corpora grandes — estão gitignored). **Nada é publicado
 > pelo script; o push é o teu clique.**
@@ -44,8 +43,6 @@ encontrar algo), (5) com `--git`, inicia um repo com **1 commit** (sem remote, s
 | `progress/` | planeamento multi-sessão (TRACKER/SESSIONS/DECISIONS/MASTER_PLAN) |
 | `CLAUDE.md` | memória de continuidade (processo interno) |
 | `.claude/` | settings + planos internos |
-| `docs/internal/` | ROOT_PROMPT + proposta ao orientador |
-| `docs/_archive/` | análises antigas de fase inicial |
 | `docs/defence/` | caderno de defesa + guia rápido (estudo **privado**) |
 | `slides/` | slides de defesa + guia de estudo (preparação **privada**) |
 | `CHECKLIST.md`, `RELATORIO_FINAL.md` | listas/relatório internos para o orientador |
@@ -71,5 +68,4 @@ encontrar algo), (5) com `--git`, inicia um repo com **1 commit** (sem remote, s
 1. Adicionar `LICENSE` ao bundle.
 2. Criar o repo público VAZIO no GitHub (sem README/licença auto-gerados).
 3. `cd ../InvestiGator-public && git remote add origin <URL> && git push -u origin main`.
-4. (Opcional) re-ligar Streamlit Cloud ao repo novo e atualizar badges. Ver `migrar_repo.md`
-   para os trade-offs de Actions/Streamlit se em vez disto migrares o repo inteiro.
+4. (Opcional) re-ligar Streamlit Cloud ao repo novo e atualizar badges.

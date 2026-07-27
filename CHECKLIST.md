@@ -28,7 +28,7 @@
       `docs/design/going_live.md` §1b).
 
 ### Académico (bloqueia a submissão)
-- [ ] **Leitura final da tese** (`thesis/main.pdf`, 78 pp) — o texto é teu para defender.
+- [ ] **Leitura final das teses** (`thesis/main.pdf` 90 pp · `thesis-pt/main.pdf` 92 pp) — o texto é teu para defender.
 - [ ] **Licença do código** com o Prof. Luís Gomes (MIT/Apache; política de IP do ISEP) +
       ficheiro `LICENSE`.
 - [ ] **Redação exata da declaração de uso de IA** (MEIA/ISEP) + **data de entrega** — confirmar
@@ -38,8 +38,8 @@
       0,455; Brier 0,229 → `docs/evaluation/live_monitoring.md`).
 
 ### Opcional
-- [ ] Migrar/renomear o repositório (procedimento + trade-offs: `docs/design/migrar_repo.md`;
-      a alternativa sem risco é o rename `DIMEIA`→`InvestiGator`).
+- [ ] (Opcional) Renomear o repositório `DIMEIA`→`InvestiGator` (Settings → Rename; mantém a
+      história e redireciona os URLs antigos).
 
 ## 🤖 Pendentes do código (nenhum bloqueia)
 - [x] ~~Confirmar alertas de MERCADO~~ ✅ **CONFIRMADO 13/07** (verificação nos logs reais do

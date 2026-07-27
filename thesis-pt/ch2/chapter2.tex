@@ -286,12 +286,13 @@ representação escolhida aqui. Detalhes na Tabela~\ref{tab:sota_nlp}.}
 significado contextual para além dos léxicos e dos vetores estáticos, e ainda barato, comparável e
 gratuito de correr. Uma nota de honestidade sobre a comparação: a avaliação no
 Capítulo~\ref{chap:casestudies} mede o Sentence-BERT contra uma linha de base \emph{lexical}, o que
-delimita a questão que interessa (o significado bate as palavras de superfície?); as variantes word2vec e
-FinBERT não são corridas empiricamente, porque os vetores de palavra estáticos são estritamente dominados
-pelos embeddings de frase contextuais na comparação de frases, e o FinBERT afinado ao domínio está
-orientado à classificação de sentimento e não à similaridade de frases, a um custo que a restrição
-gratuita-e-reprodutível deste trabalho exclui. Onde uma afirmação é barata de testar, este trabalho
-testa-a; onde compraria pouco, enuncia-se antes a razão.
+delimita a questão que interessa (o significado bate as palavras de superfície?); a própria escolha do
+embedder foi também aferida no mesmo protocolo. Um FinBERT afinado ao domínio, com mean-pooling em
+embeddings de frase, atinge apenas uma precision@5 de $0.420$, abaixo do $0.514$ do MiniLM e coerente
+com a sua orientação a sentimento, ao passo que os encoders gerais atuais (E5-small, BGE-small) empatam
+com o MiniLM (cerca de $0.51$) em vez de o superarem. O encoder geral, pequeno e gratuito é, portanto, o
+sweet spot por medição e não apenas por argumento; só os vetores de palavra estáticos, estritamente
+dominados na comparação de frases, ficam por argumento.
 
 \section{Recuperação de Informação e Avaliação de Ordenação}
 \label{sec:sota_ir}
