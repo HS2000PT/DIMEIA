@@ -44,31 +44,41 @@ honesta com um orçamento de alertas, o que um limiar cru não faz — o ganho 0
 operacional. E o valor científico não é 'o meu modelo é sofisticado'; é 'testei se a sofisticação
 valia a pena, e a resposta honesta foi: aqui, não'. Uma tese de engenharia honesta deve premiar isso."*
 
+**🎓 Q4 (a pergunta técnica mais afiada).** *"Adicionar o texto BAIXA a PR-AUC (0,538→0,496). Um
+modelo bem regularizado não piora ao ganhar features — isso não é um artefacto de sub-ajuste, e não
+uma descoberta sobre o texto?"*
+
+✅ *"Excelente pergunta, e testei-a exatamente. Um bootstrap por cluster (ticker,dia) confirma que a
+degradação é robusta (P=1,00), não ruído de uma seed. E — concedo o seu ponto em parte — o texto cru
+384-d ESTAVA deprimido por dimensionalidade: reduzi-o por PCA e recupera de 0,499 para **0,533**.
+Reporto isso. MAS mesmo o melhor texto justo (0,533, com C afinado, PCA e o encoder de domínio FinBERT)
+nunca supera a volatilidade (0,542) nem o contexto (0,538): recupera até ao nível do contexto, nunca
+acima. Logo o negativo é robusto, não um artefacto — e testei a própria crítica em vez de a evitar."*
+
 ---
 
-## 2. RQ2 — "o corpus é fino e recente"
+## 2. RQ2 — validada à escala (era "o corpus é fino")
 
 **🎓 Q1.** *"O seu corpus de recuperação são 3.714 manchetes de uns meses. Como sabe que a P@5 de 0,51
 se aguenta noutro período?"*
 
-✅ *"É a limitação que assinalo, e o resultado é preliminar **por desenho**. Estabelece o **mecanismo**,
-não a magnitude: os embeddings batem todas as baselines — **0,514 vs 0,346** lexical e **0,240** do
-acaso — em 5 sementes e 2 modelos (MiniLM e MPNet), com restrição cross-ticker exigente (proíbo o
-mesmo ticker). A robustez a sementes e modelos é o que me diz que é sinal, não sorte do corpus."*
+✅ *"Boa pergunta — e a resposta mudou desde a versão preliminar. O resultado inicial (P@5 **0,514** em
+~3.700 manchetes) era preliminar por desenho: estabelecia o mecanismo. Mas validei-o depois **à
+escala**: no corpus FNSPID multi-ano, ~80 mil manchetes de 6 anos, o mesmo protocolo cross-ticker deu
+**P@5 0,595** — acima do preliminar. A recuperação não só se aguenta noutro período, melhora."*
 
-**🎓 Q2 (aperta).** *"'Mecanismo' é uma palavra confortável. Mas os impactos que mostra — o '−2%'
-médio — são medidos nesse corpus fino. Não são de confiança."*
+**🎓 Q2 (aperta).** *"E a direção dos precedentes? Recuperar o tema não diz o que o preço faz."*
 
-✅ *"Correto, e por isso a validação de **magnitudes** sobre o FNSPID multi-ano (2018–2023) é o passo
-seguinte explícito — a base de conhecimento já foi reconstruída para isso (79.753 casos). O que
-reporto hoje sobre impacto é a maquinaria a funcionar (event-study sem lookahead) a dar clusters
-coerentes; a distribuição de magnitudes em escala é trabalho futuro, não uma alegação fechada."*
+✅ *"Exato, e quantifiquei-o: a consistência de direção dos clusters recuperados é **0,708**, quase no
+chão do acaso de **0,688** — a recuperação capta o TEMA (P@5 bem acima do acaso) mas quase nada sobre a
+DIREÇÃO. Confirma quantitativamente o meu ponto do CS3: o impacto médio é evidência sobre um tema,
+nunca uma previsão direcional — e é por isso que mostro sempre os precedentes individuais."*
 
-**🎓 Q3 (a mais dura).** *"Então metade da RQ2 — 'quantificar o impacto' — não está respondida."*
+**🎓 Q3 (a mais dura).** *"Então ainda há uma parte por fazer."*
 
-✅ *"Está respondida ao nível do **método** e de um estudo de caso reproduzível; não está **validada em
-escala**. Faço essa distinção na tese e no scorecard, onde a RQ2 é 'sim, para a recuperação'. Prefiro
-dizer exatamente o que está e o que não está do que sobre-afirmar — é a postura de toda a tese."*
+✅ *"Sim, e digo-o: o que fica é o estudo das MAGNITUDES de impacto ajustadas ao mercado sobre os
+precedentes multi-ano. Mas a recuperação — o componente — está **validada à escala**, e a propriedade
+tema≠direção está **medida**, não assumida. Reporto o que está feito e o que falta, sem sobre-afirmar."*
 
 ---
 
@@ -118,6 +128,15 @@ porquê z-score e não um detetor aprendido (testei — a Isolation Forest perde
 porquê Platt e não isotónica, e a disciplina anti-lookahead testada por mutação. E o resultado mais
 valioso é negativo e pré-comprometido — o texto não bate a volatilidade — que só tem valor porque a
 avaliação foi montada para o poder revelar. Isso é engenharia de IA, não montagem."*
+
+**🎓 Q3 (profundidade).** *"A sua 'IA' de recuperação é um encoder de 2021 off-the-shelf. Nem testou
+um encoder de domínio nem um moderno."*
+
+✅ *"Testei ambos, no mesmo protocolo. O FinBERT de domínio dá **0,420** — pior, coerente com ser
+afinado para sentimento e não para similaridade de frases. Os modernos E5 e BGE **empatam** com o
+MiniLM (~0,51), não o superam. Ou seja, a escolha do MiniLM está validada por **medição**, não por
+conveniência: um modelo pequeno, gratuito e de 2021 continua no sweet spot para esta tarefa — e agora
+tenho o número para o dizer, em vez de o argumentar."*
 
 ---
 

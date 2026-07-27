@@ -33,14 +33,18 @@ fraqueza.
 | **F1 0.516 vs 0.218** | z-score vs limiar fixo, contra proxy de movimentos extremos | "Mais do dobro; mas é evidência de APOIO, porque o rótulo é relativo à volatilidade." |
 | **F1 0.271 vs 0.530** | Isolation Forest vs z-score, mesma informação causal | "Dei ao modelo aprendido a MESMA informação e perdeu. 1.º teste justo." |
 | **F1 0.664 vs 0.516** | EWMA vs volatilidade deslizante | "A EWMA melhora — reporto-o. Mantenho a deslizante por ser explicável numa frase; o ganho fica como futuro VALIDADO." |
-| **P@5 0.514 (±0.015)** | Recuperação SBERT-MiniLM, cross-ticker | "~2,1× a base aleatória (0.240), acima da lexical (0.346). Robusto (5 sementes, 2 modelos)." |
+| **P@5 0.514 (±0.015)** | Recuperação SBERT-MiniLM, cross-ticker (corpus preliminar) | "~2,1× a base aleatória (0.240), acima da lexical (0.346). E **validado à escala: 0,595 em 80k**." |
 | **+0.377 / +0.348 / +0.100** | Lift energia / saúde / consumo | "O motor vale mais onde o vocabulário é distintivo; menos no consumo, genérico." |
 | **z = +7.61** | Tesla, 24 Out 2024, pós-resultados | "Exemplo real: μ=−0.92%, σ=2.73%, r=+19.8% → z=+7.61. A mesma regra que ignora ±2% apanha isto." |
-| **0.542 / 0.538 / 0.496** | PR-AUC triagem: volatilidade / contexto / contexto+texto | "O TEXTO não ajuda; o sinal vive no contexto de mercado. 2.º teste justo." |
+| **0.542 / 0.538 / 0.496** | PR-AUC triagem: volatilidade / contexto / contexto+texto | "O TEXTO não ajuda; o sinal vive no contexto de mercado. 2.º teste justo — e **robusto** (re-teste justo com PCA/FinBERT nunca bate a volatilidade)." |
 | **0.632 vs 0.163** | Precisão@orçamento (5 alertas/dia) vs alertar-sempre | "A triagem quase QUADRUPLICA a precisão dentro do orçamento — o valor de produto." |
 | **p = 0.539 (54%)** | Decisão META real, 12 Jul 2026 | "u=+0.699 (vol + setor dominam) → σ → Platt → 54%, o número exato enviado ao canal." |
 | **0.667 vs 0.455** | Pós-validação ao vivo (mantidas vs base rate) | "Fora da amostra, EM PRODUÇÃO: o mecanismo de triagem confirma-se." |
-| **90 / 92 pp · 50 refs · 224 testes** | Tese EN/PT · referências verificadas · suíte | "Reprodutível de ponta a ponta; nenhum número digitado à mão." |
+| **P@5 0.595 (80k)** | Recuperação à escala no FNSPID multi-ano *(reforço)* | "RQ2 validada à escala, acima do preliminar 0,514." |
+| **dir. 0.708 vs chão 0.688** | Consistência de direção dos precedentes *(reforço)* | "Recupera o TEMA, não a DIREÇÃO — tema≠direção quantificado." |
+| **FinBERT 0.420 · E5/BGE ~0.51** | Benchmark de embedders *(reforço)* | "MiniLM validado por medição: domínio pior, modernos empatam." |
+| **texto justo 0.533 < 0.542** | RQ4 re-teste justo (C+PCA+FinBERT) *(reforço)* | "Negativo do texto robusto; PCA recupera de 0,499 mas nunca bate a volatilidade." |
+| **90 / 92 pp · 52 refs · 200+ testes** | Tese EN/PT · referências verificadas · suíte | "Reprodutível de ponta a ponta; nenhum número digitado à mão." |
 
 ---
 
@@ -51,11 +55,11 @@ fraqueza.
 > (amplitude 0.015 vs 0.344), e cada alerta é explicável a um não-especialista. Testei-o contra
 > uma Isolation Forest com a mesma informação — a transparente ganhou."
 
-**RQ2 (precedentes análogos, sem lookahead) — SIM, para a recuperação.**
+**RQ2 (precedentes análogos, sem lookahead) — SIM, validada à escala.**
 > "A recuperação semântica bate todas as linhas de base (P@5 0.514 vs 0.346 lexical, 0.240
-> aleatório), independentemente do modelo. O impacto é medido ESTRITAMENTE após o evento — é um
-> resultado observado, nunca uma previsão. A validação em larga escala sobre o FNSPID multi-ano é
-> trabalho futuro; a MAQUINARIA está montada e comporta-se de forma coerente."
+> aleatório), e **validei-a à escala** no FNSPID multi-ano: **P@5 0,595 em ~80k manchetes**, acima do
+> preliminar. O impacto é medido ESTRITAMENTE após o evento — evidência observada, nunca previsão.
+> Fica só o estudo das MAGNITUDES ajustadas ao mercado como trabalho futuro."
 
 **RQ3 (explicações fiéis e úteis) — FIEL sim; ÚTIL em aberto.**
 > "As explicações são fiéis POR CONSTRUÇÃO: o texto é composto diretamente dos objetos calculados,
@@ -74,11 +78,11 @@ fraqueza.
 ## 4. Perguntas MAIS DIFÍCEIS do júri — respostas-modelo (ensaiar em voz alta)
 
 **P: O corpus de recuperação é fino e recente. Como sabes que a P@5 se aguenta?**
-> "Boa pergunta — é a limitação que assinalo explicitamente. O resultado é **preliminar** por
-> desenho: usei ~3.714 manchetes reais dos meses recentes. O que ele estabelece é o MECANISMO — os
-> embeddings batem consistentemente as linhas de base, em 5 sementes e 2 modelos, com uma
-> restrição cross-ticker exigente. A validação de MAGNITUDES sobre o FNSPID multi-ano (2018–23) é o
-> passo seguinte natural, e a base de conhecimento já foi reconstruída para isso."
+> "A resposta mudou desde a versão preliminar. O inicial (P@5 0,514 em ~3.700 manchetes) era
+> preliminar por desenho — estabelecia o mecanismo. Mas validei-o **à escala**: no FNSPID multi-ano,
+> ~80k manchetes de 6 anos, o mesmo protocolo cross-ticker deu **P@5 0,595** — acima do preliminar.
+> E quantifiquei o tema≠direção (consistência 0,71 vs chão do acaso 0,69). Fica só o estudo das
+> magnitudes ajustadas ao mercado."
 
 **P: O teu modelo treinado PERDEU para a volatilidade. Não é um fracasso?**
 > "Não — e é importante porque foi **pré-comprometido**. A pergunta da RQ4 era 'o texto ajuda?', e
@@ -143,9 +147,9 @@ fraqueza.
 
 1. **Pequeno estudo humano de utilidade (RQ3):** 6–8 pessoas, uma rubrica (clareza/completude/
    acionabilidade) sobre alguns alertas reais. Fecha a maior lacuna "em aberto" de forma barata.
-2. **Avaliação de recuperação no FNSPID multi-ano (RQ2):** sobe a RQ2 de "preliminar" a "validada em
-   escala" — mas é uma experiência NOVA numa tese perto da defesa; só com o teu 'ok' (muda o que
-   tens de defender, e pode não mudar a história).
+2. ✅ **Avaliação de recuperação no FNSPID multi-ano (RQ2): FEITO** — P@5 **0,595** em 80k, já
+   integrado na tese; a RQ2 subiu de "preliminar" a "validada à escala". Resta apenas o estudo das
+   magnitudes de impacto ajustadas ao mercado.
 
 ---
 
