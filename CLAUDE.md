@@ -33,7 +33,12 @@
   Teses compilam **90/92 pp, 0 erros, 0 refs indefinidas**. `guiao_de_defesa.md` + `simulacro_defesa.md`
   atualizados às novas verdades (RQ2 vira força; RQ4 ganha a resposta ao "artefacto"; +pergunta do
   embedder). A narrativa "simplicidade venceu" MANTÉM-SE (o texto continua a perder, agora à prova de
-  bala). **PENDENTE humano:** o aluno rever os 4 docs de avaliação novos + a integração na tese antes de entregar.
+  bala). **Gates verificados VERDES** (venv `.venv` 3.12 corre o pytest AQUI): ruff limpo (os 4 scripts
+  novos ficaram ruff-clean, linhas <100 sem `;` via `ruff format` + cortes cosméticos que NÃO mudaram
+  números), pytest exit 0 (200+ testes, 2 gated skipped), LaTeX 0 erros nas 7 peças. **Verificação
+  adversária** (workflow de 4 arguentes) apanhou 5 restos obsoletos de "RQ2=trabalho futuro" (paper/
+  guia/README/tese ch3 EN+PT) — todos corrigidos. **PENDENTE humano:** o aluno rever os 4 docs de
+  avaliação novos + a integração na tese antes de entregar.
 - **🎓 SESSÃO 41 (cont. — modo coorientador exigente; "tese primeiro"):** iterações pequenas.
   (1) **Sincronização documental:** contagens frágeis de testes (145/202 → **"200+"** estável;
   reais 228 `def test_`), slides (71/76 → **77**), páginas (86 → **90/92**) corrigidas em

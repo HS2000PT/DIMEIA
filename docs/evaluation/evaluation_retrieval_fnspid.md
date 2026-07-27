@@ -1,13 +1,13 @@
 # evaluation_retrieval_fnspid.md — Recuperação em ESCALA (RQ2; corpus multi-ano FNSPID)
 
 > Gerado por `scripts/evaluate_retrieval_fnspid.py` (ADITIVO; não altera a avaliação
-> preliminar em `evaluation_results.md`). Reutiliza os embeddings SBERT já calculados na KB
+> preliminar em `evaluation_results.md`). Reutiliza os embeddings SBERT da KB
 > (sem re-embeder). É o passo 'trabalho futuro' da RQ2: validar o componente mais forte à
 > escala (2018-2023) em vez do corpus recente de poucos meses.
 
-- **Corpus:** 79753 manchetes com setor conhecido · tickers ['AAPL', 'AMZN', 'BAC', 'CVX', 'GOOGL', 'JNJ', 'JPM', 'KO', 'MSFT', 'NVDA', 'PFE', 'TSLA', 'WMT', 'XOM'].
-- **Protocolo:** cross-ticker precision@5 (exclui a própria empresa), 500 consultas × 5 sementes (média ± desvio); mesmo proxy de setor da tese.
-- **Gerado:** 2026-07-27 07:14 UTC · seed 42.
+- **Corpus:** 79753 manchetes · tickers ['AAPL', 'AMZN', 'BAC', 'CVX', 'GOOGL', 'JNJ', 'JPM', 'KO', 'MSFT', 'NVDA', 'PFE', 'TSLA', 'WMT', 'XOM'].
+- **Protocolo:** cross-ticker precision@5, 500 consultas × 5 sementes (média ± desvio); mesmo proxy de setor da tese.
+- **Gerado:** 2026-07-27 23:45 UTC · seed 42.
 
 | Método | P@5 |
 |---|---|
