@@ -26,9 +26,14 @@
   congelado 0,496 estava EM PARTE deprimido por dimensionalidade — nuance honesta, o arguente tinha
   razão nesse ponto), mas nunca acima do contexto → **negativo da RQ4 robusto, não sub-ajuste**. Docs
   novos: `docs/evaluation/evaluation_{triage_uncertainty,retrieval_fnspid,retrieval_embedders,triage_fairtext}.md`.
-  **PENDENTE: integrar A/B/C/D na TESE (bilingue EN+PT)** — RQ2 sobe de "preliminar" a "validada à
-  escala"; RQ4 ganha ICs + o re-teste justo (negativo robusto); Cap.2/3 ganha o benchmark de embedders.
-  A narrativa "simplicidade venceu" NÃO virou (o texto continua a perder) → integração é aditiva, sem reversão.
+  **✅ INTEGRADO NA TESE (bilingue EN+PT) + materiais de defesa atualizados:** Cap.6 — RQ2 subiu de
+  "preliminar" a **"validada à escala"** (P@5 0,595) + tema≠direção quantificado; RQ4 ganhou a cláusula
+  de **robustez** (ICs por cluster + re-teste justo); figura limitações→futuro atualizada. Cap.2 — o
+  benchmark de embedders (FinBERT pior, modernos empatam) fecha o "argumentaste em vez de correr".
+  Teses compilam **90/92 pp, 0 erros, 0 refs indefinidas**. `guiao_de_defesa.md` + `simulacro_defesa.md`
+  atualizados às novas verdades (RQ2 vira força; RQ4 ganha a resposta ao "artefacto"; +pergunta do
+  embedder). A narrativa "simplicidade venceu" MANTÉM-SE (o texto continua a perder, agora à prova de
+  bala). **PENDENTE humano:** o aluno rever os 4 docs de avaliação novos + a integração na tese antes de entregar.
 - **🎓 SESSÃO 41 (cont. — modo coorientador exigente; "tese primeiro"):** iterações pequenas.
   (1) **Sincronização documental:** contagens frágeis de testes (145/202 → **"200+"** estável;
   reais 228 `def test_`), slides (71/76 → **77**), páginas (86 → **90/92**) corrigidas em
