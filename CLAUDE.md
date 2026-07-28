@@ -8,7 +8,29 @@
 
 ## Estado Atual
 - **Sessão nº:** 41 (**"improve everything" — varredura de qualidade multi-agente; correções aplicadas na branch `claude/general-improvements-0ba2e9`**)
-- **Última atualização:** 2026-07-27
+- **Última atualização:** 2026-07-28
+- **🎬 SESSÃO 41 (cont. — demo para a apresentação: app redesenhada + replay histórico; commits `968029a`+`94726ab`, PUSHED):**
+  o aluno pediu uma demo (Telegram + Streamlit a funcionar) e criticou a app ("both suck") + alertas
+  atrasados (NVDA −5% não alertado "porque abriu logo mal"). Analisei criticamente as ~10 ideias dele
+  (single-page, big charts ao vivo, notificações no separador, logos, troca de bolsa, **replay do
+  passado**) e, em modo tese-primeiro, ele escolheu a opção delimitada **"Demo limpa + replay
+  histórico"** (NÃO a reescrita do zero — risco de brinquedo/scope-creep vs. âmbito US + APIs grátis +
+  Streamlit não é framework de streaming + churn da Fig 4.5). **Feito:** (1) **motor de replay**
+  `detect_all` em `anomaly_detector/detector.py` (a MESMA norma z-score sem lookahead de `detect_latest`,
+  aplicada a cada dia da série → todos os eventos que o método realmente sinalizaria; +2 testes,
+  incl. consistência com `detect_latest`). (2) **App single-screen limpa** — `_replay_anomalies` povoa
+  o gráfico grande com triângulos ▲verde/▼vermelho (movimento abrupto detetado, tooltip com z-score) +
+  círculos de notícia do registo partilhado; cortado o ruído (mascote/saudação/painel admin/faixa de
+  tickers/`_overview_*`); intervalo 6M por defeito para o replay aparecer à abertura. (3) **Fig 4.5
+  recapturada** (Playwright, --height 1320) — dashboard novo com o replay visível; **texto + legenda
+  ch4 reescritos EN+PT** (descrevem o replay honestamente: recalculado sobre o intervalo, ≠ "nunca
+  recalculado" antigo). (4) **mascotes órfãs removidas** (`mascot_{day,night}.svg` — a app já não as usa;
+  git preserva). **Gates:** **224 testes + ruff verdes; teses compilam 90/94 pp, 0 erros, 0 refs
+  indefinidas; congelados byte-iguais.** **NÃO fiz (com razão, comunicado ao aluno):** reescrita do zero
+  da app; per-exchange open/close (scope-creep US); "fix" ao atraso dos alertas — é **limitação de
+  infra grátis** (cron do GitHub Actions é best-effort ~1,5-2h, sem servidor always-on; tempo-real exige
+  o caminho VM `run_alerts.py --watch`, já desenhado mas não implantado pelo aluno). **PENDENTE humano:**
+  gravar a demo (guião dado: workflow "Alerts" → canal Telegram + app ao vivo; plano-B vídeo pré-gravado).
 - **🔬 SESSÃO 41 (cont. — reforço de ENGENHARIA DE IA; programa A+B+C+D no PC com FNSPID+torch):**
   avaliação adversária multi-agente (5 arguentes → veredicto "solid") identificou os pontos finos;
   executei 4 melhorias REAIS (aditivas; congelados intactos; reproduzem os pontos ao milésimo; 0
