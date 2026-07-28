@@ -31,6 +31,20 @@
   infra grátis** (cron do GitHub Actions é best-effort ~1,5-2h, sem servidor always-on; tempo-real exige
   o caminho VM `run_alerts.py --watch`, já desenhado mas não implantado pelo aluno). **PENDENTE humano:**
   gravar a demo (guião dado: workflow "Alerts" → canal Telegram + app ao vivo; plano-B vídeo pré-gravado).
+  **✅ AUDITORIA DE NÍVEL DE JÚRI (2026-07-28, feita à mão — o workflow de 6 revisores bateu no
+  limite de conta, padrão do projeto):** varri 6 dimensões e o corpus volta **LIMPO**. (1) Números:
+  P@5 `0.514→0.595`, triagem `0.542/0.496/0.632/0.163`, embedders `0.420/0.514/0.538/0.504/0.513` —
+  consistentes em tese EN/PT + paper + slides EN/PT + guia + docs de defesa; **0 restos de "RQ2=futuro"**
+  (o passe adversário anterior já os limpara). (2) Referências: **52 entradas .bib = 52 chaves citadas =
+  "52 verificadas"** (README/RELATORIO), 0 indefinidas, 0 órfãs (bib PT partilhada). (3) Figuras: **14
+  referenciadas = 14 ficheiros, 0 órfãs**; `thesis-pt` partilha as figuras da EN via
+  `\graphicspath{{../thesis/}{./}}` (por desenho — daí a Fig 4.5 nova fluir para a PT). (4) **Paridade
+  EN↔PT total:** secções 58/58, ambientes figure/table 50/50, idênticos por capítulo. (5) Honestidade:
+  abstract + veredictos RQ **exemplares** ("no text model beat the volatility baseline… reported as it
+  stands"; RQ3 "útil ainda em aberto, sem estudo humano"; 0 afirmação de previsão). (6) Higiene: único
+  reparo = `make_public_bundle.py` exclui `docs/internal/`+`docs/_archive/` já inexistentes — **no-op
+  defensivo, não defeito** (exclui corretamente docs/defence, progress, slides, CLAUDE, CHECKLIST,
+  RELATORIO que EXISTEM). **Veredicto: tese examiner-ready; nada a corrigir.**
 - **🔬 SESSÃO 41 (cont. — reforço de ENGENHARIA DE IA; programa A+B+C+D no PC com FNSPID+torch):**
   avaliação adversária multi-agente (5 arguentes → veredicto "solid") identificou os pontos finos;
   executei 4 melhorias REAIS (aditivas; congelados intactos; reproduzem os pontos ao milésimo; 0
