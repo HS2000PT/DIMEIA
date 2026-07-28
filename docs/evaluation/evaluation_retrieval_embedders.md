@@ -1,13 +1,13 @@
 # evaluation_retrieval_embedders.md — Benchmark de embedders (RQ2; aditivo)
 
-> Gerado por `scripts/evaluate_retrieval_embedders.py`. Corre o mesmo protocolo cross-ticker
+> Gerado por `scripts/evaluate_retrieval_embedders.py`. Corre o protocolo cross-ticker
 > precision@k da tese, no mesmo corpus preliminar, comparando o SBERT MiniLM/MPNet com um
-> encoder de DOMÍNIO (FinBERT, mean-pooled) e um encoder MODERNO (E5/BGE) — a comparação que
+> encoder de DOMÍNIO (FinBERT, mean-pooled) e um MODERNO (E5/BGE) — a comparação que
 > o Cap. 2 discutiu mas não tinha corrido. NÃO altera os números congelados.
 
-- **Corpus:** 3714 manchetes reais · 500 consultas × 5 sementes (média ± desvio).
+- **Corpus:** 3714 manchetes · 500 consultas × 5 sementes.
 - **Protocolo:** cross-ticker precision@5 (exclui a própria empresa); proxy de setor.
-- **Gerado:** 2026-07-27 07:25 UTC · seed 42.
+- **Gerado:** 2026-07-27 23:51 UTC · seed 42.
 
 | Embedder | P@5 |
 |---|---|

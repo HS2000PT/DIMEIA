@@ -60,13 +60,12 @@ def main() -> int:
             page = browser.new_page(viewport={"width": args.width, "height": args.height},
                                     device_scale_factor=2)
             page.goto(f"http://localhost:{args.port}", wait_until="networkidle", timeout=60000)
-            # Esperar a faixa "Market now" e o gráfico Plotly renderizarem.
-            page.wait_for_selector("text=Market now", timeout=30000)
+            # Esperar o gráfico grande (a peça central: preço + replay de eventos detetados).
             try:
-                page.wait_for_selector(".js-plotly-plot", timeout=20000)
+                page.wait_for_selector(".js-plotly-plot", timeout=30000)
             except Exception:  # noqa: BLE001
-                pass  # sem plotly ⇒ captura mesmo assim (fallback da app)
-            page.wait_for_timeout(3500)  # animação do gráfico + eventos do canal
+                page.wait_for_selector("text=Alert history", timeout=10000)  # fallback sem plotly
+            page.wait_for_timeout(4000)  # replay dos eventos + animação do gráfico
             Path(args.out).parent.mkdir(parents=True, exist_ok=True)
             page.screenshot(path=args.out)
             browser.close()

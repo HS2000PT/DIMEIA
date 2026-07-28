@@ -8,7 +8,43 @@
 
 ## Estado Atual
 - **Sessão nº:** 41 (**"improve everything" — varredura de qualidade multi-agente; correções aplicadas na branch `claude/general-improvements-0ba2e9`**)
-- **Última atualização:** 2026-07-27
+- **Última atualização:** 2026-07-28
+- **🎬 SESSÃO 41 (cont. — demo para a apresentação: app redesenhada + replay histórico; commits `968029a`+`94726ab`, PUSHED):**
+  o aluno pediu uma demo (Telegram + Streamlit a funcionar) e criticou a app ("both suck") + alertas
+  atrasados (NVDA −5% não alertado "porque abriu logo mal"). Analisei criticamente as ~10 ideias dele
+  (single-page, big charts ao vivo, notificações no separador, logos, troca de bolsa, **replay do
+  passado**) e, em modo tese-primeiro, ele escolheu a opção delimitada **"Demo limpa + replay
+  histórico"** (NÃO a reescrita do zero — risco de brinquedo/scope-creep vs. âmbito US + APIs grátis +
+  Streamlit não é framework de streaming + churn da Fig 4.5). **Feito:** (1) **motor de replay**
+  `detect_all` em `anomaly_detector/detector.py` (a MESMA norma z-score sem lookahead de `detect_latest`,
+  aplicada a cada dia da série → todos os eventos que o método realmente sinalizaria; +2 testes,
+  incl. consistência com `detect_latest`). (2) **App single-screen limpa** — `_replay_anomalies` povoa
+  o gráfico grande com triângulos ▲verde/▼vermelho (movimento abrupto detetado, tooltip com z-score) +
+  círculos de notícia do registo partilhado; cortado o ruído (mascote/saudação/painel admin/faixa de
+  tickers/`_overview_*`); intervalo 6M por defeito para o replay aparecer à abertura. (3) **Fig 4.5
+  recapturada** (Playwright, --height 1320) — dashboard novo com o replay visível; **texto + legenda
+  ch4 reescritos EN+PT** (descrevem o replay honestamente: recalculado sobre o intervalo, ≠ "nunca
+  recalculado" antigo). (4) **mascotes órfãs removidas** (`mascot_{day,night}.svg` — a app já não as usa;
+  git preserva). **Gates:** **224 testes + ruff verdes; teses compilam 90/94 pp, 0 erros, 0 refs
+  indefinidas; congelados byte-iguais.** **NÃO fiz (com razão, comunicado ao aluno):** reescrita do zero
+  da app; per-exchange open/close (scope-creep US); "fix" ao atraso dos alertas — é **limitação de
+  infra grátis** (cron do GitHub Actions é best-effort ~1,5-2h, sem servidor always-on; tempo-real exige
+  o caminho VM `run_alerts.py --watch`, já desenhado mas não implantado pelo aluno). **PENDENTE humano:**
+  gravar a demo (guião dado: workflow "Alerts" → canal Telegram + app ao vivo; plano-B vídeo pré-gravado).
+  **✅ AUDITORIA DE NÍVEL DE JÚRI (2026-07-28, feita à mão — o workflow de 6 revisores bateu no
+  limite de conta, padrão do projeto):** varri 6 dimensões e o corpus volta **LIMPO**. (1) Números:
+  P@5 `0.514→0.595`, triagem `0.542/0.496/0.632/0.163`, embedders `0.420/0.514/0.538/0.504/0.513` —
+  consistentes em tese EN/PT + paper + slides EN/PT + guia + docs de defesa; **0 restos de "RQ2=futuro"**
+  (o passe adversário anterior já os limpara). (2) Referências: **52 entradas .bib = 52 chaves citadas =
+  "52 verificadas"** (README/RELATORIO), 0 indefinidas, 0 órfãs (bib PT partilhada). (3) Figuras: **14
+  referenciadas = 14 ficheiros, 0 órfãs**; `thesis-pt` partilha as figuras da EN via
+  `\graphicspath{{../thesis/}{./}}` (por desenho — daí a Fig 4.5 nova fluir para a PT). (4) **Paridade
+  EN↔PT total:** secções 58/58, ambientes figure/table 50/50, idênticos por capítulo. (5) Honestidade:
+  abstract + veredictos RQ **exemplares** ("no text model beat the volatility baseline… reported as it
+  stands"; RQ3 "útil ainda em aberto, sem estudo humano"; 0 afirmação de previsão). (6) Higiene: único
+  reparo = `make_public_bundle.py` exclui `docs/internal/`+`docs/_archive/` já inexistentes — **no-op
+  defensivo, não defeito** (exclui corretamente docs/defence, progress, slides, CLAUDE, CHECKLIST,
+  RELATORIO que EXISTEM). **Veredicto: tese examiner-ready; nada a corrigir.**
 - **🔬 SESSÃO 41 (cont. — reforço de ENGENHARIA DE IA; programa A+B+C+D no PC com FNSPID+torch):**
   avaliação adversária multi-agente (5 arguentes → veredicto "solid") identificou os pontos finos;
   executei 4 melhorias REAIS (aditivas; congelados intactos; reproduzem os pontos ao milésimo; 0

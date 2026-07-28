@@ -304,25 +304,27 @@ illustration; the full real end-to-end output appears in Chapter~\ref{chap:cases
 \label{fig:telegram_mockup}
 \end{figure}
 
-The same reasoning is also published as a live dashboard (Figure~\ref{fig:app_dashboard}): a
-``market now'' strip summarises the whole watchlist's day at a glance (companies in one sector often
-move together, so the context matters); below it, one selected company at a time is shown with a large
-price chart on which every detected event (market anomalies and material news — exactly the alerts
-delivered to the Telegram channel, read from one shared, versioned record and never recomputed) is
-marked and can be hovered for the full alert text; the same events are listed in a table below, and a
-compact line reports the background risk from the trained triage model (Section~\ref{sec:met_triage}),
-computed every day even without a fresh headline. Everything else (method, evaluation, citation)
-lives on a separate secondary view, keeping the main surface read-only and minimal.
+The same reasoning is also published as a live dashboard (Figure~\ref{fig:app_dashboard}): one
+selected company at a time is shown on a large ranged price chart on which two kinds of event are
+marked. The abrupt-move markers are the historical replay of the RQ1 detector — the same
+no-lookahead z-score run over every day in the range, so the chart shows the events the method would
+actually flag rather than a hand-picked few. The news markers are read from the one shared, versioned
+record of the alerts delivered to the Telegram channel. Either can be hovered for the full detail, the
+same events are listed in a table below, and a compact line reports the background risk from the
+trained triage model (Section~\ref{sec:met_triage}), computed every day even without a fresh headline.
+A live-status line and the morning-open and previous-close summaries sit above as collapsible notes.
+Everything else (method, evaluation, citation) lives on a separate secondary view, keeping the main
+surface read-only and minimal.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/app_dashboard.png}
 \caption[The live dashboard, a genuine capture]{The public dashboard (a genuine screenshot, not a
-mockup): the watchlist-wide ``market now'' strip, the morning open and previous-close summaries as
-collapsible notes, one company selected at a time, a large ranged price chart with detected events
-marked on the curve (hover shows the full alert; the marker here is a real alert from the public
-channel), and the trained triage model's background risk. Captured from the deployed codebase during
-live operation.}
+mockup): one company at a time on a large ranged price chart. The up/down triangles are the historical
+replay of the RQ1 z-score detector run over the whole range (hover shows the move and its z-score);
+news events read from the shared channel record are marked too. A live-status line and the open/close
+summaries sit above as collapsible notes; below sit the trained triage model's background risk and the
+alert-history table. Captured from the deployed codebase during live operation.}
 \label{fig:app_dashboard}
 \end{figure}
 

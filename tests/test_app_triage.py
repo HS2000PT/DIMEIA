@@ -63,23 +63,6 @@ def _texto_visivel(at: AppTest) -> str:
     return "\n".join(partes)
 
 
-def test_admin_desbloqueado_mostra_painel_de_definicoes(monkeypatch):
-    """Com admin desbloqueado, o painel de definições renderiza os sliders dos tunables
-    (guest, o default dos outros testes, não os mostra)."""
-    import investigator.alerts_history as alerts_history
-    import investigator.market_data.prices as prices
-
-    monkeypatch.setattr(prices, "get_price_history", _fake_history)
-    monkeypatch.setattr(alerts_history, "fetch_remote", lambda url, timeout=5.0: [])
-    at = AppTest.from_file(APP)
-    at.session_state["admin_ok"] = True   # já autenticado (salta o botão Unlock)
-    at.secrets["admin_password"] = "x"
-    at.run(timeout=120)
-    assert not at.exception
-    assert len(at.slider) >= 5   # threshold, similaridade, materialidade, teto, half-life
-    assert any("Alert settings" in str(e.label) for e in at.expander)
-
-
 def test_precos_nan_degrada_com_graca(monkeypatch):
     """Um fetch de preços a devolver NaN não pode mostrar '$nan / +nan%': cai no aviso
     gracioso 'Not enough data' (bug visto num screenshot ao vivo com o yfinance a falhar)."""
@@ -164,25 +147,6 @@ def test_vista_about_tem_metodo_avaliacao_e_demo(monkeypatch):
     assert any("Evaluation" in h for h in headers)
     labels = [e.label for e in at.expander]
     assert any("retrieval engine" in lbl for lbl in labels)  # a única "ação", fora da Live
-
-
-def test_overview_line_formata_chips_por_direcao():
-    """Faixa 'Market now' (2026-07-13): formatter PURO — verde/vermelho por direção, ordem
-    da watchlist, tickers sem dados omitidos. (A busca em lote respeita INVESTIGATOR_OFFLINE
-    e é fail-open: sem dados, a faixa não aparece — coberto pelos AppTests acima.)"""
-    import importlib.util
-
-    spec = importlib.util.spec_from_file_location("streamlit_app_puro", APP)
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)  # bare mode: as chamadas st.* de topo são no-ops
-
-    moves = {"NVDA": -0.045, "AAPL": 0.004, "MSFT": None}
-    linha = mod._overview_line(moves, ["AAPL", "MSFT", "NVDA", "ZZZZ"])
-    assert ":green[**AAPL** +0.4%]" in linha
-    assert ":red[**NVDA** -4.5%]" in linha or ":red[**NVDA** −4.5%]" in linha
-    assert "MSFT" not in linha and "ZZZZ" not in linha  # sem dados → sem chip
-    assert linha.index("AAPL") < linha.index("NVDA")    # ordem da watchlist
-    assert mod._overview_line({}, ["AAPL"]) == ""
 
 
 def test_app_boota_sem_plotly(monkeypatch):
