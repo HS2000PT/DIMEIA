@@ -7,6 +7,7 @@ ao dia avaliado; o dia avaliado não entra no cálculo da norma.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 import pandas as pd
 
@@ -77,3 +78,30 @@ def detect_intraday(running_return: float, returns, window: int = 20,
         window=window,
         threshold=threshold,
     )
+
+
+def detect_all(
+    returns, window: int = 20, threshold: float = 2.0
+) -> list[tuple[Any, AnomalyResult]]:
+    """Todos os dias anómalos da série (a norma sem lookahead de `detect_latest`,
+    aplicada a cada dia). É o motor do "replay histórico": a deteção da RQ1 corrida sobre o
+    passado para povoar o gráfico com os eventos que o método realmente detetaria.
+
+    Devolve [(rótulo_do_índice, AnomalyResult), …] para cada dia com |z| > threshold. Preserva
+    o índice da série (datas), para mapear diretamente aos pontos do gráfico.
+    """
+    r = pd.Series(returns, dtype="float64").dropna()
+    vals = r.to_numpy()
+    idx = list(r.index)
+    out: list[tuple[Any, AnomalyResult]] = []
+    for i in range(window, len(vals)):
+        recent = r.iloc[i - window : i]  # janela ANTES do dia i (sem lookahead)
+        mu = float(recent.mean())
+        sigma = float(recent.std(ddof=1))
+        z = (float(vals[i]) - mu) / sigma if sigma > 0 else 0.0
+        if abs(z) > threshold:
+            out.append((idx[i], AnomalyResult(
+                is_anomaly=True, z_score=z, last_return=float(vals[i]),
+                mean=mu, std=sigma, window=window, threshold=threshold,
+            )))
+    return out
