@@ -34,14 +34,20 @@
   \item The AI spreading through finance is largely \textbf{opaque}, a poor fit for someone who must act and live with the result.
 \end{itemize}
 \column{0.42\textwidth}
-\begin{block}{Two distinct challenges}
+\begin{block}{The three questions}
 \small
+When a holding moves, everyone asks the same three:
 \begin{enumerate}
-  \item Tell a \emph{genuinely} unusual move from ordinary volatility.
-  \item Read what a news item might \emph{mean}, from how similar events behaved before.
+  \item Is this \emph{unusual for this stock}?
+  \item Is it the \emph{company}, or the market?
+  \item Has this \emph{happened before}, and what followed?
 \end{enumerate}
 \end{block}
 \end{columns}
+\vfill
+{\small Free tools answer \textbf{none} of the three; they report the percentage, which is where
+question~1 \emph{starts}. A Bloomberg terminal answers all three, for about \$2{,}000 a month.
+The gap is not data, which is abundant and free. It is \textbf{context you can check}.}
 \end{frame}
 
 \begin{frame}{What InvestiGator does (and does not do)}
@@ -166,6 +172,34 @@ A fixed \% threshold would treat a calm and a volatile stock alike; the \emph{z}
 \end{columns}
 \end{frame}
 
+\begin{frame}{Question 2: is it the company, or the market?}
+\begin{columns}
+\column{0.46\textwidth}
+\small
+A two-factor market model, estimated \textbf{only on data before the day being explained}:
+\[ r_t = \alpha + \beta_m r^{m}_t + \beta_s \tilde r^{\,s}_t + \varepsilon_t \]
+The sector factor is \textbf{orthogonalised} against the market (an ETF and the index are
+collinear; without it the attribution is meaningless).
+\medskip
+
+Betas are \textbf{shrunk by precision}, not clipped: a noisy 20-day estimate is pulled toward its
+prior, a clean one is left alone.
+\column{0.54\textwidth}
+\begin{block}{Real, from the live system}
+\small
+\textbf{AMZN $-1.84\%$ today} \\[2pt]
+$= -1.66\%$ market $\cdot$ $-0.37\%$ sector $\cdot$ $\mathbf{+0.19\%}$ \textbf{company} \\[3pt]
+\emph{``Moved with the whole market.''}
+\end{block}
+{\small The stock fell almost two percent and the company's own contribution was
+\textbf{positive}. For the long-term holder, the most valuable output a system can give is often
+\textbf{permission to ignore something}.}
+\medskip
+
+{\footnotesize Components sum to the observed move by construction, so the line cannot lie.}
+\end{columns}
+\end{frame}
+
 \begin{frame}{News trigger: retrieve analogous precedents, measure impact}
 \begin{columns}
 \column{0.52\textwidth}
@@ -249,6 +283,35 @@ Avg 1-day move: $-1.97\%$ (over 5; 3 shown)\\
 \end{columns}
 \end{frame}
 
+\begin{frame}{Result 3b: the same guarantee, for generated language}
+\begin{columns}
+\column{0.52\textwidth}
+\small
+A language model was added \textbf{strictly as a narrator}: it may phrase the evidence, never
+supply it. A guard validates every response before delivery and \textbf{discards the whole thing} on:
+\begin{itemize}\small
+  \item a number absent from the evidence,
+  \item a figure whose \textbf{sign} was inverted,
+  \item predictive or advisory wording,
+  \item an attribution contradicting the computed one.
+\end{itemize}
+The guarantee is a property of \textbf{the system}, not of the model behaving well.
+\column{0.48\textwidth}
+\begin{block}{Two numbers, deliberately}
+\small
+\textbf{Pre-guard:} the raw model violated the evidence in a few cases.\\
+\emph{$\Rightarrow$ why the guard exists.}\\[4pt]
+\textbf{Delivered:} \textbf{zero} violations.\\
+\emph{$\Rightarrow$ the guard is what is on trial.}
+\end{block}
+{\footnotesize\textbf{Honest caveat:} the second is partly circular, since the same checker
+decides and grades. The counterweight is a red-team corpus: an independent exercise broke the
+\emph{first} design (a blocklist) with 29 reproduced bypasses. Paraphrase space is unbounded and
+any list of it is finite, so the guard was rebuilt as a \textbf{closed vocabulary}. Those attacks
+are now permanent regression tests.}
+\end{columns}
+\end{frame}
+
 \begin{frame}{Result 4: learned triage --- trained, calibrated, honest}
 \begin{columns}
 \column{0.55\textwidth}
@@ -283,12 +346,16 @@ Gradient boosting & 0.469 & 0.551 \\
 \includegraphics[width=\linewidth]{app_dashboard.png}
 \column{0.45\textwidth}
 \small
-\begin{itemize}
-  \item One page, a tab per watchlist ticker --- a genuine screenshot, not a mockup.
-  \item Background risk from the trained triage model, every day, no headline needed.
-  \item Chart annotated with detected events + a history table --- the \textbf{same} record the Telegram channel received.
-  \item Free tier only: GitHub Actions (cron) + Streamlit Community Cloud.
+A genuine screenshot, not a mockup. \textbf{Three screens, one per question:}
+\begin{itemize}\small
+  \item \textbf{Today} --- the watchlist ranked by how far from normal, with the
+        market/sector/company split \textbf{on the row}. No click needed.
+  \item \textbf{Ticker} --- chart, full decomposition, and the alerts \emph{exactly} as the
+        Telegram channel received them. Never recomputed.
+  \item \textbf{Method} --- the frozen numbers, including the negative result.
 \end{itemize}
+{\footnotesize The promise appears \textbf{once}, as the page's identity. The latency figure is
+\textbf{measured} and is simply absent when the timestamps are not there.}
 \end{columns}
 \end{frame}
 
@@ -362,6 +429,33 @@ A working, \textbf{explainable, reproducible} financial-alert system for retail 
   \item \textbf{Cross-ticker constraint?} An \emph{evaluation} choice to avoid trivial self-matches; the live alert shows the most similar precedents regardless.
   \item \textbf{A positive headline retrieved negative precedents ($-1.97\%$). Misleading?} Similarity matches \emph{theme}, not direction; the mean is theme-level \textbf{evidence}, shown with every precedent and a no-prediction disclaimer. Future work: de-duplicate precedents and flag directional disagreement.
   \item \textbf{Is it reproducible?} Yes: fixed seeds, pinned deps, versioned scripts; re-running reproduces every number.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Anticipated questions (continued)}
+\footnotesize
+\begin{itemize}
+  \item \textbf{Isn't ``zero delivered violations'' circular, since your own checker grades it?}
+        Partly, and the thesis says so. That is why it is not the only test: an independent
+        red team broke the \emph{previous} guard with 29 reproduced bypasses, built without
+        sight of the current design, and those attacks are now regression tests.
+  \item \textbf{So you built a multi-agent system?} No, and I will not claim it. One model
+        calling a few functions is not multi-agent. The narrator is a \textbf{pure function}
+        from evidence to a paragraph.
+  \item \textbf{Why exclude analyst price targets? They are free.} Because importing someone
+        else's forecast into a system defined by not forecasting is a contradiction. Coherence
+        was preferred to coverage, and it is stated as a position in Chapter~6.
+  \item \textbf{Why no portfolio features?} Holdings are personal financial data, and
+        ``your top positions are one bet'' is advice however it is phrased. That crosses the
+        boundary the ethical claim depends on.
+  \item \textbf{Where does the $0.5$ triage threshold come from?} Originally nowhere, which was
+        the honest problem. Sweeping it under an explicit cost ratio showed it implicitly assumed
+        a miss costs about the same as a false alarm; under equal costs the optimum sits where
+        the constant already was. Vindicated, but now \emph{derived}.
+  \item \textbf{Your alerts arrive hours late.} Measured: a median of about three hours, and the
+        cause is the free scheduler, not the method. The always-on path is written and costs
+        about a minute; deploying it was out of scope for the evaluation, and the honest number
+        is displayed in the product rather than hidden.
 \end{itemize}
 \end{frame}
 
