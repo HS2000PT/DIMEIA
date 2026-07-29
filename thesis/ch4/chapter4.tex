@@ -85,6 +85,77 @@ Delivery channel & Telegram bot & Free, ubiquitous, no bespoke client needed \\
 \end{tabular}
 \end{table}
 
+\section{Use Cases}
+\label{sec:investigator_usecases}
+
+\emph{What does someone actually do with this system?}
+
+The architecture above is easier to judge against the situations it was built to serve.
+Figure~\ref{fig:usecases} places them in relation to the two user profiles of
+Section~\ref{sec:intro_problem}, and Table~\ref{tab:usecases} states, for each, the question being
+asked and the components that answer it. The mapping is deliberately strict: a component that no
+use case exercises would be a component without a justification.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small, >={Stealth[length=2.2mm]},
+  uc/.style={draw, ellipse, align=center, minimum width=3.5cm, minimum height=0.95cm, fill=black!3},
+  actor/.style={align=center, font=\small\bfseries},
+]
+  \node[actor] (holder) at (0, 1.6) {Long-term\\holder};
+  \node[actor] (active) at (0, -2.6) {Active retail\\investor};
+
+  \node[uc] (uc1) at (5.0,  2.4) {UC1 Morning triage};
+  \node[uc] (uc2) at (5.0,  1.0) {UC2 Sudden drop};
+  \node[uc] (uc3) at (5.0, -0.4) {UC3 News arrives};
+  \node[uc] (uc4) at (5.0, -1.8) {UC4 Scheduled event};
+  \node[uc] (uc5) at (5.0, -3.2) {UC5 Ask in words};
+
+  \draw (holder) -- (uc2);
+  \draw (holder) -- (uc3);
+  \draw (holder) -- (uc5);
+  \draw (active) -- (uc1);
+  \draw (active) -- (uc2);
+  \draw (active) -- (uc3);
+  \draw (active) -- (uc4);
+\end{tikzpicture}
+\caption[Use cases and the two user profiles]{The five use cases and the profiles that exercise
+them. The long-term holder reaches the system when something worries them; the active investor uses
+it as a daily surface. Both converge on the same evidence, which is why a single explanation format
+serves both.}
+\label{fig:usecases}
+\end{figure}
+
+\begin{table}[ht]
+\caption{Use cases, the question each answers, and the components involved.}
+\label{tab:usecases}
+\centering
+\begin{tabular}{p{0.10\textwidth} p{0.34\textwidth} p{0.44\textwidth}}
+\toprule
+\tabhead{ID} & \tabhead{Question the user is asking} & \tabhead{Components exercised} \\
+\midrule
+UC1 & What in my watchlist deserves attention today? & Anomaly detector, learned triage, ranking \\
+UC2 & Why is this down, and is it the company or the market? & Decomposition, news linking, explanation \\
+UC3 & This headline arrived; has it mattered before? & Relevance filter, retrieval, event study \\
+UC4 & What is coming that could move this? & Scheduled-event lookup, historical reaction profile \\
+UC5 & Can I just ask, in plain words? & Grounded narrator over the components above \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two of these deserve comment because they shaped the design rather than merely consuming it.
+
+UC2 is the use case that motivated the market-versus-company decomposition. Without it the system
+could report that a holding fell sharply while leaving the reader unable to tell alarm from noise,
+which is precisely the failure mode identified for the long-term holder.
+
+UC4 is the only use case that is legitimately \emph{ahead} of events, and it is worth being precise
+about why that does not breach the no-prediction stance. A scheduled event is a matter of public
+record, not a forecast, and the historical reaction profile reports the distribution of past moves
+around such events rather than a claim about the next one. The system says what is known and what
+happened before; it does not say what will happen.
+
 \section{The Data Model}
 \label{sec:investigator_datamodel}
 

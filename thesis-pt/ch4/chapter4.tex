@@ -88,6 +88,77 @@ Canal de entrega & Bot de Telegram & Gratuito, ubíquo, sem cliente à medida \\
 \end{tabular}
 \end{table}
 
+\section{Casos de Uso}
+\label{sec:investigator_usecases}
+
+\emph{O que é que alguém faz, de facto, com este sistema?}
+
+A arquitetura acima julga-se melhor contra as situações que foi construída para servir. A
+Figura~\ref{fig:usecases} coloca-as em relação com os dois perfis de utilizador da
+Secção~\ref{sec:intro_problem}, e a Tabela~\ref{tab:usecases} enuncia, para cada uma, a pergunta que
+está a ser feita e os componentes que lhe respondem. O mapeamento é deliberadamente estrito: um
+componente que nenhum caso de uso exercitasse seria um componente sem justificação.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small, >={Stealth[length=2.2mm]},
+  uc/.style={draw, ellipse, align=center, minimum width=3.5cm, minimum height=0.95cm, fill=black!3},
+  actor/.style={align=center, font=\small\bfseries},
+]
+  \node[actor] (holder) at (0, 1.6) {Detentor de\\longo prazo};
+  \node[actor] (active) at (0, -2.6) {Investidor de\\retalho ativo};
+
+  \node[uc] (uc1) at (5.2,  2.4) {UC1 Triagem matinal};
+  \node[uc] (uc2) at (5.2,  1.0) {UC2 Queda súbita};
+  \node[uc] (uc3) at (5.2, -0.4) {UC3 Chega notícia};
+  \node[uc] (uc4) at (5.2, -1.8) {UC4 Evento agendado};
+  \node[uc] (uc5) at (5.2, -3.2) {UC5 Perguntar por palavras};
+
+  \draw (holder) -- (uc2);
+  \draw (holder) -- (uc3);
+  \draw (holder) -- (uc5);
+  \draw (active) -- (uc1);
+  \draw (active) -- (uc2);
+  \draw (active) -- (uc3);
+  \draw (active) -- (uc4);
+\end{tikzpicture}
+\caption[Casos de uso e os dois perfis de utilizador]{Os cinco casos de uso e os perfis que os
+exercitam. O detentor de longo prazo chega ao sistema quando algo o preocupa; o investidor ativo
+usa-o como superfície diária. Ambos convergem na mesma evidência, e é por isso que um único formato
+de explicação serve os dois.}
+\label{fig:usecases}
+\end{figure}
+
+\begin{table}[ht]
+\caption{Casos de uso, a pergunta que cada um responde, e os componentes envolvidos.}
+\label{tab:usecases}
+\centering
+\begin{tabular}{p{0.10\textwidth} p{0.34\textwidth} p{0.44\textwidth}}
+\toprule
+\tabhead{ID} & \tabhead{Pergunta que o utilizador faz} & \tabhead{Componentes exercitados} \\
+\midrule
+UC1 & O que na minha watchlist merece atenção hoje? & Detetor de anomalias, triagem aprendida, ordenação \\
+UC2 & Porque está isto a cair, e é a empresa ou o mercado? & Decomposição, ligação a notícia, explicação \\
+UC3 & Chegou esta manchete; já importou antes? & Filtro de relevância, retrieval, event study \\
+UC4 & O que aí vem que possa mexer com isto? & Consulta de eventos agendados, perfil histórico de reação \\
+UC5 & Posso simplesmente perguntar, por palavras? & Narrador ancorado sobre os componentes acima \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Dois destes merecem comentário, porque moldaram o desenho em vez de apenas o consumirem.
+
+O UC2 é o caso de uso que motivou a decomposição mercado-versus-empresa. Sem ela, o sistema podia
+reportar que uma posição caiu com força deixando o leitor incapaz de distinguir alarme de ruído, que
+é precisamente o modo de falha identificado para o detentor de longo prazo.
+
+O UC4 é o único caso de uso legitimamente \emph{à frente} dos acontecimentos, e vale a pena ser
+preciso sobre porque é que isso não viola a postura de não-previsão. Um evento agendado é matéria de
+registo público, não uma previsão, e o perfil histórico de reação reporta a distribuição dos
+movimentos passados em torno desses eventos, e não uma afirmação sobre o próximo. O sistema diz o
+que é sabido e o que aconteceu antes; não diz o que vai acontecer.
+
 \section{O Modelo de Dados}
 \label{sec:investigator_datamodel}
 
