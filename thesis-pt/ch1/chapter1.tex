@@ -39,17 +39,58 @@ foi emitido.
 \section{Definição do Problema}
 \label{sec:intro_problem}
 
-Um investidor de retalho que queira manter-se informado enfrenta dois problemas do dia a dia. O primeiro é
-distinguir um movimento de preço genuinamente invulgar da volatilidade comum, o que exige juízo estatístico
-e atenção constante. O segundo é interpretar o que uma notícia pode significar, o que exige saber como
-eventos semelhantes se desenrolaram no passado. A maioria das pessoas não consegue fazer nenhum dos dois em
-escala, e as aplicações de consumo que prometem ajudar costumam enviar alertas secos ou esconder o seu
-raciocínio dentro de um modelo opaco.
+Quando uma posição se mexe, o investidor de retalho faz sempre as mesmas três perguntas, pela mesma
+ordem, e elas correspondem a três problemas técnicos distintos:
 
-Este trabalho assume uma postura deliberadamente diferente: não prevê preços, \emph{explica} eventos. Para
-cada movimento abrupto ou notícia relevante, o sistema mostra o que detetou, como, de onde veio a
-informação, e quais os eventos passados que se assemelham ao atual, juntamente com o que aconteceu aos
-preços depois (Figura~\ref{fig:concept}).
+\begin{enumerate}
+  \item \textbf{Isto é realmente invulgar, ou é normal para esta ação?} Um dia de 3\% é banal numa
+        empresa e um acontecimento raro noutra, pelo que o juízo é estatístico e tem de ser feito
+        contra o comportamento recente de cada título.
+  \item \textbf{É esta empresa, ou é o mercado todo?} Uma queda que se limita a acompanhar um índice
+        em queda carrega informação diferente de uma queda que a empresa produziu por si, e separar
+        as duas exige estimar com que força o título costuma seguir o mercado e o seu setor.
+  \item \textbf{Já aconteceu algo assim, e o que se seguiu?} Responder a isto implica encontrar
+        eventos passados genuinamente comparáveis, o que é um problema de recuperação sobre
+        significado e não sobre palavras-chave, e depois medir o que os preços fizeram a seguir.
+\end{enumerate}
+
+As ferramentas gratuitas de consumo não respondem a nenhuma das três. Reportam a variação
+percentual, que é o ponto de partida da primeira pergunta e não a sua resposta. Os terminais
+profissionais respondem às três, a um custo de subscrição muito acima do alcance de um investidor
+não-profissional. A lacuna que esta dissertação aborda não é, portanto, falta de dados, que são
+abundantes e em larga medida gratuitos, mas falta de \emph{contexto} que um investidor comum
+consiga obter e, sobretudo, consiga verificar.
+
+\subsection*{A quem se destina}
+
+Dois perfis de utilizador enquadram o desenho, e querem coisas opostas do mesmo sistema.
+
+O primeiro é o \textbf{detentor de longo prazo}: alguém com um número reduzido de posições, que as
+consulta com pouca frequência e sente ansiedade quando o ecrã está vermelho. Para esta pessoa, a
+saída mais valiosa é muitas vezes a permissão para não fazer nada, entregue como evidência de que o
+movimento foi generalizado ao mercado e nada teve de notável. O modo de falha a evitar é o alarme
+sem informação.
+
+O segundo é o \textbf{investidor de retalho ativo}: alguém que consulta várias vezes por dia e já
+recebe alertas que apenas dizem que um preço se mexeu. Para esta pessoa, o valor está no contexto
+chegar com o alerta em vez de depois de uma pesquisa noutro lado. O modo de falha a evitar é a
+fadiga de alertas, em que o volume ensina o leitor a ignorar o canal.
+
+Os dois perfis puxam em direções diferentes quanto à cadência, e o sistema resolve essa tensão
+sendo deliberadamente seletivo e enunciando as suas regras de seleção de forma aberta, decisão
+retomada no Capítulo~\ref{chap:investigator}.
+
+\subsection*{Posição assumida}
+
+Este trabalho assume uma postura deliberadamente diferente da das ferramentas que o rodeiam: não
+prevê preços, \emph{explica} eventos. Para cada movimento abrupto ou notícia relevante, o sistema
+mostra o que detetou, como, de onde veio a informação, e quais os eventos passados que se assemelham
+ao atual, juntamente com o que aconteceu aos preços depois (Figura~\ref{fig:concept}).
+
+Essa recusa é uma restrição de desenho e não uma limitação pela qual pedir desculpa. Exclui importar
+previsões de terceiros, o que contradiria a afirmação que está no centro do sistema, e torna cada
+saída verificável, porque uma afirmação sobre o que já aconteceu pode ser confrontada com o registo,
+ao passo que uma previsão não pode.
 
 \begin{figure}[ht]
 \centering

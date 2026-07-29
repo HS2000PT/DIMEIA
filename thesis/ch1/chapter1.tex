@@ -38,16 +38,57 @@ alert was raised.
 \section{Problem Statement}
 \label{sec:intro_problem}
 
-A retail investor who wants to stay informed faces two everyday problems. The first is telling a genuinely
-unusual price move from ordinary volatility, which takes statistical judgement and constant attention. The
-second is reading what a news item might mean, which takes knowing how similar events played out before.
-Most people can do neither at scale, and the consumer apps that promise to help usually send bare alerts
-or hide their reasoning inside an opaque model.
+When a holding moves, a retail investor asks the same three questions, in the same order, and
+they map onto three distinct technical problems:
 
-This work takes a deliberately different stance: it does not predict prices, it \emph{explains} events.
-For each abrupt move or relevant news item, the system shows what it detected, how, where the information
-came from, and which past events resemble the current one, together with what happened to prices
-afterwards (Figure~\ref{fig:concept}).
+\begin{enumerate}
+  \item \textbf{Is this actually unusual, or normal for this stock?} A 3\% day is unremarkable for
+        one company and a rare event for another, so the judgement is statistical and has to be made
+        against each security's own recent behaviour.
+  \item \textbf{Is it this company, or the whole market?} A fall that simply tracks a falling index
+        carries different information from a fall the company produced on its own, and separating
+        the two requires estimating how strongly the security normally follows the market and its
+        sector.
+  \item \textbf{Has something like this happened before, and what followed?} Answering this means
+        finding past events that are genuinely comparable, which is a retrieval problem over
+        meaning rather than keywords, and then measuring what prices did afterwards.
+\end{enumerate}
+
+Free consumer tools answer none of the three. They report the percentage move, which is the
+starting point of the first question rather than its answer. Professional terminals do answer all
+three, at a subscription cost far beyond a non-professional investor. The gap this dissertation
+addresses is therefore not a lack of data, which is abundant and largely free, but a lack of
+\emph{context} that an ordinary investor can obtain and, more importantly, can check.
+
+\subsection*{Who this is for}
+
+Two user profiles frame the design, and they want opposite things from the same system.
+
+The first is the \textbf{long-term holder}: someone with a small number of positions who looks at
+them infrequently and feels anxiety when the screen is red. For this person the most valuable
+output is often permission to do nothing, delivered as evidence that a move was market-wide and
+unremarkable. The failure mode to avoid is alarm without information.
+
+The second is the \textbf{active retail investor}: someone who checks several times a day and
+already receives alerts that say only that a price moved. For this person the value is context
+arriving with the alert rather than after a search elsewhere. The failure mode to avoid is alert
+fatigue, where volume trains the reader to ignore the channel.
+
+The two profiles pull in different directions on cadence, and the system resolves that tension by
+being deliberately selective and by stating its selection rules openly, a decision revisited in
+Chapter~\ref{chap:investigator}.
+
+\subsection*{Position taken}
+
+This work takes a deliberately different stance from the tools that surround it: it does not
+predict prices, it \emph{explains} events. For each abrupt move or relevant news item, the system
+shows what it detected, how, where the information came from, and which past events resemble the
+current one, together with what happened to prices afterwards (Figure~\ref{fig:concept}).
+
+That refusal is a design constraint rather than a limitation to apologise for. It rules out
+importing third-party forecasts, which would contradict the claim at the centre of the system, and
+it makes every output checkable, because a statement about what already happened can be verified
+against the record while a forecast cannot.
 
 \begin{figure}[ht]
 \centering

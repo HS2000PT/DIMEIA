@@ -409,9 +409,44 @@ Robo-advisor \autocite{dacunto2019robo} & Allocates and rebalances a portfolio &
 \end{tabular}
 \end{table}
 
-\textbf{For InvestiGator:} each existing tool covers one corner, alerting, news, or allocation, but none combines
-volatility-aware detection, transparent explanation and concrete historical evidence in one tool that
-informs rather than decides. That gap is the niche this work fills.
+A fourth option has become common since large language models reached consumer products: asking a
+general assistant why a stock moved. These models are demonstrably capable on financial text, and
+domain-specific variants exist \autocite{wu2023bloomberggpt}. The difficulty is not fluency but
+grounding. A general assistant has no access to the security's own recent volatility, so it cannot
+say whether a move was unusual \emph{for that stock}; it does not estimate the security's sensitivity
+to its market and sector, so it cannot separate company from market; and its account of comparable
+past events is recalled rather than retrieved from an indexed corpus with measured outcomes. The
+answer reads well and cannot be checked, which is precisely the interpretability failure the
+explainability literature warns about \autocite{lipton2018mythos, rudin2019stop}.
+
+Table~\ref{tab:sota_three_questions} therefore scores the same tools against the three questions
+posed in Section~\ref{sec:intro_problem}, which is a stricter test than a feature list because each
+question has a checkable answer.
+
+\begin{table}[ht]
+\caption{Existing tools scored against the three questions a retail investor asks
+(Section~\ref{sec:intro_problem}).}
+\label{tab:sota_three_questions}
+\centering
+\begin{tabular}{p{0.26\textwidth} p{0.19\textwidth} p{0.19\textwidth} p{0.22\textwidth}}
+\toprule
+\tabhead{Tool} & \tabhead{Q1 Unusual for this stock?} & \tabhead{Q2 Company or market?} & \tabhead{Q3 Happened before, with outcomes?} \\
+\midrule
+Brokerage price alert & No (fixed threshold) & No & No \\
+News / sentiment app & No & No & No (polarity only) \\
+Robo-advisor \autocite{dacunto2019robo} & Not surfaced & Not surfaced & No \\
+General LLM assistant \autocite{wu2023bloomberggpt} & No (no volatility baseline) & No (no beta estimate) & Recalled, not retrieved \\
+Professional terminal & Yes & Yes & Yes (paid) \\
+\textbf{This work (InvestiGator)} & Yes (rolling z-score) & Yes (rolling beta) & Yes (retrieved, measured) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{For InvestiGator:} each existing free tool covers one corner, alerting, news, or allocation,
+and none combines volatility-aware detection, market-versus-company attribution and concrete
+historical evidence in a single tool that informs rather than decides. Professional terminals do
+combine them, at a price the target user does not pay. That intersection, all three answers at no
+cost and with the reasoning exposed, is the niche this work fills.
 
 \section{Comparative Analysis and Positioning}
 \label{sec:sota_positioning}

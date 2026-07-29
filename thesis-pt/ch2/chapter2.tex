@@ -429,9 +429,45 @@ Robo-advisor \autocite{dacunto2019robo} & Aloca e reequilibra uma carteira & Rar
 \end{tabular}
 \end{table}
 
-\textbf{Para o InvestiGator:} cada ferramenta existente cobre um canto, alertar, notícias ou alocação, mas
-nenhuma combina deteção sensível à volatilidade, explicação transparente e evidência histórica concreta
-numa só ferramenta que informa em vez de decidir. Essa lacuna é o nicho que este trabalho preenche.
+Uma quarta opção tornou-se comum desde que os grandes modelos de linguagem chegaram aos produtos de
+consumo: perguntar a um assistente genérico porque é que uma ação se mexeu. Estes modelos são
+comprovadamente capazes sobre texto financeiro, e existem variantes de domínio
+\autocite{wu2023bloomberggpt}. A dificuldade não é a fluência, é a ancoragem. Um assistente genérico
+não tem acesso à volatilidade recente do próprio título, pelo que não pode dizer se um movimento foi
+invulgar \emph{para aquela ação}; não estima a sensibilidade do título ao seu mercado e setor, pelo
+que não pode separar empresa de mercado; e o seu relato de eventos passados comparáveis é recordado,
+não recuperado de um corpus indexado com desfechos medidos. A resposta lê-se bem e não pode ser
+verificada, que é precisamente a falha de interpretabilidade contra a qual a literatura de
+explicabilidade avisa \autocite{lipton2018mythos, rudin2019stop}.
+
+A Tabela~\ref{tab:sota_three_questions} pontua, por isso, as mesmas ferramentas contra as três
+perguntas colocadas na Secção~\ref{sec:intro_problem}, o que é um teste mais exigente do que uma
+lista de funcionalidades, porque cada pergunta tem uma resposta verificável.
+
+\begin{table}[ht]
+\caption{Ferramentas existentes pontuadas contra as três perguntas que um investidor de retalho faz
+(Secção~\ref{sec:intro_problem}).}
+\label{tab:sota_three_questions}
+\centering
+\begin{tabular}{p{0.26\textwidth} p{0.19\textwidth} p{0.19\textwidth} p{0.22\textwidth}}
+\toprule
+\tabhead{Ferramenta} & \tabhead{Q1 Invulgar para esta ação?} & \tabhead{Q2 Empresa ou mercado?} & \tabhead{Q3 Já aconteceu, com desfechos?} \\
+\midrule
+Alerta de preço da corretora & Não (limiar fixo) & Não & Não \\
+App de notícias / sentimento & Não & Não & Não (só polaridade) \\
+Robo-advisor \autocite{dacunto2019robo} & Não exposto & Não exposto & Não \\
+Assistente LLM genérico \autocite{wu2023bloomberggpt} & Não (sem base de volatilidade) & Não (sem estimativa de beta) & Recordado, não recuperado \\
+Terminal profissional & Sim & Sim & Sim (pago) \\
+\textbf{Este trabalho (InvestiGator)} & Sim (z-score rolante) & Sim (beta rolante) & Sim (recuperado, medido) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Para o InvestiGator:} cada ferramenta gratuita existente cobre um canto, alertar, notícias ou
+alocação, e nenhuma combina deteção sensível à volatilidade, atribuição mercado-versus-empresa e
+evidência histórica concreta numa só ferramenta que informa em vez de decidir. Os terminais
+profissionais combinam-nas, a um preço que o utilizador-alvo não paga. Essa interseção, as três
+respostas a custo zero e com o raciocínio à vista, é o nicho que este trabalho preenche.
 
 \section{Análise Comparativa e Posicionamento}
 \label{sec:sota_positioning}
