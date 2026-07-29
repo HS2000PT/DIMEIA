@@ -98,6 +98,10 @@ jobs:
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
           POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
           ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
+          # Narrador (opcional). Sem estas chaves o alerta sai com o texto por template de
+          # sempre — o canal nunca fica dependente de quota de LLM.
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           INVESTIGATOR_HISTORY_PATH: history/alerts_history.jsonl
         run: python scripts/run_alerts.py
 
