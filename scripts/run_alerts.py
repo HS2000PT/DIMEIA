@@ -37,6 +37,9 @@ _HISTORY = Path(os.environ.get(
 # por isso é publicada/lida pelos mesmos mecanismos (workflow + VM + app via raw URL).
 _LIVE_PENDING = _HISTORY.parent / "live_pending.jsonl"
 _LIVE_KB = _HISTORY.parent / "live_kb.jsonl"
+# FUNIL DE GATES: também na branch partilhada — acumula entre corridas para se poder medir
+# quantas varreduras cada ticker perdeu em cada etapa (ver investigator/gate_log.py).
+_GATE_LOG = _HISTORY.parent / "gate_log.jsonl"
 # LOG DE PREDIÇÕES (loop de pós-validação M5.5): também na branch partilhada, para PERSISTIR
 # entre corridas do Actions (o runner é efémero — antes o log era gitignored em data/ e nunca
 # acumulava na nuvem; o loop de pós-fecho só corria no PC do aluno). Agora `git add -A` do
@@ -401,7 +404,8 @@ def precedents_are_strong(precedents: list, min_similarity: float) -> bool:
     return any(score >= min_similarity for _, score in precedents)
 
 
-def scan_news(cfg: dict, event_times: dict[str, str] | None = None) -> list[tuple[str, str]]:
+def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
+              gate_log: list | None = None) -> list[tuple[str, str]]:
     """Opcional: notícias recentes por ticker -> pares (ticker, alerta) (best-effort).
 
     Qualidade primeiro (revisão 2026-07-11, sobre 27 alertas reais): (1) filtro de
@@ -463,6 +467,19 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None) -> list[tupl
     end = date.today().isoformat()
     start = (date.today() - timedelta(days=7)).isoformat()
     alerts: list[tuple[str, str]] = []
+    hoje_iso = date.today().isoformat()
+
+    def _gate(ticker: str, stage: str, detail: str = "") -> None:
+        """Regista a etapa do funil onde este ticker parou (fail-open, nunca trava o scan)."""
+        if gate_log is None:
+            return
+        try:
+            from investigator.gate_log import GateRecord
+
+            gate_log.append(GateRecord(date=hoje_iso, ticker=ticker, stage=stage, detail=detail))
+        except Exception:  # noqa: BLE001
+            pass
+
     for ticker in n.get("tickers", []):
         try:
             items = fetch_finnhub_company_news(ticker, start, end)
@@ -473,6 +490,8 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None) -> list[tupl
                 print(f"[noticias {ticker}] {len(items)} manchete(s), nenhuma relevante "
                       "(mal etiquetadas/boilerplate) — sem alerta.")
             if not relevantes:
+                _gate(ticker, "none_relevant" if items else "no_news",
+                      f"{len(items)} manchete(s) brutas")
                 continue
             # KB viva: toda a manchete relevante é candidata a precedente futuro (captura
             # fail-open; matura dias depois, quando o impacto for observável).
@@ -482,6 +501,7 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None) -> list[tupl
             if not news_is_fresh(latest.date, date.today(), max_age):
                 print(f"[noticias {ticker}] mais recente é de {latest.date} (>{max_age} dias) "
                       "— sem alerta (anti-repetição).")
+                _gate(ticker, "stale", f"mais recente {latest.date} > {max_age}d")
                 continue
             precedents = merged_precedents(
                 latest.headline, kbs, embedder, top_k=top_k, today=date.today(),
@@ -495,6 +515,7 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None) -> list[tupl
                 best = max((s for _, s in precedents), default=0.0)
                 print(f"[noticias {ticker}] melhor precedente sim {best:.2f} < {min_sim:.2f} "
                       "— evidência fraca demais, sem alerta.")
+                _gate(ticker, "weak_precedent", f"melhor sim {best:.2f} < {min_sim:.2f}")
                 continue
             if bundle is not None:
                 from investigator.market_data.prices import get_price_history
@@ -511,6 +532,8 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None) -> list[tupl
                                    scored, gate, kept=gated is not None)
                 if gated is None:
                     print(f"[triagem {ticker}] alerta de noticia suprimido pelo gate.")
+                    p_str = f"P={scored[0]:.2f} < {gate:.2f}" if scored is not None else "sem P"
+                    _gate(ticker, "triage_suppressed", p_str)
                     continue
                 text = gated
             else:
@@ -523,8 +546,10 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None) -> list[tupl
             # sem alterar a forma dos tuplos (ticker, texto) que atravessam todo o runner.
             if event_times is not None and latest.published_at:
                 event_times[news_key(ticker, text)] = latest.published_at
+            _gate(ticker, "alerted", latest.headline[:80])
         except Exception as exc:  # noqa: BLE001
             print(f"[saltar noticias {ticker}] {type(exc).__name__}: {exc}")
+            _gate(ticker, "error", f"{type(exc).__name__}: {exc}"[:120])
     return alerts
 
 
@@ -745,6 +770,23 @@ def _record_history_safe(alerts: list[tuple[str, str]], today: str,
         print(f"[historico] registo falhou (ignorado): {type(exc).__name__}: {exc}")
 
 
+def _record_gates_safe(records: list, path: str | Path | None = None) -> None:
+    """Persiste o funil de gates ao lado do histórico (mesma branch de dados, por isso é
+    publicado pelos mesmos mecanismos). Fail-open: nunca pode travar o ciclo.
+
+    Escreve SEMPRE que há registos — inclusive em dry-run e sem Telegram configurado: o
+    funil descreve a DETEÇÃO, não a entrega, e é justamente nas corridas silenciosas
+    (nenhum alerta enviado) que interessa saber o que foi filtrado e porquê."""
+    if not records:
+        return
+    try:
+        from investigator.gate_log import append_jsonl
+
+        append_jsonl(records, path or _GATE_LOG)
+    except Exception as exc:  # noqa: BLE001
+        print(f"[funil] registo falhou (ignorado): {type(exc).__name__}: {exc}")
+
+
 def _push_history_safe(path: str | Path = _HISTORY) -> None:
     """Publica o histórico na branch `alerts-history` a partir de uma máquina própria (VM).
 
@@ -913,8 +955,15 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     # publicação de cada manchete alertada (ver `scan_news`). `detected_at` é carimbado
     # AQUI — fim da deteção, antes de qualquer envio.
     event_times: dict[str, str] = {}
-    alerts = filter_new_alerts(market_alerts, scan_news(cfg, event_times), state, max_per)
+    # Funil de gates: onde é que cada ticker parou nesta varredura. Sem isto não há resposta
+    # para "a AAPL teve 135 manchetes relevantes e 0 alertas — qual gate a matou?", porque o
+    # registo de decisões só é escrito depois dos gates de frescura e similaridade.
+    gate_records: list = []
+    alerts = filter_new_alerts(
+        market_alerts, scan_news(cfg, event_times, gate_records), state, max_per
+    )
     detected_at = utc_stamp()
+    _record_gates_safe(gate_records)
 
     threshold = float((cfg.get("market") or {}).get("threshold", 3.0))
     hora_utc = datetime.now(UTC).hour
