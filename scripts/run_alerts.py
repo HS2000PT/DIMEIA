@@ -697,6 +697,53 @@ def _attach_sector_safe(ticker: str, alert_text: str, moves: dict[str, float]) -
         return alert_text
 
 
+def _attach_decomposition_safe(ticker: str, alert_text: str, cache: dict) -> str:
+    """Anexa a repartição mercado / setor / específico da empresa a um alerta de mercado.
+
+    É a linha que responde à primeira pergunta de qualquer investidor perante um número
+    vermelho — *"é a minha empresa ou é o mercado todo?"*. Ex. real (2026-07-28):
+    `AMD -8.50% today = +0.61% market · -3.60% sector · -5.51% company-specific.`
+
+    Reutiliza a cache de preços do ciclo, por isso o SPY e cada ETF de setor são buscados
+    UMA vez por corrida, não uma vez por ticker.
+
+    Fail-open total: sem índice, sem ETF, séries desalinhadas ou erro de rede, o alerta segue
+    intacto. A decomposição é contexto — nunca condição para alertar.
+    """
+    try:
+        import numpy as np
+        import pandas as pd
+
+        from investigator.correlation_engine.decomposition import decompose_move, describe
+        from investigator.news_fetcher.relevance import MARKET_INDEX, sector_etf
+
+        etf = sector_etf(ticker)
+        cols = {ticker: _hist_cached(ticker, cache)["Close"],
+                MARKET_INDEX: _hist_cached(MARKET_INDEX, cache)["Close"]}
+        if etf:
+            cols[etf] = _hist_cached(etf, cache)["Close"]
+
+        frame = pd.DataFrame(cols)
+        frame.index = pd.to_datetime(frame.index)
+        if getattr(frame.index, "tz", None) is not None:
+            frame.index = frame.index.tz_localize(None)
+        frame = frame.dropna()
+        rets = np.log(frame / frame.shift(1)).dropna()
+        if len(rets) < 15:
+            return alert_text
+
+        d = decompose_move(
+            rets[ticker].to_numpy(),
+            rets[MARKET_INDEX].to_numpy(),
+            rets[etf].to_numpy() if etf else None,
+        )
+        return f"{alert_text}\n{describe(d, ticker)}"
+    except Exception as exc:  # noqa: BLE001
+        print(f"[decomposicao {ticker}] falhou (alerta segue sem linha): "
+              f"{type(exc).__name__}: {exc}")
+        return alert_text
+
+
 def _investigate_anomaly_safe(ticker: str, alert_text: str) -> str:
     """Investigação cruzada: procura a notícia relevante mais recente (48h) que possa
     explicar a anomalia e anexa-a ao alerta; sem notícia, di-lo honestamente.
@@ -947,6 +994,9 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     for t, r in intra_results:
         moves.setdefault(t, r.last_return)
     market_alerts = [(t, _attach_sector_safe(t, text, moves)) for t, text in market_alerts]
+    # Repartição mercado/setor/empresa — a linha que distingue "o mercado caiu" de "a TUA
+    # empresa caiu". Usa a mesma cache do ciclo (SPY e ETFs buscados 1×).
+    market_alerts = [(t, _attach_decomposition_safe(t, text, cache)) for t, text in market_alerts]
     # Investigação cruzada (anomalia → notícia): o comportamento do trader profissional —
     # vê o movimento, procura a causa. Fail-open: sem rede/chave, o alerta segue sem contexto.
     market_alerts = [(t, _investigate_anomaly_safe(t, text)) for t, text in market_alerts]

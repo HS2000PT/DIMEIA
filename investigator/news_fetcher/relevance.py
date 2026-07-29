@@ -50,6 +50,21 @@ SECTOR_LABEL: dict[str, str] = {
     "health": "healthcare", "consumer": "consumer",
 }
 
+# ETF representativo de cada setor — o "fator de setor" da decomposição
+# (`correlation_engine/decomposition.py`). São os SPDR Select Sector, os mais líquidos e com
+# histórico longo, disponíveis em qualquer fonte de preços gratuita.
+# O índice de mercado é o SPY. Um ticker sem setor mapeado decompõe-se só contra o mercado.
+MARKET_INDEX = "SPY"
+SECTOR_ETF: dict[str, str] = {
+    "tech": "XLK", "banking": "XLF", "energy": "XLE",
+    "health": "XLV", "consumer": "XLP",
+}
+
+
+def sector_etf(ticker: str) -> str:
+    """ETF do setor deste ticker ("" quando o setor não está mapeado)."""
+    return SECTOR_ETF.get(SECTOR_OF.get(ticker.upper(), ""), "")
+
 
 # Aliases por ticker (minúsculas; comparação é case-insensitive). Cobre a watchlist do
 # produto (config/alerts.yaml) + SPY. Um ticker fora do mapa cai no fallback honesto:

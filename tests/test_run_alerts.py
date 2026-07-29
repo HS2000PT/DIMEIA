@@ -243,3 +243,84 @@ def test_precedents_are_strong_aplica_o_chao():
     assert not precedents_are_strong(fracos, 0.45)
     assert precedents_are_strong(fortes, 0.45)
     assert not precedents_are_strong([], 0.45)
+
+
+# ── Decomposição anexada aos alertas de mercado (A2b, 2026-07-29) ─────────────
+def _serie_precos(n=80, seed=1):
+    import numpy as np
+    import pandas as pd
+
+    rng = np.random.default_rng(seed)
+    idx = pd.bdate_range("2026-01-01", periods=n)
+    mercado = np.cumprod(1 + rng.normal(0, 0.01, n)) * 500
+    return idx, mercado
+
+
+def _fake_hist(mult: float, seed: int):
+    import pandas as pd
+
+    idx, base = _serie_precos(seed=seed)
+    return pd.DataFrame({"Close": base * mult}, index=idx)
+
+
+def test_decomposicao_anexa_linha_ao_alerta(monkeypatch):
+    """Caminho feliz: a linha entra e nomeia as três componentes."""
+    import scripts.run_alerts as ra
+
+    monkeypatch.setattr(ra, "_hist_cached", lambda t, c: _fake_hist(1.0, seed=1))
+    out = ra._attach_decomposition_safe("NVDA", "ALERTA", {})
+    assert out.startswith("ALERTA\n")
+    linha = out.split("\n")[1]
+    assert "market" in linha and "sector" in linha and "company-specific" in linha
+
+
+def test_decomposicao_fail_open_quando_precos_falham(monkeypatch):
+    """Rede em baixo não pode impedir o alerta — a linha é contexto, nunca condição."""
+    import scripts.run_alerts as ra
+
+    def _rebenta(t, c):
+        raise RuntimeError("yfinance bloqueado")
+
+    monkeypatch.setattr(ra, "_hist_cached", _rebenta)
+    assert ra._attach_decomposition_safe("NVDA", "ALERTA", {}) == "ALERTA"
+
+
+def test_decomposicao_fail_open_com_historico_curto(monkeypatch):
+    """Poucos dias alinhados → sem linha, mas o alerta sobrevive intacto."""
+    import pandas as pd
+
+    import scripts.run_alerts as ra
+
+    curta = pd.DataFrame({"Close": [100.0, 101.0, 99.0]},
+                         index=pd.bdate_range("2026-07-01", periods=3))
+    monkeypatch.setattr(ra, "_hist_cached", lambda t, c: curta)
+    assert ra._attach_decomposition_safe("NVDA", "ALERTA", {}) == "ALERTA"
+
+
+def test_decomposicao_usa_uma_busca_por_simbolo(monkeypatch):
+    """SPY e o ETF de setor são buscados 1× por ciclo, não 1× por ticker."""
+    import scripts.run_alerts as ra
+
+    pedidos: list[str] = []
+
+    def _contado(t, c):
+        pedidos.append(t)
+        if t not in c:
+            c[t] = _fake_hist(1.0, seed=1)
+        return c[t]
+
+    monkeypatch.setattr(ra, "_hist_cached", _contado)
+    cache: dict = {}
+    ra._attach_decomposition_safe("NVDA", "A", cache)
+    ra._attach_decomposition_safe("AMD", "B", cache)   # mesmo setor (XLK) e mesmo índice
+    assert sorted(cache) == ["AMD", "NVDA", "SPY", "XLK"]
+
+
+def test_ticker_sem_setor_mapeado_decompoe_so_contra_o_mercado(monkeypatch):
+    import scripts.run_alerts as ra
+
+    monkeypatch.setattr(ra, "_hist_cached", lambda t, c: _fake_hist(1.0, seed=1))
+    cache: dict = {}
+    out = ra._attach_decomposition_safe("ZZZZ", "ALERTA", cache)
+    assert "ZZZZ" not in [k for k in cache if k in ("XLK", "XLF", "XLE")]
+    assert "market" in out
