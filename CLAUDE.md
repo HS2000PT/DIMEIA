@@ -109,9 +109,34 @@
   honestidade apanhada na captura ao vivo: "moved unusually" incluía um z=+1,03 abaixo do
   limiar → "stood out … (K past the alert threshold)". Fig 4.5 recapturada, texto+legenda
   reescritos EN+PT; teses 90/92 pp, 0 erros, paridade 51=51 secções e 53=53 figuras/tabelas.
+  **(A4) Estudo de utilidade PRONTO A CORRER** — era o atrito, não o desenho, que o travava.
+  `scripts/build_usefulness_pack.py` gera de 177 alertas REAIS: 6 estímulos A/B (com 2 casos
+  tema≠direção garantidos), contrabalanço, CSV e guião do facilitador;
+  `scripts/analyse_usefulness.py` fecha com Wilson + Wilcoxon (só a N≥8, limiar fixado ANTES
+  dos dados, com teste que falha se alguém o baixar = p-hacking visível no diff). **Falha
+  metodológica apanhada antes de contaminar:** a condição A cortava na 1.ª linha, o que para
+  NOTÍCIA é só um cabeçalho — a condição A ficaria SEM CONTEÚDO e a B ganhava por omissão.
+  Pipeline verificado com dados sintéticos, **apagados a seguir** (0 fabricação no repo).
+  **(TESE) Camada de posicionamento (o pedido de "marketing", como conteúdo académico):**
+  Cap. 1 reescrito à volta das **três perguntas**, cada uma mapeada no problema técnico
+  correspondente + as duas personas que querem coisas OPOSTAS (permissão para não fazer nada
+  vs contexto a chegar com o alerta) + a recusa de prever como RESTRIÇÃO DE DESENHO;
+  Cap. 2 nova matriz que pontua as ferramentas contra as três perguntas, incluindo o
+  **assistente LLM genérico** (falha por ancoragem, não por fluência: sem volatilidade do
+  título, sem beta, casos passados RECORDADOS e não recuperados);
+  Cap. 4 nova secção **Casos de Uso** (UC1–UC5 + diagrama ligado às personas; UC4 com o
+  argumento explícito de porque um evento agendado não viola a não-previsão);
+  Cap. 6 veredictos estendidos (RQ3 ganha a fidelidade da linguagem gerada e admite a
+  circularidade da métrica entregue; RQ4 ganha o enquadramento de política) + **nova secção
+  "Posições Assumidas por Exclusão"** com cada corte justificado.
+  **Sem citações novas** (reusa wu2023bloomberggpt, dacunto2019robo, lipton2018mythos,
+  rudin2019stop). Teses **EN 92 pp / PT 96 pp**, 0 erros, 0 refs/citações indefinidas,
+  paridade 110=110 idêntica por capítulo.
   **PENDENTE do aluno:** (1) **P1 — rever a app**; depois disso ela CONGELA até à entrega.
-  (2) conta **Oracle Cloud** (desbloqueia o polling; cliques, não engenharia).
-  (3) decidir se liga `narrator.enabled` em produção.
+  (2) **correr o estudo de utilidade** (6–10 pessoas, ~15 min cada) — fecha a única linha
+  "em aberto" do Cap. 6; precisa de tempo de calendário para recrutar.
+  (3) conta **Oracle Cloud** (desbloqueia o polling; cliques, não engenharia).
+  (4) decidir se liga `narrator.enabled` em produção.
   **Fable:** usado no narrador + redesenho da app (semana 3). A seguir: prosa da tese
   (semanas 4–5) e slides/marca (semana 6) — não gastar em plumbing/testes/tradução.
 - **🎬 SESSÃO 41 (cont. — demo para a apresentação: app redesenhada + replay histórico; commits `968029a`+`94726ab`, PUSHED):**
