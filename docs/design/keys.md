@@ -40,12 +40,33 @@ GROQ_API_KEY=
 | `TIINGO_API_KEY` | 1.º fallback de preços | [tiingo.com](https://www.tiingo.com) | ~1.000/dia | cadeia salta esta fonte |
 | `POLYGON_API_KEY` | 2.º fallback de preços | [polygon.io](https://polygon.io) | 5 pedidos/min | cadeia salta esta fonte |
 | `ALPHAVANTAGE_API_KEY` | último recurso de preços | [alphavantage.co](https://www.alphavantage.co) | 25/**dia** | cadeia salta esta fonte |
-| `GEMINI_API_KEY` | narrador (principal) | [aistudio.google.com](https://aistudio.google.com) → *Get API key* | ~1.500/dia, 10–15/min | usa o Groq |
-| `GROQ_API_KEY` | narrador (reserva) | [console.groq.com](https://console.groq.com) → *API Keys* | ~30/min, 1.000/dia | usa o texto por template |
+| `GROQ_API_KEY` | narrador (**principal**) | [console.groq.com](https://console.groq.com) → *API Keys* | ~30/min, 1.000/dia | usa o Gemini |
+| `GEMINI_API_KEY` | narrador (**reserva**) | [aistudio.google.com](https://aistudio.google.com) → *Get API key* | ver aviso abaixo | usa o texto por template |
 
 **Nenhuma das duas do narrador pede cartão.** São duas de propósito: uma defesa ao vivo não
-pode morrer num rate limit. Ordem: Gemini → Groq → template determinístico. O canal e a app
-funcionam sempre, mesmo sem nenhuma.
+pode morrer num rate limit. Ordem: **Groq → Gemini → template determinístico**. O canal e a
+app funcionam sempre, mesmo sem nenhuma.
+
+### ⚠️ Sondagem real do free tier (2026-07-29) — a ordem foi INVERTIDA por medição
+
+A ordem inicial era Gemini→Groq, por reputação de free tier generoso. **A medição contradiz-o**
+(por isso é que se sonda antes de depender):
+
+| Modelo | Resultado |
+|---|---|
+| `gemini-2.5-flash` | **404** — "no longer available to new users" |
+| `gemini-2.5-flash-lite` | **404** — idem |
+| `gemini-2.0-flash-001` | **429 à primeira chamada** — quota esgotada numa chave NOVA |
+| `gemini-2.0-flash-lite-001` | **429** — idem |
+| `gemini-flash-lite-latest` | ✅ 4,3 s |
+| `gemini-3.1-flash-lite-preview` | ✅ 1,0 s (mas *preview* — pode desaparecer antes de setembro) |
+| `gemini-flash-latest` / `gemini-3-flash-preview` | 200 mas **sem texto**: são modelos de raciocínio e gastam todo o orçamento de tokens a "pensar" |
+| **`llama-3.3-70b-versatile` (Groq)** | ✅ **0,57 s**, saída fiel ao input |
+| `llama-3.1-8b-instant` (Groq) | ✅ 0,54 s, mas omitiu a decomposição |
+
+**Decisão:** principal = **Groq `llama-3.3-70b-versatile`** (rápido, estável, saída ancorada);
+reserva = **Gemini `gemini-flash-lite-latest`** (nome estável, ao contrário dos `-preview`).
+Re-correr `scripts/probe_llm.py` antes da defesa — estes limites mudam sem aviso.
 
 ---
 
