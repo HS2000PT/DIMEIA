@@ -1,25 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="InvestiGator — an alligator's watchful eye over a rising market line">
-  <!-- InvestiGator — marca "The Stare" (2026-07-22): um olho de crocodilo (íris dourada,
-       pupila em fenda, sobrolho pesado) a vigiar uma linha de mercado ascendente. Funde
-       Invest (a linha), Investigate (o olhar) e alliGator (o olho de réptil). Cores fixas
-       (uma marca não muda com o tema do leitor). Legível de 16px a 512px. -->
-  <defs>
-    <linearGradient id="ig-bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0E2A20"/>
-      <stop offset="1" stop-color="#0A1D16"/>
-    </linearGradient>
-  </defs>
-  <rect x="10" y="10" width="236" height="236" rx="61" fill="url(#ig-bg)"/>
-  <!-- sobrolho investigativo (pesado, angular) -->
-  <path d="M62 106 L128 80 L194 106" fill="none" stroke="#78D3A2" stroke-width="15"
-        stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- olho amendoado de crocodilo -->
-  <path d="M67 137 Q128 101 189 137 Q128 173 67 137 Z" fill="#78D3A2"/>
-  <!-- íris dourada + pupila em fenda vertical (réptil) + brilho -->
-  <circle cx="128" cy="137" r="27" fill="#E7B24C"/>
-  <rect x="121" y="114" width="14" height="46" rx="7" fill="#0B1F17"/>
-  <circle cx="119" cy="128" r="4.5" fill="#FBE8BE"/>
-  <!-- linha de mercado a subir na base -->
-  <polyline points="56,206 104,206 134,206 160,188 190,198 216,170" fill="none"
-            stroke="#2FD07A" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"
+     role="img" aria-label="InvestiGator — a rising market line drawn as an alligator's ridged tail">
+  <!-- InvestiGator — marca "The Tail" (2026-07-29).
+       UM traço contínuo que se lê ao mesmo tempo como a cauda serrilhada de um jacaré e como
+       uma linha de mercado a subir: a base espessa em baixo-à-esquerda afina até à ponta em
+       cima-à-direita, e os dentes do bordo superior são simultaneamente escamas e volatilidade.
+
+       Substitui "The Stare" (olho de crocodilo), que falhava a 16 px — o sobrolho fundia-se
+       com o olho e a linha de mercado desaparecia — e cujo olho de pupila em fenda lia-se como
+       predador, contra-mensagem para um produto cuja ética é mostrar evidência, nunca caçar.
+
+       GLIFO NU, sem contentor: um quadrado escuro obrigaria um bloco a toda a superfície clara
+       onde a marca aterrasse. O contentor volta só no ícone de aplicação (icon.svg), onde a
+       plataforma o exige. Para fundos escuros usar logo-dark.svg; monocromático em logo-mono.svg. -->
+  <path d="M22 206 C 74 202, 122 180, 158 142 C 182 116, 202 86, 226 52
+           L 214 46 L 202 70 L 186 60 L 170 88 L 152 78 L 134 108 L 112 98
+           L 92 130 L 66 120 L 44 154 L 16 146 Z"
+        fill="#0A8F52"/>
 </svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"
+     role="img" aria-label="InvestiGator — a rising market line drawn as an alligator's ridged tail">
+  <!-- "The Tail" monocromático. `currentColor` herda a cor do texto onde a marca for inserida:
+       serve impressão a preto, watermark, e qualquer superfície de cor única. Que a marca
+       sobreviva sem cor nenhuma é o teste de que a FORMA carrega a identidade, e não o verde. -->
+  <path d="M22 206 C 74 202, 122 180, 158 142 C 182 116, 202 86, 226 52
+           L 214 46 L 202 70 L 186 60 L 170 88 L 152 78 L 134 108 L 112 98
+           L 92 130 L 66 120 L 44 154 L 16 146 Z"
+        fill="currentColor"/>
+</svg>

@@ -47,12 +47,14 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   dias depois (impacto real a +5d); retrieval com decaimento por idade e idade visível;
   anomalias com **investigação cruzada** ("Possible explanation: …" ou "no public explanation
   yet").
-- **Dashboard público** (<https://investigator.streamlit.app>): estilo Google Finance — uma
-  aba por empresa, UM gráfico grande (1D/5D/1M/6M) com os eventos detetados marcados na curva
-  (hover = o alerta exato do canal; nunca recalculado), a mesma lista em tabela, e o
-  "background risk" do modelo treinado (RQ4). Read-only; método/avaliação/citação numa vista
-  About separada. Identidade "The Stare" (olho de crocodilo sobre linha de mercado) + slogan
-  "Every move investigated, never predicted.".
+- **Dashboard público** (<https://investigator.streamlit.app>): TRÊS ecrãs, um por cada
+  pergunta do posicionamento — *Today* (a watchlist ordenada por quão fora do normal está o
+  dia, com a repartição mercado/setor/empresa na PRÓPRIA linha), *Ticker* (gráfico, a mesma
+  decomposição por extenso, e os alertas exatos do canal, nunca recalculados) e *Method* (os
+  números congelados, incluindo o negativo). Read-only. Construído contra critérios de
+  aceitação escritos ANTES do código (`docs/design/app_acceptance.md`), com 15 testes que SÃO
+  esses critérios. Identidade "The Tail" (um traço que é cauda de jacaré e linha de mercado ao
+  mesmo tempo) + slogan "Every move investigated, never predicted.".
   Keep-alive automático via workflow; opção 24/7 sem hibernação na VM
   (`deploy/investigator-app.service`).
 - **Bot interativo** (`scripts/run_bot.py`): watchlist pessoal por utilizador, SQLite,

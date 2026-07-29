@@ -399,9 +399,11 @@ so the interface never displays a number the system did not observe.
 \caption[The live dashboard, a genuine capture]{The public dashboard (a genuine screenshot, not a
 mockup), opening screen. The watchlist is ranked by how far each name sits from its own recent norm,
 and each row already carries the market/sector/company split, so the reader sees whether a move was
-the market or the company without clicking: here JPMorgan's $-2.15\%$ is mostly company-specific
-($-1.69\%$) once the market and sector contributions are removed. Names that did not stand out
-collapse into the single \emph{Quiet} line. The promise and the no-prediction commitment appear once,
+the market or the company without clicking. The third row is the case that motivated the feature:
+Amazon is down $1.84\%$, which looks alarming, but $1.66$ points of that came with the market and
+the company's own contribution is $+0.19\%$, so the honest reading is that nothing company-specific
+happened. The first row is the opposite case, where most of JPMorgan's fall remains after the market
+and sector are removed. Names that did not stand out collapse into the single \emph{Quiet} line. The promise and the no-prediction commitment appear once,
 at the top. The latency figure is measured from recorded timestamps and is omitted when they are
 absent. Captured from the deployed codebase during live operation.}
 \label{fig:app_dashboard}

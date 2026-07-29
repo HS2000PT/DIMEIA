@@ -1,8 +1,8 @@
 """Captura um screenshot REAL do dashboard Streamlit (Fig. 4.5 da tese).
 
 Arranca a app localmente (headless), espera o gráfico renderizar e grava um PNG com Playwright.
-Reprodutível: não fabrica nada — é a app implantada a correr. Usa a marca atual (logo "The Stare"
-+ slogan "Every move investigated, never predicted.").
+Reprodutível: não fabrica nada — é a app implantada a correr, com a marca atual ("The Tail",
+`app/assets/logo.svg`) e o slogan "Every move investigated, never predicted.".
 
 Uso:
     python scripts/screenshot_app.py                          # → thesis/figures/app_dashboard.png
