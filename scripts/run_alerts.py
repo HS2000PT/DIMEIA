@@ -697,7 +697,8 @@ def _attach_sector_safe(ticker: str, alert_text: str, moves: dict[str, float]) -
         return alert_text
 
 
-def _attach_decomposition_safe(ticker: str, alert_text: str, cache: dict) -> str:
+def _attach_decomposition_safe(ticker: str, alert_text: str, cache: dict,
+                               out: dict | None = None) -> str:
     """Anexa a repartição mercado / setor / específico da empresa a um alerta de mercado.
 
     É a linha que responde à primeira pergunta de qualquer investidor perante um número
@@ -737,6 +738,8 @@ def _attach_decomposition_safe(ticker: str, alert_text: str, cache: dict) -> str
             rets[MARKET_INDEX].to_numpy(),
             rets[etf].to_numpy() if etf else None,
         )
+        if out is not None:  # canal lateral: o narrador precisa do objeto, não do texto
+            out[ticker] = d
         return f"{alert_text}\n{describe(d, ticker)}"
     except Exception as exc:  # noqa: BLE001
         print(f"[decomposicao {ticker}] falhou (alerta segue sem linha): "
@@ -815,6 +818,55 @@ def _record_history_safe(alerts: list[tuple[str, str]], today: str,
         save_jsonl(append_and_trim(load_jsonl(path), new), path)
     except Exception as exc:  # noqa: BLE001
         print(f"[historico] registo falhou (ignorado): {type(exc).__name__}: {exc}")
+
+
+def _market_evidence(ticker: str, res, decomp, today: str):
+    """AnomalyResult (+ decomposição opcional) → AlertEvidence. Puro; None se faltar o básico."""
+    from investigator.narrator.evidence import AlertEvidence, fmt_num, fmt_pct
+
+    try:
+        kw = dict(
+            ticker=ticker, date=today, kind="market",
+            move_pct=fmt_pct(res.last_return), z_score=fmt_num(res.z_score),
+            threshold=fmt_num(res.threshold), window_days=int(res.window),
+        )
+        if decomp is not None:
+            kw.update(
+                market_pct=fmt_pct(decomp.market), sector_pct=fmt_pct(decomp.sector),
+                company_pct=fmt_pct(decomp.idiosyncratic), driver=decomp.driver,
+                decomposition_fallback=bool(decomp.fallback),
+            )
+        return AlertEvidence(**kw)
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _narrate_safe(text: str, evidence, cfg: dict) -> str:
+    """Antepõe ao alerta um parágrafo em linguagem simples, gerado pelo narrador ancorado.
+
+    **Puramente ADITIVO, e essa é a decisão de desenho.** Se o narrador falhar, se a guarda
+    de fidelidade rejeitar a resposta, ou se não houver chaves, o alerta segue EXATAMENTE
+    como hoje — nunca se antepõe o texto-template, que só repetiria o que o corpo do alerta
+    já diz. O narrador só pode acrescentar valor; nunca degradar o que já funciona.
+
+    Fail-open total, como todo o resto do runner.
+    """
+    if evidence is None or not (cfg.get("narrator") or {}).get("enabled", False):
+        return text
+    try:
+        from investigator.narrator.core import narrate
+
+        r = narrate(evidence)
+        if r.source == "template":  # sem LLM, ou guarda rejeitou → alerta inalterado
+            if r.guarded:
+                print(f"[narrador {evidence.ticker}] guarda rejeitou "
+                      f"({'; '.join(r.violations[:2])[:80]}) — alerta segue sem parágrafo.")
+            return text
+        print(f"[narrador {evidence.ticker}] {r.source} em {r.latency_s:.2f}s")
+        return f"{r.text}\n\n{text}"
+    except Exception as exc:  # noqa: BLE001
+        print(f"[narrador] falhou (alerta segue intacto): {type(exc).__name__}: {exc}")
+        return text
 
 
 def _record_gates_safe(records: list, path: str | Path | None = None) -> None:
@@ -996,10 +1048,25 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     market_alerts = [(t, _attach_sector_safe(t, text, moves)) for t, text in market_alerts]
     # Repartição mercado/setor/empresa — a linha que distingue "o mercado caiu" de "a TUA
     # empresa caiu". Usa a mesma cache do ciclo (SPY e ETFs buscados 1×).
-    market_alerts = [(t, _attach_decomposition_safe(t, text, cache)) for t, text in market_alerts]
+    decomps: dict[str, object] = {}
+    market_alerts = [(t, _attach_decomposition_safe(t, text, cache, decomps))
+                     for t, text in market_alerts]
     # Investigação cruzada (anomalia → notícia): o comportamento do trader profissional —
     # vê o movimento, procura a causa. Fail-open: sem rede/chave, o alerta segue sem contexto.
     market_alerts = [(t, _investigate_anomaly_safe(t, text)) for t, text in market_alerts]
+    # Narrador ancorado: parágrafo em linguagem simples ANTES dos factos estruturados.
+    # Aditivo — sem chaves, com o LLM em baixo ou com a guarda a rejeitar, o alerta segue
+    # exatamente como hoje (ver `_narrate_safe`).
+    if (cfg.get("narrator") or {}).get("enabled", False):
+        anomalias = {t: r for t, r in market_results if r.is_anomaly}
+        for t, r in intra_results:
+            anomalias.setdefault(t, r)
+        hoje = date.today().isoformat()
+        market_alerts = [
+            (t, _narrate_safe(text, _market_evidence(t, anomalias[t], decomps.get(t), hoje), cfg)
+             if t in anomalias else text)
+            for t, text in market_alerts
+        ]
     max_per = int((cfg.get("news") or {}).get("max_per_ticker_per_day", 2))
     # Instrumentação de latência: o scan de notícias devolve, em canal lateral, a hora de
     # publicação de cada manchete alertada (ver `scan_news`). `detected_at` é carimbado

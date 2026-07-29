@@ -324,3 +324,91 @@ def test_ticker_sem_setor_mapeado_decompoe_so_contra_o_mercado(monkeypatch):
     out = ra._attach_decomposition_safe("ZZZZ", "ALERTA", cache)
     assert "ZZZZ" not in [k for k in cache if k in ("XLK", "XLF", "XLE")]
     assert "market" in out
+
+
+# ── Narrador ligado ao runner (A5c, 2026-07-29) ──────────────────────────────
+def _ev_amd():
+    from investigator.narrator.evidence import AlertEvidence
+
+    return AlertEvidence(ticker="AMD", date="2026-07-28", kind="market",
+                         move_pct="-8.50", z_score="-1.82", threshold="1.5", window_days=20)
+
+
+def test_narrador_desligado_nao_toca_no_alerta():
+    """Defeito de produção: `narrator.enabled` false → comportamento de sempre."""
+    import scripts.run_alerts as ra
+
+    assert ra._narrate_safe("ALERTA", _ev_amd(), {}) == "ALERTA"
+    assert ra._narrate_safe("ALERTA", _ev_amd(), {"narrator": {"enabled": False}}) == "ALERTA"
+
+
+def test_narrador_antepoe_paragrafo_quando_a_guarda_aceita(monkeypatch):
+    import scripts.run_alerts as ra
+    from investigator.narrator.core import NarrationResult
+
+    bom = NarrationResult(text="AMD moved -8.50% on 2026-07-28.", source="groq",
+                          guarded=False, latency_s=0.5)
+    monkeypatch.setattr("investigator.narrator.core.narrate", lambda ev: bom)
+    out = ra._narrate_safe("ALERTA", _ev_amd(), {"narrator": {"enabled": True}})
+    assert out.startswith("AMD moved -8.50% on 2026-07-28.")
+    assert out.endswith("ALERTA")
+
+
+def test_guarda_a_rejeitar_deixa_o_alerta_INTACTO(monkeypatch):
+    """A decisão de desenho que interessa: nunca se antepõe o template, que só repetiria
+    o que o corpo do alerta já diz. O narrador só acrescenta, nunca degrada."""
+    import scripts.run_alerts as ra
+    from investigator.narrator.core import NarrationResult
+
+    mau = NarrationResult(text="(template)", source="template", guarded=True,
+                          violations=["número não-fiel: 47"])
+    monkeypatch.setattr("investigator.narrator.core.narrate", lambda ev: mau)
+    assert ra._narrate_safe("ALERTA", _ev_amd(), {"narrator": {"enabled": True}}) == "ALERTA"
+
+
+def test_narrador_a_rebentar_nao_parte_o_alerta(monkeypatch):
+    import scripts.run_alerts as ra
+
+    def _explode(ev):
+        raise RuntimeError("sem rede")
+
+    monkeypatch.setattr("investigator.narrator.core.narrate", _explode)
+    assert ra._narrate_safe("ALERTA", _ev_amd(), {"narrator": {"enabled": True}}) == "ALERTA"
+
+
+def test_evidencia_sem_decomposicao_ainda_e_valida():
+    import scripts.run_alerts as ra
+    from investigator.anomaly_detector.detector import AnomalyResult
+
+    res = AnomalyResult(is_anomaly=True, z_score=-1.82, last_return=-0.085,
+                        mean=0.0, std=0.02, window=20, threshold=1.5)
+    ev = ra._market_evidence("AMD", res, None, "2026-07-28")
+    assert ev is not None and ev.move_pct == "-8.50" and ev.market_pct is None
+
+
+def test_evidencia_com_decomposicao_leva_os_tres_componentes():
+    import scripts.run_alerts as ra
+    from investigator.anomaly_detector.detector import AnomalyResult
+    from investigator.correlation_engine.decomposition import MoveDecomposition
+
+    res = AnomalyResult(is_anomaly=True, z_score=-1.82, last_return=-0.085,
+                        mean=0.0, std=0.02, window=20, threshold=1.5)
+    d = MoveDecomposition(total=-0.085, market=0.0061, sector=-0.036,
+                          idiosyncratic=-0.0551, beta_market=2.5, beta_sector=1.8,
+                          window=20, r_squared=0.77, fallback=False)
+    ev = ra._market_evidence("AMD", res, d, "2026-07-28")
+    assert (ev.market_pct, ev.sector_pct, ev.company_pct) == ("+0.61", "-3.60", "-5.51")
+    assert ev.driver == "company"
+
+
+def test_evidencia_do_runner_passa_a_propria_guarda():
+    """Ponte crítica: a evidência construída pelo runner tem de ser narrável de facto."""
+    import scripts.run_alerts as ra
+    from investigator.anomaly_detector.detector import AnomalyResult
+    from investigator.narrator.core import check_faithfulness, template_text
+
+    res = AnomalyResult(is_anomaly=True, z_score=-1.82, last_return=-0.085,
+                        mean=0.0, std=0.02, window=20, threshold=1.5)
+    ev = ra._market_evidence("AMD", res, None, "2026-07-28")
+    rel = check_faithfulness(template_text(ev), ev)
+    assert rel.ok, rel.violations

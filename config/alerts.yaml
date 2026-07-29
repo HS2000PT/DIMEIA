@@ -70,6 +70,18 @@ news:
   # Rever ~agosto/2026 (a KB viva começa a maturar ~2026-07-17).
   max_precedent_age_days: null
 
+# NARRADOR ANCORADO (opcional; off por defeito). Antepõe ao alerta um parágrafo em linguagem
+# simples gerado por LLM — mas o LLM só escreve a LÍNGUA, nunca os factos: todos os números
+# vêm dos motores e uma guarda de fidelidade (vocabulário fechado + números com sinal
+# obrigatório) rejeita qualquer resposta que invente, inverta a direção, ou aconselhe.
+# Ver docs/design/narrator_guard.md e docs/evaluation/evaluation_narrator.md.
+#
+# Precisa de GROQ_API_KEY e/ou GEMINI_API_KEY (ver docs/design/keys.md). É ADITIVO e
+# fail-open: sem chaves, com o LLM em baixo, ou com a guarda a rejeitar, o alerta sai
+# EXATAMENTE como sai hoje. Ligar quando quiseres ver o parágrafo no canal.
+narrator:
+  enabled: false
+
 # Fase B (opcional; off por defeito): distribuir os alertas TAMBÉM por subscritor do bot
 # interativo. Os utilizadores registam-se falando com o bot (/start, /watch TSLA) enquanto
 # `python scripts/run_bot.py` estiver a correr (long-polling; não precisa de servidor).
