@@ -159,7 +159,7 @@ incluindo o caso difícil tema≠direção, rubrica, consentimento, 6–10 parti
 - A RQ3 é a **única** linha "ainda em aberto" no Cap. 6. Correr isto fecha-a.
 - Uma tarde a recrutar + um dia a analisar. **Zero código novo, zero API nova, não parte nada.**
 
-### A5. Narrador ancorado — UMA função pura `[~20h]`
+### A5. Narrador ancorado — UMA função pura ✅ **FEITO (2026-07-29)**
 `narrate(evidence) -> str`. Recebe o dicionário de evidência que os motores já produzem, devolve
 prosa. **Proibido introduzir qualquer número ausente do input.**
 - **Não é um chatbot multi-turno. Não é um sistema multi-agente.** Rotular quatro chamadas de função
@@ -168,6 +168,21 @@ prosa. **Proibido introduzir qualquer número ausente do input.**
   a que a geração afirma um número ausente. Mais recusa em perguntas de previsão ("vai subir?").
 - Fallback determinístico obrigatório: se o LLM falhar, sai o texto atual. **A demo não pode morrer
   em frente ao júri.**
+
+**Como correu, e a lição que vale para a tese.** A v1 da guarda era uma **blocklist** de padrões
+proibidos. Um red team de 3 adversários independentes — cada um obrigado a REPRODUZIR a sua
+alegação com Python antes de a poder afirmar — encontrou **29 furos confirmados**. Os dois piores:
+`"AMD gained 8.50%"` passava quando o motor calculou **−8,50%** (o conjunto permitido fazia
+`lstrip("+-")`), e apóstrofos de contrações (`it's`, `isn't`) eram lidos como aspas, criando
+"citações" falsas que isentavam números injetados e previsões.
+
+A conclusão é estrutural: **uma blocklist de linguagem natural perde sempre** (paráfrases
+infinitas vs lista finita). A v2 inverte para **allowlist**: vocabulário fechado de ~360 palavras
+neutras, números negativos só válidos com sinal, aspas só duplas verdadeiras, atribuição validada
+contra a evidência. Os 21 exploits ficaram como testes de regressão permanentes
+(`tests/test_narrator_core.py::TestRedTeam`).
+
+Detalhe completo em [`docs/design/narrator_guard.md`](../docs/design/narrator_guard.md).
 
 ### A6. Minerar o funil que já foi recolhido `[~6h]`
 `docs/evaluation/alert_funnel.md`: **AAPL 135 manchetes relevantes → 0 alertas.** AMZN 91 → 0.
