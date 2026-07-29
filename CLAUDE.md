@@ -7,8 +7,68 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 41 (**"improve everything" — varredura de qualidade multi-agente; correções aplicadas na branch `claude/general-improvements-0ba2e9`**)
-- **Última atualização:** 2026-07-28
+- **Sessão nº:** 42 (**reformulação V2 — posicionamento, instrumentação e política; branch `claude/v2-instrumentacao`**)
+- **Última atualização:** 2026-07-29
+- **🧭 SESSÃO 42 (o aluno rejeitou o produto por inteiro: "the product sucks… the streamlit is
+  completely dogshit… the alerts come too late… the AI usage is so short"; pediu repensar do zero,
+  worldmonitor.app como referência de ambição, e disse "não tenho medo de mudar tudo"):**
+  **Plano-mestre novo: [`progress/PLANO_V2.md`](progress/PLANO_V2.md)** (substitui `PLANO_MELHORIAS.md`
+  como plano ativo). **Método:** workflow multi-lente (5 lentes — trader ativo, investidor de longo
+  prazo, análise competitiva, examinador do currículo MEIA, crítico de viabilidade) + 2 críticos
+  adversários + síntese. **A revisão adversária corrigiu 3 erros meus:** (1) `abnormal_returns`
+  **NÃO** está adormecido — é usado em `triage/dataset.py:102` para construir o rótulo da RQ4, logo
+  os congelados assentam nele (o que falta é decomposição **contemporânea**, com beta rolante);
+  (2) `beta=1.0` em `event_study.py` é atacável por qualquer arguente com finanças; (3) a entrada
+  do CLAUDE.md sobre "thesis-pt ch2–ch6 = scaffolds vazios" era **falsa** (medido: 32k/55k/30k/46k/15k).
+  **DECISÃO ESTRUTURANTE — duas pistas:** *Track A* = tese, aditivo, congelados byte-iguais, entrega
+  13/09; *Track B* = ambição de produto (worldmonitor-style, redes sociais, mais feeds), **depois**
+  da entrega, entra na tese só como Trabalho Futuro. **Decisões do aluno:** tempo real = **polling
+  60s na VM Oracle** (WebSocket CORTADO — ~30h, não responde a nenhuma RQ, ambas as personas dizem
+  não notar 5s vs 5min); **cortes aceites na íntegra** — price targets de analistas (contradiz "nunca
+  prevê preços"), carteira/holdings (RGPD + fronteira de aconselhamento MiFID II), insider/MSPR/SEC,
+  reescrita do Streamlit do zero (4 redesenhos já feitos, critério estético sem condição de paragem),
+  chatbot multi-turno/multi-agente (um LLM com 5 ferramentas não é multi-agente — o júri reconhece),
+  RQ5/RQ6 novas (renumerar = churn em ch1/ch6/abstracts/paper/19 slides/guia 77/defesa). Cada corte
+  vira **parágrafo justificado no Cap. 6**. **Logo: conceito "The Tail" escolhido** (traço contínuo
+  que é cauda de jacaré e linha de mercado; o atual falha a 16px e o olho de predador é contra-mensagem).
+  **worldmonitor.app a CITAR na tese + Rafael Silva (co-orientador) a CREDITAR** — recomendação dele;
+  ideia a adaptar = **convergência multi-sinal**.
+  **✅ FEITO (3 commits, 249 testes verdes, ruff limpo, congelados byte-iguais):**
+  **(A1) A latência passou a ser mensurável — não era, de todo.** `HistoryEntry` só guardava a data
+  ao dia e `parse_finnhub_news` truncava o epoch exato do Finnhub, deitando a hora fora ⇒ nenhuma
+  afirmação de latência tinha prova, nem retroativamente. Novos campos opcionais e retrocompatíveis
+  `event_at`/`detected_at`/`sent_at`/`price_source` + `latency_seconds()` (facto→entrega, a que o
+  utilizador sente) e `pipeline_seconds()`; `NewsItem.published_at` (Finnhub + RSS), com `date`
+  intocado. **Bug latente corrigido:** `parse_jsonl_lines` rebentava com campos desconhecidos ⇒
+  acrescentar um campo ao esquema faria a app implantada **deixar de ver os alertas novos em
+  silêncio**; agora descarta o excedente. Proveniência de preços em `prices.py`
+  (`last_price_source`/`price_source_log`/`reset_price_source_log`) — a cadeia de 5 fontes sempre
+  soube qual serviu, o valor era impresso e deitado fora.
+  **(A6) Funil de gates** `investigator/gate_log.py` — regista ONDE cada ticker morre
+  (no_news/none_relevant/stale/weak_precedent/triage_suppressed/error/alerted), acumula na branch de
+  dados, escreve também em dry-run. Retroativo é impossível (o log de decisões só é escrito DEPOIS
+  dos gates de frescura e similaridade) — daí instrumentar. **1.ª medição real (dry-run 2026-07-29):
+  9 em 10 tickers silenciados numa só varredura — 7 pelo chão de similaridade, 2 pela triagem — e as
+  margens são minúsculas: MSFT 0,42 · NFLX 0,41 · GOOGL 0,44 · META 0,44 vs `min_similarity 0.45`;
+  AAPL P=0,43 e NVDA P=0,48 vs gate 0,50. Quatro falham por ≤0,04.** Explica o mistério do
+  `alert_funnel` (AAPL 135 manchetes → 0 alertas): não era relevância, eram os dois últimos gates.
+  **(A3) Varrimento de política** `scripts/evaluate_policy_sweep.py` (aditivo; reproduz os congelados
+  ao milésimo, vol 0,542 / contexto 0,538, Δ +0,000): τ* por rácio de custo R=custo(falha)/custo(falso
+  alarme) — R=0,5→0,64; R=1→0,49; R=2→0,41; R=5→0,25 — e o **rácio IMPLÍCITO do τ=0,5 ≈ 0,9**
+  (o sistema assumia que perder um movimento real custa quase o mesmo que um falso alarme; sob custos
+  iguais o ótimo é 0,49, portanto o 0,5 fica **vindicado mas agora derivado**). **Veredicto honesto:
+  o score aprendido NÃO ganha consistentemente a orçamento igual** (top-2 +0,005, top-5 −0,015,
+  resto empate) ⇒ o negativo da RQ4 aguenta também em métrica operacional. **Erro apanhado a meio e
+  documentado no próprio .md:** a 1.ª versão ordenava MANCHETES e dava Δ=+0,000 em todos os
+  orçamentos — o rótulo é por (ticker,dia), logo o top-k enchia-se de cópias do mesmo nome; agregar a
+  (ticker,dia) antes de ordenar corrigiu a unidade de análise e os empates perfeitos desapareceram.
+  **(A1c) `docs/design/cadence_contract.md`** — a promessa numa página: o que é enviado (nota de
+  abertura + resumo de fecho **garantidos** todos os dias úteis, para o silêncio ser legível), o que
+  **nunca** é enviado, os 5 gates com o custo medido de cada um, e de onde vem cada constante.
+  **PENDENTE do aluno:** criar conta **Oracle Cloud** (desbloqueia o polling; cliques, não
+  engenharia) e escolher **fornecedor de LLM grátis** (a sondar antes de depender dele).
+  **Fable:** só a partir da **semana 3** (narrador + redesenho da app), depois prosa da tese
+  (semanas 4–5) e slides/marca (semana 6) — não gastar em plumbing/testes/tradução.
 - **🎬 SESSÃO 41 (cont. — demo para a apresentação: app redesenhada + replay histórico; commits `968029a`+`94726ab`, PUSHED):**
   o aluno pediu uma demo (Telegram + Streamlit a funcionar) e criticou a app ("both suck") + alertas
   atrasados (NVDA −5% não alertado "porque abriu logo mal"). Analisei criticamente as ~10 ideias dele
@@ -147,10 +207,13 @@
   a metade segura (try/except); a semântica mais funda (não queimar marcas sem entrega; separar
   offset das marcas) fica para revisão humana. **PENDENTE do workflow (limite de conta):** as
   dimensões **simplify / test-gaps / docs-bilingue** não completaram — re-correr após o reset.
-  **📊 Paridade bilingue medida (thesis vs thesis-pt):** só **ch1 + frontmatter TRADUZIDOS**;
-  **ch2–ch6 são scaffolds vazios** no thesis-pt (EN: ch2 27k/ch3 46k/ch4 27k/ch5 41k/ch6 9k
-  chars → PT ~0). Tradução de ch2–ch6 = trabalho académico do aluno (não fabricar; ele tem de
-  ler/defender). **Gates:** 202 testes + ruff verdes; app timedelta gate limpo (test_app_triage
+  **📊 ~~Paridade bilingue medida~~ — ⚠️ ENTRADA OBSOLETA, RISCADA A 2026-07-29.** Dizia que
+  só ch1+frontmatter estavam traduzidos e que **ch2–ch6 eram "scaffolds vazios"** no thesis-pt.
+  **É FALSO.** Medido no disco a 2026-07-29: ch2 32.179 · ch3 55.535 · ch4 30.264 · ch5 46.556 ·
+  ch6 15.407 bytes. **A tese PT está traduzida** (a entrada posterior da auditoria, que reporta
+  paridade 58/58 secções e 50/50 ambientes figure/table, é a correta). Esta linha ficou aqui a
+  enganar sessões seguintes — se voltar a aparecer noutro sítio, apagar.
+  **Gates:** 202 testes + ruff verdes; app timedelta gate limpo (test_app_triage
   passa sob -W error da deprecação). **PUSH + PR:** o aluno autorizou ("commit and push everything
   auto"); branch `claude/general-improvements-0ba2e9` no remoto, **PR #1**
   (<https://github.com/HS2000PT/DIMEIA/pull/1>). `gh` não existe neste PC → PR criado via API
