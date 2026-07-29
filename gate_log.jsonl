@@ -8,3 +8,13 @@
 {"date": "2026-07-29", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.24 < 0.50"}
 {"date": "2026-07-29", "ticker": "AMD", "stage": "alerted", "detail": "Advanced Micro Devices vs. BigBear.ai: Which Technology Stock Is a Better Buy in"}
 {"date": "2026-07-29", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
+{"date": "2026-07-29", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.43 < 0.50"}
+{"date": "2026-07-29", "ticker": "MSFT", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
+{"date": "2026-07-29", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-07-29", "ticker": "TSLA", "stage": "weak_precedent", "detail": "melhor sim 0.41 < 0.45"}
+{"date": "2026-07-29", "ticker": "AMZN", "stage": "triage_suppressed", "detail": "P=0.43 < 0.50"}
+{"date": "2026-07-29", "ticker": "GOOGL", "stage": "triage_suppressed", "detail": "P=0.49 < 0.50"}
+{"date": "2026-07-29", "ticker": "META", "stage": "alerted", "detail": "Nasdaq, S&P 500 Futures Mixed Ahead Of Fed Verdict, Microsoft And Meta Earnings "}
+{"date": "2026-07-29", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.24 < 0.50"}
+{"date": "2026-07-29", "ticker": "AMD", "stage": "alerted", "detail": "AMD: Current Valuation Appears Hard To Justify"}
+{"date": "2026-07-29", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
