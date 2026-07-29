@@ -65,9 +65,54 @@
   **(A1c) `docs/design/cadence_contract.md`** — a promessa numa página: o que é enviado (nota de
   abertura + resumo de fecho **garantidos** todos os dias úteis, para o silêncio ser legível), o que
   **nunca** é enviado, os 5 gates com o custo medido de cada um, e de onde vem cada constante.
-  **PENDENTE do aluno:** criar conta **Oracle Cloud** (desbloqueia o polling; cliques, não
-  engenharia) e escolher **fornecedor de LLM grátis** (a sondar antes de depender dele).
-  **Fable:** só a partir da **semana 3** (narrador + redesenho da app), depois prosa da tese
+  **(A2) Decomposição contemporânea** `investigator/correlation_engine/decomposition.py` —
+  a linha que responde à 1.ª pergunta de qualquer investidor: *"é a minha empresa ou é o
+  mercado?"*. Ao vivo: `AMD -8,50% = +0,61% mercado · -3,60% setor · -5,51% empresa`.
+  Módulo NOVO, separado de `event_study.abnormal_returns` (que **não** está adormecido —
+  constrói o rótulo da RQ4 — e usa janela FUTURA com beta implícito 1,0). Dois fatores com o
+  setor ORTOGONALIZADO contra o mercado; betas só com dados ANTERIORES ao dia explicado.
+  **2 erros meus, apanhados a validar com dados REAIS:** (1) corte rígido de beta em ±4 — a
+  mesma constante por justificar que o projeto está a corrigir; a AMD dava β=4,43, caía num
+  fallback silencioso de β=1 e atribuía os −8,5% INTEIROS à empresa → substituído por
+  encolhimento ponderado pela PRECISÃO (Vasicek); um peso fixo (Blume 2/3) também não servia,
+  encolhia um β exato de 2,0 para 1,67. (2) `driver` escolhia a maior componente em MÓDULO:
+  NVDA +0,25% com setor −1,54% dizia "foi o setor" quando o setor puxou ao CONTRÁRIO.
+  **(A5) Narrador ancorado** `investigator/narrator/` — o LLM escreve a LÍNGUA, nunca os
+  factos. **Red team de 3 adversários (cada um obrigado a REPRODUZIR com Python) demoliu a
+  v1: 29 furos.** Os piores: `"AMD gained 8.50%"` passava com o motor a calcular −8,50%
+  (o conjunto permitido fazia `lstrip("+-")`); e apóstrofos de contrações (`it's`, `isn't`)
+  eram lidos como aspas, criando "citações" falsas que isentavam números injetados e
+  previsões. **Lição estrutural: uma blocklist de linguagem natural perde sempre** (paráfrases
+  infinitas vs lista finita) → v2 inverte para **allowlist**: vocabulário fechado (~360
+  palavras neutras), negativos só válidos COM sinal, só aspas duplas verdadeiras, atribuição
+  validada contra a evidência, normalização NFKC + rejeição de dígitos não-ASCII. Verbos
+  direcionais FORA de propósito (a direção vive no sinal, que é verificável). Os 21 exploits
+  ficaram como regressão permanente (`TestRedTeam`), 21/21 bloqueados.
+  **Arnês ao vivo (36 chamadas reais):** groq 18/18 respondeu, 2 violações pré-guarda;
+  gemini 15/18, 1 violação; **violações ENTREGUES: 0** em ambos. Duas métricas de propósito:
+  pré-guarda mede o MODELO, entregue mede a GUARDA. Limitação declarada: a métrica entregue é
+  circular (mesmo verificador decide e avalia) — daí o corpus do red team a complementá-la.
+  **Fornecedores sondados ANTES de depender:** a suposição inicial (Gemini principal) estava
+  ERRADA — 2.5-flash dá 404 "no longer available to new users", 2.0-flash dá **429 à primeira
+  chamada** numa chave nova, e alguns modelos devolvem 200 SEM TEXTO (gastam o orçamento a
+  "pensar"). Ordem invertida por MEDIÇÃO: **Groq `llama-3.3-70b-versatile` (0,6 s) → Gemini
+  `gemini-flash-lite-latest` → template**. `scripts/probe_llm.py` re-corre isto antes da defesa.
+  **(A5c) Narrador ligado ao runner**, `narrator.enabled: false` por defeito — ADITIVO: se
+  falhar/rejeitar, o alerta sai EXATAMENTE como hoje (nunca se antepõe o template, que só
+  repetiria o corpo). Uma linha de config para ligar.
+  **(APP) Redesenhada contra critérios ESCRITOS ANTES do código** (`docs/design/app_acceptance.md`)
+  — a app tinha sido redesenhada 4× e rejeitada sempre por critério estético, que não tem
+  condição de paragem. **3 ecrãs** (Today / Ticker / Method), um por pergunta do
+  posicionamento; a decomposição aparece na PRÓPRIA linha do mover (sem clicar); a promessa
+  aparece **uma** vez; a latência só se mostra quando foi MEDIDA (ao vivo: 179 min = o custo
+  do cron, agora visível). **15 testes = os critérios em forma executável.** Correção de
+  honestidade apanhada na captura ao vivo: "moved unusually" incluía um z=+1,03 abaixo do
+  limiar → "stood out … (K past the alert threshold)". Fig 4.5 recapturada, texto+legenda
+  reescritos EN+PT; teses 90/92 pp, 0 erros, paridade 51=51 secções e 53=53 figuras/tabelas.
+  **PENDENTE do aluno:** (1) **P1 — rever a app**; depois disso ela CONGELA até à entrega.
+  (2) conta **Oracle Cloud** (desbloqueia o polling; cliques, não engenharia).
+  (3) decidir se liga `narrator.enabled` em produção.
+  **Fable:** usado no narrador + redesenho da app (semana 3). A seguir: prosa da tese
   (semanas 4–5) e slides/marca (semana 6) — não gastar em plumbing/testes/tradução.
 - **🎬 SESSÃO 41 (cont. — demo para a apresentação: app redesenhada + replay histórico; commits `968029a`+`94726ab`, PUSHED):**
   o aluno pediu uma demo (Telegram + Streamlit a funcionar) e criticou a app ("both suck") + alertas
