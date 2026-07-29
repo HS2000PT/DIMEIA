@@ -482,6 +482,36 @@ knowledge base is shallower than the multi-year build it is designed for (a cove
 one). And InvestiGator is a decision-support prototype, not a production service: no user accounts, no
 persistence beyond the knowledge-base file. These are ordinary steps from prototype to product.
 
+\subsection*{Shipping a transformer under free-tier constraints}
+
+One deployment problem deserves its own account, because it is where the free-tier constraint bites
+hardest and where the solution is a genuine engineering result rather than a workaround.
+
+The retrieval component evaluated in Chapter~\ref{chap:casestudies} is a sentence transformer, and the
+usual way to run one is the \texttt{sentence-transformers} library on top of PyTorch. That stack is
+several hundred megabytes and assumes an environment that free hosting does not reliably provide. The
+naive resolutions are both bad: keep the heavy stack and accept that the public deployment cannot run,
+or substitute a lighter but different model in production and quietly evaluate one thing while shipping
+another. The second is worse than the first, because it makes the evaluation describe a system that no
+user ever touches.
+
+The resolution taken was to export the \emph{same} model to ONNX with int8 quantisation, roughly
+23~MB, running on CPU with no deep-learning framework present, and then to prove the substitution is
+faithful before trusting it. Two checks were run against the library implementation. Embedding agreement
+over real headlines gave a mean cosine similarity of $0.992$ with a minimum of $0.987$, the residual
+being quantisation noise rather than a different semantic space. Retrieval agreement matters more,
+because the product returns neighbours rather than vectors: over a set of queries against the curated
+knowledge base, the top-3 neighbour sets were identical for $20$ of $23$ queries, with $96\%$ of
+neighbours shared overall, and every divergence was a tie at the third position separated by about one
+thousandth of a similarity point.
+
+Two properties follow, and both matter beyond convenience. First, the evaluated model and the deployed
+model are the same model, so the numbers in Chapter~\ref{chap:casestudies} describe what a user actually
+receives. Second, the model artefact is fetched on demand and verified against a pinned SHA256 digest
+before use, which makes the dependency auditable: a substituted or corrupted download fails closed
+rather than silently changing what the system means by ``similar''. For a system whose central claim is
+that its reasoning can be checked, the provenance of the weights is part of that claim.
+
 Live operation also taught one engineering lesson the honest way. During the first days of continuous
 deployment the market path went silent: the free price source blocks the shared network addresses of
 hosted runners, and with a single source and no fallback, the scan simply received no data. The failure

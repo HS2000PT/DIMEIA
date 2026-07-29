@@ -494,6 +494,37 @@ desenhada (um limite de cobertura, não de método). E o InvestiGator é um prot
 serviço de produção: sem contas de utilizador, sem persistência para além do ficheiro da base de
 conhecimento. Estes são passos ordinários de protótipo a produto.
 
+\subsection*{Pôr um transformador em produção sob a restrição de free tier}
+
+Um problema de implantação merece relato próprio, porque é onde a restrição de free tier mais aperta e
+onde a solução é um resultado de engenharia genuíno, e não um contorno.
+
+O componente de retrieval avaliado no Capítulo~\ref{chap:casestudies} é um sentence transformer, e a
+forma habitual de o correr é a biblioteca \texttt{sentence-transformers} sobre o PyTorch. Essa stack tem
+várias centenas de megabytes e pressupõe um ambiente que o alojamento gratuito não oferece de forma
+fiável. As resoluções ingénuas são ambas más: manter a stack pesada e aceitar que a implantação pública
+não corre, ou substituir em produção por um modelo mais leve mas diferente, avaliando em silêncio uma
+coisa e entregando outra. A segunda é pior do que a primeira, porque faz a avaliação descrever um
+sistema que nenhum utilizador toca.
+
+A resolução adotada foi exportar o \emph{mesmo} modelo para ONNX com quantização int8, cerca de 23~MB, a
+correr em CPU sem qualquer framework de deep learning presente, e depois provar que a substituição é
+fiel antes de confiar nela. Correram-se duas verificações contra a implementação de referência. A
+concordância de embeddings sobre manchetes reais deu um cosseno médio de $0,992$ com um mínimo de
+$0,987$, sendo o resíduo ruído de quantização e não um espaço semântico diferente. A concordância de
+\emph{retrieval} importa mais, porque o produto devolve vizinhos e não vetores: sobre um conjunto de
+consultas contra a base de conhecimento curada, os conjuntos dos 3 melhores vizinhos foram idênticos em
+$20$ de $23$ consultas, com $96\%$ de vizinhos partilhados no total, e todas as divergências foram
+empates na terceira posição separados por cerca de um milésimo de ponto de similaridade.
+
+Seguem-se duas propriedades, e ambas importam para além da conveniência. Primeiro, o modelo avaliado e o
+modelo implantado são o mesmo modelo, pelo que os números do Capítulo~\ref{chap:casestudies} descrevem o
+que o utilizador recebe de facto. Segundo, o artefacto do modelo é descarregado sob demanda e verificado
+contra um resumo SHA256 fixado antes de ser usado, o que torna a dependência auditável: um download
+substituído ou corrompido falha fechado, em vez de mudar silenciosamente o que o sistema entende por
+``semelhante''. Para um sistema cuja afirmação central é que o seu raciocínio pode ser verificado, a
+proveniência dos pesos faz parte dessa afirmação.
+
 A operação ao vivo também ensinou uma lição de engenharia da forma honesta. Durante os primeiros dias de
 implantação contínua o caminho de mercado ficou em silêncio: a fonte de preços gratuita bloqueia os
 endereços de rede partilhados dos runners alojados, e com uma única fonte e sem fallback, a varredura
