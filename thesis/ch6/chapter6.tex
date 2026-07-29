@@ -76,6 +76,26 @@ an explicit no-prediction disclaimer. Usefulness to a retail investor is plausib
 yet been measured with a human study, and is therefore reported as an open point rather than a settled
 result.
 
+The faithfulness half was subsequently extended from templated text to \emph{generated} language.
+A language model was introduced strictly as a narrator, permitted to phrase the evidence but never
+to supply it, and a runtime guard validates its output against the evidence before delivery: any
+number absent from the computed evidence, any figure whose sign has been inverted, any predictive or
+advisory wording, and any attribution that contradicts the computed one causes the whole response to
+be discarded in favour of the deterministic text. The guarantee is therefore a property of the
+system rather than of the model's good behaviour.
+
+That distinction is what makes the claim measurable, and it produces two figures rather than one.
+Across a fixed set of cases against two providers, the raw model output violated the evidence in a
+small number of cases, which is the number that justifies the guard existing; the text actually
+delivered violated it in none, which is the number that tests the guard. Both are reported, together
+with the honest observation that the second is partly circular, since the same checker both decides
+and grades. The counterweight is an adversarial corpus: an independent red-team exercise against an
+earlier version of the guard produced a set of confirmed bypasses, each reproduced mechanically, and
+those attacks are now permanent regression tests. The first design, a blocklist of forbidden
+phrasings, failed against them decisively, and the lesson generalises: the space of paraphrases is
+unbounded while any list of them is finite, so the guard was rebuilt as a closed vocabulary in which
+anything not explicitly permitted is refused.
+
 \paragraph{RQ4: learned triage beyond volatility baselines.}
 \textbf{No on the text hypothesis; yes on the mechanism.} A supervised materiality model was trained,
 calibrated and tested on $79{,}753$ FNSPID examples (2018--2023) under a strict temporal protocol. As a
@@ -91,6 +111,46 @@ lowers precision robustly rather than by chance, and a deliberately fair re-test
 regularisation, a dimensionally reduced text block and a finance-domain encoder, recovers the text
 only to the level of market context, never above it. The finding is robust, not an artefact of an
 under-fit text pipeline.
+
+A final observation concerns how the triage model is \emph{used} rather than how it scores. The
+deployed system gated alerts at a hand-set probability threshold, which sat on top of a calibrated
+model without ever exploiting that calibration. Sweeping the threshold across the frozen test set
+under an explicit cost ratio between a missed move and a false alarm turns the constant into a
+derived operating point, and it also exposes what the original choice had silently assumed: the
+deployed value corresponds to treating a missed move as costing roughly the same as a false alarm.
+Under equal costs the optimum sits essentially where the constant already was, so the choice is
+vindicated, but it is now argued rather than asserted. The same analysis re-tested the negative
+result on operational terms, comparing policies at matched daily alert budgets rather than by
+PR-AUC, and the learned score again failed to beat volatility consistently. The negative therefore
+survives a change of metric, which is a stronger statement than the original result alone.
+
+\section{Positions Taken by Exclusion}
+\label{sec:concl_exclusions}
+
+Some of the clearest design decisions in this work are things the system deliberately does not do.
+Stating them as positions rather than omissions matters, because each was reachable with the data
+and effort available and was declined on principle.
+
+\paragraph{Third-party forecasts.} Analyst price targets and recommendation trends are freely
+available and would have improved coverage of the question ``why did this move''. They were excluded
+because importing another party's prediction into a system defined by not predicting is a
+contradiction that no amount of framing removes. Coherence was preferred to coverage.
+
+\paragraph{Personal holdings.} Portfolio-level analytics, concentration and correlation exposure,
+are computable from prices alone and were among the most requested capabilities. They were excluded
+for two compounding reasons: holdings are personal financial data, which turns a research prototype
+into a data-protection obligation rather than a data-protection discussion, and any statement of the
+form ``your largest positions are effectively one bet'' is advice however it is phrased, which
+crosses the boundary that the system's ethical position depends on not crossing.
+
+\paragraph{Conversational agency.} The narrator is a pure function from evidence to a paragraph, not
+a multi-turn assistant and not an agent. A single model calling several tools is not a multi-agent
+system, and describing it as one would have been the least defensible claim in the dissertation.
+
+\paragraph{Insider filings and scheduled-disclosure feeds.} These are genuinely useful and genuinely
+free. They were excluded on scope rather than principle: each adds an ingestion path and a failure
+mode without an evaluation attached, and an unevaluated component contributes nothing to the
+questions this work asks. They appear in future work instead.
 
 \section{Research Questions and Objectives Achieved}
 \label{sec:concl_objectives}

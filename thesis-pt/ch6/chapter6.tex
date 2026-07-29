@@ -79,6 +79,27 @@ subjacente, e cada alerta termina com um aviso explícito de não-previsão. A u
 investidor de retalho é plausível por desenho mas ainda não foi medida com um estudo humano, sendo
 por isso reportada como um ponto em aberto e não como um resultado assente.
 
+A metade da fidelidade foi posteriormente estendida do texto por template para linguagem
+\emph{gerada}. Um modelo de linguagem foi introduzido estritamente como narrador, autorizado a
+redigir a evidência mas nunca a fornecê-la, e uma guarda em execução valida a sua saída contra a
+evidência antes da entrega: qualquer número ausente da evidência calculada, qualquer valor com o
+sinal invertido, qualquer formulação preditiva ou de aconselhamento, e qualquer atribuição que
+contradiga a calculada fazem descartar a resposta inteira a favor do texto determinístico. A
+garantia é, portanto, uma propriedade do sistema e não do bom comportamento do modelo.
+
+É essa distinção que torna a afirmação mensurável, e ela produz dois números em vez de um. Sobre um
+conjunto fixo de casos e dois fornecedores, a saída crua do modelo violou a evidência num pequeno
+número de casos, que é o número que justifica a guarda existir; o texto efetivamente entregue não a
+violou em nenhum, que é o número que testa a guarda. Ambos são reportados, juntamente com a
+observação honesta de que o segundo é em parte circular, já que o mesmo verificador decide e avalia.
+O contrapeso é um corpus adversário: um exercício independente de red team contra uma versão
+anterior da guarda produziu um conjunto de contornos confirmados, cada um reproduzido
+mecanicamente, e esses ataques são hoje testes de regressão permanentes. O primeiro desenho, uma
+lista de formulações proibidas, falhou contra eles de forma decisiva, e a lição generaliza-se: o
+espaço de paráfrases é ilimitado enquanto qualquer lista delas é finita, pelo que a guarda foi
+reconstruída como um vocabulário fechado em que tudo o que não é explicitamente permitido é
+recusado.
+
 \paragraph{RQ4: triagem aprendida para além das linhas de base de volatilidade.}
 \textbf{Não na hipótese do texto; sim no mecanismo.} Um modelo de materialidade supervisionado foi
 treinado, calibrado e testado em $79{,}753$ exemplos do FNSPID (2018--2023) sob um protocolo temporal
@@ -95,6 +116,48 @@ baixa a precisão de forma robusta e não por acaso, e um re-teste deliberadamen
 regularização afinada, um bloco de texto reduzido em dimensão e um encoder de domínio financeiro,
 recupera o texto apenas até ao nível do contexto de mercado, nunca acima. O resultado é robusto, não
 um artefacto de um pipeline de texto sub-ajustado.
+
+Uma observação final diz respeito a como o modelo de triagem é \emph{usado}, e não a como pontua. O
+sistema implantado filtrava os alertas num limiar de probabilidade posto à mão, assente sobre um
+modelo calibrado sem nunca explorar essa calibração. Varrer o limiar sobre o conjunto de teste
+congelado, sob um rácio de custo explícito entre um movimento perdido e um falso alarme, transforma
+a constante num ponto de operação derivado, e expõe também o que a escolha original assumia em
+silêncio: o valor implantado corresponde a tratar um movimento perdido como custando
+aproximadamente o mesmo que um falso alarme. Sob custos iguais, o ótimo situa-se essencialmente onde
+a constante já estava, pelo que a escolha fica vindicada, mas passa a ser argumentada em vez de
+afirmada. A mesma análise re-testou o resultado negativo em termos operacionais, comparando
+políticas a orçamentos diários de alertas iguais em vez de por PR-AUC, e o score aprendido voltou a
+não bater a volatilidade de forma consistente. O negativo sobrevive, portanto, a uma mudança de
+métrica, o que é uma afirmação mais forte do que o resultado original por si só.
+
+\section{Posições Assumidas por Exclusão}
+\label{sec:concl_exclusions}
+
+Algumas das decisões de desenho mais claras deste trabalho são coisas que o sistema deliberadamente
+não faz. Enunciá-las como posições, e não como omissões, importa, porque cada uma era alcançável com
+os dados e o esforço disponíveis e foi recusada por princípio.
+
+\paragraph{Previsões de terceiros.} Os preços-alvo de analistas e as tendências de recomendação são
+livremente acessíveis e teriam melhorado a cobertura da pergunta ``porque é que isto se mexeu''.
+Foram excluídos porque importar a previsão de outra parte para um sistema definido por não prever é
+uma contradição que nenhum enquadramento remove. Preferiu-se a coerência à cobertura.
+
+\paragraph{Posições pessoais.} As análises ao nível da carteira, concentração e exposição por
+correlação, são calculáveis apenas a partir de preços e estavam entre as capacidades mais pedidas.
+Foram excluídas por duas razões que se somam: as posições são dados financeiros pessoais, o que
+transforma um protótipo de investigação numa obrigação de proteção de dados em vez de numa discussão
+sobre proteção de dados, e qualquer afirmação do género ``as tuas maiores posições são, na prática,
+uma só aposta'' é aconselhamento, seja qual for a redação, o que atravessa a fronteira de que a
+posição ética do sistema depende para não atravessar.
+
+\paragraph{Agência conversacional.} O narrador é uma função pura da evidência para um parágrafo, não
+um assistente multi-turno nem um agente. Um único modelo a chamar várias ferramentas não é um
+sistema multi-agente, e descrevê-lo como tal teria sido a afirmação menos defensável da dissertação.
+
+\paragraph{Registos de insiders e feeds de divulgação agendada.} São genuinamente úteis e
+genuinamente gratuitos. Foram excluídos por âmbito e não por princípio: cada um acrescenta um
+caminho de ingestão e um modo de falha sem uma avaliação associada, e um componente por avaliar nada
+contribui para as perguntas que este trabalho faz. Aparecem antes no trabalho futuro.
 
 \section{Questões de Investigação e Objetivos Alcançados}
 \label{sec:concl_objectives}
