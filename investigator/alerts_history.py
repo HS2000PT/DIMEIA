@@ -10,7 +10,8 @@ decisão de `scripts/run_alerts.py` e `.github/workflows/alerts.yml`
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, fields
+from datetime import UTC, datetime
 from pathlib import Path
 
 
@@ -21,13 +22,57 @@ class HistoryEntry:
 
     `key` (opcional) é a chave de dedup entre produtores (VM + Actions): a mesma que
     `scripts/run_alerts.py::news_key` calcula — sha1(ticker|plain_text)[:12]. Entradas
-    antigas sem key continuam válidas (a leitura recalcula quando precisa)."""
+    antigas sem key continuam válidas (a leitura recalcula quando precisa).
+
+    **Instrumentação de tempo (2026-07-29).** `date` é o dia do evento — granularidade
+    insuficiente para afirmar seja o que for sobre LATÊNCIA. Sem os dois carimbos abaixo o
+    sistema não consegue produzir um único número de latência, nem retroativamente. São
+    opcionais e retrocompatíveis: entradas antigas (sem eles) continuam a ler-se na mesma.
+
+    - `event_at`: instante UTC em que o FACTO aconteceu segundo a fonte (para notícias, a
+      hora de publicação que o Finnhub devolve). É o carimbo que interessa: `event_at →
+      sent_at` é a latência que o utilizador sente e que a queixa "chegam tarde" nomeia;
+    - `detected_at`: instante UTC (ISO 8601) em que o ciclo detetou o evento;
+    - `sent_at`: instante UTC em que a entrega ao Telegram foi confirmada;
+    - `price_source`: qual das 5 fontes da cadeia serviu o preço (`yfinance`, `tiingo`,
+      `polygon`, `stooq`, `alphavantage`) — a cadeia já sabe, mas o valor era deitado fora.
+    """
 
     date: str  # ISO (YYYY-MM-DD), dia do evento
     ticker: str
     kind: str  # "market" | "news" | "summary" | "open"
     text: str
     key: str = ""
+    event_at: str = ""  # ISO 8601 UTC — quando o facto aconteceu (publicação da notícia)
+    detected_at: str = ""  # ISO 8601 UTC, ex.: "2026-07-29T14:32:07Z"
+    sent_at: str = ""  # ISO 8601 UTC
+    price_source: str = ""  # fonte que serviu o preço (só alertas de mercado)
+
+    def _delta(self, start: str) -> float | None:
+        if not start or not self.sent_at:
+            return None
+        try:
+            t0 = datetime.fromisoformat(start.replace("Z", "+00:00"))
+            t1 = datetime.fromisoformat(self.sent_at.replace("Z", "+00:00"))
+        except ValueError:
+            return None
+        return (t1 - t0).total_seconds()
+
+    def pipeline_seconds(self) -> float | None:
+        """Segundos entre deteção e entrega — latência INTERNA (tipicamente ~1 s). Útil para
+        provar que o custo não está no nosso lado. None quando falta carimbo."""
+        return self._delta(self.detected_at)
+
+    def latency_seconds(self) -> float | None:
+        """Segundos entre o FACTO e a entrega — a latência que o utilizador sente. É este o
+        número honesto a reportar na tese. None em entradas antigas (sem carimbos)."""
+        return self._delta(self.event_at)
+
+
+def utc_stamp(now: datetime | None = None) -> str:
+    """Carimbo UTC ISO 8601 com sufixo Z. `now` injetável para testes deterministas."""
+    moment = now or datetime.now(UTC)
+    return moment.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def classify_kind(text: str) -> str:
@@ -55,16 +100,32 @@ def classify_kind(text: str) -> str:
     return "news"
 
 
+_KNOWN_FIELDS = frozenset(f.name for f in fields(HistoryEntry))
+
+
 def parse_jsonl_lines(lines: list[str]) -> list[HistoryEntry]:
-    """Interpreta linhas JSONL já em memória; linhas inválidas são ignoradas (fail-open)."""
+    """Interpreta linhas JSONL já em memória; linhas inválidas são ignoradas (fail-open).
+
+    **Campos desconhecidos são descartados em vez de rebentar.** Sem isto, acrescentar um
+    campo ao esquema partia TODOS os leitores mais antigos ainda em produção: o
+    `HistoryEntry(**payload)` levantava `TypeError` e a linha era silenciosamente saltada —
+    ou seja, durante um rollout a app implantada deixava de ver os alertas NOVOS, sem
+    qualquer erro visível. Tolerar o excedente torna o esquema extensível para sempre.
+    """
     entries: list[HistoryEntry] = []
     for line in lines:
         line = line.strip()
         if not line:
             continue
         try:
-            entries.append(HistoryEntry(**json.loads(line)))
-        except (json.JSONDecodeError, TypeError):
+            payload = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(payload, dict):
+            continue
+        try:
+            entries.append(HistoryEntry(**{k: v for k, v in payload.items() if k in _KNOWN_FIELDS}))
+        except TypeError:
             continue
     return entries
 
@@ -93,12 +154,21 @@ def fetch_remote(url: str, timeout: float = 5.0) -> list[HistoryEntry]:
         return []
 
 
+# Campos acrescentados em 2026-07-29: só são escritos quando têm valor, para o JSONL (e a
+# branch git que o guarda) não encher de `"detected_at": ""` em cada linha. O formato das
+# entradas antigas fica byte-igual.
+_OMIT_WHEN_EMPTY = ("event_at", "detected_at", "sent_at", "price_source")
+
+
 def save_jsonl(entries: list[HistoryEntry], path: str | Path) -> None:
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     with p.open("w", encoding="utf-8") as f:
         for e in entries:
-            f.write(json.dumps(asdict(e), ensure_ascii=False) + "\n")
+            payload = {
+                k: v for k, v in asdict(e).items() if v or k not in _OMIT_WHEN_EMPTY
+            }
+            f.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
 
 def append_and_trim(

@@ -22,6 +22,7 @@ from pathlib import Path
 import yaml
 
 # Permitir correr como `python scripts/run_alerts.py` a partir da raiz do repo.
+from investigator.alerts_history import utc_stamp
 from investigator.console import force_utf8_stdout
 
 _CONFIG = Path(__file__).resolve().parents[1] / "config" / "alerts.yaml"
@@ -400,7 +401,7 @@ def precedents_are_strong(precedents: list, min_similarity: float) -> bool:
     return any(score >= min_similarity for _, score in precedents)
 
 
-def scan_news(cfg: dict) -> list[tuple[str, str]]:
+def scan_news(cfg: dict, event_times: dict[str, str] | None = None) -> list[tuple[str, str]]:
     """Opcional: notícias recentes por ticker -> pares (ticker, alerta) (best-effort).
 
     Qualidade primeiro (revisão 2026-07-11, sobre 27 alertas reais): (1) filtro de
@@ -516,6 +517,12 @@ def scan_news(cfg: dict) -> list[tuple[str, str]]:
                 _log_decision_safe(latest.date, ticker, latest.headline,
                                    None, None, kept=True)
             alerts.append((ticker, text))
+            # Canal lateral de instrumentação (mesmo padrão do `cache` dos scans de mercado):
+            # guarda a HORA DE PUBLICAÇÃO da manchete que originou este alerta, indexada pela
+            # mesma chave de dedup que o histórico usa. Permite medir publicação → entrega
+            # sem alterar a forma dos tuplos (ticker, texto) que atravessam todo o runner.
+            if event_times is not None and latest.published_at:
+                event_times[news_key(ticker, text)] = latest.published_at
         except Exception as exc:  # noqa: BLE001
             print(f"[saltar noticias {ticker}] {type(exc).__name__}: {exc}")
     return alerts
@@ -695,9 +702,18 @@ def _investigate_anomaly_safe(ticker: str, alert_text: str) -> str:
 
 
 def _record_history_safe(alerts: list[tuple[str, str]], today: str,
-                         path: str | Path = _HISTORY) -> None:
+                         path: str | Path = _HISTORY,
+                         *,
+                         event_times: dict[str, str] | None = None,
+                         detected_at: str = "",
+                         sent_at: str = "",
+                         price_sources: dict[str, str] | None = None) -> None:
     """Regista os alertas REALMENTE enviados no histórico partilhado — a app lê este ficheiro
     em vez de recalcular, garantindo que mostra exatamente o que o Telegram recebeu.
+
+    Os carimbos são opcionais e só são gravados quando existem: sem eles o comportamento é
+    exatamente o de antes (entradas idênticas às antigas). `event_times` e `price_sources`
+    vêm indexados pela chave de dedup / pelo ticker, preenchidos pelos scans.
 
     Fail-open (mesmo padrão de `_log_decision_safe`): um erro aqui nunca pode impedir o envio
     real ao Telegram nem derrubar o runner.
@@ -715,9 +731,14 @@ def _record_history_safe(alerts: list[tuple[str, str]], today: str,
         new = []
         for ticker, text in alerts:
             kind = classify_kind(text)
+            key = news_key(ticker, text) if kind == "news" else ""
             new.append(HistoryEntry(
                 date=today, ticker=ticker, kind=kind, text=plain_text(text),
-                key=news_key(ticker, text) if kind == "news" else "",
+                key=key,
+                event_at=(event_times or {}).get(key, ""),
+                detected_at=detected_at,
+                sent_at=sent_at,
+                price_source=(price_sources or {}).get(ticker, ""),
             ))
         save_jsonl(append_and_trim(load_jsonl(path), new), path)
     except Exception as exc:  # noqa: BLE001
@@ -861,6 +882,12 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     # para os casos recém-maturados contarem já como precedentes nesta corrida.
     _mature_live_safe()
 
+    # Proveniência das fontes de preço: limpar por ciclo para o registo descrever ESTE ciclo
+    # (no modo --watch o processo é longo e o registo anterior contaminaria a medição).
+    from investigator.market_data.prices import price_source_log, reset_price_source_log
+
+    reset_price_source_log()
+
     cache: dict[str, object] = {}  # 1 busca de preços por ticker por ciclo (fecho+intradiário)
     market_results = collect_market_results(cfg, cache)
     tickers_anomalos = [t for t, r in market_results if r.is_anomaly]
@@ -882,7 +909,12 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     # vê o movimento, procura a causa. Fail-open: sem rede/chave, o alerta segue sem contexto.
     market_alerts = [(t, _investigate_anomaly_safe(t, text)) for t, text in market_alerts]
     max_per = int((cfg.get("news") or {}).get("max_per_ticker_per_day", 2))
-    alerts = filter_new_alerts(market_alerts, scan_news(cfg), state, max_per)
+    # Instrumentação de latência: o scan de notícias devolve, em canal lateral, a hora de
+    # publicação de cada manchete alertada (ver `scan_news`). `detected_at` é carimbado
+    # AQUI — fim da deteção, antes de qualquer envio.
+    event_times: dict[str, str] = {}
+    alerts = filter_new_alerts(market_alerts, scan_news(cfg, event_times), state, max_per)
+    detected_at = utc_stamp()
 
     threshold = float((cfg.get("market") or {}).get("threshold", 3.0))
     hora_utc = datetime.now(UTC).hour
@@ -928,7 +960,11 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     _fanout_safe(alerts, bot_cfg, dry_run=dry_run)  # fan-out só de alertas por ticker
 
     if can_send:
-        _record_history_safe(mensagens, date.today().isoformat())
+        _record_history_safe(
+            mensagens, date.today().isoformat(),
+            event_times=event_times, detected_at=detected_at, sent_at=utc_stamp(),
+            price_sources=price_source_log(),
+        )
         _push_history_safe()  # só ativo na VM (INVESTIGATOR_HISTORY_GIT=1); fail-open
         entregues = len(mensagens) - falhas
         extra = f" ({falhas} falha[s] de envio)" if falhas else ""

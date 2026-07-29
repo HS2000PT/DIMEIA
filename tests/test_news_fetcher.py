@@ -67,3 +67,34 @@ def test_parse_rss_aceita_bytes_com_declaracao_de_codificacao():
     assert items[0].headline == "Tesla recalls vehicles"
     assert items[0].ticker == "TSLA"
     assert items[0].date == "2002-10-02"
+
+
+# ── Hora de publicação (instrumentação de latência, 2026-07-29) ────────────────
+def test_finnhub_preserva_a_hora_exata_de_publicacao():
+    """O epoch do Finnhub era truncado a YYYY-MM-DD e a hora deitada fora — sem ela é
+    impossível medir quanto tempo passa entre a manchete sair e o alerta chegar."""
+    payload = [{
+        "datetime": 1785200462,  # 2026-07-28T01:01:02Z
+        "headline": "AMD secures AI data center capacity",
+        "url": "http://x",
+        "source": "Reuters",
+    }]
+    (item,) = parse_finnhub_news(payload, "amd")
+    assert item.date == "2026-07-28"                 # inalterado (KB/dedup dependem disto)
+    assert item.published_at == "2026-07-28T01:01:02Z"
+
+
+def test_rss_preserva_a_hora_de_publicacao():
+    from investigator.news_fetcher.fetcher import _rss_date_to_stamp
+
+    assert _rss_date_to_stamp("Wed, 02 Oct 2002 13:00:00 GMT") == "2002-10-02T13:00:00Z"
+    assert _rss_date_to_stamp("") == ""
+    assert _rss_date_to_stamp("não é uma data") == ""
+
+
+def test_news_item_sem_hora_fica_com_string_vazia():
+    """Feeds sem pubDate legível não inventam hora — melhor vazio do que errado."""
+    xml = ('<rss version="2.0"><channel><item><title>Sem data</title>'
+           "<link>http://t</link></item></channel></rss>")
+    (item,) = parse_rss(xml, ticker="tsla")
+    assert item.published_at == "" and item.date == ""

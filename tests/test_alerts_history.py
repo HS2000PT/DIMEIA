@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import json
+from datetime import UTC
+
 from investigator.alerts_history import (
     HistoryEntry,
     append_and_trim,
@@ -10,6 +13,7 @@ from investigator.alerts_history import (
     load_jsonl,
     parse_jsonl_lines,
     save_jsonl,
+    utc_stamp,
 )
 
 
@@ -92,3 +96,64 @@ def test_fetch_remote_sucesso_faz_parse(monkeypatch):
     monkeypatch.setattr(requests, "get", lambda *a, **k: _FakeResp())
     entries = fetch_remote("https://example.invalid/history.jsonl")
     assert entries == [HistoryEntry("2026-07-08", "TSLA", "market", "z=+2.1")]
+
+
+# ── Instrumentação de tempo (2026-07-29) ──────────────────────────────────────
+def test_entradas_antigas_sem_carimbos_continuam_a_ler_se():
+    """Retrocompatibilidade: o histórico já publicado não tem os campos novos."""
+    linha = '{"date":"2026-07-27","ticker":"AMD","kind":"market","text":"-8.64%","key":""}'
+    (entry,) = parse_jsonl_lines([linha])
+    assert entry.ticker == "AMD"
+    assert entry.event_at == "" and entry.detected_at == "" and entry.sent_at == ""
+    assert entry.latency_seconds() is None  # sem carimbos não se inventa latência
+
+
+def test_campos_desconhecidos_sao_descartados_em_vez_de_rebentar():
+    """Sem isto, um leitor ANTIGO em produção deixaria de ver os alertas novos em silêncio."""
+    linha = ('{"date":"2026-07-29","ticker":"NVDA","kind":"news","text":"x",'
+             '"campo_do_futuro":123,"outro":"abc"}')
+    (entry,) = parse_jsonl_lines([linha])
+    assert entry.ticker == "NVDA" and entry.text == "x"
+
+
+def test_latencia_medida_do_facto_ate_a_entrega():
+    e = HistoryEntry(
+        "2026-07-29", "TSLA", "news", "x",
+        event_at="2026-07-29T13:00:00Z",
+        detected_at="2026-07-29T13:41:00Z",
+        sent_at="2026-07-29T13:41:02Z",
+    )
+    assert e.latency_seconds() == 2462.0   # publicação → entrega (o que o utilizador sente)
+    assert e.pipeline_seconds() == 2.0     # deteção → entrega (o nosso lado)
+
+
+def test_latencia_ignora_carimbos_ilegiveis():
+    e = HistoryEntry("2026-07-29", "TSLA", "news", "x",
+                     event_at="ontem à tarde", sent_at="2026-07-29T13:41:02Z")
+    assert e.latency_seconds() is None
+
+
+def test_carimbos_vazios_nao_sao_escritos_no_ficheiro(tmp_path):
+    """O JSONL (e a branch git) não devem encher de campos vazios em cada linha."""
+    path = tmp_path / "h.jsonl"
+    save_jsonl([HistoryEntry("2026-07-01", "TSLA", "market", "z=+7.61")], path)
+    payload = json.loads(path.read_text(encoding="utf-8").strip())
+    assert "event_at" not in payload and "sent_at" not in payload
+    assert payload["date"] == "2026-07-01"
+
+
+def test_roundtrip_preserva_carimbos(tmp_path):
+    path = tmp_path / "h.jsonl"
+    entries = [HistoryEntry("2026-07-29", "AMD", "market", "-8.9%",
+                            detected_at="2026-07-29T20:05:00Z",
+                            sent_at="2026-07-29T20:05:01Z",
+                            price_source="tiingo")]
+    save_jsonl(entries, path)
+    assert load_jsonl(path) == entries
+
+
+def test_utc_stamp_formato_iso_com_z():
+    from datetime import datetime
+
+    fixo = datetime(2026, 7, 29, 14, 32, 7, tzinfo=UTC)
+    assert utc_stamp(fixo) == "2026-07-29T14:32:07Z"

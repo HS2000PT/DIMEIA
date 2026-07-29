@@ -176,3 +176,27 @@ def test_load_close_series_usa_fallback_e_ignora_tickers_mortos(monkeypatch):
     series = prices.load_close_series(["NVDA", "MORTO"], "2026-07-01", "2026-07-11")
     assert set(series) == {"NVDA"}
     assert series["NVDA"].index.tz is None  # índice tz-naive, pronto para searchsorted
+
+
+# ── Proveniência das fontes (observabilidade, 2026-07-29) ─────────────────────
+def test_proveniencia_regista_a_fonte_que_serviu(monkeypatch):
+    """A cadeia sempre soube qual fonte serviu; o valor era impresso e deitado fora."""
+    prices.reset_price_source_log()
+    monkeypatch.setattr(prices, "_yf_history",
+                        lambda t, **kw: (_ for _ in ()).throw(RuntimeError("bloqueado")))
+    monkeypatch.setattr(prices, "_FALLBACKS", [("tiingo", lambda t, s, e: _df_ok())])
+    prices.get_price_history("nvda", period="1mo")
+    assert prices.last_price_source("NVDA") == "tiingo"
+    assert prices.price_source_log() == {"NVDA": "tiingo"}
+
+
+def test_proveniencia_marca_yfinance_no_caminho_normal(monkeypatch):
+    prices.reset_price_source_log()
+    monkeypatch.setattr(prices, "_yf_history", lambda t, **kw: _df_ok())
+    prices.get_price_history("AAPL")
+    assert prices.last_price_source("AAPL") == "yfinance"
+
+
+def test_proveniencia_vazia_para_ticker_nunca_pedido():
+    prices.reset_price_source_log()
+    assert prices.last_price_source("ZZZZ") == ""

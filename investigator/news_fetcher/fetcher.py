@@ -25,7 +25,13 @@ class NewsItem:
 
     `summary` (opcional): o resumo curto que o Finnhub devolve — não é mostrado ao
     utilizador, mas enriquece o EMBEDDING na KB viva (uma frase de manchete sozinha é
-    pouca informação semântica)."""
+    pouca informação semântica).
+
+    `published_at` (opcional, 2026-07-29): instante EXATO da publicação (ISO 8601 UTC). O
+    Finnhub devolve um epoch em segundos e o código truncava-o a `YYYY-MM-DD`, deitando fora
+    a hora — sem ela é impossível medir quanto tempo passa entre a manchete sair e o alerta
+    chegar ao telemóvel, que é precisamente a queixa "os alertas chegam tarde". `date`
+    mantém-se intocado (alinhamento anti-lookahead, dedup e KB dependem dele)."""
 
     date: str  # 'YYYY-MM-DD'
     ticker: str
@@ -33,6 +39,7 @@ class NewsItem:
     url: str = ""
     source: str = ""
     summary: str = ""
+    published_at: str = ""  # ISO 8601 UTC, ex.: "2026-07-29T13:41:02Z"
 
 
 # ── Parsing (puro, testável) ───────────────────────────────────────────────────
@@ -48,15 +55,16 @@ def parse_finnhub_news(payload: list[dict], ticker: str) -> list[NewsItem]:
         headline = (art.get("headline") or "").strip()
         if not ts or not headline:
             continue
-        date = datetime.fromtimestamp(int(ts), tz=UTC).strftime("%Y-%m-%d")
+        moment = datetime.fromtimestamp(int(ts), tz=UTC)
         items.append(
             NewsItem(
-                date=date,
+                date=moment.strftime("%Y-%m-%d"),
                 ticker=ticker.upper(),
                 headline=headline,
                 url=str(art.get("url", "")),
                 source=str(art.get("source", "finnhub")),
                 summary=str(art.get("summary", "") or "").strip(),
+                published_at=moment.strftime("%Y-%m-%dT%H:%M:%SZ"),
             )
         )
     return items
@@ -71,6 +79,23 @@ def _rss_date_to_iso(pub_date: str) -> str:
         return parsedate_to_datetime(pub_date).strftime("%Y-%m-%d")
     except (TypeError, ValueError):
         return ""
+
+
+def _rss_date_to_stamp(pub_date: str) -> str:
+    """Instante exato da publicação RSS em ISO 8601 UTC ("" quando ilegível ou ausente).
+
+    Par de `_rss_date_to_iso`, que só guarda o dia. Feeds sem fuso horário são tratados como
+    UTC — aproximação assumida e documentada, preferível a deitar a hora fora."""
+    pub_date = (pub_date or "").strip()
+    if not pub_date:
+        return ""
+    try:
+        moment = parsedate_to_datetime(pub_date)
+    except (TypeError, ValueError):
+        return ""
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=UTC)
+    return moment.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def parse_rss(xml_text: str | bytes, ticker: str = "") -> list[NewsItem]:
@@ -96,6 +121,7 @@ def parse_rss(xml_text: str | bytes, ticker: str = "") -> list[NewsItem]:
                 headline=title,
                 url=(item.findtext("link") or "").strip(),
                 source="rss",
+                published_at=_rss_date_to_stamp(item.findtext("pubDate") or ""),
             )
         )
     return items

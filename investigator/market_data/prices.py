@@ -226,6 +226,30 @@ def fallback_daily(ticker: str, start: str, end: str) -> tuple[pd.DataFrame, str
     )
 
 
+# ── Proveniência (observabilidade) ────────────────────────────────────────────
+# Qual das cinco fontes serviu, de facto, cada ticker. A cadeia sempre soube — o valor era
+# impresso e deitado fora, por isso a afirmação de robustez do free tier existia só em prosa,
+# sem uma única medição. Registo simples em memória: não muda o tipo de retorno de nenhuma
+# função pública (a app e os testes continuam a receber DataFrames), e quem quiser medir lê
+# daqui depois da chamada. É observabilidade, não estado de negócio — pode ser limpo à vontade.
+_LAST_SOURCE: dict[str, str] = {}
+
+
+def last_price_source(ticker: str) -> str:
+    """Fonte que serviu o último pedido deste ticker ("" se ainda não houve nenhum)."""
+    return _LAST_SOURCE.get(ticker.upper(), "")
+
+
+def price_source_log() -> dict[str, str]:
+    """Cópia do registo ticker → fonte, para instrumentação e relatórios de disponibilidade."""
+    return dict(_LAST_SOURCE)
+
+
+def reset_price_source_log() -> None:
+    """Limpa o registo (usado entre ciclos e em testes)."""
+    _LAST_SOURCE.clear()
+
+
 def get_price_history(ticker: str, period: str = "6mo", interval: str = "1d") -> pd.DataFrame:
     """Histórico recente de preços de um ticker (camada live), com fallback multi-fonte.
 
@@ -234,7 +258,9 @@ def get_price_history(ticker: str, period: str = "6mo", interval: str = "1d") ->
     por isso pedidos com `interval` fino continuam yfinance-only — a app degrada com graça).
     """
     try:
-        return _yf_history(ticker, period=period, interval=interval)
+        df = _yf_history(ticker, period=period, interval=interval)
+        _LAST_SOURCE[ticker.upper()] = "yfinance"
+        return df
     except Exception as exc:  # noqa: BLE001
         if interval != "1d":
             raise RuntimeError(f"Sem dados de preços para o ticker '{ticker}'.") from exc
@@ -242,6 +268,7 @@ def get_price_history(ticker: str, period: str = "6mo", interval: str = "1d") ->
         start = (date.today() - timedelta(days=dias)).isoformat()
         end = date.today().isoformat()
         df, fonte = fallback_daily(ticker, start, end)
+        _LAST_SOURCE[ticker.upper()] = fonte
         print(f"[precos {ticker}] yfinance indisponível → servido por {fonte} ({len(df)} dias)")
         return df
 
@@ -273,5 +300,6 @@ def load_close_series(tickers: list[str], start: str, end: str) -> dict[str, pd.
         idx = pd.to_datetime(close.index)
         close.index = idx.tz_localize(None) if idx.tz is not None else idx
         prices[ticker] = close.sort_index()
+        _LAST_SOURCE[ticker.upper()] = fonte
         print(f"  [ok] {ticker}: {len(close)} dias ({fonte})")
     return prices
