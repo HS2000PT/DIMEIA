@@ -132,6 +132,29 @@
   **Sem citações novas** (reusa wu2023bloomberggpt, dacunto2019robo, lipton2018mythos,
   rudin2019stop). Teses **EN 92 pp / PT 96 pp**, 0 erros, 0 refs/citações indefinidas,
   paridade 110=110 idêntica por capítulo.
+  **(MARCA) "The Tail" substitui "The Stare"** — escolhida com as 3 variantes às escalas reais e
+  a marca antiga como CONTROLO. A anterior **falhava a 16 px** (o sobrolho fundia-se com o olho, a
+  linha de mercado desaparecia), metia 3 metáforas num ícone, e o olho de pupila em fenda era
+  contra-mensagem. Nova: um traço contínuo que é cauda de jacaré **e** linha de mercado.
+  4 ficheiros (`logo.svg` claro `#0A8F52` · `logo-dark.svg` `#00E37A` · `logo-mono.svg`
+  currentColor · `icon.svg`, o único com contentor e com o glifo ampliado 14%); duas cores porque
+  um verde intermédio ficaria apagado no escuro e fraco no claro; glifo NU porque um quadrado
+  escuro obrigaria um bloco a toda a superfície clara. `.streamlit/config.toml` retemperado
+  (verde-pântano e dourado retirados). `docs/design/brand.md` com o teste de aceitação que a
+  marca antiga falhava. **Fig 4.5 recapturada e apanhou uma ilustração MELHOR:**
+  `AMZN -1,84% = -1,66% mercado · -0,37% setor · +0,19% EMPRESA` — a ação caiu mas a contribuição
+  própria foi POSITIVA ("moved with the whole market"), que é exatamente o valor central para a
+  persona do detentor de longo prazo. Legenda reescrita EN+PT à volta desse caso.
+  **(A7) ONNX em evidência na tese** (Cap. 4, nova subsecção): o artefacto de deep-learning
+  **engineering** mais forte do projeto estava invisível, só num `.md`. O ponto: as resoluções
+  ingénuas eram manter a stack pesada (a app pública não corre) ou trocar por um modelo DIFERENTE
+  em produção — pior, porque a avaliação passaria a descrever um sistema que ninguém usa. A
+  resolução foi exportar o MESMO modelo (ONNX int8, ~23 MB, CPU, sem framework) e PROVAR a
+  fidelidade: cosseno 0,992 nos embeddings e, o que mais importa, **top-3 idênticos em 20/23
+  consultas** com 96% de vizinhos partilhados (divergências = empates no 3.º a ~0,001). Mais o
+  SHA256 fixado, que faz um download corrompido **falhar fechado** em vez de mudar em silêncio o
+  que o sistema entende por "semelhante". Fecha parcialmente ANN/Deep Learning e
+  Privacidade/Segurança **sem uma única experiência nova**.
   **PENDENTE do aluno:** (1) **P1 — rever a app**; depois disso ela CONGELA até à entrega.
   (2) **correr o estudo de utilidade** (6–10 pessoas, ~15 min cada) — fecha a única linha
   "em aberto" do Cap. 6; precisa de tempo de calendário para recrutar.
