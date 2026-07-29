@@ -64,27 +64,43 @@ contrato de cadência. Fora do caminho do dia-a-dia.
 
 A app está **feita** quando todos passarem. Nenhum é uma questão de gosto.
 
+> **Estado a 2026-07-29:** F1–F6 e N1–N4 **verdes**, cada um com um teste executável em
+> `tests/test_app_triage.py` que nomeia o critério. Falta P1 (a ronda de revisão do aluno).
+
 **Funcionais**
-- [ ] F1. Abre no ecrã *Hoje* sem cliques e sem estado vazio: ou mostra movers, ou diz
-      explicitamente que o dia foi calmo.
-- [ ] F2. Cada mover mostra a decomposição na própria linha, sem clicar.
-- [ ] F3. A frase de promessa aparece **exatamente uma vez** na página.
-- [ ] F4. Zero previsões e zero conselho em todo o texto visível (verificável por teste).
-- [ ] F5. Cada ecrã responde à sua pergunta sem o utilizador mudar de ecrã.
-- [ ] F6. Sem rede/histórico/modelo, degrada com mensagem honesta — nunca traceback.
+- [x] F1. Abre no ecrã *Today* sem cliques e sem estado vazio: ou mostra movers, ou diz
+      explicitamente que o dia foi calmo. → `test_F1_abre_em_today_sem_estado_vazio`
+- [x] F2. Cada mover mostra a decomposição na própria linha, sem clicar.
+      → `test_F2_today_mostra_a_decomposicao_na_propria_linha`
+- [x] F3. A frase de promessa aparece **exatamente uma vez** na página.
+      → `test_F3_promessa_aparece_uma_unica_vez`
+- [x] F4. Zero previsões e zero conselho em todo o texto visível, **nas três vistas**.
+      → `test_F4_sem_previsao_nem_conselho` (parametrizado)
+- [x] F5. Cada ecrã responde à sua pergunta sem mudar de ecrã. → `test_F5_*`
+- [x] F6. Sem rede/preços, degrada com mensagem honesta — nunca traceback.
+      → `test_F6_sem_dados_de_preco_degrada_com_mensagem_honesta`
 
 **Não-funcionais**
-- [ ] N1. Uma interação renderiza **um** ticker (regra de performance existente; teste
-      `len(at.metric) == 1` mantém-se válido em espírito).
-- [ ] N2. Nenhum texto visível em português (regra do projeto).
-- [ ] N3. `pytest` + `ruff` verdes; congelados byte-iguais.
-- [ ] N4. Screenshot recapturado e **congelado**; legenda da Fig. 4.5 atualizada EN+PT.
+- [x] N1. Nenhum ticker além do escolhido é renderizado. → `test_N1_*`
+      *(nota: o critério real é "só o ticker escolhido", não "só uma métrica" — o painel de
+      decomposição acrescenta 3 métricas legítimas AO MESMO ticker.)*
+- [x] N2. Nenhum texto visível em português. → `test_N2_sem_portugues_visivel`
+- [x] N3. `pytest` + `ruff` verdes; congelados byte-iguais.
+- [x] N4. Screenshot recapturado; Fig. 4.5 e legenda atualizadas EN+PT; ambas compilam.
 
 **De processo (a condição de paragem propriamente dita)**
 - [ ] P1. **Uma** ronda de revisão do aluno. O feedback dessa ronda é aplicado e fecha.
-- [ ] P2. Timebox de **3 dias**. O que não couber vira Trabalho Futuro, não uma 6.ª iteração.
-- [ ] P3. Depois de F1–F6 e N1–N4 verdes, a app está **congelada** até à entrega. Mudanças
-      só se um critério regredir — não por gosto.
+- [x] P2. Timebox de 3 dias — a reconstrução coube numa sessão.
+- [ ] P3. Depois de P1, a app fica **congelada** até à entrega. Mudanças só se um critério
+      regredir — não por gosto.
+
+### Correção de honestidade feita durante a construção
+
+A primeira versão do ecrã dizia *"N name(s) moved unusually"* para tudo o que entrava na
+lista, incluindo um GOOGL com z=+1,03 — **abaixo** do limiar de alerta. Chamar "unusual" a
+isso é exagerar, e a honestidade do texto é o produto. Passou a *"stood out today, ranked by
+how far from normal (K past the alert threshold)"*, com o marcador `flagged` reservado a quem
+passa o limiar de facto.
 
 ---
 

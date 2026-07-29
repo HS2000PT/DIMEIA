@@ -60,12 +60,17 @@ def main() -> int:
             page = browser.new_page(viewport={"width": args.width, "height": args.height},
                                     device_scale_factor=2)
             page.goto(f"http://localhost:{args.port}", wait_until="networkidle", timeout=60000)
-            # Esperar o gráfico grande (a peça central: preço + replay de eventos detetados).
-            try:
-                page.wait_for_selector(".js-plotly-plot", timeout=30000)
-            except Exception:  # noqa: BLE001
-                page.wait_for_selector("text=Alert history", timeout=10000)  # fallback sem plotly
-            page.wait_for_timeout(4000)  # replay dos eventos + animação do gráfico
+            # O ecrã de abertura é o "Today" (ver docs/design/app_acceptance.md): esperar
+            # que a lista de movers exista — é a peça central e a última a chegar, porque
+            # depende das buscas de preços e da decomposição.
+            page.wait_for_selector("text=Today", timeout=30000)
+            for marca in ("text=moved unusually", "text=Quiet", "text=unavailable"):
+                try:
+                    page.wait_for_selector(marca, timeout=25000)
+                    break
+                except Exception:  # noqa: BLE001
+                    continue
+            page.wait_for_timeout(3000)  # decomposição por mover + render final
             Path(args.out).parent.mkdir(parents=True, exist_ok=True)
             page.screenshot(path=args.out)
             browser.close()

@@ -304,27 +304,35 @@ illustration; the full real end-to-end output appears in Chapter~\ref{chap:cases
 \label{fig:telegram_mockup}
 \end{figure}
 
-The same reasoning is also published as a live dashboard (Figure~\ref{fig:app_dashboard}): one
-selected company at a time is shown on a large ranged price chart on which two kinds of event are
-marked. The abrupt-move markers are the historical replay of the RQ1 detector — the same
-no-lookahead z-score run over every day in the range, so the chart shows the events the method would
-actually flag rather than a hand-picked few. The news markers are read from the one shared, versioned
-record of the alerts delivered to the Telegram channel. Either can be hovered for the full detail, the
-same events are listed in a table below, and a compact line reports the background risk from the
-trained triage model (Section~\ref{sec:met_triage}), computed every day even without a fresh headline.
-A live-status line and the morning-open and previous-close summaries sit above as collapsible notes.
-Everything else (method, evaluation, citation) lives on a separate secondary view, keeping the main
-surface read-only and minimal.
+The same reasoning is also published as a live dashboard (Figure~\ref{fig:app_dashboard}). Its
+structure follows the three questions that motivate the system, one screen each. The opening screen
+ranks the watchlist by how far each name sits from its own recent norm, and carries the
+market/sector/company split on the row itself, so a reader learns whether a fall was the market or
+the company without a click. Names that did not stand out collapse into a single line, which makes
+quietness legible rather than ambiguous. A second screen holds the per-company detail: the price
+chart, the same decomposition in full, and the alerts exactly as the Telegram channel received them,
+read from the one shared versioned record rather than recomputed. A third screen carries the frozen
+evaluation numbers, including the negative result, for a reader who wants to check the method before
+trusting the output.
+
+Two properties of that surface are worth stating because they were designed rather than inherited.
+First, the promise and the no-prediction commitment appear exactly once, as the page's identity,
+instead of being repeated beside every row; repetition had made the earlier interface read as
+defensive without adding information. Second, the delivery-latency figure shown is measured from
+recorded event and delivery timestamps, and it is simply absent when those timestamps do not exist,
+so the interface never displays a number the system did not observe.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/app_dashboard.png}
 \caption[The live dashboard, a genuine capture]{The public dashboard (a genuine screenshot, not a
-mockup): one company at a time on a large ranged price chart. The up/down triangles are the historical
-replay of the RQ1 z-score detector run over the whole range (hover shows the move and its z-score);
-news events read from the shared channel record are marked too. A live-status line and the open/close
-summaries sit above as collapsible notes; below sit the trained triage model's background risk and the
-alert-history table. Captured from the deployed codebase during live operation.}
+mockup), opening screen. The watchlist is ranked by how far each name sits from its own recent norm,
+and each row already carries the market/sector/company split, so the reader sees whether a move was
+the market or the company without clicking: here JPMorgan's $-2.15\%$ is mostly company-specific
+($-1.69\%$) once the market and sector contributions are removed. Names that did not stand out
+collapse into the single \emph{Quiet} line. The promise and the no-prediction commitment appear once,
+at the top. The latency figure is measured from recorded timestamps and is omitted when they are
+absent. Captured from the deployed codebase during live operation.}
 \label{fig:app_dashboard}
 \end{figure}
 

@@ -313,28 +313,34 @@ real completa de ponta a ponta aparece no Capítulo~\ref{chap:casestudies} (Estu
 \label{fig:telegram_mockup}
 \end{figure}
 
-O mesmo raciocínio é também publicado como um dashboard ao vivo (Figura~\ref{fig:app_dashboard}): uma
-empresa selecionada de cada vez é mostrada num grande gráfico de preços por intervalo no qual são marcados
-dois tipos de evento. Os marcadores de movimento abrupto são o replay histórico do detetor da RQ1 — o
-mesmo z-score sem lookahead corrido sobre cada dia do intervalo, pelo que o gráfico mostra os eventos que o
-método realmente sinalizaria, e não uns poucos escolhidos à mão. Os marcadores de notícia são lidos do
-único registo partilhado e versionado dos alertas entregues ao canal Telegram. Qualquer um pode ser
-sobrevoado para o detalhe completo, os mesmos eventos são listados numa tabela em baixo, e uma linha
-compacta reporta o risco de fundo do modelo de triagem treinado (Secção~\ref{sec:met_triage}), calculado
-todos os dias mesmo sem uma manchete fresca. Uma linha de estado ao vivo e os resumos da abertura da manhã
-e do fecho anterior ficam por cima como notas recolhíveis. Tudo o resto (método, avaliação, citação) vive
-numa vista secundária separada, mantendo a superfície principal só de leitura e mínima.
+O mesmo raciocínio é também publicado como um dashboard ao vivo (Figura~\ref{fig:app_dashboard}). A sua
+estrutura segue as três perguntas que motivam o sistema, um ecrã para cada uma. O ecrã de abertura ordena
+a watchlist por quão longe cada nome está da sua própria norma recente, e traz a repartição
+mercado/setor/empresa na própria linha, para que o leitor perceba se uma queda foi do mercado ou da
+empresa sem ter de clicar. Os nomes que não se destacaram colapsam numa única linha, o que torna a
+quietude legível em vez de ambígua. Um segundo ecrã guarda o detalhe por empresa: o gráfico de preços, a
+mesma decomposição por extenso, e os alertas exatamente como o canal Telegram os recebeu, lidos do único
+registo partilhado e versionado em vez de recalculados. Um terceiro ecrã carrega os números congelados da
+avaliação, incluindo o resultado negativo, para quem quiser verificar o método antes de confiar na saída.
+
+Duas propriedades dessa superfície merecem ser enunciadas por terem sido desenhadas, e não herdadas.
+Primeiro, a promessa e o compromisso de não-previsão aparecem exatamente uma vez, como identidade da
+página, em vez de repetidos ao lado de cada linha; a repetição fazia a interface anterior ler-se como
+defensiva sem acrescentar informação. Segundo, o valor de latência mostrado é medido a partir dos carimbos
+temporais de evento e de entrega registados, e está simplesmente ausente quando esses carimbos não
+existem, pelo que a interface nunca exibe um número que o sistema não observou.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/app_dashboard.png}
 \caption[O dashboard ao vivo, uma captura genuína]{O dashboard público (uma captura genuína, não um
-mockup): uma empresa de cada vez num grande gráfico de preços por intervalo. Os triângulos para
-cima/baixo são o replay histórico do detetor z-score da RQ1 corrido sobre todo o intervalo (sobrevoar
-mostra o movimento e o seu z-score); os eventos de notícia lidos do registo partilhado do canal também são
-marcados. Uma linha de estado ao vivo e os resumos de abertura/fecho ficam por cima como notas recolhíveis;
-em baixo, o risco de fundo do modelo de triagem treinado e a tabela de histórico de alertas. Capturado da
-base de código em produção durante a operação ao vivo.}
+mockup), ecrã de abertura. A watchlist é ordenada por quão longe cada nome está da sua própria norma
+recente, e cada linha já traz a repartição mercado/setor/empresa, pelo que o leitor vê se o movimento foi
+do mercado ou da empresa sem clicar: aqui os $-2,15\%$ do JPMorgan são sobretudo específicos da empresa
+($-1,69\%$) depois de removidas as contribuições do mercado e do setor. Os nomes que não se destacaram
+colapsam na única linha \emph{Quiet}. A promessa e o compromisso de não-previsão aparecem uma só vez, no
+topo. O valor de latência é medido a partir de carimbos temporais registados e é omitido quando estes não
+existem. Capturado da base de código em produção durante a operação ao vivo.}
 \label{fig:app_dashboard}
 \end{figure}
 

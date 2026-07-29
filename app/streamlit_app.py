@@ -1,36 +1,34 @@
-"""InvestiGator — live market dashboard (Streamlit).
+"""InvestiGator — explainable market alerts (Streamlit).
 
-Design (2026-07-12, visão do aluno): DUAS vistas, e só duas.
-- 📊 Live: faixa "Market now" (o dia dos 10 tickers num relance — 1 download em lote,
-  cache 10 min, fail-open) + uma aba por empresa; em cada aba UM gráfico grande (estilo
-  Google Finance) com intervalos 1D/5D/1M/6M, os EVENTOS detetados (anomalias + notícias,
-  exatamente os que o canal Telegram recebeu) marcados no gráfico com hover, e a mesma
-  lista numa tabela por baixo. Read-only: visualização, sem ações.
-- ℹ️ About: o que é, como funciona, avaliação, como receber alertas, citação — tudo o que
-  não é o painel vivo mora aqui (texto curto; detalhe em expanders — 2026-07-13).
+Redesenhada a 2026-07-29 contra critérios de aceitação ESCRITOS ANTES do código
+(`docs/design/app_acceptance.md`). A app tinha sido redesenhada 4× e rejeitada sempre por
+critério estético — que não tem condição de paragem. Agora tem.
 
-Honesty notes (mirrors the thesis):
-- No price prediction, no trading signals. Explanations only — evidence from the past.
-- The history shown (chart markers + table) is read from the same shared record the Telegram
-  channel's runner writes (branch alerts-history) — never recomputed here.
-- Prices: yfinance first (intraday bars ~15 min delayed), with the multi-source daily
-  fallback chain of the runner (Tiingo/Polygon/…) — see investigator/market_data/prices.py.
-- Retrieval (About → try a headline) is semantic: the thesis's MiniLM in ONNX, with the
-  word-overlap fallback and the live KB + age decay of the production runner.
+**Três ecrãs, um por cada pergunta do posicionamento:**
+- **Today** — *o que na minha watchlist merece atenção agora?* (z-score + triagem)
+- **Ticker** — *é a empresa ou o mercado? já aconteceu antes?* (decomposição + retrieval)
+- **Method** — *porque é que eu havia de acreditar nisto?* (avaliação congelada)
+
+**Honestidade (espelha a tese):** sem previsão de preços, sem sinais de trading. O histórico
+mostrado é lido do MESMO registo partilhado que o canal Telegram recebeu (branch
+`alerts-history`) — nunca recalculado aqui. Preços: yfinance primeiro (intradiário ~15 min
+atrasado) com a cadeia de fallback do runner.
+
+**Desempenho:** o z-score de cada ticker só precisa da série própria; a decomposição precisa
+do SPY + ETF de setor. Por isso ordena-se com z-scores (10 séries em cache) e só se decompõem
+os movers efetivamente MOSTRADOS — não os 10.
 """
 
 from __future__ import annotations
 
 import os
-import re
 import sys
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
 
-# Plotly é um "nice-to-have" (gráfico interativo com marcadores): a app NUNCA pode cair por
-# causa dele (INVESTIGATOR_NO_PLOTLY=1 força o fallback nos testes).
+# Plotly é "nice-to-have": a app NUNCA pode cair por causa dele.
 _HAS_PLOTLY = os.environ.get("INVESTIGATOR_NO_PLOTLY") != "1"
 if _HAS_PLOTLY:
     try:
@@ -40,7 +38,6 @@ if _HAS_PLOTLY:
 if not _HAS_PLOTLY:
     go = None
 
-# Allow `streamlit run app/streamlit_app.py` from the repo root (put the root on sys.path).
 _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
@@ -51,59 +48,39 @@ st.set_page_config(
 
 _ASSETS = Path(__file__).resolve().parent / "assets"
 _LOGO = _ASSETS / "logo.svg"
-
-
 if _LOGO.exists():
     st.logo(str(_LOGO), size="large")
 
 _DEFAULT_HISTORY_URL = (
     "https://raw.githubusercontent.com/HS2000PT/DIMEIA/alerts-history/alerts_history.jsonl"
 )
-
-# Intervalos do gráfico grande (estilo Google Finance): (period, interval) do yfinance.
 _RANGES: dict[str, tuple[str, str]] = {
-    "1D": ("1d", "5m"),
-    "5D": ("5d", "30m"),
-    "1M": ("1mo", "1d"),
-    "6M": ("6mo", "1d"),
+    "1D": ("1d", "5m"), "5D": ("5d", "30m"), "1M": ("1mo", "1d"), "6M": ("6mo", "1d"),
 }
+_WINDOW = 20  # a mesma janela do detetor em produção
 
-# Validated evaluation numbers (source: docs/evaluation/, reproducible via scripts/evaluate*.py).
-RETRIEVAL_P5 = pd.DataFrame(
-    {
-        "Method": ["SBERT (MPNet)", "SBERT (MiniLM)", "Lexical (baseline)",
-                   "Random (base rate)", "Recency"],
-        "P@5": [0.538, 0.514, 0.346, 0.240, 0.126],
-    }
-).set_index("Method")
+# Números congelados da avaliação (fonte: docs/evaluation/, reproduzíveis por scripts/).
+RETRIEVAL_P5 = pd.DataFrame({
+    "Method": ["SBERT (MiniLM), at scale", "SBERT (MPNet)", "SBERT (MiniLM)",
+               "Lexical (baseline)", "Random (base rate)", "Recency"],
+    "P@5": [0.595, 0.538, 0.514, 0.346, 0.240, 0.126],
+}).set_index("Method")
 
-FIRING_RATE = pd.DataFrame(
-    {
-        "Method": ["z-score", "Fixed threshold (%)"],
-        "Min rate": [0.016, 0.009],
-        "Max rate": [0.031, 0.353],
-        "Spread (max-min)": [0.015, 0.344],
-    }
-).set_index("Method")
+TRIAGE = pd.DataFrame({
+    "Model": ["Volatility only", "Context only", "Context + text", "Alert-always (floor)"],
+    "PR-AUC": [0.542, 0.538, 0.496, 0.378],
+}).set_index("Model")
 
-PER_SECTOR = pd.DataFrame(
-    {
-        "Sector": ["Technology", "Energy", "Health", "Banking", "Consumer"],
-        "P@5 (SBERT)": [0.712, 0.448, 0.419, 0.272, 0.171],
-        "Random (base)": [0.429, 0.072, 0.071, 0.072, 0.071],
-    }
-).set_index("Sector")
+GATES = pd.DataFrame({
+    "Gate": ["Relevance filter", "Freshness (≤2d)", "Precedent similarity ≥0.45",
+             "Learned triage ≥0.50", "Cap 2/ticker/day"],
+    "Measured effect": ["removes mislabelled headlines", "anti-repetition",
+                        "silenced 7 of 10 tickers", "silenced 2 of 10 tickers",
+                        "anti-fatigue"],
+}).set_index("Gate")
 
 
-def _disclaimer() -> None:
-    st.caption(
-        "⚠️ Research/educational tool (MSc dissertation, MEIA/ISEP). It explains market events "
-        "with historical evidence — **not** financial advice, **no** price predictions."
-    )
-
-
-# ── Config / dados partilhados ──────────────────────────────────────────────────
-
+# ── Config e dados partilhados ──────────────────────────────────────────────────
 def _read_yaml_config() -> dict:
     import yaml
 
@@ -112,77 +89,43 @@ def _read_yaml_config() -> dict:
 
 def _watchlist() -> list[str]:
     try:
-        m = _read_yaml_config().get("market", {})
-        return list(m.get("tickers", [])) or ["AAPL"]
-    except Exception:
+        return list(_read_yaml_config().get("market", {}).get("tickers", [])) or ["AAPL"]
+    except Exception:  # noqa: BLE001
         return ["AAPL", "MSFT", "NVDA", "TSLA", "AMZN"]
 
 
-def _channel_url() -> str | None:
+def _public(key: str, default=None):
     try:
-        url = (_read_yaml_config().get("public", {}) or {}).get("channel_url")
-        return str(url) if url else None
-    except Exception:
-        return None
+        return (_read_yaml_config().get("public", {}) or {}).get(key) or default
+    except Exception:  # noqa: BLE001
+        return default
 
 
 def _history_url() -> str:
-    try:
-        url = (_read_yaml_config().get("public", {}) or {}).get("history_url")
-        return str(url) if url else _DEFAULT_HISTORY_URL
-    except Exception:
-        return _DEFAULT_HISTORY_URL
+    return str(_public("history_url", _DEFAULT_HISTORY_URL))
 
 
 @st.cache_data(ttl=60, show_spinner=False)
-def _read_shared_history() -> list:
+def _shared_history() -> list:
     """O MESMO histórico que o Telegram recebeu — nunca recalculado, só lido (fail-open)."""
     from investigator.alerts_history import fetch_remote
 
     return fetch_remote(_history_url())
 
 
-@st.cache_data(ttl=300, show_spinner=False)
-def _live_monitoring_md() -> str | None:
-    """Relatório de pós-validação ao vivo (live_monitoring.md na branch partilhada), fail-open.
-
-    O loop de pós-fecho tornado VISÍVEL: como as decisões de triagem correram face à base
-    rate (precisão das mantidas, Brier). Só leitura; ausente/offline/rede em baixo → None."""
-    if os.environ.get("INVESTIGATOR_OFFLINE") == "1":
-        return None
-    import requests
-
-    url = _history_url().rsplit("/", 1)[0] + "/live_monitoring.md"
-    try:
-        r = requests.get(url, timeout=5)
-        r.raise_for_status()
-        return r.text if r.text.strip() else None
-    except Exception:  # noqa: BLE001
-        return None
-
-
-@st.cache_data(ttl=60, show_spinner=False)
-def _range_prices(ticker: str, range_key: str) -> pd.Series:
-    """Fechos para o intervalo escolhido (yfinance; intraday ~15 min de atraso)."""
-    from investigator.market_data.prices import get_price_history
-
-    period, interval = _RANGES[range_key]
-    return get_price_history(ticker, period=period, interval=interval)["Close"]
-
-
 @st.cache_data(ttl=120, show_spinner=False)
 def _daily_close(ticker: str) -> pd.Series:
-    """Fechos diários (6 meses) — para o risco de fundo e fallback."""
     from investigator.market_data.prices import get_price_history
 
     return get_price_history(ticker)["Close"]
 
 
-@st.cache_resource(show_spinner="Loading the semantic model (first time only)…")
-def _retrieval_engine() -> tuple:
-    from investigator.main import product_retrieval
+@st.cache_data(ttl=60, show_spinner=False)
+def _range_prices(ticker: str, range_key: str) -> pd.Series:
+    from investigator.market_data.prices import get_price_history
 
-    return product_retrieval(auto_download=os.environ.get("INVESTIGATOR_OFFLINE") != "1")
+    period, interval = _RANGES[range_key]
+    return get_price_history(ticker, period=period, interval=interval)["Close"]
 
 
 @st.cache_resource(show_spinner=False)
@@ -192,53 +135,78 @@ def _triage_bundle():
     return load_context_bundle()
 
 
-@st.cache_data(show_spinner=False)
-def _kb_size(kb_path: str) -> int:
-    with open(kb_path, encoding="utf-8") as f:
-        return sum(1 for line in f if line.strip())
+@st.cache_resource(show_spinner="Loading the semantic model (first time only)…")
+def _retrieval_engine() -> tuple:
+    from investigator.main import product_retrieval
 
-
-def _live_kb_url() -> str:
-    return _history_url().rsplit("/", 1)[0] + "/live_kb.jsonl"
+    return product_retrieval(auto_download=os.environ.get("INVESTIGATOR_OFFLINE") != "1")
 
 
 @st.cache_data(ttl=300, show_spinner=False)
 def _retrieval_kbs(kb_path: str) -> list:
-    """[KB viva (remota, se existir), KB histórica local] — a fusão prefere o recente."""
     from investigator.historical_kb.knowledge_base import HistoricalKB
     from investigator.live_kb import fetch_remote_records
 
     kbs = []
     if os.environ.get("INVESTIGATOR_OFFLINE") != "1":
-        vivos = fetch_remote_records(_live_kb_url())
+        vivos = fetch_remote_records(_history_url().rsplit("/", 1)[0] + "/live_kb.jsonl")
         if vivos:
             kbs.append(HistoricalKB(vivos))
     kbs.append(HistoricalKB.load(kb_path))
     return kbs
 
 
-# ── Vista LIVE: o gráfico grande + eventos ──────────────────────────────────────
-
-def _market_state_pill() -> None:
-    """Estado da sessão US ao vivo (🟢 aberto / 🔴 fechado) com contagem para a próxima
-    mudança. Refresca com o fragmento `_live_view` (run_every). Fail-open: nunca derruba."""
+# ── Cálculo: ranking e decomposição ─────────────────────────────────────────────
+@st.cache_data(ttl=120, show_spinner=False)
+def _unusualness(ticker: str) -> dict | None:
+    """z-score e movimento do último dia. Só precisa da série do PRÓPRIO ticker — por isso
+    corre para toda a watchlist sem custo de índice/ETF."""
     try:
-        from investigator.market_data.market_hours import all_exchange_status
+        from investigator.anomaly_detector.detector import detect_latest
+        from investigator.market_data.prices import log_returns
 
-        rows = all_exchange_status()
-        _us_ex, us_s = rows[0]
-        dot = "🟢" if us_s.is_open else "🔴"
-        st.markdown(f"{dot} **US market {us_s.label.lower()}** · {us_s.detail}")
-        outros = " · ".join(f"{'🟢' if s.is_open else '🔴'} {ex.name}" for ex, s in rows[1:])
-        if outros:
-            st.caption(f"Other exchanges: {outros}")
-    except Exception:  # noqa: BLE001 — um indicador nunca pode partir a página
-        pass
+        close = _daily_close(ticker)
+        res = detect_latest(log_returns(close), window=_WINDOW, threshold=1.5)
+        return {"ticker": ticker, "z": float(res.z_score), "move": float(res.last_return),
+                "is_anomaly": bool(res.is_anomaly)}
+    except Exception:  # noqa: BLE001
+        return None
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def _decomposition(ticker: str) -> dict | None:
+    """Reparte o último movimento em mercado / setor / empresa (o diferenciador do produto).
+
+    Só é chamada para os movers MOSTRADOS: precisa do SPY e do ETF de setor, e fazê-lo para
+    a watchlist inteira triplicaria as buscas por nada."""
+    try:
+        import numpy as np
+
+        from investigator.correlation_engine.decomposition import decompose_move
+        from investigator.news_fetcher.relevance import MARKET_INDEX, sector_etf
+
+        etf = sector_etf(ticker)
+        cols = {ticker: _daily_close(ticker), MARKET_INDEX: _daily_close(MARKET_INDEX)}
+        if etf:
+            cols[etf] = _daily_close(etf)
+        frame = pd.DataFrame(cols)
+        frame.index = pd.to_datetime(frame.index)
+        if getattr(frame.index, "tz", None) is not None:
+            frame.index = frame.index.tz_localize(None)
+        frame = frame.dropna()
+        if len(frame) < 16:
+            return None
+        rets = np.log(frame / frame.shift(1)).dropna()
+        d = decompose_move(rets[ticker].to_numpy(), rets[MARKET_INDEX].to_numpy(),
+                           rets[etf].to_numpy() if etf else None)
+        return {"market": d.market, "sector": d.sector, "company": d.idiosyncratic,
+                "driver": d.driver, "fallback": bool(d.fallback)}
+    except Exception:  # noqa: BLE001
+        return None
 
 
 @st.cache_data(ttl=600, show_spinner=False)
 def _risk_score(ticker: str):
-    """Risco de fundo cacheado (10 min): o modelo não muda ao minuto; a app fica leve."""
     bundle = _triage_bundle()
     if bundle is None:
         return None
@@ -246,421 +214,246 @@ def _risk_score(ticker: str):
 
     try:
         return score_background(bundle, _daily_close(ticker), ticker)
-    except Exception:
+    except Exception:  # noqa: BLE001
         return None
 
 
-def _risk_line(ticker: str) -> None:
-    """Risco de fundo do modelo treinado (RQ4) — uma linha compacta, read-only."""
-    scored = _risk_score(ticker)
-    if scored is None:
-        return
-    prob, contribs = scored
-    factors = " and ".join(name for name, _ in contribs[:2])
-    st.caption(f"**Background risk {prob:.0%}** — P(bigger-than-usual move ahead), from the "
-               f"author-trained triage model; mainly {factors}. Evidence, not a forecast.")
-
-
-_SIGNED_PCT = re.compile(r"([+-]\d[\d.]*)%")
-
-
-def _market_down(text: str) -> bool:
-    """Direção de um evento de mercado a partir do NÚMERO guardado (o sinal do 1.º '%').
-
-    Robusto a entradas antigas que gravaram o emoji errado (o bug das setas): lemos o valor,
-    não o ícone. Sem '%' no texto (ex.: entradas de teste) → assume subida (default seguro).
-    """
-    m = _SIGNED_PCT.search(text)
-    return bool(m) and m.group(1).startswith("-")
-
-
-def _event_hover(h) -> str:
-    """Cartão de hover formatado (moderno, multi-linha) para o marcador do gráfico.
-
-    O hover cru (texto até 220 chars numa linha) era ilegível. Agora: o facto a negrito,
-    a linha de severidade por baixo, e uma nota discreta com a data. Plotly aceita um
-    subconjunto de HTML (<b>, <br>, <span>)."""
-    linhas = [ln.strip() for ln in h.text.split("\n") if ln.strip()]
-    head = linhas[0] if linhas else ""
-    partes = [f"<b>{head}</b>"]
-    if len(linhas) > 1:
-        partes.append(linhas[1])
-    partes.append(f"<span style='font-size:11px;opacity:0.65'>{h.date} · "
-                  "open the list below for the full alert</span>")
-    return "<br>".join(partes)
-
-
-def _event_positions(events: list, closes: pd.Series, intraday: bool):
-    """Mapeia eventos (com data) a posições (x, y) no gráfico do intervalo atual."""
-    xs, ys, hovers, colors, symbols = [], [], [], [], []
-    if intraday:
-        primeiro_do_dia: dict[str, object] = {}
-        for idx in closes.index:
-            chave = idx.date().isoformat()
-            primeiro_do_dia.setdefault(chave, idx)
-        posicao = {d: (idx, float(closes.loc[idx])) for d, idx in primeiro_do_dia.items()}
-    else:
-        posicao = {idx.date().isoformat(): (idx, float(v)) for idx, v in closes.items()}
-    for h in events:
-        par = posicao.get(h.date)
-        if par is None:
-            continue
-        x, y = par
-        xs.append(x)
-        ys.append(y)
-        hovers.append(_event_hover(h))
-        if h.kind == "market":
-            # Direção pelo sinal do movimento (fonte única do bug das setas): vermelho a
-            # descer, verde a subir; o símbolo do triângulo acompanha.
-            down = _market_down(h.text)
-            colors.append("#EF4444" if down else "#10B981")
-            symbols.append("triangle-down" if down else "triangle-up")
-        else:
-            colors.append("#3B82F6")  # notícia: azul neutro, círculo
-            symbols.append("circle")
-    return xs, ys, hovers, colors, symbols
-
-
-def _replay_anomalies(closes: pd.Series, threshold: float = 2.0):
-    """Replay histórico: corre o detetor z-score (RQ1) sobre a série mostrada e devolve os
-    marcadores dos eventos que o método REALMENTE detetaria — povoa o gráfico com os eventos
-    passados, não só os poucos alertas enviados. Só para intervalos diários (a norma precisa
-    de dias completos anteriores); série curta → sem marcadores."""
-    from investigator.anomaly_detector.detector import detect_all
-
-    rets = closes.pct_change().dropna()
-    if len(rets) < 22:
-        return [], [], [], [], []
-    xs, ys, hovers, colors, symbols = [], [], [], [], []
-    for idx, res in detect_all(rets, window=20, threshold=threshold):
-        if idx not in closes.index:
-            continue
-        xs.append(idx)
-        ys.append(float(closes.loc[idx]))
-        down = res.last_return < 0
-        colors.append("#EF4444" if down else "#10B981")
-        symbols.append("triangle-down" if down else "triangle-up")
-        d = idx.date().isoformat() if hasattr(idx, "date") else str(idx)
-        hovers.append(
-            f"<b>Abrupt move detected</b><br>{res.last_return * 100:+.2f}% · "
-            f"z = {res.z_score:+.2f}<br><span style='font-size:11px;opacity:0.65'>"
-            f"{d} · flagged by the z-score method</span>"
-        )
-    return xs, ys, hovers, colors, symbols
-
-
-def _big_chart(ticker: str, closes: pd.Series, events: list, intraday: bool):
-    """O gráfico grande: linha de preço + eventos. Em intervalos diários, os marcadores vêm do
-    REPLAY (todos os movimentos abruptos que o método deteta no histórico) + as notícias reais;
-    em intraday, os alertas reais do canal. Um símbolo = um significado (triângulo=movimento,
-    círculo=notícia) para não confundir."""
-    subiu = float(closes.iloc[-1]) >= float(closes.iloc[0])
-    cor = "#10B981" if subiu else "#EF4444"
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=closes.index, y=closes.to_numpy(), mode="lines", name="Price",
-        line={"width": 2.2, "color": cor},
-        fill="tozeroy", fillcolor=("rgba(16,185,129,0.08)" if subiu
-                                   else "rgba(239,68,68,0.08)"),
-    ))
-    if intraday:
-        xs, ys, hovers, colors, symbols = _event_positions(events, closes, intraday)
-    else:  # diário: replay (movimentos detetados) + notícias reais do histórico
-        xs, ys, hovers, colors, symbols = _replay_anomalies(closes)
-        news = [h for h in events if getattr(h, "kind", "") == "news"]
-        nx, ny, nh, nc, ns = _event_positions(news, closes, intraday)
-        xs, ys = xs + nx, ys + ny
-        hovers, colors, symbols = hovers + nh, colors + nc, symbols + ns
-    if xs:
-        fig.add_trace(go.Scatter(
-            x=xs, y=ys, mode="markers", name="Events",
-            marker={"size": 14, "color": colors, "symbol": symbols,
-                    "line": {"width": 1.4, "color": "white"}},
-            hovertext=hovers, hovertemplate="%{hovertext}<extra></extra>",
-        ))
-    ymin, ymax = float(closes.min()), float(closes.max())
-    folga = (ymax - ymin) * 0.08 or ymax * 0.01
-    fig.update_layout(
-        height=520, margin={"l": 10, "r": 10, "t": 16, "b": 10}, showlegend=False,
-        hovermode="closest", yaxis={"range": [ymin - folga, ymax + folga],
-                                    "title": "Price ($)"},
-        xaxis={"rangeslider": {"visible": False}, "showspikes": True,
-               "spikemode": "across", "spikethickness": 1, "spikedash": "dot",
-               "spikecolor": "#94A3B8"},
-        # Tooltip moderno: cartão claro, alinhado à esquerda, legível em ambos os temas.
-        hoverlabel={"align": "left", "bgcolor": "rgba(255,255,255,0.97)",
-                    "bordercolor": "#CBD5E1", "font": {"size": 12, "color": "#0B1F2E"}},
+# ── Cabeçalho: a promessa aparece UMA vez (critério F3) ─────────────────────────
+def _header() -> None:
+    st.markdown("### InvestiGator")
+    st.markdown(
+        "**Every move investigated, never predicted.** This tool answers three questions "
+        "about your watchlist: *is this move unusual*, *is it the company or the market*, "
+        "and *has something like it happened before* — with real numbers you can check. "
+        "It never predicts prices and never gives advice."
     )
-    fig.data[0].hovertemplate = "<b>$%{y:.2f}</b> · %{x|%b %d, %Y}<extra></extra>"
-    return fig
+    _market_state()
 
 
-def _kind_label(h) -> str:
-    """Rótulo humano do tipo de evento (com direção correta para o mercado)."""
-    if h.kind == "news":
-        return "📰 News event"
-    if h.kind == "summary":
-        return "📊 Daily summary"
-    return "📉 Market anomaly (down)" if _market_down(h.text) else "📈 Market anomaly (up)"
-
-
-def _events_list(eventos: list) -> None:
-    """A tabela ÚNICA e expansível (substitui as 2 tabelas antigas): cada evento é uma linha
-    — a info principal no cabeçalho (data + facto), os detalhes (texto completo do alerta)
-    ao expandir. Read-only: espelho exato do que o canal Telegram recebeu."""
-    for h in reversed(eventos):  # mais recente primeiro
-        facto = h.text.split("\n", 1)[0].strip()
-        with st.expander(f"{h.date}  ·  {facto}"):
-            st.markdown(h.text.replace("\n", "  \n"))
-            st.caption(f"{_kind_label(h)} · sent to the Telegram channel")
-
-
-def _ticker_tab(ticker: str, history: list) -> None:
-    eventos = [h for h in history if h.ticker == ticker]
-    # Default 6M: abre com o REPLAY histórico (todos os movimentos que o método deteta) a
-    # povoar o gráfico — a demo que mostra a RQ1 a trabalhar. 1D/5D ficam para o AGORA/live.
-    intervalo = st.radio("Range", list(_RANGES), index=3, horizontal=True,
-                         key=f"range_{ticker}", label_visibility="collapsed")
+def _market_state() -> None:
     try:
-        closes = _range_prices(ticker, intervalo)
-    except Exception as exc:  # noqa: BLE001
-        st.warning(f"No price data right now for {ticker}: {type(exc).__name__}")
-        return
-    closes = closes.dropna()  # sem isto, um fetch a devolver NaN mostrava "$nan / +nan%"
-    if len(closes) < 2:
-        st.warning(f"Not enough data for {ticker} in this range yet.")
+        from investigator.market_data.market_hours import us_market_status
+
+        s = us_market_status()
+        st.caption(f"{'🟢' if s.is_open else '🔴'} US market {s.label.lower()} · {s.detail}")
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def _latency_badge() -> None:
+    """Latência medida facto→entrega. Sem carimbos (histórico antigo) simplesmente não
+    aparece — nunca se mostra um número que não foi medido."""
+    try:
+        entries = _shared_history()
+        lat = [e.latency_seconds() for e in entries]
+        lat = sorted(x for x in lat if x is not None)
+        if not lat:
+            return
+        mid = lat[len(lat) // 2]
+        unit = f"{mid / 60:.0f} min" if mid >= 90 else f"{mid:.0f} s"
+        st.caption(f"⏱️ Median time from event to delivery: **{unit}** (measured, n={len(lat)})")
+    except Exception:  # noqa: BLE001
+        pass
+
+
+# ── ECRÃ 1: Today ───────────────────────────────────────────────────────────────
+def _fmt_pct(x: float) -> str:
+    return f"{x * 100:+.2f}%"
+
+
+def _today_view() -> None:
+    st.subheader("Today")
+    tickers = _watchlist()
+    rows = [r for r in (_unusualness(t) for t in tickers) if r]
+    if not rows:
+        st.info("Market data is unavailable right now. Nothing is being hidden — the price "
+                "sources are not responding. Try again shortly.")
         return
 
+    rows.sort(key=lambda r: -abs(r["z"]))
+    movers = [r for r in rows if abs(r["z"]) >= 1.0][:5]
+    quiet = [r for r in rows if r not in movers]
+
+    if not movers:
+        st.success("Quiet day: nothing in the watchlist stood out.")
+    else:
+        # "stood out" e não "moved unusually": a lista mostra os mais fora do normal, mas só
+        # os que passam o limiar do detetor levam "flagged". Chamar "unusual" a um z=+1.03
+        # seria exagerar — e a honestidade do texto é o produto.
+        flagged = sum(1 for r in movers if r["is_anomaly"])
+        st.caption(f"{len(movers)} name(s) stood out today, ranked by how far from normal "
+                   f"({flagged} past the alert threshold).")
+
+    for r in movers:
+        _mover_row(r)
+
+    if quiet:
+        names = " · ".join(f"{r['ticker']} {_fmt_pct(r['move'])}" for r in quiet)
+        st.caption(f"**Quiet:** {names}")
+
+    _latency_badge()
+
+
+def _mover_row(r: dict) -> None:
+    """Uma linha por mover, com a decomposição JÁ na linha (critério F2: sem clicar)."""
     from investigator.news_fetcher.relevance import display_name
 
-    var = float(closes.iloc[-1] / closes.iloc[0] - 1.0)
-    nome = display_name(ticker)
-    rotulo = f"{nome} ({ticker})" if nome != ticker else ticker
-    c1, c2 = st.columns([1, 3])
-    c1.metric(rotulo, f"${float(closes.iloc[-1]):.2f}", f"{var:+.2%} ({intervalo})")
-    with c2:
-        _risk_line(ticker)
-
-    intraday = intervalo in ("1D", "5D")
-    if _HAS_PLOTLY:
-        st.plotly_chart(_big_chart(ticker, closes, eventos, intraday),
-                        use_container_width=True, config={"displayModeBar": False},
-                        key=f"chart_{ticker}_{intervalo}")
-    else:
-        st.line_chart(closes, use_container_width=True)
-        st.caption("Interactive chart unavailable in this environment (plotly not installed). "
-                   "All detected events remain in the list below.")
-    if intraday:
-        st.caption("Live / today view (yfinance intraday, ~15 min delayed, auto-refreshes). "
-                   "Markers are alerts sent to the channel — hover for the text.")
-    else:
-        st.caption("**🔺/🔻 = abrupt moves the *z*-score method detected across this range** "
-                   "(the historical replay of the RQ1 detector) · 🔵 = news events · hover any "
-                   "marker for details. Switch to 1D/5D for the live intraday view.")
-
-    st.subheader("Alert history")
-    if eventos:
-        n_mkt = sum(1 for h in eventos if h.kind == "market")
-        n_news = sum(1 for h in eventos if h.kind == "news")
-        st.caption(f"{len(eventos)} on record · {n_mkt} market · {n_news} news · "
-                   "📈 up · 📉 down · 📰 news. Open a row for the full alert, "
-                   "exactly as sent to the Telegram channel.")
-        _events_list(eventos)
-    else:
-        st.caption(f"No events recorded yet for {ticker}. This fills in as the automated "
-                   "scan detects anomalies and material news.")
+    t = r["ticker"]
+    arrow = "📈" if r["move"] >= 0 else "📉"
+    with st.container(border=True):
+        left, right = st.columns([3, 2])
+        with left:
+            st.markdown(f"**{arrow} {t} ({display_name(t)}) {_fmt_pct(r['move'])}**")
+            st.caption(f"z-score {r['z']:+.2f} vs a {_WINDOW}-day norm"
+                       + (" · flagged" if r["is_anomaly"] else ""))
+        with right:
+            d = _decomposition(t)
+            if d is None:
+                st.caption("Split unavailable (needs index and sector data).")
+            else:
+                st.markdown(
+                    f"{_fmt_pct(d['market'])} market · {_fmt_pct(d['sector'])} sector · "
+                    f"**{_fmt_pct(d['company'])} company**"
+                )
+                verdict = {"market": "Moved with the whole market.",
+                           "sector": "Sector-wide, not company-specific.",
+                           "company": "Specific to this company."}[d["driver"]]
+                st.caption(verdict + (" Beta not estimated; split is indicative."
+                                      if d["fallback"] else ""))
 
 
-# run_every numérico (segundos): evita o caminho pd.Timedelta(str) do Streamlit, que
-# sob numpy>=2.5 emite a deprecação "generic unit for timedelta" (e falha num numpy futuro).
-# 120 segundos, comportamento idêntico.
-def _health_strip(history, monitoring) -> None:
-    """Prova de vida AO TOPO: quantos alertas explicados já saíram e — se a pós-validação
-    existir — a precisão das decisões MANTIDAS vs a base rate, fora da amostra. Combate o
-    'parece parado/ignorado'. Fail-open; sem st.metric (a guarda de performance conta metrics)."""
-    from investigator.evaluation.monitoring import parse_live_monitoring
-
-    n = sum(1 for h in history if h.kind in ("market", "news"))
-    bits = []
-    if n:
-        bits.append(f"**{n}** explained alerts delivered")
-    health = parse_live_monitoring(monitoring)
-    if health:
-        bits.append(
-            f"kept-alert precision **{health.kept_precision:.0%}** vs "
-            f"{health.base_rate:.0%} base rate (+{health.lift_points:.0f} pts, out-of-sample)"
-        )
-    if bits:
-        st.success("✅ Live & tracked — " + " · ".join(bits))
-
-
-@st.fragment(run_every=120)
-def _live_view() -> None:
-    history = _read_shared_history()
-    _market_state_pill()
-    monitoring = _live_monitoring_md()
-    _health_strip(history, monitoring)
-    if not history:
-        st.caption("⚠ No shared event history reachable right now. Charts still show live "
-                   "prices; events appear as the automated scan records them.")
-    openings = [h for h in history if h.kind == "open"]
-    summaries = [h for h in history if h.kind == "summary"]
-    if openings:
-        with st.expander(f"🔔 Market open snapshot ({openings[-1].date})"):
-            st.text(openings[-1].text)
-    if summaries:
-        with st.expander(f"📊 Daily close summary ({summaries[-1].date})"):
-            st.text(summaries[-1].text)
-    if monitoring:
-        with st.expander("📈 How our alerts are doing (live monitoring)"):
-            st.markdown(monitoring)
+# ── ECRÃ 2: Ticker ──────────────────────────────────────────────────────────────
+def _ticker_view() -> None:
     tickers = _watchlist()
-    # Seletor de empresa em vez de st.tabs: o Streamlit renderiza TODAS as tabs a cada
-    # interação (10× fetch/scoring — a app arrastava-se). Assim só a empresa escolhida é
-    # renderizada — o aspeto de tabs mantém-se, a app fica ~10× mais leve por interação.
-    escolhido = st.radio("Company", tickers, index=0, horizontal=True,
-                         key="ticker_sel", label_visibility="collapsed")
-    _ticker_tab(escolhido or tickers[0], history)
+    t = st.radio("Company", tickers, horizontal=True, label_visibility="collapsed",
+                 key="ticker_picker")
+    from investigator.news_fetcher.relevance import display_name
+
+    st.subheader(f"{t} — {display_name(t)}")
+
+    r = _unusualness(t)
+    if r:
+        st.metric(f"{display_name(t)} ({t})", _fmt_pct(r["move"]),
+                  delta=f"z {r['z']:+.2f}")
+
+    _decomposition_panel(t)
+    _price_chart(t)
+    _events_for(t)
+    _precedents_note()
 
 
-# ── Vista ABOUT: tudo o resto, fora do caminho ──────────────────────────────────
-
-def _about_view() -> None:
-    st.title("About InvestiGator")
-    st.markdown(
-        """
-**InvestiGator** watches the US market and **explains** every alert it sends:
-**abrupt moves** (transparent rolling *z*-score with severity levels, a sector check and a
-cross-investigation for the explaining headline) and **material news** (semantic precedents
-from historical + living knowledge bases, ranked with age decay). On top sits the one model
-**trained by the author** (RQ4): a calibrated triage classifier that gates news alerts
-against noise. **Evidence, never a prediction.**
-        """
-    )
-
-    st.header("Get the alerts")
-    url = _channel_url()
-    c1, c2 = st.columns(2)
-    with c1:
-        if url:
-            st.link_button("📡 Open the Telegram channel", url, type="primary")
-        st.caption("Automatic alerts: anomalies (with investigation), material news (quality-"
-                   "filtered), and a daily close summary. No spam by design.")
-    with c2:
-        st.markdown("**Personal watchlist (bot):** `/watch TSLA` · `/list` · `/unwatch` · "
-                    "`/stop` — replies with the next scan.")
-
-    st.header("How it works")
-    st.graphviz_chart(
-        """
-        digraph {
-            rankdir=LR; node [shape=box, style=rounded, fontsize=11];
-            headline [label="New headline"];
-            emb [label="Embedder\\n(headline -> vector)"];
-            kb [label="Knowledge bases\\n(historical + living)"];
-            sim [label="Cosine similarity\\n+ age decay"];
-            impact [label="Event study\\n(+1/+3/+5d impact)"];
-            alert [label="Explained alert"];
-            headline -> emb -> sim; kb -> sim -> impact -> alert;
-
-            prices [label="Live prices / quotes"];
-            ret [label="Returns"];
-            z [label="Rolling z-score\\n(no lookahead)"];
-            inv [label="Cross-investigation\\n(find explaining news)"];
-            prices -> ret -> z -> inv -> alert;
-        }
-        """
-    )
-
-    st.header("Evaluation (frozen thesis numbers)")
-    st.caption("Every number below is regenerated deterministically from the frozen inputs "
-               "with a fixed seed, so it can be reproduced and audited in isolation.")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.subheader("Retrieval beats every baseline")
-        st.bar_chart(RETRIEVAL_P5, use_container_width=True)
-        st.caption("SBERT (MiniLM) P@5 = 0.514 vs 0.240 random (lift +0.273); lexical 0.346.")
-    with col2:
-        st.subheader("z-score fires consistently")
-        st.dataframe(FIRING_RATE, use_container_width=True)
-        st.caption("Firing-rate spread 0.015 vs 0.344 for a fixed % threshold.")
-        st.subheader("Per sector (SBERT vs random)")
-        st.bar_chart(PER_SECTOR, use_container_width=True)
-
-    with st.expander("🔬 Try the retrieval engine on any headline (demo)"):
-        _try_headline()
-
-    with st.expander("📖 Cite / credits"):
-        st.markdown(
-            """
-Master's dissertation (MEIA, ISEP): *"Explainable Financial Alerts for Retail Investors:
-Integrating Statistical Anomaly Detection and News–Market Impact Correlation."*
-**Author:** Henrique José da Silva Santos · **Supervisor:** Prof. Luís Gomes ·
-**Co-supervisor:** Rafael Silva · Repository: <https://github.com/HS2000PT/DIMEIA>
-(see `CITATION.cff`). Attributions: FNSPID (CC BY-SA 4.0), yfinance, Finnhub, Telegram Bot API.
-            """
-        )
-    _disclaimer()
+def _decomposition_panel(t: str) -> None:
+    d = _decomposition(t)
+    if d is None:
+        return
+    st.markdown("**Is it the company or the market?**")
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Market", _fmt_pct(d["market"]))
+    c2.metric("Sector", _fmt_pct(d["sector"]))
+    c3.metric("Company-specific", _fmt_pct(d["company"]))
+    note = {"market": "Most of this move came with the whole market.",
+            "sector": "Most of this move was sector-wide.",
+            "company": "Most of this move was specific to the company."}[d["driver"]]
+    if d["fallback"]:
+        note += " Beta could not be estimated, so treat the split as indicative."
+    st.caption(note + " Rolling beta against SPY and a sector ETF, estimated only on data "
+               "before the day being explained.")
 
 
-def _try_headline() -> None:
-    """Sandbox mínima (única ação da app, deliberadamente fora da vista Live): útil para a
-    demo da defesa — o júri pode testar o motor de precedentes com qualquer manchete."""
-    from investigator.explanation_engine.explainer import plain_text
-
-    kb_path, embedder = _retrieval_engine()
-    semantic = bool(getattr(embedder, "semantic", False))
-    col = st.columns([3, 1])
-    headline = col[0].text_input("Headline", value="Nvidia demand surges on AI chip orders",
-                                 key="try_headline_text")
-    ticker = col[1].text_input("Ticker", value="NVDA", key="try_headline_ticker")
-    engine = ("semantic (MiniLM in ONNX — the thesis's model)" if semantic
-              else "word-overlap fallback")
-    st.caption(f"Knowledge base: {_kb_size(str(kb_path)):,} cases + live KB; engine: {engine}.")
-    if st.button("Find precedents", type="primary", key="try_headline_button"):
-        from datetime import date as _date
-
-        from investigator.explanation_engine.explainer import explain_news_impact
-        from investigator.live_kb import merged_precedents
-
-        news_cfg = _read_yaml_config().get("news", {}) or {}
-        max_age_cfg = news_cfg.get("max_precedent_age_days")
-        precedents = merged_precedents(
-            headline.strip(), _retrieval_kbs(str(kb_path)), embedder, top_k=3,
-            today=_date.today(),
-            half_life_days=float(news_cfg.get("recency_half_life_days", 365)),
-            max_age_days=int(max_age_cfg) if max_age_cfg is not None else None,
-        )
-        if not precedents:
-            st.warning("No precedents found in the knowledge base.")
-            return
-        min_sim = float(news_cfg.get("min_similarity", 0.45))
-        best = max(float(s) for _, s in precedents)
-        if best < min_sim:
-            st.info(f"Weak precedents (best similarity {best:.2f} < {min_sim:.2f} floor) — "
-                    "the live channel would **not** alert on this. Shown for exploration only.")
-        text = explain_news_impact(ticker.strip().upper(), headline.strip(), precedents,
-                                   horizon=5, today=_date.today().isoformat())
-        st.text(plain_text(text))
-
-
-# ── Entrada ─────────────────────────────────────────────────────────────────────
-
-def main() -> None:
-    st.sidebar.title("InvestiGator")
-    st.sidebar.caption("_Every move investigated, never predicted._")
-    vista = st.sidebar.radio("View", ["📊 Live", "ℹ️ About"], label_visibility="collapsed")
-    url = _channel_url()
-    if url:
-        st.sidebar.link_button("📡 Get alerts on Telegram", url, use_container_width=True)
-    with st.sidebar:
-        _disclaimer()
-
-    if vista == "📊 Live":
-        _live_view()
+def _price_chart(t: str) -> None:
+    rng = st.radio("Range", list(_RANGES), horizontal=True, index=0,
+                   label_visibility="collapsed", key=f"range_{t}")
+    try:
+        series = _range_prices(t, rng)
+    except Exception:  # noqa: BLE001
+        st.caption("Price history is unavailable right now.")
+        return
+    if series is None or series.empty:
+        st.caption("No price data for this range.")
+        return
+    if _HAS_PLOTLY:
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=list(series.index), y=[float(v) for v in series.values],
+            mode="lines", name=t, hovertemplate="$%{y:.2f} · %{x}<extra></extra>",
+        ))
+        fig.update_layout(height=340, margin=dict(l=0, r=0, t=10, b=0),
+                          showlegend=False, hovermode="x unified")
+        fig.update_xaxes(showspikes=True, spikemode="across")
+        st.plotly_chart(fig, use_container_width=True, key=f"chart_{t}_{rng}")
     else:
-        _about_view()
+        st.line_chart(series)
 
 
-if __name__ == "__main__":
-    main()
+def _events_for(t: str) -> None:
+    """Eventos EXATAMENTE como o canal os enviou — espelho, nunca recálculo."""
+    entries = [e for e in _shared_history() if e.ticker == t]
+    if not entries:
+        st.caption("No alerts recorded for this company yet.")
+        return
+    st.markdown(f"**What the channel sent about {t}**")
+    for e in list(reversed(entries))[:6]:
+        first = e.text.strip().splitlines()[0] if e.text.strip() else e.kind
+        with st.expander(f"{e.date} · {first[:90]}"):
+            st.text(e.text)
+
+
+def _precedents_note() -> None:
+    st.caption("Similar past cases are retrieved by meaning, not keywords. They show what "
+               "happened *after* comparable headlines — an observed pattern, never a "
+               "prediction for this one. Similar in topic does not mean similar in direction.")
+
+
+# ── ECRÃ 3: Method ──────────────────────────────────────────────────────────────
+def _method_view() -> None:
+    st.subheader("Method")
+    st.markdown(
+        "Every number here is reproducible from the dissertation's scripts. Where a result "
+        "is negative, it is reported as it fell."
+    )
+    st.markdown("**Retrieving comparable past news (precision@5)**")
+    st.dataframe(RETRIEVAL_P5, use_container_width=True)
+    st.caption("Semantic retrieval beats lexical and random baselines. Direction agreement "
+               "(0.708) sits close to chance (0.688): topic ≠ direction.")
+
+    st.markdown("**Does text help decide what deserves an alert? (PR-AUC)**")
+    st.dataframe(TRIAGE, use_container_width=True)
+    st.caption("No text model beat the volatility baseline. Reported as it stands. The "
+               "learned score still works as a *ranking* mechanism: precision@5/day 0.632 "
+               "against a 0.163 base rate.")
+
+    st.markdown("**Why the channel is quiet so often**")
+    st.dataframe(GATES, use_container_width=True)
+    st.caption("Measured on a single live scan (2026-07-29): 9 of 10 tickers were silenced, "
+               "and four missed their gate by 0.04 or less.")
+
+    with st.expander("What this system never does"):
+        st.markdown(
+            "- No price predictions, no direction forecasts, no targets.\n"
+            "- No buy/sell/hold advice.\n"
+            "- No third-party analyst forecasts — importing someone else's prediction into a "
+            "system defined by not predicting would be a contradiction.\n"
+            "- No personal holdings, so no personalised recommendation."
+        )
+
+    url = _public("channel_url")
+    if url:
+        st.link_button("📡 Open the Telegram channel", url)
+    st.caption("Research/educational tool (MSc dissertation, MEIA/ISEP). Not financial "
+               "advice.")
+
+
+# ── Composição ──────────────────────────────────────────────────────────────────
+def main() -> None:
+    _header()
+    view = st.sidebar.radio("View", ["📊 Today", "🔎 Ticker", "📐 Method"],
+                            label_visibility="collapsed")
+    if view.endswith("Today"):
+        _today_view()
+    elif view.endswith("Ticker"):
+        _ticker_view()
+    else:
+        _method_view()
+
+
+main()

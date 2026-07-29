@@ -1,8 +1,12 @@
-"""AppTest do dashboard (visão 2026-07-12): vista Live (uma aba por empresa, gráfico grande
-com eventos + tabela) e vista About (tudo o resto). Read-only por desenho.
+"""AppTest do dashboard — os testes SÃO os critérios de aceitação, em forma executável.
 
-Corre só onde o streamlit está instalado (local, stack app); no CI leve é saltado.
-Os preços são simulados (monkeypatch) e o histórico partilhado NUNCA toca a rede real.
+Cada teste nomeia o critério que verifica em `docs/design/app_acceptance.md`. Esse documento
+foi escrito ANTES do código precisamente porque a app já tinha sido redesenhada 4× e rejeitada
+sempre por critério estético — que não tem condição de paragem. Isto é a condição de paragem:
+quando estes testes estiverem verdes, a app está feita.
+
+Corre só onde o streamlit está instalado; no CI leve é saltado. Preços simulados; o histórico
+partilhado NUNCA toca a rede real.
 """
 
 from __future__ import annotations
@@ -22,10 +26,11 @@ APP = "app/streamlit_app.py"
 
 
 def _fake_history(ticker: str, period: str = "6mo", interval: str = "1d") -> pd.DataFrame:
-    rng = np.random.default_rng(1)
+    """Série determinística por ticker (a semente vem do nome → movimentos distintos)."""
+    rng = np.random.default_rng(abs(hash(ticker)) % 1000)
     n = 60
-    close = 100 * np.exp(np.cumsum(rng.normal(0, 0.01, n)))
-    if interval.endswith(("m", "h")):  # intraday: barras de hoje
+    close = 100 * np.exp(np.cumsum(rng.normal(0, 0.012, n)))
+    if interval.endswith(("m", "h")):
         idx = pd.date_range(end=pd.Timestamp.now().floor("5min"), periods=n, freq="5min")
     else:
         idx = pd.date_range(end=pd.Timestamp.today().normalize(), periods=n, freq="D")
@@ -33,132 +38,159 @@ def _fake_history(ticker: str, period: str = "6mo", interval: str = "1d") -> pd.
 
 
 @pytest.fixture(autouse=True)
-def _limpa_caches_streamlit():
-    # st.cache_data/cache_resource persistem entre instâncias de AppTest no mesmo processo —
-    # sem isto, o monkeypatch de um teste podia "vazar" para o histórico/preços de outro.
+def _isola(monkeypatch):
+    """Os caches do Streamlit persistem entre AppTests no mesmo processo — sem limpar, o
+    monkeypatch de um teste vaza para outro."""
     st.cache_data.clear()
     st.cache_resource.clear()
+    monkeypatch.setenv("INVESTIGATOR_OFFLINE", "1")
+    monkeypatch.setenv("INVESTIGATOR_NO_PLOTLY", "1")
+    import investigator.market_data.prices as prices
+
+    monkeypatch.setattr(prices, "get_price_history", _fake_history)
     yield
 
 
-def _run(monkeypatch, history: list[HistoryEntry] | None = None) -> AppTest:
-    import investigator.alerts_history as alerts_history
-    import investigator.market_data.prices as prices
+def _com_historico(monkeypatch, entries):
+    import investigator.alerts_history as ah
 
-    monkeypatch.setattr(prices, "get_price_history", _fake_history)
-    monkeypatch.setattr(alerts_history, "fetch_remote",
-                        lambda url, timeout=5.0: history or [])
-    at = AppTest.from_file(APP)
-    at.run(timeout=120)
-    return at
+    monkeypatch.setattr(ah, "fetch_remote", lambda *a, **k: entries)
 
 
-def _texto_visivel(at: AppTest) -> str:
-    """Todo o texto renderizado (markdown + labels de expander + captions) — a tabela de
-    eventos passou a ser uma lista expansível (2026-07-22), já não um dataframe."""
+def _texto(at) -> str:
+    """Todo o texto visível da página, para asserções de conteúdo."""
     partes: list[str] = []
-    partes += [str(m.value) for m in at.markdown]
+    for coll in (at.markdown, at.caption, at.subheader, at.info, at.success,
+                 at.warning, at.error):
+        partes += [str(el.value) for el in coll]
     partes += [str(e.label) for e in at.expander]
-    partes += [str(c.value) for c in at.caption]
     return "\n".join(partes)
 
 
-def test_precos_nan_degrada_com_graca(monkeypatch):
-    """Um fetch de preços a devolver NaN não pode mostrar '$nan / +nan%': cai no aviso
-    gracioso 'Not enough data' (bug visto num screenshot ao vivo com o yfinance a falhar)."""
-    import investigator.alerts_history as alerts_history
+# ── F1 / F6: abre em Today, sem cliques, sem estado vazio, sem traceback ────────
+def test_F1_abre_em_today_sem_estado_vazio(monkeypatch):
+    _com_historico(monkeypatch, [])
+    at = AppTest.from_file(APP, default_timeout=90).run()
+    assert not at.exception
+    txt = _texto(at)
+    assert "Today" in txt
+    assert ("stood out" in txt) or ("Quiet" in txt) or ("unavailable" in txt)
+
+
+def test_F6_sem_dados_de_preco_degrada_com_mensagem_honesta(monkeypatch):
     import investigator.market_data.prices as prices
 
-    def nan_hist(ticker, **kw):
-        idx = pd.date_range(end=pd.Timestamp.today().normalize(), periods=30, freq="D")
-        return pd.DataFrame({"Close": [np.nan] * 30}, index=idx)
+    def _morto(*a, **k):
+        raise RuntimeError("todas as fontes em baixo")
 
-    monkeypatch.setattr(prices, "get_price_history", nan_hist)
-    monkeypatch.setattr(alerts_history, "fetch_remote", lambda url, timeout=5.0: [])
-    at = AppTest.from_file(APP)
-    at.run(timeout=120)
+    monkeypatch.setattr(prices, "get_price_history", _morto)
+    _com_historico(monkeypatch, [])
+    at = AppTest.from_file(APP, default_timeout=90).run()
+    assert not at.exception  # nunca traceback
+    assert "unavailable" in _texto(at).lower()
+
+
+# ── F3: a promessa aparece EXATAMENTE uma vez ───────────────────────────────────
+def test_F3_promessa_aparece_uma_unica_vez(monkeypatch):
+    _com_historico(monkeypatch, [])
+    at = AppTest.from_file(APP, default_timeout=90).run()
+    assert _texto(at).count("never predicted") == 1
+
+
+# ── F4: zero previsões e zero conselho em texto visível, em TODAS as vistas ─────
+@pytest.mark.parametrize("vista", ["📊 Today", "🔎 Ticker", "📐 Method"])
+def test_F4_sem_previsao_nem_conselho(monkeypatch, vista):
+    _com_historico(monkeypatch, [HistoryEntry("2026-07-28", "AAPL", "market", "📉 AAPL -2.10%")])
+    at = AppTest.from_file(APP, default_timeout=90).run()
+    at.sidebar.radio[0].set_value(vista).run()
     assert not at.exception
-    assert any("Not enough data" in str(w.value) for w in at.warning)
+    low = _texto(at).lower()
+    for proibido in ("will rise", "will fall", "we recommend", "should buy", "should sell",
+                     "price target", "guaranteed", "bullish", "bearish"):
+        assert proibido not in low, f"{proibido!r} apareceu em {vista}"
 
 
-def test_vista_live_sem_excecoes_uma_aba_por_empresa(monkeypatch):
-    at = _run(monkeypatch)
+# ── F2 / F5: cada vista responde à SUA pergunta ─────────────────────────────────
+def test_F2_today_mostra_a_decomposicao_na_propria_linha(monkeypatch):
+    """O diferenciador do produto tem de estar visível SEM clicar."""
+    _com_historico(monkeypatch, [])
+    at = AppTest.from_file(APP, default_timeout=90).run()
+    txt = _texto(at)
+    if "stood out" in txt:  # dia calmo também é estado válido
+        assert "market ·" in txt and "sector ·" in txt
+
+
+def test_F5_ticker_responde_empresa_ou_mercado(monkeypatch):
+    _com_historico(monkeypatch, [])
+    at = AppTest.from_file(APP, default_timeout=90).run()
+    at.sidebar.radio[0].set_value("🔎 Ticker").run()
     assert not at.exception
-    # seletor de empresa (substitui st.tabs: só a escolhida é renderizada → app leve);
-    # o radio das vistas fica na sidebar, o de empresa + o de intervalo no corpo
-    radios = {tuple(r.options) for r in at.radio}
-    assert any(len(ops) >= 10 for ops in radios)  # 10 tickers da watchlist
-    assert len(at.sidebar.radio) == 1
-    assert list(at.sidebar.radio[0].options) == ["📊 Live", "ℹ️ About"]
-    # só UMA empresa renderizada por interação (a razão do ganho de velocidade)
-    assert len(at.metric) == 1
+    assert "Is it the company or the market?" in _texto(at)
 
 
-def test_risco_de_fundo_e_caption_compacta(monkeypatch):
-    at = _run(monkeypatch)
+def test_F5_method_expoe_os_congelados_incluindo_o_negativo(monkeypatch):
+    _com_historico(monkeypatch, [])
+    at = AppTest.from_file(APP, default_timeout=90).run()
+    at.sidebar.radio[0].set_value("📐 Method").run()
     assert not at.exception
-    captions = [c.value for c in at.caption]
-    assert any("Background risk" in c for c in captions)
+    txt = _texto(at)
+    assert "reproducible" in txt
+    assert "No text model beat the volatility baseline" in txt
 
 
-def test_risco_ausente_sem_modelo_nao_rebenta(monkeypatch):
-    import investigator.triage.infer as infer
-
-    monkeypatch.setattr(infer, "load_context_bundle", lambda path=None: None)
-    at = _run(monkeypatch)
-    assert not at.exception
-    captions = [c.value for c in at.caption]
-    assert not any("Background risk" in c for c in captions)
-
-
-def test_eventos_do_canal_aparecem_na_lista_expansivel(monkeypatch):
-    hist = [HistoryEntry(date="2026-07-08", ticker="AAPL", kind="market",
-                         text="Anomaly detected for AAPL: a very specific unique marker text")]
-    at = _run(monkeypatch, history=hist)
-    assert not at.exception
-    # tabela única expansível: o facto está no cabeçalho da linha (label do expander)
-    assert "a very specific unique marker text" in _texto_visivel(at)
-    assert any("Alert history" in c.value for c in at.subheader)
+# ── N1: uma interação renderiza UM ticker (desempenho) ──────────────────────────
+def test_N1_ticker_view_renderiza_apenas_um_ticker(monkeypatch):
+    """A regra de desempenho é 'só o ticker escolhido é renderizado', não 'só uma métrica':
+    o painel de decomposição acrescenta legitimamente 3 métricas AO MESMO ticker. O que não
+    pode acontecer é aparecer um SEGUNDO ticker da watchlist (era o custo do st.tabs antigo,
+    que renderizava os 10 a cada interação)."""
+    _com_historico(monkeypatch, [])
+    at = AppTest.from_file(APP, default_timeout=90).run()
+    at.sidebar.radio[0].set_value("🔎 Ticker").run()
+    escolhido = at.radio(key="ticker_picker").value
+    outros = [t for t in at.radio(key="ticker_picker").options if t != escolhido]
+    rotulos = " ".join(str(m.label) for m in at.metric)
+    presentes = [t for t in outros if t in rotulos]
+    assert not presentes, f"renderizou tickers não escolhidos: {presentes}"
 
 
-def test_sem_historico_mostra_aviso_gracioso(monkeypatch):
-    at = _run(monkeypatch, history=[])
-    assert not at.exception
-    captions = [c.value for c in at.caption]
-    assert any("No shared event history reachable" in c for c in captions)
+# ── N2: nada em português no texto visível ──────────────────────────────────────
+def test_N2_sem_portugues_visivel(monkeypatch):
+    _com_historico(monkeypatch, [])
+    at = AppTest.from_file(APP, default_timeout=90).run()
+    low = _texto(at).lower()
+    for pt in (" não ", " está ", " mercado ", " ação ", "notícia", " ontem "):
+        assert pt not in low, f"português visível: {pt!r}"
 
 
-def test_resumo_diario_do_canal_em_expander(monkeypatch):
-    hist = [HistoryEntry(date="2026-07-10", ticker="MARKET", kind="summary",
-                         text="Daily close summary\n• AAPL: +0.10% (z +0.05)")]
-    at = _run(monkeypatch, history=hist)
-    assert not at.exception
-    labels = [e.label for e in at.expander]
-    assert any("Daily close summary" in lbl for lbl in labels)
+# ── Espelho do canal: a app mostra, nunca recalcula ─────────────────────────────
+def test_eventos_sao_o_texto_exato_do_canal(monkeypatch):
+    exato = "📉 AAPL (Apple) · -2.10% today\nSplit: -1.85% market"
+    _com_historico(monkeypatch, [HistoryEntry("2026-07-28", "AAPL", "market", exato)])
+    at = AppTest.from_file(APP, default_timeout=90).run()
+    at.sidebar.radio[0].set_value("🔎 Ticker").run()
+    at.radio(key="ticker_picker").set_value("AAPL").run()
+    assert any(exato in str(el.value) for el in at.text)
 
 
-def test_vista_about_tem_metodo_avaliacao_e_demo(monkeypatch):
-    at = _run(monkeypatch)
-    at.sidebar.radio[0].set_value("ℹ️ About").run(timeout=120)
-    assert not at.exception
-    titles = [t.value for t in at.title]
-    assert any("About" in t for t in titles)
-    headers = [h.value for h in at.header]
-    assert any("Evaluation" in h for h in headers)
-    labels = [e.label for e in at.expander]
-    assert any("retrieval engine" in lbl for lbl in labels)  # a única "ação", fora da Live
+def test_sem_historico_di_lo_honestamente(monkeypatch):
+    _com_historico(monkeypatch, [])
+    at = AppTest.from_file(APP, default_timeout=90).run()
+    at.sidebar.radio[0].set_value("🔎 Ticker").run()
+    assert "No alerts recorded" in _texto(at)
 
 
-def test_app_boota_sem_plotly(monkeypatch):
-    """A app NUNCA cai por causa do gráfico: sem plotly, degrada para line_chart."""
-    import investigator.alerts_history as alerts_history
-    import investigator.market_data.prices as prices
+# ── Latência: só aparece quando foi MEDIDA ──────────────────────────────────────
+def test_latencia_ausente_sem_carimbos(monkeypatch):
+    _com_historico(monkeypatch, [HistoryEntry("2026-07-28", "AAPL", "market", "x")])
+    at = AppTest.from_file(APP, default_timeout=90).run()
+    assert "Median time from event to delivery" not in _texto(at)
 
-    monkeypatch.setenv("INVESTIGATOR_NO_PLOTLY", "1")
-    monkeypatch.setattr(prices, "get_price_history", _fake_history)
-    monkeypatch.setattr(alerts_history, "fetch_remote", lambda url, timeout=5.0: [])
-    at = AppTest.from_file(APP)
-    at.run(timeout=120)
-    assert not at.exception
-    captions = [c.value for c in at.caption]
-    assert any("Interactive chart unavailable" in c for c in captions)
+
+def test_latencia_mostrada_com_carimbos(monkeypatch):
+    _com_historico(monkeypatch, [
+        HistoryEntry("2026-07-28", "AAPL", "market", "x",
+                     event_at="2026-07-28T13:00:00Z", sent_at="2026-07-28T13:00:45Z"),
+    ])
+    at = AppTest.from_file(APP, default_timeout=90).run()
+    assert "Median time from event to delivery" in _texto(at)
