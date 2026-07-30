@@ -32,6 +32,12 @@ EXCLUDE_PREFIXES = (
     "docs/_archive/",     # análises antigas de fase inicial
     "docs/defence/",      # caderno de defesa + guia rápido (estudo privado)
     "slides/",            # slides de defesa + guia de estudo (preparação privada)
+    # Materiais do estudo de utilidade: os estímulos vêm de um canal público, mas o guião do
+    # facilitador contém o CRITÉRIO DE CORREÇÃO. Publicá-los ANTES de correr o estudo deixaria
+    # um participante encontrar as respostas, o que enviesaria a única medição humana da tese.
+    # Depois de o estudo estar corrido, isto deve ser publicado com os resultados (é o que
+    # torna o piloto reproduzível) — remover esta linha nessa altura.
+    "docs/study/",
 )
 EXCLUDE_FILES = {
     "CLAUDE.md",          # memória de continuidade (processo interno)
