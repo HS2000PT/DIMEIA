@@ -95,9 +95,17 @@ RUBRIC: tuple[tuple[str, str], ...] = (
     ),
     (
         "ma",
-        r"\b(acquires?|acquisition|to buy|merger|merges? with|takeover|buyout|"
-        r"stake in|majority stake|spin[- ]?off|divests?|divestiture|"
-        r"agrees? to (buy|acquire|sell)|deal to (buy|acquire))\b",
+        # NOTA: um "to buy" nu esteve aqui e foi retirado. Apanhava 5.032 de 5.657 matches
+        # (89%), quase todos ruído automático do fluxo: "PreMarket Opening NYSE Imbalance
+        # Update: Bank Of America 157k Shares To Buy" e listas do género "5 Blue-Chip Stocks
+        # to Buy in January". A intenção genuína de aquisição já está coberta pelas formas
+        # com verbo de acordo. Encontrado a inspecionar os matches DA PRÓPRIA RUBRICA, antes
+        # de qualquer agrupamento ter corrido.
+        r"\b(acquires?|acquisition|to acquire|merger|merges? with|takeover|buyout|"
+        r"buys? (a )?(majority |minority )?stake|(majority|minority) stake in|"
+        r"spin[- ]?off|divests?|divestiture|"
+        r"agrees? to (buy|acquire|sell)|deal to (buy|acquire)|"
+        r"(to|will) buy [A-Z])\b",
     ),
     (
         "personnel",

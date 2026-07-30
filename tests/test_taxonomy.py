@@ -48,6 +48,34 @@ def test_rubrica_cala_se_quando_ambigua() -> None:
     assert rubric_label(ambigua) is None
 
 
+@pytest.mark.parametrize(
+    "ruido",
+    [
+        "PreMarket Opening NYSE Imbalance Update: Bank Of America 157k Shares To Buy",
+        "PreMarket Opening General Electric 148k Shares To Sell; Bank Of America 113k To Buy",
+        "5 Blue-Chip Stocks to Buy in January",
+        "7 Cheap Stocks To Buy Right Now",
+    ],
+)
+def test_rubrica_nao_confunde_ordens_e_listas_com_aquisicoes(ruido: str) -> None:
+    """Regressão: um ``to buy`` nu apanhava 89% do balde ``ma`` com lixo.
+
+    O corpus está cheio de desequilíbrios de ordens ("157k Shares To Buy") e de listas de
+    sugestões ("5 Stocks to Buy"). Nenhuma delas é uma aquisição. Com o padrão antigo, ``ma``
+    era o maior balde da referência e 5.032 dos seus 5.657 matches eram ruído — o que teria
+    corrompido em silêncio todos os números de pureza a jusante.
+    """
+    assert rubric_label(ruido) != "ma"
+
+
+def test_rubrica_continua_a_apanhar_aquisicoes_genuinas() -> None:
+    """O outro lado da mesma correção: apertar não pode cegar."""
+    assert rubric_label("Salesforce Agrees To Buy Slack In $27B Deal") == "ma"
+    assert rubric_label("Shell Buys Stake in Silicon Ranch") == "ma"
+    assert rubric_label("ExxonMobil to Divest Terra Nova Project") == "ma"
+    assert rubric_label("Biogen to Acquire a Phase 2b Ready Asset from Pfizer") == "ma"
+
+
 def test_rubrica_cala_se_quando_nao_reconhece() -> None:
     assert rubric_label("Benzinga's Bulls And Bears Of The Week") is None
     assert rubric_label("") is None
