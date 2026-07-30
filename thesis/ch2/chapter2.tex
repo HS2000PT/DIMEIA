@@ -163,9 +163,11 @@ shown as evidence), with feature attribution as an optional extra.
 Good explanations are also a human matter. People want \emph{contrastive}, selective reasons, not an
 exhaustive dump \autocite{miller2019explanation}, which is why each alert shows a few relevant precedents
 and the exact quantities behind the decision. Explanations must also be evaluated, not assumed:
-\textcite{doshivelez2017rigorous} make \emph{fidelity}, how well an explanation reflects the real
-computation, a core criterion, and fidelity is the property InvestiGator can guarantee
-(Chapter~\ref{chap:casestudies}). Table~\ref{tab:sota_xai} summarises the options.
+\textcite{doshivelez2017rigorous} argue that interpretability claims need rigorous evaluation rather
+than assertion, and set out how such evaluation can be structured. The criterion this work adopts is
+\emph{fidelity}, how well an explanation reflects the real computation, because it is the property
+InvestiGator can guarantee (Chapter~\ref{chap:casestudies}). Table~\ref{tab:sota_xai} summarises the
+options.
 
 \begin{table}[ht]
 \caption{Explainability approaches considered.}
@@ -209,8 +211,10 @@ system shows checkable evidence rather than a persuasive story.
 
 \emph{How should the system represent the meaning of a headline?}
 
-To compare headlines, text must become numbers. The financial-NLP literature moves through three
-generations \autocite{kearney2014textual}: lexicons, word embeddings, and contextual neural models.
+To compare headlines, text must become numbers. The financial-NLP literature falls into three
+generations: lexicons, word embeddings, and contextual neural models. Surveys of textual analysis in
+finance up to the mid-2010s \autocite{kearney2014textual} cover the first two; the third arrived
+afterwards, and is where this work takes its representation.
 
 Lexicons came first. Finance-specific word lists fix the fact that general sentiment dictionaries misread
 ordinary financial words such as ``liability'' or ``tax'' \autocite{loughran2011liability}; they are fully

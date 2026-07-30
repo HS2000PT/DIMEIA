@@ -167,9 +167,11 @@ exposta, precedentes reais mostrados como evidência), com atribuição de featu
 Boas explicações são também uma questão humana. As pessoas querem razões \emph{contrastivas} e seletivas,
 não um despejo exaustivo \autocite{miller2019explanation}, razão pela qual cada alerta mostra alguns
 precedentes relevantes e as quantidades exatas por detrás da decisão. As explicações têm também de ser
-avaliadas, não assumidas: \textcite{doshivelez2017rigorous} fazem da \emph{fidelidade}, o quão bem uma
-explicação reflete o cálculo real, um critério central, e a fidelidade é a propriedade que o InvestiGator
-consegue garantir (Capítulo~\ref{chap:casestudies}). A Tabela~\ref{tab:sota_xai} resume as opções.
+avaliadas, não assumidas: \textcite{doshivelez2017rigorous} defendem que as afirmações de
+interpretabilidade precisam de avaliação rigorosa em vez de asserção, e mostram como essa avaliação pode
+ser estruturada. O critério que este trabalho adota é a \emph{fidelidade}, o quão bem uma explicação
+reflete o cálculo real, porque é a propriedade que o InvestiGator consegue garantir
+(Capítulo~\ref{chap:casestudies}). A Tabela~\ref{tab:sota_xai} resume as opções.
 
 \begin{table}[ht]
 \caption{Abordagens de explicabilidade consideradas.}
@@ -214,8 +216,10 @@ apropriada, pelo que o sistema mostra evidência verificável em vez de uma hist
 
 \emph{Como deve o sistema representar o significado de uma manchete?}
 
-Para comparar manchetes, o texto tem de se tornar números. A literatura de PLN financeiro atravessa três
-gerações \autocite{kearney2014textual}: léxicos, embeddings de palavras e modelos neuronais contextuais.
+Para comparar manchetes, o texto tem de se tornar números. A literatura de PLN financeiro divide-se em
+três gerações: léxicos, embeddings de palavras e modelos neuronais contextuais. As revisões de análise
+textual em finanças até meados da década de 2010 \autocite{kearney2014textual} cobrem as duas primeiras;
+a terceira surgiu depois, e é dela que este trabalho retira a sua representação.
 
 Os léxicos vieram primeiro. Listas de palavras específicas de finanças corrigem o facto de os dicionários
 de sentimento gerais lerem mal palavras financeiras comuns como ``liability'' ou ``tax''
