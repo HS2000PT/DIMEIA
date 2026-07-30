@@ -1,4 +1,4 @@
-<img src="app/assets/logo.svg" width="120" align="right" alt="InvestiGator — an alligator's watchful eye over a rising market line">
+<img src="app/assets/logo.svg" width="120" align="right" alt="InvestiGator — a rising market line drawn as an alligator's ridged tail">
 
 # InvestiGator — Explainable Financial Alerts for Retail Investors
 

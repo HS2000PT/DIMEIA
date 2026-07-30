@@ -24,8 +24,9 @@ problemas, e o primeiro é objetivo:
 3. **Contra-mensagem.** Um olho de pupila em fenda lê-se como predador. Todo o produto se
    define por mostrar evidência e nunca prever; a marca dizia o contrário.
 
-A escolha foi feita com as três variantes lado a lado às escalas reais, incluindo a marca
-antiga como controlo — a comparação está em `docs/design/brand_candidates.md`.
+A escolha foi feita com as três variantes lado a lado às escalas reais (88 / 44 / 24 / 16 px,
+sobre branco e sobre preto), incluindo a marca antiga como **controlo**. Foi o teste dos 16 px
+que decidiu: é o único tamanho em que as três variantes se separam com clareza.
 
 ## Ficheiros
 
@@ -70,7 +71,9 @@ verificável contra a saída do produto.
 - **App** (`app/streamlit_app.py`): `st.logo` + tema em `.streamlit/config.toml`.
 - **Tese**: Figura 4.5 é uma captura real da app, por isso apanha a marca sozinha ao ser
   recapturada por `scripts/screenshot_app.py`.
-- **Slides**: leem o mesmo ficheiro de asset.
+- **Slides**: apanham a marca **indiretamente**, através da captura da app (`app_dashboard.png`,
+  via `\graphicspath{{../thesis/figures/}}`). Não carregam nenhum ficheiro de marca diretamente,
+  por isso recapturar a app é o que atualiza os slides.
 - **Canal Telegram**: avatar, definido à mão pelo aluno (é um clique, não engenharia).
 
 ## Teste de aceitação da marca
