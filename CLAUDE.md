@@ -967,11 +967,20 @@
   - `investigator/explanation_engine/explainer.py::explain_news_impact` — alerta XAI com precedentes + impacto médio + nota anti-previsão.
   - `investigator/main.py::run_news_trigger` — orquestra notícia → embedding → `KB.find_precedents` → explicação → (opcional) Telegram. Default: KB-amostra + `HashingEmbedder`.
 - **Avaliação (Pergunta A):**
+  > ⚠️ **NÚMEROS DESTA SECÇÃO ESTÃO SUPERADOS — riscados a 2026-07-29.** São de uma corrida
+  > ANTIGA, anterior ao protocolo final. Os valores **congelados e citados na tese** são
+  > P@5 **0,514** (MiniLM) · **0,538** (MPNet) · **0,346** (lexical) · **0,240** (aleatório) ·
+  > **0,126** (recência), e à escala **0,595** no FNSPID; anomalia amplitude **0,015 vs 0,344**,
+  > F1 **0,516**. **Fonte de verdade: `docs/evaluation/*.md`** (regenerados por script), não
+  > este ficheiro. Mantidos aqui só como registo histórico da evolução.
   - `investigator/evaluation/retrieval_eval.py` — `retrieval_precision_at_k`, `expected_random_precision`, `recency_precision_at_k`, `same_ticker_forbid` (puro NumPy, testado: precision@k por setor cross-ticker + baselines).
-  - `scripts/fetch_finnhub_news.py` (notícias reais → CSV) + `scripts/evaluate.py` (multi-seed + ablação de modelo via `--sbert-models` → `docs/evaluation/evaluation_results.md` + figura). P@5 (média 5 seeds): SBERT-MiniLM 0,549±0,014, SBERT-MPNet 0,569±0,009, lexical 0,359, aleatório 0,241, recência 0,105.
+  - `scripts/fetch_finnhub_news.py` (notícias reais → CSV) + `scripts/evaluate.py` (multi-seed + ablação de modelo via `--sbert-models` → `docs/evaluation/evaluation_results.md` + figura). ~~P@5 (média 5 seeds): SBERT-MiniLM 0,549±0,014, SBERT-MPNet 0,569±0,009, lexical 0,359, aleatório 0,241, recência 0,105.~~ (superado — ver aviso acima)
   - `investigator/evaluation/anomaly_eval.py` (Pergunta 1: `rolling_zscore_flags`, `fixed_threshold_flags`, `label_extreme_moves`, `precision_recall_f1`, `firing_rate`; puro, testado) + `scripts/evaluate_anomaly.py` (yfinance → `docs/evaluation/evaluation_anomaly.md` + figura). Taxa de disparo: z-score amplitude 0,017 vs fixo 0,343.
 - **Scripts de dados:** `scripts/download_data.py` (FNSPID em **streaming** + filtro por ticker/janela → `data/` gitignored + amostra de títulos); `scripts/build_kb.py` (notícias CSV + preços yfinance → KB JSONL; `--sbert` para SBERT real). `data/samples/news_sample.csv` (sintético) + `data/samples/kb_sample.jsonl` (gerado) + `data/samples/README.md`.
-- **Testes (22 + 2 gated, verde):** `test_anomaly_detector.py` (4) + `test_event_study.py` (4) + `test_similarity.py` (7) + `test_knowledge_base.py` (5) + `test_smoke.py` (pipeline + Telegram `@telegram` gated) + `test_sbert_embedder.py` (SBERT real, `@sbert` gated).
+- ~~**Testes (22 + 2 gated, verde)**~~ — **contagem superada (2026-07-29: 376).** Nunca fixar
+  contagens de teste neste ficheiro: correr `pytest` é a única fonte fiável. Os módulos
+  originais eram `test_anomaly_detector` (4) + `test_event_study` (4) + `test_similarity` (7)
+  + `test_knowledge_base` (5) + `test_smoke` + `test_sbert_embedder` (gated).
 - **Smoke/gated:** Telegram (`pytest -m telegram`, envio real confirmado) e SBERT (`pytest -m sbert`, validação semântica) — ambos excluídos do verify por defeito (`-m "not telegram and not sbert"`).
 - **Stack ML instalada e fixada:** torch 2.12.1+cpu (índice CPU), sentence-transformers 5.6.0, transformers 5.12.1, huggingface-hub 1.20.1, scikit-learn 1.9.0; `requirements.txt` atualizado + `requirements.lock.txt` (72 pkgs). numpy/pandas inalterados (2.1.3/2.2.3).
 - **Pipeline KB validado:** `build_kb.py` (HashingEmbedder) → `kb_sample.jsonl` com impactos coerentes (ex.: TSLA −9,75%, MSFT +7,2%); `SbertEmbedder` validado por teste semântico. **Fonte FNSPID verificada** (HTTP 200, ~23,2 GB).

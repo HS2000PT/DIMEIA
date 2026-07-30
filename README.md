@@ -53,12 +53,14 @@ Full operator guide (Telegram, live news, building your own KB): **`docs/design/
 §0.0).
 
 ## 🔎 Or click through it — the live dashboard
-**Live at <https://investigator.streamlit.app>** — a Google-Finance-style board: one tab per
-company, one big ranged chart (1D/5D/1M/6M) with every detected event **marked on the curve**
-(hover for the full alert — exactly what the Telegram channel received, never recomputed), the
-same events tabled below, and the author-trained model's background risk. Read-only by design;
-method/evaluation/citation live on a separate About view. To run it locally (no keys,
-nothing sent):
+**Live at <https://investigator.streamlit.app>** — three screens, one per question the system
+answers. **Today** ranks your watchlist by how far each name sits from its own recent norm, with
+the market/sector/company split **on the row itself**, so you see whether a fall was the market or
+the company without clicking. **Ticker** holds the per-company detail: the price chart, the full
+decomposition, and the alerts exactly as the Telegram channel received them (never recomputed).
+**Method** carries the frozen evaluation numbers, including the negative result. Read-only by
+design, and built against acceptance criteria written before the code
+(`docs/design/app_acceptance.md`). To run it locally (no keys, nothing sent):
 
 ```bash
 pip install -r requirements.txt -r requirements-app.txt
