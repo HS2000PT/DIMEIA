@@ -78,3 +78,13 @@
 {"date": "2026-07-29", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.24 < 0.50"}
 {"date": "2026-07-29", "ticker": "AMD", "stage": "alerted", "detail": "AMD's Core Scientific deal is bigger than the headline number"}
 {"date": "2026-07-29", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
+{"date": "2026-07-30", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.43 < 0.50"}
+{"date": "2026-07-30", "ticker": "MSFT", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
+{"date": "2026-07-30", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-07-30", "ticker": "TSLA", "stage": "alerted", "detail": "Gary Black Pegs TSLA's Fair Value at $312, Says 'Don't Fall in Love With the Sto"}
+{"date": "2026-07-30", "ticker": "AMZN", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
+{"date": "2026-07-30", "ticker": "GOOGL", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-07-30", "ticker": "META", "stage": "alerted", "detail": "Meta net income falls 14% to $15.8bn as costs rise in Q2 2026"}
+{"date": "2026-07-30", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.24 < 0.50"}
+{"date": "2026-07-30", "ticker": "AMD", "stage": "alerted", "detail": "AMD: The Pullback Creates A Better Entry Ahead Of Q2"}
+{"date": "2026-07-30", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
