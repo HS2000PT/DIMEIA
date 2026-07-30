@@ -173,32 +173,32 @@ objects and their relationships.
   store/.style={draw, rounded corners, align=center, fill=black!8, text width=2.6cm, inner sep=3pt},
   lbl/.style={midway, font=\tiny, fill=white, inner sep=1pt},
 ]
-  \node[ent]   (ni)  at (0,0)      {\textbf{NewsItem} (live)\\[1pt] date $\cdot$ ticker $\cdot$ headline};
-  \node[ent]   (nr)  at (4.7,0)    {\textbf{NewsRecord} (a \emph{case})\\[1pt] date $\cdot$ ticker $\cdot$ headline\\ $+$ embedding\\ $+$ impact $+1/+3/+5$d};
+  \node[ent]   (ni)  at (0,0)      {\textbf{Live news item}\\[1pt] date $\cdot$ ticker $\cdot$ headline};
+  \node[ent]   (nr)  at (4.7,0)    {\textbf{Historical case}\\[1pt] date $\cdot$ ticker $\cdot$ headline\\ $+$ embedding\\ $+$ impact $+1/+3/+5$d};
   \node[store] (kb)  at (9.3,0)    {\textbf{Knowledge base}\\[1pt] many cases};
   \node[ent]   (emb) at (4.7,-2.6) {\textbf{Embedder}\\[1pt] headline $\to$ vector};
   \node[store] (res) at (9.3,-2.6) {\textbf{Retrieve}\\[1pt] top-$k$ cases $+$ similarity};
-  \node[ent]   (ar)  at (0,-2.6)   {\textbf{AnomalyResult}\\[1pt] (market trigger)\\ $z \cdot \mu \cdot \sigma \cdot$ window $\cdot k$};
+  \node[ent]   (ar)  at (0,-2.6)   {\textbf{Detection result}\\[1pt] (market trigger)\\ $z \cdot \mu \cdot \sigma \cdot$ window $\cdot k$};
   \draw[->] (ni)  -- node[lbl]{normalise, align} (nr);
   \draw[->] (emb) -- node[lbl]{embedding} (nr);
   \draw[->] (nr)  -- node[lbl]{stored as $1{..}*$} (kb);
   \draw[->] (kb)  -- node[lbl]{cosine top-$k$} (res);
 \end{tikzpicture}
-\caption[InvestiGator's data model]{The objects InvestiGator works with. A live \textbf{NewsItem} and a historical
-\textbf{NewsRecord} share the same schema (date, ticker, headline); a NewsRecord is a \emph{case}, adding
-the headline's embedding and its measured post-event impact. The \textbf{Embedder} produces those vectors;
-the \textbf{Knowledge base} holds many cases; a query headline retrieves the top-$k$ most similar cases with
-their similarity scores. The market trigger produces a separate \textbf{AnomalyResult}.}
+\caption[InvestiGator's data model]{The objects InvestiGator works with. A \textbf{live news item} and a
+\textbf{historical case} share the same schema (date, ticker, headline); the case adds the headline's
+embedding and its measured post-event impact. The \textbf{embedder} produces those vectors; the
+\textbf{knowledge base} holds many cases; a query headline retrieves the top-$k$ most similar cases with
+their similarity scores. The market trigger produces a separate \textbf{detection result}.}
 \label{fig:datamodel}
 \end{figure}
 
-Two points make the model easy to hold in mind. First, the \emph{shared schema}: a live \textbf{NewsItem}
-and a historical \textbf{NewsRecord} carry the same date, ticker and headline, so a fresh headline can be
-compared directly against the stored cases. A NewsRecord is simply a NewsItem that has been enriched with
-its headline \emph{embedding} and its measured \emph{impact} at $+1$, $+3$ and $+5$ trading days. Second,
-the \emph{knowledge base} is just a collection of cases; asking it for precedents returns the top-$k$ most
+Two points make the model easy to hold in mind. First, the \emph{shared schema}: a live news item and a
+historical case carry the same date, ticker and headline, so a fresh headline can be compared directly
+against the stored cases. A case is simply a news item that has been enriched with its headline
+\emph{embedding} and its measured \emph{impact} at $+1$, $+3$ and $+5$ trading days. Second, the
+\emph{knowledge base} is just a collection of cases; asking it for precedents returns the top-$k$ most
 similar cases with their similarity scores. The market side is simpler still: the detector emits one
-\textbf{AnomalyResult} holding the move and every quantity behind it ($z$, $\mu$, $\sigma$, window,
+\emph{detection result} holding the move and every quantity behind it ($z$, $\mu$, $\sigma$, window,
 threshold). These few objects are all the explanation engine ever needs.
 
 \section{Components and Responsibilities}
@@ -219,10 +219,10 @@ Table~\ref{tab:investigator_components} lists them with their one job and the da
 \tabhead{Component} & \tabhead{Responsibility} & \tabhead{Input $\to$ output} \\
 \midrule
 Market data & Fetch prices, compute log-returns & ticker $\to$ daily returns \\
-News feed & Fetch and normalise live news & ticker $\to$ NewsItem(s) \\
+News feed & Fetch and normalise live news & ticker $\to$ news items \\
 Embedder & Turn a headline into a vector & headline $\to$ embedding \\
 Knowledge base & Hold past cases; retrieve the nearest & headline $\to$ top-$k$ cases \\
-Anomaly detector & Flag volatility-relative moves & returns $\to$ AnomalyResult \\
+Anomaly detector & Flag volatility-relative moves & returns $\to$ detection result \\
 Correlation engine & Cosine similarity $+$ event-study impact & headline, KB $\to$ precedents $+$ impact \\
 Triage model & Learned severity: calibrated $P(\text{abnormal move follows})$ & headline $+$ context $\to$ probability $+$ contributions \\
 Explanation engine & Render a faithful alert from the objects & objects $\to$ alert text \\
@@ -488,7 +488,7 @@ One deployment problem deserves its own account, because it is where the free-ti
 hardest and where the solution is a genuine engineering result rather than a workaround.
 
 The retrieval component evaluated in Chapter~\ref{chap:casestudies} is a sentence transformer, and the
-usual way to run one is the \texttt{sentence-transformers} library on top of PyTorch. That stack is
+usual way to run one is its reference implementation on top of a deep-learning framework. That stack is
 several hundred megabytes and assumes an environment that free hosting does not reliably provide. The
 naive resolutions are both bad: keep the heavy stack and accept that the public deployment cannot run,
 or substitute a lighter but different model in production and quietly evaluate one thing while shipping

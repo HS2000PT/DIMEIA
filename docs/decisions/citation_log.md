@@ -106,6 +106,19 @@
 |---|---|---|
 | MacKinlay (1997), "Event Studies in Economics and Finance", JEL 35(1) | Sem DOI resolúvel (JSTOR 2729691 → 404 no Crossref; ausente no OpenAlex search). Substituída por `brown1985daily`. | 2026-06-21 |
 
-> Nota: ainda **não** existe `references.bib` (criado na Fase D). Estas entradas verificadas são a base inicial;
-> cada uma será transcrita para BibTeX e citada apenas onde fizer sentido. Mais referências (contextualização
-> 2025–2026, revisão de literatura) serão verificadas e adicionadas nas fases de escrita.
+## Estado (auditado a 2026-07-30)
+
+**52 entradas no `.bib` = 52 no log = 52 chaves citadas.** Correspondência exata nos três sentidos:
+0 órfãs, 0 citações indefinidas, 0 entradas sem identificador resolúvel. Auditoria independente
+confirmou 9 das entradas de maior risco contra o Crossref e os editores, incluindo o relatório CCAF
+de 2026 (que tem o perfil típico de uma citação fabricada — ano corrente, só URL — e é genuíno).
+
+**Nota sobre os DOIs da JSTOR** (pergunta provável na defesa): o MacKinlay (1997) foi rejeitado
+porque o seu DOI **não resolve**, ao passo que quatro DOIs `10.2307/*` aceites resolvem
+(`fama1969adjustment`, `kahneman1979prospect`, `fama1970efficient`, `engle1982arch`). O critério é
+"o identificador resolve", não "o prefixo é da JSTOR" — aplicado de forma consistente.
+
+**`devlin2019bert`** ganhou DOI (`10.18653/v1/N19-1423`) e páginas (4171–4186) a 2026-07-30,
+verificados via API do Crossref por correspondência de autores, páginas, ano e editora. O campo
+`title` vem vazio no registo do Crossref (particularidade conhecida dos metadados da ACL Anthology),
+por isso a correspondência foi feita pelos restantes campos.

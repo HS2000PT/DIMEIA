@@ -158,7 +158,7 @@ Every value shown is genuine, taken from the dataset for Nvidia on 10~May~2018.
     FNSPID / news row:\\
     {\ttfamily\tiny{}2018-05-10}\\ {\ttfamily\tiny{}NVDA}\\
     {\ttfamily\tiny{}"Nvidia Blows Out Q1}\\ {\ttfamily\tiny{}Estimates, Raises Q2..."}\\[3pt]
-    $+$ daily close prices\\ (yfinance)};
+    $+$ daily close prices\\ (free market-data service)};
   \node[clean] (s2) at (3.55,0) {%
     \textcolor{teal!65}{\textbf{2\, \textbullet\, CLEAN \& ALIGN}}\\
     \emph{no lookahead}\\[3pt]
@@ -171,7 +171,7 @@ Every value shown is genuine, taken from the dataset for Nvidia on 10~May~2018.
     \emph{the model's view}\\[3pt]
     text $\to$ SBERT \textbf{384-d}, norm 1:\\
     {\ttfamily\tiny{}[-.005, .004, .049, ...]}\\[3pt]
-    context: vol20 .021,\\ mom5 $+$.122, ret $+$.017\\[3pt]
+    context: volatility .021,\\ momentum $+$.122, return $+$.017\\[3pt]
     label: $|$abn.\ vs SPY, $+$3d$|$\\ $\ge 2\%\ \to\ $\textbf{1} (material)};
   \node[learn] (s4) at (10.65,0) {%
     \textcolor{green!55!black}{\textbf{4\, \textbullet\, LEARN \& MEASURE}}\\
@@ -597,16 +597,16 @@ by precision@$k$. Every feature is computable at the close of day $d$, before th
 \small
 \begin{tabular}{l p{6.4cm} l}
 \toprule
-\tabhead{Column} & \tabhead{What it is} & \tabhead{Example value} \\
+\tabhead{Feature} & \tabhead{What it is} & \tabhead{Example value} \\
 \midrule
-\texttt{vol20} & pre-event volatility: sd of the 20 daily log-returns ending at $d{-}1$ & $0.021$ \\
-\texttt{mom5} & five-day momentum to $d{-}1$ (cumulative log-return) & $+0.122$ \\
-\texttt{ret\_event} & event-day log-return, known at the close of $d$ & $+0.017$ \\
-\texttt{headline\_len} & number of characters in the headline & $55$ \\
-\texttt{sector} & one-hot sector indicator & tech \\
-\texttt{embedding} & $384$-d Sentence-BERT vector of the headline & $[-0.005, 0.004, \dots]$ \\
+Pre-event volatility & standard deviation of the 20 daily log-returns ending at $d{-}1$ & $0.021$ \\
+Five-day momentum & cumulative log-return to $d{-}1$ & $+0.122$ \\
+Event-day return & log-return of day $d$, known at its close & $+0.017$ \\
+Headline length & number of characters in the headline & $55$ \\
+Sector & one-hot sector indicator & tech \\
+Headline embedding & $384$-dimensional Sentence-BERT vector & $[-0.005, 0.004, \dots]$ \\
 \midrule
-\texttt{label} \emph{(target)} & $|$abnormal return vs SPY over $(d,d{+}3]| \ge 2\%$ & $1$ (material) \\
+Materiality \emph{(target)} & $|$abnormal return vs SPY over $(d,d{+}3]| \ge 2\%$ & $1$ (material) \\
 \bottomrule
 \end{tabular}
 \end{table}

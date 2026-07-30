@@ -1,5 +1,11 @@
 # PRODUCT_ROADMAP.md — melhorar produto, resultados e materiais (Sessão 40+)
 
+> ⚠️ **SUPERADO (2026-07-30). Registo histórico — não é o plano ativo.**
+> O plano vivo é [`PLANO_V2.md`](PLANO_V2.md). Cadeia de sucessão:
+> `MASTER_PLAN` → `PRODUCT_ROADMAP` → `PLANO_MELHORIAS` → **`PLANO_V2`**.
+> ⚠️ As caixas por marcar aqui incluem itens entretanto **CORTADOS por decisão** (chatbot-mascote,
+> carteira do utilizador, multi-bolsa). Ver `PLANO_V2.md` §6 para os cortes e as razões.
+
 > Origem: mensagem grande do aluno (2026-07-22), desiludido com os resultados e o produto. Pediu
 > melhorias reais, pensamento crítico e sugestões, por área. Este ficheiro captura TUDO + a minha
 > leitura crítica + prioridades + o que precisa de decisão. **Nada aqui contradiz as restrições

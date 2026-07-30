@@ -161,7 +161,7 @@ mostrado é genuíno, retirado do conjunto de dados para a Nvidia a 10~de~maio~d
     linha FNSPID / notícia:\\
     {\ttfamily\tiny{}2018-05-10}\\ {\ttfamily\tiny{}NVDA}\\
     {\ttfamily\tiny{}"Nvidia Blows Out Q1}\\ {\ttfamily\tiny{}Estimates, Raises Q2..."}\\[3pt]
-    $+$ preços de fecho diários\\ (yfinance)};
+    $+$ preços de fecho diários\\ (serviço gratuito de mercado)};
   \node[clean] (s2) at (3.55,0) {%
     \textcolor{teal!65}{\textbf{2\, \textbullet\, LIMPAR \& ALINHAR}}\\
     \emph{sem lookahead}\\[3pt]
@@ -174,7 +174,7 @@ mostrado é genuíno, retirado do conjunto de dados para a Nvidia a 10~de~maio~d
     \emph{a vista do modelo}\\[3pt]
     texto $\to$ SBERT \textbf{384-d}, norm 1:\\
     {\ttfamily\tiny{}[-.005, .004, .049, ...]}\\[3pt]
-    contexto: vol20 .021,\\ mom5 $+$.122, ret $+$.017\\[3pt]
+    contexto: volatilidade .021,\\ momentum $+$.122, retorno $+$.017\\[3pt]
     rótulo: $|$abn.\ vs SPY, $+$3d$|$\\ $\ge 2\%\ \to\ $\textbf{1} (material)};
   \node[learn] (s4) at (10.65,0) {%
     \textcolor{green!55!black}{\textbf{4\, \textbullet\, APRENDER \& MEDIR}}\\
@@ -606,16 +606,16 @@ do rótulo abrir.}
 \small
 \begin{tabular}{l p{6.4cm} l}
 \toprule
-\tabhead{Coluna} & \tabhead{O que é} & \tabhead{Valor de exemplo} \\
+\tabhead{Atributo} & \tabhead{O que é} & \tabhead{Valor de exemplo} \\
 \midrule
-\texttt{vol20} & volatilidade pré-evento: dp dos 20 log-retornos diários que terminam em $d{-}1$ & $0.021$ \\
-\texttt{mom5} & momentum de cinco dias até $d{-}1$ (log-retorno cumulativo) & $+0.122$ \\
-\texttt{ret\_event} & log-retorno do dia do evento, conhecido no fecho de $d$ & $+0.017$ \\
-\texttt{headline\_len} & número de caracteres na manchete & $55$ \\
-\texttt{sector} & indicador de setor one-hot & tech \\
-\texttt{embedding} & vetor Sentence-BERT de $384$-d da manchete & $[-0.005, 0.004, \dots]$ \\
+Volatilidade pré-evento & desvio-padrão dos 20 log-retornos diários que terminam em $d{-}1$ & $0.021$ \\
+Momentum de cinco dias & log-retorno cumulativo até $d{-}1$ & $+0.122$ \\
+Retorno do dia do evento & log-retorno de $d$, conhecido no seu fecho & $+0.017$ \\
+Comprimento da manchete & número de caracteres na manchete & $55$ \\
+Setor & indicador de setor one-hot & tech \\
+Embedding da manchete & vetor Sentence-BERT de $384$ dimensões & $[-0.005, 0.004, \dots]$ \\
 \midrule
-\texttt{label} \emph{(alvo)} & $|$retorno anormal vs SPY sobre $(d,d{+}3]| \ge 2\%$ & $1$ (material) \\
+Materialidade \emph{(alvo)} & $|$retorno anormal vs SPY sobre $(d,d{+}3]| \ge 2\%$ & $1$ (material) \\
 \bottomrule
 \end{tabular}
 \end{table}

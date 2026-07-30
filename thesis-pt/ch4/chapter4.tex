@@ -176,33 +176,33 @@ objetos e as suas relações.
   store/.style={draw, rounded corners, align=center, fill=black!8, text width=2.6cm, inner sep=3pt},
   lbl/.style={midway, font=\tiny, fill=white, inner sep=1pt},
 ]
-  \node[ent]   (ni)  at (0,0)      {\textbf{NewsItem} (ao vivo)\\[1pt] data $\cdot$ ticker $\cdot$ manchete};
-  \node[ent]   (nr)  at (4.7,0)    {\textbf{NewsRecord} (um \emph{caso})\\[1pt] data $\cdot$ ticker $\cdot$ manchete\\ $+$ embedding\\ $+$ impacto $+1/+3/+5$d};
+  \node[ent]   (ni)  at (0,0)      {\textbf{Notícia ao vivo}\\[1pt] data $\cdot$ ticker $\cdot$ manchete};
+  \node[ent]   (nr)  at (4.7,0)    {\textbf{Caso histórico}\\[1pt] data $\cdot$ ticker $\cdot$ manchete\\ $+$ embedding\\ $+$ impacto $+1/+3/+5$d};
   \node[store] (kb)  at (9.3,0)    {\textbf{Base de conhecimento}\\[1pt] muitos casos};
   \node[ent]   (emb) at (4.7,-2.6) {\textbf{Embedder}\\[1pt] manchete $\to$ vetor};
   \node[store] (res) at (9.3,-2.6) {\textbf{Recuperar}\\[1pt] top-$k$ casos $+$ similaridade};
-  \node[ent]   (ar)  at (0,-2.6)   {\textbf{AnomalyResult}\\[1pt] (gatilho de mercado)\\ $z \cdot \mu \cdot \sigma \cdot$ janela $\cdot k$};
+  \node[ent]   (ar)  at (0,-2.6)   {\textbf{Resultado de deteção}\\[1pt] (gatilho de mercado)\\ $z \cdot \mu \cdot \sigma \cdot$ janela $\cdot k$};
   \draw[->] (ni)  -- node[lbl]{normalizar, alinhar} (nr);
   \draw[->] (emb) -- node[lbl]{embedding} (nr);
   \draw[->] (nr)  -- node[lbl]{guardado como $1{..}*$} (kb);
   \draw[->] (kb)  -- node[lbl]{cosseno top-$k$} (res);
 \end{tikzpicture}
-\caption[O modelo de dados do InvestiGator]{Os objetos com que o InvestiGator trabalha. Um \textbf{NewsItem} ao
-vivo e um \textbf{NewsRecord} histórico partilham o mesmo esquema (data, ticker, manchete); um NewsRecord é
-um \emph{caso}, acrescentando o embedding da manchete e o seu impacto medido pós-evento. O \textbf{Embedder}
-produz esses vetores; a \textbf{Base de conhecimento} guarda muitos casos; uma manchete de consulta recupera
+\caption[O modelo de dados do InvestiGator]{Os objetos com que o InvestiGator trabalha. Uma
+\textbf{notícia ao vivo} e um \textbf{caso histórico} partilham o mesmo esquema (data, ticker, manchete);
+o caso acrescenta o embedding da manchete e o seu impacto medido pós-evento. O \textbf{embedder}
+produz esses vetores; a \textbf{base de conhecimento} guarda muitos casos; uma manchete de consulta recupera
 os top-$k$ casos mais similares com as suas pontuações de similaridade. O gatilho de mercado produz um
-\textbf{AnomalyResult} separado.}
+\textbf{resultado de deteção} separado.}
 \label{fig:datamodel}
 \end{figure}
 
-Dois pontos tornam o modelo fácil de reter. Primeiro, o \emph{esquema partilhado}: um \textbf{NewsItem} ao
-vivo e um \textbf{NewsRecord} histórico carregam a mesma data, ticker e manchete, pelo que uma manchete
-fresca pode ser comparada diretamente com os casos guardados. Um NewsRecord é simplesmente um NewsItem que
-foi enriquecido com o \emph{embedding} da sua manchete e o seu \emph{impacto} medido a $+1$, $+3$ e $+5$
+Dois pontos tornam o modelo fácil de reter. Primeiro, o \emph{esquema partilhado}: uma notícia ao vivo e
+um caso histórico carregam a mesma data, ticker e manchete, pelo que uma manchete fresca pode ser
+comparada diretamente com os casos guardados. Um caso é simplesmente uma notícia que foi enriquecida com
+o \emph{embedding} da sua manchete e o seu \emph{impacto} medido a $+1$, $+3$ e $+5$
 dias de negociação. Segundo, a \emph{base de conhecimento} é apenas uma coleção de casos; pedir-lhe
 precedentes devolve os top-$k$ casos mais similares com as suas pontuações de similaridade. O lado do
-mercado é ainda mais simples: o detetor emite um \textbf{AnomalyResult} contendo o movimento e cada
+mercado é ainda mais simples: o detetor emite um \emph{resultado de deteção} contendo o movimento e cada
 quantidade por detrás dele ($z$, $\mu$, $\sigma$, janela, limiar). Estes poucos objetos são tudo o que o
 motor de explicação alguma vez precisa.
 
@@ -224,10 +224,10 @@ Tabela~\ref{tab:investigator_components} lista-os com a sua única função e os
 \tabhead{Componente} & \tabhead{Responsabilidade} & \tabhead{Entrada $\to$ saída} \\
 \midrule
 Dados de mercado & Obter preços, calcular log-retornos & ticker $\to$ retornos diários \\
-Fonte de notícias & Obter e normalizar notícias ao vivo & ticker $\to$ NewsItem(s) \\
+Fonte de notícias & Obter e normalizar notícias ao vivo & ticker $\to$ notícias \\
 Embedder & Transformar uma manchete num vetor & manchete $\to$ embedding \\
 Base de conhecimento & Guardar casos passados; recuperar o mais próximo & manchete $\to$ top-$k$ casos \\
-Detetor de anomalias & Assinalar movimentos relativos à volatilidade & retornos $\to$ AnomalyResult \\
+Detetor de anomalias & Assinalar movimentos relativos à volatilidade & retornos $\to$ resultado de deteção \\
 Motor de correlação & Similaridade do cosseno $+$ impacto de estudo de evento & manchete, KB $\to$ precedentes $+$ impacto \\
 Modelo de triagem & Severidade aprendida: $P(\text{segue-se movimento anormal})$ calibrada & manchete $+$ contexto $\to$ probabilidade $+$ contribuições \\
 Motor de explicação & Compor um alerta fiel a partir dos objetos & objetos $\to$ texto do alerta \\
@@ -500,7 +500,7 @@ Um problema de implantação merece relato próprio, porque é onde a restriçã
 onde a solução é um resultado de engenharia genuíno, e não um contorno.
 
 O componente de retrieval avaliado no Capítulo~\ref{chap:casestudies} é um sentence transformer, e a
-forma habitual de o correr é a biblioteca \texttt{sentence-transformers} sobre o PyTorch. Essa stack tem
+forma habitual de o correr é a sua implementação de referência sobre uma framework de deep learning. Essa stack tem
 várias centenas de megabytes e pressupõe um ambiente que o alojamento gratuito não oferece de forma
 fiável. As resoluções ingénuas são ambas más: manter a stack pesada e aceitar que a implantação pública
 não corre, ou substituir em produção por um modelo mais leve mas diferente, avaliando em silêncio uma

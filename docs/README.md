@@ -19,6 +19,11 @@ se só queres correr o sistema.
 | [design/usefulness_study.md](design/usefulness_study.md) | **Protocolo de estudo de utilidade (RQ3)**: rubrica + desenho executável para fechar a lacuna "útil = em aberto". |
 | [design/risk_register.md](design/risk_register.md) | Riscos do projeto e mitigações. |
 | [design/public_bundle.md](design/public_bundle.md) | Publicar um bundle limpo (app + tese + código), sem segredos nem dados grandes; enacted por `scripts/make_public_bundle.py`. |
+| [design/keys.md](design/keys.md) | **Todas as chaves num só sítio**: o que faz cada uma, onde a obter, em que cofre colar, e o que falha sem ela. |
+| [design/cadence_contract.md](design/cadence_contract.md) | **O que o produto promete enviar e nunca enviar**, com o custo medido de cada gate. |
+| [design/app_acceptance.md](design/app_acceptance.md) | **Critérios de aceitação da app, escritos ANTES do código** (a condição de paragem que travou o ciclo de redesenhos). |
+| [design/narrator_guard.md](design/narrator_guard.md) | **A guarda de fidelidade do narrador**: porquê allowlist e não blocklist, e os 29 furos que o red team abriu na v1. |
+| [design/brand.md](design/brand.md) | Sistema de marca "The Tail" + o teste de aceitação que a marca anterior falhava. |
 
 ## evaluation/ — resultados (gerados por script; não editar à mão)
 | Ficheiro | Para quê |
@@ -40,6 +45,8 @@ se só queres correr o sistema.
 | [evaluation/evaluation_retrieval_fnspid.md](evaluation/evaluation_retrieval_fnspid.md) | **RQ2 à escala:** retrieval no FNSPID multi-ano (P@5 0.595 em 80k) + tema≠direção quantificado. |
 | [evaluation/evaluation_retrieval_embedders.md](evaluation/evaluation_retrieval_embedders.md) | **Benchmark de embedders:** MiniLM vs FinBERT/E5/BGE (valida a escolha do embedder por medição). |
 | [evaluation/evaluation_triage_fairtext.md](evaluation/evaluation_triage_fairtext.md) | **RQ4 re-teste justo:** C afinado + PCA do texto + FinBERT → o texto continua a não bater a volatilidade (negativo robusto; PCA recupera até ao contexto). |
+| [evaluation/evaluation_policy_sweep.md](evaluation/evaluation_policy_sweep.md) | **RQ4 como POLÍTICA:** varrimento do limiar sob rácio de custo → o `0.5` deixa de ser constante à mão e passa a ponto de operação derivado (rácio implícito ≈0,9). |
+| [evaluation/evaluation_narrator.md](evaluation/evaluation_narrator.md) | **RQ3-ext:** fidelidade do narrador ancorado — violações pré-guarda (mede o modelo) vs entregues (mede a guarda). |
 
 ## decisions/ — porquê das decisões, aprendizagem e revisões (rigor académico)
 | Ficheiro | Para quê |
@@ -62,9 +69,27 @@ se só queres correr o sistema.
 > as **cadeias de pressão** (pergunta → resposta → o júri aperta → resposta) para as 8 perguntas mais
 > perigosas. Treina em voz alta até a 3.ª pergunta sair sem hesitar.
 >
+> **4. GRAVAR a demo:** [defence/gravar_demo.md](defence/gravar_demo.md) — guião cronometrado de
+> 3 min, o que fazer quando algo falha na sala, e o erro a não cometer.
+>
+> **5. ENVIAR ao orientador:** [defence/mensagem_orientador.md](defence/mensagem_orientador.md) —
+> mensagem PT-PT pronta a copiar, com o que ele deve abrir e por que ordem.
+>
 > O resumo do projeto está na raiz: `RELATORIO_FINAL.md`. (Os antigos caderno de defesa e guia
 > rápido foram absorvidos no guia de estudo.)
 
+## study/ — materiais do estudo humano de utilidade (RQ3)
+| Ficheiro | Para quê |
+|----------|----------|
+| [study/stimuli.md](study/stimuli.md) | Os 6 estímulos, condição A (facto nu) vs B (alerta completo). Alertas REAIS do canal. |
+| [study/counterbalancing.md](study/counterbalancing.md) | Quem vê o quê e por que ordem (metade A→B, metade B→A). |
+| [study/facilitator_script.md](study/facilitator_script.md) | Guião do facilitador: consentimento, as 3 perguntas, e a regra de não ajudar. |
+| [study/responses_template.csv](study/responses_template.csv) | Folha de recolha. Copiar para `responses.csv` e preencher. |
+
+> ⚠️ Gerados por `scripts/build_usefulness_pack.py`. **Excluídos do bundle público** até o estudo
+> correr: o guião contém o critério de correção, e publicá-lo antes enviesaria a medição.
+
 ## Notas internas de continuidade
-> Vivem em `progress/` (TRACKER, SESSIONS, DECISIONS, MASTER_PLAN) e na raiz (`CLAUDE.md` — memória
-> de trabalho do projeto).
+> Vivem em `progress/` e na raiz (`CLAUDE.md` — memória de trabalho do projeto). O plano ativo é
+> `progress/PLANO_V2.md`; `MASTER_PLAN`, `PRODUCT_ROADMAP` e `PLANO_MELHORIAS` estão marcados como
+> superados e ficam só como registo.

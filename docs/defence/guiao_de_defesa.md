@@ -44,7 +44,20 @@ fraqueza.
 | **dir. 0.708 vs chão 0.688** | Consistência de direção dos precedentes *(reforço)* | "Recupera o TEMA, não a DIREÇÃO — tema≠direção quantificado." |
 | **FinBERT 0.420 · E5/BGE ~0.51** | Benchmark de embedders *(reforço)* | "MiniLM validado por medição: domínio pior, modernos empatam." |
 | **texto justo 0.533 < 0.542** | RQ4 re-teste justo (C+PCA+FinBERT) *(reforço)* | "Negativo do texto robusto; PCA recupera de 0,499 mas nunca bate a volatilidade." |
-| **90 / 92 pp · 52 refs · 200+ testes** | Tese EN/PT · referências verificadas · suíte | "Reprodutível de ponta a ponta; nenhum número digitado à mão." |
+| **94 / 96 pp · 52 refs · 376 testes** | Tese EN/PT · referências verificadas · suíte | "Reprodutível de ponta a ponta; nenhum número digitado à mão." |
+
+### Se perguntarem pela bibliografia
+
+> "52 entradas, 52 no registo de verificação, 52 chaves citadas. Zero órfãs, zero indefinidas, e
+> **todas** com identificador resolúvel. Cada uma foi verificada contra o Crossref, a arXiv ou a
+> fonte primária, com a data registada."
+
+**A pergunta difícil, e a resposta:** *"Rejeitou o MacKinlay por não ter DOI resolúvel, mas aceita
+quatro DOIs da JSTOR. Não é incoerente?"*
+> "O critério é o identificador **resolver**, não o prefixo. Os quatro `10.2307` que aceitei
+> resolvem; o do MacKinlay dá 404 no Crossref e não aparece no OpenAlex. Substituí-o pelo Brown e
+> Warner (1985), que cobre a mesma metodologia de estudo de evento. A rejeição está registada —
+> é evidência de que o protocolo foi aplicado, não contornado."
 
 ---
 

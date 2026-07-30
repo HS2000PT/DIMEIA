@@ -1,5 +1,10 @@
 # MASTER PLAN — DIMEIA / InvestiGator (the long road to submission, publication & defence)
 
+> ⚠️ **SUPERADO (2026-07-30). Registo histórico — não é o plano ativo.**
+> O plano vivo é [`PLANO_V2.md`](PLANO_V2.md). Cadeia de sucessão:
+> `MASTER_PLAN` → `PRODUCT_ROADMAP` → `PLANO_MELHORIAS` → **`PLANO_V2`**.
+> As fases A–H descritas aqui foram concluídas; mantém-se pelo valor de registo.
+
 > **Purpose.** One committed roadmap for the whole remaining mission, so work can continue **on any device,
 > any day**, always picking up where it stopped. This file is the spine; `progress/TRACKER.md` holds the
 > per-session checklist and `CLAUDE.md` holds the live "next action". Read all three at the start of a session.

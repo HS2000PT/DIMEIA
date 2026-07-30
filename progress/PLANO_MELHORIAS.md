@@ -1,5 +1,10 @@
 # PLANO DE MELHORIAS — roadmap acordado com o aluno (Sessão 41+)
 
+> ⚠️ **SUPERADO (2026-07-30). Registo histórico — não é o plano ativo.**
+> O plano vivo é [`PLANO_V2.md`](PLANO_V2.md), que o substitui explicitamente.
+> ⚠️ As caixas por marcar incluem itens entretanto **CORTADOS por decisão** (chatbot-mascote,
+> carteira, painel de admin, multi-bolsa em destaque). Ver `PLANO_V2.md` §6.
+
 > Fonte única deste esforço. Multi-sessão, multi-dispositivo. Cada fase fecha com gates
 > verdes (202 testes + ruff; tese(s) compilam 0 erros) e **congelados byte-iguais**
 > (models/, docs/evaluation/*.md, data/, números da tese). **Nunca fabricar** números,
