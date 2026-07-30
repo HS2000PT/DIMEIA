@@ -88,3 +88,13 @@
 {"date": "2026-07-30", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.24 < 0.50"}
 {"date": "2026-07-30", "ticker": "AMD", "stage": "alerted", "detail": "AMD: The Pullback Creates A Better Entry Ahead Of Q2"}
 {"date": "2026-07-30", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
+{"date": "2026-07-30", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.43 < 0.50"}
+{"date": "2026-07-30", "ticker": "MSFT", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
+{"date": "2026-07-30", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-07-30", "ticker": "TSLA", "stage": "alerted", "detail": "There's a 74% Chance SpaceX and Tesla Will Merge by May 2027, According to Kalsh"}
+{"date": "2026-07-30", "ticker": "AMZN", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
+{"date": "2026-07-30", "ticker": "GOOGL", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-07-30", "ticker": "META", "stage": "alerted", "detail": "META Stock Dips Premarket After Q2 Report: Meta’s Forecast Miss Has Investors Wo"}
+{"date": "2026-07-30", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.24 < 0.50"}
+{"date": "2026-07-30", "ticker": "AMD", "stage": "alerted", "detail": "Riot Platforms: Why The Q2 2026 AMD Hosting Update Matters More Than Bitcoin"}
+{"date": "2026-07-30", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
