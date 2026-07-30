@@ -138,3 +138,13 @@
 {"date": "2026-07-30", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
 {"date": "2026-07-30", "ticker": "AMD", "stage": "alerted", "detail": "The Nvidia Vs. AMD Narrative Evolved Again: How to Understand it Today"}
 {"date": "2026-07-30", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
+{"date": "2026-07-30", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
+{"date": "2026-07-30", "ticker": "MSFT", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
+{"date": "2026-07-30", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-07-30", "ticker": "TSLA", "stage": "alerted", "detail": "Tesla Rival BYD Just Entered Musk's Next Big Market"}
+{"date": "2026-07-30", "ticker": "AMZN", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
+{"date": "2026-07-30", "ticker": "GOOGL", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-07-30", "ticker": "META", "stage": "alerted", "detail": "Meta Platforms vs. Microsoft: What Recent Revenue Trends Tell Investors About Th"}
+{"date": "2026-07-30", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-07-30", "ticker": "AMD", "stage": "alerted", "detail": "AMD Stock Has Surged 364% in 5 Years. History Suggests That It Will Become a Mul"}
+{"date": "2026-07-30", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
