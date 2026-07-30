@@ -35,14 +35,21 @@
   \item A IA que se espalha pelas finanças é largamente \textbf{opaca}, má opção para quem tem de agir e viver com o resultado.
 \end{itemize}
 \column{0.42\textwidth}
-\begin{block}{Dois desafios distintos}
+\begin{block}{As três perguntas}
 \small
+Quando uma posição se mexe, toda a gente faz as mesmas três:
 \begin{enumerate}
-  \item Distinguir um movimento \emph{genuinamente} invulgar da volatilidade comum.
-  \item Ler o que uma notícia pode \emph{significar}, a partir de como eventos semelhantes se comportaram antes.
+  \item Isto é \emph{invulgar para esta ação}?
+  \item É a \emph{empresa}, ou é o mercado?
+  \item Já \emph{aconteceu antes}, e o que se seguiu?
 \end{enumerate}
 \end{block}
 \end{columns}
+\vfill
+{\small As ferramentas gratuitas não respondem a \textbf{nenhuma} das três; reportam a
+percentagem, que é onde a pergunta~1 \emph{começa}. Um terminal Bloomberg responde às três, por
+cerca de 2.000 dólares por mês. A lacuna não é falta de dados, que são abundantes e gratuitos.
+É falta de \textbf{contexto que se possa verificar}.}
 \end{frame}
 
 \begin{frame}{O que o InvestiGator faz (e não faz)}
@@ -167,6 +174,36 @@ Um limiar de \% fixa trataria uma ação calma e uma volátil de igual modo; o \
 \end{columns}
 \end{frame}
 
+\begin{frame}{Pergunta 2: é a empresa, ou é o mercado?}
+\begin{columns}
+\column{0.46\textwidth}
+\small
+Um modelo de mercado de dois fatores, estimado \textbf{só com dados anteriores ao dia que se
+explica}:
+\[ r_t = \alpha + \beta_m r^{m}_t + \beta_s \tilde r^{\,s}_t + \varepsilon_t \]
+O fator de setor é \textbf{ortogonalizado} contra o mercado (um ETF e o índice são colineares;
+sem isso a atribuição perde sentido).
+\medskip
+
+Os betas são \textbf{encolhidos pela precisão}, não cortados: uma estimativa ruidosa de 20 dias
+é puxada para o seu prior, uma limpa fica intacta.
+\column{0.54\textwidth}
+\begin{block}{Real, do sistema ao vivo}
+\small
+\textbf{AMZN $-1,84\%$ hoje} \\[2pt]
+$= -1,66\%$ mercado $\cdot$ $-0,37\%$ setor $\cdot$ $\mathbf{+0,19\%}$ \textbf{empresa} \\[3pt]
+\emph{``Moveu-se com o mercado inteiro.''}
+\end{block}
+{\small A ação caiu quase dois por cento e a contribuição própria da empresa foi
+\textbf{positiva}. Para o detentor de longo prazo, a saída mais valiosa que um sistema pode dar
+é muitas vezes \textbf{permissão para ignorar}.}
+\medskip
+
+{\footnotesize As componentes somam o movimento observado por construção, por isso a linha não
+pode mentir.}
+\end{columns}
+\end{frame}
+
 \begin{frame}{Gatilho de notícias: recuperar precedentes análogos, medir impacto}
 \begin{columns}
 \column{0.52\textwidth}
@@ -250,6 +287,36 @@ Avg 1-day move: $-1.97\%$ (over 5; 3 shown)\\
 \end{columns}
 \end{frame}
 
+\begin{frame}{Resultado 3b: a mesma garantia, para linguagem gerada}
+\begin{columns}
+\column{0.52\textwidth}
+\small
+Um modelo de linguagem foi acrescentado \textbf{estritamente como narrador}: pode redigir a
+evidência, nunca fornecê-la. Uma guarda valida cada resposta antes da entrega e
+\textbf{descarta-a inteira} perante:
+\begin{itemize}\small
+  \item um número ausente da evidência,
+  \item um valor com o \textbf{sinal} invertido,
+  \item formulação preditiva ou de conselho,
+  \item uma atribuição que contradiga a calculada.
+\end{itemize}
+A garantia é propriedade \textbf{do sistema}, não do modelo portar-se bem.
+\column{0.48\textwidth}
+\begin{block}{Dois números, de propósito}
+\small
+\textbf{Pré-guarda:} o modelo cru violou a evidência em alguns casos.\\
+\emph{$\Rightarrow$ é por isto que a guarda existe.}\\[4pt]
+\textbf{Entregue:} \textbf{zero} violações.\\
+\emph{$\Rightarrow$ é a guarda que está em julgamento.}
+\end{block}
+{\footnotesize\textbf{Ressalva honesta:} o segundo é em parte circular, já que o mesmo
+verificador decide e avalia. O contrapeso é um corpus de red team: um exercício independente
+partiu o \emph{primeiro} desenho (uma blocklist) com 29 contornos reproduzidos. O espaço de
+paráfrases é ilimitado e qualquer lista dele é finita, por isso a guarda foi reconstruída como
+\textbf{vocabulário fechado}. Esses ataques são hoje testes de regressão permanentes.}
+\end{columns}
+\end{frame}
+
 \begin{frame}{Resultado 4: triagem aprendida --- treinada, calibrada, honesta}
 \begin{columns}
 \column{0.55\textwidth}
@@ -284,12 +351,16 @@ Gradient boosting & 0.469 & 0.551 \\
 \includegraphics[width=\linewidth]{app_dashboard.png}
 \column{0.45\textwidth}
 \small
-\begin{itemize}
-  \item Uma página, uma aba por ticker da watchlist --- uma captura genuína, não um mockup.
-  \item Risco de fundo do modelo de triagem treinado, todos os dias, sem precisar de notícia.
-  \item Gráfico anotado com os eventos detetados + uma tabela de histórico --- o \textbf{mesmo} registo que o canal Telegram recebeu.
-  \item Apenas camada gratuita: GitHub Actions (cron) + Streamlit Community Cloud.
+Uma captura genuína, não um mockup. \textbf{Três ecrãs, um por pergunta:}
+\begin{itemize}\small
+  \item \textbf{Today} --- a watchlist ordenada por quão longe do normal, com a repartição
+        mercado/setor/empresa \textbf{na própria linha}. Sem clicar.
+  \item \textbf{Ticker} --- gráfico, decomposição por extenso, e os alertas \emph{exatamente}
+        como o canal Telegram os recebeu. Nunca recalculados.
+  \item \textbf{Method} --- os números congelados, incluindo o resultado negativo.
 \end{itemize}
+{\footnotesize A promessa aparece \textbf{uma} vez, como identidade da página. O valor de
+latência é \textbf{medido} e está simplesmente ausente quando os carimbos não existem.}
 \end{columns}
 \end{frame}
 
@@ -363,6 +434,33 @@ Um sistema de alertas financeiros funcional, \textbf{explicável e reprodutível
   \item \textbf{Restrição cross-ticker?} Uma escolha de \emph{avaliação} para evitar auto-correspondências triviais; o alerta ao vivo mostra os precedentes mais similares, seja qual for a empresa.
   \item \textbf{Uma manchete positiva recuperou precedentes negativos ($-1.97\%$). Enganador?} A similaridade capta o \emph{tema}, não a direção; a média é \textbf{evidência} ao nível do tema, mostrada com cada precedente e um aviso de não-previsão. Trabalho futuro: de-duplicar precedentes e sinalizar divergência de direção.
   \item \textbf{É reprodutível?} Sim: sementes fixas, dependências fixadas, scripts versionados; re-correr reproduz cada número.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Perguntas antecipadas (continuação)}
+\footnotesize
+\begin{itemize}
+  \item \textbf{``Zero violações entregues'' não é circular, se é o vosso próprio verificador
+        a avaliar?} Em parte é, e a tese di-lo. Por isso não é o único teste: um red team
+        independente partiu a guarda \emph{anterior} com 29 contornos reproduzidos, construídos
+        sem ver o desenho atual, e esses ataques são hoje testes de regressão.
+  \item \textbf{Então construíram um sistema multi-agente?} Não, e não o vou reivindicar. Um
+        modelo a chamar algumas funções não é multi-agente. O narrador é uma \textbf{função
+        pura} da evidência para um parágrafo.
+  \item \textbf{Porquê excluir os price targets de analistas? São gratuitos.} Porque importar a
+        previsão de outra pessoa para um sistema definido por não prever é uma contradição.
+        Preferiu-se a coerência à cobertura, e está enunciado como posição no Capítulo~6.
+  \item \textbf{Porquê nenhuma funcionalidade de carteira?} As posições são dados financeiros
+        pessoais, e ``as tuas maiores posições são uma só aposta'' é aconselhamento, seja qual
+        for a redação. Isso atravessa a fronteira de que a afirmação ética depende.
+  \item \textbf{De onde vem o limiar de triagem $0{,}5$?} Originalmente de lado nenhum, que era
+        o problema honesto. Varrê-lo sob um rácio de custo explícito mostrou que assumia
+        implicitamente que uma falha custa aproximadamente o mesmo que um falso alarme; sob
+        custos iguais o ótimo fica onde a constante já estava. Vindicado, mas agora \emph{derivado}.
+  \item \textbf{Os vossos alertas chegam horas atrasados.} Medido: mediana de cerca de três
+        horas, e a causa é o agendador gratuito, não o método. O caminho sempre-ligado está
+        escrito e custa cerca de um minuto; implantá-lo ficou fora do âmbito da avaliação, e o
+        número honesto está \textbf{à vista no produto} em vez de escondido.
 \end{itemize}
 \end{frame}
 
