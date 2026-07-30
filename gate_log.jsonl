@@ -128,3 +128,13 @@
 {"date": "2026-07-30", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
 {"date": "2026-07-30", "ticker": "AMD", "stage": "alerted", "detail": "The Nvidia Vs. AMD Narrative Evolved Again: How to Understand it Today"}
 {"date": "2026-07-30", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
+{"date": "2026-07-30", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.43 < 0.50"}
+{"date": "2026-07-30", "ticker": "MSFT", "stage": "triage_suppressed", "detail": "P=0.43 < 0.50"}
+{"date": "2026-07-30", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-07-30", "ticker": "TSLA", "stage": "alerted", "detail": "Wall Street’s Highest Yielding ETFs Pay Over 50 Percent on Nvidia and Tesla. Her"}
+{"date": "2026-07-30", "ticker": "AMZN", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
+{"date": "2026-07-30", "ticker": "GOOGL", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-07-30", "ticker": "META", "stage": "alerted", "detail": "Meta's & Microsoft's massive AI spending: Why only one is getting rewarded"}
+{"date": "2026-07-30", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-07-30", "ticker": "AMD", "stage": "alerted", "detail": "The Nvidia Vs. AMD Narrative Evolved Again: How to Understand it Today"}
+{"date": "2026-07-30", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
