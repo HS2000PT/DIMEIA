@@ -36,7 +36,11 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import AgglomerativeClustering, KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import adjusted_rand_score, silhouette_score
+from sklearn.metrics import (
+    adjusted_mutual_info_score,
+    adjusted_rand_score,
+    silhouette_score,
+)
 
 from investigator.console import force_utf8_stdout
 from investigator.historical_kb.taxonomy import (
@@ -153,6 +157,53 @@ def main() -> int:
     terms = _top_terms(headlines, assign, k_star)
     pur, n_eval = purity(assign, reference)
 
+    # ── O controlo que decide se a pureza significa alguma coisa ──────────────
+    # A pureza com rotulagem por maioria INFLACIONA quando a referência é desequilibrada e k
+    # é grande: com um tipo a valer 44% dos rótulos, muitos grupos ficam com esse rótulo por
+    # omissão. O controlo é a MESMA métrica sobre uma atribuição aleatória com os MESMOS
+    # tamanhos de grupo. O que a pureza vale é a diferença, não o valor absoluto.
+    sizes = np.bincount(assign, minlength=k_star)
+    rand_purities: list[float] = []
+    for seed in range(5):
+        shuffled = np.repeat(np.arange(k_star), sizes)
+        np.random.default_rng(seed).shuffle(shuffled)
+        rand_purities.append(purity(shuffled, reference)[0])
+    rand_pur = float(np.mean(rand_purities))
+    trivial = max(ref_counts.values()) / covered
+    print(
+        f"\nPureza {pur:.3f} · aleatório com os mesmos tamanhos {rand_pur:.3f} "
+        f"· tudo-no-maioritário {trivial:.3f}"
+    )
+
+    # ── A pergunta decisiva: por evento, ou por assunto? ──────────────────────
+    # Se os grupos se alinharem mais com TICKER/SETOR do que com tipo de evento, então o
+    # embedding organiza-se por assunto e não por acontecimento — e a taxonomia de eventos
+    # não sai daqui, por muito respeitável que a pureza pareça.
+    #
+    # A pureza NÃO serve para esta comparação, e vale a pena dizer porquê: o seu valor
+    # depende de quantas classes a referência tem (8 tipos vs 15 tickers vs 6 setores) e de
+    # quão desequilibradas são, pelo que comparar purezas entre referências diferentes é
+    # comparar coisas incomparáveis. A informação mútua AJUSTADA (AMI) é corrigida para o
+    # acaso e para a cardinalidade, que é exatamente o que aqui é preciso.
+    #
+    # E as três TÊM de ser calculadas nas MESMAS linhas — o subconjunto que a rubrica cobre.
+    # Caso contrário compara-se o alinhamento de eventos em 11.889 linhas com o de tickers em
+    # 78.933, que também não é comparação nenhuma.
+    cov_mask = np.array([r is not None for r in reference])
+    assign_cov = assign[cov_mask]
+    ref_cov = [r for r in reference if r is not None]
+    tick_cov = df.loc[cov_mask, "ticker"].astype(str).tolist()
+    sect_cov = df.loc[cov_mask, "sector"].astype(str).tolist()
+
+    ami_event = float(adjusted_mutual_info_score(ref_cov, assign_cov))
+    ami_ticker = float(adjusted_mutual_info_score(tick_cov, assign_cov))
+    ami_sector = float(adjusted_mutual_info_score(sect_cov, assign_cov))
+    print(
+        f"AMI (mesmas {cov_mask.sum():,} linhas) — evento {ami_event:.3f} · "
+        f"ticker {ami_ticker:.3f} · setor {ami_sector:.3f}"
+    )
+    subject_wins = max(ami_ticker, ami_sector) > ami_event
+
     # ── Estabilidade entre sementes ───────────────────────────────────────────
     print(f"\nEstabilidade ({args.seeds} sementes, ARI contra a semente 0)…")
     aris: list[float] = []
@@ -264,43 +315,133 @@ def main() -> int:
         top5 = ", ".join(terms[k][:5]).replace("|", "/")
         add(f"| {k} | `{labels[k]}` | {int(mask.sum()):,} | {top5} | {head} |")
     add("")
+    add("## Os dois controlos, sem os quais a pureza não significa nada")
+    add("")
+    add("### 1. A pureza bruta está inflacionada")
+    add("")
+    add("A pureza com rotulagem por maioria **inflaciona** quando a referência é desequilibrada")
+    add(f"e k é grande. Aqui um único tipo (`macro_market`) vale {trivial:.1%} dos rótulos, e há")
+    add(f"{k_star} grupos: muitos ficam com esse rótulo quase por omissão. O controlo é a mesma")
+    add("métrica sobre uma atribuição **aleatória com exatamente os mesmos tamanhos de grupo**.")
+    add("")
+    add("| Pureza medida | Aleatório (mesmos tamanhos) | Tudo-no-maioritário |")
+    add("|---:|---:|---:|")
+    add(f"| **{pur:.3f}** | {rand_pur:.3f} | {trivial:.3f} |")
+    add("")
+    add(f"O ganho real sobre o acaso é **{pur - rand_pur:+.3f}**, não {pur:.3f}.")
+    add("")
+    add("### 2. Por evento, ou apenas por assunto?")
+    add("")
+    add("Este é o controlo decisivo. Se os grupos se alinharem mais com a **empresa** ou o")
+    add("**setor** do que com o **tipo de evento**, então o agrupamento está a redescobrir o")
+    add("assunto, e uma taxonomia de eventos não sai daqui.")
+    add("")
+    add("Duas exigências de método, ambas necessárias para a comparação ser válida:")
+    add("")
+    add("- **A pureza não serve aqui.** O seu valor depende de quantas classes a referência tem")
+    add(f"  ({len(ref_counts)} tipos vs {df.loc[cov_mask, 'ticker'].nunique()} tickers vs")
+    add(f"  {df.loc[cov_mask, 'sector'].nunique()} setores) e de quão desequilibradas são;")
+    add("  comparar purezas entre referências diferentes é comparar coisas incomparáveis. A")
+    add("  **informação mútua ajustada (AMI)** é corrigida para o acaso e para a cardinalidade.")
+    add(f"- **As mesmas linhas.** Todas as três medidas correm sobre as {cov_mask.sum():,}")
+    add("  manchetes que a rubrica cobre. Medir eventos numa amostra e tickers noutra não")
+    add("  compara nada.")
+    add("")
+    add("| Referência | AMI com os grupos |")
+    add("|---|---:|")
+    add(f"| **Tipo de evento** (rubrica) | **{ami_event:.3f}** |")
+    add(f"| Ticker | {ami_ticker:.3f} |")
+    add(f"| Setor | {ami_sector:.3f} |")
+    add("")
     add("## Leitura honesta")
     add("")
-    if pur >= 0.6:
-        add(f"A pureza de {pur:.3f} está bem acima do que se esperaria por acaso: com")
-        add(f"{len(ref_counts)} tipos presentes e a distribuição desequilibrada acima, atribuir")
-        add("tudo ao tipo mais frequente daria")
-        add(f"{max(ref_counts.values()) / covered:.3f}. Os embeddings estão a recuperar")
-        add("estrutura de tipo de evento que ninguém lhes ensinou.")
+    if subject_wins:
+        add("**O resultado é negativo, e é informativo.**")
+        add("")
+        add(f"Os grupos alinham-se mais com **assunto** (ticker AMI {ami_ticker:.3f}, setor")
+        add(f"{ami_sector:.3f}) do que com **tipo de evento** ({ami_event:.3f}). A tabela dos")
+        add("grupos diz o mesmo em texto: os termos de topo são nomes de empresas e de setores,")
+        add("não verbos de acontecimento.")
+        add("")
+        add("Por outras palavras: **os embeddings de frase do MiniLM organizam manchetes")
+        add("financeiras por assunto — que empresa, que setor, que tema — e não por aquilo que")
+        add("aconteceu.** Um agrupamento não supervisionado sobre estes vetores não produz uma")
+        add("taxonomia de eventos, por muito respeitável que a pureza bruta pareça.")
+        add("")
+        add("**Consequência de desenho:** filtrar precedentes por tipo de evento **não** pode")
+        add("assentar em grupos não supervisionados destes vetores. A taxonomia guardada fica")
+        add("como artefacto descritivo e **não** é ligada à recuperação.")
     else:
-        add(f"A pureza de {pur:.3f} é modesta. Comparar com a linha de base trivial: atribuir")
-        add(f"tudo ao tipo mais frequente daria {max(ref_counts.values()) / covered:.3f}.")
-        add("Reportado tal como caiu.")
+        add(f"O alinhamento com **tipo de evento** (AMI {ami_event:.3f}) é superior ao")
+        add(f"alinhamento com **assunto** (ticker {ami_ticker:.3f}, setor {ami_sector:.3f}),")
+        add("medido nas mesmas linhas e com uma métrica corrigida para o acaso e para a")
+        add("cardinalidade. Os embeddings estão de facto a recuperar estrutura de tipo de")
+        add("evento que ninguém lhes ensinou — não apenas a agrupar por empresa.")
+        add("")
+        add("Este resultado merece uma ressalva que o torna mais útil e não menos. A leitura")
+        add("*qualitativa* da tabela dos grupos sugere o contrário: vários grupos têm por")
+        add("termos de topo nomes de empresas (`tesla, ev, musk`; `nvidia, nvda`; `apple,")
+        add("aapl`) e de setores (`oil, exxon, chevron`). As duas observações conciliam-se")
+        add("assim: o espaço de representação codifica assunto **e** tipo de evento ao mesmo")
+        add("tempo, e num corpus de 15 tickers o assunto é o eixo mais visível a olho, porque")
+        add("os nomes das empresas dominam os termos de topo. Medido com uma métrica")
+        add("corrigida, é o eixo do acontecimento que explica mais da partição.")
+        add("")
+        add("**Consequência de desenho.** Há sinal de tipo de evento nos embeddings, mas a")
+        add(f"separação é fraca em termos absolutos (silhueta {best['silhouette']:+.3f}, ver")
+        add("abaixo) e a atribuição de rótulos depende inteiramente de uma rubrica que só")
+        add(f"cobre {covered / len(df):.1%} do corpus. Isso chega para caracterizar o corpus e")
+        add("não chega para filtrar precedentes em produção: um filtro por tipo de evento")
+        add("errado remove precedentes válidos em silêncio, que é pior do que não filtrar. A")
+        add("taxonomia fica como artefacto descritivo, e o caminho sustentado pela evidência é")
+        add("a rubrica — transparente e correta onde responde.")
     add("")
-    add("Três limitações que não se devem esconder:")
+    add("### O confundimento que um arguente levanta primeiro")
+    add("")
+    add("A rubrica atribui rótulos a partir de **palavras que estão na manchete**, e os")
+    add("embeddings codificam essas mesmas palavras. Uma manchete rotulada `earnings` contém")
+    add("quase de certeza a palavra *earnings*, pelo que agrupar por semelhança de texto vai")
+    add("aproximá-la de outras que também a contêm. Parte do AMI de tipo de evento está,")
+    add("portanto, garantida por construção, e o número não deve ser lido como prova de que os")
+    add("embeddings \"percebem\" tipos de acontecimento.")
+    add("")
+    add("O que o confundimento **não** destrói é a comparação, e é isso que aqui se usa: a")
+    add("referência de ticker sofre exatamente do mesmo problema — os nomes das empresas também")
+    add("estão nas manchetes, muitas vezes mais do que uma vez e no início. As três referências")
+    add("estão em pé de igualdade quanto a este viés, pelo que a ordenação entre elas continua")
+    add("informativa mesmo que os valores absolutos estejam inflacionados.")
+    add("")
+    add("### A silhueta é baixa, e isso também conta")
+    add("")
+    add(f"A melhor silhueta é {best['silhouette']:+.3f}. Em termos absolutos é fraca: os grupos")
+    add("não estão bem separados, sobrepõem-se. E a curva é **plana** — de k=10 a k=20 varia")
+    add("entre +0.081 e +0.084, uma amplitude de 0.003. O k\\* escolhido é, portanto,")
+    add("fracamente determinado: k=16 ou k=12 serviriam quase igualmente bem. Reportado assim")
+    add("em vez de se apresentar k=18 como se fosse um ótimo nítido.")
+    add("")
+    add("### Limitações que se mantêm")
     add("")
     add("1. **A referência é uma rubrica, não um humano.** Mede-se concordância entre dois")
-    add("   métodos, não concordância com a verdade. A rubrica erra onde a linguagem é")
-    add("   indireta, e essas manchetes contam contra os grupos mesmo quando os grupos estão")
-    add("   certos.")
-    add("2. **A cobertura é parcial** — a pureza nada diz sobre as manchetes que a rubrica não")
-    add("   apanha, que são a maioria.")
-    add("3. **k foi escolhido pela silhueta, não pela pureza.** De propósito: escolher k por")
+    add("   métodos, não com a verdade. A rubrica erra onde a linguagem é indireta, e essas")
+    add("   manchetes contam contra os grupos mesmo quando os grupos estão certos.")
+    add(f"2. **A cobertura é parcial** ({covered / len(df):.1%}): a pureza nada diz sobre as")
+    add("   manchetes que a rubrica não apanha, que são a maioria.")
+    add("3. **Dois tipos são residuais** neste corpus — `guidance` (23) e `personnel` (17). Na")
+    add("   prática a pureza mede-se sobre seis tipos, não oito.")
+    add("4. **k foi escolhido pela silhueta, não pela pureza.** De propósito: escolher k por")
     add("   pureza seria afinar o método não supervisionado contra a sua própria avaliação.")
     add("")
-    add("## Para que serve, no produto")
+    add("## O que fica")
     add("")
-    add("A taxonomia guardada (`models/event_taxonomy.json`) é NumPy puro: produto interno e")
-    add("argmax, sem scikit-learn em produção. Dá duas coisas que não existiam:")
+    add("O artefacto (`models/event_taxonomy.json`) é NumPy puro — produto interno e argmax,")
+    add("sem scikit-learn em produção — e fica no repositório como camada **descritiva**: serve")
+    add("para caracterizar o corpus e para sustentar a conclusão acima. **Não** está ligado à")
+    add("recuperação nem aos alertas, e a razão é a medição desta página, não uma falta de")
+    add("tempo.")
     add("")
-    add("1. Um **tipo de evento** por alerta (\"isto é um item regulatório\").")
-    add("2. Recuperação **filtrável por tipo**, que ataca diretamente o tema≠direção: comparar")
-    add("   um item regulatório com precedentes regulatórios, e não com tudo o que se lhe")
-    add("   pareça.")
-    add("")
-    add("O campo `confidence` existe para o produto poder **recusar** mostrar um tipo quando a")
-    add("manchete não se parece com nenhum grupo. Um rótulo sem confiança é pior do que rótulo")
-    add("nenhum.")
+    add("O caminho que a evidência sustenta, se houver tempo, é a rubrica: transparente,")
+    add("verificável, sem treino, e correta onde responde — ao custo de só responder em")
+    add(f"{covered / len(df):.1%} dos casos.")
     add("")
 
     OUT_MD.parent.mkdir(parents=True, exist_ok=True)
