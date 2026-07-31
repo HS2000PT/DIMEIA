@@ -576,3 +576,13 @@
 {"ts": "2026-07-31T18:52:02+00:00", "news_date": "2026-07-31", "ticker": "JPM", "headline": "NMR or JPM: Which Is the Better Value Stock Right Now?", "prob": 0.2554975664786936, "gate": 0.5, "kept": false}
 {"ts": "2026-07-31T18:52:03+00:00", "news_date": "2026-07-31", "ticker": "AMD", "headline": "Nvidia’s Valuation Gap With AMD Just Got Bigger", "prob": 0.6006379310387902, "gate": 0.5, "kept": true}
 {"ts": "2026-07-31T18:52:04+00:00", "news_date": "2026-07-31", "ticker": "NFLX", "headline": "Netflix Is Down 46% -- Here's Why I'm Buying More", "prob": 0.40237048094067196, "gate": 0.5, "kept": false}
+{"ts": "2026-07-31T20:17:51+00:00", "news_date": "2026-07-31", "ticker": "AAPL", "headline": "Want to trade SpaceX for Apple? 1inch says skip the dollars", "prob": 0.42546831449760536, "gate": 0.5, "kept": false}
+{"ts": "2026-07-31T20:17:52+00:00", "news_date": "2026-07-31", "ticker": "MSFT", "headline": "Accenture vs. Microsoft: What Diverging Revenue Growth Paths Tell Investors", "prob": 0.5484981586087005, "gate": 0.5, "kept": true}
+{"ts": "2026-07-31T20:17:53+00:00", "news_date": "2026-07-31", "ticker": "NVDA", "headline": "NVIDIA Stock Rises 1.8% as Morningstar Sees $280 Value", "prob": 0.4863753756422565, "gate": 0.5, "kept": false}
+{"ts": "2026-07-31T20:17:54+00:00", "news_date": "2026-07-31", "ticker": "TSLA", "headline": "Elon Musk denies claims that Tesla could sell off its China business", "prob": 0.6056704382245284, "gate": 0.5, "kept": true}
+{"ts": "2026-07-31T20:17:55+00:00", "news_date": "2026-07-31", "ticker": "AMZN", "headline": "Alphabet Stock Rallies 3.9% as Amazon Revives AI Confidence", "prob": 0.4351975049316875, "gate": 0.5, "kept": false}
+{"ts": "2026-07-31T20:17:56+00:00", "news_date": "2026-07-31", "ticker": "GOOGL", "headline": "Alphabet Stock Rallies 3.9% as Amazon Revives AI Confidence", "prob": 0.47823168378011843, "gate": 0.5, "kept": false}
+{"ts": "2026-07-31T20:17:57+00:00", "news_date": "2026-07-31", "ticker": "META", "headline": "Meta Stock Rebounds as Amazon Revives AI Confidence", "prob": 0.5342680200089145, "gate": 0.5, "kept": true}
+{"ts": "2026-07-31T20:17:59+00:00", "news_date": "2026-07-31", "ticker": "JPM", "headline": "CORRECTION-JPMorgan Announces Cash Distributions for the JPMorgan ETFs", "prob": 0.25580831829081485, "gate": 0.5, "kept": false}
+{"ts": "2026-07-31T20:18:00+00:00", "news_date": "2026-07-31", "ticker": "AMD", "headline": "AMD Stock Gains as Amazon Expands AI Spending to $220 Billion", "prob": 0.6003000951201459, "gate": 0.5, "kept": true}
+{"ts": "2026-07-31T20:18:01+00:00", "news_date": "2026-07-31", "ticker": "NFLX", "headline": "Flipkart Turns Netflix Into a Loyalty Perk", "prob": 0.4021094313011164, "gate": 0.5, "kept": false}

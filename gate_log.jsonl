@@ -208,3 +208,13 @@
 {"date": "2026-07-31", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
 {"date": "2026-07-31", "ticker": "AMD", "stage": "alerted", "detail": "Nvidia’s Valuation Gap With AMD Just Got Bigger"}
 {"date": "2026-07-31", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}
+{"date": "2026-07-31", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.43 < 0.50"}
+{"date": "2026-07-31", "ticker": "MSFT", "stage": "alerted", "detail": "Accenture vs. Microsoft: What Diverging Revenue Growth Paths Tell Investors"}
+{"date": "2026-07-31", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.49 < 0.50"}
+{"date": "2026-07-31", "ticker": "TSLA", "stage": "alerted", "detail": "Elon Musk denies claims that Tesla could sell off its China business"}
+{"date": "2026-07-31", "ticker": "AMZN", "stage": "triage_suppressed", "detail": "P=0.44 < 0.50"}
+{"date": "2026-07-31", "ticker": "GOOGL", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-07-31", "ticker": "META", "stage": "alerted", "detail": "Meta Stock Rebounds as Amazon Revives AI Confidence"}
+{"date": "2026-07-31", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-07-31", "ticker": "AMD", "stage": "alerted", "detail": "AMD Stock Gains as Amazon Expands AI Spending to $220 Billion"}
+{"date": "2026-07-31", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}
