@@ -198,3 +198,13 @@
 {"date": "2026-07-31", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
 {"date": "2026-07-31", "ticker": "AMD", "stage": "alerted", "detail": "AMD Stock Rebounds With Chips Ahead Of Q2 Report; SpaceX Earnings, Lockup Expira"}
 {"date": "2026-07-31", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}
+{"date": "2026-07-31", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
+{"date": "2026-07-31", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft Copilot Lawsuit Deadline Is August 11: Will Investors Get Money Back?"}
+{"date": "2026-07-31", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.49 < 0.50"}
+{"date": "2026-07-31", "ticker": "TSLA", "stage": "alerted", "detail": "Elon Musk Responds to Major Tesla Report"}
+{"date": "2026-07-31", "ticker": "AMZN", "stage": "triage_suppressed", "detail": "P=0.44 < 0.50"}
+{"date": "2026-07-31", "ticker": "GOOGL", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-07-31", "ticker": "META", "stage": "alerted", "detail": "Meta Faces India Legal Scrutiny"}
+{"date": "2026-07-31", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-07-31", "ticker": "AMD", "stage": "alerted", "detail": "Nvidia’s Valuation Gap With AMD Just Got Bigger"}
+{"date": "2026-07-31", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}

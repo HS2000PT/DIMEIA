@@ -566,3 +566,13 @@
 {"ts": "2026-07-31T17:02:50+00:00", "news_date": "2026-07-31", "ticker": "JPM", "headline": "Fed's Hawkish Pause Puts JPMorgan in Focus: Buy, Sell or Hold?", "prob": 0.2557308402497292, "gate": 0.5, "kept": false}
 {"ts": "2026-07-31T17:02:51+00:00", "news_date": "2026-07-31", "ticker": "AMD", "headline": "AMD Stock Rebounds With Chips Ahead Of Q2 Report; SpaceX Earnings, Lockup Expiration Loom Large", "prob": 0.6020690925197179, "gate": 0.5, "kept": true}
 {"ts": "2026-07-31T17:02:52+00:00", "news_date": "2026-07-31", "ticker": "NFLX", "headline": "Netflix Is Down 46% -- Here's Why I'm Buying More", "prob": 0.4022259612400316, "gate": 0.5, "kept": false}
+{"ts": "2026-07-31T18:51:55+00:00", "news_date": "2026-07-31", "ticker": "AAPL", "headline": "Amazon's 14.9% Jump Lifts the Dow While Apple Drags It Back", "prob": 0.4246515183674191, "gate": 0.5, "kept": false}
+{"ts": "2026-07-31T18:51:56+00:00", "news_date": "2026-07-31", "ticker": "MSFT", "headline": "Microsoft Copilot Lawsuit Deadline Is August 11: Will Investors Get Money Back?", "prob": 0.5483882798074996, "gate": 0.5, "kept": true}
+{"ts": "2026-07-31T18:51:57+00:00", "news_date": "2026-07-31", "ticker": "NVDA", "headline": "Nvidia’s AMD Paradox is Exactly Why I Keep Buying", "prob": 0.4859096100926675, "gate": 0.5, "kept": false}
+{"ts": "2026-07-31T18:51:58+00:00", "news_date": "2026-07-31", "ticker": "TSLA", "headline": "Elon Musk Responds to Major Tesla Report", "prob": 0.6049279337429757, "gate": 0.5, "kept": true}
+{"ts": "2026-07-31T18:51:59+00:00", "news_date": "2026-07-31", "ticker": "AMZN", "headline": "Amazon's 14.9% Jump Lifts the Dow While Apple Drags It Back", "prob": 0.4352115141890132, "gate": 0.5, "kept": false}
+{"ts": "2026-07-31T18:52:00+00:00", "news_date": "2026-07-31", "ticker": "GOOGL", "headline": "Alphabet Jumps 6%, Reddit Craters 23% in Social Media Stock Divergence?", "prob": 0.47860552139881557, "gate": 0.5, "kept": false}
+{"ts": "2026-07-31T18:52:01+00:00", "news_date": "2026-07-31", "ticker": "META", "headline": "Meta Faces India Legal Scrutiny", "prob": 0.5332589808455999, "gate": 0.5, "kept": true}
+{"ts": "2026-07-31T18:52:02+00:00", "news_date": "2026-07-31", "ticker": "JPM", "headline": "NMR or JPM: Which Is the Better Value Stock Right Now?", "prob": 0.2554975664786936, "gate": 0.5, "kept": false}
+{"ts": "2026-07-31T18:52:03+00:00", "news_date": "2026-07-31", "ticker": "AMD", "headline": "Nvidia’s Valuation Gap With AMD Just Got Bigger", "prob": 0.6006379310387902, "gate": 0.5, "kept": true}
+{"ts": "2026-07-31T18:52:04+00:00", "news_date": "2026-07-31", "ticker": "NFLX", "headline": "Netflix Is Down 46% -- Here's Why I'm Buying More", "prob": 0.40237048094067196, "gate": 0.5, "kept": false}
