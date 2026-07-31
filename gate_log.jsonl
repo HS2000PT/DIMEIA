@@ -158,3 +158,13 @@
 {"date": "2026-07-30", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
 {"date": "2026-07-30", "ticker": "AMD", "stage": "alerted", "detail": "The Growth That Has To Land For Advanced Micro Devices Stock to Make Sense"}
 {"date": "2026-07-30", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
+{"date": "2026-07-31", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
+{"date": "2026-07-31", "ticker": "MSFT", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
+{"date": "2026-07-31", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-07-31", "ticker": "TSLA", "stage": "alerted", "detail": "META Stock Outperformed GOOG, TSLA In July Despite Earnings Selloff — Analyst Sa"}
+{"date": "2026-07-31", "ticker": "AMZN", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
+{"date": "2026-07-31", "ticker": "GOOGL", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-07-31", "ticker": "META", "stage": "alerted", "detail": "META Stock Outperformed GOOG, TSLA In July Despite Earnings Selloff — Analyst Sa"}
+{"date": "2026-07-31", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-07-31", "ticker": "AMD", "stage": "alerted", "detail": "Is AMD Stock Heading to $600 per Share?"}
+{"date": "2026-07-31", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
