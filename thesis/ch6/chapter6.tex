@@ -152,6 +152,16 @@ free. They were excluded on scope rather than principle: each adds an ingestion 
 mode without an evaluation attached, and an unevaluated component contributes nothing to the
 questions this work asks. They appear in future work instead.
 
+\paragraph{A fused convergence score.} Ranking alerts by the agreement of several independent
+signals is intuitive, and the machinery for it was built and measured
+(Section~\ref{sec:cs_convergence}). It was declined because the measurement did not support it:
+fusion beat the best single signal at one alert budget out of three, and a gain that appears only at
+the budget one chooses to quote is not a result. The component built along the way, a volume
+anomaly detector at zero data cost, was kept, and so was the readable part of the idea, reporting
+how many signals agree rather than a fused number a user cannot check. This is the pattern several
+of these positions share: build it, measure it, and let the measurement decide, including when the
+measurement says no.
+
 \section{Research Questions and Objectives Achieved}
 \label{sec:concl_objectives}
 

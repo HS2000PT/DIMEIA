@@ -116,6 +116,22 @@ PDF do próprio artigo lido página a página.
 | `vinh2010ami` | Vinh, Epps & Bailey (2010), "Information Theoretic Measures for Clusterings Comparison…", JMLR 11(95):2837–2854 | **sem DOI** (a JMLR não atribuiu ao vol. 11) · URL canónico | 2026-07-31 | BibTeX oficial da JMLR literal; **PDF lido**: cabeçalho "JMLR 11 (2010) 2837-2854", §4.1 define a AMI | ✅ verificado |
 | `rousseeuw1987silhouettes` | Rousseeuw (1987), "Silhouettes: a graphical aid…", J. Comput. Appl. Math. 20:53–65 | DOI 10.1016/0377-0427(87)90125-7 | 2026-07-31 | DOI resolvido (302 → PII 0377042787901257); Crossref + OpenAlex + Semantic Scholar concordam; **página 1 do PDF lida** no arquivo institucional do autor | ✅ verificado |
 
+### Ferramenta citada (não artigo)
+
+| Chave | Referência | Identificador | Data | Como | Estado |
+|---|---|---|---|---|---|
+| `worldmonitor2026` | World Monitor, painel de inteligência global em tempo real | <https://worldmonitor.app> (acedido 2026-07-31) | 2026-07-31 | Página obtida e lida: 56 camadas de mapa, 500+ feeds, 65+ fornecedores, sem registo, lema "By the time it's news, you already knew" | ✅ verificado |
+
+> **Porquê `@online` e não `@misc` ou um artigo.** É uma ferramenta, não literatura, e a entrada
+> descreve-a como tal, com **data de acesso** porque um sítio muda. Foi **recomendada pelo
+> coorientador Rafael Silva**, e o Caso de Estudo 8 credita essa recomendação no corpo do texto,
+> que é a prática normal para atribuir a origem de uma ideia.
+>
+> **Nota de exatidão para não sobre-simplificar a comparação:** o World Monitor inclui um
+> *Scenario Engine* para simular perturbações. Não é portanto puramente descritivo, e o texto da
+> tese diz isso ao diferenciar-se dele, em vez de o pintar como um sistema que também recusa
+> prever.
+
 **Armadilhas apanhadas pela verificação, e como foram tratadas.** Registadas porque cada uma
 produziria um erro citável se tivesse passado.
 

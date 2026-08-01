@@ -2,7 +2,7 @@
 
 > **Como usar:** copiar o bloco abaixo para email ou Teams. Confirmar os três links marcados
 > com ⚠️ antes de enviar (a app pode estar hibernada; o canal tem de estar público).
-> Escrita para ser lida em dois minutos e dar direção a quem vai abrir 104 páginas.
+> Escrita para ser lida em dois minutos e dar direção a quem vai abrir 106 páginas.
 
 ---
 
@@ -15,16 +15,16 @@ funcionar em produção, por isso o que precisa mesmo da sua leitura é o conte�
 
 **O que abrir, por ordem de importância**
 
-1. **Tese (EN), 104 páginas** — `thesis/main.pdf`
+1. **Tese (EN), 106 páginas** — `thesis/main.pdf`
    Se tiver pouco tempo: o **Capítulo 1** (o problema e as três perguntas que o sistema
    responde) e o **Capítulo 6** (os veredictos, incluindo os resultados negativos).
-2. **Tese (PT), 106 páginas** — `thesis-pt/main.pdf`
-   Mesmo conteúdo, tradução fiel. Mantidas em sincronia: 51 secções e 62 figuras/tabelas em
+2. **Tese (PT), 110 páginas** — `thesis-pt/main.pdf`
+   Mesmo conteúdo, tradução fiel. Mantidas em sincronia: 52 secções e 63 figuras/tabelas em
    ambas, idênticas por capítulo.
-3. **Slides de defesa, 22 frames** — `slides/main.pdf`
+3. **Slides de defesa, 23 frames** — `slides/main.pdf`
 4. **Sistema a correr** — ⚠️ app: <https://investigator.streamlit.app> ·
    ⚠️ canal Telegram: <https://t.me/InvestiGatorMEIA>
-5. **Código** — ⚠️ <https://github.com/HS2000PT/DIMEIA> (440 testes, tudo reproduzível por
+5. **Código** — ⚠️ <https://github.com/HS2000PT/DIMEIA> (465 testes, tudo reproduzível por
    script)
 
 **O que o sistema faz, em três linhas**
