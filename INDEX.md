@@ -53,6 +53,7 @@ written overview of the whole project, read **[`RELATORIO_FINAL.md`](RELATORIO_F
 | [`explanation_engine/`](investigator/explanation_engine/) | Builds the explainable alert text |
 | [`triage/`](investigator/triage/) | Materiality-triage model (RQ4) and inference |
 | [`narrator/`](investigator/narrator/) | Grounded narration: the LLM writes the language, never the facts, behind a runtime faithfulness guard |
+| [`convergence.py`](investigator/convergence.py) | Multi-signal fusion (measured, not wired to production) |
 | [`evaluation/`](investigator/evaluation/) | Offline evaluation and live-monitoring metrics |
 | [`telegram_bot/`](investigator/telegram_bot/) | Telegram delivery and the interactive bot |
 | **Tests** | [`tests/`](tests/) — the automated suite (`pytest`) |
@@ -60,6 +61,7 @@ written overview of the whole project, read **[`RELATORIO_FINAL.md`](RELATORIO_F
 Single-file modules in the package root: `main.py` (entry points for both triggers),
 `config.py` (environment/secrets), `alerts_history.py` (the shared record the app mirrors),
 `gate_log.py` (which gate stopped each ticker), `live_kb.py` (the growing case base),
+`convergence.py` (multi-signal fusion, measurement layer),
 `settings_overrides.py` (safe live tunables), `console.py`.
 
 ---

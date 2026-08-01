@@ -7,8 +7,69 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 42 (**reformulação V2 — posicionamento, instrumentação e política; branch `claude/v2-instrumentacao`**)
-- **Última atualização:** 2026-07-29
+- **Sessão nº:** 43 (**rigor: auditoria de conteúdo das citações + 4 estudos de caso novos; branch `main`**)
+- **Última atualização:** 2026-07-31
+- **🔬 SESSÃO 43 (o aluno pediu: validar a bibliografia a fundo "sem margem para erro ou informação
+  falsa", tirar menções a repositório/ficheiros da tese, arrumar o repo, analisar o Student Pack
+  para alternativa à VM Oracle, propor melhorias do site rumo ao nível worldmonitor, e propor
+  metodologias de Engenharia de IA com valor real; "isto ainda não está perfeito"):**
+  **7 commits, todos pushed. Tese EN 106 pp / PT 110 pp, 465 testes, 59 referências.**
+  **(A) AUDITORIA DE CONTEÚDO DAS CITAÇÕES — o último risco de integridade que faltava.** O
+  `citation_log` provava que cada fonte **existe**; nunca se tinha verificado que cada citação
+  **sustenta a frase a que está agarrada**. Li as **122 instâncias / 52 chaves** (ch1–ch6 +
+  apêndice; o Cap. 2 tem 86 das 122). **2 erros reais**, ambos corrigidos por **enfraquecimento da
+  afirmação** e nunca por inventar fonte: (1) `kearney2014textual` — **anacronismo**: um survey de
+  **2014** sustentava uma taxonomia de três gerações cuja terceira são modelos neuronais
+  contextuais (**BERT é de 2019**); (2) `doshivelez2017rigorous` — atribuição esticada: defendem
+  que a interpretabilidade tem de ser **avaliada**, mas não elegem "fidelidade" como critério
+  (isso vem da *local fidelity* do LIME). Registo em `docs/decisions/citation_content_audit.md`.
+  **(B) TRÊS MEDIÇÕES NOVAS (aditivas, congelados byte-iguais):**
+  **B1 taxonomia de eventos** — pureza 0,712, **AMI evento 0,358 > ticker 0,188 > setor 0,130**,
+  ARI 0,786; **NÃO ligada à recuperação** (silhueta 0,084 é fraca; filtrar por tipo errado deita
+  fora precedentes válidos em silêncio). **B2 predição conformal** — cobertura 0,951/0,902/0,803
+  (aleatória) vs 0,937/0,900/0,822 (temporal): **aguenta a 90% e 80%, parte-se a 95%**; e o número
+  mais duro, **a 90% de cobertura só há decisão definida em 39,5% das manchetes** — o que **explica**
+  o negativo da RQ4 por um ângulo independente. **B3 deriva** — vol20 **PSI 0,281** (significativa),
+  restantes estáveis; a prevalência do rótulo **OSCILA** (0,385→0,470→0,378) em vez de ter tendência.
+  **(C) CONVERGÊNCIA + VOLUME** — ideia do **worldmonitor.app**, recomendado pelo **coorientador
+  Rafael Silva**; ambos **citados/creditados** na tese (pedido explícito do aluno). Detetor de volume
+  = capacidade nova a **custo zero em dados** (a coluna vinha nas barras e era deitada fora). A fusão
+  **ganha em 1 de 3 orçamentos** ⇒ **não entra em produção**. Achado inesperado: o peso da
+  intensidade de notícia saiu **NEGATIVO (−0,283)** — mais manchetes = menos provável ser material
+  (dias de conteúdo automático), o que é a **justificação empírica** da regra de derivar pesos.
+  **(E) INTEGRAÇÃO COMPLETA:** Cap. 5 ganha **Estudos de Caso 5–8** (a tese tinha 4, não 5 — o plano
+  estava errado); Cap. 2 secção nova "Uncertainty and Drift in a Deployed Model"; Cap. 3 os três
+  protocolos; Cap. 6 duas limitações passam de **afirmadas a medidas** + duas novas + nova posição
+  por exclusão. **7 citações novas verificadas contra FONTE PRIMÁRIA** (workflow de 6 agentes +
+  passe adversário). **3 figuras novas** (valores entram como constantes copiadas dos .md, para
+  figura e texto não poderem divergir). Slides EN+PT 22→**23 frames**; guia 77→**80 slides**.
+  **⚠️ ERROS MEUS, apanhados e corrigidos (o valor está aqui):**
+  (1) **A rubrica tinha um `to buy` nu** que apanhava **5.032 de 5.657** matches do balde `ma` (89%)
+  com ruído automático ("157k Shares To Buy"). Se tivesse ido para o agrupamento, **todos** os
+  números de pureza estariam corrompidos em silêncio.
+  (2) **Comparei PUREZAS entre referências com cardinalidades diferentes** (8 tipos vs 14 tickers vs
+  5 setores) e em **linhas diferentes**. A pureza depende da cardinalidade ⇒ não compara nada.
+  Trocado por **AMI nas mesmas linhas**. **Sem esta correção eu teria reportado a conclusão OPOSTA**,
+  com números de aparência respeitável.
+  (3) **Teste conformal exigia cobertura numa divisão ÚNICA** e falhou a α=0,2 (0,780 vs 0,800). Não
+  era bug: a garantia é **marginal**, vale em média sobre a aleatoriedade da calibração. Passou a
+  medir a média sobre 60 divisões.
+  (4) **PSI ao vivo de 2,866 está inflacionado** — a média só se desloca +0,18σ. 980 linhas = 10
+  tickers × ~98 dias, e a vol20 é janela deslizante (dois dias consecutivos partilham 95% da
+  informação). Registado que os dois PSI **não são comparáveis em magnitude**.
+  (5) Teste de volume afirmava "volume normal não dispara" com um último dia **aleatório** que
+  calhou z=2,16. Trocar a semente seria pesca ⇒ fixei o dia na mediana + teste de **taxa de disparo**
+  sobre 300 séries.
+  **⚠️ LIMITE MENSAL DA CONTA ATINGIDO** a meio do workflow de citações: 2 dos 6 passes adversários
+  completaram (vovk, angelopoulos — não refutados), 4 não correram. **Está dito no `citation_log`**
+  em vez de ficar por dizer. **Sem mais subagentes nesta conta.**
+  **PENDENTE HUMANO:** (1) **agradecimentos** — a secção continua com o TODO e **não a escrevi de
+  propósito**: gratidão é voz do aluno (o crédito *técnico* ao coorientador já está no corpo do
+  texto). (2) apagar `thesis/build/` (permissão negada ao agente). (3) correr o estudo de utilidade.
+  (4) decidir alojamento (Heroku pendente de feedback). (5) declaração de IA + licença com o
+  orientador. **NÃO FEITO (fase D do plano):** reconstrução do dashboard estilo worldmonitor — a
+  fazer **ao lado** de `app/streamlit_app.py`, com `docs/design/dashboard_acceptance.md` escrito
+  **antes** do código.
 - **🧭 SESSÃO 42 (o aluno rejeitou o produto por inteiro: "the product sucks… the streamlit is
   completely dogshit… the alerts come too late… the AI usage is so short"; pediu repensar do zero,
   worldmonitor.app como referência de ambição, e disse "não tenho medo de mudar tudo"):**

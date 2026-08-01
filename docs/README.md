@@ -46,6 +46,10 @@ se só queres correr o sistema.
 | [evaluation/evaluation_retrieval_embedders.md](evaluation/evaluation_retrieval_embedders.md) | **Benchmark de embedders:** MiniLM vs FinBERT/E5/BGE (valida a escolha do embedder por medição). |
 | [evaluation/evaluation_triage_fairtext.md](evaluation/evaluation_triage_fairtext.md) | **RQ4 re-teste justo:** C afinado + PCA do texto + FinBERT → o texto continua a não bater a volatilidade (negativo robusto; PCA recupera até ao contexto). |
 | [evaluation/evaluation_policy_sweep.md](evaluation/evaluation_policy_sweep.md) | **RQ4 como POLÍTICA:** varrimento do limiar sob rácio de custo → o `0.5` deixa de ser constante à mão e passa a ponto de operação derivado (rácio implícito ≈0,9). |
+| [evaluation/evaluation_event_taxonomy.md](evaluation/evaluation_event_taxonomy.md) | **Caso 5:** taxonomia de tipos de evento sobre os embeddings (com os dois controlos que a tornam interpretável: aleatório de tamanhos iguais, e AMI em vez de pureza). |
+| [evaluation/evaluation_conformal.md](evaluation/evaluation_conformal.md) | **Caso 6:** predição conformal na triagem — a garantia, e o preço dela (decisão definida em só 39,5% das manchetes a 90% de cobertura). |
+| [evaluation/evaluation_drift.md](evaluation/evaluation_drift.md) | **Caso 7:** deriva PSI+KS treino→teste e →hoje; a limitação mais repetida da tese, medida. |
+| [evaluation/evaluation_convergence.md](evaluation/evaluation_convergence.md) | **Caso 8:** convergência multi-sinal (worldmonitor, creditado) + detetor de volume; a fusão ganha em 1 de 3 orçamentos e por isso não entra em produção. |
 | [evaluation/evaluation_narrator.md](evaluation/evaluation_narrator.md) | **RQ3-ext:** fidelidade do narrador ancorado — violações pré-guarda (mede o modelo) vs entregues (mede a guarda). |
 
 ## decisions/ — porquê das decisões, aprendizagem e revisões (rigor académico)
@@ -54,6 +58,7 @@ se só queres correr o sistema.
 | [decisions/learning.md](decisions/learning.md) | Cada conceito de IA explicado em PT-PT (aprendizagem do aluno). |
 | [decisions/glossary.md](decisions/glossary.md) | Glossário de termos. |
 | [decisions/citation_log.md](decisions/citation_log.md) | Registo de **cada citação verificada** (zero fabricação). |
+| [decisions/citation_content_audit.md](decisions/citation_content_audit.md) | **Auditoria de CONTEÚDO das citações**: cada citação sustenta a frase a que está agarrada? (122 instâncias; 2 afirmações esticadas corrigidas). |
 | [decisions/page_audit.md](decisions/page_audit.md) | Auditoria página-a-página + re-verificação das 50 fontes. |
 | [decisions/product_review.md](decisions/product_review.md) | Revisão de produto/UX (Pass 5 + Pass 6 do redesenho). |
 
