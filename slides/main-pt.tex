@@ -345,6 +345,49 @@ Gradient boosting & 0.469 & 0.551 \\
 \end{block}
 \end{frame}
 
+\begin{frame}{Resultado 5: o que o sistema \emph{não} sabe}
+\small Três estudos que examinam o sistema por fora. Cada um termina numa decisão de \textbf{não}
+mudar a produção, tomada com base na evidência.
+\vspace{1mm}
+\begin{columns}[T]
+\column{0.33\textwidth}
+\textbf{\footnotesize Tipos de evento}\par\smallskip
+{\scriptsize Agrupámos os embeddings contra uma rubrica escrita \emph{antes} de agrupar.
+Concordância (corrigida para o acaso): evento \textbf{0.358} $>$ ticker $0.188$ $>$ setor $0.130$.
+\par\smallskip
+Logo o espaço \emph{codifica} tipo de evento, mais do que assunto. Mas a separação é fraca
+(silhueta $0.084$) $\Rightarrow$ \textbf{não} ligado à recuperação: um tipo errado deita fora
+precedentes válidos em silêncio.}
+
+\column{0.33\textwidth}
+\textbf{\footnotesize Garantia conformal}\par\smallskip
+{\scriptsize Cobertura livre de distribuição sobre o modelo \emph{congelado} (PR-AUC reproduzida
+exatamente primeiro).
+\par\smallskip
+Aguenta-se a 90\%/80\%; \textbf{parte-se a 95\%} sob divisão temporal. Cobertura mais apertada
+apoia-se na cauda, e a cauda move-se primeiro.
+\par\smallskip
+\textbf{O preço:} para prometer 90\%, decisão definida em apenas \textbf{39,5\%} das manchetes.}
+
+\column{0.33\textwidth}
+\textbf{\footnotesize Deriva, medida}\par\smallskip
+{\scriptsize A limitação que andávamos a \emph{afirmar}, finalmente dimensionada.
+\par\smallskip
+Volatilidade pré-evento PSI \textbf{0.281} (significativa); features de retorno $0.020$ / $0.014$
+(estáveis).
+\par\smallskip
+A prevalência do rótulo \emph{oscila} ($0.385 \to 0.470 \to 0.378$), não tem tendência. Dá um
+\textbf{gatilho de re-treino} em vez de uma intuição.}
+\end{columns}
+\vfill
+\begin{block}{\small Porque é que isto vale mais do que outro número positivo}
+\small O valor de 39,5\% \textbf{explica} o Resultado 4 a partir de um ângulo independente, sem
+treinar nada de novo: o sinal disponível genuinamente não separa a maioria dos itens. E o resultado
+da deriva diz-nos \emph{porquê} os números congelados sobrevivem, já que o protocolo atravessa uma
+dessas oscilações.
+\end{block}
+\end{frame}
+
 \begin{frame}{O produto, ao vivo}
 \begin{columns}
 \column{0.55\textwidth}
@@ -393,12 +436,15 @@ latência é \textbf{medido} e está simplesmente ausente quando os carimbos nã
   \item A relevância é um \textbf{indicador aproximado por mesmo setor}, não um juízo humano.
   \item O corpus de recuperação é uma janela \textbf{recente} da camada gratuita (entretanto validada à escala no FNSPID, P@5 $0.595$); o estudo de \emph{triagem} usou de facto o FNSPID multi-ano (14/15 tickers --- a Meta é ``FB'' no corpus).
   \item O impacto de precedente mostrado é um retorno pós-evento \textbf{bruto} (os rótulos de triagem \emph{são} ajustados ao mercado).
-  \item A similaridade é \textbf{temática, não direcional}: um agrupamento pode misturar movimentos de subida/descida, pelo que a média é \emph{evidência} ao nível do tema, não uma previsão.
+  \item A similaridade é \textbf{temática, não direcional}: um agrupamento pode misturar movimentos de subida/descida, pelo que a média é \emph{evidência} ao nível do tema, não uma previsão. \emph{Testámos} a correção óbvia (filtrar por tipo de evento) e ela não se sustenta --- ver Resultado 5.
+  \item \textbf{A confiança é fina, e está agora quantificada:} garantir 90\% de cobertura deixa uma decisão definida em apenas \textbf{39,5\%} das manchetes.
+  \item \textbf{A deriva treino/implantação é medida, não apenas alegada:} concentrada na volatilidade (PSI $0.281$), e cíclica em vez de com tendência.
   \item \textbf{Ainda sem estudo humano de utilidade} (utilidade da RQ3 em aberto).
   \item Por desenho: \textbf{sem previsão de preços, sem negociação}, pelo que as métricas de lucro estão fora de âmbito.
 \end{itemize}
 \vfill
 \footnotesize Todos os resultados são reprodutíveis a partir de scripts versionados (re-correr: números idênticos).
+Duas das limitações acima eram afirmações; são agora medições.
 \end{frame}
 
 \begin{frame}{Conclusões}

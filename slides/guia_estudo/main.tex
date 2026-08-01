@@ -1221,6 +1221,124 @@ Contexto v1 (âncora) & 0,537 \\
 valem e \emph{quais não}. \texttt{scripts/train\_triage\_ext.py}
 \end{frame}
 
+\begin{frame}{Predição conformal --- do zero, em três ideias}
+\footnotesize
+\key{O problema.} A triagem devolve ``54\%''. A calibração garante uma coisa \emph{agregada}: entre
+os itens a que chamei 54\%, cerca de 54\% eram mesmo materiais. Não promete \key{nada} sobre o
+\emph{próximo} item.
+\smallskip
+
+\key{A ideia.} Em vez de devolver um número, devolve um \key{conjunto} de respostas possíveis, com
+uma garantia: escolhido um $\alpha$, a resposta certa está lá dentro em pelo menos $1-\alpha$ dos
+casos. Não assume normalidade, nem que o modelo seja bom.
+\smallskip
+
+\key{Como se faz (é mesmo simples).}
+\begin{enumerate}\scriptsize
+  \item Num bloco reservado, para cada exemplo calcula-se \emph{quanto o modelo se enganou}:
+        $1 - \hat{p}(\text{classe verdadeira})$.
+  \item Ordena-se e tira-se o quantil $\lceil (n{+}1)(1-\alpha)\rceil / n$. Chama-se $\hat{q}$.
+        \key{O ``+1'' não é decoração}: é ele que transforma ``costuma cobrir'' em garantia.
+  \item Para um item novo, entram no conjunto todas as classes com $\hat{p} \ge 1 - \hat{q}$.
+\end{enumerate}
+\smallskip
+
+\key{Como se lê, num problema de sim/não:} um rótulo $=$ decisão; \key{dois rótulos $=$ ``não sei''},
+dito de forma explícita e com garantia por trás; conjunto vazio $=$ nada é plausível a esse nível.
+\vfill
+\centering\scriptsize Encaixa na tese porque é a mesma postura que nos leva a recusar prever preços:
+melhor dizer ``não sei'' do que empurrar um 0,51 que finge decidir.
+\end{frame}
+
+\begin{frame}{O resultado conformal --- e o número que dói (decorar)}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\scriptsize
+\begin{tabular}{l c c c}
+\toprule
+Divisão & $\alpha$ & Nominal & Cobertura \\
+\midrule
+Aleatória & 0,05 & 0,95 & 0,951 \\
+Aleatória & 0,10 & 0,90 & 0,902 \\
+Aleatória & 0,20 & 0,80 & 0,803 \\
+\midrule
+Temporal & 0,05 & 0,95 & \key{0,937} \\
+Temporal & 0,10 & 0,90 & 0,900 \\
+Temporal & 0,20 & 0,80 & 0,822 \\
+\bottomrule
+\end{tabular}
+
+\column{0.48\textwidth}
+\footnotesize
+\begin{itemize}\scriptsize
+  \item \key{Aleatória:} bate no nominal em todo o lado $\Rightarrow$ a implementação está certa.
+  \item \key{Temporal} (o que a produção faz): aguenta a 90\% e 80\%, \key{parte-se a 95\%}.
+  \item \emph{Porquê?} Pedir 95\% obriga o limiar a apoiar-se na \key{cauda}, e é a cauda que se
+        move primeiro quando o regime muda.
+\end{itemize}
+\end{columns}
+\vspace{2mm}
+\begin{block}{\footnotesize O número a decorar (e a saber explicar)}
+\footnotesize Para prometer \key{90\%} de cobertura, o modelo só consegue decisão \key{definida em
+39,5\%} das manchetes. Nas outras 60,5\% o conjunto honesto tem as \emph{duas} classes.
+\smallskip
+\scriptsize Isto \key{não contradiz} a RQ4 --- \key{explica-a} por outro caminho, sem treinar nada:
+o sinal disponível genuinamente não separa a maioria dos itens. Se o júri disser ``o vosso modelo é
+fraco'', esta é a resposta que mostra que \emph{sabemos exatamente quão fraco} e porquê.
+\end{block}
+\end{frame}
+
+\begin{frame}{Deriva e tipos de evento --- as duas últimas medições}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\footnotesize\key{Deriva (o corpus envelhece)}
+\scriptsize
+\smallskip
+Treinámos em 2018--2023 e corremos hoje. Andámos a \emph{afirmar} isso como limitação. Agora está
+medido, com o \key{PSI} (bandas: $<$0,10 estável, 0,10--0,25 moderada, $>$0,25 significativa):
+\smallskip
+\begin{tabular}{l c}
+\toprule
+Volatilidade 20d & \key{0,281} \\
+Comprimento manchete & 0,111 \\
+Retorno do dia & 0,020 \\
+Momentum 5d & 0,014 \\
+\bottomrule
+\end{tabular}
+\smallskip
+
+O rótulo \key{oscila} ($0{,}385 \to 0{,}470 \to 0{,}378$), \key{não tem tendência}. Por isso os
+congelados sobrevivem: o protocolo já atravessa uma dessas oscilações.
+
+\column{0.5\textwidth}
+\footnotesize\key{Tipos de evento (o espaço sabe o quê?)}
+\scriptsize
+\smallskip
+Agrupei os embeddings e comparei com uma rubrica escrita \key{antes} de agrupar (o histórico do
+git prova a ordem --- é o pré-registo).
+\smallskip
+
+AMI (corrigido para o acaso), nas mesmas linhas:
+\smallskip
+\centering
+\begin{tabular}{l c}
+\toprule
+Tipo de evento & \key{0,358} \\
+Ticker & 0,188 \\
+Setor & 0,130 \\
+\bottomrule
+\end{tabular}
+\smallskip
+
+Logo o espaço \key{sabe} o tipo de evento, e mais do que sabe o assunto. \key{Mas} a separação é
+fraca (silhueta 0,084) $\Rightarrow$ \key{não} ligámos isto à recuperação: filtrar por um tipo
+errado deita fora precedentes válidos \emph{em silêncio}.
+\end{columns}
+\vspace{1mm}
+\centering\scriptsize \key{A lição de método:} os três estudos acabam numa decisão de \key{NÃO}
+mudar a produção. Isso é um resultado, não trabalho por acabar --- e é preciso dizê-lo assim.
+\end{frame}
+
 \begin{frame}{Ameaças à validade (ditas antes que perguntem)}
 \footnotesize
 \begin{itemize}
@@ -1499,13 +1617,21 @@ PR-AUC \textbf{0,542 vs 0,496} & RQ4: só-volatilidade bate todos os modelos com
 \textbf{0,632 vs 0,163} & precisão@5-alertas/dia: triagem vs alertar-sempre ($\approx$4$\times$) & idem \\
 \textbf{79.753} / 2.016 & exemplos FNSPID do treino / fatia curada na app pública & kb\_fnspid\_build \\
 \textbf{0,992} / 96\% & paridade ONNX$\leftrightarrow$SBERT (cosseno médio; vizinhos top-3) & onnx\_minilm\_validation \\
-\textbf{90 pp; 52/52} & tese 0 erros; todas as citações verificadas & page\_audit \\
+\textbf{104 pp; 58/58} & tese 0 erros; todas as citações verificadas & page\_audit \\
 \midrule
 \multicolumn{3}{l}{\emph{Extensão CS1 (2026-07-13; corrida nova, protocolo congelado reutilizado — não muda os de cima):}} \\
 F1 \textbf{0,280} & LOF causal (o 2.º detetor aprendido; também perde para 0,530) & evaluation\_anomaly\_ext \\
 F1 \textbf{0,664 vs 0,516} & $\sigma$ EWMA bate $\sigma$ rolling no proxy (achado honesto!) & idem \\
 \textbf{944 $\to$ 42} & funil real de produção em 5 dias (seletividade 22:1) & alert\_funnel \\
 \textbf{54\%} & exemplo trabalhado: P do alerta META real = o valor enviado & triage\_worked\_example \\
+\midrule
+\multicolumn{3}{l}{\emph{Casos 5--7 (o que o sistema NÃO sabe; aditivos, congelados intactos):}} \\
+AMI \textbf{0,358 vs 0,188} & tipo de evento bate assunto (ticker) no espaço de embeddings & Cap.~5 (CS5) \\
+\textbf{0,712 vs 0,444} & pureza dos grupos vs aleatório de tamanhos iguais (ganho $+$0,269) & idem \\
+\textbf{39,5\%} & decisão definida a 90\% de cobertura conformal (o resto é ``não sei'') & Cap.~5 (CS6) \\
+\textbf{0,937 vs 0,95} & a cobertura parte-se a $\alpha$=0,05 sob divisão temporal & idem \\
+PSI \textbf{0,281} & deriva da volatilidade treino$\to$teste (banda significativa) & Cap.~5 (CS7) \\
+\textbf{0,385/0,470/0,378} & prevalência do rótulo: oscila, não tem tendência & idem \\
 \bottomrule
 \end{tabular}
 \end{frame}

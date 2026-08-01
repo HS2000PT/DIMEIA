@@ -340,6 +340,47 @@ Gradient boosting & 0.469 & 0.551 \\
 \end{block}
 \end{frame}
 
+\begin{frame}{Result 5: what the system does \emph{not} know}
+\small Three studies that examine the system from outside. Each ends in a decision \textbf{not} to
+change production, taken on the evidence.
+\vspace{1mm}
+\begin{columns}[T]
+\column{0.33\textwidth}
+\textbf{\footnotesize Event types}\par\smallskip
+{\scriptsize Clustered the embeddings against a rubric written \emph{before} clustering.
+Agreement (chance-corrected): event \textbf{0.358} $>$ ticker $0.188$ $>$ sector $0.130$.
+\par\smallskip
+So the space \emph{does} encode event type, more than subject. But separation is weak
+($\text{silhouette }0.084$) $\Rightarrow$ \textbf{not} wired to retrieval: a wrong event type drops
+valid precedents silently.}
+
+\column{0.33\textwidth}
+\textbf{\footnotesize Conformal guarantee}\par\smallskip
+{\scriptsize Distribution-free coverage on the \emph{frozen} model (PR-AUC reproduced exactly first).
+\par\smallskip
+Holds at 90\%/80\%; \textbf{breaks at 95\%} under a temporal split. Tighter coverage leans on the
+tail, and the tail moves first.
+\par\smallskip
+\textbf{The price:} to promise 90\%, a definite call on only \textbf{39.5\%} of headlines.}
+
+\column{0.33\textwidth}
+\textbf{\footnotesize Drift, measured}\par\smallskip
+{\scriptsize The limitation we kept \emph{asserting}, finally sized.
+\par\smallskip
+Pre-event volatility PSI \textbf{0.281} (significant); returns features $0.020$ / $0.014$ (stable).
+\par\smallskip
+Label prevalence \emph{oscillates} ($0.385 \to 0.470 \to 0.378$), it does not trend. Gives a
+\textbf{retraining trigger} instead of an intuition.}
+\end{columns}
+\vfill
+\begin{block}{\small Why this matters more than another positive number}
+\small The 39.5\% figure \textbf{explains} Result 4 from an independent angle, without training
+anything new: the available signal genuinely does not separate most items. And the drift result
+tells us \emph{why} the frozen numbers survive, because the protocol already crosses one such
+oscillation.
+\end{block}
+\end{frame}
+
 \begin{frame}{The product, live}
 \begin{columns}
 \column{0.55\textwidth}
@@ -388,12 +429,15 @@ A genuine screenshot, not a mockup. \textbf{Three screens, one per question:}
   \item Relevance is a \textbf{same-sector proxy}, not a human judgement.
   \item Retrieval corpus is a \textbf{recent} free-tier window (since validated at scale on FNSPID, P@5 $0.595$); the \emph{triage} study did use multi-year FNSPID (14/15 tickers --- Meta is ``FB'' in the corpus).
   \item Displayed precedent impact is a \textbf{raw} post-event return (triage labels \emph{are} market-adjusted).
-  \item Similarity is \textbf{thematic, not directional}: a cluster can mix up/down moves, so the mean is theme-level \emph{evidence}, not a forecast.
+  \item Similarity is \textbf{thematic, not directional}: a cluster can mix up/down moves, so the mean is theme-level \emph{evidence}, not a forecast. We \emph{tested} the obvious fix (filter by event type) and it does not hold up --- see Result 5.
+  \item \textbf{Confidence is thin, and now quantified:} guaranteeing 90\% coverage leaves a definite call on only \textbf{39.5\%} of headlines.
+  \item \textbf{Train/deploy drift is measured, not just claimed:} concentrated in volatility (PSI $0.281$), and cyclical rather than trending.
   \item \textbf{No human usefulness study} yet (RQ3 usefulness open).
   \item By design: \textbf{no price prediction, no trading}, so profit metrics are out of scope.
 \end{itemize}
 \vfill
 \footnotesize All results are reproducible from versioned scripts (re-run: identical numbers).
+Two of the limitations above used to be assertions; they are now measurements.
 \end{frame}
 
 \begin{frame}{Conclusions}
