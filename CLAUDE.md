@@ -70,6 +70,36 @@
   orientador. **NÃO FEITO (fase D do plano):** reconstrução do dashboard estilo worldmonitor — a
   fazer **ao lado** de `app/streamlit_app.py`, com `docs/design/dashboard_acceptance.md` escrito
   **antes** do código.
+  **(D) A RECONSTRUÇÃO PERDEU A PREMISSA, e isso ficou escrito em vez de silenciado.** Os critérios
+  foram escritos (`docs/design/dashboard_acceptance.md`), e escrevê-los obrigou a reler o plano
+  contra o medido: **duas das cinco ideias que davam identidade à reconstrução caíram** (score de
+  convergência: ganha em 1 de 3 orçamentos; badges de tipo de evento: silhueta 0,084 e rubrica a
+  cobrir 15,1%). Sobram densidade, faixa de contexto e paleta de comandos — todas de **forma**,
+  nenhuma de **conteúdo**. Critério novo **H4** ("nenhum score que a medição não sustente") liga a
+  avaliação ao produto. **Feito o caminho aditivo:** a app mostra **volume** ("3,2× usual volume",
+  e **silêncio** quando é normal); uma só busca serve preço e volume (`_price_frame` em cache).
+  Verificado **ao vivo**: os dois maiores movers tinham 3,3× e 2,7× o habitual; um terceiro
+  sinalizado tinha volume normal e não disse nada.
+  **(F) VARREDURA DE CONSISTÊNCIA:** apanhei que **eu** tinha introduzido vírgulas decimais em modo
+  matemático na tese PT, quando a convenção são **pontos** (165 vs 21) e a regra do projeto é
+  "números **idênticos**; só a língua muda". **24 corrigidas** (14 minhas + 4 pré-existentes no
+  ch4). Verificado por comparação de **todos** os tokens numéricos das duas teses: nenhum valor
+  distinto existe só numa delas. Falso alarme investigado e descartado: o "0.989" é o recall do LOF,
+  idêntico nas duas.
+  **(G) ALOJAMENTO decidido com ofertas verificadas a 2026-08-01** (`docs/design/hosting.md`): a
+  **DigitalOcean fechou a janela ontem** ("through 7/31/26"); **Heroku $13/mês × 24 meses** é a
+  recomendação (Basic $7 sempre-ligado + Eco $5 = $12, dentro do crédito), e compra a passagem de
+  cron best-effort 1,5-2h para **polling de 60 s**. Contra o Azure não é o preço, é a **forma** do
+  crédito ($100 de uma vez esgota sem aviso). Conselho: **ativar já** e manter o ticket da Oracle
+  aberto.
+  **(H) MAPA DE COMPETÊNCIAS** (`docs/defence/mapa_competencias.md`): cada área ligada a um
+  artefacto **e a um número**, mais os **buracos ditos primeiro** (sem RL, sem multi-agente, sem
+  visão). ⚠️ **Os nomes das UC do MEIA NÃO estão no repositório e não os inventei** — o documento
+  diz ao aluno, no topo, que tem de os copiar do plano de estudos. Só 3 aparecem nos registos.
+  **Estado final: 14 commits, tudo pushed, árvore limpa. 466 testes, ruff limpo, congelados
+  byte-iguais. EN 106 pp / PT 110 pp (0 erros, 0 indefinidas), slides 23=23, guia 80, paper 4
+  (verificado sem afirmações obsoletas). Paridade 52=52 secções, 63=63 figuras/tabelas, 128=128
+  citações; três vias 59 bib = 59 citadas = 59 renderizadas, 0 órfãs.**
 - **🧭 SESSÃO 42 (o aluno rejeitou o produto por inteiro: "the product sucks… the streamlit is
   completely dogshit… the alerts come too late… the AI usage is so short"; pediu repensar do zero,
   worldmonitor.app como referência de ambição, e disse "não tenho medo de mudar tudo"):**
