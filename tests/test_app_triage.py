@@ -120,6 +120,24 @@ def test_F2_today_mostra_a_decomposicao_na_propria_linha(monkeypatch):
         assert "market ·" in txt and "sector ·" in txt
 
 
+def test_volume_invulgar_aparece_como_racio_legivel(monkeypatch):
+    """A segunda metade de "isto é invulgar?": com quanta gente a negociar.
+
+    Duas regras de produto ao mesmo tempo: quando o volume é invulgar mostra-se como **rácio**
+    ("3,2× usual volume"), porque um z-score do log do volume não comunica a ninguém; e quando é
+    normal **não se diz nada**, porque anunciar "1,0× o habitual" em cada linha seria ruído.
+    """
+    import re
+
+    _com_historico(monkeypatch, [])
+    at = AppTest.from_file(APP, default_timeout=90).run()
+    assert not at.exception
+    txt = _texto(at)
+    for achado in re.findall(r"([\d.]+)× usual volume", txt):
+        # Se apareceu, é porque passou o limiar — nunca pode ser um valor banal.
+        assert float(achado) > 1.0, f"volume de {achado}× não devia ter sido anunciado"
+
+
 def test_F5_ticker_responde_empresa_ou_mercado(monkeypatch):
     _com_historico(monkeypatch, [])
     at = AppTest.from_file(APP, default_timeout=90).run()

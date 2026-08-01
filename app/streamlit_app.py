@@ -114,10 +114,39 @@ def _shared_history() -> list:
 
 
 @st.cache_data(ttl=120, show_spinner=False)
-def _daily_close(ticker: str) -> pd.Series:
+def _price_frame(ticker: str) -> pd.DataFrame:
+    """A barra completa, não só o fecho.
+
+    O volume vem na mesma resposta e estava a ser deitado fora. Guardar a moldura inteira em
+    cache serve o preço e o volume com **uma** busca, em vez de duas.
+    """
     from investigator.market_data.prices import get_price_history
 
-    return get_price_history(ticker)["Close"]
+    return get_price_history(ticker)
+
+
+def _daily_close(ticker: str) -> pd.Series:
+    return _price_frame(ticker)["Close"]
+
+
+@st.cache_data(ttl=120, show_spinner=False)
+def _volume_signal(ticker: str) -> dict | None:
+    """Quão invulgar foi o volume — a segunda metade de "isto é invulgar para esta ação?".
+
+    Um movimento de 3% com volume normal e o mesmo movimento com o triplo do volume habitual
+    não são o mesmo acontecimento, e até aqui a app não sabia distinguir os dois.
+    """
+    try:
+        from investigator.anomaly_detector.volume import detect_volume_latest
+
+        frame = _price_frame(ticker)
+        if "Volume" not in frame:
+            return None
+        res = detect_volume_latest(frame["Volume"].to_numpy(), window=_WINDOW, threshold=2.0)
+        return {"z": float(res.z_score), "ratio": float(res.ratio),
+                "unusual": bool(res.is_unusual)}
+    except Exception:  # noqa: BLE001 — sem volume a linha aparece na mesma, só sem esta parte
+        return None
 
 
 @st.cache_data(ttl=60, show_spinner=False)
@@ -304,8 +333,15 @@ def _mover_row(r: dict) -> None:
         left, right = st.columns([3, 2])
         with left:
             st.markdown(f"**{arrow} {t} ({display_name(t)}) {_fmt_pct(r['move'])}**")
-            st.caption(f"z-score {r['z']:+.2f} vs a {_WINDOW}-day norm"
-                       + (" · flagged" if r["is_anomaly"] else ""))
+            detail = f"z-score {r['z']:+.2f} vs a {_WINDOW}-day norm"
+            if r["is_anomaly"]:
+                detail += " · flagged"
+            # O volume só entra quando é INVULGAR. Anunciar "1,0x o volume habitual" em cada
+            # linha seria ruído: a ausência desta frase já significa "volume normal".
+            vol = _volume_signal(t)
+            if vol and vol["unusual"]:
+                detail += f" · **{vol['ratio']:.1f}× usual volume**"
+            st.caption(detail)
         with right:
             d = _decomposition(t)
             if d is None:
