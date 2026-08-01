@@ -20,6 +20,7 @@ se só queres correr o sistema.
 | [design/risk_register.md](design/risk_register.md) | Riscos do projeto e mitigações. |
 | [design/public_bundle.md](design/public_bundle.md) | Publicar um bundle limpo (app + tese + código), sem segredos nem dados grandes; enacted por `scripts/make_public_bundle.py`. |
 | [design/keys.md](design/keys.md) | **Todas as chaves num só sítio**: o que faz cada uma, onde a obter, em que cofre colar, e o que falha sem ela. |
+| [design/hosting.md](design/hosting.md) | **Onde correr o vigia**: ofertas verificadas a 2026-08-01 (a DigitalOcean fechou a janela), recomendação Heroku e o que ela compra em latência. |
 | [design/cadence_contract.md](design/cadence_contract.md) | **O que o produto promete enviar e nunca enviar**, com o custo medido de cada gate. |
 | [design/app_acceptance.md](design/app_acceptance.md) | **Critérios de aceitação da app, escritos ANTES do código** (a condição de paragem que travou o ciclo de redesenhos). |
 | [design/narrator_guard.md](design/narrator_guard.md) | **A guarda de fidelidade do narrador**: porquê allowlist e não blocklist, e os 29 furos que o red team abriu na v1. |
@@ -77,7 +78,11 @@ se só queres correr o sistema.
 > **4. GRAVAR a demo:** [defence/gravar_demo.md](defence/gravar_demo.md) — guião cronometrado de
 > 3 min, o que fazer quando algo falha na sala, e o erro a não cometer.
 >
-> **5. ENVIAR ao orientador:** [defence/mensagem_orientador.md](defence/mensagem_orientador.md) —
+> **5. MAPA DE COMPETÊNCIAS:** [defence/mapa_competencias.md](defence/mapa_competencias.md) —
+> cada competência ligada a um artefacto e a um número, mais as três respostas que valem
+> mais do que a tabela e os buracos ditos antes que perguntem.
+>
+> **6. ENVIAR ao orientador:** [defence/mensagem_orientador.md](defence/mensagem_orientador.md) —
 > mensagem PT-PT pronta a copiar, com o que ele deve abrir e por que ordem.
 >
 > O resumo do projeto está na raiz: `RELATORIO_FINAL.md`. (Os antigos caderno de defesa e guia
