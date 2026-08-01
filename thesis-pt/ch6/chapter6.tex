@@ -208,7 +208,22 @@ Restam várias limitações, enunciadas com clareza:
   \item \textbf{Tema, não direção.} A similaridade por embeddings capta o tema, não a direção, pelo
         que um agrupamento recuperado pode misturar movimentos de subida e de descida; o impacto médio
         é evidência ao nível do tema, não um sinal direcional, razão pela qual os precedentes são
-        sempre mostrados individualmente.
+        sempre mostrados individualmente. O remédio natural, filtrar precedentes por tipo de evento,
+        foi testado e não assumido (Secção~\ref{sec:cs_taxonomy}): o espaço de embeddings carrega de
+        facto estrutura de tipo de evento, e carrega-a com mais força do que carrega o assunto, mas
+        demasiado fracamente para se filtrar por ela. Aplicar um tipo de evento errado deitaria fora
+        precedentes válidos em silêncio, pelo que a taxonomia fica descritiva.
+  \item \textbf{A confiança é fina, e está agora quantificada.} Envolver o modelo de triagem congelado
+        em predição conformal split (Secção~\ref{sec:cs_conformal}) mostra que garantir $90\%$ de
+        cobertura deixa uma decisão definida em apenas $39,5\%$ das manchetes. É uma confirmação
+        independente do achado do Capítulo~\ref{chap:casestudies} de que o sinal disponível é fraco,
+        obtida sem treinar nada de novo, e é uma limitação da evidência e não da implementação.
+  \item \textbf{A distância até à implantação é real, e o seu tamanho é conhecido.} O modelo foi
+        treinado num corpus de 2018--2023 e corre mais tarde. Essa distância já não é apenas afirmada:
+        está concentrada na volatilidade pré-evento, que deriva para a banda significativa, enquanto
+        as features baseadas em retornos se mantêm estáveis, e a prevalência do rótulo oscila em vez
+        de ter tendência (Secção~\ref{sec:cs_drift}). Os valores reportados devem portanto ler-se como
+        medições sob uma dessas oscilações, e não como promessas sobre um período posterior.
   \item \textbf{Sem estudo humano.} A utilidade para um investidor real ainda não foi medida.
   \item \textbf{Por desenho.} O sistema não faz previsão de preços nem negociação, pelo que as
         questões baseadas em lucro estão fora de âmbito, não por responder.
@@ -238,11 +253,17 @@ Figura~\ref{fig:limitations_future}.
   \node[lim] (l2) at (0,-2.9) {Sem estudo humano de utilidade};
   \node[fut] (f2) at (5.3,-2.9) {Pequeno estudo com rubrica: clareza, completude, acionabilidade (RQ3)};
   \node[lim] (l3) at (0,-4.35) {Tema, não direção};
-  \node[fut] (f3) at (5.3,-4.35) {De-duplicar precedentes e sinalizar divergência de direção};
+  \node[fut] (f3) at (5.3,-4.35) {Rubrica transparente de tipo de evento (os grupos são fracos demais para filtrar)};
+  \node[lim] (l4) at (0,-5.8) {Confiança fina na maioria dos itens};
+  \node[fut] (f4) at (5.3,-5.8) {Expor o ``não sei'' conformal onde a cadência o permitir};
+  \node[lim] (l5) at (0,-7.25) {Deriva entre treino e implantação};
+  \node[fut] (f5) at (5.3,-7.25) {Re-treinar no gatilho medido (índice de estabilidade acima de $0,25$)};
   \draw[->, thick, black!55] (l0.east) -- (f0.west);
   \draw[->, thick, black!55] (l1.east) -- (f1.west);
   \draw[->, thick, black!55] (l2.east) -- (f2.west);
   \draw[->, thick, black!55] (l3.east) -- (f3.west);
+  \draw[->, thick, black!55] (l4.east) -- (f4.west);
+  \draw[->, thick, black!55] (l5.east) -- (f5.west);
 \end{tikzpicture}
 \caption[As limitações mapeiam em trabalho futuro]{Cada limitação enunciada mapeia diretamente num
 passo concreto seguinte. Várias já viram uma primeira iteração do lado da produção (uma base de

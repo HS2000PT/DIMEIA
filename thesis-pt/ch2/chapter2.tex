@@ -398,6 +398,55 @@ pipeline transparente, ordenada e limitada por dia, explicada pelas suas contrib
 sobre dados de validação, e sempre comparada contra uma linha de base só-volatilidade antes de lhe ser
 permitido pesar.
 
+\section{Incerteza e Deriva num Modelo Implantado}
+\label{sec:sota_uncertainty}
+
+\emph{Uma pontuação calibrada continua a não ser uma garantia, e um modelo não fica parado. O que
+oferece a literatura em cada um destes pontos?}
+
+A calibração, tal como usada no score de triagem acima, é uma propriedade \emph{agregada}: entre os
+itens pontuados perto de uma dada probabilidade, aproximadamente essa fração deveria revelar-se
+positiva. Nada diz sobre um item individual, e não oferece recurso algum assim que o modelo é
+aplicado fora das condições em que foi ajustado. A \emph{predição conformal} responde exatamente a
+essa lacuna. O tratamento fundador \autocite{vovk2005algorithmic} mostra que um preditor pode ser
+envolvido de modo a devolver um \emph{conjunto} de rótulos com uma garantia livre de distribuição e
+válida em amostra finita: para uma taxa de erro $\alpha$ escolhida, o conjunto contém o rótulo
+verdadeiro em pelo menos $1-\alpha$ dos casos. A garantia não assume normalidade nem um modelo
+corretamente especificado, e exige apenas que os dados de calibração e de teste sejam permutáveis. A
+variante split (ou indutiva), que calibra num bloco reservado e custa por isso uma passagem extra em
+vez de um ciclo de retreino, é exposta com a sua correção de quantil de amostra finita por
+\textcite{angelopoulos2023conformal}.
+
+O apelo para um sistema construído sobre a recusa de sobre-afirmar é direto. Numa decisão binária o
+conjunto devolvido pode conter \emph{ambos} os rótulos, o que é um ``não sei'' explícito e
+quantificado, em vez de uma probabilidade perto de meio que mesmo assim força uma escolha. Trata-se
+de um género de honestidade diferente do da calibração, e as duas são complementares e não
+alternativas.
+
+A suposição de permutabilidade levanta então a segunda questão. Os modelos são treinados sobre um
+passado e implantados num futuro, e a relação entre entradas e alvo pode mudar por baixo deles. O
+tratamento padrão disto em aprendizagem automática é a literatura de \emph{concept drift}, cujo
+levantamento \autocite{gama2014survey} expõe a taxonomia (mudança súbita, gradual, incremental e
+recorrente), as estratégias de deteção e os métodos de adaptação. É um tratamento geral e não
+financeiro, pelo que fornece o enquadramento e o vocabulário, ao passo que qualquer afirmação sobre
+o quanto um corpus concreto derivou tem de vir de medir esse corpus.
+
+Ambas as preocupações pertencem a um ponto mais amplo, sobre sistemas e não sobre modelos.
+\textcite{sculley2015debt} defendem, a partir da experiência com sistemas em produção, que os
+componentes de aprendizagem automática acumulam um custo de manutenção próprio e em larga medida
+escondido: emaranhamento, em que mudar seja o que for muda tudo; dependências de dados instáveis e
+não declaradas; e dívida de configuração. O seu texto é um artigo de posição, extraído da prática e
+não um estudo empírico, e é aqui citado apenas para essa afirmação qualitativa. A relevância está em
+que um protótipo de dissertação que corre continuamente, como este corre, herda a mesma categoria de
+problema em ponto pequeno.
+
+\textbf{Para o InvestiGator:} estas três linhas convertem duas das ressalvas permanentes do sistema
+em quantidades mensuráveis. A afirmação de que uma probabilidade não é uma promessa torna-se uma
+experiência de cobertura (Secção~\ref{sec:cs_conformal}); a afirmação de que o corpus de treino
+antecede a implantação torna-se uma medição de deriva com bandas de interpretação convencionadas
+(Secção~\ref{sec:cs_drift}). Nenhuma delas altera o que o sistema implantado faz, e nos dois casos
+essa contenção é ela própria o resultado reportado.
+
 \section{Ferramentas Existentes para o Investidor de Retalho}
 \label{sec:sota_tools}
 

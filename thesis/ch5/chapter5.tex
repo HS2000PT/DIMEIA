@@ -585,15 +585,307 @@ deterministically.}
 \label{fig:triage_ablation}
 \end{figure}
 
+\section{Case Study 5: Event-Type Structure in the Embedding Space}
+\label{sec:cs_taxonomy}
+
+\emph{Question: does the sentence-embedding space that drives retrieval carry any notion of
+\emph{what kind of event} a headline reports, or only of what the headline is about? Answer: it
+carries both, and event type is the stronger of the two once the comparison is made fairly; but the
+separation is weak in absolute terms, and that is why the resulting taxonomy is kept descriptive
+rather than wired into retrieval.}
+
+\paragraph{Why the question matters.} Case Study~3 showed a positive headline retrieving a cluster
+of precedents whose measured outcomes were negative, and attributed it to theme rather than
+direction. That diagnosis leaves something unexplained: if the space encoded the \emph{kind} of
+event, precedents could be restricted to the same kind, and the mismatch would narrow. The knowledge
+base, however, is a flat collection of vectors with no notion of event type at all. This case study
+asks whether one can be recovered without supervision.
+
+\paragraph{Setup.} The cached MiniLM embeddings of the $78{,}933$ corpus headlines were clustered
+with $k$-means over $L^2$-normalised vectors, sweeping $k$ from $6$ to $20$. Because there is no
+ground truth for event type, a reference was built separately: a keyword rubric covering eight
+types (earnings, guidance, analyst action, product, legal or regulatory, mergers and acquisitions,
+personnel, and macro or market). The rubric is deliberately high-precision and low-coverage. It
+abstains when no pattern fires and also when \emph{more than one} fires, because a headline that is
+simultaneously an earnings report and an analyst action is genuinely ambiguous, and a reference that
+resolves ambiguity by list order would be inventing precision it does not have. It labels $11{,}889$
+headlines, $15.1\%$ of the corpus, and all agreement figures are computed on that subset with the
+count reported alongside.
+
+Two decisions guard the measurement. The rubric was written and committed \emph{before} any
+clustering was run, so it could not be tuned until it agreed with the clusters. And $k$ was chosen by
+silhouette rather than by agreement with the rubric, since selecting $k$ to maximise the evaluation
+metric would tune the unsupervised method against its own assessment.
+
+\paragraph{Results.} Table~\ref{tab:cs_taxonomy} reports the outcome at $k^*=18$;
+Figure~\ref{fig:cs_taxonomy} shows the silhouette sweep and the agreement comparison.
+
+\begin{table}[ht]
+\caption{Unsupervised event-type structure at $k^*=18$. Purity and agreement are measured on the
+$11{,}889$ headlines the reference rubric covers.}
+\label{tab:cs_taxonomy}
+\centering
+\begin{tabular}{l c l}
+\toprule
+\tabhead{Quantity} & \tabhead{Value} & \tabhead{Comparison} \\
+\midrule
+Silhouette (cosine)              & $+0.084$ & weak separation in absolute terms \\
+Purity against the rubric        & $0.712$  & random, same cluster sizes: $0.444$ \\
+Agreement with event type (AMI)  & \textbf{0.358} & the reference of interest \\
+Agreement with ticker (AMI)      & $0.188$  & subject, not event \\
+Agreement with sector (AMI)      & $0.130$  & subject, not event \\
+Stability across seeds (ARI)     & $0.786$  & mean over three reseeded runs \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{figures/eval_taxonomy.pdf}
+\caption[Event-type structure in the embedding space]{Left: the silhouette sweep. The curve is flat
+from $k=10$ onwards (a range of $0.003$), so $k^*=18$ is only weakly preferred over its neighbours,
+and is reported as such. Right: chance-corrected agreement between the clusters and three different
+references, all measured on the same $11{,}889$ rows. Event type outscores both subject references.}
+\label{fig:cs_taxonomy}
+\end{figure}
+
+\paragraph{Two controls, without which the headline number means little.} A purity of $0.712$ looks
+convincing and is largely an artefact. Purity computed with majority labelling inflates when the
+reference is imbalanced and $k$ is large: one type accounts for $44.4\%$ of the labels and there are
+eighteen clusters, so many acquire that label almost by default. A random assignment with exactly the
+same cluster sizes already reaches $0.444$, so the genuine gain is $+0.269$ rather than $0.712$.
+
+The second control decides the question actually asked. Purity cannot be compared across references
+with different numbers of classes, because its value depends on cardinality and imbalance; eight
+event types, fourteen tickers and five sectors are not on a common scale. Adjusted mutual
+information corrects for both chance and cardinality, and all three references are evaluated on
+identical rows. On that footing, agreement with event type ($0.358$) exceeds agreement with ticker
+($0.188$) and sector ($0.130$).
+
+\paragraph{Reading the result.} A purely qualitative reading of the clusters suggests the opposite
+conclusion, and the tension is worth resolving rather than hiding. Several clusters have company and
+sector names among their highest-weighted terms, which invites the conclusion that the space merely
+rediscovers subject. The two observations reconcile once the measurement is put on a fair footing:
+the space encodes subject \emph{and} event type simultaneously, and in a corpus of fifteen tickers
+subject is the more visible axis to the eye, because company names dominate the term lists. Measured
+with a chance-corrected statistic, the event axis explains more of the partition.
+
+One confound must be stated, because it is the first objection an examiner would raise. The rubric
+assigns labels from words present in the headline, and the embeddings encode those same words, so
+part of the event-type agreement is guaranteed by construction. What this does not damage is the
+\emph{comparison}: company names are also present in the headlines, often more than once and at the
+front, so all three references share the bias and their ordering remains informative even if the
+absolute values are inflated.
+
+\paragraph{Why it is not wired into retrieval.} The evidence supports a descriptive conclusion and
+not a production change, and the distinction is deliberate. The separation is weak in absolute terms,
+the choice of $k$ is only weakly determined, and cluster labelling depends entirely on a rubric that
+covers $15.1\%$ of the corpus. Filtering precedents by a mistaken event type would remove valid
+precedents silently, which is worse than not filtering at all. The taxonomy is therefore retained as
+a characterisation of the corpus, and the route the evidence does support, the transparent rubric,
+is recorded as future work in Chapter~\ref{chap:conclusions}.
+
+\section{Case Study 6: Distribution-Free Guarantees for the Triage Score}
+\label{sec:cs_conformal}
+
+\emph{Question: the triage score is a calibrated probability, but calibration promises nothing about
+any individual item. Can the score be given a guarantee instead? Answer: yes, split conformal
+prediction supplies a distribution-free coverage guarantee, which holds under random splitting and
+holds at the two looser confidence levels under temporal splitting but fails at the strictest one.
+The price is stark: to promise $90\%$ coverage, the model can make a definite call on only $39.5\%$
+of headlines.}
+
+\paragraph{What conformal prediction adds.} Platt scaling makes the triage score an honest
+\emph{aggregate} statement: among items scored near $0.6$, roughly $60\%$ proved material. It
+describes a historical record and promises nothing about the next item, and it offers no recourse if
+the model is used outside the regime in which it was fitted. Split conformal prediction trades the
+point estimate for a set and obtains a guarantee that is distribution-free and finite-sample: for a
+chosen $\alpha$, the set contains the true class in at least $1-\alpha$ of cases. It assumes neither
+normality, nor a well-specified model, nor even a good one.
+
+In a binary problem the returned set has a direct reading. A single label is a definite call; the
+empty set means neither class is plausible at the requested level; and a set containing \emph{both}
+labels is an explicit \emph{``I do not know''}, backed by a guarantee. That third case is the one
+that matters here: a system that refuses to forecast prices should also be able to decline to
+adjudicate its own triage, rather than pushing forward a $0.51$ that only appears to decide.
+
+\paragraph{Setup.} The frozen context-only model was loaded exactly as deployed and its test PR-AUC
+reproduced to $0.538479$, identical to the frozen value, before anything else was computed. Without
+that gate, nothing downstream would describe the model the dissertation reports. Nonconformity is
+$1-\hat{p}(\text{true class})$, and the threshold is the $\lceil (n+1)(1-\alpha)\rceil / n$ empirical
+quantile of the calibration scores. The finite-sample correction is what converts ``usually covers''
+into a guarantee; without it, coverage sits systematically below nominal.
+
+The experiment is run twice, and the contrast is the finding. A \emph{random} split of the test
+block satisfies exchangeability by construction, so the guarantee must hold and the run serves as a
+check on the implementation. A \emph{temporal} split, calibrating on the earlier half and predicting
+the later, is what the deployed system actually does, and exchangeability is not guaranteed.
+
+\paragraph{Results.} Table~\ref{tab:cs_conformal} and Figure~\ref{fig:cs_conformal} report both.
+
+\begin{table}[ht]
+\caption{Split-conformal coverage on the frozen triage model (test block, $32{,}649$ rows, split in
+half for calibration and evaluation). ``Don't know'' is the share of items whose set contains both
+labels.}
+\label{tab:cs_conformal}
+\centering
+\begin{tabular}{l c c c c c}
+\toprule
+\tabhead{Split} & \tabhead{$\alpha$} & \tabhead{Nominal} & \tabhead{Coverage} & \tabhead{Set size} & \tabhead{``Don't know''} \\
+\midrule
+Random   & 0.05 & 0.95 & 0.951 & 1.784 & 78.4\% \\
+Random   & 0.10 & 0.90 & 0.902 & 1.605 & 60.5\% \\
+Random   & 0.20 & 0.80 & 0.803 & 1.323 & 32.3\% \\
+\midrule
+Temporal & 0.05 & 0.95 & \textbf{0.937} & 1.741 & 74.1\% \\
+Temporal & 0.10 & 0.90 & 0.900 & 1.584 & 58.4\% \\
+Temporal & 0.20 & 0.80 & 0.822 & 1.368 & 36.8\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{figures/eval_conformal.pdf}
+\caption[Conformal coverage and its cost]{Left: empirical coverage against the nominal level (dashed)
+for both splits. Coverage is attained everywhere except at $\alpha=0.05$ under temporal splitting.
+Right: how the guarantee is paid for. At $90\%$ coverage the model issues a definite call on only
+$40\%$ of headlines and declares ``don't know'' on the rest.}
+\label{fig:cs_conformal}
+\end{figure}
+
+\paragraph{Reading the result.} The pattern, rather than a single verdict, is the finding. Under
+random splitting coverage is attained at all three levels, confirming the implementation is correct;
+had it failed there, the fault would have been in the method and not in the data. Under temporal
+splitting it holds at $90\%$ and $80\%$ and falls short at $95\%$ ($0.937$).
+
+The direction is what theory predicts, and stating it plainly is worthwhile: \emph{the tighter the
+required coverage, the more fragile it is to drift}. Demanding $95\%$ forces the threshold onto the
+tail of the calibration distribution, and the tail is exactly what moves first when the regime
+changes. At $80\%$ and $90\%$ there is enough slack to absorb the shift in this window. This is not a
+shortcoming of conformal prediction; it is the method detecting a breach of exchangeability and
+identifying the level at which it begins to bite. A guarantee that fails measurably is worth more
+than a probability that never promised anything and therefore can never be contradicted.
+
+\paragraph{The price, and what it says about the model.} The hardest number here is not the coverage
+but its cost. To promise $90\%$ coverage, the triage model can issue a definite call on only $39.5\%$
+of headlines; on the remaining $60.5\%$, the honest set contains both classes. This does not
+contradict Case Study~4, it explains it from an independent direction and without training anything
+new: the available signal simply does not separate most items at the confidence levels usually
+demanded. It is also the missing instrument for the deployed threshold, which by construction forces
+a decision on every item; this measurement quantifies how often that forced decision rests on very
+little.
+
+The layer is therefore kept as measurement and is not wired into production. The reason is design
+rather than time: the product commits to a legible cadence, and an alert stream that declared ``don't
+know'' on $60\%$ of items would break that commitment without anyone having decided to break it.
+
+\section{Case Study 7: Measuring the Deployment Gap}
+\label{sec:cs_drift}
+
+\emph{Question: the model was trained on a 2018--2023 corpus and runs in 2026, a gap this
+dissertation has repeatedly named as a limitation. How large is it actually? Answer: measurable and
+concentrated in one input. Pre-event volatility drifts significantly; the other inputs stay stable;
+and the label prevalence does not trend but oscillates, which explains both why the frozen numbers
+survive and why the tightest conformal guarantee does not.}
+
+\paragraph{Why it needs doing.} Asserting a limitation is cheap. An asserted limitation is an
+opinion; a measured one is a result, and one that can be discussed at a viva with numbers on the
+table.
+
+\paragraph{Setup.} Two measures are used because they see different things. The Population Stability
+Index compares binned probability mass and carries conventional interpretation bands ($<0.10$ stable,
+$0.10$ to $0.25$ moderate, $>0.25$ significant), inherited from credit-risk practice. The
+Kolmogorov--Smirnov statistic compares cumulative distributions and catches systematic shifts that
+binning dilutes.
+
+One methodological point changes how the results should be read. With tens of thousands of points a
+Kolmogorov--Smirnov test rejects almost any null hypothesis, so its $p$-value is close to useless
+here: a statistically significant difference can be trivially small. What is read instead is the
+statistic $D$, an effect size in $[0,1]$ that does not grow merely because the sample is large.
+Reporting the $p$-value alone would convert ``the sample is large'' into ``the drift is severe''.
+
+\paragraph{Results.} Table~\ref{tab:cs_drift} and Figure~\ref{fig:cs_drift} compare the training
+block (January~2018 to March~2022) against the test block (February to December~2023), which is the
+drift the frozen results have already passed through.
+
+\begin{table}[ht]
+\caption{Input drift between the training and test blocks, by feature, ordered by severity.}
+\label{tab:cs_drift}
+\centering
+\begin{tabular}{l c l c}
+\toprule
+\tabhead{Feature} & \tabhead{PSI} & \tabhead{Band} & \tabhead{KS $D$} \\
+\midrule
+Pre-event volatility (20 d) & \textbf{0.281} & significant & 0.170 \\
+Headline length             & 0.111 & moderate    & 0.103 \\
+Event-day return            & 0.020 & stable      & 0.036 \\
+Five-day momentum           & 0.014 & stable      & 0.039 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/eval_drift.pdf}
+\caption[Input drift by feature]{Distribution drift for each context feature between the training and
+test blocks, against the conventional interpretation bands. Only pre-event volatility crosses into
+the significant band; the two return-based features barely move.}
+\label{fig:cs_drift}
+\end{figure}
+
+\paragraph{Reading the result.} The feature that drifts is the volatility estimate, and the reason is
+not mysterious: the training window contains the 2020 shock, and realised volatility in that period
+does not resemble 2023. The model learned in a more turbulent world than the one it was assessed in.
+
+The label deserves separate treatment, because it is easy to conflate with the inputs. Prevalence
+moves from $0.3854$ in training to $0.3781$ in test, a relative change of only $1.9\%$. Taken at the
+endpoints alone, the target looks stable. It is not: the validation block, which lies between the two
+in time, reaches $0.4704$. The sequence rises and returns, so comparing only the endpoints would hide
+an excursion of roughly a fifth. The honest formulation is that \emph{the drift is mostly in
+volatility, and it is cyclical rather than directional}. That single statement accounts for two
+things at once: why the frozen numbers survive, since the protocol already traverses one such
+oscillation, and why the tightest conformal guarantee fails under temporal splitting
+(Section~\ref{sec:cs_conformal}), since an oscillating tail is precisely what a $95\%$ guarantee has
+least slack to absorb.
+
+\paragraph{A live snapshot, and the caveat that makes it usable.} The same price-based features were
+recomputed from current market data for the watchlist. Pre-event volatility returns a PSI of $2.866$,
+far beyond the significant band. That number overstates its case, and the report itself gives the
+reason away: the mean shifts by only $+0.18$ standard deviations. A PSI approaching three alongside
+so small a shift in mean does not describe an unrecognisable market; it describes a sample with few
+\emph{independent} observations. The cause is mechanical. Roughly a thousand rows come from ten
+tickers over about a hundred trading days, and twenty-day volatility is a rolling statistic, so two
+consecutive days share nineteen of their twenty returns. The observations are near-repetitions, the
+resulting distribution is lumpy, and the index penalises the empty bins heavily. The two indices are
+therefore \emph{not comparable in magnitude}, and placing them side by side in one table would
+mislead.
+
+What the snapshot does support is still worth having: volatility is again the feature that moves
+most, obtained independently on present-day data; the shift in mean is modest; and the remaining
+features stay in the stable and moderate bands, consistent with the within-corpus measurement. The
+honest answer to \emph{``your model was trained on old data''} is therefore that the distance was
+measured two independent ways, is concentrated in volatility, is significant but not extreme, and
+means the 2023 result should not be treated as a promise about 2026. The measurement also supplies a
+verifiable retraining trigger, the conventional $0.25$ threshold, in place of an intuition.
+
 \section{Discussion and Threats to Validity}
 \label{sec:cs_discussion}
 
-The four case studies support the core design: volatility-normalised detection is consistent across the
-market where a fixed threshold is not, semantic retrieval surfaces markedly more sector-analogous
-precedents than lexical or trivial baselines, the end-to-end alert is faithful to its own
-computation, and the learned triage adds a large budgeted-precision gain while confirming, against
-its own text features, that the transparent volatility evidence carries the signal. All results rest
-on real data and are reproducible from versioned scripts.
+The first four case studies support the core design: volatility-normalised detection is consistent
+across the market where a fixed threshold is not, semantic retrieval surfaces markedly more
+sector-analogous precedents than lexical or trivial baselines, the end-to-end alert is faithful to
+its own computation, and the learned triage adds a large budgeted-precision gain while confirming,
+against its own text features, that the transparent volatility evidence carries the signal.
+
+The final three examine the same system from the outside, asking what it does \emph{not} know. The
+embedding space turns out to carry event-type structure, though too weakly to filter precedents by
+(Section~\ref{sec:cs_taxonomy}); the triage score can be given a distribution-free guarantee, at the
+cost of admitting uncertainty on most items (Section~\ref{sec:cs_conformal}); and the gap between the
+training corpus and the deployed present is concentrated in one input and is cyclical rather than
+directional (Section~\ref{sec:cs_drift}). Each of the three ends in a decision \emph{not} to change
+production, taken on the evidence rather than for want of time, and each is recorded as such. All
+results rest on real data and are reproducible from versioned scripts.
 
 The results also have clear limits, which are set out below under the four standard categories of
 validity so that nothing is glossed over.

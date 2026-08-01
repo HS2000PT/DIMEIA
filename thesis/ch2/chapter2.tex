@@ -379,6 +379,52 @@ alert-fatigue cost the triage exists to reduce.
 ranked and gated per day, explained by its additive contributions, calibrated on validation data, and
 always compared against a volatility-only baseline before it is allowed to matter.
 
+\section{Uncertainty and Drift in a Deployed Model}
+\label{sec:sota_uncertainty}
+
+\emph{A calibrated score is still not a guarantee, and a model does not stay still. What does the
+literature offer on both counts?}
+
+Calibration, as used for the triage score above, is an \emph{aggregate} property: among items scored
+near a given probability, roughly that fraction should turn out positive. It says nothing about any
+individual item, and it offers no recourse once the model is applied outside the conditions in which
+it was fitted. \emph{Conformal prediction} addresses exactly this gap. The foundational treatment
+\autocite{vovk2005algorithmic} shows that a predictor can be wrapped so that it returns a
+\emph{set} of labels carrying a guarantee that is distribution-free and valid in finite samples: for
+a chosen error rate $\alpha$, the set contains the true label in at least $1-\alpha$ of cases. The
+guarantee assumes neither normality nor a correctly specified model, and requires only that
+calibration and test data be exchangeable. The split (or inductive) variant, which calibrates on a
+held-out block and so costs one extra pass rather than a retraining loop,
+is set out with its finite-sample quantile correction by \textcite{angelopoulos2023conformal}.
+
+The appeal for a system built on refusing to overclaim is direct. In a binary decision the returned
+set may contain \emph{both} labels, which is an explicit and quantified ``I do not know'' rather than
+a probability near one half that still forces a choice. This is a different kind of honesty from
+calibration, and the two are complementary rather than alternatives.
+
+The exchangeability assumption then raises the second question. Models are trained on a past and
+deployed into a future, and the relationship between inputs and target can change underneath them.
+The standard treatment of this in machine learning is the concept-drift literature, whose survey
+\autocite{gama2014survey} sets out the taxonomy (sudden, gradual, incremental and recurring change),
+the detection strategies and the adaptation methods. It is a general treatment rather than a
+financial one, so it supplies the framing and the vocabulary while any statement about how much a
+particular corpus has drifted must come from measuring that corpus.
+
+Both concerns belong to a wider point about systems rather than models. \textcite{sculley2015debt}
+argue, from experience with production systems, that machine-learning components accumulate a
+distinctive and largely hidden maintenance cost: entanglement, where changing anything changes
+everything; unstable and undeclared data dependencies; and configuration debt. Their account is a
+position paper drawn from practice rather than an empirical study, and it is cited here for that
+qualitative claim alone. Its relevance is that a dissertation prototype which runs continuously,
+as this one does, inherits the same category of problem in miniature.
+
+\textbf{For InvestiGator:} these three strands convert two of the system's standing caveats into
+measurable quantities. The claim that a probability is not a promise becomes a coverage experiment
+(Section~\ref{sec:cs_conformal}); the claim that the training corpus predates deployment becomes a
+drift measurement with conventional interpretation bands (Section~\ref{sec:cs_drift}). Neither
+changes what the deployed system does, and in both cases that restraint is itself the reported
+result.
+
 \section{Existing Tools for the Retail Investor}
 \label{sec:sota_tools}
 

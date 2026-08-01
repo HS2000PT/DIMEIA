@@ -587,15 +587,319 @@ deterministicamente.}
 \label{fig:triage_ablation}
 \end{figure}
 
+\section{Estudo de Caso 5: Estrutura de Tipo de Evento no Espaço de Embeddings}
+\label{sec:cs_taxonomy}
+
+\emph{Pergunta: o espaço de embeddings de frase que sustenta a recuperação carrega alguma noção do
+\emph{tipo de acontecimento} que uma manchete reporta, ou apenas do assunto de que ela trata?
+Resposta: carrega os dois, e o tipo de evento é o mais forte assim que a comparação é feita de forma
+justa; mas a separação é fraca em termos absolutos, e é por isso que a taxonomia resultante fica
+descritiva em vez de ser ligada à recuperação.}
+
+\paragraph{Porque é que a pergunta importa.} O Estudo de Caso~3 mostrou uma manchete positiva a
+recuperar um cacho de precedentes cujos impactos medidos eram negativos, e atribuiu-o ao tema e não à
+direção. Esse diagnóstico deixa algo por explicar: se o espaço codificasse o \emph{género} de
+acontecimento, os precedentes poderiam ser restringidos ao mesmo género e o desencontro estreitaria.
+A base de casos é, porém, uma coleção achatada de vetores sem qualquer noção de tipo de evento. Este
+estudo pergunta se é possível recuperar uma sem supervisão.
+
+\paragraph{Preparação.} Os embeddings MiniLM em cache das $78{,}933$ manchetes do corpus foram
+agrupados por $k$-médias sobre vetores normalizados por $L^2$, varrendo $k$ de $6$ a $20$. Como não
+existe verdade fundamental para tipo de evento, construiu-se uma referência à parte: uma rubrica de
+palavras-chave que cobre oito tipos (resultados, perspetivas, ação de analista, produto, legal ou
+regulatório, fusões e aquisições, pessoal, e macro ou mercado). A rubrica é deliberadamente de alta
+precisão e baixa cobertura. Abstém-se quando nenhum padrão dispara e também quando dispara
+\emph{mais do que um}, porque uma manchete que é simultaneamente resultados e ação de analista é
+genuinamente ambígua, e uma referência que resolvesse a ambiguidade pela ordem da lista estaria a
+inventar precisão que não tem. Rotula $11{,}889$ manchetes, $15,1\%$ do corpus, e todos os valores de
+concordância são calculados nesse subconjunto, com a contagem reportada ao lado.
+
+Duas decisões protegem a medição. A rubrica foi escrita e registada \emph{antes} de qualquer
+agrupamento ter corrido, pelo que não pôde ser afinada até concordar com os grupos. E $k$ foi
+escolhido pela silhueta e não pela concordância com a rubrica, já que escolher $k$ para maximizar a
+métrica de avaliação seria afinar o método não supervisionado contra a sua própria avaliação.
+
+\paragraph{Resultados.} A Tabela~\ref{tab:cs_taxonomy} reporta o resultado em $k^*=18$; a
+Figura~\ref{fig:cs_taxonomy} mostra o varrimento da silhueta e a comparação de concordância.
+
+\begin{table}[ht]
+\caption{Estrutura de tipo de evento não supervisionada em $k^*=18$. A pureza e a concordância são
+medidas nas $11{,}889$ manchetes que a rubrica de referência cobre.}
+\label{tab:cs_taxonomy}
+\centering
+\begin{tabular}{l c l}
+\toprule
+\tabhead{Quantidade} & \tabhead{Valor} & \tabhead{Comparação} \\
+\midrule
+Silhueta (cosseno)                & $+0.084$ & separação fraca em termos absolutos \\
+Pureza contra a rubrica           & $0.712$  & aleatório, mesmos tamanhos: $0.444$ \\
+Concordância com tipo de evento (AMI) & \textbf{0.358} & a referência de interesse \\
+Concordância com ticker (AMI)     & $0.188$  & assunto, não acontecimento \\
+Concordância com setor (AMI)      & $0.130$  & assunto, não acontecimento \\
+Estabilidade entre sementes (ARI) & $0.786$  & média de três corridas resemeadas \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{figures/eval_taxonomy.pdf}
+\caption[Estrutura de tipo de evento no espaço de embeddings]{Esquerda: o varrimento da silhueta. A
+curva é plana a partir de $k=10$ (amplitude de $0.003$), pelo que $k^*=18$ é apenas fracamente
+preferido aos seus vizinhos, e é assim que se reporta. Direita: concordância corrigida para o acaso
+entre os grupos e três referências diferentes, todas medidas nas mesmas $11{,}889$ linhas. O tipo de
+evento supera ambas as referências de assunto.}
+\label{fig:cs_taxonomy}
+\end{figure}
+
+\paragraph{Dois controlos, sem os quais o número principal diz pouco.} Uma pureza de $0.712$ parece
+convincente e é em grande medida um artefacto. A pureza calculada com rotulagem por maioria
+inflaciona quando a referência é desequilibrada e $k$ é grande: um único tipo vale $44,4\%$ dos
+rótulos e há dezoito grupos, pelo que muitos adquirem esse rótulo quase por omissão. Uma atribuição
+aleatória com exatamente os mesmos tamanhos de grupo já atinge $0.444$, pelo que o ganho genuíno é
+$+0.269$ e não $0.712$.
+
+O segundo controlo decide a pergunta que de facto se coloca. A pureza não pode ser comparada entre
+referências com números de classes diferentes, porque o seu valor depende da cardinalidade e do
+desequilíbrio; oito tipos de evento, catorze tickers e cinco setores não estão na mesma escala. A
+informação mútua ajustada corrige para o acaso e para a cardinalidade, e as três referências são
+avaliadas em linhas idênticas. Nessa base, a concordância com tipo de evento ($0.358$) supera a
+concordância com ticker ($0.188$) e com setor ($0.130$).
+
+\paragraph{Leitura do resultado.} Uma leitura puramente qualitativa dos grupos sugere a conclusão
+oposta, e a tensão merece ser resolvida em vez de escondida. Vários grupos têm nomes de empresas e de
+setores entre os seus termos de maior peso, o que convida à conclusão de que o espaço apenas
+redescobre o assunto. As duas observações conciliam-se assim que a medição é posta em pé de
+igualdade: o espaço codifica assunto \emph{e} tipo de evento em simultâneo, e num corpus de quinze
+tickers o assunto é o eixo mais visível a olho, porque os nomes das empresas dominam as listas de
+termos. Medido com uma estatística corrigida para o acaso, é o eixo do acontecimento que explica mais
+da partição.
+
+Um confundimento tem de ser declarado, porque é a primeira objeção que um arguente levanta. A rubrica
+atribui rótulos a partir de palavras presentes na manchete, e os embeddings codificam essas mesmas
+palavras, pelo que parte da concordância de tipo de evento está garantida por construção. O que isso
+não destrói é a \emph{comparação}: os nomes das empresas também estão nas manchetes, muitas vezes
+mais do que uma vez e no início, pelo que as três referências partilham o viés e a sua ordenação
+continua informativa mesmo que os valores absolutos estejam inflacionados.
+
+\paragraph{Porque não é ligada à recuperação.} A evidência sustenta uma conclusão descritiva e não
+uma mudança de produção, e a distinção é deliberada. A separação é fraca em termos absolutos, a
+escolha de $k$ é apenas fracamente determinada, e a rotulagem dos grupos depende inteiramente de uma
+rubrica que cobre $15,1\%$ do corpus. Filtrar precedentes por um tipo de evento errado removeria
+precedentes válidos em silêncio, o que é pior do que não filtrar. A taxonomia fica portanto como
+caracterização do corpus, e o caminho que a evidência sustenta, a rubrica transparente, é registado
+como trabalho futuro no Capítulo~\ref{chap:conclusions}.
+
+\section{Estudo de Caso 6: Garantias Livres de Distribuição para o Score de Triagem}
+\label{sec:cs_conformal}
+
+\emph{Pergunta: o score de triagem é uma probabilidade calibrada, mas a calibração nada promete sobre
+um item individual. Pode dar-se-lhe antes uma garantia? Resposta: sim, a predição conformal split
+fornece uma garantia de cobertura livre de distribuição, que se verifica sob divisão aleatória e se
+aguenta nos dois níveis mais folgados sob divisão temporal, falhando no mais exigente. O preço é
+cru: para prometer $90\%$ de cobertura, o modelo só consegue uma decisão definida em $39,5\%$ das
+manchetes.}
+
+\paragraph{O que a predição conformal acrescenta.} A calibração de Platt faz do score de triagem uma
+afirmação \emph{agregada} honesta: entre os itens pontuados perto de $0,6$, cerca de $60\%$ revelaram-se
+materiais. Descreve um registo histórico e nada promete sobre o item seguinte, nem oferece recurso
+algum se o modelo for usado fora do regime em que foi ajustado. A predição conformal split troca a
+estimativa pontual por um conjunto e obtém uma garantia livre de distribuição e de amostra finita:
+para um $\alpha$ escolhido, o conjunto contém a classe verdadeira em pelo menos $1-\alpha$ dos casos.
+Não assume normalidade, nem um modelo bem especificado, nem sequer um modelo bom.
+
+Num problema binário o conjunto devolvido tem uma leitura direta. Um único rótulo é uma decisão
+definida; o conjunto vazio significa que nenhuma classe é plausível ao nível pedido; e um conjunto
+que contém \emph{ambos} os rótulos é um \emph{``não sei''} explícito, com uma garantia por trás. É
+esse terceiro caso o que aqui interessa: um sistema que se recusa a prever preços deve também poder
+declinar julgar a sua própria triagem, em vez de empurrar um $0,51$ que apenas aparenta decidir.
+
+\paragraph{Preparação.} O modelo congelado só-contexto foi carregado exatamente como está implantado
+e a sua PR-AUC de teste reproduzida em $0.538479$, idêntica ao valor congelado, antes de qualquer
+outro cálculo. Sem essa porta, nada do que se segue diria respeito ao modelo que a dissertação
+reporta. A não-conformidade é $1-\hat{p}(\text{classe verdadeira})$, e o limiar é o quantil empírico
+$\lceil (n+1)(1-\alpha)\rceil / n$ das pontuações de calibração. A correção de amostra finita é o que
+converte ``costuma cobrir'' numa garantia; sem ela, a cobertura fica sistematicamente abaixo do
+nominal.
+
+A experiência corre duas vezes, e o contraste é o achado. Uma divisão \emph{aleatória} do bloco de
+teste satisfaz a permutabilidade por construção, pelo que a garantia tem de se verificar e a corrida
+serve de verificação da implementação. Uma divisão \emph{temporal}, calibrando na metade anterior e
+prevendo a posterior, é o que o sistema implantado de facto faz, e aí a permutabilidade não está
+garantida.
+
+\paragraph{Resultados.} A Tabela~\ref{tab:cs_conformal} e a Figura~\ref{fig:cs_conformal} reportam
+ambas.
+
+\begin{table}[ht]
+\caption{Cobertura conformal split sobre o modelo de triagem congelado (bloco de teste, $32{,}649$
+linhas, dividido a meio entre calibração e avaliação). ``Não sei'' é a fração de itens cujo conjunto
+contém os dois rótulos.}
+\label{tab:cs_conformal}
+\centering
+\begin{tabular}{l c c c c c}
+\toprule
+\tabhead{Divisão} & \tabhead{$\alpha$} & \tabhead{Nominal} & \tabhead{Cobertura} & \tabhead{Tam. conj.} & \tabhead{``Não sei''} \\
+\midrule
+Aleatória & 0.05 & 0.95 & 0.951 & 1.784 & 78,4\% \\
+Aleatória & 0.10 & 0.90 & 0.902 & 1.605 & 60,5\% \\
+Aleatória & 0.20 & 0.80 & 0.803 & 1.323 & 32,3\% \\
+\midrule
+Temporal  & 0.05 & 0.95 & \textbf{0.937} & 1.741 & 74,1\% \\
+Temporal  & 0.10 & 0.90 & 0.900 & 1.584 & 58,4\% \\
+Temporal  & 0.20 & 0.80 & 0.822 & 1.368 & 36,8\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{figures/eval_conformal.pdf}
+\caption[Cobertura conformal e o seu custo]{Esquerda: cobertura empírica contra o nível nominal
+(tracejado) para as duas divisões. A cobertura é atingida em todo o lado exceto em $\alpha=0.05$ sob
+divisão temporal. Direita: como a garantia é paga. A $90\%$ de cobertura o modelo emite uma decisão
+definida em apenas $40\%$ das manchetes e declara ``não sei'' nas restantes.}
+\label{fig:cs_conformal}
+\end{figure}
+
+\paragraph{Leitura do resultado.} O padrão, e não um veredicto único, é o achado. Sob divisão
+aleatória a cobertura é atingida nos três níveis, o que confirma que a implementação está correta; se
+tivesse falhado aí, a culpa seria do método e não dos dados. Sob divisão temporal aguenta-se a $90\%$
+e a $80\%$ e fica aquém a $95\%$ ($0.937$).
+
+A direção é a que a teoria prevê, e vale a pena dizê-lo por extenso: \emph{quanto mais apertada a
+cobertura exigida, mais frágil ela é à deriva}. Exigir $95\%$ obriga o limiar a apoiar-se na cauda da
+distribuição de calibração, e a cauda é exatamente o que se move primeiro quando o regime muda. A
+$80\%$ e a $90\%$ há folga suficiente para absorver o desvio desta janela. Isto não é uma falha da
+predição conformal; é o método a detetar uma quebra de permutabilidade e a identificar o nível em que
+ela começa a doer. Uma garantia que falha de forma mensurável vale mais do que uma probabilidade que
+nunca prometeu nada e por isso nunca pode ser desmentida.
+
+\paragraph{O preço, e o que ele diz sobre o modelo.} O número mais duro aqui não é a cobertura, é o
+seu custo. Para prometer $90\%$ de cobertura, o modelo de triagem só consegue emitir uma decisão
+definida em $39,5\%$ das manchetes; nas restantes $60,5\%$, o conjunto honesto contém as duas
+classes. Isto não contradiz o Estudo de Caso~4, explica-o a partir de uma direção independente e sem
+treinar nada de novo: o sinal disponível simplesmente não separa a maioria dos itens aos níveis de
+confiança habitualmente exigidos. É também o instrumento que faltava ao limiar implantado, que por
+construção força uma decisão em todos os itens; esta medição quantifica com que frequência essa
+decisão forçada assenta em muito pouco.
+
+A camada fica portanto como medição e não é ligada à produção. A razão é de desenho e não de tempo: o
+produto compromete-se com uma cadência legível, e um fluxo de alertas que declarasse ``não sei'' em
+$60\%$ dos itens quebraria esse compromisso sem que ninguém tivesse decidido quebrá-lo.
+
+\section{Estudo de Caso 7: Medir a Distância até à Implantação}
+\label{sec:cs_drift}
+
+\emph{Pergunta: o modelo foi treinado num corpus de 2018--2023 e corre em 2026, uma distância que
+esta dissertação repetidamente nomeou como limitação. Qual é o seu tamanho real? Resposta:
+mensurável e concentrada numa entrada. A volatilidade pré-evento deriva de forma significativa; as
+restantes entradas mantêm-se estáveis; e a prevalência do rótulo não tem tendência, oscila, o que
+explica ao mesmo tempo por que os números congelados sobrevivem e por que a garantia conformal mais
+apertada não sobrevive.}
+
+\paragraph{Porque é preciso fazê-lo.} Afirmar uma limitação é barato. Uma limitação afirmada é uma
+opinião; uma limitação medida é um resultado, e um resultado que se pode discutir numa prova com
+números em cima da mesa.
+
+\paragraph{Preparação.} Usam-se duas medidas porque veem coisas diferentes. O \emph{Population
+Stability Index} compara massa de probabilidade por intervalo e traz bandas de interpretação
+convencionadas ($<0,10$ estável, $0,10$ a $0,25$ moderada, $>0,25$ significativa), herdadas da
+prática de risco de crédito. A estatística de Kolmogorov--Smirnov compara distribuições acumuladas e
+apanha desvios sistemáticos que a divisão em intervalos dilui.
+
+Um ponto de método muda a forma de ler os resultados. Com dezenas de milhar de pontos um teste de
+Kolmogorov--Smirnov rejeita quase qualquer hipótese nula, pelo que o seu valor-$p$ é aqui quase
+inútil: uma diferença estatisticamente significativa pode ser trivialmente pequena. O que se lê é a
+estatística $D$, um tamanho de efeito em $[0,1]$ que não cresce só por a amostra ser grande. Reportar
+apenas o valor-$p$ converteria ``a amostra é grande'' em ``a deriva é grave''.
+
+\paragraph{Resultados.} A Tabela~\ref{tab:cs_drift} e a Figura~\ref{fig:cs_drift} comparam o bloco de
+treino (janeiro de~2018 a março de~2022) com o bloco de teste (fevereiro a dezembro de~2023), que é a
+deriva que os resultados congelados já atravessaram.
+
+\begin{table}[ht]
+\caption{Deriva das entradas entre os blocos de treino e de teste, por feature, ordenada por
+severidade.}
+\label{tab:cs_drift}
+\centering
+\begin{tabular}{l c l c}
+\toprule
+\tabhead{Feature} & \tabhead{PSI} & \tabhead{Banda} & \tabhead{KS $D$} \\
+\midrule
+Volatilidade pré-evento (20 d) & \textbf{0.281} & significativa & 0.170 \\
+Comprimento da manchete        & 0.111 & moderada    & 0.103 \\
+Retorno do dia do evento       & 0.020 & estável     & 0.036 \\
+Momentum a cinco dias          & 0.014 & estável     & 0.039 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/eval_drift.pdf}
+\caption[Deriva das entradas por feature]{Deriva de distribuição para cada feature de contexto entre
+os blocos de treino e de teste, contra as bandas de interpretação convencionadas. Só a volatilidade
+pré-evento entra na banda significativa; as duas features baseadas em retornos quase não se movem.}
+\label{fig:cs_drift}
+\end{figure}
+
+\paragraph{Leitura do resultado.} A feature que deriva é a estimativa de volatilidade, e a razão não
+é misteriosa: a janela de treino contém o choque de 2020, e a volatilidade realizada nesse período
+não se parece com a de 2023. O modelo aprendeu num mundo mais agitado do que aquele em que foi
+avaliado.
+
+O rótulo merece tratamento separado, porque é fácil confundi-lo com as entradas. A prevalência passa
+de $0.3854$ no treino para $0.3781$ no teste, uma variação relativa de apenas $1,9\%$. Tomado só nas
+pontas, o alvo parece estável. Não é: o bloco de validação, que fica entre os dois no tempo, atinge
+$0.4704$. A sequência sobe e volta, pelo que comparar apenas as pontas esconderia uma excursão de
+cerca de um quinto. A formulação honesta é que \emph{a deriva é sobretudo de volatilidade, e é
+cíclica em vez de direcional}. Essa única frase dá conta de duas coisas ao mesmo tempo: por que os
+números congelados sobrevivem, já que o protocolo atravessa uma dessas oscilações, e por que a
+garantia conformal mais apertada falha sob divisão temporal (Secção~\ref{sec:cs_conformal}), já que
+uma cauda que oscila é precisamente o que uma garantia a $95\%$ tem menos folga para absorver.
+
+\paragraph{Um instantâneo ao vivo, e a ressalva que o torna utilizável.} As mesmas features baseadas
+em preços foram recalculadas a partir dos dados de mercado atuais para a watchlist. A volatilidade
+pré-evento devolve um PSI de $2.866$, muito além da banda significativa. Esse número exagera o seu
+caso, e o próprio relatório denuncia a razão: a média desloca-se apenas $+0,18$ desvios-padrão. Um
+PSI perto de três a par de uma deslocação de média tão pequena não descreve um mercado
+irreconhecível; descreve uma amostra com poucas observações \emph{independentes}. A causa é mecânica.
+Cerca de mil linhas vêm de dez tickers ao longo de aproximadamente cem dias de negociação, e a
+volatilidade a vinte dias é uma estatística de janela deslizante, pelo que dois dias consecutivos
+partilham dezanove dos seus vinte retornos. As observações são quase repetições, a distribuição
+resultante fica aos caroços, e o índice penaliza com força os intervalos vazios. Os dois índices
+\emph{não são portanto comparáveis em magnitude}, e pô-los lado a lado numa só tabela induziria em
+erro.
+
+O que o instantâneo sustenta continua a valer a pena: a volatilidade é de novo a feature que mais se
+move, obtido de forma independente sobre dados de hoje; a deslocação da média é modesta; e as
+restantes features mantêm-se nas bandas estável e moderada, coerentes com a medição dentro do corpus.
+A resposta honesta a \emph{``o vosso modelo foi treinado em dados velhos''} é portanto que a
+distância foi medida de duas formas independentes, está concentrada na volatilidade, é significativa
+mas não extrema, e implica que o resultado de 2023 não deve ser tratado como uma promessa sobre 2026.
+A medição fornece ainda um gatilho de re-treino verificável, o limiar convencional de $0,25$, em vez
+de uma intuição.
+
 \section{Discussão e Ameaças à Validade}
 \label{sec:cs_discussion}
 
-Os quatro estudos de caso sustentam o desenho central: a deteção normalizada pela volatilidade é consistente em
-todo o mercado onde um limiar fixo não é, a recuperação semântica traz à superfície muito mais precedentes
-análogos por setor do que as linhas de base lexical ou triviais, o alerta ponta a ponta é fiel ao seu próprio
-cálculo, e a triagem aprendida acrescenta um grande ganho de precisão orçamentada enquanto confirma, contra as
-suas próprias features de texto, que a evidência transparente da volatilidade carrega o sinal. Todos os
-resultados assentam em dados reais e são reprodutíveis a partir de scripts versionados.
+Os primeiros quatro estudos de caso sustentam o desenho central: a deteção normalizada pela
+volatilidade é consistente em todo o mercado onde um limiar fixo não é, a recuperação semântica traz à
+superfície muito mais precedentes análogos por setor do que as linhas de base lexical ou triviais, o
+alerta ponta a ponta é fiel ao seu próprio cálculo, e a triagem aprendida acrescenta um grande ganho
+de precisão orçamentada enquanto confirma, contra as suas próprias features de texto, que a evidência
+transparente da volatilidade carrega o sinal.
+
+Os três últimos examinam o mesmo sistema por fora, perguntando o que ele \emph{não} sabe. O espaço de
+embeddings acaba por carregar estrutura de tipo de evento, ainda que demasiado fraca para filtrar
+precedentes por ela (Secção~\ref{sec:cs_taxonomy}); o score de triagem pode receber uma garantia
+livre de distribuição, ao custo de admitir incerteza na maioria dos itens
+(Secção~\ref{sec:cs_conformal}); e a distância entre o corpus de treino e o presente implantado está
+concentrada numa entrada e é cíclica em vez de direcional (Secção~\ref{sec:cs_drift}). Cada um dos
+três termina numa decisão de \emph{não} mudar a produção, tomada com base na evidência e não por
+falta de tempo, e cada uma fica registada como tal. Todos os resultados assentam em dados reais e são
+reprodutíveis a partir de scripts versionados.
 
 Os resultados também têm limites claros, que são expostos abaixo sob as quatro categorias padrão de validade
 para que nada seja passado por cima.

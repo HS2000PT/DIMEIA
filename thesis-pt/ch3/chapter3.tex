@@ -830,6 +830,54 @@ dada a semente, e re-corrê-lo reproduz os artefactos guardados exatamente. E o 
 qual for o sentido em que cai: se o modelo treinado não bater a linha de base da volatilidade num dado
 corpus, esse achado fica tal como enunciado.
 
+\subsection{Incerteza, deriva e estrutura não supervisionada}
+\label{sec:met_eval_uncertainty}
+
+Três protocolos adicionais examinam o sistema por fora, perguntando o que ele não sabe. Os três são
+aditivos: leem os artefactos congelados e nada alteram neles.
+
+\paragraph{Cobertura conformal.} O modelo de triagem congelado é envolvido em predição conformal
+split (Secção~\ref{sec:sota_uncertainty}). A pontuação de não-conformidade é $1 - \hat{p}(y)$ para a
+classe verdadeira $y$, e o limiar $\hat{q}$ é o quantil empírico
+$\lceil (n+1)(1-\alpha)\rceil / n$ das pontuações de calibração; é essa correção de amostra finita,
+e não o quantil empírico simples, que converte uma tendência para cobrir numa garantia. Um rótulo
+entra no conjunto de predição quando $\hat{p}(y) \ge 1 - \hat{q}$. Reportam-se duas quantidades em
+cada $\alpha$: a cobertura empírica, que testa se a garantia se verifica, e o tamanho médio do
+conjunto, que mede quanto ela custa. Como a garantia depende da permutabilidade, o protocolo corre
+duas vezes, uma sobre uma divisão aleatória do bloco de teste, onde a permutabilidade vale por
+construção e a corrida serve portanto de verificação da implementação, e outra sobre uma divisão
+temporal, que é o que a implantação de facto faz. Antes de tudo isto, exige-se que o modelo
+reproduza exatamente a sua PR-AUC de teste congelada; se não reproduzir, a corrida para, porque nada
+do que se seguisse diria respeito ao modelo que esta dissertação reporta.
+
+\paragraph{Deriva de distribuição.} Duas estatísticas complementares comparam o bloco de treino com
+um posterior. O \emph{Population Stability Index} soma $(p_{\text{atual}} - p_{\text{ref}})
+\ln(p_{\text{atual}} / p_{\text{ref}})$ sobre intervalos-quantil da distribuição de referência, e
+traz bandas de interpretação convencionadas ($<0,10$ estável, $0,10$ a $0,25$ moderada, acima de
+$0,25$ significativa) herdadas da prática de risco de crédito. Usam-se intervalos-quantil e não de
+largura igual porque as features financeiras são fortemente assimétricas, e intervalos de largura
+igual colocariam quase toda a massa no primeiro. A estatística de Kolmogorov--Smirnov compara
+distribuições acumuladas. Fixa-se de antemão uma regra de leitura: com dezenas de milhar de pontos o
+valor-$p$ associado rejeita quase qualquer hipótese nula, pelo que se reporta a \emph{estatística}
+como tamanho de efeito e não se usa o valor-$p$ para argumentar severidade. Os intervalos que a
+amostra atual não visita recebem um piso pequeno em vez de produzirem um índice infinito, já que um
+intervalo não visitado é evidência de deriva e não uma divisão por zero.
+
+\paragraph{Estrutura de evento não supervisionada.} Os embeddings das manchetes são agrupados por
+$k$-médias sobre vetores normalizados por $L^2$, e $k$ é escolhido pelo coeficiente de silhueta
+\autocite{rousseeuw1987silhouettes}, que contrapõe a coesão de cada ponto dentro do seu próprio grupo
+à sua separação do grupo mais próximo. Como não existe verdade fundamental para tipo de evento, a
+concordância é medida contra uma rubrica de palavras-chave escrita e registada \emph{antes} de
+qualquer agrupamento correr, para que não possa ser afinada até concordar. Duas salvaguardas tornam
+os números resultantes interpretáveis. A pureza dos grupos é comparada com uma atribuição aleatória
+de tamanhos idênticos, porque a pureza calculada com rotulagem por maioria inflaciona quando a
+referência é desequilibrada e $k$ é grande. E quando os grupos são comparados contra referências
+diferentes, para perguntar se se organizam por tipo de evento ou apenas por assunto, a concordância é
+medida por informação mútua ajustada \autocite{vinh2010ami} e não por pureza: a pureza depende do
+número de classes e do seu equilíbrio, pelo que compará-la entre referências de cardinalidades
+diferentes é comparar grandezas incomensuráveis, ao passo que a medida ajustada corrige para o acaso
+e para a cardinalidade. Todas estas comparações são calculadas nas mesmas linhas.
+
 \subsection{Explicação, âmbito e garantias de rigor}
 \label{sec:met_eval_rigour}
 

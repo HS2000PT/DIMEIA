@@ -817,6 +817,52 @@ Two further guarantees are pre-committed. Training is deterministic given the se
 reproduces the stored artefacts exactly. And the result is reported whichever way it falls: if the
 trained model fails to beat the volatility baseline on a given corpus, that finding stands as stated.
 
+\subsection{Uncertainty, drift and unsupervised structure}
+\label{sec:met_eval_uncertainty}
+
+Three further protocols examine the system from the outside, asking what it does not know. All three
+are additive: they read the frozen artefacts and change nothing about them.
+
+\paragraph{Conformal coverage.} The frozen triage model is wrapped in split conformal prediction
+(Section~\ref{sec:sota_uncertainty}). The nonconformity score is $1 - \hat{p}(y)$ for the true class
+$y$, and the threshold $\hat{q}$ is the $\lceil (n+1)(1-\alpha)\rceil / n$ empirical quantile of the
+calibration scores; that finite-sample correction, rather than the plain empirical quantile, is what
+turns a tendency to cover into a guarantee. A label enters the prediction set when
+$\hat{p}(y) \ge 1 - \hat{q}$. Two quantities are reported at each $\alpha$: empirical coverage,
+which tests whether the guarantee holds, and average set size, which measures what it costs. Because
+the guarantee depends on exchangeability, the protocol is run twice, once on a random split of the
+test block, where exchangeability holds by construction and the run therefore checks the
+implementation, and once on a temporal split, which is what deployment actually does. Before any of
+this, the model is required to reproduce its frozen test PR-AUC exactly; if it does not, the run
+stops, because nothing downstream would then describe the model this dissertation reports.
+
+\paragraph{Distribution drift.} Two complementary statistics compare the training block against a
+later one. The Population Stability Index sums $(p_{\text{cur}} - p_{\text{ref}})
+\ln(p_{\text{cur}} / p_{\text{ref}})$ over quantile bins of the reference distribution, and carries
+conventional interpretation bands ($<0.10$ stable, $0.10$ to $0.25$ moderate, above $0.25$
+significant) inherited from credit-risk practice. Quantile bins rather than equal-width bins are used
+because the financial features are strongly skewed, and equal-width bins would place almost all mass
+in the first one. The Kolmogorov--Smirnov statistic compares cumulative distributions. One reading
+rule is fixed in advance: with tens of thousands of points the associated $p$-value rejects almost
+any null hypothesis, so the \emph{statistic} is reported as an effect size and the $p$-value is not
+used to argue severity. Bins that the current sample does not visit receive a small floor rather than
+producing an infinite index, since an unvisited bin is evidence of drift and not a division by zero.
+
+\paragraph{Unsupervised event structure.} Headline embeddings are clustered with $k$-means over
+$L^2$-normalised vectors, and $k$ is chosen by the silhouette coefficient
+\autocite{rousseeuw1987silhouettes}, which contrasts each point's cohesion within its own cluster
+against its separation from the nearest other cluster. Because there is no ground truth for event
+type, agreement is measured against a keyword rubric that is written and committed \emph{before} any
+clustering is run, so that it cannot be tuned into agreement afterwards. Two safeguards make the
+resulting numbers interpretable. Cluster purity is compared against a random assignment with
+identical cluster sizes, because purity computed with majority labelling inflates when the reference
+is imbalanced and $k$ is large. And when the clusters are compared against different references, to
+ask whether they organise by event type or merely by subject, agreement is measured with adjusted
+mutual information \autocite{vinh2010ami} rather than purity: purity depends on the number of classes
+and their balance, so comparing it across references with different cardinalities compares
+incommensurable quantities, whereas the adjusted measure corrects for both chance and cardinality.
+All such comparisons are computed on identical rows.
+
 \subsection{Explanation, scope, and rigour guarantees}
 \label{sec:met_eval_rigour}
 

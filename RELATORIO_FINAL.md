@@ -72,7 +72,7 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
 
 ### 2.4 Documentos académicos
 - **Tese** (`thesis/`, EN-GB): 6 capítulos canónicos MEIA, **90 pp, 0 erros, 0 citações
-  indefinidas, 52/52 referências verificadas uma a uma** (auditoria em
+  indefinidas, 58/58 referências verificadas uma a uma** (auditoria em
   `docs/decisions/page_audit.md`). RQ1–RQ4 respondidas com os números acima; inclui um
   screenshot genuíno do painel único (Cap. 4, Fig. 4.5).
 - **Paper IEEE** (`paper/`): 4 pp, compila 0 erros (destilado da tese validada).
@@ -113,7 +113,7 @@ tests/                  mais de 200 testes
 data/samples/           amostras versionadas (KB curada 2.016 registos 384-d incluída)
 docs/design/            how_to_run · going_live · deployment · arquitetura · data card
 docs/evaluation/        TODOS os resultados (gerados por script; não editados à mão)
-docs/decisions/         page_audit (52/52 citações) · reviews · learning.md · glossário
+docs/decisions/         page_audit (58/58 citações) · reviews · learning.md · glossário
 progress/               MASTER_PLAN · TRACKER · SESSIONS · DECISIONS (continuidade)
 ```
 

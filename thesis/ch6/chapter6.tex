@@ -195,7 +195,22 @@ Several limitations remain, stated plainly:
   \item \textbf{Short text.} News is represented by headlines only, which limits the semantics captured.
   \item \textbf{Theme, not direction.} Embedding similarity captures theme, not direction, so a retrieved
         cluster can mix up and down moves; the mean impact is theme-level evidence, not a directional
-        signal, which is why the precedents are always shown individually.
+        signal, which is why the precedents are always shown individually. The natural remedy, filtering
+        precedents by event type, was tested rather than assumed
+        (Section~\ref{sec:cs_taxonomy}): the embedding space does carry event-type structure, and
+        carries it more strongly than it carries subject, but too weakly to filter on. Applying a
+        mistaken event type would drop valid precedents silently, so the taxonomy stays descriptive.
+  \item \textbf{Confidence is thin, and now quantified.} Wrapping the frozen triage model in split
+        conformal prediction (Section~\ref{sec:cs_conformal}) shows that guaranteeing $90\%$ coverage
+        leaves a definite call on only $39.5\%$ of headlines. This is an independent confirmation of the
+        Chapter~\ref{chap:casestudies} finding that the available signal is weak, obtained without
+        training anything new, and it is a limitation of the evidence rather than of the implementation.
+  \item \textbf{The deployment gap is real, and its size is known.} The model was trained on a
+        2018--2023 corpus and runs later. That gap is no longer only asserted: it is concentrated in
+        pre-event volatility, which drifts into the significant band, while the return-based features
+        stay stable, and the label prevalence oscillates rather than trends
+        (Section~\ref{sec:cs_drift}). The reported figures should therefore be read as measurements
+        under one such oscillation, not as promises about a later period.
   \item \textbf{No human study.} Usefulness to a real investor has not yet been measured.
   \item \textbf{By design.} The system makes no price prediction and no trade, so profit-based questions
         are out of scope, not unanswered.
@@ -224,11 +239,17 @@ The limitations map directly onto future work, summarised in Figure~\ref{fig:lim
   \node[lim] (l2) at (0,-2.6) {No human study of usefulness};
   \node[fut] (f2) at (5.3,-2.6) {Small rubric study: clarity, completeness, actionability (RQ3)};
   \node[lim] (l3) at (0,-3.9) {Theme, not direction};
-  \node[fut] (f3) at (5.3,-3.9) {De-duplicate precedents and flag directional disagreement};
+  \node[fut] (f3) at (5.3,-3.9) {Transparent event-type rubric (clusters measured too weak to filter on)};
+  \node[lim] (l4) at (0,-5.2) {Thin confidence on most items};
+  \node[fut] (f4) at (5.3,-5.2) {Surface conformal ``don't know'' where cadence permits};
+  \node[lim] (l5) at (0,-6.5) {Drift between training and deployment};
+  \node[fut] (f5) at (5.3,-6.5) {Retrain on the measured trigger (stability index above $0.25$)};
   \draw[->, thick, black!55] (l0.east) -- (f0.west);
   \draw[->, thick, black!55] (l1.east) -- (f1.west);
   \draw[->, thick, black!55] (l2.east) -- (f2.west);
   \draw[->, thick, black!55] (l3.east) -- (f3.west);
+  \draw[->, thick, black!55] (l4.east) -- (f4.west);
+  \draw[->, thick, black!55] (l5.east) -- (f5.west);
 \end{tikzpicture}
 \caption[Limitations map onto future work]{Each stated limitation maps directly onto a concrete next
 step. Several have already seen a first deployment-side iteration (a live knowledge base matured against

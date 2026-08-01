@@ -101,14 +101,68 @@
 > livro MIT Press) — pela regra deste log (ver MacKinlay), cita-se `niculescu2005calibration`, que avalia
 > exatamente o método de Platt, e o método é descrito por extenso no texto.
 
+### Incerteza, deriva e avaliação de agrupamento (sessão 43, 2026-07-31)
+
+Seis entradas novas, para os Estudos de Caso 5–7. Verificadas por **fonte primária resolvida**
+(não por snippet de pesquisa): DOI seguido até à página do editor, BibTeX oficial das atas, ou o
+PDF do próprio artigo lido página a página.
+
+| Chave | Referência | Identificador | Data | Como | Estado |
+|---|---|---|---|---|---|
+| `vovk2005algorithmic` | Vovk, Gammerman & Shafer (2005), "Algorithmic Learning in a Random World", Springer New York, xvi+324 pp | DOI 10.1007/b106715 · ISBN 978-0-387-00152-4 | 2026-07-31 | DOI resolvido → Springer; **página de rosto e de copyright lidas** (bloco CIP da Library of Congress, LCCN 2005042556); Crossref e repositório institucional de Rutgers concordam | ✅ verificado (+ passe adversário) |
+| `angelopoulos2023conformal` | Angelopoulos & Bates (2023), "Conformal Prediction: A Gentle Introduction", Found. Trends ML 16(4):494–591 | DOI 10.1561/2200000101 | 2026-07-31 | DOI resolvido (302 → página do editor); pré-publicação arXiv:2107.07511 confirmada como obra distinta | ✅ verificado (+ passe adversário) |
+| `gama2014survey` | Gama, Žliobaitė, Bifet, Pechenizkiy & Bouchachia (2014), "A Survey on Concept Drift Adaptation", ACM CSUR 46(4), art. 44 | DOI 10.1145/2523813 | 2026-07-31 | DOI resolvido → ACM DL; cinco autores e ordem confirmados | ✅ verificado |
+| `sculley2015debt` | Sculley et al. (2015), "Hidden Technical Debt in Machine Learning Systems", NIPS 28:2503–2511 | **sem DOI** — atas oficiais NeurIPS (ver nota) | 2026-07-31 | BibTeX oficial das atas obtido literalmente; PDF lido; DBLP e Google Research concordam nas páginas | ✅ verificado |
+| `vinh2010ami` | Vinh, Epps & Bailey (2010), "Information Theoretic Measures for Clusterings Comparison…", JMLR 11(95):2837–2854 | **sem DOI** (a JMLR não atribuiu ao vol. 11) · URL canónico | 2026-07-31 | BibTeX oficial da JMLR literal; **PDF lido**: cabeçalho "JMLR 11 (2010) 2837-2854", §4.1 define a AMI | ✅ verificado |
+| `rousseeuw1987silhouettes` | Rousseeuw (1987), "Silhouettes: a graphical aid…", J. Comput. Appl. Math. 20:53–65 | DOI 10.1016/0377-0427(87)90125-7 | 2026-07-31 | DOI resolvido (302 → PII 0377042787901257); Crossref + OpenAlex + Semantic Scholar concordam; **página 1 do PDF lida** no arquivo institucional do autor | ✅ verificado |
+
+**Armadilhas apanhadas pela verificação, e como foram tratadas.** Registadas porque cada uma
+produziria um erro citável se tivesse passado.
+
+1. **`vovk2005algorithmic` tem DUAS edições** substancialmente diferentes: 2005 (324 pp) e 2022
+   (476 pp, com três capítulos novos, um deles precisamente sobre proteger algoritmos contra
+   mudança de distribuição). Não são intercambiáveis. A entrada fixa a **primeira**, e o `.bib`
+   leva um comentário a dizê-lo. Também: a página de rosto imprime "Alexander Gammerman"; vários
+   registos de retalho dizem "Alex" — usa-se a forma da página de rosto.
+2. **`sculley2015debt` não tem DOI.** O único identificador com forma de DOI é o handle legado da
+   ACM (`10.5555/2969442.2969519`), que **não** está registado na Crossref e não resolve por
+   doi.org. Pôr esse campo seria dar a aparência de um identificador verificado a algo que não
+   resolve. A entrada fica sem `doi`, o que é a descrição correta.
+3. **As páginas do mesmo são fonte secundária.** O BibTeX oficial das atas traz `pages` **vazio**
+   (as atas eletrónicas não são paginadas); o intervalo 2503–2511 vem do volume impresso da Curran
+   e é corroborado pela DBLP. Usável, e registado aqui como o que é.
+4. **O "95% de glue code" NÃO está nesse artigo.** A estatística é largamente repetida e atribuída
+   a ele; a verificação leu o texto e não a encontrou. A legenda da Figura 1 diz apenas que "só uma
+   pequena fração dos sistemas reais de ML é composta pelo código de aprendizagem". É também um
+   artigo de **posição**, sem experiências, datasets ou avaliação quantitativa: só pode sustentar
+   afirmações conceptuais. A tese cita-o em conformidade.
+5. **`gama2014survey` é um survey geral de ML, não de finanças.** Sustenta "a deriva é um modo de
+   falha reconhecido, e esta é a taxonomia padrão"; **não** pode carregar nenhuma afirmação
+   empírica sobre magnitudes de deriva em corpora financeiros. Essas assentam na medição do próprio
+   projeto (Estudo de Caso 7). Sendo de 2014, também não serve para nada sobre deriva de embeddings
+   em modelos tipo SBERT.
+6. **`vinh2010ami` define a AMI mas não a recomenda.** O resumo defende a *normalized information
+   distance* como medida de eleição. A tese cita-o para **definir** a AMI e a sua correção para o
+   acaso, não como aval de que a AMI seja a melhor medida.
+7. **`rousseeuw1987silhouettes`** não cobre o k-médias em si (o próprio artigo remete para outros).
+   Não deve ser citado para isso, e não é.
+
+> ⚠️ **Cobertura do passe adversário.** As seis entradas passaram a verificação por fonte primária.
+> O **segundo** passe, adversário (um agente independente a tentar refutar a verificação), completou
+> em `vovk2005algorithmic` e `angelopoulos2023conformal`, ambos com veredicto *não refutado*. Nas
+> outras quatro o passe não chegou a correr por limite de conta. As verificações primárias dessas
+> quatro são detalhadas e citam o que foi lido, mas **não têm segunda opinião independente**, e fica
+> aqui dito em vez de ficar por dizer.
+
 ## Rejeitadas / não verificáveis (NÃO usar)
 | Referência | Motivo | Data |
 |---|---|---|
 | MacKinlay (1997), "Event Studies in Economics and Finance", JEL 35(1) | Sem DOI resolúvel (JSTOR 2729691 → 404 no Crossref; ausente no OpenAlex search). Substituída por `brown1985daily`. | 2026-06-21 |
 
-## Estado (auditado a 2026-07-30)
+## Estado (auditado a 2026-07-30; 6 entradas acrescentadas a 2026-07-31)
 
-**52 entradas no `.bib` = 52 no log = 52 chaves citadas.** Correspondência exata nos três sentidos:
+**58 entradas no `.bib` = 58 no log = 58 chaves citadas** após a sessão 43 (eram 52).
+Correspondência exata nos três sentidos:
 0 órfãs, 0 citações indefinidas, 0 entradas sem identificador resolúvel. Auditoria independente
 confirmou 9 das entradas de maior risco contra o Crossref e os editores, incluindo o relatório CCAF
 de 2026 (que tem o perfil típico de uma citação fabricada — ano corrente, só URL — e é genuíno).
