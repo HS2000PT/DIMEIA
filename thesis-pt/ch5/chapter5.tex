@@ -611,7 +611,7 @@ regulatório, fusões e aquisições, pessoal, e macro ou mercado). A rubrica é
 precisão e baixa cobertura. Abstém-se quando nenhum padrão dispara e também quando dispara
 \emph{mais do que um}, porque uma manchete que é simultaneamente resultados e ação de analista é
 genuinamente ambígua, e uma referência que resolvesse a ambiguidade pela ordem da lista estaria a
-inventar precisão que não tem. Rotula $11{,}889$ manchetes, $15,1\%$ do corpus, e todos os valores de
+inventar precisão que não tem. Rotula $11{,}889$ manchetes, $15.1\%$ do corpus, e todos os valores de
 concordância são calculados nesse subconjunto, com a contagem reportada ao lado.
 
 Duas decisões protegem a medição. A rubrica foi escrita e registada \emph{antes} de qualquer
@@ -654,7 +654,7 @@ evento supera ambas as referências de assunto.}
 
 \paragraph{Dois controlos, sem os quais o número principal diz pouco.} Uma pureza de $0.712$ parece
 convincente e é em grande medida um artefacto. A pureza calculada com rotulagem por maioria
-inflaciona quando a referência é desequilibrada e $k$ é grande: um único tipo vale $44,4\%$ dos
+inflaciona quando a referência é desequilibrada e $k$ é grande: um único tipo vale $44.4\%$ dos
 rótulos e há dezoito grupos, pelo que muitos adquirem esse rótulo quase por omissão. Uma atribuição
 aleatória com exatamente os mesmos tamanhos de grupo já atinge $0.444$, pelo que o ganho genuíno é
 $+0.269$ e não $0.712$.
@@ -685,7 +685,7 @@ continua informativa mesmo que os valores absolutos estejam inflacionados.
 \paragraph{Porque não é ligada à recuperação.} A evidência sustenta uma conclusão descritiva e não
 uma mudança de produção, e a distinção é deliberada. A separação é fraca em termos absolutos, a
 escolha de $k$ é apenas fracamente determinada, e a rotulagem dos grupos depende inteiramente de uma
-rubrica que cobre $15,1\%$ do corpus. Filtrar precedentes por um tipo de evento errado removeria
+rubrica que cobre $15.1\%$ do corpus. Filtrar precedentes por um tipo de evento errado removeria
 precedentes válidos em silêncio, o que é pior do que não filtrar. A taxonomia fica portanto como
 caracterização do corpus, e o caminho que a evidência sustenta, a rubrica transparente, é registado
 como trabalho futuro no Capítulo~\ref{chap:conclusions}.
@@ -697,11 +697,11 @@ como trabalho futuro no Capítulo~\ref{chap:conclusions}.
 um item individual. Pode dar-se-lhe antes uma garantia? Resposta: sim, a predição conformal split
 fornece uma garantia de cobertura livre de distribuição, que se verifica sob divisão aleatória e se
 aguenta nos dois níveis mais folgados sob divisão temporal, falhando no mais exigente. O preço é
-cru: para prometer $90\%$ de cobertura, o modelo só consegue uma decisão definida em $39,5\%$ das
+cru: para prometer $90\%$ de cobertura, o modelo só consegue uma decisão definida em $39.5\%$ das
 manchetes.}
 
 \paragraph{O que a predição conformal acrescenta.} A calibração de Platt faz do score de triagem uma
-afirmação \emph{agregada} honesta: entre os itens pontuados perto de $0,6$, cerca de $60\%$ revelaram-se
+afirmação \emph{agregada} honesta: entre os itens pontuados perto de $0.6$, cerca de $60\%$ revelaram-se
 materiais. Descreve um registo histórico e nada promete sobre o item seguinte, nem oferece recurso
 algum se o modelo for usado fora do regime em que foi ajustado. A predição conformal split troca a
 estimativa pontual por um conjunto e obtém uma garantia livre de distribuição e de amostra finita:
@@ -712,7 +712,7 @@ Num problema binário o conjunto devolvido tem uma leitura direta. Um único ró
 definida; o conjunto vazio significa que nenhuma classe é plausível ao nível pedido; e um conjunto
 que contém \emph{ambos} os rótulos é um \emph{``não sei''} explícito, com uma garantia por trás. É
 esse terceiro caso o que aqui interessa: um sistema que se recusa a prever preços deve também poder
-declinar julgar a sua própria triagem, em vez de empurrar um $0,51$ que apenas aparenta decidir.
+declinar julgar a sua própria triagem, em vez de empurrar um $0.51$ que apenas aparenta decidir.
 
 \paragraph{Preparação.} O modelo congelado só-contexto foi carregado exatamente como está implantado
 e a sua PR-AUC de teste reproduzida em $0.538479$, idêntica ao valor congelado, antes de qualquer
@@ -777,7 +777,7 @@ nunca prometeu nada e por isso nunca pode ser desmentida.
 
 \paragraph{O preço, e o que ele diz sobre o modelo.} O número mais duro aqui não é a cobertura, é o
 seu custo. Para prometer $90\%$ de cobertura, o modelo de triagem só consegue emitir uma decisão
-definida em $39,5\%$ das manchetes; nas restantes $60,5\%$, o conjunto honesto contém as duas
+definida em $39.5\%$ das manchetes; nas restantes $60.5\%$, o conjunto honesto contém as duas
 classes. Isto não contradiz o Estudo de Caso~4, explica-o a partir de uma direção independente e sem
 treinar nada de novo: o sinal disponível simplesmente não separa a maioria dos itens aos níveis de
 confiança habitualmente exigidos. É também o instrumento que faltava ao limiar implantado, que por
@@ -804,7 +804,7 @@ números em cima da mesa.
 
 \paragraph{Preparação.} Usam-se duas medidas porque veem coisas diferentes. O \emph{Population
 Stability Index} compara massa de probabilidade por intervalo e traz bandas de interpretação
-convencionadas ($<0,10$ estável, $0,10$ a $0,25$ moderada, $>0,25$ significativa), herdadas da
+convencionadas ($<0.10$ estável, $0.10$ a $0.25$ moderada, $>0.25$ significativa), herdadas da
 prática de risco de crédito. A estatística de Kolmogorov--Smirnov compara distribuições acumuladas e
 apanha desvios sistemáticos que a divisão em intervalos dilui.
 
@@ -850,7 +850,7 @@ não se parece com a de 2023. O modelo aprendeu num mundo mais agitado do que aq
 avaliado.
 
 O rótulo merece tratamento separado, porque é fácil confundi-lo com as entradas. A prevalência passa
-de $0.3854$ no treino para $0.3781$ no teste, uma variação relativa de apenas $1,9\%$. Tomado só nas
+de $0.3854$ no treino para $0.3781$ no teste, uma variação relativa de apenas $1.9\%$. Tomado só nas
 pontas, o alvo parece estável. Não é: o bloco de validação, que fica entre os dois no tempo, atinge
 $0.4704$. A sequência sobe e volta, pelo que comparar apenas as pontas esconderia uma excursão de
 cerca de um quinto. A formulação honesta é que \emph{a deriva é sobretudo de volatilidade, e é
@@ -862,7 +862,7 @@ uma cauda que oscila é precisamente o que uma garantia a $95\%$ tem menos folga
 \paragraph{Um instantâneo ao vivo, e a ressalva que o torna utilizável.} As mesmas features baseadas
 em preços foram recalculadas a partir dos dados de mercado atuais para a watchlist. A volatilidade
 pré-evento devolve um PSI de $2.866$, muito além da banda significativa. Esse número exagera o seu
-caso, e o próprio relatório denuncia a razão: a média desloca-se apenas $+0,18$ desvios-padrão. Um
+caso, e o próprio relatório denuncia a razão: a média desloca-se apenas $+0.18$ desvios-padrão. Um
 PSI perto de três a par de uma deslocação de média tão pequena não descreve um mercado
 irreconhecível; descreve uma amostra com poucas observações \emph{independentes}. A causa é mecânica.
 Cerca de mil linhas vêm de dez tickers ao longo de aproximadamente cem dias de negociação, e a
@@ -878,7 +878,7 @@ restantes features mantêm-se nas bandas estável e moderada, coerentes com a me
 A resposta honesta a \emph{``o vosso modelo foi treinado em dados velhos''} é portanto que a
 distância foi medida de duas formas independentes, está concentrada na volatilidade, é significativa
 mas não extrema, e implica que o resultado de 2023 não deve ser tratado como uma promessa sobre 2026.
-A medição fornece ainda um gatilho de re-treino verificável, o limiar convencional de $0,25$, em vez
+A medição fornece ainda um gatilho de re-treino verificável, o limiar convencional de $0.25$, em vez
 de uma intuição.
 
 \section{Estudo de Caso 8: Convergência Multi-Sinal}
@@ -979,7 +979,7 @@ em dados, transparente pela mesma construção do detetor de preço. O score fun
 como medição. O que transita para o produto é a leitura \emph{humana} da convergência, reportar
 quantos dos quatro sinais ultrapassaram os seus próprios limiares. Dizer que três dos quatro sinais
 dispararam comunica de imediato e pode ser verificado contra os componentes; um score fundido de
-$0{,}73$ não pode ser verificado em lado nenhum.
+$0.73$ não pode ser verificado em lado nenhum.
 
 \section{Discussão e Ameaças à Validade}
 \label{sec:cs_discussion}
