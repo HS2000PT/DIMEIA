@@ -248,3 +248,13 @@
 {"date": "2026-08-01", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
 {"date": "2026-08-01", "ticker": "AMD", "stage": "alerted", "detail": "Corsair Gaming (CRSR) Could Be 20% Overvalued After Its AMD AI Conference Showca"}
 {"date": "2026-08-01", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}
+{"date": "2026-08-01", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.43 < 0.50"}
+{"date": "2026-08-01", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft (MSFT) Faces Consumer Probes Over Microsoft 365 And Copilot Changes"}
+{"date": "2026-08-01", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.49 < 0.50"}
+{"date": "2026-08-01", "ticker": "TSLA", "stage": "alerted", "detail": "SpaceX Is Down 19% From Its IPO Price. Tesla's History Suggests This May Happen "}
+{"date": "2026-08-01", "ticker": "AMZN", "stage": "triage_suppressed", "detail": "P=0.44 < 0.50"}
+{"date": "2026-08-01", "ticker": "GOOGL", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-08-01", "ticker": "META", "stage": "alerted", "detail": "Will Profitability Gains, Buybacks and Meta Tie-Up Change Lightspeed Commerce's "}
+{"date": "2026-08-01", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-08-01", "ticker": "AMD", "stage": "alerted", "detail": "How Server CPUs Could Give AMD Stock a Big Boost After August 4"}
+{"date": "2026-08-01", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}
