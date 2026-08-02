@@ -104,3 +104,23 @@ def test_kb_384_usa_onnx_quando_ha_modelo(tmp_path):
     embedder = kb_query_embedder(_escrever_kb(tmp_path, 384))
     assert embedder.dim == 384
     assert embedder.semantic is True
+
+
+@pytest.mark.skipif(not _model_cached(), reason="modelo ONNX não descarregado nesta máquina")
+def test_sessao_e_mono_thread_e_sem_arena():
+    """Regressão de PRODUÇÃO: a sessão tem de ser mono-thread e sem arena de memória.
+
+    Por omissão o onnxruntime dimensiona pools de threads e arena pelo número de CPUs que a
+    máquina REPORTA. Num contentor pequeno isso é desastroso, porque o contentor vê os cores
+    do hospedeiro mas só tem a sua fatia de RAM. Medido em 2026-08-02: 96 MB numa máquina de
+    4 cores contra >1,2 GB num dyno Heroku Basic de 512 MB, onde o worker entrava em ciclo de
+    crash por R15 antes de completar uma varredura.
+
+    Sem este teste, alguém que reconstrua a sessão sem `SessionOptions` reintroduz a falha, e
+    ela só aparece no deploy.
+    """
+    emb = oe.OnnxMiniLMEmbedder()
+    opts = emb._session.get_session_options()
+    assert opts.intra_op_num_threads == 1
+    assert opts.inter_op_num_threads == 1
+    assert opts.enable_cpu_mem_arena is False

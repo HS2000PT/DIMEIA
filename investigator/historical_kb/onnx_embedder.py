@@ -115,8 +115,30 @@ class OnnxMiniLMEmbedder:
         self._tokenizer.enable_truncation(max_length=_MAX_SEQ_LENGTH)
         pad_id = self._tokenizer.token_to_id("[PAD]") or 0
         self._tokenizer.enable_padding(pad_id=pad_id, pad_token="[PAD]")
+        # Sessão deliberadamente MONO-THREAD e sem arena de memória.
+        #
+        # Por omissão o onnxruntime dimensiona os seus pools de threads e a arena de memória
+        # pelo número de CPUs que a máquina REPORTA. Num contentor pequeno isso é desastroso:
+        # o contentor vê os cores do hospedeiro mas só tem a sua fatia de RAM. Medido: 96 MB
+        # numa máquina de 4 cores, contra >1,2 GB num dyno Heroku Basic (limite 512 MB), onde
+        # o processo entrava em ciclo de crash por R15 antes de completar um ciclo de varredura.
+        #
+        # Um thread não custa nada aqui: o produto embebe uma mão-cheia de manchetes de cada
+        # vez, e o paralelismo intra-operação só compensa em lotes grandes. A arena serve para
+        # reutilizar blocos entre inferências frequentes; num processo que embebe algumas
+        # dezenas de frases por minuto, é memória reservada e não usada.
+        #
+        # Não altera resultados: a mesma entrada dá o mesmo embedding, e a validação de
+        # paridade contra o sentence-transformers (docs/evaluation/onnx_minilm_validation.md)
+        # continua a passar.
+        opts = onnxruntime.SessionOptions()
+        opts.intra_op_num_threads = 1
+        opts.inter_op_num_threads = 1
+        opts.enable_cpu_mem_arena = False
         self._session = onnxruntime.InferenceSession(
-            str(cache / "model_quint8_avx2.onnx"), providers=["CPUExecutionProvider"]
+            str(cache / "model_quint8_avx2.onnx"),
+            sess_options=opts,
+            providers=["CPUExecutionProvider"],
         )
         self._input_names = {i.name for i in self._session.get_inputs()}
 
