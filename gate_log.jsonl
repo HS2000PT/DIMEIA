@@ -278,3 +278,13 @@
 {"date": "2026-08-02", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
 {"date": "2026-08-02", "ticker": "AMD", "stage": "alerted", "detail": "Dow Jones Futures Due As Trump Calls Off Iran Attacks; SpaceX, AMD, Sandisk, Eli"}
 {"date": "2026-08-02", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}
+{"date": "2026-08-02", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.43 < 0.50"}
+{"date": "2026-08-02", "ticker": "MSFT", "stage": "alerted", "detail": "As Cloud Revenue Soars, Is It Time to Buy Microsoft Stock?"}
+{"date": "2026-08-02", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.49 < 0.50"}
+{"date": "2026-08-02", "ticker": "TSLA", "stage": "alerted", "detail": "Tesla and BYD Ride Global EV Boom — Five Countries See Growth More Than Double a"}
+{"date": "2026-08-02", "ticker": "AMZN", "stage": "triage_suppressed", "detail": "P=0.43 < 0.50"}
+{"date": "2026-08-02", "ticker": "GOOGL", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-08-02", "ticker": "META", "stage": "alerted", "detail": "Meta’s Per-Token Pricing Shifts the Frontier From Human Headcount to AI Output"}
+{"date": "2026-08-02", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-08-02", "ticker": "AMD", "stage": "alerted", "detail": "Jobs Report, Palantir, AMD, SpaceX, Eli Lilly, and More to Watch This Week"}
+{"date": "2026-08-02", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}
