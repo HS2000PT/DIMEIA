@@ -34,9 +34,14 @@ PANEL_2 = "#1A2029"  # estados de foco e caixas encaixadas
 LINE = "#242C38"  # limites
 
 # Texto: três níveis chegam. Mais do que três e a hierarquia deixa de se ler.
-FG = "#E8ECF2"
-FG_DIM = "#8A94A6"
-FG_MUTE = "#5A6474"
+#
+# Os dois níveis inferiores foram **clareados** depois de os medir contra o fundo. O
+# `#5A6474` de antes dava cerca de 3,3:1 sobre `#0B0E13`, abaixo do mínimo de 4,5:1 que a
+# WCAG pede para texto pequeno — e como quase tudo aqui é texto pequeno, metade da
+# interface estava tecnicamente ilegível. Não era gosto, era contraste a menos.
+FG = "#EDF1F7"  # ~16:1
+FG_DIM = "#A3AEC2"  # ~9:1  — texto secundário
+FG_MUTE = "#7C8AA3"  # ~5,4:1 — rótulos e legendas, ainda acima do mínimo
 
 # Sinal: as únicas cores com significado em toda a interface.
 UP = "#00D68F"  # subida
@@ -49,13 +54,18 @@ NEWS = "#4A9EFF"  # informação — nunca direcção
 # Um conjunto, usado igual em todo o lado. Direcção e estado são eixos SEPARADOS: um
 # alerta pode ser de subida (▲) e sinalizado (⚑) ao mesmo tempo, e misturar os dois eixos
 # num só glifo foi a origem da confusão nas versões anteriores.
-ICON_UP = "▲"
-ICON_DOWN = "▼"
-ICON_FLAT = "─"
-ICON_ALERT = "⚑"  # passou todos os gates e foi enviado
-ICON_DETECT = "○"  # o método detectaria, mas um gate suprimiu
-ICON_NEWS = "●"  # notícia captada, impacto medido
-ICON_VOLUME = "◆"  # volume invulgar
+# Cinco símbolos, **um significado cada**. A versão anterior tinha uma colisão real: `◆`
+# era "volume invulgar" nas linhas e "alerta enviado" no gráfico, e `⚑` e `○` queriam
+# ambos dizer "detectado". Um símbolo com dois sentidos é pior do que símbolo nenhum,
+# porque o leitor não sabe que está a ler mal.
+ICON_UP = "▲"  # direcção: subiu
+ICON_DOWN = "▼"  # direcção: desceu
+ICON_FLAT = "─"  # direcção: sem movimento material
+ICON_ALERT = "⚑"  # passou todos os gates e saiu para o canal
+ICON_DETECT = "○"  # o método detectou, mas um gate suprimiu
+ICON_NEWS = "●"  # notícia captada, com impacto medido
+# O volume invulgar mostra-se como texto (`3.3×`) e não como glifo: era o sexto símbolo, e
+# a partir do quinto ninguém guarda a legenda. Um número com unidade não precisa de legenda.
 
 
 def direction(value: float | None, floor: float = 0.0005) -> tuple[str, str]:

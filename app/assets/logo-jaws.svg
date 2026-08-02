@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"
+     role="img" aria-label="InvestiGator — an alligator's open jaws drawn as two diverging market lines">
+  <!-- InvestiGator — proposta "Jaws" (2026-08-03).
+
+       A IDEIA, e porque é que não é arbitrária. Existe um indicador técnico real e
+       conhecido chamado **Williams Alligator**: três médias móveis a que o autor chamou
+       maxilar, dentes e lábios, e cuja abertura ("the alligator wakes up and opens its
+       jaws") marca o início de uma tendência. Ou seja, o jacaré já pertence ao vocabulário
+       dos mercados — a marca deixa de ser um trocadilho com o nome e passa a ser uma
+       referência de domínio que um júri de finanças reconhece.
+
+       A LEITURA. Duas linhas que divergem de uma dobradiça à esquerda: ao mesmo tempo uma
+       boca aberta e duas séries a separarem-se, que é literalmente o que a volatilidade é.
+       A linha de cima é serrilhada (preço, e também dentes); a de baixo é lisa (a norma,
+       a média de onde o preço se afasta). O ponto é o olho — e é o único detalhe
+       ornamental, por isso é o primeiro a poder desaparecer aos 16 px sem perda.
+
+       PORQUÊ ISTO E NÃO O OLHO. "The Stare" falhava aos 16 px (o sobrolho fundia-se com a
+       pupila). Aqui a forma é feita de dois traços com muito espaço entre eles: quanto
+       mais pequena, mais legível fica, porque o vazio da boca não pode fechar-se. -->
+
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <!-- maxilar superior: linha de preço em ziguezague, a subir e a afastar-se -->
+    <path d="M40 128 L74 118 L96 126 L124 100 L150 108 L178 76 L206 84 L228 48"
+          stroke-width="17"/>
+    <!-- maxilar inferior: a norma, lisa, a descer em espelho -->
+    <path d="M40 128 L104 146 L164 168 L228 194" stroke-width="17"/>
+  </g>
+  <!-- o olho: o único ornamento, e o primeiro a sacrificar em tamanhos pequenos -->
+  <circle cx="66" cy="150" r="10" fill="currentColor"/>
+</svg>

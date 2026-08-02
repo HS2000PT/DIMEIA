@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"
+     role="img" aria-label="InvestiGator — a G monogram whose terminal stroke becomes a rising market line">
+  <!-- InvestiGator — proposta "Gator G" (2026-08-03).
+
+       A IDEIA. Um monograma G — de *Gator* — cujo traço terminal, em vez de fechar a
+       letra, sai para dentro e sobe como uma linha de mercado com um degrau. A letra dá o
+       reconhecimento imediato (uma inicial lê-se antes de qualquer símbolo); a saída dá o
+       significado.
+
+       PORQUÊ CONSIDERAR ISTO. É a proposta mais **conservadora** das três, e isso é uma
+       vantagem real: um monograma nunca é mal interpretado, funciona como favicon sem
+       ajustes, e envelhece bem. O custo é ser menos memorável do que uma forma própria —
+       há muitos G no mundo, e nenhum deles é nosso.
+
+       ONDE ISTO GANHA. Em documentos e em contextos pequenos e formais: cabeçalho da tese,
+       favicon, rodapé. Onde perde: como imagem única de um produto, porque não conta
+       nenhuma história sozinha. -->
+
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+     stroke-width="22">
+    <!-- o G: arco aberto do lado direito, deixando espaço para a linha sair -->
+    <path d="M186 74 A 68 68 0 1 0 186 182"/>
+    <!-- a barra do G que deixa de ser barra e passa a linha de mercado a subir -->
+    <path d="M132 128 L176 128 L200 156 L232 96"/>
+  </g>
+</svg>

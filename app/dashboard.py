@@ -304,7 +304,7 @@ def _watchlist_rows(rows: list[dict]) -> None:
 
         marcas = (T.ICON_ALERT if r["flagged"] else " ")
         if r["vol_ratio"]:
-            marcas += f" {T.ICON_VOLUME}{r['vol_ratio']:.1f}x"
+            marcas += f" {r['vol_ratio']:.1f}x vol"
 
         rotulo = (f"{t:<6}{icone} {r['move'] * 100:+6.2f}%   "
                   f"z{r['z']:+5.2f}   {marcas}")
@@ -512,7 +512,8 @@ def _detail(ticker: str) -> None:
     st.markdown(
         f"""<div style="display:flex;align-items:center;gap:0.7rem;margin-bottom:0.3rem">
           {_logo_html(ticker, 30)}
-          <div><div style="font-size:17px;font-weight:700">{NAMES.get(ticker, ticker)}</div>
+          <div><div style="font-size:17px;font-weight:700;color:{T.FG}">
+            {NAMES.get(ticker, ticker)}</div>
           <div class="num" style="font-size:11px;color:{T.FG_MUTE}">{ticker}</div></div>
           <span style="flex:1"></span>{cabeca}
         </div>""", unsafe_allow_html=True)
@@ -524,9 +525,9 @@ def _detail(ticker: str) -> None:
     st.markdown(
         f'<div class="num" style="display:flex;gap:1.1rem;font-size:10.5px;'
         f'color:{T.FG_MUTE};margin:-0.3rem 0 0.3rem">'
-        f'<span style="color:{T.FLAG}">◆ alert sent</span>'
-        f'<span>○ detected, gated</span>'
-        f'<span style="color:{T.NEWS}">● news captured</span></div>',
+        f'<span style="color:{T.FLAG}">{T.ICON_ALERT} alert sent</span>'
+        f'<span>{T.ICON_DETECT} detected, gated</span>'
+        f'<span style="color:{T.NEWS}">{T.ICON_NEWS} news captured</span></div>',
         unsafe_allow_html=True)
 
     st.markdown('<hr class="rule">', unsafe_allow_html=True)
