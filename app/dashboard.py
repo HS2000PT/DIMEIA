@@ -169,34 +169,64 @@ def _alerts() -> list:
         return []
 
 
+BACKFILL = _ROOT / "data" / "samples" / "backfill_kb.jsonl"
+
+
+def _absorver(linhas, out: dict[str, list[dict]], vistos: set) -> None:
+    """Acrescenta registos de um JSONL, sem repetir (ticker, data, manchete)."""
+    import json
+
+    for linha in linhas:
+        if not linha.strip():
+            continue
+        try:
+            r = json.loads(linha)
+        except ValueError:
+            continue
+        chave = (r.get("ticker"), r.get("date"), (r.get("headline") or "")[:80])
+        if chave in vistos:
+            continue
+        vistos.add(chave)
+        imp = r.get("impacts") or {}
+        out.setdefault(r.get("ticker", "?"), []).append({
+            "date": r.get("date", ""), "headline": r.get("headline", ""),
+            "d1": imp.get("1"), "d5": imp.get("5"),
+        })
+
+
 @st.cache_data(ttl=900, show_spinner=False)
 def _news_by_ticker() -> dict[str, list[dict]]:
-    """Notícias captadas com impacto já medido, por ticker.
+    """Notícias captadas com impacto medido, por ticker — de duas fontes somadas.
 
-    O ficheiro traz um vector de 384 dimensões por registo que aqui não serve para nada — é
-    descartado à entrada, senão guardavam-se ~1,3 M de floats em cache para desenhar pontos.
+    **Local primeiro** (`data/backfill_kb.jsonl`): um ano reconstruído, ~35 mil registos,
+    lido do disco sem rede. É o que dá densidade ao gráfico desde o primeiro segundo,
+    inclusive quando o GitHub está inacessível.
+
+    **Depois a base viva**, da branch de dados: são as semanas mais recentes, que o ano
+    reconstruído não pode ter porque o impacto a +5 dias ainda não é observável.
+
+    A ordem importa e é esta de propósito: se a rede falhar, o painel perde as últimas
+    semanas mas mantém o ano. O contrário — perder tudo porque um pedido HTTP falhou — era
+    o comportamento anterior.
     """
-    import json
     import urllib.request
 
     out: dict[str, list[dict]] = {}
+    vistos: set = set()
+
+    if BACKFILL.exists():
+        try:
+            with BACKFILL.open(encoding="utf-8") as fh:
+                _absorver(fh, out, vistos)
+        except OSError:
+            pass
+
     try:
         with urllib.request.urlopen(_raw("live_kb.jsonl"), timeout=25) as resp:
-            for linha in resp.read().decode("utf-8", "replace").splitlines():
-                if not linha.strip():
-                    continue
-                try:
-                    r = json.loads(linha)
-                except ValueError:
-                    continue
-                imp = r.get("impacts") or {}
-                out.setdefault(r.get("ticker", "?"), []).append({
-                    "date": r.get("date", ""),
-                    "headline": r.get("headline", ""),
-                    "d1": imp.get("1"), "d5": imp.get("5"),
-                })
+            _absorver(resp.read().decode("utf-8", "replace").splitlines(), out, vistos)
     except Exception:  # noqa: BLE001
-        return {}
+        pass  # o ano local chega para o painel funcionar
+
     return out
 
 

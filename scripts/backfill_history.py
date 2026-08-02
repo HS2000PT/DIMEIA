@@ -45,7 +45,7 @@ from investigator.market_data.prices import load_close_series
 from investigator.news_fetcher.relevance import is_relevant
 
 RAIZ = Path(__file__).resolve().parents[1]
-DESTINO = RAIZ / "data" / "backfill_kb.jsonl"
+DESTINO = RAIZ / "data" / "samples" / "backfill_kb.jsonl"
 
 # O Finnhub devolve no máximo ~250 itens por pedido, por isso a janela tem de ser estreita:
 # uma semana mantém-se folgadamente abaixo do tecto mesmo nos tickers mais ruidosos.
