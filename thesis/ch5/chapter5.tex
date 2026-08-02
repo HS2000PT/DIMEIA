@@ -565,7 +565,7 @@ twenty-day momentum, the ratio of short to long volatility, the standardised imm
 these under the frozen protocol (temporal split, Platt calibration on validation, seed~$42$). The
 volatility anchor reproduces the frozen number ($0.537$ against the frozen $0.538$, the tiny gap
 coming only from the stricter sixty-day history the extended features require). Adding all five
-signals moves PR-AUC to $0.535$ --- no improvement. A leave-one-in / leave-one-out sweep
+signals moves PR-AUC to $0.535$, no improvement at all. A leave-one-in / leave-one-out sweep
 (Figure~\ref{fig:triage_ablation})
 explains why: the standardised reaction is the only signal with a positive sign, and only by $0.001$;
 the others are flat or slightly negative. Rolling volatility already absorbs almost everything these

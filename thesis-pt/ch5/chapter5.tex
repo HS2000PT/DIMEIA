@@ -567,7 +567,7 @@ o rácio de volatilidade curta para longa, a reação imediata padronizada (o pr
 volatilidade só-de-queda. O modelo só-contexto foi re-treinado sobre estas sob o protocolo congelado (divisão
 temporal, calibração de Platt na validação, semente~$42$). A âncora de volatilidade reproduz o número congelado
 ($0.537$ contra o congelado $0.538$, a pequena diferença vindo apenas do histórico mais estrito de sessenta dias
-que as features estendidas exigem). Acrescentar os cinco sinais move a PR-AUC para $0.535$ --- nenhuma
+que as features estendidas exigem). Acrescentar os cinco sinais move a PR-AUC para $0.535$, sem nenhuma
 melhoria. Uma varredura leave-one-in / leave-one-out (Figura~\ref{fig:triage_ablation}) explica porquê: a reação
 padronizada é o único sinal com sinal positivo, e apenas por $0.001$; os outros são planos ou ligeiramente
 negativos. A volatilidade deslizante já absorve quase tudo o que estas features baratas carregam, que é a mesma

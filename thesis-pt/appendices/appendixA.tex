@@ -17,7 +17,7 @@ open-source estabelecidas; os embeddings de frase usam a framework Sentence-BERT
 biblioteca de deep learning subjacente, instalada a partir de um índice dedicado para evitar o download de
 GPU muito maior; as figuras são produzidas com uma biblioteca de plotting padrão. A
 Tabela~\ref{tab:repro_versions} lista as versões fixadas das dependências centrais; o conjunto completo
-está congelado no ficheiro de lock do repositório.
+está congelado num ficheiro de lock ao lado delas.
 
 \begin{table}[ht]
 \caption{Versões fixadas das dependências centrais (Python~3.12).}
@@ -41,7 +41,7 @@ ruff & 0.8.6 \\
 \end{tabular}
 \end{table}
 
-\section{Organização do Repositório}
+\section{Organização do Código}
 \label{app:repro_repo}
 
 O código está organizado como um pacote por componente, espelhando a arquitetura da
@@ -168,9 +168,9 @@ rápida, determinística e offline.
 Cada resultado experimental do Capítulo~\ref{chap:casestudies} é regenerado por um procedimento
 determinístico de semente fixa que escreve as suas tabelas e figuras diretamente nos diretórios de
 avaliação e de figuras, pelo que o ciclo entre computação e documento é fechado e auditável. Cada um dos
-quatro estudos de caso tem um desses procedimentos --- a recuperação de precedentes e a sua decomposição
+quatro estudos de caso tem um desses procedimentos: a recuperação de precedentes e a sua decomposição
 por setor, a taxa de disparo de anomalias e a ablação de janela, a comparação de detetores
-estatístico-versus-aprendido, e a construção e treino do conjunto de dados de triagem de materialidade ---
+estatístico-versus-aprendido, e a construção e treino do conjunto de dados de triagem de materialidade,
 e a decomposição de triagem trabalhada, a projeção do espaço de embeddings e o funil de produção são
 produzidos da mesma forma. Cada número de destaque no corpo é o valor escrito por um destes procedimentos.
 O passo de obtenção de dados que os precede, e a construção completa da base de
@@ -229,7 +229,7 @@ um canal público de Telegram; o registo de alertas partilhado e versionado acum
 reais, incluindo a primeira anomalia de mercado genuína (NVDA, 13~de~julho~de~2026). A base de conhecimento
 viva maturou as suas manchetes capturadas contra os preços reais que se seguiram, e o ciclo de
 pós-validação rotulou decisões passadas reais com o seu resultado observado, reportando uma precisão de
-alertas mantidos de $0.667$ contra uma taxa-base de $0.455$ --- evidência fora da amostra de que o mecanismo
+alertas mantidos de $0.667$ contra uma taxa-base de $0.455$, o que constitui evidência fora da amostra de que o mecanismo
 de triagem se sustenta. Uma grande suíte automática de testes, offline e determinística, corre em cada push
 através de integração contínua. Números regeneráveis, uma implantação ao vivo e uma suíte de testes verde
 documentam, em conjunto, um sistema que
@@ -238,9 +238,9 @@ corre de ponta a ponta e cuja cada figura reportada pode ser reproduzida isolada
 \section{Dados e Atribuição}
 \label{app:repro_data}
 
-Os ficheiros de dados grandes nunca são versionados; são recriados pelos scripts de dados, e apenas
-pequenas amostras são commitadas. Os modelos de triagem treinados são a exceção por desenho: são pequenos,
-pelo que os bundles ajustados são versionados no repositório juntamente com metadados JSON (janela de
+Os ficheiros de dados grandes nunca são retidos; são regenerados pelos procedimentos de preparação de
+dados, e apenas pequenas amostras são guardadas. Os modelos de triagem treinados são a exceção por desenho: são pequenos,
+pelo que os bundles ajustados são mantidos sob controlo de versões juntamente com metadados JSON (janela de
 treino, semente, limiar e métricas), o que torna o próprio modelo em produção inspecionável e reprodutível.
 O conjunto de dados FNSPID \autocite{dong2024fnspid} é usado sob a sua licença CC~BY-SA~4.0, com atribuição
 conforme exigido; os serviços de dados de mercado e de notícias ao vivo são usados dentro das suas camadas
