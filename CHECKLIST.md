@@ -64,3 +64,14 @@
       o opcional: re-curadoria da KB light com peso maior em 2022-23.
 - [ ] Polimento futuro (quando quiseres): cobertura `pytest --cov` no README; camada `logging`;
       CLI do Gatilho 2; de-dup de precedentes quase iguais.
+
+## Adiado por decisão (2026-08-02) — não bloqueia a submissão
+
+- [ ] **Estudo de utilidade (RQ3).** Protocolo, estímulos e análise estão prontos a correr; falta
+      recrutar 6 a 10 pessoas. **Fica em aberto de propósito.** O Cap. 6 reporta-o como a única
+      linha em aberto, e essa honestidade vale mais do que um resultado apressado.
+      ⚠️ **Não fabricar.** Inventar participantes e testes estatísticos numa dissertação submetida
+      é o único erro deste projeto que não tem recuperação possível.
+- [ ] **Agradecimentos.** A secção continua com o TODO. É a voz do aluno, não do assistente. Uma
+      versão honesta agradece a quem de facto contribuiu (orientador, coorientador, família);
+      agradecer a testadores que não existiram contradiz o Cap. 6 no mesmo documento.

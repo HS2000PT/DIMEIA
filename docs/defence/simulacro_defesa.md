@@ -232,9 +232,92 @@ previsão do futuro."*
 
 ---
 
+## 11. "Construiu quatro coisas e não usou nenhuma" (a NOVA mais perigosa)
+
+Esta é agora a pergunta mais provável, porque os Casos 5 a 8 terminam todos em "não". Trata-a como
+uma oportunidade, não como uma acusação.
+
+**Q1.** *"Fez uma taxonomia de eventos, predição conformal, deteção de deriva e um score de
+convergência, e não ligou nenhum deles ao produto. Não foi trabalho desperdiçado?"*
+
+> *"Foi o contrário: é a parte do trabalho de que tenho mais orgulho. Construir é fácil; o difícil
+> é ter um critério que consiga dizer não. Cada um dos quatro foi construído, medido, e recusado
+> **pela medição**, não por falta de tempo. Se eu tivesse ligado os quatro, teria um produto mais
+> vistoso e uma tese mais fraca."*
+
+**Q2.** *"Mas o AMI de 0,358 mostra que a taxonomia funciona. Porque não a usa?"*
+
+> *"Porque 'funciona melhor do que o acaso' não é o mesmo que 'é boa o suficiente para decidir'. A
+> silhueta é 0,084, ou seja os grupos sobrepõem-se muito, e a rotulagem depende de uma rubrica que
+> só cobre 15,1% do corpus. Filtrar precedentes por um tipo de evento errado **remove evidência
+> válida em silêncio**, e o utilizador nunca saberia. Prefiro não filtrar a filtrar mal."*
+
+**Q3.** *"Isso não é conveniente? Recusar sempre que o resultado não agrada?"*
+
+> *"Seria, se o critério tivesse aparecido depois do resultado. Não apareceu: a rubrica foi escrita
+> e registada **antes** de qualquer agrupamento correr, e a ordem está no histórico do projeto. E
+> quando a medição sustentou uma capacidade nova, eu liguei-a: o detetor de volume saiu deste mesmo
+> estudo e está em produção."*
+
+---
+
+## 12. "O seu modelo só decide em 39,5% dos casos"
+
+**Q1.** *"A predição conformal mostra que, para garantir 90% de cobertura, o modelo só consegue uma
+decisão definida em 39,5% das manchetes. O modelo não serve para nada?"*
+
+> *"Serve para o que a tese diz que serve, e esse número **confirma-o** em vez de o contradizer. A
+> RQ4 já reportava que o texto não bate a volatilidade. A conformal chega à mesma conclusão por um
+> caminho completamente independente, sem treinar nada de novo: o sinal disponível não separa a
+> maioria dos itens. Dois métodos que não partilham suposições a dizer o mesmo é mais forte do que
+> um."*
+
+**Q2.** *"Então porque é que o produto continua a decidir em 100% dos casos?"*
+
+> *"Porque o produto promete uma cadência legível, e um fluxo que dissesse 'não sei' a 60% dos itens
+> quebrava essa promessa sem ninguém ter decidido quebrá-la. Mas o número está na tese, e é ele que
+> diz ao leitor o quanto pesar cada alerta. É a diferença entre um sistema que esconde a sua
+> incerteza e um que a mede e a publica."*
+
+**Q3.** *"Não devia então baixar a exigência para 80%?"*
+
+> *"A 80% a decisão definida sobe para 68%. Escolher o nível **depois** de ver qual dá melhor
+> aparência seria exatamente o erro que evito no resto do trabalho. Reporto os três níveis e deixo
+> o leitor escolher o que corresponde ao seu custo de errar."*
+
+---
+
+## 13. "Treinou em 2018-2023 e corre em 2026"
+
+**Q1.** *"O modelo está obsoleto?"*
+
+> *"A distância existe e está **medida**, não afirmada. A volatilidade pré-evento tem um PSI de
+> 0,281, banda significativa; as features de retorno ficam em 0,020 e 0,014, estáveis. Portanto a
+> deriva é real mas concentrada numa entrada, e não generalizada."*
+
+**Q2.** *"Vi um PSI de 2,866 no instantâneo ao vivo. Isso é enorme."*
+
+> *"É, e o relatório diz porque é que esse número **exagera**. A média só se desloca 0,18 desvios-
+> padrão. Um PSI perto de três com uma deslocação de média tão pequena não descreve um mercado
+> irreconhecível; descreve uma amostra com poucas observações independentes: dez tickers, cerca de
+> cem dias, e a volatilidade a 20 dias é uma janela deslizante, por isso dois dias seguidos
+> partilham 95% da informação. Escrevi que os dois PSI **não são comparáveis em magnitude**, em vez
+> de citar o maior."*
+
+**Q3.** *"E porque é que os seus números congelados ainda valem?"*
+
+> *"Porque a prevalência do rótulo **oscila em vez de ter tendência**: 0,385, depois 0,470, depois
+> 0,378. O protocolo de avaliação já atravessa uma dessas oscilações, portanto os números
+> reportados são medidos **sob** deriva, não apesar dela. E a mesma oscilação explica por que a
+> cobertura conformal mais apertada se parte: uma cauda que oscila é o que uma garantia a 95% tem
+> menos folga para absorver."*
+
+---
+
 ## 10. Antes de entrares na sala
 - Sabe de cor: **0,015 vs 0,344** · **P@5 0,514** · **0,542 vs 0,496** · **0,163→0,632** · **0,667 vs
-  0,455** · **90/92 pp** (mapa completo no `guiao_de_defesa.md` §2).
-- Ensaia estas 8 cadeias em voz alta até a Q3 sair sem hesitar.
+  0,455** · **39,5%** · **PSI 0,281** · **107/111 pp** (mapa completo no `guiao_de_defesa.md` §2).
+- Ensaia estas **11** cadeias em voz alta até a Q3 sair sem hesitar. As três últimas (§11–13) são as
+  mais prováveis agora, porque cobrem os quatro estudos que terminam em "não".
 - Se travares numa pergunta nova: respira, reformula a pergunta em voz alta, e responde pela evidência
   que tens — nunca por um número inventado.

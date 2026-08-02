@@ -44,7 +44,16 @@ fraqueza.
 | **dir. 0.708 vs chão 0.688** | Consistência de direção dos precedentes *(reforço)* | "Recupera o TEMA, não a DIREÇÃO — tema≠direção quantificado." |
 | **FinBERT 0.420 · E5/BGE ~0.51** | Benchmark de embedders *(reforço)* | "MiniLM validado por medição: domínio pior, modernos empatam." |
 | **texto justo 0.533 < 0.542** | RQ4 re-teste justo (C+PCA+FinBERT) *(reforço)* | "Negativo do texto robusto; PCA recupera de 0,499 mas nunca bate a volatilidade." |
-| **106 / 110 pp · 59 refs · 465 testes** | Tese EN/PT · referências verificadas · suíte | "Reprodutível de ponta a ponta; nenhum número digitado à mão." |
+| **AMI 0.358 vs 0.188** | Tipo de evento vs ticker, no espaço de embeddings *(Caso 5)* | "O espaço **sabe** o tipo de acontecimento, e sabe-o mais do que sabe a empresa. Mas a silhueta é 0,084: fraco demais para filtrar precedentes, por isso NÃO liguei." |
+| **0.712 vs 0.444** | Pureza dos grupos vs aleatório do mesmo tamanho *(Caso 5)* | "O 0,712 sozinho engana: com um tipo a valer 44% dos rótulos, o acaso já dá 0,444. O ganho real é +0,269." |
+| **0.951/0.902/0.803** | Cobertura conformal, divisão aleatória *(Caso 6)* | "Bate no nominal aos três níveis — prova que a implementação está certa." |
+| **0.937 a 95%** | Cobertura conformal, divisão TEMPORAL *(Caso 6)* | "Parte-se só no nível mais exigente. Pedir 95% apoia-se na CAUDA, e é a cauda que se move primeiro. A 90% e 80% aguenta." |
+| **39,5%** | Decisões definidas a 90% de cobertura garantida *(Caso 6)* | "**O número mais duro da tese.** Para prometer 90%, o modelo só decide em 39,5% das manchetes. Não contradiz a RQ4 — **explica-a** por um caminho independente, sem treinar nada." |
+| **PSI 0.281** | Deriva da volatilidade, treino → teste *(Caso 7)* | "A limitação que a tese repetia passou a estar MEDIDA. Banda significativa, e dá um gatilho de re-treino verificável em vez de uma intuição." |
+| **0.385 / 0.470 / 0.378** | Prevalência do rótulo nos três blocos *(Caso 7)* | "**Oscila, não tem tendência.** Comparar só as pontas esconderia uma excursão de 22%. Explica por que os congelados sobrevivem E por que a cobertura a 95% parte." |
+| **ganha em 1 de 3** | Fusão multi-sinal vs melhor sinal isolado *(Caso 8)* | "Um ganho que depende do orçamento que se escolhe citar é um ganho que se **pode ter escolhido**. Não entra em produção." |
+| **peso −0,283** | Intensidade de notícia na fusão *(Caso 8)* | "**Negativo**: mais manchetes = menos provável ser material, porque são dias de conteúdo automático. À mão eu teria posto positivo e estaria errado. É a justificação empírica de DERIVAR pesos." |
+| **107 / 111 pp · 59 refs · 478 testes** | Tese EN/PT · referências verificadas · suíte | "Reprodutível de ponta a ponta; nenhum número digitado à mão. As 59 referências resolvem todas, e o título devolvido bate — verificado automaticamente." |
 
 ### Se perguntarem pela bibliografia
 
