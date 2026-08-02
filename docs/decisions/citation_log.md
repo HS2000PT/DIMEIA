@@ -170,6 +170,27 @@ produziria um erro citável se tivesse passado.
 > quatro são detalhadas e citam o que foi lido, mas **não têm segunda opinião independente**, e fica
 > aqui dito em vez de ficar por dizer.
 
+## Verificação automática dos identificadores (2026-08-02)
+
+Além da verificação manual, fonte a fonte, registada acima, corri uma verificação **automática
+de todos os 59 identificadores** para responder de forma verificável à pergunta *"há aqui alguma
+referência inventada?"*.
+
+| Tipo | Quantos | Resultado |
+|---|---:|---|
+| DOI | 43 | **43 resolvem no Crossref, e o título devolvido bate com o do `.bib`** |
+| arXiv | 8 | 8 resolvem na API do arXiv, títulos conferidos |
+| URL | 6 | 6 respondem HTTP 200 |
+| ISBN | 1 | `vovk2005algorithmic`, conferido na página de rosto do livro |
+| sem identificador | 1 | `sculley2015debt`, e está correto: o handle da ACM não está registado no Crossref e não resolve (ver armadilha 2 acima) |
+
+**59 de 59 legítimas.** A comparação de títulos não é cosmética: apanha o caso em que um DOI
+existe mas aponta para outro artigo, que é o modo de falha mais perigoso porque passa
+despercebido a uma verificação que só confirme que o identificador resolve.
+
+Repetível a qualquer momento: a verificação consulta `api.crossref.org/works/<doi>` e
+`export.arxiv.org/api/query` e compara o título normalizado.
+
 ## Rejeitadas / não verificáveis (NÃO usar)
 | Referência | Motivo | Data |
 |---|---|---|
