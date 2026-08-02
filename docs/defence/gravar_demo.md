@@ -8,8 +8,9 @@
 
 ## Antes de gravar (10 minutos)
 
-1. **Acordar a app.** O Streamlit Community Cloud adormece sem visitas. Abre
-   <https://investigator.streamlit.app> e espera que carregue por completo.
+1. **Abrir a app.** <https://investigator-meia-fa8287a1e568.herokuapp.com/>
+   Desde 2026-08-02 corre no Heroku num dyno *Basic*, **sempre ligado**: já não hiberna, e
+   não precisas do truque de a visitar antes para a acordar. Confirma na mesma que carrega.
 2. **Confirmar que há o que mostrar.** O ecrã *Today* precisa de pelo menos um nome que se
    destaque. Se o dia estiver morto, grava noutro dia ou usa a captura já guardada
    (`thesis/figures/app_dashboard.png`) como plano C.
@@ -39,6 +40,11 @@ Aponta para a linha de um mover e lê a decomposição em voz alta:
 Se apanhares um caso como o do AMZN (queda total, contribuição própria positiva), **usa-o**:
 é o argumento mais forte que o produto tem.
 
+Se a linha tiver **volume**, lê-o também: é a segunda metade da pergunta.
+> *"E moveu-se com 3,2 vezes o volume habitual. Um movimento de 3% com volume normal e outro com
+> o triplo do volume não são o mesmo acontecimento. Quando o volume é normal, o sistema não diz
+> nada — o silêncio também é informação."*
+
 Depois aponta a linha *Quiet*:
 > *"Os nomes que não se destacaram colapsam aqui. O silêncio é legível."*
 
@@ -57,9 +63,24 @@ Abre um alerta de notícia com precedentes e diz a frase que desarma a pergunta 
 > nenhum modelo com texto bateu a linha de base de volatilidade. Está reportado tal como caiu."*
 
 ### 2:35–3:00 · A latência, dita por ti antes de ta perguntarem
-> *"E aqui está a latência medida: cerca de três horas. A causa é o agendador gratuito, não o
-> método. O caminho sempre-ligado está escrito e custa cerca de um minuto. Preferi mostrar o
-> número do que escondê-lo."*
+
+⚠️ **Este guião mudou a 2026-08-02. Confirma o número no ecrã antes de gravar.**
+
+O sistema passou a correr num servidor sempre ligado, com ciclo de **60 segundos**. Antes disso
+dependia de um agendador gratuito que, medido, corria de 1,5 a 2 horas em 1,5 a 2 horas.
+
+- **Se o número no ecrã já for baixo** (segundos ou poucos minutos):
+  > *"A latência que veem está medida, não estimada. O sistema corre de minuto a minuto num
+  > servidor sempre ligado. Antes corria num agendador gratuito e a mediana era de cerca de três
+  > horas — a diferença está aqui porque a instrumentação existia antes da correção."*
+
+- **Se ainda mostrar um número alto**, a mediana inclui o histórico antigo. Diz isso:
+  > *"Esta mediana ainda inclui os alertas do agendador antigo. O ciclo atual é de 60 segundos, e
+  > o número vai descer à medida que o histórico se renova."*
+
+Em qualquer dos casos, o argumento é o mesmo e é o que interessa: **a latência é uma quantidade
+medida do facto até à entrega, não uma promessa**, e foi por ter sido instrumentada antes que a
+melhoria é demonstrável em vez de alegada.
 
 Fecha aqui. Não mostres o Telegram ao vivo a menos que sobre tempo.
 
@@ -82,6 +103,7 @@ Fecha aqui. Não mostres o Telegram ao vivo a menos que sobre tempo.
 | Falha | O que fazes |
 |---|---|
 | A app não abre | Passas ao vídeo. Uma frase: *"tenho aqui a gravação"*. Sem pedir desculpa. |
+| A app está lenta a abrir | Normal na primeira visita após um deploy. Espera 10 s antes de assumir que falhou. |
 | Sem rede | Vídeo, que está no disco. |
 | O dia está calmo e não há movers | É um estado válido do produto: *"hoje não se destacou nada, e o sistema di-lo em vez de inventar"*. |
 | O narrador não responde | Não se nota: o alerta sai com o texto determinístico. Foi desenhado assim. |

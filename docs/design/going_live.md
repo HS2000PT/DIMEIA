@@ -38,12 +38,12 @@ plataforma) — o padrão certo é a **mensagem afixada** + a descrição. Copia
 >   (z-score / historical precedents).
 > • Want **your own** watchlist? DM the bot: `/watch TSLA` · `/list` · `/stop`
 >   (replies within ~30 min).
-> • Live dashboard: <https://investigator.streamlit.app>
+> • Live dashboard: <https://investigator-meia-fa8287a1e568.herokuapp.com>
 > • Everything is **evidence from the past** — never a forecast, never financial advice.
 
 **Descrição do canal (Manage channel → Description):**
 > Explainable US-market alerts, automated: abnormal moves + material news, each with its
-> reasoning. Not advice. Dashboard: investigator.streamlit.app
+> reasoning. Not advice. Dashboard: investigator-meia-fa8287a1e568.herokuapp.com
 
 ### 2) Definir os segredos no GitHub (nunca no código)
 Repo → **Settings → Secrets and variables → Actions → New repository secret**:
