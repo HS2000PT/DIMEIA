@@ -1,0 +1,55 @@
+{
+  "name": "InvestiGator",
+  "description": "Explainable financial alerts for retail investors. Two processes: the dashboard (web) and the always-on alert watcher (worker).",
+  "repository": "https://github.com/HS2000PT/DIMEIA",
+  "keywords": ["streamlit", "finance", "explainable-ai", "alerts"],
+  "stack": "heroku-24",
+  "buildpacks": [{ "url": "heroku/python" }],
+  "formation": {
+    "web": { "quantity": 1, "size": "basic" },
+    "worker": { "quantity": 1, "size": "eco" }
+  },
+  "env": {
+    "TELEGRAM_BOT_TOKEN": {
+      "description": "Bot token from @BotFather. Without it the watcher runs but never sends.",
+      "required": false
+    },
+    "TELEGRAM_CHAT_ID": {
+      "description": "Target channel id, e.g. @InvestiGatorMEIA or a numeric id.",
+      "required": false
+    },
+    "FINNHUB_API_KEY": {
+      "description": "Free Finnhub key. Drives company news and the intraday quote.",
+      "required": false
+    },
+    "TIINGO_API_KEY": {
+      "description": "Optional. Second link in the price fallback chain.",
+      "required": false
+    },
+    "POLYGON_API_KEY": {
+      "description": "Optional. Third link in the price fallback chain.",
+      "required": false
+    },
+    "ALPHAVANTAGE_API_KEY": {
+      "description": "Optional. Last link in the price fallback chain (25 calls/day).",
+      "required": false
+    },
+    "GROQ_API_KEY": {
+      "description": "Optional. Primary provider for the grounded narrator (off by default).",
+      "required": false
+    },
+    "GEMINI_API_KEY": {
+      "description": "Optional. Fallback provider for the grounded narrator.",
+      "required": false
+    },
+    "INVESTIGATOR_HISTORY_GIT": {
+      "description": "Set to 1 so the watcher pushes the shared alert history back to the data branch.",
+      "value": "0",
+      "required": false
+    },
+    "GITHUB_TOKEN": {
+      "description": "Only needed if INVESTIGATOR_HISTORY_GIT=1. A fine-grained PAT with contents:write on this repo.",
+      "required": false
+    }
+  }
+}

@@ -39,9 +39,16 @@ joblib==1.5.3
 onnxruntime==1.27.0
 tokenizers==0.22.2
 
-# ── Gráfico interativo da app (marcadores com hover no painel ao vivo) ───────
-# Puro Python (sem binários pesados) — instala em qualquer versão do Python.
+# ── A app (dashboard) ───────────────────────────────────────
+# O plotly desenha o gráfico interativo; o streamlit serve a app.
+# Ambos são puro Python (sem binários pesados) e instalam em qualquer versão.
+#
+# Porque é que o streamlit está AQUI e não só no requirements-app.txt: o Heroku lê
+# apenas este ficheiro. No Streamlit Community Cloud a plataforma já o traz
+# pré-instalado, por isso lá é redundante — mas inofensivo, e ter a app a arrancar
+# depois de um único `pip install -r requirements.txt` é melhor do que a alternativa.
 plotly==6.8.0
+streamlit==1.41.1
 
 # O próprio pacote (editável): torna `investigator` importável sem hacks de sys.path.
 -e .

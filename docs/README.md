@@ -21,6 +21,7 @@ se só queres correr o sistema.
 | [design/public_bundle.md](design/public_bundle.md) | Publicar um bundle limpo (app + tese + código), sem segredos nem dados grandes; enacted por `scripts/make_public_bundle.py`. |
 | [design/keys.md](design/keys.md) | **Todas as chaves num só sítio**: o que faz cada uma, onde a obter, em que cofre colar, e o que falha sem ela. |
 | [design/hosting.md](design/hosting.md) | **Onde correr o vigia**: ofertas verificadas a 2026-08-01 (a DigitalOcean fechou a janela), recomendação Heroku e o que ela compra em latência. |
+| [design/heroku_setup.md](design/heroku_setup.md) | **Pôr a correr 24/7, passo a passo**: CLI, segredos, deploy, e o passo que é fácil esquecer (escalar o worker). |
 | [design/cadence_contract.md](design/cadence_contract.md) | **O que o produto promete enviar e nunca enviar**, com o custo medido de cada gate. |
 | [design/app_acceptance.md](design/app_acceptance.md) | **Critérios de aceitação da app, escritos ANTES do código** (a condição de paragem que travou o ciclo de redesenhos). |
 | [design/narrator_guard.md](design/narrator_guard.md) | **A guarda de fidelidade do narrador**: porquê allowlist e não blocklist, e os 29 furos que o red team abriu na v1. |
