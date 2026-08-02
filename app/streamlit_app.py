@@ -437,12 +437,88 @@ def _price_chart(t: str) -> None:
             x=list(series.index), y=[float(v) for v in series.values],
             mode="lines", name=t, hovertemplate="$%{y:.2f} · %{x}<extra></extra>",
         ))
+        _mark_alerts_on_chart(fig, t, series)
         fig.update_layout(height=340, margin=dict(l=0, r=0, t=10, b=0),
-                          showlegend=False, hovermode="x unified")
+                          showlegend=False, hovermode="closest")
         fig.update_xaxes(showspikes=True, spikemode="across")
         st.plotly_chart(fig, use_container_width=True, key=f"chart_{t}_{rng}")
     else:
         st.line_chart(series)
+
+
+# Cada tipo de alerta com a MESMA leitura visual que o canal do Telegram usa. A direção não é
+# recalculada aqui: é lida do próprio texto que foi enviado, porque se a app e o canal
+# divergissem um dos dois estaria a mentir, e é precisamente essa a promessa do produto.
+_MARK = {
+    "up":      {"symbol": "triangle-up",   "color": "#0A8F52", "label": "move up"},
+    "down":    {"symbol": "triangle-down", "color": "#C0392B", "label": "move down"},
+    "news":    {"symbol": "circle",        "color": "#2C6FBB", "label": "news"},
+    "open":    {"symbol": "diamond",       "color": "#8A8A8A", "label": "opening note"},
+    "summary": {"symbol": "square",        "color": "#8A8A8A", "label": "daily summary"},
+}
+
+
+def _mark_kind(entry) -> str:
+    """Categoria visual de uma entrada, a partir do que o canal REALMENTE enviou.
+
+    Os ícones 📈/📉 já estão no texto do alerta (vêm de `direction_icon`, a fonte única que
+    corrigiu o bug das setas). Lê-los daqui garante que o marcador no gráfico e a mensagem no
+    telemóvel dizem a mesma coisa, sem uma segunda cópia da lógica de direção.
+    """
+    kind = (getattr(entry, "kind", "") or "").lower()
+    if kind in ("open", "summary"):
+        return kind
+    texto = getattr(entry, "text", "") or ""
+    if "📈" in texto:
+        return "up"
+    if "📉" in texto:
+        return "down"
+    return "news"
+
+
+def _mark_alerts_on_chart(fig, ticker: str, series) -> None:
+    """Põe no gráfico um marcador por alerta, no dia em que o canal o enviou.
+
+    Sem isto o gráfico e a lista de alertas viviam separados, e o utilizador tinha de os casar
+    de cabeça: o momento que interessa (o movimento) e a prova de que o sistema o apanhou
+    ficavam em sítios diferentes do ecrã.
+
+    Fail-open: qualquer problema deixa o gráfico exatamente como estava.
+    """
+    try:
+        import pandas as pd
+
+        entradas = [e for e in _shared_history() if e.ticker == ticker and e.date]
+        if not entradas:
+            return
+        idx = pd.to_datetime(pd.Index(series.index)).tz_localize(None)
+        porto: dict[str, list] = {}
+        for e in entradas:
+            quando = pd.to_datetime(e.date, errors="coerce")
+            if pd.isna(quando):
+                continue
+            # O alerta é diário; o gráfico pode ser intradiário. Ancora-se no ponto mais
+            # próximo dentro do intervalo mostrado, e ignora-se o que cai fora dele.
+            pos = int((idx - quando).to_series().abs().values.argmin())
+            if abs((idx[pos] - quando).days) > 3:
+                continue
+            porto.setdefault(_mark_kind(e), []).append(
+                (series.index[pos], float(series.values[pos]),
+                 (e.text or "").strip().splitlines()[0][:110])
+            )
+        for categoria, pontos in porto.items():
+            estilo = _MARK.get(categoria, _MARK["news"])
+            fig.add_trace(go.Scatter(
+                x=[p[0] for p in pontos], y=[p[1] for p in pontos],
+                mode="markers", name=estilo["label"],
+                marker={"symbol": estilo["symbol"], "size": 13,
+                        "color": estilo["color"],
+                        "line": {"width": 1.5, "color": "white"}},
+                text=[p[2] for p in pontos],
+                hovertemplate="<b>%{text}</b><br>$%{y:.2f} · %{x}<extra></extra>",
+            ))
+    except Exception:  # noqa: BLE001
+        return
 
 
 def _events_for(t: str) -> None:
