@@ -393,8 +393,18 @@ def _ticker_view() -> None:
 
     r = _unusualness(t)
     if r:
-        st.metric(f"{display_name(t)} ({t})", _fmt_pct(r["move"]),
-                  delta=f"z {r['z']:+.2f}")
+        # A seta do `delta` do Streamlit é derivada de PARSEAR o texto como número. Passar-lhe
+        # "z -4.60" não parseia, e ele mostra uma seta VERDE PARA CIMA por omissão. Resultado
+        # visto ao vivo: a AAPL a cair -7,64% com "↑ z -4.60" a verde ao lado. É o mesmo bug
+        # das setas que já tinha sido corrigido nos alertas, a reaparecer por outra porta.
+        #
+        # O `delta` também não é o sítio certo para isto: significa "variação face ao valor
+        # anterior", e o z-score não é isso. Fica como legenda, onde não há seta para errar.
+        st.metric(f"{display_name(t)} ({t})", _fmt_pct(r["move"]))
+        st.caption(
+            f"z-score {r['z']:+.2f} versus the 20-day norm"
+            + (" · past the alert threshold" if r.get("is_anomaly") else "")
+        )
 
     _decomposition_panel(t)
     _price_chart(t)
