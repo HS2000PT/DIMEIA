@@ -125,15 +125,20 @@ e correto que diga que não há nada a alertar.
 
 ## Duas decisões que ficam por tomar
 
-**O histórico partilhado.** O vigia pode escrever os alertas de volta para a branch de dados,
-que é o que alimenta a app. Para isso:
+**O histórico partilhado.** ✅ **Ligado a 2026-08-02.**
 
 ```bash
-heroku config:set INVESTIGATOR_HISTORY_GIT=1 GITHUB_TOKEN="pat-com-contents-write"
+heroku config:set INVESTIGATOR_HISTORY_API=1 GITHUB_TOKEN="<pat>"
 ```
 
-Sem isto o vigia envia para o Telegram na mesma, mas a app não vê os alertas novos. Alternativa
-sem PAT: deixar o cron do Actions ligado, que já escreve o histórico.
+⚠️ **Repara na variável: é `INVESTIGATOR_HISTORY_API`, não `INVESTIGATOR_HISTORY_GIT`.** A
+antiga usa o `git` da linha de comandos e exige um *checkout* da branch de dados, que num slug
+do Heroku não existe (o buildpack remove o `.git`). Como esse caminho é fail-open, ligá-la
+teria parecido resolver e não escreveria nada, em silêncio. A nova fala com a API do GitHub.
+
+O publicador **junta** em vez de substituir, para o vigia e o cron do Actions poderem escrever
+os dois sem se apagarem, e envia o `sha` que leu: em caso de escrita concorrente recebe 409 e
+tenta na ronda seguinte.
 
 **O narrador.** Continua `narrator.enabled: false` no `config/alerts.yaml`. Ligá-lo é uma linha,
 e se falhar o alerta sai exatamente como hoje (é aditivo, com fallback determinístico).
