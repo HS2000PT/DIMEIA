@@ -13,6 +13,7 @@ se só queres correr o sistema.
 | [design/going_live.md](design/going_live.md) | Pôr o sistema **24/7** (canal Telegram + timer do GitHub, sem servidor). |
 | [design/vm_watch.md](design/vm_watch.md) | Alertas em **quase-tempo-real**: modo vigia numa VM gratuita (Oracle Free). |
 | [design/arquitectura_sistema.md](design/arquitectura_sistema.md) | Arquitetura e componentes. |
+| [design/arquitetura_dados.md](design/arquitetura_dados.md) | **"Tens uma base de dados?"** As três camadas de persistência, porque não há Postgres, a limitação real (escrita concorrente) e como está tratada. |
 | [design/data_card.md](design/data_card.md) | Origem/estrutura dos dados (FNSPID + camada live). |
 | [design/free_apis.md](design/free_apis.md) | APIs gratuitas usadas (preços, notícias, Telegram). |
 | [design/evaluation_design.md](design/evaluation_design.md) | Metodologia de avaliação (precision@k, anomalia). |
