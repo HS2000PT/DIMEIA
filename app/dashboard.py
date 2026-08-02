@@ -39,12 +39,22 @@ Correr:  streamlit run app/dashboard.py
 from __future__ import annotations
 
 import os
+import sys
 from datetime import UTC, datetime
+from pathlib import Path
 
-import pandas as pd
-import streamlit as st
+# O `streamlit run` põe no `sys.path` a pasta DO SCRIPT (`app/`), não a raiz do repositório
+# — e portanto `from app import …` não resolve. Correr com `python -m streamlit` disfarça o
+# problema, porque o `-m` acrescenta o directório actual; foi assim que isto passou a
+# verificação e rebentou na primeira execução normal. Mesmo guarda que `streamlit_app.py`.
+_ROOT = Path(__file__).resolve().parents[1]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
 
-from app import ui_tokens as T
+import pandas as pd  # noqa: E402
+import streamlit as st  # noqa: E402
+
+from app import ui_tokens as T  # noqa: E402
 
 WINDOW = 20
 THRESHOLD = 1.5
@@ -72,9 +82,13 @@ NAMES = {
 # nunca o ecrã inteiro.
 
 def _watchlist() -> list[str]:
+    # Caminho ancorado na raiz, não relativo ao directório de trabalho. Com um caminho
+    # relativo isto falha sempre que a app é lançada de outra pasta — e como o caminho
+    # falha aberto, a watchlist configurada seria ignorada **em silêncio**, mostrando a
+    # lista de reserva como se fosse a dele.
     try:
         import yaml
-        with open("config/alerts.yaml", encoding="utf-8") as fh:
+        with open(_ROOT / "config" / "alerts.yaml", encoding="utf-8") as fh:
             cfg = yaml.safe_load(fh) or {}
         return list(cfg.get("market", {}).get("tickers") or []) or list(NAMES)
     except Exception:  # noqa: BLE001
