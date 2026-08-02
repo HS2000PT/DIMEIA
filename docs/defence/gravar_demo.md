@@ -8,7 +8,7 @@
 
 ## Antes de gravar (10 minutos)
 
-1. **Abrir a app.** <https://investigator-meia-fa8287a1e568.herokuapp.com/>
+1. **Abrir a app.** <https://investigator-ddc9d8618935.herokuapp.com/>
    Desde 2026-08-02 corre no Heroku num dyno *Basic*, **sempre ligado**: já não hiberna, e
    não precisas do truque de a visitar antes para a acordar. Confirma na mesma que carrega.
 2. **Confirmar que há o que mostrar.** O ecrã *Today* precisa de pelo menos um nome que se

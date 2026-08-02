@@ -47,7 +47,7 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   dias depois (impacto real a +5d); retrieval com decaimento por idade e idade visível;
   anomalias com **investigação cruzada** ("Possible explanation: …" ou "no public explanation
   yet").
-- **Dashboard público** (<https://investigator-meia-fa8287a1e568.herokuapp.com>): TRÊS ecrãs, um por cada
+- **Dashboard público** (<https://investigator-ddc9d8618935.herokuapp.com>): TRÊS ecrãs, um por cada
   pergunta do posicionamento — *Today* (a watchlist ordenada por quão fora do normal está o
   dia, com a repartição mercado/setor/empresa na PRÓPRIA linha), *Ticker* (gráfico, a mesma
   decomposição por extenso, e os alertas exatos do canal, nunca recalculados) e *Method* (os
@@ -120,7 +120,7 @@ progress/               MASTER_PLAN · TRACKER · SESSIONS · DECISIONS (continu
 ## 4. Como ver tudo a funcionar em 10 minutos
 
 1. `bash scripts/setup_env.sh && python scripts/demo.py` — os dois gatilhos, offline (+6,46%).
-2. Abrir <https://investigator-meia-fa8287a1e568.herokuapp.com> — escolher uma aba de ticker, ver o "Background risk".
+2. Abrir <https://investigator-ddc9d8618935.herokuapp.com> — escolher uma aba de ticker, ver o "Background risk".
 3. Entrar no canal <https://t.me/InvestiGatorMEIA> — alertas reais em horário de mercado.
 4. Abrir `thesis/main.pdf` — a tese; `docs/evaluation/` — os números com os scripts ao lado.
 5. GitHub → Actions — CI verde + varreduras "Alerts" automáticas (+ branch alerts-history a crescer).

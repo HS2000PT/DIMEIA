@@ -4,7 +4,7 @@
 
 *Every move investigated, never predicted.*
 
-**▶ Try it live: <https://investigator-meia-fa8287a1e568.herokuapp.com>**
+**▶ Try it live: <https://investigator-ddc9d8618935.herokuapp.com>**
 
 [![CI (tests + lint)](https://github.com/HS2000PT/DIMEIA/actions/workflows/ci.yml/badge.svg)](https://github.com/HS2000PT/DIMEIA/actions/workflows/ci.yml)
 [![Compile thesis (LaTeX)](https://github.com/HS2000PT/DIMEIA/actions/workflows/compile-thesis.yml/badge.svg)](https://github.com/HS2000PT/DIMEIA/actions/workflows/compile-thesis.yml)
@@ -25,7 +25,7 @@ reasoning chain — detected event → explanation → sources → historical pr
 | Navigate the whole repo | [`INDEX.md`](INDEX.md) — the repository map |
 | Read the dissertation | `thesis/main.pdf` (English) · `thesis-pt/main.pdf` (Português) |
 | Study for the defence | `slides/guia_estudo/main.pdf` — the single study source |
-| See it live | <https://investigator-meia-fa8287a1e568.herokuapp.com> + Telegram <https://t.me/InvestiGatorMEIA> |
+| See it live | <https://investigator-ddc9d8618935.herokuapp.com> + Telegram <https://t.me/InvestiGatorMEIA> |
 | Get a 10-minute overview | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) |
 | Run it myself | `python scripts/demo.py` · full guide `docs/design/how_to_run.md` |
 | See what's left to do | [`CHECKLIST.md`](CHECKLIST.md) |
@@ -53,7 +53,7 @@ Full operator guide (Telegram, live news, building your own KB): **`docs/design/
 §0.0).
 
 ## 🔎 Or click through it — the live dashboard
-**Live at <https://investigator-meia-fa8287a1e568.herokuapp.com>** — three screens, one per question the system
+**Live at <https://investigator-ddc9d8618935.herokuapp.com>** — three screens, one per question the system
 answers. **Today** ranks your watchlist by how far each name sits from its own recent norm, with
 the market/sector/company split **on the row itself**, so you see whether a fall was the market or
 the company without clicking. **Ticker** holds the per-company detail: the price chart, the full

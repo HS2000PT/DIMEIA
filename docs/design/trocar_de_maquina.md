@@ -15,7 +15,7 @@ git clone https://github.com/HS2000PT/DIMEIA.git
 cd DIMEIA
 
 heroku login
-heroku config -s --app investigator-meia > .env    # ← as chaves, do cofre
+heroku config -s --app investigator > .env    # ← as chaves, do cofre
 
 bash scripts/setup_env.sh                          # ambiente Python 3.12 fixado
 ```
@@ -87,7 +87,7 @@ novas em minutos.
 ```bash
 # 1. gerar a nova no site do fornecedor
 # 2. atualizar nos dois sítios que a leem:
-heroku config:set NOME_DA_CHAVE="nova" --app investigator-meia
+heroku config:set NOME_DA_CHAVE="nova" --app investigator
 #    e em GitHub → Settings → Secrets and variables → Actions
 # 3. atualizar o .env local
 ```
@@ -95,7 +95,7 @@ heroku config:set NOME_DA_CHAVE="nova" --app investigator-meia
 Depois confirma que o vigia continua a correr:
 
 ```bash
-heroku logs --dyno=worker --tail --app investigator-meia
+heroku logs --dyno=worker --tail --app investigator
 ```
 
 O sistema é **fail-open**: sem uma chave opcional, degrada e diz o que lhe falta em vez de parar.

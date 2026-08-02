@@ -1,7 +1,7 @@
 # heroku_setup.md — pôr o InvestiGator a correr 24/7, passo a passo
 
 > ✅ **EXECUTADO a 2026-08-02.** A app está no ar em
-> <https://investigator-meia-fa8287a1e568.herokuapp.com/> e o vigia corre de 60 em 60 s.
+> <https://investigator-ddc9d8618935.herokuapp.com/> e o vigia corre de 60 em 60 s.
 > Este guia foi corrigido com o que a implantação real revelou, e não com o que se previa.
 >
 > **Custo real:** $14/mês (não $12 — ver passo 5). Crédito: **saldo único de $312** a expirar
@@ -38,7 +38,7 @@ heroku login
 ```bash
 cd c:/Users/henri/Desktop/DIMEIA
 
-heroku create investigator-meia --stack heroku-24
+heroku create investigator --stack heroku-24
 # Se o nome estiver tomado, escolhe outro: o URL será https://<nome>.herokuapp.com
 ```
 
@@ -173,3 +173,27 @@ e se falhar o alerta sai exatamente como hoje (é aditivo, com fallback determin
 O crédito cobre a entrega (13 de setembro de 2026), a defesa, e mais de um ano depois disso.
 Se em algum momento for preciso esticá-lo, `heroku ps:scale web=0` deixa só o vigia a $7/mês
 (≈44 meses) e a app volta para o Streamlit Cloud, que é grátis e hiberna.
+
+---
+
+## Um URL decente (o sufixo aleatório não sai)
+
+O Heroku acrescenta um sufixo aleatório a **todas** as apps criadas hoje, para impedir que alguém
+se apodere de um subdomínio libertado. Renomear a app **não** o remove: gera outro. Foi tentado a
+2026-08-02 e o resultado foi trocar `investigator-meia-fa8287a1e568` por
+`investigator-ddc9d8618935`, sem ganho nenhum e com o custo de invalidar o URL anterior.
+
+**A solução real é um domínio próprio, e é gratuita para ti.** O Student Pack inclui um domínio
+`.me` (Namecheap) ou `.app` (Name.com) grátis durante um ano. Com um dyno *Basic* o Heroku aceita
+domínios próprios e emite o certificado sozinho.
+
+```bash
+heroku domains:add www.investigator.me --app investigator
+heroku domains          # mostra o alvo DNS a configurar no registrar
+```
+
+Depois é só criar um CNAME no registrar a apontar para o alvo que o comando devolve, e esperar a
+propagação. O certificado (ACM) é automático e gratuito.
+
+**Vale a pena antes da defesa?** Um URL bonito não muda uma nota. Mas custa dez minutos e o link
+que envias ao orientador passa a ser legível, o que conta quando é a primeira coisa que ele vê.
