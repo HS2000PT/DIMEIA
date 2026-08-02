@@ -7,8 +7,87 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 44 (**o sistema entrou em produção no Heroku; revisão crítica de alertas e escrita**)
-- **Última atualização:** 2026-08-02
+- **Sessão nº:** 45 (**painel refeito de raiz; um ano de história reconstruído**)
+- **Última atualização:** 2026-08-03
+- **🎨 SESSÃO 45 (2026-08-03 — o aluno rejeitou a app por inteiro: "a paleta de cores, tudo uma
+  confusão… falta história… mais ícones, uniformizados… menos texto, mais visual… esquece a tua
+  consciência e constrói de zero"). Reconstruído, não remendado. 4 commits, todos pushed.**
+  **(A) SISTEMA VISUAL** (`app/ui_tokens.py`, novo). As cores eram escolhidas no sítio onde eram
+  precisas: ao fim de cinco redesenhos havia verdes diferentes para a mesma coisa e nenhum sítio
+  onde responder a "que cor é *em alta*?". Agora **quatro cores com significado** (subida, descida,
+  atenção, informação) e tudo o resto cinzento frio. **Contraste MEDIDO, não escolhido à vista:**
+  o `#5A6474` dava ~3,3:1 sobre `#0B0E13` e a WCAG pede 4,5:1 para texto pequeno — que aqui é
+  quase tudo. Passou a 16:1 / 9:1 / **5,4:1**.
+  **(B) ÍCONES — havia uma COLISÃO a sério:** `◆` era "volume invulgar" nas linhas **e** "alerta
+  enviado" no gráfico; `⚑` e `○` queriam ambos dizer "detectado". Ficam **cinco, um sentido cada**
+  (▲▼─ direcção · ⚑ enviado · ○ detectado-mas-travado · ● notícia); o volume passou a **texto**
+  (`3.3x vol`) por ser o sexto — a partir do quinto ninguém guarda a legenda. Formas Unicode e
+  **nunca emoji**: um emoji depende da fonte do sistema e já produziu aqui uma seta verde para
+  cima num movimento de −7,64%.
+  **(C) LOGÓTIPOS DAS EMPRESAS — 10/10** (`investigator/branding/`, `scripts/fetch_logos.py`).
+  Polygon, **versionados** em `app/assets/logos/`: a app implantada desenha-os sem chave, sem rede
+  e sem limite de ritmo, embebidos como `data:` URI (o navegador não faz pedidos a terceiros —
+  coerente com a posição de privacidade). Degrada para as iniciais.
+  **(D) A HISTÓRIA JÁ EXISTIA E NÃO ESTAVA LIGADA.** O gráfico mostrava 220 alertas enviados e,
+  como os gates suprimem 9 em 10 varreduras, havia tickers com nada — enquanto o sistema tinha
+  **3.331 notícias captadas e medidas** em `live_kb.jsonl` (AAPL 455, NVDA 372) sem nunca as
+  mostrar. O gráfico passa a ter **três camadas**: ⚑ enviado · ○ detectado-mas-travado (replay de
+  `detect_all`) · ● notícia. Em 6M a NVDA mostra ~20 detecções onde saíram 3 alertas — **o custo
+  dos gates ficou visível** em vez de só se mostrarem as vitórias.
+  **(E) UM ANO RECONSTRUÍDO** (`scripts/backfill_history.py`). O Finnhub gratuito serve **um ano**
+  de notícias por empresa (confirmado com um pedido a Agosto de 2025). 36.642 relevantes →
+  **35.583 maturadas**, 2025-08-08 a 2026-07-24, em `data/samples/backfill_kb.jsonl` (7,8 MB,
+  versionado — `data/**` está gitignorado e a app implantada precisa dele). NVDA 372 → **3.715 em
+  168 dias**. **Reutiliza `live_kb.mature_entry`**, o MESMO código de produção: reimplementar a
+  regra de alinhamento para o passado é exactamente como se introduz lookahead sem dar por isso.
+  **Três verificações:** 0 datas no futuro; **média do impacto +1d = +0,0002** (era o número que
+  interessava — lookahead viria enviesado, e um retorno diário médio de zero é o que a teoria
+  diz); 2.058 valores distintos, sem degeneração.
+  **⚠️ DECISÃO QUE TOMEI CONTRA O PEDIDO INICIAL:** o aluno perguntou se devíamos **limpar** o
+  histórico. **NÃO se limpou.** Os 220 alertas são a única prova de operação real e a latência
+  medida e a pós-validação citadas na tese assentam neles. O replay escreve para **outro
+  ficheiro** e o gráfico distingue-os. Um alerta reproduzido não é um alerta enviado.
+  **(F) O PAINEL PASSA A RESPONDER À RQ2.** Dizia o quê/quanto/mercado-ou-empresa mas nunca
+  *"já aconteceu antes, e o que se seguiu?"* — a pergunta que justifica a base de casos. Novo
+  painel com o desfecho medido como **barra divergente de escala fixa**, **uma linha por DIA**
+  (o impacto é medido por (ticker,dia): seis manchetes do mesmo dia desenhavam seis barras
+  idênticas). Rotulado "what followed, **measured**", nunca "expected".
+  **(G) LOGÓTIPO DA MARCA — questão FECHADA: fica "The Tail".** Construí duas alternativas e
+  testei as três às escalas reais contra o critério já escrito em `brand.md`. "Jaws" (as maxilas
+  do **Williams Alligator**, indicador que existe mesmo — seria a melhor *história*) desfaz-se num
+  `<` aos 16 px, que é onde vive um favicon; o monograma "Gator G" sobrevive pequeno, como
+  qualquer letra, mas podia ser de qualquer empresa com G. **A actual ganha.** As duas propostas
+  ficam no repositório como registo da comparação (`logo-jaws.svg`, `logo-gator-g.svg`).
+  **(H) URL do Heroku:** a app **já se chama `investigator`** — o sufixo `-ddc9d8618935` é do
+  Heroku, posto em todas as apps desde 2023 e **regenerado a cada rename**. Único caminho para um
+  URL limpo: **domínio próprio** (Student Pack dá um grátis; com dynos Basic o domínio e o SSL não
+  custam extra). Falta o aluno reclamar o domínio.
+  **⚠️ QUATRO DEFEITOS MEUS, todos apanhados a RENDERIZAR e nenhum visível nos logs:**
+  (1) a **"magia" do Streamlit desenha qualquer expressão solta do script principal, inclusive
+  dentro de funções**: `a.append(x), b.append(y)` é um tuplo solto e pintou **253 caixas
+  `(None,None,None)`** por cima do gráfico (275 elementos markdown → 22);
+  (2) a abreviatura CSS `background` repõe `background-image`, e a regra geral dos botões é mais
+  específica do que a regra por linha — apagava os logótipos **em silêncio**;
+  (3) **WebP não se identifica pelos primeiros bytes** (`RIFF`, partilhado com WAV): a Apple
+  parecia uma empresa sem logótipo e o ficheiro chegava inteiro;
+  (4) 20 pedidos em segundos contra um limite de **5/min**, num caminho que falha aberto: 9
+  tickers leram-se como "sem logótipo".
+  **⚠️ E UM DEFEITO DE MÉTODO, o mais instrutivo:** `ModuleNotFoundError: No module named 'app'`
+  na primeira execução normal. A causa não foi o código, foi a **verificação** — corri sempre
+  `python -m streamlit`, e o `-m` acrescenta o directório actual ao `sys.path`. O comando normal
+  põe lá a pasta **do script**. **Testei a coisa errada e dei por verificado.** Corrigido com a
+  guarda que `streamlit_app.py` já tinha, mais um segundo defeito da mesma classe encontrado a
+  procurar por ele (`config/alerts.yaml` aberto por caminho **relativo** — falha aberto, logo a
+  watchlist configurada seria ignorada **em silêncio**). Dois testes de regressão em
+  `tests/test_dashboard_launch.py`, e **verifiquei que FALHAM sem a correcção**: um teste de
+  regressão que passa sobre o defeito não prova nada.
+  **Gates: 496 testes, ruff limpo, congelados byte-iguais. A app em produção NÃO foi tocada — a
+  promoção é uma linha no `Procfile`.**
+  **PENDENTE HUMANO (nada disto é código):** (1) **rodar as 3 credenciais expostas** — PAT do
+  GitHub (tem `admin: true`, muito mais largo do que precisa), chave da API do Heroku, e a
+  ALPHAVANTAGE; (2) **enviar a mensagem PT-PT** em `docs/defence/mensagem_orientador.md`;
+  (3) reclamar o domínio para o URL; (4) estudo de utilidade e agradecimentos continuam
+  **parados e por fabricar nunca**.
 - **🚀 SESSÃO 44 (2026-08-02 — o sistema deixou de ser protótipo: está NO AR):**
   **(A) HEROKU AO VIVO.** <https://investigator-ddc9d8618935.herokuapp.com/> · dois dynos
   **Basic** (web + worker), ciclo de **60 s** em vez do cron best-effort de 1,5-2 h. Créditos:
