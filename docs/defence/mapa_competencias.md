@@ -29,7 +29,7 @@
 | **Recuperação de informação** | Recuperação vetorial com protocolo cross-ticker e precision@k contra três linhas de base | `correlation_engine/`, Caso 2 | P@5 **0.595** à escala |
 | **PLN** | Comparação de representações: léxico → estáticos → contextuais; benchmark de encoders medido, não argumentado | Cap. 2, `evaluation_retrieval_embedders.md` | MiniLM 0.514 > FinBERT 0.420 |
 | **Estatística / séries temporais** | z-score deslizante sem lookahead; decomposição de dois fatores com **encolhimento de Vasicek**; EWMA vs rolling | `anomaly_detector/`, `decomposition.py` | amplitude **0.015** vs 0.344 |
-| **Engenharia de software** | 466 testes, ruff, CI, pacote instalável, artefactos congelados byte-iguais | `tests/`, `.github/workflows/` | **466** testes |
+| **Engenharia de software** | 478 testes, ruff, CI, pacote instalável, artefactos congelados byte-iguais | `tests/`, `.github/workflows/` | **478** testes |
 | **Ética e IA responsável** | Recusa de prever preços como restrição de desenho; quatro capacidades cortadas **por princípio** e justificadas | Cap. 6 §"Posições Assumidas por Exclusão" | 5 posições escritas |
 
 ---
@@ -46,7 +46,7 @@ Se só houver tempo para três frases, são estas.
 
 **"Qual é a contribuição, se os modelos são todos pré-existentes?"**
 > A integração avaliada. Nenhum algoritmo é novo; o que é novo é um sistema que responde às três
-> perguntas de um investidor de retalho a custo zero, com cada afirmação rastreável ao script que a
+> perguntas de um investidor de retalho a custo zero, com cada afirmação rastreável ao procedimento que a
 > produz, e com os resultados negativos reportados tal como caíram.
 
 **"E o resultado negativo da RQ4 não enfraquece a tese?"**

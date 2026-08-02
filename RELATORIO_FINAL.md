@@ -77,7 +77,7 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   screenshot genuíno do painel único (Cap. 4, Fig. 4.5).
 - **Paper IEEE** (`paper/`): 4 pp, compila 0 erros (destilado da tese validada).
 - **Slides de defesa** (`slides/`): 17 frames (+"The product, live", com o mesmo screenshot).
-- **Guia de estudo ÚNICO** (`slides/guia_estudo/main.pdf`): 77 slides PT-PT — ensina do zero
+- **Guia de estudo ÚNICO** (`slides/guia_estudo/main.pdf`): 83 slides PT-PT — ensina do zero
   E contém o guião oral, as perguntas de defesa antecipadas, o mapa dos números congelados e o plano B
   (fonte única de estudo; os antigos caderno/guia rápido foram absorvidos e arquivados).
 - **Notebook** (`notebooks/investigator_walkthrough.ipynb`): os 3 componentes com as próprias

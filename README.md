@@ -109,7 +109,7 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 
 ## Learn it / prepare the defence — ONE source
 - **THE study guide (PT-PT):** **`slides/guia_estudo/main.pdf`** — the single, consolidated source
-  (77 slides): teaches the whole thesis from zero, the code line by line, the evaluation, **the oral
+  (83 slides): teaches the whole thesis from zero, the code line by line, the evaluation, **the oral
   script (3-min opening + per-RQ answers), the anticipated defence questions, the frozen-numbers table
   and the defence plan B**. Everything previously scattered across companion documents now lives here.
 - **Project summary (PT-PT):** **[`RELATORIO_FINAL.md`](RELATORIO_FINAL.md)** — everything in this
@@ -134,7 +134,7 @@ powers the public app) — retrieval on it has now been evaluated at scale (prec
 thesis/        LaTeX dissertation (6 chapters + front matter + appendix; 90 pp)
 paper/         IEEE paper (IEEEtran) distilled from the thesis
 slides/        defence slides (Beamer, 17 frames)
-  guia_estudo/   THE study guide (PT-PT, Beamer, 77 slides — single study source)
+  guia_estudo/   THE study guide (PT-PT, Beamer, 83 slides — single study source)
 investigator/  system code, one package per component (investigator/triage/ = the trained ML component, RQ4)
 models/        trained triage models (joblib, versioned; context-only variant runs in production)
 notebooks/     investigator_walkthrough.ipynb — hands-on tour of the 3 components, executed & committed
@@ -160,7 +160,7 @@ CITATION.cff   how to cite this work    requirements.txt (light) / requirements-
   (`requirements.txt`) — enough for the demo, the tests and the evaluations. The heavy ML stack (`torch` CPU,
   `sentence-transformers`, in `requirements-ml.txt`) is needed only for the real SBERT paths and installs with
   `bash scripts/setup_env.sh --ml` (it pulls `torch` from the PyTorch CPU index, not PyPI).
-- Verification loop: `bash scripts/verify.sh` (200+ tests + lint + LaTeX note).
+- Verification loop: `bash scripts/verify.sh` (478 tests + lint + LaTeX note).
 - Secrets live only in a local, gitignored `.env` (see `.env.example` for variable names).
 - LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push.
 
