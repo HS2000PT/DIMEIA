@@ -290,7 +290,19 @@ def _fmt_pct(x: float) -> str:
     return f"{x * 100:+.2f}%"
 
 
+@st.fragment(run_every=60)
 def _today_view() -> None:
+    """Ecrã Today, a redesenhar-se sozinho de 60 em 60 segundos.
+
+    Sem isto a página só se atualiza quando o utilizador clica em alguma coisa, o que num painel
+    de mercado é o comportamento errado: um alerta que chega às 14:35 ficava invisível até
+    alguém mexer. As funções de dados já têm cache com prazo de 60 s, pelo que este intervalo
+    apanha os dados novos assim que expiram, sem multiplicar pedidos às fontes.
+
+    ``run_every`` leva um **inteiro** de propósito. A forma em texto ("60s") faz o Streamlit
+    passar por um caminho do pandas que emite aviso de descontinuação e que deixaria de
+    funcionar numa versão futura do numpy.
+    """
     st.subheader("Today")
     tickers = _watchlist()
     rows = [r for r in (_unusualness(t) for t in tickers) if r]
