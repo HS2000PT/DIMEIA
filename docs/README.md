@@ -74,18 +74,22 @@ se só queres correr o sistema.
 > números de cor, o veredicto+guião por RQ, o guião dos 15 min, as fórmulas explicadas, e as
 > perguntas duras com respostas-modelo. É o que se lê na véspera.
 >
+> **4. AUTOTESTAR (o que fixa mesmo):** [defence/autoteste.md](defence/autoteste.md) — 31
+> perguntas para responderes **em voz alta antes de ver a resposta**. Ler cria a ilusão de
+> saber; dizer em voz alta é o que fixa. Com plano de 7 dias no fim.
+>
 > **3. SIMULAR (treino de arguição):** [defence/simulacro_defesa.md](defence/simulacro_defesa.md) —
 > as **cadeias de pressão** (pergunta → resposta → o júri aperta → resposta) para as 8 perguntas mais
 > perigosas. Treina em voz alta até a 3.ª pergunta sair sem hesitar.
 >
-> **4. GRAVAR a demo:** [defence/gravar_demo.md](defence/gravar_demo.md) — guião cronometrado de
+> **5. GRAVAR a demo:** [defence/gravar_demo.md](defence/gravar_demo.md) — guião cronometrado de
 > 3 min, o que fazer quando algo falha na sala, e o erro a não cometer.
 >
-> **5. MAPA DE COMPETÊNCIAS:** [defence/mapa_competencias.md](defence/mapa_competencias.md) —
+> **6. MAPA DE COMPETÊNCIAS:** [defence/mapa_competencias.md](defence/mapa_competencias.md) —
 > cada competência ligada a um artefacto e a um número, mais as três respostas que valem
 > mais do que a tabela e os buracos ditos antes que perguntem.
 >
-> **6. ENVIAR ao orientador:** [defence/mensagem_orientador.md](defence/mensagem_orientador.md) —
+> **7. ENVIAR ao orientador:** [defence/mensagem_orientador.md](defence/mensagem_orientador.md) —
 > mensagem PT-PT pronta a copiar, com o que ele deve abrir e por que ordem.
 >
 > O resumo do projeto está na raiz: `RELATORIO_FINAL.md`. (Os antigos caderno de defesa e guia
