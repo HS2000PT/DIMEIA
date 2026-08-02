@@ -124,3 +124,48 @@ def test_sessao_e_mono_thread_e_sem_arena():
     assert opts.intra_op_num_threads == 1
     assert opts.inter_op_num_threads == 1
     assert opts.enable_cpu_mem_arena is False
+
+
+def test_encode_fatia_em_lotes(monkeypatch):
+    """O `encode` tem de fatiar: o pico de memória cresce linearmente com o lote.
+
+    Não precisa do modelo real — conta as chamadas ao passo interno.
+    """
+    chamadas = []
+
+    class Falso(oe.OnnxMiniLMEmbedder):
+        def __init__(self):  # não carrega modelo nenhum
+            pass
+
+        def _encode_batch(self, texts):
+            chamadas.append(len(texts))
+            return np.zeros((len(texts), 384))
+
+    monkeypatch.setattr(oe, "_ENCODE_BATCH", 32)
+    saida = Falso().encode([f"t{i}" for i in range(100)])
+    assert saida.shape == (100, 384)
+    assert chamadas == [32, 32, 32, 4], f"não fatiou como esperado: {chamadas}"
+
+
+@pytest.mark.skipif(not _model_cached(), reason="modelo ONNX não descarregado nesta máquina")
+def test_embedder_e_sensivel_ao_padding_e_isso_esta_documentado():
+    """Fixa uma propriedade REAL e contra-intuitiva, medida a 2026-08-02.
+
+    Seria natural assumir que o *mean pooling* mascarado torna o resultado independente do
+    padding. Não torna: o modelo é quantizado em int8 e as posições de padding influenciam as
+    outras. O mesmo texto sozinho e ao lado de uma frase longa difere em ~0.02.
+
+    O teste existe para que ninguém volte a assumir invariância ao lote e construa em cima
+    disso (por exemplo, a comparar embeddings gerados em corridas com lotes diferentes).
+    """
+    emb = oe.OnnxMiniLMEmbedder()
+    curto = "Stock up"
+    longo = (
+        "Regulator opens a wide ranging antitrust investigation into the market practices "
+        "of this firm following complaints from rivals and consumer groups worldwide"
+    )
+    sozinho = emb.encode([curto])[0]
+    acompanhado = emb.encode([curto, longo])[0]
+    cos = float(sozinho @ acompanhado)
+    assert cos < 0.9999, "se isto passar a ser invariante, atualizar a docstring de encode()"
+    assert cos > 0.95, f"divergência maior do que a medida ({cos:.4f}) — investigar"

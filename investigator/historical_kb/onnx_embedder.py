@@ -30,6 +30,12 @@ _HF_BASE = "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolv
 _CACHE_DIR = Path(__file__).resolve().parents[2] / "models" / "onnx"
 _MAX_SEQ_LENGTH = 256  # sentence_bert_config.json do all-MiniLM-L6-v2
 
+# Teto de memória, não afinação de desempenho. O pico durante a inferência cresce
+# linearmente com o tamanho do lote, e 32 mantém-no na ordem das dezenas de MB mesmo com
+# sequências no comprimento máximo. Ver a docstring de `encode` para o incidente que o
+# obrigou a existir.
+_ENCODE_BATCH = 32
+
 # Ficheiros pinados (integridade verificada após download; falha em caso de mismatch).
 _FILES: dict[str, tuple[str, str]] = {
     "model_quint8_avx2.onnx": (
@@ -143,8 +149,41 @@ class OnnxMiniLMEmbedder:
         self._input_names = {i.name for i in self._session.get_inputs()}
 
     def encode(self, texts: list[str]) -> np.ndarray:
+        """Embeddings 384-d, sempre por LOTES pequenos.
+
+        O tamanho do lote não é uma afinação de desempenho, é um limite de memória. A saída
+        intermédia do transformer tem forma ``(n, seq, 384)`` e as ativações internas são
+        várias vezes maiores, pelo que o pico de memória cresce LINEARMENTE com ``n``. Embeber
+        tudo de uma vez é seguro com dez manchetes e fatal com mil.
+
+        Foi exatamente assim que o worker morreu no primeiro deploy: numa máquina nova o
+        ficheiro de pendentes está vazio, por isso *todas* as manchetes da varredura de 7 dias
+        × 10 tickers são novas e iam num único lote. Resultado: 1,4 GB num contentor de
+        512 MB, morto por SIGKILL em ciclo de crash. Na máquina do autor o mesmo código nunca
+        falhou, porque lá o ficheiro de pendentes já existe e os lotes são minúsculos.
+
+        **Ressalva medida, e não assumida.** Seria natural escrever aqui que fatiar não altera
+        resultados, porque o *mean pooling* é mascarado e cada texto é independente. Medido a
+        2026-08-02, é FALSO: o mesmo texto embebido sozinho e ao lado de uma frase mais longa
+        difere em ``0.022`` (cosseno ``0.986``). O modelo é quantizado em int8, e as posições de
+        padding influenciam de facto as não-padding apesar da máscara de atenção.
+
+        Isto é uma propriedade **pré-existente** deste embebedor, não uma consequência de
+        fatiar: o tamanho do lote em produção já variava de varredura para varredura, consoante
+        quantas manchetes eram novas. O que importa é o efeito na recuperação, e esse foi
+        medido: com lotes de 32 contra o lote único de antes, o top-3 é **idêntico em 8 de 8**
+        consultas e a sobreposição de vizinhos é ``1.000``. Só em lotes de 1, o extremo oposto
+        de padding, é que dois top-3 mudam.
+        """
         if not texts:
             return np.zeros((0, self.dim), dtype="float64")
+        saidas = [
+            self._encode_batch(texts[i : i + _ENCODE_BATCH])
+            for i in range(0, len(texts), _ENCODE_BATCH)
+        ]
+        return np.vstack(saidas)
+
+    def _encode_batch(self, texts: list[str]) -> np.ndarray:
         encoded = self._tokenizer.encode_batch(list(texts))
         ids = np.array([e.ids for e in encoded], dtype="int64")
         mask = np.array([e.attention_mask for e in encoded], dtype="int64")
