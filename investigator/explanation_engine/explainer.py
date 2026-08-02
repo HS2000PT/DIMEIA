@@ -132,6 +132,12 @@ def attach_news_context(alert_text: str, headline: str | None,
             "\nNo relevant news found in the last 48h. No public explanation yet.")
 
 
+# Quantas vezes o movimento do título tem de exceder a mediana dos pares para deixar de se
+# poder chamar "setorial". Em 2× a diferença já é visível a olho e o modelo de dois fatores
+# atribui a maior parte à empresa; abaixo disso, chamar-lhe setorial é defensável.
+_SECTOR_DISPROPORTION = 2.0
+
+
 def sector_context_line(ticker: str, moves: dict[str, float],
                         min_move: float = 0.01, top_n: int = 3) -> str:
     """Puro: 1 linha descritiva sobre o setor no MESMO dia — nunca causa nem previsão.
@@ -159,8 +165,21 @@ def sector_context_line(ticker: str, moves: dict[str, float],
     if same_dir:
         tops = sorted(same_dir.items(), key=lambda kv: -abs(kv[1]))[:top_n]
         listagem = ", ".join(f"{t} {m * 100:+.1f}%" for t, m in tops)
-        return (f"Sector check: other {label} names moved the same way today ({listagem}). "
-                "Looks sector-wide, not company-specific.")
+        # A MAGNITUDE decide, não só a direção.
+        #
+        # Isto era um defeito real, medido no histórico: em 9 de 30 alertas esta linha dizia
+        # "looks sector-wide" e a linha SEGUINTE, da decomposição de dois fatores, dizia "most
+        # of this move was specific to the company". O caso mais gritante foi a AMD a cair
+        # 13,23% com os pares a cair 2,0%, 1,9% e 1,4%: a direção coincide, a dimensão não.
+        # Um alerta que se contradiz a si próprio duas linhas depois destrói a confiança que
+        # todo o resto do sistema tenta construir.
+        mediana = sorted(abs(m) for m in same_dir.values())[len(same_dir) // 2]
+        desproporcionado = mediana > 0 and abs(my_move) > _SECTOR_DISPROPORTION * mediana
+        if desproporcionado:
+            return (f"Sector check: other {label} names moved the same way today ({listagem}), "
+                    f"but by far less than {tkr} did. The direction is shared; the size is not.")
+        return (f"Sector check: other {label} names moved the same way, and by a similar "
+                f"amount, today ({listagem}).")
     return (f"Sector check: other {label} names were quiet today. "
             f"This move looks specific to {tkr}.")
 

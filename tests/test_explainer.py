@@ -132,11 +132,11 @@ def test_severidade_em_niveis_no_alerta_de_mercado():
 def test_sector_context_line_descreve_o_dia_sem_prever():
     from investigator.explanation_engine.explainer import sector_context_line
 
-    # pares do setor mexeram na MESMA direção ≥1% → padrão setorial (top por |movimento|)
+    # pares do setor mexeram na MESMA direção ≥1% e em dimensão COMPARÁVEL → padrão setorial
     moves = {"NVDA": -0.045, "AMD": -0.038, "MSFT": -0.012, "AAPL": -0.002, "JPM": 0.01}
     linha = sector_context_line("NVDA", moves)
     assert "technology" in linha and "AMD -3.8%" in linha and "MSFT -1.2%" in linha
-    assert "sector-wide" in linha
+    assert "similar amount" in linha
     assert "AAPL" not in linha  # <1% não conta como "mexeu"
     assert "JPM" not in linha   # outro setor nunca entra
 
@@ -174,3 +174,31 @@ def test_attach_news_context_com_e_sem_noticia():
     sem = attach_news_context(base, None)
     assert "No relevant news found in the last 48h" in sem
     assert base in sem
+
+
+def test_sector_line_nao_pode_contradizer_a_decomposicao():
+    """Regressão de um defeito REAL, medido no histórico do canal.
+
+    A linha do setor olhava só para a DIREÇÃO dos pares. Em 9 de 30 alertas dizia "Looks
+    sector-wide, not company-specific" e a linha seguinte, da decomposição de dois fatores,
+    dizia "Most of this move was specific to the company". O caso que o denunciou: AMD a cair
+    13,23% com os pares a cair 2,0%, 1,9% e 1,4%.
+
+    Um alerta que se contradiz duas linhas depois destrói a confiança que o resto do sistema
+    tenta construir, e o utilizador não tem como saber qual das duas frases acreditar.
+    """
+    from investigator.explanation_engine.explainer import sector_context_line
+
+    # O caso real da AMD: mesma direção, dimensão totalmente diferente.
+    linha = sector_context_line(
+        "AMD", {"AMD": -0.1323, "TSLA": -0.020, "NVDA": -0.019, "AMZN": -0.014}
+    )
+    assert "sector-wide" not in linha, "não pode afirmar setorial quando o movimento é 6x maior"
+    assert "far less" in linha, f"tem de dizer que os pares mexeram muito menos: {linha}"
+
+    # Mesma direção E dimensão parecida: aí sim é legítimo chamar-lhe setorial.
+    parecido = sector_context_line(
+        "AMD", {"AMD": -0.021, "TSLA": -0.020, "NVDA": -0.019, "AMZN": -0.024}
+    )
+    assert "similar amount" in parecido
+    assert "far less" not in parecido

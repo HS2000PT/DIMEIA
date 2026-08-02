@@ -154,3 +154,45 @@ def test_merged_precedents_kb_vazia_fail_open():
     emb = HashingEmbedder(dim=16)
     assert merged_precedents("q", [HistoricalKB([]), None], emb, top_k=3,
                              today=date(2026, 7, 11)) == []
+
+
+def test_merged_precedents_deduplica_pela_manchete_e_nao_pelo_ticker():
+    """Regressão: a MESMA manchete em tickers diferentes é UM acontecimento, não três.
+
+    A chave antiga era (data, ticker, manchete), pelo que uma notícia macro recuperada para
+    GOOGL, TSLA e AMD aparecia como três precedentes e o alerta anunciava "3 similar past
+    headlines ... 3 of 3 shown cases moved down". Medido no histórico real: 11% dos alertas
+    de notícia com dois ou mais precedentes tinham texto repetido.
+
+    Três observações independentes pesam muito mais do que uma vista três vezes, e o leitor
+    não tem como distinguir as duas coisas a partir do texto.
+    """
+    from datetime import date
+
+    from investigator.historical_kb.record import NewsRecord
+    from investigator.live_kb import merged_precedents
+
+    macro = "Dow Jones Futures Loom As U.S.-Iran Attacks Escalate"
+
+    def rec(ticker, impacto):
+        return NewsRecord(date="2026-07-19", ticker=ticker, headline=macro,
+                          impacts={"1d": impacto}, embedding=[1.0, 0.0])
+
+    class KBFalsa:
+        def __init__(self, pares): self._pares = pares
+        def __len__(self): return len(self._pares)
+        def find_precedents(self, query, embedder, top_k): return self._pares[:top_k]
+
+    kb = KBFalsa([(rec("GOOGL", -0.07), 0.82),
+                  (rec("TSLA", -0.16), 0.82),
+                  (rec("AMD", -0.02), 0.81),
+                  (NewsRecord(date="2026-07-10", ticker="NVDA",
+                              headline="Nvidia unveils new data-centre chip",
+                              impacts={"1d": 0.03}, embedding=[0.9, 0.1]), 0.70)])
+
+    saida = merged_precedents("qualquer", [kb], embedder=None, top_k=3,
+                              today=date(2026, 8, 2))
+    textos = [r.headline for r, _ in saida]
+    assert len(textos) == len(set(textos)), f"manchete repetida: {textos}"
+    assert macro in textos, "o acontecimento macro deve aparecer uma vez"
+    assert textos.count(macro) == 1

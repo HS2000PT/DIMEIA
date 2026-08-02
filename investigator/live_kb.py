@@ -212,10 +212,24 @@ def merged_precedents(query: str, kbs: list, embedder, top_k: int, today: date,
     for kb in kbs:
         if kb is not None and len(kb) > 0:
             candidatos.extend(kb.find_precedents(query, embedder, top_k=top_k * 3))
-    vistos: set[tuple[str, str, str]] = set()
+    # Deduplicação pelo TEXTO da manchete, e não por (data, ticker, manchete).
+    #
+    # A chave antiga deixava passar a MESMA manchete recuperada para tickers diferentes, e o
+    # alerta apresentava-a como precedentes independentes. Medido no histórico real: 18 dos
+    # 165 alertas de notícia com dois ou mais precedentes (11%) mostravam texto repetido. O
+    # caso que o denunciou dizia "3 similar past headlines ... 3 of 3 shown cases moved down"
+    # quando era UM acontecimento macro observado em três ações.
+    #
+    # Isso não é uma imprecisão de apresentação, é uma afirmação falsa sobre a evidência: três
+    # observações independentes pesam muito mais do que uma vista três vezes, e o utilizador
+    # não tem como distinguir as duas coisas a partir do texto.
+    #
+    # Fica a instância de maior similaridade, porque os candidatos chegam ordenados por
+    # relevância e é essa a que melhor representa o acontecimento.
+    vistos: set[str] = set()
     unicos: list[tuple[NewsRecord, float]] = []
-    for rec, score in candidatos:
-        chave = (rec.date, rec.ticker, rec.headline)
+    for rec, score in sorted(candidatos, key=lambda rs: -rs[1]):
+        chave = " ".join(rec.headline.lower().split())
         if chave not in vistos:
             vistos.add(chave)
             unicos.append((rec, score))
