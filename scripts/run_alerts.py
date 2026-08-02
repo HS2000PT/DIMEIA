@@ -1131,7 +1131,15 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
             event_times=event_times, detected_at=detected_at, sent_at=utc_stamp(),
             price_sources=price_source_log(),
         )
-        _push_history_safe()  # só ativo na VM (INVESTIGATOR_HISTORY_GIT=1); fail-open
+        _push_history_safe()  # VM: git CLI (INVESTIGATOR_HISTORY_GIT=1); fail-open
+        # Contentor (Heroku): não há checkout git no slug, por isso o caminho acima não faz
+        # nada. Este publica pela API do GitHub (INVESTIGATOR_HISTORY_API=1); também fail-open.
+        try:
+            from investigator.history_publish import publish_safe
+
+            publish_safe(_HISTORY)
+        except Exception as exc:  # noqa: BLE001
+            print(f"[historico-api] indisponível (ignorado): {type(exc).__name__}: {exc}")
         entregues = len(mensagens) - falhas
         extra = f" ({falhas} falha[s] de envio)" if falhas else ""
         print(f"\n[{entregues}/{len(mensagens)} mensagem(ns) enviada(s) para o Telegram{extra}]")
