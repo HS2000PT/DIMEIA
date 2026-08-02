@@ -65,7 +65,7 @@ se só queres correr o sistema.
 | [decisions/product_review.md](decisions/product_review.md) | Revisão de produto/UX (Pass 5 + Pass 6 do redesenho). |
 
 ## Preparar a defesa — duas camadas
-> **1. ESTUDAR (ensina do zero):** `slides/guia_estudo/main.pdf` (77 slides) é a fonte única de
+> **1. ESTUDAR (ensina do zero):** `slides/guia_estudo/main.pdf` (83 slides) é a fonte única de
 > estudo — ensina a tese do zero E contém o guião oral, o mapa dos números congelados e o plano B.
 >
 > **2. ENSAIAR (recall rápido):** [defence/guiao_de_defesa.md](defence/guiao_de_defesa.md) — os

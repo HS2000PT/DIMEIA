@@ -540,6 +540,77 @@ Entrega & enviar ao utilizador & texto $\to$ Telegram \\
 \centering Ambos terminam no \key{motor de explicação}, que monta o alerta a partir dos objetos calculados.
 \end{frame}
 
+\begin{frame}{A 2.ª pergunta: "é a minha empresa, ou é o mercado inteiro?"}
+\footnotesize
+Quando uma ação cai 3\%, a primeira coisa que um investidor quer saber é se o problema é
+\key{daquela empresa} ou se o mercado inteiro caiu. São situações \emph{opostas}: uma pede atenção,
+a outra pede calma.
+\vspace{1mm}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\key{A ideia (dois fatores).} O retorno de hoje decompõe-se em três parcelas que somam ao total:
+\[ r_{\text{ação}} = \underbrace{\beta_M r_M}_{\text{mercado}} + \underbrace{\beta_S r_S}_{\text{setor}} + \underbrace{\varepsilon}_{\text{empresa}} \]
+\scriptsize
+$\beta_M$ = quanto a ação costuma acompanhar o mercado. $\beta$ de 2 significa "move-se o dobro".
+O setor é \key{ortogonalizado} contra o mercado, para não contar a mesma coisa duas vezes.
+\par\smallskip
+Os betas são estimados \key{só com dias ANTERIORES} ao dia explicado. Sem isto seria batota.
+
+\column{0.48\textwidth}
+\begin{block}{\footnotesize Exemplo real (da app)}
+\scriptsize
+\texttt{AMZN -1,84\% =}\\
+\texttt{\ \ +(-1,66\%) mercado}\\
+\texttt{\ \ +(-0,37\%) setor}\\
+\texttt{\ \ }\key{+0,19\% EMPRESA}
+\par\smallskip
+A ação caiu, mas a contribuição \emph{própria} foi \key{positiva}: caiu \emph{com} o mercado. Para
+quem tem a ação a longo prazo, isto é a diferença entre vender em pânico e não fazer nada.
+\end{block}
+\end{columns}
+\vspace{1mm}
+\centering\scriptsize\key{Erro meu, apanhado com dados reais:} eu cortava o $\beta$ a $\pm 4$. A AMD
+deu $\beta=4{,}43$, caía num $\beta=1$ silencioso e atribuía \emph{todos} os $-8{,}5\%$ à empresa.
+Trocado por \key{encolhimento de Vasicek}: em vez de cortar, puxa-se o $\beta$ para 1 na proporção
+da sua \emph{imprecisão}. Um $\beta$ bem medido fica; um mal medido é atenuado.
+\end{frame}
+
+\begin{frame}{O narrador: o LLM escreve a LÍNGUA, nunca os factos}
+\footnotesize
+\key{O problema.} Um alerta gerado por template lê-se robótico. Mas deixar um LLM escrever sobre
+finanças convida-o a inventar números e a fazer previsões, que é exatamente o que a tese recusa.
+\vspace{1mm}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\key{A solução: inversão de papéis.} O motor calcula \emph{todos} os factos; o LLM só os
+\emph{redige}. Antes de sair, uma \key{guarda} valida a frase contra a evidência e, se falhar,
+deita fora a resposta inteira e usa o texto determinístico.
+\par\smallskip
+Descarta se: houver um número que não está na evidência, um sinal invertido, uma formulação
+preditiva, ou uma atribuição que contradiga a calculada.
+\par\smallskip
+\key{A garantia é do SISTEMA, não do bom comportamento do modelo.}
+
+\column{0.5\textwidth}
+\begin{block}{\footnotesize A lição que vale a pena decorar}
+\scriptsize
+A v1 era uma \key{lista de proibições} (blocklist). Um \emph{red team} de 3 adversários, cada um
+obrigado a reproduzir o ataque em Python, abriu-lhe \key{29 furos}. O pior: \texttt{"AMD gained
+8.50\%"} passava com o motor a calcular $-8{,}50\%$.
+\par\smallskip
+\key{Uma blocklist de linguagem natural perde sempre}: as paráfrases são infinitas, a lista é
+finita. A v2 inverte para \key{allowlist} (vocabulário fechado): o que não é explicitamente
+permitido é recusado.
+\par\smallskip
+Os 21 exploits ficaram como testes permanentes. \key{21/21 bloqueados.}
+\end{block}
+\end{columns}
+\vspace{1mm}
+\centering\scriptsize Dois números, de propósito: violações \key{pré-guarda} medem o \emph{modelo};
+violações \key{entregues} medem a \emph{guarda}. Entregues: \key{0} nos dois fornecedores.
+\end{frame}
+
+
 % ====================================================================
 \section{Os dados}
 
@@ -1338,6 +1409,53 @@ errado deita fora precedentes válidos \emph{em silêncio}.
 \centering\scriptsize \key{A lição de método:} os três estudos acabam numa decisão de \key{NÃO}
 mudar a produção. Isso é um resultado, não trabalho por acabar --- e é preciso dizê-lo assim.
 \end{frame}
+
+\begin{frame}{Volume e convergência: uma capacidade nova, e um "não" honesto}
+\footnotesize
+Ideia adaptada do \key{worldmonitor.app}, recomendado pelo coorientador: um acontecimento em que
+\emph{várias fontes independentes concordam} merece mais atenção do que um em que só uma dispara.
+\vspace{1mm}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\key{O detetor de VOLUME (fica).}\par\smallskip
+\scriptsize
+O detetor de preço responde "mexeu-se muito?". Faltava a segunda metade: \key{"e com quanta gente a
+negociar?"}. Um movimento de 3\% com volume normal e outro com o triplo do volume \emph{não são o
+mesmo acontecimento}.
+\par\smallskip
+Custo em dados: \key{zero}. A coluna já vinha em todas as barras de preço e estava a ser deitada
+fora.
+\par\smallskip
+Três decisões: z sobre \key{log}(volume), porque o volume é muito assimétrico; só a cauda
+\key{superior} dispara (volume baixo é feriado, não acontecimento); e mostra-se \key{"3,2× o
+habitual"}, porque o z decide mas o rácio é que comunica.
+
+\column{0.52\textwidth}
+\key{A fusão dos 4 sinais (NÃO fica).}\par\smallskip
+\scriptsize
+Fundir preço $+$ volume $+$ intensidade de notícia $+$ triagem, com pesos \key{derivados dos dados}
+(nunca escolhidos à mão).
+\par\smallskip
+Fusão \emph{menos} o melhor sinal isolado:
+\begin{itemize}\scriptsize
+  \item top-1/dia: \textcolor{bad}{$-0{,}0498$}
+  \item top-3/dia: \textcolor{bad}{$-0{,}0317$}
+  \item top-5/dia: \textcolor{good}{$+0{,}0045$}
+\end{itemize}
+\par\smallskip
+Ganha em \key{1 de 3}. Um ganho que depende do orçamento que se escolhe citar é um ganho que se
+\emph{pode ter escolhido} $\Rightarrow$ não entra em produção.
+\end{columns}
+\vspace{1mm}
+\begin{block}{\footnotesize O achado que vale mais do que a fusão}
+\scriptsize
+O peso da \key{intensidade de notícia} saiu \key{NEGATIVO} ($-0{,}283$): mais manchetes torna o dia
+\emph{menos} provável de ser material, porque dias de muitas manchetes são dias de \emph{conteúdo
+automático}. À mão eu teria posto um peso positivo, e estaria errado: é a justificação empírica da
+regra de \key{derivar} os pesos.
+\end{block}
+\end{frame}
+
 
 \begin{frame}{Ameaças à validade (ditas antes que perguntem)}
 \footnotesize
