@@ -38,27 +38,35 @@ e deixam o sistema a cair sem aviso, enquanto $13/mês durante 24 meses cobrem a
 
 ---
 
-## 3. A recomendação
+## 3. A recomendação (e o que ela custa mesmo)
 
-**Heroku**, com a repartição que cabe exatamente no crédito:
+> ⚠️ **Secção reescrita a 2026-08-02, DEPOIS de implantar.** O plano original dizia Basic ($7)
+> para a app + Eco ($5) para o vigia = $12/mês. **Esse plano não existe:** o Heroku recusa
+> misturar tipos de dyno na mesma app (*"You can't mix dyno types: Basic and Eco"*). Abaixo
+> ficam os números reais, verificados na conta.
 
 | Processo | Dyno | Preço | Porquê este |
 |---|---|---|---|
-| App Streamlit | **Basic** | $7/mês | **Sempre ligado.** Não adormece, que é a falha do Streamlit Community Cloud (hiberna sem visitas). |
-| Vigia de alertas | **Eco** | $5/mês | O worker não recebe pedidos HTTP, por isso a regra de adormecer do Eco não se lhe aplica da mesma forma; e é o processo mais barato que corre um ciclo contínuo. |
-| | **Total** | **$12/mês** | dentro dos **$13** de crédito, com folga de $1 |
+| App Streamlit | **Basic** | $7/mês | Sempre ligado; não hiberna como o Streamlit Community Cloud |
+| Vigia de alertas | **Basic** | $7/mês | Obrigatório: não se pode misturar com Eco |
+| | **Total** | **$14/mês** | |
+
+**E mesmo assim compensa, porque o crédito não é o que a oferta anuncia.** A página do Student
+Pack diz "$13 por mês durante 24 meses", mas na conta o crédito aparece como um **saldo único de
+$312** a expirar em **2028-07-31**. A $14/mês isso dá **≈22 meses** de autonomia, contra uma
+entrega a seis semanas de distância. A aritmética mensal era a preocupação errada.
+
+**Um passo que a oferta não menciona:** o Heroku exige **verificação da conta com cartão** antes
+de criar qualquer app, mesmo com $312 de crédito por gastar. Os créditos são consumidos primeiro;
+o cartão só é cobrado se a despesa os exceder.
 
 **O que isto compra, em concreto:** o ciclo de alertas passa de *best-effort 1,5–2 h* para
-**polling de 60 s**, e a app deixa de precisar do keep-alive que hoje existe só para a manter
-acordada. É a diferença entre "o sistema notifica quando calhar" e "o sistema notifica".
+**polling de 60 s**, e a app deixa de precisar do keep-alive que existia só para a manter
+acordada.
 
-**Nota honesta sobre o Eco:** o Heroku documenta que o Eco *adormece após 30 minutos de
-inatividade*. Para um processo web isso é fatal; para um worker que está permanentemente a
-executar o seu próprio ciclo, não há inatividade que o faça adormecer. Se na prática se revelar
-que adormece, a correção é trivial e cabe no crédito: passar o worker a Basic ($7 + $7 = $14, um
-dólar acima do crédito) ou manter o vigia no Actions como rede de segurança, que é o que já
-acontece hoje.
-
+**Se o orçamento apertar**, a saída barata é manter só o worker no Heroku ($7/mês, ≈44 meses) e
+deixar a app no Streamlit Community Cloud, que é grátis e hiberna. A latência dos alertas é o
+problema que importa; a app a acordar em dez segundos não é.
 ---
 
 ## 4. Porque não simplesmente esperar pela Oracle

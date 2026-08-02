@@ -1,8 +1,11 @@
 # heroku_setup.md — pôr o InvestiGator a correr 24/7, passo a passo
 
-> **Pré-requisitos:** os créditos do Student Pack já reclamados (feito) e uma conta Heroku.
-> **Tempo:** ~20 minutos, quase todo à espera do build.
-> **Custo:** $12/mês dos $13/mês de crédito. Sobra $1/mês.
+> ✅ **EXECUTADO a 2026-08-02.** A app está no ar em
+> <https://investigator-meia-fa8287a1e568.herokuapp.com/> e o vigia corre de 60 em 60 s.
+> Este guia foi corrigido com o que a implantação real revelou, e não com o que se previa.
+>
+> **Custo real:** $14/mês (não $12 — ver passo 5). Crédito: **saldo único de $312** a expirar
+> 2028-07-31, ou seja **≈22 meses** de autonomia.
 >
 > Porque é o Heroku e não a Oracle ou a DigitalOcean: ver [`hosting.md`](hosting.md). Resumo:
 > a janela da DigitalOcean fechou a 31/07/26 e a Oracle está bloqueada sem prazo.
@@ -14,7 +17,7 @@
 | Processo | Comando | Dyno | Porquê |
 |---|---|---|---|
 | `web` | dashboard Streamlit | **Basic** $7 | Sempre ligado; nunca hiberna |
-| `worker` | vigia de alertas, ciclo de 60 s | **Eco** $5 | Substitui o cron best-effort de 1,5-2 h |
+| `worker` | vigia de alertas, ciclo de 60 s | **Basic** $7 | Substitui o cron best-effort de 1,5-2 h |
 
 Os ficheiros já estão no repositório e testados: `Procfile`, `app.json`, `.python-version`
 (3.12), e o `streamlit` foi movido para o `requirements.txt` (o Heroku só lê esse).
@@ -85,13 +88,16 @@ O build demora ~3-5 minutos. No fim deve dizer `Verifying deploy... done.`
 Por defeito o Heroku arranca **só** o `web`, e em Eco. Corrige os dois:
 
 ```bash
-heroku ps:type web=basic worker=eco
-heroku ps:scale web=1 worker=1
-heroku ps                # confirma: web (Basic) up, worker (Eco) up
+heroku ps:scale web=1:basic worker=1:basic
+heroku ps                # confirma: web (Basic) up, worker (Basic) up
 ```
 
+> ⚠️ **Não se pode misturar tipos de dyno.** A tentativa `web=basic worker=eco` é rejeitada com
+> *"You can't mix dyno types: Basic and Eco"*. Daí os dois em Basic, e daí $14/mês em vez dos
+> $12 que o plano previa.
+
 > ⚠️ **Este é o passo que é fácil esquecer.** Sem `worker=1` o vigia nunca arranca e continuas
-> a depender do cron do GitHub. Sem `web=basic` a app hiberna ao fim de 30 minutos, que é
+> a depender do cron do GitHub. Sem `basic` a app hiberna ao fim de 30 minutos, que é
 > exatamente o problema que estamos a resolver.
 
 ## Passo 6 — Confirmar que está vivo
@@ -141,8 +147,11 @@ e se falhar o alerta sai exatamente como hoje (é aditivo, com fallback determin
 | Build falha em `pip install` | pin incompatível com o Python do stack | `heroku config:set PYTHON_VERSION=3.12` |
 | App abre mas dá "Application error" | o Streamlit não apanhou o `$PORT` | confirma o `Procfile` intacto; `heroku logs --tail` |
 | Worker arranca e morre logo | falta um segredo obrigatório | `heroku logs --dyno=worker`; o runner é **fail-open** e diz qual falta |
-| Worker adormece | o Eco hiberna com inatividade | passa a Basic: `heroku ps:type worker=basic` (fica $14/mês, $1 acima do crédito) |
-| Créditos a esgotar | dois dynos Basic | volta o worker a Eco, ou desliga o `web` e usa o Streamlit Cloud para a app |
+| **Worker em ciclo de crash, `Error R15`** | **aconteceu mesmo**: o embebedor processava todas as manchetes novas num lote só, e numa máquina nova o ficheiro de pendentes está vazio, logo *tudo* é novo. 1,4 GB num dyno de 512 MB. | Já corrigido: o `encode` fatia em lotes de 32. Se voltar, medir com uma sonda no dyno em vez de adivinhar. |
+| `You can't mix dyno types` | tentativa de Basic + Eco | os dois no mesmo tipo: `heroku ps:scale web=1:basic worker=1:basic` |
+| `heroku run`/`heroku api` falha com `'C:\Program' is not recognized` | espaço no caminho de instalação da CLI no Windows | usar `cmd //c "heroku ..."`, ou a API via `curl` com `heroku auth:token` |
+| `git push heroku` dá `Authentication failed` | o Gestor de Credenciais do Windows intercepta antes | `git -c credential.helper= push heroku main` com `GIT_ASKPASS` a fornecer o token |
+| Créditos a esgotar | dois dynos Basic ($14/mês) | desliga o `web` (`heroku ps:scale web=0`) e serve a app pelo Streamlit Cloud: fica $7/mês, ≈44 meses |
 
 ---
 
@@ -151,9 +160,11 @@ e se falhar o alerta sai exatamente como hoje (é aditivo, com fallback determin
 | Item | Mensal |
 |---|---|
 | `web` Basic | $7 |
-| `worker` Eco | $5 |
-| **Total** | **$12** |
-| Crédito | $13 |
-| **Folga** | **$1/mês, durante 24 meses** |
+| `worker` Basic | $7 |
+| **Total** | **$14** |
+| Crédito (saldo único, expira 2028-07-31) | **$312** |
+| **Autonomia** | **≈22 meses** |
 
 O crédito cobre a entrega (13 de setembro de 2026), a defesa, e mais de um ano depois disso.
+Se em algum momento for preciso esticá-lo, `heroku ps:scale web=0` deixa só o vigia a $7/mês
+(≈44 meses) e a app volta para o Streamlit Cloud, que é grátis e hiberna.
