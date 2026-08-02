@@ -533,7 +533,81 @@ def _detail(ticker: str) -> None:
     st.markdown('<hr class="rule">', unsafe_allow_html=True)
     _decomp_bar(ticker)
     st.markdown('<hr class="rule">', unsafe_allow_html=True)
+    _news_panel(ticker)
+    st.markdown('<hr class="rule">', unsafe_allow_html=True)
     _alert_feed(ticker)
+
+
+def _impact_bar(valor: float | None, escala: float = 0.06) -> str:
+    """O impacto medido como barra divergente a partir de um eixo central.
+
+    Uma coluna de percentagens obriga a ler dez números para ver que a maioria é negativa;
+    uma coluna de barras mostra-o sem ler nenhum. A escala é fixa (±6%) de propósito — se
+    fosse relativa a cada linha, dois dias muito diferentes desenhariam barras iguais.
+    """
+    if valor is None:
+        return f'<span style="color:{T.FG_MUTE};font-size:10px">n/a</span>'
+    frac = max(-1.0, min(1.0, valor / escala))
+    largura = abs(frac) * 50
+    cor = T.UP if valor > 0 else T.DOWN
+    esquerda = 50 - largura if valor < 0 else 50
+    return (f'<div style="position:relative;height:9px;width:78px;background:{T.PANEL_2};'
+            f'border-radius:2px">'
+            f'<div style="position:absolute;left:50%;top:0;width:1px;height:100%;'
+            f'background:{T.LINE}"></div>'
+            f'<div style="position:absolute;left:{esquerda}%;width:{largura}%;height:100%;'
+            f'background:{cor};border-radius:2px"></div></div>')
+
+
+def _news_panel(ticker: str, limite: int = 6) -> None:
+    """As notícias captadas e **o que aconteceu a seguir**.
+
+    Isto é a pergunta central da tese — *já aconteceu antes, e o que se seguiu?* — e até
+    agora não estava no painel de todo. O sistema media +1/+3/+5 dias para cada manchete
+    captada e guardava tudo sem nunca o mostrar.
+
+    Nada aqui é previsão: são desfechos **observados** de notícias passadas. É por isso que
+    a coluna se chama "what followed" e não "expected".
+    """
+    todas = sorted(_news_by_ticker().get(ticker, []), key=lambda n: n["date"], reverse=True)
+    # Uma linha por DIA, não por manchete. O impacto é medido por (ticker, dia), portanto
+    # seis manchetes do mesmo dia desenham seis barras idênticas — repetição que ocupa o
+    # painel inteiro e não acrescenta nada. Uma linha por dia mostra a variedade real dos
+    # desfechos ao longo do tempo, que é a informação que interessa.
+    itens, dias_vistos = [], set()
+    for n in todas:
+        if n["date"] in dias_vistos:
+            continue
+        dias_vistos.add(n["date"])
+        itens.append(n)
+    st.markdown(
+        f'<div class="label">NEWS CAPTURED · {len(todas)} over {len(itens)} days · '
+        f'<span style="text-transform:none;letter-spacing:0;color:{T.FG_MUTE}">'
+        f'what followed, measured — not a forecast</span></div>',
+        unsafe_allow_html=True)
+    if not itens:
+        st.markdown(f'<span style="color:{T.FG_MUTE};font-size:12px">'
+                    f'No captured news for this company yet.</span>', unsafe_allow_html=True)
+        return
+
+    cabecalho = ('<div style="display:flex;gap:0.7rem;align-items:center;'
+                 'padding:0 0 0.3rem"><span class="label" style="width:70px">DATE</span>'
+                 '<span class="label" style="flex:1">HEADLINE</span>'
+                 '<span class="label" style="width:78px">+1D</span>'
+                 '<span class="label" style="width:78px">+5D</span></div>')
+    linhas = []
+    for n in itens[:limite]:
+        titulo = (n["headline"] or "")[:96]
+        linhas.append(
+            f'<div style="display:flex;gap:0.7rem;align-items:center;padding:0.3rem 0;'
+            f'border-top:1px solid {T.LINE}">'
+            f'<span class="num" style="width:70px;font-size:11px;color:{T.FG_MUTE}">'
+            f'{n["date"]}</span>'
+            f'<span style="flex:1;font-size:12px;color:{T.FG_DIM};overflow:hidden;'
+            f'text-overflow:ellipsis;white-space:nowrap">{titulo}</span>'
+            f'<span style="width:78px">{_impact_bar(n["d1"])}</span>'
+            f'<span style="width:78px">{_impact_bar(n["d5"])}</span></div>')
+    st.markdown(cabecalho + "".join(linhas), unsafe_allow_html=True)
 
 
 def _alert_feed(ticker: str) -> None:
