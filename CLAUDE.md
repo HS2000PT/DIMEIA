@@ -7,8 +7,49 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 43 (**rigor: auditoria de conteúdo das citações + 4 estudos de caso novos; branch `main`**)
-- **Última atualização:** 2026-07-31
+- **Sessão nº:** 44 (**o sistema entrou em produção no Heroku; revisão crítica de alertas e escrita**)
+- **Última atualização:** 2026-08-02
+- **🚀 SESSÃO 44 (2026-08-02 — o sistema deixou de ser protótipo: está NO AR):**
+  **(A) HEROKU AO VIVO.** <https://investigator-meia-fa8287a1e568.herokuapp.com/> · dois dynos
+  **Basic** (web + worker), ciclo de **60 s** em vez do cron best-effort de 1,5-2 h. Créditos:
+  **saldo único de $312** (não $13/mês) a expirar 2028-07-31 ⇒ **≈22 meses** a $14/mês.
+  **Três coisas que eu tinha escrito e estavam ERRADAS:** (1) Basic+Eco=$12 **não existe**, o
+  Heroku recusa misturar tipos de dyno; (2) o crédito é lump, não mensal; (3) exige **cartão**
+  mesmo com $312 por gastar. Tudo corrigido em `hosting.md`/`heroku_setup.md`.
+  **⚠️ BUG DE PRODUÇÃO REAL, só existia no deploy:** o worker morria em ciclo de crash com
+  **R15, 1,4 GB num dyno de 512 MB**. Duas hipóteses minhas falharam (threads do onnxruntime;
+  tamanho da branch de dados). Só com uma **sonda no próprio dyno** apareceu: o arranque são
+  281 MB, logo o pico estava no CICLO — `run_alerts` embebia **todas** as manchetes novas num
+  único lote, e numa máquina nova o ficheiro de pendentes está vazio, logo *tudo* é novo. Na
+  máquina do aluno nunca falhou porque lá o ficheiro já existe. Corrigido no **embebedor**
+  (lotes de 32). **Ressalva medida, não assumida:** ia escrever que fatiar não altera
+  resultados; medi e é **FALSO** (int8, o padding influencia: 0,022 de diferença). É
+  **pré-existente**. O que importa é a recuperação: **top-3 idêntico em 8/8**.
+  **(B) ALERTAS — 2 defeitos reais, achados a ler os 220 alertas enviados:** (1) o alerta
+  **contradizia-se em 9 de 30 casos (30%)**: "Looks sector-wide" seguido de "specific to the
+  company" (AMD −13,23% com pares a −2,0%). A verificação de setor olhava só para a DIREÇÃO,
+  nunca para a DIMENSÃO. (2) **18 de 165 alertas (11%)** mostravam a **mesma manchete** como
+  precedentes independentes (dedup era por (data,ticker,manchete)). Ambos corrigidos no
+  caminho de PRODUTO; congelados intactos.
+  **(C) BIBLIOGRAFIA — 59/59 verificadas automaticamente:** 43 DOIs resolvem no Crossref **com
+  título a bater**, 8 arXiv, 6 URLs HTTP 200, 1 ISBN, 1 sem id (correto). A comparação de
+  títulos apanha o DOI que resolve para OUTRO artigo — zero casos.
+  **(D) ESCRITA:** 0 travessões em prosa (eram 4 por língua; os 536 restantes são tabelas e
+  comentários), e a secção "Repository Organisation" e o vocabulário de controlo de versões
+  saíram do apêndice.
+  **(E) GUIA DE ESTUDO 80→83:** faltavam **quatro subsistemas com zero menções** (decomposição,
+  narrador, volume, convergência). Três frames novos que ENSINAM.
+  **(F) APP:** auto-refresh de 60 s; a linha do driver passa a falar **só quando surpreende**
+  (as 5 linhas diziam todas "Specific to this company").
+  **(G) CHAVES ENTRE MÁQUINAS:** o aluno já tinha cofre e não sabia — as 8 chaves estão nas
+  config vars do Heroku e voltam em formato `.env`. **Round-trip verificado: 8/8 idênticas.**
+  `docs/design/trocar_de_maquina.md`.
+  **⚠️ FUGA MINHA:** o filtro de output só mascarava >30 chars e **expôs a ALPHAVANTAGE_API_KEY**
+  (16 chars) no chat. O aluno também colou a chave da API do Heroku. **Ambas a rodar.**
+  **PENDENTE:** PAT do GitHub para o write-back do histórico (sem ele o Telegram recebe em 60 s
+  mas o painel não vê); a mediana de latência ainda diz 208 min porque inclui o histórico do
+  cron.
+  **Gates: 471 testes, ruff limpo, congelados byte-iguais, EN 107 pp / PT 111 pp, guia 83.**
 - **🔬 SESSÃO 43 (o aluno pediu: validar a bibliografia a fundo "sem margem para erro ou informação
   falsa", tirar menções a repositório/ficheiros da tese, arrumar o repo, analisar o Student Pack
   para alternativa à VM Oracle, propor melhorias do site rumo ao nível worldmonitor, e propor
