@@ -42,9 +42,16 @@ _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-st.set_page_config(
-    page_title="InvestiGator — explainable market alerts", page_icon="🐊", layout="wide"
-)
+# Tolerante a ser IMPORTADO. O dashboard v2 (`app/dashboard.py`) reutiliza as funções de dados
+# daqui para não haver duas versões da verdade, e a importação executa este módulo. Sem o
+# try/except, a segunda chamada a `set_page_config` rebenta a página inteira. Quando este
+# ficheiro é o script principal, o comportamento é exatamente o de sempre.
+try:
+    st.set_page_config(
+        page_title="InvestiGator — explainable market alerts", page_icon="🐊", layout="wide"
+    )
+except Exception:  # noqa: BLE001 — já configurado por quem nos importou
+    pass
 
 _ASSETS = Path(__file__).resolve().parent / "assets"
 _LOGO = _ASSETS / "logo.svg"
@@ -602,4 +609,7 @@ def main() -> None:
         _method_view()
 
 
-main()
+# Só desenha quando ESTE ficheiro é o que o Streamlit está a correr. Importado (pelo dashboard
+# v2, ou por um teste), expõe as funções sem pintar a app antiga por cima da nova.
+if __name__ == "__main__":
+    main()
