@@ -199,9 +199,25 @@ Triage precision@5 per day vs alert-always & 0.632 vs 0.163 & CS4 \\
 Extended feature ablation, PR-AUC (context $+$ 5 signals) & 0.535 ($\Delta{-}0.002$) & CS4 \\
 Worked triage decision (META, 12 Jul 2026) & $p = 0.539$ (54\%) & CS4 \\
 Production selectivity (headlines : alerts sent) & 22\,:\,1 & CS2 \\
+\midrule
+Event-type agreement, adjusted mutual information (event / ticker / sector) & 0.358 / 0.188 / 0.130 & CS5 \\
+Cluster purity against the rubric, versus a size-matched random assignment & 0.712 vs 0.444 & CS5 \\
+Conformal coverage, random split ($\alpha = 0.05/0.10/0.20$) & 0.951 / 0.902 / 0.803 & CS6 \\
+Conformal coverage, temporal split (same $\alpha$) & 0.937 / 0.900 / 0.822 & CS6 \\
+Definite calls at 90\,\% guaranteed coverage & 39.5\,\% & CS6 \\
+Input drift, stability index (volatility / headline length / returns) & 0.281 / 0.111 / $\le$0.020 & CS7 \\
+Label prevalence across the three temporal blocks & 0.385 / 0.470 / 0.378 & CS7 \\
+Signal fusion versus best single signal (budgets 1 / 3 / 5) & $-0.0498$ / $-0.0317$ / $+0.0045$ & CS8 \\
+Derived weight on news intensity (negative) & $-0.283$ & CS8 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+The lower block of that table was produced after the results in the upper block and never alters
+them: each of those procedures reads the frozen artefacts, and the two that depend on the triage
+model reproduce its frozen test score exactly before reporting anything, halting otherwise. That
+check is what makes them statements about the model this dissertation reports rather than about a
+model that happens to be lying next to it.
 
 \paragraph{Live operation.} Beyond reproducibility on demand, InvestiGator operated live. A
 scheduled workflow scanned the watchlist after each US market close and delivered explained alerts to a
