@@ -258,3 +258,13 @@
 {"date": "2026-08-01", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
 {"date": "2026-08-01", "ticker": "AMD", "stage": "alerted", "detail": "How Server CPUs Could Give AMD Stock a Big Boost After August 4"}
 {"date": "2026-08-01", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}
+{"date": "2026-08-02", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.43 < 0.50"}
+{"date": "2026-08-02", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft Stock Is Up 26% From Its 52-Week Low: Buy the Rally or Wait It Out?"}
+{"date": "2026-08-02", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.49 < 0.50"}
+{"date": "2026-08-02", "ticker": "TSLA", "stage": "alerted", "detail": "Tesla (TSLA) Explores China Split As SpaceX Merger Talk Draws Attention"}
+{"date": "2026-08-02", "ticker": "AMZN", "stage": "triage_suppressed", "detail": "P=0.44 < 0.50"}
+{"date": "2026-08-02", "ticker": "GOOGL", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-08-02", "ticker": "META", "stage": "alerted", "detail": "Meta Trades at a Forward P/E of 17, Below Its 5-Year Average, Making the Stock a"}
+{"date": "2026-08-02", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-08-02", "ticker": "AMD", "stage": "alerted", "detail": "Dow Jones Futures: Trump Calls Off Iran Attacks; SpaceX, AMD, Sandisk, Eli Lilly"}
+{"date": "2026-08-02", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}
