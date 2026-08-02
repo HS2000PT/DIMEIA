@@ -253,7 +253,7 @@ def _header() -> None:
     st.markdown(
         "**Every move investigated, never predicted.** This tool answers three questions "
         "about your watchlist: *is this move unusual*, *is it the company or the market*, "
-        "and *has something like it happened before* — with real numbers you can check. "
+        "and *has something like it happened before*, with real numbers you can check. "
         "It never predicts prices and never gives advice."
     )
     _market_state()
@@ -363,11 +363,23 @@ def _mover_row(r: dict) -> None:
                     f"{_fmt_pct(d['market'])} market · {_fmt_pct(d['sector'])} sector · "
                     f"**{_fmt_pct(d['company'])} company**"
                 )
-                verdict = {"market": "Moved with the whole market.",
+                # Só se comenta o que SURPREENDE.
+                #
+                # A leitura por omissão de um movimento grande é "aconteceu alguma coisa nesta
+                # empresa", e a linha em cima já mostra a parcela própria a negrito. Repetir
+                # "Specific to this company." em todas as linhas gasta espaço e não informa:
+                # numa captura real do painel, as cinco linhas diziam exatamente o mesmo.
+                #
+                # O que vale a pena dizer é o contrário: quando a ação se moveu com o mercado
+                # ou com o setor, e portanto NÃO é uma história sobre a empresa. É a mesma
+                # regra do detetor de volume, que se cala quando o volume é normal.
+                verdict = {"market": "Moved with the whole market, not company news.",
                            "sector": "Sector-wide, not company-specific.",
-                           "company": "Specific to this company."}[d["driver"]]
-                st.caption(verdict + (" Beta not estimated; split is indicative."
-                                      if d["fallback"] else ""))
+                           "company": ""}[d["driver"]]
+                if d["fallback"]:
+                    verdict = (verdict + " Beta not estimated; split is indicative.").strip()
+                if verdict:
+                    st.caption(verdict)
 
 
 # ── ECRÃ 2: Ticker ──────────────────────────────────────────────────────────────
