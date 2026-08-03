@@ -4,21 +4,21 @@
 > **Não editar à mão.** O loop: o runner regista decisões → dias depois este script
 > rotula-as com o resultado REAL (mesmo rótulo do treino) → métricas ao vivo → retreino.
 
-- **Gerado:** 2026-08-02 21:58 UTC · rótulo |retorno anormal vs SPY em (d, d+3]| ≥ 0.02 (o primário do treino).
-- **Decisões:** 657 registadas · 458 únicas · 253 maturadas · 205 ainda pendentes · 0 sem preços.
+- **Gerado:** 2026-08-03 22:01 UTC · rótulo |retorno anormal vs SPY em (d, d+3]| ≥ 0.02 (o primário do treino).
+- **Decisões:** 724 registadas · 489 únicas · 302 maturadas · 187 ainda pendentes · 0 sem preços.
 
 | Métrica ao vivo | Valor |
 |---|---|
-| Precisão das decisões mantidas | 0.771 (83 mantidas) |
-| Base rate (todas as decisões maturadas) | 0.672 (253) |
-| Brier das probabilidades | 0.257 |
+| Precisão das decisões mantidas | 0.810 (100 mantidas) |
+| Base rate (todas as decisões maturadas) | 0.719 (302) |
+| Brier das probabilidades | 0.258 |
 
 Calibração (previsto vs observado):
 
 | P prevista (média) | Fração observada | n |
 |---|---|---|
-| 0.25 | 0.33 | 21 |
-| 0.49 | 0.70 | 232 |
+| 0.25 | 0.30 | 23 |
+| 0.49 | 0.75 | 279 |
 
 **Retreino com os dados acumulados** (quando houver decisões maturadas suficientes):
 `python scripts/build_dataset.py` → `python scripts/train_triage.py` (stack `--ml`;
