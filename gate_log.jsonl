@@ -322,3 +322,15 @@
 {"date": "2026-08-03", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-03", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
 {"date": "2026-08-03", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.32 < 0.50"}
+{"date": "2026-08-03", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-03", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft Just Proved that AI Spending Can Pay Off. Here's How the Company Separ"}
+{"date": "2026-08-03", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.49 < 0.50"}
+{"date": "2026-08-03", "ticker": "TSLA", "stage": "error", "detail": "ReadTimeout: HTTPSConnectionPool(host='finnhub.io', port=443): Read timed out. (read timeout=10)"}
+{"date": "2026-08-03", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon Tops $3T, Meta Rallies 7% as AI Hyperscalers Ride Earnings Momentum"}
+{"date": "2026-08-03", "ticker": "GOOGL", "stage": "error", "detail": "ReadTimeout: HTTPSConnectionPool(host='finnhub.io', port=443): Read timed out. (read timeout=10)"}
+{"date": "2026-08-03", "ticker": "META", "stage": "alerted", "detail": "Amazon Tops $3T, Meta Rallies 7% as AI Hyperscalers Ride Earnings Momentum"}
+{"date": "2026-08-03", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-08-03", "ticker": "AMD", "stage": "error", "detail": "ReadTimeout: HTTPSConnectionPool(host='finnhub.io', port=443): Read timed out. (read timeout=10)"}
+{"date": "2026-08-03", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-03", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
+{"date": "2026-08-03", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.32 < 0.50"}
