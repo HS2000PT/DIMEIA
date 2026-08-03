@@ -384,36 +384,54 @@ real completa de ponta a ponta aparece no Capítulo~\ref{chap:casestudies} (Estu
 \label{fig:telegram_mockup}
 \end{figure}
 
-O mesmo raciocínio é também publicado como um dashboard ao vivo (Figura~\ref{fig:app_dashboard}). A sua
-estrutura segue as três perguntas que motivam o sistema, um ecrã para cada uma. O ecrã de abertura ordena
-a watchlist por quão longe cada nome está da sua própria norma recente, e traz a repartição
-mercado/setor/empresa na própria linha, para que o leitor perceba se uma queda foi do mercado ou da
-empresa sem ter de clicar. Os nomes que não se destacaram colapsam numa única linha, o que torna a
-quietude legível em vez de ambígua. Um segundo ecrã guarda o detalhe por empresa: o gráfico de preços, a
-mesma decomposição por extenso, e os alertas exatamente como o canal Telegram os recebeu, lidos do único
-registo partilhado e versionado em vez de recalculados. Um terceiro ecrã carrega os números congelados da
-avaliação, incluindo o resultado negativo, para quem quiser verificar o método antes de confiar na saída.
+O mesmo raciocínio é também publicado como um dashboard ao vivo (Figura~\ref{fig:app_dashboard}). A
+superfície de abertura é uma grelha com um cartão por empresa vigiada e nenhuma privilegiada, ordenada
+por quão raro foi o dia e não por ordem alfabética. Cada cartão abre com uma frase que um
+não-especialista consegue usar, e só depois mostra os números em que essa frase assenta; um cartão que
+abrisse com um $z$-score estaria a reportar uma estatística em vez de responder a uma pergunta. Uma
+segunda superfície guarda o detalhe por empresa: o gráfico de preços com os eventos detetados desenhados
+sobre ele, a decomposição mercado/setor/empresa por extenso, os precedentes recuperados, e os alertas
+exatamente como o canal Telegram os recebeu, lidos do único registo partilhado e versionado em vez de
+recalculados. Uma terceira carrega os números congelados da avaliação, incluindo o resultado negativo,
+para quem quiser verificar o método antes de confiar na saída.
 
-Duas propriedades dessa superfície merecem ser enunciadas por terem sido desenhadas, e não herdadas.
-Primeiro, a promessa e o compromisso de não-previsão aparecem exatamente uma vez, como identidade da
-página, em vez de repetidos ao lado de cada linha; a repetição fazia a interface anterior ler-se como
-defensiva sem acrescentar informação. Segundo, o valor de latência mostrado é medido a partir dos carimbos
-temporais de evento e de entrega registados, e está simplesmente ausente quando esses carimbos não
-existem, pelo que a interface nunca exibe um número que o sistema não observou.
+Duas escolhas dessa superfície merecem ser enunciadas por terem sido feitas contra uma versão anterior
+da interface, e não herdadas dela. Primeiro, a raridade é expressa como uma \emph{contagem empírica} ---
+``apenas $5$ dos últimos $249$ dias de negociação se moveram tanto'' --- e não como uma probabilidade.
+Converter um $z$-score numa probabilidade exigiria assumir normalidade, e os retornos diários de ações
+têm caudas mais pesadas do que isso, pelo que o valor resultante seria menos fiável precisamente nos dias
+que o sistema existe para explicar. Uma contagem não assume nada e é verificável por qualquer pessoa que
+tenha a mesma série de preços. Segundo, o cartão nomeia o \emph{motor} do movimento em palavras, enquanto
+a repartição em três fica a um clique. Um desenho anterior colocava as três componentes com sinal em cada
+linha; com uma watchlist de doze, isso são trinta e seis números com sinal a competir pela atenção no
+primeiro contacto, o que anula o propósito de haver uma ordenação.
+
+As duas medidas podem discordar, e a interface di-lo em vez de escolher a leitura mais confortável. O
+detetor julga um dia contra os vinte anteriores; a contagem julga-o contra o ano. Uma empresa num período
+calmo pode assim ficar abaixo do limiar de alerta e ainda assim estar perto do topo da sua amplitude
+anual, e o cartão reporta então os dois factos --- normal para as semanas recentes, raro para o ano --- e
+deixa a ponderação ao leitor.
+
+O valor de latência mostrado é medido a partir dos carimbos temporais de evento e de entrega
+registados, e está simplesmente ausente quando esses carimbos não existem, pelo que a interface nunca
+exibe um número que o sistema não observou.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/app_dashboard.png}
 \caption[O dashboard ao vivo, uma captura genuína]{O dashboard público (uma captura genuína, não um
-mockup), ecrã de abertura. A watchlist é ordenada por quão longe cada nome está da sua própria norma
-recente, e cada linha já traz a repartição mercado/setor/empresa, pelo que o leitor vê se o movimento foi
-do mercado ou da empresa sem clicar. A terceira linha é o caso que motivou a funcionalidade: a Amazon está
-$1.84\%$ em baixo, o que parece alarmante, mas $1.66$ pontos disso vieram com o mercado e a contribuição
-própria da empresa é de $+0,19\%$, pelo que a leitura honesta é que nada de específico à empresa
-aconteceu. A primeira linha é o caso oposto, em que a maior parte da queda do JPMorgan permanece depois de
-removidos o mercado e o setor. Os nomes que não se destacaram colapsam na única linha \emph{Quiet}. A promessa e o compromisso de não-previsão aparecem uma só vez, no
-topo. O valor de latência é medido a partir de carimbos temporais registados e é omitido quando estes não
-existem. Capturado da base de código em produção durante a operação ao vivo.}
+mockup), superfície de abertura. Um cartão por empresa, ordenados por quão raro foi o dia, e cada cartão
+abre com uma frase em vez de um número. Dois nomes passaram o limiar de alerta e trazem o marcador
+\texttt{UNUSUAL}, uma sparkline e as estatísticas de apoio; o $z$-score nunca aparece sem a expressão que
+o torna legível. A Microsoft e a Amazon são o caso que vale a pena ler com atenção: nenhuma passou o
+limiar, porque cada uma é julgada contra os seus próprios vinte dias anteriores, e no entanto apenas $5$ e
+$9$ dos últimos $249$ dias de negociação se moveram tanto, respetivamente. O cartão reporta as duas coisas
+--- \emph{calmo face à sua norma recente}, e raro para o ano --- em vez de resolver a discordância em
+silêncio a favor da palavra mais tranquilizadora. As empresas cujo dia foi mesmo banal dizem-no com a
+contagem que o sustenta, pelo que a quietude fica evidenciada e não afirmada. A Exxon Mobil cai para um
+quadrado com iniciais porque não há logótipo publicado para ela, o que é a degradação desenhada e não um
+recurso em falta. A promessa e o compromisso de não-previsão aparecem uma só vez, no rodapé. Capturado a
+partir do código implantado durante operação ao vivo.}
 \label{fig:app_dashboard}
 \end{figure}
 

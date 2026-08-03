@@ -306,3 +306,42 @@ def test_nan_nao_entram_no_traco() -> None:
     # O NaN sai, sobram dois pontos. Cada ponto é "x,y", logo duas vírgulas — não uma.
     pontos = svg.split('points="')[1].split('"')[0].split()
     assert len(pontos) == 2
+
+
+# ── as duas réguas quando discordam ──────────────────────────────────────────────────
+
+def test_dia_raro_mas_nao_sinalizado_nao_se_chama_ordinario() -> None:
+    """O defeito que a app promovida tinha, e que só apareceu ao olhar para a figura.
+
+    Medido ao vivo a 2026-08-03: MSFT +4,82%, z +1,11 (abaixo do limiar, logo não
+    sinalizada) e **5 de 249** dias moveram-se tanto. O cartão dizia "an ordinary day for
+    Microsoft" — sobre um movimento no top 2% do ano.
+
+    As duas réguas medem coisas diferentes (20 dias vs um ano) e podem discordar. Resolver
+    a discordância escolhendo a palavra mais simpática é mentir por omissão.
+    """
+    frase = verdict("Microsoft", _exc(5, 249, +0.0482), None, flagged=False)
+    assert "ordinary" not in frase
+    assert "only 5 of the last 249" in frase
+    assert "Quiet by its recent norm" in frase
+
+
+def test_dia_verdadeiramente_banal_continua_a_dizer_ordinario() -> None:
+    """A correcção acima não pode transformar todos os dias calmos em avisos."""
+    frase = verdict("JPMorgan", _exc(209, 249, +0.0024), None, flagged=False)
+    assert "209 of the last 249" in frase
+    assert "recent norm" not in frase
+
+
+def test_recorde_nao_sinalizado_diz_que_e_recorde() -> None:
+    """Contagem zero não pode sair como "only 0 of the last 249"."""
+    frase = verdict("Apple", _exc(0, 249, -0.02), None, flagged=False)
+    assert "no other day" in frase
+    assert "only 0" not in frase
+
+
+def test_a_correccao_nao_introduz_vocabulario_de_previsao() -> None:
+    for count in (0, 1, 5, 25, 26, 203):
+        frase = verdict("NVIDIA", _exc(count), None, flagged=False).lower()
+        for palavra in PROIBIDO:
+            assert palavra not in frase

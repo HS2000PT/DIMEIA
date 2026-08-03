@@ -375,37 +375,57 @@ illustration; the full real end-to-end output appears in Chapter~\ref{chap:cases
 \label{fig:telegram_mockup}
 \end{figure}
 
-The same reasoning is also published as a live dashboard (Figure~\ref{fig:app_dashboard}). Its
-structure follows the three questions that motivate the system, one screen each. The opening screen
-ranks the watchlist by how far each name sits from its own recent norm, and carries the
-market/sector/company split on the row itself, so a reader learns whether a fall was the market or
-the company without a click. Names that did not stand out collapse into a single line, which makes
-quietness legible rather than ambiguous. A second screen holds the per-company detail: the price
-chart, the same decomposition in full, and the alerts exactly as the Telegram channel received them,
-read from the one shared versioned record rather than recomputed. A third screen carries the frozen
-evaluation numbers, including the negative result, for a reader who wants to check the method before
-trusting the output.
+The same reasoning is also published as a live dashboard (Figure~\ref{fig:app_dashboard}). The
+opening surface is a grid with one card per watched company and none of them privileged, ordered by
+how rare the day was rather than alphabetically. Each card opens with a sentence a non-specialist can
+act on, and only then shows the numbers that sentence rests on; a card that led with a $z$-score
+would be reporting a statistic rather than answering a question. A second surface holds the
+per-company detail: the price chart with the detected events drawn on it, the market/sector/company
+decomposition in full, the retrieved precedents, and the alerts exactly as the Telegram channel
+received them, read from the one shared versioned record rather than recomputed. A third carries the
+frozen evaluation numbers, including the negative result, for a reader who wants to check the method
+before trusting the output.
 
-Two properties of that surface are worth stating because they were designed rather than inherited.
-First, the promise and the no-prediction commitment appear exactly once, as the page's identity,
-instead of being repeated beside every row; repetition had made the earlier interface read as
-defensive without adding information. Second, the delivery-latency figure shown is measured from
-recorded event and delivery timestamps, and it is simply absent when those timestamps do not exist,
-so the interface never displays a number the system did not observe.
+Two choices in that surface are worth stating because they were made against an earlier draft of the
+interface rather than inherited from it. First, rarity is expressed as an \emph{empirical count} --
+``only $5$ of the last $249$ trading days moved this much'' -- and not as a probability. Converting a
+$z$-score into a probability would require assuming normality, and daily equity returns have heavier
+tails than that, so the resulting figure would be least trustworthy on precisely the days the system
+exists to explain. A count assumes nothing and is checkable by anyone holding the same price series.
+Second, the card names the \emph{driver} of a move in words while the three-way split itself sits one
+click away. An earlier design placed all three signed components on every row; with a watchlist of
+twelve that is thirty-six signed numbers competing for attention on first contact, which defeats the
+purpose of ranking at all.
+
+The two measures can disagree, and the interface says so rather than choosing the more comfortable
+reading. The detector judges a day against the previous twenty; the count judges it against the year.
+A company in a calm stretch can therefore fall below the alert threshold while still sitting near the
+top of its annual range, and the card then reports both facts --- normal for recent weeks, rare for
+the year --- and leaves the reader to weigh them.
+
+Two further properties were designed rather than inherited. The promise and the no-prediction
+commitment appear exactly once, as the page's identity, instead of being repeated beside every card;
+repetition had made an earlier interface read as defensive without adding information. And the
+delivery-latency figure is measured from recorded event and delivery timestamps, and is simply absent
+when those timestamps do not exist, so the interface never displays a number the system did not
+observe.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/app_dashboard.png}
 \caption[The live dashboard, a genuine capture]{The public dashboard (a genuine screenshot, not a
-mockup), opening screen. The watchlist is ranked by how far each name sits from its own recent norm,
-and each row already carries the market/sector/company split, so the reader sees whether a move was
-the market or the company without clicking. The third row is the case that motivated the feature:
-Amazon is down $1.84\%$, which looks alarming, but $1.66$ points of that came with the market and
-the company's own contribution is $+0.19\%$, so the honest reading is that nothing company-specific
-happened. The first row is the opposite case, where most of JPMorgan's fall remains after the market
-and sector are removed. Names that did not stand out collapse into the single \emph{Quiet} line. The promise and the no-prediction commitment appear once,
-at the top. The latency figure is measured from recorded timestamps and is omitted when they are
-absent. Captured from the deployed codebase during live operation.}
+mockup), opening surface. One card per company, ordered by how rare the day was, and every card
+opens with a sentence rather than a number. Two names cleared the alert threshold and carry the
+\texttt{UNUSUAL} marker, a sparkline and the supporting statistics; the $z$-score is never shown
+without the phrase that makes it readable. Microsoft and Amazon are the case worth reading closely:
+neither cleared the threshold, because each is judged against its own previous twenty days, yet only
+$5$ and $9$ of the last $249$ trading days respectively moved as much. The card reports both --
+\emph{quiet by its recent norm}, and rare for the year -- instead of resolving the disagreement
+silently in favour of the calmer word. Companies whose day really was ordinary say so with the count
+that supports it, so quietness is evidenced rather than asserted. Exxon Mobil falls back to a
+lettered tile because no logotype is published for it, which is the designed degradation rather than
+a missing asset. The promise and the no-prediction commitment appear once, in the footer. Captured
+from the deployed codebase during live operation.}
 \label{fig:app_dashboard}
 \end{figure}
 

@@ -100,13 +100,30 @@ def verdict(
         # Um dia calmo tem de **mostrar** que é calmo, não afirmá-lo. Um utilizador que vê
         # +3,23% ao lado da palavra "Quiet" não tem razão nenhuma para acreditar; o mesmo
         # utilizador a ver "203 dos últimos 249 dias moveram-se tanto ou mais" acredita
-        # sem precisar de confiar em nós. É a diferença entre um rótulo e uma prova, e
-        # custa a mesma linha de texto.
-        if exc is not None and exc.count > 25:
+        # sem precisar de confiar em nós. É a diferença entre um rótulo e uma prova.
+        if exc is None:
+            base = f"Quiet — an ordinary day for {name}."
+        elif exc.count > 25:
             base = (f"Quiet — {exc.count} of the last {exc.n} trading days "
                     f"moved as much or more.")
         else:
-            base = f"Quiet — an ordinary day for {name}."
+            # AS DUAS RÉGUAS DISCORDAM, e esconder isso seria mentir pela palavra mais
+            # simpática. O detector mede contra os **20 dias anteriores**; a contagem mede
+            # contra o **ano**. Uma acção num período calmo pode não ser sinalizada (z
+            # abaixo do limiar) e ainda assim estar no topo do ano.
+            #
+            # Medido ao vivo a 2026-08-03: MSFT +4,82%, z +1,11 (não sinalizada) e apenas
+            # **5 dos 249 dias** se moveram tanto. A versão anterior escrevia "an ordinary
+            # day for Microsoft" — sobre um movimento no top 2% do ano. Dizer as duas
+            # coisas é mais comprido e é a verdade: o dia é normal *para as últimas
+            # semanas* e raro *para o ano*, e é o leitor que decide o que fazer com isso.
+            quantos = ("Only 1 of the last" if exc.count == 1
+                       else f"only {exc.count} of the last")
+            base = (f"Quiet by its recent norm — but {quantos} {exc.n} trading days "
+                    f"moved this much.")
+            if exc.count == 0:
+                base = ("Quiet by its recent norm — but no other day in the last "
+                        f"{exc.n} trading days moved this much.")
         return f"{base} So far today." if market_open else base
 
     partes = [rarity_sentence(exc, name) or f"{name} stood out today."]

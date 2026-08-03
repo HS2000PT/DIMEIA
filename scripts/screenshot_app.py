@@ -42,7 +42,10 @@ def main() -> int:
     ap.add_argument("--height", type=int, default=850)
     args = ap.parse_args()
 
-    app = REPO / "app" / "streamlit_app.py"
+    # Aponta para a app PROMOVIDA. Ficou a apontar para a v1 depois da promoção, o que
+    # produziria uma figura da tese a mostrar um ecrã que já não está no ar — a Fig. 4.5
+    # tem de ser uma captura do que o leitor encontra se abrir o URL.
+    app = REPO / "app" / "dashboard.py"
     proc = subprocess.Popen(
         [sys.executable, "-m", "streamlit", "run", str(app),
          "--server.headless", "true", "--server.port", str(args.port),
@@ -60,17 +63,18 @@ def main() -> int:
             page = browser.new_page(viewport={"width": args.width, "height": args.height},
                                     device_scale_factor=2)
             page.goto(f"http://localhost:{args.port}", wait_until="networkidle", timeout=60000)
-            # O ecrã de abertura é o "Today" (ver docs/design/app_acceptance.md): esperar
-            # que a lista de movers exista — é a peça central e a última a chegar, porque
-            # depende das buscas de preços e da decomposição.
-            page.wait_for_selector("text=Today", timeout=30000)
-            for marca in ("text=moved unusually", "text=Quiet", "text=unavailable"):
+            # O ecrã de abertura é a grelha de cartões (v3). Esperar por um VEREDICTO e
+            # não por um rótulo de ecrã: a v1 abria em "Today" e esse texto desapareceu na
+            # promoção, o que deixou este script a esperar por algo que já não existe.
+            # Um veredicto é a última peça a chegar, porque depende dos preços.
+            page.wait_for_selector(".verdict", timeout=45000)
+            for marca in ("text=Quiet", "text=trading days", "text=No market data"):
                 try:
                     page.wait_for_selector(marca, timeout=25000)
                     break
                 except Exception:  # noqa: BLE001
                     continue
-            page.wait_for_timeout(3000)  # decomposição por mover + render final
+            page.wait_for_timeout(6000)  # logótipos, sparklines e render final
             Path(args.out).parent.mkdir(parents=True, exist_ok=True)
             page.screenshot(path=args.out)
             browser.close()
