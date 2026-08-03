@@ -142,7 +142,7 @@ os números como a prova por trás dele.** É uma inversão, não uma repintura.
 
 Duas decisões dele que fixam o resto: o público é **um investidor a sério, primeiro** (a
 avaliação sai do caminho principal para **uma** página ligada), e a forma é uma **grelha de
-cartões** — as dez empresas ao mesmo nível, nenhuma privilegiada ao abrir.
+cartões** — as doze empresas ao mesmo nível, nenhuma privilegiada ao abrir.
 
 ### 6.2 A lei do desenho, uma linha
 

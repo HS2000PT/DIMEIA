@@ -84,7 +84,7 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   mãos, executado e commitado com outputs reais.
 
 ### 2.5 Qualidade de engenharia
-- **mais de 200 testes automáticos + ruff**, verdes localmente e no CI (runner limpo a cada push).
+- **mais de 600 testes automáticos + ruff**, verdes localmente e no CI (runner limpo a cada push).
 - **Reprodutibilidade:** demo offline num comando (`python scripts/demo.py` reproduz o
   exemplo do Cap. 3, +6,46%); todas as figuras/números da tese saem de scripts versionados;
   ambiente fixado (Python 3.12, `requirements*.txt`).
@@ -109,7 +109,7 @@ scripts/                demo.py · run_alerts.py (produção) · run_bot.py · e
                         build_dataset.py · train_triage.py · post_validate.py · build_kb.py
 config/alerts.yaml      watchlist + limiares + gates (a MESMA fonte para runner e app)
 .github/workflows/      ci.yml (testes) · compile-thesis.yml · alerts.yml (varredura 30/30)
-tests/                  mais de 200 testes
+tests/                  mais de 600 testes
 data/samples/           amostras versionadas (KB curada 2.016 registos 384-d incluída)
 docs/design/            how_to_run · going_live · deployment · arquitetura · data card
 docs/evaluation/        TODOS os resultados (gerados por script; não editados à mão)

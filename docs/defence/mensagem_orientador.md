@@ -40,7 +40,7 @@ resultados negativos). São cerca de 20 páginas e dão o essencial.
 | Código | ⚠️ <https://github.com/HS2000PT/DIMEIA> |
 
 A tese tem **oito estudos de caso** e **59 referências**, todas verificadas contra a fonte
-primária. O sistema corre 24 horas por dia e o código tem 478 testes automáticos.
+primária. O sistema corre 24 horas por dia e o código tem mais de 600 testes automáticos.
 
 **O que eu gostaria que olhasse com atenção crítica**
 
