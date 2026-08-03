@@ -78,9 +78,19 @@ def test_sem_decomposicao_nao_inventa() -> None:
 
 # ── veredicto ────────────────────────────────────────────────────────────────────────
 
-def test_dia_calmo_tem_direito_a_uma_frase() -> None:
-    """O silêncio legível é o produto para quem só quer permissão para não fazer nada."""
+def test_dia_calmo_mostra_que_e_calmo_em_vez_de_o_afirmar() -> None:
+    """Um rótulo pede confiança; uma contagem dispensa-a, e custa a mesma linha.
+
+    Quem vê +3,23% ao lado da palavra "Quiet" não tem razão para acreditar. Quem vê
+    "203 dos últimos 249 dias moveram-se tanto ou mais" acredita sem confiar em nós.
+    """
     frase = verdict("Apple", _exc(203), None, flagged=False)
+    assert "Quiet" in frase
+    assert "203 of the last 249" in frase
+
+
+def test_dia_calmo_sem_historia_ainda_diz_alguma_coisa() -> None:
+    frase = verdict("Apple", None, None, flagged=False)
     assert "Quiet" in frase and "Apple" in frase
 
 

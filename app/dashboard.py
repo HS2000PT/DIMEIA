@@ -97,8 +97,30 @@ def _watchlist() -> list[str]:
 
 @st.cache_data(ttl=120, show_spinner=False)
 def _daily(ticker: str) -> pd.DataFrame:
+    """Um ANO de barras diárias.
+
+    Eram seis meses, e o gráfico pedia 260 linhas para o intervalo "1Y" — ou seja, o botão
+    1Y mostrava calado seis meses. O ano serve os dois: corrige o intervalo e dá as ~250
+    sessões de que a contagem de raridade precisa para dizer "dos últimos 249 dias".
+    """
     from investigator.market_data.prices import get_price_history
-    return get_price_history(ticker)
+    return get_price_history(ticker, period="1y")
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def _rarity(ticker: str):
+    """Quantos dias do último ano se moveram pelo menos tanto como hoje.
+
+    A tradução do z-score para linguagem comum, sem assumir distribuição nenhuma. Ver
+    `investigator/anomaly_detector/frequency.py` para o porquê de não ser uma probabilidade.
+    """
+    try:
+        from investigator.anomaly_detector.frequency import empirical_exceedance
+        from investigator.market_data.prices import log_returns
+
+        return empirical_exceedance(log_returns(_daily(ticker)["Close"]))
+    except Exception:  # noqa: BLE001
+        return None
 
 
 @st.cache_data(ttl=90, show_spinner=False)
@@ -668,24 +690,75 @@ def _alert_feed(ticker: str) -> None:
 
 # ══ Página ═══════════════════════════════════════════════════════════════════════════
 
+def _grid_view(linhas: list[dict]) -> None:
+    """A grelha: as dez empresas ao mesmo nível, nenhuma privilegiada ao abrir (V1).
+
+    A ordenação é por **raridade**, não por |z|. Parece a mesma coisa e não é: o cartão
+    afirma "6 dos últimos 249 dias", portanto a ordem tem de ser essa, senão a página
+    contradiz-se — o primeiro cartão diria um número maior do que o segundo enquanto
+    estivesse mais abaixo.
+    """
+    from app.verdict import card_html, gloss_z, sparkline_svg
+
+    aberto, _ = _market_state()
+
+    def chave(r: dict) -> tuple:
+        exc = _rarity(r["ticker"])
+        # Sem contagem, cai para |z| — é melhor do que uma ordem arbitrária.
+        return (not r["flagged"], exc.count if exc else 10_000, -abs(r["z"]))
+
+    cartoes = []
+    for r in sorted(linhas, key=chave):
+        t = r["ticker"]
+        icone, cor = T.direction(r["move"])
+        exc = _rarity(t)
+        decomp = _decomposition(t) if r["flagged"] else None
+
+        chips = []
+        if r["flagged"]:
+            chips.append(gloss_z(r["z"]))
+            if r["vol_ratio"]:
+                chips.append(f"{r['vol_ratio']:.1f}x usual volume")
+            if any(getattr(e, "ticker", None) == t for e in _alerts()):
+                chips.append(f"{T.ICON_ALERT} alert sent")
+
+        cartoes.append(card_html(
+            ticker=t, name=NAMES.get(t, t), move=r["move"], icone=icone, cor=cor,
+            frase=_verdict_de(NAMES.get(t, t), exc, decomp, r["flagged"], aberto),
+            flagged=r["flagged"], chips=chips, logo=_logo_html(t, 18),
+            spark=sparkline_svg(_daily(t)["Close"].tail(30), cor) if r["flagged"] else "",
+        ))
+
+    st.markdown(f'<div class="grid">{"".join(cartoes)}</div>', unsafe_allow_html=True)
+
+
+def _verdict_de(nome: str, exc, decomp, flagged: bool, aberto: bool) -> str:
+    from app.verdict import verdict
+    return verdict(nome, exc, decomp, flagged, aberto)
+
+
 def main() -> None:
-    st.markdown(T.css(), unsafe_allow_html=True)
+    st.markdown(T.css() + T.card_css(), unsafe_allow_html=True)
 
     linhas = [s for s in (_snapshot(t) for t in _watchlist()) if s]
     if not linhas:
         st.markdown('<div class="panel">No market data available right now.</div>',
                     unsafe_allow_html=True)
         return
-    linhas.sort(key=lambda r: (not r["flagged"], -abs(r["z"])))
 
-    st.session_state.setdefault("sel", linhas[0]["ticker"])
     _header(linhas, len(_alerts()))
 
-    esquerda, direita = st.columns([1, 2.1], gap="medium")
-    with esquerda:
-        _watchlist_rows(linhas)
-    with direita:
-        _detail(st.session_state.sel)
+    # O estado da página vive no URL, não em `session_state`: `?t=NVDA` é partilhável, o
+    # botão "voltar" do browser funciona, e um cartão pode ser uma âncora em vez de um
+    # botão com um bloco desenhado por baixo (que foi o que na v2 duplicou a altura).
+    escolhido = st.query_params.get("t")
+    validos = {r["ticker"] for r in linhas}
+    if escolhido in validos:
+        _detail(escolhido)
+        st.markdown('<a href="?" target="_self" style="font-size:11.5px">← All companies</a>',
+                    unsafe_allow_html=True)
+    else:
+        _grid_view(linhas)
 
     st.markdown(
         f'<div style="margin-top:1.6rem;padding-top:0.7rem;border-top:1px solid {T.LINE};'

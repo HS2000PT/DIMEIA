@@ -81,7 +81,16 @@ def verdict(
     quem só quer permissão para não fazer nada.
     """
     if not flagged:
-        base = f"Quiet — an ordinary day for {name}."
+        # Um dia calmo tem de **mostrar** que é calmo, não afirmá-lo. Um utilizador que vê
+        # +3,23% ao lado da palavra "Quiet" não tem razão nenhuma para acreditar; o mesmo
+        # utilizador a ver "203 dos últimos 249 dias moveram-se tanto ou mais" acredita
+        # sem precisar de confiar em nós. É a diferença entre um rótulo e uma prova, e
+        # custa a mesma linha de texto.
+        if exc is not None and exc.count > 25:
+            base = (f"Quiet — {exc.count} of the last {exc.n} trading days "
+                    f"moved as much or more.")
+        else:
+            base = f"Quiet — an ordinary day for {name}."
         return f"{base} So far today." if market_open else base
 
     partes = [rarity_sentence(exc, name) or f"{name} stood out today."]
