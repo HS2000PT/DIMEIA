@@ -30,6 +30,8 @@
 | **D2** filtros + paginação | ✅ | `app/tables.py`, puro, 30 testes |
 | **E** lentidão da navegação | ✅ **premissa não se confirma** | ver §Medições |
 | **watchlist 12** | ⚠️ **código feito, dados por fazer** | XOM/JNJ sem logótipo e sem notícias |
+| **passo 6** precedentes | ✅ **com emenda V6′** | lista no detalhe; contagem no cartão custava 7,5 s |
+| **passo 7** página do método | ✅ | `?view=method`; fecha o buraco que o B abriu |
 
 ### Medições (Playwright, browser real, não logs)
 
@@ -67,8 +69,10 @@ diferença é ruído ao pé do resto. O ganho real está na primeira troca de in
    `python scripts/fetch_logos.py` (`POLYGON_API_KEY`) e
    `python scripts/backfill_history.py --months 12` (`FINNHUB_API_KEY`).
    Medido hoje: XOM e JNJ têm **0** registos de notícia; os outros dez têm 2.424–5.632.
-2. **v3 passo 6** — precedentes renderizados (abaixo, "Still outstanding").
-3. **v3 passo 7** — página do método (abaixo).
+2. **Promoção** — uma linha no `Procfile`. Depois dela abre a dívida de sincronizar a tese
+   EN/PT + slides + guia e recapturar a Fig 4.5 (ver "Still outstanding"). A tese está
+   consistente **hoje** porque a v1 é o que está no ar; a dívida é criada pela promoção,
+   não pela reconstrução.
 
 ## Context
 
@@ -211,10 +215,12 @@ Keep anchors; make the reload cheap:
 
 ## Still outstanding from earlier (do not lose these)
 
-- **v3 step 6:** precedents rendered — question 3 of the thesis appears **nowhere** in
-  either app today, though `live_kb.merged_precedents` exists and works.
-- **v3 step 7:** the method page (`?view=method`): live health parsed at runtime via
-  `investigator/evaluation/monitoring.py`, the frozen tables, the latency badge.
+- ~~**v3 step 6:** precedents rendered~~ — **FEITO (2026-08-03)**, com a emenda **V6′**
+  (contagem no cartão fora, por custar 7,5 s na página de entrada). A lista está no
+  detalhe, em `_precedent_panel`, com o desfecho medido e a moldura tema ≠ direcção.
+- ~~**v3 step 7:** the method page~~ — **FEITO (2026-08-03)**, `?view=method`. Traz também
+  a casa que faltava ao limiar e à janela depois do passo B, e `app/method.py` amarra cada
+  número congelado ao `.md` que o produziu, com testes que partem se um valor mudar.
 - **After promotion only:** coordinated thesis EN/PT + slides + guide sync, recapture
   Fig 4.5, then the parity checks. The thesis is *currently consistent* because v1 is what
   is deployed — this debt is created by promotion, not by the rebuild.

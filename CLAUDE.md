@@ -7,13 +7,15 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 47 (**backlog da v3 executado: A, B, C, D, E + watchlist a 12**)
+- **Sessão nº:** 47 (**backlog da v3 executado por inteiro, mais os passos 6 e 7**)
 - **Última atualização:** 2026-08-03
 - **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI:** [`docs/design/v3_backlog.md`](docs/design/v3_backlog.md)
-  — agora com **tabela de estado item a item + as medições**. O que sobra: **v3 passo 6**
-  (precedentes renderizados), **v3 passo 7** (página do método), e **dois comandos que
-  precisam de chaves** (ver PENDENTE em baixo). A v1 continua implantada e **intocada**;
-  promoção continua a ser uma linha no `Procfile`, e continua por fazer.
+  — agora com **tabela de estado item a item + as medições**. **A v3 está funcionalmente
+  completa**: A, B, C, D, E, watchlist a 12, passo 6 (precedentes) e passo 7 (página do
+  método). O que sobra é **(1) dois comandos que precisam de chaves** (ver PENDENTE em
+  baixo) e **(2) a decisão de promover** — uma linha no `Procfile`, que abre a dívida de
+  sincronizar tese/slides/guia e recapturar a Fig 4.5. A v1 continua implantada e
+  **intocada**.
 - **🧩 SESSÃO 47 (2026-08-03 — executar o backlog da v3; 4 commits):**
   **(A) LEGIBILIDADE.** A pílula `UNUSUAL` estava dentro da linha do topo, a disputá-la com
   logótipo, nome, ticker e o número grande — e o nome, único item sem largura própria, era
@@ -67,7 +69,35 @@
   `test_watchlist_completa_tem_aliases` tinha os dez nomes escritos à mão e **continuaria a
   passar** depois da watchlist crescer, cobrindo dez e ignorando os dois novos sem nunca
   falhar; passa a ler o `config/alerts.yaml`.
-  **Gates: 567 testes (era 537), ruff limpo, congelados byte-iguais, `app/streamlit_app.py`
+  **(PASSO 6) OS PRECEDENTES ENTRAM NO PRODUTO — a terceira pergunta da tese.** O motor
+  existe e está avaliado (RQ2), mas não estava em nenhuma das duas apps: a v1 só o expunha
+  numa demonstração, a v3 não o tinha. A base de casos é a razão de ser do trabalho e era
+  **invisível**. `_precedent_panel` consulta a partir da última manchete captada e mostra o
+  desfecho **medido** a +5 dias, a similaridade real e de que empresa vem cada caso. Ao
+  vivo, "AMD Has an Agentic AI Advantage Over Nvidia" devolve **3 casos AMD e 1 NVDA, todos
+  em baixa** — o CS3 da tese a acontecer no produto. A moldura tema ≠ direcção
+  (`verdict.precedent_framing`) vem **sempre**, varrida pelo mesmo teste de vocabulário.
+  **⚠️ EMENDA V6′, COM O NÚMERO AO LADO:** o V6 pedia **contagem no cartão**. Não fica.
+  Escrever esse número obriga a carregar o modelo semântico + a base de casos + a KB viva
+  pela rede **na página de entrada**, e mediu-se: a grelha a frio passa de **6,2 s para
+  13,7 s** — sete segundos e meio por um chip, contra o P1 que pede menos de cinco no total.
+  **E enganei-me a procurar a causa:** componente a componente a coisa custava ~3,2 s, e
+  dentro do Streamlit custa mais do dobro; andei pelo pickle do `cache_data` (0,19 s, não
+  era) e pelo parse do backfill (0,24 s, não era) até fazer a experiência que decide —
+  tirar só o chip e medir. **A soma das partes medidas isoladamente não é a medição do
+  todo.** Ficou na mesma a correcção que a caça produziu: `_retrieval_kbs` passa a
+  `cache_resource` (o `cache_data` guardava uma cópia serializada de 19,4 MB).
+  **(PASSO 7) PÁGINA DO MÉTODO** (`?view=method`, critério V7) — e **fecha o buraco que o B
+  abriu**: o limiar e a janela tinham saído do balão de ajuda e ficado sem casa, e um número
+  sem casa deixa de ser rastreável. Traz a prova de vida ao vivo (0,667 vs 0,455), a
+  latência **só porque foi medida** (208 min, n=44), as três tabelas congeladas, e o
+  **resultado negativo da RQ4 a cor e não em rodapé**. `app/method.py` amarra **cada** número
+  à cadeia exacta com que aparece no `.md` que o produziu, e `tests/test_method.py` abre os
+  ficheiros e exige-a — se uma avaliação for recorrida, a suite parte em vez de o produto
+  continuar a afirmar um número que os documentos já não sustentam. Mais quatro testes que
+  fixam as **conclusões** e não só os valores (a volatilidade tem de continuar a ganhar ao
+  texto; o z-score tem de disparar com amplitude ≥10× menor do que o limiar fixo).
+  **Gates: 594 testes (era 537), ruff limpo, congelados byte-iguais, `app/streamlit_app.py`
   e `Procfile` intocados. Tudo verificado por captura Playwright a 1920×1080 E 1366×768.**
   **⚠️ PENDENTE QUE NÃO É CÓDIGO — SÃO CHAVES (não há `.env` nesta máquina):** XOM e JNJ têm
   **0** registos de notícia (os outros dez têm 2.424–5.632) e **sem ficheiro de logótipo**.
