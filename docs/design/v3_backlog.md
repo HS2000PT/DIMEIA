@@ -1,8 +1,11 @@
 # v3_backlog.md — o que falta no painel, e porque
 
-> **Estatuto: EXECUTADO (A, B, C, D, E + watchlist), 2026-08-03.** Quatro commits sobre
-> `663919f`. Restam os dois itens de fundo (passos 6 e 7 da v3) e **duas correcções de
-> dados que dependem de chaves de API**, listadas em §Estado abaixo.
+> **Estatuto: COMPLETO do lado do código e dos dados, 2026-08-03.** A, B, C, D, E, a
+> watchlist de 12, os passos 6 e 7, e o buraco de dados da XOM/JNJ (`54b9aae`) — tudo feito.
+>
+> **Falta exactamente uma coisa no produto: a promoção**, que é uma linha no `Procfile` e é
+> uma decisão do aluno, não uma tarefa. Tudo o resto que está por fazer neste repositório é
+> ou consequência dessa decisão (sincronizar a tese) ou humano (rodar credenciais).
 >
 > `app/dashboard.py` continua a ser a v3 construída **ao lado**; o `Procfile` continua a
 > servir `app/streamlit_app.py` (v1), **intocada**. Promoção continua a ser uma linha, e
@@ -64,15 +67,23 @@ diferença é ruído ao pé do resto. O ganho real está na primeira troca de in
 
 ### O que falta, e de que depende
 
-1. **Dois comandos numa máquina com chaves** (não é código — é o `.env`, que não existe
-   nesta máquina). Sem eles, XOM e JNJ ficam meio-construídos ao lado dos outros dez:
-   `python scripts/fetch_logos.py` (`POLYGON_API_KEY`) e
-   `python scripts/backfill_history.py --months 12` (`FINNHUB_API_KEY`).
-   Medido hoje: XOM e JNJ têm **0** registos de notícia; os outros dez têm 2.424–5.632.
-2. **Promoção** — uma linha no `Procfile`. Depois dela abre a dívida de sincronizar a tese
-   EN/PT + slides + guia e recapturar a Fig 4.5 (ver "Still outstanding"). A tese está
-   consistente **hoje** porque a v1 é o que está no ar; a dívida é criada pela promoção,
-   não pela reconstrução.
+1. ~~**Dois comandos numa máquina com chaves.**~~ ✅ **FEITO a 2026-08-03** (`54b9aae`),
+   na máquina que tem o `.env`. XOM e JNJ passaram de **0** registos para **2.634**
+   (1.402 + 1.230), na mesma janela dos outros dez; total 35.583 → **38.214**. Logótipo da
+   JNJ obtido; a **XOM fica com as iniciais, e isso é correcto** — verifiquei em vez de
+   aceitar a mensagem do script, porque da última vez ela estava errada (a Apple tinha
+   logótipo em WebP e o código não reconhecia o formato). Desta vez o Polygon não tem mesmo
+   campo `branding` para a XOM.
+
+   ⚠️ **Armadilha encontrada, para quem repetir isto:** `backfill_history.py` abre o
+   destino em `"w"`. Corrê-lo com `--tickers XOM JNJ` teria **apagado os 35.583 registos
+   existentes**. O caminho seguro — e o que foi usado — é escrever para um ficheiro à
+   parte, verificar, e só depois fundir com deduplicação por `(ticker, data, manchete)`.
+
+2. **Promoção** — uma linha no `Procfile`, e é a **única coisa que falta no produto**.
+   Depois dela abre a dívida de sincronizar a tese EN/PT + slides + guia e recapturar a
+   Fig 4.5 (ver "Still outstanding"). A tese está consistente **hoje** porque a v1 é o que
+   está no ar; a dívida é criada pela promoção, não pela reconstrução.
 
 ## Context
 
