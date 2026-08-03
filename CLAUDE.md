@@ -7,8 +7,67 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 45 (**painel refeito de raiz; um ano de história reconstruído**)
+- **Sessão nº:** 46 (**v3 do painel: veredicto antes dos números; backlog por executar**)
 - **Última atualização:** 2026-08-03
+- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI:** [`docs/design/v3_backlog.md`](docs/design/v3_backlog.md)
+  — plano **aprovado e por executar**, escrito porque o aluno mudou de máquina. Árvore
+  limpa, tudo pushed. Duas decisões já tomadas lá dentro: watchlist passa a **12 com dois
+  nomes NÃO-tecnológicos** (nove dos dez actuais partilham o mesmo ETF de setor, portanto a
+  pergunta "foi o setor?" dá quase sempre a mesma resposta — é melhoria de **tese**, não de
+  layout), e a navegação **mantém URLs reais** (`?t=NVDA` partilhável), resolvendo a
+  lentidão por outro caminho.
+- **🧭 SESSÃO 46 (2026-08-03 — v3 do painel; o aluno tinha rejeitado a v2: "usability is
+  messy and confusing and dirty… re-do everything"):**
+  **(A) CRITÉRIOS ESCRITOS ANTES DO CÓDIGO** (`dashboard_acceptance.md` §6). Perguntei-lhe
+  o que o perdia e ele escolheu **as quatro opções**, esta primeira: **"não me diz o que
+  pensar"**. As quatro juntas não são sobre cores — dizem que a v2 **abre com números
+  quando devia abrir com um veredicto**. É uma inversão, não uma repintura. Público
+  decidido: **investidor primeiro** (a avaliação sai para **uma** página ligada); forma:
+  **grelha de cartões**.
+  **(B) RARIDADE QUE SE LÊ SEM ESTATÍSTICA** (`investigator/anomaly_detector/frequency.py`).
+  A tradução óbvia do z-score seria uma probabilidade — e seria **desonesta**: exige
+  normalidade, e os retornos têm caudas pesadas, logo estaria errada precisamente nos dias
+  que interessam. Conta-se: *"6 dos últimos 249 dias moveram-se pelo menos isto"*. Hoje fica
+  **fora** da contagem (senão "o maior movimento do ano" era indizível), e o `n` vem dos
+  dados, nunca da constante. Medido ao vivo: `JPM +0,27% z+0,00 → 203 de 249` (o z não diz
+  nada a um leigo; a contagem diz tudo) e `AAPL −7,64% z−4,60 → 0 de 249`.
+  **(C) AS FRASES SAEM DO STREAMLIT** (`app/verdict.py`, 29 testes). Uma lei que só se
+  verifica abrindo um browser é uma intenção — e este projecto perdeu **seis** redesenhos a
+  verificar a olho. A proibição de prever (H2) passa a varrimento sobre **112 combinações**
+  contra 16 palavras. O veredicto **não contém um único número técnico**; a linha do motor
+  **cala-se quando o motor é a própria empresa** (repetir o que se acabou de ler não
+  acrescenta nada — só fala quando *surpreende*).
+  **(D) DIAS CALMOS DEIXAM DE PEDIR CONFIANÇA.** Dizia "Quiet — an ordinary day for Meta" ao
+  lado de +3,23%, e ninguém tem razão para acreditar nisso. Passa a *"203 of the last 249
+  trading days moved as much or more"*. Mesma linha, e **sete dos dez cartões são calmos**.
+  **⚠️ QUATRO DEFEITOS MEUS, e um critério meu:**
+  (1) **`ModuleNotFoundError: No module named 'app'`** na primeira execução normal — a causa
+  não foi o código, foi a **verificação**: corri sempre `python -m streamlit`, e o `-m`
+  acrescenta o directório actual ao `sys.path`. **Testei a coisa errada e dei por
+  verificado.** Dois testes de regressão que **verifiquei que FALHAM sem a correcção**;
+  a procurar a mesma classe encontrei um segundo (`config/alerts.yaml` por caminho
+  **relativo** — falha aberto, logo a watchlist configurada seria ignorada **em silêncio**).
+  (2) **Texto escuro sobre fundo escuro: a causa era o TEMA, não os componentes.**
+  `.streamlit/config.toml` declarava um tema **claro** enquanto a v3 pinta escuro, e esse
+  ficheiro governa os componentes do próprio Streamlit. Remendei-o **duas vezes** componente
+  a componente antes de encontrar a origem. Alinhado valor a valor com `ui_tokens`.
+  (3) **Marcadores em 1D/5D** estavam atrás de um `if not intra`: um evento visível em 1M
+  desaparecia em 1D, no mesmo dia com os mesmos dados.
+  (4) **`_daily` buscava 6 meses** enquanto o gráfico pedia 260 linhas para "1Y" — o botão
+  1Y mostrava calado **seis meses**.
+  (5) **O critério V2 estava errado e foi corrigido em voz alta** (§6.3.1): exigia o
+  veredicto antes de *qualquer* número, o que obrigaria a esconder o `−7,64%`. A
+  percentagem é **o facto que a frase explica**, não jargão. Um critério corrigido em
+  silêncio é indistinguível de um critério contornado.
+  **Gates: 537 testes, ruff limpo, congelados byte-iguais. A v1 (`app/streamlit_app.py`)
+  continua implantada e INTOCADA — promoção é uma linha no `Procfile`, e não foi feita.**
+  **DECIDIDO (com razões em `v3_backlog.md`):** repositório **fica público** até à entrega —
+  privado **partiria a app em silêncio** (os dois apps lêem `raw.githubusercontent.com` sem
+  autenticação, e esses caminhos falham abertos), limita os minutos do Actions, e **não
+  revoga** as chaves expostas, que continuam a ter de ser rodadas. Alojamento: **Heroku**, e
+  a razão é específica deste projecto — a sessão 31 registou que nos **IPs partilhados do
+  Streamlit Cloud o yfinance é limitado por ritmo**, e essa é a fonte de dados primária de
+  cada render.
 - **🎨 SESSÃO 45 (2026-08-03 — o aluno rejeitou a app por inteiro: "a paleta de cores, tudo uma
   confusão… falta história… mais ícones, uniformizados… menos texto, mais visual… esquece a tua
   consciência e constrói de zero"). Reconstruído, não remendado. 4 commits, todos pushed.**
