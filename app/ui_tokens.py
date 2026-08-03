@@ -83,32 +83,6 @@ def direction(value: float | None, floor: float = 0.0005) -> tuple[str, str]:
     return ICON_FLAT, FLAT
 
 
-def row_css(ticker: str, colour: str, logo_uri: str | None, flagged: bool,
-            selected: bool) -> str:
-    """Regra CSS para uma linha da lista, endereçada pela classe `st-key-*`.
-
-    A cor e a atenção ficam em **eixos separados**: a cor do texto é a direcção do
-    movimento, e a barra à esquerda é o estado (sinalizado / seleccionado). Misturar os
-    dois num só canal foi o que produziu, numa versão anterior, uma seta verde por cima de
-    um número negativo.
-    """
-    # `!important` em vez de tentar adivinhar a estrutura do DOM. A regra geral dos botões
-    # (`div[data-testid="stButton"] > button`) é mais específica do que uma classe simples
-    # e ganharia a esta em silêncio — foi assim que os logótipos desapareceram uma vez.
-    botao = []
-    if logo_uri:
-        botao.append(f'background:transparent url("{logo_uri}") no-repeat '
-                     f"7px center/17px 17px !important")
-    if selected:
-        botao.append(f"background-color:{PANEL_2} !important")
-        botao.append(f"border-left-color:{colour} !important")
-    elif flagged:
-        botao.append(f"border-left-color:{FLAG} !important")
-    alvo = f".st-key-btn_{ticker} button"
-    return (f"<style>{alvo}{{{';'.join(botao)}}}"
-            f"{alvo},{alvo} p{{color:{colour} !important}}</style>")
-
-
 def css() -> str:
     """A folha de estilo. Devolvida como texto para a app a injectar uma vez."""
     return f"""
@@ -159,33 +133,53 @@ def css() -> str:
     border-radius: 8px; padding: 0.85rem 1rem;
   }}
 
-  /* ── Linha da watchlist ─────────────────────────────────────────────────────────
-     Cada linha é UM botão e mais nada. A tentativa anterior desenhava a linha em HTML e
-     punha um botão por baixo para a tornar clicável: davam duas linhas por empresa, com o
-     nome centrado, e a lista ficava com o dobro da altura e ilegível. Aqui o logótipo
-     entra como imagem de fundo do próprio botão e os dados são o rótulo, em monoespaçado
-     com `white-space: pre` — uma linha, alinhada em colunas, clicável em toda a largura. */
-  div[data-testid="stButton"] {{ margin-bottom: -0.42rem; }}
-  /* Nenhuma propriedade `background-*` aqui além da cor. Ter cá `background-repeat`,
-     `-position` e `-size` parecia inofensivo, mas o browser volta a juntá-las na
-     abreviatura `background`, e a abreviatura repõe `background-image: initial` — o que
-     apagava, em silêncio, o logótipo que a regra por linha tinha acabado de definir.
-     Todas as propriedades do logótipo vivem juntas em `row_css`. */
+  /* ── Botões ─────────────────────────────────────────────────────────────────────
+     Hoje os únicos botões da app são os da paginação. A regra que estava aqui vinha da
+     lista da v2, onde cada empresa era um botão com o logótipo desenhado como imagem de
+     fundo: trazia `padding-left: 30px` para abrir espaço ao ícone e `margin-bottom`
+     negativo para colar as linhas umas às outras. Essa lista deixou de existir quando a
+     grelha de cartões a substituiu, mas a regra ficou — e é geral, portanto teria
+     deformado em silêncio o primeiro botão verdadeiro que aparecesse na página. */
   div[data-testid="stButton"] > button {{
-    background-color: transparent;
-    border: 1px solid transparent; border-left: 2px solid transparent;
-    border-radius: 6px; padding: 0.3rem 0.5rem 0.3rem 30px; width: 100%;
-    min-height: 0; line-height: 1.2;
+    background-color: {PANEL}; color: {FG_DIM};
+    border: 1px solid {LINE}; border-radius: 6px;
+    padding: 0.25rem 0.7rem; min-height: 0; line-height: 1.35;
   }}
-  div[data-testid="stButton"] > button:hover {{ background-color: {PANEL_2}; }}
-  div[data-testid="stButton"] > button div[data-testid="stMarkdownContainer"] {{
-    text-align: left; width: 100%;
+  div[data-testid="stButton"] > button:hover:not(:disabled) {{
+    background-color: {PANEL_2}; border-color: {FG_MUTE}; color: {FG};
   }}
+  div[data-testid="stButton"] > button:disabled {{ opacity: 0.38; }}
   div[data-testid="stButton"] > button p {{
-    text-align: left; margin: 0;
+    margin: 0; font-size: 12px;
     font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
-    font-variant-numeric: tabular-nums; font-size: 12px; white-space: pre;
   }}
+
+  /* ── Tabelas de eventos ─────────────────────────────────────────────────────────
+     Construídas à mão e não com `st.dataframe`. A sonda mostrou que o `st.dataframe`
+     **não** briga com o tema escuro — esse risco era hipotético —, mas também não desenha
+     a barra divergente do impacto, e a barra é o que deixa ver que a maioria dos desfechos
+     foi negativa sem ler um único número. Ainda por cima, `format="%.2f%%"` mostrava
+     −0,021 como "−0,02%": errado por um factor de cem, e errado em silêncio. */
+  .trow {{
+    display: flex; gap: 0.7rem; align-items: center;
+    padding: 0.34rem 0; border-top: 1px solid {LINE};
+  }}
+  .thead {{ border-top: 0; padding: 0 0 0.25rem; }}
+  .tcell {{
+    flex: 1; min-width: 0; font-size: 13px; color: {FG_DIM};
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }}
+  .tfoot {{
+    font-size: 11.5px; color: {FG_MUTE}; padding-top: 0.45rem;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+  }}
+
+  /* Campos de filtro: compactos, e escuros como tudo o resto. */
+  div[data-testid="stTextInput"] input, div[data-testid="stSelectbox"] div[role="combobox"] {{
+    background: {PANEL} !important; border-color: {LINE} !important;
+    color: {FG} !important; font-size: 12.5px;
+  }}
+  div[data-testid="stTextInput"] input::placeholder {{ color: {FG_MUTE} !important; }}
 
   /* ── Selector de intervalo ──────────────────────────────────────────────────────
      Um rádio do Streamlit tem círculos grandes que num painel denso parecem um

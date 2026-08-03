@@ -60,8 +60,19 @@ WINDOW = 20
 THRESHOLD = 1.5
 HISTORY_BRANCH = "alerts-history"
 
-# Intervalos. O primeiro é o defeito, e o defeito é HOJE: a pergunta que traz alguém aqui é
-# "o que está a acontecer agora", não "como foi o mês".
+# Intervalos, na ordem convencional. O DEFEITO É `1M`, e isso mudou.
+#
+# Era `1D`, com a justificação de que a pergunta que traz alguém aqui é "o que está a
+# acontecer agora". Mas essa pergunta é respondida no CARTÃO — o número grande, o veredicto
+# e a raridade estão todos na grelha, sem clicar. Quem clica está a fazer a pergunta
+# seguinte, que é a da tese: *já aconteceu antes, e o que se seguiu?*
+#
+# E essa não cabe num dia. Com `1D` o gráfico não tem nem um marcador (as três camadas de
+# história são de dias passados) e a tabela de eventos abre vazia, porque o impacto de uma
+# notícia só é observável +5 dias depois. Ou seja: o ecrã inteiro de detalhe abria sem a
+# única coisa que ele existe para mostrar. Foi a captura que deu por isso — nos testes
+# passava, porque um painel vazio é um painel válido.
+RANGE_DEFAULT = "1M"
 RANGES: dict[str, tuple[str, str, bool]] = {
     "1D": ("1d", "5m", True),
     "5D": ("5d", "30m", True),
@@ -401,41 +412,16 @@ def _header(rows: list[dict], n_alerts: int) -> None:
     )
 
 
-def _watchlist_rows(rows: list[dict]) -> None:
-    """A lista: um botão por empresa, e nada mais no DOM.
+def _chart(ticker: str, rotulo: str) -> tuple[str, str] | None:
+    """Desenha o gráfico e devolve a **janela de datas que realmente desenhou** (ISO).
 
-    Todo o conteúdo vai no rótulo, em monoespaçado com `white-space: pre`, para as colunas
-    alinharem sem tabela. O logótipo entra por CSS como imagem de fundo do botão — é o que
-    permite ter ícone **e** clique numa só linha.
+    Devolvê-la é o que permite à tabela de eventos mostrar exactamente o que o gráfico
+    mostra (D1). A alternativa — a tabela voltar a deduzir a janela a partir do rótulo do
+    intervalo — seria uma segunda consulta paralela aos mesmos dados, e duas consultas
+    paralelas divergem: basta o gráfico cair para barras diárias porque a fonte não deu
+    intradiárias, e a tabela ficaria a falar de um período que não está desenhado. Aqui
+    não pode acontecer, porque quem sabe o que foi desenhado é quem desenha.
     """
-    st.markdown('<div class="label" style="margin:0.6rem 0 0.35rem">WATCHLIST</div>',
-                unsafe_allow_html=True)
-    try:
-        from investigator.branding.logos import cached_logo
-    except Exception:  # noqa: BLE001
-        def cached_logo(_):  # type: ignore[misc]
-            return None
-
-    for r in rows:
-        t = r["ticker"]
-        icone, cor = T.direction(r["move"])
-        sel = st.session_state.get("sel") == t
-
-        marcas = (T.ICON_ALERT if r["flagged"] else " ")
-        if r["vol_ratio"]:
-            marcas += f" {r['vol_ratio']:.1f}x vol"
-
-        rotulo = (f"{t:<6}{icone} {r['move'] * 100:+6.2f}%   "
-                  f"z{r['z']:+5.2f}   {marcas}")
-
-        st.markdown(T.row_css(t, cor, cached_logo(t), r["flagged"], sel),
-                    unsafe_allow_html=True)
-        if st.button(rotulo, key=f"btn_{t}", use_container_width=True):
-            st.session_state.sel = t
-            st.rerun()
-
-
-def _chart(ticker: str, rotulo: str) -> None:
     periodo, intervalo, intra = RANGES[rotulo]
 
     frame = _intraday(ticker, periodo, intervalo) if intra else None
@@ -449,14 +435,20 @@ def _chart(ticker: str, rotulo: str) -> None:
     if frame is None or frame.empty:
         st.markdown(f'<div class="panel" style="color:{T.FG_MUTE}">No price data.</div>',
                     unsafe_allow_html=True)
-        return
+        return None
 
     close = frame["Close"]
+    # A janela desenhada, tal como saiu — depois de todos os recuos. Se a fonte não deu
+    # barras intradiárias e isto caiu para fechos diários, é o período dos fechos diários
+    # que a tabela tem de usar, não o que o botão prometia.
+    _idx = pd.to_datetime(close.index)
+    janela = (_idx.min().strftime("%Y-%m-%d"), _idx.max().strftime("%Y-%m-%d"))
+
     try:
         import plotly.graph_objects as go
     except ImportError:
         st.line_chart(close)
-        return
+        return janela
 
     # Num gráfico intradiário a referência não é a primeira barra, é o FECHO ANTERIOR.
     # Sem ela, um dia que abriu com um salto de +14% desenha-se como uma subida de +2% e o
@@ -522,6 +514,7 @@ def _chart(ticker: str, rotulo: str) -> None:
                     key=f"chart_{ticker}_{rotulo}")
     if aviso:
         st.caption(aviso)
+    return janela
 
 
 def _overlay_signals(fig, ticker: str, close: pd.Series, intraday: bool = False) -> None:
@@ -549,6 +542,24 @@ def _overlay_signals(fig, ticker: str, close: pd.Series, intraday: bool = False)
         chave = d.strftime("%Y-%m-%d")
         if chave not in por_dia:  # primeira barra do dia vence
             por_dia[chave] = (d, float(v))
+
+    # Uma notícia de sábado não tem barra onde pousar. Antes, essas marcas simplesmente
+    # não se desenhavam — e o resultado era o gráfico a mostrar 13 marcas enquanto a
+    # tabela listava 18 dias, a mesma janela a dar dois números diferentes.
+    #
+    # A âncora é a **primeira sessão em ou depois** da data da notícia, que não é uma
+    # invenção para tapar o buraco: é exactamente a regra com que o sistema alinha eventos
+    # para medir o impacto (`live_kb.mature_entry`, e a KB histórica antes dela). Ou seja,
+    # a marca aparece no mesmo dia contra o qual os +1d/+5d daquela linha foram medidos. O
+    # hover continua a dizer a data real da manchete.
+    from app.tables import anchor
+
+    dias_ordenados = sorted(por_dia)
+
+    def _ancora(dia: str) -> tuple | None:
+        """A sessão onde esta data se desenha, ou `None` se cai fora do que está no ecrã."""
+        sessao = anchor(dias_ordenados, dia)
+        return por_dia[sessao] if sessao else None
 
     enviados = {getattr(e, "date", None) for e in _alerts()
                 if getattr(e, "ticker", None) == ticker}
@@ -587,9 +598,10 @@ def _overlay_signals(fig, ticker: str, close: pd.Series, intraday: bool = False)
 
     nx, ny, nt = [], [], []
     for n in _news_days(ticker):
-        if n["date"] not in por_dia:
+        alvo = _ancora(n["date"])
+        if alvo is None:
             continue
-        d, y = por_dia[n["date"]]
+        d, y = alvo
         impacto = (f"<br>+1d {_pct(n['d1'])} · +5d {_pct(n['d5'])}"
                    if n["d1"] is not None else "")
         mais = f"<br>+{n['n'] - 1} more headline(s) that day" if n["n"] > 1 else ""
@@ -664,9 +676,12 @@ def _detail(ticker: str) -> None:
           <span style="flex:1"></span>{cabeca}
         </div>""", unsafe_allow_html=True)
 
-    rotulo = st.radio("Range", list(RANGES), index=0, horizontal=True,
-                      key=f"rng_{ticker}", label_visibility="collapsed")
-    _chart(ticker, rotulo)
+    rotulo = st.radio("Range", list(RANGES), index=list(RANGES).index(RANGE_DEFAULT),
+                      horizontal=True, key=f"rng_{ticker}", label_visibility="collapsed")
+    # A janela sai do gráfico e desce para as duas tabelas. É o botão de intervalo que
+    # serve de filtro de data — ter um segundo controlo de datas por baixo seria a mesma
+    # decisão pedida duas vezes, que foi exactamente a queixa "coisas a mais de uma vez".
+    janela = _chart(ticker, rotulo)
 
     st.markdown(
         f'<div class="num" style="display:flex;gap:1.1rem;font-size:11.5px;'
@@ -679,9 +694,9 @@ def _detail(ticker: str) -> None:
     st.markdown('<hr class="rule">', unsafe_allow_html=True)
     _decomp_bar(ticker)
     st.markdown('<hr class="rule">', unsafe_allow_html=True)
-    _news_panel(ticker)
+    _news_panel(ticker, janela)
     st.markdown('<hr class="rule">', unsafe_allow_html=True)
-    _alert_feed(ticker)
+    _alert_feed(ticker, janela)
 
 
 def _impact_bar(valor: float | None, escala: float = 0.06) -> str:
@@ -705,69 +720,187 @@ def _impact_bar(valor: float | None, escala: float = 0.06) -> str:
             f'background:{cor};border-radius:2px"></div></div>')
 
 
-def _news_panel(ticker: str, limite: int = 6) -> None:
-    """As notícias captadas e **o que aconteceu a seguir**.
+PER_PAGE = 8
 
-    Isto é a pergunta central da tese — *já aconteceu antes, e o que se seguiu?* — e até
-    agora não estava no painel de todo. O sistema media +1/+3/+5 dias para cada manchete
-    captada e guardava tudo sem nunca o mostrar.
 
-    Nada aqui é previsão: são desfechos **observados** de notícias passadas. É por isso que
-    a coluna se chama "what followed" e não "expected".
+def _pager(chave: str, n_pages: int, pagina: int, total: int, unidade: str) -> None:
+    """Os controlos de página. Só aparecem quando há mais do que uma página.
+
+    Um paginador sobre uma lista de três linhas é ruído a dizer que não há nada para
+    fazer.
     """
-    todas = sorted(_news_by_ticker().get(ticker, []), key=lambda n: n["date"], reverse=True)
-    # Uma linha por DIA, não por manchete. O impacto é medido por (ticker, dia), portanto
-    # seis manchetes do mesmo dia desenham seis barras idênticas — repetição que ocupa o
-    # painel inteiro e não acrescenta nada. Uma linha por dia mostra a variedade real dos
-    # desfechos ao longo do tempo, que é a informação que interessa.
-    itens, dias_vistos = [], set()
-    for n in todas:
-        if n["date"] in dias_vistos:
-            continue
-        dias_vistos.add(n["date"])
-        itens.append(n)
+    if n_pages <= 1:
+        st.markdown(f'<div class="tfoot">{total} {unidade}</div>', unsafe_allow_html=True)
+        return
+    e, meio, d = st.columns([1, 6, 1])
+    with e:
+        if st.button("‹ Prev", key=f"prev_{chave}", disabled=pagina <= 1,
+                     use_container_width=True):
+            st.session_state[f"pg_{chave}"] = pagina - 1
+            st.rerun()
+    with meio:
+        st.markdown(f'<div class="tfoot" style="text-align:center">'
+                    f'Page {pagina} of {n_pages} &middot; {total} {unidade}</div>',
+                    unsafe_allow_html=True)
+    with d:
+        if st.button("Next ›", key=f"next_{chave}", disabled=pagina >= n_pages,
+                     use_container_width=True):
+            st.session_state[f"pg_{chave}"] = pagina + 1
+            st.rerun()
+
+
+def _page_state(chave: str, assinatura: tuple) -> int:
+    """A página actual, reposta a 1 sempre que os filtros mudam.
+
+    Sem esta reposição existe um estado que parece dados em falta: filtrar estando na
+    página 5 deixa a tabela vazia, com filtros que combinam e sem mensagem nenhuma. O
+    `paginate` também corrige a página, mas corrigir e **repor** são coisas diferentes —
+    quem acabou de escrever um filtro quer ver o princípio dos resultados, não o fim.
+    """
+    if st.session_state.get(f"sig_{chave}") != assinatura:
+        st.session_state[f"sig_{chave}"] = assinatura
+        st.session_state[f"pg_{chave}"] = 1
+    return int(st.session_state.get(f"pg_{chave}", 1))
+
+
+def _news_panel(ticker: str, janela: tuple[str, str] | None = None) -> None:
+    """As notícias captadas e **o que aconteceu a seguir**, dentro da janela do gráfico.
+
+    Isto é a pergunta central da tese — *já aconteceu antes, e o que se seguiu?* Nada aqui
+    é previsão: são desfechos **observados** de notícias passadas, e é por isso que a
+    coluna se chama "what followed" e não "expected".
+
+    **O que mudou (D1).** Mostrava as seis notícias mais recentes, sempre as mesmas,
+    independentemente do que estivesse no gráfico. Quem olhasse para seis meses de curva
+    com marcas espalhadas por ela e depois para a tabela via seis dias de Julho — duas
+    coisas a falar de períodos diferentes, uma por baixo da outra, sem nada a avisar. Agora
+    a janela vem do gráfico (`_chart` devolve-a) e a lista vem de `_news_days`, a mesma que
+    desenha as marcas. Cada marca no gráfico tem linha na tabela porque é literalmente a
+    mesma lista.
+    """
+    from app.tables import (
+        DIRECTIONS,
+        MAGNITUDES,
+        ORDERS,
+        filter_events,
+        paginate,
+        sort_events,
+        within,
+    )
+
+    todas = _news_days(ticker)
+    na_janela = within(todas, *(janela or (None, None)))
+
+    periodo = (f"{janela[0]} → {janela[1]}" if janela else "all captured history")
     st.markdown(
-        f'<div class="label">NEWS CAPTURED · {len(todas)} over {len(itens)} days · '
+        f'<div class="label">NEWS CAPTURED &middot; '
         f'<span style="text-transform:none;letter-spacing:0;color:{T.FG_MUTE}">'
-        f'what followed, measured — not a forecast</span></div>',
+        f'{periodo} &middot; what followed, measured — not a forecast</span></div>',
         unsafe_allow_html=True)
-    if not itens:
-        st.markdown(f'<span style="color:{T.FG_MUTE};font-size:12px">'
-                    f'No captured news for this company yet.</span>', unsafe_allow_html=True)
+
+    if not todas:
+        st.markdown(f'<span style="color:{T.FG_DIM};font-size:13px">'
+                    f'No captured news for this company yet.</span>',
+                    unsafe_allow_html=True)
         return
 
-    cabecalho = ('<div style="display:flex;gap:0.7rem;align-items:center;'
-                 'padding:0 0 0.3rem"><span class="label" style="width:70px">DATE</span>'
+    c1, c2, c3, c4 = st.columns([3, 1.1, 1.1, 1.5])
+    with c1:
+        q = st.text_input("Search headlines", key=f"q_{ticker}",
+                          placeholder="e.g. earnings, chips, lawsuit")
+    with c2:
+        direccao = st.selectbox("What followed", DIRECTIONS, key=f"dir_{ticker}")
+    with c3:
+        mag = st.selectbox("Minimum move", list(MAGNITUDES), key=f"mag_{ticker}")
+    with c4:
+        ordem = st.selectbox("Sort by", ORDERS, key=f"ord_{ticker}")
+
+    filtradas = sort_events(
+        filter_events(na_janela, query=q, direction=direccao, min_abs=MAGNITUDES[mag]),
+        ordem)
+
+    chave = f"news_{ticker}"
+    pagina = _page_state(chave, (q, direccao, mag, ordem, janela))
+    fatia, pagina, n_pages = paginate(filtradas, pagina, PER_PAGE)
+
+    if not filtradas:
+        # Três estados vazios diferentes, e nunca o mesmo texto para os três. "Não há
+        # nada", "os teus filtros não deixam passar nada" e "a janela é curta demais" são
+        # problemas distintos com soluções distintas, e um utilizador que não sabe qual
+        # deles tem desiste do produto em vez de mexer no controlo que o resolve.
+        if na_janela:
+            motivo = (f"None of the {len(na_janela)} days with news in this window match "
+                      f"those filters.")
+        else:
+            motivo = (f"No captured news inside the window shown above — but there are "
+                      f"{len(todas)} days of it for {ticker}. Widen the range to see them.")
+        st.markdown(f'<span style="color:{T.FG_DIM};font-size:13px">{motivo}</span>',
+                    unsafe_allow_html=True)
+        return
+
+    cabecalho = ('<div class="trow thead">'
+                 '<span class="label" style="width:78px">DATE</span>'
                  '<span class="label" style="flex:1">HEADLINE</span>'
-                 '<span class="label" style="width:78px">+1D</span>'
-                 '<span class="label" style="width:78px">+5D</span></div>')
+                 '<span class="label" style="width:82px">+1D</span>'
+                 '<span class="label" style="width:82px">+5D</span></div>')
     linhas = []
-    for n in itens[:limite]:
-        titulo = (n["headline"] or "")[:96]
+    for n in fatia:
+        titulo = (n["headline"] or "")[:110]
+        extra = (f'<span style="color:{T.FG_MUTE}"> +{n["n"] - 1} more</span>'
+                 if n.get("n", 1) > 1 else "")
         linhas.append(
-            f'<div style="display:flex;gap:0.7rem;align-items:center;padding:0.3rem 0;'
-            f'border-top:1px solid {T.LINE}">'
-            f'<span class="num" style="width:70px;font-size:11px;color:{T.FG_MUTE}">'
+            f'<div class="trow">'
+            f'<span class="num" style="width:78px;font-size:12px;color:{T.FG_MUTE}">'
             f'{n["date"]}</span>'
-            f'<span style="flex:1;font-size:12px;color:{T.FG_DIM};overflow:hidden;'
-            f'text-overflow:ellipsis;white-space:nowrap">{titulo}</span>'
-            f'<span style="width:78px">{_impact_bar(n["d1"])}</span>'
-            f'<span style="width:78px">{_impact_bar(n["d5"])}</span></div>')
+            f'<span class="tcell">{titulo}{extra}</span>'
+            f'<span style="width:82px">{_impact_bar(n["d1"])}</span>'
+            f'<span style="width:82px">{_impact_bar(n["d5"])}</span></div>')
     st.markdown(cabecalho + "".join(linhas), unsafe_allow_html=True)
+    _pager(chave, n_pages, pagina, len(filtradas), "days with news")
 
 
-def _alert_feed(ticker: str) -> None:
-    """O que o canal enviou sobre esta empresa. Texto, mas fora do caminho principal."""
-    entradas = [e for e in _alerts() if getattr(e, "ticker", None) == ticker]
-    st.markdown(f'<div class="label">ALERTS SENT · {len(entradas)}</div>',
+def _alert_feed(ticker: str, janela: tuple[str, str] | None = None) -> None:
+    """O que o canal enviou sobre esta empresa. Texto, mas fora do caminho principal.
+
+    Ganhou os mesmos filtros da tabela de eventos, e pela mesma razão: há tickers com
+    dezenas de alertas e mostrar sempre os seis mais recentes torna os outros invisíveis.
+    A procura corre sobre o texto **inteiro** do alerta e não só sobre a primeira linha —
+    quem procura "sector" quer os alertas que falam de setor, e essa palavra vive no corpo.
+    """
+    from app.tables import filter_events, paginate
+
+    todos = [{"date": getattr(e, "date", ""), "obj": e,
+              "text": (getattr(e, "text", "") or "").strip()}
+             for e in _alerts() if getattr(e, "ticker", None) == ticker]
+    dentro = [r for r in todos
+              if not janela or (janela[0] <= str(r["date"]) <= janela[1])]
+
+    st.markdown(f'<div class="label">ALERTS SENT &middot; {len(todos)} all time</div>',
                 unsafe_allow_html=True)
-    if not entradas:
+    if not todos:
         st.markdown(f'<span style="color:{T.FG_DIM};font-size:13px">'
                     f'Nothing passed every gate for this company yet — the chart still shows '
                     f'what the method detected.</span>', unsafe_allow_html=True)
         return
-    for e in sorted(entradas, key=lambda x: getattr(x, "date", ""), reverse=True)[:6]:
-        texto = (getattr(e, "text", "") or "").strip()
+
+    q = st.text_input("Search alert text", key=f"aq_{ticker}",
+                      placeholder="e.g. sector, volume, precedent")
+    filtrados = sorted(filter_events(dentro, query=q, text_key="text"),
+                       key=lambda r: str(r["date"]), reverse=True)
+
+    chave = f"alerts_{ticker}"
+    pagina = _page_state(chave, (q, janela))
+    fatia, pagina, n_pages = paginate(filtrados, pagina, PER_PAGE)
+
+    if not filtrados:
+        motivo = ("No alerts inside the window shown above." if not dentro else
+                  f"None of the {len(dentro)} alerts in this window match that search.")
+        st.markdown(f'<span style="color:{T.FG_DIM};font-size:13px">{motivo}</span>',
+                    unsafe_allow_html=True)
+        return
+
+    for r in fatia:
+        e, texto = r["obj"], r["text"]
         primeira = texto.splitlines()[0] if texto else "(no text)"
         # O resumo usa o NOSSO glifo, não o do texto guardado. Os alertas antigos trazem
         # 📈 para cima e 🔻 para baixo — dois sistemas de ícones diferentes na mesma lista,
@@ -780,6 +913,7 @@ def _alert_feed(ticker: str) -> None:
             getattr(e, "kind", ""), T.ICON_DETECT)
         with st.expander(f"{getattr(e, 'date', '?')}  {glifo}  {primeira[:72]}"):
             st.text(texto)
+    _pager(chave, n_pages, pagina, len(filtrados), "alerts in this window")
 
 
 # ══ Página ═══════════════════════════════════════════════════════════════════════════
