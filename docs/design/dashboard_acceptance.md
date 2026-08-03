@@ -156,13 +156,26 @@ cartões** — as dez empresas ao mesmo nível, nenhuma privilegiada ao abrir.
 | # | Critério |
 |---|---|
 | **V1** | A grelha abre com as 10 empresas; nenhuma está expandida nem seleccionada por defeito |
-| **V2** | Em cada cartão, o **veredicto em palavras** aparece antes de qualquer número no HTML emitido |
+| **V2** | Em cada cartão, o **veredicto em palavras** aparece antes de qualquer número **técnico** (z-score, componentes da decomposição, rácio de volume). A percentagem do dia pode vir antes: é o facto que a frase explica, não jargão — ver 6.3.1 |
 | **V3** | Um cartão sinalizado e um cartão calmo distinguem-se por **quatro canais redundantes** — posição, quantidade de tinta, corpo de letra e uma **palavra** (`UNUSUAL` / `Quiet`) — nunca só por cor |
 | **V4** | Nenhum z-score aparece sem a glosa que o torna legível (`vs 20-day norm`) |
 | **V5** | A raridade é dita por **contagem empírica** ("6 dos últimos 248 dias"), com o `n` vindo dos dados e nunca escrito à mão |
 | **V6** | Os precedentes existem no produto: **contagem** no cartão, **lista** no detalhe, a um clique |
 | **V7** | A avaliação vive em **uma** página, alcançável por **um** link, ausente da grelha e do detalhe |
 | **V8** | Ligação profunda: `?t=NVDA` abre essa empresa e mais nenhuma |
+
+#### 6.3.1 O V2 foi corrigido a meio, e vale a pena dizer porquê
+
+A primeira redacção do V2 exigia o veredicto antes de **qualquer** número. Ao escrever o
+teste percebi que isso obrigaria a esconder o `−7,64%` por baixo da frase, e isso está
+errado: a percentagem do dia é **o facto que a frase explica**, não é jargão. Ninguém
+precisa de glossário para a ler, e escondê-la seria obedecer à letra do critério contra o
+seu propósito.
+
+O que a queixa "não sei o que os números querem dizer" apontava era ao **z-score, às três
+componentes com sinal e ao rácio de volume** — esses sim precisam de uma frase antes.
+O critério passou a dizer isso. Fica registado porque um critério corrigido em silêncio é
+indistinguível de um critério contornado.
 
 ### 6.4 Duas emendas assumidas, não falhadas em silêncio
 

@@ -6,7 +6,15 @@ import itertools
 
 import pytest
 
-from app.verdict import PROIBIDO, driver_sentence, gloss_z, rarity_sentence, verdict
+from app.verdict import (
+    PROIBIDO,
+    card_html,
+    driver_sentence,
+    gloss_z,
+    rarity_sentence,
+    sparkline_svg,
+    verdict,
+)
 from investigator.anomaly_detector.frequency import Exceedance
 from investigator.correlation_engine.decomposition import VERDICT, VERDICT_SHORT
 
@@ -131,3 +139,75 @@ def test_o_z_nunca_aparece_nu() -> None:
 
 def test_o_z_positivo_leva_sinal() -> None:
     assert gloss_z(1.13).startswith("z +1.13")
+
+
+# ── cartão: a lei de ordenação, em forma executável ──────────────────────────────────
+
+def _cartao(flagged: bool = True, chips: list[str] | None = None) -> str:
+    return card_html(
+        ticker="NVDA", name="NVIDIA", move=-0.0764, icone="▼", cor="#FF5A5F",
+        frase="Its biggest fall in 249 trading days.", flagged=flagged,
+        chips=chips if chips is not None else ["z -3.41 vs 20-day norm", "3.3x usual volume"],
+        spark=sparkline_svg([1, 2, 3, 2.5], "#FF5A5F") if flagged else "")
+
+
+def test_v2_o_veredicto_vem_antes_de_qualquer_numero_tecnico() -> None:
+    """A percentagem do dia pode vir antes — é o facto que a frase explica, não jargão.
+
+    O que tem de vir depois é o z-score e o rácio de volume, que foi a queixa real
+    ("não sei o que os números querem dizer"). Ver §6.3.1 do documento de critérios.
+    """
+    html = _cartao()
+    assert html.index('class="verdict"') < html.index("z -3.41")
+    assert html.index('class="verdict"') < html.index("3.3x usual volume")
+
+
+def test_o_cartao_tem_exactamente_um_veredicto() -> None:
+    assert _cartao().count('class="verdict"') == 1
+
+
+def test_a_ligacao_e_profunda_e_abre_na_mesma_janela() -> None:
+    html = _cartao()
+    assert 'href="?t=NVDA"' in html
+    assert 'target="_self"' in html
+
+
+def test_cartao_calmo_e_mais_vazio_nao_mais_pequeno() -> None:
+    """O vazio é o sinal: sem sparkline, sem chips, sem pílula."""
+    html = _cartao(flagged=False)
+    assert "card--quiet" in html
+    assert "<svg" not in html
+    assert "chips" not in html
+    assert "UNUSUAL" not in html
+
+
+def test_cartao_sinalizado_tem_a_palavra_e_nao_so_a_cor() -> None:
+    """Critério V3: quatro canais redundantes, nunca só cor."""
+    html = _cartao()
+    assert "UNUSUAL" in html
+    assert "card--flagged" in html
+    assert "<svg" in html
+
+
+def test_chips_so_aparecem_quando_ha_algo_a_dizer() -> None:
+    assert "chips" not in _cartao(chips=[])
+
+
+# ── sparkline ────────────────────────────────────────────────────────────────────────
+
+def test_serie_plana_nao_divide_por_zero() -> None:
+    svg = sparkline_svg([100.0] * 20, "#00D68F")
+    assert svg.startswith("<svg") and "nan" not in svg.lower()
+
+
+def test_serie_curta_nao_desenha_nada() -> None:
+    assert sparkline_svg([1.0], "#00D68F") == ""
+    assert sparkline_svg([], "#00D68F") == ""
+
+
+def test_nan_nao_entram_no_traco() -> None:
+    svg = sparkline_svg([1.0, float("nan"), 3.0], "#00D68F")
+    assert "nan" not in svg.lower()
+    # O NaN sai, sobram dois pontos. Cada ponto é "x,y", logo duas vírgulas — não uma.
+    pontos = svg.split('points="')[1].split('"')[0].split()
+    assert len(pontos) == 2

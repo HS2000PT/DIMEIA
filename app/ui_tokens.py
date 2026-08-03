@@ -202,3 +202,59 @@ def css() -> str:
     font-family: ui-monospace, Menlo, Consolas, monospace; }}
 </style>
 """
+
+
+def card_css() -> str:
+    """A grelha de cartões da v3.
+
+    **A decisão que governa este bloco.** Um cartão sinalizado e um cartão calmo têm de
+    distinguir-se por **quatro canais redundantes** — posição, quantidade de tinta, corpo de
+    letra e uma palavra — e **nunca só por cor** (critério V3). Um utilizador com daltonismo
+    tem de conseguir varrer esta página, e mesmo com visão normal a cor sozinha não cria
+    hierarquia: dez cartões verdes e vermelhos são dez cartões igualmente ruidosos.
+
+    O cartão calmo é deliberadamente **mais vazio**, não mais pequeno. Vazio é o sinal: se
+    todos os dias fossem iguais, o ecrã ficaria quase em branco, que é exactamente a
+    mensagem certa para quem só quer permissão para não fazer nada.
+    """
+    return f"""
+<style>
+  .grid {{
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+    gap: 0.6rem; margin: 0.7rem 0 1.2rem;
+  }}
+
+  /* O cartão inteiro é a área de clique. Sem botão por baixo: essa tentativa deu duas
+     linhas por empresa e o dobro da altura (ver a nota em `css()`). */
+  a.card {{
+    display: block; text-decoration: none; color: inherit;
+    background: {PANEL}; border: 1px solid {LINE}; border-left: 3px solid transparent;
+    border-radius: 8px; padding: 0.6rem 0.75rem 0.7rem; min-height: 132px;
+  }}
+  a.card:hover {{ border-color: {FG_MUTE}; background: {PANEL_2}; }}
+  a.card:focus-visible {{ outline: 2px solid {UP}; outline-offset: 2px; }}
+  a.card--flagged {{ border-left-color: {FLAG}; }}
+  a.card--quiet {{ background: transparent; }}
+
+  .card-top {{ display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.45rem; }}
+  .card-name {{ font-size: 12.5px; font-weight: 700; color: {FG}; }}
+  .card-tick {{ font-size: 10px; color: {FG_MUTE}; }}
+  .card-move {{ margin-left: auto; font-size: 21px; font-weight: 700; }}
+  .card--quiet .card-move {{ font-size: 15px; font-weight: 500; }}
+
+  .pill {{
+    font-size: 9px; letter-spacing: 0.09em; font-weight: 700; color: {BG};
+    background: {FLAG}; border-radius: 3px; padding: 1px 5px;
+  }}
+
+  /* O veredicto é o herói. É a primeira coisa que se lê e a única obrigatória. */
+  .verdict {{ font-size: 12.5px; line-height: 1.42; color: {FG}; }}
+  .card--quiet .verdict {{ color: {FG_MUTE}; font-size: 11.5px; }}
+
+  .chips {{
+    display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; margin-top: 0.5rem;
+    font-size: 10px; color: {FG_MUTE};
+  }}
+  .spark {{ margin-top: 0.45rem; display: block; }}
+</style>
+"""

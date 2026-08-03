@@ -100,3 +100,60 @@ def gloss_z(z: float) -> str:
     tem de continuar visível e rastreável, mas sozinho não diz nada a quem não o conhece.
     """
     return f"z {z:+.2f} vs 20-day norm"
+
+
+def sparkline_svg(closes, colour: str, width: int = 96, height: int = 22) -> str:
+    """Uma linha de preço minúscula, em SVG inline.
+
+    SVG e não plotly: dez figuras plotly numa grelha seriam de longe a coisa mais lenta da
+    página, e o critério P1 dá cinco segundos ao arranque a frio. Isto é uma string.
+    """
+    valores = [float(v) for v in closes if v == v]
+    if len(valores) < 2:
+        return ""
+    baixo, alto = min(valores), max(valores)
+    span = (alto - baixo) or 1.0  # série plana não pode dividir por zero
+    passo = width / (len(valores) - 1)
+    pontos = " ".join(
+        f"{i * passo:.1f},{height - (v - baixo) / span * (height - 2) - 1:.1f}"
+        for i, v in enumerate(valores))
+    return (f'<svg class="spark" width="{width}" height="{height}" '
+            f'viewBox="0 0 {width} {height}" aria-hidden="true">'
+            f'<polyline points="{pontos}" fill="none" stroke="{colour}" '
+            f'stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/></svg>')
+
+
+def card_html(
+    ticker: str,
+    name: str,
+    move: float,
+    icone: str,
+    cor: str,
+    frase: str,
+    flagged: bool,
+    chips: list[str],
+    logo: str = "",
+    spark: str = "",
+) -> str:
+    """Um cartão. **O veredicto vem sempre antes de qualquer número** (critério V2).
+
+    A ordem no HTML não é um detalhe de implementação: é a lei de desenho, e por isso é
+    verificada por um teste que compara as posições no texto emitido. Um cartão calmo não
+    leva sparkline nem chips — o vazio é o sinal.
+    """
+    classe = "card--flagged" if flagged else "card--quiet"
+    pilula = '<span class="pill">UNUSUAL</span>' if flagged else ""
+    chips_html = ("".join(f"<span>{c}</span>" for c in chips)
+                  if flagged and chips else "")
+    return (
+        f'<a class="card {classe}" href="?t={ticker}" target="_self">'
+        f'<div class="card-top">{logo}'
+        f'<span class="card-name">{name}</span>'
+        f'<span class="card-tick num">{ticker}</span>{pilula}'
+        f'<span class="card-move num" style="color:{cor}">{icone} {move * 100:+.2f}%</span>'
+        f"</div>"
+        f'<div class="verdict">{frase}</div>'
+        f"{spark}"
+        f'{f"<div class=chips>{chips_html}</div>" if chips_html else ""}'
+        f"</a>"
+    )
