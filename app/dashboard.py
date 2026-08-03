@@ -84,7 +84,7 @@ RANGES: dict[str, tuple[str, str, bool]] = {
 NAMES = {
     "AAPL": "Apple", "MSFT": "Microsoft", "NVDA": "NVIDIA", "TSLA": "Tesla",
     "AMZN": "Amazon", "GOOGL": "Alphabet", "META": "Meta", "JPM": "JPMorgan Chase",
-    "AMD": "AMD", "NFLX": "Netflix",
+    "AMD": "AMD", "NFLX": "Netflix", "XOM": "Exxon Mobil", "JNJ": "Johnson & Johnson",
 }
 
 

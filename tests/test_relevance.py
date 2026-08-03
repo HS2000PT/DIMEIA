@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
-from investigator.news_fetcher.relevance import COMPANY_NAMES, is_relevant
+from pathlib import Path
+
+from investigator.news_fetcher.relevance import (
+    COMPANY_DISPLAY,
+    COMPANY_NAMES,
+    is_relevant,
+)
 
 
 def test_rejeita_lixo_real_do_canal():
@@ -45,12 +51,31 @@ def test_case_insensitive_e_vazios():
 
 
 def test_ticker_fora_do_mapa_usa_so_o_simbolo():
-    assert is_relevant("XOM raises dividend after strong quarter", "XOM")
-    assert not is_relevant("Exxon raises dividend after strong quarter", "XOM")  # sem alias
+    """O fallback honesto: sem aliases, só o próprio símbolo conta como menção.
+
+    Era demonstrado com a XOM, que entretanto entrou na watchlist e ganhou aliases. Passou
+    para a CVX, que continua fora do mapa — se um dia entrar também, este teste falha em
+    vez de deixar de testar o que diz que testa.
+    """
+    assert "CVX" not in COMPANY_NAMES, "escolher outro ticker fora do mapa para este teste"
+    assert is_relevant("CVX raises dividend after strong quarter", "CVX")
+    assert not is_relevant("Chevron raises dividend after strong quarter", "CVX")
 
 
 def test_watchlist_completa_tem_aliases():
-    """Todos os 10 tickers do produto têm pelo menos um alias (o filtro nunca fica cego)."""
-    watchlist = ["AAPL", "MSFT", "NVDA", "TSLA", "AMZN", "GOOGL", "META", "JPM", "AMD", "NFLX"]
+    """Todo o ticker do produto tem pelo menos um alias — o filtro nunca fica cego.
+
+    A watchlist é lida do `config/alerts.yaml` e não escrita à mão aqui. A lista fixa que
+    estava neste teste tinha dez nomes e continuaria a passar depois de a watchlist crescer
+    para doze: teria deixado de cobrir os dois nomes novos sem falhar uma única vez, que é
+    a pior maneira de um teste morrer.
+    """
+    import yaml
+
+    caminho = Path(__file__).resolve().parents[1] / "config" / "alerts.yaml"
+    cfg = yaml.safe_load(caminho.read_text(encoding="utf-8")) or {}
+    watchlist = cfg.get("market", {}).get("tickers") or []
+    assert len(watchlist) >= 10, "watchlist não foi lida do ficheiro"
     for t in watchlist:
         assert COMPANY_NAMES.get(t), f"{t} sem aliases"
+        assert COMPANY_DISPLAY.get(t), f"{t} sem nome legível"

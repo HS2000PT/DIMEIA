@@ -22,7 +22,7 @@ import re
 COMPANY_DISPLAY: dict[str, str] = {
     "AAPL": "Apple", "MSFT": "Microsoft", "NVDA": "NVIDIA", "TSLA": "Tesla",
     "AMZN": "Amazon", "GOOGL": "Alphabet", "META": "Meta", "JPM": "JPMorgan",
-    "AMD": "AMD", "NFLX": "Netflix",
+    "AMD": "AMD", "NFLX": "Netflix", "XOM": "Exxon Mobil", "JNJ": "Johnson & Johnson",
 }
 
 
@@ -80,6 +80,12 @@ COMPANY_NAMES: dict[str, list[str]] = {
     "JPM": ["jpmorgan", "jp morgan", "jamie dimon", "chase"],
     "AMD": ["amd", "advanced micro devices", "ryzen", "radeon", "lisa su"],
     "NFLX": ["netflix"],
+    # Os dois nomes não-tecnológicos (2026-08-03). Sem aliases, o filtro de relevância cai
+    # no fallback honesto — só o símbolo conta como menção — e uma manchete que diz
+    # "Exxon" mas não "XOM" seria descartada. Praticamente nenhuma manchete escreve o
+    # símbolo, portanto o cartão viria vazio sem que nada avisasse porquê.
+    "XOM": ["exxon", "exxonmobil", "exxon mobil"],
+    "JNJ": ["johnson & johnson", "johnson and johnson", "j&j", "janssen"],
 }
 
 # Resumos genéricos de mercado que o Finnhub etiqueta para QUALQUER ticker — nunca são

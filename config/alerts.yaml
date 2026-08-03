@@ -9,7 +9,13 @@
 market:
   enabled: true
   # A tua watchlist. Edita à vontade (símbolos NYSE/NASDAQ suportados pelo yfinance).
-  tickers: [AAPL, MSFT, NVDA, TSLA, AMZN, GOOGL, META, JPM, AMD, NFLX]
+  # 2026-08-03: 10 → 12, e os dois nomes novos são NÃO-TECNOLÓGICOS de propósito. Nove dos
+  # dez anteriores partilhavam o mesmo ETF de setor (XLK), portanto a decomposição
+  # mercado/setor/empresa respondia quase sempre a mesma coisa à pergunta "foi o setor?" —
+  # não porque a resposta fosse essa, mas porque a watchlist não tinha outra por onde
+  # variar. XOM traz o XLE (energia) e JNJ o XLV (saúde), dois factores que se movem por
+  # razões diferentes das do tecnológico. É melhoria de TESE, não de disposição no ecrã.
+  tickers: [AAPL, MSFT, NVDA, TSLA, AMZN, GOOGL, META, JPM, AMD, NFLX, XOM, JNJ]
   window: 20        # dias anteriores usados para média/desvio (a "norma")
   # |z| acima do qual é anomalia. A tese AVALIA e congela os números em threshold=3.0
   # (docs/evaluation/evaluation_anomaly.md — nunca mudam). Este é um parâmetro de
@@ -37,7 +43,8 @@ market:
 # que já foi enviado nesta fase, por isso pode repetir. Deixa 'false' até quereres experimentar.
 news:
   enabled: true            # canal com notícias (ligado no "produto zero-ops", 2026-07-06)
-  tickers: [AAPL, MSFT, NVDA, TSLA, AMZN, GOOGL, META, JPM, AMD, NFLX]
+  # Espelha a watchlist de mercado (ver a nota lá em cima sobre os dois nomes não-tecnológicos).
+  tickers: [AAPL, MSFT, NVDA, TSLA, AMZN, GOOGL, META, JPM, AMD, NFLX, XOM, JNJ]
   horizon: 5        # horizonte do impacto dos precedentes (+5 dias)
   top_k: 3          # nº de precedentes a mostrar
   # Triagem APRENDIDA (RQ4; off por defeito). Se definires um número em [0,1], cada alerta
