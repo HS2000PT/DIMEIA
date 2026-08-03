@@ -9,13 +9,27 @@
 ## Estado Atual
 - **Sessão nº:** 47 (**backlog da v3 executado por inteiro, mais os passos 6 e 7**)
 - **Última atualização:** 2026-08-03
-- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI:** [`docs/design/v3_backlog.md`](docs/design/v3_backlog.md)
-  — agora com **tabela de estado item a item + as medições**. **A v3 está funcionalmente
-  completa**: A, B, C, D, E, watchlist a 12, passo 6 (precedentes) e passo 7 (página do
-  método). O que sobra é **(1) dois comandos que precisam de chaves** (ver PENDENTE em
-  baixo) e **(2) a decisão de promover** — uma linha no `Procfile`, que abre a dívida de
-  sincronizar tese/slides/guia e recapturar a Fig 4.5. A v1 continua implantada e
-  **intocada**.
+- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI:** [`docs/design/v3_backlog.md`](docs/design/v3_backlog.md),
+  secção **"Entrega de turno"** — tem os comandos por ordem e, a seguir, **"Promoção: a
+  lista exacta do que fica por rever na tese"**, ficheiro a ficheiro e linha a linha.
+  **A v3 está funcionalmente completa** (A, B, C, D, E, watchlist a 12, passo 6
+  precedentes, passo 7 página do método). Sobram três coisas, e **nenhuma é código**:
+  **(1)** `heroku config -s --app investigator > .env` e depois `fetch_logos.py` +
+  `backfill_history.py --months 12`, que fecham o buraco de dados de XOM/JNJ;
+  **(2)** rodar as 3 credenciais expostas (PAT do GitHub primeiro — `admin: true`);
+  **(3)** decidir promover, que é **uma linha no `Procfile`** e abre a dívida da tese.
+  **⚠️ MÁQUINA:** a sessão 47 correu no **portátil** (`C:\Users\ruifa`), que **não tem
+  `.env`** — foi essa a razão de (1) ficar por fazer. A seguir é no **desktop**
+  (`C:\Users\henri`, a máquina do FNSPID, com dados e torch).
+  **⚠️ A DÍVIDA DA TESE É CRIADA PELA PROMOÇÃO, NÃO PELA RECONSTRUÇÃO** (o aluno sublinhou
+  que é para rever a sério). Enquanto a v1 estiver no ar a tese está **correcta como está**.
+  No minuto em que o `Procfile` mudar, o Cap. 4 passa a descrever um ecrã que já não existe:
+  diz que a lista leva a repartição mercado/setor/empresa **na própria linha, sem clicar**,
+  e na v3 isso está a **um clique** (emenda D2′) com o motor nomeado **em palavras**. Mais a
+  legenda da Fig. 4.5 (descreve linhas concretas: Amazon −1,84% com +0,19% da empresa), a
+  recaptura da figura (**`scripts/screenshot_app.py` aponta para `streamlit_app.py` e tem de
+  passar a apontar para `dashboard.py`**), o espelho em `thesis-pt`, os 3 ficheiros de
+  slides/guia, e o Cap. 5. Portas: as duas teses a 0 erros + **paridade EN↔PT por capítulo**.
 - **🧩 SESSÃO 47 (2026-08-03 — executar o backlog da v3; 4 commits):**
   **(A) LEGIBILIDADE.** A pílula `UNUSUAL` estava dentro da linha do topo, a disputá-la com
   logótipo, nome, ticker e o número grande — e o nome, único item sem largura própria, era
@@ -105,6 +119,19 @@
   meio-construídos ao lado dos outros dez: `python scripts/fetch_logos.py`
   (`POLYGON_API_KEY`) e `python scripts/backfill_history.py --months 12`
   (`FINNHUB_API_KEY`).
+  **🔑 GESTÃO DE CHAVES — a pergunta do aluno, respondida e registada.** *"Não se pode
+  carregar dos GitHub Secrets?"* **Não.** São de **escrita apenas**, por desenho: nenhuma
+  API os devolve e só são desencriptados dentro de um job a correr. Há maneira de os
+  imprimir num workflow (base64, a fugir à máscara) e **não se faz** — o repositório é
+  público e isso escreveria as credenciais em registos visíveis a toda a gente, ou seja
+  transformaria uma rotação numa segunda fuga. **O cofre legível já existe e é o Heroku**
+  (`heroku config -s --app investigator > .env`, round-trip verificado 8/8 a 2026-08-02,
+  documentado em `docs/design/trocar_de_maquina.md`): é o único dos três sítios que devolve
+  os valores, e é o mesmo que a produção lê, portanto há **um** sítio que pode estar errado.
+  **Recomendação dada:** Heroku como fonte operacional + um gestor de senhas como cópia de
+  recuperação, porque apagar a app do Heroku apaga o cofre. **Ordem de rotação:** PAT do
+  GitHub primeiro (`admin: true`), chave do Heroku **por último**. **Regra:** nunca colar
+  chaves no chat — o `.env` está gitignored e é lá que vão (a fuga da sessão 44 foi assim).
 - **🧭 SESSÃO 46 (2026-08-03 — v3 do painel; o aluno tinha rejeitado a v2: "usability is
   messy and confusing and dirty… re-do everything"):**
   **(A) CRITÉRIOS ESCRITOS ANTES DO CÓDIGO** (`dashboard_acceptance.md` §6). Perguntei-lhe

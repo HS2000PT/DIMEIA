@@ -230,6 +230,81 @@ Keep anchors; make the reload cheap:
 
 ---
 
+## Entrega de turno — 2026-08-03, fim da sessão 47
+
+**Onde isto ficou.** Tudo commitado e pushed (`5dcb77c`), árvore limpa, 594 testes verdes,
+ruff limpo, congelados byte-iguais. **A v1 continua a ser o que está no ar e não foi
+tocada.** A v3 está funcionalmente completa.
+
+**Em que máquina.** Esta sessão correu no **portátil** (`C:\Users\ruifa`), que **não tem
+`.env`** — daí os dois comandos por correr. A próxima sessão é no **desktop**, que é a
+máquina do FNSPID (`C:\Users\henri`, a do cabeçalho dos congelados) e tem os dados e o
+torch. Confirmar lá se existe `.env`; se não existir, é o `heroku config -s` abaixo.
+
+### A fazer, por ordem
+
+**1. Chaves — primeiro, porque desbloqueia o resto.**
+
+```bash
+heroku login                                        # browser, não precisa da chave antiga
+heroku config -s --app investigator > .env          # o cofre devolve as 8
+```
+
+Depois disto, correr os dois comandos que fecham o buraco de dados dos dois nomes novos
+(medido: XOM e JNJ têm **0** registos de notícia; os outros dez têm 2.424–5.632, e nenhum
+dos dois tem ficheiro de logótipo):
+
+```bash
+python scripts/fetch_logos.py                       # POLYGON_API_KEY
+python scripts/backfill_history.py --months 12      # FINNHUB_API_KEY
+```
+
+**2. Rodar as três credenciais expostas** — PAT do GitHub **primeiro** (tem `admin: true`,
+muito mais largo do que o acesso de escrita de que precisa), ALPHAVANTAGE, e a chave da API
+do Heroku **por último**. Cada uma actualizada em **dois** sítios: `heroku config:set` e
+GitHub → Settings → Secrets → Actions. Guardar uma cópia num gestor de senhas: se a app do
+Heroku for apagada, o cofre vai com ela.
+
+> **Nota que vale a pena não perder:** os *GitHub Secrets* **não se lêem de volta** — são
+> de escrita apenas, por desenho. Há maneira de os imprimir num workflow, e **não se faz**:
+> este repositório é público e isso escreveria as chaves em registos visíveis a toda a
+> gente. O cofre legível é o Heroku.
+
+**3. Promover, ou não.** É uma linha no `Procfile`
+(`app/streamlit_app.py` → `app/dashboard.py`). **A decisão é do aluno**, e o que ela custa
+está na secção seguinte.
+
+---
+
+## Promoção: a lista exacta do que fica por rever na tese
+
+> Isto **não** é dívida da reconstrução — é dívida **da promoção**. Enquanto a v1 estiver no
+> ar, a tese está correcta como está. No minuto em que o `Procfile` mudar, os textos abaixo
+> passam a descrever um ecrã que já não existe, e isso é exactamente o tipo de coisa que um
+> arguente encontra.
+
+**O que a tese afirma hoje sobre o painel e deixa de ser verdade com a v3:**
+
+| Ficheiro | O quê | Porque deixa de bater |
+|---|---|---|
+| `thesis/ch4/chapter4.tex` (~378–410) | "one screen each"; a lista "carries the market/sector/company split **on the row itself**, so a reader learns whether a fall was the market or the company **without a click**" | A v3 é uma **grelha de cartões**, e a repartição em três números está a **um clique** (emenda **D2′**): o cartão nomeia o motor **em palavras**. A frase actual afirma o contrário. |
+| `thesis/ch4/chapter4.tex` (legenda da Fig. 4.5) | Descreve linhas concretas: Amazon −1,84% com +0,19% da empresa, JPMorgan | A captura tem de ser refeita e a legenda reescrita à volta do que a nova mostrar. |
+| `thesis-pt/ch4/chapter4.tex` (~387–419) | O mesmo, traduzido | **Regra de sincronia bilingue**: muda numa, muda na outra, no mesmo sítio. |
+| `thesis/figures/app_dashboard.png` | A figura | `scripts/screenshot_app.py` aponta para `app/streamlit_app.py` — **tem de passar a apontar para `app/dashboard.py`**. A `thesis-pt` partilha a figura via `graphicspath`, portanto flui sozinha. |
+| `slides/main.tex`, `slides/main-pt.tex`, `slides/guia_estudo/main.tex` | Usam a mesma figura | Actualizam sozinhos quando o PNG mudar; **verificar o texto à volta** de cada um. |
+| `thesis/ch5/chapter5.tex` | Menciona o painel | Ler e confirmar se alguma afirmação depende da forma antiga. |
+
+**O que CONTINUA verdade na v3 e não precisa de ser tocado** (verificado): a promessa e o
+compromisso de não prever aparecem **uma** vez, no topo; a latência é medida a partir de
+carimbos reais e está **ausente** quando eles não existem; os alertas são lidos do registo
+partilhado e **não** recalculados.
+
+**Portas a passar depois de mexer:** as duas teses compilam a 0 erros, 0 citações/refs
+indefinidas; **paridade EN↔PT** (mesmo número de secções e de ambientes figure/table, por
+capítulo); slides e guia compilam; números congelados intactos.
+
+---
+
 ## Verification
 
 Every step ends green or it does not land:
