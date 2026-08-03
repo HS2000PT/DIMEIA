@@ -174,6 +174,13 @@ def css() -> str:
     font-family: ui-monospace, Menlo, Consolas, monospace;
   }}
 
+  /* A página do método é para LER, e uma linha de texto com 1900 px atravessa o ecrã sem
+     o olho conseguir voltar ao princípio da seguinte. Aqui a largura é a da leitura, não a
+     do monitor — e vale para as tabelas de números pela mesma razão: com a coluna a ocupar
+     tudo, o rótulo e o valor ficavam a um palmo e meio um do outro. */
+  .mcol {{ max-width: 82ch; }}
+  .mcol .trow {{ padding: 0.4rem 0; }}
+
   /* Campos de filtro: compactos, e escuros como tudo o resto. */
   div[data-testid="stTextInput"] input, div[data-testid="stSelectbox"] div[role="combobox"] {{
     background: {PANEL} !important; border-color: {LINE} !important;

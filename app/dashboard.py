@@ -491,11 +491,13 @@ def _header(rows: list[dict], n_alerts: int) -> None:
           <span class="num" style="font-size:12px;color:{cor}">● {estado}</span>
           <span class="num" style="font-size:12px;color:{T.FG_MUTE}">{agora}</span>
           <span style="flex:1"></span>
-          <span class="num help" style="font-size:12px;color:{T.FLAG}"
-                title="{FLAG_EXPLAINER}">
-            {T.ICON_ALERT} {sinalizados} flagged &middot; what is this?</span>
-          <span class="num" style="font-size:12px;color:{T.FG_MUTE}">
-            {n_alerts} alerts sent</span>
+          <a class="num help" href="?view=method" target="_self"
+             style="font-size:12px;color:{T.FLAG};text-decoration:none"
+             title="{FLAG_EXPLAINER}">
+            {T.ICON_ALERT} {sinalizados} flagged &middot; what is this?</a>
+          <a class="num" href="?view=method" target="_self"
+             style="font-size:12px;color:{T.FG_MUTE};text-decoration:none">
+            {n_alerts} alerts sent</a>
         </div>""",
         unsafe_allow_html=True,
     )
@@ -1074,6 +1076,170 @@ def _alert_feed(ticker: str, janela: tuple[str, str] | None = None) -> None:
     _pager(chave, n_pages, pagina, len(filtrados), "alerts in this window")
 
 
+# ══ Página do método ═════════════════════════════════════════════════════════════════
+
+@st.cache_data(ttl=900, show_spinner=False)
+def _live_health() -> dict | None:
+    """A prova de vida: o mecanismo medido **fora da amostra**, sobre decisões reais.
+
+    Vem do `live_monitoring.md`, que o `post_validate.py` regenera ao fecho a partir das
+    decisões que o runner registou e que já maturaram. É o número mais honesto do projecto
+    inteiro, porque não foi escolhido por ninguém: é o que aconteceu.
+    """
+    import urllib.request
+
+    from investigator.evaluation.monitoring import parse_live_monitoring
+
+    md = None
+    local = _ROOT / "docs" / "evaluation" / "live_monitoring.md"
+    if local.exists():
+        md = local.read_text(encoding="utf-8")
+    else:
+        try:
+            with urllib.request.urlopen(_raw("live_monitoring.md"), timeout=15) as r:
+                md = r.read().decode("utf-8", "replace")
+        except Exception:  # noqa: BLE001
+            return None
+    h = parse_live_monitoring(md)
+    return None if h is None else {"kept": h.kept_precision, "base": h.base_rate,
+                                   "lift": h.lift_points}
+
+
+def _latency() -> str | None:
+    """Mediana facto→entrega, e **só quando foi medida** (critério R3).
+
+    O histórico antigo não tem carimbos de tempo. Nesses casos não se mostra nada — nunca
+    se inventa uma latência plausível para preencher o espaço.
+    """
+    try:
+        valores = sorted(x for x in (e.latency_seconds() for e in _alerts()) if x is not None)
+        if not valores:
+            return None
+        m = valores[len(valores) // 2]
+        return (f"{m / 60:.0f} min" if m >= 90 else f"{m:.0f} s") + f" (n={len(valores)})"
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _num_table(titulo: str, numeros, legenda: str = "") -> None:
+    from app.method import Number  # noqa: F401  (só para o tipo ser legível aqui)
+
+    linhas = "".join(
+        f'<div class="trow">'
+        f'<span class="tcell" style="white-space:normal">{n.label}'
+        + (f'<div style="color:{T.FG_MUTE};font-size:11.5px">{n.note}</div>'
+           if n.note else "")
+        + f'</span>'
+        f'<span class="num" style="width:72px;text-align:right;font-size:14px;'
+        f'color:{T.FG}">{n.value}</span></div>'
+        for n in numeros)
+    st.markdown('<div class="mcol">'
+                + (f'<div class="label" style="margin-top:0.2rem">{titulo}</div>'
+                   if titulo else "")
+                + (f'<div style="font-size:12.5px;color:{T.FG_DIM};margin:0.15rem 0 0.3rem">'
+                   f'{legenda}</div>' if legenda else "")
+                + linhas + "</div>", unsafe_allow_html=True)
+
+
+def _method_page() -> None:
+    """A avaliação inteira, numa página, alcançável por um link (critério V7).
+
+    Vive **fora** da grelha e do detalhe de propósito. Quem abre o painel quer saber o que
+    aconteceu às suas empresas; quem quer saber se pode confiar no método faz uma pergunta
+    diferente, e merece uma página inteira em vez de ressalvas espalhadas pelas outras.
+    """
+    from app.method import ANOMALY, RETRIEVAL, TRIAGE, TRIAGE_BUDGET, TRIAGE_VERDICT
+    from app.verdict import FLAG_EXPLAINER
+
+    st.markdown(
+        f'<a class="back" href="?" target="_self">← All companies</a>'
+        f'<div style="height:1px;background:{T.LINE};margin:0.15rem 0 0.7rem"></div>'
+        f'<div style="font-size:19px;font-weight:700;color:{T.FG}">How this works, '
+        f'and how well</div>'
+        f'<div style="font-size:13px;color:{T.FG_DIM};margin:0.25rem 0 0.2rem;'
+        f'max-width:74ch">Every number on the other pages is produced by the procedure '
+        f'below. The results are from the dissertation and are reported as they fell, '
+        f'including where the method lost.</div>', unsafe_allow_html=True)
+
+    st.markdown('<hr class="rule">', unsafe_allow_html=True)
+
+    # ── prova de vida: o que aconteceu de facto, fora da amostra
+    st.markdown('<div class="label">RUNNING SYSTEM</div>', unsafe_allow_html=True)
+    saude, lat = _live_health(), _latency()
+    cartoes = []
+    if saude:
+        cartoes.append(("Kept decisions that proved right", f"{saude['kept']:.3f}",
+                        f"against {saude['base']:.3f} if it had kept everything"))
+    if lat:
+        cartoes.append(("Median time from event to delivery", lat, "measured, not estimated"))
+    cartoes.append(("Alerts actually sent to the channel", f"{len(_alerts())}", "all time"))
+    st.markdown(
+        '<div style="display:flex;gap:1.6rem;flex-wrap:wrap;margin:0.35rem 0 0.2rem">'
+        + "".join(
+            f'<div><div class="num" style="font-size:22px;color:{T.UP};font-weight:700">'
+            f'{v}</div>'
+            f'<div style="font-size:12px;color:{T.FG_DIM}">{k}</div>'
+            f'<div style="font-size:11.5px;color:{T.FG_MUTE}">{sub}</div></div>'
+            for k, v, sub in cartoes)
+        + "</div>", unsafe_allow_html=True)
+    if not saude:
+        st.markdown(f'<span style="color:{T.FG_MUTE};font-size:12px">Live post-validation '
+                    f'not available right now.</span>', unsafe_allow_html=True)
+
+    st.markdown('<hr class="rule">', unsafe_allow_html=True)
+
+    # ── a regra do alerta: o que saiu do balão de ajuda em B, agora com casa própria
+    st.markdown(
+        f'<div class="label">WHEN A DAY IS FLAGGED</div>'
+        f'<div style="font-size:13px;color:{T.FG_DIM};margin:0.2rem 0;max-width:74ch">'
+        f'{FLAG_EXPLAINER}</div>'
+        f'<div style="font-size:12.5px;color:{T.FG_MUTE};max-width:74ch">'
+        f'Precisely: the day\'s log return is compared with the mean and standard deviation '
+        f'of the <b>{WINDOW}</b> trading days before it — never including the day itself — '
+        f'and it is flagged when that distance exceeds <b>{THRESHOLD}</b> standard '
+        f'deviations. The dissertation evaluates the rule at 3.0; the deployed threshold is '
+        f'lower on purpose, and the alert text carries the severity so a 1.6 never reads '
+        f'like a 3.2.</div>', unsafe_allow_html=True)
+
+    st.markdown('<hr class="rule">', unsafe_allow_html=True)
+    _num_table("FINDING PRECEDENTS · precision@5", RETRIEVAL,
+               "Of the five cases retrieved for a headline, how many were genuinely "
+               "comparable. Higher is better.")
+
+    st.markdown('<hr class="rule">', unsafe_allow_html=True)
+    _num_table("DETECTING UNUSUAL DAYS · spread in firing rate", ANOMALY,
+               "How much the firing rate varies from company to company. Here <b>lower is "
+               "better</b>: it means the same rule treats a calm stock and a volatile one "
+               "alike.")
+
+    st.markdown('<hr class="rule">', unsafe_allow_html=True)
+    _num_table("DECIDING WHAT DESERVES AN ALERT · PR-AUC", TRIAGE,
+               "Whether reading the headline text helps decide if a day matters.")
+    st.markdown(
+        f'<div style="font-size:13px;color:{T.FLAG};margin:0.5rem 0 0.4rem;max-width:74ch">'
+        f'{TRIAGE_VERDICT}</div>', unsafe_allow_html=True)
+    _num_table("", TRIAGE_BUDGET)
+
+    st.markdown('<hr class="rule">', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="label">WHAT THIS DELIBERATELY DOES NOT DO</div>'
+        f'<div style="font-size:13px;color:{T.FG_DIM};margin-top:0.25rem;max-width:74ch;'
+        f'line-height:1.6">'
+        f'· No price targets, no buy or sell calls, and nothing about what happens next.<br>'
+        f'· No converting a z-score into a probability — that would assume a bell curve, '
+        f'and market returns have far fatter tails than one. The rarity is counted from the '
+        f'data instead.<br>'
+        f'· No combined "confidence score" across signals, and no event-type badges: both '
+        f'were built and measured, and the measurements did not support showing them.<br>'
+        f'· No average outcome as a headline number, because an average over cases that went '
+        f'+4% and −8% describes something that happened to nobody.</div>',
+        unsafe_allow_html=True)
+
+    st.markdown(
+        '<div style="margin-top:1.2rem"><a class="back" href="?" target="_self">'
+        '← All companies</a></div>', unsafe_allow_html=True)
+
+
 # ══ Página ═══════════════════════════════════════════════════════════════════════════
 
 @st.fragment(run_every=60)
@@ -1159,6 +1325,14 @@ def main() -> None:
         return
 
     _header(linhas, len(_alerts()))
+
+    # A avaliação vive numa página **própria**, alcançável por um link e ausente da grelha
+    # e do detalhe (critério V7). É também a casa dos números que saíram do balão de ajuda
+    # do cabeçalho: o limiar e a janela deixaram de ser explicação a quem não perguntou, e
+    # passaram a estar aqui, a um clique, para quem perguntar.
+    if st.query_params.get("view") == "method":
+        _method_page()
+        return
 
     # O estado da página vive no URL, não em `session_state`: `?t=NVDA` é partilhável, o
     # botão "voltar" do browser funciona, e um cartão pode ser uma âncora em vez de um
