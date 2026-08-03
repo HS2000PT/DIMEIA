@@ -95,19 +95,26 @@ def _watchlist() -> list[str]:
         return list(NAMES)
 
 
-@st.cache_data(ttl=120, show_spinner=False)
+@st.cache_data(ttl=600, show_spinner=False)
 def _daily(ticker: str) -> pd.DataFrame:
     """Um ANO de barras diárias.
 
     Eram seis meses, e o gráfico pedia 260 linhas para o intervalo "1Y" — ou seja, o botão
     1Y mostrava calado seis meses. O ano serve os dois: corrige o intervalo e dá as ~250
     sessões de que a contagem de raridade precisa para dizer "dos últimos 249 dias".
+
+    **O `ttl` está deliberadamente em camadas, e esta é a de fora.** Era de 120 s, o que
+    mandava buscar doze anos de barras à rede de dois em dois minutos — de longe a coisa
+    mais lenta desta página, e a repetir-se atrás de cada repintura. As barras DIÁRIAS de
+    um ano não mudam a esse ritmo. O que muda depressa é o preço de hoje, e esse chega por
+    `_intraday` (ttl 90 s), que é pequeno e por ticker. Cachar a rede por mais tempo do que
+    os números derivados dela é o que torna barata uma repintura.
     """
     from investigator.market_data.prices import get_price_history
     return get_price_history(ticker, period="1y")
 
 
-@st.cache_data(ttl=300, show_spinner=False)
+@st.cache_data(ttl=900, show_spinner=False)
 def _rarity(ticker: str):
     """Quantos dias do último ano se moveram pelo menos tanto como hoje.
 
@@ -156,20 +163,33 @@ def _snapshot(ticker: str) -> dict | None:
         return None
 
 
-@st.cache_data(ttl=300, show_spinner=False)
-def _replay(ticker: str, days: int) -> list[dict]:
-    """Todos os dias que o método sinalizaria na janela mostrada.
+@st.cache_data(ttl=900, show_spinner=False)
+def _replay(ticker: str) -> list[dict]:
+    """Todos os dias que o método sinalizaria no ano carregado.
 
     Esta é metade da resposta a "falta história": não é preciso gerar nada nem guardar
     nada. A regra da RQ1 corrida sobre o passado produz os eventos que ela *realmente*
     detectaria, e fá-lo com a mesma norma sem lookahead do tempo real.
+
+    **Deixou de receber o tamanho da janela mostrada, e é essa a correcção.** Recebia-o, e
+    portanto cada botão de intervalo (1M, 6M, 1Y) era uma chave de cache diferente: trocar
+    de intervalo voltava a correr `detect_all` sobre a série de novo, o que é a coisa mais
+    cara desta página. Agora corre uma vez por ticker e quem desenha filtra pelo que está
+    no ecrã.
+
+    O resultado é o mesmo **por construção**, e a razão está em `detect_all`: a norma é
+    causal — o z do dia *i* usa os 20 dias imediatamente antes dele, nunca a série inteira.
+    Logo cortar a série antes ou depois de detectar produz exactamente os mesmos dias, desde
+    que o corte deixe 20 dias de história atrás do primeiro dia visível. Era precisamente
+    isso que o `tail(days + WINDOW + 5)` da versão anterior garantia, e é o que o teste de
+    regressão em `tests/test_dashboard_launch.py` fixa.
     """
     try:
         from investigator.anomaly_detector.detector import detect_all
         from investigator.market_data.prices import log_returns
 
-        close = _daily(ticker)["Close"].tail(days + WINDOW + 5)
-        hits = detect_all(log_returns(close), window=WINDOW, threshold=THRESHOLD)
+        hits = detect_all(log_returns(_daily(ticker)["Close"]),
+                          window=WINDOW, threshold=THRESHOLD)
         return [{"date": pd.Timestamp(d).strftime("%Y-%m-%d"),
                  "z": float(r.z_score), "move": float(r.last_return)} for d, r in hits]
     except Exception:  # noqa: BLE001
@@ -252,7 +272,32 @@ def _news_by_ticker() -> dict[str, list[dict]]:
     return out
 
 
-@st.cache_data(ttl=300, show_spinner=False)
+@st.cache_data(ttl=900, show_spinner=False)
+def _news_days(ticker: str) -> list[dict]:
+    """As notícias de uma empresa agregadas a **uma entrada por dia**, mais recente primeiro.
+
+    O impacto é medido por (ticker, dia): seis manchetes do mesmo dia partilham exactamente
+    os mesmos +1d/+5d. Como pontos no gráfico isso são seis marcas indistinguíveis
+    empilhadas no mesmo sítio — e, com o hover unificado, seis linhas iguais dentro da
+    mesma caixa. O dia é a unidade em que estes dados existem, portanto é a unidade que se
+    desenha; a contagem das outras manchetes vai no campo `n`, para não se perder.
+
+    É também isto que faz o gráfico e a tabela concordarem **por construção** (D1): as duas
+    lêem esta lista, logo não podem divergir uma da outra.
+    """
+    por_dia: dict[str, dict] = {}
+    for n in _news_by_ticker().get(ticker, []):
+        dia = n.get("date") or ""
+        if not dia:
+            continue
+        if dia in por_dia:
+            por_dia[dia]["n"] += 1
+        else:
+            por_dia[dia] = {**n, "n": 1}
+    return sorted(por_dia.values(), key=lambda n: n["date"], reverse=True)
+
+
+@st.cache_data(ttl=900, show_spinner=False)
 def _decomposition(ticker: str) -> dict | None:
     try:
         import numpy as np
@@ -430,10 +475,12 @@ def _chart(ticker: str, rotulo: str) -> None:
     base = anterior if anterior is not None else float(close.iloc[0])
     subiu = float(close.iloc[-1]) >= base
     fig = go.Figure()
+    # Sem a data no `hovertemplate`: com o hover unificado ela passa a ser o TÍTULO da
+    # caixa, e repeti-la em cada linha era escrevê-la duas vezes na mesma caixa.
     fig.add_trace(go.Scatter(
         x=close.index, y=close.values, mode="lines", name="",
         line={"color": T.UP if subiu else T.DOWN, "width": 1.6},
-        hovertemplate="%{y:$.2f}<br>%{x|%d %b %H:%M}<extra></extra>"))
+        hovertemplate="%{y:$.2f}<extra></extra>"))
 
     if anterior is not None:
         fig.add_hline(y=anterior, line={"color": T.FG_MUTE, "width": 1, "dash": "dot"},
@@ -451,15 +498,25 @@ def _chart(ticker: str, rotulo: str) -> None:
     baixo = min(float(close.min()), anterior or float(close.min()))
     cima = max(float(close.max()), anterior or float(close.max()))
     margem = (cima - baixo) * 0.14 or 1.0
+    # `hovermode="x unified"` e não `"closest"`: com `closest`, um marcador de notícia rouba
+    # o hover ao preço, e ler o valor de um dia obrigava a acertar no pixel da linha. Com a
+    # coluna unificada basta estar algures na vertical daquele dia, e o preço e tudo o que
+    # aconteceu nesse dia aparecem na MESMA caixa — que é a pergunta real ("o que houve
+    # aqui?"), e não duas perguntas separadas.
+    #
+    # O `spikemode="across"` é o que desenha a linha vertical de ponta a ponta; sem ele o
+    # espigão pára no ponto e não serve de fio-de-prumo contra o eixo.
     fig.update_layout(
         height=330, margin={"l": 0, "r": 0, "t": 8, "b": 0},
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        showlegend=False, hovermode="closest",
+        showlegend=False, hovermode="x unified",
         font={"color": T.FG_DIM, "size": 11},
-        xaxis={"showgrid": False, "linecolor": T.LINE, "zeroline": False},
+        xaxis={"showgrid": False, "linecolor": T.LINE, "zeroline": False,
+               "showspikes": True, "spikemode": "across", "spikesnap": "cursor",
+               "spikethickness": 1, "spikedash": "dot", "spikecolor": T.FG_MUTE},
         yaxis={"gridcolor": T.LINE, "griddash": "dot", "side": "right", "zeroline": False,
                "range": [baixo - margem, cima + margem], "tickformat": "$,.0f"},
-        hoverlabel={"bgcolor": T.PANEL, "bordercolor": T.LINE,
+        hoverlabel={"bgcolor": T.PANEL, "bordercolor": T.LINE, "align": "left",
                     "font": {"color": T.FG, "size": 11}})
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False},
                     key=f"chart_{ticker}_{rotulo}")
@@ -497,8 +554,7 @@ def _overlay_signals(fig, ticker: str, close: pd.Series, intraday: bool = False)
                 if getattr(e, "ticker", None) == ticker}
 
     det_x, det_y, det_t, al_x, al_y, al_t = [], [], [], [], [], []
-    dias_janela = 5 if intraday else len(close)
-    for hit in _replay(ticker, dias_janela):
+    for hit in _replay(ticker):
         if hit["date"] not in por_dia:
             continue
         d, y = por_dia[hit["date"]]
@@ -530,15 +586,16 @@ def _overlay_signals(fig, ticker: str, close: pd.Series, intraday: bool = False)
             text=al_t, hovertemplate="%{text}<extra></extra>"))
 
     nx, ny, nt = [], [], []
-    for n in _news_by_ticker().get(ticker, []):
+    for n in _news_days(ticker):
         if n["date"] not in por_dia:
             continue
         d, y = por_dia[n["date"]]
         impacto = (f"<br>+1d {_pct(n['d1'])} · +5d {_pct(n['d5'])}"
                    if n["d1"] is not None else "")
+        mais = f"<br>+{n['n'] - 1} more headline(s) that day" if n["n"] > 1 else ""
         nx.append(d)
         ny.append(y)
-        nt.append(f"{(n['headline'] or '')[:88]}{impacto}")
+        nt.append(f"{(n['headline'] or '')[:88]}{impacto}{mais}")
     if nx:
         fig.add_trace(go.Scatter(
             x=nx, y=ny, mode="markers", name="",
