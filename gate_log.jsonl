@@ -310,3 +310,15 @@
 {"date": "2026-08-03", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-03", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
 {"date": "2026-08-03", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.32 < 0.50"}
+{"date": "2026-08-03", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-03", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft and Alphabet Can Absorb an AI Shock. Oracle Is the One to Watch."}
+{"date": "2026-08-03", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.49 < 0.50"}
+{"date": "2026-08-03", "ticker": "TSLA", "stage": "alerted", "detail": "Tesla Could Be Giving Up More Than a Business"}
+{"date": "2026-08-03", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon enters $3 trillion club as AI optimism sweeps through Wall Street"}
+{"date": "2026-08-03", "ticker": "GOOGL", "stage": "alerted", "detail": "Microsoft and Alphabet Can Absorb an AI Shock. Oracle Is the One to Watch."}
+{"date": "2026-08-03", "ticker": "META", "stage": "alerted", "detail": "Microsoft and Amazon Won the AI Spending Week. Alphabet, Meta, and Oracle Didn't"}
+{"date": "2026-08-03", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-08-03", "ticker": "AMD", "stage": "alerted", "detail": "AMD Q2 Earnings On Deck: What To Expect"}
+{"date": "2026-08-03", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-03", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
+{"date": "2026-08-03", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.32 < 0.50"}
