@@ -331,6 +331,8 @@ def _brand_mark(size: int = 18) -> str:
 
 
 def _header(rows: list[dict], n_alerts: int) -> None:
+    from app.verdict import FLAG_EXPLAINER
+
     aberto, agora = _market_state()
     cor = T.UP if aberto else T.FG_MUTE
     estado = "MARKET OPEN" if aberto else "MARKET CLOSED"
@@ -338,19 +340,16 @@ def _header(rows: list[dict], n_alerts: int) -> None:
     st.markdown(
         f"""<div style="display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;
                         padding-bottom:0.6rem;border-bottom:1px solid {T.LINE}">
-          <span style="display:flex;align-items:center;gap:0.5rem;font-size:14.5px;
+          <span style="display:flex;align-items:center;gap:0.5rem;font-size:15.5px;
                        font-weight:800;letter-spacing:0.13em;color:{T.FG}">
-            <span style="color:{T.UP};display:flex">{_brand_mark(19)}</span>INVESTIGATOR</span>
-          <span class="num" style="font-size:11.5px;color:{cor}">● {estado}</span>
-          <span class="num" style="font-size:11.5px;color:{T.FG_MUTE}">{agora}</span>
+            <span style="color:{T.UP};display:flex">{_brand_mark(20)}</span>INVESTIGATOR</span>
+          <span class="num" style="font-size:12px;color:{cor}">● {estado}</span>
+          <span class="num" style="font-size:12px;color:{T.FG_MUTE}">{agora}</span>
           <span style="flex:1"></span>
-          <span class="num" style="font-size:11.5px;color:{T.FLAG}"
-                title="Flagged = today's move is further from this company's own recent
- average than the alert threshold ({THRESHOLD} standard deviations over a {WINDOW}-day
- window). It is measured per company, so a 3% day can be flagged for one and ordinary
- for another.">
+          <span class="num help" style="font-size:12px;color:{T.FLAG}"
+                title="{FLAG_EXPLAINER}">
             {T.ICON_ALERT} {sinalizados} flagged &middot; what is this?</span>
-          <span class="num" style="font-size:11.5px;color:{T.FG_MUTE}">
+          <span class="num" style="font-size:12px;color:{T.FG_MUTE}">
             {n_alerts} alerts sent</span>
         </div>""",
         unsafe_allow_html=True,
@@ -557,7 +556,7 @@ def _decomp_bar(ticker: str) -> None:
     d = _decomposition(ticker)
     st.markdown('<div class="label">WHY IT MOVED</div>', unsafe_allow_html=True)
     if d is None:
-        st.markdown(f'<span style="color:{T.FG_MUTE};font-size:12px">'
+        st.markdown(f'<span style="color:{T.FG_DIM};font-size:13px">'
                     f'Not enough aligned history to attribute this move.</span>',
                     unsafe_allow_html=True)
         return
@@ -580,9 +579,9 @@ def _decomp_bar(ticker: str) -> None:
         unsafe_allow_html=True)
 
     celulas = "".join(
-        f'<div style="flex:1"><div class="label" style="font-size:9px;'
+        f'<div style="flex:1"><div class="label" style="font-size:10px;'
         f'color:{T.FG_DIM if chave == d["driver"] else T.FG_MUTE}">{k}</div>'
-        f'<div class="num" style="font-size:15px;color:{T.UP if v > 0 else T.DOWN}">'
+        f'<div class="num" style="font-size:17px;color:{T.UP if v > 0 else T.DOWN}">'
         f'{_pct(v)}</div></div>' for k, v, chave in partes)
     st.markdown(f'<div style="display:flex;gap:0.9rem">{celulas}</div>',
                 unsafe_allow_html=True)
@@ -594,17 +593,17 @@ def _detail(ticker: str) -> None:
     snap = _snapshot(ticker)
     icone, cor = T.direction(snap["move"] if snap else None)
     cabeca = (
-        f'<span class="num" style="font-size:25px;color:{cor};font-weight:700">'
+        f'<span class="num" style="font-size:27px;color:{cor};font-weight:700">'
         f'{icone} {_pct(snap["move"])}</span>'
-        f'<span class="num" style="font-size:12px;color:{T.FG_MUTE};margin-left:0.55rem">'
+        f'<span class="num" style="font-size:13px;color:{T.FG_MUTE};margin-left:0.55rem">'
         f'z {snap["z"]:+.2f}</span>') if snap else ""
 
     st.markdown(
         f"""<div style="display:flex;align-items:center;gap:0.7rem;margin-bottom:0.3rem">
           {_logo_html(ticker, 30)}
-          <div><div style="font-size:17px;font-weight:700;color:{T.FG}">
+          <div><div style="font-size:19px;font-weight:700;color:{T.FG}">
             {NAMES.get(ticker, ticker)}</div>
-          <div class="num" style="font-size:11px;color:{T.FG_MUTE}">{ticker}</div></div>
+          <div class="num" style="font-size:12px;color:{T.FG_MUTE}">{ticker}</div></div>
           <span style="flex:1"></span>{cabeca}
         </div>""", unsafe_allow_html=True)
 
@@ -613,7 +612,7 @@ def _detail(ticker: str) -> None:
     _chart(ticker, rotulo)
 
     st.markdown(
-        f'<div class="num" style="display:flex;gap:1.1rem;font-size:10.5px;'
+        f'<div class="num" style="display:flex;gap:1.1rem;font-size:11.5px;'
         f'color:{T.FG_MUTE};margin:-0.3rem 0 0.3rem">'
         f'<span style="color:{T.FLAG}">{T.ICON_ALERT} alert sent</span>'
         f'<span>{T.ICON_DETECT} detected, gated</span>'
@@ -706,7 +705,7 @@ def _alert_feed(ticker: str) -> None:
     st.markdown(f'<div class="label">ALERTS SENT · {len(entradas)}</div>',
                 unsafe_allow_html=True)
     if not entradas:
-        st.markdown(f'<span style="color:{T.FG_MUTE};font-size:12px">'
+        st.markdown(f'<span style="color:{T.FG_DIM};font-size:13px">'
                     f'Nothing passed every gate for this company yet — the chart still shows '
                     f'what the method detected.</span>', unsafe_allow_html=True)
         return
@@ -806,15 +805,22 @@ def main() -> None:
     escolhido = st.query_params.get("t")
     validos = {r["ticker"] for r in linhas}
     if escolhido in validos:
+        # O regresso vive **antes** do que ele fecha. Estava no fim da página, ou seja
+        # depois do gráfico, da decomposição, da tabela de notícias e da lista de alertas
+        # — para voltar atrás era preciso primeiro percorrer tudo aquilo de que se queria
+        # sair. Um controlo de voltar pertence ao canto superior esquerdo, que é onde
+        # todos os outros o puseram e onde o olho já o procura.
+        st.markdown(
+            f'<a class="back" href="?" target="_self">← All companies</a>'
+            f'<div style="height:1px;background:{T.LINE};margin:0.15rem 0 0.55rem"></div>',
+            unsafe_allow_html=True)
         _detail(escolhido)
-        st.markdown('<a href="?" target="_self" style="font-size:11.5px">← All companies</a>',
-                    unsafe_allow_html=True)
     else:
         _grid_live()
 
     st.markdown(
         f'<div style="margin-top:1.6rem;padding-top:0.7rem;border-top:1px solid {T.LINE};'
-        f'font-size:10.5px;color:{T.FG_MUTE};line-height:1.55">'
+        f'font-size:11.5px;color:{T.FG_MUTE};line-height:1.55">'
         f'Evidence from the past, never a forecast. Every number on this page is produced '
         f'by the procedure described in the dissertation. Company marks belong to their '
         f'owners and are shown to identify the subject of the data.</div>',

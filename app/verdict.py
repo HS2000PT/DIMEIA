@@ -31,6 +31,22 @@ PROIBIDO = (
 )
 
 
+# A resposta a "o que é isto?", em linguagem comum. Vive aqui, e não solta no HTML do
+# cabeçalho, por duas razões: é texto de produto, logo tem de passar pelo mesmo varrimento
+# de vocabulário proibido (H2) que todas as outras frases; e muda-se num sítio só.
+#
+# O que ela deliberadamente NÃO diz: "1,5 desvios-padrão numa janela de 20 dias". Era essa
+# a versão anterior, e explicava o MECANISMO a quem tinha perguntado pela CONSEQUÊNCIA.
+# Quem carrega em "o que é isto?" não está a pedir a fórmula — está a perguntar se tem de
+# se importar. A segunda frase é a que faz o trabalho todo: sem ela, um leitor compara os
+# 3% da Apple com os 3% da Tesla e conclui que o sistema se enganou num dos dois.
+FLAG_EXPLAINER = (
+    "Flagged means today's move is unusually large for this company, measured against its "
+    "own recent behaviour. Each company is judged against itself, so a 3% day can be "
+    "flagged for a calm stock and ordinary for a volatile one."
+)
+
+
 def rarity_sentence(exc: Exceedance | None, name: str = "") -> str:
     """Quão invulgar foi o dia, em palavras e sem estatística.
 
@@ -151,16 +167,24 @@ def card_html(
     leva sparkline nem chips — o vazio é o sinal.
     """
     classe = "card--flagged" if flagged else "card--quiet"
-    pilula = '<span class="pill">UNUSUAL</span>' if flagged else ""
+    # A pílula sai da linha do topo. Estava entre o ticker e o número grande, a disputar
+    # uma linha que já levava logótipo, nome e percentagem — e o nome, único elemento sem
+    # largura própria, era o que cedia: "JPMorgan Chase" truncava para dar espaço à
+    # palavra `UNUSUAL`. Numa linha só dela ninguém compete, e o nome da empresa nunca
+    # abrevia. A palavra continua lá, que é o que o critério V3 exige (quatro canais
+    # redundantes, nunca só cor) — mudou de sítio, não de existência.
+    pilula = ('<div class="card-state"><span class="pill">UNUSUAL</span></div>'
+              if flagged else "")
     chips_html = ("".join(f"<span>{c}</span>" for c in chips)
                   if flagged and chips else "")
     return (
         f'<a class="card {classe}" href="?t={ticker}" target="_self">'
         f'<div class="card-top">{logo}'
         f'<span class="card-name">{name}</span>'
-        f'<span class="card-tick num">{ticker}</span>{pilula}'
+        f'<span class="card-tick num">{ticker}</span>'
         f'<span class="card-move num" style="color:{cor}">{icone} {move * 100:+.2f}%</span>'
         f"</div>"
+        f"{pilula}"
         f'<div class="verdict">{frase}</div>'
         f"{spark}"
         f'{f"<div class=chips>{chips_html}</div>" if chips_html else ""}'

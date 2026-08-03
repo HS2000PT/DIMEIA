@@ -113,9 +113,14 @@ def css() -> str:
     """A folha de estilo. Devolvida como texto para a app a injectar uma vez."""
     return f"""
 <style>
-  /* Streamlit traz muito enchimento por defeito; num painel denso é espaço perdido. */
+  /* Streamlit traz muito enchimento por defeito; num painel denso é espaço perdido.
+     O `max-width` era 1680 px, o que num ecrã de 1920 deixava 120 px de nada de cada
+     lado — visível, e a queixa era exactamente essa. Subiu para 1920 para que o monitor
+     mais comum fique cheio de ponta a ponta. Não desapareceu: sem tecto nenhum, um ecrã
+     ultra-largo esticaria quatro cartões até uma linha de texto atravessar meio metro,
+     que se lê pior do que a margem que estamos a recuperar. */
   .stApp {{ background: {BG}; }}
-  .block-container {{ padding: 0.7rem 1.1rem 1rem; max-width: 1680px; }}
+  .block-container {{ padding: 0.7rem 0.85rem 1rem; max-width: 1920px; }}
   #MainMenu, footer, header {{ visibility: hidden; }}
 
   html, body, [class*="css"] {{
@@ -132,8 +137,20 @@ def css() -> str:
 
   .rule {{ border: 0; border-top: 1px solid {LINE}; margin: 0.9rem 0 0.7rem; }}
 
+  /* O regresso à grelha. Discreto mas não escondido: chega-lhe a cor de informação, sem
+     sublinhado, e ganha-o ao passar por cima — não precisa de competir com nada porque é
+     a única coisa naquela linha. */
+  a.back {{
+    font-size: 12.5px; color: {NEWS}; text-decoration: none; font-weight: 600;
+  }}
+  a.back:hover {{ text-decoration: underline; }}
+
+  /* "o que é isto?" — sublinhado a pontos e cursor de ajuda. Sem isto, o texto parece
+     decoração e ninguém descobre que há uma explicação por trás dele. */
+  .help {{ cursor: help; border-bottom: 1px dotted currentColor; }}
+
   .label {{
-    font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase;
+    font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase;
     color: {FG_MUTE}; font-weight: 600;
   }}
 
@@ -182,7 +199,7 @@ def css() -> str:
   div[role="radiogroup"] > label > div:first-child {{ display: none; }}
   div[role="radiogroup"] > label p {{
     font-family: ui-monospace, Menlo, Consolas, monospace;
-    font-size: 11px; color: {FG_DIM} !important; margin: 0;
+    font-size: 12px; color: {FG_DIM} !important; margin: 0;
   }}
   div[role="radiogroup"] > label:has(input:checked) {{
     background: {PANEL_2}; border-color: {UP};
@@ -191,15 +208,15 @@ def css() -> str:
 
   /* Rótulos dos widgets: cinzento-claro sobre escuro é ilegível. */
   label, .stSelectbox label {{ color: {FG_DIM} !important; }}
-  div[data-testid="stCaptionContainer"] p {{ color: {FG_MUTE}; font-size: 11px; }}
+  div[data-testid="stCaptionContainer"] p {{ color: {FG_MUTE}; font-size: 12px; }}
 
   /* O texto do alerta: `st.text` herda um fundo claro e sai preto sobre preto. */
   .stCode, pre, div[data-testid="stText"] {{
     background: {PANEL_2} !important; color: {FG_DIM} !important;
-    border: 1px solid {LINE} !important; border-radius: 6px; font-size: 11.5px;
+    border: 1px solid {LINE} !important; border-radius: 6px; font-size: 12.5px;
   }}
   div[data-testid="stExpander"] {{ border-color: {LINE} !important; background: {PANEL}; }}
-  div[data-testid="stExpander"] summary p {{ font-size: 11.5px; color: {FG_DIM};
+  div[data-testid="stExpander"] summary p {{ font-size: 12.5px; color: {FG_DIM};
     font-family: ui-monospace, Menlo, Consolas, monospace; }}
 </style>
 """
@@ -220,16 +237,36 @@ def card_css() -> str:
     """
     return f"""
 <style>
-  /* `auto-fit` e não `auto-fill`: com poucos cartões, `auto-fill` deixa colunas
-     fantasma vazias à direita em vez de deixar os cartões esticarem. O mínimo desceu de
-     268 px para 240 px, o que faz caber uma coluna a mais em 1366 px e evita que num
-     ecrã estreito o cartão transborde. */
+  /* Uma escada explícita, não `auto-fit`/`minmax`. Com `auto-fit` o número de colunas é o
+     que calhar caber, e com doze cartões isso produzia linhas órfãs — cinco, cinco e
+     **dois** —, que se lê como se os dois últimos fossem outra coisa. Aqui as larguras
+     são decididas: 4 colunas dão 4×3 exacto, e cada degrau abaixo continua a dividir doze
+     sem deixar ninguém sozinho numa linha (3×4, 2×6, 1×12).
+
+     `minmax(0, 1fr)` e nunca `1fr`: o mínimo implícito de uma coluna de grelha é
+     `auto`, ou seja, o tamanho do conteúdo — e como o número grande do cartão é
+     `white-space: nowrap`, uma coluna estreita seria empurrada para além da sua largura
+     em vez de encolher. O `0` é o que autoriza a célula a ser mais pequena do que aquilo
+     que tem lá dentro. */
+  /* `align-items: start` e não o `stretch` que a grelha faz por defeito. Sem isto, uma
+     célula calma numa linha que tem cartões sinalizados é esticada até à altura deles, e
+     o resultado é um rectângulo com borda e nada lá dentro — que se lê como se faltasse
+     qualquer coisa. O comentário aqui em baixo afirmava que o cartão calmo era
+     "genuinamente mais curto"; era falso enquanto a grelha o esticava, e a captura
+     mostrou-o. Agora é verdade. */
   .grid {{
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 0.5rem; margin: 0.55rem 0 0.9rem;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
+    gap: 0.55rem; margin: 0.55rem 0 0.9rem;
   }}
-  @media (max-width: 640px) {{
-    .grid {{ grid-template-columns: 1fr; }}
+  @media (max-width: 1279px) {{
+    .grid {{ grid-template-columns: repeat(3, minmax(0, 1fr)); }}
+  }}
+  @media (max-width: 899px) {{
+    .grid {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
+  }}
+  @media (max-width: 599px) {{
+    .grid {{ grid-template-columns: minmax(0, 1fr); }}
   }}
 
   /* O cartão inteiro é a área de clique. Sem botão por baixo: essa tentativa deu duas
@@ -249,32 +286,46 @@ def card_css() -> str:
   a.card--flagged {{ border-left-color: {FLAG}; }}
   a.card--quiet {{ background: transparent; }}
 
+  /* A escala subiu um degrau em todo o cartão. A anterior tinha sido afinada a olhar para
+     um terminal denso, e a 12,5 px o veredicto — que é a única coisa que este ecrã existe
+     para fazer ler — pedia esforço a quem não passa o dia em painéis. Densidade não é
+     letra pequena; é não desperdiçar espaço. O espaço veio das margens (ver `css()`) e da
+     linha que a pílula libertou. */
   .card-top {{ display: flex; align-items: center; gap: 0.4rem;
-               margin-bottom: 0.4rem; min-width: 0; }}
-  .card-name {{ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
-  .card-name {{ font-size: 12.5px; font-weight: 700; color: {FG}; }}
-  .card-tick {{ font-size: 10px; color: {FG_MUTE}; }}
-  /* `nowrap` e um corpo que se adapta: a 240 px de coluna, "+14.25%" com 21 px partia
-     em duas linhas e a seta ficava sozinha por cima do número. `clamp` deixa-o encolher
-     em colunas estreitas em vez de partir. */
-  .card-move {{
-    margin-left: auto; font-weight: 700; white-space: nowrap;
-    font-size: clamp(15px, 1.35vw, 20px);
+               margin-bottom: 0.35rem; min-width: 0; }}
+  /* `min-width: 0` e `flex: 1 1 auto`: sem eles um item flex recusa-se a encolher abaixo
+     do seu conteúdo, e o `text-overflow: ellipsis` nunca chega a disparar — o nome
+     empurrava o número para fora do cartão em vez de reticenciar. */
+  .card-name {{
+    flex: 1 1 auto; min-width: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 14px; font-weight: 700; color: {FG};
   }}
-  .card--quiet .card-move {{ font-size: clamp(13px, 1.05vw, 15px); font-weight: 500; }}
+  .card-tick {{ font-size: 11px; color: {FG_MUTE}; flex: 0 0 auto; }}
+  /* `nowrap` e um corpo que se adapta: numa coluna estreita, "+14.25%" com 21 px partia
+     em duas linhas e a seta ficava sozinha por cima do número. `clamp` deixa-o encolher
+     em vez de partir. */
+  .card-move {{
+    margin-left: auto; flex: 0 0 auto; font-weight: 700; white-space: nowrap;
+    font-size: clamp(16px, 1.35vw, 21px);
+  }}
+  .card--quiet .card-move {{ font-size: clamp(14px, 1.05vw, 16px); font-weight: 500; }}
 
+  /* A linha da pílula. Existe só nos cartões sinalizados — num cartão calmo não há linha
+     nenhuma, e é o vazio que faz o trabalho. */
+  .card-state {{ margin-bottom: 0.3rem; }}
   .pill {{
-    font-size: 9px; letter-spacing: 0.09em; font-weight: 700; color: {BG};
-    background: {FLAG}; border-radius: 3px; padding: 1px 5px;
+    font-size: 10px; letter-spacing: 0.09em; font-weight: 700; color: {BG};
+    background: {FLAG}; border-radius: 3px; padding: 1.5px 6px;
   }}
 
   /* O veredicto é o herói. É a primeira coisa que se lê e a única obrigatória. */
-  .verdict {{ font-size: 12.5px; line-height: 1.42; color: {FG}; }}
-  .card--quiet .verdict {{ color: {FG_MUTE}; font-size: 11.5px; }}
+  .verdict {{ font-size: 14px; line-height: 1.45; color: {FG}; }}
+  .card--quiet .verdict {{ color: {FG_DIM}; font-size: 13px; }}
 
   .chips {{
     display: flex; flex-wrap: wrap; gap: 0.4rem 0.7rem; margin-top: 0.5rem;
-    font-size: 10px; color: {FG_MUTE};
+    font-size: 11px; color: {FG_MUTE};
   }}
   .spark {{ margin-top: 0.45rem; display: block; }}
 </style>

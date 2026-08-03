@@ -7,6 +7,7 @@ import itertools
 import pytest
 
 from app.verdict import (
+    FLAG_EXPLAINER,
     PROIBIDO,
     card_html,
     driver_sentence,
@@ -201,6 +202,50 @@ def test_cartao_sinalizado_tem_a_palavra_e_nao_so_a_cor() -> None:
 
 def test_chips_so_aparecem_quando_ha_algo_a_dizer() -> None:
     assert "chips" not in _cartao(chips=[])
+
+
+def test_a_pilula_saiu_da_linha_do_nome() -> None:
+    """A1: `UNUSUAL` já não disputa a linha do topo com o nome da empresa.
+
+    Verificado por posição e não a olho: a pílula tem de vir **depois** do número grande,
+    que é o último elemento da linha do topo. Enquanto estava lá dentro, o nome era o
+    único item sem largura própria e portanto o único que cedia — "JPMorgan Chase"
+    truncava para a palavra caber.
+    """
+    html = _cartao()
+    assert html.index("card-state") > html.index("card-move")
+    assert html.index("card-state") < html.index('class="verdict"')
+
+
+def test_cartao_calmo_nao_tem_linha_de_estado() -> None:
+    """Num dia calmo não há pílula nem a linha que a segura: o vazio é o sinal."""
+    assert "card-state" not in _cartao(flagged=False)
+
+
+# ── B: a resposta a "o que é isto?" ──────────────────────────────────────────────────
+
+def test_a_explicacao_lidera_pela_consequencia_nao_pela_estatistica() -> None:
+    """A queixa era que a explicação explicava o mecanismo a quem perguntou o significado.
+
+    A versão anterior abria com "1,5 desvios-padrão numa janela de 20 dias". Estes
+    asserts fixam a inversão: a primeira frase diz o que significa, e o vocabulário da
+    estatística não aparece de todo.
+    """
+    assert FLAG_EXPLAINER.startswith("Flagged means")
+    for jargao in ("standard deviation", "z-score", "z score", "threshold", "window"):
+        assert jargao not in FLAG_EXPLAINER.lower(), jargao
+
+
+def test_a_explicacao_diz_que_cada_empresa_e_julgada_contra_si_propria() -> None:
+    """Sem esta metade, 3% da Apple e 3% da Tesla parecem o mesmo caso julgado ao contrário."""
+    assert "against itself" in FLAG_EXPLAINER
+    assert "3%" in FLAG_EXPLAINER
+
+
+def test_a_explicacao_nao_promete_nada_sobre_o_futuro() -> None:
+    """H2 aplica-se a todo o texto de produto, não só aos veredictos dos cartões."""
+    for palavra in PROIBIDO:
+        assert palavra not in FLAG_EXPLAINER.lower(), palavra
 
 
 # ── sparkline ────────────────────────────────────────────────────────────────────────
