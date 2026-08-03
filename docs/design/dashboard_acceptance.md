@@ -122,3 +122,72 @@ Isto **não** é reduzir o âmbito por falta de tempo. É a mesma regra que os E
 aplicaram ao sistema: construir, medir, e deixar a medição decidir, incluindo quando ela diz que
 não. Uma reconstrução feita depois de a sua premissa cair seria trabalho a fingir que a medição
 não aconteceu.
+
+---
+
+## 6. Critérios da v3 — o painel virado para o investidor (2026-08-03)
+
+> **Escrito ANTES do código**, como as versões anteriores. O que muda aqui não é estilo: é a
+> ordem entre palavras e números.
+
+### 6.1 O diagnóstico, nas palavras do aluno
+
+Perguntei-lhe directamente o que o perdia na v2 e ele escolheu **as quatro opções**, com esta
+primeira: **"não me diz o que pensar"**. As outras: "coisas a mais de uma vez", "não sei o que
+os números querem dizer", "não consigo perceber o que é importante".
+
+As quatro juntas dizem uma coisa só, e não é sobre cores: **a v2 abre com números (z-score,
+barras com sinal, percentagens) quando devia abrir com um veredicto em linguagem comum, e deixar
+os números como a prova por trás dele.** É uma inversão, não uma repintura.
+
+Duas decisões dele que fixam o resto: o público é **um investidor a sério, primeiro** (a
+avaliação sai do caminho principal para **uma** página ligada), e a forma é uma **grelha de
+cartões** — as dez empresas ao mesmo nível, nenhuma privilegiada ao abrir.
+
+### 6.2 A lei do desenho, uma linha
+
+> **Todo o cartão e toda a secção abrem com uma frase que um não-especialista consegue usar.
+> Nenhum número aparece antes da frase que ele sustenta.**
+
+É a forma executável de "não me diz o que pensar", e é um teste, não uma intenção.
+
+### 6.3 Critérios binários
+
+| # | Critério |
+|---|---|
+| **V1** | A grelha abre com as 10 empresas; nenhuma está expandida nem seleccionada por defeito |
+| **V2** | Em cada cartão, o **veredicto em palavras** aparece antes de qualquer número no HTML emitido |
+| **V3** | Um cartão sinalizado e um cartão calmo distinguem-se por **quatro canais redundantes** — posição, quantidade de tinta, corpo de letra e uma **palavra** (`UNUSUAL` / `Quiet`) — nunca só por cor |
+| **V4** | Nenhum z-score aparece sem a glosa que o torna legível (`vs 20-day norm`) |
+| **V5** | A raridade é dita por **contagem empírica** ("6 dos últimos 248 dias"), com o `n` vindo dos dados e nunca escrito à mão |
+| **V6** | Os precedentes existem no produto: **contagem** no cartão, **lista** no detalhe, a um clique |
+| **V7** | A avaliação vive em **uma** página, alcançável por **um** link, ausente da grelha e do detalhe |
+| **V8** | Ligação profunda: `?t=NVDA` abre essa empresa e mais nenhuma |
+
+### 6.4 Duas emendas assumidas, não falhadas em silêncio
+
+A v3 **não cumpre D2/D3 como estavam escritos** (a repartição mercado/setor/empresa em cada
+linha, sem clicar). Fica registado porque falhar um critério sem o dizer é exactamente o que
+este documento existe para impedir:
+
+- **D2′** — o cartão nomeia o motor do movimento **em palavras** ("veio com o mercado inteiro,
+  não da NVIDIA"); os três números ficam a um clique. Razão: os três números na grelha eram
+  30 valores com sinal ao mesmo tempo, que é a definição de "coisas a mais de uma vez".
+- **D3′** — a barra com sinal mantém-se, no detalhe, em `_decomp_bar`.
+
+### 6.5 O que a v3 não mostra, e ao abrigo de que regra
+
+| Não mostra | Regra |
+|---|---|
+| Score de convergência fundido | **H4** — ganha em 1 de 3 orçamentos |
+| Crachás de tipo de evento | **H4** — silhueta 0,084, rubrica cobre 15,1% |
+| Probabilidade da triagem / `materiality_line` em qualquer vista de produto | **H2** — é um número para a frente. Sobrevive só no texto espelhado do canal e como mecanismo descrito na página de avaliação |
+| Qualquer conversão de z para probabilidade | Assumiria normalidade, e os retornos têm caudas pesadas. Substituída pela contagem empírica, que não assume nada |
+| Impacto médio dos precedentes como número de destaque | A média esconde direcções mistas — é o que `explain_news_impact` já evita mostrando primeiro o intervalo |
+| Alvos de preço, comprar/vender, "movimento esperado" | **H2** e a restrição fundadora |
+
+### 6.6 Como se sabe que acabou
+
+A v1 (`app/streamlit_app.py`) **continua implantada e intocada** até a v3 passar 6.3 inteiro,
+mais H1–H4 e C1–C2. Promoção é uma linha no `Procfile`. Se não passar, a v1 fica e a v3 é
+Trabalho Futuro — como das outras vezes, não se perde nada por construir ao lado.
