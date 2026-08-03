@@ -12,6 +12,7 @@ from app.verdict import (
     card_html,
     driver_sentence,
     gloss_z,
+    precedent_framing,
     rarity_sentence,
     sparkline_svg,
     verdict,
@@ -246,6 +247,45 @@ def test_a_explicacao_nao_promete_nada_sobre_o_futuro() -> None:
     """H2 aplica-se a todo o texto de produto, não só aos veredictos dos cartões."""
     for palavra in PROIBIDO:
         assert palavra not in FLAG_EXPLAINER.lower(), palavra
+
+
+# ── H3: a moldura tema ≠ direcção dos precedentes ────────────────────────────────────
+
+def test_direccoes_mistas_mostram_a_reparticao_e_nao_uma_media() -> None:
+    """Uma média sobre casos que foram a +4% e a −8% descreve um valor que nunca aconteceu."""
+    frase = precedent_framing(up=2, down=3)
+    assert "both directions" in frase
+    assert "2 up, 3 down" in frase
+    assert "not in direction" in frase
+
+
+def test_direccao_unanime_continua_a_dizer_que_nao_fala_deste_caso() -> None:
+    """O caso do CS3: unanimidade no passado não é uma afirmação sobre o presente."""
+    for frase in (precedent_framing(up=4, down=0), precedent_framing(up=0, down=4)):
+        assert "topic-similar" in frase
+        assert "not a statement about this one" in frase
+
+
+def test_sem_desfechos_medidos_nao_se_inventa_uma_direccao() -> None:
+    """Casos recentes demais para o horizonte ter fechado não são "sem movimento"."""
+    frase = precedent_framing(0, 0)
+    assert "measured outcome" in frase
+    assert "moved" not in frase
+
+
+def test_a_moldura_nunca_e_vazia() -> None:
+    """H3 torna-a obrigatória: não pode haver combinação que devolva ""."""
+    for up in range(4):
+        for down in range(4):
+            assert precedent_framing(up, down).strip()
+
+
+def test_a_moldura_nunca_preve() -> None:
+    for up in range(5):
+        for down in range(5):
+            frase = precedent_framing(up, down).lower()
+            for palavra in PROIBIDO:
+                assert palavra not in frase, f"'{palavra}' em: {frase}"
 
 
 # ── sparkline ────────────────────────────────────────────────────────────────────────

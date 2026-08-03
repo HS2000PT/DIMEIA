@@ -187,6 +187,26 @@ este documento existe para impedir:
   não da NVIDIA"); os três números ficam a um clique. Razão: os três números na grelha eram
   30 valores com sinal ao mesmo tempo, que é a definição de "coisas a mais de uma vez".
 - **D3′** — a barra com sinal mantém-se, no detalhe, em `_decomp_bar`.
+- **V6′ (2026-08-03)** — o V6 pedia **contagem no cartão** e **lista no detalhe**. A lista
+  está feita (`_precedent_panel`); a **contagem no cartão não fica**, e a razão é medida e
+  não estética.
+
+  Para escrever um número no cartão é preciso ter feito a consulta, e fazer a consulta
+  obriga a carregar, **na página de entrada**, o modelo semântico, a base de casos e a KB
+  viva pela rede. Medido em browser real, com tudo o resto igual: a grelha a frio passa de
+  **6,2 s para 13,7 s**. São sete segundos e meio para produzir a frase "4 similar past
+  cases" num chip — contra o critério **P1**, que pede menos de cinco segundos para a
+  página inteira.
+
+  Componente a componente o custo parecia aceitável (motor 0,48 s + base 0,55 s + rede
+  1,47 s + 0,04 s por consulta ≈ 3,2 s), e dentro do Streamlit é mais do dobro disso. Fica
+  registado porque é a mesma lição de sempre neste projecto: a soma das partes medidas
+  isoladamente não é a medição do todo, e quem decide tem de ver o número do todo.
+
+  **O que se perde, dito com clareza:** a partir da grelha não se sabe quantos casos
+  comparáveis existem sem clicar. **O que não se perde:** os precedentes estão no produto,
+  a um clique, com o desfecho medido e a moldura tema ≠ direcção — que era o que faltava
+  por completo e é o que a RQ2 justifica.
 
 ### 6.5 O que a v3 não mostra, e ao abrigo de que regra
 

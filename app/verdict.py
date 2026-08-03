@@ -118,6 +118,28 @@ def verdict(
     return " ".join(partes)
 
 
+def precedent_framing(up: int, down: int) -> str:
+    """A moldura tema ≠ direcção, que o critério H3 torna **obrigatória** e nunca opcional.
+
+    É a lição do Estudo de Caso 3 aplicada ao produto: a recuperação semântica capta o
+    **tema**, não a direcção. Uma manchete positiva recupera com toda a naturalidade um
+    grupo de casos cujo desfecho médio foi negativo — não porque o método falhou, mas
+    porque "concorrência em chips de IA" é o mesmo assunto quer a notícia seja boa ou má.
+
+    Por isso não se mostra a média como número de destaque: uma média de −1,97% sobre casos
+    que foram a +4% e a −8% descreve um número que nunca aconteceu, e lê-se como se fosse
+    o que vem aí. A repartição observada não tem esse problema.
+    """
+    if up and down:
+        return (f"These moved in both directions ({up} up, {down} down) — "
+                f"similar in topic, not in direction.")
+    if up or down:
+        n, rumo = (up, "up") if up else (down, "down")
+        return (f"All {n} of these moved {rumo} — topic-similar past cases, "
+                f"and not a statement about this one.")
+    return "None of these cases has a measured outcome yet."
+
+
 def gloss_z(z: float) -> str:
     """O z-score com a glosa que o torna legível (critério V4).
 

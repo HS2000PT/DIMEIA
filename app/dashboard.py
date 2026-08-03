@@ -308,6 +308,95 @@ def _news_days(ticker: str) -> list[dict]:
     return sorted(por_dia.values(), key=lambda n: n["date"], reverse=True)
 
 
+@st.cache_resource(show_spinner=False)
+def _retrieval_engine() -> tuple:
+    """(caminho da KB, embedder) para o produto. `cache_resource` porque o modelo não é dados.
+
+    Fail-open por dentro (`product_retrieval`): sem `onnxruntime`, sem rede ou sem o modelo
+    em cache, degrada para a KB-amostra com sobreposição de palavras em vez de deixar a
+    página sem esta secção. O motor em uso é depois **dito no ecrã**, porque um precedente
+    lexical e um precedente semântico não valem o mesmo e o utilizador tem direito a saber
+    qual está a ver.
+    """
+    from investigator.main import product_retrieval
+
+    return product_retrieval(auto_download=os.environ.get("INVESTIGATOR_OFFLINE") != "1")
+
+
+@st.cache_resource(show_spinner=False)
+def _retrieval_kbs(kb_path: str) -> list:
+    """A KB viva (casos deste sistema) mais a histórica. Pela mesma ordem do runner.
+
+    **`cache_resource` e não `cache_data`, e a diferença não é de estilo.** O `cache_data`
+    guarda uma *cópia serializada* do que a função devolve — aqui, 19,4 MB de registos com
+    embeddings de 384 dimensões, a serem escritos e relidos com pickle. Uma base de casos
+    carregada não é um valor a copiar, é um recurso a partilhar, e é exactamente para isso
+    que existe o `cache_resource`. (A v1 tem o mesmo `cache_data` neste sítio; ficou como
+    estava, porque a v1 está implantada e não se toca.)
+    """
+    from investigator.historical_kb.knowledge_base import HistoricalKB
+    from investigator.live_kb import fetch_remote_records
+
+    kbs = []
+    if os.environ.get("INVESTIGATOR_OFFLINE") != "1":
+        try:
+            vivos = fetch_remote_records(_raw("live_kb.jsonl"))
+            if vivos:
+                kbs.append(HistoricalKB(vivos))
+        except Exception:  # noqa: BLE001
+            pass
+    kbs.append(HistoricalKB.load(kb_path))
+    return kbs
+
+
+@st.cache_data(ttl=900, show_spinner=False)
+def _precedents(ticker: str, top_k: int = 4) -> dict | None:
+    """*Já aconteceu antes, e o que se seguiu?* — a terceira pergunta da tese.
+
+    **Esta é a que não estava no produto de todo.** O motor existe e funciona
+    (`live_kb.merged_precedents`, avaliado na RQ2 com P@5 0,595 à escala), mas nenhuma das
+    duas apps o mostrava: a v1 só o expunha numa demonstração, a v3 não o tinha. A base de
+    casos é a razão de ser do trabalho e era invisível.
+
+    A consulta é a **última manchete captada** desta empresa. Os casos que voltam são de
+    **outras empresas também** — é essa a aposta da RQ2, que um acontecimento parecido
+    noutro sítio informa este —, e por isso cada linha diz de quem é.
+
+    O desfecho é **medido**, nunca projectado: `impacts` foi calculado depois do facto, com
+    a regra de alinhamento sem lookahead. A repartição subiram/desceram vai junta para o
+    ecrã poder aplicar a moldura tema ≠ direcção (H3) em vez de uma média que a esconde.
+    """
+    dias = _news_days(ticker)
+    if not dias:
+        return None
+    consulta = dias[0]
+    try:
+        from investigator.live_kb import merged_precedents
+
+        kb_path, embedder = _retrieval_engine()
+        casos = merged_precedents(
+            consulta["headline"], _retrieval_kbs(str(kb_path)), embedder,
+            top_k=top_k, today=datetime.now(UTC).date())
+    except Exception:  # noqa: BLE001
+        return None
+    if not casos:
+        return None
+
+    linhas, subiram, desceram = [], 0, 0
+    for rec, sim in casos:
+        imp = rec.impacts.get("5")
+        if imp is not None and imp == imp:
+            subiram += imp > 0
+            desceram += imp < 0
+        else:
+            imp = None
+        linhas.append({"ticker": rec.ticker, "date": rec.date, "headline": rec.headline,
+                       "impact": imp, "sim": float(sim)})
+    return {"query": consulta["headline"], "query_date": consulta["date"], "cases": linhas,
+            "up": subiram, "down": desceram,
+            "semantic": bool(getattr(embedder, "semantic", False))}
+
+
 @st.cache_data(ttl=900, show_spinner=False)
 def _decomposition(ticker: str) -> dict | None:
     try:
@@ -694,6 +783,11 @@ def _detail(ticker: str) -> None:
     st.markdown('<hr class="rule">', unsafe_allow_html=True)
     _decomp_bar(ticker)
     st.markdown('<hr class="rule">', unsafe_allow_html=True)
+    # A ordem é a das três perguntas: o quê e que tamanho (cabeçalho e gráfico), foi o
+    # mercado (decomposição), já aconteceu antes (precedentes). Só depois a história desta
+    # empresa em particular, que é uma pergunta diferente e mais estreita.
+    _precedent_panel(ticker)
+    st.markdown('<hr class="rule">', unsafe_allow_html=True)
     _news_panel(ticker, janela)
     st.markdown('<hr class="rule">', unsafe_allow_html=True)
     _alert_feed(ticker, janela)
@@ -761,6 +855,70 @@ def _page_state(chave: str, assinatura: tuple) -> int:
         st.session_state[f"sig_{chave}"] = assinatura
         st.session_state[f"pg_{chave}"] = 1
     return int(st.session_state.get(f"pg_{chave}", 1))
+
+
+def _precedent_panel(ticker: str) -> None:
+    """*Já aconteceu antes, e o que se seguiu?* — a pergunta que justifica a base de casos.
+
+    O desfecho de cada caso é **medido**, e a moldura tema ≠ direcção (H3) aparece sempre,
+    não só quando os casos discordam. A média deliberadamente **não** é o número de
+    destaque: sobre casos que foram a +4% e a −8%, uma média de −2% descreve um valor que
+    nunca aconteceu a ninguém.
+    """
+    from app.verdict import precedent_framing
+
+    p = _precedents(ticker)
+    st.markdown(
+        '<div class="label">HAS THIS HAPPENED BEFORE? &middot; '
+        f'<span style="text-transform:none;letter-spacing:0;color:{T.FG_MUTE}">'
+        f'past cases on a similar topic, with the outcome that was measured</span></div>',
+        unsafe_allow_html=True)
+
+    if p is None:
+        st.markdown(f'<span style="color:{T.FG_DIM};font-size:13px">'
+                    f'No comparable past cases for {ticker} yet — the case base needs a '
+                    f'captured headline to search from.</span>', unsafe_allow_html=True)
+        return
+
+    motor = ("semantic match (the dissertation's MiniLM model)" if p["semantic"]
+             else "word overlap — the semantic model is unavailable, so these are weaker")
+    st.markdown(
+        f'<div style="font-size:12.5px;color:{T.FG_DIM};margin:0.1rem 0 0.5rem">'
+        f'Closest to the latest captured headline '
+        f'<span class="num" style="color:{T.FG_MUTE}">({p["query_date"]})</span>: '
+        f'&ldquo;{(p["query"] or "")[:120]}&rdquo;'
+        f'<div style="color:{T.FG_MUTE};font-size:11.5px;margin-top:0.15rem">'
+        f'Found by {motor}.</div></div>', unsafe_allow_html=True)
+
+    cabecalho = ('<div class="trow thead">'
+                 '<span class="label" style="width:58px">CASE</span>'
+                 '<span class="label" style="width:78px">DATE</span>'
+                 '<span class="label" style="flex:1">HEADLINE</span>'
+                 '<span class="label" style="width:82px">+5D THEN</span>'
+                 '<span class="label" style="width:52px">SIM</span></div>')
+    linhas = []
+    for c in p["cases"]:
+        linhas.append(
+            f'<div class="trow">'
+            f'<span class="num" style="width:58px;font-size:12px;color:{T.FG_DIM}">'
+            f'{c["ticker"]}</span>'
+            f'<span class="num" style="width:78px;font-size:12px;color:{T.FG_MUTE}">'
+            f'{c["date"]}</span>'
+            f'<span class="tcell">{(c["headline"] or "")[:110]}</span>'
+            f'<span style="width:82px">{_impact_bar(c["impact"])}</span>'
+            f'<span class="num" style="width:52px;font-size:11.5px;color:{T.FG_MUTE}">'
+            f'{c["sim"]:.2f}</span></div>')
+    st.markdown(cabecalho + "".join(linhas), unsafe_allow_html=True)
+
+    # A moldura H3 vem SEMPRE, e a negrito. Não é uma ressalva a acrescentar quando calha:
+    # é a diferença entre "casos parecidos" e "isto vai acontecer".
+    st.markdown(
+        f'<div style="font-size:12.5px;color:{T.FLAG};margin-top:0.5rem">'
+        f'{precedent_framing(p["up"], p["down"])}</div>'
+        f'<div style="font-size:11.5px;color:{T.FG_MUTE};margin-top:0.2rem">'
+        f'Cases can come from other companies on purpose — that is what the retrieval was '
+        f'evaluated for. Outcomes are what followed then, measured after the fact.</div>',
+        unsafe_allow_html=True)
 
 
 def _news_panel(ticker: str, janela: tuple[str, str] | None = None) -> None:
@@ -961,6 +1119,18 @@ def _grid_view(linhas: list[dict]) -> None:
             chips.append(gloss_z(r["z"]))
             if r["vol_ratio"]:
                 chips.append(f"{r['vol_ratio']:.1f}x usual volume")
+            # A contagem de precedentes só se calcula para os cartões sinalizados (V6). Nos
+            # calmos não é omissão por esquecimento: é o mesmo princípio do resto do cartão
+            # calmo — sem nada a assinalar, não se gasta nem tinta nem uma consulta à base
+            # de casos. Doze consultas a cada abertura da grelha custariam mais do que a
+            # página inteira, e para nove delas ninguém tinha perguntado nada.
+            # SEM contagem de precedentes aqui, e a razão está medida — ver a emenda V6′ em
+            # `dashboard_acceptance.md`. Pôr o número no cartão obriga a carregar o modelo
+            # semântico, a base de casos e a KB viva pela rede **na página de entrada**, e
+            # media-se: a grelha a frio passava de 6,2 s para 13,7 s. Sete segundos e meio
+            # para escrever "4 similar past cases" num chip, contra um critério (P1) que
+            # pede menos de cinco no total. A lista continua a um clique, no detalhe, que é
+            # onde ela é de facto útil.
             if any(getattr(e, "ticker", None) == t for e in _alerts()):
                 chips.append(f"{T.ICON_ALERT} alert sent")
 
