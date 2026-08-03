@@ -312,6 +312,24 @@ def _pct(value: float | None, digits: int = 2) -> str:
     return "—" if value is None else f"{value * 100:+.{digits}f}%"
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
+def _brand_mark(size: int = 18) -> str:
+    """A marca "The Tail", lida do SVG real em vez de um glifo de texto.
+
+    Estava um `◤` no cabeçalho — um carácter emprestado a fazer de logótipo, enquanto o
+    ficheiro da marca existia e não era usado em lado nenhum. O SVG usa `currentColor`,
+    portanto herda a cor do contentor e não precisa de variante própria.
+    """
+    try:
+        bruto = (_ROOT / "app" / "assets" / "logo-dark.svg").read_text(encoding="utf-8")
+        corpo = bruto[bruto.index("<svg"):]
+        for atrib in ('width="256"', 'height="256"'):
+            corpo = corpo.replace(atrib, "", 1)
+        return corpo.replace("<svg", f'<svg width="{size}" height="{size}"', 1)
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def _header(rows: list[dict], n_alerts: int) -> None:
     aberto, agora = _market_state()
     cor = T.UP if aberto else T.FG_MUTE
@@ -320,13 +338,18 @@ def _header(rows: list[dict], n_alerts: int) -> None:
     st.markdown(
         f"""<div style="display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;
                         padding-bottom:0.6rem;border-bottom:1px solid {T.LINE}">
-          <span style="font-size:15px;font-weight:800;letter-spacing:0.14em;color:{T.FG}">
-            <span style="color:{T.UP}">◤</span> INVESTIGATOR</span>
+          <span style="display:flex;align-items:center;gap:0.5rem;font-size:14.5px;
+                       font-weight:800;letter-spacing:0.13em;color:{T.FG}">
+            <span style="color:{T.UP};display:flex">{_brand_mark(19)}</span>INVESTIGATOR</span>
           <span class="num" style="font-size:11.5px;color:{cor}">● {estado}</span>
           <span class="num" style="font-size:11.5px;color:{T.FG_MUTE}">{agora}</span>
           <span style="flex:1"></span>
-          <span class="num" style="font-size:11.5px;color:{T.FLAG}">
-            {T.ICON_ALERT} {sinalizados} flagged</span>
+          <span class="num" style="font-size:11.5px;color:{T.FLAG}"
+                title="Flagged = today's move is further from this company's own recent
+ average than the alert threshold ({THRESHOLD} standard deviations over a {WINDOW}-day
+ window). It is measured per company, so a 3% day can be flagged for one and ordinary
+ for another.">
+            {T.ICON_ALERT} {sinalizados} flagged &middot; what is this?</span>
           <span class="num" style="font-size:11.5px;color:{T.FG_MUTE}">
             {n_alerts} alerts sent</span>
         </div>""",
@@ -419,8 +442,12 @@ def _chart(ticker: str, rotulo: str) -> None:
                       annotation_position="top left",
                       annotation_font={"size": 10, "color": T.FG_MUTE})
 
-    if not intra:
-        _overlay_signals(fig, ticker, close)
+    # Os sinais desenham-se em TODOS os intervalos, incluindo os intradiários. Estavam
+    # atrás de um `if not intra`, e por isso um acontecimento visível no gráfico de 1M
+    # desaparecia ao carregar em 1D — no mesmo dia, com os mesmos dados. Não havia razão
+    # para isso: só era preciso ensinar a sobreposição a encontrar a barra certa quando há
+    # muitas barras por dia (ver `_overlay_signals`).
+    _overlay_signals(fig, ticker, close, intraday=intra)
 
     baixo = min(float(close.min()), anterior or float(close.min()))
     cima = max(float(close.max()), anterior or float(close.max()))
@@ -441,7 +468,7 @@ def _chart(ticker: str, rotulo: str) -> None:
         st.caption(aviso)
 
 
-def _overlay_signals(fig, ticker: str, close: pd.Series) -> None:
+def _overlay_signals(fig, ticker: str, close: pd.Series, intraday: bool = False) -> None:
     """As três camadas de história, sobre a curva.
 
     Distintas de propósito. Um ◆ é um alerta que **saiu** para o canal; um ○ é um dia que o
@@ -454,14 +481,25 @@ def _overlay_signals(fig, ticker: str, close: pd.Series) -> None:
     idx = pd.to_datetime(close.index)
     if getattr(idx, "tz", None) is not None:
         idx = idx.tz_localize(None)
-    pares = zip(idx, close.values, strict=False)
-    por_dia = {d.strftime("%Y-%m-%d"): (d, float(v)) for d, v in pares}
+
+    # Num gráfico diário há uma barra por dia e o mapa é directo. Num intradiário há
+    # dezenas, e a chave `%Y-%m-%d` seria escrita e reescrita até sobrar a ÚLTIMA barra do
+    # dia — o que colocaria a marca de uma notícia da manhã no fecho da tarde. Ancorar na
+    # PRIMEIRA barra do dia é honesto e previsível: a marca aparece onde o dia começa, que
+    # é o mais próximo do acontecimento que estes dados permitem afirmar.
+    pares = list(zip(idx, close.values, strict=False))
+    por_dia: dict[str, tuple] = {}
+    for d, v in pares:
+        chave = d.strftime("%Y-%m-%d")
+        if chave not in por_dia:  # primeira barra do dia vence
+            por_dia[chave] = (d, float(v))
 
     enviados = {getattr(e, "date", None) for e in _alerts()
                 if getattr(e, "ticker", None) == ticker}
 
     det_x, det_y, det_t, al_x, al_y, al_t = [], [], [], [], [], []
-    for hit in _replay(ticker, len(close)):
+    dias_janela = 5 if intraday else len(close)
+    for hit in _replay(ticker, dias_janela):
         if hit["date"] not in por_dia:
             continue
         d, y = por_dia[hit["date"]]
@@ -690,6 +728,20 @@ def _alert_feed(ticker: str) -> None:
 
 # ══ Página ═══════════════════════════════════════════════════════════════════════════
 
+@st.fragment(run_every=60)
+def _grid_live() -> None:
+    """A grelha, a repintar-se sozinha de 60 em 60 segundos.
+
+    O produto está num dyno sempre ligado com um ciclo de 60 s justamente para os dados
+    serem frescos; um painel que só actualiza quando alguém carrega em F5 desperdiça isso.
+    `st.fragment` repinta **só este bloco**, e as caches (`ttl` de 120-300 s) absorvem a
+    maior parte dos ciclos, por isso o custo por repintura é quase todo local.
+    """
+    linhas = [s for s in (_snapshot(t) for t in _watchlist()) if s]
+    if linhas:
+        _grid_view(linhas)
+
+
 def _grid_view(linhas: list[dict]) -> None:
     """A grelha: as dez empresas ao mesmo nível, nenhuma privilegiada ao abrir (V1).
 
@@ -758,7 +810,7 @@ def main() -> None:
         st.markdown('<a href="?" target="_self" style="font-size:11.5px">← All companies</a>',
                     unsafe_allow_html=True)
     else:
-        _grid_view(linhas)
+        _grid_live()
 
     st.markdown(
         f'<div style="margin-top:1.6rem;padding-top:0.7rem;border-top:1px solid {T.LINE};'

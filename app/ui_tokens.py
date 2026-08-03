@@ -115,11 +115,12 @@ def css() -> str:
 <style>
   /* Streamlit traz muito enchimento por defeito; num painel denso é espaço perdido. */
   .stApp {{ background: {BG}; }}
-  .block-container {{ padding: 0.8rem 1.2rem 2rem; max-width: 1600px; }}
+  .block-container {{ padding: 0.7rem 1.1rem 1rem; max-width: 1680px; }}
   #MainMenu, footer, header {{ visibility: hidden; }}
 
   html, body, [class*="css"] {{
     color: {FG};
+    -webkit-font-smoothing: antialiased;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }}
 
@@ -219,9 +220,16 @@ def card_css() -> str:
     """
     return f"""
 <style>
+  /* `auto-fit` e não `auto-fill`: com poucos cartões, `auto-fill` deixa colunas
+     fantasma vazias à direita em vez de deixar os cartões esticarem. O mínimo desceu de
+     268 px para 240 px, o que faz caber uma coluna a mais em 1366 px e evita que num
+     ecrã estreito o cartão transborde. */
   .grid {{
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
-    gap: 0.6rem; margin: 0.7rem 0 1.2rem;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.5rem; margin: 0.55rem 0 0.9rem;
+  }}
+  @media (max-width: 640px) {{
+    .grid {{ grid-template-columns: 1fr; }}
   }}
 
   /* O cartão inteiro é a área de clique. Sem botão por baixo: essa tentativa deu duas
@@ -229,18 +237,31 @@ def card_css() -> str:
   a.card {{
     display: block; text-decoration: none; color: inherit;
     background: {PANEL}; border: 1px solid {LINE}; border-left: 3px solid transparent;
-    border-radius: 8px; padding: 0.6rem 0.75rem 0.7rem; min-height: 132px;
+    border-radius: 8px; padding: 0.55rem 0.7rem 0.6rem;
+    /* Sem `min-height`. Era 132 px e um cartão calmo tem uma linha, portanto sobravam
+       ~70 px de nada, dez vezes. O alinhamento fica ao cargo da grelha (as células de
+       uma linha já têm a mesma altura), e o cartão calmo passa a ser genuinamente mais
+       curto — o que reforça a distinção em vez de a esconder atrás de espaço morto. */
+    transition: background-color .12s ease, border-color .12s ease;
   }}
   a.card:hover {{ border-color: {FG_MUTE}; background: {PANEL_2}; }}
   a.card:focus-visible {{ outline: 2px solid {UP}; outline-offset: 2px; }}
   a.card--flagged {{ border-left-color: {FLAG}; }}
   a.card--quiet {{ background: transparent; }}
 
-  .card-top {{ display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.45rem; }}
+  .card-top {{ display: flex; align-items: center; gap: 0.4rem;
+               margin-bottom: 0.4rem; min-width: 0; }}
+  .card-name {{ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
   .card-name {{ font-size: 12.5px; font-weight: 700; color: {FG}; }}
   .card-tick {{ font-size: 10px; color: {FG_MUTE}; }}
-  .card-move {{ margin-left: auto; font-size: 21px; font-weight: 700; }}
-  .card--quiet .card-move {{ font-size: 15px; font-weight: 500; }}
+  /* `nowrap` e um corpo que se adapta: a 240 px de coluna, "+14.25%" com 21 px partia
+     em duas linhas e a seta ficava sozinha por cima do número. `clamp` deixa-o encolher
+     em colunas estreitas em vez de partir. */
+  .card-move {{
+    margin-left: auto; font-weight: 700; white-space: nowrap;
+    font-size: clamp(15px, 1.35vw, 20px);
+  }}
+  .card--quiet .card-move {{ font-size: clamp(13px, 1.05vw, 15px); font-weight: 500; }}
 
   .pill {{
     font-size: 9px; letter-spacing: 0.09em; font-weight: 700; color: {BG};

@@ -1,11 +1,24 @@
-# Tema de marca do InvestiGator (2026-07-29): "The Tail" — esmeralda sobre tinta.
-# Substitui o verde-pântano + dourado de "The Stare". Só cores, sem CSS hacks; o Streamlit
-# Cloud lê este ficheiro sozinho. Ver app/assets/logo.svg e docs/design/brand.md.
+# Tema do InvestiGator — ESCURO, e alinhado com `app/ui_tokens.py` valor a valor.
+#
+# ⚠️ PORQUE É QUE ISTO IMPORTA MAIS DO QUE PARECE. Este ficheiro governa os componentes do
+# próprio Streamlit (`st.text`, o corpo dos expanders, legendas, widgets). O CSS da app
+# governa apenas o que NÓS desenhamos. Enquanto os dois discordavam — aqui um tema CLARO
+# (`backgroundColor = "#FFFFFF"`, `textColor = "#14171A"`), ali uma superfície escura — o
+# Streamlit pintava texto quase-preto por cima dos nossos painéis escuros. O resultado era
+# texto ilegível que **reaparecia sempre que se acrescentava um componente novo**.
+#
+# Foi remendado duas vezes componente a componente antes de se perceber que a causa estava
+# aqui. Remendar cada componente é uma caça sem fim; alinhar o tema resolve a classe
+# inteira de uma vez.
+#
+# REGRA: se um valor mudar em `app/ui_tokens.py`, muda aqui também. São a mesma decisão
+# escrita em duas linguagens, porque o Streamlit não lê Python para isto.
 [theme]
-primaryColor = "#0A8F52"             # esmeralda da marca (botões, seleção, foco)
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F1F5F2" # neutro com um viés muito ligeiro para o verde
-textColor = "#14171A"                # tinta quase-preta, ligeiramente fria
+base = "dark"
+primaryColor = "#00D68F"              # = ui_tokens.UP — foco, selecção, estado activo
+backgroundColor = "#0B0E13"           # = ui_tokens.BG
+secondaryBackgroundColor = "#131820"  # = ui_tokens.PANEL
+textColor = "#EDF1F7"                 # = ui_tokens.FG (~16:1 sobre o fundo)
 
 [browser]
 gatherUsageStats = false
