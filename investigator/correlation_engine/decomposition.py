@@ -252,6 +252,30 @@ def decompose_move(
     )
 
 
+# As duas formas de dizer a mesma conclusão, num sítio só.
+#
+# Havia duas cópias deste mapa — uma aqui, outra dentro da app — e cópias de frases
+# separam-se com o tempo sem ninguém reparar, porque nada as compara. Ficam aqui as duas,
+# nomeadas, porque servem **registos diferentes** e não são a mesma frase:
+#
+# `VERDICT` é a frase inteira, para o texto do alerta, onde não há mais nada a explicar.
+# `VERDICT_SHORT` é a legenda da interface, e **cala-se quando o motor é a empresa** — nesse
+# caso o painel já mostrou a barra e o número, e escrever "foi específico da empresa" seria
+# repetir o que se acabou de ver. Só fala quando **surpreende**: quando o movimento afinal
+# não é uma história sobre esta empresa. É a mesma regra do detector de volume.
+VERDICT = {
+    "market": "Most of this move came with the whole market, not from the company.",
+    "sector": "Most of this move was sector-wide, not specific to the company.",
+    "company": "Most of this move was specific to the company.",
+}
+
+VERDICT_SHORT = {
+    "market": "Moved with the whole market, not company news.",
+    "sector": "Sector-wide, not company-specific.",
+    "company": "",
+}
+
+
 def describe(d: MoveDecomposition, ticker: str = "") -> str:
     """Uma linha em linguagem simples para o alerta. Só descreve o observado; nunca prevê."""
     who = f"{ticker} " if ticker else ""
@@ -260,11 +284,7 @@ def describe(d: MoveDecomposition, ticker: str = "") -> str:
     if d.fallback:
         return head + (" Beta could not be estimated from recent data, so the market share"
                        " assumes beta 1.0 — treat the split as indicative.")
-    verdict = {
-        "market": "Most of this move came with the whole market, not from the company.",
-        "sector": "Most of this move was sector-wide, not specific to the company.",
-        "company": "Most of this move was specific to the company.",
-    }[d.driver]
+    verdict = VERDICT[d.driver]
     # Quando uma componente puxou ao contrário, dizê-lo: é justamente a informação
     # interessante ("subiu apesar de o setor ter caído") e omiti-la enganaria.
     if "sector" in d.opposed:
