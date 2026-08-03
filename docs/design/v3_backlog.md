@@ -1,15 +1,74 @@
 # v3_backlog.md — o que falta no painel, e porque
 
-> **Estatuto: PENDENTE.** Plano aprovado a 2026-08-03, **nada disto foi executado**. O
-> aluno mudou de máquina a meio; isto existe para o trabalho recomeçar sem perder contexto.
+> **Estatuto: EXECUTADO (A, B, C, D, E + watchlist), 2026-08-03.** Quatro commits sobre
+> `663919f`. Restam os dois itens de fundo (passos 6 e 7 da v3) e **duas correcções de
+> dados que dependem de chaves de API**, listadas em §Estado abaixo.
 >
-> Estado do código quando isto foi escrito: árvore limpa, `b5c0639` em local e `origin/main`.
-> `app/dashboard.py` é a v3 e está construída **ao lado**; o `Procfile` continua a servir
-> `app/streamlit_app.py` (v1). Promoção é uma linha, e não foi feita.
+> `app/dashboard.py` continua a ser a v3 construída **ao lado**; o `Procfile` continua a
+> servir `app/streamlit_app.py` (v1), **intocada**. Promoção continua a ser uma linha, e
+> continua por fazer.
 >
 > Veredicto do aluno sobre a v3: *"almost perfect"* — a estrutura e a funcionalidade estão
-> aceites (*"I like the organization and functionality of it. it's perfect"*). O que falta é
-> densidade, legibilidade, e uma capacidade nova (tabela de eventos filtrável).
+> aceites (*"I like the organization and functionality of it. it's perfect"*). O que faltava
+> era densidade, legibilidade, e uma capacidade nova (tabela de eventos filtrável).
+
+---
+
+## Estado, item a item (2026-08-03)
+
+| Item | Estado | Nota |
+|---|---|---|
+| **A1** pílula fora da linha do nome | ✅ | linha própria; "JPMorgan Chase" deixou de truncar |
+| **A2** corpo de letra maior | ✅ | veredicto/nome 12,5→14 px, chips 10→11, corpo do detalhe com eles |
+| **A3** margens laterais | ✅ | `max-width` 1680→1920 px |
+| **A4** grelha 4×3 deliberada | ✅ | escada explícita 4/3/2/1 com `minmax(0, 1fr)` |
+| **A5** "voltar" no topo | ✅ | estava no fim da página, depois de tudo o que fecha |
+| **B** "what is this?" | ✅ | `verdict.FLAG_EXPLAINER`, com testes; abre pela consequência |
+| **C1** mira / coluna de hover | ✅ | `x unified` + `spikemode="across"` |
+| **C2** mais rápido | ⚠️ **medido, ganho pequeno** | ver §Medições |
+| **D1** tabela = janela do gráfico | ✅ | `_chart` devolve a janela; chart e tabela lêem a mesma lista |
+| **D2** filtros + paginação | ✅ | `app/tables.py`, puro, 30 testes |
+| **E** lentidão da navegação | ✅ **premissa não se confirma** | ver §Medições |
+| **watchlist 12** | ⚠️ **código feito, dados por fazer** | XOM/JNJ sem logótipo e sem notícias |
+
+### Medições (Playwright, browser real, não logs)
+
+| O quê | Antes | Depois |
+|---|---|---|
+| Grelha a frio | 5,45 s | 5,46 / 5,49 / 6,20 s (3 corridas) |
+| Troca de intervalo (1.ª) | ~0,90 s | ~0,67 s |
+| Troca de intervalo (repetida) | ~0,65 s | ~0,65 s |
+| Clique num cartão — **frio** | — | mediana **0,78 s** |
+| Clique num cartão — **morno** | — | mediana **0,75 s** |
+| 1.º detalhe da sessão (uma vez por processo) | — | ~3,0 s |
+
+**O passo E não precisou de código, e isso é um resultado.** O plano fixava "se um clique
+morno ainda passar de ~1,5 s, reconsiderar os botões". Não passa: a mediana é **0,75 s**. O
+1,8 s que aparecia na medição anterior era o **primeiro** detalhe da sessão — o parse dos
+7,8 MB de `backfill_kb.jsonl`, mais o `_alerts()` pela rede, mais SPY/XLK para a
+decomposição — tudo partilhado por todos os tickers e pago **uma vez por processo**, não
+por clique. Atribuí-lo a "navegação" era medir a coisa errada. A decisão de **manter os
+URLs reais** fica portanto validada por medição, e não só por preferência.
+
+A segunda alínea do E (garantir que as caches são `st.cache_data` e não `session_state`) já
+estava satisfeita: as dez funções de dados são todas `@st.cache_data`, e o `session_state`
+só guarda número de página e assinatura de filtros — que é estado de interface, e é
+precisamente onde deve estar.
+
+**O C2 também não deu o que eu ia escrever.** Ia registá-lo como ganho de velocidade;
+medido, `detect_all` custa 18,6 ms sobre um ano contra 1,0 ms sobre 30 dias, portanto a
+diferença é ruído ao pé do resto. O ganho real está na primeira troca de intervalo
+(~0,90 → ~0,67 s). O estrangulamento da carga a frio é **rede**, não cálculo.
+
+### O que falta, e de que depende
+
+1. **Dois comandos numa máquina com chaves** (não é código — é o `.env`, que não existe
+   nesta máquina). Sem eles, XOM e JNJ ficam meio-construídos ao lado dos outros dez:
+   `python scripts/fetch_logos.py` (`POLYGON_API_KEY`) e
+   `python scripts/backfill_history.py --months 12` (`FINNHUB_API_KEY`).
+   Medido hoje: XOM e JNJ têm **0** registos de notícia; os outros dez têm 2.424–5.632.
+2. **v3 passo 6** — precedentes renderizados (abaixo, "Still outstanding").
+3. **v3 passo 7** — página do método (abaixo).
 
 ## Context
 

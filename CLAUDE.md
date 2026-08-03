@@ -7,15 +7,74 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 46 (**v3 do painel: veredicto antes dos números; backlog por executar**)
+- **Sessão nº:** 47 (**backlog da v3 executado: A, B, C, D, E + watchlist a 12**)
 - **Última atualização:** 2026-08-03
 - **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI:** [`docs/design/v3_backlog.md`](docs/design/v3_backlog.md)
-  — plano **aprovado e por executar**, escrito porque o aluno mudou de máquina. Árvore
-  limpa, tudo pushed. Duas decisões já tomadas lá dentro: watchlist passa a **12 com dois
-  nomes NÃO-tecnológicos** (nove dos dez actuais partilham o mesmo ETF de setor, portanto a
-  pergunta "foi o setor?" dá quase sempre a mesma resposta — é melhoria de **tese**, não de
-  layout), e a navegação **mantém URLs reais** (`?t=NVDA` partilhável), resolvendo a
-  lentidão por outro caminho.
+  — agora com **tabela de estado item a item + as medições**. O que sobra: **v3 passo 6**
+  (precedentes renderizados), **v3 passo 7** (página do método), e **dois comandos que
+  precisam de chaves** (ver PENDENTE em baixo). A v1 continua implantada e **intocada**;
+  promoção continua a ser uma linha no `Procfile`, e continua por fazer.
+- **🧩 SESSÃO 47 (2026-08-03 — executar o backlog da v3; 4 commits):**
+  **(A) LEGIBILIDADE.** A pílula `UNUSUAL` estava dentro da linha do topo, a disputá-la com
+  logótipo, nome, ticker e o número grande — e o nome, único item sem largura própria, era
+  o único que cedia: **"JPMorgan Chase" truncava**. Passa a ter linha própria (a palavra
+  mantém-se: o critério V3 exige quatro canais redundantes). Escala +1 degrau (veredicto e
+  nome 12,5→14 px), `max-width` 1680→**1920 px** (num ecrã de 1920 sobravam 120 px de nada
+  de cada lado), escada explícita de colunas **4/3/2/1** com `minmax(0, 1fr)`, e o "voltar"
+  sobe do **fim da página** para cima do cabeçalho.
+  **(B) A EXPLICAÇÃO PASSA A EXPLICAR.** "Flagged" abria com "1,5 desvios-padrão numa janela
+  de 20 dias" — o **mecanismo** a quem perguntou pela **consequência**. Agora
+  `verdict.FLAG_EXPLAINER`, testável ao lado das outras frases.
+  **(C) MIRA NO GRÁFICO** (`x unified` + `spikemode="across"`). Obrigou a agregar as
+  notícias a **uma entrada por dia** (`_news_days`): o impacto é medido por (ticker,dia),
+  logo dez manchetes do mesmo dia davam dez linhas iguais na mesma caixa.
+  **(D) TABELA DE EVENTOS FILTRÁVEL** — a capacidade nova. `_chart` **devolve a janela que
+  desenhou** e as tabelas consomem-na, portanto gráfico e tabela não podem divergir. Lógica
+  pura em `app/tables.py` (+30 testes). **`st.dataframe` foi sondado antes de decidir, e o
+  resultado não foi o esperado:** *não* briga com o tema escuro — esse risco era hipotético
+  —; cai porque não desenha a barra divergente e porque `format="%.2f%%"` mostrava −0,021
+  como **"−0,02%"**, errado por um factor de cem e em silêncio.
+  **⚠️ QUATRO DEFEITOS MEUS, TODOS APANHADOS A RENDERIZAR OU A CONDUZIR, NENHUM NOS TESTES:**
+  (1) o comentário do CSS afirmava que o cartão calmo era "genuinamente mais curto" — era
+  **falso** enquanto a grelha o esticava (`align-items: start` torna-o verdade);
+  (2) o detalhe abria em **1D**, e nesse intervalo não há **nada** para mostrar (as três
+  camadas são de dias passados e o impacto só é observável +5 dias depois) — ou seja, o ecrã
+  abria sem a única coisa que existe para mostrar; defeito passa a **1M**;
+  (3) `_watchlist_rows`/`row_css` eram **código morto** da lista da v2, mas a regra CSS deles
+  era **geral** e teria deformado em silêncio o primeiro botão verdadeiro da página —
+  precisamente os de paginação que este trabalho acrescenta;
+  (4) o gráfico desenhava **13** marcas de notícia e a tabela listava **18** dias: uma
+  notícia de sábado não tem barra onde pousar. Passa a ancorar na primeira sessão ≥ à data,
+  que é a **mesma regra** com que `mature_entry` alinha eventos para medir o impacto. Medido
+  depois: **18=18** em 1M, **64=64** em 6M.
+  **📏 DUAS COISAS QUE A MEDIÇÃO CONTRARIOU, e ficam escritas em vez de silenciadas:**
+  **(E) A LENTIDÃO DA NAVEGAÇÃO NÃO EXISTE.** O plano dizia "se um clique morno passar de
+  ~1,5 s, reconsiderar os botões". Medido em browser real: **mediana 0,75 s morno / 0,78 s
+  frio**. O 1,8 s anterior era o **primeiro** detalhe da sessão (parse dos 7,8 MB do
+  backfill + `_alerts()` pela rede + SPY/XLK), pago **uma vez por processo** e não por
+  clique — atribuí-lo a "navegação" era medir a coisa errada. **A decisão de manter URLs
+  reais fica validada por medição.** E não foi preciso código nenhum: as dez funções de
+  dados já eram `@st.cache_data` e o `session_state` já só guardava estado de interface.
+  **(C2) O `_replay` NÃO É UM GANHO DE VELOCIDADE.** Ia registá-lo como tal; medido,
+  `detect_all` custa **18,6 ms** sobre um ano contra 1,0 ms sobre 30 dias. O ganho real é a
+  primeira troca de intervalo (~0,90 → ~0,67 s). O estrangulamento da carga a frio é
+  **rede**, não cálculo — e a carga a frio (~5,5 s) continua **acima** do critério P1 (<5 s).
+  **(WATCHLIST) 10 → 12, com XOM (energia/XLE) e JNJ (saúde/XLV).** Nove dos dez anteriores
+  partilhavam o XLK, logo "foi o setor?" tinha quase sempre a mesma resposta por falta de
+  variedade, não por ser essa a resposta. **Já se vê o efeito ao vivo:** XOM −0,98% com o
+  setor **+0,93%** — o setor a puxar ao contrário. Betas estimados a sério nos dois
+  (`fallback=False`). **Um teste mudou por uma razão que vale a pena guardar:**
+  `test_watchlist_completa_tem_aliases` tinha os dez nomes escritos à mão e **continuaria a
+  passar** depois da watchlist crescer, cobrindo dez e ignorando os dois novos sem nunca
+  falhar; passa a ler o `config/alerts.yaml`.
+  **Gates: 567 testes (era 537), ruff limpo, congelados byte-iguais, `app/streamlit_app.py`
+  e `Procfile` intocados. Tudo verificado por captura Playwright a 1920×1080 E 1366×768.**
+  **⚠️ PENDENTE QUE NÃO É CÓDIGO — SÃO CHAVES (não há `.env` nesta máquina):** XOM e JNJ têm
+  **0** registos de notícia (os outros dez têm 2.424–5.632) e **sem ficheiro de logótipo**.
+  Correr numa máquina com chaves, **antes da promoção**, senão os dois nomes ficam
+  meio-construídos ao lado dos outros dez: `python scripts/fetch_logos.py`
+  (`POLYGON_API_KEY`) e `python scripts/backfill_history.py --months 12`
+  (`FINNHUB_API_KEY`).
 - **🧭 SESSÃO 46 (2026-08-03 — v3 do painel; o aluno tinha rejeitado a v2: "usability is
   messy and confusing and dirty… re-do everything"):**
   **(A) CRITÉRIOS ESCRITOS ANTES DO CÓDIGO** (`dashboard_acceptance.md` §6). Perguntei-lhe
