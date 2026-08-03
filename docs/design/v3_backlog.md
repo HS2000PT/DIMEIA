@@ -32,7 +32,7 @@
 | **D1** tabela = janela do gráfico | ✅ | `_chart` devolve a janela; chart e tabela lêem a mesma lista |
 | **D2** filtros + paginação | ✅ | `app/tables.py`, puro, 30 testes |
 | **E** lentidão da navegação | ✅ **premissa não se confirma** | ver §Medições |
-| **watchlist 12** | ⚠️ **código feito, dados por fazer** | XOM/JNJ sem logótipo e sem notícias |
+| **watchlist 12** | ✅ | XOM/JNJ com 2.634 notícias (`54b9aae`); XOM fica com iniciais — o Polygon não tem `branding` para ela, verificado |
 | **passo 6** precedentes | ✅ **com emenda V6′** | lista no detalhe; contagem no cartão custava 7,5 s |
 | **passo 7** página do método | ✅ | `?view=method`; fecha o buraco que o B abriu |
 
