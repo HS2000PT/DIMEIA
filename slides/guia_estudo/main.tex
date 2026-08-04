@@ -242,6 +242,69 @@ Um limiar fixo em \% trataria as duas igual; o z-score não.
 \end{columns}
 \end{frame}
 
+\begin{frame}{Ideia-chave 2b: porque é que \key{NÃO} convertemos o $z$ numa probabilidade}
+\footnotesize
+Um $z$ de $+7{,}92$ não diz nada a quem não estudou estatística. A tentação óbvia é traduzi-lo:
+\emph{``há X\% de hipótese de um movimento destes''}. \key{Não o fazemos, e a razão é o coração
+da honestidade deste trabalho.}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{Porque seria errado}
+\begin{itemize}\footnotesize
+  \item Converter $z$ em probabilidade exige assumir que os retornos seguem uma
+        \key{distribuição normal} (a curva de sino).
+  \item Os retornos diários de ações \key{não} seguem. Têm \key{caudas pesadas}: os dias
+        extremos acontecem \emph{muito} mais do que a normal prevê.
+  \item Logo o número estaria errado \key{precisamente nos dias extremos} --- que são os
+        únicos dias em que o sistema serve para alguma coisa.
+\end{itemize}
+\end{block}
+\column{0.5\textwidth}
+\begin{block}{O que fazemos: \key{contar}}
+\begin{itemize}\footnotesize
+  \item \emph{``apenas \key{5} dos últimos \key{249} dias de negociação se moveram tanto''}
+  \item Não assume distribuição \key{nenhuma}. É uma contagem numa amostra observada.
+  \item Qualquer pessoa com a mesma série de preços \key{verifica} o número.
+  \item E lê-se sem curso de estatística.
+\end{itemize}
+\end{block}
+\end{columns}
+\vspace{1mm}
+\key{Se o júri perguntar} ``porque não mostram uma probabilidade?'' --- a resposta é esta, e é
+uma escolha de \emph{engenharia}, não uma limitação.
+\end{frame}
+
+\begin{frame}{Ideia-chave 2c: quando as duas réguas \key{discordam} (e porquê dizê-lo)}
+\footnotesize
+As duas medidas respondem a perguntas diferentes, e por isso podem discordar. \key{Isso não é um
+defeito --- é informação.}
+\begin{columns}[T]
+\column{0.46\textwidth}
+\begin{block}{Duas perguntas diferentes}
+\begin{itemize}\footnotesize
+  \item \key{$z$-score}: ``é invulgar face às \key{últimas 20} sessões?''
+  \item \key{contagem}: ``é invulgar face ao \key{último ano}?''
+\end{itemize}
+Uma ação num período calmo pode ficar \emph{abaixo} do limiar e ainda assim estar no topo do ano.
+\end{block}
+\column{0.54\textwidth}
+\begin{block}{Caso real, medido a 2026-08-03}
+\footnotesize
+\key{Microsoft}, $+4{,}82\%$: $z=+1{,}11$ (\key{não} sinalizada, abaixo do limiar de $1{,}5$) e
+ainda assim \key{5 de 249} dias moveram-se tanto --- o \key{top 2\%} do ano.
+\vspace{1mm}
+A versão anterior do painel escrevia \emph{``an ordinary day for Microsoft''}. Estava a resolver a
+discordância escolhendo em silêncio a palavra mais tranquilizadora.
+\vspace{1mm}
+Agora diz as \key{duas}: \emph{``calmo face à sua norma recente --- mas apenas 5 dos últimos 249
+dias se moveram tanto''}.
+\end{block}
+\end{columns}
+\vspace{1mm}
+\key{A lição:} quando dois métodos honestos discordam, mostram-se os dois e deixa-se a ponderação
+ao leitor. Escolher um deles seria uma opinião disfarçada de medição.
+\end{frame}
+
 \begin{frame}{Ideia-chave 3: \emph{retornos} e \emph{event study} (medir o impacto, sem ver o futuro)}
 \begin{columns}[T]
 \column{0.5\textwidth}

@@ -7,8 +7,51 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 47 (**backlog da v3 executado por inteiro, mais os passos 6 e 7**)
-- **Última atualização:** 2026-08-03
+- **Sessão nº:** 48 (**v3 PROMOVIDA; tese, slides e guia sincronizados no mesmo passo**)
+- **Última atualização:** 2026-08-04
+- **🚀 SESSÃO 48 (2026-08-04 — o aluno autorizou: "continue. and promote… focus on the
+  essential and finalize the thesis, guarantee consistency and dignity and guarantee it is
+  honest"):**
+  **(A) PROMOÇÃO FEITA.** Uma linha no `Procfile`: `web:` passa de `app/streamlit_app.py`
+  para `app/dashboard.py`. A v1 deixa de ser o que está no ar.
+  **(B) ⚠️ DEFEITO DE HONESTIDADE APANHADO A OLHAR PARA A FIGURA — o achado da sessão.** Ao
+  recapturar a Fig 4.5 vi a **Microsoft +4,82% com o cartão a dizer "an ordinary day"**.
+  Verificado: `z +1,11` (abaixo do limiar, não sinalizada) mas **5 dos 249 dias** moveram-se
+  tanto — um movimento no **top 2% do ano** descrito como banal. AMZN igual (9/249). Causa:
+  as duas réguas medem coisas diferentes (detector = 20 dias anteriores; contagem = o ano) e
+  a versão anterior resolvia a discordância **escolhendo em silêncio a palavra mais
+  tranquilizadora**. Passa a dizer as duas: *"Quiet by its recent norm — but only 5 of the
+  last 249 trading days moved this much"*. 4 testes novos. **Nenhum log mostraria isto.**
+  **(C) DÍVIDA DA TESE PAGA NO MESMO COMMIT.** Cap. 4 reescrito **EN+PT**: grelha de cartões
+  em vez de três ecrãs; a frase antes do número; a raridade como **contagem empírica e não
+  probabilidade** (converter z exigiria normalidade, e as caudas pesadas fariam esse valor
+  falhar precisamente nos dias que interessam); **emenda D2′ dita em voz alta** — o cartão
+  nomeia o motor em palavras e a repartição fica a um clique (com doze empresas seriam 36
+  números com sinal a competir no primeiro contacto).
+  **(D) Fig 4.5 recapturada.** O `screenshot_app.py` apontava para a v1 **e esperava pelo
+  texto "Today"**, que a promoção apagou — ficaria pendurado à espera de algo inexistente.
+  **(E) SLIDES E GUIA.** Diziam "três ecrãs" e "na própria linha, sem clicar". Pior: o guia
+  afirmava que a app mostra o **"background risk" da triagem**, que a v3 **retira de
+  propósito** por ser uma probabilidade sobre o futuro que **H2 proíbe** em vistas de
+  produto — deixá-lo poria o aluno a reivindicar, à frente do júri, exactamente o que o
+  sistema recusa fazer. **+2 frames que ENSINAM** a contagem empírica e a discordância entre
+  as duas réguas (guia 83 → **85 slides**).
+  **(F) PORTÃO DA PROMOÇÃO** (`tests/test_dashboard_v3.py`, 20 testes): metade dos critérios
+  nunca tinha sido verificada com a app a correr. **Três falhas na 1.ª corrida, as três do
+  TESTE:** o varrimento de português apanhava os **comentários do CSS**; o H2 acusava "price
+  target" na página do método, onde o texto é *"No price targets"* — a blocklist apanhou a
+  frase e não viu a negação (mesma lição do red team do narrador, agora nos dois sentidos);
+  e o H1 exigia a promessa em todas as vistas quando o critério proíbe **repetir**.
+  **(G) CONSISTÊNCIA:** contagens de teste desactualizadas em 5 ficheiros (README 478,
+  RELATORIO 200, guião 478, mapa 478 e — o que mais importa — a **mensagem ao orientador**,
+  ainda por enviar, que dizia 478). Todas para "600+". **Falso positivo registado:** o
+  comparador de tokens numéricos EN↔PT acusou ch1/ch5/ch6 e **as três eram do regex** (ch6 =
+  coordenadas TikZ, mais largas em PT porque o texto é mais comprido; ch1 = notação
+  `US\$100{,}000` vs `100\,000 dólares`; ch5 = `39.5` existe nas duas).
+  **Gates: 618 testes, ruff limpo, congelados byte-iguais, EN 107 pp / PT 111 pp / slides
+  23+23 / guia 85 — todos 0 erros, 0 citações e referências indefinidas.**
+  **PENDENTE HUMANO:** rodar as 3 credenciais (o PAT primeiro — tem `admin: true`); enviar
+  `docs/defence/mensagem_orientador.md`; reclamar o domínio para o URL limpo.
 - **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI:** [`docs/design/v3_backlog.md`](docs/design/v3_backlog.md),
   secção **"Entrega de turno"** — tem os comandos por ordem e, a seguir, **"Promoção: a
   lista exacta do que fica por rever na tese"**, ficheiro a ficheiro e linha a linha.
