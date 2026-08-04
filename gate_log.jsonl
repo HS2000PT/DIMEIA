@@ -358,3 +358,15 @@
 {"date": "2026-08-03", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-03", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
 {"date": "2026-08-03", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.32 < 0.50"}
+{"date": "2026-08-04", "ticker": "AAPL", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
+{"date": "2026-08-04", "ticker": "MSFT", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
+{"date": "2026-08-04", "ticker": "NVDA", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
+{"date": "2026-08-04", "ticker": "TSLA", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
+{"date": "2026-08-04", "ticker": "AMZN", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
+{"date": "2026-08-04", "ticker": "GOOGL", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
+{"date": "2026-08-04", "ticker": "META", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
+{"date": "2026-08-04", "ticker": "JPM", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
+{"date": "2026-08-04", "ticker": "AMD", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
+{"date": "2026-08-04", "ticker": "NFLX", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
+{"date": "2026-08-04", "ticker": "XOM", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
+{"date": "2026-08-04", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.34 < 0.45"}
