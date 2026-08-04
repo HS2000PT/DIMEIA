@@ -67,7 +67,7 @@ result. Read-only by design, and built against acceptance criteria written befor
 
 ```bash
 pip install -r requirements.txt -r requirements-app.txt
-streamlit run app/streamlit_app.py
+streamlit run app/dashboard.py
 ```
 
 Hosting details (Streamlit Community Cloud, free): **`docs/design/deployment.md`**. The app retrieves

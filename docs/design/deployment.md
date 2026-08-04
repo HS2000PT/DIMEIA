@@ -1,6 +1,6 @@
 # deployment.md — Publicar o dashboard InvestiGator (Streamlit Community Cloud)
 
-> Guia para pôr o **dashboard interativo** (`app/streamlit_app.py`) online, de graça, com um URL
+> Guia para pôr o **dashboard interativo** (`app/dashboard.py`) online, de graça, com um URL
 > público que se pode citar na tese. É a forma mais simples de um examinador **clicar** e ver o
 > sistema a funcionar sem instalar nada.
 
@@ -21,7 +21,7 @@ Se o modelo não estiver disponível, degrada para o baseline word-overlap — a
 ## Correr localmente (para testar antes de publicar)
 ```bash
 pip install -r requirements.txt -r requirements-app.txt
-streamlit run app/streamlit_app.py
+streamlit run app/dashboard.py
 # abre http://localhost:8501
 ```
 
@@ -37,7 +37,13 @@ streamlit run app/streamlit_app.py
 1. Garantir que o repositório está no GitHub e **público** (o tier gratuito exige repo acessível).
 2. Ir a <https://share.streamlit.io> e autenticar com o GitHub.
 3. **New app** → escolher o repositório `HS2000PT/DIMEIA`, o branch `main` e o ficheiro principal
-   **`app/streamlit_app.py`** → **Advanced settings → Python 3.12**.
+   **`app/dashboard.py`** → **Advanced settings → Python 3.12**.
+
+   ⚠️ **Se a app do Cloud já existe, isto tem de ser MUDADO à mão** (Manage app → Settings →
+   Main file path). O Streamlit Cloud guarda o ficheiro principal escolhido no primeiro
+   *deploy* e **não** o relê do repositório; promover a v3 no `Procfile` do Heroku não lhe
+   toca. Sem esta mudança, a reserva serve a **v1** enquanto o primário serve a **v3** — ou
+   seja, dois produtos diferentes no mesmo projecto, e o que a tese descreve é o primário.
 4. *Deploy*. A plataforma:
    - já traz o `streamlit` pré-instalado;
    - instala automaticamente o **`requirements.txt`** (stack leve) para o resto das dependências
