@@ -17,6 +17,24 @@
 
 ---
 
+## ⏭️ Interface: PARADA como Trabalho Futuro (2026-08-04)
+
+O aluno promoveu a v3 e, na mesma conversa, disse que continua a não gostar dela:
+*"too laggy. too zoomed out. not responsive enough. not cool UX/UI design. very old-school
+and static."* Pediu que a próxima tentativa comece **numa sessão nova e sem o meu
+enviesamento**, e com **estudo de mercado a sério antes de qualquer código**.
+
+O briefing está escrito: [](PROMPT_dashboard_v4.md). Autoriza
+explicitamente **sair do Streamlit** se a medição o justificar — boa parte das queixas de
+lentidão vem de o Streamlit repintar no servidor a cada interacção, e isso não se resolve
+com CSS.
+
+**Até lá, a v3 fica no ar.** Não está partida: passa os critérios escritos, tem 20 testes de
+portão, e a tese descreve-a com exactidão. É uma questão de ambição de produto, não de
+correcção.
+
+---
+
 ## Estado, item a item (2026-08-03)
 
 | Item | Estado | Nota |
