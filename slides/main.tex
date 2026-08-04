@@ -390,16 +390,20 @@ oscillation.
 \includegraphics[width=\linewidth]{app_dashboard.png}
 \column{0.45\textwidth}
 \small
-A genuine screenshot, not a mockup. \textbf{Three screens, one per question:}
+A genuine screenshot, not a mockup. \textbf{Every card opens with a sentence, then
+the numbers behind it.}
 \begin{itemize}\small
-  \item \textbf{Today} --- the watchlist ranked by how far from normal, with the
-        market/sector/company split \textbf{on the row}. No click needed.
-  \item \textbf{Ticker} --- chart, full decomposition, and the alerts \emph{exactly} as the
-        Telegram channel received them. Never recomputed.
-  \item \textbf{Method} --- the frozen numbers, including the negative result.
+  \item \textbf{Rarity is a count, not a probability} --- ``only $5$ of the last $249$ days
+        moved this much''. Turning $z$ into a probability needs normality; returns have fat
+        tails, so it would fail on exactly the days that matter.
+  \item \textbf{Quiet is evidenced, not asserted} --- a calm day shows the count that makes
+        it calm.
+  \item \textbf{When the two measures disagree, both are shown} --- Microsoft: below the
+        alert threshold against its own $20$ days, yet only $5$ of $249$ moved as much.
 \end{itemize}
-{\footnotesize The promise appears \textbf{once}, as the page's identity. The latency figure is
-\textbf{measured} and is simply absent when the timestamps are not there.}
+{\footnotesize One click away: chart with events, the full market/sector/company split,
+precedents, and the alerts \emph{exactly} as Telegram received them. The promise appears
+\textbf{once}. Latency is \textbf{measured}, and absent when the timestamps are not there.}
 \end{columns}
 \end{frame}
 

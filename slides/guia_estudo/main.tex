@@ -1521,10 +1521,21 @@ Não é só uma tese em papel: o sistema \key{corre} em produção, de graça, s
 \includegraphics[width=\linewidth]{app_dashboard.png}
 \column{0.5\textwidth}
 \begin{itemize}
-  \item \key{Painel único} — \texttt{investigator-ddc9d8618935.herokuapp.com}: UMA página, uma \key{aba por
-        ticker} da watchlist. Cada aba mostra o "background risk" (o TEU modelo de triagem, RQ4,
-        pontua TODOS os dias, mesmo sem notícia), o gráfico anotado com cada evento detetado, e a
-        tabela de histórico — tudo lido do MESMO registo que o canal recebeu (nunca recalculado).
+  \item \key{Painel único} — \texttt{investigator-ddc9d8618935.herokuapp.com}: uma \key{grelha de
+        cartões}, um por empresa, ordenada por quão \key{raro} foi o dia. Cada cartão abre com uma
+        \key{frase} e só depois mostra os números que a sustentam. Um clique abre o detalhe: gráfico
+        com os eventos desenhados, repartição mercado/setor/empresa, precedentes, e os alertas
+        lidos do MESMO registo que o canal recebeu (nunca recalculados).
+  \item \key{A raridade é uma CONTAGEM, não uma probabilidade} — "apenas 5 dos últimos 249 dias
+        moveram-se tanto". Converter o $z$ numa probabilidade exigiria assumir \key{normalidade}, e
+        os retornos têm \key{caudas pesadas}: o número estaria errado precisamente nos dias que o
+        sistema existe para explicar. Uma contagem não assume nada e qualquer pessoa a verifica.
+        \key{Se te perguntarem porque não mostras uma probabilidade, é esta a resposta.}
+  \item \key{O que a app NÃO mostra, de propósito} — a probabilidade da triagem não aparece em
+        nenhuma vista de produto: é um número \key{sobre o futuro}, e a regra H2 proíbe-o. Vive no
+        texto do alerta (registo do que saiu) e na página do método, como mecanismo. Também não há
+        score de convergência (ganha em 1 de 3 orçamentos) nem crachás de tipo de evento
+        (silhueta 0,084) — \key{medimos, e a medição disse que não}.
   \item \key{Retrieval semântico} — o MESMO MiniLM da tese em \key{ONNX} ($\sim$23 MB, sem torch;
         paridade com o SBERT validada — cosseno médio 0,992) sobre uma fatia curada de 2.016
         manchetes FNSPID 2018--2023.
