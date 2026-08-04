@@ -430,3 +430,15 @@
 {"date": "2026-08-04", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-04", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
 {"date": "2026-08-04", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.32 < 0.50"}
+{"date": "2026-08-04", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-04", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft CEO Satya Nadella Just Announced Great News for AMD Stock Investors"}
+{"date": "2026-08-04", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.49 < 0.50"}
+{"date": "2026-08-04", "ticker": "TSLA", "stage": "alerted", "detail": "Elon Musk issues ominous warning as SpaceX short interest hits danger zone"}
+{"date": "2026-08-04", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon loses US court ban on Perplexity's AI shopping tools"}
+{"date": "2026-08-04", "ticker": "GOOGL", "stage": "alerted", "detail": "Intel's Packaging Progress Points to Google"}
+{"date": "2026-08-04", "ticker": "META", "stage": "alerted", "detail": "Meta Platforms (META) Q2 Growth Puts AI Spending And Valuation Back In Focus"}
+{"date": "2026-08-04", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-08-04", "ticker": "AMD", "stage": "alerted", "detail": "5-Star Analyst Makes Bold AMD Call Before Earnings"}
+{"date": "2026-08-04", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-04", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
+{"date": "2026-08-04", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.32 < 0.50"}
