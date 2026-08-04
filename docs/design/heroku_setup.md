@@ -197,3 +197,36 @@ propagação. O certificado (ACM) é automático e gratuito.
 
 **Vale a pena antes da defesa?** Um URL bonito não muda uma nota. Mas custa dez minutos e o link
 que envias ao orientador passa a ser legível, o que conta quando é a primeira coisa que ele vê.
+
+---
+
+## Implantar quando o `git push heroku main` falha (2026-08-04)
+
+**O sintoma.** `git push heroku main` devolve `Authentication failed`, mesmo com a sessão do
+CLI válida (`heroku auth:whoami` e `heroku auth:token` funcionam). O Heroku deixou de
+aceitar autenticação básica no git e espera um *credential helper* que o `heroku login`
+instala interactivamente — o que exige um browser e não se resolve por linha de comandos.
+
+**Porque é que isto interessa mais do que parece.** O `git push origin main` envia para o
+GitHub, e **o GitHub não implanta nada**. Sem esta segunda operação, uma alteração ao
+`Procfile` fica no repositório e a produção continua a servir o ficheiro antigo, sem
+qualquer erro. Aconteceu exactamente isso ao promover a v3: o commit estava feito e o
+`heroku ps` continuava a mostrar `app/streamlit_app.py`. **Confirmar sempre com
+`heroku ps`, nunca assumir que um commit é uma implantação.**
+
+**O caminho que funciona com o token, sem browser** (API de Sources + Builds):
+
+```sh
+HK="/c/Program Files/heroku/bin/heroku.cmd"; T=$("$HK" auth:token | tr -d '\r\n')
+# 1. pedir um espaço de upload
+curl -s -X POST https://api.heroku.com/apps/investigator/sources \
+     -H "Accept: application/vnd.heroku+json; version=3" -H "Authorization: Bearer $T" -o src.json
+# 2. empacotar SÓ o que está versionado (git archive respeita o .gitignore por construção)
+git archive --format=tar.gz -o app.tar.gz HEAD
+# 3. carregar para o put_url e criar o build a apontar para o get_url
+#    (ver scripts/ ou o histórico desta sessão para o passo em Python)
+```
+
+`git archive HEAD` em vez de empacotar a pasta: nunca inclui `.env`, `.venv`, caches nem
+nada que não esteja no commit. Verificado: build `succeeded`, release **v15**, e
+`heroku ps` a mostrar `streamlit run app/dashboard.py`.
