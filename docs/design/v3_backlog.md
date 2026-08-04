@@ -3,13 +3,13 @@
 > **Estatuto: COMPLETO do lado do código e dos dados, 2026-08-03.** A, B, C, D, E, a
 > watchlist de 12, os passos 6 e 7, e o buraco de dados da XOM/JNJ (`54b9aae`) — tudo feito.
 >
-> **Falta exactamente uma coisa no produto: a promoção**, que é uma linha no `Procfile` e é
-> uma decisão do aluno, não uma tarefa. Tudo o resto que está por fazer neste repositório é
-> ou consequência dessa decisão (sincronizar a tese) ou humano (rodar credenciais).
+> **PROMOVIDA a 2026-08-04** (release Heroku **v15**). O `Procfile` serve `app/dashboard.py`
+> e a produção foi verificada a renderizar: 12 cartões, 0 excepções, sem R14/R15. A tese, os
+> slides, o guia e o README foram sincronizados no mesmo passo — descrevem o que está no ar.
 >
-> `app/dashboard.py` continua a ser a v3 construída **ao lado**; o `Procfile` continua a
-> servir `app/streamlit_app.py` (v1), **intocada**. Promoção continua a ser uma linha, e
-> continua por fazer.
+> `app/streamlit_app.py` (v1) fica no repositório como reserva e como termo de comparação,
+> mas **já não é servida**. ⚠️ O Streamlit Cloud continua a apontar para ela: mudar à mão em
+> Manage app → Settings → Main file path (ver [`deployment.md`](deployment.md)).
 >
 > Veredicto do aluno sobre a v3: *"almost perfect"* — a estrutura e a funcionalidade estão
 > aceites (*"I like the organization and functionality of it. it's perfect"*). O que faltava
@@ -24,7 +24,7 @@ O aluno promoveu a v3 e, na mesma conversa, disse que continua a não gostar del
 and static."* Pediu que a próxima tentativa comece **numa sessão nova e sem o meu
 enviesamento**, e com **estudo de mercado a sério antes de qualquer código**.
 
-O briefing está escrito: [](PROMPT_dashboard_v4.md). Autoriza
+O briefing está escrito: [`PROMPT_dashboard_v4.md`](PROMPT_dashboard_v4.md). Autoriza
 explicitamente **sair do Streamlit** se a medição o justificar — boa parte das queixas de
 lentidão vem de o Streamlit repintar no servidor a cada interacção, e isso não se resolve
 com CSS.
@@ -98,10 +98,12 @@ diferença é ruído ao pé do resto. O ganho real está na primeira troca de in
    existentes**. O caminho seguro — e o que foi usado — é escrever para um ficheiro à
    parte, verificar, e só depois fundir com deduplicação por `(ticker, data, manchete)`.
 
-2. **Promoção** — uma linha no `Procfile`, e é a **única coisa que falta no produto**.
-   Depois dela abre a dívida de sincronizar a tese EN/PT + slides + guia e recapturar a
-   Fig 4.5 (ver "Still outstanding"). A tese está consistente **hoje** porque a v1 é o que
-   está no ar; a dívida é criada pela promoção, não pela reconstrução.
+2. ~~**Promoção**~~ ✅ **FEITA a 2026-08-04**, e a dívida da tese foi paga no mesmo
+   commit: Cap. 4 reescrito EN+PT, Fig 4.5 recapturada, slides e guia sincronizados. A
+   promoção apanhou ainda um **defeito de honestidade**: a Microsoft, com +4,82% e apenas
+   5 dos 249 dias a moverem-se tanto, aparecia como *"an ordinary day"* — as duas réguas
+   (20 dias vs um ano) discordavam e a interface escolhia em silêncio a palavra mais
+   tranquilizadora. Agora diz as duas.
 
 ## Context
 
