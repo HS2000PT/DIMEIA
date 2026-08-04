@@ -204,6 +204,36 @@ pode mentir.}
 \end{columns}
 \end{frame}
 
+% As marcas das empresas vivem em slides/logos/companies/, produzidas por
+% scripts/fetch_slide_logos.py a partir dos MESMOS ficheiros que a app implantada desenha.
+% Mesma degradação com graça do \techlogo: sem ficheiro, sem caixa.
+\newcommand{\colog}[2]{\IfFileExists{logos/companies/#1.png}%
+  {\raisebox{-5pt}{\includegraphics[height=18pt,width=40pt,keepaspectratio]{logos/companies/#1.png}}}%
+  {\scriptsize\textbf{#1}}\,{\scriptsize #2}\hspace{7pt}}
+
+\begin{frame}{O que vigia --- e porque duas das doze não são tecnológicas}
+\centering\vspace{0.5mm}
+{\footnotesize\textbf{\textcolor{blue!60}{XLK --- tecnologia}}}\par\smallskip
+\colog{AAPL}{}\colog{MSFT}{}\colog{NVDA}{}\colog{GOOGL}{}\colog{AMZN}{}\par\smallskip
+\colog{META}{}\colog{TSLA}{}\colog{AMD}{}\colog{NFLX}{}\par\medskip
+{\footnotesize\textbf{\textcolor{green!55!black}{XLF}}}\ \colog{JPM}{}\hspace{6pt}
+{\footnotesize\textbf{\textcolor{orange!75!black}{XLE}}}\ \colog{XOM}{}\hspace{6pt}
+{\footnotesize\textbf{\textcolor{purple!70}{XLV}}}\ \colog{JNJ}{}
+\par\bigskip
+\begin{columns}
+\column{0.92\textwidth}
+{\small Até Agosto de 2026 a watchlist tinha \textbf{dez} nomes, e \textbf{nove estavam no XLK}.
+A pergunta ``foi o setor?'' vinha quase sempre com a mesma resposta --- não por ser essa a
+resposta, mas porque a watchlist não dava ao fator de setor nada por onde variar.
+\textbf{A XOM (energia) e a JNJ (saúde) entraram para corrigir isso}, e o efeito apareceu logo
+no que o sistema produziu ao vivo: \textbf{XOM $-0{,}98\%$ num dia em que o seu setor fez
+$+0{,}93\%$} --- o setor a puxar ao \emph{contrário}, coisa que nove nomes tecnológicos não
+podiam ter mostrado.
+\par\smallskip
+{\footnotesize Isto é uma alteração à \emph{avaliação}, não à disposição do ecrã.}}
+\end{columns}
+\end{frame}
+
 \begin{frame}{Gatilho de notícias: recuperar precedentes análogos, medir impacto}
 \begin{columns}
 \column{0.52\textwidth}
@@ -417,8 +447,12 @@ aparece \textbf{uma} vez. A latência é \textbf{medida}, e ausente quando não 
 \newcommand{\techbadge}[2]{{\setlength{\fboxsep}{3pt}\colorbox{#1!13}{\small\strut #2}}}
 \newcommand{\techcat}[1]{\smallskip\par\textbf{\footnotesize #1}\par\smallskip}
 % Logo real se slides/logos/<file>.png existir; senao um badge de nome limpo (ver logos/README.md).
+% O limite de LARGURA nao e enfeite: nestas linhas convivem icones quadrados e logotipos que sao
+% palavras, e so com altura um logotipo-palavra fica ~7x mais largo que um icone, domina a linha e
+% empurra o ultimo badge para uma linha so dele. Limitar as duas dimensoes com keepaspectratio
+% mete todos na mesma caixa, e a linha volta a ler-se como uma linha.
 \newcommand{\techlogo}[3]{\IfFileExists{logos/#1.png}%
-  {\raisebox{-3pt}{\includegraphics[height=13pt]{logos/#1.png}}~}{}\techbadge{#2}{#3}}
+  {\raisebox{-3pt}{\includegraphics[height=13pt,width=30pt,keepaspectratio]{logos/#1.png}}~}{}\techbadge{#2}{#3}}
 \begin{frame}{Feito com --- ferramentas gratuitas e dados abertos, de ponta a ponta}
 \centering\vspace{1mm}
 \techcat{\textcolor{blue!60}{Fontes de dados \& APIs}}

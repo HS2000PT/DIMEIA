@@ -216,11 +216,26 @@ estaria errado.
 **🔴 24. Como sabes que as tuas citações não são inventadas?**
 <details><summary>resposta</summary>
 
-**59 de 59** verificadas. 43 DOIs resolvem no Crossref **e o título devolvido bate com o da
-bibliografia**, 8 arXiv, 6 URLs, 1 ISBN conferido na página de rosto, 1 sem identificador **e está
-correto assim**. A comparação de títulos apanha o DOI que resolve para **outro** artigo.
+**59 de 59** verificadas, e por **script**, não a olho: `scripts/verify_bibliography.py` resolve
+cada identificador contra o Crossref/arXiv e compara campo a campo. Repartição: **44 DOIs**, 7
+arXiv, 7 URLs, 1 ISBN. A comparação de títulos apanha o DOI que resolve para **outro** artigo.
 
 E há uma **rejeição** documentada: o MacKinlay 1997 saiu porque o DOI não resolve.
+
+Se te perguntarem o que a verificação apanhou (2026-08-04), há três respostas concretas:
+1. O **FNSPID** — o conjunto de dados de que a tese depende — estava citado como pré-publicação
+   arXiv quando já existe versão revista por pares no **KDD '24** (pp. 4918--4927). Corrigido nas
+   duas bibliografias, a da tese e a do artigo.
+2. O **LOF** declarava as actas do SIGMOD mas o DOI resolvia para a revista *SIGMOD Record*.
+   Mesmo trabalho, mesmas páginas, identificador trocado. Corrigido.
+3. O **Sculley 2015** era a única entrada sem identificador nenhum, o que contraria o protocolo
+   §6.4 do próprio projecto. Passou a ter o URL canónico da NeurIPS.
+
+E o mais instrutivo: a primeira corrida do verificador deu **33 achados** e **30 eram defeito
+meu**, não da bibliografia — comparava títulos por Jaccard e o Crossref guarda-os truncados
+("Anomaly detection" para "Anomaly Detection: A Survey"), acusava páginas de diferirem quando o
+registo só guarda a primeira, e partia apelidos com acentos (Jégou, Žliobaitė). **Um verificador
+que grita demais não é um verificador rigoroso, é um verificador em que se deixa de olhar.**
 </details>
 
 **🟡 25. E que as citações sustentam o que dizes?**

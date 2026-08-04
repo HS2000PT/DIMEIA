@@ -638,6 +638,38 @@ Trocado por \key{encolhimento de Vasicek}: em vez de cortar, puxa-se o $\beta$ p
 da sua \emph{imprecisão}. Um $\beta$ bem medido fica; um mal medido é atenuado.
 \end{frame}
 
+% Marcas das empresas: slides/logos/companies/, geradas por scripts/fetch_slide_logos.py a partir
+% dos MESMOS ficheiros que a app implantada desenha. Sem ficheiro, cai para o ticker em texto.
+\newcommand{\gcolog}[1]{\IfFileExists{../logos/companies/#1.png}%
+  {\raisebox{-5pt}{\includegraphics[height=18pt,width=40pt,keepaspectratio]{../logos/companies/#1.png}}}%
+  {\scriptsize\textbf{#1}}\hspace{7pt}}
+
+\begin{frame}{O que o sistema vigia --- e porque duas das doze não são tecnológicas}
+\centering\vspace{0.5mm}
+{\footnotesize\textbf{\textcolor{blue!60}{XLK --- tecnologia}}}\par\smallskip
+\gcolog{AAPL}\gcolog{MSFT}\gcolog{NVDA}\gcolog{GOOGL}\gcolog{AMZN}\par\smallskip
+\gcolog{META}\gcolog{TSLA}\gcolog{AMD}\gcolog{NFLX}\par\medskip
+{\footnotesize\textbf{\textcolor{green!55!black}{XLF}}}\ \gcolog{JPM}\hspace{6pt}
+{\footnotesize\textbf{\textcolor{orange!75!black}{XLE}}}\ \gcolog{XOM}\hspace{6pt}
+{\footnotesize\textbf{\textcolor{purple!70}{XLV}}}\ \gcolog{JNJ}
+\par\medskip
+\begin{columns}
+\column{0.94\textwidth}
+\footnotesize
+\key{Porque é que isto interessa à tese, e não só ao ecrã.} Até Agosto de 2026 a watchlist tinha
+\textbf{dez} nomes e \textbf{nove estavam no mesmo ETF de setor (XLK)}. A pergunta ``foi o setor?''
+vinha quase sempre com a mesma resposta --- e não por ser essa a resposta, mas porque não havia
+variedade nenhuma por onde o fator de setor pudesse variar. Se te perguntarem na defesa, é este
+o raciocínio.
+\par\smallskip
+\key{O que mudou.} Entraram a \textbf{XOM} (energia, XLE) e a \textbf{JNJ} (saúde, XLV), dois
+setores que se movem por razões diferentes das do tecnológico. O efeito apareceu logo:
+\textbf{XOM $-0{,}98\%$ num dia em que o XLE fez $+0{,}93\%$} --- o setor a puxar ao
+\emph{contrário} do movimento da ação, coisa que nove nomes tecnológicos nunca poderiam ter
+mostrado.
+\end{columns}
+\end{frame}
+
 \begin{frame}{O narrador: o LLM escreve a LÍNGUA, nunca os factos}
 \footnotesize
 \key{O problema.} Um alerta gerado por template lê-se robótico. Mas deixar um LLM escrever sobre
@@ -1876,8 +1908,12 @@ por desenho. \emph{(Tese: Fig.~4.6, o funil; Apêndice A: o pipeline completo nu
 \newcommand{\gbadge}[2]{{\setlength{\fboxsep}{3pt}\colorbox{#1!13}{\small\strut #2}}}
 \newcommand{\gcat}[1]{\smallskip\par\textbf{\footnotesize #1}\par\smallskip}
 % Logo real se ../logos/<ficheiro>.png existir; senão fica só o badge (ver ../logos/README.md).
+% O limite de LARGURA não é enfeite: nestas linhas convivem ícones quadrados e logótipos que são
+% palavras, e só com altura um logótipo-palavra fica ~7x mais largo que um ícone, domina a linha e
+% empurra o último badge para uma linha só dele. Limitar as duas dimensões com keepaspectratio
+% mete todos na mesma caixa, e a linha volta a ler-se como uma linha.
 \newcommand{\glogo}[3]{\IfFileExists{../logos/#1.png}%
-  {\raisebox{-3pt}{\includegraphics[height=13pt]{../logos/#1.png}}~}{}\gbadge{#2}{#3}}
+  {\raisebox{-3pt}{\includegraphics[height=13pt,width=30pt,keepaspectratio]{../logos/#1.png}}~}{}\gbadge{#2}{#3}}
 \begin{frame}{Feito com --- só ferramentas gratuitas e dados abertos}
 \centering\vspace{1mm}
 \gcat{\textcolor{blue!60}{Fontes de dados \& APIs}}

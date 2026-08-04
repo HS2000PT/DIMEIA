@@ -7,8 +7,102 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 48 (**v3 PROMOVIDA; tese, slides e guia sincronizados no mesmo passo**)
+- **Sessão nº:** 49 (**bibliografia verificada por script; logótipos reais; app de autoteste**)
 - **Última atualização:** 2026-08-04
+- **📚 SESSÃO 49 (2026-08-04 — o aluno pediu: "o máximo de agentes para rever criticamente
+  cada citação e entrada bibliográfica", logótipos reais nos slides e no guia, a app de quizz
+  para estudar no telemóvel, os textos do Telegram no repositório, e arrumação do repo):**
+  **(A) ⚠️ A CONTA BATEU NO LIMITE MENSAL DE GASTO, E ISSO MUDOU O MÉTODO.** Lancei o workflow
+  de auditoria com **18 agentes** (6 grupos de metadados + 6 de conteúdo + paridade EN↔PT +
+  2 de "afirmações sem fonte" + cépticos + crítico de completude). **16 dos 18 morreram no
+  limite de gasto**; só 2 completaram. O workflow do estudo de mercado da v4 perdeu os 4
+  cépticos pela mesma razão. **Não insisti com mais agentes** — passei a fazer o trabalho
+  directamente, e para metadados isso é **melhor**, não pior: resolver um DOI é um `GET`, não
+  um juízo. **Enquanto o limite não for levantado, não vale a pena lançar workflows.**
+  **(B) VERIFICADOR DE BIBLIOGRAFIA** (`scripts/verify_bibliography.py`, novo). Resolve cada
+  identificador contra Crossref/arXiv e compara **campo a campo**: título, ano, todos os
+  autores, revista/conferência, volume, número, páginas — e a verificação que quase ninguém
+  faz, **se o DOI resolve para ESTE trabalho e não para outro de título parecido**. Cobre as
+  duas bibliografias (tese + artigo IEEE) = **84 entradas**. Relatório regenerável em
+  `docs/decisions/bibliography_verification.md`.
+  **(C) 3 ACHADOS REAIS, todos corrigidos:**
+  **(C1)** o **FNSPID** — o conjunto de dados de que a tese inteira depende, e a chave mais
+  citada do corpo (7 instâncias) — estava citado como **pré-publicação arXiv** quando existe
+  versão revista por pares no **KDD '24** (DOI `10.1145/3637528.3671629`, pp. 4918–4927).
+  Corrigido nas **duas** bibliografias: uma correcção só na tese publicaria a inconsistência.
+  **(C2)** o **LOF** declarava as actas do SIGMOD mas o DOI resolvia para a revista *SIGMOD
+  Record* 29(2). Mesmo trabalho, mesmas páginas, **identificador trocado** → passa a
+  `10.1145/342009.335388`.
+  **(C3)** o **Sculley 2015** era a **única entrada sem identificador nenhum**, o que contraria
+  o protocolo §6.4 do próprio projecto. As actas do NIPS 2015 não emitem DOI ⇒ URL canónico da
+  NeurIPS, com título e lista de autores conferidos.
+  Mais o cabeçalho do `references.bib`, que dizia **"52 entradas"** havendo **59**.
+  **⚠️ (D) O ACHADO DE MÉTODO, e é o mais instrutivo: a PRIMEIRA CORRIDA DEU 33 ACHADOS E 30
+  ERAM DEFEITO MEU, não da bibliografia.** O comparador (i) media títulos por **Jaccard** e o
+  Crossref guarda-os truncados no subtítulo ("Anomaly detection" para "Anomaly Detection: A
+  Survey") ⇒ acusava **três clássicos** de "o DOI resolve para outro trabalho", que é a
+  acusação mais grave que sabe fazer; (ii) acusava páginas de diferirem quando o registo só
+  guarda a **primeira** (Kahneman, Fama ×2, Engle); (iii) partia apelidos com acentos porque
+  limpava `\[a-zA-Z]+` **antes** dos acentos de LaTeX (Jégou, Žliobaitė, Díaz-Rodríguez,
+  García); (iv) não sabia de **partículas** (o Crossref guarda `family="Hengel"`,
+  `given="Anton Van Den"`); (v) tratava `1--2` e `1-2` como números diferentes; (vi) chamava
+  "outro trabalho" a um registo do Crossref **sem título** (o do BERT é uma ficha vazia do lado
+  deles); (vii) a busca por "existe versão publicada?" corria em entradas que **já** citam as
+  actas e trouxe um capítulo de livro de 2025 para o *Attention Is All You Need* e uma revista
+  de engenharia para o *word2vec*. **Um verificador que grita demais não é rigoroso — é um
+  verificador em que se deixa de olhar.** Endurecido (contenção em vez de Jaccard, primeira
+  página, acentos primeiro, partículas, só pré-publicações declaradas + sobreposição de
+  autores). **Final: 84/84 sem achados.**
+  **(E) DUAS DIVERGÊNCIAS ARBITRADAS A FAVOR DA TESE, com fonte:** o Crossref dá 3980–3990
+  para o **SBERT** e a **ACL Anthology** dá 3982–3992 (que é o que o `.bib` tem) — manda a
+  Anthology; e a ACM publica **online-first**, logo o Pang tem 2021 (online) e 2022 (papel) e o
+  Guidotti 2018 e 2019 — a literatura cita o ano em que apareceu, e é esse que o `.bib` usa.
+  **(F) LOGÓTIPOS REAIS** (`scripts/fetch_slide_logos.py`, novo). **Desde a sessão 40 que as
+  macros `\techlogo`/`\glogo` existiam e mostravam SEMPRE o caminho de recurso**, porque
+  `slides/logos/` só tinha um README a explicar como obter os PNG à mão. **34 ficheiros**
+  (22 tecnologias + 12 empresas), `simple-icons` **16.28.0 fixada** (não `@latest` — um deck
+  que compila diferente consoante o dia não é reproduzível), cor de cada marca lida do ficheiro
+  de dados do pacote, **manifesto SHA256**. O `finnhub` e o `sbert` não existem no conjunto e
+  vêm das fontes próprias; o Yahoo e a Heroku **foram retirados** do simple-icons — e um
+  `@latest` do jsDelivr chegou a devolver **200 para um ficheiro que a versão fixada não tem**,
+  ou seja o código de estado outra vez a não ser verificação.
+  **⚠️ TRÊS DEFEITOS APANHADOS A RENDERIZAR, nenhum visível no exit code:** (1) o `latexmk`
+  devolveu **exit 0 sem recompilar** — ficheiros novos não estão no grafo de dependências, logo
+  o PDF continuava sem logótipos e "compila limpo" não queria dizer nada (`-g`); (2) com só
+  `height=13pt`, um logótipo-**palavra** fica ~7× mais largo que um ícone, dominava a linha e
+  empurrava o último badge para uma linha só dele ⇒ limite de **largura** com
+  `keepaspectratio`; (3) o `.bib` do artigo IEEE é um **ficheiro separado** e teria ficado a
+  citar a pré-publicação.
+  **(G) FRAME NOVO NOS TRÊS DECKS: "o que vigia, e porque duas das doze não são tecnológicas"**
+  — os 12 logótipos agrupados por ETF de setor (**XLK ×9 · XLF · XLE · XLV**, lido do
+  `relevance.py`, não de memória) com a razão da mudança 10→12 e o exemplo medido ao vivo
+  (**XOM −0,98% com o setor a +0,93%**). É a decisão de **avaliação**, não decoração.
+  **(H) APP DE AUTOTESTE PARA O TELEMÓVEL** (`quiz/index.html`, novo; publicada em
+  <https://claude.ai/code/artifact/9ec979e9-d46a-450c-b4d9-375cf81edc23>). **44 perguntas**, um
+  único ficheiro sem dependências externas (funciona **offline** depois de abrir — foi feita
+  para o metro), progresso em `localStorage`, filtros por bloco e por nível 🔴🟡🟢, fila de
+  repetição só das falhadas. Paleta **herdada de `app/ui_tokens.py`** (contrastes já medidos) —
+  uma segunda paleta a competir com a primeira foi um defeito que a v3 já pagou. As perguntas
+  de **número** são escolha múltipla auto-corrigida; as de **decisão** são abertas, porque são
+  essas que provam autoria (watchlist 10→12, o defeito da Microsoft "an ordinary day",
+  allowlist vs blocklist, Vasicek em vez de corte a ±4, o chip que custava 7,5 s, o teste que
+  passava e estava errado, porque o histórico **não** foi limpo).
+  **(I) TEXTOS E AVATAR DO TELEGRAM** (`docs/design/telegram_channel.md`, novo): nome, handle,
+  descrição (238 caracteres, cabe no limite de 255), mensagem fixada com a promessa por extenso
+  (é o **único** sítio onde aparece — regra H1), e `app/assets/telegram_avatar.png` **512×512**
+  gerado do `icon.svg`, que estava desenhado de propósito para ser avatar do canal e **nunca
+  tinha sido convertido para um ficheiro que se pudesse carregar**.
+  **(J) ARRUMAÇÃO DO REPO: ANÁLISE FEITA, EXECUÇÃO **NÃO** FEITA — de propósito.** 369
+  ficheiros versionados, **zero artefactos de build** (o `.gitignore` está a fazer o trabalho).
+  O varrimento de órfãos deu 24 nomes e a **maioria são falsos positivos**: os `__init__.py`
+  são marcadores de pacote, os logótipos das empresas são carregados **por ticker em runtime**
+  (nenhum ficheiro os nomeia), e os PNG do MEIA/DEI são do template do ISEP. Sobram ~4 a olhar
+  a sério: `docs/design/dashboard_v2_design.md` (a v2 foi rejeitada), `progress/PRODUCT_ROADMAP.md`,
+  e `scripts/figures/fig_{embedding_projection,uncertainty}.py`. **Apagar sem verificar cada um
+  seria exactamente o tipo de limpeza que parte a compilação da tese** — fica para a próxima
+  sessão, com os PDF a recompilar como porta.
+  **Gates: 618 testes, ruff limpo, congelados byte-iguais, EN 107 pp / PT 111 pp / artigo 4 pp /
+  slides 23→24 EN e PT / guia 85→86 — todos 0 erros e 0 citações indefinidas.**
 - **🚀 SESSÃO 48 (2026-08-04 — o aluno autorizou: "continue. and promote… focus on the
   essential and finalize the thesis, guarantee consistency and dignity and guarantee it is
   honest"):**
@@ -52,7 +146,34 @@
   23+23 / guia 85 — todos 0 erros, 0 citações e referências indefinidas.**
   **PENDENTE HUMANO:** rodar as 3 credenciais (o PAT primeiro — tem `admin: true`); enviar
   `docs/defence/mensagem_orientador.md`; reclamar o domínio para o URL limpo.
-- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI:** [`docs/design/v3_backlog.md`](docs/design/v3_backlog.md),
+- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI (actualizado na sessão 49):**
+  **⚠️ ANTES DE MAIS: a conta está no LIMITE MENSAL DE GASTO.** 16 de 18 agentes morreram lá
+  na sessão 49. **Não lançar workflows** até o aluno confirmar que o limite subiu — fazer o
+  trabalho directamente, que para verificação factual costuma até ser melhor.
+  **A fazer, por ordem:**
+  **(1)** **Arrumação do repo** — a análise está feita (bloco J da sessão 49), a execução não.
+  Olhar os ~4 candidatos reais um a um, com os PDF a recompilar como porta. Os outros 20
+  "órfãos" são falsos positivos e estão explicados.
+  **(2)** **Auditoria de CONTEÚDO das 7 chaves nunca auditadas** — `angelopoulos2023conformal`,
+  `vovk2005algorithmic`, `gama2014survey`, `vinh2010ami`, `rousseeuw1987silhouettes`,
+  `sculley2015debt`, `worldmonitor2026`. O `citation_content_audit.md` cobriu 122 instâncias /
+  52 chaves; hoje são **129 / 59**. Os metadados destas 7 já estão verificados (84/84); falta
+  ler se a fonte **sustenta a frase**. É trabalho de leitura, não de agentes.
+  **(3)** **Paridade EN↔PT nos sítios com citação** — nunca foi feita. O risco concreto é a
+  tradução **endurecer** um verbo ("suggests" → "demonstra") e a citação passar a sustentar
+  mais do que aguenta, na versão que o júri português lê. Começar pelo Cap. 2 (90 das 129
+  instâncias) e pelo Cap. 6 (os veredictos das RQ).
+  **(4)** **Demo e notificações** — `docs/defence/gravar_demo.md` já existe; o aluno quer
+  gravar o ecrã **e** as notificações push no telemóvel. Ficou explicitamente para o fim.
+  **(5)** **v4 do painel** — o estudo de mercado COMPLETOU (4 agentes; os 4 cépticos morreram
+  no limite). Resultado bruto em
+  `C:\Users\henri\AppData\Local\Temp\claude\…\tasks\wr951lb6c.output` (143k chars) e no
+  `journal.jsonl` da run `wf_c5217b07-1db`. **Se essa máquina mudar, o ficheiro perde-se** —
+  a conclusão principal fica registada aqui: o custo não é CSS nem Streamlit-tuning, é
+  **carga a frio** (parse de 8,7 MB de backfill em runtime) e a recomendação é **pré-computar
+  para um snapshot estático** no worker de 60 s. Briefing para sessão nova:
+  [`docs/design/PROMPT_dashboard_v4.md`](docs/design/PROMPT_dashboard_v4.md).
+  **⚠️ Contexto histórico abaixo (sessão 48, já feito):** `docs/design/v3_backlog.md`,
   secção **"Entrega de turno"** — tem os comandos por ordem e, a seguir, **"Promoção: a
   lista exacta do que fica por rever na tese"**, ficheiro a ficheiro e linha a linha.
   **A v3 está funcionalmente completa** (A, B, C, D, E, watchlist a 12, passo 6

@@ -1,7 +1,12 @@
 %% references.bib — APENAS entradas verificadas (docs/decisions/citation_log.md, §6.4).
-%% 52 entradas, todas com identificador resolúvel (DOI, arXiv, ISBN ou URL canónico).
-%% Verificação faseada: 2026-06-21 a 2026-07-30 (data por entrada no citation_log).
+%% 59 entradas, todas com identificador resolúvel (DOI, arXiv, ISBN ou URL canónico).
+%% Verificação faseada: 2026-06-21 a 2026-08-04 (data por entrada no citation_log).
 %% Backend: biber; estilo: authoryear-comp. Partilhado com thesis-pt/ (uma só fonte).
+%%
+%% Verificação automática: `python scripts/verify_bibliography.py --escrever` resolve cada
+%% identificador contra o Crossref/arXiv e compara campo a campo, incluindo se o DOI resolve
+%% para ESTE trabalho e não para outro de título parecido. Relatório em
+%% docs/decisions/bibliography_verification.md.
 
 @article{chandola2009anomaly,
   author    = {Chandola, Varun and Banerjee, Arindam and Kumar, Vipin},
@@ -74,11 +79,20 @@
   doi       = {10.1109/ACCESS.2018.2870052}
 }
 
-@article{dong2024fnspid,
+%% Citada a versão REVISTA POR PARES (KDD '24), não a pré-publicação. Verificado a 2026-08-04:
+%% o mesmo trabalho, os mesmos três autores, publicado nas actas do KDD '24, pp. 4918--4927.
+%% Como é o conjunto de dados sobre o qual assenta a tese inteira, e é a referência mais citada
+%% do corpo (7 instâncias), citar o arXiv quando existe versão publicada seria o reparo mais
+%% fácil de fazer a esta bibliografia. O arXiv fica como campo secundário, que é informação a
+%% mais e não a menos.
+@inproceedings{dong2024fnspid,
   author       = {Dong, Zihan and Fan, Xinyu and Peng, Zhiyuan},
   title        = {{FNSPID}: A Comprehensive Financial News Dataset in Time Series},
-  journal      = {arXiv preprint},
+  booktitle    = {Proceedings of the 30th {ACM} {SIGKDD} Conference on Knowledge Discovery and Data Mining (KDD '24)},
+  publisher    = {Association for Computing Machinery},
   year         = {2024},
+  pages        = {4918--4927},
+  doi          = {10.1145/3637528.3671629},
   eprint       = {2402.06698},
   eprinttype   = {arXiv},
   eprintclass  = {q-fin.ST}
@@ -298,7 +312,10 @@
   booktitle = {Proceedings of the 2000 ACM SIGMOD International Conference on Management of Data},
   year      = {2000},
   pages     = {93--104},
-  doi       = {10.1145/335191.335388}
+  %% O DOI 10.1145/335191.335388 resolve para o registo de REVISTA (ACM SIGMOD Record 29(2)),
+  %% não para as actas declaradas acima. Mesmo trabalho e mesmas páginas, mas a entrada e o
+  %% identificador diziam locais diferentes. Trocado pelo DOI das actas a 2026-08-04.
+  doi       = {10.1145/342009.335388}
 }
 
 @article{ahmed2016financial,
@@ -598,7 +615,12 @@
   booktitle = {Advances in Neural Information Processing Systems 28 (NIPS 2015)},
   publisher = {Curran Associates, Inc.},
   year      = {2015},
-  pages     = {2503--2511}
+  pages     = {2503--2511},
+  %% Era a ÚNICA entrada sem identificador nenhum, o que contraria o protocolo §6.4 do próprio
+  %% projecto ("nenhuma entrada entra no .bib sem identificador verificado"). As actas do NIPS
+  %% de 2015 não emitem DOI; o URL canónico da NeurIPS é o identificador estável que existe.
+  %% Verificado a 2026-08-04: título e lista de autores conferem exactamente.
+  url       = {https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html}
 }
 
 % SEM DOI, e corretamente: a JMLR não atribuiu DOI ao volume 11 (2010).

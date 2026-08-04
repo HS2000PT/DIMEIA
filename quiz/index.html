@@ -1,0 +1,693 @@
+<title>InvestiGator — Autoteste de Defesa</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0E13">
+
+<style>
+/* ------------------------------------------------------------------ tokens
+   Herdados de app/ui_tokens.py, nao inventados. Aquele ficheiro tem os
+   contrastes MEDIDOS (16:1 / 9:1 / 5,4:1 sobre o fundo), e uma segunda
+   paleta a competir com a primeira e exactamente o defeito que a v3 do
+   painel pagou caro. O tema claro deriva dos mesmos tons, escurecidos para
+   aguentarem o minimo de 4,5:1 sobre branco. */
+:root {
+  --bg:#0B0E13; --panel:#131820; --panel2:#1A2029; --line:#242C38;
+  --fg:#EDF1F7; --dim:#A3AEC2; --mute:#7C8AA3;
+  --ok:#00D68F; --no:#FF5A5F; --flag:#FFB020; --info:#4A9EFF;
+  --shadow:0 1px 0 rgba(255,255,255,.04), 0 8px 24px rgba(0,0,0,.45);
+  --r:14px;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:#F5F7FA; --panel:#FFFFFF; --panel2:#EDF1F6; --line:#D5DDE7;
+    --fg:#0F141B; --dim:#48566B; --mute:#63728A;
+    --ok:#00885C; --no:#C8353A; --flag:#9A6300; --info:#1F62C4;
+    --shadow:0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.08);
+  }
+}
+:root[data-theme="light"] {
+  --bg:#F5F7FA; --panel:#FFFFFF; --panel2:#EDF1F6; --line:#D5DDE7;
+  --fg:#0F141B; --dim:#48566B; --mute:#63728A;
+  --ok:#00885C; --no:#C8353A; --flag:#9A6300; --info:#1F62C4;
+  --shadow:0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.08);
+}
+:root[data-theme="dark"] {
+  --bg:#0B0E13; --panel:#131820; --panel2:#1A2029; --line:#242C38;
+  --fg:#EDF1F7; --dim:#A3AEC2; --mute:#7C8AA3;
+  --ok:#00D68F; --no:#FF5A5F; --flag:#FFB020; --info:#4A9EFF;
+  --shadow:0 1px 0 rgba(255,255,255,.04), 0 8px 24px rgba(0,0,0,.45);
+}
+
+* { box-sizing:border-box; }
+body {
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:var(--sans); font-size:17px; line-height:1.5;
+  -webkit-text-size-adjust:100%;
+  padding:0 0 env(safe-area-inset-bottom);
+}
+.wrap { max-width:640px; margin:0 auto; padding:14px 14px 0; }
+
+/* ------------------------------------------------------------------ topo */
+header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.mark { width:26px; height:26px; flex:0 0 auto; }
+h1 { font-size:15px; font-weight:650; letter-spacing:.01em; margin:0; flex:1; }
+h1 small { display:block; font-weight:400; font-size:11.5px; color:var(--mute);
+  letter-spacing:.06em; text-transform:uppercase; }
+.iconbtn {
+  background:var(--panel); border:1px solid var(--line); color:var(--dim);
+  border-radius:9px; width:34px; height:34px; font-size:15px; cursor:pointer;
+}
+.iconbtn:active { background:var(--panel2); }
+
+/* ---- barra de progresso: uma marca por pergunta.
+   E a mesma ideia visual da "tira de excedencias" da tese (5 dos ultimos 249
+   dias): em vez de uma percentagem abstracta, mostra as unidades reais. */
+.strip { display:flex; gap:2px; height:7px; margin:10px 0 4px; }
+.tick { flex:1 1 0; min-width:0; border-radius:2px; background:var(--line); transition:background .18s; }
+.tick.ok { background:var(--ok); }
+.tick.no { background:var(--no); }
+.tick.now { background:var(--fg); }
+.meta {
+  display:flex; justify-content:space-between; font-family:var(--mono);
+  font-size:11.5px; color:var(--mute); font-variant-numeric:tabular-nums;
+  letter-spacing:.02em; margin-bottom:12px;
+}
+
+/* ------------------------------------------------------------------ cartao */
+.card {
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--r);
+  box-shadow:var(--shadow); padding:18px 16px; margin-bottom:12px;
+}
+.tags { display:flex; gap:6px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+.tag {
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.07em;
+  text-transform:uppercase; padding:3px 7px; border-radius:5px;
+  border:1px solid var(--line); color:var(--mute); white-space:nowrap;
+}
+.tag.t1 { color:var(--flag); border-color:color-mix(in srgb, var(--flag) 40%, var(--line)); }
+.tag.t2 { color:var(--info); border-color:color-mix(in srgb, var(--info) 40%, var(--line)); }
+.tag.t3 { color:var(--mute); }
+.q { font-size:19.5px; line-height:1.36; font-weight:600; margin:0 0 4px;
+  text-wrap:balance; }
+.hint { font-size:13.5px; color:var(--mute); margin-top:10px; }
+
+.answer {
+  margin-top:14px; padding-top:14px; border-top:1px solid var(--line);
+  font-size:16px; color:var(--dim); line-height:1.55;
+}
+.answer strong, .answer b { color:var(--fg); font-weight:650; }
+.answer code, .num {
+  font-family:var(--mono); font-variant-numeric:tabular-nums;
+  background:var(--panel2); padding:1px 5px; border-radius:4px;
+  font-size:.92em; color:var(--fg);
+}
+.answer ul { margin:8px 0 0; padding-left:19px; }
+.answer li { margin:5px 0; }
+.answer p { margin:9px 0 0; }
+.answer p:first-child { margin-top:0; }
+
+/* -------------------------------------------------------------- escolhas */
+.opts { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+.opt {
+  display:flex; align-items:center; gap:10px; width:100%; text-align:left;
+  background:var(--panel2); border:1px solid var(--line); color:var(--fg);
+  border-radius:10px; padding:13px 14px; font:inherit; font-size:16.5px;
+  cursor:pointer; transition:border-color .15s, background .15s;
+}
+.opt .val { font-family:var(--mono); font-variant-numeric:tabular-nums; font-weight:600; }
+.opt:disabled { cursor:default; }
+.opt.right { border-color:var(--ok); background:color-mix(in srgb, var(--ok) 12%, var(--panel2)); }
+.opt.wrong { border-color:var(--no); background:color-mix(in srgb, var(--no) 12%, var(--panel2)); }
+.opt .badge { margin-left:auto; font-family:var(--mono); font-size:12px; }
+.opt.right .badge { color:var(--ok); }
+.opt.wrong .badge { color:var(--no); }
+
+/* ----------------------------------------------------------- accoes/base */
+.actions { display:flex; gap:8px; margin-bottom:14px; }
+button.big {
+  flex:1; padding:15px 12px; border-radius:11px; font:inherit; font-size:16px;
+  font-weight:600; cursor:pointer; border:1px solid var(--line);
+  background:var(--panel); color:var(--fg); min-height:52px;
+}
+button.big:active { transform:translateY(1px); }
+button.primary { background:var(--fg); color:var(--bg); border-color:var(--fg); }
+button.yes { border-color:color-mix(in srgb,var(--ok) 55%,var(--line)); color:var(--ok); }
+button.no  { border-color:color-mix(in srgb,var(--no) 55%,var(--line)); color:var(--no); }
+button:focus-visible, .opt:focus-visible, .iconbtn:focus-visible, select:focus-visible {
+  outline:2px solid var(--info); outline-offset:2px;
+}
+
+/* -------------------------------------------------------------- filtros */
+.filters { display:flex; gap:8px; margin-bottom:12px; }
+select {
+  flex:1; background:var(--panel); color:var(--dim); border:1px solid var(--line);
+  border-radius:9px; padding:9px 10px; font:inherit; font-size:13.5px;
+}
+.done {
+  text-align:center; padding:28px 16px;
+}
+.done .score {
+  font-family:var(--mono); font-size:46px; font-weight:700; letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums; margin:6px 0;
+}
+.done .sub { color:var(--dim); font-size:15px; line-height:1.5; }
+.miss { text-align:left; margin-top:18px; }
+.miss h3 { font-size:12px; text-transform:uppercase; letter-spacing:.08em;
+  color:var(--mute); margin:0 0 8px; font-weight:600; }
+.miss li { margin:6px 0; color:var(--dim); font-size:14.5px; }
+footer {
+  text-align:center; color:var(--mute); font-size:11.5px; padding:16px 14px 26px;
+  line-height:1.6;
+}
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M2 21c5 0 7-3 11-9 3-4.5 6-7 9-7 4 0 8 3 8 8 0 3-2 5-5 5-2 0-4-1-5-3"
+            fill="none" stroke="#00D68F" stroke-width="2.6" stroke-linecap="round"/>
+    </svg>
+    <h1>Autoteste de Defesa<small>InvestiGator · MEIA/ISEP</small></h1>
+    <button class="iconbtn" id="tema" title="Tema claro/escuro" aria-label="Alternar tema">◐</button>
+    <button class="iconbtn" id="reiniciar" title="Recomeçar" aria-label="Recomeçar">↺</button>
+  </header>
+
+  <div class="filters">
+    <select id="fBloco" aria-label="Filtrar por bloco"></select>
+    <select id="fNivel" aria-label="Filtrar por nível">
+      <option value="">Todos os níveis</option>
+      <option value="1">🔴 saber de cor</option>
+      <option value="2">🟡 saber explicar</option>
+      <option value="3">🟢 saber que existe</option>
+    </select>
+  </div>
+
+  <div class="strip" id="strip"></div>
+  <div class="meta"><span id="pos"></span><span id="placar"></span></div>
+
+  <div id="palco"></div>
+</div>
+
+<footer>
+  Funciona sem rede depois de abrir uma vez — feito para o metro.<br>
+  O progresso fica guardado neste telemóvel. Nada é enviado para lado nenhum.
+</footer>
+
+<script>
+"use strict";
+
+/* =====================================================================
+   BANCO DE PERGUNTAS
+
+   Regra: nada aqui e inventado. Cada numero vem de docs/evaluation/*.md,
+   do autoteste.md ou do registo do projecto. Se um numero mudar na tese,
+   muda aqui -- e a resposta certa da escolha multipla tem de ser a real,
+   nunca a mais bonita.
+
+   tipo "aberta": responde-se em voz alta e auto-avalia-se. E o formato que
+   treina a defesa, porque na sala ninguem da opcoes.
+   tipo "escolha": auto-corrigida. So para NUMEROS, que sao o unico sitio
+   onde ha uma resposta objectiva e onde a hesitacao se nota mais.
+   ===================================================================== */
+const BANCO = [
+/* --------------------------------------------------- 1. o que isto e */
+{b:"O que isto é", n:1, t:"aberta", q:"Em três frases, o que é o InvestiGator?",
+ a:`Um sistema de alertas financeiros <b>explicáveis</b> para investidores de retalho.
+ Responde a três perguntas quando uma acção se mexe: <b>é invulgar para esta acção?</b>,
+ <b>é a empresa ou o mercado?</b> e <b>já aconteceu antes, e o que se seguiu?</b>
+ <p>Nunca prevê preços — e isso é uma restrição de desenho, não uma falha.</p>`},
+
+{b:"O que isto é", n:1, t:"aberta", q:"Qual é a contribuição, se todos os modelos já existiam?",
+ a:`A <b>integração avaliada</b>. Nenhum algoritmo é novo. O que é novo é um sistema que
+ responde às três perguntas a custo zero, com cada afirmação rastreável ao procedimento que
+ a produziu, e com os resultados negativos reportados tal como caíram.
+ <p>É isso que engenharia de IA é: integrar, aplicar e avaliar criticamente.</p>`},
+
+{b:"O que isto é", n:2, t:"aberta", q:"Porque é que recusar prever é uma força e não uma desculpa?",
+ a:`Porque a hipótese de mercado eficiente diz que a informação pública é absorvida quase de
+ imediato — logo prever retornos a partir de notícia pública é dificílimo por construção.
+ <p>Em vez de competir com isso e falhar, o sistema <b>mede e explica o que já aconteceu</b>
+ depois de notícias comparáveis. É mais honesto e muito mais defensável.</p>`},
+
+/* ------------------------------------------------------- 2. conceitos */
+{b:"Conceitos de IA", n:1, t:"aberta", q:"O que é um embedding, e porque é preciso?",
+ a:`Um vector de números que representa o <b>significado</b> de uma frase. É preciso porque um
+ computador não compara texto por significado, só por caracteres.
+ <p>Com vectores, <i>"escassez de chips"</i> fica perto de <i>"problemas no fornecimento de
+ semicondutores"</i> mesmo sem uma palavra em comum.</p>`},
+
+{b:"Conceitos de IA", n:1, t:"aberta", q:"Porquê cosseno e não distância euclidiana?",
+ a:`Porque interessa a <b>direcção</b> do vector (o tema), não o comprimento. E como os
+ embeddings são normalizados a norma 1, o cosseno é simplesmente o produto interno — e a
+ ordenação por cosseno e por distância euclidiana passa a ser <b>a mesma</b>.
+ <p>É a escolha barata e correcta, e sabes justificá-la nas duas direcções.</p>`},
+
+{b:"Conceitos de IA", n:1, t:"aberta", q:"Escreve o z-score e explica porque se normaliza.",
+ a:`<code>z_t = (r_t − μ_t) / σ_t</code>, anomalia se <code>|z_t| > k</code>.
+ <p>Normaliza-se pela volatilidade <b>da própria acção</b> porque a mesma queda de 3% é
+ dramática numa acção calma e banal numa volátil. Um limiar fixo em percentagem trataria as
+ duas de igual maneira — e é exactamente isso que a medição mostra que corre mal.</p>`},
+
+{b:"Conceitos de IA", n:2, t:"aberta", q:"O que significa \"sem lookahead\" e como o garantes?",
+ a:`Que nenhum número usado para decidir hoje vem do futuro. A janela do z-score usa só dias
+ <b>anteriores</b>; o impacto é medido estritamente <b>depois</b> do fecho do dia do evento.
+ <p>E não é só uma afirmação: há um teste que <b>muta os preços futuros</b> — as features não
+ podem mudar, o rótulo tem de mudar. Se alguém introduzir lookahead, o teste parte.</p>`},
+
+{b:"Conceitos de IA", n:2, t:"aberta", q:"O que é precision@k e porquê essa métrica?",
+ a:`A fracção dos <code>k</code> primeiros resultados que são relevantes.
+ <p>É a métrica certa porque um alerta só mostra três ou cinco precedentes: o que interessa é
+ se os do <b>topo</b> prestam, não a lista toda.</p>`},
+
+{b:"Conceitos de IA", n:3, t:"aberta", q:"O que é um event study?",
+ a:`Medir o retorno numa janela curta <b>depois</b> de um acontecimento — aqui +1, +3 e +5 dias
+ a contar do fecho do dia do evento.
+ <p>Descreve um <b>resultado observado</b>. Nunca um efeito causal, nunca uma previsão.</p>`},
+
+{b:"Conceitos de IA", n:2, t:"aberta", q:"Porque é que a raridade é uma CONTAGEM e não uma probabilidade?",
+ a:`Converter um z-score numa probabilidade exige assumir <b>normalidade</b>. Os retornos têm
+ <b>caudas pesadas</b>, portanto essa probabilidade estaria errada precisamente nos dias que
+ interessam — os extremos.
+ <p>A contagem empírica não assume nada: <i>"só 5 dos últimos 249 dias se moveram assim"</i>.
+ E um leigo lê isso sem saber estatística nenhuma.</p>`},
+
+/* --------------------------------------------------------- 3. numeros */
+{b:"Os números", n:1, t:"escolha",
+ q:"Amplitude da taxa de disparo entre os 15 tickers, no z-score:",
+ opts:["0,015","0,344","0,126","0,530"], ok:0,
+ a:`<b>0,015</b> no z-score contra <b>0,344</b> no limiar fixo.
+ <p>É o argumento mais forte da detecção porque <b>não precisa de rótulo nenhum</b>: mostra
+ consistência em acções de volatilidade muito diferente.</p>`},
+
+{b:"Os números", n:1, t:"escolha",
+ q:"P@5 da recuperação semântica (MiniLM), no protocolo congelado:",
+ opts:["0,346","0,514","0,595","0,240"], ok:1,
+ a:`<b>0,514</b> com o MiniLM, contra <b>0,346</b> lexical, <b>0,240</b> aleatório e
+ <b>0,126</b> recência.
+ <p>Cuidado com a confusão fácil: <b>0,595</b> é o valor <b>à escala</b>, medido em 80 mil
+ manchetes do FNSPID. Os dois números existem e dizem coisas diferentes.</p>`},
+
+{b:"Os números", n:1, t:"escolha",
+ q:"RQ4 — PR-AUC da volatilidade sozinha (a linha de base que ninguém bateu):",
+ opts:["0,496","0,538","0,542","0,439"], ok:2,
+ a:`<b>volatilidade 0,542</b> &gt; contexto 0,538 &gt; contexto+texto <b>0,496</b>.
+ <p>Acrescentar o texto da manchete <b>piora</b>. O sinal vive no contexto de mercado, não no
+ título — e isto foi <b>pré-comprometido</b>: a linha de base foi escolhida antes de correr.</p>`},
+
+{b:"Os números", n:1, t:"escolha",
+ q:"Precisão da triagem dentro de um orçamento de 5 alertas/dia (vs 0,163 às cegas):",
+ opts:["0,632","0,542","0,667","0,595"], ok:0,
+ a:`<b>0,632</b> contra <b>0,163</b> de alertar às cegas — quase quadruplica.
+ <p>É o valor de produto, e sobrevive ao negativo do texto. A resposta ao <i>"o vosso modelo
+ perdeu"</i> vive neste número.</p>`},
+
+{b:"Os números", n:2, t:"escolha",
+ q:"Anomalia — F1 do z-score contra Isolation Forest e LOF, com a mesma informação causal:",
+ opts:["0,530 / 0,271 / 0,280","0,664 / 0,516 / 0,500","0,542 / 0,496 / 0,439","0,712 / 0,444 / 0,358"], ok:0,
+ a:`z-score <b>F1 0,530</b>, Isolation Forest <b>0,271</b>, LOF <b>0,280</b>.
+ <p>É a primeira das duas comparações "estatístico contra aprendido", e a opção transparente
+ ganhou. A segunda é a RQ4, onde nenhum modelo com texto bate a volatilidade.</p>`},
+
+{b:"Os números", n:2, t:"escolha",
+ q:"O achado honesto que vai CONTRA a escolha feita — EWMA vs deslizante:",
+ opts:["F1 0,664 vs 0,516","F1 0,530 vs 0,271","PR-AUC 0,542 vs 0,538","P@5 0,595 vs 0,514"], ok:0,
+ a:`A volatilidade <b>EWMA bate a deslizante: F1 0,664 contra 0,516</b>, com o mesmo recall e
+ quase metade dos falsos positivos.
+ <p>Reportei-o. Mantenho a deslizante por ser explicável numa frase, e a EWMA fica como
+ <b>trabalho futuro já validado</b>. Reportar o que contraria a nossa escolha é o que dá
+ crédito a tudo o resto.</p>`},
+
+{b:"Os números", n:1, t:"escolha",
+ q:"Prova de vida ao vivo: precisão das decisões mantidas vs taxa de base:",
+ opts:["0,667 vs 0,455","0,632 vs 0,163","0,514 vs 0,346","0,595 vs 0,240"], ok:0,
+ a:`<b>0,667 contra uma taxa de base de 0,455</b>, com Brier 0,229, medido sobre decisões
+ reais que maturaram em produção.
+ <p>Importa porque é <b>fora</b> do protocolo congelado: o mecanismo confirma-se com dados que
+ não existiam quando a avaliação foi feita.</p>`},
+
+/* ------------------------------------------------- 4. os quatro "nao" */
+{b:'Os quatro "não"', n:1, t:"aberta", q:"Taxonomia de eventos: o número, e porque NÃO a ligaste?",
+ a:`AMI <b>0,358</b> com tipo de evento contra <b>0,188</b> com ticker: o espaço sabe o
+ acontecimento, e sabe-o <b>mais</b> do que sabe a empresa. Bonito.
+ <p>Mas a silhueta é <b>0,084</b> — os grupos sobrepõem-se — e a rubrica só cobre <b>15,1%</b>
+ do corpus. Filtrar por um tipo errado <b>remove evidência válida em silêncio</b>, e é isso
+ que o critério H4 proíbe.</p>`},
+
+{b:'Os quatro "não"', n:1, t:"escolha",
+ q:"Pureza 0,712 parece boa. Que valor daria uma atribuição ALEATÓRIA com os mesmos tamanhos?",
+ opts:["0,444","0,188","0,084","0,358"], ok:0,
+ a:`<b>0,444</b>. Com um tipo a valer 44% dos rótulos e 18 grupos, o acaso já lá chega quase.
+ <p>O ganho real é <b>+0,269</b>, não 0,712. É a lição de método mais transferível da tese:
+ <b>uma métrica sem a sua linha de base não é um resultado.</b></p>`},
+
+{b:'Os quatro "não"', n:1, t:"escolha",
+ q:"Para garantir 90% de cobertura conformal, em que fracção das manchetes há decisão definida?",
+ opts:["39,5%","90,0%","63,2%","15,1%"], ok:0,
+ a:`<b>39,5%</b> — o número mais duro da tese.
+ <p>Não contradiz a RQ4: <b>explica-a</b> por um caminho independente, e sem treinar nada.
+ Se te perguntarem "o vosso sistema é confiante?", esta é a resposta honesta.</p>`},
+
+{b:'Os quatro "não"', n:2, t:"aberta", q:"A cobertura conformal parte-se onde, e porquê?",
+ a:`Aguenta a <b>90%</b> e a <b>80%</b>; parte-se a <b>95%</b> sob divisão temporal
+ (<code>0,937</code> contra 0,95).
+ <p>Porquê: pedir 95% obriga o limiar a apoiar-se na <b>cauda</b> da calibração — e é a cauda
+ que se move primeiro quando o regime muda.</p>`},
+
+{b:'Os quatro "não"', n:1, t:"aberta", q:"Deriva: o que está medido, e o que isso muda?",
+ a:`Volatilidade pré-evento <b>PSI 0,281</b> (banda significativa); features de retorno
+ <code>0,020</code> e <code>0,014</code> (estáveis).
+ <p>Muda o estatuto da afirmação: a limitação que a tese repetia passou de <b>afirmada a
+ medida</b>, e passa a dar um gatilho de re-treino verificável em vez de uma intuição.</p>`},
+
+{b:'Os quatro "não"', n:2, t:"aberta", q:"Porque é que os números congelados sobrevivem à deriva?",
+ a:`Porque a prevalência do rótulo <b>oscila</b> em vez de ter tendência:
+ <code>0,385 → 0,470 → 0,378</code>.
+ <p>O protocolo já atravessa uma dessas oscilações — logo os números foram medidos <b>sob</b>
+ deriva, não antes dela.</p>`},
+
+{b:'Os quatro "não"', n:1, t:"aberta", q:"Convergência: o resultado, e o achado que vale mais do que o resultado.",
+ a:`A fusão ganha em <b>1 de 3</b> orçamentos. Um ganho que depende do orçamento que se cita é
+ um ganho que se <b>pode ter escolhido</b> ⇒ não entra em produção.
+ <p>O achado que vale mais: o peso da intensidade de notícia saiu <b>negativo (−0,283)</b>.
+ Mais manchetes = <b>menos</b> provável ser material, porque são dias de conteúdo automático.
+ À mão eu teria posto positivo, e estaria errado. É a justificação empírica de derivar pesos
+ em vez de os arbitrar.</p>`},
+
+/* -------------------------------------------- 5. metodo e integridade */
+{b:"Método e integridade", n:1, t:"aberta", q:"Como sabes que as tuas citações não são inventadas?",
+ a:`<b>59 de 59</b> verificadas, e por <b>script</b>:
+ <code>scripts/verify_bibliography.py</code> resolve cada identificador contra o Crossref/arXiv
+ e compara campo a campo — 44 DOIs, 7 arXiv, 7 URLs, 1 ISBN.
+ <p>A comparação de títulos apanha o caso mais perigoso: um DOI que resolve para <b>outro</b>
+ artigo. E há uma <b>rejeição</b> documentada — o MacKinlay 1997 saiu porque o DOI não resolve.</p>`},
+
+{b:"Método e integridade", n:2, t:"aberta", q:"O que é que a verificação automática apanhou de facto?",
+ a:`Três coisas reais:
+ <ul>
+ <li>O <b>FNSPID</b> — o conjunto de dados de que a tese depende — estava citado como
+ pré-publicação arXiv quando já existe versão revista por pares no <b>KDD '24</b>.</li>
+ <li>O <b>LOF</b> declarava as actas do SIGMOD, mas o DOI resolvia para a revista
+ <i>SIGMOD Record</i>. Identificador trocado.</li>
+ <li>O <b>Sculley 2015</b> era a única entrada sem identificador nenhum — o que contraria o
+ protocolo do próprio projecto.</li>
+ </ul>
+ <p>E a parte honesta: a primeira corrida deu <b>33 achados e 30 eram defeito do verificador</b>,
+ não da bibliografia.</p>`},
+
+{b:"Método e integridade", n:2, t:"aberta", q:"E como sabes que as citações SUSTENTAM o que dizes?",
+ a:`É uma auditoria <b>separada</b>, porque são perguntas diferentes: uma fonte pode ser
+ perfeitamente real e mesmo assim estar mal aplicada.
+ <p>Li as <b>122 instâncias</b> contra o que a obra estabelece. Encontrei duas afirmações
+ esticadas e corrigi-as <b>enfraquecendo a afirmação</b>, nunca inventando fonte: um survey de
+ 2014 a que atribuía modelos de 2019, e um critério atribuído a autores que não o elegem.</p>`},
+
+{b:"Método e integridade", n:2, t:"aberta", q:"Como é que a explicação não pode divergir do cálculo?",
+ a:`Porque o texto é <b>composto a partir dos mesmos objectos</b> que o sistema calcula — não
+ há um segundo caminho que possa desalinhar.
+ <p>E há teste: cada precedente mostrado tem de aparecer com a data, ticker e similaridade
+ exactos, e não pode aparecer nenhum que não tenha sido recuperado.</p>`},
+
+{b:"Método e integridade", n:3, t:"aberta", q:"Tens base de dados?",
+ a:`Três camadas: <b>SQLite</b> para as subscrições do bot, <b>JSONL versionado</b> para o
+ histórico partilhado, e os modelos com metadados.
+ <p>Não há <b>servidor</b> de base de dados porque o acesso é acrescentar-e-ler-tudo sobre
+ 24 MB, e versionar dá rasto de auditoria e leitura pública. A limitação é a escrita
+ concorrente, tratada com controlo optimista — e digo-o.</p>`},
+
+/* ----------------------------------- 6. decisoes (prova que foste tu) */
+{b:"Decisões que tomei", n:1, t:"aberta",
+ q:"Porque é que a watchlist passou de 10 para 12, e porque são as duas novas NÃO tecnológicas?",
+ a:`Porque <b>nove dos dez</b> nomes anteriores partilhavam o mesmo ETF de sector (XLK). A
+ pergunta <i>"foi o sector?"</i> vinha quase sempre com a mesma resposta — <b>não por ser essa
+ a resposta, mas por falta de variedade</b>.
+ <p>Entraram a <b>XOM</b> (energia, XLE) e a <b>JNJ</b> (saúde, XLV). O efeito apareceu logo:
+ <b>XOM −0,98% num dia em que o sector fez +0,93%</b> — o sector a puxar ao contrário, coisa
+ que nove nomes tecnológicos nunca poderiam ter mostrado.</p>
+ <p>É uma melhoria de <b>avaliação</b>, não de ecrã.</p>`},
+
+{b:"Decisões que tomei", n:1, t:"aberta",
+ q:"O defeito de honestidade que apanhaste ao olhar para a Figura 4.5. Qual foi?",
+ a:`A <b>Microsoft com +4,82%</b> e o cartão a dizer <i>"an ordinary day"</i>.
+ <p>Verificado: <code>z = +1,11</code>, abaixo do limiar — mas <b>5 dos 249 dias</b> moveram-se
+ assim. Um movimento no <b>top 2% do ano</b> descrito como banal.</p>
+ <p>Causa: as duas réguas medem coisas diferentes (o detector olha 20 dias, a contagem olha o
+ ano) e a interface resolvia a discordância <b>escolhendo em silêncio a palavra mais
+ tranquilizadora</b>. Agora diz as duas. <b>Nenhum log mostraria isto</b> — só olhar para a
+ figura.</p>`},
+
+{b:"Decisões que tomei", n:2, t:"aberta",
+ q:"Porque é que o narrador usa uma ALLOWLIST e não uma lista de palavras proibidas?",
+ a:`Porque uma blocklist de linguagem natural <b>perde sempre</b>: as paráfrases são infinitas
+ e a lista é finita. Um red team de três adversários abriu <b>29 furos</b> na primeira versão —
+ incluindo apóstrofos de contracções (<i>it's</i>) lidos como aspas, criando "citações" falsas.
+ <p>A v2 inverte: vocabulário fechado (~360 palavras neutras), negativos só válidos <b>com
+ sinal</b>, atribuição validada contra a evidência. Os 21 exploits ficaram como regressão
+ permanente — 21/21 bloqueados.</p>
+ <p>E a prova de que a lição é real: o mesmo erro voltou <b>ao contrário</b> num teste, que
+ acusou "price target" numa frase que dizia <i>"No price targets"</i>.</p>`},
+
+{b:"Decisões que tomei", n:2, t:"aberta",
+ q:"Porque é que o β não é cortado a ±4, e o que puseste no lugar?",
+ a:`Porque um corte rígido é <b>exactamente a constante por justificar</b> que o projecto está a
+ corrigir noutros sítios. E fazia mal: a AMD deu <code>β = 4,43</code>, caía num recurso
+ silencioso de β=1, e atribuía os <b>−8,5% inteiros à empresa</b>.
+ <p>No lugar: <b>encolhimento de Vasicek</b>, ponderado pela <b>precisão</b> da estimativa. Um
+ β bem medido fica; um mal medido é puxado para o prior. Um peso fixo (Blume, ⅔) também não
+ servia — encolhia um β exacto de 2,0 para 1,67.</p>`},
+
+{b:"Decisões que tomei", n:2, t:"aberta",
+ q:"Mediste que o chip de precedentes na grelha custava quanto? E o que isso te ensinou?",
+ a:`A grelha a frio passava de <b>6,2 s para 13,7 s</b> — sete segundos e meio por um chip,
+ contra um critério que pede menos de cinco no total. Não entrou.
+ <p>E o mais instrutivo foi a <b>caça à causa</b>: componente a componente a coisa custava
+ ~3,2 s, mas dentro do Streamlit custava mais do dobro. Andei pelo pickle da cache (0,19 s,
+ não era) e pelo parse do backfill (0,24 s, não era) até fazer a experiência que decide —
+ tirar só o chip e medir.</p>
+ <p><b>A soma das partes medidas isoladamente não é a medição do todo.</b></p>`},
+
+{b:"Decisões que tomei", n:2, t:"aberta",
+ q:"Um teste que passava e mesmo assim estava errado. Dá o exemplo.",
+ a:`<code>test_watchlist_completa_tem_aliases</code> tinha os <b>dez nomes escritos à mão</b>.
+ Quando a watchlist cresceu para doze, o teste <b>continuava a passar</b> — cobria os dez
+ antigos e ignorava os dois novos, sem nunca falhar.
+ <p>Passou a ler o <code>config/alerts.yaml</code>. A lição: um teste que não pode falhar quando
+ o sistema muda não está a testar o sistema, está a testar uma cópia dele.</p>
+ <p>O irmão deste caso: o ecrã de detalhe abriu em 1D <b>sem nada para mostrar</b>, com todos os
+ testes verdes — porque <b>um painel vazio é um painel válido</b> para os testes. Só a captura
+ deu por isso.</p>`},
+
+{b:"Decisões que tomei", n:2, t:"aberta",
+ q:"Porque é que o histórico de alertas NÃO foi limpo, mesmo tendo sido pedido?",
+ a:`Porque os <b>220 alertas</b> são a única prova de <b>operação real</b>, e a latência medida
+ e a pós-validação citadas na tese assentam neles. Limpá-los apagaria a evidência.
+ <p>O replay histórico escreve para <b>outro ficheiro</b> e o gráfico distingue as camadas:
+ ⚑ enviado · ○ detectado-mas-travado · ● notícia.
+ <b>Um alerta reproduzido não é um alerta enviado</b>, e a interface não pode deixar
+ confundir os dois.</p>`},
+
+{b:"Decisões que tomei", n:3, t:"aberta",
+ q:"Porquê ONNX em produção, e como provaste que é o MESMO modelo?",
+ a:`Porque as alternativas ingénuas eram más: manter a stack pesada (a app pública não corre)
+ ou trocar por um modelo <b>diferente</b> em produção — o que é pior, porque a avaliação
+ passaria a descrever um sistema que ninguém usa.
+ <p>Exportei o <b>mesmo</b> modelo (ONNX int8, ~23 MB, CPU) e provei a fidelidade:
+ cosseno <b>0,992</b> nos embeddings e <b>top-3 idênticos em 20 de 23</b> consultas, com 96%
+ de vizinhos partilhados (as divergências são empates no 3.º, a ~0,001).</p>
+ <p>Mais o <b>SHA256 fixado</b>: um download corrompido <b>falha fechado</b> em vez de mudar em
+ silêncio o que o sistema entende por "semelhante".</p>`},
+
+/* --------------------------------------------- 7. as perguntas que doem */
+{b:"As que doem", n:1, t:"aberta", q:"\"O vosso modelo perdeu. É um fracasso?\"",
+ a:`<b>Não, é o resultado.</b> A comparação foi <b>pré-comprometida</b>: decidi antes de correr
+ que a volatilidade era a linha de base a bater. Não bateu, e reporto-o.
+ <p>Como mecanismo de produto, a triagem <b>quadruplica</b> a precisão dentro do orçamento
+ (0,632 vs 0,163). E um trabalho que só reporta o que correu bem é um trabalho em que não se
+ pode confiar.</p>`},
+
+{b:"As que doem", n:1, t:"aberta", q:"\"Construiu quatro coisas e não usou nenhuma.\"",
+ a:`É a parte de que tenho <b>mais orgulho</b>. Construir é fácil; o difícil é ter um critério
+ que consiga dizer <b>não</b>.
+ <p>E quando a medição <b>sustentou</b>, liguei: o detector de volume saiu do mesmo estudo e
+ está em produção. O critério foi registado <b>antes</b>, não depois de ver o resultado.</p>`},
+
+{b:"As que doem", n:2, t:"aberta", q:"\"Isto é só integrar ferramentas existentes.\"",
+ a:`Sim — e é isso que engenharia de IA é. A contribuição é a integração <b>avaliada</b>:
+ linhas de base pré-comprometidas, ablações, resultados negativos publicados, e cada número
+ regenerável por um procedimento versionado.
+ <p>Inventar um algoritmo novo não era o objectivo, nem seria defensável no tempo disponível.</p>`},
+
+{b:"As que doem", n:2, t:"aberta", q:"\"A relevância é medida por sector. Não é batota?\"",
+ a:`É um indicador aproximado, e <b>digo-o na tese</b>. Um precedente do mesmo sector sobre
+ outro assunto conta como acerto, o que <b>inflaciona todas as linhas por igual</b> — incluindo
+ as baselines contra as quais comparo.
+ <p>E o argumento principal da anomalia é <b>sem rótulo</b>, precisamente para não depender de
+ proxies.</p>`},
+
+{b:"As que doem", n:2, t:"aberta", q:"\"Usou IA para escrever isto?\"",
+ a:`Sim, e está <b>declarado</b> no front matter, sem esconder nada. Foi usada como ferramenta
+ de engenharia e de escrita.
+ <p>O que <b>não</b> foi delegado: as decisões, os critérios de aceitação escritos antes do
+ código, os resultados — que são medidos e regeneráveis — e a responsabilidade pelo que está
+ escrito. Cada número da tese tem um comando que o reproduz, no Apêndice A.</p>
+ <p>Responde com calma. A declaração honesta é mais forte do que qualquer negação.</p>`},
+];
+
+/* ===================================================================== */
+const K = "investigator-autoteste-v1";
+let estado = carregar();
+let fila = [], i = 0, revelado = false, escolhido = null;
+
+function carregar() {
+  try { return JSON.parse(localStorage.getItem(K)) || {res:{}, bloco:"", nivel:""}; }
+  catch { return {res:{}, bloco:"", nivel:""}; }
+}
+function guardar() { try { localStorage.setItem(K, JSON.stringify(estado)); } catch {} }
+
+/* Baralha com Fisher-Yates, mas so a ORDEM. As opcoes de escolha multipla
+   ficam na ordem em que foram escritas de proposito: se a resposta certa
+   andasse a saltar de posicao, decorava-se a posicao e nao o numero. */
+function baralhar(a) {
+  for (let k = a.length - 1; k > 0; k--) {
+    const j = Math.floor(Math.random() * (k + 1));
+    [a[k], a[j]] = [a[j], a[k]];
+  }
+  return a;
+}
+
+function construirFila() {
+  fila = baralhar(BANCO.map((p, idx) => ({...p, id: idx}))
+    .filter(p => (!estado.bloco || p.b === estado.bloco)
+              && (!estado.nivel || String(p.n) === estado.nivel)));
+  i = 0; revelado = false; escolhido = null;
+}
+
+const NIVEL = {1:["🔴 saber de cor","t1"], 2:["🟡 saber explicar","t2"], 3:["🟢 conhecer","t3"]};
+
+function pintar() {
+  const strip = document.getElementById("strip");
+  strip.innerHTML = "";
+  fila.forEach((p, k) => {
+    const d = document.createElement("div");
+    const r = estado.res[p.id];
+    d.className = "tick" + (k === i && !revelado ? " now" : r === true ? " ok" : r === false ? " no" : "");
+    strip.appendChild(d);
+  });
+
+  const feitas = fila.filter(p => estado.res[p.id] !== undefined);
+  const certas = feitas.filter(p => estado.res[p.id] === true).length;
+  document.getElementById("pos").textContent =
+    fila.length ? `${Math.min(i + 1, fila.length)} / ${fila.length}` : "0 / 0";
+  document.getElementById("placar").textContent =
+    feitas.length ? `${certas}/${feitas.length} certas` : "por começar";
+
+  const palco = document.getElementById("palco");
+
+  if (i >= fila.length) {
+    const falhadas = fila.filter(p => estado.res[p.id] === false);
+    const pct = feitas.length ? Math.round(100 * certas / feitas.length) : 0;
+    palco.innerHTML = `
+      <div class="card done">
+        <div class="sub">Ronda terminada</div>
+        <div class="score" style="color:${pct >= 80 ? "var(--ok)" : pct >= 50 ? "var(--flag)" : "var(--no)"}">${pct}%</div>
+        <div class="sub">${certas} de ${feitas.length} respondidas correctamente.</div>
+        ${falhadas.length ? `<div class="miss"><h3>Repete só estas</h3><ul>${
+          falhadas.map(p => `<li>${p.q}</li>`).join("")}</ul></div>` : `
+          <div class="sub" style="margin-top:14px">Sem falhas nesta ronda.
+          Faz outra volta amanhã — o que se recupera no dia seguinte é o que fica.</div>`}
+      </div>
+      <div class="actions">
+        ${falhadas.length ? `<button class="big primary" id="soFalhadas">Repetir as ${falhadas.length} falhadas</button>` : ""}
+        <button class="big" id="tudoDeNovo">Ronda nova</button>
+      </div>`;
+    const sf = document.getElementById("soFalhadas");
+    if (sf) sf.onclick = () => { fila = baralhar(falhadas.slice()); i = 0; revelado = false; escolhido = null; pintar(); };
+    document.getElementById("tudoDeNovo").onclick = () => { construirFila(); pintar(); };
+    return;
+  }
+
+  const p = fila[i];
+  const [rot, cls] = NIVEL[p.n];
+  let corpo = `
+    <div class="card">
+      <div class="tags"><span class="tag ${cls}">${rot}</span><span class="tag">${p.b}</span></div>
+      <p class="q">${p.q}</p>`;
+
+  if (p.t === "escolha") {
+    corpo += `<div class="opts">` + p.opts.map((o, k) => {
+      let c = "opt", badge = "";
+      if (revelado) {
+        if (k === p.ok) { c += " right"; badge = "certo"; }
+        else if (k === escolhido) { c += " wrong"; badge = "a tua"; }
+      }
+      return `<button class="${c}" data-k="${k}" ${revelado ? "disabled" : ""}>
+        <span class="val">${o}</span>${badge ? `<span class="badge">${badge}</span>` : ""}</button>`;
+    }).join("") + `</div>`;
+  } else if (!revelado) {
+    corpo += `<p class="hint">Responde <b>em voz alta</b> antes de abrir.
+      Ler a resposta cria a ilusão de a saber; dizê-la primeiro é o que a fixa.</p>`;
+  }
+
+  if (revelado) corpo += `<div class="answer">${p.a}</div>`;
+  corpo += `</div>`;
+
+  if (!revelado && p.t !== "escolha") {
+    corpo += `<div class="actions"><button class="big primary" id="mostrar">Mostrar resposta</button></div>`;
+  } else if (revelado) {
+    corpo += p.t === "escolha"
+      ? `<div class="actions"><button class="big primary" id="seguinte">Seguinte</button></div>`
+      : `<div class="actions">
+           <button class="big no" id="falhei">Falhei</button>
+           <button class="big yes" id="acertei">Sabia</button>
+         </div>`;
+  }
+
+  palco.innerHTML = corpo;
+
+  const mostrar = document.getElementById("mostrar");
+  if (mostrar) mostrar.onclick = () => { revelado = true; pintar(); };
+
+  palco.querySelectorAll(".opt").forEach(b => {
+    b.onclick = () => {
+      escolhido = +b.dataset.k;
+      revelado = true;
+      estado.res[p.id] = escolhido === p.ok;
+      guardar(); pintar();
+    };
+  });
+
+  const marcar = ok => { estado.res[p.id] = ok; guardar(); i++; revelado = false; escolhido = null; pintar(); };
+  const a = document.getElementById("acertei"), f = document.getElementById("falhei");
+  if (a) a.onclick = () => marcar(true);
+  if (f) f.onclick = () => marcar(false);
+  const s = document.getElementById("seguinte");
+  if (s) s.onclick = () => { i++; revelado = false; escolhido = null; pintar(); };
+}
+
+/* ------------------------------------------------------------- arranque */
+const fb = document.getElementById("fBloco");
+fb.innerHTML = `<option value="">Todos os blocos</option>` +
+  [...new Set(BANCO.map(p => p.b))].map(b => `<option value="${b}">${b}</option>`).join("");
+fb.value = estado.bloco || "";
+document.getElementById("fNivel").value = estado.nivel || "";
+
+fb.onchange = e => { estado.bloco = e.target.value; guardar(); construirFila(); pintar(); };
+document.getElementById("fNivel").onchange = e => {
+  estado.nivel = e.target.value; guardar(); construirFila(); pintar();
+};
+document.getElementById("reiniciar").onclick = () => {
+  if (confirm("Apagar o progresso guardado e começar de novo?")) {
+    estado.res = {}; guardar(); construirFila(); pintar();
+  }
+};
+document.getElementById("tema").onclick = () => {
+  const r = document.documentElement;
+  const escuro = r.getAttribute("data-theme") === "dark"
+    || (!r.getAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+  r.setAttribute("data-theme", escuro ? "light" : "dark");
+};
+
+construirFila();
+pintar();
+</script>

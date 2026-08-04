@@ -200,6 +200,34 @@ $= -1.66\%$ market $\cdot$ $-0.37\%$ sector $\cdot$ $\mathbf{+0.19\%}$ \textbf{c
 \end{columns}
 \end{frame}
 
+% Company marks live in slides/logos/companies/, produced by scripts/fetch_slide_logos.py from
+% the same files the deployed app draws. Same graceful degradation as \techlogo: no file, no box.
+\newcommand{\colog}[2]{\IfFileExists{logos/companies/#1.png}%
+  {\raisebox{-5pt}{\includegraphics[height=18pt,width=40pt,keepaspectratio]{logos/companies/#1.png}}}%
+  {\scriptsize\textbf{#1}}\,{\scriptsize #2}\hspace{7pt}}
+
+\begin{frame}{What it watches --- and why two of the twelve are not tech}
+\centering\vspace{0.5mm}
+{\footnotesize\textbf{\textcolor{blue!60}{XLK --- technology}}}\par\smallskip
+\colog{AAPL}{}\colog{MSFT}{}\colog{NVDA}{}\colog{GOOGL}{}\colog{AMZN}{}\par\smallskip
+\colog{META}{}\colog{TSLA}{}\colog{AMD}{}\colog{NFLX}{}\par\medskip
+{\footnotesize\textbf{\textcolor{green!55!black}{XLF}}}\ \colog{JPM}{}\hspace{6pt}
+{\footnotesize\textbf{\textcolor{orange!75!black}{XLE}}}\ \colog{XOM}{}\hspace{6pt}
+{\footnotesize\textbf{\textcolor{purple!70}{XLV}}}\ \colog{JNJ}{}
+\par\bigskip
+\begin{columns}
+\column{0.92\textwidth}
+{\small Until August 2026 the watchlist was \textbf{ten}, and \textbf{nine of them sat in XLK}.
+So the question ``was it the sector?'' nearly always came back with the same answer --- not
+because that was the answer, but because the watchlist gave the sector factor nothing to vary
+against. \textbf{XOM (energy) and JNJ (healthcare) were added to fix that}, and the effect showed
+up immediately in live output: \textbf{XOM $-0.98\%$ on a day its sector was $+0.93\%$} --- the
+sector pulling the \emph{other} way, which nine technology names could not have shown.
+\par\smallskip
+{\footnotesize This is a change to the \emph{evaluation}, not to the layout.}}
+\end{columns}
+\end{frame}
+
 \begin{frame}{News trigger: retrieve analogous precedents, measure impact}
 \begin{columns}
 \column{0.52\textwidth}
@@ -410,8 +438,12 @@ precedents, and the alerts \emph{exactly} as Telegram received them. The promise
 \newcommand{\techbadge}[2]{{\setlength{\fboxsep}{3pt}\colorbox{#1!13}{\small\strut #2}}}
 \newcommand{\techcat}[1]{\smallskip\par\textbf{\footnotesize #1}\par\smallskip}
 % Real logo if slides/logos/<file>.png exists; otherwise a clean name-badge (see logos/README.md).
+% The width cap is not decoration: square icons and wordmarks share these rows, and with height
+% alone a wordmark renders ~7x wider than an icon, dominates the line and pushes the last badge
+% onto a row of its own. Capping both dimensions with keepaspectratio bounds every logo to the
+% same box, so a row reads as one row.
 \newcommand{\techlogo}[3]{\IfFileExists{logos/#1.png}%
-  {\raisebox{-3pt}{\includegraphics[height=13pt]{logos/#1.png}}~}{}\techbadge{#2}{#3}}
+  {\raisebox{-3pt}{\includegraphics[height=13pt,width=30pt,keepaspectratio]{logos/#1.png}}~}{}\techbadge{#2}{#3}}
 \begin{frame}{Built with --- free tools and open data, end to end}
 \centering\vspace{1mm}
 \techcat{\textcolor{blue!60}{Data sources \& APIs}}
