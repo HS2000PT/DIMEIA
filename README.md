@@ -53,13 +53,16 @@ Full operator guide (Telegram, live news, building your own KB): **`docs/design/
 §0.0).
 
 ## 🔎 Or click through it — the live dashboard
-**Live at <https://investigator-ddc9d8618935.herokuapp.com>** — three screens, one per question the system
-answers. **Today** ranks your watchlist by how far each name sits from its own recent norm, with
-the market/sector/company split **on the row itself**, so you see whether a fall was the market or
-the company without clicking. **Ticker** holds the per-company detail: the price chart, the full
-decomposition, and the alerts exactly as the Telegram channel received them (never recomputed).
-**Method** carries the frozen evaluation numbers, including the negative result. Read-only by
-design, and built against acceptance criteria written before the code
+**Live at <https://investigator-ddc9d8618935.herokuapp.com>** — a grid with one card per company,
+ordered by how *rare* the day was. Every card opens with a sentence you can act on, and only then
+shows the numbers behind it: *"only 5 of the last 249 trading days moved this much"*. That is a
+**count**, not a probability — turning a z-score into a probability would assume normality, and
+returns have fat tails, so the figure would be wrong on exactly the days that matter. A quiet day
+shows the count that makes it quiet, rather than asking you to take our word for it. One click
+opens the detail: the price chart with detected events on it, the market/sector/company split,
+past cases retrieved by meaning, and the alerts exactly as the Telegram channel received them
+(never recomputed). A separate page carries the frozen evaluation numbers, including the negative
+result. Read-only by design, and built against acceptance criteria written before the code
 (`docs/design/app_acceptance.md`). To run it locally (no keys, nothing sent):
 
 ```bash

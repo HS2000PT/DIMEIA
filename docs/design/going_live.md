@@ -109,7 +109,8 @@ do mecanismo de triagem (precisão das mantidas vs base rate, Brier), não avali
 
 ### 6) A webpage (painel único) sempre disponível
 Publica `app/streamlit_app.py` no **Streamlit Community Cloud** — passos em
-[`deployment.md`](deployment.md). Uma página, uma aba por ticker, os mesmos alertas do canal.
+[`deployment.md`](deployment.md). Uma grelha com um cartão por empresa, os mesmos alertas
+do canal, e o detalhe a um clique.
 Depois cola o URL no `README.md` e na tese.
 *(Opcional: uma página GitHub Pages a ligar o dashboard + o canal, com um domínio grátis do Student Pack.)*
 
