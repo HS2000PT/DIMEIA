@@ -514,3 +514,15 @@
 {"date": "2026-08-05", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-05", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-05", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.31 < 0.50"}
+{"date": "2026-08-05", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-05", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft’s AI Sales Mostly Come From OpenAI, Disclosures Show"}
+{"date": "2026-08-05", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.50 < 0.50"}
+{"date": "2026-08-05", "ticker": "TSLA", "stage": "alerted", "detail": "Elon Musk Predicts ‘Money Won’t Matter in 2036.’ Is This His Worst Prediction Ye"}
+{"date": "2026-08-05", "ticker": "AMZN", "stage": "alerted", "detail": "Alphabet, Microsoft, Amazon, and Oracle Just Gained $1.9 Trillion in 3 Days. Her"}
+{"date": "2026-08-05", "ticker": "GOOGL", "stage": "alerted", "detail": "Alphabet's Google Reorganizes AI Leadership as Chief Scientist Jeff Dean Departs"}
+{"date": "2026-08-05", "ticker": "META", "stage": "alerted", "detail": "Market Chatter: Alphabet, Meta Could Face Stricter Social Media Regulation After"}
+{"date": "2026-08-05", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-08-05", "ticker": "AMD", "stage": "alerted", "detail": "SpaceX, Alphabet, Nvidia, Micron, AMD, Uber, CVS, Lilly, and More Stocks That Ex"}
+{"date": "2026-08-05", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-05", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-05", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.31 < 0.50"}
