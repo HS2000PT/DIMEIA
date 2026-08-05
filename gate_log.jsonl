@@ -454,3 +454,15 @@
 {"date": "2026-08-05", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-05", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
 {"date": "2026-08-05", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.32 < 0.50"}
+{"date": "2026-08-05", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-05", "ticker": "MSFT", "stage": "alerted", "detail": "Michael Burry Exits MSFT, Closes ORCL Short Position – Why He Changed His Tech T"}
+{"date": "2026-08-05", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.50 < 0.50"}
+{"date": "2026-08-05", "ticker": "TSLA", "stage": "alerted", "detail": "Amazon Just Landed a Big Win in the Race Against Tesla and Waymo"}
+{"date": "2026-08-05", "ticker": "AMZN", "stage": "alerted", "detail": "Andy Jassy Just Delivered Incredible News for Amazon Stock Investors"}
+{"date": "2026-08-05", "ticker": "GOOGL", "stage": "alerted", "detail": "Alphabet Stock Could Soar as It Targets the $300 Billion AI Chip Market Dominate"}
+{"date": "2026-08-05", "ticker": "META", "stage": "alerted", "detail": "Microsoft is Soaring After Earnings While Meta Platforms Drops. Is The Market Gi"}
+{"date": "2026-08-05", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-08-05", "ticker": "AMD", "stage": "alerted", "detail": "Middle East optimism lifts sentiment as SpaceX and AMD earnings dominate attenti"}
+{"date": "2026-08-05", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-05", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
+{"date": "2026-08-05", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.32 < 0.50"}
