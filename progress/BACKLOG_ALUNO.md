@@ -68,6 +68,115 @@ texto**; não é, e não pode virar, encobrir o uso de IA. Já houve uma passage
 com exactamente esta fronteira: limparam-se os *tells* de meta-comentário defensivo e a
 declaração ficou intacta.
 
+## 6bis. Rever o mecanismo de alertas e de notícias
+
+**Ditado a 2026-08-05, com um caso concreto.** Hoje a NVDA subiu muito porque o Elon Musk disse
+que a SpaceX passaria a usar exclusivamente chips NVDA. **Essa notícia nunca apareceu nos
+alertas**; apareceram outras menos importantes. Além disso: **a mesma notícia veio repetida**; e
+notícias **semanticamente negativas** trouxeram precedentes que subiram, e notícias muito
+positivas trouxeram precedentes que desceram.
+
+### O que já foi verificado no código (2026-08-05), para poupar tempo à análise
+
+**(a) O tecto diário é servido por ordem de CHEGADA, não por importância.** Em
+`scripts/run_alerts.py::filter_new_alerts`, o `max_per_ticker_per_day` (hoje **2**) corta assim:
+
+```python
+if state["news_count"].get(ticker, 0) >= max_per_ticker:
+    continue    # ja alertou 2 vezes este ticker hoje -> descarta o resto
+```
+
+As notícias são percorridas pela ordem em que chegam. **Duas notícias irrelevantes de manhã
+consomem a quota e a notícia que interessa é descartada à tarde**, em silêncio. E o mais irónico:
+o projecto **tem um modelo de triagem treinado** cuja função é exactamente ordenar por
+materialidade (RQ4, precisão 0,632 contra 0,163 num orçamento de 5/dia) — mas o tecto **não o
+usa**. Isto explica o caso da NVDA sem ser preciso mais nenhuma hipótese, e é testável.
+
+**(b) A deduplicação é por texto exacto.** `news_key(ticker, text)` é um hash do texto. A mesma
+história escrita por outro meio, ou com o título ligeiramente diferente, dá **chave diferente** e
+passa como notícia nova. O projecto já tem *embeddings* — a dedup semântica é possível sem
+dependências novas.
+
+**(c) A cobertura da fonte nunca foi medida.** As notícias vêm do Finnhub *company news*. Se o
+Finnhub não etiquetar a história da SpaceX como NVDA, ela **nunca entra no funil** e nenhum gate
+tem culpa. **Não está medido quantas das histórias que realmente movem o mercado o sistema
+chega sequer a ver.** Isto é uma limitação assumida e não quantificada — o mesmo estado em que
+estava a deriva antes da sessão 43, e que passou de *afirmada* a *medida*.
+
+### ⚠️ (d) O terceiro ponto NÃO é um defeito. É o resultado central do CS3.
+
+*"Notícia negativa mas os precedentes subiram, e vice-versa"* é **exactamente** o que a tese
+mede e reporta: a recuperação capta o **tema**, e o tema quase não diz nada sobre a **direcção**.
+Está quantificado: **consistência de direcção 0,708 contra um chão de acaso de 0,688**
+(`docs/evaluation/evaluation_retrieval_fnspid.md`), e é por isso que o alerta mostra sempre os
+precedentes **individuais** e nunca só a média, com a moldura *tema ≠ direcção*.
+
+**Não "corrigir" isto.** O que pode melhorar é a **comunicação** no produto: hoje a moldura
+existe mas é uma frase; o aluno leu os alertas e mesmo assim leu-o como incoerência, o que é o
+sinal mais claro de que a frase não está a chegar. É trabalho de interface, não de motor.
+
+## 6ter. Estudo de mercado e tabela comparativa na tese
+
+**Pedido:** analisar e descrever o que existe no mercado parecido com isto (apps, sites,
+corretoras de topo), sobretudo a funcionalidade nova do género *"porque é que a NVDA subiu
+hoje?"* — o utilizador carrega e recebe uma explicação. Depois, uma **tabela comparativa** do que
+cada um tem e não tem, e o que este trabalho tem por cima.
+
+**Sim, é prática comum numa tese — e a tese JÁ TEM isso.** §2.7 (`sec:sota_tools`) tem duas
+tabelas: *"Existing retail tools versus the system proposed in this work"* (explica porquê?
+mostra precedentes? age pelo utilizador?) e *"Existing tools scored against the three questions"*
+(Q1/Q2/Q3), mais um parágrafo sobre assistentes LLM genéricos e a crítica de **ancoragem**.
+
+**O que falta, e o aluno tem razão no que notou:**
+
+1. **Nomes.** As tabelas comparam **categorias** ("brokerage price alert", "news/sentiment app"),
+   não **produtos nomeados**. Um arguente pergunta *"quais é que foram mesmo vistos?"*. Nomear
+   Google Finance, Robinhood Cortex, Perplexity Finance, Simply Wall St, TradingView, Finviz,
+   Koyfin, Yahoo Finance, com **data de observação**, torna a comparação verificável.
+2. **A vaga do "porque é que subiu hoje?" é de 2025-26 e não está examinada.** O parágrafo sobre
+   LLM genéricos antecipa a crítica, mas foi escrito antes destes produtos existirem. Hoje são o
+   concorrente directo da afirmação central deste trabalho e merecem tratamento próprio.
+3. **A comparação é uma lista de funcionalidades, não uma medição.** O que ninguém faz e teria
+   muito mais força: **pegar no MESMO acontecimento** (o dia da NVDA serve) e pôr lado a lado o
+   que cada produto disse e o que o InvestiGator disse. Deixa de ser uma tabela de Sim/Não e passa
+   a ser evidência.
+
+**Já existe material para arrancar, e já está salvo:**
+[`docs/design/market_study_v4.md`](../docs/design/market_study_v4.md) — 69 achados sobre
+TradingView, Koyfin, Finviz, Yahoo, **Robinhood Cortex**, Public.com, Bloomberg web,
+**Perplexity Finance**, worldmonitor, Stock Events, Delta e **Simply Wall St**, com o teste
+*"o que é que um leigo extrai em dez segundos?"*. Extraído do `journal.jsonl` da corrida
+`wf_c5217b07-1db` na sessão 51, porque só existia numa pasta temporária de uma máquina.
+
+⚠️ **Os quatro cépticos que deviam contestar esse estudo morreram no limite de gasto**, e isso
+está escrito no topo do próprio documento: **as conclusões não passaram por contraditório**. Tudo
+o que dali for para a tese tem de ser **reconfirmado** — são afirmações sobre produtos de
+terceiros, observadas numa data, e um arguente pode abrir a app e verificar.
+
+## 6quater. Sugestões minhas, para o aluno decidir
+
+Pedidas por ele. Ordenadas pelo que **acrescenta mais à tese por unidade de esforço**, não pelo
+que é mais divertido.
+
+1. **Medir a cobertura do funil de notícias.** Hoje a tese diz que a fonte é gratuita e limitada;
+   não diz **quanto** perde. Pegar em N dias, listar as histórias que realmente moveram cada
+   acção, e contar quantas o sistema chegou a **ver**, quantas passaram a relevância, e quantas
+   saíram. Converte uma limitação **afirmada** numa limitação **medida** — exactamente o padrão
+   que já valorizou a deriva e a incerteza. É provavelmente o acrescento mais forte que resta.
+2. **Ordenar por materialidade em vez de por chegada** (o defeito (a) acima). Além de corrigir o
+   produto, dá à RQ4 uma **utilidade operacional a sério**: o modelo deixa de ser só avaliado e
+   passa a decidir o que cabe no orçamento diário. É a ponte que falta entre "a triagem vale como
+   mecanismo" e "a triagem está a fazer alguma coisa".
+3. **Estudo de utilidade com pessoas** — continua a ser a **única linha em aberto** do Cap. 6, e
+   nenhum trabalho meu a fecha. 6 a 10 pessoas, ~15 min cada. O material está pronto e por correr
+   desde a sessão 42 (`scripts/build_usefulness_pack.py`).
+4. **Um caso de estudo de FALHA, escrito por extenso.** O dia da NVDA é perfeito: notícia real que
+   moveu o mercado, sistema não a mostrou, causa identificada no código, correcção aplicada e
+   medida. Uma tese que mostra um falhanço diagnosticado é mais credível do que uma que só mostra
+   vitórias — e este projecto já ganha crédito precisamente por isso.
+5. **Dedup semântica** (defeito (b)): reutiliza os *embeddings* que já existem; sem dependências
+   novas.
+
 ## 6. Quaisquer pendências que restem nos TODOs do repositório
 
 Varrer [`CHECKLIST.md`](../CHECKLIST.md), os `TODO` no código e nos `.tex`, e o que sobrar do

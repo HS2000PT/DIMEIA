@@ -10,6 +10,27 @@
 - **Sessão nº:** 50 (**citações auditadas até ao fim: 129/129 conteúdo + paridade EN↔PT**)
 - **Última atualização:** 2026-08-05
 - **📌 SESSÃO 50 (2026-08-05):**
+  **➕ ADENDA (2026-08-05, 2.ª parte da sessão): o backlog cresceu com o mecanismo de alertas.**
+  O aluno reportou um caso concreto: a NVDA subiu muito com a notícia de que a SpaceX passaria a
+  usar exclusivamente chips NVDA, e **essa notícia nunca apareceu nos alertas** — apareceram
+  outras menos importantes, e repetidas. **Duas causas confirmadas no código, não hipóteses:**
+  **(i)** `filter_new_alerts` aplica o tecto diário (`max_per_ticker_per_day: 2`) por **ordem de
+  chegada**, portanto duas notícias irrelevantes de manhã consomem a quota e a que interessa é
+  descartada em silêncio — e o projecto **tem** um modelo de triagem treinado para ordenar por
+  materialidade que o tecto **não usa**; **(ii)** `news_key` é hash do **texto exacto**, logo a
+  mesma história noutro meio passa como nova. **(iii)** a cobertura da fonte nunca foi medida.
+  **⚠️ E o que o aluno leu como defeito e NÃO é:** "notícia negativa mas os precedentes subiram"
+  é o **resultado central do CS3**, medido — consistência de direcção **0,708** contra um chão de
+  acaso de **0,688**. Não se corrige; comunica-se melhor. O facto de ele próprio o ter lido como
+  incoerência **é o sinal de que a moldura *tema ≠ direcção* não está a chegar ao leitor**.
+  **ESTUDO DE MERCADO SALVO:** [`docs/design/market_study_v4.md`](docs/design/market_study_v4.md)
+  (69 achados, 12 produtos) extraído do journal da corrida `wf_c5217b07-1db`, que vivia só numa
+  pasta temporária. **Os 4 cépticos morreram no limite** — está escrito no topo do documento que
+  as conclusões **não passaram por contraditório**.
+  **A tese JÁ TEM comparação com o mercado** (§2.7, duas tabelas + parágrafo sobre assistentes
+  LLM). O que falta é **nomear produtos** (hoje compara categorias), **examinar a vaga de 2025-26
+  do "porque é que subiu hoje?"** (Robinhood Cortex, Google Finance, Perplexity), e trocar a lista
+  de Sim/Não por **um mesmo acontecimento posto lado a lado** entre produtos.
   **⚠️ (0) NOVO BACKLOG DO ALUNO, POR ANALISAR:**
   [`progress/BACKLOG_ALUNO.md`](progress/BACKLOG_ALUNO.md) — seis pedidos ditados no fim da
   sessão (refazer o painel; rever a literatura com o PDF real de cada fonte no repo; latência
