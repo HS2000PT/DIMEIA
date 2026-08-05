@@ -29,8 +29,9 @@ move and a salient headline are exactly InvestiGator's two triggers, so an alert
 attention-driven decisions are made.
 
 News also moves markets, and its text can be measured. \textcite{tetlock2007media} builds a daily
-pessimism index from a newspaper column and links it to price pressure and trading volume, an early proof
-that textual signals relate to market outcomes, which is the premise of InvestiGator's news engine. This
+pessimism index from a newspaper column and links it to price pressure and trading volume, early
+evidence that textual signals relate to market outcomes, which is the premise of InvestiGator's news
+engine. This
 audience is large and active too: even through the March~2020 crash, retail investors on one
 commission-free platform added to their holdings rather than panicking \autocite{welch2022robinhood},
 consistent with the broad ownership and market scale reported in Chapter~\ref{chap:introduction}
@@ -388,7 +389,9 @@ literature offer on both counts?}
 Calibration, as used for the triage score above, is an \emph{aggregate} property: among items scored
 near a given probability, roughly that fraction should turn out positive. It says nothing about any
 individual item, and it offers no recourse once the model is applied outside the conditions in which
-it was fitted. \emph{Conformal prediction} addresses exactly this gap. The foundational treatment
+it was fitted. \emph{Conformal prediction} narrows this gap. It returns a set for each item rather
+than a point estimate, although its guarantee remains \emph{marginal}, averaged over cases, rather
+than conditional on any one of them. The foundational treatment
 \autocite{vovk2005algorithmic} shows that a predictor can be wrapped so that it returns a
 \emph{set} of labels carrying a guarantee that is distribution-free and valid in finite samples: for
 a chosen error rate $\alpha$, the set contains the true label in at least $1-\alpha$ of cases. The

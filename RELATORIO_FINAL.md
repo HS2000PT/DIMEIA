@@ -114,7 +114,8 @@ data/samples/           amostras versionadas (KB curada 2.016 registos 384-d inc
 docs/design/            how_to_run · going_live · deployment · arquitetura · data card
 docs/evaluation/        TODOS os resultados (gerados por script; não editados à mão)
 docs/decisions/         page_audit (59/59 citações) · reviews · learning.md · glossário
-progress/               MASTER_PLAN · TRACKER · SESSIONS · DECISIONS (continuidade)
+progress/               PLANO_V2 · TRACKER · SESSIONS · DECISIONS (continuidade)
+  _historico/           planos superados, guardados como registo
 ```
 
 ## 4. Como ver tudo a funcionar em 10 minutos

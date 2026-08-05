@@ -118,6 +118,110 @@ Registadas porque são as que um arguente testaria, e porque um "está tudo bem"
   que está escrito.
 - Números, tabelas e figuras têm o seu próprio rasto de proveniência (apêndice A e `docs/evaluation/`).
 
+---
+
+# 2.ª ronda — 2026-08-05: as 7 chaves que faltavam, e a paridade EN↔PT
+
+A 1.ª ronda cobriu **122 instâncias / 52 chaves**. Entretanto a tese cresceu para **129 / 59**, e
+sete chaves nunca tinham tido o conteúdo verificado: `angelopoulos2023conformal`,
+`vovk2005algorithmic`, `gama2014survey`, `vinh2010ami`, `rousseeuw1987silhouettes`,
+`sculley2015debt` e `worldmonitor2026`. **Cobertura agora: 129/129 instâncias, 59/59 chaves.**
+
+Desta vez a leitura foi do **texto integral**, não só do resumo, para as fontes acessíveis.
+
+## Os 2 achados, ambos corrigidos por enfraquecimento
+
+### F3 — `angelopoulos2023conformal`: a garantia é **marginal**, não individual
+
+**Onde:** `ch2/chapter2.tex`, secção sobre incerteza (e o eco em `ch5/chapter5.tex`).
+
+**O que dizia:**
+> "Calibration […] is an *aggregate* property. **It says nothing about any individual item** […]
+> *Conformal prediction* **addresses exactly this gap**."
+
+**O problema.** A frase apresenta a predição conformal como a resposta ao facto de a calibração
+nada dizer sobre um item individual. Mas a garantia conformal é **igualmente agregada**: é
+*marginal*, em média sobre os casos. Dizer que "responde exactamente" a essa lacuna sugere
+**cobertura condicional**, que o método split não dá — e que, no caso geral, é impossível.
+
+**Verificado na fonte** (texto integral, arXiv:2107.07511, confirmado a 2026-08-05):
+> *"we call this property **marginal coverage**, since the probability is marginal (averaged) over
+> the randomness in the calibration and test points"*
+>
+> *"in the most general case, **conditional coverage is impossible to achieve**"*
+
+A obra dedica a este ponto uma secção, uma figura e duas métricas de diagnóstico, e chama-lhe
+*"subtle but of great practical importance"*. É exactamente o mal-entendido mais comum sobre o
+método, portanto é o que um arguente de ML testa primeiro.
+
+**Correcção (enfraquecimento, sem fonte nova — a precisão vem da mesma obra já citada):**
+> "*Conformal prediction* **narrows this gap**. It returns a set for each item rather than a point
+> estimate, although its guarantee remains *marginal*, averaged over cases, rather than conditional
+> on any one of them."
+
+PT espelhado. O eco no Cap. 5 (*"backed by a guarantee"*) passou a *"produced by a procedure whose
+coverage guarantee holds on average over cases"*.
+
+**Nota de justiça para com o texto original:** a frase seguinte já enunciava correctamente
+*"in at least $1-\alpha$ of cases"*. O defeito era de **moldura**, não uma atribuição falsa.
+
+### F4 — `vinh2010ami`: a correcção é da **linha de base**, não da escala
+
+**Onde:** `ch3/chapter3.tex`, protocolo de avaliação do agrupamento.
+
+**O que dizia:**
+> "whereas the adjusted measure **corrects for both chance and cardinality**."
+
+**O problema.** Vinh, Epps & Bailey estabelecem a *constant baseline property* — o **ponto zero**
+deixa de depender do número de classes. Não estabelecem comensurabilidade plena de **escala** entre
+referências de cardinalidades diferentes; o próprio artigo levanta ressalvas sobre efeitos
+secundários da normalização. Além disso não são duas correcções: é **uma só**, porque a esperança
+que se subtrai já é calculada sobre as marginais.
+
+**Verificado na fonte** (JMLR 11:2837–2854, PDF integral, p. 2844):
+> *"A corrected-for-chance measure, such as the ARI, on the other hand, has a **baseline value
+> always close to zero**, and appears **not to be biased in favor of any particular value of K**."*
+
+**Correcção (enfraquecimento):**
+> "whereas the adjusted measure has a **chance baseline close to zero that is not biased towards any
+> particular number of classes**."
+
+PT espelhado. **A conclusão do Caso 5 mantém-se intacta**: o argumento precisava apenas de que o
+artefacto de cardinalidade que corrompia a pureza desaparecesse, e desaparece.
+
+### F5 — `tetlock2007media`: "proof" onde a fonte dá evidência
+
+Apanhado pelo verificador de paridade e presente **nas duas línguas** por igual, portanto não era
+um defeito de tradução. O Cap. 2 dizia *"an early **proof** that textual signals relate to market
+outcomes"*. Tetlock estabelece uma relação estatística, não uma prova. Passou a *"early
+**evidence**"* / *"uma das primeiras **evidências**"*.
+
+## As 5 chaves que passaram, e porquê
+
+| chave | o que a tese lhe atribui | veredicto |
+|---|---|---|
+| `vovk2005algorithmic` | um preditor pode ser embrulhado para devolver um **conjunto**, com garantia livre de distribuição e válida em amostra finita, exigindo permutabilidade | ✓ sustenta, e a hipótese (permutabilidade) **está declarada** no texto, não escondida |
+| `gama2014survey` | a taxonomia da deriva: súbita, gradual, incremental e recorrente | ✓ são esses os quatro nomes do survey |
+| `rousseeuw1987silhouettes` | coesão contra separação; e a leitura de um valor **baixo** (0,084) como grupos **sobrepostos** | ✓ sustenta, incluindo a interpretação do valor baixo |
+| `sculley2015debt` | custo de manutenção escondido: entanglement, dependências de dados instáveis/não declaradas, dívida de configuração | ✓ são os próprios factores de risco do artigo, escritos a partir de sistemas em produção |
+| `worldmonitor2026` | inspiração de **produto**, creditada ao coorientador | ✓ e — o que importa — a tese **não** lhe atribui autoridade académica |
+
+## Paridade EN↔PT: verificada, e com controlo negativo
+
+Nunca tinha sido feita. O risco não era a citação mudar de sítio (as contagens já batiam certo):
+era a **tradução endurecer o verbo** e a citação passar a sustentar mais do que aguenta, na versão
+que o júri português lê.
+
+`scripts/check_bilingual_parity.py` compara a frase de cada lado e assinala perda de *hedges* ou
+ganho de verbos fortes. **Resultado: 0 assimetrias em 86 chaves comparadas.**
+
+⚠️ **O zero só vale porque o detector traz controlo negativo.** A primeira versão apanhava `causa`
+dentro de *causal*, *causalmente* e *causar*, e acusou cinco frases fiéis — uma delas dizia
+*"podem causar"*, que é o **hedge oposto**. Com fronteira de palavra, os cinco desapareceram. Por
+isso o script planta agora um endurecimento e um *hedge* perdido e **exige** que dispare nos dois,
+recusando-se a reportar "0 achados" se o autoteste falhar: um detector partido e um corpus limpo
+são indistinguíveis no ecrã.
+
 ## Resposta pronta, se o júri perguntar
 
 > *"Verificaram que as citações sustentam o que afirmam, ou só que existem?"*

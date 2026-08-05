@@ -236,7 +236,7 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 
 ---
 
-# MASTER PLAN A–H (estrada longa) — ver `progress/MASTER_PLAN.md`
+# MASTER PLAN A–H (estrada longa) — ver `progress/_historico/MASTER_PLAN.md`
 
 > Pós-rework: definido o plano-mestre da estrada longa até submissão, publicação IEEE e defesa.
 > Marcar progresso aqui e em `MASTER_PLAN.md`. Porta crítica: **Fase E** (validação ultra-rigorosa

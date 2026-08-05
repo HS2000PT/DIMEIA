@@ -860,7 +860,8 @@ is imbalanced and $k$ is large. And when the clusters are compared against diffe
 ask whether they organise by event type or merely by subject, agreement is measured with adjusted
 mutual information \autocite{vinh2010ami} rather than purity: purity depends on the number of classes
 and their balance, so comparing it across references with different cardinalities compares
-incommensurable quantities, whereas the adjusted measure corrects for both chance and cardinality.
+incommensurable quantities, whereas the adjusted measure has a chance baseline close to zero that is
+not biased towards any particular number of classes.
 All such comparisons are computed on identical rows.
 
 \subsection{Explanation, scope, and rigour guarantees}

@@ -26,7 +26,7 @@ REPO = Path(__file__).resolve().parents[1]
 
 # Caminhos SÓ-INTERNOS (ficam de fora do bundle público). Ver o manifesto para a justificação.
 EXCLUDE_PREFIXES = (
-    "progress/",          # planeamento multi-sessão (TRACKER/SESSIONS/DECISIONS/MASTER_PLAN)
+    "progress/",          # planeamento multi-sessão (PLANO_V2/TRACKER/SESSIONS + _historico/)
     ".claude/",           # settings + planos internos
     "docs/internal/",     # ROOT_PROMPT + proposta ao orientador
     "docs/_archive/",     # análises antigas de fase inicial

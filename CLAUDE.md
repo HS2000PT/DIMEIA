@@ -7,8 +7,70 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 49 (**bibliografia verificada por script; logótipos reais; app de autoteste**)
-- **Última atualização:** 2026-08-04
+- **Sessão nº:** 50 (**citações auditadas até ao fim: 129/129 conteúdo + paridade EN↔PT**)
+- **Última atualização:** 2026-08-05
+- **📌 SESSÃO 50 (2026-08-05):**
+  **⚠️ (0) NOVO BACKLOG DO ALUNO, POR ANALISAR:**
+  [`progress/BACKLOG_ALUNO.md`](progress/BACKLOG_ALUNO.md) — seis pedidos ditados no fim da
+  sessão (refazer o painel; rever a literatura com o PDF real de cada fonte no repo; latência
+  quase-real dos alertas; melhorar o guia; rever a escrita para soar humana; varrer os TODO que
+  restam). **Ele disse explicitamente "não penses nisso ainda"** — está registado em bruto, sem
+  análise, e é por aí que a próxima sessão começa.
+  **(A) AS 7 CHAVES QUE FALTAVAM FORAM AUDITADAS ⇒ cobertura 129/129 instâncias, 59/59 chaves.**
+  A 1.ª ronda (sessão 43) cobriu 122/52. Desta vez leu-se **texto integral**, não só o resumo.
+  **2 achados reais, ambos corrigidos por enfraquecimento, EN+PT:**
+  **(A1) `angelopoulos2023conformal` — o mais sério, e é o mal-entendido clássico do método.**
+  A tese dizia que a calibração "nada diz sobre um item individual" e que a predição conformal
+  "responde **exactamente** a essa lacuna". Não responde: a garantia conformal é **marginal**
+  (média sobre os casos), não condicional. Confirmado no texto integral (arXiv:2107.07511):
+  *"we call this property **marginal coverage**… (averaged) over the randomness in the
+  calibration and test points"* e *"in the most general case, **conditional coverage is
+  impossible to achieve**"*. Passa a "**narrows** this gap… although its guarantee remains
+  *marginal*". O eco no Cap. 5 ("backed by a guarantee") também foi enfraquecido. **Justiça para
+  com o texto:** a frase seguinte já dizia bem "in at least 1−α of cases" — era **moldura**, não
+  atribuição falsa.
+  **(A2) `vinh2010ami`** — dizia que a medida ajustada "corrige para o acaso **e para a
+  cardinalidade**". O que Vinh et al. estabelecem é a *constant baseline property* (p. 2844:
+  *"has a **baseline value** always close to zero, and appears **not to be biased in favor of any
+  particular value of K**"*) — o **ponto zero**, não a escala, e é **um** mecanismo e não dois.
+  Passa a "chance baseline close to zero that is not biased towards any particular number of
+  classes". **A conclusão do Caso 5 mantém-se intacta.**
+  **(A3) `tetlock2007media`** — "an early **proof**" nas duas línguas passa a "early
+  **evidence**". Tetlock estabelece uma relação estatística, não uma prova.
+  **5 chaves passaram com prova registada:** `vovk2005algorithmic` (e a hipótese de
+  permutabilidade **está declarada**, não escondida), `gama2014survey`, `rousseeuw1987silhouettes`
+  (incluindo a leitura correcta de uma silhueta **baixa**), `sculley2015debt` (os três itens da
+  tese são os próprios factores de risco do artigo) e `worldmonitor2026` (a tese **não** lhe
+  atribui autoridade académica — é um produto, e está creditado como tal).
+  **(B) PARIDADE EN↔PT VERIFICADA PELA 1.ª VEZ** (`scripts/check_bilingual_parity.py`, novo).
+  O risco nunca foi a citação mudar de sítio — era a tradução **endurecer o verbo** e a citação
+  passar a sustentar mais do que aguenta, na versão que o júri português lê. **0 assimetrias em
+  86 chaves comparadas.**
+  **⚠️ E o zero só vale por causa do CONTROLO NEGATIVO, que é a lição desta sessão.** A primeira
+  versão apanhava `causa` dentro de *causal*, *causalmente* e *causar* e acusou **5 frases fiéis**
+  — uma delas dizia "podem causar", que é o *hedge* **oposto** ao que estava a reportar. Com
+  fronteira de palavra desapareceram as cinco. O script passa a **plantar** um endurecimento e um
+  *hedge* perdido e a **exigir** que dispare nos dois, recusando-se a reportar "0 achados" se o
+  autoteste falhar: **um detector partido e um corpus limpo são indistinguíveis no ecrã.**
+  **(C) LIMITE DE GASTO OUTRA VEZ:** 5 de 11 agentes morreram (incluindo **os dois cépticos** e
+  **as duas passagens de paridade**). Verifiquei os dois achados **eu próprio** contra as fontes
+  primárias antes de aplicar, e fiz a paridade por script. O limite é **intermitente** — abriu a
+  meio da sessão e voltou a fechar.
+  **(D) ARRUMAÇÃO DO REPO, executada em parte:** `progress/_historico/` com os três planos que se
+  **auto-declaravam superados** (MASTER_PLAN → PRODUCT_ROADMAP → PLANO_MELHORIAS), mais
+  `progress/README.md` novo a explicar o que está vivo e porque é que um plano superado ao lado de
+  um plano activo é **pior** do que não ter plano (as caixas por marcar incluem itens **cortados
+  por decisão**). Todas as referências actualizadas, **0 links relativos partidos** (verificado).
+  **⚠️ E o que NÃO se apagou, que é o mais importante:** o varrimento de órfãos acusava
+  `scripts/figures/fig_{embedding_projection,uncertainty}.py`, e **os dois geram figuras que estão
+  na tese** — só pareciam órfãos porque a documentação cita os **PDF de saída**, não o `.py`.
+  Apagá-los partia a reprodutibilidade. O detector estava errado, não o repositório.
+  **(E) PDFs DAS FONTES:** `docs/decisions/citation_pdfs/` criado, com README que diz exactamente
+  o que descarregar (**44 das 59 são legíveis sem conta; 14 precisam da conta ISEP**, com
+  prioridade). Os `*.pdf` estão **gitignored** e isso é obrigatório, não conveniência: repositório
+  público + material com direitos de autor.
+  **Gates: 618 testes, ruff limpo, congelados byte-iguais, EN 107 pp / PT 111 pp — 0 erros e 0
+  citações indefinidas.**
 - **📚 SESSÃO 49 (2026-08-04 — o aluno pediu: "o máximo de agentes para rever criticamente
   cada citação e entrada bibliográfica", logótipos reais nos slides e no guia, a app de quizz
   para estudar no telemóvel, os textos do Telegram no repositório, e arrumação do repo):**
@@ -97,7 +159,7 @@
   O varrimento de órfãos deu 24 nomes e a **maioria são falsos positivos**: os `__init__.py`
   são marcadores de pacote, os logótipos das empresas são carregados **por ticker em runtime**
   (nenhum ficheiro os nomeia), e os PNG do MEIA/DEI são do template do ISEP. Sobram ~4 a olhar
-  a sério: `docs/design/dashboard_v2_design.md` (a v2 foi rejeitada), `progress/PRODUCT_ROADMAP.md`,
+  a sério: `docs/design/dashboard_v2_design.md` (a v2 foi rejeitada), `progress/_historico/PRODUCT_ROADMAP.md`,
   e `scripts/figures/fig_{embedding_projection,uncertainty}.py`. **Apagar sem verificar cada um
   seria exactamente o tipo de limpeza que parte a compilação da tese** — fica para a próxima
   sessão, com os PDF a recompilar como porta.
@@ -146,11 +208,21 @@
   23+23 / guia 85 — todos 0 erros, 0 citações e referências indefinidas.**
   **PENDENTE HUMANO:** rodar as 3 credenciais (o PAT primeiro — tem `admin: true`); enviar
   `docs/defence/mensagem_orientador.md`; reclamar o domínio para o URL limpo.
-- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI (actualizado na sessão 49):**
-  **⚠️ ANTES DE MAIS: a conta está no LIMITE MENSAL DE GASTO.** 16 de 18 agentes morreram lá
-  na sessão 49. **Não lançar workflows** até o aluno confirmar que o limite subiu — fazer o
-  trabalho directamente, que para verificação factual costuma até ser melhor.
-  **A fazer, por ordem:**
+- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI (actualizado na sessão 50):**
+  **👉 ABRIR PRIMEIRO: [`progress/BACKLOG_ALUNO.md`](progress/BACKLOG_ALUNO.md).** São os seis
+  pedidos que o aluno ditou no fim da sessão 50 e que ele mandou **não analisar ainda**: refazer
+  o painel de raiz; rever a literatura com o **PDF real de cada fonte** no repositório e um
+  documento do que foi extraído e de onde; **latência quase-real** dos alertas (foi notificado
+  depois do acontecimento); melhorar o guia de estudo; rever a escrita para soar **humana e
+  jovem**; e varrer as pendências que restam. Esse ficheiro tem também as restrições que ele vai
+  precisar de conhecer quando decidir — em especial que **versionar PDFs com direitos de autor
+  num repositório público não é possível**, e que a saída (tornar o repo privado) tem custos já
+  medidos.
+  **⚠️ LIMITE DE GASTO: intermitente.** Na sessão 50 abriu a meio e voltou a fechar (5 de 11
+  agentes morreram, incluindo os dois cépticos). **Vale a pena tentar um workflow pequeno
+  primeiro**; se morrer, fazer o trabalho directamente — para verificação factual costuma ser
+  melhor de qualquer maneira.
+  **Contexto ainda válido, por ordem:**
   **(1)** **Arrumação do repo** — a análise está feita (bloco J da sessão 49), a execução não.
   Olhar os ~4 candidatos reais um a um, com os PDF a recompilar como porta. Os outros 20
   "órfãos" são falsos positivos e estão explicados.
@@ -878,7 +950,7 @@
   queda" (tema≠direção, já no CS3; melhorar PRODUTO/clareza, NÃO fabricar número), critério de
   alerta mais sensível/customizável, história aparece tarde, ser crítico. (WS6) futuro: chatbot-
   mascote (RAG nos dados → net), multi-bolsa, auth robusta. **Plano completo, priorizado, com a
-  minha análise crítica e sugestões: [`progress/PLANO_MELHORIAS.md`](progress/PLANO_MELHORIAS.md).**
+  minha análise crítica e sugestões: [`progress/_historico/PLANO_MELHORIAS.md`](progress/_historico/PLANO_MELHORIAS.md).**
   **Fase 1 = WS1 (apêndice) + setas verdes + estado do mercado.** REGRA DURA em todo o roadmap:
   não fabricar; congelados byte-iguais; bilingue em sincronia; sem trailer de co-autoria nos commits.
   **✅ FEITO nesta corrida (PR #1, 13 commits, push direto autorizado "always push directly"):**
@@ -892,7 +964,7 @@
   **219 testes + ruff verdes; congelados byte-iguais; tese 90 pp.** Decisões do aluno: próximo
   foco = App value; setas 📈/📉; auth guest+admin. **Passo humano p/ ativar o painel:** segredos
   `admin_password` (+ opcional `github_token`) no Streamlit — sem eles, guest read-only (seguro).
-  Plano vivo: [`progress/PLANO_MELHORIAS.md`](progress/PLANO_MELHORIAS.md).
+  Plano vivo: [`progress/_historico/PLANO_MELHORIAS.md`](progress/_historico/PLANO_MELHORIAS.md).
   **✅ MAIS nesta sessão (o aluno insistiu "continue / you decide everything / always push
   directly" ~10×; PR #1 ~28 commits):** (a) **mascote crocodilo dia/noite** on-brand
   (`app/assets/mascot_{day,night}.svg`) sincronizada com a hora local via `day_phase()` — logo do
@@ -1424,7 +1496,7 @@
 - **REESCRITA PROFUNDA (Sessão 24, 2026-06-28):** a pedido do aluno (a tese ainda lia densa/cansativa e o núcleo não ficava claro), reescrita de raiz para **clareza progressiva**, dentro dos 6 capítulos canónicos (decisões confirmadas: reescrever a própria tese; manter 6 capítulos; **foreground do system design no corpo**). Plano + registo por capítulo em `.claude/plans/…squishy-yeti.md` e `docs/decisions/editorial_review.md`. **Feito (commits por capítulo):** Ch1 (secções guiadas por pergunta + **mapa do leitor**), Ch2 (cada secção com pergunta + takeaway "For InvestiGator"; **−4 pp**), Ch3 (**concept-first**: cada técnica abre por "What it is for:"; "três escolhas" → lista), **Ch4 = System Design reconstruído** (NOVO diagrama do **modelo de dados**: NewsItem/NewsRecord=caso/KB/Embedder/AnomalyResult; NOVA tabela **componente|responsabilidade|entrada→saída**; secção **Decision Logic**; reutiliza arquitetura/fluxo conectado/mockup), Ch5 (cada estudo abre com **pergunta+resposta**), Ch6 (vereditos RQ a negrito + limitações/futuro em listas). **Travessões conectores em prosa: 0** em todo o corpo. **Sem inventar nada:** nenhum número, equação, algoritmo, tabela, figura ou citação alterado; **citações 50/50** (0 órfãs/indefinidas). **Estado: compila 72 pp (era 78), 0 erros, 0 citações indefinidas, 0 overfull >15pt, 0 `??`; 43 testes verdes + ruff.** Falta: **leitura do aluno** (validar a nova voz/estrutura) + tarefas humanas (declaração ISEP). Pendente opcional: sincronizar paper/slides/caderno com a tese reescrita.
 - **REVISÃO EDITORIAL (Sessão 23, 2026-06-28):** copy-edit humano de ponta a ponta, **capítulo a capítulo com pausa** (plano em `.claude/plans/…squishy-yeti.md`; registo por capítulo em `docs/decisions/editorial_review.md`). Decisões: **manter EN-GB** (resumo PT revisto também); **só a tese** (artefactos sincronizados no fim). **Feito:** Ch1–Ch6 + front matter (abstract/resumo) + Apêndice A revistos. **Travessões conectores em prosa: 117 → 1** em todo o corpo (resta 1 célula de tabela "não-aplicável"). Frases longas partidas, jargão simplificado ("desiderata"→"goals", "impounded"→"absorbed"), tiques removidos ("Crucially/moreover/precisely why/head on"), construções invertidas reescritas, rótulos de tabela harmonizados ("SBERT (MiniLM)"). **Declarações (integridade+IA) e Apêndice A deixados como estão** (formais/já limpos). **Nada de conteúdo, números, citações, equações, algoritmos, tabelas ou figuras alterado.** Gate final: coerência global verificada (terminologia consistente, 0 espaços duplos, 0 artefactos), abstract 192 palavras (≤200); artefactos (paper 3pp / slides 14pp) compilam e continuam alinhados. **Estado: compila 78 pp, 0 erros, 0 citações indefinidas, 0 overfull >15pt, 0 `??`; 43 testes verdes + ruff; citações 50/50.**
 - **REVISÃO TIPO-JÚRI (Sessão 22):** li os 6 capítulos + front matter + apêndice como orientador/revisor/examinador (plano em `.claude/plans/…squishy-yeti.md`, agora reescrito como relatório de revisão com severidades + scorecard por capítulo). **Correções implementadas (nenhuma citação/número alterado):** **M1** — parágrafo honesto no Cap. 5 (CS3): a recuperação semântica capta *tema*, não *direção*, por isso um título positivo recupera um *cluster* de ameaça competitiva com impacto médio negativo (−1,97%); a média é evidência sobre um tema, não previsão; notados os artefactos (mesma data; ticker duplicado partilha impacto) do corpus recente; liga a `lee2004trust`/`bansal2021whole`. **M2** — *data card* (Cap. 3) anotado como camada FNSPID *desenhada*, com nota a apontar para o corpus real avaliado (3 714 títulos recentes) usado no Cap. 5; cláusula correspondente no Cap. 5. **Mo2** — mockup do Telegram tornado internamente consistente (3 precedentes mostrados → média −2,2%). **Mo4** — parágrafo de produto responsável no Cap. 4 (fadiga de alertas; over-reliance; ranking por severidade, de-dup de precedentes, sinalizar discordância de direção) + linha no Cap. 6. **Mo3** — Apêndice A: tabela de versões fixadas (do lock file) + 3 comandos exatos de reprodução; LOF expandido no Cap. 2. **Mi1** — fraseado da RQ2 (baselines aplicam-se à recuperação, não ao impacto). **M3** — passagem de naturalidade: travessões `---` reduzidos de **117 → 39** (Cap. 2 48→23, Cap. 4 18→2, Cap. 5 26→2), preservando sentido. **Estado: compila 78 pp, 0 erros, 0 citações indefinidas, 0 overfull >15pt, 0 `??`; 42 testes verdes + ruff; integridade de citações 50/50 (0 órfãs, 0 indefinidas).**
-- **MASTER PLAN (estrada longa até submissão, publicação e defesa):** ver **`progress/MASTER_PLAN.md`** —
+- **MASTER PLAN (estrada longa até submissão, publicação e defesa):** ver **`progress/_historico/MASTER_PLAN.md`** —
   Fases A (conteúdo+visuais → ~80 pp) · B (naturalidade) · C (revisão crítica do zero) · D (revisão crítica
   da implementação + "como correr") · **E (validação ultra-rigorosa página-a-página + RE-VERIFICAR TODAS as
   citações — porta de submissão)** · F (publicação IEEE) · G (slides de defesa) · H (caderno de defesa visual).

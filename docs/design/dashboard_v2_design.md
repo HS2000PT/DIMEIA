@@ -1,8 +1,19 @@
 # dashboard_v2_design.md — o que copiar do worldmonitor, e o que não
 
-> **Estatuto:** desenho para `app/dashboard.py`, construído **ao lado** de `app/streamlit_app.py`.
-> A app atual continua implantada e intocada. Promoção só contra os critérios já escritos em
-> [`dashboard_acceptance.md`](dashboard_acceptance.md). Se não passar, não se perde nada.
+> ⚠️ **ESTATUTO: SUPERADO (2026-08-04). Registo histórico — não dirige trabalho nenhum.**
+> Esta é a v2, que o aluno **rejeitou por inteiro** ("usability is messy and confusing and
+> dirty… re-do everything"). O que está implantado é a **v3** (`app/dashboard.py`, promovida na
+> sessão 48), desenhada contra os critérios **V1–V8** de
+> [`dashboard_acceptance.md`](dashboard_acceptance.md) §6 — que são outros.
+>
+> **Fica como registo por uma razão concreta:** a leitura do worldmonitor.app que está aqui foi
+> o que produziu as duas ideias que a medição depois **derrubou** — o score de convergência
+> (ganha em 1 de 3 orçamentos) e os crachás de tipo de evento (silhueta 0,084). Foi daí que
+> saiu o critério **H4** ("nenhum score que a medição não sustente"), que continua a valer. O
+> caminho até um "não" é defensável na defesa; apagá-lo deixaria só o "não".
+>
+> A reconstrução seguinte tem briefing próprio em
+> [`PROMPT_dashboard_v4.md`](PROMPT_dashboard_v4.md).
 >
 > **Método:** em vez de redesenhar por gosto (o que já falhou cinco vezes por não ter condição de
 > paragem), este desenho parte de uma leitura do worldmonitor.app e da pergunta *o que é que

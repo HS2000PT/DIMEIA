@@ -154,7 +154,8 @@ docs/          documentation (see docs/README.md for the full index), grouped:
   decisions/     citation log, page audit, product review, learning notes, glossary
   internal/      provenance (the original root prompt)
 data/samples/  small committed samples (large data gitignored, recreated by scripts)
-progress/      continuity logs (TRACKER, SESSIONS, DECISIONS, MASTER_PLAN)
+progress/      continuity logs (TRACKER, SESSIONS, DECISIONS, PLANO_V2)
+               _historico/ superseded plans, kept as a record
 CITATION.cff   how to cite this work    requirements.txt (light) / requirements-ml.txt (torch+SBERT)
 ```
 

@@ -40,7 +40,7 @@ encontrar algo), (5) com `--git`, inicia um repo com **1 commit** (sem remote, s
 
 | Caminho | Porquê fica de fora |
 |---|---|
-| `progress/` | planeamento multi-sessão (TRACKER/SESSIONS/DECISIONS/MASTER_PLAN) |
+| `progress/` | planeamento multi-sessão (PLANO_V2/TRACKER/SESSIONS/DECISIONS + `_historico/`) |
 | `CLAUDE.md` | memória de continuidade (processo interno) |
 | `.claude/` | settings + planos internos |
 | `docs/defence/` | caderno de defesa + guia rápido (estudo **privado**) |

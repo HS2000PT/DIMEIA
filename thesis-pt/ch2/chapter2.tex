@@ -31,8 +31,8 @@ atenção são tomadas.
 
 As notícias também movem os mercados, e o seu texto pode ser medido. \textcite{tetlock2007media}
 constrói um índice diário de pessimismo a partir de uma coluna de jornal e liga-o à pressão sobre os
-preços e ao volume de negociação, uma prova precoce de que os sinais textuais se relacionam com os
-resultados de mercado, que é a premissa do motor de notícias do InvestiGator. Este público também é
+preços e ao volume de negociação, uma das primeiras evidências de que os sinais textuais se
+relacionam com os resultados de mercado, que é a premissa do motor de notícias do InvestiGator. Este público também é
 grande e ativo: mesmo durante o crash de março de 2020, os investidores de retalho de uma plataforma sem
 comissões reforçaram as suas posições em vez de entrar em pânico \autocite{welch2022robinhood},
 consistente com a posse alargada e a escala de mercado reportadas no Capítulo~\ref{chap:introduction}
@@ -407,8 +407,10 @@ oferece a literatura em cada um destes pontos?}
 A calibração, tal como usada no score de triagem acima, é uma propriedade \emph{agregada}: entre os
 itens pontuados perto de uma dada probabilidade, aproximadamente essa fração deveria revelar-se
 positiva. Nada diz sobre um item individual, e não oferece recurso algum assim que o modelo é
-aplicado fora das condições em que foi ajustado. A \emph{predição conformal} responde exatamente a
-essa lacuna. O tratamento fundador \autocite{vovk2005algorithmic} mostra que um preditor pode ser
+aplicado fora das condições em que foi ajustado. A \emph{predição conformal} reduz essa lacuna.
+Devolve um conjunto por item em vez de uma estimativa pontual, embora a sua garantia continue a ser
+\emph{marginal}, em média sobre os casos, e não condicional em qualquer um deles. O tratamento
+fundador \autocite{vovk2005algorithmic} mostra que um preditor pode ser
 envolvido de modo a devolver um \emph{conjunto} de rótulos com uma garantia livre de distribuição e
 válida em amostra finita: para uma taxa de erro $\alpha$ escolhida, o conjunto contém o rótulo
 verdadeiro em pelo menos $1-\alpha$ dos casos. A garantia não assume normalidade nem um modelo

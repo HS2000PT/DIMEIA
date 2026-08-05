@@ -1,7 +1,7 @@
 # MASTER PLAN — DIMEIA / InvestiGator (the long road to submission, publication & defence)
 
 > ⚠️ **SUPERADO (2026-07-30). Registo histórico — não é o plano ativo.**
-> O plano vivo é [`PLANO_V2.md`](PLANO_V2.md). Cadeia de sucessão:
+> O plano vivo é [`PLANO_V2.md`](../PLANO_V2.md). Cadeia de sucessão:
 > `MASTER_PLAN` → `PRODUCT_ROADMAP` → `PLANO_MELHORIAS` → **`PLANO_V2`**.
 > As fases A–H descritas aqui foram concluídas; mantém-se pelo valor de registo.
 

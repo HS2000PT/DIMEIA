@@ -576,7 +576,7 @@ do aluno (§6.6). Opcional futuro: FNSPID multi-ano; estudo humano de utilidade;
 
 ## Sessão 20 — 2026-06-26 — MASTER PLAN A–H + Fase A (conteúdo+visuais)
 **Contexto:** pós-rework, o aluno definiu a estrada longa até submissão/IEEE/defesa. Criado
-`progress/MASTER_PLAN.md` (Fases A–H; porta de submissão = Fase E: validação página-a-página +
+`progress/_historico/MASTER_PLAN.md` (Fases A–H; porta de submissão = Fase E: validação página-a-página +
 re-verificar TODAS as citações). Pedido central da Fase A: ~80 pp por **conteúdo genuíno** (sem encher),
 mais visuais, e "visualizar o workflow de dados/passos".
 

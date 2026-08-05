@@ -76,3 +76,9 @@ config/alerts_overrides.yaml
 # Respostas do estudo de utilidade: ficam LOCAIS até o aluno decidir publicá-las.
 # O template versionado (responses_template.csv) é o que se partilha.
 docs/study/responses.csv
+
+# PDFs das fontes citadas, para a auditoria de CONTEUDO das citacoes.
+# Material com direitos de autor + repositorio publico: versiona-los transformaria uma
+# auditoria de integridade numa violacao de copyright. Fica o README (a lista do que
+# descarregar) e fica o RELATORIO da auditoria; as fontes nao.
+docs/decisions/citation_pdfs/*.pdf
