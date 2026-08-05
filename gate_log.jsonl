@@ -478,3 +478,15 @@
 {"date": "2026-08-05", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-05", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}
 {"date": "2026-08-05", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.31 < 0.50"}
+{"date": "2026-08-05", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-05", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft Azure Fiscal 2026 Sales Exceed $100B: Hold the Stock Now?"}
+{"date": "2026-08-05", "ticker": "NVDA", "stage": "alerted", "detail": "This Is Nvidia CEO Jensen Huang's Favorite Biotech Stock -- and You've Probably "}
+{"date": "2026-08-05", "ticker": "TSLA", "stage": "alerted", "detail": "Tesla (TSLA) Q2 2026 Earnings Call Transcript"}
+{"date": "2026-08-05", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon's Zoox to start paid robotaxi rides in Vegas next week"}
+{"date": "2026-08-05", "ticker": "GOOGL", "stage": "alerted", "detail": "Google Retires Assistant On Android As Gemini Shifts Ad Landscape"}
+{"date": "2026-08-05", "ticker": "META", "stage": "alerted", "detail": "Meta's India Problem Is Getting Harder to Contain"}
+{"date": "2026-08-05", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-08-05", "ticker": "AMD", "stage": "alerted", "detail": "Disney Climbs on Profit Beat; AMD Falls on Underwhelming Forecast | Stock Movers"}
+{"date": "2026-08-05", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-05", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}
+{"date": "2026-08-05", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.31 < 0.50"}
