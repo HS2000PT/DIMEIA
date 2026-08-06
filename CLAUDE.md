@@ -7,8 +7,79 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 50 (**citações auditadas até ao fim: 129/129 conteúdo + paridade EN↔PT**)
-- **Última atualização:** 2026-08-05
+- **Sessão nº:** 51 (**produto implantado, fuga de chave corrigida, documentos sincronizados**)
+- **Última atualização:** 2026-08-06
+- **🚨 SESSÃO 51 (2026-08-06):**
+  **(A) ⚠️ FUGA DE CREDENCIAL, apanhada a verificar a implantação — é o achado da sessão.**
+  A chave do **Finnhub** estava a ser escrita nos registos do Heroku **centenas de vezes**:
+  a mensagem de uma `HTTPError` inclui o URL do pedido, e o URL leva o `&token=`. Bastava a API
+  responder com erro — e nesse dia respondeu **503 a tudo** — para a chave ficar em claro no
+  registo. **O código nunca imprimiu a chave de propósito: imprimiu a EXCEPÇÃO.**
+  É a **2.ª fuga desta família** (a da sessão 44 expôs a ALPHAVANTAGE porque o filtro só
+  mascarava >30 chars). `sem_segredos()` mascara agora `token|key|apikey|api_key|apiKey|
+  access_token` — não só `token=`, porque cada fornecedor lhe chama outra coisa — nas 20
+  interpolações de excepção do runner, incluindo o envio para o Telegram (que leva o token do
+  bot no URL). **+2 testes**, um com a cadeia REAL que apareceu no registo.
+  **Verificado em produção: 0 fugas em 46 linhas pós-implantação, 7 com `<REDACTED>`.**
+  ⚠️ **A máscara impede fugas novas; não desfaz esta.** A chave do Finnhub passa a ser a
+  **4.ª a rodar**, e o CHECKLIST não tinha o item nenhum — foi acrescentado.
+  **(B) IMPLANTADO: v16 e depois v17.** O `git push heroku` está bloqueado (o Heroku deixou de
+  aceitar autenticação básica por git), portanto foi pela **API de Sources/Builds**, como na
+  sessão 48. Os dois dynos de pé, sem R14/R15. **O worker corria código da sessão 48 até hoje**
+  — a correcção do tecto por materialidade só passou a valer agora.
+  **(C) O TECTO DIÁRIO PASSA A SER SERVIDO POR MATERIALIDADE**, não por ordem de chegada. Era
+  isto que fazia a notícia da NVDA/SpaceX desaparecer: duas histórias irrelevantes de manhã
+  gastavam a quota e a que interessava caía à tarde **sem deixar rasto**. O irónico é que o
+  modelo de triagem existe exactamente para ordenar por materialidade (0,632 vs 0,163 num
+  orçamento de 5) e **o tecto nunca o consultava** — era medido e ignorado. Canal lateral
+  `materiality`, mesmo padrão do `event_times`. **Sem triagem ligada, o comportamento antigo é
+  o caso particular** (dicionário vazio ⇒ ordem de chegada preservada).
+  **⚠️ E a minha correcção trouxe um defeito PIOR, apanhado por um teste que já existia:** a
+  detecção de "mesma história noutras palavras" comparava o **alerta renderizado**, que é quase
+  todo *template* — duas notícias **diferentes** da mesma empresa colidiam e uma era suprimida
+  em silêncio. Passa a comparar **manchetes** (canal lateral `headlines`) e **falha aberto**
+  com manchetes curtas.
+  **(D) COBERTURA DA FONTE DE NOTÍCIAS: MEDIDA.** Era a 3.ª causa do caso NVDA, e nenhuma
+  correcção de código a resolve. `scripts/evaluate_news_coverage.py` (novo, usa o `detect_all`
+  **de produção**): havia pelo menos uma manchete captada em **88,5%** dos dias invulgares
+  (|z|≥1,5) e **90,4%** a |z|≥3,0. Limitação **afirmada → medida**, o mesmo percurso da deriva.
+  **Dito como limite superior**: pergunta se existia *uma* história, não *a certa*.
+  **⚠️ A NVDA é o pior ticker, com 50%** — precisamente aquele onde o aluno deu pelo problema —
+  e é ao mesmo tempo o de **maior densidade** (21,6 manchetes por dia coberto). A explicação
+  óbvia era truncagem contra o tecto de ~250 itens/pedido do Finnhub. **Testei e é FALSA:**
+  nenhuma janela de nenhum ticker passou de **165** itens. Fica registada como refutada porque
+  era plausível, estaria errada, e era **accionável** — estreitar a janela seria resolver o
+  problema errado.
+  **(E) v4: os dois passos que faltavam antes do código.**
+  `docs/design/dashboard_v4_acceptance.md` (novo, **rascunho para o aluno emendar**, com o
+  enviesamento declarado: quem o escreveu desenhou a v3). P1–P5 põem **número** no que era
+  adjectivo; C1–C6 fixam conteúdo; H1–H4 herdados.
+  E `scripts/build_snapshot.py` responde à pergunta da stack **com medição**:
+  construir a frio **4,92 s** · calcular com cache quente **0,870 s** · **ler o instantâneo
+  0,011 s**, ficheiro de **2,4 KB**. ⇒ **Sair do Streamlit NÃO é a variável que decide o
+  desempenho**; trocar de framework sem pré-computar mantém o defeito. O que isto **não** prova
+  fica escrito: mede a camada de dados, não a página, portanto o P1 (≤1,5 s) continua por provar.
+  **(F) 4 DECISÕES QUE NUNCA TINHAM CHEGADO À TESE**, todas EN+PT: a **decomposição** ganhou
+  secção de Métodos (não tinha **uma única equação** em nenhuma das teses, apesar de responder à
+  2.ª das três perguntas) com o encolhimento de **Vasicek** e o motor como maior componente
+  **do mesmo sinal**; o **ONNX em produção** (1,4 GB num contentor de 512 MB, e a suposição de
+  que fatiar em lotes não altera resultados **refutada por medição**: 0,022 no cosseno, mas
+  top-3 idêntico em 8/8); o **alerta que se contradizia** (9 em 30, AMD −13,23% com pares a
+  −2,0%); e os **critérios de aceitação escritos antes do código**. Mais o corte do
+  **streaming** nas Posições por Exclusão. **2 referências novas** (Vasicek 1973, Blume 1971),
+  verificadas no Crossref **antes** de escrever — o próprio código trazia esse aviso.
+  **(G) DOCUMENTOS SINCRONIZADOS, e um deles enganava o orientador.** O `RELATORIO_FINAL`
+  mandava-o abrir a app e ver o **"Background risk"** — que a v3 **retira de propósito** por ser
+  uma probabilidade sobre o futuro (H2). Ou seja, mandava-o procurar o que a tese recusa fazer.
+  Corrigidos ainda: descrição do painel (dizia "TRÊS ecrãs" = v1/v2), a tabela "o que falta"
+  (listava tornar pública uma app do Streamlit Cloud que já não existe, e **não** listava a
+  rotação de credenciais), README e INDEX a apontar para `app/streamlit_app.py` como produto ao
+  vivo, e as contagens em 8 ficheiros (113/115 pp, 61 refs, 626 testes). **0 links partidos.**
+  **⚠️ E uma correcção a uma afirmação MINHA:** eu disse que havia uma mascote esquecida em
+  `app/assets/investigator.svg`. **Não há** — foi apagada no commit `609a30b`. Continua
+  recuperável (`git show 2ce21e4:app/assets/investigator.svg`).
+  **Gates: 626 testes, ruff limpo, congelados byte-iguais, EN 113 pp / PT 115 pp, slides 25+25,
+  guia 88, 0 erros e 0 citações indefinidas.**
 - **📌 SESSÃO 50 (2026-08-05):**
   **➕ ADENDA (2026-08-05, 2.ª parte da sessão): o backlog cresceu com o mecanismo de alertas.**
   O aluno reportou um caso concreto: a NVDA subiu muito com a notícia de que a SpaceX passaria a
