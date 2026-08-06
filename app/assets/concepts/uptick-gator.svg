@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"
+     role="img" aria-label="InvestiGator concept E — Uptick Gator: an open jaw that is also a rising market tick">
+  <!-- CONCEITO E — "Uptick Gator".
+       UMA ideia: a boca aberta de um jacare tem exactamente a forma de um "tick" de subida.
+       A mandibula inferior desce e volta a subir; a superior acompanha. O que se le e ao mesmo
+       tempo um bocejo de jacare e um movimento de alta.
+       Vivo: e um gesto, nao um icone parado -- a boca esta a abrir.
+       Diferenca face a "Jaws" de 2026-08 (que caiu): aquela eram duas linhas finas que se
+       desfaziam num "<" aos 16 px. Esta e MASSA, nao linha, e leva o olho dentro da forma. -->
+
+  <!-- mandibula superior: cai da esquerda e sobe para a direita -->
+  <path d="M18 84
+           L120 116
+           L242 40
+           L242 74
+           L124 148
+           L18 116
+           Z"
+        fill="#0A8F52"/>
+
+  <!-- mandibula inferior: mais curta, abre o angulo -->
+  <path d="M26 150
+           L124 176
+           L226 132
+           L226 162
+           L126 206
+           L26 180
+           Z"
+        fill="#0A8F52" opacity="0.82"/>
+
+  <!-- olho: na base da mandibula superior, onde a cabeca e mais alta -->
+  <circle cx="52" cy="100" r="14" fill="#F4FBF7"/>
+  <circle cx="55" cy="100" r="6.5" fill="#0A8F52"/>
+</svg>

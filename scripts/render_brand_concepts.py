@@ -17,9 +17,8 @@ TAMANHOS = [16, 24, 32, 48, 88, 160]
 
 MARCAS = [
     ("ACTUAL — The Tail", RAIZ / "app/assets/logo.svg"),
-    ("A — Waterline", RAIZ / "app/assets/concepts/waterline.svg"),
     ("B — Pupil Tick", RAIZ / "app/assets/concepts/pupil-tick.svg"),
-    ("C — Gator Mark", RAIZ / "app/assets/concepts/gator-mark.svg"),
+    ("D — Chartback (final)", RAIZ / "app/assets/concepts/chartback.svg"),
 ]
 
 linhas = []

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"
+     role="img" aria-label="InvestiGator concept D — Chartback: an alligator whose dorsal ridge is a rising bar chart">
+  <!-- CONCEITO D — "Chartback" (2.a versao).
+       UMA ideia, e e a fusao mais directa que ha entre o animal e o dominio: as PLACAS DORSAIS
+       de um jacare ja tem forma de grafico de barras. Aqui sobem, e a subida E o grafico.
+       Nao e um jacare AO LADO de um grafico -- o dorso do jacare e o grafico.
+
+       O que mudou da 1.a versao, e porque: o focinho era curto e a silhueta lia-se como lagarta.
+       O focinho de um jacare e LONGO, BAIXO e ACHATADO -- e essa proporcao que identifica a
+       especie a distancia. Alongado e baixado, passa a ler-se jacare.
+
+       Vivo: olha para a direita, para onde o grafico vai. Olho REDONDO, nunca em fenda -- um
+       olho de predador contradiz um produto que recusa cacar seja quem for. -->
+
+  <!-- dorso: as placas sobem como barras de um grafico -->
+  <path d="M12 200
+           L12 182
+           L34 182 L34 150 L50 150 L50 182
+           L66 182 L66 130 L82 130 L82 182
+           L98 182 L98 108 L114 108 L114 182
+           L132 182
+           L132 128
+           C132 108 146 96 168 96
+           L168 128
+           Z"
+        fill="#0A8F52"/>
+
+  <!-- cabeca + focinho longo e achatado, a assinatura da especie -->
+  <path d="M150 96
+           C176 96 190 106 194 118
+           L246 118
+           C252 118 254 122 254 127
+           C254 132 252 136 246 136
+           L196 136
+           C192 152 176 162 152 162
+           L138 162
+           C130 162 126 156 126 148
+           L126 110
+           C126 102 132 96 140 96
+           Z"
+        fill="#0A8F52"/>
+
+  <!-- olho -->
+  <circle cx="166" cy="116" r="12" fill="#F4FBF7"/>
+  <circle cx="169" cy="116" r="5.5" fill="#0A8F52"/>
+
+  <!-- narina, na ponta do focinho -->
+  <circle cx="240" cy="127" r="4" fill="#F4FBF7"/>
+
+  <!-- linha da boca: um traco fino que separa maxilar de mandibula e confirma o focinho -->
+  <path d="M196 141 H244" stroke="#F4FBF7" stroke-width="4" stroke-linecap="round" opacity="0.55"/>
+</svg>

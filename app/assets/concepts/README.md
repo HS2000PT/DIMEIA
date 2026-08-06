@@ -1,51 +1,44 @@
-# Três direcções novas de marca — e o que a medição disse
+# Direcções de marca — o jacaré financeiro
 
-> Geradas a 2026-08-06 a pedido do aluno: *"algo que dê nas vistas, com olhos, ou o jacaré, ou
-> uma mascote — tipo uma marca registada"*, e, no mesmo dia, *"a Stare era má, quero coisa
-> **nova**"*. Não são revivalismos: são três ideias novas, uma ideia cada.
->
-> Regenerar a folha de comparação: `python scripts/render_brand_concepts.py`
+> Pedido a 2026-08-06: *"logótipo novo, com marca, vivo, jacaré — jacaré financeiro. Sê criativo."*
+> Regenerar a folha: `python scripts/render_brand_concepts.py`
 
-## O teste, que é o mesmo de sempre
+## A recomendação: **D — Chartback**
 
-[`docs/design/brand.md`](../../../docs/design/brand.md): legível a **16 px** com a silhueta
-reconhecível · funciona a preto e branco · funciona em fundo claro **e** escuro · **uma ideia
-só** · não contradiz a postura do produto.
+**A ideia, e é uma só:** as **placas dorsais** de um jacaré já têm a forma de um gráfico de
+barras. Aqui sobem, e essa subida **é** o gráfico. Não é um jacaré ao lado de um gráfico — o
+dorso do jacaré é o gráfico. É a fusão mais directa que existe entre o animal e o domínio.
 
-**16 px é onde vive um favicon**, e é o teste que a marca de 2026-07 falhou. Por isso a folha
-[`comparacao.png`](comparacao.png) mostra 16/24/32/48/88/160 px, nos dois fundos, **com a marca
-actual como controlo** — sem controlo não se sabe se o novo é melhor ou apenas diferente.
+**Vivo:** olha para a direita, para onde o gráfico vai. Olho **redondo**, nunca em fenda — um
+olho de predador contradiz um produto que recusa caçar seja quem for, e foi uma das razões pelas
+quais a marca de 2026-07 caiu.
 
-## Veredicto, a olhar para o render
+**Foi preciso uma segunda versão.** A primeira tinha o focinho curto e lia-se como **lagarta**.
+O focinho de um jacaré é **longo, baixo e achatado**, e é essa proporção que identifica a espécie
+à distância. Alongado, passa a ler-se jacaré. Fica registado porque a diferença entre as duas
+versões é toda ela essa proporção.
 
-| | ideia | 16 px | grande | veredicto |
-|---|---|---|---|---|
-| **A — Waterline** | o jacaré submerso: só os olhos acima da linha de água, que é também a linha do mercado | ❌ colapsa numa mancha horizontal; os olhos desaparecem | ✅ **a melhor das três** — lê-se imediatamente | **não serve como logótipo; serve como imagem grande** |
-| **B — Pupil Tick** | o mercado dentro do olho: a pupila é uma barra de preço | ✅ **a única que sobrevive** — lê-se olho com marca dentro | ✅ limpa e distinta | **a única candidata a logótipo** |
-| **C — Gator Mark** | a cabeça do jacaré vista de cima, como marca | ❌ borrão | ❌ **falhou**: não se lê como jacaré, lê-se como um vulto com dois olhos | **descartar ou redesenhar de raiz** |
+## As que caíram, e porquê
 
-**O C falhou e fica registado como falhou.** A geometria do focinho não sobrevive à simplificação;
-o que sai é uma forma arredondada sem espécie. Não é um problema de tamanho, é de desenho.
+| | ideia | veredicto |
+|---|---|---|
+| **A — Waterline** | olhos acima da linha de água | ✅ bonita em grande · ❌ **colapsa aos 16 px** — os olhos desaparecem |
+| **B — Pupil Tick** | a pupila é uma barra de preço | ✅ **a que melhor sobrevive aos 16 px** · ❌ abstracta: não é um jacaré |
+| **C — Gator Mark** | cabeça vista de cima | ❌ **falhou** — lê-se como um vulto, não como jacaré |
+| **E — Uptick Gator** | a boca aberta é um *tick* de subida | ❌ **falhou** — lê-se como galões de patente, não como maxilas |
+| **F — Snout Candle** | o focinho é um *candlestick* | ❌ **falhou** — lê-se como um robô ou um insecto |
 
-## A conclusão que interessa, e que não é a esperada
+Três das cinco falharam, e ficam escritas como falharam. `pupil-tick.svg` e `waterline.svg`
+ficam no repositório porque cada uma ganha numa dimensão em que a D perde; `gator-mark`,
+`uptick-gator` e `snout-candle` ficam como registo da comparação.
 
-**Nenhuma das três bate claramente a marca actual aos 16 px.** A "Tail" a 16 px continua a ser um
-traço limpo; a A e a C são piores lá, e a B é comparável e não obviamente melhor.
+## O que ainda falta decidir
 
-Isto empurra para a separação que já estava escrita no backlog e que o render confirma:
+**A D é mais ocupada do que a Tail aos 16 px.** A partir dos 24 px ganha claramente; a 16 px é
+uma mancha com forma, e a Tail é um traço limpo. As duas leituras honestas:
 
-- **Logótipo** (16 px, favicon, cabeçalho): ou fica a **Tail**, ou passa a **B**. São as duas
-  únicas que passam o teste.
-- **Mascote / imagem grande** (avatar do canal, capa dos slides, guia, ecrã inicial): é aqui que
-  vive o "dar nas vistas" com olhos. A **A** é forte neste papel e não paga o custo dos 16 px.
+- **usar a D em todo o lado** e aceitar que o favicon é uma silhueta, não um desenho legível;
+- **D grande + Tail a 16 px**, que é o que muitas marcas fazem (marca completa e marca reduzida).
 
-Ou seja: provavelmente não é preciso escolher entre marca e mascote — é preciso parar de lhes
-exigir a mesma coisa.
-
-## Próximo passo, se o aluno quiser continuar
-
-1. Dizer qual das duas leituras prefere para o logótipo (manter a Tail, ou passar à B).
-2. Se quiser a A como mascote, ela precisa de tratamento a sério em tamanho grande: mais
-   detalhe, ondulação melhor, talvez cor secundária. Aos 160 px já aguenta; aos 512 px de um
-   avatar de canal precisa de mais.
-3. O C só volta se for redesenhado de raiz, e não vale a pena sem uma ideia melhor para o focinho.
+Isto é decisão do aluno. O que **não** deve acontecer é escolher a olhar para o SVG a 512 px —
+foi assim que a marca anterior foi escolhida e depois caiu.

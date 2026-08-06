@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"
+     role="img" aria-label="InvestiGator concept F — Snout Candle: a front-facing alligator whose snout is a candlestick">
+  <!-- CONCEITO F — "Snout Candle".
+       UMA ideia: visto de frente, um jacare e dois olhos em cima de um focinho vertical.
+       Um candlestick tambem e um corpo vertical com uma mecha. Aqui sao a mesma forma: o
+       focinho E a vela, com mecha em cima e em baixo.
+       Vivo: e uma CARA -- olha para quem olha. E a leitura mais "mascote" das tres.
+       Aposta em massa e simetria, que e o que costuma sobreviver em pequeno. -->
+
+  <!-- mecha da vela / linha do focinho -->
+  <path d="M128 30 V222" stroke="#0A8F52" stroke-width="12" stroke-linecap="round"/>
+
+  <!-- corpo da vela = focinho -->
+  <rect x="96" y="86" width="64" height="112" rx="16" fill="#0A8F52"/>
+
+  <!-- narinas, no topo do focinho -->
+  <circle cx="115" cy="106" r="6" fill="#F4FBF7"/>
+  <circle cx="141" cy="106" r="6" fill="#F4FBF7"/>
+
+  <!-- olhos: salientes, acima e de lado, como num jacare a espreitar -->
+  <circle cx="66" cy="84" r="30" fill="#0A8F52"/>
+  <circle cx="190" cy="84" r="30" fill="#0A8F52"/>
+  <circle cx="66" cy="84" r="13" fill="#F4FBF7"/>
+  <circle cx="190" cy="84" r="13" fill="#F4FBF7"/>
+  <circle cx="70" cy="84" r="6" fill="#0A8F52"/>
+  <circle cx="194" cy="84" r="6" fill="#0A8F52"/>
+</svg>
