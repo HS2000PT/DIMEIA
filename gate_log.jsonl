@@ -550,3 +550,15 @@
 {"date": "2026-08-06", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-06", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-06", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.31 < 0.50"}
+{"date": "2026-08-06", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-06", "ticker": "MSFT", "stage": "alerted", "detail": "Could Microsoft, Amazon, or Google Actually Buy Reddit?"}
+{"date": "2026-08-06", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.50 < 0.50"}
+{"date": "2026-08-06", "ticker": "TSLA", "stage": "alerted", "detail": "Direxion Launches LOFD, Completing Its Bull & Bear Lineup Across Tesla & SpaceX"}
+{"date": "2026-08-06", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon vs. Alibaba: Two AI Giants Building Very Different Futures"}
+{"date": "2026-08-06", "ticker": "GOOGL", "stage": "alerted", "detail": "Could Microsoft, Amazon, or Google Actually Buy Reddit?"}
+{"date": "2026-08-06", "ticker": "META", "stage": "alerted", "detail": "Mark Zuckerberg Wants to Accelerate AI Development Further"}
+{"date": "2026-08-06", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.25 < 0.50"}
+{"date": "2026-08-06", "ticker": "AMD", "stage": "alerted", "detail": "MU, WDC, SKHY, AMD — VanEck’s Nicholas Frasse Downplays Volatility In Semiconduc"}
+{"date": "2026-08-06", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-06", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}
+{"date": "2026-08-06", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.31 < 0.50"}
