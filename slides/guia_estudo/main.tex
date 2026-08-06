@@ -1977,6 +1977,38 @@ por desenho. \emph{(Tese: Fig.~4.6, o funil; Apêndice A: o pipeline completo nu
 impressionante e frágil."
 \end{frame}
 
+\begin{frame}{Dois defeitos que NENHUM teste podia apanhar --- e porquê}
+\scriptsize
+Se te perguntarem \emph{"como sabe que o sistema está certo?"}, estes dois são a melhor resposta:
+mostram que sabes \key{onde os testes não chegam}.
+\vspace{1mm}
+
+\begin{block}{\scriptsize 1. O alerta que se contradizia a si próprio (9 em 30)}
+\scriptsize
+A linha de pares dizia \emph{"outros do setor moveram-se no mesmo sentido"}; \key{duas linhas abaixo}
+a decomposição dizia \emph{"a maior parte foi da empresa"}. Pior caso: \key{AMD $-13{,}23\%$} com
+pares a $-2{,}0\%$, $-1{,}9\%$, $-1{,}4\%$.
+\par\smallskip
+\key{As duas linhas estavam certas}: a comparação testava só a \key{direção}, nunca a
+\key{dimensão}. \textbf{Nenhum teste podia falhar} porque o defeito é da \key{mensagem}, não de um
+componente --- e nenhum componente estava errado. Só aparece a \key{ler alertas inteiros}.
+\end{block}
+
+\begin{block}{\scriptsize 2. O ONNX que rebentou só em produção}
+\scriptsize
+Ciclo de falha a \key{1,4 GB} num contentor de \key{512 MB}: o runner embebia \key{todas} as
+manchetes num só lote, e numa máquina \key{sem estado anterior} todas são novas. Na minha o ficheiro
+de pendentes já existia --- \key{o pico nunca acontecia localmente}.
+\par\smallskip
+\textbf{A parte que vale mais:} ia escrever que fatiar em lotes não altera resultados. \key{Medi, e é
+falso} (com \texttt{int8} o \emph{padding} muda a aritmética, até $0{,}022$ no cosseno). Testei então
+o que interessa: \key{top-3 idêntico em 8/8}. O produto deve os mesmos \key{vizinhos}, não vetores
+iguais ao bit.
+\end{block}
+
+\centering\scriptsize A lição comum: \key{um exit code 0 não é uma verificação}.
+\end{frame}
+
 \begin{frame}{Checklist final: defender com calma}
 \footnotesize
 Consigo responder a tudo isto?

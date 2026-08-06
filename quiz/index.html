@@ -512,6 +512,63 @@ const BANCO = [
  com poucas palavras de conteúdo — aí <b>falha aberto</b>, porque um alerta repetido custa ao
  leitor muito menos do que um alerta em falta.</p>`},
 
+{b:"Decisões que tomei", n:1, t:"aberta",
+ q:"Um alerta que se contradizia a si próprio. O que era, e porque é que nenhum teste o apanhava?",
+ a:`Em <b>9 dos primeiros 30</b> alertas enviados, a linha de pares dizia <i>"outros nomes do setor
+ moveram-se no mesmo sentido"</i> e <b>duas linhas abaixo</b> a decomposição dizia <i>"a maior parte
+ deste movimento foi da empresa"</i>.
+ <p>O caso mais gritante: <b>AMD −13,23%</b> com os pares a <code>−2,0%</code>, <code>−1,9%</code> e
+ <code>−1,4%</code>.</p>
+ <p><b>As duas linhas estavam certas.</b> A comparação com pares testava só a <b>direcção</b> e nunca
+ a <b>dimensão</b> — logo uma direcção partilhada era reportada como uma explicação partilhada.</p>
+ <p><b>Porque é que nenhum teste o apanhava:</b> é um defeito da <b>mensagem</b>, não de um
+ componente. Nenhum componente está errado, portanto nenhum teste de componente pode falhar. Só
+ aparece a ler alertas reais inteiros. Passa a comparar com a mediana dos pares e a dizer
+ <i>"a direcção é partilhada; a dimensão não é"</i>.</p>`},
+
+{b:"Decisões que tomei", n:2, t:"aberta",
+ q:"O ONNX rebentou em produção. Qual foi a causa, e que suposição tua a medição destruiu?",
+ a:`O worker entrava em <b>ciclo de falha a 1,4 GB</b> num contentor de <b>512 MB</b>. Duas hipóteses
+ minhas falharam (threads do motor de inferência; tamanho do ramo de dados). Só uma <b>sonda dentro
+ do próprio contentor</b> mostrou que o arranque eram <b>281 MB</b> — o que punha o pico no
+ <b>ciclo</b>, não na carga.
+ <p><b>Causa:</b> o runner embebia <b>todas</b> as manchetes novas num único lote, e numa máquina sem
+ estado anterior <b>todas</b> são novas. Na minha máquina o ficheiro de pendentes já existia, por
+ isso o pico <b>nunca acontecia localmente</b>.</p>
+ <p><b>A suposição destruída:</b> ia escrever que fatiar em lotes não altera resultados — os mesmos
+ textos, a mesma saída. <b>É falso.</b> Com <code>int8</code>, o <i>padding</i> dentro do lote
+ perturba a aritmética: diferenças até <code>0,022</code> no cosseno.</p>
+ <p>Então testei a propriedade que <b>interessa</b> em vez de a assumir: <b>top-3 idêntico em 8 de
+ 8</b>. O produto deve os mesmos <b>vizinhos</b>, não vectores idênticos ao bit — e só uma dessas
+ duas afirmações sobrevive à medição.</p>`},
+
+{b:"Decisões que tomei", n:2, t:"aberta",
+ q:"Porque é que escreveste os critérios de aceitação ANTES do código?",
+ a:`Porque a camada visível foi reconstruída várias vezes e <b>rejeitada sempre por critério
+ estético</b> — e um critério estético <b>não tem condição de paragem</b>. Há sempre outra disposição
+ para experimentar, e nenhuma versão pode alguma vez ser demonstrada como suficiente.
+ <p>Passaram a ser escritos <b>antes</b>, num documento versionado, cada um formulado de modo a que
+ <b>um teste ou uma medição</b> o decida, nunca uma opinião.</p>
+ <p><b>E a prova de que a disciplina funciona é o seu custo:</b> um dos critérios revelou-se
+ <b>errado</b> assim que a interface existiu — exigia o veredicto antes de <i>qualquer</i> número, o
+ que obrigaria a esconder o <code>−7,64%</code>, que é o <b>facto que a frase explica</b>. Foi
+ corrigido <b>por escrito</b>, com a razão registada.</p>
+ <p><b>Um critério contornado em silêncio é indistinguível de um critério que nunca foi escrito.</b></p>`},
+
+{b:"Decisões que tomei", n:2, t:"aberta",
+ q:"Na decomposição, porque é que o setor é ortogonalizado, e porque é que o \\\"motor\\\" não é a maior componente?",
+ a:`<b>Ortogonalização:</b> um ETF de setor e um índice largo são <b>fortemente colineares</b>. Sem
+ ortogonalizar, os dois coeficientes absorvem a variância um do outro e a repartição
+ mercado/setor/empresa fica <b>arbitrária</b> — os números somam na mesma, mas deixam de significar
+ o que dizem significar.
+ <p><b>O motor:</b> tomar a maior componente <b>em módulo</b> dá a resposta errada sempre que um
+ factor puxa <b>ao contrário</b>. Medido: a NVDA subiu <code>+0,25%</code> com o setor a
+ <code>−1,54%</code>. A maior em módulo era o setor — e dizer "foi o setor" seria <b>falso</b>, porque
+ o setor estava a puxar para baixo num dia que subiu.</p>
+ <p>O que explica um dia positivo são as <b>contribuições positivas</b>. Por isso o motor é a maior
+ componente <b>com o mesmo sinal do total</b>, e as que puxaram ao contrário são reportadas à parte
+ em vez de descartadas.</p>`},
+
 {b:"Decisões que tomei", n:3, t:"aberta",
  q:"Porquê ONNX em produção, e como provaste que é o MESMO modelo?",
  a:`Porque as alternativas ingénuas eram más: manter a stack pesada (a app pública não corre)
