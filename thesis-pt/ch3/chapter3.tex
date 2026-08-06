@@ -565,6 +565,60 @@ $0.38$ & $+4.9\%$  & NVDA, 2023-06-13 & Nvidia unveils new AI accelerator to ext
 igualar a média dos valores arredondados mostrados.}
 \end{table}
 
+\subsection{Atribuir um Movimento: Mercado, Setor e Empresa}
+\label{sec:met_decomposition}
+
+\emph{Para que serve:} responder à segunda das três perguntas, \emph{é a empresa ou é o mercado?} O
+estudo de evento acima mede o que se seguiu a um acontecimento; isto mede de onde veio o movimento de
+hoje. São instrumentos diferentes e a tese mantém-nos separados: o estudo de evento olha para
+\emph{a frente} a partir do evento com um beta implícito unitário, e fornece o rótulo da tarefa de
+triagem, ao passo que a decomposição explica um movimento \emph{contemporâneo} com betas estimados
+apenas sobre dados anteriores.
+
+Um modelo de um só fator atribuiria à empresa tudo o que o índice não explica, o que para uma ação
+tecnológica num dia puxado pela tecnologia é simplesmente errado. O sistema usa por isso dois fatores,
+o índice de mercado e um ETF de setor:
+\begin{equation}
+r_t \;=\; \alpha \;+\; \beta_m\,r^{m}_t \;+\; \beta_s\,\tilde r^{\,s}_t \;+\; \varepsilon_t ,
+\label{eq:decomp}
+\end{equation}
+onde $\tilde r^{\,s}_t$ é o retorno do setor \emph{ortogonalizado} contra o mercado. A ortogonalização
+não é cosmética: um ETF de setor e um índice largo são fortemente colineares, e sem ela os dois
+coeficientes absorvem a variância um do outro e a repartição torna-se arbitrária. As três
+contribuições reportadas, $\beta_m r^{m}_t$, $\beta_s \tilde r^{\,s}_t$ e o resíduo $\varepsilon_t$,
+somam o retorno observado por construção, que é o que permite ao alerta enunciá-las sem o risco de uma
+linha que não fecha. Todos os betas são ajustados numa janela estritamente \emph{anterior} ao dia que
+se explica, pela mesma razão anti-lookahead do detetor.
+
+\paragraph{Encolher o beta em vez de o cortar.} Um beta estimado sobre vinte retornos diários é
+ruidoso, e um beta ruidoso produz uma atribuição confiante e errada. A primeira implementação cortava
+a estimativa em $\pm 4$; medido com dados reais, a AMD deu $\hat\beta = 4,43$ numa janela volátil,
+caiu pelo corte para um recurso silencioso de $\beta = 1$, e atribuiu à empresa a totalidade do
+movimento de $-8,5\%$. Um limite rígido é exatamente o tipo de constante por justificar que este
+trabalho remove noutros sítios: não melhora a estimativa, substitui-a. Um peso de encolhimento fixo,
+na tradição de \textcite{blume1971risk}, também não serve aqui, porque encolhe um beta bem estimado
+tanto como um mal estimado; num caso sintético com uma ação a mover-se exatamente ao dobro do mercado,
+um peso fixo de dois terços devolve $1,67$ onde a verdade é $2,0$. O sistema encolhe antes na direção
+de um prior, em proporção à \emph{imprecisão} da estimativa \autocite{vasicek1973beta},
+\begin{equation}
+\beta \;=\; w\,\hat\beta + (1-w)\,\beta_{\text{prior}},
+\qquad
+w \;=\; \frac{\sigma^2_{\text{prior}}}{\sigma^2_{\text{prior}} + \mathrm{SE}^2(\hat\beta)} ,
+\label{eq:vasicek}
+\end{equation}
+pelo que um ajuste limpo fica intacto ($\mathrm{SE}\!\to\!0 \Rightarrow w\!\to\!1$) e um ruidoso recai
+sobre o prior. O ajuste é contínuo em vez de tudo-ou-nada, e a dispersão do prior é uma grandeza
+económica, a dispersão dos betas entre ações, e não um limiar escolhido para o exemplo dar certo.
+
+\paragraph{Nomear o motor do movimento.} Reportar que fator moveu a ação parece trivial e não é. Tomar
+a maior componente em valor absoluto dá a resposta errada sempre que um fator puxa \emph{contra} o
+movimento observado: num dia medido a Nvidia subiu $+0,25\%$ enquanto o seu setor contribuiu com
+$-1,54\%$, pelo que a maior componente em módulo era o setor, e dizer ``foi o setor'' teria sido falso.
+O que explica um dia positivo são as contribuições positivas. O motor é por isso a maior componente
+\emph{com o mesmo sinal do total}, e as componentes que puxaram ao contrário são reportadas à parte em
+vez de descartadas, porque uma ação que subiu enquanto o seu setor caía é precisamente o caso de que o
+leitor deve ser informado.
+
 \subsection{Triagem de Materialidade: um Modelo de Severidade Treinado}
 \label{sec:met_triage}
 

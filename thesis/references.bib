@@ -1,5 +1,5 @@
 %% references.bib — APENAS entradas verificadas (docs/decisions/citation_log.md, §6.4).
-%% 59 entradas, todas com identificador resolúvel (DOI, arXiv, ISBN ou URL canónico).
+%% 61 entradas, todas com identificador resolúvel (DOI, arXiv, ISBN ou URL canónico).
 %% Verificação faseada: 2026-06-21 a 2026-08-04 (data por entrada no citation_log).
 %% Backend: biber; estilo: authoryear-comp. Partilhado com thesis-pt/ (uma só fonte).
 %%
@@ -655,4 +655,30 @@
   volume    = {20},
   pages     = {53--65},
   doi       = {10.1016/0377-0427(87)90125-7}
+}
+
+%% Encolhimento de beta. Verificados a 2026-08-05 pelo protocolo §6.4 (Crossref, campo a campo):
+%% titulo, autor, revista, volume, numero, paginas e ano conferem com o registo canonico.
+%% O proprio codigo (correlation_engine/decomposition.py) trazia o aviso de que estas duas
+%% referencias tinham de ser verificadas antes de entrarem na tese.
+@article{vasicek1973beta,
+  author    = {Vasicek, Oldrich A.},
+  title     = {A Note on Using Cross-Sectional Information in {B}ayesian Estimation of Security Betas},
+  journal   = {The Journal of Finance},
+  year      = {1973},
+  volume    = {28},
+  number    = {5},
+  pages     = {1233--1239},
+  doi       = {10.1111/j.1540-6261.1973.tb01452.x}
+}
+
+@article{blume1971risk,
+  author    = {Blume, Marshall E.},
+  title     = {On the Assessment of Risk},
+  journal   = {The Journal of Finance},
+  year      = {1971},
+  volume    = {26},
+  number    = {1},
+  pages     = {1--10},
+  doi       = {10.1111/j.1540-6261.1971.tb00584.x}
 }

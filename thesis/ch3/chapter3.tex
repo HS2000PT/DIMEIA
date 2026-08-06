@@ -558,6 +558,61 @@ $0.38$ & $+4.9\%$  & NVDA, 2023-06-13 & Nvidia unveils new AI accelerator to ext
 average of the rounded values shown.}
 \end{table}
 
+\subsection{Attributing a Move: Market, Sector and Company}
+\label{sec:met_decomposition}
+
+\emph{What it is for:} answering the second of the three questions, \emph{is this the company or the
+market?} The event study above measures what followed an event; this measures where today's move came
+from. They are different instruments and the thesis keeps them apart: the event study looks
+\emph{forward} from the event with an implicit unit beta, and supplies the label for the triage task,
+whereas the decomposition explains a \emph{contemporaneous} move with betas estimated only on prior
+data.
+
+A single-factor market model would attribute everything not explained by the index to the company,
+which for a technology stock on a technology-led day is plainly wrong. The system therefore uses two
+factors, the market index and a sector ETF:
+\begin{equation}
+r_t \;=\; \alpha \;+\; \beta_m\,r^{m}_t \;+\; \beta_s\,\tilde r^{\,s}_t \;+\; \varepsilon_t ,
+\label{eq:decomp}
+\end{equation}
+where $\tilde r^{\,s}_t$ is the sector return \emph{orthogonalised} against the market. The
+orthogonalisation is not cosmetic: a sector ETF and a broad index are strongly collinear, and without
+it the two coefficients absorb each other's variance and the split becomes arbitrary. The three
+reported contributions, $\beta_m r^{m}_t$, $\beta_s \tilde r^{\,s}_t$ and the residual
+$\varepsilon_t$, sum to the observed return by construction, which is what allows the alert to state
+them without the risk of a line that does not add up. Every beta is fitted on a window strictly
+\emph{preceding} the day being explained, for the same anti-lookahead reason as the detector.
+
+\paragraph{Shrinking the beta rather than clipping it.} A beta estimated on twenty daily returns is
+noisy, and a noisy beta produces a confident and wrong attribution. The first implementation clipped
+the estimate at $\pm 4$; measured on real data, AMD produced $\hat\beta = 4.43$ in a volatile window,
+fell through the clip into a silent fallback of $\beta = 1$, and attributed the entire $-8.5\%$ move to
+the company. A hard bound is exactly the kind of unjustified constant this work removes elsewhere: it
+does not improve the estimate, it replaces it. A fixed shrinkage weight, in the tradition of
+\textcite{blume1971risk}, is also unsatisfactory here, because it shrinks a well-estimated beta as
+hard as a poorly estimated one; on a synthetic case with a ticker moving at exactly twice the market,
+a fixed two-thirds weight returns $1.67$ where the truth is $2.0$. The system instead shrinks towards
+a prior in proportion to the \emph{imprecision} of the estimate \autocite{vasicek1973beta},
+\begin{equation}
+\beta \;=\; w\,\hat\beta + (1-w)\,\beta_{\text{prior}},
+\qquad
+w \;=\; \frac{\sigma^2_{\text{prior}}}{\sigma^2_{\text{prior}} + \mathrm{SE}^2(\hat\beta)} ,
+\label{eq:vasicek}
+\end{equation}
+so a clean fit is left alone ($\mathrm{SE}\!\to\!0 \Rightarrow w\!\to\!1$) and a noisy one falls back
+towards the prior. The adjustment is continuous rather than all-or-nothing, and the prior dispersion is
+an economic quantity, the spread of betas across stocks, not a threshold chosen to make an example
+work.
+
+\paragraph{Naming the driver.} Reporting which factor drove a move looks trivial and is not. Taking the
+largest component in absolute value gives the wrong answer whenever a factor pulls \emph{against} the
+observed move: on a measured day Nvidia rose $+0.25\%$ while its sector contributed $-1.54\%$, so the
+largest component by magnitude was the sector, and reporting ``the sector'' would have been false. What
+explains a positive day are the positive contributions. The driver is therefore the largest component
+\emph{sharing the sign of the total}, and components that pulled the other way are reported separately
+rather than discarded, because a stock that rose while its sector fell is precisely the case a reader
+should be told about.
+
 \subsection{Materiality Triage: a Trained Severity Model}
 \label{sec:met_triage}
 
