@@ -121,7 +121,7 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 
 ## Project status
 **Validated and submission-ready (pending human sign-off).** Both triggers are proven end to end;
-**202 automated tests** + lint green. The core components — including a **materiality-triage model trained
+**626 automated tests** + lint green. The core components — including a **materiality-triage model trained
 by the author** on 79,753 multi-year FNSPID examples (RQ4; triage evidence, never a forecast) — are
 evaluated on **real data**, and the statistics reproduce exactly from versioned scripts. The **six-chapter
 dissertation** compiles cleanly (`thesis/main.pdf`, 113 pp, 0 errors), with **61 references each verified by
@@ -141,7 +141,8 @@ slides/        defence slides (Beamer, 17 frames)
 investigator/  system code, one package per component (investigator/triage/ = the trained ML component, RQ4)
 models/        trained triage models (joblib, versioned; context-only variant runs in production)
 notebooks/     investigator_walkthrough.ipynb — hands-on tour of the 3 components, executed & committed
-app/           streamlit_app.py — single-page live dashboard (tabs per ticker) over investigator/
+app/           dashboard.py — the deployed v3 dashboard (card grid, one per company);
+               streamlit_app.py is the v1, kept as a record and no longer served
 deploy/        VM watch mode: systemd unit + setup script (docs/design/vm_watch.md)
 run/           double-click launchers (dashboard/demo/tests/thesis)
 .vscode/       click-to-run: Run & Debug configs + tasks + recommended extensions

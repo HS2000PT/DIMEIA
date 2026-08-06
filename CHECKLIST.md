@@ -15,11 +15,23 @@
       "notable", Sector check + Possible explanation). Nota: o yfinance está a responder nos
       runners neste momento, por isso a cadeia de fallback fica de reserva silenciosa — se o
       Yahoo voltar a bloquear, o log dirá `[precos …] servido por …`.
-- [ ] **Streamlit: apagar e recriar a app com Python 3.12** (Advanced settings ao criar —
-      NÃO é o defeito). Causa confirmada (2026-07-11): em Python 3.14 os pins pandas/numpy
-      não têm wheels, a instalação falha em silêncio (~45 min) e a app arranca sem plotly
-      no ambiente base da plataforma. Detalhe: `docs/design/deployment.md` (aviso no topo).
-- [ ] **Streamlit: Sharing → público** — logo a seguir a recriar; verificar em janela anónima.
+- [x] ~~**Streamlit: recriar a app / torná-la pública**~~ — **OBSOLETO desde a sessão 44:** a
+      produção passou para o **Heroku** (dois dynos Basic, release **v17**), e já não há app no
+      Streamlit Community Cloud para recriar nem para tornar pública. O diagnóstico fica como
+      registo, porque continua verdadeiro sobre aquela plataforma: em Python 3.14 os pins de
+      pandas/numpy não têm wheels, a instalação falha **em silêncio** (~45 min) e a app arranca
+      sem plotly. Detalhe em `docs/design/deployment.md`.
+
+### ⚠️ Segurança — o mais urgente da lista
+- [ ] **Rodar 4 credenciais expostas.** Por esta ordem:
+      1. **PAT do GitHub** — tem `admin: true`, muito mais largo do que o write-back precisa;
+      2. **Finnhub** — **fuga nova, confirmada a 2026-08-06**: a mensagem das `HTTPError` inclui
+         o URL do pedido, e o URL leva o token, portanto a chave ficou escrita centenas de vezes
+         nos registos do Heroku. O código já mascara (`sem_segredos`), mas **a máscara não
+         desfaz esta fuga**;
+      3. **Chave da API do Heroku**;
+      4. **AlphaVantage**.
+      Depois de rodar: `heroku config:set` para as novas, e confirmar que o worker recupera.
 - [x] ~~**VM Oracle Free (para alertas em minutos)**~~ — **SUPERADO a 2026-08-02.** O que isto
       queria resolver (latência de 1-2 h do cron do GitHub) está resolvido de outra maneira: o
       **worker do Heroku corre em ciclo de 60 s**, sempre ligado, desde a sessão 44. A VM deixa

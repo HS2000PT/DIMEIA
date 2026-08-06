@@ -43,20 +43,25 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   **resumo diário ao fecho** (os 10 tickers, honesto em dias calmos). Corre também de manhã e
   aos fins de semana (só notícias). Produtores: modo vigia (VM, ~5 min, com **deteção
   intradiária** via cotação em tempo real) + cron do GitHub como rede de segurança, com dedup
-  partilhado (`docs/design/vm_watch.md`). **KB viva:** cada manchete relevante vira precedente
+  partilhado. Desde a sessão 44 o produtor principal é o **worker do Heroku em ciclo de 60 s**;
+  a VM (`docs/design/vm_watch.md`) fica como alternativa documentada. **KB viva:** cada manchete relevante vira precedente
   dias depois (impacto real a +5d); retrieval com decaimento por idade e idade visível;
   anomalias com **investigação cruzada** ("Possible explanation: …" ou "no public explanation
   yet").
-- **Dashboard público** (<https://investigator-ddc9d8618935.herokuapp.com>): TRÊS ecrãs, um por cada
-  pergunta do posicionamento — *Today* (a watchlist ordenada por quão fora do normal está o
-  dia, com a repartição mercado/setor/empresa na PRÓPRIA linha), *Ticker* (gráfico, a mesma
-  decomposição por extenso, e os alertas exatos do canal, nunca recalculados) e *Method* (os
-  números congelados, incluindo o negativo). Read-only. Construído contra critérios de
-  aceitação escritos ANTES do código (`docs/design/app_acceptance.md`), com 15 testes que SÃO
+- **Dashboard público** (<https://investigator-ddc9d8618935.herokuapp.com>): uma **grelha de
+  cartões**, um por cada uma das 12 empresas, nenhuma privilegiada ao abrir. Cada cartão abre
+  com **uma frase em linguagem comum** e só depois mostra o número que a sustenta; a raridade é
+  dita por **contagem empírica** ("52 dos últimos 250 dias moveram-se tanto ou mais"), nunca por
+  uma probabilidade — converter o *z* exigiria normalidade, e as caudas pesadas fariam esse valor
+  falhar precisamente nos dias que interessam. Um clique abre o detalhe: gráfico com os eventos,
+  a repartição mercado/setor/empresa por extenso, os precedentes, e os alertas **exatos** do
+  canal, nunca recalculados. A avaliação vive numa página só (`?view=method`), com os números
+  congelados **incluindo o negativo**. Read-only. Construído contra critérios de aceitação
+  escritos ANTES do código (`docs/design/dashboard_acceptance.md` §6), com testes que SÃO
   esses critérios. Identidade "The Tail" (um traço que é cauda de jacaré e linha de mercado ao
   mesmo tempo) + slogan "Every move investigated, never predicted.".
-  Keep-alive automático via workflow; opção 24/7 sem hibernação na VM
-  (`deploy/investigator-app.service`).
+  Alojado no **Heroku** (dois dynos Basic, sempre ligados, release v17) — sem hibernação e
+  sem necessidade de keep-alive.
 - **Bot interativo** (`scripts/run_bot.py`): watchlist pessoal por utilizador, SQLite,
   long-polling — sem custos de alojamento.
 
@@ -76,15 +81,16 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   `docs/decisions/page_audit.md`). RQ1–RQ4 respondidas com os números acima; inclui um
   screenshot genuíno do painel único (Cap. 4, Fig. 4.5).
 - **Paper IEEE** (`paper/`): 4 pp, compila 0 erros (destilado da tese validada).
-- **Slides de defesa** (`slides/`): 17 frames (+"The product, live", com o mesmo screenshot).
-- **Guia de estudo ÚNICO** (`slides/guia_estudo/main.pdf`): 83 slides PT-PT — ensina do zero
+- **Slides de defesa** (`slides/`): **25 frames** em EN e 25 em PT, com logótipos reais das
+  tecnologias e das 12 empresas.
+- **Guia de estudo ÚNICO** (`slides/guia_estudo/main.pdf`): **88 slides** PT-PT — ensina do zero
   E contém o guião oral, as perguntas de defesa antecipadas, o mapa dos números congelados e o plano B
   (fonte única de estudo; os antigos caderno/guia rápido foram absorvidos e arquivados).
 - **Notebook** (`notebooks/investigator_walkthrough.ipynb`): os 3 componentes com as próprias
   mãos, executado e commitado com outputs reais.
 
 ### 2.5 Qualidade de engenharia
-- **mais de 600 testes automáticos + ruff**, verdes localmente e no CI (runner limpo a cada push).
+- **626 testes automáticos + ruff**, verdes localmente e no CI (runner limpo a cada push).
 - **Reprodutibilidade:** demo offline num comando (`python scripts/demo.py` reproduz o
   exemplo do Cap. 3, +6,46%); todas as figuras/números da tese saem de scripts versionados;
   ambiente fixado (Python 3.12, `requirements*.txt`).
@@ -98,13 +104,14 @@ RELATORIO_FINAL.md      ← este documento
 README.md               porta de entrada (badges, como correr, estado)
 CHECKLIST.md            SÓ o que falta (lista mínima)
 CLAUDE.md               memória de continuidade entre sessões
-thesis/main.pdf         A TESE (90 pp)               thesis/main.tex + ch1..ch6/
+thesis/main.pdf         A TESE (113 pp)               thesis/main.tex + ch1..ch6/
 paper/                  artigo IEEE (4 pp)
-slides/main.pdf         slides de defesa (17)        slides/guia_estudo/main.pdf (guia único, 71)
+slides/main.pdf         slides de defesa (25)        slides/guia_estudo/main.pdf (guia único, 88)
 investigator/           o pacote do sistema (instalável; um subpacote por componente)
 models/                 modelos de triagem treinados (joblib versionados + metadados JSON)
 notebooks/              investigator_walkthrough.ipynb — os 3 componentes, executado
-app/streamlit_app.py    painel único ao vivo (uma aba por ticker)
+app/dashboard.py        o painel v3 NO AR (grelha de cartões) — streamlit_app.py é a v1,
+                        mantida como registo e já não servida
 scripts/                demo.py · run_alerts.py (produção) · run_bot.py · evaluate*.py ·
                         build_dataset.py · train_triage.py · post_validate.py · build_kb.py
 config/alerts.yaml      watchlist + limiares + gates (a MESMA fonte para runner e app)
@@ -121,7 +128,11 @@ progress/               PLANO_V2 · TRACKER · SESSIONS · DECISIONS (continuida
 ## 4. Como ver tudo a funcionar em 10 minutos
 
 1. `bash scripts/setup_env.sh && python scripts/demo.py` — os dois gatilhos, offline (+6,46%).
-2. Abrir <https://investigator-ddc9d8618935.herokuapp.com> — escolher uma aba de ticker, ver o "Background risk".
+2. Abrir <https://investigator-ddc9d8618935.herokuapp.com> — ler a frase de um cartão antes do
+   número; clicar num para ver o gráfico, a repartição mercado/setor/empresa e os precedentes;
+   e abrir `?view=method` para os números congelados.
+   *(Não procure um "risco de fundo": a v3 retira-o de propósito. É uma probabilidade sobre o
+   futuro, e a regra H2 deste trabalho proíbe-a em vistas de produto.)*
 3. Entrar no canal <https://t.me/InvestiGatorMEIA> — alertas reais em horário de mercado.
 4. Abrir `thesis/main.pdf` — a tese; `docs/evaluation/` — os números com os scripts ao lado.
 5. GitHub → Actions — CI verde + varreduras "Alerts" automáticas (+ branch alerts-history a crescer).
@@ -133,9 +144,15 @@ progress/               PLANO_V2 · TRACKER · SESSIONS · DECISIONS (continuida
 | 1 | Escolher a **licença do código** (MIT/Apache; política de IP do ISEP) | Prof. Luís Gomes |
 | 2 | Confirmar a **redação exata da declaração de uso de IA** + data de entrega | Prof. Luís Gomes / MEIA |
 | 3 | **Leitura final** da tese pelo autor | autor |
-| 4 | Tornar a app Streamlit **pública** de novo (regrediu no último redeploy) | autor (1 clique) |
-| 5 | Afixar a mensagem de onboarding no canal (textos prontos em `going_live.md` §1b) | autor |
-| 6 | 08–09/07: `python scripts/post_validate.py` (maturação das decisões reais) | autor (1 comando) |
+| 4 | **Rodar 4 credenciais** — PAT do GitHub (`admin:true`) primeiro, depois Finnhub, Heroku, AlphaVantage | autor (urgente) |
+| 5 | **Estudo de utilidade** (6–10 pessoas, ~15 min cada) — a única linha em aberto do Cap. 6 | autor (tempo de calendário) |
+| 6 | **Agradecimentos** — a secção tem um TODO, e é a voz do autor, não do assistente | autor |
+| 7 | Afixar a mensagem de onboarding no canal (textos prontos em `telegram_channel.md`) | autor |
+| 8 | De vez em quando: `python scripts/post_validate.py` (maturação das decisões reais) | autor (1 comando) |
+
+> **Fonte única desta lista:** [`CHECKLIST.md`](CHECKLIST.md). Se as duas divergirem, manda o
+> CHECKLIST — dois documentos de estado a discordar sobre o que bloqueia a entrega é pior do que
+> um só, e já aconteceu aqui.
 
 ## 6. Nota de integridade
 

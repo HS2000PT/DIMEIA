@@ -13,7 +13,7 @@ written overview of the whole project, read **[`RELATORIO_FINAL.md`](RELATORIO_F
 | **A dissertação (Português)** | [`thesis-pt/main.pdf`](thesis-pt/main.pdf) |
 | **Project overview + how to run** | [`README.md`](README.md) |
 | **10-minute written summary** | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) |
-| **The live product (dashboard)** | [`app/streamlit_app.py`](app/streamlit_app.py) |
+| **The live product (dashboard)** | [`app/dashboard.py`](app/dashboard.py) — v3, served by the `Procfile` |
 
 ---
 
@@ -27,6 +27,7 @@ written overview of the whole project, read **[`RELATORIO_FINAL.md`](RELATORIO_F
 | IEEE paper (distilled from the thesis) | [`paper/main.pdf`](paper/main.pdf) |
 | Defence slides (short deck) | [`slides/main.pdf`](slides/main.pdf) |
 | Study guide (teaches the thesis from zero, PT-PT) | [`slides/guia_estudo/`](slides/guia_estudo/) |
+| Self-test app (48 questions, phone, works offline) | [`quiz/index.html`](quiz/index.html) |
 
 ---
 
@@ -34,7 +35,7 @@ written overview of the whole project, read **[`RELATORIO_FINAL.md`](RELATORIO_F
 
 | Item | Where |
 |------|-------|
-| Dashboard (Streamlit) | [`app/streamlit_app.py`](app/streamlit_app.py) |
+| Dashboard (Streamlit) | [`app/dashboard.py`](app/dashboard.py) · [`verdict.py`](app/verdict.py) · [`method.py`](app/method.py) · [`tables.py`](app/tables.py) · [`ui_tokens.py`](app/ui_tokens.py) |
 | Alert runner (scan → detect → explain → Telegram) | [`scripts/run_alerts.py`](scripts/run_alerts.py) |
 | Configuration (watchlist, thresholds) | [`config/alerts.yaml`](config/alerts.yaml) |
 | Scheduled scan (GitHub Actions, after US close) | [`.github/workflows/`](.github/workflows/) |

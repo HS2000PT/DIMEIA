@@ -274,11 +274,22 @@ Só duas coisas do passado interessam aqui, e nenhuma delas é um veto:
   slides, guia de estudo, ecrã inicial. É aí que cabem olhos, expressão, personalidade, "marca
   registada".
 
-⚠️ **E já existe uma mascote esquecida no repositório:**
-[`app/assets/investigator.svg`](../app/assets/investigator.svg) — jacaré-detective com
-*deerstalker*, monóculo e lupa, desenhado na sessão 28 e retirado da app na 41 por parecer órfão.
-Pode servir de ponto de partida ou de descarte, mas **deve ser visto antes de se desenhar do
-zero**.
+⚠️ **Já existiu uma mascote, e está recuperável — mas NÃO está no repositório.**
+Correcção a uma afirmação minha de 2026-08-06, que estava errada: eu disse que
+`app/assets/investigator.svg` estava lá esquecido. **Não está.** Foi **apagado** no commit
+`609a30b` ("Auditoria de consistência: 3 restos da marca antiga corrigidos"), e a pasta
+`app/assets/` só tem hoje os ficheiros da marca "The Tail".
+
+O ficheiro continua na história do git (3 252 bytes, jacaré-detective com *deerstalker*, monóculo
+e lupa, desenhado na sessão 28) e recupera-se com:
+
+```bash
+git show 2ce21e4:app/assets/investigator.svg > app/assets/investigator.svg
+```
+
+Vale a pena **ver antes de desenhar do zero** — pode ser o ponto de partida ou um descarte
+informado. Mas quem o for buscar deve saber que foi retirado **de propósito**, por não estar
+ligado a nada depois da mudança de marca.
 
 ### Como fazer isto sem repetir o ciclo
 
