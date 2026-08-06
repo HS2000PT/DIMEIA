@@ -82,3 +82,8 @@ docs/study/responses.csv
 # auditoria de integridade numa violacao de copyright. Fica o README (a lista do que
 # descarregar) e fica o RELATORIO da auditoria; as fontes nao.
 docs/decisions/citation_pdfs/*.pdf
+
+# Instantaneo da grelha: artefacto GERADO, com carimbo de tempo. Versiona-lo poria no
+# repositorio um retrato do mercado que envelhece em minutos e que alguem leria como actual.
+# Quando a v4 for a serio, quem o escreve e o worker, para o ramo de dados -- nao o repo de codigo.
+data/samples/dashboard_snapshot.json

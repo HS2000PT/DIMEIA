@@ -51,7 +51,7 @@ de aceitação → **só então** código. Estado passo a passo:
 | passo do briefing | estado |
 |---|---|
 | 1. Estudo de mercado | ✅ [`market_study_v4.md`](../docs/design/market_study_v4.md), 786 linhas, 69 achados, 12 produtos |
-| 2. Questionar a stack com números (ficar no Streamlit ou sair) | ❌ **por fazer** |
+| 2. Questionar a stack com números | ✅ **medido 2026-08-06**: 4,92 s → **0,011 s** (ficheiro de 2,4 KB) |
 | 3. `dashboard_v4_acceptance.md` **antes** do código | ⚠️ **rascunho escrito 2026-08-06 — falta ele aprovar/emendar** |
 | 4. Código | ❌ não começado (`app/` tem só a v1 e a v3) |
 

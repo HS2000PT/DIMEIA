@@ -36,6 +36,38 @@ Isto não é opinião e poupa a discussão mais provável. Os quatro agentes do
 Pode sair-se por outras razões (controlo de interacção, transições), mas trocar de framework sem
 pré-computar mantém o defeito.
 
+## 2b. A medição que decide a stack (2026-08-06)
+
+O briefing manda **questionar a tecnologia com números** antes de propor trocá-la, e exige um
+**protótipo pequeno a provar o ganho antes de reescrever seja o que for**. Está feito:
+[`scripts/build_snapshot.py`](../../scripts/build_snapshot.py) pré-computa a grelha inteira com
+**as mesmas funções que a app usa** — se fossem reimplementadas, o ficheiro podia divergir do que
+a app calcularia e ninguém dava por isso.
+
+| caminho | tempo |
+|---|---|
+| Construir o instantâneo a frio, doze tickers, rede real | **4,92 s** |
+| Calcular ao vivo com a cache HTTP já quente (o que a grelha faz hoje) | **0,870 s** |
+| **Ler o instantâneo do disco** | **0,011 s** |
+
+O ficheiro tem **2,4 KB**.
+
+**A leitura, e é a que fecha a discussão mais cara desta linha:** o custo da carga a frio da
+grelha são **doze idas à rede**, e desaparece para **11 ms** de leitura de um ficheiro de 2,4 KB.
+Contra a construção a frio, é uma razão de ~450×; contra a versão com cache quente, 77×.
+
+⚠️ **O que isto NÃO prova.** Mede a **camada de dados**, não a página inteira. A sobrecarga do
+próprio Streamlit — ida ao servidor por interacção, *rerun* do script — continua lá e não é
+medida aqui. O P1 (≤1,5 s) **ainda não está provado**.
+
+Mas muda a pergunta, e essa é a parte útil: depois disto, **todo o orçamento que sobra é
+sobrecarga de framework**, e passa a ser mensurável isoladamente. Portanto:
+
+> **Sair do Streamlit não é a variável que decide o desempenho.** Trocar de framework sem
+> pré-computar mantém o defeito; pré-computar sem trocar de framework remove-o quase todo. A
+> migração tem de se justificar por **controlo de interacção** (transições, estado sem *rerun*),
+> nunca por "é lento" — porque a lentidão está medida e a causa não é essa.
+
 ## 3. A lei do desenho, uma linha
 
 > **A página responde à pergunta antes de mostrar os dados, e nunca faz o utilizador esperar por
