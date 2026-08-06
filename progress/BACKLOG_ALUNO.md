@@ -52,12 +52,17 @@ de aceitação → **só então** código. Estado passo a passo:
 |---|---|
 | 1. Estudo de mercado | ✅ [`market_study_v4.md`](../docs/design/market_study_v4.md), 786 linhas, 69 achados, 12 produtos |
 | 2. Questionar a stack com números (ficar no Streamlit ou sair) | ❌ **por fazer** |
-| 3. `dashboard_v4_acceptance.md` **antes** do código | ❌ **NÃO EXISTE** |
+| 3. `dashboard_v4_acceptance.md` **antes** do código | ⚠️ **rascunho escrito 2026-08-06 — falta ele aprovar/emendar** |
 | 4. Código | ❌ não começado (`app/` tem só a v1 e a v3) |
 
-**O bloqueio é o passo 3**, e é de propósito que bloqueia: é a condição de paragem. O próprio
-briefing diz que **sem ela esta será a oitava versão rejeitada**, e o histórico dá-lhe razão —
-sete foram-no. Escrever esse ficheiro é a próxima acção concreta desta linha, e é barata.
+**O passo 3 tem agora um rascunho:**
+[`dashboard_v4_acceptance.md`](../docs/design/dashboard_v4_acceptance.md) — P1–P5 (desempenho,
+todos com número e forma de medir), C1–C6 (conteúdo) e H1–H4 (honestidade, herdados). **Falta o
+aluno lê-lo e emendá-lo**, e é ele que decide, não quem o escreveu: quem escreveu desenhou a v3 e
+está enviesado, e isso está declarado no topo do documento.
+
+A defesa contra esse enviesamento não é boa vontade — é cada critério ser decidido por **um teste
+ou uma medição**. Onde um critério não for verificável, é mau e deve cair.
 
 **Nota que o estudo de mercado já traz, e poupa uma discussão:** a queixa de "lento" não é CSS
 nem afinação do Streamlit. É **carga a frio** — 8,7 MB de *backfill* analisados em tempo de
