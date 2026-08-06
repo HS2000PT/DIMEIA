@@ -215,6 +215,21 @@ Several limitations remain, stated plainly:
         fifteen tickers (Meta is indexed under its former symbol in the corpus) and headline text only.
   \item \textbf{Proxies.} Relevance is proxied by sector agreement, and the anomaly label is
         volatility-relative, which is why the label-free firing-rate argument is given primacy.
+  \item \textbf{News coverage, now measured rather than asserted.} Earlier statements that the free
+        news tier is limited never said by how much. Over a year of captured headlines across the
+        twelve names, at least one relevant headline was present on $88.5\%$ of the days the detector
+        flagged as unusual ($|z|\ge1.5$; $90.4\%$ at $|z|\ge3.0$). The complement is the share of
+        unusual days on which \emph{no code change helps}: if the provider does not attach a story to
+        the ticker, it never enters the funnel and none of the five gates is ever consulted. This
+        separates two limitations that were previously conflated, what the \emph{design} discards and
+        what the \emph{source} never delivered, and only the first is a decision of this work. The
+        figure is an upper bound, because it asks whether \emph{a} story was present and not whether
+        the \emph{right} one was; establishing the latter needs per-day human judgement. Coverage is
+        also markedly uneven: the worst-covered name reaches only $50\%$ while five names exceed
+        $97\%$, and the worst-covered name is simultaneously the one with the highest headline density,
+        so its coverage arrives in bursts. The obvious explanation, truncation against the provider's
+        per-request ceiling, was tested and rejected: no request window in the corpus came within a
+        third of that ceiling.
   \item \textbf{Short text.} News is represented by headlines only, which limits the semantics captured.
   \item \textbf{Theme, not direction.} Embedding similarity captures theme, not direction, so a retrieved
         cluster can mix up and down moves; the mean impact is theme-level evidence, not a directional

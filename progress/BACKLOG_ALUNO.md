@@ -1,11 +1,31 @@
 # Backlog do aluno — pedidos por trabalhar
 
-> **Estatuto: por analisar.** Registado a **2026-08-05**, tal como o aluno o ditou, para não se
-> perder na mudança de sessão ou de máquina. **Nada aqui foi pensado, estimado ou decidido** — é
-> a lista em bruto, e é de propósito que está em bruto: analisá-la agora seria decidir sozinho
-> coisas que ele quer decidir depois.
+> Registado a **2026-08-05** tal como o aluno o ditou. **Actualizado a 2026-08-06** com o que
+> entretanto foi feito — a versão anterior dizia "nada aqui foi analisado" e isso deixou de ser
+> verdade, e um ficheiro de estado que mente sobre o seu próprio estado é pior do que não existir.
 >
 > Ordem = a ordem em que foi ditada, não prioridade.
+
+## Ponto de situação (2026-08-06)
+
+| # | pedido | estado |
+|---|---|---|
+| 1 | Refazer o painel | **por começar.** Briefing e estudo de mercado prontos |
+| 2 | Literatura com os PDF reais | **à espera dele.** Infra pronta; 44/59 já legíveis, 14 precisam da conta ISEP |
+| 3 | Latência quase-real | **por começar** |
+| 4 | Melhorar o guia | **em curso.** 85 → 88 slides, 3 frames novos |
+| 5 | Rever a escrita | **por começar** |
+| 6 | Varrer TODO que restam | **por começar** |
+| 6bis | Mecanismo de alertas | **⭐ (a) e (b) CORRIGIDOS e na tese. (c) por medir** |
+| 6ter | Comparação de mercado na tese | **material salvo; tese por actualizar** |
+
+**Feito nesta sessão, com prova:** o tecto diário passou a ser servido por **materialidade** e não
+por ordem de chegada (era isto que fazia a notícia da NVDA desaparecer); a repetição da mesma
+história noutras palavras passa a ser apanhada pela **manchete**; e as duas coisas estão escritas
+na tese EN+PT, nos dois decks, no guia e no autoteste, como **caso de falha diagnosticado**.
+
+**O que falta do 6bis, e é o mais valioso que resta:** ninguém mediu **quanto** é que a fonte de
+notícias perde. É a alínea (c), e é o que está a ser feito a seguir.
 
 ---
 

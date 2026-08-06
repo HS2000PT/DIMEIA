@@ -226,6 +226,21 @@ Restam várias limitações, enunciadas com clareza:
   \item \textbf{Indicadores aproximados.} A relevância é aproximada por concordância de setor, e o
         rótulo de anomalia é relativo à volatilidade, razão pela qual o argumento da taxa de disparo
         sem rótulos tem primazia.
+  \item \textbf{Cobertura de notícias, agora medida e não apenas afirmada.} As afirmações anteriores
+        de que o serviço gratuito de notícias é limitado nunca diziam \emph{quanto}. Ao longo de um
+        ano de manchetes captadas sobre os doze nomes, existia pelo menos uma manchete relevante em
+        $88{,}5\%$ dos dias que o detetor assinalou como invulgares ($|z|\ge1{,}5$; $90{,}4\%$ com
+        $|z|\ge3{,}0$). O complemento é a fração de dias invulgares em que \emph{nenhuma correção de
+        código ajuda}: se o fornecedor não associa a história ao ticker, ela nunca entra no funil e
+        nenhum dos cinco \emph{gates} chega a ser consultado. Isto separa duas limitações antes
+        confundidas, o que o \emph{desenho} descarta e o que a \emph{fonte} nunca entregou, e só a
+        primeira é uma decisão deste trabalho. O valor é um limite superior, porque pergunta se
+        existia \emph{uma} história e não se existia a \emph{certa}; estabelecer a segunda exigiria
+        julgamento humano dia a dia. A cobertura é também marcadamente desigual: o nome pior coberto
+        chega apenas a $50\%$ enquanto cinco nomes ultrapassam $97\%$, e o pior coberto é
+        simultaneamente o de maior densidade de manchetes, ou seja a sua cobertura chega aos
+        arrancos. A explicação óbvia, truncagem contra o tecto de itens por pedido do fornecedor, foi
+        testada e rejeitada: nenhuma janela de pedido do corpus chegou a um terço desse tecto.
   \item \textbf{Texto curto.} As notícias são representadas apenas por manchetes, o que limita a
         semântica captada.
   \item \textbf{Tema, não direção.} A similaridade por embeddings capta o tema, não a direção, pelo
