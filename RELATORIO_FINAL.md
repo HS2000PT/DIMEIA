@@ -71,8 +71,8 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
 | Loop de pós-validação ao vivo | decisões reais registadas e rotuladas ao maturar | `live_monitoring.md` |
 
 ### 2.4 Documentos académicos
-- **Tese** (`thesis/`, EN-GB): 6 capítulos canónicos MEIA, **90 pp, 0 erros, 0 citações
-  indefinidas, 59/59 referências verificadas uma a uma** (auditoria em
+- **Tese** (`thesis/`, EN-GB): 6 capítulos canónicos MEIA, **113 pp, 0 erros, 0 citações
+  indefinidas, 61/61 referências verificadas uma a uma** (auditoria em
   `docs/decisions/page_audit.md`). RQ1–RQ4 respondidas com os números acima; inclui um
   screenshot genuíno do painel único (Cap. 4, Fig. 4.5).
 - **Paper IEEE** (`paper/`): 4 pp, compila 0 erros (destilado da tese validada).

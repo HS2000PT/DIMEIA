@@ -32,14 +32,14 @@ resultados negativos). São cerca de 20 páginas e dão o essencial.
 
 | | |
 |---|---|
-| Tese (EN), 107 pp | `thesis/main.pdf` |
-| Tese (PT), 111 pp | `thesis-pt/main.pdf` — tradução fiel, mantida em sincronia |
+| Tese (EN), 113 pp | `thesis/main.pdf` |
+| Tese (PT), 115 pp | `thesis-pt/main.pdf` — tradução fiel, mantida em sincronia |
 | Slides de defesa, 23 | `slides/main.pdf` |
 | Sistema a correr | ⚠️ <https://investigator-ddc9d8618935.herokuapp.com/> |
 | Canal de alertas | ⚠️ <https://t.me/InvestiGatorMEIA> |
 | Código | ⚠️ <https://github.com/HS2000PT/DIMEIA> |
 
-A tese tem **oito estudos de caso** e **59 referências**, todas verificadas contra a fonte
+A tese tem **oito estudos de caso** e **61 referências**, todas verificadas contra a fonte
 primária. O sistema corre 24 horas por dia e o código tem mais de 600 testes automáticos.
 
 **O que eu gostaria que olhasse com atenção crítica**

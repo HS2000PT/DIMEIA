@@ -165,7 +165,7 @@ medido; 240+ alertas reais enviados; o funil de gates; deriva; predição confor
 ## 8. Como saber que acabaste
 
 - Os critérios que **tu** escreveste em §4.3, todos verificados.
-- `pytest` verde (~618 testes hoje) e `ruff check .` limpo.
+- `pytest` verde (~626 testes hoje) e `ruff check .` limpo.
 - `git status --porcelain models/ docs/evaluation/evaluation_{triage,results,anomaly}.md`
   **vazio**.
 - Capturas nas duas resoluções, comparadas lado a lado com a v3.

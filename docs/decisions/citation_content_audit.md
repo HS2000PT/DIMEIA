@@ -226,9 +226,9 @@ são indistinguíveis no ecrã.
 
 > *"Verificaram que as citações sustentam o que afirmam, ou só que existem?"*
 >
-> Ambas, e separadamente. A existência está no registo de citações: 52 entradas, cada uma com
+> Ambas, e separadamente. A existência está no registo de citações: 61 entradas, cada uma com
 > identificador verificado contra a fonte, incluindo uma **rejeição** documentada (MacKinlay 1997, DOI
-> irresolúvel). O conteúdo está nesta auditoria: as 122 instâncias foram lidas contra o que a obra citada
+> irresolúvel). O conteúdo está nesta auditoria: as 129 instâncias foram lidas contra o que a obra citada
 > estabelece. Encontrei duas afirmações esticadas — um survey de 2014 a que se atribuía uma geração de
 > modelos de 2019, e um critério atribuído a autores que não o elegem — e corrigi ambas **enfraquecendo a
 > afirmação**, nunca acrescentando uma fonte que dissesse o que me convinha.

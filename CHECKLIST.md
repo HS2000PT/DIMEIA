@@ -20,15 +20,16 @@
       não têm wheels, a instalação falha em silêncio (~45 min) e a app arranca sem plotly
       no ambiente base da plataforma. Detalhe: `docs/design/deployment.md` (aviso no topo).
 - [ ] **Streamlit: Sharing → público** — logo a seguir a recriar; verificar em janela anónima.
-- [ ] **VM Oracle Free (para alertas em minutos)** — criar conta + VM e correr
-      `bash deploy/setup_vm.sh` (guia passo-a-passo: `docs/design/vm_watch.md`). Até lá, o cron
-      do GitHub cobre com latência ~1-2 h. *Testável já no teu PC:*
-      `python scripts/run_alerts.py --watch`.
+- [x] ~~**VM Oracle Free (para alertas em minutos)**~~ — **SUPERADO a 2026-08-02.** O que isto
+      queria resolver (latência de 1-2 h do cron do GitHub) está resolvido de outra maneira: o
+      **worker do Heroku corre em ciclo de 60 s**, sempre ligado, desde a sessão 44. A VM deixa
+      de ser precisa. `deploy/setup_vm.sh` e `docs/design/vm_watch.md` ficam como registo e como
+      caminho alternativo se um dia o Heroku sair de cena.
 - [ ] **Afixar a mensagem de onboarding no canal** + descrição (textos prontos:
       `docs/design/going_live.md` §1b).
 
 ### Académico (bloqueia a submissão)
-- [ ] **Leitura final das teses** (`thesis/main.pdf` 90 pp · `thesis-pt/main.pdf` 92 pp) — o texto é teu para defender.
+- [ ] **Leitura final das teses** (`thesis/main.pdf` 113 pp · `thesis-pt/main.pdf` 115 pp) — o texto é teu para defender.
 - [ ] **Licença do código** com o Prof. Luís Gomes (MIT/Apache; política de IP do ISEP) +
       ficheiro `LICENSE`.
 - [ ] **Redação exata da declaração de uso de IA** (MEIA/ISEP) + **data de entrega** — confirmar
