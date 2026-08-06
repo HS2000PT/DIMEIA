@@ -325,6 +325,32 @@ the context features, the pipeline behaves exactly as before. The deployed varia
 only, so it runs without the heavy embedding stack, and the alert line always names the evidence for what
 it is: triage over historical cases, not a forecast.
 
+\paragraph{Budgeting by materiality rather than by arrival.} A daily cap of two news alerts per
+company protects the reader from fatigue, but a cap is only as good as the order in which it is
+applied. Until August 2026 the runner walked each day's headlines in the order the feed returned
+them, so two immaterial stories in the morning could exhaust a company's budget and a genuinely
+material story that afternoon was discarded without trace. The fault was found in operation rather
+than in testing, on a day when Nvidia rose sharply on a supply announcement: the channel carried
+two lesser stories about that company and never carried the one that moved it. The uncomfortable
+part is that the system already held the right instrument. The triage component of
+Section~\ref{sec:met_triage} exists precisely to rank news by materiality, and
+Chapter~\ref{chap:cases} reports that within a five-alert budget it raises precision from $0.163$
+to $0.632$; the cap simply never consulted it, so the score was measured and then ignored. The cap
+is now served in descending order of the calibrated score. The change is small in code and large in
+meaning: it turns the trained component from something the evaluation measures into something the
+product uses, which is the connection between the RQ4 result and the running system that was
+previously missing.
+
+\paragraph{The same story told twice.} Deduplication keyed on the exact alert text, so one story
+filed by two outlets under different headlines produced two alerts. Alerts are now also compared on
+the content words of the \emph{headline}, above a similarity threshold. That the comparison runs on
+the headline and not on the rendered alert is deliberate and was itself a corrected mistake: the
+alert is largely fixed template, so two genuinely different stories about one company share most of
+their words, and comparing rendered alerts would have suppressed a legitimate second alert in
+silence. The check also declines to judge headlines with very few content words, where any two
+strings agree; there it fails open, because a repeated alert costs the reader far less than a
+missing one.
+
 \section{Explanation and Delivery}
 \label{sec:investigator_xai}
 

@@ -368,6 +368,34 @@ Gradient boosting & 0.469 & 0.551 \\
 \end{block}
 \end{frame}
 
+\begin{frame}{The bug that showed the model was never deciding}
+\small
+\begin{columns}[T]
+\column{0.5\textwidth}
+\textbf{What happened.} Nvidia rose sharply on a supply announcement. The channel carried
+\textbf{two lesser stories} about Nvidia that day and \textbf{never carried that one}.
+\medskip
+
+\textbf{Why.} The daily cap of two alerts per company was served \textbf{in arrival order}. Two
+immaterial morning stories exhausted the budget; the afternoon story was dropped \textbf{without
+a trace in any log}.
+\column{0.5\textwidth}
+\begin{block}{\small The uncomfortable part}
+\small The instrument was already there. Triage exists to rank by materiality, and lifts
+precision from $0.163$ to $\mathbf{0.632}$ inside a 5-alert budget --- and \textbf{the cap never
+consulted it}. The score was measured, then ignored.
+\end{block}
+\smallskip
+{\footnotesize The cap is now served by descending calibrated score. Small in code; it makes the
+trained component \textbf{decide} rather than merely be \textbf{measured}.}
+\end{columns}
+\vfill
+{\footnotesize\textbf{And the fix had its own bug.} Comparing \emph{rendered alerts} to catch
+repeated stories collides on shared template, so two \emph{different} stories would silently
+suppress one another. Caught by an existing test. It now compares \textbf{headlines}, and fails
+\textbf{open} when a headline is too short to judge.}
+\end{frame}
+
 \begin{frame}{Result 5: what the system does \emph{not} know}
 \small Four studies that examine the system from outside. Each ends in a decision \textbf{not} to
 change production, taken on the evidence. The fourth, multi-signal convergence, adapted from

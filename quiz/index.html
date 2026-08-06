@@ -487,6 +487,31 @@ const BANCO = [
  <b>Um alerta reproduzido não é um alerta enviado</b>, e a interface não pode deixar
  confundir os dois.</p>`},
 
+{b:"Decisões que tomei", n:1, t:"aberta",
+ q:"O dia em que a NVDA subiu e o alerta nunca chegou. O que aconteceu, e o que é que isso revelou?",
+ a:`O tecto diário (2 alertas por empresa) era servido por <b>ordem de chegada</b>. Duas
+ histórias irrelevantes de manhã gastavam o orçamento e a notícia que moveu a acção era
+ descartada à tarde <b>sem deixar rasto</b>.
+ <p><b>O que isso revelou é a parte que interessa:</b> o sistema já tinha o instrumento certo. O
+ modelo de triagem existe exactamente para ordenar por materialidade — dentro de um orçamento de
+ 5 alertas eleva a precisão de <code>0,163</code> para <code>0,632</code> — e o tecto
+ <b>nunca o consultava</b>. A pontuação era medida e depois ignorada.</p>
+ <p>Agora o tecto é servido por ordem decrescente da pontuação calibrada. É pouco código e muito
+ significado: o componente treinado deixa de ser só <b>avaliado</b> e passa a <b>decidir</b> — era
+ essa a ligação que faltava entre o resultado da RQ4 e o produto a funcionar.</p>`},
+
+{b:"Decisões que tomei", n:2, t:"aberta",
+ q:"Ao corrigir a repetição de notícias introduziste um defeito pior. Qual, e como o apanhaste?",
+ a:`A primeira versão comparava o <b>texto do alerta renderizado</b>. Mas o alerta é quase todo
+ <b>template</b> (cabeçalho, linhas de precedentes, a nota de não-previsão), portanto duas
+ notícias <b>genuinamente diferentes</b> da mesma empresa partilham a maior parte das palavras —
+ e a segunda seria suprimida <b>em silêncio</b>.
+ <p>Ou seja: a correcção reproduzia o defeito que estava a corrigir, ao contrário.</p>
+ <p>Apanhou-o <b>um teste que já existia</b>, o do tecto diário: passou a devolver 1 alerta onde
+ esperava 2. A comparação passou a correr sobre a <b>manchete</b>, e recusa-se a julgar manchetes
+ com poucas palavras de conteúdo — aí <b>falha aberto</b>, porque um alerta repetido custa ao
+ leitor muito menos do que um alerta em falta.</p>`},
+
 {b:"Decisões que tomei", n:3, t:"aberta",
  q:"Porquê ONNX em produção, e como provaste que é o MESMO modelo?",
  a:`Porque as alternativas ingénuas eram más: manter a stack pesada (a app pública não corre)

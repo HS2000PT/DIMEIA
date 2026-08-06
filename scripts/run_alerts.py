@@ -56,7 +56,8 @@ def load_state(path: str | Path = _STATE, today: date | None = None) -> dict:
 
     today = today or date.today()
     state = {"date": today.isoformat(), "alerted_market": [], "alerted_news": [],
-             "news_count": {}, "opening_sent": False, "summary_sent": False, "bot_offset": None}
+             "news_count": {}, "news_words": {}, "opening_sent": False, "summary_sent": False,
+             "bot_offset": None}
     try:
         raw = json.loads(Path(path).read_text(encoding="utf-8"))
         state["bot_offset"] = raw.get("bot_offset")
@@ -64,6 +65,9 @@ def load_state(path: str | Path = _STATE, today: date | None = None) -> dict:
             state["alerted_market"] = list(raw.get("alerted_market", []))
             state["alerted_news"] = list(raw.get("alerted_news", []))
             state["news_count"] = dict(raw.get("news_count", {}))
+            # Palavras de conteúdo do que já saiu hoje, para apanhar a mesma história escrita
+            # por outro meio. Ausente em estados antigos ⇒ `.get` com defeito, nunca KeyError.
+            state["news_words"] = {k: list(v) for k, v in (raw.get("news_words") or {}).items()}
             state["opening_sent"] = bool(raw.get("opening_sent", False))
             state["summary_sent"] = bool(raw.get("summary_sent", False))
     except (OSError, ValueError):
@@ -87,6 +91,56 @@ def news_key(ticker: str, text: str) -> str:
     from investigator.explanation_engine.explainer import plain_text
 
     return hashlib.sha1(f"{ticker}|{plain_text(text)}".encode()).hexdigest()[:12]
+
+
+# Palavras vazias EN+PT. "as" serve as duas línguas, por isso aparece uma vez só — estava
+# escrita duas vezes e o conjunto engolia a repetição em silêncio (apanhado pelo ruff).
+_VAZIAS = {
+    "the", "a", "an", "of", "to", "in", "on", "for", "and", "or", "as", "at", "by", "is",
+    "its", "it", "with", "from", "after", "over", "amid", "says", "said", "will", "be",
+    "que", "de", "do", "da", "dos", "das", "e", "o", "os", "um", "uma", "no", "na",
+}
+
+
+def conteudo(texto: str) -> set[str]:
+    """Palavras de conteúdo de uma manchete, para comparar histórias entre si."""
+    import re
+
+    palavras = re.findall(r"[a-z0-9]+", texto.lower())
+    return {p for p in palavras if len(p) > 2 and p not in _VAZIAS}
+
+
+def quase_repetida(manchete: str, anteriores: list[list[str]], limiar: float = 0.6) -> bool:
+    """A mesma história, escrita por outro meio?
+
+    `news_key` é um hash do texto EXACTO, e por isso só apanha a repetição literal. A mesma
+    história publicada por dois sítios com títulos diferentes gera duas chaves distintas e
+    chega ao canal duas vezes — foi exactamente o que o aluno reportou a 2026-08-05.
+
+    Jaccard sobre palavras de conteúdo apanha esse caso sem precisar de embeddings, e mantém
+    esta função **pura** (o embedder vive no scan, não aqui). O limiar é 0,6 e não 0,9 porque
+    duas redacções da mesma história partilham os nomes próprios e os números mas trocam metade
+    dos verbos; 0,9 só apanharia o que o hash já apanha.
+
+    ⚠️ **Compara MANCHETES, nunca o texto do alerta.** A primeira versão desta função comparava
+    o alerta renderizado e teria sido pior do que o defeito que corrige: o alerta é quase todo
+    *template* (cabeçalho, linhas de precedentes, a nota de não-previsão), portanto duas notícias
+    **diferentes** do mesmo ticker partilham a maior parte das palavras e uma delas seria
+    suprimida em silêncio. O teste do tecto diário apanhou isto.
+
+    E exige um mínimo de palavras: com uma ou duas, qualquer par bate e a medida não significa
+    nada. Abaixo disso **falha aberto** — mais vale um alerta repetido do que um alerta a menos.
+    """
+    novo = conteudo(manchete)
+    if len(novo) < 4:
+        return False
+    for anterior in anteriores:
+        velho = set(anterior)
+        if len(velho) < 4:
+            continue
+        if len(novo & velho) / len(novo | velho) >= limiar:
+            return True
+    return False
 
 
 def seed_state_from_shared_history(state: dict, entries: list, today: str) -> None:
@@ -113,12 +167,29 @@ def seed_state_from_shared_history(state: dict, entries: list, today: str) -> No
 
 
 def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]],
-                      state: dict, max_per_ticker: int = 2) -> list[tuple[str, str]]:
+                      state: dict, max_per_ticker: int = 2,
+                      materiality: dict[str, float] | None = None,
+                      headlines: dict[str, str] | None = None) -> list[tuple[str, str]]:
     """Puro: mantém só o que ainda NÃO foi alertado hoje e marca-o no estado.
 
     Notícias têm um TETO por ticker por dia (`max_per_ticker`, config
     `news.max_per_ticker_per_day`) — anti-fadiga: 12 alertas/dia do mesmo ticker treinam
     o utilizador a ignorar o canal.
+
+    ⚠️ **O tecto é servido por MATERIALIDADE, não por ordem de chegada** (2026-08-05).
+    Antes disto as notícias eram percorridas pela ordem em que chegavam: duas manchetes
+    irrelevantes de manhã gastavam a quota e a que interessava era **descartada em silêncio**
+    à tarde. Foi assim que o dia em que a NVDA subiu com a notícia da SpaceX passou sem alerta,
+    enquanto notícias menores do mesmo ticker passaram.
+
+    O mais difícil de defender era que o projecto **já tinha** um modelo treinado para exactamente
+    isto — a triagem da RQ4, precisão 0,632 contra 0,163 num orçamento de 5/dia — e o tecto
+    **não o consultava**. O modelo era avaliado e não decidia nada.
+
+    `materiality` é um canal lateral `{news_key: P(material)}`, o mesmo padrão que `event_times`
+    já usava, para não mudar a forma dos tuplos `(ticker, texto)` que atravessam o runner.
+    **Sem triagem ligada (o defeito por defeito), o dicionário vem vazio e a ordem de chegada
+    é preservada** — ou seja, o comportamento antigo é o caso particular deste.
     """
     keep: list[tuple[str, str]] = []
     for ticker, text in market:
@@ -127,10 +198,28 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
             keep.append((ticker, text))
         else:
             print(f"[{ticker}] já alertado hoje — sem repetição.")
+
+    if materiality:
+        # `sorted` é estável: entre iguais (e entre as que não têm score) a ordem de chegada
+        # mantém-se. As sem score ficam atrás porque não há evidência de materialidade para
+        # lhes dar a quota — e isso fica dito no log, não em silêncio.
+        news = sorted(news, key=lambda tt: -materiality.get(news_key(tt[0], tt[1]), -1.0))
+        ordem = ", ".join(
+            f"{t} {materiality.get(news_key(t, x), float('nan')):.0%}" for t, x in news[:6]
+        )
+        print(f"[noticias] tecto servido por materialidade: {ordem}")
+
+    vistas: dict[str, list[list[str]]] = state.setdefault("news_words", {})
     for ticker, text in news:
         k = news_key(ticker, text)
         if k in state["alerted_news"]:
             print(f"[noticias {ticker}] já alertada hoje — sem repetição.")
+            continue
+        # A quase-repetição compara MANCHETES. Sem manchete no canal lateral não se compara
+        # nada: falha aberto, porque suprimir um alerta por engano é pior do que repetir um.
+        manchete = (headlines or {}).get(k, "")
+        if manchete and quase_repetida(manchete, vistas.get(ticker, [])):
+            print(f"[noticias {ticker}] a mesma história noutras palavras — sem repetição.")
             continue
         if state["news_count"].get(ticker, 0) >= max_per_ticker:
             print(f"[noticias {ticker}] teto diário atingido ({max_per_ticker}) "
@@ -138,6 +227,8 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
             continue
         state["alerted_news"].append(k)
         state["news_count"][ticker] = state["news_count"].get(ticker, 0) + 1
+        if manchete:
+            vistas.setdefault(ticker, []).append(sorted(conteudo(manchete)))
         keep.append((ticker, text))
     return keep
 
@@ -405,13 +496,19 @@ def precedents_are_strong(precedents: list, min_similarity: float) -> bool:
 
 
 def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
-              gate_log: list | None = None) -> list[tuple[str, str]]:
+              gate_log: list | None = None,
+              materiality: dict[str, float] | None = None,
+              headlines: dict[str, str] | None = None) -> list[tuple[str, str]]:
     """Opcional: notícias recentes por ticker -> pares (ticker, alerta) (best-effort).
 
     Qualidade primeiro (revisão 2026-07-11, sobre 27 alertas reais): (1) filtro de
     RELEVÂNCIA — a manchete tem de mencionar a empresa e não pode ser boilerplate de
     mercado; (2) chão de SIMILARIDADE — sem um precedente forte, não há alerta; (3) o
     gate de materialidade regista o P de cada ticker no log (diagnóstico visível).
+
+    `materiality` é um canal lateral opcional `{news_key: P(material)}` que o `filter_new_alerts`
+    usa para servir o tecto diário por importância em vez de por ordem de chegada. Mesmo padrão
+    do `event_times`: não muda a forma dos tuplos que atravessam o runner.
     """
     n = cfg.get("news", {})
     if not n.get("enabled", False):
@@ -546,6 +643,15 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
             # sem alterar a forma dos tuplos (ticker, texto) que atravessam todo o runner.
             if event_times is not None and latest.published_at:
                 event_times[news_key(ticker, text)] = latest.published_at
+            # P(material) da triagem, para o tecto diário poder servir por importância. Só
+            # existe quando o gate está ligado; sem ele o dicionário fica vazio e a ordem de
+            # chegada mantém-se, que é o comportamento de sempre.
+            if materiality is not None and bundle is not None and scored is not None:
+                materiality[news_key(ticker, text)] = float(scored[0])
+            # Manchete original, para a deteção de "mesma história noutras palavras". Tem de
+            # ser a manchete e não o alerta: o alerta é quase todo template.
+            if headlines is not None:
+                headlines[news_key(ticker, text)] = latest.headline
             _gate(ticker, "alerted", latest.headline[:80])
         except Exception as exc:  # noqa: BLE001
             print(f"[saltar noticias {ticker}] {type(exc).__name__}: {exc}")
@@ -1076,8 +1182,13 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     # para "a AAPL teve 135 manchetes relevantes e 0 alertas — qual gate a matou?", porque o
     # registo de decisões só é escrito depois dos gates de frescura e similaridade.
     gate_records: list = []
+    # P(material) por manchete: o tecto diário serve por importância, não por ordem de chegada.
+    materiality: dict[str, float] = {}
+    # Manchete original de cada alerta, para apanhar a mesma história escrita por outro meio.
+    headlines: dict[str, str] = {}
     alerts = filter_new_alerts(
-        market_alerts, scan_news(cfg, event_times, gate_records), state, max_per
+        market_alerts, scan_news(cfg, event_times, gate_records, materiality, headlines),
+        state, max_per, materiality, headlines,
     )
     detected_at = utc_stamp()
     _record_gates_safe(gate_records)

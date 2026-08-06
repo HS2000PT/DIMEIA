@@ -412,3 +412,115 @@ def test_evidencia_do_runner_passa_a_propria_guarda():
     ev = ra._market_evidence("AMD", res, None, "2026-07-28")
     rel = check_faithfulness(template_text(ev), ev)
     assert rel.ok, rel.violations
+
+
+def test_teto_diario_serve_por_materialidade_e_nao_por_ordem_de_chegada(tmp_path):
+    """O caso da NVDA (2026-08-05): a notícia que interessava chegou DEPOIS da quota gasta.
+
+    Duas manchetes irrelevantes de manhã consumiam o tecto e a notícia material da tarde era
+    descartada em silêncio — apesar de existir um modelo de triagem treinado exactamente para
+    ordenar por materialidade, que o tecto não consultava.
+    """
+    from datetime import date
+
+    from scripts.run_alerts import filter_new_alerts, load_state, news_key
+
+    news = [
+        ("NVDA", "analyst note repeats hold rating"),
+        ("NVDA", "seven cheap stocks to watch this week"),
+        ("NVDA", "SpaceX to use Nvidia chips exclusively, says Musk"),
+    ]
+    mat = {
+        news_key("NVDA", news[0][1]): 0.11,
+        news_key("NVDA", news[1][1]): 0.08,
+        news_key("NVDA", news[2][1]): 0.93,
+    }
+
+    st = load_state(tmp_path / "a.json", today=date(2026, 8, 5))
+    com = filter_new_alerts([], news, st, max_per_ticker=2, materiality=mat)
+    textos = [t for _, t in com]
+    assert "SpaceX" in textos[0], "a mais material tem de vir primeiro"
+    assert len(com) == 2
+
+    # Sem o canal de materialidade, o defeito reproduz-se: a que interessa NÃO sai.
+    st2 = load_state(tmp_path / "b.json", today=date(2026, 8, 5))
+    sem = filter_new_alerts([], news, st2, max_per_ticker=2)
+    assert not any("SpaceX" in t for _, t in sem), "sem ranking, a notícia material é descartada"
+
+
+def test_sem_triagem_a_ordem_de_chegada_e_preservada(tmp_path):
+    """A triagem está OFF por defeito: o comportamento antigo tem de ser o caso particular."""
+    from datetime import date
+
+    from scripts.run_alerts import filter_new_alerts, load_state
+
+    news = [("AMD", "primeira"), ("AMD", "segunda"), ("AMD", "terceira")]
+    st = load_state(tmp_path / "c.json", today=date(2026, 8, 5))
+    keep = filter_new_alerts([], news, st, max_per_ticker=2, materiality={})
+    assert [t for _, t in keep] == ["primeira", "segunda"]
+
+
+def test_mesma_historia_noutras_palavras_nao_repete(tmp_path):
+    """`news_key` e hash do texto exacto: dois meios, dois titulos, dois alertas iguais.
+
+    A comparacao e feita sobre a MANCHETE (canal lateral), nunca sobre o texto do alerta --
+    o alerta e quase todo template e duas noticias diferentes colidiriam.
+    """
+    from datetime import date
+
+    from scripts.run_alerts import filter_new_alerts, load_state, news_key
+
+    a_txt, b_txt = "ALERTA A (texto renderizado)", "ALERTA B (texto renderizado)"
+    manchetes = {
+        news_key("NVDA", a_txt): "SpaceX to use Nvidia chips exclusively, says Musk",
+        news_key("NVDA", b_txt): "Musk says SpaceX will use Nvidia chips exclusively",
+    }
+    st = load_state(tmp_path / "d.json", today=date(2026, 8, 5))
+    keep = filter_new_alerts([], [("NVDA", a_txt), ("NVDA", b_txt)], st,
+                             max_per_ticker=2, headlines=manchetes)
+    assert len(keep) == 1, "a segunda e a mesma historia noutras palavras"
+
+
+def test_noticias_diferentes_do_mesmo_ticker_nao_sao_confundidas(tmp_path):
+    """Controlo positivo: o detector nao pode engolir noticias distintas."""
+    from datetime import date
+
+    from scripts.run_alerts import filter_new_alerts, load_state, news_key
+
+    a_txt, b_txt = "ALERTA A", "ALERTA B"
+    manchetes = {
+        news_key("NVDA", a_txt): "SpaceX to use Nvidia chips exclusively, says Musk",
+        news_key("NVDA", b_txt): "Nvidia opens research centre in Israel amid hiring push",
+    }
+    st = load_state(tmp_path / "e.json", today=date(2026, 8, 5))
+    keep = filter_new_alerts([], [("NVDA", a_txt), ("NVDA", b_txt)], st,
+                             max_per_ticker=2, headlines=manchetes)
+    assert len(keep) == 2, "historias diferentes tem de passar as duas"
+
+
+def test_alerta_renderizado_nao_serve_para_deduplicar():
+    """Porque a comparacao NAO pode ser feita sobre o texto do alerta.
+
+    Dois alertas de noticias DIFERENTES partilham quase todo o template. Se a deteccao de
+    quase-repeticao corresse sobre esse texto, o segundo seria suprimido em silencio -- que e
+    o mesmo defeito que este trabalho corrige, ao contrario.
+    """
+    from scripts.run_alerts import conteudo, quase_repetida
+
+    template = ("News alert for NVDA (Nvidia). Similar past cases and their measured impact "
+                "at +1, +3 and +5 days. This is evidence from the past, never a forecast.")
+    a = template + " Headline: SpaceX to use Nvidia chips exclusively."
+    b = template + " Headline: Nvidia opens research centre in Israel."
+    assert quase_repetida(b, [sorted(conteudo(a))]), "sobre o alerta inteiro, colidem"
+
+    # Sobre as MANCHETES, que e como o codigo faz, nao colidem.
+    ha = "SpaceX to use Nvidia chips exclusively, says Musk"
+    hb = "Nvidia opens research centre in Israel amid hiring push"
+    assert not quase_repetida(hb, [sorted(conteudo(ha))]), "sobre a manchete, sao distintas"
+
+
+def test_manchete_curta_falha_aberto():
+    """Com poucas palavras de conteudo qualquer par bate: nao se suprime nada."""
+    from scripts.run_alerts import conteudo, quase_repetida
+
+    assert not quase_repetida("manchete 2", [sorted(conteudo("manchete 1"))])

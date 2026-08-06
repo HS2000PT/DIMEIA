@@ -333,6 +333,33 @@ como antes. A variante em produção usa apenas features de contexto, pelo que c
 embeddings, e a linha do alerta nomeia sempre a evidência pelo que ela é: triagem sobre casos históricos,
 não uma previsão.
 
+\paragraph{Orçamento servido por materialidade e não por ordem de chegada.} Um tecto diário de dois
+alertas de notícia por empresa protege o leitor da fadiga, mas um tecto vale o que vale a ordem por
+que é aplicado. Até Agosto de 2026 o runner percorria as manchetes de cada dia pela ordem em que a
+fonte as devolvia, pelo que duas histórias irrelevantes de manhã podiam esgotar o orçamento de uma
+empresa e uma história genuinamente material da parte da tarde era descartada sem deixar rasto. A
+falha apareceu em operação e não em testes, num dia em que a Nvidia subiu com força na sequência de
+um anúncio de fornecimento: o canal levou duas histórias menores dessa empresa e nunca levou a que
+a moveu. O incómodo é que o sistema já tinha o instrumento certo. O componente de triagem da
+Secção~\ref{sec:met_triage} existe precisamente para ordenar notícias por materialidade, e o
+Capítulo~\ref{chap:cases} reporta que, dentro de um orçamento de cinco alertas, eleva a precisão de
+$0.163$ para $0.632$; o tecto simplesmente nunca o consultava, e por isso a pontuação era medida e
+depois ignorada. O tecto passa a ser servido por ordem decrescente da pontuação calibrada. A
+alteração é pequena em código e grande em significado: transforma o componente treinado de algo que
+a avaliação mede em algo que o produto usa, que era a ligação em falta entre o resultado da RQ4 e o
+sistema em funcionamento.
+
+\paragraph{A mesma história contada duas vezes.} A deduplicação usava como chave o texto exacto do
+alerta, pelo que uma história publicada por dois meios com títulos diferentes produzia dois alertas.
+Os alertas passam também a ser comparados pelas palavras de conteúdo da \emph{manchete}, acima de um
+limiar de semelhança. Que a comparação corra sobre a manchete e não sobre o alerta renderizado é
+deliberado, e foi um erro corrigido pelo caminho: o alerta é quase todo template fixo, portanto duas
+histórias genuinamente diferentes sobre a mesma empresa partilham a maior parte das palavras, e
+comparar alertas renderizados teria suprimido em silêncio um segundo alerta legítimo. A verificação
+também se recusa a julgar manchetes com muito poucas palavras de conteúdo, onde quaisquer duas
+cadeias concordam; aí falha aberto, porque um alerta repetido custa ao leitor muito menos do que um
+alerta em falta.
+
 \section{Explicação e Entrega}
 \label{sec:investigator_xai}
 

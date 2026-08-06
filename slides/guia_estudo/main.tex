@@ -1291,6 +1291,35 @@ $P(\text{segue-se um movimento ANORMAL})$ --- \emph{materialidade}, nunca direç
 \centering\scriptsize Corpus: FNSPID 2018--2023, \key{79\,753} exemplos, 14/15 tickers (a Meta é "FB" no corpus).
 \end{frame}
 
+\begin{frame}{O defeito que mostrou que o modelo nunca decidia}
+\footnotesize
+\key{O caso.} Um dia a Nvidia subiu com força por causa de um anúncio de fornecimento. O canal
+levou nesse dia \textbf{duas histórias menores} da Nvidia e \textbf{nunca levou essa}.
+\vspace{1mm}
+
+\key{A causa.} O tecto diário (2 alertas por empresa, anti-fadiga) era servido \key{por ordem de
+chegada}. Duas notícias irrelevantes de manhã gastavam o orçamento, e a notícia da tarde --- a que
+interessava --- caía \textbf{sem deixar rasto em log nenhum}.
+\vspace{1mm}
+
+\begin{block}{\footnotesize A parte que interessa mesmo, e que deves saber dizer}
+\footnotesize O sistema \textbf{já tinha} o instrumento certo. A triagem existe precisamente para
+ordenar por materialidade, e dentro de um orçamento de 5 alertas eleva a precisão de
+\key{0,163} para \key{0,632}. \textbf{Mas o tecto nunca a consultava.} O modelo era
+\textbf{avaliado} e não \textbf{decidia} nada.
+\par\smallskip
+Agora o tecto é servido por pontuação calibrada decrescente. É pouco código, e fecha a ligação que
+faltava entre o resultado da RQ4 e o produto a funcionar.
+\end{block}
+\vspace{1mm}
+
+\centering\scriptsize \key{E a correcção trouxe o seu próprio defeito:} comparar \emph{alertas
+renderizados} para apanhar histórias repetidas colide no \emph{template} partilhado, portanto duas
+notícias \emph{diferentes} suprimiam-se uma à outra em silêncio --- o mesmo defeito, ao contrário.
+Apanhou-o \textbf{um teste que já existia}. Passa a comparar \key{manchetes}, e falha \key{aberto}
+quando a manchete é curta demais para julgar.
+\end{frame}
+
 \begin{frame}{Como se treina sem batota --- e como se mede}
 \footnotesize
 \begin{columns}[T]

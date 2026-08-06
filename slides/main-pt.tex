@@ -375,6 +375,35 @@ Gradient boosting & 0.469 & 0.551 \\
 \end{block}
 \end{frame}
 
+\begin{frame}{O defeito que mostrou que o modelo nunca decidia}
+\small
+\begin{columns}[T]
+\column{0.5\textwidth}
+\textbf{O que aconteceu.} A Nvidia subiu com força na sequência de um anúncio de fornecimento. O
+canal levou nesse dia \textbf{duas histórias menores} da Nvidia e \textbf{nunca levou essa}.
+\medskip
+
+\textbf{Porquê.} O tecto diário de dois alertas por empresa era servido \textbf{por ordem de
+chegada}. Duas histórias irrelevantes de manhã esgotavam o orçamento; a da tarde caía \textbf{sem
+deixar rasto em log nenhum}.
+\column{0.5\textwidth}
+\begin{block}{\small A parte incómoda}
+\small O instrumento já lá estava. A triagem existe para ordenar por materialidade, e eleva a
+precisão de $0.163$ para $\mathbf{0.632}$ num orçamento de 5 alertas --- e \textbf{o tecto nunca a
+consultava}. A pontuação era medida e depois ignorada.
+\end{block}
+\smallskip
+{\footnotesize O tecto passa a ser servido por pontuação calibrada decrescente. Pouco código; faz
+o componente treinado \textbf{decidir} em vez de ser apenas \textbf{medido}.}
+\end{columns}
+\vfill
+{\footnotesize\textbf{E a correcção trouxe o seu próprio defeito.} Comparar \emph{alertas
+renderizados} para apanhar histórias repetidas colide no template partilhado, portanto duas
+histórias \emph{diferentes} suprimir-se-iam uma à outra em silêncio. Apanhado por um teste que já
+existia. Passa a comparar \textbf{manchetes}, e \textbf{falha aberto} quando a manchete é curta
+demais para julgar.}
+\end{frame}
+
 \begin{frame}{Resultado 5: o que o sistema \emph{não} sabe}
 \small Quatro estudos que examinam o sistema por fora. Cada um termina numa decisão de \textbf{não}
 mudar a produção, tomada com base na evidência. O quarto, convergência multi-sinal, adaptado do
