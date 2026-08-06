@@ -162,6 +162,19 @@ how many signals agree rather than a fused number a user cannot check. This is t
 of these positions share: build it, measure it, and let the measurement decide, including when the
 measurement says no.
 
+\paragraph{Streaming rather than polling.} Delivery latency is a real property of an alerting product,
+and the obvious engineering answer is a streaming connection to the price feed. It was declined for
+reasons that are worth separating, because only one of them is about effort. The estimated work was
+substantial, but the decisive argument is that no research question in this thesis becomes answerable
+by shortening delivery from minutes to seconds: the detector is defined on daily bars, and the
+retrieved precedents are days old by construction. Both user profiles described in
+Chapter~\ref{chap:introduction} were also asked what they would notice, and neither distinguishes five
+seconds from five minutes for an alert that exists to prompt reflection rather than a trade. The
+system therefore polls on a fixed cycle, which is enough for the claims it makes, and the honest
+statement of the limitation is that latency is bounded by that cycle and is \emph{measured} rather
+than promised. A product aimed at intraday trading would need the streaming path; this one is not that
+product, and saying so is cheaper and more truthful than building an unused capability.
+
 \section{Research Questions and Objectives Achieved}
 \label{sec:concl_objectives}
 

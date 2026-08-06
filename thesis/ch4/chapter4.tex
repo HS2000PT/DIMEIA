@@ -507,6 +507,19 @@ the work of the quality gates of Table~\ref{tab:alert_lifecycle}.}
 \label{fig:alert_funnel}
 \end{figure}
 
+\paragraph{An alert that contradicted itself.} Composing an explanation from several independent
+components creates a failure mode that no individual component can detect: each line can be correct
+while the message as a whole is incoherent. Reading the first thirty alerts the channel had actually
+sent found this in nine of them. A peer-comparison line reported that other names in the sector had
+moved the same way, and two lines below it the two-factor decomposition reported that most of the move
+belonged to the company. The clearest instance had AMD down $13.23\%$ while its sector peers were down
+$2.0\%$, $1.9\%$ and $1.4\%$. Both lines were right. The peer comparison tested only the \emph{direction}
+of the neighbouring moves and never their \emph{size}, so a shared direction was being reported as a
+shared explanation. The comparison now takes the median peer move into account and, when the subject
+moved disproportionately, says exactly that: the direction is shared, the size is not. The defect is
+recorded here because it is invisible to component tests by construction, and because an alert that
+contradicts itself two lines later destroys precisely the trust the rest of the system is built to earn.
+
 \section{Practical Use and Responsible Design}
 \label{sec:investigator_deploy}
 
@@ -557,6 +570,25 @@ receives. Second, the model artefact is fetched on demand and verified against a
 before use, which makes the dependency auditable: a substituted or corrupted download fails closed
 rather than silently changing what the system means by ``similar''. For a system whose central claim is
 that its reasoning can be checked, the provenance of the weights is part of that claim.
+
+A smaller model still has to fit the machine it runs on, and the way that lesson arrived is worth
+recording because it could not have arrived any other way. Moved to a container with 512~MB of
+memory, the worker entered a crash loop at roughly 1.4~GB. Two plausible explanations were wrong:
+neither the thread pool of the inference runtime nor the size of the data branch accounted for it. A
+probe running inside the container itself showed startup consuming only 281~MB, which located the peak
+in the scan rather than in the load, and the cause was then obvious in hindsight: the runner embedded
+every new headline in a single batch, and on a machine with no prior state \emph{every} headline is
+new. On the author's own machine the pending file already existed, so the peak never occurred and no
+amount of local testing would have produced it. Embedding now runs in fixed batches.
+
+The fix invited an assumption worth reporting because measuring it refuted it. The natural sentence to
+write is that batching cannot change results, since the same texts are encoded either way. That is
+false for this model: with int8 quantisation the padding within a batch perturbs the arithmetic, and
+measured batch-boundary differences reached $0.022$ in cosine similarity. The property that actually
+matters was then tested directly rather than assumed, and it holds: the top-3 retrieved neighbours were
+identical in $8$ of $8$ probes. The distinction is the same one the ONNX validation above rests on.
+What the product owes its user is the same \emph{neighbours}, not bit-identical vectors, and only one
+of those two claims survives measurement.
 
 Live operation also taught one engineering lesson the honest way. During the first days of continuous
 deployment the market path went silent: the free price source blocks the shared network addresses of

@@ -516,6 +516,21 @@ Tabela~\ref{tab:alert_lifecycle}.}
 \label{fig:alert_funnel}
 \end{figure}
 
+\paragraph{Um alerta que se contradizia a si próprio.} Compor uma explicação a partir de vários
+componentes independentes cria um modo de falha que nenhum componente isolado consegue detetar: cada
+linha pode estar certa e a mensagem no seu conjunto ser incoerente. A leitura dos primeiros trinta
+alertas que o canal tinha efetivamente enviado encontrou isto em nove deles. Uma linha de comparação
+com pares reportava que outros nomes do setor se tinham movido no mesmo sentido, e duas linhas abaixo a
+decomposição de dois fatores reportava que a maior parte do movimento pertencia à empresa. O caso mais
+gritante tinha a AMD a cair $13,23\%$ enquanto os pares do setor caíam $2,0\%$, $1,9\%$ e $1,4\%$. As
+duas linhas estavam certas. A comparação com pares testava apenas a \emph{direção} dos movimentos
+vizinhos e nunca a sua \emph{dimensão}, pelo que uma direção partilhada estava a ser reportada como uma
+explicação partilhada. A comparação passa a ter em conta o movimento mediano dos pares e, quando o
+sujeito se moveu desproporcionadamente, diz exatamente isso: a direção é partilhada, a dimensão não é.
+O defeito fica registado aqui porque é invisível a testes de componente por construção, e porque um
+alerta que se contradiz duas linhas depois destrói precisamente a confiança que todo o resto do sistema
+foi construído para ganhar.
+
 \section{Uso Prático e Desenho Responsável}
 \label{sec:investigator_deploy}
 
@@ -569,6 +584,27 @@ contra um resumo SHA256 fixado antes de ser usado, o que torna a dependência au
 substituído ou corrompido falha fechado, em vez de mudar silenciosamente o que o sistema entende por
 ``semelhante''. Para um sistema cuja afirmação central é que o seu raciocínio pode ser verificado, a
 proveniência dos pesos faz parte dessa afirmação.
+
+Um modelo mais pequeno tem ainda assim de caber na máquina onde corre, e vale a pena registar a forma
+como essa lição chegou, porque não podia ter chegado de outra maneira. Mudado para um contentor com
+512~MB de memória, o worker entrou em ciclo de falha por volta de 1,4~GB. Duas explicações plausíveis
+estavam erradas: nem o conjunto de threads do motor de inferência nem o tamanho do ramo de dados
+explicavam o valor. Uma sonda a correr dentro do próprio contentor mostrou que o arranque consumia
+apenas 281~MB, o que localizou o pico na varredura e não na carga, e a causa ficou então óbvia em
+retrospetiva: o runner embebia todas as manchetes novas num único lote, e numa máquina sem estado
+anterior \emph{todas} as manchetes são novas. Na máquina do autor o ficheiro de pendentes já existia,
+pelo que o pico nunca ocorria e nenhuma quantidade de testes locais o teria produzido. O embedding
+passa a correr em lotes de tamanho fixo.
+
+A correção convidava a uma suposição que vale a pena reportar porque medi-la a refutou. A frase natural
+a escrever é que fatiar em lotes não pode alterar resultados, visto que os mesmos textos são
+codificados de qualquer das formas. É falso para este modelo: com quantização int8 o preenchimento
+dentro de um lote perturba a aritmética, e as diferenças medidas na fronteira dos lotes chegaram a
+$0,022$ em similaridade do cosseno. A propriedade que de facto importa foi então testada diretamente em
+vez de assumida, e essa aguenta-se: os três vizinhos recuperados no topo foram idênticos em $8$ de $8$
+sondagens. A distinção é a mesma em que assenta a validação ONNX acima. O que o produto deve ao
+utilizador são os mesmos \emph{vizinhos}, não vetores idênticos ao bit, e só uma dessas duas afirmações
+sobrevive à medição.
 
 A operação ao vivo também ensinou uma lição de engenharia da forma honesta. Durante os primeiros dias de
 implantação contínua o caminho de mercado ficou em silêncio: a fonte de preços gratuita bloqueia os

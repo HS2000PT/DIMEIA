@@ -169,6 +169,19 @@ concordam em vez de um número fundido que o utilizador não consegue verificar.
 destas posições partilham: construir, medir, e deixar a medição decidir, incluindo quando a medição
 diz que não.
 
+\paragraph{Streaming em vez de sondagem periódica.} A latência de entrega é uma propriedade real de um
+produto de alertas, e a resposta óbvia de engenharia é uma ligação de streaming à fonte de preços. Foi
+recusada por razões que vale a pena separar, porque só uma delas é sobre esforço. O trabalho estimado
+era substancial, mas o argumento decisivo é que nenhuma pergunta de investigação desta tese se torna
+respondível por encurtar a entrega de minutos para segundos: o detetor está definido sobre barras
+diárias, e os precedentes recuperados têm dias por construção. Os dois perfis de utilizador descritos
+no Capítulo~\ref{chap:introduction} foram também interrogados sobre o que notariam, e nenhum distingue cinco
+segundos de cinco minutos num alerta que existe para provocar reflexão e não uma ordem de compra. O
+sistema sonda por isso num ciclo fixo, que chega para as afirmações que faz, e o enunciado honesto da
+limitação é que a latência está limitada por esse ciclo e é \emph{medida} em vez de prometida. Um
+produto dirigido a negociação intradiária precisaria do caminho de streaming; este não é esse produto,
+e dizê-lo é mais barato e mais verdadeiro do que construir uma capacidade que não se usa.
+
 \section{Questões de Investigação e Objetivos Alcançados}
 \label{sec:concl_objectives}
 
