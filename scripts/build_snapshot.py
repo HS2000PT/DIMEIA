@@ -87,10 +87,61 @@ def linha_de(ticker: str) -> dict | None:
         return None
 
 
+def juntar_decomposicao(linhas: list[dict]) -> None:
+    """Acrescenta mercado/setor/empresa a cada linha, in-place.
+
+    Vive no instantâneo e não na página porque é a **segunda das três perguntas** do trabalho,
+    e o critério C2 exige que as três apareçam sempre, na mesma ordem — incluindo quando a
+    resposta é "moveu-se com o mercado". Uma pergunta que só aparece às vezes ensina o leitor a
+    não a procurar.
+
+    Custa quase nada: o índice e os ETF de setor são cinco séries partilhadas por doze tickers.
+    Falha aberto por ticker — sem decomposição, a linha fica sem ela e o cartão di-lo.
+    """
+    from investigator.correlation_engine.decomposition import decompose_move
+    from investigator.market_data.prices import get_price_history, log_returns
+    from investigator.news_fetcher.relevance import MARKET_INDEX, sector_etf
+
+    cache: dict[str, object] = {}
+
+    def serie(simbolo: str):
+        if simbolo not in cache:
+            try:
+                cache[simbolo] = log_returns(get_price_history(simbolo, period="1y")["Close"])
+            except Exception:  # noqa: BLE001
+                cache[simbolo] = None
+        return cache[simbolo]
+
+    mercado = serie(MARKET_INDEX)
+    if mercado is None:
+        return
+    for linha in linhas:
+        try:
+            t = linha["ticker"]
+            r = log_returns(get_price_history(t, period="1y")["Close"])
+            etf = sector_etf(t)
+            s = serie(etf) if etf else None
+            n = min(len(r), len(mercado), len(s) if s is not None else len(r))
+            d = decompose_move(
+                r.to_numpy()[-n:],
+                mercado.to_numpy()[-n:],
+                s.to_numpy()[-n:] if s is not None else None,
+            )
+            linha["decomp"] = {
+                "market": float(d.market),
+                "sector": float(d.sector),
+                "company": float(d.idiosyncratic),
+                "driver": d.driver,
+            }
+        except Exception:  # noqa: BLE001
+            linha["decomp"] = None
+
+
 def construir() -> dict:
     tickers = _watchlist()
     t0 = time.perf_counter()
     linhas = [x for x in (linha_de(t) for t in tickers) if x]
+    juntar_decomposicao(linhas)
     custo = time.perf_counter() - t0
     return {
         # Carimbo em UTC: o critério C3 exige que a idade seja VISÍVEL no ecrã e que não passe
