@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"
+     role="img" aria-label="InvestiGator concept B — Pupil Tick: an eye whose pupil is a price bar">
+  <!-- CONCEITO B — "Pupil Tick".
+       UMA ideia: o mercado dentro do olho. A pupila não é um círculo, é uma barra de preço
+       (corpo + mecha), que é o objecto que o sistema realmente observa.
+       Porque pode aguentar 16 px: a forma exterior é uma amêndoa simples e a pupila é uma
+       barra vertical grossa -- duas formas, nada mais. Sem sobrolho, sem linha por baixo. -->
+
+  <!-- olho: amêndoa, traço grosso -->
+  <path d="M24 128 q104 -74 208 0 q-104 74 -208 0 Z"
+        fill="none" stroke="#0A8F52" stroke-width="15" stroke-linejoin="round"/>
+
+  <!-- a pupila É uma barra de preço: mecha + corpo -->
+  <path d="M128 74 V182" stroke="#0A8F52" stroke-width="9" stroke-linecap="round"/>
+  <rect x="110" y="98" width="36" height="60" rx="7" fill="#0A8F52"/>
+</svg>

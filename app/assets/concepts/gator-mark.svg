@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"
+     role="img" aria-label="InvestiGator concept C — Gator Mark: a geometric alligator head seen from above">
+  <!-- CONCEITO C — "Gator Mark".
+       UMA ideia: o animal, como marca. Cabeça de jacaré vista de cima, reduzida a geometria:
+       um focinho que afunila e dois olhos salientes. É o mais próximo de uma "marca registada"
+       no sentido em que o aluno usou a palavra -- uma forma que se reconhece sem ler nada.
+       Porque pode aguentar 16 px: silhueta cheia e fechada, sem traços finos. O risco é o
+       oposto do dos outros dois: reconhecível mas talvez generico. É para isso que serve a
+       comparacao lado a lado. -->
+
+  <!-- cabeça: focinho para cima, a alargar para a base -->
+  <path d="M128 26
+           C150 26 162 52 166 84
+           L190 104
+           C206 116 212 140 208 166
+           L198 206
+           C196 218 186 226 174 226
+           L82 226
+           C70 226 60 218 58 206
+           L48 166
+           C44 140 50 116 66 104
+           L90 84
+           C94 52 106 26 128 26 Z"
+        fill="#0A8F52"/>
+
+  <!-- olhos salientes, o traço que torna a silhueta inconfundível -->
+  <circle cx="94" cy="126" r="20" fill="#0A8F52"/>
+  <circle cx="162" cy="126" r="20" fill="#0A8F52"/>
+  <circle cx="94" cy="126" r="9" fill="#F4FBF7"/>
+  <circle cx="162" cy="126" r="9" fill="#F4FBF7"/>
+
+  <!-- narinas: dois pontos que fixam a leitura de "focinho" -->
+  <circle cx="119" cy="56" r="5.5" fill="#F4FBF7"/>
+  <circle cx="137" cy="56" r="5.5" fill="#F4FBF7"/>
+</svg>

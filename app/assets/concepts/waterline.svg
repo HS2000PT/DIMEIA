@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"
+     role="img" aria-label="InvestiGator concept A — Waterline: two eyes watching from just above the surface">
+  <!-- CONCEITO A — "Waterline".
+       UMA ideia: o jacaré submerso, de que só se vêem os olhos acima da linha de água.
+       A linha é ao mesmo tempo a superfície e a linha do mercado. É a metáfora mais próxima
+       do que o produto faz: está sempre a olhar, e não se mexe.
+       Porque pode aguentar 16 px: duas manchas e uma régua. Nada de sobrolho, nada de curva. -->
+
+  <!-- linha de água / do mercado -->
+  <path d="M20 158 H236" stroke="#0A8F52" stroke-width="14" stroke-linecap="round" fill="none"/>
+
+  <!-- ondulação, subtil: só existe para a linha não ser um traço morto -->
+  <path d="M20 182 q22 -10 44 0 t44 0 t44 0 t44 0 t44 0"
+        stroke="#0A8F52" stroke-width="7" fill="none" stroke-linecap="round" opacity="0.35"/>
+
+  <!-- os dois olhos: domos assentes na linha -->
+  <path d="M62 158 a34 30 0 0 1 68 0 Z" fill="#0A8F52"/>
+  <path d="M140 158 a26 23 0 0 1 52 0 Z" fill="#0A8F52"/>
+
+  <!-- pupilas: redondas de propósito. Uma pupila em fenda lê-se como predador, e este produto
+       recusa caçar seja quem for -- foi uma das razões pelas quais a marca de 2026-07 caiu. -->
+  <circle cx="96" cy="139" r="9" fill="#F4FBF7"/>
+  <circle cx="166" cy="142" r="7" fill="#F4FBF7"/>
+</svg>
