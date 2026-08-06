@@ -16,8 +16,20 @@
 | 4 | Melhorar o guia | **em curso.** 85 → 88 slides, 3 frames novos |
 | 5 | Rever a escrita | **por começar** |
 | 6 | Varrer TODO que restam | **por começar** |
-| 6bis | Mecanismo de alertas | **⭐ (a) e (b) CORRIGIDOS e na tese. (c) por medir** |
+| 6bis | Mecanismo de alertas | **⭐ (a), (b) e (c) FEITOS.** Cobertura medida: **88,5%** |
 | 6ter | Comparação de mercado na tese | **material salvo; tese por actualizar** |
+| 7 | Refazer o logótipo (olhos/mascote) | **por decidir.** Já caiu 2× por medição — ler §7 |
+
+## ⚠️ Estado do que está NO AR (verificado a 2026-08-06, a renderizar)
+
+| camada | estado |
+|---|---|
+| **Painel web** | ✅ **v3 no ar**, verificado por captura: 12 cartões, logótipos reais, contagens empíricas, 293 alertas no histórico |
+| **Worker de alertas** | ❌ **desactualizado.** Corre o código da sessão 48. A correcção do tecto por materialidade está no GitHub, **não no Heroku** |
+
+O `web` e o `worker` saem do **mesmo *slug***, portanto o ecrã está actual e a lógica que decide
+**que notícia chega ao telemóvel** não está. Um `git push` para o GitHub **não implanta**: o
+Heroku foi implantado pela API de Sources/Builds na sessão 48 e não está ligado a auto-deploy.
 
 **Feito nesta sessão, com prova:** o tecto diário passou a ser servido por **materialidade** e não
 por ordem de chegada (era isto que fazia a notícia da NVDA desaparecer); a repetição da mesma
@@ -196,6 +208,51 @@ que é mais divertido.
    vitórias — e este projecto já ganha crédito precisamente por isso.
 5. **Dedup semântica** (defeito (b)): reutiliza os *embeddings* que já existem; sem dependências
    novas.
+
+## 7. Refazer o logótipo — mais apelativo, com olhos ou mascote
+
+**Ditado a 2026-08-06:** algo que **dê mais nas vistas**. *"Acho que temos de ter olhos, ou o
+jacaré/crocodilo, ou uma mascote — tipo uma marca registada."*
+
+### ⚠️ Isto já foi tentado duas vezes, e as duas vezes caiu por medição
+
+Fica escrito porque é a informação de que ele vai precisar quando decidir, não para o travar.
+**A decisão é dele.**
+
+- **Sessão 40 — "The Stare".** Era exactamente isto: olho de crocodilo, íris dourada, pupila em
+  fenda, sobrolho, sobre uma linha de mercado. Ele escolheu-a de entre três propostas.
+- **Sessão 42 — substituída.** Três razões, e só a primeira é estética:
+  1. **Falhava a 16 px** — o sobrolho fundia-se com o olho e a linha de mercado desaparecia. E
+     16 px é onde vive um *favicon*, ou seja o sítio onde a marca é mais vista.
+  2. Metia **três metáforas** num só ícone.
+  3. Um **olho de predador com pupila em fenda** é contra-mensagem num produto cuja posição
+     fundadora é *não prever* e não caçar ninguém.
+- **Sessão 45 — reconfirmada com alternativas construídas a sério.** Foram feitas duas ("Jaws",
+  as maxilas do indicador Williams Alligator, que seria a melhor *história*; e o monograma
+  "Gator G") e comparadas às escalas reais contra o critério escrito. **A "Tail" ganhou.** A
+  "Jaws" desfaz-se num `<` aos 16 px. Os ficheiros ficaram no repositório como registo:
+  [`logo-jaws.svg`](../app/assets/logo-jaws.svg),
+  [`logo-gator-g.svg`](../app/assets/logo-gator-g.svg).
+
+O teste de aceitação está escrito em [`brand.md`](../docs/design/brand.md) §"Teste de aceitação
+da marca" e é este: legível a **16 px**; funciona a **preto e branco**; funciona em fundo claro
+**e** escuro; **uma só ideia**, não três; **não contradiz a postura do produto**.
+
+### O caminho que provavelmente resolve isto sem repetir o erro
+
+**Logótipo e mascote não são a mesma peça, e o projecto tem-nos confundido.** Uma marca tem de
+sobreviver a 16 px; uma mascote não — vive grande, na capa, no canal, nos slides, no guia.
+
+- **Já existe uma mascote** e está esquecida:
+  [`app/assets/investigator.svg`](../app/assets/investigator.svg), um jacaré-detective com
+  *deerstalker*, monóculo e lupa, desenhado na sessão 28. Foi retirada da app na sessão 41 por
+  parecer órfã. **Recuperá-la e usá-la em grande é provavelmente o que ele quer**, e não custa
+  o critério dos 16 px.
+- Se ainda assim quiser **olhos na marca pequena**, o desenho tem de passar o mesmo teste — e o
+  registo diz que a versão anterior não passava. Vale a pena tentar de novo com uma forma mais
+  simples (um olho **sem** sobrolho e **sem** linha de mercado é uma ideia só), mas **testar aos
+  16 px antes de decidir**, com a marca actual como controlo, que foi assim que a decisão anterior
+  se tomou.
 
 ## 6. Quaisquer pendências que restem nos TODOs do repositório
 
