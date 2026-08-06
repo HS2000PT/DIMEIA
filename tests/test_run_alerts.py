@@ -524,3 +524,32 @@ def test_manchete_curta_falha_aberto():
     from scripts.run_alerts import conteudo, quase_repetida
 
     assert not quase_repetida("manchete 2", [sorted(conteudo("manchete 1"))])
+
+
+def test_excecao_de_rede_nao_escreve_a_chave_no_registo():
+    """Fuga real, apanhada a 2026-08-06 nos registos do Heroku.
+
+    A mensagem de uma HTTPError inclui o URL do pedido, e o URL leva o token. Bastou a API
+    responder 503 -- e respondeu a tudo nesse dia -- para a chave ficar escrita centenas de
+    vezes no registo. O codigo nunca imprimiu a chave; imprimiu a EXCECAO.
+    """
+    from scripts.run_alerts import sem_segredos
+
+    chave = "d8nco1hr01qvvn95orv0d8nco1hr01qvvn95orvg"
+    bruto = (f"HTTPError: 503 Server Error: Service Unavailable for url: "
+             f"https://finnhub.io/api/v1/company-news?symbol=JNJ&from=2026-07-30&token={chave}")
+    limpo = sem_segredos(bruto)
+    assert chave not in limpo, "a chave nao pode sobreviver a mascara"
+    assert "<REDACTED>" in limpo
+    assert "finnhub.io" in limpo, "o URL continua util para diagnostico"
+    assert "symbol=JNJ" in limpo, "os parametros nao-secretos ficam"
+
+
+def test_mascara_cobre_os_varios_nomes_de_parametro():
+    """Nao chega mascarar `token=`: cada fornecedor chama-lhe outra coisa."""
+    from scripts.run_alerts import sem_segredos
+
+    for nome in ("token", "key", "apikey", "api_key", "apiKey", "access_token"):
+        s = sem_segredos(f"https://exemplo.com/v1?symbol=X&{nome}=SEGREDO123456&b=2")
+        assert "SEGREDO123456" not in s, f"{nome} passou"
+        assert "b=2" in s, "parametros seguintes nao podem ser comidos"

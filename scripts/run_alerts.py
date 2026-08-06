@@ -95,6 +95,33 @@ def news_key(ticker: str, text: str) -> str:
 
 # Palavras vazias EN+PT. "as" serve as duas línguas, por isso aparece uma vez só — estava
 # escrita duas vezes e o conjunto engolia a repetição em silêncio (apanhado pelo ruff).
+def sem_segredos(texto: object) -> str:
+    """Mascara credenciais em texto que vai para o registo.
+
+    ⚠️ **Isto é uma correcção de fuga, não higiene.** A 2026-08-06, ao verificar uma implantação,
+    apareceu isto nos registos do Heroku, centenas de vezes:
+
+        [saltar noticias JNJ] HTTPError: 503 ... for url:
+        https://finnhub.io/api/v1/company-news?symbol=JNJ&from=...&token=<A CHAVE INTEIRA>
+
+    A mensagem de uma `HTTPError` inclui o URL do pedido, e o URL leva o token. Ou seja: bastava
+    a API responder com erro — e respondeu 503 a tudo nesse dia — para a chave ficar escrita no
+    registo, legível por quem tenha acesso à aplicação. O código nunca imprimiu a chave de
+    propósito; imprimiu **a excepção**, e a chave vinha lá dentro.
+
+    É a segunda fuga desta família neste projecto (a primeira, na sessão 44, expôs a chave da
+    AlphaVantage por o filtro de saída só mascarar cadeias com mais de 30 caracteres). A lição é
+    a mesma: **nunca imprimir uma excepção de rede em bruto.**
+    """
+    import re
+
+    s = str(texto)
+    # Qualquer parâmetro de query com cheiro a credencial, seja qual for o nome.
+    s = re.sub(r"([?&](?:token|key|apikey|api_key|apiKey|access_token)=)[^&\s]+",
+               r"\1<REDACTED>", s, flags=re.I)
+    return s
+
+
 _VAZIAS = {
     "the", "a", "an", "of", "to", "in", "on", "for", "and", "or", "as", "at", "by", "is",
     "its", "it", "with", "from", "after", "over", "amid", "says", "said", "will", "be",
@@ -244,7 +271,7 @@ def _log_decision_safe(news_date: str, ticker: str, headline: str,
                      prob=(float(scored[0]) if scored is not None else None),
                      gate=(gate if scored is not None else None), kept=kept)
     except Exception as exc:  # noqa: BLE001
-        print(f"[postval] registo falhou (ignorado): {type(exc).__name__}: {exc}")
+        print(f"[postval] registo falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
 
 
 def load_config(path: str | Path = _CONFIG) -> dict:
@@ -365,7 +392,7 @@ def collect_market_results(cfg: dict, cache: dict | None = None) -> list[tuple[s
             returns = log_returns(hist["Close"])
             results.append((ticker, detect_latest(returns, window=window, threshold=threshold)))
         except Exception as exc:  # noqa: BLE001  (um ticker/rede a falhar não pode parar a varredura)
-            print(f"[saltar {ticker}] {type(exc).__name__}: {exc}")
+            print(f"[saltar {ticker}] {type(exc).__name__}: {sem_segredos(exc)}")
     return results
 
 
@@ -558,7 +585,7 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
                 kbs.append(kb_viva)
                 print(f"[kb-viva] {len(kb_viva)} caso(s) recente(s) em uso.")
         except Exception as exc:  # noqa: BLE001
-            print(f"[kb-viva] ilegível (ignorada): {type(exc).__name__}: {exc}")
+            print(f"[kb-viva] ilegível (ignorada): {type(exc).__name__}: {sem_segredos(exc)}")
     kbs.append(HistoricalKB.load(kb_path))
 
     end = date.today().isoformat()
@@ -654,8 +681,8 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
                 headlines[news_key(ticker, text)] = latest.headline
             _gate(ticker, "alerted", latest.headline[:80])
         except Exception as exc:  # noqa: BLE001
-            print(f"[saltar noticias {ticker}] {type(exc).__name__}: {exc}")
-            _gate(ticker, "error", f"{type(exc).__name__}: {exc}"[:120])
+            print(f"[saltar noticias {ticker}] {type(exc).__name__}: {sem_segredos(exc)}")
+            _gate(ticker, "error", f"{type(exc).__name__}: {sem_segredos(exc)}"[:120])
     return alerts
 
 
@@ -693,7 +720,7 @@ def _capture_live_safe(items: list, embedder) -> None:
         save_pending(add_pending(existentes, novos), _LIVE_PENDING)
         print(f"[kb-viva] +{len(novos)} pendente(s) capturado(s).")
     except Exception as exc:  # noqa: BLE001
-        print(f"[kb-viva] captura falhou (ignorada): {type(exc).__name__}: {exc}")
+        print(f"[kb-viva] captura falhou (ignorada): {type(exc).__name__}: {sem_segredos(exc)}")
 
 
 def _mature_live_safe(today: date | None = None) -> None:
@@ -719,7 +746,7 @@ def _mature_live_safe(today: date | None = None) -> None:
             print(f"[kb-viva] {len(matured)} caso(s) maturado(s) → live_kb.jsonl "
                   f"({len(still)} pendente(s)).")
     except Exception as exc:  # noqa: BLE001
-        print(f"[kb-viva] maturação falhou (ignorada): {type(exc).__name__}: {exc}")
+        print(f"[kb-viva] maturação falhou (ignorada): {type(exc).__name__}: {sem_segredos(exc)}")
 
 
 def is_us_market_session(now_utc) -> bool:
@@ -778,7 +805,7 @@ def collect_intraday_results(cfg: dict, cache: dict | None = None) -> list[tuple
                 (ticker, detect_intraday(running, returns, window=window, threshold=threshold))
             )
         except Exception as exc:  # noqa: BLE001  (um ticker a falhar não pára a varredura)
-            print(f"[intradiario {ticker}] {type(exc).__name__}: {exc}")
+            print(f"[intradiario {ticker}] {type(exc).__name__}: {sem_segredos(exc)}")
     return results
 
 
@@ -799,7 +826,10 @@ def _attach_sector_safe(ticker: str, alert_text: str, moves: dict[str, float]) -
         line = sector_context_line(ticker, moves)
         return f"{alert_text}\n{line}" if line else alert_text
     except Exception as exc:  # noqa: BLE001
-        print(f"[setor {ticker}] falhou (alerta segue sem linha): {type(exc).__name__}: {exc}")
+        print(
+            f"[setor {ticker}] falhou (alerta segue sem linha): "
+            f"{type(exc).__name__}: {sem_segredos(exc)}"
+        )
         return alert_text
 
 
@@ -849,7 +879,7 @@ def _attach_decomposition_safe(ticker: str, alert_text: str, cache: dict,
         return f"{alert_text}\n{describe(d, ticker)}"
     except Exception as exc:  # noqa: BLE001
         print(f"[decomposicao {ticker}] falhou (alerta segue sem linha): "
-              f"{type(exc).__name__}: {exc}")
+              f"{type(exc).__name__}: {sem_segredos(exc)}")
         return alert_text
 
 
@@ -878,7 +908,7 @@ def _investigate_anomaly_safe(ticker: str, alert_text: str) -> str:
         return attach_news_context(alert_text, None)
     except Exception as exc:  # noqa: BLE001
         print(f"[investigar {ticker}] falhou (alerta segue sem contexto): "
-              f"{type(exc).__name__}: {exc}")
+              f"{type(exc).__name__}: {sem_segredos(exc)}")
         return alert_text
 
 
@@ -923,7 +953,7 @@ def _record_history_safe(alerts: list[tuple[str, str]], today: str,
             ))
         save_jsonl(append_and_trim(load_jsonl(path), new), path)
     except Exception as exc:  # noqa: BLE001
-        print(f"[historico] registo falhou (ignorado): {type(exc).__name__}: {exc}")
+        print(f"[historico] registo falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
 
 
 def _market_evidence(ticker: str, res, decomp, today: str):
@@ -971,7 +1001,10 @@ def _narrate_safe(text: str, evidence, cfg: dict) -> str:
         print(f"[narrador {evidence.ticker}] {r.source} em {r.latency_s:.2f}s")
         return f"{r.text}\n\n{text}"
     except Exception as exc:  # noqa: BLE001
-        print(f"[narrador] falhou (alerta segue intacto): {type(exc).__name__}: {exc}")
+        print(
+            f"[narrador] falhou (alerta segue intacto): "
+            f"{type(exc).__name__}: {sem_segredos(exc)}"
+        )
         return text
 
 
@@ -989,7 +1022,7 @@ def _record_gates_safe(records: list, path: str | Path | None = None) -> None:
 
         append_jsonl(records, path or _GATE_LOG)
     except Exception as exc:  # noqa: BLE001
-        print(f"[funil] registo falhou (ignorado): {type(exc).__name__}: {exc}")
+        print(f"[funil] registo falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
 
 
 def _push_history_safe(path: str | Path = _HISTORY) -> None:
@@ -1020,7 +1053,7 @@ def _push_history_safe(path: str | Path = _HISTORY) -> None:
         git("push")
         print("[historico] publicado na branch alerts-history.")
     except Exception as exc:  # noqa: BLE001
-        print(f"[historico] push falhou (ignorado): {type(exc).__name__}: {exc}")
+        print(f"[historico] push falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
 
 
 def _fetch_shared_history_safe(cfg: dict) -> list:
@@ -1071,7 +1104,10 @@ def process_bot_commands(state: dict, bot_cfg: dict, *, dry_run: bool) -> None:
             send_message(reply, chat_id=chat_id)
         print(f"[bot] {len(updates)} update(s) processado(s) em lote.")
     except Exception as exc:  # noqa: BLE001  (os comandos nunca podem partir o runner)
-        print(f"[bot] processamento de comandos falhou (ignorado): {type(exc).__name__}: {exc}")
+        print(
+            f"[bot] processamento de comandos falhou (ignorado): "
+            f"{type(exc).__name__}: {sem_segredos(exc)}"
+        )
 
 
 def _fanout_safe(alerts: list[tuple[str, str]], bot_cfg: dict, *, dry_run: bool) -> None:
@@ -1103,7 +1139,7 @@ def _fanout_safe(alerts: list[tuple[str, str]], bot_cfg: dict, *, dry_run: bool)
         if not dry_run:
             print(f"[bot] fan-out: {enviados} envio(s) a subscritores.")
     except Exception as exc:  # noqa: BLE001  (o fan-out nunca pode partir o runner)
-        print(f"[bot] fan-out falhou (ignorado): {type(exc).__name__}: {exc}")
+        print(f"[bot] fan-out falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
 
 
 def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
@@ -1232,7 +1268,8 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
                 send_message(text)
             except Exception as exc:  # noqa: BLE001
                 falhas += 1
-                print(f"[!] Falha ao enviar (o ciclo continua): {exc}")
+                # O envio leva o token do bot no URL: mascarar aqui não é opcional.
+                print(f"[!] Falha ao enviar (o ciclo continua): {sem_segredos(exc)}")
 
     _fanout_safe(alerts, bot_cfg, dry_run=dry_run)  # fan-out só de alertas por ticker
 
@@ -1250,7 +1287,10 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
 
             publish_safe(_HISTORY)
         except Exception as exc:  # noqa: BLE001
-            print(f"[historico-api] indisponível (ignorado): {type(exc).__name__}: {exc}")
+            print(
+                f"[historico-api] indisponível (ignorado): "
+                f"{type(exc).__name__}: {sem_segredos(exc)}"
+            )
         entregues = len(mensagens) - falhas
         extra = f" ({falhas} falha[s] de envio)" if falhas else ""
         print(f"\n[{entregues}/{len(mensagens)} mensagem(ns) enviada(s) para o Telegram{extra}]")
@@ -1283,7 +1323,7 @@ def watch_loop(interval_s: int, *, dry_run: bool) -> None:
             # reler config permite ajustar a quente; watch=True liga a deteção intradiária
             run_cycle(effective_config(), dry_run=dry_run, watch=True)
         except Exception as exc:  # noqa: BLE001  (um ciclo falhado nunca mata o vigia)
-            print(f"[watch] ciclo falhou (continua): {type(exc).__name__}: {exc}")
+            print(f"[watch] ciclo falhou (continua): {type(exc).__name__}: {sem_segredos(exc)}")
         fim = time.monotonic() + interval_s + random.uniform(0, interval_s * 0.2)
         while not stop["flag"] and time.monotonic() < fim:
             time.sleep(1)
