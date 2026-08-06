@@ -10,7 +10,7 @@
 
 | # | pedido | estado |
 |---|---|---|
-| 1 | Refazer o painel | **por começar.** Briefing e estudo de mercado prontos |
+| 1 | Refazer o painel (**v4**) | **investigação feita, código não começado** — ver quadro abaixo |
 | 2 | Literatura com os PDF reais | **à espera dele.** Infra pronta; 44/59 já legíveis, 14 precisam da conta ISEP |
 | 3 | Latência quase-real | **por começar** |
 | 4 | Melhorar o guia | **em curso.** 85 → 88 slides, 3 frames novos |
@@ -41,7 +41,36 @@ notícias perde. É a alínea (c), e é o que está a ser feito a seguir.
 
 ---
 
-## 1. Refazer o painel por completo
+## 1. Refazer o painel por completo (v4)
+
+### Onde é que isto está, exactamente (verificado a 2026-08-06)
+
+O briefing manda uma ordem — estudo de mercado → questionar a tecnologia com números → critérios
+de aceitação → **só então** código. Estado passo a passo:
+
+| passo do briefing | estado |
+|---|---|
+| 1. Estudo de mercado | ✅ [`market_study_v4.md`](../docs/design/market_study_v4.md), 786 linhas, 69 achados, 12 produtos |
+| 2. Questionar a stack com números (ficar no Streamlit ou sair) | ❌ **por fazer** |
+| 3. `dashboard_v4_acceptance.md` **antes** do código | ❌ **NÃO EXISTE** |
+| 4. Código | ❌ não começado (`app/` tem só a v1 e a v3) |
+
+**O bloqueio é o passo 3**, e é de propósito que bloqueia: é a condição de paragem. O próprio
+briefing diz que **sem ela esta será a oitava versão rejeitada**, e o histórico dá-lhe razão —
+sete foram-no. Escrever esse ficheiro é a próxima acção concreta desta linha, e é barata.
+
+**Nota que o estudo de mercado já traz, e poupa uma discussão:** a queixa de "lento" não é CSS
+nem afinação do Streamlit. É **carga a frio** — 8,7 MB de *backfill* analisados em tempo de
+pedido. A recomendação é **pré-computar para um instantâneo estático** no worker de 60 s, que é
+o padrão que o worldmonitor usa e que o Observable Framework formaliza. Isso é uma decisão de
+**arquitectura**, e é ela que decide se se fica no Streamlit ou não.
+
+⚠️ Os quatro cépticos que deviam contestar esse estudo morreram no limite de gasto — está
+escrito no topo do documento. Nada dali entra na tese sem reconfirmação.
+
+---
+
+### O pedido original, como foi ditado
 
 Tecnologias novas, estudo de mercado, usabilidade talhada para o utilizador. Interface
 **premium**: responsividade, desempenho, moderno, *drill-downs*, estados de *hover*, cliques,
@@ -209,50 +238,51 @@ que é mais divertido.
 5. **Dedup semântica** (defeito (b)): reutiliza os *embeddings* que já existem; sem dependências
    novas.
 
-## 7. Refazer o logótipo — mais apelativo, com olhos ou mascote
+## 7. Identidade visual NOVA — logótipo e mascote
 
-**Ditado a 2026-08-06:** algo que **dê mais nas vistas**. *"Acho que temos de ter olhos, ou o
-jacaré/crocodilo, ou uma mascote — tipo uma marca registada."*
+**Ditado a 2026-08-06:** algo que **dê nas vistas**, com **olhos**, ou o jacaré/crocodilo, ou uma
+mascote — *"tipo uma marca registada"*.
 
-### ⚠️ Isto já foi tentado duas vezes, e as duas vezes caiu por medição
+**Clarificado por ele no mesmo dia, e é o que manda:** *"a 'Stare' era má. Estou a falar de coisa
+**nova**."* Portanto **não é para ressuscitar** nenhuma das marcas anteriores. É conceito novo.
 
-Fica escrito porque é a informação de que ele vai precisar quando decidir, não para o travar.
-**A decisão é dele.**
+### O que serve de material, e não de travão
 
-- **Sessão 40 — "The Stare".** Era exactamente isto: olho de crocodilo, íris dourada, pupila em
-  fenda, sobrolho, sobre uma linha de mercado. Ele escolheu-a de entre três propostas.
-- **Sessão 42 — substituída.** Três razões, e só a primeira é estética:
-  1. **Falhava a 16 px** — o sobrolho fundia-se com o olho e a linha de mercado desaparecia. E
-     16 px é onde vive um *favicon*, ou seja o sítio onde a marca é mais vista.
-  2. Metia **três metáforas** num só ícone.
-  3. Um **olho de predador com pupila em fenda** é contra-mensagem num produto cuja posição
-     fundadora é *não prever* e não caçar ninguém.
-- **Sessão 45 — reconfirmada com alternativas construídas a sério.** Foram feitas duas ("Jaws",
-  as maxilas do indicador Williams Alligator, que seria a melhor *história*; e o monograma
-  "Gator G") e comparadas às escalas reais contra o critério escrito. **A "Tail" ganhou.** A
-  "Jaws" desfaz-se num `<` aos 16 px. Os ficheiros ficaram no repositório como registo:
-  [`logo-jaws.svg`](../app/assets/logo-jaws.svg),
-  [`logo-gator-g.svg`](../app/assets/logo-gator-g.svg).
+Só duas coisas do passado interessam aqui, e nenhuma delas é um veto:
 
-O teste de aceitação está escrito em [`brand.md`](../docs/design/brand.md) §"Teste de aceitação
-da marca" e é este: legível a **16 px**; funciona a **preto e branco**; funciona em fundo claro
-**e** escuro; **uma só ideia**, não três; **não contradiz a postura do produto**.
+1. **O teste de aceitação, que é o que evita o oitavo redesenho rejeitado.** Está em
+   [`brand.md`](../docs/design/brand.md): legível a **16 px** com silhueta reconhecível; funciona
+   a **preto e branco**; funciona em fundo **claro e escuro**; **uma ideia só**, não três; não
+   contradiz a postura do produto. É o mesmo padrão dos critérios de aceitação do painel — sem
+   condição de paragem escrita, o ciclo repete-se.
+2. **Porque é que a marca-olho anterior caiu**, útil só como armadilha a evitar, não como
+   proibição: o sobrolho fundia-se com o olho aos 16 px e a linha de mercado desaparecia; metia
+   três metáforas num ícone. Um olho **pode** funcionar — o que não funciona é um olho **mais**
+   sobrolho **mais** linha de mercado no mesmo glifo.
 
-### O caminho que provavelmente resolve isto sem repetir o erro
+### A separação que provavelmente destrava isto
 
-**Logótipo e mascote não são a mesma peça, e o projecto tem-nos confundido.** Uma marca tem de
-sobreviver a 16 px; uma mascote não — vive grande, na capa, no canal, nos slides, no guia.
+**Logótipo e mascote são duas peças com requisitos diferentes, e o projecto tratou-as como uma.**
 
-- **Já existe uma mascote** e está esquecida:
-  [`app/assets/investigator.svg`](../app/assets/investigator.svg), um jacaré-detective com
-  *deerstalker*, monóculo e lupa, desenhado na sessão 28. Foi retirada da app na sessão 41 por
-  parecer órfã. **Recuperá-la e usá-la em grande é provavelmente o que ele quer**, e não custa
-  o critério dos 16 px.
-- Se ainda assim quiser **olhos na marca pequena**, o desenho tem de passar o mesmo teste — e o
-  registo diz que a versão anterior não passava. Vale a pena tentar de novo com uma forma mais
-  simples (um olho **sem** sobrolho e **sem** linha de mercado é uma ideia só), mas **testar aos
-  16 px antes de decidir**, com a marca actual como controlo, que foi assim que a decisão anterior
-  se tomou.
+- O **logótipo** tem de sobreviver a 16 px. É aí que morrem os desenhos com detalhe.
+- A **mascote** não tem esse constrangimento nenhum: vive grande — avatar do canal, capa dos
+  slides, guia de estudo, ecrã inicial. É aí que cabem olhos, expressão, personalidade, "marca
+  registada".
+
+⚠️ **E já existe uma mascote esquecida no repositório:**
+[`app/assets/investigator.svg`](../app/assets/investigator.svg) — jacaré-detective com
+*deerstalker*, monóculo e lupa, desenhado na sessão 28 e retirado da app na 41 por parecer órfão.
+Pode servir de ponto de partida ou de descarte, mas **deve ser visto antes de se desenhar do
+zero**.
+
+### Como fazer isto sem repetir o ciclo
+
+1. Escrever primeiro o que a marca tem de **dizer** (uma frase), e só depois desenhar.
+2. Produzir **três** direcções genuinamente diferentes, não três variações da mesma.
+3. **Renderizar cada uma a 16, 32, 88 e 512 px** e comparar lado a lado **com a marca actual como
+   controlo** — foi assim que a decisão da sessão 45 se tomou, e é a única parte do método
+   anterior que vale a pena manter.
+4. Decidir com as imagens à frente, não com descrições.
 
 ## 6. Quaisquer pendências que restem nos TODOs do repositório
 
