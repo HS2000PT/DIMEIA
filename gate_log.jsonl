@@ -526,3 +526,15 @@
 {"date": "2026-08-05", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-05", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-05", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.31 < 0.50"}
+{"date": "2026-08-06", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-06", "ticker": "MSFT", "stage": "alerted", "detail": "Amazon, Alphabet, and Microsoft All Delivered Soaring Cloud Growth Thanks to AI."}
+{"date": "2026-08-06", "ticker": "NVDA", "stage": "alerted", "detail": "Alphabet CEO Sundar Pichai Just Made a $200 Billion Infrastructure Move. Nvidia,"}
+{"date": "2026-08-06", "ticker": "TSLA", "stage": "alerted", "detail": "Waymo CEO takes a not-so-subtle shot at Tesla Robotaxi over Lidar"}
+{"date": "2026-08-06", "ticker": "AMZN", "stage": "alerted", "detail": "I've Been Wrong About Amazon Stock for Almost 10 Years. Here's Why I'm Finally C"}
+{"date": "2026-08-06", "ticker": "GOOGL", "stage": "alerted", "detail": "Amazon, Alphabet, and Microsoft All Delivered Soaring Cloud Growth Thanks to AI."}
+{"date": "2026-08-06", "ticker": "META", "stage": "alerted", "detail": "Meta’s Superintelligence Labs Ships Its First Product — and the Contributor Tier"}
+{"date": "2026-08-06", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
+{"date": "2026-08-06", "ticker": "AMD", "stage": "alerted", "detail": "Advanced Micro Devices (NASDAQ:AMD) Combines Strong Growth with a Promising Tech"}
+{"date": "2026-08-06", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-06", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-06", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.31 < 0.50"}
