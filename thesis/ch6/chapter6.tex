@@ -279,9 +279,10 @@ reported as engineering follow-through whose formal evaluation remains future wo
         sentiment as a feature), the missing ticker recovered under its former symbol, and the live
         post-validation loop accumulating fresh labelled decisions for periodic retraining; a
         contextual-bandit treatment of the alert threshold is the natural learned extension.
-  \item As a product, de-duplicate near-identical precedents and flag directional disagreement within
-        a retrieved cluster, complementing the severity ranking that triage already provides against
-        the alert-fatigue and over-reliance risks of Chapter~\ref{chap:investigator}.
+  \item As a product, measure what the news pipeline never sees. Coverage of the free feed is
+        currently an acknowledged limitation rather than a quantity: the share of genuinely
+        market-moving stories that reach the funnel at all has not been counted, and counting it
+        would turn an assumption into a number, as was done for drift and for uncertainty.
 \end{itemize}
 Live deployment after the evaluation was frozen already motivated a first iteration of several of these
 items: the deployed system now grows a \emph{live} knowledge base from the headlines it scans (each case

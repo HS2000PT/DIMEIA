@@ -637,8 +637,13 @@ p \;=\; \sigma\!\big(a\,p_{\text{raw}} + c\big),
 with just two scalars $(a, c)$. The parametric form is a deliberate choice over the non-parametric
 alternative, isotonic regression: a two-parameter sigmoid cannot overfit a modest validation block,
 whereas isotonic regression needs substantially more calibration data before its extra flexibility pays
-off \autocite{niculescu2005calibration}. An isotonic comparison on the full corpus is noted as future
-work rather than assumed either way.
+off \autocite{niculescu2005calibration}. That argument was later put to the test rather than left as an
+assumption. Both calibrators were fitted on the same validation block and scored on the same test set,
+for all five model families, under the frozen protocol: Platt wins or ties on the Brier score in every
+family, and the expected-calibration-error picture is mixed and by small margins. This holds even with
+a large validation block, which is the setting that should favour the non-parametric method, so the
+choice made on grounds of parsimony is also the choice the measurement supports. The comparison is
+additive and left the frozen artefacts untouched.
 
 Table~\ref{tab:triage_worked} makes the whole computation concrete by decomposing one \emph{real}
 production decision: a Meta headline sent to the public alert channel on 12 July 2026, scored by the

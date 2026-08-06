@@ -342,7 +342,7 @@ falha apareceu em operação e não em testes, num dia em que a Nvidia subiu com
 um anúncio de fornecimento: o canal levou duas histórias menores dessa empresa e nunca levou a que
 a moveu. O incómodo é que o sistema já tinha o instrumento certo. O componente de triagem da
 Secção~\ref{sec:met_triage} existe precisamente para ordenar notícias por materialidade, e o
-Capítulo~\ref{chap:cases} reporta que, dentro de um orçamento de cinco alertas, eleva a precisão de
+Capítulo~\ref{chap:casestudies} reporta que, dentro de um orçamento de cinco alertas, eleva a precisão de
 $0.163$ para $0.632$; o tecto simplesmente nunca o consultava, e por isso a pontuação era medida e
 depois ignorada. O tecto passa a ser servido por ordem decrescente da pontuação calibrada. A
 alteração é pequena em código e grande em significado: transforma o componente treinado de algo que
@@ -591,8 +591,18 @@ Capítulo~\ref{chap:casestudies} inclui, portanto, uma métrica de precisão-den
 mede este custo diretamente. A segunda é a \emph{dependência excessiva}: uma explicação confiante pode ser
 merecedora de mais confiança do que a sua evidência justifica (Secção~\ref{sec:sota_trust}). O desenho atual
 mitiga isto ao mostrar os precedentes individuais e a sua dispersão em vez de um número solitário, e ao
-recusar a previsão em cada alerta; extensões naturais são de-duplicar precedentes quase idênticos e
-sinalizar quando um agrupamento recuperado discorda na direção.
+recusar a previsão em cada alerta. Duas mitigações adicionais foram acrescentadas depois de se lerem os
+alertas que o canal tinha efectivamente enviado, e ambas nasceram de defeitos e não de previdência. Os
+precedentes passaram a ser de-duplicados pelo texto da manchete: a chave anterior juntava data, ticker e
+manchete, o que parece a escolha mais completa das duas e é precisamente por isso que falhava, porque um
+acontecimento macroeconómico recuperado sob três tickers diferentes produzia três chaves diferentes e era
+apresentado como três casos independentes. No histórico ao vivo isto afectava $18$ dos $165$ alertas de
+notícia com dois ou mais precedentes, ou seja $11\%$, e o alerta que o denunciou dizia ``$3$ de $3$ casos
+mostrados desceram'' quando era um acontecimento visto três vezes. Não é uma imprecisão de apresentação
+mas uma afirmação falsa sobre o peso da evidência, e o leitor não tem como distinguir as duas coisas a
+partir do texto. Um agrupamento recuperado que discorde na direção passou também a ser sinalizado de
+forma explícita, o que importa porque a semelhança temática quase não carrega informação direcional
+(Capítulo~\ref{chap:casestudies}).
 
 \section{Conclusões do Capítulo}
 \label{sec:investigator_summary}

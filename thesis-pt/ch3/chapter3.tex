@@ -646,8 +646,13 @@ p \;=\; \sigma\!\big(a\,p_{\text{raw}} + c\big),
 com apenas dois escalares $(a, c)$. A forma paramétrica é uma escolha deliberada face à alternativa
 não-paramétrica, a regressão isotónica: uma sigmoide de dois parâmetros não pode sobreajustar um bloco de
 validação modesto, ao passo que a regressão isotónica precisa de substancialmente mais dados de calibração
-antes de a sua flexibilidade extra compensar \autocite{niculescu2005calibration}. Uma comparação isotónica
-sobre o corpus completo é notada como trabalho futuro em vez de assumida num sentido ou noutro.
+antes de a sua flexibilidade extra compensar \autocite{niculescu2005calibration}. Esse argumento foi
+depois posto à prova em vez de ficar como suposição. Os dois calibradores foram ajustados no mesmo bloco
+de validação e avaliados no mesmo teste, para as cinco famílias de modelos e sob o protocolo congelado:
+a de Platt ganha ou empata no Brier em todas as famílias, e no erro de calibração esperado o quadro é
+misto e por margens pequenas. Isto verifica-se mesmo com um bloco de validação farto, que é o cenário
+que deveria favorecer o método não-paramétrico, pelo que a escolha feita por parcimónia é também a
+escolha que a medição sustenta. A comparação é aditiva e deixou os artefactos congelados intactos.
 
 A Tabela~\ref{tab:triage_worked} torna todo o cálculo concreto ao decompor uma decisão de produção
 \emph{real}: uma manchete da Meta enviada ao canal público de alertas a 12 de julho de 2026, pontuada pelo
