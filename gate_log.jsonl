@@ -598,3 +598,15 @@
 {"date": "2026-08-07", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-07", "ticker": "XOM", "stage": "weak_precedent", "detail": "melhor sim 0.43 < 0.45"}
 {"date": "2026-08-07", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
+{"date": "2026-08-07", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-07", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft opens fourth Azure data center region in India"}
+{"date": "2026-08-07", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.50 < 0.50"}
+{"date": "2026-08-07", "ticker": "TSLA", "stage": "alerted", "detail": "SpaceX and Tesla Are Building Their Own $119 Billion Chip Factory — and the Comp"}
+{"date": "2026-08-07", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon CEO Andy Jassy Just Made a Shocking Trillion-Dollar Prediction"}
+{"date": "2026-08-07", "ticker": "GOOGL", "stage": "alerted", "detail": "What Block (SQ)'s Buyback Completion And Google AI Tie-Up Means For Shareholders"}
+{"date": "2026-08-07", "ticker": "META", "stage": "alerted", "detail": "Where Will Meta Platforms Stock Be in 5 Years?"}
+{"date": "2026-08-07", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.25 < 0.50"}
+{"date": "2026-08-07", "ticker": "AMD", "stage": "alerted", "detail": "AMD Stock tumbles because of SpaceX"}
+{"date": "2026-08-07", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-07", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-07", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
