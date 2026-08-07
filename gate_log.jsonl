@@ -682,3 +682,15 @@
 {"date": "2026-08-07", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-07", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-07", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.39 < 0.45"}
+{"date": "2026-08-07", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-07", "ticker": "MSFT", "stage": "alerted", "detail": "Jim Cramer Was “Blown Away” By Microsoft Corporation (NASDAQ:MSFT)’s Financials"}
+{"date": "2026-08-07", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.50 < 0.50"}
+{"date": "2026-08-07", "ticker": "TSLA", "stage": "alerted", "detail": "Tesla Stock Jumps Nearly 4% as $16.8 Billion Terafab Breaks Ground"}
+{"date": "2026-08-07", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon vs MercadoLibre: Two E-Commerce Titans, Only One is The Smarter Buy Now"}
+{"date": "2026-08-07", "ticker": "GOOGL", "stage": "alerted", "detail": "Alphabet’s Cloud vs Meta’s Superintelligence: Who Wins Q2?"}
+{"date": "2026-08-07", "ticker": "META", "stage": "alerted", "detail": "Meta Faces New Risk After Major Court Ruling"}
+{"date": "2026-08-07", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.25 < 0.50"}
+{"date": "2026-08-07", "ticker": "AMD", "stage": "alerted", "detail": "The Toughest Questions AMD Faced On Its Latest Call"}
+{"date": "2026-08-07", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-07", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-07", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.41 < 0.45"}
