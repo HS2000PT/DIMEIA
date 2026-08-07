@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from datetime import UTC, datetime, timedelta
 
-from app.snapshot_io import carregar, resumo_do_dia, tira_distribuicao
+from app.snapshot_io import Instantaneo, carregar, resumo_do_dia, tira_distribuicao
 
 
 def _escrever(tmp_path, gerado, linhas):
@@ -81,3 +81,59 @@ def test_tira_de_distribuicao_reflecte_a_proporcao():
 def test_tira_com_zero_excedencias_nao_acende_nada():
     """'Nenhum outro dia se moveu assim' tem de ser visível como tira vazia."""
     assert tira_distribuicao(0, 249).count("strip-on") == 0
+
+
+# ─────────────────────────────────────────── o caminho remoto (produção no Heroku)
+# Estes testes existem por causa de um defeito real: o instantâneo era escrito pelo worker e
+# lido pelo web, e no Heroku esses são dois dynos com discos SEPARADOS e efémeros. Localmente
+# funcionava (mesmo disco), portanto nenhum teste de então podia apanhá-lo. A lição fica aqui em
+# forma executável: o leitor tem de saber ir buscar o ficheiro ao sítio partilhado.
+
+def test_sem_ficheiro_local_cai_para_o_remoto(tmp_path, monkeypatch):
+    agora = datetime(2026, 8, 6, 12, 0, tzinfo=UTC)
+    corpo = json.dumps({
+        "generated_at": (agora - timedelta(seconds=120)).isoformat(),
+        "rows": [{"ticker": "NVDA", "z": 0.4, "move": 0.01}],
+    }).encode()
+
+    class _Resposta:
+        def read(self):
+            return corpo
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+    monkeypatch.delenv("INVESTIGATOR_OFFLINE", raising=False)
+    monkeypatch.setattr("urllib.request.urlopen", lambda *a, **k: _Resposta())
+
+    s = carregar(tmp_path / "nao-existe.json", agora=agora, url="https://exemplo/snap.json")
+    assert s is not None, "sem ficheiro local, o instantâneo tem de vir da branch de dados"
+    assert s.linhas[0]["ticker"] == "NVDA"
+    assert s.remoto is True
+
+
+def test_remoto_a_2_minutos_ainda_conta_como_fresco(tmp_path, monkeypatch):
+    """O CDN do raw.githubusercontent guarda ~5 min. Com o critério local (90 s) um worker
+    saudável apareceria SEMPRE como parado, e um indicador sempre vermelho deixa de ser lido —
+    que é o modo de falha que o carimbo existe para evitar."""
+    agora = datetime(2026, 8, 6, 12, 0, tzinfo=UTC)
+    local = Instantaneo(linhas=[{"ticker": "X"}], gerado_em=agora, idade_s=120, remoto=False)
+    remoto = Instantaneo(linhas=[{"ticker": "X"}], gerado_em=agora, idade_s=120, remoto=True)
+    assert not local.fresco
+    assert remoto.fresco
+    # Mas um worker genuinamente parado continua a ser apanhado nos dois caminhos.
+    assert not Instantaneo(linhas=[{"ticker": "X"}], gerado_em=agora,
+                           idade_s=3600, remoto=True).fresco
+
+
+def test_offline_nunca_toca_na_rede(tmp_path, monkeypatch):
+    """Nenhum teste — nem nenhuma corrida com INVESTIGATOR_OFFLINE=1 — pode ir à rede."""
+    def _explode(*a, **k):
+        raise AssertionError("tocou na rede com INVESTIGATOR_OFFLINE=1")
+
+    monkeypatch.setenv("INVESTIGATOR_OFFLINE", "1")
+    monkeypatch.setattr("urllib.request.urlopen", _explode)
+    assert carregar(tmp_path / "nao-existe.json", url="https://exemplo/snap.json") is None

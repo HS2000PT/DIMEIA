@@ -143,6 +143,69 @@ def publish(path: str | Path, repo: str = "", branch: str = "",
         return f"[historico-api] escrita falhou (ignorado): {type(exc).__name__}"
 
 
+def publish_blob(path: str | Path, filename: str, repo: str = "", branch: str = "") -> str:
+    """Publica um ficheiro inteiro na branch de dados, **substituindo** o que lá está.
+
+    *Porque é que isto é diferente do `publish`.* O histórico é acumulativo e por isso junta-se
+    por chave: perder uma entrada seria perder um alerta que aconteceu mesmo. Um instantâneo é o
+    **estado agora** — a versão nova torna a antiga obsoleta por definição, e juntá-las não
+    significaria nada. Logo: substituir.
+
+    *Porque é que isto teve de existir.* O instantâneo do painel v4 é escrito pelo worker e lido
+    pelo web. Na máquina do aluno é o mesmo disco e funciona; no Heroku são **dois dynos com
+    sistemas de ficheiros separados e efémeros**, portanto o web nunca veria o ficheiro do
+    worker e a v4 mostraria "sem instantâneo" para sempre. A branch de dados é o único sítio que
+    os dois já sabem partilhar.
+
+    *Sem `sha` prévio não há escrita possível* — o GitHub exige-o para substituir. Um 409 aqui é
+    outro produtor a escrever ao mesmo tempo, e a resposta certa é desistir desta ronda: o
+    próximo ciclo é daqui a 60 s e traz dados mais recentes de qualquer maneira.
+
+    Nunca levanta. Devolve uma linha de estado legível (vazia quando desligado).
+    """
+    if not _enabled():
+        return ""
+    token = _token()
+    if not token:
+        return "[instantaneo-api] INVESTIGATOR_HISTORY_API=1 mas falta o GITHUB_TOKEN."
+
+    repo = repo or os.environ.get("INVESTIGATOR_HISTORY_REPO", DEFAULT_REPO)
+    branch = branch or os.environ.get("INVESTIGATOR_HISTORY_BRANCH", DEFAULT_BRANCH)
+
+    try:
+        corpo = Path(path).read_bytes()
+    except Exception as exc:  # noqa: BLE001
+        return f"[instantaneo-api] não li o ficheiro local (ignorado): {type(exc).__name__}"
+
+    sha = ""
+    try:
+        meta = _request(f"{_API}/repos/{repo}/contents/{filename}?ref={branch}", token)
+        sha = meta.get("sha", "")
+    except urllib.error.HTTPError as exc:
+        if exc.code != 404:  # 404 = primeira publicação, e é normal
+            return f"[instantaneo-api] leitura falhou (ignorado): HTTP {exc.code}"
+    except Exception as exc:  # noqa: BLE001
+        return f"[instantaneo-api] leitura falhou (ignorado): {type(exc).__name__}"
+
+    payload = {
+        "message": "Painel: instantaneo do ciclo",
+        "content": base64.b64encode(corpo).decode("ascii"),
+        "branch": branch,
+    }
+    if sha:
+        payload["sha"] = sha
+
+    try:
+        _request(f"{_API}/repos/{repo}/contents/{filename}", token, "PUT", payload)
+        return f"[instantaneo-api] publicado {filename} em {branch}."
+    except urllib.error.HTTPError as exc:
+        if exc.code == 409:
+            return "[instantaneo-api] conflito (outro produtor); tenta na próxima ronda."
+        return f"[instantaneo-api] escrita falhou (ignorado): HTTP {exc.code}"
+    except Exception as exc:  # noqa: BLE001
+        return f"[instantaneo-api] escrita falhou (ignorado): {type(exc).__name__}"
+
+
 def publish_safe(path: str | Path) -> None:
     """Como `publish`, mas imprime o estado e engole tudo. É o que o runner chama."""
     try:

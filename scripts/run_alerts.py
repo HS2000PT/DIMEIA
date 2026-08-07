@@ -1075,6 +1075,15 @@ def _write_snapshot_safe() -> None:
         DESTINO.parent.mkdir(parents=True, exist_ok=True)
         DESTINO.write_text(json.dumps(snap, indent=1), encoding="utf-8")
         print(f"[instantaneo] {len(snap['rows'])} tickers em {snap['build_seconds']:.1f}s")
+
+        # E publica-o na branch de dados. No Heroku o web é OUTRO dyno, com outro disco: sem
+        # este passo o ficheiro acima só existe aqui e o painel nunca o veria. Fail-open pela
+        # mesma razão que o resto desta função.
+        from investigator.history_publish import publish_blob
+
+        msg = publish_blob(DESTINO, "dashboard_snapshot.json")
+        if msg:
+            print(msg)
     except Exception as exc:  # noqa: BLE001
         print(f"[instantaneo] falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
 

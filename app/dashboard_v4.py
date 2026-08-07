@@ -453,9 +453,21 @@ def _screener(snap) -> None:
 
 
 # ─────────────────────────────────────────────────────────────────────────── main
+@st.cache_data(ttl=45, show_spinner=False)
+def _instantaneo():
+    """O instantâneo, com cache curta.
+
+    Sem cache, cada interacção (abrir um detalhe, trocar de vista) voltaria a puxar o ficheiro
+    pela rede em produção, e a v4 existe precisamente para não pagar rede no caminho de leitura.
+    45 s fica abaixo do ciclo de 60 s do worker, portanto a cache nunca é o que faz um
+    instantâneo parecer mais velho do que é.
+    """
+    return carregar()
+
+
 def main() -> None:
     st.markdown(_css(), unsafe_allow_html=True)
-    snap = carregar()
+    snap = _instantaneo()
 
     q = st.query_params
     ticker = (q.get("t") or "").upper()
@@ -465,8 +477,9 @@ def main() -> None:
         st.markdown(f'<div class="top">{_marca()}</div>', unsafe_allow_html=True)
         # Falha ABERTA e em voz alta: nunca um ecrã vazio que se confunda com um dia calmo.
         st.warning(
-            "No precomputed snapshot available. The worker writes one every cycle; "
-            "run `python scripts/build_snapshot.py` to create one locally.",
+            "No precomputed snapshot available — neither on disk nor on the data branch. "
+            "The worker writes and publishes one every cycle; run "
+            "`python scripts/build_snapshot.py` to create one locally.",
             icon="⚠️",
         )
         return

@@ -17,6 +17,7 @@ velhos é pior do que um painel que diz que não sabe.
 from __future__ import annotations
 
 import json
+import os
 import pathlib
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -24,9 +25,25 @@ from datetime import UTC, datetime
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 CAMINHO = RAIZ / "data" / "samples" / "dashboard_snapshot.json"
 
+# Onde o instantâneo vive quando quem escreve e quem lê não partilham disco. No Heroku o worker
+# e o web são dois dynos com sistemas de ficheiros separados e efémeros, portanto o ficheiro
+# local existe só no worker: a branch de dados é o único sítio que os dois já sabem partilhar.
+URL_REMOTO = (
+    "https://raw.githubusercontent.com/HS2000PT/DIMEIA/"
+    "alerts-history/dashboard_snapshot.json"
+)
+
 # Acima disto o instantâneo deixa de ser "agora". O worker corre a 60 s; 90 s dá margem para um
 # ciclo lento sem deixar passar um ficheiro genuinamente parado (critério P3).
 IDADE_MAXIMA_S = 90
+
+# O mesmo critério, para o caminho remoto — e o número é maior por uma razão **medida, não por
+# conveniência**: o `raw.githubusercontent` serve de CDN com cache de ~5 min, logo um
+# instantâneo acabado de publicar chega aqui já com minutos de idade. Manter os 90 s marcaria
+# como parado um worker perfeitamente saudável, e um indicador que está sempre vermelho deixa
+# de ser lido — que é exactamente o modo de falha que o carimbo existe para evitar.
+# 60 s de ciclo + 300 s de CDN + margem.
+IDADE_MAXIMA_REMOTA_S = 420
 
 
 @dataclass(frozen=True)
@@ -34,10 +51,11 @@ class Instantaneo:
     linhas: list[dict]
     gerado_em: datetime
     idade_s: float
+    remoto: bool = False
 
     @property
     def fresco(self) -> bool:
-        return self.idade_s <= IDADE_MAXIMA_S
+        return self.idade_s <= (IDADE_MAXIMA_REMOTA_S if self.remoto else IDADE_MAXIMA_S)
 
     @property
     def idade_legivel(self) -> str:
@@ -51,25 +69,55 @@ class Instantaneo:
         return f"{s // 3600}h ago"
 
 
+def _interpretar(bruto: dict, agora: datetime | None, remoto: bool) -> Instantaneo | None:
+    """Converte o JSON já lido num `Instantaneo`. Partilhado pelos dois caminhos, de propósito:
+    o local e o remoto têm de concordar no que consideram um instantâneo válido, senão a
+    produção comportar-se-ia de maneira diferente do que se testa em cima da mesa."""
+    gerado = datetime.fromisoformat(bruto["generated_at"])
+    if gerado.tzinfo is None:
+        gerado = gerado.replace(tzinfo=UTC)
+    linhas = [x for x in bruto.get("rows", []) if x.get("ticker")]
+    if not linhas:
+        return None
+    ref = agora or datetime.now(UTC)
+    return Instantaneo(
+        linhas=linhas,
+        gerado_em=gerado,
+        idade_s=max(0.0, (ref - gerado).total_seconds()),
+        remoto=remoto,
+    )
+
+
 def carregar(caminho: pathlib.Path | None = None,
-             agora: datetime | None = None) -> Instantaneo | None:
-    """Lê o instantâneo. Devolve `None` em qualquer falha — nunca levanta, nunca inventa."""
+             agora: datetime | None = None,
+             url: str | None = URL_REMOTO) -> Instantaneo | None:
+    """Lê o instantâneo: ficheiro local primeiro, branch de dados a seguir.
+
+    Devolve `None` em qualquer falha — nunca levanta, nunca inventa.
+
+    *A ordem importa e não é arbitrária.* O ficheiro local é a fonte quando quem escreve e quem
+    lê partilham disco (a máquina do aluno, e o próprio worker): é instantâneo, sem rede e sem
+    depender do GitHub. O remoto é o caminho de produção, onde web e worker são dynos separados.
+    Tentar o local primeiro mantém o desenvolvimento offline a funcionar tal como antes.
+
+    Passar `url=None` desliga a rede — é o que os testes usam, para nenhum teste depender de
+    estar a haver Internet.
+    """
     p = caminho or CAMINHO
     try:
-        bruto = json.loads(p.read_text(encoding="utf-8"))
-        gerado = datetime.fromisoformat(bruto["generated_at"])
-        if gerado.tzinfo is None:
-            gerado = gerado.replace(tzinfo=UTC)
-        linhas = [x for x in bruto.get("rows", []) if x.get("ticker")]
-        if not linhas:
-            return None
-        ref = agora or datetime.now(UTC)
-        return Instantaneo(
-            linhas=linhas,
-            gerado_em=gerado,
-            idade_s=max(0.0, (ref - gerado).total_seconds()),
-        )
+        return _interpretar(json.loads(p.read_text(encoding="utf-8")), agora, remoto=False)
     except (OSError, ValueError, KeyError, TypeError):
+        pass
+
+    # `INVESTIGATOR_OFFLINE=1` é a convenção já usada no resto do projecto (o conftest põe-na):
+    # nenhum teste pode tocar na rede por acidente, nem sequer pelo caminho de fallback.
+    if not url or os.environ.get("INVESTIGATOR_OFFLINE") == "1":
+        return None
+    try:
+        import urllib.request
+        with urllib.request.urlopen(url, timeout=10) as r:  # noqa: S310
+            return _interpretar(json.loads(r.read().decode("utf-8")), agora, remoto=True)
+    except Exception:  # noqa: BLE001
         return None
 
 
