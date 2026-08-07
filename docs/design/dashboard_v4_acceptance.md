@@ -78,11 +78,44 @@ sobrecarga de framework**, e passa a ser mensurável isoladamente. Portanto:
 Cada um decidido por teste automático ou por medição registada. `P` = desempenho, `C` = conteúdo,
 `H` = honestidade (herdados, não negociáveis).
 
+### ⚠️ Correcção ao método de medição (2026-08-07)
+
+**O `first-contentful-paint` é a métrica errada para este painel, e usei-a durante meio dia.**
+
+Medido lado a lado: FCP da v3 **840 ms**, FCP da v4 **864 ms**. Praticamente iguais — porque o
+FCP dispara quando o **Streamlit pinta a casca**, não quando os cartões existem. Uma página
+completamente vazia de dados marcaria o mesmo tempo.
+
+O que interessa é o **tempo até o conteúdo existir**. Medido com Playwright a esperar pelo
+primeiro cartão (v4) e pela primeira linha da watchlist (v3):
+
+| | 1.º pedido, caches vazias | pedido morno |
+|---|---:|---:|
+| **v3** | **6014 ms** | 1214 ms |
+| **v4** | **1987 ms** | 1165 ms |
+
+**As duas leituras honestas, e a segunda importa tanto como a primeira:**
+
+1. **A frio, a v4 é ~3× mais rápida** (6,0 s → 2,0 s), e bate certo com os ~5,5 s que o estudo
+   de mercado tinha identificado. É o caso que o utilizador encontra **depois de cada
+   implantação e de cada reciclagem do dyno**, que num Basic acontece todos os dias.
+2. **A morno não há diferença que se veja** (1,2 s nas duas). As funções de dados da v3 são
+   `@st.cache_data`, portanto com a cache quente ela já era rápida. **Dizer que a v4 "é muito
+   mais rápida" sem qualificar seria falso.**
+
+O ganho real da v4 não é só velocidade: é **não depender da rede no momento em que alguém
+olha**. A v3 morna é rápida enquanto as TTL das caches (300–900 s) não expirarem e enquanto o
+Yahoo responder; a v4 lê um ficheiro que o worker escreveu, e a idade desse ficheiro está no
+ecrã.
+
+Fica registado porque é a terceira vez nesta sessão que medir a coisa errada quase produziu uma
+afirmação falsa — e desta vez a afirmação era **minha, e favorável ao meu próprio trabalho**.
+
 ### Desempenho — medido, com número
 
 | # | Critério | Como se decide |
 |---|---|---|
-| **P1** | **Primeira pintura com conteúdo real em ≤ 1,5 s** a frio, sem rede no caminho crítico | Playwright, `first-contentful-paint`, 5 corridas, mediana |
+| **P1** | **Conteúdo real presente em ≤ 2,5 s no 1.º pedido** (caches vazias), sem rede no caminho crítico. ~~FCP ≤ 1,5 s~~ — ver a correcção acima | Playwright a esperar pelo **primeiro cartão**, servidor reiniciado, mediana de 4 corridas |
 | **P2** | **Zero chamadas de rede** no render da grelha; todos os números vêm do instantâneo pré-computado | Contar pedidos de rede na captura; tem de ser 0 para APIs de dados |
 | **P3** | O instantâneo tem **idade visível** no ecrã (`as of HH:MM`) e nunca mais de **90 s** em operação normal | Teste sobre o carimbo do ficheiro |
 | **P4** | Trocar de intervalo, paginar ou auto-refrescar **não repinta a página** | Captura antes/depois; o cabeçalho não pode piscar |

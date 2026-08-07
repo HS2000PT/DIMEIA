@@ -6,7 +6,12 @@ motor, nos congelados, nem na v3.
 AS DECISÕES, TOMADAS PELA MEDIÇÃO E NÃO POR GOSTO
 --------------------------------------------------
 1. **Ler um instantâneo, não calcular.** A v3 faz doze idas à rede antes da primeira pintura.
-   Medido: construir a frio 4,92 s · calcular com cache quente 0,870 s · **ler 0,011 s**.
+   Medido no browser, tempo até os cartões existirem: **1.º pedido com caches vazias 6,0 s na v3
+   contra 2,0 s na v4**; **morno, 1,2 s nas duas**.
+   ⚠️ A segunda metade dessa frase importa tanto como a primeira: com a cache quente a v3 já era
+   rápida, portanto dizer que a v4 "é mais rápida" sem qualificar seria falso. O ganho é a frio —
+   depois de cada implantação e de cada reciclagem do dyno — e é **não depender da rede** no
+   momento em que alguém olha.
 2. **Ficar em Streamlit.** Consequência directa: trocar de framework sem pré-computar mantinha
    o defeito; pré-computar sem trocar remove-o quase todo. A migração teria de se justificar
    por controlo de interacção, nunca por "é lento".
