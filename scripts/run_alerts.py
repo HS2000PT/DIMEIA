@@ -197,27 +197,56 @@ def seed_state_from_shared_history(state: dict, entries: list, today: str) -> No
 def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]],
                       state: dict, max_per_ticker: int = 2,
                       materiality: dict[str, float] | None = None,
-                      headlines: dict[str, str] | None = None) -> list[tuple[str, str]]:
+                      headlines: dict[str, str] | None = None,
+                      ladder: list[float] | None = None) -> list[tuple[str, str]]:
     """Puro: mantém só o que ainda NÃO foi alertado hoje e marca-o no estado.
 
     Notícias têm um TETO por ticker por dia (`max_per_ticker`, config
     `news.max_per_ticker_per_day`) — anti-fadiga: 12 alertas/dia do mesmo ticker treinam
     o utilizador a ignorar o canal.
 
-    ⚠️ **O tecto é servido por MATERIALIDADE, não por ordem de chegada** (2026-08-05).
-    Antes disto as notícias eram percorridas pela ordem em que chegavam: duas manchetes
-    irrelevantes de manhã gastavam a quota e a que interessava era **descartada em silêncio**
-    à tarde. Foi assim que o dia em que a NVDA subiu com a notícia da SpaceX passou sem alerta,
-    enquanto notícias menores do mesmo ticker passaram.
+    ⚠️ **CORRECÇÃO DE UM DEFEITO NA PRÓPRIA CORRECÇÃO ANTERIOR (2026-08-07).**
+    A 2026-08-05 acrescentou-se aqui uma ordenação por materialidade e escreveu-se que "o tecto
+    passa a ser servido por importância em vez de por ordem de chegada". **Não passou.** A
+    ordenação vale dentro de uma chamada, e `scan_news` emite **no máximo um alerta por ticker
+    por ciclo** (escolhe `latest`, a manchete relevante mais recente). Duas notícias do MESMO
+    ticker nunca coexistem no mesmo lote, portanto a ordenação **nunca** pode reordenar duas
+    candidatas que disputam o mesmo tecto — o tecto é por ticker. Ao longo do dia a quota
+    continuava a ser gasta pela ordem de chegada, que era exactamente o defeito a corrigir.
 
-    O mais difícil de defender era que o projecto **já tinha** um modelo treinado para exactamente
-    isto — a triagem da RQ4, precisão 0,632 contra 0,163 num orçamento de 5/dia — e o tecto
-    **não o consultava**. O modelo era avaliado e não decidia nada.
+    O teste que a validava passava a comparar três manchetes NVDA numa só chamada, um cenário
+    que a produção não sabe produzir. Um teste verde sobre um cenário impossível é
+    indistinguível de uma correcção que funciona.
+
+    **O que a ordenação faz de facto, e fica escrito como o que é:** ordena a ORDEM DE ENTREGA
+    entre tickers diferentes dentro de um ciclo — o canal mostra primeiro a mais material. É um
+    benefício pequeno e real; não é o controlo do tecto.
+
+    **O controlo do tecto é a `ladder`** (config `news.materiality_ladder`): o piso de
+    P(movimento anormal) exigido ao k-ésimo alerta de um ticker no dia. O primeiro slot passa
+    com o gate normal; cada slot seguinte custa mais. Assim uma manchete menor de manhã já não
+    consegue gastar a quota inteira, e a história da tarde encontra slot livre.
+
+    ⚠️ **O que isto NÃO resolve, e não há algoritmo online que resolva:** o primeiro slot é
+    gasto na primeira manchete que passe o gate, porque no momento da decisão a notícia da
+    tarde ainda não existe. Não se pode reservar quota para uma história que ainda não se viu,
+    e não se pode retirar um alerta já entregue. O que se pode é tornar cada slot extra mais
+    caro, e é isso que está feito.
+
+    Os pisos são **derivados**, não escolhidos: são os τ* do varrimento de política
+    (`docs/evaluation/evaluation_policy_sweep.md`) sob custos crescentes de falso alarme —
+    R=1 (custos iguais) dá τ*=0,49 para o primeiro alerta, e R=0,5 (um falso alarme custa o
+    dobro de uma falha, que é o caso do SEGUNDO alerta do mesmo ticker no mesmo dia, onde a
+    fadiga é o risco dominante) dá τ*=0,64. Um limiar de "notícia de última hora" acima disso
+    **não é implementável com este modelo** e por isso não foi inventado: o score máximo
+    observado no conjunto de teste está entre 0,65 e 0,66 (a τ=0,66 não dispara nada), logo
+    qualquer piso de 0,7+ seria código morto com aparência de rigor.
 
     `materiality` é um canal lateral `{news_key: P(material)}`, o mesmo padrão que `event_times`
     já usava, para não mudar a forma dos tuplos `(ticker, texto)` que atravessam o runner.
-    **Sem triagem ligada (o defeito por defeito), o dicionário vem vazio e a ordem de chegada
-    é preservada** — ou seja, o comportamento antigo é o caso particular deste.
+    **Sem triagem ligada (o defeito por defeito), o dicionário vem vazio, a `ladder` não tem
+    score para aplicar e a ordem de chegada é preservada** — o comportamento antigo é o caso
+    particular deste.
     """
     keep: list[tuple[str, str]] = []
     for ticker, text in market:
@@ -235,7 +264,9 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
         ordem = ", ".join(
             f"{t} {materiality.get(news_key(t, x), float('nan')):.0%}" for t, x in news[:6]
         )
-        print(f"[noticias] tecto servido por materialidade: {ordem}")
+        # Dito como o que é: isto ordena a ENTREGA entre tickers. O tecto (que é por ticker) é
+        # controlado pela `ladder` abaixo. A mensagem anterior afirmava o contrário.
+        print(f"[noticias] ordem de entrega por materialidade: {ordem}")
 
     vistas: dict[str, list[list[str]]] = state.setdefault("news_words", {})
     for ticker, text in news:
@@ -249,9 +280,20 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
         if manchete and quase_repetida(manchete, vistas.get(ticker, [])):
             print(f"[noticias {ticker}] a mesma história noutras palavras — sem repetição.")
             continue
-        if state["news_count"].get(ticker, 0) >= max_per_ticker:
+        ja_hoje = state["news_count"].get(ticker, 0)
+        if ja_hoje >= max_per_ticker:
             print(f"[noticias {ticker}] teto diário atingido ({max_per_ticker}) "
                   "— sem mais alertas deste ticker hoje.")
+            continue
+        # Piso escalonado: cada slot seguinte do mesmo ticker no mesmo dia custa mais. Falha
+        # ABERTO em duas situações, de propósito: sem `ladder` configurada, e sem score para
+        # esta manchete (triagem desligada, ou modelo ausente). Suprimir um alerta por falta de
+        # informação seria decidir com base em nada.
+        piso = ladder[ja_hoje] if ladder and ja_hoje < len(ladder) else None
+        p = (materiality or {}).get(k)
+        if piso is not None and p is not None and p < piso:
+            print(f"[noticias {ticker}] alerta nº{ja_hoje + 1} do dia exige "
+                  f"P≥{piso:.0%} e esta tem {p:.0%} — quota guardada.")
             continue
         state["alerted_news"].append(k)
         state["news_count"][ticker] = state["news_count"].get(ticker, 0) + 1
@@ -1251,9 +1293,12 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     materiality: dict[str, float] = {}
     # Manchete original de cada alerta, para apanhar a mesma história escrita por outro meio.
     headlines: dict[str, str] = {}
+    # Piso escalonado do tecto diário (ver `filter_new_alerts`). Lista vazia/ausente = sem
+    # escalonamento, comportamento de sempre.
+    escada = [float(x) for x in ((cfg.get("news") or {}).get("materiality_ladder") or [])]
     alerts = filter_new_alerts(
         market_alerts, scan_news(cfg, event_times, gate_records, materiality, headlines),
-        state, max_per, materiality, headlines,
+        state, max_per, materiality, headlines, escada,
     )
     detected_at = utc_stamp()
     _record_gates_safe(gate_records)

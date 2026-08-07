@@ -177,10 +177,23 @@ respondível por encurtar a entrega de minutos para segundos: o detetor está de
 diárias, e os precedentes recuperados têm dias por construção. Os dois perfis de utilizador descritos
 no Capítulo~\ref{chap:introduction} foram também interrogados sobre o que notariam, e nenhum distingue cinco
 segundos de cinco minutos num alerta que existe para provocar reflexão e não uma ordem de compra. O
-sistema sonda por isso num ciclo fixo, que chega para as afirmações que faz, e o enunciado honesto da
-limitação é que a latência está limitada por esse ciclo e é \emph{medida} em vez de prometida. Um
-produto dirigido a negociação intradiária precisaria do caminho de streaming; este não é esse produto,
-e dizê-lo é mais barato e mais verdadeiro do que construir uma capacidade que não se usa.
+sistema sonda por isso num ciclo fixo, que chega para as afirmações que faz, e a limitação é
+\emph{medida} em vez de prometida.
+
+Uma versão anterior deste parágrafo afirmava que a latência está limitada pelo ciclo de sondagem.
+Medi-la mostrou que é falso, e a correção vale a pena ficar visível porque muda aquilo sobre que a
+decisão acima é uma decisão. Decompor os carimbos de tempo registados de cada alerta entregue em
+publicação~$\rightarrow$~deteção e deteção~$\rightarrow$~entrega dá uma mediana de cerca de um segundo
+para a segunda componente e de cerca de duas horas e meia para a primeira. Encurtar o ciclo do
+agendador \emph{best-effort} usado antes, medido em uma hora e meia a duas horas, para um trabalhador
+de sessenta segundos moveu a mediana de ponta a ponta bem menos de uma hora, porque o ciclo nunca foi
+a restrição dominante. O atraso vive na descoberta: o serviço gratuito de notícias não é um canal em
+tempo real, e a manchete mais recente que passa o filtro de relevância é tipicamente mais velha do que
+a manchete mais recente do feed. Uma ligação de streaming aos preços não tocaria em nenhuma das duas. A
+afirmação defensável é por isso mais estreita e, ao contrário da original, verificável: o sistema
+entrega em segundos o que a sua fonte lhe dá. Um produto dirigido a negociação intradiária precisaria
+do caminho de streaming e de um serviço de notícias pago; este não é esse produto, e dizê-lo é mais
+barato e mais verdadeiro do que construir uma capacidade que não se usa.
 
 \section{Questões de Investigação e Objetivos Alcançados}
 \label{sec:concl_objectives}

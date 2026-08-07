@@ -63,6 +63,16 @@ news:
   # Teto de alertas de notícia por ticker por dia (anti-fadiga; 12/dia do mesmo ticker
   # ensinam o utilizador a ignorar o canal). O filtro de relevância corta o resto.
   max_per_ticker_per_day: 2
+  # PISO ESCALONADO do teto (2026-08-07). O k-ésimo alerta de um ticker no dia exige este
+  # P(movimento anormal) da triagem. Existe porque a correcção de 2026-08-05 NÃO resolveu o
+  # caso da NVDA: a ordenação por materialidade vale dentro de um ciclo, e o scan emite
+  # UMA manchete por ticker por ciclo, logo nunca reordena duas candidatas ao mesmo teto.
+  # Sem escalonamento, uma manchete menor de manhã gastava a quota inteira.
+  # Os valores são DERIVADOS do varrimento de política, não escolhidos: τ*(R=1)=0,49 para o
+  # 1.º alerta (custos iguais) e τ*(R=0,5)=0,64 para o 2.º, onde o custo dominante é a fadiga.
+  # Um piso de "última hora" acima disto seria código morto — o score máximo observado no
+  # conjunto de teste está entre 0,65 e 0,66. Lista vazia = sem escalonamento.
+  materiality_ladder: [0.49, 0.64]
   # KB VIVA + decaimento por idade ("timeline matters", 2026-07-11): o retrieval funde a
   # KB viva (casos capturados pelo próprio runner e maturados a +5d) com a KB histórica,
   # ordenando por cosseno × 0.5^(idade/half_life). A similaridade MOSTRADA é sempre o

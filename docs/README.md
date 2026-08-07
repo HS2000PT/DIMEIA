@@ -54,6 +54,7 @@ se só queres correr o sistema.
 | [evaluation/evaluation_conformal.md](evaluation/evaluation_conformal.md) | **Caso 6:** predição conformal na triagem — a garantia, e o preço dela (decisão definida em só 39,5% das manchetes a 90% de cobertura). |
 | [evaluation/evaluation_drift.md](evaluation/evaluation_drift.md) | **Caso 7:** deriva PSI+KS treino→teste e →hoje; a limitação mais repetida da tese, medida. |
 | [evaluation/evaluation_convergence.md](evaluation/evaluation_convergence.md) | **Caso 8:** convergência multi-sinal (worldmonitor, creditado) + detetor de volume; a fusão ganha em 1 de 3 orçamentos e por isso não entra em produção. |
+| [evaluation/evaluation_latency.md](evaluation/evaluation_latency.md) | **Latência decomposta:** publicação→detecção vs detecção→entrega. Refuta a explicação que estava registada (o ciclo de 60 s não é a restrição dominante; o nosso lado custa ~1 s). |
 | [evaluation/evaluation_narrator.md](evaluation/evaluation_narrator.md) | **RQ3-ext:** fidelidade do narrador ancorado — violações pré-guarda (mede o modelo) vs entregues (mede a guarda). |
 
 ## decisions/ — porquê das decisões, aprendizagem e revisões (rigor académico)

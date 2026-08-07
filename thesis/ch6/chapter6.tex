@@ -170,10 +170,23 @@ by shortening delivery from minutes to seconds: the detector is defined on daily
 retrieved precedents are days old by construction. Both user profiles described in
 Chapter~\ref{chap:introduction} were also asked what they would notice, and neither distinguishes five
 seconds from five minutes for an alert that exists to prompt reflection rather than a trade. The
-system therefore polls on a fixed cycle, which is enough for the claims it makes, and the honest
-statement of the limitation is that latency is bounded by that cycle and is \emph{measured} rather
-than promised. A product aimed at intraday trading would need the streaming path; this one is not that
-product, and saying so is cheaper and more truthful than building an unused capability.
+system therefore polls on a fixed cycle, which is enough for the claims it makes, and the limitation
+is \emph{measured} rather than promised.
+
+An earlier version of this paragraph stated that latency is bounded by the polling cycle. Measuring it
+showed that this is false, and the correction is worth keeping visible because it changes what the
+decision above is a decision about. Decomposing the recorded timestamps of every delivered alert into
+publication~$\rightarrow$~detection and detection~$\rightarrow$~delivery gives a median of roughly one
+second for the second component and around two and a half hours for the first. Shortening the cycle
+from the best-effort scheduler used earlier, measured at one and a half to two hours, to a sixty-second
+worker moved the end-to-end median by well under an hour, because the cycle was never the binding
+constraint. The delay lives in discovery: the free news endpoint is not a real-time channel, and the
+most recent headline that passes the relevance filter is typically older than the most recent headline
+in the feed. A streaming price connection would not have touched either. The defensible claim is
+therefore narrower and, unlike the original one, verifiable: the system delivers in seconds what its
+source gives it. A product aimed at intraday trading would need both the streaming path and a paid news
+feed; this one is not that product, and saying so is cheaper and more truthful than building an unused
+capability.
 
 \section{Research Questions and Objectives Achieved}
 \label{sec:concl_objectives}

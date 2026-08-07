@@ -414,8 +414,18 @@ def test_evidencia_do_runner_passa_a_propria_guarda():
     assert rel.ok, rel.violations
 
 
-def test_teto_diario_serve_por_materialidade_e_nao_por_ordem_de_chegada(tmp_path):
-    """O caso da NVDA (2026-08-05): a notícia que interessava chegou DEPOIS da quota gasta.
+def test_ordem_de_entrega_serve_por_materialidade(tmp_path):
+    """A ordenação por materialidade, dita pelo que ela É: ordem de ENTREGA num ciclo.
+
+    ⚠️ Este teste chegou a chamar-se "o teto serve por materialidade" e a documentar a correcção
+    do caso da NVDA. **Estava a validar um cenário que a produção não sabe produzir:** três
+    manchetes do MESMO ticker numa só chamada. O `scan_news` emite uma manchete por ticker por
+    ciclo, portanto duas candidatas ao mesmo teto (que é por ticker) nunca coexistem no lote, e
+    a ordenação nunca as pode reordenar. O controlo do teto é o piso escalonado, coberto pelo
+    teste seguinte, que percorre CICLOS separados como a produção faz.
+
+    O que fica aqui coberto é real e vale por si: dentro de um ciclo, o canal entrega primeiro
+    a mais material.
 
     Duas manchetes irrelevantes de manhã consumiam o tecto e a notícia material da tarde era
     descartada em silêncio — apesar de existir um modelo de triagem treinado exactamente para
@@ -446,6 +456,79 @@ def test_teto_diario_serve_por_materialidade_e_nao_por_ordem_de_chegada(tmp_path
     st2 = load_state(tmp_path / "b.json", today=date(2026, 8, 5))
     sem = filter_new_alerts([], news, st2, max_per_ticker=2)
     assert not any("SpaceX" in t for _, t in sem), "sem ranking, a notícia material é descartada"
+
+
+def test_piso_escalonado_guarda_a_quota_para_a_noticia_da_tarde(tmp_path):
+    """O caso da NVDA, agora no cenário que a PRODUÇÃO produz: um ciclo, um alerta por ticker.
+
+    Três ciclos ao longo do dia (o worker corre a 60 s; aqui só interessa a sequência). Duas
+    manchetes mornas de manhã, a que interessa à tarde. Com o teto a 2 e sem piso escalonado, as
+    duas de manhã gastam a quota e a da tarde é descartada — e a ordenação por materialidade não
+    salva nada, porque nunca vê duas candidatas ao mesmo tempo.
+
+    Com o piso escalonado, o segundo slot exige τ*(R=0,5)=0,64 e a manchete de 55% não o alcança,
+    portanto a quota fica guardada e a notícia da SpaceX sai.
+
+    ⚠️ **Os P's são todos ≥ 0,50 de propósito.** A primeira versão deste teste usava 0,11 e 0,08
+    e o teste apanhou-me: com `min_materiality: 0.5` em produção, essas manchetes nunca chegam a
+    esta função — são suprimidas antes. Um cenário abaixo do gate testaria um caminho que a
+    produção não percorre, que é exactamente o defeito do teste que este substitui.
+    """
+    from datetime import date
+
+    from scripts.run_alerts import filter_new_alerts, load_state, news_key
+
+    ciclos = [
+        ("NVDA", "analyst note repeats hold rating"),          # manhã, P=0,52
+        ("NVDA", "seven cheap stocks to watch this week"),      # meio-dia, P=0,55
+        ("NVDA", "SpaceX to use Nvidia chips exclusively, says Musk"),  # tarde, P=0,65
+    ]
+    mat = {news_key(t, x): p for (t, x), p in zip(ciclos, (0.52, 0.55, 0.65), strict=True)}
+    escada = [0.49, 0.64]
+
+    # Sem piso: o defeito reproduz-se, um ciclo por chamada.
+    st = load_state(tmp_path / "sem.json", today=date(2026, 8, 5))
+    saiu_sem = [t for c in ciclos for _, t in filter_new_alerts([], [c], st, 2, mat, None, None)]
+    assert not any("SpaceX" in t for t in saiu_sem), (
+        "sem piso escalonado a notícia material tem de ser descartada — se este assert falhar, "
+        "o defeito que motivou a correcção deixou de existir por outra via e a correcção "
+        "precisa de ser rejustificada"
+    )
+
+    # Com piso: a segunda manchete menor não alcança 0,64, a quota sobra para a da tarde.
+    st2 = load_state(tmp_path / "com.json", today=date(2026, 8, 5))
+    saiu = [t for c in ciclos for _, t in filter_new_alerts([], [c], st2, 2, mat, None, escada)]
+    assert any("SpaceX" in t for t in saiu), "a notícia material tem de sair"
+    assert len(saiu) == 2, "e sem estourar o teto"
+
+
+def test_piso_escalonado_falha_aberto_sem_score(tmp_path):
+    """Triagem desligada ou modelo ausente: sem P não há piso a aplicar.
+
+    Suprimir por falta de informação seria decidir com base em nada — e transformaria uma
+    configuração incompleta em silêncio do canal.
+    """
+    from datetime import date
+
+    from scripts.run_alerts import filter_new_alerts, load_state
+
+    ciclos = [("AMD", "primeira"), ("AMD", "segunda")]
+    st = load_state(tmp_path / "d.json", today=date(2026, 8, 5))
+    saiu = [t for c in ciclos
+            for _, t in filter_new_alerts([], [c], st, 2, {}, None, [0.49, 0.64])]
+    assert saiu == ["primeira", "segunda"]
+
+
+def test_piso_escalonado_nao_estorva_o_primeiro_alerta(tmp_path):
+    """O 1.º slot mantém o gate normal: quem passou a triagem passa o piso."""
+    from datetime import date
+
+    from scripts.run_alerts import filter_new_alerts, load_state, news_key
+
+    item = ("JNJ", "FDA clears new indication")
+    mat = {news_key(*item): 0.51}
+    st = load_state(tmp_path / "e.json", today=date(2026, 8, 5))
+    assert filter_new_alerts([], [item], st, 2, mat, None, [0.49, 0.64])
 
 
 def test_sem_triagem_a_ordem_de_chegada_e_preservada(tmp_path):

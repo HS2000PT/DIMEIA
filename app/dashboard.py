@@ -1105,18 +1105,37 @@ def _live_health() -> dict | None:
                                    "lift": h.lift_points}
 
 
-def _latency() -> str | None:
-    """Mediana facto→entrega, e **só quando foi medida** (critério R3).
+def _fmt_dur(seg: float) -> str:
+    return f"{seg / 60:.0f} min" if seg >= 90 else f"{seg:.0f} s"
 
-    O histórico antigo não tem carimbos de tempo. Nesses casos não se mostra nada — nunca
-    se inventa uma latência plausível para preencher o espaço.
+
+def _latency() -> tuple[str, str] | None:
+    """Mediana facto→entrega **decomposta**, e só quando foi medida (critério R3).
+
+    Devolve `(descoberta, pipeline)` — publicação→detecção e detecção→entrega.
+
+    ⚠️ **Mostrava um único número, e isso atribuía mal o tempo** (medido a 2026-08-07,
+    `docs/evaluation/evaluation_latency.md`). A mediana de ponta a ponta é ~158 min e um leitor
+    conclui que o sistema é lento; medido componente a componente, o **nosso** lado custa ~1 s e
+    o resto é a fonte a listar tarde e a manchete mais recente *relevante* já ser velha. Um
+    número agregado não distingue "somos lentos" de "a fonte é lenta", e as duas afirmações têm
+    consequências opostas — a primeira pede engenharia, a segunda pede honestidade sobre a
+    limitação.
+
+    O histórico antigo não tem carimbos de tempo. Nesses casos não se mostra nada — nunca se
+    inventa uma latência plausível para preencher o espaço.
     """
     try:
-        valores = sorted(x for x in (e.latency_seconds() for e in _alerts()) if x is not None)
-        if not valores:
+        entradas = _alerts()
+        total = sorted(x for x in (e.latency_seconds() for e in entradas) if x is not None)
+        pipe = sorted(x for x in (e.pipeline_seconds() for e in entradas) if x is not None)
+        if not total or not pipe:
             return None
-        m = valores[len(valores) // 2]
-        return (f"{m / 60:.0f} min" if m >= 90 else f"{m:.0f} s") + f" (n={len(valores)})"
+        med_total, med_pipe = total[len(total) // 2], pipe[len(pipe) // 2]
+        # A descoberta é o que resta; deriva-se das duas medianas em vez de se medir à parte
+        # porque é assim que o leitor vai fazer a subtração de cabeça.
+        return (f"{_fmt_dur(max(0.0, med_total - med_pipe))} (n={len(total)})",
+                f"{_fmt_dur(med_pipe)} (n={len(pipe)})")
     except Exception:  # noqa: BLE001
         return None
 
@@ -1171,7 +1190,10 @@ def _method_page() -> None:
         cartoes.append(("Kept decisions that proved right", f"{saude['kept']:.3f}",
                         f"against {saude['base']:.3f} if it had kept everything"))
     if lat:
-        cartoes.append(("Median time from event to delivery", lat, "measured, not estimated"))
+        # Duas medidas e não uma: a agregada não distingue "somos lentos" de "a fonte é lenta".
+        cartoes.append(("Our side: detection to delivery", lat[1], "measured, not estimated"))
+        cartoes.append(("Source lag: publication to detection", lat[0],
+                        "outside our control; a lower bound"))
     cartoes.append(("Alerts actually sent to the channel", f"{len(_alerts())}", "all time"))
     st.markdown(
         '<div style="display:flex;gap:1.6rem;flex-wrap:wrap;margin:0.35rem 0 0.2rem">'
