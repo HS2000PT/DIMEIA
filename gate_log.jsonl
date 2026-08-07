@@ -586,3 +586,15 @@
 {"date": "2026-08-07", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-07", "ticker": "XOM", "stage": "weak_precedent", "detail": "melhor sim 0.43 < 0.45"}
 {"date": "2026-08-07", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
+{"date": "2026-08-07", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-07", "ticker": "MSFT", "stage": "weak_precedent", "detail": "melhor sim 0.41 < 0.45"}
+{"date": "2026-08-07", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.50 < 0.50"}
+{"date": "2026-08-07", "ticker": "TSLA", "stage": "alerted", "detail": "Elon Musk’s Terafab Will Be Earth’s Most Valuable Building, 50x the Size of the "}
+{"date": "2026-08-07", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon CEO Andy Jassy Just Gave Investors 220 Billion Reasons to Buy Micron Stoc"}
+{"date": "2026-08-07", "ticker": "GOOGL", "stage": "alerted", "detail": "What Block (SQ)'s Buyback Completion And Google AI Tie-Up Means For Shareholders"}
+{"date": "2026-08-07", "ticker": "META", "stage": "alerted", "detail": "Mark Zuckerberg's Net Worth Swung by Double-Digit Billions Twice This Summer as "}
+{"date": "2026-08-07", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.25 < 0.50"}
+{"date": "2026-08-07", "ticker": "AMD", "stage": "alerted", "detail": "AMD to acquire Taalas for specialised AI inference silicon"}
+{"date": "2026-08-07", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-07", "ticker": "XOM", "stage": "weak_precedent", "detail": "melhor sim 0.43 < 0.45"}
+{"date": "2026-08-07", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
