@@ -7,8 +7,71 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 51 (**produto implantado, fuga de chave corrigida, documentos sincronizados**)
-- **Última atualização:** 2026-08-06
+- **Sessão nº:** 52 (**v4 do painel construída AO LADO da v3; três+duas direcções de marca desenhadas e medidas**)
+- **Última atualização:** 2026-08-07
+- **🆕 SESSÃO 52 (2026-08-06→07 — o painel v4 que faltava, e a marca desenhada de facto):**
+  **(A) v4 DO PAINEL CONSTRUÍDA, ao lado da v3.** `app/dashboard_v4.py` + `app/v4_views.py`
+  (+`tests/test_v4_views.py`). **O `Procfile` NÃO foi tocado — a v3 continua a ser servida.**
+  Três vistas ligadas por **URLs reais** (`?t=NVDA`, `?view=quiet`), portanto o botão do browser
+  funciona e o alerta do Telegram pode apontar direito ao detalhe:
+  **(1) GRELHA** que **LÊ um instantâneo** em vez de calcular — as três perguntas do trabalho como
+  secções **nomeadas**, na mesma ordem, em todos os cartões (incluindo quando a resposta é "nada
+  aconteceu": uma pergunta que só aparece às vezes ensina o leitor a não a procurar). A raridade
+  passa a **ver-se** numa tira de marcas (as que excederam acesas) — XOM rara 44/249, AMZN banal
+  235/249, sem ler número e sem assumir normalidade.
+  **(2) DETALHE** — repartição mercado/setor/empresa em barras divergentes que somam ao movimento
+  por construção, motor destacado, e as componentes que puxaram **ao contrário** ditas em vez de
+  escondidas (na NVDA: "The company itself and its sector pulled the other way").
+  **(3) SCREENER "why quiet?"** — cada nome que a varredura olhou, o gate que o parou, e a
+  **MARGEM** que faltou ("best match 0.42 < floor 0.45"). Nenhum produto comercial mostra o que
+  descartou; o silêncio é uma decisão deste sistema, logo tem de ser inspeccionável.
+  **O worker passa a escrever o instantâneo no fim de cada ciclo** (`scripts/run_alerts.py` +
+  `build_snapshot.py`) — constrói-se onde o custo dos preços já está pago e lê-se na página.
+  **Fail-open obrigatório**; o ficheiro leva carimbo de tempo e a v4 mostra a **idade**, portanto
+  um instantâneo que pare de ser escrito **nota-se no ecrã** em vez de passar por actual.
+  **⚠️ (B) O ACHADO DE MÉTODO: MEDI A COISA ERRADA MEIO DIA, E A FAVOR DO MEU PRÓPRIO TRABALHO.**
+  Usei **FCP** (first-contentful-paint) para afirmar que a v4 cumpria o P1 com 836 ms. O FCP
+  dispara quando o Streamlit pinta a **casca**, não quando os cartões existem — uma página **sem
+  dados** marcaria o mesmo. Medido lado a lado, FCP v3 840 ms ≈ v4 864 ms. Remedido à espera do
+  **conteúdo** (Playwright a esperar pelo 1.º cartão): a **frio** v4 1987 ms vs v3 6014 ms (~3×,
+  bate certo com os ~5,5 s do estudo de mercado — o caso que o utilizador encontra depois de cada
+  reciclagem do dyno Basic, diária); **a morno não há diferença visível** (as funções da v3 são
+  `cache_data`). O ganho real não é só velocidade: é **não depender da rede** no momento em que
+  alguém olha. **P1 redefinido para "conteúdo presente em ≤2,5 s no 1.º pedido"** em vez de
+  "FCP ≤1,5 s", com a razão escrita no documento — um critério corrigido às escondidas é
+  indistinguível de um critério contornado. **É a 3.ª vez nesta linha de trabalho que medir a
+  coisa errada quase produziu uma afirmação falsa.**
+  **(C) TRÊS DEFEITOS MEUS, apanhados a verificar e não nos testes:** (1) o painel de precedentes
+  dizia "No comparable past cases … yet" — afirmava que se **procurou** e não se encontrou, quando
+  não se procurou; (2) o screener lia `r.gate` quando o campo do `GateRecord` é `r.stage` — o
+  `AttributeError` era engolido por um `except` largo e o ecrã dizia "sem registo",
+  indistinguível de um dia sem corrida ⇒ o `except` passa a distinguir ficheiro-em-falta de
+  esquema-inesperado; (3) o varrimento de H2 sobre 114 frases geradas acusou a **própria máscara**
+  ("not a forecast" contém "forecast") — **3.ª vez desta classe** (red team do narrador,
+  "price target" dentro de "No price targets") ⇒ a máscara passa a reconhecer negações, com
+  controlo nos dois sentidos. Screener verificado com registo sintético de 7 linhas, **apagado a
+  seguir**.
+  **(D) MARCA: CINCO DIRECÇÕES DESENHADAS E MEDIDAS, nenhuma revivalismo da "Stare".** Renderizadas
+  a 16/24/32/48/88/160 px, nos dois fundos, com a marca **actual como controlo**.
+  **A** Waterline (olhos do jacaré sobre a linha de água = linha do mercado): melhor grande,
+  **colapsa aos 16 px**. **B** Pupil Tick (pupila = barra de preço): a única que **sobrevive aos
+  16 px**. **C** Gator Mark (cabeça de cima): **falhou** — lê-se como vulto, é de desenho não de
+  tamanho. **D** Chartback (as placas dorsais do jacaré **são** o gráfico de barras a subir; olho
+  redondo, nunca em fenda — um predador contradiz um produto que recusa caçar): **recomendação**,
+  mas mais ocupada que a Tail aos 16 px (ganha a partir dos 24). Precisou de 2.ª versão (a 1.ª lia
+  como lagarta — focinho curto). Uptick Gator (galões de patente) e Snout Candle (robô) falharam.
+  **Conclusão que não era a esperada:** nenhuma bate claramente a Tail aos 16 px ⇒ confirma a
+  **separação já escrita no backlog** — LOGÓTIPO fica Tail (ou B) para os 16 px; MASCOTE é a A/D
+  em tamanho grande, onde os "olhos" e o "dar nas vistas" não pagam o custo do favicon. Ficheiros
+  de lockup novos em `app/assets/logo-lockup*.svg` + `logo-wordmark.svg`. **Falta o aluno decidir
+  a olhar para os SVG aos tamanhos reais** — não por descrição, que foi como a marca anterior caiu.
+  **Gates verificados nesta sessão de continuidade: 643 testes, ruff limpo, congelados byte-iguais,
+  v3 e `Procfile` intocados.**
+  **⏭️ PENDENTE (não-código, decisões do aluno):** (1) aprovar/emendar
+  `docs/design/dashboard_v4_acceptance.md` e decidir **promover a v4** (uma linha no `Procfile`,
+  que abre dívida de tese como abriu na sessão 48); (2) escolher a marca/mascote com os renders à
+  frente; (3) tudo o que já estava no `progress/BACKLOG_ALUNO.md` (literatura com PDF, latência
+  quase-real, 6ter comparação de mercado nomeada na tese, rodar as 4 credenciais).
 - **🚨 SESSÃO 51 (2026-08-06):**
   **(A) ⚠️ FUGA DE CREDENCIAL, apanhada a verificar a implantação — é o achado da sessão.**
   A chave do **Finnhub** estava a ser escrita nos registos do Heroku **centenas de vezes**:
