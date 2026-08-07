@@ -53,7 +53,14 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] Fontes verificadas em fonte primária e registadas (`citation_log.md` + `references.bib`): SIFMA 2025, Gallup 2025, CCAF 2026
 - [x] 1.ª **figura reprodutível** (`scripts/figures/fig_us_market_cap.py` → `thesis/figures/us_equity_market_cap.pdf`); matplotlib fixado
 - [x] **Cap. 2 redigido** (rascunho EN-GB, 4 secções, cada afirmação citada) — compila (43 pp., 0 erros, 11 refs)
-- [ ] Revisão do aluno ao Cap. 2; fixar fonte primária para a quota de retalho no volume (TODO)
+- [x] ~~fixar fonte primária para a quota de retalho no **volume**~~ — **caixa fechada a
+  2026-08-07 por já não haver afirmação a sustentar.** A frase que preocupava esta linha era de
+  um rascunho da sessão 4 e desapareceu na reescrita S1–S9. Hoje o Cap. 1 afirma **propriedade**
+  (87% acima de US\$100k, 28% abaixo de US\$50k, Gallup) e o Cap. 2 afirma **comportamento**
+  (Robinhood em Março de 2020, Welch), com escala em SIFMA — nenhuma delas é quota de volume, e
+  as três estão verificadas em fonte primária. Uma caixa aberta sobre um texto que já não existe
+  manda procurar um problema inexistente.
+- [ ] Revisão do aluno ao Cap. 2
 
 ## Sessão 5 — Escrita: Capítulo 1 (Introduction)
 - [x] **Cap. 1 redigido** (rascunho EN-GB): motivação, problema, **RQ1–RQ3**, contribuições (Engenharia de IA), estrutura

@@ -86,15 +86,25 @@ deixa de ser um instantâneo e passa a ser uma série.
 O sistema **não** promete tempo real. Promete o seguinte, e agora sabe medi-lo
 (`HistoryEntry.event_at → sent_at`, ver `investigator/alerts_history.py`):
 
-| Modo de operação | Latência esperada | Estado |
-|---|---|---|
-| GitHub Actions (cron) | 1,5–2 h (medido, best-effort) | **em produção hoje** |
-| VM sempre-ligada, polling 60 s | ~1 min | desenhado, por implantar |
-
 Até 2026-07-29 o sistema **não conseguia produzir um único número de latência**, nem
 retroativamente: só guardava a data ao dia e descartava a hora exata de publicação que o
-Finnhub devolve. Passou a guardá-la. As afirmações de latência na tese assentam em medição,
+Finnhub devolve. Passou a guardá-la. As afirmações de latência assentam em medição,
 não em estimativa.
+
+⚠️ **Esta secção tinha uma tabela que prometia "~1 min" para o ciclo de 60 s, e a promessa era
+minha, não uma medição.** Medida a 2026-08-07 sobre 101 alertas entregues
+([`evaluation_latency.md`](../evaluation/evaluation_latency.md)):
+
+| componente | mediana | de quem é |
+|---|---|---|
+| publicação → deteção | ~158 min | da fonte (limite inferior) |
+| deteção → entrega | **~1 s** | nosso |
+| **total, era do cron** (best-effort 1,5–2 h) | 196 min | — |
+| **total, era do worker 60 s** | 143 min | — |
+
+Encurtar o ciclo de 1,5–2 h para 60 s moveu a mediana **53 minutos**, não duas horas: o ciclo
+nunca foi a restrição dominante. O que é honesto prometer é **"entregamos em segundos o que a
+fonte nos dá"** — e não uma latência total, porque a maior parte dela não é nossa para prometer.
 
 ---
 

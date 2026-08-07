@@ -1666,7 +1666,8 @@ Não é só uma tese em papel: o sistema \key{corre} em produção, de graça, s
   \item \key{Canal Telegram} — varredura automática com \key{filtro de relevância}, chão de
         similaridade, teto de 2 alertas/ticker/dia e \key{resumo diário ao fecho}; corre
         também fins de semana (só notícias). \key{Intradiário no Actions} (30 em 30 min,
-        cotação Finnhub em tempo real); a VM vigia é o upgrade de latência ($\sim$5 min).
+        cotação Finnhub em tempo real). O worker sempre-ligado corre a \key{60 s} desde
+        2026-08-02 --- e o que isso comprou está \key{medido}, não prometido (frame seguinte).
         Alertas de mercado com \key{severidade} (notable $\geq$1{,}5 < strong $\geq$2 <
         extreme $\geq$3) e linha \key{"Sector check"} (pares do setor no mesmo dia).
   \item \key{Preços à prova de falha} — lição real de produção: o Yahoo bloqueou os runners
@@ -1686,6 +1687,45 @@ Não é só uma tese em papel: o sistema \key{corre} em produção, de graça, s
 \centering \emph{Uma frase para o júri:} "o desenho de produção é conservador: tudo o que é
 opcional está desligado por defeito e falha aberto — a produção nunca depende de um componente
 opcional estar vivo."
+\end{frame}
+
+\begin{frame}{A latência: o que eu assumi, e o que a medição disse}
+\scriptsize
+\textbf{A queixa era real:} \emph{"fui notificado depois de a coisa já ter acontecido"}. E a minha
+explicação estava escrita no projeto: a mediana mostrada (\key{208 min}) incluía o histórico do
+agendador gratuito, medido em 1,5--2 h; com o worker a \key{60 s}, o número desceria.
+
+\vspace{1.5mm}
+\textbf{Separei as eras. Desceu de 196 para 143 min --- e ficou lá.} O ciclo não era a restrição.
+Só \key{decompondo} é que se vê onde está o tempo:
+
+\vspace{1.5mm}
+\centering
+\begin{tabular}{lrl}
+\toprule
+\textbf{componente} & \textbf{mediana} & \textbf{de quem é} \\
+\midrule
+publicação $\rightarrow$ deteção & $\sim$158 min & da fonte \\
+deteção $\rightarrow$ entrega & \key{$\sim$1 s} & nosso \\
+\bottomrule
+\end{tabular}
+
+\vspace{2mm}
+\raggedright
+\textbf{Porque é que a manchete já é velha quando o alerta sai} --- duas razões, e nenhuma se
+compra com infraestrutura: (1) o serviço gratuito de notícias \key{não é um canal em tempo real};
+(2) a manchete mais recente do feed \key{não é a mais recente relevante} --- num teste ao vivo o
+feed da NVDA tinha 250 manchetes, a mais recente às 11:39, mas das 30 que mencionavam a empresa a
+mais recente era de \key{08:14}.
+
+\vspace{1.5mm}
+\textbf{A lição de método, que é o que aqui interessa:} a instrumentação existia \key{antes} da
+correção, e por isso a medição pôde contrariar a minha própria expectativa em vez de a confirmar.
+Se eu só tivesse medido o total, teria atribuído à infraestrutura um atraso que é da fonte.
+
+\vspace{1.5mm}
+\centering \emph{Uma frase para o júri:} "entregamos em segundos o que a fonte nos dá --- e não
+prometo a latência total, porque a maior parte dela não é minha para prometer."
 \end{frame}
 
 \begin{frame}{Perguntas difíceis do júri (1/2)}
