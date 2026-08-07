@@ -622,3 +622,15 @@
 {"date": "2026-08-07", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-07", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-07", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
+{"date": "2026-08-07", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-07", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft opens fourth Azure data center region in India"}
+{"date": "2026-08-07", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.50 < 0.50"}
+{"date": "2026-08-07", "ticker": "TSLA", "stage": "alerted", "detail": "Elon Musk Says SpaceX Will Consume Three Times More Terafab AI Compute Than Tesl"}
+{"date": "2026-08-07", "ticker": "AMZN", "stage": "alerted", "detail": "Microsoft, Amazon, Meta, Google Are 'Collectively Overinvesting' In AI: 'That's "}
+{"date": "2026-08-07", "ticker": "GOOGL", "stage": "alerted", "detail": "Alphabet Taps the Bond Market Again for Up to $25 Billion"}
+{"date": "2026-08-07", "ticker": "META", "stage": "alerted", "detail": "Meta ordered to pay $942M: Why the judge compared the company to 'noxious pollut"}
+{"date": "2026-08-07", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.25 < 0.50"}
+{"date": "2026-08-07", "ticker": "AMD", "stage": "alerted", "detail": "ETFs to Buy as AMD Shares Sink 7% Despite Q2 Earnings Beat"}
+{"date": "2026-08-07", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-07", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-07", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
