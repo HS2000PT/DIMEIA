@@ -77,7 +77,7 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
 
 ### 2.4 Documentos académicos
 - **Tese** (`thesis/`, EN-GB): 6 capítulos canónicos MEIA, **113 pp, 0 erros, 0 citações
-  indefinidas, 61/61 referências verificadas uma a uma** (auditoria em
+  indefinidas, 63/63 referências verificadas uma a uma** (auditoria em
   `docs/decisions/page_audit.md`). RQ1–RQ4 respondidas com os números acima; inclui um
   screenshot genuíno do painel único (Cap. 4, Fig. 4.5).
 - **Paper IEEE** (`paper/`): 4 pp, compila 0 erros (destilado da tese validada).
@@ -90,7 +90,7 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   mãos, executado e commitado com outputs reais.
 
 ### 2.5 Qualidade de engenharia
-- **626 testes automáticos + ruff**, verdes localmente e no CI (runner limpo a cada push).
+- **646 testes automáticos + ruff**, verdes localmente e no CI (runner limpo a cada push).
 - **Reprodutibilidade:** demo offline num comando (`python scripts/demo.py` reproduz o
   exemplo do Cap. 3, +6,46%); todas as figuras/números da tese saem de scripts versionados;
   ambiente fixado (Python 3.12, `requirements*.txt`).

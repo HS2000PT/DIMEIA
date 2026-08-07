@@ -472,6 +472,29 @@ past events is recalled rather than retrieved from an indexed corpus with measur
 answer reads well and cannot be checked, which is precisely the interpretability failure the
 explainability literature warns about \autocite{lipton2018mythos, rudin2019stop}.
 
+Since 2025 that fourth option has stopped being a workaround and become a shipped feature, which
+makes it the closest competitor to this work's central claim and worth naming rather than describing
+as a category. Robinhood introduced \emph{Cortex} in March~2025 with a feature whose stated purpose is
+to ``answer the age-old question of, `Why is this stock going up or down today?'\,'' by generating
+summaries from news, analyst reports, technical signals and the broker's own platform data
+\autocite{robinhood2025cortex}. Google rebuilt Google Finance around AI and shipped
+``key moments'' that ``explain why a stock moved'', annotated onto the price chart
+\autocite{google2026finance}. Both were observed on 2026-08-07; the wording quoted is each vendor's
+own.
+
+The overlap with this work is real and should be stated plainly: these products answer the same
+question for a far larger audience than a dissertation ever will, and they answer it in plain
+language, which was one of the goals here. The difference is what stands behind the answer, and it
+is a difference of \emph{kind}. A generated summary is a claim; this work's output is a claim with
+its evidence attached. Neither product states whether the move was unusual \emph{for that security}
+against its own recent volatility, neither separates the company's contribution from its market and
+sector, and neither retrieves comparable past events with outcomes measured after the fact. Nor is
+either verifiable by the reader: Robinhood's own disclosure is that ``there is no guarantee that AI
+will improve investing performance, mitigate risk, or reduce losses''
+\autocite{robinhood2025cortex}, which is a statement about outcomes and not about whether any
+individual explanation is right. That is the gap this work occupies, and it is a narrow one honestly
+described: not a better answer, but an answer a reader can check.
+
 Table~\ref{tab:sota_three_questions} therefore scores the same tools against the three questions
 posed in Section~\ref{sec:intro_problem}, which is a stricter test than a feature list because each
 question has a checkable answer.
@@ -489,6 +512,7 @@ Brokerage price alert & No (fixed threshold) & No & No \\
 News / sentiment app & No & No & No (polarity only) \\
 Robo-advisor \autocite{dacunto2019robo} & Not surfaced & Not surfaced & No \\
 General LLM assistant \autocite{wu2023bloomberggpt} & No (no volatility baseline) & No (no beta estimate) & Recalled, not retrieved \\
+AI ``why did it move?'' feature (Robinhood Cortex \autocite{robinhood2025cortex}; Google Finance key moments \autocite{google2026finance}) & Not stated & Not stated & Generated, not retrieved \\
 Professional terminal & Yes & Yes & Yes (paid) \\
 \textbf{This work (InvestiGator)} & Yes (rolling z-score) & Yes (rolling beta) & Yes (retrieved, measured) \\
 \bottomrule

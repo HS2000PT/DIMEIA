@@ -17,7 +17,7 @@
 | 5 | Rever a escrita | **por começar** |
 | 6 | Varrer TODO que restam | **✅ feito 2026-08-07: zero TODO reais no código** — ver §6 |
 | 6bis | Mecanismo de alertas | **⭐ (a), (b) e (c) FEITOS.** Cobertura medida: **88,5%** |
-| 6ter | Comparação de mercado na tese | **material salvo; tese por actualizar** |
+| 6ter | Comparação de mercado na tese | **⭐ pontos 1 e 2 FEITOS 2026-08-07** (produtos nomeados, fonte primária, EN+PT); ponto 3 impossível sem observar no dia — ver §6ter |
 | 7 | Refazer o logótipo (olhos/mascote) | **por decidir.** Já caiu 2× por medição — ler §7 |
 
 ## ⚠️ Estado do que está NO AR (verificado a 2026-08-06, a renderizar)
@@ -235,6 +235,34 @@ mostra precedentes? age pelo utilizador?) e *"Existing tools scored against the 
    muito mais força: **pegar no MESMO acontecimento** (o dia da NVDA serve) e pôr lado a lado o
    que cada produto disse e o que o InvestiGator disse. Deixa de ser uma tabela de Sim/Não e passa
    a ser evidência.
+
+### ✅ Feito a 2026-08-07: pontos 1 e 2. ⚠️ Ponto 3: não, e a razão importa
+
+**Ponto 1 (nomes) e ponto 2 (a vaga de 2025-26): feitos**, no §2.7 das duas teses. Nomeados os dois
+produtos que reclamam **exactamente** a pergunta central deste trabalho:
+
+- **Robinhood Cortex** (março 2025) — propósito declarado pela própria empresa: *"answer the age-old
+  question of, 'Why is this stock going up or down today?'"*
+- **Google Finance "key moments"** (junho 2026) — *"explain why a stock moved"*, anotados no gráfico.
+
+**A regra que apliquei é mais estreita do que o habitual, e é por causa do aviso que está neste
+ficheiro:** são afirmações sobre produtos de terceiros, e um arguente pode abrir a app e verificar.
+Portanto **só entrou na tese o que está na página do próprio fornecedor**, citado com data de
+observação (2026-08-07). Li cobertura de imprensa para encontrar as fontes e **descartei-a** como
+base de afirmação — é por isso que a tabela diz *"não declarado"* e não *"não faz"*: a fonte
+primária não diz, e eu não sei.
+
+O parágrafo novo **admite a sobreposição** em vez de a minimizar (estes produtos respondem à mesma
+pergunta para muito mais gente, e em linguagem simples, que era um objetivo aqui) e põe a diferença
+onde ela existe: um resumo gerado é uma **afirmação**; isto entrega a afirmação **com a evidência
+anexada**. A divulgação da própria Robinhood — *"there is no guarantee that AI will improve
+investing performance"* — é sobre desfechos, não sobre se uma explicação individual está certa.
+
+**⚠️ Ponto 3 (o mesmo acontecimento lado a lado): NÃO FEITO, e não podia ser.** Exigiria ter
+observado esses produtos **no dia** da NVDA. Reconstruí-lo agora seria fabricar evidência, e é a
+única regra deste projecto que não tem excepção. **Se quiseres esse quadro — e é o que daria mais
+força ao capítulo — tens de escolher um dia em que uma das doze empresas se mexa muito, e capturar
+os ecrãs nesse dia.** Chega uma captura por produto.
 
 **Já existe material para arrancar, e já está salvo:**
 [`docs/design/market_study_v4.md`](../docs/design/market_study_v4.md) — 69 achados sobre

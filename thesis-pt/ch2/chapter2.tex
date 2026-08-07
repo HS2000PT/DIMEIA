@@ -495,6 +495,29 @@ não recuperado de um corpus indexado com desfechos medidos. A resposta lê-se b
 verificada, que é precisamente a falha de interpretabilidade contra a qual a literatura de
 explicabilidade avisa \autocite{lipton2018mythos, rudin2019stop}.
 
+Desde 2025 essa quarta opção deixou de ser um contorno e passou a ser funcionalidade entregue, o que
+a torna o concorrente mais próximo da afirmação central deste trabalho e merecedora de ser
+\emph{nomeada} em vez de descrita como categoria. A Robinhood lançou o \emph{Cortex} em março de 2025
+com uma funcionalidade cujo propósito declarado é ``responder à velha pergunta: `Porque é que esta
+ação está a subir ou a descer hoje?'\,'' gerando resumos a partir de notícias, relatórios de
+analistas, sinais técnicos e dos dados da própria corretora \autocite{robinhood2025cortex}. A Google
+reconstruiu o Google Finance em torno de IA e entregou ``key moments'' que ``explicam porque é que
+uma ação se moveu'', anotados sobre o gráfico de preços \autocite{google2026finance}. Ambos foram
+observados a 2026-08-07; a formulação citada é a de cada fornecedor.
+
+A sobreposição com este trabalho é real e deve ser dita sem rodeios: estes produtos respondem à mesma
+pergunta para um público muito maior do que uma dissertação alguma vez alcançará, e respondem em
+linguagem simples, que era um dos objetivos aqui. A diferença está no que sustenta a resposta, e é
+uma diferença de \emph{natureza}. Um resumo gerado é uma afirmação; o resultado deste trabalho é uma
+afirmação com a evidência anexada. Nenhum dos produtos declara se o movimento foi invulgar \emph{para
+aquele título} contra a sua própria volatilidade recente, nenhum separa a contribuição da empresa da
+do mercado e do setor, e nenhum recupera eventos passados comparáveis com desfechos medidos a
+posteriori. Nem um nem outro é verificável pelo leitor: a divulgação da própria Robinhood é que ``não
+há garantia de que a IA melhore o desempenho do investimento, mitigue o risco ou reduza perdas''
+\autocite{robinhood2025cortex}, o que é uma afirmação sobre desfechos e não sobre se uma explicação
+individual está certa. É essa a lacuna que este trabalho ocupa, e é estreita, dita com honestidade:
+não uma resposta melhor, mas uma resposta que o leitor pode verificar.
+
 A Tabela~\ref{tab:sota_three_questions} pontua, por isso, as mesmas ferramentas contra as três
 perguntas colocadas na Secção~\ref{sec:intro_problem}, o que é um teste mais exigente do que uma
 lista de funcionalidades, porque cada pergunta tem uma resposta verificável.
@@ -512,6 +535,7 @@ Alerta de preço da corretora & Não (limiar fixo) & Não & Não \\
 App de notícias / sentimento & Não & Não & Não (só polaridade) \\
 Robo-advisor \autocite{dacunto2019robo} & Não exposto & Não exposto & Não \\
 Assistente LLM genérico \autocite{wu2023bloomberggpt} & Não (sem base de volatilidade) & Não (sem estimativa de beta) & Recordado, não recuperado \\
+Funcionalidade IA ``porque é que se moveu?'' (Robinhood Cortex \autocite{robinhood2025cortex}; Google Finance key moments \autocite{google2026finance}) & Não declarado & Não declarado & Gerado, não recuperado \\
 Terminal profissional & Sim & Sim & Sim (pago) \\
 \textbf{Este trabalho (InvestiGator)} & Sim (z-score rolante) & Sim (beta rolante) & Sim (recuperado, medido) \\
 \bottomrule

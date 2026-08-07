@@ -55,8 +55,32 @@
   agradecimentos, nas duas teses, e **ficam por escrever de propósito** (voz do aluno). Mais uma
   caixa do `TRACKER` fechada **por não ter assunto**: a afirmação sobre "quota de retalho no
   volume" desapareceu na reescrita S1–S9.
-  **Gates: 646 testes, ruff limpo, EN 113 pp / PT 115 pp a 0 erros, guia 89 slides, congelados
-  byte-iguais, v3 e `Procfile` intocados.**
+  **(E) O ITEM 6ter FEITO EM PARTE: A COMPARAÇÃO DE MERCADO PASSA A NOMEAR PRODUTOS.** O §2.7
+  comparava **categorias**, e um arguente pergunta "quais é que foram mesmo vistos?". Passa a nomear
+  os dois que reclamam **exactamente** a pergunta central deste trabalho: **Robinhood Cortex**
+  (março 2025 — propósito declarado *"answer the age-old question of, 'Why is this stock going up or
+  down today?'"*) e os **key moments do Google Finance** (junho 2026 — *"explain why a stock
+  moved"*). **Regra aplicada, mais estreita do que o habitual:** só entra o que está na página do
+  **próprio fornecedor**, citado com data de observação (2026-08-07); a cobertura de imprensa serviu
+  para achar as fontes e foi **descartada** como base de afirmação — daí a tabela dizer "não
+  declarado" em vez de "não faz". O parágrafo novo **admite a sobreposição** (respondem à mesma
+  pergunta para muito mais gente) e situa a diferença onde ela existe: um resumo gerado é uma
+  afirmação, este trabalho entrega a afirmação **com a evidência anexada e verificável**. +2
+  referências (`robinhood2025cortex`, `google2026finance`), EN+PT, `verify_bibliography` **88/88**,
+  paridade EN↔PT **0 assimetrias**.
+  **⚠️ NÃO FEITO, e fica dito em vez de contornado:** o backlog pedia também o **mesmo
+  acontecimento posto lado a lado** entre produtos. Exigiria ter observado esses produtos **no dia**
+  da NVDA; reconstruí-lo agora seria fabricar evidência. Se ele quiser esse quadro, tem de escolher
+  um dia futuro e capturar os ecrãs nesse dia.
+  **⚠️ (F) LACUNA DE PROTOCOLO ANTERIOR, apanhada a comparar o `.bib` com o log CHAVE A CHAVE:** o
+  `vasicek1973beta` e o `blume1971risk` (sessão 51) estavam verificados no Crossref e **nunca
+  chegaram ao `citation_log.md`**, que o §6.4 torna obrigatório. Registados. **Contar entradas nos
+  dois sítios não bastava — os totais podiam bater com chaves diferentes**, e é essa a razão pela
+  qual a verificação passa a ser por chave. Contagens ressincronizadas em 8 ficheiros
+  (**63 referências**, 646 testes, PT 117 pp).
+  **Gates: 646 testes, ruff limpo, EN 113 pp / PT 117 pp a 0 erros e 0 citações indefinidas,
+  bibliografia 88/88, paridade 0 assimetrias, guia 89 slides, congelados byte-iguais, v3 e
+  `Procfile` intocados.**
   **⏭️ DECISÃO DO ALUNO QUE ESTE TRABALHO CRIA:** a única forma de comprar latência a sério é um
   **serviço de notícias pago**, e a restrição §5.2 é *só APIs gratuitas*. **Recomendação: fica
   como está** — uma limitação medida vale mais numa tese do que uma capacidade comprada, e mudar a

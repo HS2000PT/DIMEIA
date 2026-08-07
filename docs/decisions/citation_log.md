@@ -121,6 +121,8 @@ PDF do próprio artigo lido página a página.
 | Chave | Referência | Identificador | Data | Como | Estado |
 |---|---|---|---|---|---|
 | `worldmonitor2026` | World Monitor, painel de inteligência global em tempo real | <https://worldmonitor.app> (acedido 2026-07-31) | 2026-07-31 | Página obtida e lida: 56 camadas de mapa, 500+ feeds, 65+ fornecedores, sem registo, lema "By the time it's news, you already knew" | ✅ verificado |
+| `robinhood2025cortex` | Robinhood Markets, "Introducing Robinhood Strategies, Robinhood Banking, and Robinhood Cortex" (março 2025) | <https://robinhood.com/us/en/newsroom/introducing-strategies-banking-and-cortex/> (acedido 2026-08-07) | 2026-08-07 | Página do **próprio fornecedor** obtida e lida. Duas afirmações citadas na tese saem dela literalmente: o propósito declarado dos *Stock Digests* ("answer the age-old question of, 'Why is this stock going up or down today?'") e a divulgação de risco ("There is no guarantee that AI will improve investing performance, mitigate risk, or reduce losses"). **A página NÃO diz** se a explicação é gerada ou curada, nem mostra desfechos históricos medidos — e é por isso que a tabela da tese diz "não declarado" em vez de "não faz" | ✅ verificado |
+| `google2026finance` | Google, "Our latest Google Finance upgrades, including a new app" (25 jun 2026) | <https://blog.google/products-and-platforms/products/search/google-finance-updates-june-2026/> (acedido 2026-08-07) | 2026-08-07 | Blogue oficial da Google obtido e lido. A tese cita a formulação da própria empresa: *AI-powered "key moments" that explain why a stock moved*. **Sem mais detalhe na fonte primária** — descrições mais ricas ("anota o gráfico", "não revisto por humanos") circulam em cobertura de terceiros e **não foram usadas na tese** por não estarem na fonte primária | ✅ verificado |
 
 > **Porquê `@online` e não `@misc` ou um artigo.** É uma ferramenta, não literatura, e a entrada
 > descreve-a como tal, com **data de acesso** porque um sítio muda. Foi **recomendada pelo
@@ -196,9 +198,42 @@ Repetível a qualquer momento: a verificação consulta `api.crossref.org/works/
 |---|---|---|
 | MacKinlay (1997), "Event Studies in Economics and Finance", JEL 35(1) | Sem DOI resolúvel (JSTOR 2729691 → 404 no Crossref; ausente no OpenAlex search). Substituída por `brown1985daily`. | 2026-06-21 |
 
-## Estado (auditado a 2026-07-30; 6 entradas acrescentadas a 2026-07-31)
+## Adenda 2026-08-07 — duas chaves da sessão 51 que estavam a faltar NESTE ficheiro
 
-**58 entradas no `.bib` = 58 no log = 58 chaves citadas** após a sessão 43 (eram 52).
+⚠️ **Lacuna de protocolo, encontrada a comparar o `.bib` com o log chave a chave.** As duas
+referências acrescentadas na sessão 51 foram verificadas no Crossref **antes** de serem escritas
+(está no registo dessa sessão) e passam o `verify_bibliography.py` — mas **nunca chegaram a esta
+tabela**, e o §6.4 exige que cheguem. Uma verificação que aconteceu e não ficou registada é
+indistinguível, para quem audite, de uma que não aconteceu.
+
+| Chave | Referência | Identificador | Data | Como | Estado |
+|---|---|---|---|---|---|
+| `vasicek1973beta` | Vasicek (1973), "A Note on Using Cross-Sectional Information in Bayesian Estimation of Security Betas", *The Journal of Finance* 28(5), 1233–1239 | DOI `10.1111/j.1540-6261.1973.tb01452.x` | 2026-08-06 (verificada) / 2026-08-07 (registada) | DOI resolvido no Crossref com correspondência de título, autor, ano, revista, volume, número e páginas. Sustenta o **encolhimento do beta ponderado pela precisão** usado em `correlation_engine/decomposition.py`, que substituiu um corte rígido a ±4 | ✅ verificado |
+| `blume1971risk` | Blume (1971), "On the Assessment of Risk", *The Journal of Finance* 26(1), 1–10 | DOI `10.1111/j.1540-6261.1971.tb00584.x` | 2026-08-06 (verificada) / 2026-08-07 (registada) | Idem. Citada como a alternativa **rejeitada** (peso fixo de 2/3): encolheria um beta já preciso de 2,0 para 1,67 — a tese diz porque não serve, e não a atribui ao que faz | ✅ verificado |
+
+## Adenda 2026-08-07 — dois produtos nomeados na comparação de mercado
+
+O §2.7 comparava **categorias** ("brokerage price alert", "news/sentiment app"), e um arguente
+pergunta legitimamente *"quais foram mesmo vistos?"*. Passa a nomear dois, os que reclamam
+exactamente a pergunta central deste trabalho: **Robinhood Cortex** e os **key moments do Google
+Finance**. Regra aplicada, e é mais estreita do que o habitual porque estas são afirmações sobre
+produtos de terceiros: **só entra na tese o que está na página do próprio fornecedor**, citado com
+data de observação. Cobertura de imprensa foi lida para encontrar as fontes e depois **descartada**
+como base de afirmação.
+
+⚠️ **O que fica por fazer, e é decisão do aluno:** o backlog pedia também o **mesmo acontecimento
+posto lado a lado** entre produtos — o que cada um disse no dia da NVDA. **Não foi feito e não podia
+ser:** exigiria ter observado esses produtos naquele dia, e reconstruí-lo agora seria fabricar
+evidência. Se ele quiser esse quadro, tem de escolher um dia futuro e capturar os ecrãs no próprio
+dia. Está registado como não feito em vez de contornado.
+
+## Estado (auditado a 2026-07-30; 6 entradas acrescentadas a 2026-07-31; 2 a 2026-08-07)
+
+**63 entradas no `.bib` = 63 no log = 63 chaves citadas** (2026-08-07; eram 58 após a sessão 43 e
+52 antes dela). A correspondência é verificada por comparação **chave a chave** entre o `.bib` e
+este ficheiro — foi assim que se descobriu que o `vasicek1973beta` e o `blume1971risk` estavam
+verificados e não registados. Contar entradas nos dois sítios não bastava: os totais podiam bater
+com chaves diferentes.
 Correspondência exata nos três sentidos:
 0 órfãs, 0 citações indefinidas, 0 entradas sem identificador resolúvel. Auditoria independente
 confirmou 9 das entradas de maior risco contra o Crossref e os editores, incluindo o relatório CCAF
