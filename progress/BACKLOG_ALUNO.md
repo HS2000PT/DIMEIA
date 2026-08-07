@@ -12,10 +12,10 @@
 |---|---|---|
 | 1 | Refazer o painel (**v4**) | **investigação feita, código não começado** — ver quadro abaixo |
 | 2 | Literatura com os PDF reais | **à espera dele.** Infra pronta; 44/59 já legíveis, 14 precisam da conta ISEP |
-| 3 | Latência quase-real | **por começar** |
-| 4 | Melhorar o guia | **em curso.** 85 → 88 slides, 3 frames novos |
+| 3 | Latência quase-real | **⭐ MEDIDA, e a explicação que aqui estava era falsa** — ver §3 |
+| 4 | Melhorar o guia | **em curso.** 85 → 89 slides, 4 frames novos |
 | 5 | Rever a escrita | **por começar** |
-| 6 | Varrer TODO que restam | **por começar** |
+| 6 | Varrer TODO que restam | **✅ feito 2026-08-07: zero TODO reais no código** — ver §6 |
 | 6bis | Mecanismo de alertas | **⭐ (a), (b) e (c) FEITOS.** Cobertura medida: **88,5%** |
 | 6ter | Comparação de mercado na tese | **material salvo; tese por actualizar** |
 | 7 | Refazer o logótipo (olhos/mascote) | **por decidir.** Já caiu 2× por medição — ler §7 |
@@ -115,10 +115,39 @@ acima, com prioridade indicada).
 **Sintoma dado por ele:** ontem foi notificado **depois** de o acontecimento já ter ocorrido no
 mundo real.
 
-*Sem análise, só o que já está registado e é relevante:* o worker corre a **60 s** desde a sessão
-44; antes era o cron do GitHub, medido em **1,5–2 h**. A mediana de latência mostrada
-(**208 min, n=44**) ainda **inclui o histórico do cron antigo**, portanto o número no ecrã e a
-latência actual não são a mesma coisa.
+### ⚠️ MEDIDO a 2026-08-07 — e o parágrafo que estava aqui era uma hipótese, e é falsa
+
+O que estava escrito: *"a mediana mostrada (208 min, n=44) inclui o histórico do cron antigo,
+portanto o número no ecrã e a latência actual não são a mesma coisa"*. Verdade a meias, e a metade
+que faltava é a que interessa: **separar as eras não resolve nada.** Desce de **196 min** (cron)
+para **143 min** (worker a 60 s) e fica lá.
+
+Relatório completo: [`evaluation_latency.md`](../docs/evaluation/evaluation_latency.md), gerado por
+`python scripts/evaluate_latency.py --escrever` sobre os **101 alertas entregues** que têm carimbos.
+
+| componente | mediana | de quem é |
+|---|---|---|
+| publicação → detecção | **158 min** | da fonte (e é um **limite inferior**) |
+| detecção → entrega | **1 s** | nosso |
+
+**O nosso lado do sistema não é o problema.** O tempo está todo na descoberta, por duas razões que
+nenhuma infra-estrutura compra: o Finnhub *company news* não é um canal em tempo real, e **a
+manchete mais recente do feed não é a mais recente relevante** — num teste ao vivo (2026-08-07,
+14 h UTC) o feed da NVDA trazia 250 manchetes com a mais recente às 11:39, mas das 30 que
+mencionavam a empresa a mais recente era de **08:14**.
+
+**O que já foi feito com isto:** o painel passou a mostrar as **duas** componentes (um número
+agregado não distingue "somos lentos" de "a fonte é lenta", e as duas afirmações pedem coisas
+opostas); a tese EN+PT corrigiu o Cap. 6, que afirmava que a latência está **limitada pelo ciclo
+de sondagem**; o `gravar_demo.md` deixou de o pôr a dizer que "o número vai descer à medida que o
+histórico se renova"; e o guia ganhou um frame que ensina o achado.
+
+**O que ele tem de decidir, porque não é decisão minha:** a única forma de comprar latência a
+sério é um **serviço de notícias pago** — e a restrição §5.2 do projecto é *só APIs gratuitas*.
+Portanto, ou a limitação fica como está (medida, honesta, e escrita como Trabalho Futuro), ou a
+restrição fundadora muda. Recomendação: **fica como está.** Uma limitação medida vale mais numa
+tese do que uma capacidade comprada, e mudar a restrição a cinco semanas da entrega abre trabalho
+sem fechar nenhuma RQ.
 
 ## 4. Melhorar o guia de estudo
 
@@ -304,6 +333,25 @@ ligado a nada depois da mudança de marca.
 
 Varrer [`CHECKLIST.md`](../CHECKLIST.md), os `TODO` no código e nos `.tex`, e o que sobrar do
 [`v3_backlog.md`](../docs/design/v3_backlog.md).
+
+### ✅ Varredura feita a 2026-08-07 — e o resultado é "não há nada", com prova
+
+`TODO|FIXME|XXX|HACK` em todo o repositório fora do `.venv`: **zero marcadores reais no código.**
+A maioria dos acertos era a palavra portuguesa **TODOS** ("todos os tickers"), que o padrão apanha
+por acidente — a mesma classe de falso positivo que já apareceu três vezes neste projecto (a
+máscara do narrador, o "price target" dentro de "No price targets", o "not a forecast" que contém
+"forecast").
+
+Os únicos `% TODO` verdadeiros são **dois, nas duas teses**: dedicatória e agradecimentos. **Ficam
+por escrever de propósito** — são a voz do aluno, e escrever a gratidão dele por ele seria a única
+coisa neste repositório que não se pode verificar.
+
+**Uma caixa fechada por não ter assunto:** o `TRACKER.md` tinha, desde a sessão 4, *"fixar fonte
+primária para a quota de retalho no volume"*. A frase que a motivava era de um rascunho e
+desapareceu na reescrita S1–S9. Hoje o Cap. 1 afirma **propriedade** (Gallup) e o Cap. 2
+**comportamento** (Welch), com escala em SIFMA — nenhuma é quota de volume, e as três estão
+verificadas em fonte primária. Uma caixa aberta sobre um texto que já não existe manda procurar um
+problema inexistente, e por isso foi fechada com a razão escrita ao lado em vez de apagada.
 
 ---
 

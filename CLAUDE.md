@@ -7,8 +7,60 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 52 (**v4 do painel construída AO LADO da v3; três+duas direcções de marca desenhadas e medidas**)
+- **Sessão nº:** 53 (**a latência medida contra a minha própria hipótese, e o tecto diário que não estava corrigido**)
 - **Última atualização:** 2026-08-07
+- **🆕 SESSÃO 53 (2026-08-07 — o aluno disse "continue with the pendings… don't stop"):**
+  **⚠️ (A) A LATÊNCIA FOI MEDIDA, E A EXPLICAÇÃO QUE ESTAVA ESCRITA NO PROJECTO É FALSA.**
+  Estava registado — aqui e no backlog — que a mediana mostrada (208 min) estava contaminada pelo
+  histórico do cron e que a latência **actual**, com o worker a 60 s, seria muito melhor.
+  Separando as eras: **196 min (cron) → 143 min (worker), e fica lá.** O ciclo comprou **53
+  minutos**, não duas horas. `scripts/evaluate_latency.py` (novo) +
+  `docs/evaluation/evaluation_latency.md`, sobre os **101 alertas entregues com carimbos**:
+  **publicação→detecção 158 min · detecção→entrega 1 s.** O tempo está **todo** na descoberta, e
+  por duas razões que nenhuma infra-estrutura compra: o Finnhub *company news* não é canal em
+  tempo real, e **a manchete mais recente do feed não é a mais recente RELEVANTE** — feed NVDA ao
+  vivo, 250 manchetes, mais recente às 11:39, mais recente relevante às **08:14**. O relatório diz
+  o que **não** mede: `event_at` é a hora que a fonte declara, logo tudo ali é **limite inferior**.
+  **O painel mostrava um único número agregado, e isso atribui mal o tempo** — não distingue
+  "somos lentos" de "a fonte é lenta", e as duas afirmações pedem coisas opostas (a primeira
+  engenharia, a segunda honestidade sobre a limitação). Passa a mostrar as duas componentes.
+  **TESE EN+PT: o Cap. 6 afirmava que "latency is bounded by that cycle". É falso** e fica
+  corrigido **em voz alta**, com a medição e a razão ao lado.
+  **⚠️ (B) O `gravar_demo.md` PUNHA O ALUNO A DIZER A COISA FALSA À FRENTE DO JÚRI** — mandava-o
+  explicar um número alto com *"a mediana ainda inclui o agendador antigo e vai descer à medida
+  que o histórico se renova"*. Reescrito com a decomposição e com a resposta a *"o ciclo de 60 s
+  valeu a pena?"*, que é a mais forte que ele tem: **menos do que eu assumi, e está escrito**. O
+  `cadence_contract.md` prometia "~1 min" e a promessa era minha, não uma medição — substituída
+  pela tabela medida. Guia **88 → 89 slides** com um frame que **ensina** o achado.
+  **⚠️ (C) O TECTO DIÁRIO NÃO ESTAVA CORRIGIDO, e a sessão 51 escreveu que estava.** Apanhado a
+  investigar (A). A ordenação por materialidade vale **dentro de um ciclo**, e o `scan_news` emite
+  **UMA manchete por ticker por ciclo** (escolhe `latest`) — duas candidatas ao mesmo tecto (que é
+  **por ticker**) nunca coexistem no lote, logo a ordenação **nunca** pôde reordenar nada que
+  disputasse a quota. **Ao longo do dia continuava por ordem de chegada, que era o defeito a
+  corrigir.** E o teste que a validava comparava três manchetes do mesmo ticker **numa só
+  chamada** — um cenário que a produção não sabe produzir: **um teste verde sobre um cenário
+  impossível é indistinguível de uma correcção que funciona.**
+  Correcção: **piso escalonado** (`news.materiality_ladder`), o k-ésimo alerta de um ticker no dia
+  exige mais. **Os pisos são DERIVADOS do varrimento de política, não escolhidos:** τ*(R=1)=0,49
+  para o 1.º (custos iguais) e τ*(R=0,5)=0,64 para o 2.º, onde o custo dominante passa a ser a
+  fadiga. **Não há piso de "última hora"** porque o score máximo observado está entre **0,65 e
+  0,66** (a τ=0,66 não dispara nada) — um piso de 0,7+ seria **código morto com aparência de
+  rigor**. Fica escrito o que isto **não** resolve: não se reserva quota para uma história que
+  ainda não se viu, nem se retira um alerta entregue; o que se pode é tornar cada slot extra mais
+  caro. **+3 testes, um percorrendo CICLOS separados como a produção.** A 1.ª versão desse teste
+  usou P=0,11/0,08 e **ele apanhou-me**: com o gate a 0,5 essas manchetes nunca chegam à função.
+  **(D) VARREDURA DE TODO (item 6 do backlog): FEITA, e o resultado é "não há nada", com prova.**
+  Zero marcadores reais no código; a maioria dos acertos era a palavra **TODOS** — **4.ª vez**
+  desta classe de falso positivo neste projecto. Os únicos `% TODO` verdadeiros são dedicatória e
+  agradecimentos, nas duas teses, e **ficam por escrever de propósito** (voz do aluno). Mais uma
+  caixa do `TRACKER` fechada **por não ter assunto**: a afirmação sobre "quota de retalho no
+  volume" desapareceu na reescrita S1–S9.
+  **Gates: 646 testes, ruff limpo, EN 113 pp / PT 115 pp a 0 erros, guia 89 slides, congelados
+  byte-iguais, v3 e `Procfile` intocados.**
+  **⏭️ DECISÃO DO ALUNO QUE ESTE TRABALHO CRIA:** a única forma de comprar latência a sério é um
+  **serviço de notícias pago**, e a restrição §5.2 é *só APIs gratuitas*. **Recomendação: fica
+  como está** — uma limitação medida vale mais numa tese do que uma capacidade comprada, e mudar a
+  restrição fundadora a cinco semanas da entrega abre trabalho sem fechar nenhuma RQ.
 - **🆕 SESSÃO 52 (2026-08-06→07 — o painel v4 que faltava, e a marca desenhada de facto):**
   **(A) v4 DO PAINEL CONSTRUÍDA, ao lado da v3.** `app/dashboard_v4.py` + `app/v4_views.py`
   (+`tests/test_v4_views.py`). **O `Procfile` NÃO foi tocado — a v3 continua a ser servida.**
