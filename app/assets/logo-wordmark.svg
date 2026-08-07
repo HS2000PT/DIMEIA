@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 82" width="460" height="82"
+     role="img" aria-label="InvestiGator">
+  <!-- WORDMARK sozinho: para onde a marca ja apareceu (rodapes, segundo uso numa pagina,
+       cabecalho de documento). O "G" maiusculo a verde e o trocadilho inteiro:
+       inveSTIGATE + alliGATOR. -->
+  <text x="4" y="60"
+        font-family="'Segoe UI Semibold','Helvetica Neue',Arial,ui-sans-serif,sans-serif"
+        font-size="62" letter-spacing="-1.2" fill="#0F141B">Investi<tspan
+        fill="#0A8F52" font-weight="700">G</tspan>ator</text>
+</svg>

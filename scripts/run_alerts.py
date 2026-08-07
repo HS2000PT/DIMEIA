@@ -15,6 +15,7 @@ Pensado para ser chamado por `.github/workflows/alerts.yml` (cron) — ver docs/
 from __future__ import annotations
 
 import argparse
+import json
 import os
 from datetime import date, timedelta
 from pathlib import Path
@@ -1008,6 +1009,34 @@ def _narrate_safe(text: str, evidence, cfg: dict) -> str:
         return text
 
 
+def _write_snapshot_safe() -> None:
+    """Reescreve o instantâneo pré-computado que o painel v4 lê.
+
+    É o que torna a v4 possível em produção: a página deixa de fazer doze idas à rede antes da
+    primeira pintura e passa a ler um ficheiro de ~4 KB. Medido: 4,92 s a construir contra
+    0,011 s a ler.
+
+    Corre no worker porque é aqui que o ciclo já paga o custo dos preços — construir o
+    instantâneo no fim de um ciclo é quase de graça, e construí-lo no pedido do utilizador é
+    exactamente o defeito que a v4 corrige.
+
+    **Fail-open, e é obrigatório:** se isto rebentar, o ciclo de alertas continua. Um painel
+    desactualizado é um inconveniente; um canal de alertas parado por causa do painel seria
+    trocar o essencial pelo acessório. O ficheiro carrega o carimbo de tempo, e a v4 mostra a
+    idade — portanto um instantâneo que pare de ser escrito **nota-se no ecrã** em vez de passar
+    por actual.
+    """
+    try:
+        from scripts.build_snapshot import DESTINO, construir
+
+        snap = construir()
+        DESTINO.parent.mkdir(parents=True, exist_ok=True)
+        DESTINO.write_text(json.dumps(snap, indent=1), encoding="utf-8")
+        print(f"[instantaneo] {len(snap['rows'])} tickers em {snap['build_seconds']:.1f}s")
+    except Exception as exc:  # noqa: BLE001
+        print(f"[instantaneo] falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
+
+
 def _record_gates_safe(records: list, path: str | Path | None = None) -> None:
     """Persiste o funil de gates ao lado do histórico (mesma branch de dados, por isso é
     publicado pelos mesmos mecanismos). Fail-open: nunca pode travar o ciclo.
@@ -1228,6 +1257,7 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     )
     detected_at = utc_stamp()
     _record_gates_safe(gate_records)
+    _write_snapshot_safe()
 
     threshold = float((cfg.get("market") or {}).get("threshold", 3.0))
     hora_utc = datetime.now(UTC).hour

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 104" width="620" height="104"
+     role="img" aria-label="InvestiGator">
+  <!-- LOCKUP: a marca "The Tail" + o nome por extenso.
+       O aluno manteve a Tail como marca e pediu o nome escrito. A resposta nao e enfiar texto
+       dentro do icone -- sao PECAS que se combinam:
+         logo.svg              a marca sozinha (favicon, 16 px)
+         logo-wordmark.svg     o nome sozinho (rodapes, segundo uso numa pagina)
+         logo-lockup*.svg      as duas juntas (cabecalho, capa)
+       O "G" a verde e o trocadilho inteiro: inveSTIGATE + alliGATOR.
+       SEM assinatura, de proposito: a regra H1 diz que a promessa aparece UMA vez por ecra,
+       e um lockup repetido em cada cabecalho repeti-la-ia. Para capas ha a variante -tagline.
+       ⚠️ O texto e <text>, nao contornos: para impressao a serio, vectorizar. -->
+  <g transform="translate(6 20) scale(0.345)">
+    <path d="M12 232 C60 232 104 214 148 176 C188 141 214 104 232 62 L232 20 L196 74
+             L188 30 L152 96 L142 54 L106 122 L94 84 L58 152 L44 118 L12 186 Z"
+          fill="#0A8F52"/>
+  </g>
+  <text x="112" y="84"
+        font-family="'Segoe UI Semibold','Helvetica Neue',Arial,ui-sans-serif,sans-serif"
+        font-size="62" letter-spacing="-1.2" fill="#0F141B">Investi<tspan
+        fill="#0A8F52" font-weight="700">G</tspan>ator</text>
+</svg>
