@@ -77,6 +77,31 @@ def linha_de(ticker: str) -> dict | None:
         exc = empirical_exceedance(retornos)
         if exc is not None:
             out["rarity"] = {"count": int(exc.count), "n": int(exc.n)}
+
+        # Série de fechos para o gráfico do detalhe. Vai no instantâneo pela mesma razão que
+        # tudo o resto: se o detalhe fosse buscar preços à rede, o clique voltava a pagar o
+        # custo que a grelha deixou de pagar, e o painel ficava rápido a abrir e lento a usar.
+        # Arredondada a 4 casas — a diferença é invisível num gráfico e corta o ficheiro a meio.
+        serie = fecho.tail(260)
+        out["closes"] = [
+            [d.strftime("%Y-%m-%d"), round(float(v), 4)]
+            for d, v in serie.items()
+            if v == v  # NaN != NaN: descarta buracos sem os disfarçar
+        ]
+
+        # Dias que o detector teria assinalado ao longo do ano — o "replay" da RQ1 sobre o
+        # passado. É o que põe eventos no gráfico sem inventar nenhum: é a MESMA regra do
+        # `detect_latest`, aplicada a cada dia, e não uma marcação decorativa.
+        try:
+            from investigator.anomaly_detector.detector import detect_all
+
+            out["events"] = [
+                [d.strftime("%Y-%m-%d") if hasattr(d, "strftime") else str(d),
+                 round(float(res.z_score), 2)]
+                for d, res in detect_all(retornos, window=JANELA, threshold=LIMIAR)
+            ]
+        except Exception:  # noqa: BLE001
+            out["events"] = []
         if "Volume" in frame:
             v = detect_volume_latest(frame["Volume"], window=JANELA, threshold=2.0)
             if v.is_unusual:

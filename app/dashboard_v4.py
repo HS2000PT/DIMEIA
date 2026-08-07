@@ -44,6 +44,8 @@ from app.v4_views import (  # noqa: E402
 from investigator.branding.logos import cached_logo  # noqa: E402
 from investigator.news_fetcher.relevance import display_name  # noqa: E402
 
+HISTORY_BRANCH = "alerts-history"
+
 st.set_page_config(page_title="InvestiGator", page_icon="🐊", layout="wide")
 
 LIMIAR = 1.5
@@ -202,6 +204,83 @@ def _barra_decomp(rotulo: str, valor: float, motor: bool, maior: float) -> str:
             f'background:{_cor(valor)}"></span></span></div>')
 
 
+def _raw(caminho: str) -> str:
+    import os
+
+    repo = os.getenv("INVESTIGATOR_HISTORY_REPO", "HS2000PT/DIMEIA")
+    return f"https://raw.githubusercontent.com/{repo}/{HISTORY_BRANCH}/{caminho}"
+
+
+@st.cache_data(ttl=120, show_spinner=False)
+def _alertas() -> list:
+    """Os alertas que o canal REALMENTE recebeu.
+
+    É a única fonte: a app não recalcula texto nenhum. Se o canal e o painel discordassem, um
+    dos dois estaria a mentir — e como o painel é o que o júri vê, seria o painel.
+
+    É a única chamada de rede de toda a v4, e vive no detalhe (um clique), nunca na grelha,
+    portanto não toca no critério P2.
+    """
+    try:
+        from investigator.alerts_history import fetch_remote
+
+        return fetch_remote(_raw("alerts_history.jsonl")) or []
+    except Exception:  # noqa: BLE001
+        return []
+
+
+def _grafico(linha: dict, meses: int = 6):
+    """Preço com os dias que o detector teria assinalado.
+
+    Os marcadores NÃO são decorativos: vêm do `detect_all`, a mesma regra sem lookahead do
+    `detect_latest`, aplicada a cada dia do ano. É a RQ1 desenhada sobre o passado.
+    """
+    import plotly.graph_objects as go
+
+    fechos = linha.get("closes") or []
+    if len(fechos) < 5:
+        return None
+    corte = max(0, len(fechos) - meses * 21)
+    datas = [d for d, _ in fechos[corte:]]
+    valores = [v for _, v in fechos[corte:]]
+    dentro = set(datas)
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=datas, y=valores, mode="lines", name="Close",
+        line={"color": T.FG_DIM, "width": 1.8},
+        hovertemplate="%{x|%d %b %Y}<br><b>$%{y:.2f}</b><extra></extra>",
+    ))
+
+    por_data = dict(fechos)
+    for sinal, cor, marca, rotulo in ((1, T.UP, "triangle-up", "flagged up"),
+                                      (-1, T.DOWN, "triangle-down", "flagged down")):
+        pts = [(d, z) for d, z in (linha.get("events") or [])
+               if d in dentro and (z > 0) == (sinal > 0)]
+        if not pts:
+            continue
+        fig.add_trace(go.Scatter(
+            x=[d for d, _ in pts], y=[por_data[d] for d, _ in pts],
+            mode="markers", name=rotulo,
+            marker={"symbol": marca, "size": 11, "color": cor,
+                    "line": {"width": 1, "color": T.BG}},
+            customdata=[z for _, z in pts],
+            hovertemplate=("%{x|%d %b %Y}<br>$%{y:.2f}"
+                           "<br><b>flagged</b> · z %{customdata:+.2f}<extra></extra>"),
+        ))
+
+    fig.update_layout(
+        height=310, margin={"l": 8, "r": 8, "t": 8, "b": 8},
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        font={"color": T.FG_MUTE, "size": 11},
+        hovermode="x unified", showlegend=False,
+        xaxis={"showgrid": False, "showspikes": True, "spikemode": "across",
+               "spikethickness": 1, "spikecolor": T.LINE, "linecolor": T.LINE},
+        yaxis={"gridcolor": T.LINE, "zeroline": False, "tickprefix": "$"},
+    )
+    return fig
+
+
 def _detalhe(snap, ticker: str) -> None:
     linha = next((r for r in snap.linhas if r["ticker"] == ticker), None)
     st.markdown('<a class="back" href="?" target="_self">← all companies</a>',
@@ -219,6 +298,19 @@ def _detalhe(snap, ticker: str) -> None:
         f'{move * 100:+.2f}%</span></div>',
         unsafe_allow_html=True,
     )
+
+    fig = _grafico(linha)
+    if fig is not None:
+        st.markdown('<div class="panel" style="padding-bottom:4px">'
+                    '<div class="ptitle">Price, and the days the detector would have '
+                    'flagged</div></div>', unsafe_allow_html=True)
+        st.plotly_chart(fig, use_container_width=True,
+                        config={"displayModeBar": False, "scrollZoom": False})
+        st.markdown(
+            '<div class="a" style="margin:-6px 0 14px;color:var(--mute);font-size:12px">'
+            'The markers are the same rule the system runs live, replayed over the past year — '
+            'not annotations added by hand. Hover for the z-score on that day.</div>',
+            unsafe_allow_html=True)
 
     rar = linha.get("rarity") or {}
     c, n = rar.get("count"), rar.get("n")
@@ -268,6 +360,31 @@ def _detalhe(snap, ticker: str) -> None:
         'the reminder that similar in topic is not similar in direction.</div></div>',
         unsafe_allow_html=True,
     )
+
+    # Os alertas EXACTOS que o canal recebeu. A app não recalcula texto nenhum: se o canal e o
+    # painel discordassem, um dos dois estaria a mentir, e seria o painel.
+    meus = [a for a in _alertas() if getattr(a, "ticker", "") == ticker]
+    if meus:
+        itens = []
+        for a in sorted(meus, key=lambda x: getattr(x, "date", ""), reverse=True)[:6]:
+            # `split()` sem argumento colapsa QUALQUER espaço em branco, incluindo as quebras
+            # de linha do alerta — que é o que se quer numa linha de tabela.
+            texto = " ".join((getattr(a, "text", "") or "").split())
+            itens.append(
+                f'<div class="row"><span class="t">{getattr(a, "date", "")}</span>'
+                f'<span class="ex">{texto[:260]}{"…" if len(texto) > 260 else ""}</span></div>')
+        st.markdown(
+            f'<div class="panel"><div class="ptitle">Alerts the channel received '
+            f'({len(meus)} for this company)</div>{"".join(itens)}'
+            f'<div class="a" style="margin-top:10px;color:var(--mute);font-size:12px">'
+            f'Read from the shared history, word for word. Nothing here is recomputed — if the '
+            f'channel and this page disagreed, this page would be the one lying.</div></div>',
+            unsafe_allow_html=True)
+    else:
+        st.markdown(
+            '<div class="panel"><div class="ptitle">Alerts the channel received</div>'
+            '<div class="a none">None for this company yet.</div></div>',
+            unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────────────── screener
