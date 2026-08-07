@@ -658,3 +658,15 @@
 {"date": "2026-08-07", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-07", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-07", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
+{"date": "2026-08-07", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-07", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft Is Winning the AI Cash Flow Test"}
+{"date": "2026-08-07", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.50 < 0.50"}
+{"date": "2026-08-07", "ticker": "TSLA", "stage": "alerted", "detail": "Musk's SpaceX, Tesla to build $16.8B Terafab chip factory in Texas"}
+{"date": "2026-08-07", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon's $220 billion AI bet hits a snag: Trainium 2 chips are only 20 months ol"}
+{"date": "2026-08-07", "ticker": "GOOGL", "stage": "alerted", "detail": "Alphabet’s Cloud vs Meta’s Superintelligence: Who Wins Q2?"}
+{"date": "2026-08-07", "ticker": "META", "stage": "alerted", "detail": "Meta was just slapped with a $942-million bill for harming kids — it makes that "}
+{"date": "2026-08-07", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.25 < 0.50"}
+{"date": "2026-08-07", "ticker": "AMD", "stage": "alerted", "detail": "Why Super Micro (SMCI) Is Up 6.0% After AI Rack Expansion And AMD Instinct Coder"}
+{"date": "2026-08-07", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-07", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-07", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.39 < 0.45"}
