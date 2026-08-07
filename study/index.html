@@ -1,0 +1,846 @@
+<title>InvestiGator — curso do zero até à defesa</title>
+<style>
+/* ─────────────────────────────────────────────────────────────────────────────
+   Paleta HERDADA de app/ui_tokens.py — contrastes já medidos contra a WCAG.
+   Uma segunda paleta a competir com a primeira foi um defeito que a v3 já pagou.
+   Compromisso deliberado com UM mundo visual (escuro), o mesmo do produto:
+   por isso todas as cores são pintadas explicitamente e não há troca de tema.
+   ───────────────────────────────────────────────────────────────────────────── */
+:root {
+  --bg:      #0B0E13;
+  --panel:   #131820;
+  --panel-2: #0F141C;
+  --line:    #242C38;
+  --fg:      #EDF1F7;
+  --dim:     #A3AEC2;
+  --mute:    #7C8AA3;
+  --up:      #00D68F;  /* acento: progresso, acertos, o caminho */
+  --down:    #FF5A5F;  /* onde as pessoas se enganam */
+  --flag:    #FFB020;  /* cuidado / armadilha */
+  --news:    #4A9EFF;  /* exemplo concreto */
+  --sans: ui-sans-serif, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", Consolas, "DejaVu Sans Mono", monospace;
+  --s1: .35rem; --s2: .7rem; --s3: 1.1rem; --s4: 1.8rem; --s5: 2.8rem;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--sans); font-size: 16px; line-height: 1.65;
+  -webkit-text-size-adjust: 100%;
+}
+.wrap { display: grid; grid-template-columns: 232px minmax(0,1fr); gap: var(--s5);
+        max-width: 1180px; margin: 0 auto; padding: var(--s4) var(--s3) var(--s5); }
+@media (max-width: 860px) { .wrap { grid-template-columns: minmax(0,1fr); gap: var(--s3); padding-top: var(--s3); } }
+
+/* ── espinha dos níveis: é uma escada, e a ordem carrega informação ── */
+.rail { position: sticky; top: var(--s3); align-self: start; }
+@media (max-width: 860px) { .rail { position: static; } }
+.brand { font-weight: 800; letter-spacing: -.02em; font-size: 1.05rem; margin-bottom: var(--s1); }
+.brand span { color: var(--up); }
+.tagline { color: var(--mute); font-size: .78rem; line-height: 1.45; margin-bottom: var(--s3); }
+.levels { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+@media (max-width: 860px) { .levels { flex-direction: row; overflow-x: auto; gap: var(--s1); padding-bottom: var(--s1); } }
+.lvbtn { display: flex; align-items: baseline; gap: .55rem; width: 100%; text-align: left;
+  background: none; border: 0; border-left: 2px solid var(--line); color: var(--dim);
+  font: inherit; font-size: .84rem; padding: .42rem .6rem; cursor: pointer; }
+.lvbtn:hover { color: var(--fg); border-left-color: var(--mute); }
+.lvbtn[aria-current="true"] { color: var(--fg); border-left-color: var(--up); background: var(--panel-2); }
+.lvbtn b { font-variant-numeric: tabular-nums; color: var(--mute); font-weight: 600; }
+.lvbtn[aria-current="true"] b { color: var(--up); }
+.lvbtn em { font-style: normal; margin-left: auto; font-size: .7rem; color: var(--mute);
+  font-variant-numeric: tabular-nums; }
+@media (max-width: 860px) {
+  .lvbtn { white-space: nowrap; width: auto; border-left: 0; border-bottom: 2px solid var(--line); }
+  .lvbtn[aria-current="true"] { border-bottom-color: var(--up); }
+  .lvbtn em { display: none; }
+}
+.railfoot { margin-top: var(--s3); border-top: 1px solid var(--line); padding-top: var(--s2);
+  font-size: .74rem; color: var(--mute); }
+.railfoot button { background: none; border: 0; color: var(--mute); font: inherit;
+  text-decoration: underline; cursor: pointer; padding: 0; }
+.railfoot button:hover { color: var(--down); }
+
+/* ── conteúdo ── */
+main { min-width: 0; }
+.eyebrow { font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--up); font-weight: 700; }
+h1 { font-size: clamp(1.5rem, 4.2vw, 2.05rem); line-height: 1.15; letter-spacing: -.025em;
+  margin: var(--s1) 0 var(--s2); text-wrap: balance; max-width: 30ch; }
+.lead { color: var(--dim); max-width: 62ch; margin: 0 0 var(--s4); }
+.bar { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; margin-bottom: var(--s4); }
+.bar i { display: block; height: 100%; background: var(--up); width: 0; transition: width .3s ease; }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+
+.step { border: 1px solid var(--line); background: var(--panel); border-radius: 10px;
+  padding: var(--s3); margin-bottom: var(--s3); }
+.step.done { border-color: rgba(0,214,143,.42); }
+.step > header { display: flex; align-items: baseline; gap: .6rem; margin-bottom: var(--s2); }
+.step .n { font-family: var(--mono); font-size: .78rem; color: var(--mute);
+  font-variant-numeric: tabular-nums; padding-top: .18rem; }
+.step.done .n { color: var(--up); }
+h2 { font-size: 1.06rem; line-height: 1.3; letter-spacing: -.015em; margin: 0; text-wrap: balance; }
+.step p { margin: 0 0 var(--s2); max-width: 66ch; }
+.step p:last-of-type { margin-bottom: 0; }
+.step ul, .step ol { max-width: 66ch; padding-left: 1.15rem; margin: 0 0 var(--s2); }
+.step li { margin-bottom: .3rem; }
+b, strong { color: var(--fg); font-weight: 650; }
+code { font-family: var(--mono); font-size: .88em; background: var(--panel-2);
+  border: 1px solid var(--line); border-radius: 4px; padding: .08em .3em; }
+pre { font-family: var(--mono); font-size: .8rem; line-height: 1.55; background: var(--panel-2);
+  border: 1px solid var(--line); border-radius: 8px; padding: var(--s2) var(--s3);
+  overflow-x: auto; margin: 0 0 var(--s2); }
+pre code { background: none; border: 0; padding: 0; }
+pre .c { color: var(--mute); }
+pre .k { color: var(--news); }
+
+/* caixas: cada uma diz uma coisa diferente, e a cor é semântica */
+.box { border-left: 2px solid var(--line); padding: .1rem 0 .1rem var(--s2);
+  margin: 0 0 var(--s2); max-width: 66ch; }
+.box .t { font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; }
+.box p { margin: .15rem 0 0; color: var(--dim); }
+.ex  { border-left-color: var(--news); } .ex  .t { color: var(--news); }
+.trap{ border-left-color: var(--flag); } .trap .t { color: var(--flag); }
+.err { border-left-color: var(--down); } .err .t { color: var(--down); }
+
+table { width: 100%; border-collapse: collapse; font-size: .86rem; margin: 0 0 var(--s2); }
+.scroll { overflow-x: auto; margin-bottom: var(--s2); }
+th, td { text-align: left; padding: .34rem .6rem .34rem 0; border-bottom: 1px solid var(--line); }
+th { color: var(--mute); font-size: .7rem; letter-spacing: .07em; text-transform: uppercase; font-weight: 700; }
+td.num, th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums;
+  padding-right: 0; white-space: nowrap; }
+
+details { border-top: 1px dashed var(--line); margin-top: var(--s3); padding-top: var(--s2); }
+summary { cursor: pointer; font-size: .82rem; font-weight: 650; color: var(--flag); list-style: none; }
+summary::-webkit-details-marker { display: none; }
+summary::before { content: "▸ "; }
+details[open] summary::before { content: "▾ "; }
+details .a { color: var(--dim); font-size: .93rem; margin-top: var(--s2); max-width: 66ch; }
+details .a p { margin: 0 0 var(--s2); }
+details .a p:last-child { margin: 0; }
+
+.mark { margin-top: var(--s3); }
+.mark button { font: inherit; font-size: .8rem; font-weight: 650; cursor: pointer;
+  background: none; color: var(--mute); border: 1px solid var(--line);
+  border-radius: 999px; padding: .3rem .85rem; }
+.mark button:hover { color: var(--fg); border-color: var(--mute); }
+.step.done .mark button { color: var(--up); border-color: rgba(0,214,143,.42); }
+:focus-visible { outline: 2px solid var(--up); outline-offset: 2px; border-radius: 3px; }
+
+.nav { display: flex; gap: var(--s2); margin-top: var(--s4); }
+.nav button { flex: 1; font: inherit; font-size: .85rem; font-weight: 650; cursor: pointer;
+  background: var(--panel); color: var(--fg); border: 1px solid var(--line);
+  border-radius: 8px; padding: .6rem; }
+.nav button:hover:not(:disabled) { border-color: var(--up); }
+.nav button:disabled { color: var(--mute); cursor: default; }
+footer { color: var(--mute); font-size: .74rem; margin-top: var(--s4);
+  border-top: 1px solid var(--line); padding-top: var(--s2); max-width: 66ch; }
+</style>
+
+<div class="wrap">
+  <nav class="rail">
+    <div class="brand">Investi<span>Gator</span></div>
+    <p class="tagline">Do zero absoluto até responder ao júri. Seis níveis, por ordem de dificuldade. Não saltes.</p>
+    <ul class="levels" id="levels"></ul>
+    <div class="railfoot">
+      <div id="tot">—</div>
+      <button id="reset" type="button">apagar progresso</button>
+    </div>
+  </nav>
+
+  <main>
+    <div class="eyebrow" id="eyebrow">Nível 0</div>
+    <h1 id="title">—</h1>
+    <p class="lead" id="lead">—</p>
+    <div class="bar"><i id="fill"></i></div>
+    <div id="steps"></div>
+    <div class="nav">
+      <button id="prev" type="button">← nível anterior</button>
+      <button id="next" type="button">nível seguinte →</button>
+    </div>
+    <footer>
+      Todos os números deste curso vêm dos ficheiros de avaliação do projeto
+      (<code>docs/evaluation/</code>), gerados por script. Se um número aqui e um número na tese
+      discordarem, a tese está certa e isto está velho — diz-me e eu corrijo.
+      O progresso fica guardado só neste dispositivo.
+    </footer>
+  </main>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   O CURSO. Cada passo: explicação → exemplo real do próprio projeto → testa-te.
+   Regra que segui a escrever isto: nenhum conceito aparece antes de ser
+   explicado, e nenhum número aparece sem se dizer de onde vem.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const LEVELS = [
+{
+  n: 0, nome: "Os básicos", tempo: "~40 min",
+  titulo: "O que é IA, na medida exacta em que este trabalho a usa",
+  lead: "Não vou ensinar-te inteligência artificial toda. Vou ensinar-te as seis ideias que a tua tese usa, e nada mais — porque só essas é que tens de defender. Se alguma frase aqui não fizer sentido, para e lê outra vez antes de avançar.",
+  passos: [
+  { t: "Um modelo é uma função que aprendeu os seus próprios números",
+    h: `<p>Uma função normal é uma receita que <b>tu</b> escreves: dá-lhe um número, devolve outro.
+    <code>dobro(x) = 2 * x</code>. O <b>2</b> escreveste-o tu.</p>
+    <p>Um <b>modelo</b> é a mesma coisa com uma diferença: tu escreves a <i>forma</i> da receita, mas
+    <b>não escreves os números</b>. Escreves <code>f(x) = a * x + b</code> e deixas o computador
+    descobrir o <code>a</code> e o <code>b</code> — olhando para exemplos onde já se sabe a resposta.
+    Esse "descobrir olhando para exemplos" é o <b>treino</b>. Os números descobertos chamam-se
+    <b>parâmetros</b> ou <b>pesos</b>.</p>
+    <p>É só isto. Tudo o resto em aprendizagem automática é variação sobre esta ideia: formas de
+    receita diferentes, maneiras diferentes de descobrir os números, e formas diferentes de verificar
+    se valeram a pena.</p>`,
+    ex: `No teu projeto há <b>um</b> modelo treinado por ti, e um só: o modelo de triagem
+    (<code>models/triage_context_lr.joblib</code>, 1,8 KB). Recebe informação sobre um dia de uma
+    ação e devolve um número entre 0 e 1: a probabilidade de esse dia ter tido um movimento
+    anormal. O resto do sistema — a deteção de anomalias, a decomposição — <b>não é treinado</b>,
+    é estatística com fórmulas fixas. Saber distinguir isto é a primeira coisa que te vão perguntar.`,
+    q: "Se o júri perguntar «que modelos treinaste?», qual é a resposta certa?",
+    a: `<p><b>Um.</b> Uma regressão logística para a triagem de materialidade (a RQ4). Foi treinada
+    sobre 79.453 exemplos construídos a partir do corpus FNSPID.</p>
+    <p>E depois acrescenta a parte que mostra que sabes o que estás a dizer: <i>«uso também um
+    modelo de linguagem pré-treinado, o MiniLM, mas esse não o treinei eu — usei-o como está, para
+    transformar frases em números. E a deteção de anomalias não usa modelo nenhum: é média e desvio
+    padrão.»</i></p>` },
+  { t: "Treino, validação e teste: porque não se pode usar os mesmos dados duas vezes",
+    h: `<p>Imagina que estudas para um exame com um caderno de 100 exercícios <b>com as soluções ao
+    lado</b>. Decoras os 100. No dia do exame, se as perguntas forem exactamente essas, tens 20.
+    Isso não prova que aprendeste — prova que decoraste.</p>
+    <p>Com modelos passa-se o mesmo, e chama-se <b>overfitting</b> (sobreajuste): o modelo decora os
+    exemplos que viu em vez de aprender o padrão. Por isso os dados são cortados:</p>
+    <ul>
+      <li><b>Treino</b> — os exercícios com solução, onde ele descobre os seus números.</li>
+      <li><b>Validação</b> — exercícios diferentes, para escolher entre versões do modelo.</li>
+      <li><b>Teste</b> — exercícios que ele <b>nunca viu</b>, tocados uma só vez, ao fim. É o único
+      número que se reporta.</li>
+    </ul>
+    <p>Em dados financeiros há uma regra extra e é a mais importante de todas: o corte tem de ser
+    <b>por tempo</b>. Treinar em 2023 e testar em 2019 seria deixar o modelo ver o futuro.</p>`,
+    ex: `No teu projeto o corte é temporal e a prevalência de dias anormais em cada bloco é
+    0,385 → 0,470 → 0,378. Isso mostra que os três blocos são parecidos o suficiente para a
+    comparação ser justa, e está medido, não assumido.`,
+    q: "Porque é que reportas o número do teste e não o do treino, se o do treino é melhor?",
+    a: `<p>Porque o do treino não mede nada. Mede quão bem o modelo decorou o que já viu. Reportar
+    o treino seria como dizer que sabes a matéria porque acertaste nos exercícios que tinhas as
+    soluções à frente.</p>` },
+  { t: "Lookahead: o erro que faz um sistema mau parecer excelente",
+    h: `<p>Este é <b>o</b> erro dos sistemas financeiros, e é o que um arguente vai atacar primeiro.
+    <b>Lookahead</b> (ou fuga de informação do futuro) é quando, sem dar por isso, usas informação
+    que só existiria <i>depois</i> do momento em que dizes estar a decidir.</p>
+    <p>É traiçoeiro porque não dá erro nenhum. O programa corre, os números saem bonitos, e são
+    todos inúteis — porque em produção esse futuro não existe.</p>
+    <p>Exemplo de como se faz sem querer: para saber se hoje foi um dia estranho, calculas a média
+    dos últimos 20 dias... e incluis o dia de hoje na média. Parece inofensivo. Mas o dia que estás
+    a julgar entra na régua com que o julgas, e a régua fica contaminada.</p>`,
+    ex: `Olha para a linha exacta do teu código que evita isto, em
+    <code>investigator/anomaly_detector/detector.py</code>:
+    <pre><code>recent = r.iloc[-window - 1 : -1]  <span class="c"># janela ANTES do último (sem lookahead)</span>
+last   = float(r.iloc[-1])         <span class="c"># o dia que estamos a julgar</span></code></pre>
+    O <code>-1</code> no fim do corte é <b>o</b> detalhe. Sem ele, havia lookahead. E o comentário
+    está lá para que ninguém o apague por acidente.`,
+    q: "Como provas que não tens lookahead, em vez de só o afirmares?",
+    a: `<p>Com um <b>teste por mutação</b>: mudas os valores do futuro nos dados e verificas que o
+    resultado <b>não muda</b>. Se mudasse, é porque o futuro estava a entrar. Está feito em
+    <code>tests/</code> para a construção dos rótulos da triagem.</p>
+    <p>É uma resposta forte porque não é uma promessa — é uma experiência que falha se a promessa
+    for falsa.</p>` },
+  { t: "Transformar frases em números: embeddings",
+    h: `<p>Um computador não compara frases, compara números. Então precisas de transformar
+    <i>"Nvidia announces new AI chip"</i> numa lista de números. Essa lista chama-se
+    <b>embedding</b>.</p>
+    <p>A maneira burra: conta palavras. Duas frases são parecidas se partilham palavras. O problema é
+    óbvio — <i>"lucros acima do esperado"</i> e <i>"resultados melhores que a previsão"</i> não
+    partilham quase nada e querem dizer o mesmo. Chama-se o <b>problema do vocabulário</b>.</p>
+    <p>A maneira que usas: um modelo de linguagem já treinado (o <b>SBERT</b>, na versão
+    <b>MiniLM</b>) lê a frase inteira e devolve <b>384 números</b>. Frases com sentido parecido
+    ficam com listas parecidas, mesmo com palavras diferentes. Ele já sabe isso porque foi treinado
+    em enormes quantidades de texto — por outras pessoas, antes de ti.</p>`,
+    ex: `Para comparar duas listas de 384 números usas a <b>similaridade do cosseno</b>: um número
+    entre −1 e 1, onde 1 é "mesma direção". Não é preciso saber a fórmula de cor; é preciso saber
+    <b>porque cosseno e não distância</b>: os teus embeddings estão normalizados (comprimento 1), e
+    nesse caso a ordem que o cosseno dá é a mesma que a distância euclidiana dá. Logo a escolha não
+    altera resultados e o cosseno lê-se melhor (é sempre entre −1 e 1).`,
+    q: "Se o SBERT foi treinado por outra pessoa, o que é que fizeste tu?",
+    a: `<p>Escolhi-o <b>por medição</b>, e isso é diferente de o escolher por hábito. Comparei quatro
+    alternativas na mesma tarefa: MiniLM 0,514, BGE 0,513, E5 0,504 e — o resultado que surpreende —
+    <b>FinBERT 0,420, o pior</b>, apesar de ser o modelo "financeiro".</p>
+    <p>É um bom exemplo para dares ao júri: o modelo de domínio perdeu para o modelo geral, está
+    medido, e por isso a escolha é defensável em vez de arbitrária.</p>` },
+  { t: "Como se sabe se um sistema é bom: precisão, recall, e porque a acerteza engana",
+    h: `<p>Imagina 100 dias, dos quais 5 foram realmente estranhos. Um sistema que diz sempre
+    "dia normal" acerta 95 vezes. <b>95% de acerteza</b> — e é completamente inútil, porque nunca
+    apanha nenhum dos dias que importam.</p>
+    <p>Por isso a acerteza (<i>accuracy</i>) não se usa quando uma das respostas é rara. Usa-se:</p>
+    <ul>
+      <li><b>Precisão</b> — dos dias que sinalizei, quantos eram mesmo estranhos? (mede o incómodo:
+      falsos alarmes)</li>
+      <li><b>Recall</b> — dos dias que eram estranhos, quantos apanhei? (mede o que se perdeu)</li>
+      <li><b>F1</b> — um número que combina os dois, para não poderes ganhar num sacrificando o outro.</li>
+    </ul>
+    <p>Há sempre um compromisso: sinalizar tudo dá recall perfeito e precisão péssima.</p>`,
+    ex: `É exactamente isso que a tua primeira comparação mostra. Um limiar fixo ("avisa se mexeu
+    mais de X%") contra a tua regra de z-score, no mesmo teste:
+    <div class="scroll"><table>
+      <tr><th>método</th><th class="num">precisão</th><th class="num">recall</th><th class="num">F1</th></tr>
+      <tr><td>limiar fixo (%)</td><td class="num">0,122</td><td class="num">0,992</td><td class="num">0,218</td></tr>
+      <tr><td><b>z-score (o teu)</b></td><td class="num">0,381</td><td class="num">0,800</td><td class="num">0,516</td></tr>
+    </table></div>
+    Lê a tabela em voz alta: o limiar fixo apanha quase tudo (0,992) e por isso mesmo é inútil —
+    de cada 100 avisos, só 12 são reais. O teu apanha 80% e acerta em 38%.`,
+    q: "O que responder a «o teu recall é 0,800, perdes 20% dos eventos»?",
+    a: `<p><i>«Perco, e de propósito. O alternativo é o limiar fixo: 0,992 de recall com 0,122 de
+    precisão, ou seja, oito falsos alarmes por cada acerto. Um canal assim ensina o utilizador a
+    ignorá-lo, e aí o recall passa a zero na prática. O compromisso está medido e a escolha está
+    justificada.»</i></p>` },
+  { t: "Calibração: 70% tem de querer dizer 70%",
+    h: `<p>Um modelo devolve 0,7. O que é que isso quer dizer? Idealmente: <i>de cada 100 casos a
+    que eu dou 0,7, cerca de 70 acontecem</i>. Quando isso é verdade, o modelo está
+    <b>calibrado</b>.</p>
+    <p>Modelos crus raramente estão. Podem ordenar bem os casos (dar mais a quem é mais provável) e
+    ainda assim ter a escala toda errada. Corrige-se com uma segunda função pequena, ajustada em
+    dados separados — a que usas chama-se <b>Platt scaling</b>.</p>
+    <p>Isto não é detalhe cosmético: o teu sistema tem um portão que diz "só envia se P ≥ 0,5". Se o
+    0,5 do modelo não quer dizer nada, o portão não quer dizer nada.</p>`,
+    ex: `Verificaste isto por medição, comparando Platt com a alternativa (isotónica) nas cinco
+    famílias de modelo: <b>o Platt ganha ou empata no Brier em todas</b> (na de contexto, 0,2241
+    contra 0,2259). O <b>Brier</b> é simplesmente o erro quadrático médio da probabilidade —
+    mais baixo é melhor.`,
+    q: "Um dia real: o teu sistema mandou um alerta com «54%». De onde saiu esse número?",
+    a: `<p>Está reconstruído passo a passo em <code>docs/evaluation/triage_worked_example.md</code>,
+    para o alerta da META de 12 de julho: as contribuições somam um <i>logit</i> de +0,699 → passa
+    pela função logística → 0,668 → passa pelo Platt (a = 3,700, b = −2,313) → <b>0,539</b>, que é
+    o 54% que saiu no canal.</p>
+    <p>Isto é a melhor resposta que tens para "os números são rastreáveis?": um alerta real,
+    reproduzido do início ao fim.</p>` }]
+},
+{
+  n: 1, nome: "A tese", tempo: "~25 min",
+  titulo: "O que este trabalho quer, para quem, e porque é uma tese",
+  lead: "Agora que sabes o vocabulário, a pergunta é outra: o que estás a afirmar, e porque é que isso é trabalho académico e não uma app. Este nível é o que tens de saber dizer nos primeiros três minutos da defesa.",
+  passos: [
+  { t: "As três perguntas — e é daqui que tudo sai",
+    h: `<p>Quando uma ação se mexe, quem investe sem ser profissional faz sempre as mesmas três
+    perguntas, por esta ordem:</p>
+    <ol>
+      <li><b>Isto é invulgar para <i>esta</i> ação?</b> (a Tesla mexer 3% é terça-feira; a
+      Johnson &amp; Johnson mexer 3% não é)</li>
+      <li><b>É a empresa ou é o mercado?</b> (caiu 2% porque tem um problema, ou porque tudo caiu?)</li>
+      <li><b>Já aconteceu antes, e o que se seguiu?</b></li>
+    </ol>
+    <p>Toda a tese está organizada por estas três perguntas, e cada uma tem um problema técnico e uma
+    forma de medir:</p>
+    <div class="scroll"><table>
+      <tr><th>pergunta</th><th>problema técnico</th><th>como se mede</th></tr>
+      <tr><td>invulgar?</td><td>deteção de anomalias</td><td>F1 contra alternativas</td></tr>
+      <tr><td>empresa ou mercado?</td><td>decomposição de retornos</td><td>as partes somam ao total</td></tr>
+      <tr><td>já aconteceu?</td><td>recuperação de casos</td><td>precision@5</td></tr>
+    </table></div>`,
+    ex: `As ferramentas gratuitas não respondem a nenhuma das três. Um terminal profissional responde
+    às três, por cerca de 2.000 dólares por mês. É aí que o trabalho se posiciona — e desde 2025 há
+    concorrentes diretos: o <b>Robinhood Cortex</b> promete "responder à velha pergunta: porque é que
+    esta ação está a subir ou a descer hoje?", e o <b>Google Finance</b> tem "key moments" que
+    "explicam porque é que uma ação se moveu". Estão nomeados e citados na tese.`,
+    q: "Então o Google já faz isto. Qual é a tua contribuição?",
+    a: `<p>Não finjas que não fazem. A resposta honesta é a diferença de <b>natureza</b>:</p>
+    <p><i>«Um resumo gerado é uma afirmação. O meu resultado é uma afirmação com a evidência
+    anexada. Nenhum dos dois diz se o movimento foi invulgar para aquele título contra a
+    volatilidade dele, nenhum separa empresa de mercado com um beta estimado, e nenhum recupera
+    casos passados com desfechos medidos depois do facto. E nenhum é verificável pelo leitor. O que
+    eu ofereço não é uma resposta melhor — é uma resposta que se pode conferir.»</i></p>` },
+  { t: "A restrição que define o trabalho: nunca prever",
+    h: `<p>O sistema <b>nunca prevê preços</b>. Isto parece uma limitação e é o contrário: é uma
+    <b>restrição de desenho</b>, escolhida, e é ela que torna o trabalho coerente.</p>
+    <p>Porquê? Porque tudo o que o sistema mostra pode ser verificado por quem o lê. "Isto foi
+    invulgar" verifica-se. "Isto já aconteceu, e o que se seguiu foi isto" verifica-se. "Isto vai
+    subir" não se verifica antes de acontecer — e um sistema que o diga tem de ser acreditado em
+    vez de conferido.</p>
+    <p>A restrição tem consequências reais e visíveis no produto: a probabilidade da triagem
+    <b>não aparece</b> em nenhuma vista de produto, porque é um número sobre o futuro. Vive no texto
+    do alerta e na página do método.</p>`,
+    ex: `Há uma regra escrita (H2) e um <b>teste automático</b> que varre todas as frases que o
+    sistema sabe produzir — 112 combinações — contra uma lista de palavras proibidas. Se alguém
+    escrever "vai subir" numa frase de produto, a suite de testes parte.`,
+    q: "Um arguente diz: «sem previsão, isto é útil?». Responde.",
+    a: `<p><i>«As duas personas do Capítulo 1 querem coisas opostas: uma quer contexto quando o
+    alerta chega, a outra quer permissão para não fazer nada. Nenhuma delas quer que eu adivinhe.
+    Dizer a alguém que 203 dos últimos 249 dias se moveram tanto ou mais é dar-lhe permissão para
+    ir dormir — e isso é útil, é verificável, e não é uma previsão.»</i></p>` },
+  { t: "As quatro perguntas de investigação, e a que correu mal",
+    h: `<p>Uma tese não entrega funcionalidades, entrega <b>respostas a perguntas</b>. Tens quatro:</p>
+    <div class="scroll"><table>
+      <tr><th>#</th><th>pergunta</th><th>veredicto</th></tr>
+      <tr><td>RQ1</td><td>o z-score bate alternativas na deteção?</td><td style="color:var(--up)">sim (F1 0,516 vs 0,271)</td></tr>
+      <tr><td>RQ2</td><td>a recuperação semântica encontra precedentes relevantes?</td><td style="color:var(--up)">sim (0,595 à escala)</td></tr>
+      <tr><td>RQ3</td><td>as explicações são fiéis ao que o sistema calculou?</td><td style="color:var(--flag)">sim; "útil" em aberto</td></tr>
+      <tr><td>RQ4</td><td>ler o texto da notícia ajuda a prever materialidade?</td><td style="color:var(--down)">NÃO</td></tr>
+    </table></div>
+    <p>A RQ4 deu <b>não</b>. Nenhum modelo que lê o texto bateu uma linha de base simples de
+    volatilidade: 0,542 (só volatilidade) contra 0,496 (com texto). E está reportado assim.</p>`,
+    ex: `Mas há uma segunda metade e é ela que salva a RQ4: <b>como mecanismo de triagem, funciona</b>.
+    Num orçamento de 5 alertas por dia, a precisão dos escolhidos é <b>0,632 contra 0,163</b> ao
+    acaso — quase 4×. Ou seja: a hipótese sobre o texto falhou, o mecanismo vale. As duas coisas são
+    verdade e as duas estão escritas.`,
+    q: "«O vosso modelo perdeu para uma linha de base. Isso não é um fracasso?»",
+    a: `<p><i>«É um resultado. A comparação foi pré-comprometida: escrevi qual seria a linha de base
+    antes de treinar, para não poder escolher a mais fácil depois. E testei se o negativo era
+    fragilidade minha — afinei o C, apliquei PCA ao bloco de texto, troquei para FinBERT. O melhor
+    texto deu 0,533, ainda abaixo dos 0,542 da volatilidade. O negativo aguenta.»</i></p>
+    <p>E remata: <i>«um trabalho que só reporta o que correu bem é um trabalho em que não se pode
+    confiar.»</i> Não peças desculpa.</p>` },
+  { t: "Porque é que isto é Engenharia de IA e não invenção de algoritmos",
+    h: `<p>Isto vai ser perguntado, e a resposta não é defensiva.</p>
+    <p>O teu mestrado é em <b>Engenharia</b> de Inteligência Artificial. A contribuição pedida não é
+    inventar um algoritmo novo — é <b>integrar, aplicar e avaliar criticamente</b> componentes que já
+    existem, num sistema que funciona, é explicável e é reproduzível.</p>
+    <p>Usar bibliotecas existentes <b>é</b> o trabalho. O que distingue engenharia de "colar código"
+    é o que fazes a seguir: mediste alternativas, registaste o que falhou, e não ligaste ao produto
+    aquilo que a medição não sustentou.</p>`,
+    ex: `A prova mais forte disto são <b>quatro capacidades que construíste e não ligaste</b>: o score
+    de convergência multi-sinal (ganha em 1 de 3 orçamentos), os crachás de tipo de evento (silhueta
+    0,084, fraca), o detetor por EWMA (F1 0,664, melhor! — mas exige explicar pesos exponenciais a
+    um leigo) e a fusão de volume. Construir e não ligar, com a razão medida ao lado, é mais difícil
+    do que ligar tudo.`,
+    q: "«Isto não é só usar bibliotecas?»",
+    a: `<p><i>«Sim, e numa tese de Engenharia de IA é isso que se pede. O núcleo é raciocínio baseado
+    em casos, não algo ad hoc. E a parte de engenharia está nas decisões: quatro capacidades
+    construídas e não ligadas porque a medição não as sustentou, um modelo exportado para ONNX para
+    caber num contentor de 512 MB com a fidelidade provada, e 646 testes.»</i></p>` }]
+},
+{
+  n: 2, nome: "Como funciona", tempo: "~35 min",
+  titulo: "O sistema, peça por peça, na ordem em que os dados passam",
+  lead: "Segue um dia real através do sistema. Cada peça responde a uma das três perguntas, e no fim vês porque é que 9 de cada 10 varreduras não mandam nada — o que é uma decisão, não uma falha.",
+  passos: [
+  { t: "Peça 1 — o detetor: «isto é invulgar para esta ação?»",
+    h: `<p>A ideia é a mais simples possível e é isso que a torna defensável. Para o dia de hoje:</p>
+    <ol>
+      <li>Pega nos <b>20 dias anteriores</b> (não incluindo hoje).</li>
+      <li>Calcula a <b>média</b> e o <b>desvio padrão</b> dos retornos desses 20 dias. Isso é a
+      "norma recente" desta ação.</li>
+      <li>Vê a quantos desvios padrão o dia de hoje está dessa média. Esse número é o <b>z-score</b>.</li>
+      <li>Se |z| passar o limiar, é anomalia.</li>
+    </ol>
+    <p>Porque é que isto é melhor que "avisa se mexeu 5%"? Porque a régua é <b>a da própria ação</b>.
+    Uma ação calma tem desvio pequeno, e 2% nela é enorme. Uma ação nervosa tem desvio grande, e 2%
+    nela é nada.</p>`,
+    ex: `Dois casos reais do teu sistema:
+    <ul>
+      <li><b>AAPL −7,64% → z = −4,60 → 0 dos últimos 249 dias</b> se moveram tanto. Isto é enorme.</li>
+      <li><b>JPM +0,27% → z = +0,00 → 203 dos últimos 249 dias</b> se moveram tanto ou mais. Isto é
+      terça-feira.</li>
+    </ul>
+    Nota a segunda coluna: em vez de mostrar o z-score a um leigo (que não lhe diz nada), mostras uma
+    <b>contagem</b>. E não uma probabilidade — porque converter z em probabilidade exigiria assumir
+    normalidade, e os retornos têm caudas pesadas, logo o número estaria errado precisamente nos
+    dias que interessam.`,
+    q: "Porquê 20 dias, e não 10 ou 60?",
+    a: `<p>Porque foi medido. A ablação está na tese: F1 de <b>0,385 com 10 dias</b>, <b>0,516 com
+    20</b>, <b>0,678 com 60</b>.</p>
+    <p>Repara que 60 dá <i>melhor</i> F1. Escolheste 20 porque uma janela longa reage devagar a
+    mudanças de regime — e a tese diz isso em vez de esconder que 60 pontuou mais alto.</p>` },
+  { t: "Peça 2 — a decomposição: «é a empresa ou é o mercado?»",
+    h: `<p>Uma ação que cai 2% pode estar a cair por três razões diferentes, e a distinção muda tudo
+    para quem a tem em carteira:</p>
+    <ul>
+      <li>o <b>mercado</b> todo caiu (nada a ver com a empresa),</li>
+      <li>o <b>setor</b> caiu (a tecnologia toda),</li>
+      <li>a <b>empresa</b> tem um problema seu.</li>
+    </ul>
+    <p>Separam-se assim: mede-se quanto é que esta ação costuma acompanhar o mercado — esse número
+    chama-se <b>beta</b>. Beta 2 significa "quando o mercado sobe 1%, ela costuma subir 2%". Depois,
+    do movimento de hoje, subtrai-se a parte explicada pelo mercado, depois a parte explicada pelo
+    setor, e o que sobra é da empresa. Por construção as três partes <b>somam ao movimento total</b>.</p>`,
+    ex: `Dois exemplos reais, e o segundo é o mais valioso:
+    <pre><code>AMD  <span class="k">-8,50%</span> = +0,61% mercado · -3,60% setor · <span class="k">-5,51% empresa</span>
+AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span class="k">+0,19% empresa</span></code></pre>
+    A Amazon <b>caiu</b>, mas a contribuição própria dela foi <b>positiva</b>: caiu porque o mercado
+    inteiro caiu. Para quem a tem há anos, isto é exactamente a informação que quer — e nenhuma app
+    gratuita lhe diz.`,
+    q: "O beta da AMD saiu 4,43, o que é altíssimo. O que fizeste?",
+    a: `<p>Isto foi um <b>erro meu apanhado com dados reais</b>, e é uma boa história para contar.
+    A primeira versão cortava betas a ±4. A AMD dava 4,43, caía num valor de reserva de beta = 1, e
+    o sistema atribuía os −8,5% <b>inteiros</b> à empresa — errado, e em silêncio.</p>
+    <p>A correção não foi um corte melhor: foi <b>encolhimento ponderado pela precisão</b>
+    (Vasicek, 1973). Um beta estimado com pouca certeza é puxado para a média; um beta preciso
+    fica quase intacto. Testei também a alternativa de peso fixo (Blume, 2/3) e rejeitei-a por
+    encolher um beta preciso de 2,0 para 1,67.</p>` },
+  { t: "Peça 3 — os precedentes: «já aconteceu antes?»",
+    h: `<p>Esta é a peça que dá o nome ao núcleo do trabalho: <b>raciocínio baseado em casos</b>
+    (CBR). A ideia:</p>
+    <ol>
+      <li>Guardaste uma base de manchetes antigas, cada uma com o embedding e com o <b>impacto real
+      medido depois</b> (+1, +3, +5 dias).</li>
+      <li>Chega uma manchete nova. Calculas o embedding dela.</li>
+      <li>Procuras as mais parecidas por cosseno e mostras <b>os casos individuais</b>, com o que se
+      seguiu a cada um.</li>
+    </ol>
+    <p>Repara no detalhe: o impacto é <b>medido a posteriori</b>, não previsto. É história, não
+    profecia. É por isso que esta peça não viola a restrição de não prever.</p>`,
+    ex: `A qualidade disto mede-se com <b>precision@5</b>: das 5 mais parecidas, quantas são
+    genuinamente relacionadas?
+    <div class="scroll"><table>
+      <tr><th>método</th><th class="num">P@5</th></tr>
+      <tr><td>ao acaso</td><td class="num">0,240</td></tr>
+      <tr><td>por recência (a mais recente)</td><td class="num">0,126</td></tr>
+      <tr><td>por palavras partilhadas</td><td class="num">0,346</td></tr>
+      <tr><td><b>SBERT MiniLM (o teu)</b></td><td class="num">0,514</td></tr>
+      <tr><td>à escala, no FNSPID (~80 mil)</td><td class="num">0,595</td></tr>
+    </table></div>`,
+    q: "O resultado mais importante desta peça é um que parece um defeito. Qual é?",
+    a: `<p><b>Tema ≠ direção.</b> A recuperação encontra manchetes sobre o <i>mesmo assunto</i>, e o
+    assunto quase não diz nada sobre a <i>direção</i>. Está quantificado: a consistência de direção
+    é <b>0,708</b> contra um chão de acaso de <b>0,688</b> — ou seja, quase nada acima do acaso.</p>
+    <p>Consequência prática: uma notícia positiva pode trazer precedentes que desceram. <b>Não é
+    bug, é o resultado central do Caso de Estudo 3.</b> E é por isso que o alerta mostra sempre os
+    casos <i>individuais</i> e nunca só a média, com a moldura "tema não é direção" escrita.</p>
+    <p class="mark" style="margin:0"><b>Guarda isto:</b> tu próprio leste isto como incoerência
+    quando viste os alertas. Se te enganou a ti, engana o júri — por isso a moldura tem de estar
+    bem visível no produto.</p>` },
+  { t: "Peça 4 — os portões: porque 9 de cada 10 varreduras não mandam nada",
+    h: `<p>Uma manchete tem de passar <b>cinco</b> portões para chegar ao teu telemóvel:</p>
+    <ol>
+      <li><b>relevância</b> — a manchete tem de mencionar a empresa e não ser boilerplate de mercado;</li>
+      <li><b>frescura</b> — tem de ter ≤2 dias;</li>
+      <li><b>similaridade</b> — tem de existir um precedente com cosseno ≥ 0,45; sem evidência
+      decente, não há alerta;</li>
+      <li><b>materialidade</b> — o modelo treinado tem de lhe dar P ≥ 0,5;</li>
+      <li><b>tecto diário</b> — no máximo 2 por ticker por dia.</li>
+    </ol>
+    <p>O resultado medido: numa varredura real, <b>9 de 10 tickers ficaram em silêncio</b> — 7 pelo
+    chão de similaridade e 2 pela triagem.</p>`,
+    ex: `E as margens são minúsculas, o que é honesto mostrar: MSFT 0,42 · NFLX 0,41 · GOOGL 0,44 ·
+    META 0,44 contra um chão de 0,45. <b>Quatro falham por ≤0,04.</b> Foi para poder dizer isto que
+    construíste o registo de portões — sem ele, a pergunta "a AAPL teve 135 manchetes e 0 alertas,
+    que portão a matou?" não tinha resposta.`,
+    q: "«O sistema quase nunca alerta. Não é isso uma falha?»",
+    a: `<p><i>«É uma decisão, e está medida. O silêncio é o comportamento por defeito porque um canal
+    que manda muito ensina o utilizador a ignorá-lo. E o silêncio é inspecionável: há um ecrã que
+    mostra cada nome que a varredura olhou, o portão que o parou, e a margem que faltou.»</i></p>` },
+  { t: "A engenharia que não se vê: como isto cabe em 512 MB",
+    h: `<p>O modelo de linguagem que usas, na sua forma normal, arrasta uma biblioteca (o PyTorch)
+    que ocupa cerca de <b>1,4 GB</b>. O contentor onde o sistema corre tem <b>512 MB</b>. Não cabe.</p>
+    <p>As duas saídas fáceis eram más: manter a biblioteca pesada (e a app pública não corre), ou
+    trocar por um modelo <i>diferente</i> em produção — pior, porque a avaliação passaria a descrever
+    um sistema que ninguém usa.</p>
+    <p>O que fizeste foi exportar <b>o mesmo modelo</b> para um formato leve (<b>ONNX</b>,
+    quantizado, ~23 MB, sem biblioteca de treino) e depois <b>provar que continua a ser o mesmo</b>.</p>`,
+    ex: `A prova, e é este par de números que interessa: cosseno médio entre os embeddings antigos e
+    novos <b>0,992</b>, e — o que importa mais — <b>top-3 idêntico em 20 de 23 consultas</b>, com
+    96% de vizinhos partilhados. As três divergências eram empates no 3.º lugar, a ~0,001 de
+    distância. Mais o SHA256 fixado, que faz um download corrompido <b>falhar fechado</b> em vez de
+    mudar em silêncio o que o sistema entende por "semelhante".`,
+    q: "Porque é que o cosseno de 0,992 sozinho não bastava como prova?",
+    a: `<p>Porque o cosseno mede se os vetores são parecidos, e o que o sistema faz com eles é
+    <b>ordenar vizinhos</b>. Dois conjuntos de vetores podem ser 0,992 parecidos e ainda assim dar
+    ordens diferentes. Por isso a medição que decide é a <b>sobreposição do top-3</b>: mede a coisa
+    que o produto usa.</p>
+    <p>É o mesmo princípio que te fez errar na latência: medir a coisa certa, não a coisa fácil.</p>` }]
+},
+{
+  n: 3, nome: "O código", tempo: "~30 min",
+  titulo: "Onde é que cada coisa vive, e o que é que cada ficheiro faz",
+  lead: "Se o júri abrir o repositório, tens de saber navegar nele. Este nível liga cada peça do nível anterior ao ficheiro real, com o código que importa.",
+  passos: [
+  { t: "O mapa: o que há em cada pasta",
+    h: `<div class="scroll"><table>
+      <tr><th>pasta</th><th>o que vive lá</th></tr>
+      <tr><td><code>investigator/</code></td><td>a biblioteca: toda a lógica, sem interface</td></tr>
+      <tr><td><code>app/</code></td><td>o painel web (Streamlit)</td></tr>
+      <tr><td><code>scripts/</code></td><td>coisas que se correm: o runner de alertas, as avaliações</td></tr>
+      <tr><td><code>models/</code></td><td>o modelo treinado, versionado</td></tr>
+      <tr><td><code>tests/</code></td><td>646 testes</td></tr>
+      <tr><td><code>docs/evaluation/</code></td><td>todos os resultados, gerados por script</td></tr>
+      <tr><td><code>thesis/</code> e <code>thesis-pt/</code></td><td>as duas teses (EN e PT, em sincronia)</td></tr>
+    </table></div>
+    <p>Regra de arquitetura que deves saber dizer: <b>a lógica é pura e o acesso à rede é tardio</b>.
+    As funções que decidem coisas não fazem pedidos HTTP — recebem dados já buscados. É por isso que
+    646 testes correm em segundos e sem internet.</p>`,
+    ex: `Exemplo concreto dessa separação em <code>news_fetcher/fetcher.py</code>: há
+    <code>parse_finnhub_news(payload)</code>, que é pura e testável, e há
+    <code>fetch_finnhub_company_news(...)</code>, que só faz o pedido e chama a primeira. Testas a
+    interpretação sem tocar na rede.`,
+    q: "Porque é que separar lógica pura de rede importa para a defesa?",
+    a: `<p>Porque é a razão pela qual podes afirmar que os resultados são <b>reproduzíveis</b>. Se a
+    lógica dependesse da rede, cada corrida dava um número diferente e nada seria verificável.</p>` },
+  { t: "O detetor, inteiro",
+    h: `<p>Esta é a função que responde à primeira das três perguntas. São 20 linhas.</p>
+    <pre><code><span class="k">def</span> detect_latest(returns, window=20, threshold=3.0):
+    r = pd.Series(list(returns), dtype=<span class="c">"float64"</span>).dropna().reset_index(drop=True)
+    <span class="k">if</span> len(r) &lt; window + 1:
+        <span class="k">raise</span> ValueError(...)   <span class="c"># falha FECHADO: sem norma, não decide</span>
+
+    recent = r.iloc[-window - 1 : -1]   <span class="c"># a norma: 20 dias ANTES de hoje</span>
+    last   = float(r.iloc[-1])          <span class="c"># o dia a julgar</span>
+    mu     = float(recent.mean())
+    sigma  = float(recent.std(ddof=1))
+    z      = (last - mu) / sigma <span class="k">if</span> sigma &gt; 0 <span class="k">else</span> 0.0
+    <span class="k">return</span> AnomalyResult(is_anomaly=abs(z) &gt; threshold, z_score=z, ...)</code></pre>
+    <p>Três coisas a saber apontar: o <code>-1</code> que evita lookahead; o <code>raise</code> que
+    faz falhar fechado quando não há dados suficientes; e o <code>sigma &gt; 0</code>, que evita
+    divisão por zero num título que não mexeu nada.</p>`,
+    ex: `Há uma segunda função, <code>detect_all</code>, que aplica <b>a mesma regra</b> a cada dia
+    de uma série — é ela que desenha os triângulos no gráfico do painel. Foi feita a partir da
+    primeira de propósito: se fossem duas implementações, podiam divergir, e o gráfico passaria a
+    mostrar uma coisa que o alerta não usa.`,
+    q: "O limiar aqui é 3.0 mas em produção é 1.5. Isso não é inconsistente?",
+    a: `<p>Não, e tens de saber dizer porquê: são <b>duas coisas diferentes</b>. O <b>3,0</b> é o
+    parâmetro com que a tese avalia, e está congelado — nunca muda, senão os números da tese
+    mudavam. O <b>1,5</b> é um parâmetro de <b>implantação</b>, escolhido porque o pedido real do
+    utilizador é acompanhar, e está <b>divulgado</b> na tese em vez de escondido.</p>
+    <p>E o texto compensa com níveis de severidade (notable ≥1,5 &lt; strong ≥2 &lt; extreme ≥3),
+    para um 1,6 nunca parecer um 3,2.</p>` },
+  { t: "O runner: o que corre a cada 60 segundos",
+    h: `<p><code>scripts/run_alerts.py</code> é o coração operacional. A cada ciclo:</p>
+    <ol>
+      <li>busca preços (com uma cadeia de 5 fontes: yfinance → Tiingo → Polygon → Stooq → Alpha
+      Vantage — porque o Yahoo já bloqueou os servidores e o mercado ficou cego uma semana);</li>
+      <li>corre o detetor em cada um dos 12 tickers;</li>
+      <li>varre notícias e passa-as pelos cinco portões;</li>
+      <li>envia o que sobrou para o Telegram e <b>escreve no histórico partilhado</b>.</li>
+    </ol>
+    <p>Esse último ponto é uma decisão de desenho importante: a app <b>não recalcula</b> os alertas,
+    <b>lê</b> o que foi enviado. Assim o Telegram e o ecrã não podem divergir em silêncio.</p>`,
+    ex: `O padrão que vais ver por todo o ficheiro é <b>fail-open</b>: se o narrador falhar, se o
+    histórico não se conseguir ler, se o registo de portões rebentar — o alerta sai como sairia de
+    qualquer maneira. A regra é: <i>uma peça opcional a falhar nunca pode calar a peça principal</i>.`,
+    q: "Onde é que o fail-open é errado, e o sistema usa fail-closed?",
+    a: `<p>Onde falhar aberto significaria afirmar algo falso. Dois exemplos:</p>
+    <ul>
+      <li>o <b>detetor</b> levanta erro se não tiver 21 dias — não inventa uma norma;</li>
+      <li>o <b>SHA256</b> do modelo: um download corrompido faz o arranque falhar, em vez de mudar
+      em silêncio o que o sistema entende por "semelhante".</li>
+    </ul>
+    <p>Saber distinguir os dois casos é o que mostra que a escolha foi pensada.</p>` },
+  { t: "Os testes: o que é que 646 testes provam, e o que não provam",
+    h: `<p>Não decores o número. Sabe dizer <b>que tipos</b> de teste há, porque isso é que mostra
+    critério:</p>
+    <ul>
+      <li><b>de comportamento</b> — dada esta entrada, esta saída;</li>
+      <li><b>de fidelidade XAI</b> — cada número que aparece no texto do alerta existe no objeto que
+      o motor calculou. Se a explicação e o cálculo divergirem, parte;</li>
+      <li><b>de vocabulário proibido</b> — varre 112 frases geradas contra 16 palavras de previsão;</li>
+      <li><b>de regressão</b> — cada defeito encontrado deixou um teste atrás, e eu <b>verifiquei que
+      falha sem a correção</b> (um teste de regressão que passa sobre o defeito não prova nada);</li>
+      <li><b>de amarração de números</b> — <code>tests/test_method.py</code> abre os ficheiros de
+      avaliação e exige a cadeia exacta. Se uma avaliação for refeita, a suite parte em vez de o
+      produto continuar a afirmar um número que os documentos já não sustentam.</li>
+    </ul>`,
+    ex: `O que os testes <b>não</b> apanharam, e é honesto dizê-lo: praticamente todos os defeitos
+    de honestidade foram encontrados <b>a olhar para o ecrã</b> ou <b>a medir</b>, não a correr
+    testes. A Microsoft descrita como "an ordinary day" com +4,82%; a latência mal atribuída; o tecto
+    diário "corrigido" que não estava. Testes provam que o código faz o que escreveste — não que o
+    que escreveste é verdade.`,
+    q: "Se te perguntarem «os testes garantem que a tese está correta?», o que respondes?",
+    a: `<p><i>«Não, e é importante essa distinção. Os testes garantem que o código faz o que eu
+    escrevi que fazia, e amarram os números da tese aos ficheiros que os produziram. O que eles não
+    conseguem garantir é que a afirmação seja verdadeira — isso encontra-se a medir. Três dos
+    defeitos mais graves que corrigi foram apanhados por medição e não por teste, e estão
+    registados.»</i></p>` }]
+},
+{
+  n: 4, nome: "Os números", tempo: "~25 min",
+  titulo: "Cada número que vais dizer em voz alta, e de onde vem",
+  lead: "Este nível é para decorar — mas decorar com compreensão. Para cada número: o que mede, contra o que se compara, e a frase de uma linha que o explica.",
+  passos: [
+  { t: "Os números que tens de saber de cor",
+    h: `<div class="scroll"><table>
+      <tr><th>número</th><th>o que é</th><th>a frase</th></tr>
+      <tr><td class="num">0,516</td><td>F1 do z-score</td><td>"contra 0,218 do limiar fixo"</td></tr>
+      <tr><td class="num">0,595</td><td>P@5 à escala</td><td>"2,5× o acaso, em 80 mil manchetes"</td></tr>
+      <tr><td class="num">0,708</td><td>consistência de direção</td><td>"contra um chão de 0,688 — tema não é direção"</td></tr>
+      <tr><td class="num">0,542</td><td>PR-AUC da volatilidade</td><td>"e ganhou ao texto, que deu 0,496"</td></tr>
+      <tr><td class="num">0,632</td><td>precisão a 5/dia</td><td>"contra 0,163 ao acaso — a triagem vale como mecanismo"</td></tr>
+      <tr><td class="num">0,667</td><td>precisão AO VIVO</td><td>"contra uma base de 0,455, fora da amostra"</td></tr>
+      <tr><td class="num">0,992</td><td>fidelidade do ONNX</td><td>"e top-3 idêntico em 20 de 23"</td></tr>
+    </table></div>
+    <p>O último é o mais forte de todos e muita gente não o percebe: <b>0,667 contra 0,455</b> não é
+    um número de laboratório. É o sistema a correr em produção, com decisões reais que maturaram
+    contra preços reais. Confirma ao vivo o que a avaliação offline dizia.</p>`,
+    ex: `<b>PR-AUC</b>, que aparece três vezes: é um número que resume o compromisso
+    precisão↔recall em <i>todos</i> os limiares ao mesmo tempo. Maior é melhor. O "chão" é a
+    prevalência — 0,378 aqui, que é a fração de dias realmente anormais. Usa-se PR-AUC em vez de
+    ROC-AUC precisamente porque a classe positiva é rara.`,
+    q: "Qual é o número que mostra que a tese não está a exagerar?",
+    a: `<p>O <b>0,542 contra 0,496</b>. É a linha de base simples a ganhar ao modelo mais elaborado.
+    Uma tese que quisesse impressionar não teria este número lá — tê-lo é o que dá credibilidade a
+    todos os outros.</p>` },
+  { t: "Os quatro estudos que acabam em «não»",
+    h: `<p>São a parte mais forte do trabalho em engenharia, e tens de os saber de cor porque são
+    contra-intuitivos: construíste, mediste, e <b>não ligaste</b>.</p>
+    <div class="scroll"><table>
+      <tr><th>capacidade</th><th>medição</th><th>decisão</th></tr>
+      <tr><td>taxonomia de tipos de evento</td><td>silhueta 0,084 (fraca)</td><td>não liga ao retrieval</td></tr>
+      <tr><td>predição conformal</td><td>a 90% de cobertura, decisão definida em só <b>39,5%</b></td><td>não entra no produto</td></tr>
+      <tr><td>deriva (drift)</td><td>PSI 0,281 na volatilidade — significativa</td><td>limitação medida, não corrigida</td></tr>
+      <tr><td>convergência multi-sinal</td><td>ganha em 1 de 3 orçamentos</td><td>não entra</td></tr>
+    </table></div>
+    <p>O da conformal é o mais elegante: dá uma garantia estatística real, mas o preço é que em 60%
+    dos casos não sabe decidir. E isso <b>explica o negativo da RQ4 por um ângulo independente</b>.</p>`,
+    ex: `Uma armadilha que apanhaste tu mesmo: a garantia da predição conformal é <b>marginal</b>
+    (vale em média sobre os casos), não <b>condicional</b> (não vale para um caso individual). A tese
+    dizia que respondia "exactamente" à lacuna do caso individual — e não responde. Foi corrigido
+    para "estreita a lacuna, embora a garantia continue a ser marginal". É o mal-entendido clássico
+    do método, e tu tens a versão certa escrita.`,
+    q: "«Porque tantos resultados negativos?»",
+    a: `<p><i>«Porque foram quatro comparações pré-comprometidas em que a opção transparente ganhou,
+    e porque um trabalho que só reporta o que correu bem é um trabalho em que não se pode confiar.
+    Cada uma delas está construída, medida e desligada, com a razão ao lado.»</i></p>` },
+  { t: "Os defeitos que encontraste em ti mesmo — e porque contam a teu favor",
+    h: `<p>Se o júri te perguntar pelo momento em que percebeste mais, é aqui. Três, por ordem de
+    quanto ensinam:</p>
+    <ol>
+      <li><b>Medi a coisa errada, a favor do meu próprio trabalho.</b> Usei o FCP (o instante em que
+      o browser pinta a casca) para afirmar que a v4 era 3× mais rápida. O FCP dispara mesmo numa
+      página <b>sem dados</b>. Remedido à espera do conteúdo: a frio 1987 ms contra 6014 ms — o ganho
+      existia, mas a medição anterior não o provava.</li>
+      <li><b>A latência.</b> Assumi que a mediana alta era contaminação do agendador antigo. Medi:
+      196 → 143 min, e fica lá. O tempo está todo na <b>descoberta</b> (158 min) e não no sistema
+      (1 s).</li>
+      <li><b>Um alerta que se contradizia.</b> Em 9 de 30 casos dizia "parece ser do setor" seguido
+      de "é específico da empresa" — porque a verificação olhava para a <b>direção</b> e nunca para
+      a <b>dimensão</b>.</li>
+    </ol>`,
+    ex: `E o mais instrutivo de todos, porque não é sobre código: um cartão dizia
+    <b>"an ordinary day"</b> ao lado de <b>Microsoft +4,82%</b>. As duas réguas mediam coisas
+    diferentes (o detetor olha 20 dias, a contagem olha o ano) e a versão anterior resolvia a
+    discordância <b>escolhendo em silêncio a palavra mais tranquilizadora</b>. Passou a dizer as
+    duas: <i>"calmo pela norma recente — mas só 5 dos últimos 249 dias se moveram tanto"</i>.`,
+    q: "Como é que se apresenta um defeito próprio sem parecer amador?",
+    a: `<p>Dizendo três coisas por esta ordem: <b>o que estava errado</b>, <b>como foi encontrado</b>,
+    e <b>o que mudou para não voltar</b>. Nunca só a primeira.</p>
+    <p><i>«Um cartão descrevia como banal um movimento no top 2% do ano. Encontrei-o a olhar para a
+    figura, não nos testes — nenhum registo mostraria isto. A causa era duas réguas diferentes e uma
+    escolha silenciosa da palavra mais tranquilizadora. Agora diz as duas coisas, e há quatro testes
+    a fixá-lo.»</i></p>` }]
+},
+{
+  n: 5, nome: "Defender", tempo: "~20 min",
+  titulo: "As perguntas difíceis, e a postura",
+  lead: "Último nível. Não são truques de retórica — são as perguntas para as quais tens resposta verdadeira, e a maior parte delas está resolvida porque o trabalho foi feito de determinada maneira, não porque tens uma frase pronta.",
+  passos: [
+  { t: "As seis perguntas mais prováveis",
+    h: `<p>Para cada uma, a resposta curta. Treina a dizê-las em voz alta — a diferença entre saber e
+    conseguir dizer é enorme quando se está nervoso.</p>
+    <ol>
+      <li><b>"Isto não é só usar bibliotecas?"</b> → Sim, e é isso que uma tese de Engenharia de IA
+      pede. A contribuição é a integração, a metodologia e a avaliação crítica.</li>
+      <li><b>"Porque não deep learning / um LLM?"</b> → Para uma série de retornos e títulos curtos, o
+      ganho não compensa a perda de transparência. E não é opinião: um LLM está avaliado no
+      trabalho, como narrador, com uma guarda de fidelidade.</li>
+      <li><b>"O vosso modelo perdeu."</b> → É um resultado, pré-comprometido, e testado contra
+      sub-ajuste.</li>
+      <li><b>"Como sei que não há lookahead?"</b> → Teste por mutação: mudo o futuro e o resultado
+      não muda.</li>
+      <li><b>"O sistema quase nunca alerta."</b> → Decisão medida, e o silêncio é inspecionável.</li>
+      <li><b>"Isto é útil?"</b> → Em aberto, e está dito como em aberto. O estudo com pessoas está
+      desenhado e por correr. Não inventes um resultado.</li>
+    </ol>`,
+    ex: `A pergunta que mais gente falha é a 6. A tentação é responder "sim, é muito útil". A resposta
+    certa é: <i>«a utilidade percebida é a única linha que fica em aberto no Capítulo 6, e está
+    escrita como em aberto. Tenho o protocolo e os materiais prontos; falta correr com pessoas.»</i>
+    Admitir isto <b>ganha</b> credibilidade, não perde.`,
+    q: "Qual é a única resposta que nunca podes dar?",
+    a: `<p>Um número que não exista, ou uma certeza que não tenhas. Se não souberes, a resposta é
+    <i>«não sei, mas sei onde é que isso se verificaria»</i> — e essa é uma boa resposta.</p>
+    <p>Tudo neste trabalho foi construído para que essa frase seja sempre possível.</p>` },
+  { t: "A postura: nervoso está bem, impreciso não",
+    h: `<p>Tu és uma pessoa nervosa e isso não é problema nenhum. Um júri não avalia calma, avalia se
+    a pessoa domina o que fez. Três coisas práticas:</p>
+    <ul>
+      <li><b>Fala devagar e usa números.</b> Um número concreto vale mais que três adjetivos, e dá-te
+      tempo a pensar.</li>
+      <li><b>Quando não souberes, diz.</b> A frase é "não sei" seguida de "mas isso verificar-se-ia
+      assim".</li>
+      <li><b>Não peças desculpa pelos negativos.</b> São o teu melhor material. Se pedires desculpa,
+      ensinas o júri a lê-los como falhas.</li>
+    </ul>
+    <p>E há uma coisa que só tu podes dizer, que nenhuma ferramenta te dá: <b>este texto é teu para
+    defender</b>. Se houver uma frase na tese que não consegues explicar por palavras tuas, essa
+    frase é um risco — encontra-a antes do júri.</p>`,
+    ex: `Abertura de três minutos, na ordem que funciona: (1) as três perguntas que um investidor
+    faz; (2) que as ferramentas gratuitas não respondem a nenhuma e um terminal custa 2.000 dólares
+    por mês; (3) que o sistema responde às três de graça e mostra as contas; (4) que nunca prevê, e
+    que isso é desenho; (5) os quatro veredictos, <b>incluindo o não</b>.`,
+    q: "O que fazes se não houver internet no dia da defesa?",
+    a: `<p><code>python scripts/demo.py</code>. Corre <b>offline</b>, é determinística, e reproduz o
+    +6,46% que está no Capítulo 3. Se falhar tudo o resto, há um vídeo pré-gravado.</p>
+    <p>Ter plano B e dizê-lo com naturalidade também mostra domínio.</p>` },
+  { t: "O que ainda falta, e é teu",
+    h: `<p>Fecha o curso sabendo o que está por fazer, porque um arguente pode perguntar e porque
+    saber o estado do próprio trabalho é parte de o dominar:</p>
+    <ul>
+      <li><b>o estudo de utilidade</b> com 6 a 10 pessoas (materiais prontos desde a sessão 42);</li>
+      <li><b>os agradecimentos</b> — voz tua, ninguém a pode escrever por ti;</li>
+      <li><b>a declaração de uso de IA</b> — está escrita de forma honesta, falta confirmar a forma
+      exata com o orientador;</li>
+      <li><b>a licença</b> do código;</li>
+      <li><b>gravar a demonstração</b>;</li>
+      <li><b>escolher a marca</b> e decidir se promoves o painel v4.</li>
+    </ul>`,
+    ex: `Uma nota que vale a pena guardar sobre a declaração de IA: ela <b>mantém-se</b> e é honesta.
+    Já houve uma passagem para tornar a escrita mais natural, e a fronteira foi respeitada —
+    limparam-se tiques de estilo, e a declaração ficou intacta. Não é negociável e não é vergonha.`,
+    q: "Acabaste o curso. Qual é o teste real de que sabes a tua tese?",
+    a: `<p>Conseguires explicar qualquer figura ou tabela da tese a alguém que não sabe nada — sem
+    olhar para o texto. Se conseguires isso para todas, estás pronto.</p>
+    <p>Volta ao Nível 0 quando quiseres. Ninguém aprende isto de uma vez.</p>` }]
+}];
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+const KEY = "investigator-curso-v1";
+let feito = new Set();
+try { feito = new Set(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch (e) { feito = new Set(); }
+const guardar = () => { try { localStorage.setItem(KEY, JSON.stringify([...feito])); } catch (e) {} };
+
+let atual = 0;
+const $ = (id) => document.getElementById(id);
+const totalPassos = LEVELS.reduce((s, l) => s + l.passos.length, 0);
+const id = (li, si) => li + "." + si;
+
+function pintarRail() {
+  $("levels").innerHTML = LEVELS.map((l, i) => {
+    const n = l.passos.filter((_, s) => feito.has(id(i, s))).length;
+    return `<li><button class="lvbtn" type="button" data-l="${i}" aria-current="${i === atual}">
+      <b>${l.n}</b> ${l.nome} <em>${n}/${l.passos.length}</em></button></li>`;
+  }).join("");
+  $("levels").querySelectorAll("button").forEach(b =>
+    b.addEventListener("click", () => { atual = +b.dataset.l; pintar(); window.scrollTo(0, 0); }));
+  $("tot").textContent = `${feito.size} de ${totalPassos} passos concluídos`;
+}
+
+function pintar() {
+  const l = LEVELS[atual];
+  $("eyebrow").textContent = `Nível ${l.n} · ${l.tempo}`;
+  $("title").textContent = l.titulo;
+  $("lead").textContent = l.lead;
+  const n = l.passos.filter((_, s) => feito.has(id(atual, s))).length;
+  $("fill").style.width = (100 * n / l.passos.length) + "%";
+
+  $("steps").innerHTML = l.passos.map((p, s) => {
+    const d = feito.has(id(atual, s));
+    return `<section class="step${d ? " done" : ""}" data-s="${s}">
+      <header><span class="n">${l.n}.${s + 1}</span><h2>${p.t}</h2></header>
+      ${p.h}
+      ${p.ex ? `<div class="box ex"><div class="t">No teu projeto</div><p>${p.ex}</p></div>` : ""}
+      <details><summary>Testa-te: ${p.q}</summary><div class="a">${p.a}</div></details>
+      <div class="mark"><button type="button" data-mark="${s}">${d ? "✓ compreendido" : "marcar como compreendido"}</button></div>
+    </section>`;
+  }).join("");
+
+  $("steps").querySelectorAll("[data-mark]").forEach(b => b.addEventListener("click", () => {
+    const k = id(atual, +b.dataset.mark);
+    feito.has(k) ? feito.delete(k) : feito.add(k);
+    guardar(); pintar();
+  }));
+
+  $("prev").disabled = atual === 0;
+  $("next").disabled = atual === LEVELS.length - 1;
+  pintarRail();
+}
+
+$("prev").addEventListener("click", () => { atual--; pintar(); window.scrollTo(0, 0); });
+$("next").addEventListener("click", () => { atual++; pintar(); window.scrollTo(0, 0); });
+$("reset").addEventListener("click", () => {
+  if (confirm("Apagar o progresso todo neste dispositivo?")) { feito.clear(); guardar(); pintar(); }
+});
+pintar();
+</script>
