@@ -718,3 +718,15 @@
 {"date": "2026-08-08", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-08", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-08", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.41 < 0.45"}
+{"date": "2026-08-08", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-08", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft Corporation: A Buy And Hold Forever Type Of Stock"}
+{"date": "2026-08-08", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.50 < 0.50"}
+{"date": "2026-08-08", "ticker": "TSLA", "stage": "alerted", "detail": "Tesla UK sales drop as craze for Chinese rivals surges"}
+{"date": "2026-08-08", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon's Stock Just Soared 15%. Here's Why Now Is Just the Beginning."}
+{"date": "2026-08-08", "ticker": "GOOGL", "stage": "alerted", "detail": "Alphabet Just Posted a Jaw-Dropping $112 Billion Profit. Here's the Catch."}
+{"date": "2026-08-08", "ticker": "META", "stage": "alerted", "detail": "Meta (META) Q2 2026 Earnings Call Transcript"}
+{"date": "2026-08-08", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.25 < 0.50"}
+{"date": "2026-08-08", "ticker": "AMD", "stage": "alerted", "detail": "Advanced Micro Devices (AMD) Price Prediction: How Much a $5,000 Investment Coul"}
+{"date": "2026-08-08", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-08", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-08", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.41 < 0.45"}
