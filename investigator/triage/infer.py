@@ -12,6 +12,7 @@ segue sem triagem (comportamento antigo intacto — integração off-by-default,
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 
 import pandas as pd
@@ -57,9 +58,25 @@ def score_context(bundle: dict, vol20: float, mom5: float, ret_event: float,
 
 def score_latest(bundle: dict, close: pd.Series, headline: str, ticker: str,
                  ) -> tuple[float, list[tuple[str, float]]] | None:
-    """Score do dia mais recente da série de fechos; None se faltar histórico (fail-open)."""
+    """Score do dia mais recente da série de fechos; None se faltar histórico (fail-open).
+
+    ⚠️ O guard do NaN foi acrescentado depois de o registo de produção o exigir, e a forma como
+    apareceu vale a pena guardar. A 2026-08-04 a fonte de preços devolveu buracos em toda a
+    watchlist, as features saíram NaN, e o `LogisticRegression` levantou `ValueError` — 21 vezes
+    num dia, 25 no total. O ciclo continuava (o chamador apanha tudo e segue sem triagem), por
+    isso nada se perdeu; mas no registo isso ficava como `error` com um stack trace, que é
+    **indistinguível de uma avaria real**. Um dia sem preços não é um defeito do sistema, é uma
+    condição do mundo, e tem de se ler como tal.
+
+    `event_features` já devolve None quando falta histórico; o que não apanhava era histórico
+    presente mas com furos. Agora falha aberto do mesmo modo, e a diferença é que o log passa a
+    dizer "sem dados" em vez de rebentar.
+    """
     feats = event_features(close, len(close) - 1)
     if feats is None:
+        return None
+    if any(v is None or (isinstance(v, float) and math.isnan(v))
+           for v in (feats["vol20"], feats["mom5"], feats["ret_event"])):
         return None
     return score_context(bundle, feats["vol20"], feats["mom5"], feats["ret_event"],
                          headline, ticker)

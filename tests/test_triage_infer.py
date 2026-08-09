@@ -147,3 +147,18 @@ def test_linha_de_materialidade_nao_afirma_que_nao_e_previsao():
     assert "not a forecast" not in linha
     assert "EITHER direction" in linha
     assert "not a price forecast" in linha
+
+
+def test_score_latest_falha_aberto_com_precos_em_falta(tmp_path):
+    """Regressão de PRODUÇÃO: a 2026-08-04 a fonte de preços devolveu buracos em toda a
+    watchlist, as features saíram NaN e o LogisticRegression levantou ValueError 21 vezes num
+    dia. O ciclo sobrevivia (o chamador apanha tudo), mas o registo ficava com um stack trace
+    onde devia estar "sem dados" — e um dia sem preços é uma condição do mundo, não uma avaria.
+    """
+    b = _tiny_bundle(tmp_path)
+    rng = np.random.default_rng(7)
+    close = pd.Series(100 * np.exp(np.cumsum(rng.normal(0, 0.01, 60))))
+    assert score_latest(b, close, "abc", "NVDA") is not None      # série sã: pontua
+    com_furos = close.copy()
+    com_furos.iloc[-5:] = np.nan                                   # o que a fonte devolveu
+    assert score_latest(b, com_furos, "abc", "NVDA") is None       # falha ABERTO, não levanta
