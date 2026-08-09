@@ -76,7 +76,7 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
 | Loop de pós-validação ao vivo | decisões reais registadas e rotuladas ao maturar | `live_monitoring.md` |
 
 ### 2.4 Documentos académicos
-- **Tese** (`thesis/`, EN-GB): 6 capítulos canónicos MEIA, **113 pp, 0 erros, 0 citações
+- **Tese** (`thesis/`, EN-GB): 6 capítulos canónicos MEIA, **115 pp, 0 erros, 0 citações
   indefinidas, 63/63 referências verificadas uma a uma** (auditoria em
   `docs/decisions/page_audit.md`). RQ1–RQ4 respondidas com os números acima; inclui um
   screenshot genuíno do painel único (Cap. 4, Fig. 4.5).
@@ -90,7 +90,7 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   mãos, executado e commitado com outputs reais.
 
 ### 2.5 Qualidade de engenharia
-- **646 testes automáticos + ruff**, verdes localmente e no CI (runner limpo a cada push).
+- **649 testes automáticos + ruff**, verdes localmente e no CI (runner limpo a cada push).
 - **Reprodutibilidade:** demo offline num comando (`python scripts/demo.py` reproduz o
   exemplo do Cap. 3, +6,46%); todas as figuras/números da tese saem de scripts versionados;
   ambiente fixado (Python 3.12, `requirements*.txt`).
@@ -104,7 +104,7 @@ RELATORIO_FINAL.md      ← este documento
 README.md               porta de entrada (badges, como correr, estado)
 CHECKLIST.md            SÓ o que falta (lista mínima)
 CLAUDE.md               memória de continuidade entre sessões
-thesis/main.pdf         A TESE (113 pp)               thesis/main.tex + ch1..ch6/
+thesis/main.pdf         A TESE (115 pp)               thesis/main.tex + ch1..ch6/
 paper/                  artigo IEEE (4 pp)
 slides/main.pdf         slides de defesa (25)        slides/guia_estudo/main.pdf (guia único, 88)
 investigator/           o pacote do sistema (instalável; um subpacote por componente)

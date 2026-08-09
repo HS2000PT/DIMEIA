@@ -316,7 +316,7 @@ decisão definida em 39,5% das manchetes. O modelo não serve para nada?"*
 
 ## 10. Antes de entrares na sala
 - Sabe de cor: **0,015 vs 0,344** · **P@5 0,514** · **0,542 vs 0,496** · **0,163→0,632** · **0,667 vs
-  0,455** · **39,5%** · **PSI 0,281** · **113/117 pp** (mapa completo no `guiao_de_defesa.md` §2).
+  0,455** · **39,5%** · **PSI 0,281** · **113/119 pp** (mapa completo no `guiao_de_defesa.md` §2).
 - Ensaia estas **11** cadeias em voz alta até a Q3 sair sem hesitar. As três últimas (§11–13) são as
   mais prováveis agora, porque cobrem os quatro estudos que terminam em "não".
 - Se travares numa pergunta nova: respira, reformula a pergunta em voz alta, e responde pela evidência

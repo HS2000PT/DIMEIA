@@ -7,8 +7,58 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 53 (**a latência medida contra a minha própria hipótese, e o tecto diário que não estava corrigido**)
-- **Última atualização:** 2026-08-07
+- **Sessão nº:** 54 (**revisão de tese completa: três afirmações que a implantação já tinha desmentido**)
+- **Última atualização:** 2026-08-09
+- **🆕 SESSÃO 54 (2026-08-09 — o aluno pediu revisão exaustiva e brutalmente honesta da tese + deploy):**
+  **(A) IMPLANTAÇÃO: o Heroku estava 17 commits atrasado e servia a v3.** Release v17 = `8ded486`;
+  o `main` estava em `6cf7384` (que promove a v4 no `Procfile`) e **nunca tinha sido implantado** —
+  ou seja, a promoção da v4 existia em git e não no ar. `git push heroku` continua bloqueado; foi
+  pela API de Sources/Builds. **⚠️ E havia uma armadilha:** a v4 lê um instantâneo publicado na
+  branch de dados, e o `dashboard_snapshot.json` **não estava lá** — implantar sem mais teria posto
+  a página de erro no ar até um ciclo do worker correr. Pré-semeei o instantâneo antes de implantar.
+  **v18 = `6cf7384`, depois v19 = `294d940`.** Verificado a sério: 4 vistas a 200, worker a escrever
+  e a publicar o instantâneo em cada ciclo, rodapé presente **uma** vez, 12 cartões.
+  **⚠️ (B) O ACHADO PRINCIPAL: §4.6 AFIRMAVA UMA CORRECÇÃO QUE O PRÓPRIO CÓDIGO DESMENTE.**
+  A tese dizia que o tecto diário "passa a ser servido por ordem decrescente da pontuação calibrada"
+  e chamava-lhe "pequena em código e grande em significado". O docstring do `filter_new_alerts` diz
+  literalmente o contrário: *"não é o controlo do tecto. O controlo do tecto é a `ladder`"*. A sessão
+  53 tinha descoberto isto e corrigido o **código**; ninguém corrigiu a **tese**. O piso escalonado
+  (`materiality_ladder: [0.49, 0.64]`, derivado do varrimento de política a R=1 e R=0,5) **não
+  aparecia na tese em lado nenhum**. Agora aparece, com o que **não** resolve. E há prova de
+  produção nos logs desta sessão: *"alerta nº2 do dia exige P≥64% e esta tem 58% — quota guardada"*.
+  **⚠️ (C) A FRASE MAIS PERIGOSA DA TESE, e passou 13 sessões:** o Cap. 6 dizia *"Both user profiles
+  described in Chapter 1 **were also asked** what they would notice"*. **São personas.** A tese diz
+  em cinco sítios que nenhum estudo humano foi feito. Um arguente que leia as duas coisas pergunta
+  "quantas pessoas entrevistou?" e não há resposta. Passa a suposição declarada sobre perfis
+  construídos, com o estudo humano nomeado como o que a resolveria.
+  **(D) A PROMOÇÃO DA v4 TINHA CRIADO DÍVIDA DE TESE E DE PRODUTO, as duas por pagar:**
+  a Fig. 4.5 e o §4.7 descreviam a **v3** (marcador `UNUSUAL`, sparkline, "Microsoft 5 de 249" de
+  outro dia) e o `screenshot_app.py` ainda apontava para `dashboard.py` — **exactamente o defeito
+  que o comentário desse ficheiro avisa que não se deve repetir, repetido.** Figura recapturada da
+  app implantada; §4.7 reescrito à volta do que a v4 faz de facto. **E o §4.7 afirmava duas coisas
+  que a v4 não tinha:** o rodapé da promessa (critério **H1**) e a **página de método** (critério
+  **V7**) — a v4 tinha perdido os dois. Repostos no código em vez de removidos da tese: a página de
+  método reutiliza `app/method.py`, onde cada número guarda a cadeia com que aparece no `.md` que o
+  produziu. **Ficou registado na tese o que a v4 deliberadamente NÃO faz:** a recuperação de
+  precedentes não corre na página (custa ~7 s de carga a frio), e isso estava afirmado como se
+  corresse.
+  **(E) INCOERÊNCIAS INTERNAS QUE UM ARGUENTE ENCONTRA A FOLHEAR:** o Cap. 5 abria com "quatro
+  estudos de caso" tendo **oito** (e o §5.10 do mesmo capítulo já dizia "os primeiros quatro… os
+  últimos quatro"); o §6.6 pedia para medir a cobertura de notícias que o §6.5, **uma página antes**,
+  já reportava a 88,5%; e três sítios (§3.2.3, §4.5, §5.10) chamavam "trabalho futuro" à construção
+  multi-ano do FNSPID que **sustenta cinco dos oito estudos de caso**. Tudo corrigido, EN+PT.
+  **(F) O §6.3 CHAMAVA-SE "OBJECTIVOS ALCANÇADOS" E NUNCA PERCORRIA OS OBJECTIVOS.** Listava os
+  hábitos metodológicos do Cap. 3 e declarava "os objetivos de apoio também foram cumpridos" — o que
+  é **falso** para o quarto, cuja metade "útil" não foi medida. Agora percorre os cinco e diz
+  **quatro cumpridos e um cumprido por metade**, com a metade em falta nomeada.
+  **Gates: 649 testes, ruff limpo, EN 115 pp / PT 119 pp a 0 erros e 0 citações indefinidas,
+  bibliografia 88/88, paridade EN↔PT 0 assimetrias em 90 chaves, secções e figuras/tabelas 1:1 em
+  todos os capítulos, congelados (models/, docs/evaluation/, data/, paper/, slides/) intactos.**
+  **⏭️ O QUE FICA PARA O ALUNO (não é código):** o estudo humano de utilidade continua a ser a
+  única lacuna real da tese — fecha metade do objectivo 4, a metade em aberto da RQ3, **e** a
+  pergunta "chegou a história certa?" da cobertura de notícias, tudo na mesma passagem. Mais:
+  agradecimentos e dedicatória (voz dele), declaração de IA com o orientador, e rodar as 4
+  credenciais.
 - **🆕 SESSÃO 53 (2026-08-07 — o aluno disse "continue with the pendings… don't stop"):**
   **⚠️ (A) A LATÊNCIA FOI MEDIDA, E A EXPLICAÇÃO QUE ESTAVA ESCRITA NO PROJECTO É FALSA.**
   Estava registado — aqui e no backlog — que a mediana mostrada (208 min) estava contaminada pelo
