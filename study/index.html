@@ -576,7 +576,7 @@ last   = float(r.iloc[-1])         <span class="c"># o dia que estamos a julgar<
     a: `<p><i>«Sim, e numa tese de Engenharia de IA é isso que se pede. O núcleo é raciocínio baseado
     em casos, não algo ad hoc. E a parte de engenharia está nas decisões: quatro capacidades
     construídas e não ligadas porque a medição não as sustentou, um modelo exportado para ONNX para
-    caber num contentor de 512 MB com a fidelidade provada, e 656 testes.»</i></p>` }]
+    caber num contentor de 512 MB com a fidelidade provada, e 657 testes.»</i></p>` }]
 },
 {
   n: 3, nome: "Como funciona", tempo: "~35 min",
@@ -864,13 +864,13 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
       <tr><td><code>app/</code></td><td>o painel web (Streamlit)</td></tr>
       <tr><td><code>scripts/</code></td><td>coisas que se correm: o runner de alertas, as avaliações</td></tr>
       <tr><td><code>models/</code></td><td>o modelo treinado, versionado</td></tr>
-      <tr><td><code>tests/</code></td><td>656 testes</td></tr>
+      <tr><td><code>tests/</code></td><td>657 testes</td></tr>
       <tr><td><code>docs/evaluation/</code></td><td>todos os resultados, gerados por script</td></tr>
       <tr><td><code>thesis/</code> e <code>thesis-pt/</code></td><td>as duas teses (EN e PT, em sincronia)</td></tr>
     </table></div>
     <p>Regra de arquitetura que deves saber dizer: <b>a lógica é pura e o acesso à rede é tardio</b>.
     As funções que decidem coisas não fazem pedidos HTTP — recebem dados já buscados. É por isso que
-    656 testes correm em segundos e sem internet.</p>`,
+    657 testes correm em segundos e sem internet.</p>`,
     ex: `Exemplo concreto dessa separação em <code>news_fetcher/fetcher.py</code>: há
     <code>parse_finnhub_news(payload)</code>, que é pura e testável, e há
     <code>fetch_finnhub_company_news(...)</code>, que só faz o pedido e chama a primeira. Testas a
@@ -927,7 +927,7 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
       em silêncio o que o sistema entende por "semelhante".</li>
     </ul>
     <p>Saber distinguir os dois casos é o que mostra que a escolha foi pensada.</p>` },
-  { t: "Os testes: o que é que 656 testes provam, e o que não provam",
+  { t: "Os testes: o que é que 657 testes provam, e o que não provam",
     h: `<p>Não decores o número. Sabe dizer <b>que tipos</b> de teste há, porque isso é que mostra
     critério:</p>
     <ul>

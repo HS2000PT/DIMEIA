@@ -76,7 +76,7 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
 | Loop de pós-validação ao vivo | decisões reais registadas e rotuladas ao maturar | `live_monitoring.md` |
 
 ### 2.4 Documentos académicos
-- **Tese** (`thesis/`, EN-GB): 6 capítulos canónicos MEIA, **115 pp, 0 erros, 0 citações
+- **Tese** (`thesis/`, EN-GB): 6 capítulos canónicos MEIA, **124 pp, 0 erros, 0 citações
   indefinidas, 63/63 referências verificadas uma a uma** (auditoria em
   `docs/decisions/page_audit.md`). RQ1–RQ4 respondidas com os números acima; inclui um
   screenshot genuíno do painel único (Cap. 4, Fig. 4.5).
@@ -90,7 +90,7 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
   mãos, executado e commitado com outputs reais.
 
 ### 2.5 Qualidade de engenharia
-- **649 testes automáticos + ruff**, verdes localmente e no CI (runner limpo a cada push).
+- **657 testes automáticos + ruff**, verdes localmente e no CI (runner limpo a cada push).
 - **Reprodutibilidade:** demo offline num comando (`python scripts/demo.py` reproduz o
   exemplo do Cap. 3, +6,46%); todas as figuras/números da tese saem de scripts versionados;
   ambiente fixado (Python 3.12, `requirements*.txt`).
@@ -104,14 +104,15 @@ RELATORIO_FINAL.md      ← este documento
 README.md               porta de entrada (badges, como correr, estado)
 CHECKLIST.md            SÓ o que falta (lista mínima)
 CLAUDE.md               memória de continuidade entre sessões
-thesis/main.pdf         A TESE (115 pp)               thesis/main.tex + ch1..ch6/
+thesis/main.pdf         A TESE (124 pp)               thesis/main.tex + ch1..ch6/
 paper/                  artigo IEEE (4 pp)
 slides/main.pdf         slides de defesa (25)        slides/guia_estudo/main.pdf (guia único, 88)
 investigator/           o pacote do sistema (instalável; um subpacote por componente)
 models/                 modelos de triagem treinados (joblib versionados + metadados JSON)
 notebooks/              investigator_walkthrough.ipynb — os 3 componentes, executado
-app/dashboard.py        o painel v3 NO AR (grelha de cartões) — streamlit_app.py é a v1,
-                        mantida como registo e já não servida
+app/dashboard_v4.py     o painel NO AR (grelha + detalhe + screener + método), que LÊ um
+                        instantâneo em vez de calcular. dashboard.py (v3) e streamlit_app.py
+                        (v1) ficam como registo da evolução e já não são servidas
 scripts/                demo.py · run_alerts.py (produção) · run_bot.py · evaluate*.py ·
                         build_dataset.py · train_triage.py · post_validate.py · build_kb.py
 config/alerts.yaml      watchlist + limiares + gates (a MESMA fonte para runner e app)

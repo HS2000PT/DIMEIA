@@ -447,7 +447,7 @@ um anúncio de fornecimento: o canal levou duas histórias menores dessa empresa
 a moveu. O incómodo é que o sistema já tinha o instrumento certo. O componente de triagem da
 Secção~\ref{sec:met_triage} existe precisamente para ordenar notícias por materialidade, e o
 Capítulo~\ref{chap:casestudies} reporta que, dentro de um orçamento de cinco alertas, eleva a precisão de
-$0.163$ para $0.632$; o tecto simplesmente nunca o consultava, e por isso a pontuação era medida e
+$0.163$ para $0.632$ em dados retidos; o tecto simplesmente nunca o consultava, e a pontuação era medida e
 depois ignorada.
 
 A primeira reparação foi servir o tecto por ordem decrescente dessa pontuação, e não funcionou. A
@@ -591,11 +591,11 @@ resposta de facto vive, que são os próprios alertas de notícia, cada um com o
 recuperados e o desfecho medido a $+1$, $+3$ e $+5$ dias.
 
 Esse orçamento é também a razão pela qual a página não faz cálculo nenhum. O worker escreve um
-instantâneo pré-computado no fim de cada ciclo, onde o custo de ir buscar preços já foi pago, e a página
-lê-o; medido, construir a grelha a partir da rede custa cerca de cinco segundos contra onze milissegundos
-para ler o ficheiro. Como um instantâneo que deixasse de ser escrito em silêncio pareceria exatamente um
-mercado calmo, a página mostra a idade do instantâneo, para que a desatualização se veja no ecrã em vez
-de ser inferida.
+instantâneo pré-computado no fim de cada ciclo, onde o custo de ir buscar os preços já foi pago, e a
+página limita-se a lê-lo. Medido, construir a grelha a partir da rede custa cerca de cinco segundos,
+contra onze milissegundos para ler o ficheiro. E como um instantâneo que deixasse de ser escrito
+pareceria, em silêncio, exatamente um mercado calmo, a página mostra a idade do instantâneo: a
+desatualização vê-se no ecrã em vez de ser inferida.
 
 \begin{figure}[ht]
 \centering
@@ -606,11 +606,11 @@ cartão por empresa, ordenados por quão raro foi o dia. Cada cartão responde �
 Secção~\ref{sec:intro_problem} sob os mesmos títulos e pela mesma ordem, inclusive num dia em que a
 resposta a todas elas é que não aconteceu nada de especial: a frase de topo diz exatamente isso, e cada
 cartão evidencia a sua própria quietude com uma contagem em vez de a afirmar. A raridade é dada duas
-vezes, como uma frase que qualquer pessoa pode verificar (``$247$ dos últimos $249$ dias de negociação
-moveram-se isto ou mais'' para a Microsoft, a $+0,03\%$) e como uma tira de marcas, para que um leitor
-possa comparar empresas sem ler um número. A linha de atribuição nomeia o motor em palavras e, quando uma
-componente puxou contra o movimento, di-lo em vez de o esconder: a AMD caiu $1,22\%$ ``sobretudo a própria
-empresa'', com o mercado e o seu setor a puxarem ao contrário.}
+vezes: como uma frase que qualquer pessoa pode verificar (para a Microsoft, a $+0,03\%$, ``$247$ dos
+últimos $249$ dias moveram-se isto ou mais'') e como uma tira de marcas, para que um leitor possa
+comparar empresas sem ler um número. A linha de atribuição nomeia o motor em palavras e, quando uma
+componente puxou contra o movimento, di-lo em vez de o esconder: a AMD caiu $1,22\%$ ``sobretudo a
+própria empresa'', com o mercado e o seu setor a puxarem ao contrário.}
 \label{fig:app_dashboard}
 \end{figure}
 

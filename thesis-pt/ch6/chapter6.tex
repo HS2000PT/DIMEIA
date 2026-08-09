@@ -35,16 +35,17 @@ RQ3: explicações fiéis e úteis
   & \colorbox{yellow!25}{Fiel; utilidade em aberto}
   & fiel por construção; ainda sem estudo humano \\
 RQ4: triagem para além da volatilidade
-  & \colorbox{yellow!25}{Mecanismo sim offline; texto não}
+  & \colorbox{yellow!25}{Offline sim; texto não}
   & quota $0.163 \to 0.632$; PR-AUC $0.542$ vs $0.496$ \\
 \bottomrule
 \end{tabular}
 \caption[As quatro questões de investigação num relance]{As quatro questões de investigação e os seus
 veredictos, reportados exatamente como se revelaram. Duas são um sim sem reservas; duas são divisões
-honestas: as explicações são fiéis por construção mas a sua utilidade aguarda um estudo humano, e a
-triagem aprendida ajuda como mecanismo de produto embora nenhum modelo de texto de manchetes tenha
-batido a linha de base da volatilidade neste corpus. Os números são do
-Capítulo~\ref{chap:casestudies}.}
+honestas. As explicações são fiéis por construção mas a sua utilidade aguarda um estudo humano. A
+triagem aprendida ajuda como mecanismo de produto \emph{em dados retidos} e nenhum modelo de texto de
+manchetes bateu a linha de base da volatilidade neste corpus; medido em produção, o mesmo gate ordena
+ao acaso (Secção~\ref{sec:concl_limitations}), e é por isso que o seu veredicto é qualificado e não
+verde. Os números são do Capítulo~\ref{chap:casestudies}.}
 \label{fig:rq_scorecard}
 \end{figure}
 
@@ -248,9 +249,10 @@ similaridade e horizonte e evitação explícita de lookahead. Segunda, o \textb
 \textbf{sistema de alertas XAI-first} cuja cadeia de raciocínio inteira (deteção, evidência, fontes e
 precedentes) é exposta a um utilizador não-especialista e é fiel por construção. Terceira, um
 \textbf{modelo de triagem de materialidade} treinado e calibrado, rotulado pelo próprio código de
-estudo de evento do sistema sobre o corpus multi-ano, integrado nos alertas como evidência ordenada e
-explicada atrás de uma porta de configuração, e monitorizado em produção contra os resultados que
-efetivamente se seguiram. Quarta, uma \textbf{avaliação crítica e honesta} de cada componente central
+estudo de evento do sistema sobre o corpus multi-ano, integrado nos alertas como evidência explicada
+atrás de uma porta de configuração, e monitorizado em produção contra os resultados que
+efetivamente se seguiram --- monitorização que veio depois mostrar o gate a ordenar ao acaso na
+população implantada, o que é, em si, parte da contribuição. Quarta, uma \textbf{avaliação crítica e honesta} de cada componente central
 contra linhas de base triviais, lexicais e de volatilidade sobre dados reais, incluindo duas
 comparações pré-comprometidas estatística-versus-aprendida que os métodos transparentes venceram; os
 resultados, ablações e limitações são todos reportados com clareza e regenerados a partir de scripts

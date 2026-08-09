@@ -53,11 +53,11 @@ fraqueza.
 | **0.385 / 0.470 / 0.378** | Prevalência do rótulo nos três blocos *(Caso 7)* | "**Oscila, não tem tendência.** Comparar só as pontas esconderia uma excursão de 22%. Explica por que os congelados sobrevivem E por que a cobertura a 95% parte." |
 | **ganha em 1 de 3** | Fusão multi-sinal vs melhor sinal isolado *(Caso 8)* | "Um ganho que depende do orçamento que se escolhe citar é um ganho que se **pode ter escolhido**. Não entra em produção." |
 | **peso −0,283** | Intensidade de notícia na fusão *(Caso 8)* | "**Negativo**: mais manchetes = menos provável ser material, porque são dias de conteúdo automático. À mão eu teria posto positivo e estaria errado. É a justificação empírica de DERIVAR pesos." |
-| **113 / 119 pp · 63 refs · 649 testes** | Tese EN/PT · referências verificadas · suíte | "Reprodutível de ponta a ponta; nenhum número digitado à mão. As 63 referências resolvem todas, e o título devolvido bate — verificado automaticamente." |
+| **124 / 129 pp · 63 refs · 657 testes** | Tese EN/PT · referências verificadas · suíte | "Reprodutível de ponta a ponta; nenhum número digitado à mão. As 63 referências resolvem todas, e o título devolvido bate — verificado automaticamente." |
 
 ### Se perguntarem pela bibliografia
 
-> "61 entradas, 61 no registo de verificação, 61 chaves citadas. Zero órfãs, zero indefinidas, e
+> "63 entradas, 63 no registo de verificação, 63 chaves citadas. Zero órfãs, zero indefinidas, e
 > **todas** com identificador resolúvel. Cada uma foi verificada contra o Crossref, a arXiv ou a
 > fonte primária, com a data registada."
 

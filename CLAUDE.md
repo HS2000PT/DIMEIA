@@ -7,8 +7,76 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 54 (**revisão de tese completa: três afirmações que a implantação já tinha desmentido**)
-- **Última atualização:** 2026-08-09
+- **Sessão nº:** 55 (**auditoria P0–P8: sete afirmações retiradas, todas por medição própria**)
+- **Última atualização:** 2026-08-10
+- **🆕 SESSÃO 55 (2026-08-09/10 — o aluno pediu auditoria total em fases, e disse que o
+  REPOSITÓRIO FICA PRIVADO e não é avaliado):**
+  **⚠️ ESSA FRASE MUDOU AS PRIORIDADES.** Se o arguente nunca abre o repo, cada "isto é
+  reproduzível por um script versionado" é um apelo a evidência que ele **não pode inspeccionar**.
+  A decisão da sessão S1 (tirar todos os identificadores de código da tese) deixou de ser limpeza
+  e passou a esconder a engenharia inteira. Daí a P1.
+  **(P0) QUATRO AFIRMAÇÕES FALSAS, e a primeira INVERTE O SINAL.**
+  **(1)** O apêndice citava precisão ao vivo **0,667 vs 0,455** como *"evidência fora da amostra de
+  que o mecanismo se sustenta"*. Eram **12 decisões**; IC 95% [0,391, 0,862], que **contém** a
+  taxa-base. Re-corri a pós-validação sobre o log inteiro (**1.087 decisões, 530 maturadas**) e o
+  sinal **inverte-se**: mantidas **0,592** contra suprimidas **0,647** (z=−1,28, p=0,20).
+  **(2)** O alerta terminava em *"not a forecast"* e isso era **falso** — o próprio
+  `dashboard_acceptance.md` bane esse número de todas as vistas por ser "um número para a frente".
+  A distinção verdadeira é **materialidade vs direcção**. **(3)** Os números do ONNX não tinham
+  script, contrariando a garantia do Cap. 3. **(4)** "off by default" era contrariado pelo config
+  implantado, e "aprendizagem contínua" era exagero (nada re-treina).
+  **(P1) A ENGENHARIA PASSA A ESTAR NA TESE:** 4 excertos de código nos pontos onde a garantia é
+  **feita** (a fatia `[-window-1:-1]` do z-score; o teste que muta o futuro e exige features iguais
+  **e rótulo diferente**; a divisão por dia único com embargo; as contribuições aditivas), mais a
+  secção **"One item, end to end"** — uma notícia real da MSFT em 10 etapas, com a forma dos dados
+  e onde repousam. Lista de Excertos reposta.
+  **⚠️ (P3) O ACHADO PRINCIPAL DA SESSÃO, e é negativo: O MODELO NÃO TRANSFERE.**
+  A pós-validação dizia que o gate não ajuda mas não dizia **porquê**, e as duas causas pedem
+  correcções opostas: se o score **ordena** e só a escala está errada, recalibra-se; se **não
+  ordena**, nenhuma recalibração ajuda, porque a sigmóide é **monótona** e preserva a ordem.
+  Medido: **ROC-AUC 0,494, IC de cluster [0,391, 0,601]**. Centrado no acaso.
+  **A explicação não é modelo avariado, é modelo REDUNDANTE:** a materialidade nas decisões
+  registadas corre a **0,626** contra **0,378** no treino, porque só se registam manchetes que já
+  passaram relevância e frescura. **Um modelo avaliado isolado e implantado atrás de filtros nunca
+  foi avaliado na distribuição que vai ver.** `recalibrate_live.py` implementa o re-ajuste e
+  **RECUSA-SE a escrever** enquanto o IC não superar 0,55.
+  **⚠️ E apanhei-me a cometer o erro que a tese já corrige noutro sítio:** a 1.ª versão usou
+  bootstrap sobre **linhas**. O rótulo é por (ticker,dia) — 530 linhas são **145 unidades**. Com
+  bootstrap de cluster o IC alarga de [0,436, 0,551] para [0,391, 0,601].
+  **(P4) MATRIZ DE EVIDÊNCIA** (Apêndice A): 29 linhas, afirmação × evidência × onde ×
+  reproduzível (Script/Teste/Vivo) × estado. **Cinco linhas dizem "retirada" ou "estreitada"** e
+  ficam lá de propósito — uma matriz que só lista as sobreviventes não é uma auditoria.
+  **(P5/P6/P7) OS MATERIAIS DE ESTUDO ESTAVAM A ENSINAR O QUE EU JÁ TINHA RETIRADO.** O curso
+  chamava a 0,667 "o mais forte de todos"; o **guião de defesa** tinha-o na tabela dos números a
+  saber; o **simulacro** mandava decorá-lo. Corrigido em 5 sítios, com o **aviso** em vez do
+  silêncio (a lição — *uma percentagem sobre uma amostra pequena não é um resultado* — vale mais
+  do que o número novo). Curso: 25→**36 lições**, 6→**8 níveis**, com o nível 0 que faltava (IA vs
+  ML, supervisionado, features/labels, overfitting) e o nível **"Depois de treinado"**
+  (inferência≠treino≠re-treino≠aprendizagem contínua, drift, "aprende sozinho? Não"). Quizz
+  41→**55**. Slides EN+PT 25→**26** com o frame do Resultado 9.
+  **⚠️ DEFEITO SÓ VISÍVEL A RENDERIZAR:** nem o curso nem o quizz declaravam **charset** — abertos
+  no telemóvel, "Nível" saía "NÃ­vel". O curso também não tinha viewport.
+  **⚠️ (P8) O REGISTO DE PRODUÇÃO DENUNCIOU UM DEFEITO:** 25 `ValueError: Input X contains NaN` no
+  `gate_log` — a 2026-08-04 a fonte de preços devolveu buracos em toda a watchlist e o modelo
+  rebentou **21 vezes num dia**. Falhava aberto, mas ficava como stack trace, **indistinguível de
+  uma avaria real**. Guard no `score_latest` + teste que **verifiquei que falha sem a correcção**.
+  **DEMO (`demo_defesa.py`): é um replay ASSUMIDO**, porque nove em cada dez varreduras não mandam
+  nada — uma demo ao vivo mostraria um ecrã parado, e forçar um alerta seria fabricar o que esta
+  tese recusa fabricar. Três actos a partir dos registos versionados, offline depois da 1.ª
+  corrida. Avisa sozinho quando a mensagem histórica traz o "not a forecast" antigo.
+  **IMPLANTAÇÃO: v18→v22.** O Heroku estava 17 commits atrasado e servia a **v3** apesar de o
+  `Procfile` do `main` promover a v4. **Armadilha evitada:** a v4 lê um instantâneo da branch de
+  dados e o `dashboard_snapshot.json` **não estava lá** — pré-semeei antes de implantar. A v4 tinha
+  perdido o **rodapé da promessa** (H1) e a **página de método** (V7); repostos no código em vez de
+  removidos da tese.
+  **Gates: 657 testes, ruff limpo, EN 124 pp / PT 129 pp a 0 erros e 0 citações/referências
+  indefinidas, 0 overfull >15pt, bibliografia 63/63 (88 com o paper), paridade EN↔PT 0 assimetrias
+  e 1:1 em secções, figuras/tabelas e excertos, congelados intactos.**
+  **⏭️ FICA PARA O ALUNO:** o estudo humano (fecha metade do objectivo 4, a metade aberta da RQ3 e
+  a pergunta "chegou a história certa?" da cobertura); agradecimentos e dedicatória; declaração de
+  IA com o orientador; rodar as 4 credenciais. **Decisão de produto tomada por ele nesta sessão:**
+  o gate fica LIGADO, com a justificação mudada de "filtra materialidade" para "controla volume e
+  é a parte instrumentada".
 - **🆕 SESSÃO 54 (2026-08-09 — o aluno pediu revisão exaustiva e brutalmente honesta da tese + deploy):**
   **(A) IMPLANTAÇÃO: o Heroku estava 17 commits atrasado e servia a v3.** Release v17 = `8ded486`;
   o `main` estava em `6cf7384` (que promove a v4 no `Procfile`) e **nunca tinha sido implantado** —

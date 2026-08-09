@@ -48,7 +48,7 @@ Alternativa visual à demo de consola: os dois gatilhos + a avaliação, numa in
 
 ```bash
 pip install -r requirements.txt -r requirements-app.txt
-streamlit run app/dashboard.py         # abre http://localhost:8501 (a app implantada)
+streamlit run app/dashboard_v4.py      # abre http://localhost:8501 (a app implantada)
 ```
 
 Não envia nada e não precisa de chaves. Para publicar de graça (URL público), ver

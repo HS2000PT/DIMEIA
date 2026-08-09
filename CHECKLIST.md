@@ -41,7 +41,7 @@
       `docs/design/going_live.md` §1b).
 
 ### Académico (bloqueia a submissão)
-- [ ] **Leitura final das teses** (`thesis/main.pdf` 115 pp · `thesis-pt/main.pdf` 119 pp) — o texto é teu para defender.
+- [ ] **Leitura final das teses** (`thesis/main.pdf` 124 pp · `thesis-pt/main.pdf` 129 pp) — o texto é teu para defender.
 - [ ] **Licença do código** com o Prof. Luís Gomes (MIT/Apache; política de IP do ISEP) +
       ficheiro `LICENSE`.
 - [ ] **Redação exata da declaração de uso de IA** (MEIA/ISEP) + **data de entrega** — confirmar

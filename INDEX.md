@@ -13,7 +13,7 @@ written overview of the whole project, read **[`RELATORIO_FINAL.md`](RELATORIO_F
 | **A dissertação (Português)** | [`thesis-pt/main.pdf`](thesis-pt/main.pdf) |
 | **Project overview + how to run** | [`README.md`](README.md) |
 | **10-minute written summary** | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) |
-| **The live product (dashboard)** | [`app/dashboard.py`](app/dashboard.py) — v3, served by the `Procfile` |
+| **The live product (dashboard)** | [`app/dashboard_v4.py`](app/dashboard_v4.py) — v4, served by the `Procfile`. v3 (`dashboard.py`) and v1 (`streamlit_app.py`) are kept as a record and are no longer reachable |
 
 ---
 
@@ -36,7 +36,7 @@ written overview of the whole project, read **[`RELATORIO_FINAL.md`](RELATORIO_F
 
 | Item | Where |
 |------|-------|
-| Dashboard (Streamlit) | [`app/dashboard.py`](app/dashboard.py) · [`verdict.py`](app/verdict.py) · [`method.py`](app/method.py) · [`tables.py`](app/tables.py) · [`ui_tokens.py`](app/ui_tokens.py) |
+| Dashboard (Streamlit) | [`app/dashboard_v4.py`](app/dashboard_v4.py) · [`v4_views.py`](app/v4_views.py) · [`snapshot_io.py`](app/snapshot_io.py) · [`method.py`](app/method.py) · [`ui_tokens.py`](app/ui_tokens.py) |
 | Alert runner (scan → detect → explain → Telegram) | [`scripts/run_alerts.py`](scripts/run_alerts.py) |
 | Configuration (watchlist, thresholds) | [`config/alerts.yaml`](config/alerts.yaml) |
 | Scheduled scan (GitHub Actions, after US close) | [`.github/workflows/`](.github/workflows/) |

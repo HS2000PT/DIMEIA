@@ -229,4 +229,4 @@ git archive --format=tar.gz -o app.tar.gz HEAD
 
 `git archive HEAD` em vez de empacotar a pasta: nunca inclui `.env`, `.venv`, caches nem
 nada que não esteja no commit. Verificado: build `succeeded`, release **v15**, e
-`heroku ps` a mostrar `streamlit run app/dashboard.py`.
+`heroku ps` a mostrar `streamlit run app/dashboard_v4.py`.

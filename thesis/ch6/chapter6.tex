@@ -34,15 +34,17 @@ RQ3: faithful and useful explanations
   & \colorbox{yellow!25}{Faithful; useful open}
   & faithful by construction; no human study yet \\
 RQ4: triage beyond volatility
-  & \colorbox{yellow!25}{Mechanism yes offline; text no}
+  & \colorbox{yellow!25}{Offline yes; text no}
   & share $0.163 \to 0.632$; PR-AUC $0.542$ vs $0.496$ \\
 \bottomrule
 \end{tabular}
 \caption[The four research questions at a glance]{The four research questions and their verdicts,
-reported exactly as they fell. Two are an unqualified yes; two are honest splits: explanations are
-faithful by construction but their usefulness awaits a human study, and learned triage helps as a
-product mechanism yet no headline-text model beat the volatility baseline on this corpus. Numbers
-are from Chapter~\ref{chap:casestudies}.}
+reported exactly as they fell. Two are an unqualified yes; two are honest splits. Explanations are
+faithful by construction but their usefulness awaits a human study. Learned triage helps as a
+product mechanism \emph{on held-out data} and no headline-text model beat the volatility baseline
+on this corpus; measured in deployment the same gate ranks at chance
+(Section~\ref{sec:concl_limitations}), which is why its verdict is qualified rather than green.
+Numbers are from Chapter~\ref{chap:casestudies}.}
 \label{fig:rq_scorecard}
 \end{figure}
 
@@ -238,8 +240,9 @@ explicit avoidance of lookahead. Second, \textbf{InvestiGator}, an \textbf{XAI-f
 entire reasoning chain (detection, evidence, sources and precedents) is exposed to a non-expert
 user and is faithful by construction. Third, a trained and calibrated \textbf{materiality-triage
 model}, labelled by the system's own event-study code over the multi-year corpus, integrated into the
-alerts as ranked and explained evidence behind a configuration gate, and monitored in deployment
-against the outcomes that actually followed. Fourth, a \textbf{critical, honest evaluation} of each
+alerts as explained evidence behind a configuration gate, and monitored in deployment against the
+outcomes that actually followed --- monitoring that then showed the gate ranking at chance on the
+deployed population, which is itself part of the contribution. Fourth, a \textbf{critical, honest evaluation} of each
 core component against trivial, lexical and volatility baselines on real data, including two
 pre-committed statistical-versus-learned comparisons that the transparent methods won; results,
 ablations and limitations are all reported plainly and regenerated from versioned scripts.
