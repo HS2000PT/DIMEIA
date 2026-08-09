@@ -17,6 +17,7 @@ do mercado nem a disponibilidade do GitHub.
 from __future__ import annotations
 
 import re
+import zlib
 
 import numpy as np
 import pandas as pd
@@ -35,7 +36,9 @@ def _fake_history(ticker: str, period: str = "1y", interval: str = "1d") -> pd.D
     veredicto muda de forma conforme houver ou não história. Um stub curto testaria um
     caminho que o utilizador nunca vê.
     """
-    rng = np.random.default_rng(abs(hash(ticker)) % 1000)
+    # `hash` de strings e aleatorizado por processo (PYTHONHASHSEED) — ver a nota
+    # em test_app_triage.py. crc32 e estavel entre processos e maquinas.
+    rng = np.random.default_rng(zlib.crc32(ticker.encode()) % 1000)
     n = 260
     close = 100 * np.exp(np.cumsum(rng.normal(0, 0.012, n)))
     volume = rng.integers(1_000_000, 5_000_000, n)

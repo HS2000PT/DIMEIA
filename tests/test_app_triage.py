@@ -11,6 +11,8 @@ partilhado NUNCA toca a rede real.
 
 from __future__ import annotations
 
+import zlib
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -26,8 +28,16 @@ APP = "app/streamlit_app.py"
 
 
 def _fake_history(ticker: str, period: str = "6mo", interval: str = "1d") -> pd.DataFrame:
-    """Série determinística por ticker (a semente vem do nome → movimentos distintos)."""
-    rng = np.random.default_rng(abs(hash(ticker)) % 1000)
+    """Série determinística por ticker (a semente vem do nome → movimentos distintos).
+
+    ⚠️ A semente vinha de `hash(ticker)`, e isso **não era determinístico**: o Python
+    aleatoriza o hash de strings por processo (PYTHONHASHSEED), portanto cada corrida da suite
+    gerava preços diferentes. Era isso que fazia o teste F2 falhar de vez em quando e passar
+    sozinho a seguir — a série mudava, um ticker às vezes destacava-se e às vezes não.
+    `crc32` é estável entre processos e entre máquinas, que é o que "determinístico" tem de
+    querer dizer num teste.
+    """
+    rng = np.random.default_rng(zlib.crc32(ticker.encode()) % 1000)
     n = 60
     close = 100 * np.exp(np.cumsum(rng.normal(0, 0.012, n)))
     if interval.endswith(("m", "h")):

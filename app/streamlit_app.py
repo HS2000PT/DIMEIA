@@ -1,4 +1,8 @@
-"""InvestiGator — explainable market alerts (Streamlit).
+"""InvestiGator — explainable market alerts (Streamlit).  ⛔ SUPERSEDIDA (v1).
+
+⛔ **Já não é servida.** O `Procfile` serve `app/dashboard_v4.py` desde 2026-08-09. Esta é a
+v1, mantida como registo da evolução do produto (v1 → v3 → v4), que a tese discute no
+Cap. 4. Não a corras à espera de ver o produto: `streamlit run app/dashboard_v4.py`.
 
 Redesenhada a 2026-07-29 contra critérios de aceitação ESCRITOS ANTES do código
 (`docs/design/app_acceptance.md`). A app tinha sido redesenhada 4× e rejeitada sempre por

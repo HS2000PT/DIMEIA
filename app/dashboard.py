@@ -1,4 +1,8 @@
-"""InvestiGator — painel denso, construído de raiz.
+"""InvestiGator — painel denso, construído de raiz.  ⛔ SUPERSEDIDA (v3).
+
+⛔ **Já não é servida.** O `Procfile` serve `app/dashboard_v4.py` desde 2026-08-09. Esta é a
+v3, mantida como registo (é a que produziu a Fig. 4.5 anterior e os critérios de aceitação
+que a v4 herdou). Para ver o produto: `streamlit run app/dashboard_v4.py`.
 
 **A pergunta a que este ecrã responde, por ordem.** Um investidor de retalho abre isto e
 quer saber, em três segundos, *está a acontecer alguma coisa às minhas empresas?* Se sim,
