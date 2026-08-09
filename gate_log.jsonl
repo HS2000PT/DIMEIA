@@ -754,3 +754,15 @@
 {"date": "2026-08-09", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-09", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
 {"date": "2026-08-09", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.31 < 0.50"}
+{"date": "2026-08-09", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
+{"date": "2026-08-09", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft Shows the \"Magnificent Seven\" What AI Investment Looks Like"}
+{"date": "2026-08-09", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.50 < 0.50"}
+{"date": "2026-08-09", "ticker": "TSLA", "stage": "alerted", "detail": "Elon Musk's Boring Company Is Raising Money at a $20 Billion Valuation. Here's H"}
+{"date": "2026-08-09", "ticker": "AMZN", "stage": "alerted", "detail": "Jeff Bezos' Amazon Stock Surged 14% After a Blowout Earnings Beat, Adding $25 Bi"}
+{"date": "2026-08-09", "ticker": "GOOGL", "stage": "alerted", "detail": "Even Without Alphabet and Amazon, the S&P 500 Just Posted Its Biggest Earnings B"}
+{"date": "2026-08-09", "ticker": "META", "stage": "alerted", "detail": "SpaceX vs. Meta Platforms: Which Will Reach the $2 Trillion Club First?"}
+{"date": "2026-08-09", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.25 < 0.50"}
+{"date": "2026-08-09", "ticker": "AMD", "stage": "alerted", "detail": "AMD (AMD) Buys Inference Chip Startup Taalas To Sharpen Its AI Edge"}
+{"date": "2026-08-09", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-09", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
+{"date": "2026-08-09", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.31 < 0.50"}
