@@ -39,7 +39,7 @@ fraqueza.
 | **0.542 / 0.538 / 0.496** | PR-AUC triagem: volatilidade / contexto / contexto+texto | "O TEXTO não ajuda; o sinal vive no contexto de mercado. 2.º teste justo — e **robusto** (re-teste justo com PCA/FinBERT nunca bate a volatilidade)." |
 | **0.632 vs 0.163** | Precisão@orçamento (5 alertas/dia) vs alertar-sempre | "A triagem quase QUADRUPLICA a precisão dentro do orçamento — o valor de produto." |
 | **p = 0.539 (54%)** | Decisão META real, 12 Jul 2026 | "u=+0.699 (vol + setor dominam) → σ → Platt → 54%, o número exato enviado ao canal." |
-| **0.667 vs 0.455** | Pós-validação ao vivo (mantidas vs base rate) | "Fora da amostra, EM PRODUÇÃO: o mecanismo de triagem confirma-se." |
+| **ROC-AUC 0.494** | Gate de triagem medido AO VIVO (530 decisões, 145 pares ticker-dia) | "Em produção o gate ordena ao acaso — IC [0.391, 0.601]. Fica como controlo de volume, e a afirmação de que seleciona materialidade está retirada." |
 | **P@5 0.595 (80k)** | Recuperação à escala no FNSPID multi-ano *(reforço)* | "RQ2 validada à escala, acima do preliminar 0,514." |
 | **dir. 0.708 vs chão 0.688** | Consistência de direção dos precedentes *(reforço)* | "Recupera o TEMA, não a DIREÇÃO — tema≠direção quantificado." |
 | **FinBERT 0.420 · E5/BGE ~0.51** | Benchmark de embedders *(reforço)* | "MiniLM validado por medição: domínio pior, modernos empatam." |

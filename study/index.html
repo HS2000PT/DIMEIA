@@ -696,11 +696,14 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
     um sistema que ninguém usa.</p>
     <p>O que fizeste foi exportar <b>o mesmo modelo</b> para um formato leve (<b>ONNX</b>,
     quantizado, ~23 MB, sem biblioteca de treino) e depois <b>provar que continua a ser o mesmo</b>.</p>`,
-    ex: `A prova, e é este par de números que interessa: cosseno médio entre os embeddings antigos e
-    novos <b>0,992</b>, e — o que importa mais — <b>top-3 idêntico em 20 de 23 consultas</b>, com
-    96% de vizinhos partilhados. As três divergências eram empates no 3.º lugar, a ~0,001 de
-    distância. Mais o SHA256 fixado, que faz um download corrompido <b>falhar fechado</b> em vez de
-    mudar em silêncio o que o sistema entende por "semelhante".`,
+    ex: `A verificação, sobre <b>503</b> consultas: cosseno médio <b>0,992</b>, e — o que importa
+    mais — <b>95% dos vizinhos partilhados</b>, com as divergências separadas por uma mediana de
+    <b>0,006</b> de similaridade (empates, não temas diferentes). Mais o SHA256 fixado, que faz um
+    download corrompido <b>falhar fechado</b>.<br><br>
+    ⚠️ E uma lição de método que é tua: a medição original usava <b>23</b> consultas e dizia «20 de
+    23 idênticas». <b>Não reproduz</b> — outra amostra do mesmo tamanho dá 12 de 23. A instabilidade
+    era do tamanho da amostra e não do motor. Também media a configuração errada, re-embebendo a base
+    inteira, coisa que a produção nunca faz (lá, só a consulta passa pelo ONNX).`,
     q: "Porque é que o cosseno de 0,992 sozinho não bastava como prova?",
     a: `<p>Porque o cosseno mede se os vetores são parecidos, e o que o sistema faz com eles é
     <b>ordenar vizinhos</b>. Dois conjuntos de vetores podem ser 0,992 parecidos e ainda assim dar
@@ -962,13 +965,20 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
       <tr><td class="num">0,595</td><td>P@5 à escala</td><td>"2,5× o acaso, em 80 mil manchetes"</td></tr>
       <tr><td class="num">0,708</td><td>consistência de direção</td><td>"contra um chão de 0,688 — tema não é direção"</td></tr>
       <tr><td class="num">0,542</td><td>PR-AUC da volatilidade</td><td>"e ganhou ao texto, que deu 0,496"</td></tr>
-      <tr><td class="num">0,632</td><td>precisão a 5/dia</td><td>"contra 0,163 ao acaso — a triagem vale como mecanismo"</td></tr>
-      <tr><td class="num">0,667</td><td>precisão AO VIVO</td><td>"contra uma base de 0,455, fora da amostra"</td></tr>
-      <tr><td class="num">0,992</td><td>fidelidade do ONNX</td><td>"e top-3 idêntico em 20 de 23"</td></tr>
+      <tr><td class="num">0,632</td><td>precisão a 5/dia</td><td>"contra 0,163 ao acaso — <b>em dados retidos</b>"</td></tr>
+      <tr><td class="num">0,494</td><td>ROC-AUC AO VIVO</td><td>"IC [0,391, 0,601] — o gate não ordena em produção"</td></tr>
+      <tr><td class="num">0,992</td><td>fidelidade do ONNX</td><td>"e 95% dos vizinhos partilhados, em 503 consultas"</td></tr>
     </table></div>
-    <p>O último é o mais forte de todos e muita gente não o percebe: <b>0,667 contra 0,455</b> não é
-    um número de laboratório. É o sistema a correr em produção, com decisões reais que maturaram
-    contra preços reais. Confirma ao vivo o que a avaliação offline dizia.</p>`,
+    <p>⚠️ <b>Duas armadilhas nesta tabela, e as duas foram números que este projeto teve de retirar.</b></p>
+    <p>A primeira: uma versão antiga dizia <b>0,667 contra 0,455</b> como «prova ao vivo de que o
+    mecanismo se confirma». Valia sobre <b>12</b> decisões, e o intervalo dessas 12 continha a
+    taxa-base — não provava nada. Com a amostra inteira (530) o sinal <b>inverte-se</b>: 0,592 nas
+    mantidas contra 0,647 nas suprimidas. Por isso o número que está agora na tabela é o ROC-AUC.</p>
+    <p>A segunda: o ONNX dizia «top-3 idêntico em 20 de 23». Não reproduz — outra amostra do mesmo
+    tamanho dá 12 de 23. A grandeza estável é a <b>quota de vizinhos partilhados</b>, e essa é 95%
+    sobre 503 consultas.</p>
+    <p>Guarda a lição, que vale mais do que os números: <b>uma percentagem sobre uma amostra
+    pequena não é um resultado.</b> Se disseres 0,667 e te perguntarem o intervalo, acabou.</p>`,
     ex: `<b>PR-AUC</b>, que aparece três vezes: é um número que resume o compromisso
     precisão↔recall em <i>todos</i> os limiares ao mesmo tempo. Maior é melhor. O "chão" é a
     prevalência — 0,378 aqui, que é a fração de dias realmente anormais. Usa-se PR-AUC em vez de

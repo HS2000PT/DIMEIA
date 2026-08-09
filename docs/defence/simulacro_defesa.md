@@ -315,9 +315,14 @@ decisão definida em 39,5% das manchetes. O modelo não serve para nada?"*
 ---
 
 ## 10. Antes de entrares na sala
-- Sabe de cor: **0,015 vs 0,344** · **P@5 0,514** · **0,542 vs 0,496** · **0,163→0,632** · **0,667 vs
-  0,455** · **39,5%** · **PSI 0,281** · **113/119 pp** (mapa completo no `guiao_de_defesa.md` §2).
+- Sabe de cor: **0,015 vs 0,344** · **P@5 0,514** · **0,542 vs 0,496** · **0,163→0,632 (em dados
+  retidos)** · **ROC-AUC ao vivo 0,494** · **39,5%** · **PSI 0,281** · **124/129 pp** (mapa completo
+  no `guiao_de_defesa.md` §2).
+- ⚠️ **Não digas 0,667 vs 0,455.** Foi retirado: valia sobre 12 decisões e o intervalo continha a
+  taxa-base. Com 530 decisões o sinal inverte-se (0,592 mantidas vs 0,647 suprimidas). Se disseres o
+  número antigo e te pedirem o intervalo, não tens resposta.
 - Ensaia estas **11** cadeias em voz alta até a Q3 sair sem hesitar. As três últimas (§11–13) são as
-  mais prováveis agora, porque cobrem os quatro estudos que terminam em "não".
+  mais prováveis agora, porque cobrem os estudos que terminam em "não" — que são **cinco**, e o
+  quinto (o gate medido em produção) é o mais recente e o mais provável de ser perguntado.
 - Se travares numa pergunta nova: respira, reformula a pergunta em voz alta, e responde pela evidência
   que tens — nunca por um número inventado.

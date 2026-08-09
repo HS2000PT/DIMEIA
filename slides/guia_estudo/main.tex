@@ -1308,8 +1308,10 @@ ordenar por materialidade, e dentro de um orçamento de 5 alertas eleva a precis
 \key{0,163} para \key{0,632}. \textbf{Mas o tecto nunca a consultava.} O modelo era
 \textbf{avaliado} e não \textbf{decidia} nada.
 \par\smallskip
-Agora o tecto é servido por pontuação calibrada decrescente. É pouco código, e fecha a ligação que
-faltava entre o resultado da RQ4 e o produto a funcionar.
+\textbf{E a primeira correcção não funcionou.} Ordenar só reordena candidatas presentes ao mesmo
+tempo, e a varredura emite \key{uma} manchete por empresa por ciclo --- duas histórias a disputar a
+mesma quota nunca coexistem. Quem governa o tecto é um \textbf{piso escalonado}: o $k$-ésimo alerta
+exige mais (\key{0,49}, depois \key{0,64}), ambos \emph{derivados} do varrimento de custo.
 \end{block}
 \vspace{1mm}
 
@@ -1375,7 +1377,10 @@ LR só-texto & 0,439 & 0,572 \\
 \begin{block}{\scriptsize E depois do deploy? O loop de pós-validação (a minha ideia de "RL", na forma defensável)}
 \scriptsize Cada decisão fica registada; dias depois, quando a janela fecha, é rotulada com o que
 \emph{realmente} aconteceu $\Rightarrow$ precisão/calibração ao vivo + dados novos para retreinar.
-Não é RL clássico (os alertas não movem o mercado) --- é aprendizagem contínua com rótulos atrasados.
+\textbf{Não é RL} (os alertas não movem o mercado) e \textbf{também não é aprendizagem contínua}:
+nenhum peso muda, nada re-treina sozinho. É \emph{monitorização e recolha de rótulos} --- a
+pré-condição de um re-treino que nunca foi executado. Dizer as quatro palavras pela ordem certa
+(inferência $\neq$ treino $\neq$ re-treino $\neq$ aprendizagem contínua) é meia defesa ganha.
 \end{block}
 \end{frame}
 

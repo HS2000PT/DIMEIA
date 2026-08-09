@@ -371,7 +371,7 @@ Gradient boosting & 0.469 & 0.551 \\
 \end{columns}
 \vfill
 \begin{block}{\small O veredicto honesto (pré-comprometido)}
-\small Dentro de um orçamento de 5 alertas/dia, a triagem quase \textbf{quadruplica a precisão} ($0.632$ vs $0.163$) --- mas \textbf{nenhum modelo de texto bateu a volatilidade}. Uma ablação de seguimento juntou \emph{cinco} features de contexto baratas (regime de mercado, momentum, reação padronizada, risco de queda): PR-AUC $0.535$, de novo \textbf{sem ganho}. Um re-teste \emph{justo} (C afinado, texto reduzido por PCA, um encoder de domínio FinBERT) continua a não bater a volatilidade, pelo que o negativo é \textbf{robusto}, não um artefacto de sub-ajuste. O sinal é o contexto de mercado; reportado tal como se revelou.
+\small Dentro de um orçamento de 5 alertas/dia, a triagem quase \textbf{quadruplica a precisão} ($0.632$ vs $0.163$) \emph{em dados retidos do corpus de treino} --- mas \textbf{nenhum modelo de texto bateu a volatilidade}. Uma ablação de seguimento juntou \emph{cinco} features de contexto baratas (regime de mercado, momentum, reação padronizada, risco de queda): PR-AUC $0.535$, de novo \textbf{sem ganho}. Um re-teste \emph{justo} (C afinado, texto reduzido por PCA, um encoder de domínio FinBERT) continua a não bater a volatilidade, pelo que o negativo é \textbf{robusto}, não um artefacto de sub-ajuste. O sinal é o contexto de mercado; reportado tal como se revelou.
 \end{block}
 \end{frame}
 
@@ -393,8 +393,12 @@ precisão de $0.163$ para $\mathbf{0.632}$ num orçamento de 5 alertas --- e \te
 consultava}. A pontuação era medida e depois ignorada.
 \end{block}
 \smallskip
-{\footnotesize O tecto passa a ser servido por pontuação calibrada decrescente. Pouco código; faz
-o componente treinado \textbf{decidir} em vez de ser apenas \textbf{medido}.}
+{\footnotesize \textbf{A primeira correcção não funcionou, e é essa a parte interessante.} Ordenar
+o tecto por pontuação só reordena candidatas presentes \emph{ao mesmo tempo}, e a varredura emite
+uma manchete por empresa por ciclo --- duas histórias a disputar a mesma quota nunca coexistem. Ao
+longo do dia a ordem continuou a ser a de chegada. Quem governa o tecto é um \textbf{piso
+escalonado}: o $k$-ésimo alerta do dia exige mais ($0.49$, depois $0.64$), ambos \emph{derivados}
+do varrimento de custo, não escolhidos.}
 \end{columns}
 \vfill
 {\footnotesize\textbf{E a correcção trouxe o seu próprio defeito.} Comparar \emph{alertas
@@ -501,6 +505,47 @@ aparece \textbf{uma} vez. A latência é \textbf{medida}, e ausente quando não 
 {\footnotesize Sem APIs pagas, sem GPUs, sem servidor sempre ligado --- reprodutível num portátil.}
 \end{frame}
 
+\begin{frame}{Resultado 9: o gate foi medido em produção, e não transferiu}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\small
+Cada decisão de triagem é registada e, dias depois, rotulada com o que o preço fez ---
+a mesma regra do treino. Sobre \textbf{530} decisões maturadas:
+\medskip
+
+\begin{tabular}{lc}
+\toprule
+\textbf{Os alertas que o gate\dots} & \textbf{eram materiais} \\
+\midrule
+\textbf{manteve} ($p \ge 0.5$) & $0.592$ \\
+\textbf{suprimiu} ($p < 0.5$) & $\mathbf{0.647}$ \\
+\bottomrule
+\end{tabular}
+\medskip
+
+{\footnotesize O gate está do lado \emph{errado}, embora não significativamente
+($z=-1{,}28$, $p=0{,}20$).}
+
+\column{0.48\textwidth}
+\begin{block}{\small Qual das falhas é?}
+\small Duas falhas parecem iguais aqui e pedem correcções opostas. Se a pontuação ainda
+\textbf{ordena}, recalibra-se (dois parâmetros). Se não ordena, recalibrar não serve ---
+a sigmóide é \textbf{monótona}, preserva a ordem exactamente.
+\end{block}
+\smallskip
+{\footnotesize Medido: \textbf{ROC-AUC $0.494$}, IC de cluster $[0.391, 0.601]$ sobre $145$
+unidades (ticker, dia). Centrado no acaso. \textbf{Não há ordem para preservar.}}
+\end{columns}
+\vfill
+{\footnotesize\textbf{Porquê, e não é um modelo avariado --- é um modelo redundante.} A
+materialidade nas decisões registadas corre a $0.626$ contra $0.378$ no treino, porque só se
+registam decisões para manchetes que \emph{já} passaram os filtros de relevância e frescura. As
+etapas baratas a montante já tinham removido o que a etapa aprendida foi treinada para remover.
+\textbf{Um modelo avaliado isolado e implantado atrás de filtros nunca foi avaliado na
+distribuição que ia ver.} O gate fica ligado como controlo de \emph{volume} (suprime $\sim$3/5) e
+por ser a parte instrumentada --- desligá-lo acabava com a medição que encontrou isto.}
+\end{frame}
+
 \begin{frame}{Limitações (enunciadas com clareza)}
 \begin{itemize}
   \item A relevância é um \textbf{indicador aproximado por mesmo setor}, não um juízo humano.
@@ -522,7 +567,7 @@ Duas das limitações acima eram afirmações; são agora medições.
   \item \textbf{RQ1 (sim):} o \emph{z}-score transparente deteta de forma consistente em todo o mercado e explica cada marca.
   \item \textbf{RQ2 (sim, validada à escala):} a recuperação semântica muito acima das linhas de base (P@5 $0.595$ no FNSPID multi-ano); impacto medido sem lookahead.
   \item \textbf{RQ3 (fiel sim; útil em aberto):} as explicações não podem divergir do cálculo; a utilidade para humanos é trabalho futuro.
-  \item \textbf{RQ4 (não no texto; sim no mecanismo):} a triagem $\approx 4\times$ de precisão dentro do orçamento, mas a volatilidade ficou imbatida --- o \emph{segundo} teste justo ``aprendido vs simples'' que a escolha transparente venceu (o primeiro: Isolation Forest vs \emph{z}-score, $F_1$ $0.271$ vs $0.530$).
+  \item \textbf{RQ4 (não no texto; mecanismo sim \emph{offline}):} a triagem $\approx 4\times$ de precisão dentro do orçamento em dados retidos, mas a volatilidade ficou imbatida --- o \emph{segundo} teste justo ``aprendido vs simples'' que a escolha transparente venceu (o primeiro: Isolation Forest vs \emph{z}-score, $F_1$ $0.271$ vs $0.530$). Medido em produção, o mesmo gate ordena ao acaso (Resultado 9), pelo que a afirmação sobre o mecanismo é de conjunto de avaliação e é enunciada como tal.
 \end{itemize}
 \vfill
 \begin{block}{Contribuição}
@@ -544,7 +589,9 @@ Um sistema de alertas financeiros funcional, \textbf{explicável e reprodutível
 \begin{itemize}
   \item \textbf{Porquê não prever preços?} Eficiência de mercado (Fama 1970): as notícias públicas são absorvidas depressa; nós \emph{medimos} reações, honestamente.
   \item \textbf{Porquê \emph{z}-score, não Isolation Forest/GARCH?} Transparência para um sinal de baixa dimensão --- e \emph{testámo-lo}: uma Isolation Forest causal sobre a mesma informação perdeu ($F_1$ $0.271$ vs $0.530$).
-  \item \textbf{O vosso modelo treinado perdeu para a linha de base da volatilidade. Fracasso?} Não: a comparação foi \emph{pré-comprometida} e responde à RQ4 com evidência; a triagem ainda dá $\approx 4\times$ de precisão dentro do orçamento vs alertar sempre, e a variante em produção usa exatamente as features que carregam o sinal.
+  \item \textbf{O vosso modelo treinado perdeu para a linha de base da volatilidade. Fracasso?} Não: a comparação foi \emph{pré-comprometida} e responde à RQ4 com evidência. A triagem dá $\approx 4\times$ de precisão dentro do orçamento em dados retidos, e a variante em produção usa exatamente as features que carregam o sinal.
+  \item \textbf{Então o ML funciona em produção?} \emph{Como selector não, e medi-o} (ROC-AUC $0.494$). Como controlo de volume sim. A razão é instrutiva: os filtros a montante já tinham removido o que ele foi treinado para remover, portanto é redundante e não avariado --- uma lição sobre colocar um componente aprendido \emph{dentro} de uma pipeline.
+  \item \textbf{O sistema aprende automaticamente?} Não. Faz \emph{inferência} com pesos fixos e \emph{recolhe rótulos}; o re-treino é possível e está documentado, mas nunca correu. Chamar-lhe aprendizagem contínua seria exagero.
   \item \textbf{Como sabem que o modelo de triagem nunca vê o futuro?} Um teste unitário muta os preços pós-evento e verifica que as features ficam inalteradas enquanto o rótulo muda; split temporal por dia único com um embargo de cinco dias.
   \item \textbf{Porquê precisão@$k$ e um proxy de setor?} Métrica padrão de recuperação ordenada; objetiva, reprodutível; a relevância humana é trabalho futuro.
   \item \textbf{Restrição cross-ticker?} Uma escolha de \emph{avaliação} para evitar auto-correspondências triviais; o alerta ao vivo mostra os precedentes mais similares, seja qual for a empresa.

@@ -364,7 +364,7 @@ Gradient boosting & 0.469 & 0.551 \\
 \end{columns}
 \vfill
 \begin{block}{\small The honest verdict (pre-committed)}
-\small Within a 5-alerts/day budget, triage nearly \textbf{quadruples precision} ($0.632$ vs $0.163$) --- but \textbf{no text model beat volatility}. A follow-up ablation added \emph{five} more cheap context features (market regime, momentum, standardised reaction, downside risk): PR-AUC $0.535$, again \textbf{no gain}. A \emph{fair} re-test (tuned $C$, PCA-reduced text, a FinBERT domain encoder) still never beat volatility, so the negative is \textbf{robust}, not an under-fit artefact. The signal is market context; reported as it fell.
+\small Within a 5-alerts/day budget, triage nearly \textbf{quadruples precision} ($0.632$ vs $0.163$) \emph{on held-out data from the training corpus} --- but \textbf{no text model beat volatility}. A follow-up ablation added \emph{five} more cheap context features (market regime, momentum, standardised reaction, downside risk): PR-AUC $0.535$, again \textbf{no gain}. A \emph{fair} re-test (tuned $C$, PCA-reduced text, a FinBERT domain encoder) still never beat volatility, so the negative is \textbf{robust}, not an under-fit artefact. The signal is market context; reported as it fell.
 \end{block}
 \end{frame}
 
@@ -386,8 +386,12 @@ precision from $0.163$ to $\mathbf{0.632}$ inside a 5-alert budget --- and \text
 consulted it}. The score was measured, then ignored.
 \end{block}
 \smallskip
-{\footnotesize The cap is now served by descending calibrated score. Small in code; it makes the
-trained component \textbf{decide} rather than merely be \textbf{measured}.}
+{\footnotesize \textbf{The first fix did not work, and that is the interesting part.} Sorting the
+cap by score can only reorder candidates present \emph{together}, and the scan emits one headline
+per company per cycle --- so two stories competing for the same quota never coexist. Across a day
+the order stayed arrival order. What governs the cap is an \textbf{escalating floor}: the $k$-th
+alert of the day must clear a higher bar ($0.49$, then $0.64$), both \emph{derived} from the cost
+sweep, not chosen.}
 \end{columns}
 \vfill
 {\footnotesize\textbf{And the fix had its own bug.} Comparing \emph{rendered alerts} to catch
@@ -491,6 +495,47 @@ precedents, and the alerts \emph{exactly} as Telegram received them. The promise
 {\footnotesize No paid APIs, no GPUs, no always-on server --- reproducible on a laptop.}
 \end{frame}
 
+\begin{frame}{Result 9: the gate was measured in production, and it did not transfer}
+\begin{columns}[T]
+\column{0.52\textwidth}
+\small
+Every triage decision is logged and, days later, labelled with what the price actually did ---
+same rule as training. Over \textbf{530} matured decisions:
+\medskip
+
+\begin{tabular}{lc}
+\toprule
+\textbf{Alerts the gate\dots} & \textbf{were material} \\
+\midrule
+\textbf{kept} ($p \ge 0.5$) & $0.592$ \\
+\textbf{suppressed} ($p < 0.5$) & $\mathbf{0.647}$ \\
+\bottomrule
+\end{tabular}
+\medskip
+
+{\footnotesize The gate is on the \emph{wrong} side, though not significantly
+($z=-1.28$, $p=0.20$).}
+
+\column{0.48\textwidth}
+\begin{block}{\small Which failure is it?}
+\small Two failures look identical here and need opposite fixes. If the score still
+\textbf{ranks}, recalibrate (two parameters). If it does not rank, recalibration is useless ---
+a sigmoid is \textbf{monotone}, it preserves the order exactly.
+\end{block}
+\smallskip
+{\footnotesize Measured: \textbf{ROC-AUC $0.494$}, cluster CI $[0.391, 0.601]$ over $145$
+(ticker, day) units. Centred on chance. \textbf{No order to preserve.}}
+\end{columns}
+\vfill
+{\footnotesize\textbf{Why, and it is not a broken model --- it is a redundant one.} Materiality
+among logged decisions runs at $0.626$ against $0.378$ in training, because decisions are only
+logged for headlines that \emph{already} cleared the relevance and freshness filters. The cheap
+upstream stages had removed what the learned stage was trained to remove. \textbf{A model
+evaluated in isolation and deployed behind filters was never evaluated on the distribution it
+would see.} The gate stays on as a \emph{volume} control (it suppresses $\sim$3/5) and because it
+is the instrumented part --- switching it off would end the measurement that found this.}
+\end{frame}
+
 \begin{frame}{Limitations (stated plainly)}
 \begin{itemize}
   \item Relevance is a \textbf{same-sector proxy}, not a human judgement.
@@ -512,7 +557,7 @@ Two of the limitations above used to be assertions; they are now measurements.
   \item \textbf{RQ1 (yes):} transparent \emph{z}-score detects consistently across the market and explains every flag.
   \item \textbf{RQ2 (yes, validated at scale):} semantic retrieval far above baselines (P@5 $0.595$ on multi-year FNSPID); impact measured without lookahead.
   \item \textbf{RQ3 (faithful yes; useful open):} explanations cannot diverge from the computation; human usefulness is future work.
-  \item \textbf{RQ4 (no on text; yes on mechanism):} triage $\approx 4\times$ within-budget precision, but volatility stayed unbeaten --- the \emph{second} fair ``learned vs simple'' test the transparent choice won (first: Isolation Forest vs \emph{z}-score, $F_1$ $0.271$ vs $0.530$).
+  \item \textbf{RQ4 (no on text; mechanism yes \emph{offline}):} triage $\approx 4\times$ within-budget precision on held-out data, but volatility stayed unbeaten --- the \emph{second} fair ``learned vs simple'' test the transparent choice won (first: Isolation Forest vs \emph{z}-score, $F_1$ $0.271$ vs $0.530$). Measured in production the same gate ranks at chance (Result 9), so the mechanism claim is an evaluation-set claim and is stated as one.
 \end{itemize}
 \vfill
 \begin{block}{Contribution}
@@ -534,7 +579,9 @@ A working, \textbf{explainable, reproducible} financial-alert system for retail 
 \begin{itemize}
   \item \textbf{Why not predict prices?} Market efficiency (Fama 1970): public news is impounded fast; we \emph{measure} reactions, honestly.
   \item \textbf{Why \emph{z}-score, not Isolation Forest/GARCH?} Transparency for a low-dimensional signal --- and we \emph{tested} it: a causal Isolation Forest on the same information lost ($F_1$ $0.271$ vs $0.530$).
-  \item \textbf{Your trained model lost to the volatility baseline. Failure?} No: the comparison was \emph{pre-committed} and answers RQ4 with evidence; triage still $\approx 4\times$ within-budget precision vs alerting always, and the deployed variant uses exactly the features that carry the signal.
+  \item \textbf{Your trained model lost to the volatility baseline. Failure?} No: the comparison was \emph{pre-committed} and answers RQ4 with evidence. Triage gives $\approx 4\times$ within-budget precision on held-out data, and the deployed variant uses exactly the features that carry the signal.
+  \item \textbf{So does the ML work in production?} \emph{As a selector, no, and I measured it} (ROC-AUC $0.494$). As a volume control, yes. The reason is instructive: the upstream filters already removed most of what it was trained to remove, so it is redundant rather than broken --- a lesson about placing a learned component \emph{inside} a pipeline.
+  \item \textbf{Does the system learn automatically?} No. It does \emph{inference} with fixed weights and \emph{collects labels}; retraining is possible and documented but has never run. Calling that continual learning would be an overclaim.
   \item \textbf{How do you know the triage model never sees the future?} A unit test mutates post-event prices and asserts features are unchanged while the label changes; temporal split by unique day with a five-day embargo.
   \item \textbf{Why precision@$k$ and a sector proxy?} Standard ranked-retrieval metric; objective, reproducible; human relevance is future work.
   \item \textbf{Cross-ticker constraint?} An \emph{evaluation} choice to avoid trivial self-matches; the live alert shows the most similar precedents regardless.

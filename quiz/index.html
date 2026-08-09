@@ -566,9 +566,14 @@ const BANCO = [
  modelo de triagem existe exactamente para ordenar por materialidade — dentro de um orçamento de
  5 alertas eleva a precisão de <code>0,163</code> para <code>0,632</code> — e o tecto
  <b>nunca o consultava</b>. A pontuação era medida e depois ignorada.</p>
- <p>Agora o tecto é servido por ordem decrescente da pontuação calibrada. É pouco código e muito
- significado: o componente treinado deixa de ser só <b>avaliado</b> e passa a <b>decidir</b> — era
- essa a ligação que faltava entre o resultado da RQ4 e o produto a funcionar.</p>`},
+ <p>⚠️ E a primeira correcção <b>não funcionou</b>, o que é a parte que vale a pena saber contar:
+ ordenar só reordena candidatas presentes ao mesmo tempo, e a varredura emite <b>uma manchete por
+ empresa por ciclo</b> — duas histórias a disputar a mesma quota nunca coexistem num lote. Ao longo
+ do dia a ordem continuou a ser a de chegada.</p>
+ <p>Quem governa o tecto é um <b>piso escalonado</b>: o k-ésimo alerta do dia exige mais
+ (<code>0,49</code>, depois <code>0,64</code>), e os dois valores são <b>derivados</b> do varrimento
+ de custo — não escolhidos. O que isto não resolve, e nenhum algoritmo online resolve: o primeiro
+ lugar é gasto na primeira manchete que passa, porque a história da tarde ainda não existe.</p>`},
 
 {b:"Decisões que tomei", n:2, t:"aberta",
  q:"Ao corrigir a repetição de notícias introduziste um defeito pior. Qual, e como o apanhaste?",
@@ -644,9 +649,13 @@ const BANCO = [
  a:`Porque as alternativas ingénuas eram más: manter a stack pesada (a app pública não corre)
  ou trocar por um modelo <b>diferente</b> em produção — o que é pior, porque a avaliação
  passaria a descrever um sistema que ninguém usa.
- <p>Exportei o <b>mesmo</b> modelo (ONNX int8, ~23 MB, CPU) e provei a fidelidade:
- cosseno <b>0,992</b> nos embeddings e <b>top-3 idênticos em 20 de 23</b> consultas, com 96%
- de vizinhos partilhados (as divergências são empates no 3.º, a ~0,001).</p>
+ <p>Exportei o <b>mesmo</b> modelo (ONNX int8, ~23 MB, CPU) e verifiquei a fidelidade sobre
+ <b>503</b> consultas: cosseno <b>0,992</b> nos embeddings e <b>95% dos vizinhos partilhados</b>,
+ com as divergências separadas por uma mediana de <b>0,006</b> de similaridade — empates, não temas
+ diferentes.</p>
+ <p>⚠️ Uma medição anterior dizia «top-3 idêntico em 20 de 23» e <b>não reproduz</b>: outra amostra
+ de 23 dá 12. A instabilidade era do <b>tamanho da amostra</b>, não do motor — por isso a grandeza
+ a citar é a quota de vizinhos partilhados, e não a contagem de listas exactamente iguais.</p>
  <p>Mais o <b>SHA256 fixado</b>: um download corrompido <b>falha fechado</b> em vez de mudar em
  silêncio o que o sistema entende por "semelhante".</p>`},
 
