@@ -310,19 +310,34 @@ Restam várias limitações, enunciadas com clareza:
         orçamento $0.163 \to 0.632$) é um resultado de conjunto de avaliação. Em produção o sistema
         regista cada decisão de triagem e rotula-a dias depois com o desfecho que se seguiu, pela
         mesma regra do treino. Sobre $530$ decisões maturadas, os alertas que o gate \emph{manteve}
-        foram materiais $0.592$ das vezes (IC $95\%$ $[0.523, 0.658]$, $n=201$) contra $0.647$ nos
-        que \emph{suprimiu} ($[0.594, 0.697]$, $n=329$). A estimativa pontual está na direção errada
-        e a diferença não é significativa ($z=-1{,}28$, $p=0{,}20$), pelo que a leitura honesta é que
-        o gate não está demonstravelmente a selecionar melhor do que o acaso nesta população, e não
-        que seja prejudicial. A explicação é um desvio de população que o desenho não antecipou: a
-        materialidade entre as decisões registadas corre a $0.626$, contra uma prevalência de treino
-        de $0.378$. Só se registam decisões para manchetes que já passaram os filtros de relevância e
-        frescura, pelo que o gate é aplicado a um conjunto muito mais rico em itens materiais do que
-        aquele em que o modelo foi ajustado e limiarizado, e um corte a $0.5$ deixa pouca margem
-        nele. A calibração confirma a direção: itens pontuados perto de $0.50$ revelaram-se materiais
-        $0.66$ das vezes. O remédio correto é recalibrar sobre a população implantada e não sobre a
-        de treino, o que fica como trabalho futuro; reportar apenas o número offline descreveria um
-        benefício que o sistema em funcionamento não mostra hoje.
+        foram materiais $0.592$ das vezes contra $0.647$ nos que \emph{suprimiu}: nenhum benefício,
+        com a estimativa pontual na direção errada e a diferença não significativa
+        ($z = -1{,}28$, $p = 0{,}20$).
+
+        Perguntar \emph{porquê} é o que transforma isto num resultado utilizável, porque duas
+        falhas diferentes produzem-no e pedem remédios opostos. Se o score ainda \emph{ordena} bem e
+        só os números estão na escala errada, a correção é uma recalibração de dois parâmetros. Se o
+        score não ordena de todo, nenhuma recalibração ajuda, porque uma sigmóide é monótona e
+        preserva a ordenação exactamente. Medido sobre a população implantada, o ROC-AUC é $0.494$,
+        com um intervalo de bootstrap de cluster de $[0.391, 0.601]$ reamostrando pares
+        (ticker, dia) inteiros, já que manchetes que partilham empresa e dia partilham um rótulo e a
+        amostra efectiva é de $145$ unidades e não de $530$ linhas. O intervalo está centrado no
+        acaso. Não há portanto capacidade de ordenação mensurável para preservar, e o gate está a
+        selecionar ao acaso qualquer que seja o limiar que lhe derem. A calibração está, essa sim,
+        genuinamente errada, e melhoraria (Brier $0.260 \to 0.234$), mas corrigi-la produziria um
+        número melhor e um sistema idêntico.
+
+        A explicação mais provável não é que o modelo esteja avariado mas que seja
+        \emph{redundante}. A materialidade entre as decisões registadas corre a $0.626$ contra uma
+        prevalência de treino de $0.378$, porque só se registam decisões para manchetes que já
+        passaram os filtros de relevância e frescura. Essas etapas baratas a montante já removeram a
+        maior parte do que a etapa aprendida foi treinada para remover, deixando-lhe pouco para
+        separar. Isto é uma lição geral sobre colocar um componente aprendido dentro de uma pipeline
+        e não um defeito do componente: um modelo avaliado isoladamente e implantado atrás de
+        filtros não é avaliado sobre a distribuição que vai ver. O resultado offline do
+        Capítulo~\ref{chap:casestudies} mantém-se como resultado de conjunto de avaliação; o gate
+        implantado não ganhou o seu lugar com esta evidência, e dizê-lo é mais barato do que
+        defendê-lo.
   \item \textbf{Sem estudo humano.} A utilidade para um investidor real ainda não foi medida.
   \item \textbf{Por desenho.} O sistema não faz previsão de preços nem negociação, pelo que as
         questões baseadas em lucro estão fora de âmbito, não por responder.

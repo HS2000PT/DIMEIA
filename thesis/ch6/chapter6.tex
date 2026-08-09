@@ -293,20 +293,34 @@ Several limitations remain, stated plainly:
         instructive.} The offline result of Chapter~\ref{chap:casestudies} (budgeted precision
         $0.163 \to 0.632$) is an evaluation-set result. In deployment the system logs every triage
         decision and labels it days later with the outcome that actually followed, using the same
-        rule as training. Over $530$ matured decisions, the alerts the gate \emph{kept} were
-        material $0.592$ of the time ($95\%$ CI $[0.523, 0.658]$, $n=201$) against $0.647$ for the
-        ones it \emph{suppressed} ($[0.594, 0.697]$, $n=329$). The point estimate is in the wrong
-        direction and the difference is not significant ($z=-1.28$, $p=0.20$), so the honest reading
-        is that the gate is not demonstrably selecting better than chance on this population, not
-        that it is harmful. The explanation is a population shift the design did not anticipate:
-        materiality among logged decisions runs at $0.626$, against a training prevalence of
-        $0.378$. Decisions are only logged for headlines that already cleared the relevance and
-        freshness filters, so the gate is applied to a pool far richer in material items than the
-        one the model was fitted and thresholded on, and a cut at $0.5$ has little headroom left in
-        it. Calibration confirms the direction: items scored near $0.50$ proved material $0.66$ of
-        the time. The correct remedy is to recalibrate on the deployed population rather than the
-        training one, which is future work; reporting the offline figure alone would have described
-        a benefit the running system does not currently show.
+        rule as training. Over $530$ matured decisions the alerts the gate \emph{kept} were material
+        $0.592$ of the time against $0.647$ for the ones it \emph{suppressed}: no benefit, with the
+        point estimate in the wrong direction and the difference not significant
+        ($z = -1.28$, $p = 0.20$).
+
+        Asking \emph{why} is what turns that into a usable result, because two different failures
+        produce it and they demand opposite remedies. If the score still \emph{ranks} correctly and
+        only its numbers are on the wrong scale, the fix is a two-parameter recalibration. If the
+        score does not rank at all, no recalibration helps, because a sigmoid is monotone and
+        preserves the ordering exactly. Measured on the deployed population, the ROC-AUC is
+        $0.494$, with a cluster bootstrap interval of $[0.391, 0.601]$ resampling whole
+        (ticker, day) units, since headlines sharing a company and a day share one label and the
+        effective sample is $145$ units rather than $530$ rows. The interval is centred on chance.
+        There is therefore no measurable ranking ability to preserve, and the gate is selecting at
+        chance whatever threshold it is given. Calibration is separately and genuinely wrong, and
+        would improve (Brier $0.260 \to 0.234$), but fixing it would produce a better number and an
+        identical system.
+
+        The most likely explanation is not that the model is broken but that it is
+        \emph{redundant}. Materiality among logged decisions runs at $0.626$ against a training
+        prevalence of $0.378$, because decisions are only logged for headlines that already cleared
+        the relevance and freshness filters. Those cheap upstream stages have already removed most
+        of what the learned stage was trained to remove, leaving it little to separate. This is a
+        general lesson about placing a learned component in a pipeline rather than a fault in the
+        component: a model evaluated in isolation and deployed behind filters is not evaluated on
+        the distribution it will see. The offline result of Chapter~\ref{chap:casestudies} stands
+        as an evaluation-set result; the deployed gate has not earned its place on this evidence,
+        and saying so is cheaper than defending it.
   \item \textbf{No human study.} Usefulness to a real investor has not yet been measured.
   \item \textbf{By design.} The system makes no price prediction and no trade, so profit-based questions
         are out of scope, not unanswered.
