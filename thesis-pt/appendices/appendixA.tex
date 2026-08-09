@@ -236,6 +236,84 @@ através de integração contínua. Números regeneráveis, uma implantação ao
 documentam, em conjunto, um sistema que
 corre de ponta a ponta e cuja cada figura reportada pode ser reproduzida isoladamente.
 
+\section{Matriz de Evidência}
+\label{app:evidence_matrix}
+
+A tabela anterior lista resultados. Esta lista \emph{afirmações}, o que é um teste mais exigente,
+porque uma afirmação pode sobreviver à evidência que outrora a sustentava. Cada asserção substantiva
+desta dissertação é confrontada com a evidência que a suporta, com a possibilidade de essa evidência
+ser regenerada a pedido, e com o que se decidiu sobre a afirmação em consequência. Três entradas
+registam afirmações que foram \emph{retiradas ou estreitadas} depois de medidas; ficam na tabela em vez
+de apagadas, porque uma matriz que só listasse as afirmações sobreviventes não seria uma auditoria.
+
+A coluna de reprodutibilidade distingue três casos. \textbf{Script} significa que um procedimento
+versionado regenera o valor de forma determinística a partir de dados eles próprios regeneráveis.
+\textbf{Teste} significa que uma asserção automática falha se a afirmação deixar de valer.
+\textbf{Vivo} significa que o valor é medido a partir da implantação em funcionamento e mudará à
+medida que mais dados se acumulem, pelo que o valor é um instantâneo com a sua data e o artefacto
+durável é o procedimento e não o número.
+
+\begin{table}[ht]
+\caption[Matriz de evidência]{Cada afirmação substantiva, a sua evidência e o seu estado.
+``Estreitada'' e ``retirada'' registam afirmações que este trabalho retratou depois de as medir.}
+\label{tab:evidence_matrix}
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{p{4.6cm} p{3.5cm} p{1.6cm} p{1.2cm} p{1.7cm}}
+\toprule
+\tabhead{Afirmação} & \tabhead{Evidência} & \tabhead{Onde} & \tabhead{Repro.} & \tabhead{Estado} \\
+\midrule
+\multicolumn{5}{l}{\textbf{RQ1 — deteção transparente}} \\
+Dispara a taxa comparável em ações de volatilidade muito diferente & Amplitude da taxa $0.015$ vs $0.344$ em 15 tickers, sem rótulos & §\ref{sec:cs_anomaly} & Script & Mantida \\
+Bate um limiar fixo num proxy de movimento extremo & $F_1$ $0.516$ vs $0.218$ & §\ref{sec:cs_anomaly} & Script & Mantida (com ressalva do proxy) \\
+Bate dois detetores aprendidos com features causais idênticas & $F_1$ $0.530$ vs $0.269$ (IF) e $0.280$ (LOF) & §\ref{sec:cs_anomaly} & Script & Mantida \\
+Sem lookahead no detetor & A fatia da janela exclui o dia julgado & Excerto~\ref{lst:zscore} & Teste & Mantida \\
+Um estimador EWMA faria melhor neste proxy & $F_1$ $0.664$ vs $0.516$ & §\ref{sec:cs_anomaly} & Script & Mantida, não implantada \\
+\midrule
+\multicolumn{5}{l}{\textbf{RQ2 — recuperação de precedentes}} \\
+A recuperação semântica bate as linhas de base lexical e triviais & P@5 $0.514$ vs $0.346 / 0.240 / 0.126$, 5 sementes & §\ref{sec:cs_retrieval} & Script & Mantida \\
+Mantém-se à escala multi-ano & P@5 $0.595$ em $\sim$80k manchetes & §\ref{sec:cs_retrieval} & Script & Mantida \\
+A recuperação capta tema, não direção & Consistência de direção $0.71$ vs chão de acaso $0.69$ & §\ref{sec:cs_retrieval} & Script & Mantida \\
+Relevância $=$ concordância de setor é um proxy, não verdade & Declarado; inspeção qualitativa por setor & §\ref{sec:cs_discussion} & --- & Limitação \\
+\midrule
+\multicolumn{5}{l}{\textbf{RQ3 — explicação}} \\
+O texto do alerta não pode divergir do cálculo & Renderizado dos objetos calculados; verificado por precedente & §\ref{sec:cs_endtoend} & Teste & Mantida \\
+A linha do ``porquê'' é exata, não uma aproximação & Termos aditivos dos log-odds & Excerto~\ref{lst:contrib} & Teste & Mantida \\
+A linguagem gerada nunca fornece a evidência & Guarda em runtime; corpus de red team como regressão & §\ref{sec:concl_main} & Teste & Mantida \\
+A contagem de violações entregues é em parte circular & O mesmo verificador decide e avalia; declarado & §\ref{sec:concl_main} & --- & Limitação \\
+As explicações são \emph{úteis} & --- & --- & --- & \textbf{Não afirmado} \\
+\midrule
+\multicolumn{5}{l}{\textbf{RQ4 — triagem aprendida}} \\
+O treino é determinístico e reproduz os artefactos guardados & O bundle congelado regenera PR-AUC, ROC-AUC, Brier e precisão no orçamento exactamente & §\ref{sec:cs_triage} & Teste & Mantida \\
+Sem lookahead nas features & Mutar o futuro deixa as features iguais e muda o rótulo & Excerto~\ref{lst:leakage} & Teste & Mantida \\
+Os blocos não partilham janelas de rótulo & Divisão por dia único $+$ embargo ($820$ linhas largadas) & Excerto~\ref{lst:split} & Teste & Mantida \\
+Nenhum modelo com texto bate a linha de base de volatilidade & PR-AUC $0.542$ vs $0.496$; sobrevive a bootstrap de cluster, a um re-teste justo e a uma troca de métrica & §\ref{sec:cs_triage} & Script & Mantida \\
+A triagem eleva a precisão no orçamento $0.163 \to 0.632$ & Bloco retido do corpus de treino & §\ref{sec:cs_triage} & Script & \textbf{Estreitada} ao conjunto de avaliação \\
+O gate implantado seleciona notícias materiais & ROC-AUC $0.494$, IC de cluster $[0.391, 0.601]$, em $145$ unidades (ticker, dia) & §\ref{sec:concl_limitations} & Vivo & \textbf{Retirada} \\
+O gate implantado controla o volume & Suprime $\sim$3/5 das decisões de notícia & §\ref{sec:investigator_deploy} & Vivo & Mantida \\
+\midrule
+\multicolumn{5}{l}{\textbf{Sistema e implantação}} \\
+O modelo avaliado e o implantado são o mesmo modelo & Cosseno $0.992$; $95\%$ dos vizinhos partilhados em $503$ consultas & §\ref{sec:investigator_deploy} & Script & Mantida \\
+Conjuntos top-3 idênticos em $20$ de $23$ consultas & Não reproduz; $12/23$ noutra amostra do mesmo tamanho & --- & --- & \textbf{Retirada} \\
+A latência é limitada pelo ciclo de sondagem & Decomposição: $\sim$2,5\,h de descoberta, $\sim$1\,s de entrega & §\ref{sec:concl_exclusions} & Script & \textbf{Retirada} \\
+A fonte gratuita de notícias limita a cobertura & Pelo menos uma manchete relevante em $88,5\%$ dos dias invulgares & §\ref{sec:concl_limitations} & Script & Mantida (limite superior) \\
+Treino e implantação diferem & PSI $0.281$ na volatilidade pré-evento; a prevalência oscila & §\ref{sec:cs_drift} & Script & Mantida \\
+A confiança é fina na maioria dos itens & $39,5\%$ de decisões definidas a $90\%$ de cobertura garantida & §\ref{sec:cs_conformal} & Script & Mantida \\
+A fusão de sinais bate o melhor sinal isolado & Ganha em 1 orçamento de alertas de 3 & §\ref{sec:cs_convergence} & Script & \textbf{Retirada} \\
+O sistema correu em produção & $332$ alertas com carimbos num registo versionado & §\ref{app:repro_proof} & Vivo & Mantida \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Duas observações sobre a tabela no seu conjunto, e não sobre qualquer linha em particular. Primeira,
+cinco afirmações foram retiradas ou estreitadas, e todas as cinco o foram pelas \emph{medições do
+próprio trabalho} e não por revisão externa. É o comportamento pretendido de uma avaliação desenhada
+antes das experiências: tem de ser capaz de dizer não. Segunda, as linhas com a coluna de evidência
+mais fraca são também aquelas em que esta dissertação menos se apoia, e a afirmação mais forte que faz,
+a garantia de não-lookahead, é a que está imposta por um teste e não por prosa. Onde uma afirmação não
+pôde ser sustentada, aparece aqui como retirada e não como ausente.
+
 \section{Dados e Atribuição}
 \label{app:repro_data}
 

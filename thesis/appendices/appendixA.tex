@@ -233,6 +233,83 @@ live deployment, and a green test suite
 together document a system that runs end to end and whose every reported figure can be reproduced in
 isolation.
 
+\section{Evidence Matrix}
+\label{app:evidence_matrix}
+
+The preceding table lists results. This one lists \emph{claims}, which is a stricter test, because a
+claim can outlive the evidence that once supported it. Every substantive assertion this dissertation
+makes is set against the evidence behind it, whether that evidence can be regenerated on demand, and
+what was decided about the claim as a result. Three entries record claims that were \emph{withdrawn or
+narrowed} after measurement; they are kept in the table rather than deleted, because a matrix that
+only lists surviving claims would not be an audit.
+
+The reproducibility column distinguishes three cases. \textbf{Script} means a versioned procedure
+regenerates the figure deterministically from data that is itself regenerable. \textbf{Test} means an
+automated assertion fails if the claim stops holding. \textbf{Live} means the figure is measured from
+the running deployment and will move as more data accumulates, so the value is a snapshot with its
+date and the procedure, not the number, is the durable artefact.
+
+\begin{table}[ht]
+\caption[Evidence matrix]{Every substantive claim, its evidence, and its status. ``Narrowed'' and
+``withdrawn'' entries record claims this work retracted after measuring them.}
+\label{tab:evidence_matrix}
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{p{4.6cm} p{3.5cm} p{1.6cm} p{1.2cm} p{1.7cm}}
+\toprule
+\tabhead{Claim} & \tabhead{Evidence} & \tabhead{Where} & \tabhead{Repro.} & \tabhead{Status} \\
+\midrule
+\multicolumn{5}{l}{\textbf{RQ1 — transparent detection}} \\
+Fires at a comparable rate across stocks of very different volatility & Firing-rate range $0.015$ vs $0.344$ over 15 tickers, no labels needed & §\ref{sec:cs_anomaly} & Script & Kept \\
+Beats a fixed threshold on an extreme-move proxy & $F_1$ $0.516$ vs $0.218$ & §\ref{sec:cs_anomaly} & Script & Kept (proxy caveat stated) \\
+Beats two learned detectors on identical causal features & $F_1$ $0.530$ vs $0.269$ (IF) and $0.280$ (LOF) & §\ref{sec:cs_anomaly} & Script & Kept \\
+No lookahead in the detector & Window slice excludes the judged day & Listing~\ref{lst:zscore} & Test & Kept \\
+An EWMA estimate would do better on this proxy & $F_1$ $0.664$ vs $0.516$ & §\ref{sec:cs_anomaly} & Script & Kept, not deployed \\
+\midrule
+\multicolumn{5}{l}{\textbf{RQ2 — precedent retrieval}} \\
+Semantic retrieval beats lexical and trivial baselines & P@5 $0.514$ vs $0.346 / 0.240 / 0.126$, 5 seeds & §\ref{sec:cs_retrieval} & Script & Kept \\
+Holds at multi-year scale & P@5 $0.595$ on $\sim$80k headlines & §\ref{sec:cs_retrieval} & Script & Kept \\
+Retrieval captures theme, not direction & Direction consistency $0.71$ vs $0.69$ chance floor & §\ref{sec:cs_retrieval} & Script & Kept \\
+Relevance $=$ sector agreement is a proxy, not ground truth & Stated; qualitative inspection per sector & §\ref{sec:cs_discussion} & --- & Limitation \\
+\midrule
+\multicolumn{5}{l}{\textbf{RQ3 — explanation}} \\
+Alert text cannot diverge from the computation & Rendered from the computed objects; asserted per precedent & §\ref{sec:cs_endtoend} & Test & Kept \\
+The ``why'' line is exact, not an approximation & Additive log-odds terms & Listing~\ref{lst:contrib} & Test & Kept \\
+Generated language never supplies evidence & Runtime guard; red-team corpus as regression tests & §\ref{sec:concl_main} & Test & Kept \\
+Delivered-violation count is partly circular & Same checker decides and grades; stated & §\ref{sec:concl_main} & --- & Limitation \\
+Explanations are \emph{useful} & --- & --- & --- & \textbf{Not claimed} \\
+\midrule
+\multicolumn{5}{l}{\textbf{RQ4 — learned triage}} \\
+Training is deterministic and reproduces the stored artefacts & Frozen bundle regenerates PR-AUC, ROC-AUC, Brier and budgeted precision exactly & §\ref{sec:cs_triage} & Test & Kept \\
+No lookahead in the features & Mutating the future leaves features identical and changes the label & Listing~\ref{lst:leakage} & Test & Kept \\
+Blocks do not share label windows & Split by unique day $+$ embargo ($820$ rows dropped) & Listing~\ref{lst:split} & Test & Kept \\
+No text model beats the volatility baseline & PR-AUC $0.542$ vs $0.496$; survives cluster bootstrap, a fair re-test and a change of metric & §\ref{sec:cs_triage} & Script & Kept \\
+Triage raises within-budget precision $0.163 \to 0.632$ & Held-out block of the training corpus & §\ref{sec:cs_triage} & Script & \textbf{Narrowed} to evaluation set \\
+The deployed gate selects material news & ROC-AUC $0.494$, cluster CI $[0.391, 0.601]$, on $145$ (ticker, day) units & §\ref{sec:concl_limitations} & Live & \textbf{Withdrawn} \\
+The deployed gate controls volume & Suppresses $\sim$3/5 of news decisions & §\ref{sec:investigator_deploy} & Live & Kept \\
+\midrule
+\multicolumn{5}{l}{\textbf{System and deployment}} \\
+The evaluated model and the deployed model are the same model & Cosine $0.992$; $95\%$ of retrieved neighbours shared over $503$ queries & §\ref{sec:investigator_deploy} & Script & Kept \\
+Top-3 neighbour sets identical in $20$ of $23$ queries & Does not reproduce; $12/23$ on another sample of the same size & --- & --- & \textbf{Withdrawn} \\
+Latency is bounded by the polling cycle & Decomposition: $\sim$2.5\,h discovery, $\sim$1\,s delivery & §\ref{sec:concl_exclusions} & Script & \textbf{Withdrawn} \\
+The free news feed limits coverage & At least one relevant headline on $88.5\%$ of unusual days & §\ref{sec:concl_limitations} & Script & Kept (upper bound) \\
+Training and deployment differ & PSI $0.281$ on pre-event volatility; prevalence oscillates & §\ref{sec:cs_drift} & Script & Kept \\
+Confidence is thin on most items & $39.5\%$ definite calls at $90\%$ guaranteed coverage & §\ref{sec:cs_conformal} & Script & Kept \\
+Signal fusion beats the best single signal & Wins at 1 alert budget of 3 & §\ref{sec:cs_convergence} & Script & \textbf{Withdrawn} \\
+The system ran in production & $332$ alerts with timestamps in a versioned record & §\ref{app:repro_proof} & Live & Kept \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two observations about the table as a whole, rather than about any row in it. First, five claims were
+withdrawn or narrowed, and all five were withdrawn by \emph{this work's own measurements} rather than
+by review. That is the intended behaviour of an evaluation designed before the experiments: it is
+supposed to be able to say no. Second, the rows with the weakest evidence column are also the rows
+this dissertation leans on least, and the strongest claim it makes, the no-lookahead guarantee, is the
+one enforced by a test rather than by prose. Where a claim could not be supported, it appears here as
+withdrawn rather than as absent.
+
 \section{Data and Attribution}
 \label{app:repro_data}
 

@@ -420,7 +420,8 @@ a pontuação ultrapassa um limiar configurado, e \emph{anotado} com a pontuaç�
 contribuições aditivas. O gate falha-aberto: sem ficheiro de modelo, ou com
 histórico de preços insuficiente para calcular as features de contexto, a pipeline comporta-se exatamente
 como antes. Vem desligado na configuração por defeito e é ligado na implantação de referência, onde actua
-como o controlo de fadiga descrito abaixo. A variante em produção usa apenas features de contexto, pelo
+como o controlo de volume examinado na Secção~\ref{sec:investigator_deploy}. A variante em produção
+usa apenas features de contexto, pelo
 que corre sem a stack pesada de embeddings.
 
 A redação dessa linha merece parágrafo próprio, porque uma versão anterior dela era \emph{desonesta} e a
@@ -788,11 +789,29 @@ de todo.
 
 Uma ferramenta destinada a não-especialistas levanta também duas questões de desenho responsável. A primeira
 é a \emph{fadiga de alertas}: uma ferramenta que dispara demasiadas vezes ensina o utilizador a ignorá-la. O
-gatilho de mercado trata disto ao disparar apenas em extremos relativos à volatilidade, e o lado das
-notícias é tratado pelo modelo de triagem, cuja pontuação de severidade existe precisamente para ordenar o
-fluxo e filtrar os itens menos materiais (Secção~\ref{sec:investigator_logic}); a avaliação do
-Capítulo~\ref{chap:casestudies} inclui, portanto, uma métrica de precisão-dentro-do-orçamento-diário que
-mede este custo diretamente. A segunda é a \emph{dependência excessiva}: uma explicação confiante pode ser
+gatilho de mercado trata disto ao disparar apenas em extremos relativos à volatilidade. O lado das
+notícias é tratado pelo gate de triagem, e o que esse gate pode honestamente dizer que faz exige
+cuidado, porque a medição estreitou a afirmação depois da implantação.
+
+Foi introduzido para \emph{ordenar} o fluxo e largar os itens menos materiais, e em dados retidos do
+corpus de treino é exactamente isso que faz (Capítulo~\ref{chap:casestudies}). Na população que
+encontra em produção, não: a sua ordenação é indistinguível do acaso
+(Secção~\ref{sec:concl_limitations}). O que sobrevive à medição é mais estreito e continua a ser real.
+O gate suprime cerca de três quintos das decisões de notícia, pelo que é um controlo de \emph{volume}
+eficaz, e o volume que remove é limitado por uma regra que o leitor pode inspecionar em vez de por uma
+quota; e cada item que passa leva a razão aditiva exacta por que passou, que um corte simples por ordem
+de chegada ou por contagem diária fixa não conseguiria fornecer. A afirmação de que os itens que mantém
+são os materiais é retirada para o cenário implantado e mantida só onde foi medida.
+
+O componente é mantido em vez de removido por uma razão que merece ser enunciada, já que removê-lo
+também seria defensável. O gate é a parte instrumentada da pipeline: cada decisão que toma é registada
+e mais tarde rotulada pelo desfecho, que é o que tornou o achado negativo acima observável de todo.
+Desligá-lo terminaria a medição que revelou o problema e removeria o único canal pelo qual uma mudança
+nos filtros a montante, ou na mistura de notícias, poderia ser detetada como mudança na utilidade do
+score. Um componente que não está a ganhar o seu lugar mas que o diz vale mais do que silêncio. A
+avaliação do Capítulo~\ref{chap:casestudies} reporta, em conformidade, uma métrica de
+precisão-dentro-do-orçamento-diário, e o Capítulo~\ref{chap:conclusions} reporta o que o mesmo
+mecanismo consegue ao vivo, que não é o mesmo número. A segunda é a \emph{dependência excessiva}: uma explicação confiante pode ser
 merecedora de mais confiança do que a sua evidência justifica (Secção~\ref{sec:sota_trust}). O desenho atual
 mitiga isto ao mostrar os precedentes individuais e a sua dispersão em vez de um número solitário, e ao
 recusar a previsão em cada alerta. Duas mitigações adicionais foram acrescentadas depois de se lerem os

@@ -413,7 +413,8 @@ probability that an abnormal move follows, and the alert can be \emph{gated}, se
 clears a configured threshold, and \emph{annotated} with the score and its top additive contributions.
 The gate fails open: with no model file, or too little price history to compute the context features, the
 pipeline behaves exactly as before. It ships disabled in the default configuration and is enabled in the
-reference deployment, where it acts as the fatigue control described below. The deployed variant uses
+reference deployment, where it acts as the volume control examined in
+Section~\ref{sec:investigator_deploy}. The deployed variant uses
 context features only, so it runs without the heavy embedding stack.
 
 The wording of that line deserves its own paragraph, because an earlier version of it was
@@ -769,10 +770,29 @@ makes such a failure diagnosable at all.
 
 A tool aimed at non-experts also raises two responsible-design questions. The first is \emph{alert
 fatigue}: a tool that fires too often trains the user to ignore it. The market trigger addresses it by
-firing only on volatility-relative extremes, and the news side is addressed by the triage model, whose
-severity score exists precisely to rank the stream and gate the least material items
-(Section~\ref{sec:investigator_logic}); the evaluation of Chapter~\ref{chap:casestudies} therefore
-includes a precision-within-daily-budget metric that measures this cost directly. The second is
+firing only on volatility-relative extremes. The news side is addressed by the triage gate, and what
+that gate can honestly be said to do requires care, because measurement narrowed the claim after
+deployment.
+
+It was introduced to \emph{rank} the stream and drop the least material items, and on held-out data
+from the training corpus it does exactly that (Chapter~\ref{chap:casestudies}). On the population it
+meets in deployment it does not: its ranking is indistinguishable from chance
+(Section~\ref{sec:concl_limitations}). What survives measurement is narrower and still real. The gate
+suppresses roughly three fifths of news decisions, so it is an effective \emph{volume} control, and
+the volume it removes is bounded by a rule the reader can inspect rather than by a quota; and every
+item it passes carries the exact additive reason it passed, which a simpler cut on arrival order or a
+fixed daily count could not provide. The claim that the items it keeps are the material ones is
+withdrawn for the deployed setting and retained only where it was measured.
+
+The component is kept rather than removed for a reason worth stating, since removing it would also be
+defensible. The gate is the instrumented part of the pipeline: every decision it takes is logged and
+later labelled by outcome, which is what made the negative finding above observable at all. Switching
+it off would end the measurement that revealed the problem and would remove the only channel through
+which a change in the upstream filters, or in the news mix, could be detected as a change in the
+score's usefulness. A component that is not earning its keep but is telling you so is more valuable
+than silence. The evaluation of Chapter~\ref{chap:casestudies} accordingly reports a
+precision-within-daily-budget metric, and Chapter~\ref{chap:conclusions} reports what the same
+mechanism achieves live, which is not the same number. The second is
 \emph{over-reliance}: a confident explanation can be trusted more than its evidence warrants
 (Section~\ref{sec:sota_trust}). The present design mitigates this by showing the individual precedents
 and their spread rather than a lone number, and by disclaiming prediction on every alert. Two further
