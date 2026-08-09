@@ -321,54 +321,123 @@ const BANCO = [
  crédito a tudo o resto.</p>`},
 
 {b:"Os números", n:1, t:"escolha",
- q:"Prova de vida ao vivo: precisão das decisões mantidas vs taxa de base:",
- opts:["0,667 vs 0,455","0,632 vs 0,163","0,514 vs 0,346","0,595 vs 0,240"], ok:0,
- a:`<b>0,667 contra uma taxa de base de 0,455</b>, com Brier 0,229, medido sobre decisões
- reais que maturaram em produção.
- <p>Importa porque é <b>fora</b> do protocolo congelado: o mecanismo confirma-se com dados que
- não existiam quando a avaliação foi feita.</p>`},
+ q:"Ao vivo, sobre 530 decisões maturadas, os alertas MANTIDOS foram materiais:",
+ opts:["0,592 — MENOS do que os suprimidos (0,647)","0,667 — mais do que a taxa de base",
+       "0,632 — como no conjunto de teste","0,900 — quase sempre"], ok:0,
+ a:`<b>0,592 contra 0,647 nos suprimidos.</b> O gate ficou do lado errado, e a diferença não é
+ significativa (z=−1,28, p=0,20) — portanto a leitura certa é <i>«não seleciona melhor do que o
+ acaso»</i>, e não <i>«faz mal»</i>.
+ <p>⚠️ Uma versão antiga deste autoteste dizia <b>0,667 vs 0,455</b>. Era verdade sobre <b>12</b>
+ decisões, e o intervalo de confiança dessas 12 ia de 0,39 a 0,86 — continha a taxa de base. Não
+ provava nada. Com a amostra inteira o sinal <b>inverte-se</b>. Se disseres o número antigo numa
+ defesa e te perguntarem o intervalo, acabou.</p>`},
+
+{b:"Os números", n:2, t:"escolha",
+ q:"Porque é que RECALIBRAR não resolveria o gate ao vivo?",
+ opts:["Porque a calibração é monótona: preserva a ordem",
+       "Porque não há dados rotulados suficientes",
+       "Porque o modelo é demasiado pequeno",
+       "Porque a prevalência ao vivo é mais baixa"], ok:0,
+ a:`<b>Porque a sigmóide de Platt é crescente</b> — muda os números, nunca troca quem fica à
+ frente de quem. Se a ordenação estiver ao nível do acaso (ROC-AUC <b>0,494</b>, IC
+ [0,391, 0,601]), recalibrar melhora o Brier e <b>não muda uma única decisão</b> do gate.
+ <p>Esta distinção — discriminação contra calibração — é a coisa mais técnica que tens para
+ mostrar, e a ferramenta de recalibração <b>recusa-se a correr</b> por causa dela.</p>`},
+
+/* --------------------------------------------- 3b. depois de treinado */
+{b:"Depois de treinado", n:1, t:"aberta",
+ q:"Inferência, treino, re-treino, aprendizagem contínua: o que é cada uma NO TEU sistema?",
+ a:`<b>Inferência</b>: pontuar com pesos fixos — corre a cada 60 s no worker.
+ <b>Treino</b>: descobrir os pesos — aconteceu <b>uma vez</b>, offline, e produziu um ficheiro.
+ <b>Re-treino</b>: repetir com dados novos — possível, documentado, <b>nunca executado</b>.
+ <b>Aprendizagem contínua</b>: re-treino automático — <b>não existe</b>.
+ <p>Confundi-las é a forma mais rápida de perder credibilidade. Diz as quatro por ordem.</p>`},
+
+{b:"Depois de treinado", n:1, t:"aberta",
+ q:"«O sistema aprende com os alertas que envia?»",
+ a:`<b>Não.</b> O que corre continuamente é <b>recolha de rótulos e monitorização</b>: cada
+ decisão é registada e, dias depois, rotulada com o que aconteceu ao preço pela mesma regra do
+ treino. Nenhum peso muda.
+ <p>É a <b>pré-condição</b> de um re-treino, não um re-treino. Chamar-lhe aprendizagem contínua
+ seria exagero — e um arguente que peça para ver o código do ciclo automático não o encontra.</p>`},
+
+{b:"Depois de treinado", n:2, t:"escolha",
+ q:"Onde está o modelo treinado, concretamente?",
+ opts:["Num ficheiro .joblib de 1,8 KB no repositório, com um .json de metadados ao lado",
+       "Numa base de dados na nuvem","Dentro do código Python, como constantes",
+       "É descarregado do Hugging Face a cada arranque"], ok:0,
+ a:`Um <b>.joblib</b> com os pesos e um <b>.json</b> ao lado com a semente, os tamanhos dos
+ blocos, a prevalência e as métricas de teste. Esse par <b>é</b> um registo de modelos, ainda que
+ pequeno: consegue-se dizer que dados produziram aqueles pesos.
+ <p>O SBERT é o caso diferente — esse é descarregado, e verificado contra um <b>SHA256 fixo</b>,
+ para um download corrompido falhar fechado em vez de mudar em silêncio o que é «parecido».</p>`},
+
+{b:"Depois de treinado", n:2, t:"aberta",
+ q:"«Como sabem que o modelo avaliado é o que está a correr?»",
+ a:`Duas respostas, e a segunda é a que conta. Primeiro: <i>é literalmente o mesmo ficheiro.</i>
+ <p>Segundo: <b>há um teste</b> que carrega o ficheiro implantado, recalcula PR-AUC, ROC-AUC,
+ Brier e precisão-no-orçamento sobre o mesmo bloco, e exige igualdade <b>exacta</b>. Se alguém
+ re-treinar com outra semente, a suite parte. Não é preciso acreditar em mim.</p>`},
+
+{b:"Depois de treinado", n:2, t:"escolha",
+ q:"PSI 0,281 na volatilidade pré-evento quer dizer:",
+ opts:["Deriva significativa (a banda convencional começa em 0,25)",
+       "Deriva desprezável","Que o modelo está mal treinado","Que os dados estão corrompidos"], ok:0,
+ a:`Banda <b>significativa</b> (&lt;0,10 estável, 0,10–0,25 moderado, &gt;0,25 significativo).
+ A janela de treino contém o choque de 2020: o modelo aprendeu num mundo mais turbulento.
+ <p>Pormenor que mostra que olhaste: a prevalência do rótulo <b>oscila</b> (0,385 → 0,470 →
+ 0,378) em vez de derivar. Comparar só as pontas esconderia uma excursão de um quinto.</p>`},
+
+{b:"Depois de treinado", n:3, t:"aberta",
+ q:"Se quisesses que o modelo melhorasse com o tempo, o que farias — e porque não fizeste?",
+ a:`O mecanismo já está: <b>1.087</b> decisões registadas, <b>530</b> rotuladas. O passo seguinte
+ seria re-ajustar <b>só a camada de calibração</b> (dois parâmetros). Re-treinar os nove
+ coeficientes não: as decisões vêm agrupadas em <b>145</b> pares empresa-dia, e isso seria
+ ajustar ruído com aparência de método.
+ <p>E o remate: <b>medi antes de fazer, e a medição disse para não fazer.</b> A ferramenta existe
+ e recusa-se a escrever enquanto a discriminação não superar o acaso.</p>`},
 
 /* ------------------------------------------------- 4. os quatro "nao" */
-{b:'Os quatro "não"', n:1, t:"aberta", q:"Taxonomia de eventos: o número, e porque NÃO a ligaste?",
+{b:'Os cinco «não»', n:1, t:"aberta", q:"Taxonomia de eventos: o número, e porque NÃO a ligaste?",
  a:`AMI <b>0,358</b> com tipo de evento contra <b>0,188</b> com ticker: o espaço sabe o
  acontecimento, e sabe-o <b>mais</b> do que sabe a empresa. Bonito.
  <p>Mas a silhueta é <b>0,084</b> — os grupos sobrepõem-se — e a rubrica só cobre <b>15,1%</b>
  do corpus. Filtrar por um tipo errado <b>remove evidência válida em silêncio</b>, e é isso
  que o critério H4 proíbe.</p>`},
 
-{b:'Os quatro "não"', n:1, t:"escolha",
+{b:'Os cinco «não»', n:1, t:"escolha",
  q:"Pureza 0,712 parece boa. Que valor daria uma atribuição ALEATÓRIA com os mesmos tamanhos?",
  opts:["0,444","0,188","0,084","0,358"], ok:0,
  a:`<b>0,444</b>. Com um tipo a valer 44% dos rótulos e 18 grupos, o acaso já lá chega quase.
  <p>O ganho real é <b>+0,269</b>, não 0,712. É a lição de método mais transferível da tese:
  <b>uma métrica sem a sua linha de base não é um resultado.</b></p>`},
 
-{b:'Os quatro "não"', n:1, t:"escolha",
+{b:'Os cinco «não»', n:1, t:"escolha",
  q:"Para garantir 90% de cobertura conformal, em que fracção das manchetes há decisão definida?",
  opts:["39,5%","90,0%","63,2%","15,1%"], ok:0,
  a:`<b>39,5%</b> — o número mais duro da tese.
  <p>Não contradiz a RQ4: <b>explica-a</b> por um caminho independente, e sem treinar nada.
  Se te perguntarem "o vosso sistema é confiante?", esta é a resposta honesta.</p>`},
 
-{b:'Os quatro "não"', n:2, t:"aberta", q:"A cobertura conformal parte-se onde, e porquê?",
+{b:'Os cinco «não»', n:2, t:"aberta", q:"A cobertura conformal parte-se onde, e porquê?",
  a:`Aguenta a <b>90%</b> e a <b>80%</b>; parte-se a <b>95%</b> sob divisão temporal
  (<code>0,937</code> contra 0,95).
  <p>Porquê: pedir 95% obriga o limiar a apoiar-se na <b>cauda</b> da calibração — e é a cauda
  que se move primeiro quando o regime muda.</p>`},
 
-{b:'Os quatro "não"', n:1, t:"aberta", q:"Deriva: o que está medido, e o que isso muda?",
+{b:'Os cinco «não»', n:1, t:"aberta", q:"Deriva: o que está medido, e o que isso muda?",
  a:`Volatilidade pré-evento <b>PSI 0,281</b> (banda significativa); features de retorno
  <code>0,020</code> e <code>0,014</code> (estáveis).
  <p>Muda o estatuto da afirmação: a limitação que a tese repetia passou de <b>afirmada a
  medida</b>, e passa a dar um gatilho de re-treino verificável em vez de uma intuição.</p>`},
 
-{b:'Os quatro "não"', n:2, t:"aberta", q:"Porque é que os números congelados sobrevivem à deriva?",
+{b:'Os cinco «não»', n:2, t:"aberta", q:"Porque é que os números congelados sobrevivem à deriva?",
  a:`Porque a prevalência do rótulo <b>oscila</b> em vez de ter tendência:
  <code>0,385 → 0,470 → 0,378</code>.
  <p>O protocolo já atravessa uma dessas oscilações — logo os números foram medidos <b>sob</b>
  deriva, não antes dela.</p>`},
 
-{b:'Os quatro "não"', n:1, t:"aberta", q:"Convergência: o resultado, e o achado que vale mais do que o resultado.",
+{b:'Os cinco «não»', n:1, t:"aberta", q:"Convergência: o resultado, e o achado que vale mais do que o resultado.",
  a:`A fusão ganha em <b>1 de 3</b> orçamentos. Um ganho que depende do orçamento que se cita é
  um ganho que se <b>pode ter escolhido</b> ⇒ não entra em produção.
  <p>O achado que vale mais: o peso da intensidade de notícia saiu <b>negativo (−0,283)</b>.
