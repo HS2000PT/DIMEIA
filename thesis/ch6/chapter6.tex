@@ -34,7 +34,7 @@ RQ3: faithful and useful explanations
   & \colorbox{yellow!25}{Faithful; useful open}
   & faithful by construction; no human study yet \\
 RQ4: triage beyond volatility
-  & \colorbox{yellow!25}{Mechanism yes, text no}
+  & \colorbox{yellow!25}{Mechanism yes offline; text no}
   & share $0.163 \to 0.632$; PR-AUC $0.542$ vs $0.496$ \\
 \bottomrule
 \end{tabular}
@@ -99,8 +99,12 @@ anything not explicitly permitted is refused.
 \paragraph{RQ4: learned triage beyond volatility baselines.}
 \textbf{No on the text hypothesis; yes on the mechanism.} A supervised materiality model was trained,
 calibrated and tested on $79{,}753$ FNSPID examples (2018--2023) under a strict temporal protocol. As a
-product mechanism, learned triage is clearly worthwhile: within a five-alerts-per-day budget it raised
-the share of material alerts from $0.163$ to $0.632$, with calibrated probabilities. But the
+product mechanism, learned triage is worthwhile \emph{on held-out data from the corpus it was fitted
+on}: within a five-alerts-per-day budget it raised the share of material alerts from $0.163$ to
+$0.632$, with calibrated probabilities. That qualification is not decorative. Measured in deployment,
+on a population enriched by the upstream filters, the same gate shows no significant benefit
+(Section~\ref{sec:concl_limitations}), so the mechanism claim is an evaluation-set claim and is stated
+as one. But the
 pre-committed decisive comparison went the other way: no model reading the headline text beat the
 volatility-only baseline (PR-AUC $0.542$ against $0.496$ for the main context$+$text model), so on this
 corpus the triage signal lives in market context, not headline wording. Together with the Isolation
@@ -234,7 +238,7 @@ explicit avoidance of lookahead. Second, \textbf{InvestiGator}, an \textbf{XAI-f
 entire reasoning chain (detection, evidence, sources and precedents) is exposed to a non-expert
 user and is faithful by construction. Third, a trained and calibrated \textbf{materiality-triage
 model}, labelled by the system's own event-study code over the multi-year corpus, integrated into the
-alerts off by default as ranked and explained evidence, and continually post-validated in deployment
+alerts as ranked and explained evidence behind a configuration gate, and monitored in deployment
 against the outcomes that actually followed. Fourth, a \textbf{critical, honest evaluation} of each
 core component against trivial, lexical and volatility baselines on real data, including two
 pre-committed statistical-versus-learned comparisons that the transparent methods won; results,
@@ -285,6 +289,24 @@ Several limitations remain, stated plainly:
         stay stable, and the label prevalence oscillates rather than trends
         (Section~\ref{sec:cs_drift}). The reported figures should therefore be read as measurements
         under one such oscillation, not as promises about a later period.
+  \item \textbf{The deployed gate shows no measurable benefit on live data, and the reason is
+        instructive.} The offline result of Chapter~\ref{chap:casestudies} (budgeted precision
+        $0.163 \to 0.632$) is an evaluation-set result. In deployment the system logs every triage
+        decision and labels it days later with the outcome that actually followed, using the same
+        rule as training. Over $530$ matured decisions, the alerts the gate \emph{kept} were
+        material $0.592$ of the time ($95\%$ CI $[0.523, 0.658]$, $n=201$) against $0.647$ for the
+        ones it \emph{suppressed} ($[0.594, 0.697]$, $n=329$). The point estimate is in the wrong
+        direction and the difference is not significant ($z=-1.28$, $p=0.20$), so the honest reading
+        is that the gate is not demonstrably selecting better than chance on this population, not
+        that it is harmful. The explanation is a population shift the design did not anticipate:
+        materiality among logged decisions runs at $0.626$, against a training prevalence of
+        $0.378$. Decisions are only logged for headlines that already cleared the relevance and
+        freshness filters, so the gate is applied to a pool far richer in material items than the
+        one the model was fitted and thresholded on, and a cut at $0.5$ has little headroom left in
+        it. Calibration confirms the direction: items scored near $0.50$ proved material $0.66$ of
+        the time. The correct remedy is to recalibrate on the deployed population rather than the
+        training one, which is future work; reporting the offline figure alone would have described
+        a benefit the running system does not currently show.
   \item \textbf{No human study.} Usefulness to a real investor has not yet been measured.
   \item \textbf{By design.} The system makes no price prediction and no trade, so profit-based questions
         are out of scope, not unanswered.

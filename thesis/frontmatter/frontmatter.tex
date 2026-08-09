@@ -71,8 +71,10 @@ anomaly detection, supervised triage and transparent explanation) in a functiona
 data, semantic retrieval clearly outperformed lexical and trivial baselines (cross-ticker precision@5 of $0.51$
 against $0.35$ lexical and $0.24$ random), and the volatility-normalised detector
 fired far more consistently across stocks than a fixed threshold. A materiality-triage model trained on
-$79{,}753$ multi-year news--market examples nearly quadrupled within-budget alert precision, yet no text
-model beat the volatility-only baseline, a finding reported as it stands. Limitations and future work are
+$79{,}753$ multi-year news--market examples nearly quadrupled within-budget alert precision on held-out
+data, yet no text model beat the volatility-only baseline, and in deployment the same gate showed no
+significant benefit on the differently distributed population it actually sees. Both findings are
+reported as they stand. Limitations and future work are
 stated explicitly.
 
 \end{abstract}

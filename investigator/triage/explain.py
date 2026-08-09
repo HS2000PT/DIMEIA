@@ -43,11 +43,22 @@ def lr_group_contributions(pipeline, x_row: np.ndarray,
 
 
 def materiality_line(prob: float, contributions: list[tuple[str, float]], top: int = 2) -> str:
-    """Linha honesta para o alerta: risco em linguagem simples + porquê. Nunca é previsão.
+    """Linha honesta para o alerta: risco em linguagem simples + porquê.
 
     Revisão UX (2026-07-08): a versão anterior ("Top factors: sector (+)") era jargão
     ilegível para um leigo. Agora separa-se em "sobe o risco" / "desce o risco" com os
     nomes das features já amigáveis (ver `_FRIENDLY`); sem fatores fortes, di-lo.
+
+    ⚠️ Revisão de honestidade (2026-08-09): a versão anterior terminava em *"not a
+    forecast"*, e isso era **falso**. Uma probabilidade sobre os próximos dias é, por
+    definição, uma afirmação sobre o futuro — o próprio `dashboard_acceptance.md`
+    classifica este número como violação do critério H2 ("é um número para a frente") e
+    por isso ele está banido de todas as vistas do painel. Dizer "não é previsão" no
+    canal e bani-lo do ecrã por ser previsão é incoerente, e um arguente encontra-o.
+
+    A distinção que **é** verdadeira, e é a que o rótulo de treino sustenta, é entre
+    **materialidade** e **direção**: o modelo estima se o mercado reage de forma
+    anormalmente grande, nunca para que lado. A linha passa a dizer exactamente isso.
     """
     ups = [name for name, c in contributions if c > 0][:top]
     downs = [name for name, c in contributions if c < 0][:top]
@@ -58,6 +69,7 @@ def materiality_line(prob: float, contributions: list[tuple[str, float]], top: i
         bits.append("lowered by " + " and ".join(downs))
     why = "; ".join(bits) if bits else "no single factor dominates"
     return (
-        f"Risk estimate (learned triage): {prob:.0%} chance of a bigger-than-usual move in the "
-        f"next few days, based on similar past cases — {why}. Triage evidence, not a forecast."
+        f"Materiality estimate (learned triage): {prob:.0%} chance of an unusually large move "
+        f"over the next few days, in EITHER direction — {why}. This estimates whether the market "
+        f"reacts, never which way: it is not a price forecast and not advice."
     )

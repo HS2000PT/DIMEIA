@@ -35,7 +35,7 @@ RQ3: explicações fiéis e úteis
   & \colorbox{yellow!25}{Fiel; utilidade em aberto}
   & fiel por construção; ainda sem estudo humano \\
 RQ4: triagem para além da volatilidade
-  & \colorbox{yellow!25}{Mecanismo sim, texto não}
+  & \colorbox{yellow!25}{Mecanismo sim offline; texto não}
   & quota $0.163 \to 0.632$; PR-AUC $0.542$ vs $0.496$ \\
 \bottomrule
 \end{tabular}
@@ -103,9 +103,13 @@ recusado.
 \paragraph{RQ4: triagem aprendida para além das linhas de base de volatilidade.}
 \textbf{Não na hipótese do texto; sim no mecanismo.} Um modelo de materialidade supervisionado foi
 treinado, calibrado e testado em $79{,}753$ exemplos do FNSPID (2018--2023) sob um protocolo temporal
-estrito. Como mecanismo de produto, a triagem aprendida é claramente valiosa: dentro de um orçamento
-de cinco alertas por dia, elevou a quota de alertas materiais de $0.163$ para $0.632$, com
-probabilidades calibradas. Mas a comparação decisiva pré-comprometida foi noutro sentido: nenhum
+estrito. Como mecanismo de produto, a triagem aprendida é valiosa \emph{em dados retidos do corpus em
+que foi ajustada}: dentro de um orçamento de cinco alertas por dia, elevou a quota de alertas materiais
+de $0.163$ para $0.632$, com probabilidades calibradas. Esta qualificação não é decorativa. Medido em
+produção, sobre uma população enriquecida pelos filtros a montante, o mesmo gate não mostra benefício
+significativo (Secção~\ref{sec:concl_limitations}), pelo que a afirmação sobre o mecanismo é uma
+afirmação de conjunto de avaliação e é enunciada como tal. Mas a comparação decisiva pré-comprometida
+foi noutro sentido: nenhum
 modelo que lê o texto da manchete bateu a linha de base só-volatilidade (PR-AUC $0.542$ contra $0.496$
 do modelo principal contexto$+$texto), pelo que neste corpus o sinal da triagem vive no contexto de
 mercado, não na redação da manchete. Juntamente com a comparação com a Isolation Forest do estudo de
@@ -244,8 +248,8 @@ similaridade e horizonte e evitação explícita de lookahead. Segunda, o \textb
 \textbf{sistema de alertas XAI-first} cuja cadeia de raciocínio inteira (deteção, evidência, fontes e
 precedentes) é exposta a um utilizador não-especialista e é fiel por construção. Terceira, um
 \textbf{modelo de triagem de materialidade} treinado e calibrado, rotulado pelo próprio código de
-estudo de evento do sistema sobre o corpus multi-ano, integrado nos alertas desligado por defeito como
-evidência ordenada e explicada, e continuamente pós-validado em produção contra os resultados que
+estudo de evento do sistema sobre o corpus multi-ano, integrado nos alertas como evidência ordenada e
+explicada atrás de uma porta de configuração, e monitorizado em produção contra os resultados que
 efetivamente se seguiram. Quarta, uma \textbf{avaliação crítica e honesta} de cada componente central
 contra linhas de base triviais, lexicais e de volatilidade sobre dados reais, incluindo duas
 comparações pré-comprometidas estatística-versus-aprendida que os métodos transparentes venceram; os
@@ -301,6 +305,24 @@ Restam várias limitações, enunciadas com clareza:
         as features baseadas em retornos se mantêm estáveis, e a prevalência do rótulo oscila em vez
         de ter tendência (Secção~\ref{sec:cs_drift}). Os valores reportados devem portanto ler-se como
         medições sob uma dessas oscilações, e não como promessas sobre um período posterior.
+  \item \textbf{O gate implantado não mostra benefício mensurável em dados ao vivo, e a razão é
+        instrutiva.} O resultado offline do Capítulo~\ref{chap:casestudies} (precisão dentro do
+        orçamento $0.163 \to 0.632$) é um resultado de conjunto de avaliação. Em produção o sistema
+        regista cada decisão de triagem e rotula-a dias depois com o desfecho que se seguiu, pela
+        mesma regra do treino. Sobre $530$ decisões maturadas, os alertas que o gate \emph{manteve}
+        foram materiais $0.592$ das vezes (IC $95\%$ $[0.523, 0.658]$, $n=201$) contra $0.647$ nos
+        que \emph{suprimiu} ($[0.594, 0.697]$, $n=329$). A estimativa pontual está na direção errada
+        e a diferença não é significativa ($z=-1{,}28$, $p=0{,}20$), pelo que a leitura honesta é que
+        o gate não está demonstravelmente a selecionar melhor do que o acaso nesta população, e não
+        que seja prejudicial. A explicação é um desvio de população que o desenho não antecipou: a
+        materialidade entre as decisões registadas corre a $0.626$, contra uma prevalência de treino
+        de $0.378$. Só se registam decisões para manchetes que já passaram os filtros de relevância e
+        frescura, pelo que o gate é aplicado a um conjunto muito mais rico em itens materiais do que
+        aquele em que o modelo foi ajustado e limiarizado, e um corte a $0.5$ deixa pouca margem
+        nele. A calibração confirma a direção: itens pontuados perto de $0.50$ revelaram-se materiais
+        $0.66$ das vezes. O remédio correto é recalibrar sobre a população implantada e não sobre a
+        de treino, o que fica como trabalho futuro; reportar apenas o número offline descreveria um
+        benefício que o sistema em funcionamento não mostra hoje.
   \item \textbf{Sem estudo humano.} A utilidade para um investidor real ainda não foi medida.
   \item \textbf{Por desenho.} O sistema não faz previsão de preços nem negociação, pelo que as
         questões baseadas em lucro estão fora de âmbito, não por responder.

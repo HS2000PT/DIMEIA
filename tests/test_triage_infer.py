@@ -114,7 +114,7 @@ def test_apply_materiality_anexa_linha_acima_do_gate():
     scored = (0.8, [("recent volatility (20d)", 0.4), ("sector", -0.1)])
     out = apply_materiality("alerta", scored, gate=0.5)
     assert out is not None and out.startswith("alerta\n")
-    assert "80%" in out and "not a forecast" in out
+    assert "80%" in out and "not a price forecast" in out
 
 
 # ── linha no explainer (off por defeito) ──────────────────────────────────────
@@ -128,12 +128,22 @@ def _precedentes() -> list[tuple[NewsRecord, float]]:
 def test_explainer_sem_materialidade_e_identico():
     a = explain_news_impact("NVDA", "t", _precedentes(), horizon=3)
     b = explain_news_impact("NVDA", "t", _precedentes(), horizon=3, materiality=None)
-    assert a == b and "Risk estimate" not in a
+    assert a == b and "Materiality estimate" not in a
 
 
 def test_explainer_com_materialidade_inclui_linha_nos_dois_ramos():
     linha = materiality_line(0.7, [("recent volatility (20d)", 0.5)])
     com = explain_news_impact("NVDA", "t", _precedentes(), horizon=3, materiality=linha)
     sem_prec = explain_news_impact("NVDA", "t", [], horizon=3, materiality=linha)
-    assert "Risk estimate (learned triage)" in com and "not a forecast" in com
-    assert "Risk estimate (learned triage)" in sem_prec
+    assert "Materiality estimate (learned triage)" in com
+    assert "Materiality estimate (learned triage)" in sem_prec
+
+
+def test_linha_de_materialidade_nao_afirma_que_nao_e_previsao():
+    """A linha DÁ uma probabilidade sobre os próximos dias — chamar-lhe "não é previsão"
+    seria falso, e o critério H2 do painel bane este número precisamente por ser sobre o
+    futuro. O que a linha pode afirmar, e afirma, é que não prevê a DIREÇÃO."""
+    linha = materiality_line(0.56, [("recent volatility (20d)", 0.4)])
+    assert "not a forecast" not in linha
+    assert "EITHER direction" in linha
+    assert "not a price forecast" in linha

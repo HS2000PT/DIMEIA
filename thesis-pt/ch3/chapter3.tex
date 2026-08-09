@@ -763,13 +763,25 @@ Porta de implantação $p \ge 0.5$ & passou (alerta enviado) \\
 \end{tabular}
 \end{table}
 
-A implantação é deliberadamente conservadora. A pontuação entra na pipeline de alertas desligada por
-defeito, atrás de uma porta de configuração; a variante em produção usa apenas features de contexto, pelo
-que corre na stack de software leve, e o texto do alerta nomeia a variante usada. Uma vez ao vivo, cada
-decisão de triagem é registada, e um passo de pós-validação rotula depois cada decisão maturada com o que
-efetivamente aconteceu, usando a mesma regra de rótulo, produzindo monitorização de precisão e calibração ao
-vivo e dados de treino frescos. Isto é aprendizagem contínua com rótulos atrasados, não aprendizagem por
-reforço: não há ciclo de feedback ação--ambiente, porque os alertas do sistema não movem o mercado.
+A implantação é deliberadamente conservadora. A pontuação fica atrás de uma porta de configuração que
+está desligada na configuração por defeito e ligada na implantação de referência; a variante em produção
+usa apenas features de contexto, pelo que corre na stack de software leve, e o texto do alerta nomeia a
+variante usada.
+
+O que acontece depois da implantação precisa de ser enunciado com precisão, porque o vocabulário à volta
+convida ao exagero. Cada decisão de triagem é registada no momento em que é tomada. Um passo de
+pós-validação, corrido dias depois, rotula cada decisão maturada com o que efetivamente aconteceu, usando
+a mesma regra que produziu o rótulo de treino, e reporta precisão e calibração ao vivo. Isso é
+\emph{monitorização e recolha de rótulos}. Não é aprendizagem: nenhum modelo é reajustado, nenhum peso
+muda, e o artefacto que serve a inferência é o mesmo ficheiro que foi ajustado uma vez e congelado. A
+distinção importa porque quatro coisas são rotineiramente confundidas. \emph{Inferência} é pontuar um item
+novo com pesos fixos, e é o que corre a cada ciclo. \emph{Treino} é ajustar esses pesos, o que aconteceu
+uma vez, offline, sobre o corpus histórico. \emph{Re-treino} é repetir esse ajuste sobre dados mais
+recentes, o que os rótulos recolhidos tornam possível e que não foi executado. \emph{Aprendizagem
+contínua} é re-treinar automaticamente à medida que os dados chegam, o que este sistema não faz e não
+reivindica. O que existe é a pré-condição da terceira: um repositório crescente de decisões rotuladas pelo
+desfecho segundo a regra de treino, com o comando que o consumiria. A
+Secção~\ref{sec:concl_limitations} reporta o que esse repositório diz hoje, e não é lisonjeiro.
 
 \subsection{Técnicas de Explicação}
 \label{sec:met_xai}

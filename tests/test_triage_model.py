@@ -75,7 +75,7 @@ def test_contribuicoes_agrupadas_e_linha_de_materialidade():
     assert "headline content" in grupos and "sector" in grupos
     assert any(g.startswith("recent volatility") for g in grupos)
     linha = materiality_line(0.73, contribs)
-    assert "73%" in linha and "not a forecast" in linha
+    assert "73%" in linha and "not a price forecast" in linha
 
 
 def test_bundle_roundtrip(tmp_path):

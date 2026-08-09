@@ -1,5 +1,14 @@
 # Validação: MiniLM em ONNX (produto) vs SBERT (tese)
 
+> ⚠️ **SUPERSEDIDO em parte (2026-08-09).** Os números de *retrieval* abaixo (20/23 conjuntos
+> top-3 idênticos, 96 % de vizinhos) foram medidos à mão e **não reproduzem**: com outra
+> amostra de 23 consultas obtêm-se 12/23. A instabilidade era do tamanho da amostra, não do
+> motor. A medição reprodutível, sobre 503 consultas e na configuração de produção, está em
+> [`evaluation_onnx_parity.md`](evaluation_onnx_parity.md), gerada por
+> `scripts/evaluate_onnx_parity.py`. Os números de **cosseno** aqui reproduzem-se (0,992 / 0,983)
+> e as consultas canónicas da secção 3 continuam válidas como ilustração.
+
+
 > **Data:** 2026-07-07 · **Objetivo:** provar que o retrieval semântico da app pública/runner
 > (MiniLM `all-MiniLM-L6-v2` exportado em ONNX **quantizado**, `model_quint8_avx2.onnx`,
 > ~23 MB, `onnxruntime` CPU, sem torch) vive no MESMO espaço de embeddings do

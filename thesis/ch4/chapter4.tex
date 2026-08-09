@@ -323,10 +323,24 @@ happen after comparable past news, and the knowledge base is consulted but never
 component of Section~\ref{sec:met_triage}: each incoming news item is scored with the calibrated
 probability that an abnormal move follows, and the alert can be \emph{gated}, sent only when the score
 clears a configured threshold, and \emph{annotated} with the score and its top additive contributions.
-The gate ships off by default and fails open: with no model file, or too little price history to compute
-the context features, the pipeline behaves exactly as before. The deployed variant uses context features
-only, so it runs without the heavy embedding stack, and the alert line always names the evidence for what
-it is: triage over historical cases, not a forecast.
+The gate fails open: with no model file, or too little price history to compute the context features, the
+pipeline behaves exactly as before. It ships disabled in the default configuration and is enabled in the
+reference deployment, where it acts as the fatigue control described below. The deployed variant uses
+context features only, so it runs without the heavy embedding stack.
+
+The wording of that line deserves its own paragraph, because an earlier version of it was
+\emph{dishonest} and the correction is the clearest statement of where this system's no-prediction rule
+actually falls. The alert used to close with ``triage evidence, not a forecast''. That was false. A
+probability that an unusually large move will occur over the next few days is, by definition, a statement
+about the future, and the project's own interface criteria bar this number from every dashboard view for
+exactly that reason. Claiming in the alert that it is not a prediction, while banning it from the screen
+because it is one, is a contradiction an examiner would find. The distinction that \emph{is} true, and
+the one the training label supports, is between \emph{materiality} and \emph{direction}: the label asks
+whether an abnormal move of unusual size followed, in either direction, and never which way it went. The
+line therefore now states the probability, names the two features driving it, says explicitly that it is
+about whether the market reacts and never about which way, and disclaims price forecasting and advice.
+The system does predict one thing, narrowly and by design, and the honest course is to say which thing
+rather than to deny predicting at all.
 
 \paragraph{Budgeting by materiality rather than by arrival.} A daily cap of two news alerts per
 company protects the reader from fatigue, but a cap is only as good as the rule deciding which two
@@ -607,13 +621,26 @@ user ever touches.
 
 The resolution taken was to export the \emph{same} model to ONNX with int8 quantisation, roughly
 23~MB, running on CPU with no deep-learning framework present, and then to verify the substitution is
-faithful before trusting it. Two checks were run against the library implementation. Embedding agreement
-over real headlines gave a mean cosine similarity of $0.992$ with a minimum of $0.987$, the residual
-being quantisation noise rather than a different semantic space. Retrieval agreement matters more,
-because the product returns neighbours rather than vectors: over a set of queries against the curated
-knowledge base, the top-3 neighbour sets were identical for $20$ of $23$ queries, with $96\%$ of
-neighbours shared overall, and every divergence was a tie at the third position separated by about one
-thousandth of a similarity point.
+faithful before trusting it. Two checks were run against the library implementation, over $503$
+queries against the curated knowledge base. Embedding agreement gave a mean cosine similarity of
+$0.992$ with a minimum of $0.983$, the residual being quantisation noise rather than a different
+semantic space. Retrieval agreement matters more, because the product returns neighbours rather than
+vectors, and it must be measured in the configuration the product actually runs: the knowledge base
+stores embeddings computed once by the library implementation, and only the incoming query passes
+through the exported model. On that footing the two engines return an identical top-3 for $76\%$ of
+queries and share $95\%$ of retrieved neighbours overall. Where they disagree, they disagree by a
+hair: the median similarity gap between the neighbour one engine chose and the one the other chose in
+its place is $0.006$, which is a tie rather than a different theme.
+
+Two methodological points are worth recording, because each was a mistake caught by measuring.
+The first is that an earlier version of this check re-embedded the whole knowledge base with each
+engine. That doubles the quantisation error and answers a question deployment never asks, and it
+depressed the agreement figure accordingly. The second is that the same check was originally run on
+$23$ queries and reported $20$ of them as identical. That statistic does not reproduce: a different
+sample of the same size gives $12$. The instability was in the sample size, not the engine, which is
+why the figures above are computed over an order of magnitude more queries and why the robust
+quantity to quote is the share of shared neighbours rather than the count of exactly identical
+lists.
 
 Two properties follow, and both matter beyond convenience. First, the evaluated model and the deployed
 model are the same model, so the numbers in Chapter~\ref{chap:casestudies} describe what a user actually

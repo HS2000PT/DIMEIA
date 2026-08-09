@@ -756,13 +756,24 @@ Deployment gate $p \ge 0.5$ & passed (alert sent) \\
 \end{tabular}
 \end{table}
 
-Deployment is deliberately conservative. The score enters the alert pipeline off by default, behind a
-configuration gate; the deployed variant uses context features only, so it runs on the light software
-stack, and the alert text names the variant used. Once live, every triage decision is logged, and a
-post-validation step later labels each matured decision with what actually happened, using the same
-label rule, yielding live precision and calibration monitoring and fresh training data. This is
-continual learning with delayed labels, not reinforcement learning: there is no action--environment
-feedback loop, because the system's alerts do not move the market.
+Deployment is deliberately conservative. The score sits behind a configuration gate that is disabled in
+the default configuration and enabled in the reference deployment; the deployed variant uses context
+features only, so it runs on the light software stack, and the alert text names the variant used.
+
+What happens after deployment needs stating precisely, because the surrounding vocabulary invites an
+overclaim. Every triage decision is logged as it is made. A post-validation step, run days later, labels
+each matured decision with what actually happened, using the same rule that produced the training label,
+and reports live precision and calibration. That is \emph{monitoring and label collection}. It is not
+learning: no model is refitted, no weights change, and the artefact serving inference is the same file
+that was fitted once and frozen. The distinction matters because four things are routinely conflated.
+\emph{Inference} is scoring a new item with fixed weights, which is what runs every cycle.
+\emph{Training} is fitting those weights, which happened once, offline, on the historical corpus.
+\emph{Retraining} is repeating that fit on newer data, which the collected labels make possible and
+which has not been performed. \emph{Continual learning} is retraining automatically as data arrives,
+which this system does not do and is not claimed to do. What exists is the precondition for the third:
+a growing store of decisions labelled by outcome under the training rule, together with the command
+that would consume it. Section~\ref{sec:concl_limitations} reports what that store currently says, and
+it is not flattering.
 
 \subsection{Explanation Techniques}
 \label{sec:met_xai}

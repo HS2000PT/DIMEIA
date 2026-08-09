@@ -329,11 +329,24 @@ conhecimento é consultada mas nunca decide.
 treinado opcional da Secção~\ref{sec:met_triage}: cada notícia que chega é pontuada com a probabilidade
 calibrada de se seguir um movimento anormal, e o alerta pode ser \emph{filtrado} (gated), enviado só quando
 a pontuação ultrapassa um limiar configurado, e \emph{anotado} com a pontuação e as suas principais
-contribuições aditivas. O gate vem desligado por defeito e falha-aberto: sem ficheiro de modelo, ou com
+contribuições aditivas. O gate falha-aberto: sem ficheiro de modelo, ou com
 histórico de preços insuficiente para calcular as features de contexto, a pipeline comporta-se exatamente
-como antes. A variante em produção usa apenas features de contexto, pelo que corre sem a stack pesada de
-embeddings, e a linha do alerta nomeia sempre a evidência pelo que ela é: triagem sobre casos históricos,
-não uma previsão.
+como antes. Vem desligado na configuração por defeito e é ligado na implantação de referência, onde actua
+como o controlo de fadiga descrito abaixo. A variante em produção usa apenas features de contexto, pelo
+que corre sem a stack pesada de embeddings.
+
+A redação dessa linha merece parágrafo próprio, porque uma versão anterior dela era \emph{desonesta} e a
+correção é o enunciado mais claro de onde cai realmente a regra de não-previsão deste sistema. O alerta
+terminava em ``triagem sobre casos históricos, não uma previsão''. Era falso. Uma probabilidade de que um
+movimento invulgarmente grande ocorra nos próximos dias é, por definição, uma afirmação sobre o futuro, e
+os critérios de interface do próprio projeto banem este número de todas as vistas do painel exatamente por
+isso. Afirmar no alerta que não é previsão, enquanto se bane do ecrã por o ser, é uma contradição que um
+arguente encontra. A distinção que \emph{é} verdadeira, e que o rótulo de treino sustenta, é entre
+\emph{materialidade} e \emph{direção}: o rótulo pergunta se se seguiu um movimento anormal de tamanho
+invulgar, em qualquer direção, e nunca para que lado foi. A linha passa portanto a enunciar a
+probabilidade, a nomear as duas features que a puxam, a dizer explicitamente que é sobre se o mercado
+reage e nunca sobre para que lado, e a recusar previsão de preço e aconselhamento. O sistema prevê uma
+coisa, de forma estreita e por desenho, e o caminho honesto é dizer qual em vez de negar que prevê.
 
 \paragraph{Orçamento servido por materialidade e não por ordem de chegada.} Um tecto diário de dois
 alertas de notícia por empresa protege o leitor da fadiga, mas um tecto vale o que vale a regra que
@@ -625,12 +638,24 @@ sistema que nenhum utilizador toca.
 A resolução adotada foi exportar o \emph{mesmo} modelo para ONNX com quantização int8, cerca de 23~MB, a
 correr em CPU sem qualquer framework de deep learning presente, e depois verificar que a substituição é
 fiel antes de confiar nela. Correram-se duas verificações contra a implementação de referência. A
-concordância de embeddings sobre manchetes reais deu um cosseno médio de $0.992$ com um mínimo de
-$0.987$, sendo o resíduo ruído de quantização e não um espaço semântico diferente. A concordância de
-\emph{retrieval} importa mais, porque o produto devolve vizinhos e não vetores: sobre um conjunto de
-consultas contra a base de conhecimento curada, os conjuntos dos 3 melhores vizinhos foram idênticos em
-$20$ de $23$ consultas, com $96\%$ de vizinhos partilhados no total, e todas as divergências foram
-empates na terceira posição separados por cerca de um milésimo de ponto de similaridade.
+concordância de embeddings deu um cosseno médio de $0.992$ com um mínimo de
+$0.983$, sendo o resíduo ruído de quantização e não um espaço semântico diferente. A concordância de
+\emph{retrieval} importa mais, porque o produto devolve vizinhos e não vetores, e tem de ser medida na
+configuração em que o produto de facto corre: a base de conhecimento guarda embeddings calculados uma
+vez pela implementação de referência, e só a consulta que chega passa pelo modelo exportado. Nesse
+plano, os dois motores devolvem um top-3 idêntico em $76\%$ das consultas e partilham $95\%$ dos
+vizinhos recuperados. Onde discordam, discordam por um fio: a diferença mediana de similaridade entre o
+vizinho que um motor escolheu e o que o outro pôs no seu lugar é $0.006$, o que é um empate e não um
+tema diferente.
+
+Dois pontos de método merecem registo, porque cada um foi um erro apanhado a medir. O primeiro é que
+uma versão anterior desta verificação re-embebia a base inteira com cada motor. Isso duplica o erro de
+quantização e responde a uma pergunta que a implantação nunca faz, deprimindo a concordância em
+conformidade. O segundo é que a mesma verificação foi originalmente corrida sobre $23$ consultas e
+reportou $20$ como idênticas. Essa estatística não reproduz: outra amostra do mesmo tamanho dá $12$. A
+instabilidade estava no tamanho da amostra e não no motor, razão pela qual os valores acima são
+calculados sobre uma ordem de grandeza mais de consultas e pela qual a grandeza robusta a citar é a
+quota de vizinhos partilhados e não a contagem de listas exatamente idênticas.
 
 Seguem-se duas propriedades, e ambas importam para além da conveniência. Primeiro, o modelo avaliado e o
 modelo implantado são o mesmo modelo, pelo que os números do Capítulo~\ref{chap:casestudies} descrevem o
