@@ -6,12 +6,17 @@
 \chapter{Case Studies}
 \label{chap:casestudies}
 
-This chapter evaluates InvestiGator through four case studies on real data. The first looks at the anomaly
-trigger across stocks of very different volatility; the second at the correlation engine and the
-precedents it retrieves; the third walks through a complete alert and asks whether its explanation is
-faithful; the fourth trains and tests the materiality-triage model on the multi-year corpus. Every
-number below comes from a versioned script with a fixed seed, the evaluation followed the
-plan set out in Chapter~\ref{chap:methods}, and each study states its own limitations.
+This chapter evaluates InvestiGator through eight case studies on real data, in two groups. The first
+four test the core design: the anomaly trigger across stocks of very different volatility; the
+correlation engine and the precedents it retrieves; a complete alert, and whether its explanation is
+faithful; and the materiality-triage model trained and tested on the multi-year corpus. The final four
+examine the same system from the outside, asking what it does \emph{not} know: whether the embedding
+space encodes what kind of event a headline reports, what a distribution-free guarantee on the triage
+score would cost, how far the deployed present has drifted from the training corpus, and whether
+several signals agreeing beat the best one alone. Each of those four ends in a decision \emph{not} to
+change production, taken on the evidence. Every number below comes from a versioned script with a
+fixed seed, the evaluation followed the plan set out in Chapter~\ref{chap:methods}, and each study
+states its own limitations.
 
 \section{Common Experimental Setup}
 \label{sec:cs_setup}
@@ -539,8 +544,9 @@ is recorded as future work rather than assumed.
 \paragraph{The deployed model on one real decision.} The mechanism claim becomes tangible on a single
 live case. Figure~\ref{fig:triage_contributions} decomposes a real production decision, the Meta alert
 of 12~July~2026 whose full arithmetic is Table~\ref{tab:triage_worked}: elevated recent volatility and
-the sector indicator carry essentially the whole log-odds, the text-free near-zero terms confirm that
-context is the signal, and the calibrated $54\%$ that reached the public channel is reproduced exactly
+the sector indicator carry essentially the whole log-odds, the near-zero remaining terms are what the
+aggregate finding predicts a single case should look like, and the calibrated $54\%$ that reached the
+public channel is reproduced exactly
 by the decomposition. The evaluation's aggregate finding (context, not text) and the deployed product's
 individual decisions are one and the same computation, which is the faithfulness property the design
 promises.
@@ -1011,10 +1017,11 @@ news), which the short windows ($+1$, $+3$, $+5$ days) limit but do not eliminat
 no-causation framing acknowledges openly.
 
 \paragraph{External validity: how far do the findings generalise?} The study covers fifteen
-large-capitalisation US tickers across five sectors over a recent window, so the numbers need not transfer
-to small-capitalisation stocks, to other markets, or to other periods, and news coverage is thinner outside
-large caps. The corpus is a recent window from a free service rather than the multi-year FNSPID history;
-the full corpus is identified as the natural way to broaden this scope.
+large-capitalisation US tickers across five sectors, so the numbers need not transfer to
+small-capitalisation stocks, to other markets, or to other periods, and news coverage is thinner outside
+large caps. The retrieval study runs on a recent window from a free service; the triage, taxonomy,
+conformal, drift and convergence studies run on the multi-year FNSPID history, which broadens the
+period but not the ticker set, since that is fixed by the data card in both cases.
 
 \paragraph{Statistical-conclusion validity: are the comparisons sound?} The retrieval results are
 averaged over five random samples with standard deviations reported (the error bars in
@@ -1031,9 +1038,11 @@ to the conclusions.
 \section{Chapter Conclusions}
 \label{sec:cs_summary}
 
-Across four case studies on real data, InvestiGator's anomaly trigger fired far more consistently than a
-fixed threshold, its correlation engine retrieved sector-analogous precedents well above every baseline
-and independently of the embedding model, its explanations were faithful to the underlying
+Across eight case studies on real data, InvestiGator's anomaly trigger fired far more consistently than
+a fixed threshold, its correlation engine retrieved sector-analogous precedents well above every
+baseline and independently of the embedding model, its explanations were faithful to the underlying
 computation by construction, and its trained triage model nearly quadrupled within-budget alert
-precision while honestly failing to beat the volatility-only baseline with text. The next chapter
-draws these findings together against the research questions.
+precision while honestly failing to beat the volatility-only baseline with text. The four studies that
+followed measured what the system does not know, and each of them ended by leaving production
+unchanged because the evidence did not support a change. The next chapter draws these findings
+together against the research questions.

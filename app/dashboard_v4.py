@@ -84,6 +84,12 @@ def _css() -> str:
  .day {{ font-size:19px; color:var(--fg); font-weight:600; margin:2px 0 16px;
          line-height:1.35; max-width:82ch; }}
 
+ /* A promessa. Aparece UMA vez por página, no fim — critério H1: dizê-la em cada cartão
+    fazia a v2 ler como defensiva, e não a dizer de todo (o que a v4 fazia até aqui) é pior,
+    porque é a única posição ética que este trabalho assume em voz alta. */
+ .foot {{ margin-top:26px; padding-top:11px; border-top:1px solid var(--line);
+          font-size:11.5px; color:var(--mute); max-width:82ch; line-height:1.5; }}
+
  .grid {{ display:grid; gap:12px; grid-template-columns:repeat(4,minmax(0,1fr)); }}
  @media (max-width:1500px) {{ .grid {{ grid-template-columns:repeat(3,minmax(0,1fr)); }} }}
  @media (max-width:1080px) {{ .grid {{ grid-template-columns:repeat(2,minmax(0,1fr)); }} }}
@@ -142,6 +148,19 @@ def _css() -> str:
  .pill {{ font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; padding:2px 7px;
           border-radius:5px; border:1px solid var(--line); color:var(--mute); }}
  .pill.sent {{ color:var(--up); border-color:color-mix(in srgb,{T.UP} 45%,var(--line)); }}
+
+ /* ---- método ---- */
+ .mrow {{ display:flex; align-items:baseline; gap:12px; padding:7px 0;
+          border-bottom:1px solid var(--line); }}
+ .mrow:last-child {{ border-bottom:none; }}
+ .mrow .ml {{ font-size:12.5px; color:var(--dim); flex:1; }}
+ .mrow .mv {{ font-family:ui-monospace,monospace; font-size:13.5px; font-weight:650;
+              color:var(--fg); font-variant-numeric:tabular-nums; width:66px;
+              text-align:right; }}
+ .mrow .ms {{ font-family:ui-monospace,monospace; font-size:10.5px; color:var(--mute);
+              width:270px; }}
+ .msub {{ font-size:12.5px; color:var(--dim); line-height:1.5; max-width:80ch;
+          margin:-2px 0 10px; }}
 </style>"""
 
 
@@ -454,6 +473,65 @@ def _screener(snap) -> None:
 
 # ─────────────────────────────────────────────────────────────────────────── main
 @st.cache_data(ttl=45, show_spinner=False)
+def _bloco_metodo(titulo: str, intro: str, numeros, veredicto: str = "") -> str:
+    partes = []
+    for n in numeros:
+        nota = ""
+        if n.note:
+            nota = ('<br><span style="color:var(--mute);font-size:11.5px">'
+                    f'{n.note}</span>')
+        partes.append(f'<div class="mrow"><span class="ml">{n.label}{nota}</span>'
+                      f'<span class="mv">{n.value}</span>'
+                      f'<span class="ms">{n.source}</span></div>')
+    linhas = "".join(partes)
+    fim = (f'<div class="msub" style="margin:11px 0 0">{veredicto}</div>') if veredicto else ""
+    return (f'<div class="panel"><div class="ptitle">{titulo}</div>'
+            f'<div class="msub">{intro}</div>{linhas}{fim}</div>')
+
+
+def _metodo() -> None:
+    """A avaliação congelada, alcançável por um link (critério V7).
+
+    Vive fora da grelha de propósito: quem abre o painel quer saber o que aconteceu às suas
+    empresas; quem quer saber se pode confiar no método faz outra pergunta e merece uma página.
+
+    Os números vêm de `app.method`, onde cada um guarda a **cadeia exacta** com que aparece no
+    `.md` que o produziu — e `tests/test_method.py` abre esses ficheiros e exige-a lá. Se uma
+    avaliação for recorrida, a suite parte em vez de a página continuar a afirmar um número que
+    os documentos já não sustentam.
+    """
+    from app.method import ANOMALY, RETRIEVAL, TRIAGE, TRIAGE_BUDGET, TRIAGE_VERDICT
+
+    st.markdown('<a class="back" href="?" target="_self">← all companies</a>',
+                unsafe_allow_html=True)
+    st.markdown('<div class="day">How this works, and how well</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="msub">Every number on the other pages is produced by the procedure below. '
+        'These results are from the dissertation and are reported as they fell, including where '
+        'the method lost. The right-hand column is the file each value comes from.</div>',
+        unsafe_allow_html=True)
+
+    st.markdown(_bloco_metodo(
+        "Is the day unusual for this stock?",
+        "A move is judged against the same company&rsquo;s own previous twenty days, not against a "
+        "fixed percentage. The test is whether the rule fires at a comparable rate across "
+        "companies of very different volatility. Lower spread is better.",
+        ANOMALY), unsafe_allow_html=True)
+
+    st.markdown(_bloco_metodo(
+        "Are the retrieved precedents genuinely analogous?",
+        "Share of the top five retrieved past headlines that come from the query&rsquo;s sector, "
+        "with the company&rsquo;s own news excluded so the score cannot be won trivially. Higher "
+        "is better.",
+        RETRIEVAL), unsafe_allow_html=True)
+
+    st.markdown(_bloco_metodo(
+        "Does a trained model rank news better than simple volatility?",
+        "Area under the precision&ndash;recall curve on a held-out period, from a model trained "
+        "on 79,753 news&ndash;market examples.",
+        TRIAGE + TRIAGE_BUDGET, TRIAGE_VERDICT), unsafe_allow_html=True)
+
+
 def _instantaneo():
     """O instantâneo, com cache curta.
 
@@ -489,16 +567,28 @@ def main() -> None:
         f'<span class="{"age" if snap.fresco else "age stale"}">snapshot · '
         f'{snap.idade_legivel}</span>'
         f'<span class="nav"><a href="?" target="_self">Companies</a>'
-        f'<a href="?view=quiet" target="_self">Why quiet?</a></span></div>',
+        f'<a href="?view=quiet" target="_self">Why quiet?</a>'
+        f'<a href="?view=method" target="_self">Method</a></span></div>',
         unsafe_allow_html=True,
     )
 
     if vista == "quiet":
         _screener(snap)
+    elif vista == "method":
+        _metodo()
     elif ticker:
         _detalhe(snap, ticker)
     else:
         _grelha(snap)
+
+    # Uma vez por página, depois do conteúdo. Não se repete por cartão (H1) e não desaparece
+    # (que era o defeito): é o que distingue este produto dos que resumem sem se comprometer.
+    st.markdown(
+        '<div class="foot">Every move investigated, never predicted. '
+        'InvestiGator explains what already happened and shows the evidence behind it. '
+        'It does not forecast prices and is not investment advice.</div>',
+        unsafe_allow_html=True,
+    )
 
 
 main()

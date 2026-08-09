@@ -302,9 +302,11 @@ produção, é a Figura~\ref{fig:master_pipeline} no Apêndice~\ref{app:reproduc
 Um detalhe na construção offline importa para a honestidade: cada notícia é alinhada ao primeiro dia de
 negociação em ou após a sua data, e o impacto é medido apenas a partir do fecho desse dia em diante, pelo
 que um salto já no preço de abertura nunca é creditado ao sistema. Construir o corpus multi-ano completo é
-um trabalho pontual longo, pelo que a avaliação do Capítulo~\ref{chap:casestudies} usa uma base de
-conhecimento construída a partir de notícias reais recentes pelo processo idêntico, com a construção
-completa deixada para trabalho futuro.
+um trabalho pontual longo; foi feito, e é ele que fornece os $79{,}753$ exemplos por trás do estudo de
+triagem do Capítulo~\ref{chap:casestudies} e a repetição à escala do resultado de recuperação. O próprio
+estudo de caso da recuperação usa uma base de conhecimento construída a partir de notícias reais recentes
+pelo processo idêntico, e o que continua em aberto é mais estreito do que a construção: o estudo da
+magnitude do impacto ajustado ao mercado sobre esses precedentes multi-ano.
 
 \section{Lógica de Decisão}
 \label{sec:investigator_logic}
@@ -334,9 +336,9 @@ embeddings, e a linha do alerta nomeia sempre a evidência pelo que ela é: tria
 não uma previsão.
 
 \paragraph{Orçamento servido por materialidade e não por ordem de chegada.} Um tecto diário de dois
-alertas de notícia por empresa protege o leitor da fadiga, mas um tecto vale o que vale a ordem por
-que é aplicado. Até Agosto de 2026 o runner percorria as manchetes de cada dia pela ordem em que a
-fonte as devolvia, pelo que duas histórias irrelevantes de manhã podiam esgotar o orçamento de uma
+alertas de notícia por empresa protege o leitor da fadiga, mas um tecto vale o que vale a regra que
+decide quais dois passam. O runner percorria originalmente as manchetes de cada dia pela ordem em que
+a fonte as devolvia, pelo que duas histórias irrelevantes de manhã podiam esgotar o orçamento de uma
 empresa e uma história genuinamente material da parte da tarde era descartada sem deixar rasto. A
 falha apareceu em operação e não em testes, num dia em que a Nvidia subiu com força na sequência de
 um anúncio de fornecimento: o canal levou duas histórias menores dessa empresa e nunca levou a que
@@ -344,10 +346,37 @@ a moveu. O incómodo é que o sistema já tinha o instrumento certo. O component
 Secção~\ref{sec:met_triage} existe precisamente para ordenar notícias por materialidade, e o
 Capítulo~\ref{chap:casestudies} reporta que, dentro de um orçamento de cinco alertas, eleva a precisão de
 $0.163$ para $0.632$; o tecto simplesmente nunca o consultava, e por isso a pontuação era medida e
-depois ignorada. O tecto passa a ser servido por ordem decrescente da pontuação calibrada. A
-alteração é pequena em código e grande em significado: transforma o componente treinado de algo que
-a avaliação mede em algo que o produto usa, que era a ligação em falta entre o resultado da RQ4 e o
-sistema em funcionamento.
+depois ignorada.
+
+A primeira reparação foi servir o tecto por ordem decrescente dessa pontuação, e não funcionou. A
+falha fica registada em vez de ser substituída em silêncio, porque a sua causa é uma propriedade da
+implantação que nenhum teste de componente conseguiria expor: ordenar só reordena candidatas
+presentes ao mesmo tempo, e a varredura emite no máximo uma manchete por empresa por ciclo, pelo que
+duas histórias a disputar a quota da \emph{mesma} empresa nunca coexistem num lote. Ao longo do dia a
+ordem continuava, portanto, a ser a de chegada, que era o defeito original. O teste escrito ao lado
+dessa alteração comparava três manchetes da mesma empresa numa única chamada, um cenário que a
+produção não sabe produzir, e um teste que passa sobre um cenário impossível é indistinguível de uma
+correcção que funciona.
+
+O que governa o tecto é, em vez disso, um \emph{piso escalonado}: o $k$-ésimo alerta de uma empresa
+num dado dia tem de superar uma probabilidade calibrada mais alta do que o anterior. Os pisos são
+derivados e não escolhidos. Varrer o limiar de decisão sob uma razão de custo explícita $R$ entre um
+movimento perdido e um falso alarme (Capítulo~\ref{chap:conclusions}) dá $\tau^\star = 0,49$ a $R=1$,
+que é o primeiro alerta do dia, onde os dois erros custam aproximadamente o mesmo, e
+$\tau^\star = 0,64$ a $R = 0,5$, que é o segundo, onde interromper um leitor já interrompido torna a
+fadiga o custo dominante. Não foi acrescentado um terceiro piso, mais exigente: a pontuação máxima
+que o modelo produz no conjunto de teste congelado situa-se entre $0,65$ e $0,66$, pelo que um piso
+acima disso nunca poderia disparar, e código morto com aparência de rigor é pior do que regra nenhuma.
+O mecanismo vê-se em operação ao vivo, onde o runner regista recusas da forma \emph{``o segundo alerta
+do dia exige $p \ge 0,64$ e este tem $0,58$''}.
+
+Um limite é estrutural e não uma lacuna de implementação, e enunciá-lo é mais útil do que afirmar que
+o problema está resolvido. O primeiro lugar continua a ser gasto na primeira manchete que supera o
+gate normal, porque no momento dessa decisão a história da tarde ainda não existe: não se pode
+reservar quota para notícias que ainda não se viram, e um alerta entregue não se retira. O que uma
+regra online pode fazer é tornar cada lugar adicional mais caro, e é isso que esta faz. A ordenação
+por materialidade mantém-se pelo benefício menor que de facto entrega, decidir que empresa é
+anunciada primeiro quando várias qualificam dentro do mesmo ciclo.
 
 \paragraph{A mesma história contada duas vezes.} A deduplicação usava como chave o texto exacto do
 alerta, pelo que uma história publicada por dois meios com títulos diferentes produzia dois alertas.
@@ -411,54 +440,75 @@ real completa de ponta a ponta aparece no Capítulo~\ref{chap:casestudies} (Estu
 \label{fig:telegram_mockup}
 \end{figure}
 
-O mesmo raciocínio é também publicado como um dashboard ao vivo (Figura~\ref{fig:app_dashboard}). A
-superfície de abertura é uma grelha com um cartão por empresa vigiada e nenhuma privilegiada, ordenada
-por quão raro foi o dia e não por ordem alfabética. Cada cartão abre com uma frase que um
-não-especialista consegue usar, e só depois mostra os números em que essa frase assenta; um cartão que
-abrisse com um $z$-score estaria a reportar uma estatística em vez de responder a uma pergunta. Uma
-segunda superfície guarda o detalhe por empresa: o gráfico de preços com os eventos detetados desenhados
-sobre ele, a decomposição mercado/setor/empresa por extenso, os precedentes recuperados, e os alertas
-exatamente como o canal Telegram os recebeu, lidos do único registo partilhado e versionado em vez de
-recalculados. Uma terceira carrega os números congelados da avaliação, incluindo o resultado negativo,
-para quem quiser verificar o método antes de confiar na saída.
+O mesmo raciocínio é também publicado como um dashboard ao vivo (Figura~\ref{fig:app_dashboard}), e a sua
+decisão organizadora merece vir primeiro por ser a ligação mais clara entre este capítulo e o
+Capítulo~\ref{chap:introduction}. As três perguntas que um investidor de retalho faz
+(Secção~\ref{sec:intro_problem}) passam a ser três \emph{secções nomeadas} em cada cartão, sempre pela
+mesma ordem: isto é invulgar para esta ação, é a empresa ou é o mercado, e já aconteceu antes. Aparecem
+mesmo quando a resposta é que nada aconteceu, porque uma pergunta que só está lá às vezes ensina o leitor
+a não a procurar. A superfície de abertura é uma grelha com um cartão por empresa vigiada, nenhuma
+privilegiada, ordenada por quão raro foi o dia e não por ordem alfabética.
 
-Duas escolhas dessa superfície merecem ser enunciadas por terem sido feitas contra uma versão anterior
-da interface, e não herdadas dela. Primeiro, a raridade é expressa como uma \emph{contagem empírica} ---
-``apenas $5$ dos últimos $249$ dias de negociação se moveram tanto'' --- e não como uma probabilidade.
+Três outras superfícies completam-no. Um detalhe por empresa guarda o gráfico de preços com o detetor
+\emph{reproduzido} sobre o último ano, para que as marcas sejam a mesma regra que o sistema corre ao vivo
+e não anotações acrescentadas à mão, a repartição mercado/setor/empresa em barras que somam ao movimento
+observado, e os alertas exatamente como o canal Telegram os recebeu, lidos do único registo partilhado e
+versionado em vez de recalculados. Um screener responde à pergunta oposta, porque é que cada empresa
+esteve \emph{calma}: lista cada nome que a varredura examinou, o gate que o travou, e a margem que
+faltou. Esta superfície existe porque o silêncio é uma decisão que o sistema toma, e uma decisão que não
+se pode inspecionar é indistinguível de um sistema que não está a correr. Uma página de método carrega os
+números congelados da avaliação, incluindo o resultado negativo do Capítulo~\ref{chap:casestudies}, cada
+um ao lado do ficheiro de onde vem, para quem quiser verificar o método antes de confiar na saída.
+
+Três escolhas dentro destas superfícies foram feitas contra versões anteriores e não herdadas delas.
+Primeiro, a raridade é expressa como uma \emph{contagem empírica} --- ``$5$ dos últimos $249$ dias de
+negociação moveram-se isto ou mais'' --- e não como uma probabilidade.
 Converter um $z$-score numa probabilidade exigiria assumir normalidade, e os retornos diários de ações
 têm caudas mais pesadas do que isso, pelo que o valor resultante seria menos fiável precisamente nos dias
 que o sistema existe para explicar. Uma contagem não assume nada e é verificável por qualquer pessoa que
 tenha a mesma série de preços. Segundo, o cartão nomeia o \emph{motor} do movimento em palavras, enquanto
-a repartição em três fica a um clique. Um desenho anterior colocava as três componentes com sinal em cada
-linha; com uma watchlist de doze, isso são trinta e seis números com sinal a competir pela atenção no
-primeiro contacto, o que anula o propósito de haver uma ordenação.
+a repartição com sinal fica a um clique; um desenho anterior colocava as três componentes em cada
+linha, e com uma watchlist de doze isso são trinta e seis números com sinal a competir pela atenção no
+primeiro contacto, o que anula o propósito de haver uma ordenação. Terceiro, a promessa e o compromisso
+de não-previsão aparecem exatamente uma vez por página, no rodapé, e não ao lado de cada cartão: a
+repetição fazia uma interface anterior ler como defensiva sem acrescentar informação, ao passo que
+retirar a afirmação por completo, o que uma revisão posterior chegou a fazer, remove o único compromisso
+ético que o sistema assume em voz alta.
 
-As duas medidas podem discordar, e a interface di-lo em vez de escolher a leitura mais confortável. O
-detetor julga um dia contra os vinte anteriores; a contagem julga-o contra o ano. Uma empresa num período
-calmo pode assim ficar abaixo do limiar de alerta e ainda assim estar perto do topo da sua amplitude
-anual, e o cartão reporta então os dois factos --- normal para as semanas recentes, raro para o ano --- e
-deixa a ponderação ao leitor.
+As duas medidas de excecionalidade podem discordar, e a interface di-lo em vez de escolher a leitura mais
+confortável. O detetor julga um dia contra os vinte anteriores; a contagem julga-o contra o ano. Uma
+empresa num período calmo pode assim ficar abaixo do limiar de alerta e ainda assim estar perto do topo
+da sua amplitude anual, e o cartão reporta os dois factos --- normal para as semanas recentes, raro para
+o ano --- e deixa a ponderação ao leitor.
 
-O valor de latência mostrado é medido a partir dos carimbos temporais de evento e de entrega
-registados, e está simplesmente ausente quando esses carimbos não existem, pelo que a interface nunca
-exibe um número que o sistema não observou.
+Uma capacidade está deliberadamente ausente da página, e dizê-lo é mais útil do que dar a entender o
+contrário. A recuperação de precedentes não corre no browser: medido, carregar o codificador de frases
+acrescenta cerca de sete segundos a uma carga a frio, que é a maior parte do orçamento que a interface
+tem. O detalhe enuncia-o no próprio sítio, em vez de deixar uma lacuna silenciosa, e aponta para onde a
+resposta de facto vive, que são os próprios alertas de notícia, cada um com os seus precedentes
+recuperados e o desfecho medido a $+1$, $+3$ e $+5$ dias.
+
+Esse orçamento é também a razão pela qual a página não faz cálculo nenhum. O worker escreve um
+instantâneo pré-computado no fim de cada ciclo, onde o custo de ir buscar preços já foi pago, e a página
+lê-o; medido, construir a grelha a partir da rede custa cerca de cinco segundos contra onze milissegundos
+para ler o ficheiro. Como um instantâneo que deixasse de ser escrito em silêncio pareceria exatamente um
+mercado calmo, a página mostra a idade do instantâneo, para que a desatualização se veja no ecrã em vez
+de ser inferida.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/app_dashboard.png}
 \caption[O dashboard ao vivo, uma captura genuína]{O dashboard público (uma captura genuína, não um
-mockup), superfície de abertura. Um cartão por empresa, ordenados por quão raro foi o dia, e cada cartão
-abre com uma frase em vez de um número. Dois nomes passaram o limiar de alerta e trazem o marcador
-\texttt{UNUSUAL}, uma sparkline e as estatísticas de apoio; o $z$-score nunca aparece sem a expressão que
-o torna legível. A Microsoft e a Amazon são o caso que vale a pena ler com atenção: nenhuma passou o
-limiar, porque cada uma é julgada contra os seus próprios vinte dias anteriores, e no entanto apenas $5$ e
-$9$ dos últimos $249$ dias de negociação se moveram tanto, respetivamente. O cartão reporta as duas coisas
---- \emph{calmo face à sua norma recente}, e raro para o ano --- em vez de resolver a discordância em
-silêncio a favor da palavra mais tranquilizadora. As empresas cujo dia foi mesmo banal dizem-no com a
-contagem que o sustenta, pelo que a quietude fica evidenciada e não afirmada. A Exxon Mobil cai para um
-quadrado com iniciais porque não há logótipo publicado para ela, o que é a degradação desenhada e não um
-recurso em falta. A promessa e o compromisso de não-previsão aparecem uma só vez, no rodapé. Capturado a
-partir do código implantado durante operação ao vivo.}
+mockup), superfície de abertura, capturado a partir do código implantado durante operação ao vivo. Um
+cartão por empresa, ordenados por quão raro foi o dia. Cada cartão responde às mesmas três perguntas da
+Secção~\ref{sec:intro_problem} sob os mesmos títulos e pela mesma ordem, inclusive num dia em que a
+resposta a todas elas é que não aconteceu nada de especial: a frase de topo diz exatamente isso, e cada
+cartão evidencia a sua própria quietude com uma contagem em vez de a afirmar. A raridade é dada duas
+vezes, como uma frase que qualquer pessoa pode verificar (``$247$ dos últimos $249$ dias de negociação
+moveram-se isto ou mais'' para a Microsoft, a $+0,03\%$) e como uma tira de marcas, para que um leitor
+possa comparar empresas sem ler um número. A linha de atribuição nomeia o motor em palavras e, quando uma
+componente puxou contra o movimento, di-lo em vez de o esconder: a AMD caiu $1,22\%$ ``sobretudo a própria
+empresa'', com o mercado e o seu setor a puxarem ao contrário.}
 \label{fig:app_dashboard}
 \end{figure}
 
@@ -536,23 +586,28 @@ foi construído para ganhar.
 
 \emph{O que é preciso para o correr, e o que exige o uso responsável?}
 
-O InvestiGator corre como dois pontos de entrada, um por gatilho, cada um a executar um ciclo completo. No uso
-diário correm num horário: existe uma implantação de referência em que um temporizador de integração
-contínua gratuito varre repetidamente uma watchlist durante o horário do mercado dos EUA e entrega quaisquer
-alertas a um canal de Telegram, com um dashboard interativo publicado a par. Correr o sistema precisa apenas
-de recursos gratuitos: uma fonte de dados de mercado, uma fonte de notícias de empresa ou RSS (uma chave de
-API mantida fora do controlo de versões), e a base de conhecimento construída uma vez a partir do corpus. O
+O InvestiGator corre como dois pontos de entrada, um por gatilho, cada um a executar um ciclo completo. A
+implantação de referência corre-os continuamente numa plataforma alojada: um worker repete a varredura num
+ciclo de sessenta segundos e entrega quaisquer alertas a um canal de Telegram, enquanto um segundo processo
+serve o dashboard. Uma disposição anterior usava em vez disso um temporizador de integração contínua
+gratuito, e o afastamento dele é examinado no Capítulo~\ref{chap:conclusions}, onde medir a latência de
+entrega mostrou que o agendador nunca foi a restrição vinculativa. Correr o sistema precisa apenas
+de recursos de dados gratuitos: uma fonte de dados de mercado, uma fonte de notícias de empresa ou RSS (uma
+chave de API mantida fora do controlo de versões), e a base de conhecimento construída uma vez a partir do
+corpus. O
 Apêndice~\ref{app:reproducibility} dá os passos exatos. Os alertas reais entregues durante os testes e pela
 varredura agendada mostram que o caminho dos dados brutos ao telemóvel do investidor funciona de ponta a
 ponta. Uma vez ao vivo, as decisões de triagem são também \emph{pós-validadas}: cada decisão registada é
 rotulada dias depois com o resultado que efetivamente se seguiu, dando monitorização de precisão e
 calibração ao vivo e dados de treino frescos (Secção~\ref{sec:met_triage}).
 
-Dois limites práticos merecem ser enunciados com clareza. A camada gratuita de notícias devolve apenas uma
-janela recente, pelo que a base de conhecimento é mais rasa do que a construção multi-ano para a qual foi
-desenhada (um limite de cobertura, não de método). E o InvestiGator é um protótipo de apoio à decisão, não um
-serviço de produção: sem contas de utilizador, sem persistência para além do ficheiro da base de
-conhecimento. Estes são passos ordinários de protótipo a produto.
+Dois limites práticos merecem ser enunciados com clareza. A base de conhecimento que o sistema implantado
+consulta é muito menor do que o corpus multi-ano construído para a avaliação: a base completa não cabe na
+camada de alojamento gratuita, pelo que a produção corre sobre um subconjunto curado juntamente com os
+casos que o próprio sistema captura e matura. Isto é um limite de implantação e não de método, e é a razão
+pela qual os precedentes ao vivo são mais rasos do que os avaliados. E o InvestiGator é um protótipo de
+apoio à decisão, não um serviço de produção: sem contas de utilizador, sem persistência para além do
+ficheiro da base de conhecimento. Estes são passos ordinários de protótipo a produto.
 
 \subsection*{Pôr um transformador em produção sob a restrição de free tier}
 
@@ -568,7 +623,7 @@ coisa e entregando outra. A segunda é pior do que a primeira, porque faz a aval
 sistema que nenhum utilizador toca.
 
 A resolução adotada foi exportar o \emph{mesmo} modelo para ONNX com quantização int8, cerca de 23~MB, a
-correr em CPU sem qualquer framework de deep learning presente, e depois provar que a substituição é
+correr em CPU sem qualquer framework de deep learning presente, e depois verificar que a substituição é
 fiel antes de confiar nela. Correram-se duas verificações contra a implementação de referência. A
 concordância de embeddings sobre manchetes reais deu um cosseno médio de $0.992$ com um mínimo de
 $0.987$, sendo o resíduo ruído de quantização e não um espaço semântico diferente. A concordância de

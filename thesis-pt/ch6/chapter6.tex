@@ -174,11 +174,13 @@ produto de alertas, e a resposta óbvia de engenharia é uma ligação de stream
 recusada por razões que vale a pena separar, porque só uma delas é sobre esforço. O trabalho estimado
 era substancial, mas o argumento decisivo é que nenhuma pergunta de investigação desta tese se torna
 respondível por encurtar a entrega de minutos para segundos: o detetor está definido sobre barras
-diárias, e os precedentes recuperados têm dias por construção. Os dois perfis de utilizador descritos
-no Capítulo~\ref{chap:introduction} foram também interrogados sobre o que notariam, e nenhum distingue cinco
-segundos de cinco minutos num alerta que existe para provocar reflexão e não uma ordem de compra. O
-sistema sonda por isso num ciclo fixo, que chega para as afirmações que faz, e a limitação é
-\emph{medida} em vez de prometida.
+diárias, e os precedentes recuperados têm dias por construção. Raciocinar sobre os dois perfis de
+utilizador do Capítulo~\ref{chap:introduction} aponta no mesmo sentido, e isso deve ser rotulado pelo que
+é: nenhum dos perfis, tal como ali caracterizado, distinguiria plausivelmente cinco segundos de cinco
+minutos num alerta que existe para provocar reflexão e não uma ordem de compra. Isso é uma suposição
+sobre dois perfis construídos, não um achado sobre pessoas, e ficaria resolvido pelo mesmo estudo humano
+que a RQ3 continua a aguardar. O sistema sonda por isso num ciclo fixo, que chega para as afirmações que
+faz, e a latência resultante é \emph{medida} em vez de prometida.
 
 Uma versão anterior deste parágrafo afirmava que a latência está limitada pelo ciclo de sondagem.
 Medi-la mostrou que é falso, e a correção vale a pena ficar visível porque muda aquilo sobre que a
@@ -201,10 +203,34 @@ barato e mais verdadeiro do que construir uma capacidade que não se usa.
 O objetivo geral, desenhar, implementar e avaliar um sistema de alertas explicável e reprodutível
 movido por dois gatilhos, foi cumprido: o InvestiGator é um sistema funcional cujos dois gatilhos
 foram provados de ponta a ponta e cujos componentes centrais, incluindo o modelo de triagem treinado,
-foram avaliados sobre dados reais. Os objetivos de apoio também foram cumpridos:
-uma fatia fina de ponta a ponta foi entregue primeiro; cada componente foi mantido na sua forma mais
-simples e defensável; a avaliação seguiu um desenho fixado à partida; e todo o sistema é reprodutível
-a partir de scripts versionados.
+foram avaliados sobre dados reais. Tomando os cinco objetivos da
+Secção~\ref{sec:intro_objectives} um a um, quatro estão cumpridos por inteiro e um por metade:
+
+\begin{itemize}
+  \item \emph{Construir uma pipeline de alertas explicável movida pelos dois gatilhos.} Cumprido. Os
+        dois gatilhos correm de ponta a ponta em implantação contínua, e cada alerta é renderizado a
+        partir dos objetos calculados.
+  \item \emph{Avaliar o detetor de anomalias contra linhas de base transparentes.} Cumprido, e alargado
+        para além do prometido: o detetor foi comparado não só com um limiar fixo mas com dois
+        detetores aprendidos e um segundo estimador de volatilidade sob o mesmo protocolo causal.
+  \item \emph{Avaliar a recuperação de notícias históricas contra linhas de base triviais.} Cumprido,
+        contra linhas de base aleatória, de recência e lexical, e repetido depois à escala sobre o
+        corpus multi-ano.
+  \item \emph{Aferir se as explicações são fiéis e úteis.} Cumprido por metade, e a metade que falta é
+        nomeada em vez de ser absorvida pela que resultou. A fidelidade foi estabelecida, primeiro por
+        construção e depois, para linguagem gerada, por uma guarda em tempo de execução com um corpus
+        adversário de regressão. A utilidade não foi medida: o instrumento existe e o limiar de análise
+        foi fixado à partida, mas nenhum estudo humano foi conduzido, pelo que não se faz afirmação
+        nenhuma.
+  \item \emph{Treinar, calibrar e avaliar honestamente um modelo de triagem de materialidade.}
+        Cumprido, incluindo a parte menos confortável de reportar, já que a comparação decisiva
+        pré-comprometida correu contra o modelo treinado.
+\end{itemize}
+
+Os compromissos metodológicos do Capítulo~\ref{chap:methods} também se mantiveram: uma fatia fina de
+ponta a ponta foi entregue primeiro, cada componente foi mantido na sua forma mais simples e defensável,
+a avaliação seguiu um desenho fixado à partida, e todo o sistema é reprodutível a partir de scripts
+versionados.
 
 \section{Contribuições Revisitadas}
 \label{sec:concl_contributions}
@@ -336,10 +362,11 @@ avaliação formal fica para trabalho futuro.}
         antigo, e o ciclo de pós-validação ao vivo a acumular decisões rotuladas frescas para
         re-treino periódico; um tratamento por contextual-bandit do limiar do alerta é a extensão
         aprendida natural.
-  \item Como produto, medir o que a pipeline de notícias nunca chega a ver. A cobertura da fonte
-        gratuita é hoje uma limitação assumida e não uma grandeza: a fração das histórias que
-        realmente movem o mercado e que chegam sequer ao funil nunca foi contada, e contá-la
-        converteria uma suposição num número, como já se fez para a deriva e para a incerteza.
+  \item Fechar a metade que falta da questão da cobertura de notícias. A fração de dias invulgares
+        em que \emph{alguma} história relevante chegou ao funil está agora contada ($88,5\%$, acima),
+        mas se chegou a história \emph{certa} não está, e nenhum proxy automático o resolve: exige
+        juízo humano por dia sobre uma amostra de dias sinalizados, que é o mesmo instrumento de que
+        o estudo de utilidade precisa e poderia ser recolhido na mesma passagem.
 \end{itemize}
 A produção ao vivo, depois de a avaliação ter sido congelada, já motivou uma primeira iteração de
 vários destes pontos: o sistema em produção faz agora crescer uma base de conhecimento \emph{viva} a

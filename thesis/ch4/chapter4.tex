@@ -296,9 +296,12 @@ Figure~\ref{fig:master_pipeline} in Appendix~\ref{app:reproducibility}.}
 
 One detail in the offline build matters for honesty: each news item is aligned to the first trading day on
 or after its date, and impact is measured only from that day's close onward, so a jump already in the
-opening price is never credited to the system. Building the full multi-year corpus is a long one-off job, so
-the evaluation in Chapter~\ref{chap:casestudies} uses a knowledge base built from real recent news through
-the identical process, with the full build left as future work.
+opening price is never credited to the system. Building the full multi-year corpus is a long one-off
+job; it was run, and it supplies the $79{,}753$ examples behind the triage study of
+Chapter~\ref{chap:casestudies} and the scale re-run of the retrieval result. The retrieval case study
+itself uses a knowledge base built from real recent news through the identical process, and what
+remains outstanding is narrower than the build: the market-adjusted impact-magnitude study over those
+multi-year precedents.
 
 \section{Decision Logic}
 \label{sec:investigator_logic}
@@ -326,20 +329,45 @@ only, so it runs without the heavy embedding stack, and the alert line always na
 it is: triage over historical cases, not a forecast.
 
 \paragraph{Budgeting by materiality rather than by arrival.} A daily cap of two news alerts per
-company protects the reader from fatigue, but a cap is only as good as the order in which it is
-applied. Until August 2026 the runner walked each day's headlines in the order the feed returned
-them, so two immaterial stories in the morning could exhaust a company's budget and a genuinely
-material story that afternoon was discarded without trace. The fault was found in operation rather
-than in testing, on a day when Nvidia rose sharply on a supply announcement: the channel carried
-two lesser stories about that company and never carried the one that moved it. The uncomfortable
-part is that the system already held the right instrument. The triage component of
-Section~\ref{sec:met_triage} exists precisely to rank news by materiality, and
-Chapter~\ref{chap:casestudies} reports that within a five-alert budget it raises precision from $0.163$
-to $0.632$; the cap simply never consulted it, so the score was measured and then ignored. The cap
-is now served in descending order of the calibrated score. The change is small in code and large in
-meaning: it turns the trained component from something the evaluation measures into something the
-product uses, which is the connection between the RQ4 result and the running system that was
-previously missing.
+company protects the reader from fatigue, but a cap is only as good as the rule deciding which two
+get through. The runner originally walked each day's headlines in the order the feed returned them,
+so two immaterial stories in the morning could exhaust a company's budget and a genuinely material
+story that afternoon was discarded without trace. The fault was found in operation rather than in
+testing, on a day when Nvidia rose sharply on a supply announcement: the channel carried two lesser
+stories about that company and never carried the one that moved it. The uncomfortable part is that
+the system already held the right instrument. The triage component of Section~\ref{sec:met_triage}
+exists precisely to rank news by materiality, and Chapter~\ref{chap:casestudies} reports that within
+a five-alert budget it raises precision from $0.163$ to $0.632$; the cap simply never consulted it,
+so the score was measured and then ignored.
+
+The first repair was to serve the cap in descending order of that score, and it did not work. The
+failure is recorded rather than quietly replaced, because its cause is a property of the deployment
+that no component test could expose: sorting can only reorder candidates present together, and the
+scan emits at most one headline per company per cycle, so two stories competing for the \emph{same}
+company's quota never coexist in one batch. Across a day the order therefore remained the order of
+arrival, which was the original defect. The test written alongside that change compared three
+headlines for one company in a single call, a situation production cannot produce, and a test that
+passes over an impossible scenario is indistinguishable from a fix that works.
+
+What governs the cap instead is an \emph{escalating floor}: the $k$-th alert for a company on a
+given day must clear a higher calibrated probability than the one before it. The floors are derived
+rather than chosen. Sweeping the decision threshold under an explicit cost ratio $R$ between a
+missed move and a false alarm (Chapter~\ref{chap:conclusions}) gives $\tau^\star = 0.49$ at $R=1$,
+which is the first alert of the day, where the two errors cost about the same, and
+$\tau^\star = 0.64$ at $R = 0.5$, which is the second, where interrupting an already-interrupted
+reader makes fatigue the dominant cost. No third and stricter floor was added: the highest score the
+model produces on the frozen test set lies between $0.65$ and $0.66$, so a floor above that could
+never fire, and dead code with the appearance of rigour is worse than no rule. The mechanism is
+visible in live operation, where the runner logs refusals of the form \emph{``second alert of the
+day requires $p \ge 0.64$ and this one has $0.58$''}.
+
+One limit is structural rather than an implementation gap, and stating it is more useful than
+claiming the problem is solved. The first slot is still spent on the first headline that clears the
+ordinary gate, because at the moment of that decision the afternoon's story does not yet exist:
+quota cannot be reserved for news not yet seen, and a delivered alert cannot be recalled. What an
+online rule can do is make each additional slot more expensive, which is what this one does.
+Ordering by materiality is retained for the smaller benefit it genuinely delivers, deciding which
+company is announced first when several qualify within one cycle.
 
 \paragraph{The same story told twice.} Deduplication keyed on the exact alert text, so one story
 filed by two outlets under different headlines produced two alerts. Alerts are now also compared on
@@ -401,57 +429,76 @@ illustration; the full real end-to-end output appears in Chapter~\ref{chap:cases
 \label{fig:telegram_mockup}
 \end{figure}
 
-The same reasoning is also published as a live dashboard (Figure~\ref{fig:app_dashboard}). The
-opening surface is a grid with one card per watched company and none of them privileged, ordered by
-how rare the day was rather than alphabetically. Each card opens with a sentence a non-specialist can
-act on, and only then shows the numbers that sentence rests on; a card that led with a $z$-score
-would be reporting a statistic rather than answering a question. A second surface holds the
-per-company detail: the price chart with the detected events drawn on it, the market/sector/company
-decomposition in full, the retrieved precedents, and the alerts exactly as the Telegram channel
-received them, read from the one shared versioned record rather than recomputed. A third carries the
-frozen evaluation numbers, including the negative result, for a reader who wants to check the method
-before trusting the output.
+The same reasoning is also published as a live dashboard (Figure~\ref{fig:app_dashboard}), and its
+organising decision is worth stating first because it is the clearest link between this chapter and
+Chapter~\ref{chap:introduction}. The three questions a retail investor asks
+(Section~\ref{sec:intro_problem}) become three \emph{named sections} on every card, in the same
+order every time: is this unusual for this stock, is it the company or the market, and has this
+happened before. They appear even when the answer is that nothing happened, because a question that
+is present only sometimes teaches the reader not to look for it. The opening surface is a grid with
+one card per watched company, none privileged, ordered by how rare the day was rather than
+alphabetically.
 
-Two choices in that surface are worth stating because they were made against an earlier draft of the
-interface rather than inherited from it. First, rarity is expressed as an \emph{empirical count} --
-``only $5$ of the last $249$ trading days moved this much'' -- and not as a probability. Converting a
-$z$-score into a probability would require assuming normality, and daily equity returns have heavier
-tails than that, so the resulting figure would be least trustworthy on precisely the days the system
-exists to explain. A count assumes nothing and is checkable by anyone holding the same price series.
-Second, the card names the \emph{driver} of a move in words while the three-way split itself sits one
-click away. An earlier design placed all three signed components on every row; with a watchlist of
-twelve that is thirty-six signed numbers competing for attention on first contact, which defeats the
-purpose of ranking at all.
+Three further surfaces complete it. A per-company detail view holds the price chart with the
+detector \emph{replayed} over the past year so the marks are the same rule the system runs live
+rather than annotations added by hand, the market/sector/company split as bars that sum to the
+observed move, and the alerts exactly as the Telegram channel received them, read from the one
+shared versioned record rather than recomputed. A screener answers the opposite question, why each
+company was \emph{quiet}: it lists every name the scan examined, the gate that stopped it, and the
+margin by which it fell short. This surface exists because silence is a decision the system makes,
+and a decision that cannot be inspected is indistinguishable from a system that is not running. A
+method page carries the frozen evaluation numbers, including the negative result of
+Chapter~\ref{chap:casestudies}, each shown beside the file it comes from, for a reader who wants to
+check the method before trusting the output.
 
-The two measures can disagree, and the interface says so rather than choosing the more comfortable
-reading. The detector judges a day against the previous twenty; the count judges it against the year.
-A company in a calm stretch can therefore fall below the alert threshold while still sitting near the
-top of its annual range, and the card then reports both facts --- normal for recent weeks, rare for
-the year --- and leaves the reader to weigh them.
+Three choices within these surfaces were made against earlier drafts rather than inherited. First,
+rarity is expressed as an \emph{empirical count} -- ``$5$ of the last $249$ trading days moved this
+much or more'' -- and not as a probability. Converting a $z$-score into a probability would require
+assuming normality, and daily equity returns have heavier tails than that, so the resulting figure
+would be least trustworthy on precisely the days the system exists to explain. A count assumes
+nothing and is checkable by anyone holding the same price series. Second, the card names the
+\emph{driver} of a move in words while the signed three-way split sits one click away; an earlier
+design placed all three components on every row, and with a watchlist of twelve that is thirty-six
+signed numbers competing for attention on first contact, which defeats the purpose of ranking at
+all. Third, the promise and the no-prediction commitment appear exactly once per page, as its
+footer, rather than beside every card: repetition had made an earlier interface read as defensive
+without adding information, while dropping the statement altogether, which a later revision briefly
+did, removes the one ethical commitment the system makes out loud.
 
-Two further properties were designed rather than inherited. The promise and the no-prediction
-commitment appear exactly once, as the page's identity, instead of being repeated beside every card;
-repetition had made an earlier interface read as defensive without adding information. And the
-delivery-latency figure is measured from recorded event and delivery timestamps, and is simply absent
-when those timestamps do not exist, so the interface never displays a number the system did not
-observe.
+The two measures of unusualness can disagree, and the interface says so rather than choosing the
+more comfortable reading. The detector judges a day against the previous twenty; the count judges it
+against the year. A company in a calm stretch can therefore fall below the alert threshold while
+still sitting near the top of its annual range, and the card reports both facts --- normal for recent
+weeks, rare for the year --- and leaves the reader to weigh them.
+
+One capability is deliberately absent from the page, and saying so is more useful than implying
+otherwise. Precedent retrieval does not run in the browser: loading the sentence encoder was measured
+to add about seven seconds to a cold page load, which is most of the budget the interface has. The
+detail view states this in place rather than leaving a silent gap, and points to where the answer does
+live, namely the news alerts themselves, each of which carries its own retrieved precedents and their
+measured outcome at $+1$, $+3$ and $+5$ days.
+
+That budget is also why the page performs no computation of its own. The worker writes a precomputed
+snapshot at the end of each cycle, where the cost of fetching prices has already been paid, and the
+page reads it; measured, building the grid from the network costs about five seconds against eleven
+milliseconds to read the file. Because a snapshot that silently stopped being written would look
+exactly like a calm market, the page displays the snapshot's age, so staleness is visible on screen
+rather than inferred.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/app_dashboard.png}
 \caption[The live dashboard, a genuine capture]{The public dashboard (a genuine screenshot, not a
-mockup), opening surface. One card per company, ordered by how rare the day was, and every card
-opens with a sentence rather than a number. Two names cleared the alert threshold and carry the
-\texttt{UNUSUAL} marker, a sparkline and the supporting statistics; the $z$-score is never shown
-without the phrase that makes it readable. Microsoft and Amazon are the case worth reading closely:
-neither cleared the threshold, because each is judged against its own previous twenty days, yet only
-$5$ and $9$ of the last $249$ trading days respectively moved as much. The card reports both --
-\emph{quiet by its recent norm}, and rare for the year -- instead of resolving the disagreement
-silently in favour of the calmer word. Companies whose day really was ordinary say so with the count
-that supports it, so quietness is evidenced rather than asserted. Exxon Mobil falls back to a
-lettered tile because no logotype is published for it, which is the designed degradation rather than
-a missing asset. The promise and the no-prediction commitment appear once, in the footer. Captured
-from the deployed codebase during live operation.}
+mockup), opening surface, captured from the deployed codebase during live operation. One card per
+company, ordered by how rare the day was. Every card answers the same three questions from
+Section~\ref{sec:intro_problem} under the same headings and in the same order, including on a day
+when the answer to all of them is that nothing much happened: the headline sentence states exactly
+that, and each card evidences its own quietness with a count rather than asserting it. Rarity is
+given twice, as a sentence anyone can check (``$247$ of the last $249$ trading days moved this much
+or more'' for Microsoft, at $+0.03\%$) and as a strip of marks, so a reader can compare companies
+without reading a number. The attribution line names the driver in words and, where a component
+pulled against the move, says so rather than hiding it: AMD fell $1.22\%$ ``mostly the company
+itself'', with both the market and its sector pulling the other way.}
 \label{fig:app_dashboard}
 \end{figure}
 
@@ -525,21 +572,25 @@ contradicts itself two lines later destroys precisely the trust the rest of the 
 
 \emph{What does it take to run, and what does responsible use require?}
 
-InvestiGator runs as two entry points, one per trigger, each performing a complete cycle. In day-to-day use they
-run on a schedule: a reference deployment exists in which a free continuous-integration timer repeatedly
-scans a watchlist through US market hours and delivers any alerts to a Telegram channel, with an
-interactive dashboard published alongside. Running the system needs only free resources: a market-data
-source, a company-news or RSS source (an API key kept out of version control), and the knowledge base
-built once from the corpus. Appendix~\ref{app:reproducibility} gives the exact steps. Real alerts
+InvestiGator runs as two entry points, one per trigger, each performing a complete cycle. The reference
+deployment runs them continuously on a hosted platform: a worker repeats the scan on a sixty-second
+cycle and delivers any alerts to a Telegram channel, while a second process serves the dashboard. An
+earlier arrangement used a free continuous-integration timer instead, and the move away from it is
+examined in Chapter~\ref{chap:conclusions}, where measuring the delivery latency showed that the
+scheduler was never the binding constraint. Running the system needs only free data resources: a
+market-data source, a company-news or RSS source (an API key kept out of version control), and the
+knowledge base built once from the corpus. Appendix~\ref{app:reproducibility} gives the exact steps. Real alerts
 delivered during testing and by the scheduled scan show the path from raw data to the investor's phone
 works end to end. Once live, the triage decisions are also \emph{post-validated}: each logged decision is
 labelled days later with the outcome that actually followed, giving live precision and calibration
 monitoring and fresh training data (Section~\ref{sec:met_triage}).
 
-Two practical limits are worth stating plainly. The free news tier returns only a recent window, so the
-knowledge base is shallower than the multi-year build it is designed for (a coverage limit, not a method
-one). And InvestiGator is a decision-support prototype, not a production service: no user accounts, no
-persistence beyond the knowledge-base file. These are ordinary steps from prototype to product.
+Two practical limits are worth stating plainly. The knowledge base the deployed system queries is far
+smaller than the multi-year corpus that was built for the evaluation: the full base does not fit the
+free hosting tier, so production runs on a curated subset together with the cases the system captures
+and matures itself. This is a deployment limit rather than a method one, and it is the reason the
+live precedents are shallower than the evaluated ones. And InvestiGator is a decision-support
+prototype, not a production service: no user accounts, no persistence beyond the knowledge-base file. These are ordinary steps from prototype to product.
 
 \subsection*{Shipping a transformer under free-tier constraints}
 
@@ -555,7 +606,7 @@ another. The second is worse than the first, because it makes the evaluation des
 user ever touches.
 
 The resolution taken was to export the \emph{same} model to ONNX with int8 quantisation, roughly
-23~MB, running on CPU with no deep-learning framework present, and then to prove the substitution is
+23~MB, running on CPU with no deep-learning framework present, and then to verify the substitution is
 faithful before trusting it. Two checks were run against the library implementation. Embedding agreement
 over real headlines gave a mean cosine similarity of $0.992$ with a minimum of $0.987$, the residual
 being quantisation noise rather than a different semantic space. Retrieval agreement matters more,

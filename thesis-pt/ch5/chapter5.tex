@@ -6,12 +6,17 @@
 \chapter{Estudos de Caso}
 \label{chap:casestudies}
 
-Este capítulo avalia o InvestiGator através de quatro estudos de caso sobre dados reais. O primeiro olha para
-o gatilho de anomalias em ações de volatilidade muito diferente; o segundo para o motor de correlação e os
-precedentes que recupera; o terceiro percorre um alerta completo e pergunta se a sua explicação é fiel; o
-quarto treina e testa o modelo de triagem de materialidade sobre o corpus multi-ano. Cada número abaixo vem
-de um script versionado com uma semente fixa, a avaliação seguiu o plano estabelecido no
-Capítulo~\ref{chap:methods}, e cada estudo enuncia as suas próprias limitações.
+Este capítulo avalia o InvestiGator através de oito estudos de caso sobre dados reais, em dois grupos. Os
+primeiros quatro testam o desenho central: o gatilho de anomalias em ações de volatilidade muito
+diferente; o motor de correlação e os precedentes que recupera; um alerta completo, e se a sua explicação
+é fiel; e o modelo de triagem de materialidade treinado e testado sobre o corpus multi-ano. Os últimos
+quatro examinam o mesmo sistema por fora, perguntando o que ele \emph{não} sabe: se o espaço de embeddings
+codifica que tipo de acontecimento uma manchete relata, quanto custaria uma garantia livre de distribuição
+sobre o score de triagem, quão longe o presente implantado se afastou do corpus de treino, e se vários
+sinais em acordo batem o melhor deles sozinho. Cada um desses quatro termina numa decisão de \emph{não}
+mudar a produção, tomada sobre a evidência. Cada número abaixo vem de um script versionado com uma semente
+fixa, a avaliação seguiu o plano estabelecido no Capítulo~\ref{chap:methods}, e cada estudo enuncia as
+suas próprias limitações.
 
 \section{Montagem Experimental Comum}
 \label{sec:cs_setup}
@@ -543,9 +548,9 @@ fechar a lacuna do texto; essa possibilidade é registada como trabalho futuro e
 \paragraph{O modelo em produção numa decisão real.} A afirmação do mecanismo torna-se tangível num único caso
 ao vivo. A Figura~\ref{fig:triage_contributions} decompõe uma decisão de produção real, o alerta da Meta de
 12~de~julho~de~2026 cuja aritmética completa é a Tabela~\ref{tab:triage_worked}: a volatilidade recente elevada
-e o indicador de setor carregam essencialmente todos os log-odds, os termos quase-zero livres de texto
-confirmam que o contexto é o sinal, e os $54\%$ calibrados que chegaram ao canal público são reproduzidos
-exatamente pela decomposição. O achado agregado da avaliação (contexto, não texto) e as decisões individuais do
+e o indicador de setor carregam essencialmente todos os log-odds, os restantes termos quase-nulos são o
+que o achado agregado prevê que um caso único deve parecer, e os $54\%$ calibrados que chegaram ao canal
+público são reproduzidos exatamente pela decomposição. O achado agregado da avaliação (contexto, não texto) e as decisões individuais do
 produto em produção são um só e o mesmo cálculo, que é a propriedade de fidelidade que o desenho promete.
 
 \begin{figure}[ht]
@@ -1027,10 +1032,12 @@ fatores de todo o mercado em vez da notícia), que as janelas curtas ($+1$, $+3$
 eliminam, e que o enquadramento de não-causalidade reconhece abertamente.
 
 \paragraph{Validade externa: até onde generalizam os achados?} O estudo cobre quinze tickers de grande
-capitalização dos EUA em cinco setores sobre uma janela recente, pelo que os números não têm de transferir-se
+capitalização dos EUA em cinco setores, pelo que os números não têm de transferir-se
 para ações de pequena capitalização, para outros mercados, ou para outros períodos, e a cobertura de notícias é
-mais rala fora das grandes capitalizações. O corpus é uma janela recente de um serviço gratuito e não o
-histórico multi-ano do FNSPID; o corpus completo é identificado como a forma natural de alargar este âmbito.
+mais rala fora das grandes capitalizações. O estudo de recuperação corre sobre uma janela recente de um
+serviço gratuito; os estudos de triagem, taxonomia, conformal, deriva e convergência correm sobre o
+histórico multi-ano do FNSPID, o que alarga o período mas não o conjunto de tickers, que é fixado pelo
+cartão de dados nos dois casos.
 
 \paragraph{Validade de conclusão estatística: são as comparações sólidas?} Os resultados da recuperação são
 médias sobre cinco amostras aleatórias com desvios-padrão reportados (as barras de erro na
@@ -1047,9 +1054,11 @@ para as conclusões.
 \section{Conclusões do Capítulo}
 \label{sec:cs_summary}
 
-Ao longo de quatro estudos de caso sobre dados reais, o gatilho de anomalias do InvestiGator disparou muito mais
+Ao longo de oito estudos de caso sobre dados reais, o gatilho de anomalias do InvestiGator disparou muito mais
 consistentemente do que um limiar fixo, o seu motor de correlação recuperou precedentes análogos por setor bem
 acima de todas as linhas de base e independentemente do modelo de embedding, as suas explicações foram fiéis ao
 cálculo subjacente por construção, e o seu modelo de triagem treinado quase quadruplicou a precisão de alertas
-dentro do orçamento enquanto honestamente não conseguiu bater a linha de base só-volatilidade com texto. O
-próximo capítulo reúne estes achados face às questões de investigação.
+dentro do orçamento enquanto honestamente não conseguiu bater a linha de base só-volatilidade com texto. Os
+quatro estudos seguintes mediram o que o sistema não sabe, e cada um deles terminou deixando a produção
+inalterada porque a evidência não sustentava a mudança. O próximo capítulo reúne estes achados face às
+questões de investigação.

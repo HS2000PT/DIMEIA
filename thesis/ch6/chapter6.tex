@@ -167,11 +167,13 @@ and the obvious engineering answer is a streaming connection to the price feed. 
 reasons that are worth separating, because only one of them is about effort. The estimated work was
 substantial, but the decisive argument is that no research question in this thesis becomes answerable
 by shortening delivery from minutes to seconds: the detector is defined on daily bars, and the
-retrieved precedents are days old by construction. Both user profiles described in
-Chapter~\ref{chap:introduction} were also asked what they would notice, and neither distinguishes five
-seconds from five minutes for an alert that exists to prompt reflection rather than a trade. The
-system therefore polls on a fixed cycle, which is enough for the claims it makes, and the limitation
-is \emph{measured} rather than promised.
+retrieved precedents are days old by construction. Reasoning about the two user profiles of
+Chapter~\ref{chap:introduction} points the same way, and it should be labelled for what it is: neither
+profile, as characterised there, would plausibly distinguish five seconds from five minutes for an alert
+meant to prompt reflection rather than a trade. That is an assumption about two constructed profiles,
+not a finding about people, and it would be settled by the same human study that RQ3 still awaits. The
+system therefore polls on a fixed cycle, which is enough for the claims it makes, and the resulting
+latency is \emph{measured} rather than promised.
 
 An earlier version of this paragraph stated that latency is bounded by the polling cycle. Measuring it
 showed that this is false, and the correction is worth keeping visible because it changes what the
@@ -193,11 +195,32 @@ capability.
 
 The general objective, to design, implement and evaluate an explainable, reproducible alerting system
 driven by two triggers, was met: InvestiGator is a working system whose two triggers were proven end to
-end and whose core components, including the trained triage model, were evaluated on real data. The
-supporting objectives were also met:
-a thin end-to-end slice was delivered first; each component was kept in its simplest defensible form; the
-evaluation followed a design fixed in advance; and the whole system is reproducible from versioned
-scripts.
+end and whose core components, including the trained triage model, were evaluated on real data. Taking
+the five objectives of Section~\ref{sec:intro_objectives} one at a time, four are met in full and one
+in half:
+
+\begin{itemize}
+  \item \emph{Build an explainable alerting pipeline driven by the two triggers.} Met. Both triggers
+        run end to end in continuous deployment, and every alert is rendered from the computed objects.
+  \item \emph{Evaluate the anomaly detector against transparent baselines.} Met, and extended beyond
+        what was promised: the detector was compared not only against a fixed threshold but against two
+        learned detectors and a second volatility estimator under the same causal protocol.
+  \item \emph{Evaluate the retrieval of historical news against trivial baselines.} Met, against
+        random, recency and lexical baselines, and subsequently repeated at scale on the multi-year
+        corpus.
+  \item \emph{Assess whether the explanations are faithful and useful.} Half met, and the half that is
+        missing is named rather than absorbed into the half that succeeded. Faithfulness was
+        established, first by construction and then, for generated language, by a runtime guard with an
+        adversarial regression corpus. Usefulness was not measured: the instrument exists and the
+        analysis threshold was fixed in advance, but no human study was run, so no claim is made.
+  \item \emph{Train, calibrate and honestly evaluate a materiality-triage model.} Met, including the
+        part that was least comfortable to report, since the pre-committed decisive comparison went
+        against the trained model.
+\end{itemize}
+
+The methodological commitments of Chapter~\ref{chap:methods} also held: a thin end-to-end slice was
+delivered first, each component was kept in its simplest defensible form, the evaluation followed a
+design fixed in advance, and the whole system is reproducible from versioned scripts.
 
 \section{Contributions Revisited}
 \label{sec:concl_contributions}
@@ -320,10 +343,11 @@ reported as engineering follow-through whose formal evaluation remains future wo
         sentiment as a feature), the missing ticker recovered under its former symbol, and the live
         post-validation loop accumulating fresh labelled decisions for periodic retraining; a
         contextual-bandit treatment of the alert threshold is the natural learned extension.
-  \item As a product, measure what the news pipeline never sees. Coverage of the free feed is
-        currently an acknowledged limitation rather than a quantity: the share of genuinely
-        market-moving stories that reach the funnel at all has not been counted, and counting it
-        would turn an assumption into a number, as was done for drift and for uncertainty.
+  \item Close the remaining half of the news-coverage question. The share of unusual days on which
+        \emph{a} relevant story reached the funnel is now counted ($88.5\%$, above), but whether the
+        \emph{right} story arrived is not, and no automatic proxy settles it: it needs per-day human
+        judgement on a sample of flagged days, which is the same instrument the usefulness study
+        requires and could be collected in the same pass.
 \end{itemize}
 Live deployment after the evaluation was frozen already motivated a first iteration of several of these
 items: the deployed system now grows a \emph{live} knowledge base from the headlines it scans (each case

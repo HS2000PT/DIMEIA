@@ -224,8 +224,9 @@ for, parando caso contrário. É essa verificação que faz deles afirmações s
 dissertação reporta, e não sobre um modelo que por acaso está ao lado.
 
 \paragraph{Operação ao vivo.} Para além da reprodutibilidade a pedido, o InvestiGator operou ao vivo.
-Um workflow agendado varreu a watchlist após cada fecho do mercado dos EUA e entregou alertas explicados a
-um canal público de Telegram; o registo de alertas partilhado e versionado acumulou dezenas de alertas
+Um processo worker varreu a watchlist num ciclo de sessenta segundos e entregou alertas explicados a
+um canal público de Telegram, tendo substituído um workflow agendado anterior que corria após cada fecho
+do mercado dos EUA; o registo de alertas partilhado e versionado acumulou dezenas de alertas
 reais, incluindo a primeira anomalia de mercado genuína (NVDA, 13~de~julho~de~2026). A base de conhecimento
 viva maturou as suas manchetes capturadas contra os preços reais que se seguiram, e o ciclo de
 pós-validação rotulou decisões passadas reais com o seu resultado observado, reportando uma precisão de

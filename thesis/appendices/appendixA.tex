@@ -219,10 +219,11 @@ model reproduce its frozen test score exactly before reporting anything, halting
 check is what makes them statements about the model this dissertation reports rather than about a
 model that happens to be lying next to it.
 
-\paragraph{Live operation.} Beyond reproducibility on demand, InvestiGator operated live. A
-scheduled workflow scanned the watchlist after each US market close and delivered explained alerts to a
-public Telegram channel; the shared, versioned alert record accumulated dozens of real alerts, including
-the first genuine market anomaly (NVDA, 13~July~2026). The live knowledge base matured its captured
+\paragraph{Live operation.} Beyond reproducibility on demand, InvestiGator operated live. A worker
+process scanned the watchlist on a sixty-second cycle and delivered explained alerts to a public
+Telegram channel, having replaced an earlier scheduled workflow that ran after each US market close;
+the shared, versioned alert record accumulated dozens of real alerts, including the first genuine
+market anomaly (NVDA, 13~July~2026). The live knowledge base matured its captured
 headlines against the real prices that followed, and the post-validation loop labelled real past
 decisions with their observed outcome, reporting a kept-alert precision of $0.667$ against a base rate of
 $0.455$, which is out-of-sample evidence that the triage mechanism holds. A large automated suite of tests,

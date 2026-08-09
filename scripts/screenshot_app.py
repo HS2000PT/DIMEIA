@@ -45,7 +45,9 @@ def main() -> int:
     # Aponta para a app PROMOVIDA. Ficou a apontar para a v1 depois da promoção, o que
     # produziria uma figura da tese a mostrar um ecrã que já não está no ar — a Fig. 4.5
     # tem de ser uma captura do que o leitor encontra se abrir o URL.
-    app = REPO / "app" / "dashboard.py"
+    # 2026-08-09: a promoção da v4 repetiu exactamente o defeito que este comentário descreve.
+    # O alvo passa a ser `dashboard_v4.py`, que é o que o `Procfile` serve.
+    app = REPO / "app" / "dashboard_v4.py"
     proc = subprocess.Popen(
         [sys.executable, "-m", "streamlit", "run", str(app),
          "--server.headless", "true", "--server.port", str(args.port),
@@ -63,12 +65,12 @@ def main() -> int:
             page = browser.new_page(viewport={"width": args.width, "height": args.height},
                                     device_scale_factor=2)
             page.goto(f"http://localhost:{args.port}", wait_until="networkidle", timeout=60000)
-            # O ecrã de abertura é a grelha de cartões (v3). Esperar por um VEREDICTO e
-            # não por um rótulo de ecrã: a v1 abria em "Today" e esse texto desapareceu na
-            # promoção, o que deixou este script a esperar por algo que já não existe.
-            # Um veredicto é a última peça a chegar, porque depende dos preços.
-            page.wait_for_selector(".verdict", timeout=45000)
-            for marca in ("text=Quiet", "text=trading days", "text=No market data"):
+            # O ecrã de abertura da v4 é a grelha que LÊ o instantâneo. Esperar por um cartão
+            # (`.name`) e não por um rótulo de ecrã: os rótulos mudam a cada redesenho e
+            # deixam este script a esperar por algo que já não existe — foi o que aconteceu
+            # na promoção anterior. O cartão é a última peça a chegar.
+            page.wait_for_selector(".grid .name", timeout=45000)
+            for marca in ("text=trading days", "text=Nothing stood out", "text=No market data"):
                 try:
                     page.wait_for_selector(marca, timeout=25000)
                     break
