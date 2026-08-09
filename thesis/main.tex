@@ -26,6 +26,23 @@ headsepline,     % linha sob o cabeçalho
 
 \usepackage{makecell}
 
+% Estilo para os excertos de código. A classe do ISEP já carrega o `listings` com Java por
+% omissão; aqui fixa-se Python e um aspecto sóbrio. Os excertos são verbatim do sistema: são
+% a evidência de engenharia que o leitor tem, e por isso não são reescritos para ficarem
+% bonitos. Comentários traduzidos para inglês no excerto, e só isso.
+\lstdefinestyle{pycode}{
+  language=Python,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\color{MidnightBlue}\bfseries,
+  commentstyle=\itshape\color{black!55},
+  stringstyle=\color{black!70},
+  numbers=left, numberstyle=\tiny\color{black!45}, numbersep=7pt,
+  frame=single, rulecolor=\color{black!30},
+  breaklines=true, showstringspaces=false,
+  captionpos=b, xleftmargin=16pt, framexleftmargin=14pt,
+}
+\lstset{style=pycode}
+
 \addbibresource{references.bib} % bibliografia (só entradas verificadas, cada uma com identificador)
 
 \makenoidxglossaries            % glossário/acrónimos (compatível Overleaf)

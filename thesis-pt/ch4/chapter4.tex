@@ -299,6 +299,94 @@ produção, é a Figura~\ref{fig:master_pipeline} no Apêndice~\ref{app:reproduc
 \label{fig:workflow}
 \end{figure}
 
+\subsection*{Um item, de ponta a ponta}
+\label{sec:investigator_endtoend}
+
+O diagrama mostra a forma da pipeline; o que não consegue mostrar é o que os dados \emph{são} em cada
+passo. Como um leitor desta dissertação não pode inspecionar o sistema em funcionamento, esta
+subsecção segue uma notícia real desde a resposta do fornecedor até à mensagem num telemóvel,
+nomeando a forma que os dados tomam e onde repousam em cada etapa. O item é a manchete da Microsoft
+que o canal recebeu a 9~de~agosto~de~2026; a Tabela~\ref{tab:endtoend} é a mesma viagem numa vista.
+
+\textbf{1. Fonte e obtenção.} Um processo worker acorda num ciclo de sessenta segundos e pede
+notícias de empresa para cada ticker da watchlist a uma API gratuita sobre HTTPS, com a chave
+fornecida pelo ambiente e nunca guardada no código. A resposta é JSON: uma lista de objetos com
+manchete, resumo, nome da fonte, URL e carimbo de publicação em segundos de época Unix.
+
+\textbf{2. Normalização e o que se descarta de propósito.} Cada objeto passa a uma notícia interna
+com quatro campos: data, ticker, manchete e instante de publicação. O \emph{resumo} do fornecedor é
+lido para o filtro de relevância e depois deitado fora em vez de guardado, porque reter texto de
+artigos de terceiros seria republicar conteúdo licenciado; guarda-se só a manchete, que é o mínimo
+necessário para calcular uma similaridade. O carimbo é preservado ao segundo, e é isso que mais tarde
+torna possível a decomposição de latência do Capítulo~\ref{chap:conclusions}.
+
+\textbf{3. Relevância.} A manchete tem de nomear a empresa, verificada contra uma lista de aliases
+(``Microsoft'', ``MSFT'', e os nomes dos seus responsáveis), e não pode corresponder a boilerplate de
+resumo de mercado. Este portão existe porque o fornecedor etiqueta de forma larga: um aviso de um
+escritório de advogados e uma lista de ``maiores movimentos do S\&P~500'' chegam ambos com o ticker.
+
+\textbf{4. Representação.} A manchete sobrevivente é codificada num vetor de $384$ dimensões e norma
+unitária pelo codificador de frases quantizado, em CPU, em poucos milissegundos. Este é o único ponto
+da pipeline onde uma rede neuronal corre em produção.
+
+\textbf{5. Armazenamento.} Escrevem-se duas coisas. O vetor com os seus metadados é acrescentado a um
+ficheiro de casos \emph{pendentes}, onde espera até que o seu próprio impacto a cinco dias seja
+observável e possa maturar em precedente. Em separado, a decisão que está prestes a ser tomada é
+acrescentada a um registo de decisões. Ambos vivem numa branch de dados versionada e não no disco do
+próprio dyno, porque esse disco é efémero e não é partilhado com o processo que serve o painel.
+
+\textbf{6. Recuperação.} O vetor é comparado por cosseno contra cada caso guardado, e tomam-se os três
+melhores, ordenados com um fator de decaimento por idade enquanto a similaridade mostrada continua a
+ser o cosseno verdadeiro. Para este item os vizinhos mais próximos foram três manchetes da Microsoft
+de 2023, a similaridades $0.70$, $0.57$ e $0.55$.
+
+\textbf{7. Desfecho medido.} Cada precedente recuperado já traz o retorno que se lhe seguiu a $+1$,
+$+3$ e $+5$ dias de negociação, medido quando o caso maturou e nunca recalculado no momento da
+consulta. Aqui variaram entre $-1.67\%$ e $+4.79\%$ a cinco dias.
+
+\textbf{8. Features e pontuação.} Em paralelo, os preços recentes do ticker produzem as features de
+contexto da Secção~\ref{sec:met_triage}, e o modelo congelado transforma-as numa probabilidade
+calibrada com as suas contribuições aditivas exatas.
+
+\textbf{9. Portões.} O item passa uma verificação de frescura, um chão de evidência sobre a melhor
+similaridade, o gate de materialidade, o tecto diário por empresa com o seu piso escalonado, e uma
+verificação de duplicados entre produtores. Qualquer um destes pode terminar a viagem em silêncio, e é
+por isso que existe a superfície de screener para reportar qual deles o fez.
+
+\textbf{10. Renderização e entrega.} O texto do alerta é montado diretamente a partir dos objetos
+acima e enviado ao canal; o mesmo registo é acrescentado ao histórico partilhado, de onde o painel o
+vai buscar depois. A entrega demorou menos de um segundo desde a deteção. A mensagem que o utilizador
+recebeu está reproduzida na Secção~\ref{sec:investigator_lifecycle}.
+
+\begin{table}[ht]
+\caption[Uma notícia através de cada etapa]{Uma notícia real (Microsoft, 9~de~agosto~de~2026) em cada
+etapa, com a forma que os dados tomam e onde repousam. Lida de cima a baixo, é o sistema inteiro.}
+\label{tab:endtoend}
+\centering
+\small
+\begin{tabular}{p{0.03\textwidth} p{0.24\textwidth} p{0.32\textwidth} p{0.29\textwidth}}
+\toprule
+\tabhead{\#} & \tabhead{Etapa} & \tabhead{Forma dos dados} & \tabhead{Onde repousa} \\
+\midrule
+1 & Pedido ao fornecedor & JSON sobre HTTPS & em memória \\
+2 & Normalização & data, ticker, manchete, instante & em memória (resumo descartado) \\
+3 & Filtro de relevância & o mesmo, ou descartado & --- \\
+4 & Codificação & vetor de $384$ dimensões & em memória \\
+5 & Captura & vetor $+$ metadados; registo da decisão & branch de dados (dois ficheiros) \\
+6 & Recuperação & top-3 casos $+$ cosseno & em memória \\
+7 & Consulta do desfecho & retornos a $+1/{+}3/{+}5$ dias & lido do caso guardado \\
+8 & Features $+$ score & 9 números $\to$ probabilidade $+$ termos & ficheiro do modelo congelado \\
+9 & Portões & manter ou largar, com a razão & registo de portões (branch) \\
+10 & Entrega & texto da mensagem & Telegram $+$ histórico partilhado \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Duas propriedades desse caminho merecem ser nomeadas por serem decisões de desenho e não
+consequências. Nada entre os passos 4 e 8 precisa da rede, pelo que uma falha do fornecedor degrada o
+sistema para silêncio e não para erro. E cada passo que descarta um item regista porque o fez, que é o
+que torna um dia calmo distinguível de um dia avariado.
+
 Um detalhe na construção offline importa para a honestidade: cada notícia é alinhada ao primeiro dia de
 negociação em ou após a sua data, e o impacto é medido apenas a partir do fecho desse dia em diante, pelo
 que um salto já no preço de abertura nunca é creditado ao sistema. Construir o corpus multi-ano completo é

@@ -31,6 +31,21 @@ headsepline,     % linha sob o cabeçalho
 
 \usepackage{makecell}
 
+% Estilo para os excertos de código (ver comentário na versão inglesa). O código fica em
+% inglês nas duas versões: é o sistema, não prosa.
+\lstdefinestyle{pycode}{
+  language=Python,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\color{MidnightBlue}\bfseries,
+  commentstyle=\itshape\color{black!55},
+  stringstyle=\color{black!70},
+  numbers=left, numberstyle=\tiny\color{black!45}, numbersep=7pt,
+  frame=single, rulecolor=\color{black!30},
+  breaklines=true, showstringspaces=false,
+  captionpos=b, xleftmargin=16pt, framexleftmargin=14pt,
+}
+\lstset{style=pycode}
+
 \addbibresource{../thesis/references.bib} % bibliografia PARTILHADA (só entradas verificadas)
 
 \makenoidxglossaries            % glossário/acrónimos (compatível Overleaf)

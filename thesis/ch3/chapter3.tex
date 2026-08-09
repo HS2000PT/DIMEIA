@@ -319,6 +319,34 @@ information enters.
 \end{algorithmic}
 \end{algorithm}
 
+Because the no-lookahead property is asserted repeatedly in this dissertation, it is worth showing
+where it is actually enforced rather than only describing it. Listing~\ref{lst:zscore} is the
+detector as deployed. The guarantee is one slice: the window ends at $-1$, so the day being judged
+is excluded from the mean and standard deviation it is judged against. If that slice included the
+last element, every alert in this work would be circular, and no downstream evaluation would detect
+it.
+
+\begin{lstlisting}[caption={The rolling \emph{z}-score detector. The window that defines ``normal''
+stops one day before the day being judged.}, label={lst:zscore}]
+r = pd.Series(list(returns), dtype="float64").dropna().reset_index(drop=True)
+if len(r) < window + 1:
+    raise ValueError(f"Need at least {window + 1} returns (got {len(r)}).")
+
+recent = r.iloc[-window - 1 : -1]   # window BEFORE the last day (no lookahead)
+last   = float(r.iloc[-1])
+mu     = float(recent.mean())
+sigma  = float(recent.std(ddof=1))
+z      = (last - mu) / sigma if sigma > 0 else 0.0
+return AnomalyResult(is_anomaly=abs(z) > threshold, z_score=z,
+                     last_return=last, mean=mu, std=sigma, ...)
+\end{lstlisting}
+
+Two details of that listing carry weight beyond the slice. The function returns the quantities
+behind the decision ($z$, $\mu$, $\sigma$) and not only the verdict, which is what allows the
+explanation to be rendered from the computation rather than written alongside it. And a
+zero-variance window yields $z = 0$ rather than a division by infinity, so a stock that did not move
+at all is reported as unremarkable instead of crashing the scan.
+
 A small example shows why this matters. Two stocks both fall $3.2\%$ today. One has been calm
 ($\sigma \approx 0.40\%$), the other volatile ($\sigma \approx 1.50\%$). The same move is a clear anomaly
 for the calm stock ($z \approx -8.1$) but an ordinary day for the volatile one ($z \approx -2.2$), as
@@ -650,8 +678,60 @@ Features respect a strict timing convention, all computable at the close of day 
 window opens: the pre-event volatility (standard deviation of the twenty daily log-returns ending the
 day \emph{before} the event), the five-day momentum to the same point, the event-day return itself
 (known at the close of $d$), the headline length, a sector indicator, and the sentence embedding of the
-headline. A unit test enforces the convention by mutating prices \emph{after} the event window and
-asserting that no feature changes while the label does.
+headline.
+
+The convention is enforced rather than trusted, and the mechanism is worth showing because it is the
+strongest single piece of evidence against leakage in this work. Listing~\ref{lst:leakage} builds two
+price series that are identical up to the event day and then diverge absurdly, computes the features
+on both, and asserts they are equal. The complementary assertion is the one that gives the test its
+force: the same mutation must \emph{change the label}. A test that only checked the features could be
+satisfied by a function that ignores prices altogether; requiring the label to move proves the future
+was genuinely reachable and genuinely excluded.
+
+\begin{lstlisting}[caption={The anti-lookahead test. Mutating the future must leave every feature
+untouched and must change the label.}, label={lst:leakage}]
+def test_anti_lookahead_mutating_the_future_does_not_change_features():
+    base     = [100.0 + i * 0.1 for i in range(30)]
+    future_a = base + [200.0, 300.0, 400.0]   # absurd future A
+    future_b = base + [50.0, 10.0, 1.0]       # absurd future B
+    d = len(base) - 1                         # event on the last day of `base`
+    assert event_features(_series(future_a), event_idx=d) == \
+           event_features(_series(future_b), event_idx=d)
+
+def test_mutating_the_future_changes_the_label_but_not_the_features():
+    base   = [100.0] * 25
+    up     = _series(base + [100, 110, 120, 130])   # large abnormal move
+    flat   = _series(base + [100, 100, 100, 100])   # nothing happens
+    market = _series([100.0] * 29)
+    d = 25
+    assert event_features(up, d) == event_features(flat, d)     # features identical
+    assert abnormal_label(up,   market, d, 0.02, 3) == 1        # labels differ
+    assert abnormal_label(flat, market, d, 0.02, 3) == 0
+\end{lstlisting}
+
+The temporal protocol is enforced in the same literal way. Listing~\ref{lst:split} assigns blocks by
+\emph{unique day} rather than by row, so every headline about a company on a given day lands in one
+block, and it discards a band of days after each boundary. That band is the part most often omitted
+in practice: with a label window of up to five trading days, a headline in the last days of the
+training block would otherwise be labelled by prices that belong to the validation block.
+
+\begin{lstlisting}[caption={Temporal split by unique day, with an embargo band after each
+boundary.}, label={lst:split}]
+d = pd.to_datetime(pd.Series(dates).reset_index(drop=True))
+unique_days = np.array(sorted(d.unique()))
+n  = len(unique_days)
+i1 = int(n * train_frac)                    # 0.70
+i2 = int(n * (train_frac + val_frac))       # 0.85
+
+train_days = set(unique_days[:i1])
+emb1       = set(unique_days[i1 : i1 + embargo_days])          # discarded
+val_days   = set(unique_days[i1 + embargo_days : i2])
+emb2       = set(unique_days[i2 : i2 + embargo_days])          # discarded
+test_days  = set(unique_days[i2 + embargo_days :])
+\end{lstlisting}
+
+On the corpus of Chapter~\ref{chap:casestudies} the embargo removes $820$ rows, which is the price
+paid for the guarantee and is reported rather than absorbed silently into the split.
 
 Table~\ref{tab:met_features} makes those columns concrete: it lists every feature, what it is, and its
 actual value for the worked example of Figure~\ref{fig:data_journey} (Nvidia, 10~May~2018), together
@@ -699,7 +779,36 @@ p_{\text{raw}} \;=\; \sigma(u) \;=\; \frac{1}{1+e^{-u}},
 \end{equation}
 so each product $w_j\tilde{x}_j$ is an \emph{exact} additive contribution to the log-odds $u$: no
 surrogate model and no approximation, the property that makes the alert's ``why'' line faithful by
-construction. Because a discriminative score is not automatically an honest probability, a Platt
+construction.
+
+That claim is easy to assert and worth showing, because ``faithful by construction'' is precisely the
+kind of phrase a reader should distrust on sight. Listing~\ref{lst:contrib} is the whole computation
+behind the ``why'' line: the same scaler the model was fitted with, an element-wise product of
+coefficients and scaled inputs, and a grouping step for readability. There is no second model here,
+and nothing is estimated. The contributions sum to the log-odds exactly, which is what separates this
+from a post-hoc attribution that approximates a black box and can therefore disagree with it.
+
+\begin{lstlisting}[caption={The ``why'' line. Contributions are the model's own terms, not an
+approximation of them.}, label={lst:contrib}]
+scaler = pipeline.named_steps["scale"]
+lr     = pipeline.named_steps["lr"]
+x_scaled = scaler.transform(np.asarray(x_row, dtype="float64").reshape(1, -1))[0]
+contribs = lr.coef_[0] * x_scaled            # exact additive terms of the log-odds
+
+grouped: dict[str, float] = {}
+for name, c in zip(feature_names, contribs, strict=True):
+    if   name.startswith("emb_"):    key = "headline content"   # 384 dims -> one term
+    elif name.startswith("sector_"): key = "sector"             # one-hot  -> one term
+    else:                            key = _FRIENDLY.get(name, name)
+    grouped[key] = grouped.get(key, 0.0) + float(c)
+return sorted(grouped.items(), key=lambda kv: -abs(kv[1]))
+\end{lstlisting}
+
+The grouping is a presentation decision with a cost that should be named. Summing the $384$ embedding
+dimensions into a single ``headline content'' term makes the line readable, but it also means the user
+is told that the text mattered without being told which words did. That is an honest limit of the
+display, not of the model: the per-dimension terms remain exact and available, and no dimension of a
+sentence embedding has a meaning worth showing a non-expert anyway. Because a discriminative score is not automatically an honest probability, a Platt
 calibration is fitted on the validation block only,
 \begin{equation}
 p \;=\; \sigma\!\big(a\,p_{\text{raw}} + c\big),

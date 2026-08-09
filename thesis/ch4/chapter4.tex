@@ -294,6 +294,94 @@ Figure~\ref{fig:master_pipeline} in Appendix~\ref{app:reproducibility}.}
 \label{fig:workflow}
 \end{figure}
 
+\subsection*{One item, end to end}
+\label{sec:investigator_endtoend}
+
+The diagram shows the shape of the pipeline; what it cannot show is what the data actually \emph{is}
+at each step. Because a reader of this dissertation cannot inspect the running system, this subsection
+follows one real news item from the provider's response to the message on a phone, naming the form the
+data takes and where it rests at every stage. The item is the Microsoft headline the channel received
+on 9~August~2026; Table~\ref{tab:endtoend} is the same journey in one view.
+
+\textbf{1. Source and retrieval.} A worker process wakes on a sixty-second cycle and requests company
+news for each watchlist ticker from a free news API over HTTPS, with the API key supplied by the
+environment and never stored in the codebase. The response is JSON: a list of objects carrying a
+headline, a summary, a source name, a URL and a publication timestamp in Unix epoch seconds.
+
+\textbf{2. Normalisation and what is deliberately discarded.} Each object becomes an internal news
+item with four fields: date, ticker, headline and publication instant. The provider's \emph{summary}
+is read for relevance filtering and then dropped rather than stored, because retaining third-party
+article text would republish licensed content; only the headline, which is the minimum needed to
+compute a similarity, is kept. The epoch timestamp is preserved to the second, which is what later
+makes the latency decomposition of Chapter~\ref{chap:conclusions} possible at all.
+
+\textbf{3. Relevance.} The headline must name the company, matched against an alias list (``Microsoft'',
+``MSFT'', and the names of its principals), and must not match market-roundup boilerplate. This gate
+exists because the provider tags loosely: a law-firm notice and a ``top S\&P~500 movers'' list both
+arrive labelled with the ticker.
+
+\textbf{4. Representation.} The surviving headline is encoded into a $384$-dimensional unit-length
+vector by the quantised sentence encoder, on CPU, in a few milliseconds. This is the one point in the
+pipeline where a neural network runs in production.
+
+\textbf{5. Storage.} Two things are written. The vector plus its metadata is appended to a
+\emph{pending} case file, where it waits until its own five-day forward impact becomes observable and
+it can mature into a precedent. Separately, the decision about to be taken is appended to a decision
+log. Both files live on a version-controlled data branch rather than on the dyno's own disk, because
+the dyno's filesystem is ephemeral and is not shared with the process that serves the dashboard.
+
+\textbf{6. Retrieval.} The vector is compared by cosine against every stored case, and the top three
+are taken, ranked with an age-decay factor while the similarity displayed remains the true cosine. For
+this item the nearest neighbours were three Microsoft headlines from 2023 at similarities $0.70$,
+$0.57$ and $0.55$.
+
+\textbf{7. Measured outcome.} Each retrieved precedent already carries the return that followed it at
+$+1$, $+3$ and $+5$ trading days, measured when the case matured and never recomputed at query time.
+Here they ranged from $-1.67\%$ to $+4.79\%$ at five days.
+
+\textbf{8. Features and score.} In parallel, the ticker's recent prices yield the context features of
+Section~\ref{sec:met_triage}, and the frozen model turns them into a calibrated probability with its
+exact additive contributions.
+
+\textbf{9. Gates.} The item passes a freshness check, an evidence floor on the best similarity, the
+materiality gate, the per-company daily cap with its escalating floor, and a cross-producer duplicate
+check. Any one of these can end the journey silently, which is why the screener surface exists to
+report which one did.
+
+\textbf{10. Rendering and delivery.} The alert text is assembled directly from the objects above and
+sent to the channel; the same record is appended to the shared history, from which the dashboard later
+draws it. Delivery took under a second from detection. The message the user received is reproduced in
+Section~\ref{sec:investigator_lifecycle}.
+
+\begin{table}[ht]
+\caption[One news item through every stage]{One real news item (Microsoft, 9~August~2026) at every
+stage, with the form the data takes and where it rests. Read top to bottom, this is the whole system.}
+\label{tab:endtoend}
+\centering
+\small
+\begin{tabular}{p{0.03\textwidth} p{0.24\textwidth} p{0.32\textwidth} p{0.29\textwidth}}
+\toprule
+\tabhead{\#} & \tabhead{Stage} & \tabhead{Form of the data} & \tabhead{Where it rests} \\
+\midrule
+1 & Provider request & JSON over HTTPS & in memory \\
+2 & Normalisation & date, ticker, headline, instant & in memory (summary discarded) \\
+3 & Relevance filter & same, or dropped & --- \\
+4 & Encoding & $384$-d unit vector & in memory \\
+5 & Capture & vector $+$ metadata; decision record & data branch (two files) \\
+6 & Retrieval & top-3 cases $+$ cosine & in memory \\
+7 & Outcome lookup & returns at $+1/{+}3/{+}5$ days & read from the stored case \\
+8 & Features $+$ score & 9 numbers $\to$ probability $+$ terms & frozen model file \\
+9 & Gates & keep or drop, with the reason & gate log (data branch) \\
+10 & Delivery & message text & Telegram $+$ shared history \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two properties of that path are worth naming because they are design decisions rather than
+consequences. Nothing between steps 4 and 8 requires the network, so a provider outage degrades the
+system to silence rather than to error. And every step that discards an item records why it did, which
+is what makes a quiet day distinguishable from a broken one.
+
 One detail in the offline build matters for honesty: each news item is aligned to the first trading day on
 or after its date, and impact is measured only from that day's close onward, so a jump already in the
 opening price is never credited to the system. Building the full multi-year corpus is a long one-off

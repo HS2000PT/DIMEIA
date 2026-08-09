@@ -323,6 +323,34 @@ apenas dias anteriores, pelo que nenhuma informação futura entra.
 \end{algorithmic}
 \end{algorithm}
 
+Como a propriedade de não-lookahead é afirmada repetidamente nesta dissertação, vale a pena mostrar
+onde ela é de facto imposta em vez de apenas a descrever. O Excerto~\ref{lst:zscore} é o detetor tal
+como está implantado. A garantia é uma fatia: a janela termina em $-1$, pelo que o dia a ser julgado
+está excluído da média e do desvio-padrão contra os quais é julgado. Se essa fatia incluísse o último
+elemento, todos os alertas deste trabalho seriam circulares, e nenhuma avaliação a jusante o
+detetaria.
+
+\begin{lstlisting}[caption={O detetor \emph{z}-score. A janela que define ``normal'' pára um dia antes
+do dia a ser julgado.}, label={lst:zscore}]
+r = pd.Series(list(returns), dtype="float64").dropna().reset_index(drop=True)
+if len(r) < window + 1:
+    raise ValueError(f"Need at least {window + 1} returns (got {len(r)}).")
+
+recent = r.iloc[-window - 1 : -1]   # window BEFORE the last day (no lookahead)
+last   = float(r.iloc[-1])
+mu     = float(recent.mean())
+sigma  = float(recent.std(ddof=1))
+z      = (last - mu) / sigma if sigma > 0 else 0.0
+return AnomalyResult(is_anomaly=abs(z) > threshold, z_score=z,
+                     last_return=last, mean=mu, std=sigma, ...)
+\end{lstlisting}
+
+Dois detalhes desse excerto pesam para além da fatia. A função devolve as grandezas por trás da
+decisão ($z$, $\mu$, $\sigma$) e não apenas o veredicto, que é o que permite que a explicação seja
+renderizada a partir do cálculo em vez de escrita ao lado dele. E uma janela de variância nula produz
+$z = 0$ em vez de uma divisão por infinito, pelo que uma ação que não se mexeu de todo é reportada
+como banal em vez de fazer a varredura rebentar.
+
 Um pequeno exemplo mostra porque isto importa. Duas ações caem ambas $3.2\%$ hoje. Uma tem estado calma
 ($\sigma \approx 0.40\%$), a outra volátil ($\sigma \approx 1.50\%$). O mesmo movimento é uma anomalia clara
 para a ação calma ($z \approx -8.1$) mas um dia comum para a volátil ($z \approx -2.2$), como a
@@ -656,8 +684,60 @@ As features respeitam uma convenção temporal estrita, todas calculáveis no fe
 janela do rótulo abrir: a volatilidade pré-evento (desvio-padrão dos vinte log-retornos diários que terminam
 no dia \emph{anterior} ao evento), o momentum de cinco dias até ao mesmo ponto, o próprio retorno do dia do
 evento (conhecido no fecho de $d$), o comprimento da manchete, um indicador de setor, e o embedding de frase
-da manchete. Um teste unitário impõe a convenção ao mutar preços \emph{depois} da janela do evento e
-verificar que nenhuma feature muda enquanto o rótulo muda.
+da manchete.
+
+A convenção é imposta e não confiada, e o mecanismo merece ser mostrado porque é a peça de evidência
+mais forte contra fuga de informação neste trabalho. O Excerto~\ref{lst:leakage} constrói duas séries
+de preços idênticas até ao dia do evento e depois divergentes de forma absurda, calcula as features
+sobre ambas, e verifica que são iguais. A afirmação complementar é a que dá força ao teste: a mesma
+mutação tem de \emph{mudar o rótulo}. Um teste que só verificasse as features seria satisfeito por uma
+função que ignorasse os preços por completo; exigir que o rótulo se mexa prova que o futuro era
+genuinamente alcançável e genuinamente excluído.
+
+\begin{lstlisting}[caption={O teste de não-lookahead. Mutar o futuro tem de deixar cada feature intacta
+e tem de mudar o rótulo.}, label={lst:leakage}]
+def test_anti_lookahead_mutating_the_future_does_not_change_features():
+    base     = [100.0 + i * 0.1 for i in range(30)]
+    future_a = base + [200.0, 300.0, 400.0]   # absurd future A
+    future_b = base + [50.0, 10.0, 1.0]       # absurd future B
+    d = len(base) - 1                         # event on the last day of `base`
+    assert event_features(_series(future_a), event_idx=d) == \
+           event_features(_series(future_b), event_idx=d)
+
+def test_mutating_the_future_changes_the_label_but_not_the_features():
+    base   = [100.0] * 25
+    up     = _series(base + [100, 110, 120, 130])   # large abnormal move
+    flat   = _series(base + [100, 100, 100, 100])   # nothing happens
+    market = _series([100.0] * 29)
+    d = 25
+    assert event_features(up, d) == event_features(flat, d)     # features identical
+    assert abnormal_label(up,   market, d, 0.02, 3) == 1        # labels differ
+    assert abnormal_label(flat, market, d, 0.02, 3) == 0
+\end{lstlisting}
+
+O protocolo temporal é imposto da mesma forma literal. O Excerto~\ref{lst:split} atribui blocos por
+\emph{dia único} e não por linha, pelo que todas as manchetes sobre uma empresa num dado dia caem no
+mesmo bloco, e descarta uma faixa de dias depois de cada fronteira. Essa faixa é a parte mais vezes
+omitida na prática: com uma janela de rótulo até cinco dias de negociação, uma manchete nos últimos
+dias do bloco de treino seria de outro modo rotulada por preços que pertencem ao bloco de validação.
+
+\begin{lstlisting}[caption={Divisão temporal por dia único, com faixa de embargo depois de cada
+fronteira.}, label={lst:split}]
+d = pd.to_datetime(pd.Series(dates).reset_index(drop=True))
+unique_days = np.array(sorted(d.unique()))
+n  = len(unique_days)
+i1 = int(n * train_frac)                    # 0.70
+i2 = int(n * (train_frac + val_frac))       # 0.85
+
+train_days = set(unique_days[:i1])
+emb1       = set(unique_days[i1 : i1 + embargo_days])          # discarded
+val_days   = set(unique_days[i1 + embargo_days : i2])
+emb2       = set(unique_days[i2 : i2 + embargo_days])          # discarded
+test_days  = set(unique_days[i2 + embargo_days :])
+\end{lstlisting}
+
+No corpus do Capítulo~\ref{chap:casestudies} o embargo remove $820$ linhas, que é o preço pago pela
+garantia e é reportado em vez de absorvido em silêncio na divisão.
 
 A Tabela~\ref{tab:met_features} torna essas colunas concretas: lista cada feature, o que é, e o seu valor
 real para o exemplo trabalhado da Figura~\ref{fig:data_journey} (Nvidia, 10~de~maio~de~2018), juntamente com
@@ -706,7 +786,39 @@ p_{\text{raw}} \;=\; \sigma(u) \;=\; \frac{1}{1+e^{-u}},
 \end{equation}
 pelo que cada produto $w_j\tilde{x}_j$ é uma contribuição aditiva \emph{exata} para os log-odds $u$: sem
 modelo substituto e sem aproximação, a propriedade que torna a linha do ``porquê'' do alerta fiel por
-construção. Como uma pontuação discriminativa não é automaticamente uma probabilidade honesta, uma
+construção.
+
+Essa afirmação é fácil de fazer e merece ser mostrada, porque ``fiel por construção'' é exatamente o
+tipo de expressão de que um leitor deve desconfiar à primeira vista. O Excerto~\ref{lst:contrib} é o
+cálculo inteiro por trás da linha do ``porquê'': o mesmo escalador com que o modelo foi ajustado, um
+produto elemento a elemento entre coeficientes e entradas escaladas, e um passo de agrupamento para
+legibilidade. Não há aqui um segundo modelo, e nada é estimado. As contribuições somam exatamente aos
+log-odds, e é isso que separa isto de uma atribuição post-hoc que aproxima uma caixa preta e pode
+portanto discordar dela.
+
+\begin{lstlisting}[caption={A linha do ``porquê''. As contribuições são os próprios termos do modelo,
+e não uma aproximação deles.}, label={lst:contrib}]
+scaler = pipeline.named_steps["scale"]
+lr     = pipeline.named_steps["lr"]
+x_scaled = scaler.transform(np.asarray(x_row, dtype="float64").reshape(1, -1))[0]
+contribs = lr.coef_[0] * x_scaled            # exact additive terms of the log-odds
+
+grouped: dict[str, float] = {}
+for name, c in zip(feature_names, contribs, strict=True):
+    if   name.startswith("emb_"):    key = "headline content"   # 384 dims -> one term
+    elif name.startswith("sector_"): key = "sector"             # one-hot  -> one term
+    else:                            key = _FRIENDLY.get(name, name)
+    grouped[key] = grouped.get(key, 0.0) + float(c)
+return sorted(grouped.items(), key=lambda kv: -abs(kv[1]))
+\end{lstlisting}
+
+O agrupamento é uma decisão de apresentação com um custo que deve ser nomeado. Somar as $384$ dimensões
+do embedding num único termo ``headline content'' torna a linha legível, mas significa também que se
+diz ao utilizador que o texto contou sem se lhe dizer que palavras contaram. Isso é um limite honesto
+da exibição e não do modelo: os termos por dimensão continuam exatos e disponíveis, e nenhuma dimensão
+de um embedding de frase tem, de qualquer modo, um significado que valha a pena mostrar a um leigo.
+
+Como uma pontuação discriminativa não é automaticamente uma probabilidade honesta, uma
 calibração de Platt é ajustada apenas sobre o bloco de validação,
 \begin{equation}
 p \;=\; \sigma\!\big(a\,p_{\text{raw}} + c\big),
