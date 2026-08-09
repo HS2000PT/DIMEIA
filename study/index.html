@@ -1,3 +1,9 @@
+<!-- charset PRIMEIRO, e dentro dos primeiros 1024 bytes: sem isto o browser adivinha, e a
+     adivinha errada transforma "Nível" em "NÃ­vel". Só se nota abrindo o ficheiro
+     directamente — que é exactamente como este guia é usado, no telemóvel. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0E13">
 <title>InvestiGator — curso do zero até à defesa</title>
 <style>
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -174,7 +180,121 @@ footer { color: var(--mute); font-size: .74rem; margin-top: var(--s4);
    ═══════════════════════════════════════════════════════════════════════════ */
 const LEVELS = [
 {
-  n: 0, nome: "Os básicos", tempo: "~40 min",
+  n: 0, nome: "Antes de tudo", tempo: "~30 min",
+  titulo: "As quatro palavras que toda a gente usa e quase ninguém define",
+  lead: "Este nível não fala do teu projeto. Fala das ideias que precisas de ter na cabeça para as próximas páginas fazerem sentido. Se já souberes alguma, lê na mesma o quadro «no teu projeto» — é aí que a ideia genérica se agarra ao que construíste.",
+  passos: [
+  { t: "IA, aprendizagem automática, deep learning: três círculos dentro uns dos outros",
+    h: `<p>Imagina três círculos, um dentro do outro.</p>
+    <p>O maior é <b>Inteligência Artificial</b>: qualquer programa que faça algo que normalmente
+    exigiria uma pessoa. Um programa que joga xadrez seguindo regras escritas à mão é IA. Não
+    aprende nada, mas é IA.</p>
+    <p>Lá dentro está a <b>Aprendizagem Automática</b> (<i>machine learning</i>): o subconjunto em
+    que o programa <b>não recebe as regras</b> — descobre-as a partir de exemplos. Ninguém lhe
+    escreve «se a volatilidade for alta então…»; mostram-se-lhe milhares de casos e ele encontra a
+    relação sozinho.</p>
+    <p>E dentro desse está o <b>Deep Learning</b>: aprendizagem automática com redes neuronais de
+    muitas camadas. É o que está por trás do ChatGPT e do reconhecimento de imagem. Precisa de
+    muitos dados e de muito cálculo, e é o mais difícil de explicar por dentro.</p>
+    <p>A frase para guardar: <b>todo o deep learning é ML, todo o ML é IA, e o contrário é falso
+    nos dois casos.</b></p>`,
+    ex: `O teu sistema tem os três círculos, e saber apontar cada um é meio caminho para a
+    defesa. <b>IA sem aprendizagem:</b> o detetor de anomalias — é uma fórmula estatística fixa,
+    não aprendeu nada. <b>Aprendizagem automática:</b> o modelo de triagem, uma regressão
+    logística que tu treinaste. <b>Deep learning:</b> o SBERT, que transforma manchetes em
+    vetores — mas atenção, <b>esse não foi treinado por ti</b>, foi descarregado já treinado e
+    usado como está. Chama-se a isso usar um modelo <i>pré-treinado</i>.`,
+    q: "«Isto é um projeto de deep learning?» — como respondes sem exagerar nem desvalorizar?",
+    a: `<p><b>Não, e uso deep learning.</b> As duas coisas são verdade e a ordem importa.</p>
+    <p>«O único modelo que treinei é uma regressão logística. Uso deep learning pré-treinado — um
+    SBERT — para transformar manchetes em vetores, e a engenharia aí foi pô-lo a correr em 512 MB
+    sem framework, exportando-o para ONNX quantizado e provando que continua a devolver os mesmos
+    vizinhos. Treinar um modelo neuronal de raiz não se justificava: testei modelos mais fortes,
+    incluindo <i>gradient boosting</i>, e perderam.»</p>
+    <p>Isto é melhor do que dizer que sim, porque é verificável, e melhor do que dizer que não,
+    porque não desvaloriza a parte de engenharia que é genuinamente difícil.</p>` },
+
+  { t: "Supervisionado e não supervisionado: a diferença é ter as respostas",
+    h: `<p><b>Aprendizagem supervisionada</b> é estudar com as soluções ao lado. Dás ao computador
+    milhares de exemplos onde cada um já traz a resposta certa — «este dia foi material», «este
+    não foi» — e ele procura o padrão que liga as perguntas às respostas. Chama-se
+    <i>supervisionada</i> porque alguém (ou alguma regra) supervisionou, dando as respostas.</p>
+    <p><b>Não supervisionada</b> é o contrário: dás-lhe os exemplos <b>sem respostas</b> e
+    perguntas «que grupos existem aqui?». Ele não pode dizer se acertou, porque não há gabarito.
+    Só pode dizer «estas mil manchetes parecem-me quatro famílias».</p>
+    <p>A pergunta que decide qual usar não é técnica, é prática: <b>tens respostas?</b> Se não
+    tens, e não as consegues obter, o supervisionado está fora da mesa.</p>`,
+    ex: `Tens os dois, e um terceiro que não é nenhum. <b>Supervisionado:</b> a triagem — cada
+    exemplo traz o rótulo «houve movimento anormal ou não», e o rótulo foi produzido pelo teu
+    próprio código de estudo de evento, não à mão. <b>Não supervisionado:</b> o estudo de tipos de
+    acontecimento (Caso 5), onde agrupaste manchetes por semelhança sem lhes dizer que tipos
+    existiam. <b>Nenhum dos dois:</b> o detetor de anomalias, que é estatística pura — não há
+    treino nenhum, há uma fórmula.`,
+    q: "Porque é que o rótulo da triagem não foi escrito à mão por ti?",
+    a: `<p>Porque seriam 79.753 exemplos. Rotular isso à mão levaria meses e seria inconsistente.</p>
+    <p>A solução foi <b>derivar o rótulo dos preços</b>: um exemplo é «material» se, nos três dias
+    seguintes, a ação se moveu pelo menos 2% mais do que o mercado. Isso é medível por código,
+    para toda a gente, sem opinião.</p>
+    <p>E acrescenta a ressalva, que mostra que percebeste o que fizeste: <i>«é um proxy — mede
+    reação do mercado, não importância jornalística. Uma notícia importante que o mercado ignorou
+    conta como não-material.»</i> Dizer isto antes de te perguntarem vale mais do que responder
+    bem depois.</p>` },
+
+  { t: "Features e labels: as duas colunas que fazem tudo",
+    h: `<p>Toda a aprendizagem supervisionada é uma tabela. Cada linha é um exemplo. As colunas
+    dividem-se em dois grupos, e só dois.</p>
+    <p>As <b>features</b> são o que sabes <i>antes</i> de saber a resposta. São a pergunta.</p>
+    <p>O <b>label</b> (rótulo) é a resposta que queres aprender a dar.</p>
+    <p>É tudo. Treinar é procurar a relação entre as features e o label; usar o modelo é dar-lhe
+    features novas e receber um palpite de label.</p>
+    <p>A regra de ouro, e é onde quase todos os projetos falham: <b>uma feature só pode conter
+    informação que existiria no momento real da decisão.</b> Se uma coluna souber alguma coisa
+    sobre o futuro, o modelo parece brilhante nos testes e é inútil na vida real.</p>`,
+    ex: `No teu dataset cada linha é uma manchete. As <b>features</b> são nove números: a
+    volatilidade dos 20 dias anteriores, o momento dos 5 dias anteriores, o retorno do próprio dia
+    do evento, o comprimento da manchete, e cinco colunas de setor. O <b>label</b> é 0 ou 1:
+    houve movimento anormal ≥2% nos três dias seguintes?<br><br>
+    Repara na assimetria: as features olham para <b>trás</b>, o label olha para a <b>frente</b>.
+    É essa separação que torna o problema honesto.`,
+    q: "Porque é que o retorno do dia do evento é uma feature legítima, se o evento é nesse dia?",
+    a: `<p>Porque a decisão é tomada <b>ao fecho</b> desse dia. Ao fecho, o retorno do dia já
+    aconteceu e já é conhecido — não é informação do futuro, é informação do presente.</p>
+    <p>O label, esse, mede a janela que <b>começa</b> nesse fecho e vai até três dias depois. Não
+    há sobreposição: uma coisa acaba onde a outra começa.</p>
+    <p>É uma distinção fina e é exactamente o tipo de coisa que um arguente experiente testa. Se
+    quiseres fechar a questão de vez: <i>«e tenho um teste que muta os preços do futuro e exige
+    que nenhuma feature mude e que o rótulo mude.»</i></p>` },
+
+  { t: "Overfitting: decorar em vez de perceber",
+    h: `<p>Um aluno estuda para um exame com dez exercícios resolvidos. Pode fazer duas coisas.</p>
+    <p>Pode <b>perceber o método</b> — e então resolve exercícios novos.</p>
+    <p>Ou pode <b>decorar as dez respostas</b> — e então tem 100% se o exame for igual, e zero se
+    for diferente.</p>
+    <p>A segunda coisa é <b>overfitting</b>: o modelo agarrou-se aos detalhes e ao ruído dos
+    exemplos que viu, em vez do padrão que se repete. O sinal é sempre o mesmo: <b>excelente nos
+    dados de treino, mau em dados novos</b>.</p>
+    <p>O oposto chama-se <b>underfitting</b>: o modelo é simples demais para o padrão, e é mau nos
+    dois. Menos falado, e mais fácil de detetar.</p>
+    <p>É por isto que nunca se avalia um modelo nos dados com que foi treinado. Não é burocracia:
+    é a única forma de distinguir perceber de decorar.</p>`,
+    ex: `Duas defesas tuas contra isto. A primeira é o modelo ser <b>pequeno</b>: uma regressão
+    logística com nove números tem pouca capacidade para decorar 28 mil exemplos. A segunda é a
+    <b>divisão temporal</b>: treinas no passado, testas no futuro, e deitas fora uma faixa de dias
+    entre os blocos.<br><br>
+    E há uma prova indireta de que não houve overfitting: o <i>gradient boosting</i>, que é muito
+    mais flexível e portanto muito mais capaz de decorar, saiu-se <b>pior</b> (0,469 contra 0,542).
+    Se o problema fosse falta de capacidade, teria ganho.`,
+    q: "Se o teu modelo tivesse feito overfitting, o que é que verias nos números?",
+    a: `<p><b>Uma diferença grande entre treino e teste.</b> PR-AUC alto no bloco de treino e
+    muito mais baixo no de teste.</p>
+    <p>Não é o que se vê. O que se vê é um modelo modesto em toda a parte: 0,538 no teste contra
+    uma prevalência de 0,378. Isso é o retrato de um <b>sinal fraco</b>, não de um modelo que
+    decorou.</p>
+    <p>E é uma distinção que te favorece: o problema é difícil, não a solução é má. Um sinal fraco
+    honestamente medido é um resultado; um sinal forte que não se reproduz é um erro.</p>` }]
+},
+{
+  n: 1, nome: "Os básicos", tempo: "~40 min",
   titulo: "O que é IA, na medida exacta em que este trabalho a usa",
   lead: "Não vou ensinar-te inteligência artificial toda. Vou ensinar-te as seis ideias que a tua tese usa, e nada mais — porque só essas é que tens de defender. Se alguma frase aqui não fizer sentido, para e lê outra vez antes de avançar.",
   passos: [
@@ -310,10 +430,63 @@ last   = float(r.iloc[-1])         <span class="c"># o dia que estamos a julgar<
     pela função logística → 0,668 → passa pelo Platt (a = 3,700, b = −2,313) → <b>0,539</b>, que é
     o 54% que saiu no canal.</p>
     <p>Isto é a melhor resposta que tens para "os números são rastreáveis?": um alerta real,
-    reproduzido do início ao fim.</p>` }]
+    reproduzido do início ao fim.</p>` },
+
+  { t: "Deteção de anomalias: encontrar o estranho sem ter exemplos do estranho",
+    h: `<p>Quase toda a aprendizagem supervisionada assume que tens exemplos das duas classes. Na
+    deteção de anomalias isso falha por definição: o que procuras é <b>raro</b>, e às vezes nunca
+    foi visto. Não podes mostrar mil exemplos de «dia anormal» porque, se fossem mil, não seriam
+    anormais.</p>
+    <p>A saída é inverter o problema. Em vez de aprender o que é <i>estranho</i>, aprende-se o que
+    é <b>normal</b>, e chama-se anomalia a tudo o que se afasta o suficiente. É por isso que a
+    área é dominada por métodos <b>não supervisionados</b>.</p>
+    <p>A pergunta seguinte é «afasta-se de quê?». E aqui há uma escolha que decide tudo: afastado
+    em <b>termos absolutos</b>, ou afastado <b>para aquele caso concreto</b>? Uma queda de 3% é
+    banal numa ação volátil e enorme numa ação calma.</p>`,
+    ex: `O teu detetor responde à segunda. Define «normal» como a média e o desvio-padrão dos
+    <b>20 dias anteriores daquela ação</b>, e mede o dia de hoje em desvios-padrão. É a fórmula do
+    <i>z-score</i>.<br><br>
+    O argumento mais forte que tens sobre isto <b>não precisa de rótulos nenhuns</b>, e é por isso
+    que é o principal: um bom detetor universal devia disparar a taxa parecida em ações diferentes.
+    O teu varia <b>0,015</b> entre os quinze tickers; um limiar fixo de 3% varia <b>0,344</b>.
+    Vinte vezes mais consistente, sem precisar de saber quais dias eram «mesmo» anómalos.`,
+    q: "Porque é que o argumento da taxa de disparo é melhor do que o F1 de 0,516?",
+    a: `<p>Porque <b>não depende de um rótulo discutível</b>.</p>
+    <p>O F1 é medido contra um proxy — «movimento no percentil 99 daquela ação» — que é ele próprio
+    relativo à volatilidade. Há alguma circularidade: estás a avaliar um detetor
+    volatilidade-relativa contra um rótulo volatilidade-relativo.</p>
+    <p>A consistência da taxa de disparo não tem esse problema. É uma propriedade que se observa
+    diretamente: ou o detetor dispara a taxa parecida em ações diferentes, ou não dispara. Por isso
+    é a evidência principal, e o F1 aparece como apoio — e a tese diz isso explicitamente.</p>` },
+
+  { t: "Séries temporais: porque é que o tempo estraga os métodos normais",
+    h: `<p>Em aprendizagem automática costuma dividir-se os dados <b>ao acaso</b>: 70% para
+    treinar, 30% para testar. Com dados no tempo, isso é um erro grave.</p>
+    <p>Duas razões. A primeira é óbvia depois de dita: se treinares com dias de 2023 e testares com
+    dias de 2020, estás a usar o futuro para prever o passado — coisa que na vida real não podes
+    fazer. A segunda é mais subtil: dias próximos <b>parecem-se</b>. Se o dia 10 for para treino e
+    o 11 para teste, o modelo já viu quase a mesma informação, e o teste fica otimista.</p>
+    <p>A correção é dividir <b>por tempo</b>: passado para treinar, futuro para testar. E, quando o
+    rótulo olha para a frente vários dias, deitar fora uma faixa na fronteira — senão um exemplo do
+    fim do treino é rotulado por preços que já pertencem ao bloco seguinte.</p>`,
+    ex: `Fazes as duas coisas. Divides <b>por dia único</b> (todas as manchetes do mesmo dia caem
+    no mesmo bloco, senão duas manchetes da mesma empresa no mesmo dia ficariam uma de cada lado a
+    partilhar o rótulo) e deitas fora <b>5 dias</b> depois de cada fronteira. Custa <b>820
+    linhas</b>, e a tese reporta esse custo em vez de o esconder.<br><br>
+    Há uma consequência que aparece nos resultados e é bom saber explicar: os blocos não têm o
+    mesmo tamanho. O teste tem 32.649 linhas e o treino 28.574, embora o treino cubra 70% dos
+    <i>dias</i>. É porque a densidade de notícias cresce: só 2023 tem 44% dos exemplos.`,
+    q: "«Porque é que não usaram validação cruzada normal?»",
+    a: `<p><b>Porque baralharia o tempo.</b></p>
+    <p><i>«A validação cruzada normal distribui os exemplos ao acaso pelas dobras, o que significa
+    treinar com dias posteriores aos de teste. Isso mede uma capacidade que o sistema real nunca
+    tem, e as estimativas saem otimistas.»</i></p>
+    <p>E acrescenta a parte que mostra que não foi preguiça: <i>«uso validação cruzada num sítio,
+    quando avalio a recalibração ao vivo, porque aí a pergunta é outra — quanto melhora o
+    mapeamento de probabilidades — e não envolve prever o futuro a partir do futuro.»</i></p>` }]
 },
 {
-  n: 1, nome: "A tese", tempo: "~25 min",
+  n: 2, nome: "A tese", tempo: "~25 min",
   titulo: "O que este trabalho quer, para quem, e porque é uma tese",
   lead: "Agora que sabes o vocabulário, a pergunta é outra: o que estás a afirmar, e porque é que isso é trabalho académico e não uma app. Este nível é o que tens de saber dizer nos primeiros três minutos da defesa.",
   passos: [
@@ -403,10 +576,10 @@ last   = float(r.iloc[-1])         <span class="c"># o dia que estamos a julgar<
     a: `<p><i>«Sim, e numa tese de Engenharia de IA é isso que se pede. O núcleo é raciocínio baseado
     em casos, não algo ad hoc. E a parte de engenharia está nas decisões: quatro capacidades
     construídas e não ligadas porque a medição não as sustentou, um modelo exportado para ONNX para
-    caber num contentor de 512 MB com a fidelidade provada, e 646 testes.»</i></p>` }]
+    caber num contentor de 512 MB com a fidelidade provada, e 656 testes.»</i></p>` }]
 },
 {
-  n: 2, nome: "Como funciona", tempo: "~35 min",
+  n: 3, nome: "Como funciona", tempo: "~35 min",
   titulo: "O sistema, peça por peça, na ordem em que os dados passam",
   lead: "Segue um dia real através do sistema. Cada peça responde a uma das três perguntas, e no fim vês porque é que 9 de cada 10 varreduras não mandam nada — o que é uma decisão, não uma falha.",
   passos: [
@@ -536,7 +709,148 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
     <p>É o mesmo princípio que te fez errar na latência: medir a coisa certa, não a coisa fácil.</p>` }]
 },
 {
-  n: 3, nome: "O código", tempo: "~30 min",
+  n: 4, nome: "Depois de treinado", tempo: "~35 min",
+  titulo: "O que acontece ao modelo depois de o treino acabar",
+  lead: "Este é o nível que quase nenhum trabalho de mestrado sabe defender, e é onde tu tens vantagem — porque mediste. Quatro palavras que soam parecidas significam coisas diferentes, e confundi-las é a forma mais rápida de perder credibilidade numa defesa.",
+  passos: [
+  { t: "Inferência, treino, re-treino, aprendizagem contínua: quatro coisas diferentes",
+    h: `<p>São usadas como sinónimos e não são. Por ordem de frequência com que acontecem:</p>
+    <p><b>Inferência</b> é usar o modelo: dás-lhe features, ele devolve um número. Os pesos não
+    mexem. Acontece milhares de vezes por dia.</p>
+    <p><b>Treino</b> é descobrir os pesos a partir de exemplos. Acontece <i>uma vez</i>, offline,
+    e demora.</p>
+    <p><b>Re-treino</b> é repetir o treino com dados mais recentes, produzindo um modelo novo.
+    Acontece quando alguém decide que vale a pena.</p>
+    <p><b>Aprendizagem contínua</b> é o re-treino a acontecer <b>automaticamente</b>, à medida que
+    os dados chegam, sem ninguém carregar num botão.</p>
+    <p>A confusão é perigosa porque as pessoas ouvem «o sistema aprende» e imaginam a quarta,
+    quando quase sempre é a primeira.</p>`,
+    ex: `No teu sistema: <b>inferência</b> corre a cada 60 segundos, no worker. <b>Treino</b>
+    aconteceu uma vez, na tua máquina, e produziu o ficheiro <code>triage_context_lr.joblib</code>.
+    <b>Re-treino</b> é possível — o comando está documentado e os dados acumulam-se — mas
+    <b>nunca correu</b>. <b>Aprendizagem contínua</b> não existe, e a tese diz isso por escrito.`,
+    q: "«O vosso sistema aprende com os alertas que envia?»",
+    a: `<p><b>Não, e a distinção interessa.</b> Diz isto:</p>
+    <p><i>«O modelo faz inferência com pesos fixos. O que o sistema faz continuamente é outra
+    coisa: regista cada decisão e, dias depois, rotula-a com o que realmente aconteceu ao preço.
+    Isso é recolha de rótulos e monitorização, não aprendizagem — nenhum peso muda. É a
+    pré-condição de um re-treino, e o re-treino nunca foi executado.»</i></p>
+    <p>Chamar aprendizagem contínua a isto seria exagero, e um arguente que peça para ver o código
+    de re-treino automático não o encontraria.</p>` },
+
+  { t: "Onde vive o modelo, e como lá chegou",
+    h: `<p>«Onde está o modelo?» é uma pergunta concreta com uma resposta concreta, e muita gente
+    só sabe responder com um aceno de mão.</p>
+    <p>Um modelo treinado é <b>um ficheiro</b>. Contém os pesos que o treino descobriu, mais o que
+    for preciso para os aplicar. Passa por três sítios: a máquina onde é <b>treinado</b>, o sítio
+    onde é <b>guardado</b>, e o processo que o <b>carrega</b> para fazer inferência.</p>`,
+    ex: `O teu caminho, todo: treinaste na tua máquina (a que tem o corpus de 691 MB, que nunca
+    vai para o repositório). O resultado são dois ficheiros ao lado um do outro:
+    <code>triage_context_lr.joblib</code> — 1,8 KB, os pesos — e <code>.json</code> com os
+    metadados: a semente, o tamanho dos blocos, a prevalência, e as métricas de teste.<br><br>
+    Esse par <b>é</b> um registo de modelos, ainda que pequeno: qualquer pessoa consegue dizer que
+    dados produziram aqueles pesos. O ficheiro segue no repositório (é minúsculo), é implantado com
+    o código, e o worker carrega-o uma vez ao arrancar.<br><br>
+    E há um teste que garante que ele continua a ser o que diz ser: carrega o ficheiro, recalcula
+    as métricas sobre o mesmo bloco de teste e exige que batam <b>exactamente</b>. Se alguém
+    re-treinar com outra semente, a suite parte.`,
+    q: "«Como sabem que o modelo que avaliaram é o que está a correr?»",
+    a: `<p>Duas respostas, e a segunda é a boa.</p>
+    <p>Primeiro: <i>«é literalmente o mesmo ficheiro — o que avaliei é o que está implantado.»</i></p>
+    <p>Segundo, e mais forte: <i>«e não é preciso acreditar em mim. Há um teste que carrega o
+    ficheiro implantado, recalcula as quatro métricas que a tese cita e exige igualdade exacta.
+    Se divergissem, a suite falhava.»</i></p>
+    <p>Para o SBERT a resposta é diferente e vale a pena saber: aí o modelo é descarregado e
+    verificado contra um <b>SHA256 fixo</b>, portanto um download corrompido falha fechado em vez
+    de mudar em silêncio o que o sistema entende por «parecido».</p>` },
+
+  { t: "Drift: o mundo muda, o modelo fica quieto",
+    h: `<p>Um modelo aprende a relação que existia <b>nos dados que viu</b>. Se o mundo mudar, a
+    relação muda e o modelo continua igual. Chama-se a isto <b>drift</b>.</p>
+    <p>Há duas variedades. No <b>drift de dados</b>, as entradas mudam de distribuição — passas a
+    ver dias muito mais voláteis do que os do treino. No <b>drift de conceito</b>, a própria
+    relação entre entradas e resposta muda.</p>
+    <p>Mede-se comparando distribuições. O índice mais usado na prática chama-se <b>PSI</b>, e tem
+    faixas convencionais: abaixo de 0,10 estável, entre 0,10 e 0,25 moderado, acima de 0,25
+    significativo.</p>`,
+    ex: `Mediste, e o resultado é específico em vez de vago. Entre o bloco de treino e o de teste,
+    a <b>volatilidade pré-evento</b> tem PSI <b>0,281</b> — banda significativa. As features de
+    retorno quase não mexem (0,020 e 0,014).<br><br>
+    A explicação não é misteriosa: a janela de treino contém o choque de 2020. O modelo aprendeu
+    num mundo mais turbulento do que aquele em que foi avaliado.<br><br>
+    E há um pormenor que só se vê olhando: a prevalência do rótulo <b>oscila</b> em vez de ter
+    tendência — 0,385, depois 0,470, depois 0,378. Comparar só as pontas esconderia uma excursão
+    de um quinto.`,
+    q: "«O vosso modelo foi treinado com dados de 2023 e corre em 2026. Isso não é um problema?»",
+    a: `<p><b>É, e sei o tamanho dele.</b> Essa é a resposta que separa quem mediu de quem não
+    mediu.</p>
+    <p><i>«Medi de duas maneiras independentes. A distância está concentrada numa única feature, a
+    volatilidade, com PSI 0,281 — significativo mas não extremo. As outras estão estáveis. E a
+    prevalência do alvo oscila em vez de derivar, o que explica por que motivo os números
+    congelados sobrevivem: o protocolo já atravessa uma dessas oscilações.»</i></p>
+    <p>Fecha com o que isso implica, que é a parte útil: <i>«o que isto significa é que o resultado
+    de 2023 não deve ser lido como promessa sobre 2026, e o 0,25 dá-me um gatilho verificável para
+    decidir re-treinar em vez de uma intuição.»</i></p>` },
+
+  { t: "O sistema aprende sozinho? Não — e é isto que tens de saber dizer",
+    h: `<p>Esta é a pergunta que mais vezes apanha alunos desprevenidos, porque a resposta honesta
+    parece uma fraqueza e não é.</p>
+    <p>Aprendizagem contínua a sério exige responder a uma lista: de onde vêm os dados novos, onde
+    são guardados, quando entram, como são validados, como se treina a versão nova, como se sabe
+    qual está em produção, como se volta atrás se piorar, e como se impede que dados errados
+    contaminem o modelo.</p>
+    <p>Se não consegues responder a todas, <b>não tens aprendizagem contínua</b>. E dizê-lo é
+    melhor do que ser apanhado.</p>`,
+    ex: `O teu sistema tem metade da lista, e é a metade difícil. <b>De onde vêm os dados novos:</b>
+    cada decisão de triagem é registada com a probabilidade e a manchete. <b>Onde são guardados:</b>
+    numa branch de dados versionada, não no disco efémero do servidor. <b>Como são validados:</b>
+    dias depois, um passo de pós-validação vai buscar os preços reais e aplica a MESMA regra de
+    rótulo do treino.<br><br>
+    O que <b>não</b> existe: nada re-treina automaticamente, não há versionamento de modelos em
+    produção, não há rollback, não há humano no ciclo. O comando de re-treino está documentado e
+    nunca foi corrido.`,
+    q: "«Se quisessem que o modelo melhorasse com o tempo, o que fariam?»",
+    a: `<p>Responde com o mecanismo <b>e</b> com a razão pela qual não o fizeste, que é a parte
+    forte.</p>
+    <p><i>«O mecanismo já está: 1.087 decisões registadas, 530 já rotuladas pelo desfecho. O passo
+    seguinte seria re-ajustar a camada de calibração sobre elas — dois parâmetros, que 530 pontos
+    chegam para estimar. Re-treinar os nove coeficientes não, porque as decisões vêm agrupadas em
+    145 pares empresa-dia e isso seria ajustar ruído.»</i></p>
+    <p>E depois o remate, que é o que vais querer ter dito: <i>«mas medi antes de o fazer, e a
+    medição disse para não fazer. Explico já a seguir.»</i></p>` },
+
+  { t: "O achado que inverteu o sinal — e porque é a tua melhor história",
+    h: `<p>Um resultado negativo bem medido vale mais numa defesa do que um resultado positivo mal
+    medido. Este é o teu.</p>
+    <p>Duas causas diferentes fazem um gate parecer inútil, e pedem correções opostas. Se o score
+    <b>ordena</b> bem e só os números estão na escala errada, recalibra-se — dois parâmetros. Se o
+    score <b>não ordena</b>, recalibrar não serve de nada, porque a calibração é uma função
+    crescente: preserva a ordem exactamente. Muda os números, não muda quem fica à frente de quem.</p>
+    <p>Distinguir as duas é a diferença entre «o limiar está mal posto» e «o modelo não serve
+    aqui».</p>`,
+    ex: `Mediste na população implantada: <b>ROC-AUC 0,494</b>, intervalo de confiança
+    <b>[0,391, 0,601]</b>. Centrado no acaso. Não há ordenação para preservar.<br><br>
+    E há uma explicação, que é o que transforma isto num resultado em vez de uma queixa: a
+    materialidade entre as decisões registadas corre a <b>0,626</b>, contra <b>0,378</b> no treino.
+    Só se registam decisões para manchetes que já passaram os filtros de relevância e frescura. Os
+    filtros baratos a montante já tinham feito o trabalho que o modelo foi treinado para fazer.<br><br>
+    O modelo não está avariado. Está <b>redundante</b>.`,
+    q: "«Então a vossa componente de machine learning não funciona?»",
+    a: `<p>Não fujas. Concorda com a parte verdadeira e delimita-a.</p>
+    <p><i>«Em produção, não acrescenta poder de seleção — mediu-se, ROC-AUC 0,494 com intervalo a
+    conter o acaso. Em dados retidos do corpus de treino, acrescenta: a precisão dentro do
+    orçamento sobe de 0,163 para 0,632. As duas coisas são verdade porque são populações
+    diferentes, e a tese diz as duas.»</i></p>
+    <p>Depois dá a lição, que é o que um arguente quer ouvir de um engenheiro: <i>«o que isto
+    ensina é sobre pôr um componente aprendido DENTRO de uma pipeline. Foi avaliado isolado e
+    implantado atrás de filtros, portanto nunca foi avaliado na distribuição que ia ver. É um erro
+    de integração, não de modelação, e só apareceu porque instrumentei o gate.»</i></p>
+    <p>E se perguntarem porque é que não o desligaste: <i>«porque é a parte instrumentada. Desligá-lo
+    acabava com a medição que revelou o problema. Como controlo de volume continua a funcionar —
+    suprime três quintos — e cada item que passa leva a razão exacta por que passou.»</i></p>` }]
+},
+{
+  n: 5, nome: "O código", tempo: "~30 min",
   titulo: "Onde é que cada coisa vive, e o que é que cada ficheiro faz",
   lead: "Se o júri abrir o repositório, tens de saber navegar nele. Este nível liga cada peça do nível anterior ao ficheiro real, com o código que importa.",
   passos: [
@@ -547,13 +861,13 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
       <tr><td><code>app/</code></td><td>o painel web (Streamlit)</td></tr>
       <tr><td><code>scripts/</code></td><td>coisas que se correm: o runner de alertas, as avaliações</td></tr>
       <tr><td><code>models/</code></td><td>o modelo treinado, versionado</td></tr>
-      <tr><td><code>tests/</code></td><td>646 testes</td></tr>
+      <tr><td><code>tests/</code></td><td>656 testes</td></tr>
       <tr><td><code>docs/evaluation/</code></td><td>todos os resultados, gerados por script</td></tr>
       <tr><td><code>thesis/</code> e <code>thesis-pt/</code></td><td>as duas teses (EN e PT, em sincronia)</td></tr>
     </table></div>
     <p>Regra de arquitetura que deves saber dizer: <b>a lógica é pura e o acesso à rede é tardio</b>.
     As funções que decidem coisas não fazem pedidos HTTP — recebem dados já buscados. É por isso que
-    646 testes correm em segundos e sem internet.</p>`,
+    656 testes correm em segundos e sem internet.</p>`,
     ex: `Exemplo concreto dessa separação em <code>news_fetcher/fetcher.py</code>: há
     <code>parse_finnhub_news(payload)</code>, que é pura e testável, e há
     <code>fetch_finnhub_company_news(...)</code>, que só faz o pedido e chama a primeira. Testas a
@@ -610,7 +924,7 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
       em silêncio o que o sistema entende por "semelhante".</li>
     </ul>
     <p>Saber distinguir os dois casos é o que mostra que a escolha foi pensada.</p>` },
-  { t: "Os testes: o que é que 646 testes provam, e o que não provam",
+  { t: "Os testes: o que é que 656 testes provam, e o que não provam",
     h: `<p>Não decores o número. Sabe dizer <b>que tipos</b> de teste há, porque isso é que mostra
     critério:</p>
     <ul>
@@ -637,7 +951,7 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
     registados.»</i></p>` }]
 },
 {
-  n: 4, nome: "Os números", tempo: "~25 min",
+  n: 6, nome: "Os números", tempo: "~25 min",
   titulo: "Cada número que vais dizer em voz alta, e de onde vem",
   lead: "Este nível é para decorar — mas decorar com compreensão. Para cada número: o que mede, contra o que se compara, e a frase de uma linha que o explica.",
   passos: [
@@ -663,7 +977,7 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
     a: `<p>O <b>0,542 contra 0,496</b>. É a linha de base simples a ganhar ao modelo mais elaborado.
     Uma tese que quisesse impressionar não teria este número lá — tê-lo é o que dá credibilidade a
     todos os outros.</p>` },
-  { t: "Os quatro estudos que acabam em «não»",
+  { t: "Os cinco estudos que acabam em «não»",
     h: `<p>São a parte mais forte do trabalho em engenharia, e tens de os saber de cor porque são
     contra-intuitivos: construíste, mediste, e <b>não ligaste</b>.</p>
     <div class="scroll"><table>
@@ -672,18 +986,28 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
       <tr><td>predição conformal</td><td>a 90% de cobertura, decisão definida em só <b>39,5%</b></td><td>não entra no produto</td></tr>
       <tr><td>deriva (drift)</td><td>PSI 0,281 na volatilidade — significativa</td><td>limitação medida, não corrigida</td></tr>
       <tr><td>convergência multi-sinal</td><td>ganha em 1 de 3 orçamentos</td><td>não entra</td></tr>
+      <tr><td><b>o gate de triagem em produção</b></td><td><b>ROC-AUC 0,494</b>, IC [0,391, 0,601]</td><td>afirmação retirada; fica como controlo de volume</td></tr>
     </table></div>
     <p>O da conformal é o mais elegante: dá uma garantia estatística real, mas o preço é que em 60%
-    dos casos não sabe decidir. E isso <b>explica o negativo da RQ4 por um ângulo independente</b>.</p>`,
+    dos casos não sabe decidir. E isso <b>explica o negativo da RQ4 por um ângulo independente</b>.</p>
+    <p>O quinto é o mais recente e o mais difícil de encaixar, porque contradiz um número que a
+    própria tese cita como sucesso (0,163 → 0,632). Não há contradição: são <b>populações
+    diferentes</b>. Em dados retidos do corpus de treino o mecanismo funciona; na população que o
+    produto lhe dá, não. E a tese diz as duas coisas, em vez de citar só a que favorece.</p>`,
     ex: `Uma armadilha que apanhaste tu mesmo: a garantia da predição conformal é <b>marginal</b>
     (vale em média sobre os casos), não <b>condicional</b> (não vale para um caso individual). A tese
     dizia que respondia "exactamente" à lacuna do caso individual — e não responde. Foi corrigido
     para "estreita a lacuna, embora a garantia continue a ser marginal". É o mal-entendido clássico
     do método, e tu tens a versão certa escrita.`,
     q: "«Porque tantos resultados negativos?»",
-    a: `<p><i>«Porque foram quatro comparações pré-comprometidas em que a opção transparente ganhou,
-    e porque um trabalho que só reporta o que correu bem é um trabalho em que não se pode confiar.
-    Cada uma delas está construída, medida e desligada, com a razão ao lado.»</i></p>` },
+    a: `<p><i>«Porque foram comparações pré-comprometidas em que a opção transparente ganhou, e
+    porque um trabalho que só reporta o que correu bem é um trabalho em que não se pode confiar.
+    Cada uma está construída, medida e desligada, com a razão ao lado.»</i></p>
+    <p>E se quiseres desarmar a pergunta de vez, vira-a: <i>«todos os cinco foram retirados por
+    medições minhas, não por revisão de outra pessoa. É esse o comportamento que se espera de uma
+    avaliação desenhada antes das experiências — tem de ser capaz de dizer não. O apêndice tem uma
+    matriz que marca cada afirmação como mantida, estreitada ou retirada, e as retiradas ficam lá
+    de propósito.»</i></p>` },
   { t: "Os defeitos que encontraste em ti mesmo — e porque contam a teu favor",
     h: `<p>Se o júri te perguntar pelo momento em que percebeste mais, é aqui. Três, por ordem de
     quanto ensinam:</p>
@@ -713,7 +1037,7 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
     a fixá-lo.»</i></p>` }]
 },
 {
-  n: 5, nome: "Defender", tempo: "~20 min",
+  n: 7, nome: "Defender", tempo: "~20 min",
   titulo: "As perguntas difíceis, e a postura",
   lead: "Último nível. Não são truques de retórica — são as perguntas para as quais tens resposta verdadeira, e a maior parte delas está resolvida porque o trabalho foi feito de determinada maneira, não porque tens uma frase pronta.",
   passos: [
@@ -786,7 +1110,10 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
 }];
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-const KEY = "investigator-curso-v1";
+// v2: a numeração dos níveis mudou (nível novo à frente), por isso o progresso
+// antigo já não alinha. Trocar a chave é mais honesto do que mostrar passos
+// marcados que correspondem a outra lição.
+const KEY = "investigator-curso-v2";
 let feito = new Set();
 try { feito = new Set(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch (e) { feito = new Set(); }
 const guardar = () => { try { localStorage.setItem(KEY, JSON.stringify([...feito])); } catch (e) {} };
