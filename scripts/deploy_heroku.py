@@ -41,7 +41,10 @@ def _run(*cmd: str) -> str:
 
 
 def _token() -> str:
-    out = subprocess.run(["heroku", "auth:token"], capture_output=True, text=True, cwd=RAIZ)
+    # `shell=True` no Windows: o `heroku` é um `.cmd`, e o `CreateProcess` não o encontra
+    # sem passar pelo interpretador de comandos. Sem isto sai `WinError 2`.
+    out = subprocess.run("heroku auth:token", capture_output=True, text=True, cwd=RAIZ,
+                         shell=True)  # noqa: S602 (comando fixo, sem input do utilizador)
     # ⚠️ `heroku auth:token` sai com código 1 E imprime o token na mesma (avisa que o token
     # é de curta duração). Um `set -e` mata o script aqui, e foi o que aconteceu na primeira
     # tentativa desta sessão. Não se verifica o código de saída: verifica-se o TOKEN.
