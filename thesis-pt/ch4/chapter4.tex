@@ -603,36 +603,259 @@ empresa num período calmo pode assim ficar abaixo do limiar de alerta e ainda a
 da sua amplitude anual, e o cartão reporta os dois factos --- normal para as semanas recentes, raro para
 o ano --- e deixa a ponderação ao leitor.
 
-Uma capacidade está deliberadamente ausente da página, e dizê-lo é mais útil do que dar a entender o
-contrário. A recuperação de precedentes não corre no browser: medido, carregar o codificador de frases
-acrescenta cerca de sete segundos a uma carga a frio, que é a maior parte do orçamento que a interface
-tem. O detalhe enuncia-o no próprio sítio, em vez de deixar uma lacuna silenciosa, e aponta para onde a
-resposta de facto vive, que são os próprios alertas de notícia, cada um com os seus precedentes
-recuperados e o desfecho medido a $+1$, $+3$ e $+5$ dias.
+A página não faz cálculo nenhum. O worker escreve um instantâneo pré-computado no fim de cada ciclo,
+onde o custo de ir buscar os preços já foi pago, e a página limita-se a lê-lo. Medido, construir a
+grelha a partir da rede custa cerca de cinco segundos, contra onze milissegundos para ler o
+ficheiro. E como um instantâneo que deixasse de ser escrito pareceria, em silêncio, exatamente um
+mercado calmo, a página mostra a idade do instantâneo: a desatualização vê-se no ecrã em vez de ser
+inferida.
 
-Esse orçamento é também a razão pela qual a página não faz cálculo nenhum. O worker escreve um
-instantâneo pré-computado no fim de cada ciclo, onde o custo de ir buscar os preços já foi pago, e a
-página limita-se a lê-lo. Medido, construir a grelha a partir da rede custa cerca de cinco segundos,
-contra onze milissegundos para ler o ficheiro. E como um instantâneo que deixasse de ser escrito
-pareceria, em silêncio, exatamente um mercado calmo, a página mostra a idade do instantâneo: a
-desatualização vê-se no ecrã em vez de ser inferida.
+\subsection{Separar o servidor do cliente, e o que isso comprou}
+\label{sec:investigator_client}
+
+Uma revisão anterior desta interface renderizava do lado do servidor, re-executando todo o seu script
+a cada interação. Esse desenho obrigou a retirar uma capacidade do produto: a recuperação de
+precedentes foi \emph{removida} da página porque carregar o codificador de frases e a base de casos
+acrescentava, medido, cerca de sete segundos a uma carga a frio, que é a maior parte do orçamento que
+a interface tem. Dentro de uma única página renderizada isso é uma escolha genuína entre a capacidade
+e a velocidade, e ganhou a velocidade.
+
+Separar as duas coisas elimina a escolha em vez de a resolver. O servidor responde a pedidos e o
+cliente guarda o estado, portanto o que é caro pode ser pedido \emph{depois} da primeira pintura e
+pode chegar quando chegar. As medições estão na Tabela~\ref{tab:client_cost}: toda a superfície de
+abertura passa a chegar num único pedido, e as interações que antes custavam uma ida ao servidor ---
+mudar o intervalo do gráfico, ligar ou desligar uma série, paginar uma tabela --- passaram a ser
+operações sobre um vetor já em memória. A recuperação de precedentes, a terceira das três perguntas
+em torno das quais este trabalho se organiza, voltou à página pela sua própria rota.
+
+\begin{table}[ht]
+\centering
+\caption[Custo da interface antes e depois de separar cliente e servidor]{Custo medido da interface,
+antes e depois de separar o cliente do servidor. As duas primeiras linhas são cargas a frio da
+superfície de abertura; a terceira é a mediana de cinco mudanças de intervalo na vista de detalhe,
+medida no browser. A última linha não é um número de velocidade mas de capacidade: o desenho anterior
+teve de retirar a recuperação de precedentes da página para caber no seu orçamento de carga.}
+\label{tab:client_cost}
+\begin{tabular}{lrr}
+\toprule
+& Renderizado no servidor & Estado no cliente \\
+\midrule
+Superfície de abertura, a frio     & 5,5--6,2\,s & 1,0\,s \\
+Pedidos de dados para essa superfície & 12       & 1 \\
+Mudar o intervalo do gráfico       & $\approx$750\,ms & 2,5--7,3\,ms \\
+Chamadas de rede para mudar o intervalo & 1     & 0 \\
+Recuperação de precedentes na página & removida & presente \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Dois detalhes dessa tabela importam mais do que os totais. O zero da quarta linha é a afirmação
+estrutural: mudar de intervalo é uma fatia de uma série que o browser já tem, portanto não pode
+falhar, não pode ficar em fila atrás de um pedido lento, e não custa nada repetir. E a vista de
+abertura passa a ser, por defeito, a sessão em curso e não uma janela histórica, o que obrigou a
+acrescentar uma série intradiária de cinco minutos ao instantâneo: sem ela o intervalo por defeito
+não tinha nada para desenhar, e um produto cujo primeiro ecrã está vazio responde à pergunta errada.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/app_dashboard.png}
-\caption[O dashboard ao vivo, uma captura genuína]{O dashboard público (uma captura genuína, não um
-mockup), superfície de abertura, capturado a partir do código implantado durante operação ao vivo. Um
-cartão por empresa, ordenados por quão raro foi o dia. Cada cartão responde às mesmas três perguntas da
-Secção~\ref{sec:intro_problem} sob os mesmos títulos e pela mesma ordem, inclusive num dia em que a
-resposta a todas elas é que não aconteceu nada de especial: a frase de topo diz exatamente isso, e cada
-cartão evidencia a sua própria quietude com uma contagem em vez de a afirmar. A raridade é dada duas
-vezes: como uma frase que qualquer pessoa pode verificar (para a Microsoft, a $+0,03\%$, ``$247$ dos
-últimos $249$ dias moveram-se isto ou mais'') e como uma tira de marcas, para que um leitor possa
-comparar empresas sem ler um número. A linha de atribuição nomeia o motor em palavras e, quando uma
-componente puxou contra o movimento, di-lo em vez de o esconder: a AMD caiu $1,22\%$ ``sobretudo a
-própria empresa'', com o mercado e o seu setor a puxarem ao contrário.}
+\includegraphics[width=0.95\textwidth]{figures/app_v5_overview.png}
+\caption[A interface ao vivo, uma captura genuína]{A interface pública (uma captura genuína, não um
+mockup), superfície de abertura, capturada a partir do sistema implantado durante operação ao vivo. Um
+cartão por empresa, ordenados por quão raro foi o dia, nenhum privilegiado. Cada cartão enuncia o seu
+veredicto em palavras e evidencia-o depois com uma contagem, em vez de o afirmar, inclusive quando a
+resposta é que não aconteceu nada: a Tesla, a $+0,70\%$, lê-se ``$201$ dos últimos $249$ dias
+moveram-se isto ou mais''. A raridade aparece duas vezes, como essa frase e como uma tira de marcas,
+para se poderem comparar empresas sem ler um número --- a Exxon Mobil, o único nome sinalizado, mostra
+uma só marca acesa contra a tira quase cheia da Tesla. A linha de atribuição nomeia o motor em
+palavras, e o cabeçalho traz o estado do mercado e a idade dos dados, ambos obrigatórios porque os
+números são os da última sessão fechada e o leitor não tem outra maneira de o saber.}
 \label{fig:app_dashboard}
 \end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/app_v5_intelligence.png}
+\caption[Texto gerado com a evidência anexada]{O painel de inteligência, capturado ao vivo. O
+distintivo declara que o texto foi gerado e por que fornecedor, e o aviso âmbar por cima reporta que
+a guarda de fidelidade rejeitou parte da saída do modelo e substituiu-a pela composição
+determinística --- o produto diz ao leitor quando corrigiu o seu próprio gerador, em vez de apresentar
+o resultado como uniforme. Cada identificador entre parênteses retos no texto é um controlo: o que
+está aberto aqui resolve para o registo por trás da frase, mostrando o valor e a sua proveniência
+declarada (\emph{medido}). É a afirmação da Secção~\ref{sec:investigator_intelligence} tornada
+operacional: o texto gerado mantém-se ligado à sua evidência como uma travessia que o leitor faz, e
+não como uma promessa sobre o prompt.}
+\label{fig:app_intelligence}
+\end{figure}
+
+\section{A Camada de Inteligência: Geração Ancorada}
+\label{sec:investigator_intelligence}
+
+Tudo o que foi descrito até aqui calcula. Deteta, decompõe, recupera e pontua, e apresenta cada
+resultado ao lado da evidência que o produziu. O que não faz é \emph{combinar} esses resultados, e a
+lacuna é fácil de enunciar: numa dada manhã o sistema sabe que o mercado alargado caiu, que uma das
+posições subiu contra ele, que duas manchetes foram captadas pouco antes, e que a varredura ficou
+calada sobre um terceiro nome. Todos esses factos estão no ecrã. Fica ao leitor juntá-los.
+
+Juntá-los é a tarefa desta camada, e é a única tarefa do sistema em que um modelo generativo é o
+instrumento certo em vez do instrumento da moda. A razão é combinatória. O número de estados que vale
+a pena resumir --- quantos nomes foram sinalizados, que componente dominou, se houve manchetes
+captadas, se existem casos análogos e para que lado foram, o que fez o mercado alargado --- multiplica
+mais depressa do que se escrevem modelos de frase, e uma regra que escolhe entre frases pré-escritas
+produz texto que se lê como escrito por uma máquina porque é uma máquina a escolher entre cadeias
+fixas. Escolher que factos merecem a primeira frase, e ligá-los em prosa, é o que os modelos de
+linguagem fazem bem.
+
+\subsection{O que o gerador pode e não pode fazer}
+
+A divisão de trabalho é absoluta e é a razão de a camada ser defensável: \textbf{os motores escrevem
+os factos e o modelo escreve a língua}. O modelo não tem acesso ao mercado, não tem memória do ativo
+e não faz recuperação nenhuma. Recebe um \emph{pacote de evidência} e a sua saída é verificada contra
+esse pacote antes de alguma coisa chegar ao ecrã.
+
+Um pacote é um conjunto de factos, cada um com um identificador curto e citável, um valor e --- o
+campo que faz o trabalho ético --- uma \emph{origem} declarada, de entre três:
+
+\begin{itemize}
+  \item \textbf{medido}: retirado de dados de mercado ou do carimbo temporal da própria fonte;
+  \item \textbf{calculado}: derivado deterministicamente de valores medidos, como um $z$-score ou a
+        atribuição a três componentes;
+  \item \textbf{modelo}: produzido por um modelo treinado, como um precedente recuperado ou uma
+        pontuação de triagem calibrada, e portanto carregando a incerteza que o
+        Capítulo~\ref{chap:casestudies} reporta para ele.
+\end{itemize}
+
+Nenhum facto tem origem \emph{gerado}. Não é uma convenção de nomes mas um invariante: o gerador
+contribui prosa e nunca um facto, e um teste verifica a propriedade, para que uma alteração futura
+que a violasse falhasse em vez de seguir para produção.
+
+O gerador é instruído a citar os identificadores no meio do texto, e a interface desenha cada citação
+como um controlo que abre o facto correspondente. A afirmação de que o texto gerado se mantém ligado
+à sua evidência não é, portanto, uma promessa sobre o prompt; é uma travessia que o leitor pode
+fazer: da frase para o facto, do facto para o motor, do motor para o ficheiro que o produziu.
+
+\subsection{Dois níveis de garantia, e porque diferem}
+
+Este trabalho já contém uma guarda de geração. O narrador de alertas
+(Secção~\ref{sec:investigator_xai}) usa uma \emph{allowlist de vocabulário fechado} de cerca de
+duzentas e cinquenta palavras neutras, adotada depois de um exercício adversário abrir vinte e nove
+furos na blocklist que a precedia e estabelecer a lição estrutural: o espaço de paráfrases é infinito
+e uma lista de expressões proibidas é finita.
+
+Um relatório de cinco secções e um analista conversacional não cabem em duzentas e cinquenta
+palavras. Havia duas opções honestas: aplicar a mesma allowlist e aceitar que o produto quase não
+poderia dizer nada, ou alargá-la até deixar de ser uma allowlist e passar a ser uma blocklist com
+outro nome. Não se tomou nenhuma. O sistema passa a ter \emph{dois} níveis de garantia e a declarar a
+diferença em vez de a esbater, e a razão pela qual diferem é o \textbf{risco}, não a conveniência.
+
+\begin{table}[ht]
+\centering
+\caption[Dois níveis de garantia de geração]{Os dois caminhos de geração e o que cada um garante. A
+última linha é a que interessa: a garantia linguística do caminho puxado é mais fraca, e é declarada
+e medida em vez de afirmada.}
+\label{tab:two_guards}
+\begin{tabular}{p{0.26\textwidth}p{0.32\textwidth}p{0.32\textwidth}}
+\toprule
+& Alerta (empurrado) & Relatório e analista (puxado) \\
+\midrule
+Como chega ao leitor & Sem ser pedido, no telemóvel & A pedido, na página \\
+Evidência ao lado & Não & Sim, a um clique \\
+Números & Conjunto fechado da evidência & Conjunto fechado \emph{por frase}, ligado ao facto que
+essa frase cita \\
+Direção & Sinal obrigatório & Sinal obrigatório \\
+Vocabulário & Allowlist fechada & Blocklist, mais uma allowlist fechada de ressalvas honestas \\
+Atribuição & Validada contra a evidência & Toda a frase que afirma tem de citar um facto \\
+Garantia linguística & Absoluta & \textbf{Mais fraca, declarada e medida} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Um alerta chega sem ser pedido a um dispositivo, sem evidência ao lado; aí a garantia tem de ser
+absoluta, e o custo de uma allowlist --- um leque de expressão mais estreito --- vale a pena. Um
+relatório é pedido por um leitor que já está a olhar para a evidência, com cada frase a carregar os
+identificadores dos factos que a sustentam. Os perfis de risco diferem, logo as garantias diferem, e
+fingir o contrário seria exatamente o tipo de afirmação que o resto deste trabalho se esforçou por
+retirar.
+
+\subsection{Ligar os números aos factos que os autorizam}
+
+A primeira versão da guarda verificava os números contra o pacote como um todo. O ensaio adversário
+mostrou que isso não é uma guarda mas a sua aparência, e os três achados mais graves partilhavam uma
+só causa: se qualquer número do pacote pode aparecer em qualquer sítio do texto, então uma frase pode
+citar um facto e usar o número de outro, e a citação empresta autoridade a uma afirmação que não
+sustenta. A mesma fraqueza permite apresentar um retorno como se fosse um $z$-score e permite
+inverter uma direção usando o valor de sinal oposto de um facto diferente.
+
+A correção não é mais uma regra mas uma mudança de âmbito. O texto é dividido em frases; os
+identificadores citados \emph{nessa frase} determinam o conjunto de números que essa frase pode usar;
+e qualquer número fora desse conjunto é uma violação, exista ou não noutro sítio do pacote. A
+diferença é entre ``este número existe algures'' e ``este número é deste facto'', e só a segunda
+alguma vez foi a promessa.
+
+Fecharam-se ao mesmo tempo mais quatro fraquezas, e uma delas merece registo porque foi auto-infligida
+de uma maneira que generaliza. Para tolerar diferenças de formatação, a primeira versão admitia cada
+valor com várias precisões decimais --- o que \emph{cunha} números, já que um $z$-score de $2,65$
+escrito sem casas decimais introduz o $3$ no conjunto permitido como se um motor o tivesse calculado.
+Tolerar formatação não pode custar inventar quantidades. As outras foram quantidades escritas por
+extenso em vez de em dígitos, uma heurística de negação que podia ser usada para desligar a blocklist
+colocando uma negação por perto, e a inversão de pares ordenados, em que uma afirmação de que nove
+nomes subiram e três desceram pode ser invertida usando dois números ambos legitimamente presentes.
+
+\subsection{Comportamento medido}
+
+Reportam-se duas quantidades, e medem coisas diferentes. A primeira mede a \emph{guarda}: um corpus
+adversário de vinte e três ataques, cada um dos quais tem de ser rejeitado. A segunda mede se a
+guarda está apenas a recusar tudo: um conjunto de oito frases fiéis, cada uma das quais tem de
+passar. Sem a segunda, uma guarda que rejeitasse todo o texto pontuaria perfeitamente na primeira e
+pareceria impecável --- a mesma exigência de controlo nos dois sentidos que este trabalho aplica aos
+seus detetores.
+
+\begin{table}[ht]
+\centering
+\caption[Comportamento medido da guarda de ancoragem]{Comportamento da guarda de ancoragem,
+regenerado por um script versionado. Os ataques incluem todos os exploits reproduzidos contra a
+versão anterior, mantidos como regressões permanentes. As secções \emph{entregues} com violação têm
+de ser zero por construção, já que uma secção rejeitada é substituída pela composição determinística
+antes de ser mostrada; esse número verifica a propriedade em vez de a assumir.}
+\label{tab:guard_measured}
+\begin{tabular}{lrr}
+\toprule
+Quantidade & Contagem & Taxa \\
+\midrule
+Ataques adversários bloqueados      & 23 / 23 & 1,000 \\
+Frases de controlo fiéis aceites    & 8 / 8   & 1,000 \\
+Secções geradas conformes           & 22 / 22 & 1,000 \\
+Secções entregues com violação      & 0       & 0,000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A terceira linha merece uma ressalva que o próprio número não pode dar: é \emph{circular}, porque o
+mesmo verificador decide e avalia. Reporta-se porque um valor diferente de zero indicaria um defeito
+no caminho de entrega, não porque estabeleça fidelidade de forma independente. O corpus adversário
+existe para a complementar, e os riscos residuais que o corpus não cobre estão enunciados na
+Secção~\ref{sec:concl_limitations} em vez de ficarem por descobrir.
+
+O que a guarda rejeita é tão informativo como o que aceita. Ao longo das secções geradas, as
+rejeições foram de linguagem proibida e não de números fabricados: causa afirmada, conselho e
+previsão. O modelo, por outras palavras, procura exatamente os três registos que este sistema recusa,
+e fá-lo com frequência suficiente para a guarda estar a trabalhar continuamente em vez de decorar um
+caminho que teria sido seguro de qualquer maneira.
+
+\subsection{A linguagem natural como segunda interface}
+
+O analista responde a perguntas sobre os mesmos pacotes. A sua primeira etapa não escreve prosa
+nenhuma: traduz a pergunta num plano pequeno e validado --- que âmbito, que ativo, que tipos de
+evidência --- e cada campo desse plano é verificado contra um conjunto fechado antes de ser usado,
+portanto um modelo não pode inventar navegação. Um router determinístico, que resolve pronomes a
+partir do que o leitor está a ver, corre como alternativa; existe para que a interface conversacional
+continue a funcionar sem chave de API nenhuma, o que é uma restrição fundadora deste trabalho e não
+um detalhe de implantação.
+
+O plano traz também uma ação para a interface executar, portanto pedir o gráfico do último mês de uma
+empresa move a vista em vez de a descrever. É isto que faz da linguagem natural uma segunda interface
+sobre os mesmos dados, em vez de uma caixa de texto ao lado do produto. O produto continua utilizável
+sem nunca se falar com ele, que é a relação pretendida: o analista aprofunda a análise, não é a
+análise.
 
 \section{A Vida de Um Alerta}
 \label{sec:investigator_lifecycle}

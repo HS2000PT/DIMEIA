@@ -593,36 +593,260 @@ against the year. A company in a calm stretch can therefore fall below the alert
 still sitting near the top of its annual range, and the card reports both facts --- normal for recent
 weeks, rare for the year --- and leaves the reader to weigh them.
 
-One capability is deliberately absent from the page, and saying so is more useful than implying
-otherwise. Precedent retrieval does not run in the browser: loading the sentence encoder was measured
-to add about seven seconds to a cold page load, which is most of the budget the interface has. The
-detail view states this in place rather than leaving a silent gap, and points to where the answer does
-live, namely the news alerts themselves, each of which carries its own retrieved precedents and their
-measured outcome at $+1$, $+3$ and $+5$ days.
+The page performs no computation of its own. The worker writes a precomputed snapshot at the end of
+each cycle, where the cost of fetching prices has already been paid, and the page reads it; measured,
+building the grid from the network costs about five seconds against eleven milliseconds to read the
+file. Because a snapshot that silently stopped being written would look exactly like a calm market,
+the page displays the snapshot's age, so staleness is visible on screen rather than inferred.
 
-That budget is also why the page performs no computation of its own. The worker writes a precomputed
-snapshot at the end of each cycle, where the cost of fetching prices has already been paid, and the
-page reads it; measured, building the grid from the network costs about five seconds against eleven
-milliseconds to read the file. Because a snapshot that silently stopped being written would look
-exactly like a calm market, the page displays the snapshot's age, so staleness is visible on screen
-rather than inferred.
+\subsection{Separating the server from the client, and what it bought}
+\label{sec:investigator_client}
+
+An earlier revision of this interface rendered on the server, re-executing its whole script on every
+interaction. That design forced one capability out of the product: precedent retrieval was
+\emph{removed} from the page because loading the sentence encoder and the case base was measured to
+add about seven seconds to a cold load, which is most of the budget the interface has. Within a
+single rendered page that is a genuine choice between the capability and the speed, and the speed
+won.
+
+Separating the two removes the choice rather than resolving it. The server answers requests and the
+client holds the state, so what is expensive can be requested \emph{after} the first paint and can
+arrive when it arrives. The measurements are given in Table~\ref{tab:client_cost}: the whole opening
+surface now arrives in one request, and the interactions that previously cost a server round trip ---
+changing the chart's time range, toggling a series, paging a table --- became operations on an array
+already in memory. Precedent retrieval, the third of the three questions this work is organised
+around, returned to the page on its own route.
+
+\begin{table}[ht]
+\centering
+\caption[Cost of the interface before and after separating client from server]{Measured cost of the
+interface, before and after separating the client from the server. The first two rows are cold loads
+of the opening surface; the third is the median of five range changes on the detail view, measured in
+the browser. The last row is not a speed figure but a capability one: the earlier design had to
+remove precedent retrieval from the page to stay within its load budget.}
+\label{tab:client_cost}
+\begin{tabular}{lrr}
+\toprule
+& Server-rendered & Client-held state \\
+\midrule
+Opening surface, cold          & 5.5--6.2\,s & 1.0\,s \\
+Data requests for that surface & 12          & 1 \\
+Change chart range             & $\approx$750\,ms & 2.5--7.3\,ms \\
+Network calls to change range  & 1           & 0 \\
+Precedent retrieval on the page & removed    & present \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two details of that table matter more than the totals. The zero in the fourth row is the structural
+claim: a range change is a slice of a series the browser already has, so it cannot fail, cannot
+queue behind a slow request, and costs nothing to repeat. And the opening view defaults to the
+session in progress rather than to a historical window, which required adding a five-minute
+intraday series to the snapshot: without it the default range had nothing to draw, and a product
+whose first screen is empty answers the wrong question.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/app_dashboard.png}
-\caption[The live dashboard, a genuine capture]{The public dashboard (a genuine screenshot, not a
-mockup), opening surface, captured from the deployed codebase during live operation. One card per
-company, ordered by how rare the day was. Every card answers the same three questions from
-Section~\ref{sec:intro_problem} under the same headings and in the same order, including on a day
-when the answer to all of them is that nothing much happened: the headline sentence states exactly
-that, and each card evidences its own quietness with a count rather than asserting it. Rarity is
-given twice, as a sentence anyone can check (``$247$ of the last $249$ trading days moved this much
-or more'' for Microsoft, at $+0.03\%$) and as a strip of marks, so a reader can compare companies
-without reading a number. The attribution line names the driver in words and, where a component
-pulled against the move, says so rather than hiding it: AMD fell $1.22\%$ ``mostly the company
-itself'', with both the market and its sector pulling the other way.}
+\includegraphics[width=0.95\textwidth]{figures/app_v5_overview.png}
+\caption[The live interface, a genuine capture]{The public interface (a genuine screenshot, not a
+mockup), opening surface, captured from the deployed system during live operation. One card per
+company, ordered by how rare the day was, none privileged. Every card states its verdict in words
+and then evidences it with a count rather than asserting it, including when the answer is that
+nothing happened: Tesla, at $+0.70\%$, reads ``$201$ of the last $249$ trading days moved as much or
+more''. Rarity appears twice, as that sentence and as a strip of marks, so companies can be compared
+without reading a number --- Exxon Mobil, the only flagged name, shows a single lit mark against
+Tesla's near-full strip. The attribution line names the driver in words, and the header carries the
+market's state and the age of the data, both of which are required because the numbers are those of
+the last completed session and a reader has no other way to know it.}
 \label{fig:app_dashboard}
 \end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/app_v5_intelligence.png}
+\caption[Generated text with its evidence attached]{The intelligence panel, captured live. The badge
+states that the text was generated and by which provider, and the amber notice above it reports that
+the fidelity guard rejected part of the model's output and substituted the deterministic
+composition --- the product tells the reader when it has overridden its own generator rather than
+presenting the result as uniform. Each bracketed identifier in the prose is a control: the one opened
+here resolves to the record behind the sentence, showing the value and its declared provenance
+(\emph{measured}). This is the claim of Section~\ref{sec:investigator_intelligence} made operational:
+generated text stays attached to its evidence as a traversal the reader performs, not as an assertion
+about the prompt.}
+\label{fig:app_intelligence}
+\end{figure}
+
+\section{The Intelligence Layer: Grounded Generation}
+\label{sec:investigator_intelligence}
+
+Everything described so far computes. It detects, decomposes, retrieves and scores, and it presents
+each result beside the evidence that produced it. What it does not do is \emph{combine} those
+results, and the gap is easy to state: on a given morning the system knows that the broad market
+fell, that one holding rose against it, that two headlines were captured shortly before, and that
+the scan stayed silent on a third name. Every one of those facts is on the screen. The reader is
+left to assemble them.
+
+Assembling them is the task this layer performs, and it is the one task in the system where a
+generative model is the right instrument rather than a fashionable one. The reason is combinatorial.
+The number of states worth summarising --- how many names were flagged, which component dominated,
+whether headlines were captured, whether analogous cases exist and which way they went, what the
+broad market did --- multiplies out faster than templates can be written, and a rule that selects
+among pre-written sentences produces text that reads as machine-written because it is a machine
+choosing between fixed strings. Selecting which facts deserve the first sentence, and connecting
+them in prose, is what language models do well.
+
+\subsection{What the generator is and is not permitted to do}
+
+The division of labour is absolute and is the reason the layer is defensible: \textbf{the engines
+write the facts and the model writes the language}. The model has no access to the market, no
+memory of the asset and no retrieval of its own. It receives an \emph{evidence bundle} and its
+output is checked against that bundle before anything reaches the screen.
+
+A bundle is a set of facts, each carrying a short citable identifier, a value, and --- the field that
+does the ethical work --- a declared \emph{origin}, one of three:
+
+\begin{itemize}
+  \item \textbf{measured}: taken from market data or from a source's own timestamp;
+  \item \textbf{computed}: derived deterministically from measured values, such as a $z$-score or
+        the three-way attribution;
+  \item \textbf{model}: produced by a trained model, such as a retrieved precedent or a calibrated
+        triage score, and therefore carrying the uncertainty that Chapter~\ref{chap:casestudies}
+        reports for it.
+\end{itemize}
+
+No fact carries an origin of \emph{generated}. That is not a naming convention but an invariant:
+the generator contributes prose and never a fact, and a test asserts the property so that a future
+change that violated it would fail rather than ship.
+
+The generator is instructed to cite the identifiers inline, and the interface renders each citation
+as a control that opens the underlying fact. The claim that generated text remains attached to its
+evidence is therefore not a promise about the prompt; it is a traversal the reader can perform:
+sentence to fact, fact to engine, engine to the file that produced it.
+
+\subsection{Two levels of guarantee, and why they differ}
+
+This work already contains a generation guard. The alert narrator
+(Section~\ref{sec:investigator_xai}) uses a \emph{closed-vocabulary allowlist} of roughly
+two hundred and fifty neutral words, adopted after an adversarial exercise opened twenty-nine holes
+in its blocklist predecessor and established the structural lesson: the space of paraphrases is
+infinite and a list of forbidden phrases is finite.
+
+A five-section report and a conversational analyst do not fit in two hundred and fifty words. Two
+honest options existed: apply the same allowlist and accept that the product could say almost
+nothing, or widen it until it stopped being an allowlist and became a blocklist under another name.
+Neither was taken. Instead the system carries \emph{two} guarantee levels and states the difference
+rather than blurring it, and the reason they differ is \textbf{risk}, not convenience.
+
+\begin{table}[ht]
+\centering
+\caption[Two levels of generation guarantee]{The two generation paths and what each guarantees. The
+last row is the one that matters: the linguistic guarantee on the pulled path is weaker, and it is
+declared and measured rather than asserted.}
+\label{tab:two_guards}
+\begin{tabular}{p{0.26\textwidth}p{0.32\textwidth}p{0.32\textwidth}}
+\toprule
+& Alert (pushed) & Report and analyst (pulled) \\
+\midrule
+How it reaches the reader & Unprompted, on a phone & On request, on the page \\
+Evidence alongside it & No & Yes, one click away \\
+Numbers & Closed set from the evidence & Closed set \emph{per sentence}, bound to the fact that
+sentence cites \\
+Direction & Sign required & Sign required \\
+Vocabulary & Closed allowlist & Blocklist, plus a closed allowlist of honest disclaimers \\
+Attribution & Validated against evidence & Every claim-bearing sentence must cite a fact \\
+Linguistic guarantee & Absolute & \textbf{Weaker, declared, and measured} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+An alert arrives unrequested on a device, with no evidence beside it; the guarantee there must be
+absolute, and the cost of an allowlist --- a narrower range of expression --- is one worth paying. A
+report is requested by a reader who is already looking at the evidence, with every sentence carrying
+the identifiers of the facts behind it. The risk profiles differ, so the guarantees differ, and
+pretending otherwise would be exactly the kind of claim the rest of this work has been at pains to
+remove.
+
+\subsection{Binding numbers to the facts that license them}
+
+The first version of the guard checked numbers against the bundle as a whole. Adversarial testing
+showed that this is not a guard but the appearance of one, and the three most serious findings
+shared a single cause: if any number anywhere in the bundle may appear anywhere in the text, then a
+sentence can cite one fact and quote another's number, and the citation lends authority to a claim
+it does not support. The same weakness permits a return to be restated as a $z$-score, and permits a
+direction to be inverted using the oppositely signed value of a different fact.
+
+The correction is not an additional rule but a change of scope. The text is split into sentences;
+the identifiers cited \emph{in that sentence} determine the set of numbers that sentence may use;
+and any number outside that set is a violation regardless of whether it exists elsewhere in the
+bundle. The difference is between ``this number exists somewhere'' and ``this number belongs to this
+fact'', and only the second was ever the promise.
+
+Four further weaknesses were closed at the same time, and one of them is worth recording because it
+was self-inflicted in a way that generalises. To tolerate differences of formatting, the first
+version admitted each value at several decimal precisions --- which \emph{mints} numbers, since a
+$z$-score of $2.65$ rendered at zero decimals introduces $3$ into the permitted set as though an
+engine had computed it. Tolerating formatting must not cost inventing quantities. The others were
+quantities written as words rather than digits, a negation heuristic that could be used to switch
+the blocklist off by placing a negation nearby, and the inversion of ordered pairs, where a
+statement that nine names rose and three fell can be reversed using two numbers that are both
+legitimately present.
+
+\subsection{Measured behaviour}
+
+Two quantities are reported, and they measure different things. The first measures the
+\emph{guard}: an adversarial corpus of twenty-three attacks, each of which must be rejected. The
+second measures whether the guard is merely refusing everything: a set of eight faithful sentences,
+each of which must pass. Without the second, a guard that rejected all text would score perfectly on
+the first and appear flawless --- the same control-in-both-directions requirement that this work
+applies to its other detectors.
+
+\begin{table}[ht]
+\centering
+\caption[Measured behaviour of the grounding guard]{Behaviour of the grounding guard, regenerated by
+a versioned script. The attacks include every exploit reproduced against the earlier version, kept
+as permanent regressions. Sections \emph{delivered} carrying a violation must be zero by
+construction, since a rejected section is replaced by the deterministic composition before it is
+shown; that figure verifies the property rather than assuming it.}
+\label{tab:guard_measured}
+\begin{tabular}{lrr}
+\toprule
+Quantity & Count & Rate \\
+\midrule
+Adversarial attacks blocked        & 23 / 23 & 1.000 \\
+Faithful control sentences passed  & 8 / 8   & 1.000 \\
+Generated sections conforming      & 22 / 22 & 1.000 \\
+Sections delivered with a violation & 0      & 0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The third row deserves a caveat that the number itself cannot supply: it is \emph{circular}, because
+the same checker both decides and evaluates. It is reported because a non-zero value would indicate
+a defect in the delivery path, not because it independently establishes fidelity. The adversarial
+corpus exists to complement it, and the residual risks the corpus does not cover are stated in
+Section~\ref{sec:concl_limitations} rather than left to be discovered.
+
+What the guard rejects is as informative as what it admits. Across the generated sections, the
+rejections were of forbidden language rather than of fabricated numbers: asserted causation,
+advice, and prediction. The model, in other words, reaches for exactly the three registers this
+system refuses, and it does so often enough that the guard is doing continuous work rather than
+decorating a path that would have been safe anyway.
+
+\subsection{Natural language as a second interface}
+
+The analyst answers questions against the same bundles. Its first stage does not write prose at all:
+it translates the question into a small, validated plan --- which scope, which asset, which kinds of
+evidence --- and every field of that plan is checked against a closed set before it is used, so a
+model cannot invent navigation. A deterministic router, which resolves pronouns from what the reader
+is currently viewing, runs as the fallback; it exists so that the conversational interface still
+functions with no API keys at all, which is a founding constraint of this work rather than a
+deployment detail.
+
+The plan also carries an action for the interface to perform, so asking for last month's chart for a
+given company moves the view rather than describing it. This is what makes natural language a second
+interface onto the same data instead of a text box beside the product. The product remains usable
+without ever addressing it, which is the intended relationship: the analyst deepens the analysis, it
+is not the analysis.
 
 \section{The Life of One Alert}
 \label{sec:investigator_lifecycle}

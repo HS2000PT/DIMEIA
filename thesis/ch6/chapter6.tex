@@ -262,6 +262,18 @@ core component against trivial, lexical and volatility baselines on real data, i
 pre-committed statistical-versus-learned comparisons that the transparent methods won; results,
 ablations and limitations are all reported plainly and regenerated from versioned scripts.
 
+A fifth contribution belongs with these and is methodological rather than statistical: a
+\textbf{grounded-generation layer with a fidelity check that binds each number to the record its own
+sentence cites} (Section~\ref{sec:met_generation}). The construction is what distinguishes it from
+attaching a language model to a dashboard. The generator receives an evidence bundle whose records
+carry declared provenance, never observes the market, and is verified before delivery; the interface
+resolves each citation back to the record, so the claim that generated text stays attached to its
+evidence is a traversal a reader can perform rather than an assertion about a prompt. Its guarantee
+is deliberately weaker than the alert path's closed-vocabulary allowlist, and both that difference
+and the residual risks are declared and measured rather than asserted --- which is the part of the
+contribution most likely to transfer to other systems that place generated text next to computed
+results.
+
 \section{Limitations}
 \label{sec:concl_limitations}
 
@@ -346,7 +358,36 @@ Several limitations remain, stated plainly:
         the distribution it will see. The offline result of Chapter~\ref{chap:casestudies} stands
         as an evaluation-set result; the deployed gate has not earned its place on this evidence,
         and saying so is cheaper than defending it.
-  \item \textbf{No human study.} Usefulness to a real investor has not yet been measured.
+  \item \textbf{The generation guarantee is weaker on the pulled path, and here is precisely how.}
+        The fidelity check described in Section~\ref{sec:met_generation} blocks $23$ of $23$
+        adversarial attacks while admitting $8$ of $8$ faithful controls, and no section carrying a
+        violation is delivered. Four residual risks remain, and none of them is closed by those
+        figures. \emph{Citation relevance}: the check confirms that a cited record exists and that
+        the sentence's numbers belong to it, not that the record \emph{supports} the characterisation
+        in words --- a sentence may cite a true fact and describe it poorly without using a number.
+        \emph{Paraphrase}: the linguistic defence is a blocklist, and a blocklist over natural
+        language loses in the limit; this is exactly why the pushed alert path uses a closed
+        allowlist instead and why the two paths are not claimed to be equivalent.
+        \emph{Qualifiers}: judgements without numbers, such as calling a move unusually large,
+        are permitted because forbidding them would make the text unreadable, and they are checkable
+        by the reader against the record cited beside them. \emph{Omission}: nothing compels the
+        generator to mention an unfavourable fact, a gap the deterministic composition closes by
+        construction and the generated text does not.
+
+        The adversarial exercise that produced the current guard was also \emph{incomplete}, and the
+        manner of its incompleteness is worth recording. Six attack perspectives were commissioned;
+        two completed, producing $114$ attempts of which $21$ were reproduced, and the remainder
+        terminated on an account spending limit --- including every independent verification stage.
+        The exercise therefore returned a nominally clean verdict that was in fact the \emph{absence}
+        of verification, a failure mode this project has now encountered repeatedly. The findings
+        acted upon were confirmed by hand against the running code, and the corpus retains them as
+        regressions; but the guard has not faced four of the six perspectives, and the honest
+        statement is that its measured strength is a lower bound established against an interrupted
+        adversary.
+  \item \textbf{No human study.} Usefulness to a real investor has not yet been measured. This now
+        covers the generated text as well: whether a grounded report helps a non-expert reach a
+        sounder judgement than the underlying panels alone is exactly the kind of question the
+        missing study would answer, and no claim of usefulness is made for it here.
   \item \textbf{By design.} The system makes no price prediction and no trade, so profit-based questions
         are out of scope, not unanswered.
 \end{itemize}

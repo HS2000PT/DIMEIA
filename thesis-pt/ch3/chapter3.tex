@@ -923,6 +923,76 @@ um enriquecimento opcional, usado apenas se acrescentar valor defensável. Como 
 diretamente a partir destes objetos, a explicação é fiel ao cálculo por construção, uma propriedade testada
 no Capítulo~\ref{chap:casestudies}.
 
+\subsection{Geração Ancorada e a sua Verificação de Fidelidade}
+\label{sec:met_generation}
+
+\emph{Para que serve:} combinar vários resultados calculados num único relato legível, sem deixar que
+o passo da combinação introduza o que os motores não produziram.
+
+Os métodos anteriores respondem cada um a uma pergunta e devolvem um objeto. Nenhum deles funde esses
+objetos, e é na fusão que um modelo generativo ganha o seu lugar: o número de estados conjuntos que
+vale a pena resumir --- quantos nomes foram sinalizados, que componente dominou em cada um, se houve
+manchetes captadas, se existem casos análogos e para que lado foram --- cresce mais depressa do que
+uma biblioteca de modelos de frase, e prosa escolhida por regras lê-se como escrita por uma máquina
+porque é escolha entre cadeias fixas. Escolher que factos abrem, e ligá-los, é uma tarefa de
+linguagem.
+
+O método é restringido para que o passo de linguagem não se torne um passo factual. As entradas são
+serializadas num \emph{pacote de evidência}: um conjunto de registos, cada um com um identificador
+citável, um valor e uma proveniência declarada de \emph{medido}, \emph{calculado} ou \emph{modelo},
+correspondendo aos três tipos de objeto que as secções anteriores produzem. O gerador vê apenas este
+pacote, é instruído a citar identificadores no texto, e a sua saída é verificada antes de ser usada.
+Nenhum registo tem proveniência \emph{gerado}, e esse invariante é verificado por teste e não por
+convenção.
+
+\paragraph{A verificação de fidelidade.} A verificação é determinística, conservadora, e aplica três
+condições independentes.
+
+\begin{enumerate}
+  \item \textbf{Ligação numérica.} O texto é segmentado em frases. Para cada frase, os identificadores
+        que ela cita determinam o conjunto de números admissíveis; um valor fora desse conjunto é uma
+        violação \emph{mesmo que exista noutro sítio do pacote}. Isto é mais estrito do que verificar
+        contra o pacote como um todo, e a estritura é o ponto: um conjunto global permite que uma
+        frase cite um registo e use o valor de outro, o que possibilita apresentar um retorno como um
+        $z$-score, ou inverter uma direção usando o valor de sinal oposto de um registo diferente.
+        Valores com sinal só são admitidos na forma assinada, já que largar um sinal negativo inverte
+        o dígito mais consequente de uma afirmação sobre o mercado.
+  \item \textbf{Registos proibidos.} Previsão, conselho e causa afirmada são rejeitados por padrão. As
+        ressalvas honestas que o sistema tem de conseguir escrever --- que um trecho não contém
+        previsão, que a proximidade é apenas temporal --- são retiradas do texto por uma allowlist
+        fechada \emph{antes} desta verificação correr. Um desenho anterior tentava em vez disso
+        detetar negação pelo contexto; isso é uma fraqueza e não uma defesa, porque uma negação
+        colocada por perto desliga a verificação.
+  \item \textbf{Atribuição.} Toda a frase que faz uma afirmação verificável tem de citar pelo menos um
+        registo. Frases que não afirmam nada verificável estão isentas, porque exigir-lhes uma citação
+        obrigaria o gerador a agarrar um registo arbitrário só para satisfazer a regra, e citações
+        decorativas ensinam o leitor a deixar de as seguir.
+\end{enumerate}
+
+A rejeição é aplicada por secção e não por documento. Um relatório inteiro descartado por uma frase
+desperdiçaria síntese sã; um relatório aceite por inteiro não teria guarda nenhuma. Uma secção
+rejeitada é substituída por uma composição determinística montada a partir dos mesmos registos, e
+essa composição é obrigada a passar a mesma verificação --- se o chão não satisfizesse a guarda, uma
+falha do gerador deixaria o leitor sem nada.
+
+\paragraph{Protocolo de avaliação.} Medem-se duas quantidades, e respondem a perguntas diferentes. Um
+corpus adversário de ataques, cada um dos quais tem de ser rejeitado, mede a \emph{guarda}. Um
+conjunto de frases de controlo fiéis, cada uma das quais tem de passar, mede se a guarda está apenas
+a recusar tudo: sem ele, uma guarda que rejeitasse todo o texto pontuaria perfeitamente e pareceria
+impecável. É a mesma exigência dos dois sentidos aplicada aos detetores na
+Secção~\ref{sec:met_evaluation}. Uma terceira contagem regista as secções \emph{entregues} com
+violação, que tem de ser zero por construção; reporta-se como verificação do caminho de entrega e é
+explicitamente circular, já que o mesmo verificador decide e avalia. O corpus retém todos os exploits
+reproduzidos contra versões anteriores da guarda, para que uma fraqueza fechada não possa reabrir em
+silêncio.
+
+\paragraph{Âmbito da garantia.} A garantia aqui obtida é mais fraca do que a do caminho de alerta
+empurrado (Secção~\ref{sec:met_xai}), que usa uma allowlist de vocabulário fechado. Essa diferença é
+deliberada e decorre do risco de entrega e não da conveniência: um alerta chega sem ser pedido e sem
+evidência ao lado, ao passo que um relatório é pedido por um leitor que está a olhar para a evidência
+e pode abrir qualquer registo citado. O que a garantia mais fraca \emph{não} cobre está enunciado na
+Secção~\ref{sec:concl_limitations}.
+
 \section{Ferramentas e Frameworks}
 \label{sec:met_tools}
 

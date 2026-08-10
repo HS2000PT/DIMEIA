@@ -71,7 +71,7 @@ informação futura se infiltra no desfecho medido.
 A redação deste veredicto é deliberadamente mais estreita do que a de um rascunho anterior, e a razão é
 uma propriedade do corpus e não do método. Como a janela da camada gratuita abrange $27$ dias, a
 experiência de recuperação não pode ser descrita como recuperando \emph{precedentes}: apenas $31,1\%$
-dos vizinhos que devolve são mais antigos do que a sua consulta (Secção~ef{sec:met_data_live}). O que
+dos vizinhos que devolve são mais antigos do que a sua consulta (Secção~\ref{sec:met_data_live}). O que
 demonstra é que a semelhança por embeddings recupera itens do mesmo setor muito acima de todas as linhas
 de base, que é o que a precision@$5$ mede e o que o número sustenta. A anterioridade é uma propriedade
 da configuração implantada, onde a base de conhecimento termina em 2023 e as consultas chegam em 2026, e
@@ -274,6 +274,18 @@ comparações pré-comprometidas estatística-versus-aprendida que os métodos t
 resultados, ablações e limitações são todos reportados com clareza e regenerados a partir de scripts
 versionados.
 
+Uma quinta contribuição junta-se a estas e é metodológica e não estatística: uma \textbf{camada de
+geração ancorada com uma verificação de fidelidade que liga cada número ao registo que a própria
+frase cita} (Secção~\ref{sec:met_generation}). É a construção que a distingue de colar um modelo de
+linguagem a um painel. O gerador recebe um pacote de evidência cujos registos trazem proveniência
+declarada, nunca observa o mercado, e é verificado antes da entrega; a interface resolve cada citação
+de volta ao registo, portanto a afirmação de que o texto gerado se mantém ligado à sua evidência é
+uma travessia que o leitor pode fazer e não uma promessa sobre um prompt. A sua garantia é
+deliberadamente mais fraca do que a allowlist de vocabulário fechado do caminho de alerta, e tanto
+essa diferença como os riscos residuais são declarados e medidos em vez de afirmados --- que é a
+parte da contribuição com maior probabilidade de transferir para outros sistemas que colocam texto
+gerado ao lado de resultados calculados.
+
 \section{Limitações}
 \label{sec:concl_limitations}
 
@@ -363,7 +375,37 @@ Restam várias limitações, enunciadas com clareza:
         Capítulo~\ref{chap:casestudies} mantém-se como resultado de conjunto de avaliação; o gate
         implantado não ganhou o seu lugar com esta evidência, e dizê-lo é mais barato do que
         defendê-lo.
-  \item \textbf{Sem estudo humano.} A utilidade para um investidor real ainda não foi medida.
+  \item \textbf{A garantia de geração é mais fraca no caminho puxado, e eis exatamente como.}
+        A verificação de fidelidade descrita na Secção~\ref{sec:met_generation} bloqueia $23$ de $23$
+        ataques adversários aceitando $8$ de $8$ controlos fiéis, e nenhuma secção com violação é
+        entregue. Restam quatro riscos residuais, e nenhum deles é fechado por esses números.
+        \emph{Relevância da citação}: a verificação confirma que um registo citado existe e que os
+        números da frase lhe pertencem, não que o registo \emph{sustenta} a caracterização feita em
+        palavras --- uma frase pode citar um facto verdadeiro e descrevê-lo mal sem usar um número.
+        \emph{Paráfrase}: a defesa linguística é uma blocklist, e uma blocklist sobre linguagem
+        natural perde no limite; é precisamente por isso que o caminho de alerta empurrado usa uma
+        allowlist fechada e que os dois caminhos não são apresentados como equivalentes.
+        \emph{Qualificadores}: juízos sem número, como chamar invulgarmente grande a um movimento,
+        são permitidos porque proibi-los tornaria o texto ilegível, e são verificáveis pelo leitor
+        contra o registo citado ao lado. \emph{Omissão}: nada obriga o gerador a mencionar um facto
+        desfavorável, lacuna que a composição determinística fecha por construção e o texto gerado
+        não.
+
+        O exercício adversário que produziu a guarda atual foi também \emph{incompleto}, e a maneira
+        como o foi merece registo. Encomendaram-se seis perspetivas de ataque; duas completaram,
+        produzindo $114$ tentativas das quais $21$ foram reproduzidas, e as restantes terminaram por
+        limite de gasto da conta --- incluindo todas as etapas de verificação independente. O
+        exercício devolveu assim um veredicto nominalmente limpo que era, de facto, a \emph{ausência}
+        de verificação, modo de falha que este projeto já encontrou repetidas vezes. Os achados sobre
+        os quais se atuou foram confirmados à mão contra o código em execução, e o corpus retém-nos
+        como regressões; mas a guarda não enfrentou quatro das seis perspetivas, e a afirmação
+        honesta é que a sua força medida é um limite inferior estabelecido contra um adversário
+        interrompido.
+  \item \textbf{Sem estudo humano.} A utilidade para um investidor real ainda não foi medida. Isto
+        passa a cobrir também o texto gerado: se um relatório ancorado ajuda um não-especialista a
+        chegar a um juízo mais sólido do que os painéis subjacentes sozinhos é exatamente o tipo de
+        pergunta que o estudo em falta responderia, e não se faz aqui nenhuma afirmação de utilidade
+        para ele.
   \item \textbf{Por desenho.} O sistema não faz previsão de preços nem negociação, pelo que as
         questões baseadas em lucro estão fora de âmbito, não por responder.
 \end{itemize}

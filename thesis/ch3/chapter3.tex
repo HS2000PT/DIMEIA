@@ -910,6 +910,73 @@ over the detector with SHAP \autocite{lundberg2017shap}. Financial sentiment fro
 alert is rendered directly from these objects, the explanation is faithful to the computation by
 construction, a property tested in Chapter~\ref{chap:casestudies}.
 
+\subsection{Grounded Generation and its Fidelity Check}
+\label{sec:met_generation}
+
+\emph{What it is for:} to combine several computed results into one readable account, without letting
+the combining step introduce anything the engines did not produce.
+
+The preceding methods each answer one question and return one object. Nothing in them merges those
+objects, and merging is where a generative model earns its place: the number of joint states worth
+summarising --- how many names were flagged, which component dominated each, whether headlines were
+captured, whether analogous cases exist and which way they went --- grows faster than a template
+library, and rule-selected prose reads as machine-written because it is selection among fixed
+strings. Choosing which facts lead, and connecting them, is a language task.
+
+The method is constrained so that the language step cannot become a factual step. The inputs are
+serialised into an \emph{evidence bundle}: a set of records, each with a citable identifier, a value,
+and a declared provenance of \emph{measured}, \emph{computed} or \emph{model}, matching the three
+kinds of object the preceding sections produce. The generator sees only this bundle, is instructed
+to cite identifiers inline, and its output is verified before use. No record carries a
+\emph{generated} provenance, and that invariant is asserted by test rather than by convention.
+
+\paragraph{The fidelity check.} Verification is deterministic, conservative, and applies three
+independent conditions.
+
+\begin{enumerate}
+  \item \textbf{Numeric binding.} The text is segmented into sentences. For each sentence, the
+        identifiers it cites determine the admissible set of numbers; a value outside that set is a
+        violation \emph{even when it appears elsewhere in the bundle}. This is stricter than checking
+        against the bundle as a whole, and the strictness is the point: a global set permits a
+        sentence to cite one record and quote another's value, which allows a return to be presented
+        as a $z$-score, or a direction to be inverted using the oppositely signed value of a
+        different record. Signed values are admitted only in signed form, since dropping a minus
+        sign reverses the most consequential digit in a market statement.
+  \item \textbf{Prohibited registers.} Prediction, advice and asserted causation are rejected by
+        pattern. The honest disclaimers the system must be able to write --- that a passage contains
+        no forecast, that proximity is temporal only --- are removed from the text by a closed
+        allowlist \emph{before} this check runs. An earlier design instead attempted to detect
+        negation contextually; that is a weakness rather than a defence, because a negation placed
+        nearby disables the check.
+  \item \textbf{Attribution.} Every sentence that makes a checkable claim must cite at least one
+        record. Sentences that assert nothing checkable are exempt, because requiring a citation
+        there would force the generator to attach an arbitrary record merely to satisfy the rule, and
+        decorative citations teach a reader to stop following them.
+\end{enumerate}
+
+Rejection is applied per section rather than per document. A whole report discarded for one sentence
+would waste sound synthesis; a report accepted whole would not be guarded at all. A rejected section
+is replaced by a deterministic composition assembled from the same records, and that composition is
+required to pass the same check --- if the fallback could not satisfy the guard, a generator failure
+would leave the reader with nothing.
+
+\paragraph{Evaluation protocol.} Two quantities are measured, and they answer different questions.
+An adversarial corpus of attacks, each of which must be rejected, measures the \emph{guard}. A set of
+faithful control sentences, each of which must pass, measures whether the guard is merely refusing
+everything: without it, a guard that rejected all text would score perfectly and appear flawless.
+This is the same both-directions requirement applied to the detectors in
+Section~\ref{sec:met_evaluation}. A third figure counts sections \emph{delivered} carrying a
+violation, which must be zero by construction; it is reported as a check on the delivery path and is
+explicitly circular, since the same checker decides and evaluates. The corpus retains every exploit
+reproduced against earlier versions of the guard, so that a closed weakness cannot silently reopen.
+
+\paragraph{Scope of the guarantee.} The guarantee obtained here is weaker than the one obtained for
+the pushed alert path (Section~\ref{sec:met_xai}), which uses a closed-vocabulary allowlist. That
+difference is deliberate and follows from delivery risk rather than from convenience: an alert
+arrives unrequested and without evidence beside it, whereas a report is requested by a reader who is
+looking at the evidence and can open any cited record. What the weaker guarantee does \emph{not}
+cover is stated in Section~\ref{sec:concl_limitations}.
+
 \section{Tools and Frameworks}
 \label{sec:met_tools}
 
