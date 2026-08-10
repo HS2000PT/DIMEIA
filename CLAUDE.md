@@ -7,8 +7,75 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 55 (**auditoria P0–P8: sete afirmações retiradas, todas por medição própria**)
-- **Última atualização:** 2026-08-10
+- **Sessão nº:** 56 (**v5: reconstrução total do produto + camada generativa ancorada**)
+- **Última atualização:** 2026-08-11
+- **🆕 SESSÃO 56 (2026-08-10/11 — o aluno mandou reconstruir o produto DE RAIZ: "forget the
+  current website as a product concept… the AI component must be genuinely meaningful"):**
+  **(A) O DIAGNÓSTICO QUE JUSTIFICA A RECONSTRUÇÃO, e não é estético.** O estudo de mercado
+  que estava no repositório desde a sessão 51 já o tinha escrito e ninguém tinha agido:
+  *"No CSS fixes this; a client-side interaction layer does."* O Streamlit re-executa o script
+  **do lado do servidor** a cada interacção. Medido agora: **/api/overview 8,8 ms num único
+  pedido** e **trocar de intervalo 2,5–7,3 ms com ZERO chamadas de rede**, contra os ~750 ms
+  por interacção da v3 e os 5,5–6,2 s de carga a frio. **Carga completa em produção: 1,0 s.**
+  **(B) STACK: FastAPI + SPA estático + Lightweight Charts v5.0.9 (Apache 2.0, versionada).**
+  O processo web deixa de renderizar e passa a servir dados. **Toda a lógica continua em
+  `investigator/`** — nenhum número é calculado na API, senão o produto e a avaliação podiam
+  divergir sem ninguém dar por isso. `Procfile` passa a uvicorn; a v3/v4 ficam no repositório
+  porque as figuras da tese ainda as documentam.
+  **⚠️ O que isto DESBLOQUEIA e não é cosmético:** a v4 teve de **retirar** os precedentes do
+  produto porque custavam ~7 s a frio. Com rota própria (`/api/precedents/{t}`) saem do
+  caminho crítico e **a terceira pergunta da tese volta ao ecrã**.
+  **(C) A CAMADA QUE FALTAVA (`investigator/intelligence/`): geração ancorada.** O sistema
+  tinha quatro camadas e a quarta estava **desligada e invisível** — o `narrator/` existia com
+  `enabled: false` e o utilizador nunca via inteligência nenhuma, via aritmética.
+  `context.py` monta um **pacote de evidência** onde cada facto tem identificador citável e
+  **origem declarada** (`measured`/`computed`/`model`); **nenhum facto é `generated`** — o
+  gerador escreve prosa, nunca factos. `report.py` gera o relatório de situação com **rejeição
+  por SECÇÃO** e substituição pelo chão determinístico. `analyst.py` faz pergunta → plano →
+  evidência → resposta, e devolve uma **acção que move a interface** (linguagem natural como
+  segunda interface para os mesmos dados). Cada `[f3]` no ecrã abre o facto que o sustenta.
+  **⚠️ (D) A GARANTIA É MAIS FRACA DO QUE A DO NARRADOR E ISSO ESTÁ ESCRITO.** O narrador usa
+  allowlist de vocabulário fechado (~250 palavras); um relatório de cinco secções não cabe lá.
+  Aqui é blocklist para a linguagem + conjunto numérico fechado + âncoras obrigatórias. A
+  diferença é de **risco**: o alerta é **empurrado** (Telegram, sem pedir) e este texto é
+  **puxado** com a evidência ao lado. `guard.RESIDUAL` lista o que continua em aberto.
+  **⚠️ (E) RED TEAM: 6 lentes, 114 ataques, 21 reproduzidos — MAS 39 de 43 agentes morreram no
+  limite de gasto, INCLUINDO TODOS OS VERIFICADORES.** O workflow devolveu *"No exploit
+  survived adversarial verification"* e **isso não é um resultado limpo, é a ausência de
+  verificação** — 4.ª vez que este padrão engana neste projecto. Actuei sobre os achados das
+  2 lentes que completaram, verificados por mim.
+  **A causa dos três CRÍTICOS era UMA: o conjunto numérico era GLOBAL**, portanto qualquer
+  número do pacote podia ser colado a qualquer afirmação (citar `f5` e usar o número de `f9`;
+  restituir um retorno como z-score; inverter a direcção com o número de outro facto). A
+  correcção é **ligar cada número ao facto que a frase cita**. Fechados ainda: a padding de
+  precisão que **cunhava** números (2,65 a zero casas metia "3" no vocabulário), números por
+  extenso, a **janela de negação explorável** (bastava pôr um "no" perto para desligar a
+  blocklist ⇒ substituída por allowlist fechada de ressalvas), a máscara de horas que apagava
+  qualquer `dd:dd` ("at 92:50 per share"), e a **inversão de pares ordenados** (`8 up, 4 down`
+  reescrito como `4 up, 8 down`, com ambos os números legítimos).
+  **Medido (`scripts/evaluate_intelligence_guard.py`, regenerável): 23/23 ataques bloqueados,
+  8/8 controlos de texto fiel passam, 22/22 secções entregues conformes, 0 violações
+  entregues.** O corpus é **data-driven** — a 1.ª versão fixava "+4,47%" e partia quando o
+  mercado mexia, produzindo um relatório a acusar a guarda de rejeitar texto fiel.
+  **⚠️ (F) DOIS DEFEITOS DE HONESTIDADE MEUS, os dois apanhados A OLHAR e não nos testes:**
+  **(1)** `Exceedance` exige quatro campos; construí com dois, um `except` largo engoliu o
+  `TypeError` e o veredicto caiu em *"an ordinary day"* — sobre a **AAPL a −2,12%, o 35.º maior
+  movimento de 249 dias**. É **exactamente** o defeito que a sessão 48 corrigiu na v3, de volta
+  por uma porta diferente, escondido por um `except` que tornava um erro de programação
+  indistinguível de dados em falta.
+  **(2)** **A TIRA DE RARIDADE ESTAVA INVERTIDA**: a XOM (2 de 249 dias) aparecia quase toda
+  acesa e um dia banal aparecia com menos — **o mais raro parecia o mais comum**. Só se vê a
+  renderizar.
+  **(G) IMPLANTADO: v25 → v27.** `git push heroku` continua bloqueado ⇒
+  `scripts/deploy_heroku.py` (novo) pela API de Sources/Builds; o tarball sai de
+  `git archive HEAD`, portanto o `.env` fica de fora **por construção**. Verificado ao vivo:
+  4 rotas a 200, relatório generativo **1,5 s**, analista **1,26 s**, worker a escrever o
+  instantâneo com intradiário (78 barras de 5 min).
+  **Gates: 707 testes (era 658), ruff limpo, congelados intactos.**
+  **⏭️ NÃO FEITO, e é o maior bloco que fica:** **a propagação para a tese e materiais**
+  (Cap. 4 descreve a v4; Cap. 3 não tem a metodologia da camada generativa; figuras, slides,
+  quizz, guias e o artigo IEEE por actualizar). A tese está **correcta enquanto descrever o
+  que descreve**, mas o `Procfile` mudou ⇒ a dívida está aberta, tal como nas sessões 48 e 54.
 - **🆕 SESSÃO 55 (2026-08-09/10 — o aluno pediu auditoria total em fases, e disse que o
   REPOSITÓRIO FICA PRIVADO e não é avaliado):**
   **⚠️ ESSA FRASE MUDOU AS PRIORIDADES.** Se o arguente nunca abre o repo, cada "isto é
