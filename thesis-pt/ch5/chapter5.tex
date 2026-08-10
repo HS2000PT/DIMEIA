@@ -26,9 +26,12 @@ anomalias, os preços de fecho diários dos quinze tickers de grande capitaliza�
 obtidos de um serviço de dados de mercado gratuito sobre uma janela fixa de três anos (junho~de~2023 a
 junho~de~2026), produzindo $750$ log-retornos diários por ticker. Para o motor de correlação, $3{,}714$
 manchetes reais de notícias financeiras para os mesmos tickers foram recolhidas através de um serviço de
-notícias de empresa gratuito (os meses mais recentes disponíveis na camada gratuita), abrangendo cinco
-setores (tecnologia, banca, energia, saúde e consumo de base). Este é o corpus de avaliação de recuperação,
-distinto da camada FNSPID desenhada documentada na data card do Capítulo~\ref{chap:methods}. Para o estudo de
+notícias de empresa gratuito, abrangendo cinco setores (tecnologia, banca, energia, saúde e consumo de
+base). Esse corpus cobre \textbf{27 dias} (28~de~maio a 24~de~junho~de~2026), que é a janela que a camada
+gratuita devolve; as consequências de uma janela tão curta, tanto para o que o estudo pode afirmar como
+para o nome que os seus vizinhos recuperados devem ter, estão na Secção~\ref{sec:met_data_live}. Este é o
+corpus de avaliação de recuperação, distinto da camada FNSPID desenhada documentada na data card do
+Capítulo~\ref{chap:methods}. Para o estudo de
 triagem de materialidade (Estudo de Caso~4), o subconjunto multi-ano do FNSPID da data card \emph{foi}
 construído, pela pipeline de streaming, e alinhado aos preços: $79{,}753$ exemplos (manchete, ticker, dia do
 evento) sobre 2018--2023. As manchetes de notícias e os preços são normalizados para um esquema comum para

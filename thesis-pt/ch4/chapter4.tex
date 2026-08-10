@@ -324,6 +324,26 @@ torna possível a decomposição de latência do Capítulo~\ref{chap:conclusions
 (``Microsoft'', ``MSFT'', e os nomes dos seus responsáveis), e não pode corresponder a boilerplate de
 resumo de mercado. Este portão existe porque o fornecedor etiqueta de forma larga: um aviso de um
 escritório de advogados e uma lista de ``maiores movimentos do S\&P~500'' chegam ambos com o ticker.
+Três coisas sobre esta regra precisam de ser ditas com clareza, porque é a maior redução da pipeline e
+nenhuma delas é lisonjeira.
+
+Primeiro, \emph{quanto remove}. Aplicada ao corpus de avaliação, restrita aos doze tickers que o produto
+vigia, mantém $811$ de $2{,}478$ manchetes: \textbf{descarta dois terços do que chega}. Segundo,
+\emph{qual das metades da regra faz o trabalho}. Os padrões de boilerplate, que são a parte mais fácil de
+descrever e de justificar, explicam apenas $3,0\%$ dos descartes; os restantes $64,3\%$ falham
+simplesmente porque a manchete nunca nomeia a empresa. A regra é portanto melhor descrita como um teste
+de menção com uma pequena exclusão de boilerplate do que ao contrário. Terceiro, \emph{de onde veio a
+regra}. Não foi derivada a~priori. Foi escrita depois de ler os primeiros vinte e sete alertas que o
+canal tinha efectivamente enviado, e os padrões de boilerplate são transcrições das falhas ali
+observadas. Isso é engenharia comum e é reprodutível no sentido que importa --- a regra é código
+determinístico, pelo que duas pessoas a aplicarem-na às mesmas manchetes obtêm resultados idênticos ---
+mas não é um critério independente, e chamar-lhe isso representaria mal como foi construída.
+
+Uma quarta propriedade é uma limitação genuína e não uma divulgação. O teste de menção depende de uma
+lista de aliases escrita à mão, e a sua cobertura vale o que vale essa lista: tickers sem entrada caem no
+fallback de corresponder ao símbolo nu, que quase nenhuma manchete escreve, pelo que a sua retenção
+desaba. Outro investigador que escolhesse aliases diferentes obteria taxas de retenção diferentes do
+mesmo corpus.
 
 \textbf{4. Representação.} A manchete sobrevivente é codificada num vetor de $384$ dimensões e norma
 unitária pelo codificador de frases quantizado, em CPU, em poucos milissegundos. Este é o único ponto

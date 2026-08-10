@@ -28,7 +28,7 @@ tomadas uma a uma.
 RQ1: detetar movimentos abruptos de forma transparente
   & \colorbox{green!20}{\textbf{Sim}}
   & taxa de disparo $0.015$ vs $0.344$; $F_1$ $0.516$ \\
-RQ2: precedentes análogos, sem lookahead
+RQ2: casos análogos, sem lookahead
   & \colorbox{green!20}{\textbf{Sim} (recuperação)}
   & P@5 $0.514$ vs $0.346$ lexical, $0.240$ aleatório \\
 RQ3: explicações fiéis e úteis
@@ -58,15 +58,26 @@ Capítulo~\ref{chap:casestudies}, a taxa de disparo variou apenas $0.015$ entre 
 contra um indicador de movimentos extremos, mais do dobro da linha de base. O método é simples o
 suficiente para que cada alerta possa ser explicado ao investidor.
 
-\paragraph{RQ2: precedentes análogos sem lookahead.}
+\paragraph{RQ2: casos análogos sem lookahead.}
 \textbf{Sim, para a recuperação.} A recuperação semântica com Sentence-BERT recuperou muito mais
-precedentes análogos por setor do que qualquer alternativa trivial: uma precisão@$5$ cross-ticker de
+itens análogos por setor do que qualquer alternativa trivial: uma precisão@$5$ cross-ticker de
 $0.514 \pm 0.015$ (em cinco corridas), contra $0.346$ de uma linha de base lexical, $0.240$ do
 aleatório e $0.126$ da recência. Uma decomposição por setor mostrou que o ganho é maior onde o
 vocabulário do domínio é mais distintivo (energia, saúde). O estudo de caso ponta a ponta mostrou-a a
 trazer à superfície precedentes genuinamente temáticos a partir de fontes de empresas diferentes. O
 impacto é medido estritamente após o evento, ao estilo de um estudo de evento, pelo que nenhuma
-informação futura se infiltra na evidência. Isto foi depois validado à escala: no corpus FNSPID
+informação futura se infiltra no desfecho medido.
+
+A redação deste veredicto é deliberadamente mais estreita do que a de um rascunho anterior, e a razão é
+uma propriedade do corpus e não do método. Como a janela da camada gratuita abrange $27$ dias, a
+experiência de recuperação não pode ser descrita como recuperando \emph{precedentes}: apenas $31,1\%$
+dos vizinhos que devolve são mais antigos do que a sua consulta (Secção~ef{sec:met_data_live}). O que
+demonstra é que a semelhança por embeddings recupera itens do mesmo setor muito acima de todas as linhas
+de base, que é o que a precision@$5$ mede e o que o número sustenta. A anterioridade é uma propriedade
+da configuração implantada, onde a base de conhecimento termina em 2023 e as consultas chegam em 2026, e
+da medição de impacto, que só olha para a frente a partir de um evento.
+
+Isto foi depois validado à escala: no corpus FNSPID
 multi-ano (cerca de oitenta mil manchetes) o mesmo protocolo cross-ticker atingiu uma precision@$5$
 de $0.595$, acima do valor preliminar, e a propriedade tema-não-direção foi quantificada diretamente,
 já que a consistência de direção dos clusters recuperados ($0.71$) fica logo acima do seu chão do
@@ -263,9 +274,16 @@ versionados.
 
 Restam várias limitações, enunciadas com clareza:
 \begin{itemize}
-  \item \textbf{Corpus.} A avaliação de recuperação primária usou um corpus de notícias recente, de
-        poucos meses, de um serviço gratuito, o que torna esses números preliminares; um seguimento no
-        corpus FNSPID multi-ano validou a recuperação à escala (precision@$5$ de $0.595$). O estudo de triagem usou de facto o subconjunto
+  \item \textbf{Corpus, e é mais estreito do que parece à primeira vista.} A avaliação de recuperação
+        primária usou um corpus de camada gratuita que abrange \emph{27 dias}, não meses. É curto o
+        suficiente para excluir qualquer afirmação sobre generalização ao longo do tempo, razão pela
+        qual esses números são preliminares e pela qual a recuperação foi repetida à escala sobre o
+        corpus FNSPID multi-ano (precision@$5$ de $0.595$). Tem uma segunda consequência, enunciada
+        na Secção~\ref{sec:met_data_live}: dentro de uma janela de 27 dias apenas $31,1\%$ dos
+        vizinhos recuperados precedem a sua consulta, pelo que essa experiência mede recuperação
+        semântica de itens do mesmo setor e não recuperação de precedentes. A distinção não chega ao
+        sistema implantado, onde a base de conhecimento termina em 2023 e as consultas chegam em
+        2026. O estudo de triagem usou de facto o subconjunto
         multi-ano do FNSPID, mas com catorze dos quinze tickers (a Meta está indexada sob o seu
         símbolo antigo no corpus) e apenas o texto da manchete.
   \item \textbf{Indicadores aproximados.} A relevância é aproximada por concordância de setor, e o
@@ -362,7 +380,7 @@ Figura~\ref{fig:limitations_future}.
 ]
   \node[font=\small\bfseries, text=orange!65!black, anchor=west] at (0.1,0.95) {Limitação};
   \node[font=\small\bfseries, text=green!45!black, anchor=west] at (5.4,0.95) {Passo concreto seguinte};
-  \node[lim] (l0) at (0,0) {Corpus recente, de poucos meses};
+  \node[lim] (l0) at (0,0) {Corpus de recuperação de 27 dias};
   \node[fut] (f0) at (5.3,0) {Estudo das magnitudes de impacto à escala (recuperação já validada no FNSPID)};
   \node[lim] (l1) at (0,-1.45) {Só manchetes (texto curto)};
   \node[fut] (f1) at (5.3,-1.45) {Texto mais rico: corpo dos artigos e uma feature de sentimento};

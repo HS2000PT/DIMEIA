@@ -270,6 +270,8 @@ An EWMA estimate would do better on this proxy & $F_1$ $0.664$ vs $0.516$ & §\r
 \multicolumn{5}{l}{\textbf{RQ2 — precedent retrieval}} \\
 Semantic retrieval beats lexical and trivial baselines & P@5 $0.514$ vs $0.346 / 0.240 / 0.126$, 5 seeds & §\ref{sec:cs_retrieval} & Script & Kept \\
 Holds at multi-year scale & P@5 $0.595$ on $\sim$80k headlines & §\ref{sec:cs_retrieval} & Script & Kept \\
+The retrieval experiment recovers \emph{precedents} & Only $31.1\%$ of neighbours precede their query in a $27$-day corpus & §\ref{sec:met_data_live} & Script & \textbf{Withdrawn} (holds in deployment) \\
+The evaluation corpus spans months & $27$ days, 28 May--24 Jun 2026 & §\ref{sec:met_data_live} & Script & \textbf{Withdrawn} \\
 Retrieval captures theme, not direction & Direction consistency $0.71$ vs $0.69$ chance floor & §\ref{sec:cs_retrieval} & Script & Kept \\
 Relevance $=$ sector agreement is a proxy, not ground truth & Stated; qualitative inspection per sector & §\ref{sec:cs_discussion} & --- & Limitation \\
 \midrule
@@ -288,6 +290,9 @@ No text model beats the volatility baseline & PR-AUC $0.542$ vs $0.496$; survive
 Triage raises within-budget precision $0.163 \to 0.632$ & Held-out block of the training corpus & §\ref{sec:cs_triage} & Script & \textbf{Narrowed} to evaluation set \\
 The deployed gate selects material news & ROC-AUC $0.494$, cluster CI $[0.391, 0.601]$, on $145$ (ticker, day) units & §\ref{sec:concl_limitations} & Live & \textbf{Withdrawn} \\
 The deployed gate controls volume & Suppresses $\sim$3/5 of news decisions & §\ref{sec:investigator_deploy} & Live & Kept \\
+\midrule
+The relevance filter is an a~priori criterion & Written after reading the first $27$ alerts; boilerplate patterns transcribe observed failures & §\ref{sec:investigator_flow} & --- & \textbf{Withdrawn} \\
+The relevance filter removes two thirds of arrivals & $811$ of $2{,}478$ kept; $3.0\%$ boilerplate, $64.3\%$ no mention & §\ref{sec:investigator_flow} & Script & Kept \\
 \midrule
 \multicolumn{5}{l}{\textbf{System and deployment}} \\
 The evaluated model and the deployed model are the same model & Cosine $0.992$; $95\%$ of retrieved neighbours shared over $503$ queries & §\ref{sec:investigator_deploy} & Script & Kept \\

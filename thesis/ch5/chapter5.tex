@@ -25,9 +25,12 @@ states its own limitations.
 large-capitalisation tickers listed in the data card were retrieved from a free market-data service
 over a fixed three-year window (June~2023 to June~2026), yielding $750$ daily log-returns per ticker. For the correlation engine,
 $3{,}714$ real financial-news headlines for the same tickers were collected through a free company-news
-service (the most recent months available on the free tier), spanning five sectors (technology,
-banking, energy, health and consumer staples). This is the retrieval evaluation corpus, distinct
-from the designed FNSPID layer documented in the data card of Chapter~\ref{chap:methods}.
+service, spanning five sectors (technology, banking, energy, health and consumer staples). That corpus
+covers \textbf{27 days} (28~May to 24~June~2026), which is the window the free tier returns; the
+consequences of so short a window, both for what the study can claim and for what its retrieved
+neighbours should be called, are set out in Section~\ref{sec:met_data_live}. This is the retrieval
+evaluation corpus, distinct from the designed FNSPID layer documented in the data card of
+Chapter~\ref{chap:methods}.
 For the materiality-triage study (Case Study~4), the multi-year FNSPID subset of the data card
 \emph{was} built, by the streaming pipeline, and aligned to prices: $79{,}753$ (headline, ticker,
 event-day) examples over 2018--2023. News headlines and prices are normalised to a common

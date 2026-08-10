@@ -267,11 +267,26 @@ gratuito) e notícias de um serviço de notícias de empresa gratuito e de feeds
 deliberadamente \emph{não} usadas para construir a camada histórica, porque as camadas gratuitas cobrem
 apenas uma janela curta, recente e atrasada; mas servem bem como gatilho vivo e como fonte de notícias
 \emph{reais} para uma primeira avaliação. Para isso, um conjunto de $3{,}714$ manchetes reais para os
-quinze tickers foi recolhido do serviço de notícias de empresa gratuito (os meses mais recentes
-disponíveis), e é usado no estudo de recuperação do Capítulo~\ref{chap:casestudies}. Este corpus é real mas
-recente, razão pela qual a construção multi-ano do FNSPID continua a ser a fonte mais rica; essa construção
-\emph{foi} feita, e é ela que sustenta os estudos de triagem, taxonomia, conformal, deriva e convergência do
-Capítulo~\ref{chap:casestudies}.
+quinze tickers foi recolhido do serviço de notícias de empresa gratuito, e é usado no estudo de
+recuperação do Capítulo~\ref{chap:casestudies}.
+
+A amplitude desse corpus precisa de ser enunciada com precisão, porque limita o que o estudo pode
+afirmar. Abrange \textbf{27 dias}, de 28~de~maio a 24~de~junho~de~2026 --- a janela que a camada
+gratuita devolve, que é uma janela e não um histórico. Vinte e sete dias não sustentam qualquer
+afirmação sobre generalização ao longo do tempo, razão pela qual o resultado de recuperação é reportado
+como preliminar e depois repetido à escala sobre o corpus multi-ano. Essa construção multi-ano
+\emph{foi} feita, e é ela que sustenta os estudos de triagem, taxonomia, conformal, deriva e
+convergência do Capítulo~\ref{chap:casestudies}.
+
+Uma consequência de uma janela de 27 dias merece frase própria, porque muda como se chama a experiência
+de recuperação e não o que ela mede. A avaliação ordena candidatos por semelhança sem os restringir a
+serem anteriores à consulta; só a linha de base de recência consulta datas. Sobre as consultas
+amostradas, apenas $31,1\%$ dos vizinhos recuperados são anteriores à sua consulta, $30,2\%$ partilham a
+data e $38,7\%$ são posteriores. A métrica não é afectada, porque pontua concordância de setor e o setor
+de uma manchete não muda com o tempo; mas o que se mede é \emph{recuperação semântica de itens do mesmo
+setor}, e não recuperação de \emph{precedentes}, e esta dissertação usa a primeira descrição para essa
+experiência. No sistema implantado a distinção não se levanta: a base de conhecimento curada termina em
+2023 e as consultas chegam em 2026, pelo que cada caso recuperado precede a sua consulta por construção.
 
 \subsection{Governança de Dados e Atribuição}
 \label{sec:met_data_gov}

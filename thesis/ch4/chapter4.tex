@@ -318,7 +318,26 @@ makes the latency decomposition of Chapter~\ref{chap:conclusions} possible at al
 \textbf{3. Relevance.} The headline must name the company, matched against an alias list (``Microsoft'',
 ``MSFT'', and the names of its principals), and must not match market-roundup boilerplate. This gate
 exists because the provider tags loosely: a law-firm notice and a ``top S\&P~500 movers'' list both
-arrive labelled with the ticker.
+arrive labelled with the ticker. Three things about this rule need stating plainly, because it is the
+single largest reduction in the pipeline and none of them is flattering.
+
+First, \emph{how much it removes}. Applied to the evaluation corpus, restricted to the twelve tickers
+the product watches, it keeps $811$ of $2{,}478$ headlines: \textbf{it discards two thirds of what
+arrives}. Second, \emph{which half of the rule does the work}. The boilerplate patterns, which are the
+part easiest to describe and to justify, account for only $3.0\%$ of the discards; the remaining
+$64.3\%$ fail simply because the headline never names the company. The rule is therefore better
+described as a mention test with a small boilerplate exclusion than as the reverse. Third, \emph{where
+the rule came from}. It was not derived a~priori. It was written after reading the first twenty-seven
+alerts the channel had actually sent, and the boilerplate patterns are transcriptions of the failures
+observed there. That is ordinary engineering and it is reproducible in the sense that matters --- the
+rule is deterministic code, so two people applying it to the same headlines obtain identical results
+--- but it is not an independent criterion, and calling it one would misrepresent how it was built.
+
+A fourth property is a genuine limitation rather than a disclosure. The mention test depends on a
+hand-written alias list, and its coverage is only as good as that list: tickers without an entry fall
+back to matching the bare symbol, which almost no headline writes, so their retention collapses.
+Another researcher choosing different aliases would obtain different retention rates from the same
+corpus.
 
 \textbf{4. Representation.} The surviving headline is encoded into a $384$-dimensional unit-length
 vector by the quantised sentence encoder, on CPU, in a few milliseconds. This is the one point in the

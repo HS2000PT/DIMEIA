@@ -27,7 +27,7 @@ one at a time.
 RQ1: detect abrupt moves transparently
   & \colorbox{green!20}{\textbf{Yes}}
   & firing rate $0.015$ vs $0.344$; $F_1$ $0.516$ \\
-RQ2: analogous precedents, no lookahead
+RQ2: analogous cases, no lookahead
   & \colorbox{green!20}{\textbf{Yes} (retrieval)}
   & P@5 $0.514$ vs $0.346$ lexical, $0.240$ random \\
 RQ3: faithful and useful explanations
@@ -57,14 +57,23 @@ Chapter~\ref{chap:casestudies}, the firing rate varied by only $0.015$ across th
 against an extreme-move proxy, more than double the baseline. The method is simple enough that every
 alert can be explained to the investor.
 
-\paragraph{RQ2: analogous precedents without lookahead.}
+\paragraph{RQ2: analogous cases without lookahead.}
 \textbf{Yes, for retrieval.} Semantic retrieval with Sentence-BERT recovered markedly more
-sector-analogous precedents than every trivial alternative: a cross-ticker precision@$5$ of
+sector-analogous items than every trivial alternative: a cross-ticker precision@$5$ of
 $0.514 \pm 0.015$ (over five runs), against $0.346$ for a lexical baseline, $0.240$ for random and $0.126$
 for recency. A per-sector breakdown showed the lift is greatest where domain vocabulary is most
-distinctive (energy, health). The end-to-end case study showed it surfacing genuinely topical precedents across
+distinctive (energy, health). The end-to-end case study showed it surfacing genuinely topical cases across
 different company feeds. Impact is measured strictly after the event, in the style of an event study, so
-no future information leaks into the evidence. This was then validated at scale: on the multi-year
+no future information leaks into the measured outcome.
+
+The wording of this verdict is deliberately narrower than an earlier draft, and the reason is a
+property of the corpus rather than of the method. Because the free-tier window spans $27$ days, the
+retrieval experiment cannot be described as recovering \emph{precedents}: only $31.1\%$ of the
+neighbours it returns are older than their query (Section~\ref{sec:met_data_live}). What it
+demonstrates is that embedding similarity recovers same-sector items far above every baseline, which
+is what precision@$5$ measures and what the number supports. Pastness is a property of the deployed
+configuration, where the knowledge base ends in 2023 and queries arrive in 2026, and of the impact
+measurement, which only ever looks forward from an event. This was then validated at scale: on the multi-year
 FNSPID corpus (about eighty thousand headlines) the same cross-ticker protocol reached a
 precision@$5$ of $0.595$, above the preliminary figure, and the theme-not-direction property was
 quantified directly, since the retrieved clusters' direction consistency ($0.71$) sits barely above
@@ -252,9 +261,16 @@ ablations and limitations are all reported plainly and regenerated from versione
 
 Several limitations remain, stated plainly:
 \begin{itemize}
-  \item \textbf{Corpus.} The primary retrieval evaluation used a recent, few-month news corpus from a
-        free service, which makes those figures preliminary; a follow-up on the multi-year FNSPID
-        corpus validated the retrieval at scale (precision@$5$ of $0.595$). The triage study did use the multi-year FNSPID subset, but with fourteen of the
+  \item \textbf{Corpus, and it is narrower than it first appears.} The primary retrieval evaluation
+        used a free-tier news corpus spanning \emph{27 days}, not months. That is short enough to
+        rule out any claim about generalisation across time, which is why those figures are
+        preliminary and why the retrieval was repeated at scale on the multi-year FNSPID corpus
+        (precision@$5$ of $0.595$). It has a second consequence, stated in
+        Section~\ref{sec:met_data_live}: within a 27-day window only $31.1\%$ of the retrieved
+        neighbours precede their query, so that experiment measures semantic retrieval of
+        same-sector items rather than retrieval of precedents. The distinction does not reach the
+        deployed system, where the knowledge base ends in 2023 and queries arrive in 2026. The
+        triage study did use the multi-year FNSPID subset, but with fourteen of the
         fifteen tickers (Meta is indexed under its former symbol in the corpus) and headline text only.
   \item \textbf{Proxies.} Relevance is proxied by sector agreement, and the anomaly label is
         volatility-relative, which is why the label-free firing-rate argument is given primacy.
@@ -345,7 +361,7 @@ The limitations map directly onto future work, summarised in Figure~\ref{fig:lim
 ]
   \node[font=\small\bfseries, text=orange!65!black, anchor=west] at (0.1,0.95) {Limitation};
   \node[font=\small\bfseries, text=green!45!black, anchor=west] at (5.4,0.95) {Concrete next step};
-  \node[lim] (l0) at (0,0) {Recent, few-month corpus};
+  \node[lim] (l0) at (0,0) {27-day retrieval corpus};
   \node[fut] (f0) at (5.3,0) {Impact-magnitude study at scale (retrieval already validated on FNSPID)};
   \node[lim] (l1) at (0,-1.3) {Headlines only (short text)};
   \node[fut] (f1) at (5.3,-1.3) {Richer text: article bodies and a sentiment feature};

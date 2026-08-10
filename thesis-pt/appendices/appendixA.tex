@@ -274,6 +274,8 @@ Um estimador EWMA faria melhor neste proxy & $F_1$ $0.664$ vs $0.516$ & §\ref{s
 \multicolumn{5}{l}{\textbf{RQ2 — recuperação de precedentes}} \\
 A recuperação semântica bate as linhas de base lexical e triviais & P@5 $0.514$ vs $0.346 / 0.240 / 0.126$, 5 sementes & §\ref{sec:cs_retrieval} & Script & Mantida \\
 Mantém-se à escala multi-ano & P@5 $0.595$ em $\sim$80k manchetes & §\ref{sec:cs_retrieval} & Script & Mantida \\
+A experiência de recuperação recupera \emph{precedentes} & Só $31,1\%$ dos vizinhos precedem a consulta num corpus de $27$ dias & §\ref{sec:met_data_live} & Script & \textbf{Retirada} (vale na implantação) \\
+O corpus de avaliação abrange meses & $27$ dias, 28 mai--24 jun 2026 & §\ref{sec:met_data_live} & Script & \textbf{Retirada} \\
 A recuperação capta tema, não direção & Consistência de direção $0.71$ vs chão de acaso $0.69$ & §\ref{sec:cs_retrieval} & Script & Mantida \\
 Relevância $=$ concordância de setor é um proxy, não verdade & Declarado; inspeção qualitativa por setor & §\ref{sec:cs_discussion} & --- & Limitação \\
 \midrule
@@ -292,6 +294,9 @@ Nenhum modelo com texto bate a linha de base de volatilidade & PR-AUC $0.542$ vs
 A triagem eleva a precisão no orçamento $0.163 \to 0.632$ & Bloco retido do corpus de treino & §\ref{sec:cs_triage} & Script & \textbf{Estreitada} ao conjunto de avaliação \\
 O gate implantado seleciona notícias materiais & ROC-AUC $0.494$, IC de cluster $[0.391, 0.601]$, em $145$ unidades (ticker, dia) & §\ref{sec:concl_limitations} & Vivo & \textbf{Retirada} \\
 O gate implantado controla o volume & Suprime $\sim$3/5 das decisões de notícia & §\ref{sec:investigator_deploy} & Vivo & Mantida \\
+\midrule
+O filtro de relevância é um critério a~priori & Escrito depois de ler os primeiros $27$ alertas; os padrões de boilerplate transcrevem falhas observadas & §\ref{sec:investigator_flow} & --- & \textbf{Retirada} \\
+O filtro de relevância remove dois terços do que chega & $811$ de $2{,}478$ mantidas; $3,0\%$ boilerplate, $64,3\%$ sem menção & §\ref{sec:investigator_flow} & Script & Mantida \\
 \midrule
 \multicolumn{5}{l}{\textbf{Sistema e implantação}} \\
 O modelo avaliado e o implantado são o mesmo modelo & Cosseno $0.992$; $95\%$ dos vizinhos partilhados em $503$ consultas & §\ref{sec:investigator_deploy} & Script & Mantida \\
