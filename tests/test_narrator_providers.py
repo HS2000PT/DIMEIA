@@ -35,8 +35,8 @@ def test_groq_e_o_primeiro_por_medicao(monkeypatch):
     _com_chaves(monkeypatch)
     assert providers.available() == ["groq", "gemini"]
 
-    monkeypatch.setattr(providers, "_post_groq", lambda p, t: "do groq")
-    monkeypatch.setattr(providers, "_post_gemini", lambda p, t: "do gemini")
+    monkeypatch.setattr(providers, "_post_groq", lambda p, t, m=None: "do groq")
+    monkeypatch.setattr(providers, "_post_gemini", lambda p, t, m=None: "do gemini")
     r = providers.complete("olá")
     assert r is not None and r.provider == "groq" and r.text == "do groq"
 
@@ -48,7 +48,7 @@ def test_cai_para_gemini_quando_o_groq_falha(monkeypatch):
         raise RuntimeError("429 rate limit")
 
     monkeypatch.setattr(providers, "_post_groq", _rebenta)
-    monkeypatch.setattr(providers, "_post_gemini", lambda p, t: "do gemini")
+    monkeypatch.setattr(providers, "_post_gemini", lambda p, t, m=None: "do gemini")
     r = providers.complete("olá")
     assert r is not None and r.provider == "gemini" and r.text == "do gemini"
 
@@ -69,8 +69,8 @@ def test_resposta_vazia_conta_como_falha_e_passa_ao_seguinte(monkeypatch):
     """Medido: modelos de raciocínio devolvem HTTP 200 SEM texto. Uma string vazia não pode
     passar por resposta válida — senão o alerta sairia mudo."""
     _com_chaves(monkeypatch)
-    monkeypatch.setattr(providers, "_post_groq", lambda p, t: "")
-    monkeypatch.setattr(providers, "_post_gemini", lambda p, t: "do gemini")
+    monkeypatch.setattr(providers, "_post_groq", lambda p, t, m=None: "")
+    monkeypatch.setattr(providers, "_post_gemini", lambda p, t, m=None: "do gemini")
     r = providers.complete("olá")
     assert r is not None and r.provider == "gemini"
 
@@ -78,7 +78,7 @@ def test_resposta_vazia_conta_como_falha_e_passa_ao_seguinte(monkeypatch):
 def test_fornecedor_sem_chave_e_saltado_em_silencio(monkeypatch):
     _com_chaves(monkeypatch, groq=None, gemini="m")
     assert providers.available() == ["gemini"]
-    monkeypatch.setattr(providers, "_post_gemini", lambda p, t: "do gemini")
+    monkeypatch.setattr(providers, "_post_gemini", lambda p, t, m=None: "do gemini")
     r = providers.complete("olá")
     assert r is not None and r.provider == "gemini"
 
@@ -86,7 +86,7 @@ def test_fornecedor_sem_chave_e_saltado_em_silencio(monkeypatch):
 def test_resposta_traz_proveniencia(monkeypatch):
     """Saber QUEM serviu é o que permite medir fiabilidade em vez de a afirmar."""
     _com_chaves(monkeypatch)
-    monkeypatch.setattr(providers, "_post_groq", lambda p, t: "texto")
+    monkeypatch.setattr(providers, "_post_groq", lambda p, t, m=None: "texto")
     r = providers.complete("olá")
     assert r is not None
     assert r.model == providers.GROQ_MODEL
@@ -98,10 +98,29 @@ def test_timeout_e_propagado_ao_fornecedor(monkeypatch):
     _com_chaves(monkeypatch, groq="g", gemini=None)
     visto = {}
 
-    def _captura(p, t):
+    def _captura(p, t, m=None):
         visto["timeout"] = t
+        visto["max_tokens"] = m
         return "ok"
 
     monkeypatch.setattr(providers, "_post_groq", _captura)
     providers.complete("olá", timeout=3.5)
     assert visto["timeout"] == 3.5
+
+
+def test_orcamento_de_saida_e_propagado(monkeypatch):
+    """O relatório de situação tem cinco secções e não cabe no orçamento de um alerta.
+
+    Com os 300 tokens por defeito o texto era cortado a meio de uma frase — e um relatório
+    que acaba a meio parece uma avaria, não um limite.
+    """
+    _com_chaves(monkeypatch, groq="g", gemini=None)
+    visto = {}
+
+    def _captura(p, t, m=None):
+        visto["max_tokens"] = m
+        return "ok"
+
+    monkeypatch.setattr(providers, "_post_groq", _captura)
+    providers.complete("olá", max_tokens=900)
+    assert visto["max_tokens"] == 900

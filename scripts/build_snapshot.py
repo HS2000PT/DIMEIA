@@ -76,7 +76,13 @@ def linha_de(ticker: str) -> dict | None:
         }
         exc = empirical_exceedance(retornos)
         if exc is not None:
-            out["rarity"] = {"count": int(exc.count), "n": int(exc.n)}
+            # ⚠️ Os QUATRO campos, não dois. `move` e `same_direction` parecem supérfluos até
+            # se reconstruir o objecto do outro lado: sem `move`, a frase "a maior queda em
+            # 249 dias" não sabe se foi queda ou subida; sem `same_direction`, perde-se a
+            # informação de quantos desses dias foram no mesmo sentido.
+            out["rarity"] = {"count": int(exc.count), "n": int(exc.n),
+                             "move": float(exc.move),
+                             "same_direction": int(exc.same_direction)}
 
         # Série de fechos para o gráfico do detalhe. Vai no instantâneo pela mesma razão que
         # tudo o resto: se o detalhe fosse buscar preços à rede, o clique voltava a pagar o
@@ -106,6 +112,41 @@ def linha_de(ticker: str) -> dict | None:
             v = detect_volume_latest(frame["Volume"], window=JANELA, threshold=2.0)
             if v.is_unusual:
                 out["vol_ratio"] = float(v.ratio)
+
+        # A SESSÃO EM CURSO, em barras de 5 minutos.
+        #
+        # Porque é que isto vive no instantâneo e não no cliente: o painel abre por defeito em
+        # "agora", e "agora" tem de ser a sessão de hoje. Sem esta série, o intervalo 1D não
+        # teria nada para mostrar — os dados diários dão UM ponto — e o produto abriria na
+        # única vista onde não há nada que ver. Foi um defeito real da v3, registado na
+        # sessão 47: o detalhe abria em 1D e nesse intervalo não existe nada.
+        #
+        # ⚠️ **A honestidade que isto obriga.** Fora de horas, a série é da ÚLTIMA sessão
+        # fechada, não de hoje. O carimbo `intraday_day` vai junto exactamente para o ecrã
+        # poder dizer de que dia é — o estudo de percursos apanhou uma pessoa a ler o fecho de
+        # ontem como o preço de agora, às 08:02, sem nada no ecrã a desmenti-la.
+        out["intraday"] = None
+        out["intraday_day"] = None
+        out["prev_close"] = None
+        try:
+            import yfinance as yf
+
+            intra = yf.Ticker(ticker).history(period="1d", interval="5m")
+            if intra is not None and not intra.empty and "Close" in intra:
+                serie = intra["Close"].dropna()
+                if len(serie) >= 2:
+                    out["intraday"] = [
+                        [int(ts.timestamp()), round(float(v), 4)]
+                        for ts, v in serie.items()
+                    ]
+                    out["intraday_day"] = serie.index[-1].strftime("%Y-%m-%d")
+                    # O fecho anterior é a referência contra a qual a variação do dia faz
+                    # sentido. Sem ele, uma linha intradiária é um preço sem baseline.
+                    anteriores = fecho[fecho.index.strftime("%Y-%m-%d") < out["intraday_day"]]
+                    if len(anteriores):
+                        out["prev_close"] = round(float(anteriores.iloc[-1]), 4)
+        except Exception:  # noqa: BLE001  (falha aberto: sem intradiário o painel usa o diário)
+            pass
         return out
     except Exception as erro:  # noqa: BLE001
         print(f"  {ticker:6s} falhou: {type(erro).__name__}: {erro}")

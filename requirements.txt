@@ -39,7 +39,17 @@ joblib==1.5.3
 onnxruntime==1.27.0
 tokenizers==0.22.2
 
-# ── A app (dashboard) ───────────────────────────────────────
+# ── A app (v5: API + SPA estático) ──────────────────────────
+# O processo web serve JSON e ficheiros; o gráfico é desenhado no browser pela
+# Lightweight Charts (Apache 2.0, versionada em web/assets/vendor/, ~178 KB).
+# Nenhum destes traz binários pesados: cabem folgadamente no dyno de 512 MB.
+fastapi==0.121.2
+uvicorn[standard]==0.41.0
+
+# ── A app anterior (v3/v4, Streamlit) ───────────────────────
+# MANTIDAS de propósito: `app/dashboard.py` e `app/dashboard_v4.py` continuam a correr
+# localmente e são o que as figuras da tese anteriores documentam. Sai quando a tese
+# deixar de as referenciar — remover agora tornaria a bibliografia de figuras irreprodutível.
 # O plotly desenha o gráfico interativo; o streamlit serve a app.
 # Ambos são puro Python (sem binários pesados) e instalam em qualquer versão.
 #

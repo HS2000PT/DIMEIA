@@ -53,7 +53,14 @@ class LLMResponse:
     latency_s: float
 
 
-def _post_groq(prompt: str, timeout: float) -> str:
+# Orçamento de saída por defeito: chega para o parágrafo de um alerta, que foi o caso de uso
+# para que este módulo nasceu. Um relatório com cinco secções não cabe aqui — e quando não
+# cabe, o texto é cortado a meio de uma frase, o que parece uma avaria e não um limite. Quem
+# chama passa o seu próprio valor.
+MAX_TOKENS = 300
+
+
+def _post_groq(prompt: str, timeout: float, max_tokens: int = MAX_TOKENS) -> str:
     r = requests.post(
         "https://api.groq.com/openai/v1/chat/completions",
         headers={"Authorization": f"Bearer {config.GROQ_API_KEY}"},
@@ -61,7 +68,7 @@ def _post_groq(prompt: str, timeout: float) -> str:
             "model": GROQ_MODEL,
             "messages": [{"role": "user", "content": prompt}],
             "temperature": 0,  # determinismo: a mesma evidência deve dar o mesmo texto
-            "max_tokens": 300,
+            "max_tokens": max_tokens,
         },
         timeout=timeout,
     )
@@ -69,13 +76,13 @@ def _post_groq(prompt: str, timeout: float) -> str:
     return r.json()["choices"][0]["message"]["content"].strip()
 
 
-def _post_gemini(prompt: str, timeout: float) -> str:
+def _post_gemini(prompt: str, timeout: float, max_tokens: int = MAX_TOKENS) -> str:
     r = requests.post(
         f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent",
         params={"key": config.GEMINI_API_KEY},
         json={
             "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {"temperature": 0, "maxOutputTokens": 400},
+            "generationConfig": {"temperature": 0, "maxOutputTokens": max(400, max_tokens)},
         },
         timeout=timeout,
     )
@@ -106,7 +113,8 @@ def available() -> list[str]:
     return [name for name, _fn, key_attr, _m in _CHAIN if _has_key(key_attr)]
 
 
-def complete(prompt: str, timeout: float = TIMEOUT_S, verbose: bool = False) -> LLMResponse | None:
+def complete(prompt: str, timeout: float = TIMEOUT_S, verbose: bool = False,
+             max_tokens: int = MAX_TOKENS) -> LLMResponse | None:
     """Percorre a cadeia e devolve a primeira resposta com texto. `None` se todos falharem.
 
     Nunca levanta. Um fornecedor sem chave é saltado em silêncio (não é erro — é configuração).
@@ -117,7 +125,7 @@ def complete(prompt: str, timeout: float = TIMEOUT_S, verbose: bool = False) -> 
         fn = globals()[fn_name]  # resolvido AGORA: permite substituir/estender a cadeia
         t0 = time.time()
         try:
-            text = fn(prompt, timeout)
+            text = fn(prompt, timeout, max_tokens)
             if not text:
                 raise ValueError("resposta vazia")
             return LLMResponse(text=text, provider=name, model=model,
