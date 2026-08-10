@@ -926,7 +926,7 @@ def _attach_decomposition_safe(ticker: str, alert_text: str, cache: dict,
         return alert_text
 
 
-def _investigate_anomaly_safe(ticker: str, alert_text: str) -> str:
+def _investigate_anomaly_safe(ticker: str, alert_text: str, observado_em: str = "") -> str:
     """Investigação cruzada: procura a notícia relevante mais recente (48h) que possa
     explicar a anomalia e anexa-a ao alerta; sem notícia, di-lo honestamente.
 
@@ -944,8 +944,21 @@ def _investigate_anomaly_safe(ticker: str, alert_text: str) -> str:
         start = (date.today() - timedelta(days=2)).isoformat()
         items = fetch_finnhub_company_news(ticker, start, end)
         relevantes = [i for i in items if is_relevant(i.headline, ticker)]
+        # ⚠️ Guarda temporal (2026-08-10). Antes escolhia-se a manchete mais recente da janela
+        # sem verificar se ela é ANTERIOR ao movimento que diz explicar. Num alerta
+        # intradiário — "-1,6% até agora" — isso podia oferecer como "possible explanation"
+        # uma notícia publicada DEPOIS da leitura, o que inverte a seta causal. A linha é
+        # apresentada como hipótese e não como causa provada, mas oferecer o futuro como
+        # explicação do passado é errado mesmo com ressalva.
+        #
+        # `published_at` é o instante exacto (ISO 8601 UTC) e existe desde 2026-07-29; quando
+        # falta, cai-se para a data ao dia, que é o que havia antes. Notícias sem instante
+        # e do próprio dia continuam elegíveis — não se pode provar que vieram depois.
+        if observado_em:
+            relevantes = [i for i in relevantes
+                          if not i.published_at or i.published_at <= observado_em]
         if relevantes:
-            recente = max(relevantes, key=lambda it: it.date)
+            recente = max(relevantes, key=lambda it: (it.published_at or "", it.date))
             return attach_news_context(alert_text, recente.headline,
                                        news_date=recente.date, today=end)
         return attach_news_context(alert_text, None)
@@ -1275,7 +1288,11 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
                      for t, text in market_alerts]
     # Investigação cruzada (anomalia → notícia): o comportamento do trader profissional —
     # vê o movimento, procura a causa. Fail-open: sem rede/chave, o alerta segue sem contexto.
-    market_alerts = [(t, _investigate_anomaly_safe(t, text)) for t, text in market_alerts]
+    # `utc_stamp()` é o instante em que ESTE ciclo observou o movimento; é ele que define o
+    # que conta como "anterior" na guarda temporal de `_investigate_anomaly_safe`.
+    agora_iso = utc_stamp()
+    market_alerts = [(t, _investigate_anomaly_safe(t, text, agora_iso))
+                     for t, text in market_alerts]
     # Narrador ancorado: parágrafo em linguagem simples ANTES dos factos estruturados.
     # Aditivo — sem chaves, com o LLM em baixo ou com a guarda a rejeitar, o alerta segue
     # exatamente como hoje (ver `_narrate_safe`).

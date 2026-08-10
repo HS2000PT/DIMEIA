@@ -636,3 +636,30 @@ def test_mascara_cobre_os_varios_nomes_de_parametro():
         s = sem_segredos(f"https://exemplo.com/v1?symbol=X&{nome}=SEGREDO123456&b=2")
         assert "SEGREDO123456" not in s, f"{nome} passou"
         assert "b=2" in s, "parametros seguintes nao podem ser comidos"
+
+
+def test_investigacao_cruzada_nao_oferece_noticia_POSTERIOR_ao_movimento(monkeypatch):
+    """A seta causal não pode apontar ao contrário.
+
+    A escolha era `max(por data)` na janela de 48h, sem verificar se a manchete é ANTERIOR ao
+    movimento que diz explicar. Num alerta intradiário ("-1,6% até agora") isso oferecia como
+    *possible explanation* uma notícia publicada DEPOIS da leitura. A linha é uma hipótese e
+    não uma causa provada, mas oferecer o futuro como explicação do passado é errado mesmo
+    com ressalva.
+    """
+    import scripts.run_alerts as ra
+    from investigator.news_fetcher.fetcher import NewsItem
+
+    antes = NewsItem(date="2026-08-10", ticker="NVDA", headline="Nvidia ANTES do movimento",
+                     published_at="2026-08-10T13:00:00Z")
+    depois = NewsItem(date="2026-08-10", ticker="NVDA", headline="Nvidia DEPOIS do movimento",
+                      published_at="2026-08-10T18:00:00Z")
+
+    import investigator.config as cfg
+    monkeypatch.setattr(cfg, "FINNHUB_API_KEY", "x", raising=False)
+    monkeypatch.setattr("investigator.news_fetcher.fetcher.fetch_finnhub_company_news",
+                        lambda *a, **k: [antes, depois])
+
+    saida = ra._investigate_anomaly_safe("NVDA", "alerta", observado_em="2026-08-10T15:00:00Z")
+    assert "ANTES do movimento" in saida
+    assert "DEPOIS do movimento" not in saida, "ofereceu uma notícia posterior como explicação"
