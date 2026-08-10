@@ -102,11 +102,31 @@ preliminar e foi repetido à escala no FNSPID multi-ano.
 | Triagem de materialidade | sim | **sim, supervisionada** | **SIM** ← o único |
 | SBERT (embeddings) | sim, deep learning | sim, mas pré-treinado | **não** — descarregado |
 | Taxonomia de eventos (k-means) | sim | não supervisionada | sim (descritivo) |
+| **Geração ancorada** (relatório + analista) | **sim, generativa** | não (é inferência) | não — LLM externo, **guardado** |
 
 **A resposta a "isto é deep learning?":** *"Não, e uso deep learning."* Por esta ordem. O único
 modelo que treinei é uma regressão logística. Uso um SBERT pré-treinado, e a engenharia aí foi
 pô-lo a correr em 512 MB sem framework (ONNX quantizado) e **provar** que continua a devolver
 os mesmos vizinhos.
+
+**⚠️ A pergunta mais provável de todas: «onde está a inteligência artificial?»**
+A resposta tem quatro andares, e digo-os por esta ordem:
+
+| andar | o quê | natureza |
+|---|---|---|
+| 1 · **dados** | preços, manchetes, carimbos temporais | medido |
+| 2 · **estatística** | z-score, excedência empírica, decomposição | determinístico |
+| 3 · **aprendizagem** | SBERT + recuperação semântica + triagem calibrada | modelos treinados |
+| 4 · **geração** | relatório de situação e analista, em linguagem | LLM, ancorado |
+
+**A frase que fecha a pergunta:** *"O modelo não sabe o que aconteceu. É-lhe dito — por um motor
+de recuperação sobre 80 mil manchetes com desfecho **medido** a cinco dias, por um classificador
+calibrado, e por uma decomposição com betas encolhidos. E cada número que ele escreve é
+verificado contra essa evidência antes de chegar ao ecrã."*
+
+**E a seguir MOSTRA, não expliques:** no relatório, clica num identificador `[f1]` e abre-se o
+facto que o sustenta, com a origem declarada. Três segundos. Vale mais do que qualquer parágrafo,
+e é a diferença entre este trabalho e um wrapper de LLM.
 
 ---
 
@@ -271,6 +291,32 @@ reporta o que correu bem é um trabalho em que não se pode confiar. Todas as re
 por medições minhas, não por revisão de outra pessoa. O apêndice tem uma matriz que marca cada
 afirmação como mantida, estreitada ou retirada — e as retiradas ficam lá de propósito."*
 
+### P9. «A vossa guarda é uma blocklist — não escreveu na tese que blocklists perdem sempre?»
+> **A armadilha mais bem construída que me podem fazer, porque cita o meu próprio trabalho.
+> Não me defendo: concordo primeiro.**
+
+**Resposta segura:** *"Escrevi, e mantenho. É por isso que o **alerta** — que é empurrado para o
+telemóvel sem evidência ao lado — usa a allowlist de vocabulário fechado. O relatório é **pedido**
+pelo utilizador, na página, com a evidência a um clique. Perfis de risco diferentes, garantias
+diferentes, e a diferença está numa tabela da tese, não escondida. O que se mantém idêntico nos
+dois é a parte verificável: os números vêm de um conjunto fechado e, no relatório, ligados à frase
+que os cita."*
+
+**Se insistirem:** *"E os quatro riscos que a garantia mais fraca não fecha estão escritos —
+relevância da âncora, paráfrase, qualificadores e omissão."*
+
+### P10. «O red team confirmou que a guarda é segura?»
+> **NÃO deixar passar isto sem correcção. Se eu deixar, estou a afirmar o que não medi.**
+
+**Resposta segura:** *"Não. Encomendei seis lentes de ataque; duas completaram, e **nenhuma etapa
+de verificação independente correu** — bateram no limite de gasto da conta. O relatório final
+dizia 'nenhum exploit sobreviveu à verificação', e isso é a **ausência** de verificação, não um
+resultado limpo. Verifiquei os achados eu próprio contra o código, fechei-os, e guardei-os como
+testes de regressão. A força medida é um **limite inferior**."*
+
+**Porque é que isto é uma boa resposta:** porque a pergunta era uma armadilha e eu desarmei-a
+antes de ela fechar. Ninguém ataca quem já concordou.
+
 ---
 
 ## 12. 🚫 O que NUNCA posso afirmar
@@ -287,6 +333,9 @@ afirmação como mantida, estreitada ou retirada — e as retiradas ficam lá de
 | "O filtro é um critério objectivo a priori" | Foi escrito depois de ver falhas |
 | "Perguntámos aos utilizadores" | São **personas**. Nenhum estudo humano foi feito |
 | "As explicações são úteis" | Não medido |
+| "A guarda do relatório é tão forte como a do alerta" | É blocklist, não allowlist — **mais fraca, e declarada** |
+| "A guarda passou um red team completo" | 2 de 6 lentes; **nenhum verificador** correu (limite de gasto) |
+| "O texto gerado está sempre correcto" | Verifico o **número** e a **âncora**, não se a frase caracteriza bem o facto |
 
 ---
 

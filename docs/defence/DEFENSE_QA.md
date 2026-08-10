@@ -193,6 +193,83 @@ era uma blocklist e falhou contra um red team; foi reconstruído como vocabulár
 
 ---
 
+### D5. «Onde é que está a inteligência artificial neste trabalho?» ⭐
+
+> Esta é **a pergunta**. Ensaia-a até saíres sem hesitar.
+
+**Simples:** *"Em quatro camadas, e cada uma faz uma coisa diferente. Estatística determinística
+para detectar. **Modelos treinados** para recuperar casos análogos e para pontuar materialidade —
+um transformer de frases e uma regressão logística calibrada, treinada por mim em 79 mil
+exemplos. E **geração** para sintetizar tudo isso em prosa. A quarta é a que se vê no ecrã; as
+outras três é que produzem os factos que ela usa."*
+
+**Técnica:** a distinção que interessa não é de fluência, é de **ancoragem**. Um LLM genérico
+responde "porque é que a XOM subiu?" com o que leu na Internet até à data de corte. Este responde
+com: o retorno medido da sessão, o z-score contra a norma de 20 dias *daquele* nome, a
+decomposição mercado/setor/empresa com betas encolhidos por Vasicek, as manchetes captadas com
+carimbo temporal, e — o que nenhum modelo sabe de cor — **casos passados semanticamente parecidos
+com o desfecho medido a cinco dias**, recuperados de um arquivo de mais de 80 mil manchetes.
+
+**A frase que fecha:** *"O modelo não sabe o que aconteceu. É-lhe dito. E cada número que ele
+escreve é verificado contra a evidência que o produziu, antes de chegar ao ecrã."*
+
+**Provar:** §4.8 · §3.4 · `evaluation_intelligence_guard.md` · **e mostra no ecrã**: clica numa
+âncora `[f1]` e abre o facto.
+
+---
+
+### D6. «Isso não é só um wrapper de ChatGPT com um prompt bonito?»
+**Simples:** *"Não, e a diferença é verificável em três segundos: clique num identificador do
+texto e ele abre o facto que o gerou, com a origem declarada. Um wrapper não consegue fazer isso
+porque não tem factos próprios."*
+**Técnica:** o gerador recebe um **pacote de evidência** onde cada registo tem `id`, valor e
+origem (`medido` / `calculado` / `modelo`). **Nenhum registo tem origem `gerado`** — há um teste
+que o exige. A guarda liga cada número à frase que o cita: citar um facto e usar o número de
+outro é rejeitado.
+**Provar:** §4.8.1 · `investigator/intelligence/context.py`
+
+---
+
+### D7. «A vossa guarda é uma blocklist. Não me disse na tese que blocklists perdem sempre?» ⚠️
+> **Armadilha, e é justa. Não te defendas — concorda e explica a diferença de risco.**
+
+**Simples:** *"Disse, e continua a ser verdade. Por isso o alerta — que é **empurrado** para o
+telemóvel sem evidência ao lado — usa uma allowlist de vocabulário fechado. O relatório é
+**pedido** pelo utilizador, na página, com a evidência a um clique. São dois perfis de risco
+diferentes, e por isso duas garantias diferentes. Está declarado numa tabela, não escondido."*
+**Técnica:** o que se mantém **idêntico** nos dois caminhos é a parte verificável: números do
+conjunto fechado, sinal obrigatório, e aqui ainda mais estrito — ligados à frase que os cita. O
+que é mais fraco é só a defesa **linguística**, e os quatro riscos residuais estão em
+`guard.RESIDUAL` e no §6.5.
+**Provar:** §4.8.2 (a tabela dos dois níveis) · §6.5
+
+---
+
+### D8. «Como sabe que a guarda funciona?»
+**Simples:** *"23 de 23 ataques bloqueados, e — o número que importa mais — 8 de 8 frases fiéis
+aceites. Sem o segundo, uma guarda que rejeitasse tudo pontuava 100% e parecia perfeita."*
+**Técnica:** e o que a guarda **rejeita** é informativo: nos relatórios gerados as rejeições foram
+de causa afirmada, conselho e previsão — os três registos que o sistema recusa. Ou seja está a
+trabalhar continuamente, não a decorar um caminho que já era seguro.
+**⚠️ E digo antes que perguntem:** o red team tinha seis lentes, **duas completaram** e **nenhum
+verificador correu** — bateram no limite de gasto. O workflow devolveu "nenhum exploit
+sobreviveu", e isso é a *ausência* de verificação, não um resultado limpo. A força medida é um
+**limite inferior**.
+**Provar:** `evaluation_intelligence_guard.md` · §6.5
+
+---
+
+### D9. «Porque é que reescreveu a interface? Isso é engenharia de software, não de IA.»
+**Simples:** *"Porque a arquitectura antiga obrigava-me a **retirar uma capacidade da tese**: a
+recuperação de precedentes custava sete segundos a carregar e foi removida da página. Separar o
+cliente do servidor não a acelera — elimina a escolha."*
+**Técnica:** o custo medido: carga de 5,5–6,2 s para 1,0 s, 12 pedidos para 1, e mudar de
+intervalo de ~750 ms para 2,5–7,3 ms **com zero chamadas de rede**. O zero é a afirmação
+estrutural: passou a ser uma fatia de um vector que o browser já tem.
+**Provar:** §4.7.1 (tabela) · medido no browser, em produção
+
+---
+
 ## E. Produto
 
 ### E1. «O sistema funciona?»

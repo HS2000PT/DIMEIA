@@ -145,6 +145,48 @@ Se alguém re-treinar com outra semente, a suite parte.
 
 ---
 
+## 6b. A camada generativa (v5)
+
+> ⚠️ **A pergunta que isto responde é a mais provável de todas:** *"onde é que está a IA?"*
+> A resposta curta está no §9. Esta tabela é o que a sustenta.
+
+| O que digo | Valor | De onde veio | Como calculei | Código | Tese |
+|---|---|---|---|---|---|
+| Ataques adversários bloqueados | **23 / 23** | corpus versionado | cada ataque tem de dar `ok=False` | `evaluate_intelligence_guard.py` | §4.8 |
+| Controlos de texto fiel aceites | **8 / 8** | idem | cada controlo tem de dar `ok=True` | idem | §4.8 |
+| Secções geradas conformes | **22 / 22** | 5 relatórios reais | re-verificação de cada secção entregue | idem | §4.8 |
+| Secções entregues com violação | **0** | idem | contagem; tem de ser zero por construção | idem | §4.8 |
+| Exploits reproduzidos pelo red team | **21** de **114** tentativas | 2 de 6 lentes | ataque reproduzido em Python real | — | §6.5 |
+| Latência do relatório | **~1,5 s** | produção | tempo do fornecedor + guarda | `/api/report` | §4.8 |
+| Latência do analista | **~1,3 s** | produção | roteamento + resposta | `/api/ask` | §4.8 |
+
+**Onde vive cada peça do código:**
+
+| Peça | Ficheiro | O que faz |
+|---|---|---|
+| Pacote de evidência | `investigator/intelligence/context.py` | cada facto com id citável e origem declarada |
+| Guarda de fidelidade | `investigator/intelligence/guard.py` | ligação numérica por frase, registos proibidos, âncoras |
+| Relatório | `investigator/intelligence/report.py` | secções fixas, rejeição por secção, chão determinístico |
+| Analista | `investigator/intelligence/analyst.py` | pergunta → plano validado → evidência → resposta |
+| Risco residual | `guard.RESIDUAL` | os quatro riscos que os números **não** fecham |
+
+---
+
+## 6c. A interface (v5) — os números de desempenho
+
+| O que digo | Valor | Como medi | Tese |
+|---|---|---|---|
+| Carga da superfície de abertura | **1,0 s** (era 5,5–6,2 s) | `performance.timing` no browser, em produção | §4.7.1 |
+| Pedidos para essa superfície | **1** (eram 12) | contador de `fetch` | §4.7.1 |
+| Mudar o intervalo do gráfico | **2,5–7,3 ms** (era ~750 ms) | mediana de 5 mudanças | §4.7.1 |
+| Chamadas de rede ao mudar intervalo | **0** | `fetch` instrumentado | §4.7.1 |
+
+> **Se perguntarem "porquê trocar de tecnologia?":** a resposta não é estética. O Streamlit
+> re-executa o script **do lado do servidor** a cada interacção. O zero da última linha é a
+> afirmação estrutural: mudar de intervalo é uma fatia de um vector que o browser já tem.
+
+---
+
 ## 7. ⚠️ Onde a cadeia é mais fraca (dizer antes que perguntem)
 
 | Grandeza | Porque é mais fraca | O que digo |
@@ -154,6 +196,9 @@ Se alguém re-treinar com outra semente, a suite parte.
 | Filtro de relevância | regra escrita depois de ver falhas; aliases à mão | *"Determinística e reprodutível, mas não a priori — e a tese di-lo."* |
 | FNSPID bruto | os ~23 GB originais não estão nesta máquina | *"Tenho o subconjunto derivado e o script que o constrói; a fonte original é pública e citada."* |
 | Latência | `event_at` é a hora que a fonte declara | *"É um limite inferior, e está dito no relatório."* |
+| Guarda generativa | a defesa linguística é uma **blocklist**, não uma allowlist | *"É mais fraca do que a do alerta, de propósito, e está declarada. O alerta é empurrado sem evidência ao lado; o relatório é pedido com a evidência a um clique. Os quatro riscos que fica por fechar estão escritos em `guard.RESIDUAL` e no §6.5."* |
+| Red team da guarda | **2 de 6** lentes completaram; **nenhum verificador** correu | *"Bateu no limite de gasto da conta. O workflow devolveu 'nenhum exploit sobreviveu', e isso é a AUSÊNCIA de verificação, não um resultado limpo. Verifiquei os achados à mão. A força medida é um limite inferior."* |
+| Relevância da âncora | verifica-se que o facto citado EXISTE, não que sustenta a frase | *"Uma frase pode citar um facto verdadeiro e caracterizá-lo mal sem usar número nenhum. Está no risco residual."* |
 
 ---
 
@@ -163,7 +208,7 @@ Se alguém re-treinar com outra semente, a suite parte.
 - **Semente** 42 em todo o lado onde há aleatoriedade
 - **Modelo** versionado em `models/` (1,8 KB) com metadados `.json` ao lado
 - **Comandos** no Apêndice A, um por resultado
-- **Suite** 658 testes, offline e determinísticos
+- **Suite** 707 testes, offline e determinísticos
 
 **O que NÃO é reproduzível a partir do repositório, e digo-o:** o corpus FNSPID bruto
 (~23 GB) e o `triage_dataset.csv` (15 MB) não estão versionados. São regeneráveis pelos
