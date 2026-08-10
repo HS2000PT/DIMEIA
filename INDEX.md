@@ -28,6 +28,8 @@ written overview of the whole project, read **[`RELATORIO_FINAL.md`](RELATORIO_F
 | Defence slides (short deck) | [`slides/main.pdf`](slides/main.pdf) |
 | Study guide (teaches the thesis from zero, PT-PT) | [`slides/guia_estudo/`](slides/guia_estudo/) |
 | **Personal cheat sheet (PT-PT) — open this first before the defence** | [`docs/defence/guia_pessoal.md`](docs/defence/guia_pessoal.md) |
+| **Every number → origin, calculation, code:line, data, thesis section (PT-PT)** | [`docs/defence/THESIS_FACT_SHEET.md`](docs/defence/THESIS_FACT_SHEET.md) |
+| **Question → simple answer → technical answer → where to prove it (PT-PT)** | [`docs/defence/DEFENSE_QA.md`](docs/defence/DEFENSE_QA.md) |
 | **Graduated course, zero AI knowledge → defence (8 levels, phone, offline)** | [`study/index.html`](study/index.html) |
 | Self-test app (48 questions, phone, works offline) | [`quiz/index.html`](quiz/index.html) — quick recall only; the course above is the one to learn from |
 
