@@ -176,14 +176,19 @@ caminho de ingestão e um modo de falha sem uma avaliação associada, e um comp
 contribui para as perguntas que este trabalho faz. Aparecem antes no trabalho futuro.
 
 \paragraph{Um score de convergência fundido.} Ordenar alertas pelo acordo de vários sinais
-independentes é intuitivo, e a maquinaria para isso foi construída e medida
-(Secção~\ref{sec:cs_convergence}). Foi recusada porque a medição não a sustentou: a fusão bateu o
-melhor sinal isolado num orçamento de alertas em três, e um ganho que só aparece no orçamento que se
-escolhe citar não é um resultado. O componente construído pelo caminho, um detetor de anomalia de
-volume a custo zero em dados, ficou, e ficou também a parte legível da ideia, reportar quantos sinais
-concordam em vez de um número fundido que o utilizador não consegue verificar. É o padrão que várias
-destas posições partilham: construir, medir, e deixar a medição decidir, incluindo quando a medição
-diz que não.
+independentes é intuitivo, e a maquinaria para isso foi construída e medida. Foi recusada porque a
+medição não a sustentou: a fusão bateu o melhor sinal isolado num orçamento de alertas em três, e um
+ganho que só aparece no orçamento que se escolhe citar não é um resultado. O estudo não é reportado
+como estudo de caso porque uma capacidade recusada não precisa de um capítulo; a medição fica com os
+restantes registos de avaliação.
+
+Um achado incidental dele merece ser levado adiante, porque justifica uma regra que este trabalho
+segue por todo o lado. Quando os pesos da fusão foram \emph{derivados} em vez de escolhidos, o peso
+da intensidade de notícia saiu \emph{negativo}: um dia com muitas manchetes é \emph{menos} provável
+de ser material, porque esses dias tendem a trazer conteúdo gerado automaticamente e não
+acontecimentos. Escolher os pesos à mão teria quase de certeza posto esse termo positivo, porque é o
+que a intuição diz, e estaria errado. É o padrão que várias destas posições partilham: construir,
+medir, e deixar a medição decidir, incluindo quando a medição contradiz quem a construiu.
 
 \paragraph{Streaming em vez de sondagem periódica.} A latência de entrega é uma propriedade real de um
 produto de alertas, e a resposta óbvia de engenharia é uma ligação de streaming à fonte de preços. Foi

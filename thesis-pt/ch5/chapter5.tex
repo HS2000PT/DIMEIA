@@ -6,15 +6,14 @@
 \chapter{Estudos de Caso}
 \label{chap:casestudies}
 
-Este capítulo avalia o InvestiGator através de oito estudos de caso sobre dados reais, em dois grupos. Os
+Este capítulo avalia o InvestiGator através de sete estudos de caso sobre dados reais, em dois grupos. Os
 primeiros quatro testam o desenho central: o gatilho de anomalias em ações de volatilidade muito
-diferente; o motor de correlação e os precedentes que recupera; um alerta completo, e se a sua explicação
+diferente; o motor de correlação e os casos que recupera; um alerta completo, e se a sua explicação
 é fiel; e o modelo de triagem de materialidade treinado e testado sobre o corpus multi-ano. Os últimos
-quatro examinam o mesmo sistema por fora, perguntando o que ele \emph{não} sabe: se o espaço de embeddings
+três examinam o mesmo sistema por fora, perguntando o que ele \emph{não} sabe: se o espaço de embeddings
 codifica que tipo de acontecimento uma manchete relata, quanto custaria uma garantia livre de distribuição
-sobre o score de triagem, quão longe o presente implantado se afastou do corpus de treino, e se vários
-sinais em acordo batem o melhor deles sozinho. Cada um desses quatro termina numa decisão de \emph{não}
-mudar a produção, tomada sobre a evidência. Cada número abaixo vem de um script versionado com uma semente
+sobre o score de triagem, e quão longe o presente implantado se afastou do corpus de treino. Cada um
+desses três termina numa decisão de \emph{não} mudar a produção, tomada sobre a evidência. Cada número abaixo vem de um script versionado com uma semente
 fixa, a avaliação seguiu o plano estabelecido no Capítulo~\ref{chap:methods}, e cada estudo enuncia as
 suas próprias limitações.
 
@@ -890,107 +889,6 @@ mas não extrema, e implica que o resultado de 2023 não deve ser tratado como u
 A medição fornece ainda um gatilho de re-treino verificável, o limiar convencional de $0.25$, em vez
 de uma intuição.
 
-\section{Estudo de Caso 8: Convergência Multi-Sinal}
-\label{sec:cs_convergence}
-
-\emph{Pergunta: o sistema calcula quatro coisas independentes sobre uma ação num dado dia. O
-\emph{acordo} entre elas ordena os dias materiais melhor do que o melhor sinal isolado? Resposta:
-não de forma convincente. A fusão ganha num orçamento de alertas em três, e um ganho que depende do
-orçamento escolhido é um ganho que se pode ter escolhido, pelo que o score fundido não entra em
-produção. O detetor de volume construído pelo caminho fica, e um peso negativo inesperado acabou por
-ser o resultado mais informativo do estudo.}
-
-\paragraph{De onde vem a ideia.} O desenho foi adaptado do World Monitor
-\autocite{worldmonitor2026}, um painel gratuito de inteligência em tempo real recomendado pelo
-coorientador deste trabalho. O que essa ferramenta faz à escala, fundir dezenas de camadas ao vivo de
-muitos fornecedores numa só superfície, está fora do alcance de um projeto restrito a APIs gratuitas,
-e inclui também um motor de cenários que este sistema deliberadamente não tenta. O que transita é o
-\emph{princípio}: um acontecimento em que várias fontes independentes concordam merece mais atenção
-do que um em que só uma dispara.
-
-\paragraph{Os quatro sinais, e o que estava a ser deitado fora.} O sistema já calcula quatro coisas
-sobre um par (ticker, dia) e trata-as separadamente: se o preço se moveu de forma invulgar
-\emph{para aquela ação}, quanta notícia chegou, e quão material o modelo de triagem a julgou. O
-quarto, o \emph{volume}, não era calculado de todo, apesar de não custar nada em dados: vem em todas
-as barras de preço que o sistema já descarrega e estava a ser descartado. Responde à pergunta que
-qualquer operador faz logo depois de ver um movimento, ou seja, quanta gente estava a negociar. Um
-movimento de três por cento com volume normal e o mesmo movimento com o triplo do volume habitual não
-são o mesmo acontecimento.
-
-O detetor de volume reutiliza a convenção causal do detetor de preço, com três diferenças
-deliberadas. Estandardiza o \emph{logaritmo} do volume, porque o volume é fortemente assimétrico à
-direita e estritamente positivo, pelo que um $z$-score bruto dispara quase só para cima. Sinaliza
-apenas a cauda \emph{superior}, porque volume invulgarmente baixo é quase sempre um feriado ou meia
-sessão e não um acontecimento. E reporta um rácio simples (``$3{,}2\times$ o volume habitual'') ao
-lado do $z$-score, porque o rácio comunica e o $z$-score decide.
-
-\paragraph{Preparação.} A unidade de análise é o par (ticker, dia), que é a unidade do rótulo;
-ordenar manchetes individuais encheria o topo de cada dia com cópias do mesmo nome. Os pesos da fusão
-são \emph{derivados}, por regressão logística sobre os quatro sinais estandardizados ajustada no
-bloco de validação e avaliada no teste, nunca escolhidos à mão. O modelo de fusão é linear para que a
-contribuição de cada sinal seja exata em vez de aproximada.
-
-Uma propriedade do corpus tem de ser declarada porque limita o que este estudo pode afirmar. A
-cobertura de tickers do FNSPID varia ao longo do tempo: o bloco de treino tem treze tickers, a
-validação oito e o teste nove. Colapsar os blocos posteriores em pares (ticker, dia) deixa portanto
-$1{,}951$ pares de teste, uma amostra bem menor do que aquela em que assentam os estudos de
-recuperação e de triagem. Os dados de volume alinham em todos eles, pelo que isto é uma propriedade
-do corpus e não um defeito da junção.
-
-\paragraph{Resultados.} A Tabela~\ref{tab:cs_convergence} reporta o bloco de teste.
-
-\begin{table}[ht]
-\caption{Convergência multi-sinal contra cada sinal isolado (bloco de teste, $1{,}951$ pares
-(ticker, dia), prevalência $0.351$). A precisão@$k$ ordena cada dia e admite os $k$ do topo.}
-\label{tab:cs_convergence}
-\centering
-\begin{tabular}{l c c c c}
-\toprule
-\tabhead{Sinal} & \tabhead{PR-AUC} & \tabhead{P@1/dia} & \tabhead{P@3/dia} & \tabhead{P@5/dia} \\
-\midrule
-$z$-score do preço      & 0.339 & 0.339 & 0.347 & 0.340 \\
-$z$-score do volume     & 0.363 & 0.385 & 0.368 & 0.340 \\
-Intensidade de notícia  & 0.386 & 0.430 & 0.392 & 0.389 \\
-Probabilidade da triagem & \textbf{0.515} & \textbf{0.634} & \textbf{0.504} & 0.434 \\
-\midrule
-Convergência (fundida)  & 0.475 & 0.584 & 0.472 & \textbf{0.439} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{Leitura do resultado.} A fusão bate o melhor sinal isolado num orçamento em três
-($+0.0045$ a cinco alertas por dia) e perde nos outros dois ($-0.0498$ a um, $-0.0317$ a
-três). Um
-resultado misto com esta forma não sustenta ligar o score à produção. Um ganho que depende do
-orçamento citado é um ganho que se pode ter selecionado, e o critério aplicado ao longo deste
-trabalho é que uma capacidade nova só entra quando a medição a sustenta sem se escolher o ângulo.
-
-A razão não é misteriosa depois de enunciada. Os quatro sinais não são independentes na prática: dias
-com muita notícia tendem também a ser dias de volume alto e de movimentos grandes, pelo que combiná-los
-acrescenta menos do que o argumento sugere. É a mesma lição que as features de texto e as cinco
-features de contexto estendidas já tinham dado por caminhos diferentes. Neste corpus, a materialidade
-de curto prazo é notavelmente bem resumida por muito poucos números.
-
-\paragraph{O peso negativo, que é o achado mais útil daqui.} O peso derivado para a intensidade de
-notícia é \emph{negativo} ($-0.283$). Mais manchetes num dia torna esse dia \emph{menos} provável de
-ser material. Isto é um achado e não um erro de sinal. Dias com muitas manchetes tendem a ser dias de
-conteúdo gerado automaticamente, resumos de mercado, listas de sugestões e atualizações de
-desequilíbrio de ordens, e não dias em que aconteceu alguma coisa. É o mesmo problema de qualidade à
-entrada que motivou o filtro de relevância descrito no Capítulo~\ref{chap:investigator}, a chegar aqui
-pelo lado quantitativo.
-
-Fornece também a justificação empírica de uma regra que este trabalho seguiu do princípio ao fim. Um
-score de convergência com pesos escolhidos à mão teria quase de certeza dado à intensidade de notícia
-um peso positivo, porque é isso que a intuição diz, e estaria errado. Derivar os pesos transformou
-uma intuição numa medição que a contradisse.
-
-\paragraph{O que fica.} O detetor de volume é retido: é uma capacidade genuinamente nova a custo zero
-em dados, transparente pela mesma construção do detetor de preço. O score fundido é retido apenas
-como medição. O que transita para o produto é a leitura \emph{humana} da convergência, reportar
-quantos dos quatro sinais ultrapassaram os seus próprios limiares. Dizer que três dos quatro sinais
-dispararam comunica de imediato e pode ser verificado contra os componentes; um score fundido de
-$0.73$ não pode ser verificado em lado nenhum.
-
 \section{Discussão e Ameaças à Validade}
 \label{sec:cs_discussion}
 
@@ -1006,9 +904,8 @@ de embeddings acaba por carregar estrutura de tipo de evento, ainda que demasiad
 precedentes por ela (Secção~\ref{sec:cs_taxonomy}); o score de triagem pode receber uma garantia
 livre de distribuição, ao custo de admitir incerteza na maioria dos itens
 (Secção~\ref{sec:cs_conformal}); a distância entre o corpus de treino e o presente implantado está
-concentrada numa entrada e é cíclica em vez de direcional (Secção~\ref{sec:cs_drift}); e fundir
-quatro sinais independentes não bate de forma fiável o melhor deles isolado
-(Secção~\ref{sec:cs_convergence}). Cada um dos quatro termina numa decisão de \emph{não} mudar a
+concentrada numa entrada e é cíclica em vez de direcional (Secção~\ref{sec:cs_drift}). Cada um dos
+três termina numa decisão de \emph{não} mudar a
 produção, tomada com base na evidência e não por falta de tempo, e cada uma fica registada como tal.
 Todos os resultados assentam em dados reais e são reprodutíveis a partir de scripts versionados.
 
@@ -1038,7 +935,7 @@ eliminam, e que o enquadramento de não-causalidade reconhece abertamente.
 capitalização dos EUA em cinco setores, pelo que os números não têm de transferir-se
 para ações de pequena capitalização, para outros mercados, ou para outros períodos, e a cobertura de notícias é
 mais rala fora das grandes capitalizações. O estudo de recuperação corre sobre uma janela recente de um
-serviço gratuito; os estudos de triagem, taxonomia, conformal, deriva e convergência correm sobre o
+serviço gratuito; os estudos de triagem, taxonomia, conformal e deriva correm sobre o
 histórico multi-ano do FNSPID, o que alarga o período mas não o conjunto de tickers, que é fixado pelo
 cartão de dados nos dois casos.
 
@@ -1057,11 +954,11 @@ para as conclusões.
 \section{Conclusões do Capítulo}
 \label{sec:cs_summary}
 
-Ao longo de oito estudos de caso sobre dados reais, o gatilho de anomalias do InvestiGator disparou muito mais
+Ao longo de sete estudos de caso sobre dados reais, o gatilho de anomalias do InvestiGator disparou muito mais
 consistentemente do que um limiar fixo, o seu motor de correlação recuperou precedentes análogos por setor bem
 acima de todas as linhas de base e independentemente do modelo de embedding, as suas explicações foram fiéis ao
 cálculo subjacente por construção, e o seu modelo de triagem treinado quase quadruplicou a precisão de alertas
 dentro do orçamento enquanto honestamente não conseguiu bater a linha de base só-volatilidade com texto. Os
-quatro estudos seguintes mediram o que o sistema não sabe, e cada um deles terminou deixando a produção
+três estudos seguintes mediram o que o sistema não sabe, e cada um deles terminou deixando a produção
 inalterada porque a evidência não sustentava a mudança. O próximo capítulo reúne estes achados face às
 questões de investigação.

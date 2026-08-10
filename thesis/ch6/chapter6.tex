@@ -168,14 +168,20 @@ mode without an evaluation attached, and an unevaluated component contributes no
 questions this work asks. They appear in future work instead.
 
 \paragraph{A fused convergence score.} Ranking alerts by the agreement of several independent
-signals is intuitive, and the machinery for it was built and measured
-(Section~\ref{sec:cs_convergence}). It was declined because the measurement did not support it:
-fusion beat the best single signal at one alert budget out of three, and a gain that appears only at
-the budget one chooses to quote is not a result. The component built along the way, a volume
-anomaly detector at zero data cost, was kept, and so was the readable part of the idea, reporting
-how many signals agree rather than a fused number a user cannot check. This is the pattern several
-of these positions share: build it, measure it, and let the measurement decide, including when the
-measurement says no.
+signals is intuitive, and the machinery for it was built and measured. It was declined because the
+measurement did not support it: fusion beat the best single signal at one alert budget out of three,
+and a gain that appears only at the budget one chooses to quote is not a result. The study is not
+reported as a case study because a rejected capability does not need a chapter; the measurement is
+kept with the other evaluation records.
+
+One incidental finding from it is worth carrying forward, because it justifies a rule this work
+follows throughout. When the fusion weights were \emph{derived} rather than chosen, the weight on
+news intensity came out \emph{negative}: a day with many headlines is \emph{less} likely to be
+material, because such days tend to carry automatically generated content rather than events. Hand
+weighting would almost certainly have made that term positive, because that is what intuition says,
+and it would have been wrong. This is the pattern several of these positions share: build it, measure
+it, and let the measurement decide, including when the measurement contradicts the person who built
+it.
 
 \paragraph{Streaming rather than polling.} Delivery latency is a real property of an alerting product,
 and the obvious engineering answer is a streaming connection to the price feed. It was declined for

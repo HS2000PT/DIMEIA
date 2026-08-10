@@ -6,17 +6,16 @@
 \chapter{Case Studies}
 \label{chap:casestudies}
 
-This chapter evaluates InvestiGator through eight case studies on real data, in two groups. The first
+This chapter evaluates InvestiGator through seven case studies on real data, in two groups. The first
 four test the core design: the anomaly trigger across stocks of very different volatility; the
-correlation engine and the precedents it retrieves; a complete alert, and whether its explanation is
-faithful; and the materiality-triage model trained and tested on the multi-year corpus. The final four
-examine the same system from the outside, asking what it does \emph{not} know: whether the embedding
-space encodes what kind of event a headline reports, what a distribution-free guarantee on the triage
-score would cost, how far the deployed present has drifted from the training corpus, and whether
-several signals agreeing beat the best one alone. Each of those four ends in a decision \emph{not} to
-change production, taken on the evidence. Every number below comes from a versioned script with a
-fixed seed, the evaluation followed the plan set out in Chapter~\ref{chap:methods}, and each study
-states its own limitations.
+correlation engine and the cases it retrieves; a complete alert, and whether its explanation is
+faithful; and the materiality-triage model trained and tested on the multi-year corpus. The final
+three examine the same system from the outside, asking what it does \emph{not} know: whether the
+embedding space encodes what kind of event a headline reports, what a distribution-free guarantee on
+the triage score would cost, and how far the deployed present has drifted from the training corpus.
+Each of those three ends in a decision \emph{not} to change production, taken on the evidence. Every
+number below comes from a versioned script with a fixed seed, the evaluation followed the plan set out
+in Chapter~\ref{chap:methods}, and each study states its own limitations.
 
 \section{Common Experimental Setup}
 \label{sec:cs_setup}
@@ -879,106 +878,6 @@ measured two independent ways, is concentrated in volatility, is significant but
 means the 2023 result should not be treated as a promise about 2026. The measurement also supplies a
 verifiable retraining trigger, the conventional $0.25$ threshold, in place of an intuition.
 
-\section{Case Study 8: Multi-Signal Convergence}
-\label{sec:cs_convergence}
-
-\emph{Question: the system computes four independent things about a stock on a given day. Does
-their \emph{agreement} rank material days better than the best single signal alone? Answer: not
-convincingly. Fusion wins at one alert budget out of three, and a gain that depends on the budget
-chosen is a gain that could have been chosen, so the fused score is not put into production. The
-volume detector built along the way is kept, and an unexpected negative weight turned out to be the
-most informative result of the study.}
-
-\paragraph{Where the idea comes from.} The design was adapted from World Monitor
-\autocite{worldmonitor2026}, a free real-time intelligence dashboard recommended by the
-co-supervisor of this work. What that tool does at scale, fusing dozens of live layers from many
-providers onto one surface, is out of reach for a project restricted to free APIs, and it also
-includes scenario tooling that this system deliberately does not attempt. What transfers is the
-\emph{principle}: an event on which several independent sources agree deserves more attention than
-one where a single source fires.
-
-\paragraph{The four signals, and the one that was being thrown away.} The system already computes
-four things about a (ticker, day) pair and treats them separately: whether the price moved unusually
-\emph{for that stock}, how much news arrived, and how material the triage model judged it. The
-fourth, \emph{volume}, was not computed at all, even though it costs nothing in data: it arrives in
-every price bar the system already downloads and was being discarded. It answers the question any
-trader asks immediately after seeing a move, namely how many people were trading. A move of three
-per cent on ordinary volume and the same move on triple the usual volume are not the same event.
-
-The volume detector reuses the price detector's causal convention, with three deliberate
-differences. It standardises the \emph{logarithm} of volume, because volume is strongly
-right-skewed and strictly positive, so a raw $z$-score fires almost exclusively upward. It flags
-only the \emph{upper} tail, because unusually low volume is nearly always a holiday or a half
-session rather than an event. And it reports a plain ratio (``$3.2\times$ the usual volume'')
-alongside the $z$-score, because the ratio communicates and the $z$-score decides.
-
-\paragraph{Setup.} The unit of analysis is the (ticker, day) pair, which is the unit of the label;
-ranking individual headlines would fill the top of each day with copies of the same name. Fusion
-weights are \emph{derived}, by logistic regression on the four standardised signals fitted on the
-validation block and evaluated on test, never chosen by hand. The fusion model is linear so that
-each signal's contribution is exact rather than approximate.
-
-One property of the corpus must be stated because it bounds what this study can claim. FNSPID's
-ticker coverage varies over time: the training block holds thirteen tickers, validation eight and
-test nine. Collapsing the later blocks to (ticker, day) pairs therefore leaves $1{,}951$ test pairs,
-a much smaller sample than the retrieval and triage studies rest on. The volume data aligns on every
-one of them, so this is a property of the corpus and not a defect of the join.
-
-\paragraph{Results.} Table~\ref{tab:cs_convergence} reports the test block.
-
-\begin{table}[ht]
-\caption{Multi-signal convergence against each signal alone (test block, $1{,}951$ (ticker, day)
-pairs, prevalence $0.351$). Precision@$k$ ranks each day and admits the top $k$.}
-\label{tab:cs_convergence}
-\centering
-\begin{tabular}{l c c c c}
-\toprule
-\tabhead{Signal} & \tabhead{PR-AUC} & \tabhead{P@1/day} & \tabhead{P@3/day} & \tabhead{P@5/day} \\
-\midrule
-Price $z$-score        & 0.339 & 0.339 & 0.347 & 0.340 \\
-Volume $z$-score       & 0.363 & 0.385 & 0.368 & 0.340 \\
-News intensity         & 0.386 & 0.430 & 0.392 & 0.389 \\
-Triage probability     & \textbf{0.515} & \textbf{0.634} & \textbf{0.504} & 0.434 \\
-\midrule
-Convergence (fused)    & 0.475 & 0.584 & 0.472 & \textbf{0.439} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{Reading the result.} Fusion beats the best single signal at one budget out of three
-($+0.0045$ at five alerts per day) and loses at the other two ($-0.0498$ at one, $-0.0317$ at
-three).
-A mixed result of that shape does not support wiring the score into production. A gain that depends
-on which budget is quoted is a gain that could have been selected, and the standard applied
-throughout this work is that a new capability enters only when the measurement supports it without
-choosing the angle.
-
-The reason is not mysterious once stated. The four signals are not independent in practice: days
-with heavy news tend also to be days of high volume and large moves, so combining them adds less
-than the argument suggests. This is the same lesson the text features and the five extended context
-features already delivered by different routes. On this corpus, short-horizon materiality is
-remarkably well summarised by very few numbers.
-
-\paragraph{The negative weight, which is the most useful finding here.} The derived weight on news
-intensity is \emph{negative} ($-0.283$). More headlines on a day makes that day \emph{less} likely
-to be material. This is a finding and not a sign error. Days with many headlines tend to be days of
-automatically generated content, market round-ups, suggestion lists and order-imbalance updates,
-rather than days on which something happened. It is the same input-quality problem that motivated
-the relevance filter described in Chapter~\ref{chap:investigator}, arriving here from the
-quantitative side.
-
-It also supplies the empirical justification for a rule this work has followed throughout. A
-convergence score with hand-chosen weights would almost certainly have given news intensity a
-positive weight, because that is what intuition says, and it would have been wrong. Deriving the
-weights turned an intuition into a measurement that contradicted it.
-
-\paragraph{What is kept.} The volume detector is retained: it is a genuine new capability at zero
-data cost, transparent by the same construction as the price detector. The fused score is retained
-as a measurement only. What transfers to the product is the \emph{human} reading of convergence,
-reporting how many of the four signals crossed their own thresholds. Saying that three of four
-signals fired communicates immediately and can be checked against the components; a fused score of
-$0.73$ cannot be checked anywhere.
-
 \section{Discussion and Threats to Validity}
 \label{sec:cs_discussion}
 
@@ -988,13 +887,12 @@ sector-analogous precedents than lexical or trivial baselines, the end-to-end al
 its own computation, and the learned triage adds a large budgeted-precision gain while confirming,
 against its own text features, that the transparent volatility evidence carries the signal.
 
-The final four examine the same system from the outside, asking what it does \emph{not} know. The
-embedding space turns out to carry event-type structure, though too weakly to filter precedents by
+The final three examine the same system from the outside, asking what it does \emph{not} know. The
+embedding space turns out to carry event-type structure, though too weakly to filter retrieved cases by
 (Section~\ref{sec:cs_taxonomy}); the triage score can be given a distribution-free guarantee, at the
-cost of admitting uncertainty on most items (Section~\ref{sec:cs_conformal}); the gap between the
+cost of admitting uncertainty on most items (Section~\ref{sec:cs_conformal}); and the gap between the
 training corpus and the deployed present is concentrated in one input and is cyclical rather than
-directional (Section~\ref{sec:cs_drift}); and fusing four independent signals does not reliably beat
-the best of them alone (Section~\ref{sec:cs_convergence}). Each of the four ends in a decision
+directional (Section~\ref{sec:cs_drift}). Each of the three ends in a decision
 \emph{not} to change production, taken on the evidence rather than for want of time, and each is
 recorded as such. All results rest on real data and are reproducible from versioned scripts.
 
@@ -1023,7 +921,7 @@ no-causation framing acknowledges openly.
 large-capitalisation US tickers across five sectors, so the numbers need not transfer to
 small-capitalisation stocks, to other markets, or to other periods, and news coverage is thinner outside
 large caps. The retrieval study runs on a recent window from a free service; the triage, taxonomy,
-conformal, drift and convergence studies run on the multi-year FNSPID history, which broadens the
+conformal and drift studies run on the multi-year FNSPID history, which broadens the
 period but not the ticker set, since that is fixed by the data card in both cases.
 
 \paragraph{Statistical-conclusion validity: are the comparisons sound?} The retrieval results are
@@ -1041,11 +939,11 @@ to the conclusions.
 \section{Chapter Conclusions}
 \label{sec:cs_summary}
 
-Across eight case studies on real data, InvestiGator's anomaly trigger fired far more consistently than
-a fixed threshold, its correlation engine retrieved sector-analogous precedents well above every
+Across seven case studies on real data, InvestiGator's anomaly trigger fired far more consistently than
+a fixed threshold, its correlation engine retrieved sector-analogous cases well above every
 baseline and independently of the embedding model, its explanations were faithful to the underlying
 computation by construction, and its trained triage model nearly quadrupled within-budget alert
-precision while honestly failing to beat the volatility-only baseline with text. The four studies that
+precision while honestly failing to beat the volatility-only baseline with text. The three studies that
 followed measured what the system does not know, and each of them ended by leaving production
 unchanged because the evidence did not support a change. The next chapter draws these findings
 together against the research questions.

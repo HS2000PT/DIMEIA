@@ -211,8 +211,6 @@ Cobertura conformal, divisão temporal (mesmo $\alpha$) & 0.937 / 0.900 / 0.822 
 Decisões definidas a 90\,\% de cobertura garantida & 39.5\,\% & CS6 \\
 Deriva das entradas, índice de estabilidade (volatilidade / comprimento / retornos) & 0.281 / 0.111 / $\le$0.020 & CS7 \\
 Prevalência do rótulo nos três blocos temporais & 0.385 / 0.470 / 0.378 & CS7 \\
-Fusão de sinais versus melhor sinal isolado (orçamentos 1 / 3 / 5) & $-0.0498$ / $-0.0317$ / $+0.0045$ & CS8 \\
-Peso derivado da intensidade de notícia (negativo) & $-0.283$ & CS8 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -305,7 +303,7 @@ A latência é limitada pelo ciclo de sondagem & Decomposição: $\sim$2,5\,h de
 A fonte gratuita de notícias limita a cobertura & Pelo menos uma manchete relevante em $88,5\%$ dos dias invulgares & §\ref{sec:concl_limitations} & Script & Mantida (limite superior) \\
 Treino e implantação diferem & PSI $0.281$ na volatilidade pré-evento; a prevalência oscila & §\ref{sec:cs_drift} & Script & Mantida \\
 A confiança é fina na maioria dos itens & $39,5\%$ de decisões definidas a $90\%$ de cobertura garantida & §\ref{sec:cs_conformal} & Script & Mantida \\
-A fusão de sinais bate o melhor sinal isolado & Ganha em 1 orçamento de alertas de 3 & §\ref{sec:cs_convergence} & Script & \textbf{Retirada} \\
+A fusão de sinais bate o melhor sinal isolado & Ganha em 1 orçamento de alertas de 3 & §\ref{sec:concl_exclusions} & Script & \textbf{Retirada} \\
 O sistema correu em produção & $332$ alertas com carimbos num registo versionado & §\ref{app:repro_proof} & Vivo & Mantida \\
 \bottomrule
 \end{tabular}
