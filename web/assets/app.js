@@ -304,12 +304,17 @@ function buildChart(t) {
   const intraday = S.range === '1D' && a.intraday?.length > 1;
   const up = css.getPropertyValue('--up').trim(), down = css.getPropertyValue('--down').trim();
 
-  let data, base;
+  let data, base, fellBack = false;
   if (intraday) {
     data = a.intraday.map(([ts, v]) => ({ time: ts, value: v }));
     base = a.prev_close ?? data[0].value;
   } else {
-    const bars = RANGE_BARS[S.range] || 260;
+    // ⚠️ Sem série intradiária, `RANGE_BARS['1D']` não existe e o `|| 260` mostrava o ANO
+    // INTEIRO no separador "1D" — falhava aberto, mas para a coisa errada, e em silêncio.
+    // Um gráfico que mostra doze meses debaixo de um botão que diz "1D" é pior do que um
+    // gráfico vazio: o vazio percebe-se, isto não.
+    fellBack = S.range === '1D';
+    const bars = RANGE_BARS[S.range] || (fellBack ? 5 : 260);
     data = (a.closes || []).slice(-bars).map(([d, v]) => ({ time: d, value: v }));
     base = data.length ? data[0].value : 0;
   }
@@ -365,9 +370,14 @@ function buildChart(t) {
   S.chart = chart; S.chartApi = series;
 
   const note = $('#chart-note');
-  if (note) note.textContent = intraday
-    ? `${a.intraday.length} five-minute bars · ${a.intraday_day || ''}`
-    : `${data.length} sessions · ${marks.filter(m => m.shape !== 'circle').length} flagged · ${marks.filter(m => m.shape === 'circle').length} news days`;
+  if (note) {
+    note.textContent = intraday
+      ? `${a.intraday.length} five-minute bars · ${a.intraday_day || ''}`
+      : fellBack
+        ? `no intraday series available — showing the last ${data.length} daily closes`
+        : `${data.length} sessions · ${marks.filter(m => m.shape !== 'circle').length} flagged · ${marks.filter(m => m.shape === 'circle').length} news days`;
+    note.style.color = fellBack ? 'var(--warn)' : 'var(--ink-3)';
+  }
 
   // Clicar num marcador abre a evidência. É o "overview → detail → source" pedido.
   chart.subscribeClick(p => {
