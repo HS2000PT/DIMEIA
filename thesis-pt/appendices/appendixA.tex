@@ -240,7 +240,7 @@ corre de ponta a ponta e cuja cada figura reportada pode ser reproduzida isolada
 A tabela anterior lista resultados. Esta lista \emph{afirmações}, o que é um teste mais exigente,
 porque uma afirmação pode sobreviver à evidência que outrora a sustentava. Cada asserção substantiva
 desta dissertação é confrontada com a evidência que a suporta, com a possibilidade de essa evidência
-ser regenerada a pedido, e com o que se decidiu sobre a afirmação em consequência. Três entradas
+ser regenerada a pedido, e com o que se decidiu sobre a afirmação em consequência. Várias entradas
 registam afirmações que foram \emph{retiradas ou estreitadas} depois de medidas; ficam na tabela em vez
 de apagadas, porque uma matriz que só listasse as afirmações sobreviventes não seria uma auditoria.
 
@@ -305,12 +305,26 @@ Treino e implantação diferem & PSI $0.281$ na volatilidade pré-evento; a prev
 A confiança é fina na maioria dos itens & $39,5\%$ de decisões definidas a $90\%$ de cobertura garantida & §\ref{sec:cs_conformal} & Script & Mantida \\
 A fusão de sinais bate o melhor sinal isolado & Ganha em 1 orçamento de alertas de 3 & §\ref{sec:concl_exclusions} & Script & \textbf{Retirada} \\
 O sistema correu em produção & $332$ alertas com carimbos num registo versionado & §\ref{app:repro_proof} & Vivo & Mantida \\
+\midrule
+\multicolumn{5}{l}{\textbf{Texto gerado}} \\
+Nenhum número do texto gerado está ausente da evidência & Números ligados por frase aos registos que essa frase cita & §\ref{sec:met_generation} & Teste & Mantida \\
+O gerador produz prosa e nunca um facto & Nenhum registo do pacote tem proveniência \emph{gerado}; verificado por teste & §\ref{sec:investigator_intelligence} & Teste & Mantida \\
+A guarda bloqueia texto adversário & $23$ de $23$ ataques bloqueados & §\ref{sec:investigator_intelligence} & Script & Mantida \\
+A guarda aceita texto fiel & $8$ de $8$ controlos passam & §\ref{sec:investigator_intelligence} & Script & Mantida \\
+Nenhuma secção com violação chega ao leitor & $0$ de $22$ secções entregues & §\ref{sec:investigator_intelligence} & Script & Mantida (circular) \\
+A garantia linguística da guarda iguala a do narrador de alertas & Blocklist contra allowlist fechada; quatro riscos residuais enunciados & §\ref{sec:concl_limitations} & --- & \textbf{Retirada} \\
+A guarda sobreviveu a revisão adversária & Duas de seis perspetivas completaram; todas as etapas de verificação perdidas por limite de gasto & §\ref{sec:concl_limitations} & --- & \textbf{Estreitada} (limite inferior) \\
+\midrule
+\multicolumn{5}{l}{\textbf{Interface}} \\
+Interagir não exige chamada de rede & $0$ pedidos em cinco mudanças de intervalo; $2,5$--$7,3$\,ms & §\ref{sec:investigator_client} & Vivo & Mantida \\
+A superfície de abertura carrega num só pedido & $1,0$\,s, um pedido, medido no browser & §\ref{sec:investigator_client} & Vivo & Mantida \\
+A recuperação de precedentes não pode correr na página & Valia só para o desenho renderizado no servidor; servida por rota própria desde então & §\ref{sec:investigator_client} & Vivo & \textbf{Retirada} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Duas observações sobre a tabela no seu conjunto, e não sobre qualquer linha em particular. Primeira,
-cinco afirmações foram retiradas ou estreitadas, e todas as cinco o foram pelas \emph{medições do
+oito afirmações foram retiradas ou estreitadas, e todas elas o foram pelas \emph{medições do
 próprio trabalho} e não por revisão externa. É o comportamento pretendido de uma avaliação desenhada
 antes das experiências: tem de ser capaz de dizer não. Segunda, as linhas com a coluna de evidência
 mais fraca são também aquelas em que esta dissertação menos se apoia, e a afirmação mais forte que faz,

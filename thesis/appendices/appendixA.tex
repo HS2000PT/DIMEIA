@@ -237,7 +237,7 @@ isolation.
 The preceding table lists results. This one lists \emph{claims}, which is a stricter test, because a
 claim can outlive the evidence that once supported it. Every substantive assertion this dissertation
 makes is set against the evidence behind it, whether that evidence can be regenerated on demand, and
-what was decided about the claim as a result. Three entries record claims that were \emph{withdrawn or
+what was decided about the claim as a result. Several entries record claims that were \emph{withdrawn or
 narrowed} after measurement; they are kept in the table rather than deleted, because a matrix that
 only lists surviving claims would not be an audit.
 
@@ -301,13 +301,27 @@ Training and deployment differ & PSI $0.281$ on pre-event volatility; prevalence
 Confidence is thin on most items & $39.5\%$ definite calls at $90\%$ guaranteed coverage & §\ref{sec:cs_conformal} & Script & Kept \\
 Signal fusion beats the best single signal & Wins at 1 alert budget of 3 & §\ref{sec:concl_exclusions} & Script & \textbf{Withdrawn} \\
 The system ran in production & $332$ alerts with timestamps in a versioned record & §\ref{app:repro_proof} & Live & Kept \\
+\midrule
+\multicolumn{5}{l}{\textbf{Generated text}} \\
+No number in generated text is absent from the evidence & Numbers bound per sentence to the records that sentence cites & §\ref{sec:met_generation} & Test & Kept \\
+The generator produces prose and never a fact & No bundle record carries a \emph{generated} provenance; asserted by test & §\ref{sec:investigator_intelligence} & Test & Kept \\
+The guard blocks adversarial text & $23$ of $23$ attacks blocked & §\ref{sec:investigator_intelligence} & Script & Kept \\
+The guard admits faithful text & $8$ of $8$ controls pass & §\ref{sec:investigator_intelligence} & Script & Kept \\
+No section with a violation reaches the reader & $0$ of $22$ delivered sections & §\ref{sec:investigator_intelligence} & Script & Kept (circular) \\
+The guard's language guarantee equals the alert narrator's & Blocklist versus closed allowlist; four residual risks stated & §\ref{sec:concl_limitations} & --- & \textbf{Withdrawn} \\
+The guard survived adversarial review & Two of six perspectives completed; all verification stages lost to a spending limit & §\ref{sec:concl_limitations} & --- & \textbf{Narrowed} (lower bound) \\
+\midrule
+\multicolumn{5}{l}{\textbf{Interface}} \\
+Interaction requires no network call & $0$ requests over five range changes; $2.5$--$7.3$\,ms & §\ref{sec:investigator_client} & Live & Kept \\
+The opening surface loads in one request & $1.0$\,s, one request, measured in the browser & §\ref{sec:investigator_client} & Live & Kept \\
+Precedent retrieval cannot run on the page & Held for the server-rendered design only; served on its own route since & §\ref{sec:investigator_client} & Live & \textbf{Withdrawn} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Two observations about the table as a whole, rather than about any row in it. First, five claims were
-withdrawn or narrowed, and all five were withdrawn by \emph{this work's own measurements} rather than
-by review. That is the intended behaviour of an evaluation designed before the experiments: it is
+Two observations about the table as a whole, rather than about any row in it. First, eight claims were
+withdrawn or narrowed, and all of them were withdrawn by \emph{this work's own measurements} rather
+than by review. That is the intended behaviour of an evaluation designed before the experiments: it is
 supposed to be able to say no. Second, the rows with the weakest evidence column are also the rows
 this dissertation leans on least, and the strongest claim it makes, the no-lookahead guarantee, is the
 one enforced by a test rather than by prose. Where a claim could not be supported, it appears here as
