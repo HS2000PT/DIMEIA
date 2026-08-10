@@ -175,6 +175,32 @@ def triage(ticker: str, headline: str = "") -> dict:
     return {"available": True, **out}
 
 
+@app.get("/api/logos")
+def logos() -> dict:
+    """Logótipos das empresas como `data:` URI, num pedido.
+
+    Versionados em `app/assets/logos/` de propósito: a página desenha-os **sem chave, sem
+    rede e sem limite de ritmo**, e o navegador não faz um único pedido a terceiros — que é a
+    posição de privacidade que o resto do trabalho já defende. Um pedido para os doze em vez
+    de doze pedidos: são ~40 KB no total e evitam doze idas ao servidor na primeira pintura.
+
+    Degrada para as iniciais quando o ficheiro não existe (a XOM e a JNJ entraram na watchlist
+    depois da recolha).
+    """
+    def _load():
+        from investigator.branding.logos import cached_logo
+        out: dict[str, str] = {}
+        for t in S.watchlist():
+            try:
+                uri = cached_logo(t)
+            except Exception:  # noqa: BLE001
+                uri = None
+            if uri:
+                out[t] = uri
+        return out
+    return {"logos": S.cached("logos", 3600, _load)}
+
+
 @app.get("/api/screener")
 def screener() -> dict:
     """Porque é que o sistema ficou calado sobre cada nome. Com a margem que faltou."""

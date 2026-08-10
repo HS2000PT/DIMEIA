@@ -22,6 +22,7 @@ const S = {
   chart: null, chartApi: null, markers: null,
   rail: { open: false, tab: 'report', report: null, chat: [], busy: false },
   bundleFacts: new Map(),
+  logos: {},
 };
 
 /* ── rede ── */
@@ -92,12 +93,33 @@ function paintHeader() {
 }
 
 /* ── SVG utilitários ── */
+/* A raridade VISTA, não lida: uma marca por dia, as que excederam acesas.
+ *
+ * ⚠️ A primeira versão tinha as cores INVERTIDAS, e o efeito era o pior possível: a XOM, que
+ * se moveu assim em 2 de 249 dias — o acontecimento mais raro do ecrã —, aparecia com a tira
+ * quase toda acesa, e um dia perfeitamente banal aparecia com menos. **O mais raro parecia o
+ * mais comum.** Apanhado a olhar para a captura, não nos testes.
+ *
+ * A semântica correcta é a de `app/snapshot_io.py::tira_distribuicao`, e é esta: as primeiras
+ * `on` marcas — a proporção de dias que igualaram ou excederam — ficam ACESAS; o resto é
+ * fundo. Poucas acesas = raro.
+ */
 function strip(count, n) {
   if (!n) return '';
-  const marks = 60, on = Math.max(0, Math.min(marks, Math.round(marks * count / n))), w = 100 / marks;
-  let s = `<svg class="strip" viewBox="0 0 100 13" preserveAspectRatio="none" aria-hidden="true">`;
-  for (let i = 0; i < marks; i++)
-    s += `<rect x="${(i * w).toFixed(2)}" y="0" width="${(w - .28).toFixed(2)}" height="13" rx=".4" fill="${i < on ? 'var(--line-2)' : 'var(--warn)'}" opacity="${i < on ? .5 : 1}"/>`;
+  const marks = 60, w = 100 / marks;
+  // Arredondar 2/249 dá zero marcas acesas, e uma tira totalmente apagada lê-se como "sem
+  // dados" em vez de "raríssimo". Se houve pelo menos um dia, acende-se pelo menos uma marca:
+  // é o que o número diz, e é a diferença entre um ecrã que informa e um ecrã que parece vazio.
+  const raw = marks * count / n;
+  const on = count > 0 ? Math.max(1, Math.min(marks, Math.round(raw)))
+                       : 0;
+  let s = `<svg class="strip" viewBox="0 0 100 13" preserveAspectRatio="none" role="img"
+    aria-label="${count} of the last ${n} trading days moved at least this much">`;
+  for (let i = 0; i < marks; i++) {
+    const lit = i < on;
+    s += `<rect x="${(i * w).toFixed(2)}" y="0" width="${(w - .28).toFixed(2)}" height="13"
+      rx=".4" fill="${lit ? 'var(--warn)' : 'var(--line)'}" opacity="${lit ? .95 : 1}"/>`;
+  }
   return s + '</svg>';
 }
 function spark(closes, colour) {
@@ -107,7 +129,14 @@ function spark(closes, colour) {
   return `<svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">
     <polyline points="${pts}" fill="none" stroke="${colour}" stroke-width="1.4" vector-effect="non-scaling-stroke"/></svg>`;
 }
-const logoOf = (t, n) => `<div class="logo-fb">${esc((n || t).slice(0, 2).toUpperCase())}</div>`;
+/* Logótipo da empresa, ou as iniciais. Nunca um espaço vazio: um cartão sem marca visual
+ * obriga o olho a ler o texto para saber de quem é, e isso custa em cada varrimento. */
+const logoOf = (t, n) => {
+  const uri = S.logos[t];
+  return uri
+    ? `<img class="logo" src="${uri}" alt="" loading="lazy" decoding="async">`
+    : `<div class="logo-fb">${esc((n || t).slice(0, 2).toUpperCase())}</div>`;
+};
 
 /* ══ VISTA: home ══════════════════════════════════════════════════════════ */
 function viewHome() {
@@ -770,6 +799,14 @@ $('#ask-input').addEventListener('keydown', e => {
     return;
   }
   render();
+
+  // Logótipos DEPOIS da primeira pintura. São ~40 KB e nenhum deles é necessário para
+  // perceber a página: fazê-los bloquear o primeiro conteúdo trocaria informação por
+  // decoração, que é exactamente a inversão que esta reconstrução existe para desfazer.
+  api('/api/logos').then(d => {
+    S.logos = d.logos || {};
+    if (Object.keys(S.logos).length) render();
+  }).catch(() => { /* iniciais servem */ });
 
   // Actualização silenciosa: o worker corre a 60 s. Repinta só se os dados mudaram, e nunca
   // reordena a grelha debaixo do polegar de quem está a fazer scroll.
