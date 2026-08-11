@@ -72,10 +72,37 @@
   4 rotas a 200, relatório generativo **1,5 s**, analista **1,26 s**, worker a escrever o
   instantâneo com intradiário (78 barras de 5 min).
   **Gates: 707 testes (era 658), ruff limpo, congelados intactos.**
-  **⏭️ NÃO FEITO, e é o maior bloco que fica:** **a propagação para a tese e materiais**
-  (Cap. 4 descreve a v4; Cap. 3 não tem a metodologia da camada generativa; figuras, slides,
-  quizz, guias e o artigo IEEE por actualizar). A tese está **correcta enquanto descrever o
-  que descreve**, mas o `Procfile` mudou ⇒ a dívida está aberta, tal como nas sessões 48 e 54.
+  **(H) PROPAGAÇÃO COMPLETA (o aluno mandou: "update the thesis and all documentation now").**
+  **Tese EN+PT:** Cap. 3 ganha `§Grounded Generation and its Fidelity Check` (o método, as três
+  condições da verificação, e o protocolo com o **controlo nos dois sentidos**); Cap. 4 ganha
+  `§4.7.1 Separar o servidor do cliente` (com a **tabela do custo medido**) e a secção nova
+  `§4.8 A Camada de Inteligência` (o contrato, os **dois níveis de garantia** em tabela, a ligação
+  por frase, o comportamento medido, e a linguagem natural como 2.ª interface); Cap. 6 ganha a
+  **5.ª contribuição** e **duas limitações novas**. **Figuras:** `app_dashboard.png` (v4)
+  substituída por `app_v5_overview.png`, mais `app_v5_intelligence.png` — **a captura com uma
+  âncora ABERTA**, que é a que prova a travessia frase→facto. `scripts/screenshot_v5.py` captura
+  **de produção** de propósito.
+  **⚠️ DEFEITO PRÉ-EXISTENTE APANHADO A COMPILAR:** o `thesis-pt/ch6` tinha `Secção~` + **um byte
+  CR** + `ef{...}` — o `\r` de um `\ref` foi consumido como escape de carriage-return por uma
+  edição antiga. A tradução universal de newlines do Python **escondia-o e voltava a mangá-lo a
+  cada round-trip**; só se resolveu em modo binário. A PT não compilava.
+  **Matriz de evidência: +11 linhas** (texto gerado e interface), **3 delas retiradas ou
+  estreitadas** — incluindo *"a recuperação de precedentes não pode correr na página"*, que a v5
+  desmente, e *"a guarda sobreviveu a revisão adversária"*, estreitada para limite inferior.
+  Total de retiradas passa de 5 para **8**.
+  **Materiais:** slides EN+PT 26→**28** (2 frames novos e simétricos), guia de estudo 89→**93**,
+  quizz 55→**64** com bloco novo *"IA generativa"*. **⚠️ As 2 perguntas de escolha múltipla novas
+  usavam `correct:` quando o quizz lê `ok:` — nunca teriam pontuado.** Pack de defesa: fact sheet
+  com §6b/§6c, `DEFENSE_QA` com **D5–D9** (a D5 é *"onde está a IA?"*, a mais provável de todas),
+  guia pessoal com **P9–P10** (a P9 é a armadilha de citarem a minha própria tese contra mim).
+  **Artigo IEEE actualizado por último**, como pedido, e **mantém-se em 4 páginas**.
+  **Gates finais: 707 testes, ruff limpo, EN 128 pp / PT 134 pp a 0 erros, 0 citações e
+  referências indefinidas, 0 overfull >15pt, paridade 0 assimetrias em 89 chaves, secções e
+  figuras/tabelas 1:1 (ch3 23=23/11=11, ch4 17=17/16=16, ch6 6=6/2=2), congelados intactos
+  (`models/`, `docs/evaluation/`, `data/` sem alterações), artigo 4 pp, slides 28+28, guia 93.**
+  **⏭️ O QUE FICA (nada disto é código):** o estudo humano — que agora cobre **também** o texto
+  gerado; completar o red team da guarda (4 das 6 lentes nunca correram); agradecimentos e
+  dedicatória; declaração de IA com o orientador; rodar as 4 credenciais.
 - **🆕 SESSÃO 55 (2026-08-09/10 — o aluno pediu auditoria total em fases, e disse que o
   REPOSITÓRIO FICA PRIVADO e não é avaliado):**
   **⚠️ ESSA FRASE MUDOU AS PRIORIDADES.** Se o arguente nunca abre o repo, cada "isto é

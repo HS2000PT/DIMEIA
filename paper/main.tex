@@ -129,6 +129,28 @@ calibration monitoring.
 window and threshold, or the retrieved precedents with their similarity scores and measured impact) and
 ends with an explicit no-prediction disclaimer.
 
+\textbf{Grounded generation.} The components above each answer one question and return one object;
+nothing in them \emph{combines} those objects, and the joint state space --- how many names were flagged,
+which component dominated each, whether headlines were captured, whether analogous cases exist and which
+way they went --- outgrows any template library. A generative layer performs that synthesis under a
+construction that prevents the language step from becoming a factual one. Inputs are serialised into an
+\emph{evidence bundle}: records carrying a citable identifier, a value, and a declared provenance of
+\emph{measured}, \emph{computed} or \emph{model}. No record carries a \emph{generated} provenance, an
+invariant asserted by test. The generator sees only the bundle, cites identifiers inline, and its output
+is verified before delivery; the interface resolves each citation back to its record, so the claim that
+generated text remains attached to its evidence is a traversal rather than an assertion about a prompt.
+
+Verification applies three conditions. Numbers are bound \emph{per sentence}: the identifiers a sentence
+cites determine the values it may use, and a value outside that set is a violation even when present
+elsewhere in the bundle. A global set --- the design this replaced --- lets a sentence cite one record and
+quote another's number, which permits a return to be restated as a $z$-score or a direction to be inverted
+using the oppositely signed value of a different record. Prediction, advice and asserted causation are
+rejected by pattern, with the honest disclaimers the system must be able to write removed beforehand by a
+closed allowlist; detecting negation contextually was tried and abandoned, because a negation placed
+nearby disables the check. Finally, every sentence making a checkable claim must cite a record. Rejection
+is per section, and a rejected section is replaced by a deterministic composition that must itself pass
+the same check.
+
 \section{Evaluation}
 The evaluation is fixed in advance. The anomaly detector is assessed primarily by the \emph{consistency} of
 its firing rate across instruments of different volatility (a label-free argument) and secondarily against
@@ -194,6 +216,18 @@ Because each alert is rendered from the same objects the system computes, the ex
 from the underlying computation; this is checked by an automated test that asserts the rendered alert
 reproduces each retrieved precedent's date, ticker and measured impact.
 
+For the generative layer, two quantities are measured because they answer different questions. An
+adversarial corpus of $23$ attacks, each of which must be rejected, measures the guard: $23/23$ are
+blocked. A set of $8$ faithful control sentences, each of which must pass, measures whether the guard is
+merely refusing everything: $8/8$ are admitted. The second is the load-bearing figure, since a guard that
+rejected all text would score perfectly on the first. Across generated reports, $22/22$ delivered sections
+satisfy the check and none carrying a violation reaches the reader --- a property that must hold by
+construction and is verified rather than assumed, though it is circular, since the same checker decides
+and evaluates. What the guard rejects is itself informative: rejections were of asserted causation, advice
+and prediction rather than of fabricated numbers, indicating that the constraint is doing continuous work.
+The corpus retains every exploit reproduced against earlier versions of the guard as a permanent
+regression.
+
 \subsection{Materiality triage}
 On the multi-year FNSPID corpus \cite{dong2024fnspid} ($79{,}753$ examples over 2018--2023, fourteen of
 the fifteen tickers, temporal split by unique days with a five-day embargo; test prevalence $0.378$),
@@ -217,7 +251,14 @@ own text features, that the transparent volatility evidence carries the signal. 
 stated plainly. Relevance is a same-sector proxy, not a human judgement; the primary retrieval corpus is
 a recent window from a free service, though a follow-up validated the retrieval at scale on FNSPID (the
 triage study also used the multi-year corpus); the displayed precedent impact is a raw post-event return, whereas the triage labels
-are market-adjusted; and no human usefulness study has yet been run. A further, conceptual limitation is that embedding similarity captures \emph{theme} rather
+are market-adjusted; and no human usefulness study has yet been run, which now covers the generated text
+as well. The generative layer carries a further limitation stated rather than discovered: its
+\emph{linguistic} defence is a blocklist, and a blocklist over natural language loses in the limit, which
+is why the pushed alert path uses a closed-vocabulary allowlist and the two are not claimed to be
+equivalent. The check confirms that a cited record exists and that a sentence's numbers belong to it, not
+that the record supports the characterisation in words; and the adversarial exercise behind the current
+guard was interrupted, with two of six attack perspectives completing and no independent verification
+stage, so its measured strength is a lower bound. A further, conceptual limitation is that embedding similarity captures \emph{theme} rather
 than \emph{direction}: a retrieved cluster can mix positive and negative outcomes (a positive headline may
 retrieve a competitive-threat cluster), so the reported mean is evidence about a theme, not a directional
 forecast, which is why precedents are always shown individually and every alert disclaims prediction. By
@@ -228,9 +269,14 @@ InvestiGator shows that useful financial alerting for retail investors can be bo
 a volatility-normalised detector that explains every flag, a news--market correlation engine that
 retrieves analogous precedents and reports their measured impact as evidence rather than prediction, and
 a trained, calibrated triage model that nearly quadruples within-budget alert precision while honestly
-failing to beat a volatility-only baseline with text. Future work is a market-adjusted impact-magnitude
-study over the multi-year precedents (retrieval already validated at scale on FNSPID), a human relevance
-and usefulness study, and closing the triage text gap with richer text than headlines.
+failing to beat a volatility-only baseline with text, and a generative layer whose synthesis stays bound
+to the records it cites. The last of these carries the most transferable idea: placing generated text
+beside computed results is safe only if the binding is \emph{per claim} rather than per document, and if
+the guarantee that binding provides is stated at the strength it actually has. Future work is a
+market-adjusted impact-magnitude study over the multi-year precedents (retrieval already validated at
+scale on FNSPID), a human relevance and usefulness study covering the generated reports, completing the
+interrupted adversarial evaluation of the guard, and closing the triage text gap with richer text than
+headlines.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
