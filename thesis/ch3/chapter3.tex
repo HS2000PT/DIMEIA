@@ -967,7 +967,10 @@ everything: without it, a guard that rejected all text would score perfectly and
 This is the same both-directions requirement applied to the detectors in
 Section~\ref{sec:met_evaluation}. A third figure counts sections \emph{delivered} carrying a
 violation, which must be zero by construction; it is reported as a check on the delivery path and is
-explicitly circular, since the same checker decides and evaluates. The corpus retains every exploit
+explicitly circular, since the same checker decides and evaluates. The first two are deterministic
+and reproduce exactly; the section counts are a \emph{sample} from one run, since they depend on how
+many reports were generated and on what the model wrote, so the conforming rate is the quantity that
+carries over rather than the counts. The corpus retains every exploit
 reproduced against earlier versions of the guard, so that a closed weakness cannot silently reopen.
 
 \paragraph{Scope of the guarantee.} The guarantee obtained here is weaker than the one obtained for

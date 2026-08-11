@@ -812,34 +812,51 @@ seus detetores.
 \begin{table}[ht]
 \centering
 \caption[Comportamento medido da guarda de ancoragem]{Comportamento da guarda de ancoragem,
-regenerado por um script versionado. Os ataques incluem todos os exploits reproduzidos contra a
-versão anterior, mantidos como regressões permanentes. As secções \emph{entregues} com violação têm
-de ser zero por construção, já que uma secção rejeitada é substituída pela composição determinística
-antes de ser mostrada; esse número verifica a propriedade em vez de a assumir.}
+regenerado por um script versionado. \textbf{Os três grupos não reproduzem da mesma maneira, e a
+distinção importa mais do que qualquer número isolado.} O primeiro é determinístico: a guarda é uma
+função pura e o corpus é fixo, portanto o mesmo código dá sempre o mesmo resultado. O segundo é uma
+\emph{amostra} de uma corrida --- a contagem de secções depende de quantos relatórios se geraram e do
+que o modelo escreveu --- pelo que o que se lê é a taxa e não as contagens. O terceiro não é nem uma
+coisa nem outra: é uma propriedade que tem de valer em \emph{todas} as corridas, e o número
+verifica-a em vez de a estimar. Os ataques incluem todos os exploits reproduzidos contra a versão
+anterior, mantidos como regressões permanentes.}
 \label{tab:guard_measured}
 \begin{tabular}{lrr}
 \toprule
 Quantidade & Contagem & Taxa \\
 \midrule
+\multicolumn{3}{l}{\emph{Determinístico --- reproduz exactamente}} \\
 Ataques adversários bloqueados      & 23 / 23 & 1,000 \\
 Frases de controlo fiéis aceites    & 8 / 8   & 1,000 \\
+\midrule
+\multicolumn{3}{l}{\emph{Amostrado --- uma corrida de seis relatórios}} \\
 Secções geradas conformes           & 27 / 27 & 1,000 \\
+\midrule
+\multicolumn{3}{l}{\emph{Invariante --- tem de valer em todas as corridas}} \\
 Secções entregues com violação      & 0       & 0,000 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-A terceira linha merece uma ressalva que o próprio número não pode dar: é \emph{circular}, porque o
-mesmo verificador decide e avalia. Reporta-se porque um valor diferente de zero indicaria um defeito
-no caminho de entrega, não porque estabeleça fidelidade de forma independente. O corpus adversário
-existe para a complementar, e os riscos residuais que o corpus não cobre estão enunciados na
-Secção~\ref{sec:concl_limitations} em vez de ficarem por descobrir.
+Dois destes números precisam de uma ressalva que eles próprios não podem dar. A linha amostrada é
+uma corrida única: outra corrida gera outro número de secções e pode ver o modelo escrever texto que
+a guarda rejeita, caso em que o que transita é a \emph{taxa} de conformidade e não as contagens.
+Enunciá-la como constante seria reivindicar uma estabilidade que só o grupo determinístico tem. E a
+linha invariante é \emph{circular}, porque o mesmo verificador decide e avalia; reporta-se porque um
+valor diferente de zero indicaria um defeito no caminho de entrega, não porque estabeleça fidelidade
+de forma independente. O corpus adversário existe para a complementar, e os riscos residuais que o
+corpus não cobre estão enunciados na Secção~\ref{sec:concl_limitations} em vez de ficarem por
+descobrir.
 
-O que a guarda rejeita é tão informativo como o que aceita. Ao longo das secções geradas, as
-rejeições foram de linguagem proibida e não de números fabricados: causa afirmada, conselho e
-previsão. O modelo, por outras palavras, procura exatamente os três registos que este sistema recusa,
-e fá-lo com frequência suficiente para a guarda estar a trabalhar continuamente em vez de decorar um
-caminho que teria sido seguro de qualquer maneira.
+O que a guarda rejeita é tão informativo como o que aceita, e também isto é uma propriedade da
+corrida e não uma grandeza fixa. Ao longo das corridas, as rejeições têm sido de linguagem proibida
+e não de números fabricados: causa afirmada, conselho e previsão. O modelo, por outras palavras,
+procura exatamente os três registos que este sistema recusa, e fá-lo com frequência suficiente para a
+guarda estar a trabalhar continuamente em vez de decorar um caminho que teria sido seguro de qualquer
+maneira. A frequência com que intervém depende também de quão precisamente o gerador é instruído:
+apertar a instrução para citar cada registo na mesma frase do número que ele autoriza aumentou a
+proporção de respostas que passam sem alteração, sem mudar a regra que está a ser aplicada --- que é
+a direção esperada, já que a guarda estava a rejeitar texto verdadeiro mas insuficientemente citado.
 
 \subsection{A linguagem natural como segunda interface}
 

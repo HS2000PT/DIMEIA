@@ -220,10 +220,11 @@ For the generative layer, two quantities are measured because they answer differ
 adversarial corpus of $23$ attacks, each of which must be rejected, measures the guard: $23/23$ are
 blocked. A set of $8$ faithful control sentences, each of which must pass, measures whether the guard is
 merely refusing everything: $8/8$ are admitted. The second is the load-bearing figure, since a guard that
-rejected all text would score perfectly on the first. Across generated reports, $27/27$ delivered sections
-satisfy the check and none carrying a violation reaches the reader --- a property that must hold by
-construction and is verified rather than assumed, though it is circular, since the same checker decides
-and evaluates. What the guard rejects is itself informative: rejections were of asserted causation, advice
+rejected all text would score perfectly on the first. The first two are deterministic and reproduce exactly. In one
+run of six reports, $27/27$ delivered sections satisfy the check and none carrying a violation reaches
+the reader; the section counts are a sample of that run, so the conforming rate rather than the counts
+is what carries over, whereas the zero is a property that must hold in every run and is verified rather
+than assumed, though circular, since the same checker decides and evaluates. What the guard rejects is itself informative: rejections were of asserted causation, advice
 and prediction rather than of fabricated numbers, indicating that the constraint is doing continuous work.
 The corpus retains every exploit reproduced against earlier versions of the guard as a permanent
 regression.

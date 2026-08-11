@@ -982,7 +982,10 @@ a recusar tudo: sem ele, uma guarda que rejeitasse todo o texto pontuaria perfei
 impecável. É a mesma exigência dos dois sentidos aplicada aos detetores na
 Secção~\ref{sec:met_evaluation}. Uma terceira contagem regista as secções \emph{entregues} com
 violação, que tem de ser zero por construção; reporta-se como verificação do caminho de entrega e é
-explicitamente circular, já que o mesmo verificador decide e avalia. O corpus retém todos os exploits
+explicitamente circular, já que o mesmo verificador decide e avalia. As duas primeiras são
+determinísticas e reproduzem exactamente; as contagens de secções são uma \emph{amostra} de uma
+corrida, já que dependem de quantos relatórios se geraram e do que o modelo escreveu, pelo que o que
+transita é a taxa de conformidade e não as contagens. O corpus retém todos os exploits
 reproduzidos contra versões anteriores da guarda, para que uma fraqueza fechada não possa reabrir em
 silêncio.
 

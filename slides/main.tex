@@ -579,14 +579,18 @@ checked against the evidence that produced it.''}}
 \toprule
 Adversarial attacks blocked & $23/23$ \\
 \textbf{Faithful controls passed} & $\mathbf{8/8}$ \\
-Generated sections conforming & $27/27$ \\
+Generated sections conforming$^{*}$ & $27/27$ \\
 Delivered with a violation & $\mathbf{0}$ \\
 \bottomrule
 \end{tabular}
 \medskip
 
 {\footnotesize The \textbf{second} row is the one that matters: without it, a guard that rejected
-\emph{everything} would score $23/23$ and look flawless.}
+\emph{everything} would score $23/23$ and look flawless.
+
+\smallskip
+$^{*}$\,Sampled from one run of six reports: the \emph{rate} carries over, the counts do not. The
+first two rows are deterministic and reproduce exactly; the zero must hold in \emph{every} run.}
 
 \column{0.54\textwidth}
 \begin{block}{\small Two guarantees, not one --- and the weaker one is declared}

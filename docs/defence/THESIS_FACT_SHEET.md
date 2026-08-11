@@ -154,8 +154,22 @@ Se alguém re-treinar com outra semente, a suite parte.
 |---|---|---|---|---|---|
 | Ataques adversários bloqueados | **23 / 23** | corpus versionado | cada ataque tem de dar `ok=False` | `evaluate_intelligence_guard.py` | §4.8 |
 | Controlos de texto fiel aceites | **8 / 8** | idem | cada controlo tem de dar `ok=True` | idem | §4.8 |
-| Secções geradas conformes | **27 / 27** | 5 relatórios reais | re-verificação de cada secção entregue | idem | §4.8 |
-| Secções entregues com violação | **0** | idem | contagem; tem de ser zero por construção | idem | §4.8 |
+| Secções geradas conformes | **27 / 27** | **1 corrida de 6 relatórios** | re-verificação de cada secção entregue | idem | §4.8 |
+| Secções entregues com violação | **0** | idem | contagem; tem de ser zero **em todas as corridas** | idem | §4.8 |
+
+> ⚠️ **Estas quatro linhas não se lêem da mesma maneira, e é a primeira coisa a dizer se
+> perguntarem por elas.**
+>
+> | classe | quais | reproduz? |
+> |---|---|---|
+> | **determinística** | ataques, controlos | **sim, exactamente** — a guarda é pura e o corpus é fixo |
+> | **amostrada** | secções conformes | **não** — depende de quantos relatórios gerei e do que o modelo escreveu. **Cita-se a taxa, não a contagem** |
+> | **invariante** | entregues com violação | **tem de ser 0 sempre** — não é estatística, é propriedade a verificar |
+>
+> **Se perguntarem "porque é que este número mudaria?":** *"O 23/23 e o 8/8 não mudam — a guarda
+> é determinística. As contagens de secções mudam com o tamanho da corrida, por isso o que se cita
+> é a taxa. E o zero tem de valer em todas as corridas: se não valesse, era um defeito do caminho
+> de entrega, não uma variação de amostra."*
 | Exploits reproduzidos pelo red team | **21** de **114** tentativas | 2 de 6 lentes | ataque reproduzido em Python real | — | §6.5 |
 | Latência do relatório | **~1,5 s** | produção | tempo do fornecedor + guarda | `/api/report` | §4.8 |
 | Latência do analista | **~1,3 s** | produção | roteamento + resposta | `/api/ask` | §4.8 |

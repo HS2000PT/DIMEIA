@@ -309,9 +309,9 @@ O sistema correu em produção & $332$ alertas com carimbos num registo versiona
 \multicolumn{5}{l}{\textbf{Texto gerado}} \\
 Nenhum número do texto gerado está ausente da evidência & Números ligados por frase aos registos que essa frase cita & §\ref{sec:met_generation} & Teste & Mantida \\
 O gerador produz prosa e nunca um facto & Nenhum registo do pacote tem proveniência \emph{gerado}; verificado por teste & §\ref{sec:investigator_intelligence} & Teste & Mantida \\
-A guarda bloqueia texto adversário & $23$ de $23$ ataques bloqueados & §\ref{sec:investigator_intelligence} & Script & Mantida \\
-A guarda aceita texto fiel & $8$ de $8$ controlos passam & §\ref{sec:investigator_intelligence} & Script & Mantida \\
-Nenhuma secção com violação chega ao leitor & $0$ de $27$ secções entregues & §\ref{sec:investigator_intelligence} & Script & Mantida (circular) \\
+A guarda bloqueia texto adversário & $23$ de $23$ ataques bloqueados; determinístico & §\ref{sec:investigator_intelligence} & Script & Mantida \\
+A guarda aceita texto fiel & $8$ de $8$ controlos passam; determinístico & §\ref{sec:investigator_intelligence} & Script & Mantida \\
+Nenhuma secção com violação chega ao leitor & $0$ em todas as corridas; $27$ secções amostradas numa & §\ref{sec:investigator_intelligence} & Script & Mantida (circular) \\
 A garantia linguística da guarda iguala a do narrador de alertas & Blocklist contra allowlist fechada; quatro riscos residuais enunciados & §\ref{sec:concl_limitations} & --- & \textbf{Retirada} \\
 A guarda sobreviveu a revisão adversária & Duas de seis perspetivas completaram; todas as etapas de verificação perdidas por limite de gasto & §\ref{sec:concl_limitations} & --- & \textbf{Estreitada} (limite inferior) \\
 \midrule

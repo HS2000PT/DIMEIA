@@ -305,9 +305,9 @@ The system ran in production & $332$ alerts with timestamps in a versioned recor
 \multicolumn{5}{l}{\textbf{Generated text}} \\
 No number in generated text is absent from the evidence & Numbers bound per sentence to the records that sentence cites & §\ref{sec:met_generation} & Test & Kept \\
 The generator produces prose and never a fact & No bundle record carries a \emph{generated} provenance; asserted by test & §\ref{sec:investigator_intelligence} & Test & Kept \\
-The guard blocks adversarial text & $23$ of $23$ attacks blocked & §\ref{sec:investigator_intelligence} & Script & Kept \\
-The guard admits faithful text & $8$ of $8$ controls pass & §\ref{sec:investigator_intelligence} & Script & Kept \\
-No section with a violation reaches the reader & $0$ of $27$ delivered sections & §\ref{sec:investigator_intelligence} & Script & Kept (circular) \\
+The guard blocks adversarial text & $23$ of $23$ attacks blocked; deterministic & §\ref{sec:investigator_intelligence} & Script & Kept \\
+The guard admits faithful text & $8$ of $8$ controls pass; deterministic & §\ref{sec:investigator_intelligence} & Script & Kept \\
+No section with a violation reaches the reader & $0$ in every run; $27$ sections sampled in one & §\ref{sec:investigator_intelligence} & Script & Kept (circular) \\
 The guard's language guarantee equals the alert narrator's & Blocklist versus closed allowlist; four residual risks stated & §\ref{sec:concl_limitations} & --- & \textbf{Withdrawn} \\
 The guard survived adversarial review & Two of six perspectives completed; all verification stages lost to a spending limit & §\ref{sec:concl_limitations} & --- & \textbf{Narrowed} (lower bound) \\
 \midrule
