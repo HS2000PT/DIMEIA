@@ -1,6 +1,6 @@
 # Avaliação da guarda de ancoragem (camada de inteligência)
 
-> Gerado por `scripts/evaluate_intelligence_guard.py` a 2026-08-10 23:27 UTC.
+> Gerado por `scripts/evaluate_intelligence_guard.py` a 2026-08-11 00:14 UTC.
 > Regenerável. Nenhum número deste ficheiro foi escrito à mão.
 
 ## O que se mede, e porquê são duas coisas
@@ -27,13 +27,13 @@ Nenhum ataque do corpus escapou.
 
 | Secções geradas | Conformes | Taxa | Entregues com violação |
 |---|---|---|---|
-| 22 | 22 | 1.000 | **0** |
+| 27 | 27 | 1.000 | **0** |
 
-Latência mediana do relatório: **1.31 s**.
+Latência mediana do relatório: **1.52 s**.
 
-Origem do texto: `{'groq+guarded': 3, 'groq': 2}`.
+Origem do texto: `{'groq': 2, 'groq+guarded': 3, 'gemini+guarded': 1}`.
 
-Motivos de rejeição observados: `{'limits': 2, 'aconselha': 2, 'afirma causa': 1, 'prevê': 1}`.
+Motivos de rejeição observados: `{'aconselha': 3, 'limits': 1, 'afirma causa': 1}`.
 
 > A coluna **entregues com violação** tem de ser zero por construção: uma secção
 > que a guarda rejeita é substituída pela composição determinística antes de

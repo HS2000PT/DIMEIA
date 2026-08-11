@@ -70,8 +70,10 @@ identifier like [f3].
 HARD RULES — breaking any one invalidates the whole report:
 1. Use ONLY numbers that appear in EVIDENCE, copied exactly, including the +/- sign. Never \
 compute, combine, convert or round a number.
-2. Every sentence that makes a claim must cite the evidence it rests on, inline, like this: \
-"NVDA moved +2.14% [f4]". Cite at least one identifier per section.
+2. Cite EVERY item whose number you use, IN THE SAME SENTENCE as that number. A number is only \
+allowed in a sentence that cites the item it came from. If one sentence uses three numbers from \
+three items, cite all three in that sentence: "9 up, 3 down [f3], with XOM at +4.32% [f5]". \
+Citing at the end of a paragraph is NOT enough.
 3. NEVER predict, forecast, recommend, advise, or say what will or should happen next.
 4. NEVER assert causation. The system measures coincidence in time, not cause. Write \
 "coincided with", "was published shortly before", "temporal proximity only".

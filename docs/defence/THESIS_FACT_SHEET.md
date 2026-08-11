@@ -154,7 +154,7 @@ Se alguém re-treinar com outra semente, a suite parte.
 |---|---|---|---|---|---|
 | Ataques adversários bloqueados | **23 / 23** | corpus versionado | cada ataque tem de dar `ok=False` | `evaluate_intelligence_guard.py` | §4.8 |
 | Controlos de texto fiel aceites | **8 / 8** | idem | cada controlo tem de dar `ok=True` | idem | §4.8 |
-| Secções geradas conformes | **22 / 22** | 5 relatórios reais | re-verificação de cada secção entregue | idem | §4.8 |
+| Secções geradas conformes | **27 / 27** | 5 relatórios reais | re-verificação de cada secção entregue | idem | §4.8 |
 | Secções entregues com violação | **0** | idem | contagem; tem de ser zero por construção | idem | §4.8 |
 | Exploits reproduzidos pelo red team | **21** de **114** tentativas | 2 de 6 lentes | ataque reproduzido em Python real | — | §6.5 |
 | Latência do relatório | **~1,5 s** | produção | tempo do fornecedor + guarda | `/api/report` | §4.8 |
