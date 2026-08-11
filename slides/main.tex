@@ -536,9 +536,75 @@ would see.} The gate stays on as a \emph{volume} control (it suppresses $\sim$3/
 is the instrumented part --- switching it off would end the measurement that found this.}
 \end{frame}
 
+\begin{frame}{Where the AI is: four layers, and the fourth is visible}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Layer} & \textbf{Nature} \\
+\midrule
+1 Data & measured \\
+2 Statistics & deterministic \\
+3 \textbf{Learning} & \textbf{trained models} \\
+4 \textbf{Generation} & \textbf{grounded LLM} \\
+\bottomrule
+\end{tabular}
+\medskip
+
+{\footnotesize Layer 3 is a sentence transformer plus a calibrated classifier trained here on
+$79{,}753$ examples. Layer 4 \emph{combines} their outputs --- the one task where the state space
+outgrows any template library.}
+
+\column{0.50\textwidth}
+\begin{block}{\small The division that makes it defensible}
+\small The engines write the \textbf{facts}; the model writes the \textbf{language}. It never
+observes the market. It receives an evidence bundle whose every record declares its provenance
+(\emph{measured} / \emph{computed} / \emph{model}) --- and \textbf{no record is ever
+\emph{generated}}, asserted by test.
+\end{block}
+\end{columns}
+\vfill
+{\footnotesize\textbf{The claim, made checkable rather than promised:} each cited identifier in
+the prose is a control that opens the record behind it. Sentence $\to$ fact $\to$ engine $\to$
+file. \emph{``The model does not know what happened. It is told --- and every number it writes is
+checked against the evidence that produced it.''}}
+\end{frame}
+
+\begin{frame}{The guard: what it blocks, what it admits, and what it does not cover}
+\begin{columns}[T]
+\column{0.46\textwidth}
+\small
+\begin{tabular}{lr}
+\toprule
+Adversarial attacks blocked & $23/23$ \\
+\textbf{Faithful controls passed} & $\mathbf{8/8}$ \\
+Generated sections conforming & $22/22$ \\
+Delivered with a violation & $\mathbf{0}$ \\
+\bottomrule
+\end{tabular}
+\medskip
+
+{\footnotesize The \textbf{second} row is the one that matters: without it, a guard that rejected
+\emph{everything} would score $23/23$ and look flawless.}
+
+\column{0.54\textwidth}
+\begin{block}{\small Two guarantees, not one --- and the weaker one is declared}
+\small The \textbf{pushed} alert uses a closed-vocabulary \emph{allowlist}. The \textbf{pulled}
+report uses a blocklist plus per-sentence numeric binding. Different delivery risk, different
+guarantee. Numbers are closed-set in \emph{both}.
+\end{block}
+{\footnotesize\textbf{Stated as a limitation, not discovered by an examiner:} the linguistic
+defence is a blocklist and blocklists lose in the limit; citation \emph{relevance} is unchecked;
+and the adversarial exercise was \textbf{interrupted} --- two of six perspectives ran and no
+verification stage completed, so the measured strength is a \textbf{lower bound}.}
+\end{columns}
+\end{frame}
+
 \begin{frame}{Limitations (stated plainly)}
 \begin{itemize}
   \item Relevance is a \textbf{same-sector proxy}, not a human judgement.
+  \item The generated layer's \textbf{language} guarantee is weaker than the alert path's, by design and by declaration; its adversarial review was interrupted, so its measured strength is a lower bound.
   \item Retrieval corpus is a \textbf{recent} free-tier window (since validated at scale on FNSPID, P@5 $0.595$); the \emph{triage} study did use multi-year FNSPID (14/15 tickers --- Meta is ``FB'' in the corpus).
   \item Displayed precedent impact is a \textbf{raw} post-event return (triage labels \emph{are} market-adjusted).
   \item Similarity is \textbf{thematic, not directional}: a cluster can mix up/down moves, so the mean is theme-level \emph{evidence}, not a forecast. We \emph{tested} the obvious fix (filter by event type) and it does not hold up --- see Result 5.

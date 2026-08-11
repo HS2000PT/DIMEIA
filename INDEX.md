@@ -13,7 +13,8 @@ written overview of the whole project, read **[`RELATORIO_FINAL.md`](RELATORIO_F
 | **A dissertação (Português)** | [`thesis-pt/main.pdf`](thesis-pt/main.pdf) |
 | **Project overview + how to run** | [`README.md`](README.md) |
 | **10-minute written summary** | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) |
-| **The live product (dashboard)** | [`app/dashboard_v4.py`](app/dashboard_v4.py) — v4, served by the `Procfile`. v3 (`dashboard.py`) and v1 (`streamlit_app.py`) are kept as a record and are no longer reachable |
+| **The live product** | [`api/main.py`](api/main.py) + [`web/`](web/) — the v5 service and client, served by the `Procfile`. The Streamlit generations in `app/` are kept as a record and are no longer served |
+| **The intelligence layer** | [`investigator/intelligence/`](investigator/intelligence/) — evidence bundles, grounded report, analyst, and the fidelity guard |
 
 ---
 
@@ -39,7 +40,10 @@ written overview of the whole project, read **[`RELATORIO_FINAL.md`](RELATORIO_F
 
 | Item | Where |
 |------|-------|
-| Dashboard (Streamlit) | [`app/dashboard_v4.py`](app/dashboard_v4.py) · [`v4_views.py`](app/v4_views.py) · [`snapshot_io.py`](app/snapshot_io.py) · [`method.py`](app/method.py) · [`ui_tokens.py`](app/ui_tokens.py) |
+| Web service (v5) | [`api/main.py`](api/main.py) · [`api/services.py`](api/services.py) |
+| Web client (v5) | [`web/index.html`](web/index.html) · [`web/assets/app.js`](web/assets/app.js) · [`web/assets/app.css`](web/assets/app.css) |
+| Grounded generation | [`context.py`](investigator/intelligence/context.py) · [`guard.py`](investigator/intelligence/guard.py) · [`report.py`](investigator/intelligence/report.py) · [`analyst.py`](investigator/intelligence/analyst.py) |
+| Dashboard (Streamlit, superseded) | [`app/dashboard_v4.py`](app/dashboard_v4.py) · [`snapshot_io.py`](app/snapshot_io.py) · [`method.py`](app/method.py) · [`verdict.py`](app/verdict.py) |
 | Alert runner (scan → detect → explain → Telegram) | [`scripts/run_alerts.py`](scripts/run_alerts.py) |
 | Configuration (watchlist, thresholds) | [`config/alerts.yaml`](config/alerts.yaml) |
 | Scheduled scan (GitHub Actions, after US close) | [`.github/workflows/`](.github/workflows/) |

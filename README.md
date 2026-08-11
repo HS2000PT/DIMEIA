@@ -66,11 +66,13 @@ result. Read-only by design, and built against acceptance criteria written befor
 (`docs/design/app_acceptance.md`). To run it locally (no keys, nothing sent):
 
 ```bash
-pip install -r requirements.txt -r requirements-app.txt
-streamlit run app/dashboard_v4.py
+pip install -r requirements.txt
+uvicorn api.main:app --port 8099
 ```
 
-Hosting details (Streamlit Community Cloud, free): **`docs/design/deployment.md`**. The app retrieves
+The web process serves **JSON and static files**; the browser holds the state, so interacting with
+the chart touches no network at all (measured: range changes cost 2.5–7.3 ms with zero requests,
+against ~750 ms for the server-rendered design it replaced). The app retrieves
 precedents **semantically** — the thesis's MiniLM model exported to ONNX (~23 MB, CPU, no torch;
 numerical parity vs SBERT verified in `docs/evaluation/onnx_minilm_validation.md`) — falling back to
 the word-overlap baseline only if the model is unavailable.
@@ -124,7 +126,7 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 **626 automated tests** + lint green. The core components — including a **materiality-triage model trained
 by the author** on 79,753 multi-year FNSPID examples (RQ4; triage evidence, never a forecast) — are
 evaluated on **real data**, and the statistics reproduce exactly from versioned scripts. The **six-chapter
-dissertation** compiles cleanly (`thesis/main.pdf`, 124 pp, 0 errors), with **63 references each verified by
+dissertation** compiles cleanly (`thesis/main.pdf`, 128 pp, 0 errors), with **63 references each verified by
 DOI/arXiv/ISBN or primary source** (audit in `docs/decisions/page_audit.md`). An **IEEE paper** (`paper/`)
 and **defence slides** (`slides/`) compile. Remaining items are human-only: confirm the exact ISEP AI-use
 declaration wording + submission date, and the author's final read. The multi-year *retrieval* knowledge
@@ -134,15 +136,18 @@ powers the public app) — retrieval on it has now been evaluated at scale (prec
 
 ## Repository layout
 ```
-thesis/        LaTeX dissertation (6 chapters + front matter + appendix; 124 pp)
+thesis/        LaTeX dissertation (6 chapters + front matter + appendix; 128 pp)
 paper/         IEEE paper (IEEEtran) distilled from the thesis
 slides/        defence slides (Beamer, 17 frames)
   guia_estudo/   THE study guide (PT-PT, Beamer, 83 slides — single study source)
 investigator/  system code, one package per component (investigator/triage/ = the trained ML component, RQ4)
 models/        trained triage models (joblib, versioned; context-only variant runs in production)
 notebooks/     investigator_walkthrough.ipynb — hands-on tour of the 3 components, executed & committed
-app/           dashboard.py — the deployed v3 dashboard (card grid, one per company);
-               streamlit_app.py is the v1, kept as a record and no longer served
+api/           FastAPI service: data routes over investigator/, plus the AI report and analyst
+web/           the served single-page client (Lightweight Charts v5, vendored, Apache 2.0)
+app/           earlier Streamlit generations (v1/v3/v4), kept because thesis figures cite them;
+               verdict.py and method.py are still used — the API calls them, so the sentences
+               the reader sees cannot drift from the tested Python that produces them
 deploy/        VM watch mode: systemd unit + setup script (docs/design/vm_watch.md)
 run/           double-click launchers (dashboard/demo/tests/thesis)
 .vscode/       click-to-run: Run & Debug configs + tasks + recommended extensions

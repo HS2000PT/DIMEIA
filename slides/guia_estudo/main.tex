@@ -1600,6 +1600,117 @@ regra de \key{derivar} os pesos.
 \end{frame}
 
 % ====================================================================
+\section{A camada generativa}
+
+\begin{frame}{«Onde está a IA?» --- a resposta tem QUATRO andares}
+\footnotesize
+Esta é a pergunta mais provável de toda a defesa. Decora a ordem, não o texto.
+\vspace{2mm}
+
+\centering
+\begin{tabular}{@{}c p{4.4cm} p{4.0cm}@{}}
+\toprule
+& \textbf{O quê} & \textbf{Natureza} \\
+\midrule
+1 & preços, manchetes, carimbos & \key{medido} \\
+2 & z-score, excedência, decomposição & \key{determinístico} \\
+3 & SBERT $+$ recuperação $+$ triagem & \key{modelos treinados} \\
+4 & relatório e analista em linguagem & \key{geração ancorada} \\
+\bottomrule
+\end{tabular}
+\vspace{3mm}
+
+\raggedright
+\begin{block}{A frase que fecha a pergunta}
+\scriptsize ``O modelo \key{não sabe} o que aconteceu. É-lhe \key{dito} --- por um motor de
+recuperação sobre 80 mil manchetes com desfecho \key{medido} a cinco dias, por um classificador
+calibrado e por uma decomposição com betas encolhidos. E cada número que ele escreve é
+\key{verificado} contra essa evidência antes de chegar ao ecrã.''
+\end{block}
+\end{frame}
+
+\begin{frame}{O truque todo: o gerador escreve a LÍNGUA, os motores escrevem os FACTOS}
+\footnotesize
+O modelo recebe um \key{pacote de evidência}. Cada facto tem três coisas:
+\vspace{2mm}
+
+\centering
+\begin{tabular}{@{}l p{7.4cm}@{}}
+\toprule
+\texttt{id} & \texttt{f3} --- é isto que aparece no texto, e que se pode clicar \\
+valor & o que o motor calculou \\
+\key{origem} & \key{medido} · \key{calculado} · \key{modelo} \\
+\bottomrule
+\end{tabular}
+\vspace{3mm}
+
+\raggedright
+\begin{alertblock}{O invariante que torna isto defensável}
+\scriptsize \key{Nenhum facto tem origem ``gerado''.} O gerador contribui prosa e nunca um facto
+--- e há um \key{teste} que o exige, para que uma alteração futura que o violasse falhe em vez de
+ir para produção.
+\end{alertblock}
+\vspace{1mm}
+\scriptsize Na defesa: abre o relatório, clica num \texttt{[f1]}, e aparece o facto com a origem.
+\key{Três segundos.} Vale mais do que qualquer explicação.
+\end{frame}
+
+\begin{frame}{A guarda: porque é que 8/8 vale mais do que 23/23}
+\footnotesize
+\centering
+\begin{tabular}{@{}l r p{4.6cm}@{}}
+\toprule
+\textbf{Medida} & \textbf{Valor} & \textbf{O que mede} \\
+\midrule
+Ataques bloqueados & $23/23$ & a \key{guarda} \\
+\key{Controlos fiéis aceites} & $\mathbf{8/8}$ & \key{se não rejeita tudo} \\
+Secções geradas conformes & $22/22$ & o \key{modelo} \\
+Entregues com violação & $\mathbf{0}$ & o \key{caminho de entrega} \\
+\bottomrule
+\end{tabular}
+\vspace{3mm}
+
+\raggedright
+\begin{block}{Porque é que a segunda linha é a importante}
+\scriptsize Uma guarda que rejeitasse \key{tudo} bloqueava 23 de 23 ataques e parecia perfeita.
+Sem os controlos, \key{um detector avariado e um corpus limpo são indistinguíveis}. É a mesma
+regra dos dois sentidos que se aplica aos detectores.
+\end{block}
+\vspace{1mm}
+\scriptsize \key{E o que a guarda rejeita é informativo:} nos relatórios reais rejeitou causa
+afirmada, conselho e previsão --- os três registos que o sistema recusa. Está a trabalhar, não a
+decorar.
+\end{frame}
+
+\begin{frame}{Duas garantias, e a mais fraca está declarada}
+\footnotesize
+\centering
+\begin{tabular}{@{}p{2.5cm} p{3.4cm} p{3.4cm}@{}}
+\toprule
+& \textbf{Alerta (empurrado)} & \textbf{Relatório (puxado)} \\
+\midrule
+Como chega & telemóvel, sem pedir & página, a pedido \\
+Evidência ao lado & \key{não} & \key{sim, a um clique} \\
+Números & conjunto fechado & conjunto fechado \key{por frase} \\
+Vocabulário & \key{allowlist} fechada & blocklist \\
+Garantia & \key{absoluta} & \key{mais fraca, e medida} \\
+\bottomrule
+\end{tabular}
+\vspace{3mm}
+
+\raggedright
+\begin{alertblock}{Se te apanharem com a tua própria tese}
+\scriptsize \emph{«Não escreveu que blocklists perdem sempre?»} --- \key{Concorda primeiro.}
+``Escrevi, e mantenho. Por isso o alerta usa allowlist. A diferença é de \key{risco de entrega},
+não de conveniência, e está numa tabela da tese.''
+\end{alertblock}
+\vspace{1mm}
+\scriptsize \key{E digo antes que perguntem:} o red team tinha 6 lentes, \key{2 completaram} e
+\key{nenhum verificador correu} (limite de gasto). O relatório dizia ``nenhum exploit
+sobreviveu'' --- isso é a \key{ausência} de verificação. A força medida é um \key{limite inferior}.
+\end{frame}
+
+% ====================================================================
 \section{Decisões}
 
 \begin{frame}{Decisões de desenho: porquê isto e não outra coisa}

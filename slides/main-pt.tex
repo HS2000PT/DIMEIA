@@ -546,9 +546,76 @@ distribuição que ia ver.} O gate fica ligado como controlo de \emph{volume} (s
 por ser a parte instrumentada --- desligá-lo acabava com a medição que encontrou isto.}
 \end{frame}
 
+\begin{frame}{Onde está a IA: quatro camadas, e a quarta vê-se}
+\begin{columns}[T]
+\column{0.50\textwidth}
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Camada} & \textbf{Natureza} \\
+\midrule
+1 Dados & medido \\
+2 Estatística & determinístico \\
+3 \textbf{Aprendizagem} & \textbf{modelos treinados} \\
+4 \textbf{Geração} & \textbf{LLM ancorado} \\
+\bottomrule
+\end{tabular}
+\medskip
+
+{\footnotesize A camada 3 é um transformer de frases mais um classificador calibrado, treinado
+aqui em $79{,}753$ exemplos. A camada 4 \emph{combina} as saídas das outras --- a única tarefa em
+que o espaço de estados ultrapassa qualquer biblioteca de modelos de frase.}
+
+\column{0.50\textwidth}
+\begin{block}{\small A divisão que a torna defensável}
+\small Os motores escrevem os \textbf{factos}; o modelo escreve a \textbf{língua}. Nunca observa o
+mercado. Recebe um pacote de evidência em que cada registo declara a sua proveniência
+(\emph{medido} / \emph{calculado} / \emph{modelo}) --- e \textbf{nenhum registo é
+\emph{gerado}}, o que é verificado por teste.
+\end{block}
+\end{columns}
+\vfill
+{\footnotesize\textbf{A afirmação, tornada verificável em vez de prometida:} cada identificador
+citado no texto é um controlo que abre o registo por trás dele. Frase $\to$ facto $\to$ motor
+$\to$ ficheiro. \emph{``O modelo não sabe o que aconteceu. É-lhe dito --- e cada número que
+escreve é verificado contra a evidência que o produziu.''}}
+\end{frame}
+
+\begin{frame}{A guarda: o que bloqueia, o que aceita, e o que não cobre}
+\begin{columns}[T]
+\column{0.46\textwidth}
+\small
+\begin{tabular}{lr}
+\toprule
+Ataques adversários bloqueados & $23/23$ \\
+\textbf{Controlos fiéis aceites} & $\mathbf{8/8}$ \\
+Secções geradas conformes & $22/22$ \\
+Entregues com violação & $\mathbf{0}$ \\
+\bottomrule
+\end{tabular}
+\medskip
+
+{\footnotesize A \textbf{segunda} linha é a que interessa: sem ela, uma guarda que rejeitasse
+\emph{tudo} pontuava $23/23$ e parecia impecável.}
+
+\column{0.54\textwidth}
+\begin{block}{\small Duas garantias, não uma --- e a mais fraca está declarada}
+\small O alerta \textbf{empurrado} usa uma \emph{allowlist} de vocabulário fechado. O relatório
+\textbf{puxado} usa blocklist mais ligação numérica por frase. Risco de entrega diferente,
+garantia diferente. Os números são de conjunto fechado nos \emph{dois}.
+\end{block}
+{\footnotesize\textbf{Enunciado como limitação, não descoberto por um arguente:} a defesa
+linguística é uma blocklist e blocklists perdem no limite; a \emph{relevância} da citação não é
+verificada; e o exercício adversário foi \textbf{interrompido} --- duas de seis perspetivas
+correram e nenhuma etapa de verificação completou, portanto a força medida é um \textbf{limite
+inferior}.}
+\end{columns}
+\end{frame}
+
 \begin{frame}{Limitações (enunciadas com clareza)}
 \begin{itemize}
   \item A relevância é um \textbf{indicador aproximado por mesmo setor}, não um juízo humano.
+  \item A garantia \textbf{linguística} da camada gerada é mais fraca do que a do caminho de alerta, por desenho e por declaração; a sua revisão adversária foi interrompida, logo a força medida é um limite inferior.
   \item O corpus de recuperação é uma janela \textbf{recente} da camada gratuita (entretanto validada à escala no FNSPID, P@5 $0.595$); o estudo de \emph{triagem} usou de facto o FNSPID multi-ano (14/15 tickers --- a Meta é ``FB'' no corpus).
   \item O impacto de precedente mostrado é um retorno pós-evento \textbf{bruto} (os rótulos de triagem \emph{são} ajustados ao mercado).
   \item A similaridade é \textbf{temática, não direcional}: um agrupamento pode misturar movimentos de subida/descida, pelo que a média é \emph{evidência} ao nível do tema, não uma previsão. \emph{Testámos} a correção óbvia (filtrar por tipo de evento) e ela não se sustenta --- ver Resultado 5.

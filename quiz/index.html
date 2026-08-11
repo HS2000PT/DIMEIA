@@ -693,6 +693,89 @@ const BANCO = [
  código, os resultados — que são medidos e regeneráveis — e a responsabilidade pelo que está
  escrito. Cada número da tese tem um comando que o reproduz, no Apêndice A.</p>
  <p>Responde com calma. A declaração honesta é mais forte do que qualquer negação.</p>`},
+/* --------------------------------------------------- 9. a camada generativa */
+{b:"IA generativa", n:1, t:"aberta", q:"«Onde está a inteligência artificial no seu trabalho?»",
+ a:`Quatro andares, e digo-os por esta ordem:
+ <p><b>1 dados</b> (medido) &rarr; <b>2 estatística</b> (determinística: z-score, excedência,
+ decomposição) &rarr; <b>3 aprendizagem</b> (SBERT, recuperação semântica, triagem calibrada
+ treinada por mim em 79.753 exemplos) &rarr; <b>4 geração</b> (relatório e analista).</p>
+ <p>A frase que fecha: <b>"O modelo não sabe o que aconteceu. É-lhe dito — e cada número que
+ escreve é verificado contra a evidência que o produziu."</b></p>
+ <p>E depois <b>mostra</b>: clica num [f1] e abre o facto. Três segundos.</p>`},
+
+{b:"IA generativa", n:1, t:"aberta", q:"O que é um «pacote de evidência», e que campos tem cada facto?",
+ a:`É tudo o que o gerador vê — e a única coisa que pode afirmar. Cada facto tem
+ <b>id</b> (ex.: f3, que aparece no texto e se pode clicar), <b>valor</b>, e <b>origem</b>.
+ <p>A origem é uma de três: <b>medido</b> (dados de mercado ou carimbo da fonte),
+ <b>calculado</b> (fórmula determinística) ou <b>modelo</b> (saída de modelo treinado).</p>
+ <p><b>Nenhum facto tem origem "gerado"</b> — o gerador contribui prosa e nunca um facto, e há
+ um teste que o exige.</p>`},
+
+{b:"IA generativa", n:2, t:"escolha",
+ q:"Quantos ataques adversários a guarda bloqueia, e quantos controlos de texto fiel aceita?",
+ opts:["23/23 ataques e 8/8 controlos","23/23 ataques apenas","18/23 e 8/8","100% de tudo"],
+ ok:0,
+ a:`<b>23/23 e 8/8.</b> E a segunda metade é a que interessa mais: sem os controlos, uma guarda
+ que rejeitasse <b>tudo</b> bloqueava 23 de 23 e parecia impecável.
+ <p>Um detector avariado e um corpus limpo são indistinguíveis no ecrã.</p>`},
+
+{b:"IA generativa", n:2, t:"aberta",
+ q:"Porque é que a guarda do relatório é mais fraca do que a do alerta — e como respondo a isso?",
+ a:`<b>Concordo primeiro.</b> "Escrevi que blocklists perdem sempre, e mantenho. Por isso o
+ <b>alerta</b> — que é empurrado para o telemóvel sem evidência ao lado — usa a allowlist de
+ vocabulário fechado."
+ <p>"O <b>relatório</b> é pedido pelo utilizador, na página, com a evidência a um clique. Perfis
+ de <b>risco de entrega</b> diferentes, garantias diferentes, e está numa tabela da tese."</p>
+ <p>O que se mantém idêntico: números de conjunto fechado, sinal obrigatório — e aqui ainda mais
+ estrito, <b>ligados à frase que os cita</b>.</p>`},
+
+{b:"IA generativa", n:3, t:"aberta",
+ q:"O red team confirmou que a guarda é segura?",
+ a:`<b>Não, e é importante não deixar passar.</b> Encomendei seis lentes de ataque: duas
+ completaram e <b>nenhuma etapa de verificação independente correu</b> — bateram no limite de
+ gasto da conta.
+ <p>O relatório final dizia "nenhum exploit sobreviveu à verificação". Isso é a <b>ausência</b>
+ de verificação, não um resultado limpo.</p>
+ <p>Verifiquei os achados eu próprio contra o código, fechei-os, e guardei-os como regressões.
+ A força medida é um <b>limite inferior</b>.</p>`},
+
+{b:"IA generativa", n:3, t:"aberta",
+ q:"Qual era o defeito CRÍTICO da primeira versão da guarda, e como se corrigiu?",
+ a:`O conjunto numérico era <b>global</b>: qualquer número do pacote podia aparecer em qualquer
+ sítio do texto. Isso permitia citar um facto e usar o número de <b>outro</b> — a citação
+ emprestava autoridade a uma afirmação que não sustentava.
+ <p>Permitia também apresentar um retorno como se fosse um z-score, e <b>inverter uma direcção</b>
+ usando o valor de sinal oposto de um facto diferente.</p>
+ <p><b>A correcção não é mais uma regra: é uma mudança de âmbito.</b> O texto é dividido em
+ frases, e os identificadores citados <i>nessa frase</i> determinam os números que ela pode usar.
+ A diferença é entre "este número existe algures" e "este número é deste facto".</p>`},
+
+{b:"IA generativa", n:3, t:"aberta",
+ q:"Como é que um arredondamento pode CUNHAR um número? (defeito meu, apanhado pelo red team)",
+ a:`Para tolerar formatações diferentes, a primeira versão admitia cada valor com várias
+ precisões decimais. Um z-score de <b>2,65</b> escrito sem casas decimais introduz o <b>3</b> no
+ conjunto permitido — como se um motor o tivesse calculado.
+ <p>A lição: <b>tolerar formatação não pode custar inventar quantidades.</b></p>`},
+
+{b:"Produto", n:2, t:"escolha",
+ q:"Quanto custa mudar o intervalo do gráfico na v5, e quantas chamadas de rede faz?",
+ opts:["2,5–7,3 ms e ZERO chamadas","~750 ms e 1 chamada","1 s e 1 chamada","Depende da rede"],
+ ok:0,
+ a:`<b>2,5–7,3 ms e zero chamadas.</b> É a afirmação estrutural: mudar de intervalo é uma
+ <b>fatia de um vector que o browser já tem</b>, logo não pode falhar, não fica em fila atrás de
+ um pedido lento, e não custa nada repetir.
+ <p>Na versão anterior custava ~750 ms porque o Streamlit re-executa o script <b>do lado do
+ servidor</b> a cada interacção.</p>`},
+
+{b:"Produto", n:2, t:"aberta",
+ q:"Porque é que reescrever a interface não é «só engenharia de software»?",
+ a:`Porque a arquitectura antiga obrigou a <b>retirar uma capacidade da tese</b>: a recuperação
+ de precedentes — a <b>terceira das três perguntas</b> do trabalho — custava ~7 s a carregar e foi
+ removida da página.
+ <p>Numa página renderizada no servidor isso é uma escolha genuína entre a capacidade e a
+ velocidade. <b>Separar o cliente do servidor elimina a escolha</b> em vez de a resolver: o que é
+ caro pede-se depois da primeira pintura.</p>`},
+
 ];
 
 /* ===================================================================== */
