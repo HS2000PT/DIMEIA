@@ -732,6 +732,7 @@ O gerador é instruído a citar os identificadores no meio do texto, e a interfa
 como um controlo que abre o facto correspondente. A afirmação de que o texto gerado se mantém ligado
 à sua evidência não é, portanto, uma promessa sobre o prompt; é uma travessia que o leitor pode
 fazer: da frase para o facto, do facto para o motor, do motor para o ficheiro que o produziu.
+A Figura~\ref{fig:app_intelligence} mostra essa travessia aberta no sistema implantado.
 
 \subsection{Dois níveis de garantia, e porque diferem}
 
@@ -746,6 +747,7 @@ palavras. Havia duas opções honestas: aplicar a mesma allowlist e aceitar que 
 poderia dizer nada, ou alargá-la até deixar de ser uma allowlist e passar a ser uma blocklist com
 outro nome. Não se tomou nenhuma. O sistema passa a ter \emph{dois} níveis de garantia e a declarar a
 diferença em vez de a esbater, e a razão pela qual diferem é o \textbf{risco}, não a conveniência.
+A Tabela~\ref{tab:two_guards} põe-nos lado a lado.
 
 \begin{table}[ht]
 \centering
@@ -802,7 +804,8 @@ nomes subiram e três desceram pode ser invertida usando dois números ambos leg
 
 \subsection{Comportamento medido}
 
-Reportam-se duas quantidades, e medem coisas diferentes. A primeira mede a \emph{guarda}: um corpus
+Reportam-se duas quantidades na Tabela~\ref{tab:guard_measured}, e medem coisas diferentes. A
+primeira mede a \emph{guarda}: um corpus
 adversário de vinte e três ataques, cada um dos quais tem de ser rejeitado. A segunda mede se a
 guarda está apenas a recusar tudo: um conjunto de oito frases fiéis, cada uma das quais tem de
 passar. Sem a segunda, uma guarda que rejeitasse todo o texto pontuaria perfeitamente na primeira e

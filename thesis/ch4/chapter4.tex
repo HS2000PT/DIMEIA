@@ -722,6 +722,7 @@ The generator is instructed to cite the identifiers inline, and the interface re
 as a control that opens the underlying fact. The claim that generated text remains attached to its
 evidence is therefore not a promise about the prompt; it is a traversal the reader can perform:
 sentence to fact, fact to engine, engine to the file that produced it.
+Figure~\ref{fig:app_intelligence} shows that traversal open on the deployed system.
 
 \subsection{Two levels of guarantee, and why they differ}
 
@@ -736,6 +737,7 @@ honest options existed: apply the same allowlist and accept that the product cou
 nothing, or widen it until it stopped being an allowlist and became a blocklist under another name.
 Neither was taken. Instead the system carries \emph{two} guarantee levels and states the difference
 rather than blurring it, and the reason they differ is \textbf{risk}, not convenience.
+Table~\ref{tab:two_guards} sets them side by side.
 
 \begin{table}[ht]
 \centering
@@ -793,7 +795,8 @@ legitimately present.
 
 \subsection{Measured behaviour}
 
-Two quantities are reported, and they measure different things. The first measures the
+Two quantities are reported in Table~\ref{tab:guard_measured}, and they measure different
+things. The first measures the
 \emph{guard}: an adversarial corpus of twenty-three attacks, each of which must be rejected. The
 second measures whether the guard is merely refusing everything: a set of eight faithful sentences,
 each of which must pass. Without the second, a guard that rejected all text would score perfectly on
