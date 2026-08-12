@@ -154,7 +154,7 @@ metodológica explicada no Capítulo~\ref{chap:methods}.
 
 Esta é uma dissertação em \emph{Engenharia} de Inteligência Artificial: a contribuição não é um algoritmo
 novo, mas a montagem disciplinada de algoritmos existentes num sistema que funciona, se explica a si próprio
-e pode ser reproduzido. Quatro contribuições destacam-se:
+e pode ser reproduzido. Cinco contribuições destacam-se:
 
 \begin{itemize}
   \item Um método reprodutível para relacionar notícias com o impacto no mercado, que junta recuperação por
@@ -169,6 +169,11 @@ e pode ser reproduzido. Quatro contribuições destacam-se:
         foram seguidas de um movimento anormal, rotuladas pelo próprio código de estudo de evento do sistema,
         avaliadas face a uma baseline de volatilidade, e integradas nos alertas como evidência ordenada e
         explicada, e não como uma previsão.
+  \item Uma camada de \emph{geração ancorada} que transforma esses resultados separados em prosa sem
+        deixar que o passo de linguagem se torne um passo factual: o gerador vê apenas um pacote de
+        evidência cujos registos declaram a sua proveniência, cada número que escreve está ligado ao
+        registo que a própria frase cita, e a interface resolve cada citação de volta a esse registo,
+        para que um leitor possa seguir uma frase até ao motor que a produziu.
   \item Uma avaliação crítica e honesta de cada componente central em dados reais, face a baselines simples e
         lexicais, com os resultados, as ablações e as limitações todos reportados com clareza.
 \end{itemize}

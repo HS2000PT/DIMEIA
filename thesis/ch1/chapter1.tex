@@ -149,7 +149,7 @@ explained in Chapter~\ref{chap:methods}.
 
 This is a dissertation in Artificial Intelligence \emph{Engineering}: the contribution is not a new
 algorithm but the disciplined assembly of existing ones into a system that works, explains itself, and can
-be reproduced. Four contributions stand out:
+be reproduced. Five contributions stand out:
 
 \begin{itemize}
   \item A reproducible method for relating news to market impact, pairing sentence-embedding retrieval
@@ -163,6 +163,11 @@ be reproduced. Four contributions stand out:
         news and market context that estimates how often news with a given profile was followed by an
         abnormal move, labelled by the system's own event-study code, evaluated against a volatility
         baseline, and integrated into the alerts as ranked, explained evidence rather than a forecast.
+  \item A \emph{grounded-generation} layer that turns those separate results into prose without letting
+        the language step become a factual one: the generator sees only an evidence bundle whose records
+        declare their provenance, each number it writes is bound to the record its own sentence cites,
+        and the interface resolves every citation back to that record, so a reader can follow a sentence
+        to the engine that produced it.
   \item A critical, honest evaluation of each core component on real data, against simple and lexical
         baselines, with the results, the ablations and the limitations all reported plainly.
 \end{itemize}
