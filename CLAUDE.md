@@ -8,7 +8,7 @@
 
 ## Estado Atual
 - **Sessão nº:** 56 (**v5: reconstrução total do produto + camada generativa ancorada**)
-- **Última atualização:** 2026-08-11
+- **Última atualização:** 2026-08-12
 - **🆕 SESSÃO 56 (2026-08-10/11 — o aluno mandou reconstruir o produto DE RAIZ: "forget the
   current website as a product concept… the AI component must be genuinely meaningful"):**
   **(A) O DIAGNÓSTICO QUE JUSTIFICA A RECONSTRUÇÃO, e não é estético.** O estudo de mercado
@@ -66,7 +66,7 @@
   **(2)** **A TIRA DE RARIDADE ESTAVA INVERTIDA**: a XOM (2 de 249 dias) aparecia quase toda
   acesa e um dia banal aparecia com menos — **o mais raro parecia o mais comum**. Só se vê a
   renderizar.
-  **(G) IMPLANTADO: v25 → v27.** `git push heroku` continua bloqueado ⇒
+  **(G) IMPLANTADO: v25 → v30** (a última é `9ea5fed`). `git push heroku` continua bloqueado ⇒
   `scripts/deploy_heroku.py` (novo) pela API de Sources/Builds; o tarball sai de
   `git archive HEAD`, portanto o `.env` fica de fora **por construção**. Verificado ao vivo:
   4 rotas a 200, relatório generativo **1,5 s**, analista **1,26 s**, worker a escrever o
@@ -96,13 +96,70 @@
   com §6b/§6c, `DEFENSE_QA` com **D5–D9** (a D5 é *"onde está a IA?"*, a mais provável de todas),
   guia pessoal com **P9–P10** (a P9 é a armadilha de citarem a minha própria tese contra mim).
   **Artigo IEEE actualizado por último**, como pedido, e **mantém-se em 4 páginas**.
-  **Gates finais: 707 testes, ruff limpo, EN 128 pp / PT 134 pp a 0 erros, 0 citações e
-  referências indefinidas, 0 overfull >15pt, paridade 0 assimetrias em 89 chaves, secções e
-  figuras/tabelas 1:1 (ch3 23=23/11=11, ch4 17=17/16=16, ch6 6=6/2=2), congelados intactos
-  (`models/`, `docs/evaluation/`, `data/` sem alterações), artigo 4 pp, slides 28+28, guia 93.**
+  **(I) DEPOIS DA PROPAGAÇÃO, o aluno mandou implantar e depois "review the whole thesis again
+  end to end". Implantado v28 → v29 → v30 (`9ea5fed`).**
+  **⚠️ (I1) A VERIFICAÇÃO PÓS-IMPLANTAÇÃO ENCONTROU O PRODUTO A CAIR PARA O CHÃO METADE DAS
+  VEZES.** Medido em produção: **3 de 6** respostas do analista eram geradas; as outras caíam na
+  composição determinística. A tentação é afrouxar a guarda. Fui ver **o que** ela rejeitava: o
+  modelo escrevia contagens (`9 up, 3 down`) citando factos que não as contêm — que é
+  **exactamente** o furo que a ligação por frase existe para fechar. **A guarda estava certa; o
+  prompt é que era vago.** Corrigido no PROMPT (`cita cada facto NA MESMA frase do número que ele
+  autoriza`), regra intocada: **8/8 local, 5/6 em produção**. A que ainda cai é *"porque é que o
+  sistema ficou calado sobre a Apple?"*, onde o modelo procura linguagem causal — e deve mesmo
+  cair.
+  **⚠️ (I2) NÚMEROS AMOSTRADOS APRESENTADOS COMO CONSTANTES.** Regenerar a avaliação mudou
+  22/22 → 27/27 e eu ia só actualizar o número. O defeito era outro: **os quatro números da
+  tabela não se lêem da mesma maneira.** 23/23 e 8/8 são **determinísticos** (guarda pura,
+  corpus fixo, reproduzem exactamente); as contagens de secções são uma **amostra** de uma
+  corrida; e o zero das entregues com violação é um **invariante** que tem de valer em todas.
+  Apresentá-los como iguais reivindicava uma estabilidade que só um deles tem — e a regeneração
+  seguinte mudaria um número da tese sem nada o explicar. **A correcção de raiz está no gerador:**
+  o `.md` passa a declarar a classe de cada número e o tamanho da corrida, portanto carrega o
+  próprio N em vez de depender de quem o cita.
+  **⚠️ (I3) REVISÃO PONTA A PONTA: 6 ACHADOS, 3 MEUS.** O workflow de 6 lentes **morreu inteiro**
+  (6 de 6 agentes no limite de gasto, **zero** completaram) e devolveu *"nenhum achado
+  sobreviveu"* — **5.ª vez** que este padrão finge um resultado limpo. Feito à mão.
+  **Meus:** (1) o Cap. 1 dizia *"Four contributions"* e o Cap. 6 passou a listar cinco — a mesma
+  classe do "quatro estudos de caso quando há oito", reintroduzida (e o próprio Cap. 6 abria com
+  "Four concrete"); (2) o veredicto da **RQ3** descrevia **só o narrador de alertas**, portanto um
+  arguente lia "garantia absoluta" e depois encontrava a §4.8 com uma mais fraca; (3) o apêndice
+  intitula-se *"Every Number Traced to Its Source"* e a tabela diz *"every headline result"* — os
+  números da guarda **não estavam lá**, o que tornava falso o título da própria secção.
+  **Pré-existentes, achados a comparar as QUATRO cópias do resumo** (cada tese traz o resumo e a
+  tradução): (4) **o resumo PT DIVERGIA entre as duas teses** — a cópia dentro da tese EN
+  **omitia o resultado negativo do gate em produção** que a da tese PT tinha, logo um leitor
+  português lia um resumo diferente consoante o ficheiro, e nenhum falhava a compilar; (5) o
+  abstract EN estava em **218 palavras contra o limite de 200 que o próprio ficheiro declara**
+  (reescrito para 200 exactas, já com a camada generativa, que faltava apesar de ser a 5.ª
+  contribuição); (6) a tese PT **não dizia sobre quantas consultas** correu a verificação do ONNX
+  — o EN diz **503**, e é o número que existe precisamente porque o "20 de 23" foi retirado por
+  *n* pequeno demais.
+  **⚠️ (I4) REFERÊNCIAS: `scripts/check_references.py` (novo, versionado).** Faz o que o
+  compilador **não** faz: emparelha cada `\ref` com o que o `\label` REALMENTE rotula e compara o
+  tipo com a palavra que o introduz (`Figure~\ref{tab:x}` compila limpo e está errado).
+  **270 referências, 168 labels, 0 incompatibilidades de tipo nas duas línguas.**
+  **Dois achados:** (a) **quatro flutuantes que ninguém invocava** — a figura do painel de
+  inteligência, as duas tabelas novas, e a **Matriz de Evidência** (pré-existente); um flutuante
+  sem `\ref` compila **sem um único aviso** e o leitor nunca é mandado lá; (b) **a corrupção do
+  `\r` OUTRA VEZ**, em dois sítios novos: um heredoc escreveu `\ref` como **CARRIAGE RETURN +
+  "ef"**, e numa delas uma edição posterior converteu o CR num `\n` e partiu a referência em duas
+  linhas — o mesmo round-trip que a escondeu da primeira vez. Varrido o repositório: **0 CR
+  soltos em todos os `.tex`**.
+  **E DOIS FALSOS POSITIVOS DO MEU PRÓPRIO VERIFICADOR**, fechados antes de mandarem procurar
+  defeitos inexistentes: não reconhecia ambientes `algorithm` nem `\eqref`. **E o comparador
+  numérico EN↔PT normalizava `{,}` da mesma maneira nas duas línguas** — em EN é separador de
+  MILHARES, em PT é a vírgula DECIMAL — e transformava o `88,5` do PT em `885`, inventando
+  divergências. **3.ª vez que um verificador meu grita de mais nesta linha de trabalho.**
+  **Gates finais: 707 testes, ruff limpo, EN 128 pp / PT 139 pp a 0 erros, 0 citações e
+  referências indefinidas, 0 overfull >15pt, paridade EN↔PT 0 assimetrias em 89 chaves e
+  0 assimetrias estruturais nos 7 capítulos, 270=270 referências e 168=168 labels, abstract
+  200/200 e resumo 247/247 idênticos nas quatro cópias, congelados intactos (`models/`,
+  `docs/evaluation/` salvo o novo, `data/`), artigo 4 pp, slides 28+28, guia 93, quizz 64.**
   **⏭️ O QUE FICA (nada disto é código):** o estudo humano — que agora cobre **também** o texto
-  gerado; completar o red team da guarda (4 das 6 lentes nunca correram); agradecimentos e
-  dedicatória; declaração de IA com o orientador; rodar as 4 credenciais.
+  gerado; completar o red team da guarda (**4 das 6 lentes nunca correram**, e a força medida é
+  por isso um **limite inferior**, o que já está escrito na tese); agradecimentos e dedicatória;
+  **declaração de IA com o orientador — e ela subestima agora o que aconteceu**, porque esta
+  sessão acrescentou uma camada generativa e reconstruiu o produto; rodar as 4 credenciais.
 - **🆕 SESSÃO 55 (2026-08-09/10 — o aluno pediu auditoria total em fases, e disse que o
   REPOSITÓRIO FICA PRIVADO e não é avaliado):**
   **⚠️ ESSA FRASE MUDOU AS PRIORIDADES.** Se o arguente nunca abre o repo, cada "isto é
@@ -651,64 +708,36 @@
   23+23 / guia 85 — todos 0 erros, 0 citações e referências indefinidas.**
   **PENDENTE HUMANO:** rodar as 3 credenciais (o PAT primeiro — tem `admin: true`); enviar
   `docs/defence/mensagem_orientador.md`; reclamar o domínio para o URL limpo.
-- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI (actualizado na sessão 50):**
-  **👉 ABRIR PRIMEIRO: [`progress/BACKLOG_ALUNO.md`](progress/BACKLOG_ALUNO.md).** São os seis
-  pedidos que o aluno ditou no fim da sessão 50 e que ele mandou **não analisar ainda**: refazer
-  o painel de raiz; rever a literatura com o **PDF real de cada fonte** no repositório e um
-  documento do que foi extraído e de onde; **latência quase-real** dos alertas (foi notificado
-  depois do acontecimento); melhorar o guia de estudo; rever a escrita para soar **humana e
-  jovem**; e varrer as pendências que restam. Esse ficheiro tem também as restrições que ele vai
-  precisar de conhecer quando decidir — em especial que **versionar PDFs com direitos de autor
-  num repositório público não é possível**, e que a saída (tornar o repo privado) tem custos já
-  medidos.
-  **⚠️ LIMITE DE GASTO: intermitente.** Na sessão 50 abriu a meio e voltou a fechar (5 de 11
-  agentes morreram, incluindo os dois cépticos). **Vale a pena tentar um workflow pequeno
-  primeiro**; se morrer, fazer o trabalho directamente — para verificação factual costuma ser
-  melhor de qualquer maneira.
-  **Contexto ainda válido, por ordem:**
-  **(1)** **Arrumação do repo** — a análise está feita (bloco J da sessão 49), a execução não.
-  Olhar os ~4 candidatos reais um a um, com os PDF a recompilar como porta. Os outros 20
-  "órfãos" são falsos positivos e estão explicados.
-  **(2)** **Auditoria de CONTEÚDO das 7 chaves nunca auditadas** — `angelopoulos2023conformal`,
-  `vovk2005algorithmic`, `gama2014survey`, `vinh2010ami`, `rousseeuw1987silhouettes`,
-  `sculley2015debt`, `worldmonitor2026`. O `citation_content_audit.md` cobriu 122 instâncias /
-  52 chaves; hoje são **129 / 59**. Os metadados destas 7 já estão verificados (84/84); falta
-  ler se a fonte **sustenta a frase**. É trabalho de leitura, não de agentes.
-  **(3)** **Paridade EN↔PT nos sítios com citação** — nunca foi feita. O risco concreto é a
-  tradução **endurecer** um verbo ("suggests" → "demonstra") e a citação passar a sustentar
-  mais do que aguenta, na versão que o júri português lê. Começar pelo Cap. 2 (90 das 129
-  instâncias) e pelo Cap. 6 (os veredictos das RQ).
-  **(4)** **Demo e notificações** — `docs/defence/gravar_demo.md` já existe; o aluno quer
-  gravar o ecrã **e** as notificações push no telemóvel. Ficou explicitamente para o fim.
-  **(5)** **v4 do painel** — o estudo de mercado COMPLETOU (4 agentes; os 4 cépticos morreram
-  no limite). Resultado bruto em
-  `C:\Users\henri\AppData\Local\Temp\claude\…\tasks\wr951lb6c.output` (143k chars) e no
-  `journal.jsonl` da run `wf_c5217b07-1db`. **Se essa máquina mudar, o ficheiro perde-se** —
-  a conclusão principal fica registada aqui: o custo não é CSS nem Streamlit-tuning, é
-  **carga a frio** (parse de 8,7 MB de backfill em runtime) e a recomendação é **pré-computar
-  para um snapshot estático** no worker de 60 s. Briefing para sessão nova:
-  [`docs/design/PROMPT_dashboard_v4.md`](docs/design/PROMPT_dashboard_v4.md).
-  **⚠️ Contexto histórico abaixo (sessão 48, já feito):** `docs/design/v3_backlog.md`,
-  secção **"Entrega de turno"** — tem os comandos por ordem e, a seguir, **"Promoção: a
-  lista exacta do que fica por rever na tese"**, ficheiro a ficheiro e linha a linha.
-  **A v3 está funcionalmente completa** (A, B, C, D, E, watchlist a 12, passo 6
-  precedentes, passo 7 página do método). Sobram três coisas, e **nenhuma é código**:
-  **(1)** `heroku config -s --app investigator > .env` e depois `fetch_logos.py` +
-  `backfill_history.py --months 12`, que fecham o buraco de dados de XOM/JNJ;
-  **(2)** rodar as 3 credenciais expostas (PAT do GitHub primeiro — `admin: true`);
-  **(3)** decidir promover, que é **uma linha no `Procfile`** e abre a dívida da tese.
-  **⚠️ MÁQUINA:** a sessão 47 correu no **portátil** (`C:\Users\ruifa`), que **não tem
-  `.env`** — foi essa a razão de (1) ficar por fazer. A seguir é no **desktop**
-  (`C:\Users\henri`, a máquina do FNSPID, com dados e torch).
-  **⚠️ A DÍVIDA DA TESE É CRIADA PELA PROMOÇÃO, NÃO PELA RECONSTRUÇÃO** (o aluno sublinhou
-  que é para rever a sério). Enquanto a v1 estiver no ar a tese está **correcta como está**.
-  No minuto em que o `Procfile` mudar, o Cap. 4 passa a descrever um ecrã que já não existe:
-  diz que a lista leva a repartição mercado/setor/empresa **na própria linha, sem clicar**,
-  e na v3 isso está a **um clique** (emenda D2′) com o motor nomeado **em palavras**. Mais a
-  legenda da Fig. 4.5 (descreve linhas concretas: Amazon −1,84% com +0,19% da empresa), a
-  recaptura da figura (**`scripts/screenshot_app.py` aponta para `streamlit_app.py` e tem de
-  passar a apontar para `dashboard.py`**), o espelho em `thesis-pt`, os 3 ficheiros de
-  slides/guia, e o Cap. 5. Portas: as duas teses a 0 erros + **paridade EN↔PT por capítulo**.
+- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI (actualizado na sessão 56):**
+  **O código está feito e implantado; o que falta é humano.** Não há nenhum ficheiro de backlog
+  para abrir primeiro — o da sessão 50 foi cumprido (painel refeito de raiz na v5, guia
+  reconstruído, latência medida na sessão 53) e está arquivado como histórico.
+  **(1) O ESTUDO HUMANO é a única lacuna real que resta**, e agora fecha *quatro* coisas de uma
+  vez: a metade "útil" do objectivo 4, a metade em aberto da RQ3 — **que passou a cobrir também
+  o texto gerado** —, a pergunta "chegou a história *certa*?" da cobertura de notícias, e a
+  pergunta nova "um relatório ancorado ajuda mais do que os painéis sozinhos?". São 6–10 pessoas,
+  ~15 min cada; `scripts/build_usefulness_pack.py` e `analyse_usefulness.py` já geram o material
+  e fecham a análise.
+  **(2) A DECLARAÇÃO DE IA SUBESTIMA O QUE ACONTECEU.** Está honesta na forma mas foi escrita
+  antes de a sessão 56 acrescentar uma camada generativa e reconstruir o produto. Vale uma frase
+  escrita pelo aluno, com o orientador.
+  **(3) COMPLETAR O RED TEAM DA GUARDA:** 4 das 6 lentes nunca correram (limite de gasto). A tese
+  já diz que a força medida é um **limite inferior**, portanto não é uma correcção pendente — é
+  uma melhoria. `scripts/evaluate_intelligence_guard.py` regenera os números.
+  **(4) AGRADECIMENTOS E DEDICATÓRIA** continuam com o `% TODO` de propósito: é voz dele.
+  **(5) RODAR AS 4 CREDENCIAIS** (PAT do GitHub primeiro — tem `admin: true`).
+  **⚠️ LIMITE DE GASTO: esgotado nesta sessão.** Dois workflows lançados, **os dois perderam
+  TODOS os agentes** (43 e 6). Ambos devolveram *"nenhum achado sobreviveu à verificação"*, que é
+  a **ausência de verificação** e não um resultado limpo — **5.ª vez** que este padrão engana
+  neste projecto. Enquanto o limite não abrir, **não lançar workflows**: para verificação factual
+  fazer à mão é melhor de qualquer maneira, e foi assim que saíram os 6 achados da revisão final.
+  **⚠️ DUAS ARMADILHAS DE FERRAMENTA que custaram tempo real nesta sessão, e voltam a custar:**
+  **(a)** escrever `\ref` a partir de um heredoc ou de `python -c` em bash **transforma-o num
+  byte CR**; a tradução universal de newlines do Python **esconde-o e volta a mangá-lo a cada
+  round-trip**, e já partiu a compilação da tese PT. Usar a ferramenta de edição, ou modo
+  binário, e varrer com o teste de CR soltos.
+  **(b)** o `heroku auth:token` **sai com código 1 e imprime o token na mesma** — um `set -e`
+  mata o script aí. `scripts/deploy_heroku.py` já trata disto.
 - **🧩 SESSÃO 47 (2026-08-03 — executar o backlog da v3; 4 commits):**
   **(A) LEGIBILIDADE.** A pílula `UNUSUAL` estava dentro da linha do topo, a disputá-la com
   logótipo, nome, ticker e o número grande — e o nome, único item sem largura própria, era
@@ -2004,12 +2033,22 @@
 ---
 
 ## Estado LaTeX
-> ⚠️ **EM REWORK (S1–S9).** As notas abaixo são pré-rework (7 capítulos, 53 pp, 16 refs). **Estado atual real:**
-> 6 capítulos canónicos MEIA (Introduction · State of the Art · Methods and Materials · InvestiGator · Case Studies ·
-> Conclusions), **50 referências verificadas**, **compila 76 pp, 0 erros, 0 citações indefinidas, 0 overfull >15pt**;
-> figuras de avaliação em EN; arquitetura redesenhada + fluxo + mockup Telegram; 3 algoritmos; figura de embeddings;
-> exemplos trabalhados reais (recuperação + anomalia). **Achado medido:** 16/70 pp são versos em branco
-> (`twoside`/`openright`) → conteúdo real ≈ 53 pp; ver "REALIDADE DA CONTAGEM DE PÁGINAS" no Estado Atual.
+> ⚠️ **AS NOTAS ABAIXO SÃO HISTÓRICAS (pré-rework: 7 capítulos, 53 pp, 16 refs) e ficam como
+> registo da evolução. NÃO as ler como estado actual.**
+>
+> **ESTADO ACTUAL (sessão 56, 2026-08-12), e a única fonte fiável é compilar:**
+> 6 capítulos canónicos MEIA (Introduction · State of the Art · Methods and Materials ·
+> InvestiGator · Case Studies · Conclusions) + Apêndice A.
+> **EN 128 pp · PT 139 pp · 0 erros · 0 citações e referências indefinidas · 0 overfull >15pt.**
+> **63 referências** verificadas uma a uma (88 com as do artigo IEEE).
+> Paridade EN↔PT: **0 assimetrias** estruturais nos 7 capítulos e **0** nas frases com citação
+> (89 chaves). **270 referências cruzadas, 168 labels, 0 incompatibilidades de tipo** — verificado
+> por `scripts/check_references.py`, que faz o que o compilador não faz.
+> Artigo IEEE 4 pp · slides 28+28 · guia de estudo 93 · quizz 64 perguntas.
+>
+> ⚠️ **NUNCA FIXAR ESTES NÚMEROS AQUI COMO VERDADE PERMANENTE.** Esta secção já esteve durante
+> sessões a afirmar "76 pp, 50 referências" muito depois de ser falso. Compilar é a única fonte;
+> este bloco é um instantâneo datado.
 - **Escrito (Fase D):** `thesis/` integrado a partir do template ISEP (classe `meia-style.cls`, `frontmatter/`, `ch1..ch7/`, `appendices/`). `main.tex` adaptado (título T1, autor, nº 1180934, orientador/coorientador, keywords). **Compila localmente: 41 páginas, 0 erros**, biber OK, **8 referências no `references.bib`**. Front matter: abstract (EN) + resumo (PT) em rascunho; acrónimos atualizados (`glossary.tex`).
 - **7 capítulos** (esqueleto com secções): Introduction · Contextualization · Literature Review · Methodology · Implementation · Evaluation · Conclusion.
 - **`latexmk.rc` criado** (resolve o achado da Fase A: o `Makefile` invocava-o sem existir).
@@ -2022,6 +2061,25 @@
 - **Compila localmente: 53 páginas, 0 erros**, 16 refs na bibliografia, 0 citações indefinidas, figuras presentes; só aviso cosmético de fonte. LaTeX local: MiKTeX + biber 2.21; CI (`compile-thesis.yml`) compila em cada push a `thesis/**`.
 
 ## Estado do Código
+> ⚠️ **O inventário abaixo cresceu por acumulação e descreve os componentes pela ordem em que
+> foram construídos, não a arquitectura de hoje.** Continua correcto (nada foi removido), mas
+> **falta-lhe a camada mais recente**. Mapa actual, de cima para baixo:
+>
+> | camada | onde | o que faz |
+> |---|---|---|
+> | **cliente** | `web/` | SPA estático, Lightweight Charts v5 versionada; estado no browser |
+> | **serviço** | `api/` | FastAPI: rotas de dados + relatório e analista. **Não calcula nada** |
+> | **geração** | `investigator/intelligence/` | pacote de evidência, guarda de ancoragem, relatório, analista |
+> | **narrador** | `investigator/narrator/` | o caminho de alerta, com allowlist de vocabulário fechado |
+> | **modelos** | `investigator/triage/`, `historical_kb/` | triagem calibrada, SBERT/ONNX, recuperação |
+> | **motores** | `investigator/anomaly_detector/`, `correlation_engine/` | z-score, excedência, decomposição, estudo de evento |
+>
+> **`Procfile`: `web` = uvicorn sobre `api.main:app`** (já não é Streamlit). O `app/` fica no
+> repositório porque `verdict.py` e `method.py` continuam a ser chamados pela API — é isso que
+> impede as frases do ecrã de divergirem do Python testado que as produz — e porque as figuras
+> das teses anteriores documentam a v3/v4.
+> **Contagem de testes: correr `pytest`.** Nunca fixar aqui (ver o aviso mais abaixo).
+
 - **Implementado (thin slice / Gatilho 1):** `investigator/config.py` (.env), `investigator/market_data/prices.py` (yfinance + log-returns), `investigator/anomaly_detector/detector.py` (z-score sem lookahead, `AnomalyResult`), `investigator/explanation_engine/explainer.py` (explicação por regra), `investigator/telegram_bot/sender.py` (Telegram API), `investigator/main.py` (`run_thin_slice`). Dep ativa: `yfinance==1.4.1`.
 - **Núcleo (motor de correlação):**
   - `investigator/correlation_engine/event_study.py` — impacto pós-evento (+1/+3/+5d) e impacto médio (puro; nota anti-lookahead: medir o outcome ≠ prever).
