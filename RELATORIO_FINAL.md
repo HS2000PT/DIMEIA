@@ -29,7 +29,7 @@ O núcleo é um motor de correlação notícia–mercado sobre o dataset FNSPID 
 - **Triagem de materialidade — o modelo treinado pelo autor (RQ4)** (`triage/` + `models/`):
   regressão logística calibrada (Platt), rótulos por retorno anormal vs SPY, split temporal
   com embargo, testes anti-lookahead. Resultado honesto: a volatilidade-só bate os modelos
-  com texto em PR-AUC (0,542 vs 0,496), MAS a triagem quase quadruplica a precisão no
+  com texto em PR-AUC (0,542 vs 0,496), MAS a triagem melhora 1,67× a precisão no
   orçamento de 5 alertas/dia (0,632 vs 0,163) — reportado tal como é.
 - **Explicação XAI** (`explanation_engine/`): o alerta carrega todos os números que o
   justificam; testes de fidelidade impedem regressões.

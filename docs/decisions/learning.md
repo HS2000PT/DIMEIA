@@ -235,7 +235,7 @@ mecanismo de produto: **precisão@5 alertas/dia 0,632 vs 0,379** de uma ordenaç
 probabilidades calibradas (Brier 0,218 vs 0,622).
 - **Como explico ao júri em 3 frases (o resultado):** "Com 6 anos de dados, todos os modelos treinados
   ficam muito acima do chão alertar-sempre — dentro de um orçamento de 5 alertas/dia, a triagem quase
-  quadruplica a precisão. Mas nenhum modelo que lê o texto do título bateu a baseline de
+  melhora 1,67× a precisão. Mas nenhum modelo que lê o texto do título bateu a baseline de
   só-volatilidade, portanto o sinal está no contexto de mercado, não nas palavras. Reporto isso tal
   como caiu — foi a segunda comparação justa 'aprendido vs simples' que a escolha transparente venceu."
 

@@ -139,6 +139,23 @@
   do texto-vs-volatilidade ganha *"e às nove definições de rótulo"*.
   **Portas depois da P5: 709 testes, ruff limpo, EN 130 pp / PT 139 pp a 0 erros, paridade 0
   assimetrias, 277 refs / 169 labels iguais nas duas, congelados intactos.**
+  **⚠️ (M) A DECLARAÇÃO DE IA REESCRITA — e uma FALHA MINHA DA P1 apanhada a fazê-lo.**
+  Ao abrir o front matter vi que os **abstracts ainda diziam "quase quadruplicou"**. A P1 tinha
+  greped o NÚMERO (`0,163`) e não a AFIRMAÇÃO: **13 sítios escaparam**, incluindo as **quatro cópias
+  do resumo** (gated por identidade e por limite de palavras), o **artigo IEEE** (abstract e
+  conclusão), o guia, o quizz, o `RELATORIO_FINAL`, o `learning.md` e o `autoteste`. Todos
+  corrigidos; a substituição do abstract foi construída para **preservar a contagem** e continua
+  **200/200** e idêntica nas quatro cópias. **Lição: procurar a afirmação, não só o número.**
+  **A declaração passa a dizer a extensão real** em vez de "apoiar a redação e o desenvolvimento de
+  software": ferramentas generativas escreveram parte substancial do código e dos testes,
+  implementaram as avaliações, redigiram prosa e conduziram revisões que encontraram defeitos. E diz
+  o que é do aluno: o problema, as perguntas, as restrições fundadoras, e **todas** as decisões de
+  construir/promover/manter/estreitar/descartar — mais as retractações, com ponteiro para a Matriz de
+  Evidência. ⚠️ **A directiva-mestra §62 sugere descrever a IA como auxiliar de "sintaxe Python,
+  LaTeX, debugging"; para este trabalho isso seria SUBESTIMAR, e não foi escrito assim.**
+  ⚠️ **Continua a precisar do aluno:** confirmar a redação exacta exigida pela MEIA/ISEP com o
+  orientador (não se inventou política), pôr a data de entrega, e **tornar verdadeira** a frase
+  "Revi o conteúdo desta dissertação" — a leitura final continua em aberto no `CHECKLIST`.
   **(J) ÚLTIMA LENTE FEITA — CONSISTÊNCIA TESE↔CÓDIGO — e o resultado é largamente POSITIVO.**
   Os **quatro excertos de código** que a tese publica **não derivaram**: o `lst:zscore` bate com o
   `detect_latest` linha a linha (a fatia `[-window-1:-1]`, o `ddof=1`, a guarda `sigma > 0`), o

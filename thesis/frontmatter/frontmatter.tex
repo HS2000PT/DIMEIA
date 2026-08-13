@@ -33,9 +33,19 @@ I declare that I have fully acknowledged the Code of Ethical Conduct of P.PORTO.
 \vspace{0.5cm}
 
 \textbf{Use of Artificial Intelligence.} In accordance with the P.PORTO/ISEP guidelines, I declare that
-artificial intelligence tools were used during the development of this work to assist with
-the drafting and editing of the text and with software development. I directed the work and critically reviewed
-and validated all outputs; the ideas, decisions and final content are my own and are my responsibility.
+generative artificial intelligence tools were used throughout the development of this work, and I state
+the extent plainly rather than minimally. They were used to write and refactor a substantial part of the
+system's source code and its automated tests, to implement the evaluation procedures, to draft and edit
+prose in this document and in its supporting materials, and to carry out reviews that found defects in
+both the software and the text.
+
+What is mine is the work those tools were pointed at. The choice of problem and of audience, the research
+questions, the constraints that define the system (free data sources only, explainability first, and the
+refusal to forecast prices), and every decision about what to build, promote, keep, narrow or discard are
+my own. Where a measurement contradicted a claim I had made, the claim was withdrawn or narrowed rather
+than defended; those retractions are recorded in Appendix~\ref{app:evidence_matrix}. Every reported figure
+is produced by a versioned procedure that can be re-run. I have reviewed the content of this dissertation,
+and it, its remaining errors, and its defence are my responsibility.
 
 \vspace{1cm}
 
@@ -71,7 +81,7 @@ existing components in a functional, explainable, reproducible system. On real d
 semantic retrieval clearly outperformed lexical and trivial baselines (cross-ticker precision@5 of
 $0.51$ against $0.35$ lexical and $0.24$ random), and the volatility-normalised detector fired far
 more consistently across stocks than a fixed threshold. A materiality-triage model trained on
-$79{,}753$ multi-year examples nearly quadrupled within-budget alert precision on held-out data, yet
+$79{,}753$ multi-year examples raised within-budget alert precision $1.67$-fold on held-out data, yet
 no text model beat the volatility-only baseline, and in deployment the same gate showed no
 significant benefit on the differently distributed population it sees. Both are reported as
 they stand, with limitations stated explicitly.
@@ -95,7 +105,7 @@ criticamente componentes existentes num sistema funcional, explicável e reprodu
 reais, a recuperação semântica superou claramente as baselines lexical e triviais (precision@5
 cross-ticker de $0{,}51$, face a $0{,}35$ lexical e $0{,}24$ do acaso) e o detetor normalizado pela
 volatilidade disparou de forma muito mais consistente entre ações do que um limiar fixo. Um modelo
-de triagem de materialidade treinado em $79\,753$ exemplos de vários anos quase quadruplicou a
+de triagem de materialidade treinado em $79\,753$ exemplos de vários anos melhorou $1.67	imes$ a
 precisão dos alertas dentro do orçamento diário em dados retidos, mas nenhum modelo com texto bateu
 a baseline de só-volatilidade, e em produção o mesmo gate não mostrou benefício significativo sobre
 a população, distribuída de outra forma, que de facto vê. Ambos os resultados são reportados tal

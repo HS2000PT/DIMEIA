@@ -120,7 +120,7 @@ manchete **piora**. O sinal vive no contexto de mercado.
 <details><summary>resposta</summary>
 
 Precisão dentro de um orçamento de 5 alertas/dia: **0,632** contra **0,379** de ordenar ao acaso (1,67×). O **0,163** do chão "alertar-sempre" não media escolher às cegas: com pontuação constante o desempate segue a ordem do ficheiro, que é alfabética.
-Quase quadruplica. É o valor de produto, mesmo com o negativo do texto.
+Melhora 1,67×. É o valor de produto, mesmo com o negativo do texto.
 </details>
 
 **🟡 14. Estatístico contra aprendido: os dois testes justos.**
@@ -272,7 +272,7 @@ limitação é a escrita concorrente, tratada com controlo otimista.
 
 Não, é o resultado. A comparação foi **pré-comprometida**: decidi antes de correr que a
 volatilidade era a linha de base a bater. Não bateu, e reporto-o. Como mecanismo de produto a
-triagem quadruplica a precisão dentro do orçamento. E um trabalho que só reporta o que correu bem é
+triagem melhora 1,67× a precisão dentro do orçamento. E um trabalho que só reporta o que correu bem é
 um trabalho em que não se pode confiar.
 </details>
 

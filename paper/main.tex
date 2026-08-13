@@ -35,7 +35,7 @@ and critically evaluates existing components in a functional, reproducible syste
 retrieval reaches a cross-ticker precision@5 of $0.514\pm0.015$ against $0.240$ for random and $0.346$ for
 a lexical baseline, and a volatility-normalised detector fires far more consistently across instruments
 (firing-rate range $0.015$) than a fixed threshold ($0.344$). A supervised materiality-triage model,
-trained on $79{,}753$ multi-year news--market examples, nearly quadruples within-budget alert precision
+trained on $79{,}753$ multi-year news--market examples, raises within-budget alert precision $1.67$-fold
 ($0.632$ vs $0.379$ for a random ranking), although no model reading the headline text beat a volatility-only baseline, a
 finding we report as it stands. All results are reproducible from versioned scripts, with limitations
 stated explicitly.
@@ -269,7 +269,7 @@ design, the system performs no price prediction or trading, so profit-based metr
 InvestiGator shows that useful financial alerting for retail investors can be both transparent and reproducible:
 a volatility-normalised detector that explains every flag, a news--market correlation engine that
 retrieves analogous precedents and reports their measured impact as evidence rather than prediction, and
-a trained, calibrated triage model that nearly quadruples within-budget alert precision while honestly
+a trained, calibrated triage model that raises within-budget alert precision $1.67$-fold while honestly
 failing to beat a volatility-only baseline with text, and a generative layer whose synthesis stays bound
 to the records it cites. The last of these carries the most transferable idea: placing generated text
 beside computed results is safe only if the binding is \emph{per claim} rather than per document, and if

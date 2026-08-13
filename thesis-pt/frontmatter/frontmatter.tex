@@ -31,10 +31,20 @@ Declaro ainda que tomei pleno conhecimento do Código de Conduta Ética do P.POR
 \vspace{0.5cm}
 
 \textbf{Uso de Inteligência Artificial.} Em conformidade com as orientações do P.PORTO/ISEP, declaro que
-foram utilizadas ferramentas de inteligência artificial durante o
-desenvolvimento deste trabalho, para apoiar a redação e edição do texto e o desenvolvimento de software.
-Dirigi o trabalho e revi e validei criticamente todos os resultados; as ideias, as decisões e o conteúdo
-final são meus e da minha responsabilidade.
+foram utilizadas ferramentas de inteligência artificial generativa ao longo do desenvolvimento deste
+trabalho, e declaro-o na sua extensão real e não de forma minimizada. Foram usadas para escrever e
+reestruturar uma parte substancial do código-fonte do sistema e dos seus testes automáticos, para
+implementar os procedimentos de avaliação, para redigir e editar prosa neste documento e nos materiais
+de apoio, e para conduzir revisões que encontraram defeitos tanto no software como no texto.
+
+O que é meu é o trabalho para onde essas ferramentas foram apontadas. A escolha do problema e do
+público, as questões de investigação, as restrições que definem o sistema (apenas fontes de dados
+gratuitas, explicabilidade primeiro, e a recusa de prever preços), e todas as decisões sobre o que
+construir, promover, manter, estreitar ou descartar são minhas. Onde uma medição contrariou uma
+afirmação que eu tinha feito, a afirmação foi retirada ou estreitada em vez de defendida; essas
+retractações estão registadas no Apêndice~\ref{app:evidence_matrix}. Todos os valores reportados são
+produzidos por um procedimento versionado que pode ser re-corrido. Revi o conteúdo desta dissertação, e
+ele, os erros que nele restem, e a sua defesa são da minha responsabilidade.
 
 \vspace{1cm}
 
@@ -70,7 +80,7 @@ criticamente componentes existentes num sistema funcional, explicável e reprodu
 reais, a recuperação semântica superou claramente as baselines lexical e triviais (precision@5
 cross-ticker de $0{,}51$, face a $0{,}35$ lexical e $0{,}24$ do acaso) e o detetor normalizado pela
 volatilidade disparou de forma muito mais consistente entre ações do que um limiar fixo. Um modelo
-de triagem de materialidade treinado em $79\,753$ exemplos de vários anos quase quadruplicou a
+de triagem de materialidade treinado em $79\,753$ exemplos de vários anos melhorou $1.67	imes$ a
 precisão dos alertas dentro do orçamento diário em dados retidos, mas nenhum modelo com texto bateu
 a baseline de só-volatilidade, e em produção o mesmo gate não mostrou benefício significativo sobre
 a população, distribuída de outra forma, que de facto vê. Ambos os resultados são reportados tal
@@ -94,7 +104,7 @@ existing components in a functional, explainable, reproducible system. On real d
 semantic retrieval clearly outperformed lexical and trivial baselines (cross-ticker precision@5 of
 $0.51$ against $0.35$ lexical and $0.24$ random), and the volatility-normalised detector fired far
 more consistently across stocks than a fixed threshold. A materiality-triage model trained on
-$79{,}753$ multi-year examples nearly quadrupled within-budget alert precision on held-out data, yet
+$79{,}753$ multi-year examples raised within-budget alert precision $1.67$-fold on held-out data, yet
 no text model beat the volatility-only baseline, and in deployment the same gate showed no
 significant benefit on the differently distributed population it sees. Both are reported as
 they stand, with limitations stated explicitly.

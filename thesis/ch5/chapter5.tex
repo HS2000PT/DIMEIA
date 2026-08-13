@@ -462,7 +462,7 @@ rather than a result.
 
 \emph{Question: can the trained triage model of Section~\ref{sec:met_triage} prioritise news better
 than simple volatility evidence (\gls{RQ}4)? Answer: every trained ranker clears the always-alert
-floor by a wide margin, and within a realistic alert budget triage nearly quadruples precision; but
+floor by a wide margin, and within a realistic alert budget triage raises precision by $1.67\times$; but
 none of the models that read the headline text beats the volatility-only baseline. On this evidence,
 the triage signal lives in market context, not in headline wording, and the dissertation reports that
 finding as it stands.}
@@ -999,7 +999,7 @@ to the conclusions.
 Across seven case studies on real data, InvestiGator's anomaly trigger fired far more consistently than
 a fixed threshold, its correlation engine retrieved sector-analogous cases well above every
 baseline and independently of the embedding model, its explanations were faithful to the underlying
-computation by construction, and its trained triage model nearly quadrupled within-budget alert
+computation by construction, and its trained triage model raised within-budget alert
 precision while honestly failing to beat the volatility-only baseline with text. The three studies that
 followed measured what the system does not know, and each of them ended by leaving production
 unchanged because the evidence did not support a change. The next chapter draws these findings
