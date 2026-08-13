@@ -19,7 +19,7 @@ bateu a volatilidade. Então a resposta à sua própria pergunta é 'não'. Como
 contribuição central?"*
 
 ✅ *"A RQ4 tem duas partes e respondo às duas. Como **mecanismo de produto**, o modelo prioriza
-claramente: dentro de um orçamento de 5 alertas/dia sobe a precisão de **0,163 para 0,632** — quase
+claramente: dentro de um orçamento de 5 alertas/dia sobe a precisão de **0,379 para 0,632** — quase
 4×, com probabilidades calibradas. A **hipótese científica** — 'o texto da manchete acrescenta sinal
 sobre a volatilidade' — essa, pré-comprometida, deu não: PR-AUC **0,542 vs 0,496**. Não é um fracasso,
 é um resultado, e reporto-o tal como caiu. É a segunda vez — a primeira foi a Isolation Forest — que a
@@ -40,7 +40,7 @@ ajuda — é tudo volatilidade. A sua 'triagem' é um nome pomposo para um limia
 
 ✅ *"Concordo que o sinal vive esmagadoramente na volatilidade — digo-o na tese, sem rodeios. A
 distinção real é: a volatilidade é uma feature; o modelo calibrado transforma-a numa probabilidade
-honesta com um orçamento de alertas, o que um limiar cru não faz — o ganho 0,163→0,632 é esse valor
+honesta com um orçamento de alertas, o que um limiar cru não faz — o ganho 0,379→0,632 é esse valor
 operacional. E o valor científico não é 'o meu modelo é sofisticado'; é 'testei se a sofisticação
 valia a pena, e a resposta honesta foi: aqui, não'. Uma tese de engenharia honesta deve premiar isso."*
 
@@ -315,8 +315,8 @@ decisão definida em 39,5% das manchetes. O modelo não serve para nada?"*
 ---
 
 ## 10. Antes de entrares na sala
-- Sabe de cor: **0,015 vs 0,344** · **P@5 0,514** · **0,542 vs 0,496** · **0,163→0,632 (em dados
-  retidos)** · **ROC-AUC ao vivo 0,494** · **39,5%** · **PSI 0,281** · **124/134 pp** (mapa completo
+- Sabe de cor: **0,015 vs 0,344** · **P@5 0,514** · **0,542 vs 0,496** · **0,379→0,632 (em dados
+  retidos)** · **ROC-AUC ao vivo 0,494** · **39,5%** · **PSI 0,281** · **130/139 pp** (mapa completo
   no `guiao_de_defesa.md` §2).
 - ⚠️ **Não digas 0,667 vs 0,455.** Foi retirado: valia sobre 12 decisões e o intervalo continha a
   taxa-base. Com 530 decisões o sinal inverte-se (0,592 mantidas vs 0,647 suprimidas). Se disseres o

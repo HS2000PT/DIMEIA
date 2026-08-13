@@ -1305,7 +1305,7 @@ interessava --- caía \textbf{sem deixar rasto em log nenhum}.
 \begin{block}{\footnotesize A parte que interessa mesmo, e que deves saber dizer}
 \footnotesize O sistema \textbf{já tinha} o instrumento certo. A triagem existe precisamente para
 ordenar por materialidade, e dentro de um orçamento de 5 alertas eleva a precisão de
-\key{0,163} para \key{0,632}. \textbf{Mas o tecto nunca a consultava.} O modelo era
+\key{0,379} para \key{0,632}. \textbf{Mas o tecto nunca a consultava.} O modelo era
 \textbf{avaliado} e não \textbf{decidia} nada.
 \par\smallskip
 \textbf{E a primeira correcção não funcionou.} Ordenar só reordena candidatas presentes ao mesmo
@@ -1355,7 +1355,7 @@ mede a \emph{fadiga de alertas}.\\[1mm]
 \toprule
 Modelo & PR-AUC & P@5/dia \\
 \midrule
-Alertar-sempre & 0,378 & 0,163 \\
+Ordenação aleatória & 0,378 & 0,379 \\
 \key{LR só-volatilidade} & \key{0,542} & \key{0,632} \\
 LR só-contexto & 0,538 & 0,632 \\
 LR contexto+texto & 0,496 & 0,585 \\
@@ -1365,8 +1365,8 @@ LR só-texto & 0,439 & 0,572 \\
 \end{tabular}
 \column{0.54\textwidth}
 \begin{itemize}
-  \item \key{Como mecanismo, funciona:} dentro de 5 alertas/dia, a precisão quase \key{quadruplica}
-        (0,632 vs 0,163), com probabilidades calibradas (Brier 0,218 vs 0,622).
+  \item \key{Como mecanismo, funciona:} dentro de 5 alertas/dia, a precisão sobe \key{1,67$\times$}
+        (0,632 vs 0,379), com probabilidades calibradas (Brier 0,218 vs 0,622).
   \item \key{O veredicto:} nenhum modelo que lê o texto bateu a volatilidade $\Rightarrow$ o sinal
         está no \emph{contexto de mercado}, não nas palavras do título.
   \item É a \key{2.ª} comparação justa "aprendido vs simples" que a escolha transparente vence
@@ -1949,7 +1949,7 @@ reais precisa de um estudo humano, que declaro como limitação, não como resul
 
 \textbf{RQ4 (triagem aprendida)} --- "Não na hipótese do texto; sim no mecanismo. Nenhum modelo
 com texto bateu a só-volatilidade (PR-AUC 0,542 contra 0,496). Mas com orçamento de 5 alertas/dia
-a triagem sobe a precisão de 0,163 para 0,632, com probabilidades calibradas --- treinei, avaliei
+a triagem sobe a precisão de 0,379 para 0,632, com probabilidades calibradas --- treinei, avaliei
 com protocolo temporal estrito, e reportei o resultado tal como é. E testei a própria crítica: um
 re-teste justo (C afinado, PCA, FinBERT) confirma que o negativo é \key{robusto}, não sub-ajuste."
 \end{frame}
@@ -1960,7 +1960,7 @@ re-teste justo (C afinado, PCA, FinBERT) confirma que o negativo é \key{robusto
 Não --- a comparação foi \key{pré-comprometida} no protocolo: escrevi, antes de treinar, que o
 resultado seria reportado tal como caísse. A RQ4 fica respondida com evidência (o sinal está no
 contexto de mercado, não no texto, com esta representação); e a triagem vale como mecanismo
-(0,632 vs 0,163 no orçamento diário). Uma tese que só mostra vitórias é menos credível.
+(0,632 vs 0,379 no orçamento diário). Uma tese que só mostra vitórias é menos credível.
 \vspace{1mm}
 
 \textbf{Como garantem que a triagem não vê o futuro?}\\
@@ -2028,7 +2028,7 @@ z = \textbf{+7,61} & anomalia real TSLA 24-10-2024 (exemplo trabalhado) & Cap.~5
 \textbf{+6,46\%} & impacto médio +5d do exemplo Nvidia/AI (demo reproduz) & Cap.~3, scripts/demo.py \\
 \textbf{$-$1,97\%} & CS3: título positivo, cluster negativo (tema $\neq$ direção) & Cap.~5 \\
 PR-AUC \textbf{0,542 vs 0,496} & RQ4: só-volatilidade bate todos os modelos com texto & Cap.~5 (CS4) \\
-\textbf{0,632 vs 0,163} & precisão@5-alertas/dia: triagem vs alertar-sempre ($\approx$4$\times$) & idem \\
+\textbf{0,632 vs 0,379} & precisão@5-alertas/dia: triagem vs ordenação aleatória (1,67$\times$) & idem \\
 \textbf{79.753} / 2.016 & exemplos FNSPID do treino / fatia curada na app pública & kb\_fnspid\_build \\
 \textbf{0,992} / 96\% & paridade ONNX$\leftrightarrow$SBERT (cosseno médio; vizinhos top-3) & onnx\_minilm\_validation \\
 \textbf{106 pp; 59/59} & tese 0 erros; todas as citações verificadas & page\_audit \\

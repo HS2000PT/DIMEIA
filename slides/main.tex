@@ -354,7 +354,7 @@ are now permanent regression tests.}
 \toprule
 Model & PR-AUC & P@5/day \\
 \midrule
-Always (floor) & 0.378 & 0.163 \\
+Random ranking (floor) & 0.378 & 0.379 \\
 \textbf{Volatility LR} & \textbf{0.542} & \textbf{0.632} \\
 Context LR & 0.538 & 0.632 \\
 Context$+$text LR & 0.496 & 0.585 \\
@@ -364,7 +364,7 @@ Gradient boosting & 0.469 & 0.551 \\
 \end{columns}
 \vfill
 \begin{block}{\small The honest verdict (pre-committed)}
-\small Within a 5-alerts/day budget, triage nearly \textbf{quadruples precision} ($0.632$ vs $0.163$) \emph{on held-out data from the training corpus} --- but \textbf{no text model beat volatility}. A follow-up ablation added \emph{five} more cheap context features (market regime, momentum, standardised reaction, downside risk): PR-AUC $0.535$, again \textbf{no gain}. A \emph{fair} re-test (tuned $C$, PCA-reduced text, a FinBERT domain encoder) still never beat volatility, so the negative is \textbf{robust}, not an under-fit artefact. The signal is market context; reported as it fell.
+\small Within a 5-alerts/day budget, triage lifts precision \textbf{by $1.67\times$} ($0.632$ vs $0.379$) \emph{on held-out data from the training corpus} --- but \textbf{no text model beat volatility}. A follow-up ablation added \emph{five} more cheap context features (market regime, momentum, standardised reaction, downside risk): PR-AUC $0.535$, again \textbf{no gain}. A \emph{fair} re-test (tuned $C$, PCA-reduced text, a FinBERT domain encoder) still never beat volatility, so the negative is \textbf{robust}, not an under-fit artefact. The signal is market context; reported as it fell.
 \end{block}
 \end{frame}
 
@@ -382,7 +382,7 @@ a trace in any log}.
 \column{0.5\textwidth}
 \begin{block}{\small The uncomfortable part}
 \small The instrument was already there. Triage exists to rank by materiality, and lifts
-precision from $0.163$ to $\mathbf{0.632}$ inside a 5-alert budget --- and \textbf{the cap never
+precision from $0.379$ to $\mathbf{0.632}$ inside a 5-alert budget --- and \textbf{the cap never
 consulted it}. The score was measured, then ignored.
 \end{block}
 \smallskip

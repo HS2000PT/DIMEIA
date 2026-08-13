@@ -37,7 +37,7 @@ fraqueza.
 | **+0.377 / +0.348 / +0.100** | Lift energia / saúde / consumo | "O motor vale mais onde o vocabulário é distintivo; menos no consumo, genérico." |
 | **z = +7.61** | Tesla, 24 Out 2024, pós-resultados | "Exemplo real: μ=−0.92%, σ=2.73%, r=+19.8% → z=+7.61. A mesma regra que ignora ±2% apanha isto." |
 | **0.542 / 0.538 / 0.496** | PR-AUC triagem: volatilidade / contexto / contexto+texto | "O TEXTO não ajuda; o sinal vive no contexto de mercado. 2.º teste justo — e **robusto** (re-teste justo com PCA/FinBERT nunca bate a volatilidade)." |
-| **0.632 vs 0.163** | Precisão@orçamento (5 alertas/dia) vs alertar-sempre | "A triagem quase QUADRUPLICA a precisão dentro do orçamento — o valor de produto." |
+| **0.632 vs 0.379** | Precisão@orçamento (5 alertas/dia) vs ordenação aleatória | "A triagem sobe a precisão 1,67x dentro do orçamento — o valor de produto." |
 | **p = 0.539 (54%)** | Decisão META real, 12 Jul 2026 | "u=+0.699 (vol + setor dominam) → σ → Platt → 54%, o número exato enviado ao canal." |
 | **ROC-AUC 0.494** | Gate de triagem medido AO VIVO (530 decisões, 145 pares ticker-dia) | "Em produção o gate ordena ao acaso — IC [0.391, 0.601]. Fica como controlo de volume, e a afirmação de que seleciona materialidade está retirada." |
 | **P@5 0.595 (80k)** | Recuperação à escala no FNSPID multi-ano *(reforço)* | "RQ2 validada à escala, acima do preliminar 0,514." |
@@ -53,7 +53,7 @@ fraqueza.
 | **0.385 / 0.470 / 0.378** | Prevalência do rótulo nos três blocos *(Caso 7)* | "**Oscila, não tem tendência.** Comparar só as pontas esconderia uma excursão de 22%. Explica por que os congelados sobrevivem E por que a cobertura a 95% parte." |
 | **ganha em 1 de 3** | Fusão multi-sinal vs melhor sinal isolado *(§6.2, posição por exclusão)* | "Um ganho que depende do orçamento que se escolhe citar é um ganho que se **pode ter escolhido**. Não entra em produção." |
 | **peso −0,283** | Intensidade de notícia na fusão *(§6.2, posição por exclusão)* | "**Negativo**: mais manchetes = menos provável ser material, porque são dias de conteúdo automático. À mão eu teria posto positivo e estaria errado. É a justificação empírica de DERIVAR pesos." |
-| **124 / 134 pp · 63 refs · 707 testes** | Tese EN/PT · referências verificadas · suíte | "Reprodutível de ponta a ponta; nenhum número digitado à mão. As 63 referências resolvem todas, e o título devolvido bate — verificado automaticamente." |
+| **130 / 139 pp · 63 refs · 709 testes** | Tese EN/PT · referências verificadas · suíte | "Reprodutível de ponta a ponta; nenhum número digitado à mão. As 63 referências resolvem todas, e o título devolvido bate — verificado automaticamente." |
 
 ### Se perguntarem pela bibliografia
 
@@ -91,7 +91,7 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 **RQ4 (triagem para além da volatilidade) — NÃO no texto; SIM no mecanismo.** *(o mais sensível)*
 > "Pré-comprometi-me com a comparação decisiva: nenhum modelo que lê o TEXTO da manchete bateu a
 > volatilidade (PR-AUC 0.496 vs 0.542). **Mas isto é um resultado, não um fracasso** — como
-> MECANISMO, a triagem quase quadruplica a precisão dentro do orçamento (0.632 vs 0.163). O sinal
+> MECANISMO, a triagem sobe a precisão 1,67x dentro do orçamento (0.632 vs 0.379). O sinal
 > vive no contexto de mercado, e a variante em produção usa exatamente essas features. É a 2.ª vez
 > que a escolha transparente venceu num teste justo. Reporto-o tal como caiu."
 
@@ -109,7 +109,7 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 **P: O teu modelo treinado PERDEU para a volatilidade. Não é um fracasso?**
 > "Não — e é importante porque foi **pré-comprometido**. A pergunta da RQ4 era 'o texto ajuda?', e
 > a resposta honesta é 'neste corpus, não'. Isso é ciência: reporto o que caiu. E como PRODUTO a
-> triagem é claramente valiosa (0.632 vs 0.163). Juntando a Isolation Forest, é a segunda vez que a
+> triagem é valiosa (0.632 vs 0.379). Juntando a Isolation Forest, é a segunda vez que a
 > escolha transparente venceu um teste causal justo — isso VALIDA o desenho simplicidade-primeiro
 > com evidência, em vez de o assumir."
 
@@ -235,7 +235,7 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 | 4 | Arquitetura | 1:30 | O diagrama: sensores → motor único → explicação → Telegram/painel. |
 | 5 | Deteção (RQ1) | 2:00 | z-score (8.1, em 1 frase) → **firing rate 0,015 vs 0,344**; bateu a Isolation Forest (teste justo nº1). |
 | 6 | Recuperação (RQ2) | 2:30 | embeddings+cosseno → **P@5 0,514 vs 0,346/0,240**; + o **CS3 (tema≠direção)** como honestidade. |
-| 7 | Triagem (RQ4) | 2:00 | o veredicto confiante: **mecanismo sim (0,163→0,632), texto não (0,542 vs 0,496)** — teste justo nº2. |
+| 7 | Triagem (RQ4) | 2:00 | o veredicto confiante: **mecanismo sim (0,379→0,632), texto não (0,542 vs 0,496)** — teste justo nº2. |
 | 8 | Demo ao vivo | 1:30 | a app **sóbria**: um alerta real no canal + o painel. **Plano B: screenshot** se falhar o wifi. |
 | 9 | Contribuições | 1:00 | as 4; o fio condutor: **"a simplicidade defensável venceu dois testes justos e pré-comprometidos"**. |
 | 10 | Limitações + futuro | 1:00 | corpus fino, utilidade por medir, tema≠direção — ditas com naturalidade (mostra domínio). |

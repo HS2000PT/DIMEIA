@@ -96,7 +96,7 @@ julgamento humano. Está declarado como limitação em §5.10.
 | PR-AUC contexto+texto | **0,496** | idem | idem | `model.py:68` | idem | §5.5 |
 | PR-AUC GBM | 0,469 | idem | idem | `model.py:68` | idem | §5.5 |
 | Chão (alertar sempre) | 0,378 | idem | = prevalência do teste | `model.py:68` | idem | §5.5 |
-| Precisão @5 alertas/dia | **0,632** vs 0,163 | idem | ordena o dia por p, admite top-5 | **`model.py:82`** | idem | §5.5 |
+| Precisão @5 alertas/dia | **0,632** vs 0,379 (ordenação aleatória; 0,163 é o chão alfabético) | idem | ordena o dia por p, admite top-5 | **`model.py:82`** | idem | §5.5 |
 | Brier | 0,224 | idem | `mean((p−y)²)` | `model.py:68` | idem | §5.5 |
 | Calibração de Platt | a=3,700 · c=−2,313 | bloco de **validação** | sigmóide de 2 parâmetros | **`model.py:61`** | idem | §3.3.4 |
 | Exemplo trabalhado (META) | u=+0,699 → 0,668 → **0,539** | alerta real 12 jul 2026 | soma dos `w·x` → sigmóide → Platt | `explain.py:21` | branch de dados | §3.3.4 |
@@ -222,7 +222,7 @@ Se alguém re-treinar com outra semente, a suite parte.
 - **Semente** 42 em todo o lado onde há aleatoriedade
 - **Modelo** versionado em `models/` (1,8 KB) com metadados `.json` ao lado
 - **Comandos** no Apêndice A, um por resultado
-- **Suite** 707 testes, offline e determinísticos
+- **Suite** 709 testes, offline e determinísticos
 
 **O que NÃO é reproduzível a partir do repositório, e digo-o:** o corpus FNSPID bruto
 (~23 GB) e o `triage_dataset.csv` (15 MB) não estão versionados. São regeneráveis pelos

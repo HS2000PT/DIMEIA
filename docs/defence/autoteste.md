@@ -119,7 +119,7 @@ manchete **piora**. O sinal vive no contexto de mercado.
 **🔴 13. RQ4: o número que diz que a triagem vale a pena na mesma.**
 <details><summary>resposta</summary>
 
-Precisão dentro de um orçamento de 5 alertas/dia: **0,632** contra **0,163** de alertar às cegas.
+Precisão dentro de um orçamento de 5 alertas/dia: **0,632** contra **0,379** de ordenar ao acaso (1,67×). O **0,163** do chão "alertar-sempre" não media escolher às cegas: com pontuação constante o desempate segue a ordem do ficheiro, que é alfabética.
 Quase quadruplica. É o valor de produto, mesmo com o negativo do texto.
 </details>
 

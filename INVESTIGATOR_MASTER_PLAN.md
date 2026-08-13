@@ -258,7 +258,7 @@ oito documentos deste projecto sincronizam. **CORRIGIDO nesta sessão.**
 contribuição, e a que corresponde à UC de *Natural Language and Generative AI*. Nem nas "três
 respostas que valem mais", nem na tabela de buracos.
 
-**C4 — [V] `CHECKLIST.md:44` diz que a tese PT tem 134 pp.** Tem **139** (`/Count` do PDF).
+**C4 — [V] CORRIGIDO.** O `CHECKLIST.md:44` dizia PT 134 pp (são 139) e EN 128 (são 130 depois de P1); o guião e o simulacro de defesa diziam 124/134. Todos ressincronizados.
 
 **C5 — [V] Constantes que travam alertas e nunca foram derivadas:** `min_similarity: 0.45`,
 `max_per_ticker_per_day: 2`, `recency_half_life_days: 120`, e o limiar `0.6` do
@@ -385,7 +385,7 @@ faz-se exigindo `0,632` na mesma linha e conferindo o resto à vista.
 
 ## 10. Thesis Gaps · Evidence Gaps
 
-- **Estrutural:** nada. Portas verdes: 707 testes, ruff limpo, EN 128 pp / PT 139 pp, 270 refs /
+- **Estrutural:** nada. Portas verdes: 709 testes, ruff limpo, EN 130 pp / PT 139 pp, 274 refs /
   168 labels sem tipo errado, paridade EN↔PT 0 assimetrias, congelados intactos (12/12 verdes,
   verificado nesta sessão).
 - **De conteúdo:** A1 (chão errado, propaga a 8 artefactos) e A2 (evidência em falta).
@@ -430,15 +430,32 @@ utilizador, e o que chega ao utilizador sem avaliação.
 **Track A** (tese, aditivo, congelados intactos) até à entrega; **Track B** (ambição de produto)
 depois. Nada abaixo pede reestruturação da tese.
 
-### P1 — Corrigir o chão da precisão@orçamento (A1) · **fazer primeiro**
-Não é opcional: a frase *"(picking blindly)"* é falsa e sustenta a única afirmação positiva da RQ4.
-Alcance: `ch5`, `ch6` ×2, `appendixA` ×2, EN **e** PT, mais `guiao_de_defesa`, `simulacro_defesa`,
-`guia_pessoal`. A evidência regenerável já existe (criada nesta sessão). **Enquadrar como reforço**,
-que é o que é: o chão certo mostra um ganho real de 1,67× e um prior de 13 constantes a bater o
-modelo — a terceira vitória do método simples, coerente com a tese que o trabalho já defende.
-*Decisão do aluno:* corrigir a coluna na tabela congelada (obriga a re-correr o treino) **ou**
-deixá-la e acrescentar as linhas novas em texto. **Recomendação: a segunda** — aditiva, não toca em
-congelados, e explica o artefacto em vez de o apagar.
+### P1 — ✅ **FEITO** (2026-08-13). Chão da precisão@orçamento corrigido em todo o lado
+Executada a opção aditiva recomendada: a tabela congelada **fica** (é uma saída real do protocolo) e
+passa a trazer a ressalva na legenda; ao lado entra a **Tabela dos chãos** com as quatro ordenações,
+nas duas línguas. O `0.163` que sobrevive no texto é sempre a explicar-se a si próprio.
+
+**Alcance coberto (~48 sítios, 20 ficheiros):** `ch4`, `ch5`, `ch6` ×3 e `appendixA` ×2 nas **duas**
+teses; artigo IEEE ×2; slides EN e PT ×3 cada; guia de estudo ×6; quizz ×4 (a resposta
+auto-corrigida continua a ser a mesma opção); `guiao_de_defesa` ×4, `simulacro_defesa` ×3,
+`THESIS_FACT_SHEET`, `autoteste`, `guia_pessoal`, `learning.md`, `roadmap_rq4`.
+Os **6 sítios do LOF** ficaram intocados, como deviam.
+
+**O que a tese passa a dizer:** o ganho é **1,67×** e não ~4×; um prior de 13 constantes dá
+**0,662** contra os 0,632 do modelo; e o veredicto da RQ4 ganha a ressalva de que *ordenar por
+volatilidade* compensa, não que *aprender* compensa. A Matriz de Evidência ganha duas linhas
+(uma **estreitada duas vezes**, uma **retirada**) e o total de retiradas passa de "oito" — que já
+estava **desactualizado em três** — para **doze**.
+
+⚠️ **Uma coisa que NÃO se fez, de propósito:** o `docs/evaluation/evaluation_triage.md` continua a
+mostrar `0.163` sem ressalva. É gerado pelo `train_triage.py` e editá-lo à mão contraria a regra
+"não editar à mão"; corrigi-lo a sério obriga a re-correr o treino. **Fica para quando o treino for
+re-corrido** — e a ressalva deve entrar no gerador, não no ficheiro.
+
+**Portas depois de P1:** 709 testes, ruff limpo, EN **130 pp** / PT **139 pp** a 0 erros e 0
+indefinidas, overfull máx **14 pt** nas duas (a tabela nova precisou de `\small` e coluna mais
+estreita: a versão PT chegou a 54 pt), paridade EN↔PT **0 assimetrias**, 274 refs / 169 labels
+iguais nas duas, congelados intactos.
 
 ### P2 — A2 fechado · resta a guarda que o impede de voltar · S
 O artefacto foi reposto e a afirmação da Matriz de Evidência está sustentada (§9-A2). O que **falta**

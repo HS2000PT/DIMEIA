@@ -31,9 +31,29 @@
   **E fortalece a tese:** é a 3.ª vez que o método simples ganha, depois do z-score contra o
   Isolation Forest e da volatilidade contra o texto. Evidência nova e regenerável:
   `scripts/evaluate_budget_baselines.py` → `docs/evaluation/evaluation_budget_baselines.md`.
-  **⏭️ A propagação para a tese (EN+PT) e para o pack de defesa é a P1 e NÃO foi feita** — muda um
-  número de destaque a 31 dias da entrega e a forma de o enquadrar é decisão do aluno (recomendação
-  escrita no plano: acrescentar as linhas novas em texto, sem tocar na tabela congelada).
+  **✅ (B2) A PROPAGAÇÃO (P1) FOI FEITA a seguir, no mesmo dia, pela opção aditiva:** a tabela
+  congelada **fica** (é saída real do protocolo) com a ressalva na legenda, e ao lado entra a
+  **Tabela dos chãos** com as quatro ordenações, nas duas línguas. **~48 sítios em 20 ficheiros:**
+  `ch4`, `ch5`, `ch6`×3 e `appendixA`×2 nas duas teses; artigo IEEE ×2; slides EN e PT ×3 cada; guia
+  de estudo ×6; quizz ×4 (a resposta auto-corrigida mantém-se na mesma opção); `guiao_de_defesa`×4,
+  `simulacro_defesa`×3, `THESIS_FACT_SHEET`, `autoteste`, `guia_pessoal`, `learning.md`,
+  `roadmap_rq4`. **Os 6 sítios do LOF ficaram intocados**, como deviam.
+  A tese passa a dizer **1,67×** e não ~4×; que um prior de **13 constantes dá 0,662** contra os
+  0,632 do modelo; e a RQ4 ganha a ressalva de que *ordenar por volatilidade* compensa, não que
+  *aprender* compensa. **A Matriz de Evidência ganha duas linhas** (uma estreitada duas vezes, uma
+  retirada) e o total de retiradas passa de "oito" — **que já estava desactualizado em três** — para
+  **doze**.
+  ⚠️ **NÃO feito de propósito:** o `evaluation_triage.md` continua a mostrar `0.163` sem ressalva —
+  é gerado, editá-lo à mão contraria a própria regra do ficheiro, e corrigi-lo a sério obriga a
+  re-correr o treino. **A ressalva tem de entrar no gerador**, não no ficheiro.
+  ⚠️ **Duas armadilhas confirmadas outra vez:** (1) um heredoc converteu o `\t` de `\textbf` num
+  **TAB** e duas substituições falharam em silêncio — usar a ferramenta de edição ou strings `r"..."`;
+  (2) a tabela nova rebentou a caixa em **54 pt** na PT (o português é mais largo) ⇒ `\small` e
+  coluna mais estreita nas duas.
+  **Portas depois de P1: 709 testes, ruff limpo, EN 130 pp / PT 139 pp a 0 erros e 0 indefinidas,
+  overfull máx 14 pt nas duas, paridade EN↔PT 0 assimetrias, 274 refs / 169 labels iguais,
+  congelados intactos.** Contagens ressincronizadas em 8 ficheiros (o `CHECKLIST` dizia PT 134 pp e
+  o guião/simulacro diziam **124/134**, os dois desactualizados de antes desta sessão).
   **⚠️ (C) EVIDÊNCIA APAGADA POR UMA RE-CORRIDA, e a lição é nova:** o `.md` do bootstrap de cluster
   não tinha as linhas do texto — `evaluate_triage_uncertainty.py` corre `["vol","context"]` salvo
   `--with-text` — enquanto a prosa por baixo e a Matriz de Evidência afirmavam `vol−full` e
@@ -2142,7 +2162,7 @@
 > **ESTADO ACTUAL (sessão 56, 2026-08-12), e a única fonte fiável é compilar:**
 > 6 capítulos canónicos MEIA (Introduction · State of the Art · Methods and Materials ·
 > InvestiGator · Case Studies · Conclusions) + Apêndice A.
-> **EN 128 pp · PT 139 pp · 0 erros · 0 citações e referências indefinidas · 0 overfull >15pt.**
+> **EN 130 pp · PT 139 pp · 0 erros · 0 citações e referências indefinidas · 0 overfull >15pt.**
 > **63 referências** verificadas uma a uma (88 com as do artigo IEEE).
 > Paridade EN↔PT: **0 assimetrias** estruturais nos 7 capítulos e **0** nas frases com citação
 > (89 chaves). **270 referências cruzadas, 168 labels, 0 incompatibilidades de tipo** — verificado

@@ -190,7 +190,7 @@ re-treino, não um re-treino.
 - PR-AUC: volatilidade **0,542** > contexto 0,538 > contexto+texto **0,496** > GBM 0,469.
   **O texto piora.** Comparação pré-comprometida.
 - Valor de produto (em dados retidos): precisão dentro do orçamento de 5 alertas/dia sobe de
-  **0,163** para **0,632**.
+  **0,379** para **0,632**.
 - **⚠️ Ao vivo não transfere:** ROC-AUC **0,494**, IC [0,391, 0,601] sobre 145 pares
   empresa-dia. Centrado no acaso.
 

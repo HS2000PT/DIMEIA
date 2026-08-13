@@ -195,7 +195,8 @@ Anomaly detection, $F_1$ (z-score vs fixed threshold) & 0.516 vs 0.218 & CS1 \\
 Statistical rule vs learned detectors, $F_1$ (z-score / IF / LOF) & 0.530 / 0.269 / 0.280 & CS1 \\
 EWMA volatility (validated future), $F_1$ vs rolling & 0.664 vs 0.516 & CS1 \\
 Materiality triage, PR-AUC (volatility / context / full) & 0.542 / 0.538 / 0.496 & CS4 \\
-Triage precision@5 per day vs alert-always & 0.632 vs 0.163 & CS4 \\
+Triage precision@5 per day vs random ranking & 0.632 vs 0.379 & CS4 \\
+Triage precision@5 per day vs a per-ticker volatility prior & 0.632 vs 0.662 & CS4 \\
 Extended feature ablation, PR-AUC (context $+$ 5 signals) & 0.535 ($\Delta{-}0.002$) & CS4 \\
 Worked triage decision (META, 12 Jul 2026) & $p = 0.539$ (54\%) & CS4 \\
 Production selectivity (headlines : alerts sent) & 22\,:\,1 & CS2 \\
@@ -290,7 +291,8 @@ Training is deterministic and reproduces the stored artefacts & Frozen bundle re
 No lookahead in the features & Mutating the future leaves features identical and changes the label & Listing~\ref{lst:leakage} & Test & Kept \\
 Blocks do not share label windows & Split by unique day $+$ embargo ($820$ rows dropped) & Listing~\ref{lst:split} & Test & Kept \\
 No text model beats the volatility baseline & PR-AUC $0.542$ vs $0.496$; survives cluster bootstrap, a fair re-test and a change of metric & §\ref{sec:cs_triage} & Script & Kept \\
-Triage raises within-budget precision $0.163 \to 0.632$ & Held-out block of the training corpus & §\ref{sec:cs_triage} & Script & \textbf{Narrowed} to evaluation set \\
+Triage raises within-budget precision $0.163 \to 0.632$, nearly four times & The $0.163$ floor ranks alphabetically, not blindly; a random ranking scores $0.379$ & §\ref{sec:cs_triage} & Script & \textbf{Narrowed} twice: to the evaluation set, then to $1.67\times$ \\
+Learning is what earns the budgeted gain & A per-ticker volatility prior of $13$ constants scores $0.662$ vs the model's $0.632$ & §\ref{sec:cs_triage} & Script & \textbf{Withdrawn} \\
 The deployed gate selects material news & ROC-AUC $0.494$, cluster CI $[0.391, 0.601]$, on $145$ (ticker, day) units & §\ref{sec:concl_limitations} & Live & \textbf{Withdrawn} \\
 The deployed gate controls volume & Suppresses $\sim$3/5 of news decisions & §\ref{sec:investigator_deploy} & Live & Kept \\
 \midrule
@@ -324,10 +326,13 @@ Precedent retrieval cannot run on the page & Held for the server-rendered design
 \end{tabular}
 \end{table}
 
-Two observations about the table as a whole, rather than about any row in it. First, eight claims were
+Two observations about the table as a whole, rather than about any row in it. First, twelve claims were
 withdrawn or narrowed, and all of them were withdrawn by \emph{this work's own measurements} rather
 than by review. That is the intended behaviour of an evaluation designed before the experiments: it is
-supposed to be able to say no. Second, the rows with the weakest evidence column are also the rows
+supposed to be able to say no. The most recent of them is also the most instructive, because it was
+found by asking what a \emph{baseline} measured rather than what a model scored: the floor this work
+had been comparing its triage against ranked alphabetically, and replacing it with one that ranks at
+random cut the headline gain from a factor of four to a factor of $1.67$. Second, the rows with the weakest evidence column are also the rows
 this dissertation leans on least, and the strongest claim it makes, the no-lookahead guarantee, is the
 one enforced by a test rather than by prose. Where a claim could not be supported, it appears here as
 withdrawn rather than as absent.

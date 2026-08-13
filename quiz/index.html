@@ -298,9 +298,9 @@ const BANCO = [
  título — e isto foi <b>pré-comprometido</b>: a linha de base foi escolhida antes de correr.</p>`},
 
 {b:"Os números", n:1, t:"escolha",
- q:"Precisão da triagem dentro de um orçamento de 5 alertas/dia (vs 0,163 às cegas):",
+ q:"Precisão da triagem dentro de um orçamento de 5 alertas/dia (vs 0,379 de uma ordenação aleatória):",
  opts:["0,632","0,542","0,667","0,595"], ok:0,
- a:`<b>0,632</b> contra <b>0,163</b> de alertar às cegas — quase quadruplica.
+ a:`<b>0,632</b> contra <b>0,379</b> de ordenar ao acaso — sobe 1,67×. O <b>0,163</b> que esta tese citava era o chão de "alertar-sempre", e não media escolher às cegas: com pontuação constante o desempate segue a ordem do ficheiro, que é alfabética.
  <p>É o valor de produto, e sobrevive ao negativo do texto. A resposta ao <i>"o vosso modelo
  perdeu"</i> vive neste número.</p>`},
 
@@ -564,7 +564,7 @@ const BANCO = [
  descartada à tarde <b>sem deixar rasto</b>.
  <p><b>O que isso revelou é a parte que interessa:</b> o sistema já tinha o instrumento certo. O
  modelo de triagem existe exactamente para ordenar por materialidade — dentro de um orçamento de
- 5 alertas eleva a precisão de <code>0,163</code> para <code>0,632</code> — e o tecto
+ 5 alertas eleva a precisão de <code>0,379</code> para <code>0,632</code> — e o tecto
  <b>nunca o consultava</b>. A pontuação era medida e depois ignorada.</p>
  <p>⚠️ E a primeira correcção <b>não funcionou</b>, o que é a parte que vale a pena saber contar:
  ordenar só reordena candidatas presentes ao mesmo tempo, e a varredura emite <b>uma manchete por
@@ -664,7 +664,7 @@ const BANCO = [
  a:`<b>Não, é o resultado.</b> A comparação foi <b>pré-comprometida</b>: decidi antes de correr
  que a volatilidade era a linha de base a bater. Não bateu, e reporto-o.
  <p>Como mecanismo de produto, a triagem <b>quadruplica</b> a precisão dentro do orçamento
- (0,632 vs 0,163). E um trabalho que só reporta o que correu bem é um trabalho em que não se
+ (0,632 vs 0,379). E um trabalho que só reporta o que correu bem é um trabalho em que não se
  pode confiar.</p>`},
 
 {b:"As que doem", n:1, t:"aberta", q:"\"Construiu quatro coisas e não usou nenhuma.\"",

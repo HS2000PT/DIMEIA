@@ -12,14 +12,15 @@ Da `evaluation_triage.md` (FNSPID 2018-2023; teste 32 649 linhas, prevalência 0
 
 | Modelo | PR-AUC | Brier | Precisão@5/dia |
 |---|---|---|---|
-| Alertar-sempre (chão) | 0,378 | 0,622 | 0,163 |
+| Alertar-sempre (chão alfabético) | 0,378 | 0,622 | 0,163 |
+| Ordenação aleatória (chão real) | 0,378 | — | 0,379 |
 | LR só-volatilidade | **0,542** | 0,218 | 0,632 |
 | LR só-contexto | 0,538 | 0,224 | 0,632 |
 | LR contexto+texto | 0,496 | 0,229 | 0,585 |
 
 **Leitura honesta (o que a tese já diz):** nenhum modelo com TEXTO bate a volatilidade em
 PR-AUC — reportado tal como é. **MAS** como *mecanismo de triagem*, a precisão@orçamento salta
-de 0,163 (alertar sempre) para **0,632** (≈4×): o modelo vale para **priorizar**, não para
+de 0,379 (ordenação aleatória) para **0,632** (1,67×): o modelo vale para **priorizar**, não para
 prever. É daqui que partimos. Há margem — e cada passo abaixo é defensável e ensina.
 
 ## Eixo 1 — Novos critérios (features) + estudo de ablação  ✅ FEITO (2026-07-22)

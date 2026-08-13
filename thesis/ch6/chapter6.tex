@@ -35,7 +35,7 @@ RQ3: faithful and useful explanations
   & faithful by construction; no human study yet \\
 RQ4: triage beyond volatility
   & \colorbox{yellow!25}{Offline yes; text no}
-  & share $0.163 \to 0.632$; PR-AUC $0.542$ vs $0.496$ \\
+  & share $0.379 \to 0.632$; PR-AUC $0.542$ vs $0.496$ \\
 \bottomrule
 \end{tabular}
 \caption[The four research questions at a glance]{The four research questions and their verdicts,
@@ -128,8 +128,13 @@ for it here.
 \textbf{No on the text hypothesis; yes on the mechanism.} A supervised materiality model was trained,
 calibrated and tested on $79{,}753$ FNSPID examples (2018--2023) under a strict temporal protocol. As a
 product mechanism, learned triage is worthwhile \emph{on held-out data from the corpus it was fitted
-on}: within a five-alerts-per-day budget it raised the share of material alerts from $0.163$ to
-$0.632$, with calibrated probabilities. That qualification is not decorative. Measured in deployment,
+on}: within a five-alerts-per-day budget it raised the share of material alerts from $0.379$ to
+$0.632$, with calibrated probabilities. Two qualifications sit on that sentence and neither is
+decorative. The first is the floor: an earlier version of this verdict compared against $0.163$,
+which turned out to measure alphabetical rather than blind selection
+(Section~\ref{sec:cs_triage}), so the gain is a factor of $1.67$ and not of nearly four. The second
+is that the \emph{learned} part is not what earns it --- a per-company volatility prior of thirteen
+constants scores $0.662$ on the same metric. Measured in deployment,
 on a population enriched by the upstream filters, the same gate shows no significant benefit
 (Section~\ref{sec:concl_limitations}), so the mechanism claim is an evaluation-set claim and is stated
 as one. But the
@@ -345,7 +350,7 @@ Several limitations remain, stated plainly:
         under one such oscillation, not as promises about a later period.
   \item \textbf{The deployed gate shows no measurable benefit on live data, and the reason is
         instructive.} The offline result of Chapter~\ref{chap:casestudies} (budgeted precision
-        $0.163 \to 0.632$) is an evaluation-set result. In deployment the system logs every triage
+        $0.379 \to 0.632$) is an evaluation-set result. In deployment the system logs every triage
         decision and labels it days later with the outcome that actually followed, using the same
         rule as training. Over $530$ matured decisions the alerts the gate \emph{kept} were material
         $0.592$ of the time against $0.647$ for the ones it \emph{suppressed}: no benefit, with the

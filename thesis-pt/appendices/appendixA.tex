@@ -199,7 +199,8 @@ Deteção de anomalias, $F_1$ (z-score vs limiar fixo) & 0.516 vs 0.218 & CS1 \\
 Regra estatística vs detetores aprendidos, $F_1$ (z-score / IF / LOF) & 0.530 / 0.269 / 0.280 & CS1 \\
 Volatilidade EWMA (futuro validado), $F_1$ vs deslizante & 0.664 vs 0.516 & CS1 \\
 Triagem de materialidade, PR-AUC (volatilidade / contexto / completo) & 0.542 / 0.538 / 0.496 & CS4 \\
-Precisão@5 da triagem por dia vs alertar-sempre & 0.632 vs 0.163 & CS4 \\
+Precisão@5 da triagem por dia vs ordenação aleatória & 0.632 vs 0.379 & CS4 \\
+Precisão@5 da triagem por dia vs prior de volatilidade por ticker & 0.632 vs 0.662 & CS4 \\
 Ablação de features estendida, PR-AUC (contexto $+$ 5 sinais) & 0.535 ($\Delta{-}0.002$) & CS4 \\
 Decisão de triagem trabalhada (META, 12 Jul 2026) & $p = 0.539$ (54\%) & CS4 \\
 Seletividade de produção (manchetes : alertas enviados) & 22\,:\,1 & CS2 \\
@@ -294,7 +295,8 @@ O treino é determinístico e reproduz os artefactos guardados & O bundle congel
 Sem lookahead nas features & Mutar o futuro deixa as features iguais e muda o rótulo & Excerto~\ref{lst:leakage} & Teste & Mantida \\
 Os blocos não partilham janelas de rótulo & Divisão por dia único $+$ embargo ($820$ linhas largadas) & Excerto~\ref{lst:split} & Teste & Mantida \\
 Nenhum modelo com texto bate a linha de base de volatilidade & PR-AUC $0.542$ vs $0.496$; sobrevive a bootstrap de cluster, a um re-teste justo e a uma troca de métrica & §\ref{sec:cs_triage} & Script & Mantida \\
-A triagem eleva a precisão no orçamento $0.163 \to 0.632$ & Bloco retido do corpus de treino & §\ref{sec:cs_triage} & Script & \textbf{Estreitada} ao conjunto de avaliação \\
+A triagem eleva a precisão no orçamento $0.163 \to 0.632$, quase quatro vezes & O chão $0.163$ ordena alfabeticamente, não às cegas; uma ordenação aleatória dá $0.379$ & §\ref{sec:cs_triage} & Script & \textbf{Estreitada} duas vezes: ao conjunto de avaliação, e depois a $1.67\times$ \\
+É a aprendizagem que merece o ganho no orçamento & Um prior de volatilidade por ticker, de $13$ constantes, dá $0.662$ contra os $0.632$ do modelo & §\ref{sec:cs_triage} & Script & \textbf{Retirada} \\
 O gate implantado seleciona notícias materiais & ROC-AUC $0.494$, IC de cluster $[0.391, 0.601]$, em $145$ unidades (ticker, dia) & §\ref{sec:concl_limitations} & Vivo & \textbf{Retirada} \\
 O gate implantado controla o volume & Suprime $\sim$3/5 das decisões de notícia & §\ref{sec:investigator_deploy} & Vivo & Mantida \\
 \midrule
@@ -329,9 +331,13 @@ A recuperação de precedentes não pode correr na página & Valia só para o de
 \end{table}
 
 Duas observações sobre a tabela no seu conjunto, e não sobre qualquer linha em particular. Primeira,
-oito afirmações foram retiradas ou estreitadas, e todas elas o foram pelas \emph{medições do
+doze afirmações foram retiradas ou estreitadas, e todas elas o foram pelas \emph{medições do
 próprio trabalho} e não por revisão externa. É o comportamento pretendido de uma avaliação desenhada
-antes das experiências: tem de ser capaz de dizer não. Segunda, as linhas com a coluna de evidência
+antes das experiências: tem de ser capaz de dizer não. A mais recente é também a mais instrutiva,
+porque saiu de perguntar o que uma \emph{linha de base} media e não que pontuação um modelo tinha: o
+chão contra o qual este trabalho vinha a comparar a sua triagem ordenava alfabeticamente, e substituí-lo
+por um que ordena ao acaso cortou o ganho anunciado de um fator de quatro para um fator de $1.67$.
+Segunda, as linhas com a coluna de evidência
 mais fraca são também aquelas em que esta dissertação menos se apoia, e a afirmação mais forte que faz,
 a garantia de não-lookahead, é a que está imposta por um teste e não por prosa. Onde uma afirmação não
 pôde ser sustentada, aparece aqui como retirada e não como ausente.

@@ -36,7 +36,7 @@ retrieval reaches a cross-ticker precision@5 of $0.514\pm0.015$ against $0.240$ 
 a lexical baseline, and a volatility-normalised detector fires far more consistently across instruments
 (firing-rate range $0.015$) than a fixed threshold ($0.344$). A supervised materiality-triage model,
 trained on $79{,}753$ multi-year news--market examples, nearly quadruples within-budget alert precision
-($0.632$ vs $0.163$), although no model reading the headline text beat a volatility-only baseline, a
+($0.632$ vs $0.379$ for a random ranking), although no model reading the headline text beat a volatility-only baseline, a
 finding we report as it stands. All results are reproducible from versioned scripts, with limitations
 stated explicitly.
 \end{abstract}
@@ -236,7 +236,7 @@ every trained ranker clears the always-alert floor by a wide margin, but no mode
 text beats the volatility-only baseline: PR-AUC $0.542$ for a volatility-only logistic regression,
 against $0.538$ (context-only), $0.496$ (context$+$text), $0.469$ (gradient boosting) and $0.439$
 (text-only), floor $0.378$. As a product mechanism, however, triage is clearly worthwhile: within a
-budget of five alerts per day it raises the share of material alerts from $0.163$ to $0.632$, with
+budget of five alerts per day it raises the share of material alerts from $0.379$ to $0.632$, with
 calibrated probabilities (Brier $0.218$ against $0.622$). The same discipline was applied on the anomaly
 side, where an Isolation Forest \cite{liu2008isolation} trained causally on identical information lost to
 the $z$-score on the identical evaluation region ($F_1$ $0.271$ vs $0.530$). Both

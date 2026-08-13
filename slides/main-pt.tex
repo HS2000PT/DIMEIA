@@ -361,7 +361,7 @@ paráfrases é ilimitado e qualquer lista dele é finita, por isso a guarda foi 
 \toprule
 Modelo & PR-AUC & P@5/dia \\
 \midrule
-Sempre (base) & 0.378 & 0.163 \\
+Ordenação aleatória (base) & 0.378 & 0.379 \\
 \textbf{Volatilidade LR} & \textbf{0.542} & \textbf{0.632} \\
 Contexto LR & 0.538 & 0.632 \\
 Contexto$+$texto LR & 0.496 & 0.585 \\
@@ -371,7 +371,7 @@ Gradient boosting & 0.469 & 0.551 \\
 \end{columns}
 \vfill
 \begin{block}{\small O veredicto honesto (pré-comprometido)}
-\small Dentro de um orçamento de 5 alertas/dia, a triagem quase \textbf{quadruplica a precisão} ($0.632$ vs $0.163$) \emph{em dados retidos do corpus de treino} --- mas \textbf{nenhum modelo de texto bateu a volatilidade}. Uma ablação de seguimento juntou \emph{cinco} features de contexto baratas (regime de mercado, momentum, reação padronizada, risco de queda): PR-AUC $0.535$, de novo \textbf{sem ganho}. Um re-teste \emph{justo} (C afinado, texto reduzido por PCA, um encoder de domínio FinBERT) continua a não bater a volatilidade, pelo que o negativo é \textbf{robusto}, não um artefacto de sub-ajuste. O sinal é o contexto de mercado; reportado tal como se revelou.
+\small Dentro de um orçamento de 5 alertas/dia, a triagem sobe a precisão \textbf{$1.67\times$} ($0.632$ vs $0.379$) \emph{em dados retidos do corpus de treino} --- mas \textbf{nenhum modelo de texto bateu a volatilidade}. Uma ablação de seguimento juntou \emph{cinco} features de contexto baratas (regime de mercado, momentum, reação padronizada, risco de queda): PR-AUC $0.535$, de novo \textbf{sem ganho}. Um re-teste \emph{justo} (C afinado, texto reduzido por PCA, um encoder de domínio FinBERT) continua a não bater a volatilidade, pelo que o negativo é \textbf{robusto}, não um artefacto de sub-ajuste. O sinal é o contexto de mercado; reportado tal como se revelou.
 \end{block}
 \end{frame}
 
@@ -389,7 +389,7 @@ deixar rasto em log nenhum}.
 \column{0.5\textwidth}
 \begin{block}{\small A parte incómoda}
 \small O instrumento já lá estava. A triagem existe para ordenar por materialidade, e eleva a
-precisão de $0.163$ para $\mathbf{0.632}$ num orçamento de 5 alertas --- e \textbf{o tecto nunca a
+precisão de $0.379$ para $\mathbf{0.632}$ num orçamento de 5 alertas --- e \textbf{o tecto nunca a
 consultava}. A pontuação era medida e depois ignorada.
 \end{block}
 \smallskip

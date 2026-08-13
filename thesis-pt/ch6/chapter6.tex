@@ -36,7 +36,7 @@ RQ3: explicações fiéis e úteis
   & fiel por construção; ainda sem estudo humano \\
 RQ4: triagem para além da volatilidade
   & \colorbox{yellow!25}{Offline sim; texto não}
-  & quota $0.163 \to 0.632$; PR-AUC $0.542$ vs $0.496$ \\
+  & quota $0.379 \to 0.632$; PR-AUC $0.542$ vs $0.496$ \\
 \bottomrule
 \end{tabular}
 \caption[As quatro questões de investigação num relance]{As quatro questões de investigação e os seus
@@ -135,7 +135,12 @@ se faz aqui nenhuma afirmação de utilidade para ele.
 treinado, calibrado e testado em $79{,}753$ exemplos do FNSPID (2018--2023) sob um protocolo temporal
 estrito. Como mecanismo de produto, a triagem aprendida é valiosa \emph{em dados retidos do corpus em
 que foi ajustada}: dentro de um orçamento de cinco alertas por dia, elevou a quota de alertas materiais
-de $0.163$ para $0.632$, com probabilidades calibradas. Esta qualificação não é decorativa. Medido em
+de $0.379$ para $0.632$, com probabilidades calibradas. Duas ressalvas assentam nesta frase e nenhuma
+é decorativa. A primeira é o chão: uma versão anterior deste veredicto comparava contra $0.163$, que
+afinal media a seleção alfabética e não a seleção cega (Secção~\ref{sec:cs_triage}), pelo que o ganho
+é de um fator de $1.67$ e não de quase quatro. A segunda é que não é a parte \emph{aprendida} que o
+merece --- um prior de volatilidade por empresa, de treze constantes, dá $0.662$ na mesma métrica.
+Medido em
 produção, sobre uma população enriquecida pelos filtros a montante, o mesmo gate não mostra benefício
 significativo (Secção~\ref{sec:concl_limitations}), pelo que a afirmação sobre o mecanismo é uma
 afirmação de conjunto de avaliação e é enunciada como tal. Mas a comparação decisiva pré-comprometida
@@ -362,7 +367,7 @@ Restam várias limitações, enunciadas com clareza:
         medições sob uma dessas oscilações, e não como promessas sobre um período posterior.
   \item \textbf{O gate implantado não mostra benefício mensurável em dados ao vivo, e a razão é
         instrutiva.} O resultado offline do Capítulo~\ref{chap:casestudies} (precisão dentro do
-        orçamento $0.163 \to 0.632$) é um resultado de conjunto de avaliação. Em produção o sistema
+        orçamento $0.379 \to 0.632$) é um resultado de conjunto de avaliação. Em produção o sistema
         regista cada decisão de triagem e rotula-a dias depois com o desfecho que se seguiu, pela
         mesma regra do treino. Sobre $530$ decisões maturadas, os alertas que o gate \emph{manteve}
         foram materiais $0.592$ das vezes contra $0.647$ nos que \emph{suprimiu}: nenhum benefício,

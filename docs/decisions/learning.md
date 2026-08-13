@@ -231,7 +231,7 @@ gradient boosting (Friedman 2001; teto de capacidade).
 `docs/evaluation/evaluation_triage.md`):** PR-AUC — só-volatilidade **0,542** > só-contexto 0,538 >
 contexto+texto 0,496 > GBM 0,469 > só-texto 0,439 > alertar-sempre 0,378. **Nenhum modelo com texto
 bateu a baseline de volatilidade** (o resultado honesto pré-comprometido). MAS a triagem vale como
-mecanismo de produto: **precisão@5 alertas/dia 0,632 vs 0,163** do alertar-sempre (quase 4×), com
+mecanismo de produto: **precisão@5 alertas/dia 0,632 vs 0,379** de uma ordenação aleatória (1,67×), com
 probabilidades calibradas (Brier 0,218 vs 0,622).
 - **Como explico ao júri em 3 frases (o resultado):** "Com 6 anos de dados, todos os modelos treinados
   ficam muito acima do chão alertar-sempre — dentro de um orçamento de 5 alertas/dia, a triagem quase

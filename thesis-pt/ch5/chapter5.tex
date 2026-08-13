@@ -487,7 +487,10 @@ interpretável.
 
 \begin{table}[ht]
 \caption{Triagem de materialidade sobre o corpus FNSPID (bloco de teste; prevalência $0.378$). A PR-AUC é a
-métrica primária; a precisão@orçamento admite no máximo cinco alertas por dia.}
+métrica primária; a precisão@orçamento admite no máximo cinco alertas por dia. A precisão@orçamento da
+linha alertar-sempre depende da ordem e é discutida abaixo: com uma pontuação constante, a métrica
+orçamentada desempata pela ordem das linhas, portanto esse valor mede a seleção alfabética e não a
+seleção cega. As outras três colunas dessa linha não dependem da ordem.}
 \label{tab:cs_triage}
 \centering
 \begin{tabular}{l c c c c}
@@ -523,23 +526,67 @@ observadas, que é o que torna a pontuação honesta de mostrar a um utilizador 
 \label{fig:cs_triage_cal}
 \end{figure}
 
-\paragraph{Ler o resultado.} Três observações, por ordem decrescente de peso prático. Primeiro, \emph{a triagem
-funciona como mecanismo de produto}: dentro de um orçamento de cinco alertas por dia, ordenar por qualquer
-pontuação treinada eleva a fração de alertas materiais de $0.163$ (escolhendo às cegas) para $0.632$, quase
-quatro vezes melhor, com probabilidades calibradas (Brier $0.218$ contra $0.622$ do chão). Este é o retorno de
-combate à fadiga de alertas para que o componente foi construído. Segundo, \emph{o sinal é o contexto de
-mercado, não o texto}: a linha de base só-volatilidade atinge a melhor PR-AUC ($0.542$), o modelo só-contexto
-iguala-a na precisão orçamentada, e acrescentar o embedding da manchete \emph{baixa} o modelo linear para
-$0.496$; o ensemble com gradient boosting não recupera a diferença ($0.469$). As manchetes sozinhas estão bem
-acima do chão ($0.439$) mas bem abaixo da volatilidade. Terceiro, a resposta à \gls{RQ}4 tal como colocada é,
-portanto, \emph{negativa na hipótese do texto e positiva no mecanismo}: um ranker supervisionado e calibrado
-acrescenta valor de produto real sobre o alerta ingénuo, mas neste corpus e com esta representação de texto não
-bate a simples linha de base da volatilidade que era obrigado a bater. Esta é a segunda vez neste capítulo que
-um método aprendido recebeu uma comparação justa e causal contra a escolha transparente e perdeu (Estudo de
-Caso~1); ambas as comparações foram pré-comprometidas na Secção~\ref{sec:met_evaluation}, e ambas validam o
-desenho simplicidade-primeiro da dissertação com evidência e não com pressuposto. A variante em produção
-(só-contexto, Secção~\ref{sec:investigator_logic}) é consistente com este achado: usa exatamente as features
-que carregam o sinal.
+\begin{table}[ht]
+\caption[Chãos para a precisão orçamentada]{Quanto vale ordenar \emph{sem} modelo sob o mesmo orçamento
+de cinco alertas por dia, no mesmo bloco de teste. A última linha reproduz a
+Tabela~\ref{tab:cs_triage} ao milésimo, e é isso que estabelece que as quatro linhas partilham um só
+protocolo; o procedimento recusa-se a reportar seja o que for se não reproduzir.}
+\label{tab:cs_triage_floors}
+\centering
+\small
+\begin{tabular}{l c p{0.34\textwidth}}
+\toprule
+\tabhead{Regra de ordenação} & \tabhead{Prec.@orç.} & \tabhead{O que é de facto} \\
+\midrule
+Alertar sempre (constante)         & 0.163            & ordem alfabética, não uma escolha \\
+Permutação aleatória (40 sementes) & $0.379 \pm 0.017$ & o que quer dizer escolher às cegas \\
+Prior de volatilidade por ticker   & \textbf{0.662}   & treze constantes do bloco de treino; não lê manchete nem corre modelo \\
+Modelo só-contexto implantado      & 0.632            & o resultado congelado \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Ler o resultado.} Quatro observações, por ordem decrescente de peso prático.
+
+Primeiro, \emph{ordenar sob orçamento funciona, mas menos do que o chão dava a entender}, e a
+correção vale mais do que a afirmação original. Uma versão anterior deste parágrafo dizia que a
+triagem eleva a fração de alertas materiais de $0.163$, ``escolhendo às cegas'', para $0.632$, quase
+quatro vezes. O $0.163$ não mede escolher às cegas. O modelo alertar-sempre dá a mesma pontuação a
+todas as manchetes, e a métrica orçamentada desempata pela ordem de chegada das linhas; o corpus está
+ordenado por data e depois por ticker, portanto uma pontuação constante seleciona a empresa
+alfabeticamente primeira de cada dia. As $1{,}105$ linhas que escolhe são todas da Apple, cuja
+taxa-base é a mais baixa do bloco de teste. Contra chãos que são ordenações a sério
+(Tabela~\ref{tab:cs_triage_floors}), uma permutação aleatória dá $0.379$ --- que é a prevalência,
+como tem de ser, e essa coincidência é a verificação de sanidade da própria métrica. A pontuação
+treinada eleva portanto a precisão orçamentada por um fator de $1.67$, e não de quase quatro. O
+retorno contra a fadiga de alertas é real e é menor do que foi afirmado.
+
+Segundo, e menos confortável, \emph{uma tabela de constantes bate o modelo treinado nesta métrica}.
+Ordenar as manchetes de cada dia pela mediana da volatilidade pré-evento da respetiva empresa,
+calculada apenas sobre o bloco de treino, não lê manchete nenhuma nem corre inferência; dá $0.662$
+contra os $0.632$ do modelo implantado. Isto é consistente com tudo o resto desta secção e não uma
+surpresa: a pontuação do modelo de contexto é dominada pela volatilidade recente, portanto um resumo
+por empresa dessa mesma quantidade capta quase tudo o que ele sabe.
+
+Terceiro, \emph{o sinal é o contexto de mercado, não o texto}: a linha de base só-volatilidade atinge
+a melhor PR-AUC ($0.542$), o modelo só-contexto iguala-a na precisão orçamentada, e acrescentar o
+embedding da manchete \emph{baixa} o modelo linear para $0.496$; o ensemble com gradient boosting não
+recupera a diferença ($0.469$). As manchetes sozinhas estão bem acima do chão da prevalência
+($0.439$) mas bem abaixo da volatilidade.
+
+Quarto, a resposta à \gls{RQ}4 tal como colocada é \emph{negativa na hipótese do texto, e positiva no
+mecanismo com uma ressalva que tem de ser dita}. Ordenar sob orçamento entrega mesmo valor de produto
+sobre o alerta cego. Mas não é o componente aprendido que o entrega: um prior estático por empresa
+faz o mesmo trabalho ligeiramente melhor, portanto o que a evidência sustenta é que \emph{ordenar por
+volatilidade} compensa, e não que \emph{aprender} compensa. Neste corpus e com esta representação de
+texto o modelo não bate a linha de base simples que era obrigado a bater, e também não bate uma
+trivial. Esta é a segunda vez neste capítulo que um método aprendido recebeu uma comparação justa e
+causal contra a escolha transparente e perdeu (Estudo de Caso~1). Essas duas comparações foram
+pré-comprometidas na Secção~\ref{sec:met_evaluation}. O prior por ticker \emph{não} foi: foi
+acrescentado depois, ao verificar o que o chão desta tabela media de facto, e é reportado aqui pela
+mesma razão que os outros dois --- porque foi corrido e saiu contra o modelo treinado. A variante em
+produção (só-contexto, Secção~\ref{sec:investigator_logic}) continua consistente com o achado: usa
+exatamente as features que carregam o sinal que existe.
 
 \paragraph{Ressalvas.} O rótulo é um proxy: o tamanho do movimento ajustado ao mercado, não o juízo humano de
 materialidade. As manchetes do mesmo dia partilham um rótulo, pelo que o tamanho efetivo da amostra é menor do
