@@ -29,3 +29,18 @@
     python scripts/analyse_usefulness.py
 
 That writes `docs/evaluation/evaluation_usefulness.md` — the Case Study 5 table.
+
+## Optional block C — the generated report (exploratory)
+
+Run this only if the participant still has energy; it adds ~10 min. It is **exploratory**, so its
+sheet is separate (`responses_block_c_template.csv`) and its rows must never be pooled with A/B.
+
+- Stimuli: `report_stimuli.md`, captured once from production and **frozen** (the report is written
+  by a language model and is not reproducible; generating it live would measure the model's
+  variation instead of the condition).
+- C1 = the panels alone · C2 = the panels plus the anchored report.
+- Then the part that matters most, and needs no statistics: pick **three anchored sentences** in
+  advance and ask the participant to open the cited fact and say whether it supports the sentence.
+  **Give no help.** If people cannot do it, the anchoring contribution is true and unusable.
+- Record `report_source` for each stimulus: one that fell back to the deterministic composition
+  does **not** test the generative layer.

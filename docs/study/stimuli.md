@@ -7,54 +7,54 @@
 **Facilitator: do not explain anything while the participant reads.** The point is
 whether the alert explains itself.
 
-## S1 — TSLA · 2026-07-27 · news  ⟵ **theme ≠ direction case**
+## S1 — TSLA · 2026-08-07 · news  ⟵ **theme ≠ direction case**
 
 **Condition A (bare fact)**
 
 ```
-📰 News alert for TSLA (Tesla) (2026-07-27)
-"Just 3 "Magnificent Seven" Stocks Remain Founder-Led. Should Investors Bet on Elon Musk, Mark Zucke…"
+📰 News alert for TSLA (Tesla) (2026-08-06)
+"Prediction: Tesla's Share Price Dip Will Prove an Excellent Buying Opportunity"
 ```
 
 **Condition B (full alert)**
 
 ```
-📰 News alert for TSLA (Tesla) (2026-07-27)
-"Just 3 "Magnificent Seven" Stocks Remain Founder-Led. Should Investors Bet on Elon Musk, Mark Zucke…"
+📰 News alert for TSLA (Tesla) (2026-08-06)
+"Prediction: Tesla's Share Price Dip Will Prove an Excellent Buying Opportunity"
 
-3 similar past headlines. Their 5-day move ranged -6.60% to -3.48% (average -4.81%):
-▸ -4.35% in 5d · TSLA 2026-07-14 (13d ago) · "Better Elon Musk Buy: SpaceX’s Ascent or Tesla’s Robotics Revolution?" (sim 0.60)
-▸ -3.48% in 5d · AAPL 2026-07-16 (11d ago) · "Warren Buffett's Hand-Picked Successor, Greg Abel, Has 30% of Berkshire Hathaway's Portfolio Invest…" (sim 0.54)
-▸ -6.60% in 5d · TSLA 2026-07-10 (17d ago) · "Elon Musk Has Some Wild Thoughts About SpaceX’s Valuation" (sim 0.56)
-3 of 3 shown cases moved down — topic-similar past cases, not a prediction for this news (an observed pattern, not a forecast).
+3 similar past headlines. Their 5-day move ranged -1.36% to +0.71% (average -0.67%):
+▸ -1.36% in 5d · XOM 2026-07-30 (8d ago) · "Chevron, ExxonMobil Earnings Preview: Higher Oil Prices Have Analysts Predicting Best Results in 15…" (sim 0.46)
+▸ +0.71% in 5d · NFLX 2026-07-30 (8d ago) · "Prediction: Netflix Stock Won't Double by 2031" (sim 0.44)
+▸ -1.36% in 5d · XOM 2026-07-30 (8d ago) · "Exxon Earnings, Chevron Earnings Face Steep Expectations: A Triple-Digit Profit Spurt" (sim 0.43)
+⚠ These cases moved in BOTH directions (1 up, 2 down) — similar in TOPIC, not in direction. Context, never a forecast.
 Observed past outcomes after similar news, not a price prediction and not advice.
-Risk estimate (learned triage): 63% chance of a bigger-than-usual move in the next few days, based on similar past cases — raised by recent volatility (20d) and sector; lowered by today's own move and recent momentum (5d). Triage evidence, not a forecast.
+Risk estimate (learned triage): 58% chance of a bigger-than-usual move in the next few days, based on similar past cases — raised by recent volatility (20d) and sector; lowered by today's own move. Triage evidence, not a forecast.
 ```
 
 ---
 
-## S2 — META · 2026-07-11 · news  ⟵ **theme ≠ direction case**
+## S2 — TSLA · 2026-07-16 · news  ⟵ **theme ≠ direction case**
 
 **Condition A (bare fact)**
 
 ```
-📰 News alert for META
-"Jim Cramer Remains Upbeat About Meta Platforms (META)"
+📰 News alert for TSLA (Tesla) (2026-07-16)
+"TSLA Stock Eyes Weekly Loss: Retail Investors Grill Musk On Missed Robotaxi Targets Ahead Of Q2 Ear…"
 ```
 
 **Condition B (full alert)**
 
 ```
-📰 News alert for META
-"Jim Cramer Remains Upbeat About Meta Platforms (META)"
+📰 News alert for TSLA (Tesla) (2026-07-16)
+"TSLA Stock Eyes Weekly Loss: Retail Investors Grill Musk On Missed Robotaxi Targets Ahead Of Q2 Ear…"
 
-3 similar past headlines — their 5-day moves ranged -2.84%…+8.87% (average +2.69%):
-▸ +2.06% in 5d · JNJ 2018-05-08 · "Jim Cramer Advises His Viewers On Prestige Brands, CVS Health And More" (sim 0.53)
-▸ -2.84% in 5d · JNJ 2018-12-18 · "Hearing CNBC's Jim Cramer, On 'Squawk On The Street,' Called J&J 'Absolutely A Buy'" (sim 0.52)
-▸ +8.87% in 5d · PFE 2020-03-27 · "Cramer Reveals Stock Favorites, Says Intuitive Surgical A 'Winner'" (sim 0.51)
-⚠ Similar past cases moved in BOTH directions — treat the average with caution.
+3 similar past headlines — their 5-day moves ranged -1.85%…-1.85% (average -1.85%):
+▸ -1.85% in 5d · TSLA 2026-07-07 (9d ago) · "Tesla, Inc. (TSLA) is Attracting Investor Attention: Here is What You Should Know" (sim 0.54)
+▸ -1.85% in 5d · TSLA 2026-07-07 (9d ago) · "Tesla (TSLA) Launches Miami Robotaxi Service, Is The Upside Already Priced In?" (sim 0.53)
+▸ -1.85% in 5d · TSLA 2026-07-07 (9d ago) · "TSLA Stock Cools Overnight After Miami Robotaxi Rally — But Morgan Stanley Sees 30,000-Vehicle Flee…" (sim 0.49)
+3 of 3 shown cases moved down — an observed pattern, not a forecast.
 Observed past outcomes after similar news — not a price prediction, not advice.
-Risk estimate (learned triage): 54% chance of a bigger-than-usual move in the next few days, based on similar past cases — raised by recent volatility (20d) and sector; lowered by headline length. Triage evidence, not a forecast.
+Risk estimate (learned triage): 56% chance of a bigger-than-usual move in the next few days, based on similar past cases — raised by recent volatility (20d) and sector; lowered by today's own move and recent momentum (5d). Triage evidence, not a forecast.
 ```
 
 ---
@@ -65,81 +65,82 @@ Risk estimate (learned triage): 54% chance of a bigger-than-usual move in the ne
 
 ```
 📰 News alert for TSLA
-"Stay informed about the most active stocks in the S&P500 index on Thursday's session."
+"Nvidia owns the AI chips market. Google, Amazon, and others are coming"
 ```
 
 **Condition B (full alert)**
 
 ```
 📰 News alert for TSLA
-"Stay informed about the most active stocks in the S&P500 index on Thursday's session."
+"Nvidia owns the AI chips market. Google, Amazon, and others are coming"
 
-3 similar past headlines — their 5-day moves ranged -1.96%…+5.60% (average +1.67%):
-▸ +5.60% in 5d · PFE 2018-01-19 · "The Top 10 Value Stocks In The S&P 500" (sim 0.58)
-▸ -1.96% in 5d · AMZN 2023-11-27 · "5 Stocks You Can Confidently Invest $500 In Right Now" (sim 0.56)
-▸ +1.36% in 5d · JPM 2018-09-27 · "Best And Worst-Performing Stocks In The S&P 500 Over The Last 20 Years And How They Have Performed…" (sim 0.55)
+3 similar past headlines — their 5-day moves ranged -5.70%…+8.05% (average +0.17%):
+▸ -5.70% in 5d · NVDA 2020-02-14 · "UPDATE: Rosenblatt On Nvidia Notes 'Although the market dynamics are different (more competition),…" (sim 0.65)
+▸ +8.05% in 5d · NVDA 2023-11-07 · "What Nvidia Stock Investors Should Know About Recent AI Updates -- xAI Grok, H800, OpenAI, and More" (sim 0.65)
+▸ -1.85% in 5d · NVDA 2021-09-04 · "Nvidia Trounces AMD Once Again: Here's Why That's Great News for Nvidia Shareholders" (sim 0.64)
 Observed past outcomes after similar news — not a price prediction, not advice.
 Risk estimate (learned triage): 57% chance of a bigger-than-usual move in the next few days, based on similar past cases — raised by recent volatility (20d) and sector; lowered by recent momentum (5d). Triage evidence, not a forecast.
 ```
 
 ---
 
-## S4 — META · 2026-07-17 · market
+## S4 — NFLX · 2026-08-13 · market
 
 **Condition A (bare fact)**
 
 ```
-🔻 Anomaly detected for META: -5.29% today
+📈 NFLX (Netflix) · +3.56% so far today
 ```
 
 **Condition B (full alert)**
 
 ```
-🔻 Anomaly detected for META: -5.29% today
-A notable move: about 1.6x this stock's typical daily swing (20-day norm).
-Method: z-score: -1.64 vs threshold ±1.5 — 1.6 standard deviations from the 20d mean (+0.51%, std 3.55%). An observed move, not advice.
-Sector check: other technology names moved the same way today (NFLX -7.9%, TSLA -2.4%, MSFT -2.2%) — looks sector-wide, not company-specific.
-Possible explanation (0d ago): "Meta Plans To Hire AWS Executive As It Explores Cloud Push: Report"
+📈 NFLX (Netflix) · +3.56% so far today
+Notable move in progress · about 1.5× its typical daily swing (20-day norm) · the session is not over.
+Why flagged: live quote vs yesterday's close · z-score +1.52 vs threshold ±1.5 against the 20-day daily norm (+0.04%, std 2.32%). An observed move in progress, not advice.
+Sector check: other technology names moved the same way, and by a similar amount, today (AMD +2.2%, META +1.5%).
+NFLX +3.25% today = +0.37% market · +0.12% sector · +2.76% company-specific. Most of this move was specific to the company.
+Possible explanation (0d ago): "Bill Ackman's Pershing Square buys Netflix, 5 other stocks in 2026"
 ```
 
 ---
 
-## S5 — NFLX · 2026-07-17 · market
+## S5 — AMD · 2026-07-28 · market
 
 **Condition A (bare fact)**
 
 ```
-🔻 Anomaly detected for NFLX (Netflix): -8.71% today
+📉 AMD · -8.94% today
 ```
 
 **Condition B (full alert)**
 
 ```
-🔻 Anomaly detected for NFLX (Netflix): -8.71% today
-An extreme move: about 3.3x this stock's typical daily swing (20-day norm).
-Method: z-score: -3.35 vs threshold ±1.5 — 3.3 standard deviations from the 20d mean (-0.29%, std 2.52%). An observed move, not advice.
-Sector check: other technology names moved the same way today (META -4.5%, TSLA -2.4%, GOOGL -2.3%) — looks sector-wide, not company-specific.
-Possible explanation (0d ago): "Netflix Sinks 11% on Soft Q3 Guidance as Analysts Warn It’s “Losing Narrative Control”"
+📉 AMD · -8.94% today
+Notable move · about 1.8× its typical daily swing (20-day norm).
+Why flagged: z-score -1.82 vs threshold ±1.5, i.e. 1.8 standard deviations from the 20-day mean (-0.26%, std 4.78%). An observed move, not advice.
+Sector check: other technology names moved the same way today (TSLA -1.4%). Looks sector-wide, not company-specific.
+Possible explanation (0d ago): "AMD secures up to 2.5 GW of AI data center capacity from Core Scientific"
 ```
 
 ---
 
-## S6 — AAPL · 2026-07-15 · market
+## S6 — AMD · 2026-07-27 · market
 
 **Condition A (bare fact)**
 
 ```
-🔺 Anomaly detected for AAPL (Apple): +3.86% today
+📉 AMD · -8.64% today
 ```
 
 **Condition B (full alert)**
 
 ```
-🔺 Anomaly detected for AAPL (Apple): +3.86% today
-A notable move: about 1.6x this stock's typical daily swing (20-day norm).
-Method: z-score: +1.59 vs threshold ±1.5 — 1.6 standard deviations from the 20d mean (+0.39%, std 2.19%). An observed move, not advice.
-Sector check: other technology names moved the same way today (GOOGL +3.6%, META +3.3%, MSFT +3.3%) — looks sector-wide, not company-specific.
-Possible explanation (0d ago): "Apple chasing AI chip company deals, The Information reports"
+📉 AMD · -8.64% today
+Notable move · about 1.8× its typical daily swing (20-day norm).
+Why flagged: z-score -1.84 vs threshold ±1.5, i.e. 1.8 standard deviations from the 20-day mean (-0.10%, std 4.65%). An observed move, not advice.
+Sector check: other technology names moved the same way today (NVDA -5.2%, TSLA -1.7%). Looks sector-wide, not company-specific.
+Possible explanation (0d ago): "Newegg Business Shares a Real-World AMD EPYC™ 4005 Series Deployment Story for Growing Businesses"
 ```
 
 ---

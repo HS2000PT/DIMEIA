@@ -38,6 +38,13 @@ sabe o que ele diz — e o que **não** diz — melhor do que com um alerta de r
   memorizar), retirados de um conjunto fixo de **6 alertas reais** (3 de mercado, 3 de notícia),
   cobrindo um caso "tema ≠ direção" (o precedente de queda com notícia positiva — o ponto duro).
 
+> ⚠️ **Congelar o pacote antes do primeiro participante, e não voltar a gerá-lo.** O gerador é
+> determinístico *para a mesma história*, mas o canal continua vivo: a selecção é feita sobre os
+> alertas existentes no momento, portanto **regenerar a meio do estudo troca os estímulos** e os
+> participantes deixam de ver a mesma coisa. Verificado ao correr duas vezes com a mesma semente e
+> obter estímulos diferentes, porque entretanto o histórico crescera. Depois de gerado: commit ao
+> pacote, e só se volta a correr para um estudo novo.
+
 ---
 
 ## 3. Participantes
@@ -119,6 +126,75 @@ Para cada alerta apresentado, o participante responde:
 
 Se **não** for corrido antes da defesa: fica como trabalho futuro **desenhado em detalhe** — o que
 já é uma resposta muito mais forte do júri do que "não medimos".
+
+---
+
+## 9. Bloco C — o texto gerado (acrescentado a 2026-08-13)
+
+> **Porque é que este bloco existe, e porque é que NÃO estava aqui.** Este protocolo foi escrito na
+> sessão 42, antes de existir a camada generativa. Desde a sessão 56 a 5.ª contribuição da tese é
+> **geração ancorada**, e o `CLAUDE.md` passou a afirmar que o estudo humano "cobre também o texto
+> gerado". **Não cobria.** Cobria o alerta. Este bloco fecha a diferença entre o que estava escrito
+> e o que estava desenhado.
+
+### 9.1 A pergunta
+
+A garantia de ancoragem é hoje verificada por **máquina** (a guarda rejeita texto cujos números não
+pertençam ao facto que a frase cita) e **por construção** (o gerador nunca produz factos). Nunca foi
+verificada por um **humano**. E a afirmação do produto não é "a guarda passa": é *"cada `[f3]` abre o
+facto que o sustenta"* — uma **travessia que um leitor faz**. Se ninguém a consegue fazer, a
+contribuição é verdadeira e inútil.
+
+- **H4 (utilidade incremental):** com o relatório ancorado ao lado dos painéis, um não-especialista
+  responde melhor às perguntas de compreensão do que com os painéis sozinhos.
+- **H5 (a travessia é praticável):** dada uma frase com âncora, o participante consegue abrir o facto
+  citado e dizer se ele sustenta a frase — **sem ajuda** do facilitador.
+
+H5 é a mais importante das duas e é a que **não precisa de N grande**: se 6 de 8 pessoas não
+conseguirem fazer a travessia, isso é um resultado de usabilidade e não uma questão estatística.
+
+### 9.2 Condições
+
+- **C1 — painéis apenas:** veredicto, movimento, raridade, decomposição e precedentes, como a página
+  os mostra, **sem** o relatório.
+- **C2 — painéis + relatório ancorado:** o mesmo, mais o texto gerado com as âncoras clicáveis.
+
+### 9.3 ⚠️ Os estímulos TÊM de ser congelados, e isto é uma exigência de método
+
+O relatório é gerado por um LLM e **não é determinístico**: gerar ao vivo daria a cada participante
+um texto diferente, e a comparação deixaria de medir a condição para passar a medir a variação entre
+chamadas. Os estímulos são **capturados de produção uma vez** e ficam fixos para todos
+(`scripts/capture_report_stimuli.py`). Captura-se **também o pacote de evidência** que os sustenta,
+para a travessia de H5 poder ser feita em papel se não houver ecrã.
+
+Regista-se, para cada estímulo capturado, se veio **gerado** ou da **composição determinística** (o
+campo `source` da resposta). Um estímulo que caiu no chão determinístico **não** testa a camada
+generativa e tem de ser identificado como tal na análise — misturá-los mediria outra coisa.
+
+### 9.4 Medição
+
+Além da rubrica do §4 aplicada a C1/C2:
+
+- **H5, por frase ancorada** (3 por participante, escolhidas antes): *"esta frase cita [fN]; abra-o.
+  O facto sustenta o que a frase diz?"* → **conseguiu abrir** (sim/não) · **julgou correctamente**
+  (sim/não/não sei). Sem ajuda; regista-se o tempo até desistir, se desistir.
+- **Uma pergunta aberta que vale por si:** *"acredita mais no texto por ele trazer as âncoras, ou
+  ignorou-as?"* — se a resposta modal for "ignorei", a contribuição precisa de outra forma de
+  apresentação, e isso é accionável.
+
+### 9.5 Custo, e a decisão honesta de âmbito
+
+Somar C1/C2 ao A/B leva a sessão de ~15 para ~25 minutos e **divide ao meio** a evidência de cada
+comparação. Com N=6–10 nenhuma das duas comparações teria potência de qualquer maneira, portanto a
+escolha não é entre rigor e conveniência.
+
+**Recomendação:** correr o **bloco A/B como principal** (é o que fecha a metade em aberto declarada
+da RQ3 e o objectivo 4) e o **bloco C como exploratório**, reportado como tal, com **H5 em primeiro
+plano** — é qualitativo, é barato, e é a única evidência humana que existiria sobre a 5.ª
+contribuição. Se houver ≥16 participantes, promover C a confirmatório com o mesmo limiar do §6.
+
+**Pré-registo:** este limiar fica fixado **antes** de haver dados, como o do §6. Baixá-lo depois é
+p-hacking e fica visível no diff deste ficheiro.
 
 ---
 

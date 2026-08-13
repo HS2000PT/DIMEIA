@@ -179,6 +179,26 @@ def main() -> int:
                               f"{row[cond]['condition']},{sid},,,,,,,,,")
     (OUT_DIR / "responses_template.csv").write_text("\n".join(linhas) + "\n", encoding="utf-8")
 
+    # ── 3b. Folha do BLOCO C (texto gerado) ───────────────────────────────────
+    # Ficheiro SEPARADO de propósito: o bloco C é exploratório (§9.5 do protocolo) e as suas
+    # linhas não podem entrar na mesma tabela que as do A/B sem sugerir que têm o mesmo estatuto.
+    # `report_source` existe porque um estímulo que caiu na composição determinística NÃO testa a
+    # camada generativa: sem essa coluna, a análise misturava as duas coisas e media outra.
+    cab_c = ("participant,order,condition,ticker,report_source,"
+             "p1_detected,p1_why,p1_not_prediction,q1_clear,q2_complete,q3_actionable,"
+             "h5_anchor,h5_opened,h5_supports,open_comment")
+    linhas_c = [cab_c]
+    for row in plano:
+        # C1 = painéis apenas · C2 = painéis + relatório ancorado; ordem espelha a do A/B.
+        primeiro, segundo = ("C1", "C2") if row["order"].startswith("A") else ("C2", "C1")
+        for cond in (primeiro, segundo):
+            linhas_c.append(f"{row['participant']},{row['order']},{cond},,,,,,,,,,,,")
+        # Três frases ancoradas por participante, escolhidas ANTES da sessão (H5).
+        for _ in range(3):
+            linhas_c.append(f"{row['participant']},{row['order']},C2-anchor,,,,,,,,,,,,")
+    (OUT_DIR / "responses_block_c_template.csv").write_text(
+        "\n".join(linhas_c) + "\n", encoding="utf-8")
+
     # ── 4. Guião do facilitador ───────────────────────────────────────────────
     guiao = f"""# Facilitator script ({args.participants} participants, ~15 min each)
 
@@ -211,6 +231,21 @@ def main() -> int:
     python scripts/analyse_usefulness.py
 
 That writes `docs/evaluation/evaluation_usefulness.md` — the Case Study 5 table.
+
+## Optional block C — the generated report (exploratory)
+
+Run this only if the participant still has energy; it adds ~10 min. It is **exploratory**, so its
+sheet is separate (`responses_block_c_template.csv`) and its rows must never be pooled with A/B.
+
+- Stimuli: `report_stimuli.md`, captured once from production and **frozen** (the report is written
+  by a language model and is not reproducible; generating it live would measure the model's
+  variation instead of the condition).
+- C1 = the panels alone · C2 = the panels plus the anchored report.
+- Then the part that matters most, and needs no statistics: pick **three anchored sentences** in
+  advance and ask the participant to open the cited fact and say whether it supports the sentence.
+  **Give no help.** If people cannot do it, the anchoring contribution is true and unusable.
+- Record `report_source` for each stimulus: one that fell back to the deterministic composition
+  does **not** test the generative layer.
 """
     (OUT_DIR / "facilitator_script.md").write_text(guiao, encoding="utf-8")
 
@@ -218,7 +253,7 @@ That writes `docs/evaluation/evaluation_usefulness.md` — the Case Study 5 tabl
     print(f"\n[ok] {len(stimuli)} estímulos ({duros} tema≠direção) · "
           f"{args.participants} participantes")
     for f in ("stimuli.md", "counterbalancing.md", "responses_template.csv",
-              "facilitator_script.md"):
+              "responses_block_c_template.csv", "facilitator_script.md"):
         print(f"     docs/study/{f}")
     print("\nPróximo passo é humano: recrutar 6–10 pessoas e preencher responses.csv.")
     return 0

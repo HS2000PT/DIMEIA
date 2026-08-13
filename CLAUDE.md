@@ -156,6 +156,29 @@
   ⚠️ **Continua a precisar do aluno:** confirmar a redação exacta exigida pela MEIA/ISEP com o
   orientador (não se inventou política), pôr a data de entrega, e **tornar verdadeira** a frase
   "Revi o conteúdo desta dissertação" — a leitura final continua em aberto no `CHECKLIST`.
+  **✅ (N) ESTUDO HUMANO PREPARADO — e o protocolo NÃO cobria o que o CLAUDE.md dizia que cobria.**
+  O `build_usefulness_pack.py` está mesmo turn-key: corrido, lê **366 alertas reais** e emite 6
+  estímulos (2 tema≠direção), contrabalanço, folha e guião. **Mas o protocolo é da sessão 42, antes
+  da camada generativa**, e cobria o **alerta** — não o texto gerado, apesar de o `CLAUDE.md` afirmar
+  desde a sessão 56 que o estudo "cobre também o texto gerado". Fechado:
+  **Bloco C novo (§9 do protocolo):** C1 painéis vs C2 painéis+relatório ancorado, com **H5** em
+  primeiro plano — *dada uma frase com âncora, a pessoa consegue abrir o facto e julgar se ele
+  sustenta a frase, sem ajuda?* A garantia de ancoragem é hoje verificada **por máquina** (a guarda)
+  e **por construção**; **nunca por um humano** — e a afirmação do produto é uma **travessia que um
+  leitor faz**. Se ninguém a consegue fazer, a contribuição é verdadeira e inútil. H5 é qualitativa
+  e **não precisa de N grande**.
+  **`scripts/capture_report_stimuli.py` (novo):** congela relatórios reais de produção + o pacote de
+  evidência. **Os estímulos TÊM de ser congelados** — o relatório é de um LLM e não é determinístico;
+  gerar ao vivo mediria a variação entre chamadas em vez da condição. Corrido contra produção:
+  **4 activos, 5 secções cada, todos `groq+guarded`**.
+  ⚠️ **DEFEITO MEU apanhado a correr contra produção:** a minha detecção de "gerado" procurava a
+  cadeia `"generat"` no `source` e reportou **0 gerados** para quatro relatórios `groq+guarded`. A
+  regra certa já existia no código (`Report.was_generated`: `source != "deterministic"`) — **um
+  verificador que inventa o seu próprio predicado mede outra coisa**.
+  ⚠️ **E uma armadilha de método:** correr o gerador do pacote duas vezes com a **mesma semente** deu
+  estímulos **diferentes**, porque o canal cresceu entretanto. **Congelar o pacote antes do primeiro
+  participante** — está agora escrito no §2 do protocolo.
+  **⏭️ O que falta é só humano:** recrutar 6–10 pessoas e preencher os CSV.
   **(J) ÚLTIMA LENTE FEITA — CONSISTÊNCIA TESE↔CÓDIGO — e o resultado é largamente POSITIVO.**
   Os **quatro excertos de código** que a tese publica **não derivaram**: o `lst:zscore` bate com o
   `detect_latest` linha a linha (a fatia `[-window-1:-1]`, o `ddof=1`, a guarda `sigma > 0`), o
