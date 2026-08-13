@@ -73,8 +73,17 @@ Before committing to *any* central learning task, run this test:
 | **Signal exists** | Can you name a mechanism by which the label is determined by the input? "Efficient markets already priced it in" is a failing answer. |
 | **Labels are obtainable** | Can you produce ≥500 trustworthy labels without fabricating any? Human annotation of 300 items in an afternoon is a legitimate answer. |
 | **A dumb baseline can lose** | Can you state a simple baseline, and is it plausible that learning beats it? If the baseline is obviously unbeatable, pick another task. |
+| **⚠️ Outcome is uncertain** | Can you state, **in writing and before running**, a specific mechanism by which the learned model *loses* on your data? **If you cannot, this is a demonstration, not a study.** |
+| **⚠️ Commodity check** | Name the off-the-shelf solution (MinHash, SimHash, a stock sentence-transformer, a keyword rubric) and the exact condition under which it fails **on your data and under your constraints** — domain vocabulary, CPU/latency budget, label distribution, cost asymmetry. If it fails nowhere, the model is not your contribution: relocate the contribution explicitly to the decision layer, the dataset, the guarantee or the evaluation, and say so in §3.0. |
 | **The user sees it** | If the model improves, does something visibly improve for the user? |
 | **Failure is informative** | If the model loses, do you learn something worth a chapter? |
+
+> **Why the two ⚠️ rows exist.** Without them this section trades v1's error for its mirror image.
+> v1 asked a hard question and got a negative answer. The temptation here is to ask an easy question
+> whose answer is known in advance — *"do sentence embeddings beat Jaccard on near-duplicates?"* —
+> and a jury reads a foregone positive as an undergraduate lab exercise. **That is worse than v1's
+> honest negative.** The uncertainty must be real, and it usually lives in the *decision* the model
+> feeds, not in the model's accuracy.
 
 **Run a 2-day feasibility spike on the task before building anything around it.** Label 200 items
 by hand, train a logistic regression, look at the number. If the ceiling is chance, change the task
@@ -84,12 +93,18 @@ now — not in month four.
 
 These are candidates, not orders. Pick **one** as central; the others may become secondary.
 
-1. **Semantic near-duplicate / novelty detection over news.** *"Have I already told the user this?"*
-   Labels are cheap and reliable (annotate pairs; agreement is high). A lexical baseline (Jaccard)
-   is genuinely beatable by embeddings. It directly serves alert fatigue, which is the real user
-   problem. It is measurable, explainable, and the improvement is visible. **This is the strongest
-   candidate and v1 never built it** — it shipped a hand-tuned Jaccard threshold of 0.6, never
-   evaluated.
+1. **Novelty-aware delivery under an attention budget.** Not *"can embeddings beat Jaccard at
+   detecting duplicates?"* — that answer is known, and framing it that way fails the commodity
+   check. The research object is the **decision**: *given a fixed number of alerts a reader will
+   tolerate per week, what should be suppressed as already-told, and what does that cost in missed
+   distinct events?* The outcome is genuinely unknown, because it depends on the duplicate rate in
+   your corpus, on the cost asymmetry between a repeat and a miss, and on where the operating point
+   sits — none of which you know in advance. Measured in **distinct events delivered per week** and
+   **repeats suppressed**, against a tuned lexical threshold, not against a strawman.
+   Labels are cheap and reliable (annotate pairs; agreement is high), it directly serves alert
+   fatigue, and the improvement is visible to the user. **v1 never built this** — it shipped a
+   hand-tuned Jaccard threshold of 0.6 and never evaluated it, and separately measured that its
+   precedent deduplication was exact-text only.
 2. **Relevance classification.** *"Is this article actually about this company, or is it a
    market-roundup listing twenty tickers?"* v1 solved this with hand-written rules and measured that
    the rules discard **64.3%** of arrivals for "no mention" and 3.0% as boilerplate — a strong,
@@ -118,19 +133,43 @@ the evidence."* One chapter section, not the centrepiece.
 
 ### 2.1 The deadline is a design input, not a background fact
 
-Fix the submission date on day one and **write it into the plan file**. Then work backwards:
+Fix the submission date on day one and **write it into the plan file**. Then plan in **dated weeks
+against a stated weekly hour budget** — never in percentages. A plan expressed as percentages of an
+unknown denominator cannot visibly slip; a line reading *"planned 15 h, spent 6"* can.
 
-| Phase | Share of time | Ends with |
-|---|---|---|
-| Feasibility + problem definition | 10% | The learning task chosen, spike done, RQs fixed |
-| Thin end-to-end slice | 15% | Something a user can run, however ugly |
-| Data + labels | 20% | A versioned dataset and a labelled set |
-| Models + evaluation | 25% | Frozen results, baselines beaten or honestly not |
-| Product + usability | 10% | Acceptance criteria met |
-| Writing + propagation | 20% | Thesis compiles, every number traced |
+Write your assumed weekly hours into `PROJECT_PLAN.md` and log actual hours in `CONTINUITY.md` each
+session.
 
-**Reserve the final 15% for nothing but writing, checking and fixing.** v1's most expensive defects
-were found in the last week and each one propagated to ~20 files.
+A 26-week shape (adjust to your own calendar, keep the structure):
+
+| Wk | Phase | Ends with | Author-bound share |
+|---|---|---|---|
+| 1 | Setup, supervisor kickoff, deadline fixed | Repo skeleton, gate runner, plan file | low |
+| 2–3 | Collection spike + task selection (§1) | Task chosen, **feasibility spike run** | **high** |
+| 4–6 | Thin end-to-end slice | Something a user can run, however ugly | low |
+| 7–8 | Annotation of the frozen set + leakage tests | Labelled set, rubric, κ, mutation test | **high** |
+| 9–12 | Central model + RQ1 evaluation | Frozen results, baselines beaten or honestly not | medium |
+| 13–14 | RQ2: the deployed-distribution study | Decision log instrumented and labelled | medium |
+| 15–17 | Product, explanation layer, deployment | Acceptance criteria met, deployed | low |
+| 15–16 | **Human study (calendar-bound, runs in parallel)** | Data collected | **high** |
+| 18–22 | Writing and propagation | Thesis compiles, every number traced | **high** |
+| 23–24 | Slack — unallocated | — | — |
+| 25–26 | Final read, supervisor pass, submission | Signed and delivered | **high** |
+
+Three rules that make this survive contact:
+
+1. **Every phase ends with its thesis section drafted, not only its code.** Writing is a parallel
+   track, not a final phase. v1's most expensive defects surfaced in the last week and each
+   propagated to ~20 files.
+2. **The slack rows are not scope buffer.** If unused, they buy "Should" items from §14 — never new
+   scope.
+3. ⚠️ **Separate assistant-throughput work from author-bound work, and never let the schedule
+   assume the assistant absorbs the second.** Code, scaffolding and document mechanics compress
+   enormously with an assistant. **Annotation, critically reading generated output, running the
+   study, and writing sentences you can defend at a viva do not compress at all.** Those four sit at
+   both ends of the schedule and are the ones always underestimated. If a phase is more than ~40%
+   author-bound, it cannot be rescued by working the assistant harder — it must be *started
+   earlier*.
 
 ### 2.2 Resources
 
@@ -155,7 +194,29 @@ were found in the last week and each one propagated to ~20 files.
 
 ---
 
-## §3. RESEARCH PROBLEM AND QUESTIONS
+## §3. RESEARCH PROBLEM, CONTRIBUTION AND QUESTIONS
+
+### 3.0 The contribution statement — write it in session one
+
+A jury's opening move is *"what does the field know after this thesis that it did not before?"* A
+list of measurements is not an answer. **Write the contribution as an artefact, date it, keep it in
+`PROJECT_PLAN.md`, and revise it at every phase gate.** Five sentences, this shape:
+
+> Before this work, **X** was done by **Y**.
+> This work shows **Z**, measured by **W**.
+> The contribution is at the level of **[task / method / system / evaluation / artefact]**.
+> It transfers to **V**.
+> It would be wrong if **U** were true.
+
+Rules:
+
+- **If you cannot fill "Before this work" without hand-waving, the task is not chosen yet.** Go back
+  to §1.
+- Naming the *level* is what keeps you honest. "We integrated and evaluated existing components into
+  a working, explainable system" is a legitimate contribution **at the system and evaluation
+  level** — most engineering master's contributions are — but it must be *claimed as that*, not
+  dressed as a methodological novelty.
+- The last clause is the important one. A contribution that could not be wrong is not a finding.
 
 ### 3.1 Problem statement
 
@@ -175,10 +236,23 @@ A defensible set, adapted to your chosen task:
 
 - **RQ1 (the learning question).** Can a learned model of *[your chosen task]* outperform a
   transparent baseline on data it has not seen, under a protocol that prevents leakage?
-- **RQ2 (the evidence question).** Can the system retrieve genuinely comparable prior cases and
-  quantify what followed, without lookahead, better than trivial baselines?
+- **RQ2 (the system question — do not omit this one).** Does the learned component still earn its
+  place **inside the assembled pipeline**, measured end-to-end on the distribution the deployed
+  system actually sees, rather than in isolation on a held-out split?
 - **RQ3 (the explanation question).** Can the explanations be made *faithful* to what the system
   computed, and *useful* to a non-expert?
+
+> ⚠️ **RQ2 is the one most projects omit, and it is where v1's real finding turned out to live.**
+> Its learned gate scored well on a held-out split and ranked at **chance** in deployment, because
+> cheap upstream filters had already removed most of what it was trained to remove — the materiality
+> rate among logged decisions ran at 0.626 against a training prevalence of 0.378. *A model
+> evaluated in isolation and deployed behind filters was never evaluated on the distribution it will
+> see.* That is a general, transferable lesson, and it only exists as a finding because someone
+> measured the deployed population. **Make it an RQ from day one, and instrument the pipeline to log
+> every decision and label it later against the outcome that actually followed.**
+>
+> If you need a retrieval/evidence question as well, fold it into RQ1's evaluation rather than
+> adding a fourth RQ — renumbering later propagates into every artefact you own.
 
 RQ3 has two halves. **Faithfulness you can guarantee by construction and test. Usefulness requires
 humans.** Plan the human study in month one, not month five (§9).
@@ -311,7 +385,37 @@ compile, cross-language parity, reference/label integrity, frozen-artefact integ
 working tree. Print one line per gate. **A gate that only runs when someone remembers it is not a
 gate.**
 
-### 6.6 Baselines are a claim too — and the one v1 got wrong
+### 6.6 Sources are claims too — the highest-risk surface in assisted writing
+
+§6.5's reference gate checks LaTeX `\ref`/`\label` integrity. **That is not the same as checking
+that your sources exist and say what you claim.** A plausible, well-formatted, wrong or non-existent
+citation is the single failure most associated with LLM-assisted writing, and an examiner who finds
+one will re-read everything else suspiciously.
+
+Machinery, not care:
+
+1. **No reference enters the bibliography without a resolved identifier** — DOI, arXiv id, ISBN or
+   publisher URL — recorded in a versioned `docs/decisions/citation_log.md` with the resolution date
+   and the metadata as the registry returned it.
+2. **A gate** that fails on: unresolved identifiers; keys cited but absent; keys present but
+   uncited; and **a DOI whose registry title does not match the bibliography title** (this catches
+   the identifier that resolves to a *different* paper — the most dangerous case, because everything
+   looks right).
+3. **A content audit** over every claim-bearing citation: *does the cited work support the sentence
+   it is attached to?* Record the verdict per key. When a citation is found to be over-stretched,
+   **fix it by weakening your sentence, never by swapping in a different source** until one fits —
+   that is reverse-engineering evidence.
+4. **The assistant may not add a reference it has not resolved, and may not infer bibliographic
+   fields.** State this and hold it.
+
+v1 ran exactly this and it caught two real errors — an anachronism (a 2014 survey cited for a
+taxonomy whose third generation is BERT, from 2019) and a stretched attribution. Both were fixed by
+weakening the claim. **Also beware your own checker:** v1's first citation-verification run produced
+33 findings of which 30 were bugs in the checker (title matching by Jaccard against registry entries
+that truncate subtitles, page ranges stored only as first page, LaTeX accents stripped before
+comparison). *A verifier that cries wolf stops being read.*
+
+### 6.7 Baselines are a claim too — and the one v1 got wrong
 
 The most instructive defect in the entire first project:
 
@@ -460,6 +564,11 @@ evidence matrix).
 Framing each evaluation as *"Question: … Answer: …"* makes the chapter readable and makes negative
 results land as findings rather than as apologies.
 
+**The state-of-the-art chapter must end in a table, not a narrative.** Score named prior systems and
+named prior methods against your three RQs, and put your own system in the last row. A related-work
+section that does not position *you* against *them* is a reading list, and it is where the jury will
+ask "so what is new?" and find no sentence to point at. This table and §3.0 must agree.
+
 ### 10.2 Writing rules that save weeks
 
 - **Every number appears once, in the file that generated it.** Everywhere else references it.
@@ -556,7 +665,8 @@ elsewhere, and duplicates drift.
 
 | File | Purpose | Rule |
 |---|---|---|
-| `PROJECT_PLAN.md` | Vision, problem, RQs, hypotheses, decisions, priorities, completion matrix | **Never copies a number** that another file owns; it points |
+| `PROJECT_PLAN.md` | Vision, problem, **contribution statement (§3.0)**, RQs, hypotheses, weekly hour budget, decisions, priorities, completion matrix | **Never copies a number** that another file owns; it points |
+| `docs/decisions/citation_log.md` | Every source, its resolved identifier, the date, the registry metadata | Gated (§6.6); the assistant may not add an unresolved entry |
 | `CONTINUITY.md` | State at end of each session: done / discovered / decided / blocked / next | Updated **every** session, without exception |
 | `docs/decisions/` | One file per significant decision, with the rejected alternatives and why | Written when decided, not reconstructed later |
 | `docs/evaluation/*.md` | One per experiment, generated by script | Never hand-edited |
@@ -574,22 +684,42 @@ conversation.
 
 ## §14. WHAT "DONE" LOOKS LIKE
 
-The project is finished when **all** of these are true:
+Ten mandatory items are how a plan becomes a panic in the last fortnight. Split them, and **agree
+the descope order in writing, dated, before you need it** — so that cutting is a planned decision
+rather than an emergency.
+
+**MUST — without these there is no dissertation:**
 
 - three RQs, each answered with a measurement, and at least one answer allowed to be negative;
-- one central learned component that **beats a stated baseline**, with an interval, on data it has
-  not seen;
-- your own labelled dataset, with a written rubric and a measured agreement statistic;
+- **a contribution statement (§3.0)** naming what is new and at what level, positioned against at
+  least three named prior works;
+- one central learned component evaluated against a stated baseline, with an interval, on data it
+  has not seen — **beaten or honestly not**;
 - every thesis number produced by a versioned script that reproduces on re-run;
 - an evidence matrix including the claims you withdrew;
-- explanations that are faithful by construction, with a runtime check for any generated language;
-- a human study run — even a small one — or its absence stated plainly in the same sentence as the
-  claim it would have supported;
-- a deployed system a stranger can use without you present;
+- a citation log with every source resolved (§6.6);
 - one command that runs every gate, and it is green;
-- a thesis that compiles clean, and an author who can defend every sentence in it.
+- a thesis that compiles clean, and **an author who can defend every sentence in it**.
 
-**The last item is the one that matters.** Everything above exists to make it true.
+**SHOULD — cut these before touching MUST:**
+
+- your own labelled dataset with a written rubric and a measured agreement statistic;
+- the RQ2 deployed-distribution study;
+- a human study, even a small one;
+- a deployed system a stranger can use without you present.
+
+**COULD — first to go:**
+
+- the secondary negative study; the generative explanation layer; bilingual output; the conference
+  paper.
+
+**Descope order, agreed in advance:** COULD in listed order → deployment → human study (replaced by
+*"not measured"*, stated in the same sentence as the claim it would have supported) → labelled
+dataset shrinks to a documented subset → RQ2 becomes future work with the instrumentation left in
+place. **Nothing in MUST is ever cut**; if MUST is at risk, the scope of the *task* shrinks, not the
+rigour.
+
+**The last MUST item is the one that matters.** Everything above exists to make it true.
 
 ---
 
@@ -606,6 +736,9 @@ Do not write product code in session one.
    point in the entire project and the most valuable.
 6. Only then: set up the repository skeleton, the gate runner, and the continuity files.
 7. Write `PROJECT_PLAN.md` with the RQs, hypotheses and thresholds, and commit it dated.
+8. **Write the contribution statement (§3.0).** If the *"Before this work, X was done by Y"* clause
+   cannot be filled without hand-waving, **the task is not chosen yet — return to step 3.**
+9. Agree the descope order of §14 with your supervisor, and date it.
 
 ---
 
