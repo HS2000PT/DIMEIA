@@ -8,7 +8,8 @@ projecto do zero. Não é documentação do produto — isso vive em [`../docs/`
 
 | ficheiro | para que serve |
 |---|---|
-| [`PLANO_V2.md`](PLANO_V2.md) | **O plano activo.** Duas pistas: a tese (aditiva, entrega 13/09) e a ambição de produto, que fica para depois da entrega. |
+| [`../INVESTIGATOR_MASTER_PLAN.md`](../INVESTIGATOR_MASTER_PLAN.md) | **O plano activo** (desde 2026-08-13, na raiz porque a directiva-mestra o nomeia aí). Sucede ao `PLANO_V2` e herda-lhe as duas pistas. Traz a matriz de selecção de métodos de IA, a matriz de rastreabilidade componente→utilizador, e o registo de achados da auditoria. |
+| [`PLANO_V2.md`](PLANO_V2.md) | **Superado**, mas fica aqui e não em `_historico/`: é onde vivem as duas pistas e as justificações de cada corte (multi-agente, RL, previsão de preços…), que continuam a alimentar o Cap. 6 e são citadas por outros oito ficheiros. |
 | [`TRACKER.md`](TRACKER.md) | Caixas por fase. É onde se marca o que ficou feito. |
 | [`SESSIONS.md`](SESSIONS.md) | Registo por sessão. O histórico longo, em prosa. |
 | [`DECISIONS.md`](DECISIONS.md) | As decisões com o **porquê** — o que se escolheu e o que se rejeitou. |
@@ -27,7 +28,7 @@ decisão**, e alguém que os leia como pendências vai reconstruir coisas que se
 A cadeia de sucessão, do mais antigo para o actual:
 
 ```
-MASTER_PLAN  →  PRODUCT_ROADMAP  →  PLANO_MELHORIAS  →  PLANO_V2  (activo)
+MASTER_PLAN → PRODUCT_ROADMAP → PLANO_MELHORIAS → PLANO_V2 → INVESTIGATOR_MASTER_PLAN  (activo)
 ```
 
 **Não se apagam.** O `MASTER_PLAN` é onde estão as fases A–H que levaram a tese ao estado de

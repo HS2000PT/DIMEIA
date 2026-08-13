@@ -7,8 +7,63 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 56 (**v5: reconstrução total do produto + camada generativa ancorada**)
-- **Última atualização:** 2026-08-12
+- **Sessão nº:** 57 (**auditoria-mestra: o chão da RQ4 não media o que dizia medir**)
+- **Última atualização:** 2026-08-13
+- **🆕 SESSÃO 57 (2026-08-13 — o aluno deu uma directiva-mestra: auditar tudo antes de mexer em
+  nada, e criar o plano-mestre do projecto):**
+  **(A) PLANO-MESTRE CRIADO:** [`INVESTIGATOR_MASTER_PLAN.md`](INVESTIGATOR_MASTER_PLAN.md) na raiz,
+  sucede ao `PLANO_V2` (cadeia actualizada no `progress/README.md`; o V2 **não** foi movido — é
+  citado por oito ficheiros e guarda as justificações dos cortes). Traz a matriz de selecção de
+  métodos de IA, a análise das candidatas a RQ (**veredicto: NÃO renumerar**, com a razão escrita),
+  a matriz de rastreabilidade **componente→utilizador** (eixo diferente da Matriz de Evidência, que
+  audita afirmações) e o roteiro P1–P6 contra os **31 dias** até 13/09.
+  **⚠️ (B) O ACHADO DA SESSÃO, VERIFICADO POR MIM E CRÍTICO: o chão da precisão@orçamento é um
+  artefacto de desempate, não uma linha de base.** A tese diz que a triagem sobe de `0,163`
+  **"(picking blindly)"** para `0,632`, *"quase quatro vezes"* (`ch5:524`, e ecoado em `ch6:38`,
+  `ch6:131`, `appendixA:198` e `:293`, mais três documentos de defesa). Mas `alert-always` usa um
+  score **constante**, `precision_at_daily_budget` ordena com `argsort(..., kind="stable")`, e o CSV
+  está ordenado por `(date, ticker)` — logo o chão **escolhe por ordem alfabética**. Reproduzido: as
+  **1.105 linhas que ele selecciona são todas AAPL**. Medido sob o mesmo protocolo (que reproduz o
+  congelado 0,632 como porta de entrada): **aleatório real 0,3790 ± 0,0170** (40 sementes) e um
+  **prior de volatilidade por ticker — 13 constantes, só treino, sem manchete e sem modelo —
+  0,6624, que BATE o modelo implantado (0,6317)**. ⇒ o ganho é **1,67×**, não ~4×.
+  **Não afecta** PR-AUC/ROC-AUC/Brier (não dependem da ordem entre empates) nem o negativo da RQ4.
+  **E fortalece a tese:** é a 3.ª vez que o método simples ganha, depois do z-score contra o
+  Isolation Forest e da volatilidade contra o texto. Evidência nova e regenerável:
+  `scripts/evaluate_budget_baselines.py` → `docs/evaluation/evaluation_budget_baselines.md`.
+  **⏭️ A propagação para a tese (EN+PT) e para o pack de defesa é a P1 e NÃO foi feita** — muda um
+  número de destaque a 31 dias da entrega e a forma de o enquadrar é decisão do aluno (recomendação
+  escrita no plano: acrescentar as linhas novas em texto, sem tocar na tabela congelada).
+  **⚠️ (C) EVIDÊNCIA APAGADA POR UMA RE-CORRIDA, e a lição é nova:** o `.md` do bootstrap de cluster
+  não tinha as linhas do texto — `evaluate_triage_uncertainty.py` corre `["vol","context"]` salvo
+  `--with-text` — enquanto a prosa por baixo e a Matriz de Evidência afirmavam `vol−full` e
+  `context−full`. Re-corrido: as 5 famílias reproduzem os congelados **ao milésimo** e as diferenças
+  aparecem (**vol−full +0,0480** IC [+0,0320,+0,0660]; **context−full +0,0432** IC [+0,0269,+0,0610];
+  P(Δ>0)=1,00). **A afirmação da tese fica de pé.** Os números batem com os que a sessão 41 registou
+  ⇒ a corrida original foi feita com texto e **uma corrida posterior sem a flag reescreveu o ficheiro
+  e apagou três linhas de evidência sem um único erro**. Um artefacto regenerável regenerado com
+  outros argumentos é indistinguível de um correcto.
+  **(D) DUAS PORTAS DE ENTREGA CORRIGIDAS (o commit `d4a1558` era da sessão anterior):**
+  (1) `check_all_gates.py` **rebentava antes de correr uma única porta** numa consola `cp1252` — o
+  `corre()` já forçava utf-8 na descodificação dos **subprocessos**, faltava a saída do **próprio
+  script**; (2) a mesma porta reportava **`? passaram`** porque o `addopts` do `pyproject` já traz
+  `-q` e a porta juntava outro ⇒ `-qq`, e a `-qq` o pytest **suprime a linha de resumo**. Agora diz
+  **707 passaram**. As 12 portas correm de fio a fio em Windows.
+  **(E) OUTROS ACHADOS VERIFICADOS, todos por fazer (detalhe no plano §9):** o **filtro temporal não
+  propaga** — `S.range` só reconstrói o gráfico, e o invariante "gráfico e tabela não podem divergir"
+  que a sessão 47 criou vive em `app/tables.py`, hoje só importado pelo v3 **retirado**; o
+  `dashboard_acceptance.md:217` **proíbe** a probabilidade da triagem em qualquer vista de produto
+  (H2) e a v5 serve-a em `/api/triage`, `/api/evidence` e no pacote de evidência — **o critério é que
+  está desactualizado**, não o produto; **zero testes tocam `api/` ou `web/`** enquanto o Streamlit
+  retirado tem 67; o **mapa de competências não tem linha para a camada generativa** (a UC de
+  *Generative AI*, e a resposta à pergunta D5); `CHECKLIST.md:44` diz PT 134 pp e são **139**.
+  **⚠️ (F) A AUDITORIA ESTÁ 1/8 FEITA: sete lentes morreram no limite de gasto, e morreram TODOS os
+  verificadores.** 6.ª vez neste projecto. Tudo o que está marcado **[V]** no plano foi reproduzido
+  por mim contra o código e os dados; o resto está marcado **[NV]**. **Por auditar:** camada de
+  inteligência, recuperação/KB, pipeline de decisão, dados, produto/UI, consistência tese↔código e
+  currículo MEIA.
+  **Portas no fim da sessão: 707 testes, ruff limpo, 12/12 verdes** (só a "árvore limpa" acusa, e
+  acusa os ficheiros novos desta sessão). **Congelados intactos.**
 - **🆕 SESSÃO 56 (2026-08-10/11 — o aluno mandou reconstruir o produto DE RAIZ: "forget the
   current website as a product concept… the AI component must be genuinely meaningful"):**
   **(A) O DIAGNÓSTICO QUE JUSTIFICA A RECONSTRUÇÃO, e não é estético.** O estudo de mercado

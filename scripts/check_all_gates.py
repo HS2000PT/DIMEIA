@@ -24,6 +24,18 @@ import re
 import subprocess
 import sys
 
+# A saída DESTE script também é texto, e isso não era óbvio: `corre()` já forçava utf-8 na
+# descodificação dos subprocessos, portanto o problema parecia resolvido. Não estava — numa
+# consola Windows com cp1252 (o defeito na máquina do aluno), o primeiro `print` de um cabeçalho
+# com `═` levantava UnicodeEncodeError e **as portas não chegavam a correr**. Uma porta que
+# rebenta antes de verificar seja o que for é pior do que não existir: o exit code diz "falhou"
+# sem dizer o quê, e a leitura óbvia é que uma porta falhou.
+for _fluxo in (sys.stdout, sys.stderr):
+    try:
+        _fluxo.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):  # fluxo redirecionado que não suporta reconfigure
+        pass
+
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 PY = str(RAIZ / ".venv" / "Scripts" / "python.exe")
 if not pathlib.Path(PY).exists():
@@ -44,8 +56,12 @@ def corre(cmd: list[str], cwd: pathlib.Path | None = None, timeout: int = 900):
 
 # ── 1. código ─────────────────────────────────────────────────────────────────
 def gate_testes() -> None:
+    # ⚠️ SEM `-q` aqui. O `addopts` do pyproject já o traz; um segundo `-q` faz `-qq`, e a `-qq`
+    # o pytest **suprime a linha de resumo**. A porta continuava verde (o returncode é 0), mas
+    # reportava "? passaram" — perdia exactamente o número que existe para dar, e que oito
+    # documentos deste projecto sincronizam entre si.
     r = corre([PY, "-m", "pytest", "-m", "not telegram and not sbert",
-               "-p", "no:cacheprovider", "-q"])
+               "-p", "no:cacheprovider"])
     m = re.search(r"(\d+) passed", r.stdout + r.stderr)
     falhou = "failed" in r.stdout or "error" in r.stdout.lower()
     porta("testes", r.returncode == 0 and not falhou,

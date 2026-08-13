@@ -1,0 +1,372 @@
+# INVESTIGATOR — MASTER PLAN
+
+> **O que este ficheiro é.** O plano-mestre do produto e da dissertação, criado a 2026-08-13 em
+> resposta à directiva-mestra do aluno. Sucede ao [`progress/PLANO_V2.md`](progress/PLANO_V2.md) e
+> herda-lhe a decisão estruturante (duas pistas), que continua correcta.
+>
+> **O que este ficheiro NÃO é.** Não é um segundo sítio onde os números vivem. Este projecto já
+> pagou o custo de ter a mesma quantidade escrita em dois sítios: elas divergem, e a divergência
+> não dá erro. **Regra deste ficheiro: nenhum número congelado é copiado para aqui.** Onde um
+> número interessa, aponta-se para o ficheiro que o produz. Os únicos números escritos aqui são os
+> que foram medidos nesta sessão e ainda não têm casa.
+>
+> **Estado, sempre:** [`CLAUDE.md`](CLAUDE.md). **O que falta em cliques humanos:**
+> [`CHECKLIST.md`](CHECKLIST.md).
+
+---
+
+## Mapa de conformidade com a directiva
+
+| Secção pedida (directiva §65/§78) | Onde está |
+|---|---|
+| Project Vision · Research Problem · Research Questions | §1, §2, §3 |
+| Hypotheses · Scientific Contribution | §3.3, §4 |
+| AI Strategy (+ matriz de selecção §9) | §5 |
+| Architecture · Data Strategy · Model Strategy | §6 — e os documentos que já os detalham |
+| Evaluation Strategy | §7 |
+| Completed · In Progress · Blocked · Deferred | §8 (matriz de conclusão) |
+| Known / AI / UX / Data / Architecture Issues · Technical Debt | §9 (registo de achados) |
+| Thesis Structure · Thesis Gaps · Evidence Gaps | §10 |
+| Decisions Log · Experiment Log · Model Registry · Dataset Registry | §11 (ponteiros — todos já existem) |
+| Traceability matrix (§10/§66) | §12 |
+| Open Questions · Next Priorities · Completion Matrix | §13 (roteiro priorizado) |
+| Session History | [`progress/SESSIONS.md`](progress/SESSIONS.md) + `CLAUDE.md` |
+
+---
+
+## 1. Project Vision
+
+Um sistema que responde às três perguntas que um investidor de retalho faz por esta ordem — *isto é
+invulgar? foi a empresa ou o mercado? já aconteceu antes e o que se seguiu?* — com cada afirmação
+rastreável ao procedimento que a produziu, sobre APIs gratuitas, e **sem prever preços**.
+
+A recusa de prever não é uma limitação a pedir desculpa: é o que torna cada saída verificável. Uma
+afirmação sobre o que já aconteceu confronta-se com o registo; uma previsão não.
+
+## 2. Research Problem
+
+**O problema técnico central**, formulado como a directiva pede (e não como "juntar APIs"):
+
+> Dado um fluxo heterogéneo de preços e notícias, decidir **quando falar**, **sobre o quê**, e
+> **com que evidência anexada**, de modo a que um não-especialista possa verificar a decisão em vez
+> de confiar nela.
+
+Decompõe-se em quatro subproblemas que o sistema resolve de facto: detecção de anomalia relativa à
+norma do próprio activo; atribuição (mercado/sector/empresa); recuperação de precedentes por
+significado com medição do desfecho; e triagem de materialidade sob orçamento de atenção.
+
+**⚠️ O subproblema que a directiva obriga a nomear e que este trabalho descobriu por medição:**
+onde é que uma componente **aprendida** deve ficar num pipeline em que filtros determinísticos
+baratos correm primeiro. Está medido (ver §4.2) e hoje vive no Cap. 6 como *limitação*. É a
+constatação mais transferível do trabalho e a que está pior arrumada.
+
+## 3. Research Questions
+
+### 3.1 As quatro em vigor
+RQ1 detecção transparente · RQ2 recuperação de precedentes · RQ3 explicações fiéis e úteis ·
+RQ4 triagem aprendida. Texto exacto: [`thesis/ch1/chapter1.tex`](thesis/ch1/chapter1.tex).
+
+### 3.2 Candidatas analisadas — e porque NÃO se renumera
+A directiva §4 obriga a gerar e avaliar alternativas. Foram avaliadas três:
+
+| Candidata | Valor | Custo | Veredicto |
+|---|---|---|---|
+| **C1** — manter as quatro | Já respondidas com medição, incluindo um negativo | zero | **Escolhida** |
+| **C2** — "onde deve ficar a componente aprendida num pipeline filtrado?" | Alto: há evidência ao vivo única (§4.2) | Reestruturar a tese a 31 dias da entrega | Rejeitada como RQ; **adoptada como achado nomeado** |
+| **C3** — "pode gerar-se linguagem ao lado de resultados calculados sem que ela se torne um canal factual?" | Alto e transferível | Idem; a RQ3 já cobre fidelidade | Rejeitada como RQ; já é a 5.ª contribuição |
+
+**Razão da escolha, dita em voz alta:** renumerar propaga por ch1, ch6, dois abstracts, o artigo
+IEEE, 28+28 slides, o guia de 93, o quizz de 64 e o pack de defesa. A sessão 42 já tinha rejeitado
+RQ5/RQ6 pelo mesmo motivo. O ganho de C2 e C3 obtém-se **sem** renumerar: promovendo-as de
+*limitação* a *achado*, que é escrita e não estrutura.
+
+### 3.3 Hipóteses testáveis ainda em aberto
+- **H-a.** Um modelo treinado na população **implantada** (pós-filtros) ordena melhor do que o
+  treinado na população de treino. *Testável hoje;* provável inconclusivo (145 unidades efectivas).
+- **H-b.** Um relatório ancorado ajuda um não-especialista mais do que os painéis sozinhos.
+  *Precisa do estudo humano.*
+- **H-c.** Similaridade do cosseno prediz utilidade do precedente. *Testável; nunca testada — é o
+  que justificaria o chão `min_similarity`.*
+
+## 4. Scientific Contribution
+
+As cinco contribuições estão em [`thesis/ch6`](thesis/ch6/chapter6.tex) §Contributions Revisited.
+Duas notas que este plano acrescenta:
+
+**4.1 A contribuição está no critério que sabe dizer não.** Quatro capacidades foram construídas,
+medidas e **não** implantadas (taxonomia de eventos, score de convergência, features estendidas,
+EWMA). Oito afirmações foram retiradas ou estreitadas pelas próprias medições
+([Matriz de Evidência](thesis/appendices/appendixA.tex)).
+
+**4.2 O achado de colocação (C2), medido.** O gate implantado ordena ao acaso na população que vê
+(ROC-AUC 0,494, IC de cluster [0,391, 0,601]) porque os filtros baratos a montante já removeram o
+que ele foi treinado para remover (materialidade 0,626 ao vivo contra 0,378 no treino). Fonte:
+[`docs/evaluation/evaluation_live_transfer.md`](docs/evaluation/evaluation_live_transfer.md).
+
+## 5. AI Strategy — matriz de selecção
+
+Regra (directiva §9, §72, §73): **seleccionar, não coleccionar**; não converter em ML o que deve
+ser determinístico; não deixar em regra escrita à mão o que pode ser aprendido e comparado.
+
+| Método | Problema | Interpretab. | Avaliado contra | Veredicto | Estado |
+|---|---|---|---|---|---|
+| z-score deslizante | anomalia | alta | limiar fixo, IF, LOF, EWMA | **must** | implantado |
+| EWMA σ | anomalia | alta | rolling σ | melhor no proxy | **medido, não implantado** (explicabilidade) |
+| Isolation Forest / LOF | anomalia | baixa | z-score | perde | rejeitado com número |
+| Decomposição 2 factores + Vasicek | atribuição | alta | corte fixo ±4 | **must** | implantado |
+| Estudo de evento | rótulo e desfecho | alta | — | **must** | implantado |
+| SBERT (MiniLM) + cosseno | recuperação | média | lexical, aleatório, recência, FinBERT, E5, BGE | **must** | implantado |
+| ONNX int8 | servir o mesmo modelo | — | paridade medida | **must** | implantado |
+| LR + Platt (triagem) | materialidade | alta | volatilidade, GBM, texto | **ver §9-A1** | implantado atrás de gate |
+| Predição conformal | incerteza | alta | — | forte | medido, não exposto |
+| PSI/KS (deriva) | MLOps | alta | — | forte | medido |
+| Taxonomia de eventos | filtrar precedentes | média | AMI vs ticker/sector | fraco demais | construído, não ligado |
+| Geração ancorada + guarda | linguagem | média | red team, controlos fiéis | **must** | implantado |
+| Narrador allowlist | alerta empurrado | alta | red team | forte | construído, `enabled: false` |
+| **Dedup semântico de histórias** | fadiga/novidade | média | **nunca medido** | **candidato** | **ausente** (só Jaccard lexical) |
+| RL / bandits · multi-agente · visão | — | — | — | fora de âmbito | rejeitado por escrito (ch6) |
+
+## 6. Architecture · Data · Model Strategy
+
+Arquitectura viva (v5): cliente `web/` → serviço `api/` → motores `investigator/`. **Nenhum número
+é calculado na API** — é o que impede o produto e a avaliação de divergirem.
+Detalhe: [`docs/design/arquitectura_sistema.md`](docs/design/arquitectura_sistema.md),
+[`thesis/ch4`](thesis/ch4/chapter4.tex).
+Dados: [`docs/design/data_card.md`](docs/design/data_card.md) · Modelos: [`models/README.md`](models/README.md).
+
+## 7. Evaluation Strategy
+
+Desenho fixado antes das experiências; linhas de base pré-comprometidas; negativos reportados;
+tudo regenerável por script versionado. Índice: [`docs/evaluation/`](docs/evaluation/) (30 ficheiros).
+
+**⚠️ Emenda que esta sessão obriga:** um chão de comparação também é uma escolha de desenho, e este
+trabalho tinha um chão que não media o que dizia medir (§9-A1). Passa a valer a regra: *toda a
+métrica com orçamento declara como resolve empates.*
+
+## 8. Completion Matrix
+
+| Área | Investigado | Decidido | Implementado | Testado | Avaliado | Documentado | Estado |
+|---|---|---|---|---|---|---|---|
+| Detecção de anomalia | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | fechado |
+| Atribuição / decomposição | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | fechado |
+| Recuperação de precedentes | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | fechado |
+| Triagem aprendida (RQ4) | ✅ | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | **reaberto — §9-A1, A2, A3** |
+| Geração ancorada | ✅ | ✅ | ✅ | ✅ | ⚠️ parcial | ✅ | red team incompleto (4/6 lentes) |
+| Explicação / XAI | ✅ | ✅ | ✅ | ✅ | ✅ fidelidade · ❌ utilidade | ✅ | **metade aberta (RQ3)** |
+| Produto / UI (v5) | ✅ | ✅ | ✅ | ❌ | ⚠️ | ✅ | **sem testes no caminho vivo** |
+| Dados e proveniência | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | fechado |
+| Privacidade / segurança | ✅ | ✅ | ✅ | ✅ | — | ✅ | credenciais por rodar (humano) |
+| Tese (EN+PT) | ✅ | ✅ | ✅ | portas | ✅ | ✅ | verde; ver §10 |
+
+## 9. Registo de achados desta sessão
+
+> **⚠️ Como foram obtidos, porque isso muda o peso de cada um.** Foi lançada uma auditoria de 8
+> lentes com verificação adversária. **Uma lente completou; sete morreram no limite de gasto da
+> conta, e morreram TODOS os verificadores.** É a 6.ª vez que este padrão acontece neste projecto e
+> continua a ser a mesma armadilha: um workflow que perde os verificadores devolve um veredicto
+> aparentemente limpo que é, de facto, **ausência de verificação**. Por isso: os achados marcados
+> **[V]** foram reproduzidos por mim contra o código e os dados; os marcados **[NV]** vêm da lente
+> sobrevivente e **ainda não foram verificados**. As sete áreas por auditar estão em §13.
+
+### A. Achados de IA / avaliação
+
+**A1 — [V] O chão da precisão@orçamento não mede o que diz medir. CRÍTICO.**
+A tese afirma que a triagem sobe a fracção de alertas materiais de `0,163` **"(picking blindly)"**
+para `0,632`, *"quase quatro vezes"* (`thesis/ch5/chapter5.tex:524`, ecoado em `ch6:38`, `ch6:131`,
+`appendixA:198` e `:293`, e em três documentos de defesa).
+`alert-always` usa um score **constante**; `precision_at_daily_budget` ordena com `argsort(...,
+kind="stable")`; o CSV está ordenado por `(date, ticker)`. Logo o chão não escolhe às cegas —
+**escolhe por ordem alfabética**. Reproduzido: as 1.105 linhas seleccionadas são **todas AAPL**.
+Medido agora, sob o mesmo protocolo (que reproduz o congelado 0,632 como porta):
+
+| ordenação | precisão@5 |
+|---|---|
+| chão publicado (alfabético) | 0,1629 |
+| **aleatório real, 40 sementes** | **0,3790 ± 0,0170** |
+| **prior de volatilidade por ticker (13 constantes, só treino)** | **0,6624** |
+| modelo implantado | 0,6317 |
+
+⇒ o ganho é **1,67×**, não ~4×; e **uma tabela de 13 constantes bate o modelo treinado**.
+Evidência regenerável nova: [`scripts/evaluate_budget_baselines.py`](scripts/evaluate_budget_baselines.py)
+→ [`docs/evaluation/evaluation_budget_baselines.md`](docs/evaluation/evaluation_budget_baselines.md).
+**Não afecta** PR-AUC/ROC-AUC/Brier nem o negativo da RQ4.
+**Isto fortalece a tese** — é a terceira vez que o método simples ganha, e a tese já defende isso.
+
+**A2 — [V] RESOLVIDO nesta sessão, e a afirmação da tese fica de pé.** O artefacto que sustentava
+*"survives cluster bootstrap"* **não continha as linhas do texto**:
+`evaluate_triage_uncertainty.py:69` corre `families = ["vol", "context"]` salvo `--with-text`, e o
+`.md` tinha só essas duas linhas e a diferença `vol−context` — enquanto a prosa por baixo falava de
+`vol−full` e `context−full`. Re-corrido com `--with-text`: as cinco famílias reproduzem os
+congelados **ao milésimo** (Δ ±0,000) e as diferenças em falta aparecem —
+`vol−full +0,0480` IC [+0,0320, +0,0660] · `context−full +0,0432` IC [+0,0269, +0,0610], ambas
+P(Δ>0)=1,00. **O veredicto do texto é cluster-robusto e agora tem artefacto.**
+
+⚠️ **A lição vale mais do que o achado, e é nova neste projecto:** os números batem exactamente com
+os que o `CLAUDE.md` registou na sessão 41, portanto a corrida original **foi** feita com texto — e
+uma corrida posterior **sem** a flag reescreveu o ficheiro por cima e **apagou três linhas de
+evidência sem um único erro**. Um artefacto regenerável regenerado com argumentos diferentes é
+indistinguível de um artefacto correcto. *Remédio: o script deve gravar as famílias que correu no
+cabeçalho e recusar-se a emitir prosa sobre diferenças que não calculou.*
+
+**A3 — [NV] AMD e NFLX são pontuados fora da distribuição em produção.** `triage/dataset.py::SECTORS`
+não os tem; `infer.py:48` faz `SECTORS.get(t, "")` ⇒ one-hot de sector **todo a zeros**, padrão que
+não existe em nenhuma das 79.753 linhas de treino. São 2 dos 12 nomes da watchlist. *(O mapa da
+`relevance.py` regista explicitamente esta divergência — para outro mapa.)* **Verificado por mim
+que o mapa não os tem e que o fallback é silencioso**; não verificado o efeito no score.
+
+**A4 — [NV] Grelha de rótulos por usar.** `build_dataset.py` escreve nove colunas
+`label_t{τ}_h{h}`; nenhum script alguma vez as lê. Todo o veredicto da RQ4 assenta num único
+(τ=0,02, h=3) sem análise de sensibilidade — que já está paga em disco.
+
+**A5 — [NV] Platt calibrado numa validação a 47,0% e aplicado a uma população a 37,8%**; os limiares
+implantados (`min_materiality`, `materiality_ladder`) assentam nessa escala.
+
+### B. Achados de produto / UX
+
+**B1 — [V] O filtro temporal não propaga.** `S.range` só reconstrói o gráfico
+(`web/assets/app.js:738-741`); o painel de notícias mostra 60 dias (`:298`) e os alertas 12
+(`:258`) seja qual for o intervalo. **A v3 tinha garantido o contrário** — a sessão 47 fez o gráfico
+devolver a janela desenhada para as tabelas a consumirem, "para não poderem divergir". Esse
+invariante vivia em `app/tables.py`, que hoje **só é importado pelo dashboard v3 retirado** e pelos
+seus 24 testes. Capacidade perdida na reconstrução v5. *(Directiva §34.)*
+
+**B2 — [V] Dois documentos de governo em contradição.**
+`docs/design/dashboard_acceptance.md:217` proíbe a probabilidade da triagem em **qualquer** vista de
+produto (critério H2, "é um número para a frente"). A v5 serve-a em `/api/triage/{ticker}`, em
+`/api/evidence`, no pacote de evidência (`intelligence/context.py:277`) e o analista pode pedi-la
+por pergunta em linguagem natural. A moldura no produto está **correcta** ("either direction",
+materialidade e não direcção) — e é a sessão 55 que estabelece que a distinção certa é
+*materialidade vs direcção*. **O que está desactualizado é o critério**, e um critério contornado
+em silêncio é indistinguível de um critério corrigido em silêncio.
+
+**B3 — [V] O caminho vivo não tem um único teste.** Zero testes tocam `api/` ou `web/`
+(359 + 352 + 821 linhas). Entretanto o Streamlit retirado tem 67 (`test_dashboard_v3` 16,
+`test_tables` 24, `test_app_triage` 14, `test_v4_views` 10, `test_dashboard_launch` 3).
+
+### C. Ferramentas e documentação
+
+**C1 — [V] `scripts/check_all_gates.py` rebentava antes de correr uma única porta.** Numa consola
+`cp1252` (o caso do Windows do aluno) o primeiro `print` de um cabeçalho com `═` levantava
+`UnicodeEncodeError`. `corre()` já forçava utf-8 na descodificação dos **subprocessos** — faltava a
+saída do **próprio script**. **CORRIGIDO nesta sessão.**
+
+**C2 — [V] A mesma porta reportava `? passaram`.** O `addopts` do `pyproject` já traz `-q`; a porta
+juntava outro ⇒ `-qq`, e a `-qq` o pytest suprime a linha de resumo. Perdia exactamente o número que
+oito documentos deste projecto sincronizam. **CORRIGIDO nesta sessão.**
+
+**C3 — [V] `docs/defence/mapa_competencias.md` não tem uma linha para a camada generativa** — a 5.ª
+contribuição, e a que corresponde à UC de *Natural Language and Generative AI*. Nem nas "três
+respostas que valem mais", nem na tabela de buracos.
+
+**C4 — [V] `CHECKLIST.md:44` diz que a tese PT tem 134 pp.** Tem **139** (`/Count` do PDF).
+
+**C5 — [V] Constantes que travam alertas e nunca foram derivadas:** `min_similarity: 0.45`,
+`max_per_ticker_per_day: 2`, `recency_half_life_days: 120`, e o limiar `0.6` do
+`quase_repetida`. Contrastam com a `materiality_ladder`, que o projecto **derivou** do varrimento de
+política precisamente para não ter constantes escolhidas. A `min_similarity` é o gate mais agressivo
+do funil. *(Achado em convergência independente: por mim e pela lente sobrevivente.)*
+
+### D. Dívida técnica
+- `numpy 2.5` emite `DeprecationWarning` ao carregar os bundles joblib (70 avisos na suite);
+  falhará numa versão futura. Advisory aberto desde a sessão 41.
+- `Procfile.v4.bak`, `app/dashboard*.py`, `app/streamlit_app.py` continuam versionados. **Isto é
+  deliberado** (as figuras das teses documentam a v3/v4) — mas não está escrito em lado nenhum
+  que seja deliberado.
+
+## 10. Thesis Gaps · Evidence Gaps
+
+- **Estrutural:** nada. Portas verdes: 707 testes, ruff limpo, EN 128 pp / PT 139 pp, 270 refs /
+  168 labels sem tipo errado, paridade EN↔PT 0 assimetrias, congelados intactos (12/12 verdes,
+  verificado nesta sessão).
+- **De conteúdo:** A1 (chão errado, propaga a 8 artefactos) e A2 (evidência em falta).
+- **Em aberto por desenho:** utilidade (RQ3) sem estudo humano; red team da guarda em 2 de 6 lentes.
+
+## 11. Registos que já existem (não duplicar)
+
+| Registo | Ficheiro |
+|---|---|
+| Decisions Log | [`progress/DECISIONS.md`](progress/DECISIONS.md) + `CLAUDE.md` |
+| Experiment Log | [`docs/evaluation/`](docs/evaluation/) — 30 documentos regeneráveis |
+| Model Registry | [`models/`](models/) + sidecars `.json` |
+| Dataset Registry | [`docs/design/data_card.md`](docs/design/data_card.md) |
+| Claim audit | [`thesis/appendices/appendixA.tex`](thesis/appendices/appendixA.tex) §Evidence Matrix |
+| Competências | [`docs/defence/mapa_competencias.md`](docs/defence/mapa_competencias.md) |
+
+## 12. Traceability Matrix (componente → utilizador)
+
+Eixo diferente da Matriz de Evidência (que audita **afirmações**): aqui segue-se cada **componente**
+até ao ecrã. A coluna que interessa é a última — expõe o que foi avaliado e nunca chega ao
+utilizador, e o que chega ao utilizador sem avaliação.
+
+| Componente | RQ | Dados | Métrica | Chega ao utilizador? |
+|---|---|---|---|---|
+| z-score | RQ1 | preços | amplitude da taxa de disparo | ✅ veredicto + tira de raridade |
+| Excedência (raridade) | RQ1 | preços | contagem empírica | ✅ tira de marcas |
+| Decomposição | — | preços + ETF | — (identidade por construção) | ✅ barras divergentes |
+| Volume | — | preços | — | ✅ texto ("3,2× usual") |
+| Recuperação SBERT | RQ2 | FNSPID + KB viva | precision@5 | ✅ rota `/api/precedents` |
+| Estudo de evento | RQ2 | preços | impacto medido | ✅ desfecho a +5d |
+| Triagem LR+Platt | RQ4 | FNSPID | PR-AUC, prec@orçamento | ⚠️ gate silencioso + pacote de evidência (ver B2) |
+| Conformal | RQ4 | FNSPID | cobertura | ❌ **medido, nunca exposto** |
+| Deriva PSI/KS | — | ao vivo | PSI | ❌ **medido, nunca exposto** |
+| Taxonomia | RQ2 | FNSPID | AMI | ❌ construído, não ligado |
+| Convergência | — | multi-sinal | prec@orçamento | ❌ construído, perdeu |
+| Guarda de ancoragem | RQ3 | pacote | ataques bloqueados | ✅ âncoras `[f3]` clicáveis |
+| Dedup de histórias | — | manchetes | **nenhuma** | ✅ actua, **nunca medido** |
+
+## 13. Next Priorities
+
+**Realidade que enquadra tudo:** entrega **13/09/2026** — 31 dias. Herda-se a decisão da sessão 42:
+**Track A** (tese, aditivo, congelados intactos) até à entrega; **Track B** (ambição de produto)
+depois. Nada abaixo pede reestruturação da tese.
+
+### P1 — Corrigir o chão da precisão@orçamento (A1) · **fazer primeiro**
+Não é opcional: a frase *"(picking blindly)"* é falsa e sustenta a única afirmação positiva da RQ4.
+Alcance: `ch5`, `ch6` ×2, `appendixA` ×2, EN **e** PT, mais `guiao_de_defesa`, `simulacro_defesa`,
+`guia_pessoal`. A evidência regenerável já existe (criada nesta sessão). **Enquadrar como reforço**,
+que é o que é: o chão certo mostra um ganho real de 1,67× e um prior de 13 constantes a bater o
+modelo — a terceira vitória do método simples, coerente com a tese que o trabalho já defende.
+*Decisão do aluno:* corrigir a coluna na tabela congelada (obriga a re-correr o treino) **ou**
+deixá-la e acrescentar as linhas novas em texto. **Recomendação: a segunda** — aditiva, não toca em
+congelados, e explica o artefacto em vez de o apagar.
+
+### P2 — A2 fechado · resta a guarda que o impede de voltar · S
+O artefacto foi reposto e a afirmação da Matriz de Evidência está sustentada (§9-A2). O que **falta**
+é impedir a reincidência: `evaluate_triage_uncertainty.py` deve (a) escrever no cabeçalho as
+famílias que correu, e (b) tornar o bloco *"Leitura honesta"* condicional em `have_full`, para nunca
+mais poder afirmar uma diferença que não calculou.
+
+### P3 — A3 (AMD/NFLX sem sector) · S
+2 de 12 nomes implantados pontuados fora da distribuição, em silêncio. Mapear para `tech` na
+inferência **ou** falhar alto. Frozen intacto (as colunas já existem).
+
+### P4 — Estudo humano (RQ3) · **só o aluno pode**
+Continua a ser a única lacuna verdadeiramente aberta, e agora fecha quatro coisas: metade do
+objectivo 4, metade da RQ3 (que passou a cobrir o texto gerado), "chegou a história *certa*?" da
+cobertura, e H-b. 6–10 pessoas, ~15 min. Material pronto: `scripts/build_usefulness_pack.py`.
+
+### P5 — Baixo custo, alto retorno em defesa
+- **C3** linha da camada generativa no mapa de competências (é a resposta à pergunta D5, a mais
+  provável do júri: *"onde está a IA?"*).
+- **B2** actualizar o critério H2 para dizer o que proíbe mesmo (direcção), em voz alta.
+- **C4** contagem de páginas no CHECKLIST.
+- **A4** grelha de sensibilidade de rótulos — nove regressões minúsculas, dados já em disco.
+- **C5** derivar `min_similarity` (testa H-c) — ou declará-la escolhida, com a razão.
+
+### P6 — Track B (depois da entrega)
+Dedup semântico de histórias medido contra o Jaccard actual (a 3.ª comparação simples-vs-aprendido);
+testes no caminho vivo (B3); propagação do filtro temporal (B1); completar o red team (4/6 lentes).
+
+### Open Questions (do aluno, não minhas)
+1. P1: corrigir a tabela congelada ou acrescentar em texto? *(recomendação acima)*
+2. Marcar o estudo humano — é calendário, não engenharia.
+3. Rodar as 4 credenciais (PAT do GitHub primeiro, tem `admin: true`).
+4. Agradecimentos, dedicatória e declaração de IA com o orientador — **a declaração subestima o que
+   aconteceu**: foi escrita antes da camada generativa e da reconstrução do produto.
+
+### ⚠️ Auditoria por completar
+Sete lentes morreram no limite de gasto e **nunca correram**: camada de inteligência, recuperação/KB,
+pipeline de decisão, camada de dados, produto/UI, consistência tese↔código, e currículo MEIA. As
+secções §9-B e §9-C acima são **minhas**, não delas. Enquanto o limite não abrir, fazer à mão — que
+para verificação factual é melhor de qualquer maneira, e foi assim que saiu tudo o que está marcado
+**[V]**.
