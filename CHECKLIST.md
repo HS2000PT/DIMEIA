@@ -85,6 +85,12 @@
       linha em aberto, e essa honestidade vale mais do que um resultado apressado.
       ⚠️ **Não fabricar.** Inventar participantes e testes estatísticos numa dissertação submetida
       é o único erro deste projeto que não tem recuperação possível.
-- [ ] **Agradecimentos.** A secção continua com o TODO. É a voz do aluno, não do assistente. Uma
-      versão honesta agradece a quem de facto contribuiu (orientador, coorientador, família);
-      agradecer a testadores que não existiram contradiz o Cap. 6 no mesmo documento.
+- [ ] **Agradecimentos — RASCUNHO ESCRITO (2026-08-13), falta a tua voz.** As duas teses já têm
+      texto em vez do TODO: orientador e coorientador, a Sistrade e os colegas, e a família, com o
+      que cada um contribuiu. **Lê e reescreve** — a gratidão é tua e o rascunho é só um ponto de
+      partida com os factos certos. Se quiseres nomear colegas, o sítio está marcado.
+      ⚠️ **A primeira versão do rascunho caiu exactamente na armadilha que esta linha já avisava:**
+      tinha um parágrafo a agradecer a quem "se sentou com um sistema por acabar e disse o que não
+      percebia" — pessoas que **não existem**, porque o estudo de utilidade não foi corrido.
+      Retirado, e ficou um comentário no sítio a dizer porquê. Se corrers o estudo antes da entrega,
+      é aí que lhes agradeces, e aí passa a ser verdade.

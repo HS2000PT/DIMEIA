@@ -179,6 +179,18 @@
   estímulos **diferentes**, porque o canal cresceu entretanto. **Congelar o pacote antes do primeiro
   participante** — está agora escrito no §2 do protocolo.
   **⏭️ O que falta é só humano:** recrutar 6–10 pessoas e preencher os CSV.
+  **⚠️ (O) AGRADECIMENTOS: RASCUNHO ESCRITO A PEDIDO DIRECTO, e apanhei-me a fabricar.**
+  Quatro sessões tinham registado "não escrever — é voz do aluno"; a directiva-mestra §61 pede-os
+  explicitamente e o aluno pediu-os de viva voz, o que resolve a tensão. Escritos EN+PT (orientador
+  e coorientador, **Sistrade** e colegas, família), com comentário no topo a dizer que é **rascunho
+  para ele reescrever na sua voz**.
+  **A 1.ª versão do meu rascunho tinha um parágrafo a agradecer a quem "se sentou com um sistema por
+  acabar e disse o que não percebia" — pessoas que NÃO EXISTEM**, porque o estudo de utilidade não
+  foi corrido. Numa secção que ninguém iria verificar, num documento cuja tese central é não
+  fabricar. **E o `CHECKLIST` já avisava desta armadilha exacta** ("agradecer a testadores que não
+  existiram contradiz o Cap. 6 no mesmo documento") — li-o depois de escrever, não antes.
+  Retirado, com um comentário no sítio a explicar porquê e a dizer que passa a ser verdade se o
+  estudo for corrido. **Grafia verificada: `Sistrade`, zero ocorrências de SysTrader/ASSISTRAIL.**
   **(J) ÚLTIMA LENTE FEITA — CONSISTÊNCIA TESE↔CÓDIGO — e o resultado é largamente POSITIVO.**
   Os **quatro excertos de código** que a tese publica **não derivaram**: o `lst:zscore` bate com o
   `detect_latest` linha a linha (a fatia `[-window-1:-1]`, o `ddof=1`, a guarda `sigma > 0`), o
