@@ -929,7 +929,10 @@
   **(3) COMPLETAR O RED TEAM DA GUARDA:** 4 das 6 lentes nunca correram (limite de gasto). A tese
   já diz que a força medida é um **limite inferior**, portanto não é uma correcção pendente — é
   uma melhoria. `scripts/evaluate_intelligence_guard.py` regenera os números.
-  **(4) AGRADECIMENTOS E DEDICATÓRIA** continuam com o `% TODO` de propósito: é voz dele.
+  **(4) AGRADECIMENTOS E DEDICATÓRIA — já não estão com `% TODO`** (sessão 57, a pedido dele):
+  agradecimentos com rascunho EN+PT para ele reescrever, e dedicatória **"À minha família"**,
+  escolhida por ele quando lhe perguntei — a única coisa que eu não podia adivinhar sem inventar.
+  Falta a leitura dele às duas.
   **(5) RODAR AS 4 CREDENCIAIS** (PAT do GitHub primeiro — tem `admin: true`).
   **⚠️ LIMITE DE GASTO: esgotado nesta sessão.** Dois workflows lançados, **os dois perderam
   TODOS os agentes** (43 e 6). Ambos devolveram *"nenhum achado sobreviveu à verificação"*, que é
