@@ -286,11 +286,14 @@ frase cita; a passagem de **linguagem** proibida mantém o âmbito do pacote de 
 previsão de uma fonte é legítimo). **+2 testes de regressão nos dois sentidos**; corpus do red team
 inalterado (**23/23** ataques bloqueados, **8/8** controlos fiéis), 50/50 testes da camada verdes.
 
-⚠️ **Isto obriga a emendar o `RESIDUAL` e a tese.** O risco residual nº 1 diz que a guarda não
-verifica se o facto *caracteriza bem* a afirmação, "**sem usar um número**". Era mais largo do que
-isso: um número **também** podia escapar. A frase da tese em `ch6` §Limitations (*"a sentence may
-cite a true fact and describe it poorly without using a number"*) descrevia um furo mais estreito
-do que o que existia.
+**⚠️ CORRECÇÃO A MIM PRÓPRIO (lente §9-I, feita depois).** Escrevi aqui que isto *"obriga a emendar
+o `RESIDUAL` e a tese"*. **Não obriga — é o contrário.** Lida a frase exacta, o `ch6` afirma que a
+verificação confirma *"that the sentence's numbers belong to it"* (`thesis/ch6:382`,
+`thesis-pt/ch6:400`). Essa afirmação era **falsa antes da correcção** e é **verdadeira depois**.
+Ou seja: E1 era uma inconsistência **tese↔código** em que a tese prometia a garantia certa e o
+código não a entregava toda, e foi resolvida do lado certo. **Nenhuma frase da tese precisa de
+mudar.** O que pode valer uma linha é a *história* — a garantia teve um furo por texto citado e foi
+fechada —, mas isso é escolha editorial, não correcção.
 
 **E2 — [V] E eu reproduzi ao vivo o defeito que documentei em §9-A2.** Corri
 `evaluate_intelligence_guard.py --offline` para confirmar o corpus; a flag regenerou o `.md` **sem**
@@ -339,6 +342,39 @@ distribui**: (a) três ficheiros derivados do FNSPID — `data/samples/fnspid_ne
 share-alike **e NonCommercial**. Não sou jurista e não é um defeito: é uma restrição sobre uma
 decisão em aberto, e um `LICENSE` que diga "MIT" sem ressalva seria inexacto para esses caminhos.
 **Levar isto ao orientador junto com a pergunta**, não depois.
+
+### I. Consistência tese↔código *(a última lente, feita à mão)*
+
+**Método:** não amostragem. Lidos o `ch4` §Decision Logic, §The Life of One Alert e §Overview contra
+`run_alerts.py`, `detector.py`, `explain.py` e `config/alerts.yaml`; e os **quatro excertos de código**
+que o `ch3` publica contra os ficheiros que citam.
+
+**I1 — [V] Os quatro excertos de código NÃO derivaram.** `lst:zscore` bate com `detect_latest`
+linha a linha, incluindo a fatia `r.iloc[-window - 1 : -1]`, o `ddof=1` e a guarda `sigma > 0`;
+`lst:split` bate com `assign_splits`; `lst:contrib` bate com `lr_group_contributions`. É o resultado
+que interessa: um excerto publicado que já não é o código é indefensável, e não há nenhum.
+
+**I2 — [V] As afirmações verificáveis do `ch4` conferem.** Tecto de 2/ticker/dia
+(`max_per_ticker_per_day: 2`); pisos derivados 0,49/0,64 (`materiality_ladder`); "o scan emite no
+máximo uma manchete por empresa por ciclo"; o detector devolver *(z, μ, σ, janela, limiar)* —
+`AnomalyResult` tem exactamente esses campos; funil 944→42 = **22:1** bate com
+`alert_funnel.md`; "as dez empresas que a watchlist tinha então" está correctamente datado agora que
+são doze. **Também confere a frase que já foi um defeito:** *"ships disabled in the default
+configuration and is enabled in the reference deployment"* — o defeito do código é `None`
+(desligado) e é o ficheiro de configuração implantado que o liga.
+
+**I3 — [V] E1 era, afinal, desta classe — a tese estava certa e o código é que não cumpria.**
+Ver a correcção dentro de §9-E1. Nenhuma frase da tese muda.
+
+**I4 — [V] O alcance de A1 é MUITO maior do que eu disse.** Tinha escrito "8 artefactos"; são
+**~48 sítios em 20 ficheiros**: as duas teses (`ch4`, `ch5`, `ch6`, apêndice), o **artigo IEEE**
+(`paper/main.tex:39` e `:239`), os **três decks** (EN, PT e guia de estudo, 7 sítios só no guia), o
+**quizz** (`index.html:301`, `:303`, `:567`, `:667` — e a pergunta 301 diz *"vs 0,163 às cegas"*,
+com resposta auto-corrigida), cinco documentos de defesa e o `learning.md`.
+⚠️ **E seis sítios com `0.163` NÃO são este número** — são a precisão do LOF na tabela de detectores
+(`ch5:169`, `ch5:200` e os gémeos PT, `evaluation_anomaly_ext.md:17`, `guia_estudo:2060`). Confundi-los
+seria a 5.ª vez que um grep ingénuo produz falsos positivos nesta linha de trabalho: a separação
+faz-se exigindo `0,632` na mesma linha e conferindo o resto à vista.
 
 ### D. Dívida técnica
 - `numpy 2.5` emite `DeprecationWarning` ao carregar os bundles joblib (70 avisos na suite);
@@ -438,19 +474,22 @@ testes no caminho vivo (B3); propagação do filtro temporal (B1); completar o r
 4. Agradecimentos, dedicatória e declaração de IA com o orientador — **a declaração subestima o que
    aconteceu**: foi escrita antes da camada generativa e da reconstrução do produto.
 
-### Estado da auditoria
-Sete lentes morreram no limite de gasto. **Seis foram refeitas à mão** (§9-B produto/UI,
+### Estado da auditoria — **completa**
+Sete lentes morreram no limite de gasto; **as sete foram refeitas à mão** (§9-B produto/UI,
 §9-C ferramentas e documentação, §9-E inteligência, §9-F recuperação/KB, §9-G pipeline de decisão,
-§9-H dados e licenciamento) — e a manual encontrou coisas que a automática não tinha visto,
-incluindo o furo da guarda (E1), que foi **fechado com regressão nos dois sentidos**.
+§9-H dados e licenciamento, §9-I consistência tese↔código). A manual encontrou o que a automática
+não viu — incluindo o furo da guarda (E1), **fechado com regressão nos dois sentidos**.
 
-**Falta uma: consistência tese↔código a sério.** Foram feitos sondagens pontuais (a contagem dos
-cinco gates confere; a atribuição do FNSPID confere) mas **não** a leitura sistemática do `ch3` e do
-`ch4` contra o código, que é onde estão os defeitos desta classe que o projecto já apanhou. É a
-única lente que resta e vale um bloco dedicado — mais valioso do que qualquer coisa em P6.
+**O resultado da última lente é largamente positivo e vale dizê-lo:** os quatro excertos de código
+publicados na tese **não derivaram**, e as afirmações verificáveis do `ch4` sobre o sistema
+implantado **conferem**. A tese descreve o sistema que existe. Os dois defeitos desta classe
+encontrados hoje apontam nos dois sentidos opostos: **A1** (a tese afirma mais do que a medição
+sustenta) e **E1** (a tese afirmava uma garantia que o código não cumpria — resolvido do lado do
+código).
 
 **O currículo MEIA** não precisa de lente: o mapa existe
 (`docs/defence/mapa_competencias.md`) e o único buraco é o C3 (sem linha para a camada generativa).
 A resposta à pergunta *"onde está a IA?"* está em §4.1 — no critério que sabe dizer não — e ganhou
-esta sessão um exemplo novo e melhor: **A1**, onde a medição correcta reduz o ganho reivindicado
-pelo próprio trabalho.
+esta sessão dois exemplos novos e melhores: **A1**, onde a medição correcta reduz o ganho que o
+próprio trabalho reivindicava, e **E1**, onde o red team interno encontra e fecha um furo na
+garantia mais recente.

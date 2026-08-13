@@ -89,9 +89,27 @@
   não registadas:** o repositório distribui três ficheiros derivados do FNSPID (**CC BY-SA 4.0**,
   share-alike; um deles é o que a app lê) e o `meia-style.cls` (**CC BY-NC-SA 3.0**, share-alike e
   NonCommercial), enquanto o `CHECKLIST:45` apresenta a escolha como livre ("MIT/Apache").
-  **⏭️ FALTA UMA LENTE:** consistência tese↔código lida a sério (`ch3` e `ch4` contra o código).
-  Sondagens pontuais conferem (os cinco gates, a atribuição do FNSPID), mas é a classe onde este
-  projecto já apanhou defeitos reais e merece bloco próprio.
+  **(J) ÚLTIMA LENTE FEITA — CONSISTÊNCIA TESE↔CÓDIGO — e o resultado é largamente POSITIVO.**
+  Os **quatro excertos de código** que a tese publica **não derivaram**: o `lst:zscore` bate com o
+  `detect_latest` linha a linha (a fatia `[-window-1:-1]`, o `ddof=1`, a guarda `sigma > 0`), o
+  `lst:split` com o `assign_splits`, o `lst:contrib` com o `lr_group_contributions`. As afirmações
+  verificáveis do `ch4` conferem todas (tecto 2/dia, pisos 0,49/0,64, uma manchete por ticker por
+  ciclo, o `AnomalyResult` a devolver mesmo (z, μ, σ, janela, limiar), funil 944→42 = 22:1, "as dez
+  empresas que a watchlist tinha então" correctamente datado). **A tese descreve o sistema que
+  existe.**
+  **⚠️ (K) CORRECÇÃO A MIM PRÓPRIO, e muda o que há a fazer:** escrevi que o furo da guarda (G)
+  obrigava a emendar o `RESIDUAL` e a tese. **Não obriga — é o inverso.** A frase do `ch6:382`
+  (PT `ch6:400`) afirma que a verificação confirma *"que os números da frase lhe pertencem"*: era
+  **falsa antes** da correcção e é **verdadeira depois**. Era uma inconsistência tese↔código em que
+  a tese prometia a garantia certa e o código não a cumpria toda, resolvida do lado certo.
+  **Nenhuma frase da tese muda por causa de (G).**
+  **⚠️ (L) O ALCANCE DE (B) É MUITO MAIOR DO QUE EU DISSE: não são 8 artefactos, são ~48 sítios em
+  20 ficheiros** — as duas teses (ch4, ch5, ch6, apêndice), o **artigo IEEE**, os **três decks**
+  (EN, PT e guia de estudo), o **quizz** (uma pergunta diz *"vs 0,163 às cegas"*, auto-corrigida),
+  cinco documentos de defesa e o `learning.md`. **E seis sítios com `0.163` NÃO são este número** —
+  são a precisão do LOF na tabela de detectores. A separação faz-se exigindo `0,632` na mesma linha;
+  contá-los juntos seria a 5.ª vez que um grep ingénuo produz falsos positivos nesta linha de
+  trabalho.
   **Portas no fim da sessão: 707 testes, ruff limpo, 12/12 verdes** (só a "árvore limpa" acusa, e
   acusa os ficheiros novos desta sessão). **Congelados intactos.**
 - **🆕 SESSÃO 56 (2026-08-10/11 — o aluno mandou reconstruir o produto DE RAIZ: "forget the
