@@ -123,6 +123,47 @@ def test_numero_de_outro_facto_e_rejeitado(market):
     assert not check_grounding(f"NVDA moved -2.35% [{vol}].", market).ok
 
 
+def test_aspas_de_outro_facto_nao_isentam_o_numero(asset):
+    """⚠️ Mesma família do anterior, por um canal que a correcção de sessão 56 não fechou.
+
+    A autorização numérica passou a ser da FRASE; a isenção de citação continuou a ser do
+    PACOTE. A assimetria deixava passar o número de um facto numa frase que citava outro, desde
+    que fosse entre aspas e fosse substring de alguma manchete capturada:
+
+        `NVDA stood out today, moving 8% [f1]`      → rejeitado (correcto)
+        `NVDA stood out today, "up 8%" [f1]`        → PASSAVA, mesmo 8, mesma âncora
+
+    O leitor via a âncora resolver para um facto que não continha aquele número — que é
+    precisamente a travessia que a camada existe para garantir. Controlo no sentido oposto no
+    teste seguinte: citar a manchete E o facto dela continua a passar.
+    """
+    # Manchete COM número, que é o que torna o ataque possível — a do `asset` não tem nenhum.
+    b = build_asset_bundle(
+        ROW, "2026-08-10T17:00:00+00:00",
+        headlines=[{"headline": "Exxon Mobil shares up 8% after record quarter",
+                    "source": "Reuters", "date": "2026-08-08"}])
+    z = fid(b, "zscore", "XOM")
+    # Controlo do próprio ataque: sem aspas, o mesmo número na mesma frase é rejeitado.
+    assert not check_grounding(f"XOM stood out today, moving 8% [{z}].", b).ok
+    assert not check_grounding(f'XOM stood out today, "up 8%" [{z}].', b).ok
+
+
+def test_aspas_do_proprio_facto_continuam_isentas(asset):
+    """O sentido oposto do teste anterior: o número da fonte, citado COM o facto da fonte.
+
+    Sem este controlo, a correcção acima seria indistinguível de uma guarda que passou a
+    rejeitar toda a citação — e uma guarda que rejeita tudo desliga-se sozinha, porque o
+    produto cai sempre no chão determinístico.
+    """
+    b = build_asset_bundle(
+        ROW, "2026-08-10T17:00:00+00:00",
+        headlines=[{"headline": "Exxon Mobil shares up 8% after record quarter",
+                    "source": "Reuters", "date": "2026-08-08"}])
+    h = fid(b, "headline")
+    manchete = b.by_id(h).detail["headline"]
+    assert check_grounding(f'The captured headline reads "{manchete}" [{h}].', b).ok
+
+
 def test_retorno_restituido_como_zscore_e_rejeitado(market):
     """Tipos não são intermutáveis: +4.47 é um retorno, não um z-score."""
     z = fid(market, "zscore", "XOM")

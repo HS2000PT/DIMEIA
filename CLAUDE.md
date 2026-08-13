@@ -57,11 +57,41 @@
   está desactualizado**, não o produto; **zero testes tocam `api/` ou `web/`** enquanto o Streamlit
   retirado tem 67; o **mapa de competências não tem linha para a camada generativa** (a UC de
   *Generative AI*, e a resposta à pergunta D5); `CHECKLIST.md:44` diz PT 134 pp e são **139**.
-  **⚠️ (F) A AUDITORIA ESTÁ 1/8 FEITA: sete lentes morreram no limite de gasto, e morreram TODOS os
-  verificadores.** 6.ª vez neste projecto. Tudo o que está marcado **[V]** no plano foi reproduzido
-  por mim contra o código e os dados; o resto está marcado **[NV]**. **Por auditar:** camada de
-  inteligência, recuperação/KB, pipeline de decisão, dados, produto/UI, consistência tese↔código e
-  currículo MEIA.
+  **⚠️ (F) A AUDITORIA AUTOMÁTICA MORREU 7/8 no limite de gasto, INCLUINDO TODOS os verificadores**
+  (6.ª vez neste projecto). **O aluno mandou continuar à mão, e a manual encontrou o que a
+  automática não viu** — incluindo o furo da guarda abaixo.
+  **⚠️ (G) FURO REAL NA GUARDA DE ANCORAGEM, reproduzido e FECHADO.** A sessão 56 ligou cada número
+  **à frase** que o cita; a isenção de citações verbatim ficou a ser do **pacote**
+  (`_mask_exempt` percorria `bundle.facts` todos). Resultado:
+  `NVDA stood out today, moving 8% [f1]` é rejeitado e `NVDA stood out today, "up 8%" [f1]`
+  **passava** — mesmo número, mesma âncora — só porque `"up 8%"` é substring da manchete do `f2`.
+  A âncora resolvia para um facto que **não continha aquele número**. Não é bypass geral (um valor
+  inventado entre aspas continua rejeitado): o número é real mas **mal atribuído**.
+  **Corrigido** com `_mask_exempt(text, bundle, fids)` — só as manchetes dos factos que a frase cita
+  isentam; a passagem de **linguagem** proibida mantém o âmbito do pacote de propósito.
+  **+2 testes nos dois sentidos**; corpus do red team inalterado (**23/23** e **8/8**).
+  ⚠️ **Obriga a emendar o `RESIDUAL` e o `ch6`:** o risco nº 1 dizia que só a *caracterização*
+  escapava, "**sem usar um número**" — era mais largo do que isso.
+  **⚠️ (H) E EU REPRODUZI AO VIVO O DEFEITO DE (C), duas horas depois de o documentar.**
+  `evaluate_intelligence_guard.py --offline` regenerou o `.md` **sem** a secção "Geração real"
+  (27 secções, latência, fornecedores) que a tese cita: **23 linhas de evidência apagadas, exit 0,
+  zero avisos**. Restaurado do git. **2.ª instância da mesma classe, agora demonstrada.** Remédio
+  para os dois scripts: quem só regenera parte do documento tem de recusar escrever, ou declarar no
+  cabeçalho o que não recalculou.
+  **(I) MAIS TRÊS ACHADOS DA PASSAGEM MANUAL:** (1) a **deduplicação de precedentes é de texto
+  exacto** — a mesma história escrita por dois meios continua a contar como duas observações, e o
+  alerta afirma *"3 of 3 shown cases moved down"*; o detector para isto **existe**
+  (`quase_repetida`) e é aplicado **só** aos alertas. (2) **O 5.º gate não é instrumentado:**
+  `_gate()` corre dentro do `scan_news` e o `filter_new_alerts` (tecto, escada, quase-repetição)
+  corre **depois**, logo `stage="alerted"` quer dizer "sobreviveu à varredura" e o SPA traduz isso
+  para **"Alert sent"** — o screener pode dizer que um alerta foi enviado quando não foi, na vista
+  que existe para tornar o silêncio inspeccionável. (3) **A licença pendente tem duas restrições
+  não registadas:** o repositório distribui três ficheiros derivados do FNSPID (**CC BY-SA 4.0**,
+  share-alike; um deles é o que a app lê) e o `meia-style.cls` (**CC BY-NC-SA 3.0**, share-alike e
+  NonCommercial), enquanto o `CHECKLIST:45` apresenta a escolha como livre ("MIT/Apache").
+  **⏭️ FALTA UMA LENTE:** consistência tese↔código lida a sério (`ch3` e `ch4` contra o código).
+  Sondagens pontuais conferem (os cinco gates, a atribuição do FNSPID), mas é a classe onde este
+  projecto já apanhou defeitos reais e merece bloco próprio.
   **Portas no fim da sessão: 707 testes, ruff limpo, 12/12 verdes** (só a "árvore limpa" acusa, e
   acusa os ficheiros novos desta sessão). **Congelados intactos.**
 - **🆕 SESSÃO 56 (2026-08-10/11 — o aluno mandou reconstruir o produto DE RAIZ: "forget the

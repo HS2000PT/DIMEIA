@@ -266,6 +266,80 @@ respostas que valem mais", nem na tabela de buracos.
 política precisamente para não ter constantes escolhidas. A `min_similarity` é o gate mais agressivo
 do funil. *(Achado em convergência independente: por mim e pela lente sobrevivente.)*
 
+### E. Camada de inteligência *(lente feita à mão, 2026-08-13)*
+
+**E1 — [V] FURO REAL NA GUARDA, reproduzido e FECHADO nesta sessão.** A correcção da sessão 56
+ligou cada número **à frase** que o cita. Mas a isenção de citações verbatim continuou a ser do
+**pacote**: `_mask_exempt` percorria `bundle.facts` **todos**. A assimetria deixava um canal aberto:
+
+```
+NVDA stood out today, moving 8% [f1]      → rejeitado  (correcto)
+NVDA stood out today, "up 8%"  [f1]       → PASSAVA    (mesmo 8, mesma âncora)
+```
+
+porque `"up 8%"` é substring da manchete do `f2`. O leitor via a âncora resolver para um facto que
+**não continha aquele número** — exactamente a travessia que a camada existe para garantir.
+**Não é um bypass geral:** a cadeia tem de ser mesmo substring de uma manchete capturada (um valor
+inventado entre aspas continua a ser rejeitado), portanto o número é real mas **mal atribuído**.
+**Corrigido:** `_mask_exempt(text, bundle, fids)` limita as manchetes citáveis às dos factos que a
+frase cita; a passagem de **linguagem** proibida mantém o âmbito do pacote de propósito (citar a
+previsão de uma fonte é legítimo). **+2 testes de regressão nos dois sentidos**; corpus do red team
+inalterado (**23/23** ataques bloqueados, **8/8** controlos fiéis), 50/50 testes da camada verdes.
+
+⚠️ **Isto obriga a emendar o `RESIDUAL` e a tese.** O risco residual nº 1 diz que a guarda não
+verifica se o facto *caracteriza bem* a afirmação, "**sem usar um número**". Era mais largo do que
+isso: um número **também** podia escapar. A frase da tese em `ch6` §Limitations (*"a sentence may
+cite a true fact and describe it poorly without using a number"*) descrevia um furo mais estreito
+do que o que existia.
+
+**E2 — [V] E eu reproduzi ao vivo o defeito que documentei em §9-A2.** Corri
+`evaluate_intelligence_guard.py --offline` para confirmar o corpus; a flag regenerou o `.md` **sem**
+a secção "Geração real" (27 secções, latência 1,6 s, mistura de fornecedores) — que a tese cita e
+que a Matriz de Evidência usa. **23 linhas de evidência apagadas, exit 0, nenhum aviso.** Restaurado
+do git. É a **segunda** instância da mesma classe em duas horas, agora com demonstração.
+*Remédio (vale para os dois scripts): um gerador que só regenera parte do documento tem de recusar
+escrever, ou declarar no cabeçalho o que não recalculou.*
+
+### F. Recuperação / KB *(à mão)*
+
+**F1 — [V] A deduplicação de precedentes é de texto exacto; a de alertas não é.** `merged_precedents`
+deduplica por `" ".join(headline.lower().split())` — igualdade literal. O comentário ao lado explica
+por que razão isto importa, e explica-o melhor do que eu conseguiria: mostrar a mesma história como
+precedentes independentes *"não é uma imprecisão de apresentação, é uma afirmação falsa sobre a
+evidência: três observações independentes pesam muito mais do que uma vista três vezes"*. A correcção
+de 2026-08-02 fechou o caso do **texto idêntico** entre tickers. **A mesma história escrita por dois
+meios continua a contar como duas observações** — e o alerta di-lo em voz alta: *"3 of 3 shown cases
+moved down"*. O projecto **já tem** o detector para isto (`quase_repetida`, Jaccard 0,6) e aplica-o
+**só ao caminho dos alertas** (`run_alerts.py:280`), nunca aos precedentes. Verificado: é a única
+invocação no repositório.
+
+### G. Pipeline de decisão *(à mão)*
+
+**G1 — [V] O 5.º gate não é instrumentado, e o ecrã mente por causa disso.** `_gate(...)` é chamado
+**dentro** de `scan_news`; `filter_new_alerts` (tecto diário, escada de materialidade,
+quase-repetição) corre **depois**, e nada re-etiqueta o que ele suprime. Logo `stage="alerted"`
+significa *"sobreviveu à varredura"*, não *"foi entregue"*. E o SPA traduz `alerted` para
+**"Alert sent"** (`web/assets/app.js:635`). ⇒ **o screener pode dizer ao utilizador que um alerta
+foi enviado quando não foi** — na vista cuja razão de existir é *"o silêncio é uma decisão deste
+sistema, logo tem de ser inspeccionável"*. É também o único gate cuja coluna "efeito medido" no
+`cadence_contract.md` não tem número, e agora sabe-se porquê: não há de onde o tirar.
+*(A contagem "cinco gates" da tese está **correcta** — bate com o `cadence_contract`. O `gate_log`
+só cobre os quatro primeiros.)*
+
+### H. Dados e licenciamento *(à mão)*
+
+**H1 — [V] A atribuição do FNSPID está cumprida** (tese `appendixA:341`, `ch3:292` e `ch3:1002`,
+`data_card.md`, `README:201`). Sem achado.
+
+**H2 — [V] Mas a decisão de licença pendente tem duas restrições que o `CHECKLIST` não menciona.**
+O `CHECKLIST.md:45` apresenta a escolha como livre ("MIT/Apache"). Só que o repositório **já
+distribui**: (a) três ficheiros derivados do FNSPID — `data/samples/fnspid_news_sample.csv`,
+`kb_fnspid_sample.jsonl` e `kb_fnspid_light.jsonl` (este é o que a app implantada lê) — sob
+**CC BY-SA 4.0**, que é **share-alike**; e (b) `meia-style.cls` sob **CC BY-NC-SA 3.0**, que é
+share-alike **e NonCommercial**. Não sou jurista e não é um defeito: é uma restrição sobre uma
+decisão em aberto, e um `LICENSE` que diga "MIT" sem ressalva seria inexacto para esses caminhos.
+**Levar isto ao orientador junto com a pergunta**, não depois.
+
 ### D. Dívida técnica
 - `numpy 2.5` emite `DeprecationWarning` ao carregar os bundles joblib (70 avisos na suite);
   falhará numa versão futura. Advisory aberto desde a sessão 41.
@@ -364,9 +438,19 @@ testes no caminho vivo (B3); propagação do filtro temporal (B1); completar o r
 4. Agradecimentos, dedicatória e declaração de IA com o orientador — **a declaração subestima o que
    aconteceu**: foi escrita antes da camada generativa e da reconstrução do produto.
 
-### ⚠️ Auditoria por completar
-Sete lentes morreram no limite de gasto e **nunca correram**: camada de inteligência, recuperação/KB,
-pipeline de decisão, camada de dados, produto/UI, consistência tese↔código, e currículo MEIA. As
-secções §9-B e §9-C acima são **minhas**, não delas. Enquanto o limite não abrir, fazer à mão — que
-para verificação factual é melhor de qualquer maneira, e foi assim que saiu tudo o que está marcado
-**[V]**.
+### Estado da auditoria
+Sete lentes morreram no limite de gasto. **Seis foram refeitas à mão** (§9-B produto/UI,
+§9-C ferramentas e documentação, §9-E inteligência, §9-F recuperação/KB, §9-G pipeline de decisão,
+§9-H dados e licenciamento) — e a manual encontrou coisas que a automática não tinha visto,
+incluindo o furo da guarda (E1), que foi **fechado com regressão nos dois sentidos**.
+
+**Falta uma: consistência tese↔código a sério.** Foram feitos sondagens pontuais (a contagem dos
+cinco gates confere; a atribuição do FNSPID confere) mas **não** a leitura sistemática do `ch3` e do
+`ch4` contra o código, que é onde estão os defeitos desta classe que o projecto já apanhou. É a
+única lente que resta e vale um bloco dedicado — mais valioso do que qualquer coisa em P6.
+
+**O currículo MEIA** não precisa de lente: o mapa existe
+(`docs/defence/mapa_competencias.md`) e o único buraco é o C3 (sem linha para a camada generativa).
+A resposta à pergunta *"onde está a IA?"* está em §4.1 — no critério que sabe dizer não — e ganhou
+esta sessão um exemplo novo e melhor: **A1**, onde a medição correcta reduz o ganho reivindicado
+pelo próprio trabalho.

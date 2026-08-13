@@ -272,7 +272,7 @@ def _split_sentences(text: str) -> list[str]:
     return [p.strip() for p in parts if p.strip()]
 
 
-def _mask_exempt(text: str, bundle: Bundle) -> str:
+def _mask_exempt(text: str, bundle: Bundle, fids: set[str] | None = None) -> str:
     """Retira do âmbito o que contém dígitos e não é uma afirmação nossa.
 
     Três classes, cada uma por um falso positivo real:
@@ -283,6 +283,16 @@ def _mask_exempt(text: str, bundle: Bundle) -> str:
     ⚠️ A máscara de horas era `\\d{1,2}:\\d{2}` sem contexto, e o red team escreveu
     `"changed hands at 92:50 per share"` — um preço fabricado invisível à verificação. Agora
     só isenta o que tem marca horária a seguir.
+
+    ⚠️ `fids` LIMITA as manchetes citáveis às dos factos que a frase cita, e isso fecha um furo
+    real: a isenção de citação era do PACOTE enquanto a autorização numérica passou a ser da
+    FRASE (correcção da sessão 56). A assimetria devolvia um canal por onde o número de um facto
+    entrava numa frase que citava outro — reproduzido: `NVDA stood out today, moving 8% [f1]` é
+    rejeitado, e `NVDA stood out today, "up 8%" [f1]` passava, com o mesmo 8 e a mesma âncora,
+    só porque "up 8%" é substring da manchete do f2. O leitor via a âncora resolver para um
+    facto que não continha aquele número.
+    `fids=None` mantém o âmbito do pacote inteiro, que é o correcto para a passagem de
+    LINGUAGEM proibida: aí citar a previsão de uma fonte é legítimo, venha de que facto vier.
     """
     out = _ANCHOR_RE.sub(" ANCHOR ", text)
     out = re.sub(r"\b\d{4}-\d{2}-\d{2}\b", " DATE ", out)
@@ -291,6 +301,8 @@ def _mask_exempt(text: str, bundle: Bundle) -> str:
 
     quotable: list[str] = []
     for f in bundle.facts:
+        if fids is not None and f.fid not in fids:
+            continue
         if f.kind in {"headline", "precedent"}:
             raw_h = str(f.detail.get("headline") or "")
             if raw_h:
@@ -353,7 +365,8 @@ def check_grounding(text: str, bundle: Bundle,
 
     for sent in _split_sentences(raw):
         anchors = _ANCHOR_RE.findall(sent)
-        scope = _mask_exempt(sent, bundle)
+        # Só as manchetes dos factos QUE ESTA FRASE CITA isentam números aqui. Ver `_mask_exempt`.
+        scope = _mask_exempt(sent, bundle, set(anchors))
         low_scope = _strip_disclaimers(scope.lower())
 
         nums = _NUM_RE.findall(low_scope)
