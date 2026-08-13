@@ -472,7 +472,51 @@ Continua a ser a única lacuna verdadeiramente aberta, e agora fecha quatro cois
 objectivo 4, metade da RQ3 (que passou a cobrir o texto gerado), "chegou a história *certa*?" da
 cobertura, e H-b. 6–10 pessoas, ~15 min. Material pronto: `scripts/build_usefulness_pack.py`.
 
-### P5 — Baixo custo, alto retorno em defesa
+### P5 — ✅ **FEITO** (2026-08-13)
+
+**C3 — mapa de competências.** Linha nova para **Linguagem natural e IA generativa** (a UC que
+faltava, e a resposta à pergunta D5), com os números da guarda. A resposta *"onde está a engenharia
+de IA?"* ganha o exemplo mais forte que há — **contra o próprio trabalho**: verificar o que a minha
+linha de base media reduziu o ganho anunciado de ~4× para 1,67×. E dois buracos novos ditos antes
+que perguntem: a garantia do texto puxado é **blocklist** (mais fraca que a allowlist do alerta), e
+o red team correu **2 de 6 lentes**. **⚠️ Aviso novo em destaque: NÃO dizer "quadruplica".**
+
+**B2 — critério H2 emendado em voz alta.** Dizia *"zero números previstos"* e proibia a coisa
+errada — a v5 servia a probabilidade da triagem em três sítios, portanto **o produto implantado
+violava o critério tal como estava escrito**. A sessão 55 já tinha estabelecido porquê ao corrigir o
+*"not a forecast"* do alerta: a distinção verdadeira é **materialidade vs direcção**. O H2 passa a
+proibir a **direcção** e a exigir a moldura onde a probabilidade aparecer; a linha do §6.5 fica
+**riscada e datada**, não apagada.
+
+**C4** — feito na P1 (contagens ressincronizadas em 8 ficheiros).
+
+**A4 — grelha de sensibilidade de rótulos: o negativo da RQ4 é MAIS forte do que se sabia.**
+As nove colunas `label_t{τ}_h{h}` eram escritas desde sempre e **nunca tinham sido lidas**. Lidas:
+a volatilidade iguala ou bate o contexto+texto em **9 de 9 células** (τ ∈ {0,015, 0,02, 0,03} × h ∈
+{1, 3, 5}), com prevalências de **0,082 a 0,597**, e a célula congelada reproduz exactamente
+(0,542 / 0,538 / 0,496). ⇒ *"escolheste τ=0,02 e h=3 — e se tivesses escolhido outra coisa?"* deixa
+de ser uma pergunta com resposta. `scripts/evaluate_triage_labelgrid.py` →
+[`evaluation_triage_labelgrid.md`](docs/evaluation/evaluation_triage_labelgrid.md). Na tese: parágrafo
+novo nas Ressalvas do CS4, EN+PT.
+
+**C5 — o chão `min_similarity: 0.45` NÃO é derivável, e isso é o resultado.**
+A hipótese H-c foi testada: se um cosseno mais alto indicasse um precedente mais informativo, a
+concordância de direcção entre o precedente e a consulta subiria com a similaridade. **Não sobe.**
+Acima do chão **0,504**, abaixo **0,506**, com o chão de acaso **medido** (emparelhamento aleatório
+sob as mesmas restrições, não assumido como 0,5) em **0,507**; a diferença é −0,0012 e o intervalo
+contém zero. ⇒ o 0,45 **não** pode ser justificado como escolhendo precedentes que predizem melhor,
+e a tese passa a dizer o que ele defensavelmente é: **controlo de volume sobre coerência temática**.
+`scripts/evaluate_similarity_floor.py` →
+[`evaluation_similarity_floor.md`](docs/evaluation/evaluation_similarity_floor.md). Na tese: passagem
+nova no §Fluxo de Dados do Cap. 4, EN+PT.
+⚠️ O documento gerado avisa explicitamente para **não comparar** este número com o `0,708` do Caso 3:
+são medidas com chãos de acaso diferentes (~0,5 par-a-par vs ~0,69 de maioria interna), e pô-las lado
+a lado seria repetir o erro das purezas com cardinalidades diferentes.
+
+**Matriz de Evidência: 12 → 13 linhas retiradas/estreitadas** (a nova é o chão de similaridade), e a
+linha do texto-vs-volatilidade ganha *"e às nove definições de rótulo"*.
+
+### P5 (original) — Baixo custo, alto retorno em defesa
 - **C3** linha da camada generativa no mapa de competências (é a resposta à pergunta D5, a mais
   provável do júri: *"onde está a IA?"*).
 - **B2** actualizar o critério H2 para dizer o que proíbe mesmo (direcção), em voz alta.

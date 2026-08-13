@@ -109,6 +109,36 @@
   não registadas:** o repositório distribui três ficheiros derivados do FNSPID (**CC BY-SA 4.0**,
   share-alike; um deles é o que a app lê) e o `meia-style.cls` (**CC BY-NC-SA 3.0**, share-alike e
   NonCommercial), enquanto o `CHECKLIST:45` apresenta a escolha como livre ("MIT/Apache").
+  **✅ (P5) OS QUATRO ITENS DE BAIXO CUSTO, FEITOS — e dois deles produziram MEDIÇÕES NOVAS.**
+  **(C3)** o mapa de competências ganha a linha de **Linguagem natural e IA generativa** (a UC que
+  faltava, e a resposta à D5), dois buracos novos ditos antes que perguntem (a garantia do texto
+  puxado é **blocklist**, mais fraca; o red team correu **2 de 6 lentes**) e um aviso em destaque:
+  **NÃO dizer "quadruplica"**.
+  **(B2)** o critério **H2 emendado em voz alta**: dizia "zero números previstos" e proibia a coisa
+  errada — a v5 servia a probabilidade da triagem em três sítios, portanto **o produto violava o
+  critério tal como estava escrito**. Passa a proibir a **direcção** e a exigir a moldura de
+  materialidade; a linha do §6.5 fica **riscada e datada**, não apagada.
+  **⚠️ (A4) A GRELHA DE RÓTULOS: o negativo da RQ4 é MAIS forte do que se sabia.** As nove colunas
+  `label_t{τ}_h{h}` eram escritas desde sempre e **nunca tinham sido lidas**. Lidas: a volatilidade
+  iguala ou bate o contexto+texto em **9 de 9 células**, com prevalências de **0,082 a 0,597**, e a
+  célula congelada reproduz exactamente (0,542/0,538/0,496). A pergunta *"e se tivesses escolhido
+  outro τ?"* deixa de ter resposta. `evaluate_triage_labelgrid.py` → `.md` novo; parágrafo novo nas
+  Ressalvas do CS4, EN+PT.
+  **⚠️ (C5) O CHÃO `min_similarity: 0.45` NÃO É DERIVÁVEL, e é esse o resultado.** Testada a H-c: se
+  um cosseno mais alto indicasse um precedente mais informativo, a concordância de direcção subiria
+  com a similaridade. **Não sobe** — acima do chão **0,504**, abaixo **0,506**, com o chão de acaso
+  **medido** (emparelhamento aleatório sob as mesmas restrições, não assumido como 0,5) em **0,507**;
+  a diferença é −0,0012 e o intervalo contém zero. A tese passa a dizer o que o 0,45
+  defensavelmente é: **controlo de volume sobre coerência temática**, e não um filtro que escolhe
+  precedentes que predizem melhor. `evaluate_similarity_floor.py` → `.md` novo; passagem nova no
+  §Fluxo de Dados do Cap. 4, EN+PT.
+  ⚠️ **O documento gerado avisa para NÃO comparar este número com o 0,708 do Caso 3**: são medidas
+  com chãos de acaso diferentes (~0,5 par-a-par vs ~0,69 de maioria interna), e pô-las lado a lado
+  repetiria o erro das purezas com cardinalidades diferentes.
+  **Matriz de Evidência: 12 → 13 retiradas/estreitadas** (a nova é o chão de similaridade), e a linha
+  do texto-vs-volatilidade ganha *"e às nove definições de rótulo"*.
+  **Portas depois da P5: 709 testes, ruff limpo, EN 130 pp / PT 139 pp a 0 erros, paridade 0
+  assimetrias, 277 refs / 169 labels iguais nas duas, congelados intactos.**
   **(J) ÚLTIMA LENTE FEITA — CONSISTÊNCIA TESE↔CÓDIGO — e o resultado é largamente POSITIVO.**
   Os **quatro excertos de código** que a tese publica **não derivaram**: o `lst:zscore` bate com o
   `detect_latest` linha a linha (a fatia `[-window-1:-1]`, o `ddof=1`, a guarda `sigma > 0`), o

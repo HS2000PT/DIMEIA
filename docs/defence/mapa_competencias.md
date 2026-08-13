@@ -25,6 +25,7 @@
 | **Avaliação e metodologia experimental** | Linhas de base pré-comprometidas; ablações; multi-seed; bootstrap por cluster; resultados negativos reportados | Cap. 3 §avaliação, Casos 1–8 | 5 seeds; IC 95% por cluster |
 | **Quantificação de incerteza** | Predição conformal split com garantia livre de distribuição, testada sob permutabilidade **e** sob divisão temporal | `triage/conformal.py`, Caso 6 | cobertura **0.902** vs 0.90 nominal |
 | **MLOps / ML em produção** | Deriva medida com PSI+KS e bandas convencionadas; gatilho de re-treino verificável; log de gates; pós-validação ao vivo | `evaluation/drift.py`, Caso 7 | PSI **0.281** (significativa) |
+| **Linguagem natural e IA generativa** | **Geração ancorada**: o gerador vê um pacote de evidência onde cada facto declara a origem (`measured`/`computed`/`model`), escreve prosa e **nunca um facto**; cada número que escreve tem de pertencer ao facto que a **própria frase** cita, e a interface resolve cada `[f3]` de volta ao registo | `intelligence/context.py`, `guard.py`, Cap. 4 §4.8 | **23/23** ataques bloqueados · **8/8** controlos fiéis · **0** secções entregues com violação |
 | **XAI** | Fidelidade **por construção** (o texto é composto dos mesmos objetos calculados) + guarda de allowlist para linguagem gerada, com red team como regressão | `explanation_engine/`, `narrator/` | **0** violações entregues; 21/21 exploits bloqueados |
 | **Recuperação de informação** | Recuperação vetorial com protocolo cross-ticker e precision@k contra três linhas de base | `correlation_engine/`, Caso 2 | P@5 **0.595** à escala |
 | **PLN** | Comparação de representações: léxico → estáticos → contextuais; benchmark de encoders medido, não argumentado | Cap. 2, `evaluation_retrieval_embedders.md` | MiniLM 0.514 > FinBERT 0.420 |
@@ -42,7 +43,10 @@ Se só houver tempo para três frases, são estas.
 > No que foi **medido para decidir**, não no que foi usado. Quatro capacidades foram construídas e
 > depois **não** ligadas à produção, porque a medição não as sustentou: taxonomia de eventos,
 > score de convergência, e as extensões de features. A engenharia está em ter um critério que
-> consegue dizer não.
+> consegue dizer não. **E o exemplo mais forte é contra mim próprio:** ao verificar o que a minha
+> própria linha de base media, descobri que ela ordenava por ordem alfabética e não ao acaso, e
+> **reduzi o ganho que a tese anunciava de ~4× para 1,67×** — mais um prior de treze constantes que
+> bate o modelo treinado. Um critério que só valida não é um critério.
 
 **"Qual é a contribuição, se os modelos são todos pré-existentes?"**
 > A integração avaliada. Nenhum algoritmo é novo; o que é novo é um sistema que responde às três
@@ -53,6 +57,13 @@ Se só houver tempo para três frases, são estas.
 > Fortalece-a, e agora há um segundo caminho independente a dizer o mesmo: a predição conformal
 > mostra que, para garantir 90% de cobertura, o modelo só decide em **39,5%** dos casos. Dois
 > métodos diferentes, sem partilhar suposições, chegam à mesma conclusão sobre a força do sinal.
+
+> ⚠️ **NÃO dizer "quadruplica".** Essa versão foi retirada a 2026-08-13. O número certo é
+> **0,379 → 0,632, um factor de 1,67×**, contra uma ordenação aleatória; o `0,163` que a tese
+> citava era o chão de "alertar-sempre", que com pontuação constante desempata pela ordem do
+> ficheiro e portanto escolhe **alfabeticamente** (as 1.105 linhas que escolhia eram todas AAPL).
+> E há mais: um **prior de volatilidade por ticker, treze constantes**, dá **0,662** — bate o
+> modelo. A leitura honesta é que *ordenar por volatilidade* compensa, não que *aprender* compensa.
 
 ---
 
@@ -65,6 +76,8 @@ Se só houver tempo para três frases, são estas.
 | **Sistemas multi-agente** | Não existe, e a recusa está **escrita** no Cap. 6: um LLM com cinco ferramentas não é multi-agente. |
 | **Visão computacional** | Fora de âmbito por natureza do problema. |
 | **Treino de modelos de raiz** | Um modelo treinado (a triagem). Os embeddings são pré-treinados, e isso está declarado em todo o lado. |
+| **A garantia da camada generativa é mais fraca do que a dos alertas** | E está escrito: o alerta empurrado usa **allowlist** de vocabulário fechado; o texto puxado usa **blocklist**, que sobre linguagem natural perde no limite. Quatro riscos residuais declarados em `guard.RESIDUAL` e no Cap. 6. |
+| **O red team da guarda está incompleto** | **2 de 6 lentes** correram (as outras morreram num limite de gasto), pelo que a força medida é um **limite inferior** — e a tese diz isso. |
 
 Dizer isto primeiro tira ao júri a pergunta de armadilha e transforma-a numa demonstração de que
 o âmbito foi escolhido em vez de acontecer.

@@ -78,13 +78,35 @@ Cada critério tem de ser verificável por um teste ou por uma medição, não p
 | # | Critério |
 |---|---|
 | H1 | A promessa aparece **uma** vez, como identidade da página |
-| H2 | Zero números previstos; zero recomendações; zero price targets |
+| H2 | Zero afirmações sobre a **direcção** futura; zero recomendações; zero price targets. **Emendado a 2026-08-13 — ver a nota abaixo** |
 | H3 | Precedentes sempre com a moldura tema ≠ direção |
 | H4 | **Nenhum score que a medição não sustente** — inclui, hoje, o score de convergência fundido e os badges de tipo de evento |
 
 > H4 é o critério que este documento acrescenta ao conjunto anterior, e é o que faz a ligação
 > entre a avaliação e o produto. Sem ele, a reconstrução poderia mostrar um número bonito que os
 > Estudos de Caso 5 e 8 dizem não valer.
+
+> ### ⚠️ Emenda ao H2 (2026-08-13), dita em voz alta
+>
+> **O H2 dizia "zero números previstos" e isso proibia a coisa errada.** A v5 serve a
+> probabilidade da triagem em `/api/triage`, em `/api/evidence` e dentro do pacote de evidência que
+> o relatório generativo e o analista consomem — ou seja, o produto implantado **violava o critério
+> tal como estava escrito**. A resolução não é esconder o número: é o critério que estava mal.
+>
+> A sessão 55 já tinha estabelecido o motivo, ao corrigir o alerta que terminava em *"not a
+> forecast"*: essa frase era **falsa**, porque uma probabilidade de movimento anormal nos próximos
+> dias **é** uma afirmação sobre o futuro. A distinção verdadeira, e a única que o rótulo de treino
+> sustenta, é entre **materialidade** e **direcção** — o rótulo pergunta se houve movimento anormal,
+> nos dois sentidos, e nunca para que lado.
+>
+> **O H2 passa portanto a proibir a direcção, não o futuro**, e acrescenta uma obrigação: onde a
+> probabilidade aparecer, aparece **com a moldura** (`"probability of an unusually large move in
+> either direction"`), que é o que `intelligence/context.py` já escreve na etiqueta do facto.
+> O que continua proibido sem excepção: alvos de preço, comprar/vender, "movimento esperado", e
+> qualquer número que dê a entender um sentido.
+>
+> Corrigir isto em silêncio seria indistinguível de contornar o critério — é a mesma razão pela
+> qual a emenda ao V2 (§6.3.1) também está escrita.
 
 ### 3.5 O que a convergência PODE mostrar
 
@@ -214,7 +236,7 @@ este documento existe para impedir:
 |---|---|
 | Score de convergência fundido | **H4** — ganha em 1 de 3 orçamentos |
 | Crachás de tipo de evento | **H4** — silhueta 0,084, rubrica cobre 15,1% |
-| Probabilidade da triagem / `materiality_line` em qualquer vista de produto | **H2** — é um número para a frente. Sobrevive só no texto espelhado do canal e como mecanismo descrito na página de avaliação |
+| ~~Probabilidade da triagem / `materiality_line` em qualquer vista de produto~~ | ~~**H2** — é um número para a frente~~ **RISCADO a 2026-08-13** (ver a emenda ao H2 em §3.4): a proibição era da coisa errada, e a v5 já a servia. Passa a ser **permitida com a moldura de materialidade** e proibida sem ela |
 | Qualquer conversão de z para probabilidade | Assumiria normalidade, e os retornos têm caudas pesadas. Substituída pela contagem empírica, que não assume nada |
 | Impacto médio dos precedentes como número de destaque | A média esconde direcções mistas — é o que `explain_news_impact` já evita mostrando primeiro o intervalo |
 | Alvos de preço, comprar/vender, "movimento esperado" | **H2** e a restrição fundadora |

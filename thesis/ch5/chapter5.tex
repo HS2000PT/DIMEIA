@@ -590,6 +590,16 @@ count, and the corpus's news density grows over the window. Headlines are short,
 representation (article bodies, financial sentiment) might yet close the text gap; that possibility
 is recorded as future work rather than assumed.
 
+\paragraph{Does the verdict depend on where the label was drawn?} The threshold and horizon that
+define materiality ($\tau = 0.02$ over $(d, d+3]$) were fixed once, and a negative result that held
+only at one such choice would be worth very little. The sensitivity was in fact already paid for and
+never collected: the dataset carries nine label columns, spanning $\tau \in \{0.015, 0.02, 0.03\}$
+and horizons of one, three and five days. Refitting the three families that decide the comparison
+under each of them, with the same split, the same calibration and the same metric, the volatility
+baseline meets or beats the context-plus-text model in \emph{all nine} cells, across label
+prevalences ranging from $0.082$ to $0.597$. The reproduction cell returns the frozen figures
+exactly. The negative answer to \gls{RQ}4 therefore does not rest on where the label was drawn.
+
 \paragraph{The deployed model on one real decision.} The mechanism claim becomes tangible on a single
 live case. Figure~\ref{fig:triage_contributions} decomposes a real production decision, the Meta alert
 of 12~July~2026 whose full arithmetic is Table~\ref{tab:triage_worked}: elevated recent volatility and

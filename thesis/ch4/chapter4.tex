@@ -367,6 +367,22 @@ materiality gate, the per-company daily cap with its escalating floor, and a cro
 check. Any one of these can end the journey silently, which is why the screener surface exists to
 report which one did.
 
+Two of those constants were derived from a cost model and one was not, and the difference is worth
+being explicit about. The escalating floors come from the policy sweep at stated cost ratios. The
+\emph{evidence floor} on cosine similarity, at $0.45$, was chosen on judgement, and it is the most
+aggressive gate in the funnel: in one measured scan it stopped seven of ten companies, four of them
+by margins of $0.04$ or less. Testing whether it could be derived produced a negative answer that is
+reported rather than buried. If a higher cosine indicated a more informative precedent, agreement
+between a precedent's subsequent direction and the query's own should rise with similarity. Measured
+over the multi-year corpus under the retrieval protocol of Chapter~\ref{chap:casestudies}, and
+against a chance floor obtained by random pairing under the same constraints rather than assumed to
+be one half, it does not: pairs above the floor agree $0.504$ of the time and pairs below it $0.506$,
+a difference whose interval spans zero, with both sides at the chance level of $0.507$. The floor
+therefore cannot be justified as selecting precedents that predict direction better, and this work
+does not claim it does. What it defensibly is, and all it is claimed to be, is a volume control on
+thematic coherence --- consistent with the finding of Chapter~\ref{chap:casestudies} that retrieval
+captures theme rather than direction.
+
 \textbf{10. Rendering and delivery.} The alert text is assembled directly from the objects above and
 sent to the channel; the same record is appended to the shared history, from which the dashboard later
 draws it. Delivery took under a second from detection. The message the user received is reproduced in

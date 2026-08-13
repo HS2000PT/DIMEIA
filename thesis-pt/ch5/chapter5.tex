@@ -594,6 +594,17 @@ que a contagem de linhas, e a densidade de notícias do corpus cresce ao longo d
 curtas, pelo que uma representação de texto mais rica (corpos de artigos, sentimento financeiro) poderia ainda
 fechar a lacuna do texto; essa possibilidade é registada como trabalho futuro e não assumida.
 
+\paragraph{O veredicto depende de onde o rótulo foi traçado?} O limiar e o horizonte que definem a
+materialidade ($\tau = 0.02$ sobre $(d, d+3]$) foram fixados uma vez, e um resultado negativo que só
+valesse nessa escolha valeria muito pouco. A análise de sensibilidade estava, de facto, já paga e
+por recolher: o conjunto de dados traz nove colunas de rótulo, cobrindo
+$\tau \in \{0.015, 0.02, 0.03\}$ e horizontes de um, três e cinco dias. Reajustando as três famílias
+que decidem a comparação sob cada uma delas, com a mesma divisão, a mesma calibração e a mesma
+métrica, a linha de base de volatilidade iguala ou bate o modelo contexto+texto nas \emph{nove}
+células, com prevalências de rótulo entre $0.082$ e $0.597$. A célula de reprodução devolve os
+valores congelados exactamente. A resposta negativa à \gls{RQ}4 não assenta, portanto, em onde o
+rótulo foi traçado.
+
 \paragraph{O modelo em produção numa decisão real.} A afirmação do mecanismo torna-se tangível num único caso
 ao vivo. A Figura~\ref{fig:triage_contributions} decompõe uma decisão de produção real, o alerta da Meta de
 12~de~julho~de~2026 cuja aritmética completa é a Tabela~\ref{tab:triage_worked}: a volatilidade recente elevada

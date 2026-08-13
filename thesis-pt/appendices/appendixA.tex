@@ -294,9 +294,10 @@ As explicações são \emph{úteis} & --- & --- & --- & \textbf{Não afirmado} \
 O treino é determinístico e reproduz os artefactos guardados & O bundle congelado regenera PR-AUC, ROC-AUC, Brier e precisão no orçamento exactamente & §\ref{sec:cs_triage} & Teste & Mantida \\
 Sem lookahead nas features & Mutar o futuro deixa as features iguais e muda o rótulo & Excerto~\ref{lst:leakage} & Teste & Mantida \\
 Os blocos não partilham janelas de rótulo & Divisão por dia único $+$ embargo ($820$ linhas largadas) & Excerto~\ref{lst:split} & Teste & Mantida \\
-Nenhum modelo com texto bate a linha de base de volatilidade & PR-AUC $0.542$ vs $0.496$; sobrevive a bootstrap de cluster, a um re-teste justo e a uma troca de métrica & §\ref{sec:cs_triage} & Script & Mantida \\
+Nenhum modelo com texto bate a linha de base de volatilidade & PR-AUC $0.542$ vs $0.496$; sobrevive a bootstrap de cluster, a um re-teste justo, a uma troca de métrica e às nove definições de rótulo & §\ref{sec:cs_triage} & Script & Mantida \\
 A triagem eleva a precisão no orçamento $0.163 \to 0.632$, quase quatro vezes & O chão $0.163$ ordena alfabeticamente, não às cegas; uma ordenação aleatória dá $0.379$ & §\ref{sec:cs_triage} & Script & \textbf{Estreitada} duas vezes: ao conjunto de avaliação, e depois a $1.67\times$ \\
 É a aprendizagem que merece o ganho no orçamento & Um prior de volatilidade por ticker, de $13$ constantes, dá $0.662$ contra os $0.632$ do modelo & §\ref{sec:cs_triage} & Script & \textbf{Retirada} \\
+O chão de similaridade selecciona precedentes que predizem a direcção & Acima do chão $0.504$ vs abaixo $0.506$, acaso $0.507$; o intervalo contém zero & §\ref{sec:investigator_flow} & Script & \textbf{Retirada} \\
 O gate implantado seleciona notícias materiais & ROC-AUC $0.494$, IC de cluster $[0.391, 0.601]$, em $145$ unidades (ticker, dia) & §\ref{sec:concl_limitations} & Vivo & \textbf{Retirada} \\
 O gate implantado controla o volume & Suprime $\sim$3/5 das decisões de notícia & §\ref{sec:investigator_deploy} & Vivo & Mantida \\
 \midrule
@@ -331,7 +332,7 @@ A recuperação de precedentes não pode correr na página & Valia só para o de
 \end{table}
 
 Duas observações sobre a tabela no seu conjunto, e não sobre qualquer linha em particular. Primeira,
-doze afirmações foram retiradas ou estreitadas, e todas elas o foram pelas \emph{medições do
+treze afirmações foram retiradas ou estreitadas, e todas elas o foram pelas \emph{medições do
 próprio trabalho} e não por revisão externa. É o comportamento pretendido de uma avaliação desenhada
 antes das experiências: tem de ser capaz de dizer não. A mais recente é também a mais instrutiva,
 porque saiu de perguntar o que uma \emph{linha de base} media e não que pontuação um modelo tinha: o

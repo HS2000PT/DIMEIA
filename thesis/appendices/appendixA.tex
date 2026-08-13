@@ -290,9 +290,10 @@ Explanations are \emph{useful} & --- & --- & --- & \textbf{Not claimed} \\
 Training is deterministic and reproduces the stored artefacts & Frozen bundle regenerates PR-AUC, ROC-AUC, Brier and budgeted precision exactly & §\ref{sec:cs_triage} & Test & Kept \\
 No lookahead in the features & Mutating the future leaves features identical and changes the label & Listing~\ref{lst:leakage} & Test & Kept \\
 Blocks do not share label windows & Split by unique day $+$ embargo ($820$ rows dropped) & Listing~\ref{lst:split} & Test & Kept \\
-No text model beats the volatility baseline & PR-AUC $0.542$ vs $0.496$; survives cluster bootstrap, a fair re-test and a change of metric & §\ref{sec:cs_triage} & Script & Kept \\
+No text model beats the volatility baseline & PR-AUC $0.542$ vs $0.496$; survives cluster bootstrap, a fair re-test, a change of metric and all nine label definitions & §\ref{sec:cs_triage} & Script & Kept \\
 Triage raises within-budget precision $0.163 \to 0.632$, nearly four times & The $0.163$ floor ranks alphabetically, not blindly; a random ranking scores $0.379$ & §\ref{sec:cs_triage} & Script & \textbf{Narrowed} twice: to the evaluation set, then to $1.67\times$ \\
 Learning is what earns the budgeted gain & A per-ticker volatility prior of $13$ constants scores $0.662$ vs the model's $0.632$ & §\ref{sec:cs_triage} & Script & \textbf{Withdrawn} \\
+The similarity floor selects precedents that predict direction & Above the floor $0.504$ vs below $0.506$, chance $0.507$; interval spans zero & §\ref{sec:investigator_flow} & Script & \textbf{Withdrawn} \\
 The deployed gate selects material news & ROC-AUC $0.494$, cluster CI $[0.391, 0.601]$, on $145$ (ticker, day) units & §\ref{sec:concl_limitations} & Live & \textbf{Withdrawn} \\
 The deployed gate controls volume & Suppresses $\sim$3/5 of news decisions & §\ref{sec:investigator_deploy} & Live & Kept \\
 \midrule
@@ -326,7 +327,7 @@ Precedent retrieval cannot run on the page & Held for the server-rendered design
 \end{tabular}
 \end{table}
 
-Two observations about the table as a whole, rather than about any row in it. First, twelve claims were
+Two observations about the table as a whole, rather than about any row in it. First, thirteen claims were
 withdrawn or narrowed, and all of them were withdrawn by \emph{this work's own measurements} rather
 than by review. That is the intended behaviour of an evaluation designed before the experiments: it is
 supposed to be able to say no. The most recent of them is also the most instructive, because it was

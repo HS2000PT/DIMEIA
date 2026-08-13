@@ -373,6 +373,22 @@ similaridade, o gate de materialidade, o tecto diário por empresa com o seu pis
 verificação de duplicados entre produtores. Qualquer um destes pode terminar a viagem em silêncio, e é
 por isso que existe a superfície de screener para reportar qual deles o fez.
 
+Duas dessas constantes foram derivadas de um modelo de custos e uma não foi, e vale a pena ser
+explícito sobre a diferença. Os pisos escalonados vêm do varrimento de política sob rácios de custo
+declarados. O \emph{chão de evidência} sobre a similaridade do cosseno, em $0.45$, foi escolhido por
+juízo, e é o gate mais agressivo do funil: numa varredura medida parou sete de dez empresas, quatro
+delas por margens de $0.04$ ou menos. Testar se podia ser derivado produziu uma resposta negativa que
+se reporta em vez de se esconder. Se um cosseno mais alto indicasse um precedente mais informativo, a
+concordância entre a direcção subsequente do precedente e a da própria consulta deveria subir com a
+similaridade. Medido sobre o corpus multi-ano, sob o protocolo de recuperação do
+Capítulo~\ref{chap:casestudies} e contra um chão de acaso obtido por emparelhamento aleatório sob as
+mesmas restrições em vez de assumido como metade, não sobe: os pares acima do chão concordam $0.504$
+das vezes e os pares abaixo $0.506$, uma diferença cujo intervalo contém zero, com ambos os lados ao
+nível do acaso de $0.507$. O chão não pode, portanto, ser justificado como seleccionando precedentes
+que predizem melhor a direcção, e este trabalho não afirma que o faça. O que ele defensavelmente é, e
+tudo o que se reivindica, é um controlo de volume sobre a coerência temática --- coerente com o
+achado do Capítulo~\ref{chap:casestudies} de que a recuperação capta tema e não direcção.
+
 \textbf{10. Renderização e entrega.} O texto do alerta é montado diretamente a partir dos objetos
 acima e enviado ao canal; o mesmo registo é acrescentado ao histórico partilhado, de onde o painel o
 vai buscar depois. A entrega demorou menos de um segundo desde a deteção. A mensagem que o utilizador
