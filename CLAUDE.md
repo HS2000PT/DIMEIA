@@ -191,6 +191,27 @@
   existiram contradiz o Cap. 6 no mesmo documento") — li-o depois de escrever, não antes.
   Retirado, com um comentário no sítio a explicar porquê e a dizer que passa a ser verdade se o
   estudo for corrido. **Grafia verificada: `Sistrade`, zero ocorrências de SysTrader/ASSISTRAIL.**
+  **✅ (P) TRÊS CORRECÇÕES DE HONESTIDADE + IMPLANTAÇÃO (o aluno decidiu ficar com o repositório
+  e acabá-lo).** **(1)** O **screener dizia "Alert sent" sem ter enviado**: `_gate()` corre dentro
+  do `scan_news` e o tecto/escada/quase-repetição correm **depois**, sem reetiquetar nada. Três
+  etapas novas (`daily_cap`, `ladder_floor`, `duplicate_story`), canal lateral `suppressed` e
+  `_reconcile_gates`, que **só** reetiqueta quem está em `alerted` — uma supressão pós-varredura não
+  pode apagar a razão verdadeira de quem morreu antes. **(2)** **AMD e NFLX pontuados fora da
+  distribuição**: estão na watchlist e em nenhum corpus de treino (confirmado — o dataset congelado
+  tem 14 tickers, nenhum deles), e o `SECTORS.get(t, "")` dava-lhes one-hot **todo a zeros**, padrão
+  inexistente nas 79.753 linhas de treino. Corrigido **no limite da inferência** (`deploy_sector`),
+  sem tocar no mapa canónico, que é partilhado com a avaliação de recuperação. **(3)** **Geradores
+  parciais deixam de apagar evidência**: o `--offline` da guarda preserva a secção que não
+  recalculou, com aviso; o do bootstrap declara as famílias corridas e a "Leitura honesta" passa a
+  ser condicional. **+5 testes (714), congelados intactos.**
+  **IMPLANTADO `6be2383c`** (produção estava **13 commits atrás**, ou seja o furo da guarda ainda lá
+  estava enquanto a tese já o descrevia fechado). Verificado ao vivo: health fresco (79 s),
+  `/api/overview` **1,25 s num pedido**, e o **AMD e o NFLX passam a ter sector +0,303** (igual ao
+  NVDA) enquanto o **JPM mantém −0,467** — o mapa canónico continua a ganhar, que era o controlo.
+  ⚠️ **Defeito meu pelo caminho:** uma expressão com precedência errada num `python -c` **truncou o
+  `evaluate_triage_uncertainty.py` para 18 linhas**; restaurado do git e refeito com a ferramenta de
+  edição. É a 3.ª vez nesta sessão que gerar código com aspas/escapes num `-c` ou heredoc causa dano.
+  ⚠️ **A olhar:** o `gate_log` acumulado tem **21 linhas em `error`** — vale ver de onde vêm.
   **(J) ÚLTIMA LENTE FEITA — CONSISTÊNCIA TESE↔CÓDIGO — e o resultado é largamente POSITIVO.**
   Os **quatro excertos de código** que a tese publica **não derivaram**: o `lst:zscore` bate com o
   `detect_latest` linha a linha (a fatia `[-window-1:-1]`, o `ddof=1`, a guarda `sigma > 0`), o
