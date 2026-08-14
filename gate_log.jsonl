@@ -826,3 +826,15 @@
 {"date": "2026-08-14", "ticker": "NFLX", "stage": "weak_precedent", "detail": "melhor sim 0.41 < 0.45"}
 {"date": "2026-08-14", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}
 {"date": "2026-08-14", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.30 < 0.50"}
+{"date": "2026-08-14", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.46 < 0.50"}
+{"date": "2026-08-14", "ticker": "MSFT", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
+{"date": "2026-08-14", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
+{"date": "2026-08-14", "ticker": "TSLA", "stage": "weak_precedent", "detail": "melhor sim 0.45 < 0.45"}
+{"date": "2026-08-14", "ticker": "AMZN", "stage": "ladder_floor", "detail": "P 0.57 < floor 0.64"}
+{"date": "2026-08-14", "ticker": "GOOGL", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
+{"date": "2026-08-14", "ticker": "META", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
+{"date": "2026-08-14", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.24 < 0.50"}
+{"date": "2026-08-14", "ticker": "AMD", "stage": "ladder_floor", "detail": "P 0.63 < floor 0.64"}
+{"date": "2026-08-14", "ticker": "NFLX", "stage": "weak_precedent", "detail": "melhor sim 0.41 < 0.45"}
+{"date": "2026-08-14", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.40 < 0.50"}
+{"date": "2026-08-14", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.30 < 0.50"}
