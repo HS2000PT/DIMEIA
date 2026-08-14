@@ -1119,6 +1119,58 @@ def _record_gates_safe(records: list, path: str | Path | None = None) -> None:
         print(f"[funil] registo falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
 
 
+def _seed_from_branch_safe(path: str | Path, filename: str) -> None:
+    """Semeia um ficheiro de dados a partir da branch, uma vez, no arranque.
+
+    ⚠️ **Sem isto, publicar destruiria histórico.** O disco do dyno é efémero: a cada reinício o
+    ficheiro local recomeça vazio, e publicá-lo escreveria por cima da cópia da branch com
+    apenas os registos desde o último arranque. Semear primeiro e publicar depois preserva a
+    série; é o mesmo raciocínio do `seed_state_from_shared_history`, aplicado ao ficheiro.
+
+    Só semeia quando o local está **vazio ou ausente** — nunca sobrescreve trabalho local.
+    """
+    import os
+    import urllib.request
+
+    p = Path(path)
+    try:
+        if p.exists() and p.stat().st_size > 0:
+            return
+        repo = os.environ.get("INVESTIGATOR_HISTORY_REPO", "HS2000PT/DIMEIA")
+        branch = os.environ.get("INVESTIGATOR_HISTORY_BRANCH", "alerts-history")
+        url = f"https://raw.githubusercontent.com/{repo}/{branch}/{filename}"
+        with urllib.request.urlopen(url, timeout=15) as r:  # noqa: S310
+            texto = r.read().decode("utf-8", "replace")
+        if texto.strip():
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text(texto, encoding="utf-8")
+            print(f"[semear] {filename}: {len(texto.splitlines())} linhas da branch")
+    except Exception as exc:  # noqa: BLE001
+        print(f"[semear] {filename} indisponível (ignorado): "
+              f"{type(exc).__name__}: {sem_segredos(exc)}")
+
+
+def _publish_data_safe(path: str | Path, filename: str) -> None:
+    """Publica um ficheiro de dados na branch. Fail-open, como tudo neste caminho.
+
+    ⚠️ Existe porque o raciocínio que o instantâneo já tinha escrito — *"no Heroku o web é OUTRO
+    dyno, com outro disco"* — nunca foi aplicado a estes dois ficheiros. O `gate_log` era escrito
+    só localmente (apesar de o docstring afirmar que era "publicado pelos mesmos mecanismos") e o
+    `predictions_log` idem. Resultado medido a 2026-08-15: o `alerts_history` estava actual
+    (2026-08-14) e **os dois estavam parados em 2026-08-09** — seis dias. O screener servia uma
+    semana atrasada, e o registo de decisões que alimenta a pós-validação **deixou de crescer**.
+    """
+    try:
+        from investigator.history_publish import publish_blob
+
+        msg = publish_blob(path, filename)
+        if msg:
+            print(msg)
+    except Exception as exc:  # noqa: BLE001
+        print(f"[publicar {filename}] indisponível (ignorado): "
+              f"{type(exc).__name__}: {sem_segredos(exc)}")
+
+
 def _push_history_safe(path: str | Path = _HISTORY) -> None:
     """Publica o histórico na branch `alerts-history` a partir de uma máquina própria (VM).
 
@@ -1255,6 +1307,12 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     # não se repete — sem isto, dois produtores duplicariam alertas no canal.
     seed_state_from_shared_history(state, _fetch_shared_history_safe(cfg), state["date"])
 
+    # Semear os ficheiros de série a partir da branch, se o disco local estiver vazio. No
+    # contentor isso acontece a cada reinício, e publicar sem semear apagaria a série toda.
+    # Não faz nada quando o ficheiro já existe — logo custa uma ida à rede por arranque.
+    _seed_from_branch_safe(_GATE_LOG, "gate_log.jsonl")
+    _seed_from_branch_safe(_PRED_LOG, "predictions_log.jsonl")
+
     # KB viva: maturar pendentes cujo impacto (+5d) já é observável — ANTES dos scans,
     # para os casos recém-maturados contarem já como precedentes nesta corrida.
     _mature_live_safe()
@@ -1332,6 +1390,11 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     detected_at = utc_stamp()
     _reconcile_gates(gate_records, pos_scan)
     _record_gates_safe(gate_records)
+    # Estes dois vivem em disco EFÉMERO no contentor e o web é outro dyno: sem publicar, o
+    # screener serve o que existia no último arranque e a pós-validação deixa de crescer.
+    # (Medido a 2026-08-15: parados havia seis dias enquanto o histórico estava actual.)
+    _publish_data_safe(_GATE_LOG, "gate_log.jsonl")
+    _publish_data_safe(_PRED_LOG, "predictions_log.jsonl")
     _write_snapshot_safe()
 
     threshold = float((cfg.get("market") or {}).get("threshold", 3.0))

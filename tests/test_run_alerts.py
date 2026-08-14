@@ -718,3 +718,27 @@ def test_todas_as_etapas_pos_varredura_existem_no_gate_log():
 
     for etapa in ("daily_cap", "ladder_floor", "duplicate_story"):
         assert etapa in STAGES
+
+
+def test_semear_nao_sobrescreve_ficheiro_local_com_conteudo(tmp_path):
+    """⚠️ O disco do dyno é efémero: sem semear, publicar escreveria por cima da branch com só
+    os registos desde o último arranque — apagaria a série. Mas semear NUNCA pode destruir
+    trabalho local, senão trocava-se um modo de perder dados por outro."""
+    from scripts.run_alerts import _seed_from_branch_safe
+
+    p = tmp_path / "gate_log.jsonl"
+    p.write_text('{"date":"2026-08-15","ticker":"NVDA","stage":"alerted","detail":""}\n',
+                 encoding="utf-8")
+    antes = p.read_text(encoding="utf-8")
+    _seed_from_branch_safe(p, "gate_log.jsonl")   # ficheiro tem conteúdo -> não toca
+    assert p.read_text(encoding="utf-8") == antes
+
+
+def test_semear_e_publicar_falham_abertos(tmp_path, monkeypatch):
+    """Nenhum dos dois pode travar um ciclo de alertas: um painel desactualizado é um
+    inconveniente, um canal parado por causa dele seria trocar o essencial pelo acessório."""
+    from scripts.run_alerts import _publish_data_safe, _seed_from_branch_safe
+
+    monkeypatch.setenv("INVESTIGATOR_HISTORY_REPO", "nao/existe-de-todo")
+    _seed_from_branch_safe(tmp_path / "ausente.jsonl", "gate_log.jsonl")   # não levanta
+    _publish_data_safe(tmp_path / "ausente.jsonl", "gate_log.jsonl")       # não levanta
