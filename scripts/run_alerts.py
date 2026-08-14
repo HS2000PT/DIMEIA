@@ -123,52 +123,16 @@ def sem_segredos(texto: object) -> str:
     return s
 
 
-_VAZIAS = {
-    "the", "a", "an", "of", "to", "in", "on", "for", "and", "or", "as", "at", "by", "is",
-    "its", "it", "with", "from", "after", "over", "amid", "says", "said", "will", "be",
-    "que", "de", "do", "da", "dos", "das", "e", "o", "os", "um", "uma", "no", "na",
-}
-
-
-def conteudo(texto: str) -> set[str]:
-    """Palavras de conteúdo de uma manchete, para comparar histórias entre si."""
-    import re
-
-    palavras = re.findall(r"[a-z0-9]+", texto.lower())
-    return {p for p in palavras if len(p) > 2 and p not in _VAZIAS}
+# ⚠️ A regra da quase-repetição vive agora em `investigator/dedup.py`, porque o caminho dos
+# PRECEDENTES precisava exactamente da mesma e uma biblioteca não deve importar de um script.
+# Estes nomes ficam como re-exportação: são a API que os testes e o resto do runner já usavam.
+from investigator.dedup import content_words as conteudo  # noqa: E402
+from investigator.dedup import is_near_duplicate  # noqa: E402
 
 
 def quase_repetida(manchete: str, anteriores: list[list[str]], limiar: float = 0.6) -> bool:
-    """A mesma história, escrita por outro meio?
-
-    `news_key` é um hash do texto EXACTO, e por isso só apanha a repetição literal. A mesma
-    história publicada por dois sítios com títulos diferentes gera duas chaves distintas e
-    chega ao canal duas vezes — foi exactamente o que o aluno reportou a 2026-08-05.
-
-    Jaccard sobre palavras de conteúdo apanha esse caso sem precisar de embeddings, e mantém
-    esta função **pura** (o embedder vive no scan, não aqui). O limiar é 0,6 e não 0,9 porque
-    duas redacções da mesma história partilham os nomes próprios e os números mas trocam metade
-    dos verbos; 0,9 só apanharia o que o hash já apanha.
-
-    ⚠️ **Compara MANCHETES, nunca o texto do alerta.** A primeira versão desta função comparava
-    o alerta renderizado e teria sido pior do que o defeito que corrige: o alerta é quase todo
-    *template* (cabeçalho, linhas de precedentes, a nota de não-previsão), portanto duas notícias
-    **diferentes** do mesmo ticker partilham a maior parte das palavras e uma delas seria
-    suprimida em silêncio. O teste do tecto diário apanhou isto.
-
-    E exige um mínimo de palavras: com uma ou duas, qualquer par bate e a medida não significa
-    nada. Abaixo disso **falha aberto** — mais vale um alerta repetido do que um alerta a menos.
-    """
-    novo = conteudo(manchete)
-    if len(novo) < 4:
-        return False
-    for anterior in anteriores:
-        velho = set(anterior)
-        if len(velho) < 4:
-            continue
-        if len(novo & velho) / len(novo | velho) >= limiar:
-            return True
-    return False
+    """A mesma história, escrita por outro meio? Ver `investigator.dedup.is_near_duplicate`."""
+    return is_near_duplicate(manchete, anteriores, limiar)
 
 
 def seed_state_from_shared_history(state: dict, entries: list, today: str) -> None:

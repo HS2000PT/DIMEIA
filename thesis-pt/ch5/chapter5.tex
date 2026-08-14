@@ -594,6 +594,17 @@ que a contagem de linhas, e a densidade de notícias do corpus cresce ao longo d
 curtas, pelo que uma representação de texto mais rica (corpos de artigos, sentimento financeiro) poderia ainda
 fechar a lacuna do texto; essa possibilidade é registada como trabalho futuro e não assumida.
 
+Uma última ressalva diz respeito à \emph{escala} da probabilidade e não à ordenação, e importa
+porque é sobre essa escala que assentam os limiares de implantação. O calibrador é ajustado no bloco
+de validação, cuja prevalência de rótulo é $0.470$, e aplicado a um bloco de teste cuja prevalência é
+$0.378$. A consequência é um enviesamento sistemático para cima: a probabilidade média prevista no
+bloco de teste é $0.428$ contra uma taxa observada de $0.378$, uma sobre-previsão de $+0.050$, quando
+a mesma medição no bloco de validação dá $-0.000$ por construção. A ordenação não é afectada, pelo
+que nenhum dos resultados de ordenação acima muda; mas um piso implantado expresso como probabilidade
+absoluta é um filtro um pouco mais frouxo do que o seu número sugere. Fica declarado aqui em vez de
+corrigido em silêncio, porque reajustar alteraria um artefacto congelado que o resto deste capítulo
+reporta.
+
 \paragraph{O veredicto depende de onde o rótulo foi traçado?} O limiar e o horizonte que definem a
 materialidade ($\tau = 0.02$ sobre $(d, d+3]$) foram fixados uma vez, e um resultado negativo que só
 valesse nessa escolha valeria muito pouco. A análise de sensibilidade estava, de facto, já paga e

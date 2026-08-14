@@ -590,6 +590,17 @@ count, and the corpus's news density grows over the window. Headlines are short,
 representation (article bodies, financial sentiment) might yet close the text gap; that possibility
 is recorded as future work rather than assumed.
 
+One further caveat concerns the probability \emph{scale} rather than the ranking, and it matters
+because the deployment thresholds sit on that scale. The calibrator is fitted on the validation
+block, whose label prevalence is $0.470$, and applied to a test block whose prevalence is $0.378$.
+The consequence is a systematic upward bias: mean predicted probability on the test block is
+$0.428$ against an observed rate of $0.378$, an over-prediction of $+0.050$, where the same
+measurement on the validation block is $-0.000$ by construction. The ordering is unaffected, so
+none of the ranking results above changes; but a deployed floor expressed as an absolute
+probability is a slightly looser filter than its number suggests. It is disclosed here rather than
+silently corrected, because refitting would alter a frozen artefact that the rest of this chapter
+reports.
+
 \paragraph{Does the verdict depend on where the label was drawn?} The threshold and horizon that
 define materiality ($\tau = 0.02$ over $(d, d+3]$) were fixed once, and a negative result that held
 only at one such choice would be worth very little. The sensitivity was in fact already paid for and

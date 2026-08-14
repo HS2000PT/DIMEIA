@@ -248,14 +248,14 @@ function viewAsset(t) {
   </div>
 
   <div class="panel" style="margin-top:var(--s4)">
-    <div class="panel-head"><span class="panel-title">Captured news · ${a.news?.length || 0} days</span>
+    <div class="panel-head"><span class="panel-title">Captured news · ${inWindow(a, a.news).length} days in ${S.range}</span>
       <span class="dim" style="font-size:var(--t-xs)">outcome measured 5 trading days later, never projected</span></div>
-    <div class="rows" id="news-rows">${newsRows(a.news)}</div>
+    <div class="rows" id="news-rows">${newsRows(inWindow(a, a.news))}</div>
   </div>
 
-  ${a.alerts?.length ? `<div class="panel" style="margin-top:var(--s4)">
-    <div class="panel-head"><span class="panel-title">Alerts actually sent · ${a.alerts.length}</span></div>
-    <div class="rows">${a.alerts.slice(0, 12).map(al => `
+  ${inWindow(a, a.alerts).length ? `<div class="panel" style="margin-top:var(--s4)">
+    <div class="panel-head"><span class="panel-title">Alerts actually sent · ${inWindow(a, a.alerts).length} in ${S.range}</span></div>
+    <div class="rows">${inWindow(a, a.alerts).slice(0, 12).map(al => `
       <div class="row"><span class="row-date">${esc(shortDate(al.date))}</span>
         <div class="row-main"><div class="row-title">${esc((al.text || '').split('\n')[0])}</div>
           <div class="row-meta"><span>${esc(al.kind)}</span>${al.sent_at ? `<span>sent ${esc(al.sent_at.slice(11, 16))} UTC</span>` : ''}</div>
@@ -293,7 +293,21 @@ function decompHTML(d) {
     </div>`;
 }
 
+/** Filtra qualquer lista datada pela janela da página. Uma linha sem data fica de fora, porque
+ *  mostrá-la sob um intervalo que não a contém é a divergência que isto veio corrigir. */
+function inWindow(a, items) {
+  const from = chartWindow(a).from;
+  if (!from) return items || [];
+  return (items || []).filter(x => (x.date || '') >= from);
+}
+
 function newsRows(news) {
+  // Um painel vazio sem explicação lê-se como avaria. Com o intervalo a governar a página, o
+  // vazio passou a ser comum e legítimo (num "1D" quase nunca há notícia capturada) — e a
+  // diferença entre "não houve" e "está partido" tem de estar escrita.
+  if (!news || !news.length) {
+    return `<div class="empty">No captured news in this range. Widen the range to see more.</div>`;
+  }
   if (!news?.length) return `<div class="empty">No headlines captured for this name yet.</div>`;
   return news.slice(0, 60).map((n, i) => `
     <button class="row" data-news="${i}">
@@ -307,6 +321,30 @@ function newsRows(news) {
 
 /* ══ GRÁFICO ══════════════════════════════════════════════════════════════ */
 const RANGE_BARS = { '5D': 5, '1M': 22, '3M': 66, '6M': 126, '1Y': 260 };
+
+/** A JANELA DA PÁGINA — uma só, para o gráfico e os painéis não poderem divergir.
+ *
+ * ⚠️ Existe porque a reconstrução da v5 perdeu um invariante que a v3 tinha construído de
+ * propósito: lá, o gráfico devolvia a janela que desenhou e as tabelas consumiam-na. Aqui o
+ * intervalo só reconstruía o gráfico, enquanto o painel de notícias mostrava sempre 60 dias e o
+ * de alertas sempre 12 — ou seja, com "1M" escolhido, o gráfico mostrava um mês e a lista por
+ * baixo mostrava meio ano, **na mesma página e ao mesmo tempo**.
+ *
+ * `from` é a data do primeiro ponto desenhado; tudo o que a página mostra filtra por ela.
+ */
+function chartWindow(a) {
+  if (S.range === '1D' && a.intraday?.length > 1) {
+    return { from: a.intraday_day || (a.closes?.length ? a.closes[a.closes.length - 1][0] : ''),
+             rows: [], intraday: true, fellBack: false };
+  }
+  // ⚠️ Sem série intradiária, `RANGE_BARS['1D']` não existe e o `|| 260` mostrava o ANO INTEIRO
+  // no separador "1D" — falhava aberto, mas para a coisa errada, e em silêncio. Um gráfico que
+  // mostra doze meses debaixo de um botão que diz "1D" é pior do que um vazio: o vazio percebe-se.
+  const fellBack = S.range === '1D';
+  const bars = RANGE_BARS[S.range] || (fellBack ? 5 : 260);
+  const rows = (a.closes || []).slice(-bars);
+  return { from: rows.length ? rows[0][0] : '', rows, intraday: false, fellBack };
+}
 
 function buildChart(t) {
   const a = S.assets.get(t); if (!a) return;
@@ -333,18 +371,14 @@ function buildChart(t) {
   const intraday = S.range === '1D' && a.intraday?.length > 1;
   const up = css.getPropertyValue('--up').trim(), down = css.getPropertyValue('--down').trim();
 
-  let data, base, fellBack = false;
+  const win = chartWindow(a);
+  let data, base;
+  const fellBack = win.fellBack;
   if (intraday) {
     data = a.intraday.map(([ts, v]) => ({ time: ts, value: v }));
     base = a.prev_close ?? data[0].value;
   } else {
-    // ⚠️ Sem série intradiária, `RANGE_BARS['1D']` não existe e o `|| 260` mostrava o ANO
-    // INTEIRO no separador "1D" — falhava aberto, mas para a coisa errada, e em silêncio.
-    // Um gráfico que mostra doze meses debaixo de um botão que diz "1D" é pior do que um
-    // gráfico vazio: o vazio percebe-se, isto não.
-    fellBack = S.range === '1D';
-    const bars = RANGE_BARS[S.range] || (fellBack ? 5 : 260);
-    data = (a.closes || []).slice(-bars).map(([d, v]) => ({ time: d, value: v }));
+    data = win.rows.map(([d, v]) => ({ time: d, value: v }));
     base = data.length ? data[0].value : 0;
   }
   if (!data.length) { box.innerHTML = `<div class="empty">No series for this range.</div>`; return; }
@@ -739,7 +773,9 @@ document.addEventListener('click', e => {
   const r = e.target.closest('#ranges button[data-r]');
   if (r) { S.range = r.dataset.r; history.replaceState({}, '', S.route.ticker ? `/?t=${S.route.ticker}${S.range !== '1D' ? '&r=' + S.range : ''}` : '/');
            document.querySelectorAll('#ranges button').forEach(b => b.setAttribute('aria-pressed', b.dataset.r === S.range));
-           return buildChart(S.route.ticker); }
+           // Re-renderiza a VISTA inteira, não só o gráfico: o intervalo é o contexto da página,
+           // e os painéis derivam dele. Continua sem rede — o activo já está em `S.assets`.
+           return render(); }
 
   if (e.target.closest('#tog-ev')) { S.series.events = !S.series.events; $('#tog-ev').setAttribute('aria-pressed', S.series.events); return buildChart(S.route.ticker); }
   if (e.target.closest('#tog-nw')) { S.series.news = !S.series.news; $('#tog-nw').setAttribute('aria-pressed', S.series.news); return buildChart(S.route.ticker); }

@@ -196,3 +196,37 @@ def test_merged_precedents_deduplica_pela_manchete_e_nao_pelo_ticker():
     assert len(textos) == len(set(textos)), f"manchete repetida: {textos}"
     assert macro in textos, "o acontecimento macro deve aparecer uma vez"
     assert textos.count(macro) == 1
+
+
+def test_precedentes_nao_contam_a_mesma_historia_duas_vezes(monkeypatch):
+    """⚠️ A dedup de precedentes era de TEXTO EXACTO: a mesma história publicada por dois meios
+    com títulos diferentes contava como duas observações independentes — e o alerta afirma-o em
+    voz alta ("3 of 3 shown cases moved down"). Três observações independentes pesam muito mais
+    do que uma vista três vezes, e o utilizador não tem como distinguir as duas coisas."""
+    from datetime import date
+
+    from investigator.historical_kb.knowledge_base import HistoricalKB
+    from investigator.historical_kb.record import NewsRecord
+    from investigator.live_kb import merged_precedents
+
+    def rec(ticker, headline, imp):
+        return NewsRecord(date="2026-01-05", ticker=ticker, headline=headline,
+                          impacts={1: imp, 3: imp, 5: imp}, embedding=[1.0, 0.0])
+
+    # A MESMA história, três redacções — mais uma genuinamente distinta.
+    kb = HistoricalKB([
+        rec("NVDA", "Nvidia beats quarterly estimates on data-centre demand", -0.03),
+        rec("AMD", "Nvidia beats quarterly estimates amid data-centre demand", -0.03),
+        rec("MSFT", "Nvidia beats estimates for the quarter on data centre demand", -0.03),
+        rec("TSLA", "Regulator opens safety investigation into driver-assist software", +0.02),
+    ])
+
+    class _Emb:
+        def encode(self, texts):
+            return [[1.0, 0.0] for _ in texts]
+
+    saida = merged_precedents("qualquer coisa", [kb], _Emb(), top_k=4,
+                              today=date(2026, 2, 1))
+    manchetes = [r.headline for r, _ in saida]
+    assert len(manchetes) == 2, f"a mesma história contada como independente: {manchetes}"
+    assert any("Regulator" in h for h in manchetes), "a história distinta não pode desaparecer"

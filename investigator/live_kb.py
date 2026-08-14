@@ -226,13 +226,22 @@ def merged_precedents(query: str, kbs: list, embedder, top_k: int, today: date,
     #
     # Fica a instância de maior similaridade, porque os candidatos chegam ordenados por
     # relevância e é essa a que melhor representa o acontecimento.
+    # ⚠️ 2026-08-14: a chave exacta fechava o caso do texto IDÊNTICO; a mesma história escrita
+    # por dois meios continuava a contar como duas observações independentes — e o alerta
+    # afirma-o em voz alta ("3 of 3 shown cases moved down"). Passa a usar o mesmo detector de
+    # quase-repetição que o caminho dos alertas já usava e que este nunca tinha usado.
+    from investigator.dedup import content_words, is_near_duplicate
+
     vistos: set[str] = set()
+    vistas_palavras: list[set[str]] = []
     unicos: list[tuple[NewsRecord, float]] = []
     for rec, score in sorted(candidatos, key=lambda rs: -rs[1]):
         chave = " ".join(rec.headline.lower().split())
-        if chave not in vistos:
-            vistos.add(chave)
-            unicos.append((rec, score))
+        if chave in vistos or is_near_duplicate(rec.headline, vistas_palavras):
+            continue
+        vistos.add(chave)
+        vistas_palavras.append(content_words(rec.headline))
+        unicos.append((rec, score))
     if max_age_days is not None:
         unicos = [(r, s) for r, s in unicos if _within_age(r.date, today, max_age_days)]
     unicos.sort(key=lambda rs: -(rs[1] * recency_weight(rs[0].date, today, half_life_days)))
