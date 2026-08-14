@@ -212,6 +212,29 @@
   `evaluate_triage_uncertainty.py` para 18 linhas**; restaurado do git e refeito com a ferramenta de
   edição. É a 3.ª vez nesta sessão que gerar código com aspas/escapes num `-c` ou heredoc causa dano.
   ⚠️ **A olhar:** o `gate_log` acumulado tem **21 linhas em `error`** — vale ver de onde vêm.
+  **✅ (Q) ITENS 4–7 FEITOS E IMPLANTADOS (`3f5f4cea`).** **(4)** O **intervalo passa a governar a
+  página**: havia UMA janela para o gráfico e nenhuma para os painéis (notícias sempre 60 dias,
+  alertas sempre 12), portanto com "1M" o gráfico mostrava um mês e a lista por baixo meio ano **na
+  mesma página**. A v3 tinha construído esse invariante de propósito e a v5 perdeu-o. Agora há uma
+  só `chartWindow()` e o botão re-renderiza a vista inteira (sem rede). Verificado em produção:
+  1D→0 notícias · 1M→12 notícias e **8** alertas · 1Y→169 e **10** — os alertas variarem é a prova
+  de que o filtro é real. **Estado vazio honesto novo** (um painel vazio sem explicação lê-se como
+  avaria). ⚠️ E o "10 constante" que vi primeiro **não era filtro partido**: os 10 alertas da NVDA
+  são mesmo todos posteriores ao início de 1M — verifiquei antes de "corrigir" o que estava certo.
+  **(5)** **O caminho vivo tinha ZERO testes** (`api/` + `web/`) enquanto o Streamlit retirado tinha
+  67. **+9 testes offline**, incluindo a regra mais fácil de partir sem dar por isso — **a API serve,
+  não calcula** (os valores têm de ser os do instantâneo byte a byte) — e a garantia de que nenhum
+  facto do pacote de evidência tem proveniência `generated`.
+  **(6)** **Calibração enviesada, DECLARADA:** o Platt é ajustado numa validação a **47,0%** de
+  prevalência e aplicado a um teste a **37,8%** ⇒ média prevista **0,428** contra **0,378**
+  observado (**+0,050**), quando na validação dá −0,000 por construção. A ordenação não muda, mas os
+  limiares implantados assentam nessa escala. Nas Ressalvas do CS4, EN+PT.
+  **(7)** **A mesma história contava duas vezes nos precedentes:** a dedup era de **texto exacto**, e
+  o alerta afirma em voz alta *"3 of 3 shown cases moved down"*. O detector já existia **para os
+  alertas** e nunca tinha sido usado aqui. Extraído para `investigator/dedup.py` (uma biblioteca não
+  importa de um script) e usado nos dois caminhos. **Nenhum script de avaliação usa
+  `merged_precedents`** ⇒ nada congelado mexe, e **a demo reproduz +6,46%**.
+  **Portas: 724 testes, ruff limpo, congelados intactos.**
   **(J) ÚLTIMA LENTE FEITA — CONSISTÊNCIA TESE↔CÓDIGO — e o resultado é largamente POSITIVO.**
   Os **quatro excertos de código** que a tese publica **não derivaram**: o `lst:zscore` bate com o
   `detect_latest` linha a linha (a fatia `[-window-1:-1]`, o `ddof=1`, a guarda `sigma > 0`), o
