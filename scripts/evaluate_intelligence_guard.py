@@ -312,6 +312,32 @@ def escreve(corpus: dict, geracao: dict | None) -> None:
         linhas += ["### ⚠️ Falsos positivos (texto fiel rejeitado)", ""]
         linhas += [f"- **{n}** — {v}" for n, _t, v in corpus["falsos_positivos"]] + [""]
 
+    if geracao is None:
+        # ⚠️ REGENERAÇÃO PARCIAL. Correr com `--offline` recalcula só o corpus de ataques. Se
+        # escrevêssemos o ficheiro na mesma, a secção "Geração real" DESAPARECIA — e ela é citada
+        # pela tese e usada pela Matriz de Evidência. Aconteceu mesmo: 23 linhas de evidência
+        # apagadas, exit 0, zero avisos, e o ficheiro a parecer perfeitamente normal.
+        #
+        # Um gerador que só regenera parte do documento tem de dizer o que não recalculou, em vez
+        # de o deitar fora em silêncio.
+        anterior = DESTINO.read_text(encoding="utf-8") if DESTINO.exists() else ""
+        i = anterior.find("## Geração real")
+        j = anterior.find("## Risco residual")
+        if i != -1 and j > i:
+            linhas += [
+                "> ⚠️ **A secção seguinte NÃO foi recalculada nesta corrida** (`--offline`: o "
+                "corpus de ataques correu, o LLM não). Fica como estava, com a data da corrida "
+                "que a produziu.",
+                "",
+                anterior[i:j].rstrip(),
+                "",
+            ]
+        elif anterior:
+            linhas += [
+                "> ⚠️ **Corrida `--offline`:** só o corpus de ataques foi recalculado, e não havia "
+                "secção de geração anterior para preservar.",
+                "",
+            ]
     if geracao:
         acc = geracao["aceites"] / max(1, geracao["seccoes"])
         n_rel = geracao.get("relatorios", 0)

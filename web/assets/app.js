@@ -632,7 +632,9 @@ async function viewScreener() {
   rows.forEach(r => { by[r.stage] = (by[r.stage] || 0) + 1; });
   const label = { no_news: 'No headline found', none_relevant: 'Nothing named the company',
     stale: 'Headline too old', weak_precedent: 'No strong past case',
-    triage_suppressed: 'Below the volume-control floor', alerted: 'Alert sent', error: 'Error' };
+    triage_suppressed: 'Below the volume-control floor',
+    daily_cap: 'Daily cap already used', ladder_floor: 'Second alert needed a higher score',
+    duplicate_story: 'Same story, already sent', alerted: 'Alert sent', error: 'Error' };
   return `<div class="crumb"><button data-nav-home>Overview</button><span class="sep">/</span><span class="muted">Screener</span></div>
     <h2 style="margin:0 0 var(--s2);font-size:var(--t-2xl);letter-spacing:-.03em">Why the system stayed quiet</h2>
     <p class="muted" style="max-width:70ch;margin:0 0 var(--s5)">Nine in ten scans send nothing. Silence

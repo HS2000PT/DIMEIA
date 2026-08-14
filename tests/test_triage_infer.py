@@ -162,3 +162,31 @@ def test_score_latest_falha_aberto_com_precos_em_falta(tmp_path):
     com_furos = close.copy()
     com_furos.iloc[-5:] = np.nan                                   # o que a fonte devolveu
     assert score_latest(b, com_furos, "abc", "NVDA") is None       # falha ABERTO, não levanta
+
+
+# ── Nenhum nome da watchlist pode ser pontuado fora da distribuição ────────────
+# ⚠️ Regressão: AMD e NFLX estão na watchlist implantada e em nenhum corpus de treino, e o
+# `SECTORS.get(t, "")` dava-lhes um one-hot de setor TODO A ZEROS — padrão que não existe em
+# nenhuma das 79.753 linhas de treino. Dois dos doze nomes implantados, em silêncio.
+
+def test_todos_os_tickers_da_watchlist_tem_setor_na_inferencia():
+    import yaml
+
+    from investigator.triage.infer import deploy_sector
+    from scripts.run_alerts import _CONFIG
+
+    cfg = yaml.safe_load(_CONFIG.read_text(encoding="utf-8"))
+    tickers = (cfg.get("news") or {}).get("tickers") or []
+    assert tickers, "watchlist vazia — o teste deixaria de verificar o que diz verificar"
+    sem_setor = [t for t in tickers if not deploy_sector(t)]
+    assert not sem_setor, f"pontuados fora da distribuição (one-hot a zeros): {sem_setor}"
+
+
+def test_o_mapa_do_corpus_continua_a_ganhar_ao_de_implantacao():
+    """Controlo no sentido oposto: o mapa canónico não pode ser sobreposto pelo de implantação,
+    senão a inferência divergiria do treino para os nomes que ESTIVERAM no treino."""
+    from investigator.triage.dataset import SECTORS
+    from investigator.triage.infer import deploy_sector
+
+    for t, setor in SECTORS.items():
+        assert deploy_sector(t) == setor

@@ -1,6 +1,6 @@
 # Avaliação da guarda de ancoragem (camada de inteligência)
 
-> Gerado por `scripts/evaluate_intelligence_guard.py` a 2026-08-11 00:28 UTC.
+> Gerado por `scripts/evaluate_intelligence_guard.py` a 2026-08-14 07:23 UTC.
 > Regenerável. Nenhum número deste ficheiro foi escrito à mão.
 
 ## ⚠️ Duas classes de número, e não se lêem da mesma maneira
@@ -34,6 +34,8 @@ estabilidade que só uma delas tem.
 | 8 | 8 | 1.000 |
 
 Nenhum ataque do corpus escapou.
+
+> ⚠️ **A secção seguinte NÃO foi recalculada nesta corrida** (`--offline`: o corpus de ataques correu, o LLM não). Fica como estava, com a data da corrida que a produziu.
 
 ## Geração real (AMOSTRADA — ver a tabela das classes acima)
 

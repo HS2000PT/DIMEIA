@@ -27,7 +27,17 @@ STAGES: tuple[str, ...] = (
     "weak_precedent",     # nenhum precedente com cosseno >= min_similarity
     "triage_suppressed",  # o modelo aprendido pontuou abaixo de min_materiality
     "error",              # exceção no processamento deste ticker (fail-open)
-    "alerted",            # sobreviveu a tudo e gerou alerta
+    # ── as três abaixo acontecem DEPOIS da varredura, no `filter_new_alerts` ──────
+    # ⚠️ Existem porque a sua ausência fazia o ecrã mentir. O `_gate()` corre dentro do
+    # `scan_news`; o tecto diário, a escada de materialidade e a quase-repetição correm a
+    # seguir, e nada re-etiquetava o que elas suprimiam. Resultado: `alerted` queria dizer
+    # "sobreviveu à varredura" e o screener traduzia-o para **"Alert sent"** — dizendo ao
+    # utilizador que um alerta tinha sido enviado quando não tinha, na vista cuja razão de
+    # existir é tornar o silêncio inspeccionável.
+    "daily_cap",          # o tecto de alertas/ticker/dia já estava cheio
+    "ladder_floor",       # o k-ésimo alerta do dia exigia P mais alto do que este tem
+    "duplicate_story",    # a mesma história noutras palavras, já alertada hoje
+    "alerted",            # sobreviveu a tudo E foi mesmo entregue
 )
 
 _TERMINAL_OK = "alerted"

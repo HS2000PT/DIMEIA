@@ -663,3 +663,58 @@ def test_investigacao_cruzada_nao_oferece_noticia_POSTERIOR_ao_movimento(monkeyp
     saida = ra._investigate_anomaly_safe("NVDA", "alerta", observado_em="2026-08-10T15:00:00Z")
     assert "ANTES do movimento" in saida
     assert "DEPOIS do movimento" not in saida, "ofereceu uma notícia posterior como explicação"
+
+
+# ── O funil tem de dizer a verdade sobre o que foi ENTREGUE ────────────────────
+# ⚠️ Regressão de um defeito visível no ecrã e invisível a todos os testes que existiam:
+# `_gate()` corre dentro do `scan_news`, e o tecto/escada/quase-repetição correm DEPOIS, no
+# `filter_new_alerts`. Nada reetiquetava o que elas suprimiam, portanto `stage="alerted"`
+# significava "sobreviveu à varredura" e o screener traduzia-o para "Alert sent" — dizendo ao
+# utilizador que um alerta saiu quando não saiu, na vista que existe para tornar o silêncio
+# inspeccionável.
+
+def _gate_rec(ticker: str, stage: str, detail: str = ""):
+    from investigator.gate_log import GateRecord
+
+    return GateRecord(date="2026-08-14", ticker=ticker, stage=stage, detail=detail)
+
+
+def test_tecto_diario_reetiqueta_o_funil_em_vez_de_dizer_alerted(tmp_path):
+    from datetime import date
+
+    from scripts.run_alerts import _reconcile_gates, filter_new_alerts, load_state
+
+    st = load_state(tmp_path / "none.json", today=date(2026, 8, 14))
+    st["news_count"]["NVDA"] = 2  # tecto de 2/dia já gasto
+    sup: dict[str, tuple[str, str]] = {}
+    keep = filter_new_alerts([], [("NVDA", "News alert for NVDA\nmanchete nova")], st,
+                             max_per_ticker=2, suppressed=sup)
+    assert keep == []                      # não foi entregue
+    assert sup["NVDA"][0] == "daily_cap"   # e sabe-se porquê
+
+    recs = [_gate_rec("NVDA", "alerted"), _gate_rec("XOM", "weak_precedent", "sim 0.31 < 0.45")]
+    _reconcile_gates(recs, sup)
+    assert recs[0].stage == "daily_cap"        # deixou de mentir
+    assert "cap" in recs[0].detail
+    assert recs[1].stage == "weak_precedent"   # e não reescreveu quem já tinha morrido antes
+
+
+def test_reconciliacao_nao_toca_em_quem_foi_mesmo_entregue(tmp_path):
+    """Controlo no sentido oposto: sem supressão, `alerted` continua a ser `alerted`.
+
+    Sem este teste, uma reconciliação que reetiquetasse tudo seria indistinguível de uma que
+    funciona — e o screener passaria a dizer que nunca se envia nada."""
+    from scripts.run_alerts import _reconcile_gates
+
+    recs = [_gate_rec("NVDA", "alerted")]
+    _reconcile_gates(recs, {})
+    assert recs[0].stage == "alerted"
+
+
+def test_todas_as_etapas_pos_varredura_existem_no_gate_log():
+    """As etapas novas têm de estar declaradas, senão o screener recebe uma etapa que não sabe
+    desenhar e cai no rótulo por defeito."""
+    from investigator.gate_log import STAGES
+
+    for etapa in ("daily_cap", "ladder_floor", "duplicate_story"):
+        assert etapa in STAGES

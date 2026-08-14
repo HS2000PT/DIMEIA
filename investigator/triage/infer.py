@@ -35,17 +35,39 @@ def load_context_bundle(path: str | Path = DEFAULT_BUNDLE) -> dict | None:
     return load_bundle(p)
 
 
+# Setor em tempo de INFERÊNCIA para nomes que a watchlist tem e o corpus de treino não.
+#
+# ⚠️ Porque isto existe. O `SECTORS` de `dataset.py` é o mapa do CORPUS (14 tickers do FNSPID);
+# a watchlist implantada tem doze nomes, e **AMD e NFLX não estão em nenhum dos dois**. Sem esta
+# tabela, `SECTORS.get(t, "")` devolvia "" e o `context_block` produzia um one-hot de setor
+# **todo a zeros** — um padrão que não existe em **nenhuma** das 79.753 linhas de treino, onde
+# toda a linha tem exactamente um setor activo. Dois dos doze nomes implantados eram pontuados
+# fora da distribuição, em silêncio.
+#
+# Não se toca no mapa canónico: ele descreve o corpus, é partilhado com a avaliação de
+# recuperação, e alterá-lo mexeria em números congelados. Isto é uma decisão de IMPLANTAÇÃO e
+# fica declarada como tal — é uma aproximação (nenhum dos dois esteve no treino) e a alternativa
+# era pior.
+DEPLOY_SECTORS: dict[str, str] = {"AMD": "tech", "NFLX": "tech"}
+
+
+def deploy_sector(ticker: str) -> str:
+    """O setor a usar na inferência: corpus primeiro, watchlist depois, "" em último."""
+    t = ticker.upper()
+    return SECTORS.get(t) or DEPLOY_SECTORS.get(t, "")
+
+
 def score_context(bundle: dict, vol20: float, mom5: float, ret_event: float,
                   headline: str, ticker: str) -> tuple[float, list[tuple[str, float]]]:
     """Probabilidade calibrada + contribuições (XAI) a partir das features de contexto.
 
-    Ticker fora do mapa de setores → one-hot todo a zeros ("setor desconhecido") — o modelo
-    pontua na mesma, só sem o sinal de setor.
+    Ticker fora de qualquer mapa → one-hot todo a zeros ("setor desconhecido"). O modelo pontua
+    na mesma, mas **fora da distribuição de treino** — ver `DEPLOY_SECTORS`.
     """
     df = pd.DataFrame([{
         "vol20": vol20, "mom5": mom5, "ret_event": ret_event,
         "headline_len": float(len(headline)),
-        "sector": SECTORS.get(ticker.upper(), ""),
+        "sector": deploy_sector(ticker),
     }])
     x, names = context_block(df)
     if names != bundle["feature_names"]:  # bundle velho vs features novas (guarda tipo R1)

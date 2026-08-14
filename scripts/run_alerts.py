@@ -198,7 +198,9 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
                       state: dict, max_per_ticker: int = 2,
                       materiality: dict[str, float] | None = None,
                       headlines: dict[str, str] | None = None,
-                      ladder: list[float] | None = None) -> list[tuple[str, str]]:
+                      ladder: list[float] | None = None,
+                      suppressed: dict[str, tuple[str, str]] | None = None
+                      ) -> list[tuple[str, str]]:
     """Puro: mantém só o que ainda NÃO foi alertado hoje e marca-o no estado.
 
     Notícias têm um TETO por ticker por dia (`max_per_ticker`, config
@@ -247,6 +249,12 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
     **Sem triagem ligada (o defeito por defeito), o dicionário vem vazio, a `ladder` não tem
     score para aplicar e a ordem de chegada é preservada** — o comportamento antigo é o caso
     particular deste.
+
+    ⚠️ `suppressed` é o canal lateral de SAÍDA `{ticker: (etapa, detalhe)}`, e existe por causa
+    de um defeito que só se via no ecrã: estas três supressões acontecem **depois** do
+    `scan_news`, que é onde o funil é registado, portanto nada as registava. O `gate_log` dizia
+    `alerted` e o screener traduzia para **"Alert sent"** — afirmando ao utilizador que um
+    alerta saiu quando não saiu. Quem chama reconcilia o funil com isto.
     """
     keep: list[tuple[str, str]] = []
     for ticker, text in market:
@@ -279,11 +287,15 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
         manchete = (headlines or {}).get(k, "")
         if manchete and quase_repetida(manchete, vistas.get(ticker, [])):
             print(f"[noticias {ticker}] a mesma história noutras palavras — sem repetição.")
+            if suppressed is not None:
+                suppressed[ticker] = ("duplicate_story", "same story, other words")
             continue
         ja_hoje = state["news_count"].get(ticker, 0)
         if ja_hoje >= max_per_ticker:
             print(f"[noticias {ticker}] teto diário atingido ({max_per_ticker}) "
                   "— sem mais alertas deste ticker hoje.")
+            if suppressed is not None:
+                suppressed[ticker] = ("daily_cap", f"cap {max_per_ticker}/day reached")
             continue
         # Piso escalonado: cada slot seguinte do mesmo ticker no mesmo dia custa mais. Falha
         # ABERTO em duas situações, de propósito: sem `ladder` configurada, e sem score para
@@ -294,6 +306,8 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
         if piso is not None and p is not None and p < piso:
             print(f"[noticias {ticker}] alerta nº{ja_hoje + 1} do dia exige "
                   f"P≥{piso:.0%} e esta tem {p:.0%} — quota guardada.")
+            if suppressed is not None:
+                suppressed[ticker] = ("ladder_floor", f"P {p:.2f} < floor {piso:.2f}")
             continue
         state["alerted_news"].append(k)
         state["news_count"][ticker] = state["news_count"].get(ticker, 0) + 1
@@ -1101,6 +1115,29 @@ def _write_snapshot_safe() -> None:
         print(f"[instantaneo] falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
 
 
+def _reconcile_gates(records: list, suppressed: dict[str, tuple[str, str]]) -> None:
+    """Puro: corrige o funil com o que foi suprimido DEPOIS da varredura.
+
+    Sem isto, `stage="alerted"` significa "sobreviveu ao `scan_news`" e não "foi entregue", e o
+    screener mostra **"Alert sent"** a um utilizador a quem não se enviou nada — na vista que
+    existe precisamente para tornar o silêncio inspeccionável.
+
+    Só reetiqueta registos que estejam em `alerted`: uma supressão pós-varredura não pode
+    ressuscitar um ticker que já tinha morrido antes, e sobrescrever a etapa real apagaria a
+    razão verdadeira pela qual ele saiu do funil.
+    """
+    if not suppressed:
+        return
+    for i, r in enumerate(records):
+        if r.stage != "alerted":
+            continue
+        hit = suppressed.get(r.ticker)
+        if hit:
+            from dataclasses import replace
+
+            records[i] = replace(r, stage=hit[0], detail=hit[1])
+
+
 def _record_gates_safe(records: list, path: str | Path | None = None) -> None:
     """Persiste o funil de gates ao lado do histórico (mesma branch de dados, por isso é
     publicado pelos mesmos mecanismos). Fail-open: nunca pode travar o ciclo.
@@ -1322,11 +1359,14 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     # Piso escalonado do tecto diário (ver `filter_new_alerts`). Lista vazia/ausente = sem
     # escalonamento, comportamento de sempre.
     escada = [float(x) for x in ((cfg.get("news") or {}).get("materiality_ladder") or [])]
+    # Supressões pós-varredura, para o funil poder ser reconciliado (ver `filter_new_alerts`).
+    pos_scan: dict[str, tuple[str, str]] = {}
     alerts = filter_new_alerts(
         market_alerts, scan_news(cfg, event_times, gate_records, materiality, headlines),
-        state, max_per, materiality, headlines, escada,
+        state, max_per, materiality, headlines, escada, pos_scan,
     )
     detected_at = utc_stamp()
+    _reconcile_gates(gate_records, pos_scan)
     _record_gates_safe(gate_records)
     _write_snapshot_safe()
 

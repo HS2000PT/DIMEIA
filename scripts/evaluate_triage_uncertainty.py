@@ -142,6 +142,10 @@ def main() -> int:
         "> amostras correlacionadas. Aqui os modelos ficam fixos (train+val) e reamostram-se os",
         f"> CLUSTERS (ticker,dia) do teste com reposição ({args.boot}×), IC 95% percentil.",
         "",
+        f"> **Famílias corridas: `{'`, `'.join(families)}`.** Fica escrito porque a sua ausência "
+        "já custou evidência: sem `--with-text` só correm `vol` e `context`, e uma corrida "
+        "dessas reescreveu este ficheiro por cima de outra, apagando as três linhas do texto.",
+        "",
         f"- **Teste:** {len(test)} linhas em {n_cl} clusters (ticker,dia); "
         f"prevalência {y['test'].mean():.3f}.",
         f"- **Gerado:** {datetime.now(UTC).strftime('%Y-%m-%d %H:%M')} UTC · seed {args.seed}"
@@ -166,19 +170,27 @@ def main() -> int:
         a = np.asarray([x for x in v if x == x])
         m, lo, hi = float(a.mean()), float(np.percentile(a, 2.5)), float(np.percentile(a, 97.5))
         L.append(f"| {name} | {m:+.4f} | [{lo:+.4f}, {hi:+.4f}] | {float((a > 0).mean()):.2f} |")
-    L += [
-        "",
-        "**Leitura honesta:** as barras marginais (coluna IC 95%) são largas, por isso "
-        "reportar as PR-AUC a 3 casas como pontos precisos não era defensável — o honesto é "
-        "o par (ponto, IC). Mas o bootstrap é EMPARELHADO (mesma reamostragem para todas as "
-        "famílias), e são as DIFERENÇAS que sustentam a comparação decisiva: quando `vol−full` "
-        "e `context−full` são positivos com IC a excluir 0 e P(Δ>0)=1, adicionar o bloco de "
-        "texto PIORA de forma robusta (não é ruído de uma seed) — o veredicto 'o texto não "
-        "acrescenta sobre o contexto de mercado' fica estatisticamente sustentado, "
-        "cluster-robusto. Fica em aberto para o re-teste justo da RQ4 (fase D) se a degradação "
-        "reflete 'texto sem sinal' ou sub-ajuste do pipeline de texto (penalização não "
-        "afinada; bloco 384-d a diluir 5 escalares).",
-    ]
+    base = ("**Leitura honesta:** as barras marginais (coluna IC 95%) são largas, por isso "
+            "reportar as PR-AUC a 3 casas como pontos precisos não era defensável — o honesto é "
+            "o par (ponto, IC). Mas o bootstrap é EMPARELHADO (mesma reamostragem para todas as "
+            "famílias), e são as DIFERENÇAS que sustentam a comparação decisiva")
+    if "full" in families:
+        L += ["", base + ": quando `vol−full` "
+              "e `context−full` são positivos com IC a excluir 0 e P(Δ>0)=1, adicionar o bloco de "
+              "texto PIORA de forma robusta (não é ruído de uma seed) — o veredicto 'o texto não "
+              "acrescenta sobre o contexto de mercado' fica estatisticamente sustentado, "
+              "cluster-robusto. Fica em aberto para o re-teste justo da RQ4 se a degradação "
+              "reflete 'texto sem sinal' ou sub-ajuste do pipeline de texto (penalização não "
+              "afinada; bloco 384-d a diluir 5 escalares)."]
+    else:
+        # ⚠️ Sem `--with-text` as famílias de texto não correram, e esta prosa afirmava na mesma
+        # que `vol−full` e `context−full` eram positivos — diferenças que a tabela acima não
+        # contém. Uma corrida sem a flag reescreveu o ficheiro por cima de outra e apagou essas
+        # três linhas **sem um único aviso**, deixando a afirmação da tese sem artefacto.
+        L += ["", base + ". ⚠️ **As famílias de texto NÃO correram nesta corrida** "
+              "(sem `--with-text`), pelo que as diferenças `vol−full` e `context−full` **não "
+              "estão nesta tabela** e nada aqui as sustenta. Para as obter: re-correr com "
+              "`--with-text`."]
     out.write_text("\n".join(L) + "\n", encoding="utf-8")
     print(f"\nEscrito: {out}")
     return 0
