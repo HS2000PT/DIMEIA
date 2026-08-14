@@ -7,8 +7,9 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 57 (**auditoria-mestra: o chão da RQ4 não media o que dizia medir**)
-- **Última atualização:** 2026-08-13
+- **Sessão nº:** 57 (**auditoria-mestra ponta a ponta, a propagação da correcção da RQ4, e o
+  produto a dizer a verdade sobre si próprio**)
+- **Última atualização:** 2026-08-15
 - **🆕 SESSÃO 57 (2026-08-13 — o aluno deu uma directiva-mestra: auditar tudo antes de mexer em
   nada, e criar o plano-mestre do projecto):**
   **(A) PLANO-MESTRE CRIADO:** [`INVESTIGATOR_MASTER_PLAN.md`](INVESTIGATOR_MASTER_PLAN.md) na raiz,
@@ -235,6 +236,33 @@
   importa de um script) e usado nos dois caminhos. **Nenhum script de avaliação usa
   `merged_precedents`** ⇒ nada congelado mexe, e **a demo reproduz +6,46%**.
   **Portas: 724 testes, ruff limpo, congelados intactos.**
+  **✅ (R) OS 21 ERROS DO FUNIL: HISTÓRICOS — e ir vê-los encontrou um defeito VIVO.**
+  Os 28 registos em `error` do log inteiro (768 linhas, 2026-07-29 a 08-09) são duas causas em
+  **três dias apenas**: **25x `ValueError: Input X contains NaN`** (4 a 07-29 e **21 a 08-04**) e
+  **3x `ReadTimeout` do Finnhub** (08-03). É exactamente o incidente que a sessão 55 documentou — a
+  fonte de preços devolveu buracos em toda a watchlist — e há **zero erros desde 2026-08-04**.
+  **Nada a corrigir.** ⚠️ **Ressalva honesta:** o log só vai até 08-09 e a guarda da sessão 55 é de
+  08-09/10, portanto o silêncio depois de 08-04 mostra que a **fonte recuperou**, não que a guarda
+  funciona; a prova da guarda é o teste que falha sem ela, não este silêncio.
+  **⚠️ (S) O ACHADO A SÉRIO, que só apareceu por ir ver:** o `gate_log.jsonl` e o
+  `predictions_log.jsonl` estavam **parados em 2026-08-09** enquanto o `alerts_history.jsonl`
+  estava actual (08-14) e o instantâneo fresco a 79 s. **Causa:** o worker do Heroku publica o
+  instantâneo (`publish_blob`) e o histórico (`publish_safe`) e **nunca publicou estes dois** —
+  eram escritos só em disco local, que no contentor é **efémero** e pertence a **outro dyno** que
+  não o web. O docstring do `gate_log` chegava a afirmar que era *"publicado pelos mesmos
+  mecanismos"*; não era. E o raciocínio certo já estava escrito no `_write_snapshot_safe` (*"no
+  Heroku o web é OUTRO dyno, com outro disco"*) — nunca foi aplicado aqui.
+  **Custo:** o **screener servia uma semana atrasada**, na vista que existe para tornar o silêncio
+  inspeccionável; e o **registo de decisões que alimenta a pós-validação deixou de crescer** — é a
+  base de evidência do resultado do gate implantado que a tese reporta.
+  **Correcção:** `_publish_data_safe` em cada ciclo + `_seed_from_branch_safe` no arranque.
+  ⚠️ **A ORDEM É A ARMADILHA:** publicar sem semear escreveria por cima da branch com apenas os
+  registos desde o último reinício e **apagaria a série inteira**; semear só actua com o ficheiro
+  local vazio/ausente, logo nunca destrói trabalho local. +2 testes.
+  **Verificado ao vivo depois de implantar:** `gate_log` **768 -> 828** linhas, `predictions_log`
+  **1087 -> 1122**, ambos já com 2026-08-14 — e o screener passou a mostrar um balde
+  **`ladder_floor: 10`**, que é a correcção (P) a funcionar em produção: dez alertas correctamente
+  reportados como suprimidos pelo piso escalonado, onde antes diriam "Alert sent".
   **(J) ÚLTIMA LENTE FEITA — CONSISTÊNCIA TESE↔CÓDIGO — e o resultado é largamente POSITIVO.**
   Os **quatro excertos de código** que a tese publica **não derivaram**: o `lst:zscore` bate com o
   `detect_latest` linha a linha (a fatia `[-window-1:-1]`, o `ddof=1`, a guarda `sigma > 0`), o
@@ -957,39 +985,53 @@
   23+23 / guia 85 — todos 0 erros, 0 citações e referências indefinidas.**
   **PENDENTE HUMANO:** rodar as 3 credenciais (o PAT primeiro — tem `admin: true`); enviar
   `docs/defence/mensagem_orientador.md`; reclamar o domínio para o URL limpo.
-- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI (actualizado na sessão 56):**
-  **O código está feito e implantado; o que falta é humano.** Não há nenhum ficheiro de backlog
-  para abrir primeiro — o da sessão 50 foi cumprido (painel refeito de raiz na v5, guia
-  reconstruído, latência medida na sessão 53) e está arquivado como histórico.
-  **(1) O ESTUDO HUMANO é a única lacuna real que resta**, e agora fecha *quatro* coisas de uma
-  vez: a metade "útil" do objectivo 4, a metade em aberto da RQ3 — **que passou a cobrir também
-  o texto gerado** —, a pergunta "chegou a história *certa*?" da cobertura de notícias, e a
-  pergunta nova "um relatório ancorado ajuda mais do que os painéis sozinhos?". São 6–10 pessoas,
-  ~15 min cada; `scripts/build_usefulness_pack.py` e `analyse_usefulness.py` já geram o material
-  e fecham a análise.
-  **(2) A DECLARAÇÃO DE IA SUBESTIMA O QUE ACONTECEU.** Está honesta na forma mas foi escrita
-  antes de a sessão 56 acrescentar uma camada generativa e reconstruir o produto. Vale uma frase
-  escrita pelo aluno, com o orientador.
-  **(3) COMPLETAR O RED TEAM DA GUARDA:** 4 das 6 lentes nunca correram (limite de gasto). A tese
-  já diz que a força medida é um **limite inferior**, portanto não é uma correcção pendente — é
-  uma melhoria. `scripts/evaluate_intelligence_guard.py` regenera os números.
-  **(4) AGRADECIMENTOS E DEDICATÓRIA — já não estão com `% TODO`** (sessão 57, a pedido dele):
-  agradecimentos com rascunho EN+PT para ele reescrever, e dedicatória **"À minha família"**,
-  escolhida por ele quando lhe perguntei — a única coisa que eu não podia adivinhar sem inventar.
-  Falta a leitura dele às duas.
-  **(5) RODAR AS 4 CREDENCIAIS** (PAT do GitHub primeiro — tem `admin: true`).
-  **⚠️ LIMITE DE GASTO: esgotado nesta sessão.** Dois workflows lançados, **os dois perderam
-  TODOS os agentes** (43 e 6). Ambos devolveram *"nenhum achado sobreviveu à verificação"*, que é
-  a **ausência de verificação** e não um resultado limpo — **5.ª vez** que este padrão engana
-  neste projecto. Enquanto o limite não abrir, **não lançar workflows**: para verificação factual
-  fazer à mão é melhor de qualquer maneira, e foi assim que saíram os 6 achados da revisão final.
-  **⚠️ DUAS ARMADILHAS DE FERRAMENTA que custaram tempo real nesta sessão, e voltam a custar:**
-  **(a)** escrever `\ref` a partir de um heredoc ou de `python -c` em bash **transforma-o num
-  byte CR**; a tradução universal de newlines do Python **esconde-o e volta a mangá-lo a cada
-  round-trip**, e já partiu a compilação da tese PT. Usar a ferramenta de edição, ou modo
-  binário, e varrer com o teste de CR soltos.
-  **(b)** o `heroku auth:token` **sai com código 1 e imprime o token na mesma** — um `set -e`
-  mata o script aí. `scripts/deploy_heroku.py` já trata disto.
+- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI (actualizado na sessão 57, 2026-08-15):**
+  **O aluno decidiu: fica com este repositório e acaba-o.** (Pediu também um prompt de raiz para um
+  projecto novo — está em `docs/design/PROMPT_V2_NOVO_PROJECTO.md` e é para **depois da entrega**;
+  começar repositório novo a 30 dias do prazo custaria a tese, e isso está lá escrito.)
+  **O QUE JÁ NÃO ESTÁ EM ABERTO:** a auditoria das 7 lentes (feita à mão, a automática morreu no
+  limite); a correcção do chão da RQ4 propagada a ~48 sítios em 20 ficheiros; a grelha de rótulos
+  (9/9) e o chão de similaridade (não derivável, e é esse o resultado); os sete itens de produto
+  (screener honesto, AMD/NFLX na distribuição, geradores parciais, filtro temporal, testes no
+  caminho vivo, calibração declarada, dedup de precedentes); e a publicação do funil e do registo de
+  decisões. **Tudo implantado e verificado ao vivo.**
+  **O QUE FALTA É HUMANO — e por esta ordem:**
+  **(1) O ESTUDO HUMANO. É o único item com relógio.** Fecha quatro coisas: a metade "útil" do
+  objectivo 4, a metade em aberto da RQ3 (que agora **cobre o texto gerado**, bloco C novo no
+  protocolo), a pergunta "chegou a história *certa*?", e a H5 — *dada uma frase com âncora, a pessoa
+  consegue abrir o facto e julgar se ele a sustenta, sem ajuda?* A garantia de ancoragem nunca foi
+  verificada por um humano. Pacote turn-key: `build_usefulness_pack.py` (6 estímulos, 2
+  tema/direcção) e `capture_report_stimuli.py` (4 relatórios reais congelados).
+  ⚠️ **Congelar o pacote antes do 1.º participante** — o canal cresce e a mesma semente dá
+  estímulos diferentes.
+  **(2) A LEITURA FINAL DAS DUAS TESES.** É pré-requisito da declaração de IA, que afirma "revi o
+  conteúdo desta dissertação".
+  **(3) COM O ORIENTADOR:** a redacção exacta da declaração de IA (não se inventou política) + a
+  data de entrega; e a **licença do código** — com as duas restrições que a auditoria encontrou:
+  três ficheiros distribuídos derivam do FNSPID (**CC BY-SA**, share-alike) e o `meia-style.cls` é
+  **CC BY-NC-SA** (share-alike **e** NonCommercial).
+  **(4) OS AGRADECIMENTOS na voz dele** (há rascunho EN+PT) e confirmar a dedicatória.
+  **(5) RODAR AS 4 CREDENCIAIS** (PAT do GitHub primeiro — tem admin).
+  **(6) OPCIONAL:** completar o red team da guarda (4 das 6 lentes nunca correram; a tese já diz que
+  a força medida é um **limite inferior**, logo é melhoria e não correcção).
+  **⚠️ LIMITE DE GASTO: continua a morder.** Nesta sessão, de três workflows, **7 de 8**, **2 de 4**
+  e **2 de 4** agentes morreram — e as corridas devolvem veredictos de aparência limpa que são a
+  **ausência de verificação** (7.ª vez). Para verificação factual, **fazer à mão é melhor**: foi
+  assim que saíram o furo da guarda, o chão alfabético e os dois ficheiros parados.
+  **⚠️ ARMADILHAS DE FERRAMENTA — a lista cresceu e todas custaram tempo real:**
+  **(a)** escrever LaTeX a partir de heredoc/`python -c`: o `
+` de `
+ef` vira **CR** e o `	` de
+  `	extbf` vira **TAB**. Usar a ferramenta de edição ou strings `r"..."`.
+  **(b)** uma expressão com **precedência errada** num `python -c` **truncou um script para 18
+  linhas**; restaurado do git. Não gerar código com aspas/escapes por `-c`.
+  **(c)** `grep` a um NÚMERO não encontra a mesma afirmação escrita **por palavras** — 13 sítios
+  diziam "quadruplica" sem citar o 0,163.
+  **(d)** um gerador que só regenera **parte** do documento **apaga o resto com exit 0**. Aconteceu
+  duas vezes no mesmo dia; ambos os scripts foram corrigidos.
+  **(e)** publicar um ficheiro de série **sem semear primeiro** apaga a série no contentor.
+  **(f)** o `heroku auth:token` sai com código 1 e imprime o token na mesma; o
+  `scripts/deploy_heroku.py` já trata disto.
 - **🧩 SESSÃO 47 (2026-08-03 — executar o backlog da v3; 4 commits):**
   **(A) LEGIBILIDADE.** A pílula `UNUSUAL` estava dentro da linha do topo, a disputá-la com
   logótipo, nome, ticker e o número grande — e o nome, único item sem largura própria, era
@@ -2292,6 +2334,7 @@
 > 6 capítulos canónicos MEIA (Introduction · State of the Art · Methods and Materials ·
 > InvestiGator · Case Studies · Conclusions) + Apêndice A.
 > **EN 130 pp · PT 139 pp · 0 erros · 0 citações e referências indefinidas · 0 overfull >15pt.**
+> **726 testes · ruff limpo · congelados intactos** (instantâneo de 2026-08-15).
 > **63 referências** verificadas uma a uma (88 com as do artigo IEEE).
 > Paridade EN↔PT: **0 assimetrias** estruturais nos 7 capítulos e **0** nas frases com citação
 > (89 chaves). **270 referências cruzadas, 168 labels, 0 incompatibilidades de tipo** — verificado
