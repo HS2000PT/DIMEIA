@@ -15,6 +15,23 @@ apagaria a distinção; usar o mesmo nome do ficheiro de produção confundiria 
 **Retomável.** Escreve à medida que avança e salta o que já está feito, porque são dezenas de
 milhares de manchetes e o processo pode ser interrompido.
 
+⚠️ **MEDIDO A 2026-08-15, E É O QUE DECIDE SE ISTO PODE IR PARA PRODUÇÃO.**
+A corrida demorou 17,4 min e produziu 38 214 vectores de 384 dimensões, com as normas todas a
+`1.000000` (confirma a normalização). Mas carregar o ficheiro com o código de produção custa
+**655 MB de RAM**, e o dyno tem **512 MB**. Tal como está, não arranca.
+
+E o problema **não é o volume de dados, é o formato**. As mesmas 38 214 × 384 posições ocupam:
+
+| formato | memória |
+|---|---|
+| listas de `float` de Python (o que o JSON produz) | **655 MB** (medido) |
+| `numpy` float64 | 112 MB |
+| `numpy` float32 | **56 MB** |
+
+São **11,7×** entre o primeiro e o último, e vêm do custo de objecto de cada `float` de Python.
+Fica registado com o número medido para que ninguém implante às cegas nem descarte a base por
+uma razão errada: o caminho é mudar o formato de armazenamento, não reduzir os casos.
+
 Correr:  python scripts/embed_backfill_kb.py
 """
 
