@@ -1,15 +1,3 @@
-{"date": "2026-07-30", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
-{"date": "2026-07-30", "ticker": "MSFT", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
-{"date": "2026-07-30", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
-{"date": "2026-07-30", "ticker": "TSLA", "stage": "alerted", "detail": "Virtuix Lands Tesla as First Omni One Enterprise Customer, Signaling Major Push "}
-{"date": "2026-07-30", "ticker": "AMZN", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
-{"date": "2026-07-30", "ticker": "GOOGL", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
-{"date": "2026-07-30", "ticker": "META", "stage": "alerted", "detail": "Meta's capex guidance isn't cutting it for investors. Stock drops."}
-{"date": "2026-07-30", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
-{"date": "2026-07-30", "ticker": "AMD", "stage": "alerted", "detail": "Nvidia vs. AMD vs. Intel: Which Stock Is the Better Buy for the Server CPU Boom?"}
-{"date": "2026-07-30", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
-{"date": "2026-07-30", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.43 < 0.50"}
-{"date": "2026-07-30", "ticker": "MSFT", "stage": "triage_suppressed", "detail": "P=0.43 < 0.50"}
 {"date": "2026-07-30", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.48 < 0.50"}
 {"date": "2026-07-30", "ticker": "TSLA", "stage": "alerted", "detail": "Tesla Stock Is Gaining. How Microsoft Is Helping End Its  Six-Day Losing Streak."}
 {"date": "2026-07-30", "ticker": "AMZN", "stage": "triage_suppressed", "detail": "P=0.42 < 0.50"}
@@ -810,6 +798,18 @@
 {"date": "2026-08-15", "ticker": "NFLX", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
 {"date": "2026-08-15", "ticker": "XOM", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
 {"date": "2026-08-15", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.31 < 0.45"}
+{"date": "2026-08-15", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.46 < 0.50"}
+{"date": "2026-08-15", "ticker": "MSFT", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
+{"date": "2026-08-15", "ticker": "NVDA", "stage": "weak_precedent", "detail": "melhor sim 0.38 < 0.45"}
+{"date": "2026-08-15", "ticker": "TSLA", "stage": "weak_precedent", "detail": "melhor sim 0.45 < 0.45"}
+{"date": "2026-08-15", "ticker": "AMZN", "stage": "weak_precedent", "detail": "melhor sim 0.36 < 0.45"}
+{"date": "2026-08-15", "ticker": "GOOGL", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
+{"date": "2026-08-15", "ticker": "META", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
+{"date": "2026-08-15", "ticker": "JPM", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
+{"date": "2026-08-15", "ticker": "AMD", "stage": "duplicate_story", "detail": "same story, other words"}
+{"date": "2026-08-15", "ticker": "NFLX", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
+{"date": "2026-08-15", "ticker": "XOM", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
+{"date": "2026-08-15", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.30 < 0.50"}
 {"date": "2026-08-15", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.46 < 0.50"}
 {"date": "2026-08-15", "ticker": "MSFT", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
 {"date": "2026-08-15", "ticker": "NVDA", "stage": "weak_precedent", "detail": "melhor sim 0.38 < 0.45"}
