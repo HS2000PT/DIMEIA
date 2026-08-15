@@ -61,6 +61,11 @@ news:
   # a dissertação avalia (precisão dentro de um orçamento de 5/dia); até aqui a avaliação media
   # uma política e a produção implantava outra.
   daily_budget: 5
+  # Fontes além do Finnhub. Medido em `docs/evaluation/evaluation_news_sources.md`: as três
+  # juntas dão 970 manchetes relevantes distintas contra 432 só com o Finnhub (+125%). A
+  # Alpha Vantage é a mais fresca (9,3h de mediana) e o Polygon traz mais exclusivas.
+  # O Tiingo foi rejeitado por medição (403, exige plano pago) e o GNews por não ser por empresa.
+  extra_sources: [alphavantage, polygon]
   # Anti-repetição: só alerta notícias com ≤ este nº de dias (o scan olha 7 dias para trás,
   # mas sem isto a MESMA manchete podia alertar dias a fio). 2 cobre o fim de semana.
   # max_age_days: 2

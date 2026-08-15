@@ -146,6 +146,114 @@ def fetch_finnhub_company_news(
     return parse_finnhub_news(resp.json(), ticker)
 
 
+# ── Segunda e terceira fontes ─────────────────────────────────────────────────
+#
+# ⚠️ Existem por MEDIÇÃO, e a medição está em `docs/evaluation/evaluation_news_sources.md`.
+# Sobre a watchlist inteira e três dias, contando só as manchetes que sobrevivem ao filtro de
+# relevância que já está em produção:
+#
+#   | fonte         | relevantes | precisão | frescura (mediana) | cobertura | exclusivas |
+#   |---------------|-----------:|---------:|-------------------:|----------:|-----------:|
+#   | Finnhub       |        432 |      35% |             15,8 h |     12/12 |        401 |
+#   | Alpha Vantage |        141 |      24% |          **9,3 h** |     12/12 |        119 |
+#   | Polygon       |        429 |      27% |             52,6 h |      8/12 |    **418** |
+#
+# Três fontes gratuitas com três forças diferentes, e é isso que justifica somá-las em vez de
+# escolher a melhor: o Finnhub etiqueta melhor, a Alpha Vantage é a **mais fresca** (que é o que
+# ataca a queixa "os alertas chegam tarde"), e o Polygon traz mais manchetes que mais nenhuma
+# traz — mas com 52,6 h de mediana, ou seja, serve para **encher a base de casos** e não para
+# alertar. Juntas dão 970 manchetes relevantes distintas contra as 432 do Finnhub sozinho: mais
+# **125%**.
+#
+# Rejeitadas, e fica escrito porquê: o **Tiingo** devolve HTTP 403 no endpoint de notícias (exige
+# plano pago) e o **GNews** não é por empresa — é pesquisa por palavras, e usá-lo obrigaria a
+# inferir a empresa a partir do texto, acrescentando um erro que estas três não têm.
+
+
+def parse_alphavantage_news(payload: dict, ticker: str) -> list[NewsItem]:
+    """Converte a resposta do Alpha Vantage `NEWS_SENTIMENT` em `NewsItem`.
+
+    O carimbo vem como `20260815T203300`, sem separadores — daí a conversão à mão.
+    """
+    items: list[NewsItem] = []
+    for art in (payload or {}).get("feed", []) or []:
+        titulo = (art.get("title") or "").strip()
+        q = str(art.get("time_published") or "")
+        if not titulo or len(q) != 15:
+            continue
+        items.append(
+            NewsItem(
+                date=f"{q[:4]}-{q[4:6]}-{q[6:8]}",
+                ticker=ticker.upper(),
+                headline=titulo,
+                url=str(art.get("url", "")),
+                source=str(art.get("source", "alphavantage")),
+                summary=str(art.get("summary", "") or "").strip(),
+                published_at=f"{q[:4]}-{q[4:6]}-{q[6:8]}T{q[9:11]}:{q[11:13]}:00Z",
+            )
+        )
+    return items
+
+
+def parse_polygon_news(payload: dict, ticker: str) -> list[NewsItem]:
+    """Converte a resposta do Polygon `/v2/reference/news` em `NewsItem`."""
+    items: list[NewsItem] = []
+    for art in (payload or {}).get("results", []) or []:
+        titulo = (art.get("title") or "").strip()
+        quando = str(art.get("published_utc") or "")
+        if not titulo or len(quando) < 10:
+            continue
+        items.append(
+            NewsItem(
+                date=quando[:10],
+                ticker=ticker.upper(),
+                headline=titulo,
+                url=str(art.get("article_url", "")),
+                source=str((art.get("publisher") or {}).get("name", "polygon")),
+                summary=str(art.get("description", "") or "").strip(),
+                published_at=quando.replace("+00:00", "Z"),
+            )
+        )
+    return items
+
+
+def fetch_alphavantage_news(
+    ticker: str, api_key: str | None = None, limit: int = 50, timeout: int = 15
+) -> list[NewsItem]:
+    """Notícias de uma empresa no Alpha Vantage. Levanta sem chave, como as outras."""
+    import requests
+
+    api_key = api_key or config.ALPHAVANTAGE_API_KEY
+    if not api_key:
+        raise RuntimeError("ALPHAVANTAGE_API_KEY não configurada (ver .env).")
+    resp = requests.get(
+        "https://www.alphavantage.co/query",
+        params={"function": "NEWS_SENTIMENT", "tickers": ticker,
+                "limit": limit, "apikey": api_key},
+        timeout=timeout,
+    )
+    resp.raise_for_status()
+    return parse_alphavantage_news(resp.json(), ticker)
+
+
+def fetch_polygon_news(
+    ticker: str, api_key: str | None = None, limit: int = 50, timeout: int = 15
+) -> list[NewsItem]:
+    """Notícias de uma empresa no Polygon."""
+    import requests
+
+    api_key = api_key or getattr(config, "POLYGON_API_KEY", "")
+    if not api_key:
+        raise RuntimeError("POLYGON_API_KEY não configurada (ver .env).")
+    resp = requests.get(
+        "https://api.polygon.io/v2/reference/news",
+        params={"ticker": ticker, "limit": limit, "apiKey": api_key},
+        timeout=timeout,
+    )
+    resp.raise_for_status()
+    return parse_polygon_news(resp.json(), ticker)
+
+
 def fetch_rss_feed(feed_url: str, ticker: str = "", timeout: int = 10) -> list[NewsItem]:
     """Descarrega e parseia um feed RSS público."""
     import requests

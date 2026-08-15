@@ -162,6 +162,64 @@ def seed_state_from_shared_history(state: dict, entries: list, today: str) -> No
             state["opening_sent"] = True
 
 
+def _noticias_de_todas_as_fontes(ticker: str, start: str, end: str, cfg_news: dict) -> list:
+    """Junta as fontes configuradas e devolve manchetes **sem repetições**.
+
+    ⚠️ Somar fontes só vale a pena porque foi medido que se completam, e não porque "mais é
+    melhor" (`docs/evaluation/evaluation_news_sources.md`): sobre a watchlist e três dias, as
+    três juntas dão **970** manchetes relevantes distintas contra as **432** do Finnhub sozinho.
+    O Polygon traz mais exclusivas do que o Finnhub, e a Alpha Vantage é a **mais fresca** (9,3 h
+    de mediana contra 15,8 h), que é o que ataca a queixa de os alertas chegarem tarde.
+
+    A deduplicação é por manchete normalizada. É o mínimo defensável: a mesma história publicada
+    por dois sítios com títulos diferentes continua a passar como duas, e isso é uma limitação
+    conhecida — a detecção por significado existe no sistema e está registada como o passo
+    seguinte.
+
+    Fail-open por fonte: uma fonte que falhe ou não tenha chave é ignorada com aviso, e as
+    outras respondem. É a mesma razão pela qual os preços vêm de uma cadeia e não de uma fonte.
+    """
+    import re
+
+    from investigator.news_fetcher.fetcher import (
+        fetch_alphavantage_news,
+        fetch_finnhub_company_news,
+        fetch_polygon_news,
+    )
+
+    extra = [f.strip().lower() for f in (cfg_news.get("extra_sources") or [])]
+    fontes: list[tuple[str, object]] = [
+        ("finnhub", lambda: fetch_finnhub_company_news(ticker, start, end)),
+    ]
+    if "alphavantage" in extra:
+        fontes.append(("alphavantage", lambda: fetch_alphavantage_news(ticker)))
+    if "polygon" in extra:
+        fontes.append(("polygon", lambda: fetch_polygon_news(ticker)))
+
+    vistos: set[str] = set()
+    juntas: list = []
+    contagem: dict[str, int] = {}
+    for nome, fn in fontes:
+        try:
+            itens = fn()
+        except Exception as exc:  # noqa: BLE001 — uma fonte em baixo não pode calar o sistema
+            print(f"[noticias {ticker}] fonte {nome} indisponível (ignorada): "
+                  f"{type(exc).__name__}: {sem_segredos(exc)}")
+            continue
+        novos = 0
+        for it in itens:
+            chave = re.sub(r"[^a-z0-9 ]+", " ", it.headline.lower()).strip()
+            if chave and chave not in vistos:
+                vistos.add(chave)
+                juntas.append(it)
+                novos += 1
+        contagem[nome] = novos
+    if len(contagem) > 1:
+        detalhe = " · ".join(f"{k} +{v}" for k, v in contagem.items())
+        print(f"[noticias {ticker}] {len(juntas)} manchetes distintas ({detalhe})")
+    return juntas
+
+
 def _movimento_de_hoje(ticker: str) -> tuple[float | None, str | None]:
     """O retorno do último dia e uma leitura em palavras da sua raridade. Fail-open total.
 
@@ -637,7 +695,6 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
     from investigator.explanation_engine.explainer import explain_news_impact
     from investigator.historical_kb.knowledge_base import HistoricalKB
     from investigator.live_kb import merged_precedents
-    from investigator.news_fetcher.fetcher import fetch_finnhub_company_news
     from investigator.news_fetcher.relevance import is_relevant
 
     if not config.FINNHUB_API_KEY:
@@ -719,7 +776,7 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
 
     for ticker in n.get("tickers", []):
         try:
-            items = fetch_finnhub_company_news(ticker, start, end)
+            items = _noticias_de_todas_as_fontes(ticker, start, end, n)
             # Filtro de relevância ANTES de escolher: mata as manchetes mal etiquetadas do
             # Finnhub (lei/escritórios, resumos "S&P500 movers"…) que sujavam o canal.
             relevantes = [i for i in items if is_relevant(i.headline, ticker)]
