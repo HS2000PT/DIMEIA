@@ -1,0 +1,597 @@
+<meta charset="utf-8">
+<title>InvestiGator — Autoteste (tese curta)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0E13">
+
+<style>
+/* ------------------------------------------------------------------ tokens
+   Herdados de app/ui_tokens.py, nao inventados. Aquele ficheiro tem os
+   contrastes MEDIDOS (16:1 / 9:1 / 5,4:1 sobre o fundo), e uma segunda
+   paleta a competir com a primeira e exactamente o defeito que a v3 do
+   painel pagou caro. O tema claro deriva dos mesmos tons, escurecidos para
+   aguentarem o minimo de 4,5:1 sobre branco. */
+:root {
+  --bg:#0B0E13; --panel:#131820; --panel2:#1A2029; --line:#242C38;
+  --fg:#EDF1F7; --dim:#A3AEC2; --mute:#7C8AA3;
+  --ok:#00D68F; --no:#FF5A5F; --flag:#FFB020; --info:#4A9EFF;
+  --shadow:0 1px 0 rgba(255,255,255,.04), 0 8px 24px rgba(0,0,0,.45);
+  --r:14px;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:#F5F7FA; --panel:#FFFFFF; --panel2:#EDF1F6; --line:#D5DDE7;
+    --fg:#0F141B; --dim:#48566B; --mute:#63728A;
+    --ok:#00885C; --no:#C8353A; --flag:#9A6300; --info:#1F62C4;
+    --shadow:0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.08);
+  }
+}
+:root[data-theme="light"] {
+  --bg:#F5F7FA; --panel:#FFFFFF; --panel2:#EDF1F6; --line:#D5DDE7;
+  --fg:#0F141B; --dim:#48566B; --mute:#63728A;
+  --ok:#00885C; --no:#C8353A; --flag:#9A6300; --info:#1F62C4;
+  --shadow:0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.08);
+}
+:root[data-theme="dark"] {
+  --bg:#0B0E13; --panel:#131820; --panel2:#1A2029; --line:#242C38;
+  --fg:#EDF1F7; --dim:#A3AEC2; --mute:#7C8AA3;
+  --ok:#00D68F; --no:#FF5A5F; --flag:#FFB020; --info:#4A9EFF;
+  --shadow:0 1px 0 rgba(255,255,255,.04), 0 8px 24px rgba(0,0,0,.45);
+}
+
+* { box-sizing:border-box; }
+body {
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:var(--sans); font-size:17px; line-height:1.5;
+  -webkit-text-size-adjust:100%;
+  padding:0 0 env(safe-area-inset-bottom);
+}
+.wrap { max-width:640px; margin:0 auto; padding:14px 14px 0; }
+
+/* ------------------------------------------------------------------ topo */
+header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.mark { width:26px; height:26px; flex:0 0 auto; }
+h1 { font-size:15px; font-weight:650; letter-spacing:.01em; margin:0; flex:1; }
+h1 small { display:block; font-weight:400; font-size:11.5px; color:var(--mute);
+  letter-spacing:.06em; text-transform:uppercase; }
+.iconbtn {
+  background:var(--panel); border:1px solid var(--line); color:var(--dim);
+  border-radius:9px; width:34px; height:34px; font-size:15px; cursor:pointer;
+}
+.iconbtn:active { background:var(--panel2); }
+
+/* ---- barra de progresso: uma marca por pergunta.
+   E a mesma ideia visual da "tira de excedencias" da tese (5 dos ultimos 249
+   dias): em vez de uma percentagem abstracta, mostra as unidades reais. */
+.strip { display:flex; gap:2px; height:7px; margin:10px 0 4px; }
+.tick { flex:1 1 0; min-width:0; border-radius:2px; background:var(--line); transition:background .18s; }
+.tick.ok { background:var(--ok); }
+.tick.no { background:var(--no); }
+.tick.now { background:var(--fg); }
+.meta {
+  display:flex; justify-content:space-between; font-family:var(--mono);
+  font-size:11.5px; color:var(--mute); font-variant-numeric:tabular-nums;
+  letter-spacing:.02em; margin-bottom:12px;
+}
+
+/* ------------------------------------------------------------------ cartao */
+.card {
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--r);
+  box-shadow:var(--shadow); padding:18px 16px; margin-bottom:12px;
+}
+.tags { display:flex; gap:6px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+.tag {
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.07em;
+  text-transform:uppercase; padding:3px 7px; border-radius:5px;
+  border:1px solid var(--line); color:var(--mute); white-space:nowrap;
+}
+.tag.t1 { color:var(--flag); border-color:color-mix(in srgb, var(--flag) 40%, var(--line)); }
+.tag.t2 { color:var(--info); border-color:color-mix(in srgb, var(--info) 40%, var(--line)); }
+.tag.t3 { color:var(--mute); }
+.q { font-size:19.5px; line-height:1.36; font-weight:600; margin:0 0 4px;
+  text-wrap:balance; }
+.hint { font-size:13.5px; color:var(--mute); margin-top:10px; }
+
+.answer {
+  margin-top:14px; padding-top:14px; border-top:1px solid var(--line);
+  font-size:16px; color:var(--dim); line-height:1.55;
+}
+.answer strong, .answer b { color:var(--fg); font-weight:650; }
+.answer code, .num {
+  font-family:var(--mono); font-variant-numeric:tabular-nums;
+  background:var(--panel2); padding:1px 5px; border-radius:4px;
+  font-size:.92em; color:var(--fg);
+}
+.answer ul { margin:8px 0 0; padding-left:19px; }
+.answer li { margin:5px 0; }
+.answer p { margin:9px 0 0; }
+.answer p:first-child { margin-top:0; }
+
+/* -------------------------------------------------------------- escolhas */
+.opts { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+.opt {
+  display:flex; align-items:center; gap:10px; width:100%; text-align:left;
+  background:var(--panel2); border:1px solid var(--line); color:var(--fg);
+  border-radius:10px; padding:13px 14px; font:inherit; font-size:16.5px;
+  cursor:pointer; transition:border-color .15s, background .15s;
+}
+.opt .val { font-family:var(--mono); font-variant-numeric:tabular-nums; font-weight:600; }
+.opt:disabled { cursor:default; }
+.opt.right { border-color:var(--ok); background:color-mix(in srgb, var(--ok) 12%, var(--panel2)); }
+.opt.wrong { border-color:var(--no); background:color-mix(in srgb, var(--no) 12%, var(--panel2)); }
+.opt .badge { margin-left:auto; font-family:var(--mono); font-size:12px; }
+.opt.right .badge { color:var(--ok); }
+.opt.wrong .badge { color:var(--no); }
+
+/* ----------------------------------------------------------- accoes/base */
+.actions { display:flex; gap:8px; margin-bottom:14px; }
+button.big {
+  flex:1; padding:15px 12px; border-radius:11px; font:inherit; font-size:16px;
+  font-weight:600; cursor:pointer; border:1px solid var(--line);
+  background:var(--panel); color:var(--fg); min-height:52px;
+}
+button.big:active { transform:translateY(1px); }
+button.primary { background:var(--fg); color:var(--bg); border-color:var(--fg); }
+button.yes { border-color:color-mix(in srgb,var(--ok) 55%,var(--line)); color:var(--ok); }
+button.no  { border-color:color-mix(in srgb,var(--no) 55%,var(--line)); color:var(--no); }
+button:focus-visible, .opt:focus-visible, .iconbtn:focus-visible, select:focus-visible {
+  outline:2px solid var(--info); outline-offset:2px;
+}
+
+/* -------------------------------------------------------------- filtros */
+.filters { display:flex; gap:8px; margin-bottom:12px; }
+select {
+  flex:1; background:var(--panel); color:var(--dim); border:1px solid var(--line);
+  border-radius:9px; padding:9px 10px; font:inherit; font-size:13.5px;
+}
+.done {
+  text-align:center; padding:28px 16px;
+}
+.done .score {
+  font-family:var(--mono); font-size:46px; font-weight:700; letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums; margin:6px 0;
+}
+.done .sub { color:var(--dim); font-size:15px; line-height:1.5; }
+.miss { text-align:left; margin-top:18px; }
+.miss h3 { font-size:12px; text-transform:uppercase; letter-spacing:.08em;
+  color:var(--mute); margin:0 0 8px; font-weight:600; }
+.miss li { margin:6px 0; color:var(--dim); font-size:14.5px; }
+footer {
+  text-align:center; color:var(--mute); font-size:11.5px; padding:16px 14px 26px;
+  line-height:1.6;
+}
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M2 21c5 0 7-3 11-9 3-4.5 6-7 9-7 4 0 8 3 8 8 0 3-2 5-5 5-2 0-4-1-5-3"
+            fill="none" stroke="#00D68F" stroke-width="2.6" stroke-linecap="round"/>
+    </svg>
+    <h1>Autoteste de Defesa<small>InvestiGator · MEIA/ISEP</small></h1>
+    <button class="iconbtn" id="tema" title="Tema claro/escuro" aria-label="Alternar tema">◐</button>
+    <button class="iconbtn" id="reiniciar" title="Recomeçar" aria-label="Recomeçar">↺</button>
+  </header>
+
+  <div class="filters">
+    <select id="fBloco" aria-label="Filtrar por bloco"></select>
+    <select id="fNivel" aria-label="Filtrar por nível">
+      <option value="">Todos os níveis</option>
+      <option value="1">🔴 saber de cor</option>
+      <option value="2">🟡 saber explicar</option>
+      <option value="3">🟢 saber que existe</option>
+    </select>
+  </div>
+
+  <div class="strip" id="strip"></div>
+  <div class="meta"><span id="pos"></span><span id="placar"></span></div>
+
+  <div id="palco"></div>
+</div>
+
+<footer>
+  Funciona sem rede depois de abrir uma vez — feito para o metro.<br>
+  O progresso fica guardado neste telemóvel. Nada é enviado para lado nenhum.
+</footer>
+
+<script>
+"use strict";
+
+/* =====================================================================
+   BANCO DE PERGUNTAS
+
+   Regra: nada aqui e inventado. Cada numero vem de docs/evaluation/*.md,
+   do autoteste.md ou do registo do projecto. Se um numero mudar na tese,
+   muda aqui -- e a resposta certa da escolha multipla tem de ser a real,
+   nunca a mais bonita.
+
+   tipo "aberta": responde-se em voz alta e auto-avalia-se. E o formato que
+   treina a defesa, porque na sala ninguem da opcoes.
+   tipo "escolha": auto-corrigida. So para NUMEROS, que sao o unico sitio
+   onde ha uma resposta objectiva e onde a hesitacao se nota mais.
+   ===================================================================== */
+const BANCO = [
+
+// ─────────────────────────── O que isto é
+{b:"O que isto é", n:1, t:"aberta", q:"Em três frases, o que é o InvestiGator?",
+ a:`Um sistema de alertas financeiros para investidores de retalho, construído só com fontes
+ gratuitas. Responde às três perguntas que uma pessoa faz quando o preço se mexe: é invulgar? foi a
+ empresa ou o mercado? já aconteceu antes e o que se seguiu? E mostra sempre como chegou à resposta.`},
+
+{b:"O que isto é", n:1, t:"aberta", q:"Porque é que recusar prever preços é uma força?",
+ a:`Porque é o que torna tudo o resto verificável. Uma afirmação sobre o que já aconteceu confere-se
+ contra o registo; uma previsão não se confere — nem no momento, nem depois.
+ <p>Há também uma razão teórica: se o futuro fosse previsível a partir de informação pública, essa
+ informação já estaria no preço.</p>`},
+
+{b:"O que isto é", n:2, t:"escolha",
+ q:"O que é que a matriz do Capítulo 2 mostra sobre as ferramentas que já existem?",
+ opts:["Que ninguém responde às três perguntas",
+       "Que a linha que responde às três existe e é a mais cara",
+       "Que os robo-advisors resolvem o problema",
+       "Que só faltava mais um agregador de notícias"], ok:1,
+ a:`<b>A linha que responde às três já existe: é o terminal profissional.</b> E custa milhares por ano.
+ <p>Por isso o argumento não é "ninguém fez isto" — é <b>o problema não é científico, é de acesso</b>.
+ É uma posição muito mais defensável.</p>`},
+
+// ─────────────────────────── Conceitos de IA
+{b:"Conceitos de IA", n:1, t:"escolha",
+ q:"Qual é a relação entre IA, aprendizagem automática e aprendizagem profunda?",
+ opts:["São sinónimos","IA contém ML, e ML contém a profunda","ML contém IA","A profunda contém a IA"], ok:1,
+ a:`<b>IA é o guarda-chuva; ML é um pedaço dele; a aprendizagem profunda é um pedaço do ML.</b>
+ <p>Na tua tese: estatística (técnica 1), aprendizagem profunda já treinada por outros (técnica 2),
+ e ML treinado por ti (técnica 3).</p>`},
+
+{b:"Conceitos de IA", n:1, t:"escolha", q:"O que é uma <i>feature</i>?",
+ opts:["A resposta certa que o modelo tenta acertar","Uma coluna de entrada que o modelo vê",
+       "O erro do modelo","O nome do algoritmo"], ok:1,
+ a:`<b>Uma coluna de entrada.</b> As tuas: volatilidade a 20 dias, momento a 5 dias, movimento do
+ dia, comprimento da manchete e setor. A <i>resposta certa</i> chama-se <b>rótulo</b>.`},
+
+{b:"Conceitos de IA", n:1, t:"aberta",
+ q:"Isto aprende sozinho? Melhora com o tempo?",
+ a:`<b>Não.</b> O modelo foi treinado uma vez sobre 2018–2023 e está congelado. Em produção faz
+ <b>inferência</b> — aplica o que aprendeu — e não volta a aprender.
+ <p>Três coisas diferentes: <b>treino</b> (uma vez), <b>inferência</b> (todos os dias) e
+ <b>re-treino</b> (não é feito).</p>`},
+
+{b:"Conceitos de IA", n:2, t:"escolha", q:"Para que serve uma linha de base?",
+ opts:["Para melhorar o modelo","Para dar sentido ao número do modelo",
+       "Para acelerar o treino","Para calibrar probabilidades"], ok:1,
+ a:`<b>Para dar sentido ao número.</b> Dizer "acerta em metade dos casos" não quer dizer nada até se
+ saber quanto acertaria uma alternativa trivial.
+ <p>É a lição central do teu trabalho: o resultado mais útil veio de olhar para a linha de base e não
+ para o modelo.</p>`},
+
+{b:"Conceitos de IA", n:2, t:"escolha", q:"O que é calibração?",
+ opts:["Reduzir o erro do modelo","Fazer com que 70% queira mesmo dizer 70% das vezes",
+       "Escolher as features","Dividir os dados"], ok:1,
+ a:`<b>Fazer com que a probabilidade queira dizer o que parece.</b> Uma pontuação alta não é, por si,
+ uma probabilidade. Como o número é mostrado a uma pessoa, tem de ser honesto.
+ <p>Ajustada na <b>validação</b>, nunca no teste.</p>`},
+
+{b:"Conceitos de IA", n:2, t:"aberta", q:"O que é sobreajuste, e o que o deteta?",
+ a:`O modelo decora o treino e falha em dados novos. Deteta-se avaliando em dados <b>que ele não
+ viu</b> — é para isso que existe a divisão treino/validação/teste.`},
+
+// ─────────────────────────── Técnica 1
+{b:"Técnica 1 — anomalia", n:1, t:"aberta",
+ q:"Porque é que uma regra de avisar sempre que mexer mais de 3% é má?",
+ a:`Porque 3% significa coisas diferentes em empresas diferentes. Numa calma é raro; numa volátil
+ acontece a toda a hora. A mesma regra quase nunca fala numa e fala quase todos os dias na outra.
+ <p>Medido: o limiar fixo dispara em <b>0,9%</b> dos dias na empresa mais calma e <b>35,3%</b> na
+ mais volátil.</p>`},
+
+{b:"Técnica 1 — anomalia", n:1, t:"escolha", q:"O z-score compara o dia de hoje com o quê?",
+ opts:["Com o mercado inteiro","Com os 20 dias anteriores da mesma ação",
+       "Com o mesmo dia do ano passado","Com as outras empresas do setor"], ok:1,
+ a:`<b>Com os 20 dias anteriores da própria ação.</b> É isso que faz z=+7 querer dizer o mesmo numa
+ empresa calma e numa volátil.`},
+
+{b:"Técnica 1 — anomalia", n:2, t:"aberta",
+ q:"Porque é que o dia julgado não entra no cálculo da sua própria norma?",
+ a:`Porque se entrasse, um dia extremo puxava a média e aumentava o desvio-padrão — e ficava a
+ parecer <b>menos</b> invulgar do que foi. Seria usar informação que ainda não devia contar
+ (<b>lookahead</b>).
+ <p>Na tese isto é garantido por um <b>teste automático</b>, não por uma promessa.</p>`},
+
+{b:"Técnica 1 — anomalia", n:3, t:"escolha",
+ q:"O que acontece se uma ação não se mexer nada durante 20 dias?",
+ opts:["O sistema rebenta","Devolve z = 0","Devolve z infinito","Salta a empresa"], ok:1,
+ a:`<b>Devolve z = 0.</b> O desvio-padrão seria zero e a divisão não existe; em vez de rebentar, uma
+ ação parada é descrita como não tendo nada de especial — que é o que se passa.`},
+
+// ─────────────────────────── Técnica 2
+{b:"Técnica 2 — precedentes", n:1, t:"escolha",
+ q:"Porque é que procurar notícias parecidas por palavras em comum falha?",
+ opts:["É lento demais","Falha nos dois sentidos: sinónimos, e palavras iguais com sentidos diferentes",
+       "Só funciona em inglês","Precisa de GPU"], ok:1,
+ a:`<b>Falha nos dois sentidos.</b> "Supera previsões" e "bate estimativas" dizem o mesmo sem
+ partilhar palavras; "bate estimativas" e "bate recorde de despedimentos" partilham "bate" e não têm
+ nada a ver.`},
+
+{b:"Técnica 2 — precedentes", n:1, t:"escolha", q:"O que é um embedding, aqui?",
+ opts:["Um resumo da notícia","Uma lista de 384 números que representa a frase",
+       "A previsão do preço","Uma base de dados"], ok:1,
+ a:`<b>Uma lista de 384 números</b> — uma coordenada de significado. Frases com sentido parecido ficam
+ perto umas das outras nesse espaço.
+ <p>⚠️ O modelo <b>não é teu</b>: é pré-treinado (Sentence-BERT). Diz isso.</p>`},
+
+{b:"Técnica 2 — precedentes", n:2, t:"aberta", q:"Porquê o cosseno e não a distância?",
+ a:`Porque interessa <b>sobre o que</b> a frase fala, não o comprimento do texto. O cosseno mede o
+ ângulo entre duas direções, por isso uma manchete curta e um parágrafo longo sobre o mesmo assunto
+ ficam próximos.`},
+
+{b:"Técnica 2 — precedentes", n:3, t:"aberta",
+ q:"O que quer dizer captar tema e não direção, e como sabes?",
+ a:`Duas notícias podem ser sobre o mesmo assunto e o preço ter ido para lados opostos.
+ <p>Medido: concordância de direção <b>0,708</b> contra um chão de acaso de <b>0,688</b> — quase
+ nada. É por isso que os casos são mostrados <b>um a um</b> e nunca só como média.</p>`},
+
+// ─────────────────────────── Técnica 3
+{b:"Técnica 3 — triagem", n:1, t:"escolha", q:"O rótulo do teu modelo pergunta o quê?",
+ opts:["Se a ação vai subir","Se houve movimento anormalmente grande, em qualquer direção",
+       "Se a notícia é positiva","Se o utilizador vai clicar"], ok:1,
+ a:`<b>Se houve movimento anormalmente grande, em VALOR ABSOLUTO.</b> Nunca a direção.
+ <p>É a fronteira que o trabalho não atravessa: o modelo aprende sobre <b>materialidade</b>, não
+ sobre subir ou descer.</p>`},
+
+{b:"Técnica 3 — triagem", n:2, t:"escolha", q:"Porque é que a divisão dos dados é cronológica?",
+ opts:["É mais rápido","Para o modelo não ser avaliado sobre um passado que já conhece",
+       "Porque os dados são poucos","Para equilibrar as classes"], ok:1,
+ a:`<b>Para não ser avaliado sobre um passado que já viu.</b> Se os dados fossem baralhados, treinava
+ com 2023 e era testado com 2019 — o contrário do que acontece na realidade.`},
+
+{b:"Técnica 3 — triagem", n:2, t:"aberta", q:"Para que serve o embargo entre blocos?",
+ a:`O rótulo olha 3 dias para a frente. Uma notícia no último dia de treino tem o rótulo determinado
+ por dias que já pertencem ao bloco seguinte. Deitam-se fora 5 dias de fronteira — e diz-se quantas
+ linhas isso custou.`},
+
+{b:"Técnica 3 — triagem", n:3, t:"aberta",
+ q:"Como garantes que não há informação do futuro nas features?",
+ a:`<b>Por teste, não por promessa.</b> Há um teste que altera artificialmente o futuro e exige duas
+ coisas ao mesmo tempo: que as features fiquem <b>iguais</b> (descrevem o passado) e que o rótulo
+ <b>mude</b> (descreve o futuro). Se houvesse infiltração, o teste falha.`},
+
+{b:"Técnica 3 — triagem", n:3, t:"aberta",
+ q:"O teu modelo perdeu para a volatilidade. Como respondes?",
+ a:`Que a hipótese foi testada e a resposta foi não — e que o critério foi escrito <b>antes</b> de
+ correr. Verifiquei por três caminhos: re-teste em condições favoráveis ao texto (0,533, ainda
+ abaixo), reamostragem por grupos, e <b>nove</b> definições diferentes do rótulo, com a volatilidade
+ a ganhar nas nove.
+ <p>Um trabalho que só reporta o que corre bem não é uma avaliação.</p>`},
+
+// ─────────────────────────── Os números
+{b:"Os números", n:1, t:"escolha", q:"Amplitude da taxa de disparo: z-score contra limiar fixo?",
+ opts:["0,015 vs 0,344","0,344 vs 0,015","0,163 vs 0,632","0,514 vs 0,346"], ok:0,
+ a:`<b>0,015 contra 0,344</b> — mais de 20 vezes mais consistente entre empresas. É o argumento
+ principal da QI1, e não precisa de rótulos nenhuns.`},
+
+{b:"Os números", n:1, t:"escolha", q:"Precisão@5: método / palavras / acaso / recência?",
+ opts:["0,514 / 0,346 / 0,240 / 0,126","0,346 / 0,514 / 0,126 / 0,240",
+       "0,595 / 0,514 / 0,346 / 0,240","0,632 / 0,379 / 0,240 / 0,126"], ok:0,
+ a:`<b>0,514 / 0,346 / 0,240 / 0,126.</b> Repara que mostrar as mais recentes é a <b>pior</b> de
+ todas — faz sentido: a notícia mais recente sobre outra empresa não tem razão para estar
+ relacionada.`},
+
+{b:"Os números", n:2, t:"escolha", q:"PR-AUC: só volatilidade contra contexto+texto?",
+ opts:["0,542 vs 0,496","0,496 vs 0,542","0,538 vs 0,439","0,632 vs 0,379"], ok:0,
+ a:`<b>0,542 contra 0,496.</b> Acrescentar o texto da manchete <b>piora</b>. O sinal vive no contexto
+ de mercado.`},
+
+{b:"Os números", n:2, t:"escolha", q:"Em quantas células da grelha de rótulos a volatilidade ganha?",
+ opts:["5 de 9","7 de 9","9 de 9","3 de 9"], ok:2,
+ a:`<b>Nove em nove.</b> Três limiares vezes três horizontes. É o que transforma "escolheste um
+ limiar de 2% — e se tivesses escolhido outro?" numa pergunta sem resposta.`},
+
+{b:"Os números", n:3, t:"escolha",
+ q:"Precisão no orçamento de 5 alertas por dia: ao acaso para modelo?",
+ opts:["0,379 para 0,632","0,163 para 0,632","0,240 para 0,514","0,378 para 0,542"], ok:0,
+ a:`<b>0,379 para 0,632</b>, um ganho de <b>1,67×</b>.
+ <p>⚠️ O <b>0,163</b> não serve como chão: era o "alertar sempre", que dá a mesma pontuação a tudo, e
+ com tudo empatado a métrica desempata pela ordem do ficheiro — ou seja, media <b>escolher por ordem
+ alfabética</b>.</p>`},
+
+{b:"Os números", n:3, t:"escolha",
+ q:"Quanto dá o prior de 13 constantes (volatilidade média por empresa)?",
+ opts:["0,662 — bate o modelo","0,379 — igual ao acaso","0,632 — empata","0,514"], ok:0,
+ a:`<b>0,662, e bate o modelo treinado (0,632).</b> Sem ler manchete nenhuma e sem correr inferência.
+ <p>O que a evidência sustenta é que <b>ordenar por volatilidade</b> compensa — não que
+ <b>aprender</b> compense. Diz isto tu, antes que to digam.</p>`},
+
+// ─────────────────────────── As que doem
+{b:"As que doem", n:3, t:"aberta", q:"Onde está a engenharia de IA? Isto são bibliotecas.",
+ a:`No que foi <b>medido para decidir</b>. Construí alternativas e não implantei as que a medição não
+ sustentou. A engenharia está em ter um critério capaz de dizer não — e o exemplo mais forte é contra
+ mim próprio: verificar o que a minha linha de base media reduziu o ganho anunciado de quase quatro
+ vezes para 1,67 vezes.`},
+
+{b:"As que doem", n:3, t:"aberta", q:"Não bastava perguntar a um assistente de IA genérico?",
+ a:`Um assistente genérico não tem a volatilidade daquela ação, não separa a empresa do mercado, e não
+ <b>recupera</b> casos passados — no melhor dos casos <b>recorda</b> do treino, o que não é
+ verificável. E a saída dele é uma afirmação; a minha vem com a evidência anexada.`},
+
+{b:"As que doem", n:3, t:"aberta", q:"Fez estudo com utilizadores?",
+ a:`<b>Não.</b> O desenho está feito — participantes, tarefas, critérios — mas não foi corrido a
+ tempo. Por isso não afirmo nada sobre utilidade: a fidelidade está garantida por construção, a
+ utilidade fica em aberto, e está escrito assim na tese.
+ <p style="color:#FF5A5F"><b>Nunca inventes participantes nem opiniões.</b> É a única resposta que te
+ pode custar o grau.</p>`},
+
+{b:"As que doem", n:3, t:"aberta",
+ q:"Os alertas parecem falhar notícias importantes. Isso não invalida o sistema?",
+ a:`Parte disso está medido: havia pelo menos uma notícia captada em <b>88,5%</b> dos dias
+ invulgares, e a empresa pior coberta fica-se pelos <b>50%</b>. Os restantes são dias em que
+ <b>nenhuma alteração ao código ajuda</b> — se a fonte não associou notícia à empresa, ela nunca entra
+ no funil.
+ <p>E é um <b>limite superior</b>: pergunta se existia <i>uma</i> notícia, não se chegou <i>a
+ certa</i>. Saber isso exige julgamento humano dia a dia, e é o primeiro trabalho futuro.</p>`},
+
+{b:"As que doem", n:3, t:"aberta",
+ q:"Qual foi a lição mais transferível que levas deste trabalho?",
+ a:`Que <b>o sítio onde se põe um modelo importa tanto como o modelo</b>. O meu funcionava
+ razoavelmente sozinho e deixou de servir quando colocado atrás de dois filtros simples que já faziam
+ grande parte do trabalho.
+ <p>Um modelo avaliado isolado e implantado atrás de filtros nunca foi avaliado na distribuição que
+ vai ver.</p>`},
+];
+
+/* ===================================================================== */
+const K = "investigator-autoteste-v1";
+let estado = carregar();
+let fila = [], i = 0, revelado = false, escolhido = null;
+
+function carregar() {
+  try { return JSON.parse(localStorage.getItem(K)) || {res:{}, bloco:"", nivel:""}; }
+  catch { return {res:{}, bloco:"", nivel:""}; }
+}
+function guardar() { try { localStorage.setItem(K, JSON.stringify(estado)); } catch {} }
+
+/* Baralha com Fisher-Yates, mas so a ORDEM. As opcoes de escolha multipla
+   ficam na ordem em que foram escritas de proposito: se a resposta certa
+   andasse a saltar de posicao, decorava-se a posicao e nao o numero. */
+function baralhar(a) {
+  for (let k = a.length - 1; k > 0; k--) {
+    const j = Math.floor(Math.random() * (k + 1));
+    [a[k], a[j]] = [a[j], a[k]];
+  }
+  return a;
+}
+
+function construirFila() {
+  fila = baralhar(BANCO.map((p, idx) => ({...p, id: idx}))
+    .filter(p => (!estado.bloco || p.b === estado.bloco)
+              && (!estado.nivel || String(p.n) === estado.nivel)));
+  i = 0; revelado = false; escolhido = null;
+}
+
+const NIVEL = {1:["🔴 saber de cor","t1"], 2:["🟡 saber explicar","t2"], 3:["🟢 conhecer","t3"]};
+
+function pintar() {
+  const strip = document.getElementById("strip");
+  strip.innerHTML = "";
+  fila.forEach((p, k) => {
+    const d = document.createElement("div");
+    const r = estado.res[p.id];
+    d.className = "tick" + (k === i && !revelado ? " now" : r === true ? " ok" : r === false ? " no" : "");
+    strip.appendChild(d);
+  });
+
+  const feitas = fila.filter(p => estado.res[p.id] !== undefined);
+  const certas = feitas.filter(p => estado.res[p.id] === true).length;
+  document.getElementById("pos").textContent =
+    fila.length ? `${Math.min(i + 1, fila.length)} / ${fila.length}` : "0 / 0";
+  document.getElementById("placar").textContent =
+    feitas.length ? `${certas}/${feitas.length} certas` : "por começar";
+
+  const palco = document.getElementById("palco");
+
+  if (i >= fila.length) {
+    const falhadas = fila.filter(p => estado.res[p.id] === false);
+    const pct = feitas.length ? Math.round(100 * certas / feitas.length) : 0;
+    palco.innerHTML = `
+      <div class="card done">
+        <div class="sub">Ronda terminada</div>
+        <div class="score" style="color:${pct >= 80 ? "var(--ok)" : pct >= 50 ? "var(--flag)" : "var(--no)"}">${pct}%</div>
+        <div class="sub">${certas} de ${feitas.length} respondidas correctamente.</div>
+        ${falhadas.length ? `<div class="miss"><h3>Repete só estas</h3><ul>${
+          falhadas.map(p => `<li>${p.q}</li>`).join("")}</ul></div>` : `
+          <div class="sub" style="margin-top:14px">Sem falhas nesta ronda.
+          Faz outra volta amanhã — o que se recupera no dia seguinte é o que fica.</div>`}
+      </div>
+      <div class="actions">
+        ${falhadas.length ? `<button class="big primary" id="soFalhadas">Repetir as ${falhadas.length} falhadas</button>` : ""}
+        <button class="big" id="tudoDeNovo">Ronda nova</button>
+      </div>`;
+    const sf = document.getElementById("soFalhadas");
+    if (sf) sf.onclick = () => { fila = baralhar(falhadas.slice()); i = 0; revelado = false; escolhido = null; pintar(); };
+    document.getElementById("tudoDeNovo").onclick = () => { construirFila(); pintar(); };
+    return;
+  }
+
+  const p = fila[i];
+  const [rot, cls] = NIVEL[p.n];
+  let corpo = `
+    <div class="card">
+      <div class="tags"><span class="tag ${cls}">${rot}</span><span class="tag">${p.b}</span></div>
+      <p class="q">${p.q}</p>`;
+
+  if (p.t === "escolha") {
+    corpo += `<div class="opts">` + p.opts.map((o, k) => {
+      let c = "opt", badge = "";
+      if (revelado) {
+        if (k === p.ok) { c += " right"; badge = "certo"; }
+        else if (k === escolhido) { c += " wrong"; badge = "a tua"; }
+      }
+      return `<button class="${c}" data-k="${k}" ${revelado ? "disabled" : ""}>
+        <span class="val">${o}</span>${badge ? `<span class="badge">${badge}</span>` : ""}</button>`;
+    }).join("") + `</div>`;
+  } else if (!revelado) {
+    corpo += `<p class="hint">Responde <b>em voz alta</b> antes de abrir.
+      Ler a resposta cria a ilusão de a saber; dizê-la primeiro é o que a fixa.</p>`;
+  }
+
+  if (revelado) corpo += `<div class="answer">${p.a}</div>`;
+  corpo += `</div>`;
+
+  if (!revelado && p.t !== "escolha") {
+    corpo += `<div class="actions"><button class="big primary" id="mostrar">Mostrar resposta</button></div>`;
+  } else if (revelado) {
+    corpo += p.t === "escolha"
+      ? `<div class="actions"><button class="big primary" id="seguinte">Seguinte</button></div>`
+      : `<div class="actions">
+           <button class="big no" id="falhei">Falhei</button>
+           <button class="big yes" id="acertei">Sabia</button>
+         </div>`;
+  }
+
+  palco.innerHTML = corpo;
+
+  const mostrar = document.getElementById("mostrar");
+  if (mostrar) mostrar.onclick = () => { revelado = true; pintar(); };
+
+  palco.querySelectorAll(".opt").forEach(b => {
+    b.onclick = () => {
+      escolhido = +b.dataset.k;
+      revelado = true;
+      estado.res[p.id] = escolhido === p.ok;
+      guardar(); pintar();
+    };
+  });
+
+  const marcar = ok => { estado.res[p.id] = ok; guardar(); i++; revelado = false; escolhido = null; pintar(); };
+  const a = document.getElementById("acertei"), f = document.getElementById("falhei");
+  if (a) a.onclick = () => marcar(true);
+  if (f) f.onclick = () => marcar(false);
+  const s = document.getElementById("seguinte");
+  if (s) s.onclick = () => { i++; revelado = false; escolhido = null; pintar(); };
+}
+
+/* ------------------------------------------------------------- arranque */
+const fb = document.getElementById("fBloco");
+fb.innerHTML = `<option value="">Todos os blocos</option>` +
+  [...new Set(BANCO.map(p => p.b))].map(b => `<option value="${b}">${b}</option>`).join("");
+fb.value = estado.bloco || "";
+document.getElementById("fNivel").value = estado.nivel || "";
+
+fb.onchange = e => { estado.bloco = e.target.value; guardar(); construirFila(); pintar(); };
+document.getElementById("fNivel").onchange = e => {
+  estado.nivel = e.target.value; guardar(); construirFila(); pintar();
+};
+document.getElementById("reiniciar").onclick = () => {
+  if (confirm("Apagar o progresso guardado e começar de novo?")) {
+    estado.res = {}; guardar(); construirFila(); pintar();
+  }
+};
+document.getElementById("tema").onclick = () => {
+  const r = document.documentElement;
+  const escuro = r.getAttribute("data-theme") === "dark"
+    || (!r.getAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+  r.setAttribute("data-theme", escuro ? "light" : "dark");
+};
+
+construirFila();
+pintar();
+</script>

@@ -111,3 +111,12 @@ tese/slides/*.toc
 tese/slides/*.fdb_latexmk
 tese/slides/*.fls
 tese/slides/build.log
+tese/guia/*.aux
+tese/guia/*.log
+tese/guia/*.nav
+tese/guia/*.out
+tese/guia/*.snm
+tese/guia/*.toc
+tese/guia/*.fdb_latexmk
+tese/guia/*.fls
+tese/guia/build.log
