@@ -34,7 +34,7 @@ uma consequência deliberada das escolhas do Capítulo~\ref{cap:metodologia}.
 O código está organizado por componente, a espelhar a Figura~\ref{fig:arquitetura}: dados de mercado,
 recolha de notícias, deteção, motor de correlação, base de casos, motor de explicação e entrega. A
 lógica pura está separada da entrada e saída, e as dependências pesadas são carregadas só quando
-precisas --- por isso o núcleo é testado sem rede e sem carregar modelos. A suite tem
+precisas, e por isso o núcleo é testado sem rede e sem carregar modelos. A suite tem
 \textbf{726 testes} automáticos.
 
 Os segredos (chaves de API, credenciais) são lidos de um ficheiro local que nunca é versionado.
@@ -42,9 +42,11 @@ Os segredos (chaves de API, credenciais) são lidos de um ficheiro local que nun
 \section{Como cada número é reproduzido}
 \label{sec:ap_numeros}
 
-Nenhum número desta dissertação foi escrito à mão. Cada um é produzido por um procedimento
-automático com semente fixa, que escreve o seu próprio ficheiro de resultados; o texto cita esse
-ficheiro. A Tabela~\ref{tab:ap_numeros} liga cada resultado ao procedimento que o gera.
+Nenhum \emph{resultado} desta dissertação foi escrito à mão. Cada um é produzido por um
+procedimento automático com semente fixa, que escreve o seu próprio ficheiro de resultados; o texto
+cita esse ficheiro. A Tabela~\ref{tab:ap_numeros} liga cada resultado ao procedimento que o gera.
+Os restantes números do documento são de dois tipos, e nenhum deles é uma medição minha: valores
+retirados das fontes citadas, e constantes de configuração do sistema.
 
 \begin{table}[ht]
 \caption[Cada resultado e o procedimento que o produz]{Todos os resultados reportados, e onde são
@@ -77,7 +79,7 @@ Funil de produção (captadas $\rightarrow$ enviadas) & $944 \rightarrow 42$ & �
 \section{Matriz de evidência}
 \label{sec:ap_matriz}
 
-A tabela anterior lista \emph{resultados}. Esta lista \emph{afirmações}, que é um teste mais duro ---
+A tabela anterior lista \emph{resultados}. Esta lista \emph{afirmações}, que é um teste mais duro,
 porque uma afirmação pode sobreviver à evidência que a sustentava.
 
 A Tabela~\ref{tab:ap_matriz} põe cada afirmação substantiva desta dissertação frente à evidência que
@@ -95,14 +97,14 @@ significa que este trabalho a abandonou depois de a medir.}
 \toprule
 \tabhead{Afirmação} & \tabhead{Evidência} & \tabhead{Estado} \\
 \midrule
-\multicolumn{3}{l}{\textbf{QI1 --- deteção}} \\
+\multicolumn{3}{l}{\textbf{QI1, deteção}} \\
 Dispara a um ritmo comparável entre empresas muito diferentes & Amplitude $0.015$ vs $0.344$, sem
 usar rótulos & Mantida \\
 Bate um limiar fixo no rótulo aproximado & $F_1$ $0.516$ vs $0.218$ & Mantida (o rótulo é um proxy) \\
 Bate dois detetores aprendidos com a mesma informação & $F_1$ $0.530$ vs $0.269$ e $0.280$ & Mantida \\
 Não usa informação do futuro & A janela exclui o dia julgado; imposto por teste & Mantida \\
 \midrule
-\multicolumn{3}{l}{\textbf{QI2 --- precedentes}} \\
+\multicolumn{3}{l}{\textbf{QI2, precedentes}} \\
 Bate as alternativas lexical e triviais & P@5 $0.514$ vs $0.346$ / $0.240$ / $0.126$ & Mantida \\
 Aguenta à escala do corpus completo & P@5 $0.595$ & Mantida \\
 Capta tema, não direção & Concordância $0.708$ contra um chão de $0.688$ & Mantida (é uma limitação) \\
@@ -110,7 +112,7 @@ Capta tema, não direção & Concordância $0.708$ contra um chão de $0.688$ & 
 O chão de semelhança escolhe precedentes que preveem melhor & Acima do chão $0.504$, abaixo $0.506$,
 acaso $0.507$ & \textbf{Retirada} \\
 \midrule
-\multicolumn{3}{l}{\textbf{QI3 --- triagem}} \\
+\multicolumn{3}{l}{\textbf{QI3, triagem}} \\
 Nenhum modelo com texto bate a volatilidade & PR-AUC $0.496$ vs $0.542$; aguenta re-teste justo,
 reamostragem por grupos e nove rótulos & Mantida \\
 Sem uso de informação futura nas features & Mutar o futuro deixa as features iguais e muda o rótulo &
@@ -134,7 +136,7 @@ As explicações são \emph{úteis} a uma pessoa & --- & \textbf{Não afirmado} 
 Duas observações sobre a tabela no seu conjunto, e não sobre nenhuma linha.
 
 Primeiro: \textbf{quatro afirmações foram retiradas, e todas o foram pelas medições deste próprio
-trabalho} --- nenhuma por revisão externa. É o comportamento pretendido de uma avaliação desenhada
+trabalho}, nenhuma por revisão externa. É o comportamento pretendido de uma avaliação desenhada
 antes das experiências: tem de ser capaz de dizer que não.
 
 Segundo: as duas linhas marcadas ``não afirmado'' são tão importantes como as outras. Uma delas é a

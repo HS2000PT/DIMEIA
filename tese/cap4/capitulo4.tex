@@ -58,7 +58,7 @@ o resultado.}
 Há uma regra de desenho que atravessa tudo isto e que vale a pena dizer já: \textbf{a explicação é
 montada a partir dos objetos que foram calculados}, e nunca escrita à parte. Se o detetor calculou
 um $z$ de $+7.61$, é esse número que aparece no texto. Não há um sítio onde alguém escreva a frase e
-outro sítio onde alguém calcule o valor --- porque, se houvesse, os dois podiam divergir sem
+outro sítio onde alguém calcule o valor, porque, se houvesse, os dois podiam divergir sem
 ninguém dar por isso.
 
 \section{De onde vêm os dados}
@@ -75,7 +75,7 @@ Isso obriga a três decisões de engenharia.
 \paragraph{Preços: uma cadeia, não uma fonte.}
 As fontes gratuitas de preços falham. Bloqueiam por excesso de pedidos, respondem com erro, ou
 simplesmente não têm o dia de hoje. Em vez de depender de uma, o sistema tenta várias por ordem e
-fica pela primeira que responde. Regista sempre qual serviu --- porque saber de onde veio um número
+fica pela primeira que responde. Regista sempre qual serviu, porque saber de onde veio um número
 faz parte de o poder explicar.
 
 \paragraph{Notícias: por empresa, e filtradas à entrada.}
@@ -151,7 +151,7 @@ de julho de 2026. Todos os valores são os que o sistema calculou nesse dia.}
 1. Recolher & A varredura foi buscar as notícias da semana para cada empresa da lista. \\
 2. Nomeia a empresa? & A manchete diz ``Meta'' e ``Mark Zuckerberg'', que estão na lista de nomes da
 empresa, e não corresponde a nenhum padrão de texto automático. \textbf{Passa.} \\
-3. É recente? & Tem menos de dois dias. \textbf{Passa} --- sem esta porta, a mesma notícia alertava
+3. É recente? & Tem menos de dois dias. \textbf{Passa}: sem esta porta, a mesma notícia alertava
 dias seguidos. \\
 4. Procurar parecidas & A manchete é transformada em 384 números e comparada com a base de casos. As
 três mais parecidas: Microsoft 2023-11-07 ($0.46$), Nvidia 2023-08-02 ($0.51$), Nvidia 2023-09-21
@@ -169,7 +169,7 @@ buscar depois. \\
 \end{table}
 
 Vale a pena olhar para a etapa 4 com atenção, porque é onde o trabalho fica interessante. Os três
-casos recuperados são de \textbf{outras empresas} --- duas da Nvidia e uma da Microsoft --- e o
+casos recuperados são de \textbf{outras empresas} (duas da Nvidia e uma da Microsoft), e o
 sistema mostra-os na mesma. É deliberado: se a pergunta é ``já houve notícias como esta?'', a
 resposta não tem de vir da mesma empresa. Notícias sobre investimento em inteligência artificial numa
 tecnológica grande são comparáveis entre si.
@@ -190,7 +190,7 @@ Duas coisas foram acrescentadas depois de o sistema estar a funcionar, e ambas p
 
 \begin{description}
   \item[Níveis de severidade.] Um $z$ de $1.6$ e um $z$ de $3.2$ não são a mesma coisa, e o texto do
-        alerta passou a distingui-los em palavras --- ``assinalável'', ``forte'', ``extremo'' --- em
+        alerta passou a distingui-los em palavras (``assinalável'', ``forte'', ``extremo'') em
         vez de dar o mesmo aviso aos dois.
   \item[Comparação com os pares.] Um alerta que diz ``a empresa caiu 8\%'' sem dizer que o setor
         inteiro caiu é enganador. O sistema passou a olhar para as outras empresas do mesmo setor no
@@ -200,7 +200,7 @@ Duas coisas foram acrescentadas depois de o sistema estar a funcionar, e ambas p
 Esta segunda correção veio de ler os primeiros trinta alertas enviados. Em nove deles o texto
 \textbf{contradizia-se}: uma linha dizia que o movimento parecia ser do setor inteiro, e duas linhas
 abaixo a repartição dizia que a maior parte pertencia à empresa. As duas linhas estavam certas
-isoladamente --- a comparação com os pares olhava apenas para a \emph{direção} do movimento dos
+isoladamente: a comparação com os pares olhava apenas para a \emph{direção} do movimento dos
 vizinhos, nunca para a sua \emph{dimensão}. Passou a olhar para as duas.
 
 \section{As portas: quando o sistema decide calar-se}
@@ -209,7 +209,7 @@ vizinhos, nunca para a sua \emph{dimensão}. Passou a olhar para as duas.
 \emph{Porque é que o sistema não avisa de quase nada?}
 
 Porque avisar de tudo é o mesmo que não avisar de nada. Se o canal enviar quinze mensagens por dia,
-a pessoa deixa de as ler --- e o sistema perde a única coisa que tinha para dar.
+a pessoa deixa de as ler, e o sistema perde a única coisa que tinha para dar.
 
 As cinco portas da Figura~\ref{fig:caminho} existem para isso. O efeito conjunto é grande: numa
 janela medida em produção, das \textbf{944} notícias relevantes que entraram, saíram \textbf{42}
@@ -231,7 +231,7 @@ diferentes.}
 \midrule
 Nomeia a empresa & --- & Regra escrita depois de ler os primeiros alertas e ver o que passava. \\
 É recente & 2 dias & Escolhido: cobre um fim de semana. \\
-Evidência forte & $0.45$ & \textbf{Escolhido}, e é a porta mais agressiva de todas --- ver abaixo. \\
+Evidência forte & $0.45$ & \textbf{Escolhido}, e é a porta mais agressiva de todas (ver abaixo). \\
 Merece avisar & $50\%$ & \textbf{Derivado} de uma análise de custos: quando falhar um movimento e dar
 um falso alarme custam o mesmo, o limiar ótimo é $0.49$. \\
 Teto diário & 2/dia & Escolhido, com um piso que sobe: o segundo alerta do dia sobre a mesma empresa
@@ -242,7 +242,7 @@ exige uma pontuação mais alta. \\
 
 O chão de semelhança merece um parágrafo próprio, porque é a porta que mais mata e a que tem a
 justificação mais fraca. Numa varredura medida, sete das dez empresas foram travadas exatamente
-ali --- e quatro delas por menos de $0.04$ de diferença. Testei depois se um valor mais alto de
+ali, e quatro delas por menos de $0.04$ de diferença. Testei depois se um valor mais alto de
 semelhança correspondia a precedentes mais informativos, e \textbf{não corresponde}: a concordância
 de direção entre o caso passado e o caso atual fica ao nível do acaso dos dois lados do limiar. A
 conclusão honesta é que este número serve para \emph{controlar o volume} de alertas e para garantir
@@ -257,10 +257,10 @@ O alerta não é uma frase. É uma pequena estrutura, sempre com as mesmas parte
 ordem:
 
 \begin{enumerate}
-  \item \textbf{o facto} --- o que aconteceu, em números;
-  \item \textbf{porquê foi assinalado} --- a razão estatística, em linguagem simples;
-  \item \textbf{os casos passados} --- um a um, com data, semelhança e o que se seguiu a cada um;
-  \item \textbf{a ressalva} --- que isto é história observada e não uma previsão.
+  \item \textbf{o facto}: o que aconteceu, em números;
+  \item \textbf{porquê foi assinalado}: a razão estatística, em linguagem simples;
+  \item \textbf{os casos passados}: um a um, com data, semelhança e o que se seguiu a cada um;
+  \item \textbf{a ressalva}: que isto é história observada e não uma previsão.
 \end{enumerate}
 
 A Figura~\ref{fig:app} mostra como isto chega ao ecrã.
@@ -278,7 +278,7 @@ existe.
 \includegraphics[width=0.92\textwidth]{figures/app_v5_overview.png}
 \caption[A página inicial do sistema]{A página que o utilizador vê. Cada empresa tem um cartão com o
 veredicto \emph{em palavras} antes de qualquer número, o movimento do dia, e a raridade expressa em
-dias --- ``$6$ dos últimos $249$ dias mexeram-se pelo menos isto'' --- em vez de um valor
+dias (``$6$ dos últimos $249$ dias mexeram-se pelo menos isto'') em vez de um valor
 estatístico que a maioria das pessoas não sabe ler.}
 \label{fig:app}
 \end{figure}
@@ -290,7 +290,7 @@ estatístico que a maioria das pessoas não sabe ler.}
 
 A primeira versão corria no agendador gratuito de um serviço de alojamento de código. Funcionava, e
 tinha um problema que só se vê a usar: \textbf{os alertas chegavam tarde}. O agendador gratuito é de
-melhor esforço --- na prática corria de hora e meia em hora e meia, e não de meia em meia hora como
+melhor esforço: na prática corria de hora e meia em hora e meia, e não de meia em meia hora como
 estava configurado.
 
 A solução veio do plano do ISEP: o \emph{GitHub Student Developer Pack} dá créditos que permitiram
@@ -324,5 +324,5 @@ do lado da infraestrutura muda isso. Depois de o sistema ver a notícia, a mensa
 um segundo.
 
 Isto é uma limitação real e fica escrita como tal. Comprar um serviço de notícias em tempo real
-resolveria --- e violaria a restrição fundadora do trabalho. Preferi ter uma limitação medida a ter
+resolveria, e violaria a restrição fundadora do trabalho. Preferi ter uma limitação medida a ter
 uma capacidade comprada.

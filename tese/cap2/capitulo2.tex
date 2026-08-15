@@ -37,7 +37,7 @@ Terminal profissional & sim & sim & sim & milhares/ano \\
 \end{table}
 
 A tabela mostra o essencial: \textbf{a linha que responde às três perguntas existe, e é a mais cara
-de todas}. Não há aqui um problema científico por resolver --- há um problema de acesso. As
+de todas}. Não há aqui um problema científico por resolver: há um problema de acesso. As
 respostas são conhecidas; estão atrás de uma subscrição que a pessoa de quem este trabalho fala não
 vai pagar.
 
@@ -49,8 +49,8 @@ memória. A pergunta ``isto é normal?'' fica sem resposta precisamente no síti
 
 Os \emph{robo-advisors} \autocite{dacunto2019robo} respondem a outra pergunta: como distribuir
 dinheiro por uma carteira. É uma pergunta legítima e não é esta. Além disso, aconselhar sobre
-investimentos tem obrigações regulatórias que este trabalho evita por desenho --- ver
-Secção~\ref{sec:ctx_escolhas}.
+investimentos tem obrigações regulatórias que este trabalho evita por desenho (ver
+Secção~\ref{sec:ctx_escolhas}).
 
 \section{Os produtos que fazem exatamente esta pergunta}
 \label{sec:ctx_produtos}
@@ -68,13 +68,13 @@ hoje''} \autocite{robinhood2025cortex}. Os \textbf{momentos-chave} do Google Fin
 utilizadores. Convém dizê-lo com clareza em vez de fingir que este território estava vazio.
 
 A diferença está no que é entregue. Um resumo gerado é uma \textbf{afirmação}: o utilizador lê e
-acredita, ou não. O que este trabalho entrega é uma afirmação \textbf{com a evidência anexada} --- os
+acredita, ou não. O que este trabalho entrega é uma afirmação \textbf{com a evidência anexada}: os
 casos passados, um a um, com as datas, as semelhanças e o que o preço fez a seguir a cada um. A
 diferença não é de fluência: é de \emph{verificabilidade}.
 
 Uma ressalva de método, porque é fácil escorregar aqui: destes produtos só se afirma o que está
 escrito nas páginas dos próprios fornecedores, consultadas em data registada. Não se testaram, e por
-isso não se diz o que fazem por dentro --- diz-se apenas o que declaram fazer.
+isso não se diz o que fazem por dentro; diz-se apenas o que declaram fazer.
 
 \section{E um assistente de IA genérico?}
 \label{sec:ctx_llm}
@@ -89,7 +89,7 @@ plausível. O problema é o que está por trás desse texto. Ele não tem:
 \begin{itemize}
   \item a \textbf{volatilidade recente} daquela ação, que é o que permite dizer se 4\% é muito;
   \item a \textbf{separação} entre o que foi o mercado e o que foi a empresa;
-  \item uma \textbf{base de casos passados} para \emph{recuperar} --- no melhor dos casos
+  \item uma \textbf{base de casos passados} para \emph{recuperar}. No melhor dos casos
         \emph{recorda} casos do treino, o que não é a mesma coisa e não é verificável.
 \end{itemize}
 
@@ -101,7 +101,7 @@ de menos: é confiarem \emph{na medida errada}, o que exige que o sistema mostre
 \autocite{lee2004trust}.
 
 Por isso, neste trabalho, a linguagem nunca produz factos. Os números vêm dos motores que os
-calcularam, e o texto é montado a partir deles --- como se descreveu na
+calcularam, e o texto é montado a partir deles, como se descreveu na
 Secção~\ref{sec:sis_explicacao}.
 
 \section{As peças técnicas que este trabalho usa}
@@ -110,12 +110,12 @@ Secção~\ref{sec:sis_explicacao}.
 \emph{De onde vêm as três técnicas do capítulo seguinte?}
 
 Nenhuma delas é invenção minha. Todas têm uma literatura, e a contribuição está em escolhê-las,
-integrá-las e avaliá-las --- não em inventá-las.
+integrá-las e avaliá-las, e não em inventá-las.
 
 \paragraph{Detetar o que é invulgar.}
 A deteção de anomalias é uma área grande \autocite{chandola2009anomaly}. Para séries temporais
 financeiras há duas famílias: as \textbf{estatísticas}, que comparam o presente com uma norma
-recente, e as \textbf{aprendidas}, que tentam descobrir sozinhas o que é raro --- como o
+recente, e as \textbf{aprendidas}, que tentam descobrir sozinhas o que é raro, como o
 \emph{Isolation Forest} \autocite{liu2008isolation} ou o \emph{Local Outlier Factor}
 \autocite{breunig2000lof}. Este trabalho usa a primeira família e compara-a com a segunda no
 Capítulo~\ref{cap:avaliacao}.
@@ -152,12 +152,12 @@ sentido de uma frase inteira. Cada geração resolve uma limitação da anterior
 
 A primeira geração conta palavras \autocite{salton1975vsm}: simples, e cega a sinónimos. A segunda
 representa cada \emph{palavra} como um vetor \autocite{mikolov2013word2vec}, o que aproxima
-sinónimos --- mas cada palavra fica com um sentido fixo, independentemente da frase. A terceira usa
+sinónimos, mas cada palavra fica com um sentido fixo, independentemente da frase. A terceira usa
 modelos que leem a frase toda \autocite{devlin2019bert}, e permite comparar \emph{frases} diretamente
 \autocite{reimers2019sbert}. É esta que este trabalho usa.
 
 Existem modelos treinados especificamente para texto financeiro \autocite{araci2019finbert}. Não são
-automaticamente melhores para esta tarefa --- e no Capítulo~\ref{cap:avaliacao} isso é medido em vez
+automaticamente melhores para esta tarefa, e no Capítulo~\ref{cap:avaliacao} isso é medido em vez
 de assumido.
 
 \paragraph{Medir o efeito de um acontecimento.}
@@ -186,8 +186,8 @@ Quatro decisões, e cada uma fecha uma porta de propósito.
   \item[Responder às três perguntas, e só a essas.] Não se acrescentam funcionalidades que não
         sirvam uma delas. É o que mantém o sistema pequeno o suficiente para ser explicado por
         inteiro.
-  \item[Não prever preços.] Nem direção, nem alvo, nem recomendação. Além da razão já dada --- é o
-        que torna tudo verificável --- há uma razão teórica: se movimentos futuros fossem previsíveis
+  \item[Não prever preços.] Nem direção, nem alvo, nem recomendação. Além da razão já dada, que é o
+        que torna tudo verificável, há uma razão teórica: se movimentos futuros fossem previsíveis
         a partir de informação pública, essa informação já estaria refletida no preço
         \autocite{fama1970efficient}.
   \item[Não gerir carteiras nem aconselhar.] O sistema não sabe o que o utilizador tem, e não lhe diz
@@ -200,4 +200,4 @@ Quatro decisões, e cada uma fecha uma porta de propósito.
 A última merece uma nota honesta. Usar apenas fontes gratuitas limita o sistema de forma real: as
 notícias chegam com atraso, e nem tudo o que acontece é coberto. O Capítulo~\ref{cap:sistema}
 quantifica esse atraso e o Capítulo~\ref{cap:conclusoes} volta a ele. A opção foi ter uma limitação
-medida em vez de uma capacidade comprada --- mas é uma limitação, e não uma virtude.
+medida em vez de uma capacidade comprada. Mas é uma limitação, e não uma virtude.

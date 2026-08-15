@@ -41,7 +41,7 @@ uma. Cada secção deste capítulo trata de uma coluna.}
 
 Cada decisão é tratada com a técnica mais simples que consegue resolvê-la. Isto não é preguiça: é
 uma escolha de desenho que se paga no Capítulo~\ref{cap:avaliacao}, onde cada técnica é comparada
-com alternativas mais complicadas. Quando a simples ganha, fica a simples --- e diz-se porquê.
+com alternativas mais complicadas. Quando a simples ganha, fica a simples, e diz-se porquê.
 
 \section{Técnica 1: detetar o que é invulgar}
 \label{sec:met_zscore}
@@ -66,7 +66,7 @@ A solução é velha e boa, e é a forma mais comum de detetar anomalias em sér
 \autocite{chandola2009anomaly}: em vez de comparar com um número fixo, comparo com o comportamento
 recente da própria ação.
 
-Olho para os últimos vinte dias e pergunto duas coisas: \emph{quanto é que esta ação costuma mexer?}
+Olho para os últimos vinte dias e pergunto duas coisas: \emph{quanto é que esta ação costuma oscilar?}
 e \emph{quão longe do costume ficou hoje?} A resposta chama-se \textbf{\emph{z}-score}:
 
 \begin{equation}
@@ -77,7 +77,7 @@ e \emph{quão longe do costume ficou hoje?} A resposta chama-se \textbf{\emph{z}
 Termo a termo:
 
 \begin{itemize}
-  \item $r_t$ é o retorno de hoje --- quanto a ação subiu ou desceu;
+  \item $r_t$ é o retorno de hoje, ou seja, quanto a ação subiu ou desceu;
   \item $\mu$ (mu) é a \textbf{média} dos retornos dos vinte dias anteriores: o ``centro'' do que é
         normal;
   \item $\sigma$ (sigma) é o \textbf{desvio-padrão} desses vinte dias: uma medida de quanto a ação
@@ -85,9 +85,9 @@ Termo a termo:
   \item $z_t$ é o resultado: \emph{a quantos desvios-padrão do normal ficou o dia de hoje}.
 \end{itemize}
 
-Um $z$ de $+1$ quer dizer ``um bocadinho acima do costume''. Um $z$ de $+7$ quer dizer ``isto quase
-nunca acontece''. E --- o ponto todo --- $z = +7$ significa a mesma coisa na empresa calma e na
-empresa volátil, porque cada uma é comparada consigo própria.
+Um $z$ de $+1$ quer dizer ``ligeiramente acima do costume''. Um $z$ de $+7$ quer dizer ``isto quase
+nunca acontece''. E é aqui que está o essencial: $z = +7$ significa a mesma coisa na empresa calma e
+na empresa volátil, porque cada uma é comparada consigo própria.
 
 \subsection{A janela que anda, e a regra que a protege}
 
@@ -114,7 +114,7 @@ desliza: para julgar o dia de hoje, usa os vinte dias \emph{anteriores}; amanhã
     node[right, align=left, black!60] {\footnotesize amanhã a janela\\[-2pt]\footnotesize desliza um dia};
 \end{tikzpicture}
 \caption[A janela deslizante do \emph{z}-score]{A janela que define ``o normal''. O dia que está a ser
-julgado \textbf{não entra} no cálculo da sua própria norma --- e é esta separação que garante que o
+julgado \textbf{não entra} no cálculo da sua própria norma, e é esta separação que garante que o
 sistema nunca usa informação que ainda não teria.}
 \label{fig:janela}
 \end{figure}
@@ -124,7 +124,7 @@ não entra no cálculo da sua própria norma}. Se entrasse, um dia muito extremo
 inflacionaria o desvio-padrão, e o próprio dia pareceria menos invulgar do que foi. O sistema
 estaria a usar informação que, no momento da decisão, ainda não devia contar.
 
-Esta regra tem um nome --- \textbf{evitar \emph{lookahead}} --- e atravessa todo o trabalho. Volto a
+Esta regra tem um nome, \textbf{evitar \emph{lookahead}}, e atravessa todo o trabalho. Volto a
 ela na Secção~\ref{sec:met_avaliacao}, onde mostro como é imposta por um teste automático em vez de
 ser apenas prometida.
 
@@ -182,9 +182,9 @@ A maneira ingénua de procurar é por palavras. Procurar notícias antigas que c
 ``bate'' e ``estimativas''. Funciona mal, por duas razões simétricas:
 
 \begin{itemize}
-  \item duas notícias podem dizer a \textbf{mesma coisa com palavras diferentes} ---
+  \item duas notícias podem dizer a \textbf{mesma coisa com palavras diferentes}:
         ``supera previsões'' e ``bate estimativas'' não partilham uma única palavra importante;
-  \item duas notícias podem \textbf{partilhar palavras e falar de coisas diferentes} --- ``bate
+  \item duas notícias podem \textbf{partilhar palavras e falar de assuntos diferentes}: ``bate
         estimativas'' e ``bate recorde de despedimentos'' partilham ``bate''.
 \end{itemize}
 
@@ -192,12 +192,12 @@ O que é preciso é comparar \textbf{significado}, não letras.
 
 \subsection{A ideia: transformar frases em pontos}
 
-É aqui que entra a única peça de aprendizagem profunda deste trabalho, e vale a pena explicá-la com
+É aqui que entra a única peça de aprendizagem profunda que o sistema usa, e vale a pena explicá-la com
 calma porque é a que soa mais complicada e não é.
 
 Um \textbf{modelo de embeddings de frase} \autocite{reimers2019sbert} é um modelo já treinado que
-recebe uma frase e devolve uma lista de números --- neste caso, 384 números. Essa lista chama-se \emph{embedding}, e funciona como
-uma \textbf{coordenada}: é a posição daquela frase num espaço.
+recebe uma frase e devolve uma lista de números, neste caso 384. Essa lista chama-se
+\emph{embedding} e funciona como uma \textbf{coordenada}: é a posição daquela frase num espaço.
 
 A propriedade que interessa é esta: o modelo foi treinado de forma a que frases com significado
 parecido fiquem \textbf{perto} umas das outras nesse espaço, mesmo que usem palavras diferentes. A
@@ -223,7 +223,7 @@ conseguem desenhar).
 \end{tikzpicture}
 \caption[Frases como pontos num espaço]{Cada frase vira um ponto. Frases com o mesmo significado
 ficam próximas, mesmo sem partilharem palavras; frases que partilham palavras (``bate'') mas falam
-de coisas diferentes ficam longe. O desenho tem duas dimensões para se poder ver --- o modelo usa
+de assuntos diferentes ficam longe. O desenho tem duas dimensões para se poder ver; o modelo usa
 384.}
 \label{fig:embeddings}
 \end{figure}
@@ -236,7 +236,7 @@ A medida usada é a \textbf{semelhança do cosseno}. Em vez de medir a distânci
 \textbf{ângulo} entre as duas direções. Dá um valor entre $-1$ e $1$:
 
 \begin{itemize}
-  \item perto de $1$: as duas frases apontam na mesma direção --- significado muito parecido;
+  \item perto de $1$: as duas frases apontam na mesma direção, ou seja, significado muito parecido;
   \item perto de $0$: não têm relação;
   \item negativo: apontam em direções opostas.
 \end{itemize}
@@ -286,14 +286,14 @@ Duas decisões de detalhe, ambas com consequência:
 
 E vale a pena dizer aquilo que isto \textbf{não} é. Medir o que aconteceu a seguir a notícias
 passadas não é prever o que vai acontecer agora. É por isso que o sistema mostra sempre os casos
-\emph{um a um}, com a data e o valor de cada um, em vez de resumir tudo a uma média --- uma média
+\emph{um a um}, com a data e o valor de cada um, em vez de resumir tudo a uma média. Uma média
 esconde que os casos podem ter ido em sentidos opostos.
 
 \begin{tcolorbox}[colback=black!3, colframe=black!30, boxrule=0.4pt, arc=2pt]
 \textbf{Em três frases.} Um modelo já treinado transforma cada manchete numa lista de 384 números que
 funciona como uma coordenada de significado. Comparo manchetes pelo ângulo entre essas coordenadas,
-o que apanha frases parecidas mesmo com palavras diferentes. Para cada caso passado, meço o que o
-preço fez $1$, $3$ e $5$ dias depois --- uma medição, não uma previsão.
+o que aproxima frases parecidas mesmo com palavras diferentes. Para cada caso passado, meço o que o
+preço fez $1$, $3$ e $5$ dias depois: uma medição, não uma previsão.
 \end{tcolorbox}
 
 \section{Técnica 3: decidir o que merece um alerta}
@@ -306,7 +306,7 @@ preço fez $1$, $3$ e $5$ dias depois --- uma medição, não uma previsão.
 Chegam muitas notícias. A maioria não interessa: repetições, listas automáticas, textos que
 mencionam a empresa de passagem.
 
-Um sistema que avisa de tudo é tão inútil como um que não avisa de nada --- pior, até, porque ensina
+Um sistema que avisa de tudo é tão inútil como um que não avisa de nada. Pior, até, porque ensina
 a pessoa a ignorar o canal. Este problema tem nome, \textbf{fadiga de alertas}, e é a razão pela
 qual esta terceira decisão existe.
 
@@ -318,7 +318,7 @@ Aqui, ao contrário das duas anteriores, não há uma fórmula óbvia. É o sít
 Para treinar um modelo é preciso, antes de tudo, uma pergunta com resposta conhecida.
 
 A pergunta escolhida foi: \emph{depois desta notícia, houve um movimento anormalmente grande no
-preço?} A resposta --- o \textbf{rótulo} --- constrói-se assim:
+preço?} A resposta, o \textbf{rótulo}, constrói-se assim:
 
 \begin{enumerate}
   \item mede-se o retorno da ação nos três dias seguintes à notícia;
@@ -336,14 +336,14 @@ sobre \emph{materialidade}, não sobre subir ou descer.
 O modelo recebe cinco tipos de informação sobre o momento da notícia:
 
 \begin{itemize}
-  \item \textbf{volatilidade recente} --- quanto a ação tem oscilado nos últimos 20 dias;
-  \item \textbf{momento} --- como se comportou nos últimos 5 dias;
+  \item \textbf{volatilidade recente}: quanto a ação tem oscilado nos últimos 20 dias;
+  \item \textbf{momento}: como se comportou nos últimos 5 dias;
   \item \textbf{o movimento do próprio dia};
   \item \textbf{o comprimento da manchete};
   \item \textbf{o setor} da empresa.
 \end{itemize}
 
-E, numa das variantes testadas, também o \emph{embedding} da manchete --- os mesmos 384 números da
+E, numa das variantes testadas, também o \emph{embedding} da manchete, os mesmos 384 números da
 Secção~\ref{sec:met_recuperacao}. Comparar a variante com texto e a variante sem texto é
 precisamente o que a \gls{QI}3 pergunta, e a resposta está no Capítulo~\ref{cap:avaliacao}.
 
@@ -377,7 +377,7 @@ Duas regras, e as duas existem para impedir que o modelo pareça melhor do que �
 
 \begin{description}
   \item[Dividir pelo tempo, não ao acaso.] Se os dados fossem baralhados, o modelo treinaria com
-        notícias de 2023 e seria testado com notícias de 2019 --- estaria a ser avaliado sobre um
+        notícias de 2023 e seria testado com notícias de 2019, ou seja, estaria a ser avaliado sobre um
         passado que já conhece. Aqui, treina-se no início do período e testa-se no fim, como
         acontece na realidade.
   \item[Embargo entre blocos.] O rótulo de uma notícia depende dos três dias seguintes. Uma notícia
@@ -394,7 +394,7 @@ Como o número vai ser mostrado a uma pessoa, isso tem de ser corrigido. O passo
 \textbf{calibração} \autocite{niculescu2005calibration}: ajusta-se uma função simples que
 transforma pontuações em probabilidades
 \emph{honestas}, de modo a que, entre todos os casos a que o modelo dá $70\%$, cerca de $70\%$
-tenham mesmo acontecido. A calibração é ajustada no bloco de validação --- nunca no de teste.
+tenham mesmo acontecido. A calibração é ajustada no bloco de validação, nunca no de teste.
 
 \begin{tcolorbox}[colback=black!3, colframe=black!30, boxrule=0.4pt, arc=2pt]
 \textbf{Em três frases.} Treinei um modelo para estimar se uma notícia é seguida de um movimento
@@ -413,13 +413,13 @@ Três compromissos, assumidos \emph{antes} de correr as experiências.
 \paragraph{Primeiro: comparar sempre com o mais simples.}
 Um número sozinho não diz nada. Dizer que a recuperação acerta em metade dos casos só significa
 alguma coisa quando se sabe o que acertaria uma alternativa trivial. Por isso cada técnica é
-comparada com \textbf{linhas de base} --- uma regra fixa, uma escolha ao acaso, a notícia mais
+comparada com \textbf{linhas de base}: uma regra fixa, uma escolha ao acaso, a notícia mais
 recente. Se a técnica sofisticada não ganhar, isso é o resultado, e é o que fica escrito.
 
 \paragraph{Segundo: o não-\emph{lookahead} é imposto por um teste, não prometido.}
 É fácil escrever ``não usámos informação do futuro''. É difícil garanti-lo. Aqui existe um teste
 automático que faz o seguinte: pega num exemplo, \textbf{altera artificialmente o futuro} e volta a
-calcular. Depois exige duas coisas ao mesmo tempo --- que as \emph{features} fiquem exatamente
+calcular. Depois exige duas condições ao mesmo tempo: que as \emph{features} fiquem exatamente
 iguais (porque descrevem o passado) e que o \emph{rótulo} mude (porque descreve o futuro). Se
 alguma informação do futuro se tivesse infiltrado nas features, o teste falha.
 

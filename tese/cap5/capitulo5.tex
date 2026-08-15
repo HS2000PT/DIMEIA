@@ -33,7 +33,7 @@ regra fixa?} \textbf{Sim, e com uma margem grande.}
 \subsection{Como foi medido}
 
 Foram usados três anos de cotações diárias de quinze empresas grandes, entre junho de 2023 e junho de
-2026 --- cerca de 750 dias por empresa.
+2026, ou seja, cerca de 750 dias por empresa.
 
 São quinze, e não as doze que o sistema vigia em produção. A diferença é de propósito: a avaliação
 quer \emph{variedade} de volatilidade, para o argumento da consistência ter sobre o que incidir; a
@@ -45,8 +45,8 @@ universal deve disparar a um ritmo \textbf{parecido} em empresas diferentes. Se 
 quase nada noutra, o que está a medir é a volatilidade da empresa e não a raridade do dia.
 
 Como argumento de apoio, usou-se também um rótulo aproximado: considera-se ``dia extremo'' um dia no
-percentil 99 dos retornos \emph{daquela} empresa. É um rótulo imperfeito --- é ele próprio relativo à
-volatilidade --- e por isso vem em segundo lugar.
+percentil 99 dos retornos \emph{daquela} empresa. É um rótulo imperfeito, porque é ele próprio
+relativo à volatilidade, e por isso vem em segundo lugar.
 
 \subsection{Resultado}
 
@@ -70,7 +70,7 @@ Limiar fixo ($|r| \ge 3\%$) & $0.009$ & $0.353$ & $0.344$ \\
 A Figura~\ref{fig:av_disparo} mostra a mesma informação empresa a empresa.
 
 A diferença é de mais de vinte vezes. O limiar fixo dispara em $0.9\%$ dos dias na empresa mais calma
-e em $35.3\%$ dos dias na mais volátil --- ou seja, para uma delas quase nunca diz nada e para a
+e em $35.3\%$ dos dias na mais volátil: para uma delas quase nunca diz nada e para a
 outra fala um dia em cada três. O \emph{z}-score fica entre $1.6\%$ e $3.1\%$ em todas.
 
 \begin{figure}[ht]
@@ -112,9 +112,9 @@ Local Outlier Factor & $0.163$ & $0.989$ & $0.280$ & $0.183$ \\
 consistência entre empresas muito melhor. Os dois métodos aprendidos assinalam quase tudo
 (\emph{recall} altíssimo) e acertam pouco (precisão baixa).
 
-Este é o primeiro dos dois casos em que uma técnica mais sofisticada foi comparada de forma justa com
-uma mais simples --- e perdeu. É um resultado que vale por si: justifica por medição a escolha do
-método simples, em vez de a justificar por preferência.
+Este é o primeiro de três casos, neste capítulo, em que uma técnica mais sofisticada foi comparada
+de forma justa com uma mais simples e perdeu. É um resultado que vale por si: justifica por medição
+a escolha do método simples, em vez de a justificar por preferência.
 
 \subsection{O que isto não permite concluir}
 
@@ -134,8 +134,8 @@ O problema de avaliar recuperação é que não existe uma lista de ``respostas 
 etiquetou pares de notícias como relacionados ou não.
 
 Usou-se então uma aproximação verificável: considera-se que uma notícia recuperada é
-\textbf{relevante} se pertencer ao \emph{mesmo setor} da notícia de consulta. É imperfeito --- duas
-notícias do mesmo setor podem não ter nada a ver --- mas tem duas virtudes: é objetivo, e não foi
+\textbf{relevante} se pertencer ao \emph{mesmo setor} da notícia de consulta. É imperfeito, porque
+duas notícias do mesmo setor podem não ter nada a ver, mas tem duas virtudes: é objetivo, e não foi
 escolhido depois de ver os resultados.
 
 Além disso, impôs-se uma restrição que torna a tarefa \emph{mais difícil}: a notícia recuperada tem
@@ -165,12 +165,12 @@ Mais recente & $0.126$ & devolver simplesmente as últimas notícias \\
 \end{table}
 
 A Tabela~\ref{tab:av_recuperacao} tem o método usado, uma variante maior, e as três alternativas
-triviais. A leitura é direta: escolher ao acaso acerta em $24\%$ dos casos --- é esse o chão, e não zero,
-porque há cinco setores e alguns são maiores do que outros. Procurar por palavras em comum sobe para
+triviais. A leitura é direta: escolher ao acaso acerta em $24\%$ dos casos. É esse o chão, e não
+zero, porque há cinco setores e alguns são maiores do que outros. Procurar por palavras em comum sobe para
 $34.6\%$. Comparar significado sobe para $51.4\%$, mais do dobro do acaso.
 
-E a alternativa que parece mais razoável de todas --- ``mostra-me simplesmente as notícias mais
-recentes'' --- é a \textbf{pior} de todas, com $12.6\%$. Faz sentido: a notícia mais recente sobre
+E a alternativa que parece mais razoável de todas, ``mostra-me apenas as notícias mais
+recentes'', é a \textbf{pior} de todas, com $12.6\%$. Faz sentido: a notícia mais recente sobre
 outra empresa não tem razão nenhuma para estar relacionada com esta.
 
 \subsection{Aguenta à escala?}
@@ -187,7 +187,7 @@ Primeiro, ``mesmo setor'' não é o mesmo que ``relacionado''. É uma aproximaç
 lido como tal.
 
 Segundo, e mais interessante: a recuperação capta \textbf{tema}, não \textbf{direção}. Duas notícias
-podem ser sobre o mesmo assunto e o preço ter ido para lados opostos --- foi exatamente o que
+podem ser sobre o mesmo assunto e o preço ter ido para lados opostos, que foi exatamente o que
 aconteceu no exemplo do Capítulo~\ref{cap:sistema}. Medindo a concordância de direção entre a
 notícia de consulta e os casos recuperados, obtém-se $0.708$ contra um chão de acaso de $0.688$: quase
 nada. Por isso o sistema mostra os casos um a um e nunca resume a uma média, e por isso o texto do
@@ -232,7 +232,7 @@ Gradient boosting (contexto $+$ texto) & $0.469$ & $0.228$ \\
 
 O melhor modelo da Tabela~\ref{tab:av_triagem} é o mais simples de todos: o que usa \textbf{apenas a volatilidade
 recente}. Acrescentar o resto do contexto não melhora. Acrescentar o texto da manchete
-\emph{piora} --- de $0.542$ para $0.496$.
+\emph{piora}, de $0.542$ para $0.496$.
 
 Isto era o contrário do que eu esperava quando comecei. A hipótese era que o texto da notícia
 trouxesse informação que os preços não tinham. Sobre este corpus, não traz.
@@ -243,7 +243,7 @@ Foi a primeira coisa que fui verificar, por três caminhos.
 
 \paragraph{Será que o modelo de texto estava mal afinado?} Repetiu-se a comparação dando ao texto as
 melhores condições possíveis: regularização afinada, redução de dimensionalidade do bloco de texto, e
-um modelo de linguagem especializado em finanças. O melhor resultado do texto sobe para $0.533$ ---
+um modelo de linguagem especializado em finanças. O melhor resultado do texto sobe para $0.533$,
 e continua abaixo dos $0.542$ da volatilidade.
 
 \paragraph{Será que a diferença é ruído?} Reamostrou-se o bloco de teste mil vezes, por grupos
@@ -251,7 +251,7 @@ e continua abaixo dos $0.542$ da volatilidade.
 observações independentes. A diferença mantém-se com o intervalo a excluir zero.
 
 \paragraph{Será que depende de como defini o rótulo?} O rótulo usa um limiar de $2\%$ e um horizonte
-de três dias --- ambos escolhidos por mim. Repetiu-se toda a comparação para nove combinações
+de três dias, ambos escolhidos por mim. Repetiu-se toda a comparação para nove combinações
 diferentes de limiar e horizonte. A volatilidade iguala ou bate o modelo com texto nas
 \textbf{nove}.
 
@@ -259,7 +259,7 @@ O resultado negativo aguenta os três testes. Não é um acidente do meu setup: 
 
 \subsection{Mas serve para alguma coisa?}
 
-Serve --- e aqui é preciso muito cuidado com a comparação, porque é fácil enganar-se.
+Serve, mas aqui é preciso muito cuidado com a comparação, porque é fácil enganar-se.
 
 O produto não mostra tudo: mostra no máximo cinco alertas por dia. A pergunta útil passa a ser
 \emph{das cinco notícias que escolho mostrar, quantas eram mesmo importantes?}
@@ -275,7 +275,7 @@ notícias do dia, sobre o mesmo bloco de teste.}
 \toprule
 \tabhead{Como escolher} & \tabhead{Precisão@5} & \tabhead{O que é} \\
 \midrule
-``Alertar sempre'' & $0.163$ & \emph{não é escolher às cegas} --- ver o aviso abaixo \\
+``Alertar sempre'' & $0.163$ & \emph{não é escolher às cegas}; ver o aviso abaixo \\
 Ao acaso (40 sementes) & $0.379 \pm 0.017$ & o que ``às cegas'' quer mesmo dizer \\
 Volatilidade média da empresa & $\mathbf{0.662}$ & treze constantes, sem ler manchete nenhuma \\
 O modelo treinado & $0.632$ & o que está implantado \\
@@ -286,7 +286,7 @@ O modelo treinado & $0.632$ & o que está implantado \\
 \begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
 \textbf{Um aviso sobre a primeira linha, que eu próprio quase publiquei errado.} O modelo
 ``alertar sempre'' dá a mesma pontuação a todas as notícias. Quando todas empatam, a métrica escolhe
-pela ordem em que as linhas aparecem no ficheiro --- e o ficheiro está ordenado por data e por nome
+pela ordem em que as linhas aparecem no ficheiro, e o ficheiro está ordenado por data e por nome
 da empresa. Ou seja, esse $0.163$ \textbf{não mede escolher ao acaso: mede escolher por ordem
 alfabética}, e todas as linhas que ele seleciona pertencem à empresa que vem primeiro no alfabeto.
 
@@ -295,9 +295,10 @@ primeira leitura sugeria. Deixo isto escrito porque foi um erro meu, e porque a 
 \emph{verificar o que a linha de base mede é tão importante como verificar o que o modelo faz}.
 \end{tcolorbox}
 
-Há ainda a terceira linha, que é desconfortável e fica: uma tabela de \textbf{treze constantes} ---
-a volatilidade média de cada empresa, calculada só sobre o bloco de treino, sem ler uma única
-manchete --- obtém $0.662$ e \textbf{bate o modelo treinado}. O que a evidência sustenta, portanto, é
+Há ainda a terceira linha, que é desconfortável e fica. Uma tabela de \textbf{treze constantes},
+a volatilidade média de cada empresa, calculada só sobre o bloco de treino e sem ler uma única
+manchete, obtém $0.662$ e \textbf{bate o modelo treinado}. É o terceiro caso deste capítulo em que o
+método mais simples ganha. O que a evidência sustenta, portanto, é
 que \emph{ordenar por volatilidade} compensa; não que \emph{aprender} compense.
 
 \subsection{E em produção?}
@@ -306,7 +307,7 @@ O sistema regista todas as decisões de triagem e, dias depois, verifica o que r
 Sobre $530$ decisões já maturadas, o modelo não mostra benefício: as notícias que ele deixou passar
 eram importantes $59.2\%$ das vezes, contra $64.7\%$ das que ele travou.
 
-A explicação mais provável não é que o modelo esteja avariado --- é que esteja a \textbf{mais}.
+A explicação mais provável não é que o modelo esteja avariado, mas que esteja a \textbf{mais}.
 Quando ele é chamado, as notícias já passaram pelo filtro de relevância e pelo de frescura. Esses
 filtros baratos já removeram grande parte do que o modelo foi treinado para remover, e sobra-lhe
 pouco para separar. \textbf{Um modelo avaliado isolado e implantado atrás de filtros nunca foi
@@ -315,7 +316,7 @@ avaliado na distribuição que vai ver.} É a lição mais transferível deste t
 \subsection{O que isto não permite concluir}
 
 Que o texto de notícias não sirva para nada. Só se testou uma representação (manchetes, sem o corpo
-do artigo) sobre um corpus. Com textos completos e mais dados, a resposta podia ser outra --- e isso
+do artigo) sobre um corpus. Com textos completos e mais dados, a resposta podia ser outra, e isso
 fica como trabalho futuro, não como desculpa.
 
 \section{Resumo dos três resultados}

@@ -35,8 +35,8 @@ As aplicações gratuitas não respondem a nenhuma das três. Mostram a percenta
 da primeira pergunta e não a resposta. Os terminais profissionais respondem às três, mas custam mais
 por mês do que muita gente investe por ano.
 
-É essa distância que este trabalho tenta encurtar. Não por falta de dados --- há dados a mais, e
-gratuitos. Por falta de \textbf{contexto}, e de um contexto que a pessoa possa \emph{verificar}.
+É essa distância que este trabalho tenta encurtar. Não por falta de dados: há dados a mais, e
+gratuitos. O que falta é \textbf{contexto}, e um contexto que a pessoa possa \emph{verificar}.
 
 \begin{figure}[ht]
 \centering
@@ -54,13 +54,13 @@ fala. Elaborado a partir dos dados do SIFMA Capital Markets Fact Book
 \emph{Se tivesse de explicar o InvestiGator numa frase, qual seria?}
 
 Esta: \textbf{o sistema vigia um conjunto de empresas, deteta quando algo sai fora do normal, e
-avisa --- mas só avisa com a explicação e a evidência ao lado.}
+avisa, mas só avisa com a explicação e a evidência ao lado.}
 
 Há duas maneiras de o sistema começar a prestar atenção, e estão na
 Figura~\ref{fig:conceito}. Ou o \textbf{preço} se mexe de forma invulgar, ou chega uma
 \textbf{notícia} relevante sobre uma das empresas. Em qualquer dos casos, o que sai do outro lado
 não é uma notificação seca. É um alerta que diz o que aconteceu, porque é que foi considerado
-invulgar, de onde vieram os dados, e que casos parecidos já existiram no passado --- com o que o
+invulgar, de onde vieram os dados, e que casos parecidos já existiram no passado, com o que o
 preço fez depois deles.
 
 \begin{figure}[ht]
@@ -95,9 +95,9 @@ Nunca diz que uma ação vai subir. Nunca diz para comprar ou para vender. Nunca
 preço.
 
 Isto pode parecer uma limitação. É o contrário: é o que torna tudo o resto verificável. Uma
-afirmação sobre o que \emph{já} aconteceu pode ser conferida contra o registo. Uma previsão não pode
-ser conferida por ninguém, nem no momento em que é feita nem depois. Ao recusar prever, o sistema
-obriga-se a dizer só coisas que consegue mostrar.
+afirmação sobre o que \emph{já} aconteceu pode ser confirmada contra o registo no momento em que é
+lida. Uma previsão não pode: só se saberá se estava certa depois de o investidor já ter tido de
+decidir. Ao recusar prever, o sistema obriga-se a dizer apenas aquilo que consegue mostrar.
 
 \section{Objetivos e perguntas de investigação}
 \label{sec:intro_objetivos}
@@ -109,16 +109,16 @@ explicável para investidores de retalho, usando apenas fontes de dados gratuita
 
 Para lá chegar, o trabalho responde a três perguntas de investigação. Cada uma tem uma medição
 associada, porque uma pergunta a que não se sabe responder com um número não é uma pergunta de
-investigação --- é uma opinião.
+investigação: é uma opinião.
 
 \begin{itemize}
-  \item \textbf{\gls{QI}1 --- deteção.} Consegue um método estatístico simples e transparente
+  \item \textbf{\gls{QI}1, deteção.} Consegue um método estatístico simples e transparente
         detetar movimentos invulgares de forma consistente entre empresas com volatilidades muito
         diferentes, e fazê-lo melhor do que uma regra fixa?
-  \item \textbf{\gls{QI}2 --- precedentes.} Consegue o sistema encontrar notícias passadas
+  \item \textbf{\gls{QI}2, precedentes.} Consegue o sistema encontrar notícias passadas
         genuinamente parecidas com a atual, melhor do que alternativas triviais, e medir o que
         aconteceu ao preço a seguir a elas sem usar informação do futuro?
-  \item \textbf{\gls{QI}3 --- triagem.} Consegue um modelo treinado decidir que notícias merecem um
+  \item \textbf{\gls{QI}3, triagem.} Consegue um modelo treinado decidir que notícias merecem um
         alerta melhor do que uma linha de base simples baseada apenas em volatilidade?
 \end{itemize}
 
@@ -144,18 +144,18 @@ inventar um algoritmo novo. É escolher, integrar e avaliar criticamente técnic
 formarem um sistema que funciona, que se explica, e que outra pessoa consegue reproduzir. Escolher
 bem \emph{é} o trabalho de engenharia.
 
-Ficam quatro coisas:
+Ficam quatro contribuições:
 
 \begin{enumerate}
   \item \textbf{Um sistema completo e a funcionar}, com os dois gatilhos, sobre fontes gratuitas, e
-        implantado --- não uma demonstração de laboratório.
+        implantado, e não uma demonstração de laboratório.
   \item \textbf{Um método reprodutível para ligar notícias a impacto de mercado}, que combina
         recuperação por semelhança semântica com janelas de estudo de evento, sem deixar entrar
         informação do futuro.
   \item \textbf{Um conjunto de dados próprio e um modelo treinado sobre ele}: 79\,753 exemplos
         construídos a partir de notícias e preços históricos, com o modelo, a calibração e as
         métricas guardados como artefactos versionados.
-  \item \textbf{Uma avaliação honesta de cada componente} contra linhas de base transparentes ---
+  \item \textbf{Uma avaliação honesta de cada componente} contra linhas de base transparentes,
         incluindo o resultado que me correu ao contrário, que está reportado como tal.
 \end{enumerate}
 
@@ -164,18 +164,18 @@ Ficam quatro coisas:
 
 \emph{Por onde é que isto vai?}
 
-O documento foi escrito para ser lido de fio a pavio, e cada capítulo responde a uma pergunta:
+O documento foi escrito para ser lido do princípio ao fim, e cada capítulo responde a uma pergunta:
 
 \begin{itemize}
-  \item \textbf{Capítulo~\ref{cap:contexto} --- Contexto:} o que já existe, e porque é que não
+  \item \textbf{Contexto} (Capítulo~\ref{cap:contexto}): o que já existe, e porque é que não
         chega para o problema desta tese.
-  \item \textbf{Capítulo~\ref{cap:metodologia} --- Metodologia:} as três técnicas, explicadas
+  \item \textbf{Metodologia} (Capítulo~\ref{cap:metodologia}): as três técnicas, explicadas
         devagar e com desenhos.
-  \item \textbf{Capítulo~\ref{cap:sistema} --- O sistema:} como as peças se ligam, e uma notícia
+  \item \textbf{O sistema} (Capítulo~\ref{cap:sistema}): como as peças se ligam, e uma notícia
         real seguida do princípio ao fim.
-  \item \textbf{Capítulo~\ref{cap:avaliacao} --- Avaliação:} o que foi medido, contra o quê, e com
+  \item \textbf{Avaliação} (Capítulo~\ref{cap:avaliacao}): o que foi medido, contra o quê, e com
         que resultado.
-  \item \textbf{Capítulo~\ref{cap:conclusoes} --- Conclusões:} o que ficou provado, o que ficou por
+  \item \textbf{Conclusões} (Capítulo~\ref{cap:conclusoes}): o que ficou provado, o que ficou por
         fazer, e o que eu faria a seguir.
 \end{itemize}
 
