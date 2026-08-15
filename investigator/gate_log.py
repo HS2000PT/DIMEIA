@@ -44,6 +44,15 @@ STAGES: tuple[str, ...] = (
     # registos `alerted` num dia em que o canal recebeu 4 mensagens** — a vista que existe
     # para tornar as decisões inspeccionáveis exagerava por perto de duas ordens de grandeza.
     "already_sent",       # esta manchete exacta já tinha sido entregue hoje
+    # ⚠️ O ORÇAMENTO GLOBAL DO DIA, e a razão de existir é medida.
+    # Até 2026-08-15 o volume era controlado por um limiar fixo sobre o score da triagem.
+    # Medido sobre 4366 decisões reais: em 84% delas o resultado estava determinado pela
+    # EMPRESA antes de se ler a manchete (três empresas passavam sempre, cinco nunca), porque
+    # dentro de cada empresa o score quase não varia. O limiar controlava o volume
+    # seleccionando tickers, não notícias.
+    # O orçamento substitui-o pela política que a própria dissertação AVALIA — as k melhores
+    # do dia — fechando uma divergência entre o que é medido e o que é implantado.
+    "daily_budget",       # o orçamento global de alertas do dia já estava gasto
     "alerted",            # sobreviveu a tudo E foi mesmo entregue
 )
 

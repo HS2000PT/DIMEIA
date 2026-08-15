@@ -163,7 +163,8 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
                       materiality: dict[str, float] | None = None,
                       headlines: dict[str, str] | None = None,
                       ladder: list[float] | None = None,
-                      suppressed: dict[str, tuple[str, str]] | None = None
+                      suppressed: dict[str, tuple[str, str]] | None = None,
+                      daily_budget: int | None = None
                       ) -> list[tuple[str, str]]:
     """Puro: mantém só o que ainda NÃO foi alertado hoje e marca-o no estado.
 
@@ -258,6 +259,24 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
             if suppressed is not None:
                 suppressed[ticker] = ("duplicate_story", "same story, other words")
             continue
+        # ⚠️ ORÇAMENTO GLOBAL DO DIA, e vem ANTES do tecto por ticker de propósito.
+        # O tecto por ticker limita cada empresa mas não limita o total: com doze empresas a
+        # dois alertas cada, o pior caso são vinte e quatro mensagens num dia. O que o
+        # utilizador sente é o total, não a distribuição.
+        # A ordem entre candidatas já foi decidida acima, por materialidade — que é a única
+        # coisa para que o score do modelo tem informação: ordenar ENTRE empresas. É essa a
+        # política que a dissertação avalia (precisão dentro de um orçamento de k por dia), e
+        # passa a ser também a que está implantada.
+        if daily_budget is not None:
+            total_hoje = sum(state["news_count"].values())
+            if total_hoje >= daily_budget:
+                print(f"[noticias {ticker}] orçamento do dia gasto "
+                      f"({total_hoje}/{daily_budget}) — sem mais alertas hoje.")
+                if suppressed is not None:
+                    suppressed[ticker] = ("daily_budget",
+                                          f"budget {daily_budget}/day spent")
+                continue
+
         ja_hoje = state["news_count"].get(ticker, 0)
         if ja_hoje >= max_per_ticker:
             print(f"[noticias {ticker}] teto diário atingido ({max_per_ticker}) "
@@ -269,7 +288,18 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
         # ABERTO em duas situações, de propósito: sem `ladder` configurada, e sem score para
         # esta manchete (triagem desligada, ou modelo ausente). Suprimir um alerta por falta de
         # informação seria decidir com base em nada.
-        piso = ladder[ja_hoje] if ladder and ja_hoje < len(ladder) else None
+        #
+        # ⚠️ COM ORÇAMENTO LIGADO, O PRIMEIRO SLOT NÃO TEM PISO, e isto foi apanhado num
+        # dry-run: tirar o veto da triagem em `scan_news` não bastava, porque a escada é
+        # **outro limiar sobre o mesmo score** e reproduzia o mesmo defeito — a AAPL, cujo
+        # score está sempre à volta de 0.46, continuava a não conseguir alertar nunca, agora
+        # travada aqui em vez de lá.
+        # A escada foi derivada quando o score era a porta; passando o controlo de volume para
+        # o orçamento, ela mantém o papel para que continua a servir — tornar cada alerta
+        # EXTRA da MESMA empresa mais caro, que é anti-fadiga e não selecção de empresas.
+        primeiro_slot_livre = daily_budget is not None and ja_hoje == 0
+        piso = (None if primeiro_slot_livre
+                else ladder[ja_hoje] if ladder and ja_hoje < len(ladder) else None)
         p = (materiality or {}).get(k)
         if piso is not None and p is not None and p < piso:
             print(f"[noticias {ticker}] alerta nº{ja_hoje + 1} do dia exige "
@@ -582,6 +612,11 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
     max_prec_age = n.get("max_precedent_age_days")
     max_prec_age = int(max_prec_age) if max_prec_age is not None else None
 
+    # Orçamento global de alertas por dia. Quando está definido, o score da triagem deixa de
+    # ser porta e passa a ser critério de ORDENAÇÃO — ver a nota no ponto de decisão.
+    orcamento = n.get("daily_budget")
+    orcamento = int(orcamento) if orcamento is not None else None
+
     # Triagem aprendida (off por defeito): só ativa com min_materiality definido E modelo
     # presente. Sem modelo, avisa e segue com o comportamento de sempre.
     gate = n.get("min_materiality")
@@ -676,15 +711,24 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
                 if scored is not None:
                     print(f"[triagem {ticker}] P(anormal)={scored[0]:.0%} "
                           f"(gate {gate:.0%})")
+                # ⚠️ Com orçamento ligado, a triagem DEIXA DE VETAR e passa só a ordenar.
+                # Razão medida (`evaluation_gate_selectivity.md`): dentro de uma empresa o
+                # score quase não varia, logo um limiar sobre ele selecciona empresas e não
+                # notícias — em 84% das decisões o resultado estava determinado pela empresa
+                # antes de se ler a manchete, e cinco das doze não conseguiam alertar nunca.
+                # O score continua a ser calculado, registado e mostrado: tem informação para
+                # ORDENAR entre empresas, que é o uso que a medição sustenta.
                 gated = apply_materiality(text, scored, gate)
-                _log_decision_safe(latest.date, ticker, latest.headline,
-                                   scored, gate, kept=gated is not None)
-                if gated is None:
+                so_ordena = orcamento is not None
+                _log_decision_safe(latest.date, ticker, latest.headline, scored, gate,
+                                   kept=so_ordena or gated is not None)
+                if gated is None and not so_ordena:
                     print(f"[triagem {ticker}] alerta de noticia suprimido pelo gate.")
                     p_str = f"P={scored[0]:.2f} < {gate:.2f}" if scored is not None else "sem P"
                     _gate(ticker, "triage_suppressed", p_str)
                     continue
-                text = gated
+                if gated is not None:
+                    text = gated
             else:
                 _log_decision_safe(latest.date, ticker, latest.headline,
                                    None, None, kept=True)
@@ -1387,9 +1431,12 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     escada = [float(x) for x in ((cfg.get("news") or {}).get("materiality_ladder") or [])]
     # Supressões pós-varredura, para o funil poder ser reconciliado (ver `filter_new_alerts`).
     pos_scan: dict[str, tuple[str, str]] = {}
+    # Orçamento global do dia (ver `filter_new_alerts`). None = comportamento de sempre.
+    orcamento_dia = (cfg.get("news") or {}).get("daily_budget")
     alerts = filter_new_alerts(
         market_alerts, scan_news(cfg, event_times, gate_records, materiality, headlines),
         state, max_per, materiality, headlines, escada, pos_scan,
+        daily_budget=int(orcamento_dia) if orcamento_dia is not None else None,
     )
     detected_at = utc_stamp()
     _reconcile_gates(gate_records, pos_scan)

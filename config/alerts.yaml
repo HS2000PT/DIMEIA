@@ -53,7 +53,14 @@ news:
   # passa a acompanhar o alerta. null = desligado (comportamento de sempre, sem modelo).
   # LIGADO em produção como controlo de fadiga de alertas: só passa notícia com
   # P(movimento anormal) ≥ 0.5 segundo o modelo treinado (RQ4). Fail-open sem modelo.
+  # ⚠️ Com `daily_budget` definido, este valor DEIXA DE VETAR e passa só a ordenar.
+  # Medido em `docs/evaluation/evaluation_gate_selectivity.md`: como limiar, seleccionava
+  # empresas e não notícias (84% das decisões estavam determinadas pela empresa).
   min_materiality: 0.5
+  # Orçamento global de alertas de notícia por dia, entre TODAS as empresas. É a política que
+  # a dissertação avalia (precisão dentro de um orçamento de 5/dia); até aqui a avaliação media
+  # uma política e a produção implantava outra.
+  daily_budget: 5
   # Anti-repetição: só alerta notícias com ≤ este nº de dias (o scan olha 7 dias para trás,
   # mas sem isto a MESMA manchete podia alertar dias a fio). 2 cobre o fim de semana.
   # max_age_days: 2

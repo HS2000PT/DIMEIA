@@ -716,8 +716,61 @@ def test_todas_as_etapas_pos_varredura_existem_no_gate_log():
     desenhar e cai no rótulo por defeito."""
     from investigator.gate_log import STAGES
 
-    for etapa in ("daily_cap", "ladder_floor", "duplicate_story", "already_sent"):
+    for etapa in ("daily_cap", "ladder_floor", "duplicate_story", "already_sent",
+                  "daily_budget"):
         assert etapa in STAGES
+
+
+def test_orcamento_global_limita_o_TOTAL_e_nao_so_cada_empresa():
+    """⚠️ O tecto por ticker não limita o total: 12 empresas x 2 = 24 mensagens num dia.
+
+    O que o utilizador sente é o total. O orçamento é global e vem antes do tecto.
+    """
+    from scripts.run_alerts import filter_new_alerts
+
+    estado: dict = {"day": "2026-08-15", "alerted_market": [], "alerted_news": [],
+                    "news_count": {}, "news_words": {}}
+    candidatas = [(t, f"News alert for {t}\nlinha") for t in
+                  ("AAPL", "MSFT", "NVDA", "TSLA", "AMZN", "GOOGL", "META")]
+    suprimidas: dict[str, tuple[str, str]] = {}
+
+    saida = filter_new_alerts([], candidatas, estado, suppressed=suprimidas, daily_budget=3)
+
+    assert len(saida) == 3, "o orçamento tem de limitar o total, não cada empresa"
+    assert suprimidas.get("GOOGL", ("", ""))[0] == "daily_budget"
+
+
+def test_sem_orcamento_o_comportamento_e_o_de_sempre():
+    """O caminho antigo é o caso particular: sem orçamento, nada muda."""
+    from scripts.run_alerts import filter_new_alerts
+
+    estado: dict = {"day": "2026-08-15", "alerted_market": [], "alerted_news": [],
+                    "news_count": {}, "news_words": {}}
+    candidatas = [(t, f"News alert for {t}\nlinha") for t in
+                  ("AAPL", "MSFT", "NVDA", "TSLA", "AMZN", "GOOGL", "META")]
+
+    saida = filter_new_alerts([], candidatas, estado)
+
+    assert len(saida) == 7, "sem orçamento não pode haver limite global"
+
+
+def test_orcamento_serve_as_mais_materiais_primeiro():
+    """O orçamento só vale alguma coisa se gastar os lugares nas melhores candidatas.
+
+    É a única coisa para que a medição sustenta usar o score do modelo: ordenar ENTRE
+    empresas.
+    """
+    from scripts.run_alerts import filter_new_alerts, news_key
+
+    estado: dict = {"day": "2026-08-15", "alerted_market": [], "alerted_news": [],
+                    "news_count": {}, "news_words": {}}
+    cands = [(t, f"News alert for {t}\nlinha") for t in ("AAPL", "MSFT", "NVDA")]
+    mat = {news_key(t, x): p for (t, x), p in zip(cands, (0.30, 0.90, 0.60), strict=True)}
+
+    saida = filter_new_alerts([], cands, estado, materiality=mat, daily_budget=2)
+
+    assert [t for t, _ in saida] == ["MSFT", "NVDA"], (
+        "com orçamento de 2, os lugares vão para as duas mais materiais")
 
 
 def test_manchete_ja_enviada_hoje_e_registada_como_supressao():
