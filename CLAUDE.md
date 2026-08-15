@@ -7,6 +7,50 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 59 (2026-08-15, 2.ª parte — o aluno mandou focar tudo na QUALIDADE DOS ALERTAS:
+  "isto é o nosso produto e ciência; o UI é secundário"). IMPLANTADO E VERIFICADO AO VIVO.**
+  **⚠️ (A) O ACHADO: O PORTÃO ESCOLHIA EMPRESAS, NÃO NOTÍCIAS — 84% das decisões.** Medido sobre
+  as 4366 decisões reais (`evaluate_gate_selectivity.py`, novo): a amplitude do score DENTRO de
+  cada empresa é **0,064** e ENTRE empresas **0,385** (6,1×). Três empresas passavam **sempre**
+  (AMD 963/963, META, TSLA) e cinco **nunca** (AAPL, JNJ, JPM, NFLX, XOM) — a Apple não conseguia
+  gerar um alerta de notícia, acontecesse o que acontecesse. É o mesmo defeito que a tese já
+  identifica nos preços (um limiar fixo mede volatilidade, não raridade), um nível acima.
+  **⚠️ E a correcção óbvia NÃO servia:** simulei o piso relativo por empresa e nas de score quase
+  constante o percentil cai **em cima** da constante — a JNJ passaria 874 vezes. É o artefacto de
+  desempate que a tese documenta no chão alfabético.
+  **(B) SOLUÇÃO (escolha do aluno): o modelo deixa de VETAR e passa a ORDENAR**, com **orçamento
+  global de 5 alertas/dia**. O tecto por ticker limitava cada empresa e não o total (12×2=24).
+  **E isto fecha uma divergência**: a tese AVALIA precisão@orçamento e a produção implantava um
+  LIMIAR — eram políticas diferentes. ⚠️ O dry-run apanhou o que faltava: a `materiality_ladder`
+  é **outro limiar sobre o mesmo score** e a AAPL continuava muda, travada uma função à frente.
+  Com orçamento, o 1.º slot não tem piso.
+  **⚠️ (C) O CICLO DE APRENDIZAGEM ESTAVA PARADO.** `live_kb` congelado em 2026-07-27 e 1785
+  pendentes de Julho por maturar (precisam de 8 dias, tinham 19). Causa: o worker não semeia nem
+  publica `live_kb`/`live_pending` — a mesma classe da sessão 57. **A correcção não podia ser a
+  mesma:** pesam 16,6 e 11,9 MB e publicá-los a cada 60 s seriam dezenas de GB/dia. Solução:
+  semear no arranque + publicar com estrangulamento de 30 min.
+  **(D) BASE DE CASOS: 2016 → 38 214 precedentes.** O `backfill_kb` tinha 38 mil casos com
+  impactos medidos e **zero embeddings**. Embebidos com o embedder do produto (17,4 min; o script
+  **recusa-se a escrever** se cair no fallback lexical). ⚠️ **Mas em JSONL custava 655 MB de RAM
+  num contentor de 512 MB** — e o problema era o FORMATO, não o volume: as mesmas 38214×384
+  posições são **56 MB em float32**. Formato compacto novo (metadados JSONL + `.npy` mmap):
+  **25 MB e 0,44 s**, contra 655 MB e 9,0 s. **26×.** Corrigido também que o `find_precedents`
+  reconstruía a matriz INTEIRA a cada consulta.
+  **(E) TEXTO DO ALERTA:** a **fonte com hiperligação** (o `NewsItem` já trazia `source`/`url` e
+  eram deitados fora; verificado que o URL do Finnhub é um 302 para o artigo real), o **preço de
+  hoje** com a contagem empírica de raridade, e os precedentes a **contar DIAS e não casos**
+  (medido: 36,8% dos alertas assentavam em menos dias do que casos).
+  **IMPLANTADO `4040c48b`** e verificado nos registos do worker: `[kb-ano] 38214`, `[kb-viva] 4621`,
+  `30 caso(s) maturado(s)`, `orçamento do dia gasto (5/5)`, funil com `daily_budget: 18` e
+  `already_sent: 1`. Instantâneo fresco e a avançar. **Sem falta de memória.**
+  ⚠️ **Falso alarme meu:** julguei o instantâneo parado; era cache do CDN do raw.githubusercontent
+  (~5 min) e o `fresco: False` que apareceu era o sistema a sinalizar-se correctamente.
+  ⚠️ **Dano que causei:** um commit apanhou o `backfill_kb_sbert.jsonl` a ser escrito e pôs
+  **84 MB na história do git**, permanentemente. Não reescrevi história publicada.
+  **⏭️ POR FAZER:** mais fontes de notícias (intercalar, menos latência, validação cruzada); o
+  **painel simples** — ⚠️ **o aluno NÃO quer eliminar o painel, quer substituir a v5**, que ele
+  descreve como "excêntrica" e "uma sopa de funcionalidades", por um **espelho do Telegram**.
+  **Portas: 736 testes, ruff limpo, tese 77 pp a 0 erros, congelados intactos.**
 - **Sessão nº:** 58 (**a TESE CURTA em PT-PT: revisão crítica, PT-PT a sério, transparência
   máxima, e as métricas explicadas do zero**)
 - **Última atualização:** 2026-08-15
