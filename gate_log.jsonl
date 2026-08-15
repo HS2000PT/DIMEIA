@@ -1,15 +1,3 @@
-{"date": "2026-08-03", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon Tops $3T, Meta Rallies 7% as AI Hyperscalers Ride Earnings Momentum"}
-{"date": "2026-08-03", "ticker": "GOOGL", "stage": "alerted", "detail": "Why Alphabet Stock Popped Today"}
-{"date": "2026-08-03", "ticker": "META", "stage": "alerted", "detail": "Amazon Tops $3T, Meta Rallies 7% as AI Hyperscalers Ride Earnings Momentum"}
-{"date": "2026-08-03", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
-{"date": "2026-08-03", "ticker": "AMD", "stage": "alerted", "detail": "AMD Q2 Earnings Preview: Wall Street Is Watching AMD's Server CPU Push As Lisa S"}
-{"date": "2026-08-03", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
-{"date": "2026-08-03", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
-{"date": "2026-08-03", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.32 < 0.50"}
-{"date": "2026-08-04", "ticker": "AAPL", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
-{"date": "2026-08-04", "ticker": "MSFT", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
-{"date": "2026-08-04", "ticker": "NVDA", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
-{"date": "2026-08-04", "ticker": "TSLA", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
 {"date": "2026-08-04", "ticker": "AMZN", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
 {"date": "2026-08-04", "ticker": "GOOGL", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
 {"date": "2026-08-04", "ticker": "META", "stage": "error", "detail": "ValueError: Input X contains NaN.\nLogisticRegression does not accept missing values encoded as NaN natively. For supervi"}
@@ -558,6 +546,18 @@
 {"date": "2026-08-15", "ticker": "NFLX", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
 {"date": "2026-08-15", "ticker": "XOM", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
 {"date": "2026-08-15", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.31 < 0.45"}
+{"date": "2026-08-15", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.46 < 0.50"}
+{"date": "2026-08-15", "ticker": "MSFT", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
+{"date": "2026-08-15", "ticker": "NVDA", "stage": "weak_precedent", "detail": "melhor sim 0.38 < 0.45"}
+{"date": "2026-08-15", "ticker": "TSLA", "stage": "weak_precedent", "detail": "melhor sim 0.45 < 0.45"}
+{"date": "2026-08-15", "ticker": "AMZN", "stage": "weak_precedent", "detail": "melhor sim 0.36 < 0.45"}
+{"date": "2026-08-15", "ticker": "GOOGL", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
+{"date": "2026-08-15", "ticker": "META", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
+{"date": "2026-08-15", "ticker": "JPM", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
+{"date": "2026-08-15", "ticker": "AMD", "stage": "duplicate_story", "detail": "same story, other words"}
+{"date": "2026-08-15", "ticker": "NFLX", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
+{"date": "2026-08-15", "ticker": "XOM", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
+{"date": "2026-08-15", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.30 < 0.50"}
 {"date": "2026-08-15", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.46 < 0.50"}
 {"date": "2026-08-15", "ticker": "MSFT", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
 {"date": "2026-08-15", "ticker": "NVDA", "stage": "weak_precedent", "detail": "melhor sim 0.38 < 0.45"}
