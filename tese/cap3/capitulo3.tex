@@ -1,6 +1,429 @@
-% Capítulo 3 — Metodologia (por escrever)
+% Capítulo 3 — Metodologia: as três técnicas (orçamento: ~16 pp)
+% É o capítulo que tem de ser defensável de cor. Explicar devagar, com desenhos,
+% e fechar cada técnica com um resumo de três frases.
 
 \chapter{Metodologia}
 \label{cap:metodologia}
 
-Por escrever.
+\section{As três decisões}
+\label{sec:met_tres}
+
+\emph{O que é que o sistema tem mesmo de decidir?}
+
+Tudo o que este trabalho faz cabe em três decisões. Estão na Figura~\ref{fig:tres_decisoes} e são
+sempre as mesmas, por esta ordem.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small, >={Stealth[length=2.4mm]},
+  cx/.style={draw, rounded corners, align=center, text width=3.5cm, minimum height=1.7cm,
+             fill=black!4},
+  num/.style={font=\bfseries\large, text=black!45},
+]
+  \node[cx] (a) {\textbf{1. É invulgar?}\\[3pt]
+    \footnotesize comparar o dia de hoje\\ \footnotesize com o normal \emph{desta} empresa};
+  \node[cx, right=1.1cm of a] (b) {\textbf{2. Já aconteceu?}\\[3pt]
+    \footnotesize procurar notícias passadas\\ \footnotesize parecidas, e medir o que\\
+    \footnotesize se seguiu};
+  \node[cx, right=1.1cm of b] (c) {\textbf{3. Merece avisar?}\\[3pt]
+    \footnotesize decidir se isto justifica\\ \footnotesize interromper alguém};
+  \node[num, above=1mm of a] {estatística};
+  \node[num, above=1mm of b] {significado};
+  \node[num, above=1mm of c] {aprendizagem};
+  \draw[->, thick, black!50] (a) -- (b);
+  \draw[->, thick, black!50] (b) -- (c);
+\end{tikzpicture}
+\caption[As três decisões do sistema]{As três decisões, e a família de técnicas que responde a cada
+uma. Cada secção deste capítulo trata de uma coluna.}
+\label{fig:tres_decisoes}
+\end{figure}
+
+Cada decisão é tratada com a técnica mais simples que consegue resolvê-la. Isto não é preguiça: é
+uma escolha de desenho que se paga no Capítulo~\ref{cap:avaliacao}, onde cada técnica é comparada
+com alternativas mais complicadas. Quando a simples ganha, fica a simples --- e diz-se porquê.
+
+\section{Técnica 1: detetar o que é invulgar}
+\label{sec:met_zscore}
+
+\emph{Como é que um computador decide que 4\% é muito?}
+
+\subsection{O problema, em palavras}
+
+Não é possível responder com um número fixo.
+
+Uma regra do género \emph{``avisar sempre que uma ação se mexer mais de 3\%''} parece razoável e é
+má. Para uma empresa calma, como uma cadeia de supermercados, 3\% é um acontecimento raro. Para uma
+empresa volátil, como uma tecnológica em crescimento, 3\% acontece muitas vezes por mês. A mesma
+regra dá quase nenhum alerta na primeira e alertas quase todos os dias na segunda.
+
+O que interessa não é o tamanho do movimento. É o tamanho do movimento \textbf{comparado com o que
+é normal para aquela empresa}.
+
+\subsection{A ideia: medir em desvios-padrão}
+
+A solução é velha e boa, e é a forma mais comum de detetar anomalias em séries temporais
+\autocite{chandola2009anomaly}: em vez de comparar com um número fixo, comparo com o comportamento
+recente da própria ação.
+
+Olho para os últimos vinte dias e pergunto duas coisas: \emph{quanto é que esta ação costuma mexer?}
+e \emph{quão longe do costume ficou hoje?} A resposta chama-se \textbf{\emph{z}-score}:
+
+\begin{equation}
+  z_t \;=\; \frac{r_t - \mu}{\sigma}
+  \label{eq:zscore}
+\end{equation}
+
+Termo a termo:
+
+\begin{itemize}
+  \item $r_t$ é o retorno de hoje --- quanto a ação subiu ou desceu;
+  \item $\mu$ (mu) é a \textbf{média} dos retornos dos vinte dias anteriores: o ``centro'' do que é
+        normal;
+  \item $\sigma$ (sigma) é o \textbf{desvio-padrão} desses vinte dias: uma medida de quanto a ação
+        costuma oscilar à volta desse centro;
+  \item $z_t$ é o resultado: \emph{a quantos desvios-padrão do normal ficou o dia de hoje}.
+\end{itemize}
+
+Um $z$ de $+1$ quer dizer ``um bocadinho acima do costume''. Um $z$ de $+7$ quer dizer ``isto quase
+nunca acontece''. E --- o ponto todo --- $z = +7$ significa a mesma coisa na empresa calma e na
+empresa volátil, porque cada uma é comparada consigo própria.
+
+\subsection{A janela que anda, e a regra que a protege}
+
+A Figura~\ref{fig:janela} mostra como isto funciona ao longo do tempo. A janela dos vinte dias
+desliza: para julgar o dia de hoje, usa os vinte dias \emph{anteriores}; amanhã, desliza um dia.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\small, >={Stealth[length=2.2mm]}]
+  % barras dos dias
+  \foreach \i in {0,...,19} {
+    \fill[black!18] (\i*0.32,0) rectangle (\i*0.32+0.24,0.55);
+  }
+  \fill[orange!70] (20*0.32,0) rectangle (20*0.32+0.24,1.25);
+  \draw[decorate, decoration={brace, amplitude=5pt}, black!55]
+    (0,-0.15) -- (19*0.32+0.24,-0.15)
+    node[midway, below=6pt, align=center, black!65]
+    {\footnotesize os \textbf{20 dias anteriores}\\[-2pt]\footnotesize dão o $\mu$ e o $\sigma$};
+  \draw[decorate, decoration={brace, amplitude=5pt}, orange!75!black]
+    (20*0.32,-0.15) -- (20*0.32+0.24,-0.15)
+    node[midway, below=6pt, align=center, text=orange!60!black]
+    {\footnotesize o dia\\[-2pt]\footnotesize \textbf{a julgar}};
+  \draw[->, thick, black!45] (20*0.32+0.6,0.6) -- (20*0.32+1.5,0.6)
+    node[right, align=left, black!60] {\footnotesize amanhã a janela\\[-2pt]\footnotesize desliza um dia};
+\end{tikzpicture}
+\caption[A janela deslizante do \emph{z}-score]{A janela que define ``o normal''. O dia que está a ser
+julgado \textbf{não entra} no cálculo da sua própria norma --- e é esta separação que garante que o
+sistema nunca usa informação que ainda não teria.}
+\label{fig:janela}
+\end{figure}
+
+Repare-se num pormenor da figura que parece pequeno e não é: \textbf{o dia que está a ser julgado
+não entra no cálculo da sua própria norma}. Se entrasse, um dia muito extremo puxaria a média e
+inflacionaria o desvio-padrão, e o próprio dia pareceria menos invulgar do que foi. O sistema
+estaria a usar informação que, no momento da decisão, ainda não devia contar.
+
+Esta regra tem um nome --- \textbf{evitar \emph{lookahead}} --- e atravessa todo o trabalho. Volto a
+ela na Secção~\ref{sec:met_avaliacao}, onde mostro como é imposta por um teste automático em vez de
+ser apenas prometida.
+
+\subsection{Um caso real}
+
+A Tabela~\ref{tab:met_tsla} mostra o cálculo completo para o maior movimento do período estudado:
+a Tesla, a 24 de outubro de 2024, no dia a seguir aos resultados trimestrais.
+
+\begin{table}[ht]
+\caption{O \emph{z}-score de um dia real, passo a passo (Tesla, 24 de outubro de 2024).}
+\label{tab:met_tsla}
+\centering
+\begin{tabular}{p{0.55\textwidth} r}
+\toprule
+\tabhead{Quantidade} & \tabhead{Valor} \\
+\midrule
+Média dos retornos dos 20 dias anteriores, $\mu$ & $-0.92\%$ \\
+Desvio-padrão desses 20 dias, $\sigma$ & $2.73\%$ \\
+Retorno do dia, $r_t$ & $+19.82\%$ \\
+\midrule
+\emph{z}-score, $(r_t - \mu)/\sigma$ & $\mathbf{+7.61}$ \\
+Sinalizado? & sim \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Um movimento de quase 20\% num dia é evidente para qualquer pessoa. O que a tabela mostra é
+\emph{porquê}: não porque 20\% seja um número grande em abstrato, mas porque é sete vezes e meia o
+que aquela ação costumava mexer naquelas semanas. É essa frase que o sistema consegue mostrar ao
+utilizador, e é a diferença entre avisar e explicar.
+
+Há ainda um caso pequeno que vale a pena resolver bem: se uma ação não se mexeu \emph{nada} durante
+vinte dias, o desvio-padrão é zero e a divisão da Equação~\ref{eq:zscore} não existe. Nesse caso o
+sistema devolve $z = 0$ em vez de rebentar. Uma ação parada é descrita como não tendo nada de
+especial, que é exatamente o que se passa.
+
+\begin{tcolorbox}[colback=black!3, colframe=black!30, boxrule=0.4pt, arc=2pt]
+\textbf{Em três frases.} Comparo o dia de hoje com os vinte dias anteriores da mesma ação e conto a
+distância em desvios-padrão. Assim, o mesmo número significa a mesma coisa numa empresa calma e numa
+volátil. O dia julgado nunca entra no cálculo da sua própria norma.
+\end{tcolorbox}
+
+\section{Técnica 2: encontrar casos parecidos}
+\label{sec:met_recuperacao}
+
+\emph{Como é que o computador percebe que duas notícias falam da mesma coisa?}
+
+\subsection{O problema, em palavras}
+
+Chega uma notícia: \emph{``Nvidia bate estimativas com procura de centros de dados''}.
+
+A pergunta útil é: \emph{já houve notícias parecidas com esta, e o que fez o preço a seguir?}
+
+A maneira ingénua de procurar é por palavras. Procurar notícias antigas que contenham ``Nvidia'',
+``bate'' e ``estimativas''. Funciona mal, por duas razões simétricas:
+
+\begin{itemize}
+  \item duas notícias podem dizer a \textbf{mesma coisa com palavras diferentes} ---
+        ``supera previsões'' e ``bate estimativas'' não partilham uma única palavra importante;
+  \item duas notícias podem \textbf{partilhar palavras e falar de coisas diferentes} --- ``bate
+        estimativas'' e ``bate recorde de despedimentos'' partilham ``bate''.
+\end{itemize}
+
+O que é preciso é comparar \textbf{significado}, não letras.
+
+\subsection{A ideia: transformar frases em pontos}
+
+É aqui que entra a única peça de aprendizagem profunda deste trabalho, e vale a pena explicá-la com
+calma porque é a que soa mais complicada e não é.
+
+Um \textbf{modelo de embeddings de frase} \autocite{reimers2019sbert} é um modelo já treinado que
+recebe uma frase e devolve uma lista de números --- neste caso, 384 números. Essa lista chama-se \emph{embedding}, e funciona como
+uma \textbf{coordenada}: é a posição daquela frase num espaço.
+
+A propriedade que interessa é esta: o modelo foi treinado de forma a que frases com significado
+parecido fiquem \textbf{perto} umas das outras nesse espaço, mesmo que usem palavras diferentes. A
+Figura~\ref{fig:embeddings} mostra a ideia em duas dimensões (as verdadeiras são 384, que não se
+conseguem desenhar).
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\small]
+  \draw[->, black!35] (-0.3,0) -- (7.6,0);
+  \draw[->, black!35] (0,-0.3) -- (0,4.3);
+  % cluster resultados
+  \fill[black!70] (1.5,3.2) circle (2.4pt) node[right=3pt, align=left, font=\footnotesize] {``bate estimativas''};
+  \fill[black!70] (2.1,3.6) circle (2.4pt) node[right=3pt, align=left, font=\footnotesize] {``supera previsões''};
+  \fill[black!70] (1.9,2.7) circle (2.4pt) node[right=3pt, align=left, font=\footnotesize] {``lucro acima do esperado''};
+  \draw[black!35, dashed] (1.85,3.15) circle (1.0);
+  \node[black!50, font=\footnotesize\itshape] at (1.1,4.35) {resultados financeiros};
+  % cluster despedimentos
+  \fill[orange!75!black] (5.9,1.0) circle (2.4pt) node[right=3pt, align=left, font=\footnotesize] {``corta 2000 postos''};
+  \fill[orange!75!black] (5.4,1.5) circle (2.4pt) node[left=3pt, align=right, font=\footnotesize] {``bate recorde de\\ despedimentos''};
+  \draw[orange!55, dashed] (5.65,1.25) circle (0.8);
+  \node[orange!60!black, font=\footnotesize\itshape] at (6.3,2.35) {despedimentos};
+\end{tikzpicture}
+\caption[Frases como pontos num espaço]{Cada frase vira um ponto. Frases com o mesmo significado
+ficam próximas, mesmo sem partilharem palavras; frases que partilham palavras (``bate'') mas falam
+de coisas diferentes ficam longe. O desenho tem duas dimensões para se poder ver --- o modelo usa
+384.}
+\label{fig:embeddings}
+\end{figure}
+
+\subsection{Medir a distância: o cosseno}
+
+Tendo duas frases como pontos, falta medir se estão perto.
+
+A medida usada é a \textbf{semelhança do cosseno}. Em vez de medir a distância em linha reta, mede o
+\textbf{ângulo} entre as duas direções. Dá um valor entre $-1$ e $1$:
+
+\begin{itemize}
+  \item perto de $1$: as duas frases apontam na mesma direção --- significado muito parecido;
+  \item perto de $0$: não têm relação;
+  \item negativo: apontam em direções opostas.
+\end{itemize}
+
+Usa-se o ângulo e não a distância porque o que interessa é \emph{sobre o que} a frase fala, e não o
+comprimento do texto. Uma manchete curta e um parágrafo longo sobre o mesmo assunto devem ficar
+próximos, e o ângulo dá isso.
+
+\subsection{Medir o que se seguiu}
+
+Encontrar notícias parecidas é metade. A outra metade é dizer o que aconteceu ao preço depois de cada
+uma delas.
+
+Para isso usa-se uma técnica clássica de finanças, o \textbf{estudo de evento}
+\autocite{brown1985daily}: fixa-se o dia da notícia e mede-se a variação do preço $1$, $3$ e $5$
+dias depois. A Figura~\ref{fig:estudo_evento}
+mostra o alinhamento.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\small, >={Stealth[length=2.2mm]}]
+  \draw[black!40, thick] (0,0) -- (9,0);
+  \foreach \x/\l in {1.2/{$d$}, 3.4/{$d{+}1$}, 5.6/{$d{+}3$}, 7.8/{$d{+}5$}} {
+    \draw[black!45] (\x,-0.12) -- (\x,0.12);
+    \node[below=3pt, black!60, font=\footnotesize] at (\x,-0.12) {\l};
+  }
+  \node[align=center, font=\footnotesize, text=orange!60!black] at (1.2,1.15)
+    {notícia\\ publicada};
+  \draw[->, orange!75!black] (1.2,0.85) -- (1.2,0.2);
+  \draw[->, black!55] (1.2,-0.95) to[bend right=12] node[midway, below, font=\footnotesize, black!65] {o que se seguiu} (7.8,-0.95);
+  \node[align=center, font=\footnotesize, black!55] at (1.2,0.45) {fecho\\ deste dia};
+\end{tikzpicture}
+\caption[Como se mede o impacto de uma notícia]{O impacto é medido a partir do \emph{fecho} do dia da
+notícia. Se a notícia sai num sábado, o dia $d$ é o primeiro dia de bolsa seguinte. É uma
+\textbf{medição do que aconteceu}, não uma previsão.}
+\label{fig:estudo_evento}
+\end{figure}
+
+Duas decisões de detalhe, ambas com consequência:
+
+\begin{enumerate}
+  \item \textbf{Se a notícia sai fora de dias de bolsa}, o dia $d$ é o primeiro dia de negociação
+        igual ou posterior. Sem esta regra, uma notícia de sábado não teria a que se agarrar.
+  \item \textbf{A medição começa no fecho de $d$}, não na abertura. É a opção conservadora: não
+        atribui à notícia a parte do movimento que já tinha acontecido antes de ela ser lida.
+\end{enumerate}
+
+E vale a pena dizer aquilo que isto \textbf{não} é. Medir o que aconteceu a seguir a notícias
+passadas não é prever o que vai acontecer agora. É por isso que o sistema mostra sempre os casos
+\emph{um a um}, com a data e o valor de cada um, em vez de resumir tudo a uma média --- uma média
+esconde que os casos podem ter ido em sentidos opostos.
+
+\begin{tcolorbox}[colback=black!3, colframe=black!30, boxrule=0.4pt, arc=2pt]
+\textbf{Em três frases.} Um modelo já treinado transforma cada manchete numa lista de 384 números que
+funciona como uma coordenada de significado. Comparo manchetes pelo ângulo entre essas coordenadas,
+o que apanha frases parecidas mesmo com palavras diferentes. Para cada caso passado, meço o que o
+preço fez $1$, $3$ e $5$ dias depois --- uma medição, não uma previsão.
+\end{tcolorbox}
+
+\section{Técnica 3: decidir o que merece um alerta}
+\label{sec:met_triagem}
+
+\emph{Já sei que algo é invulgar. Devo mesmo interromper alguém?}
+
+\subsection{O problema, em palavras}
+
+Chegam muitas notícias. A maioria não interessa: repetições, listas automáticas, textos que
+mencionam a empresa de passagem.
+
+Um sistema que avisa de tudo é tão inútil como um que não avisa de nada --- pior, até, porque ensina
+a pessoa a ignorar o canal. Este problema tem nome, \textbf{fadiga de alertas}, e é a razão pela
+qual esta terceira decisão existe.
+
+Aqui, ao contrário das duas anteriores, não há uma fórmula óbvia. É o sítio natural para
+\textbf{aprender a partir dos dados}.
+
+\subsection{A tarefa e o rótulo}
+
+Para treinar um modelo é preciso, antes de tudo, uma pergunta com resposta conhecida.
+
+A pergunta escolhida foi: \emph{depois desta notícia, houve um movimento anormalmente grande no
+preço?} A resposta --- o \textbf{rótulo} --- constrói-se assim:
+
+\begin{enumerate}
+  \item mede-se o retorno da ação nos três dias seguintes à notícia;
+  \item subtrai-se o movimento do mercado no mesmo período, para não confundir ``a empresa mexeu-se''
+        com ``mexeu-se tudo'';
+  \item se o que sobra for maior do que $2\%$ em valor absoluto, o rótulo é $1$; caso contrário, $0$.
+\end{enumerate}
+
+Repare-se em \textbf{valor absoluto}. O rótulo diz se houve movimento \emph{grande}, e nunca em que
+\textbf{direção}. Isto é deliberado e é a fronteira que o trabalho não atravessa: o modelo aprende
+sobre \emph{materialidade}, não sobre subir ou descer.
+
+\subsection{O que o modelo vê}
+
+O modelo recebe cinco tipos de informação sobre o momento da notícia:
+
+\begin{itemize}
+  \item \textbf{volatilidade recente} --- quanto a ação tem oscilado nos últimos 20 dias;
+  \item \textbf{momento} --- como se comportou nos últimos 5 dias;
+  \item \textbf{o movimento do próprio dia};
+  \item \textbf{o comprimento da manchete};
+  \item \textbf{o setor} da empresa.
+\end{itemize}
+
+E, numa das variantes testadas, também o \emph{embedding} da manchete --- os mesmos 384 números da
+Secção~\ref{sec:met_recuperacao}. Comparar a variante com texto e a variante sem texto é
+precisamente o que a \gls{QI}3 pergunta, e a resposta está no Capítulo~\ref{cap:avaliacao}.
+
+\subsection{Treinar sem fazer batota com o tempo}
+
+Esta é a parte onde é mais fácil enganar-se a si próprio, por isso vale a pena o desenho da
+Figura~\ref{fig:divisao}.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\small]
+  \fill[black!18] (0,0) rectangle (6.3,0.7);
+  \fill[orange!35] (6.3,0) rectangle (7.0,0.7);
+  \fill[black!32] (7.0,0) rectangle (8.4,0.7);
+  \fill[orange!35] (8.4,0) rectangle (9.1,0.7);
+  \fill[black!50] (9.1,0) rectangle (10.5,0.7);
+  \node[white, font=\footnotesize\bfseries] at (3.15,0.35) {TREINO};
+  \node[font=\footnotesize\bfseries] at (7.7,0.35) {VALIDAÇÃO};
+  \node[white, font=\footnotesize\bfseries] at (9.8,0.35) {TESTE};
+  \node[orange!60!black, font=\footnotesize, rotate=90] at (6.65,1.35) {embargo};
+  \node[orange!60!black, font=\footnotesize, rotate=90] at (8.75,1.35) {embargo};
+  \draw[->, black!45] (0,-0.4) -- (10.5,-0.4) node[right, black!60, font=\footnotesize] {tempo};
+\end{tikzpicture}
+\caption[Divisão temporal com embargo]{Os dados são divididos \textbf{por ordem cronológica}, nunca
+ao acaso. Entre blocos há um \emph{embargo} de cinco dias, porque o rótulo de uma notícia olha até
+três dias para a frente e sem o embargo o fim do treino tocaria no princípio do teste.}
+\label{fig:divisao}
+\end{figure}
+
+Duas regras, e as duas existem para impedir que o modelo pareça melhor do que é:
+
+\begin{description}
+  \item[Dividir pelo tempo, não ao acaso.] Se os dados fossem baralhados, o modelo treinaria com
+        notícias de 2023 e seria testado com notícias de 2019 --- estaria a ser avaliado sobre um
+        passado que já conhece. Aqui, treina-se no início do período e testa-se no fim, como
+        acontece na realidade.
+  \item[Embargo entre blocos.] O rótulo de uma notícia depende dos três dias seguintes. Uma notícia
+        no último dia de treino tem o seu rótulo determinado por dias que já pertencem ao bloco
+        seguinte. Deitam-se fora os cinco dias de fronteira, e diz-se quantas linhas isso custou.
+\end{description}
+
+\subsection{Da pontuação à probabilidade: calibração}
+
+O modelo devolve uma pontuação. Uma pontuação alta não é, por si só, uma probabilidade: dizer $0.8$
+não garante que aconteça em 8 de cada 10 casos.
+
+Como o número vai ser mostrado a uma pessoa, isso tem de ser corrigido. O passo chama-se
+\textbf{calibração} \autocite{niculescu2005calibration}: ajusta-se uma função simples que
+transforma pontuações em probabilidades
+\emph{honestas}, de modo a que, entre todos os casos a que o modelo dá $70\%$, cerca de $70\%$
+tenham mesmo acontecido. A calibração é ajustada no bloco de validação --- nunca no de teste.
+
+\begin{tcolorbox}[colback=black!3, colframe=black!30, boxrule=0.4pt, arc=2pt]
+\textbf{Em três frases.} Treinei um modelo para estimar se uma notícia é seguida de um movimento
+anormalmente grande, em qualquer direção. Os dados são divididos pelo tempo, com um embargo entre
+blocos, para o modelo nunca ser avaliado sobre um futuro que já viu. A pontuação é calibrada, para o
+número mostrado ao utilizador querer dizer o que parece querer dizer.
+\end{tcolorbox}
+
+\section{Como é que se sabe que isto funciona}
+\label{sec:met_avaliacao}
+
+\emph{O que impede um resultado bonito de ser um resultado enganador?}
+
+Três compromissos, assumidos \emph{antes} de correr as experiências.
+
+\paragraph{Primeiro: comparar sempre com o mais simples.}
+Um número sozinho não diz nada. Dizer que a recuperação acerta em metade dos casos só significa
+alguma coisa quando se sabe o que acertaria uma alternativa trivial. Por isso cada técnica é
+comparada com \textbf{linhas de base} --- uma regra fixa, uma escolha ao acaso, a notícia mais
+recente. Se a técnica sofisticada não ganhar, isso é o resultado, e é o que fica escrito.
+
+\paragraph{Segundo: o não-\emph{lookahead} é imposto por um teste, não prometido.}
+É fácil escrever ``não usámos informação do futuro''. É difícil garanti-lo. Aqui existe um teste
+automático que faz o seguinte: pega num exemplo, \textbf{altera artificialmente o futuro} e volta a
+calcular. Depois exige duas coisas ao mesmo tempo --- que as \emph{features} fiquem exatamente
+iguais (porque descrevem o passado) e que o \emph{rótulo} mude (porque descreve o futuro). Se
+alguma informação do futuro se tivesse infiltrado nas features, o teste falha.
+
+\paragraph{Terceiro: reportar o que sair.}
+O critério de sucesso de cada experiência foi escrito antes de a correr. Onde o resultado contrariou
+o que se esperava, fica reportado como se revelou. O Capítulo~\ref{cap:avaliacao} tem um caso desses,
+e é o mais interessante dos três.

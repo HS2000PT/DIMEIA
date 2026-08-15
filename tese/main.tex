@@ -19,12 +19,15 @@ headsepline,
 ]{meia-style}
 
 \usepackage{tikz}
-\usetikzlibrary{positioning, arrows.meta, calc, fit, backgrounds, shapes.geometric}
+\usetikzlibrary{positioning, arrows.meta, calc, fit, backgrounds, shapes.geometric, decorations.pathreplacing}
 % Em nós de diagrama, nunca cortar palavras a meio: quebrar só em espaços.
 \tikzset{every node/.append style={execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000\relax}}}
 
 % Figuras partilhadas com as teses longas: `figures/x` -> ../thesis/figures/x.
 \graphicspath{{../thesis/}{./}}
+
+% Caixas "Em três frases": o resumo defensável no fim de cada técnica.
+\usepackage[most]{tcolorbox}
 
 \usepackage[style=authoryear-comp,backend=biber]{biblatex}
 \addbibresource{../thesis/references.bib}
