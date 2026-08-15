@@ -120,3 +120,7 @@ tese/guia/*.toc
 tese/guia/*.fdb_latexmk
 tese/guia/*.fls
 tese/guia/build.log
+
+# Base de casos embebida: derivada, grande, e reproduzivel por scripts/embed_backfill_kb.py.
+# Fica fora do git ate se decidir se a app precisa dela (ver o commit que a criou).
+data/samples/backfill_kb_sbert.jsonl
