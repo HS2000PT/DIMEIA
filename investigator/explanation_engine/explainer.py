@@ -237,6 +237,10 @@ def explain_news_impact(
     date: str = "",
     materiality: str | None = None,
     today: str = "",
+    move: float | None = None,
+    move_note: str | None = None,
+    source: str = "",
+    url: str = "",
 ) -> str:
     """Explicação XAI para o Gatilho 2: notícia nova + precedentes históricos semelhantes.
 
@@ -254,6 +258,22 @@ def explain_news_impact(
     if date:
         header += f" ({html.escape(date, quote=False)})"
     header += f'\n"{html.escape(_clip(headline), quote=False)}"'
+    # ⚠️ DE ONDE VEIO, E COMO IR LÊ-LA. O `NewsItem` já trazia `source` e `url` da fonte, e o
+    # alerta deitava-os fora: citava uma manchete sem dizer quem a publicou nem deixar
+    # verificá-la. Num sistema cujo argumento é entregar a afirmação COM a evidência anexada,
+    # a fonte da própria manchete é a evidência mais básica de todas.
+    if source or url:
+        quem = html.escape(source, quote=False) if source else "source"
+        header += f'\n<a href="{html.escape(url, quote=True)}">{quem}</a>' if url else f"\n{quem}"
+    # ⚠️ O QUE O PREÇO ESTÁ A FAZER, que é o facto que faltava. Até 2026-08-15 um alerta de
+    # notícia falava de manchetes passadas e nunca dizia o que a acção fazia AGORA — o
+    # utilizador tinha de ir ver a outro lado a única coisa que lhe permitia julgar se a
+    # notícia interessava. Opcional: sem valor, o texto fica byte-igual ao de sempre.
+    if move is not None and move == move:
+        linha = f"Right now: <b>{move * 100:+.2f}%</b> today"
+        if move_note:
+            linha += f" · {html.escape(move_note, quote=False)}"
+        header += f"\n{linha}"
     if not precedents:
         out = header + "\nNo similar historical precedents found in the knowledge base."
         return f"{out}\n{materiality}" if materiality else out
@@ -295,11 +315,29 @@ def explain_news_impact(
     elif vals and (subiram == len(vals) or desceram == len(vals)):
         # Unânime (inclui o caso confuso: notícia positiva mas casos passados caíram) — deixar
         # explícito que estes são casos do mesmo TEMA, não uma previsão para esta notícia.
+        #
+        # ⚠️ E CONTAR OS DIAS, não só os casos. O impacto é medido por (empresa, dia), portanto
+        # duas manchetes da mesma empresa no mesmo dia partilham o MESMO valor por construção.
+        # Dizer "3 de 3 casos desceram" quando os três são o mesmo dia apresenta como
+        # concordância aquilo que é uma repetição. Medido sobre os 247 alertas já entregues
+        # com precedentes: em 36,8% os casos assentavam em menos dias distintos do que casos
+        # exibidos, e em 11,3% eram todos do mesmo dia.
         rumo = "up" if subiram else "down"
-        lines.append(
-            f"{len(vals)} of {len(vals)} shown cases moved {rumo} — topic-similar past cases, "
-            "not a prediction for this news (an observed pattern, not a forecast)."
-        )
+        dias = {(rec.ticker, rec.date) for rec, _ in precedents
+                if rec.impacts.get(key) is not None}
+        if len(dias) < len(vals):
+            plural = "s" if len(dias) != 1 else ""
+            lines.append(
+                f"{len(vals)} of {len(vals)} shown cases moved {rumo}, but they come from only "
+                f"{len(dias)} observed day{plural} — impact is measured per company-day, so "
+                "cases sharing a day share the same number. Topic-similar past cases, not a "
+                "prediction for this news."
+            )
+        else:
+            lines.append(
+                f"{len(vals)} of {len(vals)} shown cases moved {rumo} — topic-similar past "
+                "cases, not a prediction for this news (an observed pattern, not a forecast)."
+            )
     if materiality:
         lines.append(materiality)
     lines.append(

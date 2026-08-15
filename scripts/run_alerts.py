@@ -158,6 +158,40 @@ def seed_state_from_shared_history(state: dict, entries: list, today: str) -> No
             state["opening_sent"] = True
 
 
+def _movimento_de_hoje(ticker: str) -> tuple[float | None, str | None]:
+    """O retorno do último dia e uma leitura em palavras da sua raridade. Fail-open total.
+
+    Existe porque um alerta de notícia falava de manchetes passadas e nunca dizia o que a acção
+    estava a fazer **agora** — o facto mais simples e o único que permite julgar, num relance,
+    se a notícia interessa. A frase de raridade usa a mesma contagem empírica do painel (quantos
+    dos últimos dias se moveram pelo menos isto), e não uma probabilidade: converter o z-score
+    numa probabilidade exigiria normalidade, que os retornos não têm.
+    """
+    try:
+        from investigator.anomaly_detector.frequency import empirical_exceedance
+        from investigator.market_data.prices import get_price_history
+
+        closes = get_price_history(ticker)["Close"].dropna()
+        if len(closes) < 2:
+            return None, None
+        retornos = closes.pct_change().dropna()
+        ret = float(retornos.iloc[-1])
+        nota = None
+        try:
+            exc = empirical_exceedance(retornos)
+            if exc is not None:
+                # A contagem diz as duas coisas conforme o caso: "3 of the last 249" lê-se
+                # como raro e "220 of the last 249" lê-se como banal, sem precisar de
+                # adjectivo nenhum. O número fica sempre, que é a lição do defeito antigo em
+                # que um movimento no top 2% do ano foi descrito como "an ordinary day".
+                nota = f"{exc.count} of the last {exc.n} days moved at least as much"
+        except Exception:  # noqa: BLE001 — a nota é um extra, nunca um requisito
+            nota = None
+        return ret, nota
+    except Exception:  # noqa: BLE001
+        return None, None
+
+
 def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]],
                       state: dict, max_per_ticker: int = 2,
                       materiality: dict[str, float] | None = None,
@@ -691,9 +725,16 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
                 latest.headline, kbs, embedder, top_k=top_k, today=date.today(),
                 half_life_days=half_life, max_age_days=max_prec_age,
             )
+            # O movimento de hoje, para o alerta poder dizer o que a acção está a fazer. Sem
+            # isto o utilizador lia sobre manchetes passadas e tinha de ir a outro lado buscar
+            # a única coisa que lhe permitia julgar se aquilo importava. Fail-open: sem preço,
+            # o alerta fica exactamente como era.
+            movimento, nota_mov = _movimento_de_hoje(ticker)
             text = explain_news_impact(
                 ticker, latest.headline, precedents, horizon=horizon,
                 date=latest.date, today=date.today().isoformat(),
+                move=movimento, move_note=nota_mov,
+                source=latest.source, url=latest.url,
             )
             if not precedents_are_strong(precedents, min_sim):
                 best = max((s for _, s in precedents), default=0.0)
