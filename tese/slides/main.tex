@@ -1,0 +1,355 @@
+% Slides de defesa — tese curta (PT-PT).
+% ~15 minutos. Regra: um slide, uma ideia. O que está no slide é o que se aponta; o resto diz-se.
+% O penúltimo frame é a DEMONSTRAÇÃO (gravação da app).
+
+\documentclass[aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese,shorthands=off]{babel}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, calc, decorations.pathreplacing}
+\tikzset{every node/.append style={execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000\relax}}}
+\graphicspath{{../../thesis/figures/}}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+
+\title[InvestiGator]{Alertas Financeiros Explicáveis para Investidores de Retalho}
+\author[H.\ Santos]{Henrique José da Silva Santos \\
+  \footnotesize Orientador: Prof.\ Luís Gomes \quad Coorientador: Rafael Silva}
+\institute[ISEP]{MEIA --- Instituto Superior de Engenharia do Porto}
+\date{\footnotesize Defesa}
+
+\begin{document}
+
+\begin{frame}\titlepage\end{frame}
+
+% ══ 1. O PROBLEMA ═══════════════════════════════════════════════════════════
+\begin{frame}{Uma pessoa abre a aplicação e vê isto}
+\begin{center}
+\begin{tikzpicture}
+  \node[draw, rounded corners=6pt, minimum width=5cm, minimum height=2.6cm, fill=black!4] (t) {};
+  \node[font=\Large\bfseries] at ([yshift=6mm]t.center) {NVDA};
+  \node[font=\Huge\bfseries, text=red!65!black] at ([yshift=-6mm]t.center) {$-4{,}1\%$};
+\end{tikzpicture}
+\end{center}
+\vspace{2mm}
+\begin{center}
+\large E fica com \textbf{três perguntas} --- sempre estas, sempre por esta ordem.
+\end{center}
+\end{frame}
+
+\begin{frame}{As três perguntas}
+\begin{enumerate}
+  \item[\textbf{1.}] \textbf{Isto é invulgar?}\\
+        \footnotesize 4\% numa empresa calma é muito. Noutra, é terça-feira.\\[3mm]
+  \item[\textbf{2.}] \textbf{Foi a empresa, ou foi o mercado?}\\
+        \footnotesize Se caiu tudo, a história é outra.\\[3mm]
+  \item[\textbf{3.}] \textbf{Já aconteceu antes, e o que se seguiu?}\\
+        \footnotesize Houve dias parecidos? O que fez o preço depois?
+\end{enumerate}
+\vspace{3mm}
+\begin{center}
+\textbf{As aplicações gratuitas não respondem a nenhuma delas.}
+\end{center}
+\end{frame}
+
+\begin{frame}{O que existe hoje}
+\centering
+\small
+\begin{tabular}{lcccl}
+\toprule
+& \textbf{invulgar?} & \textbf{empresa ou mercado?} & \textbf{já aconteceu?} & \textbf{custo} \\
+\midrule
+App da corretora & --- & --- & --- & incluído \\
+Agregador de notícias & --- & --- & --- & grátis \\
+\emph{Robo-advisor} & --- & --- & --- & \% da carteira \\
+Terminal profissional & \checkmark & \checkmark & \checkmark & milhares/ano \\
+\midrule
+\textbf{Este trabalho} & \checkmark & \checkmark & \checkmark & \textbf{grátis} \\
+\bottomrule
+\end{tabular}
+\vspace{5mm}
+
+\begin{center}
+A linha que responde às três \textbf{já existe}. É a mais cara de todas.\\
+\textbf{O problema não é científico --- é de acesso.}
+\end{center}
+\end{frame}
+
+% ══ 2. O SISTEMA ════════════════════════════════════════════════════════════
+\begin{frame}{O que o sistema faz}
+\begin{center}
+\begin{tikzpicture}[
+  font=\small, >={Stealth[length=2.2mm]},
+  gat/.style={draw, rounded corners, fill=black!8, align=center, text width=2.9cm, minimum height=0.9cm},
+  sis/.style={draw, rounded corners, fill=black!3, align=center, text width=2.4cm, minimum height=1.5cm},
+  sa/.style={draw, rounded corners, fill=black!3, align=center, text width=3.4cm, minimum height=1.5cm},
+]
+  \node[gat] (g1) {movimento invulgar};
+  \node[gat, below=6mm of g1] (g2) {notícia relevante};
+  \node[sis] (s) at ($(g1)!0.5!(g2) + (3.9,0)$) {\textbf{InvestiGator}};
+  \node[sa, right=1.1cm of s] (o) {alerta explicado\\[2pt]
+    \scriptsize o quê · porquê\\ \scriptsize fontes · casos passados};
+  \draw[->] (g1) -- (s); \draw[->] (g2) -- (s); \draw[->] (s) -- (o);
+\end{tikzpicture}
+\end{center}
+\vspace{4mm}
+\begin{center}
+\large E há uma coisa que ele \textbf{recusa} fazer.
+\end{center}
+\end{frame}
+
+\begin{frame}{Não prevê preços}
+\begin{center}
+\Large
+Nunca diz que vai subir.\\[2mm]
+Nunca diz para comprar.\\[2mm]
+Nunca mostra um alvo de preço.
+\end{center}
+\vspace{6mm}
+\begin{center}
+\normalsize
+Parece uma limitação. É o contrário:\\
+\textbf{é o que torna tudo o resto verificável.}\\[2mm]
+\footnotesize Uma afirmação sobre o que já aconteceu confere-se contra o registo.\\
+Uma previsão não se confere.
+\end{center}
+\end{frame}
+
+% ══ 3. AS TRÊS TÉCNICAS ═════════════════════════════════════════════════════
+\begin{frame}{Técnica 1 --- é invulgar?}
+Comparar o dia de hoje com \textbf{os 20 dias anteriores da mesma ação}.
+\begin{center}
+\begin{tikzpicture}[font=\footnotesize]
+  \foreach \i in {0,...,19} { \fill[black!18] (\i*0.28,0) rectangle (\i*0.28+0.2,0.45); }
+  \fill[orange!70] (20*0.28,0) rectangle (20*0.28+0.2,1.0);
+  \draw[decorate, decoration={brace, amplitude=4pt}, black!55] (0,-0.12) -- (19*0.28+0.2,-0.12)
+    node[midway, below=5pt, black!65] {os 20 dias anteriores};
+  \draw[decorate, decoration={brace, amplitude=4pt}, orange!75!black]
+    (20*0.28,-0.12) -- (20*0.28+0.2,-0.12) node[midway, below=5pt, text=orange!60!black] {hoje};
+\end{tikzpicture}
+\end{center}
+\vspace{1mm}
+\begin{center}
+$z = \dfrac{\text{movimento de hoje} - \text{média}}{\text{desvio-padrão}}$
+\end{center}
+\vspace{2mm}
+\footnotesize
+$z=+7$ quer dizer o mesmo numa empresa calma e numa volátil.\\
+\textbf{O dia julgado não entra no cálculo da sua própria norma} --- sem isto, seria batota.
+\end{frame}
+
+\begin{frame}{Técnica 2 --- já aconteceu antes?}
+Procurar por palavras falha nos \textbf{dois} sentidos:
+\vspace{2mm}
+\begin{center}
+\begin{tikzpicture}[font=\footnotesize]
+  \fill[black!70] (0.6,1.5) circle (2pt) node[right=2pt] {``bate estimativas''};
+  \fill[black!70] (1.1,2.0) circle (2pt) node[right=2pt] {``supera previsões''};
+  \draw[black!35, dashed] (0.85,1.75) circle (0.75);
+  \node[black!50, font=\scriptsize\itshape] at (0.9,2.75) {mesmo sentido, palavras diferentes};
+  \fill[orange!75!black] (6.6,0.8) circle (2pt) node[right=2pt] {``bate recorde de despedimentos''};
+  \draw[orange!55, dashed] (6.6,0.8) circle (0.55);
+  \node[orange!60!black, font=\scriptsize\itshape] at (6.9,1.7) {palavra igual, sentido diferente};
+\end{tikzpicture}
+\end{center}
+\vspace{1mm}
+Cada manchete vira \textbf{384 números} --- uma coordenada de significado.\\
+Compara-se pelo \textbf{ângulo} entre elas.
+\vspace{2mm}
+
+Depois, para cada caso passado, mede-se o que o preço fez a $+1$, $+3$ e $+5$ dias.\\
+\footnotesize \textbf{É uma medição do passado, não uma previsão.}
+\end{frame}
+
+\begin{frame}{Técnica 3 --- merece avisar?}
+Aqui não há fórmula óbvia. É o sítio para \textbf{aprender dos dados}.
+\vspace{3mm}
+\begin{itemize}
+  \item \textbf{79\,753} exemplos que construí a partir de notícias e preços (2018--2023)
+  \item Pergunta: \emph{depois desta notícia houve um movimento anormalmente grande?}
+  \item \textbf{Em valor absoluto} --- nunca em que direção
+  \item Divisão \textbf{cronológica} com embargo; probabilidades calibradas
+\end{itemize}
+\vspace{4mm}
+\begin{center}
+\footnotesize O modelo, o seu treino e as suas métricas ficam guardados como artefactos.\\
+\textbf{É o meu modelo, treinado nos meus dados.}
+\end{center}
+\end{frame}
+
+% ══ 4. UM ALERTA REAL ═══════════════════════════════════════════════════════
+\begin{frame}{Um alerta real, do princípio ao fim}
+\footnotesize Meta, 12 de julho de 2026 --- \emph{``Mark Zuckerberg Said Meta's AI Bets `Haven't Come
+to Fruition Yet' as Shares Fell 5\%''}
+\vspace{2mm}
+\centering
+\scriptsize
+\begin{tabular}{rll}
+\toprule
+& \textbf{etapa} & \textbf{o que aconteceu} \\
+\midrule
+2 & nomeia a empresa? & ``Meta'', ``Zuckerberg'' \checkmark \\
+3 & é recente? & menos de 2 dias \checkmark \\
+4 & casos parecidos & MSFT $0{,}46$ · NVDA $0{,}51$ · NVDA $0{,}46$ \\
+5 & evidência forte? & melhor $0{,}51 \ge 0{,}45$ \checkmark \\
+6 & merece avisar? & $54\% \ge 50\%$ \checkmark \\
+9 & enviado & ao canal, e guardado \\
+\bottomrule
+\end{tabular}
+\vspace{3mm}
+
+\begin{center}
+\footnotesize Os desfechos foram \textbf{em sentidos opostos}: $+2{,}70\%$ · $-3{,}87\%$ · $+5{,}05\%$\\
+Por isso mostram-se \textbf{um a um} --- uma média esconderia isso.
+\end{center}
+\end{frame}
+
+% ══ 5. RESULTADOS ═══════════════════════════════════════════════════════════
+\begin{frame}{Resultado 1 --- deteção \textcolor{green!50!black}{\textbf{sim}}}
+Um bom detetor deve disparar a um ritmo \textbf{parecido} em empresas diferentes.
+\vspace{2mm}
+\centering
+\begin{tabular}{lccc}
+\toprule
+& \textbf{mín} & \textbf{máx} & \textbf{amplitude} \\
+\midrule
+\emph{z}-score & $0{,}016$ & $0{,}031$ & $\mathbf{0{,}015}$ \\
+Limiar fixo de 3\% & $0{,}009$ & $0{,}353$ & $0{,}344$ \\
+\bottomrule
+\end{tabular}
+\vspace{4mm}
+
+\begin{center}
+Mais de \textbf{20 vezes} mais consistente.\\[2mm]
+\small E ganha também a dois métodos aprendidos:
+$F_1$ $\mathbf{0{,}530}$ contra $0{,}269$ e $0{,}280$.
+\end{center}
+\end{frame}
+
+\begin{frame}{Resultado 2 --- precedentes \textcolor{green!50!black}{\textbf{sim}}}
+\centering
+\begin{tabular}{lc}
+\toprule
+\textbf{método} & \textbf{precisão@5} \\
+\midrule
+\textbf{Por significado (o método)} & $\mathbf{0{,}514}$ \\
+Por palavras em comum & $0{,}346$ \\
+Ao acaso (o chão) & $0{,}240$ \\
+As mais recentes & $0{,}126$ \\
+\bottomrule
+\end{tabular}
+\vspace{4mm}
+
+\begin{itemize}
+  \small
+  \item Sobre o corpus completo (80 mil notícias): \textbf{0,595}
+  \item \textbf{Capta tema, não direção} --- e é por isso que os casos aparecem um a um
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Resultado 3 --- triagem \textcolor{red!60!black}{\textbf{não}}}
+\centering
+\begin{tabular}{lc}
+\toprule
+\textbf{modelo} & \textbf{PR-AUC} \\
+\midrule
+\textbf{Só volatilidade} & $\mathbf{0{,}542}$ \\
+Só contexto & $0{,}538$ \\
+Contexto + texto & $0{,}496$ \\
+Só texto & $0{,}439$ \\
+\bottomrule
+\end{tabular}
+\vspace{3mm}
+
+\begin{center}
+\textbf{Nenhum modelo que lê o texto bate a volatilidade.}
+\end{center}
+\vspace{2mm}
+\footnotesize
+Era o contrário do que eu esperava. Verifiquei por três caminhos:
+re-teste em condições favoráveis ao texto ($0{,}533$, ainda abaixo),
+reamostragem por grupos, e \textbf{nove} definições diferentes do rótulo --- a volatilidade ganha
+nas nove.
+\end{frame}
+
+\begin{frame}{O erro que encontrei em mim próprio}
+Eu tinha escrito que a triagem \emph{``quase quadruplica''} a precisão: de $0{,}163$ para $0{,}632$.
+\vspace{3mm}
+
+O $0{,}163$ vinha do modelo ``alertar sempre'', que dá a mesma pontuação a tudo.\\
+\textbf{Com tudo empatado, a métrica desempata pela ordem do ficheiro} --- que está ordenado por data
+e por nome da empresa.
+\vspace{3mm}
+\begin{center}
+\large Esse número não media escolher às cegas.\\
+\textbf{Media escolher por ordem alfabética.}
+\end{center}
+\vspace{3mm}
+\footnotesize
+Ao acaso a sério dá $0{,}379$ $\Rightarrow$ o ganho é de \textbf{1,67$\times$}, não de quase quatro.\\
+E uma tabela de \textbf{13 constantes} dá $0{,}662$ --- bate o modelo treinado.
+\end{frame}
+
+% ══ 6. O QUE APRENDI ════════════════════════════════════════════════════════
+\begin{frame}{O que aprendi}
+\begin{enumerate}
+  \item \textbf{A linha de base é tão importante como o modelo.}\\
+        \footnotesize O resultado mais útil do trabalho veio de olhar para aquilo contra o qual eu
+        estava a comparar.\\[3mm]
+  \item \textbf{O sítio onde se põe um modelo importa tanto como o modelo.}\\
+        \footnotesize O meu funcionava sozinho e deixou de servir atrás de dois filtros simples, que
+        já faziam o trabalho.\\[3mm]
+  \item \textbf{A técnica mais simples ganhou duas vezes.}\\
+        \footnotesize Ao Isolation Forest, e ao modelo com texto.
+\end{enumerate}
+\vspace{3mm}
+\begin{center}
+\small A parte difícil não foi escolher a técnica mais avançada.\\
+Foi montar a avaliação \textbf{capaz de dizer que ela não era precisa}.
+\end{center}
+\end{frame}
+
+\begin{frame}{Limitações --- ditas antes de me perguntarem}
+\begin{itemize}
+  \item \textbf{Não fiz estudo com utilizadores.} A fidelidade das explicações está garantida por
+        construção; a \emph{utilidade} não foi medida, e não a afirmo.
+  \item \textbf{Os critérios de alerta ainda não estão bem calibrados}, e noto-o a usar. Medido:
+        havia notícia captada em $88{,}5\%$ dos dias invulgares --- e é um \emph{limite superior},
+        porque pergunta se existia \emph{uma}, não se chegou \emph{a certa}.
+  \item \textbf{Só manchetes}, não o corpo dos artigos.
+  \item \textbf{O atraso é da fonte, não da infraestrutura}: $\approx$2,5\,h até detetar,
+        1\,s até entregar.
+\end{itemize}
+\end{frame}
+
+% ══ 7. DEMONSTRAÇÃO ═════════════════════════════════════════════════════════
+\begin{frame}{Demonstração}
+\begin{center}
+\includegraphics[width=0.78\textwidth]{app_v5_overview.png}
+\end{center}
+\vspace{-2mm}
+\begin{center}
+\footnotesize O sistema está no ar. \textbf{[gravação da aplicação]}
+\end{center}
+% ⚠️ AO ALUNO: substituir a imagem acima pela GRAVAÇÃO no dia da defesa.
+%    Opção A (mais segura): abrir o vídeo em janela separada e voltar aos slides.
+%    Opção B: \usepackage{multimedia} e \movie[...]{...}{demo.mp4} — só funciona em
+%             alguns leitores de PDF; testar no portátil da apresentação ANTES.
+%    Plano B se não houver rede: esta imagem já mostra o essencial.
+\end{frame}
+
+\begin{frame}[plain]
+\vspace{1.5cm}
+\begin{center}
+{\Large \textbf{Obrigado}}\\[6mm]
+{\large Perguntas?}\\[10mm]
+\footnotesize
+Duas respostas de ``sim'', uma de ``não'', e um erro meu encontrado e corrigido.\\
+\textbf{É isso que uma avaliação honesta produz.}
+\end{center}
+\end{frame}
+
+\end{document}

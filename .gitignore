@@ -102,3 +102,12 @@ tese/*.out
 tese/*.run.xml
 tese/*.toc
 tese/build.log
+tese/slides/*.aux
+tese/slides/*.log
+tese/slides/*.nav
+tese/slides/*.out
+tese/slides/*.snm
+tese/slides/*.toc
+tese/slides/*.fdb_latexmk
+tese/slides/*.fls
+tese/slides/build.log
