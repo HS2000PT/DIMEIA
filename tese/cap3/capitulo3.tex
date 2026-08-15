@@ -416,6 +416,76 @@ Usa-se o ângulo e não a distância porque o que interessa é \emph{sobre o que
 comprimento do texto. Uma manchete curta e um parágrafo longo sobre o mesmo assunto devem ficar
 próximos, e o ângulo dá isso.
 
+A fórmula geral do cosseno entre dois vetores $\mathbf{u}$ e $\mathbf{v}$ é:
+
+\begin{equation}
+  \cos(\mathbf{u}, \mathbf{v}) \;=\;
+  \frac{\displaystyle\sum_{i=1}^{384} u_i \, v_i}
+       {\sqrt{\displaystyle\sum_{i=1}^{384} u_i^2} \; \cdot \;
+        \sqrt{\displaystyle\sum_{i=1}^{384} v_i^2}}
+  \label{eq:cosseno}
+\end{equation}
+
+Em cima multiplicam-se as duas listas número a número e soma-se tudo. Em baixo dividem-se pelos
+comprimentos dos dois vetores, e é essa divisão que faz o resultado depender só da direção.
+
+\paragraph{E há aqui uma simplificação que vale a pena conhecer.}
+O modelo devolve os vetores já com comprimento $1$. Isso não é um detalhe de arrumação: quando os
+dois comprimentos valem $1$, o denominador da Equação~\ref{eq:cosseno} vale $1 \times 1 = 1$ e a
+fórmula reduz-se à soma de cima. Comparar duas manchetes passa a ser \textbf{multiplicar e somar},
+sem mais nada, o que é a razão de o sistema conseguir percorrer $80$ mil casos depressa.
+
+\subsection{O cosseno em dois casos reais}
+
+A Tabela~\ref{tab:met_cosseno} segue a conta para dois pares de manchetes retirados da base de
+casos. São reais, e os valores são os que o sistema calcula.
+
+\begin{table}[ht]
+\caption[O cosseno entre duas manchetes reais]{Dois pares do lado oposto da escala. Repare-se na
+linha do comprimento: vale exatamente $1$ nos quatro vetores, o que confirma a normalização e faz o
+cosseno coincidir com a soma dos produtos.}
+\label{tab:met_cosseno}
+\centering
+\small
+\begin{tabular}{L{0.26\textwidth} L{0.30\textwidth} L{0.30\textwidth}}
+\toprule
+ & \tabhead{Par A: mesmo assunto} & \tabhead{Par B: assuntos diferentes} \\
+\midrule
+Primeira manchete & ``Shares of several companies in the technology, software and semiconductor
+space are trading lower\ldots'' & ``Peloton Shares Tick To Session Low As Hearing Report Apple
+Working On `Guided Workout'\ldots'' \\
+\addlinespace
+Segunda manchete & ``Shares of several technology, software and semiconductor companies are
+trading lower\ldots'' & ``Coronavirus: Another Severe Hit To The Automotive Industry'' \\
+\midrule
+Comprimento do 1.\textsuperscript{o} vetor & $1.000000$ & $1.000000$ \\
+Comprimento do 2.\textsuperscript{o} vetor & $1.000000$ & $1.000000$ \\
+Soma dos $384$ produtos & $+0.955626$ & $-0.085901$ \\
+\midrule
+\textbf{Cosseno} & $\mathbf{+0.956}$ & $\mathbf{-0.086}$ \\
+Leitura & praticamente a mesma notícia & sem relação nenhuma \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Para tornar a soma concreta, eis as quatro primeiras das $384$ parcelas do par A:
+
+\begin{equation*}
+\begin{aligned}
+  &\underbrace{(+0.0609)(+0.0418)}_{+0.002546} \;+\;
+   \underbrace{(-0.0524)(-0.0312)}_{+0.001638} \;+\; \\[4pt]
+  &\underbrace{(+0.0584)(+0.0648)}_{+0.003779} \;+\;
+   \underbrace{(+0.0142)(+0.0004)}_{+0.000006} \;+\; \cdots \;=\; +0.955626
+\end{aligned}
+\end{equation*}
+
+Note-se a segunda parcela: dois números \emph{negativos} contribuem \emph{positivamente}, porque o
+que conta é os dois vetores concordarem naquela dimensão, e não o sinal em si. E note-se, no par B,
+que a soma final é ligeiramente negativa: as manchetes não são opostas em sentido nenhum, apenas não
+têm nada em comum, e o valor anda à volta de zero.
+
+O limiar usado em produção é $0.45$. O par A passaria com folga; o par B nem se aproxima.
+
 \subsection{Medir o que se seguiu}
 
 Encontrar notícias parecidas é metade. A outra metade é dizer o que aconteceu ao preço depois de cada
@@ -566,6 +636,72 @@ Como o número vai ser mostrado a uma pessoa, isso tem de ser corrigido. O passo
 transforma pontuações em probabilidades
 \emph{honestas}, de modo a que, entre todos os casos a que o modelo dá $70\%$, cerca de $70\%$
 tenham mesmo acontecido. A calibração é ajustada no bloco de validação, nunca no de teste.
+
+A função usada tem apenas dois números a aprender, $a$ e $b$:
+
+\begin{equation}
+  p_{\text{calibrada}} \;=\; \frac{1}{1 + e^{-\left(a\,p_{\text{bruta}} + b\right)}}
+  \label{eq:platt}
+\end{equation}
+
+Neste trabalho os dois valores aprendidos foram $a = 3.700$ e $b = -2.313$. O sinal negativo de $b$
+diz o essencial: o modelo, deixado por sua conta, era \textbf{demasiado otimista}, e a calibração
+existe para o puxar para baixo.
+
+\subsection{Da linha de dados aos 39\%: a conta toda}
+\label{sec:met_conta}
+
+Falta ligar as pontas. A Tabela~\ref{tab:met_conta} segue \textbf{a mesma linha} que a
+Figura~\ref{fig:met_linha} mostrou no início deste capítulo, desde os valores em bruto até à
+percentagem final, sem saltar nenhuma etapa.
+
+\begin{table}[ht]
+\caption[Uma linha, do início ao fim]{As cinco etapas para a notícia da Apple de 2 de fevereiro de
+2023. Os valores são os que o modelo implantado produz; a soma da terceira etapa reproduz o modelo
+até à sexta casa decimal.}
+\label{tab:met_conta}
+\centering
+\small
+\begin{tabular}{L{0.06\textwidth} L{0.34\textwidth} L{0.44\textwidth}}
+\toprule
+ & \tabhead{Etapa} & \tabhead{O que acontece} \\
+\midrule
+1 & \textbf{Entrada} & As nove entradas da linha: volatilidade $0.0127$, momento $0.0249$,
+movimento do dia $0.0364$, comprimento do título $53$, e o setor em nove casas das quais só uma
+está a $1$. \\
+\addlinespace
+2 & \textbf{Normalização} & Cada valor é comparado com a média e a dispersão do conjunto de treino,
+para que grandezas diferentes possam ser somadas. A volatilidade deste dia fica em $-0.49$, ou
+seja, \emph{abaixo} do habitual; o movimento do dia fica em $+1.10$. \\
+\addlinespace
+3 & \textbf{Soma pesada} & Cada valor normalizado é multiplicado pelo seu peso e somam-se todos:
+$-0.253$ da volatilidade, $+0.236$ do setor, $+0.006$ do movimento do dia, mais os restantes e o
+termo constante. Total: $\mathbf{+0.029}$. \\
+\addlinespace
+4 & \textbf{Sigmoide} & O total é convertido em algo entre $0$ e $1$:
+$1/(1+e^{-0.029}) = \mathbf{0.507}$. \\
+\addlinespace
+5 & \textbf{Calibração} & $3.700 \times 0.507 - 2.313 = -0.437$, e a sigmoide disso dá
+$\mathbf{0.392}$. É este o número que chega ao ecrã, arredondado: \textbf{39\%}. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Há duas coisas neste percurso que merecem atenção, e são as que tornam o exemplo útil.
+
+\paragraph{A calibração não é uma formalidade.}
+A pontuação bruta era $0.507$, praticamente um lançamento de moeda. Depois de calibrada passa a
+$0.392$. São leituras diferentes: a primeira diria a um utilizador que a coisa está em aberto, e a
+segunda diz que é mais provável não acontecer nada de especial. \textbf{A ordenação entre notícias
+não muda} com esta transformação, porque ela é sempre crescente; o que muda é o \emph{significado}
+do número mostrado, e é esse número que a pessoa lê.
+
+\paragraph{E a maior contribuição foi negativa.}
+A parcela de maior peso, $-0.253$, veio da volatilidade, e puxou a probabilidade \emph{para baixo}.
+A razão é que a Apple vinha de vinte dias mais calmos do que o habitual, e o modelo aprendeu que
+notícias em períodos calmos são menos frequentemente seguidas de movimentos grandes. É a mesma
+lógica do detetor do início do capítulo, aprendida em vez de escrita, e é a razão pela qual o alerta
+consegue dizer ao utilizador \emph{o que} levantou e \emph{o que} baixou a estimativa.
 
 \begin{tcolorbox}[colback=black!3, colframe=black!30, boxrule=0.4pt, arc=2pt]
 \textbf{Em três frases.} Treinei um modelo para estimar se uma notícia é seguida de um movimento
