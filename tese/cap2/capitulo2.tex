@@ -1,6 +1,199 @@
-% Capítulo 2 — Contexto (por escrever)
+% Capítulo 2 — Contexto (orçamento: ~8 pp)
+% O que já existe, e porque é que não chega. A matriz das três perguntas é o instrumento central.
 
 \chapter{Contexto}
 \label{cap:contexto}
 
-Por escrever.
+\section{O que existe hoje para quem investe pouco}
+\label{sec:ctx_ferramentas}
+
+\emph{Ninguém resolveu isto antes?}
+
+Resolveram, em parte, e de maneiras diferentes. Vale a pena olhar para o que existe com um critério
+fixo, em vez de o descrever em geral. O critério deste trabalho são as três perguntas do
+Capítulo~\ref{cap:introducao}, e a Tabela~\ref{tab:ctx_matriz} usa-as para pontuar as alternativas.
+
+\begin{table}[ht]
+\caption[As ferramentas existentes contra as três perguntas]{O que cada tipo de ferramenta responde.
+``Parcial'' significa que dá matéria-prima para a resposta, mas deixa o trabalho ao utilizador.}
+\label{tab:ctx_matriz}
+\centering
+\small
+\begin{tabular}{p{0.26\textwidth} c c c p{0.24\textwidth}}
+\toprule
+\tabhead{Ferramenta} & \tabhead{É invulgar?} & \tabhead{Empresa ou mercado?} & \tabhead{Já aconteceu?}
+& \tabhead{Custo} \\
+\midrule
+App da corretora & não & não & não & incluído \\
+Agregador de notícias & não & não & não & grátis \\
+App de sentimento & parcial & não & não & grátis/baixo \\
+\emph{Robo-advisor} & não & não & não & \% da carteira \\
+Terminal profissional & sim & sim & sim & milhares/ano \\
+\midrule
+\textbf{Este trabalho} & \textbf{sim} & \textbf{sim} & \textbf{sim} & \textbf{grátis} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A tabela mostra o essencial: \textbf{a linha que responde às três perguntas existe, e é a mais cara
+de todas}. Não há aqui um problema científico por resolver --- há um problema de acesso. As
+respostas são conhecidas; estão atrás de uma subscrição que a pessoa de quem este trabalho fala não
+vai pagar.
+
+Vale a pena olhar para duas linhas em particular.
+
+A \textbf{app da corretora} é onde a maioria das pessoas realmente olha. Mostra a percentagem do dia
+e um gráfico. Não diz se aquilo é muito para aquela ação, não separa a empresa do mercado, e não tem
+memória. A pergunta ``isto é normal?'' fica sem resposta precisamente no sítio onde é feita.
+
+Os \emph{robo-advisors} \autocite{dacunto2019robo} respondem a outra pergunta: como distribuir
+dinheiro por uma carteira. É uma pergunta legítima e não é esta. Além disso, aconselhar sobre
+investimentos tem obrigações regulatórias que este trabalho evita por desenho --- ver
+Secção~\ref{sec:ctx_escolhas}.
+
+\section{Os produtos que fazem exatamente esta pergunta}
+\label{sec:ctx_produtos}
+
+\emph{E os produtos recentes que prometem explicar porque é que uma ação subiu?}
+
+Existem, são recentes, e seria desonesto não os nomear.
+
+O \textbf{Robinhood Cortex}, anunciado em março de 2025, declara na página do próprio fornecedor que
+serve para \emph{``responder à velha questão de porque é que esta ação está a subir ou a descer
+hoje''} \autocite{robinhood2025cortex}. Os \textbf{momentos-chave} do Google Finance, de junho de
+2026, propõem-se \emph{``explicar porque é que uma ação se moveu''} \autocite{google2026finance}.
+
+É a mesma pergunta deste trabalho, feita por empresas com muito mais recursos e muito mais
+utilizadores. Convém dizê-lo com clareza em vez de fingir que este território estava vazio.
+
+A diferença está no que é entregue. Um resumo gerado é uma \textbf{afirmação}: o utilizador lê e
+acredita, ou não. O que este trabalho entrega é uma afirmação \textbf{com a evidência anexada} --- os
+casos passados, um a um, com as datas, as semelhanças e o que o preço fez a seguir a cada um. A
+diferença não é de fluência: é de \emph{verificabilidade}.
+
+Uma ressalva de método, porque é fácil escorregar aqui: destes produtos só se afirma o que está
+escrito nas páginas dos próprios fornecedores, consultadas em data registada. Não se testaram, e por
+isso não se diz o que fazem por dentro --- diz-se apenas o que declaram fazer.
+
+\section{E um assistente de IA genérico?}
+\label{sec:ctx_llm}
+
+\emph{Não bastava perguntar a um modelo de linguagem?}
+
+É a objeção mais razoável de todas, e merece resposta séria.
+
+Um assistente genérico responde bem à pergunta, no sentido em que produz um texto fluente e
+plausível. O problema é o que está por trás desse texto. Ele não tem:
+
+\begin{itemize}
+  \item a \textbf{volatilidade recente} daquela ação, que é o que permite dizer se 4\% é muito;
+  \item a \textbf{separação} entre o que foi o mercado e o que foi a empresa;
+  \item uma \textbf{base de casos passados} para \emph{recuperar} --- no melhor dos casos
+        \emph{recorda} casos do treino, o que não é a mesma coisa e não é verificável.
+\end{itemize}
+
+E há uma diferença mais funda, que é a razão pela qual este trabalho não é um invólucro à volta de um
+modelo de linguagem. Modelos grandes especializados em finanças existem
+\autocite{wu2023bloomberggpt} e são impressionantes. Mas a saída deles é uma afirmação, e a
+literatura sobre confiança em sistemas automáticos mostra que o problema não é as pessoas confiarem
+de menos: é confiarem \emph{na medida errada}, o que exige que o sistema mostre em que se apoia
+\autocite{lee2004trust}.
+
+Por isso, neste trabalho, a linguagem nunca produz factos. Os números vêm dos motores que os
+calcularam, e o texto é montado a partir deles --- como se descreveu na
+Secção~\ref{sec:sis_explicacao}.
+
+\section{As peças técnicas que este trabalho usa}
+\label{sec:ctx_tecnicas}
+
+\emph{De onde vêm as três técnicas do capítulo seguinte?}
+
+Nenhuma delas é invenção minha. Todas têm uma literatura, e a contribuição está em escolhê-las,
+integrá-las e avaliá-las --- não em inventá-las.
+
+\paragraph{Detetar o que é invulgar.}
+A deteção de anomalias é uma área grande \autocite{chandola2009anomaly}. Para séries temporais
+financeiras há duas famílias: as \textbf{estatísticas}, que comparam o presente com uma norma
+recente, e as \textbf{aprendidas}, que tentam descobrir sozinhas o que é raro --- como o
+\emph{Isolation Forest} \autocite{liu2008isolation} ou o \emph{Local Outlier Factor}
+\autocite{breunig2000lof}. Este trabalho usa a primeira família e compara-a com a segunda no
+Capítulo~\ref{cap:avaliacao}.
+
+\paragraph{Representar texto: três gerações.}
+Comparar notícias por significado depende de como se representa o texto, e essa representação passou
+por três gerações, na Figura~\ref{fig:ctx_geracoes}.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small, >={Stealth[length=2.4mm]},
+  g/.style={draw, rounded corners, align=center, text width=3.2cm, minimum height=1.9cm, fill=black!3},
+]
+  \node[g] (a) {\textbf{Contar palavras}\\[3pt]
+    \footnotesize cada palavra é\\ \footnotesize independente\\[3pt]
+    \footnotesize \emph{``subiu'' e ``valorizou''}\\ \footnotesize \emph{não têm relação}};
+  \node[g, right=1.0cm of a] (b) {\textbf{Palavras como vetores}\\[3pt]
+    \footnotesize palavras parecidas\\ \footnotesize ficam próximas\\[3pt]
+    \footnotesize \emph{mas cada palavra tem}\\ \footnotesize \emph{sempre o mesmo sentido}};
+  \node[g, right=1.0cm of b] (c) {\textbf{Frases inteiras}\\[3pt]
+    \footnotesize o sentido depende\\ \footnotesize do contexto\\[3pt]
+    \footnotesize \emph{é o que este}\\ \footnotesize \emph{trabalho usa}};
+  \draw[->, thick, black!45] (a) -- (b);
+  \draw[->, thick, black!45] (b) -- (c);
+\end{tikzpicture}
+\caption[Três gerações de representação de texto]{Como se passou de contar palavras a representar o
+sentido de uma frase inteira. Cada geração resolve uma limitação da anterior.}
+\label{fig:ctx_geracoes}
+\end{figure}
+
+A primeira geração conta palavras \autocite{salton1975vsm}: simples, e cega a sinónimos. A segunda
+representa cada \emph{palavra} como um vetor \autocite{mikolov2013word2vec}, o que aproxima
+sinónimos --- mas cada palavra fica com um sentido fixo, independentemente da frase. A terceira usa
+modelos que leem a frase toda \autocite{devlin2019bert}, e permite comparar \emph{frases} diretamente
+\autocite{reimers2019sbert}. É esta que este trabalho usa.
+
+Existem modelos treinados especificamente para texto financeiro \autocite{araci2019finbert}. Não são
+automaticamente melhores para esta tarefa --- e no Capítulo~\ref{cap:avaliacao} isso é medido em vez
+de assumido.
+
+\paragraph{Medir o efeito de um acontecimento.}
+Ligar uma notícia ao que o preço fez a seguir é um problema clássico em finanças, com metodologia
+estabelecida há décadas: o estudo de evento \autocite{brown1985daily}. E que o texto publicado tem
+relação estatística com os movimentos do mercado é observação antiga \autocite{tetlock2007media}.
+
+\paragraph{Raciocinar por casos passados.}
+Mostrar casos anteriores parecidos, em vez de uma regra abstrata, tem nome próprio em inteligência
+artificial: \emph{raciocínio baseado em casos} \autocite{aamodt1994cbr}. É exatamente o que a segunda
+técnica deste trabalho faz.
+
+\paragraph{Explicar decisões automáticas.}
+Por fim, a exigência de que um sistema mostre \emph{como} chegou a uma conclusão é uma área em si
+\autocite{arrieta2020xai, adadi2018peeking}. Este trabalho segue a via mais conservadora: em vez de
+explicar \emph{a posteriori} um modelo opaco, usa componentes cuja explicação é o próprio cálculo.
+
+\section{As escolhas que este trabalho faz}
+\label{sec:ctx_escolhas}
+
+\emph{Face a tudo isto, o que é que fica decidido?}
+
+Quatro decisões, e cada uma fecha uma porta de propósito.
+
+\begin{description}
+  \item[Responder às três perguntas, e só a essas.] Não se acrescentam funcionalidades que não
+        sirvam uma delas. É o que mantém o sistema pequeno o suficiente para ser explicado por
+        inteiro.
+  \item[Não prever preços.] Nem direção, nem alvo, nem recomendação. Além da razão já dada --- é o
+        que torna tudo verificável --- há uma razão teórica: se movimentos futuros fossem previsíveis
+        a partir de informação pública, essa informação já estaria refletida no preço
+        \autocite{fama1970efficient}.
+  \item[Não gerir carteiras nem aconselhar.] O sistema não sabe o que o utilizador tem, e não lhe diz
+        o que fazer. Isto evita recolher dados pessoais e mantém o trabalho fora da fronteira do
+        aconselhamento financeiro regulado.
+  \item[Só fontes gratuitas.] Torna o sistema utilizável por quem ele serve, e transforma as
+        limitações resultantes em algo que se \emph{mede} e reporta, em vez de algo que se compra.
+\end{description}
+
+A última merece uma nota honesta. Usar apenas fontes gratuitas limita o sistema de forma real: as
+notícias chegam com atraso, e nem tudo o que acontece é coberto. O Capítulo~\ref{cap:sistema}
+quantifica esse atraso e o Capítulo~\ref{cap:conclusoes} volta a ele. A opção foi ter uma limitação
+medida em vez de uma capacidade comprada --- mas é uma limitação, e não uma virtude.
