@@ -1219,6 +1219,36 @@ def _publish_data_safe(path: str | Path, filename: str) -> None:
               f"{type(exc).__name__}: {sem_segredos(exc)}")
 
 
+_ULTIMA_PUB: dict[str, float] = {}
+
+
+def _publish_lento_safe(path: str | Path, filename: str, minutos: int = 30) -> None:
+    """Publica um ficheiro GRANDE, mas no máximo de `minutos` em `minutos`.
+
+    ⚠️ Existe porque a base de casos viva **parou de crescer** e a razão é de escala, não de
+    esquecimento. Medido a 2026-08-15: `live_kb.jsonl` estava congelado em 2026-07-27 e
+    `live_pending.jsonl` tinha 1785 entradas de Julho ainda por maturar — 19 dias, quando a
+    maturação precisa de 8. O sistema captava casos a cada minuto e nenhum chegava a ser
+    convertido em precedente utilizável, ou seja, **o ciclo de aprendizagem estava parado**.
+
+    A causa é a mesma dos outros ficheiros (disco efémero, o web é outro dyno) mas a correcção
+    não pode ser a mesma: estes dois pesam **16,6 MB e 11,9 MB**, e publicá-los a cada ciclo de
+    60 s seriam dezenas de GB por dia de tráfego. Daí o estrangulamento por tempo.
+
+    O que se perde com isto fica dito: até `minutos` de capturas, se o contentor reiniciar
+    nesse intervalo. É uma perda pequena e recuperável — a manchete volta a ser captada na
+    varredura seguinte enquanto continuar dentro da janela de frescura.
+    """
+    import time
+
+    agora = time.monotonic()
+    ultima = _ULTIMA_PUB.get(filename)
+    if ultima is not None and (agora - ultima) < minutos * 60:
+        return
+    _ULTIMA_PUB[filename] = agora
+    _publish_data_safe(path, filename)
+
+
 def _push_history_safe(path: str | Path = _HISTORY) -> None:
     """Publica o histórico na branch `alerts-history` a partir de uma máquina própria (VM).
 
@@ -1360,6 +1390,10 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     # Não faz nada quando o ficheiro já existe — logo custa uma ida à rede por arranque.
     _seed_from_branch_safe(_GATE_LOG, "gate_log.jsonl")
     _seed_from_branch_safe(_PRED_LOG, "predictions_log.jsonl")
+    # ⚠️ E estes dois são os que mais importam: sem semear, o contentor arranca sem base de
+    # casos e sem pendentes, e o ciclo de aprendizagem recomeça do zero a cada reinício.
+    _seed_from_branch_safe(_LIVE_KB, "live_kb.jsonl")
+    _seed_from_branch_safe(_LIVE_PENDING, "live_pending.jsonl")
 
     # KB viva: maturar pendentes cujo impacto (+5d) já é observável — ANTES dos scans,
     # para os casos recém-maturados contarem já como precedentes nesta corrida.
@@ -1446,6 +1480,10 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     # (Medido a 2026-08-15: parados havia seis dias enquanto o histórico estava actual.)
     _publish_data_safe(_GATE_LOG, "gate_log.jsonl")
     _publish_data_safe(_PRED_LOG, "predictions_log.jsonl")
+    # A base de casos viva é grande (dezenas de MB) e por isso vai a um ritmo mais lento. Sem
+    # isto, o que o sistema aprende morre no reinício do contentor e nada matura.
+    _publish_lento_safe(_LIVE_KB, "live_kb.jsonl")
+    _publish_lento_safe(_LIVE_PENDING, "live_pending.jsonl")
     _write_snapshot_safe()
 
     threshold = float((cfg.get("market") or {}).get("threshold", 3.0))

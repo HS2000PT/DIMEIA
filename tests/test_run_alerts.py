@@ -721,6 +721,28 @@ def test_todas_as_etapas_pos_varredura_existem_no_gate_log():
         assert etapa in STAGES
 
 
+def test_publicacao_lenta_estrangula_por_tempo(tmp_path, capsys):
+    """⚠️ Regressão do ciclo de aprendizagem parado (medido a 2026-08-15).
+
+    A base de casos viva estava congelada em 2026-07-27 e havia 1785 pendentes de Julho por
+    maturar. A causa é de escala: `live_kb` e `live_pending` pesam dezenas de MB e não podem
+    ser publicados a cada ciclo de 60 s. Este teste fixa o estrangulamento — a segunda chamada
+    seguida não pode voltar a publicar.
+    """
+    from scripts.run_alerts import _ULTIMA_PUB, _publish_lento_safe
+
+    _ULTIMA_PUB.clear()
+    p = tmp_path / "live_kb.jsonl"
+    p.write_text('{"date":"2026-08-15"}\n', encoding="utf-8")
+
+    _publish_lento_safe(p, "live_kb.jsonl", minutos=30)
+    marca = dict(_ULTIMA_PUB)
+    _publish_lento_safe(p, "live_kb.jsonl", minutos=30)
+
+    assert "live_kb.jsonl" in marca, "a primeira chamada tem de tentar publicar"
+    assert _ULTIMA_PUB == marca, "a segunda chamada seguida não pode voltar a publicar"
+
+
 def test_orcamento_global_limita_o_TOTAL_e_nao_so_cada_empresa():
     """⚠️ O tecto por ticker não limita o total: 12 empresas x 2 = 24 mensagens num dia.
 
