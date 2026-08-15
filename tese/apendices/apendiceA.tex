@@ -1,6 +1,158 @@
-% Apêndice A — Reprodutibilidade (por escrever)
+% Apêndice A — Reprodutibilidade (orçamento: ~6 pp)
+% A matriz de evidência é a peça mais importante: lista as afirmações, incluindo as retiradas.
 
 \chapter{Reprodutibilidade}
 \label{ap:reprodutibilidade}
 
-Por escrever.
+\section{Ambiente}
+\label{sec:ap_ambiente}
+
+O sistema está escrito em Python~3.12. As dependências estão fixadas num ficheiro de bloqueio, para
+que o ambiente possa ser recriado noutra máquina. A Tabela~\ref{tab:ap_versoes} lista as principais.
+
+\begin{table}[ht]
+\caption{Versões fixadas das dependências principais.}
+\label{tab:ap_versoes}
+\centering
+\small
+\begin{tabular}{l l l l}
+\toprule
+\tabhead{Biblioteca} & \tabhead{Versão} & \tabhead{Biblioteca} & \tabhead{Versão} \\
+\midrule
+numpy & 2.1.3 & sentence-transformers & 5.6.0 \\
+pandas & 2.2.3 & transformers & 5.12.1 \\
+scikit-learn & 1.9.0 & torch (versão CPU) & 2.12.1 \\
+matplotlib & 3.11.0 & pytest & 8.3.4 \\
+yfinance & 1.4.1 & ruff & 0.8.6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Não é preciso GPU. Tudo o que esta dissertação reporta corre num computador portátil comum, o que é
+uma consequência deliberada das escolhas do Capítulo~\ref{cap:metodologia}.
+
+O código está organizado por componente, a espelhar a Figura~\ref{fig:arquitetura}: dados de mercado,
+recolha de notícias, deteção, motor de correlação, base de casos, motor de explicação e entrega. A
+lógica pura está separada da entrada e saída, e as dependências pesadas são carregadas só quando
+precisas --- por isso o núcleo é testado sem rede e sem carregar modelos. A suite tem
+\textbf{726 testes} automáticos.
+
+Os segredos (chaves de API, credenciais) são lidos de um ficheiro local que nunca é versionado.
+
+\section{Como cada número é reproduzido}
+\label{sec:ap_numeros}
+
+Nenhum número desta dissertação foi escrito à mão. Cada um é produzido por um procedimento
+automático com semente fixa, que escreve o seu próprio ficheiro de resultados; o texto cita esse
+ficheiro. A Tabela~\ref{tab:ap_numeros} liga cada resultado ao procedimento que o gera.
+
+\begin{table}[ht]
+\caption[Cada resultado e o procedimento que o produz]{Todos os resultados reportados, e onde são
+gerados. Correr outra vez sobre os mesmos dados devolve exatamente os mesmos valores.}
+\label{tab:ap_numeros}
+\centering
+\small
+\begin{tabular}{p{0.46\textwidth} p{0.20\textwidth} p{0.22\textwidth}}
+\toprule
+\tabhead{Resultado} & \tabhead{Valor} & \tabhead{Onde aparece} \\
+\midrule
+Amplitude da taxa de disparo ($z$-score vs limiar fixo) & $0.015$ vs $0.344$ & §\ref{sec:av_qi1} \\
+$F_1$ contra o rótulo aproximado & $0.516$ vs $0.218$ & §\ref{sec:av_qi1} \\
+$z$-score contra dois detetores aprendidos & $0.530$ / $0.269$ / $0.280$ & §\ref{sec:av_qi1} \\
+Precisão@5 da recuperação (4 métodos) & $0.514$ / $0.346$ / $0.240$ / $0.126$ & §\ref{sec:av_qi2} \\
+Precisão@5 sobre o corpus completo & $0.595$ & §\ref{sec:av_qi2} \\
+Concordância de direção vs chão de acaso & $0.708$ vs $0.688$ & §\ref{sec:av_qi2} \\
+Triagem, PR-AUC das seis famílias & $0.378$ a $0.542$ & §\ref{sec:av_qi3} \\
+Precisão dentro do orçamento (4 formas de escolher) & $0.163$ / $0.379$ / $0.662$ / $0.632$ &
+§\ref{sec:av_qi3} \\
+Grelha de nove definições de rótulo & $9$ de $9$ & §\ref{sec:av_qi3} \\
+Decisões maturadas em produção & $0.592$ vs $0.647$ & §\ref{sec:av_qi3} \\
+Cobertura das notícias em dias invulgares & $88.5\%$ & §\ref{sec:con_limitacoes} \\
+Latência, por era e decomposta & $196$ / $143$ / $158$ min & §\ref{sec:sis_implantacao} \\
+Funil de produção (captadas $\rightarrow$ enviadas) & $944 \rightarrow 42$ & §\ref{sec:sis_portas} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Matriz de evidência}
+\label{sec:ap_matriz}
+
+A tabela anterior lista \emph{resultados}. Esta lista \emph{afirmações}, que é um teste mais duro ---
+porque uma afirmação pode sobreviver à evidência que a sustentava.
+
+A Tabela~\ref{tab:ap_matriz} põe cada afirmação substantiva desta dissertação frente à evidência que
+a suporta e ao estado em que ficou. \textbf{As afirmações retiradas ficam na tabela em vez de serem
+apagadas}, porque uma matriz que só lista as sobreviventes não é uma auditoria.
+
+\begin{table}[ht]
+\caption[Matriz de evidência]{Cada afirmação, a evidência, e o que lhe aconteceu. ``Retirada''
+significa que este trabalho a abandonou depois de a medir.}
+\label{tab:ap_matriz}
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{p{0.36\textwidth} p{0.36\textwidth} p{0.16\textwidth}}
+\toprule
+\tabhead{Afirmação} & \tabhead{Evidência} & \tabhead{Estado} \\
+\midrule
+\multicolumn{3}{l}{\textbf{QI1 --- deteção}} \\
+Dispara a um ritmo comparável entre empresas muito diferentes & Amplitude $0.015$ vs $0.344$, sem
+usar rótulos & Mantida \\
+Bate um limiar fixo no rótulo aproximado & $F_1$ $0.516$ vs $0.218$ & Mantida (o rótulo é um proxy) \\
+Bate dois detetores aprendidos com a mesma informação & $F_1$ $0.530$ vs $0.269$ e $0.280$ & Mantida \\
+Não usa informação do futuro & A janela exclui o dia julgado; imposto por teste & Mantida \\
+\midrule
+\multicolumn{3}{l}{\textbf{QI2 --- precedentes}} \\
+Bate as alternativas lexical e triviais & P@5 $0.514$ vs $0.346$ / $0.240$ / $0.126$ & Mantida \\
+Aguenta à escala do corpus completo & P@5 $0.595$ & Mantida \\
+Capta tema, não direção & Concordância $0.708$ contra um chão de $0.688$ & Mantida (é uma limitação) \\
+``Relevante'' é o mesmo que ``mesmo setor'' & --- & \textbf{Não afirmado} (é um proxy) \\
+O chão de semelhança escolhe precedentes que preveem melhor & Acima do chão $0.504$, abaixo $0.506$,
+acaso $0.507$ & \textbf{Retirada} \\
+\midrule
+\multicolumn{3}{l}{\textbf{QI3 --- triagem}} \\
+Nenhum modelo com texto bate a volatilidade & PR-AUC $0.496$ vs $0.542$; aguenta re-teste justo,
+reamostragem por grupos e nove rótulos & Mantida \\
+Sem uso de informação futura nas features & Mutar o futuro deixa as features iguais e muda o rótulo &
+Mantida \\
+A triagem quase quadruplica a precisão no orçamento & O chão de $0.163$ ordena alfabeticamente; ao
+acaso dá $0.379$ & \textbf{Retirada} (o ganho é $1.67\times$) \\
+É a aprendizagem que produz o ganho no orçamento & Um prior de $13$ constantes dá $0.662$ contra
+$0.632$ do modelo & \textbf{Retirada} \\
+O modelo implantado seleciona melhor do que o acaso & $0.592$ mantidas contra $0.647$ suprimidas &
+\textbf{Retirada} \\
+\midrule
+\multicolumn{3}{l}{\textbf{Sistema}} \\
+O texto do alerta não pode divergir do cálculo & É montado a partir dos objetos calculados & Mantida \\
+A fonte gratuita limita a cobertura & Pelo menos uma notícia em $88.5\%$ dos dias invulgares &
+Mantida (limite superior) \\
+As explicações são \emph{úteis} a uma pessoa & --- & \textbf{Não afirmado} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Duas observações sobre a tabela no seu conjunto, e não sobre nenhuma linha.
+
+Primeiro: \textbf{quatro afirmações foram retiradas, e todas o foram pelas medições deste próprio
+trabalho} --- nenhuma por revisão externa. É o comportamento pretendido de uma avaliação desenhada
+antes das experiências: tem de ser capaz de dizer que não.
+
+Segundo: as duas linhas marcadas ``não afirmado'' são tão importantes como as outras. Uma delas é a
+utilidade para o utilizador, que não foi medida porque não houve estudo com pessoas. Onde não há
+evidência, não há afirmação.
+
+\section{Dados e atribuição}
+\label{sec:ap_dados}
+
+Os ficheiros de dados grandes não são versionados: são regenerados pelos procedimentos de preparação,
+e apenas pequenas amostras acompanham o código para que os testes corram sem rede.
+
+O conjunto histórico usado para construir a base de casos é o \gls{FNSPID}
+\autocite{dong2024fnspid}, utilizado ao abrigo da sua licença Creative Commons BY-SA 4.0, cuja
+atribuição é aqui cumprida. Apenas excertos mínimos de manchetes aparecem no documento, a título
+ilustrativo.
+
+Os preços vêm de serviços gratuitos de dados de mercado, através de uma cadeia de alternativas
+descrita na Secção~\ref{sec:sis_dados}; as notícias em tempo real vêm de uma API gratuita, dentro dos
+seus limites de utilização. Não é recolhido nem armazenado qualquer dado pessoal: o sistema não sabe
+o que os utilizadores possuem, e não lhes pergunta.
