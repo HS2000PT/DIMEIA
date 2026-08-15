@@ -1,15 +1,3 @@
-{"date": "2026-08-07", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon CEO Andy Jassy Just Made a Shocking Trillion-Dollar Prediction"}
-{"date": "2026-08-07", "ticker": "GOOGL", "stage": "alerted", "detail": "What Block (SQ)'s Buyback Completion And Google AI Tie-Up Means For Shareholders"}
-{"date": "2026-08-07", "ticker": "META", "stage": "alerted", "detail": "Where Will Meta Platforms Stock Be in 5 Years?"}
-{"date": "2026-08-07", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.25 < 0.50"}
-{"date": "2026-08-07", "ticker": "AMD", "stage": "alerted", "detail": "AMD Stock tumbles because of SpaceX"}
-{"date": "2026-08-07", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
-{"date": "2026-08-07", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
-{"date": "2026-08-07", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
-{"date": "2026-08-07", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
-{"date": "2026-08-07", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft opens fourth Azure data center region in India"}
-{"date": "2026-08-07", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.50 < 0.50"}
-{"date": "2026-08-07", "ticker": "TSLA", "stage": "alerted", "detail": "Elon Musk Says SpaceX Will Consume Three Times More Terafab AI Compute Than Tesl"}
 {"date": "2026-08-07", "ticker": "AMZN", "stage": "alerted", "detail": "Market Chatter: Amazon's AWS Engineers Face Longer Waits for CPU Servers Amid Ca"}
 {"date": "2026-08-07", "ticker": "GOOGL", "stage": "alerted", "detail": "What Block (SQ)'s Buyback Completion And Google AI Tie-Up Means For Shareholders"}
 {"date": "2026-08-07", "ticker": "META", "stage": "alerted", "detail": "Meta ordered to pay $942M: Why the judge compared the company to 'noxious pollut"}
@@ -306,6 +294,18 @@
 {"date": "2026-08-15", "ticker": "NFLX", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
 {"date": "2026-08-15", "ticker": "XOM", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
 {"date": "2026-08-15", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.31 < 0.45"}
+{"date": "2026-08-15", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.46 < 0.50"}
+{"date": "2026-08-15", "ticker": "MSFT", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
+{"date": "2026-08-15", "ticker": "NVDA", "stage": "weak_precedent", "detail": "melhor sim 0.38 < 0.45"}
+{"date": "2026-08-15", "ticker": "TSLA", "stage": "weak_precedent", "detail": "melhor sim 0.45 < 0.45"}
+{"date": "2026-08-15", "ticker": "AMZN", "stage": "weak_precedent", "detail": "melhor sim 0.36 < 0.45"}
+{"date": "2026-08-15", "ticker": "GOOGL", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
+{"date": "2026-08-15", "ticker": "META", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
+{"date": "2026-08-15", "ticker": "JPM", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
+{"date": "2026-08-15", "ticker": "AMD", "stage": "duplicate_story", "detail": "same story, other words"}
+{"date": "2026-08-15", "ticker": "NFLX", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
+{"date": "2026-08-15", "ticker": "XOM", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
+{"date": "2026-08-15", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.30 < 0.50"}
 {"date": "2026-08-15", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.46 < 0.50"}
 {"date": "2026-08-15", "ticker": "MSFT", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
 {"date": "2026-08-15", "ticker": "NVDA", "stage": "weak_precedent", "detail": "melhor sim 0.38 < 0.45"}
