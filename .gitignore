@@ -124,3 +124,8 @@ tese/guia/build.log
 # Base de casos embebida: derivada, grande, e reproduzivel por scripts/embed_backfill_kb.py.
 # Fica fora do git ate se decidir se a app precisa dela (ver o commit que a criou).
 data/samples/backfill_kb_sbert.jsonl
+# O formato COMPACTO (metadados + matriz float32) e versionado de proposito: e o que a
+# producao carrega, e o tarball do deploy sai de `git archive HEAD`. Sao 64 MB contra os
+# 140 MB do JSONL, e sao 25 MB de RAM contra 655 MB.
+!data/samples/backfill_kb_meta.jsonl
+!data/samples/backfill_kb_vec.npy

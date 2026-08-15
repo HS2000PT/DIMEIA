@@ -31,8 +31,12 @@ from investigator.historical_kb.record import NewsRecord
 class HistoricalKB:
     """Coleção de `NewsRecord` com construção, persistência e recuperação de precedentes."""
 
-    def __init__(self, records: list[NewsRecord] | None = None):
+    def __init__(self, records: list[NewsRecord] | None = None,
+                 matrix: np.ndarray | None = None):
         self.records: list[NewsRecord] = list(records) if records else []
+        # Matriz de vectores em float32, alinhada linha a linha com `records`. Só existe no
+        # formato compacto; a `None` mantém-se o caminho antigo, byte a byte.
+        self._matrix: np.ndarray | None = matrix
 
     def __len__(self) -> int:
         return len(self.records)
@@ -98,6 +102,22 @@ class HistoricalKB:
         self, query_text: str, embedder: Embedder, top_k: int = 5
     ) -> list[tuple[NewsRecord, float]]:
         """Devolve os `top_k` precedentes mais semelhantes ao texto, com o score de cosseno."""
+        # Caminho compacto: a matriz já existe em float32 e os registos não trazem vector
+        # nenhum. É o que permite uma base de dezenas de milhares de casos caber num
+        # contentor pequeno — ver `load_compact`.
+        if self._matrix is not None:
+            if not len(self.records):
+                return []
+            query = np.asarray(embedder.encode([query_text])[0], dtype="float32")
+            if query.shape[0] != self._matrix.shape[1]:
+                raise ValueError(
+                    f"Embedding dim mismatch: query has {query.shape[0]} dims but the "
+                    f"knowledge base stores {self._matrix.shape[1]}. Query with the same "
+                    "embedder used to build the KB."
+                )
+            hits = top_k_similar(query, self._matrix, k=top_k)
+            return [(self.records[i], score) for i, score in hits]
+
         usable = [r for r in self.records if r.embedding is not None]
         if not usable:
             return []
@@ -130,3 +150,51 @@ class HistoricalKB:
                 if line:
                     records.append(NewsRecord.from_dict(json.loads(line)))
         return cls(records)
+
+    # ── Persistência compacta (metadados + matriz float32) ────────────────────
+    #
+    # ⚠️ Existe por uma medição, não por elegância. Uma base de 38 214 casos guardada em
+    # JSONL custa **655 MB de RAM** ao ser carregada, e o contentor de produção tem 512 MB —
+    # ou seja, a base não cabia e a razão não era o volume dos dados. As mesmas
+    # 38 214 × 384 posições ocupam 56 MB em float32: são **11,7×**, e vêm do custo de objecto
+    # de cada `float` de Python guardado numa lista.
+    #
+    # Além disso, `find_precedents` reconstruía a matriz inteira **a cada consulta**. Aqui ela
+    # é carregada uma vez e reutilizada.
+    #
+    # O formato são dois ficheiros: um JSONL só com metadados (sem vectores) e um `.npy` com
+    # a matriz. Ficam separados de propósito — os metadados continuam legíveis por uma pessoa,
+    # que é metade da razão de o projecto usar JSONL.
+
+    def save_compact(self, meta_path: str | Path, vec_path: str | Path) -> None:
+        """Grava metadados e vectores em separado; os vectores em float32."""
+        meta_path, vec_path = Path(meta_path), Path(vec_path)
+        meta_path.parent.mkdir(parents=True, exist_ok=True)
+        usable = [r for r in self.records if r.embedding is not None]
+        if not usable:
+            raise ValueError("nenhum registo tem embedding — não há matriz para gravar.")
+        matrix = np.asarray([r.embedding for r in usable], dtype="float32")
+        with meta_path.open("w", encoding="utf-8") as f:
+            for r in usable:
+                d = r.to_dict()
+                d.pop("embedding", None)
+                f.write(json.dumps(d, ensure_ascii=False) + "\n")
+        np.save(vec_path, matrix)
+
+    @classmethod
+    def load_compact(cls, meta_path: str | Path, vec_path: str | Path) -> HistoricalKB:
+        """Carrega o formato compacto. A matriz entra em modo `mmap`: fica no disco e só as
+        páginas realmente tocadas vão para memória."""
+        records: list[NewsRecord] = []
+        with Path(meta_path).open("r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    records.append(NewsRecord.from_dict(json.loads(line)))
+        matrix = np.load(Path(vec_path), mmap_mode="r")
+        if matrix.shape[0] != len(records):
+            raise ValueError(
+                f"metadados e matriz não batem certo: {len(records)} registos contra "
+                f"{matrix.shape[0]} vectores. Regenerar os dois a partir da mesma fonte."
+            )
+        return cls(records, matrix=matrix)

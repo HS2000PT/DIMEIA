@@ -38,6 +38,10 @@ _HISTORY = Path(os.environ.get(
 # por isso é publicada/lida pelos mesmos mecanismos (workflow + VM + app via raw URL).
 _LIVE_PENDING = _HISTORY.parent / "live_pending.jsonl"
 _LIVE_KB = _HISTORY.parent / "live_kb.jsonl"
+# Base reconstruída do último ano, em formato compacto (metadados + matriz float32).
+_AMOSTRAS = Path(__file__).resolve().parents[1] / "data" / "samples"
+_BACKFILL_META = _AMOSTRAS / "backfill_kb_meta.jsonl"
+_BACKFILL_VEC = _AMOSTRAS / "backfill_kb_vec.npy"
 # FUNIL DE GATES: também na branch partilhada — acumula entre corridas para se poder medir
 # quantas varreduras cada ticker perdeu em cada etapa (ver investigator/gate_log.py).
 _GATE_LOG = _HISTORY.parent / "gate_log.jsonl"
@@ -680,6 +684,21 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
                 print(f"[kb-viva] {len(kb_viva)} caso(s) recente(s) em uso.")
         except Exception as exc:  # noqa: BLE001
             print(f"[kb-viva] ilegível (ignorada): {type(exc).__name__}: {sem_segredos(exc)}")
+    # Base reconstruída do último ano (2025-08 em diante), em formato compacto. É a que dá
+    # volume real de casos comparáveis: 38 214 contra os ~2 000 da curada.
+    #
+    # ⚠️ TEM de ser o formato compacto, e o número que o justifica está medido: a mesma base
+    # em JSONL custa **655 MB de RAM** e o contentor tem 512 MB. Em float32, com a matriz
+    # mapeada do disco, são **25 MB** e carrega em 0,44 s em vez de 9. Carregá-la em JSONL
+    # mataria o worker com falta de memória.
+    if _BACKFILL_META.exists() and _BACKFILL_VEC.exists():
+        try:
+            kb_ano = HistoricalKB.load_compact(_BACKFILL_META, _BACKFILL_VEC)
+            if len(kb_ano):
+                kbs.append(kb_ano)
+                print(f"[kb-ano] {len(kb_ano)} caso(s) do último ano em uso.")
+        except Exception as exc:  # noqa: BLE001 — fail-open: sem ela o produto responde na mesma
+            print(f"[kb-ano] indisponível (ignorada): {type(exc).__name__}: {sem_segredos(exc)}")
     kbs.append(HistoricalKB.load(kb_path))
 
     end = date.today().isoformat()

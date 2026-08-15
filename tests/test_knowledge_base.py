@@ -72,6 +72,45 @@ def test_find_precedents_rejeita_embedder_de_dimensao_diferente():
         kb.find_precedents("Apple unveils new iPhone", HashingEmbedder(dim=32), top_k=1)
 
 
+def test_formato_compacto_da_o_MESMO_resultado_que_o_jsonl(tmp_path):
+    """⚠️ O formato compacto existe por uma medição: a base de 38 214 casos custava 655 MB de
+    RAM em JSONL e o contentor de produção tem 512 MB. Em float32 são 25 MB.
+
+    Mas só serve se devolver exactamente os mesmos precedentes. É isso que este teste fixa.
+    """
+    import numpy as np
+
+    news, prices = _sample_inputs()
+    emb = HashingEmbedder(dim=16)
+    kb = HistoricalKB.build(news, prices, emb)
+    consulta = "chip demand"
+    esperado = [(r.headline, round(s, 4)) for r, s in kb.find_precedents(consulta, emb, top_k=3)]
+
+    meta, vec = tmp_path / "meta.jsonl", tmp_path / "vec.npy"
+    kb.save_compact(meta, vec)
+    compacta = HistoricalKB.load_compact(meta, vec)
+
+    assert np.load(vec).dtype == np.float32, "os vectores têm de ficar em float32"
+    obtido = [(r.headline, round(s, 4))
+              for r, s in compacta.find_precedents(consulta, emb, top_k=3)]
+    assert obtido == esperado, "o formato compacto tem de devolver os mesmos precedentes"
+
+
+def test_compacto_recusa_metadados_e_matriz_desalinhados(tmp_path):
+    """Se os dois ficheiros forem regenerados em alturas diferentes, os precedentes passariam
+    a ser atribuídos às manchetes erradas, em silêncio. Tem de rebentar."""
+    import numpy as np
+
+    news, prices = _sample_inputs()
+    kb = HistoricalKB.build(news, prices, HashingEmbedder(dim=16))
+    meta, vec = tmp_path / "meta.jsonl", tmp_path / "vec.npy"
+    kb.save_compact(meta, vec)
+    np.save(vec, np.load(vec)[:1])  # a matriz encolhe, os metadados não
+
+    with pytest.raises(ValueError, match="não batem certo"):
+        HistoricalKB.load_compact(meta, vec)
+
+
 def test_save_load_roundtrip(tmp_path):
     news, prices = _sample_inputs()
     kb = HistoricalKB.build(news, prices, HashingEmbedder(dim=16))
