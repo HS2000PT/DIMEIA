@@ -1,0 +1,133 @@
+% Front matter — tese curta, PT-PT.
+
+\frontmatter
+\pagestyle{plain}
+
+\maketitlepage
+
+%----------------------------------------------------------------------------------------
+%	DECLARAÇÃO DE INTEGRIDADE
+%----------------------------------------------------------------------------------------
+
+\begin{soi}
+
+\vspace{1cm}
+
+Declaro que realizei este trabalho académico com integridade.
+
+Não recorri a plágio nem a qualquer forma de utilização indevida ou falsificação de informações ou
+resultados ao longo do processo que conduziu à sua elaboração.
+
+Declaro, por isso, que este documento é original e da minha autoria, não tendo sido utilizado
+anteriormente para qualquer outro fim.
+
+Declaro ainda que tenho pleno conhecimento do Código de Conduta Ética do P.PORTO.
+
+\vspace{0.5cm}
+
+\textbf{Uso de Inteligência Artificial.} Em conformidade com as orientações do P.PORTO/ISEP, declaro
+que foram utilizadas ferramentas de inteligência artificial generativa ao longo do desenvolvimento
+deste trabalho, e declaro-o na sua extensão real. Foram usadas para escrever e reestruturar parte
+substancial do código do sistema e dos seus testes, para implementar os procedimentos de avaliação,
+para redigir e editar prosa neste documento, e para conduzir revisões que encontraram defeitos no
+software e no texto.
+
+O que é meu é o trabalho para onde essas ferramentas foram apontadas: a escolha do problema, as
+questões de investigação, as restrições que definem o sistema (apenas fontes gratuitas,
+explicabilidade primeiro, e a recusa de prever preços), e todas as decisões sobre o que construir,
+manter ou descartar. Sempre que uma medição contrariou uma afirmação minha, retirei a afirmação em
+vez de a defender. Revi o conteúdo deste documento, e ele, os erros que nele restem, e a sua defesa
+são da minha responsabilidade.
+
+\vspace{1cm}
+
+ISEP, Porto, \today % NOTA: substituir pela data de entrega; confirmar a redação exigida pela MEIA/ISEP.
+
+\end{soi}
+
+%----------------------------------------------------------------------------------------
+%	DEDICATÓRIA
+%----------------------------------------------------------------------------------------
+\begin{dedicatory}
+À minha família.
+\end{dedicatory}
+
+%----------------------------------------------------------------------------------------
+%	RESUMO
+%----------------------------------------------------------------------------------------
+
+\begin{abstract}
+Quando uma ação se move de forma abrupta, um investidor não profissional faz sempre as mesmas três
+perguntas: \emph{isto é invulgar?}, \emph{foi a empresa ou foi o mercado?}, e \emph{já aconteceu
+antes, e o que se seguiu?} As ferramentas gratuitas mostram a percentagem e ficam-se por aí; os
+terminais profissionais respondem, mas a um custo fora do alcance de quem investe as suas poupanças.
+
+Esta dissertação apresenta o \textbf{InvestiGator}, um sistema de alertas financeiros construído
+sobre fontes de dados gratuitas, que responde às três perguntas e mostra sempre como chegou à
+resposta. O trabalho assenta em três técnicas: deteção de anomalias por \emph{z}-score deslizante,
+recuperação de precedentes por semelhança semântica com medição do desfeito observado, e um modelo
+supervisionado de triagem, treinado sobre um conjunto de dados próprio, para decidir que notícias
+merecem interromper alguém.
+
+Cada componente foi avaliado contra linhas de base transparentes, e os resultados são reportados tal
+como se revelaram. A deteção normalizada pela volatilidade dispara de forma muito mais consistente
+entre empresas do que um limiar fixo. A recuperação semântica supera as linhas de base lexical e
+triviais. O modelo de triagem, treinado em 79\,753 exemplos, \textbf{não} superou uma linha de base
+que usa apenas volatilidade --- um resultado negativo que se reporta, e que valida por medição a
+opção pela simplicidade que atravessa todo o trabalho.
+
+O sistema recusa, por desenho, prever preços: explica o que já aconteceu, com a evidência ao lado.
+\end{abstract}
+
+\begin{abstractotherlanguage}
+When a stock moves abruptly, a non-professional investor always asks the same three questions:
+\emph{is this unusual?}, \emph{was it the company or the market?}, and \emph{has this happened
+before, and what followed?} Free tools show the percentage and stop there; professional terminals do
+answer, at a subscription cost beyond someone investing their savings.
+
+This dissertation presents \textbf{InvestiGator}, a financial alerting system built on free data
+sources that answers those three questions and always shows how it reached the answer. The work
+rests on three techniques: anomaly detection with a rolling \emph{z}-score, precedent retrieval by
+semantic similarity with measurement of the observed outcome, and a supervised triage model, trained
+on a purpose-built dataset, to decide which news deserves interrupting someone.
+
+Each component was evaluated against transparent baselines, and the results are reported exactly as
+they fell. Volatility-normalised detection fires far more consistently across companies than a fixed
+threshold. Semantic retrieval beats lexical and trivial baselines. The triage model, trained on
+79\,753 examples, did \textbf{not} beat a volatility-only baseline --- a negative result that is
+reported, and that validates by measurement the simplicity-first stance running through the work.
+
+By design, the system refuses to predict prices: it explains what already happened, with the
+evidence beside it.
+\end{abstractotherlanguage}
+
+%----------------------------------------------------------------------------------------
+%	AGRADECIMENTOS
+%----------------------------------------------------------------------------------------
+\begin{acknowledgements}
+Ao meu orientador, Prof.\ Luís Gomes, e ao meu coorientador, Rafael Silva, por todo o apoio ao longo
+desta tese. Por trocarem ideias comigo e me ajudarem a decidir a direção do tema; por me mostrarem
+exemplos de aplicações que já existem e me manterem a par do que se vai fazendo na área; e por me
+guiarem na elaboração deste documento. Muito do que aqui está tomou a forma que tem porque houve
+antes uma conversa com eles.
+
+À minha família, por todo o apoio e por acreditarem em mim. Por me incentivarem sempre, e pela
+alegria com que foram acompanhando a construção disto --- que é, para mim, a melhor parte de o ter
+feito.
+
+Aos meus colegas da Sistrade, e à Sistrade, pela flexibilidade que me permitiu seguir este mestrado
+a par do trabalho, pelas opiniões e pelo feedback que foram dando sobre a aplicação, e por serem boa
+companhia todos os dias.
+\end{acknowledgements}
+
+%----------------------------------------------------------------------------------------
+%	ÍNDICES
+%----------------------------------------------------------------------------------------
+\tableofcontents
+\listoffigures
+\listoftables
+
+\printnoidxglossary[type=\acronymtype, title=Lista de Acrónimos, nonumberlist]
+
+\mainmatter
+\pagestyle{thesis}

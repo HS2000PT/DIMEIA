@@ -1,0 +1,72 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Dissertação MEIA — ISEP
+% TESE CURTA, EM PORTUGUÊS, ESCRITA DE RAIZ (ver tese/PROMPT.md)
+%
+% Objectivo: 70–80 páginas, três técnicas bem explicadas, muito ilustrada, para ser defendida
+% com calma. NÃO é tradução nem resumo de ../thesis-pt/ — é outro documento, mais curto e mais
+% claro, a contar a mesma verdade.
+%
+% Reutiliza (nunca duplica): figuras de ../thesis/figures/ e a bibliografia verificada
+% ../thesis/references.bib. Os NÚMEROS lêem-se sempre de docs/evaluation/*.md.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[
+11pt,
+singlespacing,
+parskip,
+nohyperreflinkcolor,
+headsepline,
+]{meia-style}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, calc, fit, backgrounds, shapes.geometric}
+% Em nós de diagrama, nunca cortar palavras a meio: quebrar só em espaços.
+\tikzset{every node/.append style={execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000\relax}}}
+
+% Figuras partilhadas com as teses longas: `figures/x` -> ../thesis/figures/x.
+\graphicspath{{../thesis/}{./}}
+
+\usepackage[style=authoryear-comp,backend=biber]{biblatex}
+\addbibresource{../thesis/references.bib}
+
+\makenoidxglossaries
+\input{frontmatter/glossary}
+
+%----------------------------------------------------------------------------------------
+%	INFORMAÇÃO DA DISSERTAÇÃO
+%----------------------------------------------------------------------------------------
+
+\thesistitle{Alertas Financeiros Explicáveis para Investidores de Retalho: Deteção de Anomalias, Recuperação de Precedentes e Triagem Aprendida}
+
+\author{Henrique José da Silva Santos}
+\studentnumber{1180934}
+\supervisor{Luís Gomes}
+\cosupervisor{Rafael Silva}
+\committeepresident{[A definir]}
+\committeemembers{[A definir]\\}
+\keywords{IA Explicável, Alertas Financeiros, Deteção de Anomalias, Recuperação Semântica, Investidores de Retalho}
+\university{\href{https://www.isep.ipp.pt}{Instituto Superior de Engenharia do Porto (ISEP)}}
+\department{\href{https://www.dei.isep.ipp.pt}{Departamento de Engenharia Informática (DEI)}}
+\thesisdate{Porto, \today}
+
+\hypersetup{pdftitle=\ttitle}
+\hypersetup{pdfauthor=\authorname}
+\hypersetup{pdfkeywords=\keywordnames}
+
+\begin{document}
+
+\input{frontmatter/frontmatter}
+
+\input{cap1/capitulo1} % Introdução
+\input{cap2/capitulo2} % Contexto
+\input{cap3/capitulo3} % Metodologia — as três técnicas
+\input{cap4/capitulo4} % O sistema
+\input{cap5/capitulo5} % Avaliação
+\input{cap6/capitulo6} % Conclusões
+
+\printbibliography[heading=bibintoc]
+
+\appendix
+\input{apendices/apendiceA}
+
+\end{document}

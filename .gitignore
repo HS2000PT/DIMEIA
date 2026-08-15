@@ -87,3 +87,18 @@ docs/decisions/citation_pdfs/*.pdf
 # repositorio um retrato do mercado que envelhece em minutos e que alguem leria como actual.
 # Quando a v4 for a serio, quem o escreve e o worker, para o ramo de dados -- nao o repo de codigo.
 data/samples/dashboard_snapshot.json
+
+# Tese curta: artefactos de compilação (o PDF é versionado, o resto não)
+tese/*.aux
+tese/*.bbl
+tese/*.bcf
+tese/*.blg
+tese/*.fdb_latexmk
+tese/*.fls
+tese/*.lof
+tese/*.log
+tese/*.lot
+tese/*.out
+tese/*.run.xml
+tese/*.toc
+tese/build.log

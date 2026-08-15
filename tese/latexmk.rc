@@ -1,0 +1,5 @@
+# latexmk.rc — mínimo. O Makefile do template invoca 'latexmk -r latexmk.rc'.
+# O glossário usa \makenoidxglossaries (não precisa de 'makeglossaries' externo),
+# por isso basta garantir geração de PDF e uso do biber para a bibliografia.
+$pdf_mode  = 1;   # gerar PDF via pdflatex
+$bibtex_use = 2;  # processar bibliografia (biber detetado pelo .bcf) e limpar

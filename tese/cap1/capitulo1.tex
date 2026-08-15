@@ -1,0 +1,184 @@
+% Capítulo 1 — Introdução (orçamento: ~8 pp)
+% Voz: primeira pessoa quando ajuda, frases curtas, uma ideia por frase.
+% Cada secção abre com a pergunta a que responde.
+
+\chapter{Introdução}
+\label{cap:introducao}
+
+\section{De onde veio este trabalho}
+\label{sec:intro_origem}
+
+\emph{Que problema é este, e porque é que vale a pena resolvê-lo?}
+
+Hoje é fácil comprar ações. Basta uma aplicação no telemóvel e alguns minutos. A maior parte das
+famílias americanas já tem ações, diretamente ou através de fundos e planos de reforma
+\autocite{gallup2025stock}, e o mercado onde investem vale mais de 62 biliões de dólares
+\autocite{sifma2025factbook}.
+
+Difícil é a parte seguinte: perceber o que aconteceu quando o preço se mexe.
+
+Imagine-se uma pessoa que tem cinco ou seis ações e olha para elas de vez em quando. Um dia abre a
+aplicação e vê uma delas a cair 4\%. A aplicação diz-lhe exatamente isso: menos 4\%. E mais nada.
+
+A partir daí a pessoa fica sozinha com três perguntas, e faz sempre estas três, por esta ordem:
+
+\begin{enumerate}
+  \item \textbf{Isto é invulgar?} Quatro por cento numa empresa calma é muito. Na mesma semana, e
+        noutra empresa, pode ser um dia perfeitamente normal.
+  \item \textbf{Foi a empresa, ou foi o mercado?} Se caiu tudo, a história é uma. Se caiu só esta,
+        é outra completamente diferente.
+  \item \textbf{Já aconteceu antes, e o que se seguiu?} Se já houve dias parecidos, o que fez o
+        preço a seguir?
+\end{enumerate}
+
+As aplicações gratuitas não respondem a nenhuma das três. Mostram a percentagem, que é o princípio
+da primeira pergunta e não a resposta. Os terminais profissionais respondem às três, mas custam mais
+por mês do que muita gente investe por ano.
+
+É essa distância que este trabalho tenta encurtar. Não por falta de dados --- há dados a mais, e
+gratuitos. Por falta de \textbf{contexto}, e de um contexto que a pessoa possa \emph{verificar}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/us_equity_market_cap.pdf}
+\caption[Capitalização do mercado acionista dos EUA]{Capitalização do mercado acionista dos EUA,
+2015--2024, em biliões de dólares. É neste mercado que investem as pessoas de quem este trabalho
+fala. Elaborado a partir dos dados do SIFMA Capital Markets Fact Book
+\autocite{sifma2025factbook}.}
+\label{fig:mercado_eua}
+\end{figure}
+
+\section{O que o sistema faz, numa página}
+\label{sec:intro_sistema}
+
+\emph{Se tivesse de explicar o InvestiGator numa frase, qual seria?}
+
+Esta: \textbf{o sistema vigia um conjunto de empresas, deteta quando algo sai fora do normal, e
+avisa --- mas só avisa com a explicação e a evidência ao lado.}
+
+Há duas maneiras de o sistema começar a prestar atenção, e estão na
+Figura~\ref{fig:conceito}. Ou o \textbf{preço} se mexe de forma invulgar, ou chega uma
+\textbf{notícia} relevante sobre uma das empresas. Em qualquer dos casos, o que sai do outro lado
+não é uma notificação seca. É um alerta que diz o que aconteceu, porque é que foi considerado
+invulgar, de onde vieram os dados, e que casos parecidos já existiram no passado --- com o que o
+preço fez depois deles.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small, >={Stealth[length=2.2mm]},
+  gat/.style={draw, rounded corners, fill=black!8, align=center, text width=3.1cm, minimum height=1cm},
+  sis/.style={draw, rounded corners, fill=black!3, align=center, text width=2.6cm, minimum height=1.6cm},
+  saida/.style={draw, rounded corners, fill=black!3, align=center, text width=3.8cm, minimum height=1.6cm},
+]
+  \node[gat] (g1) {movimento invulgar\\ no preço};
+  \node[gat, below=7mm of g1] (g2) {notícia relevante\\ sobre a empresa};
+  \node[sis] (sis) at ($(g1)!0.5!(g2) + (4.2,0)$) {\textbf{InvestiGator}};
+  \node[saida, right=1.3cm of sis] (out) {alerta explicado\\[2pt]
+    \footnotesize o que aconteceu\\ \footnotesize porquê · fontes\\ \footnotesize casos parecidos};
+  \node[right=1.0cm of out, align=center] (inv) {\footnotesize investidor};
+  \draw[->] (g1) -- (sis);
+  \draw[->] (g2) -- (sis);
+  \draw[->] (sis) -- (out);
+  \draw[->] (out) -- (inv);
+\end{tikzpicture}
+\caption[O que o sistema faz]{Os dois gatilhos e o que sai deles. O que o investidor recebe é um
+alerta que ele consegue seguir e conferir, e não apenas um aviso de que o preço mexeu.}
+\label{fig:conceito}
+\end{figure}
+
+\subsection*{E o que o sistema recusa fazer}
+
+Há uma coisa que este sistema não faz, e não é por não ter dado jeito: \textbf{não prevê preços}.
+
+Nunca diz que uma ação vai subir. Nunca diz para comprar ou para vender. Nunca mostra um alvo de
+preço.
+
+Isto pode parecer uma limitação. É o contrário: é o que torna tudo o resto verificável. Uma
+afirmação sobre o que \emph{já} aconteceu pode ser conferida contra o registo. Uma previsão não pode
+ser conferida por ninguém, nem no momento em que é feita nem depois. Ao recusar prever, o sistema
+obriga-se a dizer só coisas que consegue mostrar.
+
+\section{Objetivos e perguntas de investigação}
+\label{sec:intro_objetivos}
+
+\emph{O que é que este trabalho se propõe descobrir?}
+
+O objetivo geral é \textbf{desenhar, construir e avaliar} um sistema de alertas financeiros
+explicável para investidores de retalho, usando apenas fontes de dados gratuitas.
+
+Para lá chegar, o trabalho responde a três perguntas de investigação. Cada uma tem uma medição
+associada, porque uma pergunta a que não se sabe responder com um número não é uma pergunta de
+investigação --- é uma opinião.
+
+\begin{itemize}
+  \item \textbf{\gls{QI}1 --- deteção.} Consegue um método estatístico simples e transparente
+        detetar movimentos invulgares de forma consistente entre empresas com volatilidades muito
+        diferentes, e fazê-lo melhor do que uma regra fixa?
+  \item \textbf{\gls{QI}2 --- precedentes.} Consegue o sistema encontrar notícias passadas
+        genuinamente parecidas com a atual, melhor do que alternativas triviais, e medir o que
+        aconteceu ao preço a seguir a elas sem usar informação do futuro?
+  \item \textbf{\gls{QI}3 --- triagem.} Consegue um modelo treinado decidir que notícias merecem um
+        alerta melhor do que uma linha de base simples baseada apenas em volatilidade?
+\end{itemize}
+
+Estas três perguntas dão origem a quatro objetivos concretos:
+
+\begin{enumerate}
+  \item construir o sistema completo, dos dados até ao alerta entregue;
+  \item avaliar cada componente contra linhas de base transparentes;
+  \item garantir que as explicações são fiéis ao que o sistema realmente calculou;
+  \item reportar os resultados tal como se revelarem, incluindo os que forem negativos.
+\end{enumerate}
+
+O quarto objetivo é o mais importante e é o mais fácil de trair. Voltarei a ele no
+Capítulo~\ref{cap:conclusoes}.
+
+\section{Contribuições}
+\label{sec:intro_contribuicoes}
+
+\emph{O que é que fica feito no fim?}
+
+Esta é uma dissertação de \textbf{Engenharia de Inteligência Artificial}. A contribuição não é
+inventar um algoritmo novo. É escolher, integrar e avaliar criticamente técnicas que já existem, até
+formarem um sistema que funciona, que se explica, e que outra pessoa consegue reproduzir. Escolher
+bem \emph{é} o trabalho de engenharia.
+
+Ficam quatro coisas:
+
+\begin{enumerate}
+  \item \textbf{Um sistema completo e a funcionar}, com os dois gatilhos, sobre fontes gratuitas, e
+        implantado --- não uma demonstração de laboratório.
+  \item \textbf{Um método reprodutível para ligar notícias a impacto de mercado}, que combina
+        recuperação por semelhança semântica com janelas de estudo de evento, sem deixar entrar
+        informação do futuro.
+  \item \textbf{Um conjunto de dados próprio e um modelo treinado sobre ele}: 79\,753 exemplos
+        construídos a partir de notícias e preços históricos, com o modelo, a calibração e as
+        métricas guardados como artefactos versionados.
+  \item \textbf{Uma avaliação honesta de cada componente} contra linhas de base transparentes ---
+        incluindo o resultado que me correu ao contrário, que está reportado como tal.
+\end{enumerate}
+
+\section{Como ler este documento}
+\label{sec:intro_estrutura}
+
+\emph{Por onde é que isto vai?}
+
+O documento foi escrito para ser lido de fio a pavio, e cada capítulo responde a uma pergunta:
+
+\begin{itemize}
+  \item \textbf{Capítulo~\ref{cap:contexto} --- Contexto:} o que já existe, e porque é que não
+        chega para o problema desta tese.
+  \item \textbf{Capítulo~\ref{cap:metodologia} --- Metodologia:} as três técnicas, explicadas
+        devagar e com desenhos.
+  \item \textbf{Capítulo~\ref{cap:sistema} --- O sistema:} como as peças se ligam, e uma notícia
+        real seguida do princípio ao fim.
+  \item \textbf{Capítulo~\ref{cap:avaliacao} --- Avaliação:} o que foi medido, contra o quê, e com
+        que resultado.
+  \item \textbf{Capítulo~\ref{cap:conclusoes} --- Conclusões:} o que ficou provado, o que ficou por
+        fazer, e o que eu faria a seguir.
+\end{itemize}
+
+Há um fio que atravessa os capítulos~\ref{cap:metodologia} a~\ref{cap:avaliacao}: \textbf{a mesma
+notícia real}, seguida desde o momento em que chega até ao alerta que sai. Sempre que aparecer, é a
+mesma. Serve para que nada aqui fique abstrato.
