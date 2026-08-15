@@ -7,9 +7,96 @@
 ---
 
 ## Estado Atual
-- **Sessão nº:** 57 (**auditoria-mestra ponta a ponta, a propagação da correcção da RQ4, e o
-  produto a dizer a verdade sobre si próprio**)
+- **Sessão nº:** 58 (**a TESE CURTA em PT-PT: revisão crítica, PT-PT a sério, transparência
+  máxima, e as métricas explicadas do zero**)
 - **Última atualização:** 2026-08-15
+- **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
+  tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
+  ter calma nas estatísticas, mostrando cada salto até ao valor final):**
+  **A tese curta (`tese/`) passou de 59 para 77 páginas, e nenhuma delas é enchimento.**
+  **(A) REVISÃO CRÍTICA — 7 flutuantes órfãos e 2 erros reais.** O `check_references.py` estava
+  **cego** para a tese curta: só conhecia os nomes ingleses (`ch{i}/chapter{i}.tex`) e imprimia
+  `0 referências, 0 labels`, que se lê como "está tudo bem" e era "não olhei para nada". Corrigido,
+  e passa a **sair com erro** quando não encontra corpus. Com ele a ver: **7 figuras/tabelas que
+  nenhuma frase invocava**. Erros reais: (1) o Cap. 6 dizia que "a metade útil da **QI3**" ficava
+  em aberto — a QI3 é a triagem e está respondida com um "Não"; a metade aberta é do **terceiro
+  objectivo** (é a classe de erro que a renumeração cria); (2) **doze** empresas no Cap. 6 e
+  **quinze** no Cap. 5 sem nunca dizer porquê (watchlist implantada vs corpus de avaliação).
+  **⚠️ (B) O ERRO QUE O ALUNO APANHOU, e a intuição dele de que haveria mais estava certa.**
+  A tese dizia: *"Uma previsão não pode ser conferida por ninguém, nem no momento em que é feita
+  **nem depois**."* **É FALSO** — uma previsão pode ser conferida depois, e este trabalho até tem
+  um mecanismo que o faz aos próprios alertas. Eu tinha escrito a versão *mais forte* do argumento
+  em vez da correcta. **A mesma frase estava em mais DOIS documentos**: no guia de estudo (por onde
+  ele estudaria antes da defesa) e no quizz. Corrigida nos três, para o que é verdade e é mais
+  estreito: confirma-se contra o registo **no momento em que é lida**; uma previsão só se confere
+  depois de já ter sido preciso decidir.
+  **(C) 189 TRAVESSÕES FORA.** Corpo 115→3, slides 29→3, guia 45→1, quizz 41→0. Os 7 que ficam são
+  **todos** células de tabela a significar "não aplicável". Cada frase reescrita uma a uma.
+  Registo: `o ponto todo` era decalque de *"the whole point"*. **Brasileirismos: ZERO** — varridos
+  com lista fechada; o único acerto era falso positivo meu (*"o que se vai fazendo"* é PT-PT).
+  **⚠️ (D) A CONTAGEM ESTAVA ERRADA E CONTRA O PRÓPRIO TRABALHO:** três documentos diziam que
+  "a técnica mais simples ganhou **duas** vezes" e o Cap. 5 reporta **três** (z-score vs IF/LOF;
+  volatilidade vs texto; e as **treze constantes a 0.662** contra o modelo implantado a 0.632, que
+  o próprio capítulo chama "desconfortável"). Contá-la torna o argumento central **mais forte**.
+  **(E) TRANSPARÊNCIA MÁXIMA:** secção nova no Cap. 3 com os **dados tal como são** (linha real do
+  FNSPID em bruto, linha real do treino **inteira** com as 20 colunas, registo real da base de
+  casos, dicionário de colunas com a pergunta *"vê o futuro?"*, e a tabela dos **intervalos reais
+  lidos dos ficheiros**). Secção nova no Cap. 4 com **todas as peças externas NOMEADAS** (Heroku,
+  GitHub Actions, Telegram, Finnhub, yfinance, Tiingo, Polygon, Alpha Vantage, FNSPID, SBERT),
+  cada uma com o limite gratuito e **a alternativa que perdeu** — incluindo o **Stooq, rejeitado
+  por medição**. Diagrama de infraestrutura novo. O **alerta real** anotado peça a peça.
+  **⚠️ (F) DOIS DEFEITOS DE PRODUTO ENCONTRADOS A CONSTRUIR ISSO, medidos e corrigidos:**
+  **(F1) o funil dizia `alerted` 330 vezes num dia em que foram enviadas 4 mensagens.** A supressão
+  *"esta manchete já foi alertada hoje"* fazia `continue` **sem registar nada**, ao contrário das
+  outras três. Com o ciclo de 60 s a mesma manchete recontava-se todos os minutos. É a **mesma
+  classe** que a sessão 57 corrigiu, sobrevivendo na única porta que ficou por instrumentar.
+  Etapa `already_sent` nova, com rótulo no screener e teste de regressão.
+  **(F2) o registo do funil guardava menos de um dia.** O tecto era de **5000 LINHAS**,
+  dimensionado para o agendador de 30/30 min (~8 dias). Com 60 s são **30× mais** registos, e as
+  5000 linhas publicadas eram **todas do próprio dia** (a AMD tinha 0 registos e 1 alerta enviado
+  nesse dia). **Uma retenção contada em linhas muda de significado sempre que a cadência muda.**
+  Passa a **3 dias**, com o tecto de linhas só como rede de segurança, e a razão do número (o
+  ficheiro é republicado a cada ciclo: o custo é de **publicação**) fica escrita. **+3 testes,
+  verificados a falhar sem a correcção.**
+  **⚠️ (G) DOIS SÍTIOS ONDE A MEDIÇÃO NÃO DÁ RAZÃO AO SISTEMA, agora ditos em voz alta:** a
+  **janela de 20 dias não ganha** (60d dá F1 **0.678** contra 0.516) e o **desvio-padrão de pesos
+  iguais não ganha** (EWMA dá **0.664** contra 0.516, cortando quase metade dos falsos alarmes).
+  Os dois ficam — por responsividade e por explicabilidade — mas ditos como **escolha** e não como
+  resultado. O segundo só apareceu porque uma figura que acrescentei tinha um painel que a tese
+  nunca discutia: **ou se explica, ou não se põe**.
+  **(H) MEDIÇÃO NOVA E REGENERÁVEL** (`evaluate_precedent_independence.py`): o alerta **afirma mais
+  evidência do que tem**. O impacto é medido por (empresa, dia), logo três manchetes do mesmo dia
+  partilham o mesmo valor por construção. Em **36,8%** dos 247 alertas entregues os casos assentam
+  em menos dias distintos do que casos exibidos; em **11,3%** são todos o mesmo dia; e dos 120 que
+  afirmam unanimidade, **23,3%** apoiam-se num único dia. Não afecta nenhum número do Cap. 5.
+  **(I) AS MÉTRICAS EXPLICADAS DO ZERO** (secção nova antes dos resultados), porque o capítulo
+  dizia "F1 = 0.530" e nunca mostrava de onde vinha: matriz de confusão em figura; precisão e
+  cobertura com fórmula; o **F1 com as duas contas feitas até ao fim** (0.218 e 0.516); a
+  **precisão@5** com figura e o chão de acaso medido; a **PR-AUC** com figura da curva e **área
+  sombreada**, mais a propriedade que a torna interpretável (o chão é a prevalência: "alertar
+  sempre" dá exactamente 0.378); e o **Brier** com a conta que fecha (1 − 0.378 = **0.622**).
+  **Escolhi de propósito exemplos cujas contas fecham contra números já congelados.**
+  **(J) E OS DOIS SALTOS QUE FALTAVAM NO CAP. 3:** o **cosseno** com dois pares reais (+0.956 e
+  −0.086), os quatro comprimentos a valerem exactamente 1.000000 (confirma a normalização em vez
+  de a afirmar) e as primeiras parcelas da soma; e a **calibração** com os valores realmente
+  aprendidos (a=3.700, b=−2.313) mais **a mesma linha de dados seguida pelas cinco etapas** até aos
+  39%. Verificado contra o modelo implantado: a minha soma reproduz o pipeline **até à sexta casa**.
+  **⚠️ DEFEITOS MEUS DESTA SESSÃO, todos apanhados a RENDERIZAR e nenhum no exit code:** (1)
+  decimais com **vírgula** na secção nova e **ponto** no resto (53 convertidos); (2) os rótulos da
+  matriz de confusão **escreviam-se um por cima do outro** — um rótulo rodado é mais alto do que a
+  linha que legenda; tentei recentrar, continuou, passaram a horizontais; (3) dois rótulos a
+  colidir na curva PR; (4) apertei uma figura à procura de um overfull que era **da tabela**, e as
+  três caixas ficaram com alturas diferentes; (5) ao corrigir a contagem deixei "o primeiro dos
+  **dois** casos" seguido de "é o primeiro de **três**".
+  **⚠️ O LIMITE DE GASTO MENSAL MORDEU OUTRA VEZ: 7 de 7 agentes**, devolvendo
+  `{aceites: 0, rejeitados: 0}` — que se lê como "nada a corrigir" e é a **ausência de revisão**
+  (**8.ª vez**). Feito à mão, e **todos os achados desta sessão saíram da passagem manual**.
+  **Portas finais: tese 77 pp · slides 18 · guia 19, todos 0 erros e 0 indefinidas; 0 overfull
+  >15pt; 0 flutuantes órfãos; 103 referências sem incompatibilidades de tipo; 23/23 números a bater
+  certo com os `docs/evaluation`; 0 travessões em prosa; quizz 33 perguntas; 730 testes (era 724);
+  ruff limpo; congelados e teses longas intactos.**
+  **⏭️ O QUE FICA NA TESE CURTA:** o apêndice lista os comandos numa tabela e podia mostrar **a
+  saída real de cada um**; e os slides/guia não têm ainda a secção das métricas explicadas.
 - **🆕 SESSÃO 57 (2026-08-13 — o aluno deu uma directiva-mestra: auditar tudo antes de mexer em
   nada, e criar o plano-mestre do projecto):**
   **(A) PLANO-MESTRE CRIADO:** [`INVESTIGATOR_MASTER_PLAN.md`](INVESTIGATOR_MASTER_PLAN.md) na raiz,
