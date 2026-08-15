@@ -716,8 +716,30 @@ def test_todas_as_etapas_pos_varredura_existem_no_gate_log():
     desenhar e cai no rótulo por defeito."""
     from investigator.gate_log import STAGES
 
-    for etapa in ("daily_cap", "ladder_floor", "duplicate_story"):
+    for etapa in ("daily_cap", "ladder_floor", "duplicate_story", "already_sent"):
         assert etapa in STAGES
+
+
+def test_manchete_ja_enviada_hoje_e_registada_como_supressao():
+    """⚠️ Regressão do defeito medido a 2026-08-15.
+
+    A supressão ``esta manchete exacta já foi alertada hoje`` fazia ``continue`` sem registar
+    nada, ao contrário das outras três. Com o ciclo de 60 s a mesma manchete é reavaliada todos
+    os minutos, e o funil contava-a como ``alerted`` de cada vez: **330 registos `alerted` num
+    dia em que o canal recebeu 4 mensagens**.
+    """
+    from scripts.run_alerts import filter_new_alerts, news_key
+
+    texto = "News alert for NVDA\nqualquer coisa"
+    estado: dict = {"day": "2026-08-15", "alerted_news": [news_key("NVDA", texto)],
+                    "news_count": {}, "news_words": {}}
+    suprimidas: dict[str, tuple[str, str]] = {}
+
+    saida = filter_new_alerts([], [("NVDA", texto)], estado, suppressed=suprimidas)
+
+    assert saida == [], "uma manchete já entregue não pode ser reenviada"
+    assert suprimidas.get("NVDA", ("", ""))[0] == "already_sent", (
+        "a supressão tem de ficar registada, senão o funil continua a dizer 'alerted'")
 
 
 def test_semear_nao_sobrescreve_ficheiro_local_com_conteudo(tmp_path):

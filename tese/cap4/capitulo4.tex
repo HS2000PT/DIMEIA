@@ -90,6 +90,79 @@ Para responder à pergunta ``já aconteceu antes?'' é preciso um passado. Usa-s
 correspondentes. Desse alinhamento nasce a base de casos: cerca de 80 mil notícias entre 2018 e
 2023, cada uma com o que o preço fez a seguir.
 
+\section{As peças que não são minhas}
+\label{sec:sis_pecas}
+
+\emph{O que é que este sistema usa de fora, e porquê essas e não outras?}
+
+Um sistema construído sobre serviços de terceiros deve dizer quais são. Não por formalidade: porque
+cada um deles é uma dependência, um limite, e uma decisão que podia ter sido tomada ao contrário. A
+Tabela~\ref{tab:sis_pecas} lista todas, com o que cada uma faz, o que custa, e o que foi
+\emph{rejeitado} em favor dela.
+
+\begin{table}[ht]
+\caption[Tudo o que o sistema usa de fora]{As dependências externas, nomeadas. A coluna da direita
+é a que interessa: uma escolha só se defende contra a alternativa que não foi tomada.}
+\label{tab:sis_pecas}
+\centering
+\scriptsize
+\begin{tabular}{L{0.15\textwidth} L{0.20\textwidth} L{0.16\textwidth} L{0.35\textwidth}}
+\toprule
+\tabhead{Peça} & \tabhead{Para quê} & \tabhead{Custo/limite} & \tabhead{Porquê esta, e não a outra} \\
+\midrule
+\textbf{Finnhub} & notícias por empresa, em tempo quase real & grátis, 60 pedidos/min &
+Dá notícias \emph{por empresa}, que é o que o sistema precisa. Alternativas de \gls{RSS} genérico
+obrigariam a descobrir a empresa a partir do texto, acrescentando um erro que não é preciso ter. \\
+\addlinespace
+\textbf{yfinance} & preços diários e intradiários & grátis, sem garantia &
+É a fonte mais completa sem chave. Falha com frequência, e por isso não é usada sozinha: ver a
+cadeia abaixo. \\
+\addlinespace
+\textbf{Tiingo, Polygon, Alpha Vantage} & preços, quando a primeira falha & grátis com chave;
+Alpha Vantage 25 pedidos/dia & São \emph{alternativas de recurso}, não fontes principais. A ordem é
+fixa e o sistema regista qual delas serviu, porque saber a origem de um número faz parte de o poder
+explicar. \\
+\addlinespace
+\textbf{Stooq} & era candidato a fonte de preços & grátis & \textbf{Rejeitada por medição.} Foi
+testada ao vivo e responde com uma verificação anti-robô, o que a torna inutilizável dentro de um
+processo automático. Fica registada porque parecia servir. \\
+\addlinespace
+\textbf{\gls{FNSPID}} \autocite{dong2024fnspid} & o passado: notícias antigas alinhadas com preços
+& grátis, licença \emph{CC BY-SA} & É público, é grande, e já vem alinhado com preços. Construir
+uma base equivalente exigiria comprar histórico de notícias. \\
+\addlinespace
+\textbf{Sentence-BERT} \autocite{reimers2019sbert} & transformar manchetes em vetores & grátis,
+corre localmente & Modelo já treinado, pequeno o suficiente para caber num contentor de memória
+limitada. Alternativas maiores e um modelo específico de finanças foram testados e estão medidos no
+Capítulo~\ref{cap:avaliacao}. \\
+\addlinespace
+\textbf{Telegram} & entregar o alerta ao telemóvel & grátis, sem limite prático &
+Tem \gls{API} de \emph{bot} sem custo e sem processo de aprovação, e o utilizador subscreve com um
+clique. Notificações nativas de telemóvel obrigariam a publicar aplicações em duas lojas. \\
+\addlinespace
+\textbf{Heroku} & manter o sistema a correr sem parar & créditos do \emph{GitHub Student Pack} &
+Dá um processo \textbf{permanente}, que é o que o ciclo de 60 segundos exige. É a decisão explicada
+na Secção~\ref{sec:sis_implantacao}. \\
+\addlinespace
+\textbf{GitHub Actions} & correr os testes, compilar a dissertação, e guardar o histórico &
+grátis para repositórios públicos & Serve hoje de rede de segurança do processo permanente, e serviu
+de \emph{motor} na primeira versão. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Duas observações que valem mais do que a tabela.
+
+\paragraph{A cadeia de preços é a peça de engenharia mais aborrecida e mais necessária.}
+Nenhuma fonte gratuita de preços é fiável sozinha. O sistema tenta-as por ordem fixa e fica pela
+primeira que responde, registando sempre qual serviu. Sem isto, um dia em que o Yahoo bloqueia
+seria indistinguível de um dia sem mercado.
+
+\paragraph{Nada disto é escolhido por gosto sem prova.}
+Duas destas linhas mudaram por \emph{medição} e não por opinião: o Stooq foi despromovido depois de
+se ver o que devolve, e o modelo de vetores foi comparado com três alternativas antes de ficar. As
+restantes são escolhas de restrição: são as que cabem em ``apenas fontes gratuitas''.
+
 \section{O caminho de uma notícia, do princípio ao fim}
 \label{sec:sis_caminho}
 
@@ -215,6 +288,46 @@ As cinco portas da Figura~\ref{fig:caminho} existem para isso. O efeito conjunto
 janela medida em produção, das \textbf{944} notícias relevantes que entraram, saíram \textbf{42}
 alertas. Cerca de uma em cada vinte e duas.
 
+Vale a pena ver isto num dia concreto, com os números lidos do registo do próprio sistema. A
+Tabela~\ref{tab:sis_funil} mostra o dia 15 de agosto de 2026.
+
+\begin{table}[ht]
+\caption[O funil de um dia real]{Onde morreram as avaliações do dia 15 de agosto de 2026, lidas do
+registo do sistema. A leitura da coluna da direita é a parte que interessa.}
+\label{tab:sis_funil}
+\centering
+\small
+\begin{tabular}{L{0.30\textwidth} r L{0.42\textwidth}}
+\toprule
+\tabhead{Onde morreu} & \tabhead{Avaliações} & \tabhead{O que é} \\
+\midrule
+Sem precedente forte & $3\,086$ & nenhum caso passado acima do mínimo de semelhança \\
+Abaixo do piso da triagem & $1\,136$ & o modelo pontuou abaixo de $50\%$ \\
+A mesma história & $307$ & já contada por outras palavras \\
+Piso escalonado & $141$ & o segundo alerta do dia exigia pontuação mais alta \\
+Sobreviveu às portas & $330$ & \textbf{ver a ressalva} \\
+\midrule
+\textbf{Mensagens entregues} & \textbf{4} & o que a pessoa recebeu de facto \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{E a ressalva é um defeito que encontrei ao construir esta tabela.}
+Cinco mil avaliações e quatro mensagens: a proporção está certa e é o comportamento pretendido. Mas
+a linha dos $330$ não queria dizer o que parecia. O sistema reavalia as mesmas manchetes de $60$ em
+$60$ segundos, e uma manchete que já tinha sido entregue nesse dia voltava a passar todas as portas
+a cada minuto. Era travada no fim, por uma verificação de ``isto já foi enviado'' que
+\textbf{não estava registada como uma etapa}, ao contrário das três acima dela.
+
+Resultado: a vista que existe para tornar as decisões do sistema inspecionáveis dizia
+``alerta enviado'' $330$ vezes num dia em que enviou $4$ mensagens. Não é um erro de contagem
+inofensivo: é a mesma classe de defeito que a tabela abaixo documenta para as outras portas,
+sobrevivendo na única que ficou por instrumentar.
+
+Está corrigido: a supressão passou a ser uma etapa com nome próprio, como as outras, e existe um
+teste que falha se voltar a desaparecer. Os números da tabela são os de \emph{antes} da correção,
+porque é esse o estado em que os medi.
+
 Cada porta tem uma constante associada, e é justo perguntar de onde vêm esses números. A
 Tabela~\ref{tab:sis_portas} responde, incluindo quando a resposta é ``foi escolhido''.
 
@@ -263,10 +376,56 @@ ordem:
   \item \textbf{a ressalva}: que isto é história observada e não uma previsão.
 \end{enumerate}
 
-A Figura~\ref{fig:app} mostra como isto chega ao ecrã.
-
 A ordem importa. A pessoa lê primeiro o que aconteceu e só depois a estatística, porque é assim que
 uma pessoa pensa; um alerta que abre com ``$z = 2.65$'' perde o leitor na primeira linha.
+
+A Figura~\ref{fig:sis_alerta} mostra um alerta \textbf{tal como foi entregue}, copiado do registo
+do canal. A Figura~\ref{fig:app} mostra a mesma informação na página web.
+
+\begin{figure}[ht]
+\centering
+\begin{tcolorbox}[colback=black!3, colframe=black!35, boxrule=0.4pt, arc=2pt,
+                  width=0.97\textwidth, fontupper=\ttfamily\scriptsize]
+\textcolor{black!55}{[1]} News alert for AMZN (Amazon) (2026-08-13)\\
+\hspace*{1em}"Prediction: Amazon Will Join Apple in the \$4 Trillion Club Before 2030"\\[4pt]
+\textcolor{black!55}{[3]} 3 similar past headlines. Their 5-day move ranged -2.73\% to -2.73\%\\
+\hspace*{1em}(average -2.73\%):\\
+\hspace*{1em}-2.73\% in 5d · AAPL 2026-08-05 (8d ago) · "If You Invested \$100 In Apple\\
+\hspace*{2em}Stock 10 Years Ago, You Would Have This Much Today" (sim 0.56)\\
+\hspace*{1em}-2.73\% in 5d · AAPL 2026-08-05 (8d ago) · "Apple's Selloff Is Overdone"\\
+\hspace*{2em}(sim 0.51)\\
+\hspace*{1em}-2.73\% in 5d · AAPL 2026-08-05 (8d ago) · "Apple's Buyback Is Retiring\\
+\hspace*{2em}Less Stock Just As The Memory Bill Grows" (sim 0.47)\\[4pt]
+\textcolor{black!55}{[4]} 3 of 3 shown cases moved down — topic-similar past cases, not a\\
+\hspace*{1em}prediction for this news (an observed pattern, not a forecast).\\
+\hspace*{1em}Observed past outcomes after similar news, not a price prediction and\\
+\hspace*{1em}not advice.\\[4pt]
+\textcolor{black!55}{[2]} Materiality estimate (learned triage): 57\% chance of an unusually\\
+\hspace*{1em}large move over the next few days, in EITHER direction — raised by\\
+\hspace*{1em}recent volatility (20d) and sector; lowered by today's own move and\\
+\hspace*{1em}recent momentum (5d). This estimates whether the market reacts, never\\
+\hspace*{1em}which way: it is not a price forecast and not advice.
+\end{tcolorbox}
+\caption[Um alerta real, tal como foi entregue]{Um alerta enviado ao canal a 13 de agosto de 2026,
+copiado do registo sem edição. Os números entre parênteses marcam as quatro partes da lista acima.
+Todos os valores vêm dos objetos que os calcularam: a semelhança do motor de recuperação, o
+movimento a cinco dias da medição de impacto, e os $57\%$ do modelo calibrado.}
+\label{fig:sis_alerta}
+\end{figure}
+
+\paragraph{E este exemplo mostra um defeito que eu não tinha visto até o pôr aqui.}
+Os três precedentes têm o \emph{mesmo} impacto, $-2{,}73\%$, e a mesma data. Não é coincidência: o
+impacto é medido por \textbf{(empresa, dia)}, logo três manchetes da mesma empresa no mesmo dia
+partilham o mesmo valor por construção. A frase ``\emph{3 of 3 shown cases moved down}'' apresenta
+como concordância entre três casos aquilo que é \textbf{um dia observado três vezes}.
+
+Medido sobre os $247$ alertas de notícia com precedentes já entregues: em $36{,}8\%$ deles os casos
+mostrados assentam em menos dias distintos do que casos exibidos, e em $11{,}3\%$ os três são o
+mesmo dia. Dos $120$ alertas que afirmam unanimidade, $23{,}3\%$ apoiam-se num único dia.
+
+Isto \textbf{não afeta} nenhum número reportado no Capítulo~\ref{cap:avaliacao}: a precisão@5 conta
+manchetes e a concordância de direção é medida par a par sobre o corpus histórico. Afeta a força que
+o \emph{alerta} reivindica quando fala ao utilizador, e fica registado como limitação por isso.
 
 E a garantia que sustenta tudo isto é de construção, não de boa vontade: \textbf{cada número do
 texto vem do objeto que o calculou}. O texto é montado a partir dessas peças. Não é possível o alerta
@@ -288,14 +447,62 @@ estatístico que a maioria das pessoas não sabe ler.}
 
 \emph{Como é que um sistema destes se mantém a funcionar sem servidor pago?}
 
-A primeira versão corria no agendador gratuito de um serviço de alojamento de código. Funcionava, e
-tinha um problema que só se vê a usar: \textbf{os alertas chegavam tarde}. O agendador gratuito é de
-melhor esforço: na prática corria de hora e meia em hora e meia, e não de meia em meia hora como
-estava configurado.
+A primeira versão corria no agendador do \textbf{GitHub Actions}, configurado para disparar de meia
+em meia hora nos dias úteis. Funcionava, e tinha um problema que só se vê a usar: \textbf{os alertas
+chegavam tarde}. Esse agendador é de \emph{melhor esforço} para repositórios gratuitos: quando os
+executores partilhados enchem, a corrida é saltada. Na prática corria de hora e meia em hora e meia.
 
-A solução veio do plano do ISEP: o \emph{GitHub Student Developer Pack} dá créditos que permitiram
-alojar o sistema num serviço com processo permanente. O ciclo passou a correr de \textbf{60 em 60
-segundos}.
+A solução veio do plano do ISEP: o \emph{GitHub Student Developer Pack} dá créditos de
+\textbf{Heroku}, que permitiram passar de um agendador para um \textbf{processo permanente}. O ciclo
+passou a correr de \textbf{60 em 60 segundos}.
+
+A Figura~\ref{fig:sis_infra} mostra onde cada peça corre depois dessa mudança, porque a arquitetura
+de execução não é óbvia e tem uma consequência que me custou tempo real.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize, >={Stealth[length=2.2mm]},
+  cx/.style={draw, rounded corners, align=center, text width=2.35cm, minimum height=1.2cm,
+             inner sep=4pt},
+  proc/.style={cx, fill=black!5},
+  dado/.style={cx, fill=black!14},
+  fora/.style={cx, dashed, fill=white},
+  et/.style={font=\scriptsize, text=black!55},
+]
+  \node[proc] (w) {\textbf{worker}\\ \scriptsize ciclo de 60\,s\\ \scriptsize (Heroku)};
+  \node[proc, below=8mm of w] (web) {\textbf{web}\\ \scriptsize serve a página\\ \scriptsize (Heroku)};
+  \node[dado, right=0.85cm of w, yshift=-7mm] (br)
+    {\textbf{branch de dados}\\ \scriptsize histórico e registos\\ \scriptsize (GitHub)};
+  \node[fora, left=0.85cm of w] (apis) {\textbf{fontes}\\ \scriptsize Finnhub, preços};
+  \node[fora, right=0.85cm of br, yshift=8mm] (tg) {\textbf{Telegram}\\ \scriptsize o alerta};
+  \node[fora, right=0.85cm of br, yshift=-8mm] (nav) {\textbf{navegador}\\ \scriptsize o utilizador};
+
+  \draw[->] (apis) -- (w);
+  \draw[->] (w) -- node[et, above, sloped] {publica} (br);
+  \draw[->] (br) -- node[et, below, sloped] {lê} (web);
+  \draw[->] (w.north) -- ++(0,0.45) -| node[et, above, pos=0.25] {envia} (tg.north);
+  \draw[->] (web) -- ++(2.0,0) |- (nav);
+\end{tikzpicture}
+\caption[Onde cada peça corre]{Os dois processos do Heroku não partilham disco. Tudo o que tem de
+sobreviver a um reinício, ou de ser visto pelo outro processo, passa pela \textbf{branch de
+dados} no GitHub.}
+\label{fig:sis_infra}
+\end{figure}
+
+\paragraph{A consequência, e é um defeito que encontrei e corrigi.}
+Os dois processos correm em máquinas separadas e o disco de cada uma é apagado a cada reinício.
+Isso está escrito na documentação do serviço e eu sabia-o. Mesmo assim, dois dos ficheiros de
+registo, o do funil e o das decisões de triagem, estavam a ser escritos \textbf{apenas em disco
+local}. Resultado: o processo que serve a página mostrava uma semana atrasada, e o registo que
+alimenta a validação posterior tinha deixado de crescer. Ambos passaram a ser publicados na branch
+de dados a cada ciclo.
+
+\paragraph{E o \textbf{GitHub Actions} não desapareceu.} Continua a fazer três coisas: corre os
+testes a cada alteração de código (\gls{CI}), compila esta dissertação, e mantém um agendador de
+reserva que dispara nos mesmos horários. Se o processo permanente parar, o sistema degrada para o
+comportamento da primeira versão em vez de ficar mudo, e o mecanismo que evita alertas repetidos
+garante que os dois não enviam a mesma coisa duas vezes.
 
 E aqui está o resultado, na Tabela~\ref{tab:sis_latencia}, que é mais interessante do que a
 decisão:

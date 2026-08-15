@@ -116,6 +116,43 @@ Este é o primeiro de três casos, neste capítulo, em que uma técnica mais sof
 de forma justa com uma mais simples e perdeu. É um resultado que vale por si: justifica por medição
 a escolha do método simples, em vez de a justificar por preferência.
 
+A Figura~\ref{fig:av_detetores} mostra esta comparação em gráfico, e ao lado uma segunda que ainda
+não foi discutida.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.88\textwidth]{figures/eval_anomaly_detectors.pdf}
+\caption[A regra contra os métodos aprendidos]{À esquerda, os três detetores sobre a mesma região
+pontuada e com o mesmo cuidado de não usar o futuro. À direita, uma segunda comparação, entre duas
+maneiras de estimar a volatilidade: a que o sistema usa e uma alternativa. Está discutida a seguir,
+porque o resultado não foi o esperado.}
+\label{fig:av_detetores}
+\end{figure}
+
+\subsection{E uma segunda comparação, que também não me deu razão}
+
+O painel direito da Figura~\ref{fig:av_detetores} responde a outra pergunta: e se, em vez de calcular
+o desvio-padrão dando \emph{o mesmo peso} aos vinte dias, se desse mais peso aos dias recentes?
+
+É uma ideia antiga em finanças, e a experiência foi desenhada para justificar por que razão o
+sistema \emph{não} precisava dela. Deu o contrário. Com o mesmo \emph{recall}, a alternativa obtém
+$F_1 = 0.664$ contra os $0.516$ da regra usada, e consegue-o eliminando quase metade dos falsos
+alarmes (precisão $0.568$ contra $0.381$).
+
+O mecanismo é compreensível depois de visto. Movimentos grandes andam em grupo: depois de um dia
+agitado costumam vir mais. Uma média de vinte dias com pesos iguais dilui o choque por vinte dias e
+continua a achar tudo invulgar durante semanas; uma média que dá mais peso ao que é recente absorve
+o choque de imediato e volta a calar-se.
+
+\textbf{O sistema continua a usar a versão que perdeu}, e a razão é a mesma que atravessa o
+trabalho: ``a média e o desvio dos últimos vinte dias'' explica-se a qualquer pessoa em duas frases,
+e ``pesos que decaem exponencialmente'' não. Numa ferramenta cujo argumento central é a
+explicabilidade, um ganho de precisão que custa a explicação não é obviamente um ganho.
+
+Mas é uma escolha, não um resultado, e é assim que fica escrita. A alternativa está medida, o ganho
+está registado, e adotá-la é uma alteração pequena se algum dia a explicabilidade deixar de ser a
+restrição dominante.
+
 \subsection{O que isto não permite concluir}
 
 O rótulo é aproximado e relativo à volatilidade, e por isso o argumento de peso é o da consistência,
@@ -168,6 +205,17 @@ A Tabela~\ref{tab:av_recuperacao} tem o método usado, uma variante maior, e as 
 triviais. A leitura é direta: escolher ao acaso acerta em $24\%$ dos casos. É esse o chão, e não
 zero, porque há cinco setores e alguns são maiores do que outros. Procurar por palavras em comum sobe para
 $34.6\%$. Comparar significado sobe para $51.4\%$, mais do dobro do acaso.
+
+A Figura~\ref{fig:av_recuperacao} mostra o mesmo por setor e para vários tamanhos de lista.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/eval_retrieval_precision.pdf}
+\caption[Recuperação, por setor e por tamanho de lista]{Precisão@$k$ para cada método, com a
+restrição de a notícia recuperada ter de ser de outra empresa. A separação entre a linha do método
+usado e as alternativas mantém-se para todos os $k$ testados, e não apenas para $k=5$.}
+\label{fig:av_recuperacao}
+\end{figure}
 
 E a alternativa que parece mais razoável de todas, ``mostra-me apenas as notícias mais
 recentes'', é a \textbf{pior} de todas, com $12.6\%$. Faz sentido: a notícia mais recente sobre
@@ -229,6 +277,17 @@ Gradient boosting (contexto $+$ texto) & $0.469$ & $0.228$ \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+A Figura~\ref{fig:av_triagem} mostra as curvas completas, e não apenas o número resumo.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.86\textwidth]{figures/eval_triage_pr.pdf}
+\caption[As curvas de precisão e cobertura da triagem]{As curvas sobre o bloco de teste. A área
+debaixo de cada curva é o valor da tabela. A curva do modelo que usa apenas volatilidade está por
+cima das outras em quase toda a extensão, e não só no valor agregado.}
+\label{fig:av_triagem}
+\end{figure}
 
 O melhor modelo da Tabela~\ref{tab:av_triagem} é o mais simples de todos: o que usa \textbf{apenas a volatilidade
 recente}. Acrescentar o resto do contexto não melhora. Acrescentar o texto da manchete
@@ -318,6 +377,97 @@ avaliado na distribuição que vai ver.} É a lição mais transferível deste t
 Que o texto de notícias não sirva para nada. Só se testou uma representação (manchetes, sem o corpo
 do artigo) sobre um corpus. Com textos completos e mais dados, a resposta podia ser outra, e isso
 fica como trabalho futuro, não como desculpa.
+
+\section{Todas as alternativas que foram testadas e não ficaram}
+\label{sec:av_alternativas}
+
+\emph{Como é que sei que estas escolhas são boas, e não apenas as primeiras que me ocorreram?}
+
+Ao longo dos três capítulos anteriores cada técnica foi apresentada com uma justificação. Falta
+juntá-las num sítio só, porque é assim que se vê o padrão: \textbf{a maior parte das escolhas deste
+sistema foi decidida por medição contra uma alternativa concreta}, e várias delas contrariaram o que
+eu esperava.
+
+A Tabela~\ref{tab:av_alternativas} lista todas. A coluna do meio é a que interessa: não o que ficou,
+mas o que foi \emph{posto de lado} e com que número.
+
+\begin{table}[ht]
+\caption[Cada escolha, contra a alternativa que perdeu]{As decisões técnicas do trabalho, cada uma
+com a alternativa medida contra ela. Duas linhas dizem \emph{não ganhou}: são os pontos em que o
+sistema usa a opção que a medição não favorece, e a razão está escrita. As três últimas não têm
+número porque são decisões de restrição.}
+\label{tab:av_alternativas}
+\centering
+\scriptsize
+\begin{tabular}{L{0.20\textwidth} L{0.30\textwidth} L{0.38\textwidth}}
+\toprule
+\tabhead{Ficou} & \tabhead{Perdeu, e com que número} & \tabhead{O que isso quer dizer} \\
+\midrule
+\emph{z}-score deslizante & Limiar fixo de $3\%$: amplitude $0.344$ contra $0.015$ &
+Um limiar fixo mede a volatilidade da empresa, não a raridade do dia. \\
+\addlinespace
+\emph{z}-score deslizante & \emph{Isolation Forest} ($F_1$ $0.269$) e \emph{Local Outlier Factor}
+($0.280$) contra $0.530$ & Os métodos aprendidos assinalam quase tudo e acertam pouco. \\
+\addlinespace
+Janela de 20 dias & \textbf{Não ganhou:} 10d dá $F_1$ $0.385$, 20d dá $0.516$, e \textbf{60d dá
+$0.678$} & A medição favorece uma janela mais longa. Ver a discussão abaixo. \\
+\addlinespace
+Desvio-padrão de pesos iguais & \textbf{Não ganhou:} pesos que decaem dão $F_1$ $0.664$ contra
+$0.516$ & Mantido por ser explicável a um leigo, e dito como escolha e não como resultado. \\
+\addlinespace
+Embeddings de frase & Sobreposição de palavras: P@5 $0.346$ contra $0.514$ &
+Palavras iguais não são assunto igual, e assunto igual não precisa de palavras iguais. \\
+\addlinespace
+MiniLM & MPNet ($0.538$, maior e mais lento) e um modelo de finanças ($0.420$) &
+\textbf{O modelo específico do domínio foi o pior.} Não se assumiu: mediu-se. \\
+\addlinespace
+Regressão logística & Árvores com \emph{boosting}: PR-AUC $0.469$ contra $0.538$ &
+O modelo mais expressivo não ganhou, e o simples explica-se. \\
+\addlinespace
+Calibração de Platt & Regressão isotónica, comparada na mesma validação &
+Platt iguala ou ganha no Brier em todas as famílias testadas. \\
+\addlinespace
+Cosseno & Distância euclidiana &
+Com vetores normalizados as duas dão a mesma ordenação, e o cosseno lê-se melhor. \\
+\midrule
+Apenas fontes gratuitas & --- & Restrição fundadora: define quem o sistema pode servir. \\
+Não prever preços & --- & Restrição de desenho: é o que torna tudo o resto verificável. \\
+Mercado dos EUA & --- & Restrição de âmbito: é onde as fontes gratuitas têm cobertura. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Vale a pena olhar para três linhas com atenção.
+
+O \textbf{modelo de finanças perdeu}. Era a escolha que parecia mais óbvia de todas: um modelo
+treinado especificamente em texto financeiro devia ser melhor a comparar notícias financeiras.
+Obteve $0.420$ contra os $0.514$ de um modelo genérico e pequeno. Se eu o tivesse adotado por ser o
+óbvio, o sistema ficava pior e eu nunca saberia.
+
+\paragraph{A janela de 20 dias é a única linha desta tabela em que o sistema não usa o vencedor.}
+E é a que mais me custou deixar escrita. A ablação diz que uma janela de 60 dias obtém $F_1 = 0.678$
+contra os $0.516$ da janela de 20. Se o critério fosse este número, o sistema devia usar 60.
+
+Não usa, por duas razões, e a segunda é a que importa.
+
+A primeira é que uma janela de 60 dias demora três meses a reagir a uma mudança de regime. Uma
+empresa que passa de calma a volátil continuaria a ser julgada pela sua norma antiga, e o detetor
+dispararia a torto e a direito durante semanas.
+
+A segunda é que \textbf{este número não é de confiança para esta comparação}. O rótulo é um
+\emph{proxy} construído a partir do percentil de movimento \emph{da própria empresa}, portanto é ele
+próprio relativo à volatilidade. Uma janela mais longa produz uma norma menos adaptativa, que
+assinala mais vezes a cauda extrema, que é precisamente o que este rótulo premeia. Há circularidade,
+e ela favorece a janela longa por construção.
+
+É por isso que o argumento principal da Secção~\ref{sec:av_qi1} é a \textbf{consistência da taxa de
+disparo}, que não usa rótulo nenhum. Mas nada disto transforma $0.678$ em $0.516$. A afirmação
+honesta é: \emph{a janela de 20 dias foi escolhida por responsividade, e a única medição que
+existe sobre este ponto não a sustenta.} Fica assim.
+
+E as \textbf{três últimas linhas não têm número de propósito}. São restrições, não resultados: foram
+escolhidas antes de haver qualquer medição e não se defendem com uma tabela. Apresentá-las como se
+tivessem sido testadas seria dar-lhes uma autoridade que não têm.
 
 \section{Resumo dos três resultados}
 \label{sec:av_resumo}

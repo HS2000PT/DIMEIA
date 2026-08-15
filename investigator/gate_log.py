@@ -37,6 +37,13 @@ STAGES: tuple[str, ...] = (
     "daily_cap",          # o tecto de alertas/ticker/dia já estava cheio
     "ladder_floor",       # o k-ésimo alerta do dia exigia P mais alto do que este tem
     "duplicate_story",    # a mesma história noutras palavras, já alertada hoje
+    # ⚠️ E esta faltava, pela MESMA razão, e é a que mais distorcia a contagem. A supressão
+    # "esta manchete exacta já foi alertada hoje" fazia `continue` sem registar nada, ao
+    # contrário das três acima. Com o ciclo de 60 s a mesma manchete é reavaliada todos os
+    # minutos e passava a contar como `alerted` de cada vez. Medido a 2026-08-15: **330
+    # registos `alerted` num dia em que o canal recebeu 4 mensagens** — a vista que existe
+    # para tornar as decisões inspeccionáveis exagerava por perto de duas ordens de grandeza.
+    "already_sent",       # esta manchete exacta já tinha sido entregue hoje
     "alerted",            # sobreviveu a tudo E foi mesmo entregue
 )
 
@@ -91,9 +98,30 @@ def attrition_table(records: list[GateRecord]) -> list[tuple[str, int, str]]:
     return sorted(rows, key=lambda r: (r[1], r[0]))
 
 
-def append_jsonl(records: list[GateRecord], path: str | Path, max_entries: int = 5000) -> None:
-    """Acrescenta ao ficheiro e apara (o mesmo contrato de `alerts_history`). Fail-open:
-    um erro aqui nunca pode travar um ciclo de alertas."""
+def append_jsonl(records: list[GateRecord], path: str | Path, max_entries: int = 20000,
+                 max_days: int = 3) -> None:
+    """Acrescenta ao ficheiro e apara. Fail-open: um erro aqui nunca pode travar um ciclo.
+
+    ⚠️ A retenção é por **DIAS**, e o tecto de linhas é só uma rede de segurança.
+
+    O tecto era de 5000 linhas, e foi dimensionado quando o sistema corria num agendador de
+    30 em 30 minutos: 12 tickers x 48 ciclos = ~576 registos por dia, ou seja ~8 dias de
+    história. Com o ciclo de 60 segundos são ~1440 ciclos por dia, **30x mais**, e o mesmo
+    tecto passou a guardar **menos de um dia** — medido a 2026-08-15: as 5000 linhas do
+    ficheiro publicado eram todas do próprio dia.
+
+    Isso esvazia a única vista que existe para tornar o silêncio do sistema inspeccionável.
+    Uma retenção contada em linhas muda de significado sempre que a cadência muda; contada em
+    dias, não muda. Daí a ordem: apara-se primeiro por dia, e o tecto de linhas só actua se um
+    dia sozinho for anormalmente grande.
+
+    ⚠️ **A restrição que fixa estes números não é o disco, é a PUBLICAÇÃO.** O ficheiro é
+    republicado na branch de dados a cada ciclo de 60 s, portanto o custo cresce com o
+    tamanho e não com a idade. Três dias a ~9000 registos/dia (a taxa medida) cabem
+    folgadamente nos 20000, e o ficheiro fica na ordem dos 2 MB. Guardar uma semana seria
+    honesto em retenção e desonesto em custo, e a escolha fica escrita em vez de parecer
+    arbitrária.
+    """
     if not records:
         return
     p = Path(path)
@@ -101,7 +129,30 @@ def append_jsonl(records: list[GateRecord], path: str | Path, max_entries: int =
         p.parent.mkdir(parents=True, exist_ok=True)
         existing = p.read_text(encoding="utf-8").splitlines() if p.exists() else []
         new = [json.dumps(asdict(r), ensure_ascii=False) for r in records]
-        combined = (existing + new)[-max_entries:] if max_entries > 0 else existing + new
+        combined = existing + new
+
+        if max_days > 0:
+            dias = []
+            for linha in combined:
+                try:
+                    d = json.loads(linha).get("date")
+                except (json.JSONDecodeError, AttributeError):
+                    continue
+                if d and d not in dias:
+                    dias.append(d)
+            if len(dias) > max_days:
+                manter = set(sorted(dias)[-max_days:])
+                filtradas = []
+                for linha in combined:
+                    try:
+                        if json.loads(linha).get("date") in manter:
+                            filtradas.append(linha)
+                    except json.JSONDecodeError:
+                        continue  # linha corrompida: não sobrevive à aparagem
+                combined = filtradas
+
+        if max_entries > 0:
+            combined = combined[-max_entries:]
         p.write_text("\n".join(combined) + "\n", encoding="utf-8")
     except OSError:
         return

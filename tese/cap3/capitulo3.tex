@@ -43,6 +43,177 @@ Cada decisão é tratada com a técnica mais simples que consegue resolvê-la. I
 uma escolha de desenho que se paga no Capítulo~\ref{cap:avaliacao}, onde cada técnica é comparada
 com alternativas mais complicadas. Quando a simples ganha, fica a simples, e diz-se porquê.
 
+\section{Os dados, tal como são}
+\label{sec:met_dados}
+
+\emph{Antes de explicar o que se faz com os dados: com que é que eles se parecem, exatamente?}
+
+Uma dissertação pode descrever dados durante páginas sem que o leitor consiga imaginar uma única
+linha deles. Esta secção resolve isso da forma mais direta possível: mostra as linhas verdadeiras,
+copiadas dos ficheiros que o sistema usa.
+
+\subsection{O que entra: uma notícia histórica}
+
+A camada histórica vem do \gls{FNSPID} \autocite{dong2024fnspid}, um conjunto público de notícias
+financeiras. O ficheiro é um \gls{CSV} com três colunas, e a Figura~\ref{fig:met_fnspid} mostra como
+uma linha se parece:
+
+\begin{figure}[ht]
+\centering
+\begin{tcolorbox}[colback=black!3, colframe=black!30, boxrule=0.4pt, arc=2pt,
+                  width=0.96\textwidth, fontupper=\ttfamily\footnotesize]
+date,ticker,headline\\
+2020-03-09,AAPL,"Crude Awakening: Energy Sector Takes A 20\% Spill As\\
+\hspace*{2em}Crude Price War Sends Oil To 4-Year Lows"
+\end{tcolorbox}
+\caption[Uma linha do conjunto de dados histórico]{Uma linha real do \gls{FNSPID}, copiada do
+ficheiro. Três colunas e mais nada: data, empresa, título. Não traz preço, não traz corpo do
+artigo, e não traz rótulo nenhum. Tudo o resto é construído.}
+\label{fig:met_fnspid}
+\end{figure}
+
+Repare-se no que \emph{não} está ali. Não há preço, não há reação do mercado, não há indicação de
+que a notícia seja importante. Uma manchete sobre petróleo aparece etiquetada como \texttt{AAPL},
+o que ilustra bem a qualidade da etiquetagem à entrada e justifica o filtro de relevância descrito
+no Capítulo~\ref{cap:sistema}.
+
+\subsection{O que é construído: uma linha do conjunto de treino}
+
+Do lado de lá do processamento está o conjunto de dados com que o modelo de triagem é treinado.
+Tem $79\,753$ linhas. A Figura~\ref{fig:met_linha} mostra uma delas, inteira, sem cortes.
+
+\begin{figure}[ht]
+\centering
+\begin{tcolorbox}[colback=black!3, colframe=black!30, boxrule=0.4pt, arc=2pt,
+                  width=0.96\textwidth, fontupper=\ttfamily\footnotesize]
+date            = 2023-02-02\\
+news\_date       = 2023-02-02\\
+ticker          = AAPL\\
+sector          = tech\\
+headline        = "Apple (AAPL) Misses Q1 Earnings and Revenue Estimates"\\
+headline\_len    = 53\\
+vol20           = 0.01266203305026954\\
+mom5            = 0.024854333506149767\\
+ret\_event       = 0.036392215960942983\\
+label           = 1\\
+label\_t0.015\_h1 = 1 \quad label\_t0.015\_h3 = 1 \quad label\_t0.015\_h5 = 1\\
+label\_t0.02\_h1  = 1 \quad label\_t0.02\_h3  = 1 \quad label\_t0.02\_h5  = 1\\
+label\_t0.03\_h1  = 1 \quad label\_t0.03\_h3  = 0 \quad label\_t0.03\_h5  = 0\\
+split           = test
+\end{tcolorbox}
+\caption[Uma linha do conjunto de treino, inteira]{Uma linha real do conjunto de dados de triagem.
+As nove colunas \texttt{label\_*} são as nove definições alternativas de rótulo usadas na
+Secção~\ref{sec:av_qi3}: repare-se que a mesma notícia é ``importante'' com um limiar de $1{,}5\%$
+ou $2\%$ e deixa de o ser a $3\%$ ao fim de três dias.}
+\label{fig:met_linha}
+\end{figure}
+
+A Tabela~\ref{tab:met_colunas} diz o que cada coluna é, de onde vem, e a pergunta que mais importa:
+\textbf{consegue esta coluna ver o futuro?} É a pergunta que separa uma avaliação honesta de uma
+avaliação impossível de acreditar.
+
+\begin{table}[ht]
+\caption[O dicionário de colunas]{Cada coluna do conjunto de treino, a sua origem, e se pode ou não
+conter informação posterior ao momento da decisão.}
+\label{tab:met_colunas}
+\centering
+\small
+\begin{tabular}{L{0.20\textwidth} L{0.40\textwidth} C{0.13\textwidth} L{0.15\textwidth}}
+\toprule
+\tabhead{Coluna} & \tabhead{O que é} & \tabhead{Vê o futuro?} & \tabhead{Origem} \\
+\midrule
+\texttt{date} & dia de negociação a que a notícia foi alinhada & não & calculado \\
+\texttt{news\_date} & data que a fonte declara para a notícia & não & \gls{FNSPID} \\
+\texttt{ticker} & empresa & não & \gls{FNSPID} \\
+\texttt{sector} & setor, de um mapa fixo escrito à mão & não & mapa do autor \\
+\texttt{headline} & o título, tal como veio & não & \gls{FNSPID} \\
+\texttt{headline\_len} & número de caracteres do título & não & calculado \\
+\texttt{vol20} & desvio-padrão dos retornos dos 20 dias \emph{anteriores} & não & preços \\
+\texttt{mom5} & retorno acumulado dos 5 dias \emph{anteriores} & não & preços \\
+\texttt{ret\_event} & retorno do próprio dia da notícia & não & preços \\
+\texttt{label} & houve movimento anormal em $(d, d{+}3]$? & \textbf{sim} & preços \\
+\texttt{label\_t*\_h*} & o mesmo, com nove limiares e horizontes & \textbf{sim} & preços \\
+\texttt{split} & treino, validação ou teste & não & divisão temporal \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+As colunas de rótulo \textbf{têm} de ver o futuro: é isso que um rótulo é. O que não pode acontecer
+é uma coluna de \emph{entrada} ver o futuro, e é exatamente isso que o teste descrito na
+Secção~\ref{sec:met_avaliacao} verifica automaticamente.
+
+\subsection{O que é guardado: um caso na base de precedentes}
+
+A base de casos é um ficheiro onde cada linha é um objeto \gls{JSON}. A
+Figura~\ref{fig:met_registo} mostra um registo real, com o vetor abreviado por ser demasiado longo
+para caber na página.
+
+\begin{figure}[ht]
+\centering
+\begin{tcolorbox}[colback=black!3, colframe=black!30, boxrule=0.4pt, arc=2pt,
+                  width=0.96\textwidth, fontupper=\ttfamily\footnotesize]
+\{"date": "2020-03-09",\\
+\hspace*{1em}"ticker": "AAPL",\\
+\hspace*{1em}"headline": "Crude Awakening: Energy Sector Takes A 20\% Spill ...",\\
+\hspace*{1em}"impacts": \{"1": 0.0720, "3": -0.0674, "5": -0.0900\},\\
+\hspace*{1em}"embedding": [-0.0112, +0.0243, +0.1301, ..., +0.0662]\}
+\end{tcolorbox}
+\caption[Um caso guardado na base de precedentes]{Um registo real da base de casos. O campo
+\texttt{impacts} é o que o preço fez $1$, $3$ e $5$ dias depois, \textbf{medido} e não estimado. O
+campo \texttt{embedding} tem $384$ números, dos quais se mostram quatro. É este vetor que permite
+comparar esta notícia com uma de hoje.}
+\label{fig:met_registo}
+\end{figure}
+
+Estes três objetos são todo o material do trabalho. Tudo o resto neste capítulo é o que se faz com
+eles.
+
+\subsection{Que períodos, exatamente}
+
+Uma dissertação que diz ``dados de 2018 a 2023'' obriga o leitor a acreditar. A
+Tabela~\ref{tab:met_periodos} diz o intervalo \textbf{lido dos próprios ficheiros}, e distingue as
+duas coisas que é fácil confundir: o material \emph{histórico}, com que se treina e avalia, e o
+registo do sistema \emph{a funcionar}, que é muito mais recente e muito mais curto.
+
+\begin{table}[ht]
+\caption[O intervalo real de cada conjunto de dados]{Cada conjunto usado, com o intervalo e a
+dimensão medidos no ficheiro. As três últimas linhas são o sistema em operação, e a diferença de
+escala em relação às primeiras é ela própria uma informação.}
+\label{tab:met_periodos}
+\centering
+\small
+\begin{tabular}{L{0.30\textwidth} L{0.26\textwidth} L{0.32\textwidth}}
+\toprule
+\tabhead{Conjunto} & \tabhead{Intervalo} & \tabhead{Dimensão} \\
+\midrule
+\multicolumn{3}{l}{\textbf{Histórico: com que se treina e avalia}} \\
+Conjunto de treino da triagem & 2018-01-02 a 2023-12-18 & $79\,753$ exemplos \\
+Preços para a deteção & 2023-06-01 a 2026-06-01 & 15 empresas, $\approx 750$ dias cada \\
+\midrule
+\multicolumn{3}{l}{\textbf{Operação: o sistema a funcionar}} \\
+Alertas entregues ao canal & 2026-07-09 a 2026-08-13 & 367 mensagens \\
+Registo de decisões de triagem & 2026-07-22 a 2026-08-15 & $4\,366$ decisões \\
+Registo do funil de portas & últimos 3 dias (por desenho) & ver a ressalva abaixo \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Os $367$ alertas dividem-se em $278$ de notícia, $48$ de movimento de preço, $24$ resumos de fecho e
+$17$ notas de abertura. O primeiro alerta de notícia é de 9 de julho de 2026; o primeiro de
+movimento, de 13 de julho.
+
+\paragraph{A ressalva da última linha, porque é um defeito que encontrei a escrever esta tabela.}
+O registo do funil guarda apenas os últimos dias, e isso quase passou despercebido. O limite estava
+escrito em \textbf{número de linhas} ($5000$) e foi dimensionado quando o sistema corria de meia em
+meia hora, o que dava cerca de oito dias de história. Com o ciclo de 60 segundos passaram a existir
+trinta vezes mais registos, e o mesmo limite guarda \textbf{menos de um dia}: quando fui ler o
+ficheiro publicado, as $5000$ linhas eram todas do próprio dia.
+
+Uma retenção contada em linhas muda de significado sempre que a cadência muda; contada em dias, não
+muda. Passou a ser contada em dias. Fica em três, e não numa semana, porque o ficheiro é
+republicado a cada ciclo e o custo é de publicação, não de armazenamento. A restrição que fixa o
+número está escrita em vez de parecer arbitrária.
+
 \section{Técnica 1: detetar o que é invulgar}
 \label{sec:met_zscore}
 

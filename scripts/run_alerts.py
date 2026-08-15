@@ -245,6 +245,10 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
         k = news_key(ticker, text)
         if k in state["alerted_news"]:
             print(f"[noticias {ticker}] já alertada hoje — sem repetição.")
+            # Sem esta linha o funil continuava a dizer `alerted` a cada ciclo de 60 s para
+            # uma manchete já entregue. As três supressões abaixo registavam-se e esta não.
+            if suppressed is not None:
+                suppressed[ticker] = ("already_sent", "same headline already delivered today")
             continue
         # A quase-repetição compara MANCHETES. Sem manchete no canal lateral não se compara
         # nada: falha aberto, porque suprimir um alerta por engano é pior do que repetir um.

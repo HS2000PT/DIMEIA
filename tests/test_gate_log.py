@@ -79,6 +79,54 @@ def test_append_apara_ao_limite(tmp_path):
     assert [r.ticker for r in load_jsonl(path)] == ["T2", "T3", "T4"]
 
 
+def test_append_retem_por_dias_e_nao_por_linhas(tmp_path):
+    """A retenção conta-se em DIAS, senão muda de significado quando a cadência muda.
+
+    Regressão do defeito medido a 2026-08-15: o tecto de 5000 linhas foi dimensionado para
+    um agendador de 30 em 30 minutos e, com o ciclo de 60 segundos, passou a guardar menos
+    de um dia — esvaziando a vista que existe para tornar o silêncio inspeccionável.
+    """
+    path = tmp_path / "gate.jsonl"
+    for dia in range(1, 11):  # 10 dias, 3 registos cada
+        append_jsonl([GateRecord(f"2026-08-{dia:02d}", f"T{i}", "alerted") for i in range(3)],
+                     path, max_days=3)
+    dias = {r.date for r in load_jsonl(path)}
+    assert dias == {"2026-08-08", "2026-08-09", "2026-08-10"}
+
+
+def test_um_dia_movimentado_nao_apaga_os_dias_anteriores(tmp_path):
+    """É este o caso que o tecto de linhas fazia mal: um dia cheio expulsava os outros.
+
+    O teste compara os DOIS regimes sobre exatamente os mesmos dados, senão não distingue
+    a correcção de um limite generoso.
+    """
+    dados = ([GateRecord("2026-08-01", "AAPL", "alerted")],
+             [GateRecord("2026-08-02", f"T{i}", "weak_precedent") for i in range(400)])
+
+    # regime antigo: só tecto de linhas, dimensionado para a cadência antiga
+    antigo = tmp_path / "antigo.jsonl"
+    for lote in dados:
+        append_jsonl(lote, antigo, max_days=0, max_entries=100)
+    assert "2026-08-01" not in {r.date for r in load_jsonl(antigo)}, (
+        "o teste não discrimina: o dia calmo devia morrer no regime antigo")
+
+    # regime novo: retenção por dias
+    novo = tmp_path / "novo.jsonl"
+    for lote in dados:
+        append_jsonl(lote, novo, max_days=3, max_entries=100000)
+    assert "2026-08-01" in {r.date for r in load_jsonl(novo)}, (
+        "o dia calmo tem de sobreviver a um dia movimentado")
+
+
+def test_tecto_de_linhas_continua_a_ser_rede_de_seguranca(tmp_path):
+    """Mesmo dentro da janela de dias, o ficheiro não pode crescer sem limite: é publicado
+    a cada ciclo."""
+    path = tmp_path / "gate.jsonl"
+    append_jsonl([GateRecord("2026-08-01", f"T{i}", "alerted") for i in range(50)],
+                 path, max_days=7, max_entries=10)
+    assert len(load_jsonl(path)) == 10
+
+
 def test_append_vazio_nao_cria_ficheiro(tmp_path):
     path = tmp_path / "gate.jsonl"
     append_jsonl([], path)
