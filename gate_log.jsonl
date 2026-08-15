@@ -1,15 +1,3 @@
-{"date": "2026-08-04", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon loses US court ban on Perplexity's AI shopping tools"}
-{"date": "2026-08-04", "ticker": "GOOGL", "stage": "alerted", "detail": "Intel's Packaging Progress Points to Google"}
-{"date": "2026-08-04", "ticker": "META", "stage": "alerted", "detail": "Meta Platforms (META) Q2 Growth Puts AI Spending And Valuation Back In Focus"}
-{"date": "2026-08-04", "ticker": "JPM", "stage": "triage_suppressed", "detail": "P=0.26 < 0.50"}
-{"date": "2026-08-04", "ticker": "AMD", "stage": "alerted", "detail": "5-Star Analyst Makes Bold AMD Call Before Earnings"}
-{"date": "2026-08-04", "ticker": "NFLX", "stage": "triage_suppressed", "detail": "P=0.39 < 0.50"}
-{"date": "2026-08-04", "ticker": "XOM", "stage": "triage_suppressed", "detail": "P=0.41 < 0.50"}
-{"date": "2026-08-04", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.32 < 0.50"}
-{"date": "2026-08-05", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.47 < 0.50"}
-{"date": "2026-08-05", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft: AI Investment Is Driven By Orders Already In Hand"}
-{"date": "2026-08-05", "ticker": "NVDA", "stage": "triage_suppressed", "detail": "P=0.50 < 0.50"}
-{"date": "2026-08-05", "ticker": "TSLA", "stage": "alerted", "detail": "MU, SNDK, SKHY Stocks In Focus: Elon Musk Says Memory Demand Is Growing ‘200% A "}
 {"date": "2026-08-05", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon.com vs. Carnival: Which Consumer Stock Is a Better Buy in 2026, the E-Com"}
 {"date": "2026-08-05", "ticker": "GOOGL", "stage": "alerted", "detail": "Dynatrace (DT) Adds Google Executive To Its Board As It Expands AI Tools"}
 {"date": "2026-08-05", "ticker": "META", "stage": "alerted", "detail": "Microsoft is Soaring After Earnings While Meta Platforms Drops. Is The Market Gi"}
@@ -474,6 +462,18 @@
 {"date": "2026-08-15", "ticker": "NFLX", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
 {"date": "2026-08-15", "ticker": "XOM", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
 {"date": "2026-08-15", "ticker": "JNJ", "stage": "weak_precedent", "detail": "melhor sim 0.31 < 0.45"}
+{"date": "2026-08-15", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.46 < 0.50"}
+{"date": "2026-08-15", "ticker": "MSFT", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
+{"date": "2026-08-15", "ticker": "NVDA", "stage": "weak_precedent", "detail": "melhor sim 0.38 < 0.45"}
+{"date": "2026-08-15", "ticker": "TSLA", "stage": "weak_precedent", "detail": "melhor sim 0.45 < 0.45"}
+{"date": "2026-08-15", "ticker": "AMZN", "stage": "weak_precedent", "detail": "melhor sim 0.36 < 0.45"}
+{"date": "2026-08-15", "ticker": "GOOGL", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
+{"date": "2026-08-15", "ticker": "META", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
+{"date": "2026-08-15", "ticker": "JPM", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
+{"date": "2026-08-15", "ticker": "AMD", "stage": "duplicate_story", "detail": "same story, other words"}
+{"date": "2026-08-15", "ticker": "NFLX", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
+{"date": "2026-08-15", "ticker": "XOM", "stage": "weak_precedent", "detail": "melhor sim 0.30 < 0.45"}
+{"date": "2026-08-15", "ticker": "JNJ", "stage": "triage_suppressed", "detail": "P=0.30 < 0.50"}
 {"date": "2026-08-15", "ticker": "AAPL", "stage": "triage_suppressed", "detail": "P=0.46 < 0.50"}
 {"date": "2026-08-15", "ticker": "MSFT", "stage": "weak_precedent", "detail": "melhor sim 0.35 < 0.45"}
 {"date": "2026-08-15", "ticker": "NVDA", "stage": "weak_precedent", "detail": "melhor sim 0.38 < 0.45"}
