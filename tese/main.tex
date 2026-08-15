@@ -29,6 +29,13 @@ headsepline,
 % Caixas "Em três frases": o resumo defensável no fim de cada técnica.
 \usepackage[most]{tcolorbox}
 
+% Coluna centrada com largura fixa. Uma coluna `c` não quebra: um cabeçalho comprido empurra a
+% tabela para fora da margem e o LaTeX só o diz num aviso que passa despercebido.
+% Sem hifenação: numa coluna estreita, "Já aconte-ceu?" fica pior do que uma quebra no espaço.
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering\arraybackslash\hyphenpenalty=10000\exhyphenpenalty=10000}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash\hyphenpenalty=10000\exhyphenpenalty=10000}p{#1}}
+
 \usepackage[style=authoryear-comp,backend=biber]{biblatex}
 \addbibresource{../thesis/references.bib}
 

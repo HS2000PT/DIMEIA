@@ -35,6 +35,11 @@ regra fixa?} \textbf{Sim, e com uma margem grande.}
 Foram usados três anos de cotações diárias de quinze empresas grandes, entre junho de 2023 e junho de
 2026 --- cerca de 750 dias por empresa.
 
+São quinze, e não as doze que o sistema vigia em produção. A diferença é de propósito: a avaliação
+quer \emph{variedade} de volatilidade, para o argumento da consistência ter sobre o que incidir; a
+lista de produção é uma escolha de produto e não uma amostra. Confundir as duas seria avaliar o
+detetor exatamente no conjunto que ele foi montado para servir.
+
 O argumento principal não precisa de rótulos nenhuns, e é por isso que é o principal. Um bom detetor
 universal deve disparar a um ritmo \textbf{parecido} em empresas diferentes. Se dispara muito numa e
 quase nada noutra, o que está a medir é a volatilidade da empresa e não a raridade do dia.
@@ -61,6 +66,8 @@ Limiar fixo ($|r| \ge 3\%$) & $0.009$ & $0.353$ & $0.344$ \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+A Figura~\ref{fig:av_disparo} mostra a mesma informação empresa a empresa.
 
 A diferença é de mais de vinte vezes. O limiar fixo dispara em $0.9\%$ dos dias na empresa mais calma
 e em $35.3\%$ dos dias na mais volátil --- ou seja, para uma delas quase nunca diz nada e para a
@@ -157,7 +164,8 @@ Mais recente & $0.126$ & devolver simplesmente as últimas notícias \\
 \end{tabular}
 \end{table}
 
-A leitura é direta. Escolher ao acaso acerta em $24\%$ dos casos --- é esse o chão, e não zero,
+A Tabela~\ref{tab:av_recuperacao} tem o método usado, uma variante maior, e as três alternativas
+triviais. A leitura é direta: escolher ao acaso acerta em $24\%$ dos casos --- é esse o chão, e não zero,
 porque há cinco setores e alguns são maiores do que outros. Procurar por palavras em comum sobe para
 $34.6\%$. Comparar significado sobe para $51.4\%$, mais do dobro do acaso.
 
@@ -222,7 +230,7 @@ Gradient boosting (contexto $+$ texto) & $0.469$ & $0.228$ \\
 \end{tabular}
 \end{table}
 
-O melhor modelo da tabela é o mais simples de todos: o que usa \textbf{apenas a volatilidade
+O melhor modelo da Tabela~\ref{tab:av_triagem} é o mais simples de todos: o que usa \textbf{apenas a volatilidade
 recente}. Acrescentar o resto do contexto não melhora. Acrescentar o texto da manchete
 \emph{piora} --- de $0.542$ para $0.496$.
 
@@ -332,6 +340,6 @@ $0.542$), e o resultado aguenta três testes de robustez \\
 \end{tabular}
 \end{table}
 
-Duas das três respostas são afirmativas e uma é negativa. A negativa é a que eu mais aprendi a
+A Tabela~\ref{tab:av_resumo} junta as três. Duas das respostas são afirmativas e uma é negativa. A negativa é a que eu mais aprendi a
 defender: mostra que a avaliação foi montada para poder dizer que não, e uma avaliação que só sabe
 dizer que sim não avalia nada.

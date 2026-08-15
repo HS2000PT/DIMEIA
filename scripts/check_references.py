@@ -19,11 +19,27 @@ import sys
 BASE = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else "thesis"
 MOSTRAR_TUDO = "--all" in sys.argv
 
-FICHEIROS = [
+# ⚠️ Duas convenções de nomes, porque a tese curta (`tese/`) usa nomes em português. Sem isto o
+# script encontrava **zero** ficheiros e imprimia "0 referências, 0 labels" — que se lê como
+# "está tudo bem" e é, na verdade, "não olhei para nada". Um verificador que não encontra o
+# corpus tem de ser indistinguível de um que falha, e não de um que passa.
+FICHEIROS_EN = [
     "frontmatter/frontmatter.tex",
     *[f"ch{i}/chapter{i}.tex" for i in range(1, 7)],
     "appendices/appendixA.tex",
 ]
+FICHEIROS_PT = [
+    "frontmatter/frontmatter.tex",
+    *[f"cap{i}/capitulo{i}.tex" for i in range(1, 7)],
+    "apendices/apendiceA.tex",
+]
+FICHEIROS = FICHEIROS_PT if (pathlib.Path(BASE) / "cap1").is_dir() else FICHEIROS_EN
+
+_encontrados = [f for f in FICHEIROS if (pathlib.Path(BASE) / f).exists()]
+if not _encontrados:
+    print(f"ERRO: nenhum ficheiro do corpus encontrado em '{BASE}/'. "
+          "Um verificador que não vê o corpus não pode dizer que está tudo bem.")
+    raise SystemExit(2)
 
 # Que tipo de alvo cada prefixo de label anuncia.
 PREFIXO_TIPO = {

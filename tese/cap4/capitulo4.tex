@@ -11,14 +11,16 @@
 
 O Capítulo~\ref{cap:metodologia} explicou três técnicas isoladas. Este mostra-as a trabalhar juntas.
 
-O sistema chama-se \textbf{InvestiGator} e tem cinco partes, na Figura~\ref{fig:arquitetura}. Cada
-uma faz uma coisa só, e passa o resultado à seguinte.
+O sistema chama-se \textbf{InvestiGator} e tem cinco partes, na Figura~\ref{fig:arquitetura}:
+\textbf{deteção}, \textbf{recuperação}, \textbf{triagem}, \textbf{explicação} e \textbf{entrega}.
+Cada uma faz uma coisa só, e passa o resultado à seguinte.
 
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[
   font=\small, >={Stealth[length=2.4mm]},
-  cx/.style={draw, rounded corners, align=center, text width=2.6cm, minimum height=1.5cm},
+  cx/.style={draw, rounded corners, align=center, text width=2.6cm, minimum height=1.5cm,
+             inner sep=4pt},
   fonte/.style={cx, fill=black!10},
   proc/.style={cx, fill=black!3},
   saida/.style={cx, fill=black!16},
@@ -27,15 +29,15 @@ uma faz uma coisa só, e passa o resultado à seguinte.
   \node[fonte, below=6mm of p] (n) {\textbf{Notícias}\\ \footnotesize API gratuita\\ \footnotesize por empresa};
   \node[fonte, below=6mm of n] (h) {\textbf{Histórico}\\ \footnotesize 80 mil notícias\\ \footnotesize antigas + preços};
 
-  \node[proc, right=1.2cm of p] (det) {\textbf{Deteção}\\ \footnotesize é invulgar?};
-  \node[proc, right=1.2cm of n] (rec) {\textbf{Recuperação}\\ \footnotesize já aconteceu?};
-  \node[proc, right=1.2cm of h] (tri) {\textbf{Triagem}\\ \footnotesize merece avisar?};
+  \node[proc, right=0.8cm of p] (det) {\textbf{Deteção}\\ \footnotesize é invulgar?};
+  \node[proc, right=0.8cm of n] (rec) {\textbf{Recuperação}\\ \footnotesize já aconteceu?};
+  \node[proc, right=0.8cm of h] (tri) {\textbf{Triagem}\\ \footnotesize merece avisar?};
 
-  \node[proc, right=1.3cm of rec, text width=2.8cm] (exp)
+  \node[proc, right=0.9cm of rec, text width=2.8cm] (exp)
     {\textbf{Explicação}\\ \footnotesize monta o texto a\\ \footnotesize partir do que foi\\ \footnotesize calculado};
 
-  \node[saida, right=1.2cm of exp, yshift=9mm] (tg) {\textbf{Telegram}\\ \footnotesize alerta no telemóvel};
-  \node[saida, right=1.2cm of exp, yshift=-9mm] (web) {\textbf{Página web}\\ \footnotesize consultar quando\\ \footnotesize apetecer};
+  \node[saida, right=0.8cm of exp, yshift=9mm] (tg) {\textbf{Telegram}\\ \footnotesize alerta no telemóvel};
+  \node[saida, right=0.8cm of exp, yshift=-9mm] (web) {\textbf{Página web}\\ \footnotesize consultar quando\\ \footnotesize apetecer};
 
   \draw[->] (p) -- (det);
   \draw[->] (n) -- (rec);
@@ -261,6 +263,8 @@ ordem:
   \item \textbf{a ressalva} --- que isto é história observada e não uma previsão.
 \end{enumerate}
 
+A Figura~\ref{fig:app} mostra como isto chega ao ecrã.
+
 A ordem importa. A pessoa lê primeiro o que aconteceu e só depois a estatística, porque é assim que
 uma pessoa pensa; um alerta que abre com ``$z = 2.65$'' perde o leitor na primeira linha.
 
@@ -293,7 +297,8 @@ A solução veio do plano do ISEP: o \emph{GitHub Student Developer Pack} dá cr
 alojar o sistema num serviço com processo permanente. O ciclo passou a correr de \textbf{60 em 60
 segundos}.
 
-E aqui está o resultado, que é mais interessante do que a decisão:
+E aqui está o resultado, na Tabela~\ref{tab:sis_latencia}, que é mais interessante do que a
+decisão:
 
 \begin{table}[ht]
 \caption[O que o ciclo de 60 segundos comprou]{Latência medida sobre os alertas entregues, separando

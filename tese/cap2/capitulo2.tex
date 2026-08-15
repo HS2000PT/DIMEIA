@@ -19,7 +19,8 @@ Capítulo~\ref{cap:introducao}, e a Tabela~\ref{tab:ctx_matriz} usa-as para pont
 \label{tab:ctx_matriz}
 \centering
 \small
-\begin{tabular}{p{0.26\textwidth} c c c p{0.24\textwidth}}
+\begin{tabular}{L{0.21\textwidth} C{0.11\textwidth} C{0.15\textwidth} C{0.13\textwidth}
+                L{0.16\textwidth}}
 \toprule
 \tabhead{Ferramenta} & \tabhead{É invulgar?} & \tabhead{Empresa ou mercado?} & \tabhead{Já aconteceu?}
 & \tabhead{Custo} \\
@@ -127,15 +128,18 @@ por três gerações, na Figura~\ref{fig:ctx_geracoes}.
 \centering
 \begin{tikzpicture}[
   font=\small, >={Stealth[length=2.4mm]},
-  g/.style={draw, rounded corners, align=center, text width=3.2cm, minimum height=1.9cm, fill=black!3},
+  % Altura mínima igual nas três: com alturas diferentes as caixas ficam desalinhadas e a
+  % figura lê-se como se uma geração fosse maior do que as outras, que não é o que diz.
+  g/.style={draw, rounded corners, align=center, text width=3.0cm, minimum height=3.3cm,
+            inner sep=5pt, fill=black!3},
 ]
   \node[g] (a) {\textbf{Contar palavras}\\[3pt]
     \footnotesize cada palavra é\\ \footnotesize independente\\[3pt]
     \footnotesize \emph{``subiu'' e ``valorizou''}\\ \footnotesize \emph{não têm relação}};
-  \node[g, right=1.0cm of a] (b) {\textbf{Palavras como vetores}\\[3pt]
+  \node[g, right=0.85cm of a] (b) {\textbf{Palavras como vetores}\\[3pt]
     \footnotesize palavras parecidas\\ \footnotesize ficam próximas\\[3pt]
     \footnotesize \emph{mas cada palavra tem}\\ \footnotesize \emph{sempre o mesmo sentido}};
-  \node[g, right=1.0cm of b] (c) {\textbf{Frases inteiras}\\[3pt]
+  \node[g, right=0.85cm of b] (c) {\textbf{Frases inteiras}\\[3pt]
     \footnotesize o sentido depende\\ \footnotesize do contexto\\[3pt]
     \footnotesize \emph{é o que este}\\ \footnotesize \emph{trabalho usa}};
   \draw[->, thick, black!45] (a) -- (b);
