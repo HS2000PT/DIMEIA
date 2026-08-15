@@ -1,6 +1,337 @@
-% Capítulo 5 — Avaliação (por escrever)
+% Capítulo 5 — Avaliação (orçamento: ~16 pp)
+% Uma secção por QI. Cada uma: pergunta, como se mediu, resultado, e o que NÃO se pode concluir.
+% ⚠️ Usar o chão CORRIGIDO da precisão@orçamento (aleatório 0.379), nunca o 0.163 alfabético.
 
 \chapter{Avaliação}
 \label{cap:avaliacao}
 
-Por escrever.
+\section{Como está montado este capítulo}
+\label{sec:av_montagem}
+
+\emph{O que é que vale como prova?}
+
+Cada uma das três perguntas de investigação tem aqui a sua secção. Todas seguem a mesma forma, de
+propósito:
+
+\begin{enumerate}
+  \item a pergunta;
+  \item como foi medida, e contra que alternativa;
+  \item o resultado;
+  \item \textbf{o que este resultado não permite concluir}.
+\end{enumerate}
+
+O quarto ponto é o que separa uma avaliação de uma demonstração. Todos os números deste capítulo são
+produzidos por procedimentos automáticos com semente fixa: correr outra vez sobre os mesmos dados dá
+exatamente os mesmos valores.
+
+\section{QI1: detetar o que é invulgar}
+\label{sec:av_qi1}
+
+\emph{Um \emph{z}-score deslizante deteta movimentos invulgares de forma mais consistente do que uma
+regra fixa?} \textbf{Sim, e com uma margem grande.}
+
+\subsection{Como foi medido}
+
+Foram usados três anos de cotações diárias de quinze empresas grandes, entre junho de 2023 e junho de
+2026 --- cerca de 750 dias por empresa.
+
+O argumento principal não precisa de rótulos nenhuns, e é por isso que é o principal. Um bom detetor
+universal deve disparar a um ritmo \textbf{parecido} em empresas diferentes. Se dispara muito numa e
+quase nada noutra, o que está a medir é a volatilidade da empresa e não a raridade do dia.
+
+Como argumento de apoio, usou-se também um rótulo aproximado: considera-se ``dia extremo'' um dia no
+percentil 99 dos retornos \emph{daquela} empresa. É um rótulo imperfeito --- é ele próprio relativo à
+volatilidade --- e por isso vem em segundo lugar.
+
+\subsection{Resultado}
+
+A Tabela~\ref{tab:av_disparo} mostra o argumento principal.
+
+\begin{table}[ht]
+\caption[Consistência da taxa de disparo]{Com que frequência cada método dispara, entre as quinze
+empresas. O que interessa é a \textbf{amplitude}: quanto menor, mais consistente é o detetor.}
+\label{tab:av_disparo}
+\centering
+\begin{tabular}{l c c c}
+\toprule
+\tabhead{Método} & \tabhead{Taxa mínima} & \tabhead{Taxa máxima} & \tabhead{Amplitude} \\
+\midrule
+\emph{z}-score (janela 20) & $0.016$ & $0.031$ & $\mathbf{0.015}$ \\
+Limiar fixo ($|r| \ge 3\%$) & $0.009$ & $0.353$ & $0.344$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A diferença é de mais de vinte vezes. O limiar fixo dispara em $0.9\%$ dos dias na empresa mais calma
+e em $35.3\%$ dos dias na mais volátil --- ou seja, para uma delas quase nunca diz nada e para a
+outra fala um dia em cada três. O \emph{z}-score fica entre $1.6\%$ e $3.1\%$ em todas.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/eval_anomaly_firing_rate.pdf}
+\caption[Taxa de disparo por empresa]{A mesma informação, empresa a empresa. As barras do limiar
+fixo acompanham a volatilidade de cada ação; as do \emph{z}-score mantêm-se quase constantes.}
+\label{fig:av_disparo}
+\end{figure}
+
+Contra o rótulo aproximado, o \emph{z}-score obtém $F_1 = 0.516$ contra $0.218$ do limiar fixo.
+
+\subsection{E contra métodos aprendidos?}
+
+Faltava a comparação mais exigente: e se em vez de uma regra estatística se usasse um método de
+aprendizagem automática desenhado para detetar anomalias?
+
+Foram testados dois, sobre exatamente a mesma informação e com o mesmo cuidado de não usar o futuro:
+\emph{Isolation Forest} \autocite{liu2008isolation} e \emph{Local Outlier Factor}
+\autocite{breunig2000lof}. O resultado está na Tabela~\ref{tab:av_detetores}.
+
+\begin{table}[ht]
+\caption[A regra transparente contra dois métodos aprendidos]{Os três detetores, sobre os mesmos
+dados e sob o mesmo protocolo.}
+\label{tab:av_detetores}
+\centering
+\begin{tabular}{l c c c c}
+\toprule
+\tabhead{Detetor} & \tabhead{Precisão} & \tabhead{Recall} & \tabhead{$F_1$} & \tabhead{Amplitude} \\
+\midrule
+\emph{z}-score (a regra) & $0.407$ & $0.761$ & $\mathbf{0.530}$ & $\mathbf{0.017}$ \\
+Isolation Forest & $0.158$ & $0.913$ & $0.269$ & $0.140$ \\
+Local Outlier Factor & $0.163$ & $0.989$ & $0.280$ & $0.183$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{A regra transparente ganha aos dois.} Não por pouco: quase o dobro do $F_1$, e com uma
+consistência entre empresas muito melhor. Os dois métodos aprendidos assinalam quase tudo
+(\emph{recall} altíssimo) e acertam pouco (precisão baixa).
+
+Este é o primeiro dos dois casos em que uma técnica mais sofisticada foi comparada de forma justa com
+uma mais simples --- e perdeu. É um resultado que vale por si: justifica por medição a escolha do
+método simples, em vez de a justificar por preferência.
+
+\subsection{O que isto não permite concluir}
+
+O rótulo é aproximado e relativo à volatilidade, e por isso o argumento de peso é o da consistência,
+que não usa rótulo nenhum. E a comparação foi feita sobre estas quinze empresas e este período; nada
+aqui diz o que aconteceria noutro mercado ou noutra década.
+
+\section{QI2: encontrar casos parecidos}
+\label{sec:av_qi2}
+
+\emph{A recuperação por significado encontra notícias passadas genuinamente relacionadas, melhor do
+que alternativas triviais?} \textbf{Sim, com folga sobre todas elas.}
+
+\subsection{Como foi medido}
+
+O problema de avaliar recuperação é que não existe uma lista de ``respostas certas''. Ninguém
+etiquetou pares de notícias como relacionados ou não.
+
+Usou-se então uma aproximação verificável: considera-se que uma notícia recuperada é
+\textbf{relevante} se pertencer ao \emph{mesmo setor} da notícia de consulta. É imperfeito --- duas
+notícias do mesmo setor podem não ter nada a ver --- mas tem duas virtudes: é objetivo, e não foi
+escolhido depois de ver os resultados.
+
+Além disso, impôs-se uma restrição que torna a tarefa \emph{mais difícil}: a notícia recuperada tem
+de ser de uma \textbf{empresa diferente}. Sem isso, o sistema podia parecer bom limitando-se a
+devolver notícias da mesma empresa, que estão quase sempre no mesmo setor por construção.
+
+A métrica é a \textbf{precisão@5}: das cinco notícias que o sistema devolve, quantas são relevantes.
+
+\subsection{Resultado}
+
+\begin{table}[ht]
+\caption[Recuperação: o método contra três alternativas triviais]{Precisão@5, média de cinco
+repetições com sementes diferentes. Quanto maior, melhor.}
+\label{tab:av_recuperacao}
+\centering
+\begin{tabular}{l c l}
+\toprule
+\tabhead{Método} & \tabhead{Precisão@5} & \tabhead{O que é} \\
+\midrule
+Embeddings (MiniLM) & $\mathbf{0.514}$ & o método usado \\
+Embeddings (MPNet) & $0.538$ & um modelo maior, mais lento \\
+Palavras em comum & $0.346$ & procurar por sobreposição de palavras \\
+Escolha ao acaso & $0.240$ & o chão: a proporção natural \\
+Mais recente & $0.126$ & devolver simplesmente as últimas notícias \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A leitura é direta. Escolher ao acaso acerta em $24\%$ dos casos --- é esse o chão, e não zero,
+porque há cinco setores e alguns são maiores do que outros. Procurar por palavras em comum sobe para
+$34.6\%$. Comparar significado sobe para $51.4\%$, mais do dobro do acaso.
+
+E a alternativa que parece mais razoável de todas --- ``mostra-me simplesmente as notícias mais
+recentes'' --- é a \textbf{pior} de todas, com $12.6\%$. Faz sentido: a notícia mais recente sobre
+outra empresa não tem razão nenhuma para estar relacionada com esta.
+
+\subsection{Aguenta à escala?}
+
+A avaliação acima corre sobre um corpus recente e curto. Para confirmar que o resultado não é um
+acidente desse corpus, a mesma medição foi repetida sobre o conjunto histórico completo, com cerca de
+80 mil notícias de seis anos: a precisão@5 sobe para $\mathbf{0.595}$.
+
+\subsection{O que isto não permite concluir}
+
+Duas coisas, e a segunda é importante para o produto.
+
+Primeiro, ``mesmo setor'' não é o mesmo que ``relacionado''. É uma aproximação, e o número deve ser
+lido como tal.
+
+Segundo, e mais interessante: a recuperação capta \textbf{tema}, não \textbf{direção}. Duas notícias
+podem ser sobre o mesmo assunto e o preço ter ido para lados opostos --- foi exatamente o que
+aconteceu no exemplo do Capítulo~\ref{cap:sistema}. Medindo a concordância de direção entre a
+notícia de consulta e os casos recuperados, obtém-se $0.708$ contra um chão de acaso de $0.688$: quase
+nada. Por isso o sistema mostra os casos um a um e nunca resume a uma média, e por isso o texto do
+alerta diz explicitamente que se trata de casos semelhantes no \emph{tema}.
+
+\section{QI3: decidir o que merece um alerta}
+\label{sec:av_qi3}
+
+\emph{Um modelo treinado prioriza notícias melhor do que uma linha de base simples baseada só em
+volatilidade?} \textbf{Não. E é o resultado mais interessante deste trabalho.}
+
+\subsection{Como foi medido}
+
+O conjunto de dados foi construído a partir do histórico: \textbf{79\,753} exemplos entre 2018 e
+2023, cada um uma notícia com o contexto de mercado do dia e o rótulo descrito na
+Secção~\ref{sec:met_triagem}. A divisão é cronológica com embargo, como na
+Figura~\ref{fig:divisao}.
+
+Compararam-se seis modelos, do mais simples ao mais completo. A métrica principal é a
+\textbf{PR-AUC}, apropriada quando as duas classes são desequilibradas.
+
+\subsection{Resultado}
+
+\begin{table}[ht]
+\caption[Triagem: seis modelos sobre o mesmo bloco de teste]{Quanto maior a PR-AUC, melhor; quanto
+menor o Brier, melhor calibradas estão as probabilidades.}
+\label{tab:av_triagem}
+\centering
+\begin{tabular}{l c c}
+\toprule
+\tabhead{Modelo} & \tabhead{PR-AUC} & \tabhead{Brier} \\
+\midrule
+Alertar sempre (chão) & $0.378$ & $0.622$ \\
+\textbf{Só volatilidade} & $\mathbf{0.542}$ & $\mathbf{0.218}$ \\
+Só contexto de mercado & $0.538$ & $0.224$ \\
+Só texto da manchete & $0.439$ & $0.240$ \\
+Contexto $+$ texto & $0.496$ & $0.229$ \\
+Gradient boosting (contexto $+$ texto) & $0.469$ & $0.228$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+O melhor modelo da tabela é o mais simples de todos: o que usa \textbf{apenas a volatilidade
+recente}. Acrescentar o resto do contexto não melhora. Acrescentar o texto da manchete
+\emph{piora} --- de $0.542$ para $0.496$.
+
+Isto era o contrário do que eu esperava quando comecei. A hipótese era que o texto da notícia
+trouxesse informação que os preços não tinham. Sobre este corpus, não traz.
+
+\subsection{Não será um acidente do meu setup?}
+
+Foi a primeira coisa que fui verificar, por três caminhos.
+
+\paragraph{Será que o modelo de texto estava mal afinado?} Repetiu-se a comparação dando ao texto as
+melhores condições possíveis: regularização afinada, redução de dimensionalidade do bloco de texto, e
+um modelo de linguagem especializado em finanças. O melhor resultado do texto sobe para $0.533$ ---
+e continua abaixo dos $0.542$ da volatilidade.
+
+\paragraph{Será que a diferença é ruído?} Reamostrou-se o bloco de teste mil vezes, por grupos
+(empresa, dia), porque notícias do mesmo dia sobre a mesma empresa partilham o rótulo e não são
+observações independentes. A diferença mantém-se com o intervalo a excluir zero.
+
+\paragraph{Será que depende de como defini o rótulo?} O rótulo usa um limiar de $2\%$ e um horizonte
+de três dias --- ambos escolhidos por mim. Repetiu-se toda a comparação para nove combinações
+diferentes de limiar e horizonte. A volatilidade iguala ou bate o modelo com texto nas
+\textbf{nove}.
+
+O resultado negativo aguenta os três testes. Não é um acidente do meu setup: é o que os dados dizem.
+
+\subsection{Mas serve para alguma coisa?}
+
+Serve --- e aqui é preciso muito cuidado com a comparação, porque é fácil enganar-se.
+
+O produto não mostra tudo: mostra no máximo cinco alertas por dia. A pergunta útil passa a ser
+\emph{das cinco notícias que escolho mostrar, quantas eram mesmo importantes?}
+A Tabela~\ref{tab:av_orcamento} responde.
+
+\begin{table}[ht]
+\caption[Precisão dentro de um orçamento de cinco alertas por dia]{Quatro formas de escolher as cinco
+notícias do dia, sobre o mesmo bloco de teste.}
+\label{tab:av_orcamento}
+\centering
+\small
+\begin{tabular}{l c p{0.42\textwidth}}
+\toprule
+\tabhead{Como escolher} & \tabhead{Precisão@5} & \tabhead{O que é} \\
+\midrule
+``Alertar sempre'' & $0.163$ & \emph{não é escolher às cegas} --- ver o aviso abaixo \\
+Ao acaso (40 sementes) & $0.379 \pm 0.017$ & o que ``às cegas'' quer mesmo dizer \\
+Volatilidade média da empresa & $\mathbf{0.662}$ & treze constantes, sem ler manchete nenhuma \\
+O modelo treinado & $0.632$ & o que está implantado \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
+\textbf{Um aviso sobre a primeira linha, que eu próprio quase publiquei errado.} O modelo
+``alertar sempre'' dá a mesma pontuação a todas as notícias. Quando todas empatam, a métrica escolhe
+pela ordem em que as linhas aparecem no ficheiro --- e o ficheiro está ordenado por data e por nome
+da empresa. Ou seja, esse $0.163$ \textbf{não mede escolher ao acaso: mede escolher por ordem
+alfabética}, e todas as linhas que ele seleciona pertencem à empresa que vem primeiro no alfabeto.
+
+Comparado com o chão certo, o ganho do modelo é de $1.67$ vezes, e não das quase quatro vezes que a
+primeira leitura sugeria. Deixo isto escrito porque foi um erro meu, e porque a lição é geral:
+\emph{verificar o que a linha de base mede é tão importante como verificar o que o modelo faz}.
+\end{tcolorbox}
+
+Há ainda a terceira linha, que é desconfortável e fica: uma tabela de \textbf{treze constantes} ---
+a volatilidade média de cada empresa, calculada só sobre o bloco de treino, sem ler uma única
+manchete --- obtém $0.662$ e \textbf{bate o modelo treinado}. O que a evidência sustenta, portanto, é
+que \emph{ordenar por volatilidade} compensa; não que \emph{aprender} compense.
+
+\subsection{E em produção?}
+
+O sistema regista todas as decisões de triagem e, dias depois, verifica o que realmente aconteceu.
+Sobre $530$ decisões já maturadas, o modelo não mostra benefício: as notícias que ele deixou passar
+eram importantes $59.2\%$ das vezes, contra $64.7\%$ das que ele travou.
+
+A explicação mais provável não é que o modelo esteja avariado --- é que esteja a \textbf{mais}.
+Quando ele é chamado, as notícias já passaram pelo filtro de relevância e pelo de frescura. Esses
+filtros baratos já removeram grande parte do que o modelo foi treinado para remover, e sobra-lhe
+pouco para separar. \textbf{Um modelo avaliado isolado e implantado atrás de filtros nunca foi
+avaliado na distribuição que vai ver.} É a lição mais transferível deste trabalho.
+
+\subsection{O que isto não permite concluir}
+
+Que o texto de notícias não sirva para nada. Só se testou uma representação (manchetes, sem o corpo
+do artigo) sobre um corpus. Com textos completos e mais dados, a resposta podia ser outra --- e isso
+fica como trabalho futuro, não como desculpa.
+
+\section{Resumo dos três resultados}
+\label{sec:av_resumo}
+
+\begin{table}[ht]
+\caption[As três perguntas e as suas respostas]{O veredicto de cada questão de investigação.}
+\label{tab:av_resumo}
+\centering
+\small
+\begin{tabular}{p{0.16\textwidth} p{0.14\textwidth} p{0.56\textwidth}}
+\toprule
+\tabhead{Pergunta} & \tabhead{Resposta} & \tabhead{Com base em quê} \\
+\midrule
+\textbf{QI1} deteção & \textbf{Sim} & Amplitude de disparo $0.015$ contra $0.344$; e ganha a dois
+métodos aprendidos ($F_1$ $0.530$ contra $0.269$ e $0.280$) \\
+\textbf{QI2} precedentes & \textbf{Sim} & Precisão@5 de $0.514$ contra $0.346$ (palavras), $0.240$
+(acaso) e $0.126$ (recência); $0.595$ à escala \\
+\textbf{QI3} triagem & \textbf{Não} & Nenhum modelo com texto bate a volatilidade ($0.496$ contra
+$0.542$), e o resultado aguenta três testes de robustez \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Duas das três respostas são afirmativas e uma é negativa. A negativa é a que eu mais aprendi a
+defender: mostra que a avaliação foi montada para poder dizer que não, e uma avaliação que só sabe
+dizer que sim não avalia nada.
