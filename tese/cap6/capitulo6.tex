@@ -1,6 +1,155 @@
-% Capítulo 6 — Conclusões (por escrever)
+% Capítulo 6 — Conclusões (orçamento: ~8 pp)
+% Fechar sem inflacionar. As limitações são ditas em voz alta, incluindo a que fica em aberto.
 
 \chapter{Conclusões}
 \label{cap:conclusoes}
 
-Por escrever.
+\section{O que ficou feito}
+\label{sec:con_feito}
+
+\emph{No fim, o que é que existe?}
+
+Existe um sistema a funcionar, e não uma demonstração. O InvestiGator vigia doze empresas, corre de
+forma contínua, e envia alertas explicados a um canal público --- com uma página web onde tudo o que
+foi enviado pode ser consultado depois.
+
+E existe uma avaliação de cada uma das três técnicas, contra alternativas mais simples, com os
+resultados reportados como se revelaram. É essa a parte que dá a este trabalho o carácter de
+dissertação e não o de projeto.
+
+\section{As respostas às perguntas de investigação}
+\label{sec:con_qi}
+
+\paragraph{QI1 --- deteção. Sim.}
+Um \emph{z}-score deslizante deteta movimentos invulgares de forma muito mais consistente entre
+empresas do que uma regra fixa: uma amplitude de disparo de $0.015$ contra $0.344$, mais de vinte
+vezes melhor. E, sujeito a uma comparação justa, ganha também a dois métodos de aprendizagem
+desenhados para esta tarefa.
+
+\paragraph{QI2 --- precedentes. Sim.}
+A recuperação por significado encontra notícias passadas relacionadas melhor do que procurar por
+palavras, do que escolher ao acaso e do que devolver as mais recentes ($0.514$ contra $0.346$,
+$0.240$ e $0.126$), e o resultado aguenta à escala do corpus completo ($0.595$). Com uma ressalva
+que ficou clara ao medir: a semelhança capta o \textbf{tema}, não a \textbf{direção}.
+
+\paragraph{QI3 --- triagem. Não.}
+Nenhum modelo que lê o texto da manchete bateu uma linha de base que usa apenas volatilidade
+($0.496$ contra $0.542$). O resultado sobreviveu a um re-teste em condições favoráveis ao texto, a
+uma reamostragem por grupos, e a nove definições diferentes do rótulo.
+
+Esta última resposta é negativa e é a que eu levo mais a sério. Escrevi o critério de sucesso antes
+de correr a experiência, e o resultado foi ao contrário do que eu esperava. Reportá-lo tal como
+caiu era a única opção compatível com o resto do trabalho.
+
+\section{Os objetivos, um a um}
+\label{sec:con_objetivos}
+
+Dos quatro objetivos da Secção~\ref{sec:intro_objetivos}, \textbf{três estão cumpridos e um está
+cumprido por metade}.
+
+\begin{enumerate}
+  \item \emph{Construir o sistema completo.} Cumprido. Os dois gatilhos funcionam de ponta a ponta,
+        em produção.
+  \item \emph{Avaliar cada componente contra linhas de base transparentes.} Cumprido, e mais do que
+        o prometido: o detetor foi comparado não só com uma regra fixa mas também com dois métodos
+        aprendidos.
+  \item \emph{Garantir que as explicações são fiéis.} \textbf{Cumprido por metade.} A fidelidade
+        está garantida por construção --- o texto é montado a partir dos objetos calculados, e não
+        pode divergir deles. Mas a \emph{utilidade} para uma pessoa real não foi medida, porque não
+        se chegou a fazer um estudo com utilizadores. Não se afirma nada sobre ela.
+  \item \emph{Reportar os resultados tal como se revelarem.} Cumprido, e a prova é o resultado
+        negativo da QI3 estar no documento com o mesmo destaque dos outros dois.
+\end{enumerate}
+
+\section{Limitações}
+\label{sec:con_limitacoes}
+
+\emph{Onde é que este trabalho é fraco?}
+
+Ditas em voz alta, por ordem de importância.
+
+\paragraph{Não há estudo com utilizadores.}
+É a lacuna maior e a mais fácil de nomear. Todo o sistema é construído à volta da ideia de que uma
+explicação ajuda um não-especialista a decidir melhor --- e essa ideia \textbf{não foi testada com
+pessoas}. O desenho do estudo existe, com participantes, tarefas e critérios definidos, mas não foi
+corrido a tempo. Enquanto isso não acontecer, a metade ``útil'' da QI3 fica sem resposta, e é assim
+que está escrito.
+
+\paragraph{Os alertas ainda não estão bem calibrados, e sei disso a usar.}
+Esta é a limitação que mais me incomoda, precisamente porque a noto como utilizador e não nos
+números. Recebo no telemóvel, por outras vias, notícias sobre estas empresas que o sistema não
+assinalou. E há dias em que uma ação sobe bastante e não gera alerta nenhum.
+
+Parte disto está medido: sobre um ano de notícias captadas, existia pelo menos uma notícia relevante
+em $88.5\%$ dos dias que o detetor considerou invulgares. Os restantes $11.5\%$ são dias em que
+\textbf{nenhuma alteração ao código ajuda} --- se a fonte gratuita não associou nenhuma notícia à
+empresa, ela nunca entra no funil. E a cobertura é muito desigual: a empresa pior coberta fica-se
+pelos $50\%$.
+
+Mas esse número é um \textbf{limite superior}, e a distinção importa: ele pergunta se existia
+\emph{uma} notícia, não se chegou \emph{a certa}. Saber isso exigiria julgamento humano dia a dia, e
+é trabalho por fazer.
+
+\paragraph{As notícias são só manchetes.}
+O sistema lê o título e não o corpo do artigo. Isso limita o que a representação de texto consegue
+captar, e é uma explicação plausível --- não confirmada --- para o resultado negativo da QI3.
+
+\paragraph{Os rótulos são aproximações.}
+``Relevante'' é aproximado por ``mesmo setor'', e ``importante'' é aproximado por ``houve movimento
+grande''. As duas são objetivas e verificáveis, mas nenhuma é a coisa que realmente se queria medir.
+
+\paragraph{O modelo treinado não mostra benefício em produção.}
+Medido sobre as decisões já verificadas, o modelo não separa melhor do que o acaso na população que
+realmente vê. A explicação mais provável é que ele esteja a mais: quando é chamado, os filtros mais
+baratos já removeram quase tudo o que ele foi treinado para remover.
+
+\paragraph{O atraso é real e não se resolve com engenharia.}
+Entre a notícia ser publicada e o sistema a ver passam, em mediana, cerca de duas horas e meia. A
+entrega, depois disso, demora um segundo. Comprar um serviço de notícias em tempo real resolveria e
+violaria a restrição fundadora deste trabalho.
+
+\section{O que eu faria a seguir}
+\label{sec:con_futuro}
+
+\emph{Se houvesse mais três meses, por onde começava?}
+
+Por esta ordem, e as três primeiras respondem diretamente às limitações acima.
+
+\begin{enumerate}
+  \item \textbf{Correr o estudo com utilizadores.} Seis a dez pessoas, quinze minutos cada. Fecha a
+        metade em aberto da QI3 e é a única coisa desta lista que não se pode acelerar com mais
+        computação --- precisa de calendário.
+  \item \textbf{Estudar a sério os critérios de alerta.} É o trabalho que a limitação anterior pede.
+        Não basta ajustar limiares: é preciso perceber, com julgamento humano sobre uma amostra de
+        dias, quais das notícias que hoje não passam \emph{deviam} passar, e quais das que passam não
+        acrescentam nada. Isso daria pela primeira vez um alvo real para otimizar, em vez de se
+        estar a afinar constantes contra um proxy.
+  \item \textbf{Ler o corpo dos artigos, e não só o título.} É a hipótese mais direta para explicar
+        o negativo da QI3, e é testável com o mesmo protocolo já montado.
+  \item \textbf{Detetar histórias repetidas por significado.} Hoje a repetição é apanhada por
+        palavras em comum. Fazê-lo por significado usaria a técnica que o sistema já tem, e atacaria
+        de frente a fadiga de alertas.
+\end{enumerate}
+
+\section{O que eu aprendi}
+\label{sec:con_licao}
+
+Termino com aquilo que mudou na minha cabeça ao longo destes meses, porque é a parte que não estava
+no plano.
+
+A primeira coisa foi perceber que \textbf{a linha de base é tão importante como o modelo}. Passei semanas
+a melhorar modelos e o resultado mais útil de todo o trabalho veio de olhar com atenção para aquilo
+contra o qual os estava a comparar. Numa das medições, o valor que eu usava como ``escolher às
+cegas'' não escolhia às cegas coisa nenhuma --- escolhia por ordem alfabética. Corrigir isso reduziu
+para menos de metade um ganho que eu já tinha escrito.
+
+A segunda foi perceber que \textbf{o sítio onde se põe um modelo importa tanto como o modelo}. O meu
+funcionava razoavelmente quando avaliado sozinho e deixou de servir para nada quando colocado atrás
+de dois filtros simples, que já faziam grande parte do trabalho. Isso não estava em nenhum sítio do
+plano inicial, e é provavelmente a lição mais transferível que levo daqui.
+
+E a terceira foi mais simples do que as outras: \textbf{a técnica mais simples ganhou duas vezes}.
+Ganhou ao Isolation Forest, ganhou ao modelo com texto. Comecei este trabalho a assumir que o
+caminho para um bom resultado era acrescentar sofisticação. Acabo-o com duas medições a dizer o
+contrário --- e com a convicção de que a parte difícil da engenharia de inteligência artificial não é
+escolher a técnica mais avançada, é montar a avaliação que consegue dizer que ela não era precisa.
