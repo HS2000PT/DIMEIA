@@ -24,6 +24,314 @@ O quarto ponto é o que separa uma avaliação de uma demonstração. Todos os n
 produzidos por procedimentos automáticos com semente fixa: correr outra vez sobre os mesmos dados dá
 exatamente os mesmos valores.
 
+\section{Como se lê cada número deste capítulo}
+\label{sec:av_metricas}
+
+\emph{Antes de ver os resultados: o que é que cada medida quer dizer, e como é calculada?}
+
+Esta secção existe porque um resultado só vale o que vale a medida que o produziu. Um número como
+``$F_1 = 0.530$'' não diz nada a quem não sabe o que é o $F_1$, e um leitor que aceite esse número
+sem o compreender não está a avaliar o trabalho: está a confiar nele. Percorro por isso cada medida
+usada, com a fórmula, com o que ela premeia, e com a conta feita até ao valor que aparece mais à
+frente.
+
+\subsection{As quatro maneiras de acertar e de errar}
+\label{sec:av_matriz}
+
+Todas as medidas deste capítulo, à exceção de uma, assentam na mesma ideia de partida. O sistema faz
+uma afirmação sobre um dia, a realidade tem uma resposta, e há quatro combinações possíveis. Estão na
+Figura~\ref{fig:av_matriz} e o nome habitual deste quadro é \textbf{matriz de confusão}.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  cel/.style={draw, minimum width=3.5cm, minimum height=1.55cm, align=center, inner sep=3pt},
+  bom/.style={cel, fill=black!7},
+  mau/.style={cel, fill=orange!13},
+  rot/.style={font=\footnotesize\bfseries, text=black!65},
+]
+  \node[bom] (vp) at (0,0) {\textbf{Verdadeiro positivo}\\[2pt]
+    \footnotesize assinalou, e o dia\\ \footnotesize \emph{era} mesmo invulgar};
+  \node[mau, right=0mm of vp] (fp) {\textbf{Falso positivo}\\[2pt]
+    \footnotesize assinalou, e o dia\\ \footnotesize era banal\\ \footnotesize (\emph{alarme falso})};
+  \node[mau, below=0mm of vp] (fn) {\textbf{Falso negativo}\\[2pt]
+    \footnotesize calou-se, e o dia\\ \footnotesize era invulgar\\ \footnotesize (\emph{escapou})};
+  \node[bom, below=0mm of fp] (vn) {\textbf{Verdadeiro negativo}\\[2pt]
+    \footnotesize calou-se, e o dia\\ \footnotesize era mesmo banal};
+
+  \node[rot, above=2mm of vp] {a realidade: invulgar};
+  \node[rot, above=2mm of fp] {a realidade: banal};
+  % ⚠️ Horizontais, e não rodadas: um rótulo rodado é mais alto do que a linha que legenda,
+  % e as duas versões anteriores escreviam-se uma por cima da outra.
+  \node[rot, left=2mm of vp, align=right] {o sistema\\ \emph{assinala}};
+  \node[rot, left=2mm of fn, align=right] {o sistema\\ \emph{cala-se}};
+\end{tikzpicture}
+\caption[As quatro combinações possíveis]{A matriz de confusão. As duas células cinzentas são
+acertos; as duas alaranjadas são os dois erros possíveis, e \textbf{custam coisas diferentes}. Um
+falso positivo gasta a atenção de quem lê; um falso negativo deixa passar o dia que interessava.}
+\label{fig:av_matriz}
+\end{figure}
+
+A distinção que importa é a última. Os dois erros não são simétricos, e nenhuma medida única os
+resume sem escolher uma prioridade. É por isso que se usam duas medidas em vez de uma.
+
+\subsection{Precisão e cobertura}
+\label{sec:av_prec_rec}
+
+A \textbf{precisão} responde a: \emph{das vezes que o sistema falou, quantas tinha razão?}
+
+\begin{equation}
+  \text{Precisão} \;=\; \frac{\text{VP}}{\text{VP} + \text{FP}}
+  \label{eq:precisao}
+\end{equation}
+
+A \textbf{cobertura}, também chamada \emph{recall}, responde a uma pergunta diferente:
+\emph{dos dias que eram mesmo invulgares, quantos é que o sistema apanhou?}
+
+\begin{equation}
+  \text{Cobertura} \;=\; \frac{\text{VP}}{\text{VP} + \text{FN}}
+  \label{eq:cobertura}
+\end{equation}
+
+Repare-se em que o denominador muda. A precisão divide pelo que o sistema \emph{disse}; a cobertura
+divide pelo que \emph{existia}. São perguntas diferentes e podem dar respostas opostas.
+
+E é exatamente isso que acontece neste trabalho, o que torna o exemplo particularmente útil. A regra
+do limiar fixo, aquela que assinala qualquer movimento acima de $3\%$, obtém uma cobertura de
+$0.992$: apanha praticamente todos os dias invulgares que existiam. Vista só por esse número
+parece excelente. Mas a sua precisão é de $0.122$, ou seja, \textbf{de cada cem vezes que fala,
+tem razão doze}. Apanha tudo porque fala quase sempre, e uma regra que fala quase sempre não está a
+detetar coisa nenhuma.
+
+Este par de números é a razão de ser da secção seguinte: é preciso uma medida que não se deixe
+enganar por nenhum dos dois extremos.
+
+\subsection{O \texorpdfstring{$F_1$}{F1}: obrigar as duas a andarem juntas}
+\label{sec:av_f1}
+
+O $F_1$ combina precisão e cobertura numa só medida através da \textbf{média harmónica}:
+
+\begin{equation}
+  F_1 \;=\; 2 \cdot \frac{\text{Precisão} \times \text{Cobertura}}
+                         {\text{Precisão} + \text{Cobertura}}
+  \label{eq:f1}
+\end{equation}
+
+A escolha da média harmónica, e não da média habitual, é deliberada e vale a pena perceber porquê. A
+média aritmética de $0.122$ e $0.992$ é $0.557$, um valor que faria a regra do limiar fixo
+parecer razoável. A média harmónica \textbf{puxa para baixo em direção ao pior dos dois}, e por isso
+só dá um valor alto quando \emph{ambos} são altos. É uma medida que não deixa comprar cobertura à
+custa de precisão.
+
+Vejamos a conta completa, com os dois detetores, exatamente como os valores aparecem mais à frente.
+
+\paragraph{Para o limiar fixo}, com precisão $0.122$ e cobertura $0.992$:
+\begin{equation*}
+  F_1 = 2 \cdot \frac{0.122 \times 0.992}{0.122 + 0.992}
+      = 2 \cdot \frac{0.1210}{1.114}
+      = \frac{0.2421}{1.114}
+      = 0.218
+\end{equation*}
+
+\paragraph{Para o \emph{z}-score}, com precisão $0.381$ e cobertura $0.800$:
+\begin{equation*}
+  F_1 = 2 \cdot \frac{0.381 \times 0.800}{0.381 + 0.800}
+      = 2 \cdot \frac{0.3048}{1.181}
+      = \frac{0.6096}{1.181}
+      = 0.516
+\end{equation*}
+
+São estes os dois valores que a Secção~\ref{sec:av_qi1} reporta. O \emph{z}-score tem
+\emph{menos} cobertura do que o limiar fixo, e ainda assim ganha com folga, porque triplica a
+precisão. É a média harmónica a fazer o seu trabalho.
+
+\subsection{A precisão@\texorpdfstring{$k$}{k}: avaliar uma lista curta}
+\label{sec:av_patk}
+
+A recuperação de precedentes não devolve uma decisão de sim ou não: devolve uma \textbf{lista
+ordenada}. E o utilizador não lê a lista toda, lê as primeiras. Faz portanto sentido medir apenas o
+topo dessa lista, que é o que a \textbf{precisão@$k$} faz:
+
+\begin{equation}
+  \text{Precisão@}k \;=\; \frac{\text{número de casos relevantes entre os } k \text{ primeiros}}{k}
+  \label{eq:patk}
+\end{equation}
+
+Neste trabalho $k = 5$, porque cinco é a ordem de grandeza do que cabe num alerta sem o tornar
+ilegível. Um caso recuperado conta como relevante se pertencer ao mesmo setor da notícia de consulta,
+com a restrição adicional de ter de ser de \textbf{outra empresa}, pelas razões dadas na
+Secção~\ref{sec:av_qi2}.
+
+A Figura~\ref{fig:av_patk} mostra a conta para uma consulta.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize,
+  it/.style={draw, rounded corners=2pt, minimum width=6.1cm, minimum height=0.72cm,
+             align=left, text width=5.8cm, inner xsep=6pt},
+  sim/.style={it, fill=black!8},
+  nao/.style={it, fill=orange!12},
+]
+  \node[font=\small\bfseries] (q) at (0,0.85) {consulta: notícia de tecnologia};
+  \node[sim] (a) at (0,0) {1. \ \ tecnologia \hfill \textbf{relevante}};
+  \node[sim, below=1.2mm of a] (b) {2. \ \ tecnologia \hfill \textbf{relevante}};
+  \node[nao, below=1.2mm of b] (c) {3. \ \ energia \hfill não};
+  \node[sim, below=1.2mm of c] (d) {4. \ \ tecnologia \hfill \textbf{relevante}};
+  \node[nao, below=1.2mm of d] (e) {5. \ \ banca \hfill não};
+  \node[right=5mm of c, align=left, font=\small] (calc)
+    {$\text{Precisão@}5 = \dfrac{3}{5} = 0.600$};
+  \draw[decorate, decoration={brace, amplitude=4pt}, black!45]
+    ($(a.north east)+(1mm,0)$) -- ($(e.south east)+(1mm,0)$);
+\end{tikzpicture}
+\caption[A precisão@5 numa consulta]{Uma consulta devolve cinco casos; três são do mesmo setor. A
+medida é a fração, e faz-se a média sobre muitas consultas. Note-se que \textbf{a ordem dentro dos
+cinco não conta}: esta medida pergunta quantos acertou, não se pôs os melhores à frente.}
+\label{fig:av_patk}
+\end{figure}
+
+Falta um número sem o qual a medida não se interpreta: \textbf{qual é o valor de quem escolhe ao
+acaso?} Não é zero. Como há cinco setores e alguns são maiores do que outros, uma escolha aleatória
+acerta uma fração apreciável das vezes só por sorte. Esse chão foi medido, e vale $0.240$. Qualquer
+método tem de ser lido contra ele, e não contra zero.
+
+\subsection{A PR-AUC: a lista toda, em todos os pontos de corte}
+\label{sec:av_prauc}
+
+O modelo de triagem não devolve uma decisão: devolve uma \textbf{probabilidade} para cada notícia.
+Para transformar isso numa decisão é preciso escolher um limiar, e o valor da precisão e da cobertura
+muda conforme o limiar escolhido.
+
+Se o limiar for muito baixo, o sistema alerta quase sempre: a cobertura sobe e a precisão desce. Se
+for muito alto, alerta quase nunca: a precisão sobe e a cobertura desce. Cada limiar possível dá,
+portanto, um par (cobertura, precisão), e o conjunto de todos esses pares desenha uma curva. É a
+\textbf{curva de precisão--cobertura}, e a Figura~\ref{fig:av_prcurva} explica como se lê.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize, >={Stealth[length=2mm]}]
+  % A área é o assunto da figura, portanto desenha-se em vez de se descrever.
+  \fill[black!8] (0.15,0) -- (0.15,3.55)
+    .. controls (2.2,3.2) and (3.6,2.5) .. (6,1.512) -- (6,0) -- cycle;
+
+  \draw[->, black!55] (0,0) -- (7.6,0) node[right, black!70] {cobertura};
+  \draw[->, black!55] (0,0) -- (0,4.5) node[above, black!70] {precisão};
+  \foreach \x/\l in {0/0, 3/0.5, 6/1} \draw[black!45] (\x,0) -- (\x,-0.09) node[below] {\l};
+  \foreach \y/\l in {0/0, 2/0.5, 4/1} \draw[black!45] (0,\y) -- (-0.09,\y) node[left] {\l};
+
+  \draw[dashed, black!55] (0,1.512) -- (6.2,1.512)
+    node[right=0mm, align=left, black!60] {chão\\ $0.378$};
+  \draw[very thick, black!75] (0.15,3.55) .. controls (2.2,3.2) and (3.6,2.5) .. (6,1.512);
+
+  \fill[black] (1.5,3.35) circle (1.6pt);
+  \draw[black!50] (1.5,3.35) -- (2.5,4.05)
+    node[right=-0.5mm, align=left, black!75] {limiar \textbf{alto}:\\ fala pouco, acerta muito};
+  \fill[black] (5.1,1.85) circle (1.6pt);
+  \draw[black!50] (5.1,1.85) -- (5.9,2.75)
+    node[right=-0.5mm, align=left, black!75] {limiar \textbf{baixo}:\\ fala muito,\\ acerta pouco};
+
+  \node[align=center, black!60] at (2.5,0.75) {esta \textbf{área} é a PR-AUC};
+\end{tikzpicture}
+\caption[Como se lê uma curva de precisão--cobertura]{Cada ponto da curva é um limiar de decisão
+diferente. Um modelo melhor mantém a curva alta durante mais tempo antes de cair. A área debaixo da
+curva resume esse comportamento num só número, sem obrigar a escolher um limiar.}
+\label{fig:av_prcurva}
+\end{figure}
+
+A \textbf{PR-AUC} é a área debaixo dessa curva. O seu valor está entre $0$ e $1$, e a grande vantagem
+é resumir o modelo em \emph{todos} os limiares de uma vez, em vez de o julgar num limiar escolhido à
+mão, que seria uma decisão arbitrária a contaminar a comparação.
+
+Há aqui uma propriedade que convém conhecer, porque é o que torna esta medida interpretável.
+\textbf{O chão da PR-AUC não é zero: é a proporção de casos positivos que existem nos dados.} Um
+modelo que ignore por completo o que lhe dão e atribua a mesma probabilidade a tudo obtém uma
+PR-AUC igual a essa proporção.
+
+No bloco de teste deste trabalho a proporção de casos positivos é de $37.8\%$, e o modelo
+``alertar sempre'' obtém exatamente $\text{PR-AUC} = 0.378$. Não é coincidência: é a propriedade
+acima, e serve de verificação de que a medição está bem montada. Todos os valores de PR-AUC deste
+capítulo devem ser lidos contra esse chão de $0.378$.
+
+\paragraph{E porquê esta medida, e não a percentagem de acertos?}
+Porque a percentagem de acertos engana quando as duas classes têm tamanhos diferentes. Se apenas
+$37.8\%$ dos casos são positivos, um modelo que responda sempre ``não é importante'' acerta em
+$62.2\%$ das vezes sem ter aprendido nada. Um número que premeia esse comportamento não serve para
+escolher entre modelos.
+
+\subsection{O Brier: a probabilidade tem de ser honesta}
+\label{sec:av_brier}
+
+As medidas anteriores olham para a \emph{ordenação}: se o modelo põe os casos importantes à frente.
+Falta uma que olhe para o \emph{valor} da probabilidade. Isso importa porque o sistema mostra ao
+utilizador uma frase do género ``$57\%$ de probabilidade'', e essa percentagem tem de querer dizer
+alguma coisa.
+
+O \textbf{Brier} é a média do quadrado do erro entre a probabilidade anunciada e o que aconteceu:
+
+\begin{equation}
+  \text{Brier} \;=\; \frac{1}{n}\sum_{i=1}^{n}\left(p_i - y_i\right)^2
+  \label{eq:brier}
+\end{equation}
+
+onde $p_i$ é a probabilidade que o modelo deu ao caso $i$ e $y_i$ vale $1$ se o caso se revelou
+importante e $0$ se não. Ao contrário das anteriores, aqui \textbf{quanto menor, melhor}: zero seria
+a perfeição.
+
+O quadrado não está ali por acaso. Penaliza mais do que proporcionalmente os enganos confiantes: um
+modelo que diz $90\%$ e erra paga $(0.9-0)^2 = 0.81$, enquanto um que diz $60\%$ e erra paga
+apenas $0.16$. Prometer muito e falhar sai caro, que é a propriedade desejada num sistema que
+mostra percentagens a quem não as sabe questionar.
+
+Vale a pena fazer a conta para o caso mais simples de todos, porque fecha exatamente. O modelo
+``alertar sempre'' anuncia $p_i = 1$ para todas as notícias. Para os casos que se revelaram
+importantes ($y_i = 1$) o erro é $(1-1)^2 = 0$; para os restantes ($y_i = 0$) é $(1-0)^2 = 1$. O
+Brier passa a ser, simplesmente, a fração de casos não importantes:
+
+\begin{equation*}
+  \text{Brier} = 1 - 0.378 = 0.622
+\end{equation*}
+
+E $0.622$ é precisamente o valor que a tabela da Secção~\ref{sec:av_qi3} reporta para esse modelo.
+O modelo de volatilidade obtém $0.218$, ou seja, menos de metade do erro.
+
+\subsection{Qual medida responde a que pergunta}
+\label{sec:av_qual}
+
+A Tabela~\ref{tab:av_metricas} resume o que cada uma faz e onde é usada, porque usar a medida errada
+para a pergunta certa é uma forma silenciosa de chegar a uma conclusão falsa.
+
+\begin{table}[ht]
+\caption[As medidas usadas e o que cada uma responde]{Cada medida, a pergunta a que responde, o seu
+chão de referência, e onde aparece neste capítulo.}
+\label{tab:av_metricas}
+\centering
+\small
+\begin{tabular}{L{0.15\textwidth} L{0.34\textwidth} L{0.20\textwidth} C{0.13\textwidth}}
+\toprule
+\tabhead{Medida} & \tabhead{Responde a} & \tabhead{Chão} & \tabhead{Usada em} \\
+\midrule
+Amplitude de disparo & O detetor comporta-se do mesmo modo em empresas diferentes? & zero seria o
+ideal & \gls{QI}1 \\
+\addlinespace
+$F_1$ & Acerta quando fala, e fala quando devia? & depende dos dados & \gls{QI}1 \\
+\addlinespace
+Precisão@5 & Das cinco que mostro, quantas prestam? & $0.240$ (acaso medido) & \gls{QI}2 \\
+\addlinespace
+PR-AUC & Ordena bem, seja qual for o limiar? & $0.378$ (a prevalência) & \gls{QI}3 \\
+\addlinespace
+Brier & A percentagem anunciada é honesta? & $0.622$ (alertar sempre) & \gls{QI}3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Uma nota final sobre a primeira linha, que é a única medida deste capítulo que não usa rótulos. A
+amplitude de disparo mede a diferença entre a empresa em que o detetor mais fala e aquela em que
+menos fala. Não precisa de saber quais dias eram mesmo invulgares: parte apenas do princípio de que
+um bom detetor universal deve comportar-se de forma parecida em empresas diferentes. É por não
+depender de rótulo nenhum que ela serve de argumento principal da secção seguinte, e as restantes de
+argumento de apoio.
+
 \section{QI1: detetar o que é invulgar}
 \label{sec:av_qi1}
 
