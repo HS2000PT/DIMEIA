@@ -680,11 +680,120 @@ filtros baratos já removeram grande parte do que o modelo foi treinado para rem
 pouco para separar. \textbf{Um modelo avaliado isolado e implantado atrás de filtros nunca foi
 avaliado na distribuição que vai ver.} É a lição mais transferível deste trabalho.
 
+\subsection{E o que é que o portão estava a escolher, afinal?}
+\label{sec:av_portao}
+
+A subsecção anterior diz que o modelo está \emph{a mais}. Fica bem como explicação e é vaga: não
+diz \textbf{o que} ele estava a fazer quando era chamado. Vale a pena responder a isso, porque a
+resposta é medível e porque foi ela que mudou o sistema.
+
+A pergunta é simples. O portão implantado era um limiar fixo sobre a probabilidade calibrada: passa
+quem estiver acima de $0.50$. \emph{Esse limiar separava manchetes, ou separava empresas?}
+
+Mediu-se sobre as $4\,366$ decisões \textbf{realmente tomadas em produção}, e a
+Figura~\ref{fig:av_portao} mostra o resultado de uma só vez.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize, x=13cm, y=0.44cm]
+  % eixo
+  \draw[black!45] (0.22,0) -- (0.68,0);
+  \foreach \x in {0.25,0.35,0.45,0.55,0.65}
+    \draw[black!40] (\x,0) -- (\x,-0.22) node[below, black!60] {\x};
+  % o piso
+  \draw[dashed, thick, orange!70!black] (0.50,-0.6) -- (0.50,13.2)
+    node[above, align=center, text=orange!60!black] {piso\\ $0.50$};
+  % (linha, ticker, mínimo, mediana, máximo, COR). A cor vai nos dados de propósito: uma
+  % condicional dentro do \foreach falha em silêncio e as barras saem todas iguais.
+  \foreach \i/\t/\a/\m/\b/\c in {
+    12/JPM/0.242/0.248/0.258/black!30, 11/JNJ/0.298/0.298/0.324/black!30,
+    10/NFLX/0.388/0.413/0.426/black!30, 9/XOM/0.390/0.399/0.407/black!30,
+    8/AAPL/0.423/0.457/0.472/black!30, 7/NVDA/0.457/0.481/0.501/black!62,
+    6/GOOGL/0.444/0.489/0.528/black!62, 5/MSFT/0.417/0.555/0.557/black!62,
+    4/AMZN/0.411/0.568/0.571/black!62, 3/META/0.525/0.537/0.545/orange!65,
+    2/TSLA/0.545/0.586/0.630/orange!65, 1/AMD/0.549/0.632/0.633/orange!65}
+  {
+    \node[left, black!75] at (0.22,\i) {\t};
+    \draw[line width=2.6pt, color=\c] (\a,\i) -- (\b,\i);
+    \fill[black!85] (\m,\i) circle (1.1pt);
+  }
+  \node[right, align=left, text=orange!60!black] at (0.645,2) {passa\\ sempre};
+  \node[right, align=left, black!55] at (0.56,10.5) {nunca\\ passa};
+  \node[right, align=left, black!62] at (0.605,6.5) {aqui o piso\\ decide};
+\end{tikzpicture}
+\caption[O que o portão separava]{Para cada empresa, o intervalo de todas as pontuações que o
+modelo lhe deu em produção, com a mediana marcada a preto. A linha tracejada é o piso de decisão.
+As barras claras nunca o alcançam, as escuras atravessam-no, e as alaranjadas estão sempre acima.
+Repare-se em que oito das doze estão \textbf{inteiramente} de um dos lados: para essas, a decisão
+estava tomada antes de se ler a manchete.}
+\label{fig:av_portao}
+\end{figure}
+
+A leitura da figura é imediata e os números confirmam-na:
+
+\begin{itemize}
+  \item a amplitude média das pontuações \textbf{dentro} de cada empresa é $0.064$;
+  \item a amplitude \textbf{entre} as medianas das empresas é $0.385$, ou seja, $6.1$ vezes maior;
+  \item três empresas ficavam \textbf{sempre} acima do piso e cinco \textbf{nunca} lá chegavam;
+  \item só em quatro das doze o piso decidia alguma coisa.
+\end{itemize}
+
+\begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
+Em \textbf{$84\%$} das decisões, o resultado estava determinado pela \textbf{empresa} antes de a
+manchete ser lida. A Apple não conseguia gerar um alerta de notícia, acontecesse o que
+acontecesse; a AMD passava em $963$ de $963$.
+\end{tcolorbox}
+
+\paragraph{E este é o mesmo defeito que este trabalho já tinha identificado, um nível acima.}
+A Secção~\ref{sec:av_qi1} mostra que um limiar fixo sobre o \emph{retorno} mede a volatilidade da
+empresa e não a raridade do dia, e é essa a razão de ser do \emph{z}-score. O limiar fixo sobre a
+\emph{pontuação do modelo} tem exatamente a mesma forma: como a pontuação é quase uma constante por
+empresa, cortá-la num valor fixo ordena empresas, não notícias. Encontrei o meu próprio erro
+repetido numa camada diferente.
+
+\subsection{A correção óbvia, e porque é que não servia}
+
+Se o remédio funcionou para os preços, a tentação é aplicá-lo aqui: em vez de um piso fixo, um piso
+\emph{relativo a cada empresa}, alertando quando a pontuação é invulgar \emph{para aquela empresa}.
+
+Simulei-o sobre as mesmas decisões antes de escrever uma linha de código. Metade do problema
+resolve-se: as doze empresas passam a estar representadas, que é o efeito pretendido. Mas aparece
+outro, e é o mais instrutivo desta secção.
+
+Nas empresas cuja pontuação quase não varia, o percentil cai \textbf{em cima} da constante e quase
+todas as decisões empatam acima dele. A JNJ, cuja pontuação vive entre $0.298$ e $0.324$, passaria
+$874$ vezes. O piso relativo deixa de escolher por materialidade e passa a escolher por desempate,
+que é precisamente o artefacto documentado na Secção~\ref{sec:av_qi3} a propósito do chão de
+comparação.
+
+\textbf{Não se corrige um defeito introduzindo o defeito vizinho.} A conclusão honesta é mais funda
+do que ``falta afinar o piso'':
+
+\begin{tcolorbox}[colback=black!3, colframe=black!35, boxrule=0.5pt, arc=2pt]
+Dentro de uma empresa, a pontuação do modelo quase não varia com a manchete. Nenhuma regra de
+decisão aplicada a essa pontuação a pode tornar sensível à notícia, porque a informação que
+distinguiria uma manchete da seguinte não está lá.
+\end{tcolorbox}
+
+\paragraph{O que se fez em consequência, e porquê.}
+O modelo deixou de ser porta e passou a ser critério de \textbf{ordenação}. É o uso que a medição
+sustenta: entre empresas ele tem informação, e é exatamente isso que a precisão dentro de um
+orçamento mede. O controlo de volume passou para um \textbf{orçamento diário} de cinco alertas,
+servido por ordem de materialidade.
+
+E isto fecha uma divergência que só se viu ao olhar para as duas coisas ao mesmo tempo: \textbf{esta
+dissertação avaliava uma política de orçamento e o sistema implantava uma política de limiar}. Eram
+políticas diferentes, portanto o número reportado descrevia um sistema que não era o que estava no
+ar. Passaram a ser a mesma.
+
 \subsection{O que isto não permite concluir}
 
 Que o texto de notícias não sirva para nada. Só se testou uma representação (manchetes, sem o corpo
 do artigo) sobre um corpus. Com textos completos e mais dados, a resposta podia ser outra, e isso
 fica como trabalho futuro, não como desculpa.
+
+E, sobre a secção anterior, que o modelo seja inútil. Ele ordena empresas melhor do que o acaso, e é
+com esse papel que ficou. O que a medição desmente é o uso que lhe estava a ser dado.
 
 \section{Todas as alternativas que foram testadas e não ficaram}
 \label{sec:av_alternativas}
