@@ -239,8 +239,9 @@ O que interessa não é o tamanho do movimento. É o tamanho do movimento \textb
 
 \subsection{A ideia: medir em desvios-padrão}
 
-A solução é velha e boa, e é a forma mais comum de detetar anomalias em séries temporais
-\autocite{chandola2009anomaly}: em vez de comparar com um número fixo, comparo com o comportamento
+A solução é velha e boa, e pertence à família \emph{estatística} da taxonomia de deteção de anomalias
+\autocite{chandola2009anomaly}, ou seja àquela que define o que é normal a partir da distribuição
+recente dos próprios dados: em vez de comparar com um número fixo, comparo com o comportamento
 recente da própria ação.
 
 Olho para os últimos vinte dias e faço duas perguntas: \emph{quanto é que esta ação costuma oscilar?}
@@ -430,9 +431,20 @@ w \;=\; \frac{\sigma^2_{\text{ref}}}{\sigma^2_{\text{ref}} + \mathrm{SE}^2(\hat\
 Quando o ajuste é limpo, o erro-padrão é pequeno, $w$ aproxima-se de 1 e a estimativa fica
 praticamente intacta. Quando a janela é ruidosa, o erro-padrão cresce, $w$ aproxima-se de 0 e o beta
 recai sobre a referência. O ajuste é gradual e não tudo ou nada. A alternativa mais simples, um peso
-fixo na tradição de \textcite{blume1971risk}, foi testada e rejeitada por uma razão concreta: encolhe
-com a mesma força uma estimativa boa e uma má, e num caso construído em que uma ação se move
-exatamente ao dobro do mercado, um peso fixo de dois terços devolve $1.67$ onde a verdade é $2.0$.
+fixo na tradição decorrente de \textcite{blume1971risk}, foi testada e rejeitada por uma razão
+concreta: encolhe com a mesma força uma estimativa boa e uma má, e num caso construído em que uma
+ação se move exatamente ao dobro do mercado, um peso fixo de dois terços devolve $1.67$ onde a
+verdade é $2.0$.
+
+Falta declarar um desvio face à formulação original, porque ele existe e um leitor que conheça o
+artigo iria procurá-lo. Em \textcite{vasicek1973beta}, o valor de referência $\beta_{\text{ref}}$ e a
+sua dispersão $\sigma^2_{\text{ref}}$ \textbf{não} são constantes escolhidas: são a média e a
+variância da distribuição dos betas no conjunto dos títulos, estimadas do corte transversal, e é
+precisamente aí que reside a natureza bayesiana do método. Aqui são fixos, $1.0$ e $0.5$, e a razão
+é de âmbito: a watchlist tem doze empresas, e estimar uma distribuição de betas a partir de doze
+observações produziria uma referência mais ruidosa do que a constante que ela substituiria. O
+mecanismo de ponderação pela precisão mantém-se exatamente o de Vasicek; o que se simplifica é a
+origem do valor para o qual se encolhe.
 
 \subsection{Um caso real, com todos os passos}
 
@@ -650,10 +662,23 @@ O limiar usado em produção é $0.45$. O par A passaria com folga; o par B nem 
 Encontrar notícias parecidas é metade. A outra metade é dizer o que aconteceu ao preço depois de cada
 uma delas.
 
-Para isso usa-se uma técnica clássica de finanças, o \textbf{estudo de evento}
-\autocite{brown1985daily}: fixa-se o dia da notícia e mede-se a variação do preço $1$, $3$ e $5$
-dias depois. A Figura~\ref{fig:estudo_evento}
-mostra o alinhamento.
+Para isso adapta-se uma técnica clássica de finanças, o \textbf{estudo de evento}
+\autocite{brown1985daily}: fixa-se o dia da notícia e mede-se o que o preço fez $1$, $3$ e $5$ dias
+depois. A Figura~\ref{fig:estudo_evento} mostra o alinhamento.
+
+O verbo ``adapta-se'' está ali de propósito, e a diferença tem de ficar dita porque é uma
+simplificação face à fonte. O que \textcite{brown1985daily} normalizam é a medição do retorno
+\emph{anormal}, ou seja o retorno já descontado de uma referência, tipicamente o movimento do
+mercado no mesmo período. O que este trabalho mostra ao utilizador é o retorno \textbf{bruto},
+sem desconto nenhum.
+
+A escolha é deliberada e tem um custo. A favor: o valor exibido é o que a pessoa veria na sua
+aplicação, e um número que ela pode conferir vale mais, num produto que se propõe ser verificável,
+do que um número mais correto que ela não sabe reproduzir. Contra, e é real: um retorno bruto mistura
+a reação à notícia com o que o mercado inteiro fez nesses dias, pelo que num período de queda
+generalizada os precedentes parecerão piores do que foram. O sistema \emph{sabe} fazer o desconto,
+e fá-lo onde ele é indispensável, que é na construção do rótulo da Secção~\ref{sec:met_triagem};
+aqui não o faz, e isso fica registado como escolha e não como descuido.
 
 \begin{figure}[ht]
 \centering

@@ -27,9 +27,10 @@ vezes melhor. E, sujeito a uma comparação justa, ganha também a dois métodos
 desenhados para esta tarefa \autocite{liu2008isolation, breunig2000lof}.
 
 Este resultado é menos surpreendente do que parece à primeira vista, e a literatura ajuda a
-perceber porquê. Os dois métodos aprendidos definem normalidade pela geometria dos dados, o que é
-uma vantagem quando há muitas variáveis a interagir \autocite{chandola2009anomaly}; aqui há uma
-série de retornos por empresa, e a estrutura que interessa é temporal, não geométrica. A janela
+perceber porquê. Os dois métodos aprendidos definem normalidade pela geometria dos dados
+\autocite{liu2008isolation, breunig2000lof}, e foram desenhados para situações com muitas variáveis
+a interagir; aqui há uma série de retornos por empresa, e a estrutura que interessa é temporal, não
+geométrica. A janela
 deslizante capta diretamente o agrupamento de volatilidade que caracteriza estas séries
 \autocite{engle1982arch, bollerslev1986garch}, ao passo que um detetor treinado sobre o conjunto
 todo tem de aprender essa estrutura a partir dos dados. Quando a suposição de um método simples
@@ -37,16 +38,21 @@ coincide com a estrutura real do problema, é difícil batê-lo.
 
 \paragraph{QI2, precedentes. Sim.}
 A recuperação por significado encontra notícias passadas relacionadas melhor do que procurar por
-palavras \autocite{robertson2009bm25}, do que escolher ao acaso e do que devolver as mais recentes
-($0.514$ contra $0.346$, $0.240$ e $0.126$), e o resultado aguenta à escala do corpus completo
-($0.595$). Com uma ressalva que ficou clara ao medir: a semelhança capta o \textbf{tema}, não a
+sobreposição de palavras, do que escolher ao acaso e do que devolver as mais recentes ($0.514$ contra
+$0.346$, $0.240$ e $0.126$), e o resultado aguenta à escala do corpus completo ($0.595$). A linha de
+base lexical medida é a mais simples da sua família, e não uma função de ordenação afinada, o que
+delimita o alcance da afirmação. Com uma ressalva que ficou clara ao medir: a semelhança capta o \textbf{tema}, não a
 \textbf{direção}.
 
-Essa ressalva merece ser lida à luz da teoria e não como um defeito da implementação. Se a direção
-de um movimento futuro fosse recuperável a partir do tema de uma notícia pública, essa informação
-já estaria refletida no preço \autocite{fama1970efficient}. O que se mediu é, portanto,
-aproximadamente o que se devia esperar, e é essa a razão pela qual o produto apresenta os
-precedentes como observações do passado e nunca como indicação do que vem a seguir.
+Essa ressalva é coerente com o que se esperaria, e não é apenas um defeito da implementação. A
+hipótese dos mercados eficientes na sua forma semiforte \autocite{fama1970efficient} diz que a
+informação pública já está refletida no preço; se assim for, a direção de um movimento futuro não
+deveria ser recuperável a partir do tema de uma notícia pública. Convém ser cuidadoso com o estatuto
+disto: trata-se de uma hipótese e não de uma lei, e o próprio autor sublinha que os seus testes são
+sempre conjuntos, da eficiência e de um modelo de formação de preços ao mesmo tempo. Este trabalho
+não a testa nem se apoia nela para concluir seja o que for. Serve apenas para dizer que o resultado
+medido não é anómalo, e é uma das razões pelas quais o produto apresenta os precedentes como
+observações do passado e nunca como indicação do que vem a seguir.
 
 \paragraph{QI3, triagem. Não.}
 Nenhum modelo que lê o texto da manchete bateu uma linha de base que usa apenas volatilidade
@@ -59,12 +65,18 @@ caiu era a única opção compatível com o resto do trabalho.
 
 Existe uma linha de investigação considerável que usa texto para antecipar movimentos de preço
 \autocite{xing2018nlffsurvey, ding2015deep}, e seria cómodo apresentar este resultado como se a
-contradissesse. Não a contradiz, e convém ser preciso sobre porquê. Esses trabalhos usam
-tipicamente o corpo dos artigos ou fluxos de texto muito maiores, extraem estruturas de
-acontecimento em vez de comparar frases, e avaliam noutras condições. O que aqui se mostra é mais
-estreito e também mais útil para quem constrói: \textbf{sob esta restrição de dados}, ou seja
-manchetes de fontes gratuitas, o sinal textual não acrescenta ao que a volatilidade recente já
-dizia. É um resultado sobre um regime de recursos, e não sobre a linguagem.
+contradissesse. Não a contradiz, e convém ser preciso sobre porquê, incluindo num ponto em que a
+diferença é menor do que eu gostaria. \textcite{ding2015deep} trabalham também sobre \emph{títulos},
+e não sobre o corpo dos artigos, pelo que a diferença não está aí. Está no que se faz com eles:
+extraem estruturas de acontecimento, do tipo actor, ação e objeto, e treinam uma rede para prever a
+direção do movimento, ao passo que aqui se compara o título inteiro por semelhança e se recusa
+prever direção. Os corpora e os horizontes de avaliação também diferem.
+
+O que aqui se mostra é, portanto, mais estreito do que uma refutação, e é essa a afirmação que faço:
+\textbf{sob esta restrição de dados e com esta família de métodos}, ou seja títulos de fontes
+gratuitas comparados por semelhança de frase, o sinal textual não acrescenta ao que a volatilidade
+recente já dizia. É um resultado sobre um regime de recursos e uma escolha de representação, e não
+sobre a linguagem.
 
 \section{Os objetivos, um a um}
 \label{sec:con_objetivos}
@@ -102,12 +114,14 @@ que está escrito.
 
 A literatura é explícita quanto ao peso desta falta. Afirmações de interpretabilidade exigem
 avaliação e não bastam ser declaradas \autocite{doshivelez2017rigorous}, e o motivo não é
-formalismo: o efeito de uma explicação sobre uma pessoa não é dedutível da sua construção. Sabe-se
-que o risco não é as pessoas confiarem de menos mas confiarem na medida errada
-\autocite{lee2004trust}, e que uma explicação apresentada com confiança pode levar alguém a aceitar
-uma resposta errada \autocite{bansal2021whole}. Este sistema é construído para reduzir esse risco,
-mostrando a evidência em vez de emitir um veredicto, mas \emph{que o consiga} é uma hipótese por
-verificar e não um resultado.
+formalismo: o efeito de uma explicação sobre uma pessoa não é dedutível da sua construção. O que se
+sabe é que a confiança pode falhar nos \emph{dois} sentidos, ignorando um aviso correto ou aceitando
+um errado \autocite{lee2004trust}, e que a simples presença de uma explicação chega para aumentar a
+aceitação de respostas erradas \autocite{bansal2021whole}. Este sistema é construído para tornar a
+confiança apropriada, mostrando a evidência em vez de emitir um veredicto, mas \emph{que o consiga} é
+uma hipótese por verificar e não um resultado. Note-se, aliás, que sem estudo com pessoas eu não
+consigo distinguir os dois modos de falha: um alerta ignorado e um alerta indevidamente acreditado
+são, para os meus registos, exatamente a mesma ausência de dados.
 
 \paragraph{Os alertas ainda não estão bem calibrados, e sei disso a usar.}
 Esta é a limitação que mais me incomoda, precisamente porque a noto como utilizador e não nos
@@ -285,11 +299,15 @@ Por esta ordem, e as três primeiras respondem diretamente às limitações acim
   \item \textbf{Dar ao utilizador um conjunto em vez de um número.} A predição conformal permite
         devolver um conjunto de respostas com uma garantia livre de distribuição
         \autocite{vovk2005algorithmic, angelopoulos2023conformal}, o que encaixa bem numa
-        ferramenta que recusa afirmar mais do que sabe. Foi considerada e não adotada, e a razão
-        fica registada para quem retome: a garantia é \emph{marginal}, ou seja vale em média sobre
-        os casos e não caso a caso, o que é precisamente a leitura errada que um utilizador faria.
-        Usá-la exigiria explicar esta distinção no produto, e isso é desenho de interação por
-        fazer, não uma questão de implementação.
+        ferramenta que recusa afirmar mais do que sabe. Foi considerada e não adotada, e ficam
+        registadas as \emph{duas} razões, porque quem retomar isto precisa das duas. A primeira é
+        que a garantia é \emph{marginal}, vale em média sobre os casos e não caso a caso, que é
+        precisamente a leitura errada que um utilizador faria. A segunda é mais dura: a garantia
+        exige \textbf{permutabilidade} entre calibração e teste, e estes dados são uma série
+        temporal, com as manchetes a chegarem por ordem. É a mesma hipótese que este trabalho
+        recusa quando divide o conjunto por data e com embargo. Aplicar o método sem tratar isso
+        daria intervalos com uma garantia que os dados não sustentam, e seria trocar um número
+        honesto por um número com aparência de rigor.
 \end{enumerate}
 
 \section{O que eu aprendi}
@@ -320,6 +338,12 @@ Esta conclusão não é minha nem é original, e é por isso que me deixa mais d
 fosse. \textcite{rudin2019stop} defende que, em decisões de consequência séria, se deve usar
 modelos interpretáveis à partida em vez de explicar modelos opacos depois, e um dos argumentos é
 que a diferença de desempenho que justificaria a opacidade muitas vezes não existe quando se
-verifica. Neste trabalho ela não existiu em nenhuma das três comparações. A diferença é que aqui
-não foi uma posição assumida à cabeça: foi a conclusão a que a medição chegou, três vezes, contra
-o que eu esperava.
+verifica. Duas das minhas três comparações são instâncias disso: o \emph{z}-score contra dois
+detetores cuja decisão não se lê, e a regressão logística contra as árvores com \emph{boosting}.
+
+A terceira não é, e convém não a arrumar na mesma prateleira só porque a conclusão rima. A tabela de
+treze constantes não venceu um modelo opaco: venceu uma regressão logística calibrada, que é
+interpretável e cujas contribuições esta tese exibe uma a uma. Aquilo não é um argumento sobre
+opacidade, é um argumento sobre \emph{informação}: o modelo perdeu para uma tabela porque as suas
+entradas quase não variavam dentro de cada empresa, e não porque fosse complexo demais. São lições
+diferentes, e juntá-las tornaria a mais interessante das duas invisível.

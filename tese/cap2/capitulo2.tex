@@ -47,9 +47,14 @@ processo que chega a ser mensurável através do volume de pesquisas na internet
 \autocite{da2011attention}.
 
 Repare-se no que isto significa quando se junta às três perguntas do Capítulo~\ref{cap:introducao}.
-Os três sinais que capturam a atenção do investidor, ou seja a notícia, o volume invulgar e o
-movimento extremo do dia, são exatamente os sinais que este sistema deteta. A diferença é o que
-acontece a seguir. Hoje, esses sinais chegam à pessoa em bruto, e o que a literatura documenta é que
+Os três sinais que capturam a atenção do investidor são a notícia, o volume invulgar e o movimento
+extremo do dia, e este sistema calcula os três. Convém, no entanto, ser exato quanto ao estatuto de
+cada um, porque não é o mesmo: a notícia e o movimento extremo são os dois \emph{gatilhos}, ou seja
+podem por si levantar um alerta, ao passo que o volume é calculado e mostrado como contexto e nunca
+levanta nada. A razão está medida e é dita na Secção~\ref{sec:av_alternativas}: a combinação do
+volume com os outros sinais só melhorou a triagem em um de três orçamentos, e uma capacidade que
+ganha uma vez em três não justifica mais uma via de interrupção. A diferença é o que acontece a
+seguir. Hoje, esses sinais chegam à pessoa em bruto, e o que a literatura documenta é que
 ela compra a seguir. O que este trabalho tenta é interpor, entre o sinal e a decisão, o contexto que
 permite julgá-lo: se aquilo é invulgar para aquela empresa, se foi a empresa ou o mercado, e o que
 se seguiu em casos parecidos. A Figura~\ref{fig:ctx_atencao} resume esta cadeia.
@@ -64,7 +69,9 @@ se seguiu em casos parecidos. A Figura~\ref{fig:ctx_atencao} resume esta cadeia.
             inner sep=4pt, fill=black!8, very thick},
 ]
   \node[s] (n)  {\textbf{Notícia}};
-  \node[s, below=0.35cm of n] (v) {\textbf{Volume}\\\footnotesize invulgar};
+  % A caixa do volume é tracejada de propósito: o sinal é calculado e mostrado, mas não
+  % levanta alertas. Desenhá-la igual às outras afirmaria três gatilhos onde há dois.
+  \node[s, dashed, below=0.35cm of n] (v) {\textbf{Volume}\\\footnotesize invulgar};
   \node[s, below=0.35cm of v] (m) {\textbf{Movimento}\\\footnotesize extremo do dia};
 
   \node[d, right=2.1cm of v] (ctx) {\textbf{Contexto}\\\footnotesize as três perguntas};
@@ -79,16 +86,20 @@ se seguiu em casos parecidos. A Figura~\ref{fig:ctx_atencao} resume esta cadeia.
         align=center, yshift=1pt] {hoje: sem intermediário} (dec.north west);
 \end{tikzpicture}
 \caption[Da atenção à decisão]{Os três sinais que a literatura identifica como captadores de atenção
-\autocite{barber2008glitters} são os mesmos que este sistema deteta. A seta a tracejado é o caminho
-que existe hoje, em que o sinal chega em bruto. A caixa central é o que este trabalho acrescenta.}
+\autocite{barber2008glitters} são calculados por este sistema, mas apenas dois levantam alertas: a
+caixa do volume está a tracejado porque o sinal é mostrado como contexto e não interrompe ninguém. A
+seta a tracejado é o caminho que existe hoje, em que o sinal chega em bruto. A caixa central é o que
+este trabalho acrescenta.}
 \label{fig:ctx_atencao}
 \end{figure}
 
-Uma última nota de enquadramento. A adoção de inteligência artificial no setor financeiro deixou de
-ser experimental e passou a ser generalizada, tanto do lado das instituições como do lado dos
-produtos de retalho \autocite{ccaf2026aifs}. Isso significa que a pergunta relevante já não é se
-estas técnicas vão chegar ao investidor particular, porque estão a chegar, mas sim em que condições
-de transparência é que chegam.
+Uma última nota de enquadramento. Do lado das \emph{instituições}, a adoção de inteligência
+artificial em serviços financeiros deixou de ser experimental e passou a ser generalizada, como
+documenta o inquérito a empresas do setor conduzido pelo \textcite{ccaf2026aifs}. Do lado dos
+\emph{produtos de retalho} não cito esse inquérito, porque ele não mede essa população; o que se
+sabe é o que os próprios fornecedores anunciam, e disso trata a Secção~\ref{sec:ctx_produtos}. Com
+essa ressalva, a pergunta relevante já não é se estas técnicas vão chegar ao investidor particular,
+mas em que condições de transparência é que chegam.
 
 \section{O que existe hoje para quem investe pouco}
 \label{sec:ctx_ferramentas}
@@ -198,10 +209,14 @@ plausível. O problema é o que está por trás desse texto. Ele não tem:
 E há uma diferença mais funda, que é a razão pela qual este trabalho não é um invólucro à volta de um
 modelo de linguagem. Modelos grandes especializados em finanças existem
 \autocite{wu2023bloomberggpt} e são impressionantes. Mas a saída deles é uma afirmação que se lê bem
-e não se consegue conferir, o que é precisamente a falha de interpretabilidade contra a qual a
-literatura da área avisa \autocite{lipton2018mythos, rudin2019stop}. A literatura sobre confiança em
-sistemas automáticos acrescenta que o problema não é as pessoas confiarem de menos: é confiarem
-\emph{na medida errada}, o que exige que o sistema mostre em que se apoia \autocite{lee2004trust}.
+e não se consegue conferir, e a literatura da área avisa que uma explicação que não se pode verificar
+não resolve o problema que diz resolver \autocite{lipton2018mythos, rudin2019stop}. A literatura
+sobre confiança em sistemas automáticos acrescenta a razão pela qual isso importa.
+\textcite{lee2004trust} descrevem \emph{dois} modos de falha simétricos: confiar de menos, e por isso
+ignorar um aviso correto, e confiar de mais, e por isso aceitar um errado. O objetivo não é maximizar
+a confiança nem minimizá-la, mas torná-la \emph{apropriada}, ou seja ajustada à capacidade real do
+sistema. E uma pessoa só pode ajustar a sua confiança se lhe for mostrado em que é que o sistema se
+apoia.
 
 Por isso, neste trabalho, a linguagem nunca produz factos. Os números vêm dos motores que os
 calcularam, e o texto é montado a partir deles, como se descreve na
@@ -297,8 +312,10 @@ sentido de uma frase inteira. Cada geração resolve uma limitação da anterior
 \end{figure}
 
 A primeira geração conta palavras. O modelo de espaço vetorial \autocite{salton1975vsm} representa um
-documento pela frequência dos termos que contém, e a linha de trabalho que dele decorre, até ao BM25
-\autocite{robertson2009bm25}, continua a ser uma linha de base forte em recuperação de informação.
+documento pela frequência dos termos que contém. Dentro desta geração há ainda uma segunda linha,
+nascida de um quadro diferente e não deste, a das funções de ordenação probabilísticas, de que o
+BM25 \autocite{robertson2009bm25} é o representante corrente; as duas continuam a ser linhas de base
+fortes em recuperação de informação.
 É transparente e é rápido, mas é cego a sinónimos: para este tipo de representação, ``subiu'' e
 ``valorizou'' são símbolos sem relação nenhuma. Em texto financeiro há ainda uma variante
 especializada, os léxicos de domínio, que corrigem o facto de dicionários de sentimento genéricos
@@ -365,9 +382,9 @@ Essa suposição não é automaticamente verdadeira, e o Capítulo~\ref{cap:aval
 assumir.
 
 Convém situar este trabalho dentro da literatura mais vasta de processamento de linguagem natural
-aplicado a finanças. As revisões dessa área até meados da década de 2010 \autocite{kearney2014textual}
-cobrem as duas primeiras gerações; a terceira chegou depois, e é de onde este trabalho tira a sua
-representação. Existe ainda uma linha de investigação substancial que usa texto para \emph{prever}
+aplicado a finanças. A revisão de \textcite{kearney2014textual} cobre o estado dessa área até 2014,
+ou seja a primeira geração e os métodos baseados em léxicos, que eram então o instrumento dominante;
+as representações contextuais de frase, que este trabalho usa, chegariam anos depois. Existe ainda uma linha de investigação substancial que usa texto para \emph{prever}
 movimentos de preço \autocite{xing2018nlffsurvey, ding2015deep}. Este trabalho não pertence a essa
 linha, e a distinção é deliberada: aqui o texto serve para encontrar casos passados comparáveis,
 cujo desfecho já é conhecido e já foi medido, e não para produzir uma previsão sobre o futuro.
@@ -396,10 +413,13 @@ linhas de base contra as quais o resultado é comparado.
 
 \emph{Encontrados casos análogos, como se mede honestamente o que aconteceu ao preço a seguir?}
 
-O instrumento é o \emph{estudo de evento}, introduzido por \textcite{fama1969adjustment} e
-normalizado para retornos diários por \textcite{brown1985daily}, que fixaram a prática de medir
-retornos sobre janelas curtas após o acontecimento. É essa prática que fundamenta as janelas de mais
-um, mais três e mais cinco dias usadas neste trabalho.
+O instrumento é o \emph{estudo de evento}, introduzido por \textcite{fama1969adjustment}.
+\textcite{brown1985daily} estudam em detalhe o seu comportamento com retornos \emph{diários},
+comparando várias formas de estimar o retorno esperado e mostrando que os procedimentos mais simples
+se comportam bem sobre janelas curtas em torno do acontecimento. É esse resultado que dá conforto às
+janelas de mais um, mais três e mais cinco dias usadas neste trabalho, com uma diferença que a
+Secção~\ref{sec:met_recuperacao} declara: o que aqui se mostra ao utilizador é o retorno bruto e não
+o retorno anormal que aqueles autores estudam.
 
 Que o texto publicado tem relação estatística com os movimentos do mercado é observação antiga
 \autocite{tetlock2007media}. Convém enunciá-la com o verbo certo: trata-se de evidência de uma
@@ -408,12 +428,14 @@ relação estatística, e não de uma prova de causalidade.
 Há um ponto metodológico que interessa antecipar aqui, porque afeta a segunda pergunta do trabalho,
 a de separar a empresa do mercado. Fazer essa separação exige estimar a sensibilidade de cada ação
 ao mercado, e essa estimativa é ruidosa, sobretudo em empresas voláteis ou com histórico curto. A
-literatura de finanças resolveu isto há décadas encolhendo a estimativa na direção de um valor de
-referência. A forma mais simples usa um peso fixo \autocite{blume1971risk}, o que tem o inconveniente
-de encolher com a mesma força uma estimativa boa e uma má. A alternativa que este trabalho adota
-pondera o encolhimento pela \emph{imprecisão} da própria estimativa \autocite{vasicek1973beta}, de
-modo que uma estimativa fiável é praticamente preservada e uma estimativa frágil é puxada para o
-valor de referência. O detalhe está na Secção~\ref{sec:met_decomposicao}.
+literatura de finanças documentou o fenómeno e propôs a correção. \textcite{blume1971risk} estabelece
+que os betas estimados tendem a regredir para a média entre períodos sucessivos, ou seja que uma
+estimativa extrema hoje tende a sê-lo menos amanhã; daí decorreu a prática, corrente mas posterior ao
+próprio artigo, de encolher a estimativa com um peso fixo. Essa prática encolhe com a mesma força uma
+estimativa boa e uma má. A alternativa que este trabalho adota pondera o encolhimento pela
+\emph{imprecisão} da própria estimativa \autocite{vasicek1973beta}, de modo que uma estimativa fiável
+é praticamente preservada e uma frágil é puxada para o valor de referência. O detalhe está na
+Secção~\ref{sec:met_decomposicao}.
 
 Por fim, o enquadramento teórico que justifica a recusa de prever. Se movimentos futuros fossem
 sistematicamente previsíveis a partir de informação pública, essa informação já estaria refletida no
@@ -535,8 +557,10 @@ qualificação. Este trabalho oferece transparência de mecanismo, ou seja o uti
 cálculo, e não oferece uma explicação causal do acontecimento no mundo.
 
 A segunda é mais incómoda e é frequentemente ignorada. Explicações podem induzir
-\emph{confiança excessiva}: \textcite{bansal2021whole} mostram que as pessoas aceitam explicações
-apresentadas com confiança mesmo quando a resposta subjacente está errada. Daqui decorre uma
+\emph{confiança excessiva}: \textcite{bansal2021whole} mostram que acrescentar uma explicação
+aumenta a probabilidade de a pessoa aceitar a resposta do sistema \textbf{quer ela esteja certa quer
+esteja errada}, ou seja que o ganho não vem de a pessoa passar a distinguir melhor os dois casos. É
+a presença da explicação que produz o efeito, e não o tom com que é apresentada. Daqui decorre uma
 consequência de desenho concreta neste sistema. A média dos desfechos dos casos recuperados é
 mostrada como aquilo que é, uma medição sobre o passado, e nunca como uma expectativa sobre o futuro,
 porque tratá-la como previsão seria exatamente a confiança excessiva contra a qual a literatura de
@@ -556,9 +580,11 @@ Este trabalho inclui um componente aprendido, cuja função é ordenar notícias
 esperada, e esse componente levanta três questões que a literatura trata separadamente.
 
 A primeira é a de saber contra que teto comparar um modelo simples. Conjuntos de árvores treinados
-por reforço do gradiente \autocite{friedman2001gbm} constituem o aprendiz não linear mais forte
-disponível para dados tabulares desta natureza, e servem por isso de referência superior contra a
-qual o modelo interpretável é medido no Capítulo~\ref{cap:avaliacao}.
+por reforço do gradiente \autocite{friedman2001gbm} são um aprendiz não linear forte e amplamente
+usado em dados tabulares, capaz de captar interações e efeitos não lineares que uma regressão
+logística não capta, e servem por isso de referência superior contra a qual o modelo interpretável é
+medido no Capítulo~\ref{cap:avaliacao}. Não se afirma que sejam o melhor método existente, porque
+essa é uma afirmação sobre um campo inteiro e não foi medida aqui.
 
 A segunda é a da honestidade do número produzido. Para quem lê, uma pontuação só é honesta se for uma
 \emph{probabilidade}. As pontuações em bruto de um classificador estão tipicamente mal calibradas, e a
@@ -574,8 +600,16 @@ conhecimento dela. A predição conformal permite envolver um preditor de modo q
 \emph{conjunto} de rótulos com uma garantia livre de distribuição e válida em amostras finitas
 \autocite{vovk2005algorithmic}, e a variante que calibra sobre um bloco reservado, com a respetiva
 correção de quantil para amostras finitas, está estabelecida \autocite{angelopoulos2023conformal}.
-Importa ser preciso quanto ao alcance da garantia, porque é o mal-entendido mais comum a respeito
-deste método: a cobertura é \emph{marginal}, ou seja vale em média sobre os casos, e não caso a caso.
+
+Duas precisões, porque são as que decidem se o método serve aqui. A primeira é o alcance da garantia,
+e é o mal-entendido mais comum a respeito deste método: a cobertura é \emph{marginal}, ou seja vale
+em média sobre os casos, e não caso a caso. A segunda é a condição sob a qual ela vale, que é a
+\textbf{permutabilidade} entre os dados de calibração e os de teste. Não é um pormenor técnico neste
+trabalho: os dados são uma série temporal financeira, as manchetes chegam por ordem cronológica, e a
+Secção~\ref{sec:met_triagem} divide o conjunto por data e com embargo precisamente porque tratar
+estas observações como permutáveis produziria uma avaliação otimista. A hipótese que a garantia
+conformal exige é a mesma que este trabalho recusa noutro sítio, e por isso o método entra no
+Capítulo~\ref{cap:conclusoes} como caminho a explorar e não como omissão.
 
 A terceira questão é a de continuar a funcionar com o tempo. Um modelo implantado enfrenta alteração
 da distribuição dos dados que vê, e o tratamento habitual disso em aprendizagem automática é a

@@ -434,10 +434,11 @@ a escolha do método simples, em vez de a justificar por preferência.
 
 Vale a pena perceber \emph{porquê}, porque a explicação não é que os métodos sejam maus. Ambos
 definem normalidade pela geometria dos dados: o \emph{Isolation Forest} pela facilidade com que um
-ponto se separa por cortes aleatórios, o \emph{Local Outlier Factor} pela densidade em torno de cada
-ponto \autocite{chandola2009anomaly}. Essa definição é uma vantagem quando há muitas variáveis a
-interagir, e aqui não há: há uma série de retornos por empresa, cuja estrutura relevante é
-\emph{temporal}. O agrupamento de volatilidade \autocite{engle1982arch, bollerslev1986garch} faz com
+ponto se separa por cortes aleatórios \autocite{liu2008isolation}, o \emph{Local Outlier Factor} pela
+densidade em torno de cada ponto face à dos seus vizinhos \autocite{breunig2000lof}. São ambos
+métodos que a taxonomia de \textcite{chandola2009anomaly} coloca fora da família estatística, e
+foram construídos para dados com muitas variáveis a interagir. Aqui não é esse o caso: há uma série
+de retornos por empresa, cuja estrutura relevante é \emph{temporal}. O agrupamento de volatilidade \autocite{engle1982arch, bollerslev1986garch} faz com
 que o que conta como invulgar mude ao longo do tempo, e uma janela deslizante acompanha isso por
 construção, enquanto um detetor ajustado ao conjunto todo tem de o inferir. O padrão de resultados
 confirma-o: os dois métodos aprendidos assinalam demasiado, que é o que sucede quando se aplica uma
@@ -579,12 +580,17 @@ triviais. A leitura é direta: escolher ao acaso acerta em $24\%$ dos casos. É 
 zero, porque há cinco setores e alguns são maiores do que outros. Procurar por palavras em comum sobe para
 $34.6\%$. Comparar significado sobe para $51.4\%$, mais do dobro do acaso.
 
-Convém dizer o que a linha ``palavras em comum'' representa, porque não é um adversário fraco
-montado para perder. A recuperação por sobreposição de termos é a tradição que vai do modelo de
-espaço vetorial \autocite{salton1975vsm} ao BM25 \autocite{robertson2009bm25}, e continua a ser uma
-linha de base forte em recuperação de informação. Que a representação de frases
-\autocite{reimers2019sbert} a supere em $17$ pontos percentuais é, por isso, um resultado com
-conteúdo, e não a comparação com um espantalho.
+Convém dizer com precisão o que a linha ``palavras em comum'' é, porque o nome admite leituras muito
+diferentes. É a forma mais simples da família lexical: contagem de palavras projetada por
+dispersão e comparada por cosseno. Não tem ponderação pela raridade dos termos, não tem saturação da
+frequência, e não tem normalização pelo comprimento do texto. Pertence portanto à tradição que vai do
+modelo de espaço vetorial \autocite{salton1975vsm} às funções de ordenação probabilísticas como o
+BM25 \autocite{robertson2009bm25}, mas fica no degrau de entrada dessa família, e não no topo.
+
+Isso obriga a ler o resultado pelo que ele é. Os $17$ pontos percentuais que a representação de
+frases \autocite{reimers2019sbert} acrescenta medem a distância a um ponto de partida honesto, e
+\textbf{não} a distância a um sistema lexical afinado. Comparar contra um BM25 bem parametrizado é
+trabalho por fazer, e é a comparação que tornaria esta conclusão mais forte.
 
 A variante MPNet fica acima da MiniLM ($0.538$ contra $0.514$), e a escolha do modelo mais pequeno
 para produção foi tomada por custo e não por qualidade. Fica registada como o que é: uma troca
@@ -643,9 +649,12 @@ Compararam-se seis modelos, do mais simples ao mais completo. A métrica princip
 
 Dois cuidados de montagem, ambos para que a comparação não favoreça a conclusão que se acabou por
 obter. Primeiro, um dos seis modelos é um conjunto de árvores treinado por reforço do gradiente
-\autocite{friedman2001gbm}, incluído precisamente por ser o aprendiz não linear mais forte
-disponível para dados desta natureza: serve de teto, e se o texto tivesse sinal a extrair era ali
-que apareceria. Segundo, todas as pontuações são convertidas em probabilidades por calibração
+\autocite{friedman2001gbm}, incluído por ser o mais expressivo dos seis: capta interações e efeitos
+não lineares entre as variáveis que a regressão logística, por construção, não capta. Serve de teto,
+e se o texto tivesse sinal a extrair era ali que teria mais hipóteses de aparecer. Convém enunciar o
+alcance exato desta garantia: mostra que \emph{nenhum dos seis} modelos comparados extraiu sinal do
+texto, e não que nenhum modelo o conseguiria. Um método mais recente, ou o corpo dos artigos em vez
+do título, continuam por testar. Segundo, todas as pontuações são convertidas em probabilidades por calibração
 \emph{a posteriori} sobre um bloco de validação reservado \autocite{niculescu2005calibration}, sem o
 que a coluna do Brier não seria comparável entre modelos.
 
@@ -1039,6 +1048,11 @@ Platt iguala ou ganha no Brier em todas as famílias testadas. \\
 \addlinespace
 Cosseno & Distância euclidiana &
 Com vetores normalizados as duas dão a mesma ordenação, e o cosseno lê-se melhor. \\
+\addlinespace
+Dois gatilhos (notícia e preço) & Juntar-lhes o \textbf{volume} e a intensidade de notícia numa
+fusão: ganha em $1$ de $3$ orçamentos ($+0.0045$ em top-5, $-0.0498$ em top-1, $-0.0317$ em top-3)
+& O volume continua a ser calculado e mostrado como contexto, mas não levanta alertas: uma
+capacidade que ganha uma vez em três não justifica mais uma via de interrupção. \\
 \midrule
 Apenas fontes gratuitas & --- & Restrição fundadora: define quem o sistema pode servir. \\
 Não prever preços & --- & Restrição de desenho: é o que torna tudo o resto verificável. \\
