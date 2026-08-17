@@ -96,8 +96,12 @@ como concordância entre três casos. Só que o impacto é medido por \emph{(emp
 manchetes da mesma empresa no mesmo dia partilham o mesmo valor por construção. Medido sobre os
 $247$ alertas já entregues com precedentes, em $36.8\%$ deles os casos assentam em menos dias
 distintos do que casos mostrados, e em $11.3\%$ são todos do mesmo dia. Não afeta nenhum número do
-Capítulo~\ref{cap:avaliacao}; afeta o que o produto diz ao utilizador, e a correção é contar dias e
-não manchetes.
+Capítulo~\ref{cap:avaliacao}; afeta o que o produto diz ao utilizador.
+
+O alerta passou a contar dias e não manchetes, o que torna a afirmação verdadeira. Mas a causa de
+fundo continua lá: o impacto \emph{é} medido por dia, portanto duas notícias do mesmo dia nunca
+poderão ser duas observações independentes, por mais que se conte bem. Medir impacto por notícia
+exigiria dados de preço ao minuto, que as fontes gratuitas não dão.
 
 \paragraph{As notícias são só manchetes.}
 O sistema lê o título e não o corpo do artigo. Isso limita o que a representação de texto consegue
@@ -107,10 +111,18 @@ captar, e é uma explicação plausível, embora não confirmada, para o resulta
 ``Relevante'' é aproximado por ``mesmo setor'', e ``importante'' é aproximado por ``houve movimento
 grande''. As duas são objetivas e verificáveis, mas nenhuma é a coisa que realmente se queria medir.
 
-\paragraph{O modelo treinado não mostra benefício em produção.}
-Medido sobre as decisões já verificadas, o modelo não separa melhor do que o acaso na população que
-realmente vê. A explicação mais provável é que ele esteja a mais: quando é chamado, os filtros mais
-baratos já removeram quase tudo o que ele foi treinado para remover.
+\paragraph{O modelo treinado não separa notícias dentro da mesma empresa.}
+Esta era, até ao fim deste trabalho, a limitação pior compreendida. Sabia-se que o modelo não
+mostrava benefício em produção e dizia-se que estaria ``a mais''. Medir o que ele fazia deu uma
+resposta mais precisa e mais dura: a pontuação varia $0.064$ dentro de cada empresa e $0.385$ entre
+empresas, portanto o limiar que decidia os alertas estava a separar empresas e não manchetes. Em
+$84\%$ das decisões o resultado estava determinado antes de a notícia ser lida
+(Secção~\ref{sec:av_portao}).
+
+O sistema foi mudado em consequência: o modelo deixou de decidir e passou a ordenar. Mas a
+limitação de fundo mantém-se e não se resolve com nenhuma regra de decisão, porque a informação que
+distinguiria uma manchete da seguinte não está na pontuação. Resolve-se com melhor representação do
+texto, que é a primeira linha do trabalho futuro.
 
 \paragraph{O atraso é real e não se resolve com engenharia.}
 Entre a notícia ser publicada e o sistema a ver passam, em mediana, cerca de duas horas e meia. A

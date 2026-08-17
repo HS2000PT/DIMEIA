@@ -110,9 +110,17 @@ Tabela~\ref{tab:sis_pecas} lista todas, com o que cada uma faz, o que custa, e o
 \toprule
 \tabhead{Peça} & \tabhead{Para quê} & \tabhead{Custo/limite} & \tabhead{Porquê esta, e não a outra} \\
 \midrule
-\textbf{Finnhub} & notícias por empresa, em tempo quase real & grátis, 60 pedidos/min &
-Dá notícias \emph{por empresa}, que é o que o sistema precisa. Alternativas de \gls{RSS} genérico
-obrigariam a descobrir a empresa a partir do texto, acrescentando um erro que não é preciso ter. \\
+\textbf{Finnhub} & notícias por empresa & grátis, 60 pedidos/min &
+Dá notícias \emph{por empresa}, que é o que o sistema precisa, e é a que etiqueta melhor
+(Secção~\ref{sec:sis_fontes}). \\
+\addlinespace
+\textbf{Alpha Vantage} & notícias, segunda fonte & grátis com chave &
+É a \textbf{mais fresca} das três, e a frescura é o que ataca a queixa de os alertas chegarem
+tarde. \\
+\addlinespace
+\textbf{Polygon} & notícias, terceira fonte & grátis com chave &
+Traz mais manchetes exclusivas do que qualquer outra, mas antigas: serve para encher a base de
+casos, não para alertar. \\
 \addlinespace
 \textbf{yfinance} & preços diários e intradiários & grátis, sem garantia &
 É a fonte mais completa sem chave. Falha com frequência, e por isso não é usada sozinha: ver a
@@ -126,6 +134,11 @@ explicar. \\
 \textbf{Stooq} & era candidato a fonte de preços & grátis & \textbf{Rejeitada por medição.} Foi
 testada ao vivo e responde com uma verificação anti-robô, o que a torna inutilizável dentro de um
 processo automático. Fica registada porque parecia servir. \\
+\addlinespace
+\textbf{Tiingo, GNews} & eram candidatos a fontes de notícias & grátis com chave &
+\textbf{Rejeitados por medição.} O Tiingo devolve erro de autorização no endpoint de notícias
+(exige plano pago) e o GNews não é por empresa: é pesquisa por palavras, e usá-lo obrigaria a
+inferir a empresa a partir do texto. \\
 \addlinespace
 \textbf{\gls{FNSPID}} \autocite{dong2024fnspid} & o passado: notícias antigas alinhadas com preços
 & grátis, licença \emph{CC BY-SA} & É público, é grande, e já vem alinhado com preços. Construir
@@ -157,6 +170,63 @@ Duas observações que valem mais do que a tabela.
 Nenhuma fonte gratuita de preços é fiável sozinha. O sistema tenta-as por ordem fixa e fica pela
 primeira que responde, registando sempre qual serviu. Sem isto, um dia em que o Yahoo bloqueia
 seria indistinguível de um dia sem mercado.
+
+\subsection{Porquê três fontes de notícias, e não a melhor}
+\label{sec:sis_fontes}
+
+O sistema começou com uma fonte só. A pergunta natural é se acrescentar mais vale a pena, e a
+resposta não é ``mais é melhor'': é preciso medir, porque cada fonte custa pedidos e uma fonte
+generosa e mal etiquetada não acrescenta nada.
+
+O critério não pode ser quantas notícias cada uma devolve. Tem de ser quantas \textbf{sobrevivem
+ao filtro de relevância} que já está em produção, porque tudo o que é rejeitado à entrada não
+chega a existir para o sistema. A Tabela~\ref{tab:sis_fontes} mede isso sobre as doze empresas e
+três dias.
+
+\begin{table}[ht]
+\caption[As três fontes, medidas]{O que cada fonte gratuita entrega depois do filtro de
+relevância. A última coluna é a que decide se vale a pena somar: quantas manchetes cada uma traz
+que \emph{nenhuma} das outras traz.}
+\label{tab:sis_fontes}
+\centering
+\small
+\begin{tabular}{L{0.20\textwidth} C{0.12\textwidth} C{0.11\textwidth} C{0.13\textwidth}
+                C{0.12\textwidth} C{0.13\textwidth}}
+\toprule
+\tabhead{Fonte} & \tabhead{Relevantes} & \tabhead{Precisão} & \tabhead{Frescura} &
+\tabhead{Cobertura} & \tabhead{Exclusivas} \\
+\midrule
+Finnhub & $432$ & $\mathbf{35\%}$ & $15.8$ h & $\mathbf{12/12}$ & $401$ \\
+Alpha Vantage & $141$ & $24\%$ & $\mathbf{9.3}$ \textbf{h} & $\mathbf{12/12}$ & $119$ \\
+Polygon & $429$ & $27\%$ & $52.6$ h & $8/12$ & $\mathbf{418}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Três fontes gratuitas com \textbf{três forças diferentes}, e é isso, e não o volume, que justifica
+somá-las:
+
+\begin{itemize}
+  \item o \textbf{Finnhub} etiqueta melhor e cobre todas as empresas;
+  \item a \textbf{Alpha Vantage} é a mais fresca, com $9.3$ horas de mediana contra $15.8$, e a
+        frescura é exatamente o que ataca a queixa de os alertas chegarem tarde;
+  \item o \textbf{Polygon} traz mais manchetes exclusivas do que qualquer outra, incluindo o
+        Finnhub, mas com $52.6$ horas de mediana. Serve para \emph{encher a base de casos}, não
+        para alertar, e é assim que está a ser usado.
+\end{itemize}
+
+Juntas dão \textbf{$970$} manchetes relevantes distintas, contra as $432$ do Finnhub sozinho: mais
+$125\%$. Para as empresas menos cobertas a diferença é maior ainda, e são precisamente essas as que
+o sistema quase nunca conseguia comentar.
+
+Há ainda um segundo motivo, que não é de volume: quando uma fonte falha ou bloqueia, as outras
+respondem. É a mesma razão pela qual os preços já vinham de uma cadeia e não de uma fonte só.
+
+\paragraph{O que isto não compra.}
+Latência garantida. As três publicam com atrasos próprios, e o ganho num caso concreto depende de
+qual delas viu a história primeiro. A frescura mediana melhora, e isso está medido; afirmar que os
+alertas passam a chegar mais cedo em geral exigiria voltar a medir a latência ponta a ponta ao fim
+de algumas semanas, e isso ainda não foi feito.
 
 \paragraph{Nada disto é escolhido por gosto sem prova.}
 Duas destas linhas mudaram por \emph{medição} e não por opinião: o Stooq foi despromovido depois de
@@ -490,6 +560,85 @@ registo, o do funil e o das decisões de triagem, estavam a ser escritos \textbf
 local}. Resultado: o processo que serve a página mostrava uma semana atrasada, e o registo que
 alimenta a validação posterior tinha deixado de crescer. Ambos passaram a ser publicados na branch
 de dados a cada ciclo.
+
+\subsection{O sistema aprende com o que vai vendo, e quase não aprendia}
+\label{sec:sis_ciclo}
+
+Há uma parte do desenho que só faz sentido com o tempo a passar. Toda a manchete relevante que a
+varredura vê é guardada como \textbf{candidata a precedente futuro}. Passados oito dias, quando o
+impacto no preço já é observável, essa candidata é medida com a mesma regra de alinhamento do
+Capítulo~\ref{cap:metodologia} e entra na base de casos. A base cresce sozinha, e os alertas de
+amanhã comparam-se contra o que o sistema viu ontem.
+
+Isso é o desenho. Fui verificar se estava a acontecer, e não estava.
+
+\begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
+A base de casos viva estava congelada havia \textbf{dezanove dias}, e havia $1\,785$ candidatas de
+julho ainda por maturar, quando a maturação precisa de oito. O sistema captava centenas de casos
+por ciclo e \textbf{nenhum} chegava a ser convertido em precedente utilizável.
+\end{tcolorbox}
+
+A causa é a mesma que já tinha atingido dois ficheiros de registo: no serviço de alojamento, o
+processo que serve a página e o que faz as varreduras são \emph{máquinas separadas}, e o disco de
+cada uma é apagado quando ela reinicia. Tudo o que tem de sobreviver a um reinício passa pelo
+repositório de dados, e estes dois ficheiros não passavam.
+
+\paragraph{Mas a correção não podia ser a mesma, e é isso que torna o caso interessante.}
+Os registos que já eram publicados a cada ciclo pesam menos de um megabyte. Estes pesam
+$16.6$ e $11.9$ megabytes. Publicá-los de sessenta em sessenta segundos seriam dezenas de
+\emph{gigabytes} por dia de tráfego, o que é obviamente insustentável e é, muito provavelmente, a
+razão pela qual ninguém os tinha publicado.
+
+A solução separa as duas coisas que estavam a ser confundidas: \textbf{semear} no arranque, para
+o contentor não começar do zero, e \textbf{publicar com um intervalo mínimo} de trinta minutos, em
+vez de a cada ciclo. O que se perde fica dito: até trinta minutos de capturas, se o contentor
+reiniciar nesse intervalo. É uma perda pequena e recuperável, porque a mesma manchete volta a ser
+captada na varredura seguinte enquanto estiver dentro da janela de frescura.
+
+\subsection{Quarenta mil casos que não cabiam na memória}
+\label{sec:sis_memoria}
+
+O sistema tinha, guardado, um ano inteiro de notícias reais com o impacto já medido: $38\,214$
+casos. Não os usava, por duas razões que se descobriram uma de cada vez.
+
+A primeira era simples: faltavam-lhes os vetores. Foram calculados com o mesmo modelo do produto,
+e o procedimento \textbf{recusa-se a escrever} se esse modelo não estiver disponível, porque
+vetores de outro modelo seriam incomparáveis com a base de produção e isso é pior do que não os
+ter.
+
+A segunda apareceu ao medir, e é uma lição de engenharia que vale por si. Está na
+Tabela~\ref{tab:sis_memoria}.
+
+\begin{table}[ht]
+\caption[O mesmo conteúdo, três formatos]{Custo de memória para os mesmos $38\,214$ vetores de
+$384$ dimensões. O contentor de produção tem $512$ MB.}
+\label{tab:sis_memoria}
+\centering
+\small
+\begin{tabular}{L{0.46\textwidth} C{0.16\textwidth} C{0.18\textwidth}}
+\toprule
+\tabhead{Como está guardado} & \tabhead{Memória} & \tabhead{Carregar} \\
+\midrule
+Listas de números em Python (o que o formato de texto produz) & $655$ MB & $9.0$ s \\
+Matriz de precisão dupla & $112$ MB & --- \\
+\textbf{Matriz de precisão simples, mapeada do disco} & $\mathbf{25}$ \textbf{MB} &
+$\mathbf{0.44}$ \textbf{s} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Em formato de texto a base \textbf{não arrancava}: pedia mais memória do que o contentor tem. E o
+problema não era o volume dos dados. As mesmas $38\,214 \times 384$ posições ocupam $56$ MB quando
+guardadas como números de precisão simples; os $655$ MB vinham do custo de cada número
+\emph{individual} de Python dentro de uma lista. São $26$ vezes de diferença, e a diferença está
+toda na forma de guardar.
+
+A mesma medição revelou um desperdício que ninguém tinha notado: a comparação com os casos
+passados reconstruía a matriz \emph{inteira} a cada consulta. Passou a ser carregada uma vez.
+
+O efeito no produto é o que se esperaria de multiplicar a base por vinte: os precedentes que o
+alerta mostra passaram a ser da própria empresa e sobre o mesmo assunto, com semelhanças acima de
+$0.7$ onde antes apareciam casos de outra empresa a $0.46$.
 
 \paragraph{E o \textbf{GitHub Actions} não desapareceu.} Continua a fazer três coisas: corre os
 testes a cada alteração de código (\gls{CI}), compila esta dissertação, e mantém um agendador de
