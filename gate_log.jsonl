@@ -19993,7 +19993,7 @@
 {"date": "2026-08-17", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-17", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-17", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-08-17", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-17", "ticker": "JPM", "stage": "stale", "detail": "mais recente 2026-08-14 > 2d"}
 {"date": "2026-08-17", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-17", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-17", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
