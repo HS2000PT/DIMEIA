@@ -40,7 +40,7 @@ Faz **duas gravações** e escolhe a melhor. A segunda sai sempre melhor do que 
 
 ## O guião, por partes
 
-### Parte 1 — o alerta, no telemóvel (55 segundos)
+### Parte 1: o alerta, no telemóvel (55 segundos)
 
 Começa no **Telegram**, no alerta mais recente.
 
@@ -67,7 +67,7 @@ construído:
 4. **A última linha.**
    > «E acaba a dizer o que isto não é. São desfechos observados, não uma previsão.»
 
-### Parte 2 — o que o sistema NÃO enviou (60 segundos)
+### Parte 2: o que o sistema NÃO enviou (60 segundos)
 
 Muda para o **browser**. Deixa ver o topo da página e depois desce até à segunda secção.
 
@@ -89,7 +89,7 @@ E depois a frase que fecha a demonstração:
 > «Nenhum produto comercial mostra o que descartou. Mas neste sistema o silêncio é uma decisão,
 > e uma decisão que não se pode inspeccionar é indistinguível de uma avaria.»
 
-### Parte 3 — fecho (20 segundos)
+### Parte 3: fecho (20 segundos)
 
 Volta ao Telegram e deixa o alerta no ecrã.
 
