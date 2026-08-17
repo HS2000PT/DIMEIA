@@ -981,6 +981,70 @@ E as \textbf{três últimas linhas não têm número de propósito}. São restri
 escolhidas antes de haver qualquer medição e não se defendem com uma tabela. Apresentá-las como se
 tivessem sido testadas seria dar-lhes uma autoridade que não têm.
 
+\section{E o sistema inteiro vale mais do que o que a pessoa já tem?}
+\label{sec:av_pontaaponta}
+
+\emph{Cada componente foi comparado com a sua alternativa. E o conjunto?}
+
+As secções anteriores comparam peça a peça: o detetor contra um limiar fixo, a recuperação contra
+escolher ao acaso, a triagem contra a volatilidade. Falta a comparação de que o utilizador precisa,
+que é ao nível do \textbf{sistema}: dadas as notícias de um dia, quais são as cinco que valia a
+pena mostrar, e o sistema escolhe-as melhor do que aquilo que já existe de graça?
+
+A Tabela~\ref{tab:av_pontaaponta} responde. Todas as políticas escolhem cinco por dia, sobre o
+mesmo bloco de teste e com o mesmo rótulo. O desempate é \textbf{aleatório e explícito} em todas,
+pela razão dada na Secção~\ref{sec:av_qi3}.
+
+\begin{table}[ht]
+\caption[O sistema contra as alternativas que já existem]{Todas as políticas escolhem cinco
+notícias por dia. As duas últimas linhas não são políticas: uma é o chão e a outra é o tecto.}
+\label{tab:av_pontaaponta}
+\centering
+\small
+\begin{tabular}{L{0.26\textwidth} L{0.38\textwidth} C{0.13\textwidth}}
+\toprule
+\tabhead{Política} & \tabhead{O que faz} & \tabhead{Precisão@5} \\
+\midrule
+Ao acaso & escolhe cinco à sorte & $0.375$ \\
+Quem mais se mexeu hoje & notícias das empresas com maior movimento do dia & $0.489$ \\
+\textbf{O modelo implantado} & a triagem aprendida & $\mathbf{0.632}$ \\
+Volatilidade da empresa & doze constantes, sem ler manchete & $\mathbf{0.662}$ \\
+\midrule
+Oráculo & sabe as respostas: o melhor possível & $0.968$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Três coisas saem daqui, e a última é a mais útil.
+
+\paragraph{O sistema bate a alternativa realista.}
+Mostrar notícias de quem mais se mexeu hoje é o que qualquer aplicação de bolsa já faz, sem custo
+nenhum, e obtém $0.489$. O sistema obtém $0.632$. Portanto o trabalho todo acrescenta alguma coisa
+sobre o que a pessoa já tinha, e é a primeira vez neste documento que isso é medido ao nível do
+conjunto e não de uma peça.
+
+\paragraph{E continua a não bater a volatilidade.}
+Doze constantes calculadas só sobre o bloco de treino obtêm $0.662$. Já se sabia da
+Secção~\ref{sec:av_qi3}, e agora sabe-se porquê: a Secção~\ref{sec:av_ablacao} mostrou que o modelo
+é, na prática, uma tabela por empresa, e a volatilidade é outra tabela por empresa, mais simples.
+Duas tabelas a fazer a mesma coisa, e ganha a que não precisa de ser treinada.
+
+\paragraph{O oráculo diz onde está o problema, e não é onde eu julgava.}
+O melhor resultado possível, escolhendo com as respostas na mão, seria $0.968$. Isso quer dizer
+que \textbf{em quase todos os dias existem mesmo cinco notícias importantes no lote}. O sistema não
+está limitado por falta de matéria-prima: está limitado por não conseguir distinguir quais são.
+
+A margem entre $0.632$ e $0.968$ é de $0.336$, e está quase toda em separar notícias \emph{dentro}
+de cada empresa, que é exatamente o que o modelo implantado não consegue fazer. É a mesma
+conclusão a chegar por um terceiro caminho independente.
+
+\paragraph{Uma linha de base que não foi medida, e porquê.}
+A alternativa mais natural de todas seria \emph{``ler as primeiras cinco notícias que chegam''}.
+Não é medível aqui: o conjunto de dados histórico não guarda a hora de publicação e está ordenado
+por data e por empresa, portanto usar a ordem do ficheiro mediria a ordem \textbf{alfabética} das
+empresas. Seria o mesmo artefacto que a Secção~\ref{sec:av_qi3} documenta, desta vez introduzido de
+propósito. Uma linha de base errada é pior do que uma linha de base em falta.
+
 \section{Resumo dos três resultados}
 \label{sec:av_resumo}
 
