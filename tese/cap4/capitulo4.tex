@@ -9,11 +9,13 @@
 
 \emph{Como é que as peças se ligam?}
 
-O Capítulo~\ref{cap:metodologia} explicou quatro técnicas isoladas. Este mostra-as a trabalhar juntas.
+O Capítulo~\ref{cap:metodologia} explicou quatro técnicas isoladas; este mostra-as a trabalhar
+juntas, que é onde aparecem os problemas que nenhuma delas tem sozinha.
 
 O sistema chama-se \textbf{InvestiGator} e tem cinco partes, na Figura~\ref{fig:arquitetura}:
 \textbf{deteção}, \textbf{recuperação}, \textbf{triagem}, \textbf{explicação} e \textbf{entrega}.
-Cada uma tem uma responsabilidade única, e passa o resultado à seguinte.
+Cada uma tem uma responsabilidade única e passa o resultado à seguinte, o que permite substituir
+qualquer delas sem tocar nas outras.
 
 \begin{figure}[ht]
 \centering
@@ -73,16 +75,16 @@ pagar comissões não vai subscrever um terminal financeiro.
 Isso obriga a três decisões de engenharia.
 
 \paragraph{Preços: uma cadeia, não uma fonte.}
-As fontes gratuitas de preços falham. Bloqueiam por excesso de pedidos, respondem com erro, ou
-simplesmente não têm o dia de hoje. Em vez de depender de uma, o sistema tenta várias por ordem e
-fica pela primeira que responde. Regista sempre qual serviu, porque saber de onde veio um número
-faz parte de o poder explicar.
+As fontes gratuitas de preços falham com regularidade, seja bloqueando por excesso de pedidos, seja
+respondendo com erro, seja simplesmente não tendo ainda o dia de hoje. Em vez de depender de uma, o
+sistema tenta várias por ordem e fica pela primeira que responde, registando sempre qual delas
+serviu, porque saber de onde veio um número faz parte de o poder explicar.
 
 \paragraph{Notícias: por empresa, e filtradas à entrada.}
-As notícias vêm de uma API gratuita, empresa a empresa. O que chega é muito e é sujo: listas
-automáticas de ``os dez maiores movimentos do dia'', textos que mencionam a empresa de passagem,
-comunicados de escritórios de advogados. Antes de tudo o resto, um filtro exige que a notícia
-\textbf{nomeie mesmo a empresa} e rejeita padrões conhecidos de texto automático.
+As notícias vêm de uma API gratuita, empresa a empresa, e o que chega é muito e é sujo: listas
+automáticas de ``os dez maiores movimentos do dia'', textos que mencionam a empresa apenas de
+passagem, comunicados de escritórios de advogados. Antes de tudo o resto, portanto, um filtro exige
+que a notícia \textbf{nomeie mesmo a empresa} e rejeita os padrões conhecidos de texto automático.
 
 \paragraph{Histórico: um conjunto de dados público, alinhado com preços.}
 Para responder à pergunta ``já aconteceu antes?'' é preciso um passado. Usa-se o \gls{FNSPID}
@@ -167,21 +169,21 @@ de \emph{motor} na primeira versão. \\
 Duas observações que valem mais do que a tabela.
 
 \paragraph{A cadeia de preços é a peça de engenharia mais aborrecida e mais necessária.}
-Nenhuma fonte gratuita de preços é fiável sozinha. O sistema tenta-as por ordem fixa e fica pela
-primeira que responde, registando sempre qual serviu. Sem isto, um dia em que o Yahoo bloqueia
-seria indistinguível de um dia sem mercado.
+Nenhuma fonte gratuita de preços é fiável sozinha, e por isso o sistema tenta-as por ordem fixa,
+fica pela primeira que responde e regista sempre qual delas serviu. Sem esta cadeia, um dia em que o
+Yahoo bloqueia seria indistinguível de um dia em que o mercado não abriu.
 
 \subsection{Porquê três fontes de notícias, e não a melhor}
 \label{sec:sis_fontes}
 
-O sistema começou com uma fonte só. A pergunta natural é se acrescentar mais compensa, e a
-resposta não é ``mais é melhor'': é preciso medir, porque cada fonte custa pedidos e uma fonte
-generosa e mal etiquetada não acrescenta nada.
+O sistema começou com uma fonte só, e a pergunta natural é se acrescentar mais compensa. A resposta
+não é ``mais é melhor'': é preciso medir, porque cada fonte custa pedidos e uma fonte generosa mas
+mal etiquetada não acrescenta nada de aproveitável.
 
-O critério não pode ser quantas notícias cada uma devolve. Tem de ser quantas \textbf{sobrevivem
-ao filtro de relevância} que já está em produção, porque tudo o que é rejeitado à entrada não
-chega a existir para o sistema. A Tabela~\ref{tab:sis_fontes} mede isso sobre as doze empresas e
-três dias.
+O critério também não pode ser quantas notícias cada uma devolve, mas quantas \textbf{sobrevivem ao
+filtro de relevância} que já está em produção, porque tudo o que é rejeitado à entrada não chega a
+existir para o sistema. A Tabela~\ref{tab:sis_fontes} mede exatamente isso, sobre as doze empresas
+e três dias.
 
 \begin{table}[ht]
 \caption[As três fontes, medidas]{O que cada fonte gratuita entrega depois do filtro de
@@ -326,8 +328,9 @@ importante que há para saber: que casos parecidos deram resultados diferentes.
 
 \emph{E quando não há notícia nenhuma?}
 
-O segundo gatilho é mais curto. Todos os dias, depois do fecho, o sistema calcula o \emph{z}-score de
-cada empresa da lista, como na Secção~\ref{sec:met_zscore}. Se algum passar o limiar, há alerta.
+O segundo gatilho é bastante mais curto: todos os dias, depois do fecho, o sistema calcula o
+\emph{z}-score de cada empresa da lista, como na Secção~\ref{sec:met_zscore}, e basta que um deles
+ultrapasse o limiar para haver alerta.
 
 Duas capacidades foram acrescentadas depois de o sistema estar a funcionar, e ambas por observação:
 
@@ -354,9 +357,9 @@ vizinhos, nunca para a sua \emph{dimensão}. Passou a olhar para as duas.
 Porque avisar de tudo é o mesmo que não avisar de nada. Se o canal enviar quinze mensagens por dia,
 a pessoa deixa de as ler, e o sistema perde a única coisa que tinha para dar.
 
-As cinco portas da Figura~\ref{fig:caminho} existem para isso. O efeito conjunto é grande: numa
-janela medida em produção, das \textbf{944} notícias relevantes que entraram, saíram \textbf{42}
-alertas. Cerca de uma em cada vinte e duas.
+As cinco portas da Figura~\ref{fig:caminho} existem precisamente para isso, e o efeito conjunto
+delas é grande: numa janela medida em produção, das \textbf{944} notícias relevantes que entraram
+saíram \textbf{42} alertas, ou seja cerca de uma em cada vinte e duas.
 
 Vale a pena ver isto num dia concreto, com os números lidos do registo do próprio sistema. A
 Tabela~\ref{tab:sis_funil} mostra o dia 15 de agosto de 2026.

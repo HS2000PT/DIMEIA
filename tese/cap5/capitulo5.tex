@@ -101,8 +101,9 @@ A \textbf{cobertura}, também chamada \emph{recall}, responde a uma pergunta dif
   \label{eq:cobertura}
 \end{equation}
 
-Repare-se em que o denominador muda. A precisão divide pelo que o sistema \emph{disse}; a cobertura
-divide pelo que \emph{existia}. São perguntas diferentes e podem dar respostas opostas.
+Repare-se em que o denominador muda: a precisão divide pelo que o sistema \emph{disse}, ao passo que
+a cobertura divide pelo que \emph{existia}. São por isso perguntas diferentes, e nada impede que
+deem respostas opostas sobre o mesmo detetor.
 
 E é exatamente isso que acontece neste trabalho, o que torna o exemplo particularmente útil. A regra
 do limiar fixo, aquela que assinala qualquer movimento acima de $3\%$, obtém uma cobertura de
@@ -149,9 +150,10 @@ Vejamos a conta completa, com os dois detetores, exatamente como os valores apar
       = 0.516
 \end{equation*}
 
-São estes os dois valores que a Secção~\ref{sec:av_qi1} reporta. O \emph{z}-score tem
-\emph{menos} cobertura do que o limiar fixo, e ainda assim ganha com folga, porque triplica a
-precisão. É a média harmónica a fazer o seu trabalho.
+São estes os dois valores que a Secção~\ref{sec:av_qi1} reporta, e a comparação entre eles mostra a
+média harmónica a fazer exatamente o seu trabalho: o \emph{z}-score tem \emph{menos} cobertura do
+que o limiar fixo e ainda assim ganha com folga, porque triplica a precisão e o $F_1$ recusa-se a
+deixar comprar uma à custa da outra.
 
 \subsection{A precisão@\texorpdfstring{$k$}{k}: avaliar uma lista curta}
 \label{sec:av_patk}
@@ -201,8 +203,8 @@ cinco não conta}: esta medida pergunta quantos acertou, não se pôs os melhore
 
 Falta um número sem o qual a medida não se interpreta: \textbf{qual é o valor de quem escolhe ao
 acaso?} Não é zero. Como há cinco setores e alguns são maiores do que outros, uma escolha aleatória
-acerta uma fração apreciável das vezes só por sorte. Esse chão foi medido, e vale $0.240$. Qualquer
-método tem de ser lido contra ele, e não contra zero.
+acerta uma fração apreciável das vezes apenas por sorte, e esse chão, uma vez medido, vale $0.240$.
+É contra ele, e não contra zero, que qualquer método tem de ser lido.
 
 \subsection{A PR-AUC: a lista toda, em todos os pontos de corte}
 \label{sec:av_prauc}
@@ -386,8 +388,9 @@ Limiar fixo ($|r| \ge 3\%$) & $0.009$ & $0.353$ & $0.344$ \\
 A Figura~\ref{fig:av_disparo} mostra a mesma informação empresa a empresa.
 
 A diferença é de mais de vinte vezes. O limiar fixo dispara em $0.9\%$ dos dias na empresa mais calma
-e em $35.3\%$ dos dias na mais volátil: para uma delas quase nunca diz nada e para a
-outra fala um dia em cada três. O \emph{z}-score fica entre $1.6\%$ e $3.1\%$ em todas.
+e em $35.3\%$ dos dias na mais volátil, ou seja para uma delas quase nunca diz nada e para a outra
+fala um dia em cada três, ao passo que o \emph{z}-score se mantém entre $1.6\%$ e $3.1\%$ em todas
+elas.
 
 \begin{figure}[ht]
 \centering
@@ -496,9 +499,10 @@ de investigação?}
 Porque não há nada contra o que a comparar, e é melhor dizê-lo do que fabricar uma métrica.
 
 Repare-se na diferença face às outras três técnicas. Para a deteção existe um critério objetivo de
-``movimento extremo'' e portanto é possível contar acertos e falhas. Para a recuperação existe uma
-noção verificável de relevância e portanto existe precisão@$k$. Para a triagem existe um rótulo
-construído a partir de preços futuros. Em todos estes casos há um alvo externo.
+``movimento extremo'', pelo que é possível contar acertos e falhas; para a recuperação existe uma
+noção verificável de relevância, e daí a precisão@$k$; para a triagem existe um rótulo construído a
+partir de preços futuros. Em todos estes casos há um alvo externo contra o qual a técnica pode
+sair errada.
 
 Na decomposição não há. Nenhuma fonte de dados publica qual foi a parcela ``verdadeira'' de mercado
 no movimento da AMD num dado dia, porque essa quantidade não é observável: ela só existe
@@ -506,8 +510,8 @@ no movimento da AMD num dado dia, porque essa quantidade não é observável: el
 uma previsão que possa sair certa ou errada. Inventar aqui um número de exatidão seria produzir uma
 métrica com boa aparência e sem referente, que é precisamente o contrário do que este capítulo faz.
 
-Isto não deixa a técnica por avaliar. Deixa-a por avaliar \emph{daquela} maneira, e obriga a
-perguntar o que, nela, é falsificável. Há duas coisas.
+Isto não deixa a técnica por avaliar: deixa-a por avaliar \emph{daquela} maneira, e obriga a
+perguntar o que, dentro dela, continua a ser falsificável. São duas coisas, e ambas se medem.
 
 \paragraph{Primeira: a repartição discrimina, ou diz sempre o mesmo?}
 Uma decomposição que atribuísse tudo à empresa todos os dias seria inútil mesmo estando
@@ -518,9 +522,9 @@ empresas diferentes no mesmo dia, que é a condição mínima para valer a pena 
 
 \paragraph{Segunda: os betas estão bem estimados?}
 Esta é a parte que pode mesmo estar errada, e a medida apropriada é o $R^2$ do ajuste na janela de
-estimação. O $R^2$ mediano foi $0.460$. \textbf{Numa das 17 empresas foi negativo}, o que significa
-que, naquela janela, mercado e setor não explicavam a variação daquela ação melhor do que a sua
-própria média.
+estimação, cuja mediana foi $0.460$. \textbf{Numa das 17 empresas foi negativo}, o que significa que,
+naquela janela, mercado e setor não explicavam a variação daquela ação melhor do que a sua própria
+média, e portanto que a repartição desse dia se apoia num ajuste que não descreve os dados.
 
 \paragraph{O que este resultado não permite concluir.}
 Que a repartição está certa porque as parcelas somam. Elas somam sempre, com diferença nula até à
@@ -613,16 +617,18 @@ outra empresa não tem razão nenhuma para estar relacionada com esta.
 
 \subsection{Aguenta à escala?}
 
-A avaliação acima corre sobre um corpus recente e curto. Para confirmar que o resultado não é um
-acidente desse corpus, a mesma medição foi repetida sobre o conjunto histórico completo, com cerca de
-80 mil notícias de seis anos: a precisão@5 sobe para $\mathbf{0.595}$.
+A avaliação acima corre sobre um corpus recente e curto, pelo que, para confirmar que o resultado
+não é um acidente desse corpus, a mesma medição foi repetida sobre o conjunto histórico completo,
+com cerca de 80 mil notícias de seis anos. A precisão@5 não só se mantém como sobe, para
+$\mathbf{0.595}$.
 
 \subsection{O que isto não permite concluir}
 
 Duas observações, e a segunda tem consequências para o produto.
 
-Primeiro, ``mesmo setor'' não é o mesmo que ``relacionado''. É uma aproximação, e o número deve ser
-lido como tal.
+Primeiro, ``mesmo setor'' não é o mesmo que ``relacionado'': é uma aproximação construída porque era
+verificável, e não porque fosse exatamente aquilo que se queria medir, e o número deve ser lido com
+essa reserva.
 
 Segundo, e mais interessante: a recuperação capta \textbf{tema}, não \textbf{direção}. Duas notícias
 podem ser sobre o mesmo assunto e o preço ter ido para lados opostos, que foi exatamente o que

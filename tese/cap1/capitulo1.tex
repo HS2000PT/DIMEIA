@@ -10,33 +10,36 @@
 
 \emph{Que problema é este, e porque é que vale a pena resolvê-lo?}
 
-Hoje é fácil comprar ações. Basta uma aplicação no telemóvel e alguns minutos. A maior parte das
-famílias americanas já tem ações, diretamente ou através de fundos e planos de reforma
-\autocite{gallup2025stock}, e o mercado onde investem vale mais de 62 biliões de dólares
-\autocite{sifma2025factbook} (Figura~\ref{fig:mercado_eua}).
+Comprar ações tornou-se uma operação trivial, que exige pouco mais do que uma aplicação no telemóvel
+e alguns minutos de atenção. Talvez por isso a maior parte das famílias americanas detenha hoje
+ações, diretamente ou através de fundos e planos de reforma \autocite{gallup2025stock}, num mercado
+que vale mais de 62 biliões de dólares \autocite{sifma2025factbook} (Figura~\ref{fig:mercado_eua}).
 
 Difícil é a parte seguinte: perceber o que aconteceu quando o preço se mexe.
 
-Imagine-se uma pessoa que tem cinco ou seis ações e olha para elas de vez em quando. Um dia abre a
-aplicação e vê uma delas a cair 4\%. A aplicação diz-lhe exatamente isso: menos 4\%. E mais nada.
+Imagine-se uma pessoa que tem cinco ou seis ações e olha para elas de vez em quando. Num dia
+qualquer abre a aplicação, vê uma delas a cair 4\%, e o que a aplicação lhe diz é exatamente isso,
+menos 4\%. E mais nada.
 
 A partir daí a pessoa fica sozinha com três perguntas, e faz sempre estas três, por esta ordem:
 
 \begin{enumerate}
-  \item \textbf{Isto é invulgar?} Quatro por cento numa empresa calma é muito. Na mesma semana, e
-        noutra empresa, pode ser um dia perfeitamente normal.
-  \item \textbf{Foi a empresa, ou foi o mercado?} Se caiu tudo, a história é uma. Se caiu só esta,
-        é outra completamente diferente.
-  \item \textbf{Já aconteceu antes, e o que se seguiu?} Se já houve dias parecidos, o que fez o
-        preço a seguir?
+  \item \textbf{Isto é invulgar?} Quatro por cento numa empresa habitualmente calma é um movimento
+        grande, ao passo que na mesma semana, e noutra empresa, pode ser um dia perfeitamente
+        normal.
+  \item \textbf{Foi a empresa, ou foi o mercado?} Se caiu tudo, a história é uma; se caiu apenas
+        esta, é outra completamente diferente, e as duas pedem reações opostas.
+  \item \textbf{Já aconteceu antes, e o que se seguiu?} Havendo dias parecidos no passado, saber o
+        que o preço fez a seguir a cada um deles é a única forma de situar o de hoje.
 \end{enumerate}
 
-As aplicações gratuitas não respondem a nenhuma das três. Mostram a percentagem, que é o princípio
-da primeira pergunta e não a resposta. Os terminais profissionais respondem às três, mas custam mais
-por mês do que muita gente investe por ano.
+Nenhuma das três obtém resposta nas aplicações gratuitas, que se limitam a mostrar a percentagem, ou
+seja o princípio da primeira pergunta e não a sua resposta. Os terminais profissionais respondem às
+três, mas custam por mês mais do que muita gente investe por ano.
 
-É essa distância que este trabalho tenta encurtar. Não por falta de dados: há dados a mais, e
-gratuitos. O que falta é \textbf{contexto}, e um contexto que a pessoa possa \emph{verificar}.
+É essa distância que este trabalho tenta encurtar, e não por falta de dados, porque dados há de
+sobra e gratuitos. O que falta é \textbf{contexto}, e um contexto que a pessoa possa
+\emph{verificar}.
 
 \begin{figure}[ht]
 \centering
@@ -56,12 +59,12 @@ fala. Elaborado a partir dos dados do SIFMA Capital Markets Fact Book
 Esta: \textbf{o sistema vigia um conjunto de empresas, deteta quando algo sai fora do normal, e
 avisa, mas só avisa com a explicação e a evidência ao lado.}
 
-Há duas maneiras de o sistema começar a prestar atenção, e estão na
-Figura~\ref{fig:conceito}. Ou o \textbf{preço} se mexe de forma invulgar, ou chega uma
-\textbf{notícia} relevante sobre uma das empresas. Em qualquer dos casos, o que sai do outro lado
-não é uma notificação seca. É um alerta que diz o que aconteceu, porque é que foi considerado
-invulgar, de onde vieram os dados, e que casos parecidos já existiram no passado, com o que o
-preço fez depois deles.
+Há duas maneiras de o sistema começar a prestar atenção, representadas na
+Figura~\ref{fig:conceito}: ou o \textbf{preço} se mexe de forma invulgar para aquela empresa, ou
+chega uma \textbf{notícia} relevante sobre ela. Em qualquer dos dois casos, o que sai do outro lado
+não é uma notificação seca, mas um alerta que diz o que aconteceu, porque é que foi considerado
+invulgar, de onde vieram os dados, e que casos parecidos já existiram no passado, com o que o preço
+fez depois de cada um deles.
 
 \begin{figure}[ht]
 \centering
@@ -153,10 +156,10 @@ Capítulo~\ref{cap:conclusoes}.
 
 \emph{O que é que fica feito no fim?}
 
-Esta é uma dissertação de \textbf{Engenharia de Inteligência Artificial}. A contribuição não é
-inventar um algoritmo novo. É escolher, integrar e avaliar criticamente técnicas que já existem, até
-formarem um sistema que funciona, que se explica, e que outra pessoa consegue reproduzir. Escolher
-bem \emph{é} o trabalho de engenharia.
+Sendo esta uma dissertação de \textbf{Engenharia de Inteligência Artificial}, a contribuição não está
+em inventar um algoritmo novo, mas em escolher, integrar e avaliar criticamente técnicas que já
+existem, até formarem um sistema que funciona, que se explica, e que outra pessoa consegue
+reproduzir. Escolher bem \emph{é} o trabalho de engenharia.
 
 Ficam quatro contribuições:
 
@@ -193,6 +196,7 @@ O documento foi escrito para ser lido do princípio ao fim, e cada capítulo res
         fazer, e o que eu faria a seguir.
 \end{itemize}
 
-Há um fio que atravessa os capítulos~\ref{cap:metodologia} a~\ref{cap:avaliacao}: \textbf{a mesma
-notícia real}, seguida desde o momento em que chega até ao alerta que sai. Sempre que aparecer, é a
-mesma. Serve para que nada aqui fique abstrato.
+Há ainda um fio que atravessa os capítulos~\ref{cap:metodologia} a~\ref{cap:avaliacao}: \textbf{a
+mesma notícia real}, seguida desde o momento em que chega até ao alerta que sai. Sempre que
+reaparecer é a mesma, e a razão de a seguir assim é evitar que alguma parte deste documento fique
+abstrata quando podia ser mostrada.
