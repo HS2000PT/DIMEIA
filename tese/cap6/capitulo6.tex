@@ -217,6 +217,48 @@ violaria a restrição fundadora deste trabalho.
 
 \emph{Se houvesse mais três meses, por onde começava?}
 
+Nada nesta lista é uma ideia solta. Cada item fecha uma limitação da secção anterior, e a
+Figura~\ref{fig:con_futuro} mostra essa correspondência, porque uma lista de trabalho futuro que não
+derive das limitações medidas é um pedido de desculpas com outra forma.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=2.2mm]},
+  lim/.style={draw, rounded corners, align=left, text width=4.9cm, inner sep=4pt,
+              minimum height=1.05cm, fill=black!5},
+  fut/.style={draw, rounded corners, align=left, text width=4.4cm, inner sep=4pt,
+              minimum height=1.05cm, fill=black!2},
+  cst/.style={align=center, text width=1.9cm, text=black!60},
+  seta/.style={->, thick, black!45},
+]
+  \node[font=\bfseries\footnotesize] (hl) at (0,1.15) {Limitação medida};
+  \node[font=\bfseries\footnotesize] (hf) at (6.9,1.15) {O que a fecha};
+  \node[font=\bfseries\footnotesize] (hc) at (11.4,1.15) {Custo};
+
+  % ATENÇÃO: os nomes das variáveis do \foreach NÃO podem ser \c, \l, \i, \o nem \t.
+  % São comandos do LaTeX (cedilha, l barrado, i sem ponto...), e o \foreach substitui-os
+  % também DENTRO das palavras: com \c como variável, "avaliação" saía
+  % "avalia<custo>ção", e o documento compilava sem um único aviso.
+  \foreach \xn/\xlim/\xfut/\xcus in {%
+    0/{Nenhuma avaliação com pessoas}/{Correr o estudo: 6 a 10 pessoas, 15 min cada}/{calendário},%
+    1/{O modelo implantado é uma tabela de consulta: $84\%$ das decisões fechadas antes de ler a notícia}/{Entradas que variem com a manchete}/{baixo: já existem no sistema},%
+    2/{Cobertura de $88.5\%$, e $50\%$ na pior empresa}/{Julgamento humano sobre uma amostra de dias}/{calendário},%
+    3/{Lê o título e não o corpo do artigo}/{Ler o corpo dos artigos}/{dados novos},%
+    4/{Repetição apanhada por palavras em comum}/{Detetar repetição por significado}/{baixo: técnica já existe}%
+  } {
+    \node[lim] (L\xn) at (0,-\xn*1.35) {\xlim};
+    \node[fut] (F\xn) at (6.9,-\xn*1.35) {\xfut};
+    \node[cst] (C\xn) at (11.4,-\xn*1.35) {\xcus};
+    \draw[seta] (L\xn) -- (F\xn);
+  }
+\end{tikzpicture}
+\caption[Das limitações ao trabalho futuro]{Cada linha do trabalho futuro responde a uma limitação
+que foi medida, e não a uma intuição. As duas que custam calendário e não computação são as que só
+se resolvem com pessoas, e são por isso as primeiras da lista.}
+\label{fig:con_futuro}
+\end{figure}
+
 Por esta ordem, e as três primeiras respondem diretamente às limitações acima.
 
 \begin{enumerate}

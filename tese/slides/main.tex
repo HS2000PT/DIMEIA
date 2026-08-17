@@ -331,15 +331,19 @@ estiver acima de $0{,}50$.
 \begin{tikzpicture}[font=\tiny, x=7.0cm, y=0.245cm]
   \draw[dashed, thick, orange!70!black] (0.50,-0.8) -- (0.50,12.6)
     node[above, text=orange!60!black] {piso $0{,}50$};
-  \foreach \i/\t/\a/\b/\c in {
+    % Variaveis do \foreach nunca podem chamar-se \c \t \l \i \o: sao comandos do
+  % LaTeX (cedilha, til, l barrado, i sem ponto, o barrado) e o \foreach substitui-os
+  % tambem DENTRO das palavras. Ver a Figura 6.1, onde \c transformava "avaliacao"
+  % em "avalia<custo>cao" sem um unico aviso de compilacao.
+  \foreach \xn/\xtk/\xa/\xb/\xcor in {
     12/JPM/0.242/0.258/black!30, 11/JNJ/0.298/0.324/black!30,
     10/NFLX/0.388/0.426/black!30, 9/XOM/0.390/0.407/black!30,
     8/AAPL/0.423/0.472/black!30, 7/NVDA/0.457/0.501/black!62,
     6/GOOGL/0.444/0.528/black!62, 5/MSFT/0.417/0.557/black!62,
     4/AMZN/0.411/0.571/black!62, 3/META/0.525/0.545/orange!65,
     2/TSLA/0.545/0.630/orange!65, 1/AMD/0.549/0.633/orange!65}
-  { \node[left, black!70] at (0.235,\i) {\t};
-    \draw[line width=2.2pt, color=\c] (\a,\i) -- (\b,\i); }
+  { \node[left, black!70] at (0.235,\xn) {\xtk};
+    \draw[line width=2.2pt, color=\xcor] (\xa,\xn) -- (\xb,\xn); }
   \node[right, text=black!55] at (0.56,10.5) {nunca passa};
   \node[right, text=orange!60!black] at (0.655,2.5) {passa sempre};
   \draw[black!40] (0.23,-0.5) -- (0.68,-0.5);

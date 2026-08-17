@@ -225,8 +225,8 @@ portanto, um par (cobertura, precisão), e o conjunto de todos esses pares desen
 
   \draw[->, black!55] (0,0) -- (7.6,0) node[right, black!70] {cobertura};
   \draw[->, black!55] (0,0) -- (0,4.5) node[above, black!70] {precisão};
-  \foreach \x/\l in {0/0, 3/0.5, 6/1} \draw[black!45] (\x,0) -- (\x,-0.09) node[below] {\l};
-  \foreach \y/\l in {0/0, 2/0.5, 4/1} \draw[black!45] (0,\y) -- (-0.09,\y) node[left] {\l};
+  \foreach \x/\xrot in {0/0, 3/0.5, 6/1} \draw[black!45] (\x,0) -- (\x,-0.09) node[below] {\xrot};
+  \foreach \y/\xrot in {0/0, 2/0.5, 4/1} \draw[black!45] (0,\y) -- (-0.09,\y) node[left] {\xrot};
 
   \draw[dashed, black!55] (0,1.512) -- (6.2,1.512)
     node[right=0mm, align=left, black!60] {chão\\ $0.378$};
@@ -789,7 +789,11 @@ Figura~\ref{fig:av_portao} mostra o resultado de uma só vez.
     node[above, align=center, text=orange!60!black] {piso\\ $0.50$};
   % (linha, ticker, mínimo, mediana, máximo, COR). A cor vai nos dados de propósito: uma
   % condicional dentro do \foreach falha em silêncio e as barras saem todas iguais.
-  \foreach \i/\t/\a/\m/\b/\c in {
+    % Variaveis do \foreach nunca podem chamar-se \c \t \l \i \o: sao comandos do
+  % LaTeX (cedilha, til, l barrado, i sem ponto, o barrado) e o \foreach substitui-os
+  % tambem DENTRO das palavras. Ver a Figura 6.1, onde \c transformava "avaliacao"
+  % em "avalia<custo>cao" sem um unico aviso de compilacao.
+  \foreach \xn/\xtk/\xa/\xm/\xb/\xcor in {
     12/JPM/0.242/0.248/0.258/black!30, 11/JNJ/0.298/0.298/0.324/black!30,
     10/NFLX/0.388/0.413/0.426/black!30, 9/XOM/0.390/0.399/0.407/black!30,
     8/AAPL/0.423/0.457/0.472/black!30, 7/NVDA/0.457/0.481/0.501/black!62,
@@ -797,9 +801,9 @@ Figura~\ref{fig:av_portao} mostra o resultado de uma só vez.
     4/AMZN/0.411/0.568/0.571/black!62, 3/META/0.525/0.537/0.545/orange!65,
     2/TSLA/0.545/0.586/0.630/orange!65, 1/AMD/0.549/0.632/0.633/orange!65}
   {
-    \node[left, black!75] at (0.22,\i) {\t};
-    \draw[line width=2.6pt, color=\c] (\a,\i) -- (\b,\i);
-    \fill[black!85] (\m,\i) circle (1.1pt);
+    \node[left, black!75] at (0.22,\xn) {\xtk};
+    \draw[line width=2.6pt, color=\xcor] (\xa,\xn) -- (\xb,\xn);
+    \fill[black!85] (\xm,\xn) circle (1.1pt);
   }
   \node[right, align=left, text=orange!60!black] at (0.645,2) {passa\\ sempre};
   \node[right, align=left, black!55] at (0.56,10.5) {nunca\\ passa};

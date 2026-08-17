@@ -659,9 +659,9 @@ mostra o alinhamento.
 \centering
 \begin{tikzpicture}[font=\small, >={Stealth[length=2.2mm]}]
   \draw[black!40, thick] (0,0) -- (9,0);
-  \foreach \x/\l in {1.2/{$d$}, 3.4/{$d{+}1$}, 5.6/{$d{+}3$}, 7.8/{$d{+}5$}} {
+  \foreach \x/\xrot in {1.2/{$d$}, 3.4/{$d{+}1$}, 5.6/{$d{+}3$}, 7.8/{$d{+}5$}} {
     \draw[black!45] (\x,-0.12) -- (\x,0.12);
-    \node[below=3pt, black!60, font=\footnotesize] at (\x,-0.12) {\l};
+    \node[below=3pt, black!60, font=\footnotesize] at (\x,-0.12) {\xrot};
   }
   \node[align=center, font=\footnotesize, text=orange!60!black] at (1.2,1.15)
     {notícia\\ publicada};
