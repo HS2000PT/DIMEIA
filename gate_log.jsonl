@@ -13614,3 +13614,15 @@
 {"date": "2026-08-16", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-16", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-16", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-17", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-17", "ticker": "MSFT", "stage": "alerted", "detail": "Amazon, Alphabet, and Microsoft Are Dropping Nearly $600 Billion on Capital Expe"}
+{"date": "2026-08-17", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-17", "ticker": "TSLA", "stage": "alerted", "detail": "Tesla Stock Faces a High Stakes Reality Check After Its Record Quarter"}
+{"date": "2026-08-17", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon, Alphabet, and Microsoft Are Dropping Nearly $600 Billion on Capital Expe"}
+{"date": "2026-08-17", "ticker": "GOOGL", "stage": "alerted", "detail": "Alphabet: The CapEx 'Tantrum' Feels Wrong"}
+{"date": "2026-08-17", "ticker": "META", "stage": "stale", "detail": "mais recente 2026-08-14 > 2d"}
+{"date": "2026-08-17", "ticker": "JPM", "stage": "stale", "detail": "mais recente 2026-08-14 > 2d"}
+{"date": "2026-08-17", "ticker": "AMD", "stage": "alerted", "detail": "Stanley Druckenmiller Bets Big on AMZN, AMD — Dumps AVGO, INTC and MU in Q2"}
+{"date": "2026-08-17", "ticker": "NFLX", "stage": "stale", "detail": "mais recente 2026-08-14 > 2d"}
+{"date": "2026-08-17", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-17", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
