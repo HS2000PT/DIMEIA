@@ -209,7 +209,11 @@ def screener() -> dict:
 
 @app.get("/api/alerts")
 def alerts() -> dict:
-    return {"rows": S.alerts()[:200]}
+    # ⚠️ Os ÚLTIMOS 200, não os primeiros. O histórico está por ordem cronológica e cresce; com
+    # `[:200]` a página deixava de ver alertas novos assim que o ficheiro passasse esse tamanho,
+    # e servia em silêncio uma janela cada vez mais antiga. Apanhado a 2026-08-17, com o canal
+    # em 391 alertas: a página mostrava como mais recente um alerta de 31 de julho.
+    return {"rows": S.alerts()[-200:]}
 
 
 @app.get("/api/method")

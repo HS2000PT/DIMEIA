@@ -133,3 +133,20 @@ def test_precedentes_indisponiveis_degradam_em_vez_de_rebentar(client, monkeypat
     d = client.get("/api/precedents/NVDA").json()
     assert d["available"] is False
     assert d["reason"]
+
+
+def test_alertas_servem_os_MAIS_RECENTES_e_nao_os_primeiros(client, monkeypatch):
+    """⚠️ Regressão apanhada a preparar a gravação da defesa, a 2026-08-17.
+
+    O histórico está por ordem cronológica e cresce. Servir `[:200]` significava que, assim que
+    o ficheiro passasse esse tamanho, a página deixava de ver alertas novos e servia em silêncio
+    uma janela cada vez mais antiga. Com o canal em 391 alertas, a página mostrava como mais
+    recente um alerta de 31 de julho.
+    """
+    historico = [{"date": f"2026-01-{d:02d}", "ticker": "NVDA", "kind": "news", "text": f"n{d}"}
+                 for d in range(1, 29)]
+    monkeypatch.setattr(S, "alerts", lambda: historico)
+
+    linhas = client.get("/api/alerts").json()["rows"]
+
+    assert linhas[-1]["date"] == "2026-01-28", "o mais recente do histórico tem de estar presente"
