@@ -243,6 +243,8 @@ volatilidade ganha nas nove. Um trabalho que só reporta o que corre bem não é
 \key{9 de 9} & células da grelha em que a volatilidade ganha & QI3 \\
 \key{0,379} $\to$ \key{0,632} & precisão no orçamento: acaso $\to$ modelo ($1{,}67\times$) & QI3 \\
 \key{0,662} & o prior de 13 constantes, que \textbf{bate} o modelo & QI3 \\
+\key{84\%} & decisões determinadas pela \textbf{empresa}, não pela notícia & QI3 \\
+\key{0,064} vs \key{0,385} & variação do score dentro vs entre empresas ($6{,}1\times$) & QI3 \\
 \key{79\,753} & exemplos do teu conjunto de dados & --- \\
 \key{88,5\%} & dias invulgares com notícia captada (limite superior) & limitação \\
 \key{944 $\to$ 42} & funil de produção: captadas $\to$ enviadas & sistema \\
@@ -308,6 +310,24 @@ que te pode custar o grau.}
 coberta fica-se pelos $50\%$. E é um \textbf{limite superior}: pergunta se existia \emph{uma}
 notícia, não se chegou \emph{a certa}. Saber isso exige julgamento humano dia a dia, e é o primeiro
 trabalho futuro que aponto.''
+\end{block}
+\end{frame}
+
+\begin{frame}{\key{Nível 6}: a pergunta mais dura, e a tua melhor resposta}
+\small
+\begin{block}{``O vosso modelo não serve para nada, então?''}
+``Serve para o que a medição sustenta: \textbf{ordenar} empresas. Não serve para o que eu lhe
+estava a pedir. Medi o que ele fazia quando decidia e a pontuação varia \key{0,064} dentro de cada
+empresa e \key{0,385} entre empresas: o limiar estava a separar empresas, não manchetes. Em
+\key{84\%} das decisões o resultado estava determinado antes de a notícia ser lida.''
+\end{block}
+\begin{block}{``E porque não puseram o limiar relativo a cada empresa?''}
+``Simulei isso \textbf{antes} de mexer no código. Resolve metade, e cria outro problema: nas
+empresas de pontuação quase constante o percentil cai em cima da constante e quase tudo empata
+acima. Uma delas passaria \key{874} vezes. Não se corrige um defeito introduzindo o defeito
+vizinho.''\\
+\footnotesize \textcolor{red!60!black}{Se te perguntarem só uma coisa sobre a QI3, é esta. Diz
+sempre a segunda parte: mostra que testaste a correcção óbvia em vez de a assumir.}
 \end{block}
 \end{frame}
 

@@ -293,6 +293,62 @@ Ao acaso a sério dá $0{,}379$ $\Rightarrow$ o ganho é de \textbf{1,67$\times$
 E uma tabela de \textbf{13 constantes} dá $0{,}662$: bate o modelo treinado.
 \end{frame}
 
+\begin{frame}{E encontrei-o outra vez, um nível acima}
+\small
+O sistema decidia se avisava com um \textbf{limiar fixo} sobre a pontuação do modelo: passa quem
+estiver acima de $0{,}50$.
+\vspace{-1mm}
+\begin{center}
+\begin{tikzpicture}[font=\tiny, x=7.0cm, y=0.245cm]
+  \draw[dashed, thick, orange!70!black] (0.50,-0.8) -- (0.50,12.6)
+    node[above, text=orange!60!black] {piso $0{,}50$};
+  \foreach \i/\t/\a/\b/\c in {
+    12/JPM/0.242/0.258/black!30, 11/JNJ/0.298/0.324/black!30,
+    10/NFLX/0.388/0.426/black!30, 9/XOM/0.390/0.407/black!30,
+    8/AAPL/0.423/0.472/black!30, 7/NVDA/0.457/0.501/black!62,
+    6/GOOGL/0.444/0.528/black!62, 5/MSFT/0.417/0.557/black!62,
+    4/AMZN/0.411/0.571/black!62, 3/META/0.525/0.545/orange!65,
+    2/TSLA/0.545/0.630/orange!65, 1/AMD/0.549/0.633/orange!65}
+  { \node[left, black!70] at (0.235,\i) {\t};
+    \draw[line width=2.2pt, color=\c] (\a,\i) -- (\b,\i); }
+  \node[right, text=black!55] at (0.56,10.5) {nunca passa};
+  \node[right, text=orange!60!black] at (0.655,2.5) {passa sempre};
+  \draw[black!40] (0.23,-0.5) -- (0.68,-0.5);
+  \foreach \x in {0.25,0.35,0.45,0.55,0.65}
+    \node[below, black!55] at (\x,-0.5) {\x};
+\end{tikzpicture}
+\end{center}
+\vspace{-1mm}
+\begin{center}
+Em \textbf{84\%} das decisões, o resultado estava determinado\\
+pela \textbf{empresa} antes de a manchete ser lida.
+\end{center}
+\vspace{1mm}
+{\footnotesize A Apple não conseguia gerar um alerta de notícia. A AMD passava em $963$ de $963$.}
+\end{frame}
+
+\begin{frame}{E a correção óbvia também estava errada}
+\textbf{A tentação:} se um limiar fixo mede a empresa e não a notícia, torna-se \emph{relativo a
+cada empresa}, que foi exatamente o que o \emph{z}-score fez para os preços.
+\vspace{3mm}
+
+Simulei-o \textbf{antes} de escrever código. Metade resolve-se: as doze passam a estar
+representadas.
+\vspace{2mm}
+
+\textbf{Mas} nas empresas de pontuação quase constante o percentil cai \emph{em cima} da constante
+e quase tudo empata acima. A JNJ passaria \textbf{874} vezes.
+\vspace{3mm}
+\begin{center}
+\large Não se corrige um defeito introduzindo o defeito vizinho.
+\end{center}
+\vspace{3mm}
+\footnotesize
+\textbf{O que se fez:} o modelo deixou de decidir e passou a \textbf{ordenar}, com um orçamento de
+5 alertas por dia. E isso fechou uma divergência: a dissertação \emph{avaliava} uma política de
+orçamento e o sistema \emph{implantava} uma de limiar.
+\end{frame}
+
 % ══ 6. O QUE APRENDI ════════════════════════════════════════════════════════
 \begin{frame}{O que aprendi}
 \begin{enumerate}
