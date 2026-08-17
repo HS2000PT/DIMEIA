@@ -17,6 +17,16 @@ que vale mais de 62 biliões de dólares \autocite{sifma2025factbook} (Figura~\r
 
 Difícil é a parte seguinte: perceber o que aconteceu quando o preço se mexe.
 
+E não é uma dificuldade sem consequências. A investigação em finanças comportamentais mostra que os
+investidores particulares se afastam de forma sistemática do ideal racional
+\autocite{barberis2003behavioral}, e um desses desvios diz respeito diretamente a este trabalho:
+perante milhares de escolhas possíveis, a pessoa acaba por comprar aquilo que lhe \emph{chamou a
+atenção}, sendo os principais captadores dessa atenção a notícia, o volume invulgar e o movimento
+extremo de um único dia \autocite{barber2008glitters}. São exatamente os momentos em que este
+sistema fala. A isso acresce que as perdas se sentem com mais intensidade do que os ganhos
+equivalentes \autocite{kahneman1979prospect}, o que torna a falta de contexto mais cara justamente
+quando as notícias são más.
+
 Imagine-se uma pessoa que tem cinco ou seis ações e olha para elas de vez em quando. Num dia
 qualquer abre a aplicação, vê uma delas a cair 4\%, e o que a aplicação lhe diz é exatamente isso,
 menos 4\%. E mais nada.
@@ -102,6 +112,13 @@ afirmação sobre o que \emph{já} aconteceu pode ser confirmada contra o regist
 lida. Uma previsão não pode: só se saberá se estava certa depois de o investidor já ter tido de
 decidir. Ao recusar prever, o sistema obriga-se a dizer apenas aquilo que consegue mostrar.
 
+Há ainda uma segunda razão, esta teórica, e que a Secção~\ref{sec:ctx_evento} desenvolve. Se
+movimentos futuros fossem sistematicamente antecipáveis a partir de informação pública, essa
+informação já estaria refletida no preço, que é o conteúdo da hipótese dos mercados eficientes na sua
+forma semiforte \autocite{fama1970efficient}. Este trabalho não a testa nem se apoia nela para
+concluir seja o que for; serve apenas para dizer que prometer previsão a partir de notícias públicas
+gratuitas seria prometer aquilo que a teoria dominante considera improvável.
+
 \section{Objetivos e perguntas de investigação}
 \label{sec:intro_objetivos}
 
@@ -167,11 +184,12 @@ Ficam quatro contribuições:
   \item \textbf{Um sistema completo e a funcionar}, com os dois gatilhos, sobre fontes gratuitas, e
         implantado, e não uma demonstração de laboratório.
   \item \textbf{Um método reprodutível para ligar notícias a impacto de mercado}, que combina
-        recuperação por semelhança semântica com janelas de estudo de evento, sem deixar entrar
-        informação do futuro.
+        recuperação por semelhança semântica de frases \autocite{reimers2019sbert} com janelas de
+        estudo de evento na tradição de \textcite{brown1985daily}, sem deixar entrar informação do
+        futuro.
   \item \textbf{Um conjunto de dados próprio e um modelo treinado sobre ele}: 79\,753 exemplos
-        construídos a partir de notícias e preços históricos, com o modelo, a calibração e as
-        métricas guardados como artefactos versionados.
+        construídos a partir do corpus público \gls{FNSPID} \autocite{dong2024fnspid} e de preços
+        históricos, com o modelo, a calibração e as métricas guardados como artefactos versionados.
   \item \textbf{Uma avaliação honesta de cada componente} contra linhas de base transparentes,
         incluindo o resultado que me correu ao contrário, que está reportado como tal.
 \end{enumerate}

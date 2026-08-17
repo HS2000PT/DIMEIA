@@ -452,6 +452,13 @@ ordem:
 A ordem importa. A pessoa lê primeiro o que aconteceu e só depois a estatística, porque é assim que
 uma pessoa pensa; um alerta que abre com ``$z = 2.65$'' perde o leitor na primeira linha.
 
+Importa também a \emph{quantidade}. O sistema mostra três precedentes e não os trinta que encontrou,
+e essa não é uma decisão de espaço no ecrã: a investigação sobre explicação estabelece que as pessoas
+procuram razões seletivas e contrastivas, e não uma enumeração exaustiva de tudo o que contribuiu
+\autocite{miller2019explanation}. Uma lista com trinta casos seria mais completa e menos útil, porque
+a pessoa não a leria. Pela mesma razão o alerta exibe as quantidades exatas por detrás da decisão e
+não o cálculo inteiro que as produziu.
+
 A Figura~\ref{fig:sis_alerta} mostra um alerta \textbf{tal como foi entregue}, copiado do registo
 do canal. A mesma informação fica disponível numa página web, que serve para consultar o que foi
 enviado e, sobretudo, o que \emph{não} foi: é aí que vive o registo das decisões descrito na
@@ -488,6 +495,15 @@ Todos os valores vêm dos objetos que os calcularam: a semelhança do motor de r
 movimento a cinco dias da medição de impacto, e os $57\%$ do modelo calibrado.}
 \label{fig:sis_alerta}
 \end{figure}
+
+Uma nota sobre o número que aparece na última linha do alerta. Os $57\%$ não são a pontuação em bruto
+do modelo: são o resultado de a converter numa \emph{probabilidade}, ajustando uma sigmoide sobre um
+bloco de validação reservado \autocite{niculescu2005calibration}. A distinção não é decorativa neste
+contexto. Uma pontuação em bruto ordena bem e não significa nada por si, ao passo que uma
+probabilidade calibrada promete que, entre as manchetes a que o sistema atribui $57\%$, aproximadamente
+essa fração terá mesmo um movimento invulgar. É a diferença entre um número que se pode mostrar a
+alguém e um número que só serve por dentro, e a Secção~\ref{sec:av_qi3} verifica se a promessa se
+cumpre.
 
 \paragraph{E este exemplo mostra um defeito que eu não tinha visto até o pôr aqui.}
 Os três precedentes têm o \emph{mesmo} impacto, $-2.73\%$, e a mesma data. Não é coincidência: o
@@ -573,6 +589,13 @@ impacto no preço já é observável, essa candidata é medida com a mesma regra
 Capítulo~\ref{cap:metodologia} e entra na base de casos. A base cresce sozinha, e os alertas de
 amanhã comparam-se contra o que o sistema viu ontem.
 
+Convém situar o que este mecanismo é e o que não é. Ele mantém atualizada a \emph{base de casos}, ou
+seja a evidência que o sistema mostra, mas não re-treina modelo nenhum: os pesos da triagem são os
+que foram aprendidos uma vez. A literatura de deriva de conceito trata precisamente do problema de um
+modelo implantado deixar de corresponder aos dados que passa a ver, e organiza as respostas em
+deteção da mudança e adaptação a ela \autocite{gama2014survey}. Deste par, este sistema tem a
+primeira metade, porque mede a deriva, e não tem a segunda.
+
 Isso é o desenho. Fui verificar se estava a acontecer, e não estava.
 
 \begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
@@ -585,6 +608,15 @@ A causa é a mesma que já tinha atingido dois ficheiros de registo: no serviço
 processo que serve a página e o que faz as varreduras são \emph{máquinas separadas}, e o disco de
 cada uma é apagado quando ela reinicia. Tudo o que tem de sobreviver a um reinício passa pelo
 repositório de dados, e estes dois ficheiros não passavam.
+
+Convém dar nome a esta classe de falha, porque ela não é uma distração minha e repete-se em sistemas
+muito maiores do que este. \textcite{sculley2015debt} descrevem, a partir de experiência com sistemas
+de aprendizagem em produção, um custo de manutenção que não aparece em nenhuma métrica de qualidade,
+e cujos sintomas incluem exatamente este: \emph{dependências de dados não declaradas}, ou seja
+componentes cuja correção depende de uma suposição sobre outro componente que ninguém escreveu em
+lado nenhum. Aqui a suposição era ``o ficheiro que escrevi continua lá amanhã'', e ela é verdadeira
+na máquina de quem desenvolve e falsa no contentor. Nenhum teste podia apanhá-la, porque cada peça
+cumpria o seu contrato, e nenhum erro foi registado, porque escrever no disco local nunca falhou.
 
 \paragraph{Mas a correção não podia ser a mesma, e é isso que torna o caso interessante.}
 Os registos que já eram publicados a cada ciclo pesam menos de um megabyte. Estes pesam
@@ -638,6 +670,14 @@ toda na forma de guardar.
 
 A mesma medição revelou um desperdício que ninguém tinha notado: a comparação com os casos
 passados reconstruía a matriz \emph{inteira} a cada consulta. Passou a ser carregada uma vez.
+
+Uma nota sobre até onde isto escala, porque é a pergunta seguinte. A procura continua a ser
+\textbf{exaustiva}, ou seja compara a consulta com os $38\,214$ casos todos, e a esta dimensão isso
+custa menos de um segundo e tem a vantagem de o resultado ser exato. Se a base crescesse uma ou duas
+ordens de grandeza, a substituição conhecida é um índice aproximado \autocite{johnson2021faiss}, que
+troca uma garantia de exatidão por tempo de resposta sem alterar a representação. Não foi feito
+porque ainda não é preciso, e trocar exatidão por velocidade que não faz falta seria pagar um custo
+sem comprar nada.
 
 O efeito no produto é o que se esperaria de multiplicar a base por vinte: os precedentes que o
 alerta mostra passaram a ser da própria empresa e sobre o mesmo assunto, com semelhanças acima de
