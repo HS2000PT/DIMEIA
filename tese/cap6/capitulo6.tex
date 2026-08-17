@@ -24,13 +24,29 @@ dissertação e não o de projeto.
 Um \emph{z}-score deslizante deteta movimentos invulgares de forma muito mais consistente entre
 empresas do que uma regra fixa: uma amplitude de disparo de $0.015$ contra $0.344$, mais de vinte
 vezes melhor. E, sujeito a uma comparação justa, ganha também a dois métodos de aprendizagem
-desenhados para esta tarefa.
+desenhados para esta tarefa \autocite{liu2008isolation, breunig2000lof}.
+
+Este resultado é menos surpreendente do que parece à primeira vista, e a literatura ajuda a
+perceber porquê. Os dois métodos aprendidos definem normalidade pela geometria dos dados, o que é
+uma vantagem quando há muitas variáveis a interagir \autocite{chandola2009anomaly}; aqui há uma
+série de retornos por empresa, e a estrutura que interessa é temporal, não geométrica. A janela
+deslizante capta diretamente o agrupamento de volatilidade que caracteriza estas séries
+\autocite{engle1982arch, bollerslev1986garch}, ao passo que um detetor treinado sobre o conjunto
+todo tem de aprender essa estrutura a partir dos dados. Quando a suposição de um método simples
+coincide com a estrutura real do problema, é difícil batê-lo.
 
 \paragraph{QI2, precedentes. Sim.}
 A recuperação por significado encontra notícias passadas relacionadas melhor do que procurar por
-palavras, do que escolher ao acaso e do que devolver as mais recentes ($0.514$ contra $0.346$,
-$0.240$ e $0.126$), e o resultado aguenta à escala do corpus completo ($0.595$). Com uma ressalva
-que ficou clara ao medir: a semelhança capta o \textbf{tema}, não a \textbf{direção}.
+palavras \autocite{robertson2009bm25}, do que escolher ao acaso e do que devolver as mais recentes
+($0.514$ contra $0.346$, $0.240$ e $0.126$), e o resultado aguenta à escala do corpus completo
+($0.595$). Com uma ressalva que ficou clara ao medir: a semelhança capta o \textbf{tema}, não a
+\textbf{direção}.
+
+Essa ressalva merece ser lida à luz da teoria e não como um defeito da implementação. Se a direção
+de um movimento futuro fosse recuperável a partir do tema de uma notícia pública, essa informação
+já estaria refletida no preço \autocite{fama1970efficient}. O que se mediu é, portanto,
+aproximadamente o que se devia esperar, e é essa a razão pela qual o produto apresenta os
+precedentes como observações do passado e nunca como indicação do que vem a seguir.
 
 \paragraph{QI3, triagem. Não.}
 Nenhum modelo que lê o texto da manchete bateu uma linha de base que usa apenas volatilidade
@@ -40,6 +56,15 @@ uma reamostragem por grupos, e a nove definições diferentes do rótulo.
 Esta última resposta é negativa e é a que eu levo mais a sério. Escrevi o critério de sucesso antes
 de correr a experiência, e o resultado foi ao contrário do que eu esperava. Reportá-lo tal como
 caiu era a única opção compatível com o resto do trabalho.
+
+Existe uma linha de investigação considerável que usa texto para antecipar movimentos de preço
+\autocite{xing2018nlffsurvey, ding2015deep}, e seria cómodo apresentar este resultado como se a
+contradissesse. Não a contradiz, e convém ser preciso sobre porquê. Esses trabalhos usam
+tipicamente o corpo dos artigos ou fluxos de texto muito maiores, extraem estruturas de
+acontecimento em vez de comparar frases, e avaliam noutras condições. O que aqui se mostra é mais
+estreito e também mais útil para quem constrói: \textbf{sob esta restrição de dados}, ou seja
+manchetes de fontes gratuitas, o sinal textual não acrescenta ao que a volatilidade recente já
+dizia. É um resultado sobre um regime de recursos, e não sobre a linguagem.
 
 \section{Os objetivos, um a um}
 \label{sec:con_objetivos}
@@ -75,6 +100,15 @@ pessoas}. O desenho do estudo existe, com participantes, tarefas e critérios de
 corrido a tempo. Enquanto isso não acontecer, a metade ``útil'' do terceiro objetivo fica sem resposta, e é assim
 que está escrito.
 
+A literatura é explícita quanto ao peso desta falta. Afirmações de interpretabilidade exigem
+avaliação e não bastam ser declaradas \autocite{doshivelez2017rigorous}, e o motivo não é
+formalismo: o efeito de uma explicação sobre uma pessoa não é dedutível da sua construção. Sabe-se
+que o risco não é as pessoas confiarem de menos mas confiarem na medida errada
+\autocite{lee2004trust}, e que uma explicação apresentada com confiança pode levar alguém a aceitar
+uma resposta errada \autocite{bansal2021whole}. Este sistema é construído para reduzir esse risco,
+mostrando a evidência em vez de emitir um veredicto, mas \emph{que o consiga} é uma hipótese por
+verificar e não um resultado.
+
 \paragraph{Os alertas ainda não estão bem calibrados, e sei disso a usar.}
 Esta é a limitação que mais me incomoda, precisamente porque a noto como utilizador e não nos
 números. Recebo no telemóvel, por outras vias, notícias sobre estas empresas que o sistema não
@@ -105,11 +139,36 @@ exigiria dados de preço ao minuto, que as fontes gratuitas não dão.
 
 \paragraph{As notícias são só manchetes.}
 O sistema lê o título e não o corpo do artigo. Isso limita o que a representação de texto consegue
-captar, e é uma explicação plausível, embora não confirmada, para o resultado negativo da QI3.
+captar, e é uma explicação plausível, embora não confirmada, para o resultado negativo da QI3. As
+revisões de análise textual em finanças descrevem trabalhos que operam sobre documentos inteiros
+\autocite{kearney2014textual}, e uma manchete é, por construção, a parte do documento onde mais
+informação foi deitada fora.
 
 \paragraph{Os rótulos são aproximações.}
 ``Relevante'' é aproximado por ``mesmo setor'', e ``importante'' é aproximado por ``houve movimento
 grande''. As duas são objetivas e verificáveis, mas nenhuma é aquilo que realmente se queria medir.
+Esta dependência de aproximações não é uma particularidade deste trabalho: em finanças a deteção é
+dominada por métodos não supervisionados precisamente porque anomalias rotuladas são escassas
+\autocite{ahmed2016financial}. Quem quiser um alvo melhor tem de o construir com julgamento humano,
+que é o que a segunda linha do trabalho futuro propõe.
+
+\paragraph{A repartição de um movimento nem sempre está bem estimada.}
+A decomposição em mercado, setor e empresa soma sempre exatamente ao movimento observado, mas essa
+soma fecha por construção e não valida nada, como a Secção~\ref{sec:av_decomposicao} explica. A
+medida que diz alguma coisa é o $R^2$ da janela de estimação, cuja mediana foi $0.460$ e que numa
+das dezassete empresas foi negativo. Nesses casos a repartição continua a ser exibida e deve
+ler-se como indicativa. O encolhimento do beta \autocite{vasicek1973beta} limita o dano de uma
+estimativa má, mas não a transforma numa boa.
+
+\paragraph{Nada volta a ser treinado.}
+O modelo implantado é o que foi treinado uma vez, e o sistema não se re-treina. A literatura de
+deriva de conceito trata exatamente deste problema, com uma taxonomia da mudança e estratégias de
+deteção e adaptação \autocite{gama2014survey}. Aqui a deriva é medida mas não é corrigida, e há um
+episódio concreto que mostra que o custo é real: o ciclo que faz maturar os casos observados esteve
+parado dezanove dias sem que um único erro fosse registado, porque o processo que os escrevia e o
+processo que os servia corriam em máquinas diferentes com discos diferentes. É a mesma classe de
+dependência não declarada descrita atrás \autocite{sculley2015debt}, e foi encontrada a olhar, não
+por um alarme.
 
 \paragraph{Escolhi para o produto um modelo que não podia fazer o que eu lhe estava a pedir.}
 Esta é a limitação que mais me custa escrever, e é a que aprendi mais tarde.
@@ -136,6 +195,17 @@ O sistema foi mudado: o modelo deixou de decidir e passou a ordenar entre empres
 para o qual tem informação. Mas a limitação de fundo mantém-se, e não se resolve com nenhuma regra
 de decisão nem com mais treino. Resolve-se com entradas que variem com a notícia, e é a primeira
 linha do trabalho futuro.
+
+Esta falha tem nome na literatura de sistemas de aprendizagem em produção, e reconhecê-la ajuda a
+generalizá-la. \textcite{sculley2015debt} descrevem, a partir de experiência com sistemas reais,
+uma classe de custo que não aparece em nenhuma métrica de qualidade: dependências de dados não
+declaradas e emaranhamento entre componentes, em que a validade de uma peça depende de suposições
+sobre outra que ninguém escreveu. Foi exatamente isso que aconteceu aqui. O modelo foi avaliado
+isoladamente, sobre a distribuição do conjunto de treino, e implantado atrás de dois filtros que
+alteram essa distribuição. Nenhum teste falhou, nenhum registo acusou nada, e o modelo continuou a
+produzir números com boa aparência durante meses. Um componente aprendido é avaliado onde é
+treinado e é útil onde é colocado, e quando esses dois sítios diferem a diferença não se anuncia
+sozinha.
 
 \paragraph{O atraso é real e não se resolve com engenharia.}
 Entre a notícia ser publicada e o sistema a ver passam, em mediana, cerca de duas horas e meia. A
@@ -166,7 +236,18 @@ Por esta ordem, e as três primeiras respondem diretamente às limitações acim
         o negativo da QI3, e é testável com o mesmo protocolo já montado.
   \item \textbf{Detetar histórias repetidas por significado.} Hoje a repetição é apanhada por
         palavras em comum. Fazê-lo por significado usaria a técnica que o sistema já tem, e atacaria
-        de frente a fadiga de alertas.
+        de frente a fadiga de alertas. Este ponto é mais importante do que parece: se os
+        particulares compram aquilo que lhes chama a atenção \autocite{barber2008glitters}, um
+        sistema que repete a mesma história três vezes não está a informar, está a amplificar o
+        mesmo estímulo.
+  \item \textbf{Dar ao utilizador um conjunto em vez de um número.} A predição conformal permite
+        devolver um conjunto de respostas com uma garantia livre de distribuição
+        \autocite{vovk2005algorithmic, angelopoulos2023conformal}, o que encaixa bem numa
+        ferramenta que recusa afirmar mais do que sabe. Foi considerada e não adotada, e a razão
+        fica registada para quem retome: a garantia é \emph{marginal}, ou seja vale em média sobre
+        os casos e não caso a caso, o que é precisamente a leitura errada que um utilizador faria.
+        Usá-la exigiria explicar esta distinção no produto, e isso é desenho de interação por
+        fazer, não uma questão de implementação.
 \end{enumerate}
 
 \section{O que eu aprendi}
@@ -192,3 +273,11 @@ ao modelo que está implantado. Comecei este trabalho a assumir que o caminho pa
 era acrescentar sofisticação. Acabo-o com três medições a dizer o contrário, e com a convicção de
 que a parte difícil da engenharia de inteligência artificial não é escolher a técnica mais avançada,
 é montar a avaliação que consegue dizer que ela não era precisa.
+
+Esta conclusão não é minha nem é original, e é por isso que me deixa mais descansado do que se
+fosse. \textcite{rudin2019stop} defende que, em decisões de consequência séria, se deve usar
+modelos interpretáveis à partida em vez de explicar modelos opacos depois, e um dos argumentos é
+que a diferença de desempenho que justificaria a opacidade muitas vezes não existe quando se
+verifica. Neste trabalho ela não existiu em nenhuma das três comparações. A diferença é que aqui
+não foi uma posição assumida à cabeça: foi a conclusão a que a medição chegou, três vezes, contra
+o que eu esperava.

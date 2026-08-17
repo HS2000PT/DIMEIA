@@ -24,6 +24,13 @@ O quarto ponto é o que separa uma avaliação de uma demonstração. Todos os n
 produzidos por procedimentos automáticos com semente fixa: correr outra vez sobre os mesmos dados dá
 exatamente os mesmos valores.
 
+Falta explicar uma assimetria, antes que ela pareça um esquecimento. O
+Capítulo~\ref{cap:metodologia} descreve \emph{quatro} técnicas e este capítulo tem \emph{três}
+perguntas de investigação. A técnica que fica de fora é a decomposição de um movimento, e a razão
+por que fica é metodológica e não de conveniência: não existe resposta certa contra a qual a
+comparar. A Secção~\ref{sec:av_decomposicao} trata-a à parte e explica o que, nela, ainda assim se
+pode medir.
+
 \section{Como se lê cada número deste capítulo}
 \label{sec:av_metricas}
 
@@ -150,8 +157,9 @@ precisão. É a média harmónica a fazer o seu trabalho.
 \label{sec:av_patk}
 
 A recuperação de precedentes não devolve uma decisão de sim ou não: devolve uma \textbf{lista
-ordenada}. E o utilizador não lê a lista toda, lê as primeiras. Faz portanto sentido medir apenas o
-topo dessa lista, que é o que a \textbf{precisão@$k$} faz:
+ordenada}. E o utilizador não lê a lista toda, lê as primeiras. Por isso se usa uma medida sensível
+à ordem, como é prática estabelecida em recuperação de informação \autocite{manning2008ir}, e a mais
+direta dessas medidas olha apenas para o topo da lista. É o que a \textbf{precisão@$k$} faz:
 
 \begin{equation}
   \text{Precisão@}k \;=\; \frac{\text{número de casos relevantes entre os } k \text{ primeiros}}{k}
@@ -424,6 +432,17 @@ Este é o primeiro de três casos, neste capítulo, em que uma técnica mais sof
 de forma justa com uma mais simples e perdeu. É um resultado que vale por si: justifica por medição
 a escolha do método simples, em vez de a justificar por preferência.
 
+Vale a pena perceber \emph{porquê}, porque a explicação não é que os métodos sejam maus. Ambos
+definem normalidade pela geometria dos dados: o \emph{Isolation Forest} pela facilidade com que um
+ponto se separa por cortes aleatórios, o \emph{Local Outlier Factor} pela densidade em torno de cada
+ponto \autocite{chandola2009anomaly}. Essa definição é uma vantagem quando há muitas variáveis a
+interagir, e aqui não há: há uma série de retornos por empresa, cuja estrutura relevante é
+\emph{temporal}. O agrupamento de volatilidade \autocite{engle1982arch, bollerslev1986garch} faz com
+que o que conta como invulgar mude ao longo do tempo, e uma janela deslizante acompanha isso por
+construção, enquanto um detetor ajustado ao conjunto todo tem de o inferir. O padrão de resultados
+confirma-o: os dois métodos aprendidos assinalam demasiado, que é o que sucede quando se aplica uma
+noção global de raridade a séries cuja escala varia.
+
 A Figura~\ref{fig:av_detetores} mostra esta comparação em gráfico, e ao lado uma segunda que ainda
 não foi discutida.
 
@@ -466,6 +485,52 @@ restrição dominante.
 O rótulo é aproximado e relativo à volatilidade, e por isso o argumento de peso é o da consistência,
 que não usa rótulo nenhum. E a comparação foi feita sobre estas quinze empresas e este período; nada
 aqui diz o que aconteceria noutro mercado ou noutra década.
+
+\section{A técnica sem pergunta: porque é que a decomposição não tem QI}
+\label{sec:av_decomposicao}
+
+\emph{Se a decomposição responde à segunda pergunta do investidor, porque é que não tem uma pergunta
+de investigação?}
+
+Porque não há nada contra o que a comparar, e é melhor dizê-lo do que fabricar uma métrica.
+
+Repare-se na diferença face às outras três técnicas. Para a deteção existe um critério objetivo de
+``movimento extremo'' e portanto é possível contar acertos e falhas. Para a recuperação existe uma
+noção verificável de relevância e portanto existe precisão@$k$. Para a triagem existe um rótulo
+construído a partir de preços futuros. Em todos estes casos há um alvo externo.
+
+Na decomposição não há. Nenhuma fonte de dados publica qual foi a parcela ``verdadeira'' de mercado
+no movimento da AMD num dado dia, porque essa quantidade não é observável: ela só existe
+\emph{relativamente a um modelo}. Dados os betas, a repartição é uma identidade contabilística, e não
+uma previsão que possa sair certa ou errada. Inventar aqui um número de exatidão seria produzir uma
+métrica com boa aparência e sem referente, que é precisamente o contrário do que este capítulo faz.
+
+Isto não deixa a técnica por avaliar. Deixa-a por avaliar \emph{daquela} maneira, e obriga a
+perguntar o que, nela, é falsificável. Há duas coisas.
+
+\paragraph{Primeira: a repartição discrimina, ou diz sempre o mesmo?}
+Uma decomposição que atribuísse tudo à empresa todos os dias seria inútil mesmo estando
+aritmeticamente correta. Medido sobre as 17 empresas num mesmo dia: o motor identificado foi a
+própria empresa em 8 casos, o mercado em 5 e o setor em 4. A quota do movimento atribuída à empresa
+teve mediana $0.487$, com extremos em $0.064$ e $0.939$. A repartição responde coisas diferentes para
+empresas diferentes no mesmo dia, que é a condição mínima para valer a pena calculá-la.
+
+\paragraph{Segunda: os betas estão bem estimados?}
+Esta é a parte que pode mesmo estar errada, e a medida apropriada é o $R^2$ do ajuste na janela de
+estimação. O $R^2$ mediano foi $0.460$. \textbf{Numa das 17 empresas foi negativo}, o que significa
+que, naquela janela, mercado e setor não explicavam a variação daquela ação melhor do que a sua
+própria média.
+
+\paragraph{O que este resultado não permite concluir.}
+Que a repartição está certa porque as parcelas somam. Elas somam sempre, com diferença nula até à
+precisão da máquina, porque a parcela da empresa é \emph{definida} como o resto. Uma repartição
+inteiramente sem sentido somaria igualmente bem. A soma que fecha é uma verificação de implementação
+e não uma validação de método, e apresentá-la como validação seria o tipo de afirmação que este
+trabalho recusa noutros sítios.
+
+Também não permite concluir que o valor exibido ao utilizador é fiável em todos os dias. No caso de
+$R^2$ negativo não é, e é por isso que a limitação fica registada no
+Capítulo~\ref{cap:conclusoes} em vez de ficar escondida atrás de uma soma exata.
 
 \section{QI2: encontrar casos parecidos}
 \label{sec:av_qi2}
@@ -513,6 +578,17 @@ A Tabela~\ref{tab:av_recuperacao} tem o método usado, uma variante maior, e as 
 triviais. A leitura é direta: escolher ao acaso acerta em $24\%$ dos casos. É esse o chão, e não
 zero, porque há cinco setores e alguns são maiores do que outros. Procurar por palavras em comum sobe para
 $34.6\%$. Comparar significado sobe para $51.4\%$, mais do dobro do acaso.
+
+Convém dizer o que a linha ``palavras em comum'' representa, porque não é um adversário fraco
+montado para perder. A recuperação por sobreposição de termos é a tradição que vai do modelo de
+espaço vetorial \autocite{salton1975vsm} ao BM25 \autocite{robertson2009bm25}, e continua a ser uma
+linha de base forte em recuperação de informação. Que a representação de frases
+\autocite{reimers2019sbert} a supere em $17$ pontos percentuais é, por isso, um resultado com
+conteúdo, e não a comparação com um espantalho.
+
+A variante MPNet fica acima da MiniLM ($0.538$ contra $0.514$), e a escolha do modelo mais pequeno
+para produção foi tomada por custo e não por qualidade. Fica registada como o que é: uma troca
+declarada, cujo preço em precisão está medido nesta tabela.
 
 A Figura~\ref{fig:av_recuperacao} mostra o mesmo por setor e para vários tamanhos de lista.
 
@@ -564,6 +640,14 @@ Figura~\ref{fig:divisao}.
 
 Compararam-se seis modelos, do mais simples ao mais completo. A métrica principal é a
 \textbf{PR-AUC}, apropriada quando as duas classes são desequilibradas.
+
+Dois cuidados de montagem, ambos para que a comparação não favoreça a conclusão que se acabou por
+obter. Primeiro, um dos seis modelos é um conjunto de árvores treinado por reforço do gradiente
+\autocite{friedman2001gbm}, incluído precisamente por ser o aprendiz não linear mais forte
+disponível para dados desta natureza: serve de teto, e se o texto tivesse sinal a extrair era ali
+que apareceria. Segundo, todas as pontuações são convertidas em probabilidades por calibração
+\emph{a posteriori} sobre um bloco de validação reservado \autocite{niculescu2005calibration}, sem o
+que a coluna do Brier não seria comparável entre modelos.
 
 \subsection{Resultado}
 
@@ -750,6 +834,16 @@ empresa e não a raridade do dia, e é essa a razão de ser do \emph{z}-score. O
 \emph{pontuação do modelo} tem exatamente a mesma forma: como a pontuação é quase uma constante por
 empresa, cortá-la num valor fixo ordena empresas, não notícias. Encontrei o meu próprio erro
 repetido numa camada diferente.
+
+\paragraph{Porque é que nada disto disparou um alarme.}
+Convém explicar como um defeito desta dimensão sobrevive meses num sistema com centenas de testes,
+porque a resposta é genérica e não específica deste trabalho. O modelo foi avaliado sobre a
+distribuição do conjunto de treino e implantado atrás de dois filtros que a alteram: só chegam à
+sua entrada manchetes que já passaram relevância e frescura. Nenhum teste podia detetar isto, porque
+cada peça cumpria o seu contrato; o que estava errado era uma suposição sobre a ligação entre elas,
+que ninguém tinha escrito em lado nenhum. É a classe de custo que \textcite{sculley2015debt}
+descrevem como dependências de dados não declaradas, e o sintoma que eles apontam verificou-se aqui
+por inteiro: o sistema continuou a produzir números de aparência perfeitamente normal.
 
 \subsection{E a medição acima não é uma surpresa: é aritmética}
 \label{sec:av_inevitavel}
