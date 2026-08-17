@@ -47,10 +47,66 @@
   (~5 min) e o `fresco: False` que apareceu era o sistema a sinalizar-se correctamente.
   ⚠️ **Dano que causei:** um commit apanhou o `backfill_kb_sbert.jsonl` a ser escrito e pôs
   **84 MB na história do git**, permanentemente. Não reescrevi história publicada.
-  **⏭️ POR FAZER:** mais fontes de notícias (intercalar, menos latência, validação cruzada); o
-  **painel simples** — ⚠️ **o aluno NÃO quer eliminar o painel, quer substituir a v5**, que ele
-  descreve como "excêntrica" e "uma sopa de funcionalidades", por um **espelho do Telegram**.
-  **Portas: 736 testes, ruff limpo, tese 77 pp a 0 erros, congelados intactos.**
+  **(F) FONTES: DE UMA PARA TRÊS, +125%, SEM CHAVES NOVAS.** O aluno ofereceu-se para arranjar
+  chaves; não foram precisas, já tinha cinco e três tinham endpoints de notícias por usar.
+  Sondadas com as chaves reais (`probe_news_sources.py`) e depois medidas a sério
+  (`evaluate_news_sources.py`), com o critério certo: quantas sobrevivem ao **filtro de
+  relevância**, não quantas vêm. Finnhub 432 relevantes/35% precisão/15,8h; Alpha Vantage
+  141/24%/**9,3h** (a mais fresca, ataca o "chegam tarde"); Polygon 429/27%/52,6h mas
+  **418 exclusivas** (mais que o Finnhub) — serve para encher a base, não para alertar.
+  Juntas **970 contra 432**. Rejeitadas por medição: **Tiingo** (403, plano pago) e **GNews**
+  (não é por empresa). Fail-open por fonte.
+  **(G) PAINEL SIMPLES** (`web/simple.html`): duas secções e mais nada — o que foi enviado, e o
+  que **não** foi com a porta e a margem que faltou. Um ficheiro, sem dependências.
+  ⚠️ **A v5 fica em `/` para comparação; o aluno decide.**
+  **(H) GUIÃO DA GRAVAÇÃO** (`tese/GRAVACAO.md`): 2m30, três partes, com o que dizer, o que NÃO
+  fazer, e a tabela do que responder se correr mal. ⚠️ **Não consigo gravar vídeo** — ele grava
+  com `Win+G`.
+  ⚠️ **E preparar isso apanhou um defeito:** `/api/alerts` servia `[:200]` — os **primeiros** 200
+  de um histórico cronológico com 391. A página mostrava como mais recente um alerta de 31/07
+  com o canal em 17/08, e ia envelhecendo em silêncio. Passa a `[-200:]`, +1 teste.
+  **⏭️ POR FAZER:** o estudo com utilizadores (o único com relógio).
+  **Portas: 736 testes, ruff limpo, congelados intactos.**
+- **🔬 SESSÃO 59 (2.ª parte — o aluno disse que sentia que "não estamos a ir a lado nenhum" e
+  pediu a CRÍTICA METODOLÓGICA ao desenho, em vez de recomeçar de um repositório novo):**
+  Dei-lhe a crítica com seis pontos. **Três foram corrigidos ou medidos a seguir, a pedido dele.**
+  **⚠️ (A) O PONTO 1, E É O ACHADO MAIS FORTE DE TODA A TESE: o resultado da QI3 e a escolha de
+  produto estavam confundidos, e fui eu que os confundi.** O modelo implantado tem 9 entradas;
+  7 descrevem a EMPRESA, 1 o DIA, e **uma só** distingue duas manchetes da mesma empresa no mesmo
+  dia: `headline_len`. Com o peso medido (+0,0059, escala 36,9), 80 caracteres movem o logit
+  **+0,0128** contra **0,385** de amplitude entre empresas. Ou seja, os 84% que eu tinha
+  apresentado como **descoberta empírica** são uma **consequência aritmética** — a experiência não
+  podia ter dado outro resultado. Separação que a tese passa a fazer: a conclusão científica da
+  QI3 **mantém-se** (a variante COM texto tem 384 números por manchete e perdeu), mas a variante
+  **implantada** nunca podia triar notícias. **A lição de método:** a PR-AUC é sobre o teste
+  inteiro, onde a variação ENTRE empresas domina; a métrica estava certa e a pergunta que ela faz
+  não era a de que o produto precisava. Corrigido em Cap. 3, 5 e 6.
+  **(B) ABLAÇÃO DA IDENTIDADE, com prova** (`evaluate_triage_identity.py`): uma **tabela de
+  consulta por empresa** (um número fixo, zero informação da notícia) obtém **0,534** contra os
+  **0,538** do implantado — diferença de **0,004** e a MESMA precisão@orçamento. Sem entradas de
+  nível de empresa cai para **0,378**, que é exactamente a prevalência, o chão. Só o comprimento
+  do título: **0,378**, o mesmo chão. **O modelo implantado É uma tabela de consulta.**
+  **(C) LINHA DE BASE PONTA A PONTA** (`evaluate_endtoend_baselines.py`), que faltava por
+  completo: acaso 0,375 · "quem mais se mexeu hoje" **0,489** (grátis em qualquer app) · modelo
+  **0,632** · volatilidade **0,662** · **oráculo 0,968**. O sistema bate a alternativa realista.
+  ⚠️ **E o oráculo é a informação nova:** em quase todos os dias EXISTEM cinco notícias materiais
+  no lote — o sistema não está limitado por matéria-prima, está limitado por não as distinguir.
+  A margem de 0,336 está quase toda em separar DENTRO de cada empresa. **Terceiro caminho
+  independente a dar a mesma conclusão.**
+  ⚠️ **Linha de base NÃO medida, de propósito:** "ler as primeiras 5 do feed" exigiria a hora de
+  publicação; o ficheiro está ordenado por data e empresa, logo mediria ordem **alfabética** — o
+  artefacto que a tese já documenta, desta vez introduzido por mim.
+  **⚠️ (D) PÁGINAS: o corpo tem 63, não 85.** Ele pediu para cortar a secção das métricas "para
+  voltar às 80". Medido: 85 físicas = **63 de corpo** + 9 de front matter + 13 versos em branco do
+  `twoside`. O corpo está ABAIXO do intervalo dele. Não cortei, expliquei, e ele mandou ficar.
+  **⏭️ AS DUAS CRÍTICAS QUE FICAM, e são de desenho:** (1) **não há verdade humana em nenhuma
+  avaliação** — os três rótulos são proxies (percentil, mesmo-setor, limiar de retorno). 150 a 200
+  itens etiquetados ancoravam as três perguntas de uma vez, e cabem em 28 dias. (2) **a unidade de
+  análise é o DIA e o objecto é a NOTÍCIA** — daí vêm os precedentes que colapsam, o rótulo que é
+  de dia, e o modelo não separar duas notícias do mesmo dia. Exigiria preços ao minuto.
+  **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
+  0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
+  736 testes · ruff limpo · congelados e teses longas intactos.**
 - **Sessão nº:** 58 (**a TESE CURTA em PT-PT: revisão crítica, PT-PT a sério, transparência
   máxima, e as métricas explicadas do zero**)
 - **Última atualização:** 2026-08-15
