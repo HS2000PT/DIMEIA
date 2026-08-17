@@ -573,6 +573,7 @@ Repare-se em \textbf{valor absoluto}. O rótulo diz se houve movimento \emph{gra
 sobre \emph{materialidade}, não sobre subir ou descer.
 
 \subsection{O que o modelo vê}
+\label{sec:met_modelo_ve}
 
 O modelo recebe cinco tipos de informação sobre o momento da notícia:
 
@@ -587,6 +588,24 @@ O modelo recebe cinco tipos de informação sobre o momento da notícia:
 E, numa das variantes testadas, também o \emph{embedding} da manchete, os mesmos 384 números da
 Secção~\ref{sec:met_recuperacao}. Comparar a variante com texto e a variante sem texto é
 precisamente o que a \gls{QI}3 pergunta, e a resposta está no Capítulo~\ref{cap:avaliacao}.
+
+\paragraph{Vale a pena olhar para esta lista com atenção, porque ela decide mais do que parece.}
+A que \emph{nível} vive cada uma destas informações? A volatilidade e o momento descrevem a
+empresa e movem-se devagar. O setor é literalmente constante. O movimento do dia é igual para
+todas as notícias do mesmo dia. Sobra uma única entrada que distingue duas manchetes da mesma
+empresa no mesmo dia: \textbf{o comprimento do título}.
+
+\begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
+Na variante \emph{sem} texto, duas notícias diferentes da mesma empresa, no mesmo dia, diferem
+para o modelo apenas no número de caracteres do título. Essa entrada tem um peso pequeno, e por
+isso a pontuação dessa variante é \textbf{quase constante dentro de cada empresa} por
+construção, e não por acidente do treino.
+\end{tcolorbox}
+
+Isto não invalida a comparação que a \gls{QI}3 faz: a variante \emph{com} texto tem $384$ números
+por manchete e é essa que responde à pergunta. Mas fixa desde já o que a variante sem texto pode e
+não pode fazer, e é uma distinção a que o Capítulo~\ref{cap:avaliacao} volta, porque foi ela que
+me escapou quando escolhi o que implantar.
 
 \subsection{Treinar sem fazer batota com o tempo}
 

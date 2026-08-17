@@ -111,18 +111,31 @@ captar, e é uma explicação plausível, embora não confirmada, para o resulta
 ``Relevante'' é aproximado por ``mesmo setor'', e ``importante'' é aproximado por ``houve movimento
 grande''. As duas são objetivas e verificáveis, mas nenhuma é a coisa que realmente se queria medir.
 
-\paragraph{O modelo treinado não separa notícias dentro da mesma empresa.}
-Esta era, até ao fim deste trabalho, a limitação pior compreendida. Sabia-se que o modelo não
-mostrava benefício em produção e dizia-se que estaria ``a mais''. Medir o que ele fazia deu uma
-resposta mais precisa e mais dura: a pontuação varia $0.064$ dentro de cada empresa e $0.385$ entre
-empresas, portanto o limiar que decidia os alertas estava a separar empresas e não manchetes. Em
-$84\%$ das decisões o resultado estava determinado antes de a notícia ser lida
-(Secção~\ref{sec:av_portao}).
+\paragraph{Escolhi para o produto um modelo que não podia fazer o que eu lhe estava a pedir.}
+Esta é a limitação que mais me custa escrever, e é a que aprendi mais tarde.
 
-O sistema foi mudado em consequência: o modelo deixou de decidir e passou a ordenar. Mas a
-limitação de fundo mantém-se e não se resolve com nenhuma regra de decisão, porque a informação que
-distinguiria uma manchete da seguinte não está na pontuação. Resolve-se com melhor representação do
-texto, que é a primeira linha do trabalho futuro.
+O que foi implantado como porta de decisão foi a variante \emph{sem} texto, escolhida por ter a
+melhor PR-AUC entre as que cabiam no contentor. Só que essa variante recebe informação de nível de
+\emph{empresa}, e a única entrada que distingue duas manchetes da mesma empresa no mesmo dia é o
+comprimento do título. A sua pontuação é quase constante dentro de cada empresa \textbf{por
+aritmética}, e não por acidente: em $84\%$ das decisões o resultado estava determinado antes de a
+notícia ser lida (Secção~\ref{sec:av_inevitavel}).
+
+Convém separar bem as duas coisas, porque só uma delas é um erro:
+
+\begin{itemize}
+  \item o \textbf{resultado da \gls{QI}3 mantém-se}. A variante com texto tinha mesmo $384$ números
+        por manchete e perdeu à volatilidade. A pergunta de investigação foi respondida;
+  \item a \textbf{escolha de produto estava errada}, e a razão é de método: escolhi por uma métrica
+        que faz a pergunta ``ordena bem no conjunto todo?'' quando o produto precisava de
+        ``distingue duas notícias da mesma empresa?''. Uma pontuação constante por empresa responde
+        bem à primeira e não responde de todo à segunda.
+\end{itemize}
+
+O sistema foi mudado: o modelo deixou de decidir e passou a ordenar entre empresas, que é o uso
+para o qual tem informação. Mas a limitação de fundo mantém-se, e não se resolve com nenhuma regra
+de decisão nem com mais treino. Resolve-se com entradas que variem com a notícia, e é a primeira
+linha do trabalho futuro.
 
 \paragraph{O atraso é real e não se resolve com engenharia.}
 Entre a notícia ser publicada e o sistema a ver passam, em mediana, cerca de duas horas e meia. A
@@ -145,6 +158,10 @@ Por esta ordem, e as três primeiras respondem diretamente às limitações acim
         dias, quais das notícias que hoje não passam \emph{deviam} passar, e quais das que passam não
         acrescentam nada. Isso daria pela primeira vez um alvo real para otimizar, em vez de se
         estar a afinar constantes contra um proxy.
+  \item \textbf{Dar ao modelo de decisão entradas que variem com a notícia.} É a correção direta da
+        limitação anterior, e é barata: as duas quantidades óbvias já existem no sistema, que são a
+        semelhança do melhor precedente e a concordância de direção entre eles. Ao contrário da
+        volatilidade e do setor, mudam de manchete para manchete.
   \item \textbf{Ler o corpo dos artigos, e não só o título.} É a hipótese mais direta para explicar
         o negativo da QI3, e é testável com o mesmo protocolo já montado.
   \item \textbf{Detetar histórias repetidas por significado.} Hoje a repetição é apanhada por

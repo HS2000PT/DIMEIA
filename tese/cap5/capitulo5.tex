@@ -751,6 +751,46 @@ empresa e não a raridade do dia, e é essa a razão de ser do \emph{z}-score. O
 empresa, cortá-la num valor fixo ordena empresas, não notícias. Encontrei o meu próprio erro
 repetido numa camada diferente.
 
+\subsection{E a medição acima não é uma surpresa: é aritmética}
+\label{sec:av_inevitavel}
+
+Apresentei o resultado anterior como uma descoberta empírica. Ao verificá-lo percebi que é pior do
+que isso, e é preciso dizê-lo com clareza porque muda a leitura.
+
+O modelo implantado é a variante \textbf{sem texto}. Como a Secção~\ref{sec:met_modelo_ve} já
+mostrou, das suas entradas apenas uma distingue duas manchetes da mesma empresa no mesmo dia: o
+comprimento do título. Com o peso que essa entrada tem, oitenta caracteres a mais deslocam a
+pontuação em cerca de $0.013$, contra uma amplitude de $0.385$ entre empresas.
+
+\begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
+A pontuação quase constante dentro de cada empresa não é um acidente do treino nem um defeito dos
+dados. É uma \textbf{consequência aritmética do conjunto de entradas}. O modelo implantado nunca
+foi capaz de ordenar notícias, e nenhum treino o tornaria capaz.
+\end{tcolorbox}
+
+Isto obriga a separar duas coisas que eu tinha juntado, e a separação é a parte honesta:
+
+\begin{itemize}
+  \item \textbf{A conclusão científica da \gls{QI}3 mantém-se.} A variante \emph{com} texto tem
+        $384$ números por manchete, portanto tem mesmo informação sobre a notícia, e ainda assim
+        obteve $0.496$ contra os $0.542$ da volatilidade. É essa comparação que responde à
+        pergunta, e o resultado negativo é dela.
+  \item \textbf{A decisão de produto estava errada por outra razão.} O que foi implantado como
+        porta de decisão foi a variante \emph{sem} texto. Escolhi-a porque tinha a melhor
+        PR-AUC entre as que cabiam no contentor, sem reparar que essa métrica não fazia a
+        pergunta que o produto precisava.
+\end{itemize}
+
+\paragraph{E é aqui que está a lição de método, que vale mais do que o resultado.}
+A PR-AUC é calculada sobre o conjunto de teste inteiro, onde a variação \emph{entre}
+empresas domina. Uma pontuação que ordene bem as empresas e não distinga nada dentro de cada uma
+obtém uma PR-AUC alta. A métrica estava correta e a resposta que ela dá também: só que a
+pergunta que ela faz (\emph{ordena bem no conjunto todo?}) não é a pergunta de que o produto
+precisava (\emph{distingue duas notícias da mesma empresa?}).
+
+Nenhum dos números deste capítulo muda por causa disto. O que muda é o que se pode afirmar com
+eles, e é essa a correção.
+
 \subsection{A correção óbvia, e porque é que não servia}
 
 Se o remédio funcionou para os preços, a tentação é aplicá-lo aqui: em vez de um piso fixo, um piso
