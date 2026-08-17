@@ -27,30 +27,24 @@
 \begin{frame}\titlepage\end{frame}
 
 % ══ 1. O PROBLEMA ═══════════════════════════════════════════════════════════
-\begin{frame}{Uma pessoa abre a aplicação e vê isto}
+\begin{frame}{Uma pessoa abre a aplicação, vê isto, e fica com três perguntas}
 \begin{center}
 \begin{tikzpicture}
-  \node[draw, rounded corners=6pt, minimum width=5cm, minimum height=2.6cm, fill=black!4] (t) {};
-  \node[font=\Large\bfseries] at ([yshift=6mm]t.center) {NVDA};
-  \node[font=\Huge\bfseries, text=red!65!black] at ([yshift=-6mm]t.center) {$-4.1\%$};
+  \node[draw, rounded corners=5pt, minimum width=4.2cm, minimum height=1.5cm, fill=black!4] (t) {};
+  \node[font=\small\bfseries] at ([yshift=4.5mm]t.center) {NVDA};
+  \node[font=\LARGE\bfseries, text=red!65!black] at ([yshift=-3.5mm]t.center) {$-4.1\%$};
 \end{tikzpicture}
 \end{center}
-\vspace{2mm}
-\begin{center}
-\large E fica com \textbf{três perguntas}, sempre estas e sempre por esta ordem.
-\end{center}
-\end{frame}
-
-\begin{frame}{As três perguntas}
+\vspace{1mm}
 \begin{enumerate}
   \item[\textbf{1.}] \textbf{Isto é invulgar?}\\
-        \footnotesize 4\% numa empresa calma é muito. Noutra, é terça-feira.\\[3mm]
+        \footnotesize 4\% numa empresa calma é muito. Noutra, é terça-feira.\\[2mm]
   \item[\textbf{2.}] \textbf{Foi a empresa, ou foi o mercado?}\\
-        \footnotesize Se caiu tudo, a história é outra.\\[3mm]
+        \footnotesize Se caiu tudo, a história é outra.\\[2mm]
   \item[\textbf{3.}] \textbf{Já aconteceu antes, e o que se seguiu?}\\
         \footnotesize Houve dias parecidos? O que fez o preço depois?
 \end{enumerate}
-\vspace{3mm}
+\vspace{2mm}
 \begin{center}
 \textbf{As aplicações gratuitas não respondem a nenhuma delas.}
 \end{center}
@@ -274,7 +268,7 @@ As mais recentes & $0.126$ \\
 
 \begin{itemize}
   \small
-  \item Sobre o corpus completo (80 mil notícias): \textbf{0,595}
+  \item Sobre o corpus completo (80 mil notícias): \textbf{0.595}
   \item \textbf{Capta tema, não direção}, e é por isso que os casos aparecem um a um
 \end{itemize}
 \end{frame}
@@ -318,7 +312,7 @@ e por nome da empresa.
 \end{center}
 \vspace{3mm}
 \footnotesize
-Ao acaso a sério dá $0.379$ $\Rightarrow$ o ganho é de \textbf{1,67$\times$}, não de quase quatro.\\
+Ao acaso a sério dá $0.379$ $\Rightarrow$ o ganho é de \textbf{1.67$\times$}, não de quase quatro.\\
 E uma tabela de \textbf{13 constantes} dá $0.662$: bate o modelo treinado.
 \end{frame}
 
