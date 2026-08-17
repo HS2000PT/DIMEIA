@@ -377,44 +377,8 @@ orçamento e o sistema \emph{implantava} uma de limiar.
 \end{frame}
 
 % ══ 6. O QUE APRENDI ════════════════════════════════════════════════════════
-\begin{frame}{O que aprendi}
-\begin{enumerate}
-  \item \textbf{A linha de base é tão importante como o modelo.}\\
-        \footnotesize O resultado mais útil do trabalho veio de olhar para aquilo contra o qual eu
-        estava a comparar.\\[3mm]
-  \item \textbf{O sítio onde se põe um modelo importa tanto como o modelo.}\\
-        \footnotesize O meu funcionava sozinho e deixou de servir atrás de dois filtros simples, que
-        já faziam o trabalho.\\[3mm]
-  \item \textbf{A técnica mais simples ganhou três vezes.}\\
-        \footnotesize Ao Isolation Forest e ao modelo que lê o texto, que são casos de
-        \emph{simples contra complexo}. E uma tabela de constantes ganhou ao modelo implantado,
-        que é um caso diferente: ali o modelo até era interpretável, e perdeu por \textbf{falta de
-        informação}, não por excesso de complexidade.
-\end{enumerate}
-\vspace{3mm}
-\begin{center}
-\small A parte difícil não foi escolher a técnica mais avançada.\\
-Foi montar a avaliação \textbf{capaz de dizer que ela não era precisa}.
-\end{center}
-\end{frame}
-
-\begin{frame}{Limitações, ditas antes de me perguntarem}
-\begin{itemize}
-  \item \textbf{Não fiz estudo com utilizadores.} A fidelidade das explicações está garantida por
-        construção; a \emph{utilidade} não foi medida, e não a afirmo.
-  \item \textbf{Os critérios de alerta ainda não estão bem calibrados}, e noto-o a usar. Medido:
-        havia notícia captada em $88.5\%$ dos dias invulgares, e é um \emph{limite superior},
-        porque pergunta se existia \emph{uma}, não se chegou \emph{a certa}.
-  \item \textbf{Só manchetes}, não o corpo dos artigos.
-  \item \textbf{O atraso é da fonte, não da infraestrutura}: $\approx$2.5\,h até detetar,
-        1\,s até entregar.
-  \item \textbf{Nada volta a ser treinado.} A base de casos cresce sozinha, mas os pesos do
-        modelo são os que foram aprendidos uma vez. A deriva é medida e não é corrigida.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{O que faria a seguir, e porquê essa ordem}
-Nenhum destes itens é uma ideia solta: \textbf{cada um fecha uma limitação que foi medida}.
+\begin{frame}{Limitações, ditas antes de me perguntarem, e o que as fecha}
+\textbf{Cada limitação foi medida}, e a coluna da direita é o trabalho que ela pede.
 \vspace{3mm}
 \begin{center}
 \begin{tikzpicture}[font=\scriptsize, >={Stealth[length=2mm]},
@@ -442,9 +406,9 @@ Nenhum destes itens é uma ideia solta: \textbf{cada um fecha uma limitação qu
 \end{tikzpicture}
 \end{center}
 \vspace{2mm}
-\begin{center}
-\small As duas que custam \textbf{calendário} e não computação são as primeiras da lista.
-\end{center}
+{\footnotesize \textbf{Mais duas:} o atraso é da \emph{fonte} e não da infraestrutura
+($\approx$2.5\,h até detetar, 1\,s até entregar); e \textbf{nada volta a ser treinado}, porque a
+base de casos cresce sozinha, os pesos não, e a deriva é medida e não corrigida.}
 \end{frame}
 
 % ══ 7. DEMONSTRAÇÃO ═════════════════════════════════════════════════════════
@@ -464,14 +428,26 @@ Nenhum destes itens é uma ideia solta: \textbf{cada um fecha uma limitação qu
 %    Plano B se não houver rede: esta imagem já mostra o essencial.
 \end{frame}
 
-\begin{frame}[plain]
-\vspace{1.5cm}
+% O que aprendi vive aqui, e nao num frame proprio: fica no ecra durante as perguntas,
+% que e melhor sitio do que um slide que passa de relance.
+\begin{frame}[plain]{O que aprendi}
+\begin{enumerate}
+  \item \textbf{A linha de base é tão importante como o modelo.}\\
+        \footnotesize O resultado mais útil do trabalho veio de olhar para aquilo contra o qual eu
+        estava a comparar.\\[2mm]
+  \item \textbf{O sítio onde se põe um modelo importa tanto como o modelo.}\\
+        \footnotesize O meu funcionava sozinho e deixou de servir atrás de dois filtros simples,
+        que já faziam o trabalho.\\[2mm]
+  \item \textbf{A técnica mais simples ganhou três vezes.}\\
+        \footnotesize Ao Isolation Forest e ao modelo que lê o texto, que são \emph{simples contra
+        complexo}. E uma tabela de constantes ganhou ao modelo implantado, que é um caso
+        diferente: ali o modelo até era interpretável, e perdeu por \textbf{falta de informação}.
+\end{enumerate}
+\vspace{4mm}
 \begin{center}
-{\Large \textbf{Obrigado}}\\[6mm]
-{\large Perguntas?}\\[10mm]
-\footnotesize
-Duas respostas de ``sim'', uma de ``não'', e um erro meu encontrado e corrigido.\\
-\textbf{É isso que uma avaliação honesta produz.}
+\small A parte difícil não foi escolher a técnica mais avançada.\\
+Foi montar a avaliação \textbf{capaz de dizer que ela não era precisa}.\\[6mm]
+{\Large \textbf{Obrigado.}\quad Perguntas?}
 \end{center}
 \end{frame}
 

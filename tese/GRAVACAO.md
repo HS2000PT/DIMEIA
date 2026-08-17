@@ -8,10 +8,14 @@ Para os últimos minutos da defesa. **Alvo: 2 minutos e 30 segundos.** Não mais
 > exactamente o que este trabalho recusa fazer. Uma gravação de um dia real é honesta e cabe no
 > tempo. **Diz isto em voz alta no início**, em vez de deixar a pergunta no ar.
 
-**Onde é que isto entra.** A gravação é o *slide* **20 de 21**, logo a seguir a "O que faria a
-seguir". Nessa altura o júri já viu as quatro técnicas e os três resultados. A demonstração não
+**Onde é que isto entra.** A gravação é o *slide* **18 de 19**, entre as limitações e o slide
+final. Nessa altura o júri já viu as quatro técnicas e os três resultados. A demonstração não
 serve para repetir nada disso: serve para mostrar que **existe mesmo**, e que o que a tese
 descreve é o que sai do outro lado.
+
+Repara que o slide que se segue à gravação é o **último**, e é o que fica no ecrã durante as
+perguntas. Não o passes à pressa: as três lições que lá estão são a tua última palavra, e ficam
+à vista enquanto o júri pergunta.
 
 ---
 
@@ -168,7 +172,7 @@ Para a gravação.
 
 ## Uma nota sobre o tempo
 
-Vinte minutos para vinte e um *slides* é apertado, portanto conta com **menos de um minuto por
+Vinte minutos para dezanove *slides* é apertado, portanto conta com **menos de um minuto por
 *slide*** e não pares em nenhum.
 
 Se a apresentação se alongar, **corta pela seguinte ordem**:
