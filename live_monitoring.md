@@ -4,8 +4,8 @@
 > **Não editar à mão.** O loop: o runner regista decisões → dias depois este script
 > rotula-as com o resultado REAL (mesmo rótulo do treino) → métricas ao vivo → retreino.
 
-- **Gerado:** 2026-08-15 21:23 UTC · rótulo |retorno anormal vs SPY em (d, d+3]| ≥ 0.02 (o primário do treino).
-- **Decisões:** 5302 registadas · 723 únicas · 696 maturadas · 27 ainda pendentes · 0 sem preços.
+- **Gerado:** 2026-08-17 21:19 UTC · rótulo |retorno anormal vs SPY em (d, d+3]| ≥ 0.02 (o primário do treino).
+- **Decisões:** 19247 registadas · 820 únicas · 696 maturadas · 124 ainda pendentes · 0 sem preços.
 
 | Métrica ao vivo | Valor |
 |---|---|
