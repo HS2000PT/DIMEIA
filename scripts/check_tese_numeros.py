@@ -1,0 +1,137 @@
+"""Cada numero da tese curta conferido contra o ficheiro de avaliacao que o produz.
+
+Porque e que isto existe. Os resultados desta dissertacao vivem em `docs/evaluation/*.md`,
+gerados por scripts. A tese cita-os a mao. Se um script for re-corrido e um valor mudar, a
+tese passa a afirmar um numero que a evidencia ja nao sustenta, e nada falha: o LaTeX compila,
+os testes passam, e o documento fica errado em silencio. Ja aconteceu neste projecto.
+
+Este verificador fecha essa porta. Falha com codigo 1 quando um numero citado nao aparece no
+ficheiro que devia produzi-lo.
+
+    python scripts/check_tese_numeros.py
+"""
+
+from __future__ import annotations
+
+import pathlib
+import re
+import sys
+
+RAIZ = pathlib.Path(__file__).resolve().parents[1]
+AVAL = RAIZ / "docs" / "evaluation"
+TESE = RAIZ / "tese"
+
+# (numero como aparece na tese, ficheiro que o produz, o que e)
+# Um numero pode aparecer com mais ou menos casas do que o gerador escreve; por isso a
+# comparacao e feita por VALOR e nao por cadeia de caracteres.
+MANIFESTO: list[tuple[str, str, str]] = [
+    # QI1 -- detecao
+    ("0.015", "evaluation_anomaly.md", "amplitude da taxa de disparo, z-score"),
+    ("0.344", "evaluation_anomaly.md", "amplitude da taxa de disparo, limiar fixo"),
+    ("0.516", "evaluation_anomaly.md", "F1 do z-score contra o rotulo aproximado"),
+    ("0.218", "evaluation_anomaly.md", "F1 do limiar fixo"),
+    ("0.530", "evaluation_anomaly_ext.md", "F1 do z-score no protocolo dos detetores"),
+    ("0.269", "evaluation_anomaly_ext.md", "F1 do Isolation Forest"),
+    ("0.280", "evaluation_anomaly_ext.md", "F1 do Local Outlier Factor"),
+    ("0.407", "evaluation_anomaly.md", "precisao do z-score"),
+    # QI2 -- recuperacao
+    ("0.514", "evaluation_results.md", "precisao@5, MiniLM"),
+    ("0.538", "evaluation_results.md", "precisao@5, MPNet"),
+    ("0.346", "evaluation_results.md", "precisao@5, palavras em comum"),
+    ("0.240", "evaluation_results.md", "precisao@5, acaso"),
+    ("0.126", "evaluation_results.md", "precisao@5, recencia"),
+    ("0.595", "evaluation_retrieval_fnspid.md", "precisao@5 a escala"),
+    ("0.708", "evaluation_retrieval_fnspid.md", "concordancia de direcao"),
+    ("0.688", "evaluation_retrieval_fnspid.md", "chao de acaso da concordancia"),
+    # QI3 -- triagem
+    ("0.542", "evaluation_triage.md", "PR-AUC, so volatilidade"),
+    ("0.538", "evaluation_triage.md", "PR-AUC, so contexto"),
+    ("0.496", "evaluation_triage.md", "PR-AUC, contexto + texto"),
+    ("0.439", "evaluation_triage.md", "PR-AUC, so texto"),
+    ("0.469", "evaluation_triage.md", "PR-AUC, gradient boosting"),
+    ("0.378", "evaluation_triage.md", "prevalencia, o chao da PR-AUC"),
+    ("0.622", "evaluation_triage.md", "Brier de alertar sempre"),
+    # chaos do orcamento (a correccao do artefacto alfabetico)
+    ("0.3790", "evaluation_budget_baselines.md", "chao aleatorio real"),
+    ("0.6624", "evaluation_budget_baselines.md", "prior de volatilidade por ticker"),
+    ("0.6317", "evaluation_budget_baselines.md", "modelo implantado"),
+    # decomposicao (tecnica 2)
+    ("2.0143", "evaluation_decomposition.md", "beta de mercado da AMD, encolhido"),
+    ("1.5888", "evaluation_decomposition.md", "beta de setor da AMD, encolhido"),
+    ("0.6577", "evaluation_decomposition.md", "R2 do ajuste da AMD"),
+    ("0.460", "evaluation_decomposition.md", "R2 mediano sobre a watchlist"),
+    ("0.487", "evaluation_decomposition.md", "quota especifica mediana"),
+    # producao
+    ("88.5", "evaluation_news_coverage.md", "cobertura de noticias em dias invulgares"),
+    ("36.8", "evaluation_precedent_independence.md", "alertas com menos dias do que casos"),
+    ("11.3", "evaluation_precedent_independence.md", "alertas assentes num unico dia"),
+]
+
+FICHEIROS_TESE = [
+    "frontmatter/frontmatter.tex",
+    *[f"cap{i}/capitulo{i}.tex" for i in range(1, 7)],
+    "apendices/apendiceA.tex",
+]
+
+
+def valores(texto: str) -> set[float]:
+    """Todos os numeros decimais do texto, como valores."""
+    saida = set()
+    for m in re.finditer(r"[-+]?\d+(?:\.\d+)?", texto):
+        try:
+            saida.add(float(m.group(0)))
+        except ValueError:
+            continue
+    return saida
+
+
+def main() -> int:
+    corpo = "\n".join(
+        (TESE / f).read_text(encoding="utf-8", errors="replace")
+        for f in FICHEIROS_TESE
+        if (TESE / f).exists()
+    )
+    citados = valores(corpo)
+
+    cache: dict[str, set[float]] = {}
+    falhas, ausentes, ok = [], [], 0
+
+    for num, ficheiro, desc in MANIFESTO:
+        alvo = float(num)
+        p = AVAL / ficheiro
+        if not p.exists():
+            ausentes.append((num, ficheiro, desc))
+            continue
+        if ficheiro not in cache:
+            cache[ficheiro] = valores(p.read_text(encoding="utf-8", errors="replace"))
+
+        # A tese cita-o? (se nao, e um numero do manifesto que ja nao esta na tese)
+        na_tese = any(abs(v - alvo) < 5e-4 for v in citados)
+        # O ficheiro de avaliacao produz esse valor?
+        na_fonte = any(abs(v - alvo) < 5e-4 for v in cache[ficheiro])
+
+        if na_tese and na_fonte:
+            ok += 1
+        elif na_tese and not na_fonte:
+            falhas.append((num, ficheiro, desc, "citado na tese, AUSENTE da fonte"))
+        elif not na_tese and na_fonte:
+            falhas.append((num, ficheiro, desc, "existe na fonte, ja NAO citado na tese"))
+        else:
+            falhas.append((num, ficheiro, desc, "ausente dos dois"))
+
+    print(f"{ok} de {len(MANIFESTO)} numeros conferidos contra a fonte que os produz.")
+    for num, ficheiro, desc, porque in falhas:
+        print(f"  FALHA  {num:>8s}  {desc}")
+        print(f"         {porque}  ({ficheiro})")
+    for num, ficheiro, desc in ausentes:
+        print(f"  SEM FONTE  {num:>8s}  {desc}  -> {ficheiro} nao existe")
+
+    if falhas or ausentes:
+        print("\nUm numero que a tese afirma tem de existir no ficheiro que o produz.")
+        return 1
+    print("Todos batem certo.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
