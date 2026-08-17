@@ -64,10 +64,11 @@ terminais profissionais respondem, mas a um custo fora do alcance de quem invest
 
 Esta dissertação apresenta o \textbf{InvestiGator}, um sistema de alertas financeiros construído
 sobre fontes de dados gratuitas, que responde às três perguntas e mostra sempre como chegou à
-resposta. O trabalho assenta em três técnicas: deteção de anomalias por \emph{z}-score deslizante,
-recuperação de precedentes por semelhança semântica com medição do desfeito observado, e um modelo
-supervisionado de triagem, treinado sobre um conjunto de dados próprio, para decidir que notícias
-merecem interromper alguém.
+resposta. O trabalho assenta em quatro técnicas: deteção de anomalias por \emph{z}-score deslizante;
+decomposição do movimento em mercado, setor e empresa, com encolhimento do beta pela precisão da
+estimativa; recuperação de precedentes por semelhança semântica, com medição do desfecho observado;
+e um modelo supervisionado de triagem, treinado sobre um conjunto de dados próprio, para decidir
+que notícias merecem interromper alguém.
 
 Cada componente foi avaliado contra linhas de base transparentes, e os resultados são reportados tal
 como se revelaram. A deteção normalizada pela volatilidade dispara de forma muito mais consistente
@@ -87,9 +88,10 @@ answer, at a subscription cost beyond someone investing their savings.
 
 This dissertation presents \textbf{InvestiGator}, a financial alerting system built on free data
 sources that answers those three questions and always shows how it reached the answer. The work
-rests on three techniques: anomaly detection with a rolling \emph{z}-score, precedent retrieval by
-semantic similarity with measurement of the observed outcome, and a supervised triage model, trained
-on a purpose-built dataset, to decide which news deserves interrupting someone.
+rests on four techniques: anomaly detection with a rolling \emph{z}-score; decomposition of a move
+into market, sector and company, with the beta shrunk by the precision of its estimate; precedent
+retrieval by semantic similarity, with measurement of the observed outcome; and a supervised triage
+model, trained on a purpose-built dataset, to decide which news deserves interrupting someone.
 
 Each component was evaluated against transparent baselines, and the results are reported exactly as
 they fell. Volatility-normalised detection fires far more consistently across companies than a fixed

@@ -1,41 +1,47 @@
-% Capítulo 3 — Metodologia: as três técnicas (orçamento: ~16 pp)
+% Capítulo 3 — Metodologia: as quatro técnicas (orçamento: ~20 pp)
 % É o capítulo que tem de ser defensável de cor. Explicar devagar, com desenhos,
 % e fechar cada técnica com um resumo de três frases.
 
 \chapter{Metodologia}
 \label{cap:metodologia}
 
-\section{As três decisões}
+\section{As quatro decisões}
 \label{sec:met_tres}
 
 \emph{O que é que o sistema tem mesmo de decidir?}
 
-Tudo o que este trabalho faz cabe em três decisões. Estão na Figura~\ref{fig:tres_decisoes} e são
-sempre as mesmas, por esta ordem.
+Tudo o que este trabalho faz cabe em quatro decisões, na Figura~\ref{fig:tres_decisoes}. As três
+primeiras são, uma a uma, as três perguntas do Capítulo~\ref{cap:introducao}; a quarta não é uma
+pergunta do investidor, mas do sistema, e existe porque responder às três não obriga a interromper
+ninguém.
 
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[
   font=\small, >={Stealth[length=2.4mm]},
-  cx/.style={draw, rounded corners, align=center, text width=3.5cm, minimum height=1.7cm,
-             fill=black!4},
-  num/.style={font=\bfseries\large, text=black!45},
+  cx/.style={draw, rounded corners, align=center, text width=2.85cm, minimum height=2.0cm,
+             inner sep=4pt, fill=black!4},
+  num/.style={font=\bfseries\small, text=black!45},
 ]
   \node[cx] (a) {\textbf{1. É invulgar?}\\[3pt]
-    \footnotesize comparar o dia de hoje\\ \footnotesize com o normal \emph{desta} empresa};
-  \node[cx, right=1.1cm of a] (b) {\textbf{2. Já aconteceu?}\\[3pt]
-    \footnotesize procurar notícias passadas\\ \footnotesize parecidas, e medir o que\\
-    \footnotesize se seguiu};
-  \node[cx, right=1.1cm of b] (c) {\textbf{3. Merece avisar?}\\[3pt]
+    \footnotesize comparar hoje com o\\ \footnotesize normal \emph{desta} empresa};
+  \node[cx, right=0.6cm of a] (b) {\textbf{2. Empresa ou}\\\textbf{mercado?}\\[3pt]
+    \footnotesize repartir o movimento\\ \footnotesize pelas suas fontes};
+  \node[cx, right=0.6cm of b] (c) {\textbf{3. Já aconteceu?}\\[3pt]
+    \footnotesize procurar casos passados\\ \footnotesize e medir o que se seguiu};
+  \node[cx, right=0.6cm of c] (d) {\textbf{4. Merece avisar?}\\[3pt]
     \footnotesize decidir se isto justifica\\ \footnotesize interromper alguém};
   \node[num, above=1mm of a] {estatística};
-  \node[num, above=1mm of b] {significado};
-  \node[num, above=1mm of c] {aprendizagem};
+  \node[num, above=1mm of b] {regressão};
+  \node[num, above=1mm of c] {significado};
+  \node[num, above=1mm of d] {aprendizagem};
   \draw[->, thick, black!50] (a) -- (b);
   \draw[->, thick, black!50] (b) -- (c);
+  \draw[->, thick, black!50] (c) -- (d);
 \end{tikzpicture}
-\caption[As três decisões do sistema]{As três decisões, e a família de técnicas que responde a cada
-uma. Cada secção deste capítulo trata de uma coluna.}
+\caption[As quatro decisões do sistema]{As quatro decisões, e a família de técnicas que responde a
+cada uma. As três primeiras são as três perguntas do Capítulo~\ref{cap:introducao}. Cada secção
+deste capítulo trata de uma coluna.}
 \label{fig:tres_decisoes}
 \end{figure}
 
@@ -172,7 +178,7 @@ eles.
 
 Uma dissertação que diz ``dados de 2018 a 2023'' obriga o leitor a acreditar. A
 Tabela~\ref{tab:met_periodos} diz o intervalo \textbf{lido dos próprios ficheiros}, e distingue as
-duas coisas que é fácil confundir: o material \emph{histórico}, com que se treina e avalia, e o
+dois conjuntos que é fácil confundir: o material \emph{histórico}, com que se treina e avalia, e o
 registo do sistema \emph{a funcionar}, que é muito mais recente e muito mais curto.
 
 \begin{table}[ht]
@@ -237,7 +243,7 @@ A solução é velha e boa, e é a forma mais comum de detetar anomalias em sér
 \autocite{chandola2009anomaly}: em vez de comparar com um número fixo, comparo com o comportamento
 recente da própria ação.
 
-Olho para os últimos vinte dias e pergunto duas coisas: \emph{quanto é que esta ação costuma oscilar?}
+Olho para os últimos vinte dias e faço duas perguntas: \emph{quanto é que esta ação costuma oscilar?}
 e \emph{quão longe do costume ficou hoje?} A resposta chama-se \textbf{\emph{z}-score}:
 
 \begin{equation}
@@ -295,6 +301,25 @@ não entra no cálculo da sua própria norma}. Se entrasse, um dia muito extremo
 inflacionaria o desvio-padrão, e o próprio dia pareceria menos invulgar do que foi. O sistema
 estaria a usar informação que, no momento da decisão, ainda não devia contar.
 
+No código, esta separação é uma única fatia, e é ela que a garante. O Excerto~\ref{lst:zscore}
+mostra o cálculo completo:
+
+\begin{lstlisting}[label=lst:zscore, caption={O cálculo do \emph{z}-score. A fatia \texttt{[-window-1:-1]} exclui o
+próprio dia da janela que define a sua norma.},label={lst:zscore}]
+r = pd.Series(list(returns), dtype="float64").dropna().reset_index(drop=True)
+
+recent = r.iloc[-window - 1 : -1]   # a janela ANTES do ultimo (sem lookahead)
+last   = float(r.iloc[-1])
+
+mu    = float(recent.mean())
+sigma = float(recent.std(ddof=1))
+z     = (last - mu) / sigma if sigma > 0 else 0.0
+\end{lstlisting}
+
+O \texttt{-1} final é a garantia inteira. Sem ele, o dia entraria no cálculo da sua própria média e
+do seu próprio desvio-padrão, e um dia extremo diluir-se-ia a si mesmo. A última linha é o caso da
+ação parada, discutido acima: quando o desvio-padrão é zero, devolve-se zero em vez de dividir.
+
 Esta regra tem um nome, \textbf{evitar \emph{lookahead}}, e atravessa todo o trabalho. Volto a
 ela na Secção~\ref{sec:met_avaliacao}, onde mostro como é imposta por um teste automático em vez de
 ser apenas prometida.
@@ -327,7 +352,7 @@ Um movimento de quase 20\% num dia é evidente para qualquer pessoa. O que a tab
 que aquela ação costumava mexer naquelas semanas. É essa frase que o sistema consegue mostrar ao
 utilizador, e é a diferença entre avisar e explicar.
 
-Há ainda um caso pequeno que vale a pena resolver bem: se uma ação não se mexeu \emph{nada} durante
+Há ainda um caso limite que convém resolver bem: se uma ação não se moveu \emph{nada} durante
 vinte dias, o desvio-padrão é zero e a divisão da Equação~\ref{eq:zscore} não existe. Nesse caso o
 sistema devolve $z = 0$ em vez de rebentar. Uma ação parada é descrita como não tendo nada de
 especial, que é exatamente o que se passa.
@@ -338,7 +363,140 @@ distância em desvios-padrão. Assim, o mesmo número significa a mesma coisa nu
 volátil. O dia julgado nunca entra no cálculo da sua própria norma.
 \end{tcolorbox}
 
-\section{Técnica 2: encontrar casos parecidos}
+\section{Técnica 2: separar a empresa do mercado}
+\label{sec:met_decomposicao}
+
+\subsection{O problema, em palavras}
+
+A técnica anterior responde a \emph{quanto}. Não responde a \emph{de quem}. E essa é, de longe, a
+pergunta que uma pessoa faz a seguir: se a minha ação caiu 4\%, caiu porque alguma coisa aconteceu
+\emph{a esta empresa}, ou porque caiu tudo?
+
+As duas situações pedem reações opostas e são indistinguíveis no ecrã de qualquer aplicação
+gratuita, que mostra apenas o número final. Uma queda que acompanhou o mercado inteiro não é uma
+história sobre a empresa; uma queda de 4\% num dia em que o mercado subiu é uma história muito
+específica. O número mostrado é o mesmo nos dois casos.
+
+\subsection{A ideia: um movimento tem parcelas}
+
+A ideia é repartir o movimento observado em três parcelas que somam ao total:
+
+\begin{equation}
+r_{\text{empresa}} \;=\; \underbrace{\beta_m \, r_m}_{\text{mercado}}
+\;+\; \underbrace{\beta_s \, \tilde r_s}_{\text{setor}}
+\;+\; \underbrace{\varepsilon}_{\text{específico da empresa}}
+\label{eq:decomposicao}
+\end{equation}
+
+onde $r_m$ é o retorno do índice de mercado do dia, $\tilde r_s$ o do setor, e $\beta_m$ e $\beta_s$
+medem a sensibilidade histórica desta ação a cada um. A terceira parcela é definida como o resto,
+ou seja tudo o que mercado e setor não explicam, e é por isso que a soma fecha sempre. Este ponto
+volta a ser importante mais abaixo, porque é a origem da limitação principal da técnica.
+
+Há três detalhes que decidem se isto funciona ou se produz números com boa aparência e sem
+significado.
+
+\paragraph{Primeiro: o setor tem de ser ortogonalizado.}
+Um fundo de índice setorial e o índice de mercado movem-se quase juntos. Se as duas variáveis
+entrarem na regressão como estão, os coeficientes ficam instáveis e a repartição perde sentido, um
+efeito conhecido de colinearidade. Por isso o fator de setor usado não é o retorno do setor, mas o
+que dele \emph{sobra} depois de descontado o mercado, ou seja o resíduo de uma primeira regressão do
+setor sobre o mercado. É esse resíduo que $\tilde r_s$ representa na Equação~\ref{eq:decomposicao}.
+
+\paragraph{Segundo: os betas só podem ver o passado.}
+A janela de estimação termina no dia anterior ao dia que se está a explicar. Esta é a mesma
+disciplina anti-antecipação da Secção~\ref{sec:met_zscore}, e aqui é ainda mais fácil de violar sem
+dar por isso, porque a tentação de incluir o próprio dia na regressão é grande e melhoraria o ajuste.
+
+\paragraph{Terceiro: um beta estimado em vinte dias é ruidoso, e isso trata-se.}
+Este foi o ponto onde a primeira versão desta técnica estava errada, e vale a pena registar porquê.
+A estimativa bruta de $\beta_m$ pode sair absurda numa janela agitada. A correção inicial foi cortar
+a régua num limite fixo, e recair sobre $\beta_m = 1$ acima dele. Isso é exatamente o tipo de
+constante por justificar que este trabalho corrige noutros sítios, e tem uma consequência pior do
+que parece: num dia em que a estimativa dispara, o sistema deixava silenciosamente de descontar o
+mercado e atribuía o movimento \emph{inteiro} à empresa, que é a conclusão mais forte que sabe tirar.
+
+A solução vem da literatura de finanças e está descrita na Secção~\ref{sec:ctx_evento}: encolher a
+estimativa na direção de um valor de referência, com um peso determinado pela \emph{imprecisão} da
+própria estimativa \autocite{vasicek1973beta},
+
+\begin{equation}
+\beta \;=\; w\,\hat\beta \;+\; (1-w)\,\beta_{\text{ref}},
+\qquad
+w \;=\; \frac{\sigma^2_{\text{ref}}}{\sigma^2_{\text{ref}} + \mathrm{SE}^2(\hat\beta)} .
+\label{eq:vasicek}
+\end{equation}
+
+Quando o ajuste é limpo, o erro-padrão é pequeno, $w$ aproxima-se de 1 e a estimativa fica
+praticamente intacta. Quando a janela é ruidosa, o erro-padrão cresce, $w$ aproxima-se de 0 e o beta
+recai sobre a referência. O ajuste é gradual e não tudo ou nada. A alternativa mais simples, um peso
+fixo na tradição de \textcite{blume1971risk}, foi testada e rejeitada por uma razão concreta: encolhe
+com a mesma força uma estimativa boa e uma má, e num caso construído em que uma ação se move
+exatamente ao dobro do mercado, um peso fixo de dois terços devolve $1.67$ onde a verdade é $2.0$.
+
+\subsection{Um caso real, com todos os passos}
+
+A Tabela~\ref{tab:met_decomposicao} mostra a decomposição de um dia real da AMD, regenerável pelo
+comando do Apêndice~\ref{ap:reprodutibilidade}.
+
+\begin{table}[ht]
+\caption[A decomposição de um movimento real]{Um dia da AMD, repartido. Os betas foram estimados
+sobre os 20 dias anteriores e encolhidos pela Equação~\ref{eq:vasicek}. A soma das três parcelas
+reproduz o movimento observado exatamente.}
+\label{tab:met_decomposicao}
+\centering
+\small
+\begin{tabular}{L{0.42\textwidth} r}
+\toprule
+\tabhead{Passo} & \tabhead{Valor} \\
+\midrule
+Movimento observado no dia & $+6.2944\%$ \\
+\midrule
+$\beta_m$ estimado e encolhido & $2.0143$ \\
+$\beta_s$ estimado e encolhido & $1.5888$ \\
+$R^2$ do ajuste na janela & $0.6577$ \\
+Dias usados na estimação & $20$ \\
+\midrule
+Componente de mercado, $\beta_m r_m$ & $-0.3992\%$ \\
+Componente de setor, $\beta_s \tilde r_s$ & $-0.0362\%$ \\
+Componente específica da empresa, $\varepsilon$ & $+6.7298\%$ \\
+\midrule
+Soma das três parcelas & $+6.2944\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Este caso foi escolhido por ser instrutivo, e não por ser favorável. A AMD subiu 6.29\% num dia em
+que \textbf{tanto o mercado como o setor puxaram para baixo}. O sistema não diz apenas ``foi
+específico da empresa''; diz também que subiu \emph{apesar} de o contexto ter empurrado no sentido
+contrário, o que é uma afirmação mais forte e mais informativa do que a percentagem sozinha. O beta
+de mercado de $2.01$ diz ainda que esta é uma ação que historicamente amplifica o mercado, e é por
+isso que uma queda de 2\% no índice não significa a mesma coisa para a AMD e para uma ação defensiva.
+
+No mesmo dia, e sobre as 17 empresas vigiadas, a resposta variou: em 8 casos o motor foi a própria
+empresa, em 5 foi o mercado e em 4 foi o setor. A quota do movimento atribuída à empresa teve mediana
+$0.487$, com extremos em $0.064$ e $0.939$. Isto é um único dia e não é uma estimativa estável, mas
+estabelece o mínimo necessário para a pergunta valer a pena: a resposta não é a mesma para todas as
+empresas.
+
+\subsection{O que esta técnica não garante}
+
+Há uma armadilha nesta técnica que é fácil não ver, e convém dizê-la antes que alguém a encontre.
+
+As três parcelas somam sempre o movimento observado, com diferença nula até à precisão da máquina.
+Isso é tentador de apresentar como validação, e não é: a soma fecha \emph{por construção}, porque a
+parcela da empresa é definida como o resto. Uma repartição inteiramente sem sentido também somaria.
+
+A medida que diz alguma coisa sobre a qualidade da repartição é o $R^2$ do ajuste na janela de
+estimação. Sobre as 17 empresas, o $R^2$ mediano foi $0.460$, e \textbf{numa delas foi negativo}, o
+que significa que naquela janela o mercado e o setor não explicavam a variação daquela ação melhor
+do que a simples média. Nesses casos a repartição continua a somar, continua a ser exibida, e deve
+ler-se como indicativa.
+
+Esta é uma limitação real e fica registada como tal, em vez de ser escondida atrás de uma soma que
+fecha. O Capítulo~\ref{cap:conclusoes} regressa a ela.
+
+\section{Técnica 3: encontrar casos parecidos}
 \label{sec:met_recuperacao}
 
 \emph{Como é que o computador percebe que duas notícias falam da mesma coisa?}
@@ -363,7 +521,7 @@ O que é preciso é comparar \textbf{significado}, não letras.
 
 \subsection{A ideia: transformar frases em pontos}
 
-É aqui que entra a única peça de aprendizagem profunda que o sistema usa, e vale a pena explicá-la com
+É aqui que entra a única peça de aprendizagem profunda que o sistema usa, e merece ser explicada com
 calma porque é a que soa mais complicada e não é.
 
 Um \textbf{modelo de embeddings de frase} \autocite{reimers2019sbert} é um modelo já treinado que
@@ -400,6 +558,7 @@ de assuntos diferentes ficam longe. O desenho tem duas dimensões para se poder 
 \end{figure}
 
 \subsection{Medir a distância: o cosseno}
+\label{sec:met_cosseno}
 
 Tendo duas frases como pontos, falta medir se estão perto.
 
@@ -429,7 +588,7 @@ A fórmula geral do cosseno entre dois vetores $\mathbf{u}$ e $\mathbf{v}$ é:
 Em cima multiplicam-se as duas listas número a número e soma-se tudo. Em baixo dividem-se pelos
 comprimentos dos dois vetores, e é essa divisão que faz o resultado depender só da direção.
 
-\paragraph{E há aqui uma simplificação que vale a pena conhecer.}
+\paragraph{E há aqui uma simplificação de consequências práticas.}
 O modelo devolve os vetores já com comprimento $1$. Isso não é um detalhe de arrumação: quando os
 dois comprimentos valem $1$, o denominador da Equação~\ref{eq:cosseno} vale $1 \times 1 = 1$ e a
 fórmula reduz-se à soma de cima. Comparar duas manchetes passa a ser \textbf{multiplicar e somar},
@@ -525,7 +684,7 @@ Duas decisões de detalhe, ambas com consequência:
         atribui à notícia a parte do movimento que já tinha acontecido antes de ela ser lida.
 \end{enumerate}
 
-E vale a pena dizer aquilo que isto \textbf{não} é. Medir o que aconteceu a seguir a notícias
+Convém dizer também aquilo que isto \textbf{não} é. Medir o que aconteceu a seguir a notícias
 passadas não é prever o que vai acontecer agora. É por isso que o sistema mostra sempre os casos
 \emph{um a um}, com a data e o valor de cada um, em vez de resumir tudo a uma média. Uma média
 esconde que os casos podem ter ido em sentidos opostos.
@@ -537,7 +696,7 @@ o que aproxima frases parecidas mesmo com palavras diferentes. Para cada caso pa
 preço fez $1$, $3$ e $5$ dias depois: uma medição, não uma previsão.
 \end{tcolorbox}
 
-\section{Técnica 3: decidir o que merece um alerta}
+\section{Técnica 4: decidir o que merece um alerta}
 \label{sec:met_triagem}
 
 \emph{Já sei que algo é invulgar. Devo mesmo interromper alguém?}
@@ -609,7 +768,7 @@ me escapou quando escolhi o que implantar.
 
 \subsection{Treinar sem fazer batota com o tempo}
 
-Esta é a parte onde é mais fácil enganar-se a si próprio, por isso vale a pena o desenho da
+Esta é a parte onde é mais fácil enganar-se a si próprio, e daí o desenho da
 Figura~\ref{fig:divisao}.
 
 \begin{figure}[ht]
@@ -706,11 +865,11 @@ $\mathbf{0.392}$. É este o número que chega ao ecrã, arredondado: \textbf{39\
 \end{tabular}
 \end{table}
 
-Há duas coisas neste percurso que merecem atenção, e são as que tornam o exemplo útil.
+Há dois pormenores neste percurso que merecem atenção, e são eles que tornam o exemplo útil.
 
 \paragraph{A calibração não é uma formalidade.}
 A pontuação bruta era $0.507$, praticamente um lançamento de moeda. Depois de calibrada passa a
-$0.392$. São leituras diferentes: a primeira diria a um utilizador que a coisa está em aberto, e a
+$0.392$. São leituras diferentes: a primeira diria a um utilizador que o desfecho está em aberto, e a
 segunda diz que é mais provável não acontecer nada de especial. \textbf{A ordenação entre notícias
 não muda} com esta transformação, porque ela é sempre crescente; o que muda é o \emph{significado}
 do número mostrado, e é esse número que a pessoa lê.
@@ -738,7 +897,7 @@ Três compromissos, assumidos \emph{antes} de correr as experiências.
 
 \paragraph{Primeiro: comparar sempre com o mais simples.}
 Um número sozinho não diz nada. Dizer que a recuperação acerta em metade dos casos só significa
-alguma coisa quando se sabe o que acertaria uma alternativa trivial. Por isso cada técnica é
+alguma coisa quando se sabe o que acertaria uma alternativa trivial. Cada técnica é, portanto,
 comparada com \textbf{linhas de base}: uma regra fixa, uma escolha ao acaso, a notícia mais
 recente. Se a técnica sofisticada não ganhar, isso é o resultado, e é o que fica escrito.
 
@@ -748,6 +907,37 @@ automático que faz o seguinte: pega num exemplo, \textbf{altera artificialmente
 calcular. Depois exige duas condições ao mesmo tempo: que as \emph{features} fiquem exatamente
 iguais (porque descrevem o passado) e que o \emph{rótulo} mude (porque descreve o futuro). Se
 alguma informação do futuro se tivesse infiltrado nas features, o teste falha.
+
+Esta é a garantia mais importante de todo o trabalho e a mais fácil de prometer sem cumprir, por
+isso o Excerto~\ref{lst:lookahead} mostra-a tal como está escrita.
+
+\begin{lstlisting}[label=lst:lookahead, caption={O teste que impede o futuro de entrar nas \emph{features}. As duas
+séries partilham o passado e divergem apenas depois do dia do evento.},label={lst:lookahead}]
+def test_anti_lookahead_mutar_o_futuro_nao_muda_features():
+    base = [100.0 + i * 0.1 for i in range(30)]
+    futuro_a = base + [200.0, 300.0, 400.0]   # futuros absurdos A
+    futuro_b = base + [50.0, 10.0, 1.0]       # futuros absurdos B
+    d = len(base) - 1                         # o evento e o ultimo dia comum
+
+    fa = event_features(_serie(futuro_a), event_idx=d)
+    fb = event_features(_serie(futuro_b), event_idx=d)
+
+    assert fa == fb   # features identicas => o futuro nao vaza
+
+def test_mutar_o_futuro_muda_o_ROTULO_mas_nao_as_features():
+    sobe  = _serie([100.0] * 25 + [100, 110, 120, 130])  # movimento enorme
+    plano = _serie([100.0] * 25 + [100, 100, 100, 100])  # nada acontece
+
+    assert event_features(sobe, 25) == event_features(plano, 25)
+    assert abnormal_label(sobe,  mercado, 25, 0.02, 3) == 1
+    assert abnormal_label(plano, mercado, 25, 0.02, 3) == 0
+\end{lstlisting}
+
+O segundo teste é o que fecha o argumento, e é o que distingue esta verificação de uma verificação
+inútil. Exigir apenas que as \emph{features} não mudem seria satisfeito por um sistema que
+ignorasse os dados por completo. Exigir, ao mesmo tempo, que o \textbf{rótulo mude} obriga a que a
+diferença entre as duas séries seja real e detetável, e é essa combinação que prova que a fronteira
+está no sítio certo.
 
 \paragraph{Terceiro: reportar o que sair.}
 O critério de sucesso de cada experiência foi escrito antes de a correr. Onde o resultado contrariou

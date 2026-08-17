@@ -9,11 +9,11 @@
 
 \emph{Como é que as peças se ligam?}
 
-O Capítulo~\ref{cap:metodologia} explicou três técnicas isoladas. Este mostra-as a trabalhar juntas.
+O Capítulo~\ref{cap:metodologia} explicou quatro técnicas isoladas. Este mostra-as a trabalhar juntas.
 
 O sistema chama-se \textbf{InvestiGator} e tem cinco partes, na Figura~\ref{fig:arquitetura}:
 \textbf{deteção}, \textbf{recuperação}, \textbf{triagem}, \textbf{explicação} e \textbf{entrega}.
-Cada uma faz uma coisa só, e passa o resultado à seguinte.
+Cada uma tem uma responsabilidade única, e passa o resultado à seguinte.
 
 \begin{figure}[ht]
 \centering
@@ -50,12 +50,12 @@ Cada uma faz uma coisa só, e passa o resultado à seguinte.
   \draw[->] (exp.east) -- ++(0.35,0) |- (web.west);
 \end{tikzpicture}
 \caption[Arquitetura do sistema]{As cinco partes do InvestiGator. À esquerda, de onde vêm os dados;
-ao centro, as três técnicas do capítulo anterior; à direita, as duas formas de o utilizador receber
+ao centro, as quatro técnicas do capítulo anterior; à direita, as duas formas de o utilizador receber
 o resultado.}
 \label{fig:arquitetura}
 \end{figure}
 
-Há uma regra de desenho que atravessa tudo isto e que vale a pena dizer já: \textbf{a explicação é
+Há uma regra de desenho que atravessa tudo isto e que convém enunciar já: \textbf{a explicação é
 montada a partir dos objetos que foram calculados}, e nunca escrita à parte. Se o detetor calculou
 um $z$ de $+7.61$, é esse número que aparece no texto. Não há um sítio onde alguém escreva a frase e
 outro sítio onde alguém calcule o valor, porque, se houvesse, os dois podiam divergir sem
@@ -81,7 +81,7 @@ faz parte de o poder explicar.
 \paragraph{Notícias: por empresa, e filtradas à entrada.}
 As notícias vêm de uma API gratuita, empresa a empresa. O que chega é muito e é sujo: listas
 automáticas de ``os dez maiores movimentos do dia'', textos que mencionam a empresa de passagem,
-comunicados de escritórios de advogados. Antes de qualquer coisa, um filtro exige que a notícia
+comunicados de escritórios de advogados. Antes de tudo o resto, um filtro exige que a notícia
 \textbf{nomeie mesmo a empresa} e rejeita padrões conhecidos de texto automático.
 
 \paragraph{Histórico: um conjunto de dados público, alinhado com preços.}
@@ -174,7 +174,7 @@ seria indistinguível de um dia sem mercado.
 \subsection{Porquê três fontes de notícias, e não a melhor}
 \label{sec:sis_fontes}
 
-O sistema começou com uma fonte só. A pergunta natural é se acrescentar mais vale a pena, e a
+O sistema começou com uma fonte só. A pergunta natural é se acrescentar mais compensa, e a
 resposta não é ``mais é melhor'': é preciso medir, porque cada fonte custa pedidos e uma fonte
 generosa e mal etiquetada não acrescenta nada.
 
@@ -185,7 +185,7 @@ três dias.
 
 \begin{table}[ht]
 \caption[As três fontes, medidas]{O que cada fonte gratuita entrega depois do filtro de
-relevância. A última coluna é a que decide se vale a pena somar: quantas manchetes cada uma traz
+relevância. A última coluna é a que decide se compensa somar: quantas manchetes cada uma traz
 que \emph{nenhuma} das outras traz.}
 \label{tab:sis_fontes}
 \centering
@@ -329,7 +329,7 @@ importante que há para saber: que casos parecidos deram resultados diferentes.
 O segundo gatilho é mais curto. Todos os dias, depois do fecho, o sistema calcula o \emph{z}-score de
 cada empresa da lista, como na Secção~\ref{sec:met_zscore}. Se algum passar o limiar, há alerta.
 
-Duas coisas foram acrescentadas depois de o sistema estar a funcionar, e ambas por observação:
+Duas capacidades foram acrescentadas depois de o sistema estar a funcionar, e ambas por observação:
 
 \begin{description}
   \item[Níveis de severidade.] Um $z$ de $1.6$ e um $z$ de $3.2$ não são a mesma coisa, e o texto do
@@ -403,7 +403,7 @@ Tabela~\ref{tab:sis_portas} responde, incluindo quando a resposta é ``foi escol
 
 \begin{table}[ht]
 \caption[As portas e as suas constantes]{As cinco portas, o valor usado, e de onde vem. Distinguir
-``derivado'' de ``escolhido'' é uma questão de honestidade: as duas coisas defendem-se de maneiras
+``derivado'' de ``escolhido'' é uma questão de honestidade: os dois casos defendem-se de maneiras
 diferentes.}
 \label{tab:sis_portas}
 \centering
@@ -589,7 +589,7 @@ $16.6$ e $11.9$ megabytes. Publicá-los de sessenta em sessenta segundos seriam 
 \emph{gigabytes} por dia de tráfego, o que é obviamente insustentável e é, muito provavelmente, a
 razão pela qual ninguém os tinha publicado.
 
-A solução separa as duas coisas que estavam a ser confundidas: \textbf{semear} no arranque, para
+A solução separa os dois problemas que estavam a ser confundidos: \textbf{semear} no arranque, para
 o contentor não começar do zero, e \textbf{publicar com um intervalo mínimo} de trinta minutos, em
 vez de a cada ciclo. O que se perde fica dito: até trinta minutos de capturas, se o contentor
 reiniciar nesse intervalo. É uma perda pequena e recuperável, porque a mesma manchete volta a ser
@@ -640,7 +640,7 @@ O efeito no produto é o que se esperaria de multiplicar a base por vinte: os pr
 alerta mostra passaram a ser da própria empresa e sobre o mesmo assunto, com semelhanças acima de
 $0.7$ onde antes apareciam casos de outra empresa a $0.46$.
 
-\paragraph{E o \textbf{GitHub Actions} não desapareceu.} Continua a fazer três coisas: corre os
+\paragraph{E o \textbf{GitHub Actions} não desapareceu.} Continua a desempenhar três funções: corre os
 testes a cada alteração de código (\gls{CI}), compila esta dissertação, e mantém um agendador de
 reserva que dispara nos mesmos horários. Se o processo permanente parar, o sistema degrada para o
 comportamento da primeira versão em vez de ficar mudo, e o mecanismo que evita alertas repetidos

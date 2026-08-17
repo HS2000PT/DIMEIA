@@ -118,7 +118,7 @@ O $F_1$ combina precisão e cobertura numa só medida através da \textbf{média
   \label{eq:f1}
 \end{equation}
 
-A escolha da média harmónica, e não da média habitual, é deliberada e vale a pena perceber porquê. A
+A escolha da média harmónica, e não da média habitual, é deliberada, e a razão é instrutiva. A
 média aritmética de $0.122$ e $0.992$ é $0.557$, um valor que faria a regra do limiar fixo
 parecer razoável. A média harmónica \textbf{puxa para baixo em direção ao pior dos dois}, e por isso
 só dá um valor alto quando \emph{ambos} são altos. É uma medida que não deixa comprar cobertura à
@@ -537,7 +537,7 @@ acidente desse corpus, a mesma medição foi repetida sobre o conjunto históric
 
 \subsection{O que isto não permite concluir}
 
-Duas coisas, e a segunda é importante para o produto.
+Duas observações, e a segunda tem consequências para o produto.
 
 Primeiro, ``mesmo setor'' não é o mesmo que ``relacionado''. É uma aproximação, e o número deve ser
 lido como tal.
@@ -546,7 +546,7 @@ Segundo, e mais interessante: a recuperação capta \textbf{tema}, não \textbf{
 podem ser sobre o mesmo assunto e o preço ter ido para lados opostos, que foi exatamente o que
 aconteceu no exemplo do Capítulo~\ref{cap:sistema}. Medindo a concordância de direção entre a
 notícia de consulta e os casos recuperados, obtém-se $0.708$ contra um chão de acaso de $0.688$: quase
-nada. Por isso o sistema mostra os casos um a um e nunca resume a uma média, e por isso o texto do
+nada. Daí que o sistema mostre os casos um a um e nunca os resuma a uma média, e daí também que o texto do
 alerta diz explicitamente que se trata de casos semelhantes no \emph{tema}.
 
 \section{QI3: decidir o que merece um alerta}
@@ -606,7 +606,7 @@ trouxesse informação que os preços não tinham. Sobre este corpus, não traz.
 
 \subsection{Não será um acidente do meu setup?}
 
-Foi a primeira coisa que fui verificar, por três caminhos.
+Foi a primeira hipótese que fui verificar, por três caminhos.
 
 \paragraph{Será que o modelo de texto estava mal afinado?} Repetiu-se a comparação dando ao texto as
 melhores condições possíveis: regularização afinada, redução de dimensionalidade do bloco de texto, e
@@ -823,7 +823,7 @@ obtém exatamente o chão não aprendeu coisa nenhuma.
 O comprimento do título, sozinho, também dá $0.378$. É o mesmo chão. A única informação por
 manchete que o modelo implantado recebia é indistinguível de não receber informação nenhuma.
 
-Isto obriga a separar duas coisas que eu tinha juntado, e a separação é a parte honesta:
+Isto obriga a separar duas afirmações que eu tinha juntado, e a separação é a parte honesta:
 
 \begin{itemize}
   \item \textbf{A conclusão científica da \gls{QI}3 mantém-se.} A variante \emph{com} texto tem
@@ -876,7 +876,7 @@ sustenta: entre empresas ele tem informação, e é exatamente isso que a precis
 orçamento mede. O controlo de volume passou para um \textbf{orçamento diário} de cinco alertas,
 servido por ordem de materialidade.
 
-E isto fecha uma divergência que só se viu ao olhar para as duas coisas ao mesmo tempo: \textbf{esta
+E isto fecha uma divergência que só se torna visível ao confrontar as duas: \textbf{esta
 dissertação avaliava uma política de orçamento e o sistema implantava uma política de limiar}. Eram
 políticas diferentes, portanto o número reportado descrevia um sistema que não era o que estava no
 ar. Passaram a ser a mesma.
@@ -1015,11 +1015,11 @@ Oráculo & sabe as respostas: o melhor possível & $0.968$ \\
 \end{tabular}
 \end{table}
 
-Três coisas saem daqui, e a última é a mais útil.
+Três leituras saem daqui, e a última é a mais útil.
 
 \paragraph{O sistema bate a alternativa realista.}
 Mostrar notícias de quem mais se mexeu hoje é o que qualquer aplicação de bolsa já faz, sem custo
-nenhum, e obtém $0.489$. O sistema obtém $0.632$. Portanto o trabalho todo acrescenta alguma coisa
+nenhum, e obtém $0.489$. O sistema obtém $0.632$. O trabalho acrescenta, portanto, valor mensurável
 sobre o que a pessoa já tinha, e é a primeira vez neste documento que isso é medido ao nível do
 conjunto e não de uma peça.
 

@@ -1,16 +1,102 @@
-% Capítulo 2 — Contexto (orçamento: ~8 pp)
+% Capítulo 2 — Contexto (orçamento: ~20 pp)
 % O que já existe, e porque é que não chega. A matriz das três perguntas é o instrumento central.
+% Regra de escrita: sem travessões em prosa, decimais com ponto, PT-PT.
 
 \chapter{Contexto}
 \label{cap:contexto}
+
+Este capítulo responde a uma pergunta simples de enunciar e difícil de responder com honestidade:
+\emph{o que é que já existe, e porque é que não chega?} A resposta organiza-se em três movimentos.
+Primeiro caracteriza-se a pessoa a quem o sistema se dirige, porque as limitações dela são o que
+define o problema. Depois examinam-se as ferramentas que hoje ocupam este espaço, com um critério
+fixo em vez de uma descrição geral. Por fim percorrem-se, uma a uma, as áreas técnicas de onde vêm
+as peças que o Capítulo~\ref{cap:metodologia} vai usar, para que fique claro que nenhuma delas é
+invenção deste trabalho e que a contribuição está na escolha, na integração e na avaliação crítica.
+
+\section{Quem investe, e porque é que a atenção é o problema}
+\label{sec:ctx_investidor}
+
+\emph{Quem é esta pessoa, e o que é que a literatura já sabe sobre a forma como ela decide?}
+
+A escala foi dada no Capítulo~\ref{cap:introducao}: a maior parte das famílias americanas detém
+ações \autocite{gallup2025stock}, num mercado que vale mais de 62 biliões de dólares
+\autocite{sifma2025factbook}. Interessa agora a segunda metade da caracterização, que não é de
+dimensão mas de comportamento, e que explica porque é que o problema deste trabalho existe.
+
+Este público é numeroso e é ativo. Mesmo durante a queda de março de 2020, os investidores
+particulares de uma plataforma sem comissões reforçaram posições em vez de fugirem
+\autocite{welch2022robinhood}, o que contraria a caricatura do pequeno investidor que só reage em
+pânico. São pessoas que decidem, com regularidade, e que por isso beneficiam de melhor informação.
+
+O que a literatura de finanças comportamentais estabelece é que essas decisões se afastam de forma
+sistemática, e não aleatória, do ideal racional \autocite{barberis2003behavioral}. Duas dessas
+regularidades importam diretamente para o desenho de um sistema de alertas.
+
+A primeira é a \textbf{aversão à perda}: sentimos as perdas com mais intensidade do que os ganhos
+equivalentes \autocite{kahneman1979prospect}. Daí que uma pessoa fique particularmente sensível a
+más notícias, e daí que um alerta que chegue a tempo e venha explicado tenha valor real em vez de
+valor decorativo.
+
+A segunda é mais desconfortável, e é a que fundamenta este trabalho inteiro.
+\textcite{barber2008glitters} mostram que os investidores particulares são compradores líquidos de
+ações que \emph{chamam a atenção}, entendendo-se por isso as que aparecem nas notícias, as que
+apresentam volume invulgar e as que registam retornos extremos num único dia. O mecanismo que os
+autores propõem é o do problema de procura: perante milhares de escolhas possíveis, a pessoa não
+avalia todas, e recai sobre aquilo que lhe saltou à vista. A atenção é de tal modo central neste
+processo que chega a ser mensurável através do volume de pesquisas na internet
+\autocite{da2011attention}.
+
+Repare-se no que isto significa quando se junta às três perguntas do Capítulo~\ref{cap:introducao}.
+Os três sinais que capturam a atenção do investidor, ou seja a notícia, o volume invulgar e o
+movimento extremo do dia, são exatamente os sinais que este sistema deteta. A diferença é o que
+acontece a seguir. Hoje, esses sinais chegam à pessoa em bruto, e o que a literatura documenta é que
+ela compra a seguir. O que este trabalho tenta é interpor, entre o sinal e a decisão, o contexto que
+permite julgá-lo: se aquilo é invulgar para aquela empresa, se foi a empresa ou o mercado, e o que
+se seguiu em casos parecidos. A Figura~\ref{fig:ctx_atencao} resume esta cadeia.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small, >={Stealth[length=2.4mm]},
+  s/.style={draw, rounded corners, align=center, text width=2.55cm, minimum height=1.5cm,
+            inner sep=4pt, fill=black!3},
+  d/.style={draw, rounded corners, align=center, text width=2.55cm, minimum height=1.5cm,
+            inner sep=4pt, fill=black!8, very thick},
+]
+  \node[s] (n)  {\textbf{Notícia}};
+  \node[s, below=0.35cm of n] (v) {\textbf{Volume}\\\footnotesize invulgar};
+  \node[s, below=0.35cm of v] (m) {\textbf{Movimento}\\\footnotesize extremo do dia};
+
+  \node[d, right=2.1cm of v] (ctx) {\textbf{Contexto}\\\footnotesize as três perguntas};
+  \node[s, right=1.9cm of ctx] (dec) {\textbf{Decisão}\\\footnotesize da pessoa};
+
+  \draw[->, thick, black!45] (n) -- (ctx);
+  \draw[->, thick, black!45] (v) -- (ctx);
+  \draw[->, thick, black!45] (m) -- (ctx);
+  \draw[->, thick, black!45] (ctx) -- (dec);
+
+  \draw[->, dashed, black!55] (n.east) to[out=20, in=150] node[above, midway, font=\scriptsize,
+        align=center, yshift=1pt] {hoje: sem intermediário} (dec.north west);
+\end{tikzpicture}
+\caption[Da atenção à decisão]{Os três sinais que a literatura identifica como captadores de atenção
+\autocite{barber2008glitters} são os mesmos que este sistema deteta. A seta a tracejado é o caminho
+que existe hoje, em que o sinal chega em bruto. A caixa central é o que este trabalho acrescenta.}
+\label{fig:ctx_atencao}
+\end{figure}
+
+Uma última nota de enquadramento. A adoção de inteligência artificial no setor financeiro deixou de
+ser experimental e passou a ser generalizada, tanto do lado das instituições como do lado dos
+produtos de retalho \autocite{ccaf2026aifs}. Isso significa que a pergunta relevante já não é se
+estas técnicas vão chegar ao investidor particular, porque estão a chegar, mas sim em que condições
+de transparência é que chegam.
 
 \section{O que existe hoje para quem investe pouco}
 \label{sec:ctx_ferramentas}
 
 \emph{Ninguém resolveu isto antes?}
 
-Resolveram, em parte, e de maneiras diferentes. Vale a pena olhar para o que existe com um critério
-fixo, em vez de o descrever em geral. O critério deste trabalho são as três perguntas do
+Resolveram, em parte, e de maneiras diferentes. Convém olhar para o que existe com um critério fixo,
+em vez de o descrever em geral. O critério deste trabalho são as três perguntas do
 Capítulo~\ref{cap:introducao}, e a Tabela~\ref{tab:ctx_matriz} usa-as para pontuar as alternativas.
 
 \begin{table}[ht]
@@ -41,16 +127,32 @@ de todas}. Não há aqui um problema científico por resolver: há um problema d
 respostas são conhecidas; estão atrás de uma subscrição que a pessoa de quem este trabalho fala não
 vai pagar.
 
-Vale a pena olhar para duas linhas em particular.
+Convém olhar para três linhas em particular, porque cada uma falha por uma razão diferente e essas
+razões informam decisões de desenho tomadas mais à frente.
 
 A \textbf{app da corretora} é onde a maioria das pessoas realmente olha. Mostra a percentagem do dia
 e um gráfico. Não diz se aquilo é muito para aquela ação, não separa a empresa do mercado, e não tem
-memória. A pergunta ``isto é normal?'' fica sem resposta precisamente no sítio onde é feita.
+memória. A pergunta ``isto é normal?'' fica sem resposta precisamente no sítio onde é feita. Os
+alertas de preço que estas aplicações oferecem partilham a mesma limitação de forma mais aguda:
+disparam quando um limiar fixo é atravessado, o que ignora a volatilidade própria de cada ação, e
+por isso disparam constantemente nas empresas agitadas e quase nunca nas calmas. Além disso dizem
+apenas \emph{que} um nível foi ultrapassado, nunca \emph{porquê}. Esta observação não é acessória: é
+a razão pela qual o Capítulo~\ref{cap:metodologia} usa uma medida relativa à norma de cada empresa em
+vez de um limiar absoluto, e o Capítulo~\ref{cap:avaliacao} mede a diferença que isso faz.
+
+As \textbf{apps de sentimento} pontuam notícias como positivas ou negativas e mostram o resultado.
+Dão matéria-prima para a primeira pergunta, mas param aí, e o Capítulo~\ref{cap:avaliacao} mostra,
+com medição própria, que o tema de uma notícia e a direção do movimento que se lhe segue são coisas
+distintas com mais frequência do que a intuição sugere.
 
 Os \emph{robo-advisors} \autocite{dacunto2019robo} respondem a outra pergunta: como distribuir
-dinheiro por uma carteira. É uma pergunta legítima e não é esta. Além disso, aconselhar sobre
-investimentos tem obrigações regulatórias que este trabalho evita por desenho (ver
-Secção~\ref{sec:ctx_escolhas}).
+dinheiro por uma carteira. É uma pergunta legítima e não é esta. A literatura reconhece-lhes
+benefícios genuínos, nomeadamente a melhoria da diversificação e a contenção de enviesamentos
+comportamentais \autocite{dacunto2019robo, cardillo2024robo}, mas o modo de funcionamento é o
+oposto do deste trabalho: eles \emph{agem por} o investidor, com lógica proprietária, ao passo que
+aqui se procura explicar e deixar a decisão à pessoa. Acresce que aconselhar sobre investimentos tem
+obrigações regulatórias que este trabalho evita por desenho, como se detalha na
+Secção~\ref{sec:ctx_escolhas}.
 
 \section{Os produtos que fazem exatamente esta pergunta}
 \label{sec:ctx_produtos}
@@ -95,34 +197,78 @@ plausível. O problema é o que está por trás desse texto. Ele não tem:
 
 E há uma diferença mais funda, que é a razão pela qual este trabalho não é um invólucro à volta de um
 modelo de linguagem. Modelos grandes especializados em finanças existem
-\autocite{wu2023bloomberggpt} e são impressionantes. Mas a saída deles é uma afirmação, e a
-literatura sobre confiança em sistemas automáticos mostra que o problema não é as pessoas confiarem
-de menos: é confiarem \emph{na medida errada}, o que exige que o sistema mostre em que se apoia
-\autocite{lee2004trust}.
+\autocite{wu2023bloomberggpt} e são impressionantes. Mas a saída deles é uma afirmação que se lê bem
+e não se consegue conferir, o que é precisamente a falha de interpretabilidade contra a qual a
+literatura da área avisa \autocite{lipton2018mythos, rudin2019stop}. A literatura sobre confiança em
+sistemas automáticos acrescenta que o problema não é as pessoas confiarem de menos: é confiarem
+\emph{na medida errada}, o que exige que o sistema mostre em que se apoia \autocite{lee2004trust}.
 
 Por isso, neste trabalho, a linguagem nunca produz factos. Os números vêm dos motores que os
-calcularam, e o texto é montado a partir deles, como se descreveu na
+calcularam, e o texto é montado a partir deles, como se descreve na
 Secção~\ref{sec:sis_explicacao}.
 
-\section{As peças técnicas que este trabalho usa}
-\label{sec:ctx_tecnicas}
+\section{Detetar o que é invulgar}
+\label{sec:ctx_anomalias}
 
-\emph{De onde vêm as três técnicas do capítulo seguinte?}
+\emph{Como é que se decide, de forma defensável, que um dia foi diferente dos outros?}
 
-Nenhuma delas é invenção minha. Todas têm uma literatura, e a contribuição está em escolhê-las,
-integrá-las e avaliá-las, e não em inventá-las.
+A deteção de anomalias é uma área estabelecida, com uma taxonomia consolidada que separa os métodos
+pela forma como definem normalidade \autocite{chandola2009anomaly, pang2021deep}. Para o problema
+deste trabalho interessam três famílias, resumidas na Tabela~\ref{tab:ctx_anomalias}.
 
-\paragraph{Detetar o que é invulgar.}
-A deteção de anomalias é uma área grande \autocite{chandola2009anomaly}. Para séries temporais
-financeiras há duas famílias: as \textbf{estatísticas}, que comparam o presente com uma norma
-recente, e as \textbf{aprendidas}, que tentam descobrir sozinhas o que é raro, como o
-\emph{Isolation Forest} \autocite{liu2008isolation} ou o \emph{Local Outlier Factor}
-\autocite{breunig2000lof}. Este trabalho usa a primeira família e compara-a com a segunda no
-Capítulo~\ref{cap:avaliacao}.
+\begin{table}[ht]
+\caption[Famílias de deteção de anomalias]{As três famílias relevantes para séries temporais
+financeiras, e o que cada uma exige em troca do que oferece.}
+\label{tab:ctx_anomalias}
+\centering
+\small
+\begin{tabular}{L{0.20\textwidth} L{0.30\textwidth} L{0.36\textwidth}}
+\toprule
+\tabhead{Família} & \tabhead{Como define normalidade} & \tabhead{Custo e benefício} \\
+\midrule
+Estatística \newline (limiar sobre a norma recente)
+  & Distribuição local dos retornos, estimada numa janela deslizante
+  & A explicação é o próprio cálculo; supõe uma distribuição localmente estável \\
+\addlinespace
+Aprendida, não supervisionada \newline \autocite{liu2008isolation, breunig2000lof}
+  & Estrutura geométrica dos dados: pontos fáceis de isolar ou pouco densos face aos vizinhos
+  & Não precisa de rótulos e capta padrões multivariados; a decisão deixa de ser legível em uma frase \\
+\addlinespace
+Profunda \newline \autocite{pang2021deep}
+  & Um modelo de normalidade aprendido por uma rede
+  & Maior capacidade; exige mais dados e afasta-se do requisito de explicabilidade \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\paragraph{Representar texto: três gerações.}
-Comparar notícias por significado depende de como se representa o texto, e essa representação passou
-por três gerações, na Figura~\ref{fig:ctx_geracoes}.
+Há uma restrição prática que condiciona toda esta escolha e que convém enunciar cedo: em finanças a
+deteção é dominada por métodos \emph{não supervisionados}, porque anomalias rotuladas são escassas
+\autocite{ahmed2016financial}. Não existe um conjunto de dados em que alguém tenha marcado, dia a
+dia, quais os movimentos que mereciam um alerta. Essa ausência não é um detalhe de implementação:
+molda a forma como o Capítulo~\ref{cap:avaliacao} pode avaliar este componente, e é a razão pela
+qual a avaliação se apoia num critério definido a partir dos próprios dados em vez de um julgamento
+humano.
+
+A família estatística assenta numa suposição, a de que a distribuição dos retornos é localmente
+estável, e essa suposição merece ser confrontada em vez de escondida. A literatura de volatilidade
+mostra que os mercados exibem \emph{agrupamento de volatilidade}, ou seja a tendência de os períodos
+calmos e os agitados chegarem em séries \autocite{engle1982arch, bollerslev1986garch}. Uma janela
+deslizante é precisamente o que acompanha esse agrupamento, porque a norma contra a qual o dia de
+hoje é comparado é reestimada a cada dia a partir do passado recente. A escolha não elimina o
+problema, mas trata-o, e o Capítulo~\ref{cap:avaliacao} mede a alternativa em que a janela pondera
+observações recentes com mais peso.
+
+A comparação entre a família estatística e a aprendida não fica em argumento. O
+Capítulo~\ref{cap:avaliacao} corre as duas sobre os mesmos dados e reporta o resultado tal como sai.
+
+\section{Representar texto por significado}
+\label{sec:ctx_texto}
+
+\emph{Como é que um computador decide que duas notícias falam do mesmo?}
+
+Comparar notícias por significado depende inteiramente de como se representa o texto, e essa
+representação passou por três gerações, esquematizadas na Figura~\ref{fig:ctx_geracoes} e detalhadas
+na Tabela~\ref{tab:ctx_texto}.
 
 \begin{figure}[ht]
 \centering
@@ -150,30 +296,350 @@ sentido de uma frase inteira. Cada geração resolve uma limitação da anterior
 \label{fig:ctx_geracoes}
 \end{figure}
 
-A primeira geração conta palavras \autocite{salton1975vsm}: simples, e cega a sinónimos. A segunda
-representa cada \emph{palavra} como um vetor \autocite{mikolov2013word2vec}, o que aproxima
-sinónimos, mas cada palavra fica com um sentido fixo, independentemente da frase. A terceira usa
-modelos que leem a frase toda \autocite{devlin2019bert}, e permite comparar \emph{frases} diretamente
-\autocite{reimers2019sbert}. É esta que este trabalho usa.
+A primeira geração conta palavras. O modelo de espaço vetorial \autocite{salton1975vsm} representa um
+documento pela frequência dos termos que contém, e a linha de trabalho que dele decorre, até ao BM25
+\autocite{robertson2009bm25}, continua a ser uma linha de base forte em recuperação de informação.
+É transparente e é rápido, mas é cego a sinónimos: para este tipo de representação, ``subiu'' e
+``valorizou'' são símbolos sem relação nenhuma. Em texto financeiro há ainda uma variante
+especializada, os léxicos de domínio, que corrigem o facto de dicionários de sentimento genéricos
+lerem mal palavras financeiras correntes como ``passivo'' ou ``imposto''
+\autocite{loughran2011liability}. São inteiramente transparentes, e estão limitados pelo vocabulário
+que alguém teve o cuidado de compilar.
 
-Existem modelos treinados especificamente para texto financeiro \autocite{araci2019finbert}. Não são
-automaticamente melhores para esta tarefa, e no Capítulo~\ref{cap:avaliacao} isso é medido em vez
-de assumido.
+A segunda geração representa cada \emph{palavra} como um vetor num espaço onde a proximidade
+significa uso semelhante, aprendido a partir do contexto local \autocite{mikolov2013word2vec} ou da
+coocorrência global \autocite{pennington2014glove}. Isto aproxima sinónimos, que era o problema da
+geração anterior, mas mantém uma limitação própria: cada palavra fica com um único vetor,
+independentemente da frase em que aparece.
 
-\paragraph{Medir o efeito de um acontecimento.}
-Ligar uma notícia ao que o preço fez a seguir é um problema clássico em finanças, com metodologia
-estabelecida há décadas: o estudo de evento \autocite{brown1985daily}. E que o texto publicado tem
-relação estatística com os movimentos do mercado é observação antiga \autocite{tetlock2007media}.
+A terceira geração remove essa limitação. O \emph{Transformer} \autocite{vaswani2017attention} tornou
+viável processar a frase inteira com dependências de longo alcance, e o BERT
+\autocite{devlin2019bert} produziu representações profundamente \emph{contextuais}, em que o vetor de
+uma palavra depende das que a rodeiam. Falta ainda um passo para o problema deste trabalho, porque
+comparar duas frases com um modelo desses exigiria processá-las em conjunto, uma vez por par, o que
+não escala para uma base com dezenas de milhares de casos. O Sentence-BERT \autocite{reimers2019sbert}
+resolve isso ao produzir um vetor por frase, calculado uma única vez, de modo que a comparação passa
+a ser uma operação aritmética entre vetores já existentes. É esta a representação que este trabalho
+usa, e a razão da escolha é tanto de qualidade como de arquitetura.
 
-\paragraph{Raciocinar por casos passados.}
-Mostrar casos anteriores parecidos, em vez de uma regra abstrata, tem nome próprio em inteligência
-artificial: \emph{raciocínio baseado em casos} \autocite{aamodt1994cbr}. É exatamente o que a segunda
-técnica deste trabalho faz.
+\begin{table}[ht]
+\caption[Abordagens de representação de texto]{As opções consideradas para representar notícias
+financeiras, e o que cada uma implica.}
+\label{tab:ctx_texto}
+\centering
+\small
+\begin{tabular}{L{0.22\textwidth} L{0.28\textwidth} L{0.36\textwidth}}
+\toprule
+\tabhead{Abordagem} & \tabhead{Representação} & \tabhead{Forças e limitações} \\
+\midrule
+Contagem de termos \newline \autocite{salton1975vsm, robertson2009bm25}
+  & Frequência ponderada de palavras
+  & Transparente e rápida; cega a sinónimos \\
+\addlinespace
+Léxicos financeiros \newline \autocite{loughran2011liability}
+  & Listas de palavras com polaridade
+  & Totalmente transparente; limitada ao vocabulário compilado \\
+\addlinespace
+Vetores de palavras \newline \autocite{mikolov2013word2vec, pennington2014glove}
+  & Um vetor fixo por palavra
+  & Aproxima sinónimos; um só sentido por palavra \\
+\addlinespace
+Frases contextuais \newline \autocite{devlin2019bert, reimers2019sbert}
+  & Um vetor por frase, sensível ao contexto
+  & Compara frases diretamente; modelo maior, menos legível por dentro \\
+\addlinespace
+Modelos de domínio \newline \autocite{araci2019finbert, yang2020finbert}
+  & Como acima, ajustado a texto financeiro
+  & Vocabulário do domínio; não é automaticamente melhor nesta tarefa \\
+\addlinespace
+Modelos grandes \newline \autocite{wu2023bloomberggpt}
+  & Geração de texto sobre conhecimento amplo
+  & Muito capaz; caro, opaco e fora da restrição de gratuitidade \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\paragraph{Explicar decisões automáticas.}
-Por fim, a exigência de que um sistema mostre \emph{como} chegou a uma conclusão é uma área em si
-\autocite{arrieta2020xai, adadi2018peeking}. Este trabalho segue a via mais conservadora: em vez de
-explicar \emph{a posteriori} um modelo opaco, usa componentes cuja explicação é o próprio cálculo.
+Existem modelos treinados especificamente para texto financeiro \autocite{araci2019finbert,
+yang2020finbert}. A suposição natural é que sejam melhores nesta tarefa por serem do domínio certo.
+Essa suposição não é automaticamente verdadeira, e o Capítulo~\ref{cap:avaliacao} mede-a em vez de a
+assumir.
+
+Convém situar este trabalho dentro da literatura mais vasta de processamento de linguagem natural
+aplicado a finanças. As revisões dessa área até meados da década de 2010 \autocite{kearney2014textual}
+cobrem as duas primeiras gerações; a terceira chegou depois, e é de onde este trabalho tira a sua
+representação. Existe ainda uma linha de investigação substancial que usa texto para \emph{prever}
+movimentos de preço \autocite{xing2018nlffsurvey, ding2015deep}. Este trabalho não pertence a essa
+linha, e a distinção é deliberada: aqui o texto serve para encontrar casos passados comparáveis,
+cujo desfecho já é conhecido e já foi medido, e não para produzir uma previsão sobre o futuro.
+
+\section{Recuperar casos parecidos, e saber se a recuperação é boa}
+\label{sec:ctx_recuperacao}
+
+\emph{Encontrada uma representação, como se recupera o que interessa, e como se avalia isso?}
+
+Representar cada notícia por um vetor transforma a pergunta ``que casos passados se parecem com
+este?'' num problema de recuperação de informação. A medida de proximidade usada é o cosseno do
+ângulo entre os vetores, cuja mecânica se detalha na Secção~\ref{sec:met_cosseno}. A operação é
+exata, e portanto o resultado não depende de nenhuma aproximação: percorrem-se todos os casos da
+base e ordenam-se. A escalas muito superiores, essa procura exaustiva pode ser trocada por um índice
+aproximado \autocite{johnson2021faiss} sem alterar a representação, o que fica registado como
+caminho de crescimento e não como necessidade atual.
+
+Como a recuperação devolve uma lista ordenada, avalia-se com medidas sensíveis à ordem
+\autocite{manning2008ir}. A mais direta, e a que este trabalho usa, é a \emph{precisão@$k$}, ou seja
+a fração dos $k$ primeiros resultados que são relevantes. A definição de relevância, que é onde uma
+avaliação destas se ganha ou se perde, é estabelecida no Capítulo~\ref{cap:metodologia} juntamente com as
+linhas de base contra as quais o resultado é comparado.
+
+\section{Medir o efeito de um acontecimento}
+\label{sec:ctx_evento}
+
+\emph{Encontrados casos análogos, como se mede honestamente o que aconteceu ao preço a seguir?}
+
+O instrumento é o \emph{estudo de evento}, introduzido por \textcite{fama1969adjustment} e
+normalizado para retornos diários por \textcite{brown1985daily}, que fixaram a prática de medir
+retornos sobre janelas curtas após o acontecimento. É essa prática que fundamenta as janelas de mais
+um, mais três e mais cinco dias usadas neste trabalho.
+
+Que o texto publicado tem relação estatística com os movimentos do mercado é observação antiga
+\autocite{tetlock2007media}. Convém enunciá-la com o verbo certo: trata-se de evidência de uma
+relação estatística, e não de uma prova de causalidade.
+
+Há um ponto metodológico que interessa antecipar aqui, porque afeta a segunda pergunta do trabalho,
+a de separar a empresa do mercado. Fazer essa separação exige estimar a sensibilidade de cada ação
+ao mercado, e essa estimativa é ruidosa, sobretudo em empresas voláteis ou com histórico curto. A
+literatura de finanças resolveu isto há décadas encolhendo a estimativa na direção de um valor de
+referência. A forma mais simples usa um peso fixo \autocite{blume1971risk}, o que tem o inconveniente
+de encolher com a mesma força uma estimativa boa e uma má. A alternativa que este trabalho adota
+pondera o encolhimento pela \emph{imprecisão} da própria estimativa \autocite{vasicek1973beta}, de
+modo que uma estimativa fiável é praticamente preservada e uma estimativa frágil é puxada para o
+valor de referência. O detalhe está na Secção~\ref{sec:met_decomposicao}.
+
+Por fim, o enquadramento teórico que justifica a recusa de prever. Se movimentos futuros fossem
+sistematicamente previsíveis a partir de informação pública, essa informação já estaria refletida no
+preço \autocite{fama1970efficient}. Esta é uma das razões pelas quais o sistema mede o que já
+aconteceu em vez de projetar o que virá, e a outra, mais prática, é que apenas o passado é
+verificável por quem lê.
+
+\section{Raciocinar por casos passados}
+\label{sec:ctx_casos}
+
+\emph{Mostrar casos anteriores em vez de uma regra: isso tem nome?}
+
+Tem, e é uma linha estabelecida em inteligência artificial. O \emph{raciocínio baseado em casos}
+\autocite{aamodt1994cbr} resolve um problema novo recuperando problemas passados semelhantes e
+reutilizando o que se sabe sobre eles, em vez de aplicar uma regra geral derivada de antemão. É
+exatamente o que a terceira técnica deste trabalho faz.
+
+A escolha tem uma justificação adicional, que vem do lado de quem lê. A investigação sobre explicação
+em ciências sociais mostra que as pessoas procuram razões \emph{contrastivas} e seletivas, e não uma
+enumeração exaustiva de tudo o que contribuiu \autocite{miller2019explanation}. Um punhado de casos
+concretos, com datas e desfechos, corresponde a essa expectativa muito melhor do que um coeficiente.
+Daí que cada alerta mostre alguns precedentes relevantes e as quantidades exatas por detrás da
+decisão, em vez de despejar tudo o que o sistema calculou.
+
+\section{Explicar decisões automáticas}
+\label{sec:ctx_xai}
+
+\emph{Se o sistema decide, como é que mostra em que se baseou?}
+
+A exigência de que um sistema mostre \emph{como} chegou a uma conclusão constitui uma área própria,
+com revisões consolidadas \autocite{arrieta2020xai, adadi2018peeking}. Essa área divide-se em duas
+vias, ilustradas na Figura~\ref{fig:ctx_xai} e comparadas na Tabela~\ref{tab:ctx_xai}: modelos
+\emph{transparentes}, interpretáveis em si mesmos, e métodos \emph{a posteriori}, que explicam um
+modelo opaco já treinado e que podem ser organizados pelo que explicam
+\autocite{guidotti2018survey}.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small, >={Stealth[length=2.4mm]},
+  r/.style={draw, rounded corners, align=center, text width=3.5cm, minimum height=1.1cm,
+            inner sep=4pt, fill=black!3},
+  t/.style={draw, rounded corners, align=center, text width=3.5cm, minimum height=1.4cm,
+            inner sep=4pt, fill=black!8, very thick},
+  o/.style={draw, rounded corners, align=center, text width=3.5cm, minimum height=1.4cm,
+            inner sep=4pt, fill=black!3},
+]
+  \node[r] (raiz) {\textbf{Explicar uma decisão}};
+  \node[t, below left=1.1cm and 0.35cm of raiz] (tr) {\textbf{Modelo transparente}\\
+    \footnotesize a explicação é o cálculo};
+  \node[o, below right=1.1cm and 0.35cm of raiz] (ph) {\textbf{Método a posteriori}\\
+    \footnotesize explica um modelo opaco};
+
+  \node[below=0.4cm of tr, align=center, font=\footnotesize, text width=3.6cm]
+    (trx) {regra, regressão linear,\\ contagem sobre a série};
+  \node[below=0.4cm of ph, align=center, font=\footnotesize, text width=3.6cm]
+    (phx) {LIME, SHAP};
+
+  \draw[->, thick, black!45] (raiz) -- (tr);
+  \draw[->, thick, black!45] (raiz) -- (ph);
+  \draw[-, black!35] (tr) -- (trx);
+  \draw[-, black!35] (ph) -- (phx);
+\end{tikzpicture}
+\caption[As duas vias para a explicabilidade]{As duas vias que a literatura distingue
+\autocite{arrieta2020xai, guidotti2018survey}: construir modelos transparentes por desenho, ou
+explicar um modelo opaco depois de treinado. Este trabalho segue a via da esquerda.}
+\label{fig:ctx_xai}
+\end{figure}
+
+Os dois métodos \emph{a posteriori} mais usados operam de formas distintas. O LIME ajusta um modelo
+simples em torno de uma previsão individual, aproximando localmente o comportamento do modelo opaco
+\autocite{ribeiro2016lime}. O SHAP atribui uma previsão às suas variáveis usando valores de Shapley
+\autocite{lundberg2017shap}. Ambos são genéricos e ambos são úteis.
+
+Ambos partilham, contudo, uma propriedade que pesa muito neste contexto. Para decisões de
+consequência séria, \textcite{rudin2019stop} argumenta que se deve abandonar o compromisso com
+modelos opacos e usar antes modelos interpretáveis à partida, precisamente porque uma explicação
+\emph{a posteriori} é ela própria uma aproximação, e uma aproximação pode induzir em erro. O
+utilizador recebe então duas coisas cuja relação não consegue avaliar: uma decisão e uma explicação
+que talvez não corresponda a ela.
+
+\begin{table}[ht]
+\caption[Abordagens de explicabilidade consideradas]{As opções ponderadas, e a razão da escolha feita
+neste trabalho.}
+\label{tab:ctx_xai}
+\centering
+\small
+\begin{tabular}{L{0.20\textwidth} L{0.24\textwidth} L{0.42\textwidth}}
+\toprule
+\tabhead{Método} & \tabhead{Tipo} & \tabhead{Forças e limitações} \\
+\midrule
+LIME \autocite{ribeiro2016lime}
+  & Substituto local, a posteriori
+  & Intuitivo e agnóstico ao modelo; as explicações podem ser instáveis e só valem localmente \\
+\addlinespace
+SHAP \autocite{lundberg2017shap}
+  & Atribuição por valores de Shapley
+  & Fundamentação teórica sólida; custo computacional e leitura exigente para um leigo \\
+\addlinespace
+Modelo transparente \newline \autocite{rudin2019stop}
+  & Interpretável por construção
+  & A explicação é o próprio cálculo, logo não pode divergir da decisão; limita a família de modelos disponível \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Este trabalho segue a via conservadora: em vez de explicar \emph{a posteriori} um modelo opaco, usa
+componentes cuja explicação é o próprio cálculo. Um desvio relativo a uma norma recente, uma
+decomposição aditiva que soma exatamente ao movimento observado e uma lista de casos passados com os
+respetivos desfechos são todos objetos que se podem mostrar por inteiro. A explicação não é uma
+segunda coisa produzida sobre a decisão: é a decisão, escrita por extenso.
+
+Duas cautelas da literatura fecham esta secção, e as duas condicionam o modo como o
+Capítulo~\ref{cap:avaliacao} está organizado.
+
+A primeira é que ``interpretabilidade'' não designa uma coisa só \autocite{lipton2018mythos}, pelo
+que um sistema deve declarar que tipo de interpretabilidade oferece em vez de reclamar a palavra sem
+qualificação. Este trabalho oferece transparência de mecanismo, ou seja o utilizador pode seguir o
+cálculo, e não oferece uma explicação causal do acontecimento no mundo.
+
+A segunda é mais incómoda e é frequentemente ignorada. Explicações podem induzir
+\emph{confiança excessiva}: \textcite{bansal2021whole} mostram que as pessoas aceitam explicações
+apresentadas com confiança mesmo quando a resposta subjacente está errada. Daqui decorre uma
+consequência de desenho concreta neste sistema. A média dos desfechos dos casos recuperados é
+mostrada como aquilo que é, uma medição sobre o passado, e nunca como uma expectativa sobre o futuro,
+porque tratá-la como previsão seria exatamente a confiança excessiva contra a qual a literatura de
+confiança avisa \autocite{lee2004trust, bansal2021whole}.
+
+Acresce que afirmações de interpretabilidade exigem avaliação rigorosa e não bastam ser declaradas
+\autocite{doshivelez2017rigorous}. É por isso que o Capítulo~\ref{cap:avaliacao} mede o que pode ser
+medido por máquina e diz, de forma explícita, qual a parte que continua por avaliar por faltar um
+estudo com pessoas.
+
+\section{Um modelo que continua a funcionar depois de implantado}
+\label{sec:ctx_producao}
+
+\emph{Treinar um modelo é uma coisa. Mantê-lo a funcionar é outra. O que diz a literatura?}
+
+Este trabalho inclui um componente aprendido, cuja função é ordenar notícias por materialidade
+esperada, e esse componente levanta três questões que a literatura trata separadamente.
+
+A primeira é a de saber contra que teto comparar um modelo simples. Conjuntos de árvores treinados
+por reforço do gradiente \autocite{friedman2001gbm} constituem o aprendiz não linear mais forte
+disponível para dados tabulares desta natureza, e servem por isso de referência superior contra a
+qual o modelo interpretável é medido no Capítulo~\ref{cap:avaliacao}.
+
+A segunda é a da honestidade do número produzido. Para quem lê, uma pontuação só é honesta se for uma
+\emph{probabilidade}. As pontuações em bruto de um classificador estão tipicamente mal calibradas, e a
+calibração \emph{a posteriori}, ajustando por exemplo uma sigmoide sobre um bloco de validação
+reservado, corrige esse problema \autocite{niculescu2005calibration}. A escolha da forma paramétrica
+em detrimento da alternativa não paramétrica é deliberada: uma sigmoide de dois parâmetros não
+consegue sobreajustar um bloco de validação modesto, ao passo que a regressão isotónica precisa de
+bastante mais dados de calibração antes de a sua flexibilidade adicional compensar
+\autocite{niculescu2005calibration}.
+
+Uma terceira via, considerada e não adotada, merece registo porque a decisão foi tomada com
+conhecimento dela. A predição conformal permite envolver um preditor de modo que devolva um
+\emph{conjunto} de rótulos com uma garantia livre de distribuição e válida em amostras finitas
+\autocite{vovk2005algorithmic}, e a variante que calibra sobre um bloco reservado, com a respetiva
+correção de quantil para amostras finitas, está estabelecida \autocite{angelopoulos2023conformal}.
+Importa ser preciso quanto ao alcance da garantia, porque é o mal-entendido mais comum a respeito
+deste método: a cobertura é \emph{marginal}, ou seja vale em média sobre os casos, e não caso a caso.
+
+A terceira questão é a de continuar a funcionar com o tempo. Um modelo implantado enfrenta alteração
+da distribuição dos dados que vê, e o tratamento habitual disso em aprendizagem automática é a
+literatura de \emph{deriva de conceito}, cuja revisão de referência estabelece a taxonomia da
+mudança, sendo esta súbita, gradual, incremental ou recorrente, bem como as estratégias de deteção e
+os métodos de adaptação \autocite{gama2014survey}. Este trabalho mede a deriva sobre os seus próprios
+dados no Capítulo~\ref{cap:avaliacao}, em vez de a assumir ausente.
+
+Há por fim um custo que não aparece em nenhuma métrica de qualidade e que a experiência com sistemas
+em produção documenta bem. \textcite{sculley2015debt} argumentam que os componentes de aprendizagem
+automática acumulam um custo de manutenção distintivo e em grande medida oculto, nomeadamente o
+emaranhamento, em que mudar qualquer coisa muda tudo, as dependências de dados instáveis e não
+declaradas, e a dívida de configuração. O Capítulo~\ref{cap:conclusoes} regressa a este ponto com um
+exemplo concreto e medido deste próprio sistema, em que uma parte do ciclo de aprendizagem parou sem
+que nenhum erro fosse registado.
+
+\section{Síntese: a lacuna que este trabalho ocupa}
+\label{sec:ctx_lacuna}
+
+\emph{Postas as peças em cima da mesa, o que é que falta?}
+
+A revisão feita neste capítulo permite localizar com precisão o espaço em que este trabalho se
+inscreve, e esse espaço não é um vazio técnico. Cada peça individual existe, está publicada e está
+avaliada. A Tabela~\ref{tab:ctx_lacuna} torna isso explícito.
+
+\begin{table}[ht]
+\caption[Onde fica este trabalho]{Cada componente existe na literatura. O que não existe é a
+combinação, sob a restrição de custo nulo, com a evidência entregue ao utilizador.}
+\label{tab:ctx_lacuna}
+\centering
+\small
+\begin{tabular}{L{0.24\textwidth} L{0.30\textwidth} L{0.34\textwidth}}
+\toprule
+\tabhead{Pergunta} & \tabhead{O que a literatura oferece} & \tabhead{O que falta para esta pessoa} \\
+\midrule
+É invulgar?
+  & Deteção de anomalias, estatística e aprendida \autocite{chandola2009anomaly, liu2008isolation}
+  & Chegar-lhe em linguagem que ela leia, relativa à norma daquela empresa \\
+\addlinespace
+Empresa ou mercado?
+  & Estudo de evento e estimação de sensibilidade \autocite{brown1985daily, vasicek1973beta}
+  & Estar disponível fora de um terminal profissional \\
+\addlinespace
+Já aconteceu antes?
+  & Representação de frases e recuperação \autocite{reimers2019sbert, manning2008ir}
+  & Uma base de casos com desfechos já medidos, e não recordados \\
+\addlinespace
+Porque é que acredito?
+  & Explicabilidade e literatura de confiança \autocite{rudin2019stop, lee2004trust}
+  & A evidência entregue junto da afirmação, verificável no momento da leitura \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A lacuna, portanto, não é de método: é de \emph{integração sob restrição}. Os produtos que respondem
+às três perguntas cobram milhares por ano. Os produtos gratuitos que prometem responder à terceira
+entregam uma afirmação sem a evidência. E os componentes académicos que resolveriam cada pedaço
+foram avaliados isoladamente, sobre corpora de referência, e não como um sistema que funciona todos
+os dias contra fontes reais e que reporta o que falha.
+
+É esse o espaço que este trabalho ocupa, e é também o que determina a natureza da sua contribuição:
+não está em inventar um método novo, mas em escolher, integrar e avaliar criticamente métodos
+existentes num sistema que funciona, sob restrições declaradas, e cuja avaliação inclui os
+resultados que não favorecem o próprio sistema.
 
 \section{As escolhas que este trabalho faz}
 \label{sec:ctx_escolhas}
@@ -187,9 +653,9 @@ Quatro decisões, e cada uma fecha uma porta de propósito.
         sirvam uma delas. É o que mantém o sistema pequeno o suficiente para ser explicado por
         inteiro.
   \item[Não prever preços.] Nem direção, nem alvo, nem recomendação. Além da razão já dada, que é o
-        que torna tudo verificável, há uma razão teórica: se movimentos futuros fossem previsíveis
-        a partir de informação pública, essa informação já estaria refletida no preço
-        \autocite{fama1970efficient}.
+        que torna tudo verificável, há a razão teórica da Secção~\ref{sec:ctx_evento}: se movimentos
+        futuros fossem previsíveis a partir de informação pública, essa informação já estaria
+        refletida no preço \autocite{fama1970efficient}.
   \item[Não gerir carteiras nem aconselhar.] O sistema não sabe o que o utilizador tem, e não lhe diz
         o que fazer. Isto evita recolher dados pessoais e mantém o trabalho fora da fronteira do
         aconselhamento financeiro regulado.

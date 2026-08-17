@@ -31,6 +31,24 @@ headsepline,
 
 % Coluna centrada com largura fixa. Uma coluna `c` não quebra: um cabeçalho comprido empurra a
 % tabela para fora da margem e o LaTeX só o diz num aviso que passa despercebido.
+% Excertos de código. ⚠️ Existem por uma razão precisa: o júri avalia este documento e não tem
+% acesso ao repositório, portanto uma garantia descrita em prosa é uma afirmação por verificar.
+% Só entram excertos nos pontos onde a garantia é FEITA, nunca como ilustração.
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\bfseries,
+  commentstyle=\itshape\color{black!55},
+  stringstyle=\color{black!70},
+  numbers=left, numberstyle=\tiny\color{black!40}, numbersep=7pt,
+  frame=single, rulecolor=\color{black!25}, framesep=5pt,
+  backgroundcolor=\color{black!3},
+  showstringspaces=false, breaklines=true, columns=fullflexible,
+  captionpos=b, language=Python, literate=%
+    {á}{{\'a}}1 {ã}{{\~a}}1 {ç}{{\c c}}1 {é}{{\'e}}1 {í}{{\'i}}1
+    {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {â}{{\^a}}1 {ê}{{\^e}}1
+}
+
 % Sem hifenação: numa coluna estreita, "Já aconte-ceu?" fica pior do que uma quebra no espaço.
 \usepackage{array}
 \newcolumntype{C}[1]{>{\centering\arraybackslash\hyphenpenalty=10000\exhyphenpenalty=10000}p{#1}}
