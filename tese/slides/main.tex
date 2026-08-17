@@ -15,7 +15,8 @@
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{caption}{\raggedright\insertcaption\par}
 
-\title[InvestiGator]{Alertas Financeiros Explicáveis para Investidores de Retalho}
+\title[InvestiGator]{Explicar sem prever}
+\subtitle{\normalsize Alertas de mercado com evidência verificável para o investidor de retalho}
 \author[H.\ Santos]{Henrique José da Silva Santos \\
   \footnotesize Orientador: Prof.\ Luís Gomes \quad Coorientador: Rafael Silva}
 \institute[ISEP]{MEIA, Instituto Superior de Engenharia do Porto}
@@ -141,7 +142,35 @@ $z=+7$ quer dizer o mesmo numa empresa calma e numa volátil.\\
 \textbf{O dia julgado não entra no cálculo da sua própria norma.} Sem isto, seria falsear.
 \end{frame}
 
-\begin{frame}{Técnica 2: já aconteceu antes?}
+\begin{frame}{Técnica 2: foi a empresa, ou foi o mercado?}
+Um $+6.29\%$ pode ser a empresa ou pode ser o mercado. A aplicação da corretora
+mostra \textbf{o mesmo número} nos dois casos.
+\vspace{2mm}
+\begin{center}
+\begin{tikzpicture}[font=\footnotesize]
+  % AMD, dia real: +6.29% = -0.40 mercado -0.04 setor +6.73 empresa
+  \draw[black!40] (0,0) -- (0,3.1);
+  \node[black!55, font=\scriptsize, left] at (0,3.1) {0};
+  \fill[black!35]      (0,2.5) rectangle (-0.40*0.8,2.9);
+  \fill[black!20]      (0,1.9) rectangle (-0.04*0.8,2.3);
+  \fill[orange!75]     (0,1.3) rectangle (6.73*0.8,1.7);
+  \node[right, black!70] at (0.15,2.7) {mercado \ $-0.40\%$};
+  \node[right, black!70] at (0.15,2.1) {setor \ \ \ \ $-0.04\%$};
+  \node[right=5.5cm, text=orange!55!black, font=\bfseries] at (0.15,1.5) {empresa \ $+6.73\%$};
+  \draw[black!45, thick] (0,0.55) -- (6.29*0.8,0.55);
+  \node[right, black!75, font=\bfseries] at (0.15,0.2) {total observado \ $+6.29\%$};
+\end{tikzpicture}
+\end{center}
+\vspace{1mm}
+\footnotesize
+A AMD subiu \textbf{apesar} de o mercado e o setor terem puxado ao contrário.\\
+Os \emph{betas} são estimados \textbf{só com dias anteriores}, e encolhidos conforme a
+\textbf{precisão} da estimativa: uma estimativa frágil é puxada para a referência.\\
+\textbf{Ressalva:} as três parcelas somam sempre, porque a da empresa é o resto. Isso não
+prova que estejam bem estimadas. O $R^2$ mediano é $0.460$, e num dos casos é negativo.
+\end{frame}
+
+\begin{frame}{Técnica 3: já aconteceu antes?}
 Procurar por palavras falha nos \textbf{dois} sentidos:
 \vspace{2mm}
 \begin{center}
@@ -164,7 +193,7 @@ Depois, para cada caso passado, mede-se o que o preço fez a $+1$, $+3$ e $+5$ d
 \footnotesize \textbf{É uma medição do passado, não uma previsão.}
 \end{frame}
 
-\begin{frame}{Técnica 3: merece avisar?}
+\begin{frame}{Técnica 4: merece avisar?}
 Aqui não há fórmula óbvia. É o sítio para \textbf{aprender dos dados}.
 \vspace{3mm}
 \begin{itemize}
