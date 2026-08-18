@@ -25386,3 +25386,15 @@
 {"ts": "2026-08-18T18:22:36+00:00", "news_date": "2026-08-17", "ticker": "NFLX", "headline": "Why Is Netflix Stock Falling on Monday?", "prob": 0.436901188078389, "gate": 0.5, "kept": true}
 {"ts": "2026-08-18T18:22:38+00:00", "news_date": "2026-08-18", "ticker": "XOM", "headline": "Why Is ExxonMobil Stock Gaining Tuesday?", "prob": 0.3995890818499323, "gate": 0.5, "kept": true}
 {"ts": "2026-08-18T18:22:41+00:00", "news_date": "2026-08-17", "ticker": "JNJ", "headline": "Johnson & Johnson (NYSE:JNJ): A Dividend Quality Standout", "prob": 0.2943376992490104, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:24:17+00:00", "news_date": "2026-08-18", "ticker": "AAPL", "headline": "Apple overhauls Europe app store fees to resolve payments clash", "prob": 0.45402938035154466, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:24:20+00:00", "news_date": "2026-08-18", "ticker": "MSFT", "headline": "Microsoft: The Price Climbed Too Far Too Fast (Rating Downgrade)", "prob": 0.5594032431615382, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:24:22+00:00", "news_date": "2026-08-18", "ticker": "NVDA", "headline": "Nvidia's Q2 Preview: A $7 Trillion Market Cap Within Reach", "prob": 0.47068091815758994, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:24:27+00:00", "news_date": "2026-08-18", "ticker": "TSLA", "headline": "Tesla: Back Into Negative Free Cash Flow Territory", "prob": 0.5814439457801676, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:24:30+00:00", "news_date": "2026-08-18", "ticker": "AMZN", "headline": "Warren Buffett Disciple Seth Klarman Bets on Cruise Lines, Auto Parts, Amazon and Bill Ackman in Q2", "prob": 0.5686646461005316, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:24:33+00:00", "news_date": "2026-08-18", "ticker": "GOOGL", "headline": "XLC: Alphabet And Meta Just Keep Churning", "prob": 0.5121910064090817, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:24:36+00:00", "news_date": "2026-08-18", "ticker": "META", "headline": "Wall Street Lunch: Meta Faces High-Stakes Federal Trial Over Child Safety", "prob": 0.5062173792896782, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:24:40+00:00", "news_date": "2026-08-17", "ticker": "JPM", "headline": "Here’s How Much You Would Have Made Owning JPMorgan Chase Stock In The Last 5 Years", "prob": 0.24075286265614876, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:24:43+00:00", "news_date": "2026-08-18", "ticker": "AMD", "headline": "What's Going On With AMD Stock Tuesday?", "prob": 0.6388333836044365, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:24:46+00:00", "news_date": "2026-08-17", "ticker": "NFLX", "headline": "Why Is Netflix Stock Falling on Monday?", "prob": 0.4368915212677833, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:24:50+00:00", "news_date": "2026-08-18", "ticker": "XOM", "headline": "Why Is ExxonMobil Stock Gaining Tuesday?", "prob": 0.39960272663583474, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:24:55+00:00", "news_date": "2026-08-17", "ticker": "JNJ", "headline": "Johnson & Johnson (NYSE:JNJ): A Dividend Quality Standout", "prob": 0.2943548708789951, "gate": 0.5, "kept": true}
