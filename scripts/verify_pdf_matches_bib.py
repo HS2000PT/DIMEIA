@@ -1,0 +1,92 @@
+"""Cada PDF arquivado e mesmo o artigo que a chave declara?
+
+Um DOI valido no .bib nao garante que o PDF que esta na pasta seja esse artigo. Este
+verificador le a primeira pagina de cada PDF e compara o titulo com o do .bib.
+
+    python scripts/verify_pdf_matches_bib.py
+"""
+
+from __future__ import annotations
+
+import pathlib
+import re
+import subprocess
+import sys
+
+RAIZ = pathlib.Path(__file__).resolve().parents[1]
+BIB = RAIZ / "thesis" / "references.bib"
+PDFS = RAIZ / "docs" / "decisions" / "citation_pdfs"
+
+
+def limpa(s: str) -> str:
+    s = re.sub(r"\\[`'^\"~=.]\{?(\w)\}?", r"\1", s)
+    s = re.sub(r"\\[a-zA-Z]+", " ", s)
+    s = s.lower()
+    s = re.sub(r"[^a-z0-9 ]+", " ", s)
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def titulo_do_bib() -> dict[str, str]:
+    bib = BIB.read_text(encoding="utf-8")
+    out = {}
+    for m in re.finditer(r"@(\w+)\{([^,]+),(.*?)\n\}", bib, re.S):
+        chave, corpo = m.group(2).strip(), m.group(3)
+        t = re.search(r"title\s*=\s*[{\"](.*?)[}\"]\s*(?:,|\n|$)", corpo, re.S)
+        if t:
+            out[chave] = re.sub(r"\s+", " ", t.group(1)).strip()
+    return out
+
+
+def texto_inicio(pdf: pathlib.Path, paginas: int = 2) -> str:
+    r = subprocess.run(["pdftotext", "-enc", "UTF-8", "-f", "1", "-l", str(paginas),
+                        str(pdf), "-"], capture_output=True)
+    return r.stdout.decode("utf-8", "replace")
+
+
+def main() -> int:
+    titulos = titulo_do_bib()
+    pdfs = sorted(PDFS.glob("*.pdf"))
+    if not pdfs:
+        print("Nenhum PDF em", PDFS)
+        return 2
+
+    bons, suspeitos, sem_bib = [], [], []
+    for p in pdfs:
+        chave = p.stem
+        if chave not in titulos:
+            sem_bib.append(chave)
+            continue
+        alvo = limpa(titulos[chave])
+        corpo = limpa(texto_inicio(p))
+        if not corpo:
+            suspeitos.append((chave, "PDF sem texto extraivel (digitalizacao?)", ""))
+            continue
+        # quantas palavras do titulo do .bib aparecem no inicio do PDF
+        palavras = [w for w in alvo.split() if len(w) > 3]
+        if not palavras:
+            palavras = alvo.split()
+        achadas = sum(1 for w in palavras if w in corpo)
+        frac = achadas / len(palavras) if palavras else 0.0
+        if frac >= 0.70:
+            bons.append(chave)
+        else:
+            # o que o PDF parece ser, para ajudar a identificar o engano
+            linhas = [x.strip() for x in texto_inicio(p, 1).splitlines() if len(x.strip()) > 22]
+            parece = linhas[0][:78] if linhas else "?"
+            suspeitos.append((chave, f"so {frac:.0%} do titulo aparece no PDF", parece))
+
+    print(f"PDFs: {len(pdfs)} · correspondem: {len(bons)} · suspeitos: {len(suspeitos)} · "
+          f"sem entrada no .bib: {len(sem_bib)}\n")
+    for ch, porque, parece in suspeitos:
+        print(f"  !! {ch}")
+        print(f"     {porque}")
+        print(f"     .bib diz : {titulos.get(ch, '')[:78]}")
+        if parece:
+            print(f"     PDF parece: {parece}")
+    for ch in sem_bib:
+        print(f"  ?? {ch}: PDF na pasta sem entrada correspondente no .bib")
+    return 1 if suspeitos else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

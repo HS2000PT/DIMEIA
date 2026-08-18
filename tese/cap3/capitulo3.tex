@@ -852,6 +852,22 @@ Neste trabalho os dois valores aprendidos foram $a = 3.700$ e $b = -2.313$. O si
 diz o essencial: o modelo, deixado por sua conta, era \textbf{demasiado otimista}, e a calibração
 existe para o puxar para baixo.
 
+\paragraph{E a calibração fica enviesada, por uma razão que convém dizer.}
+A sigmoide é ajustada no bloco de validação e aplicada ao de teste, e os dois blocos não têm a mesma
+proporção de casos importantes: a validação tem $47.0\%$ e o teste $37.8\%$. Como a divisão é
+cronológica, essa diferença não é um defeito de amostragem, é o mundo a mudar entre dois períodos.
+
+A consequência é mensurável e vai no sentido desfavorável. No bloco de validação a probabilidade
+média prevista iguala a observada, $0.470$ contra $0.470$, como não podia deixar de ser, porque é
+ali que a sigmoide é ajustada. No bloco de teste a média prevista é $0.428$ contra $0.378$
+observado, ou seja o sistema anuncia cerca de \textbf{cinco pontos percentuais a mais} do que
+acontece.
+
+Isto não altera a \emph{ordenação} entre notícias, porque a sigmoide é monótona e preserva a ordem,
+e é a ordenação que o produto usa para escolher o que enviar. Altera o valor absoluto que aparece no
+alerta. Fica registado porque é o único número que o utilizador vê, e porque o corrigir exigiria
+recalibrar sobre a distribuição que o sistema encontra em produção, que é trabalho por fazer.
+
 \subsection{Da linha de dados aos 39\%: a conta toda}
 \label{sec:met_conta}
 

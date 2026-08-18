@@ -911,22 +911,24 @@ Contexto completo (o implantado) & as nove entradas & $0.538$ & $0.632$ \\
 Só volatilidade & uma entrada, de empresa & $0.542$ & $0.632$ \\
 \midrule
 \textbf{Tabela de consulta por empresa} & \textbf{nada da notícia} & $\mathbf{0.534}$ &
-$\mathbf{0.632}$ \\
+$\mathbf{0.662}$ \\
 \midrule
-Sem os indicadores de setor & tira 5 entradas de empresa & $0.543$ & $0.632$ \\
-Sem volatilidade nem momento & tira as 2 que restam & $0.389$ & $0.474$ \\
-Sem nada de nível de empresa & fica o dia e a notícia & $0.378$ & $0.164$ \\
-Só o comprimento do título & a única de nível de notícia & $0.378$ & $0.164$ \\
+Sem os indicadores de setor & tira 5 entradas de empresa & $0.543$ & $0.629$ \\
+Sem volatilidade nem momento & tira as 2 que restam & $0.389$ & $0.390$ \\
+Sem nada de nível de empresa & fica o dia e a notícia & $0.378$ & $0.368$ \\
+Só o comprimento do título & a única de nível de notícia & $0.378$ & $0.352$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Três leituras, e nenhuma delas depende de interpretação.
 
-\paragraph{A tabela de consulta iguala o modelo.}
-Obtém $0.534$ contra $0.538$, uma diferença de $0.004$, e exatamente a mesma precisão dentro do
-orçamento. Um número por empresa, fixado meses antes e nunca actualizado, faz o mesmo que o modelo
-treinado. \textbf{O modelo implantado é uma tabela de consulta.}
+\paragraph{A tabela de consulta iguala o modelo, e numa das métricas bate-o.}
+Na PR-AUC obtém $0.534$ contra $0.538$, uma diferença de $0.004$. Na precisão dentro do orçamento,
+que é a métrica mais próxima do uso real, obtém $0.662$ contra $0.632$, ou seja \textbf{fica à
+frente}. Um número por empresa, fixado meses antes e nunca atualizado, faz o mesmo que o modelo
+treinado e, no critério que mais se parece com o produto, faz melhor.
+\textbf{O modelo implantado é uma tabela de consulta.}
 
 \paragraph{Sem a empresa, não sobra nada.}
 Retirando todas as entradas de nível de empresa, a PR-AUC cai para $0.378$, que é precisamente a
@@ -934,8 +936,8 @@ prevalência do bloco de teste, ou seja, o chão definido na Secção~\ref{sec:a
 obtém exatamente o chão não aprendeu coisa nenhuma.
 
 \paragraph{E a única entrada que descreve a notícia não vale nada.}
-O comprimento do título, sozinho, também dá $0.378$. É o mesmo chão. A única informação por
-título que o modelo implantado recebia é indistinguível de não receber informação nenhuma.
+O comprimento do título, sozinho, também dá $0.378$ de PR-AUC. É o mesmo chão. A única informação
+por título que o modelo implantado recebia é indistinguível de não receber informação nenhuma.
 
 Isto obriga a separar duas afirmações que eu tinha juntado, e a separação é a parte honesta:
 

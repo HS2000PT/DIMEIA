@@ -55,6 +55,16 @@ MANIFESTO: list[tuple[str, str, str]] = [
     ("0.3790", "evaluation_budget_baselines.md", "chao aleatorio real"),
     ("0.6624", "evaluation_budget_baselines.md", "prior de volatilidade por ticker"),
     ("0.6317", "evaluation_budget_baselines.md", "modelo implantado"),
+    # ablacao da identidade (Cap. 5). ⚠️ Esta tabela ja divergiu do seu proprio ficheiro em
+    # 5 das 7 linhas da coluna Precisao@5, e o manifesto nao a cobria. Cobre agora.
+    ("0.534", "evaluation_triage_identity.md", "PR-AUC da tabela de consulta"),
+    ("0.543", "evaluation_triage_identity.md", "PR-AUC sem indicadores de setor"),
+    ("0.389", "evaluation_triage_identity.md", "PR-AUC sem volatilidade nem momento"),
+    ("0.662", "evaluation_triage_identity.md", "precisao@5 da tabela de consulta"),
+    ("0.629", "evaluation_triage_identity.md", "precisao@5 sem indicadores de setor"),
+    ("0.390", "evaluation_triage_identity.md", "precisao@5 sem volatilidade nem momento"),
+    ("0.368", "evaluation_triage_identity.md", "precisao@5 sem nada de nivel de empresa"),
+    ("0.352", "evaluation_triage_identity.md", "precisao@5 so com o comprimento do titulo"),
     # decomposicao (tecnica 2)
     ("2.0143", "evaluation_decomposition.md", "beta de mercado da AMD, encolhido"),
     ("1.5888", "evaluation_decomposition.md", "beta de setor da AMD, encolhido"),

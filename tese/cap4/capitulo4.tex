@@ -500,10 +500,15 @@ Uma nota sobre o número que aparece na última linha do alerta. Os $57\%$ não 
 do modelo: são o resultado de a converter numa \emph{probabilidade}, ajustando uma sigmoide sobre um
 bloco de validação reservado \autocite{niculescu2005calibration}. A distinção não é decorativa neste
 contexto. Uma pontuação em bruto ordena bem e não significa nada por si, ao passo que uma
-probabilidade calibrada promete que, entre os títulos a que o sistema atribui $57\%$, aproximadamente
-essa fração terá mesmo um movimento invulgar. É a diferença entre um número que se pode mostrar a
-alguém e um número que só serve por dentro, e a Secção~\ref{sec:av_qi3} verifica se a promessa se
-cumpre.
+probabilidade calibrada pretende que, entre os títulos a que o sistema atribui $57\%$,
+aproximadamente essa fração tenha mesmo um movimento invulgar. É a diferença entre um número que se
+pode mostrar a alguém e um número que só serve por dentro.
+
+Convém, porém, não prometer mais do que se cumpre. A Secção~\ref{sec:av_qi3} reporta o erro médio
+desta probabilidade, mas a Secção~\ref{sec:met_conta} regista uma limitação que esse erro médio não
+revela: a calibração é ajustada num bloco com mais casos importantes do que aquele a que é aplicada,
+e por isso o valor anunciado é cerca de cinco pontos percentuais otimista. A ordenação entre notícias
+não é afetada, porque a transformação preserva a ordem; o número absoluto é.
 
 \paragraph{E este exemplo mostra um defeito que eu não tinha visto até o pôr aqui.}
 Os três precedentes têm o \emph{mesmo} impacto, $-2.73\%$, e a mesma data. Não é coincidência: o
