@@ -25326,3 +25326,15 @@
 {"ts": "2026-08-18T18:11:41+00:00", "news_date": "2026-08-17", "ticker": "NFLX", "headline": "Why Is Netflix Stock Falling on Monday?", "prob": 0.43684072003892827, "gate": 0.5, "kept": true}
 {"ts": "2026-08-18T18:11:45+00:00", "news_date": "2026-08-18", "ticker": "XOM", "headline": "Why Is ExxonMobil Stock Gaining Tuesday?", "prob": 0.3995481150321177, "gate": 0.5, "kept": true}
 {"ts": "2026-08-18T18:11:49+00:00", "news_date": "2026-08-17", "ticker": "JNJ", "headline": "Johnson & Johnson (NYSE:JNJ): A Dividend Quality Standout", "prob": 0.2943445675342977, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:13:38+00:00", "news_date": "2026-08-18", "ticker": "AAPL", "headline": "Apple overhauls Europe app store fees to resolve payments clash", "prob": 0.45402143580388976, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:13:40+00:00", "news_date": "2026-08-18", "ticker": "MSFT", "headline": "Microsoft: The Price Climbed Too Far Too Fast (Rating Downgrade)", "prob": 0.5593590491326947, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:13:42+00:00", "news_date": "2026-08-18", "ticker": "NVDA", "headline": "Nvidia's Q2 Preview: A $7 Trillion Market Cap Within Reach", "prob": 0.47060403047957017, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:13:46+00:00", "news_date": "2026-08-18", "ticker": "TSLA", "headline": "Tesla Semi Deployment Triples Einride's Capacity As 500 Units Join Amazon Freight Push", "prob": 0.5824915572455668, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:13:49+00:00", "news_date": "2026-08-18", "ticker": "AMZN", "headline": "Warren Buffett Disciple Seth Klarman Bets on Cruise Lines, Auto Parts, Amazon and Bill Ackman in Q2", "prob": 0.5686720755874054, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:13:52+00:00", "news_date": "2026-08-18", "ticker": "GOOGL", "headline": "XLC: Alphabet And Meta Just Keep Churning", "prob": 0.5121804954847649, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:13:55+00:00", "news_date": "2026-08-18", "ticker": "META", "headline": "XLC: Alphabet And Meta Just Keep Churning", "prob": 0.5052147923707889, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:13:58+00:00", "news_date": "2026-08-17", "ticker": "JPM", "headline": "Here’s How Much You Would Have Made Owning JPMorgan Chase Stock In The Last 5 Years", "prob": 0.2407602013332238, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:14:01+00:00", "news_date": "2026-08-18", "ticker": "AMD", "headline": "What's Going On With AMD Stock Tuesday?", "prob": 0.6387613960145301, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:14:04+00:00", "news_date": "2026-08-17", "ticker": "NFLX", "headline": "Why Is Netflix Stock Falling on Monday?", "prob": 0.43685040345041254, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:14:07+00:00", "news_date": "2026-08-18", "ticker": "XOM", "headline": "Why Is ExxonMobil Stock Gaining Tuesday?", "prob": 0.3995492546486335, "gate": 0.5, "kept": true}
+{"ts": "2026-08-18T18:14:11+00:00", "news_date": "2026-08-17", "ticker": "JNJ", "headline": "Johnson & Johnson (NYSE:JNJ): A Dividend Quality Standout", "prob": 0.29432739424427795, "gate": 0.5, "kept": true}
