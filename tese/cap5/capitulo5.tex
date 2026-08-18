@@ -439,8 +439,9 @@ Vale a pena perceber \emph{porquê}, porque a explicação não é que os métod
 definem normalidade pela geometria dos dados: o \emph{Isolation Forest} pela facilidade com que um
 ponto se separa por cortes aleatórios \autocite{liu2008isolation}, o \emph{Local Outlier Factor} pela
 densidade em torno de cada ponto face à dos seus vizinhos \autocite{breunig2000lof}. São ambos
-métodos que a taxonomia de \textcite{chandola2009anomaly} coloca fora da família estatística, e
-foram construídos para dados com muitas variáveis a interagir. Aqui não é esse o caso: há uma série
+métodos não paramétricos, distintos da família \emph{estatística} que \textcite{chandola2009anomaly}
+define como aquela que modela a distribuição dos dados normais, e foram construídos para dados com
+muitas variáveis a interagir. Aqui não é esse o caso: há uma série
 de retornos por empresa, cuja estrutura relevante é \emph{temporal}. O agrupamento de volatilidade \autocite{engle1982arch, bollerslev1986garch} faz com
 que o que conta como invulgar mude ao longo do tempo, e uma janela deslizante acompanha isso por
 construção, enquanto um detetor ajustado ao conjunto todo tem de o inferir. O padrão de resultados
@@ -678,7 +679,7 @@ menor o Brier, melhor calibradas estão as probabilidades.}
 Alertar sempre (chão) & $0.378$ & $0.622$ \\
 \textbf{Só volatilidade} & $\mathbf{0.542}$ & $\mathbf{0.218}$ \\
 Só contexto de mercado & $0.538$ & $0.224$ \\
-Só texto da manchete & $0.439$ & $0.240$ \\
+Só texto do título & $0.439$ & $0.240$ \\
 Contexto $+$ texto & $0.496$ & $0.229$ \\
 Gradient boosting (contexto $+$ texto) & $0.469$ & $0.228$ \\
 \bottomrule
@@ -697,7 +698,7 @@ cima das outras em quase toda a extensão, e não só no valor agregado.}
 \end{figure}
 
 O melhor modelo da Tabela~\ref{tab:av_triagem} é o mais simples de todos: o que usa \textbf{apenas a volatilidade
-recente}. Acrescentar o resto do contexto não melhora. Acrescentar o texto da manchete
+recente}. Acrescentar o resto do contexto não melhora. Acrescentar o texto do título
 \emph{piora}, de $0.542$ para $0.496$.
 
 Isto era o contrário do que eu esperava quando comecei. A hipótese era que o texto da notícia
@@ -743,7 +744,7 @@ notícias do dia, sobre o mesmo bloco de teste.}
 \midrule
 ``Alertar sempre'' & $0.163$ & \emph{não é escolher às cegas}; ver o aviso abaixo \\
 Ao acaso (40 sementes) & $0.379 \pm 0.017$ & o que ``às cegas'' quer mesmo dizer \\
-Volatilidade média da empresa & $\mathbf{0.662}$ & treze constantes, sem ler manchete nenhuma \\
+Volatilidade média da empresa & $\mathbf{0.662}$ & treze constantes, sem ler título nenhum \\
 O modelo treinado & $0.632$ & o que está implantado \\
 \bottomrule
 \end{tabular}
@@ -763,7 +764,7 @@ primeira leitura sugeria. Deixo isto escrito porque foi um erro meu, e porque a 
 
 Há ainda a terceira linha, que é desconfortável e fica. Uma tabela de \textbf{treze constantes},
 a volatilidade média de cada empresa, calculada só sobre o bloco de treino e sem ler uma única
-manchete, obtém $0.662$ e \textbf{bate o modelo treinado}. É o terceiro caso deste capítulo em que o
+título, obtém $0.662$ e \textbf{bate o modelo treinado}. É o terceiro caso deste capítulo em que o
 método mais simples ganha. O que a evidência sustenta, portanto, é
 que \emph{ordenar por volatilidade} compensa; não que \emph{aprender} compense.
 
@@ -787,7 +788,7 @@ diz \textbf{o que} ele estava a fazer quando era chamado. Vale a pena responder 
 resposta é medível e porque foi ela que mudou o sistema.
 
 A pergunta é simples. O portão implantado era um limiar fixo sobre a probabilidade calibrada: passa
-quem estiver acima de $0.50$. \emph{Esse limiar separava manchetes, ou separava empresas?}
+quem estiver acima de $0.50$. \emph{Esse limiar separava títulos, ou separava empresas?}
 
 Mediu-se sobre as $4\,366$ decisões \textbf{realmente tomadas em produção}, e a
 Figura~\ref{fig:av_portao} mostra o resultado de uma só vez.
@@ -828,7 +829,7 @@ Figura~\ref{fig:av_portao} mostra o resultado de uma só vez.
 modelo lhe deu em produção, com a mediana marcada a preto. A linha tracejada é o piso de decisão.
 As barras claras nunca o alcançam, as escuras atravessam-no, e as alaranjadas estão sempre acima.
 Repare-se em que oito das doze estão \textbf{inteiramente} de um dos lados: para essas, a decisão
-estava tomada antes de se ler a manchete.}
+estava tomada antes de se ler o título.}
 \label{fig:av_portao}
 \end{figure}
 
@@ -843,7 +844,7 @@ A leitura da figura é imediata e os números confirmam-na:
 
 \begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
 Em \textbf{$84\%$} das decisões, o resultado estava determinado pela \textbf{empresa} antes de a
-manchete ser lida. A Apple não conseguia gerar um alerta de notícia, acontecesse o que
+título ser lida. A Apple não conseguia gerar um alerta de notícia, acontecesse o que
 acontecesse; a AMD passava em $963$ de $963$.
 \end{tcolorbox}
 
@@ -858,7 +859,7 @@ repetido numa camada diferente.
 Convém explicar como um defeito desta dimensão sobrevive meses num sistema com centenas de testes,
 porque a resposta é genérica e não específica deste trabalho. O modelo foi avaliado sobre a
 distribuição do conjunto de treino e implantado atrás de dois filtros que a alteram: só chegam à
-sua entrada manchetes que já passaram relevância e frescura. Nenhum teste podia detetar isto, porque
+sua entrada títulos que já passaram relevância e frescura. Nenhum teste podia detetar isto, porque
 cada peça cumpria o seu contrato; o que estava errado era uma suposição sobre a ligação entre elas,
 que ninguém tinha escrito em lado nenhum. É a classe de custo que \textcite{sculley2015debt}
 descrevem como dependências de dados não declaradas, e o sintoma que eles apontam verificou-se aqui
@@ -871,7 +872,7 @@ Apresentei o resultado anterior como uma descoberta empírica. Ao verificá-lo p
 que isso, e é preciso dizê-lo com clareza porque muda a leitura.
 
 O modelo implantado é a variante \textbf{sem texto}. Como a Secção~\ref{sec:met_modelo_ve} já
-mostrou, das suas entradas apenas uma distingue duas manchetes da mesma empresa no mesmo dia: o
+mostrou, das suas entradas apenas uma distingue dois títulos da mesma empresa no mesmo dia: o
 comprimento do título. Com o peso que essa entrada tem, oitenta caracteres a mais deslocam a
 pontuação em cerca de $0.013$, contra uma amplitude de $0.385$ entre empresas.
 
@@ -889,7 +890,7 @@ Vale a pena testá-lo, e o teste é o mais simples possível.
 
 Se o modelo aprendeu sobretudo a reconhecer a empresa, então deve ser possível reproduzi-lo com
 uma \textbf{tabela de consulta}: para cada empresa, um único número fixado no bloco de treino, que
-é a fração das suas notícias que se revelaram importantes. Essa tabela não vê a manchete, não vê o
+é a fração das suas notícias que se revelaram importantes. Essa tabela não vê o título, não vê o
 dia, não vê nada. Devolve sempre o mesmo valor para a mesma empresa.
 
 A Tabela~\ref{tab:av_ablacao} compara-a com o modelo implantado e desmonta o modelo entrada a
@@ -934,13 +935,13 @@ obtém exatamente o chão não aprendeu coisa nenhuma.
 
 \paragraph{E a única entrada que descreve a notícia não vale nada.}
 O comprimento do título, sozinho, também dá $0.378$. É o mesmo chão. A única informação por
-manchete que o modelo implantado recebia é indistinguível de não receber informação nenhuma.
+título que o modelo implantado recebia é indistinguível de não receber informação nenhuma.
 
 Isto obriga a separar duas afirmações que eu tinha juntado, e a separação é a parte honesta:
 
 \begin{itemize}
   \item \textbf{A conclusão científica da \gls{QI}3 mantém-se.} A variante \emph{com} texto tem
-        $384$ números por manchete, portanto tem mesmo informação sobre a notícia, e ainda assim
+        $384$ números por título, portanto tem mesmo informação sobre a notícia, e ainda assim
         obteve $0.496$ contra os $0.542$ da volatilidade. É essa comparação que responde à
         pergunta, e o resultado negativo é dela.
   \item \textbf{A decisão de produto estava errada por outra razão.} O que foi implantado como
@@ -978,9 +979,9 @@ comparação.
 do que ``falta afinar o piso'':
 
 \begin{tcolorbox}[colback=black!3, colframe=black!35, boxrule=0.5pt, arc=2pt]
-Dentro de uma empresa, a pontuação do modelo quase não varia com a manchete. Nenhuma regra de
+Dentro de uma empresa, a pontuação do modelo quase não varia com o título. Nenhuma regra de
 decisão aplicada a essa pontuação a pode tornar sensível à notícia, porque a informação que
-distinguiria uma manchete da seguinte não está lá.
+distinguiria um título da seguinte não está lá.
 \end{tcolorbox}
 
 \paragraph{O que se fez em consequência, e porquê.}
@@ -996,7 +997,7 @@ ar. Passaram a ser a mesma.
 
 \subsection{O que isto não permite concluir}
 
-Que o texto de notícias não sirva para nada. Só se testou uma representação (manchetes, sem o corpo
+Que o texto de notícias não sirva para nada. Só se testou uma representação (títulos, sem o corpo
 do artigo) sobre um corpus. Com textos completos e mais dados, a resposta podia ser outra, e isso
 fica como trabalho futuro, não como desculpa.
 
@@ -1126,7 +1127,7 @@ notícias por dia. As duas últimas linhas não são políticas: uma é o chão 
 Ao acaso & escolhe cinco à sorte & $0.375$ \\
 Quem mais se mexeu hoje & notícias das empresas com maior movimento do dia & $0.489$ \\
 \textbf{O modelo implantado} & a triagem aprendida & $\mathbf{0.632}$ \\
-Volatilidade da empresa & doze constantes, sem ler manchete & $\mathbf{0.662}$ \\
+Volatilidade da empresa & doze constantes, sem ler título & $\mathbf{0.662}$ \\
 \midrule
 Oráculo & sabe as respostas: o melhor possível & $0.968$ \\
 \bottomrule

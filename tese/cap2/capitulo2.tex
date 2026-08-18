@@ -24,8 +24,8 @@ ações \autocite{gallup2025stock}, num mercado que vale mais de 62 biliões de 
 dimensão mas de comportamento, e que explica porque é que o problema deste trabalho existe.
 
 Este público é numeroso e é ativo. Mesmo durante a queda de março de 2020, os investidores
-particulares de uma plataforma sem comissões reforçaram posições em vez de fugirem
-\autocite{welch2022robinhood}, o que contraria a caricatura do pequeno investidor que só reage em
+particulares de uma plataforma sem comissões aumentaram as suas posições agregadas em vez de fugirem
+\autocite{welch2022robinhood}, o que contraria a caricatura do investidor particular que só reage em
 pânico. São pessoas que decidem, com regularidade, e que por isso beneficiam de melhor informação.
 
 O que a literatura de finanças comportamentais estabelece é que essas decisões se afastam de forma
@@ -42,7 +42,10 @@ A segunda é mais desconfortável, e é a que fundamenta este trabalho inteiro.
 ações que \emph{chamam a atenção}, entendendo-se por isso as que aparecem nas notícias, as que
 apresentam volume invulgar e as que registam retornos extremos num único dia. O mecanismo que os
 autores propõem é o do problema de procura: perante milhares de escolhas possíveis, a pessoa não
-avalia todas, e recai sobre aquilo que lhe saltou à vista. A atenção é de tal modo central neste
+avalia todas, e recai sobre aquilo que lhe saltou à vista. Convém registar a base empírica: são
+registos de corretoras dos Estados Unidos entre 1991 e 1999, ou seja anteriores à negociação por
+telemóvel e sem comissões, e o mecanismo que descrevem é o que aqui se assume transferível, não os
+valores concretos. A atenção é de tal modo central neste
 processo que chega a ser mensurável através do volume de pesquisas na internet
 \autocite{da2011attention}.
 
@@ -54,8 +57,12 @@ podem por si levantar um alerta, ao passo que o volume é calculado e mostrado c
 levanta nada. A razão está medida e é dita na Secção~\ref{sec:av_alternativas}: a combinação do
 volume com os outros sinais só melhorou a triagem em um de três orçamentos, e uma capacidade que
 ganha uma vez em três não justifica mais uma via de interrupção. A diferença é o que acontece a
-seguir. Hoje, esses sinais chegam à pessoa em bruto, e o que a literatura documenta é que
-ela compra a seguir. O que este trabalho tenta é interpor, entre o sinal e a decisão, o contexto que
+seguir. Hoje, esses sinais chegam à pessoa em bruto, e o que a literatura documenta é que, em
+agregado, estes investidores compram mais do que vendem aquilo que lhes chamou a atenção. Os autores
+são explícitos quanto ao alcance da afirmação: nem toda a gente compra tudo o que lhe salta à vista,
+e o que se mede é um desequilíbrio entre compras e vendas. São também explícitos quanto ao que daí
+resulta, e é essa a metade que justifica este trabalho: esse padrão de compra \emph{não} gera
+retornos superiores. O que este trabalho tenta é interpor, entre o sinal e a decisão, o contexto que
 permite julgá-lo: se aquilo é invulgar para aquela empresa, se foi a empresa ou o mercado, e o que
 se seguiu em casos parecidos. A Figura~\ref{fig:ctx_atencao} resume esta cadeia.
 
@@ -85,7 +92,7 @@ se seguiu em casos parecidos. A Figura~\ref{fig:ctx_atencao} resume esta cadeia.
   \draw[->, dashed, black!55] (n.east) to[out=20, in=150] node[above, midway, font=\scriptsize,
         align=center, yshift=1pt] {hoje: sem intermediário} (dec.north west);
 \end{tikzpicture}
-\caption[Da atenção à decisão]{Os três sinais que a literatura identifica como captadores de atenção
+\caption[Da atenção à decisão]{Os três indicadores de atenção que a literatura usa
 \autocite{barber2008glitters} são calculados por este sistema, mas apenas dois levantam alertas: a
 caixa do volume está a tracejado porque o sinal é mostrado como contexto e não interrompe ninguém. A
 seta a tracejado é o caminho que existe hoje, em que o sinal chega em bruto. A caixa central é o que
@@ -156,14 +163,19 @@ Dão matéria-prima para a primeira pergunta, mas param aí, e o Capítulo~\ref{
 com medição própria, que o tema de uma notícia e a direção do movimento que se lhe segue são coisas
 distintas com mais frequência do que a intuição sugere.
 
-Os \emph{robo-advisors} \autocite{dacunto2019robo} respondem a outra pergunta: como distribuir
-dinheiro por uma carteira. É uma pergunta legítima e não é esta. A literatura reconhece-lhes
-benefícios genuínos, nomeadamente a melhoria da diversificação e a contenção de enviesamentos
-comportamentais \autocite{dacunto2019robo, cardillo2024robo}, mas o modo de funcionamento é o
-oposto do deste trabalho: eles \emph{agem por} o investidor, com lógica proprietária, ao passo que
-aqui se procura explicar e deixar a decisão à pessoa. Acresce que aconselhar sobre investimentos tem
-obrigações regulatórias que este trabalho evita por desenho, como se detalha na
-Secção~\ref{sec:ctx_escolhas}.
+Os \emph{robo-advisors} \autocite{dacunto2019robo} respondem sobretudo a outra pergunta: como
+distribuir dinheiro por uma carteira. É uma pergunta legítima e não é esta. A literatura
+reconhece-lhes benefícios genuínos, embora não uniformes: \textcite{dacunto2019robo} medem uma
+melhoria da diversificação e uma redução da volatilidade \emph{para quem tinha menos de cinco ações}
+antes da adesão, ao passo que para quem já detinha mais de dez o efeito sobre a diversificação é
+quase nulo. A contenção de enviesamentos comportamentais é o benefício mais consistente
+\autocite{dacunto2019robo, cardillo2024robo}.
+
+A diferença face a este trabalho é de \emph{objeto} e não de transparência. Um \emph{robo-advisor}
+recomenda uma carteira e executa-a, ainda que a decisão final continue a ser autorizada pelo
+investidor; aqui não se recomenda nada, e o que se entrega é a evidência sobre um acontecimento
+concreto. Acresce que aconselhar sobre investimentos tem obrigações regulatórias que este trabalho
+evita por desenho, como se detalha na Secção~\ref{sec:ctx_escolhas}.
 
 \section{Os produtos que fazem exatamente esta pergunta}
 \label{sec:ctx_produtos}
@@ -256,18 +268,21 @@ Profunda \newline \autocite{pang2021deep}
 \end{tabular}
 \end{table}
 
-Há uma restrição prática que condiciona toda esta escolha e que convém enunciar cedo: em finanças a
-deteção é dominada por métodos \emph{não supervisionados}, porque anomalias rotuladas são escassas
-\autocite{ahmed2016financial}. Não existe um conjunto de dados em que alguém tenha marcado, dia a
+Há uma restrição prática que condiciona toda esta escolha e que convém enunciar cedo. Em domínios
+financeiros vizinhos, como a deteção de fraude, os métodos \emph{não supervisionados} ocupam um lugar
+central, precisamente porque anomalias rotuladas são escassas e os padrões mudam com o tempo
+\autocite{ahmed2016financial}. O mesmo se aplica ao problema deste trabalho. Não existe um conjunto de dados em que alguém tenha marcado, dia a
 dia, quais os movimentos que mereciam um alerta. Essa ausência não é um detalhe de implementação:
 molda a forma como o Capítulo~\ref{cap:avaliacao} pode avaliar este componente, e é a razão pela
 qual a avaliação se apoia num critério definido a partir dos próprios dados em vez de um julgamento
 humano.
 
 A família estatística assenta numa suposição, a de que a distribuição dos retornos é localmente
-estável, e essa suposição merece ser confrontada em vez de escondida. A literatura de volatilidade
-mostra que os mercados exibem \emph{agrupamento de volatilidade}, ou seja a tendência de os períodos
-calmos e os agitados chegarem em séries \autocite{engle1982arch, bollerslev1986garch}. Uma janela
+estável, e essa suposição merece ser confrontada em vez de escondida. Os modelos de volatilidade
+condicional, introduzidos por \textcite{engle1982arch} sobre séries de inflação e generalizados por
+\textcite{bollerslev1986garch}, formalizam o \emph{agrupamento de volatilidade}, ou seja a tendência
+de os períodos calmos e os agitados chegarem em séries. É uma propriedade que a literatura financeira
+posterior documentou também nos retornos de ações. Uma janela
 deslizante é precisamente o que acompanha esse agrupamento, porque a norma contra a qual o dia de
 hoje é comparado é reestimada a cada dia a partir do passado recente. A escolha não elimina o
 problema, mas trata-o, e o Capítulo~\ref{cap:avaliacao} mede a alternativa em que a janela pondera
@@ -415,11 +430,15 @@ linhas de base contra as quais o resultado é comparado.
 
 O instrumento é o \emph{estudo de evento}, introduzido por \textcite{fama1969adjustment}.
 \textcite{brown1985daily} estudam em detalhe o seu comportamento com retornos \emph{diários},
-comparando várias formas de estimar o retorno esperado e mostrando que os procedimentos mais simples
-se comportam bem sobre janelas curtas em torno do acontecimento. É esse resultado que dá conforto às
-janelas de mais um, mais três e mais cinco dias usadas neste trabalho, com uma diferença que a
-Secção~\ref{sec:met_recuperacao} declara: o que aqui se mostra ao utilizador é o retorno bruto e não
-o retorno anormal que aqueles autores estudam.
+comparando várias formas de estimar o retorno esperado, e concluem que os procedimentos correntes,
+assentes no modelo de mercado estimado por mínimos quadrados, se mantêm bem especificados em janelas
+curtas em torno do acontecimento. Os próprios autores delimitam o alcance dessa conclusão: a variante
+mais simples de todas, que desconta apenas a média histórica do próprio título, perde potência e
+chega a ficar mal especificada quando as datas dos acontecimentos se concentram no mesmo dia.
+
+É esse resultado que dá conforto às janelas de mais um, mais três e mais cinco dias usadas neste
+trabalho, com uma diferença que a Secção~\ref{sec:met_recuperacao} declara: o que aqui se mostra ao
+utilizador é o retorno bruto e não o retorno anormal que aqueles autores estudam.
 
 Que o texto publicado tem relação estatística com os movimentos do mercado é observação antiga
 \autocite{tetlock2007media}. Convém enunciá-la com o verbo certo: trata-se de evidência de uma
@@ -437,9 +456,10 @@ estimativa boa e uma má. A alternativa que este trabalho adota pondera o encolh
 é praticamente preservada e uma frágil é puxada para o valor de referência. O detalhe está na
 Secção~\ref{sec:met_decomposicao}.
 
-Por fim, o enquadramento teórico que justifica a recusa de prever. Se movimentos futuros fossem
-sistematicamente previsíveis a partir de informação pública, essa informação já estaria refletida no
-preço \autocite{fama1970efficient}. Esta é uma das razões pelas quais o sistema mede o que já
+Por fim, o enquadramento teórico que justifica a recusa de prever. A hipótese dos mercados
+eficientes, na sua forma semiforte, sustenta que os preços já refletem a informação publicamente
+disponível \autocite{fama1970efficient}; daí decorre que movimentos futuros não deveriam ser
+sistematicamente previsíveis a partir dessa informação. Esta é uma das razões pelas quais o sistema mede o que já
 aconteceu em vez de projetar o que virá, e a outra, mais prática, é que apenas o passado é
 verificável por quem lê.
 
@@ -450,8 +470,14 @@ verificável por quem lê.
 
 Tem, e é uma linha estabelecida em inteligência artificial. O \emph{raciocínio baseado em casos}
 \autocite{aamodt1994cbr} resolve um problema novo recuperando problemas passados semelhantes e
-reutilizando o que se sabe sobre eles, em vez de aplicar uma regra geral derivada de antemão. É
-exatamente o que a terceira técnica deste trabalho faz.
+reutilizando o que se sabe sobre eles, em vez de se apoiar \emph{apenas} em conhecimento geral do
+domínio. A fonte descreve um ciclo de quatro processos, que são recuperar, reutilizar, rever e reter,
+e afirma que os quatro são necessários para resolver um problema por completo.
+
+A terceira técnica deste trabalho implementa os dois primeiros e \textbf{pára deliberadamente} antes
+dos outros dois: recupera casos semelhantes e mostra o que neles foi medido, mas não adapta esse
+desfecho ao caso presente. Adaptar seria produzir uma expectativa sobre o que vai acontecer, ou seja
+exatamente a previsão que este trabalho recusa.
 
 A escolha tem uma justificação adicional, que vem do lado de quem lê. A investigação sobre explicação
 em ciências sociais mostra que as pessoas procuram razões \emph{contrastivas} e seletivas, e não uma
@@ -587,13 +613,22 @@ medido no Capítulo~\ref{cap:avaliacao}. Não se afirma que sejam o melhor méto
 essa é uma afirmação sobre um campo inteiro e não foi medida aqui.
 
 A segunda é a da honestidade do número produzido. Para quem lê, uma pontuação só é honesta se for uma
-\emph{probabilidade}. As pontuações em bruto de um classificador estão tipicamente mal calibradas, e a
-calibração \emph{a posteriori}, ajustando por exemplo uma sigmoide sobre um bloco de validação
-reservado, corrige esse problema \autocite{niculescu2005calibration}. A escolha da forma paramétrica
-em detrimento da alternativa não paramétrica é deliberada: uma sigmoide de dois parâmetros não
-consegue sobreajustar um bloco de validação modesto, ao passo que a regressão isotónica precisa de
-bastante mais dados de calibração antes de a sua flexibilidade adicional compensar
-\autocite{niculescu2005calibration}.
+\emph{probabilidade}. As pontuações em bruto de muitos classificadores estão mal calibradas, e a
+calibração \emph{a posteriori}, ajustando uma sigmoide sobre um bloco de validação reservado, corrige
+essa distorção \autocite{niculescu2005calibration}.
+
+Convém, no entanto, registar o que a mesma fonte conclui, porque não favorece a escolha feita aqui.
+\textcite{niculescu2005calibration} apontam a regressão logística como já \emph{bem calibrada à
+partida}, e concluem que nessas famílias a calibração posterior não traz melhoria e chega a
+prejudicar quando o bloco de calibração é pequeno. Acrescentam que, acima de cerca de mil casos de
+calibração, a regressão isotónica iguala ou supera sempre a sigmoide. O modelo implantado neste
+trabalho é precisamente uma regressão logística, e o seu bloco de validação está muito acima desse
+limiar, pelo que as duas afirmações se aplicam ao caso.
+
+A calibração não se justifica aqui, portanto, por autoridade, e sim por medição: a
+Secção~\ref{sec:av_alternativas} compara as duas variantes na mesma validação, e a sigmoide iguala ou
+ganha no Brier em todas as famílias testadas. É um caso em que a teoria apontava para a alternativa e
+a medição sobre estes dados não lhe deu razão, e fica registado como tal.
 
 Uma terceira via, considerada e não adotada, merece registo porque a decisão foi tomada com
 conhecimento dela. A predição conformal permite envolver um preditor de modo que devolva um
@@ -603,9 +638,13 @@ correção de quantil para amostras finitas, está estabelecida \autocite{angelo
 
 Duas precisões, porque são as que decidem se o método serve aqui. A primeira é o alcance da garantia,
 e é o mal-entendido mais comum a respeito deste método: a cobertura é \emph{marginal}, ou seja vale
-em média sobre os casos, e não caso a caso. A segunda é a condição sob a qual ela vale, que é a
+em média sobre os casos, e não caso a caso. Registe-se que a fonte não trata isto como limite
+intransponível, e dedica uma secção a mostrar que a validade condicional se pode obter modificando a
+definição de preditor conformal; o que se afirma aqui é apenas que a variante corrente, e a que seria
+adotada sem trabalho adicional, dá a garantia marginal. A segunda precisão é a condição sob a qual
+essa garantia vale, que é a
 \textbf{permutabilidade} entre os dados de calibração e os de teste. Não é um pormenor técnico neste
-trabalho: os dados são uma série temporal financeira, as manchetes chegam por ordem cronológica, e a
+trabalho: os dados são uma série temporal financeira, os títulos chegam por ordem cronológica, e a
 Secção~\ref{sec:met_triagem} divide o conjunto por data e com embargo precisamente porque tratar
 estas observações como permutáveis produziria uma avaliação otimista. A hipótese que a garantia
 conformal exige é a mesma que este trabalho recusa noutro sítio, e por isso o método entra no

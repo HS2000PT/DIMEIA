@@ -79,7 +79,7 @@ artigo, e não traz rótulo nenhum. Tudo o resto é construído.}
 \end{figure}
 
 Repare-se no que \emph{não} está ali. Não há preço, não há reação do mercado, não há indicação de
-que a notícia seja importante. Uma manchete sobre petróleo aparece etiquetada como \texttt{AAPL},
+que a notícia seja importante. Um título sobre petróleo aparece etiquetado como \texttt{AAPL},
 o que ilustra bem a qualidade da etiquetagem à entrada e justifica o filtro de relevância descrito
 no Capítulo~\ref{cap:sistema}.
 
@@ -584,7 +584,7 @@ A medida usada é a \textbf{semelhança do cosseno}. Em vez de medir a distânci
 \end{itemize}
 
 Usa-se o ângulo e não a distância porque o que interessa é \emph{sobre o que} a frase fala, e não o
-comprimento do texto. Uma manchete curta e um parágrafo longo sobre o mesmo assunto devem ficar
+comprimento do texto. Um título curto e um parágrafo longo sobre o mesmo assunto devem ficar
 próximos, e o ângulo dá isso.
 
 A fórmula geral do cosseno entre dois vetores $\mathbf{u}$ e $\mathbf{v}$ é:
@@ -603,16 +603,16 @@ comprimentos dos dois vetores, e é essa divisão que faz o resultado depender s
 \paragraph{E há aqui uma simplificação de consequências práticas.}
 O modelo devolve os vetores já com comprimento $1$. Isso não é um detalhe de arrumação: quando os
 dois comprimentos valem $1$, o denominador da Equação~\ref{eq:cosseno} vale $1 \times 1 = 1$ e a
-fórmula reduz-se à soma de cima. Comparar duas manchetes passa a ser \textbf{multiplicar e somar},
+fórmula reduz-se à soma de cima. Comparar dois títulos passa a ser \textbf{multiplicar e somar},
 sem mais nada, o que é a razão de o sistema conseguir percorrer $80$ mil casos depressa.
 
 \subsection{O cosseno em dois casos reais}
 
-A Tabela~\ref{tab:met_cosseno} segue a conta para dois pares de manchetes retirados da base de
+A Tabela~\ref{tab:met_cosseno} segue a conta para dois pares de títulos retirados da base de
 casos. São reais, e os valores são os que o sistema calcula.
 
 \begin{table}[ht]
-\caption[O cosseno entre duas manchetes reais]{Dois pares do lado oposto da escala. Repare-se na
+\caption[O cosseno entre dois títulos reais]{Dois pares do lado oposto da escala. Repare-se na
 linha do comprimento: vale exatamente $1$ nos quatro vetores, o que confirma a normalização e faz o
 cosseno coincidir com a soma dos produtos.}
 \label{tab:met_cosseno}
@@ -622,11 +622,11 @@ cosseno coincidir com a soma dos produtos.}
 \toprule
  & \tabhead{Par A: mesmo assunto} & \tabhead{Par B: assuntos diferentes} \\
 \midrule
-Primeira manchete & ``Shares of several companies in the technology, software and semiconductor
+Primeira título & ``Shares of several companies in the technology, software and semiconductor
 space are trading lower\ldots'' & ``Peloton Shares Tick To Session Low As Hearing Report Apple
 Working On `Guided Workout'\ldots'' \\
 \addlinespace
-Segunda manchete & ``Shares of several technology, software and semiconductor companies are
+Segunda título & ``Shares of several technology, software and semiconductor companies are
 trading lower\ldots'' & ``Coronavirus: Another Severe Hit To The Automotive Industry'' \\
 \midrule
 Comprimento do 1.\textsuperscript{o} vetor & $1.000000$ & $1.000000$ \\
@@ -652,7 +652,7 @@ Para tornar a soma concreta, eis as quatro primeiras das $384$ parcelas do par A
 
 Note-se a segunda parcela: dois números \emph{negativos} contribuem \emph{positivamente}, porque o
 que conta é os dois vetores concordarem naquela dimensão, e não o sinal em si. E note-se, no par B,
-que a soma final é ligeiramente negativa: as manchetes não são opostas em sentido nenhum, apenas não
+que a soma final é ligeiramente negativa: os títulos não são opostos em sentido nenhum, apenas não
 têm nada em comum, e o valor anda à volta de zero.
 
 O limiar usado em produção é $0.45$. O par A passaria com folga; o par B nem se aproxima.
@@ -715,8 +715,8 @@ passadas não é prever o que vai acontecer agora. É por isso que o sistema mos
 esconde que os casos podem ter ido em sentidos opostos.
 
 \begin{tcolorbox}[colback=black!3, colframe=black!30, boxrule=0.4pt, arc=2pt]
-\textbf{Em três frases.} Um modelo já treinado transforma cada manchete numa lista de 384 números que
-funciona como uma coordenada de significado. Comparo manchetes pelo ângulo entre essas coordenadas,
+\textbf{Em três frases.} Um modelo já treinado transforma cada título numa lista de 384 números que
+funciona como uma coordenada de significado. Comparo títulos pelo ângulo entre essas coordenadas,
 o que aproxima frases parecidas mesmo com palavras diferentes. Para cada caso passado, meço o que o
 preço fez $1$, $3$ e $5$ dias depois: uma medição, não uma previsão.
 \end{tcolorbox}
@@ -765,18 +765,18 @@ O modelo recebe cinco tipos de informação sobre o momento da notícia:
   \item \textbf{volatilidade recente}: quanto a ação tem oscilado nos últimos 20 dias;
   \item \textbf{momento}: como se comportou nos últimos 5 dias;
   \item \textbf{o movimento do próprio dia};
-  \item \textbf{o comprimento da manchete};
+  \item \textbf{o comprimento do título};
   \item \textbf{o setor} da empresa.
 \end{itemize}
 
-E, numa das variantes testadas, também o \emph{embedding} da manchete, os mesmos 384 números da
+E, numa das variantes testadas, também o \emph{embedding} do título, os mesmos 384 números da
 Secção~\ref{sec:met_recuperacao}. Comparar a variante com texto e a variante sem texto é
 precisamente o que a \gls{QI}3 pergunta, e a resposta está no Capítulo~\ref{cap:avaliacao}.
 
 \paragraph{Vale a pena olhar para esta lista com atenção, porque ela decide mais do que parece.}
 A que \emph{nível} vive cada uma destas informações? A volatilidade e o momento descrevem a
 empresa e movem-se devagar. O setor é literalmente constante. O movimento do dia é igual para
-todas as notícias do mesmo dia. Sobra uma única entrada que distingue duas manchetes da mesma
+todas as notícias do mesmo dia. Sobra uma única entrada que distingue dois títulos da mesma
 empresa no mesmo dia: \textbf{o comprimento do título}.
 
 \begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
@@ -787,7 +787,7 @@ construção, e não por acidente do treino.
 \end{tcolorbox}
 
 Isto não invalida a comparação que a \gls{QI}3 faz: a variante \emph{com} texto tem $384$ números
-por manchete e é essa que responde à pergunta. Mas fixa desde já o que a variante sem texto pode e
+por título e é essa que responde à pergunta. Mas fixa desde já o que a variante sem texto pode e
 não pode fazer, e é uma distinção a que o Capítulo~\ref{cap:avaliacao} volta, porque foi ela que
 me escapou quando escolhi o que implantar.
 
@@ -835,10 +835,11 @@ O modelo devolve uma pontuação. Uma pontuação alta não é, por si só, uma 
 não garante que aconteça em 8 de cada 10 casos.
 
 Como o número vai ser mostrado a uma pessoa, isso tem de ser corrigido. O passo chama-se
-\textbf{calibração} \autocite{niculescu2005calibration}: ajusta-se uma função simples que
-transforma pontuações em probabilidades
-\emph{honestas}, de modo a que, entre todos os casos a que o modelo dá $70\%$, cerca de $70\%$
-tenham mesmo acontecido. A calibração é ajustada no bloco de validação, nunca no de teste.
+\textbf{calibração}, e a função usada aqui é a sigmoide de dois parâmetros proposta por Platt em
+1999, cuja avaliação empírica comparativa é feita por \textcite{niculescu2005calibration}. Transforma
+pontuações em probabilidades \emph{honestas}, de modo a que, entre todos os casos a que o modelo dá
+$70\%$, cerca de $70\%$ tenham mesmo acontecido. A calibração é ajustada no bloco de validação, nunca
+no de teste.
 
 A função usada tem apenas dois números a aprender, $a$ e $b$:
 

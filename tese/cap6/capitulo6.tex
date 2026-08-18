@@ -55,7 +55,7 @@ medido não é anómalo, e é uma das razões pelas quais o produto apresenta os
 observações do passado e nunca como indicação do que vem a seguir.
 
 \paragraph{QI3, triagem. Não.}
-Nenhum modelo que lê o texto da manchete bateu uma linha de base que usa apenas volatilidade
+Nenhum modelo que lê o texto do título bateu uma linha de base que usa apenas volatilidade
 ($0.496$ contra $0.542$). O resultado sobreviveu a um re-teste em condições favoráveis ao texto, a
 uma reamostragem por grupos, e a nove definições diferentes do rótulo.
 
@@ -141,21 +141,21 @@ Mas esse número é um \textbf{limite superior}, e a distinção importa: ele pe
 \paragraph{O alerta afirma mais evidência do que tem.}
 Quando mostra três precedentes e diz que os três se moveram na mesma direção, está a apresentar isso
 como concordância entre três casos. Só que o impacto é medido por \emph{(empresa, dia)}: três
-manchetes da mesma empresa no mesmo dia partilham o mesmo valor por construção. Medido sobre os
+títulos da mesma empresa no mesmo dia partilham o mesmo valor por construção. Medido sobre os
 $247$ alertas já entregues com precedentes, em $36.8\%$ deles os casos assentam em menos dias
 distintos do que casos mostrados, e em $11.3\%$ são todos do mesmo dia. Não afeta nenhum número do
 Capítulo~\ref{cap:avaliacao}; afeta o que o produto diz ao utilizador.
 
-O alerta passou a contar dias e não manchetes, o que torna a afirmação verdadeira. Mas a causa de
+O alerta passou a contar dias e não títulos, o que torna a afirmação verdadeira. Mas a causa de
 fundo continua lá: o impacto \emph{é} medido por dia, portanto duas notícias do mesmo dia nunca
 poderão ser duas observações independentes, por mais que se conte bem. Medir impacto por notícia
 exigiria dados de preço ao minuto, que as fontes gratuitas não dão.
 
-\paragraph{As notícias são só manchetes.}
+\paragraph{As notícias são só títulos.}
 O sistema lê o título e não o corpo do artigo. Isso limita o que a representação de texto consegue
 captar, e é uma explicação plausível, embora não confirmada, para o resultado negativo da QI3. As
 revisões de análise textual em finanças descrevem trabalhos que operam sobre documentos inteiros
-\autocite{kearney2014textual}, e uma manchete é, por construção, a parte do documento onde mais
+\autocite{kearney2014textual}, e um título é, por construção, a parte do documento onde mais
 informação foi deitada fora.
 
 \paragraph{Os rótulos são aproximações.}
@@ -189,7 +189,7 @@ Esta é a limitação que mais me custa escrever, e é a que aprendi mais tarde.
 
 O que foi implantado como porta de decisão foi a variante \emph{sem} texto, escolhida por ter a
 melhor PR-AUC entre as que cabiam no contentor. Só que essa variante recebe informação de nível de
-\emph{empresa}, e a única entrada que distingue duas manchetes da mesma empresa no mesmo dia é o
+\emph{empresa}, e a única entrada que distingue dois títulos da mesma empresa no mesmo dia é o
 comprimento do título. A sua pontuação é quase constante dentro de cada empresa \textbf{por
 aritmética}, e não por acidente: em $84\%$ das decisões o resultado estava determinado antes de a
 notícia ser lida (Secção~\ref{sec:av_inevitavel}).
@@ -198,7 +198,7 @@ Convém separar bem as duas afirmações, porque só uma delas é um erro:
 
 \begin{itemize}
   \item o \textbf{resultado da \gls{QI}3 mantém-se}. A variante com texto tinha mesmo $384$ números
-        por manchete e perdeu à volatilidade. A pergunta de investigação foi respondida;
+        por título e perdeu à volatilidade. A pergunta de investigação foi respondida;
   \item a \textbf{escolha de produto estava errada}, e a razão é de método: escolhi por uma métrica
         que faz a pergunta ``ordena bem no conjunto todo?'' quando o produto precisava de
         ``distingue duas notícias da mesma empresa?''. Uma pontuação constante por empresa responde
@@ -256,7 +256,7 @@ derive das limitações medidas é um pedido de desculpas com outra forma.
   % "avalia<custo>ção", e o documento compilava sem um único aviso.
   \foreach \xn/\xlim/\xfut/\xcus in {%
     0/{Nenhuma avaliação com pessoas}/{Correr o estudo: 6 a 10 pessoas, 15 min cada}/{calendário},%
-    1/{O modelo implantado é uma tabela de consulta: $84\%$ das decisões fechadas antes de ler a notícia}/{Entradas que variem com a manchete}/{baixo: já existem no sistema},%
+    1/{O modelo implantado é uma tabela de consulta: $84\%$ das decisões fechadas antes de ler a notícia}/{Entradas que variem com o título}/{baixo: já existem no sistema},%
     2/{Cobertura de $88.5\%$, e $50\%$ na pior empresa}/{Julgamento humano sobre uma amostra de dias}/{calendário},%
     3/{Lê o título e não o corpo do artigo}/{Ler o corpo dos artigos}/{dados novos},%
     4/{Repetição apanhada por palavras em comum}/{Detetar repetição por significado}/{baixo: técnica já existe}%
@@ -287,7 +287,7 @@ Por esta ordem, e as três primeiras respondem diretamente às limitações acim
   \item \textbf{Dar ao modelo de decisão entradas que variem com a notícia.} É a correção direta da
         limitação anterior, e é barata: as duas quantidades óbvias já existem no sistema, que são a
         semelhança do melhor precedente e a concordância de direção entre eles. Ao contrário da
-        volatilidade e do setor, mudam de manchete para manchete.
+        volatilidade e do setor, mudam de título para título.
   \item \textbf{Ler o corpo dos artigos, e não só o título.} É a hipótese mais direta para explicar
         o negativo da QI3, e é testável com o mesmo protocolo já montado.
   \item \textbf{Detetar histórias repetidas por significado.} Hoje a repetição é apanhada por
@@ -304,7 +304,7 @@ Por esta ordem, e as três primeiras respondem diretamente às limitações acim
         que a garantia é \emph{marginal}, vale em média sobre os casos e não caso a caso, que é
         precisamente a leitura errada que um utilizador faria. A segunda é mais dura: a garantia
         exige \textbf{permutabilidade} entre calibração e teste, e estes dados são uma série
-        temporal, com as manchetes a chegarem por ordem. É a mesma hipótese que este trabalho
+        temporal, com os títulos a chegarem por ordem. É a mesma hipótese que este trabalho
         recusa quando divide o conjunto por data e com embargo. Aplicar o método sem tratar isso
         daria intervalos com uma garantia que os dados não sustentam, e seria trocar um número
         honesto por um número com aparência de rigor.
