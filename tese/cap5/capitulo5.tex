@@ -711,7 +711,7 @@ recente}. Acrescentar o resto do contexto não melhora. Acrescentar o texto do t
 Isto era o contrário do que eu esperava quando comecei. A hipótese era que o texto da notícia
 trouxesse informação que os preços não tinham. Sobre este corpus, não traz.
 
-\subsection{Não será um acidente do meu montagem?}
+\subsection{Não será um acidente da minha montagem?}
 
 Foi a primeira hipótese que fui verificar, por três caminhos.
 
@@ -794,7 +794,7 @@ filtros baratos já removeram grande parte do que o modelo foi treinado para rem
 pouco para separar. \textbf{Um modelo avaliado isolado e implantado atrás de filtros nunca foi
 avaliado na distribuição que vai ver.} É a lição mais transferível deste trabalho.
 
-\subsection{E o que é que o porta estava a escolher, afinal?}
+\subsection{E o que é que a porta estava a escolher, afinal?}
 \label{sec:av_portao}
 
 A subsecção anterior diz que o modelo está \emph{a mais}. Fica bem como explicação e é vaga: não
@@ -1175,6 +1175,18 @@ está limitado por falta de matéria-prima: está limitado por não conseguir di
 A margem entre $0.632$ e $0.968$ é de $0.336$, e está quase toda em separar notícias \emph{dentro}
 de cada empresa, que é exatamente o que o modelo implantado não consegue fazer. É a mesma
 conclusão a chegar por um terceiro caminho independente.
+
+\paragraph{E tudo isto conta com a notícia ter chegado.}
+Todas as políticas desta tabela escolhem de dentro do que a fonte entregou, o que deixa de fora a
+pergunta anterior a todas: e quando não entregou nada? Está medido. Sobre um ano de notícias
+captadas, existia pelo menos uma notícia relevante em $88.5\%$ dos dias que o detetor considerou
+invulgares, e $90.4\%$ nos mais extremos. Nos restantes, nenhuma alteração ao código ajuda: se a
+fonte gratuita não associou notícia nenhuma à empresa, ela nunca entra no funil. E a cobertura é
+muito desigual, com a empresa pior coberta a ficar-se pelos $50\%$.
+
+Este número é um \textbf{limite superior} e a distinção decide o que ele vale: pergunta se existia
+\emph{uma} notícia, não se chegou \emph{a certa}. A Secção~\ref{sec:con_limitacoes} retoma-o como
+limitação.
 
 \paragraph{Uma linha de base que não foi medida, e porquê.}
 A alternativa mais natural de todas seria \emph{``ler as primeiras cinco notícias que chegam''}.

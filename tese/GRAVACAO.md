@@ -89,8 +89,11 @@ construído:
    > duas observações independentes. O sistema conta os dias e diz-me. Isto foi um defeito que
    > eu descobri a escrever a tese, e a correcção foi passar a contar dias em vez de casos.»
 
-5. **A última linha.**
-   > «E acaba a dizer o que isto não é. São desfechos observados, não uma previsão.»
+5. **A ressalva, e depois a estimativa.**
+   > «A ressalva diz o que isto não é: são desfechos observados, não uma previsão. E a mensagem
+   > acaba na estimativa de materialidade, que é a probabilidade de o mercado reagir e nunca em que
+   > direção. Fica em último de propósito: é o único número que olha para a frente, e quem parar de
+   > ler antes dele já levou os factos e o histórico.»
 
 ### Parte 2: o alerta de mercado, e a segunda pergunta (30 segundos)
 

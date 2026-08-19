@@ -1,7 +1,7 @@
 % Capítulo 4 — O sistema (orçamento: ~16 pp)
 % O fio condutor: UMA notícia real seguida do princípio ao fim.
 
-\chapter{O Sistema}
+\chapter{O sistema}
 \label{cap:sistema}
 
 \section{Vista de conjunto}
@@ -451,14 +451,21 @@ O alerta não é uma frase. É uma pequena estrutura, sempre com as mesmas parte
 ordem:
 
 \begin{enumerate}
-  \item \textbf{o facto}: o que aconteceu, em números;
-  \item \textbf{porquê foi assinalado}: a razão estatística, em linguagem simples;
+  \item \textbf{o facto}: o que aconteceu, em números, e a fonte;
   \item \textbf{os casos passados}: um a um, com data, semelhança e o que se seguiu a cada um;
-  \item \textbf{a ressalva}: que isto é história observada e não uma previsão.
+  \item \textbf{a ressalva}: que isto é história observada e não uma previsão;
+  \item \textbf{a estimativa}: a probabilidade de o mercado reagir, e nunca em que direção.
 \end{enumerate}
 
-A ordem importa. A pessoa lê primeiro o que aconteceu e só depois a estatística, porque é assim que
-uma pessoa pensa; um alerta que abre com ``$z = 2.65$'' perde o leitor na primeira linha.
+A ordem importa, e cada extremo foi escolhido. A pessoa lê primeiro o que aconteceu e só depois a
+estatística, porque é assim que uma pessoa pensa; um alerta que abre com ``$z = 2.65$'' perde o
+leitor na primeira linha. E a estimativa fica em \textbf{último}, porque é o único número da
+mensagem que olha para a frente: quem parar de ler antes dela fica com factos e com histórico, que
+é exatamente o que este trabalho quer entregar.
+
+No alerta de movimento de preço a primeira parte traz também a razão estatística, em linguagem
+simples, porque aí o que aconteceu \emph{é} o movimento; no alerta de notícia esse lugar é
+ocupado pelo título e pela ligação para o artigo.
 
 Importa também a \emph{quantidade}. O sistema mostra três precedentes e não os trinta que encontrou,
 e essa não é uma decisão de espaço no ecrã: a investigação sobre explicação estabelece que as pessoas
@@ -479,7 +486,7 @@ descreve aqui.
                   width=0.97\textwidth, fontupper=\ttfamily\scriptsize]
 \textcolor{black!55}{[1]} News alert for AMZN (Amazon) (2026-08-13)\\
 \hspace*{1em}"Prediction: Amazon Will Join Apple in the \$4 Trillion Club Before 2030"\\[4pt]
-\textcolor{black!55}{[3]} 3 similar past headlines. Their 5-day move ranged -2.73\% to -2.73\%\\
+\textcolor{black!55}{[2]} 3 similar past headlines. Their 5-day move ranged -2.73\% to -2.73\%\\
 \hspace*{1em}(average -2.73\%):\\
 \hspace*{1em}-2.73\% in 5d · AAPL 2026-08-05 (8d ago) · "If You Invested \$100 In Apple\\
 \hspace*{2em}Stock 10 Years Ago, You Would Have This Much Today" (sim 0.56)\\
@@ -487,18 +494,18 @@ descreve aqui.
 \hspace*{2em}(sim 0.51)\\
 \hspace*{1em}-2.73\% in 5d · AAPL 2026-08-05 (8d ago) · "Apple's Buyback Is Retiring\\
 \hspace*{2em}Less Stock Just As The Memory Bill Grows" (sim 0.47)\\[4pt]
-\textcolor{black!55}{[4]} 3 of 3 shown cases moved down — topic-similar past cases, not a\\
+\textcolor{black!55}{[3]} 3 of 3 shown cases moved down — topic-similar past cases, not a\\
 \hspace*{1em}prediction for this news (an observed pattern, not a forecast).\\
 \hspace*{1em}Observed past outcomes after similar news, not a price prediction and\\
 \hspace*{1em}not advice.\\[4pt]
-\textcolor{black!55}{[2]} Materiality estimate (learned triage): 57\% chance of an unusually\\
+\textcolor{black!55}{[4]} Materiality estimate (learned triage): 57\% chance of an unusually\\
 \hspace*{1em}large move over the next few days, in EITHER direction — raised by\\
 \hspace*{1em}recent volatility (20d) and sector; lowered by today's own move and\\
 \hspace*{1em}recent momentum (5d). This estimates whether the market reacts, never\\
 \hspace*{1em}which way: it is not a price forecast and not advice.
 \end{tcolorbox}
 \caption[Um alerta real, tal como foi entregue]{Um alerta enviado ao canal a 13 de agosto de 2026,
-copiado do registo sem edição. Os números entre parênteses marcam as quatro partes da lista acima.
+copiado do registo sem edição. Os números entre parênteses marcam as quatro partes da lista acima, pela ordem em que saem.
 Todos os valores vêm dos objetos que os calcularam: a semelhança do motor de recuperação, o
 movimento a cinco dias da medição de impacto, e os $57\%$ do modelo calibrado.}
 \label{fig:sis_alerta}
