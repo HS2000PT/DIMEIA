@@ -29070,3 +29070,15 @@
 {"ts": "2026-08-19T06:22:42+00:00", "news_date": "2026-08-18", "ticker": "NFLX", "headline": "Is the Bottom in for Netflix Stock?", "prob": null, "gate": null, "kept": true}
 {"ts": "2026-08-19T06:22:46+00:00", "news_date": "2026-08-18", "ticker": "XOM", "headline": "Why Is ExxonMobil Stock Gaining Tuesday?", "prob": null, "gate": null, "kept": true}
 {"ts": "2026-08-19T06:22:50+00:00", "news_date": "2026-08-17", "ticker": "JNJ", "headline": "Johnson & Johnson (NYSE:JNJ): A Dividend Quality Standout", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-19T06:24:32+00:00", "news_date": "2026-08-19", "ticker": "AAPL", "headline": "Prediction: 3 Unstoppable Artificial Intelligence Stocks That Will Join Nvidia, Apple, and Alphabet in the $4 Trillion Club by 2028", "prob": 0.4563891427781336, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T06:24:38+00:00", "news_date": "2026-08-19", "ticker": "MSFT", "headline": "Google Cloud Grew 82% Last Quarter. Azure Grew 43% and AWS Grew 37%.", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-19T06:24:42+00:00", "news_date": "2026-08-19", "ticker": "NVDA", "headline": "NVDY Isn't The Fund It Was - Because Nvidia Isn't The Stock It Was", "prob": 0.47093402945256174, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T06:24:46+00:00", "news_date": "2026-08-18", "ticker": "TSLA", "headline": "Gary Black Says Tesla Bulls On Social Media Are Like College Students Doing 'Tequila Shots'", "prob": 0.5826602012435191, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T06:24:49+00:00", "news_date": "2026-08-19", "ticker": "AMZN", "headline": "Google Cloud Grew 82% Last Quarter. Azure Grew 43% and AWS Grew 37%.", "prob": 0.5675682295930085, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T06:24:53+00:00", "news_date": "2026-08-18", "ticker": "GOOGL", "headline": "XLC: Alphabet And Meta Just Keep Churning", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-19T06:24:56+00:00", "news_date": "2026-08-18", "ticker": "META", "headline": "Wall Street Lunch: Meta Faces High-Stakes Federal Trial Over Child Safety", "prob": 0.5059412577360599, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T06:25:00+00:00", "news_date": "2026-08-17", "ticker": "JPM", "headline": "Here’s How Much You Would Have Made Owning JPMorgan Chase Stock In The Last 5 Years", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-19T06:25:04+00:00", "news_date": "2026-08-19", "ticker": "AMD", "headline": "Great News for AMD Stock Investors!", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-19T06:25:09+00:00", "news_date": "2026-08-18", "ticker": "NFLX", "headline": "Is the Bottom in for Netflix Stock?", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-19T06:25:13+00:00", "news_date": "2026-08-18", "ticker": "XOM", "headline": "Why Is ExxonMobil Stock Gaining Tuesday?", "prob": 0.3996901683155366, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T06:25:16+00:00", "news_date": "2026-08-17", "ticker": "JNJ", "headline": "Johnson & Johnson (NYSE:JNJ): A Dividend Quality Standout", "prob": 0.2944371586588936, "gate": 0.5, "kept": true}
