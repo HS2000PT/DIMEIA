@@ -159,8 +159,12 @@ evidência, não há afirmação.
 \section{Dados e atribuição}
 \label{sec:ap_dados}
 
-Os ficheiros de dados grandes não são versionados: são regenerados pelos procedimentos de preparação,
-e apenas pequenas amostras acompanham o código para que os testes corram sem rede.
+Os corpora de origem não são versionados: o conjunto histórico completo ocupa centenas de megabytes
+e é regenerado pelos procedimentos de preparação. Acompanham o código pequenas amostras, para que os
+testes corram sem rede, e uma excepção que convém declarar: a \textbf{base de casos que o sistema
+consulta} está versionada, com $56$ megabytes de vetores e $8$ de metadados. Não é uma amostra, é o
+artefacto de que a aplicação implantada precisa para arrancar, e sem ele o sistema não teria
+precedentes para mostrar.
 
 O conjunto histórico usado para construir a base de casos é o \gls{FNSPID}
 \autocite{dong2024fnspid}, utilizado ao abrigo da sua licença Creative Commons BY-SA 4.0, cuja
