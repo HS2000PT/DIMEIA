@@ -1,0 +1,59 @@
+"""Lente das figuras: cada flutuante e referenciado, discutido, e com legenda que se sustenta?
+
+Um flutuante que ninguem invoca compila sem um unico aviso e o leitor nunca la vai.
+Um flutuante referenciado uma so vez, e so na frase que o introduz, tambem nao foi discutido.
+"""
+import pathlib
+import re
+import sys
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
+RAIZ = pathlib.Path(r"C:\Users\henri\Desktop\DIMEIA\tese")
+FICH = ["frontmatter/frontmatter.tex"] + [f"cap{i}/capitulo{i}.tex" for i in range(1, 7)] + [
+    "apendices/apendiceA.tex"]
+
+inv = []
+partes = {}
+for f in FICH:
+    p = RAIZ / f
+    if not p.exists():
+        continue
+    s = p.read_text(encoding="utf-8")
+    partes[f] = s
+    for m in re.finditer(r"\\begin\{(figure|table)\}(.*?)\\end\{\1\}", s, re.S):
+        tipo, corpo = m.group(1), m.group(2)
+        lab = re.search(r"\\label\{([^}]+)\}", corpo)
+        cap = re.search(r"\\caption(?:\[([^\]]*)\])?", corpo)
+        curta = cap.group(1) if cap and cap.group(1) else ""
+        temlonga = bool(re.search(r"\\caption(\[[^\]]*\])?\{.{40,}", corpo, re.S))
+        inv.append({
+            "f": f, "linha": s[:m.start()].count("\n") + 1, "tipo": tipo,
+            "lab": lab.group(1) if lab else "SEM-LABEL", "curta": curta,
+            "longa": temlonga,
+        })
+
+todo = "\n".join(partes.values())
+
+print(f"{'ficheiro':22s} {'lin':>5s} {'tipo':6s} {'refs':>4s} {'leg':>4s}  label")
+achados = []
+for x in inv:
+    n = len(re.findall(r"\\(?:ref|autoref|eqref)\{" + re.escape(x["lab"]) + r"\}", todo))
+    leg = "ok" if (x["curta"] and x["longa"]) else "!!"
+    marca = ""
+    if n == 0:
+        marca = "  <-- NUNCA REFERENCIADO"
+        achados.append((x["lab"], "nunca referenciado"))
+    elif n == 1:
+        marca = "  <-- referenciado uma so vez"
+    if leg == "!!":
+        marca += "  <-- legenda curta/longa em falta"
+        achados.append((x["lab"], "legenda incompleta"))
+    print(f"{x['f']:22s} {x['linha']:5d} {x['tipo']:6s} {n:4d} {leg:>4s}{marca}")
+
+print(f"\ntotal de flutuantes: {len(inv)}  ({sum(1 for x in inv if x['tipo'] == 'figure')} figuras, "
+      f"{sum(1 for x in inv if x['tipo'] == 'table')} tabelas)")
+print(f"achados: {len(achados)}")
+for lab, o in achados:
+    print("  -", lab, ":", o)
