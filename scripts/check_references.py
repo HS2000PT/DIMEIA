@@ -16,6 +16,12 @@ import pathlib
 import re
 import sys
 
+# A consola do Windows e cp1252 e rebenta a imprimir simbolos. Um verificador que morre a
+# imprimir o achado e pior do que um que nao corre: parece que passou.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 BASE = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else "thesis"
 MOSTRAR_TUDO = "--all" in sys.argv
 

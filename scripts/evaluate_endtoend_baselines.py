@@ -137,7 +137,7 @@ def main() -> None:
     # prior de volatilidade por empresa (só treino)
     vol = partes["train"].groupby("ticker")["vol20"].mean()
     s_vol = teste["ticker"].map(vol).fillna(float(partes["train"]["vol20"].mean())).to_numpy()
-    resultados.append(("Volatilidade da empresa", "doze constantes, sem ler manchete",
+    resultados.append(("Volatilidade da empresa", "treze constantes, sem ler manchete",
                        precisao_por_dia(teste, s_vol, ORCAMENTO, rng.random(len(teste))),
                        "sem modelo"))
 
@@ -189,7 +189,7 @@ mostrar notícias de quem mais se mexeu hoje é o que qualquer aplicação de bo
 obtém `{[v for r, _, v, _ in resultados if r == 'Quem mais se mexeu hoje'][0]:.3f}` contra os
 `{p_modelo:.3f}` do sistema.
 
-**Mas a linha mais desconfortável é a da volatilidade**, e já era conhecida: doze constantes
+**Mas a linha mais desconfortável é a da volatilidade**, e já era conhecida: treze constantes
 calculadas só sobre o treino, sem ler uma única manchete, obtêm
 `{[v for r, _, v, _ in resultados if r == 'Volatilidade da empresa'][0]:.3f}`. É coerente com a
 ablação da identidade: o que o modelo faz bem é ordenar empresas, e a volatilidade também o faz.

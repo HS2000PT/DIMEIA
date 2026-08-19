@@ -6,26 +6,26 @@
 - entradas no `.bib`: **63**
 - com DOI que resolve e bate certo: **46**
 - com problema: **0**
-- sem identificador, nao arXiv: **10**
-- pre-publicacoes (arXiv ou sem DOI): **7**
+- sem identificador, nao arXiv: **12**
+- pre-publicacoes (arXiv ou sem DOI): **5**
 
 ## Pre-publicacoes: existe versao publicada?
 
 | Chave | Titulo | Versao publicada encontrada |
 |---|---|---|
 | `araci2019finbert` | {FinBERT}: Financial Sentiment Analysis with | nao encontrada |
-| `lundberg2017shap` | A Unified Approach to Interpreting Model Pre | nao encontrada |
 | `mikolov2013word2vec` | Efficient Estimation of Word Representations | **Journal of Innovations in Engineering Educatio** (2020), `10.3126/jiee.v3i1.34327` |
 | `yang2020finbert` | {FinBERT}: A Pretrained Language Model for F | nao encontrada |
 | `doshivelez2017rigorous` | Towards a Rigorous Science of Interpretable  | nao encontrada |
-| `vaswani2017attention` | Attention Is All You Need | **From Human Attention to Computational Attentio** (2025), `10.1007/978-3-031-84300-6_13` |
 | `wu2023bloomberggpt` | {BloombergGPT}: A Large Language Model for F | nao encontrada |
 
 ## Sem identificador e sem ser pre-publicacao
 
+- `lundberg2017shap`: A Unified Approach to Interpreting Model Predictions (Advances in Neural Information Processin)
 - `sifma2025factbook`: 2025 Capital Markets Fact Book ()
 - `gallup2025stock`: What Percentage of Americans Own Stock? ()
 - `ccaf2026aifs`: Global AI in Financial Services Report: Adoption, Impact and Risks ()
+- `vaswani2017attention`: Attention Is All You Need (Advances in Neural Information Processin)
 - `ding2015deep`: Deep Learning for Event-Driven Stock Prediction (Proceedings of the 24th International Jo)
 - `manning2008ir`: Introduction to Information Retrieval (Cambridge University Press)
 - `sculley2015debt`: Hidden Technical Debt in Machine Learning Systems (Advances in Neural Information Processin)

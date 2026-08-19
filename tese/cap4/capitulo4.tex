@@ -301,8 +301,9 @@ dias seguidos. \\
 4. Procurar parecidas & O título é transformada em 384 números e comparada com a base de casos. As
 três mais parecidas: Microsoft 2023-11-07 ($0.46$), Nvidia 2023-08-02 ($0.51$), Nvidia 2023-09-21
 ($0.46$). \\
-5. Evidência forte? & A melhor semelhança é $0.51$, acima do mínimo de $0.45$. \textbf{Passa.} \\
-6. Merece avisar? & O modelo de triagem dá $54\%$, acima do mínimo de $50\%$. \textbf{Passa.} \\
+5. Evidência forte? & A melhor semelhança é $0.51$, acima do chão de $0.45$. \textbf{Passa.} \\
+6. Merece avisar? & O modelo de triagem dá $54\%$. À data deste alerta esse valor era um limiar de
+corte; hoje serve para ordenar, e quem corta é o orçamento diário. \textbf{Passa.} \\
 7. Já avisei hoje? & É o primeiro alerta desta empresa hoje, e nenhum outro produtor o enviou.
 \textbf{Passa.} \\
 8. Montar a explicação & O texto é composto a partir dos objetos calculados: o movimento, os três
@@ -362,11 +363,13 @@ delas é grande: numa janela medida em produção, das \textbf{944} notícias re
 saíram \textbf{42} alertas, ou seja cerca de uma em cada vinte e duas.
 
 Vale a pena ver isto num dia concreto, com os números lidos do registo do próprio sistema. A
-Tabela~\ref{tab:sis_funil} mostra o dia 15 de agosto de 2026.
+Tabela~\ref{tab:sis_funil} mostra as avaliações registadas a 15 de agosto de 2026.
 
 \begin{table}[ht]
-\caption[O funil de um dia real]{Onde morreram as avaliações do dia 15 de agosto de 2026, lidas do
-registo do sistema. A leitura da coluna da direita é a parte que interessa.}
+\caption[O funil de um dia real]{Onde morreram as avaliações registadas a 15 de agosto de 2026.
+São as $5\,060$ avaliações que o registo continha quando foi lido, e não o dia inteiro: o ficheiro
+tem um limite de linhas, pela razão explicada na Secção~\ref{sec:met_dados}. O que se lê aqui são
+proporções, não totais. A coluna da direita é a parte que interessa.}
 \label{tab:sis_funil}
 \centering
 \small
@@ -374,32 +377,34 @@ registo do sistema. A leitura da coluna da direita é a parte que interessa.}
 \toprule
 \tabhead{Onde morreu} & \tabhead{Avaliações} & \tabhead{O que é} \\
 \midrule
-Sem precedente forte & $3\,086$ & nenhum caso passado acima do mínimo de semelhança \\
-Abaixo do piso da triagem & $1\,136$ & o modelo pontuou abaixo de $50\%$ \\
-A mesma história & $307$ & já contada por outras palavras \\
-Piso escalonado & $141$ & o segundo alerta do dia exigia pontuação mais alta \\
-Sobreviveu às portas & $330$ & \textbf{ver a ressalva} \\
+Sem precedente forte & $2\,994$ & nenhum caso passado acima do chão de semelhança \\
+Abaixo do piso da triagem & $1\,194$ & o modelo pontuou abaixo do mínimo \\
+Piso escalonado & $269$ & o segundo alerta do dia exigia pontuação mais alta \\
+A mesma história & $249$ & já contada por outras palavras \\
+Orçamento esgotado & $21$ & o dia já tinha gasto os cinco alertas \\
+Sobreviveu às portas & $333$ & \textbf{ver a ressalva} \\
 \midrule
-\textbf{Mensagens entregues} & \textbf{4} & o que a pessoa recebeu de facto \\
+\textbf{Mensagens entregues} & \textbf{5} & o orçamento do dia, gasto por inteiro \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \paragraph{E a ressalva é um defeito que encontrei ao construir esta tabela.}
-Cinco mil avaliações e quatro mensagens: a proporção está certa e é o comportamento pretendido. Mas
-a linha dos $330$ não queria dizer o que parecia. O sistema reavalia as mesmas títulos de $60$ em
+Cinco mil avaliações e cinco mensagens: a proporção está certa e é o comportamento pretendido. Mas
+a linha dos $333$ não queria dizer o que parecia. O sistema reavalia os mesmos títulos de $60$ em
 $60$ segundos, e um título que já tinha sido entregue nesse dia voltava a passar todas as portas
-a cada minuto. Era travada no fim, por uma verificação de ``isto já foi enviado'' que
-\textbf{não estava registada como uma etapa}, ao contrário das três acima dela.
+a cada minuto. Era travado no fim, por uma verificação de ``isto já foi enviado'' que
+\textbf{não estava registada como uma etapa}, ao contrário de todas as outras.
 
 Resultado: a vista que existe para tornar as decisões do sistema inspecionáveis dizia
-``alerta enviado'' $330$ vezes num dia em que enviou $4$ mensagens. Não é um erro de contagem
+``alerta enviado'' $333$ vezes num dia em que enviou $5$ mensagens. Não é um erro de contagem
 inofensivo: é a mesma classe de defeito que a tabela abaixo documenta para as outras portas,
 sobrevivendo na única que ficou por instrumentar.
 
 Está corrigido: a supressão passou a ser uma etapa com nome próprio, como as outras, e existe um
 teste que falha se voltar a desaparecer. Os números da tabela são os de \emph{antes} da correção,
-porque é esse o estado em que os medi.
+e sabe-se que são: o registo não contém uma única linha da etapa nova, quando $333$ sobreviveram às
+portas e apenas $5$ foram enviadas.
 
 Cada porta tem uma constante associada, e é justo perguntar de onde vêm esses números. A
 Tabela~\ref{tab:sis_portas} responde, incluindo quando a resposta é ``foi escolhido''.
@@ -418,16 +423,19 @@ diferentes.}
 Nomeia a empresa & --- & Regra escrita depois de ler os primeiros alertas e ver o que passava. \\
 É recente & 2 dias & Escolhido: cobre um fim de semana. \\
 Evidência forte & $0.45$ & \textbf{Escolhido}, e é a porta mais agressiva de todas (ver abaixo). \\
-Merece avisar & $50\%$ & \textbf{Derivado} de uma análise de custos: quando falhar um movimento e dar
-um falso alarme custam o mesmo, o limiar ótimo é $0.49$. \\
-Teto diário & 2/dia & Escolhido, com um piso que sobe: o segundo alerta do dia sobre a mesma empresa
-exige uma pontuação mais alta. \\
+Merece avisar & $50\%$ & \textbf{Derivado} de uma análise de custos, que dá $0.49$ quando falhar um
+movimento e dar um falso alarme custam o mesmo; o valor implantado foi arredondado à mão para
+$0.50$. \textbf{Hoje já não veta}: serve para \emph{ordenar} as candidatas, e quem corta é o
+orçamento diário. \\
+Orçamento diário & 5/dia & Escolhido, e é hoje o verdadeiro controlo de volume: as candidatas do dia
+são ordenadas pela pontuação e só as cinco melhores são enviadas. Substituiu um teto de duas por
+empresa, que limitava cada nome e não o total. \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-O chão de semelhança merece um parágrafo próprio, porque é a porta que mais mata e a que tem a
-justificação mais fraca. Numa varredura medida, sete das dez empresas foram travadas exatamente
+O chão de semelhança merece um parágrafo próprio, porque é a porta que trava mais casos e a que
+tem a justificação mais fraca. Numa varredura medida, sete das dez empresas foram travadas exatamente
 ali, e quatro delas por menos de $0.04$ de diferença. Testei depois se um valor mais alto de
 semelhança correspondia a precedentes mais informativos, e \textbf{não corresponde}: a concordância
 de direção entre o caso passado e o caso atual fica ao nível do acaso dos dois lados do limiar. A
@@ -635,7 +643,7 @@ vez de a cada ciclo. O que se perde fica dito: até trinta minutos de capturas, 
 reiniciar nesse intervalo. É uma perda pequena e recuperável, porque o mesmo título volta a ser
 captada na varredura seguinte enquanto estiver dentro da janela de frescura.
 
-\subsection{Quarenta mil casos que não cabiam na memória}
+\subsection{Trinta e oito mil casos que não cabiam na memória}
 \label{sec:sis_memoria}
 
 O sistema tinha, guardado, um ano inteiro de notícias reais com o impacto já medido: $38\,214$
@@ -703,19 +711,23 @@ E aqui está o resultado, na Tabela~\ref{tab:sis_latencia}, que é mais interess
 decisão:
 
 \begin{table}[ht]
-\caption[O que o ciclo de 60 segundos comprou]{Latência medida sobre os alertas entregues, separando
-as duas eras. O tempo está quase todo na \emph{descoberta}, não na entrega.}
+\caption[O que o ciclo de 60 segundos comprou]{Latência medida sobre os alertas entregues. As duas
+primeiras linhas separam as duas eras; as duas últimas repartem o percurso e são medidas sobre o
+conjunto \emph{inteiro}, as duas eras juntas, e por isso não se subtraem às de cima. O tempo está
+quase todo na \emph{descoberta}, não na entrega.}
 \label{tab:sis_latencia}
 \centering
-\begin{tabular}{p{0.5\textwidth} r}
+\begin{tabular}{p{0.46\textwidth} r r}
 \toprule
-\tabhead{Medição} & \tabhead{Valor} \\
+\tabhead{Medição} & \tabhead{Valor} & \tabhead{Casos} \\
 \midrule
-Mediana, com o agendador gratuito & $196$ min \\
-Mediana, com o ciclo de 60 segundos & $143$ min \\
+\multicolumn{3}{l}{\emph{Por era, sobre o percurso completo}} \\
+Mediana, com o agendador gratuito & $196$ min & $28$ \\
+Mediana, com o ciclo de 60 segundos & $143$ min & $73$ \\
 \midrule
-Da publicação até o sistema detetar & $\approx 158$ min \\
-Da deteção até a mensagem chegar & $\approx 1$ s \\
+\multicolumn{3}{l}{\emph{As duas eras juntas, repartindo o percurso}} \\
+Da publicação até o sistema detetar & $\approx 158$ min & $101$ \\
+Da deteção até a mensagem chegar & $\approx 1$ s & $101$ \\
 \bottomrule
 \end{tabular}
 \end{table}

@@ -496,7 +496,7 @@ contrário, o que é uma afirmação mais forte e mais informativa do que a perc
 de mercado de $2.01$ diz ainda que esta é uma ação que historicamente amplifica o mercado, e é por
 isso que uma queda de 2\% no índice não significa a mesma coisa para a AMD e para uma ação defensiva.
 
-No mesmo dia, e sobre as 17 empresas do mapa de setores que o procedimento de avaliação percorre, a resposta variou: em 8 casos o motor foi a própria
+No mesmo dia, e sobre as dezassete empresas do mapa de setores que o procedimento de avaliação percorre, a resposta variou: em 8 casos o motor foi a própria
 empresa, em 5 foi o mercado e em 4 foi o setor. A quota do movimento atribuída à empresa teve mediana
 $0.487$, com extremos em $0.064$ e $0.939$. Isto é um único dia e não é uma estimativa estável, mas
 estabelece o mínimo necessário para a pergunta valer a pena: a resposta não é a mesma para todas as
@@ -511,7 +511,7 @@ Isso é tentador de apresentar como validação, e não é: a soma fecha \emph{p
 parcela da empresa é definida como o resto. Uma repartição inteiramente sem sentido também somaria.
 
 A medida que diz alguma coisa sobre a qualidade da repartição é o $R^2$ do ajuste na janela de
-estimação. Sobre essas 17 empresas, o $R^2$ mediano foi $0.460$, e \textbf{numa delas foi negativo}, o
+estimação. Sobre essas dezassete empresas, o $R^2$ mediano foi $0.460$, e \textbf{numa delas foi negativo}, o
 que significa que naquela janela o mercado e o setor não explicavam a variação daquela ação melhor
 do que a simples média. Nesses casos a repartição continua a somar, continua a ser exibida, e deve
 ler-se como indicativa.
@@ -666,7 +666,7 @@ que conta é os dois vetores concordarem naquela dimensão, e não o sinal em si
 que a soma final é ligeiramente negativa: os títulos não são opostos em sentido nenhum, apenas não
 têm nada em comum, e o valor anda à volta de zero.
 
-O limiar usado em produção é $0.45$. O par A passaria com folga; o par B nem se aproxima.
+O chão de semelhança usado em produção é $0.45$. O par A passaria com folga; o par B nem se aproxima.
 
 \subsection{Medir o que se seguiu}
 
@@ -958,9 +958,9 @@ recente. Se a técnica sofisticada não ganhar, isso é o resultado, e é o que 
 \paragraph{Segundo: o não-\emph{lookahead} é imposto por um teste, não prometido.}
 É fácil escrever ``não usámos informação do futuro''. É difícil garanti-lo. Aqui existe um teste
 automático que faz o seguinte: pega num exemplo, \textbf{altera artificialmente o futuro} e volta a
-calcular. Depois exige duas condições ao mesmo tempo: que as \emph{features} fiquem exatamente
+calcular. Depois exige duas condições ao mesmo tempo: que as entradas fiquem exatamente
 iguais (porque descrevem o passado) e que o \emph{rótulo} mude (porque descreve o futuro). Se
-alguma informação do futuro se tivesse infiltrado nas features, o teste falha.
+alguma informação do futuro se tivesse infiltrado nas entradas, o teste falha.
 
 Esta é a garantia mais importante de todo o trabalho e a mais fácil de prometer sem cumprir, por
 isso o Excerto~\ref{lst:lookahead} mostra-a tal como está escrita.
@@ -988,7 +988,7 @@ def test_mutar_o_futuro_muda_o_ROTULO_mas_nao_as_features():
 \end{lstlisting}
 
 O segundo teste é o que fecha o argumento, e é o que distingue esta verificação de uma verificação
-inútil. Exigir apenas que as \emph{features} não mudem seria satisfeito por um sistema que
+inútil. Exigir apenas que as entradas não mudem seria satisfeito por um sistema que
 ignorasse os dados por completo. Exigir, ao mesmo tempo, que o \textbf{rótulo mude} obriga a que a
 diferença entre as duas séries seja real e detetável, e é essa combinação que prova que a fronteira
 está no sítio certo.

@@ -418,7 +418,7 @@ dados e sob o mesmo protocolo.}
 \centering
 \begin{tabular}{l c c c c}
 \toprule
-\tabhead{Detetor} & \tabhead{Precisão} & \tabhead{Recall} & \tabhead{$F_1$} & \tabhead{Amplitude} \\
+\tabhead{Detetor} & \tabhead{Precisão} & \tabhead{Cobertura} & \tabhead{$F_1$} & \tabhead{Amplitude} \\
 \midrule
 \emph{z}-score (a regra) & $0.407$ & $0.761$ & $\mathbf{0.530}$ & $\mathbf{0.017}$ \\
 Isolation Forest & $0.158$ & $0.913$ & $0.269$ & $0.140$ \\
@@ -523,14 +523,14 @@ perguntar o que, dentro dela, continua a ser falsificável. São duas coisas, e 
 
 \paragraph{Primeira: a repartição discrimina, ou diz sempre o mesmo?}
 Uma decomposição que atribuísse tudo à empresa todos os dias seria inútil mesmo estando
-aritmeticamente correta. Medido num mesmo dia sobre as 17 empresas do mapa de setores, que é o conjunto que o procedimento de avaliação percorre e não a lista de empresas vigiadas implantada: o motor identificado foi a
+aritmeticamente correta. Medido num mesmo dia sobre as dezassete empresas do mapa de setores, que é o conjunto que o procedimento de avaliação percorre e não a lista de empresas vigiadas implantada: o motor identificado foi a
 própria empresa em 8 casos, o mercado em 5 e o setor em 4. A quota do movimento atribuída à empresa
 teve mediana $0.487$, com extremos em $0.064$ e $0.939$. A repartição responde coisas diferentes para
 empresas diferentes no mesmo dia, que é a condição mínima para valer a pena calculá-la.
 
 \paragraph{Segunda: os betas estão bem estimados?}
 Esta é a parte que pode mesmo estar errada, e a medida apropriada é o $R^2$ do ajuste na janela de
-estimação, cuja mediana foi $0.460$. \textbf{Numa dessas 17 empresas foi negativo}, o que significa que,
+estimação, cuja mediana foi $0.460$. \textbf{Numa dessas dezassete empresas foi negativo}, o que significa que,
 naquela janela, mercado e setor não explicavam a variação daquela ação melhor do que a sua própria
 média, e portanto que a repartição desse dia se apoia num ajuste que não descreve os dados.
 
@@ -1035,7 +1035,7 @@ mas o que foi \emph{posto de lado} e com que número.
 
 \begin{table}[ht]
 \caption[Cada escolha, contra a alternativa que perdeu]{As decisões técnicas do trabalho, cada uma
-com a alternativa medida contra ela. Duas linhas dizem \emph{não ganhou}: são os pontos em que o
+com a alternativa medida contra ela. Três linhas dizem \emph{não ganhou}: são os pontos em que o
 sistema usa a opção que a medição não favorece, e a razão está escrita. As três últimas não têm
 número porque são decisões de restrição.}
 \label{tab:av_alternativas}
@@ -1060,8 +1060,9 @@ $0.516$ & Mantido por ser explicável a um leigo, e dito como escolha e não com
 Embeddings de frase & Sobreposição de palavras: P@5 $0.346$ contra $0.514$ &
 Palavras iguais não são assunto igual, e assunto igual não precisa de palavras iguais. \\
 \addlinespace
-MiniLM & MPNet ($0.538$, maior e mais lento) e um modelo de finanças ($0.420$) &
-\textbf{O modelo específico do domínio foi o pior.} Não se assumiu: mediu-se. \\
+MiniLM & \textbf{Não ganhou:} MPNet dá P@5 $0.538$ contra $0.514$; um modelo de finanças dá
+$0.420$ & O modelo mais pesado é melhor, e foi trocado por custo, não por qualidade.
+\textbf{O modelo específico do domínio foi o pior de todos.} Não se assumiu: mediu-se. \\
 \addlinespace
 Regressão logística & Árvores com reforço do gradiente: PR-AUC $0.469$ contra $0.538$ &
 O modelo mais expressivo não ganhou, e o simples explica-se. \\
@@ -1099,7 +1100,7 @@ Não usa, por duas razões, e a segunda é a que importa.
 
 A primeira é que uma janela de 60 dias demora três meses a reagir a uma mudança de regime. Uma
 empresa que passa de calma a volátil continuaria a ser julgada pela sua norma antiga, e o detetor
-dispararia a torto e a direito durante semanas.
+dispararia sem critério durante semanas.
 
 A segunda é que \textbf{este número não é de confiança para esta comparação}. O rótulo é um
 \emph{proxy} construído a partir do percentil de movimento \emph{da própria empresa}, portanto é ele
@@ -1160,7 +1161,8 @@ sobre o que a pessoa já tinha, e é a primeira vez neste documento que isso é 
 conjunto e não de uma peça.
 
 \paragraph{E continua a não bater a volatilidade.}
-Doze constantes calculadas só sobre o bloco de treino obtêm $0.662$. Já se sabia da
+Treze constantes calculadas só sobre o bloco de treino obtêm $0.662$, uma por cada empresa que
+aparece no treino. Já se sabia da
 Secção~\ref{sec:av_qi3}, e agora sabe-se porquê: a Secção~\ref{sec:av_ablacao} mostrou que o modelo
 é, na prática, uma tabela por empresa, e a volatilidade é outra tabela por empresa, mais simples.
 Duas tabelas a fazer a mesma coisa, e ganha a que não precisa de ser treinada.

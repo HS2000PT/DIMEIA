@@ -22,7 +22,7 @@ ordenar por empresa em ordem alfabética.
 | Alertar sempre | não escolhe: leva as primeiras que apareçam | 0.380 | chão |
 | Ao acaso (40 sementes) | escolhe cinco à sorte | 0.375 | ±0.012 |
 | Quem mais se mexeu hoje | notícias das empresas com maior movimento do dia | 0.489 | grátis em qualquer app |
-| Volatilidade da empresa | doze constantes, sem ler manchete | 0.662 | sem modelo |
+| Volatilidade da empresa | treze constantes, sem ler manchete | 0.662 | sem modelo |
 | \textbf{O modelo implantado} | a triagem aprendida | 0.632 | o sistema |
 | Oráculo | sabe as respostas: o melhor possível | 0.968 | tecto |
 
@@ -33,7 +33,7 @@ mostrar notícias de quem mais se mexeu hoje é o que qualquer aplicação de bo
 obtém `0.489` contra os
 `0.632` do sistema.
 
-**Mas a linha mais desconfortável é a da volatilidade**, e já era conhecida: doze constantes
+**Mas a linha mais desconfortável é a da volatilidade**, e já era conhecida: treze constantes
 calculadas só sobre o treino, sem ler uma única manchete, obtêm
 `0.662`. É coerente com a
 ablação da identidade: o que o modelo faz bem é ordenar empresas, e a volatilidade também o faz.
