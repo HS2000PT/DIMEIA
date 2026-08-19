@@ -32825,3 +32825,15 @@
 {"ts": "2026-08-19T19:00:54+00:00", "news_date": "2026-08-19", "ticker": "NFLX", "headline": "Netflix, Eli Lilly, Elanco Animal Health And More Stock On CNBC’s ‘Final Trades’", "prob": 0.44017518510121056, "gate": 0.5, "kept": true}
 {"ts": "2026-08-19T19:00:59+00:00", "news_date": "2026-08-19", "ticker": "XOM", "headline": "What’s Going On With Exxon Stock on Wednesday?", "prob": 0.40021337958563624, "gate": 0.5, "kept": true}
 {"ts": "2026-08-19T19:01:06+00:00", "news_date": "2026-08-19", "ticker": "JNJ", "headline": "EVP At Johnson & Johnson Exercises Options Worth $2.38M", "prob": 0.30375619659034736, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T19:02:58+00:00", "news_date": "2026-08-19", "ticker": "AAPL", "headline": "Apple Is The Most Underappreciated AI Mega-Cap, Analyst Says", "prob": 0.4561538605608906, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T19:03:03+00:00", "news_date": "2026-08-18", "ticker": "MSFT", "headline": "Microsoft: The Price Climbed Too Far Too Fast (Rating Downgrade)", "prob": 0.5577711275555134, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T19:03:08+00:00", "news_date": "2026-08-19", "ticker": "NVDA", "headline": "Why Falling AI Prices Could Be Good News for Nvidia Stock", "prob": 0.475428252269222, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T19:03:15+00:00", "news_date": "2026-08-19", "ticker": "TSLA", "headline": "Tesla: No One Is Paying Attention", "prob": 0.5788751899869429, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T19:03:20+00:00", "news_date": "2026-08-19", "ticker": "AMZN", "headline": "SpaceX Rolls Out Grok 4.6 on Amazon Bedrock", "prob": 0.5673865190502354, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T19:03:26+00:00", "news_date": "2026-08-19", "ticker": "GOOGL", "headline": "Marvell Is Very Risky Despite The New AI Deal With Alphabet", "prob": 0.511865810157716, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T19:03:32+00:00", "news_date": "2026-08-19", "ticker": "META", "headline": "Meta: If You're Bearish Now, You're Selling At The Bottom", "prob": 0.5159890465999009, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T19:03:37+00:00", "news_date": "2026-08-17", "ticker": "JPM", "headline": "Here’s How Much You Would Have Made Owning JPMorgan Chase Stock In The Last 5 Years", "prob": 0.23773008268256524, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T19:03:42+00:00", "news_date": "2026-08-19", "ticker": "AMD", "headline": "AMD's Helios Platform And Explosive EPS Growth Make It A Buy", "prob": 0.628039228598879, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T19:03:48+00:00", "news_date": "2026-08-19", "ticker": "NFLX", "headline": "Netflix, Eli Lilly, Elanco Animal Health And More Stock On CNBC’s ‘Final Trades’", "prob": 0.4401610100106613, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T19:03:53+00:00", "news_date": "2026-08-19", "ticker": "XOM", "headline": "What’s Going On With Exxon Stock on Wednesday?", "prob": 0.4002145142593383, "gate": 0.5, "kept": true}
+{"ts": "2026-08-19T19:03:59+00:00", "news_date": "2026-08-19", "ticker": "JNJ", "headline": "EVP At Johnson & Johnson Exercises Options Worth $2.38M", "prob": 0.3037503950142337, "gate": 0.5, "kept": true}
