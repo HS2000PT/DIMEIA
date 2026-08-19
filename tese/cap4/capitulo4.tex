@@ -668,10 +668,15 @@ $\mathbf{0.44}$ \textbf{s} \\
 \end{table}
 
 Em formato de texto a base \textbf{não arrancava}: pedia mais memória do que o contentor tem. E o
-problema não era o volume dos dados. As mesmas $38\,214 \times 384$ posições ocupam $56$ MB quando
-guardadas como números de precisão simples; os $655$ MB vinham do custo de cada número
-\emph{individual} de Python dentro de uma lista. São $26$ vezes de diferença, e a diferença está
-toda na forma de guardar.
+problema não era o volume dos dados. As mesmas $38\,214 \times 384$ posições valem $56$ MB de
+números de precisão simples, mas ocupavam $655$ MB porque cada número era um objeto individual de
+Python dentro de uma lista, e cada objeto desses carrega o seu próprio cabeçalho: são $11.7$ vezes
+o tamanho do conteúdo, gastas em contabilidade.
+
+Guardando-os como uma matriz mapeada do disco, o processo passa a pagar $25$ MB, ou seja
+\textbf{$26$ vezes menos} do que a versão em texto, e menos ainda do que os $56$ MB do conteúdo em
+bruto, porque o sistema operativo carrega apenas as páginas que forem lidas. A diferença está toda
+na forma de guardar.
 
 A mesma medição revelou um desperdício que ninguém tinha notado: a comparação com os casos
 passados reconstruía a matriz \emph{inteira} a cada consulta. Passou a ser carregada uma vez.

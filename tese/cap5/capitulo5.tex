@@ -516,14 +516,14 @@ perguntar o que, dentro dela, continua a ser falsificável. São duas coisas, e 
 
 \paragraph{Primeira: a repartição discrimina, ou diz sempre o mesmo?}
 Uma decomposição que atribuísse tudo à empresa todos os dias seria inútil mesmo estando
-aritmeticamente correta. Medido sobre as 17 empresas num mesmo dia: o motor identificado foi a
+aritmeticamente correta. Medido num mesmo dia sobre as 17 empresas do mapa de setores, que é o conjunto que o procedimento de avaliação percorre e não a watchlist implantada: o motor identificado foi a
 própria empresa em 8 casos, o mercado em 5 e o setor em 4. A quota do movimento atribuída à empresa
 teve mediana $0.487$, com extremos em $0.064$ e $0.939$. A repartição responde coisas diferentes para
 empresas diferentes no mesmo dia, que é a condição mínima para valer a pena calculá-la.
 
 \paragraph{Segunda: os betas estão bem estimados?}
 Esta é a parte que pode mesmo estar errada, e a medida apropriada é o $R^2$ do ajuste na janela de
-estimação, cuja mediana foi $0.460$. \textbf{Numa das 17 empresas foi negativo}, o que significa que,
+estimação, cuja mediana foi $0.460$. \textbf{Numa dessas 17 empresas foi negativo}, o que significa que,
 naquela janela, mercado e setor não explicavam a variação daquela ação melhor do que a sua própria
 média, e portanto que a repartição desse dia se apoia num ajuste que não descreve os dados.
 
@@ -1129,7 +1129,7 @@ notícias por dia. As duas últimas linhas não são políticas: uma é o chão 
 Ao acaso & escolhe cinco à sorte & $0.375$ \\
 Quem mais se mexeu hoje & notícias das empresas com maior movimento do dia & $0.489$ \\
 \textbf{O modelo implantado} & a triagem aprendida & $\mathbf{0.632}$ \\
-Volatilidade da empresa & doze constantes, sem ler título & $\mathbf{0.662}$ \\
+Volatilidade da empresa & treze constantes, sem ler título & $\mathbf{0.662}$ \\
 \midrule
 Oráculo & sabe as respostas: o melhor possível & $0.968$ \\
 \bottomrule
