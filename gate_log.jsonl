@@ -107,18 +107,6 @@
 {"date": "2026-08-17", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-17", "ticker": "TSLA", "stage": "already_sent", "detail": "same headline already delivered today"}
 {"date": "2026-08-17", "ticker": "AMZN", "stage": "already_sent", "detail": "same headline already delivered today"}
-{"date": "2026-08-17", "ticker": "GOOGL", "stage": "already_sent", "detail": "same headline already delivered today"}
-{"date": "2026-08-17", "ticker": "META", "stage": "stale", "detail": "mais recente 2026-08-14 > 2d"}
-{"date": "2026-08-17", "ticker": "JPM", "stage": "stale", "detail": "mais recente 2026-08-14 > 2d"}
-{"date": "2026-08-17", "ticker": "AMD", "stage": "already_sent", "detail": "same headline already delivered today"}
-{"date": "2026-08-17", "ticker": "NFLX", "stage": "stale", "detail": "mais recente 2026-08-14 > 2d"}
-{"date": "2026-08-17", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-08-17", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-08-17", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-08-17", "ticker": "MSFT", "stage": "already_sent", "detail": "same headline already delivered today"}
-{"date": "2026-08-17", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-08-17", "ticker": "TSLA", "stage": "already_sent", "detail": "same headline already delivered today"}
-{"date": "2026-08-17", "ticker": "AMZN", "stage": "already_sent", "detail": "same headline already delivered today"}
 {"date": "2026-08-17", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-17", "ticker": "META", "stage": "stale", "detail": "mais recente 2026-08-14 > 2d"}
 {"date": "2026-08-17", "ticker": "JPM", "stage": "stale", "detail": "mais recente 2026-08-14 > 2d"}
@@ -18819,6 +18807,18 @@
 {"date": "2026-08-19", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-19", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-19", "ticker": "AMD", "stage": "already_sent", "detail": "same headline already delivered today"}
+{"date": "2026-08-19", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-19", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-19", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-19", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-19", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-19", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-19", "ticker": "TSLA", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-19", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-19", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-19", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-19", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-19", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-19", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-19", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-19", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
