@@ -57,6 +57,18 @@ headsepline,
 \usepackage[style=authoryear-comp,backend=biber]{biblatex}
 \addbibresource{../thesis/references.bib}
 
+% ⚠️ A opção `nohyperreflinkcolor` da classe tira a cor das ligações mas NÃO tira a moldura:
+% o hyperref passa a desenhar um rectângulo à volta de cada referência e citação, e isso vê-se
+% no PDF impresso. As dissertações aprovadas não têm molduras nenhumas. `hidelinks` tira as duas.
+\hypersetup{hidelinks}
+
+% Um DOI ou um URL longo não tem espaços onde quebrar, e por omissão o biblatex prefere
+% deixá-lo sair pela margem a parti-lo. Numa bibliografia com endereços isso produz linhas
+% visivelmente fora da caixa. Estes penalties autorizam a quebra dentro do endereço.
+\setcounter{biburlnumpenalty}{9000}
+\setcounter{biburlucpenalty}{9000}
+\setcounter{biburllcpenalty}{9000}
+
 \makenoidxglossaries
 \input{frontmatter/glossary}
 

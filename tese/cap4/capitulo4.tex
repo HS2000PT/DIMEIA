@@ -29,7 +29,7 @@ qualquer delas sem tocar nas outras.
 ]
   \node[fonte] (p) {\textbf{Preços}\\ \footnotesize fontes gratuitas\\ \footnotesize (com alternativas)};
   \node[fonte, below=6mm of p] (n) {\textbf{Notícias}\\ \footnotesize API gratuita\\ \footnotesize por empresa};
-  \node[fonte, below=6mm of n] (h) {\textbf{Histórico}\\ \footnotesize 80 mil notícias\\ \footnotesize antigas + preços};
+  \node[fonte, below=6mm of n] (h) {\textbf{Histórico}\\ \footnotesize casos antigos\\ \footnotesize com impacto medido};
 
   \node[proc, right=0.8cm of p] (det) {\textbf{Deteção}\\ \footnotesize é invulgar?};
   \node[proc, right=0.8cm of n] (rec) {\textbf{Recuperação}\\ \footnotesize já aconteceu?};
@@ -89,8 +89,15 @@ que a notícia \textbf{nomeie mesmo a empresa} e rejeita os padrões conhecidos 
 \paragraph{Histórico: um conjunto de dados público, alinhado com preços.}
 Para responder à pergunta ``já aconteceu antes?'' é preciso um passado. Usa-se o \gls{FNSPID}
 \autocite{dong2024fnspid}, um conjunto público de notícias financeiras, alinhado com os preços
-correspondentes. Desse alinhamento nasce a base de casos: cerca de 80 mil notícias entre 2018 e
-2023, cada uma com o que o preço fez a seguir.
+correspondentes. Desse alinhamento nascem cerca de 80 mil casos entre 2018 e 2023, cada um com o
+que o preço fez a seguir, e é sobre eles que a recuperação é \emph{avaliada} no
+Capítulo~\ref{cap:avaliacao}.
+
+Convém separar isso do que o sistema \emph{implantado} consulta, porque não é o mesmo ficheiro. Em
+produção a base de casos é um ano de notícias reais recolhidas pelo próprio sistema, com o impacto
+medido da mesma maneira: são $38\,214$ casos, e a Secção~\ref{sec:sis_memoria} conta o que foi
+preciso fazer para caberem na memória. Um serve para medir se o método funciona, o outro é o que
+está a correr.
 
 \section{As peças que não são minhas}
 \label{sec:sis_pecas}
