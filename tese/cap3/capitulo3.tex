@@ -457,8 +457,10 @@ origem do valor para o qual se encolhe.
 
 \subsection{Um caso real, com todos os passos}
 
-A Tabela~\ref{tab:met_decomposicao} mostra a decomposição de um dia real da AMD, regenerável pelo
-comando do Apêndice~\ref{ap:reprodutibilidade}.
+A Tabela~\ref{tab:met_decomposicao} mostra a decomposição de um dia real da AMD, o de 15 de agosto
+de 2026. O procedimento que a gera consta do Apêndice~\ref{ap:reprodutibilidade} e decompõe sempre a
+última sessão fechada à data em que corre, pelo que reproduzir estes valores exatos exige fixar essa
+data.
 
 \begin{table}[ht]
 \caption[A decomposição de um movimento real]{Um dia da AMD, repartido. Os betas foram estimados
@@ -895,17 +897,18 @@ até à sexta casa decimal.}
 \toprule
  & \tabhead{Etapa} & \tabhead{O que acontece} \\
 \midrule
-1 & \textbf{Entrada} & As nove entradas da linha: volatilidade $0.0127$, momento $0.0249$,
-movimento do dia $0.0364$, comprimento do título $53$, e o setor em nove casas das quais só uma
-está a $1$. \\
+1 & \textbf{Entrada} & As nove entradas da linha: quatro números, que são volatilidade $0.0127$,
+momento $0.0249$, movimento do dia $0.0364$ e comprimento do título $53$, mais o setor codificado
+em cinco casas, uma por setor, das quais só a da tecnologia está a $1$. \\
 \addlinespace
 2 & \textbf{Normalização} & Cada valor é comparado com a média e a dispersão do conjunto de treino,
 para que grandezas diferentes possam ser somadas. A volatilidade deste dia fica em $-0.49$, ou
 seja, \emph{abaixo} do habitual; o movimento do dia fica em $+1.10$. \\
 \addlinespace
 3 & \textbf{Soma pesada} & Cada valor normalizado é multiplicado pelo seu peso e somam-se todos:
-$-0.253$ da volatilidade, $+0.236$ do setor, $+0.006$ do movimento do dia, mais os restantes e o
-termo constante. Total: $\mathbf{+0.029}$. \\
+$-0.253$ da volatilidade, $+0.236$ da casa do setor tecnológico, $+0.006$ do movimento do dia,
+$-0.003$ do comprimento do título, $+0.067$ das restantes casas de setor, e o termo constante
+$-0.025$. Total: $\mathbf{+0.029}$. \\
 \addlinespace
 4 & \textbf{Sigmoide} & O total é convertido em algo entre $0$ e $1$:
 $1/(1+e^{-0.029}) = \mathbf{0.507}$. \\

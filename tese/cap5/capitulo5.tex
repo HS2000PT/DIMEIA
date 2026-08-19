@@ -431,6 +431,13 @@ Local Outlier Factor & $0.163$ & $0.989$ & $0.280$ & $0.183$ \\
 consistência entre empresas muito melhor. Os dois métodos aprendidos assinalam quase tudo
 (\emph{recall} altíssimo) e acertam pouco (precisão baixa).
 
+Uma nota para quem comparar esta tabela com a conta feita na Secção~\ref{sec:av_f1}, onde o mesmo
+\emph{z}-score aparece com $F_1 = 0.516$. Os dois valores são reais e medem o mesmo detetor sob
+protocolos diferentes: o $0.516$ é sobre todos os dias avaliados, ao passo que o $0.530$ desta tabela
+é sobre a região que os \textbf{três} detetores conseguem pontuar, que é a única em que a comparação
+entre eles é justa. Comparar cada método fora da região comum daria vantagem a quem pontua mais
+dias.
+
 Este é o primeiro de três casos, neste capítulo, em que uma técnica mais sofisticada foi comparada
 de forma justa com uma mais simples e perdeu. É um resultado que vale por si: justifica por medição
 a escolha do método simples, em vez de a justificar por preferência.
@@ -773,6 +780,13 @@ que \emph{ordenar por volatilidade} compensa; não que \emph{aprender} compense.
 O sistema regista todas as decisões de triagem e, dias depois, verifica o que realmente aconteceu.
 Sobre $530$ decisões já maturadas, o modelo não mostra benefício: as notícias que ele deixou passar
 eram importantes $59.2\%$ das vezes, contra $64.7\%$ das que ele travou.
+
+Estes dois números pedem uma ressalva sobre a sua precisão, e ela é grande. As $530$ decisões não
+são $530$ observações independentes: o rótulo é atribuído por \emph{(empresa, dia)}, e as $530$
+linhas repartem-se por apenas $145$ pares distintos. Medida sobre essas $145$ unidades, a capacidade
+de ordenação do modelo tem um intervalo de confiança a $95\%$ de $[0.391, 0.601]$ em torno de $0.494$, ou seja um
+intervalo que contém confortavelmente o acaso. A leitura correta não é que o modelo seja pior do que
+nada, mas que 	extbf{esta amostra não distingue o modelo do acaso}.
 
 A explicação mais provável não é que o modelo esteja avariado, mas que esteja a \textbf{mais}.
 Quando ele é chamado, as notícias já passaram pelo filtro de relevância e pelo de frescura. Esses
@@ -1126,7 +1140,7 @@ notícias por dia. As duas últimas linhas não são políticas: uma é o chão 
 \toprule
 \tabhead{Política} & \tabhead{O que faz} & \tabhead{Precisão@5} \\
 \midrule
-Ao acaso & escolhe cinco à sorte & $0.375$ \\
+Ao acaso & escolhe cinco à sorte & $0.375$\footnotemark{} \\
 Quem mais se mexeu hoje & notícias das empresas com maior movimento do dia & $0.489$ \\
 \textbf{O modelo implantado} & a triagem aprendida & $\mathbf{0.632}$ \\
 Volatilidade da empresa & treze constantes, sem ler título & $\mathbf{0.662}$ \\
@@ -1135,6 +1149,7 @@ Oráculo & sabe as respostas: o melhor possível & $0.968$ \\
 \bottomrule
 \end{tabular}
 \end{table}
+\footnotetext{Este chão de acaso ($0.375 \pm 0.012$) difere ligeiramente do que a Tabela~\ref{tab:av_orcamento} reporta ($0.379 \pm 0.017$). Não é discrepância: são dois protocolos, um sobre o conjunto de candidatas do sistema completo e outro sobre o bloco de teste da triagem, e os dois intervalos sobrepõem-se largamente.}
 
 Três leituras saem daqui, e a última é a mais útil.
 
