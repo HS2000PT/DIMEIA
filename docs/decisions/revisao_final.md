@@ -195,22 +195,37 @@ não corresponde à tua experiência nota-se.
 
 ## G. O que continua por verificar
 
+> Actualizado a 2026-08-19. A lista de PDFs em falta que estava aqui **estava desactualizada**:
+> puseste 55 na pasta e já só faltam os que estão em baixo.
+
 | Item | Estado |
 |---|---|
-| Citações contra os PDFs originais | A correr. **14 fontes** estão no disco em `docs/decisions/citation_pdfs/` |
-| As restantes **46 referências** | **Sem PDF local.** Ver lista abaixo |
+| PDFs das fontes | **55 na pasta.** O verificador confirma que **51 são mesmo o artigo que o nome diz** |
+| Fontes citadas com PDF | **54 de 61** |
+| Citações validadas contra o original | Feita para as que tinham PDF na altura. As secções I a L deste documento são o resultado |
 | Estudo com utilizadores | Não existe, e está declarado em cinco sítios da tese |
 | Red team da guarda | 4 das 6 lentes nunca correram, e a tese diz que a força medida é um limite inferior |
 
-**PDFs em falta que valeria a pena teres**, por ordem de importância para a tese (são os mais
-citados e os mais carregados no argumento):
+**Os 4 que o verificador assinala, e nenhum é um artigo errado:**
 
-`reimers2019sbert` · `devlin2019bert` · `liu2008isolation` · `breunig2000lof` ·
-`rudin2019stop` · `lee2004trust` · `bansal2021whole` · `miller2019explanation` ·
-`salton1975vsm` · `robertson2009bm25` · `dong2024fnspid` · `vasicek1973beta` ·
-`friedman2001gbm` · `gama2014survey` · `sculley2015debt`
+| Chave | O que se passa | O que fazer |
+|---|---|---|
+| `fama1969adjustment` | PDF é digitalização, sem texto que se possa extrair | Nada. Não é erro: só não dá para verificar por máquina |
+| `fama1970efficient` | O mesmo | Nada |
+| `niculescu2005calibration` | O mesmo | Nada. Esta foi lida por mim e é a origem do achado I1 |
+| `mikolov2013word2vec` | O PDF é o *Efficient Estimation*, e a entrada passou a ser o **NIPS 2013** | **Trocar o PDF.** Ver abaixo |
 
-Se os puseres na mesma pasta, corro a validação sobre eles.
+**Três descarregamentos, e são os únicos que faltam.** Todos gratuitos e sem conta:
+
+| Chave | Onde | Porquê |
+|---|---|---|
+| `mikolov2013word2vec` | `proceedings.neurips.cc/paper_files/paper/2013/file/9aa42b31882ec039965f3c4923ce901b-Paper.pdf` | A entrada deixou de ser a pré-publicação e passou a ser as actas |
+| `liu2020finbert` | `ijcai.org/proceedings/2020/622` | Entrada nova, revista por pares |
+| `huang2023finbert` | Wiley, *Contemporary Accounting Research* 40(2) — pode exigir a conta do ISEP | Entrada nova, revista por pares |
+
+**As sete fontes sem PDF**: quatro delas são páginas web e não artigos (Gallup, SIFMA, CCAF,
+Robinhood, Google Finance). Para essas o PDF não é o artefacto certo, e já foram verificadas
+contra a página do próprio fornecedor com a data de observação registada.
 
 ---
 

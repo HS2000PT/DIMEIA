@@ -17,6 +17,12 @@ import pathlib
 import re
 import sys
 
+# A consola do Windows e cp1252: imprimir um simbolo mata o verificador a MEIO do
+# relatorio, e um relatorio truncado le-se como um relatorio limpo.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 AVAL = RAIZ / "docs" / "evaluation"
 TESE = RAIZ / "tese"
