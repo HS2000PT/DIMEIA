@@ -206,14 +206,21 @@ não corresponde à tua experiência nota-se.
 | Estudo com utilizadores | Não existe, e está declarado em cinco sítios da tese |
 | Red team da guarda | 4 das 6 lentes nunca correram, e a tese diz que a força medida é um limite inferior |
 
-**Os 4 que o verificador assinala, e nenhum é um artigo errado:**
+**Os 5 que o verificador assinala, e um deles é mesmo o artigo errado:**
 
 | Chave | O que se passa | O que fazer |
 |---|---|---|
+| **`bollerslev1986garch`** | **O PDF não é o artigo.** É uma tese de mestrado de 2003 da Simon Fraser University, de Michael S. Lo, cujo título contém as mesmas palavras. A entrada do `.bib` está certa e o DOI resolve | **Descarregar o artigo certo** |
 | `fama1969adjustment` | PDF é digitalização, sem texto que se possa extrair | Nada. Não é erro: só não dá para verificar por máquina |
 | `fama1970efficient` | O mesmo | Nada |
 | `niculescu2005calibration` | O mesmo | Nada. Esta foi lida por mim e é a origem do achado I1 |
 | `mikolov2013word2vec` | O PDF é o *Efficient Estimation*, e a entrada passou a ser o **NIPS 2013** | **Trocar o PDF.** Ver abaixo |
+
+> **Porque é que isto só apareceu agora.** O verificador comparava só o **título**, e o título
+> daquela tese de mestrado contém as palavras todas. Passou a exigir também que **um dos autores
+> apareça** nas primeiras páginas, que é o que distingue o artigo de um trabalho *sobre* o artigo.
+> A primeira versão dessa regra acusou dois livros que estão certos, porque num livro os autores
+> só aparecem na folha de rosto interior: lê agora seis páginas antes de acusar.
 
 **Três descarregamentos, e são os únicos que faltam.** Todos gratuitos e sem conta:
 
