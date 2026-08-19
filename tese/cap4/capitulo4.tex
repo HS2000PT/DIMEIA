@@ -429,9 +429,9 @@ Cada porta tem uma constante associada, e é justo perguntar de onde vêm esses 
 Tabela~\ref{tab:sis_portas} responde, incluindo quando a resposta é ``foi escolhido''.
 
 \begin{table}[ht]
-\caption[As portas e as suas constantes]{As cinco portas, o valor usado, e de onde vem. Distinguir
-``derivado'' de ``escolhido'' é uma questão de honestidade: os dois casos defendem-se de maneiras
-diferentes.}
+\caption[As portas e as suas constantes]{As cinco portas da figura, mais o piso escalonado que
+actua depois delas, com o valor usado e de onde vem. Distinguir ``derivado'' de ``escolhido'' é uma
+questão de honestidade: os dois casos defendem-se de maneiras diferentes.}
 \label{tab:sis_portas}
 \centering
 \small
@@ -447,8 +447,14 @@ movimento e dar um falso alarme custam o mesmo; o valor implantado foi arredonda
 $0.50$. \textbf{Hoje já não veta}: serve para \emph{ordenar} as candidatas, e quem corta é o
 orçamento diário. \\
 Orçamento diário & 5/dia & Escolhido, e é hoje o verdadeiro controlo de volume: as candidatas do dia
-são ordenadas pela pontuação e só as cinco melhores são enviadas. Substituiu um teto de duas por
-empresa, que limitava cada nome e não o total. \\
+são ordenadas pela pontuação e só as cinco melhores são enviadas. Veio corrigir um teto de duas por
+empresa, que limitava cada nome e não o total; esse teto continua ativo por baixo, mas com um
+orçamento de cinco raramente é ele a cortar. \\
+\addlinespace
+Piso escalonado & $0.49$ e $0.64$ & \textbf{Derivados} da mesma análise de custos, para dois rácios
+diferentes: o primeiro alerta do dia de uma empresa exige $0.49$ e o segundo exige $0.64$. A ideia é
+que o segundo aviso do mesmo nome no mesmo dia tem de valer mais do que o primeiro, porque o custo
+dominante deixa de ser falhar um movimento e passa a ser cansar quem lê. \\
 \bottomrule
 \end{tabular}
 \end{table}
