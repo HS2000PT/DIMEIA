@@ -138,9 +138,14 @@ Vejamos a conta completa, com os dois detetores, exatamente como os valores apar
 \begin{equation*}
   F_1 = 2 \cdot \frac{0.122 \times 0.992}{0.122 + 0.992}
       = 2 \cdot \frac{0.1210}{1.114}
-      = \frac{0.2421}{1.114}
-      = 0.218
+      = \frac{0.2420}{1.114}
+      = 0.217
 \end{equation*}
+
+Com estas duas casas a conta dá $0.217$, e a tabela do resultado reporta $0.218$. A diferença é o
+arredondamento: a precisão e a cobertura são mostradas com três casas mas o valor foi calculado com
+todas. Fica dito porque um leitor que refaça a conta chega ao meu $0.217$, e um número que não fecha
+sem explicação é pior do que um número com uma casa a mais.
 
 \paragraph{Para o \emph{z}-score, com precisão $0.381$ e cobertura $0.800$:}
 \begin{equation*}
@@ -290,8 +295,9 @@ a perfeição.
 
 O quadrado não está ali por acaso. Penaliza mais do que proporcionalmente os enganos confiantes: um
 modelo que diz $90\%$ e erra paga $(0.9-0)^2 = 0.81$, enquanto um que diz $60\%$ e erra paga
-apenas $0.16$. Prometer muito e falhar sai caro, que é a propriedade desejada num sistema que
-mostra percentagens a quem não as sabe questionar.
+$(0.6-0)^2 = 0.36$. A confiança é uma vez e meia maior e o castigo é mais do dobro, e é isso que
+``mais do que proporcionalmente'' quer dizer. Prometer muito e falhar sai caro, que é a propriedade
+desejada num sistema que mostra percentagens a quem não as sabe questionar.
 
 Vale a pena fazer a conta para o caso mais simples de todos, porque fecha exatamente. O modelo
 ``alertar sempre'' anuncia $p_i = 1$ para todas as notícias. Para os casos que se revelaram
@@ -729,7 +735,7 @@ de três dias, ambos escolhidos por mim. Repetiu-se toda a comparação para nov
 diferentes de limiar e horizonte. A volatilidade iguala ou bate o modelo com texto nas
 \textbf{nove}.
 
-O resultado negativo aguenta os três testes. Não é um acidente do meu montagem: é o que os dados dizem.
+O resultado negativo aguenta os três testes. Não é um acidente da minha montagem: é o que os dados dizem.
 
 \subsection{Mas serve para alguma coisa?}
 
@@ -770,7 +776,7 @@ primeira leitura sugeria. Deixo isto escrito porque foi um erro meu, e porque a 
 \end{tcolorbox}
 
 Há ainda a terceira linha, que é desconfortável e fica. Uma tabela de \textbf{treze constantes},
-a volatilidade média de cada empresa, calculada só sobre o bloco de treino e sem ler uma única
+a volatilidade média de cada empresa, calculada só sobre o bloco de treino e sem ler um único
 título, obtém $0.662$ e \textbf{bate o modelo treinado}. É o terceiro caso deste capítulo em que o
 método mais simples ganha. O que a evidência sustenta, portanto, é
 que \emph{ordenar por volatilidade} compensa; não que \emph{aprender} compense.
@@ -786,13 +792,36 @@ são $530$ observações independentes: o rótulo é atribuído por \emph{(empre
 linhas repartem-se por apenas $145$ pares distintos. Medida sobre essas $145$ unidades, a capacidade
 de ordenação do modelo tem um intervalo de confiança a $95\%$ de $[0.391, 0.601]$ em torno de $0.494$, ou seja um
 intervalo que contém confortavelmente o acaso. A leitura correta não é que o modelo seja pior do que
-nada, mas que 	extbf{esta amostra não distingue o modelo do acaso}.
+nada, mas que \textbf{esta amostra não distingue o modelo do acaso}.
 
 A explicação mais provável não é que o modelo esteja avariado, mas que esteja a \textbf{mais}.
 Quando ele é chamado, as notícias já passaram pelo filtro de relevância e pelo de frescura. Esses
 filtros baratos já removeram grande parte do que o modelo foi treinado para remover, e sobra-lhe
 pouco para separar. \textbf{Um modelo avaliado isolado e implantado atrás de filtros nunca foi
 avaliado na distribuição que vai ver.} É a lição mais transferível deste trabalho.
+
+\subsection{E os dados de hoje ainda se parecem com os do treino?}
+\label{sec:av_deriva}
+
+Há uma segunda razão pela qual um modelo implantado pode deixar de servir, e é independente da
+anterior: os dados mudam. Este foi treinado sobre 2018--2023 e corre em 2026. A distância está
+afirmada em vários sítios deste documento, e afirmar é barato, portanto foi medida.
+
+A medida usada é o \gls{PSI}, que compara a distribuição de cada entrada entre o período de treino
+e o actual, com as bandas convencionadas em risco de crédito: abaixo de $0.10$ estável, entre
+$0.10$ e $0.25$ moderada, acima de $0.25$ significativa.
+
+O resultado tem duas metades e as duas interessam. A entrada que mais se deslocou é a
+\textbf{volatilidade dos vinte dias anteriores}, com \gls{PSI} de $0.281$, ou seja na banda
+significativa; as restantes ficam estáveis. Mas o \textbf{rótulo quase não se move}: a prevalência
+de positivos passa de $0.3854$ para $0.3781$.
+
+É uma combinação incómoda de ler e vale a pena dizer o que significa. A entrada de que o modelo mais
+depende é precisamente a que mais derivou, e o que ele tenta prever manteve-se onde estava. Não
+invalida nenhum número deste capítulo, porque todos foram medidos dentro do mesmo período, mas
+diz que o modelo implantado está a ver uma distribuição que já não é a do treino. Aqui a deriva é
+\textbf{medida e não corrigida}: nada se re-treina, e a Secção~\ref{sec:con_futuro} diz o que
+faria falta para isso.
 
 \subsection{E o que é que a porta estava a escolher, afinal?}
 \label{sec:av_portao}
@@ -801,7 +830,7 @@ A subsecção anterior diz que o modelo está \emph{a mais}. Fica bem como expli
 diz \textbf{o que} ele estava a fazer quando era chamado. Vale a pena responder a isso, porque a
 resposta é medível e porque foi ela que mudou o sistema.
 
-A pergunta é simples. O porta implantado era um limiar fixo sobre a probabilidade calibrada: passa
+A pergunta é simples. A porta implantada era um limiar fixo sobre a probabilidade calibrada: passa
 quem estiver acima de $0.50$. \emph{Esse limiar separava títulos, ou separava empresas?}
 
 Mediu-se sobre as $4\,366$ decisões \textbf{realmente tomadas em produção}, e a
@@ -857,8 +886,8 @@ A leitura da figura é imediata e os números confirmam-na:
 \end{itemize}
 
 \begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
-Em \textbf{$84\%$} das decisões, o resultado estava determinado pela \textbf{empresa} antes de a
-título ser lida. A Apple não conseguia gerar um alerta de notícia, acontecesse o que
+Em \textbf{$84\%$} das decisões, o resultado estava determinado pela \textbf{empresa} antes de o
+título ser lido. A Apple não conseguia gerar um alerta de notícia, acontecesse o que
 acontecesse; a AMD passava em $963$ de $963$.
 \end{tcolorbox}
 
@@ -888,7 +917,14 @@ que isso, e é preciso dizê-lo com clareza porque muda a leitura.
 O modelo implantado é a variante \textbf{sem texto}. Como a Secção~\ref{sec:met_modelo_ve} já
 mostrou, das suas entradas apenas uma distingue dois títulos da mesma empresa no mesmo dia: o
 comprimento do título. Com o peso que essa entrada tem, oitenta caracteres a mais deslocam a
-pontuação em cerca de $0.013$, contra uma amplitude de $0.385$ entre empresas.
+pontuação interna do modelo em $0.0128$, e depois de passar pela calibração isso são poucos
+milésimos na probabilidade que o sistema mostra. A amplitude entre empresas, medida nessa mesma
+probabilidade, é de $0.385$. As duas grandezas separam-se por duas ordens de magnitude.
+
+O cuidado com as escalas é deliberado e vale a pena explicá-lo, porque é fácil enganar-se aqui: o
+$0.0128$ vive na escala interna do modelo, antes da calibração, e o $0.385$ vive na probabilidade
+calibrada. Pô-los lado a lado sem os converter compararia coisas diferentes, e a conversão só torna
+o argumento mais forte, não mais fraco.
 
 \begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
 A pontuação quase constante dentro de cada empresa não é um acidente do treino nem um defeito dos
@@ -997,7 +1033,7 @@ do que ``falta afinar o piso'':
 \begin{tcolorbox}[colback=black!3, colframe=black!35, boxrule=0.5pt, arc=2pt]
 Dentro de uma empresa, a pontuação do modelo quase não varia com o título. Nenhuma regra de
 decisão aplicada a essa pontuação a pode tornar sensível à notícia, porque a informação que
-distinguiria um título da seguinte não está lá.
+distinguiria um título do seguinte não está lá.
 \end{tcolorbox}
 
 \paragraph{O que se fez em consequência, e porquê.}
@@ -1093,8 +1129,8 @@ O modelo medido foi o FinBERT de \textcite{araci2019finbert}, e obteve $0.420$ c
 $0.514$ de um modelo genérico e pequeno. Se eu o tivesse adotado por ser o
 óbvio, o sistema ficava pior e eu nunca saberia.
 
-\paragraph{A janela de 20 dias é a única linha desta tabela em que o sistema não usa o vencedor.}
-E é a que mais me custou deixar escrita. A ablação diz que uma janela de 60 dias obtém $F_1 = 0.678$
+\paragraph{A janela de 20 dias é a linha desta tabela que mais me custou deixar escrita.}
+É uma das três em que o sistema não usa o que a medição favorece, e a mais difícil de justificar. A ablação diz que uma janela de 60 dias obtém $F_1 = 0.678$
 contra os $0.516$ da janela de 20. Se o critério fosse este número, o sistema devia usar 60.
 
 Não usa, por duas razões, e a segunda é a que importa.

@@ -140,9 +140,9 @@ Alpha Vantage 25 pedidos/dia & São \emph{alternativas de recurso}, não fontes 
 fixa e o sistema regista qual delas serviu, porque saber a origem de um número faz parte de o poder
 explicar. \\
 \addlinespace
-\textbf{Stooq} & era candidato a fonte de preços & grátis & \textbf{Rejeitada por medição.} Foi
-testada ao vivo e responde com uma verificação anti-robô, o que a torna inutilizável dentro de um
-processo automático. Fica registada porque parecia servir. \\
+\textbf{Stooq} & era candidato a fonte de preços & grátis & \textbf{Rejeitado por medição.} Foi
+testado ao vivo e responde com uma verificação anti-robô, o que o torna inutilizável dentro de um
+processo automático. Fica registado porque parecia servir. \\
 \addlinespace
 \textbf{Tiingo, GNews} & eram candidatos a fontes de notícias & grátis com chave &
 \textbf{Rejeitados por medição.} O Tiingo devolve erro de autorização no endpoint de notícias
@@ -305,7 +305,7 @@ de julho de 2026. Todos os valores são os que o sistema calculou nesse dia.}
 empresa, e não corresponde a nenhum padrão de texto automático. \textbf{Passa.} \\
 3. É recente? & Tem menos de dois dias. \textbf{Passa}: sem esta porta, a mesma notícia alertava
 dias seguidos. \\
-4. Procurar parecidas & O título é transformada em 384 números e comparada com a base de casos. As
+4. Procurar parecidas & O título é transformado em 384 números e comparado com a base de casos. As
 três mais parecidas: Microsoft 2023-11-07 ($0.46$), Nvidia 2023-08-02 ($0.51$), Nvidia 2023-09-21
 ($0.46$). \\
 5. Evidência forte? & A melhor semelhança é $0.51$, acima do chão de $0.45$. \textbf{Passa.} \\
@@ -339,6 +339,18 @@ importante que há para saber: que casos parecidos deram resultados diferentes.
 O segundo gatilho é bastante mais curto: todos os dias, depois do fecho, o sistema calcula o
 \emph{z}-score de cada empresa da lista, como na Secção~\ref{sec:met_zscore}, e basta que um deles
 ultrapasse o limiar para haver alerta.
+
+É também aqui, e só aqui, que entra a segunda técnica do Capítulo~\ref{cap:metodologia}. Ao alerta
+de preço é acrescentada uma linha com a \textbf{repartição do movimento}, calculada como a
+Secção~\ref{sec:met_decomposicao} descreve, do género
+\emph{``NFLX $-2.11\%$ hoje $=$ $-0.08\%$ mercado $\cdot$ $-0.32\%$ setor $\cdot$ $-1.71\%$ da
+própria empresa''}, seguida de uma frase em palavras que nomeia a maior parcela. É a resposta à
+segunda das três perguntas fundadoras, entregue em números dentro da mensagem.
+
+Não aparece no alerta de notícia, e a razão é que a repartição é do \emph{movimento do dia}: sem
+movimento não há o que repartir. Quando a estimação da sensibilidade ao mercado falha, a linha sai
+na mesma mas diz que assumiu sensibilidade $1.0$ e que a repartição é indicativa, em vez de calar
+a incerteza.
 
 Duas capacidades foram acrescentadas depois de o sistema estar a funcionar, e ambas por observação:
 
@@ -611,8 +623,8 @@ de dados a cada ciclo.
 \label{sec:sis_ciclo}
 
 Há uma parte do desenho que só faz sentido com o tempo a passar. Todo o título relevante que a
-varredura vê é guardada como \textbf{candidata a precedente futuro}. Passados oito dias, quando o
-impacto no preço já é observável, essa candidata é medida com a mesma regra de alinhamento do
+varredura vê é guardado como \textbf{candidato a precedente futuro}. Passados oito dias, quando o
+impacto no preço já é observável, esse candidato é medido com a mesma regra de alinhamento do
 Capítulo~\ref{cap:metodologia} e entra na base de casos. A base cresce sozinha, e os alertas de
 amanhã comparam-se contra o que o sistema viu ontem.
 
@@ -655,7 +667,7 @@ A solução separa os dois problemas que estavam a ser confundidos: \textbf{seme
 o contentor não começar do zero, e \textbf{publicar com um intervalo mínimo} de trinta minutos, em
 vez de a cada ciclo. O que se perde fica dito: até trinta minutos de capturas, se o contentor
 reiniciar nesse intervalo. É uma perda pequena e recuperável, porque o mesmo título volta a ser
-captada na varredura seguinte enquanto estiver dentro da janela de frescura.
+captado na varredura seguinte enquanto estiver dentro da janela de frescura.
 
 \subsection{Trinta e oito mil casos que não cabiam na memória}
 \label{sec:sis_memoria}
