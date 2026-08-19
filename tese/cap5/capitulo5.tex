@@ -523,7 +523,7 @@ perguntar o que, dentro dela, continua a ser falsificável. São duas coisas, e 
 
 \paragraph{Primeira: a repartição discrimina, ou diz sempre o mesmo?}
 Uma decomposição que atribuísse tudo à empresa todos os dias seria inútil mesmo estando
-aritmeticamente correta. Medido num mesmo dia sobre as 17 empresas do mapa de setores, que é o conjunto que o procedimento de avaliação percorre e não a watchlist implantada: o motor identificado foi a
+aritmeticamente correta. Medido num mesmo dia sobre as 17 empresas do mapa de setores, que é o conjunto que o procedimento de avaliação percorre e não a lista de empresas vigiadas implantada: o motor identificado foi a
 própria empresa em 8 casos, o mercado em 5 e o setor em 4. A quota do movimento atribuída à empresa
 teve mediana $0.487$, com extremos em $0.064$ e $0.939$. A repartição responde coisas diferentes para
 empresas diferentes no mesmo dia, que é a condição mínima para valer a pena calculá-la.
@@ -688,7 +688,7 @@ Alertar sempre (chão) & $0.378$ & $0.622$ \\
 Só contexto de mercado & $0.538$ & $0.224$ \\
 Só texto do título & $0.439$ & $0.240$ \\
 Contexto $+$ texto & $0.496$ & $0.229$ \\
-Gradient boosting (contexto $+$ texto) & $0.469$ & $0.228$ \\
+Árvores com reforço do gradiente (contexto $+$ texto) & $0.469$ & $0.228$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -711,7 +711,7 @@ recente}. Acrescentar o resto do contexto não melhora. Acrescentar o texto do t
 Isto era o contrário do que eu esperava quando comecei. A hipótese era que o texto da notícia
 trouxesse informação que os preços não tinham. Sobre este corpus, não traz.
 
-\subsection{Não será um acidente do meu setup?}
+\subsection{Não será um acidente do meu montagem?}
 
 Foi a primeira hipótese que fui verificar, por três caminhos.
 
@@ -729,7 +729,7 @@ de três dias, ambos escolhidos por mim. Repetiu-se toda a comparação para nov
 diferentes de limiar e horizonte. A volatilidade iguala ou bate o modelo com texto nas
 \textbf{nove}.
 
-O resultado negativo aguenta os três testes. Não é um acidente do meu setup: é o que os dados dizem.
+O resultado negativo aguenta os três testes. Não é um acidente do meu montagem: é o que os dados dizem.
 
 \subsection{Mas serve para alguma coisa?}
 
@@ -794,14 +794,14 @@ filtros baratos já removeram grande parte do que o modelo foi treinado para rem
 pouco para separar. \textbf{Um modelo avaliado isolado e implantado atrás de filtros nunca foi
 avaliado na distribuição que vai ver.} É a lição mais transferível deste trabalho.
 
-\subsection{E o que é que o portão estava a escolher, afinal?}
+\subsection{E o que é que o porta estava a escolher, afinal?}
 \label{sec:av_portao}
 
 A subsecção anterior diz que o modelo está \emph{a mais}. Fica bem como explicação e é vaga: não
 diz \textbf{o que} ele estava a fazer quando era chamado. Vale a pena responder a isso, porque a
 resposta é medível e porque foi ela que mudou o sistema.
 
-A pergunta é simples. O portão implantado era um limiar fixo sobre a probabilidade calibrada: passa
+A pergunta é simples. O porta implantado era um limiar fixo sobre a probabilidade calibrada: passa
 quem estiver acima de $0.50$. \emph{Esse limiar separava títulos, ou separava empresas?}
 
 Mediu-se sobre as $4\,366$ decisões \textbf{realmente tomadas em produção}, e a
@@ -839,7 +839,7 @@ Figura~\ref{fig:av_portao} mostra o resultado de uma só vez.
   \node[right, align=left, black!55] at (0.56,10.5) {nunca\\ passa};
   \node[right, align=left, black!62] at (0.605,6.5) {aqui o piso\\ decide};
 \end{tikzpicture}
-\caption[O que o portão separava]{Para cada empresa, o intervalo de todas as pontuações que o
+\caption[O que o porta separava]{Para cada empresa, o intervalo de todas as pontuações que o
 modelo lhe deu em produção, com a mediana marcada a preto. A linha tracejada é o piso de decisão.
 As barras claras nunca o alcançam, as escuras atravessam-no, e as alaranjadas estão sempre acima.
 Repare-se em que oito das doze estão \textbf{inteiramente} de um dos lados: para essas, a decisão
@@ -963,7 +963,7 @@ Isto obriga a separar duas afirmações que eu tinha juntado, e a separação é
   \item \textbf{A decisão de produto estava errada por outra razão.} O que foi implantado como
         porta de decisão foi a variante \emph{sem} texto. Escolhi-a porque tinha a melhor
         PR-AUC entre as que cabiam no contentor, sem reparar que essa métrica não fazia a
-        pergunta que o produto precisava.
+        pergunta de que o produto precisava.
 \end{itemize}
 
 \paragraph{E é aqui que está a lição de método, que vale mais do que o resultado.}
@@ -1063,7 +1063,7 @@ Palavras iguais não são assunto igual, e assunto igual não precisa de palavra
 MiniLM & MPNet ($0.538$, maior e mais lento) e um modelo de finanças ($0.420$) &
 \textbf{O modelo específico do domínio foi o pior.} Não se assumiu: mediu-se. \\
 \addlinespace
-Regressão logística & Árvores com \emph{boosting}: PR-AUC $0.469$ contra $0.538$ &
+Regressão logística & Árvores com reforço do gradiente: PR-AUC $0.469$ contra $0.538$ &
 O modelo mais expressivo não ganhou, e o simples explica-se. \\
 \addlinespace
 Calibração de Platt & Regressão isotónica, comparada na mesma validação &
@@ -1132,7 +1132,7 @@ pela razão dada na Secção~\ref{sec:av_qi3}.
 
 \begin{table}[ht]
 \caption[O sistema contra as alternativas que já existem]{Todas as políticas escolhem cinco
-notícias por dia. As duas últimas linhas não são políticas: uma é o chão e a outra é o tecto.}
+notícias por dia. As duas últimas linhas não são políticas: uma é o chão e a outra é o teto.}
 \label{tab:av_pontaaponta}
 \centering
 \small

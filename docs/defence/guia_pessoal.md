@@ -45,7 +45,7 @@ API de notícias (Finnhub)          Preços (yfinance + 4 fontes de recurso)
         │                                     │
         ▼                                     ▼
   normalizar (guardo data, ticker,      log-retornos
-  manchete; DEITO FORA o resumo)              │
+  título; DEITO FORA o resumo)              │
         │                                     ▼
         ▼                             z-score sobre os 20 dias ANTERIORES
   filtro de relevância                        │
@@ -81,12 +81,12 @@ sistema calculou — por isso não pode divergir do cálculo.*
 |---|---|---|---|
 | **Histórica** | FNSPID (CC BY-SA 4.0) | 79.753 exemplos notícia–mercado, 2018–2023 | `data/` local, **não versionado** (é grande) |
 | **Base curada** | subconjunto do FNSPID | 2.016 casos com embedding 384-d | versionada (7,7 MB) — é o que a app consulta |
-| **Corpus de avaliação** | Finnhub | 3.714 manchetes, **27 dias** (28 mai–24 jun 2026) | `data/finnhub_news.csv` |
+| **Corpus de avaliação** | Finnhub | 3.714 títulos, **27 dias** (28 mai–24 jun 2026) | `data/finnhub_news.csv` |
 | **Viva** | Finnhub + preços | decisões e alertas que o sistema toma | branch `alerts-history` |
 
 **O que deito fora de propósito:** o *resumo* que o fornecedor manda com cada notícia. Guardo
-só a manchete. Razão: republicar texto de artigos de terceiros seria distribuir conteúdo
-licenciado; a manchete é o mínimo para calcular semelhança.
+só o título. Razão: republicar texto de artigos de terceiros seria distribuir conteúdo
+licenciado; o título é o mínimo para calcular semelhança.
 
 **⚠️ O que tenho de saber dizer sobre o corpus de avaliação:** são **27 dias**, não meses.
 Não sustenta nenhuma afirmação sobre generalização no tempo. É por isso que o resultado é
@@ -114,13 +114,13 @@ A resposta tem quatro andares, e digo-os por esta ordem:
 
 | andar | o quê | natureza |
 |---|---|---|
-| 1 · **dados** | preços, manchetes, carimbos temporais | medido |
+| 1 · **dados** | preços, títulos, carimbos temporais | medido |
 | 2 · **estatística** | z-score, excedência empírica, decomposição | determinístico |
 | 3 · **aprendizagem** | SBERT + recuperação semântica + triagem calibrada | modelos treinados |
 | 4 · **geração** | relatório de situação e analista, em linguagem | LLM, ancorado |
 
 **A frase que fecha a pergunta:** *"O modelo não sabe o que aconteceu. É-lhe dito — por um motor
-de recuperação sobre 80 mil manchetes com desfecho **medido** a cinco dias, por um classificador
+de recuperação sobre 80 mil títulos com desfecho **medido** a cinco dias, por um classificador
 calibrado, e por uma decomposição com betas encolhidos. E cada número que ele escreve é
 verificado contra essa evidência antes de chegar ao ecrã."*
 
@@ -135,7 +135,7 @@ e é a diferença entre este trabalho e um wrapper de LLM.
 - **O que faz:** dá a probabilidade de se seguir um movimento anormalmente grande, **em
   qualquer direcção**, nos 3 dias após uma notícia.
 - **Entradas (9):** volatilidade dos 20 dias anteriores, momento a 5 dias, retorno do próprio
-  dia, comprimento da manchete, e 5 colunas de setor.
+  dia, comprimento do título, e 5 colunas de setor.
 - **Rótulo:** `|retorno do ticker − retorno do SPY|` nos 3 dias seguintes `≥ 2%`. Produzido pelo
   meu próprio código, não à mão.
 - **Divisão:** temporal, **por dia único**, 70/15/15, com **embargo de 5 dias** entre blocos
@@ -209,7 +209,7 @@ Medi: ROC-AUC 0,494. **Não há ordem para preservar.**
 
 E a explicação não é "modelo avariado", é **modelo redundante**: a materialidade entre as
 decisões registadas corre a **0,626**, contra **0,378** no treino — porque só se registam
-manchetes que já passaram os filtros de relevância e frescura. Os filtros baratos a montante já
+títulos que já passaram os filtros de relevância e frescura. Os filtros baratos a montante já
 tinham feito o trabalho.
 
 **A lição, e é o que um arguente quer ouvir de um engenheiro:** *um modelo avaliado isolado e
@@ -250,7 +250,7 @@ anterioridade é estrutural. E a medição do impacto olha sempre só para a fre
 
 ### P2. «Deitam fora dois terços das notícias?»
 **Resposta segura:** *"Sim, e medi-o em vez de o esconder. 811 de 2.478. E só 3% é a regra de
-boilerplate que descrevo — os outros 64% falham por a manchete nunca nomear a empresa. Prefiro
+boilerplate que descrevo — os outros 64% falham por o título nunca nomear a empresa. Prefiro
 mostrar a taxa de descarte do que a de sobrevivência."*
 
 ### P3. «De onde veio a regra do filtro?»

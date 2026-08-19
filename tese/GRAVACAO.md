@@ -31,7 +31,7 @@ Precisas de **dois** alertas à mão, e são de tipos diferentes:
 
 | Qual | Como o reconheces | Para que serve |
 |---|---|---|
-| Um de **notícia** | começa por `📰 News alert for` | mostra a manchete, a fonte e os precedentes |
+| Um de **notícia** | começa por `📰 News alert for` | mostra o título, a fonte e os precedentes |
 | Um de **mercado** | começa por `📈` ou `📉` e diz `so far today` | é o único que traz a linha da **decomposição** |
 
 Se o canal não tiver nada dos últimos dois dias, **grava na mesma** e usa o mais recente que
@@ -66,7 +66,7 @@ Começa no **Telegram**, no alerta de notícia.
 Aponta com o rato, sem pressa, por esta ordem, que é a mesma ordem em que o alerta está
 construído:
 
-1. **A manchete e a fonte.**
+1. **O título e a fonte.**
    > «A notícia, e por baixo quem a publicou. Esta ligação abre o artigo original: quem receber
    > isto pode ir confirmar o que o sistema diz que aconteceu.»
 
@@ -85,7 +85,7 @@ construído:
    come from only 2 observed days"*. **Aponta mesmo para ela**, porque é a que mais impressiona
    quem percebe do assunto:
    > «E repare-se nisto. Três casos, mas de apenas dois dias distintos. O impacto é medido por
-   > empresa e por dia, portanto duas manchetes do mesmo dia partilham o mesmo valor e não são
+   > empresa e por dia, portanto dois títulos do mesmo dia partilham o mesmo valor e não são
    > duas observações independentes. O sistema conta os dias e diz-me. Isto foi um defeito que
    > eu descobri a escrever a tese, e a correcção foi passar a contar dias em vez de casos.»
 

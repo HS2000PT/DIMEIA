@@ -113,7 +113,7 @@ Tabela~\ref{tab:sis_pecas} lista todas, com o que cada uma faz, o que custa, e o
 \tabhead{Peça} & \tabhead{Para quê} & \tabhead{Custo/limite} & \tabhead{Porquê esta, e não a outra} \\
 \midrule
 \textbf{Finnhub} & notícias por empresa & grátis, 60 pedidos/min &
-Dá notícias \emph{por empresa}, que é o que o sistema precisa, e é a que etiqueta melhor
+Dá notícias \emph{por empresa}, que é o de que o sistema precisa, e é a que etiqueta melhor
 (Secção~\ref{sec:sis_fontes}). \\
 \addlinespace
 \textbf{Alpha Vantage} & notícias, segunda fonte & grátis com chave &
@@ -560,7 +560,7 @@ de execução não é óbvia e tem uma consequência que me custou tempo real.
   \node[proc] (w) {\textbf{worker}\\ \scriptsize ciclo de 60\,s\\ \scriptsize (Heroku)};
   \node[proc, below=8mm of w] (web) {\textbf{web}\\ \scriptsize serve a página\\ \scriptsize (Heroku)};
   \node[dado, right=0.85cm of w, yshift=-7mm] (br)
-    {\textbf{branch de dados}\\ \scriptsize histórico e registos\\ \scriptsize (GitHub)};
+    {\textbf{repositório de dados}\\ \scriptsize histórico e registos\\ \scriptsize (GitHub)};
   \node[fora, left=0.85cm of w] (apis) {\textbf{fontes}\\ \scriptsize Finnhub, preços};
   \node[fora, right=0.85cm of br, yshift=8mm] (tg) {\textbf{Telegram}\\ \scriptsize o alerta};
   \node[fora, right=0.85cm of br, yshift=-8mm] (nav) {\textbf{navegador}\\ \scriptsize o utilizador};

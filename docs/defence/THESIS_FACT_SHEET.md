@@ -45,12 +45,12 @@ script escreveu. Verifiquei isto exaustivamente — **os 3 dígitos decimais do 
 
 | O que digo | Valor | De onde veio | Como calculei | Código | Dados | Tese |
 |---|---|---|---|---|---|---|
-| P@5 semântica (MiniLM) | **0,514 ± 0,015** | 3.714 manchetes | dos 5 vizinhos, quantos do mesmo setor; empresa própria **excluída**; média de 5 sementes | `retrieval_eval.py:33` | `data/finnhub_news.csv` | §5.3 |
+| P@5 semântica (MiniLM) | **0,514 ± 0,015** | 3.714 títulos | dos 5 vizinhos, quantos do mesmo setor; empresa própria **excluída**; média de 5 sementes | `retrieval_eval.py:33` | `data/finnhub_news.csv` | §5.3 |
 | P@5 lexical | **0,346** | idem | mesma fórmula, embedder de sobreposição de palavras | `retrieval_eval.py:33` | idem | §5.3 |
 | P@5 acaso | **0,240** | idem | taxa-base do setor | `retrieval_eval.py:58` | idem | §5.3 |
 | P@5 recência | **0,126** | idem | k mais recentes | `retrieval_eval.py:80` | idem | §5.3 |
-| P@5 à escala | **0,595** | 80k manchetes | mesmo protocolo | `evaluate_retrieval_fnspid.py` | FNSPID | §5.3 |
-| Corpus: nº de manchetes | **3.714** | Finnhub company-news | `count()` após filtro de setor conhecido | `evaluate.py:73-79` | `finnhub_news.csv` | §3.2.3 |
+| P@5 à escala | **0,595** | 80k títulos | mesmo protocolo | `evaluate_retrieval_fnspid.py` | FNSPID | §5.3 |
+| Corpus: nº de títulos | **3.714** | Finnhub company-news | `count()` após filtro de setor conhecido | `evaluate.py:73-79` | `finnhub_news.csv` | §3.2.3 |
 | Corpus: amplitude | **27 dias** (28 mai–24 jun 2026) | idem | `max(data) − min(data)` | `evaluate_corpus_and_filter.py` | idem | §3.2.3 |
 | Vizinhos anteriores à consulta | **31,1%** | 300 consultas × top-5 | compara datas do vizinho e da consulta | `evaluate_corpus_and_filter.py` | idem | §3.2.3 |
 | Consistência de direção | 0,708 vs chão 0,688 | FNSPID | quota de precedentes na mesma direção | `evaluate_retrieval_fnspid.py` | FNSPID | §5.3 |
@@ -66,12 +66,12 @@ julgamento humano. Está declarado como limitação em §5.10.
 
 | O que digo | Valor | De onde veio | Como calculei | Código | Dados | Tese |
 |---|---|---|---|---|---|---|
-| Manchetes mantidas | **811 de 2.478** (32,7%) | 12 tickers com aliases | `is_relevant()` sobre o corpus | **`relevance.py:114`** | `finnhub_news.csv` | §4.5 |
+| Títulos mantidas | **811 de 2.478** (32,7%) | 12 tickers com aliases | `is_relevant()` sobre o corpus | **`relevance.py:114`** | `finnhub_news.csv` | §4.5 |
 | Descartadas por boilerplate | **74** (3,0%) | idem | regex de 11 padrões | `relevance.py:92-105` | idem | §4.5 |
 | Descartadas por não mencionar | **1.593** (64,3%) | idem | sem alias nem ticker, palavra inteira | `relevance.py:109` | idem | §4.5 |
 
 **A regra, em uma linha:**
-`relevante(manchete, ticker) = não-vazia ∧ ¬boilerplate ∧ menciona(ticker ∨ alias)`
+`relevante(título, ticker) = não-vazia ∧ ¬boilerplate ∧ menciona(ticker ∨ alias)`
 
 **⚠️ Duas coisas a assumir, e estão na tese (§4.5):**
 1. A regra foi escrita **depois** de ler os primeiros 27 alertas — não é a priori.
@@ -85,12 +85,12 @@ julgamento humano. Está declarado como limitação em §5.10.
 
 | O que digo | Valor | De onde veio | Como calculei | Código | Dados | Tese |
 |---|---|---|---|---|---|---|
-| Exemplos de treino | **79.753** | FNSPID 2018–23 | (manchete, ticker, dia) com preços alinhados | `build_dataset.py` | `triage_dataset.csv` | §3.2.1 |
+| Exemplos de treino | **79.753** | FNSPID 2018–23 | (título, ticker, dia) com preços alinhados | `build_dataset.py` | `triage_dataset.csv` | §3.2.1 |
 | Blocos treino/val/teste | **28.574 / 17.710 / 32.649** | idem | divisão temporal por **dia único**, 70/15/15 | **`dataset.py:108`** | idem | §3.3.4 |
 | Linhas largadas no embargo | **820** | idem | 5 dias únicos após cada fronteira | `dataset.py:108` | idem | §3.3.4 |
 | Prevalência por bloco | 0,385 / 0,470 / 0,378 | idem | `mean(label)` | — | idem | §5.8 |
 | Definição do rótulo | `\|r_tkr − r_SPY\| ≥ 2%` a 3d | preços | diferença de retornos acumulados | **`dataset.py:99`** | idem | §3.3.4 |
-| Features (9) | vol20, mom5, ret_event, len, 5×setor | preços + manchete | todas ao fecho do dia `d` | **`dataset.py:39`** | idem | §3.3.4 |
+| Features (9) | vol20, mom5, ret_event, len, 5×setor | preços + título | todas ao fecho do dia `d` | **`dataset.py:39`** | idem | §3.3.4 |
 | PR-AUC volatilidade | **0,542** | bloco de teste | área sob precisão–recall | **`model.py:68`** | idem | §5.5 |
 | PR-AUC contexto | 0,538 | idem | idem | `model.py:68` | idem | §5.5 |
 | PR-AUC contexto+texto | **0,496** | idem | idem | `model.py:68` | idem | §5.5 |
@@ -133,14 +133,14 @@ Se alguém re-treinar com outra semente, a suite parte.
 | Cosseno ONNX vs SBERT | **0,992** (mín 0,983) | 503 consultas | cosseno par-a-par | `evaluate_onnx_parity.py` | KB curada | §4.9 |
 | Vizinhos partilhados | **95%** | idem | interseção dos top-3 | idem | idem | §4.9 |
 | Folga mediana nas divergências | 0,006 | idem | diferença de similaridade | idem | idem | §4.9 |
-| Cobertura de notícias | **88,5%** (90,4% a \|z\|≥3) | 1 ano, 12 nomes | dias com ≥1 manchete relevante / dias invulgares | `evaluate_news_coverage.py` | branch de dados | §6.5 |
+| Cobertura de notícias | **88,5%** (90,4% a \|z\|≥3) | 1 ano, 12 nomes | dias com ≥1 título relevante / dias invulgares | `evaluate_news_coverage.py` | branch de dados | §6.5 |
 | Deriva (PSI) na volatilidade | **0,281** | treino vs teste | `Σ(p_c−p_r)·ln(p_c/p_r)` em bins por quantil | `evaluate_drift.py` | `triage_dataset.csv` | §5.8 |
 | Cobertura conformal a 90% | decisão definida em **39,5%** | bloco de teste | conjuntos de predição split-conformal | `evaluate_conformal.py` | idem | §5.7 |
 | AMI tipo de evento vs ticker | **0,358** vs 0,188 | FNSPID | informação mútua ajustada, mesmas linhas | `evaluate_event_taxonomy.py` | idem | §5.6 |
 | Fusão vs melhor sinal | ganha em **1 de 3** orçamentos | 1.951 pares | P@k por orçamento | `evaluate_convergence.py` | idem | §5.9 |
 | Latência: publicação→detecção | **~158 min** (mediana) | 101 alertas | `detected_at − event_at` | `evaluate_latency.py` | `alerts_history.jsonl` | §6.2 |
 | Latência: detecção→entrega | **~1 s** | idem | `sent_at − detected_at` | idem | idem | §6.2 |
-| Funil de produção | 944 manchetes → **42** alertas (22:1) | 5 dias ao vivo | contagens do registo | `alert_funnel.md` | branch de dados | §4.8 |
+| Funil de produção | 944 títulos → **42** alertas (22:1) | 5 dias ao vivo | contagens do registo | `alert_funnel.md` | branch de dados | §4.8 |
 | Alertas reais entregues | **332** | produção | linhas do histórico partilhado | — | `alerts_history.jsonl` | Apêndice A |
 
 ---

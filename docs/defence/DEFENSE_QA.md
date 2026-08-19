@@ -53,7 +53,7 @@ embargo de 5 dias, que custa 820 linhas.
 **Simples:** *"Porque com dados no tempo a divisão aleatória treina com o futuro para prever o
 passado. E porque dias próximos parecem-se: se o dia 10 fosse treino e o 11 teste, o modelo já
 tinha visto quase a mesma informação."*
-**Técnica:** divisão por **dia único** (todas as manchetes do mesmo dia no mesmo bloco) mais
+**Técnica:** divisão por **dia único** (todos os títulos do mesmo dia no mesmo bloco) mais
 embargo, porque o rótulo olha até 5 dias à frente e sem embargo um exemplo do fim do treino
 seria rotulado por preços do bloco seguinte.
 **Provar:** §3.3.4, Excerto 3.2 · `dataset.py:108`
@@ -100,9 +100,9 @@ e o setor não muda com o tempo. Na implantação a base termina em 2023 e as co
 **Provar:** §3.2.3, §6.5 · `evaluation_relevance_filter.md` §3
 
 ### C2. «Deita fora dois terços das notícias. Com que critério?»
-**Simples:** *"A manchete tem de nomear a empresa e não pode ser um resumo genérico de mercado.
+**Simples:** *"O título tem de nomear a empresa e não pode ser um resumo genérico de mercado.
 Medi o efeito: mantenho 811 de 2.478. E só 3% dos descartes são a regra de boilerplate — os
-outros 64% falham por a manchete nunca nomear a empresa."*
+outros 64% falham por o título nunca nomear a empresa."*
 **Técnica:** `relevante = não-vazia ∧ ¬boilerplate ∧ menciona(ticker ∨ alias)`, comparação por
 palavra inteira. É código determinístico: duas pessoas obtêm o mesmo resultado.
 **Provar:** §4.5 · `relevance.py:114` · `evaluation_relevance_filter.md`
@@ -116,7 +116,7 @@ intervalo a conter o acaso."*
 e só a escala está errada, recalibra-se. Se não ordena, recalibrar não serve, porque a sigmóide
 é **monótona** e preserva a ordem exactamente. Medi a discriminação: não há ordem para preservar.
 A explicação é que o modelo é **redundante**, não avariado — a materialidade ao vivo corre a
-0,626 contra 0,378 no treino, porque só se registam manchetes que já passaram os filtros.
+0,626 contra 0,378 no treino, porque só se registam títulos que já passaram os filtros.
 **A lição:** *um modelo avaliado isolado e implantado atrás de filtros nunca foi avaliado na
 distribuição que ia ver.*
 **Provar:** §6.5 · `evaluation_live_transfer.md` · `recalibrate_live.py` (recusa-se a correr)
@@ -206,9 +206,9 @@ outras três é que produzem os factos que ela usa."*
 **Técnica:** a distinção que interessa não é de fluência, é de **ancoragem**. Um LLM genérico
 responde "porque é que a XOM subiu?" com o que leu na Internet até à data de corte. Este responde
 com: o retorno medido da sessão, o z-score contra a norma de 20 dias *daquele* nome, a
-decomposição mercado/setor/empresa com betas encolhidos por Vasicek, as manchetes captadas com
+decomposição mercado/setor/empresa com betas encolhidos por Vasicek, os títulos captadas com
 carimbo temporal, e — o que nenhum modelo sabe de cor — **casos passados semanticamente parecidos
-com o desfecho medido a cinco dias**, recuperados de um arquivo de mais de 80 mil manchetes.
+com o desfecho medido a cinco dias**, recuperados de um arquivo de mais de 80 mil títulos.
 
 **A frase que fecha:** *"O modelo não sabe o que aconteceu. É-lhe dito. E cada número que ele
 escreve é verificado contra a evidência que o produziu, antes de chegar ao ecrã."*

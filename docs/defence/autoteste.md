@@ -106,14 +106,14 @@ muito diferente.
 <details><summary>resposta</summary>
 
 P@5 = **0,514** (MiniLM), contra **0,346** lexical, **0,240** aleatório e **0,126** recência. E
-**validado à escala: 0,595** em 80 mil manchetes do FNSPID.
+**validado à escala: 0,595** em 80 mil títulos do FNSPID.
 </details>
 
 **🔴 12. RQ4: o número que diz que o texto não ajuda.**
 <details><summary>resposta</summary>
 
 PR-AUC: **volatilidade 0,542** > contexto 0,538 > **contexto+texto 0,496**. Acrescentar o texto da
-manchete **piora**. O sinal vive no contexto de mercado.
+título **piora**. O sinal vive no contexto de mercado.
 </details>
 
 **🔴 13. RQ4: o número que diz que a triagem vale a pena na mesma.**
@@ -172,7 +172,7 @@ passado; isto é uma garantia. E num problema binário o conjunto pode dizer **"
 <details><summary>resposta</summary>
 
 Para garantir **90% de cobertura**, o modelo só consegue uma decisão definida em **39,5%** das
-manchetes. Não contradiz a RQ4: **explica-a** por um caminho independente, sem treinar nada.
+títulos. Não contradiz a RQ4: **explica-a** por um caminho independente, sem treinar nada.
 </details>
 
 **🟡 20. A cobertura conformal parte-se onde, e porquê?**
@@ -204,7 +204,7 @@ protocolo já atravessa uma dessas oscilações, logo os números são medidos *
 A fusão ganha em **1 de 3** orçamentos. Um ganho que depende do orçamento que se cita é um ganho
 que se **pode ter escolhido** ⇒ não entra em produção.
 
-O achado: o peso da intensidade de notícia saiu **negativo (−0,283)**. Mais manchetes = menos
+O achado: o peso da intensidade de notícia saiu **negativo (−0,283)**. Mais títulos = menos
 provável ser material, porque são dias de conteúdo automático. À mão eu teria posto positivo e
 estaria errado.
 </details>

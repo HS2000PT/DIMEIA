@@ -48,11 +48,11 @@ fraqueza.
 | **0.712 vs 0.444** | Pureza dos grupos vs aleatório do mesmo tamanho *(Caso 5)* | "O 0,712 sozinho engana: com um tipo a valer 44% dos rótulos, o acaso já dá 0,444. O ganho real é +0,269." |
 | **0.951/0.902/0.803** | Cobertura conformal, divisão aleatória *(Caso 6)* | "Bate no nominal aos três níveis — prova que a implementação está certa." |
 | **0.937 a 95%** | Cobertura conformal, divisão TEMPORAL *(Caso 6)* | "Parte-se só no nível mais exigente. Pedir 95% apoia-se na CAUDA, e é a cauda que se move primeiro. A 90% e 80% aguenta." |
-| **39,5%** | Decisões definidas a 90% de cobertura garantida *(Caso 6)* | "**O número mais duro da tese.** Para prometer 90%, o modelo só decide em 39,5% das manchetes. Não contradiz a RQ4 — **explica-a** por um caminho independente, sem treinar nada." |
+| **39,5%** | Decisões definidas a 90% de cobertura garantida *(Caso 6)* | "**O número mais duro da tese.** Para prometer 90%, o modelo só decide em 39,5% dos títulos. Não contradiz a RQ4 — **explica-a** por um caminho independente, sem treinar nada." |
 | **PSI 0.281** | Deriva da volatilidade, treino → teste *(Caso 7)* | "A limitação que a tese repetia passou a estar MEDIDA. Banda significativa, e dá um gatilho de re-treino verificável em vez de uma intuição." |
 | **0.385 / 0.470 / 0.378** | Prevalência do rótulo nos três blocos *(Caso 7)* | "**Oscila, não tem tendência.** Comparar só as pontas esconderia uma excursão de 22%. Explica por que os congelados sobrevivem E por que a cobertura a 95% parte." |
 | **ganha em 1 de 3** | Fusão multi-sinal vs melhor sinal isolado *(§6.2, posição por exclusão)* | "Um ganho que depende do orçamento que se escolhe citar é um ganho que se **pode ter escolhido**. Não entra em produção." |
-| **peso −0,283** | Intensidade de notícia na fusão *(§6.2, posição por exclusão)* | "**Negativo**: mais manchetes = menos provável ser material, porque são dias de conteúdo automático. À mão eu teria posto positivo e estaria errado. É a justificação empírica de DERIVAR pesos." |
+| **peso −0,283** | Intensidade de notícia na fusão *(§6.2, posição por exclusão)* | "**Negativo**: mais títulos = menos provável ser material, porque são dias de conteúdo automático. À mão eu teria posto positivo e estaria errado. É a justificação empírica de DERIVAR pesos." |
 | **130 / 139 pp · 63 refs · 709 testes** | Tese EN/PT · referências verificadas · suíte | "Reprodutível de ponta a ponta; nenhum número digitado à mão. As 63 referências resolvem todas, e o título devolvido bate — verificado automaticamente." |
 
 ### Se perguntarem pela bibliografia
@@ -79,7 +79,7 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 
 **RQ2 (precedentes análogos, sem lookahead) — SIM, validada à escala.**
 > "A recuperação semântica bate todas as linhas de base (P@5 0.514 vs 0.346 lexical, 0.240
-> aleatório), e **validei-a à escala** no FNSPID multi-ano: **P@5 0,595 em ~80k manchetes**, acima do
+> aleatório), e **validei-a à escala** no FNSPID multi-ano: **P@5 0,595 em ~80k títulos**, acima do
 > preliminar. O impacto é medido ESTRITAMENTE após o evento — evidência observada, nunca previsão.
 > Fica só o estudo das MAGNITUDES ajustadas ao mercado como trabalho futuro."
 
@@ -89,7 +89,7 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 > reporto-a como limitação em aberto, não como afirmação."
 
 **RQ4 (triagem para além da volatilidade) — NÃO no texto; SIM no mecanismo.** *(o mais sensível)*
-> "Pré-comprometi-me com a comparação decisiva: nenhum modelo que lê o TEXTO da manchete bateu a
+> "Pré-comprometi-me com a comparação decisiva: nenhum modelo que lê o TEXTO do título bateu a
 > volatilidade (PR-AUC 0.496 vs 0.542). **Mas isto é um resultado, não um fracasso** — como
 > MECANISMO, a triagem sobe a precisão 1,67x dentro do orçamento (0.632 vs 0.379). O sinal
 > vive no contexto de mercado, e a variante em produção usa exatamente essas features. É a 2.ª vez
@@ -100,9 +100,9 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 ## 4. Perguntas MAIS DIFÍCEIS do júri — respostas-modelo (ensaiar em voz alta)
 
 **P: O corpus de recuperação é fino e recente. Como sabes que a P@5 se aguenta?**
-> "A resposta mudou desde a versão preliminar. O inicial (P@5 0,514 em ~3.700 manchetes) era
+> "A resposta mudou desde a versão preliminar. O inicial (P@5 0,514 em ~3.700 títulos) era
 > preliminar por desenho — estabelecia o mecanismo. Mas validei-o **à escala**: no FNSPID multi-ano,
-> ~80k manchetes de 6 anos, o mesmo protocolo cross-ticker deu **P@5 0,595** — acima do preliminar.
+> ~80k títulos de 6 anos, o mesmo protocolo cross-ticker deu **P@5 0,595** — acima do preliminar.
 > E quantifiquei o tema≠direção (consistência 0,71 vs chão do acaso 0,69). Fica só o estudo das
 > magnitudes ajustadas ao mercado."
 

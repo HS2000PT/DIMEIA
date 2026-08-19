@@ -60,7 +60,7 @@ Se quiseres a versão viva da mesma ideia, o painel implantado tem a página **�
 
 ### 3 · Um alerta até ao fim *(≈2 min)*
 
-O que aparece: a manchete, os cinco portões que passou, a mensagem verbatim, e a latência
+O que aparece: o título, os cinco portões que passou, a mensagem verbatim, e a latência
 decomposta.
 
 O que dizes, sobre a latência (e é o número que te salva a pergunta sobre tempo real):
@@ -102,7 +102,7 @@ perdeste nada.
 1. Sem rede → `--offline` (é o modo normal na sala).
 2. Sem portátil teu → os PDFs bastam: o Apêndice A tem a **Matriz de Evidência** e a §4.5 tem a
    viagem de uma notícia em dez etapas.
-3. Sem nada → conta o funil de cabeça: **944 manchetes relevantes capturadas em cinco dias,
+3. Sem nada → conta o funil de cabeça: **944 títulos relevantes capturadas em cinco dias,
    42 alertas, 22:1**. E o que travou a maioria: precedente fraco e triagem.
 
 ---

@@ -20,7 +20,7 @@ contribuição central?"*
 
 ✅ *"A RQ4 tem duas partes e respondo às duas. Como **mecanismo de produto**, o modelo prioriza
 claramente: dentro de um orçamento de 5 alertas/dia sobe a precisão de **0,379 para 0,632** — quase
-4×, com probabilidades calibradas. A **hipótese científica** — 'o texto da manchete acrescenta sinal
+4×, com probabilidades calibradas. A **hipótese científica** — 'o texto do título acrescenta sinal
 sobre a volatilidade' — essa, pré-comprometida, deu não: PR-AUC **0,542 vs 0,496**. Não é um fracasso,
 é um resultado, e reporto-o tal como caiu. É a segunda vez — a primeira foi a Isolation Forest — que a
 escolha transparente vence um teste causal justo. Isso valida o desenho simplicidade-primeiro com
@@ -59,12 +59,12 @@ acima. Logo o negativo é robusto, não um artefacto — e testei a própria cr�
 
 ## 2. RQ2 — validada à escala (era "o corpus é fino")
 
-**🎓 Q1.** *"O seu corpus de recuperação são 3.714 manchetes de uns meses. Como sabe que a P@5 de 0,51
+**🎓 Q1.** *"O seu corpus de recuperação são 3.714 títulos de uns meses. Como sabe que a P@5 de 0,51
 se aguenta noutro período?"*
 
 ✅ *"Boa pergunta — e a resposta mudou desde a versão preliminar. O resultado inicial (P@5 **0,514** em
-~3.700 manchetes) era preliminar por desenho: estabelecia o mecanismo. Mas validei-o depois **à
-escala**: no corpus FNSPID multi-ano, ~80 mil manchetes de 6 anos, o mesmo protocolo cross-ticker deu
+~3.700 títulos) era preliminar por desenho: estabelecia o mecanismo. Mas validei-o depois **à
+escala**: no corpus FNSPID multi-ano, ~80 mil títulos de 6 anos, o mesmo protocolo cross-ticker deu
 **P@5 0,595** — acima do preliminar. A recuperação não só se aguenta noutro período, melhora."*
 
 **🎓 Q2 (aperta).** *"E a direção dos precedentes? Recuperar o tema não diz o que o preço faz."*
@@ -264,7 +264,7 @@ convergência, e não ligou nenhum deles ao produto. Não foi trabalho desperdi�
 ## 12. "O seu modelo só decide em 39,5% dos casos"
 
 **Q1.** *"A predição conformal mostra que, para garantir 90% de cobertura, o modelo só consegue uma
-decisão definida em 39,5% das manchetes. O modelo não serve para nada?"*
+decisão definida em 39,5% dos títulos. O modelo não serve para nada?"*
 
 > *"Serve para o que a tese diz que serve, e esse número **confirma-o** em vez de o contradizer. A
 > RQ4 já reportava que o texto não bate a volatilidade. A conformal chega à mesma conclusão por um

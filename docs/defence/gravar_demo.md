@@ -76,7 +76,7 @@ documento apanha-te.
 > *"A latência está decomposta de propósito, porque um número agregado não distingue duas coisas
 > com consequências opostas. Do lado do sistema — da deteção até à entrega — a mediana é de **um
 > segundo**. Da publicação até à deteção são cerca de **duas horas e meia**, e isso é a fonte
-> gratuita a listar tarde, mais o facto de a manchete mais recente que passa o filtro de
+> gratuita a listar tarde, mais o facto de o título mais recente que passa o filtro de
 > relevância ser tipicamente mais velha do que a mais recente do feed."*
 
 Se te perguntarem se o ciclo de 60 segundos valeu a pena, a resposta honesta é a mais
