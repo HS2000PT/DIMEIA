@@ -40,6 +40,10 @@
 }
 
 @article{araci2019finbert,
+  %% FICA como pre-publicacao de proposito: e o artefacto EXACTAMENTE medido no
+  %% Capitulo 5 (o ponto de controlo ProsusAI/finbert). Trocar a citacao por um FinBERT
+  %% publicado atribuiria a medicao ao modelo errado. Para a afirmacao geral de que
+  %% existem modelos de dominio, o corpo cita liu2020finbert e huang2023finbert.
   author       = {Araci, Dogu},
   title        = {{FinBERT}: Financial Sentiment Analysis with Pre-trained Language Models},
   journal      = {arXiv preprint},
@@ -151,13 +155,21 @@
   doi        = {10.18653/v1/N19-1423}
 }
 
-@article{mikolov2013word2vec,
-  author     = {Mikolov, Tomas and Chen, Kai and Corrado, Greg and Dean, Jeffrey},
-  title      = {Efficient Estimation of Word Representations in Vector Space},
-  journal    = {arXiv preprint},
-  year       = {2013},
-  eprint     = {1301.3781},
-  eprinttype = {arXiv}
+@inproceedings{mikolov2013word2vec,
+  author    = {Mikolov, Tomas and Sutskever, Ilya and Chen, Kai and Corrado, Greg S.
+               and Dean, Jeffrey},
+  title     = {Distributed Representations of Words and Phrases and their Compositionality},
+  booktitle = {Advances in Neural Information Processing Systems 26 (NIPS 2013)},
+  publisher = {Curran Associates, Inc.},
+  volume    = {26},
+  pages     = {3111--3119},
+  year      = {2013},
+  %% Substitui a pre-publicacao arXiv 1301.3781 pela versao nas actas, revista por pares, que
+  %% apresenta o mesmo modelo skip-gram treinado a partir do contexto local. As actas do NIPS de
+  %% 2013 nao emitem DOI; o URL canonico da NeurIPS e o identificador estavel que existe, tal
+  %% como em sculley2015debt. Autores, volume e paginas lidos do BibTeX oficial da NeurIPS a
+  %% 2026-08-19.
+  url       = {https://papers.nips.cc/paper_files/paper/2013/hash/9aa42b31882ec039965f3c4923ce901b-Abstract.html}
 }
 
 @article{yang2020finbert,
@@ -260,6 +272,10 @@
 }
 
 @article{doshivelez2017rigorous,
+  %% FICA como pre-publicacao: nunca teve versao publicada, e a contribuicao citada e a
+  %% taxonomia de avaliacao da interpretabilidade, que nenhum trabalho revisto por pares
+  %% substitui. As afirmacoes vizinhas apoiam-se em lipton2018mythos e rudin2019stop,
+  %% ambos publicados.
   author     = {Doshi-Velez, Finale and Kim, Been},
   title      = {Towards a Rigorous Science of Interpretable Machine Learning},
   journal    = {arXiv preprint},
@@ -287,6 +303,8 @@
 }
 
 @article{wu2023bloomberggpt,
+  %% FICA como pre-publicacao: nunca teve versao publicada, e e citada para NOMEAR um
+  %% sistema concreto. Nao ha equivalente revisto por pares que nomeie o mesmo artefacto.
   author     = {Wu, Shijie and Irsoy, Ozan and Lu, Steven and Dabravolski, Vadim and Dredze, Mark and Gehrmann, Sebastian and Kambadur, Prabhanjan and Rosenberg, David and Mann, Gideon},
   title      = {{BloombergGPT}: A Large Language Model for Finance},
   journal    = {arXiv preprint},
@@ -691,4 +709,31 @@
   number    = {1},
   pages     = {1--10},
   doi       = {10.1111/j.1540-6261.1971.tb00584.x}
+}
+
+@inproceedings{liu2020finbert,
+  author    = {Liu, Zhuang and Huang, Degen and Huang, Kaiyu and Li, Zhuang and Zhao, Jun},
+  title     = {{FinBERT}: A Pre-trained Financial Language Representation Model for Financial
+               Text Mining},
+  booktitle = {Proceedings of the Twenty-Ninth International Joint Conference on Artificial
+               Intelligence (IJCAI-20)},
+  publisher = {International Joint Conferences on Artificial Intelligence Organization},
+  pages     = {4513--4519},
+  year      = {2020},
+  %% Verificada no Crossref a 2026-08-19: titulo, cinco autores, actas e paginas conferem.
+  doi       = {10.24963/ijcai.2020/622}
+}
+
+@article{huang2023finbert,
+  author  = {Huang, Allen H. and Wang, Hui and Yang, Yi},
+  title   = {{FinBERT}: A Large Language Model for Extracting Information from Financial Text},
+  journal = {Contemporary Accounting Research},
+  volume  = {40},
+  number  = {2},
+  pages   = {806--841},
+  year    = {2023},
+  %% Verificada no Crossref a 2026-08-19: titulo, tres autores, revista, volume, numero, ano e
+  %% paginas conferem. E a versao revista por pares da linhagem FinBERT de Yi Yang, cuja
+  %% pre-publicacao (yang2020finbert) ficou citada apenas no corpo mais antigo.
+  doi     = {10.1111/1911-3846.12832}
 }

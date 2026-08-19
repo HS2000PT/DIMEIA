@@ -3,18 +3,17 @@
 > Gerado por `scripts/verify_dois.py`. Cada DOI resolvido contra o Crossref e
 > comparado campo a campo com o `.bib`. Nao editar a mao.
 
-- entradas no `.bib`: **63**
-- com DOI que resolve e bate certo: **46**
+- entradas no `.bib`: **65**
+- com DOI que resolve e bate certo: **48**
 - com problema: **0**
-- sem identificador, nao arXiv: **12**
-- pre-publicacoes (arXiv ou sem DOI): **5**
+- sem identificador, nao arXiv: **13**
+- pre-publicacoes (arXiv ou sem DOI): **4**
 
 ## Pre-publicacoes: existe versao publicada?
 
 | Chave | Titulo | Versao publicada encontrada |
 |---|---|---|
 | `araci2019finbert` | {FinBERT}: Financial Sentiment Analysis with | nao encontrada |
-| `mikolov2013word2vec` | Efficient Estimation of Word Representations | **Journal of Innovations in Engineering Educatio** (2020), `10.3126/jiee.v3i1.34327` |
 | `yang2020finbert` | {FinBERT}: A Pretrained Language Model for F | nao encontrada |
 | `doshivelez2017rigorous` | Towards a Rigorous Science of Interpretable  | nao encontrada |
 | `wu2023bloomberggpt` | {BloombergGPT}: A Large Language Model for F | nao encontrada |
@@ -25,6 +24,7 @@
 - `sifma2025factbook`: 2025 Capital Markets Fact Book ()
 - `gallup2025stock`: What Percentage of Americans Own Stock? ()
 - `ccaf2026aifs`: Global AI in Financial Services Report: Adoption, Impact and Risks ()
+- `mikolov2013word2vec`: Distributed Representations of Words and Phrases and their Composition (Advances in Neural Information Processin)
 - `vaswani2017attention`: Attention Is All You Need (Advances in Neural Information Processin)
 - `ding2015deep`: Deep Learning for Event-Driven Stock Prediction (Proceedings of the 24th International Jo)
 - `manning2008ir`: Introduction to Information Retrieval (Cambridge University Press)
@@ -62,12 +62,15 @@
 | `friedman2001gbm` | OK | Greedy function approximation: A gradient boosting machine | The Annals of Statistics | 2001 |
 | `gama2014survey` | OK | A survey on concept drift adaptation | ACM Computing Surveys | 2014 |
 | `guidotti2018survey` | OK | A Survey of Methods for Explaining Black Box Models | ACM Computing Surveys | 2019 |
+| `huang2023finbert` | OK | <scp>FinBERT</scp>
+                    : A Large Language  | Contemporary Accounting Research | 2023 |
 | `johnson2021faiss` | OK | Billion-Scale Similarity Search with GPUs | IEEE Transactions on Big Data | 2021 |
 | `kahneman1979prospect` | OK | Prospect Theory: An Analysis of Decision under Risk | Econometrica | 1979 |
 | `kearney2014textual` | OK | Textual sentiment in finance: A survey of methods and mode | International Review of Financial An | 2014 |
 | `lee2004trust` | OK | Trust in Automation: Designing for Appropriate Reliance | Human Factors: The Journal of the Hu | 2004 |
 | `lipton2018mythos` | OK | The mythos of model interpretability | Communications of the ACM | 2018 |
 | `liu2008isolation` | OK | Isolation Forest | 2008 Eighth IEEE International Confe | 2008 |
+| `liu2020finbert` | OK | FinBERT: A Pre-trained Financial Language Representation M | Proceedings of the Twenty-Ninth Inte | 2020 |
 | `loughran2011liability` | OK | When Is a Liability Not a Liability? Textual Analysis, Dic | The Journal of Finance | 2011 |
 | `miller2019explanation` | OK | Explanation in artificial intelligence: Insights from the  | Artificial Intelligence | 2019 |
 | `niculescu2005calibration` | OK | Predicting good probabilities with supervised learning | Proceedings of the 22nd internationa | 2005 |
