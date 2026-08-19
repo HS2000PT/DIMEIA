@@ -94,6 +94,16 @@ def main() -> int:
         if not corpo:
             suspeitos.append((chave, "PDF sem texto extraivel (digitalizacao?)", ""))
             continue
+        # ⚠️ Um PDF do JSTOR pode trazer a folha de rosto em texto e o ARTIGO em imagem. Passava
+        # aqui com o titulo e o autor certos, e a validacao de citacoes contra ele nao encontrava
+        # nada. Poucos caracteres por pagina denunciam-no.
+        todo = texto_inicio(p, 999)
+        pags = max(1, todo.count(chr(12)))
+        if len(todo.strip()) / pags < 400:
+            suspeitos.append((chave, f"quase sem texto: {len(todo.strip())} caracteres em {pags} "
+                                     f"paginas. E digitalizacao, e nao da para conferir citacoes "
+                                     f"por maquina", ""))
+            continue
         # quantas palavras do titulo do .bib aparecem no inicio do PDF
         palavras = [w for w in alvo.split() if len(w) > 3]
         if not palavras:

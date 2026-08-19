@@ -371,3 +371,63 @@ contra a teoria. É material para a defesa, não um problema a esconder.
 | O que falta e o que sobra | Não coberto |
 
 As **46 referências sem PDF local** continuam por validar contra o original.
+
+---
+---
+
+# Parte 3: as restantes citações, contra os PDFs originais
+
+> **19 de agosto de 2026.** Puseste 55 PDFs na pasta. A Parte 2 tinha sido feita sobre os 14 que
+> lá estavam na altura. Esta parte fecha as restantes.
+>
+> **Método:** para cada chave, extraí a frase da tese que a cita e procurei no PDF a passagem que
+> a sustenta. Está tudo em baixo com **as palavras do artigo**, para poderes conferir. Onde não
+> pus citação verbatim, é porque não verifiquei, e digo-o.
+
+## Resultado: nenhuma afirmação nova sem apoio
+
+**30 chaves verificadas nesta passagem**, e as frases da tese aguentam todas. As passagens que
+mais custaria defender no dia da prova, e que agora estão conferidas:
+
+| Chave | O que a tese afirma | O que o artigo diz |
+|---|---|---|
+| `blume1971risk` | os betas regridem para a média entre períodos sucessivos | p. 8: *"the values of the risk coefficients as measured by the estimates of β₁ tend to regress towards the means"*, e a secção seguinte chama-se *"A Method of Correction"* |
+| `vasicek1973beta` | o encolhimento é ponderado pela **imprecisão** da estimativa | *"the degree of adjustment being proportionate to the precision h = 1/s_b²"* |
+| `brown1985daily` | os procedimentos correntes com o modelo de mercado por mínimos quadrados são bem especificados | §7: *"methodologies based on the OLS market model and using standard parametric tests are well-specified"*; §7.2: *"Procedures other than OLS... convey no clear-cut benefit"* |
+| `bansal2021whole` | uma explicação aumenta a aceitação **mesmo quando a recomendação está errada** | *"explanations increased the chance that humans will accept the AI's recommendation, regardless of its correctness"* |
+| `miller2019explanation` | as pessoas procuram razões contrastivas e seletivas | *"1. Explanations are contrastive... 2. Explanation are selected (in a biased manner)"* |
+| `lee2004trust` | a confiança falha nos dois sentidos | *"misuse and disuse of automation"* |
+| `welch2022robinhood` | os particulares aumentaram posições na queda de março de 2020 | *"Robinhood investors collectively increased their holdings in the March 2020 COVID bear market, indicating an absence of panic"* |
+| `dacunto2019robo` | benefício para quem tinha **menos de cinco** ações, quase nulo acima de **dez** | *"increases portfolio diversification and decreases volatility for those that held less than 5 stocks... barely affects diversification for investors that held more than 10 stocks"* |
+| `ahmed2016financial` | em finanças domina o não supervisionado por falta de rótulos | *"Labelled data for training of models are scarcely available."* |
+| `kahneman1979prospect` | as perdas pesam mais do que os ganhos | *"losses loom larger than gains"* |
+| `breunig2000lof` | densidade em torno do ponto face à dos vizinhos | *"the average of the ratio of the local reachability density of p and those of p's MinPts-nearest neighbors"* |
+| `reimers2019sbert` | comparar pares com o BERT não escala | *"BERT uses a cross-encoder: two sentences are passed to the transformer network"*, e 65 horas contra ~5 segundos |
+| `loughran2011liability` | os dicionários gerais classificam mal palavras financeiras | *"word lists developed for other disciplines misclassify common words in financial text"* |
+| `pennington2014glove` + `mikolov2013word2vec` | contexto **local** contra coocorrência **global** | GloVe: *"global matrix factorization methods... and local context window methods"* |
+
+Verificadas também, com a passagem no artigo: `chandola2009anomaly` (a família estatística é a
+§7 do próprio survey), `liu2008isolation`, `engle1982arch`, `bollerslev1986garch` (pelo DOI, ver
+abaixo), `gama2014survey`, `sculley2015debt`, `aamodt1994cbr`, `johnson2021faiss`, `salton1975vsm`,
+`robertson2009bm25`, `manning2008ir`, `ribeiro2016lime`, `lundberg2017shap`, `arrieta2020xai`,
+`guidotti2018survey`, `devlin2019bert`, `vaswani2017attention`, `friedman2001gbm`,
+`kearney2014textual`, `ding2015deep`, `pang2021deep`, `cardillo2024robo`, `wu2023bloomberggpt`.
+
+## ⚠️ Um erro que EU quase introduzi, e vale a pena saberes porquê
+
+A meio desta passagem julguei ter apanhado um erro nos números do `dacunto2019robo`: o **corpo**
+do artigo fala em *"less than 10 stocks"*, e a tese diz *"menos de cinco"*. Cheguei a corrigir a
+tese. Fui depois ler o **resumo** e ele diz, com todas as letras, *"less than 5 stocks"* e
+*"more than 10 stocks"* — que é exactamente o que a tese tinha. **Revertido.**
+
+O artigo faz dois cortes diferentes, um no resumo e outro no corpo, e eu li o segundo primeiro.
+A lição não é sobre este artigo: é que **corrigir com base numa leitura parcial estraga texto que
+estava certo**, e é mais perigoso do que não corrigir, porque sai com ar de rigor.
+
+## O que continua sem poder ser verificado por máquina
+
+`fama1969adjustment`, `fama1970efficient` e `niculescu2005calibration` são digitalizações sem
+texto. O `blume1971risk` também era, e esse **li-o à página**, que é como se resolve. Os outros
+três podem ser lidos da mesma maneira se quiseres fechar isto por completo — mas nenhum deles
+sustenta um número, sustentam enquadramento.
+
