@@ -348,7 +348,7 @@ foi de $+21.92\%$.}
 \tabhead{Quantidade} & \tabhead{Valor} \\
 \midrule
 Média dos retornos dos 20 dias anteriores, $\mu$ & $-0.92\%$ \\
-Desvio-padrão desses 20 dias, $\sigma$ & $2.73\%$ \\
+Desvio-padrão desses 20 dias, $\sigma$ & $2.72\%$ \\
 Retorno do dia, $r_t$ & $+19.82\%$ \\
 \midrule
 \emph{z}-score, $(r_t - \mu)/\sigma$ & $\mathbf{+7.61}$ \\
@@ -356,6 +356,10 @@ Sinalizado? & sim \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+Os valores da tabela estão arredondados a duas casas e o $z$ foi calculado com todas, portanto
+quem refizer a divisão com os números impressos chega a $7.63$ e não a $7.61$. A diferença é só o
+arredondamento, e fica dita para não parecer um erro.
 
 Um movimento de quase 20\% num dia é evidente para qualquer pessoa. O que a tabela mostra é
 \emph{porquê}: não porque 20\% seja um número grande em abstrato, mas porque é sete vezes e meia o
@@ -837,7 +841,9 @@ Duas regras, e as duas existem para impedir que o modelo pareça melhor do que �
         acontece na realidade.
   \item[Embargo entre blocos.] O rótulo de uma notícia depende dos três dias seguintes. Uma notícia
         no último dia de treino tem o seu rótulo determinado por dias que já pertencem ao bloco
-        seguinte. Deitam-se fora os cinco dias de fronteira, e diz-se quantas linhas isso custou.
+        seguinte. Deitam-se fora os cinco dias de fronteira, e o preço disso é conhecido:
+        \textbf{$820$ das $79\,753$ linhas}, ou seja $1.03\%$. Ficam $28\,574$ para treino,
+        $17\,710$ para validação e $32\,649$ para teste.
 \end{description}
 
 \subsection{Da pontuação à probabilidade: calibração}
@@ -906,12 +912,13 @@ para que grandezas diferentes possam ser somadas. A volatilidade deste dia fica 
 seja, \emph{abaixo} do habitual; o movimento do dia fica em $+1.10$. \\
 \addlinespace
 3 & \textbf{Soma pesada} & Cada valor normalizado é multiplicado pelo seu peso e somam-se todos:
-$-0.253$ da volatilidade, $+0.236$ da casa do setor tecnológico, $+0.006$ do movimento do dia,
-$-0.003$ do comprimento do título, $+0.067$ das restantes casas de setor, e o termo constante
-$-0.025$. Total: $\mathbf{+0.029}$. \\
+$-0.252$ da volatilidade, $+0.236$ da casa do setor tecnológico, $+0.067$ das restantes casas de
+setor, $+0.006$ do movimento do dia, $-0.003$ do comprimento do título, $+0.000$ do momento, e o
+termo constante $-0.025$. Total: $\mathbf{+0.030}$. As parcelas estão arredondadas a três casas e
+a sua soma impressa dá $0.029$; o total é o valor não arredondado. \\
 \addlinespace
 4 & \textbf{Sigmoide} & O total é convertido em algo entre $0$ e $1$:
-$1/(1+e^{-0.029}) = \mathbf{0.507}$. \\
+$1/(1+e^{-0.030}) = \mathbf{0.507}$. \\
 \addlinespace
 5 & \textbf{Calibração} & $3.700 \times 0.507 - 2.313 = -0.437$, e a sigmoide disso dá
 $\mathbf{0.392}$. É este o número que chega ao ecrã, arredondado: \textbf{39\%}. \\
@@ -929,11 +936,15 @@ não muda} com esta transformação, porque ela é sempre crescente; o que muda 
 do número mostrado, e é esse número que a pessoa lê.
 
 \paragraph{E a maior contribuição foi negativa.}
-A parcela de maior peso, $-0.253$, veio da volatilidade, e puxou a probabilidade \emph{para baixo}.
+A parcela de maior peso, $-0.252$, veio da volatilidade, e puxou a probabilidade \emph{para baixo}.
 A razão é que a Apple vinha de vinte dias mais calmos do que o habitual, e o modelo aprendeu que
 notícias em períodos calmos são menos frequentemente seguidas de movimentos grandes. É a mesma
 lógica do detetor do início do capítulo, aprendida em vez de escrita, e é a razão pela qual o alerta
 consegue dizer ao utilizador \emph{o que} levantou e \emph{o que} baixou a estimativa.
+
+Repare-se também no outro extremo da lista. O \textbf{momento} entrou com $+0.000$, e não por
+arredondamento infeliz: o peso que o modelo lhe aprendeu é de facto quase nulo. Das nove entradas,
+uma não está a fazer nada, e isso só se vê desmontando um caso.
 
 \begin{tcolorbox}[colback=black!3, colframe=black!30, boxrule=0.4pt, arc=2pt]
 \textbf{Em três frases.} Treinei um modelo para estimar se uma notícia é seguida de um movimento
