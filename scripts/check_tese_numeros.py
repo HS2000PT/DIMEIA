@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import pathlib
 import re
+import subprocess
 import sys
 
 # A consola do Windows e cp1252: imprimir um simbolo mata o verificador a MEIO do
@@ -101,6 +102,40 @@ def valores(texto: str) -> set[float]:
     return saida
 
 
+def _confere_contagem_de_testes(falhas: list) -> bool:
+    """A contagem de testes que o apendice afirma bate com a suite?
+
+    Nao se corre a suite (demora): conta-se o que o pytest COLECTA, que e o mesmo numero e
+    e barato. Se o pytest nao estiver disponivel, avisa e nao bloqueia: um verificador que
+    rebenta por falta de ambiente e pior do que um que diz que nao verificou.
+    """
+    ap = TESE / "apendices" / "apendiceA.tex"
+    if not ap.exists():
+        return False
+    m = re.search(r"textbf\{(\d+) testes\}", ap.read_text(encoding="utf-8"))
+    if not m:
+        print("  AVISO  o apendice ja nao declara uma contagem de testes")
+        return False
+    afirmado = int(m.group(1))
+    try:
+        r = subprocess.run([sys.executable, "-m", "pytest", "--collect-only", "-p",
+                            "no:cacheprovider"], cwd=RAIZ, capture_output=True, timeout=600)
+        saida = r.stdout.decode("utf-8", "replace")
+    except (OSError, subprocess.SubprocessError) as e:
+        print(f"  AVISO  nao consegui contar os testes ({e}); contagem NAO verificada")
+        return False
+    c = re.search(r"(\d+)\s*/\s*\d+ tests collected|(\d+) tests collected", saida)
+    if not c:
+        print("  AVISO  nao percebi a saida do pytest; contagem NAO verificada")
+        return False
+    real = int(c.group(1) or c.group(2))
+    if real != afirmado:
+        falhas.append((str(afirmado), "pytest --collect-only", "contagem de testes do apendice",
+                       f"a suite colecta {real}"))
+        return True
+    return False
+
+
 def main() -> int:
     corpo = "\n".join(
         (TESE / f).read_text(encoding="utf-8", errors="replace")
@@ -135,6 +170,10 @@ def main() -> int:
         else:
             falhas.append((num, ficheiro, desc, "ausente dos dois"))
 
+    # ⚠️ A contagem de testes nao vem de nenhum .md: vem da suite. Ficou desactualizada em
+    # silencio (a tese dizia 726 quando ja eram 737), porque nada a ligava a realidade.
+    erro_testes = _confere_contagem_de_testes(falhas)
+
     print(f"{ok} de {len(MANIFESTO)} numeros conferidos contra a fonte que os produz.")
     for num, ficheiro, desc, porque in falhas:
         print(f"  FALHA  {num:>8s}  {desc}")
@@ -142,7 +181,7 @@ def main() -> int:
     for num, ficheiro, desc in ausentes:
         print(f"  SEM FONTE  {num:>8s}  {desc}  -> {ficheiro} nao existe")
 
-    if falhas or ausentes:
+    if falhas or ausentes or erro_testes:
         print("\nUm numero que a tese afirma tem de existir no ficheiro que o produz.")
         return 1
     print("Todos batem certo.")
