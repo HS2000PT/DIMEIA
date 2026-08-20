@@ -65,6 +65,7 @@ MANIFESTO: list[tuple[str, str, str]] = [
     # `evaluate_live_transfer.py`. A 2026-08-20 mudaram mesmo, de 530 para 825 decisoes.
     ("825", "evaluation_live_transfer.md", "decisoes maturadas no registo de producao"),
     ("0.589", "evaluation_live_transfer.md", "materiais entre as decisoes mantidas"),
+    ("0.617", "live_monitoring.md", "materiais entre as decisoes suprimidas"),
     ("0.617", "evaluation_live_transfer.md", "materiais entre as decisoes suprimidas"),
     ("0.486", "evaluation_live_transfer.md", "ROC-AUC na populacao implantada"),
     # o texto POR CIMA da melhor linha de base (Cap. 5). O 0.534 e o 0.662 ja vinham da

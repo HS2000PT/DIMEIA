@@ -101,6 +101,8 @@ def test_live_report_caso_a_mao():
     assert rep["n"] == 4 and rep["n_mantidas"] == 3
     assert rep["precisao_mantidas"] == pytest.approx(2 / 3)
     assert rep["base_rate"] == pytest.approx(3 / 4)
+    # o contraste que interessa: mantidas contra suprimidas, e nao contra a taxa-base
+    assert rep["n_suprimidas"] == 1 and rep["precisao_suprimidas"] == pytest.approx(1.0)
     assert rep["brier"] == pytest.approx((0.04 + 0.36 + 0.64) / 3)
     assert rep["calibracao"] == [
         (pytest.approx(0.2), pytest.approx(1.0), 1),
@@ -112,6 +114,8 @@ def test_live_report_caso_a_mao():
 def test_live_report_vazio_e_nan_seguro():
     rep = live_report([])
     assert rep["n"] == 0 and rep["precisao_mantidas"] != rep["precisao_mantidas"]  # NaN
+    assert rep["n_suprimidas"] == 0
+    assert rep["precisao_suprimidas"] != rep["precisao_suprimidas"]  # NaN
 
 
 # ── registo no runner (nunca pára a varredura) ────────────────────────────────

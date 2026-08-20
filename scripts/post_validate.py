@@ -124,6 +124,8 @@ def main() -> int:
         "|---|---|",
         f"| Precisão das decisões mantidas | {_f(rep['precisao_mantidas'])} "
         f"({rep['n_mantidas']} mantidas) |",
+        f"| Precisão das decisões suprimidas | {_f(rep['precisao_suprimidas'])} "
+        f"({rep['n_suprimidas']} suprimidas) |",
         f"| Base rate (todas as decisões maturadas) | {_f(rep['base_rate'])} ({rep['n']}) |",
         f"| Brier das probabilidades | {_f(rep['brier'])} |",
     ]

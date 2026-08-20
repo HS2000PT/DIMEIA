@@ -89,16 +89,22 @@ def live_report(labeled: list[dict]) -> dict:
     """Métricas ao vivo sobre decisões JÁ rotuladas (cada dict tem 'label' 0/1).
 
     Devolve: n, n_mantidas, precisao_mantidas (fração de mantidas que foram materiais),
-    base_rate (fração material de TODAS — o chão honesto), brier (só onde há prob) e
-    bins de calibração [(p_médio, fração_observada, n), ...] em 3 faixas.
+    n_suprimidas e precisao_suprimidas (o mesmo para as que a porta deitou fora — é este o
+    contraste que responde a "a porta escolhe melhor do que o acaso?"), base_rate (fração
+    material de TODAS — o chão honesto), brier (só onde há prob) e bins de calibração
+    [(p_médio, fração_observada, n), ...] em 3 faixas.
     """
     n = len(labeled)
     kept = [d for d in labeled if d.get("kept")]
+    dropped = [d for d in labeled if not d.get("kept")]
     with_prob = [d for d in labeled if d.get("prob") is not None]
     rep: dict = {
         "n": n,
         "n_mantidas": len(kept),
         "precisao_mantidas": (float(np.mean([d["label"] for d in kept])) if kept else float("nan")),
+        "n_suprimidas": len(dropped),
+        "precisao_suprimidas": (float(np.mean([d["label"] for d in dropped]))
+                                if dropped else float("nan")),
         "base_rate": (float(np.mean([d["label"] for d in labeled])) if labeled else float("nan")),
         "brier": (float(np.mean([(d["prob"] - d["label"]) ** 2 for d in with_prob]))
                   if with_prob else float("nan")),
