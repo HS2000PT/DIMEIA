@@ -3,7 +3,20 @@
 > Lista viva, mínima de propósito: **apenas o que ainda não está feito.** O histórico completo
 > do que já foi construído vive em `progress/SESSIONS.md` (por sessão) e `progress/TRACKER.md`
 > (por fase); o estado técnico detalhado em `CLAUDE.md`; o resumo para o júri em
-> `RELATORIO_FINAL.md`. Última limpeza: 2026-07-11.
+> `RELATORIO_FINAL.md`. Última limpeza: 2026-08-20.
+
+## ▶ Antes de entregar, corre isto
+
+```bash
+python scripts/check_entrega.py
+```
+
+Verifica de uma vez os três PDF (existem, e são mais recentes do que as fontes), os cinco
+verificadores, os marcadores de trabalho por acabar, e que a data não muda sozinha. **Se sair
+a zero, tudo o que uma máquina consegue verificar está feito** — o que fica abaixo é o que só
+tu podes fazer.
+
+Estado a 2026-08-20: **sai a zero.** Tese 114 pp, slides 19, guia 20.
 
 ## 🧑 Cliques só teus (ninguém pode fazer por ti)
 
@@ -65,8 +78,9 @@
       severidade "notable"), linha "Sector check" (AMD −4,1%, TSLA −3,8% → sector-wide),
       "Possible explanation (0d ago)", dedup ("já alertado hoje — sem repetição"), enviado ao
       Telegram; branch `alerts-history` a crescer (44 alertas: 43 news + 1 market).
-- [ ] Confirmar o 1.º RESUMO DIÁRIO na corrida ≥21h UTC de um dia útil (13/07 à noite ou dia
-      útil seguinte) — agora há resultados de mercado para o alimentar.
+- [x] ~~Confirmar o 1.º RESUMO DIÁRIO~~ ✅ **CONFIRMADO.** O histórico do canal tem **24
+      resumos de fecho** e **17 notas de abertura** (contados na Tabela 3.1 da tese, sobre os
+      367 alertas entregues entre 09/07 e 13/08).
 - [x] ~~17/07: confirmar maturação da KB viva~~ ✅ **CONFIRMADO 13/07 (4 dias antes do
       previsto)**: 13 casos maturados em `live_kb.jsonl` com impactos reais (JPM/NFLX de
       04-05/07, alinhados ao 1.º dia de negociação 06/07), 1.043 pendentes, e o log do scan
