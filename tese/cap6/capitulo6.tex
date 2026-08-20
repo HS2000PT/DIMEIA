@@ -31,6 +31,46 @@ a correr. É aí, e não no modelo, que está o trabalho.
 \section{As respostas às perguntas de investigação}
 \label{sec:con_qi}
 
+A Figura~\ref{fig:con_scorecard} responde às três de uma vez, e o resto desta secção diz o que
+cada resposta permite e não permite afirmar.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  cx/.style={draw, rounded corners=2pt, align=left, inner sep=5pt, text width=5.3cm,
+             minimum height=1.5cm},
+  sim/.style={cx, fill=black!5},
+  nao/.style={cx, fill=black!5, draw=black!70, very thick},
+  ver/.style={font=\bfseries\large, align=center},
+  num/.style={align=left, text width=4.3cm, font=\scriptsize, text=black!70},
+]
+  \node[sim] (q1) at (0,0)      {\textbf{QI1} \\ Detetar o que é invulgar de forma consistente
+                                  entre empresas?};
+  \node[ver] at (3.55,0)        {SIM};
+  \node[num] at (7.3,0)         {amplitude de disparo $0.015$ contra $0.344$ de uma regra fixa;
+                                  e bate dois detetores aprendidos};
+
+  \node[sim] (q2) at (0,-2.0)   {\textbf{QI2} \\ Encontrar notícias passadas genuinamente
+                                  parecidas?};
+  \node[ver] at (3.55,-2.0)     {SIM};
+  \node[num] at (7.3,-2.0)      {precisão@5 de $0.514$ contra $0.346$, $0.240$ e $0.126$;
+                                  aguenta à escala, com $0.595$};
+
+  \node[nao] (q3) at (0,-4.0)   {\textbf{QI3} \\ Um modelo treinado decide melhor do que uma
+                                  linha de base simples?};
+  \node[ver] at (3.55,-4.0)     {NÃO};
+  \node[num] at (7.3,-4.0)      {PR-AUC $0.496$ com texto contra $0.542$ só com volatilidade;
+                                  aguenta três testes de robustez};
+
+  \draw[black!35] (3.55,-4.85) -- (3.55,0.85);
+\end{tikzpicture}
+\caption[As três perguntas e as suas respostas]{O resultado do trabalho numa figura, com a resposta
+negativa apresentada com o mesmo destaque das outras duas. A terceira linha é a que mais custou a
+escrever e é a que dá crédito às outras: um trabalho que só reporta o que correu bem não permite
+saber se as duas primeiras respostas foram medidas ou desejadas.}
+\label{fig:con_scorecard}
+\end{figure}
+
 \paragraph{QI1, deteção. Sim.}
 Um \emph{z}-score deslizante deteta movimentos invulgares de forma muito mais consistente entre
 empresas do que uma regra fixa: uma amplitude de disparo de $0.015$ contra $0.344$, mais de vinte

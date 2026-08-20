@@ -660,7 +660,41 @@ Há uma parte do desenho que só faz sentido com o tempo a passar. Todo o títul
 varredura vê é guardado como \textbf{candidato a precedente futuro}. Passados oito dias, quando o
 impacto no preço já é observável, esse candidato é medido com a mesma regra de alinhamento do
 Capítulo~\ref{cap:metodologia} e entra na base de casos. A base cresce sozinha, e os alertas de
-amanhã comparam-se contra o que o sistema viu ontem.
+amanhã comparam-se contra o que o sistema viu ontem. A Figura~\ref{fig:sis_ciclo_kb} mostra
+o ciclo.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize, >={Stealth[length=2.2mm]},
+  et/.style={draw, rounded corners=3pt, align=center, inner sep=4pt, text width=2.65cm,
+             minimum height=1.25cm, fill=black!5},
+  esp/.style={draw, dashed, rounded corners=3pt, align=center, inner sep=4pt, text width=2.4cm,
+              minimum height=1.25cm, fill=white},
+]
+  \node[et]  (a) at (0,0)     {\textbf{hoje}\\ a varredura vê um título relevante};
+  \node[esp] (b) at (3.55,0)  {guardado como \emph{candidato}, com o seu vetor};
+  \node[et]  (c) at (7.0,0)   {\textbf{oito dias depois}\\ o preço já disse o que fez};
+  \node[et]  (d) at (10.5,0)  {entra na \textbf{base de casos} como precedente};
+
+  \draw[->, thick, black!55] (a) -- (b);
+  \draw[->, thick, black!55] (b) -- (c);
+  \draw[->, thick, black!55] (c) -- (d);
+
+  % o regresso: a base alimenta a varredura seguinte
+  \draw[->, thick, black!55] (d.south) -- ++(0,-0.85) -| (a.south)
+    node[pos=0.25, below, font=\scriptsize, black!65]
+    {os alertas de amanhã comparam-se com o que o sistema viu ontem};
+
+  \node[align=left, font=\scriptsize, text=black!60, text width=3.2cm] at (5.3,1.55)
+    {a espera não é uma ineficiência: é o que impede o caso de conhecer o seu próprio futuro};
+\end{tikzpicture}
+\caption[O ciclo que faz a base de casos crescer]{O que acontece a um título entre ser visto e
+poder servir de precedente. A espera de oito dias existe porque o impacto de um caso só é
+observável depois de o preço se mover, e medi-lo antes seria deixar o caso conhecer o seu próprio
+desfecho. Este ciclo mantém atualizada a \textbf{evidência} que o sistema mostra, e não os pesos do
+modelo: nada aqui re-treina nada.}
+\label{fig:sis_ciclo_kb}
+\end{figure}
 
 Convém situar o que este mecanismo é e o que não é. Ele mantém atualizada a \emph{base de casos}, ou
 seja a evidência que o sistema mostra, mas não re-treina modelo nenhum: os pesos da triagem são os
@@ -816,6 +850,48 @@ logística com nove entradas que, medida contra uma linha de base de uma só var
 A engenharia não está no tamanho do modelo. Está no que foi preciso construir para que aquele
 número, e a conclusão negativa que ele sustenta, sejam de confiança. Essa construção tem sete peças,
 e cada uma existe porque a sua ausência produziria um resultado bonito e falso.
+A Figura~\ref{fig:sis_lifecycle} mostra as duas metades do ciclo.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\scriptsize, >={Stealth[length=2mm]},
+  cx/.style={draw, rounded corners=2pt, align=center, inner sep=3pt, text width=2.15cm,
+             minimum height=1.0cm, fill=black!5},
+  art/.style={cx, fill=black!14, draw=black!55, thick},
+  obs/.style={cx, fill=white, draw=black!45},
+  fase/.style={font=\scriptsize\bfseries, text=black!60},
+]
+  \node[fase] at (-1.55,0.95) {construir};
+  \node[cx]  (d) at (0,0)    {conjunto de dados\\ rotulado};
+  \node[cx]  (t) at (2.5,0)  {treino};
+  \node[cx]  (v) at (5.0,0)  {validação\\ \emph{calibração}};
+  \node[cx]  (s) at (7.5,0)  {teste\\ \emph{uma só vez}};
+  \node[art] (m) at (10.0,0) {artefacto\\ versionado};
+
+  \foreach \xa/\xb in {d/t, t/v, v/s, s/m} \draw[->, thick, black!55] (\xa) -- (\xb);
+
+  \node[fase] at (-1.55,-1.75) {observar};
+  \node[art] (p) at (0,-1.9)   {o \textbf{mesmo} modelo, em produção};
+  \node[obs] (g) at (2.5,-1.9) {registo de cada decisão};
+  \node[obs] (w) at (5.0,-1.9) {esperar que o preço responda};
+  \node[obs] (r) at (7.5,-1.9) {pós-validação\\ e deriva};
+
+  \draw[->, thick, black!55] (m.south) -- ++(0,-0.5) -| (p.north);
+  \foreach \xa/\xb in {p/g, g/w, w/r} \draw[->, thick, black!55] (\xa) -- (\xb);
+
+  % o elo que NAO existe
+  \draw[->, dashed, black!40] (r.east) -- ++(0.9,0) |- (10.0,-1.05)
+    node[pos=0.72, right, align=left, text width=2.2cm, black!55]
+    {re-treino:\\ \textbf{não existe}};
+\end{tikzpicture}
+\caption[O ciclo de vida do modelo]{As duas metades do ciclo. Em cima, construir: os dados são
+rotulados, a divisão é cronológica, a calibração é ajustada na validação, e o bloco de teste é
+usado no fim. Em baixo, observar: o modelo que corre é o mesmo que foi avaliado, cada decisão fica
+registada, e dias depois é confrontada com o que o preço realmente fez. O elo a tracejado é o que
+fecharia o ciclo e \textbf{não existe}: a deriva é medida e não corrigida, e a
+Secção~\ref{sec:con_futuro} diz o que faria falta para a corrigir.}
+\label{fig:sis_lifecycle}
+\end{figure}
 
 \begin{description}
   \item[1. O conjunto de dados é construído, não encontrado.] O \gls{FNSPID} dá títulos com data;

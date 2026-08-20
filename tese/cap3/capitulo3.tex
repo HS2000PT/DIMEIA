@@ -918,7 +918,54 @@ precisamente o que a \gls{QI}3 pergunta, e a resposta está no Capítulo~\ref{ca
 A que \emph{nível} vive cada uma destas informações? A volatilidade e o momento descrevem a
 empresa e movem-se devagar. O setor é literalmente constante. O movimento do dia é igual para
 todas as notícias do mesmo dia. Sobra uma única entrada que distingue dois títulos da mesma
-empresa no mesmo dia: \textbf{o comprimento do título}.
+empresa no mesmo dia: \textbf{o comprimento do título}. A Figura~\ref{fig:met_entradas} arruma as nove
+entradas por esse critério.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize, >={Stealth[length=2mm]},
+  cx/.style={draw, rounded corners=2pt, align=center, inner sep=3pt, minimum height=0.62cm,
+             text width=2.35cm},
+  emp/.style={cx, fill=black!8},
+  dia/.style={cx, fill=black!16},
+  not/.style={cx, fill=black!45, text=white, draw=black!60, very thick},
+  rot/.style={font=\scriptsize\bfseries, text=black!65, align=left},
+]
+  % nivel EMPRESA: sete entradas
+  \node[rot] at (-2.55,0.62) {nível da EMPRESA};
+  \node[emp] (a) at (0,0)    {volatilidade\\ dos 20 dias};
+  \node[emp] (b) at (2.6,0)  {momento\\ dos 5 dias};
+  \node[emp] (c) at (5.2,0)  {setor: banca};
+  \node[emp] (d) at (7.8,0)  {setor: consumo};
+  \node[emp] (e) at (0,-0.95)   {setor: energia};
+  \node[emp] (f) at (2.6,-0.95) {setor: saúde};
+  \node[emp] (g) at (5.2,-0.95) {setor: tecnologia};
+  \node[font=\scriptsize, text=black!55, align=left, text width=2.4cm]
+    at (7.9,-0.95) {mudam devagar, ou não mudam};
+
+  % nivel DIA
+  \node[rot] at (-2.55,-1.95) {nível do DIA};
+  \node[dia] (h) at (0,-2.15) {retorno\\ do próprio dia};
+  \node[font=\scriptsize, text=black!55, align=left, text width=5.6cm]
+    at (4.3,-2.15) {igual para todas as notícias da mesma empresa nesse dia};
+
+  % nivel NOTICIA
+  \node[rot] at (-2.55,-3.15) {nível da NOTÍCIA};
+  \node[not] (i) at (0,-3.35) {comprimento\\ do título};
+  \node[font=\scriptsize, text=black!70, align=left, text width=5.6cm]
+    at (4.3,-3.35) {\textbf{a única que distingue duas notícias da mesma empresa no mesmo dia}};
+
+  \draw[black!25] (-3.9,-1.55) -- (9.3,-1.55);
+  \draw[black!25] (-3.9,-2.75) -- (9.3,-2.75);
+\end{tikzpicture}
+\caption[As nove entradas, por nível]{As nove entradas do modelo implantado, agrupadas pelo que
+cada uma consegue distinguir. Sete descrevem a \textbf{empresa} e mudam devagar ou nada; uma
+descreve o \textbf{dia} e é igual para todas as notícias desse dia; e \textbf{uma só} muda de um
+título para o seguinte. A figura antecipa, sem a demonstrar, a medição da
+Secção~\ref{sec:av_ablacao}: um modelo com esta composição de entradas dificilmente poderia
+separar duas notícias, e a ablação mostra que não separa.}
+\label{fig:met_entradas}
+\end{figure}
 
 \begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
 Na variante \emph{sem} texto, duas notícias diferentes da mesma empresa, no mesmo dia, diferem
