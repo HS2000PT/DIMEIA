@@ -15,6 +15,8 @@ podem divergir em silêncio — é a classe de defeito que este projecto já pag
 
 from __future__ import annotations
 
+import pathlib
+
 import pytest
 
 fastapi = pytest.importorskip("fastapi")
@@ -150,3 +152,61 @@ def test_alertas_servem_os_MAIS_RECENTES_e_nao_os_primeiros(client, monkeypatch)
     linhas = client.get("/api/alerts").json()["rows"]
 
     assert linhas[-1]["date"] == "2026-01-28", "o mais recente do histórico tem de estar presente"
+
+
+# ══ A PÁGINA (v6) ═══════════════════════════════════════════════════════════════════
+# A v6 é um ficheiro só, sem build, e por isso não há módulo para importar. O que se pode
+# testar sem um browser é o CONTRATO entre a página e a API, e as regras que ela aplica ao
+# texto do alerta. Foi um defeito destes que fez a hiperligação da fonte sair como texto cru.
+
+_PAGINA = pathlib.Path(__file__).resolve().parents[1] / "web" / "index.html"
+
+
+def test_a_pagina_so_usa_rotas_que_a_api_serve():
+    """Uma rota escrita à mão na página e inexistente na API é um ecrã vazio em produção.
+
+    Nada avisa: o `fetch` falha, o `catch` mostra a mensagem de indisponibilidade, e parece um
+    problema de rede.
+    """
+    import re
+
+    html = _PAGINA.read_text(encoding="utf-8")
+    pedidas = {m.group(1) for m in re.finditer(r'json\("(/api/[a-z]+)', html)}
+    servidas = {r.path for r in api_main.app.routes
+                if getattr(r, "path", "").startswith("/api/")}
+
+    assert pedidas, "a página tem de pedir alguma coisa"
+    assert pedidas <= servidas, f"a página pede rotas que a API não serve: {pedidas - servidas}"
+
+
+def test_a_pagina_nao_mostra_a_probabilidade_da_triagem():
+    """O critério H2 proíbe um número sobre o futuro em qualquer vista de produto.
+
+    A v5 servia-o em três sítios. A v6 não pode voltar a fazê-lo por distração.
+    """
+    html = _PAGINA.read_text(encoding="utf-8")
+    assert "/api/triage" not in html
+    assert "/api/report" not in html and "/api/ask" not in html
+
+
+def test_a_hiperligacao_da_fonte_sobrevive_ao_escape():
+    """⚠️ Regressão medida no browser a 2026-08-20: ZERO ligações reais em 25 alertas.
+
+    O texto do alerta é escapado antes de ser inserido, e o escape converte as aspas em
+    `&quot;`. O padrão que reconstruía a ligação procurava aspas literais, portanto nunca
+    casava, e o `<a href="...">` saía impresso no ecrã. A página tem de aceitar as duas formas.
+    """
+    html = _PAGINA.read_text(encoding="utf-8")
+    padrao = next(li for li in html.splitlines() if "&lt;a href=" in li)
+
+    assert "&quot;" in padrao, "sem isto o escape das aspas parte a ligação, e ninguém dá por isso"
+
+
+def test_a_pagina_recusa_um_href_que_nao_seja_http():
+    """O URL vem de uma API externa, portanto não é de confiança.
+
+    Um `javascript:` no href seria execução de código a partir de dados de terceiros, na única
+    parte da página que insere HTML vindo de fora.
+    """
+    html = _PAGINA.read_text(encoding="utf-8")
+    assert "const seguro" in html and "https?" in html

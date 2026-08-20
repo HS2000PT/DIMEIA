@@ -25,7 +25,7 @@ perguntas. Não o passes à pressa: as três lições que lá estão são a tua 
 ontem:
 
 - o canal: <https://t.me/InvestiGatorMEIA>
-- a página: <https://investigator-ddc9d8618935.herokuapp.com/simple.html>
+- a página: <https://investigator-ddc9d8618935.herokuapp.com/>
 
 Precisas de **dois** alertas à mão, e são de tipos diferentes:
 
@@ -149,8 +149,9 @@ Para a gravação.
 ## O que NÃO fazer
 
 - **Não acelerar o vídeo.** Se ficar longo, corta uma parte inteira em vez de acelerar tudo.
-- **Não mostrar a versão antiga da página** (`/`, sem `simple.html`). É a que tem funcionalidades
-  a mais e desvia a atenção do que interessa.
+- **A página é a de `/`, e é só essa.** A versão antiga, com nove separadores e relatório
+  gerado, foi retirada. Se vires um ecrã cheio de painéis, estás a olhar para uma cópia em
+  cache: recarrega com `Ctrl`+`F5`. A que interessa tem três secções e mais nada.
 - **Não narrar números que não estão no ecrã.** Se disseres um número, ele tem de estar visível.
 - **Não editar o texto de um alerta** para ficar mais bonito. É a única coisa aqui que te pode
   custar o grau.

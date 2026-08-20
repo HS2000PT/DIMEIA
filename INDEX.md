@@ -41,7 +41,7 @@ written overview of the whole project, read **[`RELATORIO_FINAL.md`](RELATORIO_F
 | Item | Where |
 |------|-------|
 | Web service (v5) | [`api/main.py`](api/main.py) · [`api/services.py`](api/services.py) |
-| Web client (v5) | [`web/index.html`](web/index.html) · [`web/assets/app.js`](web/assets/app.js) · [`web/assets/app.css`](web/assets/app.css) |
+| Web client (v6) | [`web/index.html`](web/index.html) — um ficheiro, três secções. A v5 (nove rotas, relatório gerado, 48 KB de JS) foi retirada |
 | Grounded generation | [`context.py`](investigator/intelligence/context.py) · [`guard.py`](investigator/intelligence/guard.py) · [`report.py`](investigator/intelligence/report.py) · [`analyst.py`](investigator/intelligence/analyst.py) |
 | Dashboard (Streamlit, superseded) | [`app/dashboard_v4.py`](app/dashboard_v4.py) · [`snapshot_io.py`](app/snapshot_io.py) · [`method.py`](app/method.py) · [`verdict.py`](app/verdict.py) |
 | Alert runner (scan → detect → explain → Telegram) | [`scripts/run_alerts.py`](scripts/run_alerts.py) |
