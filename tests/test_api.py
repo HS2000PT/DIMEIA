@@ -111,14 +111,31 @@ def test_screener_expoe_a_etapa_e_a_margem(client):
     assert "0.45" in linhas[0]["detail"]
 
 
-def test_evidence_declara_proveniencia_e_nao_tem_facto_gerado(client):
-    """A garantia central da camada de inteligência: o gerador escreve prosa, nunca factos.
-    Se algum registo aparecer com proveniência 'generated', a afirmação da tese cai."""
-    d = client.get("/api/evidence?scope=market").json()
-    assert d["facts"], "pacote vazio — o relatório não teria o que citar"
-    origens = {f["origin"] for f in d["facts"]}
-    assert origens <= {"measured", "computed", "model"}, f"proveniência inesperada: {origens}"
-    assert all(f["id"].startswith("f") for f in d["facts"])
+def test_a_api_nao_serve_nada_que_a_pagina_nao_use(client):
+    """A regra inversa da anterior, e é a que mantém a superfície pequena.
+
+    Sete rotas foram retiradas a uma semana da entrega — geração com modelo de linguagem,
+    pacote de evidência, probabilidade da triagem, precedentes, logótipos e números da
+    avaliação — porque **nenhuma delas era usada pela página**. Uma rota pública que ninguém
+    consome é risco sem retorno: mais código para manter, mais para correr mal e mais para
+    explicar. Duas delas eram POST sem limite de ritmo contra a quota de um fornecedor
+    externo, e uma servia um número que o critério H2 proíbe em vistas de produto.
+
+    Este teste existe para que voltar a expor uma rota seja uma **decisão**, e não um resto.
+    """
+    import re
+
+    html = _PAGINA.read_text(encoding="utf-8")
+    # A documentação do contrato fica, e é a única excepção: não é superfície de produto,
+    # não corre lógica nenhuma, e numa defesa é a resposta a "o que é que isto serve?".
+    DOCS = {"/api/docs", "/api/openapi.json"}
+    servidas = {r.path for r in api_main.app.routes
+                if getattr(r, "path", "").startswith("/api/")} - DOCS
+    usadas = {m.group(1) for m in re.finditer(r'json\("(/api/[a-z]+)', html)}
+    # `/api/asset/{ticker}` é montada com template literal, logo não aparece no varrimento
+    usadas.add("/api/asset/{ticker}")
+
+    assert servidas == usadas, f"rotas servidas e não usadas: {sorted(servidas - usadas)}"
 
 
 def test_spa_serve_o_index_em_rotas_profundas(client):
@@ -126,15 +143,6 @@ def test_spa_serve_o_index_em_rotas_profundas(client):
     r = client.get("/qualquer/caminho/inexistente")
     assert r.status_code == 200
     assert "html" in r.headers.get("content-type", "")
-
-
-def test_precedentes_indisponiveis_degradam_em_vez_de_rebentar(client, monkeypatch):
-    """Fail-open em toda a superfície: uma rota que devolve 500 porque o modelo não está presente
-    transforma uma indisponibilidade parcial numa página branca."""
-    monkeypatch.setattr(S, "precedents", lambda t, top_k=4, query=None: None)
-    d = client.get("/api/precedents/NVDA").json()
-    assert d["available"] is False
-    assert d["reason"]
 
 
 def test_alertas_servem_os_MAIS_RECENTES_e_nao_os_primeiros(client, monkeypatch):

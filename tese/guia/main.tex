@@ -11,11 +11,18 @@
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, calc, decorations.pathreplacing}
 \tikzset{every node/.append style={execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000\relax}}}
-\graphicspath{{../../thesis/figures/}}
+\graphicspath{{../figures/}{../../thesis/figures/}}
+\usepackage{xcolor}
+% A marca: o verde de `app/assets/logo.svg`, e o "G" e o trocadilho inteiro --
+% inveSTIGATE + alliGATOR. Uma macro so, para o nome nunca sair escrito de duas
+% maneiras diferentes em dois sitios.
+\definecolor{marca}{HTML}{0A8F52}
+\newcommand{\gator}{Investi\textcolor{marca}{G}ator}
 \setbeamertemplate{navigation symbols}{}
 \newcommand{\key}[1]{\textbf{\textcolor{blue!55!black}{#1}}}
 
-\title[Guia de estudo]{Guia de estudo do InvestiGator}
+\title[Guia de estudo]{Guia de estudo do \gator}
+\titlegraphic{\includegraphics[height=0.95cm]{logo_lockup.png}}
 \subtitle{Do zero até conseguir defender}
 \author{Henrique J.\ S.\ Santos}
 \date{}

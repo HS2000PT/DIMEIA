@@ -76,8 +76,10 @@
            border-bottom:1px solid var(--linha); }
   .barra { max-width:1560px; margin:0 auto; padding:10px 22px;
            display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-  .marca { display:flex; align-items:center; gap:9px; font-weight:650; letter-spacing:-.015em; }
-  .marca img { width:22px; height:22px; display:block; }
+  .marca { display:flex; align-items:center; gap:9px; text-decoration:none; color:inherit; }
+  .marca .tail { width:26px; height:26px; display:block; color:var(--acento); flex:0 0 auto; }
+  .marca .nome { font-weight:650; letter-spacing:-.015em; font-size:1.02rem; }
+  .marca .nome b { color:var(--acento); font-weight:750; }
   .marca small { display:block; font-weight:400; font-size:.78rem; color:var(--fraco);
                  letter-spacing:0; }
   .estado { margin-left:auto; display:flex; align-items:center; gap:8px;
@@ -224,12 +226,26 @@
 
 <header>
   <div class="barra">
-    <div class="marca">
-      <img src="/assets/icon.svg" alt="" width="22" height="22">
-      <span>InvestiGator
-        <small>what was sent, and what was not</small>
-      </span>
-    </div>
+    <a class="marca" href="/" aria-label="InvestiGator — what was sent, and what was not">
+      <!-- A marca por extenso: o glifo "The Tail" mais o nome, que é o que o autor pediu ao
+           rever a página — o ícone sozinho não diz o nome a quem chega. As duas peças já
+           existiam em `app/assets/` (logo.svg e logo-wordmark.svg) e nunca tinham sido postas
+           juntas no produto.
+
+           Desenhado aqui em linha, e não com <img>, por uma razão concreta: um SVG carregado
+           por <img> não herda a cor do texto, portanto teria de haver duas cópias (clara e
+           escura) que alguém teria de manter sincronizadas. Assim a tinta é `currentColor` e
+           acompanha o tema, e o verde é o mesmo `--acento` do resto da página.
+
+           O "G" a verde é o trocadilho inteiro, e é a única letra colorida: inveSTIGATE +
+           alliGATOR. -->
+      <svg class="tail" viewBox="0 0 256 256" aria-hidden="true">
+        <path d="M22 206 C 74 202, 122 180, 158 142 C 182 116, 202 86, 226 52
+                 L 214 46 L 202 70 L 186 60 L 170 88 L 152 78 L 134 108 L 112 98
+                 L 92 130 L 66 120 L 44 154 L 16 146 Z" fill="currentColor"/>
+      </svg>
+      <span class="nome">Investi<b>G</b>ator<small>what was sent, and what was not</small></span>
+    </a>
     <div class="estado"><span class="ponto" id="ponto"></span><span id="estado">loading…</span></div>
   </div>
 </header>

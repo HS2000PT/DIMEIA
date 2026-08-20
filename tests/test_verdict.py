@@ -345,3 +345,32 @@ def test_a_correccao_nao_introduz_vocabulario_de_previsao() -> None:
         frase = verdict("NVIDIA", _exc(count), None, flagged=False).lower()
         for palavra in PROIBIDO:
             assert palavra not in frase
+
+
+def test_dia_sinalizado_mas_banal_nao_esconde_que_foi_sinalizado() -> None:
+    """A imagem ao espelho do defeito da Microsoft, e esteve no ar até 2026-08-20.
+
+    Medido em produção nesse dia: JPM a -1.66%, **sinalizada** pelo detector, e a contagem
+    a dizer que a maioria dos últimos 249 dias se moveu tanto ou mais. A frase saía como
+    "An ordinary day for JPMorgan" e calava a sinalização — enquanto a mesma página
+    desenhava o ponto de sinalizada ao lado do nome e a contava na legenda. O ecrã
+    contradizia a frase, e quem lê acredita na frase.
+
+    Dizer as duas réguas é mais comprido e é a verdade: invulgar para as últimas semanas,
+    banal à escala do ano.
+    """
+    frase = verdict("JPMorgan", _exc(140, 249, -0.0166), None, flagged=True)
+    assert "Flagged against its recent norm" in frase
+    assert "140 of the last 249" in frase
+    assert "ordinary day" not in frase
+
+
+def test_dia_sinalizado_e_raro_continua_a_dizer_so_a_raridade() -> None:
+    """A correcção acima não pode pôr a ressalva onde as duas réguas CONCORDAM.
+
+    Se o dia foi sinalizado e é raro no ano, não há discordância nenhuma para declarar, e
+    acrescentar "mas" seria enfraquecer um resultado que não precisa de ressalva.
+    """
+    frase = verdict("Exxon Mobil", _exc(2, 249, +0.0432), None, flagged=True)
+    assert "Only 2 of the last 249" in frase
+    assert "but" not in frase.lower()

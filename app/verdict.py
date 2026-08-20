@@ -126,7 +126,23 @@ def verdict(
                         f"{exc.n} trading days moved this much.")
         return f"{base} So far today." if market_open else base
 
-    partes = [rarity_sentence(exc, name) or f"{name} stood out today."]
+    # ⚠️ AS DUAS RÉGUAS DISCORDAM TAMBÉM NESTE SENTIDO, e a versão anterior só tratava o
+    # outro. O detector mede contra os **20 dias anteriores** e a contagem mede contra o
+    # **ano**: um dia pode ser sinalizado (z para lá do limiar, porque as últimas semanas
+    # foram calmas) e ainda assim ser banal à escala do ano.
+    #
+    # Medido ao vivo a 2026-08-20: JPM a -1.66%, **sinalizada**, e a contagem diz que a
+    # maioria dos últimos 249 dias se moveu tanto ou mais. A frase saía como "an ordinary
+    # day for JPMorgan" e **calava que o detector a tinha assinalado** — enquanto a própria
+    # página desenhava o ponto de sinalizada ao lado do nome. O ecrã contradizia a frase.
+    #
+    # É a imagem ao espelho do defeito da MSFT que a sessão 48 corrigiu: ali escondia-se a
+    # raridade, aqui esconde-se a sinalização. Dizer as duas é mais comprido e é a verdade.
+    raro = rarity_sentence(exc, name)
+    if raro and exc is not None and exc.count > 25:
+        raro = (f"Flagged against its recent norm — but {exc.count} of the last {exc.n} "
+                f"trading days moved as much or more.")
+    partes = [raro or f"{name} stood out today."]
     motor = driver_sentence(decomp)
     if motor:
         partes.append(motor)

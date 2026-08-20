@@ -51,7 +51,8 @@ body {
 
 /* ------------------------------------------------------------------ topo */
 header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-.mark { width:26px; height:26px; flex:0 0 auto; }
+.mark { width:26px; height:26px; flex:0 0 auto; color:var(--ok); }
+.marca-g { color:var(--ok); font-weight:800; }
 h1 { font-size:15px; font-weight:650; letter-spacing:.01em; margin:0; flex:1; }
 h1 small { display:block; font-weight:400; font-size:11.5px; color:var(--mute);
   letter-spacing:.06em; text-transform:uppercase; }
@@ -166,11 +167,15 @@ footer {
 
 <div class="wrap">
   <header>
-    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
-      <path d="M2 21c5 0 7-3 11-9 3-4.5 6-7 9-7 4 0 8 3 8 8 0 3-2 5-5 5-2 0-4-1-5-3"
-            fill="none" stroke="#00D68F" stroke-width="2.6" stroke-linecap="round"/>
+    <!-- A marca "The Tail": um traço contínuo que se lê ao mesmo tempo como a cauda
+         serrilhada de um jacaré e como uma linha de mercado a subir. O desenho é o mesmo
+         de `app/assets/logo.svg`, e estava aqui uma curva antiga que não era a marca. -->
+    <svg class="mark" viewBox="0 0 256 256" aria-hidden="true">
+      <path d="M22 206 C 74 202, 122 180, 158 142 C 182 116, 202 86, 226 52
+               L 214 46 L 202 70 L 186 60 L 170 88 L 152 78 L 134 108 L 112 98
+               L 92 130 L 66 120 L 44 154 L 16 146 Z" fill="currentColor"/>
     </svg>
-    <h1>Autoteste de Defesa<small>InvestiGator · MEIA/ISEP</small></h1>
+    <h1>Autoteste de Defesa<small>Investi<span class="marca-g">G</span>ator · MEIA/ISEP</small></h1>
     <button class="iconbtn" id="tema" title="Tema claro/escuro" aria-label="Alternar tema">◐</button>
     <button class="iconbtn" id="reiniciar" title="Recomeçar" aria-label="Recomeçar">↺</button>
   </header>

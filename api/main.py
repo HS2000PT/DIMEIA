@@ -27,12 +27,10 @@ indistinguível de um produto avariado.
 from __future__ import annotations
 
 import pathlib
-from typing import Any
 
 from fastapi import FastAPI
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
 
 from api import services as S
 
@@ -155,50 +153,34 @@ def asset(ticker: str) -> dict:
     }
 
 
-@app.get("/api/precedents/{ticker}")
-def precedents(ticker: str, top_k: int = 4, q: str | None = None) -> dict:
-    """A terceira pergunta da tese. Rota separada porque custa ~7 s a frio (modelo + KB)."""
-    out = S.precedents(ticker, top_k=top_k, query=q)
-    if out is None:
-        return {"available": False,
-                "reason": "no captured headline for this name, or the retrieval engine "
-                          "is unavailable in this environment"}
-    return {"available": True, **out}
-
-
-@app.get("/api/triage/{ticker}")
-def triage(ticker: str, headline: str = "") -> dict:
-    out = S.triage_score(ticker, headline)
-    if out is None:
-        return {"available": False,
-                "reason": "the trained model or the price history is unavailable here"}
-    return {"available": True, **out}
-
-
-@app.get("/api/logos")
-def logos() -> dict:
-    """Logótipos das empresas como `data:` URI, num pedido.
-
-    Versionados em `app/assets/logos/` de propósito: a página desenha-os **sem chave, sem
-    rede e sem limite de ritmo**, e o navegador não faz um único pedido a terceiros — que é a
-    posição de privacidade que o resto do trabalho já defende. Um pedido para os doze em vez
-    de doze pedidos: são ~40 KB no total e evitam doze idas ao servidor na primeira pintura.
-
-    Degrada para as iniciais quando o ficheiro não existe (a XOM e a JNJ entraram na watchlist
-    depois da recolha).
-    """
-    def _load():
-        from investigator.branding.logos import cached_logo
-        out: dict[str, str] = {}
-        for t in S.watchlist():
-            try:
-                uri = cached_logo(t)
-            except Exception:  # noqa: BLE001
-                uri = None
-            if uri:
-                out[t] = uri
-        return out
-    return {"logos": S.cached("logos", 3600, _load)}
+# ── O que esta API deliberadamente NÃO serve ──────────────────────────────────
+#
+# Sete rotas foram **retiradas** a 2026-08-20, uma semana antes da entrega, e a razão é a
+# mesma para todas: **nenhuma delas era usada pela página**, e uma superfície pública que
+# ninguém consome é risco sem retorno — mais código para manter, mais para correr mal, e
+# mais para explicar numa defesa.
+#
+#   /api/report, /api/ask   geração com modelo de linguagem. Eram POST **públicos e sem
+#                           limite de ritmo** que gastavam a quota de um fornecedor externo
+#                           a pedido de qualquer pessoa. E a dissertação curta não descreve
+#                           camada generativa nenhuma: posiciona-se, no §2.7, precisamente
+#                           contra o resumo gerado, por ser uma afirmação sem evidência
+#                           anexada. Manter no ar o que o documento não reivindica é dívida.
+#   /api/evidence           existia para tornar verificável a ancoragem do texto gerado.
+#                           Sem texto gerado, não há o que ancorar.
+#   /api/triage             servia a probabilidade da triagem, que o critério H2 proíbe em
+#                           qualquer vista de produto. Estava fora da página e continuava
+#                           acessível a quem soubesse o caminho.
+#   /api/precedents         a recuperação semântica carrega o modelo e a base de casos:
+#                           ~7 s a frio e centenas de MB num contentor de 512 MB, para uma
+#                           rota que ninguém chamava. Os precedentes chegam ao utilizador
+#                           dentro do texto do alerta, que é onde a dissertação os mostra.
+#   /api/logos, /api/method  simplesmente sem consumidor.
+#
+# ⚠️ **O código NÃO foi apagado.** `investigator/intelligence/`, `app/method.py` e o motor
+# de recuperação continuam no repositório, testados: são história do trabalho e as duas
+# teses longas descrevem-nos. O que saiu foi a **exposição pública**, que é outra coisa.
+# Voltar a expor qualquer uma é acrescentar oito linhas.
 
 
 @app.get("/api/screener")
@@ -214,130 +196,6 @@ def alerts() -> dict:
     # e servia em silêncio uma janela cada vez mais antiga. Apanhado a 2026-08-17, com o canal
     # em 391 alertas: a página mostrava como mais recente um alerta de 31 de julho.
     return {"rows": S.alerts()[-200:]}
-
-
-@app.get("/api/method")
-def method() -> dict:
-    """Os números congelados da avaliação, cada um amarrado ao ficheiro que o produziu.
-
-    Reutiliza `app/method.py`, onde cada `Number` guarda a cadeia exacta com que aparece no
-    `.md` que o gerou — e `tests/test_method.py` abre esses ficheiros e exige-a. Se uma
-    avaliação for recorrida, a suite parte, em vez de o produto continuar a afirmar um número
-    que os documentos já não sustentam.
-    """
-    try:
-        from app import method as M
-
-        def pack(items) -> list[dict]:
-            return [{"label": n.label, "value": n.value, "source": n.source,
-                     "note": n.note} for n in items]
-
-        return {
-            "blocks": [
-                {"key": "retrieval",
-                 "title": "RQ2 — finding analogous past cases",
-                 "metric": "precision@5 (higher is better)",
-                 "numbers": pack(M.RETRIEVAL)},
-                {"key": "anomaly",
-                 "title": "RQ1 — detecting unusual moves",
-                 "metric": "spread in firing rate across companies (lower is better)",
-                 "numbers": pack(M.ANOMALY)},
-                {"key": "triage",
-                 "title": "RQ4 — deciding what deserves an alert",
-                 "metric": "PR-AUC (higher is better)",
-                 "numbers": pack(M.TRIAGE),
-                 "verdict": M.TRIAGE_VERDICT},
-            ],
-        }
-    except Exception as e:  # noqa: BLE001
-        return {"blocks": [], "error": f"{type(e).__name__}: {e}"}
-
-
-# ── Inteligência ──────────────────────────────────────────────────────────────
-
-class ReportRequest(BaseModel):
-    scope: str = Field("market", pattern="^(market|asset)$")
-    ticker: str | None = None
-
-
-def _bundle_for(scope: str, ticker: str | None, wants: list[str] | None = None):
-    """Monta o pacote de evidência. Único sítio — o relatório e o analista têm de ver
-    exactamente a mesma evidência, senão respondiam de maneira diferente à mesma pergunta."""
-    from investigator.intelligence.context import build_asset_bundle, build_market_bundle
-
-    snap = S.snapshot()
-    rows = snap.get("rows", [])
-    as_of = snap.get("as_of", "")
-    if scope == "market" or not ticker:
-        return build_market_bundle(rows, as_of)
-
-    t = ticker.upper()
-    row = next((r for r in rows if r.get("ticker") == t), None) or {"ticker": t}
-    w = set(wants or ["move", "attribution", "news", "precedents"])
-
-    heads = S.news_days(t, limit=4) if ("news" in w or "precedents" in w) else []
-    prec = None
-    if "precedents" in w and heads:
-        p = S.precedents(t, top_k=4)
-        prec = p.get("cases") if p else None
-    tri = None
-    if "triage" in w or "precedents" in w:
-        tri = S.triage_score(t, heads[0]["headline"] if heads else "")
-    gate = None
-    if "gate" in w:
-        hit = next((g for g in S.screener() if g["ticker"] == t), None)
-        if hit:
-            gate = {"reason": hit["stage"].replace("_", " "), "margin": hit["detail"],
-                    "stage": hit["stage"]}
-
-    spy = next((r for r in rows if r.get("ticker") == "SPY"), None)
-    return build_asset_bundle(row, as_of, headlines=heads, precedents=prec,
-                              triage=tri, gate=gate, market_row=spy)
-
-
-@app.post("/api/report")
-def report(req: ReportRequest) -> dict:
-    """Relatório de situação generativo, ancorado no pacote de evidência.
-
-    Nunca falha: sem LLM ou com a guarda a rejeitar, sai a composição determinística e o
-    campo `source` di-lo. O produto **mostra** essa distinção — um texto gerado e um texto
-    composto não valem o mesmo, e o utilizador tem direito a saber qual está a ler.
-    """
-    from investigator.intelligence.report import generate_report
-
-    bundle = _bundle_for(req.scope, req.ticker)
-    return generate_report(bundle).to_json()
-
-
-class AskRequest(BaseModel):
-    question: str = Field(min_length=2, max_length=500)
-    context: dict[str, Any] = Field(default_factory=dict)
-
-
-@app.post("/api/ask")
-def ask(req: AskRequest) -> dict:
-    """Analista conversacional: pergunta -> plano -> evidência -> resposta ancorada.
-
-    A resposta traz `plan.action`, que a interface executa. É isso que faz da linguagem
-    natural uma **segunda interface para os mesmos dados** em vez de uma caixa de texto ao
-    lado do produto.
-    """
-    from investigator.intelligence import analyst
-
-    tickers = S.watchlist()
-    plan = analyst.route(req.question, tickers, req.context)
-    bundle = _bundle_for(plan.scope, plan.ticker, plan.wants)
-    return analyst.ask(req.question, bundle, plan).to_json()
-
-
-@app.get("/api/evidence")
-def evidence(scope: str = "market", ticker: str | None = None) -> dict:
-    """O pacote de evidência em bruto — o que o gerador viu, sem o gerador.
-
-    Existe para a afirmação "cada frase é rastreável" ser **verificável por quem duvida**, e
-    não só demonstrável por quem construiu.
-    """
-    return _bundle_for(scope, ticker).to_json()
 
 
 # ── Estáticos ─────────────────────────────────────────────────────────────────
