@@ -27,8 +27,8 @@
   `scripts/screenshot_v6.py` (novo), em dois painéis — a empresa e o funil do dia. A frase do
   Cap. 4 que dizia que a interface *"não se descreve aqui"* mantém-se e ganha a razão de a
   mostrar: é o único sítio onde o **silêncio** é visível. O caso capturado é bom por acaso: a
-  Alphabet fechou a **+0.15\%** e a repartição mostra que não foi um dia sem história — foram
-  o setor a puxar **+1.25\%** e a empresa **−1.37\%** a anularem-se.
+  Alphabet fechou a **+0.15%** e a repartição mostra que não foi um dia sem história — foram
+  o setor a puxar **+1.25%** e a empresa **−1.37%** a anularem-se.
   ⚠️ **A figura teve de ser MOVIDA no ficheiro:** posta antes da figura do alerta, ficava
   numerada 4.3 e o texto citava a 4.4 primeiro. O LaTeX numera pela ordem de **definição**, não
   de leitura.
