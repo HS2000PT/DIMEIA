@@ -62,6 +62,23 @@
   **PORTAS: `check_entrega.py` a zero, tese 116 pp, 44 números conferidos contra a fonte, 746
   testes.** ⚠️ **E as portas apanharam-me duas vezes nesta parte:** dois travessões e um
   «exactamente» que eu próprio escrevi no texto novo.
+  **(A6) IMPLANTADO E VERIFICADO AO VIVO** — `release 6e838ec5`, e o `HEAD` é o `origin`
+  (`b0c5d8f1`), árvore limpa. ⚠️ **Nada de `api/`, `web/`, `investigator/` ou `app/` tinha mudado
+  desde a implantação anterior** (as últimas alterações foram todas de tese, slides e guia);
+  implantei na mesma para que o que está no ar seja **verificavelmente** o `HEAD`, e não uma
+  versão aproximada.
+  **Medido em produção, e não no código:** as seis rotas servidas a **200** (0,64 s a 1,96 s) e
+  as sete retiradas a **404 `application/json`**; instantâneo **fresco a 82 s**; uma selecção a
+  governar a página inteira (cliquei na JNJ e seguiram-na o gráfico, o veredicto, o feed
+  `JNJ · 2`, o realce no funil e a URL `?t=JNJ`); a legenda a bater com a lista, que é a
+  correcção desta parte; a **hiperligação da fonte seguida até ao fim** (302 → artigo real do
+  SeekingAlpha), que é o que separa mostrar evidência de mostrar uma afirmação; **0 erros de
+  consola**; a **375 px** zero rolagem horizontal e barra fixa de 49 px, a **1600 px** duas
+  colunas de 861+615; **contraste medido nos dois temas**, 6,9–15,8:1 no escuro e 4,7–17,7:1 no
+  claro, todos acima de 4,5:1.
+  **E o ciclo de aprendizagem está vivo:** `gate_log` **18 648** linhas, `predictions_log`
+  **38 084**, canal **422** alertas — os três a crescer na branch de dados, que é o que garante
+  que a pós-validação continua a ter matéria-prima.
 - **🆕 SESSÃO 61 — 3.ª parte (2026-08-20): A MARCA, A FIGURA DA PÁGINA NA TESE, E SETE ROTAS
   RETIRADAS. O aluno pediu simplicidade e "pronto para entrega, mesmo que tenhamos de remover
   coisas de que não temos a certeza".**
