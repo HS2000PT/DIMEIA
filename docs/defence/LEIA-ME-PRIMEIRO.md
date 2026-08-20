@@ -37,7 +37,7 @@ a resposta é um **"Não"** firme — nenhum modelo com texto bate a volatilidad
 | Não digas | Diz | Porquê |
 |---|---|---|
 | "quase 4×" | **1,67×** (de 0,379 para 0,632) | O chão de `0,163` ordenava por ordem alfabética das empresas. Ao acaso a sério dá 0,379 |
-| "0,667 vs 0,455 ao vivo" | **0,592 vs 0,647** | Eram 12 decisões. Com 530, o sinal **inverte-se** |
+| "0,667 vs 0,455 ao vivo" | **0,589 vs 0,617** | Eram 12 decisões. Com 825, o sinal **inverte-se** |
 | "a triagem funciona em produção" | "em produção não mostra benefício" | Intervalo [0,391, 0,601], que contém o acaso |
 
 ## 3. O que estes documentos ensinam e a tese curta não tem

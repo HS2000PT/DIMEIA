@@ -324,10 +324,10 @@ decisão definida em 39,5% dos títulos. O modelo não serve para nada?"*
 
 ## 10. Antes de entrares na sala
 - Sabe de cor: **0,015 vs 0,344** · **P@5 0,514** · **0,542 vs 0,496** · **0,379→0,632 (em dados
-  retidos)** · **ROC-AUC ao vivo 0,494** · **39,5%** · **PSI 0,281** · **130/139 pp** (mapa completo
+  retidos)** · **ROC-AUC ao vivo 0,486** · **39,5%** · **PSI 0,281** · **130/139 pp** (mapa completo
   no `guiao_de_defesa.md` §2).
 - ⚠️ **Não digas 0,667 vs 0,455.** Foi retirado: valia sobre 12 decisões e o intervalo continha a
-  taxa-base. Com 530 decisões o sinal inverte-se (0,592 mantidas vs 0,647 suprimidas). Se disseres o
+  taxa-base. Com 825 decisões o sinal inverte-se (0,589 mantidas vs 0,617 suprimidas). Se disseres o
   número antigo e te pedirem o intervalo, não tens resposta.
 - Ensaia estas **11** cadeias em voz alta até a Q3 sair sem hesitar. As três últimas (§11–13) são as
   mais prováveis agora, porque cobrem os estudos que terminam em "não" — que são **cinco**, e o

@@ -60,6 +60,12 @@ MANIFESTO: list[tuple[str, str, str]] = [
     ("0.469", "evaluation_triage.md", "PR-AUC, gradient boosting"),
     ("0.378", "evaluation_triage.md", "prevalencia, o chao da PR-AUC"),
     ("0.622", "evaluation_triage.md", "Brier de alertar sempre"),
+    # pos-validacao ao vivo. ⚠️ Estes tres nao estavam no manifesto, e sao dos que mais
+    # provavelmente mudam: o registo cresce todos os dias e o ficheiro e regenerado por
+    # `evaluate_live_transfer.py`. A 2026-08-20 mudaram mesmo, de 530 para 825 decisoes.
+    ("0.589", "evaluation_live_transfer.md", "materiais entre as decisoes mantidas"),
+    ("0.617", "evaluation_live_transfer.md", "materiais entre as decisoes suprimidas"),
+    ("0.486", "evaluation_live_transfer.md", "ROC-AUC na populacao implantada"),
     # chaos do orcamento (a correccao do artefacto alfabetico)
     ("0.3790", "evaluation_budget_baselines.md", "chao aleatorio real"),
     ("0.6624", "evaluation_budget_baselines.md", "prior de volatilidade por ticker"),

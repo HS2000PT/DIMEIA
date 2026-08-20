@@ -841,16 +841,22 @@ que \emph{ordenar por volatilidade} compensa; não que \emph{aprender} compense.
 \subsection{E em produção?}
 
 O sistema regista todas as decisões de triagem e, dias depois, verifica o que realmente aconteceu.
-Sobre $530$ decisões já maturadas, o modelo não mostra benefício: as notícias que ele deixou passar
-eram importantes $59.2\%$ das vezes, contra $64.7\%$ das que ele travou.
+Sobre $825$ decisões já maturadas, o modelo não mostra benefício: as notícias que ele deixou passar
+eram importantes $58.9\%$ das vezes, contra $61.7\%$ das que ele travou.
 
-Estes dois números pedem uma ressalva sobre a sua precisão, e ela é grande. As $530$ decisões não
-são $530$ observações independentes: o rótulo é atribuído por \emph{(empresa, dia)}, e as $530$
-linhas repartem-se por apenas $145$ pares distintos. Medida sobre essas $145$ unidades, a capacidade
-de ordenação do modelo, a \textbf{ROC-AUC}, fica em $0.494$ com um intervalo de confiança a
-$95\%$ de $[0.391, 0.601]$. Nesta medida o acaso vale exatamente $0.5$, portanto o intervalo
+Estes dois números pedem uma ressalva sobre a sua precisão, e ela é grande. As $825$ decisões não
+são $825$ observações independentes: o rótulo é atribuído por \emph{(empresa, dia)}, e as $825$
+linhas repartem-se por apenas $239$ pares distintos. Medida sobre essas $239$ unidades, a capacidade
+de ordenação do modelo, a \textbf{ROC-AUC}, fica em $0.486$ com um intervalo de confiança a
+$95\%$ de $[0.403, 0.571]$. Nesta medida o acaso vale exatamente $0.5$, portanto o intervalo
 contém-no confortavelmente. A leitura correta não é que o modelo seja pior do que
 nada, mas que \textbf{esta amostra não distingue o modelo do acaso}.
+
+Esta medição foi refeita a 20 de agosto de 2026, quando o registo já tinha $825$ decisões
+maturadas contra as $530$ de que dispunha a primeira leitura. Vale a pena dizer o que mudou,
+porque quase nada mudou: a diferença entre mantidas e suprimidas estreitou-se (era $59.2\%$
+contra $64.7\%$), a \textbf{ROC-AUC} passou de $0.494$ para $0.486$, e o intervalo encolheu.
+Com metade mais evidência o veredicto é o mesmo, e é mais firme.
 
 A explicação mais provável não é que o modelo esteja avariado, mas que esteja a \textbf{mais}.
 Quando ele é chamado, as notícias já passaram pelo filtro de relevância e pelo de frescura. Esses

@@ -123,7 +123,7 @@ alertas com carimbos. O que mostrei foi um dia desse registo.
 **«Porque é que o gate travou uma notícia com P=0,47 e deixou passar uma com 0,55?»**
 Porque o limiar está em 0,50, e esse valor é derivado e não escolhido: vem do varrimento de
 custo a R=1, onde uma falha e um falso alarme custam o mesmo. **E depois acrescenta o que é
-teu:** medi esse gate em produção e ele não separa — ROC-AUC 0,494. Fica como controlo de
+teu:** medi esse gate em produção e ele não separa — ROC-AUC 0,486. Fica como controlo de
 volume, e a afirmação de que selecciona materialidade está retirada da tese.
 
 **«Consegue mostrar-me o modelo a treinar?»**

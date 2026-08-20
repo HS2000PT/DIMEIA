@@ -196,7 +196,7 @@ re-treino, não um re-treino.
   **O texto piora.** Comparação pré-comprometida.
 - Valor de produto (em dados retidos): precisão dentro do orçamento de 5 alertas/dia sobe de
   **0,379** para **0,632**.
-- **⚠️ Ao vivo não transfere:** ROC-AUC **0,494**, IC [0,391, 0,601] sobre 145 pares
+- **⚠️ Ao vivo não transfere:** ROC-AUC **0,486**, IC [0,403, 0,571] sobre 239 pares
   empresa-dia. Centrado no acaso.
 
 ---
@@ -210,7 +210,7 @@ Duas falhas produzem o mesmo sintoma e pedem correcções opostas:
 - se o score **não ordena** → recalibrar não serve, porque a sigmóide é **monótona**: preserva
   a ordem exactamente.
 
-Medi: ROC-AUC 0,494. **Não há ordem para preservar.**
+Medi: ROC-AUC 0,486. **Não há ordem para preservar.**
 
 E a explicação não é "modelo avariado", é **modelo redundante**: a materialidade entre as
 decisões registadas corre a **0,626**, contra **0,378** no treino — porque só se registam
@@ -236,7 +236,7 @@ integração, não de modelação — e só apareceu porque instrumentei o gate.
 | Como calcula a precisão? | PR-AUC no bloco de teste; e precisão@orçamento diário | §3.6.4 | `evaluation_triage.md` |
 | Onde está o modelo? | `.joblib` de 1,8 KB + `.json` de metadados | §4.9 | teste de reprodução |
 | Aprende continuamente? | **Não.** Inferência + recolha de rótulos | §3.3.4 | — |
-| O modelo funciona? | Offline sim; ao vivo não (ROC-AUC 0,494) | §6.5 | `evaluation_live_transfer.md` |
+| O modelo funciona? | Offline sim; ao vivo não (ROC-AUC 0,486) | §6.5 | `evaluation_live_transfer.md` |
 | A latência? | ~2,5 h de descoberta + ~1 s de entrega | §6.2 | `evaluation_latency.md` |
 | Está mesmo a correr? | Sim, 332 alertas com carimbos | Apêndice A | branch `alerts-history` |
 
@@ -266,7 +266,7 @@ tese diz isso. As listas de aliases são escritas à mão, e outro investigador 
 retenção diferentes."*
 
 ### P4. «Então o vosso machine learning não funciona?»
-**Resposta segura:** *"Como selector em produção, não — ROC-AUC 0,494, medido. Em dados retidos,
+**Resposta segura:** *"Como selector em produção, não — ROC-AUC 0,486, medido. Em dados retidos,
 sim. As duas coisas são verdade porque são populações diferentes, e a tese diz as duas. O que
 isto ensina é sobre pôr um componente aprendido dentro de uma pipeline."*
 
@@ -329,7 +329,7 @@ antes de ela fechar. Ninguém ataca quem já concordou.
 | Não dizer | Porquê |
 |---|---|
 | "0,667 vs 0,455 prova que o mecanismo funciona ao vivo" | Eram 12 decisões; com 530 o sinal **inverte-se** |
-| "O gate selecciona notícias materiais" | ROC-AUC 0,494 — retirado |
+| "O gate selecciona notícias materiais" | ROC-AUC 0,486 — retirado |
 | "O corpus abrange meses" | São 27 dias |
 | "Recuperamos precedentes" (sobre a avaliação) | Só 31,1% são anteriores |
 | "Top-3 idêntico em 20 de 23" (ONNX) | Não reproduz; a grandeza estável é 95% de vizinhos |

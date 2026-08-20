@@ -121,9 +121,9 @@ Se alguém re-treinar com outra semente, a suite parte.
 | Decisões registadas | **1.087** | produção | uma linha por decisão de triagem | `postval.py:26` | `predictions_log.jsonl` | §6.5 |
 | Decisões maturadas | **530** | idem | janela (d, d+3] fechada | `postval.py:71` | idem | §6.5 |
 | Unidades efectivas | **145** pares (ticker, dia) | idem | o rótulo é por ticker-dia | `evaluate_live_transfer.py` | idem | §6.5 |
-| Mantidas materiais | **0,592** | idem | `mean(label)` nas mantidas | `postval.py:88` | idem | §6.5 |
-| Suprimidas materiais | **0,647** | idem | idem nas suprimidas | `postval.py:88` | idem | §6.5 |
-| ROC-AUC ao vivo | **0,494** | idem | prob. de um positivo ficar acima de um negativo | `evaluate_live_transfer.py` | idem | §6.5 |
+| Mantidas materiais | **0,589** | idem | `mean(label)` nas mantidas | `postval.py:88` | idem | §6.5 |
+| Suprimidas materiais | **0,617** | idem | idem nas suprimidas | `postval.py:88` | idem | §6.5 |
+| ROC-AUC ao vivo | **0,486** | idem | prob. de um positivo ficar acima de um negativo | `evaluate_live_transfer.py` | idem | §6.5 |
 | IC 95% (bootstrap de **cluster**) | **[0,391; 0,601]** | idem | reamostra pares ticker-dia inteiros | `evaluate_live_transfer.py` | idem | §6.5 |
 | Prevalência ao vivo vs treino | **0,626** vs 0,378 | idem | `mean(label)` | idem | idem | §6.5 |
 

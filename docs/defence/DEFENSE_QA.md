@@ -115,7 +115,7 @@ palavra inteira. É código determinístico: duas pessoas obtêm o mesmo resulta
 listas de aliases são feitas à mão. É reprodutível, mas não é um critério a priori."*
 
 ### C3. «Então o vosso machine learning funciona ou não?»
-**Simples:** *"Em dados retidos, sim. Em produção, não — e medi-o. ROC-AUC 0,494, com o
+**Simples:** *"Em dados retidos, sim. Em produção, não — e medi-o. ROC-AUC 0,486, com o
 intervalo a conter o acaso."*
 **Técnica:** duas falhas produzem o mesmo sintoma e pedem correcções opostas. Se o score ordena
 e só a escala está errada, recalibra-se. Se não ordena, recalibrar não serve, porque a sigmóide
