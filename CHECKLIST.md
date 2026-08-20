@@ -55,7 +55,8 @@ Estado a 2026-08-20: **sai a zero.** Tese 116 pp, slides 21, guia 24, quizz 37 p
       `docs/design/going_live.md` §1b).
 
 ### Académico (bloqueia a submissão)
-- [ ] **Leitura final da tese que vais entregar** (`tese/main.pdf`, 114 pp, PT-PT) — o texto é teu para defender.
+- [ ] **Leitura final da tese que vais entregar** (`tese/main.pdf`, **116 pp**, PT-PT) — o
+      texto é teu para defender.
 - [ ] **Licença do código** com o Prof. Luís Gomes + ficheiro `LICENSE`.
       ⚠️ **Não é uma escolha livre entre MIT e Apache**, e a auditoria encontrou duas
       restrições: o repositório distribui ficheiros derivados do FNSPID (**CC BY-SA 4.0**,
@@ -68,6 +69,19 @@ Estado a 2026-08-20: **sai a zero.** Tese 116 pp, slides 21, guia 24, quizz 37 p
       530 o sinal **inverte-se**: mantidas 0,592 contra suprimidas 0,647, com o intervalo
       [0,391, 0,601] a conter o acaso. É o que a tese reporta, e é o resultado desconfortável
       que ela escolhe não esconder → `docs/evaluation/evaluation_live_transfer.md`.
+
+- [ ] **Três PDF de fontes por descarregar, e um por substituir** (verificado a 2026-08-20):
+      - `bollerslev1986garch.pdf` **é o ficheiro errado** — está lá um projecto de mestrado de
+        2003 da Simon Fraser (Michael S. Lo) com título parecido, não o artigo de 1986;
+      - `mikolov2013word2vec.pdf` é a **pré-publicação arXiv**, e a entrada passou a citar as
+        actas do NIPS 2013 (`proceedings.neurips.cc`, paper `9aa42b31…`);
+      - faltam `liu2020finbert` (`ijcai.org/proceedings/2020/622`, livre) e `huang2023finbert`
+        (Wiley, *Contemporary Accounting Research* 40(2), pode exigir a conta do ISEP).
+      Não bloqueia a submissão — as afirmações estão verificadas contra o registo do Crossref e
+      contra o texto —, mas a pasta é a prova de que foram lidas no original.
+- [ ] **Gravar a demonstração** (`Win`+`G`), com o `tese/GRAVACAO.md` à frente. É o *slide*
+      **20 de 21**, e o *slide* seguinte tem agora a captura do funil como plano B se a
+      gravação falhar na sala.
 
 ### Opcional
 - [ ] (Opcional) Renomear o repositório `DIMEIA`→`InvestiGator` (Settings → Rename; mantém a
