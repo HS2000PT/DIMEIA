@@ -122,8 +122,14 @@ Estado a 2026-08-20: **sai a zero.** Tese 116 pp, slides 21, guia 24, quizz 37 p
       pequenas), mesmo com 17.710 pontos de calibração; a escolha da tese fica validada
       empiricamente → `docs/evaluation/calibration_platt_vs_isotonic.md`. Fica em aberto só
       o opcional: re-curadoria da KB light com peso maior em 2022-23.
-- [ ] Polimento futuro (quando quiseres): cobertura `pytest --cov` no README; camada `logging`;
-      CLI do Gatilho 2; de-dup de precedentes quase iguais.
+- [x] ~~De-dup de precedentes quase iguais~~ ✅ **FEITO na sessão 57.** `investigator/dedup.py`
+      é usado nos **dois** caminhos — no `merged_precedents` (`live_kb.py:240`) e na supressão
+      de alertas (`run_alerts.py:139`) —, com testes em `test_live_kb`, `test_run_alerts` e
+      `test_news_fetcher`. A linha ficou aqui por esquecimento.
+- [ ] Polimento futuro, e nenhum destes se recomenda antes da entrega: cobertura `pytest --cov`
+      no README (um número que passa a precisar de manutenção), camada `logging` a substituir
+      os `print` (toca no worker que está no ar), e um CLI para o Gatilho 2 (o `scripts/demo.py`
+      já cobre a demonstração).
 
 ## Adiado por decisão (2026-08-02) — não bloqueia a submissão
 
