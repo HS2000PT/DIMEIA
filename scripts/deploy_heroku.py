@@ -122,7 +122,17 @@ def main() -> int:
     inicio = time.time()
     while True:
         time.sleep(10)
-        b = _api(token, "GET", f"/apps/{APP}/builds/{bid}")
+        # ⚠️ UM TEMPO ESGOTADO A CONSULTAR NÃO É UM BUILD FALHADO. A 2026-08-20 a leitura de
+        # uma destas consultas expirou, o script morreu com um rasto de excepção e a
+        # implantação **tinha corrido bem** — a página nova já estava no ar. Um rasto que se
+        # lê como falha leva alguém a implantar outra vez, ou pior, a desfazer o que resultou.
+        # A consulta é de leitura pura, portanto repetir é seguro.
+        try:
+            b = _api(token, "GET", f"/apps/{APP}/builds/{bid}")
+        except Exception as e:  # noqa: BLE001
+            print(f"  [{time.time() - inicio:5.0f}s] consulta falhou ({type(e).__name__}), "
+                  f"a repetir — o build continua no Heroku")
+            continue
         st = b["status"]
         print(f"  [{time.time() - inicio:5.0f}s] {st}")
         if st != "pending":
