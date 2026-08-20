@@ -476,14 +476,6 @@ function desenhar(a) {
   chart.timeScale().fitContent();
   chart.subscribeClick(p => { if (p.time) abrirDia(String(p.time)); });
 
-  const nEnv = enviados.size, nEv = eventos.size - nEnv;
-  document.getElementById("legenda").innerHTML =
-    `<span>${dados.length} sessions</span>` +
-    `<span class="chave"><i class="env"></i>${nEnv} sent</span>` +
-    `<span class="chave"><i></i>${nEv} flagged, stopped at a gate</span>` +
-    (posteriores.length
-      ? `<span>${posteriores.length} more sent after the last close shown</span>` : "");
-
   // ⚠️ OS MESMOS DIAS, ALCANÇÁVEIS PELO TECLADO. Não é redundância: um marcador desenhado numa
   // tela não se alcança com o teclado nem existe para um leitor de ecrã, portanto uma interface
   // que só responde ao clique no gráfico é inutilizável para quem não usa rato. Na v6 eram
@@ -491,6 +483,21 @@ function desenhar(a) {
   const soltos = new Map(posteriores.map(al => [al.date, al]));
   const todos = [...new Set([...soltos.keys(), ...enviados.keys(), ...eventos.keys()])]
     .sort().reverse();
+
+  // ⚠️ A LEGENDA CONTA-SE A PARTIR DESTA LISTA, e não por aritmética à parte. A versão anterior
+  // fazia `eventos.size - enviados.size`, o que supõe que todo o dia com alerta foi também um dia
+  // assinalado pelo detector — e é falso: um alerta de NOTÍCIA sai em dias que o detector nunca
+  // assinalou. Medido em produção a 2026-08-20 na TSLA: a lista mostrava 34 dias sem alerta e a
+  // legenda, três centímetros acima, dizia 22. Dois números do mesmo facto a discordar no mesmo
+  // ecrã, que é exactamente o defeito que esta revisão veio corrigir noutros sítios.
+  const nEnv = todos.filter(d => enviados.has(d) || soltos.has(d)).length;
+  const nEv = todos.filter(d => !enviados.has(d) && !soltos.has(d)).length;
+  document.getElementById("legenda").innerHTML =
+    `<span>${dados.length} sessions</span>` +
+    `<span class="chave"><i class="env"></i>${nEnv} sent</span>` +
+    `<span class="chave"><i></i>${nEv} flagged, stopped at a gate</span>` +
+    (posteriores.length
+      ? `<span>${posteriores.length} of those after the last close shown</span>` : "");
   document.getElementById("dias").innerHTML = todos.length
     ? todos.map(d => {
         const al = enviados.get(d) || soltos.get(d), z = eventos.get(d);
