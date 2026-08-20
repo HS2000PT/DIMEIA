@@ -807,7 +807,7 @@ por título e é essa que responde à pergunta. Mas fixa desde já o que a varia
 não pode fazer, e é uma distinção a que o Capítulo~\ref{cap:avaliacao} volta, porque foi ela que
 me escapou quando escolhi o que implantar.
 
-\subsection{Treinar sem fazer batota com o tempo}
+\subsection{Treinar sem deixar o futuro entrar no treino}
 
 Esta é a parte onde é mais fácil enganar-se a si próprio, e daí o desenho da
 Figura~\ref{fig:divisao}.
@@ -977,7 +977,7 @@ alguma informação do futuro se tivesse infiltrado nas entradas, o teste falha.
 Esta é a garantia mais importante de todo o trabalho e a mais fácil de prometer sem cumprir, por
 isso o Excerto~\ref{lst:lookahead} mostra-a tal como está escrita.
 
-\begin{lstlisting}[label=lst:lookahead, caption={O teste que impede o futuro de entrar nas \emph{features}. As duas
+\begin{lstlisting}[label=lst:lookahead, caption={O teste que impede o futuro de entrar nas entradas. As duas
 séries partilham o passado e divergem apenas depois do dia do evento.},label={lst:lookahead}]
 def test_anti_lookahead_mutar_o_futuro_nao_muda_features():
     base = [100.0 + i * 0.1 for i in range(30)]
