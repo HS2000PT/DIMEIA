@@ -25,6 +25,14 @@ import json
 import pathlib
 import subprocess
 import sys
+
+# ⚠️ A consola do Windows e cp1252 e rebenta a imprimir simbolos. Aconteceu na implantacao de
+# 2026-08-20: o build tinha SUCEDIDO e o script morreu na linha que imprimia o sucesso, com um
+# rasto de excepcao que se le como implantacao falhada. E a setima vez que esta classe aparece
+# neste projecto, e aqui e das piores: leva alguem a implantar outra vez sem precisar.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 import tempfile
 import time
 import urllib.error
