@@ -7,6 +7,91 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 60 (2026-08-19/20 — "termina o que começaste; não pode ficar nada pendente", e o
+  aluno deu autoridade para decidir). A TESE CURTA PASSA A PORTA DE ENTREGA.**
+  **⚠️ (A) O ACHADO GRAVE, E A CULPA É MINHA: um `\textbf` partido por um TAB estava IMPRESSO
+  no PDF.** O Cap. 5 tinha `<TAB>extbf{...}` e o PDF entregue mostrava `extbfesta amostra não
+  distingue o modelo do acaso` a meio de uma frase. **Compila a ZERO erros**, porque
+  `extbf{...}` é texto válido. É a armadilha do heredoc que o próprio CLAUDE.md documenta, e que
+  eu accionei **três vezes** nesta sessão. Porta nova, `scripts/check_tex_escapes.py`, que
+  procura os restos de comandos comidos por escapes (`\t`→TAB+extbf, `\r`→CR+ef, e mais 40
+  padrões): **encontrou mais dois**, nos resumos das duas teses longas (`$1.67<TAB>imes$`).
+  **(B) CONCORDÂNCIAS: eram 15, não 3.** A substituição manchete→título deixou o feminino para
+  trás em quinze sítios ("Primeira título", "o título é transformada em 384 números e
+  comparada", "todo o título relevante é guardada como candidata", "O porta implantado", "do
+  meu montagem"). E criou uma **colisão de sentido**: no Cap. 2, "a média histórica do próprio
+  título" não é uma manchete, é o **valor mobiliário**. Mais 7 no guia e no quizz.
+  **(C) QUATRO CONTAS QUE NÃO FECHAVAM, refeitas contra o modelo e contra os preços reais.**
+  Reproduzi o exemplo da Apple no modelo implantado: a volatilidade é −0.252 (dizia −0.253), o
+  total é +0.030 (dizia +0.029), e **faltava a parcela do MOMENTO** numa lista introduzida como
+  "somam-se todos" — entra com +0.000, e não por arredondamento: das nove entradas **uma não
+  está a fazer nada**, e isso só se vê desmontando um caso. A Tesla: σ = 2.7246%, ou seja
+  **2.72%** e não 2.73%. O Brier: (0.6)² = **0.36** e não 0.16. O embargo prometia dizer quantas
+  linhas custou e nunca dizia: **820 de 79 753**, 1.03%.
+  **(D) DOIS SÍTIOS ONDE A TESE SE ELOGIAVA A MAIS.** Dizia que a precisão@5 "sobe" de 0.514
+  para 0.595 sem dizer que **o chão de acaso também sobe**, de 0.240 para 0.333: a margem é
+  praticamente a mesma, e o resultado honesto é que **não se degrada** com seis anos de corpus.
+  E comparava 0.013 (logit) com 0.385 (probabilidade calibrada) como se fossem a mesma escala —
+  medido no modelo implantado, 80 caracteres valem 0.0128 no logit e **poucos milésimos** na
+  probabilidade, o que torna o argumento **mais forte**.
+  **(E) DUAS LACUNAS DE ESTRUTURA.** A **deriva** era afirmada como medida em dois capítulos e o
+  Cap. 5 nunca a mostrava (existe: PSI 0.281 na volatilidade, com o rótulo quase parado — a
+  entrada de que o modelo mais depende é a que mais derivou). E a **decomposição** não aparecia
+  uma única vez no Cap. 4, apesar de a legenda prometer "as quatro técnicas".
+  **(F) O APÊNDICE: "todos os resultados" e faltavam NOVE**, incluindo a ablação da identidade
+  (0.534 vs 0.538), que é o achado que a tese apresenta como o mais forte. E o Cap. 3 mandava o
+  leitor ao apêndice procurar "o procedimento que a gera", que o apêndice não nomeia de
+  propósito. E dizia "não é armazenado qualquer dado pessoal" com o `bot: enabled: true` e o
+  `store.py` a guardar o `chat_id` e as empresas de cada subscritor. E a licença do FNSPID é
+  **CC BY-SA**: o repositório distribui derivados, portanto a partilha nos mesmos termos é
+  accionada, e é ela que condiciona a licença do código.
+  **(G) A CAPA.** Imprimia **`[A definir]` duas vezes** (o júri, que a escola só designa depois
+  da entrega) e a data era `\today`, ou seja mudava a cada compilação. As quatro dissertações
+  aprovadas em `thesis-examples/` **não mostram júri nenhum** e usam mês e ano. Guarda no
+  template para o bloco só aparecer com nomes; data fixada. **E TODAS as referências saíam com
+  moldura vermelha/verde à volta** nas 114 páginas (`nohyperreflinkcolor` tira a cor e não a
+  moldura) — `hidelinks`. Só se vê a olhar para a página.
+  **(H) O ABSTRACT IMPRIMIA AS PALAVRAS-CHAVE EM PORTUGUÊS**, e elas saíam coladas à última
+  frase do resumo, a meio da linha (o `\bigskip` do template é espaço vertical **dentro** do
+  parágrafo; faltava o `\par`). A Lista de Acrónimos não tinha a **PR-AUC**, que é a métrica
+  principal do Cap. 5 e aparece 16 vezes.
+  **(I) OS DOCUMENTOS DE DEFESA ENSINAM A TESE LONGA.** Medido: **39 usos de RQ1–RQ4** em sete
+  documentos e **zero de QI**. A correspondência não é um-para-um: a **RQ3 não existe** na tese
+  curta. E o `simulacro_defesa.md` ensinava a dizer **"quase 4×"** — o número retirado — na
+  resposta àquela que o próprio ficheiro chama a pergunta mais perigosa. Criado o
+  `docs/defence/LEIA-ME-PRIMEIRO.md` com o mapa e os números retirados, e um aviso no topo dos
+  nove. Nos materiais que ele vai mesmo usar: o guia numerava **três** técnicas onde a tese tem
+  quatro, e o slide da decomposição mostrava o R² e duas linhas abaixo dizia que a técnica não
+  tem resultado medido nenhum.
+  **(J) CITAÇÕES: as 30 que faltavam, contra os PDF originais.** Nenhuma afirmação caiu. E um
+  **PDF não era o artigo**: o arquivado como `bollerslev1986garch` é uma tese de mestrado de
+  2003 com o título parecido. O verificador passa a exigir também o autor.
+  **⚠️ ARXIV: de cinco para quatro.** O word2vec passa às actas do NIPS 2013 e a afirmação geral
+  sobre modelos de domínio a dois FinBERT publicados. **E isso apanhou um buraco:** o Cap. 5
+  dizia "um modelo de finanças deu 0.420" e nunca dizia qual — é o ProsusAI/finbert, ou seja o
+  Araci, e trocar a citação teria atribuído a medição ao modelo errado.
+  **⚠️ ERRO MEU QUE QUASE ENTROU:** julguei ter apanhado números errados no D'Acunto porque li o
+  **corpo** do artigo e não o **resumo**, onde estavam os números que a tese usava. Cheguei a
+  corrigir a tese. **Revertido.** Corrigir a partir de uma leitura parcial é pior do que não
+  corrigir, porque sai com ar de rigor.
+  **⚠️ E OS MEUS VERIFICADORES QUASE ENTRARAM ERRADOS.** O `check_apendice_xref` precisou de
+  **quatro** correcções: cortava a secção na primeira subsecção (acusou 9 de 12 linhas
+  correctas), procurava sem fronteiras ("1.5" dentro de "21.5"), e — o pior — arredondava
+  percentagens a **zero casas**, o que fazia 0.015 virar `"2"`: aprovava uma referência
+  deliberadamente errada e **passava no próprio teste de sabotagem**. O `check_entrega`
+  procurava `TODO` sem distinguir maiúsculas e acusou dezassete frases com a palavra
+  portuguesa **"todo"** (5.ª vez desta classe).
+  **PORTAS NOVAS, todas verificadas a FALHAR antes de serem versionadas:**
+  `check_tex_escapes.py`, `check_apendice_xref.py`, `check_materiais.py`, `check_floats.py`, e
+  **`check_entrega.py`**, que corre tudo de uma vez e é o comando único antes de entregar.
+  **A contagem de testes passa a ser uma porta** (era 726 e são 737).
+  **ESTADO: `python scripts/check_entrega.py` SAI A ZERO.** Tese **114 pp**, slides 19, guia 20,
+  todos 0 erros e 0 indefinidas, overfull máx 5pt, teses longas 130 e 139 intactas.
+  **⏭️ O QUE FICA É SÓ HUMANO:** a leitura final da tese; a redacção da declaração de IA e a
+  **licença** com o orientador (com as duas restrições de partilha nos mesmos termos); o estudo
+  com utilizadores; e rodar as 4 credenciais.
+  **⚠️ O LIMITE DE GASTO MORDEU AS TRÊS VEZES:** 7 de 7 agentes, depois 7 de 11, depois 3 de 5 —
+  e **todos os refutadores morreram nas três**. Verifiquei os 66 achados eu próprio. **10.ª vez.**
 - **🆕 SESSÃO 59 (2026-08-15, 2.ª parte — o aluno mandou focar tudo na QUALIDADE DOS ALERTAS:
   "isto é o nosso produto e ciência; o UI é secundário"). IMPLANTADO E VERIFICADO AO VIVO.**
   **⚠️ (A) O ACHADO: O PORTÃO ESCOLHIA EMPRESAS, NÃO NOTÍCIAS — 84% das decisões.** Medido sobre
