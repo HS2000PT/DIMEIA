@@ -65,6 +65,13 @@ Estado a 2026-08-20: **sai a zero.** Tese 116 pp, slides 21, guia 24, quizz 37 p
 - [ ] **Redação exata da declaração de uso de IA** (MEIA/ISEP) + **data de entrega** — confirmar
       com o Prof. Luís Gomes.
 - [ ] Correr `python scripts/post_validate.py` de vez em quando enquanto o canal está vivo.
+      ✅ **Corrido a 2026-08-20** sobre o registo de produção (38 300 linhas, **825 decisões
+      maturadas**, contra as 530 de 09/08): mantidas **0.589** contra uma taxa-base de
+      **0.602**. ⚠️ **A conclusão não muda e fica mais forte:** o que o modelo deixa passar
+      continua a não ser melhor do que a média, agora com metade mais evidência.
+      **A tese não foi alterada** — cita `evaluation_live_transfer.md` (0.592 vs 0.647, sobre
+      530), que é um protocolo diferente e continua a ser saída real. Re-correr o congelado
+      obrigaria a mexer em quatro sítios para dizer o mesmo, a três semanas da entrega.
       ⚠️ **O estado que aqui estava (0,667 vs 0,455) foi retirado.** Eram 12 decisões, e com
       530 o sinal **inverte-se**: mantidas 0,592 contra suprimidas 0,647, com o intervalo
       [0,391, 0,601] a conter o acaso. É o que a tese reporta, e é o resultado desconfortável
