@@ -16582,3 +16582,15 @@
 {"date": "2026-08-20", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-20", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-20", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-20", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-20", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-20", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-20", "ticker": "TSLA", "stage": "already_sent", "detail": "same headline already delivered today"}
+{"date": "2026-08-20", "ticker": "AMZN", "stage": "already_sent", "detail": "same headline already delivered today"}
+{"date": "2026-08-20", "ticker": "GOOGL", "stage": "already_sent", "detail": "same headline already delivered today"}
+{"date": "2026-08-20", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-20", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-20", "ticker": "AMD", "stage": "weak_precedent", "detail": "melhor sim 0.42 < 0.45"}
+{"date": "2026-08-20", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-20", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-20", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
