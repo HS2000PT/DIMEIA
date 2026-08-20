@@ -312,6 +312,11 @@ KOMA-script documentation for details.}]{fancyhdr}
 \newcommand*{\university}[1]{\def\univname{#1}}
 \newcommand*{\department}[1]{\def\deptname{#1}}
 \newcommand*{\keywords}[1]{\def\keywordnames{#1}}
+% ⚠️ ALTERAÇÃO AO TEMPLATE (2026-08-20). O template usava as MESMAS palavras-chave nos dois
+% resumos, e por isso a página do Abstract em inglês imprimia as palavras-chave em português.
+% Este segundo comando dá-lhe as suas; se não for definido, o comportamento antigo mantém-se.
+\newcommand*{\keywordsother}[1]{\def\keywordnamesother{#1}}
+\providecommand{\keywordnamesother}{}
 
 \newcommand*{\studentnumber}[1]{\def\studnumber{#1}}
 
@@ -436,7 +441,10 @@ KOMA-script documentation for details.}]{fancyhdr}
 	\chapter*{\abslabel}	
 }
 {
-  \bigskip
+  % ⚠️ ALTERAÇÃO AO TEMPLATE (2026-08-20). O \bigskip é espaço VERTICAL dentro do parágrafo
+  % corrente, e não um fim de parágrafo: as palavras-chave saíam coladas à última frase do
+  % resumo, a meio da linha. O \par fecha o parágrafo antes do espaço.
+  \par\bigskip\noindent
   {\bf \keywordslabel:} {\keywordnames}
   \vfil\vfil\vfil\null
 }
@@ -457,8 +465,8 @@ KOMA-script documentation for details.}]{fancyhdr}
 	\chapter*{\abslabelotherlang}
 }
 {
-  \bigskip
-  {\bf \keywordslabelother:} {\keywordnames}
+  \par\bigskip\noindent   % ver a nota do ambiente acima: o \par é o que separa o parágrafo
+  {\bf \keywordslabelother:} {\ifx\keywordnamesother\empty\keywordnames\else\keywordnamesother\fi}
   \vfil\vfil\vfil\null
 }
 
