@@ -215,6 +215,13 @@ if WEB.exists():
         profundas funcionem com o botão "voltar" do browser, que é o que faz um produto web
         parecer um produto web.
         """
+        # ⚠️ Menos `/api/`, que tem de falhar como API e não como página. Sem esta linha, um
+        # pedido a uma rota retirada devolvia **200 com HTML**, e quem estivesse a chamá-la
+        # recebia uma página web onde esperava JSON — que se lê como "a rota existe e
+        # devolveu lixo", em vez de "a rota não existe". Um 404 explícito é a resposta
+        # honesta e é a que diz o que aconteceu.
+        if path.startswith("api/"):
+            return JSONResponse({"error": f"no such route: /{path}"}, status_code=404)
         f = WEB / path
         if f.is_file():
             return FileResponse(f)

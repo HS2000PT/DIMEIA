@@ -259,3 +259,18 @@ def test_a_pagina_nao_corta_o_canal_em_silencio():
     """
     html = _PAGINA.read_text(encoding="utf-8")
     assert "older message" in html, "o resto do canal tem de estar alcançável e contado"
+
+
+def test_uma_rota_de_api_inexistente_falha_como_api_e_nao_como_pagina(client):
+    """⚠️ Medido em produção a 2026-08-20, logo a seguir a retirar sete rotas.
+
+    O apanha-tudo do SPA servia `index.html` para **qualquer** caminho, incluindo os que
+    começam por `/api/`. Resultado: `GET /api/report` respondia **200 com HTML**. Quem
+    estivesse a chamar a rota recebia uma página web onde esperava JSON, o que se lê como
+    "a rota existe e devolveu lixo" em vez de "a rota não existe".
+    """
+    r = client.get("/api/rota-que-nao-existe")
+    assert r.status_code == 404
+    assert r.headers["content-type"].startswith("application/json")
+    # e o SPA continua a apanhar tudo o resto, que é o que faz o botão "voltar" funcionar
+    assert client.get("/qualquer/coisa").status_code == 200
