@@ -57,3 +57,13 @@ ntab = sum(1 for x in inv if x["tipo"] == "table")
 print(f"\ntotal de flutuantes: {len(inv)}  ({nfig} figuras, {ntab} tabelas)")
 for lab, o in achados:
     print("  -", lab, ":", o)
+
+# ⚠️ ESTE VERIFICADOR RELATAVA E NÃO FALHAVA, o que é quase o mesmo que não existir: o
+# `check_entrega.py` corre-o e olha para o código de saída, portanto um flutuante órfão passava
+# a porta com um "ok" ao lado. Apanhado a 2026-08-20 com a `tab:av_causal`, que eu próprio
+# acrescentei e nunca referenciei. Um relatório que ninguém lê não é uma porta.
+if achados:
+    print(f"\nFALHA: {len(achados)} flutuante(s) por corrigir. Um flutuante que nenhuma frase")
+    print("invoca compila sem um único aviso, e o leitor nunca é mandado lá.")
+    raise SystemExit(1)
+print("\nTodos os flutuantes são invocados e têm legenda curta e longa.")
