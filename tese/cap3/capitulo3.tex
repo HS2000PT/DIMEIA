@@ -70,7 +70,7 @@ uma linha se parece:
                   width=0.96\textwidth, fontupper=\ttfamily\footnotesize]
 date,ticker,headline\\
 2020-03-09,AAPL,"Crude Awakening: Energy Sector Takes A 20\% Spill As\\
-\hspace*{2em}Crude Price War Sends Oil To 4-Year Lows"
+\hspace*{2em}Crude Price War Sends Oil To 4-Year Low"
 \end{tcolorbox}
 \caption[Uma linha do conjunto de dados histórico]{Uma linha real do \gls{FNSPID}, copiada do
 ficheiro. Três colunas e mais nada: data, empresa, título. Não traz preço, não traz corpo do
@@ -232,7 +232,8 @@ Não é possível responder com um número fixo.
 Uma regra do género \emph{``avisar sempre que uma ação se mexer mais de 3\%''} parece razoável e é
 má. Para uma empresa calma, como uma cadeia de supermercados, 3\% é um acontecimento raro. Para uma
 empresa volátil, como uma tecnológica em crescimento, 3\% acontece muitas vezes por mês. A mesma
-regra dá quase nenhum alerta na primeira e alertas quase todos os dias na segunda.
+regra sinaliza menos de um por cento dos dias na primeira e mais de um terço na segunda, e os
+números são medidos: a Secção~\ref{sec:av_qi1} reporta-os.
 
 O que interessa, portanto, não é o tamanho do movimento em si, mas o tamanho do movimento
 \textbf{comparado com o que é normal para aquela empresa}.
