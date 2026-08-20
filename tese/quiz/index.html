@@ -384,7 +384,36 @@ const BANCO = [
 {b:"Os números", n:2, t:"escolha", q:"PR-AUC: só volatilidade contra contexto+texto?",
  opts:["0.542 vs 0.496","0.496 vs 0.542","0.538 vs 0.439","0.632 vs 0.379"], ok:0,
  a:`<b>0.542 contra 0.496.</b> Acrescentar o texto do título <b>piora</b>. O sinal vive no contexto
- de mercado.`},
+ de mercado. Cuidado: isto é a comparação <i>lado a lado</i>. A pergunta "o texto acrescenta por
+ cima do melhor?" é outra, e tem outra resposta.`},
+
+{b:"Os números", n:1, t:"escolha", q:"Medido POR CIMA da tabela de consulta por empresa, quanto acrescenta o título?",
+ opts:["+0.012, e o intervalo exclui zero","nada: +0.000","+0.120","piora em -0.012"], ok:0,
+ a:`<b>+0.012 de PR-AUC, IC [+0.004, +0.020].</b> É a única vez neste trabalho em que uma
+ representação de texto mostra valor mensurável. Porque só aparece aqui: as outras comparações põem
+ as variantes <b>lado a lado</b> e respondem a "qual é melhor"; esta soma o texto ao melhor
+ preditor conhecido e responde a "acrescenta?". São perguntas diferentes.`},
+
+{b:"As que doem", n:1, t:"escolha", q:"A variante tabela+texto dá 0.547 e a volatilidade 0.542. Podes dizer que o texto ganha?",
+ opts:["Não: o intervalo da diferença contém zero","Sim, 0.547 > 0.542","Sim, se disseres que é por pouco","Só se a precisão@5 também subir"], ok:0,
+ a:`<b>Não.</b> A diferença tem intervalo [-0.032, +0.037], que contém zero: são dois pontos dentro
+ do ruído um do outro. O veredicto da QI3 continua "não". Dizer que ganha seria ler uma diferença
+ que a amostra não sustenta — e é o tipo de exagero que rebenta na defesa.`},
+
+{b:"Os números", n:2, t:"escolha", q:"O acréscimo de +0.012 muda a precisão dentro do orçamento de 5 alertas por dia?",
+ opts:["Não: 0.662 com e sem texto","Sobe para 0.674","Desce para 0.632","Sobe para 0.700"], ok:0,
+ a:`<b>Não muda uma casa decimal: 0.662 nas duas.</b> O ganho existe na ordenação do conjunto todo
+ e desaparece quando só se escolhem cinco por dia, que é o que o sistema faz. <b>Um ganho que não
+ sobrevive à métrica de produto não muda o produto</b>, e é assim que fica reportado.`},
+
+{b:"As que doem", n:2, t:"aberta", q:"Se o texto acrescenta, porque é que a resposta à QI3 continua a ser \"não\"? E o que é que o acréscimo muda, então?",
+ a:`Continua "não" porque a pergunta da QI3 é se um modelo com texto <b>bate</b> uma linha de base
+ simples, e não bate: contra a volatilidade a diferença tem intervalo que contém zero. O que o
+ acréscimo muda não é o veredicto, é a sua <b>precisão</b>: passa de "o texto não serve" para
+ <b>onde</b> é que ele não serve. A informação que traz distingue <b>empresas e períodos</b>, e o
+ produto precisava que distinguisse <b>notícias</b> — confirmado pela AUC dentro da empresa, que
+ fica em 0.512 com intervalo a conter 0.5. Daí que o trabalho seguinte não seja procurar um modelo
+ maior: é arranjar um rótulo por notícia.`},
 
 {b:"Os números", n:2, t:"escolha", q:"Em quantas células da grelha de rótulos a volatilidade ganha?",
  opts:["5 de 9","7 de 9","9 de 9","3 de 9"], ok:2,

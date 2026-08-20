@@ -328,7 +328,7 @@ antes de ela fechar. Ninguém ataca quem já concordou.
 
 | Não dizer | Porquê |
 |---|---|
-| "0,667 vs 0,455 prova que o mecanismo funciona ao vivo" | Eram 12 decisões; com 530 o sinal **inverte-se** |
+| "0,667 vs 0,455 prova que o mecanismo funciona ao vivo" | Eram 12 decisões; com **825** o sinal **inverte-se** (0,589 mantidas vs 0,617 suprimidas) |
 | "O gate selecciona notícias materiais" | ROC-AUC 0,486 — retirado |
 | "O corpus abrange meses" | São 27 dias |
 | "Recuperamos precedentes" (sobre a avaliação) | Só 31,1% são anteriores |

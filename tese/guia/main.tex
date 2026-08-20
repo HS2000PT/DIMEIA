@@ -294,6 +294,31 @@ volatilidade ganha nas nove. Um trabalho que só reporta o que corre bem não é
 \end{block}
 \end{frame}
 
+\begin{frame}{\key{Nível 4}: e a metade da resposta que quase ficou por medir}
+Todas as comparações acima põem as variantes \textbf{lado a lado}: respondem a
+\emph{qual é melhor}. Falta a outra pergunta, e é a mais útil para quem constrói:
+\begin{center}
+\textbf{o texto acrescenta ao melhor preditor que já existe?}
+\end{center}
+\vspace{2mm}
+Medido \textbf{por cima} da tabela de consulta por empresa, que é esse melhor preditor:
+\begin{center}
+\key{$+0{,}012$} de PR-AUC, IC $[+0{,}004,\ +0{,}020]$ \quad ---\quad \textbf{exclui zero}
+\end{center}
+É a única vez neste trabalho em que uma representação de texto mostra valor mensurável.
+\vspace{1mm}
+\begin{block}{Mas o veredicto não muda, e dizes tu porquê antes que perguntem}
+\textbf{1.} $0{,}547$ vs $0{,}542$, e o intervalo da diferença \textbf{contém zero} --- não
+digas que ganha;\\
+\textbf{2.} a precisão no orçamento é $0{,}662$ com e sem texto;\\
+\textbf{3.} continua a não separar dois dias da mesma empresa.
+\end{block}
+\begin{center}
+\small \emph{Não é uma ressalva, é uma \textbf{localização}}: o texto distingue
+\textbf{empresas}, e o produto precisava que distinguisse \textbf{notícias}.
+\end{center}
+\end{frame}
+
 % ═══════════════ NÍVEL 5 ═══════════════
 \begin{frame}{\key{Nível 5}: os números de cor}
 \centering
@@ -306,6 +331,7 @@ volatilidade ganha nas nove. Um trabalho que só reporta o que corre bem não é
 \key{0.595} & precisão@5 no corpus completo (80 mil) & QI2 \\
 \key{0.708} vs 0.688 & concordância de direção vs acaso (tema $\neq$ direção) & QI2 \\
 \key{0.542} vs \key{0.496} & PR-AUC: só volatilidade vs contexto$+$texto & QI3 \\
+\key{+0.012} IC $[+0.004, +0.020]$ & o texto \textbf{por cima} da melhor base: acrescenta & QI3 \\
 \key{9 de 9} & células da grelha em que a volatilidade ganha & QI3 \\
 \key{0.379} $\to$ \key{0.632} & precisão no orçamento: acaso $\to$ modelo ($1{,}67\times$) & QI3 \\
 \key{0.662} & o prior de 13 constantes, que \textbf{bate} o modelo & QI3 \\
@@ -338,7 +364,8 @@ evidência.''
 \begin{block}{Não digas ``a precisão ao vivo foi de $0.667$ contra $0.455$''}
 Esse par existiu, e foi \textbf{retirado}: eram \textbf{12 decisões}, com intervalo de
 confiança a $95\%$ de $[0.391,\ 0.862]$, que \textbf{contém} a taxa-base. Refeito sobre o
-registo inteiro ($1\,087$ decisões, $530$ maturadas) o sinal \textbf{inverte-se}.\\[2mm]
+registo inteiro, hoje com \textbf{825} decisões maturadas, o sinal \textbf{inverte-se}:
+mantidas $0.589$ contra suprimidas $0.617$.\\[2mm]
 \textbf{O que dizes:} ``uma percentagem sobre uma amostra pequena não é um resultado, e
 retirei-a''. A lição vale mais do que o número valia.
 \end{block}

@@ -34,6 +34,27 @@ número, porque uma avaliação que só sabe dizer que sim não avalia nada."*
 > ⚠️ **NÃO dizer "quase 4×".** Essa versão foi retirada a 2026-08-13: o chão de `0,163` ordenava por
 > ordem alfabética das empresas, e ao acaso a sério dá `0,379`. O número certo é **1,67×**.
 
+> ### ➕ Acrescentado a 2026-08-20, e repara na precisão que isto traz
+>
+> A resposta acima enuncia a hipótese como *"o texto **acrescenta** sinal **sobre** a
+> volatilidade"* e responde-lhe com `0,542 vs 0,496`, que é uma comparação **lado a lado**.
+> São perguntas diferentes, e um arguente atento pode dar por isso. Agora há a medição certa
+> para a pergunta certa, e ela **melhora** a resposta:
+>
+> ✅ *"E fui medir exactamente essa formulação, porque reparei que a comparação lado a lado não
+> lhe responde. Somado **por cima** do melhor preditor conhecido, que é a tabela de consulta por
+> empresa, o título **acrescenta**: `+0,012` de PR-AUC, com intervalo `[+0,004, +0,020]` que
+> exclui zero. É a única vez neste trabalho em que o texto mostra valor mensurável. **Mas não
+> muda o veredicto**, e digo porquê antes que mo perguntem: contra a volatilidade sozinha a
+> diferença tem intervalo que contém zero; a precisão dentro do orçamento é `0,662` com e sem
+> texto; e continua a não separar dois dias da mesma empresa. O que isto acrescenta não é uma
+> ressalva, é uma **localização** — a informação que o texto traz distingue **empresas**, e o
+> produto precisava que distinguisse **notícias**."*
+>
+> ⚠️ **A armadilha aqui é o entusiasmo.** `0,547` é maior do que `0,542` e é tentador dizer que
+> ganha. **Não ganha** — o intervalo contém zero. Dizer que ganha seria ler uma diferença que a
+> amostra não sustenta, e é o tipo de exagero que rebenta na sala.
+
 **🎓 Q2 (aperta).** *"Se o texto não ajuda, para que serve o modelo? Podia ter usado só a volatilidade
 — um número — e dispensado o machine learning."*
 

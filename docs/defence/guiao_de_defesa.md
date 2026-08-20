@@ -49,6 +49,7 @@ fraqueza.
 | **dir. 0.708 vs chão 0.688** | Consistência de direção dos precedentes *(reforço)* | "Recupera o TEMA, não a DIREÇÃO — tema≠direção quantificado." |
 | **FinBERT 0.420 · E5/BGE ~0.51** | Benchmark de embedders *(reforço)* | "MiniLM validado por medição: domínio pior, modernos empatam." |
 | **texto justo 0.533 < 0.542** | RQ4 re-teste justo (C+PCA+FinBERT) *(reforço)* | "Negativo do texto robusto; PCA recupera de 0,499 mas nunca bate a volatilidade." |
+| **+0.012, IC [+0.004, +0.020]** | O texto **por cima** da tabela de consulta (§5.6.10) *(o resultado novo)* | "Medido por cima do melhor preditor em vez de contra ele, o título **acrescenta**, e o intervalo exclui zero. Mas não bate a volatilidade sozinha, não muda a precisão no orçamento (0.662 nas duas), e não separa dias da mesma empresa. **Localiza o limite: distingue empresas, não notícias.**" |
 | **AMI 0.358 vs 0.188** | Tipo de evento vs ticker, no espaço de embeddings *(Caso 5)* | "O espaço **sabe** o tipo de acontecimento, e sabe-o mais do que sabe a empresa. Mas a silhueta é 0,084: fraco demais para filtrar precedentes, por isso NÃO liguei." |
 | **0.712 vs 0.444** | Pureza dos grupos vs aleatório do mesmo tamanho *(Caso 5)* | "O 0,712 sozinho engana: com um tipo a valer 44% dos rótulos, o acaso já dá 0,444. O ganho real é +0,269." |
 | **0.951/0.902/0.803** | Cobertura conformal, divisão aleatória *(Caso 6)* | "Bate no nominal aos três níveis — prova que a implementação está certa." |
@@ -99,6 +100,33 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 > MECANISMO, a triagem sobe a precisão 1,67x dentro do orçamento (0.632 vs 0.379). O sinal
 > vive no contexto de mercado, e a variante em produção usa exatamente essas features. É a 2.ª vez
 > que a escolha transparente venceu num teste justo. Reporto-o tal como caiu."
+
+> ### ⚠️ E há uma segunda metade desta resposta, acrescentada a 2026-08-20. **Não a percas.**
+>
+> Todas as comparações acima põem as variantes **lado a lado**, e respondem a *qual é melhor*.
+> A pergunta que faltava era outra: **o texto acrescenta ao melhor preditor que existe?** Medido
+> por cima da tabela de consulta por empresa, que é esse melhor preditor:
+>
+> **"Sim. `+0.012` de PR-AUC, com intervalo `[+0.004, +0.020]` que exclui zero. É pequeno, é
+> real, e é a única vez neste trabalho em que uma representação de texto mostra valor
+> mensurável."**
+>
+> **Três ressalvas que tens de dizer a seguir, sem esperar que perguntem** (é isso que separa
+> um resultado defensável de um exagero):
+> 1. **não bate a volatilidade sozinha** — `0.547` contra `0.542`, mas o intervalo da diferença
+>    contém zero. **Nunca digas que ganha.** O veredicto da QI3 continua "não";
+> 2. **não chega ao produto** — a precisão dentro do orçamento é `0.662` com e sem texto, sem
+>    uma casa decimal de diferença. Um ganho que não sobrevive à métrica de produto não muda o
+>    produto;
+> 3. **continua a não separar dias da mesma empresa** — a AUC dentro da empresa fica em `0.512`,
+>    com intervalo a conter `0.5`.
+>
+> **A frase que fecha, e é a que vale a pena decorar:** *"o que isto acrescenta ao «não» não é
+> uma ressalva, é uma **localização**: a informação que o texto traz distingue **empresas e
+> períodos**, e o produto precisava que distinguisse **notícias**. Por isso o trabalho seguinte
+> não é procurar um modelo maior — é arranjar um rótulo por notícia."*
+>
+> Está na Secção 5.6.10 da tese e no veredicto da QI3 do Cap. 6.
 
 ---
 

@@ -119,7 +119,7 @@ Se alguém re-treinar com outra semente, a suite parte.
 | O que digo | Valor | De onde veio | Como calculei | Código | Dados | Tese |
 |---|---|---|---|---|---|---|
 | Decisões registadas | **1.087** | produção | uma linha por decisão de triagem | `postval.py:26` | `predictions_log.jsonl` | §6.5 |
-| Decisões maturadas | **530** | idem | janela (d, d+3] fechada | `postval.py:71` | idem | §6.5 |
+| Decisões maturadas | **825** (eram 530 a 09/08) | idem | janela (d, d+3] fechada | `postval.py:71` | idem | §6.5 |
 | Unidades efectivas | **145** pares (ticker, dia) | idem | o rótulo é por ticker-dia | `evaluate_live_transfer.py` | idem | §6.5 |
 | Mantidas materiais | **0,589** | idem | `mean(label)` nas mantidas | `postval.py:88` | idem | §6.5 |
 | Suprimidas materiais | **0,617** | idem | idem nas suprimidas | `postval.py:88` | idem | §6.5 |
