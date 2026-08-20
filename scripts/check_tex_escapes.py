@@ -58,7 +58,13 @@ def main() -> int:
             if "build" in f.parts:
                 continue
             vistos += 1
-            texto = f.read_text(encoding="utf-8", errors="replace")
+            # Ler BYTES e descodificar a mao, em vez de read_text. Em modo de
+            # texto o Python traduz mudancas de linha, e um CR solto (que e
+            # exactamente o que o escape de \ref deixa para tras) chega ca
+            # dentro ja convertido: o verificador ficava cego a metade dos
+            # defeitos que existe para apanhar. Ver o teste de sabotagem.
+            bruto = f.read_bytes().decode("utf-8", errors="replace")
+            texto = bruto.replace("\r\n", "\n")
             rel = str(f.relative_to(RAIZ))
             for n, linha in enumerate(texto.split("\n"), 1):
                 for ch, palavras in RESTOS:

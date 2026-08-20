@@ -111,6 +111,24 @@ Nenhum modelo que lê o texto do título bateu uma linha de base que usa apenas 
 ($0.496$ contra $0.542$). O resultado sobreviveu a um re-teste em condições favoráveis ao texto, a
 uma reamostragem por grupos, e a nove definições diferentes do rótulo.
 
+A resposta é negativa e é preciso dizê-la com a precisão que ela ganhou no fim do trabalho. Todas
+essas comparações põem as variantes \emph{lado a lado}, e respondem por isso a \emph{qual é
+melhor}. A pergunta que faltava era outra, e mais útil para quem constrói um sistema:
+\emph{o texto acrescenta ao melhor preditor que existe?} Medida assim, por cima da tabela de
+consulta por empresa que a Secção~\ref{sec:av_ablacao} identifica como esse melhor preditor, a
+resposta é \textbf{sim}, com $+0.012$ de PR-AUC e um intervalo $[+0.004, +0.020]$ que exclui zero.
+É pequeno, é real, e é a única vez neste trabalho em que uma representação de texto mostra valor
+mensurável.
+
+Três medições impedem que isso reabra o veredicto, e estão na Secção~\ref{sec:av_acrescimo}: a
+diferença para a volatilidade sozinha continua a ter um intervalo que contém zero; a precisão
+dentro do orçamento não muda uma casa decimal, ou seja o ganho não sobrevive à métrica que
+descreve o produto; e a capacidade de separar dois dias da mesma empresa continua ao nível do
+acaso. O que isto acrescenta ao ``não'' não é uma ressalva, é uma \textbf{localização}: a
+informação que o texto traz distingue empresas e períodos, e o produto precisava que distinguisse
+notícias. É essa a diferença entre um resultado negativo e um resultado negativo compreendido, e é
+ela que aponta o trabalho seguinte na Secção~\ref{sec:con_futuro}.
+
 Esta última resposta é negativa e é a que eu levo mais a sério. Escrevi o critério de sucesso antes
 de correr a experiência, e o resultado foi ao contrário do que eu esperava. Reportá-lo tal como
 caiu era a única opção compatível com o resto do trabalho.

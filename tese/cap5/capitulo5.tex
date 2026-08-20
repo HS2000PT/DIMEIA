@@ -780,7 +780,7 @@ trouxesse informação que os preços não tinham. Sobre este corpus, não traz.
 Foi a primeira hipótese que fui verificar, por três caminhos.
 
 \paragraph{Será que o modelo de texto estava mal afinado?} Repetiu-se a comparação dando ao texto as
-melhores condições possíveis: regularização afinada, redução de dimensionalidade do bloco de texto, e
+melhores condições possíveis: regularização afinada, redução do bloco de texto a $32$ dimensões, e
 um modelo de linguagem especializado em finanças. O melhor resultado do texto sobe para $0.533$,
 e continua abaixo dos $0.542$ da volatilidade.
 
@@ -1399,8 +1399,10 @@ propósito. Uma linha de base errada é pior do que uma linha de base em falta.
 métodos aprendidos ($F_1$ $0.530$ contra $0.269$ e $0.280$) \\
 \textbf{QI2} precedentes & \textbf{Sim} & Precisão@5 de $0.514$ contra $0.346$ (palavras), $0.240$
 (acaso) e $0.126$ (recência); $0.595$ à escala \\
-\textbf{QI3} triagem & \textbf{Não} & Nenhum modelo com texto bate a volatilidade ($0.496$ contra
-$0.542$), e o resultado aguenta três testes de robustez \\
+\textbf{QI3} triagem & \textbf{Não} & Nenhum modelo com texto bate a volatilidade de forma
+sustentada ($0.496$ contra $0.542$; a melhor variante com texto chega a $0.547$, mas a diferença
+tem intervalo que contém zero), e o resultado aguenta os três testes de robustez. \textbf{Mas o
+texto acrescenta} ao melhor preditor conhecido: $+0.012$, IC $[+0.004, +0.020]$ \\
 \bottomrule
 \end{tabular}
 \end{table}
