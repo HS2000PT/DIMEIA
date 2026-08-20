@@ -38,11 +38,12 @@ Estado a 2026-08-20: **sai a zero.** Tese 114 pp, slides 19, guia 20.
 ### ⚠️ Segurança — o mais urgente da lista
 - [ ] **Rodar 4 credenciais expostas.** Por esta ordem:
       1. **PAT do GitHub** — tem `admin: true`, muito mais largo do que o write-back precisa;
-      2. **Finnhub** — **fuga nova, confirmada a 2026-08-06**: a mensagem das `HTTPError` inclui
+      2. **Chave da API do Heroku** — ⚠️ **subiu de prioridade a 2026-08-20:** foi impressa
+         no terminal durante a implantação da v6. Rodar antes das restantes duas.
+      3. **Finnhub** — **fuga nova, confirmada a 2026-08-06**: a mensagem das `HTTPError` inclui
          o URL do pedido, e o URL leva o token, portanto a chave ficou escrita centenas de vezes
          nos registos do Heroku. O código já mascara (`sem_segredos`), mas **a máscara não
          desfaz esta fuga**;
-      3. **Chave da API do Heroku**;
       4. **AlphaVantage**.
       Depois de rodar: `heroku config:set` para as novas, e confirmar que o worker recupera.
 - [x] ~~**VM Oracle Free (para alertas em minutos)**~~ — **SUPERADO a 2026-08-02.** O que isto
