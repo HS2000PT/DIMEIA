@@ -94,9 +94,16 @@ news:
   # desempate quando a KB viva tiver casos; os históricos continuam a aparecer quando são
   # os únicos no tema (decisão de produto, divulgada).
   recency_half_life_days: 120
-  # Corte duro de idade (dias). null = sem corte. NOTA: só faz sentido definir (ex.: 730)
-  # quando a KB viva já tiver meses de casos — antes disso cortaria quase tudo.
-  # Rever ~agosto/2026 (a KB viva começa a maturar ~2026-07-17).
+  # Corte duro de idade (dias). null = sem corte.
+  # ⚠️ REVISTO a 2026-08-20, e a decisão é **manter null**, por medição e não por inércia.
+  # A proposta era 730 dias. Contadas as idades da base que a produção realmente consulta:
+  # o `backfill_kb` tem 38 214 casos com idade máxima de **377 dias** e a KB viva tem 11 445
+  # com máxima de **94**. Um corte a 730 removeria **zero** casos — seria configuração morta
+  # com aparência de rigor, que é exactamente o que se recusou nos pisos da escada.
+  # O decaimento por recência (half-life de 120 dias) já faz o trabalho: um caso de 377 dias
+  # entra com peso ~0.11 e só ganha se não houver nada mais recente no tema.
+  # Volta a fazer sentido quando a base tiver casos com mais de dois anos, ou seja não antes
+  # de meados de 2027.
   max_precedent_age_days: null
 
 # NARRADOR ANCORADO (opcional; off por defeito). Antepõe ao alerta um parágrafo em linguagem

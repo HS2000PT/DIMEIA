@@ -104,8 +104,11 @@ Estado a 2026-08-20: **sai a zero.** Tese 116 pp, slides 21, guia 24, quizz 37 p
       04-05/07, alinhados ao 1.º dia de negociação 06/07), 1.043 pendentes, e o log do scan
       diz "[kb-viva] 13 caso(s) recente(s) em uso" — os precedentes de 2026 já entram no
       retrieval.
-- [ ] ~Agosto: quando a KB viva tiver semanas de casos, definir `news.max_precedent_age_days`
-      (proposta: 730) no alerts.yaml — o corte duro de idade dos precedentes.
+- [x] ~~Definir `news.max_precedent_age_days`~~ ✅ **DECIDIDO 2026-08-20: fica `null`**, e a
+      decisão é por medição. A base que a produção consulta tem idade máxima de **377 dias**
+      (38 214 casos do backfill) e **94 dias** (11 445 na KB viva); um corte a 730 removeria
+      **zero** casos. Seria configuração morta com aparência de rigor. O decaimento por
+      recência (half-life 120 d) já faz o trabalho. Rever se a base passar dos dois anos.
 - [x] ~~Platt vs isotonic no PC do FNSPID~~ ✅ **FEITO 13/07** (afinal ESTE PC tem o dataset):
       `scripts/evaluate_calibration_ext.py` reproduz o protocolo congelado 5/5 ao milésimo e
       compara — **a Platt ganha ou empata no Brier em TODAS as famílias** (ECE misto, margens
