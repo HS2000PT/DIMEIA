@@ -5,7 +5,7 @@
 > novo manda evitar.
 >
 > **O guião a usar é o [`tese/GRAVACAO.md`](../../tese/GRAVACAO.md)**: 2m30, três partes, alinhado
-> com os 19 slides e com o que está no ar.
+> com os 20 slides e com o que está no ar.
 >
 > Este fica como registo de como a demonstração era pensada antes, e porque mudou.
 

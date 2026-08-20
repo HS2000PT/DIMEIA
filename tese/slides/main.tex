@@ -349,7 +349,7 @@ estiver acima de $0.50$.
 \vspace{-1mm}
 \begin{center}
 Em \textbf{84\%} das decisões, o resultado estava determinado\\
-pela \textbf{empresa} antes de o título ser lida.
+pela \textbf{empresa} antes de o título ser lido.
 \end{center}
 \vspace{1mm}
 {\footnotesize A Apple não conseguia gerar um alerta de notícia. A AMD passava em $963$ de $963$.}
@@ -378,15 +378,68 @@ orçamento e o sistema \emph{implantava} uma de limiar.
 \end{frame}
 
 % ══ 6. O QUE APRENDI ════════════════════════════════════════════════════════
+\begin{frame}{Então quanto vale o modelo? Duas medições que respondem}
+\small
+\begin{columns}[T]
+\begin{column}{0.47\textwidth}
+\textbf{1. Tirei-lhe a notícia.}\\[1mm]
+{\scriptsize Uma \emph{tabela de consulta}: um número fixo por empresa, zero informação sobre o
+título.}
+\vspace{1mm}
+\begin{center}\scriptsize
+\begin{tabular}{lc}
+\toprule
+\textbf{o que vê} & \textbf{PR-AUC} \\
+\midrule
+o implantado, nove entradas & $0.538$ \\
+\textbf{só a empresa} & $\mathbf{0.534}$ \\
+sem nada da empresa & $0.378$ \\
+só o comprimento do título & $0.378$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{1mm}
+{\scriptsize Diferença de $0.004$, e $0.378$ é o chão. \textbf{O modelo implantado é uma tabela de
+consulta.}}
+\end{column}
+\begin{column}{0.47\textwidth}
+\textbf{2. Comparei o sistema inteiro.}\\[1mm]
+{\scriptsize Precisão nas cinco notícias que o produto mostra por dia.}
+\vspace{1mm}
+\begin{center}\scriptsize
+\begin{tabular}{lc}
+\toprule
+\textbf{política} & \textbf{prec.@5} \\
+\midrule
+ao acaso & $0.375$ \\
+quem mais se mexeu hoje & $0.489$ \\
+\textbf{o sistema} & $\mathbf{0.632}$ \\
+volatilidade, treze constantes & $0.662$ \\
+oráculo & $0.968$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{1mm}
+{\scriptsize Bate a alternativa realista. \textbf{Mas o oráculo é a informação nova:} as notícias
+importantes \emph{estão} no lote.}
+\end{column}
+\end{columns}
+\vspace{2mm}
+\begin{center}
+A margem que falta não está em melhores dados. Está em \textbf{separar duas notícias da mesma
+empresa no mesmo dia}.
+\end{center}
+\end{frame}
+
 \begin{frame}{Limitações, ditas antes de me perguntarem, e o que as fecha}
 \textbf{Cada limitação foi medida}, e a coluna da direita é o trabalho que ela pede.
-\vspace{3mm}
+\vspace{1.5mm}
 \begin{center}
 \begin{tikzpicture}[font=\scriptsize, >={Stealth[length=2mm]},
   lim/.style={draw, rounded corners, align=left, text width=4.3cm, inner sep=3pt,
-              minimum height=0.82cm, fill=black!5},
+              minimum height=0.72cm, fill=black!5},
   fut/.style={draw, rounded corners, align=left, text width=3.9cm, inner sep=3pt,
-              minimum height=0.82cm, fill=black!2},
+              minimum height=0.72cm, fill=black!2},
   cst/.style={align=center, text width=1.7cm, text=black!60},
 ]
   \node[font=\bfseries\scriptsize] at (0,1.0)   {limitação medida};
@@ -397,19 +450,20 @@ orçamento e o sistema \emph{implantava} uma de limiar.
     0/{Nenhuma avaliação com pessoas}/{Correr o estudo: 6 a 10 pessoas}/{calendário},%
     1/{O modelo implantado é uma tabela de consulta}/{Entradas que variem com o título}/{baixo},%
     2/{Cobertura de $88.5\%$, e $50\%$ na pior}/{Julgamento humano sobre uma amostra}/{calendário},%
-    3/{Lê o título e não o corpo}/{Ler o corpo dos artigos}/{dados novos}%
+    3/{Lê o título e não o corpo}/{Ler o corpo dos artigos}/{dados novos},%
+    4/{Deriva: a entrada de que mais depende é a que mais derivou}/{Re-treinar com o que se observa}/{baixo}%
   } {
-    \node[lim] (L\xn) at (0,-\xn*1.05) {\xlim};
-    \node[fut] (F\xn) at (6.1,-\xn*1.05) {\xfut};
-    \node[cst] at (10.0,-\xn*1.05) {\xcus};
+    \node[lim] (L\xn) at (0,-\xn*0.92) {\xlim};
+    \node[fut] (F\xn) at (6.1,-\xn*0.92) {\xfut};
+    \node[cst] at (10.0,-\xn*0.92) {\xcus};
     \draw[->, thick, black!45] (L\xn) -- (F\xn);
   }
 \end{tikzpicture}
 \end{center}
-\vspace{2mm}
+\vspace{0.5mm}
 {\footnotesize \textbf{Mais duas:} o atraso é da \emph{fonte} e não da infraestrutura
 ($\approx$2.5\,h até detetar, 1\,s até entregar); e \textbf{nada volta a ser treinado}, porque a
-base de casos cresce sozinha, os pesos não, e a deriva é medida e não corrigida.}
+base de casos cresce sozinha, os pesos não.}
 \end{frame}
 
 % ══ 7. DEMONSTRAÇÃO ═════════════════════════════════════════════════════════
