@@ -86,6 +86,21 @@ def _select(entries: list, seed: int) -> list[dict]:
     escolhidos += rng.sample(restantes, 3 - len(escolhidos))
     escolhidos += rng.sample(market, 3)
 
+    # ⚠️ Entrelaçar notícia e mercado antes de numerar. O `_assign` parte a lista ao meio, e
+    # com os três de notícia à frente e os três de mercado atrás cada metade ficava de um tipo
+    # só: uma condição via sempre notícia e a outra sempre mercado. O cruzamento do `_assign`
+    # equilibra isso ENTRE participantes, mas entrelaçar equilibra-o também DENTRO de cada um,
+    # e com oito pessoas a variância é que decide se se vê alguma coisa.
+    noticia = [e for e in escolhidos if e.kind == "news"]
+    mercado = [e for e in escolhidos if e.kind == "market"]
+    entrelacados: list = []
+    for i in range(max(len(noticia), len(mercado))):
+        if i < len(noticia):
+            entrelacados.append(noticia[i])
+        if i < len(mercado):
+            entrelacados.append(mercado[i])
+    escolhidos = entrelacados
+
     out = []
     for i, e in enumerate(escolhidos, start=1):
         out.append({
@@ -101,20 +116,41 @@ def _select(entries: list, seed: int) -> list[dict]:
 
 
 def _assign(stimuli: list[dict], n_participants: int) -> list[dict]:
-    """Contrabalanço: metade A→B, metade B→A, e alertas DIFERENTES em cada condição
-    (senão o participante limitava-se a lembrar-se do primeiro)."""
+    """Contrabalanço em DOIS factores cruzados, e o segundo faltava.
+
+    Os alertas têm de ser diferentes em cada condição, senão o participante limita-se a
+    lembrar-se do primeiro. Mas fazer isso obriga a decidir *que* metade vai para a condição
+    A, e a primeira versão deste gerador punha **sempre** o grupo 1 em A e o grupo 2 em B,
+    cruzando apenas a ordem.
+
+    ⚠️ Isso confunde a condição com o conjunto de estímulos: qualquer diferença entre A e B
+    podia ser causada por uma metade ser mais fácil do que a outra, e não pela explicação.
+    Pior, o caso tema≠direção, que é o mais difícil de todos, é sempre o S1 e ficava sempre em
+    A — a condição de referência —, o que faz a referência parecer pior e **enviesa a favor do
+    sistema que este trabalho está a avaliar**.
+
+    Agora cruzam-se os dois factores, o que dá quatro células:
+
+        p ímpar  -> vê a condição A primeiro;      p par    -> vê a B primeiro
+        ((p-1)//2) par -> grupo 1 é o material de A;  ímpar -> grupo 2 é o material de A
+
+    Com oito participantes cada célula recebe dois, e o efeito do conjunto de estímulos
+    cancela-se entre participantes em vez de se somar ao efeito da condição.
+    """
     metade = len(stimuli) // 2
     grupo1, grupo2 = stimuli[:metade], stimuli[metade:]
     plano = []
     for p in range(1, n_participants + 1):
         a_primeiro = p % 2 == 1
+        g1_em_a = ((p - 1) // 2) % 2 == 0
+        mat_a, mat_b = (grupo1, grupo2) if g1_em_a else (grupo2, grupo1)
         plano.append({
             "participant": f"P{p:02d}",
             "order": "A→B" if a_primeiro else "B→A",
             "cond1": {"condition": "A" if a_primeiro else "B",
-                      "stimuli": [s["id"] for s in (grupo1 if a_primeiro else grupo2)]},
+                      "stimuli": [s["id"] for s in (mat_a if a_primeiro else mat_b)]},
             "cond2": {"condition": "B" if a_primeiro else "A",
-                      "stimuli": [s["id"] for s in (grupo2 if a_primeiro else grupo1)]},
+                      "stimuli": [s["id"] for s in (mat_b if a_primeiro else mat_a)]},
         })
     return plano
 
@@ -125,6 +161,11 @@ def main() -> int:
     ap.add_argument("--url", default=DEFAULT_URL)
     ap.add_argument("--participants", type=int, default=8)
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument(
+        "--bloco-c", action="store_true",
+        help="escrever tambem a folha do bloco C. NAO usar: as rotas que serviam o relatorio "
+             "gerado foram retiradas da API a 2026-08-20 e o bloco mede uma funcionalidade que "
+             "o produto entregue nao tem. Ver usefulness_study.md secao 9.")
     args = ap.parse_args()
 
     entries = _history(args.url)
@@ -158,8 +199,16 @@ def main() -> int:
 
     # ── 2. Plano de contrabalanço ─────────────────────────────────────────────
     P = ["# Counterbalancing plan", "",
-         "Half the participants see A first, half see B first, and the two conditions use",
-         "**different** alerts — otherwise the second condition would just be recall.", "",
+         "**Two factors are crossed, not one.**", "",
+         "1. **Order.** Half see condition A first, half see B first.",
+         "2. **Which alerts are shown as A.** The two conditions must use *different* alerts,",
+         "   otherwise the second one only measures recall. That forces a choice of which half",
+         "   goes into A — and if the same half always did, any A-vs-B difference could just be",
+         "   one half being easier. So half the participants get set 1 as A and half get set 2.",
+         "", "Each set therefore appears the same number of times in A as in B, and the",
+         "stimulus effect cancels between participants instead of adding to the condition",
+         "effect. Each set also mixes news and market alerts, so neither condition is all of",
+         "one type for any single participant.", "",
          "| Participant | Order | Condition 1 | Condition 2 |", "|---|---|---|---|"]
     for row in plano:
         P.append(f"| {row['participant']} | {row['order']} | "
@@ -180,6 +229,12 @@ def main() -> int:
     (OUT_DIR / "responses_template.csv").write_text("\n".join(linhas) + "\n", encoding="utf-8")
 
     # ── 3b. Folha do BLOCO C (texto gerado) ───────────────────────────────────
+    # ⛔ NÃO é escrita por defeito desde 2026-08-20. O bloco C testa o relatório gerado, e as
+    # rotas que o serviam foram retiradas da API; a tese curta também não reivindica camada
+    # generativa nenhuma. Emitir a folha convidaria alguém a correr um bloco que mede uma
+    # funcionalidade que o produto entregue não tem. O código fica, atrás de uma opção
+    # explícita, porque é o desenho que se usaria se a camada voltasse a ser exposta.
+    #
     # Ficheiro SEPARADO de propósito: o bloco C é exploratório (§9.5 do protocolo) e as suas
     # linhas não podem entrar na mesma tabela que as do A/B sem sugerir que têm o mesmo estatuto.
     # `report_source` existe porque um estímulo que caiu na composição determinística NÃO testa a
@@ -196,8 +251,9 @@ def main() -> int:
         # Três frases ancoradas por participante, escolhidas ANTES da sessão (H5).
         for _ in range(3):
             linhas_c.append(f"{row['participant']},{row['order']},C2-anchor,,,,,,,,,,,,")
-    (OUT_DIR / "responses_block_c_template.csv").write_text(
-        "\n".join(linhas_c) + "\n", encoding="utf-8")
+    if args.bloco_c:
+        (OUT_DIR / "responses_block_c_template.csv").write_text(
+            "\n".join(linhas_c) + "\n", encoding="utf-8")
 
     # ── 4. Guião do facilitador ───────────────────────────────────────────────
     guiao = f"""# Facilitator script ({args.participants} participants, ~15 min each)
@@ -232,28 +288,29 @@ def main() -> int:
 
 That writes `docs/evaluation/evaluation_usefulness.md` — the Case Study 5 table.
 
-## Optional block C — the generated report (exploratory)
+## ⛔ Block C — do not run it
 
-Run this only if the participant still has energy; it adds ~10 min. It is **exploratory**, so its
-sheet is separate (`responses_block_c_template.csv`) and its rows must never be pooled with A/B.
+Block C tested the generated report. **The product no longer serves it.** The `/api/report` and
+`/api/evidence` routes were withdrawn on 2026-08-20, and the short thesis does not claim a
+generative layer at all — §2.7 argues *against* the generated summary. Running it would measure
+a feature the delivered system does not have.
 
-- Stimuli: `report_stimuli.md`, captured once from production and **frozen** (the report is written
-  by a language model and is not reproducible; generating it live would measure the model's
-  variation instead of the condition).
-- C1 = the panels alone · C2 = the panels plus the anchored report.
-- Then the part that matters most, and needs no statistics: pick **three anchored sentences** in
-  advance and ask the participant to open the cited fact and say whether it supports the sentence.
-  **Give no help.** If people cannot do it, the anchoring contribution is true and unusable.
-- Record `report_source` for each stimulus: one that fell back to the deterministic composition
-  does **not** test the generative layer.
+Verified by running it, not by assuming: `capture_report_stimuli.py` returns `HTTPError` for every
+ticker and writes nothing. The reasoning is in `docs/design/usefulness_study.md` §9.
+
+If someone asks what that leaves: the anchoring guarantee is still checked by machine and **never
+by a human**, and that stays the honest answer.
 """
     (OUT_DIR / "facilitator_script.md").write_text(guiao, encoding="utf-8")
 
     duros = sum(1 for s in stimuli if s["hard"])
     print(f"\n[ok] {len(stimuli)} estímulos ({duros} tema≠direção) · "
           f"{args.participants} participantes")
-    for f in ("stimuli.md", "counterbalancing.md", "responses_template.csv",
-              "responses_block_c_template.csv", "facilitator_script.md"):
+    escritos = ["stimuli.md", "counterbalancing.md", "responses_template.csv",
+                "facilitator_script.md"]
+    if args.bloco_c:
+        escritos.append("responses_block_c_template.csv")
+    for f in escritos:
         print(f"     docs/study/{f}")
     print("\nPróximo passo é humano: recrutar 6–10 pessoas e preencher responses.csv.")
     return 0

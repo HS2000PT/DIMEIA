@@ -131,6 +131,30 @@ já é uma resposta muito mais forte do júri do que "não medimos".
 
 ## 9. Bloco C — o texto gerado (acrescentado a 2026-08-13)
 
+> # ⛔ NÃO CORRER. Fora de âmbito desde 2026-08-20, e a razão não é falta de tempo.
+>
+> **O que este bloco testa deixou de estar no produto.** A 3.ª parte da sessão 61 retirou sete
+> rotas da API, entre elas o `POST /api/report` e o `GET /api/evidence`, que são exactamente as
+> duas de que o Bloco C depende. Verificado por execução a 2026-08-20:
+> `python scripts/capture_report_stimuli.py --base <produção>` devolve `HTTPError` em todos os
+> tickers e **não escreve nada** — o script falha fechado, como deve.
+>
+> **E a retirada foi deliberada, não um acidente a corrigir.** O texto gerado era servido por
+> dois `POST` públicos sem limite de ritmo contra a quota de um fornecedor de LLM, e **a tese
+> curta não reivindica camada generativa nenhuma**: o §2.7 posiciona-se precisamente *contra* o
+> resumo gerado. Correr o Bloco C mediria a utilidade de uma funcionalidade que o sistema
+> entregue não tem e que o documento não afirma ter.
+>
+> **O que fica em vez disso, e é a resposta honesta a dar se perguntarem:** a garantia de
+> ancoragem continua verificada por máquina (23/23 ataques bloqueados, 8/8 controlos de texto
+> fiel) e **nunca por um humano**. A H5 — *dada uma frase com âncora, uma pessoa consegue abrir
+> o facto e julgar se ele a sustenta?* — permanece **por medir**, e é isso que se diz. O código
+> da camada continua no repositório e testado, porque as teses longas descrevem-no; o que saiu
+> foi a exposição.
+>
+> Este bloco fica escrito por inteiro, e não apagado, por duas razões: é o desenho que se usaria
+> se a camada voltasse a ser exposta, e apagá-lo esconderia que a pergunta existe.
+
 > **Porque é que este bloco existe, e porque é que NÃO estava aqui.** Este protocolo foi escrito na
 > sessão 42, antes de existir a camada generativa. Desde a sessão 56 a 5.ª contribuição da tese é
 > **geração ancorada**, e o `CLAUDE.md` passou a afirmar que o estudo humano "cobre também o texto
