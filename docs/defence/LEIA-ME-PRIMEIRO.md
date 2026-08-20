@@ -53,8 +53,8 @@ defender**.
 
 Para a defesa, os materiais alinhados com a tese entregue são:
 
-- `tese/slides/main.tex` — 20 slides, os que vais projetar
-- `tese/guia/main.tex` — 22 slides de estudo
+- `tese/slides/main.tex` — 21 slides, os que vais projetar
+- `tese/guia/main.tex` — 24 slides de estudo
 - `tese/quiz/index.html` — o quizz, para o telemóvel
 - `tese/GRAVACAO.md` — o guião da gravação da demonstração
 

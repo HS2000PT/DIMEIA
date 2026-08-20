@@ -36,7 +36,7 @@ Corre isto **uma vez com internet**, em casa. Fica em cache local, e a partir da
 rede. Na sala, corre com `--offline` e não dependes de nada.
 
 Confirma também que os PDFs estão no portátil, e que são os certos: **`tese/main.pdf`** (a
-dissertação que entregaste), `tese/slides/main.pdf` (os 20 slides) e `tese/guia/main.pdf`.
+dissertação que entregaste), `tese/slides/main.pdf` (os 21 slides) e `tese/guia/main.pdf`.
 As teses longas em `thesis/` e `thesis-pt/` foram superadas e não são o que vais defender.
 
 ---

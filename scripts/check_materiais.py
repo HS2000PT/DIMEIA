@@ -44,6 +44,11 @@ def limpa(t: str) -> str:
     t = re.sub(r"<style.*?</style>", " ", t, flags=re.S | re.I)
     t = re.sub(r"\\begin\{lstlisting\}.*?\\end\{lstlisting\}", " ", t, flags=re.S)
     t = re.sub(r"```.*?```", " ", t, flags=re.S)
+    # ⚠️ MEDIDAS DE COMPOSICAO NAO SAO RESULTADOS. Um "0.62" em `egin{column}{0.62	extwidth}`
+    # ou em `height=0.78	extheight` e uma fraccao da pagina, nao um numero que a tese afirme.
+    # Sem isto o verificador acusava cinco larguras de coluna como afirmacoes sem fonte, e um
+    # verificador que grita de mais deixa de ser lido -- este projecto ja pagou isso cinco vezes.
+    t = re.sub(r"\d+\.\d+\s*\\(?:text|line|column|page)(?:width|height)", " ", t)
     return t
 
 

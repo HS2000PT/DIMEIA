@@ -13,7 +13,7 @@
 |---|---|
 | `python scripts/check_entrega.py` | **sai a zero** |
 | Tese curta | 114 pp · 0 erros · 0 referências indefinidas · overfull máx 5 pt |
-| Slides · guia · quizz | 20 · 22 · quizz 37, verificados por porta |
+| Slides · guia · quizz | 21 · 24 · quizz 37, verificados por porta |
 | Suite | 737 testes, 0 falhas |
 | Ligações da bibliografia | **0 partidas** (ver F1) |
 | Achados de citação por consumir | **122** (ver F1) |
@@ -147,7 +147,7 @@ a bater, e o diff desta fase não toca em nenhum `$...$` nem em nenhum `\cite`.
 lado — a ablação da identidade ($0.534$ contra $0.538$, e $0.378$ sem nada da empresa) e as
 linhas de base ponta a ponta ($0.375$ · $0.489$ · $0.632$ · $0.662$ · oráculo $0.968$). A
 **deriva** saiu do rodapé e passou a linha própria na tabela das limitações. O *slide* de
-fecho já existia. O `GRAVACAO.md` passou a apontar para o *slide* 19 de 20.
+fecho já existia. O `GRAVACAO.md` passou a apontar para o *slide* 20 de 21.
 
 **O que fazer:** o aluno tem 20 minutos, o que dá menos de um minuto por *slide* e é apertado.
 **Expandir só se cada *slide* novo ensinar alguma coisa que o júri vá perguntar.** Candidatos, e

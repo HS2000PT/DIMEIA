@@ -40,6 +40,25 @@
   `requirements.txt` que o Heroku instala. Não são importadas pelo caminho vivo (não custam
   memória, custam tamanho de slug) e as figuras das teses longas documentam-nas. **Ficam**, com a
   receita de remoção escrita para depois da entrega.
+  **(A4) OS SLIDES E O GUIA GANHAM A PÁGINA, e é a mesma captura da tese.** Slides **20 → 21**:
+  um frame novo, *"As três perguntas, respondidas no ecrã"*, que fecha o ciclo do primeiro frame
+  do deck — as três perguntas com que ele abre, respondidas sobre um caso real. E a
+  **Demonstração** deixa de ser só a palavra `[gravação]`: recebe a captura do **funil**, que é
+  o plano B que o comentário do próprio ficheiro já prometia desde a sessão 60 e que **nunca
+  tinha existido**. É a escolha certa para plano B: nove em cada dez varreduras não enviam nada,
+  logo o silêncio é justamente o que uma demonstração ao vivo não consegue mostrar.
+  Guia **22 → 24**, com as duas metades e o que apontar em cada uma.
+  ⚠️ **Três defeitos de composição, todos só visíveis a renderizar:** a captura é alta e a
+  `width=	extwidth` fazia-a **transbordar do slide**, cortando a lista de dias (passa a
+  `height=`); o funil ficava colado ao texto que se lhe seguia, porque um `\includegraphics`
+  sem parágrafo deixa o texto correr ao lado; e o frame do guia ficou **sem `\end{frame}`** e o
+  LaTeX só disse *"File ended while scanning"*, que não aponta para o sítio.
+  **⚠️ (A5) E O MEU PRÓPRIO VERIFICADOR GRITOU DE MAIS: acusou cinco larguras de coluna.**
+  O `check_materiais` compara decimais dos materiais contra a tese, e passou a ver
+  `0.62	extwidth` e `height=0.78	extheight` como afirmações sem fonte. Medidas de composição
+  não são resultados. Corrigido no verificador — **e a primeira correcção não funcionava**: a
+  expressão que escrevi era um no-op e o verificador passava por outra razão. Só se apanha
+  plantando um número falso e exigindo que ele dispare, que é o que se fez.
   **PORTAS: `check_entrega.py` a zero, tese 116 pp, 44 números conferidos contra a fonte, 746
   testes.** ⚠️ **E as portas apanharam-me duas vezes nesta parte:** dois travessões e um
   «exactamente» que eu próprio escrevi no texto novo.
