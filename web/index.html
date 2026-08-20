@@ -155,6 +155,7 @@
                               box-shadow:inset 2px 0 0 var(--acento); }
   .dia .quando { color:var(--fraco); font-variant-numeric:tabular-nums; }
   .dia .z { color:var(--fraco); font-size:.8rem; }
+  .dia .quieto { color:var(--fraco); }
   .dia .selo { color:var(--acento); font-weight:600; font-size:.78rem;
                text-transform:uppercase; letter-spacing:.05em; }
   @keyframes surge { from { opacity:0; transform:translateY(-3px); } }
@@ -455,13 +456,17 @@ function desenhar(a) {
   document.getElementById("dias").innerHTML = todos.length
     ? todos.map(d => {
         const al = enviados.get(d) || soltos.get(d), z = eventos.get(d);
+        // ⚠️ A frase "Flagged by the detector, no alert" repetida vinte e nove vezes seguidas
+        // é ruído, não informação: o que ela diz já está na legenda por cima. Os dias que
+        // interessam dizem o que foram; os outros ficam quietos, com o z alinhado a duas casas.
         const que = soltos.has(d) ? "Alert sent, after the last close shown"
                   : al ? (al.kind === "market" ? "Unusual move, alert sent" : "News alert sent")
-                  : "Flagged by the detector, no alert";
+                  : "no alert";
         return `<button class="dia" data-dia="${esc(d)}" aria-pressed="false">
                   <span class="quando">${esc(d)}</span>
-                  <span>${esc(que)}</span>
-                  <span class="${al ? "selo" : "z"}">${al ? "sent" : (z != null ? "z " + z : "")}</span>
+                  <span class="${al ? "" : "quieto"}">${esc(que)}</span>
+                  <span class="${al ? "selo" : "z"}">${al ? "sent"
+                      : (z != null ? "z " + Number(z).toFixed(2) : "")}</span>
                 </button>`;
       }).join("")
     : `<p class="vazio" style="padding:10px 2px">No flagged day in this window.</p>`;
