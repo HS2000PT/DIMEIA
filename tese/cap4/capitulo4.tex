@@ -117,7 +117,7 @@ cada um deles é uma dependência, um limite, e uma decisão que podia ter sido 
 Tabela~\ref{tab:sis_pecas} lista todas, com o que cada uma faz, o que custa, e o que foi
 \emph{rejeitado} em favor dela.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \caption[Tudo o que o sistema usa de fora]{As dependências externas, nomeadas. A coluna da direita
 é a que interessa: uma escolha só se defende contra a alternativa que não foi tomada.}
 \label{tab:sis_pecas}
@@ -200,7 +200,7 @@ filtro de relevância} que já está em produção, porque tudo o que é rejeita
 existir para o sistema. A Tabela~\ref{tab:sis_fontes} mede exatamente isso, sobre as doze empresas
 e três dias.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \caption[As três fontes, medidas]{O que cada fonte gratuita entrega depois do filtro de
 relevância. A última coluna é a que decide se compensa somar: quantos títulos cada uma traz
 que \emph{nenhuma} das outras traz.}
@@ -298,7 +298,7 @@ varreduras acabam assim.}
 \label{fig:caminho}
 \end{figure}
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \caption[Uma notícia real, etapa a etapa]{O que aconteceu em cada etapa para o alerta da Meta de 12
 de julho de 2026. Todos os valores são os que o sistema calculou nesse dia.}
 \label{tab:sis_caminho}
@@ -392,7 +392,7 @@ saíram \textbf{42} alertas, ou seja cerca de uma em cada vinte e duas.
 Vale a pena ver isto num dia concreto, com os números lidos do registo do próprio sistema. A
 Tabela~\ref{tab:sis_funil} mostra as avaliações registadas a 15 de agosto de 2026.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \caption[O funil de um dia real]{Onde morreram as avaliações registadas a 15 de agosto de 2026.
 São as $5\,060$ que o registo continha no momento em que foi lido, o que é \emph{parte} de um dia e
 não o dia inteiro. O que se lê aqui são proporções, não totais. A coluna da direita é a parte que
@@ -436,7 +436,7 @@ portas e apenas $5$ foram enviadas.
 Cada porta tem uma constante associada, e é justo perguntar de onde vêm esses números. A
 Tabela~\ref{tab:sis_portas} responde, incluindo quando a resposta é ``foi escolhido''.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \caption[As portas e as suas constantes]{As portas que têm uma constante associada, e de onde
 vem cada valor. A porta ``já avisei hoje'' não aparece porque não tem constante nenhuma, e o
 orçamento diário aparece porque, apesar de atuar depois das portas da figura, é hoje quem
@@ -562,10 +562,13 @@ movimento a cinco dias da medição de impacto, e os $57\%$ do modelo calibrado.
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=0.76\textwidth]{figures/app_v6_empresa.png}
+% ⚠️ Larguras apertadas depois de o LaTeX avisar "Float too large for page by 41.6pt": as duas
+% capturas mais a legenda não cabiam na caixa, e a legenda descia até à linha do número de
+% página. É um aviso e não um erro, portanto não para a compilação: só se vê a renderizar.
+\includegraphics[width=0.70\textwidth]{figures/app_v6_empresa.png}
 
-\vspace{4mm}
-\includegraphics[width=0.92\textwidth]{figures/app_v6_silencio.png}
+\vspace{3mm}
+\includegraphics[width=0.86\textwidth]{figures/app_v6_silencio.png}
 \caption[A página, capturada em funcionamento]{A página, capturada da aplicação em
 funcionamento a 20 de agosto de 2026, com a sessão americana a decorrer.
 \textbf{Em cima}, uma empresa. \textbf{Em baixo}, as
@@ -761,7 +764,7 @@ ter.
 A segunda apareceu ao medir, e é uma lição de engenharia que vale por si. Está na
 Tabela~\ref{tab:sis_memoria}.
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \caption[O mesmo conteúdo, três formatos]{Custo de memória para os mesmos $38\,214$ vetores de
 $384$ dimensões. O contentor de produção tem $512$ MB.}
 \label{tab:sis_memoria}
@@ -814,7 +817,7 @@ garante que os dois não enviam a mesma coisa duas vezes.
 E aqui está o resultado, na Tabela~\ref{tab:sis_latencia}, que é mais interessante do que a
 decisão:
 
-\begin{table}[ht]
+\begin{table}[!htbp]
 \caption[O que o ciclo de 60 segundos comprou]{Latência medida sobre os alertas entregues. As duas
 primeiras linhas separam as duas eras; as duas últimas repartem o percurso e são medidas sobre o
 conjunto \emph{inteiro}, as duas eras juntas, e por isso não se subtraem às de cima. O tempo está
