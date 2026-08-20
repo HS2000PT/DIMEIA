@@ -49,13 +49,13 @@
   logo o silêncio é justamente o que uma demonstração ao vivo não consegue mostrar.
   Guia **22 → 24**, com as duas metades e o que apontar em cada uma.
   ⚠️ **Três defeitos de composição, todos só visíveis a renderizar:** a captura é alta e a
-  `width=	extwidth` fazia-a **transbordar do slide**, cortando a lista de dias (passa a
+  `width=\textwidth` fazia-a **transbordar do slide**, cortando a lista de dias (passa a
   `height=`); o funil ficava colado ao texto que se lhe seguia, porque um `\includegraphics`
   sem parágrafo deixa o texto correr ao lado; e o frame do guia ficou **sem `\end{frame}`** e o
   LaTeX só disse *"File ended while scanning"*, que não aponta para o sítio.
   **⚠️ (A5) E O MEU PRÓPRIO VERIFICADOR GRITOU DE MAIS: acusou cinco larguras de coluna.**
   O `check_materiais` compara decimais dos materiais contra a tese, e passou a ver
-  `0.62	extwidth` e `height=0.78	extheight` como afirmações sem fonte. Medidas de composição
+  `0.62\textwidth` e `height=0.78\textheight` como afirmações sem fonte. Medidas de composição
   não são resultados. Corrigido no verificador — **e a primeira correcção não funcionava**: a
   expressão que escrevi era um no-op e o verificador passava por outra razão. Só se apanha
   plantando um número falso e exigindo que ele dispare, que é o que se fez.
