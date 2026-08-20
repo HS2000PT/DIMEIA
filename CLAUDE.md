@@ -7,6 +7,42 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 61 — 4.ª parte (2026-08-20): A DIRECTIVA-MESTRA FOI REENVIADA, e desta vez foi
+  EXECUTADA pela §78 — inspeccionar antes de mexer. Produziu uma experiência nova e um achado que
+  a tese não dizia.**
+  **AUDITORIA:** [`INVESTIGATOR_MASTER_AUDIT.md`](INVESTIGATOR_MASTER_AUDIT.md), tudo medido com
+  comandos e não citado de memória: 8 214 linhas em `investigator/` contra 16 531 em `scripts/`
+  (a experiência pesa o dobro do produto, que é o que a §2 pede); as **nove decisões** que o
+  sistema toma antes de interromper alguém, cada uma classificada como aprendida, determinística
+  **por medição**, ou determinística por falta de rótulos; a matriz de rastreabilidade com os sete
+  elos da §66; e as dependências externas de IA classificadas como a §30 manda.
+  **⚠️ (A1) O ACHADO: A RECUPERAÇÃO FOI AVALIADA PODENDO VER O FUTURO, E ISSO NUNCA FOI DITO.**
+  O protocolo da QI2 proíbe o candidato de ser da **mesma empresa** e mais nada — não o proíbe de
+  ser **posterior** à consulta. O `evaluation_relevance_filter.md` já tinha medido a consequência
+  (**38,7%** dos vizinhos são posteriores, **30,2%** do mesmo dia) e esse facto **não aparecia em
+  nenhum sítio da dissertação**. Não é fuga no sentido habitual (o rótulo é "mesmo setor", que não
+  muda com o tempo), mas a pergunta fala em encontrar notícias **passadas**, e o produto só
+  consegue devolver passado — a base de casos só recebe um caso oito dias depois.
+  **MEDIDO** (`scripts/evaluate_retrieval_causal.py`, novo, aditivo, sobre as 79 753 manchetes):
+  com a restrição da produção a precisão@5 cai de **0.595 para 0.513**. **Mas o chão de acaso cai
+  quase o mesmo** (0.333 → 0.259) e **a margem sobre o acaso muda 0.008**. O método mantém
+  praticamente toda a vantagem. ⚠️ **É a terceira vez neste trabalho que ler uma precisão sem o
+  seu chão daria a conclusão errada** — e o script calcula a margem sozinho, para o número não
+  depender de quem o cita. A corrida reproduz o congelado 0.595 na mesma passagem, que é a porta
+  de entrada. Tese: **Secção 5.5.4** nova + linha **estreitada** na Matriz de Evidência.
+  **(A2) A RELEVÂNCIA É A ÚNICA DECISÃO CENTRAL QUE CONTINUA UMA REGRA, e não pode ser aprendida
+  honestamente.** Deita fora **67,3%** das manchetes; é classificação binária de texto, logo
+  aprendível em princípio. Mas o único rótulo disponível seria a saída da própria regra —
+  circular — e a §12 e a §63 proíbem fabricar rótulos. **É o mesmo bloqueio do estudo de
+  utilidade:** ~200 itens anotados desbloqueiam os dois ao mesmo tempo. Fica dito nesses termos.
+  **(A3) DÍVIDA DECLARADA E NÃO PAGA, de propósito:** as três aplicações Streamlit retiradas
+  continuam versionadas, com 67 testes, e arrastam `streamlit` e `plotly` para o
+  `requirements.txt` que o Heroku instala. Não são importadas pelo caminho vivo (não custam
+  memória, custam tamanho de slug) e as figuras das teses longas documentam-nas. **Ficam**, com a
+  receita de remoção escrita para depois da entrega.
+  **PORTAS: `check_entrega.py` a zero, tese 116 pp, 44 números conferidos contra a fonte, 746
+  testes.** ⚠️ **E as portas apanharam-me duas vezes nesta parte:** dois travessões e um
+  «exactamente» que eu próprio escrevi no texto novo.
 - **🆕 SESSÃO 61 — 3.ª parte (2026-08-20): A MARCA, A FIGURA DA PÁGINA NA TESE, E SETE ROTAS
   RETIRADAS. O aluno pediu simplicidade e "pronto para entrega, mesmo que tenhamos de remover
   coisas de que não temos a certeza".**

@@ -42,6 +42,8 @@ MANIFESTO: list[tuple[str, str, str]] = [
     ("0.280", "evaluation_anomaly_ext.md", "F1 do Local Outlier Factor"),
     ("0.407", "evaluation_anomaly.md", "precisao do z-score"),
     # QI2 -- recuperacao
+    ("0.513", "evaluation_retrieval_causal.md", "precisao@5 so com o passado"),
+    ("0.259", "evaluation_retrieval_causal.md", "chao de acaso no protocolo causal"),
     ("0.514", "evaluation_results.md", "precisao@5, MiniLM"),
     ("0.538", "evaluation_results.md", "precisao@5, MPNet"),
     ("0.346", "evaluation_results.md", "precisao@5, palavras em comum"),

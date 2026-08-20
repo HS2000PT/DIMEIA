@@ -40,7 +40,7 @@ Figura~\ref{fig:arquitetura}: dados de mercado, recolha de notícias, deteção,
 base de casos, triagem, motor de explicação e entrega. A
 lógica pura está separada da entrada e saída, e as dependências pesadas são carregadas só quando
 precisas, e por isso o núcleo é testado sem rede e sem carregar modelos. A suite tem
-\textbf{741 testes} automáticos.
+\textbf{746 testes} automáticos.
 
 Os segredos (chaves de API, credenciais) são lidos de um ficheiro local que nunca é versionado.
 
@@ -140,6 +140,8 @@ Não usa informação do futuro & A janela exclui o dia julgado; imposto por tes
 \multicolumn{3}{l}{\textbf{QI2, precedentes}} \\
 Bate as alternativas lexical e triviais & P@5 $0.514$ vs $0.346$ / $0.240$ / $0.126$ & Mantida \\
 Aguenta à escala do corpus completo & P@5 $0.595$ & Mantida \\
+Aguenta a restrição da produção (só o passado) & P@5 $0.513$ com chão $0.259$: a margem sobre
+o acaso muda $0.008$ & \textbf{Estreitada} (o número simétrico descrevia uma tarefa mais fácil) \\
 Capta tema, não direção & Concordância $0.708$ contra um chão de $0.688$ & Mantida (é uma limitação) \\
 ``Relevante'' é o mesmo que ``mesmo setor'' & --- & \textbf{Não afirmado} (é um proxy) \\
 O chão de semelhança escolhe precedentes que preveem melhor & Acima do chão $0.504$, abaixo $0.506$,

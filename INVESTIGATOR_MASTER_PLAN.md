@@ -424,6 +424,32 @@ utilizador, e o que chega ao utilizador sem avaliação.
 | Guarda de ancoragem | RQ3 | pacote | ataques bloqueados | ✅ âncoras `[f3]` clicáveis |
 | Dedup de histórias | — | manchetes | **nenhuma** | ✅ actua, **nunca medido** |
 
+## 12a. Auditoria-mestra (§78) — 2026-08-20
+
+A directiva foi reenviada e a §78 manda **inspeccionar antes de mexer**. A inspecção está em
+[`INVESTIGATOR_MASTER_AUDIT.md`](INVESTIGATOR_MASTER_AUDIT.md): o inventário contado, as **nove
+decisões** que o sistema toma antes de interromper alguém com o estado de cada uma (aprendida,
+determinística por medição, ou determinística por falta de rótulos), a matriz de rastreabilidade
+com os sete elos da §66, e a classificação de cada dependência externa de IA que a §30 exige.
+
+**Produziu dois achados, e um deles virou experiência.**
+
+**A1 — a recuperação foi avaliada podendo ver o futuro, e isso não estava dito.** O protocolo da
+QI2 proíbe o candidato de ser da mesma empresa e mais nada; não o proíbe de ser posterior à
+consulta. Corrido o mesmo protocolo com a restrição da produção — só candidatos **estritamente
+anteriores** — a precisão@5 desce de $0.595$ para $0.513$, **mas o chão desce quase o mesmo**
+($0.333 	o 0.259$) e a margem sobre o acaso muda apenas $0.008$. O método mantém a vantagem.
+`scripts/evaluate_retrieval_causal.py` → `docs/evaluation/evaluation_retrieval_causal.md`; a tese
+ganha a Secção 5.5.4 e a Matriz de Evidência ganha uma linha **estreitada**.
+
+**A2 — a relevância é a única decisão central que continua uma regra, e não pode ser aprendida
+honestamente.** Deita fora 67.3% das manchetes e é classificação binária de texto, portanto
+aprendível em princípio; mas o único rótulo disponível seria a saída da própria regra, o que torna
+a experiência circular, e a §12 e a §63 proíbem fabricar rótulos. **É o mesmo bloqueio do estudo
+de utilidade:** duzentos itens anotados desbloqueiam os dois.
+
+---
+
 ## 12b. Validação contra a directiva-mestra (2026-08-20)
 
 > O aluno reenviou a directiva-mestra e pediu para a **validar**. Isto é a validação, e a

@@ -643,6 +643,56 @@ primeiro caso e $+0.262$ no segundo, ou seja praticamente a mesma. O que este re
 lido com rigor, não é que o método melhore com mais dados: é que \textbf{não se degrada} quando o
 corpus passa de recente e curto para seis anos, e era isso que estava em causa.
 
+\subsection{E se o sistema só puder olhar para trás?}
+\label{sec:av_qi2_causal}
+
+Há uma coisa que o protocolo acima permite e que o sistema em produção não permite, e é preciso
+dizê-la. A restrição imposta é que a notícia recuperada seja de \emph{outra empresa}, e mais
+nada: em particular, ela pode ser \textbf{posterior} à consulta. E não é raro, é o caso comum ---
+no corpus recente, $38.7\%$ dos vizinhos devolvidos têm data posterior à da consulta e outros
+$30.2\%$ são do mesmo dia.
+
+O sistema implantado não tem essa liberdade. A base de precedentes só recebe um caso oito dias
+depois, quando o impacto no preço já é observável, portanto tudo o que ele consegue devolver é
+passado. O número acima descreve, então, uma tarefa ligeiramente mais fácil do que aquela que o
+produto executa, e a pergunta de investigação fala em encontrar notícias \emph{passadas}.
+
+Convém separar duas coisas antes de medir. Isto \textbf{não} é uma fuga de informação no sentido
+habitual: o critério de acerto é \emph{pertencer ao mesmo setor}, e o setor de uma notícia não
+muda com o tempo, pelo que a direção temporal não tem por onde inflacionar a precisão. O que
+está em causa é mais simples: se o número reportado corresponde à tarefa que a pergunta descreve.
+
+A medição repete o protocolo exatamente, acrescentando à máscara a condição de o candidato ser
+\textbf{estritamente anterior} à consulta, e reproduz o número simétrico na mesma corrida para a
+comparação ser emparelhada. Nenhuma das $2500$ consultas ficou sem passado suficiente.
+
+\begin{table}[ht]
+\caption[A recuperação sob a restrição da produção]{A mesma tarefa, com e sem a restrição de o
+precedente ter de ser anterior à consulta. A coluna que interessa é a última.}
+\label{tab:av_causal}
+\centering
+\begin{tabular}{l c c c}
+\toprule
+\tabhead{O que o sistema pode ver} & \tabhead{Precisão@5} & \tabhead{Chão} & \tabhead{Margem} \\
+\midrule
+Tudo menos a própria empresa & $0.595$ & $0.333$ & $+0.262$ \\
+\textbf{Só o que é anterior} & $\mathbf{0.513}$ & $0.259$ & $\mathbf{+0.254}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A precisão desce $0.082$, o que parece muito. Mas o chão desce quase outro tanto, porque
+restringir os candidatos aos anteriores muda a composição do conjunto de onde se escolhe e
+acertar por sorte deixa de ser tão provável. Medida contra o respectivo chão, \textbf{a margem
+muda $0.008$}: o método mantém praticamente toda a vantagem quando é obrigado a trabalhar como
+trabalha em produção.
+
+Vale a pena reparar que esta é a \emph{terceira} vez neste capítulo em que ler uma precisão sem
+o seu chão daria a conclusão errada. Foi assim na passagem do corpus recente para o completo, foi
+assim na precisão dentro do orçamento, onde custou uma afirmação retirada, e é assim aqui.
+Não é coincidência: uma precisão é uma quantidade sem significado próprio, e só o adquire ao pé
+da alternativa que não sabe nada.
+
 \subsection{O que isto não permite concluir}
 
 Duas observações, e a segunda tem consequências para o produto.
