@@ -402,6 +402,44 @@ const BANCO = [
  <b>aprender</b> compense. Diz isto tu, antes que to digam.</p>`},
 
 // ─────────────────────────── As que doem
+{b:"Os números", n:3, t:"escolha",
+ q:"Uma tabela de consulta por empresa, com zero informação sobre a notícia, dá que PR-AUC?",
+ opts:["0.534, contra 0.538 do implantado","0.378, o chão","0.662","0.240"], ok:0,
+ a:`<b>0.534, contra os 0.538 do modelo implantado:</b> uma diferença de 0.004, e a mesma
+ precisão no orçamento. <p>É o achado mais forte da tese: <b>o modelo implantado é uma tabela de
+ consulta</b>. Das nove entradas, oito descrevem a empresa ou o dia, e a única que distingue dois
+ títulos da mesma empresa no mesmo dia é o comprimento do título.</p>`},
+
+{b:"Os números", n:3, t:"escolha",
+ q:"E se lhe tirares todas as entradas de nível de empresa, ficando só o dia e a notícia?",
+ opts:["0.378, que é exatamente o chão","0.534","0.496","0.632"], ok:0,
+ a:`<b>0.378, e esse número é a prevalência</b>, ou seja o chão: não aprendeu nada.
+ <p>Só o comprimento do título dá o mesmo 0.378. Toda a capacidade do modelo vinha de saber
+ <i>que empresa</i> era.</p>`},
+
+{b:"As que doem", n:3, t:"escolha",
+ q:"Nas linhas de base ponta a ponta, o oráculo dá 0.968. O que é que isso diz?",
+ opts:["Que as notícias importantes estão no lote, e o sistema é que não as distingue",
+       "Que o sistema está quase perfeito",
+       "Que faltam mais fontes de notícias",
+       "Que o oráculo tem uma fuga de informação"], ok:0,
+ a:`<b>Que a matéria-prima não é o problema.</b> Em quase todos os dias existem cinco notícias
+ materiais no lote. O sistema dá 0.632, a alternativa realista (quem mais se mexeu hoje) dá 0.489,
+ e ordenar por volatilidade dá 0.662.
+ <p>A margem que falta está quase toda em <b>separar duas notícias da mesma empresa no mesmo
+ dia</b>, que é exatamente o que o modelo implantado não sabe fazer.</p>`},
+
+{b:"As que doem", n:3, t:"aberta",
+ q:"A entrada de que o modelo mais depende foi a que mais derivou, e o rótulo quase não se moveu. Explica.",
+ a:`A deriva foi <b>medida</b> com o PSI, que compara a distribuição de cada entrada entre o
+ treino e hoje: a volatilidade dos vinte dias anteriores caiu na banda significativa, e as
+ restantes ficaram estáveis. Mas a prevalência de positivos praticamente não mudou.
+ <p><b>O que isto significa:</b> o modelo está a ver uma distribuição que já não é a do treino,
+ enquanto aquilo que tenta prever continua onde estava. Não invalida nenhum resultado, porque
+ todos foram medidos dentro do mesmo período.</p>
+ <p><b>O que dizes a seguir:</b> aqui a deriva é medida e <b>não corrigida</b>. Nada se
+ re-treina. Corrigi-la é trabalho declarado, não trabalho feito.</p>`},
+
 {b:"As que doem", n:3, t:"aberta", q:"Onde está a engenharia de IA? Isto são bibliotecas.",
  a:`No que foi <b>medido para decidir</b>. Construí alternativas e não implantei as que a medição não
  sustentou. A engenharia está em ter um critério capaz de dizer não, e o exemplo mais forte é contra

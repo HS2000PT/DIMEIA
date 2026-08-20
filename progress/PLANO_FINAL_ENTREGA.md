@@ -13,7 +13,7 @@
 |---|---|
 | `python scripts/check_entrega.py` | **sai a zero** |
 | Tese curta | 114 pp · 0 erros · 0 referências indefinidas · overfull máx 5 pt |
-| Slides · guia · quizz | 19 · 20 · alinhados, verificados por porta |
+| Slides · guia · quizz | 20 · 22 · quizz 37, verificados por porta |
 | Suite | 737 testes, 0 falhas |
 | Ligações da bibliografia | **0 partidas** (ver F1) |
 | Achados de citação por consumir | **122** (ver F1) |
@@ -115,7 +115,7 @@ promoção da v4 abriu dívida de tese que ficou meses por pagar.
 
 ---
 
-## F3 — A escrita da tese: registo académico
+## F3 — A escrita da tese: registo académico  ✅ FEITO (2026-08-20)
 
 **O que se procura**, por esta ordem de gravidade:
 
@@ -139,9 +139,15 @@ a bater, e o diff desta fase não toca em nenhum `$...$` nem em nenhum `\cite`.
 
 ---
 
-## F4 — Slides
+## F4 — Slides  ✅ FEITO (2026-08-20)
 
-**Estado:** 19 *slides*, 0 erros, todos os números batem com a tese.
+**Estado:** **20** *slides*, 0 erros, todos os números batem com a tese.
+
+**Feito:** um *slide* novo, "Então quanto vale o modelo?", com as duas medições lado a
+lado — a ablação da identidade ($0.534$ contra $0.538$, e $0.378$ sem nada da empresa) e as
+linhas de base ponta a ponta ($0.375$ · $0.489$ · $0.632$ · $0.662$ · oráculo $0.968$). A
+**deriva** saiu do rodapé e passou a linha própria na tabela das limitações. O *slide* de
+fecho já existia. O `GRAVACAO.md` passou a apontar para o *slide* 19 de 20.
 
 **O que fazer:** o aluno tem 20 minutos, o que dá menos de um minuto por *slide* e é apertado.
 **Expandir só se cada *slide* novo ensinar alguma coisa que o júri vá perguntar.** Candidatos, e
@@ -158,9 +164,15 @@ guião da gravação continua a apontar para o *slide* certo (é o 18 de 19 hoje
 
 ---
 
-## F5 — Guia de estudo e quizz
+## F5 — Guia de estudo e quizz  ✅ FEITO (2026-08-20)
 
-**Estado:** guia com 20 *slides*, quizz alinhado, decimais e terminologia já corrigidos hoje.
+**Estado:** guia com **22** *slides*, quizz com **37** perguntas.
+
+**Feito:** o guia ganhou o *slide* da **decomposição** (técnica 2, com o encolhimento de
+Vasicek e as duas coisas que se mediram nela), e a numeração das quatro técnicas passou a
+bater com a do Nível 0. Ganhou também um segundo *slide* de avisos: o **$0.667$ contra
+$0.455$** que foi retirado, e a tradução **RQ$	o$QI**. O quizz ganhou quatro perguntas: a
+ablação da identidade (duas), o **oráculo** das linhas de base, e a **deriva**.
 
 **O que falta:**
 - o guia **não ensina** a decomposição com a profundidade das outras três, e ela é uma das quatro

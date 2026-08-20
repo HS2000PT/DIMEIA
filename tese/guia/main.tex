@@ -163,8 +163,32 @@ Na tese isto é garantido por \textbf{um teste automático}, não por uma promes
 futuro e exige que as \emph{features} fiquem iguais e o rótulo mude.
 \end{frame}
 
+\begin{frame}{\key{Nível 2}, técnica 2: foi a empresa, ou foi o mercado?}
+\small
+Responde à \key{segunda} das três perguntas, e é a que um arguente com finanças conhece.
+\vspace{2mm}
+\begin{itemize}
+  \item \key{A conta:} o movimento do dia parte-se em três parcelas que \textbf{somam ao}
+        \textbf{total}: \emph{mercado} (o beta vezes o índice), \emph{setor} (o fundo do setor,
+        já descontado do mercado) e \emph{empresa} (o que sobra).
+  \item \key{Os betas} são estimados só com dias \textbf{anteriores} ao dia explicado, e
+        \textbf{encolhidos} para $1$ na proporção da sua própria precisão (Vasicek, 1973).
+  \item \key{Porquê encolher:} sem isso, um beta mal estimado atribuía o movimento inteiro à
+        empresa.
+\end{itemize}
+\vspace{2mm}
+\begin{block}{O que dizes se te perguntarem se está certa}
+``As parcelas somam sempre, por construção, portanto isso não prova nada. Medi as duas coisas
+que podiam falhar: se a repartição \textbf{discrimina} (num mesmo dia o motor foi a empresa em
+$8$ casos, o mercado em $5$ e o setor em $4$, logo não diz sempre o mesmo) e se os
+\textbf{betas} estão bem estimados ($R^2$ mediano $0.460$, e \textbf{numa das dezassete foi}
+\textbf{negativo}). E não há verdade humana para comparar: é por isso que esta
+técnica não dá origem a uma pergunta de investigação.''
+\end{block}
+\end{frame}
+
 % ═══════════════ NÍVEL 3 ═══════════════
-\begin{frame}{\key{Nível 3}, técnica 2: frases como pontos}
+\begin{frame}{\key{Nível 3}, técnica 3: frases como pontos}
 \begin{itemize}
   \item Um \key{embedding} é uma lista de números que representa uma frase: aqui, \textbf{384}.
   \item Funciona como uma \textbf{coordenada de significado}: frases parecidas ficam perto.
@@ -200,7 +224,7 @@ esconderia que foram em sentidos opostos.
 \end{frame}
 
 % ═══════════════ NÍVEL 4 ═══════════════
-\begin{frame}{\key{Nível 4}, técnica 3: o teu modelo}
+\begin{frame}{\key{Nível 4}, técnica 4: o teu modelo}
 \begin{itemize}
   \item \key{79\,753} exemplos que construíste (notícias 2018--2023 $+$ preços).
   \item \key{Rótulo:} houve movimento anormal $\ge 2\%$ nos 3 dias seguintes? \textbf{Em valor
@@ -266,6 +290,23 @@ empresa. Media \textbf{escolher por ordem alfabética}.
 ``Contra um chão que escolhe mesmo ao acaso ($0{,}379$), o ganho é de \textbf{1.67 vezes}. Encontrei
 o erro a verificar o que a minha própria linha de base media, e corrigi-o. Está na matriz de
 evidência.''
+\end{block}
+\end{frame}
+
+\begin{frame}{\key{Nível 5}: mais dois enganos fáceis de cometer}
+\begin{block}{Não digas ``a precisão ao vivo foi de $0.667$ contra $0.455$''}
+Esse par existiu, e foi \textbf{retirado}: eram \textbf{12 decisões}, com intervalo de
+confiança a $95\%$ de $[0.391,\ 0.862]$, que \textbf{contém} a taxa-base. Refeito sobre o
+registo inteiro ($1\,087$ decisões, $530$ maturadas) o sinal \textbf{inverte-se}.\\[2mm]
+\textbf{O que dizes:} ``uma percentagem sobre uma amostra pequena não é um resultado, e
+retirei-a''. A lição vale mais do que o número valia.
+\end{block}
+\vspace{2mm}
+\begin{block}{Não digas ``RQ''}
+A tese longa tinha \textbf{quatro RQ}. Esta tem \textbf{três QI}, e a correspondência não é um
+para um: a antiga RQ3, sobre a utilidade das explicações, \textbf{não existe} aqui, porque não
+foi feito estudo com pessoas. RQ1$\to$QI1, RQ2$\to$QI2, RQ4$\to$\textbf{QI3}.\\[2mm]
+Os documentos de defesa antigos ainda dizem RQ. Traduz antes de responder.
 \end{block}
 \end{frame}
 
