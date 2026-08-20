@@ -7,6 +7,58 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 61 (2026-08-20 — "continua com o plano F1...F5"). AS TRÊS FASES QUE FALTAVAM, FEITAS.**
+  A **F1** (134 achados de citação) e a **F2** (a v6 do painel, implantada) já tinham fechado nesta
+  data. Esta corrida fez a **F3, a F4 e a F5**, que são de forma e não de conteúdo — **nenhum
+  número, nenhuma citação e nenhuma afirmação mudou**, e verifiquei-o no diff: zero linhas tocadas
+  com `\cite` ou com `$`.
+  **(F3) ESCRITA.** Cinco expressões coloquiais fora, e duas delas estavam **no índice**:
+  *"Treinar sem fazer batota com o tempo"* → *"sem deixar o futuro entrar no treino"*, *"que também
+  não me deu razão"* → *"que também não confirmou a escolha"*, *"Mas serve para alguma coisa?"* →
+  *"Mas tem utilidade prática?"*. Mais *"não lhe deu razão"* no Cap. 2 e *"obviamente
+  insustentável"* no Cap. 4. Anglicismo: `features` → **entradas** nos dois sítios de prosa que
+  restavam (o apêndice e uma legenda); dentro do excerto de código fica, porque é código real.
+  **⚠️ E uma concordância que só o título curto mostrava:** a Figura das pontuações entrava na
+  **Lista de Figuras** como *"O que o porta separava"*. Brasileirismos: **zero**, varridos com
+  lista alargada. Frases-comboio: nenhuma acima de 60 palavras.
+  **(F4) SLIDES: 19 → 20.** Um só *slide* novo, e junta as duas medições que a tese ganhou depois
+  de os *slides* estarem feitos, porque respondem à mesma pergunta (*quanto vale o modelo?*): a
+  **ablação da identidade** ($0.534$ da tabela de consulta contra $0.538$ do implantado, e $0.378$
+  sem nada de nível de empresa, que é o chão) e as **linhas de base ponta a ponta** ($0.375$ acaso ·
+  $0.489$ quem mais se mexeu · $0.632$ o sistema · $0.662$ volatilidade · **oráculo $0.968$**).
+  A **deriva** saiu do rodapé e passou a linha própria na tabela das limitações — era uma limitação
+  medida escondida numa nota, e é das que um arguente pergunta.
+  ⚠️ **Não acrescentei mais nada de propósito:** são 20 minutos, ou seja menos de um minuto por
+  *slide*. O `GRAVACAO.md` foi ressincronizado (a gravação é agora o **19 de 20**), e com ele os
+  três documentos de defesa que contavam 19.
+  **(F5) GUIA 20 → 22, QUIZZ 33 → 37.** O guia **não ensinava a decomposição**, que é uma das
+  quatro técnicas e responde a uma das três perguntas fundadoras: *slide* novo com o encolhimento
+  de Vasicek, o porquê de não se cortar em $\pm 4$, e as **duas coisas que nela se mediram** (se a
+  repartição discrimina, e o $R^2$ mediano $0.460$ com uma empresa **negativa**).
+  ⚠️ **E isso apanhou uma incoerência de numeração:** o Nível 0 já dizia "técnicas 1 e 2 são
+  estatística, 3 é aprendizagem profunda, 4 é o teu modelo", e os *slides* das técnicas numeravam
+  1, 2, 3 sem a decomposição — ou seja o guia contradizia-se a si próprio. Renumerado.
+  *Slide* novo de avisos, com os **dois enganos que faltavam**: o **$0.667$ contra $0.455$**
+  (retirado — eram 12 decisões, IC $[0.391, 0.862]$, que contém a taxa-base) e a tradução
+  **RQ→QI**, que a tese curta precisa porque a **RQ3 não existe**. Quizz: quatro perguntas novas
+  (ablação da identidade ×2, o oráculo, a deriva), validadas a correr o banco em `node` (37
+  perguntas, 0 de escolha sem resposta certa) e a **abrir a página no browser**.
+  **⚠️ A ARMADILHA DOS ESCAPES MORDEU QUATRO VEZES NUMA SÓ SESSÃO, e de duas maneiras.** Neste
+  shell, um heredoc **come um nível de barras invertidas mesmo estando entre plicas**: o `\\[2mm]`
+  do LaTeX chegou ao ficheiro como `\[2mm]`, que abre **modo matemático**, e os `\\` de fim
+  de linha das tabelas chegaram como `\`, que dá *Misplaced \noalign*. Pior, `\\textbf`
+  colapsa para `\textbf`, e **o Python lê então o \t como TAB** — que
+  é exactamente o defeito que a sessão 60 documentou impresso no PDF. **Regra que passa a valer:**
+  **dentro destes heredocs, ou strings `r"..."`, ou `chr(92)`.** O `check_tex_escapes.py` apanhou-o
+  das duas vezes.
+  **PORTAS: 741 testes a passar e `python scripts/check_entrega.py` sai a zero** — tese **114 pp**, slides **20**, guia
+  **22**, 0 erros e 0 referências indefinidas nos três, overfull máx 5 pt na tese e **0** nos
+  materiais, números a bater com a fonte, escapes limpos.
+  **⏭️ O QUE FICA É SÓ HUMANO, e está no `progress/PLANO_FINAL_ENTREGA.md`:** a leitura final; a
+  declaração de IA e a licença com o orientador (com as duas restrições de partilha nos mesmos
+  termos); a data de entrega; os agradecimentos; rodar as 4 credenciais; descarregar os 3 PDF da
+  F1c e substituir o do Bollerslev; gravar a demonstração; e o estudo com utilizadores, que é o
+  único item com relógio de calendário.
 - **🆕 SESSÃO 60 (2026-08-19/20 — "termina o que começaste; não pode ficar nada pendente", e o
   aluno deu autoridade para decidir). A TESE CURTA PASSA A PORTA DE ENTREGA.**
   **⚠️ (A) O ACHADO GRAVE, E A CULPA É MINHA: um `\textbf` partido por um TAB estava IMPRESSO
