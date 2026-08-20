@@ -70,15 +70,18 @@ Estado a 2026-08-20: **sai a zero.** Tese 116 pp, slides 21, guia 24, quizz 37 p
       [0,391, 0,601] a conter o acaso. É o que a tese reporta, e é o resultado desconfortável
       que ela escolhe não esconder → `docs/evaluation/evaluation_live_transfer.md`.
 
-- [ ] **Três PDF de fontes por descarregar, e um por substituir** (verificado a 2026-08-20):
-      - `bollerslev1986garch.pdf` **é o ficheiro errado** — está lá um projecto de mestrado de
-        2003 da Simon Fraser (Michael S. Lo) com título parecido, não o artigo de 1986;
-      - `mikolov2013word2vec.pdf` é a **pré-publicação arXiv**, e a entrada passou a citar as
-        actas do NIPS 2013 (`proceedings.neurips.cc`, paper `9aa42b31…`);
-      - faltam `liu2020finbert` (`ijcai.org/proceedings/2020/622`, livre) e `huang2023finbert`
-        (Wiley, *Contemporary Accounting Research* 40(2), pode exigir a conta do ISEP).
-      Não bloqueia a submissão — as afirmações estão verificadas contra o registo do Crossref e
-      contra o texto —, mas a pasta é a prova de que foram lidas no original.
+- [x] ~~**Três PDF de fontes por descarregar, e um por substituir**~~ ✅ **FEITO 2026-08-20.**
+      O `bollerslev1986garch.pdf` **era o ficheiro errado** (um projecto de mestrado de 2003 da
+      Simon Fraser com título parecido) e foi substituído pelo artigo verdadeiro, conferido
+      contra o `.bib` pelo intervalo de páginas **307–327**. Descarregados também
+      `mikolov2013word2vec` (actas do NIPS, que a entrada passou a citar), `liu2020finbert`
+      (IJCAI-20) e `vinh2010ami` (JMLR). **Cobertura: 57 de 65.**
+- [ ] **Dois PDF que só tu consegues** — a Wiley e a Elsevier respondem **403** com desafio
+      anti-robô, e isso não se contorna: `huang2023finbert` (*Contemporary Accounting Research*
+      40(2)) e `rousseeuw1987silhouettes` (*J. Comput. Appl. Math.* 20). Descarrega-os de dentro
+      da rede do ISEP e larga-os em `docs/decisions/citation_pdfs/` com o nome da chave.
+      As outras seis entradas sem PDF são **páginas web**, onde o original é a própria página:
+      conferem-se abrindo o endereço. Detalhe em `citation_pdfs/FALTAM.md`.
 - [ ] **Gravar a demonstração** (`Win`+`G`), com o `tese/GRAVACAO.md` à frente. É o *slide*
       **20 de 21**, e o *slide* seguinte tem agora a captura do funil como plano B se a
       gravação falhar na sala.
