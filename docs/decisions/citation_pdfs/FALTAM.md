@@ -10,7 +10,8 @@
 
 ## Estado medido
 
-**57 de 65 entradas do `references.bib` têm o PDF.** Faltam oito, e nenhuma delas por acaso:
+**59 de 65 entradas do `references.bib` têm o PDF.** As seis que faltam são **todas
+páginas web**, e nenhuma delas por acaso:
 
 | Chave | Porque falta | O que fazer |
 |---|---|---|
@@ -20,16 +21,18 @@
 | `robinhood2025cortex` | idem (página do próprio fornecedor) | idem |
 | `google2026finance` | idem | idem |
 | `worldmonitor2026` | idem (é um produto, creditado como tal) | idem |
-| `huang2023finbert` | **Wiley responde 403** com desafio anti-robô | descarregar com a conta do ISEP |
-| `rousseeuw1987silhouettes` | **Elsevier responde 403** com desafio anti-robô | descarregar com a conta do ISEP |
 
 Sobre as seis primeiras: para uma página web o "original" **é** a página, e a tese regista a data
 de consulta. Guardar um PDF impresso dela não acrescenta verificabilidade — o que acrescenta é
 abrir o endereço e confirmar que continua a dizer o mesmo.
 
-Sobre as duas últimas: os editores servem um desafio de robô, e **não se contorna** um desafio
-desses. Descarregam-se de dentro da rede do ISEP, ou ficam por conferir — e nesse caso a tese
-continua honesta, porque a Matriz de Evidência regista o que foi verificado e como.
+**Os dois artigos que faltavam já cá estão.** A Wiley e a Elsevier responderam **403** com
+desafio anti-robô, e um desafio desses não se contorna; o aluno descarregou-os a 2026-08-20 e
+foram conferidos como os outros:
+
+- `huang2023finbert` — *Contemporary Accounting Research* **40**(2), 806–841, Huang, Wang e Yang.
+  Título, três apelidos, revista, páginas e ano conferem.
+- `rousseeuw1987silhouettes` — *J. Comput. Appl. Math.* **20** (1987) **53–65**, Rousseeuw. Idem.
 
 ## O que foi corrigido a 2026-08-20
 

@@ -76,12 +76,12 @@ Estado a 2026-08-20: **sai a zero.** Tese 116 pp, slides 21, guia 24, quizz 37 p
       contra o `.bib` pelo intervalo de páginas **307–327**. Descarregados também
       `mikolov2013word2vec` (actas do NIPS, que a entrada passou a citar), `liu2020finbert`
       (IJCAI-20) e `vinh2010ami` (JMLR). **Cobertura: 57 de 65.**
-- [ ] **Dois PDF que só tu consegues** — a Wiley e a Elsevier respondem **403** com desafio
-      anti-robô, e isso não se contorna: `huang2023finbert` (*Contemporary Accounting Research*
-      40(2)) e `rousseeuw1987silhouettes` (*J. Comput. Appl. Math.* 20). Descarrega-os de dentro
-      da rede do ISEP e larga-os em `docs/decisions/citation_pdfs/` com o nome da chave.
-      As outras seis entradas sem PDF são **páginas web**, onde o original é a própria página:
-      conferem-se abrindo o endereço. Detalhe em `citation_pdfs/FALTAM.md`.
+- [x] ~~**Dois PDF que só tu consegues**~~ ✅ **FEITO 2026-08-20 pelo aluno.** O
+      `huang2023finbert` e o `rousseeuw1987silhouettes` estão na pasta e foram conferidos
+      contra o `.bib` (título, apelidos, revista, páginas **806–841** e **53–65**, ano).
+      **Cobertura: 59 de 65.** As seis restantes são **páginas web**, onde o original é a
+      própria página: conferem-se abrindo o endereço, e a lista está em
+      `docs/decisions/citation_pdfs/FALTAM.md`.
 - [ ] **Gravar a demonstração** (`Win`+`G`), com o `tese/GRAVACAO.md` à frente. É o *slide*
       **20 de 21**, e o *slide* seguinte tem agora a captura do funil como plano B se a
       gravação falhar na sala.
