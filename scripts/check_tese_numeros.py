@@ -63,6 +63,7 @@ MANIFESTO: list[tuple[str, str, str]] = [
     # pos-validacao ao vivo. ⚠️ Estes tres nao estavam no manifesto, e sao dos que mais
     # provavelmente mudam: o registo cresce todos os dias e o ficheiro e regenerado por
     # `evaluate_live_transfer.py`. A 2026-08-20 mudaram mesmo, de 530 para 825 decisoes.
+    ("825", "evaluation_live_transfer.md", "decisoes maturadas no registo de producao"),
     ("0.589", "evaluation_live_transfer.md", "materiais entre as decisoes mantidas"),
     ("0.617", "evaluation_live_transfer.md", "materiais entre as decisoes suprimidas"),
     ("0.486", "evaluation_live_transfer.md", "ROC-AUC na populacao implantada"),
