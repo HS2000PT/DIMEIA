@@ -7,6 +7,63 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 61 — 3.ª parte (2026-08-20): A MARCA, A FIGURA DA PÁGINA NA TESE, E SETE ROTAS
+  RETIRADAS. O aluno pediu simplicidade e "pronto para entrega, mesmo que tenhamos de remover
+  coisas de que não temos a certeza".**
+  **⚠️ (A) A MARCA ESTAVA ERRADA EM DOIS SÍTIOS, e o aluno viu antes de mim.** O `web/assets/
+  icon.svg` era um **traço curvo qualquer**, não a marca: a "The Tail" — a cauda serrilhada que
+  também é uma linha de mercado — vive em `app/assets/logo.svg` e nunca tinha chegado ao
+  separador do browser. O quizz tinha o mesmo traço. Corrigidos os dois.
+  **(B) O NOME PASSA A ESTAR ESCRITO, com o "G" a verde**, que é o trocadilho inteiro
+  (inveSTIGATE + alliGATOR): cabeçalho da página (desenhado em linha para herdar a cor do tema,
+  em vez de duas cópias que alguém teria de manter sincronizadas), quizz, e **capa dos slides e
+  do guia** com o lockup completo.
+  **⚠️ E A DESCOBERTA A MEIO: OS QUATRO FICHEIROS DE LOCKUP ESTAVAM PARTIDOS.** Tinham `--`
+  dentro de um comentário XML, o que é ilegal: o SVG **não abria em lado nenhum** desde que foi
+  escrito, na sessão 52. Ninguém deu por isso porque nunca tinham sido usados. Corrigidos os
+  quatro, e o `scripts/render_logo.py` (novo) deriva os PNG do LaTeX a partir do **mesmo** SVG,
+  para a marca não passar a existir em duas versões que divergem.
+  **(C) A PÁGINA ENTRA NA TESE: Figura 4.4**, capturada da **produção** por
+  `scripts/screenshot_v6.py` (novo), em dois painéis — a empresa e o funil do dia. A frase do
+  Cap. 4 que dizia que a interface *"não se descreve aqui"* mantém-se e ganha a razão de a
+  mostrar: é o único sítio onde o **silêncio** é visível. O caso capturado é bom por acaso: a
+  Alphabet fechou a **+0.15\%** e a repartição mostra que não foi um dia sem história — foram
+  o setor a puxar **+1.25\%** e a empresa **−1.37\%** a anularem-se.
+  ⚠️ **A figura teve de ser MOVIDA no ficheiro:** posta antes da figura do alerta, ficava
+  numerada 4.3 e o texto citava a 4.4 primeiro. O LaTeX numera pela ordem de **definição**, não
+  de leitura.
+  **⚠️ (D) SETE ROTAS RETIRADAS DA API, e é a aplicação directa do pedido dele.**
+  `/api/report`, `/api/ask`, `/api/evidence`, `/api/triage`, `/api/precedents`, `/api/logos` e
+  `/api/method`. **Nenhuma era usada pela página.** Duas eram **POST públicos e sem limite de
+  ritmo** contra a quota de um fornecedor de LLM; uma servia a probabilidade da triagem, que o
+  critério H2 proíbe em vistas de produto; outra carregava o modelo e a base de casos num
+  contentor de 512 MB. **E a tese curta não descreve camada generativa nenhuma** — posiciona-se,
+  no §2.7, precisamente contra o resumo gerado. Manter no ar o que o documento não reivindica é
+  dívida. **O código fica**, testado, porque as teses longas descrevem-no: o que saiu foi a
+  exposição.
+  ⚠️ **E logo a seguir, medido em produção: as rotas retiradas devolviam `200` com HTML**,
+  porque o apanha-tudo do SPA servia o `index.html` para qualquer caminho. Quem chamasse recebia
+  uma página onde esperava JSON, que se lê como "existe e devolveu lixo". Passa a **404 JSON**.
+  **⚠️ (E) DEFEITO DE HONESTIDADE NO VEREDICTO, apanhado a olhar para a figura.** A JPM estava
+  **sinalizada** pelo detector e a frase dizia *"An ordinary day for JPMorgan"* — calando a
+  sinalização, enquanto a mesma página desenhava o ponto de sinalizada ao lado do nome e a
+  contava na legenda. **É a imagem ao espelho do defeito da Microsoft que a sessão 48 corrigiu:**
+  ali escondia-se a raridade, aqui a sinalização. Passa a dizer as duas réguas. **+2 testes**,
+  um deles a garantir que a ressalva **não** aparece quando as duas concordam.
+  **(F) MAIS DUAS CORRECÇÕES QUE SÓ A FIGURA MOSTROU:** as barras da repartição pintavam de
+  verde a parcela que era o **motor**, e verde já quer dizer "subiu" no resto da página — uma
+  parcela negativa saía verde; passam a dizer o **sinal**, com o eixo do zero visível. E o funil
+  em grelha de colunas deixava **buracos enormes** (etapas de alturas muito diferentes); passa a
+  lista de linhas, que é também a forma certa de ler um funil.
+  **(G) A DIRECTIVA-MESTRA, VALIDADA e não executada** — §12b novo no
+  `INVESTIGATOR_MASTER_PLAN.md`, ponto a ponto. A directiva descreve um programa que ela própria
+  admite durar *"semanas ou meses"*; faltam **24 dias**. A maior parte já está satisfeita; o que
+  falta é sobretudo do tipo que a própria directiva manda **declarar** em vez de fabricar (§60,
+  §63, §64). Fica escrito o que conscientemente **não** se faz e porquê: agentes e aprendizagem
+  por reforço (a directiva avisa duas vezes para não os acrescentar por serem actuais), mais
+  fontes de dados, e reestruturar a dissertação a 24 dias do prazo.
+  **PORTAS: 746 testes, ruff limpo, `check_entrega.py` a zero, tese 116 pp, slides 20, guia 22.**
+  **Produção verificada ao vivo depois de cada implantação.**
 - **🆕 SESSÃO 61 — 2.ª parte (2026-08-20): F6, A REVISÃO DE PRODUTO DO PAINEL. IMPLANTADA E
   VERIFICADA AO VIVO.** Pedida como revisão de pré-lançamento — questionar a estrutura, não
   inspeccionar a interface. Cinco achados; a v6.1 está no ar em `c9652fb`+.

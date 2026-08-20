@@ -424,6 +424,62 @@ utilizador, e o que chega ao utilizador sem avaliação.
 | Guarda de ancoragem | RQ3 | pacote | ataques bloqueados | ✅ âncoras `[f3]` clicáveis |
 | Dedup de histórias | — | manchetes | **nenhuma** | ✅ actua, **nunca medido** |
 
+## 12b. Validação contra a directiva-mestra (2026-08-20)
+
+> O aluno reenviou a directiva-mestra e pediu para a **validar**. Isto é a validação, e a
+> primeira coisa a dizer é sobre o **calendário**: a directiva descreve um programa de
+> investigação e engenharia que ela própria admite poder durar *"semanas ou meses"* — novos
+> conjuntos de dados, novas experiências, treino de modelos, reestruturação da dissertação.
+> **Faltam 24 dias para a entrega**, e a instrução mais recente do aluno, na mesma sessão, é
+> *"minimizar erros e bugs, simplicidade, clareza, deixar pronto para entrega, mesmo que
+> tenhamos de remover coisas de que não temos a certeza"*.
+>
+> As duas coisas não se executam ao mesmo tempo, e não é preciso escolher às cegas: a maior
+> parte da directiva **já está satisfeita** por trabalho feito nas sessões anteriores. O que
+> falta é maioritariamente do tipo que a própria directiva manda declarar em vez de fabricar
+> (§60, §63, §64). Portanto: **valida-se, declara-se o que falta, e não se abre obra nova.**
+
+| § | O que a directiva exige | Estado | Onde |
+|---|---|---|---|
+| 3–5 | problema de investigação formulado, subproblemas identificados | ✅ | Cap. 1; três QI |
+| 6 | identidade técnica própria, não `API → LLM → resposta` | ✅ | dados, modelo e avaliação próprios; a camada de LLM foi **retirada do produto** |
+| 7, 73 | as decisões centrais aprendidas dos dados, não só regras | ⚠️ **parcial, e medido** | a triagem é aprendida (79 753 exemplos, LR+Platt); a **detecção é estatística por decisão**, e o Cap. 5 mostra que os detectores aprendidos (IF, LOF) perdem |
+| 9 | seleccionar, não coleccionar métodos | ✅ | matriz §5; três técnicas construídas e **duas não implantadas por medição** |
+| 11–12 | dados como artefacto de primeira classe, conjunto próprio | ✅ | 79 753 exemplos com rótulo anti-lookahead + 38 214 precedentes medidos |
+| 14–15 | linhas de base primeiro, comparação de modelos | ✅ | e é o resultado central: **o simples ganhou três vezes** |
+| 16–17 | explicabilidade ≠ geração | ✅ | contribuições aditivas do modelo; a geração saiu do produto |
+| 19–21 | inteligência temporal, evento vs anomalia | ✅ | z-score contra a norma da própria empresa; embargo; maturação a 8 dias |
+| 22–23 | alerta é mais do que um limiar; relevância ≠ importância | ✅ | funil de nove etapas; relevância e materialidade são camadas distintas |
+| 24 | novidade e redundância semântica | ✅ | `investigator/dedup.py`, usado nos dois caminhos |
+| 25 | fadiga de alertas | ✅ | orçamento diário, piso escalonado, supressão registada |
+| 26–27 | personalização e humano no ciclo | ❌ **não feito** | declarado como trabalho futuro |
+| 28–30 | ciclo de vida e artefactos do modelo | ✅ | `models/` versionado, congelados verificados por porta |
+| 31–32 | estratégia de LLM; o *chatbot* deve existir? | ✅ **decidido: não** | retirado a 2026-08-20 — ver `api/main.py` |
+| 34 | filtro temporal global | ⚠️ **não implementado** | a v6.1 tem **uma selecção** (empresa) que governa a página; não tem 1D/5D/1M. A dissertação não o afirma |
+| 35–37 | auditoria de UX, divulgação progressiva | ✅ | revisão F6 |
+| 42–45 | avaliação desenhada antes das afirmações, erros, ablação | ✅ | `docs/evaluation/`, 20+ documentos regeneráveis |
+| 47 | fugas temporais | ✅ | divisão cronológica + embargo + **teste que muta o futuro** |
+| 48–49 | ética, privacidade, segurança | ✅ | sem previsão de direcção; guarda de vocabulário; credenciais por rodar (humano) |
+| 53 | tese ↔ código consistentes | ✅ | verificado nesta sessão antes de mexer no painel |
+| 60 | avaliação com utilizadores | ❌ **não feita, e declarada** | pacote pronto; é o único item com relógio |
+| 61 | agradecimentos | ⚠️ rascunho | falta a voz do aluno |
+| 62 | declaração de IA | ⚠️ **e há uma tensão a resolver com o orientador** | a directiva sugere descrevê-la como auxiliar de sintaxe e LaTeX; para este trabalho isso **subestima**, e a declaração actual diz a extensão real |
+| 63–64 | nada fabricado; afirmações classificadas | ✅ | Matriz de Evidência, com 13 afirmações **retiradas ou estreitadas** |
+| 65–68 | plano-mestre, rastreabilidade, matriz, continuidade | ✅ | este ficheiro + `CLAUDE.md` |
+
+**O que a directiva pede e este trabalho conscientemente NÃO faz**, com a razão:
+
+1. **Agentes, sistemas multi-agente, aprendizagem por reforço.** A directiva avisa duas vezes
+   para não os acrescentar por serem actuais (§8, §71). Não há problema neste sistema que os
+   peça.
+2. **Mais fontes de dados.** §39 pede que cada fonte tenha um papel justificado. As três
+   actuais foram escolhidas por medição, e há uma rejeitada por medição.
+3. **Reestruturar a dissertação** (§54). A estrutura actual tem seis capítulos, compila a zero
+   erros e está auditada afirmação a afirmação. Reestruturar a 24 dias trocaria uma coisa
+   verificada por uma por verificar.
+
+---
+
 ## 13. Next Priorities
 
 **Realidade que enquadra tudo:** entrega **13/09/2026** — 31 dias. Herda-se a decisão da sessão 42:
