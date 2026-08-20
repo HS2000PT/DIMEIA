@@ -248,3 +248,32 @@ porque o seu DOI **não resolve**, ao passo que quatro DOIs `10.2307/*` aceites 
 verificados via API do Crossref por correspondência de autores, páginas, ano e editora. O campo
 `title` vem vazio no registo do Crossref (particularidade conhecida dos metadados da ACL Anthology),
 por isso a correspondência foi feita pelos restantes campos.
+
+## 2026-08-20 — duas entradas novas: a metodologia de investigação
+
+A Secção~3.1 passou a nomear o tipo de investigação que esta dissertação é, o que obrigou a duas
+citações novas. Ambas verificadas contra o **Crossref** a 2026-08-20, campo a campo:
+
+| Chave | DOI | Conferido |
+|---|---|---|
+| `hevner2004design` | `10.2307/25148625` | *Design Science in Information Systems Research*, Hevner, March, Park e Ram, **MIS Quarterly 28**(1), 2004, pp. 75–106 |
+| `peffers2007dsrm` | `10.2753/MIS0742-1222240302` | *A Design Science Research Methodology for Information Systems Research*, Peffers, Tuunanen, Rothenberger e Chatterjee, **JMIS 24**(3), 2007, pp. 45–77 |
+
+⚠️ **Uma diferença registada em vez de escondida:** o título no registo do Crossref do Hevner
+termina com um `1`, que é a marca de uma nota de rodapé do próprio artigo e não parte do título.
+O `.bib` omite-o, e a razão fica escrita no comentário da entrada.
+
+**O que estas fontes sustentam, e o que não sustentam.** São chamadas para duas coisas: que o
+objeto de estudo de um trabalho deste tipo é o artefacto, e que a avaliação é uma atividade
+central e não um passo final. **Não** são chamadas para validar o desenho concreto das
+experiências, que se defende sozinho no Capítulo 5. E a mesma exigência que elas estabelecem é
+usada, na mesma secção, para declarar onde o trabalho fica a dever: utilidade mede-se com pessoas,
+e isso não foi feito.
+
+⚠️ **E o meu próprio verificador apanhou-me na entrada nova.** Escrevi `75--105` no `.bib`, que é
+o intervalo que a maior parte das fontes secundárias cita para o Hevner, e o registo do Crossref
+declara **75–106**. Corrigido para o que foi efetivamente verificado. Não tenho como abrir a
+página do editor a partir daqui, portanto o que se afirma é o que se conferiu: o registo do
+Crossref. Se a diferença de uma página vier a importar, é aí que se vai buscar a arbitragem, como
+se fez com o SBERT (Crossref 3980–3990 contra a ACL Anthology 3982–3992, arbitrado a favor da
+Anthology).

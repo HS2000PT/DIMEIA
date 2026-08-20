@@ -58,13 +58,13 @@ Figura~\ref{fig:av_matriz} e o nome habitual deste quadro é \textbf{matriz de c
   mau/.style={cel, fill=orange!13},
   rot/.style={font=\footnotesize\bfseries, text=black!65},
 ]
-  \node[bom] (vp) at (0,0) {\textbf{Verdadeiro positivo}\\[2pt]
+  \node[bom] (vp) at (0,0) {\textbf{Verdadeiro positivo (VP)}\\[2pt]
     \footnotesize assinalou, e o dia\\ \footnotesize \emph{era} mesmo invulgar};
-  \node[mau, right=0mm of vp] (fp) {\textbf{Falso positivo}\\[2pt]
+  \node[mau, right=0mm of vp] (fp) {\textbf{Falso positivo (FP)}\\[2pt]
     \footnotesize assinalou, e o dia\\ \footnotesize era banal\\ \footnotesize (\emph{alarme falso})};
-  \node[mau, below=0mm of vp] (fn) {\textbf{Falso negativo}\\[2pt]
+  \node[mau, below=0mm of vp] (fn) {\textbf{Falso negativo (FN)}\\[2pt]
     \footnotesize calou-se, e o dia\\ \footnotesize era invulgar\\ \footnotesize (\emph{escapou})};
-  \node[bom, below=0mm of fp] (vn) {\textbf{Verdadeiro negativo}\\[2pt]
+  \node[bom, below=0mm of fp] (vn) {\textbf{Verdadeiro negativo (VN)}\\[2pt]
     \footnotesize calou-se, e o dia\\ \footnotesize era mesmo banal};
 
   \node[rot, above=2mm of vp] {a realidade: invulgar};
@@ -847,7 +847,7 @@ eram importantes $58.9\%$ das vezes, contra $61.7\%$ das que ele travou.
 Estes dois números pedem uma ressalva sobre a sua precisão, e ela é grande. As $825$ decisões não
 são $825$ observações independentes: o rótulo é atribuído por \emph{(empresa, dia)}, e as $825$
 linhas repartem-se por apenas $239$ pares distintos. Medida sobre essas $239$ unidades, a capacidade
-de ordenação do modelo, a \textbf{ROC-AUC}, fica em $0.486$ com um intervalo de confiança a
+de ordenação do modelo, a \textbf{\gls{ROCAUC}}, fica em $0.486$ com um intervalo de confiança a
 $95\%$ de $[0.403, 0.571]$. Nesta medida o acaso vale exatamente $0.5$, portanto o intervalo
 contém-no confortavelmente. A leitura correta não é que o modelo seja pior do que
 nada, mas que \textbf{esta amostra não distingue o modelo do acaso}.
