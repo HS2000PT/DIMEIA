@@ -448,7 +448,49 @@ r_{\text{empresa}} \;=\; \underbrace{\beta_m \, r_m}_{\text{mercado}}
 onde $r_m$ é o retorno do índice de mercado do dia, $\tilde r_s$ o do setor, e $\beta_m$ e $\beta_s$
 medem a sensibilidade histórica desta ação a cada um. A terceira parcela é definida como o resto,
 ou seja tudo o que mercado e setor não explicam, e é por isso que a soma fecha sempre. Este ponto
-volta a ser importante mais abaixo, porque é a origem da limitação principal da técnica.
+volta a ser importante mais abaixo, porque é a origem da limitação principal da técnica. A
+Figura~\ref{fig:met_decomposicao} mostra a repartição de um dia real, e a primeira coisa que
+se vê nela é que duas das parcelas podem puxar ao contrário do movimento final.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\small, >={Stealth[length=2.2mm]}, x=1cm, y=1cm]
+  % escala: 1 cm = 1 ponto percentual. Os valores sao os do caso real da AMD.
+  \def\yzero{0}
+  \draw[black!30] (-0.4,\yzero) -- (10.6,\yzero);
+  \node[left, font=\footnotesize, black!55] at (-0.45,\yzero) {$0\%$};
+
+  % mercado: -0.3992
+  \fill[black!45] (0.35,\yzero) rectangle (1.45,-0.40);
+  \node[font=\footnotesize, align=center] at (0.9,-0.95) {mercado\\ $-0.40\%$};
+
+  % setor: -0.0362 (quase invisivel, e isso e a informacao)
+  \fill[black!45] (2.35,\yzero) rectangle (3.45,-0.04);
+  \node[font=\footnotesize, align=center] at (2.9,-0.95) {setor\\ $-0.04\%$};
+
+  % empresa: +6.7298
+  \fill[black!70] (4.35,\yzero) rectangle (5.45,6.73);
+  \node[font=\footnotesize, align=center, text=black] at (4.9,7.25) {\textbf{empresa}\\ $+6.73\%$};
+
+  % soma observada
+  \draw[black!25, dashed] (6.1,\yzero) -- (6.1,6.9);
+  \fill[black!15, draw=black!55] (7.05,\yzero) rectangle (8.15,6.29);
+  \node[font=\footnotesize, align=center] at (7.6,6.85) {movimento\\ observado\\ $+6.29\%$};
+
+  \draw[->, black!55] (5.6,3.2) -- (6.9,3.2);
+  \node[font=\footnotesize, black!55, align=center] at (6.25,2.6) {somam};
+
+  \node[font=\footnotesize, black!60, align=left, text width=2.1cm]
+    at (9.6,3.4) {as três parcelas somam ao movimento do dia, sempre};
+\end{tikzpicture}
+\caption[Um movimento repartido em três parcelas]{O mesmo dia da AMD da
+Tabela~\ref{tab:met_decomposicao}, desenhado. O mercado e o setor puxaram \emph{para baixo}, e a
+subida foi toda da empresa. As três parcelas somam ao movimento observado por construção, e é
+precisamente por somarem sempre que essa soma não prova nada sobre a qualidade da repartição, como
+a Secção~\ref{sec:av_decomposicao} discute.}
+\label{fig:met_decomposicao}
+\end{figure}
+
 
 Há três detalhes que decidem se isto funciona ou se produz números com boa aparência e sem
 significado.
@@ -644,6 +686,47 @@ A medida usada é a \textbf{semelhança do cosseno}. Em vez de medir a distânci
 Usa-se o ângulo e não a distância porque o que interessa é \emph{sobre o que} a frase fala, e não o
 comprimento do texto. Um título curto e um parágrafo longo sobre o mesmo assunto devem ficar
 próximos, e o ângulo dá isso.
+A Figura~\ref{fig:met_cosseno} mostra as duas situações.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\small, >={Stealth[length=2.4mm]}, scale=1.0]
+  % ── par parecido: angulo pequeno ────────────────────────────────────────
+  \begin{scope}
+    \draw[->, black!35] (0,0) -- (4.3,0);
+    \draw[->, black!35] (0,0) -- (0,3.3);
+    \draw[->, very thick, black!75] (0,0) -- (3.6,1.5)
+      node[right, black, align=left, font=\footnotesize] {título A};
+    \draw[->, very thick, black!75] (0,0) -- (3.35,2.15)
+      node[right, black, align=left, font=\footnotesize] {título B};
+    \draw[black!55] (1.25,0.52) arc (22.6:32.7:1.35);
+    \node[font=\footnotesize, black!55] at (1.85,1.02) {$\theta$ pequeno};
+    \node[align=center, font=\footnotesize] at (2.1,-0.75)
+      {\textbf{mesmo assunto}\\ $\cos\theta = +0.956$};
+  \end{scope}
+  % ── par diferente: angulo quase recto ───────────────────────────────────
+  \begin{scope}[xshift=7.4cm]
+    \draw[->, black!35] (0,0) -- (4.3,0);
+    \draw[->, black!35] (0,0) -- (0,3.3);
+    \draw[->, very thick, black!75] (0,0) -- (3.9,0.6)
+      node[right, black, align=left, font=\footnotesize] {título A};
+    \draw[->, very thick, black!75] (0,0) -- (0.75,3.05)
+      node[above, black, align=left, font=\footnotesize] {título C};
+    \draw[black!55] (1.35,0.21) arc (8.7:76.2:1.37);
+    \node[font=\footnotesize, black!55] at (1.72,1.35) {$\theta$ quase recto};
+    \node[align=center, font=\footnotesize] at (2.1,-0.75)
+      {\textbf{assuntos diferentes}\\ $\cos\theta = -0.086$};
+  \end{scope}
+\end{tikzpicture}
+\caption[O cosseno, e porque é o ângulo e não a distância]{Cada título é uma seta com $384$
+coordenadas, aqui desenhada em duas para se poder ver. O que se compara é o \textbf{ângulo} entre
+elas, e não o sítio onde as pontas caem: um título curto e um parágrafo longo sobre o mesmo
+assunto apontam na mesma direção, e o comprimento da seta, que é o que a distância mediria, diz
+respeito ao tamanho do texto e não ao seu tema. Os dois valores são os do par real da
+Tabela~\ref{tab:met_cosseno}.}
+\label{fig:met_cosseno}
+\end{figure}
+
 
 A fórmula geral do cosseno entre dois vetores $\mathbf{u}$ e $\mathbf{v}$ é:
 
@@ -910,7 +993,47 @@ A função usada tem apenas dois números a aprender, $a$ e $b$:
 
 Neste trabalho os dois valores aprendidos foram $a = 3.700$ e $b = -2.313$. O sinal negativo de $b$
 diz o essencial: o modelo, deixado por sua conta, era \textbf{demasiado otimista}, e a calibração
-existe para o puxar para baixo.
+existe para o puxar para baixo. A Figura~\ref{fig:met_platt} desenha a curva.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\small, >={Stealth[length=2.2mm]}, x=6.4cm, y=4.2cm]
+  % eixos: pontuacao bruta em x, probabilidade calibrada em y
+  \draw[->, black!45] (0,0) -- (1.06,0) node[right, font=\footnotesize, black!65]
+    {pontuação bruta};
+  \draw[->, black!45] (0,0) -- (0,1.08) node[above, font=\footnotesize, black!65]
+    {probabilidade calibrada};
+  \foreach \v in {0,0.5,1} {
+    \draw[black!45] (\v,0) -- (\v,-0.018) node[below, font=\scriptsize, black!60] {\v};
+    \draw[black!45] (0,\v) -- (-0.008,\v) node[left, font=\scriptsize, black!60] {\v};
+  }
+  % a diagonal: o que aconteceria se nao houvesse calibracao
+  \draw[black!30, dashed] (0,0) -- (1,1);
+  \node[font=\scriptsize, black!45, rotate=33] at (0.82,0.90) {sem calibrar};
+
+  % a sigmoide 1/(1+e^-(3.700 p - 2.313)), amostrada
+  \draw[very thick, black!80] plot coordinates {
+    (0.00,0.090) (0.05,0.106) (0.10,0.125) (0.15,0.146) (0.20,0.170)
+    (0.25,0.197) (0.30,0.228) (0.35,0.262) (0.40,0.299) (0.45,0.339)
+    (0.50,0.382) (0.55,0.427) (0.60,0.473) (0.65,0.520) (0.70,0.566)
+    (0.75,0.611) (0.80,0.654) (0.85,0.694) (0.90,0.731) (0.95,0.764)
+    (1.00,0.795)};
+
+  % o caso real do exemplo trabalhado: 0.507 -> 0.392
+  \draw[black!55, dotted, thick] (0.507,0) -- (0.507,0.392) -- (0,0.392);
+  \fill[black] (0.507,0.392) circle (1.5pt);
+  \node[font=\footnotesize, align=left, black] at (0.79,0.30)
+    {o caso da Tabela~\ref{tab:met_conta}:\\ $0.507 \rightarrow \mathbf{0.392}$};
+  \draw[->, black!55] (0.78,0.345) -- (0.545,0.386);
+\end{tikzpicture}
+\caption[A calibração, desenhada]{A curva que converte a pontuação do modelo numa probabilidade,
+com os dois valores aprendidos neste trabalho, $a = 3.700$ e $b = -2.313$. A curva corre
+\textbf{abaixo} da diagonal em quase toda a extensão, e é isso que quer dizer o sinal negativo de
+$b$: o modelo, deixado por sua conta, anunciava mais do que acontecia, e a calibração puxa-o para
+baixo. O ponto marcado é o caso real seguido na Tabela~\ref{tab:met_conta}, onde uma pontuação de
+$0.507$, praticamente um lançamento de moeda, se torna $0.392$.}
+\label{fig:met_platt}
+\end{figure}
 
 \paragraph{E a calibração fica enviesada, por uma razão que convém dizer.}
 A sigmoide é ajustada no bloco de validação e aplicada ao de teste, e os dois blocos não têm a mesma

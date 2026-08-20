@@ -117,7 +117,43 @@ cumprido por metade}.
 
 \emph{Onde é que este trabalho é fraco?}
 
-Ditas em voz alta, por ordem de importância.
+Ditas em voz alta, por ordem de importância. A Figura~\ref{fig:con_limites} resume as cinco
+principais e o que cada uma pediria para ser fechada.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize, >={Stealth[length=2mm]},
+  lim/.style={draw, rounded corners=2pt, align=left, text width=4.9cm, inner sep=4pt,
+              minimum height=0.95cm, fill=black!5},
+  fut/.style={draw, rounded corners=2pt, align=left, text width=4.4cm, inner sep=4pt,
+              minimum height=0.95cm, fill=white},
+  cst/.style={align=center, text width=1.9cm, text=black!60, font=\scriptsize},
+]
+  \node[font=\bfseries\scriptsize, text=black!70] at (0,1.15)  {limitação, e está medida};
+  \node[font=\bfseries\scriptsize, text=black!70] at (6.6,1.15) {o que a fecha};
+  \node[font=\bfseries\scriptsize, text=black!70] at (11.1,1.15) {o que custa};
+  % ⚠️ As variaveis do \foreach nunca podem chamar-se \c \t \l \i \o: sao comandos do LaTeX e a
+  % substituicao acontece tambem DENTRO das palavras.
+  \foreach \xn/\xlim/\xfut/\xcus in {%
+    0/{Nenhuma avaliação com pessoas}/{Correr o estudo desenhado: 6 a 10 participantes}/{tempo de calendário},%
+    1/{Os rótulos são aproximações}/{Anotar uma amostra com julgamento humano}/{tempo de calendário},%
+    2/{O alerta afirma mais evidência do que tem}/{Medir o impacto por notícia, e não por dia}/{preços ao minuto},%
+    3/{Só se lê o título, e não o corpo}/{Recolher e representar o texto integral}/{dados novos},%
+    4/{A deriva é medida e não corrigida}/{Re-treinar com o que se observa em produção}/{baixo}%
+  } {
+    \node[lim] (L\xn) at (0,-\xn*1.12) {\xlim};
+    \node[fut] (F\xn) at (6.6,-\xn*1.12) {\xfut};
+    \node[cst] at (11.1,-\xn*1.12) {\xcus};
+    \draw[->, thick, black!40] (L\xn) -- (F\xn);
+  }
+\end{tikzpicture}
+\caption[As limitações e o que as fecha]{Cada limitação desta secção foi \textbf{medida}, e não
+apenas afirmada. A coluna do meio é o trabalho que cada uma pede, e a da direita é a razão pela
+qual ainda não foi feito. As duas primeiras partilham o mesmo obstáculo, que é o único deste
+trabalho com relógio de calendário: sem julgamento humano sobre uma amostra, nem a utilidade das
+explicações nem a qualidade dos rótulos podem deixar de ser aproximações.}
+\label{fig:con_limites}
+\end{figure}
 
 \paragraph{Não há estudo com utilizadores.}
 É a lacuna maior e a mais fácil de nomear. Todo o sistema é construído à volta da ideia de que uma
