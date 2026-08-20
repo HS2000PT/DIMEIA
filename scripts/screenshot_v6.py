@@ -69,6 +69,12 @@ def main() -> int:
 
         # O funil está no fim da página: rola-se até lá para que os tipos de letra e as caixas
         # estejam desenhados antes de recortar.
+        # ⚠️ O funil recorta-se numa janela ESTREITA de propósito. À largura do ecrã a tira
+        # sai com 2700 px e, reduzida à largura do texto de uma página A4, o tipo de letra
+        # fica ilegível. Numa janela estreita as etapas empilham-se e o texto sobrevive à
+        # redução. Verificado a olhar para a página composta, que é a única prova que conta.
+        pg.set_viewport_size({"width": 1000, "height": 1000})
+        pg.wait_for_timeout(400)
         funil = pg.locator("#funil")
         funil.scroll_into_view_if_needed()
         pg.wait_for_timeout(400)
