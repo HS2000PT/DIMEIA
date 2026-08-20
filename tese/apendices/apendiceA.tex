@@ -7,8 +7,10 @@
 \section{Ambiente}
 \label{sec:ap_ambiente}
 
-O sistema está escrito em Python~3.12. As dependências estão fixadas num ficheiro de bloqueio, para
-que o ambiente possa ser recriado noutra máquina. A Tabela~\ref{tab:ap_versoes} lista as principais.
+O sistema está escrito em Python~3.12. As dependências do ambiente que produz os números desta
+dissertação estão fixadas num ficheiro de bloqueio, para que esse ambiente possa ser recriado noutra
+máquina. O serviço implantado tem o seu próprio conjunto, mais pequeno, porque não precisa de treinar
+nada. A Tabela~\ref{tab:ap_versoes} lista as principais.
 
 \begin{table}[ht]
 \caption[Versões fixadas das dependências]{As versões com que todos os números deste
@@ -186,7 +188,17 @@ O conjunto histórico usado para construir a base de casos é o \gls{FNSPID}
 atribuição é aqui cumprida. Apenas excertos mínimos de títulos aparecem no documento, a título
 ilustrativo.
 
+Essa licença tem uma segunda obrigação que convém não calar, porque é acionada: como o repositório
+distribui ficheiros \emph{derivados} do \gls{FNSPID}, a cláusula de partilha nos mesmos termos
+aplica-se a eles. A licença do código é uma decisão que fica em aberto neste documento, e é esta a
+restrição que a condiciona.
+
 Os preços vêm de serviços gratuitos de dados de mercado, através de uma cadeia de alternativas
 descrita na Secção~\ref{sec:sis_dados}; as notícias em tempo real vêm de uma API gratuita, dentro dos
-seus limites de utilização. Não é recolhido nem armazenado qualquer dado pessoal: o sistema não sabe
-o que os utilizadores possuem, e não lhes pergunta.
+seus limites de utilização. Sobre dados pessoais convém ser exato em vez de generoso. O sistema
+\textbf{não sabe o que os utilizadores possuem e não lhes pergunta}, que é a decisão de desenho que
+interessa: não há carteira, não há posições, não há montantes. O canal público não identifica
+ninguém. Há, no entanto, uma funcionalidade opcional em que quem quiser receber alertas
+personalizados fala com o robô, e aí ficam guardados o identificador de conversa do Telegram e a
+lista de empresas que essa pessoa escolheu seguir. É pouco, e é a totalidade: fica dito, porque
+``nenhum dado pessoal'' seria mais simples de escrever e não seria verdade.
