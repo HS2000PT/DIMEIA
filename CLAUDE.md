@@ -7,6 +7,99 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 61 — 6.ª parte (2026-08-20): A TESE LIDA LINHA A LINHA, DO PRINCÍPIO AO FIM. Já não
+  sobra secção por ler. Sete achados, e três são defeitos que eu próprio tinha introduzido.**
+  ⚠️ **Isto NÃO é a leitura final do CHECKLIST, e não a substitui.** Aquela é do aluno, e é o
+  que torna verdadeira a frase *"revi o conteúdo desta dissertação"* da declaração de IA.
+  Continua por fazer.
+  **⚠️ (A) TEXTO CORROMPIDO IMPRESSO NO PDF, outra vez, e outra vez a compilar a zero erros.**
+  O Cap. 2 tinha *"não basta declará-**claradas**"* — uma palavra partida a meio de uma
+  substituição antiga, na frase que fecha a secção de explicabilidade. É a mesma classe do
+  `extbf` da sessão 60: **`declará-claradas` é texto válido**, nenhum verificador o apanha, e só
+  se vê a ler.
+  **⚠️ (B) UMA CITAÇÃO ALTERADA EM SILÊNCIO — e é o achado que mais incomoda.** A Tabela 3.6 diz
+  que os títulos são **reais**, copiados da base de casos. O original é
+  `Coronavirus – Another Severe Hit To The Automotive Industry`, com **travessão**; a tese
+  imprimia **dois pontos**. Quase de certeza por causa da regra "zero travessões", que se aplica
+  à **prosa** e não a texto citado. Numa tese cuja afirmação central é que a evidência é verbatim
+  e conferível, alterar uma citação em silêncio é precisamente o defeito que ela existe para não
+  ter. Reposto o carácter original; o `check_escrita` não se opõe, porque a regra nunca foi sobre
+  citações.
+  **⚠️ (C) O VEREDICTO DA QI3 ESTAVA DESACTUALIZADO PELA MEDIÇÃO DO PRÓPRIO DIA.** A tabela-resumo
+  do Cap. 5, que é a última que o júri lê, ainda dizia *"nenhum modelo com texto bate a
+  volatilidade (0.496 contra 0.542)"* — e a §5.6.10 acrescentada horas antes reporta a variante
+  **tabela + texto a 0.547**, ou seja **acima**. A secção trata o caso (o intervalo contém zero);
+  o resumo afirmava a versão antiga. Duas páginas da mesma tese a contradizerem-se.
+  **E pior: o Cap. 6, que é onde o veredicto vive, não mencionava o achado de todo** — o resumo
+  já o dizia, o Cap. 5 já o dizia, e a conclusão não. Dois parágrafos novos, com o resultado
+  (`+0.012`, IC `[+0.004, +0.020]`) e as **três medições que impedem que ele reabra o veredicto**.
+  O "não" passa de veredicto a **localização**: a informação que o texto traz distingue empresas
+  e períodos, e o produto precisava que distinguisse notícias.
+  **(D) A DECOMPOSIÇÃO NÃO ESTAVA NO DIAGRAMA DO SISTEMA.** A legenda da Figura 4.1 prometia
+  *"as quatro técnicas do capítulo anterior"* e o centro mostrava **três** mais a explicação. A
+  sessão 60 tinha notado a ausência no Cap. 4 e corrigido a **prosa**; a figura ficou. Entrou como
+  caixa própria, **a tracejado**, porque é a única que não corre em todos os alertas: só entra no
+  de preço, já que sem movimento não há o que repartir. Verificado a renderizar.
+  **(E) MAIS TRÊS DE CONTAGEM E COERÊNCIA:** a legenda da tabela das portas prometia *"as cinco
+  portas da figura"* e trocava uma (falta *"já avisei hoje"*, sobra o orçamento diário); *"Três,
+  por ordem de importância"* seguido de **quatro** parágrafos na secção nova de ética; e um
+  `label` duplicado nas opções de dois excertos de código.
+  **⚠️ (F) O MEU VERIFICADOR DE ESCAPES ERA CEGO A METADE DO QUE EXISTE PARA APANHAR.** A
+  armadilha do heredoc mordeu a escrever (C), e o `check_tex_escapes` **não disse nada** sobre os
+  dois `\ref` partidos enquanto apanhava o `\textbf`. **Causa: lia com `read_text`, e a tradução
+  universal de mudanças de linha do Python converte o CR em `\n` antes de o verificador o ver.**
+  Ou seja, metade dos padrões da lista (`\r` → CR+`ef`) **nunca podia disparar**, desde que o
+  verificador foi escrito. É o mesmo round-trip que escondeu esta classe na sessão 56. Passa a
+  ler **bytes**. **+4 testes** (`tests/test_check_tex_escapes.py`), e o do CR **verificado a
+  falhar** contra o verificador antigo, com os dois controlos no sentido oposto: ficheiro limpo
+  não grita, e CRLF normal do Windows não é falso positivo.
+  **(G) A PÓS-VALIDAÇÃO MOSTRAVA METADE DO CONTRASTE.** O `live_monitoring.md` publicava
+  *"mantidas 0.589"* contra a **taxa-base 0.602**, que é o comparador fraco. A pergunta é *a porta
+  escolhe melhor do que o que ela deitou fora?*, e essa exige as **suprimidas**: passa a calcular
+  e publicar **0.617 em 389**. Reproduzi os valores antigos exactamente (0.589 · 436 · 0.602 ·
+  825) antes de aceitar o ficheiro regenerado. **⚠️ Correcção a mim próprio: anunciei que o 0.617
+  da tese era aritmética minha sem fonte. Estava enganado** — está no `evaluation_live_transfer.md`
+  com IC `[0.568, 0.664]`. Verifiquei antes de mexer na tese, e por isso não corrigi nada que
+  estivesse certo.
+  **(H) UM FICHEIRO QUE SE AUTO-DECLARAVA PENDENTE E NÃO ESTAVA.** O
+  `docs/decisions/achados_citacoes_por_consumir.md` tem 134 achados e o título dizia *"que nunca
+  foram consumidos"*. Foram, na fase F1. Um ficheiro assim ao lado de trabalho feito **manda a
+  sessão seguinte refazer tudo** — a mesma classe dos planos superados que a sessão 50 arrumou.
+  Conferi **10 dos 134** (os cinco de severidade **alta** e mais cinco): **nove integralmente
+  aplicados**, e o décimo era o travessão de (B). O estado ficou escrito no topo do ficheiro,
+  **incluindo que 124 não foram reconferidos um a um**.
+  **PORTAS: tese 126 pp, 0 erros, 52/52 números conferidos contra a fonte, 750 testes, ruff limpo,
+  `check_entrega.py` a zero.** ⚠️ **E a porta apanhou-me:** o apêndice dizia **746 testes** e a
+  suite passou a **750** com os que eu próprio tinha acabado de escrever.
+  **(I) IMPLANTADO E VERIFICADO AO VIVO — duas vezes, porque a verificação encontrou um defeito.**
+  `release b6199baa` (`7dc17307`) e depois `release e312a8e9`.
+  **⚠️ O DEFEITO REAL: CONTRASTE ABAIXO DO MÍNIMO NO TEMA CLARO.** O texto secundário do funil
+  (*"all 5 slots used"*) dava **4.20:1**, abaixo dos 4.5 da WCAG para texto pequeno. A causa é
+  específica e só aparece a medir: o `--fraco` passava sobre o `--fundo` com 4.67:1, mas aquele
+  texto assenta na **sua própria caixa** (`--linha2`), que é mais clara, e ali caía. `#6b7280` →
+  `#4b5563` (**6.56:1** sobre a caixa). Remedido em produção: **4.75–18.29:1, zero abaixo**.
+  **⚠️ E DOIS FALSOS ALARMES MEUS, que valem mais do que o achado.** (1) A minha sonda de
+  contraste **ignorava o canal alfa** e lia um verde a 12% de opacidade como verde puro: reportou
+  três pares a 1.2:1 que, compondo o alfa, dão 5.8–15.8:1. (2) Corrigida a sonda, o tema claro
+  acusou o `AAPL` a **1.02:1** — texto preto sobre botão preto, ou seja a barra de empresas
+  ilegível. A folha de estilo dizia `.tk { background: var(--caixa) }` e essa variável resolve
+  para **branco** no claro; plantei um `div` novo com a mesma variável e saiu **branco**. Era
+  **estilo em cache** dos elementos já pintados quando a emulação de tema mudou; depois de
+  recarregar a sério, `.tk` é branco. **Não havia defeito, e "corrigi-lo" teria partido o tema
+  escuro.** ⚠️ **Regra que passa a valer: medir contraste sem compor o alfa dá números falsos, e
+  trocar de tema por emulação não repinta o que já estava desenhado — recarregar antes de medir.**
+  **MEDIDO EM PRODUÇÃO, e não no código:** as seis rotas a **200** (0,65–2,26 s) e as sete
+  retiradas a **404 `application/json`**; instantâneo **fresco a 184 s**; **a legenda bate com a
+  lista** (`3 sent · 37 flagged` na JNJ) e **por uma razão que só se vê a medir** — dos 3 alertas,
+  dois caem em dias com barra e **um (19/08) não tem barra onde pousar**, que é exactamente o caso
+  que a 2.ª parte corrigiu; a repartição a **fechar exacto** (parecia −2.24 contra −2.23, e os
+  valores sem arredondar da API somam **−2.2339%** — era leitura minha dos decimais); uma selecção
+  a governar a página inteira (XOM mudou nome, veredicto, motor, legenda e URL, sem resíduo);
+  a **hiperligação da fonte seguida até ao fim** (302 → artigo real do Benzinga carregado num
+  separador; os editores devolvem **403 a `curl`**, que é anti-robô e não ligação partida);
+  **0 erros de consola**; a **375 px** zero rolagem horizontal e barra fixa de **49 px (6% do
+  ecrã)**. **E o ciclo continua vivo:** `gate_log` **20 000**, `predictions_log` **40 076** (eram
+  38 084), canal **424** alertas.
 - **🆕 SESSÃO 61 — 5.ª parte (2026-08-20): AS FONTES CONFERIDAS CONTRA O ORIGINAL, E OS DOIS
   ÚLTIMOS PENDENTES DE CÓDIGO FECHADOS POR MEDIÇÃO.**
   **⚠️ (A) O BOLLERSLEV ERA MESMO OUTRO ARTIGO, e agora está substituído.** O ficheiro arquivado
@@ -444,7 +537,7 @@
   736 testes · ruff limpo · congelados e teses longas intactos.**
 - **Sessão nº:** 58 (**a TESE CURTA em PT-PT: revisão crítica, PT-PT a sério, transparência
   máxima, e as métricas explicadas do zero**)
-- **Última atualização:** 2026-08-15
+- **Última atualização:** 2026-08-20
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
   ter calma nas estatísticas, mostrando cada salto até ao valor final):**
