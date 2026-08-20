@@ -54,7 +54,11 @@
 <style>
   :root {
     --tinta:#12151a; --fundo:#fbfbfa; --caixa:#ffffff; --linha:#e3e3df; --linha2:#efefec;
-    --fraco:#6b7280; --acento:#0a7f4f; --acento-fraco:#0a7f4f14;
+    /* --fraco era #6b7280. Sobre o --fundo dava 4.67:1 e passava, mas o texto secundario
+       do funil assenta em --linha2 (#efefec) e ali caia para 4.20:1, abaixo dos 4.5 que a
+       WCAG pede para texto pequeno. Medido no browser, nao estimado: o par que falhava era
+       "all 5 slots used". #4b5563 da 6.56:1 sobre --linha2 e 7.30:1 sobre o fundo. */
+    --fraco:#4b5563; --acento:#0a7f4f; --acento-fraco:#0a7f4f14;
     --sobe:#0f766e; --desce:#b91c1c; --parou:#b45309; --grelha:#eeeeea;
   }
   @media (prefers-color-scheme: dark) {
