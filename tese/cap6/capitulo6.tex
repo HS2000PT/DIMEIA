@@ -13,9 +13,12 @@ Existe um sistema a funcionar, e não uma demonstração. O InvestiGator vigia d
 forma contínua, e envia alertas explicados a um canal público, com uma página web onde tudo o que
 foi enviado pode ser consultado depois.
 
-E existe uma avaliação de cada uma das quatro técnicas, contra alternativas mais simples, com os
-resultados reportados como se revelaram. É essa a parte que dá a este trabalho o carácter de
-dissertação e não o de projeto.
+E existe uma avaliação de cada uma das quatro técnicas, com os resultados reportados como se
+revelaram. Três foram medidas \emph{contra alternativas mais simples}, que é o desenho que permite
+dizer que não. A quarta, a decomposição, não podia sê-lo, porque não existe uma resposta certa
+contra a qual comparar uma repartição: dela mede-se o que é mensurável, que é a qualidade do
+ajuste, e a Secção~\ref{sec:av_decomposicao} explica porquê. É esta parte que dá ao trabalho o
+carácter de dissertação e não o de projeto.
 
 \section{As respostas às perguntas de investigação}
 \label{sec:con_qi}
@@ -31,8 +34,9 @@ perceber porquê. Os dois métodos aprendidos definem normalidade pela geometria
 \autocite{liu2008isolation, breunig2000lof}, e foram desenhados para situações com muitas variáveis
 a interagir; aqui há uma série de retornos por empresa, e a estrutura que interessa é temporal, não
 geométrica. A janela
-deslizante capta diretamente o agrupamento de volatilidade que caracteriza estas séries
-\autocite{engle1982arch, bollerslev1986garch}, ao passo que um detetor treinado sobre o conjunto
+deslizante capta diretamente o \emph{agrupamento de volatilidade}, a propriedade que os modelos
+\gls{ARCH} e \gls{GARCH} formalizam \autocite{engle1982arch, bollerslev1986garch} e que a literatura
+financeira posterior documentou nos retornos de ações, ao passo que um detetor treinado sobre o conjunto
 todo tem de aprender essa estrutura a partir dos dados. Quando a suposição de um método simples
 coincide com a estrutura real do problema, é difícil batê-lo.
 
@@ -87,9 +91,11 @@ cumprido por metade}.
 \begin{enumerate}
   \item \emph{Construir o sistema completo.} Cumprido. Os dois gatilhos funcionam de ponta a ponta,
         em produção.
-  \item \emph{Avaliar cada componente contra linhas de base transparentes.} Cumprido, e mais do que
-        o prometido: o detetor foi comparado não só com uma regra fixa mas também com dois métodos
-        aprendidos.
+  \item \emph{Avaliar cada componente contra linhas de base transparentes.} Cumprido para os três
+        componentes em que uma linha de base existe, e num deles mais do que o prometido: o detetor
+        foi comparado não só com uma regra fixa mas também com dois métodos aprendidos. Para a
+        decomposição não há linha de base possível, e o que se fez em vez disso está dito na
+        Secção~\ref{sec:av_decomposicao}.
   \item \emph{Garantir que as explicações são fiéis.} \textbf{Cumprido por metade.} A fidelidade
         está garantida por construção: o texto é montado a partir dos objetos calculados, e não
         pode divergir deles. Mas a \emph{utilidade} para uma pessoa real não foi medida, porque não
