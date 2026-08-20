@@ -356,7 +356,7 @@ No código, esta separação é uma única fatia, e é ela que a garante. O Exce
 mostra o cálculo completo:
 
 \begin{lstlisting}[label=lst:zscore, caption={O cálculo do \emph{z}-score. A fatia \texttt{[-window-1:-1]} exclui o
-próprio dia da janela que define a sua norma.},label={lst:zscore}]
+próprio dia da janela que define a sua norma.}]
 r = pd.Series(list(returns), dtype="float64").dropna().reset_index(drop=True)
 
 recent = r.iloc[-window - 1 : -1]   # a janela ANTES do ultimo (sem lookahead)
@@ -768,7 +768,7 @@ space are trading lower\ldots'' & ``Peloton Shares Tick To Session Low As Hearin
 Working On `Guided Workout'\ldots'' \\
 \addlinespace
 Segundo título & ``Shares of several technology, software and semiconductor companies are
-trading lower\ldots'' & ``Coronavirus: Another Severe Hit To The Automotive Industry'' \\
+trading lower\ldots'' & ``Coronavirus – Another Severe Hit To The Automotive Industry'' \\
 \midrule
 Comprimento do 1.\textsuperscript{o} vetor & $1.000000$ & $1.000000$ \\
 Comprimento do 2.\textsuperscript{o} vetor & $1.000000$ & $1.000000$ \\
@@ -1190,7 +1190,7 @@ Esta é a garantia mais importante de todo o trabalho e a mais fácil de promete
 isso o Excerto~\ref{lst:lookahead} mostra-a tal como está escrita.
 
 \begin{lstlisting}[label=lst:lookahead, caption={O teste que impede o futuro de entrar nas entradas. As duas
-séries partilham o passado e divergem apenas depois do dia do evento.},label={lst:lookahead}]
+séries partilham o passado e divergem apenas depois do dia do evento.}]
 def test_anti_lookahead_mutar_o_futuro_nao_muda_features():
     base = [100.0 + i * 0.1 for i in range(30)]
     futuro_a = base + [200.0, 300.0, 400.0]   # futuros absurdos A
@@ -1282,7 +1282,8 @@ descarregamento corrompido ou substituído mudaria em silêncio aquilo que o sis
 \subsection{Questões éticas e sociais}
 \label{sec:met_etica}
 
-Três, por ordem de importância.
+Quatro, por ordem de importância. As três primeiras são decisões de desenho; a última é uma
+restrição que se descobriu tarde e que não se escolheu.
 
 \paragraph{Não aconselhar, e não prever.} A restrição fundadora deste trabalho é também a sua
 principal salvaguarda ética. Um sistema que dissesse a alguém o que vai acontecer ao preço estaria

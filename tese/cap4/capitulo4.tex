@@ -34,6 +34,10 @@ qualquer delas sem tocar nas outras.
   \node[proc, right=0.8cm of p] (det) {\textbf{Deteção}\\ \footnotesize é invulgar?};
   \node[proc, right=0.8cm of n] (rec) {\textbf{Recuperação}\\ \footnotesize já aconteceu?};
   \node[proc, right=0.8cm of h] (tri) {\textbf{Triagem}\\ \footnotesize merece avisar?};
+  % A decomposicao e a quarta tecnica e faltava aqui. Tracejada porque so entra no
+  % alerta de PRECO: sem movimento do dia nao ha nada para repartir.
+  \node[proc, dashed, below=6mm of tri] (dec)
+    {\textbf{Decomposição}\\ \footnotesize empresa ou mercado?};
 
   \node[proc, right=0.9cm of rec, text width=2.8cm] (exp)
     {\textbf{Explicação}\\ \footnotesize monta o texto a\\ \footnotesize partir do que foi\\ \footnotesize calculado};
@@ -48,12 +52,16 @@ qualquer delas sem tocar nas outras.
   \draw[->] (det.east) -- ++(0.4,0) |- (exp.west);
   \draw[->] (rec) -- (exp);
   \draw[->] (tri.east) -- ++(0.4,0) |- (exp.west);
+  \draw[->, dashed] (p.south west) -- ++(-0.35,0) |- (dec.west);
+  \draw[->, dashed] (dec.east) -- ++(0.55,0) |- (exp.west);
   \draw[->] (exp.east) -- ++(0.35,0) |- (tg.west);
   \draw[->] (exp.east) -- ++(0.35,0) |- (web.west);
 \end{tikzpicture}
 \caption[Arquitetura do sistema]{As cinco partes do InvestiGator. À esquerda, de onde vêm os dados;
-ao centro, as quatro técnicas do capítulo anterior; à direita, as duas formas de o utilizador receber
-o resultado.}
+ao centro, as quatro técnicas do capítulo anterior mais o motor que compõe o texto; à direita, as
+duas formas de o utilizador receber o resultado. A \textbf{decomposição} está a tracejado porque é
+a única que não corre em todos os alertas: só entra no de preço, já que sem movimento do dia não
+há nada para repartir.}
 \label{fig:arquitetura}
 \end{figure}
 

@@ -1,4 +1,18 @@
-# Achados de citação que nunca foram consumidos
+# Achados de citação: 134 achados, consumidos na fase F1
+
+> **ESTADO: CONSUMIDO.** O titulo deste ficheiro dizia "que nunca foram consumidos" e passou a
+> mentir a 2026-08-20, quando a fase F1 do `progress/PLANO_FINAL_ENTREGA.md` os aplicou. Um
+> ficheiro que se auto-descreve como pendente, ao lado de trabalho feito, e pior do que nao
+> existir: manda uma sessao seguinte refazer o que ja esta feito. Fica como registo de
+> proveniencia, e nao como lista de tarefas.
+>
+> **Ate onde isto foi verificado, dito com precisao.** A 2026-08-20, numa leitura linha a linha
+> dos capitulos, conferi **10 dos 134** contra o texto actual: os cinco de severidade [alta]
+> (5, 6, 11, 12, 26) e mais cinco (1, 2, 4, 83, 84). **Nove estavam integralmente aplicados.** O
+> decimo, o 83, estava aplicado a metade: o "4-Year Lows" tinha sido corrigido para "4-Year Low",
+> e o travessao do titulo do par B continuava substituido por dois pontos, ou seja uma citacao
+> alterada em silencio numa tabela que afirma mostrar titulos reais. Foi corrigido nessa leitura.
+> Os restantes 124 **nao foram reconferidos um a um**.
 
 
 ## Workflow `wf_53961fa9-d7c`
