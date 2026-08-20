@@ -206,6 +206,15 @@
   .etapa.passou { border-top-color:var(--acento); }
   .etapa.passou h3 { color:var(--acento); }
 
+  /* No telemóvel, o cabeçalho fixo estava a comer 98 px (12% do ecrã) porque a assinatura da
+     marca empurrava o estado para uma segunda linha. Numa página que se lê a rolar, a barra
+     fixa é imposto puro: fica a marca e o estado, numa linha só. */
+  @media (max-width:640px) {
+    .marca small { display:none; }
+    .barra { padding:8px 16px; flex-wrap:nowrap; }
+    main { padding:14px 16px 56px; }
+  }
+
   footer { max-width:1560px; margin:0 auto; padding:22px; border-top:1px solid var(--linha);
            color:var(--fraco); font-size:.82rem; display:flex; gap:18px; flex-wrap:wrap; }
 </style>
