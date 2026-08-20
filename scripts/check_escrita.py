@@ -38,7 +38,12 @@ BRASILEIRISMOS = [
 PRE_ACORDO = [
     "pára", "acção", "acções", "actual", "actualmente", "actor", "actores", "objectivo",
     "objectivos", "projecto", "projectos", "óptimo", "directo", "directamente", "tecto",
-    "aspecto", "aspectos", "excepto", "facto de que", "contacto", "exacto", "exacta",
+    "aspecto", "aspectos", "excepto", "facto de que", "exacto", "exacta",
+    # ⚠️ "contacto" SAIU desta lista a 2026-08-20, e a razao importa: em PT-PT o c de
+    # "contacto" PRONUNCIA-SE, logo o Acordo de 1990 mantem-no. A forma sem c e a
+    # brasileira. Este verificador acusou a palavra certa e eu, a obedecer-lhe, escrevi
+    # um brasileirismo numa tese que tem "zero brasileirismos" como criterio. Um
+    # verificador errado nao e neutro: produz o defeito que existe para evitar.
     "exactamente", "correcto", "correcta", "afecta", "adopta", "adoptar",
 ]
 
