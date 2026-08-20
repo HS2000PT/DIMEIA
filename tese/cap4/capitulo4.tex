@@ -964,20 +964,23 @@ triagem e a sua calibração, as portas de decisão com as constantes derivadas,
 amarrada aos objetos calculados, e o ciclo de observação que mede o sistema depois de implantado.
 
 \textbf{Deliberadamente ausente:} não há aqui um modelo de linguagem a escrever texto para o
-utilizador. A Secção~\ref{sec:ctx_llm} explica porquê, e a razão é a mesma que atravessa o trabalho:
-uma frase gerada é uma afirmação, e este sistema entrega afirmações com a evidência ao lado.
+utilizador, pela razão que a Secção~\ref{sec:ctx_llm} desenvolve e que atravessa o trabalho: uma
+frase gerada é uma afirmação, e este sistema entrega afirmações com a evidência ao lado.
 
 \subsection{O que este ciclo não tem}
 
-Duas coisas, e ambas são consequência de uma só causa.
+Duas coisas, e as causas são diferentes.
 
 \textbf{Não há re-treino.} Os pesos são de 2018--2023 e não voltaram a ser ajustados, apesar de a
-deriva estar medida. Re-treinar exigiria rótulos novos, e os rótulos novos vêm dos preços, portanto
-seria possível; o que impede não é a técnica, é que re-treinar com o registo de produção mudaria os
-números que este documento reporta, e essa mudança tem de ser feita com tempo para a avaliar. Fica
-como trabalho declarado.
+deriva estar medida. Seria possível, porque os rótulos novos vêm dos preços: o que impede não é a
+técnica, é que re-treinar com o registo de produção mudaria os números que este documento reporta,
+e isso precisa de tempo para ser avaliado. Fica como trabalho declarado.
 
-\textbf{Não há verdade humana.} Os três rótulos deste trabalho, ou seja movimento anormal,
-mesmo setor e percentil de movimento, são aproximações verificáveis, e nenhuma delas foi
-confrontada com o julgamento de uma pessoa. É a limitação de que mais dependem as outras, e o
+% \looseness=-1 pede ao TeX que componha o paragrafo uma linha mais curto. Esta aqui por
+% composicao e nao por estilo: sem ele o capitulo transbordava duas linhas para uma pagina
+% so delas, que se le como um erro de composicao. So se ve a renderizar.
+\looseness=-1
+\textbf{Não há verdade humana.} Os três rótulos deste trabalho, ou seja movimento anormal, mesmo
+setor e percentil de movimento, são aproximações verificáveis que nunca foram confrontadas com o
+julgamento de uma pessoa. É a limitação de que mais dependem as outras, e o
 Capítulo~\ref{cap:conclusoes} volta a ela.
