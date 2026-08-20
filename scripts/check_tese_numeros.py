@@ -66,6 +66,11 @@ MANIFESTO: list[tuple[str, str, str]] = [
     ("0.589", "evaluation_live_transfer.md", "materiais entre as decisoes mantidas"),
     ("0.617", "evaluation_live_transfer.md", "materiais entre as decisoes suprimidas"),
     ("0.486", "evaluation_live_transfer.md", "ROC-AUC na populacao implantada"),
+    # o texto POR CIMA da melhor linha de base (Cap. 5). O 0.534 e o 0.662 ja vinham da
+    # ablacao da identidade; o que e novo e o valor com texto.
+    ("0.547", "evaluation_triage_within.md", "PR-AUC da tabela de consulta mais o texto"),
+    ("0.512", "evaluation_triage_within.md", "AUC dentro da empresa, tabela mais texto"),
+    ("0.502", "evaluation_triage_within.md", "AUC dentro da empresa, modelo implantado"),
     # chaos do orcamento (a correccao do artefacto alfabetico)
     ("0.3790", "evaluation_budget_baselines.md", "chao aleatorio real"),
     ("0.6624", "evaluation_budget_baselines.md", "prior de volatilidade por ticker"),

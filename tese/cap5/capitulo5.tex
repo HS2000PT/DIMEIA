@@ -648,7 +648,7 @@ corpus passa de recente e curto para seis anos, e era isso que estava em causa.
 
 Há uma coisa que o protocolo acima permite e que o sistema em produção não permite, e é preciso
 dizê-la. A restrição imposta é que a notícia recuperada seja de \emph{outra empresa}, e mais
-nada: em particular, ela pode ser \textbf{posterior} à consulta. E não é raro, é o caso comum ---
+nada: em particular, ela pode ser \textbf{posterior} à consulta. E não é raro, é o caso comum:
 no corpus recente, $38.7\%$ dos vizinhos devolvidos têm data posterior à da consulta e outros
 $30.2\%$ são do mesmo dia.
 
@@ -1075,6 +1075,92 @@ precisava (\emph{distingue duas notícias da mesma empresa?}).
 
 Nenhum dos números deste capítulo muda por causa disto. O que muda é o que se pode afirmar com
 eles, e é essa a correção.
+
+\subsection{E se o texto não for para substituir, mas para acrescentar?}
+\label{sec:av_acrescimo}
+
+Há uma pergunta que a comparação de famílias não faz, e que só me ocorreu depois de a ablação da
+identidade explicar o que o modelo é.
+
+Toda a avaliação da \gls{QI}3 põe as variantes \textbf{lado a lado}: só volatilidade contra só
+contexto contra só texto. Uma comparação dessas responde a \emph{qual é melhor}. Não responde a
+\emph{o texto acrescenta ao melhor que existe}, que é uma pergunta diferente e, para um sistema,
+mais útil: ninguém é obrigado a escolher entre as duas fontes de informação.
+
+A variante \emph{contexto + texto} parece já fazer isso, e não faz, por uma razão que a
+Secção~\ref{sec:av_ablacao} tornou visível: soma o texto ao bloco de contexto, que \textbf{não é}
+o melhor preditor conhecido. O melhor é a tabela de consulta por empresa. Nunca se tinha testado
+o texto por cima dela.
+
+\paragraph{O critério, fixado antes de medir.} Um acréscimo só conta se o intervalo de confiança
+a $95\%$ da diferença, obtido por reamostragem \textbf{por grupos} (empresa, dia), excluir zero. E
+a representação de texto não foi afinada aqui: usa-se a mesma redução a $32$ dimensões do
+re-teste da Secção~\ref{sec:av_qi3}, para que a comparação não seja o resultado de procurar a
+configuração que dá jeito.
+
+\begin{table}[ht]
+\caption[O texto por cima da melhor linha de base]{Somar o título à tabela de consulta. A coluna
+da direita é a capacidade de ordenar \emph{dentro} de cada empresa, onde a tabela vale $0.5$ por
+construção e não por estimativa.}
+\label{tab:av_acrescimo}
+\centering
+\small
+\begin{tabular}{L{0.40\textwidth} C{0.13\textwidth} C{0.13\textwidth} C{0.17\textwidth}}
+\toprule
+\tabhead{Modelo} & \tabhead{PR-AUC} & \tabhead{Prec.@5} & \tabhead{AUC dentro} \\
+\midrule
+Tabela de consulta por empresa & $0.534$ & $\mathbf{0.662}$ & $0.500$ \\
+\textbf{Tabela + texto} & $\mathbf{0.547}$ & $\mathbf{0.662}$ & $0.512$ \\
+Contexto (o implantado) & $0.538$ & $0.632$ & $0.502$ \\
+Contexto + texto & $0.533$ & $0.627$ & $0.508$ \\
+Só texto & $0.457$ & $0.616$ & $0.495$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{O resultado, e é positivo.} O título \textbf{acrescenta} à melhor linha de base:
+$+0.012$ de PR-AUC, com intervalo $[+0.004,\ +0.020]$, que exclui zero. É o valor mais alto
+medido em qualquer variante deste trabalho, e é a primeira vez que uma representação de texto
+mostra valor mensurável nesta tarefa.
+
+Três ressalvas impedem que isto seja mais do que é, e todas são medições e não modéstia.
+
+\begin{description}
+  \item[Não bate a volatilidade sozinha.] O $0.547$ é maior do que o $0.542$, mas a diferença
+        entre os dois tem intervalo $[-0.032,\ +0.037]$, que contém zero. São dois pontos dentro
+        do ruído um do outro, e afirmar que o modelo com texto \emph{ganha} seria ler uma
+        diferença que esta amostra não sustenta. O veredicto da \gls{QI}3 não muda.
+
+  \item[Não chega ao produto.] A precisão dentro do orçamento de cinco alertas por dia é
+        $0.662$ com e sem o texto, sem uma casa decimal de diferença. O acréscimo existe na
+        ordenação do conjunto todo e desaparece quando só se escolhem cinco por dia, que é
+        exatamente o que o sistema faz. Um ganho que não sobrevive à métrica de produto não muda
+        o produto.
+
+  \item[E continua a não separar dias da mesma empresa.] A última coluna da
+        Tabela~\ref{tab:av_acrescimo} mede a capacidade de ordenar \emph{dentro} de cada empresa,
+        onde a tabela de consulta vale $0.500$ por construção, por devolver sempre o mesmo valor.
+        O modelo implantado obtém $0.502$ com intervalo $[0.462,\ 0.542]$, que contém $0.5$; com
+        texto sobe para $0.512$, e o acréscimo tem intervalo que também contém zero. Ou seja: a
+        informação que o texto traz distingue \textbf{empresas e períodos}, e não notícias. O
+        diagnóstico da secção anterior sai confirmado, não desmentido.
+\end{description}
+
+\paragraph{O que isto muda na resposta à \gls{QI}3.} A resposta continua a ser não, e passa a ser
+mais precisa. Antes dizia-se: \emph{nenhum modelo com texto bate a volatilidade}. Continua
+verdade. Acrescenta-se agora: \emph{mas o texto não é inútil}, acrescenta ao melhor preditor
+conhecido, de forma pequena e mensurável, e o que o impede de mudar o sistema não é a ausência de
+informação, é a informação ser do tipo errado. Distingue empresas quando o produto precisa de
+distinguir notícias.
+
+É uma resposta melhor do que a anterior porque diz \emph{onde} está o limite. E aponta o trabalho
+seguinte sem ambiguidade: não é procurar um modelo maior, é arranjar um rótulo por notícia.
+
+\paragraph{Uma ressalva sobre o próprio método.} Este é mais um modelo avaliado sobre o mesmo
+bloco de teste, que já serviu várias comparações deste capítulo. Quanto mais vezes se olha para um
+conjunto de teste, mais fácil é encontrar nele uma diferença pequena. As duas defesas usadas
+não afinar a configuração aqui, e escrever o critério antes de medir, reduzem esse risco
+sem o eliminarem, e um efeito de $+0.012$ deve ser lido com essa reserva.
 
 \subsection{A correção óbvia, e porque é que não servia}
 
