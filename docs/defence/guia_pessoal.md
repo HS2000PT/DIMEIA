@@ -369,7 +369,7 @@ antes de ela fechar. Ninguém ataca quem já concordou.
 
 - [ ] `python scripts/demo_defesa.py --dia 2026-08-09` corrido **uma vez com internet** (fica
       em cache; depois usa `--offline`)
-- [ ] `thesis/main.pdf` e `slides/main-pt.pdf` no portátil
+- [ ] `tese/main.pdf`, `tese/slides/main.pdf` e `tese/guia/main.pdf` no portátil (são estes, e não as teses longas)
 - [ ] Ler as secções 11 e 12 desta página. São as que salvam a defesa.
 - [ ] Uma frase de cabeça: **"a simplicidade defensável venceu, e tenho as medições que o
       mostram — incluindo as que correram contra mim."**

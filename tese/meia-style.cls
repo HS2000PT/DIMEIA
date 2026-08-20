@@ -383,13 +383,18 @@ KOMA-script documentation for details.}]{fancyhdr}
 	{\large \bfseries \noindent \supervisorlabel: \supname } \\
 	\ifdefined\cosupname {\large \bfseries \cosupervisorlabel: \cosupname} \\ \fi
 	\vfill
-	{\normalsize \bfseries \noindent \evallabel:} \\
-	{\normalsize \presidentlabel: } \\
-	%\bigskip
-	{\normalsize \presidentname } \\ \\
-	{\normalsize \memberslabel:} \\
-	{\normalsize \committee } \\
-	\smallskip \\
+	% ⚠️ ALTERAÇÃO AO TEMPLATE (2026-08-20). O bloco do júri era impresso sempre, e a escola só
+	% designa o júri DEPOIS da entrega: na versão submetida saíam etiquetas seguidas de nada, ou
+	% um "[A definir]" impresso na capa, que se lê como um documento por acabar. Passa a aparecer
+	% só quando os nomes existem. Basta preenchê-los no main.tex para o bloco voltar.
+	\ifx\presidentname\empty\else
+		{\normalsize \bfseries \noindent \evallabel:} \\
+		{\normalsize \presidentlabel: } \\
+		{\normalsize \presidentname } \\ \\
+		{\normalsize \memberslabel:} \\
+		{\normalsize \committee } \\
+		\smallskip \\
+	\fi
 	\begin{center}
 	{\normalsize \tdate} % Date
 	\end{center}

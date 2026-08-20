@@ -1,9 +1,13 @@
-# gravar_demo.md — Guião da demonstração (3 minutos)
+# gravar_demo.md — Guião da demonstração (3 minutos) — **SUPERADO**
 
-> ⚠️ **Este documento foi escrito para a tese longa em inglês.** A que vais defender é a
-> tese curta em português (`tese/`), que tem **três QI** e não quatro RQ, e onde alguns
-> números foram corrigidos. Lê o [`LEIA-ME-PRIMEIRO.md`](LEIA-ME-PRIMEIRO.md) antes de
-> estudares por aqui.
+> 🛑 **Não uses este.** Há dois guiões de gravação no repositório e contradizem-se: este manda
+> percorrer ecrãs que o serviço implantado já não serve, e abrir exactamente a página que o guião
+> novo manda evitar.
+>
+> **O guião a usar é o [`tese/GRAVACAO.md`](../../tese/GRAVACAO.md)**: 2m30, três partes, alinhado
+> com os 19 slides e com o que está no ar.
+>
+> Este fica como registo de como a demonstração era pensada antes, e porque mudou.
 
 > **Porquê gravar.** Numa defesa, uma demo ao vivo depende de rede, de um free tier e de um
 > agendador que não controlas. Uma gravação não depende de nada. Levas as duas: abres a app ao

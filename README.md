@@ -23,8 +23,9 @@ reasoning chain — detected event → explanation → sources → historical pr
 | I want to… | Go to |
 |---|---|
 | Navigate the whole repo | [`INDEX.md`](INDEX.md) — the repository map |
-| Read the dissertation | `thesis/main.pdf` (English) · `thesis-pt/main.pdf` (Português) |
-| Study for the defence | `slides/guia_estudo/main.pdf` — the single study source |
+| **Read the dissertation being submitted** | **`tese/main.pdf`** — 114 pp, Portuguese. This is the one that is evaluated |
+| Read the earlier long versions | `thesis/main.pdf` (English, 130 pp) · `thesis-pt/main.pdf` (Português, 139 pp). Superseded, kept for the record |
+| Study for the defence | `tese/slides/main.pdf` (19) · `tese/guia/main.pdf` (20) · `tese/quiz/index.html`. Older material in `docs/defence/` targets the long thesis — read [`docs/defence/LEIA-ME-PRIMEIRO.md`](docs/defence/LEIA-ME-PRIMEIRO.md) first |
 | See it live | <https://investigator-ddc9d8618935.herokuapp.com> + Telegram <https://t.me/InvestiGatorMEIA> |
 | Get a 10-minute overview | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) |
 | Run it myself | `python scripts/demo.py` · full guide `docs/design/how_to_run.md` |

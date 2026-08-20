@@ -41,14 +41,19 @@
       `docs/design/going_live.md` §1b).
 
 ### Académico (bloqueia a submissão)
-- [ ] **Leitura final das teses** (`thesis/main.pdf` 130 pp · `thesis-pt/main.pdf` 139 pp) — o texto é teu para defender.
-- [ ] **Licença do código** com o Prof. Luís Gomes (MIT/Apache; política de IP do ISEP) +
-      ficheiro `LICENSE`.
+- [ ] **Leitura final da tese que vais entregar** (`tese/main.pdf`, 114 pp, PT-PT) — o texto é teu para defender.
+- [ ] **Licença do código** com o Prof. Luís Gomes + ficheiro `LICENSE`.
+      ⚠️ **Não é uma escolha livre entre MIT e Apache**, e a auditoria encontrou duas
+      restrições: o repositório distribui ficheiros derivados do FNSPID (**CC BY-SA 4.0**,
+      com partilha nos mesmos termos) e o `meia-style.cls` é **CC BY-NC-SA 3.0** (partilha
+      nos mesmos termos *e* não comercial). Levar isto à conversa.
 - [ ] **Redação exata da declaração de uso de IA** (MEIA/ISEP) + **data de entrega** — confirmar
       com o Prof. Luís Gomes.
-- [ ] Correr `python scripts/post_validate.py` de vez em quando enquanto o canal está vivo
-      (última corrida: 13/07 — 33 decisões maturadas; precisão das mantidas 0,667 vs base
-      0,455; Brier 0,229 → `docs/evaluation/live_monitoring.md`).
+- [ ] Correr `python scripts/post_validate.py` de vez em quando enquanto o canal está vivo.
+      ⚠️ **O estado que aqui estava (0,667 vs 0,455) foi retirado.** Eram 12 decisões, e com
+      530 o sinal **inverte-se**: mantidas 0,592 contra suprimidas 0,647, com o intervalo
+      [0,391, 0,601] a conter o acaso. É o que a tese reporta, e é o resultado desconfortável
+      que ela escolhe não esconder → `docs/evaluation/evaluation_live_transfer.md`.
 
 ### Opcional
 - [ ] (Opcional) Renomear o repositório `DIMEIA`→`InvestiGator` (Settings → Rename; mantém a

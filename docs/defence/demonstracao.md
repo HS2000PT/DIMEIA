@@ -35,7 +35,9 @@ python scripts/demo_defesa.py --dia 2026-08-09
 Corre isto **uma vez com internet**, em casa. Fica em cache local, e a partir daí funciona sem
 rede. Na sala, corre com `--offline` e não dependes de nada.
 
-Confirma também que os PDFs estão no portátil: `thesis/main.pdf`, `slides/main-pt.pdf`.
+Confirma também que os PDFs estão no portátil, e que são os certos: **`tese/main.pdf`** (a
+dissertação que entregaste), `tese/slides/main.pdf` (os 19 slides) e `tese/guia/main.pdf`.
+As teses longas em `thesis/` e `thesis-pt/` foram superadas e não são o que vais defender.
 
 ---
 
