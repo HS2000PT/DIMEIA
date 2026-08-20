@@ -7,6 +7,57 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 61 — 7.ª parte (2026-08-20): O ESTUDO DE UTILIDADE POSTO A PONTO DE CORRER — e
+  prepará-lo encontrou um defeito de desenho que teria invalidado o resultado.**
+  ⚠️ **O aluno pediu "corre o estudo de utilidade". Não corri, e não é limitação de tempo:** o
+  estudo precisa de 6 a 10 **pessoas reais**, e produzir essas respostas seria fabricar
+  participantes, que é o único erro deste projecto sem recuperação e que já foi recusado antes.
+  Feito tudo o resto, até ao ponto exacto onde é preciso um humano.
+  **⚠️ (A) O ACHADO: O CONTRABALANÇO ESTAVA CONFUNDIDO, E ENVIESAVA A FAVOR DO PRÓPRIO SISTEMA.**
+  O `_assign` do `build_usefulness_pack.py` dizia cruzar as condições e cruzava **só a ordem**:
+  nos **dois** ramos, a condição **A** recebia sempre o `grupo1` e a **B** sempre o `grupo2`.
+  Qualquer diferença entre A e B seria **inseparável** de uma metade ser mais fácil do que a
+  outra. E pior: o caso **tema≠direção**, que é o estímulo mais difícil de todos, é sempre o `S1`
+  e caía **sempre na condição de referência** — o que faz a referência parecer pior e empurra o
+  resultado na direcção que convém à tese. **Um estudo corrido assim daria um número, e o número
+  não queria dizer o que parecia.**
+  Corrigido para **dois factores cruzados** (ordem × que metade é o material de A), com a razão
+  escrita no docstring. Verificado a contar: cada conjunto aparece **4 vezes em A e 4 em B**,
+  logo o efeito do estímulo cancela-se entre participantes em vez de se somar ao da condição.
+  **(A2) E os grupos estavam separados por TIPO** (`S1–S3` notícia, `S4–S6` mercado), portanto
+  cada participante via uma condição toda de notícia e a outra toda de mercado. O cruzamento
+  equilibra isso entre pessoas; entrelaçar equilibra-o também **dentro** de cada uma, e com N=8 a
+  variância é o que decide se se vê alguma coisa. Passam a alternar.
+  **⛔ (B) O BLOCO C DEIXOU DE SER CORRÍVEL, e a razão é de âmbito e não de tempo.** O bloco do
+  texto gerado depende do `POST /api/report` e do `GET /api/evidence`, **retiradas na 3.ª parte
+  desta sessão**. Verificado **por execução** e não por suposição: o `capture_report_stimuli.py`
+  contra produção devolve `HTTPError` em todos os tickers e **não escreve nada** — falha fechado,
+  como deve. E a retirada foi deliberada: o **§2.7 da tese curta posiciona-se contra o resumo
+  gerado** e o documento não reivindica camada generativa nenhuma, logo correr o bloco mediria a
+  utilidade de uma funcionalidade que o produto entregue **não tem**.
+  Marcado `⛔ NÃO CORRER` no topo do §9 do protocolo, com a evidência e a data; a folha de
+  recolha **deixa de ser emitida por defeito** (passa a exigir `--bloco-c`), porque gerar uma
+  folha para um bloco que não se deve correr é convidar alguém a corrê-lo. **O desenho fica
+  escrito por inteiro e não apagado**, por duas razões ditas no sítio: é o que se usaria se a
+  camada voltasse a ser exposta, e apagá-lo esconderia que a pergunta existe.
+  ⚠️ **A consequência para a defesa, e é a resposta honesta a dar:** a garantia de ancoragem
+  continua verificada **por máquina** (23/23 ataques bloqueados) e **nunca por um humano**. A
+  **H5** — *dada uma frase com âncora, a pessoa consegue abrir o facto e julgar se ele a
+  sustenta?* — permanece **por medir**, e é isso que se diz.
+  **(C) O PACOTE ESTÁ CONGELADO E COMPLETO**, em `docs/study/`: `stimuli.md` (**6 alertas reais**
+  do canal, condição A = facto nu e B = alerta completo, com **2** casos tema≠direção),
+  `counterbalancing.md` (agora com os dois factores, e o cabeçalho a explicá-los em vez de
+  descrever só o antigo), `responses_template.csv` e `facilitator_script.md`.
+  **Verificada também a outra ponta:** com a folha por preencher, o `analyse_usefulness.py` diz
+  *"está vazio, nada a analisar"* e **não inventa resultado**; o limiar de **N≥8** para o
+  Wilcoxon está fixado no código **antes** de haver dados, e baixá-lo apareceria no diff.
+  ⚠️ **A partir daqui não se regenera o pacote** — o canal cresceu de 366 para **424** alertas, e
+  regenerar a meio troca os estímulos debaixo dos participantes.
+  **PORTAS: 750 testes, ruff limpo.**
+  **⏭️ O QUE FALTA É SÓ RECRUTAR:** 6 a 10 adultos sem formação em finanças ou IA (colegas e
+  família são o perfil certo), ~15 min cada, e no fim `python scripts/analyse_usefulness.py`.
+  ⚠️ **Se o estudo não for corrido, isso não é um buraco:** o Cap. 6 reporta-o como a única linha
+  em aberto, e essa honestidade defende-se melhor do que um resultado apressado.
 - **🆕 SESSÃO 61 — 6.ª parte (2026-08-20): A TESE LIDA LINHA A LINHA, DO PRINCÍPIO AO FIM. Já não
   sobra secção por ler. Sete achados, e três são defeitos que eu próprio tinha introduzido.**
   ⚠️ **Isto NÃO é a leitura final do CHECKLIST, e não a substitui.** Aquela é do aluno, e é o

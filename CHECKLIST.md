@@ -128,9 +128,23 @@ Estado a 2026-08-20: **sai a zero.** Tese 126 pp, slides 21, guia 24, quizz 37 p
 
 ## Adiado por decisão (2026-08-02) — não bloqueia a submissão
 
-- [ ] **Estudo de utilidade (RQ3).** Protocolo, estímulos e análise estão prontos a correr; falta
-      recrutar 6 a 10 pessoas. **Fica em aberto de propósito.** O Cap. 6 reporta-o como a única
-      linha em aberto, e essa honestidade vale mais do que um resultado apressado.
+- [ ] **Estudo de utilidade (RQ3) — PACOTE PRONTO E CONGELADO a 2026-08-20. Falta recrutar.**
+      Tudo o que não precisa de pessoas está feito, em `docs/study/`: `stimuli.md` (6 alertas
+      **reais** do canal, condição A = facto nu, B = alerta completo, com 2 casos tema≠direção),
+      `counterbalancing.md`, `responses_template.csv` e `facilitator_script.md`.
+      **Como correr:** 6 a 10 adultos **sem** formação em finanças ou IA (colegas e família são o
+      perfil certo), ~15 min cada. Copia `responses_template.csv` para `responses.csv`, preenche
+      à medida, e no fim corre `python scripts/analyse_usefulness.py`.
+      ⚠️ **Não expliques nada enquanto a pessoa lê — esse silêncio é a medição.**
+      ⚠️ **Não regeneres o pacote.** O canal continua a crescer (366 → 424 alertas) e regenerar a
+      meio troca os estímulos debaixo dos participantes.
+      ⚠️ **O BLOCO C NÃO SE CORRE.** Testava o relatório gerado, e as rotas que o serviam foram
+      retiradas da API a 2026-08-20; a tese curta também não reivindica camada generativa (o §2.7
+      posiciona-se contra o resumo gerado). Verificado por execução: o capturador devolve
+      `HTTPError` em todos os tickers e não escreve nada. Razão escrita em
+      `docs/design/usefulness_study.md` §9.
+      **Se não o correres, não é um buraco:** o Cap. 6 reporta-o como a única linha em aberto, e
+      essa honestidade vale mais do que um resultado apressado.
       ⚠️ **Não fabricar.** Inventar participantes e testes estatísticos numa dissertação submetida
       é o único erro deste projeto que não tem recuperação possível.
 - [ ] **Agradecimentos — RASCUNHO ESCRITO (2026-08-13), falta a tua voz.** As duas teses já têm
