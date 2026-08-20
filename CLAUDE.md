@@ -7,6 +7,40 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 61 — 2.ª parte (2026-08-20): F6, A REVISÃO DE PRODUTO DO PAINEL. IMPLANTADA E
+  VERIFICADA AO VIVO.** Pedida como revisão de pré-lançamento — questionar a estrutura, não
+  inspeccionar a interface. Cinco achados; a v6.1 está no ar em `c9652fb`+.
+  **(1) DUAS REPRESENTAÇÕES, DOIS ESTADOS, NO MESMO ECRÃ.** O gráfico era de uma empresa e as
+  duas listas por baixo eram de todas. Agora **uma selecção governa a página** — gráfico,
+  acontecimentos, detalhe do dia e mensagens — com botão explícito para o canal inteiro, e a URL
+  guarda a escolha.
+  **⚠️ (2) O ACHADO: O PRODUTO RESPONDIA A DUAS DAS TRÊS PERGUNTAS FUNDADORAS.** A repartição do
+  movimento (*foi a empresa, ou foi o mercado?*) vinha na API em `decomp`, em cada linha, e o
+  cliente **deitava-a fora**. O mesmo com o veredicto em palavras, que o `app/verdict.py` calcula
+  com 29 testes e a página ignorava. **Uma camada testada, servida e invisível é pior do que não
+  existir:** paga-se o custo de a manter e não se recebe o valor. As duas voltaram ao ecrã.
+  **⚠️ (3) A LEGENDA DIZIA "0 sent" COM ALERTAS ENVIADOS NA LISTA AO LADO.** Um alerta mais
+  recente do que o último fecho desenhado não tem barra onde pousar, e era descartado em silêncio
+  pelo `sessao()`. Passa a ser contado à parte e dito em voz alta.
+  **(4) O MURO DE TEXTO.** Vinte e cinco mensagens de quinze linhas. Passam a mostrar o título e
+  o movimento do momento, e abrem para o texto **exacto**. E o canal deixou de ser cortado em
+  silêncio: quantas ficaram por mostrar é dito, com botão.
+  **(5) O ECRÃ.** 860 px num monitor de 1920 → duas colunas a partir dos 1100, `autoSize` no
+  gráfico, e no telemóvel a barra fixa passou de **98 px (12% do ecrã) para 41**. Os 38 botões de
+  data soltos viraram uma lista que diz o que aconteceu em cada dia — continua a ser a via de
+  teclado para os marcadores, que numa tela não existem para um leitor de ecrã.
+  **VERIFICADO NO BROWSER E NÃO NO CÓDIGO:** contraste **≥4.5:1 nos dois temas** em dez pares,
+  **0 rolagem horizontal** a 375/1200/1600, **0 erros de consola**, a hiperligação da fonte a
+  resolver mesmo (302 do Finnhub → artigo da Benzinga), e em produção com instantâneo fresco a
+  89 s. **+3 testes (744)**, os três verificados a **falhar** contra a página anterior.
+  **⚠️ E DUAS COISAS QUE A REVISÃO APANHOU DE CAMINHO:** a porta dizia **"ruff limpo" e havia 11
+  erros** em cinco verificadores escritos nas duas últimas sessões (corrigidos); e o
+  `deploy_heroku.py` **morria com um rasto de excepção quando a CONSULTA ao build expirava** —
+  com o build **bem sucedido** e a página já no ar. Um rasto que se lê como falha leva alguém a
+  implantar outra vez, ou a desfazer o que resultou. A consulta é de leitura pura: passa a repetir.
+  **⚠️ A TESE NÃO MUDA, e verifiquei antes de mexer:** o Cap. 4 diz que a página serve para ver o
+  que foi enviado e o que não foi, e que *"a interface em si não é uma contribuição deste trabalho
+  e não se descreve aqui"*. A v6.1 cumpre a frase melhor do que a v6.
 - **🆕 SESSÃO 61 (2026-08-20 — "continua com o plano F1...F5"). AS TRÊS FASES QUE FALTAVAM, FEITAS.**
   A **F1** (134 achados de citação) e a **F2** (a v6 do painel, implantada) já tinham fechado nesta
   data. Esta corrida fez a **F3, a F4 e a F5**, que são de forma e não de conteúdo — **nenhum

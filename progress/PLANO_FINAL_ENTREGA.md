@@ -187,6 +187,46 @@ e o guia tem um *slide* por técnica com a mesma profundidade.
 
 ---
 
+## F6 — Revisão de produto do painel  ✅ FEITO (2026-08-20)
+
+Pedida como revisão de pré-lançamento e não como inspecção de interface: questionar a estrutura,
+não preservar o que já lá está. Cinco achados, todos corrigidos.
+
+**1. Duas representações, dois estados, no mesmo ecrã.** O gráfico era de uma empresa e as duas
+listas por baixo eram de todas. Agora a empresa escolhida governa a página inteira — gráfico,
+acontecimentos, detalhe do dia e mensagens — com um botão explícito para o canal todo. A URL
+guarda a escolha.
+
+**⚠️ 2. O produto respondia a duas das três perguntas fundadoras.** A repartição do movimento
+(*foi a empresa, ou foi o mercado?*) vinha na API em cada linha, no campo `decomp`, e o cliente
+**deitava-a fora**. O mesmo com o veredicto em palavras, que `app/verdict.py` calcula com 29
+testes e a página ignorava. Uma camada testada, servida e invisível é pior do que não existir:
+paga-se o custo e não se recebe o valor. Ambas voltaram ao ecrã, com testes que falham sem elas.
+
+**⚠️ 3. A legenda dizia "0 sent" e a lista ao lado mostrava alertas enviados.** Um alerta mais
+recente do que o último fecho desenhado não tem barra onde pousar, e era deitado fora em
+silêncio. Passa a ser contado à parte e dito: *"2 more sent after the last close shown"*.
+
+**4. O muro de texto.** Vinte e cinco mensagens de quinze linhas em monoespaçado. Cada uma passa
+a mostrar o título e o movimento do momento, e abre para o texto **exacto** que saiu. E o canal
+deixou de ser cortado em silêncio: quantas mensagens ficaram por mostrar é dito, com botão.
+
+**5. O ecrã.** Uma coluna de 860 px num monitor de 1920. Duas colunas a partir dos 1100 px, o
+gráfico a acompanhar a janela (`autoSize`), e no telemóvel a barra fixa deixou de comer 12% do
+ecrã. Trinta e oito botões de data soltos viraram uma lista que diz o que aconteceu em cada dia.
+
+**Verificado no browser, não no código:** contraste ≥ 4.5:1 nos dois temas em dez pares de
+cores, zero rolagem horizontal a 375, 1200 e 1600 px, zero erros de consola, a ligação da fonte
+a resolver para o artigo real (302 do Finnhub → Benzinga), e a página em produção com o
+instantâneo fresco. **+3 testes** (744), verificados a falhar contra a página anterior.
+
+**Também apanhado:** a porta dizia *ruff limpo* e havia **11 erros** em cinco verificadores;
+corrigidos. E o `deploy_heroku.py` morria com um rasto de excepção quando a **consulta** ao
+build expirava — com o build **bem sucedido** e a página já no ar. Um rasto que se lê como falha
+leva alguém a implantar outra vez.
+
+---
+
 ## O que NÃO está neste plano, e porquê
 
 | | Porquê |
