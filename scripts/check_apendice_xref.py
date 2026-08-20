@@ -72,7 +72,7 @@ for linha in linhas:
         # ⚠️ Sem fronteiras, "1.5" casa dentro de "21.5" e o verificador aprova tudo.
         return re.search(r"(?<![\d.])" + re.escape(agulha) + r"(?![\d])", palheiro) is not None
 
-    def esta(v):
+    def esta(v, limpo=limpo):
         v = v.replace(",", ".")
         if _solto(v, limpo):
             return True

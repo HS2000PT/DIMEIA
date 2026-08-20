@@ -109,11 +109,12 @@ def main() -> int:
     achados, ok, sem_id, arxiv = [], 0, [], []
     linhas = []
 
-    for tipo, chave, c in entradas:
+    for _tipo, chave, c in entradas:
         doi = c.get("doi", "").strip()
         titulo = c.get("title", "")
         onde = c.get("journal") or c.get("booktitle") or c.get("publisher") or ""
-        eprint = c.get("eprint", "") or ("arxiv" in onde.lower()) or ("arxiv" in c.get("note", "").lower())
+        eprint = (c.get("eprint", "") or "arxiv" in onde.lower()
+                  or "arxiv" in c.get("note", "").lower())
 
         if not doi:
             (arxiv if eprint else sem_id).append((chave, titulo, onde))
@@ -172,7 +173,7 @@ def main() -> int:
         if arxiv:
             w("## Pre-publicacoes: existe versao publicada?\n\n")
             w("| Chave | Titulo | Versao publicada encontrada |\n|---|---|---|\n")
-            for ch, t, onde in arxiv:
+            for ch, t, _onde in arxiv:
                 pub = procura_publicado(t)
                 time.sleep(0.35)
                 if pub:
@@ -190,12 +191,12 @@ def main() -> int:
 
         w("\n## Todas as entradas com DOI\n\n")
         w("| Chave | Estado | Crossref devolve | Publicado em | Ano |\n|---|---|---|---|---|\n")
-        for ch, d, t, cont, ano, est in sorted(linhas):
+        for ch, _d, t, cont, ano, est in sorted(linhas):
             w(f"| `{ch}` | {est} | {t} | {cont} | {ano} |\n")
 
     print(f"entradas {len(entradas)} · DOI certo {ok} · problemas {len(achados)} · "
           f"pre-publicacoes {len(arxiv)} · sem id {len(sem_id)}")
-    for ch, p, d, _ in achados:
+    for ch, p, _d, _ in achados:
         print(f"  !! {ch}: {p}")
     print(f"\nEscrito: {SAIDA}")
     return 1 if achados else 0

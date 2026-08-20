@@ -210,3 +210,44 @@ def test_a_pagina_recusa_um_href_que_nao_seja_http():
     """
     html = _PAGINA.read_text(encoding="utf-8")
     assert "const seguro" in html and "https?" in html
+
+
+# ══ A PÁGINA (v6.1, revisão de produto F6) ══════════════════════════════════════════
+# As três regras abaixo já foram quebradas uma vez cada, e nenhuma delas dá erro: a página
+# continua a compilar, a carregar e a parecer bem. Só se nota a olhar para o ecrã e a saber o
+# que devia lá estar — que é exactamente o tipo de defeito que um teste deve apanhar por nós.
+
+
+def test_a_pagina_usa_o_veredicto_que_o_servidor_calcula():
+    """`app/verdict.py` tem 29 testes e resolve o caso das duas réguas que discordam.
+
+    A v6 pedia `/api/overview`, recebia o campo `verdict` de cada linha e **não o mostrava**:
+    uma camada testada, servida e ignorada. Reescrever a frase em JavaScript seria pior ainda,
+    porque criava uma segunda verdade que ninguém verificava.
+    """
+    html = _PAGINA.read_text(encoding="utf-8")
+    assert ".verdict" in html, "a página tem de mostrar o veredicto do servidor, não inventar um"
+
+
+def test_a_pagina_mostra_a_reparticao_do_movimento():
+    """*Foi a empresa, ou foi o mercado?* é uma das três perguntas fundadoras do trabalho.
+
+    A v6 tinha-a deixado cair: a API servia `decomp` em cada linha e o cliente deitava-a fora.
+    Um produto que responde a duas das três perguntas não é o produto que a dissertação
+    descreve.
+    """
+    html = _PAGINA.read_text(encoding="utf-8")
+    assert "decomp" in html
+    for parte in ("market", "sector", "company"):
+        assert parte in html, f"falta a parcela {parte} na repartição"
+
+
+def test_a_pagina_nao_corta_o_canal_em_silencio():
+    """Mostrar as primeiras N mensagens sem dizer quantas ficaram de fora é um corte silencioso.
+
+    A página é um espelho do canal: se não couber tudo, tem de dizer quanto não coube e ter
+    onde carregar. É a mesma regra que os relatórios de avaliação seguem quando limitam
+    cobertura.
+    """
+    html = _PAGINA.read_text(encoding="utf-8")
+    assert "older message" in html, "o resto do canal tem de estar alcançável e contado"

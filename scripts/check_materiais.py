@@ -83,12 +83,14 @@ def main() -> int:
     travessoes, virgulas = [], []
     for p in corpo + [x for x in MATERIAIS if x.exists()]:
         md = p.suffix.lower() == ".md"
-        for n, linha in enumerate(limpa(p.read_text(encoding="utf-8", errors="replace")).split("\n"), 1):
+        texto = limpa(p.read_text(encoding="utf-8", errors="replace"))
+        for n, linha in enumerate(texto.split("\n"), 1):
             if linha.lstrip().startswith("%"):
                 continue
             # travessao a serio: entre palavras. Em Markdown, `---` sozinho e uma barra
             # horizontal e `|---|` e uma tabela: nenhum dos dois e travessao.
-            if re.search(r"\w\s*---\s*\w", linha) and not (md and linha.lstrip().startswith(("|", "-"))):
+            barra = md and linha.lstrip().startswith(("|", "-"))
+            if re.search(r"\w\s*---\s*\w", linha) and not barra:
                 travessoes.append(f"{p.name}:{n}  {linha.strip()[:60]}")
             if re.search(r"\$[^$]*\d,\d[^$]*\$", linha):
                 virgulas.append(f"{p.name}:{n}  {linha.strip()[:60]}")

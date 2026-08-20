@@ -120,9 +120,9 @@ def main() -> int:
     # ⚠️ AUTOTESTE: sem isto, um regex partido dá "0 achados" e lê-se como corpus limpo.
     planta = "O usuário abriu o arquivo e o projecto precisava setup."
     controlo = []
-    for nome, termos, palavra in (("b", [re.escape(x) for x in BRASILEIRISMOS], True),
-                                  ("p", [re.escape(x) for x in PRE_ACORDO], True),
-                                  ("a", [re.escape(x) for x in ANGLICISMOS], True)):
+    for nome, termos in (("b", [re.escape(x) for x in BRASILEIRISMOS]),
+                         ("p", [re.escape(x) for x in PRE_ACORDO]),
+                         ("a", [re.escape(x) for x in ANGLICISMOS])):
         for termo in termos:
             rx = re.compile(r"(?<![\w-])" + termo + r"(?![\w-])", re.I)
             if rx.search(planta):

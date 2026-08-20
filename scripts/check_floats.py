@@ -52,8 +52,8 @@ for x in inv:
         achados.append((x["lab"], "legenda incompleta"))
     print(f"{x['f']:22s} {x['linha']:5d} {x['tipo']:6s} {n:4d} {leg:>4s}{marca}")
 
-print(f"\ntotal de flutuantes: {len(inv)}  ({sum(1 for x in inv if x['tipo'] == 'figure')} figuras, "
-      f"{sum(1 for x in inv if x['tipo'] == 'table')} tabelas)")
-print(f"achados: {len(achados)}")
+nfig = sum(1 for x in inv if x["tipo"] == "figure")
+ntab = sum(1 for x in inv if x["tipo"] == "table")
+print(f"\ntotal de flutuantes: {len(inv)}  ({nfig} figuras, {ntab} tabelas)")
 for lab, o in achados:
     print("  -", lab, ":", o)

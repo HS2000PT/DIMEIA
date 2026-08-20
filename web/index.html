@@ -6,166 +6,308 @@
 <title>InvestiGator — what was sent, and what was not</title>
 <link rel="icon" href="/assets/icon.svg">
 <!--
-  A PÁGINA. Versão 6.
+  A PÁGINA. Versão 6.1 — revisão de produto (F6).
 
-  A v5 tinha nove rotas, relatório generativo, analista, painel de triagem e 48 KB de código.
-  O autor descreveu-a como "uma sopa de funcionalidades" e ela foi retirada. Esta nasce da
-  página simples, que era honesta, e recebe de volta a ÚNICA coisa da v5 que vale a pena: o
-  gráfico com os acontecimentos assinalados e clicáveis.
+  ## O que esta página é
 
-  Três secções, por esta ordem, e mais nada:
+  Um espelho do canal, mais o que o canal não pode mostrar: o **silêncio**. Nove em cada dez
+  varreduras não enviam nada, e essa é a decisão mais frequente que o sistema toma. Um produto
+  que só mostra o que enviou apresenta as vitórias e esconde o critério.
 
-    1. O GRÁFICO. Uma empresa de cada vez. Os dias assinalados pelo detetor marcados na curva,
-       e os alertas que foram mesmo enviados com marca própria. Clicar num marcador abre o que
-       aconteceu nesse dia, com o texto exacto do alerta se ele existir.
-    2. O QUE FOI ENVIADO, com o texto que chegou ao telemóvel. Nada é reescrito aqui.
-    3. O QUE NÃO FOI, e em que porta é que cada empresa parou, com a margem que faltou.
+  ## O que mudou na 6.1, e porquê
 
-  A terceira é a que justifica a página existir. O canal mostra o que aconteceu; só aqui se vê
-  o SILÊNCIO, e o silêncio é uma decisão do sistema e não uma ausência de decisão.
+  1. **UMA SELECÇÃO GOVERNA A PÁGINA.** Antes, o gráfico era de uma empresa e as duas listas
+     por baixo eram de todas. Duas representações com estados diferentes no mesmo ecrã obrigam
+     o leitor a perguntar-se se estão a falar da mesma coisa. Agora a empresa escolhida governa
+     o gráfico, a lista de acontecimentos, o detalhe do dia e — por defeito — o que foi enviado,
+     com um botão explícito para ver o canal inteiro.
 
-  ⚠️ O QUE ESTA PÁGINA NÃO MOSTRA, e é deliberado: a probabilidade da triagem. É um número
-  sobre o futuro, e o critério de aceitação H2 proíbe-o em qualquer vista de produto. Está no
-  registo de decisões, que é onde ele pertence, e não no ecrã de quem lê.
+  2. **A SEGUNDA DAS TRÊS PERGUNTAS VOLTOU AO ECRÃ.** A v6 mostrava *foi invulgar?* e *já
+     aconteceu antes?*, e tinha deixado cair *foi a empresa ou foi o mercado?* — que é uma das
+     três perguntas fundadoras do trabalho. A repartição já vinha na API (`decomp`) e era
+     deitada fora pelo cliente. Volta como barra, com o motor nomeado por palavras.
+
+  3. **O VEREDICTO EM PALAVRAS, ANTES DO NÚMERO.** `app/verdict.py` tem 29 testes, resolve o
+     caso das duas réguas que discordam e impõe a proibição de prever por varrimento. Estava a
+     ser calculado no servidor e ignorado no cliente. Uma frase antes da percentagem é a regra
+     de apresentação deste projecto desde a v3.
+
+  4. **OS ALERTAS DEIXARAM DE SER UM MURO.** Vinte e cinco mensagens de quinze linhas cada uma
+     é texto a mais para se ler seja o que for. Cada uma passa a mostrar o essencial e a abrir
+     para o texto **exacto** que saiu. Nenhuma palavra é reescrita e nada é deitado fora: a
+     promessa da secção é essa, e é ela que a torna verificável.
+
+  5. **OS TRINTA E OITO BOTÕES DE DATA VIRARAM UMA LISTA.** Eram a via de teclado para os
+     marcadores do gráfico (um marcador desenhado numa tela não existe para um leitor de ecrã),
+     e continuam a sê-lo — mas como lista legível, com o que aconteceu em cada dia, e ligada ao
+     gráfico nos dois sentidos.
+
+  6. **O ECRÃ INTEIRO.** Uma coluna de 860 px num monitor de 1920 desperdiça metade da página e
+     obriga a rolar por tudo. Duas colunas a partir dos 1100 px.
+
+  ⚠️ O QUE ESTA PÁGINA NÃO ACRESCENTA: nada que a medição não sustente (critério H4), nenhuma
+  direcção prevista, nenhum conselho. O texto dos alertas traz a estimativa de materialidade
+  porque foi assim que ela chegou ao telemóvel, e com a moldura que o critério H2 exige — de
+  probabilidade *de haver movimento*, em qualquer direcção. A página não a recalcula nem a
+  destaca.
 -->
 <style>
   :root {
-    --tinta: #12151a; --fundo: #fbfbfa; --caixa: #fff; --linha: #e4e4e0;
-    --fraco: #6b7280; --acento: #0f766e; --parou: #b45309;
-    --sobe: #0f766e; --desce: #b91c1c; --grelha: #eeeeea;
+    --tinta:#12151a; --fundo:#fbfbfa; --caixa:#ffffff; --linha:#e3e3df; --linha2:#efefec;
+    --fraco:#6b7280; --acento:#0a7f4f; --acento-fraco:#0a7f4f14;
+    --sobe:#0f766e; --desce:#b91c1c; --parou:#b45309; --grelha:#eeeeea;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --tinta:#e8e8e4; --fundo:#0f1115; --caixa:#171a20; --linha:#282c34;
-            --fraco:#9aa1ac; --acento:#5eead4; --parou:#fbbf24;
-            --sobe:#5eead4; --desce:#f87171; --grelha:#1e222a; }
+    :root { --tinta:#e9e9e5; --fundo:#0d0f13; --caixa:#14171c; --linha:#252932; --linha2:#1b1f26;
+            --fraco:#98a0ac; --acento:#23c67a; --acento-fraco:#23c67a1f;
+            --sobe:#5eead4; --desce:#f87171; --parou:#fbbf24; --grelha:#1c2027; }
   }
-  * { box-sizing: border-box; }
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
   body { margin:0; background:var(--fundo); color:var(--tinta);
-         font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
-  main { max-width: 860px; margin: 0 auto; padding: 32px 20px 80px; }
-  h1 { font-size: 1.45rem; margin: 0 0 4px; letter-spacing:-.02em; }
-  h2 { font-size: 1.05rem; margin: 44px 0 6px; letter-spacing:-.01em; }
-  .sub { color: var(--fraco); font-size: .92rem; margin: 0 0 6px; }
-  .estado { color: var(--fraco); font-size: .84rem; margin-top: 10px; }
+         font:15px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+         font-variant-numeric:tabular-nums; }
+  button { font:inherit; color:inherit; }
+  :focus-visible { outline:2px solid var(--acento); outline-offset:2px; border-radius:4px; }
+  a { color:var(--acento); }
 
-  /* ── o gráfico ─────────────────────────────────────────────────────────── */
-  .empresas { display:flex; flex-wrap:wrap; gap:6px; margin: 10px 0 12px; }
-  .empresa { background: var(--caixa); border:1px solid var(--linha); border-radius: 6px;
-             padding: 4px 10px; font-size: .85rem; cursor: pointer; color: inherit;
-             font-family: inherit; }
-  .empresa[aria-pressed="true"] { border-color: var(--acento); font-weight: 600; }
-  .empresa .mv { color: var(--fraco); margin-left: 5px; font-variant-numeric: tabular-nums; }
-  .empresa .mv.pos { color: var(--sobe); } .empresa .mv.neg { color: var(--desce); }
-  #grafico { height: 260px; border:1px solid var(--linha); border-radius: 8px;
-             background: var(--caixa); }
-  .legenda { color: var(--fraco); font-size: .82rem; margin: 8px 0 0; }
-  .legenda b { color: var(--tinta); font-weight: 600; }
-  #dia { margin: 12px 0 0; }
+  /* ── cabeçalho ─────────────────────────────────────────────────────────── */
+  header { position:sticky; top:0; z-index:5; background:var(--fundo);
+           border-bottom:1px solid var(--linha); }
+  .barra { max-width:1560px; margin:0 auto; padding:10px 22px;
+           display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .marca { display:flex; align-items:center; gap:9px; font-weight:650; letter-spacing:-.015em; }
+  .marca img { width:22px; height:22px; display:block; }
+  .marca small { display:block; font-weight:400; font-size:.78rem; color:var(--fraco);
+                 letter-spacing:0; }
+  .estado { margin-left:auto; display:flex; align-items:center; gap:8px;
+            font-size:.82rem; color:var(--fraco); }
+  .ponto { width:7px; height:7px; border-radius:50%; background:var(--acento); }
+  .ponto.frio { background:var(--parou); }
 
-  .alerta { background: var(--caixa); border:1px solid var(--linha); border-radius: 8px;
-            padding: 14px 16px; margin: 10px 0; }
-  .alerta .quando { color: var(--fraco); font-size: .8rem; letter-spacing:.02em; }
-  .alerta pre { margin: 6px 0 0; white-space: pre-wrap; word-wrap: break-word;
-                font: .9rem/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
-  .alerta a { color: var(--acento); }
-  .etapa { margin: 18px 0 0; }
-  .etapa h3 { font-size: .95rem; margin: 0 0 2px; font-weight: 600; }
-  .etapa .porque { color: var(--fraco); font-size: .85rem; margin: 0 0 8px; }
-  .nomes { display:flex; flex-wrap:wrap; gap:6px; }
-  .nome { background: var(--caixa); border:1px solid var(--linha); border-radius: 6px;
-          padding: 3px 9px; font-size: .85rem; }
-  .nome b { font-weight: 600; }
-  .nome span { color: var(--fraco); }
-  .passou .nome { border-color: var(--acento); }
-  footer { margin-top: 56px; padding-top: 18px; border-top:1px solid var(--linha);
-           color: var(--fraco); font-size: .82rem; }
-  .vazio { color: var(--fraco); font-style: italic; }
+  /* ── estrutura ─────────────────────────────────────────────────────────── */
+  main { max-width:1560px; margin:0 auto; padding:20px 22px 72px; }
+  .colunas { display:grid; grid-template-columns:1fr; gap:32px; align-items:start; }
+  @media (min-width:1100px) {
+    .colunas { grid-template-columns:minmax(0,7fr) minmax(0,5fr); gap:40px; }
+    .direita { position:sticky; top:56px; max-height:calc(100vh - 76px);
+               display:flex; flex-direction:column; }
+  }
+  h2 { font-size:.78rem; text-transform:uppercase; letter-spacing:.09em; color:var(--fraco);
+       font-weight:650; margin:0 0 10px; }
+  .sub { color:var(--fraco); font-size:.85rem; margin:-4px 0 12px; }
+  .vazio { color:var(--fraco); font-style:italic; font-size:.9rem; }
+  section + section { margin-top:38px; }
+
+  /* ── barra de empresas ─────────────────────────────────────────────────── */
+  .rail { display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; margin:0 0 18px;
+          scrollbar-width:thin; }
+  .tk { flex:0 0 auto; border:1px solid var(--linha); background:var(--caixa); border-radius:7px;
+        padding:6px 10px 5px; cursor:pointer; text-align:left; line-height:1.25;
+        transition:border-color .12s, background .12s; }
+  .tk:hover { border-color:var(--fraco); }
+  .tk[aria-pressed="true"] { border-color:var(--acento); background:var(--acento-fraco); }
+  .tk b { display:block; font-size:.83rem; font-weight:650; letter-spacing:.01em; }
+  .tk s { display:block; font-size:.78rem; text-decoration:none; color:var(--fraco); }
+  .tk s.pos { color:var(--sobe); } .tk s.neg { color:var(--desce); }
+  .tk .flag { display:inline-block; width:5px; height:5px; border-radius:50%;
+              background:var(--parou); margin-left:5px; vertical-align:middle; }
+
+  /* ── cabeça da empresa ─────────────────────────────────────────────────── */
+  .quem { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin:0 0 2px; }
+  .quem h1 { font-size:1.5rem; margin:0; letter-spacing:-.022em; font-weight:650; }
+  .quem .tick { color:var(--fraco); font-size:.85rem; letter-spacing:.06em; }
+  .quem .mv { margin-left:auto; font-size:1.5rem; font-weight:650; letter-spacing:-.02em; }
+  .mv.pos { color:var(--sobe); } .mv.neg { color:var(--desce); }
+  .veredicto { font-size:1.02rem; margin:2px 0 16px; max-width:62ch; }
+
+  /* ── repartição do movimento ───────────────────────────────────────────── */
+  .rep { margin:0 0 18px; }
+  .rep .barras { display:flex; flex-direction:column; gap:5px; }
+  .rep .l { display:grid; grid-template-columns:66px 1fr 62px; align-items:center; gap:10px;
+            font-size:.82rem; }
+  .rep .l span:first-child { color:var(--fraco); }
+  .rep .t { position:relative; height:7px; background:var(--linha2); border-radius:3px; }
+  .rep .t i { position:absolute; top:0; height:7px; border-radius:3px; background:var(--fraco); }
+  .rep .l.motor .t i { background:var(--acento); }
+  .rep .l.motor span:first-child { color:var(--tinta); font-weight:600; }
+  .rep .v { text-align:right; font-variant-numeric:tabular-nums; }
+  .rep .nota { color:var(--fraco); font-size:.82rem; margin:8px 0 0; }
+
+  /* ── gráfico ───────────────────────────────────────────────────────────── */
+  #grafico { height:clamp(280px, 34vh, 430px); border:1px solid var(--linha); border-radius:9px;
+             background:var(--caixa); display:flex; align-items:center; justify-content:center;
+             color:var(--fraco); font-size:.85rem; }
+  .legenda { color:var(--fraco); font-size:.82rem; margin:9px 0 0;
+             display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+  .chave { display:inline-flex; align-items:center; gap:6px; }
+  .chave i { width:8px; height:8px; border-radius:50%; background:var(--fraco); display:block; }
+  .chave i.env { border-radius:1px; background:var(--acento); }
+
+  /* ── acontecimentos ────────────────────────────────────────────────────── */
+  .dias { margin:16px 0 0; border-top:1px solid var(--linha2); max-height:280px; overflow-y:auto; }
+  .dia { display:grid; grid-template-columns:92px 1fr auto; gap:10px; align-items:baseline;
+         width:100%; text-align:left; background:none; border:0;
+         border-bottom:1px solid var(--linha2); padding:8px 8px 8px 2px; cursor:pointer;
+         font-size:.86rem; }
+  .dia:hover { background:var(--linha2); }
+  .dia[aria-pressed="true"] { background:var(--acento-fraco);
+                              box-shadow:inset 2px 0 0 var(--acento); }
+  .dia .quando { color:var(--fraco); font-variant-numeric:tabular-nums; }
+  .dia .z { color:var(--fraco); font-size:.8rem; }
+  .dia .selo { color:var(--acento); font-weight:600; font-size:.78rem;
+               text-transform:uppercase; letter-spacing:.05em; }
+  @keyframes surge { from { opacity:0; transform:translateY(-3px); } }
+  .detalhe { animation:surge .14s ease-out; border:1px solid var(--linha);
+             border-left:2px solid var(--acento);
+             border-radius:0 8px 8px 0; background:var(--caixa); padding:12px 14px;
+             margin:14px 0 0; }
+  @media (prefers-reduced-motion: reduce) { .detalhe { animation:none; } }
+  .detalhe .quando { color:var(--fraco); font-size:.78rem; letter-spacing:.04em; }
+
+  /* ── mensagens ─────────────────────────────────────────────────────────── */
+  .filtro { display:flex; gap:6px; margin:0 0 12px; }
+  .filtro button { border:1px solid var(--linha); background:var(--caixa); border-radius:6px;
+                   padding:3px 10px; font-size:.8rem; cursor:pointer; }
+  .filtro button[aria-pressed="true"] { border-color:var(--acento); background:var(--acento-fraco);
+                                        font-weight:600; }
+  .feed { overflow-y:auto; flex:1; min-height:0; padding-right:4px; }
+  .msg { border-bottom:1px solid var(--linha2); padding:12px 2px; }
+  .msg:first-child { padding-top:0; }
+  .msg .cab { display:flex; gap:8px; align-items:baseline; font-size:.78rem; color:var(--fraco); }
+  .msg .cab b { color:var(--tinta); font-weight:650; letter-spacing:.02em; }
+  .msg .tipo { margin-left:auto; text-transform:uppercase; letter-spacing:.06em; font-size:.68rem;
+               border:1px solid var(--linha); border-radius:4px; padding:0 5px; }
+  .msg .cabeca { margin:5px 0 0; font-weight:550; }
+  .msg .agora { color:var(--fraco); font-size:.84rem; margin:3px 0 0; }
+  .msg details { margin:7px 0 0; }
+  .msg summary { color:var(--fraco); font-size:.8rem; cursor:pointer; width:max-content; }
+  .msg summary:hover { color:var(--acento); }
+  .mais { display:block; width:100%; margin:14px 0 0; padding:8px; cursor:pointer;
+          border:1px solid var(--linha); border-radius:7px; background:var(--caixa);
+          color:var(--fraco); font-size:.82rem; }
+  .mais:hover { border-color:var(--acento); color:var(--acento); }
+  .msg pre { margin:8px 0 0; white-space:pre-wrap; word-wrap:break-word; color:var(--tinta);
+             font:.82rem/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+             border-left:1px solid var(--linha); padding-left:11px; }
+
+  /* ── funil ─────────────────────────────────────────────────────────────── */
+  .funil { display:grid; grid-template-columns:repeat(auto-fill,minmax(255px,1fr)); gap:2px 26px; }
+  .etapa { padding:9px 0; border-top:1px solid var(--linha2); }
+  .etapa h3 { font-size:.88rem; margin:0; font-weight:600;
+              display:flex; align-items:baseline; gap:8px; }
+  .etapa h3 .n { color:var(--fraco); font-weight:400; font-size:.8rem; }
+  .etapa .porque { color:var(--fraco); font-size:.8rem; margin:1px 0 6px; }
+  .nomes { display:flex; flex-wrap:wrap; gap:5px; }
+  .nome { border:1px solid var(--linha); border-radius:5px; padding:2px 7px; font-size:.79rem;
+          background:var(--caixa); }
+  .nome b { font-weight:600; } .nome span { color:var(--fraco); }
+  .nome.eu { border-color:var(--acento); background:var(--acento-fraco); }
+  .etapa.passou { border-top-color:var(--acento); }
+  .etapa.passou h3 { color:var(--acento); }
+
+  footer { max-width:1560px; margin:0 auto; padding:22px; border-top:1px solid var(--linha);
+           color:var(--fraco); font-size:.82rem; display:flex; gap:18px; flex-wrap:wrap; }
 </style>
 </head>
 <body>
+
+<header>
+  <div class="barra">
+    <div class="marca">
+      <img src="/assets/icon.svg" alt="" width="22" height="22">
+      <span>InvestiGator
+        <small>what was sent, and what was not</small>
+      </span>
+    </div>
+    <div class="estado"><span class="ponto" id="ponto"></span><span id="estado">loading…</span></div>
+  </div>
+</header>
+
 <main>
-  <h1>InvestiGator</h1>
-  <p class="sub">What was sent, and what was not. This page is a mirror of the Telegram channel.</p>
-  <p class="estado" id="estado">loading…</p>
+  <div class="rail" id="rail" role="group" aria-label="Companies"></div>
 
-  <h2>One company at a time</h2>
-  <p class="sub">
-    Days the detector flagged are marked on the line; the ones that became an alert are marked
-    differently. Click any marker to see what happened that day.
-  </p>
-  <div class="empresas" id="empresas"></div>
-  <div id="grafico"></div>
-  <p class="legenda" id="legenda"></p>
-  <!--
-    ⚠️ OS MESMOS DIAS, EM BOTÕES. Não é redundância: um marcador desenhado numa tela não se
-    alcança com o teclado nem existe para um leitor de ecrã, portanto uma interface que só
-    responde ao clique no gráfico é inutilizável para quem não usa rato. As duas vias abrem
-    exactamente o mesmo detalhe.
-  -->
-  <div class="empresas" id="dias"></div>
-  <div id="dia"></div>
+  <div class="colunas">
+    <div class="esquerda">
+      <section aria-label="The selected company">
+        <div class="quem">
+          <h1 id="nome">…</h1><span class="tick" id="tick"></span>
+          <span class="mv" id="mv"></span>
+        </div>
+        <p class="veredicto" id="veredicto"></p>
+        <div class="rep" id="rep"></div>
+        <div id="grafico">drawing the last year of sessions…</div>
+        <p class="legenda" id="legenda"></p>
+        <div class="dias" id="dias"></div>
+        <div id="detalhe"></div>
+      </section>
+    </div>
 
-  <h2>What was sent</h2>
-  <p class="sub">The exact text that reached the phone. Nothing is rewritten here.</p>
-  <div id="alertas"><p class="vazio">loading…</p></div>
+    <div class="direita">
+      <h2>What was sent</h2>
+      <p class="sub">The exact text that reached the phone. Nothing is rewritten.</p>
+      <div class="filtro" id="filtro"></div>
+      <div class="feed" id="alertas"><p class="vazio">loading…</p></div>
+    </div>
+  </div>
 
-  <h2>Why it stayed quiet</h2>
-  <p class="sub">
-    Nine out of ten scans send nothing. That is the design, not a failure — but silence is a
-    decision, so it is shown here in the order the decisions are taken.
-  </p>
-  <div id="funil"><p class="vazio">loading…</p></div>
-
-  <footer>
-    Observed past outcomes, never a price prediction and never advice.
-  </footer>
+  <section>
+    <h2>Why it stayed quiet</h2>
+    <p class="sub" id="funilSub">
+      Nine out of ten scans send nothing. Silence is a decision, so here is where each company
+      stopped, in the order the decisions are taken.
+    </p>
+    <div class="funil" id="funil"><p class="vazio">loading…</p></div>
+  </section>
 </main>
+
+<footer>
+  <span>Observed past outcomes. Never a price prediction, never advice.</span>
+  <span id="rodape"></span>
+</footer>
 
 <script src="/assets/vendor/lightweight-charts.js"></script>
 <script>
-// As portas pela ORDEM em que acontecem. É o ponto da última secção: ver o funil como etapas,
-// e não como uma lista solta. A ordem é a do caminho real de uma notícia dentro do sistema.
+// As portas pela ORDEM em que acontecem. É o ponto da última secção: ver o funil como etapas de
+// um caminho, e não como uma lista solta de razões.
 const ETAPAS = [
-  ["no_news",           "No news at all",            "the source returned nothing for this company"],
-  ["none_relevant",     "Nothing relevant",          "news arrived, but none of it actually named the company"],
-  ["stale",             "Too old",                   "the most recent relevant headline is older than the freshness window"],
-  ["weak_precedent",    "No strong past case",       "no past headline was similar enough to be worth showing"],
-  ["triage_suppressed", "Below the volume floor",    "the learned model scored it below the floor"],
-  ["ladder_floor",      "Second alert cost more",    "an extra alert for the same company must clear a higher bar"],
-  ["duplicate_story",   "Same story, other words",   "already sent today under a different headline"],
-  ["already_sent",      "Already sent",              "this exact headline had already gone out today"],
-  ["daily_budget",      "Daily budget spent",        "the five slots for the day were already used"],
-  ["error",             "Error",                     "something failed while processing this company"],
-  ["alerted",           "Alert sent",                "cleared every gate and was delivered"],
+  ["no_news",           "No news at all",         "the source returned nothing for this company"],
+  ["none_relevant",     "Nothing relevant",       "news arrived, but none of it named the company"],
+  ["stale",             "Too old",                "the newest relevant headline is past the freshness window"],
+  ["weak_precedent",    "No strong past case",    "no past headline was similar enough to be worth showing"],
+  ["triage_suppressed", "Below the volume floor", "the learned model scored it below the floor"],
+  ["ladder_floor",      "Second alert cost more", "an extra alert for the same company must clear a higher bar"],
+  ["duplicate_story",   "Same story, other words","already sent today under a different headline"],
+  ["already_sent",      "Already sent",           "this exact headline had already gone out today"],
+  ["daily_budget",      "Daily budget spent",     "the five slots for the day were already used"],
+  ["error",             "Error",                  "something failed while processing this company"],
+  ["alerted",           "Alert sent",             "cleared every gate and was delivered"],
 ];
 
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c =>
   ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
 
 // O registo do funil é escrito em português pelo runner (é um log interno). A interface é em
-// inglês, e misturar as duas línguas no mesmo ecrã é confuso. Traduz-se **só para mostrar**;
-// o registo fica como está, porque é a prova.
+// inglês, e misturar as duas línguas no mesmo ecrã é confuso. Traduz-se **só para mostrar**; o
+// registo fica como está, porque é a prova.
 const DETALHE = [
-  [/^melhor sim ([\d.]+) < ([\d.]+)$/,        (m) => `best match ${m[1]}, floor ${m[2]}`],
-  [/^P=([\d.]+) < ([\d.]+)$/,                 (m) => `scored ${m[1]}, floor ${m[2]}`],
-  [/^mais recente (\S+) > (\d+)d$/,           (m) => `newest is ${m[1]}, older than ${m[2]} days`],
-  [/^same story, other words$/,               () => "already sent under another headline"],
-  [/^budget (\d+)\/day spent$/,               (m) => `all ${m[1]} slots used`],
-  [/^cap (\d+)\/day reached$/,                (m) => `cap of ${m[1]} for this company reached`],
-  [/^(\d+) manchete\(s\) brutas$/,            (m) => `${m[1]} headlines, none of them relevant`],
+  [/^melhor sim ([\d.]+) < ([\d.]+)$/,  m => `best match ${m[1]}, floor ${m[2]}`],
+  [/^P=([\d.]+) < ([\d.]+)$/,           m => `scored ${m[1]}, floor ${m[2]}`],
+  [/^mais recente (\S+) > (\d+)d$/,     m => `newest is ${m[1]}, past ${m[2]} days`],
+  [/^same story, other words$/,         () => "sent under another headline"],
+  [/^budget (\d+)\/day spent$/,         m => `all ${m[1]} slots used`],
+  [/^cap (\d+)\/day reached$/,          m => `cap of ${m[1]} reached`],
+  [/^(\d+) manchete\(s\) brutas$/,      m => `${m[1]} headlines, none relevant`],
 ];
-const legivel = (d) => {
+const legivel = d => {
   for (const [rx, fn] of DETALHE) { const m = rx.exec(d || ""); if (m) return fn(m); }
   return d || "";
 };
 
 // ⚠️ A HIPERLIGAÇÃO DA FONTE TEM DE FUNCIONAR. É ela que torna a notícia verificável, e é a
-// diferença entre mostrar evidência e mostrar uma afirmação.
-//
-// A versão anterior desta página não a convertia, e o `<a href="...">` saía como TEXTO CRU no
-// ecrã. A causa é subtil: o `esc()` converte as aspas em `&quot;`, e o padrão procurava aspas
-// literais, portanto nunca casava. Medido no browser: zero ligações reais em vinte e cinco
-// alertas. Aqui aceitam-se as duas formas.
+// diferença entre mostrar evidência e mostrar uma afirmação. A versão anterior desta página não
+// a convertia e o `<a href>` saía como TEXTO CRU: o `esc()` converte as aspas em `&quot;` e o
+// padrão procurava aspas literais, portanto nunca casava. Aceitam-se as duas formas.
 //
 // E o URL vem de uma API externa, portanto NÃO se confia nele: só `http` e `https` viram
 // ligação. Um `javascript:` no href seria execução de código a partir de dados de terceiros.
@@ -177,128 +319,288 @@ const comLinks = t => esc(t)
              : texto)
   .replace(/&lt;\/?b&gt;/g, "").replace(/&lt;\/?i&gt;/g, "");
 
+const pct = v => (v >= 0 ? "+" : "") + (v * 100).toFixed(2) + "%";
 async function json(u) { const r = await fetch(u); if (!r.ok) throw new Error(u); return r.json(); }
 
-const S = { ticker: null, chart: null, serie: null, marcas: null, activo: null };
+const S = { ticker:null, activo:null, dia:null, alertas:[], funil:[], linhas:[], ambito:"todos",
+      quantos:20 };
 
-/** A sessão de negociação em que um acontecimento pousa.
- *  Uma notícia de sábado não tem barra onde assentar: ancora-se na primeira sessão >= à data,
- *  que é a MESMA regra com que o impacto foi medido. Sem isto, o gráfico e a lista divergem. */
+/** A sessão de negociação em que um acontecimento pousa. Uma notícia de sábado não tem barra
+ *  onde assentar: ancora-se na primeira sessão >= à data, que é a MESMA regra com que o impacto
+ *  foi medido. Sem isto, o gráfico e a lista divergem. */
 function sessao(data, serie) {
   for (const p of serie) if (p.time >= data) return p.time;
   return null;
 }
 
+// ── a empresa escolhida ──────────────────────────────────────────────────────
+function cabeca(a, linha) {
+  document.getElementById("nome").textContent = a.name || a.ticker;
+  document.getElementById("tick").textContent = a.ticker;
+  const mv = document.getElementById("mv");
+  if (typeof a.move === "number") {
+    mv.textContent = pct(a.move);
+    mv.className = "mv " + (a.move >= 0 ? "pos" : "neg");
+  } else { mv.textContent = ""; mv.className = "mv"; }
+  // A FRASE ANTES DO NÚMERO. Vem de `app/verdict.py`, que é testado; escrevê-la outra vez em
+  // JavaScript criaria uma segunda verdade que ninguém verificava.
+  document.getElementById("veredicto").textContent = (linha && linha.verdict) || "";
+  repartir(a.decomp, a.name || a.ticker);
+}
+
+/** A segunda das três perguntas do trabalho: foi a empresa, ou foi o mercado?
+ *  As três parcelas somam ao movimento do dia por construção. A escala é comum às três, senão
+ *  a barra maior deixaria de querer dizer a maior parcela. */
+function repartir(d, nome) {
+  const box = document.getElementById("rep");
+  if (!d || typeof d.company !== "number") { box.innerHTML = ""; return; }
+  const partes = [["Market", d.market, "market"], ["Sector", d.sector, "sector"],
+                  ["Company", d.company, "company"]];
+  const max = Math.max(...partes.map(p => Math.abs(p[1] || 0)), 1e-9);
+  const linhas = partes.map(([rot, v, chave]) => {
+    const w = (Math.abs(v || 0) / max) * 50;                       // metade da barra por lado
+    const esquerda = (v || 0) < 0 ? 50 - w : 50;
+    return `<div class="l ${d.driver === chave ? "motor" : ""}">
+              <span>${rot}</span>
+              <span class="t"><i style="left:${esquerda}%;width:${w}%"></i></span>
+              <span class="v">${pct(v || 0)}</span>
+            </div>`;
+  }).join("");
+  const motor = { market:"the market as a whole", sector:"its sector",
+                  company:"the company itself" }[d.driver] || "";
+  box.innerHTML = `<div class="barras">${linhas}</div>` +
+    (motor ? `<p class="nota">Today's move in ${esc(nome)} came mostly from ${motor}.</p>` : "");
+}
+
+// ── o gráfico ────────────────────────────────────────────────────────────────
 function desenhar(a) {
   const box = document.getElementById("grafico");
   box.innerHTML = "";
   const css = getComputedStyle(document.documentElement);
-  const tinta = css.getPropertyValue("--tinta").trim();
-  const fraco = css.getPropertyValue("--fraco").trim();
+  const cor = n => css.getPropertyValue(n).trim();
 
   const chart = LightweightCharts.createChart(box, {
-    height: 260,
-    layout: { background: { color: "transparent" }, textColor: fraco, fontSize: 11 },
-    grid: { vertLines: { color: css.getPropertyValue("--grelha").trim() },
-            horzLines: { color: css.getPropertyValue("--grelha").trim() } },
-    rightPriceScale: { borderColor: css.getPropertyValue("--linha").trim() },
-    timeScale: { borderColor: css.getPropertyValue("--linha").trim() },
-    crosshair: { mode: 0 },
+    // `autoSize` em vez de uma largura fixa: sem isto o gráfico ficava com a largura que tinha
+    // no primeiro desenho e um monitor redimensionado deixava-o cortado ou a flutuar.
+    autoSize: true,
+    layout: { background:{ color:"transparent" }, textColor:cor("--fraco"), fontSize:11 },
+    grid: { vertLines:{ color:cor("--grelha") }, horzLines:{ color:cor("--grelha") } },
+    rightPriceScale: { borderColor:cor("--linha") },
+    timeScale: { borderColor:cor("--linha") },
+    crosshair: { mode:0 },
     handleScale: false, handleScroll: false,
   });
   const serie = chart.addSeries(LightweightCharts.LineSeries, {
-    color: tinta, lineWidth: 2, priceLineVisible: false, lastValueVisible: false,
+    color: cor("--tinta"), lineWidth:2, priceLineVisible:false, lastValueVisible:false,
   });
-  const dados = (a.closes || []).map(([d, v]) => ({ time: d, value: v }));
+  const dados = (a.closes || []).map(([d, v]) => ({ time:d, value:v }));
   serie.setData(dados);
 
-  // Um alerta é um acontecimento que SAIU; um evento é um que o detetor assinalou e pode não
-  // ter saído. Mostrar os dois com marcas diferentes é o que torna o custo das portas visível.
-  const diasComAlerta = new Set();
+  // Um alerta é um acontecimento que SAIU; um evento é um que o detetor assinalou e pode não ter
+  // saído. Marcas diferentes para os dois é o que torna o custo das portas visível.
+  // ⚠️ UM ALERTA PODE SER MAIS RECENTE DO QUE O ÚLTIMO FECHO DESENHADO. Quando isso acontece
+  // não há barra onde o pousar, e a versão anterior deitava-o fora em silêncio: a legenda dizia
+  // "0 sent" para a JNJ enquanto a lista ao lado mostrava um alerta da JNJ. Duas contas do mesmo
+  // facto a discordar no mesmo ecrã. Agora conta-se à parte e diz-se.
+  const ultimo = dados.length ? dados[dados.length - 1].time : null;
+  const enviados = new Map();
+  const posteriores = [];
   for (const al of (a.alerts || [])) {
     const t = sessao(al.date, dados);
-    if (t) diasComAlerta.add(t);
+    if (t) enviados.set(t, al);
+    else if (ultimo && al.date > ultimo) posteriores.push(al);
   }
   const marcas = [];
-  for (const t of diasComAlerta) {
-    marcas.push({ time: t, position: "aboveBar", shape: "arrowDown",
-                  color: css.getPropertyValue("--acento").trim(), text: "sent" });
+  for (const t of enviados.keys()) {
+    marcas.push({ time:t, position:"aboveBar", shape:"arrowDown", color:cor("--acento") });
   }
+  const eventos = new Map();
   for (const [d, z] of (a.events || [])) {
     const t = sessao(d, dados);
-    if (!t || diasComAlerta.has(t)) continue;   // já tem a marca mais forte
-    marcas.push({ time: t, position: "belowBar", shape: "circle", size: 0.8,
-                  color: (z < 0 ? css.getPropertyValue("--desce") : css.getPropertyValue("--sobe")).trim() });
+    if (!t) continue;
+    eventos.set(t, z);
+    if (enviados.has(t)) continue;                     // já tem a marca mais forte
+    marcas.push({ time:t, position:"belowBar", shape:"circle", size:0.8,
+                  color: cor(z < 0 ? "--desce" : "--sobe") });
   }
   marcas.sort((x, y) => x.time < y.time ? -1 : 1);
-  S.marcas = marcas.length ? LightweightCharts.createSeriesMarkers(serie, marcas) : null;
+  if (marcas.length) LightweightCharts.createSeriesMarkers(serie, marcas);
   chart.timeScale().fitContent();
-
-  const nSent = diasComAlerta.size;
-  const nEv = marcas.length - nSent;
-  document.getElementById("legenda").innerHTML =
-    `${dados.length} sessions · <b>${nSent}</b> alert${nSent === 1 ? "" : "s"} sent ` +
-    `· <b>${nEv}</b> flagged by the detector but stopped at a gate. ` +
-    `That difference is what the gates cost, and it is the point of the last section.`;
-
   chart.subscribeClick(p => { if (p.time) abrirDia(String(p.time)); });
-  S.chart = chart; S.serie = serie;
 
-  // Os mesmos dias, alcançáveis pelo teclado. Ordem inversa: o mais recente primeiro, que é o
-  // que interessa a quem chega à página.
-  const dias = [...new Set(marcas.map(m => String(m.time)))].sort().reverse();
-  document.getElementById("dias").innerHTML = dias.length
-    ? dias.map(d => `<button class="empresa" data-dia="${esc(d)}" aria-pressed="false">` +
-                    `${esc(d)}${diasComAlerta.has(d) ? ' <span class="mv">sent</span>' : ""}</button>`).join("")
+  const nEnv = enviados.size, nEv = eventos.size - nEnv;
+  document.getElementById("legenda").innerHTML =
+    `<span>${dados.length} sessions</span>` +
+    `<span class="chave"><i class="env"></i>${nEnv} sent</span>` +
+    `<span class="chave"><i></i>${nEv} flagged, stopped at a gate</span>` +
+    (posteriores.length
+      ? `<span>${posteriores.length} more sent after the last close shown</span>` : "");
+
+  // ⚠️ OS MESMOS DIAS, ALCANÇÁVEIS PELO TECLADO. Não é redundância: um marcador desenhado numa
+  // tela não se alcança com o teclado nem existe para um leitor de ecrã, portanto uma interface
+  // que só responde ao clique no gráfico é inutilizável para quem não usa rato. Na v6 eram
+  // trinta e oito botões soltos, ilegíveis; aqui são uma lista que diz o que aconteceu.
+  const soltos = new Map(posteriores.map(al => [al.date, al]));
+  const todos = [...new Set([...soltos.keys(), ...enviados.keys(), ...eventos.keys()])]
+    .sort().reverse();
+  document.getElementById("dias").innerHTML = todos.length
+    ? todos.map(d => {
+        const al = enviados.get(d) || soltos.get(d), z = eventos.get(d);
+        const que = soltos.has(d) ? "Alert sent, after the last close shown"
+                  : al ? (al.kind === "market" ? "Unusual move, alert sent" : "News alert sent")
+                  : "Flagged by the detector, no alert";
+        return `<button class="dia" data-dia="${esc(d)}" aria-pressed="false">
+                  <span class="quando">${esc(d)}</span>
+                  <span>${esc(que)}</span>
+                  <span class="${al ? "selo" : "z"}">${al ? "sent" : (z != null ? "z " + z : "")}</span>
+                </button>`;
+      }).join("")
+    : `<p class="vazio" style="padding:10px 2px">No flagged day in this window.</p>`;
+  for (const b of document.querySelectorAll("#dias .dia")) {
+    b.addEventListener("click", () => abrirDia(b.dataset.dia));
+  }
+}
+
+/** O detalhe de um dia. Se houve alerta mostra-se o texto EXACTO que foi enviado; se não houve,
+ *  diz-se o que o detetor viu, sem inventar uma explicação para o silêncio. */
+function abrirDia(dia) {
+  const a = S.activo;
+  if (!a) return;
+  S.dia = dia;
+  for (const b of document.querySelectorAll("#dias .dia")) {
+    const meu = b.dataset.dia === dia;
+    b.setAttribute("aria-pressed", String(meu));
+    if (meu) b.scrollIntoView({ block:"nearest" });
+  }
+  const serie = (a.closes || []).map(([d, v]) => ({ time:d, value:v }));
+  const alerta = (a.alerts || []).find(x => sessao(x.date, serie) === dia || x.date === dia);
+  const ev = (a.events || []).find(([d]) => sessao(d, serie) === dia);
+  const noticias = (a.news || []).filter(n => n.date === dia);
+
+  let corpo;
+  if (alerta) {
+    corpo = `<pre>${comLinks(alerta.text)}</pre>`;
+  } else if (ev) {
+    corpo = `<p style="margin:4px 0 0">The detector flagged this day (z = ${esc(ev[1])}) and no
+             alert was sent. The last section shows which gate stops each company.</p>`;
+  } else {
+    corpo = `<p style="margin:4px 0 0">Nothing was flagged on this day.</p>`;
+  }
+  const extra = noticias.length
+    ? `<p class="sub" style="margin:8px 0 0">${noticias.length} headline${noticias.length === 1 ? "" : "s"} captured that day.</p>`
     : "";
-  for (const b of document.querySelectorAll("#dias .empresa")) {
+  document.getElementById("detalhe").innerHTML =
+    `<div class="detalhe"><div class="quando">${esc(dia)} · ${esc(a.ticker)}</div>${corpo}${extra}</div>`;
+}
+
+// ── as mensagens ─────────────────────────────────────────────────────────────
+/** Vinte e cinco mensagens de quinze linhas é texto a mais para se ler seja o que for.
+ *  Mostra-se o essencial e abre-se para o texto exacto. **Nada é reescrito e nada é deitado
+ *  fora**: as linhas do resumo são as primeiras linhas da própria mensagem, e o texto completo
+ *  está sempre a um clique. */
+function resumo(t) {
+  const linhas = String(t || "").split("\n").filter(l => l.trim());
+  const cabeca = linhas[1] && /^["“]/.test(linhas[1].trim()) ? linhas[1] : linhas[0];
+  const agora = linhas.find(l => /^Right now:/.test(l)) || (cabeca === linhas[0] ? linhas[1] : "");
+  return { cabeca, agora: agora === cabeca ? "" : agora };
+}
+
+function pintarAlertas() {
+  const alvo = S.ambito === "um" ? S.ticker : null;
+  const todas = S.alertas
+    .filter(a => !alvo || a.ticker === alvo)
+    .slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  const rows = todas.slice(0, S.quantos);
+  // Um canal com duzentas mensagens não se despeja de uma vez — no telemóvel eram nove mil
+  // píxeis de rolagem. Mas também não se corta em silêncio: quantas ficaram por mostrar é dito,
+  // e o botão traz o resto.
+  const faltam = todas.length - rows.length;
+
+  document.getElementById("alertas").innerHTML = rows.length
+    ? rows.map(a => {
+        const r = resumo(a.text);
+        return `<article class="msg">
+          <div class="cab"><b>${esc(a.ticker)}</b><span>${esc(a.date)}</span>
+            <span class="tipo">${esc(a.kind || "alert")}</span></div>
+          <p class="cabeca">${comLinks(r.cabeca)}</p>
+          ${r.agora ? `<p class="agora">${comLinks(r.agora)}</p>` : ""}
+          <details><summary>full message as sent</summary><pre>${comLinks(a.text)}</pre></details>
+        </article>`;
+      }).join("") + (faltam
+        ? `<button class="mais" id="mais">${faltam} older message${faltam === 1 ? "" : "s"}</button>`
+        : "")
+    : `<p class="vazio">${alvo ? "Nothing has been sent about " + esc(alvo) + " yet." : "Nothing has been sent yet."}</p>`;
+  const mais = document.getElementById("mais");
+  if (mais) mais.addEventListener("click", () => { S.quantos += 40; pintarAlertas(); });
+}
+
+function pintarFiltro() {
+  const meus = S.alertas.filter(a => a.ticker === S.ticker).length;
+  document.getElementById("filtro").innerHTML =
+    `<button data-a="um"    aria-pressed="${S.ambito === "um"}">${esc(S.ticker || "")} · ${meus}</button>
+     <button data-a="todos" aria-pressed="${S.ambito === "todos"}">All companies · ${S.alertas.length}</button>`;
+  for (const b of document.querySelectorAll("#filtro button")) {
     b.addEventListener("click", () => {
-      for (const o of document.querySelectorAll("#dias .empresa")) {
-        o.setAttribute("aria-pressed", String(o === b));
-      }
-      abrirDia(b.dataset.dia);
+      S.ambito = b.dataset.a; S.quantos = 20; pintarFiltro(); pintarAlertas();
     });
   }
 }
 
-/** O detalhe de um dia. Se houve alerta mostra-se o texto EXACTO que foi enviado; se não
- *  houve, diz-se o que o detetor viu, sem inventar uma explicação para o silêncio. */
-function abrirDia(dia) {
-  const a = S.activo;
-  if (!a) return;
-  const serie = (a.closes || []).map(([d, v]) => ({ time: d, value: v }));
-  const alerta = (a.alerts || []).find(x => sessao(x.date, serie) === dia);
-  const ev = (a.events || []).find(([d]) => d === dia);
-  const noticias = (a.news || []).filter(n => n.date === dia);
-
-  let html = `<div class="alerta"><div class="quando">${esc(dia)} · ${esc(a.ticker)}</div>`;
-  if (alerta) {
-    html += `<pre>${comLinks(alerta.text)}</pre>`;
-  } else if (ev) {
-    html += `<pre>The detector flagged this day (z = ${esc(ev[1])}), and no alert was sent.` +
-            `\nThe section below shows which gate stops each company.</pre>`;
-  } else {
-    html += `<pre>Nothing was flagged on this day.</pre>`;
+// ── o funil ──────────────────────────────────────────────────────────────────
+// Só o dia mais recente: a pergunta é "porque é que está calado AGORA", e misturar dias faria a
+// mesma empresa aparecer em duas etapas ao mesmo tempo.
+function pintarFunil() {
+  const todas = S.funil;
+  const dia = todas.reduce((m, r) => r.date > m ? r.date : m, "");
+  const hoje = todas.filter(r => r.date === dia);
+  const porEtapa = new Map();
+  for (const r of hoje) {
+    if (!porEtapa.has(r.stage)) porEtapa.set(r.stage, new Map());
+    porEtapa.get(r.stage).set(r.ticker, r.detail || "");   // a última decisão de cada empresa
   }
-  if (noticias.length) {
-    html += `<p class="legenda">${noticias.length} headline${noticias.length === 1 ? "" : "s"} captured that day.</p>`;
-  }
-  html += `</div>`;
-  document.getElementById("dia").innerHTML = html;
+  const blocos = ETAPAS.filter(([k]) => porEtapa.has(k)).map(([k, titulo, porque]) => {
+    const entradas = [...porEtapa.get(k).entries()].sort();
+    const nomes = entradas.map(([t, d]) => {
+      const leg = legivel(d);
+      return `<span class="nome ${t === S.ticker ? "eu" : ""}"><b>${esc(t)}</b>` +
+             `${leg ? " <span>" + esc(leg) + "</span>" : ""}</span>`;
+    }).join("");
+    return `<div class="etapa${k === "alerted" ? " passou" : ""}">
+              <h3>${esc(titulo)} <span class="n">${entradas.length}</span></h3>
+              <p class="porque">${esc(porque)}</p>
+              <div class="nomes">${nomes}</div>
+            </div>`;
+  });
+  document.getElementById("funil").innerHTML = blocos.length
+    ? blocos.join("") : '<p class="vazio">No decisions recorded yet.</p>';
+  document.getElementById("funilSub").textContent =
+    `Nine out of ten scans send nothing. Silence is a decision, so here is where each company ` +
+    `stopped on ${dia}, in the order the decisions are taken.`;
 }
 
-async function escolher(t) {
+// ── escolher uma empresa: uma selecção governa a página ──────────────────────
+async function escolher(t, porEscolha) {
   S.ticker = t;
-  for (const b of document.querySelectorAll(".empresa[data-t]")) {
-    b.setAttribute("aria-pressed", String(b.dataset.t === t));
+  // Ao chegar, a pergunta é "o que fez o sistema hoje", e a resposta é o canal inteiro.
+  // A partir do momento em que se escolhe uma empresa, a página inteira passa a ser sobre
+  // ela: dois estados diferentes no mesmo ecrã é a confusão que esta revisão veio corrigir.
+  if (porEscolha) { S.ambito = "um"; S.quantos = 20; }
+  for (const b of document.querySelectorAll("#rail .tk")) {
+    const meu = b.dataset.t === t;
+    b.setAttribute("aria-pressed", String(meu));
+    if (meu) b.scrollIntoView({ block:"nearest", inline:"nearest" });
   }
-  document.getElementById("dia").innerHTML = "";
+  document.getElementById("detalhe").innerHTML = "";
+  const linha = S.linhas.find(r => r.ticker === t);
+  pintarFiltro(); pintarAlertas(); pintarFunil();
   try {
     S.activo = await json(`/api/asset/${t}`);
+    cabeca(S.activo, linha);
     desenhar(S.activo);
   } catch (e) {
     document.getElementById("legenda").textContent = "Could not load this company.";
   }
+  history.replaceState(null, "", `?t=${t}`);
 }
 
 (async () => {
@@ -308,68 +610,52 @@ async function escolher(t) {
     ]);
 
     const idade = Math.round(saude.age_s || 0);
-    document.getElementById("estado").textContent =
-      `Last check ${idade < 120 ? idade + " seconds" : Math.round(idade / 60) + " minutes"} ago`
-      + (saude.fresh ? "." : " — the system has not reported in for a while.");
+    const quanto = idade < 120 ? idade + "s" : idade < 7200 ? Math.round(idade / 60) + " min"
+                                             : Math.round(idade / 3600) + " h";
+    document.getElementById("estado").textContent = saude.fresh
+      ? `checked ${quanto} ago`
+      : `last check ${quanto} ago — not reporting in`;
+    document.getElementById("ponto").className = "ponto" + (saude.fresh ? "" : " frio");
+    const m = visao.market || {};
+    document.getElementById("rodape").textContent =
+      [m.label && "Market " + m.label.toLowerCase(), m.detail,
+       visao.alerts_total ? visao.alerts_total + " alerts sent to date" : ""]
+      .filter(Boolean).join(" · ");
 
-    // ── 1. as empresas, e o gráfico ─────────────────────────────────────────
-    const linhasV = (visao.rows || []);
-    document.getElementById("empresas").innerHTML = linhasV.map(r => {
-      const mv = typeof r.move === "number" ? (r.move * 100).toFixed(2) + "%" : "";
-      const cls = typeof r.move === "number" ? (r.move >= 0 ? "pos" : "neg") : "";
-      return `<button class="empresa" data-t="${esc(r.ticker)}" aria-pressed="false">` +
-             `${esc(r.ticker)}<span class="mv ${cls}">${esc(mv)}</span></button>`;
+    S.linhas  = visao.rows || [];
+    S.alertas = alertas.rows || [];
+    S.funil   = funil.rows || [];
+
+    document.getElementById("rail").innerHTML = S.linhas.map(r => {
+      const n = typeof r.move === "number";
+      return `<button class="tk" data-t="${esc(r.ticker)}" aria-pressed="false"
+                title="${esc(r.name || r.ticker)}">
+                <b>${esc(r.ticker)}${r.flagged ? '<span class="flag"></span>' : ""}</b>
+                <s class="${n ? (r.move >= 0 ? "pos" : "neg") : ""}">${n ? pct(r.move) : "—"}</s>
+              </button>`;
     }).join("");
-    for (const b of document.querySelectorAll(".empresa[data-t]")) {
-      b.addEventListener("click", () => escolher(b.dataset.t));
-    }
-    if (linhasV.length) await escolher(linhasV[0].ticker);
-
-    // ── 2. o que foi enviado ────────────────────────────────────────────────
-    // Mais recente primeiro: numa página, a pergunta é "o que chegou agora", ao contrário do
-    // canal, onde a mensagem nova aparece em baixo porque se lê a rolar.
-    const linhas = (alertas.rows || [])
-      .slice().sort((a, b) => (b.date || "").localeCompare(a.date || "")).slice(0, 25);
-    document.getElementById("alertas").innerHTML = linhas.length
-      ? linhas.map(a => `<div class="alerta">
-           <div class="quando">${esc(a.date)} · ${esc(a.ticker)}</div>
-           <pre>${comLinks(a.text)}</pre>
-         </div>`).join("")
-      : '<p class="vazio">Nothing has been sent yet.</p>';
-
-    // ── 3. porque é que ficou calado ────────────────────────────────────────
-    // Só o dia mais recente: a pergunta é "porque é que está calado AGORA", e misturar dias
-    // faria a mesma empresa aparecer em duas etapas ao mesmo tempo.
-    const todas = funil.rows || [];
-    const dia = todas.reduce((m, r) => r.date > m ? r.date : m, "");
-    const hoje = todas.filter(r => r.date === dia);
-    const porEtapa = new Map();
-    for (const r of hoje) {
-      if (!porEtapa.has(r.stage)) porEtapa.set(r.stage, new Map());
-      porEtapa.get(r.stage).set(r.ticker, r.detail || "");  // a última decisão de cada empresa
+    for (const b of document.querySelectorAll("#rail .tk")) {
+      b.addEventListener("click", () => escolher(b.dataset.t, true));
     }
 
-    const blocos = ETAPAS.filter(([k]) => porEtapa.has(k)).map(([k, titulo, porque]) => {
-      const nomes = [...porEtapa.get(k).entries()].sort()
-        .map(([t, d]) => {
-          const leg = legivel(d);
-          return `<span class="nome"><b>${esc(t)}</b>${leg ? " <span>" + esc(leg) + "</span>" : ""}</span>`;
-        })
-        .join("");
-      return `<div class="etapa${k === "alerted" ? " passou" : ""}">
-                <h3>${esc(titulo)}</h3>
-                <p class="porque">${esc(porque)}</p>
-                <div class="nomes">${nomes}</div>
-              </div>`;
-    });
-
-    document.getElementById("funil").innerHTML = blocos.length
-      ? `<p class="sub">Decisions taken on ${esc(dia)}.</p>` + blocos.join("")
-      : '<p class="vazio">No decisions recorded yet.</p>';
+    // A URL guarda a empresa: partilhar a página partilha o que se estava a ver, e o botão
+    // "voltar" do browser continua a funcionar.
+    // A empresa de entrada é a que o próprio sistema destacou — a sinalizada, ou, se nenhuma
+    // o foi, a que mais se moveu. Abrir sempre na primeira da lista gastava a vista principal
+    // com uma empresa onde não aconteceu nada.
+    const pedido = new URLSearchParams(location.search).get("t");
+    const notavel = S.linhas.slice().sort((a, b) =>
+      (b.flagged ? 1 : 0) - (a.flagged ? 1 : 0) ||
+      Math.abs(b.move || 0) - Math.abs(a.move || 0))[0];
+    const inicial = S.linhas.find(r => r.ticker === pedido) ? pedido
+                  : (notavel && notavel.ticker);
+    if (inicial) await escolher(inicial);
 
   } catch (e) {
-    document.getElementById("estado").textContent =
-      "Could not reach the system. Nothing is shown rather than something made up.";
+    document.getElementById("estado").textContent = "could not reach the system";
+    document.getElementById("ponto").className = "ponto frio";
+    document.getElementById("alertas").innerHTML =
+      '<p class="vazio">Nothing is shown rather than something made up.</p>';
   }
 })();
 </script>
