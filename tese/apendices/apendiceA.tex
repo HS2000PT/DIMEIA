@@ -51,11 +51,15 @@ cita esse ficheiro. A Tabela~\ref{tab:ap_numeros} reúne todos os resultados rep
 cada um aparece no corpo do documento; o ficheiro de resultados correspondente, e o procedimento que
 o escreve, estão nomeados no repositório de código.
 
-Os restantes números do documento são de três tipos: valores retirados das fontes citadas,
-constantes de configuração do sistema, e quantidades medidas sobre a operação em produção, como as
-latências, a cobertura das fontes de notícias e as contagens do funil de decisões. Estas últimas são
-medições minhas, e o capítulo onde aparecem diz sempre sobre que período e que conjunto foram
-feitas.
+A garantia de determinismo vale para tudo o que está acima da linha divisória da tabela. As três
+linhas de baixo são de outra natureza e por isso estão separadas: são medições sobre a
+\emph{operação}, e o seu valor depende de quando o registo foi lido, não de uma semente. O capítulo
+onde aparecem diz sempre sobre que período e que conjunto foram feitas.
+
+Os restantes números do documento são de dois tipos: valores retirados das fontes citadas e
+constantes de configuração do sistema. Os primeiros estão citados no sítio onde aparecem; os
+segundos estão na Tabela~\ref{tab:sis_portas}, com a distinção entre os que foram derivados e os
+que foram escolhidos.
 
 \begin{table}[ht]
 \caption[Cada resultado e o procedimento que o produz]{Todos os resultados reportados, e onde são
@@ -77,11 +81,22 @@ Triagem, PR-AUC das seis famílias & $0.378$ a $0.542$ & §\ref{sec:av_qi3} \\
 Precisão dentro do orçamento (4 formas de escolher) & $0.163$ / $0.379$ / $0.662$ / $0.632$ &
 §\ref{sec:av_qi3} \\
 Grelha de nove definições de rótulo & $9$ de $9$ & §\ref{sec:av_qi3} \\
-Decomposição de um movimento, caso trabalhado & $-0.40$ / $-0.04$ / $+6.73$ \% &
+Decomposição de um movimento, caso trabalhado & $-0.3992$ / $-0.0362$ / $+6.7298$ \% &
 §\ref{sec:met_decomposicao} \\
 $R^2$ da decomposição, mediana e casos negativos & $0.460$, $1$ de $17$ &
 §\ref{sec:av_decomposicao} \\
+Ablação da identidade: tabela de consulta vs modelo & $0.534$ vs $0.538$ &
+§\ref{sec:av_ablacao} \\
+Selectividade da porta, dentro vs entre empresas & $0.064$ vs $0.385$ & §\ref{sec:av_portao} \\
+Deriva de distribuição, \gls{PSI} da volatilidade & $0.281$ & §\ref{sec:av_deriva} \\
+Sistema inteiro contra as alternativas & $0.489$ / $0.632$ / $0.662$ / $0.968$ &
+§\ref{sec:av_pontaaponta} \\
+Ablação à janela e ao peso do desvio & $0.678$ e $0.664$ contra $0.516$ &
+§\ref{sec:av_alternativas} \\
 Decisões maturadas em produção & $0.592$ vs $0.647$ & §\ref{sec:av_qi3} \\
+\midrule
+\multicolumn{3}{l}{\emph{Medições sobre a operação, sem semente: dependem de quando o registo foi
+lido}} \\
 Cobertura das notícias em dias invulgares & $88.5\%$ & §\ref{sec:con_limitacoes} \\
 Latência, por era e decomposta & $196$ / $143$ / $158$ min & §\ref{sec:sis_implantacao} \\
 Funil de produção (captadas $\rightarrow$ enviadas) & $944 \rightarrow 42$ & §\ref{sec:sis_portas} \\

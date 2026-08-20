@@ -248,7 +248,7 @@ const BANCO = [
  opts:["A resposta certa que o modelo tenta acertar","Uma coluna de entrada que o modelo vê",
        "O erro do modelo","O nome do algoritmo"], ok:1,
  a:`<b>Uma coluna de entrada.</b> As tuas: volatilidade a 20 dias, momento a 5 dias, movimento do
- dia, comprimento da manchete e setor. A <i>resposta certa</i> chama-se <b>rótulo</b>.`},
+ dia, comprimento do título e setor. A <i>resposta certa</i> chama-se <b>rótulo</b>.`},
 
 {b:"Conceitos de IA", n:1, t:"aberta",
  q:"Isto aprende sozinho? Melhora com o tempo?",
@@ -321,13 +321,13 @@ const BANCO = [
 
 {b:"Técnica 2: precedentes", n:2, t:"aberta", q:"Porquê o cosseno e não a distância?",
  a:`Porque interessa <b>sobre o que</b> a frase fala, não o comprimento do texto. O cosseno mede o
- ângulo entre duas direções, por isso uma manchete curta e um parágrafo longo sobre o mesmo assunto
+ ângulo entre duas direções, por isso um título curto e um parágrafo longo sobre o mesmo assunto
  ficam próximos.`},
 
 {b:"Técnica 2: precedentes", n:3, t:"aberta",
  q:"O que quer dizer captar tema e não direção, e como sabes?",
  a:`Duas notícias podem ser sobre o mesmo assunto e o preço ter ido para lados opostos.
- <p>Medido: concordância de direção <b>0,708</b> contra um chão de acaso de <b>0,688</b>, quase
+ <p>Medido: concordância de direção <b>0.708</b> contra um chão de acaso de <b>0.688</b>, quase
  nada. É por isso que os casos são mostrados <b>um a um</b> e nunca só como média.</p>`},
 
 // ─────────────────────────── Técnica 3
@@ -358,27 +358,27 @@ const BANCO = [
 {b:"Técnica 3: triagem", n:3, t:"aberta",
  q:"O teu modelo perdeu para a volatilidade. Como respondes?",
  a:`Que a hipótese foi testada e a resposta foi não, e que o critério foi escrito <b>antes</b> de
- correr. Verifiquei por três caminhos: re-teste em condições favoráveis ao texto (0,533, ainda
+ correr. Verifiquei por três caminhos: re-teste em condições favoráveis ao texto (0.533, ainda
  abaixo), reamostragem por grupos, e <b>nove</b> definições diferentes do rótulo, com a volatilidade
  a ganhar nas nove.
  <p>Um trabalho que só reporta o que corre bem não é uma avaliação.</p>`},
 
 // ─────────────────────────── Os números
 {b:"Os números", n:1, t:"escolha", q:"Amplitude da taxa de disparo: z-score contra limiar fixo?",
- opts:["0,015 vs 0,344","0,344 vs 0,015","0,163 vs 0,632","0,514 vs 0,346"], ok:0,
- a:`<b>0,015 contra 0,344</b>: mais de 20 vezes mais consistente entre empresas. É o argumento
+ opts:["0.015 vs 0.344","0.344 vs 0.015","0.163 vs 0.632","0.514 vs 0.346"], ok:0,
+ a:`<b>0.015 contra 0.344</b>: mais de 20 vezes mais consistente entre empresas. É o argumento
  principal da QI1, e não precisa de rótulos nenhuns.`},
 
 {b:"Os números", n:1, t:"escolha", q:"Precisão@5: método / palavras / acaso / recência?",
- opts:["0,514 / 0,346 / 0,240 / 0,126","0,346 / 0,514 / 0,126 / 0,240",
-       "0,595 / 0,514 / 0,346 / 0,240","0,632 / 0,379 / 0,240 / 0,126"], ok:0,
- a:`<b>0,514 / 0,346 / 0,240 / 0,126.</b> Repara que mostrar as mais recentes é a <b>pior</b> de
+ opts:["0.514 / 0.346 / 0.240 / 0.126","0.346 / 0.514 / 0.126 / 0.240",
+       "0.595 / 0.514 / 0.346 / 0.240","0.632 / 0.379 / 0.240 / 0.126"], ok:0,
+ a:`<b>0.514 / 0.346 / 0.240 / 0.126.</b> Repara que mostrar as mais recentes é a <b>pior</b> de
  todas. Faz sentido: a notícia mais recente sobre outra empresa não tem razão para estar
  relacionada.`},
 
 {b:"Os números", n:2, t:"escolha", q:"PR-AUC: só volatilidade contra contexto+texto?",
- opts:["0,542 vs 0,496","0,496 vs 0,542","0,538 vs 0,439","0,632 vs 0,379"], ok:0,
- a:`<b>0,542 contra 0,496.</b> Acrescentar o texto da manchete <b>piora</b>. O sinal vive no contexto
+ opts:["0.542 vs 0.496","0.496 vs 0.542","0.538 vs 0.439","0.632 vs 0.379"], ok:0,
+ a:`<b>0.542 contra 0.496.</b> Acrescentar o texto do título <b>piora</b>. O sinal vive no contexto
  de mercado.`},
 
 {b:"Os números", n:2, t:"escolha", q:"Em quantas células da grelha de rótulos a volatilidade ganha?",
@@ -388,16 +388,16 @@ const BANCO = [
 
 {b:"Os números", n:3, t:"escolha",
  q:"Precisão no orçamento de 5 alertas por dia: ao acaso para modelo?",
- opts:["0,379 para 0,632","0,163 para 0,632","0,240 para 0,514","0,378 para 0,542"], ok:0,
- a:`<b>0,379 para 0,632</b>, um ganho de <b>1,67×</b>.
- <p>⚠️ O <b>0,163</b> não serve como chão: era o "alertar sempre", que dá a mesma pontuação a tudo, e
+ opts:["0.379 para 0.632","0.163 para 0.632","0.240 para 0.514","0.378 para 0.542"], ok:0,
+ a:`<b>0.379 para 0.632</b>, um ganho de <b>1.67×</b>.
+ <p>⚠️ O <b>0.163</b> não serve como chão: era o "alertar sempre", que dá a mesma pontuação a tudo, e
  com tudo empatado a métrica desempata pela ordem do ficheiro, ou seja, media <b>escolher por ordem
  alfabética</b>.</p>`},
 
 {b:"Os números", n:3, t:"escolha",
  q:"Quanto dá o prior de 13 constantes (volatilidade média por empresa)?",
- opts:["0,662 (bate o modelo)","0,379 (igual ao acaso)","0,632 (empata)","0,514"], ok:0,
- a:`<b>0,662, e bate o modelo treinado (0,632).</b> Sem ler manchete nenhuma e sem correr inferência.
+ opts:["0.662 (bate o modelo)","0.379 (igual ao acaso)","0.632 (empata)","0.514"], ok:0,
+ a:`<b>0.662, e bate o modelo treinado (0.632).</b> Sem ler título nenhum e sem correr inferência.
  <p>O que a evidência sustenta é que <b>ordenar por volatilidade</b> compensa, e não que
  <b>aprender</b> compense. Diz isto tu, antes que to digam.</p>`},
 
@@ -406,7 +406,7 @@ const BANCO = [
  a:`No que foi <b>medido para decidir</b>. Construí alternativas e não implantei as que a medição não
  sustentou. A engenharia está em ter um critério capaz de dizer não, e o exemplo mais forte é contra
  mim próprio: verificar o que a minha linha de base media reduziu o ganho anunciado de quase quatro
- vezes para 1,67 vezes.`},
+ vezes para 1.67 vezes.`},
 
 {b:"As que doem", n:3, t:"aberta", q:"Não bastava perguntar a um assistente de IA genérico?",
  a:`Um assistente genérico não tem a volatilidade daquela ação, não separa a empresa do mercado, e não

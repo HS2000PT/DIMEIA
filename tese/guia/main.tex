@@ -62,7 +62,7 @@ aprendizagem por reforço. Diz isso sem hesitar.
 \begin{tabular}{p{0.24\textwidth} p{0.68\textwidth}}
 \toprule
 \key{Features} & As colunas que o modelo vê. Na tua: volatilidade, momento, movimento do dia,
-comprimento da manchete, setor. \\
+comprimento do título, setor. \\
 \key{Rótulo} & A resposta certa, conhecida. Na tua: houve movimento anormal a seguir? Sim/não. \\
 \key{Treino / teste} & Ensinas com uns dados, avalias com \emph{outros}. Se avaliasses com os
 mesmos, media memória e não aprendizagem. \\
@@ -171,7 +171,7 @@ futuro e exige que as \emph{features} fiquem iguais e o rótulo mude.
 \end{itemize}
 \vspace{3mm}
 \begin{block}{Porquê o ângulo e não a distância?}
-Porque interessa \emph{sobre o que} a frase fala, não o comprimento do texto. Uma manchete curta e
+Porque interessa \emph{sobre o que} a frase fala, não o comprimento do texto. Um título curto e
 um parágrafo longo sobre o mesmo assunto devem ficar próximos.
 \end{block}
 \vspace{2mm}
@@ -188,8 +188,8 @@ Duas notícias podem ser sobre \textbf{o mesmo assunto} e o preço ter ido para 
 opostos}.
 \vspace{3mm}
 \begin{block}{Medido}
-Concordância de direção entre a notícia e os casos recuperados: \key{0,708}\\
-Chão de acaso: \key{0,688}\\[2mm]
+Concordância de direção entre a notícia e os casos recuperados: \key{0.708}\\
+Chão de acaso: \key{0.688}\\[2mm]
 Ou seja: \textbf{quase nada}.
 \end{block}
 \vspace{2mm}
@@ -234,17 +234,17 @@ volatilidade ganha nas nove. Um trabalho que só reporta o que corre bem não é
 \small
 \begin{tabular}{lll}
 \toprule
-\key{0,015} vs \key{0,344} & amplitude de disparo: $z$-score vs limiar fixo & QI1 \\
-\key{0,530} / 0,269 / 0,280 & $F_1$: $z$-score vs Isolation Forest vs LOF & QI1 \\
-\key{0,514} / 0,346 / 0,240 / 0,126 & precisão@5: significado / palavras / acaso / recência & QI2 \\
-\key{0,595} & precisão@5 no corpus completo (80 mil) & QI2 \\
-\key{0,708} vs 0,688 & concordância de direção vs acaso (tema $\neq$ direção) & QI2 \\
-\key{0,542} vs \key{0,496} & PR-AUC: só volatilidade vs contexto$+$texto & QI3 \\
+\key{0.015} vs \key{0.344} & amplitude de disparo: $z$-score vs limiar fixo & QI1 \\
+\key{0.530} / 0.269 / 0.280 & $F_1$: $z$-score vs Isolation Forest vs LOF & QI1 \\
+\key{0.514} / 0.346 / 0.240 / 0.126 & precisão@5: significado / palavras / acaso / recência & QI2 \\
+\key{0.595} & precisão@5 no corpus completo (80 mil) & QI2 \\
+\key{0.708} vs 0.688 & concordância de direção vs acaso (tema $\neq$ direção) & QI2 \\
+\key{0.542} vs \key{0.496} & PR-AUC: só volatilidade vs contexto$+$texto & QI3 \\
 \key{9 de 9} & células da grelha em que a volatilidade ganha & QI3 \\
-\key{0,379} $\to$ \key{0,632} & precisão no orçamento: acaso $\to$ modelo ($1{,}67\times$) & QI3 \\
-\key{0,662} & o prior de 13 constantes, que \textbf{bate} o modelo & QI3 \\
+\key{0.379} $\to$ \key{0.632} & precisão no orçamento: acaso $\to$ modelo ($1{,}67\times$) & QI3 \\
+\key{0.662} & o prior de 13 constantes, que \textbf{bate} o modelo & QI3 \\
 \key{84\%} & decisões determinadas pela \textbf{empresa}, não pela notícia & QI3 \\
-\key{0,064} vs \key{0,385} & variação do score dentro vs entre empresas ($6{,}1\times$) & QI3 \\
+\key{0.064} vs \key{0.385} & variação do score dentro vs entre empresas ($6{,}1\times$) & QI3 \\
 \key{79\,753} & exemplos do teu conjunto de dados & --- \\
 \key{88,5\%} & dias invulgares com notícia captada (limite superior) & limitação \\
 \key{944 $\to$ 42} & funil de produção: captadas $\to$ enviadas & sistema \\
@@ -262,7 +262,7 @@ empatadas, a métrica desempata pela ordem do ficheiro, que está ordenado por d
 empresa. Media \textbf{escolher por ordem alfabética}.
 \vspace{3mm}
 \begin{block}{O que dizes}
-``Contra um chão que escolhe mesmo ao acaso ($0{,}379$), o ganho é de \textbf{1,67 vezes}. Encontrei
+``Contra um chão que escolhe mesmo ao acaso ($0{,}379$), o ganho é de \textbf{1.67 vezes}. Encontrei
 o erro a verificar o que a minha própria linha de base media, e corrigi-o. Está na matriz de
 evidência.''
 \end{block}
@@ -317,8 +317,8 @@ trabalho futuro que aponto.''
 \small
 \begin{block}{``O vosso modelo não serve para nada, então?''}
 ``Serve para o que a medição sustenta: \textbf{ordenar} empresas. Não serve para o que eu lhe
-estava a pedir. Medi o que ele fazia quando decidia e a pontuação varia \key{0,064} dentro de cada
-empresa e \key{0,385} entre empresas: o limiar estava a separar empresas, não manchetes. Em
+estava a pedir. Medi o que ele fazia quando decidia e a pontuação varia \key{0.064} dentro de cada
+empresa e \key{0.385} entre empresas: o limiar estava a separar empresas, não títulos. Em
 \key{84\%} das decisões o resultado estava determinado antes de a notícia ser lida.''
 \end{block}
 \begin{block}{``E porque não puseram o limiar relativo a cada empresa?''}

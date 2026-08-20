@@ -38,14 +38,26 @@ for f in sorted(RAIZ.rglob("cap*/capitulo*.tex")):
             seccoes[lab.group(1)] = (titulo, bloco, f.parent.name)
 
 ap = (RAIZ / "apendices" / "apendiceA.tex").read_text(encoding="utf-8")
-linhas = [x for x in ap.split("\n") if "&" in x and "ref{sec:" in x]
+# ⚠️ Uma linha de tabela pode estar partida por varias linhas do ficheiro: o `\ref` cai na
+# seguinte e o verificador deixava de a ver. Tres linhas novas passaram assim despercebidas.
+# Junta-se por LINHA LOGICA, que acaba em `\\`.
+logicas, acumulado = [], ""
+for fisica in ap.split("\n"):
+    acumulado += " " + fisica.strip()
+    if fisica.rstrip().endswith("\\\\"):
+        logicas.append(acumulado.strip())
+        acumulado = ""
+linhas = [x for x in logicas if "&" in x and "ref{sec:" in x]
 print(f"linhas da tabela com referencia a seccao: {len(linhas)}\n")
 
 maus = 0
 for linha in linhas:
     lab = re.search(r"\\ref\{(sec:[^}]+)\}", linha).group(1)
     celulas = [c.strip() for c in linha.split("&")]
-    valores = re.findall(r"[-+]?\d+[.,]\d+|\b\d{2,}\b", celulas[1] if len(celulas) > 1 else "")
+    # ⚠️ So DECIMAIS. Um inteiro solto ("17", "20", "5") e generico de mais para verificar,
+    # e o corpo escreve-o muitas vezes por extenso ("dezassete"): testa-lo so produz alarmes
+    # falsos, e um verificador que grita de mais deixa de ser lido.
+    valores = re.findall(r"[-+]?\d+[.,]\d+", celulas[1] if len(celulas) > 1 else "")
     if lab not in seccoes:
         print(f"  !! {lab}: label nao existe")
         maus += 1
