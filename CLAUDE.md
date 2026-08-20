@@ -7,6 +7,41 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 61 — 5.ª parte (2026-08-20): AS FONTES CONFERIDAS CONTRA O ORIGINAL, E OS DOIS
+  ÚLTIMOS PENDENTES DE CÓDIGO FECHADOS POR MEDIÇÃO.**
+  **⚠️ (A) O BOLLERSLEV ERA MESMO OUTRO ARTIGO, e agora está substituído.** O ficheiro arquivado
+  como `bollerslev1986garch.pdf` era um **projecto de mestrado de 2003 da Simon Fraser**
+  (Michael S. Lo) com título parecido. Substituído pelo artigo verdadeiro — *Journal of
+  Econometrics* **31** (1986) **307–327** — da página do próprio autor em Duke.
+  Descarregados e conferidos também `mikolov2013word2vec` (as **actas do NIPS**, que a entrada
+  passou a citar na sessão 60, em vez da pré-publicação), `liu2020finbert` (IJCAI-20) e
+  `vinh2010ami` (JMLR); o aluno trouxe da rede do ISEP os dois que os editores bloqueiam com
+  desafio anti-robô, `huang2023finbert` (Wiley, **403**) e `rousseeuw1987silhouettes` (Elsevier,
+  **403**) — e um desafio desses **não se contorna**.
+  **Cobertura: 59 de 65.** As seis que faltam são **páginas web**, onde o original é a própria
+  página e o que vale é abri-la. O `FALTAM.md` foi reescrito **contando os ficheiros**: dizia
+  "tenho 14 de 60" e estava desactualizado em dezenas de entradas.
+  ⚠️ **A regra que apanhou o Bollerslev, e que passa a estar escrita:** não basta o `curl`
+  devolver `200` — lê-se a **primeira página** e compara-se com o `.bib` por título, apelidos e
+  uma marca dura. Foi o intervalo `307–327` que o denunciou, e no `liu2020finbert` foram as
+  páginas **4513–4519**, porque a primeira página nem escreve o ano por extenso.
+  **(B) O CORTE DE IDADE DOS PRECEDENTES FICA `null`, e agora por medição.** A proposta pendente
+  desde julho era 730 dias. Contadas as idades da base que a produção **realmente** consulta: o
+  `backfill_kb` tem 38 214 casos com máxima de **377 dias** e a KB viva **11 445** com máxima de
+  **94**. Um corte a 730 removeria **zero** casos — seria configuração morta com aparência de
+  rigor, que é o que se recusou nos pisos da escada. A razão ficou no `alerts.yaml`.
+  ⚠️ **E medir isto apanhou um susto que não era um:** a cópia **local** do `live_kb.jsonl` tem
+  270 casos e parecia parada; a de **produção**, na branch de dados, tem **11 445**, com o caso
+  mais recente a 8 dias — exactamente a janela de maturação. O ciclo está vivo; a cópia local é
+  que é velha.
+  **(C) PÓS-VALIDAÇÃO CORRIDA sobre o registo de produção** (38 300 linhas, **825 decisões
+  maturadas** contra as 530 de 09/08): mantidas **0.589** contra taxa-base **0.602**. **A
+  conclusão negativa aguenta, e com metade mais evidência.** A tese **não muda**: cita o
+  `evaluation_live_transfer.md` (0.592 vs 0.647 sobre 530), que é outro protocolo e continua a
+  ser saída real; re-correr o congelado obrigaria a mexer em quatro sítios para dizer o mesmo.
+  **(D) UMA LINHA DO CHECKLIST ESTAVA A MENTIR:** pedia a de-duplicação de precedentes quase
+  iguais, que a **sessão 57 já tinha feito** (`investigator/dedup.py`, usado nos dois caminhos,
+  com testes em três ficheiros). Fechada.
 - **🆕 SESSÃO 61 — 4.ª parte (2026-08-20): A DIRECTIVA-MESTRA FOI REENVIADA, e desta vez foi
   EXECUTADA pela §78 — inspeccionar antes de mexer. Produziu uma experiência nova e um achado que
   a tese não dizia.**
