@@ -435,7 +435,7 @@ Local Outlier Factor & $0.163$ & $0.989$ & $0.280$ & $0.183$ \\
 
 \textbf{A regra transparente ganha aos dois.} Não por pouco: quase o dobro do $F_1$, e com uma
 consistência entre empresas muito melhor. Os dois métodos aprendidos assinalam quase tudo
-(\emph{recall} altíssimo) e acertam pouco (precisão baixa).
+(cobertura altíssima) e acertam pouco (precisão baixa).
 
 Uma nota para quem comparar esta tabela com a conta feita na Secção~\ref{sec:av_f1}, onde o mesmo
 \emph{z}-score aparece com $F_1 = 0.516$. Os dois valores são reais e medem o mesmo detetor sob
@@ -480,7 +480,7 @@ O painel direito da Figura~\ref{fig:av_detetores} responde a outra pergunta: e s
 o desvio-padrão dando \emph{o mesmo peso} aos vinte dias, se desse mais peso aos dias recentes?
 
 É uma ideia antiga em finanças, e a experiência foi desenhada para justificar por que razão o
-sistema \emph{não} precisava dela. Deu o contrário. Com o mesmo \emph{recall}, a alternativa obtém
+sistema \emph{não} precisava dela. Deu o contrário. Com a mesma cobertura, a alternativa obtém
 $F_1 = 0.664$ contra os $0.516$ da regra usada, e consegue-o eliminando quase metade dos falsos
 alarmes (precisão $0.568$ contra $0.381$).
 
@@ -816,7 +816,7 @@ anterior: os dados mudam. Este foi treinado sobre 2018--2023 e corre em 2026. A 
 afirmada em vários sítios deste documento, e afirmar é barato, portanto foi medida.
 
 A medida usada é o \gls{PSI}, que compara a distribuição de cada entrada entre o período de treino
-e o actual, com as bandas convencionadas em risco de crédito: abaixo de $0.10$ estável, entre
+e o atual, com as bandas convencionadas em risco de crédito: abaixo de $0.10$ estável, entre
 $0.10$ e $0.25$ moderada, acima de $0.25$ significativa.
 
 O resultado tem duas metades e as duas interessam. A entrada que mais se deslocou é a

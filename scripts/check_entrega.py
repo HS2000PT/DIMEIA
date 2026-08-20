@@ -28,6 +28,7 @@ VERIFICADORES = [
     ("apêndice: cada número onde diz estar", "check_apendice_xref.py"),
     ("materiais de estudo alinhados", "check_materiais.py"),
     ("flutuantes referenciados", "check_floats.py"),
+    ("escrita: PT-PT e um termo por conceito", "check_escrita.py"),
 ]
 
 PDFS = [
