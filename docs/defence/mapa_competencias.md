@@ -1,5 +1,10 @@
 # mapa_competencias.md — o que esta dissertação demonstra, e onde está a prova
 
+> ⚠️ **Este documento foi escrito para a tese longa em inglês.** A que vais defender é a
+> tese curta em português (`tese/`), que tem **três QI** e não quatro RQ, e onde alguns
+> números foram corrigidos. Lê o [`LEIA-ME-PRIMEIRO.md`](LEIA-ME-PRIMEIRO.md) antes de
+> estudares por aqui.
+
 > **Para que serve.** Numa defesa, a pergunta *"onde é que isto mostra engenharia de IA?"* aparece
 > quase sempre, e a pior resposta possível é uma lista de tecnologias. Esta página liga cada
 > competência a **um artefacto concreto e a um número**, para a resposta ser verificável em vez de

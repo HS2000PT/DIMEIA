@@ -1,5 +1,10 @@
 # Simulacro de defesa — cadeias de pressão para treinar (PT-PT)
 
+> ⚠️ **Este documento foi escrito para a tese longa em inglês.** A que vais defender é a
+> tese curta em português (`tese/`), que tem **três QI** e não quatro RQ, e onde alguns
+> números foram corrigidos. Lê o [`LEIA-ME-PRIMEIRO.md`](LEIA-ME-PRIMEIRO.md) antes de
+> estudares por aqui.
+
 > **Como usar:** lê a pergunta, tapa a resposta, responde **em voz alta** com as tuas palavras, só
 > depois compara. O que treina de verdade não é a 1.ª pergunta — são os **follow-ups** (o júri não
 > para na primeira). Cada bloco escala: Q1 → apertam → apertam mais. Todos os números são os
@@ -18,13 +23,16 @@
 bateu a volatilidade. Então a resposta à sua própria pergunta é 'não'. Como não é isto um fracasso da
 contribuição central?"*
 
-✅ *"A RQ4 tem duas partes e respondo às duas. Como **mecanismo de produto**, o modelo prioriza
-claramente: dentro de um orçamento de 5 alertas/dia sobe a precisão de **0,379 para 0,632** — quase
-4×, com probabilidades calibradas. A **hipótese científica** — 'o texto do título acrescenta sinal
-sobre a volatilidade' — essa, pré-comprometida, deu não: PR-AUC **0,542 vs 0,496**. Não é um fracasso,
-é um resultado, e reporto-o tal como caiu. É a segunda vez — a primeira foi a Isolation Forest — que a
-escolha transparente vence um teste causal justo. Isso valida o desenho simplicidade-primeiro com
-evidência, em vez de o assumir."*
+✅ *"A pergunta tem duas partes e respondo às duas. Como **mecanismo de produto**, o modelo prioriza:
+dentro de um orçamento de 5 alertas/dia sobe a precisão de **0,379 para 0,632**, ou seja **1,67×**,
+com probabilidades calibradas. A **hipótese científica** — 'o texto do título acrescenta sinal sobre
+a volatilidade' — essa, pré-comprometida, deu não: PR-AUC **0,542 vs 0,496**. Não é um fracasso, é um
+resultado, e reporto-o tal como caiu. E vou mais longe do que a pergunta: uma tabela de treze
+constantes, sem ler título nenhum, obtém **0,662** e bate o modelo treinado. Está na tese, com o
+número, porque uma avaliação que só sabe dizer que sim não avalia nada."*
+
+> ⚠️ **NÃO dizer "quase 4×".** Essa versão foi retirada a 2026-08-13: o chão de `0,163` ordenava por
+> ordem alfabética das empresas, e ao acaso a sério dá `0,379`. O número certo é **1,67×**.
 
 **🎓 Q2 (aperta).** *"Se o texto não ajuda, para que serve o modelo? Podia ter usado só a volatilidade
 — um número — e dispensado o machine learning."*

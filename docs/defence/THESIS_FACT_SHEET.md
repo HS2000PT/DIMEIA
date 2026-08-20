@@ -1,5 +1,10 @@
 # THESIS_FACT_SHEET — cada número, de onde veio, e onde o provo
 
+> ⚠️ **Este documento foi escrito para a tese longa em inglês.** A que vais defender é a
+> tese curta em português (`tese/`), que tem **três QI** e não quatro RQ, e onde alguns
+> números foram corrigidos. Lê o [`LEIA-ME-PRIMEIRO.md`](LEIA-ME-PRIMEIRO.md) antes de
+> estudares por aqui.
+
 > **Para que serve:** se alguém apontar para um número e perguntar *"de onde vem isso?"*, a
 > resposta está nesta página em três segundos.
 >

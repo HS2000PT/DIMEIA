@@ -1,5 +1,10 @@
 # Tese — Guia Pessoal (TL;DR)
 
+> ⚠️ **Este documento foi escrito para a tese longa em inglês.** A que vais defender é a
+> tese curta em português (`tese/`), que tem **três QI** e não quatro RQ, e onde alguns
+> números foram corrigidos. Lê o [`LEIA-ME-PRIMEIRO.md`](LEIA-ME-PRIMEIRO.md) antes de
+> estudares por aqui.
+
 > **Isto não é a tese.** É a minha folha de apoio: informal, directa, para abrir antes de falar
 > com o orientador ou antes da defesa. Tudo o que está aqui está verificado — se um número
 > aparece nesta página, existe um ficheiro gerado por script que o produz.

@@ -1,5 +1,10 @@
 # autoteste.md — perguntas para responderes EM VOZ ALTA antes de ver a resposta
 
+> ⚠️ **Este documento foi escrito para a tese longa em inglês.** A que vais defender é a
+> tese curta em português (`tese/`), que tem **três QI** e não quatro RQ, e onde alguns
+> números foram corrigidos. Lê o [`LEIA-ME-PRIMEIRO.md`](LEIA-ME-PRIMEIRO.md) antes de
+> estudares por aqui.
+
 > **Como usar, e isto importa.** Ler uma resposta cria a ilusão de a saber. Dizê-la em voz alta
 > antes de a ver é o que a fixa. Por isso: **lê a pergunta, responde alto, só depois abres.**
 >

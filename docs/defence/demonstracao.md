@@ -1,5 +1,10 @@
 # demonstracao.md — o que mostrar ao júri, por que ordem, e o que dizer
 
+> ⚠️ **Este documento foi escrito para a tese longa em inglês.** A que vais defender é a
+> tese curta em português (`tese/`), que tem **três QI** e não quatro RQ, e onde alguns
+> números foram corrigidos. Lê o [`LEIA-ME-PRIMEIRO.md`](LEIA-ME-PRIMEIRO.md) antes de
+> estudares por aqui.
+
 > **Regra da sala:** nada aqui depende de o mercado colaborar, de haver wi-fi, ou de um alerta
 > chegar no momento certo. Se alguma dessas coisas correr bem, é bónus.
 

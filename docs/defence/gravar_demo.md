@@ -1,5 +1,10 @@
 # gravar_demo.md — Guião da demonstração (3 minutos)
 
+> ⚠️ **Este documento foi escrito para a tese longa em inglês.** A que vais defender é a
+> tese curta em português (`tese/`), que tem **três QI** e não quatro RQ, e onde alguns
+> números foram corrigidos. Lê o [`LEIA-ME-PRIMEIRO.md`](LEIA-ME-PRIMEIRO.md) antes de
+> estudares por aqui.
+
 > **Porquê gravar.** Numa defesa, uma demo ao vivo depende de rede, de um free tier e de um
 > agendador que não controlas. Uma gravação não depende de nada. Levas as duas: abres a app ao
 > vivo se estiver bem, e tens o vídeo se não estiver. **Grava mesmo que aches que não precisas.**

@@ -1,5 +1,10 @@
 # Guião de Defesa — recall rápido para a arguição (PT-PT)
 
+> ⚠️ **Este documento foi escrito para a tese longa em inglês.** A que vais defender é a
+> tese curta em português (`tese/`), que tem **três QI** e não quatro RQ, e onde alguns
+> números foram corrigidos. Lê o [`LEIA-ME-PRIMEIRO.md`](LEIA-ME-PRIMEIRO.md) antes de
+> estudares por aqui.
+
 > Complementa o guia de estudo (`slides/guia_estudo/`, que ENSINA). Isto é para **recall e
 > ensaio**: os números que tens de saber de cor, o guião por RQ, e as perguntas mais duras do
 > júri com respostas-modelo. Feito para uma defesa CALMA. Todos os números são os congelados da

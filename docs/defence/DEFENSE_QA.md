@@ -1,5 +1,10 @@
 # DEFENSE_QA — pergunta → resposta simples → resposta técnica → onde provar
 
+> ⚠️ **Este documento foi escrito para a tese longa em inglês.** A que vais defender é a
+> tese curta em português (`tese/`), que tem **três QI** e não quatro RQ, e onde alguns
+> números foram corrigidos. Lê o [`LEIA-ME-PRIMEIRO.md`](LEIA-ME-PRIMEIRO.md) antes de
+> estudares por aqui.
+
 > **Como usar:** lê a coluna *simples* em voz alta até sair natural. A *técnica* só sai se
 > insistirem. A coluna *onde provar* é para eu saber que existe — não é para recitar.
 >
