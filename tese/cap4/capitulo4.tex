@@ -800,3 +800,95 @@ um segundo.
 Isto é uma limitação real e fica escrita como tal. Comprar um serviço de notícias em tempo real
 resolveria, e violaria a restrição fundadora do trabalho. Preferi ter uma limitação medida a ter
 uma capacidade comprada.
+
+\section{O ciclo de vida do modelo, e o que nele é meu}
+\label{sec:sis_ciclo_vida}
+
+\emph{Onde é que está, concretamente, a engenharia de inteligência artificial deste trabalho?}
+
+É uma pergunta justa, e merece uma resposta reunida num sítio só, porque as peças estão espalhadas
+por três capítulos e obrigar quem lê a juntá-las é uma forma de não responder.
+
+Começo pela parte incómoda. Este sistema treina \textbf{um} modelo, e esse modelo é uma regressão
+logística com nove entradas que, medida contra uma linha de base de uma só variável,
+\textbf{perdeu}. Se a pergunta for \emph{quantos modelos treinou?}, a resposta é um, e é pequeno.
+
+A engenharia não está no tamanho do modelo. Está no que foi preciso construir para que aquele
+número, e a conclusão negativa que ele sustenta, sejam de confiança. Essa construção tem sete peças,
+e cada uma existe porque a sua ausência produziria um resultado bonito e falso.
+
+\begin{description}
+  \item[1. O conjunto de dados é construído, não encontrado.] O \gls{FNSPID} dá títulos com data;
+        os preços vêm de outro lado. Alinhar as duas coisas, decidir a que dia de negociação
+        pertence uma notícia de sábado, e derivar o rótulo a partir do movimento futuro, é o
+        trabalho que produz as $79\,753$ linhas da Secção~\ref{sec:met_dados}. Nenhuma delas existia
+        antes.
+
+  \item[2. O rótulo é uma decisão, e é declarado como tal.] ``Houve movimento anormal nos três dias
+        seguintes'' não é um facto que estivesse nos dados: é uma definição, com um limiar e um
+        horizonte escolhidos por quem constrói. Por isso a Secção~\ref{sec:av_qi3} não se fica
+        por essa escolha e mede \textbf{nove} definições alternativas.
+
+  \item[3. A separação temporal é imposta por um teste, não prometida.] A divisão é cronológica com
+        embargo, e existe um teste automático que altera o futuro de um exemplo e exige que as
+        entradas fiquem iguais e o rótulo mude. É a diferença entre afirmar que não há fuga e ter
+        onde a ir buscar se houver.
+
+  \item[4. As probabilidades são calibradas, e o seu enviesamento está medido.] O modelo devolve um
+        número entre zero e um, e esse número é usado para ordenar e para cortar. A calibração de
+        Platt é ajustada num bloco reservado, e o Capítulo~\ref{cap:avaliacao} declara que a
+        prevalência da validação não é a do teste, o que desloca a escala.
+
+  \item[5. Os artefactos existem e estão versionados.] O modelo treinado, o calibrador e um ficheiro
+        que descreve a corrida (dimensão de cada bloco, prevalência, semente, métricas) vivem
+        no repositório. Uma métrica sem o artefacto que a produziu não é reproduzível; é uma
+        afirmação.
+
+  \item[6. O modelo implantado é o modelo avaliado.] Isto parece trivial e não é. O codificador de
+        frases usado na avaliação corre sobre uma biblioteca pesada que não cabe no contentor de
+        produção. Em vez de trocar por outro modelo, o que faria a dissertação descrever um
+        sistema que ninguém usa, exportou-se o \emph{mesmo} modelo para um formato leve, e mediu-se
+        a fidelidade da conversão. A alternativa fácil era mais rápida e teria invalidado o
+        Capítulo~\ref{cap:avaliacao}.
+
+  \item[7. O que corre é observado.] Cada decisão de triagem é registada. Dias depois, quando o
+        preço já disse o que fez, um segundo procedimento rotula essas decisões com a mesma regra do
+        treino e mede se o modelo está a ajudar. Foi assim que se soube que \emph{não} está, e é a
+        Secção~\ref{sec:av_qi3} que o reporta. A deriva das entradas é medida pelo mesmo espírito.
+\end{description}
+
+\subsection{O que é meu, e o que é consumido}
+
+A distinção interessa, e escondê-la seria fácil.
+
+\textbf{Consumido de fora:} um codificador de frases pré-treinado, e mais nada em matéria de
+modelos. Não foi ajustado, não foi treinado, e o trabalho não reivindica nada sobre ele além de o
+ter escolhido \emph{por medição}, contra quatro alternativas, incluindo dois modelos específicos de
+finanças que perderam. É uma dependência \textbf{essencial}: sem representação de frases não há
+recuperação semântica. É também \textbf{substituível}: a interface que o isola tem uma
+implementação de reserva que degrada para sobreposição de palavras quando o modelo não está
+disponível.
+
+\textbf{Construído aqui:} o conjunto de dados rotulado, o alinhamento anti-fuga, o detetor e a sua
+janela protegida, a decomposição com encolhimento, a base de casos com impacto medido, o modelo de
+triagem e a sua calibração, as portas de decisão com as constantes derivadas, a camada de explicação
+amarrada aos objetos calculados, e o ciclo de observação que mede o sistema depois de implantado.
+
+\textbf{Deliberadamente ausente:} não há aqui um modelo de linguagem a escrever texto para o
+utilizador. A Secção~\ref{sec:ctx_llm} explica porquê, e a razão é a mesma que atravessa o trabalho:
+uma frase gerada é uma afirmação, e este sistema entrega afirmações com a evidência ao lado.
+
+\subsection{O que este ciclo não tem}
+
+Duas coisas, e ambas são consequência de uma só causa.
+
+\textbf{Não há re-treino.} Os pesos são de 2018--2023 e não voltaram a ser ajustados, apesar de a
+deriva estar medida. Re-treinar exigiria rótulos novos, e os rótulos novos vêm dos preços, portanto
+seria possível; o que impede não é a técnica, é que re-treinar com o registo de produção mudaria os
+números que este documento reporta, e essa mudança tem de ser feita com tempo para a avaliar. Fica
+como trabalho declarado.
+
+\textbf{Não há verdade humana.} Os três rótulos deste trabalho, ou seja movimento anormal,
+mesmo setor e percentil de movimento, são aproximações verificáveis, e nenhuma delas foi
+confrontada com o julgamento de uma pessoa. É a limitação de que mais dependem as outras, e o
+Capítulo~\ref{cap:conclusoes} volta a ela.

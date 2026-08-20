@@ -47,6 +47,24 @@ def paginas(pdf: pathlib.Path) -> str:
         return "?"
 
 
+def registo_sujo(log: pathlib.Path) -> list[str]:
+    """Erros e referências por resolver no `.log` do LaTeX.
+
+    Um PDF existir não quer dizer que esteja bem: o LaTeX escreve-o mesmo depois de erros, e o
+    que sai para a página é lixo tipográfico que só se vê a olhar. As referências indefinidas
+    são piores, porque saem como `??` e ninguém repara numa página cheia de texto.
+
+    As faltas de tipo de letra não contam: são cosméticas e o template do ISEP produz três.
+    """
+    if not log.exists():
+        return []
+    linhas = log.read_text(encoding="utf-8", errors="replace").splitlines()
+    erros = [x.strip() for x in linhas if x.startswith("! ")]
+    indefinidas = [x.strip() for x in linhas
+                   if "undefined" in x.lower() and "Font shape" not in x]
+    return erros + indefinidas
+
+
 def main() -> int:
     falhas = 0
 
@@ -60,7 +78,18 @@ def main() -> int:
             print(f"  !!  {nome}: o .tex é MAIS RECENTE do que o .pdf — recompila")
             falhas += 1
             continue
-        print(f"  ok  {nome}: {paginas(pdf)} páginas, mais recente do que a fonte")
+        # ⚠️ E O REGISTO DE COMPILAÇÃO, que esta porta não olhava. O LaTeX **recupera** de quase
+        # tudo: um `\ref` partido por um escape produz três erros, imprime lixo na página, e
+        # **escreve o PDF na mesma**. A porta dizia "ok, 118 páginas" sobre um documento com
+        # erros dentro. Apanhado a 2026-08-20, no próprio dia em que causei um.
+        problemas = registo_sujo(pdf.with_suffix(".log"))
+        if problemas:
+            print(f"  !!  {nome}: {len(problemas)} problema(s) no registo de compilação")
+            for x in problemas[:3]:
+                print(f"        {x[:78]}")
+            falhas += 1
+            continue
+        print(f"  ok  {nome}: {paginas(pdf)} páginas, compila limpo, mais recente do que a fonte")
 
     print("\n=== os verificadores ===")
     for descricao, script in VERIFICADORES:
