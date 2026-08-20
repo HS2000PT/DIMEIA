@@ -129,10 +129,19 @@
   .rep .l { display:grid; grid-template-columns:66px 1fr 62px; align-items:center; gap:10px;
             font-size:.82rem; }
   .rep .l span:first-child { color:var(--fraco); }
+  /* A cor diz o SINAL e nada mais. A primeira versão pintava de verde a parcela que era o
+     motor, e verde já quer dizer "subiu" no resto da página: uma parcela negativa a verde só
+     porque era a maior era uma contradição a olhar para o leitor. O motor distingue-se pelo
+     rótulo a negrito, e a barra pela direcção. */
   .rep .t { position:relative; height:7px; background:var(--linha2); border-radius:3px; }
-  .rep .t i { position:absolute; top:0; height:7px; border-radius:3px; background:var(--fraco); }
-  .rep .l.motor .t i { background:var(--acento); }
+  .rep .t::before { content:""; position:absolute; left:50%; top:-2px; width:1px; height:11px;
+                    background:var(--linha); }
+  .rep .t i { position:absolute; top:0; height:7px; border-radius:3px; background:var(--sobe);
+              min-width:2px; }
+  .rep .t i.neg { background:var(--desce); }
   .rep .l.motor span:first-child { color:var(--tinta); font-weight:600; }
+  .rep .eixo { color:var(--fraco); font-size:.72rem; text-align:center; margin:3px 0 0;
+               letter-spacing:.04em; }
   .rep .v { text-align:right; font-variant-numeric:tabular-nums; }
   .rep .nota { color:var(--fraco); font-size:.82rem; margin:8px 0 0; }
 
@@ -195,12 +204,23 @@
              border-left:1px solid var(--linha); padding-left:11px; }
 
   /* ── funil ─────────────────────────────────────────────────────────────── */
-  .funil { display:grid; grid-template-columns:repeat(auto-fill,minmax(255px,1fr)); gap:2px 26px; }
-  .etapa { padding:9px 0; border-top:1px solid var(--linha2); }
+  /* ⚠️ Uma grelha de colunas deixava buracos enormes: as etapas têm alturas muito
+     diferentes (uma empresa numa, sete noutra) e o CSS grid não as encaixa, empurra-as para
+     a linha seguinte e deixa metade do ecrã vazio. Só se viu ao capturar a figura.
+     Uma lista de linhas é também a forma certa: um funil lê-se de cima para baixo, pela
+     ordem em que as decisões acontecem. */
+  .funil { display:block; }
+  .etapa { display:grid; grid-template-columns:minmax(150px,210px) 1fr; gap:6px 20px;
+           padding:10px 0; border-top:1px solid var(--linha2); align-items:baseline; }
   .etapa h3 { font-size:.88rem; margin:0; font-weight:600;
-              display:flex; align-items:baseline; gap:8px; }
+              display:flex; align-items:baseline; gap:7px; }
   .etapa h3 .n { color:var(--fraco); font-weight:400; font-size:.8rem; }
-  .etapa .porque { color:var(--fraco); font-size:.8rem; margin:1px 0 6px; }
+  .etapa .porque { grid-column:1; color:var(--fraco); font-size:.78rem; margin:0; }
+  .etapa .nomes { grid-column:2; grid-row:1 / span 2; }
+  @media (max-width:640px) {
+    .etapa { grid-template-columns:1fr; }
+    .etapa .porque, .etapa .nomes { grid-column:1; grid-row:auto; }
+  }
   .nomes { display:flex; flex-wrap:wrap; gap:5px; }
   .nome { border:1px solid var(--linha); border-radius:5px; padding:2px 7px; font-size:.79rem;
           background:var(--caixa); }
@@ -388,13 +408,15 @@ function repartir(d, nome) {
     const esquerda = (v || 0) < 0 ? 50 - w : 50;
     return `<div class="l ${d.driver === chave ? "motor" : ""}">
               <span>${rot}</span>
-              <span class="t"><i style="left:${esquerda}%;width:${w}%"></i></span>
+              <span class="t"><i class="${(v || 0) < 0 ? "neg" : ""}"
+                    style="left:${esquerda}%;width:${w}%"></i></span>
               <span class="v">${pct(v || 0)}</span>
             </div>`;
   }).join("");
   const motor = { market:"the market as a whole", sector:"its sector",
                   company:"the company itself" }[d.driver] || "";
   box.innerHTML = `<div class="barras">${linhas}</div>` +
+    `<p class="eixo">the three add up to the day's move · left of the line is down</p>` +
     (motor ? `<p class="nota">Today's move in ${esc(nome)} came mostly from ${motor}.</p>` : "");
 }
 
