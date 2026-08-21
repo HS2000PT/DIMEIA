@@ -66,6 +66,13 @@ fora desta tabela} porque servem uma passagem e não um resultado, como as $820$
 embargo descarta, o $\sigma$ do caso trabalhado da Tesla, o custo de memória dos três formatos, ou
 as contagens por fonte de notícias. Cada uma diz, no sítio onde aparece, sobre que dados foi feita.
 
+Uma delas merece nota própria, porque é a única que não se pode regenerar. A repartição do funil
+por porta, na Tabela~\ref{tab:sis_funil}, foi lida do registo de decisões num dia concreto, e esse
+registo guarda apenas três dias: a razão está na Secção~\ref{sec:met_dados}, e é que ele é
+republicado a cada ciclo, portanto o custo é de publicação e não de armazenamento. Correr o mesmo
+procedimento hoje daria outro dia, não o mesmo. Fica dito assim, em vez de se apresentar como
+reproduzível uma medição que o não é.
+
 \begin{table}[ht]
 \caption[Cada resultado e o procedimento que o produz]{Todos os resultados reportados, e onde são
 gerados. Correr outra vez sobre os mesmos dados devolve exatamente os mesmos valores.}
@@ -110,6 +117,7 @@ Decisões maturadas em produção, mantidas vs suprimidas & $0.589$ vs $0.617$ &
 Cobertura das notícias em dias invulgares & $88.5\%$ & §\ref{sec:con_limitacoes} \\
 Latência, por era e decomposta & $196$ / $143$ / $158$ min & §\ref{sec:sis_implantacao} \\
 Funil de produção (captadas $\rightarrow$ enviadas) & $944 \rightarrow 42$ & §\ref{sec:sis_portas} \\
+Funil de um dia, repartido por porta & $5\,060 \rightarrow 5$ & §\ref{sec:sis_portas} \\
 \bottomrule
 \end{tabular}
 \end{table}
