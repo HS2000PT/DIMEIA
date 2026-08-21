@@ -438,6 +438,49 @@ empresa no mesmo dia}.
 \end{center}
 \end{frame}
 
+\begin{frame}{``E onde está a engenharia de inteligência artificial?''}
+\small
+Começo pela parte incómoda: este trabalho treina \textbf{um} modelo, e é uma regressão
+logística com nove entradas que \textbf{perdeu} para uma linha de base de uma só variável.
+\vspace{2mm}
+
+\begin{center}
+\textbf{A engenharia não está no tamanho do modelo.}\\
+Está no que foi preciso construir para que aquele número, e a conclusão negativa
+que ele sustenta, sejam \emph{de confiança}.
+\end{center}
+\vspace{2mm}
+
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+{\footnotesize
+\textbf{1.} O conjunto de dados é \textbf{construído}, não encontrado: $79\,753$ linhas que não
+existiam.\\[1mm]
+\textbf{2.} O rótulo é uma \textbf{decisão}, e por isso mediram-se \textbf{nove} definições
+alternativas.\\[1mm]
+\textbf{3.} A separação temporal é imposta por um \textbf{teste} que muta o futuro, não
+prometida.\\[1mm]
+\textbf{4.} As probabilidades são calibradas, e o seu enviesamento está \textbf{medido}.
+}
+\end{column}
+\begin{column}{0.48\textwidth}
+{\footnotesize
+\textbf{5.} O modelo, o calibrador e a corrida estão \textbf{versionados}.\\[1mm]
+\textbf{6.} O modelo implantado \textbf{é} o modelo avaliado: exportado para um formato leve,
+com a fidelidade da conversão medida em vez de assumida.\\[1mm]
+\textbf{7.} O que corre é \textbf{observado}: cada decisão é registada e confrontada dias
+depois com o que o preço fez. Foi assim que se soube que \emph{não} estava a ajudar.
+}
+\end{column}
+\end{columns}
+\vspace{2mm}
+
+\begin{center}
+\footnotesize A parte difícil não foi escolher a técnica. Foi montar a avaliação que
+\textbf{consegue dizer que não}, e depois acreditar nela.
+\end{center}
+\end{frame}
+
 \begin{frame}{Limitações, ditas antes de me perguntarem, e o que as fecha}
 \textbf{Cada limitação foi medida}, e a coluna da direita é o trabalho que ela pede.
 \vspace{1.5mm}
