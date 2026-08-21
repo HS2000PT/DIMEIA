@@ -24,6 +24,11 @@ TESE = RAIZ / "tese"
 
 VERIFICADORES = [
     ("números contra a fonte", "check_tese_numeros.py"),
+    # O de cima verifica uma lista curada contra o ficheiro que a produz: garante que os que estão
+    # na lista estão certos, e nada diz sobre os que não estão. Este faz o inverso, e é por isso
+    # que os dois coexistem: varre o documento inteiro e exige que TODO o número afirmado tenha
+    # origem, ou uma justificação escrita.
+    ("todo o número tem origem", "auditar_numeros.py"),
     ("escapes de LaTeX comidos", "check_tex_escapes.py"),
     ("apêndice: cada número onde diz estar", "check_apendice_xref.py"),
     ("materiais de estudo alinhados", "check_materiais.py"),
