@@ -951,10 +951,23 @@ A leitura da figura é imediata e os números confirmam-na:
 \end{itemize}
 
 \begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
-Em \textbf{$84\%$} das decisões, o resultado estava determinado pela \textbf{empresa} antes de o
-título ser lido. A Apple não conseguia gerar um alerta de notícia, acontecesse o que
-acontecesse; a AMD passava em $963$ de $963$.
+Em \textbf{$84\%$} das decisões registadas, o resultado estava determinado pela
+\textbf{empresa} antes de o título ser lido. A Apple não conseguia gerar um alerta de notícia,
+acontecesse o que acontecesse; a AMD passava em $963$ de $963$.
 \end{tcolorbox}
+
+\paragraph{E esse $84\%$ precisa de uma ressalva, que aponta contra o próprio argumento.}
+O número conta \textbf{decisões registadas}, e o sistema repontua os mesmos títulos a cada ciclo
+de sessenta segundos: o mesmo título entra dezenas de vezes. Pior, a duplicação não é uniforme.
+É maior nas empresas com \emph{menos} notícias, que são precisamente as que nunca passam o piso,
+pelo que contar decisões empurra a fração para cima, ou seja na direção que favorece a conclusão
+que estou a defender.
+
+Contado uma vez por título distinto, sobre uma janela posterior e maior
+($36\,925$ decisões até 20 de agosto de 2026), a fração cai para $48\%$. A conclusão estrutural
+não muda, e é ela que sustenta a decisão que se seguiu: continua a haver empresas inteiramente
+de um dos lados do piso, e a amplitude entre empresas continua a ser várias vezes a amplitude
+dentro de cada uma. O que muda é a força do número isolado, e fica assim escrito.
 
 \paragraph{E este é o mesmo defeito que este trabalho já tinha identificado, um nível acima.}
 A Secção~\ref{sec:av_qi1} mostra que um limiar fixo sobre o \emph{retorno} mede a volatilidade da

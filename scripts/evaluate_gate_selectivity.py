@@ -18,6 +18,7 @@ SAI:  docs/evaluation/evaluation_gate_selectivity.md
 
 from __future__ import annotations
 
+import argparse
 import collections
 import json
 import pathlib
@@ -27,6 +28,10 @@ import sys
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 SAIDA = RAIZ / "docs" / "evaluation" / "evaluation_gate_selectivity.md"
+# ⚠️ O ficheiro acima e um INSTANTANEO que a dissertacao cita (4 366 decisoes, ate
+# 2026-08-15). Re-corre-lo sobre o registo de hoje muda a janela e TODOS os numeros que a
+# tese reporta, o que e indistinguivel de uma correccao. Por isso o caminho e um argumento:
+#   --saida <ficheiro>   escreve noutro sitio, sem tocar no congelado.
 BRANCH = "origin/alerts-history"
 PISO = 0.50
 MIN_POR_TICKER = 20
@@ -45,6 +50,14 @@ def decisoes() -> list[dict]:
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--saida", default=str(SAIDA),
+                    help="onde escrever. O valor por defeito e o instantaneo que a tese "
+                         "cita: passar outro caminho evita reescreve-lo.")
+    args = ap.parse_args()
+    destino = pathlib.Path(args.saida)
+    if not destino.is_absolute():
+        destino = RAIZ / destino
     pred = decisoes()
     if len(pred) < 200:
         print(f"ERRO: só {len(pred)} decisões pontuadas. Não escrevo um relatório sobre isto.",
@@ -70,6 +83,26 @@ def main() -> None:
     n_mistos = sum(len(por_t[t]) for t in mistos)
     pc_determinado = 100.0 * (len(pred) - n_mistos) / len(pred)
 
+    # ⚠️ A MESMA CONTA, POR TITULO UNICO — e a diferenca e grande.
+    # O sistema repontua os mesmos titulos de 60 em 60 segundos, portanto contar DECISOES
+    # REGISTADAS conta a mesma manchete dezenas ou centenas de vezes. E a duplicacao nao e
+    # uniforme: e maior nas empresas com POUCAS noticias, que sao precisamente as que nunca
+    # passam o piso. O resultado e que a contagem por decisao empurra a fraccao para cima,
+    # ou seja na direccao que convem a conclusao. Publicam-se as duas.
+    por_t_uni: dict[str, dict[str, float]] = collections.defaultdict(dict)
+    for p in pred:
+        chave = p.get("headline") or p.get("news_key") or ""
+        por_t_uni[p["ticker"]][chave] = p["prob"]
+    n_uni = sum(len(v) for v in por_t_uni.values())
+    det_uni = sum(
+        len(v) for t, v in por_t_uni.items()
+        if min(v.values()) >= PISO or max(v.values()) < PISO
+    )
+    pc_determinado_uni = 100.0 * det_uni / n_uni if n_uni else float("nan")
+    factor_max = max(
+        (len(por_t[t]) / len(por_t_uni[t]), t) for t in por_t if por_t_uni.get(t)
+    )
+
     def veredicto(t: str) -> str:
         if t in sempre_sim:
             return "sempre passa"
@@ -94,8 +127,8 @@ def main() -> None:
             f"{len(c)}/{len(por_t)} | {pior[0]} com {pior[1]} |")
     rel = "\n".join(linhas_rel)
 
-    SAIDA.parent.mkdir(parents=True, exist_ok=True)
-    SAIDA.write_text(f"""# O portão de triagem separa notícias ou empresas?
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    destino.write_text(f"""# O portão de triagem separa notícias ou empresas?
 
 > **Gerado por** `scripts/evaluate_gate_selectivity.py`. Não editar à mão.
 > **Fonte:** `{BRANCH}:predictions_log.jsonl` — as decisões **realmente tomadas em produção**.
@@ -118,8 +151,16 @@ def main() -> None:
 - Empresas que **nunca** passam: {len(sempre_nao)} — {', '.join(sempre_nao) or '(nenhuma)'}
 - Empresas em que o piso **chega a decidir**: {len(mistos)} — {', '.join(mistos) or '(nenhuma)'}
 
-> **Em {pc_determinado:.0f}% das decisões o resultado estava determinado pela EMPRESA antes de
-> se ler a manchete.**
+> **Em {pc_determinado_uni:.0f}% dos títulos distintos o resultado estava determinado pela
+> EMPRESA antes de a manchete ser lida.**
+
+⚠️ **Duas contagens, e a diferença entre elas importa.** Contado por **decisão registada**, o
+valor é `{pc_determinado:.0f}%` sobre {len(pred)} decisões; contado por **título distinto**, é
+`{pc_determinado_uni:.0f}%` sobre {n_uni}. A diferença não é ruído: o sistema repontua os mesmos
+títulos a cada ciclo de 60 segundos, e a duplicação é **maior nas empresas com menos notícias**
+(o pior caso é a {factor_max[1]}, com {factor_max[0]:.0f} decisões por título), que são
+precisamente as que nunca passam o piso. Contar decisões empurra portanto a fração para cima, ou
+seja **na direção que convém à conclusão**. O número a citar é o dos títulos distintos.
 
 Isto explica, de uma só vez, as três queixas do utilizador: recebe demasiados alertas (as
 empresas que passam sempre saturam o tecto diário), recebe-os sempre das mesmas, e nunca recebe
@@ -169,8 +210,9 @@ evidência recuperada, e a novidade da história.
     print(f"dentro / entre  : {dentro:.3f} / {entre:.3f}  ({entre/dentro:.1f}x)")
     print(f"sempre passa    : {sempre_sim}")
     print(f"nunca passa     : {sempre_nao}")
-    print(f"determinado pela empresa: {pc_determinado:.0f}% das decisões")
-    print(f"-> {SAIDA.relative_to(RAIZ)}")
+    print(f"determinado pela empresa: {pc_determinado:.0f}% das decisões, "
+          f"{pc_determinado_uni:.0f}% dos títulos distintos")
+    print(f"-> {destino.relative_to(RAIZ)}")
 
 
 if __name__ == "__main__":

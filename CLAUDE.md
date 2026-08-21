@@ -516,8 +516,14 @@
   accionada, e é ela que condiciona a licença do código.
   **(G) A CAPA.** Imprimia **`[A definir]` duas vezes** (o júri, que a escola só designa depois
   da entrega) e a data era `\today`, ou seja mudava a cada compilação. As quatro dissertações
-  aprovadas em `thesis-examples/` **não mostram júri nenhum** e usam mês e ano. Guarda no
-  template para o bloco só aparecer com nomes; data fixada. **E TODAS as referências saíam com
+  aprovadas em `thesis-examples/` ~~**não mostram júri nenhum**~~ e usam mês e ano. Guarda no
+  template para o bloco só aparecer com nomes; data fixada.
+  ⚠️ **RISCADO A 2026-08-21: A AFIRMAÇÃO SOBRE O JÚRI ERA FALSA, e fez apagar um bloco
+  obrigatório da capa.** As quatro **mostram-no todas** (verificado com `pdftotext -layout` nas
+  quatro capas), e a do **Bruno Ribeiro foi aprovada e depositada com os marcadores do template
+  por preencher** — `[Nome do Presidente, Categoria, Escola]` —, que é exactamente o cenário
+  que esta nota dizia ser inaceitável. O bloco foi **reposto** com esses marcadores. A data em
+  mês e ano está certa e mantém-se. **E TODAS as referências saíam com
   moldura vermelha/verde à volta** nas 114 páginas (`nohyperreflinkcolor` tira a cor e não a
   moldura) — `hidelinks`. Só se vê a olhar para a página.
   **(H) O ABSTRACT IMPRIMIA AS PALAVRAS-CHAVE EM PORTUGUÊS**, e elas saíam coladas à última

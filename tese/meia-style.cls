@@ -388,10 +388,11 @@ KOMA-script documentation for details.}]{fancyhdr}
 	{\large \bfseries \noindent \supervisorlabel: \supname } \\
 	\ifdefined\cosupname {\large \bfseries \cosupervisorlabel: \cosupname} \\ \fi
 	\vfill
-	% ⚠️ ALTERAÇÃO AO TEMPLATE (2026-08-20). O bloco do júri era impresso sempre, e a escola só
-	% designa o júri DEPOIS da entrega: na versão submetida saíam etiquetas seguidas de nada, ou
-	% um "[A definir]" impresso na capa, que se lê como um documento por acabar. Passa a aparecer
-	% só quando os nomes existem. Basta preenchê-los no main.tex para o bloco voltar.
+	% ⚠️ ALTERAÇÃO AO TEMPLATE (2026-08-20), mantida por outra razão (2026-08-21). Foi
+	% acrescentada para esconder o bloco do júri numa versão submetida, com a justificação
+	% — falsa — de que as dissertações aprovadas não o mostram. Mostram-no todas, e uma delas
+	% com os marcadores por preencher, portanto o bloco voltou. A guarda fica porque é
+	% inofensiva: com os nomes preenchidos em main.tex, imprime como o template original.
 	\ifx\presidentname\empty\else
 		{\normalsize \bfseries \noindent \evallabel:} \\
 		{\normalsize \presidentlabel: } \\

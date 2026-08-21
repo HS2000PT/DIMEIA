@@ -66,6 +66,10 @@ MANIFESTO: list[tuple[str, str, str]] = [
     ("825", "evaluation_live_transfer.md", "decisoes maturadas no registo de producao"),
     ("0.589", "evaluation_live_transfer.md", "materiais entre as decisoes mantidas"),
     ("0.617", "live_monitoring.md", "materiais entre as decisoes suprimidas"),
+    # A seleccao da porta contada por TITULO DISTINTO, e nao por decisao registada: o
+    # sistema repontua a mesma manchete a cada ciclo, e a duplicacao e maior nas empresas
+    # que nunca passam o piso. O congelado (84%) fica; este e o numero corrigido.
+    ("48", "evaluation_gate_selectivity_unicos.md", "determinado pela empresa, por titulo"),
     ("0.617", "evaluation_live_transfer.md", "materiais entre as decisoes suprimidas"),
     ("0.486", "evaluation_live_transfer.md", "ROC-AUC na populacao implantada"),
     # o texto POR CIMA da melhor linha de base (Cap. 5). O 0.534 e o 0.662 ja vinham da
