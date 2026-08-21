@@ -156,8 +156,19 @@
   .legenda { color:var(--fraco); font-size:.82rem; margin:9px 0 0;
              display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
   .chave { display:inline-flex; align-items:center; gap:6px; }
-  .chave i { width:8px; height:8px; border-radius:50%; background:var(--fraco); display:block; }
-  .chave i.env { border-radius:1px; background:var(--acento); }
+  /* ⚠️ OS SIMBOLOS DA LEGENDA TEM DE SER OS MESMOS QUE O GRAFICO DESENHA, e nao eram.
+     O grafico marca um alerta enviado com uma SETA PARA BAIXO (shape:"arrowDown") e a legenda
+     mostrava um quadrado; marca um dia assinalado com um circulo VERDE ou VERMELHO conforme a
+     direcao do movimento, e a legenda mostrava um circulo cinzento. Ou seja: das duas marcas
+     que o grafico usa, nenhuma aparecia na legenda com a forma certa, e a cor de uma delas
+     carregava sentido que nada explicava. E a mesma classe de defeito que a legenda do funil
+     tinha na 2.a parte da sessao 61: duas contas do mesmo facto a discordar no mesmo ecra. */
+  .chave i { width:8px; height:8px; border-radius:50%; display:block; background:var(--fraco); }
+  .chave i.sobe { background:var(--sobe); }
+  .chave i.desce { background:var(--desce); }
+  .chave i.env { width:0; height:0; border-radius:0; background:none;
+                 border-left:5px solid transparent; border-right:5px solid transparent;
+                 border-top:7px solid var(--acento); }
 
   /* ── acontecimentos ────────────────────────────────────────────────────── */
   .dias { margin:16px 0 0; border-top:1px solid var(--linha2); max-height:280px; overflow-y:auto; }
@@ -499,7 +510,8 @@ function desenhar(a) {
   document.getElementById("legenda").innerHTML =
     `<span>${dados.length} sessions</span>` +
     `<span class="chave"><i class="env"></i>${nEnv} sent</span>` +
-    `<span class="chave"><i></i>${nEv} flagged, stopped at a gate</span>` +
+    `<span class="chave"><i class="sobe"></i><i class="desce"></i>` +
+      `${nEv} flagged, stopped at a gate (colour is the direction)</span>` +
     (posteriores.length
       ? `<span>${posteriores.length} of those after the last close shown</span>` : "");
   document.getElementById("dias").innerHTML = todos.length

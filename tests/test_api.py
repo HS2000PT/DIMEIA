@@ -274,3 +274,37 @@ def test_uma_rota_de_api_inexistente_falha_como_api_e_nao_como_pagina(client):
     assert r.headers["content-type"].startswith("application/json")
     # e o SPA continua a apanhar tudo o resto, que é o que faz o botão "voltar" funcionar
     assert client.get("/qualquer/coisa").status_code == 200
+
+
+def test_a_legenda_descreve_as_marcas_que_o_grafico_desenha_mesmo():
+    """Uma legenda que não bate com o desenho é pior do que legenda nenhuma: ensina errado.
+
+    ⚠️ **O defeito que este teste fixa.** O gráfico marcava um alerta enviado com uma seta para
+    baixo (``shape:"arrowDown"``) e a legenda mostrava um quadrado; marcava um dia assinalado com
+    um círculo **verde ou vermelho** conforme a direção do movimento, e a legenda mostrava um
+    círculo cinzento, sem dizer em lado nenhum que a cor queria dizer alguma coisa. Das duas
+    marcas que o gráfico usa, nenhuma aparecia na legenda com a forma certa.
+
+    É a mesma classe de defeito que a legenda do funil tinha (``0 sent`` com alertas na lista ao
+    lado): duas representações do mesmo facto a discordar no mesmo ecrã. Nenhum registo a mostra,
+    e nenhum teste a apanhava, porque cada metade estava internamente correcta.
+
+    O teste é estrutural de propósito: não sabe desenhar, sabe exigir que para cada forma que o
+    gráfico usa exista uma classe de legenda declarada, e que a cor seja explicada quando carrega
+    sentido.
+    """
+    html = _PAGINA.read_text(encoding="utf-8")
+
+    # o gráfico usa exactamente duas formas, e cada uma tem de ter o seu símbolo na legenda
+    assert 'shape:"arrowDown"' in html, "mudou a marca do alerta enviado; rever a legenda"
+    assert 'shape:"circle"' in html, "mudou a marca do dia assinalado; rever a legenda"
+
+    # o símbolo de "enviado" tem de ser um triângulo (bordas), e não um quadrado
+    assert "border-top:7px solid var(--acento)" in html, \
+        "o símbolo de 'sent' voltou a não ser uma seta"
+
+    # o círculo é pintado pela direcção no gráfico, logo a legenda tem de mostrar as duas cores
+    assert ".chave i.sobe" in html and ".chave i.desce" in html, \
+        "a legenda voltou a mostrar uma só cor para uma marca que o gráfico pinta em duas"
+    assert "colour is the direction" in html, \
+        "a cor do círculo carrega sentido e a legenda não o explica"
