@@ -203,14 +203,38 @@ Aqui não há fórmula óbvia. É o sítio para \textbf{aprender dos dados}.
 \begin{itemize}
   \item \textbf{79\,753} exemplos que construí a partir de notícias e preços (2018--2023)
   \item Pergunta: \emph{depois desta notícia houve um movimento anormalmente grande?}
-  \item \textbf{Em valor absoluto}, nunca em que direção
-  \item Divisão \textbf{cronológica} com embargo; probabilidades calibradas
+        \textbf{Em valor absoluto}, nunca em que direção
 \end{itemize}
-\vspace{4mm}
-\begin{center}
-\footnotesize O modelo, o seu treino e as suas métricas ficam guardados como artefactos.\\
-\textbf{É o meu modelo, treinado nos meus dados.}
-\end{center}
+\vspace{1mm}
+
+% ⚠️ ESTE BLOCO SUBSTITUI UM BULLET QUE DIZIA "divisão cronológica com embargo" E MAIS NADA.
+% É a pergunta de credibilidade de qualquer tese com um modelo treinado ("como sabes que ele não
+% viu o futuro?") e a resposta era uma linha de texto, ou seja uma afirmação. Passa a ser
+% mostrada: a divisão vê-se, e o teste que a impõe está escrito ao lado. Não custa um frame
+% novo, porque ocupa o espaço dos bullets que substitui.
+\centering
+\begin{tikzpicture}[font=\scriptsize]
+  \fill[black!55] (0,0) rectangle (6.3,0.52);
+  \fill[orange!45] (6.3,0) rectangle (6.72,0.52);
+  \fill[black!30] (6.72,0) rectangle (8.12,0.52);
+  \fill[orange!45] (8.12,0) rectangle (8.54,0.52);
+  \fill[black!55] (8.54,0) rectangle (9.94,0.52);
+  \node[white, font=\scriptsize\bfseries] at (3.15,0.26) {TREINO};
+  \node[white, font=\scriptsize\bfseries] at (7.42,0.26) {VALID.};
+  \node[white, font=\scriptsize\bfseries] at (9.24,0.26) {TESTE};
+  % Os dois rótulos dizem a MESMA coisa de propósito: um a dizer "embargo" e o outro a dizer
+  % "5 dias" lia-se como duas bandas diferentes, quando são a mesma regra aplicada duas vezes.
+  \node[orange!60!black, anchor=south, font=\tiny] at (6.51,0.60) {embargo};
+  \node[orange!60!black, anchor=south, font=\tiny] at (8.33,0.60) {embargo};
+  \draw[->, black!45] (0,-0.22) -- (9.94,-0.22) node[right, black!60, font=\tiny] {tempo};
+\end{tikzpicture}
+\vspace{3mm}
+
+\raggedright\footnotesize
+Divisão por \textbf{dias inteiros} com embargo de \textbf{cinco}, nunca por linhas: duas notícias
+do mesmo dia não podem cair uma de cada lado. E a garantia não é prometida, é \textbf{imposta por
+um teste}: dois futuros absurdos ($+300\%$ e $-99\%$) sobre o mesmo passado têm de dar entradas
+\textbf{idênticas} e rótulos \textbf{diferentes}. Se o futuro vazasse, as entradas mudavam.
 \end{frame}
 
 % ══ 4. UM ALERTA REAL ═══════════════════════════════════════════════════════
@@ -475,7 +499,9 @@ depois com o que o preço fez. Foi assim que se soube que \emph{não} estava a a
 }
 \end{column}
 \end{columns}
-\vspace{2mm}
+% 2mm punha a caixa 0.52pt acima do slide. Meio ponto não se vê, mas o padrão dos materiais deste
+% projecto é zero overfull, e um aviso tolerado é um aviso que se deixa de ler.
+\vspace{0.5mm}
 
 \begin{center}
 \footnotesize A parte difícil não foi escolher a técnica. Foi montar a avaliação que
