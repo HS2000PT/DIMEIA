@@ -53,18 +53,24 @@ Figura~\ref{fig:av_matriz} e o nome habitual deste quadro é \textbf{matriz de c
 \centering
 \begin{tikzpicture}[
   font=\small,
-  cel/.style={draw, minimum width=3.5cm, minimum height=1.55cm, align=center, inner sep=3pt},
+  % altura fixa nas quatro, para a grelha ser mesmo uma grelha
+  cel/.style={draw, minimum width=4.4cm, minimum height=1.75cm, align=center, inner sep=3pt,
+              text depth=0pt},
   bom/.style={cel, fill=black!7},
   mau/.style={cel, fill=orange!13},
   rot/.style={font=\footnotesize\bfseries, text=black!65},
 ]
-  \node[bom] (vp) at (0,0) {\textbf{Verdadeiro positivo (VP)}\\[2pt]
+  % ⚠️ Posições ABSOLUTAS, e não `right=0mm of`. Duas das células têm uma linha de texto a mais
+  % (o "(alarme falso)" e o "(escapou)"), portanto crescem em altura; posicionadas umas em
+  % relação às outras, a grelha partia-se e as quatro caixas saíam desencontradas. Numa figura
+  % que existe para ensinar um 2x2, isso desfaz o próprio argumento. Só se vê a renderizar.
+  \node[bom, anchor=north west] (vp) at (0,0)      {\textbf{Verdadeiro positivo (VP)}\\[2pt]
     \footnotesize assinalou, e o dia\\ \footnotesize \emph{era} mesmo invulgar};
-  \node[mau, right=0mm of vp] (fp) {\textbf{Falso positivo (FP)}\\[2pt]
+  \node[mau, anchor=north west] (fp) at (4.4,0)       {\textbf{Falso positivo (FP)}\\[2pt]
     \footnotesize assinalou, e o dia\\ \footnotesize era banal\\ \footnotesize (\emph{alarme falso})};
-  \node[mau, below=0mm of vp] (fn) {\textbf{Falso negativo (FN)}\\[2pt]
+  \node[mau, anchor=north west] (fn) at (0,-1.75)  {\textbf{Falso negativo (FN)}\\[2pt]
     \footnotesize calou-se, e o dia\\ \footnotesize era invulgar\\ \footnotesize (\emph{escapou})};
-  \node[bom, below=0mm of fp] (vn) {\textbf{Verdadeiro negativo (VN)}\\[2pt]
+  \node[bom, anchor=north west] (vn) at (4.4,-1.75) {\textbf{Verdadeiro negativo (VN)}\\[2pt]
     \footnotesize calou-se, e o dia\\ \footnotesize era mesmo banal};
 
   \node[rot, above=2mm of vp] {a realidade: invulgar};
