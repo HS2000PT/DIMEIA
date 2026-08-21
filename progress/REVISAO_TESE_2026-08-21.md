@@ -144,6 +144,9 @@ erro, é aviso, e só se vê a renderizar. Larguras apertadas; o aviso desaparec
 
 ## 2. Encontrado, **não corrigido** — precisa da tua decisão
 
+> ✅ **2.1 e 2.2 foram feitos a 2026-08-21, a pedido.** Ficam escritos como estavam, com o que
+> foi feito no fim de cada um.
+
 ### 2.1 A recomendação do coorientador não está citada na tese
 
 O `worldmonitor2026` está no `.bib`, verificado, e **nunca é citado**. O `CLAUDE.md` regista que
@@ -158,6 +161,11 @@ Uma oração na linha da tabela resolve.
 ⚠️ **Não o fiz porque é uma decisão tua**: creditar uma sugestão do coorientador no corpo do
 documento é uma escolha que te pertence, não a mim.
 
+> ✅ **FEITO.** Parágrafo próprio no §2.1 (a primeira versão ficou a meio da cadeia do argumento e
+> partia-lhe o fio; foi movida), mais a citação na linha da tabela das alternativas do Cap. 5. A
+> descrição do produto limita-se ao que o fornecedor declara, que é a regra do próprio §2.3.
+> Verificado no PDF: a citação sai no corpo e a entrada aparece na bibliografia impressa.
+
 ### 2.2 O resumo diz que o sistema «explica o que já aconteceu», e o alerta traz um número para a frente
 
 O alerta termina em *«57% chance of an unusually large move over the next few days»*. A tese
@@ -171,6 +179,11 @@ tens é excelente. **Proposta:** ~15 palavras no resumo a nomear esse número e 
 nulo, e transforma uma armadilha em prova de cuidado.
 
 Deixei por fazer porque mexer no resumo é decisão de autor.
+
+> ✅ **FEITO**, nas duas línguas, e ficou mais curto do que eu esperava. Aproveitei para corrigir
+> no mesmo sítio o *«melhor linha de base»* do ponto 1.1, que tinha escapado ao lote anterior:
+> o *front matter* não estava na lista. Resumo 392 palavras, abstract 353, sem limite aplicável
+> (a tese aprovada da Joana tem ~450). Verificado a renderizar.
 
 ### 2.3 Achados que ficaram por verificar
 
