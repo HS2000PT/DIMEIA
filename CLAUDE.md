@@ -7,6 +7,81 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 61 — 8.ª parte (2026-08-21): REVISÃO PROFUNDA DA TESE, do princípio ao fim. Treze
+  correcções, e a mais grave era minha, escrita no dia anterior.**
+  **⚠️ (A) O MÉTODO FALHOU PRIMEIRO, e isso condiciona como se lê o resto.** Lancei seis lentes
+  em paralelo, cada uma com um céptico obrigado a reproduzir o achado antes de o confirmar.
+  **Sete dos nove agentes morreram no limite de sessão, e entre eles os dois cépticos** (11.ª vez
+  neste projecto). Completaram-se duas lentes e **nenhuma verificação**. Verifiquei os **18
+  achados eu próprio**, um a um, contra os ficheiros: **onze confirmaram-se**, e várias
+  severidades vinham inflacionadas. Ficam por correr quatro lentes: arguente hostil, figuras
+  renderizadas, estrutura contra as quatro teses aprovadas, e escrita. **Plano completo em
+  [`progress/REVISAO_TESE_2026-08-21.md`](progress/REVISAO_TESE_2026-08-21.md)**, que separa o
+  corrigido, o que ficou por decidir, e **o que foi verificado e estava limpo** — esta última
+  parte para ninguém voltar a gastar tempo lá.
+  **⚠️ (B) O ACHADO GRAVE: A TABELA DE CONSULTA NÃO É «O MELHOR PREDITOR QUE EXISTE», e fui eu
+  que o escrevi na 6.ª parte.** A medição nova soma o texto por cima dela, e eu descrevi-a como o
+  melhor preditor conhecido. **Na PR-AUC — a métrica exacta onde o `+0.012` é medido — a
+  volatilidade sozinha dá `0.542` e a tabela de consulta `0.534`.** A volatilidade está **acima**,
+  e um arguente que vire a página encontra a contradição.
+  **A razão verdadeira é melhor do que a que eu tinha:** a tabela de consulta é a base certa não
+  por ser a melhor, mas porque **contém tudo o que o modelo sabe da empresa e nada da notícia** —
+  é isso que faz o acréscimo isolar a contribuição do texto. Reescrito em **onze sítios** (Cap. 5
+  ×5, Cap. 6, apêndice, guia ×2, e os **dois resumos**, que tinham escapado ao primeiro lote), e
+  a tese passa a dizer em voz alta que a volatilidade fica acima dela.
+  **⚠️ (C) «DOIS MODELOS ESPECÍFICOS DE FINANÇAS» — FOI MEDIDO UM.** No §4.9.1, que é onde o
+  trabalho defende o que é contribuição própria. A fonte mede quatro alternativas (MPNet, FinBERT,
+  E5, BGE) e **só o FinBERT é de domínio**; o próprio Cap. 4, 789 linhas antes, escreve «um».
+  **(D) TRÊS DESCRIÇÕES ERRADAS NA MESMA FRASE DO §1.5**, o inventário dos estudos de caso: o
+  funil «de um dia inteiro» que a legenda da Tabela 4.5 desmente explicitamente; «duas forças a
+  anularem-se» numa figura que **recapturei no dia anterior** e onde agora é o setor sozinho a
+  puxar; e «o Cap. 3 segue a mesma notícia pelas três formas» quando duas figuras são de
+  2020-03-09 e a do meio de 2023-02-02.
+  **(E) MAIS SEIS DE CONTEÚDO:** o resumo dizia «treinado em 79 753 exemplos» quando esse é o
+  conjunto inteiro e o treino são **28 574**; o Cap. 6 dizia que a página serve «tudo o que foi
+  enviado» e a API serve `[-200:]` de 424; a linha das **decisões maturadas** estava do lado
+  **determinístico** da tabela do apêndice, que promete valores que não mudam, e ela mudou de 530
+  para 825; faltava à mesma tabela a recuperação sob a restrição da produção; o Cap. 1 dizia que
+  as aplicações gratuitas «se limitam a mostrar a percentagem» quando o §2.3 nomeia dois produtos
+  que prometem mais; e **o fecho do Cap. 6 contava só as vitórias** — três da técnica simples,
+  omitindo as **duas** em que a sofisticada ganhou e o sistema ficou com a simples por
+  explicabilidade. Passa a dizer as duas, e a distinguir **escolha** de **resultado**.
+  **(F) COMPOSIÇÃO, e nada disto aparece no `exit code`.** **Sete tabelas do Cap. 4 saíam treze
+  páginas depois do texto que as manda ler** — citadas nas páginas 44–47, impressas nas 57–59,
+  porque a fila de flutuantes de tabela entupia enquanto as figuras saíam no sítio. É o capítulo
+  que segue uma notícia do princípio ao fim, com a tabela de cada etapa treze páginas à frente.
+  Corrigido com `[!htbp]`. Mais: **duas páginas com duas linhas cada** no fim do Cap. 2 e do
+  Cap. 4 (a do Cap. 2 tinha causa de conteúdo — o parágrafo final **repetia** o que a lista quatro
+  linhas acima já dizia); um `Float too large for page by 41.6pt` que empurrava uma legenda para a
+  linha do número de página; duas legendas minhas do dia anterior a prometerem mais do que a
+  tabela; e o guia a ensinar `σ = 2,73%` quando a tese diz `2.72%` desde a sessão 60.
+  **(G) UMA PROMESSA LÓGICA QUE NÃO SE CUMPRIA:** o §4.9.2 abria com «Duas coisas, e ambas são
+  consequência de **uma só causa**» e o primeiro item diz explicitamente que a sua causa é outra
+  («o que impede não é a técnica»).
+  **✅ (H) A PEDIDO, DEPOIS: O WORLD MONITOR CITADO E O RESUMO AJUSTADO.**
+  A entrada `worldmonitor2026` estava no `.bib`, **verificada desde a sessão 43 e nunca citada**.
+  A experiência que dela nasceu (a fusão multi-sinal) está na tese, medida e rejeitada — sem dizer
+  de onde veio a ideia. Passa a ter parágrafo próprio no §2.1, a creditar o **coorientador** que a
+  sugeriu, mais a citação na tabela das alternativas do Cap. 5. ⚠️ **A descrição do produto
+  limita-se ao que o fornecedor declara**, que é a regra que o próprio §2.3 impõe: inventar-lhe
+  capacidades seria quebrá-la no sítio onde ela é enunciada. ⚠️ **E a primeira versão ficou a meio
+  da cadeia do argumento e partia-lhe o fio** — movida para depois de a cadeia fechar.
+  Os **dois resumos** ganham a frase que faltava: *«A única excepção é declarada como tal e vai no
+  fim de cada alerta: uma probabilidade de o mercado reagir de forma invulgar, em qualquer
+  direção»*. O alerta traz mesmo esse número, o Cap. 4 trata-o muito bem, e o resumo comprimia-o
+  para «explica o que já aconteceu». Não era desonestidade, era compressão — mas era a pergunta
+  que um arguente faz, e a resposta já existia. Resumo **392** palavras, abstract **353**; sem
+  limite aplicável (a tese aprovada da Joana tem ~450).
+  **(I) VERIFICADO E LIMPO, para não se repetir:** bibliografia (63 citadas, 0 sem entrada, 0
+  órfãs impressas); acrónimos (0 usados sem definição; os 13 por usar não são impressos, e o
+  `BERT` e o `AI` em texto simples são nome de modelo com citação e texto dentro de um título
+  citado); 0 labels duplicados; overfull máximo **5.19 pt**; os **341 decimais** do corpo, dos
+  quais os 94 «sem fonte» são coordenadas TikZ e valores intermédios cuja aritmética a tese mostra
+  — **não é achado, e reportá-lo seria gritar de mais**; paridade resumo↔abstract; e a proporção
+  dos capítulos (1: 6 pp · 2: 14 · 3: 22 · 4: 18 · 5: 26 · 6: 14 · apêndice ~10, corpo de 100 pp
+  em 127 físicas).
+  **PORTAS: tese 127 pp, 0 erros, 52/52 números conferidos, 750 testes, ruff limpo,
+  `check_entrega.py` a zero.**
 - **🆕 SESSÃO 61 — 7.ª parte (2026-08-20): O ESTUDO DE UTILIDADE POSTO A PONTO DE CORRER — e
   prepará-lo encontrou um defeito de desenho que teria invalidado o resultado.**
   ⚠️ **O aluno pediu "corre o estudo de utilidade". Não corri, e não é limitação de tempo:** o
@@ -588,7 +663,7 @@
   736 testes · ruff limpo · congelados e teses longas intactos.**
 - **Sessão nº:** 58 (**a TESE CURTA em PT-PT: revisão crítica, PT-PT a sério, transparência
   máxima, e as métricas explicadas do zero**)
-- **Última atualização:** 2026-08-20
+- **Última atualização:** 2026-08-21
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
   ter calma nas estatísticas, mostrando cada salto até ao valor final):**
