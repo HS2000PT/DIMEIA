@@ -993,7 +993,11 @@ Figura~\ref{fig:divisao}.
   \fill[orange!35] (8.4,0) rectangle (9.1,0.7);
   \fill[black!50] (9.1,0) rectangle (10.5,0.7);
   \node[white, font=\footnotesize\bfseries] at (3.15,0.35) {TREINO};
-  \node[font=\footnotesize\bfseries] at (7.7,0.35) {VALIDAÇÃO};
+  % ⚠️ "VALIDAÇÃO" é mais larga do que o seu bloco (1.4 cm) e derramava sobre as duas bandas
+  % do embargo, de um lado e do outro. Sai para cima, com um traço a apontar-lhe. Alargar o
+  % bloco não servia: as larguras são as proporções reais do eixo do tempo.
+  \node[font=\scriptsize\bfseries, anchor=south] (rotval) at (7.7,0.95) {VALIDAÇÃO};
+  \draw[black!45] (7.7,0.9) -- (7.7,0.7);
   \node[white, font=\footnotesize\bfseries] at (9.8,0.35) {TESTE};
   \node[orange!60!black, font=\footnotesize, rotate=90] at (6.65,1.35) {embargo};
   \node[orange!60!black, font=\footnotesize, rotate=90] at (8.75,1.35) {embargo};
@@ -1018,6 +1022,20 @@ Duas regras, e as duas existem para impedir que o modelo pareça melhor do que �
         \textbf{$820$ das $79\,753$ linhas}, ou seja $1.03\%$. Ficam $28\,574$ para treino,
         $17\,710$ para validação e $32\,649$ para teste.
 \end{description}
+
+\paragraph{E há aqui um número que surpreende, por isso convém explicá-lo antes que espante.}
+O bloco de teste tem \emph{mais} exemplos do que o de treino, $32\,649$ contra $28\,574$. Não é
+um erro de divisão: o corte é de $70$, $15$ e $15$ por cento \textbf{em dias de negociação}, e
+por dias a proporção é exatamente essa, com $1\,050$ dias de treino contra $221$ de teste. O que
+desequilibra as contagens é a densidade de notícias, que cresce muito ao longo do período: 2018
+vale $5.1\%$ das linhas e 2023 vale $43.8\%$. Mil e cinquenta dias antigos produzem menos
+exemplos do que duzentos e vinte e um dias recentes.
+
+A divisão é por dias, e não por linhas, porque é o dia que separa o passado do futuro: cortar por
+número de exemplos partiria dias ao meio e deixaria entrar no treino notícias do mesmo dia que
+está a ser testado. O efeito colateral não é mau, e vale a pena dizê-lo: um bloco de teste grande
+torna a estimativa mais precisa. O que ele custa é do outro lado, e fica registado como
+limitação: o modelo é treinado sobre a metade menos densa do período.
 
 \subsection{Da pontuação à probabilidade: calibração}
 
