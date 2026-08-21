@@ -1090,8 +1090,12 @@ mais útil: ninguém é obrigado a escolher entre as duas fontes de informação
 
 A variante \emph{contexto + texto} parece já fazer isso, e não faz, por uma razão que a
 Secção~\ref{sec:av_ablacao} tornou visível: soma o texto ao bloco de contexto, que \textbf{não é}
-o melhor preditor conhecido. O melhor é a tabela de consulta por empresa. Nunca se tinha testado
-o texto por cima dela.
+a base certa para esta pergunta. A base certa é a \textbf{tabela de consulta por empresa}, e a
+razão é metodológica e não de desempenho: ela contém tudo o que o modelo sabe sobre a
+\emph{empresa} e absolutamente nada sobre a \emph{notícia}, portanto somar-lhe o título isola a
+contribuição do texto. Convém dizer o que ela não é: na PR-AUC a volatilidade sozinha fica
+\textbf{acima} dela, $0.542$ contra $0.534$, e é por isso que a tabela dos intervalos tem uma
+segunda linha. Nunca se tinha testado o texto por cima desta base.
 
 \paragraph{O critério, fixado antes de medir.} Um acréscimo só conta se o intervalo de confiança
 a $95\%$ da diferença, obtido por reamostragem \textbf{por grupos} (empresa, dia), excluir zero. E
@@ -1100,7 +1104,7 @@ re-teste da Secção~\ref{sec:av_qi3}, para que a comparação não seja o resul
 configuração que dá jeito.
 
 \begin{table}[ht]
-\caption[O texto por cima da melhor linha de base]{Somar o título à tabela de consulta. A coluna
+\caption[O texto por cima da tabela de consulta]{Somar o título à tabela de consulta. A coluna
 da direita é a capacidade de ordenar \emph{dentro} de cada empresa, onde a tabela vale $0.5$ por
 construção e não por estimativa.}
 \label{tab:av_acrescimo}
@@ -1119,7 +1123,7 @@ Só texto & $0.457$ & $0.616$ & $0.495$ \\
 \end{tabular}
 \end{table}
 
-\paragraph{O resultado, e é positivo.} O título \textbf{acrescenta} à melhor linha de base:
+\paragraph{O resultado, e é positivo.} O título \textbf{acrescenta} a essa base:
 $+0.012$ de PR-AUC, com intervalo $[+0.004,\ +0.020]$, que exclui zero. É o valor mais alto
 medido em qualquer variante deste trabalho, e é a primeira vez que uma representação de texto
 mostra valor mensurável nesta tarefa.
@@ -1149,9 +1153,9 @@ Três ressalvas impedem que isto seja mais do que é, e todas são medições e 
 
 \paragraph{O que isto muda na resposta à \gls{QI}3.} A resposta continua a ser não, e passa a ser
 mais precisa. Antes dizia-se: \emph{nenhum modelo com texto bate a volatilidade}. Continua
-verdade. Acrescenta-se agora: \emph{mas o texto não é inútil}, acrescenta ao melhor preditor
-conhecido, de forma pequena e mensurável, e o que o impede de mudar o sistema não é a ausência de
-informação, é a informação ser do tipo errado. Distingue empresas quando o produto precisa de
+verdade. Acrescenta-se agora: \emph{mas o texto não é inútil}, acrescenta ao que o modelo já sabe
+sobre a empresa, de forma pequena e mensurável, e o que o impede de mudar o sistema não é a
+ausência de informação, é a informação ser do tipo errado. Distingue empresas quando o produto precisa de
 distinguir notícias.
 
 É uma resposta melhor do que a anterior porque diz \emph{onde} está o limite. E aponta o trabalho
@@ -1402,7 +1406,7 @@ métodos aprendidos ($F_1$ $0.530$ contra $0.269$ e $0.280$) \\
 \textbf{QI3} triagem & \textbf{Não} & Nenhum modelo com texto bate a volatilidade de forma
 sustentada ($0.496$ contra $0.542$; a melhor variante com texto chega a $0.547$, mas a diferença
 tem intervalo que contém zero), e o resultado aguenta os três testes de robustez. \textbf{Mas o
-texto acrescenta} ao melhor preditor conhecido: $+0.012$, IC $[+0.004, +0.020]$ \\
+texto acrescenta} ao que o modelo já sabe da empresa: $+0.012$, IC $[+0.004, +0.020]$ \\
 \bottomrule
 \end{tabular}
 \end{table}

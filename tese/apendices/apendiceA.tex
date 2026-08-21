@@ -81,6 +81,8 @@ $F_1$ contra o rótulo aproximado & $0.516$ vs $0.218$ & §\ref{sec:av_qi1} \\
 $z$-score contra dois detetores aprendidos & $0.530$ / $0.269$ / $0.280$ & §\ref{sec:av_qi1} \\
 Precisão@5 da recuperação (4 métodos) & $0.514$ / $0.346$ / $0.240$ / $0.126$ & §\ref{sec:av_qi2} \\
 Precisão@5 sobre o corpus completo & $0.595$ & §\ref{sec:av_qi2} \\
+Precisão@5 só com precedentes anteriores & $0.513$ com chão $0.259$ &
+§\ref{sec:av_qi2_causal} \\
 Concordância de direção vs chão de acaso & $0.708$ vs $0.688$ & §\ref{sec:av_qi2} \\
 Triagem, PR-AUC das seis famílias & $0.378$ a $0.542$ & §\ref{sec:av_qi3} \\
 Precisão dentro do orçamento (4 formas de escolher) & $0.163$ / $0.379$ / $0.662$ / $0.632$ &
@@ -100,10 +102,11 @@ Sistema inteiro contra as alternativas & $0.489$ / $0.632$ / $0.662$ / $0.968$ &
 §\ref{sec:av_pontaaponta} \\
 Ablação à janela e ao peso do desvio & $0.678$ e $0.664$ contra $0.516$ &
 §\ref{sec:av_alternativas} \\
-Decisões maturadas em produção & $0.589$ vs $0.617$ & §\ref{sec:av_qi3} \\
 \midrule
 \multicolumn{3}{l}{\emph{Medições sobre a operação, sem semente: dependem de quando o registo foi
 lido}} \\
+Decisões maturadas em produção, mantidas vs suprimidas & $0.589$ vs $0.617$ &
+§\ref{sec:av_qi3} \\
 Cobertura das notícias em dias invulgares & $88.5\%$ & §\ref{sec:con_limitacoes} \\
 Latência, por era e decomposta & $196$ / $143$ / $158$ min & §\ref{sec:sis_implantacao} \\
 Funil de produção (captadas $\rightarrow$ enviadas) & $944 \rightarrow 42$ & §\ref{sec:sis_portas} \\
@@ -152,7 +155,7 @@ acaso $0.507$ & \textbf{Retirada} \\
 \multicolumn{3}{l}{\textbf{QI3, triagem}} \\
 Nenhum modelo com texto bate a volatilidade & PR-AUC $0.496$ vs $0.542$; aguenta re-teste justo,
 reamostragem por grupos e nove rótulos & Mantida \\
-O texto acrescenta por cima da melhor linha de base & PR-AUC $0.547$ contra $0.534$: $+0.012$,
+O texto acrescenta por cima da tabela de consulta & PR-AUC $0.547$ contra $0.534$: $+0.012$,
 IC $[+0.004, +0.020]$ por grupos & \textbf{Nova} (positiva, e não muda a precisão no orçamento) \\
 Sem uso de informação futura nas entradas & Mutar o futuro deixa as entradas iguais e muda o rótulo &
 Mantida \\

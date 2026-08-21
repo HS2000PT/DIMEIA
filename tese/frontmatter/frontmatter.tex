@@ -76,7 +76,7 @@ que notícias merecem interromper alguém.
 Cada componente foi avaliado contra linhas de base transparentes, e os resultados são reportados tal
 como se revelaram. A deteção normalizada pela volatilidade dispara de forma muito mais consistente
 entre empresas do que um limiar fixo. A recuperação semântica supera as linhas de base lexical e
-triviais. O modelo de triagem, treinado em 79\,753 exemplos, \textbf{não} superou uma linha de base
+triviais. O modelo de triagem, construído sobre um conjunto de 79\,753 exemplos, \textbf{não} superou uma linha de base
 que usa apenas volatilidade, um resultado negativo que se reporta, e que valida por medição a
 opção pela simplicidade que atravessa todo o trabalho. Medido, porém, \emph{por cima} da melhor linha de base em vez de contra ela, o título acrescenta uma quantidade pequena e mensurável, o que situa o limite: a informação que ele traz distingue empresas, e não notícias.
 
@@ -101,7 +101,7 @@ model, trained on a purpose-built dataset, to decide which news deserves interru
 Each component was evaluated against transparent baselines, and the results are reported exactly as
 they fell. Volatility-normalised detection fires far more consistently across companies than a fixed
 threshold. Semantic retrieval beats lexical and trivial baselines. The triage model, trained on
-79\,753 examples, did \textbf{not} beat a volatility-only baseline, a negative result that is
+a purpose-built dataset of 79\,753 examples, did \textbf{not} beat a volatility-only baseline, a negative result that is
 reported, and that validates by measurement the simplicity-first stance running through the work. Measured \emph{on top of} the best baseline rather than against it, however, the headline does add a small and measurable amount, which locates the limit: the information it carries separates companies, not news items.
 
 The system ran continuously while this dissertation was being written, and its own decisions were evaluated a second time against what the market did next, over $825$ matured decisions.

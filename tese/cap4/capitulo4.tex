@@ -437,8 +437,8 @@ Cada porta tem uma constante associada, e é justo perguntar de onde vêm esses 
 Tabela~\ref{tab:sis_portas} responde, incluindo quando a resposta é ``foi escolhido''.
 
 \begin{table}[!htbp]
-\caption[As portas e as suas constantes]{As portas que têm uma constante associada, e de onde
-vem cada valor. A porta ``já avisei hoje'' não aparece porque não tem constante nenhuma, e o
+\caption[As portas e as suas constantes]{Cada porta, e de onde vem o valor que usa. A primeira
+não tem valor nenhum, porque é uma regra de texto e não um limiar. A porta ``já avisei hoje'' não aparece porque não tem constante nenhuma, e o
 orçamento diário aparece porque, apesar de atuar depois das portas da figura, é hoje quem
 verdadeiramente corta. Distinguir ``derivado'' de ``escolhido'' é uma
 questão de honestidade: os dois casos defendem-se de maneiras diferentes.}
@@ -952,8 +952,8 @@ A distinção interessa, e escondê-la seria fácil.
 
 \textbf{Consumido de fora:} um codificador de frases pré-treinado, e mais nada em matéria de
 modelos. Não foi ajustado, não foi treinado, e o trabalho não reivindica nada sobre ele além de o
-ter escolhido \emph{por medição}, contra quatro alternativas, incluindo dois modelos específicos de
-finanças que perderam. É uma dependência \textbf{essencial}: sem representação de frases não há
+ter escolhido \emph{por medição}, contra quatro alternativas: um modelo maior, dois codificadores
+mais recentes, e um modelo específico de finanças, que foi o pior de todos. É uma dependência \textbf{essencial}: sem representação de frases não há
 recuperação semântica. É também \textbf{substituível}: a interface que o isola tem uma
 implementação de reserva que degrada para sobreposição de palavras quando o modelo não está
 disponível.
