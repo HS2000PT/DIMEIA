@@ -79,13 +79,14 @@ vezes melhor. E, sujeito a uma comparação justa, ganha também a dois métodos
 desenhados para esta tarefa \autocite{liu2008isolation, breunig2000lof}.
 
 Este resultado é menos surpreendente do que parece à primeira vista, e a literatura ajuda a
-perceber porquê. Os dois métodos aprendidos definem normalidade pela geometria dos dados
-\autocite{liu2008isolation, breunig2000lof}, e foram desenhados para situações com muitas variáveis
+perceber porquê. Os dois métodos aprendidos decidem o que é invulgar pela geometria dos dados
+\autocite{liu2008isolation, breunig2000lof}, um isolando o ponto raro e o outro comparando
+densidades, e foram desenhados para situações com muitas variáveis
 a interagir; aqui há uma série de retornos por empresa, e a estrutura que interessa é temporal, não
 geométrica. A janela
 deslizante capta diretamente o \emph{agrupamento de volatilidade}, a propriedade que os modelos
-\gls{ARCH} e \gls{GARCH} formalizam \autocite{engle1982arch, bollerslev1986garch} e que a literatura
-financeira posterior documentou nos retornos de ações, ao passo que um detetor treinado sobre o conjunto
+\gls{ARCH} e \gls{GARCH} formalizam \autocite{engle1982arch, bollerslev1986garch} sobre séries de inflação e que a
+Secção~\ref{sec:av_qi1} mede nos retornos analisados aqui, ao passo que um detetor treinado sobre o conjunto
 todo tem de aprender essa estrutura a partir dos dados. Quando a suposição de um método simples
 coincide com a estrutura real do problema, é difícil batê-lo.
 
@@ -272,9 +273,9 @@ informação foi deitada fora.
 \paragraph{Os rótulos são aproximações.}
 ``Relevante'' é aproximado por ``mesmo setor'', e ``importante'' é aproximado por ``houve movimento
 grande''. As duas são objetivas e verificáveis, mas nenhuma é aquilo que realmente se queria medir.
-Esta dependência de aproximações não é uma particularidade deste trabalho: em finanças a deteção é
-dominada por métodos não supervisionados precisamente porque anomalias rotuladas são escassas
-\autocite{ahmed2016financial}. Quem quiser um alvo melhor tem de o construir com julgamento humano,
+Esta dependência de aproximações não é uma particularidade deste trabalho: em domínios
+financeiros vizinhos, como a deteção de fraude, os métodos não supervisionados ocupam um lugar
+central precisamente porque anomalias rotuladas são escassas \autocite{ahmed2016financial}. Quem quiser um alvo melhor tem de o construir com julgamento humano,
 que é o que a segunda linha do trabalho futuro propõe.
 
 \paragraph{A repartição de um movimento nem sempre está bem estimada.}
@@ -292,7 +293,7 @@ deteção e adaptação \autocite{gama2014survey}. Aqui a deriva é medida mas n
 episódio concreto que mostra que o custo é real: o ciclo que faz maturar os casos observados esteve
 parado dezanove dias sem que um único erro fosse registado, porque o processo que os escrevia e o
 processo que os servia corriam em máquinas diferentes com discos diferentes. É a mesma classe de
-dependência não declarada descrita atrás \autocite{sculley2015debt}, e foi encontrada a olhar, não
+dependência de dados descrita atrás \autocite{sculley2015debt}, e foi encontrada a olhar, não
 por um alarme.
 
 \paragraph{Escolhi para o produto um modelo que não podia fazer o que eu lhe estava a pedir.}
@@ -323,8 +324,8 @@ linha do trabalho futuro.
 
 Esta falha tem nome na literatura de sistemas de aprendizagem em produção, e reconhecê-la ajuda a
 generalizá-la. \textcite{sculley2015debt} descrevem, a partir de experiência com sistemas reais,
-uma classe de custo que não aparece em nenhuma métrica de qualidade: dependências de dados não
-declaradas e emaranhamento entre componentes, em que a validade de uma peça depende de suposições
+uma classe de custo que não aparece em nenhuma métrica de qualidade: dependências de dados
+instáveis e emaranhamento entre componentes, em que a validade de uma peça depende de suposições
 sobre outra que ninguém escreveu. Foi exatamente isso que aconteceu aqui. O modelo foi avaliado
 isoladamente, sobre a distribuição do conjunto de treino, e implantado atrás de dois filtros que
 alteram essa distribuição. Nenhum teste falhou, nenhum registo acusou nada, e o modelo continuou a

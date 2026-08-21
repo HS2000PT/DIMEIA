@@ -156,8 +156,9 @@ processo automático. Fica registado porque parecia servir. \\
 inferir a empresa a partir do texto. \\
 \addlinespace
 \textbf{\gls{FNSPID}} \autocite{dong2024fnspid} & o passado: notícias antigas alinhadas com preços
-& grátis, licença \emph{CC BY-SA} & É público, é grande, e já vem alinhado com preços. Construir
-uma base equivalente exigiria comprar histórico de notícias. \\
+& grátis, licença \emph{CC BY-SA} & É público, é grande, e traz título, data e empresa. O
+alinhamento com preços que este trabalho usa é construído aqui; comprar histórico de notícias
+equivalente não era opção. \\
 \addlinespace
 \textbf{Sentence-BERT} \autocite{reimers2019sbert} & transformar títulos em vetores & grátis,
 corre localmente & Modelo já treinado, pequeno o suficiente para caber num contentor de memória
@@ -731,9 +732,10 @@ repositório de dados, e estes dois ficheiros não passavam.
 Convém dar nome a esta classe de falha, porque ela não é uma distração minha e repete-se em sistemas
 muito maiores do que este. \textcite{sculley2015debt} descrevem, a partir de experiência com sistemas
 de aprendizagem em produção, um custo de manutenção que não aparece em nenhuma métrica de qualidade,
-e cujos sintomas incluem exatamente este: \emph{dependências de dados não declaradas}, ou seja
-componentes cuja correção depende de uma suposição sobre outro componente que ninguém escreveu em
-lado nenhum. Aqui a suposição era ``o ficheiro que escrevi continua lá amanhã'', e ela é verdadeira
+e cujos sintomas incluem exatamente este. Entre os factores de risco que enumeram estão as
+\emph{dependências de dados} instáveis e o emaranhamento entre componentes; o caso aqui é uma
+variante deles, em que a correção de uma peça depende de uma suposição sobre outra que ninguém
+escreveu em lado nenhum. Aqui a suposição era ``o ficheiro que escrevi continua lá amanhã'', e ela é verdadeira
 na máquina de quem desenvolve e falsa no contentor. Nenhum teste podia apanhá-la, porque cada peça
 cumpria o seu contrato, e nenhum erro foi registado, porque escrever no disco local nunca falhou.
 

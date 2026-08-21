@@ -455,14 +455,16 @@ de forma justa com uma mais simples e perdeu. É um resultado que vale por si: j
 a escolha do método simples, em vez de a justificar por preferência.
 
 Interessa perceber \emph{porquê}, porque a explicação não é que os métodos sejam maus. Ambos
-definem normalidade pela geometria dos dados: o \emph{Isolation Forest} pela facilidade com que um
-ponto se separa por cortes aleatórios \autocite{liu2008isolation}, o \emph{Local Outlier Factor} pela
-densidade em torno de cada ponto face à dos seus vizinhos \autocite{breunig2000lof}. São ambos
+decidem o que é invulgar pela geometria dos dados, ainda que por vias opostas: o \emph{Isolation
+Forest} recusa modelar o normal e isola diretamente o ponto raro, pela facilidade com que ele se
+separa por cortes aleatórios \autocite{liu2008isolation}, enquanto o \emph{Local Outlier Factor}
+compara a densidade em torno de cada ponto com a dos seus vizinhos \autocite{breunig2000lof}. São ambos
 métodos não paramétricos, distintos da família \emph{estatística} que \textcite{chandola2009anomaly}
 define como aquela que modela a distribuição dos dados normais, e foram construídos para dados com
 muitas variáveis a interagir. Aqui não é esse o caso: há uma série
-de retornos por empresa, cuja estrutura relevante é \emph{temporal}. O agrupamento de volatilidade \autocite{engle1982arch, bollerslev1986garch} faz com
-que o que conta como invulgar mude ao longo do tempo, e uma janela deslizante acompanha isso por
+de retornos por empresa, cuja estrutura relevante é \emph{temporal}. O agrupamento de volatilidade, que os modelos \gls{ARCH} e \gls{GARCH} formalizam
+\autocite{engle1982arch, bollerslev1986garch}, faz com que o que conta como invulgar mude ao longo
+do tempo, e uma janela deslizante acompanha isso por
 construção, enquanto um detetor ajustado ao conjunto todo tem de o inferir. O padrão de resultados
 confirma-o: os dois métodos aprendidos assinalam demasiado, que é o que sucede quando se aplica uma
 noção global de raridade a séries cuja escala varia.
@@ -991,7 +993,7 @@ distribuição do conjunto de treino e implantado atrás de dois filtros que a a
 sua entrada títulos que já passaram relevância e frescura. Nenhum teste podia detetar isto, porque
 cada peça cumpria o seu contrato; o que estava errado era uma suposição sobre a ligação entre elas,
 que ninguém tinha escrito em lado nenhum. É a classe de custo que \textcite{sculley2015debt}
-descrevem como dependências de dados não declaradas, e o sintoma que eles apontam verificou-se aqui
+arrumam sob dependências de dados e emaranhamento entre componentes, e o sintoma que eles apontam verificou-se aqui
 por inteiro: o sistema continuou a produzir números de aparência perfeitamente normal.
 
 \subsection{E a medição acima não é uma surpresa: é aritmética}

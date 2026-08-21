@@ -18,7 +18,7 @@ invenção deste trabalho e que a contribuição está na escolha, na integraç�
 
 \emph{Quem é esta pessoa, e o que é que a literatura já sabe sobre a forma como ela decide?}
 
-A escala foi dada no Capítulo~\ref{cap:introducao}: a maior parte das famílias americanas detém
+A escala foi dada no Capítulo~\ref{cap:introducao}: a maior parte dos adultos americanos detém
 ações \autocite{gallup2025stock}, num mercado que vale mais de 62 biliões de dólares
 \autocite{sifma2025factbook}. Interessa agora a segunda metade da caracterização, que não é de
 dimensão mas de comportamento, e que explica porque é que o problema deste trabalho existe.
@@ -284,12 +284,13 @@ A família estatística assenta numa suposição, a de que a distribuição dos 
 estável, e essa suposição merece ser confrontada em vez de escondida. Os modelos de volatilidade
 condicional, introduzidos por \textcite{engle1982arch} sobre séries de inflação e generalizados por
 \textcite{bollerslev1986garch}, formalizam o \emph{agrupamento de volatilidade}, ou seja a tendência
-de os períodos calmos e os agitados chegarem em séries. É uma propriedade que a literatura financeira
-posterior documentou também nos retornos de ações. Uma janela
+de os períodos calmos e os agitados chegarem em séries. Os dois artigos formalizam-na sobre séries
+de inflação, e este trabalho não a toma emprestada para os retornos de ações: mede-a nos próprios
+dados, na Secção~\ref{sec:av_qi1}, ao comparar a janela de pesos iguais com uma que pondera as
+observações recentes com mais peso. Uma janela
 deslizante é precisamente o que acompanha esse agrupamento, porque a norma contra a qual o dia de
 hoje é comparado é reestimada a cada dia a partir do passado recente. A escolha não elimina o
-problema, mas trata-o, e o Capítulo~\ref{cap:avaliacao} mede a alternativa em que a janela pondera
-observações recentes com mais peso.
+problema, mas trata-o, e a medição referida acima diz quanto custa mantê-la.
 
 A comparação entre a família estatística e a aprendida não fica em argumento. O
 Capítulo~\ref{cap:avaliacao} corre as duas sobre os mesmos dados e reporta o resultado tal como sai.
@@ -643,10 +644,12 @@ correção de quantil para amostras finitas, está estabelecida \autocite{angelo
 
 Duas precisões, porque são as que decidem se o método serve aqui. A primeira é o alcance da garantia,
 e é o mal-entendido mais comum a respeito deste método: a cobertura é \emph{marginal}, ou seja vale
-em média sobre os casos, e não caso a caso. Registe-se que a fonte não trata isto como limite
-intransponível, e dedica uma secção a mostrar que a validade condicional se pode obter modificando a
-definição de preditor conformal; o que se afirma aqui é apenas que a variante corrente, e a que seria
-adotada sem trabalho adicional, dá a garantia marginal. A segunda precisão é a condição sob a qual
+em média sobre os casos, e não caso a caso. Registe-se que \textcite{vovk2005algorithmic} não tratam isto
+como limite intransponível, e dedicam uma secção a mostrar que a \emph{validade condicional} se pode
+obter modificando a definição de preditor conformal. Convém dizer o que essa expressão ali
+significa, porque não é o que o nome sugere: é validade \emph{dentro de categorias} fixadas à
+partida, e não caso a caso, portanto estreita a média sem a eliminar. O que se afirma aqui é que a
+variante corrente, e a que seria adotada sem trabalho adicional, dá a garantia marginal. A segunda precisão é a condição sob a qual
 essa garantia vale, que é a
 \textbf{permutabilidade} entre os dados de calibração e os de teste. Não é um pormenor técnico neste
 trabalho: os dados são uma série temporal financeira, os títulos chegam por ordem cronológica, e a
@@ -727,9 +730,9 @@ Quatro decisões, e cada uma fecha uma porta de propósito.
         sirvam uma delas. É o que mantém o sistema pequeno o suficiente para ser explicado por
         inteiro.
   \item[Não prever preços.] Nem direção, nem alvo, nem recomendação. Além da razão já dada, que é o
-        que torna tudo verificável, há a razão teórica da Secção~\ref{sec:ctx_evento}: se movimentos
-        futuros fossem previsíveis a partir de informação pública, essa informação já estaria
-        refletida no preço \autocite{fama1970efficient}.
+        que torna tudo verificável, há a razão teórica da Secção~\ref{sec:ctx_evento}: os preços já
+        refletem a informação publicamente disponível \autocite{fama1970efficient}, e se assim for,
+        movimentos futuros não deveriam ser sistematicamente previsíveis a partir dela.
   \item[Não gerir carteiras nem aconselhar.] O sistema não sabe o que o utilizador tem, e não lhe diz
         o que fazer. Isto evita recolher dados pessoais e mantém o trabalho fora da fronteira do
         aconselhamento financeiro regulado.
