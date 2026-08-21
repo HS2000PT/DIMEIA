@@ -360,9 +360,12 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
         # dois alertas cada, o pior caso são vinte e quatro mensagens num dia. O que o
         # utilizador sente é o total, não a distribuição.
         # A ordem entre candidatas já foi decidida acima, por materialidade — que é a única
-        # coisa para que o score do modelo tem informação: ordenar ENTRE empresas. É essa a
-        # política que a dissertação avalia (precisão dentro de um orçamento de k por dia), e
-        # passa a ser também a que está implantada.
+        # coisa para que o score do modelo tem informação: ordenar ENTRE empresas.
+        # ⚠️ NÃO dizer que é a mesma política que a dissertação avalia. Não é, e o docstring
+        # desta função explica porquê: a métrica ordena o dia INTEIRO e depois escolhe cinco
+        # (offline), e aqui os cinco lugares gastam-se por ordem de chegada (online), porque a
+        # notícia da tarde ainda não existe. São da mesma família; a avaliada é um limite
+        # superior desta. A tese diz isso na Secção do veredicto da QI3.
         if daily_budget is not None:
             total_hoje = sum(state["news_count"].values())
             if total_hoje >= daily_budget:

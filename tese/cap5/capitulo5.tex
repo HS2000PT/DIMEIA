@@ -805,7 +805,9 @@ A Tabela~\ref{tab:av_orcamento} responde.
 
 \begin{table}[ht]
 \caption[Precisão dentro de um orçamento de cinco alertas por dia]{Quatro formas de escolher as cinco
-notícias do dia, sobre o mesmo bloco de teste.}
+notícias do dia, sobre o mesmo bloco de teste. As quatro escolhem \emph{sabendo o dia inteiro}, e
+por isso os valores são limites superiores do que uma política online consegue: ver a ressalva na
+Secção~\ref{sec:av_qi3}.}
 \label{tab:av_orcamento}
 \centering
 \small
@@ -1210,10 +1212,26 @@ sustenta: entre empresas ele tem informação, e é exatamente isso que a precis
 orçamento mede. O controlo de volume passou para um \textbf{orçamento diário} de cinco alertas,
 servido por ordem de materialidade.
 
-E isto fecha uma divergência que só se torna visível ao confrontar as duas: \textbf{esta
+E isto aproxima uma divergência que só se torna visível ao confrontar as duas: \textbf{esta
 dissertação avaliava uma política de orçamento e o sistema implantava uma política de limiar}. Eram
 políticas diferentes, portanto o número reportado descrevia um sistema que não era o que estava no
-ar. Passaram a ser a mesma.
+ar. Passaram a ser da mesma família.
+
+\paragraph{Mas não passaram a ser a mesma, e a diferença que resta tem de ficar dita.}
+A métrica avaliada ordena \emph{todas} as candidatas do bloco de teste e só depois enche cinco
+lugares em cada dia. Isso exige conhecer o dia inteiro antes de decidir, ou seja é uma política
+\textbf{offline}. O sistema implantado decide \textbf{online}, de sessenta em sessenta segundos:
+gasta o primeiro lugar na primeira notícia que passe as portas, porque no momento da decisão a
+notícia da tarde ainda não existe. Não se pode reservar quota para uma história que ainda não se
+viu, nem retirar um alerta já entregue.
+
+A consequência é precisa e vale a pena enunciá-la assim: \textbf{a precisão dentro do orçamento
+que este capítulo reporta é um limite superior} do que a política implantada consegue. Nenhuma
+regra online bate uma que escolhe as cinco melhores de um dia inteiro. O que a ordenação do modelo
+compra em produção é mais modesto e é real: decide quem vai à frente \emph{dentro de cada ciclo},
+e o piso escalonado da Secção~\ref{sec:sis_portas} encarece cada lugar seguinte, para que uma
+notícia menor da manhã não gaste a quota que a da tarde ia precisar. É o que se consegue fazer sem
+ver o futuro, e é por isso que fica escrito como limite e não como equivalência.
 
 \subsection{O que isto não permite concluir}
 
@@ -1339,7 +1357,8 @@ pela razão dada na Secção~\ref{sec:av_qi3}.
 
 \begin{table}[ht]
 \caption[O sistema contra as alternativas que já existem]{Todas as políticas escolhem cinco
-notícias por dia. As duas últimas linhas não são políticas: uma é o chão e a outra é o teto.}
+notícias por dia, e todas o fazem \emph{sabendo o dia inteiro}: a comparação entre elas é justa,
+e cada valor é um limite superior do que a mesma regra daria a decidir ao minuto. As duas últimas linhas não são políticas: uma é o chão e a outra é o teto.}
 \label{tab:av_pontaaponta}
 \centering
 \small
