@@ -82,8 +82,8 @@ ninguém.
   \draw[->, thick, black!50] (c) -- (d);
 \end{tikzpicture}
 \caption[As quatro decisões do sistema]{As quatro decisões, e a família de técnicas que responde a
-cada uma. As três primeiras são as três perguntas do Capítulo~\ref{cap:introducao}. Cada secção
-deste capítulo trata de uma coluna.}
+cada uma. As três primeiras são as três perguntas do Capítulo~\ref{cap:introducao}. Cada coluna tem a
+sua secção neste capítulo, da Secção~\ref{sec:met_zscore} à Secção~\ref{sec:met_triagem}.}
 \label{fig:tres_decisoes}
 \end{figure}
 
@@ -700,20 +700,32 @@ A Figura~\ref{fig:met_cosseno} mostra as duas situações.
     \draw[->, very thick, black!75] (0,0) -- (3.35,2.15)
       node[right, black, align=left, font=\footnotesize] {título B};
     \draw[black!55] (1.25,0.52) arc (22.6:32.7:1.35);
-    \node[font=\footnotesize, black!55] at (1.85,1.02) {$\theta$ pequeno};
+    % ⚠️ O rótulo estava em (1.85,1.02), entre as duas setas — e como elas divergem, a de cima
+    % passava-lhe por dentro no lado esquerdo (a x=1.1 ela vai em y=0.71, a x=2.6 em y=1.67).
+    % Sai para BAIXO das duas, com um traço a ligá-lo ao arco.
+    \node[font=\footnotesize, black!55] (rp) at (2.35,0.28) {$\theta$ pequeno};
+    \draw[black!35] (rp.north) -- (1.55,0.72);
     \node[align=center, font=\footnotesize] at (2.1,-0.75)
       {\textbf{mesmo assunto}\\ $\cos\theta = +0.956$};
   \end{scope}
   % ── par diferente: angulo quase recto ───────────────────────────────────
   \begin{scope}[xshift=7.4cm]
-    \draw[->, black!35] (0,0) -- (4.3,0);
-    \draw[->, black!35] (0,0) -- (0,3.3);
-    \draw[->, very thick, black!75] (0,0) -- (3.9,0.6)
-      node[right, black, align=left, font=\footnotesize] {título A};
-    \draw[->, very thick, black!75] (0,0) -- (0.75,3.05)
-      node[above, black, align=left, font=\footnotesize] {título C};
-    \draw[black!55] (1.35,0.21) arc (8.7:76.2:1.37);
-    \node[font=\footnotesize, black!55] at (1.72,1.35) {$\theta$ quase recto};
+    % ⚠️ O ângulo tem de PASSAR dos 90 graus, senão o cosseno não pode ser negativo. A versão
+    % anterior desenhava 67 graus, cujo cosseno é +0.38, debaixo de uma legenda que dizia
+    % −0.086 — a figura contradizia o número que ela existe para ilustrar. Aqui o título A vai
+    % ao longo do eixo e o C fica em 94.9 graus, que é o arco-cosseno de −0.086. O eixo estende-se
+    % um pouco para a esquerda de propósito: é aí que se vê que a ponta passou a perpendicular.
+    \draw[->, black!35] (-1.0,0) -- (4.5,0);
+    \draw[->, black!35] (0,-0.3) -- (0,3.5);
+    % A perpendicular como REFERENCIA, para os 5 graus de excesso se verem: sem ela, uma seta
+    % a 94.9 graus e visualmente indistinguivel do eixo vertical, e o ponto da figura perde-se.
+    \draw[dashed, black!45] (0,0) -- (85:3.35) node[above, font=\scriptsize, black!55] {$90^\circ$};
+    \draw[->, very thick, black!75] (0,0) -- (3.5,0);
+    \node[black, font=\footnotesize] at (2.6,0.3) {título A};
+    \draw[->, very thick, black!75] (0,0) -- (94.9:3.2);
+    \node[black, font=\footnotesize, anchor=east] at (94.9:3.45) {título C};
+    \draw[black!55] (1.55,0) arc (0:94.9:1.55);
+    \node[font=\footnotesize, black!55] at (1.30,1.30) {$\theta > 90^\circ$};
     \node[align=center, font=\footnotesize] at (2.1,-0.75)
       {\textbf{assuntos diferentes}\\ $\cos\theta = -0.086$};
   \end{scope}
@@ -1125,8 +1137,9 @@ percentagem final, sem saltar nenhuma etapa.
 
 \begin{table}[ht]
 \caption[Uma linha, do início ao fim]{As cinco etapas para a notícia da Apple de 2 de fevereiro de
-2023. Os valores são os que o modelo implantado produz; a soma da terceira etapa reproduz o modelo
-até à sexta casa decimal.}
+2023. Os valores são os que o modelo implantado produz. As parcelas estão arredondadas a três
+casas, e a etapa 3 diz o que a sua soma impressa dá e o que o total não arredondado dá; contra
+o modelo, a soma sem arredondar reproduz até à sexta casa decimal.}
 \label{tab:met_conta}
 \centering
 \small
@@ -1207,8 +1220,9 @@ alguma informação do futuro se tivesse infiltrado nas entradas, o teste falha.
 Esta é a garantia mais importante de todo o trabalho e a mais fácil de prometer sem cumprir, por
 isso o Excerto~\ref{lst:lookahead} mostra-a tal como está escrita.
 
-\begin{lstlisting}[label=lst:lookahead, caption={O teste que impede o futuro de entrar nas entradas. As duas
-séries partilham o passado e divergem apenas depois do dia do evento.}]
+\begin{lstlisting}[label=lst:lookahead, caption={Os \textbf{dois} testes que impedem o futuro de entrar
+nas entradas. O primeiro exige que duas séries com futuros diferentes dêem entradas iguais; o
+segundo, que é o que fecha o argumento, exige ao mesmo tempo que o \emph{rótulo} mude.}]
 def test_anti_lookahead_mutar_o_futuro_nao_muda_features():
     base = [100.0 + i * 0.1 for i in range(30)]
     futuro_a = base + [200.0, 300.0, 400.0]   # futuros absurdos A

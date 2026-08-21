@@ -42,8 +42,9 @@ número, porque uma avaliação que só sabe dizer que sim não avalia nada."*
 > para a pergunta certa, e ela **melhora** a resposta:
 >
 > ✅ *"E fui medir exactamente essa formulação, porque reparei que a comparação lado a lado não
-> lhe responde. Somado **por cima** do melhor preditor conhecido, que é a tabela de consulta por
-> empresa, o título **acrescenta**: `+0,012` de PR-AUC, com intervalo `[+0,004, +0,020]` que
+> lhe responde. Somado **por cima** da tabela de consulta por empresa — que é a base certa por
+> conter tudo o que o modelo sabe da empresa e nada da notícia — o título **acrescenta**:
+> `+0,012` de PR-AUC, com intervalo `[+0,004, +0,020]` que
 > exclui zero. É a única vez neste trabalho em que o texto mostra valor mensurável. **Mas não
 > muda o veredicto**, e digo porquê antes que mo perguntem: contra a volatilidade sozinha a
 > diferença tem intervalo que contém zero; a precisão dentro do orçamento é `0,662` com e sem
@@ -54,6 +55,11 @@ número, porque uma avaliação que só sabe dizer que sim não avalia nada."*
 > ⚠️ **A armadilha aqui é o entusiasmo.** `0,547` é maior do que `0,542` e é tentador dizer que
 > ganha. **Não ganha** — o intervalo contém zero. Dizer que ganha seria ler uma diferença que a
 > amostra não sustenta, e é o tipo de exagero que rebenta na sala.
+>
+> ⚠️ **E não chames à tabela de consulta "o melhor preditor".** Na PR-AUC a volatilidade sozinha
+> dá `0,542` e ela dá `0,534`, portanto a volatilidade fica **acima**. Ela é a base certa por
+> outra razão, e é essa que dizes: sabe tudo da empresa e nada da notícia, e é isso que faz o
+> acréscimo isolar a contribuição do texto.
 
 **🎓 Q2 (aperta).** *"Se o texto não ajuda, para que serve o modelo? Podia ter usado só a volatilidade
 — um número — e dispensado o machine learning."*

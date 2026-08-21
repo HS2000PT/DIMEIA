@@ -49,7 +49,7 @@ fraqueza.
 | **dir. 0.708 vs chão 0.688** | Consistência de direção dos precedentes *(reforço)* | "Recupera o TEMA, não a DIREÇÃO — tema≠direção quantificado." |
 | **FinBERT 0.420 · E5/BGE ~0.51** | Benchmark de embedders *(reforço)* | "MiniLM validado por medição: domínio pior, modernos empatam." |
 | **texto justo 0.533 < 0.542** | RQ4 re-teste justo (C+PCA+FinBERT) *(reforço)* | "Negativo do texto robusto; PCA recupera de 0,499 mas nunca bate a volatilidade." |
-| **+0.012, IC [+0.004, +0.020]** | O texto **por cima** da tabela de consulta (§5.6.10) *(o resultado novo)* | "Medido por cima do melhor preditor em vez de contra ele, o título **acrescenta**, e o intervalo exclui zero. Mas não bate a volatilidade sozinha, não muda a precisão no orçamento (0.662 nas duas), e não separa dias da mesma empresa. **Localiza o limite: distingue empresas, não notícias.**" |
+| **+0.012, IC [+0.004, +0.020]** | O texto **por cima** da tabela de consulta (§5.6.10) *(o resultado novo)* | "Medido por cima da tabela de consulta por empresa, em vez de contra ela, o título **acrescenta**, e o intervalo exclui zero. Mas não bate a volatilidade sozinha, não muda a precisão no orçamento (0.662 nas duas), e não separa dias da mesma empresa. **Localiza o limite: distingue empresas, não notícias.**" |
 | **AMI 0.358 vs 0.188** | Tipo de evento vs ticker, no espaço de embeddings *(Caso 5)* | "O espaço **sabe** o tipo de acontecimento, e sabe-o mais do que sabe a empresa. Mas a silhueta é 0,084: fraco demais para filtrar precedentes, por isso NÃO liguei." |
 | **0.712 vs 0.444** | Pureza dos grupos vs aleatório do mesmo tamanho *(Caso 5)* | "O 0,712 sozinho engana: com um tipo a valer 44% dos rótulos, o acaso já dá 0,444. O ganho real é +0,269." |
 | **0.951/0.902/0.803** | Cobertura conformal, divisão aleatória *(Caso 6)* | "Bate no nominal aos três níveis — prova que a implementação está certa." |
@@ -104,8 +104,13 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 > ### ⚠️ E há uma segunda metade desta resposta, acrescentada a 2026-08-20. **Não a percas.**
 >
 > Todas as comparações acima põem as variantes **lado a lado**, e respondem a *qual é melhor*.
-> A pergunta que faltava era outra: **o texto acrescenta ao melhor preditor que existe?** Medido
-> por cima da tabela de consulta por empresa, que é esse melhor preditor:
+> A pergunta que faltava era outra: **o texto acrescenta ao que já se sabe da empresa?** Medido
+> por cima da tabela de consulta por empresa, que sabe tudo da empresa e nada da notícia:
+>
+> ⚠️ **Não digas "o melhor preditor".** Na PR-AUC a volatilidade sozinha dá `0.542` e a tabela
+> de consulta `0.534`, portanto a tabela **não** é o melhor. Ela é a base certa por outra razão,
+> e é essa que dizes: contém tudo o que o modelo sabe da empresa e nada da notícia, e é isso que
+> faz o acréscimo isolar a contribuição do texto.
 >
 > **"Sim. `+0.012` de PR-AUC, com intervalo `[+0.004, +0.020]` que exclui zero. É pequeno, é
 > real, e é a única vez neste trabalho em que uma representação de texto mostra valor

@@ -142,6 +142,10 @@ boa companhia todos os dias.
 % apresenta um deles como "a garantia mais importante de todo o trabalho" — um leitor que o
 % procure nao tinha por onde o encontrar a partir da frente.
 \renewcommand{\lstlistlistingname}{Lista de Excertos de Código}
+% ⚠️ E o prefixo de cada legenda, que saía "Listing 3.1:" enquanto o corpo manda ler o
+% "Excerto 3.1". O `listings` não é traduzido pelo babel, e isto tem de ficar depois de
+% \begin{document} para não ser sobrescrito.
+\renewcommand{\lstlistingname}{Excerto}
 \lstlistoflistings
 
 \printnoidxglossary[type=\acronymtype, title=Lista de Acrónimos, nonumberlist]

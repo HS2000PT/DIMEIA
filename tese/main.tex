@@ -35,6 +35,9 @@ headsepline,
 % acesso ao repositório, portanto uma garantia descrita em prosa é uma afirmação por verificar.
 % Só entram excertos nos pontos onde a garantia é FEITA, nunca como ilustração.
 \usepackage{listings}
+% ⚠️ A legenda saía "Listing 3.1:" enquanto o texto manda ler o "Excerto 3.1". O `listings` não
+% é traduzido pelo babel, portanto o nome tem de ser posto à mão — e tem de ser depois de
+% \begin{document}, senão o babel volta a pô-lo em inglês. Ver a linha no frontmatter.
 \lstset{
   basicstyle=\ttfamily\footnotesize,
   keywordstyle=\bfseries,
