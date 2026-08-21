@@ -277,3 +277,25 @@ página do editor a partir daqui, portanto o que se afirma é o que se conferiu:
 Crossref. Se a diferença de uma página vier a importar, é aí que se vai buscar a arbitragem, como
 se fez com o SBERT (Crossref 3980–3990 contra a ACL Anthology 3982–3992, arbitrado a favor da
 Anthology).
+
+## 2026-08-21 — quatro entradas que faltavam ao registo
+
+⚠️ **Como e que faltavam.** Estas quatro estavam verificadas (a prova estava nos comentarios do
+proprio `.bib`, com data) e nunca chegaram a este ficheiro, que o protocolo 6.4 torna
+obrigatorio. E a **segunda vez** que esta classe aparece: a sessao 53 apanhou-a com o
+`vasicek1973beta` e o `blume1971risk`. Contar entradas nos dois sitios nao chega, porque os
+totais podem bater com chaves diferentes; a conferencia passa a ser **por chave**, e ha um
+comando para isso no fim desta seccao.
+
+| chave | como foi verificada | quando |
+|---|---|---|
+| `liu2020finbert` | Crossref: titulo, cinco autores, actas do IJCAI-20 e paginas 4513--4519 conferem. PDF arquivado e conferido pela primeira pagina. | 2026-08-19, PDF a 2026-08-20 |
+| `huang2023finbert` | Crossref: titulo, tres autores, *Contemporary Accounting Research* 40(2), paginas 806--841 e ano conferem. PDF trazido da rede do ISEP (o editor devolve 403 a um cliente automatico) e conferido. | 2026-08-19, PDF a 2026-08-20 |
+| `lundberg2017shap` | **Estava sem identificador nenhum.** As actas da NeurIPS nao emitem DOI; passa a ter o URL canonico, verificado a HTTP 200 e com o `<title>` da pagina a bater com o titulo da entrada. | 2026-08-21 |
+| `vaswani2017attention` | **Idem.** URL canonico da NeurIPS, HTTP 200, `<title>` a bater. | 2026-08-21 |
+
+**O comando que apanha esta falha, e que passa a valer:**
+
+```bash
+python -c "import re,glob,io; c=''.join(io.open(f,encoding='utf-8',errors='replace').read() for f in glob.glob('tese/cap*/*.tex')+glob.glob('tese/apendices/*.tex')); u={k.strip() for m in re.findall(r'cite[a-z]*\*?(?:\[[^]]*\])*\{([^}]+)\}',c) for k in m.split(',')}; log=io.open('docs/decisions/citation_log.md',encoding='utf-8').read(); print(sorted(k for k in u if k and k not in log) or 'todas registadas')"
+```
