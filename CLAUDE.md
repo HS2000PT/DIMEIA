@@ -7,6 +7,109 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 61 — 9.ª parte (2026-08-22): O ARGUENTE HOSTIL, QUE NUNCA TINHA CORRIDO. Dezanove
+  ressalvas novas na tese, e a mais forte reduz o resultado positivo mais citado do trabalho.**
+  **⚠️ (A) MUDEI O DESENHO DO MÉTODO, E FOI ISSO QUE FEZ A DIFERENÇA.** Em doze corridas deste
+  projecto o padrão repete-se: os agentes que **procuram** completam, os que **verificam** morrem
+  no limite de sessão, e o workflow devolve um veredicto de aparência limpa que é a **ausência de
+  verificação**. Desta vez gastei os agentes só a procurar e verifiquei tudo eu. **Correu 4 de 5 à
+  primeira** (a de método retomou-se depois com `resumeFromRunId`, que só re-corre a que morreu).
+  **⚠️ (B) O ACHADO PRINCIPAL: O CHÃO DA QI2 ERA O MAIS GENEROSO DOS DISPONÍVEIS.** O corpus tem
+  3 714 notícias e **1 736 são de tecnologia**, quase metade. Existe uma estratégia sem modelo
+  nenhum, que não olha sequer para a pergunta — *devolver sempre cinco notícias de tecnologia* — e
+  ela vale exactamente a fracção de consultas que são de tecnologia: **0.467**. Contra ela a
+  margem do método cai de **+0.274 para +0.047**, e a linha lexical de 0.346 fica **abaixo** do
+  chão. É a mesma classe do chão alfabético de 0.163, na pergunta onde ninguém tinha olhado.
+  **⚠️ MAS A CORRECÇÃO NÃO É RENDER-SE AO NÚMERO, e verifiquei porquê.** A estratégia trivial dá
+  `1.000` em tecnologia e **`0.000` em todas as outras**: devolveria semicondutores a quem
+  perguntasse por uma petrolífera. **Dentro** de cada setor o método dá 0.712 (chão 0.429), 0.448
+  na energia e 0.419 na saúde (chão 0.072 e 0.071), ou seja **seis vezes o chão onde o corpus é
+  fino**. O agregado **subestima o método e sobrestima a alternativa**, pela mesma razão. A
+  afirmação passa a ser: supera a taxa-base **nos cinco setores**, e o agregado não é a forma
+  certa de o dizer. Reproduzi os pesos (0.507 contra os 0.514 reportados) para confirmar que as
+  consultas são uniformes e que a linha trivial vale mesmo 0.467.
+  **⚠️ (C) A FIGURA DO ALERTA IMPRIME UMA PREVISÃO**, numa tese que diz que o sistema nunca prevê.
+  O exemplo real cita *"Prediction: Amazon Will Join Apple in the $4 Trillion Club Before 2030"* —
+  alvo e data, entregue no telemóvel. A distinção existe (a garantia é sobre o que o sistema
+  **escreve**, não sobre o que **cita**, e citar é o que torna o resto verificável) e **nunca
+  estava escrita**. Fica no §met_etica e na legenda, com a limitação que dela decorre: **o filtro
+  decide se o título é sobre a empresa, não se é factual**.
+  **⚠️ (D) A AUTO-CORRECÇÃO DA ABLAÇÃO ESTAVA ELA PRÓPRIA ERRADA.** Dizia que a variante implantada
+  foi escolhida *"por ter a melhor PR-AUC entre as que cabiam no contentor"*, e a tabela desmente-a
+  **quatro linhas acima**: 0.542 e 0.543 contra 0.538, e nenhuma precisa do codificador. A
+  justificação de uma escolha errada estava errada, **dentro do parágrafo que existe para a
+  corrigir**. A razão defensável é outra: é a única das três cujas contribuições o alerta consegue
+  **mostrar**.
+  **(E) CINCO CONFIRMADAS A LER O CÓDIGO, e nenhuma se via na tese:** o `class_weight="balanced"`
+  explica **parte do `b` negativo** da calibração (a tese atribuía-o ao modelo); o GBM correu com
+  os **parâmetros por defeito**, sem procura de hiperparâmetros, e a tese chama-lhe *teto*; o
+  **R² da decomposição não é o do ajuste OLS** (esse nunca poderia ser negativo, e a tese reporta
+  um caso negativo) mas o do modelo com os **betas encolhidos** — o comentário do código já o
+  dizia; os preços **são** ajustados para desdobramentos e dividendos (verificado a correr: a
+  Apple 4:1 de 31/08/2020 sai contínua) e a tese não o dizia; e **AMD e NFLX não estão no corpus
+  de treino**, entrando nas 825 decisões da pós-validação como quaisquer outras.
+  **(F) MAIS OITO:** o `ret_event` significa **coisas diferentes** no treino e em produção
+  (encontrado por **duas lentes em separado**, confirmado no código: em treino é o retorno completo
+  do dia da notícia, em produção o `score_latest` usa a última barra diária, que a meio da sessão é
+  a véspera) — é uma **segunda causa possível** para o gate não ajudar e não a consigo separar da
+  redundância; os intervalos do Cap. 5 reamostram **dentro** de um bloco de 221 dias e não medem
+  estabilidade entre períodos; a **assimetria de rigor** (a QI3, que me contraria, leva intervalos;
+  a QI1 e a QI2 eram pontos nus — e os desvios da recuperação **já existiam no ficheiro gerado**);
+  o rótulo da QI3 desconta o mercado com **β = 1**, a constante que a técnica anterior recusa uma
+  página antes; a Equação 3.2 **nunca nomeava os instrumentos** (SPY e os SPDR Select Sector); o
+  orçamento de cinco **não foi derivado** de medição nenhuma; **sobrevivência** (as quinze foram
+  escolhidas em 2026 e a avaliação corre até 2018); e o critério que o capítulo usava e nunca
+  enunciava — **uma diferença de PR-AUC abaixo de 0.02 é tratada como indistinguível**.
+  **(G) A DECOMPOSIÇÃO GANHA DUAS PRECISÕES:** a empresa explicada **faz parte** dos índices contra
+  os quais é regredida (enviesamento de direcção conhecida, empurra a parcela específica para
+  baixo), e o mapa de setores é do autor — **cinco das nove** que ele arruma como tecnologia não
+  pertencem ao XLK. Declarado e não corrigido, porque é o mesmo mapa que serve de rótulo à QI2.
+  **(H) E A LEGAL RESOLVIDA POR NÃO INVENTAR DIREITO.** A tese afirma duas vezes que fica fora da
+  fronteira do aconselhamento regulado e a bibliografia **não tem uma única entrada legal**.
+  Nomear uma directiva seria uma afirmação jurídica sem fonte. Passa a dizer em que sentido é usada,
+  que é fronteira de **desenho**, e que **não houve parecer nenhum**. O mesmo na proteção de dados.
+  **(I) O REGISTO ACADÉMICO, que o aluno tinha levantado: 57 acusações, 14 aplicadas, 43 refutadas.**
+  A lente confundia **voz directa com informalidade** (*"de longe"*, *"faz sentido"*, *"um punhado
+  de"*, *"devagar e com desenhos"* são português corrente, e reescrevê-los para voz passiva tornaria
+  a tese pior). Ficam quatro casos de calão a sério, e o pior estava numa **tabela de métricas**
+  (*"quantas prestam?"*). ⚠️ **E duas que não são de registo:** *"são um aprendiz não linear forte"*
+  é decalque de *learner* e **erro de terminologia** no estado da arte; e *"custou tempo real"*
+  lê-se duas vezes numa tese que fala de dados em tempo real três parágrafos acima.
+  **(J) TÍTULO: não era aborrecido, era MUDO.** As quatro dissertações aprovadas nomeiam todas a
+  sua máquina; a nossa não nomeava nenhuma, num mestrado de Engenharia de IA. *"Explicar sem
+  prever"* mantém-se (é a mesma forma da aprovada mais recente); a segunda metade passa a nomear as
+  duas técnicas. **123 caracteres, contra 115–123 das aprovadas** — o antigo estava em 95, ou seja
+  **abaixo** do intervalo.
+  **(K) TODO O NÚMERO DA TESE PASSA A TER ORIGEM.** Dos 231 afirmados na prosa e nas tabelas, 26 não
+  apareciam em ficheiro nenhum. Rastreados um a um: oito são instantâneos de dados reais, nove são
+  derivados cuja aritmética a tese mostra, dois são um exemplo de formato, quatro não são afirmações
+  — **e três eram defeito**, o funil de um dia. Ganhou gerador (`scripts/snapshot_funil.py`) e
+  artefacto (`docs/evaluation/funil_por_porta.md`). ⚠️ **A ressalva que decide a leitura ficou
+  escrita:** a coluna conta **avaliações** e não notícias, porque o sistema reavalia os mesmos
+  títulos de 60 em 60 s — ler a linha maior como *"é esta a porta que mais corta"* seria repetir,
+  pelo lado da interpretação, o defeito que a sessão 58 corrigiu no código.
+  **(L) GUIA DE CONSTRUÇÃO NOVO** (`tese/guia_construir/`, 16 pp): dez fases para reconstruir o
+  sistema, com o código real, a linha onde cada garantia é feita, e um comando que se corre. Mais
+  os oito erros que cada fase custou, e o que está no repositório que a tese **não reivindica**.
+  ⚠️ **A porta que escrevi apanhou SETE dos dez excertos:** três estavam **inventados** (o filtro de
+  relevância mostrava funções que não existem) e quatro tinham sido **reformatados por mim** para
+  caberem no slide. Passaram a ser **cortados do ficheiro por script**. O `check_guia_codigo.py`
+  confere em duas passagens, e a segunda existe porque a primeira deu VERBATIM a um excerto que
+  colava duas funções saltando uma terceira sem marcar o corte.
+  **(M) A PÁGINA, IMPLANTADA E VERIFICADA AO VIVO** (`release d8e77861`): a assinatura sai do
+  cabeçalho (**H1 diz que a promessa aparece uma vez, e aparecia duas** — a página inteira já é a
+  promessa, e o próprio `logo-lockup.svg` tinha a decisão escrita desde a sessão 52); o estado da
+  bolsa **sobe do rodapé** com as bolsas nomeadas, e **sai** do rodapé em vez de ficar nos dois
+  sítios; os doze logótipos entram na barra, servidos por nós e nunca de terceiros (114 → 20 KB); e
+  **a legenda do gráfico não descrevia nenhuma das duas marcas que ele desenha** — seta para baixo
+  mostrada como quadrado, círculo verde-ou-vermelho mostrado a cinzento, com a cor a carregar
+  sentido que nada explicava. **+4 testes, verificados a falhar.** Em produção: 12/12 logótipos
+  desenhados, 0 erros de consola, barra 52 px no monitor e 48 px (5% do ecrã) a 375.
+  **PORTAS: tese 135 pp, 0 erros, 754 testes, ruff limpo, `check_entrega.py` a zero** (com dois
+  verificadores novos: `auditar_numeros.py` e `check_guia_codigo.py`).
+  ⚠️ **As portas apanharam-me cinco vezes:** o apêndice a dizer 750 e 751 testes, `exacta` que é
+  pré-Acordo, um travessão em prosa, `var(--txt)` numa página cuja variável é `--tinta`, e
+  **U+26A0 na prosa do LaTeX** em três sítios, que só é usável em comentários.
 - **🆕 SESSÃO 61 — 8.ª parte (2026-08-21): REVISÃO PROFUNDA DA TESE, do princípio ao fim. Treze
   correcções, e a mais grave era minha, escrita no dia anterior.**
   **⚠️ (A) O MÉTODO FALHOU PRIMEIRO, e isso condiciona como se lê o resto.** Lancei seis lentes
@@ -667,9 +770,8 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 58 (**a TESE CURTA em PT-PT: revisão crítica, PT-PT a sério, transparência
-  máxima, e as métricas explicadas do zero**)
-- **Última atualização:** 2026-08-21
+- **Sessão nº:** 61 (9.ª parte — o arguente hostil, o registo académico, o guia de construção)
+- **Última atualização:** 2026-08-22
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
   ter calma nas estatísticas, mostrando cada salto até ao valor final):**
