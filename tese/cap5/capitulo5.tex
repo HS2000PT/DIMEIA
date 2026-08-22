@@ -116,7 +116,7 @@ do limiar fixo, aquela que assinala qualquer movimento acima de $3\%$, obtém um
 $0.992$: apanha praticamente todos os dias invulgares que existiam. Vista só por esse número
 parece excelente. Mas a sua precisão é de $0.122$, ou seja, \textbf{de cada cem vezes que fala,
 tem razão doze}. Apanha tudo porque fala quase sempre, e uma regra que fala quase sempre não está a
-detetar coisa nenhuma.
+detetar nada.
 
 Este par de números é a razão de ser da secção seguinte: é preciso uma medida que não se deixe
 enganar por nenhum dos dois extremos.
@@ -338,7 +338,7 @@ ideal & \gls{QI}1 \\
 \addlinespace
 $F_1$ & Acerta quando fala, e fala quando devia? & depende dos dados & \gls{QI}1 \\
 \addlinespace
-Precisão@5 & Das cinco que mostro, quantas prestam? & $0.240$ (acaso medido) & \gls{QI}2 \\
+Precisão@5 & Das cinco que mostro, quantas são relevantes? & $0.240$ (acaso medido) & \gls{QI}2 \\
 \addlinespace
 PR-AUC & Ordena bem, seja qual for o limiar? & $0.378$ (a prevalência) & \gls{QI}3 \\
 \addlinespace
@@ -572,7 +572,7 @@ etiquetou pares de notícias como relacionados ou não.
 
 Usou-se então uma aproximação verificável: considera-se que uma notícia recuperada é
 \textbf{relevante} se pertencer ao \emph{mesmo setor} da notícia de consulta. É imperfeito, porque
-duas notícias do mesmo setor podem não ter nada a ver, mas tem duas virtudes: é objetivo, e não foi
+duas notícias do mesmo setor podem ser sobre assuntos distintos, mas tem duas virtudes: é objetivo, e não foi
 escolhido depois de ver os resultados.
 
 Além disso, impôs-se uma restrição que torna a tarefa \emph{mais difícil}: a notícia recuperada tem
@@ -699,7 +699,7 @@ trabalha em produção.
 Repare-se que esta é a \emph{terceira} vez neste capítulo em que ler uma precisão sem
 o seu chão daria a conclusão errada. Foi assim na passagem do corpus recente para o completo, foi
 assim na precisão dentro do orçamento, onde custou uma afirmação retirada, e é assim aqui.
-Não é coincidência: uma precisão é uma quantidade sem significado próprio, e só o adquire ao pé
+Não é coincidência: uma precisão é uma quantidade sem significado próprio, e só o adquire ao lado
 da alternativa que não sabe nada.
 
 \subsection{O que isto não permite concluir}
@@ -901,7 +901,7 @@ faria falta para isso.
 \subsection{E o que é que a porta estava a escolher, afinal?}
 \label{sec:av_portao}
 
-A subsecção anterior diz que o modelo está \emph{a mais}. Fica bem como explicação e é vaga: não
+A subsecção anterior diz que o modelo está \emph{a mais}. Serve de explicação e é vaga: não
 diz \textbf{o que} ele estava a fazer quando era chamado. Vale a pena responder a isso, porque a
 resposta é medível e porque foi ela que mudou o sistema.
 
@@ -1071,9 +1071,9 @@ treinado e, no critério que mais se parece com o produto, faz melhor.
 \paragraph{Sem a empresa, não sobra nada.}
 Retirando todas as entradas de nível de empresa, a PR-AUC cai para $0.378$, que é precisamente a
 prevalência do bloco de teste, ou seja, o chão definido na Secção~\ref{sec:av_prauc}. Um modelo que
-obtém exatamente o chão não aprendeu coisa nenhuma.
+obtém exatamente o chão não aprendeu nada.
 
-\paragraph{E a única entrada que descreve a notícia não vale nada.}
+\paragraph{E a única entrada que descreve a notícia não acrescenta nada.}
 O comprimento do título, sozinho, também dá $0.378$ de PR-AUC. É o mesmo chão. A única informação
 por título que o modelo implantado recebia é indistinguível de não receber informação nenhuma.
 
@@ -1124,7 +1124,7 @@ segunda linha. Nunca se tinha testado o texto por cima desta base.
 a $95\%$ da diferença, obtido por reamostragem \textbf{por grupos} (empresa, dia), excluir zero. E
 a representação de texto não foi afinada aqui: usa-se a mesma redução a $32$ dimensões do
 re-teste da Secção~\ref{sec:av_qi3}, para que a comparação não seja o resultado de procurar a
-configuração que dá jeito.
+configuração que convém.
 
 \begin{table}[ht]
 \caption[O texto por cima da tabela de consulta]{Somar o título à tabela de consulta. A coluna
@@ -1357,7 +1357,7 @@ tivessem sido testadas seria dar-lhes uma autoridade que não têm.
 As secções anteriores comparam peça a peça: o detetor contra um limiar fixo, a recuperação contra
 escolher ao acaso, a triagem contra a volatilidade. Falta a comparação de que o utilizador precisa,
 que é ao nível do \textbf{sistema}: dadas as notícias de um dia, quais são as cinco que valia a
-pena mostrar, e o sistema escolhe-as melhor do que aquilo que já existe de graça?
+pena mostrar, e o sistema escolhe-as melhor do que aquilo que já existe sem custo?
 
 A Tabela~\ref{tab:av_pontaaponta} responde. Todas as políticas escolhem cinco por dia, sobre o
 mesmo bloco de teste e com o mesmo rótulo. O desempate é \textbf{aleatório e explícito} em todas,
