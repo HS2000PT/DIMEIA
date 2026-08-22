@@ -446,9 +446,12 @@ medem a sensibilidade histórica desta ação a cada um. A terceira parcela é d
 ou seja tudo o que mercado e setor não explicam, e é por isso que a soma fecha sempre.
 
 \paragraph{Duas precisões sobre o que estes dois fatores realmente são.}
-Na prática, $r_m$ é o retorno de um fundo cotado que segue o índice largo do mercado americano, e
-$\tilde r_s$ o de um fundo setorial escolhido a partir do mapa de setores desta secção. Daí decorrem
-duas ressalvas que a equação não deixa ver, e nenhuma delas é neutra.
+Convém primeiro nomeá-los, porque a equação não o faz e sem isso um $\beta_s$ impresso não se pode
+julgar. O mercado é o \textbf{SPY}, o fundo cotado que segue o índice largo americano, e o setor é
+o \textbf{SPDR Select Sector} correspondente ao mapa desta secção: XLK na tecnologia, XLF na banca,
+XLE na energia, XLV na saúde e XLP no consumo. Foram escolhidos por serem os mais líquidos da sua
+classe e por terem histórico longo em qualquer fonte gratuita, que é a restrição em que este
+trabalho vive. Daí decorrem duas ressalvas que a equação não deixa ver, e nenhuma delas é neutra.
 
 A primeira é que \textbf{a empresa explicada faz parte dos índices contra os quais é regredida}.
 Nas maiores da amostra isto não é um pormenor: elas estão entre as maiores posições dos dois
@@ -458,8 +461,9 @@ específica para baixo. Corrigi-lo exigiria índices construídos sem a ação e
 fonte gratuita publica; o efeito é maior precisamente nas empresas de que o sistema mais fala.
 
 A segunda é que \textbf{o mapa de setores é grosseiro, e é meu}. Cinco das nove empresas que ele
-arruma como tecnologia não pertencem ao fundo setorial correspondente: a classificação da indústria
-coloca-as em consumo discricionário e em serviços de comunicação. Nesses casos a regressão mede a
+arruma como tecnologia não pertencem ao XLK: a classificação padrão da indústria põe duas em
+consumo discricionário e três em serviços de comunicação, um setor que foi criado em 2018
+precisamente para as separar da tecnologia. Nesses casos a regressão mede a
 sensibilidade a um agregado \emph{vizinho} e não ao setor de pertença. O mapa fica como está por uma
 razão que vale a pena escrever: é o mesmo que a Secção~\ref{sec:met_recuperacao} usa como rótulo de
 relevância, e trocá-lo agora mudaria dois resultados ao mesmo tempo, um de método e outro de
@@ -925,6 +929,22 @@ Repare-se em \textbf{valor absoluto}. O rótulo diz se houve movimento \emph{gra
 \textbf{direção}. Isto é deliberado e é a fronteira que o trabalho não atravessa: o modelo aprende
 sobre \emph{materialidade}, não sobre subir ou descer.
 
+\paragraph{E o passo 2 usa um beta de um, o que é uma incoerência com a técnica anterior.}
+Subtrair o movimento do mercado \emph{tal e qual} equivale a supor que esta ação acompanha o
+mercado ponto por ponto. É exatamente a suposição que a Secção~\ref{sec:met_decomposicao} recusa
+uma página antes, com o argumento de que recair sobre $\beta = 1$ é a classe de constante por
+justificar que este trabalho corrige noutros sítios, e ali mostra-se uma ação cujo beta bruto
+estimado foi $4.43$. Numa ação de beta alto, o que sobra depois da subtração ainda contém parte do
+movimento do mercado, e o rótulo passa a marcar como material um dia em que só o mercado se mexeu.
+
+A incoerência é real e fica declarada. O que a atenua é que o efeito é \emph{simétrico entre os
+modelos comparados}: todas as seis famílias da Secção~\ref{sec:av_qi3} são treinadas e avaliadas
+contra o mesmo rótulo, portanto um rótulo mais ruidoso torna a tarefa mais difícil para todas por
+igual e não favorece nenhuma. O que ele afeta é o \emph{nível} das métricas, não a ordenação, que
+é o que a pergunta compara. Refazer o rótulo com betas encolhidos obrigaria a retreinar as seis e
+a re-correr tudo o que delas depende, e o benefício seria um número diferente para a mesma
+conclusão.
+
 \subsection{O que o modelo vê}
 \label{sec:met_modelo_ve}
 
@@ -1339,6 +1359,25 @@ a emitir uma previsão que ninguém pode conferir no momento em que é lida; um 
 comprar estaria dentro de uma atividade regulada. Este descreve o que já aconteceu e mostra a
 evidência ao lado, e a Secção~\ref{sec:ctx_escolhas} explica porque é que essa fronteira é de
 desenho e não de modéstia.
+
+Há aqui uma distinção que é preciso fazer em voz alta, porque a Figura~\ref{fig:sis_alerta} a
+torna impossível de ignorar: o alerta que serve de exemplo, e que é um alerta real copiado do
+registo, cita um título que diz \emph{``Prediction: Amazon Will Join Apple in the \$4 Trillion Club
+Before 2030''}. Isso é uma previsão, com um alvo e com uma data, entregue no telemóvel de uma
+pessoa por este sistema.
+
+A garantia que este trabalho dá aplica-se ao que o sistema \textbf{escreve}, e não ao que ele
+\textbf{cita}. O título é conteúdo de terceiros, reproduzido \emph{verbatim} porque é o facto que
+desencadeou o alerta, e reproduzi-lo é o que torna o resto verificável: sem ele o leitor não pode
+ir à fonte confirmar do que se trata. Tudo o que é do sistema, nesse mesmo alerta, respeita a
+restrição, e vê-se nas três partes seguintes, que falam de casos passados observados, de
+\emph{``not a prediction for this news''} e de probabilidade \textbf{em qualquer direção}.
+
+Fica no entanto uma limitação que decorre disto e que não tem solução dentro das restrições
+assumidas: \textbf{o filtro de relevância decide se o título é sobre a empresa, e não se ele é
+factual}. Um título especulativo passa como qualquer outro. Distinguir notícia de opinião exigiria
+um classificador que este trabalho não tem, e é uma das linhas que o
+Capítulo~\ref{cap:conclusoes} deixa em aberto.
 
 \paragraph{Fadiga de alertas, e o direito a não ser interrompido.} Um sistema que avisa de tudo
 não é atento, é ruidoso, e ensina quem o recebe a ignorá-lo. Isto trata-se como um requisito e não

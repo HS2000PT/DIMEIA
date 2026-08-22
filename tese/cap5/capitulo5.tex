@@ -414,6 +414,18 @@ fixo acompanham a volatilidade de cada ação; as do \emph{z}-score mantêm-se q
 
 Contra o rótulo aproximado, o \emph{z}-score obtém $F_1 = 0.516$ contra $0.218$ do limiar fixo.
 
+\paragraph{Uma nota sobre o padrão de evidência desta secção, e é uma nota contra mim.}
+Os números desta pergunta e da seguinte são pontos, sem intervalo. Os da
+Secção~\ref{sec:av_qi3}, que é onde está o resultado que me contraria, levam reamostragem por
+grupos e intervalos de confiança. É uma assimetria: os resultados que me favorecem estão a ser
+julgados por um padrão mais fraco do que o que me desfavorece. A justificação parcial é que as
+diferenças aqui são de outra ordem de grandeza --- $0.516$ contra $0.218$, ou uma amplitude de
+$0.015$ contra $0.344$, não são $0.005$ --- e por isso nenhuma reamostragem plausível as
+inverteria. Mas a justificação não é completa, porque dias da mesma empresa também não são
+independentes aqui, e pela razão que este mesmo capítulo invoca a propósito do desvio ponderado:
+os movimentos grandes andam em grupo. A comparação de recuperação, essa, passou a mostrar o
+desvio sobre as cinco repetições, que já existia e não estava impresso.
+
 \subsection{E contra métodos aprendidos?}
 
 Faltava a comparação mais exigente: e se em vez de uma regra estatística se usasse um método de
@@ -584,22 +596,24 @@ A métrica é a \textbf{precisão@5}: das cinco notícias que o sistema devolve,
 \subsection{Resultado}
 
 \begin{table}[ht]
-\caption[Recuperação: o método contra três alternativas triviais]{Precisão@5, média de cinco
-repetições com sementes diferentes. Quanto maior, melhor.}
+\caption[Recuperação: o método contra quatro alternativas triviais]{Precisão@5, média
+$\pm$ desvio-padrão sobre cinco repetições com sementes diferentes. Quanto maior, melhor. A linha
+``sempre o setor maior'' não tem desvio porque não é uma medição: é a fração de consultas que são
+do setor maior, e sai igual em qualquer repetição.}
 \label{tab:av_recuperacao}
 \centering
 \begin{tabular}{l c l}
 \toprule
 \tabhead{Método} & \tabhead{Precisão@5} & \tabhead{O que é} \\
 \midrule
-Embeddings (MiniLM) & $0.514$ & \textbf{o método usado} \\
-Embeddings (MPNet) & $\mathbf{0.538}$ & um modelo maior, mais lento \\
-Palavras em comum & $0.346$ & procurar por sobreposição de palavras \\
+Embeddings (MiniLM) & $0.514 \pm 0.015$ & \textbf{o método usado} \\
+Embeddings (MPNet) & $\mathbf{0.538} \pm 0.011$ & um modelo maior, mais lento \\
+Palavras em comum & $0.346 \pm 0.011$ & procurar por sobreposição de palavras \\
 % Esta linha faltava, e era a mais incomoda de todas. Ver o paragrafo "E ha uma alternativa
 % trivial que nao estava nesta tabela" logo a seguir a discussao das palavras em comum.
 Sempre o setor maior & $0.467$ & devolver sempre notícias de tecnologia \\
-Escolha ao acaso & $0.240$ & o chão: a proporção natural \\
-Mais recente & $0.126$ & devolver simplesmente as últimas notícias \\
+Escolha ao acaso & $0.240 \pm 0.004$ & o chão: a proporção natural \\
+Mais recente & $0.126 \pm 0.006$ & devolver simplesmente as últimas notícias \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -830,6 +844,17 @@ e continua abaixo dos $0.542$ da volatilidade.
 (empresa, dia), porque notícias do mesmo dia sobre a mesma empresa partilham o rótulo e não são
 observações independentes. A diferença mantém-se com o intervalo a excluir zero.
 
+\textbf{E convém dizer a que pergunta este intervalo responde, porque não é a mais larga.} A
+reamostragem é feita \emph{dentro} de um único bloco de teste, que são $221$ dias de negociação;
+mede portanto o ruído de amostragem nesse período e não diz nada sobre a estabilidade entre
+períodos. A distinção não é teórica neste trabalho: a Secção~\ref{sec:av_deriva} mede um
+\gls{PSI} de $0.281$ na volatilidade, e a prevalência do rótulo passa de $47.0\%$ na validação
+para $37.8\%$ no teste. Se a variação de um período para outro é dessa ordem, é plausível que a
+variância \emph{entre} janelas seja maior do que os efeitos que aqui se declaram distinguíveis de
+zero, e todas as comparações deste capítulo, incluindo as nove definições de rótulo e as
+ablações, correm sobre o mesmo bloco. Uma origem rolante com três ou quatro cortes sucessivos
+responderia à pergunta larga, e não foi feita; fica declarado, e não contornado.
+
 \paragraph{Será que depende de como defini o rótulo?} O rótulo usa um limiar de $2\%$ e um horizonte
 de três dias, ambos escolhidos por mim. Repetiu-se toda a comparação para nove combinações
 diferentes de limiar e horizonte. A volatilidade iguala ou bate o modelo com texto nas
@@ -1030,6 +1055,21 @@ que ninguém tinha escrito em lado nenhum. É a classe de custo que \textcite{sc
 arrumam sob dependências de dados e emaranhamento entre componentes, e o sintoma que eles apontam verificou-se aqui
 por inteiro: o sistema continuou a produzir números de aparência perfeitamente normal.
 
+\paragraph{E há uma segunda causa possível, que não consigo separar da primeira.}
+Uma das nove entradas do modelo é a \textbf{reação do próprio dia}, e no treino ela é o retorno do
+fecho de $d-1$ para o fecho de $d$, ou seja o movimento completo do dia da notícia, que só se
+conhece quando esse dia fecha. Em produção o sistema pontua a notícia no minuto em que a apanha,
+com uma latência mediana de $158$ minutos desde a publicação e exemplos captados às
+$08{:}14$: a essa hora o dia da notícia ainda não fechou. A entrada é então calculada sobre a
+última barra diária que a fonte tem, que durante a sessão é o fecho da véspera ou uma barra
+incompleta do próprio dia. Em nenhum dos casos é a quantidade sobre a qual o modelo foi treinado.
+
+Não é a mesma coisa que a redundância descrita acima, e as duas produzem o mesmo sintoma. Com o
+que ficou registado não consigo atribuir peso a cada uma: o registo de decisões guarda a
+probabilidade e o resultado, e não guarda o valor das entradas no momento em que a pontuação foi
+feita. Separá-las exigiria registar as entradas, que é uma linha de código e uma corrida de
+semanas. Fica dito porque a explicação que eu tinha dado era completa de mais.
+
 \subsection{E a medição acima não é uma surpresa: é aritmética}
 \label{sec:av_inevitavel}
 
@@ -1119,10 +1159,25 @@ Isto obriga a separar duas afirmações que eu tinha juntado, e a separação é
         obteve $0.496$ contra os $0.542$ da volatilidade. É essa comparação que responde à
         pergunta, e o resultado negativo é dela.
   \item \textbf{A decisão de produto estava errada por outra razão.} O que foi implantado como
-        porta de decisão foi a variante \emph{sem} texto. Escolhi-a porque tinha a melhor
-        PR-AUC entre as que cabiam no contentor, sem reparar que essa métrica não fazia a
-        pergunta de que o produto precisava.
+        porta de decisão foi a variante \emph{sem} texto, e escolhi-a sem reparar que a métrica
+        que usei para o fazer não fazia a pergunta de que o produto precisava.
 \end{itemize}
+
+\paragraph{E a frase que eu tinha escrito aqui também não era exata.}
+Durante várias versões deste capítulo esta lista dizia que a variante implantada foi escolhida
+\emph{por ter a melhor PR-AUC entre as que cabiam no contentor}. A tabela desta secção desmente-o
+quatro linhas acima: a variante só-volatilidade obtém $0.542$ e a variante sem os indicadores de
+setor obtém $0.543$, contra os $0.538$ da implantada, e nenhuma delas precisa do codificador de
+frases, portanto ambas cabiam. A justificação que eu dava a uma escolha errada estava ela própria
+errada, dentro do parágrafo que existe para a corrigir.
+
+A razão defensável que a escolha tem, e que só reconheço agora, é outra e não é de exatidão: a
+variante de nove entradas é a única das três cujas contribuições o alerta consegue \emph{mostrar}.
+A linha da Figura~\ref{fig:sis_alerta} que diz \emph{``raised by recent volatility (20d) and
+sector; lowered by today's own move and recent momentum (5d)''} precisa de mais do que uma entrada
+para existir, e com um modelo de uma variável reduzir-se-ia a repetir o nome dessa variável. Num
+trabalho cuja restrição fundadora é a explicabilidade, isso é uma razão; mas é uma razão que
+encontrei depois, e o preço em PR-AUC dela são os $0.005$ que a tabela mostra.
 
 \paragraph{E é aqui que está a lição de método, que vale mais do que o resultado.}
 A PR-AUC é calculada sobre o conjunto de teste inteiro, onde a variação \emph{entre}
