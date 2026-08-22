@@ -84,10 +84,15 @@
   .marca .tail { width:26px; height:26px; display:block; color:var(--acento); flex:0 0 auto; }
   .marca .nome { font-weight:650; letter-spacing:-.015em; font-size:1.02rem; }
   .marca .nome b { color:var(--acento); font-weight:750; }
-  .marca small { display:block; font-weight:400; font-size:.78rem; color:var(--fraco);
-                 letter-spacing:0; }
+  /* O estado do mercado, que estava no rodapé. Fica encostado à marca e não ao estado do
+     sistema, porque são coisas diferentes: um diz se a BOLSA está aberta, o outro se o SISTEMA
+     está a reportar. Juntá-los faria ler "closed" como avaria. */
+  .mercado { margin-left:18px; display:flex; align-items:baseline; gap:8px;
+             font-size:.82rem; color:var(--fraco); min-width:0; }
+  .mercado .bolsas { font-weight:600; color:var(--tinta); letter-spacing:.01em; }
+  .mercado #mercado, .mercado .det { white-space:nowrap; }
   .estado { margin-left:auto; display:flex; align-items:center; gap:8px;
-            font-size:.82rem; color:var(--fraco); }
+            font-size:.82rem; color:var(--fraco); flex:0 0 auto; }
   .ponto { width:7px; height:7px; border-radius:50%; background:var(--acento); }
   .ponto.frio { background:var(--parou); }
 
@@ -113,7 +118,13 @@
         transition:border-color .12s, background .12s; }
   .tk:hover { border-color:var(--fraco); }
   .tk[aria-pressed="true"] { border-color:var(--acento); background:var(--acento-fraco); }
-  .tk b { display:block; font-size:.83rem; font-weight:650; letter-spacing:.01em; }
+  .tk .cab { display:flex; align-items:center; gap:5px; }
+  /* O logótipo é reconhecimento, não informação: um utilizador encontra a Apple pela maçã mais
+     depressa do que por "AAPL". Por isso fica pequeno e ao lado do ticker, que continua a ser o
+     que identifica sem ambiguidade. `object-fit: contain` porque os doze ficheiros têm rácios
+     diferentes e esticá-los deformaria marcas registadas. */
+  .tk .lg { width:16px; height:16px; object-fit:contain; border-radius:3px; flex:0 0 auto; }
+  .tk b { font-size:.83rem; font-weight:650; letter-spacing:.01em; }
   .tk s { display:block; font-size:.78rem; text-decoration:none; color:var(--fraco); }
   .tk s.pos { color:var(--sobe); } .tk s.neg { color:var(--desce); }
   .tk .flag { display:inline-block; width:5px; height:5px; border-radius:50%;
@@ -248,7 +259,10 @@
      marca empurrava o estado para uma segunda linha. Numa página que se lê a rolar, a barra
      fixa é imposto puro: fica a marca e o estado, numa linha só. */
   @media (max-width:640px) {
-    .marca small { display:none; }
+    /* No telemóvel a barra fixa é imposto puro: fica a marca, se a bolsa está aberta, e o
+       estado do sistema. O "opens Mon 09:30 EDT" é detalhe e sai. */
+    .mercado { margin-left:12px; gap:6px; }
+    .mercado .bolsas, .mercado .det { display:none; }
     .barra { padding:8px 16px; flex-wrap:nowrap; }
     main { padding:14px 16px 56px; }
   }
@@ -261,7 +275,10 @@
 
 <header>
   <div class="barra">
-    <a class="marca" href="/" aria-label="InvestiGator — what was sent, and what was not">
+    <!-- O aria-label também levava a assinatura, e para quem usa um leitor de ecrã isso é
+         exactamente uma segunda vez: ouve-a como nome do link e volta a encontrá-la nos títulos
+         das duas secções. O que o link precisa de dizer é para onde vai. -->
+    <a class="marca" href="/" aria-label="InvestiGator, home">
       <!-- A marca por extenso: o glifo "The Tail" mais o nome, que é o que o autor pediu ao
            rever a página — o ícone sozinho não diz o nome a quem chega. As duas peças já
            existiam em `app/assets/` (logo.svg e logo-wordmark.svg) e nunca tinham sido postas
@@ -279,8 +296,24 @@
                  L 214 46 L 202 70 L 186 60 L 170 88 L 152 78 L 134 108 L 112 98
                  L 92 130 L 66 120 L 44 154 L 16 146 Z" fill="currentColor"/>
       </svg>
-      <span class="nome">Investi<b>G</b>ator<small>what was sent, and what was not</small></span>
+      <span class="nome">Investi<b>G</b>ator</span>
     </a>
+    <!-- ⚠️ A ASSINATURA "what was sent, and what was not" SAIU DAQUI, e sair é o que o critério
+         H1 pede. Ele diz que a promessa aparece UMA vez; aparecia duas, porque a página inteira
+         já é a promessa: as duas secções chamam-se "What was sent" e "Why it stayed quiet". Pô-la
+         também por baixo do nome era repeti-la em palavras ao lado da estrutura que a cumpre.
+         O próprio `app/assets/logo-lockup.svg` já tinha a decisão escrita no cabeçalho: "SEM
+         assinatura, de propósito ... para capas há a variante -tagline". A página contradizia o
+         ficheiro da própria marca. Fica no <title>, que é a identidade do separador e não uma
+         segunda afirmação no ecrã. -->
+    <div class="mercado">
+      <!-- As doze empresas vigiadas são das duas bolsas, e dizer QUAL o utilizador está a ver é
+           a informação em falta: um "closed" sem bolsa não diz de onde. Estava só no rodapé, ou
+           seja fora de vista numa página que se lê a rolar; passa para cima e SAI do rodapé, em
+           vez de ficar nos dois sítios. -->
+      <span class="bolsas">NASDAQ&nbsp;·&nbsp;NYSE</span>
+      <span id="mercado">…</span><span id="mercado-det" class="det"></span>
+    </div>
     <div class="estado"><span class="ponto" id="ponto"></span><span id="estado">loading…</span></div>
   </div>
 </header>
@@ -691,21 +724,35 @@ async function escolher(t, porEscolha) {
       ? `checked ${quanto} ago`
       : `last check ${quanto} ago — not reporting in`;
     document.getElementById("ponto").className = "ponto" + (saude.fresh ? "" : " frio");
+    // O estado do mercado subiu para a barra. NÃO fica também no rodapé: dois sítios a dizer o
+    // mesmo facto é a classe de defeito que esta página já corrigiu duas vezes (a legenda do
+    // funil, e a contagem de alertas por empresa).
     const m = visao.market || {};
+    // Duas peças e não uma cadeia só: no telemóvel o detalhe SAI (a folha de estilo esconde
+    // `.det`), em vez de ser cortado com reticências. Cortar dá uma frase truncada que se lê pior
+    // do que a sua ausência: "opens Mon 09:3..." não informa ninguém.
+    document.getElementById("mercado").textContent = (m.label || "").toLowerCase();
+    document.getElementById("mercado-det").textContent = m.detail ? " · " + m.detail : "";
     document.getElementById("rodape").textContent =
-      [m.label && "Market " + m.label.toLowerCase(), m.detail,
-       visao.alerts_total ? visao.alerts_total + " alerts sent to date" : ""]
-      .filter(Boolean).join(" · ");
+      visao.alerts_total ? visao.alerts_total + " alerts sent to date" : "";
 
     S.linhas  = visao.rows || [];
     S.alertas = alertas.rows || [];
     S.funil   = funil.rows || [];
 
+    // ⚠️ OS LOGÓTIPOS SÃO SERVIDOS DAQUI, e não de um CDN da empresa. Um <img> apontado a um
+    // domínio de terceiros diria a esse terceiro quem visita esta página e que empresas está a
+    // ver, o que contradiz a posição de privacidade que o trabalho assume. Os ficheiros vivem em
+    // web/assets/logos/ e vêm com a página. Se um faltar, o `onerror` esconde-o e o botão fica
+    // exactamente como estava: o nome nunca depende da imagem.
     document.getElementById("rail").innerHTML = S.linhas.map(r => {
       const n = typeof r.move === "number";
-      return `<button class="tk" data-t="${esc(r.ticker)}" aria-pressed="false"
+      const t = esc(r.ticker);
+      return `<button class="tk" data-t="${t}" aria-pressed="false"
                 title="${esc(r.name || r.ticker)}">
-                <b>${esc(r.ticker)}${r.flagged ? '<span class="flag"></span>' : ""}</b>
+                <span class="cab"><img class="lg" src="/assets/logos/${t}.png" alt=""
+                       onerror="this.remove()"><b>${t}${
+                       r.flagged ? '<span class="flag"></span>' : ""}</b></span>
                 <s class="${n ? (r.move >= 0 ? "pos" : "neg") : ""}">${n ? pct(r.move) : "—"}</s>
               </button>`;
     }).join("");

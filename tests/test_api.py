@@ -308,3 +308,65 @@ def test_a_legenda_descreve_as_marcas_que_o_grafico_desenha_mesmo():
         "a legenda voltou a mostrar uma só cor para uma marca que o gráfico pinta em duas"
     assert "colour is the direction" in html, \
         "a cor do círculo carrega sentido e a legenda não o explica"
+
+
+def test_a_promessa_da_pagina_aparece_uma_vez_e_nao_duas():
+    """Critério H1: a promessa é a identidade da página, e aparece **uma** vez.
+
+    ⚠️ Aparecia duas. A página inteira já é a promessa (as secções chamam-se ``What was sent`` e
+    ``Why it stayed quiet``) e o cabeçalho repetia-a em palavras por baixo do nome. O ficheiro da
+    própria marca, ``app/assets/logo-lockup.svg``, já tinha a decisão escrita: *"SEM assinatura,
+    de propósito ... para capas há a variante -tagline"*. A página contradizia-o.
+
+    Fica no ``<title>``, que é a identidade do separador do browser e não uma segunda afirmação
+    no ecrã.
+    """
+    html = _PAGINA.read_text(encoding="utf-8")
+    corpo = html.split("<body>", 1)[1]
+    visivel = corpo.replace("<!--", "\x00").split("\x00")
+    visivel = "".join(p.split("-->", 1)[-1] if "-->" in p else p for p in visivel)
+
+    assert "what was sent, and what was not" in html.split("<body>")[0], \
+        "a promessa saiu também do <title>, e o separador ficou sem identidade"
+    assert visivel.count("what was sent, and what was not") == 0, \
+        "a assinatura voltou ao corpo da página: H1 diz que a promessa aparece uma vez"
+    assert "<h2>What was sent</h2>" in html and "Why it stayed quiet" in html, \
+        "as duas secções são a promessa; sem elas a página deixa de a cumprir"
+
+
+def test_o_estado_da_bolsa_nao_esta_em_dois_sitios():
+    """Uma representação por facto. Aprendido três vezes nesta página, ao custo de três defeitos.
+
+    O estado do mercado subiu do rodapé para a barra, onde se vê sem rolar. Deixá-lo também no
+    rodapé criaria dois sítios a dizer o mesmo, que é como nasceram o ``0 sent`` com alertas na
+    lista ao lado e a legenda do funil a discordar da contagem.
+    """
+    html = _PAGINA.read_text(encoding="utf-8")
+    assert 'id="mercado"' in html, "o estado da bolsa saiu da barra"
+    assert "NASDAQ" in html and "NYSE" in html, \
+        "a barra tem de dizer de QUE bolsas fala; 'closed' sozinho não diz de onde"
+    js = html.split("rodape\").textContent", 1)
+    assert len(js) == 2, "mudou a forma de escrever o rodapé; rever este teste"
+    assert "m.label" not in js[1][:200], \
+        "o estado do mercado voltou ao rodapé, e está agora em dois sítios"
+
+
+def test_os_logotipos_sao_servidos_por_nos_e_nunca_por_terceiros():
+    """Um <img> para um domínio de terceiros conta-lhe quem visita a página e o que está a ver.
+
+    Isso contradiz a posição de privacidade do trabalho, que é a razão pela qual estes ficheiros
+    estão versionados em vez de puxados de um CDN. O teste fixa as duas metades: a origem é
+    relativa, e cada empresa da watchlist tem mesmo o seu ficheiro.
+    """
+    import re
+
+    html = _PAGINA.read_text(encoding="utf-8")
+    externos = re.findall(r'<img[^>]+src="(https?://[^"]+)"', html)
+    assert not externos, f"a página carrega imagens de terceiros: {externos}"
+    assert '/assets/logos/${t}.png' in html, "a barra deixou de mostrar os logótipos"
+
+    pasta = _PAGINA.parent / "assets" / "logos"
+    tem = {f.stem for f in pasta.glob("*.png")}
+    faltam = {"AAPL", "MSFT", "NVDA", "TSLA", "AMZN", "GOOGL",
+              "META", "JPM", "AMD", "NFLX", "XOM", "JNJ"} - tem
+    assert not faltam, f"sem logótipo para {sorted(faltam)}; o botão fica sem imagem"
