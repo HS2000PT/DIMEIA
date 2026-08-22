@@ -443,7 +443,27 @@ r_{\text{empresa}} \;=\; \underbrace{\beta_m \, r_m}_{\text{mercado}}
 
 onde $r_m$ é o retorno do índice de mercado do dia, $\tilde r_s$ o do setor, e $\beta_m$ e $\beta_s$
 medem a sensibilidade histórica desta ação a cada um. A terceira parcela é definida como o resto,
-ou seja tudo o que mercado e setor não explicam, e é por isso que a soma fecha sempre. Este ponto
+ou seja tudo o que mercado e setor não explicam, e é por isso que a soma fecha sempre.
+
+\paragraph{Duas precisões sobre o que estes dois fatores realmente são.}
+Na prática, $r_m$ é o retorno de um fundo cotado que segue o índice largo do mercado americano, e
+$\tilde r_s$ o de um fundo setorial escolhido a partir do mapa de setores desta secção. Daí decorrem
+duas ressalvas que a equação não deixa ver, e nenhuma delas é neutra.
+
+A primeira é que \textbf{a empresa explicada faz parte dos índices contra os quais é regredida}.
+Nas maiores da amostra isto não é um pormenor: elas estão entre as maiores posições dos dois
+fundos. Parte do que a repartição atribui ao mercado ou ao setor é, por isso, o próprio movimento
+da empresa a ser-lhe devolvido, e o enviesamento tem direção conhecida, empurra a parcela
+específica para baixo. Corrigi-lo exigiria índices construídos sem a ação em causa, que nenhuma
+fonte gratuita publica; o efeito é maior precisamente nas empresas de que o sistema mais fala.
+
+A segunda é que \textbf{o mapa de setores é grosseiro, e é meu}. Cinco das nove empresas que ele
+arruma como tecnologia não pertencem ao fundo setorial correspondente: a classificação da indústria
+coloca-as em consumo discricionário e em serviços de comunicação. Nesses casos a regressão mede a
+sensibilidade a um agregado \emph{vizinho} e não ao setor de pertença. O mapa fica como está por uma
+razão que vale a pena escrever: é o mesmo que a Secção~\ref{sec:met_recuperacao} usa como rótulo de
+relevância, e trocá-lo agora mudaria dois resultados ao mesmo tempo, um de método e outro de
+avaliação. Declara-se em vez de se corrigir. Este ponto
 volta a ser importante mais abaixo, porque é a origem da limitação principal da técnica. A
 Figura~\ref{fig:met_decomposicao} mostra a repartição de um dia real, e a primeira coisa que
 se vê nela é que duas das parcelas podem puxar ao contrário do movimento final.

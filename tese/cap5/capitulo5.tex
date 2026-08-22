@@ -595,6 +595,9 @@ repetições com sementes diferentes. Quanto maior, melhor.}
 Embeddings (MiniLM) & $0.514$ & \textbf{o método usado} \\
 Embeddings (MPNet) & $\mathbf{0.538}$ & um modelo maior, mais lento \\
 Palavras em comum & $0.346$ & procurar por sobreposição de palavras \\
+% Esta linha faltava, e era a mais incomoda de todas. Ver o paragrafo "E ha uma alternativa
+% trivial que nao estava nesta tabela" logo a seguir a discussao das palavras em comum.
+Sempre o setor maior & $0.467$ & devolver sempre notícias de tecnologia \\
 Escolha ao acaso & $0.240$ & o chão: a proporção natural \\
 Mais recente & $0.126$ & devolver simplesmente as últimas notícias \\
 \bottomrule
@@ -604,7 +607,8 @@ Mais recente & $0.126$ & devolver simplesmente as últimas notícias \\
 A Tabela~\ref{tab:av_recuperacao} tem o método usado, uma variante maior, e as três alternativas
 triviais. A leitura é direta: escolher ao acaso acerta em $24\%$ dos casos. É esse o chão, e não
 zero, porque há cinco setores e alguns são maiores do que outros. Procurar por palavras em comum sobe para
-$34.6\%$. Comparar significado sobe para $51.4\%$, mais do dobro do acaso.
+$34.6\%$. Comparar significado sobe para $51.4\%$, mais do dobro do acaso. A linha
+``sempre o setor maior'' é discutida a seguir, e é a que obriga a ler tudo isto com cuidado.
 
 Convém dizer com precisão o que a linha ``palavras em comum'' é, porque o nome admite leituras muito
 diferentes. É a forma mais simples da família lexical: contagem de palavras projetada por
@@ -617,6 +621,36 @@ Isso obriga a ler o resultado pelo que ele é. Os $17$ pontos percentuais que a 
 frases \autocite{reimers2019sbert} acrescenta medem a distância a um ponto de partida honesto, e
 \textbf{não} a distância a um sistema lexical afinado. Comparar contra um BM25 bem parametrizado é
 trabalho por fazer, e é a comparação que tornaria esta conclusão mais forte.
+
+\paragraph{E há uma alternativa trivial que faltava a esta tabela, que é a que mais incomoda.}
+O corpus tem $3\,714$ notícias e não está equilibrado: $1\,736$ delas, ou seja quase metade, são de
+tecnologia. Existe por isso uma estratégia que não precisa de modelo nenhum e não olha sequer para
+a consulta: \emph{devolver sempre cinco notícias de tecnologia}. Ela acerta em todas as consultas
+de tecnologia e em nenhuma das outras, portanto a sua precisão é exatamente a fração de consultas
+que são de tecnologia, $0.467$. Medida contra ela, e não contra o acaso uniforme, a margem do
+método cai de $+0.274$ para \textbf{$+0.047$}, e a linha lexical de $0.346$ passa a estar
+\emph{abaixo} do chão.
+
+Isto é a mesma classe de defeito que a Secção~\ref{sec:av_qi3} apanha na precisão dentro do
+orçamento, e que este capítulo diz três vezes: uma precisão sem o seu chão dá a conclusão errada.
+Aqui o chão que estava na tabela era o mais generoso dos disponíveis.
+
+\paragraph{E, dito isto, é o número agregado que está a enganar, e não o método.}
+A estratégia trivial obtém $1.000$ nas consultas de tecnologia e \textbf{$0.000$} em todas as
+outras. Como produto não serve para nada: devolveria notícias de semicondutores a quem perguntasse
+por uma petrolífera. O que ela explora não é uma propriedade do problema, é a composição deste
+corpus.
+
+A comparação que sobrevive a isso é a que se faz \emph{dentro} de cada setor, onde a estratégia
+trivial não tem por onde se agarrar. Aí o chão de acaso é $0.429$ na tecnologia e cerca de $0.072$
+em cada um dos outros quatro, e o método obtém $0.712$ na tecnologia, $0.448$ na energia e $0.419$
+na saúde. Ou seja: onde o agregado é dominado, o método ganha $0.283$; onde o corpus é fino, ganha
+seis vezes o chão. \textbf{O agregado subestima o método e sobrestima a alternativa trivial, e
+pela mesma razão} --- quase metade das consultas vem do único setor onde o chão já era alto.
+
+A afirmação que este trabalho passa a fazer é portanto a mais estreita e a mais defensável: a
+recuperação semântica supera a taxa-base \textbf{em todos os cinco setores}, e o número agregado
+não é a forma certa de o dizer.
 
 A variante MPNet fica acima da MiniLM ($0.538$ contra $0.514$), e a escolha do modelo mais pequeno
 para produção foi tomada por custo e não por qualidade. Fica registada como o que é: uma troca
