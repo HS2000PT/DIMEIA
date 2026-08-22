@@ -34,12 +34,17 @@ VERIFICADORES = [
     ("materiais de estudo alinhados", "check_materiais.py"),
     ("flutuantes referenciados", "check_floats.py"),
     ("escrita: PT-PT e um termo por conceito", "check_escrita.py"),
+    # O guia de construção promete código verbatim. Sem esta porta a promessa vale o que valer
+    # a memória de quem o escreveu, e o código muda: um excerto correcto hoje deixa de o ser.
+    ("guia de construção: código verbatim", "check_guia_codigo.py"),
 ]
 
 PDFS = [
     ("tese", TESE / "main.pdf", TESE / "main.tex"),
     ("slides", TESE / "slides" / "main.pdf", TESE / "slides" / "main.tex"),
     ("guia", TESE / "guia" / "main.pdf", TESE / "guia" / "main.tex"),
+    ("guia de construção", TESE / "guia_construir" / "main.pdf",
+     TESE / "guia_construir" / "main.tex"),
 ]
 
 

@@ -1,0 +1,543 @@
+% Guia de construção — reconstruir o sistema de raiz, por fases, com o código real.
+%
+% ⚠️ POR QUE É QUE ESTE DOCUMENTO EXISTE, e em que difere de `tese/guia/`.
+% Aquele ensina a DEFENDER: os números de cor, as perguntas do júri, o que não dizer. Este ensina
+% a CONSTRUIR. São complementares, e a razão de existirem os dois é que as perguntas que um
+% arguente faz sobre COMO uma coisa foi feita não se respondem com um número decorado.
+%
+% ⚠️ TODO O CÓDIGO AQUI É VERBATIM. Foi copiado dos ficheiros e conferido por máquina, duas vezes:
+% uma a exigir que cada linha exista no ficheiro, outra a exigir que os blocos sejam CONTÍGUOS e
+% pela ordem certa. A segunda passagem apanhou um excerto que colava duas funções e saltava uma
+% terceira sem marcar o corte — e a primeira tinha-o dado por bom. Onde há um corte, ele está
+% marcado com `# ...` e nunca escondido.
+%
+% Regras do projecto que valem aqui: PT-PT, decimais com PONTO, zero travessões na prosa.
+
+\documentclass[aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese,shorthands=off]{babel}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\graphicspath{{../figures/}{../slides/}}
+
+\definecolor{marca}{HTML}{0A8F52}
+\newcommand{\gator}{Investi\textcolor{marca}{G}ator}
+\setbeamertemplate{navigation symbols}{}
+% Um título de frame a `\large` custa cerca de meia dúzia de pontos de altura em todos os slides,
+% e estes são densos por natureza: cada um tem um excerto de código inteiro. Num guia de leitura
+% o título não precisa de ser grande, e a folga que isto liberta é o que faz o "Verifica-se com"
+% caber acima do rodapé em vez de lhe assentar em cima.
+\setbeamerfont{frametitle}{size=\small}
+
+% O mesmo estilo de código da dissertação, para o aluno reconhecer os excertos quando os
+% reencontrar lá. `literate` é obrigatório: sem ele os acentos dos comentários reais saem partidos.
+\lstset{
+  basicstyle=\ttfamily\tiny,
+  keywordstyle=\bfseries,
+  commentstyle=\itshape\color{black!55},
+  stringstyle=\color{black!70},
+  frame=single, rulecolor=\color{black!25}, framesep=3pt,
+  backgroundcolor=\color{black!3},
+  % Os excertos passaram a ser cortados do ficheiro em vez de escritos a mão, e ficaram mais
+  % altos: cinco frames transbordavam, o pior em 22pt, o que empurra o "Verifica-se com" para
+  % cima do rodapé. O espaço à volta do bloco é onde há folga sem mexer no código.
+  aboveskip=1mm, belowskip=1mm,
+  showstringspaces=false, breaklines=true, columns=fullflexible,
+  language=Python, literate=%
+    {á}{{\'a}}1 {ã}{{\~a}}1 {ç}{{\c c}}1 {é}{{\'e}}1 {í}{{\'i}}1
+    {ó}{{\'o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1 {â}{{\^a}}1 {ê}{{\^e}}1
+    {à}{{\`a}}1 {ô}{{\^o}}1 {É}{{\'E}}1 {Ó}{{\'O}}1
+    % ⚠️ Estes dois estão em código REAL e por isso ficam. O ponto médio é do docstring do
+    % calibrador (`a·score + b`) e o travessão é do docstring do `assign_splits`. A regra do
+    % projecto de zero travessões aplica-se à PROSA, não a texto citado: reescrever o comentário
+    % de um ficheiro para o pôr num guia seria deixar de ser verbatim, que é a única coisa que
+    % este documento promete.
+    % Idem: a seta esta numa mensagem de registo real do prices.py, e o "menor ou igual" num
+    % docstring do dataset.py. Substitui-los por "->" e "<=" seria reescrever o ficheiro.
+    {·}{{\textperiodcentered}}1 {—}{{---}}1
+    {→}{{$\rightarrow$}}1 {≤}{{$\leq$}}1
+}
+
+% ⚠️ `\fonte` não é decoração. Faz duas coisas: diz ao leitor que ficheiro abrir para ver o
+% excerto no seu contexto, e é o que permite ao `scripts/check_guia_codigo.py` conferir, a cada
+% compilação, que o bloco seguinte continua a existir VERBATIM nesse ficheiro. Sem a marca, a
+% promessa deste guia (código real, não reescrito) seria só uma afirmação minha.
+% O `\detokenize` é obrigatório e não é preciosismo: os caminhos têm `_` (market_data,
+% news_fetcher, onnx_embedder) e um `_` fora de modo matemático é um erro de LaTeX. Escapá-los à
+% mão em cada chamada funcionaria, mas partiria o `check_guia_codigo.py`, que lê estes caminhos
+% para ir ao ficheiro: passaria a procurar `market\_data`, que não existe.
+\newcommand{\fonte}[1]{\vspace{0.5mm}{\tiny\ttfamily\color{black!55}\detokenize{#1}}\vspace{-1mm}}
+\newcommand{\linhaq}[1]{\vspace{1mm}{\scriptsize\textbf{A linha que interessa.} #1}}
+% O `\par` põe isto em linha própria sem gastar espaço vertical: sem ele o comando ficava colado
+% ao fim da frase anterior e lia-se como parte dela. Um `\vspace` resolveria a leitura e custaria
+% meio milímetro em cada frame, que é exactamente o que separa dois deles de transbordarem.
+\newcommand{\verifica}[1]{{\scriptsize\par\textbf{Verifica-se com.} \texttt{#1}}}
+
+\title[Guia de construção]{Reconstruir o \gator{} de raiz}
+\subtitle{\normalsize Dez fases, com o código que está mesmo lá}
+\author[H.\ Santos]{Henrique José da Silva Santos}
+\institute[ISEP]{MEIA, Instituto Superior de Engenharia do Porto}
+\date{\footnotesize Guia de estudo}
+
+\begin{document}
+
+\begin{frame}\titlepage\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{frame}{Para que serve este guia, e para que não serve}
+\small
+O outro guia ensina-te a \textbf{defender}: os números de cor, as perguntas prováveis, o que não
+dizer. Este ensina-te a \textbf{construir}.
+\vspace{2mm}
+
+\begin{center}
+\textbf{A diferença importa numa prova.}\\
+Uma pergunta sobre \emph{quanto deu} responde-se com um número.\\
+Uma pergunta sobre \emph{como fizeste} não.
+\end{center}
+\vspace{3mm}
+
+São dez fases, pela ordem em que o sistema foi realmente construído. Cada uma traz:
+\vspace{1mm}
+\begin{itemize}\small
+  \item o \textbf{problema} que ela resolve, numa frase;
+  \item o \textbf{código real}, copiado dos ficheiros e não reescrito;
+  \item \textbf{a linha que interessa}, ou seja onde é que a garantia é mesmo feita;
+  \item \textbf{como se verifica}, com um comando que podes correr.
+\end{itemize}
+\vspace{2mm}
+
+{\footnotesize Os erros que cada fase custou estão reunidos no penúltimo \emph{slide}, de
+propósito: lidos de seguida, são a parte deste trabalho que mais se aprende.}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{frame}[fragile]{Fase 1: de preços para retornos}
+{\footnotesize \$500 é muito numa empresa e pouco noutra: o sistema trabalha em
+\textbf{retornos}, e tenta cinco fontes gratuitas por ordem fixa.}
+
+\fonte{investigator/market_data/prices.py}
+\begin{lstlisting}
+def get_price_history(ticker: str, period: str = "6mo", interval: str = "1d") -> pd.DataFrame:
+# ...
+    try:
+        df = _yf_history(ticker, period=period, interval=interval)
+        _LAST_SOURCE[ticker.upper()] = "yfinance"
+        return df
+    except Exception as exc:  # noqa: BLE001
+        if interval != "1d":
+            raise RuntimeError(f"Sem dados de preços para o ticker '{ticker}'.") from exc
+# ...
+        df, fonte = fallback_daily(ticker, start, end)
+        _LAST_SOURCE[ticker.upper()] = fonte
+        print(f"[precos {ticker}] yfinance indisponível → servido por {fonte} ({len(df)} dias)")
+        return df
+# ...
+def log_returns(close: pd.Series) -> pd.Series:
+    """Retornos logarítmicos a partir da série de preços de fecho."""
+    return np.log(close / close.shift(1)).dropna()
+\end{lstlisting}
+
+\linhaq{O \texttt{shift(1)}. Cada retorno divide o fecho de hoje pelo do dia \textbf{anterior} e
+nunca por um posterior: nenhum valor futuro entra na norma que a fase seguinte constrói.}
+\verifica{pytest tests/test\_prices\_fallback.py}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{frame}[fragile]{Fase 2: o que conta como movimento invulgar}
+{\footnotesize $2\%$ é banal na Tesla e enorme na Johnson \& Johnson, portanto um limiar fixo em
+percentagem mediria \emph{volatilidade} e não \emph{raridade}. Mede-se em desvios-padrão face aos
+últimos vinte dias da própria empresa.}
+\vspace{1mm}
+
+\fonte{investigator/anomaly_detector/detector.py}
+\begin{lstlisting}
+    r = pd.Series(list(returns), dtype="float64").dropna().reset_index(drop=True)
+# ...
+    recent = r.iloc[-window - 1 : -1]  # janela ANTES do último (sem lookahead)
+    last = float(r.iloc[-1])
+    mu = float(recent.mean())
+    sigma = float(recent.std(ddof=1))
+    z = (last - mu) / sigma if sigma > 0 else 0.0
+    return AnomalyResult(
+        is_anomaly=abs(z) > threshold,
+        z_score=z,
+        last_return=last,
+        mean=mu,
+        std=sigma,
+        window=window,
+        threshold=threshold,
+    )
+\end{lstlisting}
+
+\linhaq{O \texttt{-1} do fim da fatia \texttt{r.iloc[-window - 1 : -1]}, que \textbf{exclui o
+próprio dia julgado}. Com \texttt{r.iloc[-window:]} o salto entrava no cálculo da sua própria
+régua, inflacionava o \texttt{sigma} e encolhia o seu próprio $z$: o dia extraordinário
+esconder-se-ia a si mesmo.}
+\verifica{pytest tests/test\_anomaly\_detector.py}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{frame}[fragile]{Fase 3: deitar fora o que não é da empresa}
+{\footnotesize A fonte etiqueta mal. Chegavam notícias de escritórios de advogados etiquetadas
+como \emph{AMD}, e listas de \emph{top movers} repetidas para vários tickers. Sem este filtro,
+$67\%$ do que entra é ruído, e um precedente construído sobre ruído é pior do que nenhum.}
+\vspace{1mm}
+
+\fonte{investigator/news_fetcher/relevance.py}
+\begin{lstlisting}
+def is_relevant(headline: str, ticker: str) -> bool:
+    """True se a manchete é plausivelmente SOBRE esta empresa (e não boilerplate de mercado)."""
+    if not headline or not headline.strip():
+        return False
+    low = headline.lower()
+    if _BOILERPLATE_RE.search(low):
+        return False
+    terms = [ticker.lower()] + COMPANY_NAMES.get(ticker.upper(), [])
+    return any(_mentions(low, t) for t in terms)
+\end{lstlisting}
+
+\linhaq{A ordem. O \texttt{\_BOILERPLATE\_RE} corre \textbf{antes} da procura de menções, e tem
+de correr: uma lista de \emph{top movers} menciona a empresa, portanto passaria a última linha
+sem dificuldade. Trocar as duas deixaria entrar exactamente o ruído que este filtro existe para
+apanhar, e nada avisaria. Repare-se ainda no \texttt{COMPANY\_NAMES}: procurar só o \emph{ticker}
+perderia toda a notícia que escreve \emph{Nvidia} e nunca \emph{NVDA}.}
+\verifica{pytest tests/test\_relevance.py}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{frame}[fragile]{Fase 4: uma frase como um ponto no espaço}
+{\footnotesize Duas notícias sobre o mesmo assunto raramente partilham palavras. Um codificador de
+frases já treinado transforma cada título em $384$ números, de forma a que proximidade entre pontos
+seja proximidade de \emph{significado}.}
+\vspace{1mm}
+
+\fonte{investigator/historical_kb/onnx_embedder.py}
+\begin{lstlisting}
+def masked_mean_pool(hidden: np.ndarray, attention_mask: np.ndarray) -> np.ndarray:
+    """Mean pooling com máscara + normalização L2 — igual ao sentence-transformers.
+
+    hidden: (n, seq, dim); attention_mask: (n, seq) com 1 nos tokens reais. Puro numpy,
+    testável offline (tests/test_onnx_embedder.py cobre a matemática sem o modelo).
+    """
+    mask = attention_mask[..., None].astype("float64")
+    summed = (hidden.astype("float64") * mask).sum(axis=1)
+    counts = np.clip(mask.sum(axis=1), 1e-9, None)
+    pooled = summed / counts
+    norms = np.linalg.norm(pooled, axis=1, keepdims=True)
+    return pooled / np.clip(norms, 1e-12, None)
+\end{lstlisting}
+
+\linhaq{A última linha, a normalização. Depois dela todos os vectores têm comprimento $1$, e por
+isso o cosseno entre dois passa a ser um simples produto interno. Não é uma optimização: é o que
+faz com que \emph{semelhança} deixe de depender do comprimento do título.}
+\verifica{pytest tests/test\_onnx\_embedder.py}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{frame}[fragile]{Fase 5: encontrar o precedente}
+{\footnotesize Com cada título já como um ponto, \emph{parecido} passa a ser uma conta: o cosseno
+do ângulo entre dois vectores. Um resultado perto de $1$ quer dizer que apontam para o mesmo sítio.}
+\vspace{1mm}
+
+\fonte{investigator/correlation_engine/similarity.py}
+\begin{lstlisting}
+def cosine_similarity(a, b) -> float:
+    """Similaridade do cosseno entre dois vetores 1D. Vetor nulo → 0.0 (sem direção)."""
+    a = np.asarray(a, dtype="float64")
+    b = np.asarray(b, dtype="float64")
+    na = float(np.linalg.norm(a))
+    nb = float(np.linalg.norm(b))
+    if na == 0.0 or nb == 0.0:
+        return 0.0
+    return float(np.dot(a, b) / (na * nb))
+\end{lstlisting}
+
+\linhaq{A guarda \texttt{if na == 0.0 or nb == 0.0}. Um vector nulo não tem direcção, logo o
+ângulo não existe e a divisão rebentaria. Devolver $0.0$ diz \emph{não se parece com nada}, que é
+a leitura correcta, e mantém a função total: nenhuma consulta pode derrubar o sistema por causa de
+um registo degenerado.}
+\verifica{pytest tests/test\_similarity.py}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{frame}[fragile]{Fase 6: medir o que aconteceu depois}
+{\footnotesize Esta é a fase que separa este trabalho de uma previsão. Mede-se o que o preço
+\textbf{fez} nos $1$, $3$ e $5$ dias a seguir a uma notícia \emph{passada}. É observação
+verificável, não projecção.}
+\vspace{1mm}
+
+\fonte{investigator/correlation_engine/event_study.py}
+\begin{lstlisting}
+def post_event_returns(close: pd.Series, event_idx: int,
+                       horizons: tuple[int, ...] = (1, 3, 5)) -> dict[int, float]:
+    # ...
+    p0 = float(close.iloc[event_idx])
+    out: dict[int, float] = {}
+    for h in horizons:
+        j = event_idx + h
+        out[h] = float(close.iloc[j] / p0 - 1.0) if 0 <= j < len(close) else float("nan")
+    return out
+# ...
+def abnormal_returns(close: pd.Series, market_close: pd.Series, event_idx: int,
+                     horizons: tuple[int, ...] = (1, 3, 5)) -> dict[int, float]:
+    # ...
+    own = post_event_returns(close, event_idx, horizons)
+    mkt = post_event_returns(market_close, event_idx, horizons)
+    return {h: own[h] - mkt[h] for h in horizons}
+\end{lstlisting}
+
+\linhaq{O \texttt{float("nan")} quando \texttt{j} sai da série. Uma notícia dos últimos cinco dias
+\textbf{ainda não tem} desfecho a $+5$; devolver zero, ou o último preço disponível, inventaria um
+resultado. O \texttt{NaN} propaga-se e obriga quem consome a decidir o que fazer com a ausência.}
+\verifica{pytest tests/test\_event\_study.py}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{frame}[fragile]{Fase 7: foi a empresa, ou foi o mercado?}
+{\footnotesize Um movimento reparte-se em três: o que veio do mercado inteiro, o que veio do setor,
+e o que sobra e é da própria empresa. Os betas são estimados só com dias \textbf{anteriores}.}
+\vspace{1mm}
+
+\fonte{investigator/correlation_engine/decomposition.py}
+\begin{lstlisting}
+def _shrink(beta_raw: float, std_err: float, prior: float,
+            prior_sd: float = PRIOR_BETA_SD) -> float:
+    """Encolhe `beta_raw` na direção de `prior`, pesando pela precisão da estimativa."""
+    if not np.isfinite(std_err) or std_err <= 0:
+        return beta_raw  # ajuste exato: nada a encolher
+    w = prior_sd**2 / (prior_sd**2 + std_err**2)
+    return w * beta_raw + (1.0 - w) * prior
+# ...
+    total = float(t[-1])
+    r_m_today = float(m[-1])
+    r_s_today = float(s[-1]) if s is not None else 0.0
+
+    # Janela de estimação: estritamente ANTES do dia explicado (anti-lookahead).
+    hist_t, hist_m = t[:-1][-window:], m[:-1][-window:]
+    hist_s = s[:-1][-window:] if s is not None else None
+\end{lstlisting}
+
+\linhaq{O peso \texttt{w} do \texttt{\_shrink}. Um beta estimado em vinte dias é ruidoso, e numa
+janela agitada a AMD deu $\beta = 4.43$. Cortar em $\pm 4$ seria outra constante por justificar;
+aqui o encolhimento é \textbf{proporcional à precisão da estimativa}: com erro-padrão pequeno o
+beta fica intacto, com erro grande aproxima-se da referência.}
+\verifica{pytest tests/test\_decomposition.py}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{frame}[fragile]{Fase 8: um conjunto de treino sem o futuro lá dentro}
+{\footnotesize É aqui que os trabalhos com dados temporais se enganam, e o engano não dá erro:
+dá um resultado bom de mais.}
+
+\fonte{investigator/triage/dataset.py}
+\begin{lstlisting}
+def assign_splits(dates: pd.Series, train_frac: float = 0.70, val_frac: float = 0.15,
+                  embargo_days: int = 5) -> pd.Series:
+    """Divisão TEMPORAL por dias únicos (70/15/15) com embargo entre blocos.
+
+    Todas as linhas do mesmo dia ficam no mesmo bloco (evita fuga por notícias do mesmo dia).
+    O embargo remove `embargo_days` dias únicos APÓS cada fronteira (rotulados "embargo",
+    excluídos do treino e da avaliação) — protege contra sobreposição das janelas de rótulo
+    (h≤5) entre blocos.
+    """
+    d = pd.to_datetime(pd.Series(dates).reset_index(drop=True))
+    unique_days = np.array(sorted(d.unique()))
+    n = len(unique_days)
+    i1 = int(n * train_frac)
+    i2 = int(n * (train_frac + val_frac))
+    train_days = set(unique_days[:i1])
+    emb1 = set(unique_days[i1 : i1 + embargo_days])
+    val_days = set(unique_days[i1 + embargo_days : i2])
+    emb2 = set(unique_days[i2 : i2 + embargo_days])
+\end{lstlisting}
+
+\linhaq{\texttt{unique\_days}, e não as linhas. Dividir por linhas poria duas notícias
+\textbf{do mesmo dia}, com o mesmo rótulo, uma no treino e outra no teste: o modelo veria a
+resposta. O embargo trata do segundo problema, o rótulo olhar cinco dias em frente.}
+\verifica{pytest tests/test\_triage\_dataset.py}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{frame}[fragile]{Fase 9: treinar, e depois calibrar}
+{\footnotesize Um modelo dá uma pontuação, e uma pontuação não é uma probabilidade. Para o alerta
+poder dizer \emph{$39\%$} é preciso um segundo ajuste, feito num bloco reservado que o modelo
+nunca viu.}
+\vspace{1mm}
+
+\fonte{investigator/triage/model.py}
+\begin{lstlisting}
+class PlattCalibrator:
+    """p_calibrada = sigmóide(a·score + b), com (a,b) ajustados na validação."""
+
+    a: float
+    b: float
+
+    def __call__(self, scores: np.ndarray) -> np.ndarray:
+        z = self.a * np.asarray(scores, dtype="float64") + self.b
+        return 1.0 / (1.0 + np.exp(-z))
+
+
+def fit_platt(scores_val: np.ndarray, y_val: np.ndarray, seed: int = 42) -> PlattCalibrator:
+    lr = LogisticRegression(max_iter=1000, random_state=seed)
+    lr.fit(np.asarray(scores_val, dtype="float64").reshape(-1, 1), y_val)
+    return PlattCalibrator(a=float(lr.coef_[0][0]), b=float(lr.intercept_[0]))
+\end{lstlisting}
+
+\linhaq{O \texttt{scores\_val}, no nome do argumento. A calibração ajusta-se na
+\textbf{validação} e nunca no treino: ajustada no treino, corrigiria o sobreajustamento em vez da
+escala, e as probabilidades sairiam confiantes de mais onde o modelo está errado. Aqui
+$a = 3.700$ e $b = -2.313$.}
+\verifica{pytest tests/test\_triage\_model.py}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{frame}[fragile]{Fase 10: observar o que corre, e deixar-se contrariar}
+{\footnotesize Sem esta fase o trabalho acabava numa métrica de teste. Cada decisão real é
+registada, e dias depois confrontada com o que o preço \emph{fez}. Foi assim que se soube que a
+porta \textbf{não estava a ajudar}.}
+\vspace{1mm}
+
+\fonte{investigator/triage/postval.py}
+\begin{lstlisting}
+    rep: dict = {
+        "n": n,
+        "n_mantidas": len(kept),
+        "precisao_mantidas": (float(np.mean([d["label"] for d in kept])) if kept else float("nan")),
+        "n_suprimidas": len(dropped),
+        "precisao_suprimidas": (float(np.mean([d["label"] for d in dropped]))
+                                if dropped else float("nan")),
+        "base_rate": (float(np.mean([d["label"] for d in labeled])) if labeled else float("nan")),
+        "brier": (float(np.mean([(d["prob"] - d["label"]) ** 2 for d in with_prob]))
+                  if with_prob else float("nan")),
+        "calibracao": [],
+    }
+\end{lstlisting}
+
+\linhaq{A \texttt{precisao\_suprimidas}. Comparar as mantidas com a taxa-base responde a
+\emph{a porta acerta?}, que é a pergunta fácil. A pergunta que interessa é \emph{a porta escolhe
+melhor do que aquilo que deitou fora?}, e essa exige medir também as suprimidas. Medido: mantidas
+$0.589$ contra suprimidas $\mathbf{0.617}$, ou seja o que a porta rejeitou era \emph{mais}
+material.}
+\verifica{python scripts/post\_validate.py}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% ⚠️ ESTA TABELA ESTAVA NUM SÓ FRAME E CORTAVA AS DUAS ÚLTIMAS LINHAS, incluindo a dos dezanove
+% dias, que é a mais forte de todas. O aviso era `Overfull \vbox 70pt`, ou seja não é um erro e
+% não para a compilação: só se vê a renderizar a página. Dividida em duas, quatro linhas cada.
+\begin{frame}{Os erros que cada fase custou (1/2)}
+\small
+Lidos de seguida, são a parte deste trabalho que mais se aprende, e são a melhor resposta a
+\emph{``o que é que correu mal?''}. Nenhum deles deu erro nenhum.
+\vspace{3mm}
+
+{\scriptsize
+\begin{tabular}{@{}p{0.15\textwidth}p{0.80\textwidth}@{}}
+\toprule
+\textbf{fase} & \textbf{o erro, e porque é que passou despercebido} \\
+\midrule
+1. preços & A última fonte da cadeia devolvia um resultado \emph{vazio} como sucesso. Preços
+vazios propagavam-se em silêncio, sem uma única excepção. Numa cadeia de recurso, a resposta
+vazia tem de ser tratada como falha. \\
+\addlinespace
+2. detetor & A Microsoft a $+4.82\%$ com o cartão a dizer \emph{``an ordinary day''}. O $z$ era
+$+1.11$, abaixo do limiar, mas só $5$ dos últimos $249$ dias se tinham movido tanto. Duas réguas
+a discordar, e a interface escolhia em silêncio a mais tranquilizadora. \\
+\addlinespace
+3. relevância & Sem o filtro, a mesma história contava duas vezes e um escritório de advogados
+era notícia da AMD. \\
+\addlinespace
+5. precedentes & A deduplicação era de \emph{texto exacto}: a mesma história escrita por dois
+meios continuava a contar como duas observações, e o alerta afirmava mais evidência do que
+tinha. \\
+\bottomrule
+\end{tabular}}
+\end{frame}
+
+\begin{frame}{Os erros que cada fase custou (2/2)}
+\vspace{2mm}
+{\scriptsize
+\begin{tabular}{@{}p{0.15\textwidth}p{0.80\textwidth}@{}}
+\toprule
+\textbf{fase} & \textbf{o erro, e porque é que passou despercebido} \\
+\midrule
+6. impacto & O impacto é medido por (empresa, dia), portanto três títulos do mesmo dia partilham
+o mesmo valor \emph{por construção}. Em $36.8\%$ dos alertas os casos assentavam em menos dias
+distintos do que casos mostrados: o alerta afirmava mais evidência independente do que tinha. \\
+\addlinespace
+7. decomposição & O motor era escolhido pela maior componente \textbf{em módulo}, e uma empresa
+a subir com o setor a puxar ao contrário saía descrita como \emph{``foi o setor''}. O sinal
+importa, e o módulo deita-o fora. \\
+\addlinespace
+9. calibração & O ajuste é feito numa validação a $47.0\%$ de prevalência e aplicado a um teste a
+$37.8\%$. A ordenação não muda, mas os limiares implantados assentam nessa escala, e por isso a
+probabilidade média prevista sai $0.050$ acima da observada. \\
+\addlinespace
+10. observação & Os dois registos que alimentam esta fase eram escritos em disco local, num
+contentor cujo disco é efémero e pertence a outro processo. Estiveram parados
+\textbf{dezanove dias sem um único erro registado}, e foi encontrado a olhar, não por um alarme. \\
+\bottomrule
+\end{tabular}}
+\vspace{3mm}
+
+\begin{center}\footnotesize
+O padrão é sempre o mesmo: cada peça cumpria o seu contrato, e o que estava errado era uma
+suposição sobre a ligação entre elas que ninguém tinha escrito em lado nenhum.
+\end{center}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{frame}{Se abrirem o repositório: o que lá está e a tese não reivindica}
+\small
+É uma pergunta possível, e a resposta honesta é melhor do que a evasiva.
+\vspace{3mm}
+
+Existe em \texttt{investigator/intelligence/} e \texttt{investigator/narrator/} uma camada que usa
+um modelo de linguagem para escrever prosa, com uma verificação que rejeita qualquer frase cujos
+números não estejam ancorados num facto citado. Foi construída, foi atacada por um exercício
+adversário, e \textbf{$23$ de $23$ ataques foram bloqueados}.
+\vspace{3mm}
+
+\begin{center}
+\textbf{E está desligada em produção, de propósito.}
+\end{center}
+\vspace{3mm}
+
+Duas razões, e as duas estão no documento. A primeira é de posição: o trabalho defende que uma
+frase gerada é uma \emph{afirmação}, e este sistema entrega afirmações com a evidência ao lado.
+A segunda é de honestidade: a dissertação \textbf{não reivindica} essa camada em lado nenhum, e
+manter no ar aquilo que o documento não descreve seria dívida.
+\vspace{3mm}
+
+{\footnotesize A frase a dizer: \emph{``está lá, funciona, e decidi não a expor porque contradiz a
+posição que o trabalho assume. As rotas foram retiradas e a configuração está a falso.''}}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{frame}{O fio que liga as dez fases}
+\small
+Se te esquecerem de tudo o resto, é isto que a construção ensina.
+\vspace{3mm}
+
+\begin{enumerate}
+  \item Cada fase tem \textbf{uma linha} onde a garantia é feita, e quase sempre é uma fatia, uma
+        guarda ou a escolha de que dados entram. Não é o algoritmo.
+  \item Os erros que custaram mais tempo \textbf{não davam erro nenhum}. Davam um resultado
+        plausível.
+  \item A parte difícil não foi escolher a técnica. Foi montar a avaliação que
+        \textbf{consegue dizer que não}.
+\end{enumerate}
+\vspace{4mm}
+
+\begin{center}
+\footnotesize Guia irmão: \texttt{tese/guia/} ensina a defender.\\
+Este ensina a construir. Levas os dois.
+\end{center}
+\end{frame}
+
+\end{document}

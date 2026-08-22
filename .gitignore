@@ -129,3 +129,15 @@ data/samples/backfill_kb_sbert.jsonl
 # 140 MB do JSONL, e sao 25 MB de RAM contra 655 MB.
 !data/samples/backfill_kb_meta.jsonl
 !data/samples/backfill_kb_vec.npy
+
+# Guia de construção (novo na sessão 61): os mesmos artefactos de build dos outros dois decks.
+# O .vrb aparece aqui e não nos outros porque este é o único com frames [fragile].
+tese/guia_construir/*.aux
+tese/guia_construir/*.log
+tese/guia_construir/*.nav
+tese/guia_construir/*.out
+tese/guia_construir/*.snm
+tese/guia_construir/*.toc
+tese/guia_construir/*.vrb
+tese/guia_construir/*.fdb_latexmk
+tese/guia_construir/*.fls
