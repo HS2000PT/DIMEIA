@@ -1,6 +1,6 @@
 % Capítulo 5 — Avaliação (orçamento: ~16 pp)
 % Uma secção por QI. Cada uma: pergunta, como se mediu, resultado, e o que NÃO se pode concluir.
-% ⚠️ Usar o chão CORRIGIDO da precisão@orçamento (aleatório 0.379), nunca o 0.163 alfabético.
+% ️ Usar o chão CORRIGIDO da precisão@orçamento (aleatório 0.379), nunca o 0.163 alfabético.
 
 \chapter{Avaliação}
 \label{cap:avaliacao}
@@ -60,7 +60,7 @@ Figura~\ref{fig:av_matriz} e o nome habitual deste quadro é \textbf{matriz de c
   mau/.style={cel, fill=orange!13},
   rot/.style={font=\footnotesize\bfseries, text=black!65},
 ]
-  % ⚠️ Posições ABSOLUTAS, e não `right=0mm of`. Duas das células têm uma linha de texto a mais
+  % ️ Posições ABSOLUTAS, e não `right=0mm of`. Duas das células têm uma linha de texto a mais
   % (o "(alarme falso)" e o "(escapou)"), portanto crescem em altura; posicionadas umas em
   % relação às outras, a grelha partia-se e as quatro caixas saíam desencontradas. Numa figura
   % que existe para ensinar um 2x2, isso desfaz o próprio argumento. Só se vê a renderizar.
@@ -75,7 +75,7 @@ Figura~\ref{fig:av_matriz} e o nome habitual deste quadro é \textbf{matriz de c
 
   \node[rot, above=2mm of vp] {a realidade: invulgar};
   \node[rot, above=2mm of fp] {a realidade: banal};
-  % ⚠️ Horizontais, e não rodadas: um rótulo rodado é mais alto do que a linha que legenda,
+  % ️ Horizontais, e não rodadas: um rótulo rodado é mais alto do que a linha que legenda,
   % e as duas versões anteriores escreviam-se uma por cima da outra.
   \node[rot, left=2mm of vp, align=right] {o sistema\\ \emph{assinala}};
   \node[rot, left=2mm of fn, align=right] {o sistema\\ \emph{cala-se}};
@@ -414,6 +414,13 @@ fixo acompanham a volatilidade de cada ação; as do \emph{z}-score mantêm-se q
 
 Contra o rótulo aproximado, o \emph{z}-score obtém $F_1 = 0.516$ contra $0.218$ do limiar fixo.
 
+Uma ressalva sobre esta comparação: a janela do \emph{z}-score é variada mais abaixo, e o limiar
+de $3\%$ da regra fixa \textbf{não é}. É o valor convencional e não foi otimizado. Um limiar mais
+alto subir-lhe-ia a precisão à custa da cobertura, e não é evidente em que ponto o $F_1$ ficaria;
+o que a comparação mostra com segurança não é que nenhum limiar fixo consegue melhor, é que um
+limiar fixo mede a coisa errada, porque a mesma percentagem significa coisas diferentes em
+empresas diferentes. Esse argumento não depende do valor escolhido.
+
 \paragraph{Uma nota sobre o padrão de evidência desta secção, e é uma nota contra mim.}
 Os números desta pergunta e da seguinte são pontos, sem intervalo. Os da
 Secção~\ref{sec:av_qi3}, que é onde está o resultado que me contraria, levam reamostragem por
@@ -521,7 +528,10 @@ restrição dominante.
 \subsection{O que isto não permite concluir}
 
 O rótulo é aproximado e relativo à volatilidade, e por isso o argumento de peso é o da consistência,
-que não usa rótulo nenhum. E a comparação foi feita sobre estas quinze empresas e este período; nada
+que não usa rótulo nenhum. E as quinze são todas de grande capitalização e foram escolhidas em
+$2026$, com a avaliação a correr para trás até $2018$: sobreviveram por construção, e nenhuma delas
+saiu de bolsa, foi absorvida ou desapareceu da lista. O que se mede é portanto o comportamento do
+método em empresas que duraram, e não na população de que elas foram tiradas. E a comparação foi feita sobre estas quinze empresas e este período; nada
 aqui diz o que aconteceria noutro mercado ou noutra década.
 
 \section{A técnica sem pergunta: porque é que a decomposição não tem QI}
@@ -555,8 +565,12 @@ teve mediana $0.487$, com extremos em $0.064$ e $0.939$. A repartição responde
 empresas diferentes no mesmo dia, que é a condição mínima para valer a pena calculá-la.
 
 \paragraph{Segunda: os betas estão bem estimados?}
-Esta é a parte que pode mesmo estar errada, e a medida apropriada é o $R^2$ do ajuste na janela de
-estimação, cuja mediana foi $0.460$. \textbf{Numa dessas dezassete empresas foi negativo}, o que significa que,
+Esta é a parte que pode mesmo estar errada, e a medida apropriada é o $R^2$ na janela de
+estimação, cuja mediana foi $0.460$. Convém dizer de que $R^2$ se trata, porque não é o do
+ajuste por mínimos quadrados: esse, calculado dentro da amostra e com termo constante, nunca
+poderia ser negativo. O que se reporta é o $R^2$ do \textbf{modelo efetivamente usado}, ou seja com
+os betas já encolhidos e o termo constante recentrado para eles. É exatamente por isso que ele pode
+ser negativo, e é a medida certa a olhar, porque é esse o modelo cuja repartição aparece no ecrã. \textbf{Numa dessas dezassete empresas foi negativo}, o que significa que,
 naquela janela, mercado e setor não explicavam a variação daquela ação melhor do que a sua própria
 média, e portanto que a repartição desse dia se apoia num ajuste que não descreve os dados.
 
@@ -784,7 +798,12 @@ Compararam-se seis modelos, do mais simples ao mais completo. A métrica princip
 Dois cuidados de montagem, ambos para que a comparação não favoreça a conclusão que se acabou por
 obter. Primeiro, um dos seis modelos é um conjunto de árvores treinado por reforço do gradiente
 \autocite{friedman2001gbm}, incluído por ser o mais expressivo dos seis: capta interações e efeitos
-não lineares entre as variáveis que a regressão logística, por construção, não capta. Serve de teto,
+não lineares entre as variáveis que a regressão logística, por construção, não capta.
+Com uma ressalva que enfraquece a palavra \emph{teto} e que é preciso dar: correu com os
+parâmetros por defeito da biblioteca, sem qualquer procura de hiperparâmetros. Um modelo de
+árvores por afinar não é o melhor que essa família consegue, portanto a sua derrota limita o que
+se pode concluir: mostra que o texto não aparece \emph{nesta} montagem, e não que não apareceria
+num modelo não linear bem afinado. Serve de teto,
 e se o texto tivesse sinal a extrair era ali que teria mais hipóteses de aparecer. Convém enunciar o
 alcance exato desta garantia: mostra que \emph{nenhum dos seis} modelos comparados extraiu sinal do
 texto, e não que nenhum modelo o conseguiria. Um método mais recente, ou o corpo dos artigos em vez
@@ -921,6 +940,14 @@ de ordenação do modelo, a \textbf{\gls{ROCAUC}}, fica em $0.486$ com um interv
 $95\%$ de $[0.403, 0.571]$. Nesta medida o acaso vale exatamente $0.5$, portanto o intervalo
 contém-no confortavelmente. A leitura correta não é que o modelo seja pior do que
 nada, mas que \textbf{esta amostra não distingue o modelo do acaso}.
+
+\paragraph{E duas das doze empresas vigiadas não estão no corpus de treino.}
+O mapa canónico do material histórico tem quinze nomes e o treino cobre catorze; a lista que o
+produto vigia tem doze, e duas delas nunca apareceram em nenhum exemplo de treino. O modelo
+pontua-as na mesma, porque o que ele recebe são valores numéricos e não a identidade da empresa,
+mas fá-lo sobre uma combinação de entradas que não viu. É um segundo sentido, mais literal, em que
+o modelo implantado corre fora da distribuição em que foi avaliado, e as decisões dessas duas
+empresas entram nas $825$ acima como quaisquer outras.
 
 Esta medição foi refeita a 20 de agosto de 2026, quando o registo já tinha $825$ decisões
 maturadas contra as $530$ de que dispunha a primeira leitura. Vale a pena dizer o que mudou,
@@ -1540,6 +1567,15 @@ texto acrescenta} ao que o modelo já sabe da empresa: $+0.012$, IC $[+0.004, +0
 \bottomrule
 \end{tabular}
 \end{table}
+
+\paragraph{E um critério que este capítulo usa e nunca tinha enunciado.}
+Vão aparecer diferenças pequenas lidas de maneiras diferentes, e convém dizer a regra antes de
+elas surgirem em vez de a deixar adivinhar. Uma diferença de PR-AUC \textbf{abaixo de $0.02$} é
+tratada aqui como indistinguível para efeitos práticos, mesmo quando o intervalo emparelhado
+exclui zero. É por isso que o $+0.012$ do texto sobre a tabela de consulta é reportado como real
+e ao mesmo tempo como incapaz de reabrir o veredicto, e que o $0.004$ entre a tabela de consulta
+e o modelo implantado não sustenta escolher um em vez do outro. O limite é meu e é arbitrário;
+o que não pode ser arbitrário é aplicá-lo nos dois sentidos, e é para isso que fica escrito.
 
 A Tabela~\ref{tab:av_resumo} junta as três. Duas das respostas são afirmativas e uma é negativa. A negativa é a que eu mais aprendi a
 defender: mostra que a avaliação foi montada para poder dizer que não, e uma avaliação que só sabe

@@ -219,6 +219,11 @@ Tabela~\ref{tab:met_periodos} diz o intervalo \textbf{lido dos próprios ficheir
 dois conjuntos que é fácil confundir: o material \emph{histórico}, com que se treina e avalia, e o
 registo do sistema \emph{a funcionar}, que é muito mais recente e muito mais curto.
 
+Uma nota que parece técnica e não é: todos os preços usados são \textbf{fechos ajustados} para
+desdobramentos e dividendos. Não é um pormenor nesta janela, que contém o desdobramento de quatro
+para um da Apple e dois da Tesla: sem ajuste, a série mostraria quedas de trinta a oitenta por
+cento em dias em que não aconteceu nada, e o detetor assinalaria todas com convicção.
+
 \begin{table}[ht]
 \caption[O intervalo real de cada conjunto de dados]{Cada conjunto usado, com o intervalo e a
 dimensão medidos no ficheiro. As três últimas linhas são o sistema em operação, e a diferença de
@@ -231,7 +236,7 @@ escala em relação às primeiras é ela própria uma informação.}
 \tabhead{Conjunto} & \tabhead{Intervalo} & \tabhead{Dimensão} \\
 \midrule
 \multicolumn{3}{l}{\textbf{Histórico: com que se treina e avalia}} \\
-Conjunto de treino da triagem & 2018-01-02 a 2023-12-18 & $79\,753$ exemplos \\
+Conjunto de treino da triagem & 2018-01-02 a 2023-12-18 & $79\,753$ exemplos, 14 empresas \\
 Preços para a deteção & 2023-06-01 a 2026-06-01 & 15 empresas, $\approx 750$ dias cada \\
 \midrule
 \multicolumn{3}{l}{\textbf{Operação: o sistema a funcionar}} \\
@@ -1108,6 +1113,13 @@ Neste trabalho os dois valores aprendidos foram $a = 3.700$ e $b = -2.313$. O si
 diz o essencial: o modelo, deixado por sua conta, era \textbf{demasiado otimista}, e a calibração
 existe para o puxar para baixo. A Figura~\ref{fig:met_platt} desenha a curva.
 
+Convém acrescentar de onde vem parte desse otimismo, porque não é uma propriedade do modelo, é uma
+escolha minha. O treino \textbf{repondera as classes} para compensar o desequilíbrio entre elas, e
+numa tarefa em que os positivos são pouco mais de um terço isso empurra as pontuações para cima por
+construção. A calibração está portanto, em parte, a desfazer uma decisão tomada um passo antes. Não
+invalida nada, porque o que sai é ajustado contra o que realmente aconteceu num bloco reservado,
+mas explica a magnitude do $b$ melhor do que dizer que o modelo era otimista.
+
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[font=\small, >={Stealth[length=2.2mm]}, x=6.4cm, y=4.2cm]
@@ -1382,7 +1394,10 @@ Capítulo~\ref{cap:conclusoes} deixa em aberto.
 \paragraph{Fadiga de alertas, e o direito a não ser interrompido.} Um sistema que avisa de tudo
 não é atento, é ruidoso, e ensina quem o recebe a ignorá-lo. Isto trata-se como um requisito e não
 como um detalhe: existe um orçamento de cinco alertas por dia entre todas as empresas, um piso que
-sobe a cada alerta repetido da mesma empresa, e supressão de histórias repetidas. O
+sobe a cada alerta repetido da mesma empresa, e supressão de histórias repetidas. Ao contrário dos
+pisos, que saem de um varrimento de custos, \textbf{o cinco não foi derivado de medição nenhuma}:
+é uma escolha, feita para que uma pessoa consiga ler tudo o que recebe, e a
+Secção~\ref{sec:av_qi3} avalia a política \emph{dado} esse orçamento em vez de o justificar. O
 Capítulo~\ref{cap:sistema} mostra o funil completo, e nove em cada dez varreduras não enviam nada.
 O silêncio é uma decisão do sistema, e é por isso que a página web o torna inspecionável.
 
