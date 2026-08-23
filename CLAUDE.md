@@ -72,6 +72,9 @@
   betas de Vasicek era **computacionalmente inviável** (não era, e a razão verdadeira da tese
   aguenta-se melhor), e invocar **Hevner / Design Science Research**, que a tese **não usa em lado
   nenhum** — convidaria a pergunta *"onde está isso escrito?"*.
+  **✅ (H) O ALUNO CONFIRMOU AS RECUSAS DE (F)**, portanto deixam de ser julgamento meu e passam a
+  ser decisão dele: a §5.2, a §2.4, o tom da §6.6 e o excerto anti-lookahead **ficam como estão**.
+  Uma sessão futura que receba a mesma crítica não tem de voltar a discuti-las.
 - **🆕 SESSÃO 61 — 9.ª parte (2026-08-22): O ARGUENTE HOSTIL, QUE NUNCA TINHA CORRIDO. Dezanove
   ressalvas novas na tese, e a mais forte reduz o resultado positivo mais citado do trabalho.**
   **⚠️ (A) MUDEI O DESENHO DO MÉTODO, E FOI ISSO QUE FEZ A DIFERENÇA.** Em doze corridas deste
