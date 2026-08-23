@@ -1,7 +1,3 @@
-{"date": "2026-08-21", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-08-21", "ticker": "MSFT", "stage": "alerted", "detail": "Comparative Study: Microsoft And Industry Competitors In Software Industry"}
-{"date": "2026-08-21", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-08-21", "ticker": "TSLA", "stage": "alerted", "detail": "EXCLUSIVE: Nvidia Partner Says Tesla, Waymo Are Growing the Physical AI Market —"}
 {"date": "2026-08-21", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon Prime Video Plans To Invest $2B In Latin America From 2027 Through 2030"}
 {"date": "2026-08-21", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-21", "ticker": "META", "stage": "alerted", "detail": "Win or lose, Meta still faces real risks in its social media addiction trial"}
@@ -19984,6 +19980,18 @@
 {"date": "2026-08-23", "ticker": "TSLA", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-23", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-23", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-23", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-23", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-23", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-23", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-23", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-23", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-23", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-23", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-23", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-23", "ticker": "TSLA", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-23", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-23", "ticker": "GOOGL", "stage": "already_sent", "detail": "same headline already delivered today"}
 {"date": "2026-08-23", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-23", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-23", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
