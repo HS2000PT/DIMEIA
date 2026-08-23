@@ -45,6 +45,33 @@
   **A LEITURA QUE INTERESSA PARA A DEFESA:** um arguente hostil externo, a correr sem conhecer o
   histórico, produziu dez perguntas e **oito já tinham resposta escrita em parágrafos que existem
   para as antecipar**. É o argumento mais forte a fazer no dia.
+  **⚠️ (E) SEGUNDA CRÍTICA DA MESMA FERRAMENTA, no mesmo dia: DEZ EM DEZ já estavam na tese.**
+  Verifiquei os que eram novos face à primeira: o proxy de setor (§5.5 já faz **exactamente** o que
+  ele recomenda, o chão de 0.467 e o método a ganhar nos cinco setores); o **teste ter mais
+  exemplos do que o treino** (§3.7.4 tem parágrafo intitulado *"E há aqui um número que surpreende"*
+  com 32 649 contra 28 574, a causa da densidade e os dois lados — a "ação recomendada" dele é
+  palavra por palavra o que a tese escreve); o EWMA (§5.3.4, declarado como escolha e não
+  resultado); e a latência (§6.4 decompõe-na, e o Cap. 1 nunca promete velocidade).
+  **✅ O QUE ELE ACERTOU, e foi feito: §A.5 NOVA.** O Cap. 6 dizia *"o mesmo protocolo já montado"*
+  e o leitor **não o podia ver**, numa tese cuja regra é que o que não se confere não vale nada. O
+  protocolo estava inteiro em `docs/study/` e nunca chegara ao documento. A secção descreve as duas
+  condições sobre seis alertas reais, o **contrabalanço cruzado em dois factores** com a razão que
+  só apareceu ao prepará-lo, a pergunta H5 (a travessia frase→facto nunca foi feita por um humano),
+  e as **duas salvaguardas contra o próprio autor** (o limiar de oito fixado no código antes de
+  haver dados; o procedimento que responde *"está vazia"* em vez de inventar). Converte a maior
+  fraqueza em evidência de rigor.
+  **⚠️ (F) MAS SEGUIR OS CONSELHOS EDITORIAIS DELE PIORARIA A TESE, e isso fica escrito para não
+  se repetir:** mandava **encurtar a §5.2** (*"o júri já sabe o que é F1"*), que existe porque o
+  capítulo dizia `F1 = 0.530` sem mostrar de onde vinha; **remover a §2.4**, que é onde está a
+  resposta a *"onde está a IA?"*; **passar a §6.6 a tom formal**, que é a lente de registo que a
+  9.ª parte já correu e **refutou 43 de 57**; e mover o excerto anti-lookahead para o apêndice,
+  quando ele está no corpo por decisão (é onde a garantia é feita, e o repositório não é
+  inspeccionado). **E as duas rondas contradizem-se:** a primeira exigia *mais* detalhe sobre a
+  falha do Heroku, a segunda manda encurtá-la.
+  **⚠️ (G) DUAS ARMADILHAS NAS RESPOSTAS QUE ELE SUGERIA PARA A DEFESA:** dizer que refazer os
+  betas de Vasicek era **computacionalmente inviável** (não era, e a razão verdadeira da tese
+  aguenta-se melhor), e invocar **Hevner / Design Science Research**, que a tese **não usa em lado
+  nenhum** — convidaria a pergunta *"onde está isso escrito?"*.
 - **🆕 SESSÃO 61 — 9.ª parte (2026-08-22): O ARGUENTE HOSTIL, QUE NUNCA TINHA CORRIDO. Dezanove
   ressalvas novas na tese, e a mais forte reduz o resultado positivo mais citado do trabalho.**
   **⚠️ (A) MUDEI O DESENHO DO MÉTODO, E FOI ISSO QUE FEZ A DIFERENÇA.** Em doze corridas deste
