@@ -52,7 +52,8 @@ script escreveu. Verifiquei isto exaustivamente — **os 3 dígitos decimais do 
 |---|---|---|---|---|---|---|
 | P@5 semântica (MiniLM) | **0,514 ± 0,015** | 3.714 títulos | dos 5 vizinhos, quantos do mesmo setor; empresa própria **excluída**; média de 5 sementes | `retrieval_eval.py:33` | `data/finnhub_news.csv` | §5.3 |
 | P@5 lexical | **0,346** | idem | mesma fórmula, embedder de sobreposição de palavras | `retrieval_eval.py:33` | idem | §5.3 |
-| P@5 acaso | **0,240** | idem | taxa-base do setor | `retrieval_eval.py:58` | idem | §5.3 |
+| P@5 acaso | **0,240** | idem | taxa-base do setor, medida por consulta | `retrieval_eval.py:58` | idem | §5.3 |
+| **P@5 sempre o setor maior** | **0,467** | idem | ⚠️ **o chão que interessa**: 1736/3714 do corpus é tecnologia, logo *devolver sempre tecnologia* vale a fração de consultas que são de tecnologia | fração, não medição | `evaluation_results.md` | §5.3 |
 | P@5 recência | **0,126** | idem | k mais recentes | `retrieval_eval.py:80` | idem | §5.3 |
 | P@5 à escala | **0,595** | 80k títulos | mesmo protocolo | `evaluate_retrieval_fnspid.py` | FNSPID | §5.3 |
 | Corpus: nº de títulos | **3.714** | Finnhub company-news | `count()` após filtro de setor conhecido | `evaluate.py:73-79` | `finnhub_news.csv` | §3.2.3 |

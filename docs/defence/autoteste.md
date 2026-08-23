@@ -110,7 +110,10 @@ muito diferente.
 **🔴 11. Recuperação: o número principal e as suas linhas de base.**
 <details><summary>resposta</summary>
 
-P@5 = **0,514** (MiniLM), contra **0,346** lexical, **0,240** aleatório e **0,126** recência. E
+P@5 = **0,514** (MiniLM), contra **0,346** lexical, **0,240** aleatório e **0,126** recência.
+⚠️ **E contra o chão que interessa: 0,467**, que é *devolver sempre tecnologia* (metade do corpus).
+A margem real é **+0,047**; a afirmação que se aguenta é a de **dentro de cada setor**, onde o
+método ganha nos cinco. E
 **validado à escala: 0,595** em 80 mil títulos do FNSPID.
 </details>
 

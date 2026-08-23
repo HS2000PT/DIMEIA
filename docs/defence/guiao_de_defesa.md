@@ -38,7 +38,7 @@ fraqueza.
 | **F1 0.516 vs 0.218** | z-score vs limiar fixo, contra proxy de movimentos extremos | "Mais do dobro; mas é evidência de APOIO, porque o rótulo é relativo à volatilidade." |
 | **F1 0.271 vs 0.530** | Isolation Forest vs z-score, mesma informação causal | "Dei ao modelo aprendido a MESMA informação e perdeu. 1.º teste justo." |
 | **F1 0.664 vs 0.516** | EWMA vs volatilidade deslizante | "A EWMA melhora — reporto-o. Mantenho a deslizante por ser explicável numa frase; o ganho fica como futuro VALIDADO." |
-| **P@5 0.514 (±0.015)** | Recuperação SBERT-MiniLM, cross-ticker (corpus preliminar) | "~2,1× a base aleatória (0.240), acima da lexical (0.346). E **validado à escala: 0,595 em 80k**." |
+| **P@5 0.514 (±0.015)** | Recuperação SBERT-MiniLM, cross-ticker (corpus preliminar) | ⚠️ **NÃO dizer "2,1× o acaso".** O chão certo não é o 0,240: metade do corpus é tecnologia, e *devolver sempre tecnologia* vale **0,467** sem modelo nenhum. Dizer: "contra o chão trivial certo a margem é **+0,047**; mas essa alternativa acerta em tudo num setor e em **nada** nos outros quatro. **Dentro** de cada setor o método ganha nos cinco: 0,448 na energia contra um chão de 0,072. E valida à escala, 0,595 em 80k." |
 | **+0.377 / +0.348 / +0.100** | Lift energia / saúde / consumo | "O motor vale mais onde o vocabulário é distintivo; menos no consumo, genérico." |
 | **z = +7.61** | Tesla, 24 Out 2024, pós-resultados | "Exemplo real: μ=−0.92%, σ=2.72%, r=+19.8% → z=+7.61. A mesma regra que ignora ±2% apanha isto." |
 | **0.542 / 0.538 / 0.496** | PR-AUC triagem: volatilidade / contexto / contexto+texto | "O TEXTO não ajuda; o sinal vive no contexto de mercado. 2.º teste justo — e **robusto** (re-teste justo com PCA/FinBERT nunca bate a volatilidade)." |
@@ -84,6 +84,7 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 > uma Isolation Forest com a mesma informação — a transparente ganhou."
 
 **RQ2 (precedentes análogos, sem lookahead) — SIM, validada à escala.**
+> ⚠️ *Frase revista a 2026-08-22: ver a linha da P@5 na tabela acima. O chão a citar é o 0,467.*
 > "A recuperação semântica bate todas as linhas de base (P@5 0.514 vs 0.346 lexical, 0.240
 > aleatório), e **validei-a à escala** no FNSPID multi-ano: **P@5 0,595 em ~80k títulos**, acima do
 > preliminar. O impacto é medido ESTRITAMENTE após o evento — evidência observada, nunca previsão.

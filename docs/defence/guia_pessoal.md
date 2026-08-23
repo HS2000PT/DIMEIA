@@ -180,7 +180,9 @@ re-treino, não um re-treino.
   Forest **0,269** vs LOF **0,280**.
 
 ### RQ2 — recuperar casos análogos · **SIM**
-- P@5 **0,514** vs 0,346 (lexical), 0,240 (acaso), 0,126 (recência). À escala: **0,595** em 80k.
+- P@5 **0,514** vs **0,467** (*sempre tecnologia*, o chão certo), 0,346 (lexical), 0,240 (acaso
+  uniforme). À escala: **0,595** em 80k. ⚠️ A margem sobre o chão certo é **+0,047**, e a
+  afirmação forte é **por setor**: ganha nos cinco, 0,448 na energia contra 0,072.
 - *Como se calcula:* dos 5 vizinhos mais próximos, quantos são do mesmo setor da consulta? Com
   a **própria empresa excluída** — não posso ganhar a acertar em mim mesmo.
 - **⚠️ O que NÃO posso dizer:** que são "precedentes". Naquele corpus de 27 dias, só **31,1%**

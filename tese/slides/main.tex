@@ -293,17 +293,22 @@ $F_1$ $\mathbf{0.530}$ contra $0.269$ e $0.280$.
 \textbf{método} & \textbf{precisão@5} \\
 \midrule
 \textbf{Por significado (o método)} & $\mathbf{0.514}$ \\
+Sempre o setor maior & $0.467$ \\
 Por palavras em comum & $0.346$ \\
 Ao acaso (o chão) & $0.240$ \\
 As mais recentes & $0.126$ \\
 \bottomrule
 \end{tabular}
-\vspace{4mm}
+\vspace{2mm}
 
 \begin{itemize}
   \small
-  \item Sobre o corpus completo (80 mil notícias): \textbf{0.595}
-  \item \textbf{Capta tema, não direção}, e é por isso que os casos aparecem um a um
+  \item Metade do corpus é tecnologia: \textbf{devolver sempre tecnologia} vale $0.467$
+        sem modelo nenhum. A margem real é $+0.047$, e não $+0.274$.
+  \item \textbf{Mas essa alternativa acerta em tudo num setor e em nada nos outros quatro.}
+        Dentro de cada setor o método ganha nos \textbf{cinco}: $0.448$ na energia, com chão $0.072$.
+  \item Sobre o corpus completo (80 mil notícias): \textbf{0.595}. E \textbf{capta tema, não
+        direção}, que é porque os casos aparecem um a um.
 \end{itemize}
 \end{frame}
 
