@@ -173,6 +173,15 @@ MiniLM (~0,51), não o superam. Ou seja, a escolha do MiniLM está validada por 
 conveniência: um modelo pequeno, gratuito e de 2021 continua no sweet spot para esta tarefa — e agora
 tenho o número para o dizer, em vez de o argumentar."*
 
+⚠️ **Se insistirem no FinBERT ("mas devia ganhar"), a resposta forte é ESTREITAR, não defender:**
+*"O que medi foi o FinBERT com média dos seus vetores a servir de vetor de frase, que é a única
+forma de o usar sem o treinar outra vez. Ele é afinado para classificação de sentimento, não para
+pôr frases num espaço onde a distância signifique semelhança — e é precisamente esse objetivo de
+treino que o Sentence-BERT acrescenta. Portanto o que mostro é que **este** modelo de domínio,
+usado **desta** forma, perde. Não mostro que conhecimento de domínio não sirva: para isso teria de
+afinar um encoder financeiro com um objetivo de similaridade e voltar a medir, e não o fiz."*
+(Está na tese, §5.7, e no Cap. 2 na explicação do que o Sentence-BERT acrescenta.)
+
 ---
 
 ## 5. Proxy de setor — "relevância a fingir"

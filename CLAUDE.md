@@ -7,6 +7,44 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 61 — 10.ª parte (2026-08-23): UMA CRÍTICA DE JÚRI TRAZIDA DE FORA, VERIFICADA UMA A
+  UMA. Dez acusações, OITO já estavam escritas na tese, e uma era real.**
+  O aluno colou uma análise crítica produzida por outra ferramenta (dez problemas classificados, um
+  plano de correção e dez perguntas de defesa). **Não a aceitei de fio a pavio: fui ver cada uma
+  contra os ficheiros**, e o resultado é o melhor sinal que este trabalho teve até agora.
+  **⚠️ (A) OITO DAS DEZ SÃO A PRÓPRIA TESE, PARAFRASEADA.** A tabela de consulta está em §5.6.7–5.6.9
+  com a ablação e o preço da escolha; o **limite superior** da precisão@orçamento está em §5.6.11 a
+  negrito, e a acusação era precisamente de *falta de honestidade* nesse ponto; o desfasamento do
+  `ret_event` está em §5.6.7 e a tese é **mais honesta do que a crítica** (diz que não consegue
+  separá-lo da redundância); o beta de 1 tem parágrafo próprio em §3.7.2 com o mesmo argumento; a
+  sobrevivência está em §5.3.5; a multi-contagem de precedentes está em §4.7 e §6.4 **e já corrigida
+  no código** (o alerta conta dias, `explainer.py:318`); o Heroku em §4.8; e o estudo com pessoas é
+  declarado como a única linha em aberto. **A crítica também estava desatualizada quanto ao produto:**
+  o modelo **já não veta**, e o `config/alerts.yaml:56` di-lo em comentário.
+  **⚠️ (B) A QUE ERA REAL: O FINBERT PERDIA E A TESE NUNCA DIZIA PORQUÊ.** §5.7 reportava `0.420`
+  contra `0.514` e ficava-se por aí. A explicação **existia em dois sítios e não no documento** — no
+  `evaluation_retrieval_embedders.md` (*"afinado para sentimento, não para similaridade"*) e no
+  `simulacro_defesa.md`. É a mesma classe do raciocínio que fica no gerador e não chega à tese.
+  **E a medição diz mais do que a tese afirmava:** o script embebe o FinBERT por **mean-pooling**
+  (`evaluate_retrieval_embedders.py:55`), que é exactamente a configuração que Reimers e Gurevych
+  reportam como fraca. Duas adições sem números novos: **§2.3** passa a dizer que o que o
+  Sentence-BERT acrescenta é um **objetivo de treino** e não só a arquitectura; **§5.7** explica a
+  derrota e **estreita a afirmação** — o que se mostra é que *este* modelo de domínio, usado *desta*
+  forma, perde, e não que conhecimento de domínio não sirva. O `simulacro_defesa.md` ganhou a mesma
+  resposta estreitada.
+  **(C) A LEGAL FICOU COMO ESTAVA, e de propósito.** A crítica aconselhava *"GPL v3 ou CC BY-SA 4.0"*
+  para o código. A obrigação de partilha nos mesmos termos do FNSPID prende-se aos **ficheiros
+  derivados** e não determina por si a licença do código, que é o que o apêndice A.4 já diz. Mexer
+  seria inventar direito sem parecer, que é o erro que a 9.ª parte tinha acabado de recusar.
+  **⚠️ (D) E A ARMADILHA DO `-qq` MORDEU-ME OUTRA VEZ** (documentada na sessão 57): o `addopts` do
+  `pyproject` já traz `-q`, o meu segundo `-q` fez `-qq`, e o pytest **suprime a linha de resumo** —
+  a suite sai a zero e não diz quantos testes correram.
+  **PORTAS: tese 135 pp, 0 erros, 0 referências indefinidas, 0 overfull, `check_entrega.py` a zero
+  (11 verificadores), ruff limpo. Zero ficheiros Python tocados** (diff: 8 linhas no `cap2`, 15 no
+  `cap5`, um bloco no `simulacro_defesa.md`).
+  **A LEITURA QUE INTERESSA PARA A DEFESA:** um arguente hostil externo, a correr sem conhecer o
+  histórico, produziu dez perguntas e **oito já tinham resposta escrita em parágrafos que existem
+  para as antecipar**. É o argumento mais forte a fazer no dia.
 - **🆕 SESSÃO 61 — 9.ª parte (2026-08-22): O ARGUENTE HOSTIL, QUE NUNCA TINHA CORRIDO. Dezanove
   ressalvas novas na tese, e a mais forte reduz o resultado positivo mais citado do trabalho.**
   **⚠️ (A) MUDEI O DESENHO DO MÉTODO, E FOI ISSO QUE FEZ A DIFERENÇA.** Em doze corridas deste
@@ -770,8 +808,8 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 61 (9.ª parte — o arguente hostil, o registo académico, o guia de construção)
-- **Última atualização:** 2026-08-22
+- **Sessão nº:** 61 (10.ª parte — a crítica de júri externa, verificada uma a uma)
+- **Última atualização:** 2026-08-23
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
   ter calma nas estatísticas, mostrando cada salto até ao valor final):**

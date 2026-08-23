@@ -1440,6 +1440,21 @@ O modelo medido foi o FinBERT de \textcite{araci2019finbert}, e obteve $0.420$ c
 $0.514$ de um modelo genérico e pequeno. Se eu o tivesse adotado por ser o
 óbvio, o sistema ficava pior e eu nunca saberia.
 
+\paragraph{E vale a pena dizer porque é que perdeu, porque a razão é de método e não de domínio.}
+O que foi medido foi o FinBERT com a \textbf{média dos seus vetores} a servir de vetor de frase, que
+é a única forma de o usar nesta tarefa sem o treinar de novo. Ora o FinBERT é um codificador afinado
+para \textbf{classificação de sentimento}, e não para colocar frases num espaço onde a distância
+signifique semelhança. Como a Secção~\ref{sec:ctx_texto} mostrou, é precisamente esse objetivo de
+treino que o Sentence-BERT acrescenta, e sem ele um codificador desta família produz vetores fracos
+para comparar frases \autocite{reimers2019sbert}. O modelo sabe mais de finanças e menos de
+\emph{distâncias}, e a tarefa aqui é uma tarefa de distâncias.
+
+Isto \textbf{estreita} a afirmação em vez de a reforçar, e é assim que fica escrita. O que a medição
+mostra é que \emph{este} modelo de domínio, usado \emph{desta} forma, perde para um modelo genérico
+treinado para similaridade. Não mostra que conhecimento de domínio não sirva para nada. Pô-lo à
+prova a sério exigiria afinar um codificador financeiro com um objetivo de similaridade de frases e
+voltar a medir, o que não foi feito e fica como trabalho por fazer.
+
 \paragraph{A janela de 20 dias é a linha desta tabela que mais me custou deixar escrita.}
 É uma das três em que o sistema não usa o que a medição favorece, e a mais difícil de justificar. A ablação diz que uma janela de 60 dias obtém $F_1 = 0.678$
 contra os $0.516$ da janela de 20. Se o critério fosse este número, o sistema devia usar 60.

@@ -358,6 +358,14 @@ resolve isso ao produzir um vetor por frase, calculado uma única vez, de modo q
 a ser uma operação aritmética entre vetores já existentes. É esta a representação que este trabalho
 usa, e a razão da escolha é tanto de qualidade como de arquitetura.
 
+Convém reter uma parte da contribuição do Sentence-BERT que não é a arquitetura, porque ela volta a
+ser precisa no Capítulo~\ref{cap:avaliacao}. O que esse trabalho acrescenta é um \textbf{objetivo de
+treino}: os vetores são aprendidos de maneira a que a distância entre dois deles signifique
+semelhança de sentido. Os autores reportam que um codificador da família BERT usado diretamente para
+comparar frases produz representações fracas para esse fim, ficando por vezes atrás da simples média
+de vetores de palavra \autocite{reimers2019sbert}. A consequência é que um codificador afinado para
+outra tarefa qualquer não herda esta propriedade só por ter sido treinado no domínio certo.
+
 \begin{table}[ht]
 \caption[Abordagens de representação de texto]{As opções consideradas para representar notícias
 financeiras, e o que cada uma implica.}
