@@ -17799,7 +17799,7 @@
 {"date": "2026-08-24", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-24", "ticker": "TSLA", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-24", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-08-24", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-24", "ticker": "GOOGL", "stage": "stale", "detail": "mais recente 2026-08-21 > 2d"}
 {"date": "2026-08-24", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-24", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-24", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
