@@ -15479,7 +15479,7 @@
 {"date": "2026-08-25", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-25", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-25", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-08-25", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-25", "ticker": "MSFT", "stage": "already_sent", "detail": "same headline already delivered today"}
 {"date": "2026-08-25", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-25", "ticker": "TSLA", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-25", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
