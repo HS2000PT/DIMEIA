@@ -173,8 +173,13 @@ falta de pensamento.
   abre no facto que a sustenta está verificada por máquina e **nunca por uma pessoa**. Se ninguém
   conseguir fazer essa travessia, a contribuição é verdadeira e inútil.
 
-**⚠️ A armadilha:** invocar **Hevner** ou **Design Science Research** para justificar a divisão em
-fases. A tese não os usa em lado nenhum, e a pergunta seguinte é *"onde está isso escrito?"*.
+**✅ E aqui podes invocar o enquadramento, porque ele está no documento.** A **§3.1** declara que
+este trabalho pertence à investigação por desenho, citando \[Hevner 2004\] e \[Peffers 2007\], e
+diz que a avaliação de um artefacto tem de ser rigorosa e é atividade central do processo. Podes
+dizer: *"o meu enquadramento é o da investigação por desenho, e ele exige avaliação rigorosa do
+artefacto; cumpri-a na parte técnica e declaro por medir a parte de utilidade."* Não uses isto para
+sugerir que a avaliação humana é opcional — o próprio enquadramento pede demonstração de utilidade,
+e é por isso que o objetivo está dito como cumprido **por metade**.
 
 ---
 
@@ -310,7 +315,7 @@ do que qualquer arquitetura.
 - ❌ **"a minha RQ3 é sobre as explicações"** — na tese curta a QI3 é a **triagem**.
 - ❌ **"era computacionalmente inviável"** sobre os betas de Vasicek — não era. A razão verdadeira é
   que obrigaria a retreinar as seis famílias para chegar à mesma conclusão com outro número.
-- ❌ **Hevner / Design Science Research** — a tese não os usa.
+- ✅ **Hevner / Design Science Research** — **podes** usá-los: a §3.1 cita os dois. (Correcção a 2026-08-26: eu tinha dito o contrário, e estava enganado.)
 
 **As três frases com que abres, se te esqueceres de tudo o resto:**
 

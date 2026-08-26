@@ -70,8 +70,13 @@
   falha do Heroku, a segunda manda encurtá-la.
   **⚠️ (G) DUAS ARMADILHAS NAS RESPOSTAS QUE ELE SUGERIA PARA A DEFESA:** dizer que refazer os
   betas de Vasicek era **computacionalmente inviável** (não era, e a razão verdadeira da tese
-  aguenta-se melhor), e invocar **Hevner / Design Science Research**, que a tese **não usa em lado
-  nenhum** — convidaria a pergunta *"onde está isso escrito?"*.
+  aguenta-se melhor).
+  **⚠️ CORRECÇÃO A 2026-08-26, e o erro foi meu:** escrevi aqui que invocar **Hevner / Design
+  Science Research** era armadilha porque *"a tese não os usa em lado nenhum"*. **É FALSO.** A
+  **§3.1 cita `hevner2004design` e `peffers2007dsrm`** e declara o trabalho como investigação por
+  desenho. O meu grep procurou a palavra *"Hevner"* e a prosa está em português (*"investigação por
+  desenho"*), logo o nome só existe como chave do `.bib`. **Procurar a chave de citação, e não o
+  apelido** — é a mesma classe do grep que procura o número e não a afirmação (armadilha (c)).
   **✅ (H) O ALUNO CONFIRMOU AS RECUSAS DE (F)**, portanto deixam de ser julgamento meu e passam a
   ser decisão dele: a §5.2, a §2.4, o tom da §6.6 e o excerto anti-lookahead **ficam como estão**.
   Uma sessão futura que receba a mesma crítica não tem de voltar a discuti-las.
