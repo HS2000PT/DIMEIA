@@ -4,6 +4,11 @@
 > tese curta em português (`tese/`), que tem **três QI** e não quatro RQ, e onde alguns
 > números foram corrigidos. Lê o [`LEIA-ME-PRIMEIRO.md`](LEIA-ME-PRIMEIRO.md) antes de
 > estudares por aqui.
+>
+> 👉 **Estuda primeiro pelo [`simulacro_tese_curta.md`](simulacro_tese_curta.md)**, escrito a
+> 2026-08-23 para o documento que vais mesmo entregar, com a numeração QI e os números atuais
+> (o chão de `0.467`, a tabela de consulta, o protocolo do estudo na §A.5). Este ficheiro fica
+> como treino adicional das **cadeias de seguimento**, que continuam boas.
 
 > **Como usar:** lê a pergunta, tapa a resposta, responde **em voz alta** com as tuas palavras, só
 > depois compara. O que treina de verdade não é a 1.ª pergunta — são os **follow-ups** (o júri não

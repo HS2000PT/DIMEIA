@@ -3,6 +3,15 @@
 > Escrito a 2026-08-20, depois de medir. **Lê isto primeiro, uma vez.** São dois minutos e
 > evitam que decores números que já não existem no documento que vais defender.
 
+## Por onde estudar (se só leres uma linha, é esta)
+
+👉 **[`simulacro_tese_curta.md`](simulacro_tese_curta.md)** — escrito a 2026-08-23 **para a tese
+curta**, com a numeração QI, os números atuais e as armadilhas. Dez perguntas, do "onde está a
+contribuição?" ao "onde está a IA?". É o único documento desta pasta que não precisa de tradução
+mental.
+
+Os outros continuam bons para estudar o raciocínio, com os avisos abaixo.
+
 ## O que se passa
 
 Estes documentos foram escritos para a **tese longa em inglês** (`thesis/`, 130 páginas), ao
