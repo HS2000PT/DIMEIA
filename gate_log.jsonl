@@ -4031,14 +4031,14 @@
 {"date": "2026-08-26", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-26", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-26", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-08-26", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft's AI Rally Has Room To Run"}
+{"date": "2026-08-26", "ticker": "MSFT", "stage": "duplicate_story", "detail": "same story, other words"}
 {"date": "2026-08-26", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-08-26", "ticker": "TSLA", "stage": "alerted", "detail": "EXCLUSIVE: Tesla's Biggest Robotics Advantage Isn't AI, RoboStrategy CEO Says"}
-{"date": "2026-08-26", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon.com Inc (AMZN) Senior Vice President David Zapolsky Sells 15,430 Shares"}
+{"date": "2026-08-26", "ticker": "TSLA", "stage": "duplicate_story", "detail": "same story, other words"}
+{"date": "2026-08-26", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-26", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-08-26", "ticker": "META", "stage": "alerted", "detail": "Meta Platforms Rolls Out New Account Security Features For WhatsApp; Upgrades Tw"}
+{"date": "2026-08-26", "ticker": "META", "stage": "already_sent", "detail": "same headline already delivered today"}
 {"date": "2026-08-26", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-08-26", "ticker": "AMD", "stage": "alerted", "detail": "AMD: More Downside Risks As Insiders Unlock Massive Gains - Reiterate Hold"}
+{"date": "2026-08-26", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-26", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-26", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-26", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
