@@ -51,20 +51,25 @@ processo que chega a ser mensurável através do volume de pesquisas na internet
 
 Repare-se no que isto significa quando se junta às três perguntas do Capítulo~\ref{cap:introducao}.
 Os três sinais que capturam a atenção do investidor são a notícia, o volume invulgar e o movimento
-extremo do dia, e este sistema calcula os três. Convém, no entanto, ser exato quanto ao estatuto de
-cada um, porque não é o mesmo: a notícia e o movimento extremo são os dois \emph{gatilhos}, ou seja
-podem por si levantar um alerta, ao passo que o volume é calculado e mostrado como contexto e nunca
-levanta nada. A razão está medida e é dita na Secção~\ref{sec:av_alternativas}: a combinação do
-volume com os outros sinais só melhorou a triagem em um de três orçamentos, e uma capacidade que
-ganha uma vez em três não justifica mais uma via de interrupção. A diferença é o que acontece a
-seguir. Hoje, esses sinais chegam à pessoa em bruto, e o que a literatura documenta é que, em
-agregado, estes investidores compram mais do que vendem aquilo que lhes chamou a atenção. Os autores
-são explícitos quanto ao alcance da afirmação: nem toda a gente compra tudo o que lhe salta à vista,
-e o que se mede é um desequilíbrio entre compras e vendas. São também explícitos quanto ao que daí
+extremo do dia, e este sistema calcula os três. A diferença está no que acontece a seguir.
+
+Hoje esses sinais chegam à pessoa em bruto, e o que a literatura documenta é que, em agregado,
+estes investidores compram mais do que vendem aquilo que lhes chamou a atenção. Os autores são
+explícitos quanto ao alcance da afirmação: nem toda a gente compra tudo o que lhe salta à vista, e
+o que se mede é um desequilíbrio entre compras e vendas. São também explícitos quanto ao que daí
 resulta, e é essa a metade que justifica este trabalho: esse padrão de compra \emph{não} gera
-retornos superiores. O que este trabalho tenta é interpor, entre o sinal e a decisão, o contexto que
-permite julgá-lo: se aquilo é invulgar para aquela empresa, se foi a empresa ou o mercado, e o que
-se seguiu em casos parecidos. A Figura~\ref{fig:ctx_atencao} resume esta cadeia.
+retornos superiores.
+
+O que este trabalho tenta é interpor, entre o sinal e a decisão, o contexto que permite julgá-lo:
+se aquilo é invulgar para aquela empresa, se foi a empresa ou o mercado, e o que se seguiu em casos
+parecidos. A Figura~\ref{fig:ctx_atencao} resume esta cadeia.
+
+Convém ainda ser exato quanto ao estatuto de cada um dos três sinais, porque não é o mesmo. A
+notícia e o movimento extremo são os dois \emph{gatilhos}, ou seja podem por si levantar um alerta;
+o volume é calculado e mostrado como contexto, e nunca levanta nada. A razão está medida e é dita na
+Secção~\ref{sec:av_alternativas}: combinar o volume com os outros sinais só melhorou a triagem em um
+de três orçamentos, e uma capacidade que ganha uma vez em três não justifica mais uma via de
+interrupção.
 
 Uma nota de atribuição sobre essa combinação, porque a ideia não é minha. Veio de um painel de
 informação em tempo real que reúne sinais de origens diferentes num só indicador \autocite{worldmonitor2026}, sugerido pelo coorientador deste trabalho. Era plausível o suficiente
@@ -331,12 +336,12 @@ sentido de uma frase inteira. Cada geração resolve uma limitação da anterior
 \end{figure}
 
 A primeira geração conta palavras. O modelo de espaço vetorial \autocite{salton1975vsm} representa um
-documento pela frequência dos termos que contém. Dentro desta geração há ainda uma segunda linha,
-nascida de um quadro diferente e não deste, a das funções de ordenação probabilísticas, de que o
-BM25 \autocite{robertson2009bm25} é o representante corrente; as duas continuam a ser linhas de base
-fortes em recuperação de informação.
-É transparente e é rápido, mas é cego a sinónimos: para este tipo de representação, ``subiu'' e
-``valorizou'' são símbolos sem relação nenhuma. Em texto financeiro há ainda uma variante
+documento pela frequência dos termos que contém. É transparente e é rápido, mas é cego a sinónimos:
+para este tipo de representação, ``subiu'' e ``valorizou'' são símbolos sem relação nenhuma. Dentro
+desta mesma geração há ainda uma segunda linha, nascida de um quadro diferente e não deste, a das
+funções de ordenação probabilísticas, de que o BM25 \autocite{robertson2009bm25} é o representante
+corrente; as duas continuam a ser linhas de base fortes em recuperação de informação, e partilham
+aquela cegueira. Em texto financeiro há ainda uma variante
 especializada, os léxicos de domínio, que corrigem o facto de dicionários de sentimento genéricos
 lerem mal palavras financeiras correntes como ``passivo'' ou ``imposto''
 \autocite{loughran2011liability}. São inteiramente transparentes, e estão limitados pelo vocabulário
