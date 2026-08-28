@@ -4870,3 +4870,15 @@
 {"date": "2026-08-27", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-27", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-27", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-28", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-28", "ticker": "MSFT", "stage": "alerted", "detail": "What's Going On With Microsoft Stock?"}
+{"date": "2026-08-28", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-28", "ticker": "TSLA", "stage": "alerted", "detail": "Tesla's Optimus Rival Could Be Worth $6 Billion As SoftBank Circles OpenAI-Backe"}
+{"date": "2026-08-28", "ticker": "AMZN", "stage": "alerted", "detail": "Inside Amazon's Stock Drop: Why Analysts Remain High on AWS AI Momentum"}
+{"date": "2026-08-28", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-28", "ticker": "META", "stage": "alerted", "detail": "What Is Going on With Meta Platforms Stock on Thursday?"}
+{"date": "2026-08-28", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-28", "ticker": "AMD", "stage": "alerted", "detail": "Why Is AMD Stock Trending Today?"}
+{"date": "2026-08-28", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-28", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-28", "ticker": "JNJ", "stage": "stale", "detail": "mais recente 2026-08-25 > 2d"}
