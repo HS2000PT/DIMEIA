@@ -4328,3 +4328,13 @@
 {"ts": "2026-08-29T15:41:25+00:00", "news_date": "2026-08-28", "ticker": "META", "headline": "Meta Buys Away Its Distraction At Minimal Cost", "prob": null, "gate": null, "kept": true}
 {"ts": "2026-08-29T15:41:26+00:00", "news_date": "2026-08-27", "ticker": "JPM", "headline": "'JPMorgan Leads $5 Billion Debt Package for Volta AI Buildout' - Bloomberg", "prob": null, "gate": null, "kept": true}
 {"ts": "2026-08-29T15:41:26+00:00", "news_date": "2026-08-28", "ticker": "AMD", "headline": "Cathie Wood Trims AMD After a 120% Rally — Is the AI Trade Getting Too Crowded?", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T15:42:56+00:00", "news_date": "2026-08-29", "ticker": "AAPL", "headline": "Apple: CEO Changes, But Double Compounding Does Not", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T15:42:56+00:00", "news_date": "2026-08-28", "ticker": "MSFT", "headline": "Microsoft: The Rerating Is Probably Over For Now (Rating Downgrade)", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T15:42:57+00:00", "news_date": "2026-08-29", "ticker": "NVDA", "headline": "Nvidia: The Cracks Are Finally Showing", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T15:42:58+00:00", "news_date": "2026-08-29", "ticker": "TSLA", "headline": "Why Tesla's Optimus Robot Might Have a Hollywood \"Problem\"", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T15:42:59+00:00", "news_date": "2026-08-29", "ticker": "AMZN", "headline": "Valley & Summit Law Highlights New CPSC Compliance Challenges for Amazon Sellers", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T15:43:00+00:00", "news_date": "2026-08-28", "ticker": "GOOGL", "headline": "Marvell’s Google AI Chip Deal Could Drive $120 Billion in Long-Term Revenue: Analyst", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T15:43:01+00:00", "news_date": "2026-08-28", "ticker": "META", "headline": "Meta Buys Away Its Distraction At Minimal Cost", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T15:43:02+00:00", "news_date": "2026-08-27", "ticker": "JPM", "headline": "'JPMorgan Leads $5 Billion Debt Package for Volta AI Buildout' - Bloomberg", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T15:43:03+00:00", "news_date": "2026-08-28", "ticker": "AMD", "headline": "Cathie Wood Trims AMD After a 120% Rally — Is the AI Trade Getting Too Crowded?", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T15:43:05+00:00", "news_date": "2026-08-28", "ticker": "NFLX", "headline": "Walt Disney vs. Netflix: Evaluating Massive Overall Business Scale Versus Consistent Double-Digit Growth in Revenue", "prob": null, "gate": null, "kept": true}
