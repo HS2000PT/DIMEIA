@@ -817,3 +817,12 @@
 {"ts": "2026-08-29T05:59:38+00:00", "news_date": "2026-08-28", "ticker": "META", "headline": "Meta Buys Away Its Distraction At Minimal Cost", "prob": null, "gate": null, "kept": true}
 {"ts": "2026-08-29T05:59:38+00:00", "news_date": "2026-08-27", "ticker": "JPM", "headline": "'JPMorgan Leads $5 Billion Debt Package for Volta AI Buildout' - Bloomberg", "prob": null, "gate": null, "kept": true}
 {"ts": "2026-08-29T05:59:38+00:00", "news_date": "2026-08-28", "ticker": "AMD", "headline": "Cathie Wood Trims AMD After a 120% Rally — Is the AI Trade Getting Too Crowded?", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T06:00:58+00:00", "news_date": "2026-08-28", "ticker": "AAPL", "headline": "Apple hikes subscription prices for Apple TV and Apple One in the U.S.", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T06:00:59+00:00", "news_date": "2026-08-28", "ticker": "MSFT", "headline": "Microsoft: The Rerating Is Probably Over For Now (Rating Downgrade)", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T06:01:00+00:00", "news_date": "2026-08-28", "ticker": "NVDA", "headline": "Warsh Sparks Rate-Hike Bets, Nvidia Reaffirms AI Growth Story: This Week on Wall Street", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T06:01:01+00:00", "news_date": "2026-08-29", "ticker": "TSLA", "headline": "Tesla is Raising Prices on Specific Cybertruck Models", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T06:01:01+00:00", "news_date": "2026-08-28", "ticker": "AMZN", "headline": "Stocks making the biggest moves midday: Amazon, Marvell, PayPal, Salesforce & more", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T06:01:02+00:00", "news_date": "2026-08-28", "ticker": "GOOGL", "headline": "Marvell’s Google AI Chip Deal Could Drive $120 Billion in Long-Term Revenue: Analyst", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T06:01:03+00:00", "news_date": "2026-08-28", "ticker": "META", "headline": "Meta Buys Away Its Distraction At Minimal Cost", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T06:01:04+00:00", "news_date": "2026-08-27", "ticker": "JPM", "headline": "'JPMorgan Leads $5 Billion Debt Package for Volta AI Buildout' - Bloomberg", "prob": null, "gate": null, "kept": true}
+{"ts": "2026-08-29T06:01:04+00:00", "news_date": "2026-08-28", "ticker": "AMD", "headline": "Cathie Wood Trims AMD After a 120% Rally — Is the AI Trade Getting Too Crowded?", "prob": null, "gate": null, "kept": true}
