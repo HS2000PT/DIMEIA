@@ -28,9 +28,9 @@
 bateu a volatilidade. Então a resposta à sua própria pergunta é 'não'. Como não é isto um fracasso da
 contribuição central?"*
 
-✅ *"A pergunta tem duas partes e respondo às duas. Como **mecanismo de produto**, o modelo prioriza:
-dentro de um orçamento de 5 alertas/dia sobe a precisão de **0,379 para 0,632**, ou seja **1,67×**,
-com probabilidades calibradas. A **hipótese científica** — 'o texto do título acrescenta sinal sobre
+✅ *"A pergunta tem duas partes e respondo às duas. No **teste offline do mecanismo**, dentro de um
+orçamento de 5 alertas/dia, a precisão sobe de **0,379 para 0,632**, ou seja **1,67×**. É um limite
+superior da política online, não utilidade humana medida. A **hipótese científica** — 'o texto do título acrescenta sinal sobre
 a volatilidade' — essa, pré-comprometida, deu não: PR-AUC **0,542 vs 0,496**. Não é um fracasso, é um
 resultado, e reporto-o tal como caiu. E vou mais longe do que a pergunta: uma tabela de treze
 constantes, sem ler título nenhum, obtém **0,662** e bate o modelo treinado. Está na tese, com o
@@ -50,7 +50,8 @@ número, porque uma avaliação que só sabe dizer que sim não avalia nada."*
 > lhe responde. Somado **por cima** da tabela de consulta por empresa — que é a base certa por
 > conter tudo o que o modelo sabe da empresa e nada da notícia — o título **acrescenta**:
 > `+0,012` de PR-AUC, com intervalo `[+0,004, +0,020]` que
-> exclui zero. É a única vez neste trabalho em que o texto mostra valor mensurável. **Mas não
+> exclui zero. É um efeito detetável neste protocolo, mas fica abaixo do critério prático de
+> `0,02`. **Não
 > muda o veredicto**, e digo porquê antes que mo perguntem: contra a volatilidade sozinha a
 > diferença tem intervalo que contém zero; a precisão dentro do orçamento é `0,662` com e sem
 > texto; e continua a não separar dois dias da mesma empresa. O que isto acrescenta não é uma
@@ -102,10 +103,11 @@ acima. Logo o negativo é robusto, não um artefacto — e testei a própria cr�
 **🎓 Q1.** *"O seu corpus de recuperação são 3.714 títulos de uns meses. Como sabe que a P@5 de 0,51
 se aguenta noutro período?"*
 
-✅ *"Boa pergunta — e a resposta mudou desde a versão preliminar. O resultado inicial (P@5 **0,514** em
-~3.700 títulos) era preliminar por desenho: estabelecia o mecanismo. Mas validei-o depois **à
-escala**: no corpus FNSPID multi-ano, ~80 mil títulos de 6 anos, o mesmo protocolo cross-ticker deu
-**P@5 0,595** — acima do preliminar. A recuperação não só se aguenta noutro período, melhora."*
+✅ *"Boa pergunta — e a resposta mudou desde a versão preliminar. O resultado inicial (P@5 **0,514**
+em ~3.700 títulos) estabelecia o mecanismo. No FNSPID multi-ano, sob a restrição causal da produção,
+obtive **0,513** contra chão **0,259**, margem **+0,254**. O teste simétrico de escala dá **0,595**
+contra **0,333**, mas permite candidatos posteriores. A conclusão é robustez noutro período, não
+que a tarefa causal melhore."*
 
 **🎓 Q2 (aperta).** *"E a direção dos precedentes? Recuperar o tema não diz o que o preço faz."*
 
@@ -117,8 +119,9 @@ nunca uma previsão direcional — e é por isso que mostro sempre os precedente
 **🎓 Q3 (a mais dura).** *"Então ainda há uma parte por fazer."*
 
 ✅ *"Sim, e digo-o: o que fica é o estudo das MAGNITUDES de impacto ajustadas ao mercado sobre os
-precedentes multi-ano. Mas a recuperação — o componente — está **validada à escala**, e a propriedade
-tema≠direção está **medida**, não assumida. Reporto o que está feito e o que falta, sem sobre-afirmar."*
+precedentes multi-ano. A recuperação foi medida à escala também sob a restrição causal, e a
+propriedade tema≠direção está **medida**, não assumida. Reporto o que está feito e o que falta,
+sem sobre-afirmar."*
 
 ---
 
@@ -231,10 +234,11 @@ transparente e verificável, o bruto é a escolha honesta."*
 
 **🎓 Q1.** *"Como garante que não há lookahead?"*
 
-✅ *"Por construção **e** por teste. Cada feature usa só informação até ao fecho do dia do evento; o
-impacto acumula-se **estritamente para a frente** a partir desse fecho. E há um teste unitário que
-**muta os preços futuros** e verifica que nenhuma feature muda enquanto o rótulo muda — se houvesse
-fuga, esse teste falhava."*
+✅ *"Por construção **e** por teste no referencial diário. As entradas offline usam informação até
+ao fecho do dia do evento; o impacto acumula-se **estritamente para a frente**. Um teste unitário
+**muta os preços futuros** e verifica que as entradas não mudam enquanto o rótulo muda. O limite é
+explícito: `ret_event` é o retorno completo do dia no treino e ainda não existe quando a notícia
+chega intradia, por isso isto não prova paridade treino-produção nesse instante."*
 
 **🎓 Q2 (aperta).** *"E na avaliação? O split temporal não podia deixar uma janela de rótulo cavalgar
 dois blocos?"*
@@ -364,7 +368,7 @@ decisão definida em 39,5% dos títulos. O modelo não serve para nada?"*
 ---
 
 ## 10. Antes de entrares na sala
-- Sabe de cor: **0,015 vs 0,344** · **P@5 0,514** · **0,542 vs 0,496** · **0,379→0,632 (em dados
+- Sabe de cor: **0,015 vs 0,344** · **P@5 causal 0,513 vs 0,259** · **0,542 vs 0,496** · **0,379→0,632 (em dados
   retidos)** · **ROC-AUC ao vivo 0,486** · **39,5%** · **PSI 0,281** · **130/139 pp** (mapa completo
   no `guiao_de_defesa.md` §2).
 - ⚠️ **Não digas 0,667 vs 0,455.** Foi retirado: valia sobre 12 decisões e o intervalo continha a

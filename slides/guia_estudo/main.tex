@@ -723,8 +723,9 @@ Licença CC BY-SA 4.0 (atribuição obrigatória).
 \begin{block}{Live}
 \footnotesize
 Preços (yfinance) $+$ notícias (Finnhub/RSS), só APIs \key{gratuitas}.\\[1mm]
-A avaliação usa um corpus \key{real e recente} (3\,714 títulos) construído pelo mesmo processo; e foi
-\key{validada à escala} no FNSPID multi-ano (${\sim}$80k, P@5 0,595).
+A avaliação usa um corpus \key{real e recente} (3\,714 títulos) construído pelo mesmo processo.
+No FNSPID multi-ano, a tarefa causal da produção dá P@5 \key{0,513} contra chão \key{0,259};
+o \key{0,595} pertence ao teste simétrico de escala.
 \end{block}
 \end{columns}
 \vspace{1mm}
@@ -871,7 +872,7 @@ def detect_latest(returns, window=20, threshold=3.0):
   \item \key{recebe} a série de retornos; \key{devolve} um \texttt{AnomalyResult} (decisão $+$ todas as
         quantidades).
   \item \key{recent}: só dias \emph{antes} de hoje $\Rightarrow$ \key{sem lookahead}.
-  \item \key{Exemplo (TSLA):} $\mu=-0{,}92\%$, $\sigma=2{,}73\%$, hoje $=+19{,}82\% \Rightarrow z=+7{,}61
+  \item \key{Exemplo (TSLA):} $\mu=-0{,}92\%$, $\sigma=2{,}72\%$, hoje $=+19{,}82\% \Rightarrow z=+7{,}61
         \Rightarrow$ anomalia.
 \end{itemize}
 \end{frame}
@@ -1261,7 +1262,7 @@ Coluna & O que é & Valor \\
 \midrule
 \texttt{vol20} & volatilidade pré-evento (20 dias até $d{-}1$) & 0,021 \\
 \texttt{mom5} & momento de 5 dias até $d{-}1$ & $+0{,}122$ \\
-\texttt{ret\_event} & retorno do dia do evento (fecho de $d$) & $+0{,}017$ \\
+\texttt{ret\_event} & retorno completo do dia; só existe no fecho de $d$ & $+0{,}017$ \\
 \texttt{headline\_len} & n.\textsuperscript{o} de caracteres do título & 55 \\
 \texttt{sector} & setor (one-hot) & tech \\
 \texttt{embedding} & vetor SBERT 384-d do título & $[-0{,}005; 0{,}004; \dots]$ \\
@@ -1271,8 +1272,9 @@ Coluna & O que é & Valor \\
 \end{tabular}
 \smallskip
 \par\footnotesize As colunas 1--5 (contexto) alimentam a \key{triagem} $\to$ PR-AUC e precisão@5/dia;
-o \texttt{embedding} alimenta também o \key{retrieval} $\to$ precisão@$k$. Tudo calculável no fecho
-de $d$, \emph{antes} de a janela do rótulo abrir (anti-lookahead).
+o \texttt{embedding} alimenta também o \key{retrieval} $\to$ precisão@$k$. No protocolo offline,
+tudo é calculável no fecho de $d$, antes de a janela do rótulo abrir. Isto é uma garantia causal
+\key{diária}; não prova que \texttt{ret\_event} esteja disponível quando a notícia chega intradia.
 \end{frame}
 
 \begin{frame}{Triagem de materialidade --- o modelo que EU treinei (RQ4)}
@@ -1287,7 +1289,8 @@ $P(\text{segue-se um movimento ANORMAL})$ --- \emph{materialidade}, nunca direç
   \item \key{Features (só passado):} volatilidade dos 20 dias \emph{antes}, momentum 5d, retorno do
         próprio dia, comprimento do título, setor, embedding SBERT do título.
   \item \key{Anti-batota testado:} um teste unitário \emph{muda os preços do futuro} e verifica que
-        as features NÃO mudam (e o rótulo sim). É a resposta pronta à pergunta nº 1 do júri.
+        as features NÃO mudam (e o rótulo sim), no referencial do fecho diário. Não prova que
+        \texttt{ret\_event} esteja disponível quando a notícia chega intradia.
 \end{itemize}
 \centering\scriptsize Corpus: FNSPID 2018--2023, \key{79\,753} exemplos, 14/15 tickers (a Meta é "FB" no corpus).
 \end{frame}
@@ -1304,15 +1307,17 @@ interessava --- caía \textbf{sem deixar rasto em log nenhum}.
 \vspace{1mm}
 
 \begin{block}{\footnotesize A parte que interessa mesmo, e que deves saber dizer}
-\footnotesize O sistema \textbf{já tinha} o instrumento certo. A triagem existe precisamente para
-ordenar por materialidade, e dentro de um orçamento de 5 alertas eleva a precisão de
-\key{0,379} para \key{0,632}. \textbf{Mas o tecto nunca a consultava.} O modelo era
+\scriptsize O sistema \textbf{já tinha} o instrumento certo. A triagem existe precisamente para
+ordenar por materialidade, e no teste offline com orçamento de 5 alertas eleva a precisão de
+\key{0,379} para \key{0,632}. É um limite superior, porque vê o dia inteiro. \textbf{Mas o tecto
+nunca a consultava.} O modelo era
 \textbf{avaliado} e não \textbf{decidia} nada.
 \par\smallskip
 \textbf{E a primeira correcção não funcionou.} Ordenar só reordena candidatas presentes ao mesmo
 tempo, e a varredura emite \key{uma} manchete por empresa por ciclo --- duas histórias a disputar a
-mesma quota nunca coexistem. Quem governa o tecto é um \textbf{piso escalonado}: o $k$-ésimo alerta
-exige mais (\key{0,49}, depois \key{0,64}), ambos \emph{derivados} do varrimento de custo.
+mesma quota nunca coexistem. O total é governado pelo \textbf{orçamento global de 5/dia}. Com ele,
+o primeiro alerta de cada empresa não tem piso e o segundo exige \key{0,64}; o \key{0,49} fica
+apenas como proveniência do varrimento que derivou os dois valores.
 \end{block}
 \vspace{1mm}
 
@@ -1863,8 +1868,9 @@ e o custo. LLMs ficam como trabalho futuro (infraestrutura pronta: FAISS para es
 \vspace{1mm}
 
 \textbf{A precision@5 de $\sim$0,51 é boa?}\\
-É $\sim 2{,}1\times$ o acaso e acima do lexical, com desvio pequeno (5 seeds). E \key{validada à escala}:
-no FNSPID multi-ano (${\sim}$80k manchetes) a P@5 sobe a \key{0,595}.
+No corpus recente, o agregado é $0,514$, mas o melhor chão trivial dá $0,467$; a defesa forte é que
+o método ganha \key{nos cinco setores}. No FNSPID multi-ano, a tarefa causal dá \key{0,513} contra
+chão \key{0,259} (margem $+0,254$). O $0,595$ é o protocolo simétrico de escala.
 \vspace{1mm}
 
 \textbf{O proxy de setor não é fraco?}\\
@@ -1874,8 +1880,9 @@ no FNSPID multi-ano (${\sim}$80k manchetes) a P@5 sobe a \key{0,595}.
 \begin{frame}{Perguntas difíceis do júri (2/2)}
 \scriptsize
 \textbf{Como garantem que não há lookahead?}\\
-O z-score usa só dias anteriores; o impacto mede-se só \emph{depois} do evento, do fecho do 1.\textsuperscript{o}
-dia de negociação $\ge$ data. Está em código e testado.
+O z-score usa só dias anteriores; o impacto mede-se só \emph{depois} do evento. Na triagem, a
+garantia é ao fecho diário: \texttt{ret\_event} só fica completo no fecho de $d$ e não está
+disponível quando a notícia chega intradia. O teste não prova essa paridade.
 \vspace{1mm}
 
 \textbf{Como sei que a explicação é verdadeira?}\\
@@ -1915,8 +1922,8 @@ Este motor de correlação notícia--mercado é o núcleo da tese."
 \scriptsize "Avaliei cada componente contra baselines em dados reais. A recuperação semântica
 atinge precision@5 de 0,51 contra 0,35 da baseline lexical e 0,24 do acaso. O detetor normalizado
 pela volatilidade dispara de forma consistente onde um limiar fixo não consegue. E fui além de
-aplicar componentes: \textbf{treinei e calibrei um modelo de triagem de materialidade} sobre
-79.753 exemplos de seis anos. O resultado é honesto nos dois sentidos: nenhum modelo que lê o
+aplicar componentes: \textbf{treinei e calibrei um modelo de triagem de materialidade}. O conjunto
+inteiro tem 79.753 exemplos; o bloco de treino tem 28.574. O resultado é honesto nos dois sentidos: nenhum modelo que lê o
 texto bateu a baseline de só-volatilidade --- e reporto isso tal como caiu --- mas, dentro de um
 orçamento realista de cinco alertas por dia, a triagem melhora a precisão \textbf{$1{,}67\times$}.
 Duas vezes dei a um método aprendido uma comparação justa contra a escolha transparente, e duas
@@ -1938,9 +1945,9 @@ entre ações (amplitude 0,015 vs 0,344 de um limiar fixo) e explica-se com méd
 Desafiei-o com um método aprendido --- Isolation Forest --- e o z-score venceu (F1 0,530 vs 0,271)."
 \vspace{1mm}
 
-\textbf{RQ2 (recuperação + impacto)} --- "Sim, e validada à escala. SBERT dá precision@5 de 0,51
-cross-ticker (\key{0,595} no FNSPID multi-ano de 80k), contra 0,35 lexical e 0,24 aleatório; o impacto
-é medido com janelas de estudo de evento (+1/+3/+5 dias), sem lookahead, e mostrado como evidência."
+\textbf{RQ2 (recuperação + impacto)} --- "Sim. Sob a restrição causal da produção, SBERT dá
+precision@5 de \key{0,513} contra chão \key{0,259}, margem $+0,254$; o $0,595$ é o teste simétrico
+de escala. O impacto é medido depois do evento e mostrado como evidência, não previsão."
 \vspace{1mm}
 
 \textbf{RQ3 (explicações)} --- "Fiéis \key{por construção}: o texto do alerta é gerado diretamente
@@ -1950,7 +1957,8 @@ reais precisa de um estudo humano, que declaro como limitação, não como resul
 
 \textbf{RQ4 (triagem aprendida)} --- "Não na hipótese do texto; sim no mecanismo. Nenhum modelo
 com texto bateu a só-volatilidade (PR-AUC 0,542 contra 0,496). Mas com orçamento de 5 alertas/dia
-a triagem sobe a precisão de 0,379 para 0,632, com probabilidades calibradas --- treinei, avaliei
+a triagem sobe a precisão offline de 0,379 para 0,632, um limite superior da política online;
+com probabilidades calibradas --- treinei, avaliei
 com protocolo temporal estrito, e reportei o resultado tal como é. E testei a própria crítica: um
 re-teste justo (C afinado, PCA, FinBERT) confirma que o negativo é \key{robusto}, não sub-ajuste."
 \end{frame}
@@ -2016,12 +2024,14 @@ mecanismo está construído e a correr.
 
 \begin{frame}{O mapa dos números congelados (decorar esta tabela)}
 \tiny
+\renewcommand{\arraystretch}{0.96}
 \begin{tabular}{l l l}
 \toprule
 \textbf{Número} & \textbf{O que é} & \textbf{Onde} \\
 \midrule
 P@5 \textbf{0,514} $\pm$ 0,015 & SBERT-MiniLM vs 0,346 lexical / 0,240 acaso / 0,126 recência & Cap.~5, evaluation\_results \\
-P@5 \textbf{0,595} (80k) & recuperação validada à escala no FNSPID multi-ano & Cap.~6, retrieval\_fnspid \\
+P@5 \textbf{0,513} / 0,259 & tarefa causal da produção / chão (margem $+0,254$) & Cap.~5, retrieval\_causal \\
+P@5 \textbf{0,595} / 0,333 & teste simétrico de escala / chão; permite candidatos futuros & Cap.~5, retrieval\_fnspid \\
 0,538 & P@5 do SBERT-MPNet (melhor, mais pesado) & idem \\
 \textbf{0,015 vs 0,344} & amplitude da taxa de disparo: z-score vs limiar fixo & Cap.~5, evaluation\_anomaly \\
 F1 \textbf{0,530 vs 0,271} & z-score vs Isolation Forest causal (o simples ganha) & idem \\
@@ -2030,7 +2040,7 @@ z = \textbf{+7,61} & anomalia real TSLA 24-10-2024 (exemplo trabalhado) & Cap.~5
 \textbf{$-$1,97\%} & CS3: título positivo, cluster negativo (tema $\neq$ direção) & Cap.~5 \\
 PR-AUC \textbf{0,542 vs 0,496} & RQ4: só-volatilidade bate todos os modelos com texto & Cap.~5 (CS4) \\
 \textbf{0,632 vs 0,379} & precisão@5-alertas/dia: triagem vs ordenação aleatória (1,67$\times$) & idem \\
-\textbf{79.753} / 2.016 & exemplos FNSPID do treino / fatia curada na app pública & kb\_fnspid\_build \\
+\textbf{79.753} / 28.574 & conjunto FNSPID inteiro / bloco de treino da triagem & dataset temporal \\
 \textbf{0,992} / 96\% & paridade ONNX$\leftrightarrow$SBERT (cosseno médio; vizinhos top-3) & onnx\_minilm\_validation \\
 \textbf{106 pp; 59/59} & tese 0 erros; todas as citações verificadas & page\_audit \\
 \midrule

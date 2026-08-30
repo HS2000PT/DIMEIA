@@ -55,7 +55,8 @@ script escreveu. Verifiquei isto exaustivamente — **os 3 dígitos decimais do 
 | P@5 acaso | **0,240** | idem | taxa-base do setor, medida por consulta | `retrieval_eval.py:58` | idem | §5.3 |
 | **P@5 sempre o setor maior** | **0,467** | idem | ⚠️ **o chão que interessa**: 1736/3714 do corpus é tecnologia, logo *devolver sempre tecnologia* vale a fração de consultas que são de tecnologia | fração, não medição | `evaluation_results.md` | §5.3 |
 | P@5 recência | **0,126** | idem | k mais recentes | `retrieval_eval.py:80` | idem | §5.3 |
-| P@5 à escala | **0,595** | 80k títulos | mesmo protocolo | `evaluate_retrieval_fnspid.py` | FNSPID | §5.3 |
+| P@5 causal | **0,513**, chão **0,259**, margem **+0,254** | 80k títulos | só candidatos anteriores à consulta | `evaluate_retrieval_causal.py` | FNSPID | §5.5.4 |
+| P@5 simétrica à escala | **0,595**, chão **0,333** | 80k títulos | permite candidatos posteriores | `evaluate_retrieval_fnspid.py` | FNSPID | §5.5.3 |
 | Corpus: nº de títulos | **3.714** | Finnhub company-news | `count()` após filtro de setor conhecido | `evaluate.py:73-79` | `finnhub_news.csv` | §3.2.3 |
 | Corpus: amplitude | **27 dias** (28 mai–24 jun 2026) | idem | `max(data) − min(data)` | `evaluate_corpus_and_filter.py` | idem | §3.2.3 |
 | Vizinhos anteriores à consulta | **31,1%** | 300 consultas × top-5 | compara datas do vizinho e da consulta | `evaluate_corpus_and_filter.py` | idem | §3.2.3 |
@@ -91,12 +92,12 @@ julgamento humano. Está declarado como limitação em §5.10.
 
 | O que digo | Valor | De onde veio | Como calculei | Código | Dados | Tese |
 |---|---|---|---|---|---|---|
-| Exemplos de treino | **79.753** | FNSPID 2018–23 | (título, ticker, dia) com preços alinhados | `build_dataset.py` | `triage_dataset.csv` | §3.2.1 |
+| Conjunto inteiro | **79.753** | FNSPID 2018–23 | (título, ticker, dia) com preços alinhados | `build_dataset.py` | `triage_dataset.csv` | §3.2.1 |
 | Blocos treino/val/teste | **28.574 / 17.710 / 32.649** | idem | divisão temporal por **dia único**, 70/15/15 | **`dataset.py:108`** | idem | §3.3.4 |
 | Linhas largadas no embargo | **820** | idem | 5 dias únicos após cada fronteira | `dataset.py:108` | idem | §3.3.4 |
 | Prevalência por bloco | 0,385 / 0,470 / 0,378 | idem | `mean(label)` | — | idem | §5.8 |
 | Definição do rótulo | `\|r_tkr − r_SPY\| ≥ 2%` a 3d | preços | diferença de retornos acumulados | **`dataset.py:99`** | idem | §3.3.4 |
-| Features (9) | vol20, mom5, ret_event, len, 5×setor | preços + título | todas ao fecho do dia `d` | **`dataset.py:39`** | idem | §3.3.4 |
+| Features (9) | vol20, mom5, ret_event, len, 5×setor | preços + título | `ret_event` é o retorno completo no fecho de `d`; não está disponível quando a notícia chega intradia | **`dataset.py:39`** | idem | §3.3.4 |
 | PR-AUC volatilidade | **0,542** | bloco de teste | área sob precisão–recall | **`model.py:68`** | idem | §5.5 |
 | PR-AUC contexto | 0,538 | idem | idem | `model.py:68` | idem | §5.5 |
 | PR-AUC contexto+texto | **0,496** | idem | idem | `model.py:68` | idem | §5.5 |
@@ -121,12 +122,12 @@ Se alguém re-treinar com outra semente, a suite parte.
 |---|---|---|---|---|---|---|
 | Decisões registadas | **1.087** | produção | uma linha por decisão de triagem | `postval.py:26` | `predictions_log.jsonl` | §6.5 |
 | Decisões maturadas | **825** (eram 530 a 09/08) | idem | janela (d, d+3] fechada | `postval.py:71` | idem | §6.5 |
-| Unidades efectivas | **145** pares (ticker, dia) | idem | o rótulo é por ticker-dia | `evaluate_live_transfer.py` | idem | §6.5 |
+| Unidades efectivas | **239** pares (ticker, dia) | idem | o rótulo é por ticker-dia | `evaluate_live_transfer.py` | idem | §6.5 |
 | Mantidas materiais | **0,589** | idem | `mean(label)` nas mantidas | `postval.py:88` | idem | §6.5 |
 | Suprimidas materiais | **0,617** | idem | idem nas suprimidas | `postval.py:88` | idem | §6.5 |
 | ROC-AUC ao vivo | **0,486** | idem | prob. de um positivo ficar acima de um negativo | `evaluate_live_transfer.py` | idem | §6.5 |
-| IC 95% (bootstrap de **cluster**) | **[0,391; 0,601]** | idem | reamostra pares ticker-dia inteiros | `evaluate_live_transfer.py` | idem | §6.5 |
-| Prevalência ao vivo vs treino | **0,626** vs 0,378 | idem | `mean(label)` | idem | idem | §6.5 |
+| IC 95% (bootstrap de **cluster**) | **[0,403; 0,571]** | idem | reamostra pares ticker-dia inteiros | `evaluate_live_transfer.py` | idem | §6.5 |
+| Prevalência ao vivo vs treino | **0,602** vs 0,378 | idem | `mean(label)` | idem | idem | §6.5 |
 
 **Ficheiro gerado:** `docs/evaluation/evaluation_live_transfer.md`, `live_monitoring.md`
 

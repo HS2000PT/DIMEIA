@@ -535,12 +535,12 @@ a mesma regra do treino. Sobre \textbf{530} decisões maturadas:
 a sigmóide é \textbf{monótona}, preserva a ordem exactamente.
 \end{block}
 \smallskip
-{\footnotesize Medido: \textbf{ROC-AUC $0.494$}, IC de cluster $[0.391, 0.601]$ sobre $145$
+{\footnotesize Medido: \textbf{ROC-AUC $0.486$}, IC de cluster $[0.403, 0.571]$ sobre $239$
 unidades (ticker, dia). Centrado no acaso. \textbf{Não há ordem para preservar.}}
 \end{columns}
 \vfill
 {\footnotesize\textbf{Porquê, e não é um modelo avariado --- é um modelo redundante.} A
-materialidade nas decisões registadas corre a $0.626$ contra $0.378$ no treino, porque só se
+materialidade nas decisões registadas corre a $0.602$ contra $0.378$ no treino, porque só se
 registam decisões para manchetes que \emph{já} passaram os filtros de relevância e frescura. As
 etapas baratas a montante já tinham removido o que a etapa aprendida foi treinada para remover.
 \textbf{Um modelo avaliado isolado e implantado atrás de filtros nunca foi avaliado na
@@ -641,7 +641,7 @@ Duas das limitações acima eram afirmações; são agora medições.
   \item \textbf{RQ1 (sim):} o \emph{z}-score transparente deteta de forma consistente em todo o mercado e explica cada marca.
   \item \textbf{RQ2 (sim):} sob a restrição causal da produção, P@5 $0.513$ contra chão $0.259$ (margem $+0.254$); $0.595$ é o teste simétrico de escala. Impacto medido sem lookahead.
   \item \textbf{RQ3 (fiel sim; útil em aberto):} as explicações não podem divergir do cálculo; a utilidade para humanos é trabalho futuro.
-  \item \textbf{RQ4 (não no texto; mecanismo sim \emph{offline}):} a triagem $\approx 4\times$ de precisão dentro do orçamento em dados retidos, mas a volatilidade ficou imbatida --- o \emph{segundo} teste justo ``aprendido vs simples'' que a escolha transparente venceu (o primeiro: Isolation Forest vs \emph{z}-score, $F_1$ $0.271$ vs $0.530$). Medido em produção, o mesmo gate ordena ao acaso (Resultado 9), pelo que a afirmação sobre o mecanismo é de conjunto de avaliação e é enunciada como tal.
+  \item \textbf{RQ4 (não no texto; ganho offline no proxy):} a triagem melhora $1.67\times$ a precisão dentro do orçamento ($0.632$ vs $0.379$), como limite superior da política online; a volatilidade ficou imbatida. Em produção, o mesmo gate ordena ao acaso (Resultado 9).
 \end{itemize}
 \vfill
 \begin{block}{Contribuição}
@@ -663,10 +663,10 @@ Um sistema de alertas financeiros funcional, \textbf{explicável e reprodutível
 \begin{itemize}
   \item \textbf{Porquê não prever preços?} Eficiência de mercado (Fama 1970): as notícias públicas são absorvidas depressa; nós \emph{medimos} reações, honestamente.
   \item \textbf{Porquê \emph{z}-score, não Isolation Forest/GARCH?} Transparência para um sinal de baixa dimensão --- e \emph{testámo-lo}: uma Isolation Forest causal sobre a mesma informação perdeu ($F_1$ $0.271$ vs $0.530$).
-  \item \textbf{O vosso modelo treinado perdeu para a linha de base da volatilidade. Fracasso?} Não: a comparação foi \emph{pré-comprometida} e responde à RQ4 com evidência. A triagem dá $\approx 4\times$ de precisão dentro do orçamento em dados retidos, e a variante em produção usa exatamente as features que carregam o sinal.
-  \item \textbf{Então o ML funciona em produção?} \emph{Como selector não, e medi-o} (ROC-AUC $0.494$). Como controlo de volume sim. A razão é instrutiva: os filtros a montante já tinham removido o que ele foi treinado para remover, portanto é redundante e não avariado --- uma lição sobre colocar um componente aprendido \emph{dentro} de uma pipeline.
+  \item \textbf{O vosso modelo treinado perdeu para a linha de base da volatilidade. Fracasso?} Não: a comparação foi \emph{pré-comprometida}. Offline, a triagem melhora $1.67\times$ o proxy no orçamento, mas é um limite superior e não utilidade humana.
+  \item \textbf{Então o ML funciona em produção?} \emph{Como selector não, e medi-o} (ROC-AUC $0.486$). Como controlo de volume sim. Os filtros a montante tornam-no redundante na população implantada.
   \item \textbf{O sistema aprende automaticamente?} Não. Faz \emph{inferência} com pesos fixos e \emph{recolhe rótulos}; o re-treino é possível e está documentado, mas nunca correu. Chamar-lhe aprendizagem contínua seria exagero.
-  \item \textbf{Como sabem que o modelo de triagem nunca vê o futuro?} Um teste unitário muta os preços pós-evento e verifica que as features ficam inalteradas enquanto o rótulo muda; split temporal por dia único com um embargo de cinco dias.
+  \item \textbf{Como sabem que o modelo de triagem nunca vê o futuro?} No referencial diário, um teste muta preços posteriores a $d$; as entradas não mudam e o rótulo muda. Limite: \texttt{ret\_event} só fica completo no fecho e não está disponível quando a notícia chega intradia.
   \item \textbf{Porquê precisão@$k$ e um proxy de setor?} Métrica padrão de recuperação ordenada; objetiva, reprodutível; a relevância humana é trabalho futuro.
   \item \textbf{Restrição cross-ticker?} Uma escolha de \emph{avaliação} para evitar auto-correspondências triviais; o alerta ao vivo mostra os precedentes mais similares, seja qual for a empresa.
   \item \textbf{Uma manchete positiva recuperou precedentes negativos ($-1.97\%$). Enganador?} A similaridade capta o \emph{tema}, não a direção; a média é \textbf{evidência} ao nível do tema, mostrada com cada precedente e um aviso de não-previsão. Trabalho futuro: de-duplicar precedentes e sinalizar divergência de direção.

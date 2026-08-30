@@ -78,7 +78,9 @@ calma e banal numa volátil. Um limiar fixo em percentagem trataria as duas de i
 
 Que nenhum número usado para decidir hoje vem do futuro. A janela do z-score usa só dias
 **anteriores**; o impacto é medido estritamente **depois** do fecho do dia do evento. Há um teste
-que **muta os preços futuros**: as features não podem mudar, o rótulo tem de mudar.
+que **muta os preços futuros**: as features não podem mudar, o rótulo tem de mudar. Limite: é uma
+garantia ao fecho diário. `ret_event` é o retorno completo do dia no treino e ainda não existe
+quando a notícia chega intradia; o teste não prova paridade nesse instante.
 </details>
 
 **🟡 8. O que é precision@k e porquê essa métrica?**
@@ -113,8 +115,8 @@ muito diferente.
 P@5 = **0,514** (MiniLM), contra **0,346** lexical, **0,240** aleatório e **0,126** recência.
 ⚠️ **E contra o chão que interessa: 0,467**, que é *devolver sempre tecnologia* (metade do corpus).
 A margem real é **+0,047**; a afirmação que se aguenta é a de **dentro de cada setor**, onde o
-método ganha nos cinco. E
-**validado à escala: 0,595** em 80 mil títulos do FNSPID.
+método ganha nos cinco. No FNSPID, sob a restrição causal da produção, dá **0,513** contra chão
+**0,259**, margem **+0,254**. O **0,595** é o teste simétrico de escala e permite candidatos futuros.
 </details>
 
 **🔴 12. RQ4: o número que diz que o texto não ajuda.**
@@ -127,8 +129,9 @@ título **piora**. O sinal vive no contexto de mercado.
 **🔴 13. RQ4: o número que diz que a triagem vale a pena na mesma.**
 <details><summary>resposta</summary>
 
-Precisão dentro de um orçamento de 5 alertas/dia: **0,632** contra **0,379** de ordenar ao acaso (1,67×). O **0,163** do chão "alertar-sempre" não media escolher às cegas: com pontuação constante o desempate segue a ordem do ficheiro, que é alfabética.
-Melhora 1,67×. É o valor de produto, mesmo com o negativo do texto.
+Precisão dentro de um orçamento de 5 alertas/dia: **0,632** contra **0,379** de ordenar ao acaso
+(1,67×). É um resultado **offline no proxy** e um limite superior da política online, não uma
+medição de utilidade humana ou de eficácia ao vivo.
 </details>
 
 **🟡 14. Estatístico contra aprendido: os dois testes justos.**

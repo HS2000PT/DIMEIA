@@ -255,7 +255,10 @@ const BANCO = [
  a:`Que nenhum número usado para decidir hoje vem do futuro. A janela do z-score usa só dias
  <b>anteriores</b>; o impacto é medido estritamente <b>depois</b> do fecho do dia do evento.
  <p>E não é só uma afirmação: há um teste que <b>muta os preços futuros</b> — as features não
- podem mudar, o rótulo tem de mudar. Se alguém introduzir lookahead, o teste parte.</p>`},
+ podem mudar, o rótulo tem de mudar. Se alguém introduzir lookahead, o teste parte.</p>
+ <p><b>Limite:</b> esta é uma garantia ao fecho diário. <code>ret_event</code> é o retorno completo
+ de hoje no treino e ainda não existe quando uma notícia chega intradia; portanto o teste não
+ demonstra paridade entre treino e produção nesse instante.</p>`},
 
 {b:"Conceitos de IA", n:2, t:"aberta", q:"O que é precision@k e porquê essa métrica?",
  a:`A fracção dos <code>k</code> primeiros resultados que são relevantes.
@@ -287,8 +290,9 @@ const BANCO = [
  opts:["0,346","0,514","0,595","0,240"], ok:1,
  a:`<b>0,514</b> com o MiniLM, contra <b>0,346</b> lexical, <b>0,240</b> aleatório e
  <b>0,126</b> recência.
- <p>Cuidado com a confusão fácil: <b>0,595</b> é o valor <b>à escala</b>, medido em 80 mil
- títulos do FNSPID. Os dois números existem e dizem coisas diferentes.</p>
+ <p>Cuidado com a confusão fácil: <b>0,595</b> é o teste <b>simétrico à escala</b>, medido em
+ 80 mil títulos do FNSPID, mas permite candidatos posteriores. A tarefa causal do produto dá
+ <b>0,513</b> contra chão <b>0,259</b>, margem <b>+0,254</b>.</p>
  <p>⚠️ E não digas &laquo;mais do dobro do acaso&raquo;. O chão de <b>0,240</b> é o do acaso
  uniforme, e há um melhor: metade do corpus é tecnologia, portanto <b>devolver sempre
  tecnologia</b> vale <b>0,467</b> sem modelo nenhum. A margem real é <b>+0,047</b>.</p>
@@ -307,8 +311,9 @@ const BANCO = [
  q:"Precisão da triagem dentro de um orçamento de 5 alertas/dia (vs 0,379 de uma ordenação aleatória):",
  opts:["0,632","0,542","0,667","0,595"], ok:0,
  a:`<b>0,632</b> contra <b>0,379</b> de ordenar ao acaso — sobe 1,67×. O <b>0,163</b> que esta tese citava era o chão de "alertar-sempre", e não media escolher às cegas: com pontuação constante o desempate segue a ordem do ficheiro, que é alfabética.
- <p>É o valor de produto, e sobrevive ao negativo do texto. A resposta ao <i>"o vosso modelo
- perdeu"</i> vive neste número.</p>`},
+ <p>É um ganho <b>offline</b> no proxy, não utilidade humana nem eficácia causal ao vivo. Como a
+ política vê o dia inteiro antes de escolher cinco, funciona como <b>limite superior</b> da
+ política online. A resposta ao <i>"o vosso modelo perdeu"</i> tem de conservar esta ressalva.</p>`},
 
 {b:"Os números", n:2, t:"escolha",
  q:"Anomalia — F1 do z-score contra Isolation Forest e LOF, com a mesma informação causal:",
@@ -345,8 +350,8 @@ const BANCO = [
        "Porque o modelo é demasiado pequeno",
        "Porque a prevalência ao vivo é mais baixa"], ok:0,
  a:`<b>Porque a sigmóide de Platt é crescente</b> — muda os números, nunca troca quem fica à
- frente de quem. Se a ordenação estiver ao nível do acaso (ROC-AUC <b>0,494</b>, IC
- [0,391, 0,601]), recalibrar melhora o Brier e <b>não muda uma única decisão</b> do gate.
+ frente de quem. Se a ordenação estiver ao nível do acaso (ROC-AUC <b>0,486</b>, IC
+ [0,403, 0,571]), recalibrar melhora o Brier e <b>não muda uma única decisão</b> do gate.
  <p>Esta distinção — discriminação contra calibração — é a coisa mais técnica que tens para
  mostrar, e a ferramenta de recalibração <b>recusa-se a correr</b> por causa dela.</p>`},
 
@@ -396,9 +401,9 @@ const BANCO = [
 
 {b:"Depois de treinado", n:3, t:"aberta",
  q:"Se quisesses que o modelo melhorasse com o tempo, o que farias — e porque não fizeste?",
- a:`O mecanismo já está: <b>1.087</b> decisões registadas, <b>530</b> rotuladas. O passo seguinte
- seria re-ajustar <b>só a camada de calibração</b> (dois parâmetros). Re-treinar os nove
- coeficientes não: as decisões vêm agrupadas em <b>145</b> pares empresa-dia, e isso seria
+ a:`O mecanismo já está: <b>825</b> decisões maturadas, agrupadas em <b>239</b> pares empresa-dia.
+ O passo seguinte seria re-ajustar <b>só a camada de calibração</b> (dois parâmetros). Re-treinar
+ os nove coeficientes sobre grupos tão dependentes seria
  ajustar ruído com aparência de método.
  <p>E o remate: <b>medi antes de fazer, e a medição disse para não fazer.</b> A ferramenta existe
  e recusa-se a escrever enquanto a discriminação não superar o acaso.</p>`},
@@ -577,9 +582,10 @@ const BANCO = [
  ordenar só reordena candidatas presentes ao mesmo tempo, e a varredura emite <b>uma manchete por
  empresa por ciclo</b> — duas histórias a disputar a mesma quota nunca coexistem num lote. Ao longo
  do dia a ordem continuou a ser a de chegada.</p>
- <p>Quem governa o tecto é um <b>piso escalonado</b>: o k-ésimo alerta do dia exige mais
- (<code>0,49</code>, depois <code>0,64</code>), e os dois valores são <b>derivados</b> do varrimento
- de custo — não escolhidos. O que isto não resolve, e nenhum algoritmo online resolve: o primeiro
+ <p>Quem governa o total é o <b>orçamento global de 5 alertas/dia</b>. Com ele ligado, o primeiro
+ alerta de cada empresa fica <b>sem piso</b> e o segundo exige <code>0,64</code>. O
+ <code>0,49</code> permanece apenas como proveniência do varrimento que derivou ambos os valores.
+ O que isto não resolve, e nenhum algoritmo online resolve: o primeiro
  lugar é gasto na primeira manchete que passa, porque a história da tarde ainda não existe.</p>`},
 
 {b:"Decisões que tomei", n:2, t:"aberta",
@@ -704,8 +710,8 @@ const BANCO = [
 {b:"IA generativa", n:1, t:"aberta", q:"«Onde está a inteligência artificial no seu trabalho?»",
  a:`Quatro andares, e digo-os por esta ordem:
  <p><b>1 dados</b> (medido) &rarr; <b>2 estatística</b> (determinística: z-score, excedência,
- decomposição) &rarr; <b>3 aprendizagem</b> (SBERT, recuperação semântica, triagem calibrada
- treinada por mim em 79.753 exemplos) &rarr; <b>4 geração</b> (relatório e analista).</p>
+ decomposição) &rarr; <b>3 aprendizagem</b> (SBERT, recuperação semântica, triagem calibrada;
+ conjunto de 79.753 exemplos, bloco de treino 28.574) &rarr; <b>4 geração</b> (relatório e analista).</p>
  <p>A frase que fecha: <b>"O modelo não sabe o que aconteceu. É-lhe dito — e cada número que
  escreve é verificado contra a evidência que o produziu."</b></p>
  <p>E depois <b>mostra</b>: clica num [f1] e abre o facto. Três segundos.</p>`},

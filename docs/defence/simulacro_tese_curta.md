@@ -71,7 +71,8 @@ pergunta que separa uma tese honesta de uma tese defensiva.
 - **E aqui vem a parte que ganha a pergunta: o "não" tem uma localização.** Feita a pergunta certa,
   que não é *qual é melhor* mas *o texto acrescenta ao que já se sabe*, a resposta é **sim**:
   `+0.012` de PR-AUC por cima da tabela de consulta por empresa, com intervalo `[+0.004, +0.020]`
-  que exclui zero. É pequeno e é real. Mas três medições impedem que reabra o veredicto: a
+  que exclui zero. É detetável neste protocolo, pequeno e abaixo do critério prático de `0.02`.
+  Três medições impedem que reabra o veredicto: a
   diferença para a volatilidade continua a conter zero, a precisão dentro do orçamento não muda uma
   casa decimal, e a capacidade de separar dois dias da mesma empresa continua ao nível do acaso.
 
@@ -300,7 +301,8 @@ do que qualquer arquitetura.
 | `0.015` vs `0.344` | amplitude de disparo: *z*-score vs limiar fixo (QI1) |
 | `0.530` vs `0.269` / `0.280` | F1: *z*-score vs Isolation Forest vs LOF |
 | `0.514` vs `0.467` | precisão@5 vs o chão trivial *sempre tecnologia* (QI2) |
-| `0.595` | precisão@5 no corpus completo, 80 mil títulos |
+| `0.513` vs `0.259` | precisão@5 causal vs chão; margem `+0.254` |
+| `0.595` vs `0.333` | teste simétrico de escala; permite candidatos futuros |
 | `0.708` vs `0.688` | concordância de direção vs acaso: **tema ≠ direção** |
 | `0.496` vs `0.542` | PR-AUC: contexto+texto vs só volatilidade (QI3) |
 | `0.534` vs `0.538` | tabela de consulta vs modelo implantado |

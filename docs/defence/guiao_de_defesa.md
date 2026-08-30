@@ -38,18 +38,19 @@ fraqueza.
 | **F1 0.516 vs 0.218** | z-score vs limiar fixo, contra proxy de movimentos extremos | "Mais do dobro; mas é evidência de APOIO, porque o rótulo é relativo à volatilidade." |
 | **F1 0.271 vs 0.530** | Isolation Forest vs z-score, mesma informação causal | "Dei ao modelo aprendido a MESMA informação e perdeu. 1.º teste justo." |
 | **F1 0.664 vs 0.516** | EWMA vs volatilidade deslizante | "A EWMA melhora — reporto-o. Mantenho a deslizante por ser explicável numa frase; o ganho fica como futuro VALIDADO." |
-| **P@5 0.514 (±0.015)** | Recuperação SBERT-MiniLM, cross-ticker (corpus preliminar) | ⚠️ **NÃO dizer "2,1× o acaso".** O chão certo não é o 0,240: metade do corpus é tecnologia, e *devolver sempre tecnologia* vale **0,467** sem modelo nenhum. Dizer: "contra o chão trivial certo a margem é **+0,047**; mas essa alternativa acerta em tudo num setor e em **nada** nos outros quatro. **Dentro** de cada setor o método ganha nos cinco: 0,448 na energia contra um chão de 0,072. E valida à escala, 0,595 em 80k." |
+| **P@5 0.514 (±0.015)** | Recuperação SBERT-MiniLM, cross-ticker (corpus preliminar) | ⚠️ **NÃO dizer "2,1× o acaso".** O chão trivial mais forte é **0,467**. A defesa é por setor: o método ganha nos cinco. No FNSPID, sob a restrição causal da produção, dá **0,513** contra chão **0,259**, margem **+0,254**. |
 | **+0.377 / +0.348 / +0.100** | Lift energia / saúde / consumo | "O motor vale mais onde o vocabulário é distintivo; menos no consumo, genérico." |
 | **z = +7.61** | Tesla, 24 Out 2024, pós-resultados | "Exemplo real: μ=−0.92%, σ=2.72%, r=+19.8% → z=+7.61. A mesma regra que ignora ±2% apanha isto." |
 | **0.542 / 0.538 / 0.496** | PR-AUC triagem: volatilidade / contexto / contexto+texto | "O TEXTO não ajuda; o sinal vive no contexto de mercado. 2.º teste justo — e **robusto** (re-teste justo com PCA/FinBERT nunca bate a volatilidade)." |
-| **0.632 vs 0.379** | Precisão@orçamento (5 alertas/dia) vs ordenação aleatória | "A triagem sobe a precisão 1,67x dentro do orçamento — o valor de produto." |
+| **0.632 vs 0.379** | Precisão@orçamento (5 alertas/dia) vs ordenação aleatória | "Ganho offline no proxy, 1,67x; limite superior da política online, não utilidade humana." |
 | **p = 0.539 (54%)** | Decisão META real, 12 Jul 2026 | "u=+0.699 (vol + setor dominam) → σ → Platt → 54%, o número exato enviado ao canal." |
 | **ROC-AUC 0.486** | Gate de triagem medido AO VIVO (825 decisões, 239 pares ticker-dia) | "Em produção o gate ordena ao acaso — IC [0.403, 0.571]. Fica como controlo de volume, e a afirmação de que seleciona materialidade está retirada." |
-| **P@5 0.595 (80k)** | Recuperação à escala no FNSPID multi-ano *(reforço)* | "RQ2 validada à escala, acima do preliminar 0,514." |
+| **P@5 0.513 vs 0.259 (80k)** | Recuperação causal no FNSPID multi-ano *(síntese)* | "Só precedentes anteriores; margem +0,254, como no produto." |
+| **P@5 0.595 vs 0.333 (80k)** | Teste simétrico de escala *(reforço)* | "Permite candidatos posteriores; prova escala, não a tarefa causal." |
 | **dir. 0.708 vs chão 0.688** | Consistência de direção dos precedentes *(reforço)* | "Recupera o TEMA, não a DIREÇÃO — tema≠direção quantificado." |
 | **FinBERT 0.420 · E5/BGE ~0.51** | Benchmark de embedders *(reforço)* | "MiniLM validado por medição: domínio pior, modernos empatam." |
 | **texto justo 0.533 < 0.542** | RQ4 re-teste justo (C+PCA+FinBERT) *(reforço)* | "Negativo do texto robusto; PCA recupera de 0,499 mas nunca bate a volatilidade." |
-| **+0.012, IC [+0.004, +0.020]** | O texto **por cima** da tabela de consulta (§5.6.10) *(o resultado novo)* | "Medido por cima da tabela de consulta por empresa, em vez de contra ela, o título **acrescenta**, e o intervalo exclui zero. Mas não bate a volatilidade sozinha, não muda a precisão no orçamento (0.662 nas duas), e não separa dias da mesma empresa. **Localiza o limite: distingue empresas, não notícias.**" |
+| **+0.012, IC [+0.004, +0.020]** | O texto **por cima** da tabela de consulta (§5.6.10) *(o resultado novo)* | "Acréscimo detetável neste protocolo, mas abaixo do critério prático de 0.02. Não bate a volatilidade, não muda a precisão no orçamento e não separa dias da mesma empresa." |
 | **AMI 0.358 vs 0.188** | Tipo de evento vs ticker, no espaço de embeddings *(Caso 5)* | "O espaço **sabe** o tipo de acontecimento, e sabe-o mais do que sabe a empresa. Mas a silhueta é 0,084: fraco demais para filtrar precedentes, por isso NÃO liguei." |
 | **0.712 vs 0.444** | Pureza dos grupos vs aleatório do mesmo tamanho *(Caso 5)* | "O 0,712 sozinho engana: com um tipo a valer 44% dos rótulos, o acaso já dá 0,444. O ganho real é +0,269." |
 | **0.951/0.902/0.803** | Cobertura conformal, divisão aleatória *(Caso 6)* | "Bate no nominal aos três níveis — prova que a implementação está certa." |
@@ -83,11 +84,10 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 > (amplitude 0.015 vs 0.344), e cada alerta é explicável a um não-especialista. Testei-o contra
 > uma Isolation Forest com a mesma informação — a transparente ganhou."
 
-**RQ2 (precedentes análogos, sem lookahead) — SIM, validada à escala.**
-> ⚠️ *Frase revista a 2026-08-22: ver a linha da P@5 na tabela acima. O chão a citar é o 0,467.*
-> "A recuperação semântica bate todas as linhas de base (P@5 0.514 vs 0.346 lexical, 0.240
-> aleatório), e **validei-a à escala** no FNSPID multi-ano: **P@5 0,595 em ~80k títulos**, acima do
-> preliminar. O impacto é medido ESTRITAMENTE após o evento — evidência observada, nunca previsão.
+**RQ2 (precedentes do mesmo setor, sem lookahead) — SIM.**
+> "No corpus recente, o método ganha nos cinco setores. No FNSPID multi-ano, sob a restrição causal
+> da produção, dá **P@5 0,513** contra chão **0,259**, margem **+0,254**. O **0,595** é o teste
+> simétrico de escala e permite candidatos posteriores. O impacto é medido ESTRITAMENTE após o evento — evidência observada, nunca previsão.
 > Fica só o estudo das MAGNITUDES ajustadas ao mercado como trabalho futuro."
 
 **RQ3 (explicações fiéis e úteis) — FIEL sim; ÚTIL em aberto.**
@@ -98,7 +98,8 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 **RQ4 (triagem para além da volatilidade) — NÃO no texto; SIM no mecanismo.** *(o mais sensível)*
 > "Pré-comprometi-me com a comparação decisiva: nenhum modelo que lê o TEXTO do título bateu a
 > volatilidade (PR-AUC 0.496 vs 0.542). **Mas isto é um resultado, não um fracasso** — como
-> MECANISMO, a triagem sobe a precisão 1,67x dentro do orçamento (0.632 vs 0.379). O sinal
+> MECANISMO OFFLINE, a triagem sobe a precisão 1,67x dentro do orçamento (0.632 vs 0.379). É um
+> limite superior da política online e não mede utilidade humana. O sinal
 > vive no contexto de mercado, e a variante em produção usa exatamente essas features. É a 2.ª vez
 > que a escolha transparente venceu num teste justo. Reporto-o tal como caiu."
 
@@ -113,9 +114,9 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 > e é essa que dizes: contém tudo o que o modelo sabe da empresa e nada da notícia, e é isso que
 > faz o acréscimo isolar a contribuição do texto.
 >
-> **"Sim. `+0.012` de PR-AUC, com intervalo `[+0.004, +0.020]` que exclui zero. É pequeno, é
-> real, e é a única vez neste trabalho em que uma representação de texto mostra valor
-> mensurável."**
+> **"Sim. `+0.012` de PR-AUC, com intervalo `[+0.004, +0.020]` que exclui zero. É detetável
+> neste protocolo, mas fica abaixo do critério prático de `0.02` e não muda a precisão no
+> orçamento."**
 >
 > **Três ressalvas que tens de dizer a seguir, sem esperar que perguntem** (é isso que separa
 > um resultado defensável de um exagero):
@@ -139,10 +140,10 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 ## 4. Perguntas MAIS DIFÍCEIS do júri — respostas-modelo (ensaiar em voz alta)
 
 **P: O corpus de recuperação é fino e recente. Como sabes que a P@5 se aguenta?**
-> "A resposta mudou desde a versão preliminar. O inicial (P@5 0,514 em ~3.700 títulos) era
-> preliminar por desenho — estabelecia o mecanismo. Mas validei-o **à escala**: no FNSPID multi-ano,
-> ~80k títulos de 6 anos, o mesmo protocolo cross-ticker deu **P@5 0,595** — acima do preliminar.
-> E quantifiquei o tema≠direção (consistência 0,71 vs chão do acaso 0,69). Fica só o estudo das
+> "A resposta mudou desde a versão preliminar. No FNSPID multi-ano, sob a restrição causal da
+> produção, obtive **P@5 0,513** contra chão **0,259**, margem **+0,254**. O teste simétrico de
+> escala dá **0,595** contra **0,333**, mas permite candidatos posteriores. E quantifiquei o
+> tema≠direção (consistência 0,71 vs chão 0,69). Fica só o estudo das
 > magnitudes ajustadas ao mercado."
 
 **P: O teu modelo treinado PERDEU para a volatilidade. Não é um fracasso?**
@@ -164,10 +165,11 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 > perguntas diferentes — assumo o custo do bruto (confundimento) e limito-o com janelas curtas."
 
 **P: Como garantes que não há lookahead?**
-> "Por construção e por teste. Cada feature usa só informação até ao instante; o impacto acumula-se
-> ESTRITAMENTE para a frente a partir do fecho do dia do evento. E há um teste unitário que MUTA os
-> preços FUTUROS e verifica que nenhuma feature muda enquanto o rótulo muda. O split temporal é por
-> dia único com embargo, para nenhuma janela de rótulo cavalgar dois blocos."
+> "Por construção e por teste no referencial diário. As entradas offline usam informação até ao
+> fecho de `d`; o impacto acumula-se ESTRITAMENTE para a frente. Um teste MUTA os preços FUTUROS e
+> verifica que as entradas não mudam enquanto o rótulo muda. O limite é explícito: `ret_event` é o
+> retorno completo do dia no treino e ainda não existe quando a notícia chega intradia, portanto
+> isto não prova paridade treino-produção nesse instante."
 
 **P: Porquê não previr o preço? Não seria mais útil?**
 > "Pela eficiência de mercado (Fama 1970): as notícias públicas são absorvidas quase de imediato,
@@ -208,8 +210,8 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 
 1. **Pequeno estudo humano de utilidade (RQ3):** 6–8 pessoas, uma rubrica (clareza/completude/
    acionabilidade) sobre alguns alertas reais. Fecha a maior lacuna "em aberto" de forma barata.
-2. ✅ **Avaliação de recuperação no FNSPID multi-ano (RQ2): FEITO** — P@5 **0,595** em 80k, já
-   integrado na tese; a RQ2 subiu de "preliminar" a "validada à escala". Resta apenas o estudo das
+2. ✅ **Avaliação de recuperação no FNSPID multi-ano (RQ2): FEITO** — P@5 causal **0,513** contra
+   chão **0,259**, margem **+0,254**; o **0,595** fica identificado como protocolo simétrico. Resta o estudo das
    magnitudes de impacto ajustadas ao mercado.
 
 ---

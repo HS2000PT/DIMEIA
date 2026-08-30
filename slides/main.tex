@@ -525,12 +525,12 @@ same rule as training. Over \textbf{530} matured decisions:
 a sigmoid is \textbf{monotone}, it preserves the order exactly.
 \end{block}
 \smallskip
-{\footnotesize Measured: \textbf{ROC-AUC $0.494$}, cluster CI $[0.391, 0.601]$ over $145$
+{\footnotesize Measured: \textbf{ROC-AUC $0.486$}, cluster CI $[0.403, 0.571]$ over $239$
 (ticker, day) units. Centred on chance. \textbf{No order to preserve.}}
 \end{columns}
 \vfill
 {\footnotesize\textbf{Why, and it is not a broken model --- it is a redundant one.} Materiality
-among logged decisions runs at $0.626$ against $0.378$ in training, because decisions are only
+among logged decisions runs at $0.602$ against $0.378$ in training, because decisions are only
 logged for headlines that \emph{already} cleared the relevance and freshness filters. The cheap
 upstream stages had removed what the learned stage was trained to remove. \textbf{A model
 evaluated in isolation and deployed behind filters was never evaluated on the distribution it
@@ -629,7 +629,7 @@ Two of the limitations above used to be assertions; they are now measurements.
   \item \textbf{RQ1 (yes):} transparent \emph{z}-score detects consistently across the market and explains every flag.
   \item \textbf{RQ2 (yes):} under the deployed causal constraint, P@5 $0.513$ against a $0.259$ floor (margin $+0.254$); $0.595$ is the symmetric scale test. Impact measured without lookahead.
   \item \textbf{RQ3 (faithful yes; useful open):} explanations cannot diverge from the computation; human usefulness is future work.
-  \item \textbf{RQ4 (no on text; mechanism yes \emph{offline}):} triage $\approx 4\times$ within-budget precision on held-out data, but volatility stayed unbeaten --- the \emph{second} fair ``learned vs simple'' test the transparent choice won (first: Isolation Forest vs \emph{z}-score, $F_1$ $0.271$ vs $0.530$). Measured in production the same gate ranks at chance (Result 9), so the mechanism claim is an evaluation-set claim and is stated as one.
+  \item \textbf{RQ4 (no on text; offline proxy gain):} triage improves within-budget precision $1.67\times$ ($0.632$ vs $0.379$), as an upper bound on the online policy; volatility stayed unbeaten. In production the same gate ranks at chance (Result 9).
 \end{itemize}
 \vfill
 \begin{block}{Contribution}
@@ -651,10 +651,10 @@ A working, \textbf{explainable, reproducible} financial-alert system for retail 
 \begin{itemize}
   \item \textbf{Why not predict prices?} Market efficiency (Fama 1970): public news is impounded fast; we \emph{measure} reactions, honestly.
   \item \textbf{Why \emph{z}-score, not Isolation Forest/GARCH?} Transparency for a low-dimensional signal --- and we \emph{tested} it: a causal Isolation Forest on the same information lost ($F_1$ $0.271$ vs $0.530$).
-  \item \textbf{Your trained model lost to the volatility baseline. Failure?} No: the comparison was \emph{pre-committed} and answers RQ4 with evidence. Triage gives $\approx 4\times$ within-budget precision on held-out data, and the deployed variant uses exactly the features that carry the signal.
-  \item \textbf{So does the ML work in production?} \emph{As a selector, no, and I measured it} (ROC-AUC $0.494$). As a volume control, yes. The reason is instructive: the upstream filters already removed most of what it was trained to remove, so it is redundant rather than broken --- a lesson about placing a learned component \emph{inside} a pipeline.
+  \item \textbf{Your trained model lost to the volatility baseline. Failure?} No: the comparison was \emph{pre-committed}. Offline, triage improves the within-budget proxy $1.67\times$, but that is an upper bound and not measured human utility.
+  \item \textbf{So does the ML work in production?} \emph{As a selector, no, and I measured it} (ROC-AUC $0.486$). As a volume control, yes. Upstream filters make it redundant in the deployed population.
   \item \textbf{Does the system learn automatically?} No. It does \emph{inference} with fixed weights and \emph{collects labels}; retraining is possible and documented but has never run. Calling that continual learning would be an overclaim.
-  \item \textbf{How do you know the triage model never sees the future?} A unit test mutates post-event prices and asserts features are unchanged while the label changes; temporal split by unique day with a five-day embargo.
+  \item \textbf{How do you know the triage model never sees the future?} At the daily-close boundary, a test mutates prices after $d$; inputs stay fixed and the label changes. Limit: \texttt{ret\_event} is complete only at the close and unavailable when news arrives intraday.
   \item \textbf{Why precision@$k$ and a sector proxy?} Standard ranked-retrieval metric; objective, reproducible; human relevance is future work.
   \item \textbf{Cross-ticker constraint?} An \emph{evaluation} choice to avoid trivial self-matches; the live alert shows the most similar precedents regardless.
   \item \textbf{A positive headline retrieved negative precedents ($-1.97\%$). Misleading?} Similarity matches \emph{theme}, not direction; the mean is theme-level \textbf{evidence}, shown with every precedent and a no-prediction disclaimer. Future work: de-duplicate precedents and flag directional disagreement.

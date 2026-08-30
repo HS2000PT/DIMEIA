@@ -50,6 +50,7 @@ JUSTIFICADOS: dict[str, str] = {
     "0.217": "reconstrucao do leitor a duas casas, contra o 0.218 reportado; a tese di-lo",
     "7.63": "reconstrucao do leitor a duas casas, contra o 7.61 reportado; a tese di-lo",
     "0.336": "0.968 - 0.632, escrito na mesma frase",
+    "0.143": "0.632 - 0.489, escrito na mesma frase",
     "0.037": "limite superior de [-0.0321, +0.0366] em evaluation_triage_within.md, a 3 casas",
     "0.462": "limite inferior de um IC do mesmo ficheiro, a 3 casas",
     # (c) exemplo ilustrativo, marcado como tal ("do genero...")

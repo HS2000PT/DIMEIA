@@ -358,8 +358,10 @@ last   = float(r.iloc[-1])         <span class="c"># o dia que estamos a julgar<
     O <code>-1</code> no fim do corte é <b>o</b> detalhe. Sem ele, havia lookahead. E o comentário
     está lá para que ninguém o apague por acidente.`,
     q: "Como provas que não tens lookahead, em vez de só o afirmares?",
-    a: `<p>Com um <b>teste por mutação</b>: mudas os valores do futuro nos dados e verificas que o
-    resultado <b>não muda</b>. Se mudasse, é porque o futuro estava a entrar. Está feito em
+    a: `<p>Com um <b>teste por mutação</b>: mudas os valores posteriores a <code>d</code> e verificas
+    que as entradas offline <b>não mudam</b>. Se mudassem, o futuro estava a entrar. É uma garantia
+    ao fecho diário: <code>ret_event</code> só fica completo nesse fecho e não está disponível quando
+    a notícia chega intradia. Está feito em
     <code>tests/</code> para a construção dos rótulos da triagem.</p>
     <p>É uma resposta forte porque não é uma promessa — é uma experiência que falha se a promessa
     for falsa.</p>` },
@@ -542,16 +544,16 @@ last   = float(r.iloc[-1])         <span class="c"># o dia que estamos a julgar<
     <div class="scroll"><table>
       <tr><th>#</th><th>pergunta</th><th>veredicto</th></tr>
       <tr><td>RQ1</td><td>o z-score bate alternativas na deteção?</td><td style="color:var(--up)">sim (F1 0,516 vs 0,271)</td></tr>
-      <tr><td>RQ2</td><td>a recuperação semântica encontra precedentes relevantes?</td><td style="color:var(--up)">sim (0,595 à escala)</td></tr>
+      <tr><td>RQ2</td><td>a recuperação semântica encontra precedentes do mesmo setor?</td><td style="color:var(--up)">sim (causal: 0,513 vs 0,259)</td></tr>
       <tr><td>RQ3</td><td>as explicações são fiéis ao que o sistema calculou?</td><td style="color:var(--flag)">sim; "útil" em aberto</td></tr>
       <tr><td>RQ4</td><td>ler o texto da notícia ajuda a prever materialidade?</td><td style="color:var(--down)">NÃO</td></tr>
     </table></div>
     <p>A RQ4 deu <b>não</b>. Nenhum modelo que lê o texto bateu uma linha de base simples de
     volatilidade: 0,542 (só volatilidade) contra 0,496 (com texto). E está reportado assim.</p>`,
-    ex: `Mas há uma segunda metade e é ela que salva a RQ4: <b>como mecanismo de triagem, funciona</b>.
-    Num orçamento de 5 alertas por dia, a precisão dos escolhidos é <b>0,632 contra 0,163</b> ao
-    acaso — quase 4×. Ou seja: a hipótese sobre o texto falhou, o mecanismo vale. As duas coisas são
-    verdade e as duas estão escritas.`,
+    ex: `Há uma segunda metade: <b>offline, o mecanismo de triagem melhora o proxy</b>.
+    Num orçamento de 5 alertas por dia, a precisão dos escolhidos é <b>0,632 contra 0,379</b> de
+    uma ordenação aleatória. É um limite superior, porque vê o dia inteiro antes de escolher;
+    não prova utilidade humana nem eficácia causal da política online.`,
     q: "«O vosso modelo perdeu para uma linha de base. Isso não é um fracasso?»",
     a: `<p><i>«É um resultado. A comparação foi pré-comprometida: escrevi qual seria a linha de base
     antes de treinar, para não poder escolher a mais fácil depois. E testei se o negativo era
@@ -656,7 +658,8 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
       <tr><td>por recência (a mais recente)</td><td class="num">0,126</td></tr>
       <tr><td>por palavras partilhadas</td><td class="num">0,346</td></tr>
       <tr><td><b>SBERT MiniLM (o teu)</b></td><td class="num">0,514</td></tr>
-      <tr><td>à escala, no FNSPID (~80 mil)</td><td class="num">0,595</td></tr>
+      <tr><td><b>causal, só precedentes anteriores (~80 mil)</b></td><td class="num">0,513 vs chão 0,259</td></tr>
+      <tr><td>simétrico à escala, permite futuros</td><td class="num">0,595 vs chão 0,333</td></tr>
     </table></div>`,
     q: "O resultado mais importante desta peça é um que parece um defeito. Qual é?",
     a: `<p><b>Tema ≠ direção.</b> A recuperação encontra manchetes sobre o <i>mesmo assunto</i>, e o
@@ -815,10 +818,9 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
     q: "«Se quisessem que o modelo melhorasse com o tempo, o que fariam?»",
     a: `<p>Responde com o mecanismo <b>e</b> com a razão pela qual não o fizeste, que é a parte
     forte.</p>
-    <p><i>«O mecanismo já está: 1.087 decisões registadas, 530 já rotuladas pelo desfecho. O passo
-    seguinte seria re-ajustar a camada de calibração sobre elas — dois parâmetros, que 530 pontos
-    chegam para estimar. Re-treinar os nove coeficientes não, porque as decisões vêm agrupadas em
-    145 pares empresa-dia e isso seria ajustar ruído.»</i></p>
+    <p><i>«O mecanismo já está: 825 decisões maturadas, agrupadas em 239 pares empresa-dia. O passo
+    seguinte seria re-ajustar a camada de calibração — dois parâmetros. Re-treinar os nove
+    coeficientes sobre grupos tão dependentes seria ajustar ruído.»</i></p>
     <p>E depois o remate, que é o que vais querer ter dito: <i>«mas medi antes de o fazer, e a
     medição disse para não fazer. Explico já a seguir.»</i></p>` },
 
@@ -831,18 +833,18 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
     crescente: preserva a ordem exactamente. Muda os números, não muda quem fica à frente de quem.</p>
     <p>Distinguir as duas é a diferença entre «o limiar está mal posto» e «o modelo não serve
     aqui».</p>`,
-    ex: `Mediste na população implantada: <b>ROC-AUC 0,494</b>, intervalo de confiança
-    <b>[0,391, 0,601]</b>. Centrado no acaso. Não há ordenação para preservar.<br><br>
+    ex: `Mediste na população implantada: <b>ROC-AUC 0,486</b>, intervalo de confiança
+    <b>[0,403, 0,571]</b>. Centrado no acaso. Não há ordenação para preservar.<br><br>
     E há uma explicação, que é o que transforma isto num resultado em vez de uma queixa: a
-    materialidade entre as decisões registadas corre a <b>0,626</b>, contra <b>0,378</b> no treino.
+    materialidade entre as decisões maturadas corre a <b>0,602</b>, contra <b>0,378</b> no treino.
     Só se registam decisões para manchetes que já passaram os filtros de relevância e frescura. Os
     filtros baratos a montante já tinham feito o trabalho que o modelo foi treinado para fazer.<br><br>
     O modelo não está avariado. Está <b>redundante</b>.`,
     q: "«Então a vossa componente de machine learning não funciona?»",
     a: `<p>Não fujas. Concorda com a parte verdadeira e delimita-a.</p>
-    <p><i>«Em produção, não acrescenta poder de seleção — mediu-se, ROC-AUC 0,494 com intervalo a
-    conter o acaso. Em dados retidos do corpus de treino, acrescenta: a precisão dentro do
-    orçamento sobe de 0,163 para 0,632. As duas coisas são verdade porque são populações
+    <p><i>«Em produção, não acrescenta poder de seleção — mediu-se, ROC-AUC 0,486 com intervalo a
+    conter o acaso. Em dados retidos do corpus de treino, a precisão offline dentro do
+    orçamento sobe de 0,379 para 0,632. As duas coisas são verdade porque são populações
     diferentes, e a tese diz as duas.»</i></p>
     <p>Depois dá a lição, que é o que um arguente quer ouvir de um engenheiro: <i>«o que isto
     ensina é sobre pôr um componente aprendido DENTRO de uma pipeline. Foi avaliado isolado e
@@ -964,11 +966,12 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
     h: `<div class="scroll"><table>
       <tr><th>número</th><th>o que é</th><th>a frase</th></tr>
       <tr><td class="num">0,516</td><td>F1 do z-score</td><td>"contra 0,218 do limiar fixo"</td></tr>
-      <tr><td class="num">0,595</td><td>P@5 à escala</td><td>"2,5× o acaso, em 80 mil manchetes"</td></tr>
+      <tr><td class="num">0,513</td><td>P@5 causal</td><td>"chão 0,259; margem +0,254, em 80 mil manchetes"</td></tr>
+      <tr><td class="num">0,595</td><td>P@5 simétrica</td><td>"teste de escala; chão 0,333; permite candidatos futuros"</td></tr>
       <tr><td class="num">0,708</td><td>consistência de direção</td><td>"contra um chão de 0,688 — tema não é direção"</td></tr>
       <tr><td class="num">0,542</td><td>PR-AUC da volatilidade</td><td>"e ganhou ao texto, que deu 0,496"</td></tr>
-      <tr><td class="num">0,632</td><td>precisão a 5/dia</td><td>"contra 0,163 ao acaso — <b>em dados retidos</b>"</td></tr>
-      <tr><td class="num">0,494</td><td>ROC-AUC AO VIVO</td><td>"IC [0,391, 0,601] — o gate não ordena em produção"</td></tr>
+      <tr><td class="num">0,632</td><td>precisão a 5/dia</td><td>"contra 0,379 aleatória — <b>offline, limite superior</b>"</td></tr>
+      <tr><td class="num">0,486</td><td>ROC-AUC AO VIVO</td><td>"IC [0,403, 0,571] — o gate não ordena em produção"</td></tr>
       <tr><td class="num">0,992</td><td>fidelidade do ONNX</td><td>"e 95% dos vizinhos partilhados, em 503 consultas"</td></tr>
     </table></div>
     <p>⚠️ <b>Duas armadilhas nesta tabela, e as duas foram números que este projeto teve de retirar.</b></p>
@@ -998,12 +1001,12 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
       <tr><td>predição conformal</td><td>a 90% de cobertura, decisão definida em só <b>39,5%</b></td><td>não entra no produto</td></tr>
       <tr><td>deriva (drift)</td><td>PSI 0,281 na volatilidade — significativa</td><td>limitação medida, não corrigida</td></tr>
       <tr><td>convergência multi-sinal</td><td>ganha em 1 de 3 orçamentos</td><td>não entra</td></tr>
-      <tr><td><b>o gate de triagem em produção</b></td><td><b>ROC-AUC 0,494</b>, IC [0,391, 0,601]</td><td>afirmação retirada; fica como controlo de volume</td></tr>
+      <tr><td><b>o gate de triagem em produção</b></td><td><b>ROC-AUC 0,486</b>, IC [0,403, 0,571]</td><td>afirmação retirada; fica como controlo de volume</td></tr>
     </table></div>
     <p>O da conformal é o mais elegante: dá uma garantia estatística real, mas o preço é que em 60%
     dos casos não sabe decidir. E isso <b>explica o negativo da RQ4 por um ângulo independente</b>.</p>
     <p>O quinto é o mais recente e o mais difícil de encaixar, porque contradiz um número que a
-    própria tese cita como sucesso (0,163 → 0,632). Não há contradição: são <b>populações
+    própria tese cita como sucesso (0,379 → 0,632). Não há contradição: são <b>populações
     diferentes</b>. Em dados retidos do corpus de treino o mecanismo funciona; na população que o
     produto lhe dá, não. E a tese diz as duas coisas, em vez de citar só a que favorece.</p>`,
     ex: `Uma armadilha que apanhaste tu mesmo: a garantia da predição conformal é <b>marginal</b>

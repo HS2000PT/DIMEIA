@@ -181,8 +181,9 @@ re-treino, não um re-treino.
 
 ### RQ2 — recuperar casos análogos · **SIM**
 - P@5 **0,514** vs **0,467** (*sempre tecnologia*, o chão certo), 0,346 (lexical), 0,240 (acaso
-  uniforme). À escala: **0,595** em 80k. ⚠️ A margem sobre o chão certo é **+0,047**, e a
-  afirmação forte é **por setor**: ganha nos cinco, 0,448 na energia contra 0,072.
+  uniforme). A afirmação forte é **por setor**: ganha nos cinco, 0,448 na energia contra 0,072.
+- No FNSPID, a tarefa causal da produção dá **0,513** contra chão **0,259**, margem **+0,254**.
+  O **0,595** é o teste simétrico de escala e permite candidatos futuros.
 - *Como se calcula:* dos 5 vizinhos mais próximos, quantos são do mesmo setor da consulta? Com
   a **própria empresa excluída** — não posso ganhar a acertar em mim mesmo.
 - **⚠️ O que NÃO posso dizer:** que são "precedentes". Naquele corpus de 27 dias, só **31,1%**
@@ -196,8 +197,8 @@ re-treino, não um re-treino.
 ### RQ4 — triagem aprendida · **OFFLINE SIM, TEXTO NÃO, AO VIVO NÃO**
 - PR-AUC: volatilidade **0,542** > contexto 0,538 > contexto+texto **0,496** > GBM 0,469.
   **O texto piora.** Comparação pré-comprometida.
-- Valor de produto (em dados retidos): precisão dentro do orçamento de 5 alertas/dia sobe de
-  **0,379** para **0,632**.
+- Resultado offline no proxy: a precisão dentro do orçamento de 5 alertas/dia sobe de **0,379**
+  para **0,632**. É um limite superior da política online, não utilidade humana medida.
 - **⚠️ Ao vivo não transfere:** ROC-AUC **0,486**, IC [0,403, 0,571] sobre 239 pares
   empresa-dia. Centrado no acaso.
 
@@ -215,7 +216,7 @@ Duas falhas produzem o mesmo sintoma e pedem correcções opostas:
 Medi: ROC-AUC 0,486. **Não há ordem para preservar.**
 
 E a explicação não é "modelo avariado", é **modelo redundante**: a materialidade entre as
-decisões registadas corre a **0,626**, contra **0,378** no treino — porque só se registam
+decisões maturadas corre a **0,602**, contra **0,378** no treino — porque só se registam
 títulos que já passaram os filtros de relevância e frescura. Os filtros baratos a montante já
 tinham feito o trabalho.
 
@@ -233,7 +234,7 @@ integração, não de modelação — e só apareceu porque instrumentei o gate.
 | Quantos exemplos? | 79.753 para a triagem; 3.714 para recuperação | §3.2, §5.1 | `evaluation_triage.md` |
 | Como são criados os rótulos? | `\|ret − ret_SPY\|` a 3 dias ≥ 2%, pelo meu código | §3.3.4 | `dataset.py` |
 | Como divide treino/teste? | Temporal, por dia único, 70/15/15 + embargo 5d | §3.3.4 | Excerto 3.2 |
-| Como sei que não há lookahead? | Teste que muta o futuro: features iguais, rótulo muda | §3.3.4 | Excerto 3.1 |
+| Como sei que não há lookahead? | No fecho diário, teste que muta o futuro; `ret_event` não está disponível intradia | §3.3.4 | Excerto 3.1 |
 | Porque exclui certas notícias? | Tem de nomear a empresa; sem boilerplate. Descarta 2/3 | §4.5 | `evaluation_relevance_filter.md` |
 | Como calcula a precisão? | PR-AUC no bloco de teste; e precisão@orçamento diário | §3.6.4 | `evaluation_triage.md` |
 | Onde está o modelo? | `.joblib` de 1,8 KB + `.json` de metadados | §4.9 | teste de reprodução |
@@ -246,14 +247,11 @@ integração, não de modelação — e só apareceu porque instrumentei o gate.
 
 ## 11. ⚠️ ZONA DE PERIGO — as perguntas que doem
 
-### P1. «Só 31% dos vossos precedentes são anteriores à consulta?»
-**Porque é vulnerável:** parece lookahead.
-**A verdade:** não é lookahead — a métrica pontua concordância de **setor**, e o setor não muda
-com o tempo. Mas a palavra "precedente" estava errada.
-**Resposta segura:** *"Nessa experiência, sim, e por isso chamo-lhe recuperação semântica de
-itens do mesmo setor, não recuperação de precedentes. O corpus tem 27 dias — não dá para exigir
-anterioridade. Em produção a base termina em 2023 e as consultas são de 2026, portanto a
-anterioridade é estrutural. E a medição do impacto olha sempre só para a frente."*
+### P1. «O vosso 0,595 permite candidatos futuros. Como pode chamar-lhes precedentes?»
+**Porque é vulnerável:** o protocolo simétrico de escala não é a tarefa causal do produto.
+**Resposta segura:** *"Tem razão quanto ao 0,595: é um teste simétrico de escala e permite
+candidatos posteriores. Por isso o número de síntese é outro: sob a restrição causal, só com casos
+anteriores, a P@5 é 0,513 contra chão 0,259, margem +0,254. A conclusão mantém-se sem usar o futuro."*
 
 ### P2. «Deitam fora dois terços das notícias?»
 **Resposta segura:** *"Sim, e medi-o em vez de o esconder. 811 de 2.478. E só 3% é a regra de

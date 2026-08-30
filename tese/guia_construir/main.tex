@@ -157,42 +157,26 @@ percentagem mediria \emph{volatilidade} e não \emph{raridade}. Mede-se em desvi
 \fonte{investigator/anomaly_detector/detector.py}
 \begin{lstlisting}
 def _score(last: float, mu: float, sigma: float, threshold: float) -> tuple[float, bool, bool]:
-    """Calcula o z e resolve explicitamente uma norma com variância nula.
-
-    Se a janela anterior for constante, o z-score não está definido. Manter o mesmo valor não é
-    anómalo; afastar-se dele é sinalizado sem inventar um z finito. `z_score=0.0` fica apenas como
-    sentinela compatível, e `zero_variance` obriga os consumidores a explicar o caso pelo nome.
-    """
+# ...
     if sigma > 0.0:
         z = (last - mu) / sigma
         return z, abs(z) > threshold, False
     moved = not math.isclose(last, mu, rel_tol=0.0, abs_tol=1e-15)
     return 0.0, moved, True
 # ...
-    r = pd.Series(list(returns), dtype="float64").dropna().reset_index(drop=True)
-# ...
     recent = r.iloc[-window - 1 : -1]  # janela ANTES do último (sem lookahead)
     last = float(r.iloc[-1])
     mu = float(recent.mean())
     sigma = float(recent.std(ddof=1))
     z, is_anomaly, zero_variance = _score(last, mu, sigma, threshold)
-    return AnomalyResult(
-        is_anomaly=is_anomaly,
-        z_score=z,
-        last_return=last,
-        mean=mu,
-        std=sigma,
-        window=window,
-        threshold=threshold,
+# ...
         zero_variance=zero_variance,
-    )
 \end{lstlisting}
 
 \linhaq{O \texttt{-1} do fim da fatia \texttt{r.iloc[-window - 1 : -1]}, que \textbf{exclui o
 próprio dia julgado}. Com \texttt{r.iloc[-window:]} o salto entrava no cálculo da sua própria
-régua, inflacionava o \texttt{sigma} e encolhia o seu próprio $z$: o dia extraordinário
-esconder-se-ia a si mesmo. Se a norma for constante, repetir o valor não dispara; afastar-se dele
-dispara, mas o produto diz que o $z$ é indefinido em vez de inventar um número.}
+régua, inflacionava o \texttt{sigma} e encolhia o seu próprio $z$. Se a norma for constante,
+repetir o valor não dispara; afastar-se dele dispara, mas o produto diz que o $z$ é indefinido.}
 \verifica{pytest tests/test\_anomaly\_detector.py}
 \end{frame}
 
