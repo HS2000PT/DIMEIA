@@ -8962,3 +8962,15 @@
 {"date": "2026-08-29", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-08-29", "ticker": "XOM", "stage": "stale", "detail": "mais recente 2026-08-26 > 2d"}
 {"date": "2026-08-29", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-30", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-30", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-30", "ticker": "NVDA", "stage": "alerted", "detail": "Nvidia: The Cracks Are Finally Showing"}
+{"date": "2026-08-30", "ticker": "TSLA", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-30", "ticker": "AMZN", "stage": "alerted", "detail": "Valley & Summit Law Highlights New CPSC Compliance Challenges for Amazon Sellers"}
+{"date": "2026-08-30", "ticker": "GOOGL", "stage": "alerted", "detail": "Alphabet has the four pillars in AI, says Glenview Trust's Bill Stone"}
+{"date": "2026-08-30", "ticker": "META", "stage": "alerted", "detail": "Meta’s $18 billion settlement puts TikTok and YouTube on notice. Who's next on t"}
+{"date": "2026-08-30", "ticker": "JPM", "stage": "stale", "detail": "mais recente 2026-08-27 > 2d"}
+{"date": "2026-08-30", "ticker": "AMD", "stage": "alerted", "detail": "Cathie Wood Trims AMD After a 120% Rally — Is the AI Trade Getting Too Crowded?"}
+{"date": "2026-08-30", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-30", "ticker": "XOM", "stage": "stale", "detail": "mais recente 2026-08-26 > 2d"}
+{"date": "2026-08-30", "ticker": "JNJ", "stage": "stale", "detail": "mais recente 2026-08-25 > 2d"}
