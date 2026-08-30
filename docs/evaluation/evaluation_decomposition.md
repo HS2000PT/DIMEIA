@@ -2,8 +2,8 @@
 
 > Gerado por `scripts/evaluate_decomposition.py`. Nao editar a mao.
 > Mercado: `SPY` · janela de estimacao: 20 dias anteriores ao dia
-> explicado · encolhimento de Vasicek com prior 1.0 e
-> dispersao 0.5 · minimo de 10 dias para estimar.
+> explicado · encolhimento de Vasicek com priors mercado=1.0 e setor=0.0
+> desvio-padrao comum=0.5 (variancia=0.25) · minimo de 10 dias para estimar.
 
 ## 1. Um caso trabalhado
 

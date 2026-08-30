@@ -107,19 +107,9 @@ A \textbf{cobertura}, também chamada \emph{recall}, responde a uma pergunta dif
   \label{eq:cobertura}
 \end{equation}
 
-Repare-se em que o denominador muda: a precisão divide pelo que o sistema \emph{disse}, ao passo que
-a cobertura divide pelo que \emph{existia}. São por isso perguntas diferentes, e nada impede que
-deem respostas opostas sobre o mesmo detetor.
-
-E é exatamente isso que acontece neste trabalho, o que torna o exemplo particularmente útil. A regra
-do limiar fixo, aquela que assinala qualquer movimento acima de $3\%$, obtém uma cobertura de
-$0.992$: apanha praticamente todos os dias invulgares que existiam. Vista só por esse número
-parece excelente. Mas a sua precisão é de $0.122$, ou seja, \textbf{de cada cem vezes que fala,
-tem razão doze}. Apanha tudo porque fala quase sempre, e uma regra que fala quase sempre não está a
-detetar nada.
-
-Este par de números é a razão de ser da secção seguinte: é preciso uma medida que não se deixe
-enganar por nenhum dos dois extremos.
+O denominador muda: a precisão divide pelo que o sistema \emph{disse}; a cobertura, pelo que
+\emph{existia}. A regra fixa ilustra o conflito: cobre $0.992$ dos dias invulgares, mas tem precisão
+$0.122$ porque fala quase sempre. É preciso uma medida que não premie nenhum destes extremos.
 
 \subsection{O \texorpdfstring{$F_1$}{F1}: obrigar as duas a andarem juntas}
 \label{sec:av_f1}
@@ -132,39 +122,15 @@ O $F_1$ combina precisão e cobertura numa só medida através da \textbf{média
   \label{eq:f1}
 \end{equation}
 
-A escolha da média harmónica, e não da média habitual, é deliberada, e a razão é instrutiva. A
-média aritmética de $0.122$ e $0.992$ é $0.557$, um valor que faria a regra do limiar fixo
-parecer razoável. A média harmónica \textbf{puxa para baixo em direção ao pior dos dois}, e por isso
-só dá um valor alto quando \emph{ambos} são altos. É uma medida que não deixa comprar cobertura à
-custa de precisão.
-
-Vejamos a conta completa, com os dois detetores, exatamente como os valores aparecem mais à frente.
-
-\paragraph{Para o limiar fixo, com precisão $0.122$ e cobertura $0.992$:}
-\begin{equation*}
-  F_1 = 2 \cdot \frac{0.122 \times 0.992}{0.122 + 0.992}
-      = 2 \cdot \frac{0.1210}{1.114}
-      = \frac{0.2420}{1.114}
-      = 0.217
-\end{equation*}
-
-Com estas duas casas a conta dá $0.217$, e a tabela do resultado reporta $0.218$. A diferença é o
-arredondamento: a precisão e a cobertura são mostradas com três casas mas o valor foi calculado com
-todas. Fica dito porque um leitor que refaça a conta chega ao meu $0.217$, e um número que não fecha
-sem explicação é pior do que um número com uma casa a mais.
-
-\paragraph{Para o \emph{z}-score, com precisão $0.381$ e cobertura $0.800$:}
+A média harmónica puxa o resultado para o pior dos dois valores. Por exemplo, para o \emph{z}-score:
 \begin{equation*}
   F_1 = 2 \cdot \frac{0.381 \times 0.800}{0.381 + 0.800}
-      = 2 \cdot \frac{0.3048}{1.181}
-      = \frac{0.6096}{1.181}
       = 0.516
 \end{equation*}
 
-São estes os dois valores que a Secção~\ref{sec:av_qi1} reporta, e a comparação entre eles mostra a
-média harmónica a fazer exatamente o seu trabalho: o \emph{z}-score tem \emph{menos} cobertura do
-que o limiar fixo e ainda assim ganha com folga, porque triplica a precisão e o $F_1$ recusa-se a
-deixar comprar uma à custa da outra.
+Aplicada à regra fixa, dá $0.218$; com os valores arredondados impressos a conta dá $0.217$. A
+diferença vem das casas decimais não mostradas. O \emph{z}-score ganha apesar de ter menos cobertura,
+porque triplica a precisão.
 
 \subsection{A precisão@\texorpdfstring{$k$}{k}: avaliar uma lista curta}
 \label{sec:av_patk}
@@ -588,8 +554,8 @@ Capítulo~\ref{cap:conclusoes} em vez de ficar escondida atrás de uma soma exat
 \section{QI2: encontrar casos parecidos}
 \label{sec:av_qi2}
 
-\emph{A recuperação por significado encontra notícias passadas genuinamente relacionadas, melhor do
-que alternativas triviais?} \textbf{Sim, com folga sobre todas elas.}
+\emph{A recuperação por significado encontra notícias passadas de outra empresa do mesmo setor
+melhor do que alternativas triviais?} \textbf{Sim, nos cinco setores avaliados.}
 
 \subsection{Como foi medido}
 
@@ -794,6 +760,10 @@ Figura~\ref{fig:divisao}.
 
 Compararam-se seis modelos, do mais simples ao mais completo. A métrica principal é a
 \textbf{PR-AUC}, apropriada quando as duas classes são desequilibradas.
+
+Para efeitos práticos, uma diferença de PR-AUC abaixo de $0.02$ é tratada como indistinguível,
+mesmo quando o intervalo emparelhado exclui zero. O limite é uma escolha do autor; declará-lo aqui,
+antes dos resultados, obriga a aplicá-lo nos dois sentidos.
 
 Dois cuidados de montagem, ambos para que a comparação não favoreça a conclusão que se acabou por
 obter. Primeiro, um dos seis modelos é um conjunto de árvores treinado por reforço do gradiente
@@ -1190,42 +1160,23 @@ Isto obriga a separar duas afirmações que eu tinha juntado, e a separação é
         que usei para o fazer não fazia a pergunta de que o produto precisava.
 \end{itemize}
 
-\paragraph{E a frase que eu tinha escrito aqui também não era exata.}
-Durante várias versões deste capítulo esta lista dizia que a variante implantada foi escolhida
-\emph{por ter a melhor PR-AUC entre as que cabiam no contentor}. A tabela desta secção desmente-o
-quatro linhas acima: a variante só-volatilidade obtém $0.542$ e a variante sem os indicadores de
-setor obtém $0.543$, contra os $0.538$ da implantada, e nenhuma delas precisa do codificador de
-frases, portanto ambas cabiam. A justificação que eu dava a uma escolha errada estava ela própria
-errada, dentro do parágrafo que existe para a corrigir.
+\paragraph{Porque se manteve a variante de nove entradas.}
+Não foi por ter a melhor PR-AUC entre as que cabiam no contentor: só volatilidade obtém $0.542$ e
+sem os indicadores de setor $0.543$, contra $0.538$, e ambas cabiam. A razão defensável é a
+explicabilidade: só a variante de nove entradas permite ao alerta mostrar contribuições que sobem e
+descem a pontuação (Figura~\ref{fig:sis_alerta}). O preço dessa escolha é $0.005$ de PR-AUC.
 
-A razão defensável que a escolha tem, e que só reconheço agora, é outra e não é de exatidão: a
-variante de nove entradas é a única das três cujas contribuições o alerta consegue \emph{mostrar}.
-A linha da Figura~\ref{fig:sis_alerta} que diz \emph{``raised by recent volatility (20d) and
-sector; lowered by today's own move and recent momentum (5d)''} precisa de mais do que uma entrada
-para existir, e com um modelo de uma variável reduzir-se-ia a repetir o nome dessa variável. Num
-trabalho cuja restrição fundadora é a explicabilidade, isso é uma razão; mas é uma razão que
-encontrei depois, e o preço em PR-AUC dela são os $0.005$ que a tabela mostra.
-
-\paragraph{E é aqui que está a lição de método, que vale mais do que o resultado.}
-A PR-AUC é calculada sobre o conjunto de teste inteiro, onde a variação \emph{entre}
-empresas domina. Uma pontuação que ordene bem as empresas e não distinga nada dentro de cada uma
-obtém uma PR-AUC alta. A métrica estava correta e a resposta que ela dá também: só que a
-pergunta que ela faz (\emph{ordena bem no conjunto todo?}) não é a pergunta de que o produto
-precisava (\emph{distingue duas notícias da mesma empresa?}).
-
-Nenhum dos números deste capítulo muda por causa disto. O que muda é o que se pode afirmar com
-eles, e é essa a correção.
+A lição de método mantém-se: a PR-AUC sobre o conjunto inteiro pode ser alta quando a variação
+\emph{entre} empresas domina, mesmo sem distinguir notícias dentro da mesma empresa. A métrica
+respondia a \emph{ordena bem o conjunto?}; o produto precisava de \emph{distingue duas notícias da
+mesma empresa?}.
 
 \subsection{E se o texto não for para substituir, mas para acrescentar?}
 \label{sec:av_acrescimo}
 
-Há uma pergunta que a comparação de famílias não faz, e que só me ocorreu depois de a ablação da
-identidade explicar o que o modelo é.
-
-Toda a avaliação da \gls{QI}3 põe as variantes \textbf{lado a lado}: só volatilidade contra só
-contexto contra só texto. Uma comparação dessas responde a \emph{qual é melhor}. Não responde a
-\emph{o texto acrescenta ao melhor que existe}, que é uma pergunta diferente e, para um sistema,
-mais útil: ninguém é obrigado a escolher entre as duas fontes de informação.
+Comparar só volatilidade, só contexto e só texto responde a \emph{qual é melhor}; não responde a
+\emph{o texto acrescenta informação}. Para o testar é preciso somá-lo a uma base que conheça a
+empresa sem conhecer a notícia.
 
 A variante \emph{contexto + texto} parece já fazer isso, e não faz, por uma razão que a
 Secção~\ref{sec:av_ablacao} tornou visível: soma o texto ao bloco de contexto, que \textbf{não é}
@@ -1297,8 +1248,8 @@ sobre a empresa, de forma pequena e mensurável, e o que o impede de mudar o sis
 ausência de informação, é a informação ser do tipo errado. Distingue empresas quando o produto precisa de
 distinguir notícias.
 
-É uma resposta melhor do que a anterior porque diz \emph{onde} está o limite. E aponta o trabalho
-seguinte sem ambiguidade: não é procurar um modelo maior, é arranjar um rótulo por notícia.
+O limite fica assim localizado: o trabalho seguinte pede um rótulo por notícia, não apenas um
+modelo maior.
 
 \paragraph{Uma ressalva sobre o próprio método.} Este é mais um modelo avaliado sobre o mesmo
 bloco de teste, que já serviu várias comparações deste capítulo. Quanto mais vezes se olha para um
@@ -1369,15 +1320,10 @@ com esse papel que ficou. O que a medição desmente é o uso que lhe estava a s
 \section{Todas as alternativas que foram testadas e não ficaram}
 \label{sec:av_alternativas}
 
-\emph{Como é que sei que estas escolhas são boas, e não apenas as primeiras que me ocorreram?}
+\emph{As escolhas foram comparadas com alternativas concretas?}
 
-Ao longo dos três capítulos anteriores cada técnica foi apresentada com uma justificação. Falta
-juntá-las num sítio só, porque é assim que se vê o padrão: \textbf{a maior parte das escolhas deste
-sistema foi decidida por medição contra uma alternativa concreta}, e várias delas contrariaram o que
-eu esperava.
-
-A Tabela~\ref{tab:av_alternativas} lista todas. A coluna do meio é a que interessa: não o que ficou,
-mas o que foi \emph{posto de lado} e com que número.
+A Tabela~\ref{tab:av_alternativas} reúne as comparações feitas ao longo do trabalho, incluindo as
+três em que o sistema mantém a opção que a medição não favorece.
 
 \begin{table}[ht]
 \caption[Cada escolha, contra a alternativa que perdeu]{As decisões técnicas do trabalho, cada uma
@@ -1434,26 +1380,19 @@ Mercado dos EUA & --- & Restrição de âmbito: é onde as fontes gratuitas têm
 
 Três linhas merecem atenção.
 
-O \textbf{modelo de finanças perdeu}. Era a escolha que parecia mais óbvia de todas: um modelo
-treinado especificamente em texto financeiro devia ser melhor a comparar notícias financeiras.
-O modelo medido foi o FinBERT de \textcite{araci2019finbert}, e obteve $0.420$ contra os
-$0.514$ de um modelo genérico e pequeno. Se eu o tivesse adotado por ser o
-óbvio, o sistema ficava pior e eu nunca saberia.
-
-\paragraph{E vale a pena dizer porque é que perdeu, porque a razão é de método e não de domínio.}
-O que foi medido foi o FinBERT com a \textbf{média dos seus vetores} a servir de vetor de frase, que
-é a única forma de o usar nesta tarefa sem o treinar de novo. Ora o FinBERT é um codificador afinado
+\paragraph{Porque perdeu o modelo de finanças.}
+O FinBERT de \textcite{araci2019finbert} obteve $0.420$ contra $0.514$ do modelo genérico. Foi usado
+com a \textbf{média dos seus vetores} como vetor de frase, a forma de o aplicar sem novo treino. É
+um codificador afinado
 para \textbf{classificação de sentimento}, e não para colocar frases num espaço onde a distância
 signifique semelhança. Como a Secção~\ref{sec:ctx_texto} mostrou, é precisamente esse objetivo de
 treino que o Sentence-BERT acrescenta, e sem ele um codificador desta família produz vetores fracos
 para comparar frases \autocite{reimers2019sbert}. O modelo sabe mais de finanças e menos de
 \emph{distâncias}, e a tarefa aqui é uma tarefa de distâncias.
 
-Isto \textbf{estreita} a afirmação em vez de a reforçar, e é assim que fica escrita. O que a medição
-mostra é que \emph{este} modelo de domínio, usado \emph{desta} forma, perde para um modelo genérico
-treinado para similaridade. Não mostra que conhecimento de domínio não sirva para nada. Pô-lo à
-prova a sério exigiria afinar um codificador financeiro com um objetivo de similaridade de frases e
-voltar a medir, o que não foi feito e fica como trabalho por fazer.
+Logo, a medição mostra apenas que \emph{este} modelo de domínio, usado \emph{desta} forma, perde para
+um modelo genérico treinado para similaridade. Testar conhecimento de domínio exigiria afinar um
+codificador financeiro com um objetivo de similaridade de frases.
 
 \paragraph{A janela de 20 dias é a linha desta tabela que mais me custou deixar escrita.}
 É uma das três em que o sistema não usa o que a medição favorece, e a mais difícil de justificar. A ablação diz que uma janela de 60 dias obtém $F_1 = 0.678$
@@ -1582,15 +1521,6 @@ texto acrescenta} ao que o modelo já sabe da empresa: $+0.012$, IC $[+0.004, +0
 \bottomrule
 \end{tabular}
 \end{table}
-
-\paragraph{E um critério que este capítulo usa e nunca tinha enunciado.}
-Vão aparecer diferenças pequenas lidas de maneiras diferentes, e convém dizer a regra antes de
-elas surgirem em vez de a deixar adivinhar. Uma diferença de PR-AUC \textbf{abaixo de $0.02$} é
-tratada aqui como indistinguível para efeitos práticos, mesmo quando o intervalo emparelhado
-exclui zero. É por isso que o $+0.012$ do texto sobre a tabela de consulta é reportado como real
-e ao mesmo tempo como incapaz de reabrir o veredicto, e que o $0.004$ entre a tabela de consulta
-e o modelo implantado não sustenta escolher um em vez do outro. O limite é meu e é arbitrário;
-o que não pode ser arbitrário é aplicá-lo nos dois sentidos, e é para isso que fica escrito.
 
 A Tabela~\ref{tab:av_resumo} junta as três. Duas das respostas são afirmativas e uma é negativa. A negativa é a que eu mais aprendi a
 defender: mostra que a avaliação foi montada para poder dizer que não, e uma avaliação que só sabe

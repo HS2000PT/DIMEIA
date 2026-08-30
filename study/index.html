@@ -633,8 +633,8 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
     A primeira versão cortava betas a ±4. A AMD dava 4,43, caía num valor de reserva de beta = 1, e
     o sistema atribuía os −8,5% <b>inteiros</b> à empresa — errado, e em silêncio.</p>
     <p>A correção não foi um corte melhor: foi <b>encolhimento ponderado pela precisão</b>
-    (Vasicek, 1973). Um beta estimado com pouca certeza é puxado para a média; um beta preciso
-    fica quase intacto. Testei também a alternativa de peso fixo (Blume, 2/3) e rejeitei-a por
+    (Vasicek, 1973). Um beta estimado com pouca certeza é puxado para o prior correspondente
+    (1 no mercado, 0 no setor ortogonalizado); um beta preciso fica quase intacto. Testei também a alternativa de peso fixo (Blume, 2/3) e rejeitei-a por
     encolher um beta preciso de 2,0 para 1,67.</p>` },
   { t: "Peça 3 — os precedentes: «já aconteceu antes?»",
     h: `<p>Esta é a peça que dá o nome ao núcleo do trabalho: <b>raciocínio baseado em casos</b>

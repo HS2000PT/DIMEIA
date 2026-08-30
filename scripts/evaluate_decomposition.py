@@ -25,6 +25,7 @@ from investigator.correlation_engine.decomposition import (  # noqa: E402
     MIN_WINDOW,
     PRIOR_BETA_MARKET,
     PRIOR_BETA_SD,
+    PRIOR_BETA_SECTOR,
     decompose_move,
 )
 from investigator.market_data.prices import load_close_series  # noqa: E402
@@ -104,8 +105,14 @@ def main() -> int:
         w("# Decomposicao de um movimento: mercado, setor, empresa\n\n")
         w("> Gerado por `scripts/evaluate_decomposition.py`. Nao editar a mao.\n")
         w(f"> Mercado: `{MERCADO}` · janela de estimacao: {JANELA} dias anteriores ao dia\n")
-        w(f"> explicado · encolhimento de Vasicek com prior {PRIOR_BETA_MARKET} e\n")
-        w(f"> dispersao {PRIOR_BETA_SD} · minimo de {MIN_WINDOW} dias para estimar.\n\n")
+        w(
+            "> explicado · encolhimento de Vasicek com priors "
+            f"mercado={PRIOR_BETA_MARKET} e setor={PRIOR_BETA_SECTOR}\n"
+        )
+        w(
+            f"> desvio-padrao comum={PRIOR_BETA_SD} "
+            f"(variancia={PRIOR_BETA_SD**2}) · minimo de {MIN_WINDOW} dias para estimar.\n\n"
+        )
 
         w("## 1. Um caso trabalhado\n\n")
         w(f"Ticker **{t}** (setor `{etf}`), movimento do dia **{d.total:+.4%}**.\n\n")

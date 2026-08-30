@@ -92,9 +92,7 @@ com alternativas mais complicadas. Quando a simples ganha, fica a simples, e diz
 
 \emph{Antes de explicar o que se faz com os dados: com que é que eles se parecem, exatamente?}
 
-Uma dissertação pode descrever dados durante páginas sem que o leitor consiga imaginar uma única
-linha deles. Esta secção resolve isso da forma mais direta possível: mostra as linhas verdadeiras,
-copiadas dos ficheiros que o sistema usa.
+Esta secção mostra linhas verdadeiras, copiadas dos ficheiros que o sistema usa.
 
 \subsection{O que entra: uma notícia histórica}
 
@@ -214,10 +212,9 @@ neste capítulo é o que se faz com eles.
 
 \subsection{Que períodos, exatamente}
 
-Uma dissertação que diz ``dados de 2018 a 2023'' obriga o leitor a acreditar. A
-Tabela~\ref{tab:met_periodos} diz o intervalo \textbf{lido dos próprios ficheiros}, e distingue os
-dois conjuntos que é fácil confundir: o material \emph{histórico}, com que se treina e avalia, e o
-registo do sistema \emph{a funcionar}, que é muito mais recente e muito mais curto.
+A Tabela~\ref{tab:met_periodos} dá o intervalo \textbf{lido dos próprios ficheiros} e distingue o
+material \emph{histórico}, usado no treino e na avaliação, do registo mais curto do sistema
+\emph{a funcionar}.
 
 Uma nota que parece técnica e não é: todos os preços usados são \textbf{fechos ajustados} para
 desdobramentos e dividendos. Não é um pormenor nesta janela, que contém o desdobramento de quatro
@@ -300,7 +297,7 @@ Termo a termo:
 
 \begin{itemize}
   \item $r_t$ é o retorno de hoje, ou seja, quanto a ação subiu ou desceu. Interessa dizer já como
-        é calculado, porque afeta a leitura de todos os números deste capítulo: é um
+        é calculado, porque é o formato usado pelo detetor e pela decomposição da técnica seguinte: é um
         \textbf{retorno logarítmico}, $r_t = \ln(P_t / P_{t-1})$, e não a variação percentual
         simples. A escolha é a convenção corrente em séries financeiras, porque torna os retornos
         aditivos ao longo do tempo e simétricos entre subidas e descidas. A consequência prática é
@@ -348,13 +345,9 @@ sistema nunca usa informação que ainda não teria.}
 \label{fig:janela}
 \end{figure}
 
-Repare-se num pormenor da figura que parece pequeno e não é: \textbf{o dia que está a ser julgado
-não entra no cálculo da sua própria norma}. Se entrasse, um dia muito extremo puxaria a média e
-inflacionaria o desvio-padrão, e o próprio dia pareceria menos invulgar do que foi. O sistema
-estaria a usar informação que, no momento da decisão, ainda não devia contar.
-
-No código, esta separação é uma única fatia, e é ela que a garante. O Excerto~\ref{lst:zscore}
-mostra o cálculo completo:
+O dia julgado não entra na sua própria norma: se entrasse, puxaria a média e o desvio-padrão e
+pareceria menos invulgar. No código, esta separação é a fatia mostrada no
+Excerto~\ref{lst:zscore}:
 
 \begin{lstlisting}[label=lst:zscore, caption={O cálculo do \emph{z}-score. A fatia \texttt{[-window-1:-1]} exclui o
 próprio dia da janela que define a sua norma.}]
@@ -368,13 +361,9 @@ sigma = float(recent.std(ddof=1))
 z     = (last - mu) / sigma if sigma > 0 else 0.0
 \end{lstlisting}
 
-O \texttt{-1} final é a garantia inteira. Sem ele, o dia entraria no cálculo da sua própria média e
-do seu próprio desvio-padrão, e um dia extremo diluir-se-ia a si mesmo. A última linha é o caso da
-ação parada, discutido acima: quando o desvio-padrão é zero, devolve-se zero em vez de dividir.
-
-Esta regra tem um nome, \textbf{evitar \emph{lookahead}}, e atravessa todo o trabalho. Volto a
-ela na Secção~\ref{sec:met_avaliacao}, onde mostro como é imposta por um teste automático em vez de
-ser apenas prometida.
+O \texttt{-1} final garante a exclusão; se o desvio-padrão for zero, a última linha devolve zero em
+vez de dividir. Esta prevenção de \emph{lookahead} é imposta por teste automático na
+Secção~\ref{sec:met_avaliacao}.
 
 \subsection{Um caso real}
 
@@ -447,8 +436,9 @@ r_{\text{empresa}} \;=\; \underbrace{\beta_m \, r_m}_{\text{mercado}}
 \end{equation}
 
 onde $r_m$ é o retorno do índice de mercado do dia, $\tilde r_s$ o do setor, e $\beta_m$ e $\beta_s$
-medem a sensibilidade histórica desta ação a cada um. A terceira parcela é definida como o resto,
-ou seja tudo o que mercado e setor não explicam, e é por isso que a soma fecha sempre.
+medem a sensibilidade histórica desta ação a cada um. Todos são retornos logarítmicos, como na
+técnica anterior. A terceira parcela é definida como o resto, ou seja tudo o que mercado e setor
+não explicam, e é por isso que a soma fecha sempre.
 
 \paragraph{Duas precisões sobre o que estes dois fatores realmente são.}
 Convém primeiro nomeá-los, porque a equação não o faz e sem isso um $\beta_s$ impresso não se pode
@@ -560,14 +550,15 @@ ação se move exatamente ao dobro do mercado, um peso fixo de dois terços devo
 verdade é $2.0$.
 
 Falta declarar um desvio face à formulação original, porque ele existe e um leitor que conheça o
-artigo iria procurá-lo. Em \textcite{vasicek1973beta}, o valor de referência $\beta_{\text{ref}}$ e a
-sua dispersão $\sigma^2_{\text{ref}}$ \textbf{não} são constantes escolhidas: são a média e a
-variância da distribuição dos betas no conjunto dos títulos, estimadas do corte transversal, e é
-precisamente aí que reside a natureza bayesiana do método. Aqui são fixos, $1.0$ e $0.5$, e a razão
-é de âmbito: a lista de empresas vigiadas tem doze empresas, e estimar uma distribuição de betas a partir de doze
-observações produziria uma referência mais ruidosa do que a constante que ela substituiria. O
-mecanismo de ponderação pela precisão mantém-se exatamente o de Vasicek; o que se simplifica é a
-origem do valor para o qual se encolhe.
+artigo iria procurá-lo. Em \textcite{vasicek1973beta}, $\beta_{\text{ref}}$ e
+$\sigma^2_{\text{ref}}$ são estimados da distribuição transversal dos betas. Aqui são escolhas do
+autor: $\beta_{\text{ref},m}=1.0$ para o mercado, $\beta_{\text{ref},s}=0.0$ para o fator setorial
+já ortogonalizado, e um desvio-padrão comum $\sigma_{\text{ref}}=0.5$, logo a variância da
+Equação~\ref{eq:vasicek} é $0.25$. O mapa de avaliação tem dezassete títulos e a lista implantada
+tem doze, ambos selecionados para este sistema e não um corte transversal representativo. Por isso
+não se estimou neles um prior que pareceria empírico sem o ser. Também não se fez uma análise de
+sensibilidade a $\sigma_{\text{ref}}$: o mecanismo de ponderação pela precisão vem de Vasicek, mas
+estes priors e os valores concretos da repartição continuam a ser uma escolha de modelação.
 
 \subsection{Um caso real, com todos os passos}
 
@@ -577,9 +568,10 @@ de 2026. O procedimento que a gera vive no repositório de código, como todos o
 corre, pelo que reproduzir estes valores exatos exige fixar essa data.
 
 \begin{table}[ht]
-\caption[A decomposição de um movimento real]{Um dia da AMD, repartido. Os betas foram estimados
-sobre os 20 dias anteriores e encolhidos pela Equação~\ref{eq:vasicek}. A soma das três parcelas
-reproduz o movimento observado exatamente.}
+\caption[A decomposição de um movimento real]{Um dia da AMD, repartido em retornos logarítmicos.
+Os betas foram estimados sobre os 20 dias anteriores e encolhidos pela
+Equação~\ref{eq:vasicek}. A soma das três parcelas reproduz exatamente o retorno logarítmico
+observado~de $+6.2944\%$, correspondente a uma variação simples do preço de $+6.50\%$.}
 \label{tab:met_decomposicao}
 \centering
 \small
@@ -603,8 +595,9 @@ Soma das três parcelas & $+6.2944\%$ \\
 \end{tabular}
 \end{table}
 
-Este caso foi escolhido por ser instrutivo, e não por ser favorável. A AMD subiu 6.29\% num dia em
-que \textbf{tanto o mercado como o setor puxaram para baixo}. O sistema não diz apenas ``foi
+Este caso foi escolhido por ser instrutivo, e não por ser favorável. A AMD teve um retorno
+logarítmico de $+6.29\%$, ou $+6.50\%$ de variação simples do preço, num dia em que \textbf{tanto
+o mercado como o setor puxaram para baixo}. O sistema não diz apenas ``foi
 específico da empresa''; diz também que subiu \emph{apesar} de o contexto ter empurrado no sentido
 contrário, o que é uma afirmação mais forte e mais informativa do que a percentagem sozinha. O beta
 de mercado de $2.01$ diz ainda que esta é uma ação que historicamente amplifica o mercado, e é por
@@ -708,10 +701,8 @@ A medida usada é a \textbf{semelhança do cosseno}. Em vez de medir a distânci
   \item negativo: apontam em direções opostas.
 \end{itemize}
 
-Usa-se o ângulo e não a distância porque o que interessa é \emph{sobre o que} a frase fala, e não o
-comprimento do texto. Um título curto e um parágrafo longo sobre o mesmo assunto devem ficar
-próximos, e o ângulo dá isso.
-A Figura~\ref{fig:met_cosseno} mostra as duas situações.
+O ângulo capta o assunto sem depender do comprimento do texto. A
+Figura~\ref{fig:met_cosseno} mostra as duas situações.
 
 \begin{figure}[ht]
 \centering
@@ -848,7 +839,9 @@ O verbo ``adapta-se'' está ali de propósito, e a diferença tem de ficar dita 
 simplificação face à fonte. O que \textcite{brown1985daily} normalizam é a medição do retorno
 \emph{anormal}, ou seja o retorno já descontado de uma referência, tipicamente o movimento do
 mercado no mesmo período. O que este trabalho mostra ao utilizador é o retorno \textbf{bruto},
-sem desconto nenhum.
+sem desconto nenhum. Nestes horizontes usa-se a variação percentual simples,
+$P_{d+h}/P_d-1$, e não o retorno logarítmico da deteção e da decomposição: é o número que o
+utilizador consegue conferir diretamente na sua aplicação.
 
 A escolha é deliberada e tem um custo. A favor: o valor exibido é o que a pessoa veria na sua
 aplicação, e um número que ela pode conferir vale mais, num produto que se propõe ser verificável,
@@ -967,8 +960,8 @@ E, numa das variantes testadas, também o \emph{embedding} do título, os mesmos
 Secção~\ref{sec:met_recuperacao}. Comparar a variante com texto e a variante sem texto é
 precisamente o que a \gls{QI}3 pergunta, e a resposta está no Capítulo~\ref{cap:avaliacao}.
 
-\paragraph{Vale a pena olhar para esta lista com atenção, porque ela decide mais do que parece.}
-A que \emph{nível} vive cada uma destas informações? A volatilidade e o momento descrevem a
+\paragraph{O nível de cada entrada.}
+A volatilidade e o momento descrevem a
 empresa e movem-se devagar. O setor é literalmente constante. O movimento do dia é igual para
 todas as notícias do mesmo dia. Sobra uma única entrada que distingue dois títulos da mesma
 empresa no mesmo dia: \textbf{o comprimento do título}. A Figura~\ref{fig:met_entradas} arruma as nove
@@ -1027,10 +1020,9 @@ isso a pontuação dessa variante é \textbf{quase constante dentro de cada empr
 construção, e não por acidente do treino.
 \end{tcolorbox}
 
-Isto não invalida a comparação que a \gls{QI}3 faz: a variante \emph{com} texto tem $384$ números
-por título e é essa que responde à pergunta. Mas fixa desde já o que a variante sem texto pode e
-não pode fazer, e é uma distinção a que o Capítulo~\ref{cap:avaliacao} volta, porque foi ela que
-me escapou quando escolhi o que implantar.
+A variante \emph{com} texto tem $384$ números por título e é essa que responde à \gls{QI}3. O
+Capítulo~\ref{cap:avaliacao} volta ao limite da variante sem texto, que não foi reconhecido quando
+se escolheu o que implantar.
 
 \subsection{Treinar sem deixar o futuro entrar no treino}
 
@@ -1219,13 +1211,6 @@ $\mathbf{0.392}$. É este o número que chega ao ecrã, arredondado: \textbf{39\
 \end{table}
 
 Há dois pormenores neste percurso que merecem atenção, e são eles que tornam o exemplo útil.
-
-\paragraph{A calibração não é uma formalidade.}
-A pontuação bruta era $0.507$, praticamente um lançamento de moeda. Depois de calibrada passa a
-$0.392$. São leituras diferentes: a primeira diria a um utilizador que o desfecho está em aberto, e a
-segunda diz que é mais provável não acontecer nada de especial. \textbf{A ordenação entre notícias
-não muda} com esta transformação, porque ela é sempre crescente; o que muda é o \emph{significado}
-do número mostrado, e é esse número que a pessoa lê.
 
 \paragraph{E a maior contribuição foi negativa.}
 A parcela de maior peso, $-0.252$, veio da volatilidade, e puxou a probabilidade \emph{para baixo}.

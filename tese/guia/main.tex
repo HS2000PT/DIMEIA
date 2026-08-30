@@ -213,7 +213,8 @@ Responde à \key{segunda} das três perguntas, e é a que um arguente com finan�
         \textbf{total}: \emph{mercado} (o beta vezes o índice), \emph{setor} (o fundo do setor,
         já descontado do mercado) e \emph{empresa} (o que sobra).
   \item \key{Os betas} são estimados só com dias \textbf{anteriores} ao dia explicado, e
-        \textbf{encolhidos} para $1$ na proporção da sua própria precisão (Vasicek, 1973).
+        \textbf{encolhidos} pela sua precisão: mercado para $1$, setor ortogonalizado para $0$
+        (Vasicek, 1973). O desvio-padrão comum do prior é $0.5$.
   \item \key{Porquê encolher:} sem isso, um beta mal estimado atribuía o movimento inteiro à
         empresa.
 \end{itemize}

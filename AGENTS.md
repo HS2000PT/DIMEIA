@@ -7,6 +7,110 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 62 — DIAGNÓSTICO INTEGRAL FECHADO (2026-08-30): O PDF CANÓNICO FOI LIDO E
+  INSPECIONADO NAS 134 PÁGINAS; A TESE NÃO FOI ALTERADA NESTA PASSAGEM.** O pedido externo foi
+  tratado como especificação de revisão, não como autoridade. O relatório completo, com tese em
+  linguagem simples, dez fragilidades por risco, dez melhorias, figuras essenciais, quinze
+  perguntas de júri, alegações a verificar e plano realista de três dias, ficou em
+  `progress/DIAGNOSTICO_INTEGRAL_TESE_2026-08-30.md`. Foram confrontados PDF, LaTeX, artefactos e
+  código; todas as páginas foram renderizadas, e as páginas de figuras, síntese e apêndice foram
+  ampliadas. **COMPOSIÇÃO:** limpa, sem sobreposições, figuras cortadas ou ligações visivelmente
+  partidas; as Tabelas A.2/A.3 são densas mas legíveis. A Figura 5.6, porém, é anunciada como
+  resultado “por setor” e mostra apenas agregados P@5/P@10 — falha visual substantiva porque a
+  melhor defesa da QI2 é precisamente ganhar dentro dos cinco setores.
+  **QUATRO CORREÇÕES OBJETIVAS ANTES DA CONGELAÇÃO:** (1) a Tabela 4.5 diz que o primeiro alerta
+  exige `0.49`, mas com `daily_budget=5` o código deixa o primeiro lugar sem piso e usa `0.64` no
+  segundo; uma candidata de `0.10` passou numa reprodução; (2) a síntese da QI2 nas pp. 90/92 usa
+  `0.595`, protocolo que admite candidatos futuros, apesar de a própria §5.5.4 medir a pergunta
+  “passadas” com `0.513`, chão `0.259`, margem `+0.254`; (3) a p. 36 afirma que o ruído do rótulo
+  com beta igual a um não pode alterar a ordenação das famílias — o protocolo comum garante
+  comparabilidade interna, não invariância da ordenação; (4) com vinte retornos anteriores todos
+  iguais e um salto de `+5%` hoje, os três caminhos do detetor devolvem `sigma=0`, `z=0` e não
+  alertam; a frase da p. 27 só é verdadeira se o dia atual também ficar parado.
+  **FRAGILIDADES CENTRAIS, NÃO DESCOBERTAS DE ÚLTIMA HORA:** a QI3 rotula empresa-dia e não cada
+  notícia; a garantia anti-lookahead é ao fecho diário, enquanto `ret_event` não existe no instante
+  da notícia em produção; não houve estudo humano; a decomposição não tem verdade de terreno nem
+  sensibilidade aos priors; a precisão no orçamento é offline e limite superior da política online;
+  e o modelo ao vivo ficou indistinguível do acaso. A tese já declara quase tudo isto, mas a defesa
+  tem de manter os limites sem os converter em promessas.
+  **SENSIBILIDADE NOVA DA QI2, AINDA APENAS DIAGNÓSTICA:** no corpus recente há `3 714` linhas,
+  `2 879` manchetes normalizadas únicas e `1 413` linhas em `578` grupos de manchete exatamente
+  igual que atravessam tickers. Proibir candidatos com a mesma manchete, no mesmo protocolo de 500
+  consultas × 5 sementes, reduz P@5 de `0.51392` para `0.49064`; o chão permanece `~0.240` e a
+  conclusão sobrevive. O FNSPID tem `79 753` linhas, `59 570` únicas e `25 166` em `9 416` grupos
+  cross-ticker. **Não pôr estes números na tese sem criar gerador, artefacto e verificador.**
+  **PORTAS:** `scripts/check_entrega.py` passou 11 verificações e os oito verificadores; PDF 134
+  páginas, 53/53 números congelados, referências e composição limpas. O PDF incorpora todas as
+  fontes, mas usa sobretudo Type 3 e não é tagged; confirmar apenas se o regulamento de depósito
+  exige PDF/A/fontes escaláveis antes de reabrir a compilação. O aviso Poppler sobre um destino de
+  anotação não se reproduziu como estrutura inválida: `pypdf` encontrou 724 anotações, 551 destinos
+  nomeados e zero arrays curtos. **PRÓXIMA AÇÃO:** aplicar primeiro as quatro correções objetivas e
+  a figura por setor, sincronizar guia/slides/simulacro, recompilar e só depois compactar ou polir.
+- **🆕 SESSÃO 62 — abertura (2026-08-28): O ALUNO REDEFINIU A ORDEM FINAL E IDENTIFICOU O PDF
+  CANÓNICO.** O texto trazido pelo aluno pede uma revisão em quatro fases: (1) fechar primeiro a
+  verdade científica e técnica e tentar apenas melhorias defensáveis; (2) só depois reduzir e
+  reorganizar a dissertação, privilegiando explicações visuais e um apêndice legível; (3) fechar
+  produto, implantação e experiência do utilizador; (4) produzir slides de defesa e material de
+  estudo visual. **Fonte canónica explicitamente indicada pelo aluno: `tese/main.pdf`** (136 pp,
+  gerado em 2026-08-26), e não `thesis/main.pdf` (130 pp, versão inglesa distinta). Existem as duas
+  árvores no repositório e os PDFs têm hashes diferentes; **não arquivar, mover nem criar um novo
+  repositório antes de mapear dependências**, para não separar a tese dos geradores, resultados e
+  verificadores que a sustentam. Nesta abertura não houve alteração à tese, código, implantação ou
+  ficheiros de produto; apenas ficou fixado o âmbito e a fonte atual.
+  **PRIMEIRA PASSAGEM CONCLUÍDA:** o PDF tem 24 páginas físicas de matéria inicial, 102 páginas
+  numeradas de corpo, 4 de bibliografia e 5 de apêndice; contém 35 figuras, 33 tabelas e 2 excertos
+  de código. A densidade concentra-se sobretudo no Cap. 5 (14 559 palavras, 29 subseções) e no
+  Cap. 3 (11 848 palavras, 26 subseções). O apêndice não é longo: mistura funções demais em cinco
+  páginas. `check_entrega.py` passa integralmente e `auditar_numeros.py` encontra 246 números, zero
+  sem origem conhecida. Isto prova proveniência, não necessidade ou boa interpretação. A
+  bibliografia tem 65 entradas, 48 DOI verificados e 4 pré-publicações sem versão publicada
+  encontrada (`araci2019finbert`, `yang2020finbert`, `doshivelez2017rigorous`,
+  `wu2023bloomberggpt`): risco localizado perante a preferência do orientador, não uma revisão
+  dominada por arXiv. **Dependência a preservar:** `tese/main.tex` usa
+  `../thesis/references.bib`. Registo completo em `progress/AUDITORIA_FINAL_2026-08-28.md`.
+  **DUAS INCONSISTÊNCIAS CIENTÍFICAS CONFIRMADAS E CORRIGIDAS NO PDF:** (1) o Cap. 6 ainda dizia
+  que a variante implantada fora escolhida por ter a melhor PR-AUC entre as que cabiam no
+  contentor, apesar de o §5.6.9 provar o contrário (`0.542` e `0.543` contra `0.538`); passa a
+  declarar a razão defensável, explicabilidade, e o preço de `0.005`; (2) a QI2 prometia notícias
+  “genuinamente parecidas/relacionadas”, mas o rótulo só mede outra empresa do mesmo setor; a
+  pergunta, a abertura do resultado e a conclusão foram estreitadas para o proxy realmente medido.
+  O PDF recompilado manteve 136 páginas; a página 98, afetada pela primeira correção, foi
+  inspecionada e está limpa.
+  **PRIMEIRA COMPACTAÇÃO CONCLUÍDA:** o critério `PR-AUC < 0.02` passou para o protocolo da QI3,
+  antes dos resultados. O Cap. 5 desceu de **14 559 para 13 703 palavras (-856)** ao condensar
+  repetições nas métricas, na variante implantada, na adição do texto e nas alternativas; ficaram
+  as fórmulas, um exemplo calculado e todos os protocolos, resultados e limitações. O PDF passou de
+  **136 para 134 páginas**. Uma compilação interrompida corrompeu auxiliares e PDF; a recuperação
+  exigiu limpar apenas artefactos gerados e reconstruir integralmente.
+  **⚠️ A primeira porta foi corrida por engano com o Python global:** acusou 584/754 testes porque
+  faltava `python-dotenv` e seis módulos não eram importáveis. Não era uma queda da suite. Com o
+  Python do projeto, a contagem bateu.
+  **PORTAS:** tese 134 pp, 0 referências indefinidas, 53/53 números conferidos,
+  `git diff --check` limpo e `check_entrega.py` a zero (11 verificações).
+  **TERCEIRA INCONSISTÊNCIA TÉCNICA CORRIGIDA — PRIORS E RETORNOS DA DECOMPOSIÇÃO:** o Cap. 3
+  confundia os valores do encolhimento de Vasicek e dizia que a definição de retorno valia para
+  todo o capítulo. O código usa prior de mercado `1.0`, prior do setor ortogonalizado `0.0` e
+  desvio-padrão comum `0.5` (variância `0.25`); estes priors são escolhas do autor, não estimativas
+  transversais, e não houve análise de sensibilidade. O detetor e a decomposição usam retornos
+  logarítmicos, enquanto os precedentes mostram variação simples `P_(d+h)/P_d-1`; no caso da AMD,
+  `+6.2944%` logarítmico equivale a `+6.50%` simples. Tese, gerador, relatório e materiais de estudo
+  foram sincronizados. As páginas físicas 54 e 58 e os guias foram inspecionados; a inspeção apanhou
+  e corrigiu uma palavra colada na legenda da Tabela 3.4. **PORTAS REPETIDAS:** tese 134 pp,
+  `check_entrega.py` a zero, 754 testes passados, 2 desselecionados, ruff e `git diff --check`
+  limpos. Registo detalhado em `progress/AUDITORIA_FINAL_2026-08-28.md`.
+  **OBJETIVO PERSISTENTE ATIVO (2026-08-28):** a tarefa ficou vinculada a `tese/`. O objetivo
+  mantém a ordem já decidida nesta sessão: rigor científico e técnico; compactação, visuais e
+  apêndice; produto, implantação e experiência; por fim slides e material de estudo. O `todo.txt`
+  foi lido apenas como contexto externo e não substitui estas decisões nem a memória do projeto.
+  **AUDITORIA DE ORIENTAÇÃO (2026-08-28):** ficou registada em
+  `progress/AUDITORIA_ORIENTACAO_3_DIAS_2026-08-28.md`, sem migração nem alteração de credenciais.
+  Confirma que não há ganho defensável em re-treinar a QI3 à pressa; `79 753` é o conjunto inteiro,
+  não o treino. O risco MLOps mais concreto é a migração para repositório privado: a app lê
+  `raw.githubusercontent.com` sem autenticação e falha para lista vazia; resolver primeiro no
+  backend autenticado e testar antes de tornar privado. Há ainda duas divergências a corrigir quando
+  se mexer em implantação: CI compila `thesis/` quando a fonte canónica é `tese/`, e `app.json`
+  anuncia `INVESTIGATOR_HISTORY_GIT` em vez do caminho API que o Heroku realmente usa. Não mover
+  árvores agora: `tese/main.tex` continua a depender de `thesis/references.bib`.
 - **🆕 SESSÃO 61 — 10.ª parte (2026-08-23): UMA CRÍTICA DE JÚRI TRAZIDA DE FORA, VERIFICADA UMA A
   UMA. Dez acusações, OITO já estavam escritas na tese, e uma era real.**
   O aluno colou uma análise crítica produzida por outra ferramenta (dez problemas classificados, um
@@ -3353,3 +3457,5 @@ ef` vira **CR** e o `	` de
 **DoD (§8) — gate para avançar de fase:** deliverables existem e commitados; `verify.sh` passa (testes + LaTeX compila); cada conceito novo explicado em `learning.md` com nota de defesa; cada citação nova verificada e registada; nenhum segredo em ficheiros versionados; `AGENTS.md` atualizado com estado e próxima ação.
 
 **Git & continuidade (§12):** branch único `main`, história linear (rebase); começar sessão com pull-rebase; terminar com verify→commit→pull-rebase→push (sem force-push, sem auto-resolver conflitos que possam perder trabalho); dados grandes/modelos nunca versionados; commits descritivos em PT-PT.
+
+## Imported Claude Cowork project instructions
