@@ -67,7 +67,7 @@ def registo_sujo(log: pathlib.Path) -> list[str]:
     As faltas de tipo de letra não contam: são cosméticas e o template do ISEP produz três.
     """
     if not log.exists():
-        return []
+        return [f"registo de compilação em falta: {log.name}"]
     linhas = log.read_text(encoding="utf-8", errors="replace").splitlines()
     erros = [x.strip() for x in linhas if x.startswith("! ")]
     indefinidas = [x.strip() for x in linhas

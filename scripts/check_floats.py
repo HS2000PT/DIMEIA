@@ -10,15 +10,17 @@ import sys
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-RAIZ = pathlib.Path(r"C:\Users\henri\Desktop\DIMEIA\tese")
+RAIZ = pathlib.Path(__file__).resolve().parents[1] / "tese"
 FICH = ["frontmatter/frontmatter.tex"] + [f"cap{i}/capitulo{i}.tex" for i in range(1, 7)] + [
     "apendices/apendiceA.tex"]
 
 inv = []
 partes = {}
+ausentes = []
 for f in FICH:
     p = RAIZ / f
     if not p.exists():
+        ausentes.append(f)
         continue
     s = p.read_text(encoding="utf-8")
     partes[f] = s
@@ -33,6 +35,15 @@ for f in FICH:
             "lab": lab.group(1) if lab else "SEM-LABEL", "curta": curta,
             "longa": temlonga,
         })
+
+if ausentes:
+    print(f"ERRO: faltam {len(ausentes)} ficheiro(s) do corpus em {RAIZ}:")
+    for f in ausentes:
+        print("  -", f)
+    raise SystemExit(2)
+if not partes:
+    print(f"ERRO: não encontrei corpus em {RAIZ}.")
+    raise SystemExit(2)
 
 todo = "\n".join(partes.values())
 

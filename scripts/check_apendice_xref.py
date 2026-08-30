@@ -15,11 +15,16 @@ import sys
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-RAIZ = pathlib.Path(r"C:\Users\henri\Desktop\DIMEIA\tese")
+RAIZ = pathlib.Path(__file__).resolve().parents[1] / "tese"
 NIVEL = {"section": 1, "subsection": 2, "subsubsection": 3}
 
 seccoes = {}
-for f in sorted(RAIZ.rglob("cap*/capitulo*.tex")):
+ficheiros_capitulo = sorted(RAIZ.rglob("cap*/capitulo*.tex"))
+if not ficheiros_capitulo:
+    print(f"ERRO: não encontrei capítulos em {RAIZ}. Não é seguro validar sem corpus.")
+    sys.exit(2)
+
+for f in ficheiros_capitulo:
     s = f.read_text(encoding="utf-8")
     marcas = [(m.start(), NIVEL[m.group(1)], m.group(2))
               for m in re.finditer(r"\\((?:sub)*section)\{([^}]*)\}", s)]
@@ -37,7 +42,11 @@ for f in sorted(RAIZ.rglob("cap*/capitulo*.tex")):
         if lab:
             seccoes[lab.group(1)] = (titulo, bloco, f.parent.name)
 
-ap = (RAIZ / "apendices" / "apendiceA.tex").read_text(encoding="utf-8")
+apendice = RAIZ / "apendices" / "apendiceA.tex"
+if not apendice.exists():
+    print(f"ERRO: não encontrei {apendice}. Não é seguro validar sem apêndice.")
+    sys.exit(2)
+ap = apendice.read_text(encoding="utf-8")
 # ⚠️ Uma linha de tabela pode estar partida por varias linhas do ficheiro: o `\ref` cai na
 # seguinte e o verificador deixava de a ver. Tres linhas novas passaram assim despercebidas.
 # Junta-se por LINHA LOGICA, que acaba em `\\`.

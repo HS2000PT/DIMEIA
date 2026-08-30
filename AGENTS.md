@@ -7,6 +7,23 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 63 — PLANO DE EMERGÊNCIA DE DEFESA FECHADO (2026-08-30): NÃO HOUVE ALTERAÇÃO À
+  TESE, AO CÓDIGO OU AOS RESULTADOS; SÓ FOI CRIADO O PLANO PARA REVISÃO INDEPENDENTE.** Perante o
+  pedido urgente do aluno, a decisão é **não recomeçar de zero**: tese/ já é a versão curta
+  portuguesa e conserva a rastreabilidade que uma reconstrução destruiria. O plano completo está
+  em progress/PLANO_EMERGENCIA_DEFESA_2026-08-30.md, inclui handoff para Claude Cowork,
+  calendário de um dia, registo de alegações A/B/C, cortes por secção, seis visuais de evidência e
+  as oito correções factuais que bloqueiam congelação. **O PDF atual é um novo candidato:** tem 135
+  páginas físicas e SHA-256 70544C7A...F6FC649, diferente do PDF de 134 páginas diagnosticado
+  antes; não se deve herdar a validação anterior sem nova compilação e inspeção. A porta atual não
+  está verde: check_entrega.py acusa seis falhas (quatro PDFs mais antigos que fontes, contagem
+  de testes 763/742 e xref do apêndice); check_apendice_xref.py e check_floats.py ainda têm
+  caminho fixo de outro computador, sendo o segundo um falso positivo possível. Os inputs
+  integrais de QI1/QI2/QI3 não estão nesta cópia; não retreinar nem correr scripts dinâmicos antes
+  de recuperar snapshots identificados. **Núcleo recomendado:** z-score, recuperação semântica
+  causal estreita e triagem supervisionada como resultado negativo, com decomposição apenas
+  indicativa. **Próxima ação, apenas se autorizada:** congelar/snapshot, reparar portas, classificar
+  cada alegação por evidência, e só então compactar tese/ e recompilar.
 - **🆕 SESSÃO 62 — DIAGNÓSTICO INTEGRAL FECHADO (2026-08-30): O PDF CANÓNICO FOI LIDO E
   INSPECIONADO NAS 134 PÁGINAS; A TESE NÃO FOI ALTERADA NESTA PASSAGEM.** O pedido externo foi
   tratado como especificação de revisão, não como autoridade. O relatório completo, com tese em
