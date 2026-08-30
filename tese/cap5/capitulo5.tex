@@ -650,14 +650,18 @@ A variante MPNet fica acima da MiniLM ($0.538$ contra $0.514$), e a escolha do m
 para produção foi tomada por custo e não por qualidade. Fica registada como o que é: uma troca
 declarada, cujo preço em precisão está medido nesta tabela.
 
-A Figura~\ref{fig:av_recuperacao} mostra o mesmo por setor e para vários tamanhos de lista.
+A Figura~\ref{fig:av_recuperacao} torna visíveis as duas comparações que decidem a leitura: o
+resultado dentro de cada setor e a diferença entre o protocolo simétrico de escala e o protocolo
+causal da produção.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.9\textwidth]{figures/eval_retrieval_precision.pdf}
-\caption[Recuperação, por setor e por tamanho de lista]{Precisão@$k$ para cada método, com a
-restrição de a notícia recuperada ter de ser de outra empresa. A separação entre a linha do método
-usado e as alternativas mantém-se para todos os $k$ testados, e não apenas para $k=5$.}
+\includegraphics[width=0.96\textwidth]{figures/eval_retrieval_sector_causal.pdf}
+\caption[Recuperação por setor e sob a restrição temporal]{À esquerda, precisão@5 do MiniLM e a
+taxa-base aleatória dentro de cada setor: o método fica acima do respetivo chão nos cinco. À direita,
+o protocolo simétrico de escala e o protocolo causal da produção, cada um ao lado do seu chão. A
+precisão baixa de $0.595$ para $0.513$, mas a margem sobre o acaso muda apenas de $+0.262$ para
+$+0.254$.}
 \label{fig:av_recuperacao}
 \end{figure}
 
@@ -669,7 +673,8 @@ outra empresa não tem razão nenhuma para estar relacionada com esta.
 
 A avaliação acima corre sobre um corpus recente e curto, pelo que, para confirmar que o resultado
 não é um acidente desse corpus, a mesma medição foi repetida sobre o conjunto histórico completo,
-com cerca de 80 mil notícias de seis anos. A precisão@5 não só se mantém como sobe, para
+com cerca de 80 mil notícias de seis anos. Neste teste de escala \textbf{simétrico}, que ainda
+permite candidatos posteriores à consulta, a precisão@5 não só se mantém como sobe, para
 $\mathbf{0.595}$.
 
 Convém, no entanto, não ler essa subida como se fosse toda ganho. O chão de acaso também sobe, de
@@ -757,6 +762,13 @@ O conjunto de dados foi construído a partir do histórico: \textbf{79\,753} exe
 2023, cada um uma notícia com o contexto de mercado do dia e o rótulo descrito na
 Secção~\ref{sec:met_triagem}. A divisão é cronológica com embargo, como na
 Figura~\ref{fig:divisao}.
+
+O protocolo é causal em relação aos dias posteriores, mas uma entrada não está disponível no mesmo
+referencial em produção: \texttt{ret\_event} é o retorno completo do dia $d$ no conjunto offline e
+a notícia é pontuada antes desse dia fechar. Por isso, o resultado abaixo avalia o modelo com a
+variável diária completa; não demonstra paridade com a pontuação intradiária. A
+Secção~\ref{sec:av_ret_event_producao} mede o sintoma em produção e separa o que os registos permitem
+concluir.
 
 Compararam-se seis modelos, do mais simples ao mais completo. A métrica principal é a
 \textbf{PR-AUC}, apropriada quando as duas classes são desequilibradas.
@@ -1053,6 +1065,7 @@ arrumam sob dependências de dados e emaranhamento entre componentes, e o sintom
 por inteiro: o sistema continuou a produzir números de aparência perfeitamente normal.
 
 \paragraph{E há uma segunda causa possível, que não consigo separar da primeira.}
+\label{sec:av_ret_event_producao}
 Uma das nove entradas do modelo é a \textbf{reação do próprio dia}, e no treino ela é o retorno do
 fecho de $d-1$ para o fecho de $d$, ou seja o movimento completo do dia da notícia, que só se
 conhece quando esse dia fecha. Em produção o sistema pontua a notícia no minuto em que a apanha,
@@ -1213,10 +1226,10 @@ Só texto & $0.457$ & $0.616$ & $0.495$ \\
 \end{tabular}
 \end{table}
 
-\paragraph{O resultado, e é positivo.} O título \textbf{acrescenta} a essa base:
-$+0.012$ de PR-AUC, com intervalo $[+0.004,\ +0.020]$, que exclui zero. É o valor mais alto
-medido em qualquer variante deste trabalho, e é a primeira vez que uma representação de texto
-mostra valor mensurável nesta tarefa.
+\paragraph{O resultado é detetável, mas pequeno.} O título \textbf{acrescenta} a essa base:
+$+0.012$ de PR-AUC, com intervalo $[+0.004,\ +0.020]$, que exclui zero. É a primeira vez que uma
+representação de texto mostra um acréscimo detetável nesta tarefa, mas fica abaixo do critério
+prático de $0.02$ fixado antes dos resultados e não altera a precisão dentro do orçamento.
 
 Três ressalvas impedem que isto seja mais do que é, e todas são medições e não modéstia.
 
@@ -1419,15 +1432,15 @@ E as \textbf{três últimas linhas não têm número de propósito}. São restri
 escolhidas antes de haver qualquer medição e não se defendem com uma tabela. Apresentá-las como se
 tivessem sido testadas seria dar-lhes uma autoridade que não têm.
 
-\section{E o sistema inteiro vale mais do que o que a pessoa já tem?}
+\section{E o sistema inteiro ganha na métrica ponta a ponta?}
 \label{sec:av_pontaaponta}
 
 \emph{Cada componente foi comparado com a sua alternativa. E o conjunto?}
 
 As secções anteriores comparam peça a peça: o detetor contra um limiar fixo, a recuperação contra
-escolher ao acaso, a triagem contra a volatilidade. Falta a comparação de que o utilizador precisa,
-que é ao nível do \textbf{sistema}: dadas as notícias de um dia, quais são as cinco que valia a
-pena mostrar, e o sistema escolhe-as melhor do que aquilo que já existe sem custo?
+escolher ao acaso, a triagem contra a volatilidade. Falta uma comparação ao nível do
+\textbf{sistema}: dadas as notícias de um dia, quais são as cinco que o proxy considera materiais,
+e a política escolhe-as melhor do que uma regra disponível sem custo?
 
 A Tabela~\ref{tab:av_pontaaponta} responde. Todas as políticas escolhem cinco por dia, sobre o
 mesmo bloco de teste e com o mesmo rótulo. O desempate é \textbf{aleatório e explícito} em todas,
@@ -1457,11 +1470,11 @@ Oráculo & sabe as respostas: o melhor possível & $0.968$ \\
 
 Três leituras saem daqui, e a última é a mais útil.
 
-\paragraph{O sistema bate a alternativa realista.}
+\paragraph{O sistema bate a regra realista neste proxy offline.}
 Mostrar notícias de quem mais se mexeu hoje é o que qualquer aplicação de bolsa já faz, sem custo
-nenhum, e obtém $0.489$. O sistema obtém $0.632$. O trabalho acrescenta, portanto, valor mensurável
-sobre o que a pessoa já tinha, e é a primeira vez neste documento que isso é medido ao nível do
-conjunto e não de uma peça.
+nenhum, e obtém $0.489$. O sistema obtém $0.632$: um ganho de $0.143$ na precisão@5 sob o mesmo
+protocolo ponta a ponta. Isto mede a capacidade de ordenar o rótulo aproximado no bloco offline; não
+mede utilidade percebida por uma pessoa nem o valor causal dos alertas ao vivo.
 
 \paragraph{E continua a não bater a volatilidade.}
 Treze constantes calculadas só sobre o bloco de treino obtêm $0.662$, uma por cada empresa que
@@ -1512,12 +1525,13 @@ propósito. Uma linha de base errada é pior do que uma linha de base em falta.
 \midrule
 \textbf{QI1} deteção & \textbf{Sim} & Amplitude de disparo $0.015$ contra $0.344$; e ganha a dois
 métodos aprendidos ($F_1$ $0.530$ contra $0.269$ e $0.280$) \\
-\textbf{QI2} precedentes & \textbf{Sim} & Precisão@5 de $0.514$ contra $0.346$ (palavras), $0.240$
-(acaso) e $0.126$ (recência); $0.595$ à escala \\
+\textbf{QI2} precedentes & \textbf{Sim} & Sob a restrição causal da produção, precisão@5 de
+$0.513$, chão $0.259$ e margem $+0.254$; o teste simétrico de escala dá $0.595$ \\
 \textbf{QI3} triagem & \textbf{Não} & Nenhum modelo com texto bate a volatilidade de forma
 sustentada ($0.496$ contra $0.542$; a melhor variante com texto chega a $0.547$, mas a diferença
 tem intervalo que contém zero), e o resultado aguenta os três testes de robustez. \textbf{Mas o
-texto acrescenta} ao que o modelo já sabe da empresa: $+0.012$, IC $[+0.004, +0.020]$ \\
+texto acrescenta} ao que o modelo já sabe da empresa: $+0.012$, IC $[+0.004, +0.020]$; abaixo do
+critério prático e sem ganho na precisão@5 \\
 \bottomrule
 \end{tabular}
 \end{table}

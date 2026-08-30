@@ -126,7 +126,8 @@ def main() -> None:
     """Arranque simples da thin slice para um ticker por defeito."""
     result, text = run_thin_slice()
     print(text)
-    print(f"[is_anomaly={result.is_anomaly} z={result.z_score:+.2f}]")
+    z = "undefined (flat baseline)" if result.zero_variance else f"{result.z_score:+.2f}"
+    print(f"[is_anomaly={result.is_anomaly} z={z}]")
 
 
 if __name__ == "__main__":

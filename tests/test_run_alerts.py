@@ -165,6 +165,13 @@ def test_build_daily_summary_com_e_sem_anomalias():
     assert "not advice" in calmo
     agitado = build_daily_summary([("TSLA", _res(True, 2.6))], 2.0)
     assert "📈 TSLA" in agitado and "anomaly" in agitado.lower()
+    plano = AnomalyResult(
+        is_anomaly=True, z_score=0.0, last_return=0.05, mean=0.0, std=0.0,
+        window=20, threshold=2.0, zero_variance=True,
+    )
+    texto_plano = build_daily_summary([("FLAT", plano)], 2.0)
+    assert "flat 20-day baseline" in texto_plano
+    assert "z +0.00" not in texto_plano
     assert build_daily_summary([], 2.0) == ""
 
 

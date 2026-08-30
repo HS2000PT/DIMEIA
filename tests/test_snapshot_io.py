@@ -70,6 +70,16 @@ def test_resumo_nunca_usa_vocabulario_de_previsao():
             assert termo not in frase, f"{termo!r} em {frase!r}"
 
 
+def test_resumo_respeita_flag_explicita_quando_z_nao_existe():
+    linhas = [
+        {"ticker": "FLAT", "z": None, "flagged": True, "zero_variance": True},
+        {"ticker": "CALM", "z": 0.2, "flagged": False},
+    ]
+
+    texto = resumo_do_dia(linhas)
+    assert "One name stood out today: FLAT" in texto
+
+
 def test_tira_de_distribuicao_reflecte_a_proporcao():
     rara = tira_distribuicao(2, 250)
     comum = tira_distribuicao(200, 250)

@@ -68,9 +68,10 @@ def linha_de(ticker: str) -> dict | None:
         res = detect_latest(retornos, window=JANELA, threshold=LIMIAR)
         out: dict = {
             "ticker": ticker,
-            "z": float(res.z_score),
+            "z": None if res.reported_z is None else float(res.reported_z),
             "move": float(res.last_return),
             "flagged": bool(res.is_anomaly),
+            "zero_variance": bool(res.zero_variance),
             "vol_ratio": None,
             "rarity": None,
         }
@@ -103,7 +104,8 @@ def linha_de(ticker: str) -> dict | None:
 
             out["events"] = [
                 [d.strftime("%Y-%m-%d") if hasattr(d, "strftime") else str(d),
-                 round(float(res.z_score), 2)]
+                 None if res.reported_z is None else round(float(res.reported_z), 2),
+                 res.baseline_direction]
                 for d, res in detect_all(retornos, window=JANELA, threshold=LIMIAR)
             ]
         except Exception:  # noqa: BLE001

@@ -109,7 +109,7 @@ def main() -> int:
 
         por_limiar = {}
         for lim in LIMIARES:
-            invulgares = [(d, r) for d, r in resultados if abs(r.z_score) >= lim]
+            invulgares = [(d, r) for d, r in resultados if r.score_magnitude >= lim]
             cobertos = 0
             for dia, _ in invulgares:
                 d = dia.date() if hasattr(dia, "date") else dia

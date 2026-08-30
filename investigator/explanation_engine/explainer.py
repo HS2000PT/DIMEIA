@@ -79,6 +79,16 @@ def explain_anomaly(ticker: str, result: AnomalyResult) -> str:
     Linha final (nota curta): porque disparou (a estatística, para quem quiser).
     """
     icon = direction_icon(result.last_return)
+    if result.zero_variance:
+        return (
+            f"{icon} <b>{html.escape(ticker, quote=False)}"
+            f"{html.escape(_nome(ticker), quote=False)} · "
+            f"{result.last_return * 100:+.2f}% today</b>\n"
+            f"Move after a flat {result.window}-day baseline.\n"
+            f"<i>Why flagged: the previous {result.window} daily returns had zero variation, "
+            f"so a z-score is undefined; today's return differs from their "
+            f"{result.mean * 100:+.2f}% mean. An observed move, not advice.</i>"
+        )
     sev = severity_label(result.z_score).capitalize()
     return (
         f"{icon} <b>{html.escape(ticker, quote=False)}"
@@ -97,6 +107,17 @@ def explain_intraday(ticker: str, result: AnomalyResult) -> str:
     """Anomalia INTRADIÁRIA (movimento em curso, sem esperar o fecho) — mesmas camadas do
     alerta diário, com "so far today" e a fonte (cotação ao vivo vs fecho anterior)."""
     icon = direction_icon(result.last_return)
+    if result.zero_variance:
+        return (
+            f"{icon} <b>{html.escape(ticker, quote=False)}"
+            f"{html.escape(_nome(ticker), quote=False)} · "
+            f"{result.last_return * 100:+.2f}% so far today</b>\n"
+            f"Move in progress after a flat {result.window}-day baseline · "
+            f"the session is not over.\n"
+            f"<i>Why flagged: the previous {result.window} complete daily returns had zero "
+            f"variation, so a z-score is undefined; the live return differs from their "
+            f"{result.mean * 100:+.2f}% mean. An observed move in progress, not advice.</i>"
+        )
     sev = severity_label(result.z_score).capitalize()
     return (
         f"{icon} <b>{html.escape(ticker, quote=False)}"
@@ -186,6 +207,11 @@ def sector_context_line(ticker: str, moves: dict[str, float],
 
 def explain_normal(ticker: str, result: AnomalyResult) -> str:
     """Mensagem quando não há anomalia (útil para testes/diagnóstico)."""
+    if result.zero_variance:
+        return (
+            f"No anomaly for {html.escape(ticker, quote=False)} today "
+            f"(the return stayed at the flat {result.window}-day mean)."
+        )
     return (
         f"No anomaly for {html.escape(ticker, quote=False)} today "
         f"(z-score {result.z_score:+.2f}, within ±{result.threshold:g})."

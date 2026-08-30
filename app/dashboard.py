@@ -166,8 +166,10 @@ def _snapshot(ticker: str) -> dict | None:
         frame = _daily(ticker)
         close = frame["Close"]
         res = detect_latest(log_returns(close), window=WINDOW, threshold=THRESHOLD)
-        out = {"ticker": ticker, "z": float(res.z_score), "move": float(res.last_return),
-               "flagged": bool(res.is_anomaly), "vol_ratio": None}
+        out = {"ticker": ticker,
+               "z": None if res.reported_z is None else float(res.reported_z),
+               "move": float(res.last_return), "flagged": bool(res.is_anomaly),
+               "zero_variance": bool(res.zero_variance), "vol_ratio": None}
         if "Volume" in frame:
             from investigator.anomaly_detector.volume import detect_volume_latest
             v = detect_volume_latest(frame["Volume"], window=WINDOW, threshold=2.0)
@@ -206,7 +208,9 @@ def _replay(ticker: str) -> list[dict]:
         hits = detect_all(log_returns(_daily(ticker)["Close"]),
                           window=WINDOW, threshold=THRESHOLD)
         return [{"date": pd.Timestamp(d).strftime("%Y-%m-%d"),
-                 "z": float(r.z_score), "move": float(r.last_return)} for d, r in hits]
+                 "z": None if r.reported_z is None else float(r.reported_z),
+                 "move": float(r.last_return), "zero_variance": bool(r.zero_variance)}
+                for d, r in hits]
     except Exception:  # noqa: BLE001
         return []
 
@@ -664,7 +668,9 @@ def _overlay_signals(fig, ticker: str, close: pd.Series, intraday: bool = False)
         if hit["date"] not in por_dia:
             continue
         d, y = por_dia[hit["date"]]
-        rotulo = f"{hit['date']}<br>{_pct(hit['move'])} · z {hit['z']:+.2f}"
+        estatistica = (f"z {hit['z']:+.2f}" if hit["z"] is not None
+                       else "flat baseline; z undefined")
+        rotulo = f"{hit['date']}<br>{_pct(hit['move'])} · {estatistica}"
         # Uma instrução por linha, e nunca `a.append(x), b.append(y)`. A vírgula faz disto
         # um tuplo solto, e a "magia" do Streamlit desenha **qualquer** expressão solta do
         # script principal — inclusive dentro de funções. A versão com vírgulas pintou 253
@@ -756,11 +762,13 @@ def _decomp_bar(ticker: str) -> None:
 def _detail(ticker: str) -> None:
     snap = _snapshot(ticker)
     icone, cor = T.direction(snap["move"] if snap else None)
+    estatistica = ("flat 20-day norm; z undefined" if snap and snap["z"] is None
+                   else f'z {snap["z"]:+.2f}' if snap else "")
     cabeca = (
         f'<span class="num" style="font-size:27px;color:{cor};font-weight:700">'
         f'{icone} {_pct(snap["move"])}</span>'
         f'<span class="num" style="font-size:13px;color:{T.FG_MUTE};margin-left:0.55rem">'
-        f'z {snap["z"]:+.2f}</span>') if snap else ""
+        f'{estatistica}</span>') if snap else ""
 
     st.markdown(
         f"""<div style="display:flex;align-items:center;gap:0.7rem;margin-bottom:0.3rem">
@@ -1297,7 +1305,8 @@ def _grid_view(linhas: list[dict]) -> None:
     def chave(r: dict) -> tuple:
         exc = _rarity(r["ticker"])
         # Sem contagem, cai para |z| — é melhor do que uma ordem arbitrária.
-        return (not r["flagged"], exc.count if exc else 10_000, -abs(r["z"]))
+        score = float("inf") if r["flagged"] and r["z"] is None else abs(r["z"] or 0.0)
+        return (not r["flagged"], exc.count if exc else 10_000, -score)
 
     cartoes = []
     for r in sorted(linhas, key=chave):

@@ -41,6 +41,18 @@ def test_explica_anomalia_em_linguagem_simples():
     assert "7.6× its typical daily swing" in text            # leitura em linguagem simples
 
 
+def test_salto_apos_norma_plana_e_explicado_sem_z_inventado():
+    res = AnomalyResult(
+        is_anomaly=True, z_score=0.0, last_return=0.05,
+        mean=0.0, std=0.0, window=20, threshold=3.0, zero_variance=True,
+    )
+
+    text = explain_anomaly("TEST", res)
+    assert "flat 20-day baseline" in text
+    assert "z-score is undefined" in text
+    assert "z-score +0.00" not in text
+
+
 def test_explicacao_fiel_aos_precedentes_recuperados():
     """Fidelidade (XAI): a explicação reflete EXATAMENTE os precedentes e scores recuperados."""
     precs = _precedents()

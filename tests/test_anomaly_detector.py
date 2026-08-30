@@ -3,7 +3,7 @@
 import pandas as pd
 import pytest
 
-from investigator.anomaly_detector.detector import detect_all, detect_latest
+from investigator.anomaly_detector.detector import detect_all, detect_intraday, detect_latest
 
 
 def _base_returns(n: int = 30) -> list[float]:
@@ -59,3 +59,36 @@ def test_detect_all_consistente_com_detect_latest_sem_lookahead():
     ref = detect_latest(vals[:31], window=20, threshold=3.0)  # série até ao dia 30 inclusive
     assert res_all.z_score == pytest.approx(ref.z_score)
     assert res_all.last_return == pytest.approx(ref.last_return)
+
+
+def test_janela_constante_sem_movimento_continua_normal():
+    res = detect_latest([0.0] * 21, window=20, threshold=3.0)
+
+    assert res.is_anomaly is False
+    assert res.zero_variance is True
+    assert res.z_score == 0.0
+
+
+@pytest.mark.parametrize("salto", [0.05, -0.05])
+def test_salto_apos_janela_constante_e_sinalizado_sem_inventar_z(salto):
+    res = detect_latest([0.0] * 20 + [salto], window=20, threshold=3.0)
+
+    assert res.is_anomaly is True
+    assert res.zero_variance is True
+    assert res.z_score == 0.0
+    assert res.score_magnitude == float("inf")
+
+
+def test_salto_intradiario_apos_janela_constante_e_sinalizado():
+    res = detect_intraday(0.05, [0.0] * 20, window=20, threshold=3.0)
+
+    assert res.is_anomaly is True
+    assert res.zero_variance is True
+
+
+def test_replay_inclui_salto_apos_janela_constante():
+    found = detect_all(pd.Series([0.0] * 20 + [0.05]), window=20, threshold=3.0)
+
+    assert len(found) == 1
+    assert found[0][0] == 20
+    assert found[0][1].zero_variance is True

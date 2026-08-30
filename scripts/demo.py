@@ -51,7 +51,8 @@ def demo_mercado() -> None:
 
         print(plain_text(explain_anomaly("AAPL", res) if res.is_anomaly
                          else explain_normal("AAPL", res)))
-        print(f"[is_anomaly={res.is_anomaly}  z={res.z_score:+.2f}]")
+        z = "undefined (flat baseline)" if res.zero_variance else f"{res.z_score:+.2f}"
+        print(f"[is_anomaly={res.is_anomaly}  z={z}]")
     except Exception as exc:  # noqa: BLE001  (rede pode falhar; a demo continua útil)
         print(f"(Sem internet ou erro: {type(exc).__name__}.")
         print(" O gatilho de notícia acima corre sempre, offline.)")

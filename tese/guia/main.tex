@@ -202,6 +202,10 @@ Isso seria usar informação que, no momento da decisão, ainda não devia conta
 \footnotesize
 Na tese isto é garantido por \textbf{um teste automático}, não por uma promessa: o teste altera o
 futuro e exige que as \emph{features} fiquem iguais e o rótulo mude.
+\par\smallskip
+\textbf{Caso limite:} se os vinte dias forem constantes, manter o mesmo valor não dispara; um salto
+dispara com a explicação \emph{``norma plana; $z$ indefinido''}. Nunca digas que esse salto tem
+$z=0$.
 \end{frame}
 
 \begin{frame}{\key{Nível 2}, técnica 2: foi a empresa, ou foi o mercado?}
@@ -306,7 +310,8 @@ Medido \textbf{por cima} da tabela de consulta, que sabe tudo da empresa e nada 
 \begin{center}
 \key{$+0{,}012$} de PR-AUC, IC $[+0{,}004,\ +0{,}020]$ \quad ---\quad \textbf{exclui zero}
 \end{center}
-É a única vez neste trabalho em que uma representação de texto mostra valor mensurável.
+É a única vez neste trabalho em que uma representação de texto mostra um acréscimo detetável; fica
+abaixo do critério prático de $0{,}02$ e não muda a métrica de produto.
 \vspace{1mm}
 \begin{block}{Mas o veredicto não muda, e dizes tu porquê antes que perguntem}
 \textbf{1.} $0{,}547$ vs $0{,}542$, e o intervalo da diferença \textbf{contém zero} --- não
@@ -330,7 +335,7 @@ digas que ganha;\\
 \key{0.530} / 0.269 / 0.280 & $F_1$: $z$-score vs Isolation Forest vs LOF & QI1 \\
 \key{0.514} vs \key{0.467} & precisão@5: significado vs \emph{sempre tecnologia} & QI2 \\
 0.346 / 0.240 & idem: palavras em comum / acaso uniforme & QI2 \\
-\key{0.595} & precisão@5 no corpus completo (80 mil) & QI2 \\
+\key{0.513} / 0.259 / $+0.254$ & P@5 causal / chão / margem; $0.595$ é o teste simétrico & QI2 \\
 \key{0.708} vs 0.688 & concordância de direção vs acaso (tema $\neq$ direção) & QI2 \\
 \key{0.542} vs \key{0.496} & PR-AUC: só volatilidade vs contexto$+$texto & QI3 \\
 \key{+0.012} IC $[+0.004, +0.020]$ & o texto por cima da \textbf{tabela de consulta}: acrescenta & QI3 \\

@@ -461,10 +461,11 @@ tomada de ciclo em ciclo, sem saber o que a tarde ainda traz. A pontuação orde
 \emph{do mesmo ciclo}, e é o piso escalonado que encarece cada lugar seguinte. Veio corrigir um
 teto de duas por empresa, que limitava cada nome e não o total. \\
 \addlinespace
-Piso escalonado & $0.49$ e $0.64$ & \textbf{Derivados} da mesma análise de custos, para dois rácios
-diferentes: o primeiro alerta do dia de uma empresa exige $0.49$ e o segundo exige $0.64$. A ideia é
-que o segundo aviso do mesmo nome no mesmo dia tem de valer mais do que o primeiro, porque o custo
-dominante deixa de ser falhar um movimento e passa a ser cansar quem lê. \\
+Piso escalonado & primeiro livre; segundo $0.64$ & A configuração conserva os valores derivados
+$0.49$ e $0.64$, mas, com o orçamento global ligado, o código ignora explicitamente o primeiro: o
+primeiro alerta do dia de cada empresa não tem piso de triagem. O segundo exige $0.64$. Assim a
+escada atua apenas como anti-fadiga dentro da mesma empresa e não volta a excluir à partida nomes
+cuja pontuação-base é baixa. \\
 \bottomrule
 \end{tabular}
 \end{table}

@@ -188,11 +188,23 @@ def _seta(v: float) -> str:
     return T.ICON_UP if v > 0 else T.ICON_DOWN if v < 0 else T.ICON_FLAT
 
 
+def _flagged(r: dict) -> bool:
+    if "flagged" in r:
+        return bool(r["flagged"])
+    return abs(float(r.get("z") or 0.0)) >= LIMIAR
+
+
+def _score(r: dict) -> float:
+    if _flagged(r) and r.get("z") is None:
+        return float("inf")
+    return abs(float(r.get("z") or 0.0))
+
+
 # ──────────────────────────────────────────────────────────────────────── grelha
 def _cartao(r: dict) -> str:
     t = r["ticker"]
     move = float(r.get("move") or 0.0)
-    flagged = abs(float(r.get("z") or 0.0)) >= LIMIAR
+    flagged = _flagged(r)
     rar = r.get("rarity") or {}
     c, n = rar.get("count"), rar.get("n")
 
@@ -212,7 +224,7 @@ def _cartao(r: dict) -> str:
 def _grelha(snap) -> None:
     st.markdown(f'<div class="day">{resumo_do_dia(snap.linhas, LIMIAR)}</div>',
                 unsafe_allow_html=True)
-    ordenadas = sorted(snap.linhas, key=lambda r: -abs(float(r.get("z") or 0.0)))
+    ordenadas = sorted(snap.linhas, key=lambda r: -_score(r))
     st.markdown(f'<div class="grid">{"".join(_cartao(r) for r in ordenadas)}</div>',
                 unsafe_allow_html=True)
 
@@ -277,10 +289,15 @@ def _grafico(linha: dict, meses: int = 6):
     ))
 
     por_data = dict(fechos)
+    eventos = []
+    for evento in linha.get("events") or []:
+        d, z = evento[:2]
+        direcao = evento[2] if len(evento) > 2 else (-1 if z is not None and z < 0 else 1)
+        eventos.append((d, z, direcao))
     for sinal, cor, marca, rotulo in ((1, T.UP, "triangle-up", "flagged up"),
                                       (-1, T.DOWN, "triangle-down", "flagged down")):
-        pts = [(d, z) for d, z in (linha.get("events") or [])
-               if d in dentro and (z > 0) == (sinal > 0)]
+        pts = [(d, z) for d, z, direcao in eventos
+               if d in dentro and (direcao > 0) == (sinal > 0)]
         if not pts:
             continue
         fig.add_trace(go.Scatter(
@@ -288,9 +305,10 @@ def _grafico(linha: dict, meses: int = 6):
             mode="markers", name=rotulo,
             marker={"symbol": marca, "size": 11, "color": cor,
                     "line": {"width": 1, "color": T.BG}},
-            customdata=[z for _, z in pts],
+            customdata=[f"z {z:+.2f}" if z is not None else "flat baseline; z undefined"
+                        for _, z in pts],
             hovertemplate=("%{x|%d %b %Y}<br>$%{y:.2f}"
-                           "<br><b>flagged</b> · z %{customdata:+.2f}<extra></extra>"),
+                           "<br><b>flagged</b> · %{customdata}<extra></extra>"),
         ))
 
     fig.update_layout(

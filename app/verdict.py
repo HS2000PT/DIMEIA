@@ -173,12 +173,14 @@ def precedent_framing(up: int, down: int) -> str:
     return "None of these cases has a measured outcome yet."
 
 
-def gloss_z(z: float) -> str:
+def gloss_z(z: float | None) -> str:
     """O z-score com a glosa que o torna legível (critério V4).
 
     Nunca devolve o número nu. O z é a estatística com que o detector dispara e por isso
     tem de continuar visível e rastreável, mas sozinho não diz nada a quem não o conhece.
     """
+    if z is None:
+        return "flat 20-day norm; z undefined"
     return f"z {z:+.2f} vs 20-day norm"
 
 

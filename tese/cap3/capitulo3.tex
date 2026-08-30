@@ -172,7 +172,8 @@ conter informação posterior ao momento da decisão.}
 \texttt{headline\_len} & número de caracteres do título & não & calculado \\
 \texttt{vol20} & desvio-padrão dos retornos dos 20 dias \emph{anteriores} & não & preços \\
 \texttt{mom5} & retorno acumulado dos 5 dias \emph{anteriores} & não & preços \\
-\texttt{ret\_event} & retorno do próprio dia da notícia & não & preços \\
+\texttt{ret\_event} & retorno fecho a fecho do dia da notícia; só fica completo no fecho &
+\textbf{sim, intradia} & preços \\
 \texttt{label} & houve movimento anormal em $(d, d{+}3]$? & \textbf{sim} & preços \\
 \texttt{label\_t*\_h*} & o mesmo, com nove limiares e horizontes & \textbf{sim} & preços \\
 \texttt{split} & treino, validação ou teste & não & divisão temporal \\
@@ -180,9 +181,13 @@ conter informação posterior ao momento da decisão.}
 \end{tabular}
 \end{table}
 
-As colunas de rótulo \textbf{têm} de ver o futuro: é isso que um rótulo é. O que não pode acontecer
-é uma coluna de \emph{entrada} ver o futuro, e é exatamente isso que o teste descrito na
-Secção~\ref{sec:met_avaliacao} verifica automaticamente.
+As colunas de rótulo \textbf{têm} de ver o futuro: é isso que um rótulo é. A
+\texttt{ret\_event} exige uma precisão adicional. No protocolo offline não vê nada posterior ao
+fecho de $d$, que é o referencial em que a linha é construída; no instante em que uma notícia chega
+durante a sessão, porém, esse fecho ainda é futuro. O teste da Secção~\ref{sec:met_avaliacao}
+garante que nada posterior a $d$ entra nas variáveis, mas não prova paridade entre a variável diária
+completa e a que a produção consegue observar intradia. Essa diferença é medida e retomada na
+Secção~\ref{sec:av_ret_event_producao}.
 
 \subsection{O que é guardado: um caso na base de precedentes}
 
@@ -358,12 +363,19 @@ last   = float(r.iloc[-1])
 
 mu    = float(recent.mean())
 sigma = float(recent.std(ddof=1))
-z     = (last - mu) / sigma if sigma > 0 else 0.0
+if sigma > 0:
+    z, is_anomaly = (last - mu) / sigma, abs(z) > threshold
+else:
+    z = 0.0                         # sentinela interna; nao e um z calculado
+    is_anomaly = not math.isclose(last, mu)
 \end{lstlisting}
 
-O \texttt{-1} final garante a exclusão; se o desvio-padrão for zero, a última linha devolve zero em
-vez de dividir. Esta prevenção de \emph{lookahead} é imposta por teste automático na
-Secção~\ref{sec:met_avaliacao}.
+O \texttt{-1} final garante a exclusão. Se o desvio-padrão for zero, há dois casos distintos: manter
+o valor constante não dispara; afastar-se dele dispara, porque um salto depois de uma janela plana
+não pode ser tratado como normal. A divisão não existe, portanto o sistema guarda $0$ apenas como
+sentinela interna e apresenta ao utilizador ``norma plana; $z$ indefinido'', sem inventar uma
+distância normalizada. Os três caminhos do detetor partilham esta regra e os dois ramos são impostos
+por testes automáticos.
 
 \subsection{Um caso real}
 
@@ -400,9 +412,10 @@ que aquela ação costumava mexer naquelas semanas. É essa frase que o sistema 
 utilizador, e é a diferença entre avisar e explicar.
 
 Há ainda um caso limite que convém resolver bem: se uma ação não se moveu \emph{nada} durante
-vinte dias, o desvio-padrão é zero e a divisão da Equação~\ref{eq:zscore} não existe. Nesse caso o
-sistema devolve $z = 0$ em vez de falhar. Uma ação parada é descrita como não tendo nada de
-especial, que é exatamente o que se passa.
+vinte dias, o desvio-padrão é zero e a divisão da Equação~\ref{eq:zscore} não existe. Se hoje também
+ficar parada, não há anomalia. Se hoje se afastar dessa norma plana, o sistema sinaliza o movimento
+sem lhe atribuir um $z$ fictício; a explicação diz que a variância anterior era nula. Assim, evitar
+a divisão por zero não silencia precisamente o primeiro salto depois de um período constante.
 
 \begin{tcolorbox}[colback=black!3, colframe=black!30, boxrule=0.4pt, arc=2pt]
 \textbf{Em três frases.} Comparo o dia de hoje com os vinte dias anteriores da mesma ação e conto a
@@ -935,13 +948,13 @@ justificar que este trabalho corrige noutros sítios, e ali mostra-se uma ação
 estimado foi $4.43$. Numa ação de beta alto, o que sobra depois da subtração ainda contém parte do
 movimento do mercado, e o rótulo passa a marcar como material um dia em que só o mercado se mexeu.
 
-A incoerência é real e fica declarada. O que a atenua é que o efeito é \emph{simétrico entre os
-modelos comparados}: todas as seis famílias da Secção~\ref{sec:av_qi3} são treinadas e avaliadas
-contra o mesmo rótulo, portanto um rótulo mais ruidoso torna a tarefa mais difícil para todas por
-igual e não favorece nenhuma. O que ele afeta é o \emph{nível} das métricas, não a ordenação, que
-é o que a pergunta compara. Refazer o rótulo com betas encolhidos obrigaria a retreinar as seis e
-a re-correr tudo o que delas depende, e o benefício seria um número diferente para a mesma
-conclusão.
+A incoerência é real e fica declarada. Todas as seis famílias da Secção~\ref{sec:av_qi3} são
+treinadas e avaliadas contra o mesmo rótulo, pelo que a comparação é \emph{internamente
+consistente sob esta definição do alvo}. Isso não garante que a ordenação sobreviva a outro rótulo:
+o erro introduzido por $\beta=1$ pode estar correlacionado com a empresa, a volatilidade e as
+próprias entradas, e favorecer famílias diferentes de forma diferente. Não foi corrida uma análise
+de sensibilidade que reconstruísse o alvo com betas estimados ou encolhidos. Por isso, tanto o nível
+das métricas como a sua ordenação ficam condicionados ao rótulo efetivamente usado.
 
 \subsection{O que o modelo vê}
 \label{sec:met_modelo_ve}
@@ -1243,15 +1256,18 @@ alguma coisa quando se sabe o que acertaria uma alternativa trivial. Cada técni
 comparada com \textbf{linhas de base}: uma regra fixa, uma escolha ao acaso, a notícia mais
 recente. Se a técnica sofisticada não ganhar, isso é o resultado, e é o que fica escrito.
 
-\paragraph{Segundo: o não-\emph{lookahead} é imposto por um teste, não prometido.}
+\paragraph{Segundo: o não-\emph{lookahead} diário é imposto por um teste, não prometido.}
 É fácil escrever ``não usámos informação do futuro''. É difícil garanti-lo. Aqui existe um teste
 automático que faz o seguinte: pega num exemplo, \textbf{altera artificialmente o futuro} e volta a
 calcular. Depois exige duas condições ao mesmo tempo: que as entradas fiquem exatamente
 iguais (porque descrevem o passado) e que o \emph{rótulo} mude (porque descreve o futuro). Se
 alguma informação do futuro se tivesse infiltrado nas entradas, o teste falha.
 
-Esta é a garantia mais importante de todo o trabalho e a mais fácil de prometer sem cumprir, por
-isso o Excerto~\ref{lst:lookahead} mostra-a tal como está escrita.
+Esta é a garantia mais importante do protocolo offline e a mais fácil de prometer sem cumprir, por
+isso o Excerto~\ref{lst:lookahead} mostra-a tal como está escrita. O referencial é o fecho de $d$:
+o teste impede informação de $d+1$ em diante, mas não torna o retorno completo de $d$ disponível no
+minuto em que uma notícia é captada. Essa fronteira intradiária é a ressalva já declarada na
+Tabela~\ref{tab:met_colunas}.
 
 \begin{lstlisting}[label=lst:lookahead, caption={Os \textbf{dois} testes que impedem o futuro de entrar
 nas entradas. O primeiro exige que duas séries com futuros diferentes dêem entradas iguais; o

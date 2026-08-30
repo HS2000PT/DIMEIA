@@ -889,11 +889,13 @@ AMZN <span class="k">-1,84%</span> = -1,66% mercado · -0,37% setor · <span cla
     last   = float(r.iloc[-1])          <span class="c"># o dia a julgar</span>
     mu     = float(recent.mean())
     sigma  = float(recent.std(ddof=1))
-    z      = (last - mu) / sigma <span class="k">if</span> sigma &gt; 0 <span class="k">else</span> 0.0
-    <span class="k">return</span> AnomalyResult(is_anomaly=abs(z) &gt; threshold, z_score=z, ...)</code></pre>
+    z, is_anomaly, zero_variance = _score(last, mu, sigma, threshold)
+    <span class="k">return</span> AnomalyResult(is_anomaly=is_anomaly, z_score=z,
+                         zero_variance=zero_variance, ...)</code></pre>
     <p>Três coisas a saber apontar: o <code>-1</code> que evita lookahead; o <code>raise</code> que
-    faz falhar fechado quando não há dados suficientes; e o <code>sigma &gt; 0</code>, que evita
-    divisão por zero num título que não mexeu nada.</p>`,
+    faz falhar fechado quando não há dados suficientes; e <code>_score</code>, que trata uma norma
+    constante sem inventar um z-score. Repetir o valor não dispara; afastar-se dele dispara e é
+    apresentado como <b>z indefinido</b>.</p>`,
     ex: `Há uma segunda função, <code>detect_all</code>, que aplica <b>a mesma regra</b> a cada dia
     de uma série — é ela que desenha os triângulos no gráfico do painel. Foi feita a partir da
     primeira de propósito: se fossem duas implementações, podiam divergir, e o gráfico passaria a

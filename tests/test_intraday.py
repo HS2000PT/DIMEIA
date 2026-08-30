@@ -48,6 +48,15 @@ def test_explicacao_intradiaria_e_fiel_e_diz_em_curso():
     assert "not advice" in texto
 
 
+def test_explicacao_intradiaria_de_norma_plana_nao_inventa_z():
+    res = detect_intraday(0.05, [0.0] * 20, window=20, threshold=2.0)
+    texto = plain_text(explain_intraday("TEST", res))
+
+    assert "flat 20-day baseline" in texto
+    assert "z-score is undefined" in texto
+    assert "z-score +0.00" not in texto
+
+
 def test_collect_intraday_desligado_devolve_vazio():
     from scripts.run_alerts import collect_intraday_results
 

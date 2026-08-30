@@ -303,10 +303,12 @@ const BANCO = [
  <p>Na tese isto é garantido por um <b>teste automático</b>, não por uma promessa.</p>`},
 
 {b:"Técnica 1: anomalia", n:3, t:"escolha",
- q:"O que acontece se uma ação não se mexer nada durante 20 dias?",
- opts:["O sistema rebenta","Devolve z = 0","Devolve z infinito","Salta a empresa"], ok:1,
- a:`<b>Devolve z = 0.</b> O desvio-padrão seria zero e a divisão não existe; em vez de rebentar, uma
- ação parada é descrita como não tendo nada de especial, que é o que se passa.`},
+ q:"Depois de 20 dias com retorno constante, hoje há um salto de 5%. O que acontece?",
+ opts:["Sinaliza; o z é indefinido","Devolve z = 0 e não sinaliza","Devolve z infinito","Salta a empresa"], ok:0,
+ a:`<b>Sinaliza, mas não inventa um z.</b> Com variância nula a divisão não existe. Se hoje repetir
+ o valor constante, não há anomalia; se se afastar dele, o sistema dispara e explica
+ <b>«norma plana; z indefinido»</b>. O 0 interno é apenas uma sentinela e nunca é mostrado como
+ estatística calculada.`},
 
 // ─────────────────────────── Técnica 2
 {b:"Técnica 2: precedentes", n:1, t:"escolha",
@@ -381,6 +383,12 @@ const BANCO = [
  todas. Faz sentido: a notícia mais recente sobre outra empresa não tem razão para estar
  relacionada.`},
 
+{b:"As que doem", n:2, t:"escolha", q:"Que número deve resumir a QI2, que pergunta por notícias passadas?",
+ opts:["0.513, chão 0.259, margem +0.254","0.595, chão 0.333","0.514, chão 0.240","0.467"], ok:0,
+ a:`<b>0.513, com chão 0.259 e margem +0.254.</b> É o protocolo causal: só deixa recuperar casos
+ anteriores à consulta, como o produto. O <b>0.595</b> continua útil como teste simétrico de escala
+ em 80 mil títulos, mas permite candidatos futuros e não deve ser o número de síntese.`},
+
 {b:"Os números", n:2, t:"escolha", q:"PR-AUC: só volatilidade contra contexto+texto?",
  opts:["0.542 vs 0.496","0.496 vs 0.542","0.538 vs 0.439","0.632 vs 0.379"], ok:0,
  a:`<b>0.542 contra 0.496.</b> Acrescentar o texto do título <b>piora</b>. O sinal vive no contexto
@@ -390,7 +398,8 @@ const BANCO = [
 {b:"Os números", n:1, t:"escolha", q:"Medido POR CIMA da tabela de consulta por empresa, quanto acrescenta o título?",
  opts:["+0.012, e o intervalo exclui zero","nada: +0.000","+0.120","piora em -0.012"], ok:0,
  a:`<b>+0.012 de PR-AUC, IC [+0.004, +0.020].</b> É a única vez neste trabalho em que uma
- representação de texto mostra valor mensurável. Porque só aparece aqui: as outras comparações põem
+ representação de texto mostra um acréscimo detetável, mas fica abaixo do critério prático de
+ 0.02 e não muda a precisão no orçamento. Porque só aparece aqui: as outras comparações põem
  as variantes <b>lado a lado</b> e respondem a "qual é melhor"; esta soma o texto ao melhor
  preditor conhecido e responde a "acrescenta?". São perguntas diferentes.`},
 

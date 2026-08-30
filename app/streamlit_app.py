@@ -207,8 +207,11 @@ def _unusualness(ticker: str) -> dict | None:
 
         close = _daily_close(ticker)
         res = detect_latest(log_returns(close), window=_WINDOW, threshold=1.5)
-        return {"ticker": ticker, "z": float(res.z_score), "move": float(res.last_return),
-                "is_anomaly": bool(res.is_anomaly)}
+        return {"ticker": ticker,
+                "z": None if res.reported_z is None else float(res.reported_z),
+                "score": float(res.score_magnitude), "move": float(res.last_return),
+                "is_anomaly": bool(res.is_anomaly),
+                "zero_variance": bool(res.zero_variance)}
     except Exception:  # noqa: BLE001
         return None
 
@@ -322,8 +325,8 @@ def _today_view() -> None:
                 "sources are not responding. Try again shortly.")
         return
 
-    rows.sort(key=lambda r: -abs(r["z"]))
-    movers = [r for r in rows if abs(r["z"]) >= 1.0][:5]
+    rows.sort(key=lambda r: -r["score"])
+    movers = [r for r in rows if r["score"] >= 1.0][:5]
     quiet = [r for r in rows if r not in movers]
 
     if not movers:
@@ -356,7 +359,9 @@ def _mover_row(r: dict) -> None:
         left, right = st.columns([3, 2])
         with left:
             st.markdown(f"**{arrow} {t} ({display_name(t)}) {_fmt_pct(r['move'])}**")
-            detail = f"z-score {r['z']:+.2f} vs a {_WINDOW}-day norm"
+            detail = (f"z-score {r['z']:+.2f} vs a {_WINDOW}-day norm"
+                      if r["z"] is not None
+                      else f"flat {_WINDOW}-day norm; z-score undefined")
             if r["is_anomaly"]:
                 detail += " · flagged"
             # O volume só entra quando é INVULGAR. Anunciar "1,0x o volume habitual" em cada
@@ -412,10 +417,10 @@ def _ticker_view() -> None:
         # O `delta` também não é o sítio certo para isto: significa "variação face ao valor
         # anterior", e o z-score não é isso. Fica como legenda, onde não há seta para errar.
         st.metric(f"{display_name(t)} ({t})", _fmt_pct(r["move"]))
-        st.caption(
-            f"z-score {r['z']:+.2f} versus the 20-day norm"
-            + (" · past the alert threshold" if r.get("is_anomaly") else "")
-        )
+        estatistica = (f"z-score {r['z']:+.2f} versus the 20-day norm"
+                       if r["z"] is not None
+                       else "flat 20-day norm; z-score undefined")
+        st.caption(estatistica + (" · flagged" if r.get("is_anomaly") else ""))
 
     _decomposition_panel(t)
     _price_chart(t)

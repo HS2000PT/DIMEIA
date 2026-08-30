@@ -78,12 +78,12 @@ estimativa; recuperação de precedentes por semelhança semântica, com mediç�
 e um modelo supervisionado de triagem, treinado sobre um conjunto de dados próprio, para decidir
 que notícias merecem interromper alguém.
 
-Cada componente foi avaliado contra linhas de base transparentes, e os resultados são reportados tal
-como se revelaram. A deteção normalizada pela volatilidade dispara de forma muito mais consistente
+Cada componente foi avaliado e, sempre que existia um referente adequado, comparado com linhas de
+base transparentes; os resultados são reportados tal como se revelaram. A deteção normalizada pela volatilidade dispara de forma muito mais consistente
 entre empresas do que um limiar fixo. A recuperação semântica supera as linhas de base lexical e
 triviais. O modelo de triagem, construído sobre um conjunto de 79\,753 exemplos, \textbf{não} superou uma linha de base
 que usa apenas volatilidade, um resultado negativo que se reporta, e que valida por medição a
-opção pela simplicidade que atravessa todo o trabalho. Medido, porém, \emph{por cima} de uma base que sabe tudo da empresa e nada da notícia, em vez de contra ela, o título acrescenta uma quantidade pequena e mensurável, o que situa o limite: a informação que ele traz distingue empresas, e não notícias.
+opção pela simplicidade que atravessa todo o trabalho. Medido, porém, \emph{por cima} de uma base que sabe tudo da empresa e nada da notícia, em vez de contra ela, o título acrescenta uma quantidade pequena e detetável; fica abaixo do critério prático predefinido e não altera a precisão no orçamento. O resultado situa o limite: a informação que ele traz distingue empresas, e não notícias.
 
 O sistema esteve em funcionamento contínuo durante a escrita desta dissertação, e as suas próprias decisões foram avaliadas uma segunda vez contra o que o mercado fez a seguir, sobre $825$ decisões já maturadas.
 
@@ -103,11 +103,11 @@ into market, sector and company, with the beta shrunk by the precision of its es
 retrieval by semantic similarity, with measurement of the observed outcome; and a supervised triage
 model, trained on a purpose-built dataset, to decide which news deserves interrupting someone.
 
-Each component was evaluated against transparent baselines, and the results are reported exactly as
-they fell. Volatility-normalised detection fires far more consistently across companies than a fixed
+Each component was evaluated and, whenever a suitable comparator existed, tested against transparent
+baselines; the results are reported exactly as they fell. Volatility-normalised detection fires far more consistently across companies than a fixed
 threshold. Semantic retrieval beats lexical and trivial baselines. The triage model, trained on
 a purpose-built dataset of 79\,753 examples, did \textbf{not} beat a volatility-only baseline, a negative result that is
-reported, and that validates by measurement the simplicity-first stance running through the work. Measured \emph{on top of} a baseline that knows everything about the company and nothing about the news item, rather than against it, the headline does add a small and measurable amount, which locates the limit: the information it carries separates companies, not news items.
+reported, and that validates by measurement the simplicity-first stance running through the work. Measured \emph{on top of} a baseline that knows everything about the company and nothing about the news item, rather than against it, the headline adds a small, detectable amount; it remains below the pre-specified practical threshold and does not change within-budget precision. This locates the limit: the information it carries separates companies, not news items.
 
 The system ran continuously while this dissertation was being written, and its own decisions were evaluated a second time against what the market did next, over $825$ matured decisions.
 

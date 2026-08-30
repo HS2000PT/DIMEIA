@@ -285,7 +285,9 @@ Random & $0.240$ & $0.240$ \\
 \centering\includegraphics[width=\linewidth]{eval_retrieval_per_sector.pdf}
 \par\scriptsize Lift largest where vocabulary is distinctive (energy, health).
 \end{columns}
-\vspace{1mm}\par\centering\footnotesize Validated at scale on multi-year FNSPID (${\sim}80$k headlines): \textbf{P@5 $0.595$}; direction consistency $0.71$ sits at the $0.69$ chance floor (theme, not direction).
+\vspace{1mm}\par\centering\footnotesize On multi-year FNSPID under the deployed causal constraint:
+\textbf{P@5 $0.513$ vs $0.259$ floor} (margin $+0.254$). The symmetric scale test gives $0.595$;
+direction consistency $0.71$ sits at the $0.69$ floor (theme, not direction).
 \end{frame}
 
 \begin{frame}{Result 3: explanations are faithful by construction}
@@ -389,9 +391,9 @@ consulted it}. The score was measured, then ignored.
 {\footnotesize \textbf{The first fix did not work, and that is the interesting part.} Sorting the
 cap by score can only reorder candidates present \emph{together}, and the scan emits one headline
 per company per cycle --- so two stories competing for the same quota never coexist. Across a day
-the order stayed arrival order. What governs the cap is an \textbf{escalating floor}: the $k$-th
-alert of the day must clear a higher bar ($0.49$, then $0.64$), both \emph{derived} from the cost
-sweep, not chosen.}
+the order stayed arrival order. The total is governed by the \textbf{global 5/day budget}. With it
+enabled, each company's first alert has no floor and the second must clear $0.64$; $0.49$ remains
+only as provenance of the sweep that derived both values.}
 \end{columns}
 \vfill
 {\footnotesize\textbf{And the fix had its own bug.} Comparing \emph{rendered alerts} to catch
@@ -609,7 +611,7 @@ verification stage completed, so the measured strength is a \textbf{lower bound}
 \begin{itemize}
   \item Relevance is a \textbf{same-sector proxy}, not a human judgement.
   \item The generated layer's \textbf{language} guarantee is weaker than the alert path's, by design and by declaration; its adversarial review was interrupted, so its measured strength is a lower bound.
-  \item Retrieval corpus is a \textbf{recent} free-tier window (since validated at scale on FNSPID, P@5 $0.595$); the \emph{triage} study did use multi-year FNSPID (14/15 tickers --- Meta is ``FB'' in the corpus).
+  \item The recent retrieval corpus is a \textbf{short} window; on multi-year FNSPID the causal task gives P@5 $0.513$ against a $0.259$ floor. The $0.595$ figure is from the symmetric scale protocol, which allows later candidates.
   \item Displayed precedent impact is a \textbf{raw} post-event return (triage labels \emph{are} market-adjusted).
   \item Similarity is \textbf{thematic, not directional}: a cluster can mix up/down moves, so the mean is theme-level \emph{evidence}, not a forecast. We \emph{tested} the obvious fix (filter by event type) and it does not hold up --- see Result 5.
   \item \textbf{Confidence is thin, and now quantified:} guaranteeing 90\% coverage leaves a definite call on only \textbf{39.5\%} of headlines.
@@ -625,7 +627,7 @@ Two of the limitations above used to be assertions; they are now measurements.
 \begin{frame}{Conclusions}
 \begin{itemize}
   \item \textbf{RQ1 (yes):} transparent \emph{z}-score detects consistently across the market and explains every flag.
-  \item \textbf{RQ2 (yes, validated at scale):} semantic retrieval far above baselines (P@5 $0.595$ on multi-year FNSPID); impact measured without lookahead.
+  \item \textbf{RQ2 (yes):} under the deployed causal constraint, P@5 $0.513$ against a $0.259$ floor (margin $+0.254$); $0.595$ is the symmetric scale test. Impact measured without lookahead.
   \item \textbf{RQ3 (faithful yes; useful open):} explanations cannot diverge from the computation; human usefulness is future work.
   \item \textbf{RQ4 (no on text; mechanism yes \emph{offline}):} triage $\approx 4\times$ within-budget precision on held-out data, but volatility stayed unbeaten --- the \emph{second} fair ``learned vs simple'' test the transparent choice won (first: Isolation Forest vs \emph{z}-score, $F_1$ $0.271$ vs $0.530$). Measured in production the same gate ranks at chance (Result 9), so the mechanism claim is an evaluation-set claim and is stated as one.
 \end{itemize}

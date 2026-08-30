@@ -291,7 +291,9 @@ Aleatório & $0.240$ & $0.240$ \\
 \centering\includegraphics[width=\linewidth]{eval_retrieval_per_sector.pdf}
 \par\scriptsize Ganho maior onde o vocabulário é distintivo (energia, saúde).
 \end{columns}
-\vspace{1mm}\par\centering\footnotesize Validado à escala no FNSPID multi-ano (${\sim}80$k manchetes): \textbf{P@5 $0.595$}; consistência de direção $0.71$ no chão do acaso $0.69$ (tema, não direção).
+\vspace{1mm}\par\centering\footnotesize No FNSPID multi-ano, sob a restrição causal da produção:
+\textbf{P@5 $0.513$ vs chão $0.259$} (margem $+0.254$). O teste simétrico de escala dá $0.595$;
+consistência de direção $0.71$ no chão $0.69$ (tema, não direção).
 \end{frame}
 
 \begin{frame}{Resultado 3: as explicações são fiéis por construção}
@@ -396,9 +398,9 @@ consultava}. A pontuação era medida e depois ignorada.
 {\footnotesize \textbf{A primeira correcção não funcionou, e é essa a parte interessante.} Ordenar
 o tecto por pontuação só reordena candidatas presentes \emph{ao mesmo tempo}, e a varredura emite
 uma manchete por empresa por ciclo --- duas histórias a disputar a mesma quota nunca coexistem. Ao
-longo do dia a ordem continuou a ser a de chegada. Quem governa o tecto é um \textbf{piso
-escalonado}: o $k$-ésimo alerta do dia exige mais ($0.49$, depois $0.64$), ambos \emph{derivados}
-do varrimento de custo, não escolhidos.}
+longo do dia a ordem continuou a ser a de chegada. O total é governado pelo \textbf{orçamento
+global de 5/dia}. Com ele ligado, o primeiro alerta de cada empresa fica sem piso e o segundo
+exige $0.64$; o $0.49$ permanece apenas como proveniência do varrimento que derivou ambos.}
 \end{columns}
 \vfill
 {\footnotesize\textbf{E a correcção trouxe o seu próprio defeito.} Comparar \emph{alertas
@@ -621,7 +623,7 @@ inferior}.}
 \begin{itemize}
   \item A relevância é um \textbf{indicador aproximado por mesmo setor}, não um juízo humano.
   \item A garantia \textbf{linguística} da camada gerada é mais fraca do que a do caminho de alerta, por desenho e por declaração; a sua revisão adversária foi interrompida, logo a força medida é um limite inferior.
-  \item O corpus de recuperação é uma janela \textbf{recente} da camada gratuita (entretanto validada à escala no FNSPID, P@5 $0.595$); o estudo de \emph{triagem} usou de facto o FNSPID multi-ano (14/15 tickers --- a Meta é ``FB'' no corpus).
+  \item O corpus recente é uma janela \textbf{curta}; no FNSPID multi-ano a tarefa causal dá P@5 $0.513$ contra chão $0.259$. O $0.595$ vem do protocolo simétrico de escala, que permite candidatos posteriores.
   \item O impacto de precedente mostrado é um retorno pós-evento \textbf{bruto} (os rótulos de triagem \emph{são} ajustados ao mercado).
   \item A similaridade é \textbf{temática, não direcional}: um agrupamento pode misturar movimentos de subida/descida, pelo que a média é \emph{evidência} ao nível do tema, não uma previsão. \emph{Testámos} a correção óbvia (filtrar por tipo de evento) e ela não se sustenta --- ver Resultado 5.
   \item \textbf{A confiança é fina, e está agora quantificada:} garantir 90\% de cobertura deixa uma decisão definida em apenas \textbf{39,5\%} das manchetes.
@@ -637,7 +639,7 @@ Duas das limitações acima eram afirmações; são agora medições.
 \begin{frame}{Conclusões}
 \begin{itemize}
   \item \textbf{RQ1 (sim):} o \emph{z}-score transparente deteta de forma consistente em todo o mercado e explica cada marca.
-  \item \textbf{RQ2 (sim, validada à escala):} a recuperação semântica muito acima das linhas de base (P@5 $0.595$ no FNSPID multi-ano); impacto medido sem lookahead.
+  \item \textbf{RQ2 (sim):} sob a restrição causal da produção, P@5 $0.513$ contra chão $0.259$ (margem $+0.254$); $0.595$ é o teste simétrico de escala. Impacto medido sem lookahead.
   \item \textbf{RQ3 (fiel sim; útil em aberto):} as explicações não podem divergir do cálculo; a utilidade para humanos é trabalho futuro.
   \item \textbf{RQ4 (não no texto; mecanismo sim \emph{offline}):} a triagem $\approx 4\times$ de precisão dentro do orçamento em dados retidos, mas a volatilidade ficou imbatida --- o \emph{segundo} teste justo ``aprendido vs simples'' que a escolha transparente venceu (o primeiro: Isolation Forest vs \emph{z}-score, $F_1$ $0.271$ vs $0.530$). Medido em produção, o mesmo gate ordena ao acaso (Resultado 9), pelo que a afirmação sobre o mecanismo é de conjunto de avaliação e é enunciada como tal.
 \end{itemize}

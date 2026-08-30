@@ -511,13 +511,15 @@ function desenhar(a) {
     marcas.push({ time:t, position:"aboveBar", shape:"arrowDown", color:cor("--acento") });
   }
   const eventos = new Map();
-  for (const [d, z] of (a.events || [])) {
+  for (const evento of (a.events || [])) {
+    const [d, z, direcaoGuardada] = evento;
     const t = sessao(d, dados);
     if (!t) continue;
-    eventos.set(t, z);
+    const direcao = direcaoGuardada || (z < 0 ? -1 : 1);
+    eventos.set(t, { z, direcao });
     if (enviados.has(t)) continue;                     // já tem a marca mais forte
     marcas.push({ time:t, position:"belowBar", shape:"circle", size:0.8,
-                  color: cor(z < 0 ? "--desce" : "--sobe") });
+                  color: cor(direcao < 0 ? "--desce" : "--sobe") });
   }
   marcas.sort((x, y) => x.time < y.time ? -1 : 1);
   if (marcas.length) LightweightCharts.createSeriesMarkers(serie, marcas);
@@ -549,7 +551,7 @@ function desenhar(a) {
       ? `<span>${posteriores.length} of those after the last close shown</span>` : "");
   document.getElementById("dias").innerHTML = todos.length
     ? todos.map(d => {
-        const al = enviados.get(d) || soltos.get(d), z = eventos.get(d);
+        const al = enviados.get(d) || soltos.get(d), evento = eventos.get(d);
         // ⚠️ A frase "Flagged by the detector, no alert" repetida vinte e nove vezes seguidas
         // é ruído, não informação: o que ela diz já está na legenda por cima. Os dias que
         // interessam dizem o que foram; os outros ficam quietos, com o z alinhado a duas casas.
@@ -560,7 +562,8 @@ function desenhar(a) {
                   <span class="quando">${esc(d)}</span>
                   <span class="${al ? "" : "quieto"}">${esc(que)}</span>
                   <span class="${al ? "selo" : "z"}">${al ? "sent"
-                      : (z != null ? "z " + Number(z).toFixed(2) : "")}</span>
+                      : (evento ? (evento.z == null ? "flat baseline"
+                                                   : "z " + Number(evento.z).toFixed(2)) : "")}</span>
                 </button>`;
       }).join("")
     : `<p class="vazio" style="padding:10px 2px">No flagged day in this window.</p>`;
@@ -589,7 +592,9 @@ function abrirDia(dia) {
   if (alerta) {
     corpo = `<pre>${comLinks(alerta.text)}</pre>`;
   } else if (ev) {
-    corpo = `<p style="margin:4px 0 0">The detector flagged this day (z = ${esc(ev[1])}) and no
+    const estatistica = ev[1] == null ? "after a flat baseline; z-score undefined"
+                                      : `with z = ${esc(ev[1])}`;
+    corpo = `<p style="margin:4px 0 0">The detector flagged this day ${estatistica} and no
              alert was sent. The last section shows which gate stops each company.</p>`;
   } else {
     corpo = `<p style="margin:4px 0 0">Nothing was flagged on this day.</p>`;

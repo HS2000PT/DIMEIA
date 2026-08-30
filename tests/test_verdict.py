@@ -153,6 +153,13 @@ def test_o_z_positivo_leva_sinal() -> None:
     assert gloss_z(1.13).startswith("z +1.13")
 
 
+def test_norma_plana_nao_e_mostrada_como_z_zero() -> None:
+    texto = gloss_z(None)
+    assert "flat 20-day norm" in texto
+    assert "z undefined" in texto
+    assert "z +0.00" not in texto
+
+
 # ── cartão: a lei de ordenação, em forma executável ──────────────────────────────────
 
 def _cartao(flagged: bool = True, chips: list[str] | None = None) -> str:

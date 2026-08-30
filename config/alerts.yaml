@@ -57,9 +57,9 @@ news:
   # Medido em `docs/evaluation/evaluation_gate_selectivity.md`: como limiar, seleccionava
   # empresas e não notícias (84% das decisões estavam determinadas pela empresa).
   min_materiality: 0.5
-  # Orçamento global de alertas de notícia por dia, entre TODAS as empresas. É a política que
-  # a dissertação avalia (precisão dentro de um orçamento de 5/dia); até aqui a avaliação media
-  # uma política e a produção implantava outra.
+  # Orçamento global de alertas de notícia por dia, entre TODAS as empresas. Alinha a capacidade
+  # da produção com o orçamento de 5/dia avaliado, mas não torna as políticas idênticas: offline
+  # ordena-se o dia completo; online os lugares gastam-se à medida que as notícias chegam.
   daily_budget: 5
   # Fontes além do Finnhub. Medido em `docs/evaluation/evaluation_news_sources.md`: as três
   # juntas dão 970 manchetes relevantes distintas contra 432 só com o Finnhub (+125%). A
@@ -75,13 +75,16 @@ news:
   # Teto de alertas de notícia por ticker por dia (anti-fadiga; 12/dia do mesmo ticker
   # ensinam o utilizador a ignorar o canal). O filtro de relevância corta o resto.
   max_per_ticker_per_day: 2
-  # PISO ESCALONADO do teto (2026-08-07). O k-ésimo alerta de um ticker no dia exige este
-  # P(movimento anormal) da triagem. Existe porque a correcção de 2026-08-05 NÃO resolveu o
+  # PISO ESCALONADO do teto (2026-08-07). Com `daily_budget`, o PRIMEIRO alerta de cada ticker
+  # ignora a primeira posição desta lista; o segundo exige 0,64. Existe porque a correcção de
+  # 2026-08-05 NÃO resolveu o
   # caso da NVDA: a ordenação por materialidade vale dentro de um ciclo, e o scan emite
   # UMA manchete por ticker por ciclo, logo nunca reordena duas candidatas ao mesmo teto.
   # Sem escalonamento, uma manchete menor de manhã gastava a quota inteira.
   # Os valores são DERIVADOS do varrimento de política, não escolhidos: τ*(R=1)=0,49 para o
   # 1.º alerta (custos iguais) e τ*(R=0,5)=0,64 para o 2.º, onde o custo dominante é a fadiga.
+  # O 0,49 fica como proveniência do varrimento, mas é deliberadamente contornado quando existe
+  # orçamento global para não voltar a selecionar empresas em vez de notícias.
   # Um piso de "última hora" acima disto seria código morto — o score máximo observado no
   # conjunto de teste está entre 0,65 e 0,66. Lista vazia = sem escalonamento.
   materiality_ladder: [0.49, 0.64]

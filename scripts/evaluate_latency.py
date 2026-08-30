@@ -248,11 +248,13 @@ def relatorio(entradas: list[HistoryEntry]) -> str:
         "reordenar. O teste que a validava comparava três manchetes do mesmo ticker numa só "
         "chamada, um cenário que a produção não sabe produzir.",
         "",
-        "A correcção (2026-08-07) é um **piso escalonado**: o k-ésimo alerta de um ticker no dia "
-        "exige um P(movimento anormal) maior. Os pisos são derivados do varrimento de política "
-        "— τ*(R=1)=0,49 para o primeiro, τ*(R=0,5)=0,64 para o segundo, onde o custo dominante "
-        "passa a ser a fadiga. Não há piso de \"última hora\" acima disso porque o score máximo "
-        "observado está entre 0,65 e 0,66: seria código morto com aparência de rigor.",
+        "A correcção (2026-08-07) combina o orçamento global com um **piso anti-fadiga** para "
+        "alertas adicionais do mesmo ticker. A configuração conserva os valores derivados do "
+        "varrimento — τ*(R=1)=0,49 e τ*(R=0,5)=0,64 —, mas, com `daily_budget`, o primeiro "
+        "alerta de cada ticker fica sem piso e o segundo exige 0,64. O 0,49 fica como "
+        "proveniência, não como porta activa. Não há piso de \"última hora\" acima disso porque "
+        "o score máximo observado está entre 0,65 e 0,66: seria código morto com aparência de "
+        "rigor.",
         "",
         "**O que continua sem solução, e nenhum algoritmo online a tem:** o primeiro slot é gasto "
         "na primeira manchete que passe o gate, porque nesse momento a notícia da tarde ainda não "

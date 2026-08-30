@@ -285,10 +285,10 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
     entre tickers diferentes dentro de um ciclo — o canal mostra primeiro a mais material. É um
     benefício pequeno e real; não é o controlo do tecto.
 
-    **O controlo do tecto é a `ladder`** (config `news.materiality_ladder`): o piso de
-    P(movimento anormal) exigido ao k-ésimo alerta de um ticker no dia. O primeiro slot passa
-    com o gate normal; cada slot seguinte custa mais. Assim uma manchete menor de manhã já não
-    consegue gastar a quota inteira, e a história da tarde encontra slot livre.
+    **O controlo global do tecto é `daily_budget`**. A `ladder` (config
+    `news.materiality_ladder`) encarece apenas alertas adicionais do mesmo ticker: com orçamento
+    ligado, o primeiro slot fica livre e o segundo exige a segunda posição da escada. Assim a
+    triagem não volta a excluir empresas inteiras por outra porta.
 
     ⚠️ **O que isto NÃO resolve, e não há algoritmo online que resolva:** o primeiro slot é
     gasto na primeira manchete que passe o gate, porque no momento da decisão a notícia da
@@ -296,14 +296,14 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
     e não se pode retirar um alerta já entregue. O que se pode é tornar cada slot extra mais
     caro, e é isso que está feito.
 
-    Os pisos são **derivados**, não escolhidos: são os τ* do varrimento de política
-    (`docs/evaluation/evaluation_policy_sweep.md`) sob custos crescentes de falso alarme —
-    R=1 (custos iguais) dá τ*=0,49 para o primeiro alerta, e R=0,5 (um falso alarme custa o
-    dobro de uma falha, que é o caso do SEGUNDO alerta do mesmo ticker no mesmo dia, onde a
-    fadiga é o risco dominante) dá τ*=0,64. Um limiar de "notícia de última hora" acima disso
-    **não é implementável com este modelo** e por isso não foi inventado: o score máximo
-    observado no conjunto de teste está entre 0,65 e 0,66 (a τ=0,66 não dispara nada), logo
-    qualquer piso de 0,7+ seria código morto com aparência de rigor.
+    Os dois valores guardados na configuração são **derivados**, não escolhidos: são os τ* do
+    varrimento de política (`docs/evaluation/evaluation_policy_sweep.md`) sob custos crescentes
+    de falso alarme. R=1 dá τ*=0,49 e R=0,5 dá τ*=0,64. Com `daily_budget`, 0,49 fica apenas como
+    proveniência: o primeiro alerta de cada ticker não tem piso e o SEGUNDO exige 0,64, onde a
+    fadiga é o risco dominante. Um limiar de "notícia de última hora" acima disso **não é
+    implementável com este modelo** e por isso não foi inventado: o score máximo observado no
+    conjunto de teste está entre 0,65 e 0,66 (a τ=0,66 não dispara nada), logo qualquer piso de
+    0,7+ seria código morto com aparência de rigor.
 
     `materiality` é um canal lateral `{news_key: P(material)}`, o mesmo padrão que `event_times`
     já usava, para não mudar a forma dos tuplos `(ticker, texto)` que atravessam o runner.
@@ -569,7 +569,7 @@ def build_daily_summary(results: list[tuple[str, object]], threshold: float) -> 
         return ""
     from investigator.explanation_engine.explainer import direction_icon
 
-    ordenados = sorted(results, key=lambda tr: -abs(tr[1].z_score))
+    ordenados = sorted(results, key=lambda tr: -tr[1].score_magnitude)
     linhas = ["📊 <b>Daily close summary</b>"]
     # Hierarquia visual (UX 2026-07-12): movers em destaque, um por linha; os calmos
     # (<1% e sem anomalia) comprimidos numa linha só — 10 linhas monótonas não se leem.
@@ -577,19 +577,24 @@ def build_daily_summary(results: list[tuple[str, object]], threshold: float) -> 
     # levam 📈 (sobe, verde) / 📉 (desce, vermelho); os movers normais as setas finas ⬆/⬇.
     calmos: list[str] = []
     for ticker, r in ordenados:
+        estatistica = (f"z {r.z_score:+.2f}" if not r.zero_variance
+                       else f"flat {r.window}-day baseline")
         if r.is_anomaly:
             icon = direction_icon(r.last_return)
-            linhas.append(f"{icon} {ticker}: {r.last_return * 100:+.2f}% (z {r.z_score:+.2f})")
+            linhas.append(f"{icon} {ticker}: {r.last_return * 100:+.2f}% ({estatistica})")
         elif abs(r.last_return) >= 0.01:
             seta = "⬆" if r.last_return > 0 else "⬇"
-            linhas.append(f"{seta} {ticker}: {r.last_return * 100:+.2f}% (z {r.z_score:+.2f})")
+            linhas.append(f"{seta} {ticker}: {r.last_return * 100:+.2f}% ({estatistica})")
         else:
             calmos.append(f"{ticker} {r.last_return * 100:+.1f}%")
     if calmos:
         linhas.append("• Quiet: " + " · ".join(calmos))
     n_anom = sum(1 for _, r in results if r.is_anomaly)
     if n_anom:
-        linhas.append(f"{n_anom} anomaly(ies) today (|z| ≥ {threshold:g}); alerted above.")
+        linhas.append(
+            f"{n_anom} anomaly(ies) today (|z| ≥ {threshold:g}, or a move after a flat "
+            "baseline); alerted above."
+        )
     else:
         linhas.append(f"No anomalies today (threshold |z| ≥ {threshold:g}); a normal day.")
     linhas.append("<i>An observed snapshot of the watchlist, not advice.</i>")
@@ -1163,9 +1168,10 @@ def _market_evidence(ticker: str, res, decomp, today: str):
     from investigator.narrator.evidence import AlertEvidence, fmt_num, fmt_pct
 
     try:
+        z_score = None if res.reported_z is None else fmt_num(res.reported_z)
         kw = dict(
             ticker=ticker, date=today, kind="market",
-            move_pct=fmt_pct(res.last_return), z_score=fmt_num(res.z_score),
+            move_pct=fmt_pct(res.last_return), z_score=z_score,
             threshold=fmt_num(res.threshold), window_days=int(res.window),
         )
         if decomp is not None:

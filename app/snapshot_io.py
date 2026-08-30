@@ -69,6 +69,19 @@ class Instantaneo:
         return f"{s // 3600}h ago"
 
 
+def _flagged(row: dict, limiar: float) -> bool:
+    """Lê o veredicto explícito; mantém compatibilidade com instantâneos antigos."""
+    if "flagged" in row:
+        return bool(row["flagged"])
+    return abs(float(row.get("z") or 0.0)) >= limiar
+
+
+def _score(row: dict, limiar: float) -> float:
+    if _flagged(row, limiar) and row.get("z") is None:
+        return float("inf")
+    return abs(float(row.get("z") or 0.0))
+
+
 def _interpretar(bruto: dict, agora: datetime | None, remoto: bool) -> Instantaneo | None:
     """Converte o JSON já lido num `Instantaneo`. Partilhado pelos dois caminhos, de propósito:
     o local e o remoto têm de concordar no que consideram um instantâneo válido, senão a
@@ -130,12 +143,12 @@ def resumo_do_dia(linhas: list[dict], limiar: float = 1.5) -> str:
     if not linhas:
         return "No data for today yet."
     total = len(linhas)
-    destacadas = [r for r in linhas if abs(float(r.get("z") or 0.0)) >= limiar]
+    destacadas = [r for r in linhas if _flagged(r, limiar)]
     n = len(destacadas)
     if n == 0:
         return f"Nothing stood out today. All {total} moved within their usual range."
     nomes = ", ".join(r["ticker"] for r in sorted(
-        destacadas, key=lambda r: -abs(float(r.get("z") or 0.0)))[:3])
+        destacadas, key=lambda r: -_score(r, limiar))[:3])
     if n == 1:
         return f"One name stood out today: {nomes}. The other {total - 1} were ordinary."
     return f"{n} of {total} stood out today: {nomes}. The rest moved within their usual range."
