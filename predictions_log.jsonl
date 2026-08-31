@@ -16303,3 +16303,12 @@
 {"ts": "2026-08-31T19:29:18+00:00", "news_date": "2026-08-31", "ticker": "META", "headline": "Inside Meta's Landmark Youth-Safety Deal: $18 Billion Settlement Meets New Teen Limits", "prob": 0.46991996151636767, "gate": 0.5, "kept": true}
 {"ts": "2026-08-31T19:29:22+00:00", "news_date": "2026-08-31", "ticker": "AMD", "headline": "Cisco and AMD Team With HUMAIN On Saudi AI Infrastructure", "prob": 0.544930789909676, "gate": 0.5, "kept": true}
 {"ts": "2026-08-31T19:29:25+00:00", "news_date": "2026-08-31", "ticker": "XOM", "headline": "What's Going on with ExxonMobil Shares on Monday?", "prob": 0.4005851146132326, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:31:51+00:00", "news_date": "2026-08-31", "ticker": "AAPL", "headline": "End of an era at Apple: Tim Cook's last day as CEO", "prob": 0.44749439278641207, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:31:56+00:00", "news_date": "2026-08-31", "ticker": "MSFT", "headline": "Bill Ackman Saw Microsoft Before the Chart Did", "prob": 0.42428966710526195, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:32:00+00:00", "news_date": "2026-08-31", "ticker": "NVDA", "headline": "14x Earnings For 70% Growth: Why Nvidia Remains My Top Pick", "prob": 0.49032028743158124, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:32:04+00:00", "news_date": "2026-08-31", "ticker": "TSLA", "headline": "Trade Tracker: Bryn Talkington buys more Tesla", "prob": 0.4678168398983709, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:32:07+00:00", "news_date": "2026-08-31", "ticker": "AMZN", "headline": "Amazon Web Services Accelerates Middle East AI Push with Saudi Cloud Region Launch", "prob": 0.5561569234343913, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:32:11+00:00", "news_date": "2026-08-31", "ticker": "GOOGL", "headline": "CrowdStrike's Falcon Platform Now Available On Google Cloud", "prob": 0.470102783133739, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:32:14+00:00", "news_date": "2026-08-31", "ticker": "META", "headline": "Inside Meta's Landmark Youth-Safety Deal: $18 Billion Settlement Meets New Teen Limits", "prob": 0.469882442810116, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:32:20+00:00", "news_date": "2026-08-31", "ticker": "AMD", "headline": "Cisco and AMD Team With HUMAIN On Saudi AI Infrastructure", "prob": 0.5449409927574753, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:32:26+00:00", "news_date": "2026-08-31", "ticker": "XOM", "headline": "What's Going on with ExxonMobil Shares on Monday?", "prob": 0.4006226429734964, "gate": 0.5, "kept": true}
