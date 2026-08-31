@@ -16385,3 +16385,12 @@
 {"ts": "2026-08-31T19:55:38+00:00", "news_date": "2026-08-31", "ticker": "META", "headline": "Inside Meta's Landmark Youth-Safety Deal: $18 Billion Settlement Meets New Teen Limits", "prob": 0.4698485109358482, "gate": 0.5, "kept": true}
 {"ts": "2026-08-31T19:55:40+00:00", "news_date": "2026-08-31", "ticker": "AMD", "headline": "AMD: Still Eating Intel's Lunch", "prob": 0.5442835048182313, "gate": 0.5, "kept": true}
 {"ts": "2026-08-31T19:55:42+00:00", "news_date": "2026-08-31", "ticker": "XOM", "headline": "What's Going on with ExxonMobil Shares on Monday?", "prob": 0.4007092845829704, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:58:28+00:00", "news_date": "2026-08-31", "ticker": "AAPL", "headline": "End of an era at Apple: Tim Cook's last day as CEO", "prob": 0.4476283825380303, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:58:30+00:00", "news_date": "2026-08-31", "ticker": "MSFT", "headline": "Bill Ackman Saw Microsoft Before the Chart Did", "prob": 0.42412410216904617, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:58:41+00:00", "news_date": "2026-08-31", "ticker": "NVDA", "headline": "14x Earnings For 70% Growth: Why Nvidia Remains My Top Pick", "prob": 0.4904956036854703, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:58:45+00:00", "news_date": "2026-08-31", "ticker": "TSLA", "headline": "Trade Tracker: Bryn Talkington buys more Tesla", "prob": 0.46794717643719896, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:58:46+00:00", "news_date": "2026-08-31", "ticker": "AMZN", "headline": "Amazon Web Services Accelerates Middle East AI Push with Saudi Cloud Region Launch", "prob": 0.5562750264982025, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:58:47+00:00", "news_date": "2026-08-31", "ticker": "GOOGL", "headline": "CrowdStrike's Falcon Platform Now Available On Google Cloud", "prob": 0.47018974943038055, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:58:48+00:00", "news_date": "2026-08-31", "ticker": "META", "headline": "Inside Meta's Landmark Youth-Safety Deal: $18 Billion Settlement Meets New Teen Limits", "prob": 0.4698936353270549, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:58:50+00:00", "news_date": "2026-08-31", "ticker": "AMD", "headline": "AMD: Still Eating Intel's Lunch", "prob": 0.5442820515113553, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T19:58:51+00:00", "news_date": "2026-08-31", "ticker": "XOM", "headline": "What's Going on with ExxonMobil Shares on Monday?", "prob": 0.4007700511680724, "gate": 0.5, "kept": true}
