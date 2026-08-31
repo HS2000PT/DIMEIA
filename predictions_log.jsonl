@@ -16157,3 +16157,12 @@
 {"ts": "2026-08-31T18:50:34+00:00", "news_date": "2026-08-31", "ticker": "META", "headline": "Inside Meta's Landmark Youth-Safety Deal: $18 Billion Settlement Meets New Teen Limits", "prob": 0.46301103705540064, "gate": 0.5, "kept": true}
 {"ts": "2026-08-31T18:50:36+00:00", "news_date": "2026-08-31", "ticker": "AMD", "headline": "AMD Expands Global AI Footprint With New Saudi Platform", "prob": 0.546435432084817, "gate": 0.5, "kept": true}
 {"ts": "2026-08-31T18:50:38+00:00", "news_date": "2026-08-31", "ticker": "XOM", "headline": "ExxonMobil Advances $100M STEM Investment In Guyana", "prob": 0.3993965625912914, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:52:42+00:00", "news_date": "2026-08-31", "ticker": "AAPL", "headline": "End of an era at Apple: Tim Cook's last day as CEO", "prob": 0.38510127242511455, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:52:44+00:00", "news_date": "2026-08-31", "ticker": "MSFT", "headline": "Bill Ackman Saw Microsoft Before the Chart Did", "prob": 0.41868698406742133, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:52:45+00:00", "news_date": "2026-08-31", "ticker": "NVDA", "headline": "NVDU: Nvidia's Earnings Beat Opens A Tactical Window For Active Traders", "prob": 0.5065199059589821, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:52:48+00:00", "news_date": "2026-08-31", "ticker": "TSLA", "headline": "Trade Tracker: Bryn Talkington buys more Tesla", "prob": 0.47263032264390376, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:52:50+00:00", "news_date": "2026-08-31", "ticker": "AMZN", "headline": "Amazon Web Services Accelerates Middle East AI Push with Saudi Cloud Region Launch", "prob": 0.43819326152864796, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:52:52+00:00", "news_date": "2026-08-31", "ticker": "GOOGL", "headline": "CrowdStrike's Falcon Platform Now Available On Google Cloud", "prob": 0.43542270397187893, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:52:52+00:00", "news_date": "2026-08-31", "ticker": "META", "headline": "Inside Meta's Landmark Youth-Safety Deal: $18 Billion Settlement Meets New Teen Limits", "prob": 0.4630388656335885, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:52:54+00:00", "news_date": "2026-08-31", "ticker": "AMD", "headline": "AMD Expands Global AI Footprint With New Saudi Platform", "prob": 0.546439070076682, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:52:56+00:00", "news_date": "2026-08-31", "ticker": "XOM", "headline": "ExxonMobil Advances $100M STEM Investment In Guyana", "prob": 0.3993663027753702, "gate": 0.5, "kept": true}
