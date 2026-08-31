@@ -16420,3 +16420,10 @@
 {"ts": "2026-08-31T20:07:15+00:00", "news_date": "2026-08-31", "ticker": "GOOGL", "headline": "CrowdStrike's Falcon Platform Now Available On Google Cloud", "prob": 0.47018864133647303, "gate": 0.5, "kept": true}
 {"ts": "2026-08-31T20:07:18+00:00", "news_date": "2026-08-31", "ticker": "AMD", "headline": "AMD: Still Eating Intel's Lunch", "prob": 0.5442580867818995, "gate": 0.5, "kept": true}
 {"ts": "2026-08-31T20:07:19+00:00", "news_date": "2026-08-31", "ticker": "XOM", "headline": "What's Going on with ExxonMobil Shares on Monday?", "prob": 0.40077705640342415, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T20:09:32+00:00", "news_date": "2026-08-31", "ticker": "AAPL", "headline": "End of an era at Apple: Tim Cook's last day as CEO", "prob": 0.44761998387983126, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T20:09:34+00:00", "news_date": "2026-08-31", "ticker": "MSFT", "headline": "Bill Ackman Saw Microsoft Before the Chart Did", "prob": 0.42413047019057065, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T20:09:36+00:00", "news_date": "2026-08-31", "ticker": "NVDA", "headline": "14x Earnings For 70% Growth: Why Nvidia Remains My Top Pick", "prob": 0.490453409739853, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T20:09:38+00:00", "news_date": "2026-08-31", "ticker": "TSLA", "headline": "Trade Tracker: Bryn Talkington buys more Tesla", "prob": 0.467941024605521, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T20:09:44+00:00", "news_date": "2026-08-31", "ticker": "AMZN", "headline": "Amazon Web Services Accelerates Middle East AI Push with Saudi Cloud Region Launch", "prob": 0.5562570817834646, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T20:09:46+00:00", "news_date": "2026-08-31", "ticker": "GOOGL", "headline": "CrowdStrike's Falcon Platform Now Available On Google Cloud", "prob": 0.47018864133647303, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T20:09:49+00:00", "news_date": "2026-08-31", "ticker": "AMD", "headline": "AMD: Still Eating Intel's Lunch", "prob": 0.5442580867818995, "gate": 0.5, "kept": true}
