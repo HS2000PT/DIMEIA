@@ -1,0 +1,83 @@
+\chapter{Correspondência com o plano curricular}
+\label{ap:curriculo}
+
+Uma dissertação de mestrado em Engenharia de Inteligência Artificial deve poder mostrar onde é que
+o conhecimento do curso foi efetivamente aplicado. Este apêndice faz essa correspondência, unidade
+a unidade, e nomeia também as duas unidades cuja matéria não teve aplicação neste trabalho ---
+porque uma correspondência que encontra tudo em todo o lado não informa ninguém.
+
+\begin{table}[!htbp]
+\caption[Correspondência com o plano curricular]{Onde cada unidade curricular do plano do mestrado
+é aplicada neste trabalho. A última coluna remete para a secção onde a aplicação é visível.}
+\label{tab:ap_curriculo}
+\centering
+\small
+\begin{tabular}{L{0.24\textwidth} L{0.46\textwidth} L{0.20\textwidth}}
+\toprule
+\tabhead{Unidade} & \tabhead{Onde é aplicada} & \tabhead{Secção} \\
+\midrule
+\multicolumn{3}{l}{\emph{Fundamentos de sistemas inteligentes}} \\
+Aprendizagem Automática 1 &
+  Construção de um conjunto de dados rotulado a partir de duas fontes desalinhadas; regressão
+  logística com normalização e reponderação de classes; conjuntos de árvores por reforço do
+  gradiente como referência superior; calibração \emph{a posteriori} &
+  §\ref{sec:met_triagem}, §\ref{sec:av_qi3} \\
+Engenharia do Conhecimento &
+  Raciocínio baseado em casos: recuperar e reutilizar precedentes em vez de aplicar uma regra
+  geral, com a paragem deliberada antes da adaptação &
+  §\ref{sec:ctx_casos}, §\ref{sec:met_recuperacao} \\
+Paradigmas de Programação em IA &
+  Separação entre lógica pura e efeitos, que é o que permite testar o núcleo sem rede e sem
+  carregar modelos. A matéria de programação lógica e por restrições não teve aplicação &
+  §\ref{sec:met_avaliacao} \\
+Planeamento e Tomada de Decisão &
+  Política de decisão sob orçamento: portas em cascata, limiar derivado de uma análise de custos
+  de erro, e a distinção entre uma política \emph{offline} que conhece o dia inteiro e uma política
+  \emph{online} que decide a cada ciclo &
+  §\ref{sec:sis_portas}, §\ref{sec:av_qi3} \\
+\midrule
+\multicolumn{3}{l}{\emph{IA avançada e aplicações especializadas}} \\
+Aprendizagem Automática 2 &
+  Representações contextuais de frase produzidas por uma arquitetura \emph{Transformer}; exportação
+  do codificador para um formato leve, com medição da fidelidade da conversão, por restrição de
+  memória do ambiente de execução &
+  §\ref{sec:ctx_texto}, §\ref{sec:met_recuperacao} \\
+Linguagem Natural e Sistemas Conversacionais &
+  Semelhança semântica entre frases e avaliação de recuperação sensível à ordem. O sistema é uma
+  arquitetura de recuperação sem geração: recupera evidência e recusa produzir texto sobre ela, com
+  a justificação dada no estado da arte &
+  §\ref{sec:ctx_llm}, §\ref{sec:av_qi2} \\
+Ambientes Inteligentes &
+  Sem aplicação. O trabalho não tem componente física, robótica nem de Internet das Coisas &
+  --- \\
+\midrule
+\multicolumn{3}{l}{\emph{Profissionalismo, segurança e inovação}} \\
+Aspetos Sociais e Éticos em IA &
+  Confiança apropriada em sistemas automáticos e o risco de a explicação aumentar a aceitação de
+  respostas erradas; recusa de aconselhamento; fadiga de alertas como requisito de desenho &
+  §\ref{sec:ctx_xai}, §\ref{sec:met_desafios} \\
+Privacidade e Segurança em Sistemas Inteligentes &
+  Minimização de dados por desenho, com a excepção declarada; gestão de credenciais e mascaramento
+  de segredos em registos; verificação de integridade do modelo descarregado &
+  §\ref{sec:met_privacidade}, §\ref{sec:met_seguranca} \\
+Investigação e Inovação em IA &
+  Enquadramento em investigação por desenho; critérios de sucesso fixados antes das medições;
+  linhas de base declaradas com o respetivo chão; matriz de evidência com as afirmações retiradas;
+  escrita científica e verificação das referências &
+  §\ref{sec:met_tipo}, Apêndice~\ref{ap:reprodutibilidade} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Duas observações sobre esta tabela.
+
+A primeira é que a contribuição de engenharia deste trabalho não está no tamanho do modelo. É
+treinado um único modelo, e é pequeno. Está no que foi necessário construir para que o número que
+ele produz, e a conclusão negativa que esse número sustenta, sejam de confiança: o conjunto de
+dados rotulado, a separação temporal imposta por um teste automático, a calibração com o
+enviesamento declarado, a garantia de que o modelo implantado é o modelo avaliado, e o ciclo que
+volta a avaliar o sistema depois de estar em funcionamento.
+
+A segunda é que duas linhas dizem ``sem aplicação'' ou aplicação parcial. Ambientes Inteligentes
+não tem correspondência neste trabalho, e a matéria de programação lógica e por restrições também
+não. Registá-lo é mais informativo do que construir uma ligação artificial.

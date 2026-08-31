@@ -1,0 +1,77 @@
+\chapter{Correspondência com o plano curricular}
+\label{ap:curriculo}
+
+Este apêndice estabelece a correspondência entre as unidades curriculares do mestrado e os pontos do
+trabalho em que a respetiva matéria foi aplicada. A Tabela~\ref{tab:ap_curriculo} apresenta essa
+correspondência e identifica igualmente as unidades cuja matéria não teve aplicação, uma vez que uma
+correspondência que encontre aplicação para todas as unidades em todos os pontos não transmite
+informação.
+
+Duas entradas da tabela declaram ausência de aplicação: a matéria de Ambientes Inteligentes e a
+componente de programação lógica e por restrições. O seu registo é mais informativo do que a
+construção de uma ligação artificial.
+
+\begin{table}[!htbp]
+\caption[Correspondência com o plano curricular]{Aplicação da matéria de cada unidade curricular do
+plano de estudos do mestrado no trabalho descrito nesta dissertação. A última coluna indica a secção
+em que essa aplicação é visível.}
+\label{tab:ap_curriculo}
+\centering
+\footnotesize
+\begin{tabular}{L{0.23\textwidth} L{0.47\textwidth} L{0.19\textwidth}}
+\toprule
+\tabhead{Unidade} & \tabhead{Onde é aplicada} & \tabhead{Secção} \\
+\midrule
+\multicolumn{3}{l}{\emph{Fundamentos de sistemas inteligentes}} \\
+Aprendizagem Automática 1 &
+  Construção de um conjunto de treino rotulado a partir de duas fontes desalinhadas no tempo;
+  regressão logística com normalização e reponderação de classes; conjuntos de árvores por reforço
+  do gradiente como referência superior; calibração \emph{a posteriori} &
+  §\ref{sec:met_triagem}, §\ref{sec:av_qi3} \\
+Engenharia do Conhecimento &
+  Raciocínio baseado em casos: recuperação e reutilização de precedentes em substituição de uma
+  regra geral, com a interrupção deliberada do ciclo antes da adaptação &
+  §\ref{sec:ctx_casos}, §\ref{sec:met_recuperacao} \\
+Paradigmas de Programação em \gls{IA} &
+  Separação entre lógica pura e efeitos externos, que é a propriedade que permite verificar o núcleo
+  do sistema sem acesso à rede e sem carregar modelos. A matéria de programação lógica e por
+  restrições não teve aplicação &
+  §\ref{sec:met_metodologia} \\
+Planeamento e Tomada de Decisão &
+  Política de decisão sob orçamento: portas em cascata, limiar derivado de uma análise de custos de
+  erro, e distinção entre uma política que dispõe do dia completo e uma política que decide a cada
+  ciclo &
+  §\ref{sec:sis_politica}, §\ref{sec:av_qi3} \\
+\midrule
+\multicolumn{3}{l}{\emph{Inteligência artificial avançada e aplicações especializadas}} \\
+Aprendizagem Automática 2 &
+  Representações contextuais de frase produzidas por uma arquitetura \emph{Transformer}; exportação
+  do codificador para um formato leve, com medição da fidelidade da conversão, imposta pela
+  restrição de memória do ambiente de execução &
+  §\ref{sec:ctx_texto}, §\ref{sec:met_recuperacao} \\
+Linguagem Natural e Sistemas Conversacionais &
+  Semelhança semântica entre frases e avaliação de recuperação sensível à ordem. O sistema constitui
+  uma arquitetura de recuperação sem geração: recupera evidência e recusa produzir texto sobre ela,
+  com a justificação apresentada no estado da arte &
+  §\ref{sec:ctx_texto}, §\ref{sec:av_qi2} \\
+Ambientes Inteligentes &
+  Sem aplicação. O trabalho não comporta componente física, robótica nem de Internet das Coisas &
+  --- \\
+\midrule
+\multicolumn{3}{l}{\emph{Profissionalismo, segurança e inovação}} \\
+Aspetos Sociais e Éticos em \gls{IA} &
+  Confiança apropriada em sistemas automáticos e risco de a explicação aumentar a aceitação de
+  respostas incorretas; recusa de aconselhamento; fadiga de alertas como requisito de desenho &
+  §\ref{sec:ctx_xai}, §\ref{sec:met_desafios} \\
+Privacidade e Segurança em Sistemas Inteligentes &
+  Minimização de dados por desenho, com a exceção declarada; gestão de credenciais e mascaramento de
+  segredos em registos; verificação de integridade do modelo transferido &
+  §\ref{sec:met_privacidade}, §\ref{sec:met_seguranca} \\
+Investigação e Inovação em \gls{IA} &
+  Enquadramento em investigação por desenho; critérios de sucesso fixados antes das medições; linhas
+  de comparação declaradas com o respetivo valor de referência; matriz de evidência com as
+  afirmações retiradas &
+  §\ref{sec:met_metodologia}, Apêndice~\ref{ap:reprodutibilidade} \\
+\bottomrule
+\end{tabular}
+\end{table}

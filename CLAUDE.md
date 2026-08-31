@@ -7,6 +7,84 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 62 (2026-08-30): AUDITORIA CRÍTICA EXTERNA DA TESE, PEDIDA PELO ALUNO, E DEPOIS
+  EXECUTADA. Quatro pontos verificados no código, um achado novo que a tese não dizia, e
+  dezassete correções aplicadas em texto. NENHUMA experiência foi corrida.**
+  O aluno pediu uma revisão integral de `tese/main.pdf` em papel de orientador, júri, revisor e
+  editor, e a seguir mandou avançar com o plano. Dois documentos novos na raiz:
+  **`AUDITORIA_CRITICA_PRE_DEFESA.md`** (diagnóstico, 10 fragilidades por risco, 15 perguntas de
+  júri com resposta oral redigida, plano visual, mapa de domínio) e
+  **`ALTERACOES_PRE_DEFESA.md`** (o que mudou, uma a uma, e o que ficou por fazer).
+  **⚠️ (A) O ACHADO NOVO, e é o mais forte: OS TRÊS BLOCOS QUASE NÃO PARTILHAM EMPRESAS.**
+  Contado nas colunas `split` e `ticker` do conjunto congelado: treino 2018-01-02 a 2022-03-03
+  com **13** empresas, validação **8**, teste 2023-02-02 a 2023-12-18 com **9**. Cinco empresas
+  do treino (BAC, GOOGL, JNJ, JPM, PFE) **não aparecem uma única vez no teste**, e a **MSFT vale
+  17,1% do teste sem estar no treino**. A Apple passa de prevalência `0.448` no treino para
+  `0.183` no teste. **Não é fuga nem erro de divisão** — o corte é por dia e a proporção é a
+  declarada; é a composição do corpus a mudar, a mesma causa que já tornava o teste maior do que
+  o treino. **E corta nos dois sentidos, e está escrito assim:** a favor do negativo da QI3, um
+  modelo cujo sinal é a identidade da empresa estima-a sobre empresas que mal existem onde é
+  avaliado, enquanto a volatilidade é medida no dia e atravessa empresas; contra, não separa *o
+  modelo é pior* de *a identidade não transfere entre estes dois períodos*. **E explica, sem
+  recorrer ao acaso, a prevalência de 47,0% da validação** contra 37,8% do teste, que estava
+  no documento sem explicação. Entrou no §5.6.3 e como limitação nova no Cap. 6.
+  **⚠️ (B) A TESE DIZIA QUE O TREINO COBRIA CATORZE EMPRESAS. É FALSO: cobre TREZE.** O
+  *dataset* tem catorze; o bloco de treino tem treze, e é por isso que a tabela de consulta tem
+  treze constantes. A contradição estava em quatro sítios (`cap5:888,906,927,1463`,
+  `cap6:468,486`) contra a Tabela 3.2, e sustentava o resultado mais espetacular do trabalho.
+  **✅ (C) TRÊS VERIFICAÇÕES QUE SALVARAM RESPOSTAS DE DEFESA, e não mudaram números:**
+  (1) a linha de base ``só volatilidade'' usa **apenas `vol20`**, verificado em
+  `evaluate_triage_identity.py` — logo a assimetria de referencial do `ret_event` está do lado
+  dos modelos que **perdem**, e corrigi-la só podia tornar o negativo **mais forte**. Passou a
+  estar escrito no §5.6.1, e é a resposta à objeção mais técnica que existe contra o Cap. 5.
+  (2) a deduplicação entre fontes de notícias é por **título normalizado** (`_norm`: minúsculas,
+  sem pontuação) e não por significado, logo a coluna ``exclusivas'' da Tabela 4.2 é um **limite
+  superior** — o que explica a sobreposição de 3% entre três agregadores, que era implausível.
+  (3) a prevalência de 47% da validação é real e tem a causa em (A).
+  **⚠️ (D) A FRAGILIDADE CRÍTICA ERA A QI1, E NÃO O RESULTADO NEGATIVO DA QI3.** A medida
+  ``principal'' da QI1 é a amplitude da taxa de disparo, escolhida por não depender de rótulos.
+  Mas **tem o zero como ótimo, e o ótimo é atingível por um disparo aleatório calibrado**, que a
+  bateria sem saber nada. Restava o `F1` contra um rótulo que a própria tese admite ser circular.
+  Corrigido por parágrafo e por **figura nova (Fig. 5.5)**: as duas medidas num plano com as duas
+  zonas de exclusão, e a posição do disparo aleatório a cinzento porque é **consequência da
+  construção e não uma medição**. A afirmação passa a ser *nenhuma das duas basta sozinha*.
+  **✅ (E) A ÚNICA CONTRADIÇÃO RESUMO↔CAPÍTULO, FECHADA.** O resumo dizia que a recuperação
+  ``supera as linhas de base lexical e triviais'' e o §5.5 mostra a lexical (`0.346`) **abaixo**
+  do melhor chão trivial (`0.467`) — e a Tabela A.3 já registava a afirmação como estreitada.
+  Passa a ``supera a taxa-base dentro de cada um dos cinco setores'', nas duas línguas.
+  **(F) MAIS ONZE CORREÇÕES:** Tabela 3.3 nova com **os cinco conjuntos de empresas**
+  (17/15/15/14/13/9/12) a dizer em voz alta que **não são encaixados**; a caixa destacada do
+  §5.6.7 passa a abrir com **48%** e não com os 84%, com a contagem generosa ao lado; a legenda
+  da Tabela 5.9 explica porque é que ``contexto + texto'' dá `0.533` ali e `0.496` na Tabela 5.6
+  (a redução a 32 dimensões), que de outro modo se lê como contradição entre duas tabelas; o
+  `+0.012` passa a **limite superior de um efeito** e não descoberta; o **β=1 do rótulo** passa a
+  hipótese alternativa **não excluída**, com o mecanismo escrito (o erro é maior nas ações mais
+  sensíveis ao mercado, que são as mais voláteis, e a volatilidade é a linha de base que ganha);
+  ``o ciclo comprou 53 minutos'' passa a ``as duas eras diferem em 53 minutos'', com as razões
+  pelas quais não é o efeito isolado do ciclo (n=28 vs 73, fontes e período mudaram, sem
+  intervalo); e a amplitude `0.017` vs `0.015` ganha a nota do protocolo de região comum.
+  **✅ (G) A ÚNICA LACUNA DE REFERÊNCIA SÉRIA, FECHADA: `ancker2017alertfatigue`.** A ``fadiga de
+  alertas'' sustentava uma decisão de desenho inteira — o orçamento de cinco — e **não tinha uma
+  única citação**. Entrou Ancker et al. (2017), BMC Med Inform Decis Mak 17(1):36,
+  `10.1186/s12911-017-0430-8`, **verificada no Crossref campo a campo** antes de ser escrita. O
+  parágrafo diz que o domínio é clínico e que **o que se transfere é o mecanismo e não os
+  valores**, que é a mesma disciplina que a tese já aplica a Barber e Odean.
+  **PORTAS: 0 erros, 0 referências e citações indefinidas, overfull máx 5.19 pt (inalterado),
+  `check_escrita`/`check_floats`/`check_tex_escapes`/`auditar_numeros`/`check_apendice_xref`
+  a passar e `check_tese_numeros` a 53/53.** Tese **135 → 141 pp**. +202 linhas, −12, em seis
+  ficheiros. **Zero ficheiros Python tocados; zero números existentes alterados.**
+  **⚠️ (H) A COMPILAÇÃO DE VERIFICAÇÃO NÃO FOI FEITA NO MiKTeX.** A VM local não tem `biber` nem
+  o babel português; correu num TeX Live 2023 do contentor, depois de instalar
+  `texlive-lang-portuguese`, `biber`, `lmodern`, `texlive-fonts-extra` e `texlive-plain-generic`.
+  **`tese/main.pdf` NÃO foi substituído de propósito** — recompilar no MiKTeX antes de entregar,
+  e a contagem de páginas pode diferir por uma ou duas.
+  **⚠️ (I) O QUE CONSCIENTEMENTE NÃO SE FEZ, e a razão é uma só:** nenhuma experiência nova. A
+  análise de sensibilidade ao rótulo com betas encolhidos e a origem rolante fechariam as duas
+  fragilidades que restam, e as duas ficam **declaradas** em vez de corridas, porque um número
+  novo a três dias da entrega obriga a propagar por seis capítulos, pelos slides, pelo guia e
+  pelo quizz. É a mesma regra que a sessão 53 aplicou ao serviço de notícias pago.
+  **⏭️ HUMANO: os nomes do júri continuam como `[Nome do Presidente, Categoria, Escola]` na folha
+  de rosto.** Mais a recompilação, o estudo com pessoas e a licença, que já lá estavam.
 - **🆕 SESSÃO 61 — 10.ª parte (2026-08-23): UMA CRÍTICA DE JÚRI TRAZIDA DE FORA, VERIFICADA UMA A
   UMA. Dez acusações, OITO já estavam escritas na tese, e uma era real.**
   O aluno colou uma análise crítica produzida por outra ferramenta (dez problemas classificados, um
@@ -843,8 +921,8 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 61 (10.ª parte — a crítica de júri externa, verificada uma a uma)
-- **Última atualização:** 2026-08-23
+- **Sessão nº:** 62 (auditoria crítica da tese, e execução do plano)
+- **Última atualização:** 2026-08-30
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
   ter calma nas estatísticas, mostrando cada salto até ao valor final):**

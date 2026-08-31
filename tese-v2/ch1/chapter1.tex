@@ -18,18 +18,17 @@ A facilidade de acesso não se estendeu, contudo, à interpretação da informa�
 um ativo se move, o investidor particular dispõe de instrumentos limitados para determinar o
 significado desse movimento.
 
-A investigação em finanças comportamentais estabelece que as decisões destes investidores se
-afastam de forma sistemática, e não aleatória, do ideal racional \autocite{barberis2003behavioral}.
-Dois desvios são particularmente relevantes para o problema tratado nesta dissertação. O primeiro
-é a aversão à perda: perdas são percecionadas com maior intensidade do que ganhos equivalentes
-\autocite{kahneman1979prospect}, o que aumenta o custo da ausência de contexto precisamente quando
-a informação é desfavorável. O segundo é o efeito da atenção: perante um número elevado de
-alternativas, o investidor particular tende a adquirir os ativos que lhe captam a atenção,
-identificados por três indicadores observáveis, que são a presença em notícias, o volume de
-transação anormal e o retorno extremo num único dia \autocite{barber2008glitters}. Os autores
-demonstram ainda que este padrão de aquisição não gera retornos superiores.
+O comportamento deste segmento é objeto de investigação corrente, e dois resultados recentes
+delimitam o problema tratado nesta dissertação. O primeiro é o de que a atenção do investidor
+particular constitui hoje uma quantidade medida, cujos indicadores são discutidos e comparados na
+literatura \autocite{cahill2025attention}: aquilo que determina o que o investidor observa é
+estudado como variável, e não como acaso. O segundo é o de que a participação do investidor
+particular no mercado, e as condições em que negoceia, permanecem tema de revisão ativa
+\autocite{ernst2026retail}. O Capítulo~\ref{cap:contexto} desenvolve os mecanismos
+comportamentais que esta literatura documenta, e que explicam por que razão a ausência de contexto
+é mais onerosa para este público do que para um profissional.
 
-A confluência destes dois resultados delimita o problema. Os sinais que captam a atenção do
+Interessa reter deste conjunto o que delimita o problema. Os sinais que captam a atenção do
 investidor chegam-lhe sem contexto, e a decisão que se lhes segue é tomada sob condições que a
 literatura documenta como desfavoráveis. Três questões concretas permanecem por responder no
 momento em que o investidor observa um movimento de preço:
@@ -51,7 +50,24 @@ contexto verificável construído sobre eles.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/us_equity_market_cap.pdf}
+\begin{tikzpicture}
+\begin{axis}[
+  ybar, width=0.86\textwidth, height=5.4cm, bar width=13pt,
+  ymin=0, ymax=72,
+  symbolic x coords={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},
+  xtick=data,
+  ylabel={Biliões de dólares},
+  tick label style={font=\footnotesize}, label style={font=\footnotesize},
+  nodes near coords, nodes near coords style={font=\scriptsize, black!65},
+  every node near coord/.append style={/pgf/number format/.cd, fixed, fixed zerofill, precision=1,
+                                       use comma, 1000 sep={}},
+  ymajorgrids, grid style={black!12}, axis lines*=left,
+]
+\addplot[fill=black!25, draw=black!55] coordinates {
+  (2015,25.1) (2016,27.4) (2017,32.1) (2018,30.4) (2019,34.1)
+  (2020,41.6) (2021,48.5) (2022,40.3) (2023,49.0) (2024,62.2)};
+\end{axis}
+\end{tikzpicture}
 \caption[Capitalização do mercado acionista dos EUA]{Capitalização do mercado acionista dos
 Estados Unidos, 2015--2024, em biliões de dólares. Elaborado a partir dos dados do SIFMA Capital
 Markets Fact Book \autocite{sifma2025factbook}.}
@@ -77,11 +93,11 @@ produz previsões de preço}. Não indica direção futura, não emite recomenda
 e não apresenta alvos de preço. Esta restrição tem duas justificações. A primeira é de
 verificabilidade: uma afirmação sobre um acontecimento passado pode ser confirmada contra o
 registo no momento em que é lida, ao passo que uma previsão só é avaliável depois de a decisão do
-investidor já ter sido tomada. A segunda é teórica e é desenvolvida no Capítulo~\ref{cap:contexto}:
-a hipótese dos mercados eficientes, na sua forma semiforte, sustenta que os preços refletem já a
-informação publicamente disponível \autocite{fama1970efficient}, o que torna improvável a
-antecipação sistemática de movimentos a partir dessa informação. Esta dissertação não testa essa
-hipótese nem se apoia nela para estabelecer qualquer conclusão.
+investidor já ter sido tomada. A segunda é teórica: a hipótese dos mercados eficientes, na
+sua forma semiforte, torna improvável a antecipação sistemática de movimentos a partir de
+informação publicamente disponível. O Capítulo~\ref{cap:contexto} desenvolve-a e identifica a
+literatura correspondente. Esta dissertação não testa essa hipótese nem se apoia nela para
+estabelecer qualquer conclusão.
 
 \begin{figure}[ht]
 \centering
@@ -156,9 +172,9 @@ constituírem um sistema funcional, explicável e reprodutível. Identificam-se 
   \item \textbf{Um sistema completo em funcionamento}, com os dois gatilhos, assente em fontes
         gratuitas e efetivamente implantado, e não uma demonstração laboratorial.
   \item \textbf{Um método reprodutível para medir o comportamento do preço na sequência de
-        notícias semanticamente próximas}, combinando recuperação por semelhança de frases
-        \autocite{reimers2019sbert} com janelas de estudo de evento na tradição de
-        \textcite{brown1985daily}, sem utilização de informação posterior ao momento da decisão.
+        notícias semanticamente próximas}, combinando recuperação por semelhança de frases com
+        janelas de estudo de evento, sem utilização de informação posterior ao momento da decisão.
+        O Capítulo~\ref{cap:contexto} identifica as duas linhas de trabalho de que provêm.
   \item \textbf{Um conjunto de dados próprio e um modelo treinado sobre ele}, com 79\,753 exemplos
         construídos a partir do corpus público \gls{FNSPID} \autocite{dong2024fnspid} e de séries
         de preços, com o modelo, a calibração e as métricas conservados como artefactos

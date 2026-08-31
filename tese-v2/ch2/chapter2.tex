@@ -1,0 +1,667 @@
+\chapter{Estado da arte}
+\label{cap:contexto}
+
+Este capítulo apresenta o enquadramento científico e tecnológico do trabalho. Caracteriza-se
+primeiro o público a que o sistema se dirige e as limitações que definem o problema; examinam-se
+depois as soluções atualmente disponíveis; percorrem-se por fim as áreas técnicas de onde provêm
+os componentes utilizados, situando a contribuição desta dissertação em relação a cada uma.
+
+\section{O investidor particular e o problema da atenção}
+\label{sec:ctx_investidor}
+
+Esta secção caracteriza o comportamento documentado do público a que o sistema se dirige, uma vez
+que são as limitações desse comportamento, e não a dimensão do mercado, que delimitam o problema
+tratado.
+
+O Capítulo~\ref{cap:introducao} estabeleceu a escala do universo em causa. A caracterização que
+falta é de comportamento, e começa por uma observação que contraria a representação corrente do
+investidor particular como agente que apenas reage em pânico. Durante a queda de março de 2020, os
+investidores particulares de uma plataforma sem comissões aumentaram as suas posições agregadas em
+vez de reduzirem a exposição \autocite{welch2022robinhood}. Trata-se de um público que decide com
+regularidade, e que por isso beneficia de melhor informação no momento da decisão.
+
+A literatura de finanças comportamentais estabelece que essas decisões se afastam de forma
+sistemática do ideal racional \autocite{barberis2003behavioral}. Duas regularidades condicionam
+diretamente o desenho de um sistema de alertas. A primeira é a aversão à perda
+\autocite{kahneman1979prospect}, já enunciada no capítulo anterior, e cuja consequência para este
+trabalho é que o custo da ausência de contexto é assimétrico: é maior precisamente quando a
+informação é desfavorável.
+
+A segunda é o efeito da atenção, e é a que fundamenta o problema. \textcite{barber2008glitters}
+estabelecem que os investidores particulares são compradores líquidos das ações que lhes captam a
+atenção, identificadas por três indicadores observáveis, que são a presença em notícias, o volume
+de transação anormal e o retorno extremo num único dia. O mecanismo proposto pelos autores é o do
+problema de procura: perante um número muito elevado de alternativas, o investidor não avalia todas
+e a sua escolha recai sobre o subconjunto que lhe foi tornado visível.
+
+Os autores delimitam o
+alcance da afirmação, que respeita a um desequilíbrio agregado entre compras e vendas e não a um
+comportamento universal, e reportam a conclusão que justifica este trabalho: o padrão de aquisição
+assim formado não gera retornos superiores. A base empírica são registos de corretoras
+norte-americanas entre 1991 e 1999, anteriores à negociação por telemóvel e à ausência de
+comissões, pelo que o que se assume transferível é o mecanismo e não os valores medidos. A
+centralidade da atenção neste processo é de tal ordem que se tornou mensurável através do volume de
+pesquisas na internet \autocite{da2011attention}.
+
+Os três indicadores identificados pela literatura são calculados por este sistema, mas o estatuto
+de cada um difere. A notícia e o movimento extremo constituem os dois gatilhos descritos no
+Capítulo~\ref{cap:introducao} e podem, por si, originar um alerta. O volume é calculado e
+apresentado como contexto, e não interrompe o utilizador. A razão desta assimetria é empírica e
+está reportada na Secção~\ref{sec:av_sintese}: a combinação do volume com os restantes sinais
+melhorou a triagem em apenas um de três orçamentos considerados, resultado que não sustenta a
+introdução de uma terceira via de interrupção. A ideia de fundir sinais de origens distintas num
+indicador único provém de um painel de informação em tempo real com essa arquitetura
+\autocite{worldmonitor2026}, sugerido pelo coorientador deste trabalho, e entra na dissertação na
+condição em que foi avaliada, ou seja como alternativa medida e não adotada.
+
+Do lado das instituições financeiras, a adoção de inteligência artificial deixou de ser
+experimental, como documenta o inquérito a empresas do setor conduzido pelo
+\textcite{ccaf2026aifs}. Esse inquérito não mede a população dos produtos destinados ao investidor
+particular, pelo que não sustenta afirmações sobre ela; a caracterização dessa população assenta no
+que os próprios fornecedores declaram, e é objeto da secção seguinte.
+
+\section{Ferramentas de informação financeira para o retalho}
+\label{sec:ctx_ferramentas}
+
+Esta secção examina as soluções atualmente disponíveis, avaliando cada uma contra um critério fixo,
+que são as três perguntas enunciadas no Capítulo~\ref{cap:introducao}. A
+Tabela~\ref{tab:ctx_ferramentas} apresenta o resultado dessa avaliação.
+
+\begin{table}[!htbp]
+\caption[As ferramentas existentes contra as três perguntas]{As categorias de ferramenta existentes
+avaliadas contra as três perguntas do Capítulo~\ref{cap:introducao}. A classificação
+\emph{parcial} indica que a ferramenta fornece matéria-prima para a resposta e deixa a
+interpretação ao utilizador.}
+\label{tab:ctx_ferramentas}
+\centering
+\small
+\begin{tabular}{L{0.22\textwidth} C{0.11\textwidth} C{0.15\textwidth} C{0.12\textwidth}
+                L{0.17\textwidth}}
+\toprule
+\tabhead{Ferramenta} & \tabhead{É invulgar?} & \tabhead{Empresa ou mercado?} &
+\tabhead{Já aconteceu?} & \tabhead{Custo} \\
+\midrule
+Aplicação da corretora & não & não & não & incluído \\
+Agregador de notícias & não & não & não & gratuito \\
+Aplicação de sentimento & parcial & não & não & gratuito ou baixo \\
+Gestor automático de carteira & não & não & não & percentagem da carteira \\
+Terminal profissional & sim & sim & sim & milhares por ano \\
+\midrule
+\textbf{Este trabalho} & \textbf{sim} & \textbf{sim} & \textbf{sim} & \textbf{gratuito} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A tabela evidencia o essencial. A linha que responde às três perguntas existe e é a mais dispendiosa
+de todas. O problema não é, portanto, de natureza científica, mas de acesso: as respostas são
+conhecidas e estão condicionadas a uma subscrição incompatível com o perfil de investidor em causa.
+
+Três categorias merecem exame individual, uma vez que cada uma falha por uma razão distinta e essas
+razões informam decisões tomadas nos capítulos seguintes.
+
+A aplicação da corretora é o instrumento de acesso mais imediato ao preço, e é aquele cuja
+documentação pública descreve o menor conjunto de indicadores. Apresenta a variação percentual do
+dia e um gráfico de preço. Não indica se essa variação é elevada
+para aquela ação em particular, não separa a componente de empresa da componente de mercado e não
+dispõe de memória de acontecimentos comparáveis.
+
+Os alertas de preço oferecidos por estas
+aplicações partilham a mesma limitação de forma mais acentuada: disparam quando um limiar fixo é
+atravessado, critério que ignora a volatilidade própria de cada ação e que por isso produz alertas
+frequentes nas empresas agitadas e raros nas empresas calmas. Comunicam ainda que um nível foi
+ultrapassado, e nunca porquê. Esta observação determina a opção metodológica descrita na
+Secção~\ref{sec:met_detecao}, que substitui o limiar absoluto por uma medida relativa à norma
+recente de cada empresa, e cuja diferença é quantificada na Secção~\ref{sec:av_qi1}.
+
+As aplicações de sentimento classificam notícias como positivas ou negativas e apresentam o
+resultado dessa classificação. Fornecem matéria-prima para a primeira pergunta e não avançam além
+dela. A Secção~\ref{sec:av_qi2} apresenta ainda uma medição própria segundo a qual o tema de uma
+notícia e a direção do movimento que se lhe segue coincidem com menos frequência do que a intuição
+sugere, o que limita o alcance de uma pontuação de sentimento como indicador de impacto.
+
+Os gestores automáticos de carteira respondem sobretudo a uma pergunta distinta, a da distribuição
+de capital por um conjunto de ativos. A literatura reconhece-lhes benefícios genuínos, embora não
+uniformes: \textcite{dacunto2019robo} medem uma melhoria da diversificação e uma redução da
+volatilidade nos investidores que detinham menos de cinco ações antes da adesão, ao passo que para
+os que já detinham mais de dez o efeito sobre a diversificação é próximo de nulo. A contenção de
+enviesamentos comportamentais é o benefício mais consistentemente reportado
+\autocite{dacunto2019robo, cardillo2024robo}. A diferença face a este trabalho é de objeto e não de
+transparência: um gestor automático recomenda uma carteira e executa-a, ao passo que este sistema
+não formula recomendações e entrega evidência sobre um acontecimento concreto. Acresce que a
+prestação de aconselhamento sobre investimentos constitui atividade regulada, fronteira que o
+presente trabalho evita por desenho, conforme discutido na Secção~\ref{sec:met_etica}.
+
+Existem, por fim, produtos recentes que declaram responder exatamente à pergunta tratada nesta
+dissertação. O Robinhood Cortex, anunciado em março de 2025, declara na página do próprio
+fornecedor destinar-se a responder à questão de saber por que razão uma ação está a subir ou a
+descer num dado dia \autocite{robinhood2025cortex}. Os momentos-chave do Google Finance,
+apresentados em junho de 2026, propõem-se explicar por que razão uma ação se moveu
+\autocite{google2026finance}. Trata-se da mesma pergunta, formulada por organizações com recursos e
+base de utilizadores incomparavelmente maiores.
+
+A diferença situa-se no que as respetivas páginas
+declaram ser entregue. Ambas descrevem um resumo em linguagem natural, e nenhuma descreve a
+apresentação dos casos passados individualizados, com datas, semelhanças medidas e comportamento
+observado do preço após cada um, que é o que este trabalho entrega. A distinção reivindicada não é
+de fluência, mas de verificabilidade, e respeita ao que as páginas declaram: os produtos não foram
+testados, pelo que nada se afirma sobre o que efetivamente entregam.
+
+A objeção mais razoável ao trabalho consiste em perguntar por que razão um assistente de
+inteligência artificial genérico não resolveria o mesmo problema. Não foi realizada uma comparação
+com nenhum desses assistentes, pelo que o que se segue é um argumento de desenho e não um resultado.
+Um assistente que não disponha de acesso externo a dados de mercado não dispõe de três elementos.
+O primeiro é a volatilidade recente da ação, que permite determinar se uma variação é elevada. O
+segundo é a separação entre a componente de mercado e a componente específica da empresa. O
+terceiro é uma base de casos passados sobre a qual efetuar uma recuperação.
+
+Quanto a este último ponto, um modelo de linguagem recorda
+casos vistos durante o treino, o que não constitui recuperação e não é verificável pelo leitor.
+Existem modelos de grande dimensão especializados em texto financeiro, cuja capacidade está
+documentada \autocite{li2023llmfinance}. A saída de qualquer deles permanece uma afirmação que se lê com facilidade e não se confere.
+
+A
+literatura de explicabilidade dá razões para desconfiar dela. \textcite{lipton2018mythos}
+argumenta que a interpretabilidade não designa uma propriedade única e que um sistema deve
+declarar qual delas oferece. \textcite{rudin2019stop} argumenta que uma explicação produzida sobre
+um modelo opaco é uma aproximação que pode induzir em erro. Nenhum dos dois trata de texto gerado por modelos de linguagem, pelo que a transposição é do
+autor e o que dela se retira é uma razão de desenho e não um resultado da literatura. É esta a razão pela qual a linguagem nunca produz
+factos neste sistema: os números provêm dos componentes que os calcularam, e o texto é composto a
+partir deles, conforme descrito na Secção~\ref{sec:sis_explicacao}.
+
+\section{Deteção de anomalias em séries temporais financeiras}
+\label{sec:ctx_anomalias}
+
+Esta secção situa a primeira decisão do sistema no campo da deteção de anomalias e enuncia as
+famílias de método consideradas.
+
+A deteção de anomalias constitui uma área estabelecida, com uma taxonomia consolidada que separa os
+métodos pela forma como definem normalidade \autocite{chandola2009anomaly, pang2021deep}. Três
+famílias são relevantes para séries temporais financeiras.
+
+A família estatística define normalidade a partir da distribuição local dos próprios dados,
+estimada numa janela deslizante, e assinala como anómalas as observações que dela se afastam além
+de um limiar. A explicação de uma deteção coincide com o cálculo que a produziu, o que a torna
+integralmente comunicável ao utilizador. Em contrapartida, supõe que a distribuição dos retornos é
+localmente estável.
+
+A família aprendida não supervisionada define normalidade a partir da estrutura geométrica dos
+dados. O Isolation Forest \autocite{liu2008isolation} identifica como anómalos os pontos que uma
+partição aleatória isola com poucos cortes; o Local Outlier Factor \autocite{breunig2000lof}
+identifica-os pela densidade reduzida face à dos seus vizinhos. Ambos dispensam rótulos e captam
+padrões multivariados que uma regra sobre uma única série não capta, ao custo de a decisão deixar
+de ser enunciável numa frase.
+
+A família profunda aprende um modelo de normalidade através de uma rede \autocite{pang2021deep}.
+Oferece maior capacidade de representação, exige volumes de dados superiores e afasta-se do
+requisito de explicabilidade que estrutura este trabalho.
+
+Uma restrição prática condiciona toda esta escolha. Em domínios financeiros vizinhos, como a
+deteção de fraude, os métodos não supervisionados ocupam posição central precisamente porque
+anomalias rotuladas são escassas e os padrões se alteram ao longo do tempo
+\autocite{ahmed2016financial}. A mesma condição verifica-se aqui: não existe um conjunto de dados
+em que tenha sido registado, dia a dia, que movimentos justificariam um alerta. Esta ausência
+determina a forma como o Capítulo~\ref{cap:avaliacao} pode avaliar o componente, e é a razão pela
+qual a avaliação assenta num critério derivado dos próprios dados em vez de um julgamento humano.
+
+A suposição de estabilidade local em que a família estatística assenta é confrontada e não
+escondida. Os modelos de volatilidade condicional, introduzidos por \textcite{engle1982arch} e
+generalizados por \textcite{bollerslev1986garch}, formalizam o agrupamento de volatilidade, ou seja
+a tendência de os períodos calmos e os períodos agitados ocorrerem em séries. Ambos os artigos
+formalizam o fenómeno sobre séries de inflação, pelo que a sua transposição para retornos de ações
+não é assumida: a Secção~\ref{sec:av_qi1} mede-a nos dados deste trabalho, comparando a janela de
+pesos iguais com uma variante que atribui maior peso às observações recentes. Uma janela deslizante
+acompanha parcialmente o fenómeno, uma vez que a norma contra a qual cada dia é comparado é
+reestimada diariamente a partir do passado próximo. A escolha não elimina o problema, e a medição
+referida quantifica o que custa mantê-la.
+
+A comparação entre a família estatística e a família aprendida não permanece no plano do argumento.
+O Capítulo~\ref{cap:avaliacao} executa ambas sobre os mesmos dados e reporta o resultado obtido.
+
+\section{Representação de texto e recuperação semântica}
+\label{sec:ctx_texto}
+
+Esta secção percorre as formas de representar texto que tornam possível comparar notícias por
+significado, e enuncia o critério de avaliação da recuperação que delas decorre.
+
+A comparação de notícias por significado depende inteiramente da representação adotada, e essa
+representação atravessou três gerações, esquematizadas na Figura~\ref{fig:ctx_geracoes} e
+detalhadas na Tabela~\ref{tab:ctx_texto}.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small, >={Stealth[length=2.4mm]},
+  g/.style={draw, rounded corners, align=center, text width=3.0cm, minimum height=3.3cm,
+            inner sep=5pt, fill=black!3},
+]
+  \node[g] (a) {\textbf{Contagem de palavras}\\[3pt]
+    \footnotesize cada palavra é\\ \footnotesize um símbolo isolado\\[3pt]
+    \footnotesize \emph{``subiu'' e ``valorizou''}\\ \footnotesize \emph{não têm relação}};
+  \node[g, right=0.85cm of a] (b) {\textbf{Vetores de palavra}\\[3pt]
+    \footnotesize palavras de uso\\ \footnotesize semelhante ficam próximas\\[3pt]
+    \footnotesize \emph{um só sentido}\\ \footnotesize \emph{por palavra}};
+  \node[g, right=0.85cm of b] (c) {\textbf{Vetores de frase}\\[3pt]
+    \footnotesize o sentido depende\\ \footnotesize do contexto\\[3pt]
+    \footnotesize \emph{representação}\\ \footnotesize \emph{adotada neste trabalho}};
+  \draw[->, thick, black!45] (a) -- (b);
+  \draw[->, thick, black!45] (b) -- (c);
+\end{tikzpicture}
+\caption[Três gerações de representação de texto]{As três gerações de representação de texto. Cada
+uma resolve uma limitação identificada na anterior, e a terceira é a que permite comparar duas
+frases diretamente pela posição dos respetivos vetores.}
+\label{fig:ctx_geracoes}
+\end{figure}
+
+A primeira geração representa um documento pela frequência dos termos que contém. O modelo de
+espaço vetorial \autocite{salton1975vsm} é transparente e computacionalmente barato, e é cego a
+sinónimos: os termos ``subiu'' e ``valorizou'' constituem, para esta representação, símbolos sem
+relação. Dentro da mesma geração existe uma segunda linha, oriunda de um quadro probabilístico
+distinto, a das funções de ordenação de que o BM25 \autocite{robertson2009bm25} é o representante
+corrente; ambas permanecem linhas de base fortes em recuperação de informação e partilham aquela
+cegueira. Em texto financeiro existe ainda uma variante especializada, os léxicos de domínio, que
+corrigem o facto de os dicionários de sentimento genéricos interpretarem incorretamente palavras
+correntes na linguagem financeira \autocite{loughran2011liability}. São integralmente
+transparentes, e ficam limitados ao vocabulário que foi compilado.
+
+A segunda geração representa cada palavra como um vetor num espaço onde a proximidade traduz uso
+semelhante, aprendido a partir do contexto local \autocite{mikolov2013word2vec} ou da coocorrência
+global \autocite{pennington2014glove}. Esta representação aproxima sinónimos, resolvendo a limitação
+anterior, e introduz uma nova: cada palavra recebe um vetor único, independentemente da frase em
+que ocorre.
+
+A terceira geração remove essa limitação. O Transformer \autocite{vaswani2017attention} tornou
+viável o processamento da frase completa com dependências de longo alcance, e o \gls{BERT}
+\autocite{devlin2019bert} produziu representações contextuais, nas quais o vetor de uma palavra
+depende das que a rodeiam. Um passo adicional é necessário para o problema aqui tratado: comparar
+duas frases com um modelo dessa natureza exigiria processá-las conjuntamente, uma vez por par, o
+que não é praticável sobre uma base com dezenas de milhares de casos. O \gls{SBERT}
+\autocite{reimers2019sbert} resolve esta questão produzindo um vetor por frase, calculado uma única
+vez, de modo que a comparação passa a ser uma operação aritmética entre vetores já existentes.
+
+A contribuição do \gls{SBERT} que importa a este trabalho não reside na arquitetura mas no objetivo
+de treino: os vetores são aprendidos de forma que a distância entre dois deles traduza semelhança
+de sentido. Os autores reportam que um codificador da família \gls{BERT} utilizado diretamente para
+comparar frases produz representações fracas para esse fim, ficando por vezes atrás da média
+simples de vetores de palavra \autocite{reimers2019sbert}. Daqui decorre que um codificador ajustado
+a outra tarefa não herda esta propriedade pelo facto de ter sido treinado no domínio adequado.
+
+\begin{table}[!htbp]
+\caption[Abordagens de representação de texto]{As abordagens consideradas para representar notícias
+financeiras, com a representação que cada uma produz e as implicações da sua adoção.}
+\label{tab:ctx_texto}
+\centering
+\small
+\begin{tabular}{L{0.22\textwidth} L{0.28\textwidth} L{0.36\textwidth}}
+\toprule
+\tabhead{Abordagem} & \tabhead{Representação} & \tabhead{Forças e limitações} \\
+\midrule
+Contagem de termos \newline \autocite{salton1975vsm, robertson2009bm25}
+  & Frequência ponderada de palavras
+  & Transparente e rápida; cega a sinónimos \\
+\addlinespace
+Léxicos financeiros \newline \autocite{loughran2011liability}
+  & Listas de palavras com polaridade atribuída
+  & Totalmente transparente; limitada ao vocabulário compilado \\
+\addlinespace
+Vetores de palavra \newline \autocite{mikolov2013word2vec, pennington2014glove}
+  & Um vetor fixo por palavra
+  & Aproxima sinónimos; um só sentido por palavra \\
+\addlinespace
+Vetores de frase \newline \autocite{devlin2019bert, reimers2019sbert}
+  & Um vetor por frase, sensível ao contexto
+  & Compara frases diretamente; modelo maior e menos legível internamente \\
+\addlinespace
+Modelos de domínio \newline \autocite{liu2020finbert, huang2023finbert}
+  & Como acima, ajustada a texto financeiro
+  & Vocabulário do domínio; superioridade nesta tarefa não é automática \\
+\addlinespace
+Modelos de grande dimensão \newline \autocite{li2023llmfinance}
+  & Geração de texto sobre conhecimento amplo
+  & Capacidade elevada; dispendiosos, opacos e fora da restrição de gratuitidade \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Para texto financeiro existem modelos treinados especificamente para o domínio
+\autocite{liu2020finbert, huang2023finbert}. A suposição natural
+é a de que sejam superiores nesta tarefa por essa razão. A suposição não é automaticamente
+verdadeira, e a Secção~\ref{sec:av_qi2} mede-a em vez de a assumir.
+
+O trabalho inscreve-se na literatura mais vasta de processamento de linguagem natural aplicado a
+finanças. A revisão de \textcite{kearney2014textual} cobre o estado dessa área até 2014, dominado
+pelos léxicos de domínio e por classificadores supervisionados sobre contagens de palavras; as
+representações contextuais de frase utilizadas neste trabalho são posteriores e não constam dessa
+revisão. Existe ainda uma linha de investigação substancial que utiliza texto para antecipar
+movimentos de preço \autocite{xing2018nlffsurvey, ding2015deep}. O presente trabalho situa-se fora
+dessa linha por opção de desenho: o texto é aqui empregue para localizar casos anteriores
+comparáveis, cujo desfecho já ocorreu e já foi medido, e não para gerar uma previsão.
+
+A representação de cada notícia por um vetor converte a identificação de casos comparáveis num
+problema de recuperação de informação. A medida de proximidade adotada é a semelhança do cosseno,
+cuja mecânica é descrita na Secção~\ref{sec:met_recuperacao}. A operação é exata, uma vez que se
+percorre a totalidade da base de casos e se ordena o resultado, pelo que este não depende de
+qualquer aproximação. A escalas substancialmente superiores, a procura exaustiva pode ser
+substituída por um índice aproximado \autocite{johnson2021faiss} sem alteração da representação, o
+que constitui caminho de crescimento e não necessidade presente.
+
+Uma vez que a recuperação devolve uma lista ordenada, a sua avaliação recorre a medidas sensíveis à
+ordem \autocite{manning2008ir}. A adotada neste trabalho é a precisão nos $k$ primeiros resultados,
+ou seja a fração desses $k$ resultados que são relevantes. A definição de relevância, que é onde uma
+avaliação desta natureza se decide, é estabelecida na Secção~\ref{sec:met_recuperacao} juntamente
+com as linhas de base contra as quais o resultado é comparado.
+
+\subsection{Recuperação com geração, e por que razão o sistema para antes dela}
+
+A arquitetura hoje corrente para responder a uma pergunta a partir de um corpo de documentos é a
+geração aumentada por recuperação, na qual um recuperador seleciona passagens e um modelo de
+linguagem redige a resposta a partir delas \autocite{lewis2020rag}. A literatura sobre a família é
+extensa e encontra-se sistematizada \autocite{huang2026ragsurvey}.
+
+O sistema aqui descrito executa a primeira metade dessa arquitetura e detém-se antes da segunda, e a
+razão é a mesma que atravessa o trabalho. A recuperação devolve objetos verificáveis: um título, uma
+data, uma semelhança medida e um movimento de preço observado. A geração converte esses objetos numa
+afirmação em prosa, cuja fidelidade ao que foi recuperado é ela própria uma propriedade a avaliar, e
+que o destinatário deste sistema não tem meios para confrontar. A opção não decorre de limitação
+técnica, e a distinção deve ser feita com clareza: acrescentar a geração é possível e barato; o que
+não é barato é a avaliação de que ela não desloca o significado da evidência. Nenhuma comparação com
+uma arquitetura completa foi realizada neste trabalho, pelo que o que aqui se afirma é uma razão de
+desenho e não um resultado.
+
+\subsection{Corpora de notícias financeiras e rótulos de setor}
+
+A avaliação de recuperação sobre notícias financeiras exige um corpo de texto alinhado com preços, e
+esse alinhamento é o que distingue um corpus utilizável de uma coleção de títulos. O conjunto
+utilizado neste trabalho é o \gls{FNSPID} \autocite{dong2024fnspid}, que reúne notícias e séries de
+preços correspondentes e cuja construção está documentada.
+
+A relevância entre duas notícias é aproximada, neste trabalho, pela pertença ao mesmo setor. A opção
+substitui uma anotação humana inexistente por um critério objetivo, e transporta a limitação
+correspondente: a validade de um agrupamento é uma propriedade mensurável, seja pela separação entre
+grupos \autocite{rousseeuw1987silhouettes}, seja pela concordância entre agrupamentos alternativos
+corrigida para o acaso \autocite{vinh2010ami}, e nenhuma dessas medidas foi aplicada ao mapa
+setorial adotado. O que o rótulo garante é objetividade e reprodutibilidade, e não que o setor seja
+a partição mais informativa do corpus.
+
+\section{Estudos de evento e decomposição de retornos}
+\label{sec:ctx_evento}
+
+Esta secção apresenta o instrumento com que se mede o efeito de um acontecimento sobre o preço, bem
+como a correção estatística de que depende a separação entre a componente de empresa e a componente
+de mercado.
+
+O instrumento adotado é o estudo de evento, cuja formulação remonta a
+\textcite{fama1969adjustment}. O comportamento do método sobre retornos diários foi examinado por
+\textcite{brown1985daily}, que confrontam formas alternativas de estimar o retorno esperado e
+concluem que os procedimentos correntes, assentes na estimação do modelo de mercado por mínimos
+quadrados, permanecem bem especificados em janelas curtas em torno do acontecimento. O alcance
+desta conclusão é delimitado pelos próprios autores: a variante mais simples, que subtrai apenas a
+média histórica da ação, perde potência estatística e pode tornar-se mal especificada quando as
+datas dos acontecimentos coincidem. É este resultado que motiva a ordem de grandeza das
+janelas de um, três e cinco dias adotadas neste trabalho. A transposição não é direta, e a diferença
+está declarada na
+Secção~\ref{sec:met_recuperacao}, segundo a qual o valor apresentado ao utilizador é o retorno bruto
+e não o retorno anormal que aqueles autores estudam.
+
+A existência de uma relação estatística entre o texto publicado e os movimentos do mercado é
+observação antiga \autocite{tetlock2007media}. O verbo adequado é o da evidência de uma relação
+estatística, e não o da demonstração de causalidade.
+
+Um ponto metodológico condiciona a segunda pergunta do trabalho, a da separação entre a empresa e o
+mercado. Essa separação exige estimar a sensibilidade de cada ação ao mercado, e a estimativa é
+ruidosa, sobretudo em empresas voláteis ou com histórico curto. \textcite{blume1971risk} estabelece
+que os coeficientes assim estimados tendem a regredir para a média entre períodos sucessivos, ou
+seja que uma estimativa extrema num período tende a sê-lo menos no seguinte; daí decorreu a prática,
+corrente mas posterior ao próprio artigo, de encolher a estimativa com um peso fixo. Essa prática
+aplica a mesma correção a estimativas precisas e imprecisas. A alternativa adotada neste trabalho
+pondera o encolhimento pela imprecisão da própria estimativa \autocite{vasicek1973beta}, de modo que
+uma estimativa fiável é praticamente preservada e uma estimativa frágil é aproximada do valor de
+referência. A formulação é apresentada na Secção~\ref{sec:met_decomposicao}.
+
+O enquadramento teórico que justifica a recusa de prever pertence igualmente a esta área. A
+hipótese dos mercados eficientes, na sua forma semiforte, sustenta que os preços refletem já a
+informação publicamente disponível \autocite{fama1970efficient}, do que decorre que movimentos
+futuros não deveriam ser sistematicamente previsíveis a partir dessa informação. Constitui uma das
+razões pelas quais o sistema mede o que já ocorreu em vez de projetar o que virá; a segunda, de
+natureza prática, é que apenas o passado é verificável por quem lê.
+
+\section{Raciocínio baseado em casos}
+\label{sec:ctx_casos}
+
+Esta secção enquadra a terceira técnica do sistema numa linha estabelecida de inteligência
+artificial e delimita a parte dessa linha que o trabalho implementa.
+
+O raciocínio baseado em casos \autocite{aamodt1994cbr} aborda um problema novo através da
+recuperação de problemas anteriores semelhantes e do aproveitamento do que sobre eles é conhecido,
+dispensando o recurso exclusivo a conhecimento geral do domínio. A fonte organiza o método num
+ciclo de quatro processos, a saber recuperar, reutilizar, rever e reter, e considera os quatro
+necessários à resolução completa de um problema.
+
+A técnica descrita na Secção~\ref{sec:met_recuperacao} implementa os dois primeiros e interrompe-se
+deliberadamente antes dos restantes: recupera casos semelhantes e apresenta o que neles foi medido,
+sem adaptar esse desfecho ao caso presente. A adaptação produziria uma expectativa sobre o que virá
+a acontecer, ou seja precisamente a previsão que o trabalho recusa. A implementação parcial de um
+ciclo estabelecido é, neste caso, uma consequência da restrição fundadora e não uma insuficiência.
+
+A opção encontra apoio adicional do lado de quem lê. A investigação sobre explicação em ciências
+sociais estabelece que as pessoas procuram razões contrastivas e seletivas, e não uma enumeração
+exaustiva de tudo o que contribuiu para um resultado \autocite{miller2019explanation}. Um conjunto
+reduzido de casos concretos, com data e desfecho, corresponde melhor a essa expectativa do que um
+coeficiente. É por essa razão que cada alerta apresenta alguns precedentes e as quantidades exatas
+que sustentam a decisão, em vez da totalidade dos valores calculados.
+
+Há um segundo requisito, do mesmo lado, que condiciona não o conteúdo da explicação mas a frequência
+com que ela é entregue. Um destinatário exposto a avisos em excesso deixa de os processar, fenómeno
+documentado em domínios onde o custo de o ignorar é elevado \autocite{ancker2017alertfatigue}. A
+consequência para este trabalho é que a política de decisão não é um acessório do sistema mas parte
+do seu desenho: um alerta que não é lido tem o mesmo valor de um alerta que não foi enviado, e é por
+isso que o Capítulo~\ref{cap:sistema} trata os critérios de supressão com o mesmo cuidado com que
+trata os métodos que produzem o alerta.
+
+\section{Explicabilidade e confiança em sistemas automáticos}
+\label{sec:ctx_xai}
+
+Esta secção situa o requisito de explicabilidade que atravessa o trabalho e apresenta as cautelas
+que a literatura associa à apresentação de explicações.
+
+A exigência de que um sistema demonstre como chegou a uma conclusão constitui uma área própria, com
+revisões consolidadas \autocite{arrieta2020xai, adadi2018peeking}. A área divide-se em duas vias,
+representadas na Figura~\ref{fig:ctx_xai}: os modelos transparentes, interpretáveis em si mesmos, e
+os métodos \emph{a posteriori}, que explicam um modelo opaco já treinado e que podem ser
+organizados pelo tipo de objeto que explicam \autocite{guidotti2018survey}.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small, >={Stealth[length=2.4mm]},
+  r/.style={draw, rounded corners, align=center, text width=3.5cm, minimum height=1.1cm,
+            inner sep=4pt, fill=black!3},
+  t/.style={draw, rounded corners, align=center, text width=3.5cm, minimum height=1.4cm,
+            inner sep=4pt, fill=black!8, very thick},
+  o/.style={draw, rounded corners, align=center, text width=3.5cm, minimum height=1.4cm,
+            inner sep=4pt, fill=black!3},
+]
+  \node[r] (raiz) {\textbf{Explicar uma decisão}};
+  \node[t, below left=1.1cm and 0.35cm of raiz] (tr) {\textbf{Modelo transparente}\\
+    \footnotesize a explicação é o cálculo};
+  \node[o, below right=1.1cm and 0.35cm of raiz] (ph) {\textbf{Método a posteriori}\\
+    \footnotesize explica um modelo opaco};
+
+  \node[below=0.4cm of tr, align=center, font=\footnotesize, text width=3.6cm]
+    (trx) {regra, regressão linear,\\ contagem sobre a série};
+  \node[below=0.4cm of ph, align=center, font=\footnotesize, text width=3.6cm]
+    (phx) {\gls{LIME}, \gls{SHAP}};
+
+  \draw[->, thick, black!45] (raiz) -- (tr);
+  \draw[->, thick, black!45] (raiz) -- (ph);
+  \draw[-, black!35] (tr) -- (trx);
+  \draw[-, black!35] (ph) -- (phx);
+\end{tikzpicture}
+\caption[As duas vias para a explicabilidade]{As duas vias distinguidas pela literatura
+\autocite{arrieta2020xai, guidotti2018survey}: construir modelos transparentes por desenho, ou
+explicar um modelo opaco depois de treinado. Este trabalho segue a primeira.}
+\label{fig:ctx_xai}
+\end{figure}
+
+Os dois métodos \emph{a posteriori} de utilização mais generalizada operam de formas distintas. O
+\gls{LIME} ajusta um modelo simples na vizinhança de uma previsão individual, aproximando
+localmente o comportamento do modelo opaco \autocite{ribeiro2016lime}. O \gls{SHAP} atribui uma
+previsão às variáveis que a produziram recorrendo a valores de Shapley \autocite{lundberg2017shap}.
+Ambos são genéricos e ambos são úteis.
+
+Ambos partilham, contudo, uma propriedade determinante neste contexto. Perante decisões de
+consequência séria, \textcite{rudin2019stop} defende o abandono dos modelos opacos em favor de
+modelos interpretáveis por construção, com o argumento de que toda a explicação \emph{a posteriori}
+constitui ela própria uma aproximação, e uma aproximação pode conduzir a leituras erradas. O
+utilizador recebe nesse caso dois objetos cuja relação não está em condições de avaliar, que são
+uma decisão e uma explicação que pode não lhe corresponder.
+
+Este trabalho segue a via conservadora. Em lugar de explicar \emph{a posteriori} um modelo opaco,
+recorre a componentes em que a explicação e o cálculo coincidem. Um afastamento face a uma norma
+recente, uma repartição aditiva cuja soma reproduz o movimento observado e um conjunto de casos
+anteriores com os desfechos medidos constituem objetos apresentáveis por inteiro. A explicação
+não constitui um segundo objeto produzido sobre a decisão: é a decisão, enunciada por extenso.
+
+Duas cautelas da literatura fecham esta secção, e ambas condicionam a organização do
+Capítulo~\ref{cap:avaliacao}.
+
+A primeira é que interpretabilidade não designa uma propriedade única \autocite{lipton2018mythos},
+pelo que um sistema deve declarar o tipo de interpretabilidade que oferece em vez de reclamar o
+termo sem qualificação. Este trabalho oferece transparência de mecanismo, ou seja o utilizador pode
+seguir o cálculo que conduziu à decisão, e não oferece uma explicação causal do acontecimento no
+mundo.
+
+A segunda respeita ao efeito da própria explicação sobre quem a recebe. A confiança em sistemas
+automáticos falha em dois sentidos simétricos, com o utilizador a ignorar um aviso correto ou a
+aceitar um aviso incorreto, pelo que o objetivo não é maximizar a confiança mas torná-la ajustada à
+capacidade real do sistema \autocite{lee2004trust}. \textcite{bansal2021whole} acrescentam que a
+presença de uma explicação aumenta a probabilidade de aceitação da resposta do sistema quer esta
+esteja certa quer esteja errada, ou seja que o ganho observado não decorre de a pessoa passar a
+distinguir melhor os dois casos. As consequências de desenho que daqui decorrem estão descritas na
+Secção~\ref{sec:met_etica}.
+
+Acresce que afirmações de interpretabilidade exigem avaliação rigorosa e não se estabelecem por
+declaração \autocite{doshivelez2018considerations}. É por essa razão que o Capítulo~\ref{cap:avaliacao}
+mede o que é mensurável por procedimento automático e identifica explicitamente a parte que
+permanece por avaliar por ausência de um estudo com utilizadores.
+
+\section{Aprendizagem automática em ambiente de produção}
+\label{sec:ctx_producao}
+
+Esta secção reúne a literatura relativa ao componente aprendido do sistema, organizada segundo as
+três questões que a sua implantação levanta.
+
+A primeira questão é a de determinar contra que referência superior comparar um modelo simples.
+Conjuntos de árvores treinados por reforço do gradiente \autocite{friedman2001gbm} captam interações
+e efeitos não lineares que uma regressão logística não capta, e desempenham por isso essa função no
+Capítulo~\ref{cap:avaliacao}. Não se afirma que constituam o melhor método existente, uma vez que
+tal seria uma afirmação sobre um campo inteiro.
+
+A segunda questão respeita à honestidade do valor apresentado. Uma pontuação só é interpretável
+como probabilidade se estiver calibrada, e as pontuações em bruto de muitos classificadores não o
+estão; a calibração \emph{a posteriori} sobre um bloco de validação reservado corrige essa
+distorção \autocite{niculescu2005calibration}. A mesma fonte não favorece, contudo, a opção tomada
+neste trabalho: identifica a regressão logística como já bem calibrada à partida e conclui que,
+acima de cerca de mil casos de calibração, a regressão isotónica iguala ou supera a sigmoide. O
+modelo implantado é uma regressão logística com um bloco de validação muito acima desse limiar,
+pelo que ambas as afirmações se lhe aplicam. A opção justifica-se por medição e não por autoridade:
+a comparação das duas variantes sobre a mesma validação está reportada na
+Tabela~\ref{tab:av_alternativas}.
+
+Uma via alternativa foi considerada e não adotada. A predição conformal devolve um conjunto de
+rótulos com uma garantia livre de distribuição, válida em amostras finitas
+\autocite{vovk2005algorithmic, angelopoulos2023conformal}. Duas precisões determinam que não é aplicável nas condições deste trabalho. A cobertura da
+variante corrente é marginal: vale em média sobre os casos, e não caso a caso. E a garantia exige
+permutabilidade entre o bloco de calibração e o de teste, hipótese que a divisão cronológica com
+embargo da Secção~\ref{sec:met_triagem} recusa por construção. A Secção~\ref{sec:con_futuro} retoma o método
+como caminho a explorar.
+
+A terceira questão é a da permanência do desempenho ao longo do tempo. Um modelo implantado enfrenta
+alteração da distribuição dos dados que observa, e a literatura de deriva de conceito estabelece a
+taxonomia dessa mudança e as estratégias de deteção e adaptação \autocite{gama2014survey}. Este
+trabalho mede a deriva sobre os seus próprios dados em vez de a assumir ausente.
+
+Existe, por fim, um custo que não é captado por nenhuma métrica de qualidade.
+\textcite{sculley2015debt} estabelecem que os componentes de aprendizagem automática acumulam
+manutenção oculta, em particular através do emaranhamento entre peças e de dependências de dados
+instáveis e não declaradas. O Capítulo~\ref{cap:conclusoes} regressa a este ponto com um exemplo
+medido no presente sistema, em que parte do ciclo de aprendizagem se interrompeu sem que qualquer
+erro fosse registado.
+
+\section{Síntese e posicionamento do trabalho}
+\label{sec:ctx_sintese}
+
+Esta secção localiza o trabalho relativamente à revisão apresentada e enuncia as decisões de âmbito
+que dela decorrem.
+
+A revisão permite delimitar com precisão o espaço em que o trabalho se inscreve, e esse espaço não
+constitui um vazio técnico. Cada componente utilizado existe, está publicado e está avaliado, como
+a Tabela~\ref{tab:ctx_posicionamento} torna explícito.
+
+\begin{table}[!htbp]
+\caption[Posicionamento do trabalho face à literatura]{Cada componente do sistema existe na
+literatura de forma isolada. O que não existe é a sua combinação sob a restrição de custo nulo, com
+a evidência entregue ao utilizador no momento em que a afirmação lhe é apresentada.}
+\label{tab:ctx_posicionamento}
+\centering
+\small
+\begin{tabular}{L{0.24\textwidth} L{0.30\textwidth} L{0.34\textwidth}}
+\toprule
+\tabhead{Pergunta} & \tabhead{O que a literatura oferece} & \tabhead{O que falta ao público-alvo} \\
+\midrule
+É invulgar?
+  & Deteção de anomalias, estatística e aprendida \autocite{chandola2009anomaly, liu2008isolation}
+  & Uma medida relativa à norma da própria empresa, comunicada em linguagem acessível \\
+\addlinespace
+É a empresa ou o mercado?
+  & Estudo de evento e estimação de sensibilidade \autocite{brown1985daily, vasicek1973beta}
+  & Disponibilidade fora de um terminal profissional \\
+\addlinespace
+Já aconteceu antes?
+  & Representação de frases e recuperação \autocite{reimers2019sbert, manning2008ir}
+  & Uma base de casos com desfechos medidos, e não recordados \\
+\addlinespace
+Por que razão acreditar?
+  & Explicabilidade e literatura de confiança \autocite{rudin2019stop, lee2004trust}
+  & A evidência entregue junto da afirmação e verificável no momento da leitura \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A lacuna não é, portanto, de método, mas de integração sob restrição. Os produtos que respondem às
+três perguntas são terminais profissionais, que não são disponibilizados em regime gratuito nem em
+regime acessível ao investidor particular; o seu preço não é publicado de forma que permita citá-lo
+aqui, e é a indisponibilidade, e não um valor concreto, que sustenta o argumento. Os produtos
+gratuitos que declaram responder à terceira entregam uma afirmação sem a evidência que a sustenta.
+E os componentes académicos que resolveriam cada parte foram avaliados isoladamente, sobre corpora
+de referência, e não como um sistema em funcionamento contínuo contra fontes reais.
+
+Esta observação determina a distinção que atravessa o trabalho e que o Capítulo~\ref{cap:sistema}
+retoma ao justificar a ausência de um modelo de linguagem na composição das mensagens. Uma frase
+gerada é uma afirmação: apresenta-se ao leitor num registo fluente e não lhe fornece meios para a
+confrontar com aquilo que a sustenta. Uma frase composta a partir de objetos calculados é uma
+afirmação acompanhada da evidência, na qual cada valor apresentado remete para a medição que o
+produziu e o leitor pode confirmar cada elemento no momento em que o lê. É esta a propriedade que o sistema procura preservar, e é ela que fixa a natureza da contribuição.
+Não é a formulação de um método novo. É a seleção, integração e avaliação crítica de métodos
+existentes num sistema funcional, sob restrições declaradas, e com os resultados que não favorecem
+as opções tomadas incluídos na avaliação.
+
+Quatro decisões de âmbito decorrem deste posicionamento, e cada uma exclui deliberadamente uma
+classe de funcionalidade.
+
+\begin{description}
+  \item[Responder às três perguntas, e apenas a essas.] Não são incorporadas funcionalidades que
+        não sirvam uma delas, o que mantém o sistema com dimensão compatível com a sua explicação
+        integral.
+  \item[Não produzir previsões de preço.] Nem direção, nem alvo, nem recomendação. Além da razão de
+        verificabilidade enunciada no Capítulo~\ref{cap:introducao}, aplica-se o enquadramento
+        teórico da Secção~\ref{sec:ctx_evento} \autocite{fama1970efficient}.
+  \item[Não gerir carteiras nem prestar aconselhamento.] O sistema não conhece as posições do
+        utilizador e não lhe indica que ação tomar, o que evita a recolha de dados pessoais e
+        mantém o trabalho fora da fronteira do aconselhamento financeiro regulado.
+  \item[Utilizar exclusivamente fontes gratuitas.] A restrição torna o sistema acessível ao público
+        a que se destina e converte as limitações resultantes em quantidades medidas e reportadas.
+\end{description}
+
+A última decisão tem um custo real que importa enunciar sem atenuação. As notícias chegam com
+atraso e a cobertura dos acontecimentos é incompleta. O Capítulo~\ref{cap:sistema} quantifica
+ambas as limitações e o Capítulo~\ref{cap:conclusoes} avalia as suas consequências.

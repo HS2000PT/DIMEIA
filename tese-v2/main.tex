@@ -1,0 +1,83 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Dissertação MEIA — InvestiGator
+% Construído sobre o modelo oficial MEIA/ISEP (Luiz Faria, Jan/2022),
+% que por sua vez adapta o TMDEI/ISEP (Nuno Pereira, Paulo Baltarejo, Dez/2015).
+%
+% ESTRUTURA: segue o esqueleto das dissertações MEIA aprovadas
+% (Introdução → Estado da arte → Métodos e materiais → Implementação →
+%  Casos de estudo → Conclusões), com um capítulo próprio de casos de estudo.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[
+11pt,
+portuguese,
+singlespacing,
+parskip,
+nohyperreflinkcolor,
+headsepline,
+]{meia-style}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, calc, fit, backgrounds, shapes.geometric, decorations.pathreplacing}
+\tikzset{every node/.append style={execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000\relax}}}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{booktabs}
+\usepackage{tcolorbox}
+\usepackage{makecell}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+\graphicspath{{figures/}{./}}
+
+\usepackage[style=authoryear-comp,backend=biber]{biblatex}
+% Permite quebrar URLs longos na bibliografia. Sem isto, o endereço das actas do NeurIPS
+% na entrada do Transformer produz um overfull de 70 pt, com o texto a sair para a margem.
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
+\setcounter{biburlnumpenalty}{9000}
+\addbibresource{references.bib}
+\hypersetup{hidelinks}
+
+\makenoidxglossaries
+\input{frontmatter/glossary}
+
+\thesistitle{InvestiGator: alertas financeiros explicáveis para o investidor particular}
+\thesissubtitle{Deteção de anomalias e recuperação de precedentes sobre fontes de dados gratuitas}
+\author{Henrique José da Silva Santos}
+\studentnumber{1180934}
+\supervisor{Luís Gomes}
+\cosupervisor{Rafael Silva}
+\committeepresident{[Nome do Presidente, Categoria, Escola]}
+\committeemembers{[Nome do Vogal 1, Categoria, Escola] \\ {}[Nome do Vogal 2, Categoria, Escola]}
+\keywords{Inteligência Artificial Explicável, Alertas Financeiros, Deteção de Anomalias, Recuperação Semântica, Investidor Particular}
+\keywordsother{Explainable Artificial Intelligence, Financial Alerts, Anomaly Detection, Semantic Retrieval, Retail Investor}
+\university{Instituto Superior de Engenharia do Porto}
+\department{Departamento de Engenharia Informática}
+\thesisdate{Porto, setembro de 2026}
+
+\hypersetup{pdftitle=\ttitle}
+\hypersetup{pdfauthor=\authorname}
+\hypersetup{pdfkeywords=\keywordnames}
+
+\begin{document}
+
+\input{frontmatter/frontmatter}
+
+\input{ch1/chapter1}
+\input{ch2/chapter2}
+\input{ch3/chapter3}
+\input{ch4/chapter4}
+\input{ch5/chapter5}
+\input{ch6/chapter6}
+
+\printbibliography[heading=bibintoc]
+
+\appendix
+\input{appendices/appendixA}
+\input{appendices/appendixB}
+
+\end{document}

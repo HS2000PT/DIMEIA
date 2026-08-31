@@ -10,39 +10,18 @@
 O sistema está escrito em Python~3.12. As dependências do ambiente que produz os números desta
 dissertação estão fixadas num ficheiro de bloqueio, para que esse ambiente possa ser recriado noutra
 máquina. O serviço implantado tem o seu próprio conjunto, mais pequeno, porque não precisa de treinar
-nada. A Tabela~\ref{tab:ap_versoes} lista as principais.
+nada. As versões com que todos os números deste documento foram produzidos são
+\texttt{numpy}~2.1.3, \texttt{pandas}~2.2.3, \texttt{scikit-learn}~1.9.0,
+\texttt{matplotlib}~3.11.0, \texttt{yfinance}~1.4.1, \texttt{sentence-transformers}~5.6.0,
+\texttt{transformers}~5.12.1 e \texttt{torch}~2.12.1 na variante para CPU. Estão fixadas, e não em
+intervalos, porque uma biblioteca que muda sozinha muda os resultados sem aviso.
 
-\begin{table}[H]
-\caption[Versões fixadas das dependências]{As versões com que todos os números deste
-documento foram produzidos, lidas do ficheiro de dependências do repositório. Estão fixadas, e
-não em intervalos, porque uma biblioteca que muda sozinha muda os resultados sem aviso.}
-\label{tab:ap_versoes}
-\centering
-\small
-\begin{tabular}{l l l l}
-\toprule
-\tabhead{Biblioteca} & \tabhead{Versão} & \tabhead{Biblioteca} & \tabhead{Versão} \\
-\midrule
-numpy & 2.1.3 & sentence-transformers & 5.6.0 \\
-pandas & 2.2.3 & transformers & 5.12.1 \\
-scikit-learn & 1.9.0 & torch (versão CPU) & 2.12.1 \\
-matplotlib & 3.11.0 & pytest & 8.3.4 \\
-yfinance & 1.4.1 & ruff & 0.8.6 \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 Não é preciso GPU. Tudo o que esta dissertação reporta corre num computador portátil comum, o que é
 uma consequência deliberada das escolhas do Capítulo~\ref{cap:metodologia}.
 
-O código está organizado por componente, com um pacote para cada peça da
-Figura~\ref{fig:arquitetura}: dados de mercado, recolha de notícias, deteção, motor de correlação,
-base de casos, triagem, motor de explicação e entrega. A
-lógica pura está separada da entrada e saída, e as dependências pesadas são carregadas só quando
-precisas, e por isso o núcleo é testado sem rede e sem carregar modelos. A suite tem
-\textbf{763 testes} automáticos.
-
-Os segredos (chaves de API, credenciais) são lidos de um ficheiro local que nunca é versionado.
+A verificação automática do sistema tem \textbf{763 testes}, entre os quais os que impõem a
+separação temporal descrita na Secção~\ref{sec:met_avaliacao}.
 
 \section{Como cada número é reproduzido}
 \label{sec:ap_numeros}
@@ -232,40 +211,29 @@ personalizados fala com o robô, e aí ficam guardados o identificador de conver
 lista de empresas que essa pessoa escolheu seguir. É pouco, e é a totalidade: fica dito, porque
 ``nenhum dado pessoal'' seria mais simples de escrever e não seria verdade.
 
-\section{O estudo com pessoas: desenhado, congelado, por correr}
+\section{O estudo com utilizadores: desenho}
 \label{sec:ap_estudo}
 
-A limitação mais séria deste trabalho é não ter sido testado com um único utilizador. O
-Capítulo~\ref{cap:conclusoes} refere um protocolo ``já montado'', e uma afirmação dessas não vale
-nada se o leitor não a puder conferir. Fica aqui o desenho, para que a diferença entre \emph{não
-foi feito} e \emph{não foi pensado} seja visível.
+A limitação mais séria deste trabalho é não ter sido testado com utilizadores. O
+Capítulo~\ref{cap:conclusoes} refere um protocolo já preparado, e o seu desenho fica aqui para que
+essa afirmação possa ser conferida.
 
-\textbf{As duas condições.} Seis alertas reais, tirados do canal, nunca inventados. A condição A
-mostra o facto nu, a condição B mostra o alerta completo com a explicação. Dois dos seis são casos
-em que o tema e a direção discordam, que é onde a Secção~\ref{sec:av_qi2} mostra que o sistema é
-mais fácil de ler mal.
+O estudo compara duas condições sobre seis alertas reais retirados do canal: a condição~A apresenta
+o facto sem explicação, a condição~B apresenta o alerta completo. Dois dos seis são casos em que o
+tema e a direção do movimento discordam, que é onde a Secção~\ref{sec:av_qi2} mostra o sistema ser
+mais fácil de interpretar mal. O contrabalanço cruza dois fatores: a ordem das condições e qual das
+metades dos estímulos serve de condição~A. O segundo é necessário porque as condições têm de usar
+alertas diferentes, sob pena de a segunda medir memória; sem o cruzamento, qualquer diferença entre
+condições ficaria confundida com uma das metades ser mais fácil.
 
-\textbf{O contrabalanço cruza dois fatores, e não um.} O primeiro é a ordem. O segundo é qual das
-metades serve de condição A, e existe por uma razão que só apareceu ao prepará-lo: as duas
-condições têm de usar alertas \emph{diferentes}, senão a segunda mede memória; mas se a mesma
-metade fosse sempre a A, qualquer diferença entre A e B ficaria confundida com uma das metades ser
-mais fácil. Cruzados os dois, cada conjunto aparece o mesmo número de vezes de cada lado e o efeito
-do estímulo cancela-se entre participantes em vez de se somar ao da condição.
+A pergunta é a que a verificação automática não alcança. A fidelidade entre cada frase do alerta e
+o facto que a sustenta está garantida por construção, mas a afirmação do produto é uma travessia
+que um leitor faz: dada uma frase com âncora, consegue abrir o facto e julgar se ele a sustenta,
+sozinho? Se não conseguir, a contribuição é verdadeira e inútil. É uma pergunta qualitativa e não
+exige amostra grande.
 
-\textbf{A pergunta que interessa.} A garantia de que cada frase do alerta se abre no facto que a
-sustenta está verificada por máquina e por construção, e \textbf{nunca por uma pessoa}. Mas a
-afirmação do produto é uma travessia que um leitor faz: dada uma frase com âncora, consegue abrir o
-facto e julgar se ele a sustenta, sozinho? Se ninguém a conseguir fazer, a contribuição é
-verdadeira e inútil. É essa a pergunta que o estudo existe para responder, e é qualitativa, logo
-não precisa de amostra grande.
-
-\textbf{Duas salvaguardas contra mim próprio.} O limiar de oito participantes para o teste
-estatístico está fixado no código \textbf{antes de existirem dados}, portanto baixá-lo apareceria
-no histórico de alterações em vez de passar despercebido. E o procedimento de análise, corrido
-sobre a folha por preencher, responde que está vazia e não produz resultado nenhum.
-
-\textbf{E um bloco que foi retirado, por medição e não por conveniência.} O desenho original tinha
-um terceiro bloco sobre o texto gerado. As rotas que o serviam foram retiradas do produto, o que se
-confirmou a correr o procedimento de captura contra o sistema em produção, e não a supor. Medir a
-utilidade de uma funcionalidade que o produto entregue não tem não faria sentido. O bloco fica
-escrito e marcado como \emph{não correr}, porque apagá-lo esconderia que a pergunta existe.
+Duas salvaguardas metodológicas estão fixadas no código antes de existirem dados: o limiar de oito
+participantes para o teste estatístico, cuja alteração ficaria registada no histórico, e o
+procedimento de análise, que sobre a folha por preencher não produz resultado nenhum. Um terceiro
+bloco do desenho original, sobre texto gerado, está marcado como não executável, porque as rotas
+que o serviam foram retiradas do produto.

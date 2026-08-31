@@ -90,8 +90,6 @@ com alternativas mais complicadas. Quando a simples ganha, fica a simples, e diz
 \section{Os dados, tal como são}
 \label{sec:met_dados}
 
-\emph{Antes de explicar o que se faz com os dados: com que é que eles se parecem, exatamente?}
-
 Esta secção mostra linhas verdadeiras, copiadas dos ficheiros que o sistema usa.
 
 \subsection{O que entra: uma notícia histórica}
@@ -150,36 +148,12 @@ ou $2\%$ e deixa de o ser a $3\%$ ao fim de três dias.}
 \label{fig:met_linha}
 \end{figure}
 
-A Tabela~\ref{tab:met_colunas} diz o que cada coluna é, de onde vem, e a pergunta que mais importa:
-\textbf{consegue esta coluna ver o futuro?} É a pergunta que separa uma avaliação honesta de uma
-avaliação impossível de acreditar.
+A pergunta que separa uma avaliação honesta de uma avaliação impossível de acreditar é, para cada
+coluna, \textbf{se ela consegue ver o futuro}. Só as colunas de rótulo o fazem, porque é isso que
+um rótulo é. A \texttt{ret\_event} exige uma precisão adicional: no protocolo \emph{offline} não vê
+nada posterior ao fecho de $d$, que é o referencial em que a linha é construída, mas no instante em
+que uma notícia chega durante a sessão esse fecho ainda é futuro. As restantes descrevem o passado.
 
-\begin{table}[ht]
-\caption[O dicionário de colunas]{Cada coluna do conjunto de treino, a sua origem, e se pode ou não
-conter informação posterior ao momento da decisão.}
-\label{tab:met_colunas}
-\centering
-\small
-\begin{tabular}{L{0.20\textwidth} L{0.40\textwidth} C{0.13\textwidth} L{0.15\textwidth}}
-\toprule
-\tabhead{Coluna} & \tabhead{O que é} & \tabhead{Vê o futuro?} & \tabhead{Origem} \\
-\midrule
-\texttt{date} & dia de negociação a que a notícia foi alinhada & não & calculado \\
-\texttt{news\_date} & data que a fonte declara para a notícia & não & \gls{FNSPID} \\
-\texttt{ticker} & empresa & não & \gls{FNSPID} \\
-\texttt{sector} & setor, de um mapa fixo escrito à mão & não & mapa do autor \\
-\texttt{headline} & o título, tal como veio & não & \gls{FNSPID} \\
-\texttt{headline\_len} & número de caracteres do título & não & calculado \\
-\texttt{vol20} & desvio-padrão dos retornos dos 20 dias \emph{anteriores} & não & preços \\
-\texttt{mom5} & retorno acumulado dos 5 dias \emph{anteriores} & não & preços \\
-\texttt{ret\_event} & retorno fecho a fecho do dia da notícia; só fica completo no fecho &
-\textbf{sim, intradia} & preços \\
-\texttt{label} & houve movimento anormal em $(d, d{+}3]$? & \textbf{sim} & preços \\
-\texttt{label\_t*\_h*} & o mesmo, com nove limiares e horizontes & \textbf{sim} & preços \\
-\texttt{split} & treino, validação ou teste & não & divisão temporal \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 As colunas de rótulo \textbf{têm} de ver o futuro: é isso que um rótulo é. A
 \texttt{ret\_event} exige uma precisão adicional. No protocolo offline não vê nada posterior ao
@@ -238,7 +212,7 @@ escala em relação às primeiras é ela própria uma informação.}
 \tabhead{Conjunto} & \tabhead{Intervalo} & \tabhead{Dimensão} \\
 \midrule
 \multicolumn{3}{l}{\textbf{Histórico: com que se treina e avalia}} \\
-Conjunto de treino da triagem & 2018-01-02 a 2023-12-18 & $79\,753$ exemplos, 14 empresas \\
+Conjunto de treino da triagem & 2018-01-02 a 2023-12-18 & $79\,753$ exemplos, 14 empresas ($13$ no treino) \\
 Preços para a deteção & 2023-06-01 a 2026-06-01 & 15 empresas, $\approx 750$ dias cada \\
 \midrule
 \multicolumn{3}{l}{\textbf{Operação: o sistema a funcionar}} \\
@@ -253,22 +227,50 @@ Os $367$ alertas dividem-se em $278$ de notícia, $48$ de movimento de preço, $
 $17$ notas de abertura. O primeiro alerta de notícia é de 9 de julho de 2026; o primeiro de
 movimento, de 13 de julho.
 
-\paragraph{A ressalva da última linha, porque é um defeito que encontrei a escrever esta tabela.}
-O registo do funil guarda apenas os últimos dias, e isso quase passou despercebido. O limite estava
-escrito em \textbf{número de linhas} ($5000$) e foi dimensionado quando o sistema corria de meia em
-meia hora, o que dava cerca de oito dias de história. Com o ciclo de 60 segundos passaram a existir
-trinta vezes mais registos, e o mesmo limite guarda \textbf{menos de um dia}: quando fui ler o
-ficheiro publicado, as $5000$ linhas eram todas do próprio dia.
+\paragraph{E quantas empresas, afinal.} Ao longo do documento aparecem cinco contagens
+diferentes, e nenhuma delas é um erro: são conjuntos com propósitos distintos, que a
+Tabela~\ref{tab:met_universos} reúne de uma vez para que quem salte entre capítulos não tenha de
+os reconstruir. Duas coisas nela merecem atenção, porque não são o que se esperaria. A primeira é
+que \textbf{não são conjuntos encaixados}: a lista que o produto vigia não é um subconjunto do
+treino, e duas das suas empresas nunca apareceram em nenhum exemplo. A segunda é que o bloco onde
+todas as métricas do Capítulo~\ref{cap:avaliacao} são medidas tem \emph{nove} empresas, e não as
+catorze do conjunto: a divisão é cronológica e a composição do corpus muda com o tempo, pela mesma
+razão que a Secção~\ref{sec:met_split} explica para as contagens de linhas.
 
-Uma retenção contada em linhas muda de significado sempre que a cadência muda; contada em dias, não
-muda. Passou a ser contada em dias. Fica em três, e não numa semana, porque o ficheiro é
-republicado a cada ciclo e o custo é de publicação, não de armazenamento. A restrição que fixa o
-número está escrita em vez de parecer arbitrária.
+\begin{table}[!htbp]
+\caption[Os cinco conjuntos de empresas]{Os conjuntos de empresas usados, e para que serve cada
+um. As contagens diferem por desenho e não por descuido. \textbf{Não são encaixados}: a lista de
+produção contém duas empresas que não existem em nenhum dos conjuntos históricos.}
+\label{tab:met_universos}
+\centering
+\small
+\begin{tabular}{L{0.28\textwidth} C{0.08\textwidth} L{0.50\textwidth}}
+\toprule
+\tabhead{Conjunto} & \tabhead{Quantas} & \tabhead{Para que serve, e onde aparece} \\
+\midrule
+Mapa de setores estendido & $17$ & O universo que a decomposição percorre
+  (Secção~\ref{sec:met_decomposicao} e Secção~\ref{sec:av_decomposicao}). \\
+Mapa canónico do histórico & $15$ & Rotula a relevância na recuperação
+  (Secção~\ref{sec:av_qi2}). \\
+Preços para a deteção & $15$ & Variedade de volatilidade, que é sobre o que o argumento da
+  consistência incide (Secção~\ref{sec:av_qi1}). \\
+Conjunto de dados da triagem & $14$ & O que o alinhamento entre notícias e preços produziu. \\
+\quad de que o bloco de treino cobre & $13$ & São estas as treze constantes da tabela de consulta
+  da Secção~\ref{sec:av_ablacao}. \\
+\quad e o bloco de teste cobre & $9$ & Onde \emph{todas} as métricas da triagem são medidas. \\
+\midrule
+Lista vigiada em produção & $12$ & Escolha de produto. Duas delas não existem em nenhum conjunto
+  histórico (Secção~\ref{sec:av_qi3}). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+O registo do funil retém apenas três dias por desenho, porque é republicado a cada ciclo e o custo
+é de publicação e não de armazenamento. A consequência para a leitura da tabela está no
+Apêndice~\ref{ap:reprodutibilidade}: é a única medição deste documento que não se regenera.
 
 \section{Técnica 1: detetar o que é invulgar}
 \label{sec:met_zscore}
-
-\emph{Como é que um computador decide que 4\% é muito?}
 
 \subsection{O problema, em palavras}
 
@@ -642,8 +644,6 @@ fecha. O Capítulo~\ref{cap:conclusoes} regressa a ela.
 \section{Técnica 3: encontrar casos parecidos}
 \label{sec:met_recuperacao}
 
-\emph{Como é que o computador percebe que duas notícias falam da mesma coisa?}
-
 \subsection{O problema, em palavras}
 
 Chega uma notícia: \emph{``Nvidia bate estimativas com procura de centros de dados''}.
@@ -763,8 +763,7 @@ Figura~\ref{fig:met_cosseno} mostra as duas situações.
 coordenadas, aqui desenhada em duas para se poder ver. O que se compara é o \textbf{ângulo} entre
 elas, e não o sítio onde as pontas caem: um título curto e um parágrafo longo sobre o mesmo
 assunto apontam na mesma direção, e o comprimento da seta, que é o que a distância mediria, diz
-respeito ao tamanho do texto e não ao seu tema. Os dois valores são os do par real da
-Tabela~\ref{tab:met_cosseno}.}
+respeito ao tamanho do texto e não ao seu tema. Os dois valores são os de um par real da base de casos.}
 \label{fig:met_cosseno}
 \end{figure}
 
@@ -790,38 +789,14 @@ sem mais nada, o que é a razão de o sistema conseguir percorrer $80$ mil casos
 
 \subsection{O cosseno em dois casos reais}
 
-A Tabela~\ref{tab:met_cosseno} segue a conta para dois pares de títulos retirados da base de
-casos. São reais, e os valores são os que o sistema calcula.
+Dois pares reais, retirados da base de casos, situam a escala. No primeiro, dois títulos sobre a
+descida de empresas de tecnologia e semicondutores dão $\cos = +0.956$. No segundo, um título sobre
+a Peloton e outro sobre o impacto da pandemia na indústria automóvel dão $\cos = -0.086$. Nos
+quatro vetores o comprimento vale exatamente $1$, o que confirma a normalização e faz o cosseno
+coincidir com a soma dos produtos.
 
-\begin{table}[ht]
-\caption[O cosseno entre dois títulos reais]{Dois pares do lado oposto da escala. Repare-se na
-linha do comprimento: vale exatamente $1$ nos quatro vetores, o que confirma a normalização e faz o
-cosseno coincidir com a soma dos produtos.}
-\label{tab:met_cosseno}
-\centering
-\small
-\begin{tabular}{L{0.26\textwidth} L{0.30\textwidth} L{0.30\textwidth}}
-\toprule
- & \tabhead{Par A: mesmo assunto} & \tabhead{Par B: assuntos diferentes} \\
-\midrule
-Primeiro título & ``Shares of several companies in the technology, software and semiconductor
-space are trading lower\ldots'' & ``Peloton Shares Tick To Session Low As Hearing Report Apple
-Working On `Guided Workout'\ldots'' \\
-\addlinespace
-Segundo título & ``Shares of several technology, software and semiconductor companies are
-trading lower\ldots'' & ``Coronavirus – Another Severe Hit To The Automotive Industry'' \\
-\midrule
-Comprimento do 1.\textsuperscript{o} vetor & $1.000000$ & $1.000000$ \\
-Comprimento do 2.\textsuperscript{o} vetor & $1.000000$ & $1.000000$ \\
-Soma dos $384$ produtos & $+0.955626$ & $-0.085901$ \\
-\midrule
-\textbf{Cosseno} & $\mathbf{+0.956}$ & $\mathbf{-0.086}$ \\
-Leitura & praticamente a mesma notícia & sem relação nenhuma \\
-\bottomrule
-\end{tabular}
-\end{table}
 
-Para tornar a soma concreta, eis as quatro primeiras das $384$ parcelas do par A:
+Para tornar a soma concreta, eis as quatro primeiras das $384$ parcelas do primeiro par:
 
 \begin{equation*}
 \begin{aligned}
@@ -833,11 +808,11 @@ Para tornar a soma concreta, eis as quatro primeiras das $384$ parcelas do par A
 \end{equation*}
 
 Note-se a segunda parcela: dois números \emph{negativos} contribuem \emph{positivamente}, porque o
-que conta é os dois vetores concordarem naquela dimensão, e não o sinal em si. E note-se, no par B,
+que conta é os dois vetores concordarem naquela dimensão, e não o sinal em si. E note-se, no segundo par,
 que a soma final é ligeiramente negativa: os títulos não são opostos em sentido nenhum, apenas não
 têm nada em comum, e o valor anda à volta de zero.
 
-O chão de semelhança usado em produção é $0.45$. O par A passaria com folga; o par B nem se aproxima.
+O chão de semelhança usado em produção é $0.45$: o primeiro par passaria com folga, o segundo nem se aproxima.
 
 \subsection{Medir o que se seguiu}
 
@@ -908,8 +883,6 @@ preço fez $1$, $3$ e $5$ dias depois: uma medição, não uma previsão.
 \section{Técnica 4: decidir o que merece um alerta}
 \label{sec:met_triagem}
 
-\emph{Já sei que algo é invulgar. Devo mesmo interromper alguém?}
-
 \subsection{O problema, em palavras}
 
 Chegam muitas notícias. A maioria não interessa: repetições, listas automáticas, textos que
@@ -918,6 +891,12 @@ mencionam a empresa de passagem.
 Um sistema que avisa de tudo é tão inútil como um que não avisa de nada. Pior, até, porque ensina
 a pessoa a ignorar o canal. Este problema tem nome, \textbf{fadiga de alertas}, e é a razão pela
 qual esta terceira decisão existe.
+
+Não é uma intuição minha, e convém dar-lhe a fonte em vez de a afirmar. O efeito está documentado
+em sistemas de apoio à decisão clínica, onde \textcite{ancker2017alertfatigue} medem que a probabilidade de um profissional aceitar um alerta \emph{desce} à medida que ele
+recebe mais alertas, e que o efeito é maior quando o mesmo alerta se repete. O domínio é outro e o
+que se transfere é o \emph{mecanismo}, e não os valores: quem é interrompido muitas vezes deixa de
+distinguir as interrupções, e a partir daí um aviso correto vale tanto como um errado.
 
 Aqui, ao contrário das duas anteriores, não há uma fórmula óbvia. É o sítio natural para
 \textbf{aprender a partir dos dados}.
@@ -1038,6 +1017,7 @@ Capítulo~\ref{cap:avaliacao} volta ao limite da variante sem texto, que não fo
 se escolheu o que implantar.
 
 \subsection{Treinar sem deixar o futuro entrar no treino}
+\label{sec:met_split}
 
 Esta é a parte onde é mais fácil enganar-se a si próprio, e daí o desenho da
 Figura~\ref{fig:divisao}.
@@ -1081,7 +1061,7 @@ Duas regras, e as duas existem para impedir que o modelo pareça melhor do que �
         $17\,710$ para validação e $32\,649$ para teste.
 \end{description}
 
-\paragraph{E há aqui um número que surpreende, por isso convém explicá-lo antes que espante.}
+\paragraph{Porque é que o bloco de teste é maior do que o de treino.}
 O bloco de teste tem \emph{mais} exemplos do que o de treino, $32\,649$ contra $28\,574$. Não é
 um erro de divisão: o corte é de $70$, $15$ e $15$ por cento \textbf{em dias de negociação}, e
 por dias a proporção é exatamente essa, com $1\,050$ dias de treino contra $221$ de teste. O que
@@ -1096,6 +1076,7 @@ torna a estimativa mais precisa. O que ele custa é do outro lado, e fica regist
 limitação: o modelo é treinado sobre a metade menos densa do período.
 
 \subsection{Da pontuação à probabilidade: calibração}
+\label{sec:met_calibracao}
 
 O modelo devolve uma pontuação. Uma pontuação alta não é, por si só, uma probabilidade: dizer $0.8$
 não garante que aconteça em 8 de cada 10 casos.
@@ -1246,8 +1227,6 @@ número mostrado ao utilizador querer dizer o que parece querer dizer.
 \section{Como é que se sabe que isto funciona}
 \label{sec:met_avaliacao}
 
-\emph{O que impede um resultado bonito de ser um resultado enganador?}
-
 Três compromissos, assumidos \emph{antes} de correr as experiências.
 
 \paragraph{Primeiro: comparar sempre com o mais simples.}
@@ -1267,7 +1246,7 @@ Esta é a garantia mais importante do protocolo offline e a mais fácil de prome
 isso o Excerto~\ref{lst:lookahead} mostra-a tal como está escrita. O referencial é o fecho de $d$:
 o teste impede informação de $d+1$ em diante, mas não torna o retorno completo de $d$ disponível no
 minuto em que uma notícia é captada. Essa fronteira intradiária é a ressalva já declarada na
-Tabela~\ref{tab:met_colunas}.
+Secção~\ref{sec:met_dados}.
 
 \begin{lstlisting}[label=lst:lookahead, caption={Os \textbf{dois} testes que impedem o futuro de entrar
 nas entradas. O primeiro exige que duas séries com futuros diferentes dêem entradas iguais; o
@@ -1306,8 +1285,6 @@ e é o mais interessante dos três.
 \section{Desafios tecnológicos e sociais}
 \label{sec:met_desafios}
 
-\emph{Que riscos é que um sistema destes cria, e o que é que este faz em relação a eles?}
-
 Um sistema que recolhe informação sobre empresas, guarda decisões, e interrompe pessoas no
 telemóvel levanta questões que não são técnicas. Convém tratá-las com o mesmo cuidado que se dá
 às medições, e no mesmo sítio: aqui, e não numa nota no fim.
@@ -1345,92 +1322,58 @@ descrição do que o sistema faz e não uma qualificação jurídica dessa base,
 \subsection{Segurança}
 \label{sec:met_seguranca}
 
-Um sistema que corre sozinho e fala com serviços externos tem credenciais, e credenciais fogem.
+Um sistema autónomo que consome serviços externos detém credenciais. As chaves vivem em variáveis
+de ambiente e no cofre de segredos da plataforma, nunca no repositório, e todo o texto enviado para
+os registos passa por uma função que mascara parâmetros com nome de credencial. Esta segunda
+salvaguarda foi acrescentada depois de se observar que as mensagens de erro de bibliotecas de HTTP
+reproduzem o endereço do pedido, e que algumas destas \glspl{API} transportam a chave nesse
+endereço.
 
-As chaves nunca estão no repositório: vivem em variáveis de ambiente e no cofre de segredos da
-plataforma. Isso é o mínimo e não chega, e a razão pela qual sei que não chega é que \textbf{falhou}.
-As mensagens de erro de uma biblioteca de HTTP incluem o endereço do pedido, e o endereço de
-algumas destas \glspl{API} leva a chave lá dentro. Bastou um dia em que uma fonte respondeu com
-erro a todos os pedidos para a chave ficar escrita centenas de vezes no registo do serviço. O
-código nunca imprimiu a chave: imprimiu a exceção.
-
-A correção tem duas partes, e só a primeira é técnica. A primeira é uma função que mascara
-qualquer parâmetro com nome de credencial em todo o texto que vai para o registo, e um teste que
-usa a cadeia real que apareceu. A segunda é que \textbf{uma máscara não desfaz uma fuga}: a chave
-exposta tem de ser substituída, e isso é uma operação humana que fica na lista de tarefas por
-fazer.
-
-Há ainda uma decisão de segurança do lado dos modelos. O codificador de frases é descarregado sob
-pedido e verificado contra uma soma de controlo fixada no código. Sem essa verificação, um
-descarregamento corrompido ou substituído mudaria em silêncio aquilo que o sistema entende por
-``semelhante''; com ela, falha fechado.
+Do lado dos modelos, o codificador de frases é descarregado sob pedido e verificado contra uma soma
+de controlo fixada no código. Sem essa verificação, um descarregamento corrompido ou substituído
+alteraria em silêncio o que o sistema entende por ``semelhante''.
 
 \subsection{Questões éticas e sociais}
 \label{sec:met_etica}
 
-Quatro, por ordem de importância. As três primeiras são decisões de desenho; a última é uma
-restrição que se descobriu tarde e que não se escolheu.
+\paragraph{Não aconselhar, e não prever.} A restrição fundadora do trabalho é também a sua
+principal salvaguarda ética. Um sistema que anunciasse o que vai acontecer ao preço emitiria uma
+previsão que ninguém pode conferir no momento em que a lê; um que indicasse o que comprar entraria
+numa atividade regulada. Importa o estatuto desta fronteira: é de \textbf{desenho}, traçada por
+prudência e não a partir de uma análise do direito aplicável. Não houve parecer jurídico, a
+bibliografia não tem fontes legais, e operar isto como serviço exigiria obtê-lo antes.
 
-\paragraph{Não aconselhar, e não prever.} A restrição fundadora deste trabalho é também a sua
-principal salvaguarda ética. Um sistema que dissesse a alguém o que vai acontecer ao preço estaria
-a emitir uma previsão que ninguém pode conferir no momento em que é lida; um que dissesse o que
-comprar estaria dentro de uma atividade regulada, no sentido corrente de recomendar um
-instrumento financeiro a uma pessoa concreta. Convém dizer com que estatuto esta frase aparece:
-é uma fronteira de \textbf{desenho}, traçada por prudência e não a partir de uma análise do direito
-aplicável. Não houve parecer jurídico, a bibliografia deste trabalho não tem fontes legais, e
-quem quisesse operar isto como serviço teria de o obter antes. Este descreve o que já aconteceu e mostra a
-evidência ao lado, e a Secção~\ref{sec:ctx_escolhas} explica porque é que essa fronteira é de
-desenho e não de modéstia.
+A garantia aplica-se ao que o sistema \textbf{escreve} e não ao que ele \textbf{cita}. O alerta
+reproduzido na Figura~\ref{fig:sis_alerta} cita um título de terceiros que é, ele próprio, uma
+previsão com alvo e data. Reproduzi-lo \emph{verbatim} é o que torna o resto verificável, porque
+sem ele o leitor não pode confirmar na fonte; tudo o que é do sistema nesse mesmo alerta respeita a
+restrição. Daqui decorre uma limitação sem solução dentro das restrições assumidas: \textbf{o filtro
+de relevância decide se o título é sobre a empresa, não se é factual}, e um título especulativo
+passa como qualquer outro. Distinguir notícia de opinião exigiria um classificador que este
+trabalho não tem.
 
-Há aqui uma distinção que é preciso fazer em voz alta, porque a Figura~\ref{fig:sis_alerta} a
-torna impossível de ignorar: o alerta que serve de exemplo, e que é um alerta real copiado do
-registo, cita um título que diz \emph{``Prediction: Amazon Will Join Apple in the \$4 Trillion Club
-Before 2030''}. Isso é uma previsão, com um alvo e com uma data, entregue no telemóvel de uma
-pessoa por este sistema.
+\paragraph{Fadiga de alertas.} Um sistema que avisa de tudo ensina quem o recebe a ignorá-lo, e
+isso é tratado como requisito: existe um orçamento de cinco alertas por dia entre todas as
+empresas, um piso que sobe a cada alerta repetido da mesma empresa, e supressão de histórias
+repetidas. Ao contrário dos pisos, que saem de um varrimento de custos, \textbf{o cinco não foi
+derivado de medição nenhuma}: é uma escolha, e a Secção~\ref{sec:av_qi3} avalia a política
+\emph{dado} esse orçamento em vez de o justificar. Nove em cada dez varreduras não enviam nada, e é
+por isso que a página torna o silêncio inspecionável.
 
-A garantia que este trabalho dá aplica-se ao que o sistema \textbf{escreve}, e não ao que ele
-\textbf{cita}. O título é conteúdo de terceiros, reproduzido \emph{verbatim} porque é o facto que
-desencadeou o alerta, e reproduzi-lo é o que torna o resto verificável: sem ele o leitor não pode
-ir à fonte confirmar do que se trata. Tudo o que é do sistema, nesse mesmo alerta, respeita a
-restrição, e vê-se nas três partes seguintes, que falam de casos passados observados, de
-\emph{``not a prediction for this news''} e de probabilidade \textbf{em qualquer direção}.
-
-Fica no entanto uma limitação que decorre disto e que não tem solução dentro das restrições
-assumidas: \textbf{o filtro de relevância decide se o título é sobre a empresa, e não se ele é
-factual}. Um título especulativo passa como qualquer outro. Distinguir notícia de opinião exigiria
-um classificador que este trabalho não tem, e é uma das linhas que o
-Capítulo~\ref{cap:conclusoes} deixa em aberto.
-
-\paragraph{Fadiga de alertas, e o direito a não ser interrompido.} Um sistema que avisa de tudo
-não é atento, é ruidoso, e ensina quem o recebe a ignorá-lo. Isto trata-se como um requisito e não
-como um detalhe: existe um orçamento de cinco alertas por dia entre todas as empresas, um piso que
-sobe a cada alerta repetido da mesma empresa, e supressão de histórias repetidas. Ao contrário dos
-pisos, que saem de um varrimento de custos, \textbf{o cinco não foi derivado de medição nenhuma}:
-é uma escolha, feita para que uma pessoa consiga ler tudo o que recebe, e a
-Secção~\ref{sec:av_qi3} avalia a política \emph{dado} esse orçamento em vez de o justificar. O
-Capítulo~\ref{cap:sistema} mostra o funil completo, e nove em cada dez varreduras não enviam nada.
-O silêncio é uma decisão do sistema, e é por isso que a página web o torna inspecionável.
-
-Isso resolve o problema para quem abre a página, e \textbf{não para quem só recebe as mensagens}.
-No canal, um sistema calmo e um sistema avariado são indistinguíveis: cinco dias sem nada podem
-ser um mercado sossegado ou um processo que morreu, e quem espera não tem como saber qual. O
-sistema emite uma nota de abertura e um resumo de fecho em cada dia útil, precisamente para que
-a ausência deles seja um sinal, mas isso é uma prova de vida indireta e não uma garantia. Fica
-como limitação assumida do canal enquanto interface.
+Isso resolve o problema para quem abre a página e não para quem só recebe mensagens: no canal, um
+sistema calmo e um sistema avariado são indistinguíveis. A nota de abertura e o resumo de fecho
+diários existem para que a sua ausência seja um sinal, mas são uma prova de vida indireta.
 
 \paragraph{Confiança a mais, e confiança a menos.} Uma explicação não torna automaticamente uma
-decisão melhor. A literatura mostra que a confiança falha nos dois sentidos, com o utilizador a
-ignorar um aviso correto ou a aceitar um errado \autocite{lee2004trust}, e que a simples presença
-de uma explicação aumenta a aceitação de respostas erradas \autocite{bansal2021whole}. É por isso
-que este sistema mostra os casos passados um a um, com as datas e o desfecho de cada um, em vez de
-os resumir a uma média que se lê como uma previsão. \textbf{Que isso consiga produzir confiança
-apropriada é uma hipótese, e não um resultado}: sem o estudo com pessoas descrito na
-Secção~\ref{sec:con_limitacoes}, não é possível distinguir um alerta ignorado de um alerta
-indevidamente acreditado, porque ambos deixam o mesmo registo, que é nenhum.
+decisão melhor. A confiança falha nos dois sentidos, com o utilizador a ignorar um aviso correto ou
+a aceitar um errado \autocite{lee2004trust}, e a simples presença de uma explicação aumenta a
+aceitação de respostas erradas \autocite{bansal2021whole}. É por isso que o sistema mostra os casos
+passados um a um, com data e desfecho, em vez de os resumir a uma média que se leria como previsão.
+\textbf{Que isso produza confiança apropriada é uma hipótese e não um resultado}: sem o estudo com
+utilizadores da Secção~\ref{sec:con_limitacoes}, um alerta ignorado e um alerta indevidamente
+acreditado deixam o mesmo registo, que é nenhum.
 
-\paragraph{E uma restrição legal que se descobriu a meio.} Três dos ficheiros que o repositório
-distribui derivam de um conjunto de dados publicado sob uma licença que exige partilha nos mesmos
-termos, e o modelo de documento usado nesta dissertação tem uma licença que exige o mesmo e ainda
-proíbe uso comercial. Isso condiciona a licença do próprio código, que deixa de ser uma escolha
-livre. Fica registado porque é o tipo de restrição que se descobre tarde e obriga a decidir com
-pressa.
+\paragraph{Uma restrição de licenciamento.} Três dos ficheiros derivados que o trabalho produz
+assentam num conjunto de dados publicado sob licença de partilha nos mesmos termos, e o modelo de
+documento desta dissertação exige o mesmo e proíbe uso comercial. A licença do código deixa, por
+isso, de ser uma escolha livre.

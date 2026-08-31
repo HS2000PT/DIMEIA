@@ -1,0 +1,265 @@
+\chapter{Reprodutibilidade}
+\label{ap:reprodutibilidade}
+
+Este apêndice documenta a proveniência dos resultados apresentados no corpo da dissertação. Enumera
+os artefactos conservados, estabelece a correspondência entre cada resultado reportado e o
+procedimento que o produz, apresenta o estado em que ficou cada afirmação substantiva depois de
+medida, e regista as condições de licenciamento dos dados utilizados. Encerra com o desenho do
+estudo com utilizadores que a Secção~\ref{sec:con_limitacoes} identifica como a lacuna de maior
+peso do trabalho.
+
+\section{Artefactos conservados}
+\label{sec:ap_artefactos}
+
+Esta secção enumera o que é conservado no repositório de código e o que não é, com a razão de cada
+caso.
+
+O ambiente de execução está descrito na Secção~\ref{sec:met_ferramentas}, com as versões exatas das
+bibliotecas que produziram os valores deste documento. As versões estão fixadas, e não expressas em
+intervalos, porque uma biblioteca que se atualize sozinha altera resultados sem emitir aviso.
+Nenhum dos procedimentos exige unidade de processamento gráfico.
+
+São conservadas três classes de artefacto. A primeira é o componente aprendido, que compreende o
+modelo treinado, o calibrador ajustado sobre o bloco de validação e um ficheiro descritivo da
+execução que os produziu, com a dimensão de cada bloco, a prevalência de casos positivos, a semente
+utilizada e as métricas obtidas. A segunda é o conjunto de ficheiros de resultados, um por
+procedimento de avaliação, que o texto cita. A terceira é a base de precedentes que a aplicação
+implantada consulta, com cinquenta e seis megabytes de vetores e oito de metadados. Esta última não
+constitui uma amostra: é o artefacto de que o sistema necessita para arrancar, e sem ele não
+existiriam precedentes para apresentar.
+
+Os corpora de origem não são conservados no repositório. O conjunto histórico ocupa várias centenas
+de megabytes e é reconstruído pelos procedimentos de preparação descritos na
+Secção~\ref{sec:met_dados}. Acompanham o código amostras reduzidas, cuja finalidade é permitir que a
+verificação automática decorra sem acesso à rede, incluindo o teste que impõe a separação temporal
+descrita na Secção~\ref{sec:met_triagem}.
+
+\section{Origem de cada resultado}
+\label{sec:ap_numeros}
+
+Esta secção estabelece a correspondência entre cada resultado reportado no corpo do documento e o
+procedimento que o gera.
+
+Nenhum resultado desta dissertação foi introduzido manualmente no texto. Cada um é produzido por um
+procedimento automático de semente fixa, que escreve o seu próprio ficheiro de resultados, e é esse
+ficheiro que o texto cita. Uma segunda execução sobre os mesmos dados devolve os mesmos valores. A
+Tabela~\ref{tab:ap_numeros} reúne os resultados reportados e identifica a secção em que cada um
+aparece; o repositório de código nomeia, para cada resultado, o ficheiro que o contém e o
+procedimento que o produz.
+
+A garantia de determinismo aplica-se ao bloco superior da tabela. As linhas do bloco inferior são de
+outra natureza, e por isso estão separadas: constituem medições sobre a operação do sistema, cujo
+valor depende do momento em que o registo foi lido e não de uma semente. A secção em que cada uma é
+apresentada declara o período e o conjunto sobre que foi realizada.
+
+Uma dessas medições não é regenerável, e a distinção fica registada em vez de omitida. A repartição
+do funil por porta, apresentada na Secção~\ref{sec:sis_politica}, foi lida do registo de decisões
+num dia concreto, e esse registo conserva apenas três dias, pela razão indicada na
+Secção~\ref{sec:met_dados}: é republicado a cada ciclo, pelo que o custo é de publicação e não de
+armazenamento. A execução do mesmo procedimento numa data posterior produz outro dia, e não o mesmo.
+O valor consta de um ficheiro de resultados, com a data da leitura e o procedimento que a produziu,
+de modo que qualquer leitura futura tenha origem declarada ainda que aquele dia não se repita.
+
+\begin{table}[!htbp]
+\caption[Cada resultado e o procedimento que o produz]{Os resultados reportados no corpo do
+documento e a secção em que aparecem. O bloco superior é determinístico e reproduz-se exatamente
+sobre os mesmos dados; o bloco inferior reúne medições sobre a operação, cujo valor depende da data
+de leitura do registo.}
+\label{tab:ap_numeros}
+\centering
+\small
+\begin{tabular}{p{0.46\textwidth} L{0.21\textwidth} L{0.19\textwidth}}
+\toprule
+\tabhead{Resultado} & \tabhead{Valor} & \tabhead{Onde aparece} \\
+\midrule
+Amplitude da taxa de disparo, desvio relativo contra limiar fixo & $0{,}015$ contra $0{,}344$ &
+§\ref{sec:av_qi1} \\
+$F_1$ contra o critério aproximado & $0{,}516$ contra $0{,}218$ & §\ref{sec:av_qi1} \\
+Comparação com dois detetores aprendidos & $0{,}530$ / $0{,}269$ / $0{,}280$ & §\ref{sec:av_qi1} \\
+Ablação à janela e ao peso do desvio & $0{,}678$ e $0{,}664$ contra $0{,}516$ & §\ref{sec:av_qi1} \\
+\addlinespace
+Precisão@5 da recuperação, quatro métodos & $0{,}514$ / $0{,}346$ / $0{,}240$ / $0{,}126$ &
+§\ref{sec:av_qi2} \\
+Valor de referência do setor mais representado & $0{,}467$ & §\ref{sec:av_qi2} \\
+Precisão@5 no protocolo simétrico à escala & $0{,}595$ com acaso $0{,}333$ & §\ref{sec:av_qi2} \\
+Precisão@5 apenas com precedentes anteriores & $0{,}513$ com acaso $0{,}259$ & §\ref{sec:av_qi2} \\
+Concordância de direção contra o valor de acaso & $0{,}708$ contra $0{,}688$ & §\ref{sec:av_qi2} \\
+\addlinespace
+Triagem, \gls{PRAUC} das seis famílias & de $0{,}378$ a $0{,}542$ & §\ref{sec:av_qi3} \\
+Precisão dentro do orçamento, quatro políticas & $0{,}163$ / $0{,}379$ / $0{,}662$ / $0{,}632$ &
+§\ref{sec:av_qi3} \\
+Grelha de nove definições de critério & $9$ de $9$ & §\ref{sec:av_qi3} \\
+Ablação da identidade, tabela de consulta contra modelo & $0{,}534$ contra $0{,}538$ &
+§\ref{sec:av_ablacao} \\
+Acréscimo do texto sobre a tabela de consulta & $0{,}547$ contra $0{,}534$ & §\ref{sec:av_ablacao} \\
+\addlinespace
+Qualidade do ajuste da decomposição, mediana e casos negativos & $0{,}460$, $1$ em $17$ &
+§\ref{sec:av_decomposicao} \\
+Seletividade da porta, dentro e entre empresas & $0{,}072$ contra $0{,}392$ &
+§\ref{sec:av_producao} \\
+Deriva de distribuição, \gls{PSI} da volatilidade & $0{,}281$ & §\ref{sec:av_producao} \\
+Sistema completo contra as alternativas & $0{,}489$ / $0{,}632$ / $0{,}662$ / $0{,}968$ &
+§\ref{sec:av_producao} \\
+\midrule
+\multicolumn{3}{l}{\emph{Medições sobre a operação: o valor depende da data de leitura do registo}}
+\\
+Decisões maturadas, mantidas contra suprimidas & $58{,}9\%$ contra $61{,}7\%$ &
+§\ref{sec:av_producao} \\
+Capacidade de ordenação sobre as decisões tomadas & $0{,}486$ & §\ref{sec:av_producao} \\
+Cobertura de notícias em dias invulgares & $88{,}5\%$ & §\ref{sec:av_producao} \\
+Latência, descoberta e entrega & $353$ min e $5$ s & §\ref{sec:sis_operacao} \\
+Funil de produção, relevantes até entregues & $944 \rightarrow 42$ & §\ref{sec:sis_politica} \\
+Funil de um dia, repartido por porta & $5\,060$ avaliações & §\ref{sec:sis_politica} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Os restantes valores numéricos do documento pertencem a três categorias. Os valores extraídos da
+literatura estão citados no local em que aparecem. As constantes de configuração constam da
+Tabela~\ref{tab:sis_portas}, com a distinção entre as que foram derivadas de uma medição e as que
+foram escolhidas. A terceira categoria reúne medições que servem uma passagem e não um resultado,
+como as linhas descartadas pelo embargo, o desvio-padrão do caso trabalhado da
+Secção~\ref{sec:met_detecao} ou as contagens por fonte de notícias; cada uma declara, no local em
+que aparece, o conjunto sobre que foi realizada.
+
+\section{Matriz de evidência}
+\label{sec:ap_matriz}
+
+Esta secção submete cada afirmação substantiva do trabalho à evidência que a sustenta e regista o
+estado em que ficou.
+
+A tabela da secção anterior enumera resultados. A Tabela~\ref{tab:ap_matriz} enumera afirmações,
+exame mais exigente, uma vez que uma afirmação pode não sobreviver à evidência que a suportava. As
+afirmações retiradas permanecem na tabela, dado que uma matriz que enumere apenas as sobreviventes
+não constitui uma auditoria.
+
+\begin{table}[!htbp]
+\caption[Matriz de evidência]{Cada afirmação substantiva, a evidência que a sustenta e o estado em
+que ficou. O estado \emph{retirada} indica que o trabalho a abandonou depois de a medir; o estado
+\emph{estreitada} indica que subsiste numa formulação mais restrita do que a inicial.}
+\label{tab:ap_matriz}
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{1.08}
+\begin{tabular}{p{0.34\textwidth} p{0.36\textwidth} L{0.18\textwidth}}
+\toprule
+\tabhead{Afirmação} & \tabhead{Evidência} & \tabhead{Estado} \\
+\midrule
+\multicolumn{3}{l}{\textbf{Deteção de movimentos invulgares}} \\
+Dispara a ritmo comparável entre empresas de volatilidade muito distinta &
+  Amplitude de $0{,}015$ contra $0{,}344$, sem recurso a rótulos & Mantida \\
+Supera um limiar fixo no critério aproximado & $F_1$ de $0{,}516$ contra $0{,}218$ &
+  Mantida, com o critério declarado como aproximação \\
+Supera dois detetores aprendidos com a mesma informação &
+  $F_1$ de $0{,}530$ contra $0{,}269$ e $0{,}280$ & Mantida \\
+Não utiliza informação posterior ao dia avaliado &
+  A janela exclui esse dia, e um teste automático impõe a exclusão & Mantida \\
+A janela de vinte dias e o desvio de pesos iguais são as melhores opções &
+  Variantes alternativas obtêm $0{,}678$ e $0{,}664$ contra $0{,}516$ &
+  \textbf{Retirada}: mantidas por explicabilidade, não por desempenho \\
+\midrule
+\multicolumn{3}{l}{\textbf{Recuperação de precedentes}} \\
+Supera as alternativas lexical e triviais &
+  Precisão@5 de $0{,}514$ contra $0{,}346$, $0{,}240$ e $0{,}126$ & Mantida \\
+Supera por larga margem o melhor valor de referência trivial &
+  A escolha do setor mais representado obtém $0{,}467$, o que reduz a margem de $+0{,}274$ para
+  $+0{,}047$ & \textbf{Estreitada}: a afirmação passa a ser por setor, onde se mantém nos cinco \\
+Resiste ao aumento de escala do corpus &
+  Precisão@5 de $0{,}595$ com acaso de $0{,}333$ & Mantida como teste de escala \\
+Resiste à restrição temporal da produção &
+  Precisão@5 de $0{,}513$ com acaso de $0{,}259$: a margem varia $0{,}008$ &
+  \textbf{Estreitada}: o valor simétrico descreve tarefa menos exigente \\
+Capta tema e não direção & Concordância de $0{,}708$ contra acaso de $0{,}688$ &
+  Mantida, e reportada como limitação \\
+A pertença ao mesmo setor equivale a relação entre notícias & --- &
+  \textbf{Não afirmado}: é uma aproximação declarada \\
+\midrule
+\multicolumn{3}{l}{\textbf{Triagem de notícias}} \\
+Nenhuma variante com texto supera a volatilidade &
+  \gls{PRAUC} de $0{,}496$ contra $0{,}542$, com nove definições de critério e reamostragem por
+  grupos & Mantida \\
+O texto acrescenta informação sobre a tabela de consulta &
+  \gls{PRAUC} de $0{,}547$ contra $0{,}534$, com intervalo entre $+0{,}004$ e $+0{,}020$ &
+  \textbf{Nova}, positiva, e sem efeito na precisão dentro do orçamento \\
+As entradas não incorporam informação futura &
+  Alterar o futuro de um exemplo deixa as entradas iguais e altera o critério & Mantida \\
+A triagem quadruplica a precisão dentro do orçamento &
+  O valor de referência de $0{,}163$ resulta de ordenação alfabética; a escolha aleatória obtém
+  $0{,}379$ & \textbf{Retirada}: o ganho é de $1{,}67$ vezes \\
+O ganho dentro do orçamento provém da aprendizagem &
+  Treze constantes por empresa obtêm $0{,}662$ contra $0{,}632$ do modelo & \textbf{Retirada} \\
+O modelo implantado seleciona melhor do que o acaso &
+  $58{,}9\%$ de casos materiais entre as mantidas contra $61{,}7\%$ entre as suprimidas &
+  \textbf{Retirada} \\
+\midrule
+\multicolumn{3}{l}{\textbf{Sistema}} \\
+O texto do alerta não pode divergir do cálculo &
+  É composto a partir dos objetos calculados, sem geração de linguagem & Mantida \\
+A restrição de gratuitidade limita a cobertura &
+  Pelo menos uma notícia relevante em $88{,}5\%$ dos dias invulgares & Mantida como limite superior \\
+As explicações são úteis a uma pessoa & --- & \textbf{Não afirmado} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Duas observações incidem sobre a tabela no seu conjunto e não sobre qualquer linha isolada.
+
+A primeira é que as afirmações retiradas o foram por medições do próprio trabalho, e nenhuma por
+revisão externa. Constitui o comportamento pretendido de um plano de avaliação fixado antes das
+experiências, cuja utilidade reside precisamente na capacidade de produzir uma resposta negativa.
+
+A segunda é que as duas linhas assinaladas como não afirmadas têm o mesmo peso das restantes. Uma
+delas é a utilidade das explicações para o utilizador, que não foi medida por ausência de estudo com
+pessoas. Onde não existe evidência, não é formulada afirmação.
+
+\section{Dados, licenças e atribuição}
+\label{sec:ap_dados}
+
+Esta secção regista a origem dos dados utilizados e as obrigações que o seu licenciamento impõe.
+
+O conjunto histórico que sustenta a base de precedentes é o \gls{FNSPID}
+\autocite{dong2024fnspid}, utilizado ao abrigo da licença Creative Commons BY-SA 4.0, cuja
+atribuição é aqui cumprida. Do corpus constam no documento apenas excertos mínimos de títulos, a
+título ilustrativo.
+
+Essa licença comporta uma segunda obrigação, que é acionada neste caso. Uma vez que o repositório
+distribui ficheiros derivados do \gls{FNSPID}, a cláusula de partilha nos mesmos termos aplica-se a
+esses ficheiros. A licença do código constitui uma decisão que permanece em aberto neste documento,
+e é esta a restrição que a condiciona.
+
+Os preços provêm de serviços gratuitos de dados de mercado, através da cadeia de alternativas
+descrita na Secção~\ref{sec:sis_dados}; as notícias em tempo real provêm de três interfaces
+gratuitas, dentro dos respetivos limites de utilização, comparadas na Secção~\ref{sec:sis_fontes}.
+
+Quanto a dados pessoais, a formulação exata consta da Secção~\ref{sec:met_privacidade}: o sistema
+não conhece as posições dos utilizadores e não as solicita, e o canal público não identifica
+destinatários. A exceção é a subscrição opcional de alertas personalizados, em que ficam associados
+o identificador de conversa atribuído pela plataforma e a lista de empresas escolhida, e esses são
+os únicos elementos armazenados.
+
+\section{Desenho do estudo com utilizadores}
+\label{sec:ap_estudo}
+
+Esta secção apresenta o desenho do estudo referido na Secção~\ref{sec:con_futuro}.
+
+O estudo compara duas condições sobre seis alertas reais extraídos do canal. A condição A apresenta
+o facto sem explicação e a condição B apresenta o alerta completo. Dois dos seis casos são situações
+em que o tema da notícia e a direção do movimento discordam, configuração em que a
+Secção~\ref{sec:av_qi2} mostra o sistema ser mais suscetível de interpretação incorreta.
+
+O contrabalanço cruza dois fatores, que são a ordem das condições e a metade dos estímulos que serve
+de condição A. O segundo fator é necessário porque as duas condições recorrem a alertas distintos,
+sob pena de a segunda medir memória em vez de compreensão; sem o cruzamento, qualquer diferença
+entre condições ficaria confundida com a maior acessibilidade de uma das metades.
+
+A pergunta central é a que a verificação automática não alcança. A correspondência entre cada frase
+do alerta e o facto que a sustenta está garantida por construção, mas a afirmação do produto
+descreve um percurso realizado por um leitor: dada uma frase com remissão, aceder ao facto
+correspondente e julgar autonomamente se este a sustenta. A questão é qualitativa e não exige
+amostra de grande dimensão.
+
+Duas salvaguardas metodológicas estão fixadas no código antes de existirem dados: o limiar de oito
+participantes para o teste estatístico, cuja alteração ficaria registada no histórico de versões, e
+o procedimento de análise, que sobre a folha por preencher não produz resultado algum. Um terceiro
+bloco do desenho original, relativo a texto gerado, não é executável, uma vez que as vias que o
+serviam foram retiradas do sistema.

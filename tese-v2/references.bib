@@ -39,20 +39,6 @@
   doi       = {10.18653/v1/D19-1410}
 }
 
-@article{araci2019finbert,
-  %% FICA como pre-publicacao de proposito: e o artefacto EXACTAMENTE medido no
-  %% Capitulo 5 (o ponto de controlo ProsusAI/finbert). Trocar a citacao por um FinBERT
-  %% publicado atribuiria a medicao ao modelo errado. Para a afirmacao geral de que
-  %% existem modelos de dominio, o corpo cita liu2020finbert e huang2023finbert.
-  author       = {Araci, Dogu},
-  title        = {{FinBERT}: Financial Sentiment Analysis with Pre-trained Language Models},
-  journal      = {arXiv preprint},
-  year         = {2019},
-  eprint       = {1908.10063},
-  eprinttype   = {arXiv},
-  eprintclass  = {cs.CL}
-}
-
 @inproceedings{lundberg2017shap,
   author    = {Lundberg, Scott M. and Lee, Su-In},
   title     = {A Unified Approach to Interpreting Model Predictions},
@@ -177,15 +163,6 @@
   url       = {https://papers.nips.cc/paper_files/paper/2013/hash/9aa42b31882ec039965f3c4923ce901b-Abstract.html}
 }
 
-@article{yang2020finbert,
-  author     = {Yang, Yi and Uy, Mark Christopher Siy and Huang, Allen},
-  title      = {{FinBERT}: A Pretrained Language Model for Financial Communications},
-  journal    = {arXiv preprint},
-  year       = {2020},
-  eprint     = {2006.08097},
-  eprinttype = {arXiv}
-}
-
 %% --- Expansão do Estado da Arte (Cap. 2) — verificadas (Crossref/arXiv/DOI, 2026-06-22) ---
 
 @article{barber2008glitters,
@@ -276,20 +253,6 @@
   doi       = {10.1038/s42256-019-0048-x}
 }
 
-@article{doshivelez2017rigorous,
-  %% FICA como pre-publicacao: nunca teve versao publicada, e a contribuicao citada e a
-  %% taxonomia de avaliacao da interpretabilidade, que nenhum trabalho revisto por pares
-  %% substitui. As afirmacoes vizinhas apoiam-se em lipton2018mythos e rudin2019stop,
-  %% ambos publicados.
-  author     = {Doshi-Velez, Finale and Kim, Been},
-  title      = {Towards a Rigorous Science of Interpretable Machine Learning},
-  journal    = {arXiv preprint},
-  year       = {2017},
-  eprint     = {1702.08608},
-  eprinttype = {arXiv},
-  eprintclass = {stat.ML}
-}
-
 @inproceedings{vaswani2017attention,
   author    = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, {\L}ukasz and Polosukhin, Illia},
   title     = {Attention Is All You Need},
@@ -308,18 +271,6 @@
   year      = {2014},
   pages     = {1532--1543},
   doi       = {10.3115/v1/D14-1162}
-}
-
-@article{wu2023bloomberggpt,
-  %% FICA como pre-publicacao: nunca teve versao publicada, e e citada para NOMEAR um
-  %% sistema concreto. Nao ha equivalente revisto por pares que nomeie o mesmo artefacto.
-  author     = {Wu, Shijie and Irsoy, Ozan and Lu, Steven and Dabravolski, Vadim and Dredze, Mark and Gehrmann, Sebastian and Kambadur, Prabhanjan and Rosenberg, David and Mann, Gideon},
-  title      = {{BloombergGPT}: A Large Language Model for Finance},
-  journal    = {arXiv preprint},
-  year       = {2023},
-  eprint     = {2303.17564},
-  eprinttype = {arXiv},
-  eprintclass = {cs.LG}
 }
 
 %% --- 2.ª expansão do Estado da Arte (Cap. 2) — verificadas (DOI/arXiv, 2026-06-24) ---
@@ -787,4 +738,84 @@
   number    = {1},
   pages     = {36},
   doi       = {10.1186/s12911-017-0430-8}
+}
+
+@incollection{doshivelez2018considerations,
+  author    = {Doshi-Velez, Finale and Kim, Been},
+  title     = {Considerations for Evaluation and Generalization in Interpretable Machine
+               Learning},
+  booktitle = {Explainable and Interpretable Models in Computer Vision and Machine Learning},
+  editor    = {Escalante, Hugo Jair and Escalera, Sergio and Guyon, Isabelle and Bar\'o, Xavier
+               and G\"u\c{c}l\"ut\"urk, Ya\u{g}mur and G\"u\c{c}l\"u, Umut and van Gerven, Marcel},
+  series    = {The Springer Series on Challenges in Machine Learning},
+  publisher = {Springer},
+  address   = {Cham},
+  pages     = {3--17},
+  year      = {2018},
+  %% Verificada a 2026-08-31 (Springer Link): versao revista por pares do argumento antes
+  %% disponivel apenas em pre-publicacao. Substitui doshivelez2017rigorous.
+  isbn      = {978-3-319-98130-7},
+  doi       = {10.1007/978-3-319-98131-4_1}
+}
+
+@inproceedings{li2023llmfinance,
+  author    = {Li, Yinheng and Wang, Shaofei and Ding, Han and Chen, Hang},
+  title     = {Large Language Models in Finance: A Survey},
+  booktitle = {Proceedings of the Fourth ACM International Conference on AI in Finance
+               (ICAIF '23)},
+  publisher = {Association for Computing Machinery},
+  pages     = {374--382},
+  year      = {2023},
+  %% Verificada no Crossref a 2026-08-31: quatro autores, actas, paginas e DOI conferem.
+  %% Substitui wu2023bloomberggpt, que so existia em pre-publicacao.
+  doi       = {10.1145/3604237.3626869}
+}
+
+%% --- Evidencia recente para a contextualizacao (Cap. 1) — verificadas no Crossref, 2026-08-31 ---
+@article{cahill2025attention,
+  author  = {Cahill, Daniel and Liu, Zhangxin and Smales, Lee A.},
+  title   = {Investigating proxies for retail investor attention in financial markets},
+  journal = {Accounting \& Finance},
+  volume  = {65},
+  number  = {1},
+  pages   = {521--550},
+  year    = {2025},
+  %% Verificada no Crossref a 2026-08-31: tres autores, revista, volume, numero, paginas e ano.
+  doi     = {10.1111/acfi.13338}
+}
+
+@article{ernst2026retail,
+  author  = {Ernst, Thomas H. and Spatt, Chester S.},
+  title   = {Retail Investors and Trading Execution},
+  journal = {Annual Review of Financial Economics},
+  year    = {2026},
+  %% Verificada no Crossref a 2026-08-31: autores, titulo, revista e ano. Publicacao antecipada
+  %% em linha, ainda sem volume nem paginas atribuidos.
+  doi     = {10.1146/annurev-financial-111424-124712}
+}
+
+%% --- Geracao aumentada por recuperacao (Cap. 2) — verificadas a 2026-08-31 ---
+@inproceedings{lewis2020rag,
+  author    = {Lewis, Patrick and Perez, Ethan and Piktus, Aleksandra and Petroni, Fabio and
+               Karpukhin, Vladimir and Goyal, Naman and K\"uttler, Heinrich and Lewis, Mike and
+               Yih, Wen-tau and Rockt\"aschel, Tim and Riedel, Sebastian and Kiela, Douwe},
+  title     = {Retrieval-Augmented Generation for Knowledge-Intensive {NLP} Tasks},
+  booktitle = {Advances in Neural Information Processing Systems 33 (NeurIPS 2020)},
+  publisher = {Curran Associates},
+  pages     = {9459--9474},
+  year      = {2020},
+  %% Actas revistas por pares (NeurIPS), nao pre-publicacao. Verificada a 2026-08-31 nas actas
+  %% oficiais e no indice da ACM (10.5555/3495724.3496517).
+  url       = {https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html}
+}
+
+@article{huang2026ragsurvey,
+  author  = {Huang, Yizheng and Huang, Jimmy Xiangji},
+  title   = {A Survey on Retrieval-Augmented Text Generation for Large Language Models},
+  journal = {ACM Computing Surveys},
+  volume  = {58},
+  pages   = {1--38},
+  year    = {2026},
+  %% Verificada no Crossref a 2026-08-31: dois autores, revista, volume, paginas e ano.
+  doi     = {10.1145/3805774}
 }

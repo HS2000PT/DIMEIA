@@ -16,8 +16,6 @@ invenção deste trabalho e que a contribuição está na escolha, na integraç�
 \section{Quem investe, e porque é que a atenção é o problema}
 \label{sec:ctx_investidor}
 
-\emph{Quem é esta pessoa, e o que é que a literatura já sabe sobre a forma como ela decide?}
-
 A escala foi dada no Capítulo~\ref{cap:introducao}: a maior parte dos adultos americanos detém
 ações \autocite{gallup2025stock}, num mercado que vale mais de 62 biliões de dólares
 \autocite{sifma2025factbook}. Interessa agora a segunda metade da caracterização, que não é de
@@ -121,8 +119,6 @@ mas em que condições de transparência é que chegam.
 \section{O que existe hoje para quem investe pouco}
 \label{sec:ctx_ferramentas}
 
-\emph{Ninguém resolveu isto antes?}
-
 Resolveram, em parte, e de maneiras diferentes. O que existe merece ser olhado com um critério fixo,
 em vez de o descrever em geral. O critério deste trabalho são as três perguntas do
 Capítulo~\ref{cap:introducao}, e a Tabela~\ref{tab:ctx_matriz} usa-as para pontuar as alternativas.
@@ -190,8 +186,6 @@ evita por desenho, como se detalha na Secção~\ref{sec:ctx_escolhas}.
 \section{Os produtos que fazem exatamente esta pergunta}
 \label{sec:ctx_produtos}
 
-\emph{E os produtos recentes que prometem explicar porque é que uma ação subiu?}
-
 Existem, são recentes, e seria desonesto não os nomear.
 
 O \textbf{Robinhood Cortex}, anunciado em março de 2025, declara na página do próprio fornecedor que
@@ -244,8 +238,6 @@ Secção~\ref{sec:sis_explicacao}.
 
 \section{Detetar o que é invulgar}
 \label{sec:ctx_anomalias}
-
-\emph{Como é que se decide, de forma defensável, que um dia foi diferente dos outros?}
 
 A deteção de anomalias é uma área estabelecida, com uma taxonomia consolidada que separa os métodos
 pela forma como definem normalidade \autocite{chandola2009anomaly, pang2021deep}. Para o problema
@@ -302,8 +294,6 @@ Capítulo~\ref{cap:avaliacao} corre as duas sobre os mesmos dados e reporta o re
 
 \section{Representar texto por significado}
 \label{sec:ctx_texto}
-
-\emph{Como é que um computador decide que duas notícias falam do mesmo?}
 
 Comparar notícias por significado depende inteiramente de como se representa o texto, e essa
 representação passou por três gerações, esquematizadas na Figura~\ref{fig:ctx_geracoes} e detalhadas
@@ -426,8 +416,6 @@ cujo desfecho já é conhecido e já foi medido, e não para produzir uma previs
 \section{Recuperar casos parecidos, e saber se a recuperação é boa}
 \label{sec:ctx_recuperacao}
 
-\emph{Encontrada uma representação, como se recupera o que interessa, e como se avalia isso?}
-
 Representar cada notícia por um vetor transforma a pergunta ``que casos passados se parecem com
 este?'' num problema de recuperação de informação. A medida de proximidade usada é o cosseno do
 ângulo entre os vetores, cuja mecânica se detalha na Secção~\ref{sec:met_cosseno}. A operação é
@@ -444,8 +432,6 @@ linhas de base contra as quais o resultado é comparado.
 
 \section{Medir o efeito de um acontecimento}
 \label{sec:ctx_evento}
-
-\emph{Encontrados casos análogos, como se mede honestamente o que aconteceu ao preço a seguir?}
 
 O instrumento é o \emph{estudo de evento}, introduzido por \textcite{fama1969adjustment}.
 \textcite{brown1985daily} estudam em detalhe o seu comportamento com retornos \emph{diários},
@@ -485,8 +471,6 @@ verificável por quem lê.
 \section{Raciocinar por casos passados}
 \label{sec:ctx_casos}
 
-\emph{Mostrar casos anteriores em vez de uma regra: isso tem nome?}
-
 Tem, e é uma linha estabelecida em inteligência artificial. O \emph{raciocínio baseado em casos}
 \autocite{aamodt1994cbr} resolve um problema novo recuperando problemas passados semelhantes e
 reutilizando o que se sabe sobre eles, em vez de se apoiar \emph{apenas} em conhecimento geral do
@@ -508,11 +492,9 @@ decisão, em vez de despejar tudo o que o sistema calculou.
 \section{Explicar decisões automáticas}
 \label{sec:ctx_xai}
 
-\emph{Se o sistema decide, como é que mostra em que se baseou?}
-
 A exigência de que um sistema mostre \emph{como} chegou a uma conclusão constitui uma área própria,
 com revisões consolidadas \autocite{arrieta2020xai, adadi2018peeking}. Essa área divide-se em duas
-vias, ilustradas na Figura~\ref{fig:ctx_xai} e comparadas na Tabela~\ref{tab:ctx_xai}: modelos
+vias, ilustradas na Figura~\ref{fig:ctx_xai}: modelos
 \emph{transparentes}, interpretáveis em si mesmos, e métodos \emph{a posteriori}, que explicam um
 modelo opaco já treinado e que podem ser organizados pelo que explicam
 \autocite{guidotti2018survey}.
@@ -562,30 +544,6 @@ modelos opacos e usar antes modelos interpretáveis à partida, precisamente por
 utilizador recebe então duas coisas cuja relação não consegue avaliar: uma decisão e uma explicação
 que talvez não corresponda a ela.
 
-\begin{table}[ht]
-\caption[Abordagens de explicabilidade consideradas]{As opções ponderadas, e a razão da escolha feita
-neste trabalho.}
-\label{tab:ctx_xai}
-\centering
-\small
-\begin{tabular}{L{0.20\textwidth} L{0.24\textwidth} L{0.42\textwidth}}
-\toprule
-\tabhead{Método} & \tabhead{Tipo} & \tabhead{Forças e limitações} \\
-\midrule
-LIME \autocite{ribeiro2016lime}
-  & Substituto local, a posteriori
-  & Intuitivo e agnóstico ao modelo; as explicações podem ser instáveis e só valem localmente \\
-\addlinespace
-SHAP \autocite{lundberg2017shap}
-  & Atribuição por valores de Shapley
-  & Fundamentação teórica sólida; custo computacional e leitura exigente para um leigo \\
-\addlinespace
-Modelo transparente \newline \autocite{rudin2019stop}
-  & Interpretável por construção
-  & A explicação é o próprio cálculo, logo não pode divergir da decisão; limita a família de modelos disponível \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 Este trabalho segue a via conservadora: em vez de explicar \emph{a posteriori} um modelo opaco, usa
 componentes cuja explicação é o próprio cálculo. Um desvio relativo a uma norma recente, uma
@@ -619,72 +577,43 @@ estudo com pessoas.
 \section{Um modelo que continua a funcionar depois de implantado}
 \label{sec:ctx_producao}
 
-\emph{Treinar um modelo é uma coisa. Mantê-lo a funcionar é outra. O que diz a literatura?}
+O componente aprendido deste trabalho levanta três questões que a literatura trata separadamente.
 
-Este trabalho inclui um componente aprendido, cuja função é ordenar notícias por materialidade
-esperada, e esse componente levanta três questões que a literatura trata separadamente.
+A primeira é contra que teto comparar um modelo simples. Conjuntos de árvores treinados por reforço
+do gradiente \autocite{friedman2001gbm} captam interações e efeitos não lineares que uma regressão
+logística não capta, e servem por isso de referência superior no Capítulo~\ref{cap:avaliacao}. Não
+se afirma que sejam o melhor método existente, porque essa seria uma afirmação sobre um campo
+inteiro.
 
-A primeira é a de saber contra que teto comparar um modelo simples. Conjuntos de árvores treinados
-por reforço do gradiente \autocite{friedman2001gbm} são uma família de modelos não lineares forte e amplamente
-usada em dados tabulares, capaz de captar interações e efeitos não lineares que uma regressão
-logística não capta, e servem por isso de referência superior contra a qual o modelo interpretável é
-medido no Capítulo~\ref{cap:avaliacao}. Não se afirma que sejam o melhor método existente, porque
-essa é uma afirmação sobre um campo inteiro e não foi medida aqui.
+A segunda é a honestidade do número produzido. Uma pontuação só é honesta para quem a lê se for uma
+probabilidade, e as pontuações em bruto de muitos classificadores estão mal calibradas; a
+calibração \emph{a posteriori} sobre um bloco de validação reservado corrige essa distorção
+\autocite{niculescu2005calibration}. A mesma fonte, porém, não favorece a escolha feita aqui:
+aponta a regressão logística como já bem calibrada à partida, e conclui que acima de cerca de mil
+casos de calibração a regressão isotónica iguala ou supera a sigmoide. O modelo implantado é uma
+regressão logística com um bloco de validação muito acima desse limiar, pelo que ambas as
+afirmações se aplicam. A calibração justifica-se aqui por medição e não por autoridade: a
+Secção~\ref{sec:av_alternativas} compara as duas variantes na mesma validação e a sigmoide iguala
+ou ganha no Brier em todas as famílias testadas.
 
-A segunda é a da honestidade do número produzido. Para quem lê, uma pontuação só é honesta se for uma
-\emph{probabilidade}. As pontuações em bruto de muitos classificadores estão mal calibradas, e a
-calibração \emph{a posteriori}, ajustando uma sigmoide sobre um bloco de validação reservado, corrige
-essa distorção \autocite{niculescu2005calibration}.
+Uma via alternativa foi considerada e não adotada. A predição conformal devolve um \emph{conjunto}
+de rótulos com garantia livre de distribuição válida em amostras finitas
+\autocite{vovk2005algorithmic, angelopoulos2023conformal}. Duas precisões decidem que não serve
+aqui: a cobertura da variante corrente é \emph{marginal}, vale em média sobre os casos e não caso a
+caso; e a garantia exige \textbf{permutabilidade} entre calibração e teste, que é exatamente a
+hipótese que a Secção~\ref{sec:met_triagem} recusa ao dividir o conjunto por data e com embargo. O
+Capítulo~\ref{cap:conclusoes} retoma o método como caminho a explorar.
 
-Convém, no entanto, registar o que a mesma fonte conclui, porque não favorece a escolha feita aqui.
-\textcite{niculescu2005calibration} apontam a regressão logística como já \emph{bem calibrada à
-partida}, e concluem que nessas famílias a calibração posterior não traz melhoria e chega a
-prejudicar quando o bloco de calibração é pequeno. Acrescentam que, acima de cerca de mil casos de
-calibração, a regressão isotónica iguala ou supera sempre a sigmoide. O modelo implantado neste
-trabalho é precisamente uma regressão logística, e o seu bloco de validação está muito acima desse
-limiar, pelo que as duas afirmações se aplicam ao caso.
+A terceira questão é continuar a funcionar com o tempo. Um modelo implantado enfrenta alteração da
+distribuição dos dados que vê, e a literatura de \emph{deriva de conceito} estabelece a taxonomia
+da mudança e as estratégias de deteção e adaptação \autocite{gama2014survey}. Este trabalho mede a
+deriva sobre os seus próprios dados em vez de a assumir ausente.
 
-A calibração não se justifica aqui, portanto, por autoridade, e sim por medição: a
-Secção~\ref{sec:av_alternativas} compara as duas variantes na mesma validação, e a sigmoide iguala ou
-ganha no Brier em todas as famílias testadas. É um caso em que a teoria apontava para a alternativa e
-a medição sobre estes dados não a confirmou, e fica registado como tal.
-
-Uma terceira via, considerada e não adotada, merece registo porque a decisão foi tomada com
-conhecimento dela. A predição conformal permite envolver um preditor de modo que devolva um
-\emph{conjunto} de rótulos com uma garantia livre de distribuição e válida em amostras finitas
-\autocite{vovk2005algorithmic}, e a variante que calibra sobre um bloco reservado, com a respetiva
-correção de quantil para amostras finitas, está estabelecida \autocite{angelopoulos2023conformal}.
-
-Duas precisões, porque são as que decidem se o método serve aqui. A primeira é o alcance da garantia,
-e é o mal-entendido mais comum a respeito deste método: a cobertura é \emph{marginal}, ou seja vale
-em média sobre os casos, e não caso a caso. Registe-se que \textcite{vovk2005algorithmic} não tratam isto
-como limite intransponível, e dedicam uma secção a mostrar que a \emph{validade condicional} se pode
-obter modificando a definição de preditor conformal. Convém dizer o que essa expressão ali
-significa, porque não é o que o nome sugere: é validade \emph{dentro de categorias} fixadas à
-partida, e não caso a caso, portanto estreita a média sem a eliminar. O que se afirma aqui é que a
-variante corrente, e a que seria adotada sem trabalho adicional, dá a garantia marginal. A segunda precisão é a condição sob a qual
-essa garantia vale, que é a
-\textbf{permutabilidade} entre os dados de calibração e os de teste. Não é um pormenor técnico neste
-trabalho: os dados são uma série temporal financeira, os títulos chegam por ordem cronológica, e a
-Secção~\ref{sec:met_triagem} divide o conjunto por data e com embargo precisamente porque tratar
-estas observações como permutáveis produziria uma avaliação otimista. A hipótese que a garantia
-conformal exige é a mesma que este trabalho recusa noutro sítio, e por isso o método entra no
-Capítulo~\ref{cap:conclusoes} como caminho a explorar e não como omissão.
-
-A terceira questão é a de continuar a funcionar com o tempo. Um modelo implantado enfrenta alteração
-da distribuição dos dados que vê, e o tratamento habitual disso em aprendizagem automática é a
-literatura de \emph{deriva de conceito}, cuja revisão de referência estabelece a taxonomia da
-mudança, sendo esta súbita, gradual, incremental ou recorrente, bem como as estratégias de deteção e
-os métodos de adaptação \autocite{gama2014survey}. Este trabalho mede a deriva sobre os seus próprios
-dados no Capítulo~\ref{cap:avaliacao}, em vez de a assumir ausente.
-
-Há por fim um custo que não aparece em nenhuma métrica de qualidade e que a experiência com sistemas
-em produção documenta bem. \textcite{sculley2015debt} argumentam que os componentes de aprendizagem
-automática acumulam um custo de manutenção distintivo e em grande medida oculto, nomeadamente o
-emaranhamento, em que mudar qualquer coisa muda tudo, as dependências de dados instáveis e não
-declaradas, e a dívida de configuração. O Capítulo~\ref{cap:conclusoes} regressa a este ponto com um
-exemplo concreto e medido deste próprio sistema, em que uma parte do ciclo de aprendizagem parou sem
-que nenhum erro fosse registado.
+Há por fim um custo que não aparece em nenhuma métrica de qualidade. \textcite{sculley2015debt}
+argumentam que os componentes de aprendizagem automática acumulam manutenção oculta, em particular
+o emaranhamento entre peças e as dependências de dados instáveis e não declaradas. O
+Capítulo~\ref{cap:conclusoes} regressa a este ponto com um exemplo medido deste sistema, em que
+parte do ciclo de aprendizagem parou sem que nenhum erro fosse registado.
 
 \section{Síntese: a lacuna que este trabalho ocupa}
 \label{sec:ctx_lacuna}

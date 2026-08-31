@@ -191,8 +191,6 @@ cumprido por metade}.
 \section{Limitações}
 \label{sec:con_limitacoes}
 
-\emph{Onde é que este trabalho é fraco?}
-
 Ditas em voz alta, por ordem de importância. A Figura~\ref{fig:con_limites} resume as cinco
 principais e o que cada uma pediria para ser fechada.
 
@@ -287,6 +285,19 @@ revisões de análise textual em finanças descrevem trabalhos que operam sobre 
 \autocite{kearney2014textual}, e um título é, por construção, a parte do documento onde mais
 informação foi deitada fora.
 
+\paragraph{Os três blocos de dados quase não partilham empresas.}
+A divisão é cronológica, e a composição do corpus muda com o tempo: o bloco de treino tem treze
+empresas, o de teste tem nove, cinco das do treino não aparecem uma única vez no teste, e uma
+empresa que vale $17.1\%$ das linhas de teste nunca aparece no treino. Descobri-o tarde, a contar
+as colunas do conjunto congelado, e tem duas consequências. A primeira reforça o resultado da
+\gls{QI}3: um modelo cujo sinal é, no essencial, a identidade da empresa
+(Secção~\ref{sec:av_ablacao}) estima essa identidade sobre empresas que mal existem no bloco onde é
+avaliado, enquanto a volatilidade é medida no próprio dia e atravessa empresas. A segunda limita-o:
+não é possível separar \emph{o modelo é pior} de \emph{a identidade não transfere entre estes dois
+períodos}. Também explica, sem recorrer ao acaso, a diferença de prevalência entre a validação e o
+teste que a Secção~\ref{sec:met_calibracao} declara. Uma divisão que mantivesse a composição
+constante responderia à pergunta, e não foi feita.
+
 \paragraph{Os rótulos são aproximações.}
 ``Relevante'' é aproximado por ``mesmo setor'', e ``importante'' é aproximado por ``houve movimento
 grande''. As duas são objetivas e verificáveis, mas nenhuma é aquilo que realmente se queria medir.
@@ -313,7 +324,7 @@ processo que os servia corriam em máquinas diferentes com discos diferentes. É
 dependência de dados descrita atrás \autocite{sculley2015debt}, e foi encontrada a olhar, não
 por um alarme.
 
-\paragraph{Escolhi para o produto um modelo que não podia fazer o que eu lhe estava a pedir.}
+\paragraph{O modelo implantado não podia executar a função que lhe foi atribuída.}
 Esta é a limitação que mais me custa escrever, e é a que aprendi mais tarde.
 
 O que foi implantado como porta de decisão foi a variante \emph{sem} texto. Não era a variante com
@@ -361,8 +372,6 @@ violaria a restrição fundadora deste trabalho.
 
 \section{Trabalho futuro}
 \label{sec:con_futuro}
-
-\emph{Se houvesse mais três meses, por onde começava?}
 
 Nada nesta lista é uma ideia solta. Os cinco primeiros itens fecham cada um uma limitação da secção
 anterior, e a Figura~\ref{fig:con_futuro} mostra essa correspondência linha a linha, porque uma
@@ -450,43 +459,28 @@ Por esta ordem, e as três primeiras respondem diretamente às limitações acim
 \section{O que eu aprendi}
 \label{sec:con_licao}
 
-Termino com aquilo que mudou na minha cabeça ao longo destes meses, porque é a parte que não estava
-no plano.
+Três lições atravessam este trabalho, e nenhuma delas estava no plano inicial.
 
-A primeira foi perceber que \textbf{a linha de base é tão importante como o modelo}. Passei semanas
-a melhorar modelos e o resultado mais útil de todo o trabalho veio de olhar com atenção para aquilo
-contra o qual os estava a comparar. Numa das medições, o valor que eu usava como ``escolher às
-cegas'' não escolhia às cegas de todo: escolhia por ordem alfabética. Corrigir isso reduziu
-para menos de metade um ganho que eu já tinha escrito.
+\textbf{A linha de base vale tanto como o modelo.} O resultado mais útil desta dissertação não veio
+de melhorar modelos, veio de examinar aquilo contra o qual estavam a ser comparados: um chão de
+comparação que aparentava escolher ao acaso ordenava por ordem alfabética, e corrigi-lo reduziu a
+menos de metade um ganho já escrito.
 
-A segunda foi perceber que \textbf{o sítio onde se põe um modelo importa tanto como o modelo}. O meu
-funcionava razoavelmente quando avaliado sozinho e deixou de servir para nada quando colocado atrás
-de dois filtros simples, que já faziam grande parte do trabalho. Isso não estava em nenhum sítio do
-plano inicial, e é provavelmente a lição mais transferível que levo daqui.
+\textbf{O lugar onde um modelo é colocado importa tanto como o modelo.} O componente aprendido
+comportava-se razoavelmente avaliado isoladamente e deixou de acrescentar valor quando colocado
+atrás de dois filtros que já faziam grande parte do trabalho. É a lição mais transferível do
+trabalho, e generaliza-se: um componente é avaliado onde é treinado e é útil onde é colocado.
 
-E a terceira foi mais simples do que as outras: \textbf{a técnica mais simples ganhou três vezes}.
-Ganhou ao Isolation Forest, ganhou ao modelo que lê o texto, e uma tabela de treze constantes ganhou
-ao modelo que está implantado. Convém dizer também as duas vezes em que
-foi ao contrário: uma janela mais longa e um desvio-padrão com pesos que decaem obtêm ambos um
-$F_1$ melhor do que o que o sistema usa, e mantive o simples por ser explicável. Essas duas são
-uma \emph{escolha}, e não um resultado, e é assim que estão escritas no Capítulo \ref{cap:avaliacao}.
-Comecei este trabalho a assumir que o caminho para um bom resultado era acrescentar
-sofisticação. Acabo-o com medições a dizer o contrário, e com a convicção de
-que a parte difícil da engenharia de inteligência artificial não é escolher a técnica mais avançada,
-é montar a avaliação que consegue dizer que ela não era precisa.
+\textbf{A técnica mais simples venceu três comparações.} Venceu dois detetores de anomalias
+aprendidos, venceu o modelo que lê o texto, e uma tabela de treze constantes venceu o modelo
+implantado. Duas comparações correram em sentido contrário, e ficam registadas como escolhas e não
+como resultados: uma janela mais longa e um desvio-padrão com pesos decrescentes obtêm ambos um
+$F_1$ superior ao da regra usada, mantida por ser explicável.
 
-Esta conclusão não é minha nem é original, e é por isso que me deixa mais descansado do que se
-fosse. \textcite{rudin2019stop} defende que, em decisões de consequência séria, se deve usar
-modelos interpretáveis à partida em vez de explicar modelos opacos depois, e um dos argumentos é
-que a diferença de desempenho que justificaria a opacidade muitas vezes não existe quando se
-verifica. A primeira das minhas três comparações é uma instância disso, o \emph{z}-score contra dois
-detetores cuja decisão não se lê, e há ainda uma quarta comparação, fora dessa lista e com a mesma
-lição, que é a regressão logística contra as árvores com reforço do gradiente.
-
-A das treze constantes não é, e convém não a arrumar na mesma prateleira só porque a conclusão
-rima. A tabela de
-treze constantes não venceu um modelo opaco: venceu uma regressão logística calibrada, que é
-interpretável e cujas contribuições esta tese exibe uma a uma. Aquilo não é um argumento sobre
-opacidade, é um argumento sobre \emph{informação}: o modelo perdeu para uma tabela porque as suas
-entradas quase não variavam dentro de cada empresa, e não porque fosse complexo demais. São lições
-diferentes, e juntá-las tornaria a mais interessante das duas invisível.
+As duas primeiras convergem com \textcite{rudin2019stop}, que defende o uso de modelos
+interpretáveis à partida em decisões de consequência séria, com o argumento de que a diferença de
+desempenho que justificaria a opacidade frequentemente não resiste à verificação. A terceira é de
+outra natureza e não deve ser arrumada com elas: a tabela de treze constantes não venceu um modelo
+opaco, venceu uma regressão logística calibrada cujas contribuições este documento exibe uma a uma.
+Não é um argumento sobre opacidade, é um argumento sobre informação, porque as entradas do modelo
+quase não variavam dentro de cada empresa.

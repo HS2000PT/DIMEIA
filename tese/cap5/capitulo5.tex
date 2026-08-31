@@ -8,8 +8,6 @@
 \section{Como está montado este capítulo}
 \label{sec:av_montagem}
 
-\emph{O que é que vale como prova?}
-
 Cada uma das três perguntas de investigação tem aqui a sua secção. Todas seguem a mesma forma, de
 propósito:
 
@@ -34,260 +32,60 @@ pode medir.
 \section{Como se lê cada número deste capítulo}
 \label{sec:av_metricas}
 
-\emph{Antes de ver os resultados: o que é que cada medida quer dizer, e como é calculada?}
+Um resultado vale o que vale a medida que o produziu, e este capítulo usa cinco. Esta secção define
+cada uma e, sobretudo, fixa o seu \textbf{chão} --- o valor que um método sem informação nenhuma
+obtém --- porque uma medida lida sem o seu chão dá a conclusão errada, e este capítulo documenta
+três ocasiões em que isso aconteceu.
 
-Esta secção existe porque um resultado só vale o que vale a medida que o produziu. Um número como
-``$F_1 = 0.530$'' não diz nada a quem não sabe o que é o $F_1$, e um leitor que aceite esse número
-sem o compreender não está a avaliar o trabalho: está a confiar nele. Percorro por isso cada medida
-usada, com a fórmula, com o que ela premeia, e com a conta feita até ao valor que aparece mais à
-frente.
+Todas assentam nas quatro combinações entre o que o sistema afirma e o que a realidade tem:
+verdadeiros e falsos positivos, verdadeiros e falsos negativos. Os dois erros não são simétricos e
+custam coisas diferentes: um falso positivo gasta a atenção de quem lê, um falso negativo deixa
+passar o dia que interessava.
 
-\subsection{As quatro maneiras de acertar e de errar}
-\label{sec:av_matriz}
+A \textbf{precisão} é a fração de acertos entre as vezes em que o sistema falou,
+$\mathrm{VP}/(\mathrm{VP}+\mathrm{FP})$; a \textbf{cobertura} é a fração dos casos relevantes que
+ele apanhou, $\mathrm{VP}/(\mathrm{VP}+\mathrm{FN})$. Uma sobe à custa da outra, e uma regra que
+fale quase sempre atinge cobertura alta com precisão baixa.
 
-Todas as medidas deste capítulo, à exceção de uma, assentam na mesma ideia de partida. O sistema faz
-uma afirmação sobre um dia, a realidade tem uma resposta, e há quatro combinações possíveis. Estão na
-Figura~\ref{fig:av_matriz} e o nome habitual deste quadro é \textbf{matriz de confusão}.
-
-\begin{figure}[ht]
-\centering
-\begin{tikzpicture}[
-  font=\small,
-  % altura fixa nas quatro, para a grelha ser mesmo uma grelha
-  cel/.style={draw, minimum width=4.4cm, minimum height=1.75cm, align=center, inner sep=3pt,
-              text depth=0pt},
-  bom/.style={cel, fill=black!7},
-  mau/.style={cel, fill=orange!13},
-  rot/.style={font=\footnotesize\bfseries, text=black!65},
-]
-  % ️ Posições ABSOLUTAS, e não `right=0mm of`. Duas das células têm uma linha de texto a mais
-  % (o "(alarme falso)" e o "(escapou)"), portanto crescem em altura; posicionadas umas em
-  % relação às outras, a grelha partia-se e as quatro caixas saíam desencontradas. Numa figura
-  % que existe para ensinar um 2x2, isso desfaz o próprio argumento. Só se vê a renderizar.
-  \node[bom, anchor=north west] (vp) at (0,0)      {\textbf{Verdadeiro positivo (VP)}\\[2pt]
-    \footnotesize assinalou, e o dia\\ \footnotesize \emph{era} mesmo invulgar};
-  \node[mau, anchor=north west] (fp) at (4.4,0)       {\textbf{Falso positivo (FP)}\\[2pt]
-    \footnotesize assinalou, e o dia\\ \footnotesize era banal\\ \footnotesize (\emph{alarme falso})};
-  \node[mau, anchor=north west] (fn) at (0,-1.75)  {\textbf{Falso negativo (FN)}\\[2pt]
-    \footnotesize calou-se, e o dia\\ \footnotesize era invulgar\\ \footnotesize (\emph{escapou})};
-  \node[bom, anchor=north west] (vn) at (4.4,-1.75) {\textbf{Verdadeiro negativo (VN)}\\[2pt]
-    \footnotesize calou-se, e o dia\\ \footnotesize era mesmo banal};
-
-  \node[rot, above=2mm of vp] {a realidade: invulgar};
-  \node[rot, above=2mm of fp] {a realidade: banal};
-  % ️ Horizontais, e não rodadas: um rótulo rodado é mais alto do que a linha que legenda,
-  % e as duas versões anteriores escreviam-se uma por cima da outra.
-  \node[rot, left=2mm of vp, align=right] {o sistema\\ \emph{assinala}};
-  \node[rot, left=2mm of fn, align=right] {o sistema\\ \emph{cala-se}};
-\end{tikzpicture}
-\caption[As quatro combinações possíveis]{A matriz de confusão. As duas células cinzentas são
-acertos; as duas alaranjadas são os dois erros possíveis, e \textbf{custam coisas diferentes}. Um
-falso positivo gasta a atenção de quem lê; um falso negativo deixa passar o dia que interessava.}
-\label{fig:av_matriz}
-\end{figure}
-
-A distinção que importa é a última. Os dois erros não são simétricos, e nenhuma medida única os
-resume sem escolher uma prioridade. É por isso que se usam duas medidas em vez de uma.
-
-\subsection{Precisão e cobertura}
-\label{sec:av_prec_rec}
-
-A \textbf{precisão} responde a: \emph{das vezes que o sistema falou, quantas tinha razão?}
-
-\begin{equation}
-  \text{Precisão} \;=\; \frac{\text{VP}}{\text{VP} + \text{FP}}
-  \label{eq:precisao}
-\end{equation}
-
-A \textbf{cobertura}, também chamada \emph{recall}, responde a uma pergunta diferente:
-\emph{dos dias que eram mesmo invulgares, quantos é que o sistema apanhou?}
-
-\begin{equation}
-  \text{Cobertura} \;=\; \frac{\text{VP}}{\text{VP} + \text{FN}}
-  \label{eq:cobertura}
-\end{equation}
-
-O denominador muda: a precisão divide pelo que o sistema \emph{disse}; a cobertura, pelo que
-\emph{existia}. A regra fixa ilustra o conflito: cobre $0.992$ dos dias invulgares, mas tem precisão
-$0.122$ porque fala quase sempre. É preciso uma medida que não premie nenhum destes extremos.
-
-\subsection{O \texorpdfstring{$F_1$}{F1}: obrigar as duas a andarem juntas}
+\subsection{O \texorpdfstring{$F_1$}{F1}}
 \label{sec:av_f1}
 
-O $F_1$ combina precisão e cobertura numa só medida através da \textbf{média harmónica}:
+O $F_1$ é a média harmónica das duas, $2 \cdot \frac{P \cdot C}{P + C}$, e puxa o resultado para o
+pior dos dois valores, o que impede que um extremo seja premiado. Para o \emph{z}-score, com
+precisão $0.381$ e cobertura $0.800$, dá $0.516$; para a regra fixa, com precisão $0.122$ e
+cobertura $0.992$, dá $0.218$.
 
-\begin{equation}
-  F_1 \;=\; 2 \cdot \frac{\text{Precisão} \times \text{Cobertura}}
-                         {\text{Precisão} + \text{Cobertura}}
-  \label{eq:f1}
-\end{equation}
+\subsection{A precisão@\texorpdfstring{$k$}{k}}
 
-A média harmónica puxa o resultado para o pior dos dois valores. Por exemplo, para o \emph{z}-score:
-\begin{equation*}
-  F_1 = 2 \cdot \frac{0.381 \times 0.800}{0.381 + 0.800}
-      = 0.516
-\end{equation*}
+A recuperação de precedentes devolve uma lista ordenada, e o utilizador lê apenas as primeiras.
+Avalia-se com uma medida sensível à ordem \autocite{manning2008ir}: a fração dos $k$ primeiros
+resultados que são relevantes, com $k = 5$, que é o que cabe num alerta. O seu chão não é zero: uma
+escolha ao acaso entre cinco setores de tamanhos diferentes acerta $0.240$ das vezes.
 
-Aplicada à regra fixa, dá $0.218$; com os valores arredondados impressos a conta dá $0.217$. A
-diferença vem das casas decimais não mostradas. O \emph{z}-score ganha apesar de ter menos cobertura,
-porque triplica a precisão.
-
-\subsection{A precisão@\texorpdfstring{$k$}{k}: avaliar uma lista curta}
-\label{sec:av_patk}
-
-A recuperação de precedentes não devolve uma decisão de sim ou não: devolve uma \textbf{lista
-ordenada}. E o utilizador não lê a lista toda, lê as primeiras. Por isso se usa uma medida sensível
-à ordem, como é prática estabelecida em recuperação de informação \autocite{manning2008ir}, e a mais
-direta dessas medidas olha apenas para o topo da lista. É o que a \textbf{precisão@$k$} faz:
-
-\begin{equation}
-  \text{Precisão@}k \;=\; \frac{\text{número de casos relevantes entre os } k \text{ primeiros}}{k}
-  \label{eq:patk}
-\end{equation}
-
-Neste trabalho $k = 5$, porque cinco é a ordem de grandeza do que cabe num alerta sem o tornar
-ilegível. Um caso recuperado conta como relevante se pertencer ao mesmo setor da notícia de consulta,
-com a restrição adicional de ter de ser de \textbf{outra empresa}, pelas razões dadas na
-Secção~\ref{sec:av_qi2}.
-
-A Figura~\ref{fig:av_patk} mostra a conta para uma consulta.
-
-\begin{figure}[ht]
-\centering
-\begin{tikzpicture}[
-  font=\footnotesize,
-  it/.style={draw, rounded corners=2pt, minimum width=6.1cm, minimum height=0.72cm,
-             align=left, text width=5.8cm, inner xsep=6pt},
-  sim/.style={it, fill=black!8},
-  nao/.style={it, fill=orange!12},
-]
-  \node[font=\small\bfseries] (q) at (0,0.85) {consulta: notícia de tecnologia};
-  \node[sim] (a) at (0,0) {1. \ \ tecnologia \hfill \textbf{relevante}};
-  \node[sim, below=1.2mm of a] (b) {2. \ \ tecnologia \hfill \textbf{relevante}};
-  \node[nao, below=1.2mm of b] (c) {3. \ \ energia \hfill não};
-  \node[sim, below=1.2mm of c] (d) {4. \ \ tecnologia \hfill \textbf{relevante}};
-  \node[nao, below=1.2mm of d] (e) {5. \ \ banca \hfill não};
-  \node[right=5mm of c, align=left, font=\small] (calc)
-    {$\text{Precisão@}5 = \dfrac{3}{5} = 0.600$};
-  \draw[decorate, decoration={brace, amplitude=4pt}, black!45]
-    ($(a.north east)+(1mm,0)$) -- ($(e.south east)+(1mm,0)$);
-\end{tikzpicture}
-\caption[A precisão@5 numa consulta]{Uma consulta devolve cinco casos; três são do mesmo setor. A
-medida é a fração, e faz-se a média sobre muitas consultas. Note-se que \textbf{a ordem dentro dos
-cinco não conta}: esta medida pergunta quantos acertou, não se pôs os melhores à frente.}
-\label{fig:av_patk}
-\end{figure}
-
-Falta um número sem o qual a medida não se interpreta: \textbf{qual é o valor de quem escolhe ao
-acaso?} Não é zero. Como há cinco setores e alguns são maiores do que outros, uma escolha aleatória
-acerta uma fração apreciável das vezes apenas por sorte, e esse chão, uma vez medido, vale $0.240$.
-É contra ele, e não contra zero, que qualquer método tem de ser lido.
-
-\subsection{A PR-AUC: a lista toda, em todos os pontos de corte}
+\subsection{A PR-AUC}
 \label{sec:av_prauc}
 
-O modelo de triagem não devolve uma decisão: devolve uma \textbf{probabilidade} para cada notícia.
-Para transformar isso numa decisão é preciso escolher um limiar, e o valor da precisão e da cobertura
-muda conforme o limiar escolhido.
+O modelo de triagem devolve uma probabilidade, não uma decisão. Cada limiar possível dá um par
+(cobertura, precisão), e o conjunto desses pares desenha a curva de precisão--cobertura; a
+\gls{PRAUC} é a área debaixo dela, e resume o modelo em todos os limiares de uma vez em vez de o
+julgar num limiar escolhido à mão.
 
-Se o limiar for muito baixo, o sistema alerta quase sempre: a cobertura sobe e a precisão desce. Se
-for muito alto, alerta quase nunca: a precisão sobe e a cobertura desce. Cada limiar possível dá,
-portanto, um par (cobertura, precisão), e o conjunto de todos esses pares desenha uma curva. É a
-\textbf{curva de precisão--cobertura}, e a Figura~\ref{fig:av_prcurva} explica como se lê.
+O seu chão é a proporção de casos positivos nos dados: um modelo que atribua a mesma probabilidade
+a tudo obtém exatamente essa proporção. No bloco de teste ela é $0.378$, e é contra esse valor, e
+não contra zero, que todas as PR-AUC deste capítulo devem ser lidas. Prefere-se à percentagem de
+acertos porque, com classes desequilibradas, responder sempre ``não é importante'' acerta $62.2\%$
+das vezes sem ter aprendido nada.
 
-\begin{figure}[ht]
-\centering
-\begin{tikzpicture}[font=\footnotesize, >={Stealth[length=2mm]}]
-  % A área é o assunto da figura, portanto desenha-se em vez de se descrever.
-  \fill[black!8] (0.15,0) -- (0.15,3.55)
-    .. controls (2.2,3.2) and (3.6,2.5) .. (6,1.512) -- (6,0) -- cycle;
-
-  \draw[->, black!55] (0,0) -- (7.6,0) node[right, black!70] {cobertura};
-  \draw[->, black!55] (0,0) -- (0,4.5) node[above, black!70] {precisão};
-  \foreach \x/\xrot in {0/0, 3/0.5, 6/1} \draw[black!45] (\x,0) -- (\x,-0.09) node[below] {\xrot};
-  \foreach \y/\xrot in {0/0, 2/0.5, 4/1} \draw[black!45] (0,\y) -- (-0.09,\y) node[left] {\xrot};
-
-  \draw[dashed, black!55] (0,1.512) -- (6.2,1.512)
-    node[right=0mm, align=left, black!60] {chão\\ $0.378$};
-  \draw[very thick, black!75] (0.15,3.55) .. controls (2.2,3.2) and (3.6,2.5) .. (6,1.512);
-
-  \fill[black] (1.5,3.35) circle (1.6pt);
-  \draw[black!50] (1.5,3.35) -- (2.5,4.05)
-    node[right=-0.5mm, align=left, black!75] {limiar \textbf{alto}:\\ fala pouco, acerta muito};
-  \fill[black] (5.1,1.85) circle (1.6pt);
-  \draw[black!50] (5.1,1.85) -- (5.9,2.75)
-    node[right=-0.5mm, align=left, black!75] {limiar \textbf{baixo}:\\ fala muito,\\ acerta pouco};
-
-  \node[align=center, black!60] at (2.5,0.75) {esta \textbf{área} é a PR-AUC};
-\end{tikzpicture}
-\caption[Como se lê uma curva de precisão--cobertura]{Cada ponto da curva é um limiar de decisão
-diferente. Um modelo melhor mantém a curva alta durante mais tempo antes de cair. A área debaixo da
-curva resume esse comportamento num só número, sem obrigar a escolher um limiar.}
-\label{fig:av_prcurva}
-\end{figure}
-
-A \textbf{\gls{PRAUC}} é a área debaixo dessa curva. O seu valor está entre $0$ e $1$, e a grande vantagem
-é resumir o modelo em \emph{todos} os limiares de uma vez, em vez de o julgar num limiar escolhido à
-mão, que seria uma decisão arbitrária a contaminar a comparação.
-
-Há aqui uma propriedade que convém conhecer, porque é o que torna esta medida interpretável.
-\textbf{O chão da PR-AUC não é zero: é a proporção de casos positivos que existem nos dados.} Um
-modelo que ignore por completo o que lhe dão e atribua a mesma probabilidade a tudo obtém uma
-PR-AUC igual a essa proporção.
-
-No bloco de teste deste trabalho a proporção de casos positivos é de $37.8\%$, e o modelo
-``alertar sempre'' obtém exatamente $\text{PR-AUC} = 0.378$. Não é coincidência: é a propriedade
-acima, e serve de verificação de que a medição está bem montada. Todos os valores de PR-AUC deste
-capítulo devem ser lidos contra esse chão de $0.378$.
-
-\paragraph{E porquê esta medida, e não a percentagem de acertos?}
-Porque a percentagem de acertos engana quando as duas classes têm tamanhos diferentes. Se apenas
-$37.8\%$ dos casos são positivos, um modelo que responda sempre ``não é importante'' acerta em
-$62.2\%$ das vezes sem ter aprendido nada. Um número que premeia esse comportamento não serve para
-escolher entre modelos.
-
-\subsection{O Brier: a probabilidade tem de ser honesta}
+\subsection{O Brier}
 \label{sec:av_brier}
 
-As medidas anteriores olham para a \emph{ordenação}: se o modelo põe os casos importantes à frente.
-Falta uma que olhe para o \emph{valor} da probabilidade. Isso importa porque o sistema mostra ao
-utilizador uma frase do género ``$57\%$ de probabilidade'', e essa percentagem tem de querer dizer
-alguma coisa.
-
-O \textbf{Brier} é a média do quadrado do erro entre a probabilidade anunciada e o que aconteceu:
-
-\begin{equation}
-  \text{Brier} \;=\; \frac{1}{n}\sum_{i=1}^{n}\left(p_i - y_i\right)^2
-  \label{eq:brier}
-\end{equation}
-
-onde $p_i$ é a probabilidade que o modelo deu ao caso $i$ e $y_i$ vale $1$ se o caso se revelou
-importante e $0$ se não. Ao contrário das anteriores, aqui \textbf{quanto menor, melhor}: zero seria
-a perfeição.
-
-O quadrado não está ali por acaso. Penaliza mais do que proporcionalmente os enganos confiantes: um
-modelo que diz $90\%$ e erra paga $(0.9-0)^2 = 0.81$, enquanto um que diz $60\%$ e erra paga
-$(0.6-0)^2 = 0.36$. A confiança é uma vez e meia maior e o castigo é mais do dobro, e é isso que
-``mais do que proporcionalmente'' quer dizer. Prometer muito e falhar sai caro, que é a propriedade
-desejada num sistema que mostra percentagens a quem não as sabe questionar.
-
-Vale a pena fazer a conta para o caso mais simples de todos, porque fecha exatamente. O modelo
-``alertar sempre'' anuncia $p_i = 1$ para todas as notícias. Para os casos que se revelaram
-importantes ($y_i = 1$) o erro é $(1-1)^2 = 0$; para os restantes ($y_i = 0$) é $(1-0)^2 = 1$. O
-Brier passa a ser, simplesmente, a fração de casos não importantes:
-
-\begin{equation*}
-  \text{Brier} = 1 - 0.378 = 0.622
-\end{equation*}
-
-E $0.622$ é precisamente o valor que a tabela da Secção~\ref{sec:av_qi3} reporta para esse modelo.
-O modelo de volatilidade obtém $0.218$, ou seja, menos de metade do erro.
-
-\subsection{Qual medida responde a que pergunta}
-\label{sec:av_qual}
-
-A Tabela~\ref{tab:av_metricas} resume o que cada uma faz e onde é usada, porque usar a medida errada
-para a pergunta certa é uma forma silenciosa de chegar a uma conclusão falsa.
+As medidas anteriores olham para a \emph{ordenação}. O Brier olha para o \emph{valor} da
+probabilidade, que é o que o sistema mostra ao utilizador: é a média do quadrado do erro entre a
+probabilidade anunciada e o que aconteceu, e aqui quanto menor melhor. O quadrado penaliza mais do
+que proporcionalmente os enganos confiantes, que é a propriedade desejada num sistema que exibe
+percentagens a quem não as sabe questionar. O seu chão fecha a conta: um modelo que anuncie $1$
+para tudo paga a fração de casos não importantes, $1 - 0.378 = 0.622$, que é exatamente o valor
+reportado para esse modelo na Tabela~\ref{tab:av_triagem}.
 
 \begin{table}[ht]
 \caption[As medidas usadas e o que cada uma responde]{Cada medida, a pergunta a que responde, o seu
@@ -313,12 +111,10 @@ Brier & A percentagem anunciada é honesta? & $0.622$ (alertar sempre) & \gls{QI
 \end{tabular}
 \end{table}
 
-Uma nota final sobre a primeira linha, que é a única medida deste capítulo que não usa rótulos. A
-amplitude de disparo mede a diferença entre a empresa em que o detetor mais fala e aquela em que
-menos fala. Não precisa de saber quais dias eram mesmo invulgares: parte apenas do princípio de que
-um bom detetor universal deve comportar-se de forma parecida em empresas diferentes. É por não
-depender de rótulo nenhum que ela serve de argumento principal da secção seguinte, e as restantes de
-argumento de apoio.
+A primeira linha da Tabela~\ref{tab:av_metricas} é a única medida deste capítulo que não usa
+rótulos: a amplitude de disparo mede a diferença entre a empresa em que o detetor mais fala e
+aquela em que menos fala, e parte apenas do princípio de que um bom detetor universal se deve
+comportar de forma parecida em empresas diferentes.
 
 \section{QI1: detetar o que é invulgar}
 \label{sec:av_qi1}
@@ -380,6 +176,54 @@ fixo acompanham a volatilidade de cada ação; as do \emph{z}-score mantêm-se q
 
 Contra o rótulo aproximado, o \emph{z}-score obtém $F_1 = 0.516$ contra $0.218$ do limiar fixo.
 
+\paragraph{E é preciso dizer o que a amplitude sozinha não exclui, porque sozinha não exclui muito.}
+A medida principal desta secção não tem chão em zero: tem o zero como ótimo, e o ótimo é atingível
+por um método que não sabe nada. Um detetor que assinalasse, em cada empresa, uma fração fixa de
+dias \emph{escolhidos ao acaso} teria amplitude praticamente nula, ou seja bateria o \emph{z}-score
+exatamente na medida que aqui se elege como principal. Não precisa de ser corrido para se saber:
+é uma consequência da construção.
+
+Isso não invalida a medida; obriga a lê-la com a outra ao lado, e é essa a razão de existirem duas.
+A amplitude exclui o limiar fixo, que dispara conforme a volatilidade da empresa em vez da raridade
+do dia. O $F_1$ exclui o disparo aleatório, que fica ao nível do acaso contra qualquer rótulo.
+\textbf{Nenhuma das duas basta sozinha, e apenas a regra deslizante passa nas duas}, e é isso que
+a Figura~\ref{fig:av_duasmedidas} desenha. Fica assim
+escrito porque a formulação anterior --- ``o argumento principal não precisa de rótulos, e é por
+isso que é o principal'' --- é verdadeira quanto à independência de rótulos e insuficiente quanto
+ao que a medida prova.
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=1.05cm, y=0.95cm, font=\small]
+  % eixos
+  \draw[->, thick] (0,0) -- (8.4,0) node[below left=2pt and 0pt]{amplitude de disparo \emph{(menor é melhor)}};
+  \draw[->, thick] (0,0) -- (0,5.2) node[above left=0pt and -12pt, rotate=90, anchor=south]{};
+  \node[rotate=90, anchor=south] at (-0.7,2.6) {$F_1$ \emph{(maior é melhor)}};
+  % regioes excluidas
+  \fill[orange!10] (5.0,0) rectangle (8.4,5.2);
+  \fill[orange!10] (0,0) rectangle (8.4,1.6);
+  \draw[dashed, orange!70!black] (5.0,0) -- (5.0,5.2);
+  \draw[dashed, orange!70!black] (0,1.6) -- (8.4,1.6);
+  \node[orange!60!black, align=center, font=\scriptsize] at (6.7,4.4)
+    {excluído pela\\amplitude};
+  \node[orange!60!black, align=center, font=\scriptsize] at (3.0,0.3)
+    {excluído pelo $F_1$};
+  % pontos
+  \fill[black] (0.6,3.9) circle (2.4pt);
+  \node[right=3pt, align=left] at (0.6,3.9) {\textbf{\emph{z}-score}\\[-2pt]{\scriptsize $0.015$ · $0.516$}};
+  \fill[gray!70] (0.5,0.8) circle (2.4pt);
+  \node[right=3pt, align=left] at (0.5,0.9) {disparo aleatório\\[-2pt]{\scriptsize $\approx 0$ · acaso}};
+  \fill[gray!70] (7.4,0.55) circle (2.4pt);
+  \node[above=3pt, align=center] at (7.0,0.6) {limiar fixo\\[-2pt]{\scriptsize $0.344$ · $0.218$}};
+\end{tikzpicture}
+\caption[O que cada medida da QI1 exclui]{As duas medidas desta secção, e o que cada uma
+consegue excluir sozinha. A amplitude exclui o limiar fixo, que dispara conforme a volatilidade
+da empresa; o $F_1$ exclui o disparo aleatório, que atinge o ótimo da amplitude sem saber nada.
+\textbf{Só a regra deslizante fica fora das duas zonas.} A posição do disparo aleatório é uma
+consequência da construção e não uma medição, e está desenhada a cinzento por isso.}
+\label{fig:av_duasmedidas}
+\end{figure}
+
 Uma ressalva sobre esta comparação: a janela do \emph{z}-score é variada mais abaixo, e o limiar
 de $3\%$ da regra fixa \textbf{não é}. É o valor convencional e não foi otimizado. Um limiar mais
 alto subir-lhe-ia a precisão à custa da cobertura, e não é evidente em que ponto o $F_1$ ficaria;
@@ -387,7 +231,7 @@ o que a comparação mostra com segurança não é que nenhum limiar fixo conseg
 limiar fixo mede a coisa errada, porque a mesma percentagem significa coisas diferentes em
 empresas diferentes. Esse argumento não depende do valor escolhido.
 
-\paragraph{Uma nota sobre o padrão de evidência desta secção, e é uma nota contra mim.}
+\paragraph{Uma assimetria no padrão de evidência.}
 Os números desta pergunta e da seguinte são pontos, sem intervalo. Os da
 Secção~\ref{sec:av_qi3}, que é onde está o resultado que me contraria, levam reamostragem por
 grupos e intervalos de confiança. É uma assimetria: os resultados que me favorecem estão a ser
@@ -433,7 +277,8 @@ Uma nota para quem comparar esta tabela com a conta feita na Secção~\ref{sec:a
 protocolos diferentes: o $0.516$ é sobre todos os dias avaliados, ao passo que o $0.530$ desta tabela
 é sobre a região que os \textbf{três} detetores conseguem pontuar, que é a única em que a comparação
 entre eles é justa. Comparar cada método fora da região comum daria vantagem a quem pontua mais
-dias.
+dias. A amplitude segue a mesma regra e é por isso que aparece aqui como $0.017$ e na
+Tabela~\ref{tab:av_disparo} como $0.015$: é o mesmo detetor, medido sobre menos dias.
 
 Este é o primeiro de três casos, neste capítulo, em que uma técnica mais sofisticada foi comparada
 de forma justa com uma mais simples e perdeu. É um resultado que vale por si: justifica por medição
@@ -616,7 +461,7 @@ frases \autocite{reimers2019sbert} acrescenta medem a distância a um ponto de p
 \textbf{não} a distância a um sistema lexical afinado. Comparar contra um BM25 bem parametrizado é
 trabalho por fazer, e é a comparação que tornaria esta conclusão mais forte.
 
-\paragraph{E há uma alternativa trivial que faltava a esta tabela, que é a que mais incomoda.}
+\paragraph{Uma alternativa trivial que a tabela não continha.}
 O corpus tem $3\,714$ notícias e não está equilibrado: $1\,736$ delas, ou seja quase metade, são de
 tecnologia. Existe por isso uma estratégia que não precisa de modelo nenhum e não olha sequer para
 a consulta: \emph{devolver sempre cinco notícias de tecnologia}. Ela acerta em todas as consultas
@@ -770,6 +615,14 @@ variável diária completa; não demonstra paridade com a pontuação intradiár
 Secção~\ref{sec:av_ret_event_producao} mede o sintoma em produção e separa o que os registos permitem
 concluir.
 
+Convém dizer para que lado essa assimetria empurra, porque não é neutra e porque é a primeira
+objeção que a secção levanta. A entrada \texttt{ret\_event} pertence ao bloco de contexto, ou seja
+está nos modelos que \emph{perdem}; a linha de base vencedora usa uma única entrada, a volatilidade
+dos vinte dias anteriores, e essa está fechada na véspera. O referencial mais generoso está portanto
+do lado dos modelos que a comparação não favorece, e corrigi-lo só poderia tornar o resultado
+negativo mais forte, nunca mais fraco. O que fica por demonstrar é o nível das métricas, e não a
+ordenação entre as famílias.
+
 Compararam-se seis modelos, do mais simples ao mais completo. A métrica principal é a
 \textbf{PR-AUC}, apropriada quando as duas classes são desequilibradas.
 
@@ -863,12 +716,36 @@ diferentes de limiar e horizonte. A volatilidade iguala ou bate o modelo com tex
 
 O resultado negativo aguenta os três testes. Não é um acidente da minha montagem: é o que os dados dizem.
 
+\paragraph{E há uma quarta verificação, que fiz por último e que corta nos dois sentidos.}
+Contei quantas empresas há em cada bloco, coisa que a divisão cronológica não garante, e os três
+blocos \textbf{quase não partilham empresas}. O treino vai de 2018-01-02 a 2022-03-03 e tem treze
+nomes; o teste vai de 2023-02-02 a 2023-12-18 e tem nove. Cinco empresas do treino não aparecem
+uma única vez no teste, e uma empresa do teste, que vale $17.1\%$ das suas linhas, nunca aparece
+no treino. Pior: para as que estão nos dois lados, a taxa de positivos desloca-se muito, e a
+Apple passa de $0.448$ no treino para $0.183$ no teste. Isto lê-se direto das colunas
+\texttt{split} e \texttt{ticker} do conjunto congelado e não precisa de nenhuma corrida nova.
+
+Não é uma fuga nem um erro de divisão: o corte é por dia, e por dia a proporção é a que a
+Secção~\ref{sec:met_split} declara. É a composição do corpus que muda com o tempo, pela mesma razão
+que ali torna o bloco de teste maior do que o de treino --- as empresas de que se escreve em 2018
+não são as de que se escreve em 2023.
+
+E a consequência puxa nos dois sentidos, por isso fica escrita inteira. \textbf{A favor do
+resultado negativo:} um modelo cujo sinal é, no essencial, a identidade da empresa
+(Secção~\ref{sec:av_ablacao}) está a estimar essa identidade sobre um conjunto de empresas que mal
+existe no bloco onde é avaliado, ao passo que a volatilidade é medida no próprio dia e atravessa
+empresas. Isso é uma explicação adicional, e mais concreta do que a que eu tinha, para a linha de
+base ganhar. \textbf{Contra:} também quer dizer que a comparação não separa \emph{o modelo é pior}
+de \emph{a identidade não transfere entre estes dois períodos}, e essa separação exigiria uma
+divisão que mantivesse a composição constante --- que não foi feita. Também explica, sem
+recorrer ao acaso, a prevalência de $47.0\%$ da validação contra $37.8\%$ do teste: são conjuntos
+de empresas diferentes, e não apenas períodos diferentes.
+
 \subsection{Mas tem utilidade prática?}
 
 Serve, mas aqui é preciso muito cuidado com a comparação, porque é fácil enganar-se.
 
 O produto não mostra tudo: mostra no máximo cinco alertas por dia. A pergunta útil passa a ser
-\emph{das cinco notícias que escolho mostrar, quantas eram mesmo importantes?}
 A Tabela~\ref{tab:av_orcamento} responde.
 
 \begin{table}[ht]
@@ -924,7 +801,9 @@ contém-no confortavelmente. A leitura correta não é que o modelo seja pior do
 nada, mas que \textbf{esta amostra não distingue o modelo do acaso}.
 
 \paragraph{E duas das doze empresas vigiadas não estão no corpus de treino.}
-O mapa canónico do material histórico tem quinze nomes e o treino cobre catorze; a lista que o
+O mapa canónico do material histórico tem quinze nomes, o conjunto de dados construído cobre
+catorze e o \emph{bloco de treino} cobre treze --- que é a razão de a tabela de consulta da
+Secção~\ref{sec:av_ablacao} ter treze constantes e não catorze; a lista que o
 produto vigia tem doze, e duas delas nunca apareceram em nenhum exemplo de treino. O modelo
 pontua-as na mesma, porque o que ele recebe são valores numéricos e não a identidade da empresa,
 mas fá-lo sobre uma combinação de entradas que não viu. É um segundo sentido, mais literal, em que
@@ -1029,40 +908,30 @@ A leitura da figura é imediata e os números confirmam-na:
 \end{itemize}
 
 \begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
-Em \textbf{$84\%$} das decisões registadas, o resultado estava determinado pela
+Em \textbf{$48\%$} dos títulos distintos --- e em $84\%$ das decisões registadas, que é a
+contagem mais generosa das duas e está discutida a seguir --- o resultado estava determinado pela
 \textbf{empresa} antes de o título ser lido. A Apple não conseguia gerar um alerta de notícia,
 acontecesse o que acontecesse; a AMD passava em $963$ de $963$.
 \end{tcolorbox}
 
-\paragraph{E esse $84\%$ precisa de uma ressalva, que aponta contra o próprio argumento.}
-O número conta \textbf{decisões registadas}, e o sistema repontua os mesmos títulos a cada ciclo
-de sessenta segundos: o mesmo título entra dezenas de vezes. Pior, a duplicação não é uniforme.
-É maior nas empresas com \emph{menos} notícias, que são precisamente as que nunca passam o piso,
-pelo que contar decisões empurra a fração para cima, ou seja na direção que favorece a conclusão
-que estou a defender.
+As duas contagens medem coisas diferentes e ambas ficam. O sistema repontua os mesmos títulos a
+cada ciclo de sessenta segundos, e a duplicação é maior nas empresas com menos notícias, que são
+as que nunca passam o piso; contar decisões empurra portanto a fração para cima. Contado uma vez
+por título distinto, sobre uma janela maior de $36\,925$ decisões, a fração é de $48\%$. A
+conclusão estrutural não depende de qual se escolha: continua a haver empresas inteiramente de um
+dos lados do piso, e a amplitude entre empresas continua a ser várias vezes a amplitude dentro de
+cada uma.
 
-Contado uma vez por título distinto, sobre uma janela posterior e maior
-($36\,925$ decisões até 20 de agosto de 2026), a fração cai para $48\%$. A conclusão estrutural
-não muda, e é ela que sustenta a decisão que se seguiu: continua a haver empresas inteiramente
-de um dos lados do piso, e a amplitude entre empresas continua a ser várias vezes a amplitude
-dentro de cada uma. O que muda é a força do número isolado, e fica assim escrito.
+O defeito tem a mesma forma que o da Secção~\ref{sec:av_qi1}, uma camada acima: aí, um limiar fixo
+sobre o retorno mede a volatilidade da empresa em vez da raridade do dia; aqui, um limiar fixo
+sobre uma pontuação quase constante por empresa ordena empresas em vez de notícias.
 
-\paragraph{E este é o mesmo defeito que este trabalho já tinha identificado, um nível acima.}
-A Secção~\ref{sec:av_qi1} mostra que um limiar fixo sobre o \emph{retorno} mede a volatilidade da
-empresa e não a raridade do dia, e é essa a razão de ser do \emph{z}-score. O limiar fixo sobre a
-\emph{pontuação do modelo} tem exatamente a mesma forma: como a pontuação é quase uma constante por
-empresa, cortá-la num valor fixo ordena empresas, não notícias. Encontrei o meu próprio erro
-repetido numa camada diferente.
-
-\paragraph{Porque é que nada disto disparou um alarme.}
-Convém explicar como um defeito desta dimensão sobrevive meses num sistema com centenas de testes,
-porque a resposta é genérica e não específica deste trabalho. O modelo foi avaliado sobre a
-distribuição do conjunto de treino e implantado atrás de dois filtros que a alteram: só chegam à
-sua entrada títulos que já passaram relevância e frescura. Nenhum teste podia detetar isto, porque
-cada peça cumpria o seu contrato; o que estava errado era uma suposição sobre a ligação entre elas,
-que ninguém tinha escrito em lado nenhum. É a classe de custo que \textcite{sculley2015debt}
-arrumam sob dependências de dados e emaranhamento entre componentes, e o sintoma que eles apontam verificou-se aqui
-por inteiro: o sistema continuou a produzir números de aparência perfeitamente normal.
+Nenhum teste o podia detetar. O modelo foi avaliado sobre a distribuição do conjunto de treino e
+implantado atrás de dois filtros que a alteram, e cada peça cumpria o seu contrato: o que estava
+errado era uma suposição sobre a ligação entre elas, não escrita em lado nenhum. É a classe de
+custo que \textcite{sculley2015debt} arrumam sob dependências de dados e emaranhamento entre
+componentes, com o sintoma que eles descrevem: o sistema continua a produzir números de aparência
+normal.
 
 \paragraph{E há uma segunda causa possível, que não consigo separar da primeira.}
 \label{sec:av_ret_event_producao}
@@ -1074,11 +943,9 @@ $08{:}14$: a essa hora o dia da notícia ainda não fechou. A entrada é então 
 última barra diária que a fonte tem, que durante a sessão é o fecho da véspera ou uma barra
 incompleta do próprio dia. Em nenhum dos casos é a quantidade sobre a qual o modelo foi treinado.
 
-Não é a mesma coisa que a redundância descrita acima, e as duas produzem o mesmo sintoma. Com o
-que ficou registado não consigo atribuir peso a cada uma: o registo de decisões guarda a
-probabilidade e o resultado, e não guarda o valor das entradas no momento em que a pontuação foi
-feita. Separá-las exigiria registar as entradas, que é uma linha de código e uma corrida de
-semanas. Fica dito porque a explicação que eu tinha dado era completa de mais.
+As duas causas produzem o mesmo sintoma e o registo não permite atribuir peso a cada uma, porque
+guarda a probabilidade e o resultado mas não o valor das entradas no momento da pontuação.
+Separá-las exigiria registar essas entradas e voltar a observar durante semanas.
 
 \subsection{E a medição acima não é uma surpresa: é aritmética}
 \label{sec:av_inevitavel}
@@ -1209,7 +1076,11 @@ configuração que convém.
 \begin{table}[ht]
 \caption[O texto por cima da tabela de consulta]{Somar o título à tabela de consulta. A coluna
 da direita é a capacidade de ordenar \emph{dentro} de cada empresa, onde a tabela vale $0.5$ por
-construção e não por estimativa.}
+construção e não por estimativa. \textbf{As linhas com texto não são as da
+Tabela~\ref{tab:av_triagem} e não devem ser lidas contra ela:} aqui o bloco de texto está reduzido
+a $32$ dimensões, como no re-teste favorável ao texto, e é por isso que ``contexto + texto'' dá
+$0.533$ aqui e $0.496$ ali. A redução é a mesma para todas as linhas desta tabela, logo a
+comparação \emph{dentro} dela é justa.}
 \label{tab:av_acrescimo}
 \centering
 \small
@@ -1269,6 +1140,12 @@ bloco de teste, que já serviu várias comparações deste capítulo. Quanto mai
 conjunto de teste, mais fácil é encontrar nele uma diferença pequena. As duas defesas usadas
 não afinar a configuração aqui, e escrever o critério antes de medir, reduzem esse risco
 sem o eliminarem, e um efeito de $+0.012$ deve ser lido com essa reserva.
+
+A formulação que sobrevive a essa reserva é a mais fraca das duas possíveis, e é a que fica: não se
+consegue rejeitar que o título acrescente alguma coisa, e o acréscimo, a existir, é menor do que o
+critério prático fixado antes de medir. É um limite superior de um efeito, e não uma descoberta.
+Uma origem rolante com cortes sucessivos --- a mesma que a Secção~\ref{sec:av_qi3} declara em
+falta --- é o que permitiria dizer mais do que isto.
 
 \subsection{A correção óbvia, e porque é que não servia}
 
@@ -1330,10 +1207,19 @@ fica como trabalho futuro, não como desculpa.
 E, sobre a secção anterior, que o modelo seja inútil. Ele ordena empresas melhor do que o acaso, e é
 com esse papel que ficou. O que a medição desmente é o uso que lhe estava a ser dado.
 
+E há uma hipótese alternativa que estas medições \textbf{não excluem}, e que convém nomear em vez
+de esperar que alguém a levante. O rótulo desconta o mercado com $\beta = 1$, pela incoerência que
+a Secção~\ref{sec:met_triagem} declara. Numa ação de beta alto o que sobra da subtração ainda
+contém movimento do mercado, portanto o erro do rótulo não é aleatório: é maior nas ações mais
+sensíveis ao mercado, que são também, tipicamente, as mais voláteis. Ora a linha de base que ganha
+é exatamente a volatilidade. Não é possível, com o que está medido, separar \emph{a volatilidade
+prevê melhor a materialidade} de \emph{a volatilidade prevê melhor o erro que o meu rótulo
+introduz}. A experiência que resolveria isto é reconstruir o alvo com betas estimados e encolhidos,
+como faz a Secção~\ref{sec:met_decomposicao}, e repetir as seis famílias; não foi corrida, e por
+isso tanto o nível como a ordenação das métricas ficam condicionados ao rótulo efetivamente usado.
+
 \section{Todas as alternativas que foram testadas e não ficaram}
 \label{sec:av_alternativas}
-
-\emph{As escolhas foram comparadas com alternativas concretas?}
 
 A Tabela~\ref{tab:av_alternativas} reúne as comparações feitas ao longo do trabalho, incluindo as
 três em que o sistema mantém a opção que a medição não favorece.
@@ -1435,8 +1321,6 @@ tivessem sido testadas seria dar-lhes uma autoridade que não têm.
 \section{E o sistema inteiro ganha na métrica ponta a ponta?}
 \label{sec:av_pontaaponta}
 
-\emph{Cada componente foi comparado com a sua alternativa. E o conjunto?}
-
 As secções anteriores comparam peça a peça: o detetor contra um limiar fixo, a recuperação contra
 escolher ao acaso, a triagem contra a volatilidade. Falta uma comparação ao nível do
 \textbf{sistema}: dadas as notícias de um dia, quais são as cinco que o proxy considera materiais,
@@ -1483,7 +1367,7 @@ Secção~\ref{sec:av_qi3}, e agora sabe-se porquê: a Secção~\ref{sec:av_ablac
 é, na prática, uma tabela por empresa, e a volatilidade é outra tabela por empresa, mais simples.
 Duas tabelas a fazer a mesma coisa, e ganha a que não precisa de ser treinada.
 
-\paragraph{O oráculo diz onde está o problema, e não é onde eu julgava.}
+\paragraph{O oráculo localiza a limitação.}
 O melhor resultado possível, escolhendo com as respostas na mão, seria $0.968$. Isso quer dizer
 que \textbf{em quase todos os dias existem mesmo cinco notícias importantes no lote}. O sistema não
 está limitado por falta de matéria-prima: está limitado por não conseguir distinguir quais são.
@@ -1514,28 +1398,7 @@ propósito. Uma linha de base errada é pior do que uma linha de base em falta.
 \section{Resumo dos três resultados}
 \label{sec:av_resumo}
 
-\begin{table}[ht]
-\caption[As três perguntas e as suas respostas]{O veredicto de cada questão de investigação.}
-\label{tab:av_resumo}
-\centering
-\small
-\begin{tabular}{L{0.16\textwidth} L{0.14\textwidth} L{0.56\textwidth}}
-\toprule
-\tabhead{Pergunta} & \tabhead{Resposta} & \tabhead{Com base em quê} \\
-\midrule
-\textbf{QI1} deteção & \textbf{Sim} & Amplitude de disparo $0.015$ contra $0.344$; e ganha a dois
-métodos aprendidos ($F_1$ $0.530$ contra $0.269$ e $0.280$) \\
-\textbf{QI2} precedentes & \textbf{Sim} & Sob a restrição causal da produção, precisão@5 de
-$0.513$, chão $0.259$ e margem $+0.254$; o teste simétrico de escala dá $0.595$ \\
-\textbf{QI3} triagem & \textbf{Não} & Nenhum modelo com texto bate a volatilidade de forma
-sustentada ($0.496$ contra $0.542$; a melhor variante com texto chega a $0.547$, mas a diferença
-tem intervalo que contém zero), e o resultado aguenta os três testes de robustez. \textbf{Mas o
-texto acrescenta} ao que o modelo já sabe da empresa: $+0.012$, IC $[+0.004, +0.020]$; abaixo do
-critério prático e sem ganho na precisão@5 \\
-\bottomrule
-\end{tabular}
-\end{table}
 
-A Tabela~\ref{tab:av_resumo} junta as três. Duas das respostas são afirmativas e uma é negativa. A negativa é a que eu mais aprendi a
+Duas das respostas são afirmativas e uma é negativa. A negativa é a que mais custou a
 defender: mostra que a avaliação foi montada para poder dizer que não, e uma avaliação que só sabe
 dizer que sim não avalia nada.

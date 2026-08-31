@@ -7,8 +7,6 @@
 \section{Vista de conjunto}
 \label{sec:sis_vista}
 
-\emph{Como é que as peças se ligam?}
-
 O Capítulo~\ref{cap:metodologia} explicou quatro técnicas isoladas; este mostra-as a trabalhar
 juntas, que é onde aparecem os problemas que nenhuma delas tem sozinha.
 
@@ -101,91 +99,22 @@ Capítulo~\ref{cap:avaliacao}.
 
 Convém separar isso do que o sistema \emph{implantado} consulta, porque não é o mesmo ficheiro. Em
 produção a base de casos é um ano de notícias reais recolhidas pelo próprio sistema, com o impacto
-medido da mesma maneira: são $38\,214$ casos, e a Secção~\ref{sec:sis_memoria} conta o que foi
-preciso fazer para caberem na memória. Um serve para medir se o método funciona, o outro é o que
+medido da mesma maneira: são $38\,214$ casos. Um serve para medir se o método funciona, o outro é o que
 está a correr.
 
 \section{As peças que não são minhas}
 \label{sec:sis_pecas}
 
-\emph{O que é que este sistema usa de fora, e porquê essas e não outras?}
-
-Um sistema construído sobre serviços de terceiros deve dizer quais são. Não por formalidade: porque
-cada um deles é uma dependência, um limite, e uma decisão que podia ter sido tomada ao contrário. A
-Tabela~\ref{tab:sis_pecas} lista todas, com o que cada uma faz, o que custa, e o que foi
-\emph{rejeitado} em favor dela.
-
-\begin{table}[!htbp]
-\caption[Tudo o que o sistema usa de fora]{As dependências externas, nomeadas. A coluna da direita
-é a que interessa: uma escolha só se defende contra a alternativa que não foi tomada.}
-\label{tab:sis_pecas}
-\centering
-\scriptsize
-\begin{tabular}{L{0.15\textwidth} L{0.20\textwidth} L{0.16\textwidth} L{0.35\textwidth}}
-\toprule
-\tabhead{Peça} & \tabhead{Para quê} & \tabhead{Custo/limite} & \tabhead{Porquê esta, e não a outra} \\
-\midrule
-\textbf{Finnhub} & notícias por empresa & grátis, 60 pedidos/min &
-Dá notícias \emph{por empresa}, que é o de que o sistema precisa, e é a que etiqueta melhor
-(Secção~\ref{sec:sis_fontes}). \\
-\addlinespace
-\textbf{Alpha Vantage} & notícias, segunda fonte & grátis com chave &
-É a \textbf{mais fresca} das três, e a frescura é o que ataca a queixa de os alertas chegarem
-tarde. \\
-\addlinespace
-\textbf{Polygon} & notícias, terceira fonte & grátis com chave &
-Traz mais títulos exclusivos do que qualquer outra fonte, mas antigos: serve para encher a base de
-casos, não para alertar. \\
-\addlinespace
-\textbf{yfinance} & preços diários e intradiários & grátis, sem garantia &
-É a fonte mais completa sem chave. Falha com frequência, e por isso não é usada sozinha: ver a
-cadeia abaixo. \\
-\addlinespace
-\textbf{Tiingo, Polygon, Alpha Vantage} & preços, quando a primeira falha & grátis com chave;
-Alpha Vantage 25 pedidos/dia & São \emph{alternativas de recurso}, não fontes principais. A ordem é
-fixa e o sistema regista qual delas serviu, porque saber a origem de um número faz parte de o poder
-explicar. \\
-\addlinespace
-\textbf{Stooq} & era candidato a fonte de preços & grátis & \textbf{Rejeitado por medição.} Foi
-testado ao vivo e responde com uma verificação anti-robô, o que o torna inutilizável dentro de um
-processo automático. Fica registado porque parecia servir. \\
-\addlinespace
-\textbf{Tiingo, GNews} & eram candidatos a fontes de notícias & grátis com chave &
-\textbf{Rejeitados por medição.} O Tiingo devolve erro de autorização no endpoint de notícias
-(exige plano pago) e o GNews não é por empresa: é pesquisa por palavras, e usá-lo obrigaria a
-inferir a empresa a partir do texto. \\
-\addlinespace
-\textbf{\gls{FNSPID}} \autocite{dong2024fnspid} & o passado: notícias antigas alinhadas com preços
-& grátis, licença \emph{CC BY-SA} & É público, é grande, e traz título, data e empresa. O
-alinhamento com preços que este trabalho usa é construído aqui; comprar histórico de notícias
-equivalente não era opção. \\
-\addlinespace
-\textbf{Sentence-BERT} \autocite{reimers2019sbert} & transformar títulos em vetores & grátis,
-corre localmente & Modelo já treinado, pequeno o suficiente para caber num contentor de memória
-limitada. Alternativas maiores e um modelo específico de finanças foram testados e estão medidos no
-Capítulo~\ref{cap:avaliacao}. \\
-\addlinespace
-\textbf{Telegram} & entregar o alerta ao telemóvel & grátis, sem limite prático &
-Tem \gls{API} de \emph{bot} sem custo e sem processo de aprovação, e o utilizador subscreve com um
-clique. Notificações nativas de telemóvel obrigariam a publicar aplicações em duas lojas. \\
-\addlinespace
-\textbf{Heroku} & manter o sistema a correr sem parar & créditos do \emph{GitHub Student Pack} &
-Dá um processo \textbf{permanente}, que é o que o ciclo de 60 segundos exige. É a decisão explicada
-na Secção~\ref{sec:sis_implantacao}. \\
-\addlinespace
-\textbf{GitHub Actions} & correr os testes, compilar a dissertação, e guardar o histórico &
-grátis para repositórios públicos & Serve hoje de rede de segurança do processo permanente, e serviu
-de \emph{motor} na primeira versão. \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Duas observações que valem mais do que a tabela.
-
-\paragraph{A cadeia de preços é a peça de engenharia mais aborrecida e mais necessária.}
-Nenhuma fonte gratuita de preços é fiável sozinha, e por isso o sistema tenta-as por ordem fixa,
-fica pela primeira que responde e regista sempre qual delas serviu. Sem esta cadeia, um dia em que o
-Yahoo bloqueia seria indistinguível de um dia em que o mercado não abriu.
+O sistema assenta em serviços de terceiros, todos gratuitos, e cada um é uma dependência e um
+limite. As notícias vêm de três fontes complementares, comparadas na Secção~\ref{sec:sis_fontes};
+os preços vêm de uma cadeia de quatro alternativas tentadas por ordem fixa, porque nenhuma fonte
+gratuita de preços é fiável sozinha e sem a cadeia um dia de bloqueio seria indistinguível de um
+dia em que o mercado não abriu; o registo guarda sempre qual delas serviu, porque a origem de um
+número faz parte de o poder explicar. A representação de frases usa um codificador pré-treinado,
+escolhido por medição contra quatro alternativas (Secção~\ref{sec:av_alternativas}), e a entrega
+usa a interface de robô do Telegram. Duas candidaturas foram rejeitadas por medição e não por
+argumento: uma fonte de preços que responde com verificação anti-robô, e uma de notícias que não
+permite consulta por empresa.
 
 \subsection{Porquê três fontes de notícias, e não a melhor}
 \label{sec:sis_fontes}
@@ -202,7 +131,12 @@ e três dias.
 \begin{table}[!htbp]
 \caption[As três fontes, medidas]{O que cada fonte gratuita entrega depois do filtro de
 relevância. A última coluna é a que decide se compensa somar: quantos títulos cada uma traz
-que \emph{nenhuma} das outras traz.}
+que \emph{nenhuma} das outras traz. \textbf{Essa coluna é um limite superior}, e a razão é a
+regra de comparação: dois títulos só contam como o mesmo se coincidirem depois de passarem a
+minúsculas e de se lhes tirar a pontuação. Duas fontes que reescrevam o mesmo acontecimento por
+outras palavras contam como dois títulos exclusivos, e é isso que explica a sobreposição
+observada ser tão pequena. Fazer a comparação por \emph{significado} usaria a técnica que o
+sistema já tem, e é o item~5 da Secção~\ref{sec:con_futuro}.}
 \label{tab:sis_fontes}
 \centering
 \small
@@ -252,8 +186,6 @@ restantes são escolhas de restrição: são as que cabem em ``apenas fontes gra
 \section{O caminho de uma notícia, do princípio ao fim}
 \label{sec:sis_caminho}
 
-\emph{O que acontece, exatamente, entre uma notícia sair e um alerta chegar ao telemóvel?}
-
 Esta é a secção central do capítulo, e segue \textbf{uma notícia real}: um alerta que o canal
 enviou a 12 de julho de 2026 sobre a Meta.
 
@@ -261,8 +193,7 @@ enviou a 12 de julho de 2026 sobre a Meta.
 \emph{``Mark Zuckerberg Said Meta's AI Bets `Haven't Come to Fruition Yet' as Shares Fell 5\%''}
 \end{quote}
 
-A Figura~\ref{fig:caminho} mostra as etapas. A Tabela~\ref{tab:sis_caminho} mostra o que aconteceu
-em cada uma, com os valores que o sistema realmente calculou.
+A Figura~\ref{fig:caminho} mostra as nove etapas.
 
 \begin{figure}[ht]
 \centering
@@ -297,36 +228,12 @@ varreduras acabam assim.}
 \label{fig:caminho}
 \end{figure}
 
-\begin{table}[!htbp]
-\caption[Uma notícia real, etapa a etapa]{O que aconteceu em cada etapa para o alerta da Meta de 12
-de julho de 2026. Todos os valores são os que o sistema calculou nesse dia.}
-\label{tab:sis_caminho}
-\centering
-\small
-\begin{tabular}{L{0.24\textwidth} p{0.66\textwidth}}
-\toprule
-\tabhead{Etapa} & \tabhead{O que aconteceu} \\
-\midrule
-1. Recolher & A varredura foi buscar as notícias da semana para cada empresa da lista. \\
-2. Nomeia a empresa? & O título diz ``Meta'' e ``Mark Zuckerberg'', que estão na lista de nomes da
-empresa, e não corresponde a nenhum padrão de texto automático. \textbf{Passa.} \\
-3. É recente? & Tem menos de dois dias. \textbf{Passa}: sem esta porta, a mesma notícia alertava
-dias seguidos. \\
-4. Procurar parecidas & O título é transformado em 384 números e comparado com a base de casos. As
-três mais parecidas: Microsoft 2023-11-07 ($0.46$), Nvidia 2023-08-02 ($0.51$), Nvidia 2023-09-21
-($0.46$). \\
-5. Evidência forte? & A melhor semelhança é $0.51$, acima do chão de $0.45$. \textbf{Passa.} \\
-6. Merece avisar? & O modelo de triagem dá $54\%$. À data deste alerta esse valor era um limiar de
-corte; hoje serve para ordenar, e quem corta é o orçamento diário. \textbf{Passa.} \\
-7. Já avisei hoje? & É o primeiro alerta desta empresa hoje, e nenhum outro produtor o enviou.
-\textbf{Passa.} \\
-8. Montar a explicação & O texto é composto a partir dos objetos calculados: o movimento, os três
-casos passados com o que se seguiu a cada um, e a nota de que isto não é uma previsão. \\
-9. Enviar e registar & Enviado ao canal e guardado no registo partilhado, de onde a página web o vai
-buscar depois. \\
-\bottomrule
-\end{tabular}
-\end{table}
+
+Os valores desse alerta, etapa a etapa: o título nomeia a empresa e não corresponde a nenhum padrão
+de texto automático; tem menos de dois dias; os três precedentes mais próximos são Microsoft
+2023-11-07 ($0.46$), Nvidia 2023-08-02 ($0.51$) e Nvidia 2023-09-21 ($0.46$), e a melhor semelhança
+fica acima do chão de $0.45$; o modelo de triagem atribui $54\%$; é o primeiro alerta da empresa
+nesse dia. A mensagem é composta a partir dos objetos calculados e registada.
 
 A etapa 4 merece atenção, e a razão está no que ela devolve. Os três
 casos recuperados são de \textbf{outras empresas} (duas da Nvidia e uma da Microsoft), e o
@@ -340,8 +247,6 @@ importante que há para saber: que casos parecidos deram resultados diferentes.
 
 \section{O caminho de um movimento de preço}
 \label{sec:sis_mercado}
-
-\emph{E quando não há notícia nenhuma?}
 
 O segundo gatilho é bastante mais curto: todos os dias, depois do fecho, o sistema calcula o
 \emph{z}-score de cada empresa da lista, como na Secção~\ref{sec:met_zscore}, e basta que um deles
@@ -379,8 +284,6 @@ vizinhos, nunca para a sua \emph{dimensão}. Passou a olhar para as duas.
 \section{As portas: quando o sistema decide calar-se}
 \label{sec:sis_portas}
 
-\emph{Porque é que o sistema não avisa de quase nada?}
-
 Porque avisar de tudo é o mesmo que não avisar de nada. Se o canal enviar quinze mensagens por dia,
 a pessoa deixa de as ler, e o sistema perde o único valor que tinha para dar.
 
@@ -415,7 +318,7 @@ Sobreviveu às portas & $333$ & \textbf{ver a ressalva} \\
 \end{tabular}
 \end{table}
 
-\paragraph{E a ressalva é um defeito que encontrei ao construir esta tabela.}
+\paragraph{Uma etapa que não estava instrumentada.}
 Cinco mil avaliações e cinco mensagens: a proporção está certa e é o comportamento pretendido. Mas
 a linha dos $333$ não queria dizer o que parecia. O sistema reavalia os mesmos títulos de $60$ em
 $60$ segundos, e um título que já tinha sido entregue nesse dia voltava a passar todas as portas
@@ -480,8 +383,6 @@ coerência de tema, e não para escolher casos que preveem melhor. Fica dito ass
 
 \section{Como o alerta é explicado}
 \label{sec:sis_explicacao}
-
-\emph{O que é que a pessoa recebe, e porque é que se pode fiar?}
 
 O alerta não é uma frase. É uma pequena estrutura, sempre com as mesmas partes e sempre pela mesma
 ordem:
@@ -600,7 +501,7 @@ revela: a calibração é ajustada num bloco com mais casos importantes do que a
 e por isso o valor anunciado é cerca de cinco pontos percentuais otimista. A ordenação entre notícias
 não é afetada, porque a transformação preserva a ordem; o número absoluto é.
 
-\paragraph{E este exemplo mostra um defeito que eu não tinha visto até o pôr aqui.}
+\paragraph{O que o alerta afirma, e o que a medição sustenta.}
 Os três precedentes têm o \emph{mesmo} impacto, $-2.73\%$, e a mesma data. Não é coincidência: o
 impacto é medido por \textbf{(empresa, dia)}, logo três títulos da mesma empresa no mesmo dia
 partilham o mesmo valor por construção. A frase ``\emph{3 of 3 shown cases moved down}'' apresenta
@@ -619,71 +520,56 @@ texto vem do objeto que o calculou}. O texto é montado a partir dessas peças. 
 dizer $+4.47\%$ e o sistema ter calculado outro valor, porque só existe um sítio onde esse valor
 existe.
 
-\section{Onde isto corre, e o que isso custou}
+\section{Onde o sistema corre, e com que latência}
 \label{sec:sis_implantacao}
 
-\emph{Como é que um sistema destes se mantém a funcionar sem servidor pago?}
+O sistema corre como processo permanente, com um ciclo de varredura de sessenta segundos, sobre
+créditos de alojamento incluídos no plano académico. A primeira versão usava um agendador gratuito
+de melhor esforço, que na prática corria de hora e meia em hora e meia; a mudança para um processo
+permanente foi feita para reduzir o atraso dos alertas, e a Tabela~\ref{tab:sis_latencia} mede o
+que ela comprou.
 
-A primeira versão corria no agendador do \textbf{GitHub Actions}, configurado para disparar de meia
-em meia hora nos dias úteis. Funcionava, e tinha um problema que só se vê a usar: \textbf{os alertas
-chegavam tarde}. Esse agendador é de \emph{melhor esforço} para repositórios gratuitos: quando os
-executores partilhados enchem, a corrida é saltada. Na prática corria de hora e meia em hora e meia.
-
-A solução veio do plano do ISEP: o \emph{GitHub Student Developer Pack} dá créditos de
-\textbf{Heroku}, que permitiram passar de um agendador para um \textbf{processo permanente}. O ciclo
-passou a correr de \textbf{60 em 60 segundos}.
-
-A Figura~\ref{fig:sis_infra} mostra onde cada peça corre depois dessa mudança, porque a arquitetura
-de execução não é óbvia e tem uma consequência que descobri à minha custa.
-
-\begin{figure}[ht]
+\begin{table}[!htbp]
+\caption[O que o ciclo de 60 segundos comprou]{Latência medida sobre os alertas entregues. As duas
+primeiras linhas separam as duas eras; as duas últimas repartem o percurso e são medidas sobre o
+conjunto \emph{inteiro}, as duas eras juntas, e por isso não se subtraem às de cima. O tempo está
+quase todo na \emph{descoberta}, não na entrega.}
+\label{tab:sis_latencia}
 \centering
-\begin{tikzpicture}[
-  font=\footnotesize, >={Stealth[length=2.2mm]},
-  cx/.style={draw, rounded corners, align=center, text width=2.35cm, minimum height=1.2cm,
-             inner sep=4pt},
-  proc/.style={cx, fill=black!5},
-  dado/.style={cx, fill=black!14},
-  fora/.style={cx, dashed, fill=white},
-  et/.style={font=\scriptsize, text=black!55},
-]
-  \node[proc] (w) {\textbf{worker}\\ \scriptsize ciclo de 60\,s\\ \scriptsize (Heroku)};
-  \node[proc, below=8mm of w] (web) {\textbf{web}\\ \scriptsize serve a página\\ \scriptsize (Heroku)};
-  \node[dado, right=0.85cm of w, yshift=-7mm] (br)
-    {\textbf{repositório de dados}\\ \scriptsize histórico e registos\\ \scriptsize (GitHub)};
-  \node[fora, left=0.85cm of w] (apis) {\textbf{fontes}\\ \scriptsize Finnhub, preços};
-  \node[fora, right=0.85cm of br, yshift=8mm] (tg) {\textbf{Telegram}\\ \scriptsize o alerta};
-  \node[fora, right=0.85cm of br, yshift=-8mm] (nav) {\textbf{navegador}\\ \scriptsize o utilizador};
+\begin{tabular}{p{0.46\textwidth} r r}
+\toprule
+\tabhead{Medição} & \tabhead{Valor} & \tabhead{Casos} \\
+\midrule
+\multicolumn{3}{l}{\emph{Por era, sobre o percurso completo}} \\
+Mediana, com o agendador gratuito & $196$ min & $28$ \\
+Mediana, com o ciclo de 60 segundos & $143$ min & $73$ \\
+\midrule
+\multicolumn{3}{l}{\emph{As duas eras juntas, repartindo o percurso}} \\
+Da publicação até o sistema detetar & $\approx 158$ min & $101$ \\
+Da deteção até a mensagem chegar & $\approx 1$ s & $101$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-  \draw[->] (apis) -- (w);
-  \draw[->] (w) -- node[et, above, sloped] {publica} (br);
-  \draw[->] (br) -- node[et, below, sloped] {lê} (web);
-  \draw[->] (w.north) -- ++(0,0.45) -| node[et, above, pos=0.25] {envia} (tg.north);
-  \draw[->] (web) -- ++(2.0,0) |- (nav);
-\end{tikzpicture}
-\caption[Onde cada peça corre]{Os dois processos do Heroku não partilham disco. Tudo o que tem de
-sobreviver a um reinício, ou de ser visto pelo outro processo, passa pela \textbf{branch de
-dados} no GitHub.}
-\label{fig:sis_infra}
-\end{figure}
+As duas eras diferem em $53$ minutos de mediana. Essa diferença não isola o efeito do ciclo: as
+duas eras não correram em paralelo, entre elas mudaram as fontes de notícias e o período de
+calendário, e as amostras são de $28$ e $73$ casos sem intervalo de confiança. O que a medição
+mostra com segurança é a repartição do percurso, e essa não depende da comparação entre eras:
+\textbf{quase todo o tempo decorre até a notícia aparecer na fonte gratuita}, e a entrega demora
+cerca de um segundo depois de o sistema a ver.
 
-\paragraph{A consequência, e é um defeito que encontrei e corrigi.}
-Os dois processos correm em máquinas separadas e o disco de cada uma é apagado a cada reinício.
-Isso está escrito na documentação do serviço e eu sabia-o. Mesmo assim, dois dos ficheiros de
-registo, o do funil e o das decisões de triagem, estavam a ser escritos \textbf{apenas em disco
-local}. Resultado: o processo que serve a página mostrava uma semana atrasada, e o registo que
-alimenta a validação posterior tinha deixado de crescer. Ambos passaram a ser publicados na branch
-de dados a cada ciclo.
+A latência é, portanto, uma limitação das fontes e não da infraestrutura. Um serviço pago de
+notícias em tempo real resolveria-a, e violaria a restrição de custo nulo que define o âmbito
+deste trabalho.
 
-\subsection{O sistema aprende com o que vai vendo, e quase não aprendia}
+\subsection{A base de casos cresce com o que o sistema observa}
 \label{sec:sis_ciclo}
 
-Há uma parte do desenho que só faz sentido com o tempo a passar. Todo o título relevante que a
-varredura vê é guardado como \textbf{candidato a precedente futuro}. Passados oito dias, quando o
-impacto no preço já é observável, esse candidato é medido com a mesma regra de alinhamento do
-Capítulo~\ref{cap:metodologia} e entra na base de casos. A base cresce sozinha, e os alertas de
-amanhã comparam-se contra o que o sistema viu ontem. A Figura~\ref{fig:sis_ciclo_kb} mostra
-o ciclo.
+Todo o título relevante que a varredura vê é guardado como candidato a precedente. Oito dias
+depois, quando o impacto no preço já é observável, esse candidato é medido com a mesma regra de
+alinhamento da Secção~\ref{sec:met_recuperacao} e entra na base de casos. A espera não é uma
+ineficiência: é o que impede um caso de conhecer o seu próprio desfecho. A Figura~\ref{fig:sis_ciclo_kb}
+mostra o ciclo.
 
 \begin{figure}[ht]
 \centering
@@ -718,150 +604,25 @@ modelo: nada aqui re-treina nada.}
 \label{fig:sis_ciclo_kb}
 \end{figure}
 
-Convém situar o que este mecanismo é e o que não é. Ele mantém atualizada a \emph{base de casos}, ou
-seja a evidência que o sistema mostra, mas não re-treina modelo nenhum: os pesos da triagem são os
-que foram aprendidos uma vez. A literatura de deriva de conceito trata precisamente do problema de um
-modelo implantado deixar de corresponder aos dados que passa a ver, e organiza as respostas em
-deteção da mudança e adaptação a ela \autocite{gama2014survey}. Deste par, este sistema tem a
-primeira metade, porque mede a deriva, e não tem a segunda.
+Este mecanismo mantém atualizada a \emph{evidência} que o sistema mostra, e não os pesos do
+modelo: nada aqui re-treina nada. Da taxonomia de deriva de conceito \autocite{gama2014survey},
+o sistema tem a deteção da mudança e não tem a adaptação a ela.
 
-Isso é o desenho. Fui verificar se estava a acontecer, e não estava.
+Verificou-se, já com o sistema em funcionamento, que este ciclo tinha estado parado dezanove dias
+sem que nenhum erro fosse registado: os dois processos correm em máquinas separadas cujo disco é
+apagado a cada reinício, e os ficheiros de maturação não estavam a ser publicados no repositório de
+dados. É a classe de custo que \textcite{sculley2015debt} descrevem como dependência de dados não
+declarada, cada peça cumpre o seu contrato e a suposição que as liga não está escrita em lado
+nenhum. O Capítulo~\ref{cap:conclusoes} retoma-a como limitação.
 
-\begin{tcolorbox}[colback=orange!5, colframe=orange!45, boxrule=0.5pt, arc=2pt]
-A base de casos viva estava congelada havia \textbf{dezanove dias}, e havia $1\,785$ candidatas de
-julho ainda por maturar, quando a maturação precisa de oito. O sistema captava centenas de casos
-por ciclo e \textbf{nenhum} chegava a ser convertido em precedente utilizável.
-\end{tcolorbox}
-
-A causa é a mesma que já tinha atingido dois ficheiros de registo: no serviço de alojamento, o
-processo que serve a página e o que faz as varreduras são \emph{máquinas separadas}, e o disco de
-cada uma é apagado quando ela reinicia. Tudo o que tem de sobreviver a um reinício passa pelo
-repositório de dados, e estes dois ficheiros não passavam.
-
-Convém dar nome a esta classe de falha, porque ela não é uma distração minha e repete-se em sistemas
-muito maiores do que este. \textcite{sculley2015debt} descrevem, a partir de experiência com sistemas
-de aprendizagem em produção, um custo de manutenção que não aparece em nenhuma métrica de qualidade,
-e cujos sintomas incluem exatamente este. Entre os factores de risco que enumeram estão as
-\emph{dependências de dados} instáveis e o emaranhamento entre componentes; o caso aqui é uma
-variante deles, em que a correção de uma peça depende de uma suposição sobre outra que ninguém
-escreveu em lado nenhum. Aqui a suposição era ``o ficheiro que escrevi continua lá amanhã'', e ela é verdadeira
-na máquina de quem desenvolve e falsa no contentor. Nenhum teste podia apanhá-la, porque cada peça
-cumpria o seu contrato, e nenhum erro foi registado, porque escrever no disco local nunca falhou.
-
-\paragraph{Mas a correção não podia ser a mesma, e é isso que torna o caso interessante.}
-Os registos que já eram publicados a cada ciclo pesam menos de um megabyte. Estes pesam
-$16.6$ e $11.9$ megabytes. Publicá-los de sessenta em sessenta segundos seriam dezenas de
-\emph{gigabytes} por dia de tráfego, o que é insustentável e é, muito provavelmente, a
-razão pela qual ninguém os tinha publicado.
-
-A solução separa os dois problemas que estavam a ser confundidos: \textbf{semear} no arranque, para
-o contentor não começar do zero, e \textbf{publicar com um intervalo mínimo} de trinta minutos, em
-vez de a cada ciclo. O que se perde fica dito: até trinta minutos de capturas, se o contentor
-reiniciar nesse intervalo. É uma perda pequena e recuperável, porque o mesmo título volta a ser
-captado na varredura seguinte enquanto estiver dentro da janela de frescura.
-
-\subsection{Trinta e oito mil casos que não cabiam na memória}
-\label{sec:sis_memoria}
-
-O sistema tinha, guardado, um ano inteiro de notícias reais com o impacto já medido: $38\,214$
-casos. Não os usava, por duas razões que se descobriram uma de cada vez.
-
-A primeira era simples: faltavam-lhes os vetores. Foram calculados com o mesmo modelo do produto,
-e o procedimento \textbf{recusa-se a escrever} se esse modelo não estiver disponível, porque
-vetores de outro modelo seriam incomparáveis com a base de produção e isso é pior do que não os
-ter.
-
-A segunda apareceu ao medir, e é uma lição de engenharia que vale por si. Está na
-Tabela~\ref{tab:sis_memoria}.
-
-\begin{table}[!htbp]
-\caption[O mesmo conteúdo, três formatos]{Custo de memória para os mesmos $38\,214$ vetores de
-$384$ dimensões. O contentor de produção tem $512$ MB.}
-\label{tab:sis_memoria}
-\centering
-\small
-\begin{tabular}{L{0.46\textwidth} C{0.16\textwidth} C{0.18\textwidth}}
-\toprule
-\tabhead{Como está guardado} & \tabhead{Memória} & \tabhead{Carregar} \\
-\midrule
-Listas de números em Python (o que o formato de texto produz) & $655$ MB & $9.0$ s \\
-Matriz de precisão dupla & $112$ MB & --- \\
-\textbf{Matriz de precisão simples, mapeada do disco} & $\mathbf{25}$ \textbf{MB} &
-$\mathbf{0.44}$ \textbf{s} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Em formato de texto a base \textbf{não arrancava}: pedia mais memória do que o contentor tem. E o
-problema não era o volume dos dados. As mesmas $38\,214 \times 384$ posições valem $56$ MB de
-números de precisão simples, mas ocupavam $655$ MB porque cada número era um objeto individual de
-Python dentro de uma lista, e cada objeto desses carrega o seu próprio cabeçalho: são $11.7$ vezes
-o tamanho do conteúdo, gastas em contabilidade.
-
-Guardando-os como uma matriz mapeada do disco, o processo passa a pagar $25$ MB, ou seja
-\textbf{$26$ vezes menos} do que a versão em texto, e menos ainda do que os $56$ MB do conteúdo em
-bruto, porque o sistema operativo carrega apenas as páginas que forem lidas. A diferença está toda
-na forma de guardar.
-
-A mesma medição revelou um desperdício que ninguém tinha notado: a comparação com os casos
-passados reconstruía a matriz \emph{inteira} a cada consulta. Passou a ser carregada uma vez.
-
-Uma nota sobre até onde isto escala, porque é a pergunta seguinte. A procura continua a ser
-\textbf{exaustiva}, ou seja compara a consulta com os $38\,214$ casos todos, e a esta dimensão isso
-custa menos de um segundo e tem a vantagem de o resultado ser exato. Se a base crescesse uma ou duas
-ordens de grandeza, a substituição conhecida é um índice aproximado \autocite{johnson2021faiss}, que
-troca uma garantia de exatidão por tempo de resposta sem alterar a representação. Não foi feito
-porque ainda não é preciso, e trocar exatidão por velocidade que não faz falta seria pagar um custo
-sem comprar nada.
-
-O efeito no produto é o que se esperaria de multiplicar a base por vinte: os precedentes que o
-alerta mostra passaram a ser da própria empresa e sobre o mesmo assunto, com semelhanças acima de
-$0.7$ onde antes apareciam casos de outra empresa a $0.46$.
-
-\paragraph{E o \textbf{GitHub Actions} não desapareceu.} Continua a desempenhar três funções: corre os
-testes a cada alteração de código (\gls{CI}), compila esta dissertação, e mantém um agendador de
-reserva que dispara nos mesmos horários. Se o processo permanente parar, o sistema degrada para o
-comportamento da primeira versão em vez de ficar mudo, e o mecanismo que evita alertas repetidos
-garante que os dois não enviam a mesma coisa duas vezes.
-
-O resultado está na Tabela~\ref{tab:sis_latencia}, e é mais informativo do que a
-decisão:
-
-\begin{table}[!htbp]
-\caption[O que o ciclo de 60 segundos comprou]{Latência medida sobre os alertas entregues. As duas
-primeiras linhas separam as duas eras; as duas últimas repartem o percurso e são medidas sobre o
-conjunto \emph{inteiro}, as duas eras juntas, e por isso não se subtraem às de cima. O tempo está
-quase todo na \emph{descoberta}, não na entrega.}
-\label{tab:sis_latencia}
-\centering
-\begin{tabular}{p{0.46\textwidth} r r}
-\toprule
-\tabhead{Medição} & \tabhead{Valor} & \tabhead{Casos} \\
-\midrule
-\multicolumn{3}{l}{\emph{Por era, sobre o percurso completo}} \\
-Mediana, com o agendador gratuito & $196$ min & $28$ \\
-Mediana, com o ciclo de 60 segundos & $143$ min & $73$ \\
-\midrule
-\multicolumn{3}{l}{\emph{As duas eras juntas, repartindo o percurso}} \\
-Da publicação até o sistema detetar & $\approx 158$ min & $101$ \\
-Da deteção até a mensagem chegar & $\approx 1$ s & $101$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-O ciclo comprou \textbf{53 minutos}, e não as duas horas que eu esperava. A razão está nas duas
-últimas linhas: quase todo o tempo é gasto \emph{até a notícia aparecer na fonte gratuita}, e nada
-do lado da infraestrutura muda isso. Depois de o sistema ver a notícia, a mensagem chega em cerca de
-um segundo.
-
-Isto é uma limitação real e fica escrita como tal. Comprar um serviço de notícias em tempo real
-resolveria, e violaria a restrição fundadora do trabalho. Preferi ter uma limitação medida a ter
-uma capacidade comprada.
+A base implantada tem $38\,214$ casos com impacto medido, guardados como matriz de precisão
+simples mapeada do disco. O formato importa: os mesmos vetores em estruturas nativas de Python
+excediam a memória do contentor, e a mudança de formato foi o que permitiu usá-los. O efeito no
+produto é o que se esperaria de multiplicar a base por vinte, com os precedentes exibidos a passarem
+a ser da própria empresa e sobre o mesmo assunto.
 
 \section{O ciclo de vida do modelo, e o que nele é meu}
 \label{sec:sis_ciclo_vida}
-
-\emph{Onde é que está, concretamente, a engenharia de inteligência artificial deste trabalho?}
 
 É uma pergunta justa, e merece uma resposta reunida num sítio só, porque as peças estão espalhadas
 por três capítulos e obrigar quem lê a juntá-las é uma forma de não responder.

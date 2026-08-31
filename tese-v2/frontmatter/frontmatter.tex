@@ -1,0 +1,145 @@
+% Front matter — tese curta, PT-PT.
+
+\frontmatter
+\pagestyle{plain}
+
+\maketitlepage
+
+%----------------------------------------------------------------------------------------
+%	DECLARAÇÃO DE INTEGRIDADE
+%----------------------------------------------------------------------------------------
+
+\begin{soi}
+
+\vspace{1cm}
+
+Declaro que realizei este trabalho académico com integridade.
+
+Não recorri a plágio nem a qualquer forma de utilização indevida ou falsificação de informações ou
+resultados ao longo do processo que conduziu à sua elaboração.
+
+Declaro, por isso, que este documento é original e da minha autoria, não tendo sido utilizado
+anteriormente para qualquer outro fim.
+
+Declaro ainda que tenho pleno conhecimento do Código de Conduta Ética do P.PORTO.
+
+\vspace{0.5cm}
+
+\textbf{Uso de Inteligência Artificial.} Em conformidade com as orientações do P.PORTO/ISEP,
+declaro o uso de ferramentas de inteligência artificial generativa neste trabalho, e descrevo-o
+com precisão.
+
+A concepção é minha: o problema, as questões de investigação, as restrições que definem o sistema
+(apenas fontes gratuitas, explicabilidade primeiro, e a recusa de prever preços), o desenho de
+cada experiência e o critério de sucesso fixado antes de a correr, e todas as decisões sobre o que
+construir, manter ou descartar. Nenhuma conclusão deste documento foi delegada.
+
+A execução foi assistida, e em extensão substancial. Essas ferramentas escreveram e
+reestruturaram parte considerável do código do sistema e dos seus testes, implementaram os
+procedimentos de avaliação, redigiram e editaram prosa neste documento, e conduziram revisões que
+encontraram defeitos no software e no texto. Onde uma medição contrariou uma afirmação minha,
+retirei a afirmação em vez de a defender, e o Apêndice~\ref{ap:reprodutibilidade} regista as que
+foram retiradas.
+
+Revi o conteúdo deste documento. Ele, os erros que nele restem, e a sua defesa são da minha
+responsabilidade.
+
+\vspace{1cm}
+
+% A data acompanha a da capa (definida em main.tex). Estava em \today e mudava sozinha a cada
+% compilação, o que numa DECLARAÇÃO ASSINADA é pior do que na capa.
+% ⚠️ FALTA CONFIRMAR com o orientador a redação exata que a MEIA/ISEP exige para esta declaração.
+ISEP, Porto, setembro de 2026
+
+\end{soi}
+
+%----------------------------------------------------------------------------------------
+%	DEDICATÓRIA
+%----------------------------------------------------------------------------------------
+\begin{dedicatory}
+À minha família.
+\end{dedicatory}
+
+%----------------------------------------------------------------------------------------
+%	RESUMO
+%----------------------------------------------------------------------------------------
+
+\begin{abstract}
+Quando o preço de uma ação se move de forma abrupta, o investidor particular necessita de
+determinar se o movimento é invulgar, se a sua origem é a empresa ou o mercado, e se existem
+precedentes. As aplicações gratuitas apresentam a variação percentual e não respondem a estas
+questões; os terminais profissionais respondem, a um custo incompatível com este investidor.
+
+Esta dissertação apresenta o InvestiGator, um sistema de alertas financeiros assente exclusivamente
+em fontes de dados gratuitas, que responde às três questões e expõe a evidência que sustenta cada
+resposta. O sistema integra quatro técnicas: deteção de anomalias por \emph{z}-score deslizante,
+decomposição do retorno em mercado, setor e empresa com encolhimento do beta, recuperação de
+precedentes por semelhança semântica com medição do desfecho observado, e um modelo supervisionado
+de triagem treinado sobre um conjunto de dados construído para o efeito.
+
+Cada componente foi avaliado contra linhas de base transparentes. A deteção normalizada pela
+volatilidade revela-se consistente entre empresas; a recuperação semântica supera a taxa-base em
+todos os setores avaliados; o modelo de triagem não supera uma linha de base baseada apenas em
+volatilidade, resultado negativo que é reportado e analisado.
+
+Por desenho, o sistema não produz previsões de preço.
+\end{abstract}
+
+\begin{abstractotherlanguage}
+When a stock price moves abruptly, retail investors need to determine whether the movement is
+unusual, whether its origin lies with the company or the market, and whether comparable precedents
+exist. Free applications display the percentage change and answer none of these questions;
+professional terminals do answer them, at a cost incompatible with this investor profile.
+
+This dissertation presents InvestiGator, a financial alerting system built exclusively on free data
+sources, which answers the three questions and exposes the evidence supporting each answer. The
+system integrates four techniques: anomaly detection through a rolling \emph{z}-score, decomposition
+of returns into market, sector and company components with beta shrinkage, precedent retrieval by
+semantic similarity with measurement of the observed outcome, and a supervised triage model trained
+on a purpose-built dataset.
+
+Each component was evaluated against transparent baselines. Volatility-normalised detection proves
+consistent across companies; semantic retrieval outperforms the base rate in every sector assessed;
+the triage model does not outperform a volatility-only baseline, a negative result that is reported
+and analysed.
+
+By design, the system does not produce price forecasts.
+\end{abstractotherlanguage}
+%----------------------------------------------------------------------------------------
+%	AGRADECIMENTOS
+%----------------------------------------------------------------------------------------
+\begin{acknowledgements}
+Ao meu orientador, Prof.\ Luís Gomes, e ao meu coorientador, Rafael Silva, por todo o apoio ao longo
+desta tese. Por trocarem ideias comigo e me ajudarem a decidir a direção do tema; por me mostrarem
+exemplos de aplicações que já existem e me manterem a par do que se vai fazendo na área; e por me
+guiarem na elaboração deste documento. Muito do que aqui está tomou a forma que tem porque houve
+antes uma conversa com eles.
+
+À minha família, por todo o apoio e por acreditarem em mim. Por me incentivarem sempre, e pela
+alegria com que foram acompanhando a construção disto. É, para mim, a melhor parte de o ter
+feito.
+
+Aos meus colegas da Sistrade, e à Sistrade, pela flexibilidade que me permitiu seguir este mestrado
+a par do trabalho, pelas conversas informais sobre a aplicação ao longo destes meses, e por serem
+boa companhia todos os dias.
+\end{acknowledgements}
+
+%----------------------------------------------------------------------------------------
+%	ÍNDICES
+%----------------------------------------------------------------------------------------
+\tableofcontents
+\listoffigures
+\listoftables
+% Sao dois excertos, e uma lista de duas linhas parece pouco. Fica na mesma, por duas razoes:
+% e a convencao do template (uma das dissertacoes aprovadas do mesmo mestrado tem-na), e a tese
+% apresenta um deles como "a garantia mais importante de todo o trabalho" — um leitor que o
+% procure nao tinha por onde o encontrar a partir da frente.
+% ⚠️ E o prefixo de cada legenda, que saía "Listing 3.1:" enquanto o corpo manda ler o
+% "Excerto 3.1". O `listings` não é traduzido pelo babel, e isto tem de ficar depois de
+% \begin{document} para não ser sobrescrito.
+\renewcommand{\lstlistingname}{Excerto}
+
+\printnoidxglossary[type=\acronymtype, title=Lista de Acrónimos, nonumberlist]
+
+\mainmatter
+\pagestyle{thesis}
