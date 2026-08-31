@@ -16076,3 +16076,12 @@
 {"ts": "2026-08-31T18:30:08+00:00", "news_date": "2026-08-30", "ticker": "META", "headline": "Meta's AI Strategy Is Misunderstood By The Market", "prob": 0.46174978472695405, "gate": 0.5, "kept": true}
 {"ts": "2026-08-31T18:30:10+00:00", "news_date": "2026-08-31", "ticker": "AMD", "headline": "AMD Expands Global AI Footprint With New Saudi Platform", "prob": 0.5465150283477264, "gate": 0.5, "kept": true}
 {"ts": "2026-08-31T18:30:11+00:00", "news_date": "2026-08-31", "ticker": "XOM", "headline": "ExxonMobil Advances $100M STEM Investment In Guyana", "prob": 0.3994717584795781, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:32:12+00:00", "news_date": "2026-08-31", "ticker": "AAPL", "headline": "End of an era at Apple: Tim Cook's last day as CEO", "prob": 0.38514126625555584, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:32:13+00:00", "news_date": "2026-08-31", "ticker": "MSFT", "headline": "Bill Ackman Saw Microsoft Before the Chart Did", "prob": 0.41871743880481194, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:32:15+00:00", "news_date": "2026-08-31", "ticker": "NVDA", "headline": "Nvidia: This Is A Golden Opportunity", "prob": 0.5054450462079033, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:32:17+00:00", "news_date": "2026-08-31", "ticker": "TSLA", "headline": "Trade Tracker: Bryn Talkington buys more Tesla", "prob": 0.4726893890936237, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:32:19+00:00", "news_date": "2026-08-31", "ticker": "AMZN", "headline": "Amazon Web Services Accelerates Middle East AI Push with Saudi Cloud Region Launch", "prob": 0.43809896814072513, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:32:20+00:00", "news_date": "2026-08-31", "ticker": "GOOGL", "headline": "CrowdStrike's Falcon Platform Now Available On Google Cloud", "prob": 0.4353878211151558, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:32:21+00:00", "news_date": "2026-08-31", "ticker": "META", "headline": "Inside Meta's Landmark Youth-Safety Deal: $18 Billion Settlement Meets New Teen Limits", "prob": 0.4630494586323227, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:32:22+00:00", "news_date": "2026-08-31", "ticker": "AMD", "headline": "AMD Expands Global AI Footprint With New Saudi Platform", "prob": 0.5465099454432932, "gate": 0.5, "kept": true}
+{"ts": "2026-08-31T18:32:23+00:00", "news_date": "2026-08-31", "ticker": "XOM", "headline": "ExxonMobil Advances $100M STEM Investment In Guyana", "prob": 0.39946239424200114, "gate": 0.5, "kept": true}
