@@ -17530,3 +17530,15 @@
 {"date": "2026-08-30", "ticker": "NFLX", "stage": "stale", "detail": "mais recente 2026-08-26 > 2d"}
 {"date": "2026-08-30", "ticker": "XOM", "stage": "stale", "detail": "mais recente 2026-08-26 > 2d"}
 {"date": "2026-08-30", "ticker": "JNJ", "stage": "stale", "detail": "mais recente 2026-08-25 > 2d"}
+{"date": "2026-08-31", "ticker": "AAPL", "stage": "alerted", "detail": "Amazon Has Badly Underperformed the S&P 500 and Nasdaq-100 Since Jeff Bezos Step"}
+{"date": "2026-08-31", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-08-31", "ticker": "NVDA", "stage": "alerted", "detail": "NVDW: Collect High-Yield Income From Nvidia Swaps"}
+{"date": "2026-08-31", "ticker": "TSLA", "stage": "alerted", "detail": "The Biggest Risk Facing Tesla Stock Right Now"}
+{"date": "2026-08-31", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon Has Badly Underperformed the S&P 500 and Nasdaq-100 Since Jeff Bezos Step"}
+{"date": "2026-08-31", "ticker": "GOOGL", "stage": "stale", "detail": "mais recente 2026-08-28 > 2d"}
+{"date": "2026-08-31", "ticker": "META", "stage": "alerted", "detail": "Meta's AI Strategy Is Misunderstood By The Market"}
+{"date": "2026-08-31", "ticker": "JPM", "stage": "stale", "detail": "mais recente 2026-08-27 > 2d"}
+{"date": "2026-08-31", "ticker": "AMD", "stage": "stale", "detail": "mais recente 2026-08-28 > 2d"}
+{"date": "2026-08-31", "ticker": "NFLX", "stage": "stale", "detail": "mais recente 2026-08-26 > 2d"}
+{"date": "2026-08-31", "ticker": "XOM", "stage": "stale", "detail": "mais recente 2026-08-26 > 2d"}
+{"date": "2026-08-31", "ticker": "JNJ", "stage": "stale", "detail": "mais recente 2026-08-25 > 2d"}
