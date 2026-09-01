@@ -47,6 +47,26 @@ class HistoryEntry:
     detected_at: str = ""  # ISO 8601 UTC, ex.: "2026-07-29T14:32:07Z"
     sent_at: str = ""  # ISO 8601 UTC
     price_source: str = ""  # fonte que serviu o preço (só alertas de mercado)
+    # ── Identidade da mensagem no Telegram (2026-09-01) ──────────────────────────────────
+    # ⚠️ Sem estes dois, uma mensagem já entregue é INALCANÇÁVEL: não há como lhe acrescentar
+    # a análise que chegou oito segundos depois, nem o desfecho observado que só existe cinco
+    # dias depois. Guardá-los no momento do envio é a única oportunidade — o Telegram não
+    # oferece maneira de reencontrar uma mensagem pelo conteúdo.
+    # Opcionais e retrocompatíveis: as entradas antigas continuam a ler-se na mesma.
+    message_id: int = 0
+    chat_id: str = ""
+    # ⚠️ O HTML EXATO que o Telegram recebeu, e não o `text`, que é a versão sem tags para a
+    # consola e para o painel. Sem este campo não é possível **editar** a mensagem mais tarde
+    # sem a degradar: o `plain_text` tira o negrito e desfaz as entidades HTML, portanto
+    # reenviar o `text` perderia a formatação e, numa manchete com «<» ou «&», produziria HTML
+    # inválido que o Telegram rejeita. Vazio nas entradas anteriores a 2026-09-01, e é por isso
+    # que a anotação de desfecho as ignora — são inalcançáveis de qualquer maneira, por não
+    # terem `message_id`.
+    text_html: str = ""
+    # Estado da mensagem: "" (o de sempre, texto completo à partida), "esboco" (foi entregue o
+    # cabeçalho e a análise ainda não chegou), "completo" (a edição com a análise foi aceite),
+    # "anotado" (já leva o desfecho observado).
+    estado: str = ""
 
     def _delta(self, start: str) -> float | None:
         if not start or not self.sent_at:
