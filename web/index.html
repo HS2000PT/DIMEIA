@@ -60,11 +60,16 @@
        "all 5 slots used". #4b5563 da 6.56:1 sobre --linha2 e 7.30:1 sobre o fundo. */
     --fraco:#4b5563; --acento:#0a7f4f; --acento-fraco:#0a7f4f14;
     --sobe:#0f766e; --desce:#b91c1c; --parou:#b45309; --grelha:#eeeeea;
+    /* O funil precisa de três tons distintos entre si: a pista (o total), quem ainda
+       entrou, e quem esta porta travou. A primeira versão usava --grelha para o segundo,
+       que difere de --linha2 em um ponto de cinzento: as barras liam-se todas iguais. */
+    --funil-vivo:#c3c8d0; --funil-caiu:#c2610a;
   }
   @media (prefers-color-scheme: dark) {
     :root { --tinta:#e9e9e5; --fundo:#0d0f13; --caixa:#14171c; --linha:#252932; --linha2:#1b1f26;
             --fraco:#98a0ac; --acento:#23c67a; --acento-fraco:#23c67a1f;
-            --sobe:#5eead4; --desce:#f87171; --parou:#fbbf24; --grelha:#1c2027; }
+            --sobe:#5eead4; --desce:#f87171; --parou:#fbbf24; --grelha:#1c2027;
+            --funil-vivo:#3d4553; --funil-caiu:#e08b1a; }
   }
   * { box-sizing:border-box; }
   html { -webkit-text-size-adjust:100%; }
@@ -239,38 +244,60 @@
      empresas caem. Lê-se num segundo. A prosa de cada porta continua lá, no `title` e por
      baixo quando se escolhe a porta, em vez de estar toda ao mesmo tempo no ecrã. */
   .funil { display:flex; flex-direction:column; gap:2px; }
+  /* ⚠️ ISTO NÃO É UM <button>, e a razão foi medida no DOM.
+     O elemento <button> tem um contentor interno próprio que encolhe para o conteúdo: com a
+     grelha no botão, ou num <span> dentro dele, a coluna `1fr` ficava em 57 px e as quatro
+     barras saíam todas iguais — o funil deixava de ser um funil. Medido com
+     getBoundingClientRect, não suposto.
+     A alternativa é uma <div> com `role="button"`, `tabindex="0"` e tratamento de Enter e de
+     Espaço, que dá controlo total do CSS sem perder o teclado nem o leitor de ecrã. */
   .porta { display:grid; grid-template-columns:minmax(140px,190px) 1fr auto; gap:14px;
-           align-items:center; width:100%; text-align:left; background:none; border:0;
-           border-radius:6px; padding:5px 8px; font:inherit; color:inherit; cursor:pointer; }
+           align-items:center; border-radius:6px; padding:6px 8px; cursor:pointer; }
+  .porta:focus-visible { outline:2px solid var(--acento); outline-offset:2px; }
   .porta:hover { background:var(--linha2); }
   .porta[aria-pressed="true"] { background:var(--acento-fraco); }
   .porta .rot { font-size:.82rem; font-weight:600; }
   .porta[aria-pressed="true"] .rot { color:var(--acento); }
   /* A barra: a parte clara é quem entrou nesta porta, a escura é quem ela travou. A largura
      em percentagem do total faz o encurtamento ser literal — o funil vê-se, não se lê. */
-  .barra { height:17px; border-radius:3px; background:var(--linha2); overflow:hidden;
-           display:flex; }
-  .barra .viva { background:var(--grelha); border-right:1px solid var(--linha); }
-  .barra .caiu { background:var(--parou); opacity:.72; }
-  .porta.enviou .barra .caiu { background:var(--acento); opacity:1; }
+  /* A pista é o total; o que lá está dentro é quem ainda entrou nesta porta. É o encurtamento
+     da parte pintada, linha após linha, que faz o funil ver-se sem se ler. */
+  /* ⚠️ `pbarra`, e NÃO `barra`. A primeira versão chamou-lhe `.barra` — que é a classe do
+     CABEÇALHO da página, definida oitenta linhas acima. As duas regras misturaram-se: as
+     barras do funil ficavam em 57 px com os segmentos a zero de altura, e as minhas
+     propriedades caíam em cima do cabeçalho. É a mesma família de defeito que o nome da marca
+     dentro de um retângulo, e apanhou-se da mesma maneira: medindo no DOM em vez de olhar.
+     Prefixo `p` de porta: o nome diz a que pertence.
+     `width:100%` explícito porque um item de grelha só estica com `width:auto`, e um <span>
+     com `display:flex` não o garante em todos os motores. */
+  .pbarra { width:100%; min-width:0; height:18px; border-radius:3px; background:var(--linha2);
+            display:flex; overflow:hidden; }
+  .pbarra .viva { background:var(--funil-vivo); border-radius:3px 0 0 3px; }
+  .pbarra .caiu { background:var(--funil-caiu); border-radius:0 3px 3px 0; }
+  .porta.enviou .pbarra .caiu { background:var(--acento); }
   .porta .cont { font-size:.78rem; color:var(--fraco); font-variant-numeric:tabular-nums;
                  white-space:nowrap; }
   .porta .cont b { color:var(--tinta); font-weight:600; }
   @media (max-width:640px) {
     .porta { grid-template-columns:1fr auto; }
-    .porta .barra { grid-column:1 / -1; grid-row:2; }
+    .porta .pbarra { grid-column:1 / -1; grid-row:2; }
   }
 
   /* As empresas, por baixo do funil. Sem porta escolhida mostram-se todas, agrupadas; com uma
      porta escolhida mostram-se as dessa porta, com a frase que a explica. */
   .detFunil { margin-top:12px; padding-top:11px; border-top:1px solid var(--linha); }
   .detFunil .explica { font-size:.82rem; color:var(--fraco); margin:0 0 8px; max-width:80ch; }
+  /* ⚠️ `chip`, e NÃO `nome`. A classe `.nome` destas fichas era herdada pelo nome da marca no
+     cabeçalho, que declara `.marca .nome` sem borda nem fundo e por isso apanhava a borda, o
+     raio, o preenchimento e o fundo destas — o nome do produto aparecia dentro de um retângulo,
+     como se fosse a ficha de uma empresa. Renomear a classe do funil é a correção certa; pôr
+     `border:none` no cabeçalho taparia o defeito e deixá-lo-ia à espera do próximo caso. */
   .nomes { display:flex; flex-wrap:wrap; gap:5px; }
-  .nome { border:1px solid var(--linha); border-radius:5px; padding:2px 7px; font-size:.79rem;
+  .chip { border:1px solid var(--linha); border-radius:5px; padding:2px 7px; font-size:.79rem;
           background:var(--caixa); }
-  .nome b { font-weight:600; } .nome span { color:var(--fraco); }
-  .nome.eu { border-color:var(--acento); background:var(--acento-fraco); }
-  .nome .porta-de { color:var(--fraco); font-size:.72rem; }
+  .chip b { font-weight:600; } .chip span { color:var(--fraco); }
+  .chip.eu { border-color:var(--acento); background:var(--acento-fraco); }
+  .chip .porta-de { color:var(--fraco); font-size:.72rem; }
 
   /* No telemóvel, o cabeçalho fixo estava a comer 98 px (12% do ecrã) porque a assinatura da
      marca empurrava o estado para uma segunda linha. Numa página que se lê a rolar, a barra
@@ -688,12 +715,28 @@ function pintarFunil() {
   const todas = S.funil;
   const dia = todas.reduce((m, r) => r.date > m ? r.date : m, "");
   const hoje = todas.filter(r => r.date === dia);
-  const porEtapa = new Map();
+  // ⚠️ UMA EMPRESA, UMA PORTA. Com o ciclo de 60 s, a mesma empresa é avaliada dezenas de vezes
+  // por dia e pode parar em portas diferentes ao longo do dia. Agrupar por porta sem resolver
+  // isso conta a mesma empresa várias vezes: a primeira versão desta barra imprimiu "6 de 2" e
+  // "5 de -4" — sobreviventes negativos, com os mesmos dados que a versão em blocos mostrava
+  // sem ninguém dar por nada, porque uma lista não soma.
+  //
+  // A resolução é a porta MAIS ADIANTADA que a empresa alcançou hoje. É a leitura correta: uma
+  // empresa que alertou às 14h00 e apanhou "already_sent" às 14h01 chegou a alertar, e a ordem
+  // das portas já codifica isso.
+  const ordem = new Map(ETAPAS.map(([k], i) => [k, i]));
+  const melhor = new Map();   // ticker -> {stage, detail}
   for (const r of hoje) {
-    if (!porEtapa.has(r.stage)) porEtapa.set(r.stage, new Map());
-    porEtapa.get(r.stage).set(r.ticker, r.detail || "");   // a última decisão de cada empresa
+    const i = ordem.has(r.stage) ? ordem.get(r.stage) : -1;
+    const j = melhor.has(r.ticker) ? ordem.get(melhor.get(r.ticker).stage) : -2;
+    if (i > j) melhor.set(r.ticker, { stage: r.stage, detail: r.detail || "" });
   }
-  const total = new Set(hoje.map(r => r.ticker)).size;
+  const porEtapa = new Map();
+  for (const [t, v] of melhor) {
+    if (!porEtapa.has(v.stage)) porEtapa.set(v.stage, new Map());
+    porEtapa.get(v.stage).set(t, v.detail);
+  }
+  const total = melhor.size;
   const alvo = document.getElementById("funil");
   if (!total) {
     alvo.innerHTML = '<p class="vazio">No decisions recorded yet.</p>';
@@ -711,24 +754,32 @@ function pintarFunil() {
     // Quem "cai" na porta final é quem passou: a mesma geometria, o outro significado, e é a
     // cor que os separa. Um funil que pintasse o alerta como perda diria o contrário do que é.
     linhas.push(
-      `<button class="porta${enviou ? " enviou" : ""}" data-etapa="${esc(k)}"` +
-      ` aria-pressed="false" title="${esc(porque)}">` +
+      `<div class="porta${enviou ? " enviou" : ""}" data-etapa="${esc(k)}" role="button"` +
+      ` tabindex="0" aria-pressed="false" title="${esc(porque)}">` +
       `<span class="rot">${esc(titulo)}</span>` +
-      `<span class="barra" role="img" aria-label="${entraram} of ${total} still in, ` +
+      `<span class="pbarra" role="img" aria-label="${entraram} of ${total} still in, ` +
       `${caiu} ${enviou ? "delivered" : "stopped here"}">` +
       `<span class="viva" style="width:${(entraram - caiu) / total * 100}%"></span>` +
       `<span class="caiu" style="width:${caiu / total * 100}%"></span></span>` +
-      `<span class="cont"><b>${caiu}</b> of ${entraram}</span></button>`);
+      `<span class="cont"><b>${caiu}</b> of ${entraram}</span></div>`);
     vivas -= caiu;
   }
   alvo.innerHTML = linhas.join("");
-  alvo.querySelectorAll(".porta").forEach(b => b.addEventListener("click", () => {
-    const k = b.dataset.etapa;
+  const escolherPorta = (el) => {
+    const k = el.dataset.etapa;
     S.etapa = (S.etapa === k) ? null : k;
     alvo.querySelectorAll(".porta").forEach(o =>
       o.setAttribute("aria-pressed", String(o.dataset.etapa === S.etapa)));
     pintarDetalheFunil(porEtapa);
-  }));
+  };
+  alvo.querySelectorAll(".porta").forEach(el => {
+    el.addEventListener("click", () => escolherPorta(el));
+    // Enter e Espaço, que é o que o <button> daria de graça e uma <div> não dá. O
+    // preventDefault no Espaço evita que a página role por baixo de quem está a navegar.
+    el.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); escolherPorta(el); }
+    });
+  });
   S.etapa = null;
   pintarDetalheFunil(porEtapa);
   document.getElementById("funilSub").textContent =
@@ -743,7 +794,7 @@ function pintarDetalheFunil(porEtapa) {
   const porque = new Map(ETAPAS.map(([k, , p]) => [k, p]));
   const ficha = (t, d, etapa) => {
     const leg = legivel(d);
-    return `<span class="nome ${t === S.ticker ? "eu" : ""}"><b>${esc(t)}</b>` +
+    return `<span class="chip ${t === S.ticker ? "eu" : ""}"><b>${esc(t)}</b>` +
            (etapa ? ` <span class="porta-de">${esc(rotulo.get(etapa) || etapa)}</span>` : "") +
            (leg ? ` <span>${esc(leg)}</span>` : "") + `</span>`;
   };
