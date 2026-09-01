@@ -21146,3 +21146,12 @@
 {"ts": "2026-09-01T13:36:33+00:00", "news_date": "2026-08-31", "ticker": "META", "headline": "ChatGPT Ads Surge: How OpenAI's Rapid Expansion Imperils Google and Meta", "prob": 0.4329963639238449, "gate": 0.5, "kept": true}
 {"ts": "2026-09-01T13:36:34+00:00", "news_date": "2026-09-01", "ticker": "AMD", "headline": "AMD: Buy This Post-Earnings Pullback", "prob": 0.5437176655658656, "gate": 0.5, "kept": true}
 {"ts": "2026-09-01T13:36:35+00:00", "news_date": "2026-08-31", "ticker": "XOM", "headline": "What's Going on with ExxonMobil Shares on Monday?", "prob": 0.4071975754600528, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T13:38:09+00:00", "news_date": "2026-09-01", "ticker": "AAPL", "headline": "Should You Buy Apple Before Sept. 9? Here’s What History Says.", "prob": 0.3818400755653727, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T13:38:12+00:00", "news_date": "2026-08-31", "ticker": "MSFT", "headline": "Amazon Web Services, Microsoft Collaborate On Multicloud Networking", "prob": 0.39820357182872324, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T13:38:13+00:00", "news_date": "2026-09-01", "ticker": "NVDA", "headline": "Nvidia Just Proved It Doesn't Need China Anymore", "prob": 0.5016672830349629, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T13:38:15+00:00", "news_date": "2026-09-01", "ticker": "TSLA", "headline": "Tesla: This Week's Cybercab Launch Has A Lot To Prove", "prob": 0.48049446745725494, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T13:38:16+00:00", "news_date": "2026-08-31", "ticker": "AMZN", "headline": "Amazon Refutes U.S. Federal Trade Commission Lawsuit Over Allegedly Misleading Advertisers About Its Sponsored Ads Pricing, Auction", "prob": 0.4226083666909992, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T13:38:17+00:00", "news_date": "2026-09-01", "ticker": "GOOGL", "headline": "Alphabet: Question Marks Behind The AI Boom", "prob": 0.4114054815992205, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T13:38:18+00:00", "news_date": "2026-08-31", "ticker": "META", "headline": "ChatGPT Ads Surge: How OpenAI's Rapid Expansion Imperils Google and Meta", "prob": 0.43296848622663786, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T13:38:19+00:00", "news_date": "2026-09-01", "ticker": "AMD", "headline": "AMD: Buy This Post-Earnings Pullback", "prob": 0.5435804099373653, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T13:38:21+00:00", "news_date": "2026-08-31", "ticker": "XOM", "headline": "What's Going on with ExxonMobil Shares on Monday?", "prob": 0.40721609502307776, "gate": 0.5, "kept": true}
