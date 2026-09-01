@@ -35,3 +35,26 @@ def narrator_providers() -> list[str]:
 def telegram_ready() -> bool:
     """Verdadeiro se o token e o chat id do Telegram estão configurados."""
     return bool(TELEGRAM_BOT_TOKEN) and bool(TELEGRAM_CHAT_ID)
+
+# ── Webhook do Telegram ───────────────────────────────────────────────────────────────────
+# O bot passou de long-polling a webhook para que a recolha de feedback não dependa de uma
+# máquina ligada. ⚠️ O Telegram não permite os dois: com webhook registado, o `getUpdates`
+# devolve 409. Por isso esta variável é o interruptor único — quando está a 1, o runner deixa
+# de chamar `getUpdates` e o `api/main.py` abre a rota.
+TELEGRAM_WEBHOOK_ENABLED: bool = os.environ.get("TELEGRAM_WEBHOOK_ENABLED") == "1"
+
+# Segredo do cabeçalho `X-Telegram-Bot-Api-Secret-Token`. Sem ele a rota fica FECHADA, e não
+# aberta: um webhook público sem verificação aceita votos de quem descobrir o endereço, e a
+# amostra deixaria de significar o que a tese diz que significa.
+TELEGRAM_WEBHOOK_SECRET: str | None = os.environ.get("TELEGRAM_WEBHOOK_SECRET")
+
+# Sal do resumo criptográfico do votante. Recai no token do bot, que já é secreto e já existe,
+# para que a funcionalidade não fique dependente de mais uma variável por configurar; definir
+# um próprio é melhor, porque desliga a rotação do token da estabilidade dos resumos.
+FEEDBACK_SALT: str = (os.environ.get("FEEDBACK_SALT")
+                      or os.environ.get("TELEGRAM_BOT_TOKEN") or "")
+
+
+def feedback_ready() -> bool:
+    """Verdadeiro se o webhook pode receber e gravar votos com identidade estável."""
+    return bool(TELEGRAM_WEBHOOK_ENABLED and TELEGRAM_WEBHOOK_SECRET and FEEDBACK_SALT)

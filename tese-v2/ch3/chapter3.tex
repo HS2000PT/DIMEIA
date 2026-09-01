@@ -259,10 +259,18 @@ Quando o ajuste é preciso, o erro-padrão é reduzido, $w$ aproxima-se da unida
 praticamente preservada; quando a janela é ruidosa, o erro-padrão cresce e a estimativa recai sobre
 o valor de referência. O ajuste é gradual e não dicotómico. A formulação original estima
 $\beta_{\text{ref}}$ e $\sigma^2_{\text{ref}}$ a partir da distribuição transversal dos betas;
-neste trabalho são escolhas do autor, com $\beta_{\text{ref}} = 1{,}0$ para o mercado,
-$\beta_{\text{ref}} = 0{,}0$ para o fator setorial já ortogonalizado, e um desvio-padrão comum de
-$0{,}5$. A amostra de empresas não constitui um corte transversal representativo, pelo que a
-estimação de um prior sobre ela produziria um valor com aparência empírica sem o ser.
+neste trabalho são fixados, e cada um tem justificação própria. Para o mercado adota-se
+$\beta_{\text{ref}} = 1{,}0$, que corresponde à hipótese de a ação acompanhar o índice na ausência
+de informação local fiável, e é o valor para o qual a média transversal dos betas tende por
+construção do próprio índice. Para o fator setorial, já ortogonalizado face ao mercado, adota-se
+$\beta_{\text{ref}} = 0{,}0$, uma vez que o resíduo de uma ortogonalização tem média nula e a
+ausência de exposição setorial é, por isso, a hipótese neutra. O desvio-padrão comum de $0{,}5$
+determina a rapidez da transição entre a estimativa amostral e o valor de referência: fixa-o de
+modo que uma janela com erro-padrão dessa mesma ordem receba peso aproximadamente igual das duas
+origens, o que situa o ponto de equilíbrio dentro da gama de erros-padrão efetivamente observada em
+janelas de vinte dias. A estimação destes valores a partir da amostra não foi realizada, e a razão
+é declarada: doze a dezassete empresas não constituem um corte transversal representativo, pelo que
+um prior estimado sobre elas teria aparência empírica sem o ser.
 
 Três salvaguardas completam a estimação. Abaixo de dez observações utilizáveis a regressão não é
 tentada, assumindo-se sensibilidade unitária ao mercado e nula ao setor, situação que é declarada
@@ -626,3 +634,25 @@ sentidos, com o utilizador a ignorar um aviso correto ou a aceitar um aviso inco
 com data e desfecho, em vez de os resumir a uma média suscetível de ser lida como previsão. Que
 esta opção produza confiança apropriada constitui uma hipótese e não um resultado, uma vez que o
 estudo com utilizadores necessário para a verificar não foi realizado.
+
+
+\subsection{Utilização de ferramentas de inteligência artificial}
+\label{sec:met_ia}
+
+Esta subsecção declara, conforme a Declaração de Integridade remete, como foram utilizadas
+ferramentas de inteligência artificial generativa neste trabalho e com que finalidade.
+
+A conceção é do autor: o problema, as questões de investigação, as restrições que definem o
+sistema — apenas fontes gratuitas, explicabilidade primeiro, e a recusa de prever preços —, o
+desenho de cada experiência, o critério de sucesso fixado antes de a correr, e todas as decisões
+sobre o que construir, manter ou descartar. Nenhuma conclusão deste documento foi delegada.
+
+A execução foi assistida, e em extensão substancial. Essas ferramentas escreveram e reestruturaram
+parte considerável do código do sistema e dos seus testes, implementaram os procedimentos de
+avaliação, redigiram e editaram prosa neste documento, e conduziram revisões que encontraram
+defeitos no software e no texto. Onde uma medição contrariou uma afirmação do autor, a afirmação
+foi retirada em vez de defendida, e o Apêndice~\ref{ap:reprodutibilidade} regista as que foram
+retiradas.
+
+O conteúdo deste documento foi revisto pelo autor. Ele, os erros que nele restem, e a sua defesa
+são da sua responsabilidade.

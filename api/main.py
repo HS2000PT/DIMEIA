@@ -28,7 +28,7 @@ from __future__ import annotations
 
 import pathlib
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -196,6 +196,79 @@ def alerts() -> dict:
     # e servia em silêncio uma janela cada vez mais antiga. Apanhado a 2026-08-17, com o canal
     # em 391 alertas: a página mostrava como mais recente um alerta de 31 de julho.
     return {"rows": S.alerts()[-200:]}
+
+
+# ── Telegram: webhook (votos do leitor + comandos do bot) ─────────────────────────────────
+
+_VOTOS = RAIZ / "data" / "feedback.jsonl"
+
+
+def _ctx_webhook():
+    """Monta o contexto do webhook com as saídas reais. Importa tarde, como o resto do módulo.
+
+    A publicação na branch de dados é o que torna os votos duráveis: o disco do dyno é efémero
+    e reinicia pelo menos uma vez por dia. É o mesmo mecanismo que o `gate_log` já usa.
+    """
+    from investigator import config
+    from investigator.telegram_bot import sender, store, webhook
+
+    def publicar(caminho):
+        from investigator.history_publish import publish_blob
+
+        publish_blob(caminho, "feedback.jsonl")
+
+    return webhook.Contexto(
+        sal=config.FEEDBACK_SALT,
+        caminho_votos=_VOTOS,
+        enviar=sender.send_message,
+        responder_callback=sender.answer_callback_query,
+        editar_teclado=sender.edit_message_reply_markup,
+        publicar=publicar,
+        ligacao_db=lambda: store.connect(),
+    )
+
+
+@app.post("/telegram/webhook")
+async def telegram_webhook(request: Request) -> JSONResponse:
+    """Recebe updates do Telegram.
+
+    ⚠️ **Devolve 200 em quase todos os casos, de propósito.** Um estatuto de erro faz o
+    Telegram reenviar o mesmo update, com recuo crescente, durante muito tempo. Um voto que
+    não conseguimos gravar é um voto perdido; um 500 devolvido em ciclo é o bot inteiro
+    parado. A única resposta que não é 200 é a do segredo errado, que tem de ser 403 porque
+    aí queremos mesmo que a outra ponta desista.
+
+    O segredo em falta fecha a rota. Um webhook público sem verificação aceita votos de quem
+    descobrir o endereço, e a amostra da tese deixaria de significar o que diz significar.
+    """
+    from investigator import config
+    from investigator.telegram_bot import webhook
+
+    if not webhook.segredo_confere(
+        request.headers.get("x-telegram-bot-api-secret-token"),
+        config.TELEGRAM_WEBHOOK_SECRET or "",
+    ):
+        return JSONResponse({"ok": False, "error": "forbidden"}, status_code=403)
+    try:
+        update = await request.json()
+    except Exception:  # noqa: BLE001
+        return JSONResponse({"ok": True, "ignored": "corpo ilegível"})
+    linha = webhook.processar(update, _ctx_webhook())
+    print(linha)
+    return JSONResponse({"ok": True})
+
+
+# ⚠️ NÃO HÁ `/api/feedback`, e a ausência é uma decisão.
+#
+# A primeira versão desta alteração expunha uma rota `/api/feedback` com o agregado dos votos.
+# O `test_a_api_nao_serve_nada_que_a_pagina_nao_use` apanhou-a: a página ainda não a consome, e
+# esse teste existe precisamente para que expor uma rota pública seja uma decisão e não um
+# resto — sete rotas foram retiradas a uma semana da entrega pela mesma razão.
+#
+# A análise da tese não precisa dela: lê o `feedback.jsonl` publicado na branch de dados, que é
+# a forma reproduzível de o fazer e a única que um terceiro consegue repetir. A rota volta na
+# revisão do painel, no mesmo passo em que a página passar a mostrar as contagens — que é
+# quando deixará de ser superfície sem consumidor.
 
 
 # ── Estáticos ─────────────────────────────────────────────────────────────────

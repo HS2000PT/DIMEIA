@@ -13,42 +13,27 @@
 
 \vspace{1cm}
 
-Declaro que realizei este trabalho académico com integridade.
+Declaro ter conduzido este trabalho académico com integridade.
 
-Não recorri a plágio nem a qualquer forma de utilização indevida ou falsificação de informações ou
-resultados ao longo do processo que conduziu à sua elaboração.
+Não plagiei ou apliquei qualquer forma de uso indevido de informações ou falsificação de
+resultados ao longo do processo que levou à sua elaboração.
 
-Declaro, por isso, que este documento é original e da minha autoria, não tendo sido utilizado
-anteriormente para qualquer outro fim.
+Portanto, o trabalho apresentado neste documento é original e de minha autoria, não tendo sido
+utilizado anteriormente para nenhum outro fim. As exceções estão explicitamente reconhecidas na
+secção onde são abordadas as considerações éticas, a Secção~\ref{sec:met_etica}. A
+Secção~\ref{sec:met_ia}, que se lhe segue, declara como as ferramentas de Inteligência Artificial
+foram utilizadas e para que finalidade.
 
 Declaro ainda que tenho pleno conhecimento do Código de Conduta Ética do P.PORTO.
 
-\vspace{0.5cm}
-
-\textbf{Uso de Inteligência Artificial.} Em conformidade com as orientações do P.PORTO/ISEP,
-declaro o uso de ferramentas de inteligência artificial generativa neste trabalho, e descrevo-o
-com precisão.
-
-A concepção é minha: o problema, as questões de investigação, as restrições que definem o sistema
-(apenas fontes gratuitas, explicabilidade primeiro, e a recusa de prever preços), o desenho de
-cada experiência e o critério de sucesso fixado antes de a correr, e todas as decisões sobre o que
-construir, manter ou descartar. Nenhuma conclusão deste documento foi delegada.
-
-A execução foi assistida, e em extensão substancial. Essas ferramentas escreveram e
-reestruturaram parte considerável do código do sistema e dos seus testes, implementaram os
-procedimentos de avaliação, redigiram e editaram prosa neste documento, e conduziram revisões que
-encontraram defeitos no software e no texto. Onde uma medição contrariou uma afirmação minha,
-retirei a afirmação em vez de a defender, e o Apêndice~\ref{ap:reprodutibilidade} regista as que
-foram retiradas.
-
-Revi o conteúdo deste documento. Ele, os erros que nele restem, e a sua defesa são da minha
-responsabilidade.
-
 \vspace{1cm}
 
+% A redação acima é a do modelo oficial MEIA (v2, 2026), palavra por palavra, incluindo o período
+% das exceções — que se aplica e por isso fica. É o modelo que manda a declaração de uso de IA
+% para a secção das considerações éticas (Secção~\ref{sec:met_ia}), e não para esta página; a
+% versão anterior deste ficheiro trazia-a aqui, o que contrariava o modelo.
 % A data acompanha a da capa (definida em main.tex). Estava em \today e mudava sozinha a cada
 % compilação, o que numa DECLARAÇÃO ASSINADA é pior do que na capa.
-% ⚠️ FALTA CONFIRMAR com o orientador a redação exata que a MEIA/ISEP exige para esta declaração.
 ISEP, Porto, setembro de 2026
 
 \end{soi}
@@ -138,6 +123,41 @@ boa companhia todos os dias.
 % "Excerto 3.1". O `listings` não é traduzido pelo babel, e isto tem de ficar depois de
 % \begin{document} para não ser sobrescrito.
 \renewcommand{\lstlistingname}{Excerto}
+
+%----------------------------------------------------------------------------------------
+%	LISTA DE SÍMBOLOS
+%----------------------------------------------------------------------------------------
+% Exigida pela lista de verificação do modelo oficial MEIA (v2, 2026), que a marca como
+% obrigatória. Só entram os símbolos que o documento usa e define; a terceira coluna remete para
+% a equação ou secção onde cada um é introduzido, para que a lista sirva de índice e não apenas
+% de glossário. A Lista de Código e a Lista de Algoritmos não constam porque o documento não tem
+% nenhum dos dois, e o próprio modelo manda remover esses comandos nesse caso.
+\begin{symbols}{l p{0.60\textwidth} l}
+$P_t$ & Preço de fecho da sessão $t$ & Eq.~\ref{eq:zscore} \\
+$r_t$ & Retorno logarítmico do dia $t$, $\ln(P_t / P_{t-1})$ & Eq.~\ref{eq:zscore} \\
+$\mu$, $\sigma$ & Média e desvio-padrão dos retornos da janela anterior ao dia & Eq.~\ref{eq:zscore} \\
+$z_t$ & Raridade do retorno do dia $t$ face à janela anterior & Eq.~\ref{eq:zscore} \\
+\addlinespace
+$r_m$, $\tilde{r}_s$ & Retorno diário do índice de mercado e do índice de setor & Eq.~\ref{eq:decomposicao} \\
+$\beta_m$, $\beta_s$ & Sensibilidade histórica da ação ao mercado e ao setor & Eq.~\ref{eq:decomposicao} \\
+$\varepsilon$ & Parte do retorno que não é explicada nem pelo mercado nem pelo setor & Eq.~\ref{eq:decomposicao} \\
+$\hat{\beta}$ & Estimativa do beta obtida por regressão sobre a janela & Eq.~\ref{eq:vasicek} \\
+$\beta_{\text{ref}}$ & Beta de referência para onde a estimativa é encolhida & Eq.~\ref{eq:vasicek} \\
+$\mathrm{SE}(\hat{\beta})$ & Erro-padrão da estimativa do beta & Eq.~\ref{eq:vasicek} \\
+$\sigma^2_{\text{ref}}$ & Variância de referência que fixa a força do encolhimento & Eq.~\ref{eq:vasicek} \\
+$w$ & Peso do encolhimento de Vasicek, entre zero e um & Eq.~\ref{eq:vasicek} \\
+\addlinespace
+$\cos$ & Semelhança do cosseno entre dois vetores de frase & Secção~\ref{sec:met_recuperacao} \\
+$h$ & Meia-vida do decaimento por recência aplicado aos precedentes & Secção~\ref{sec:met_recuperacao} \\
+$k$ & Número de precedentes recuperados e apresentados & Secção~\ref{sec:met_recuperacao} \\
+\addlinespace
+$p_{\text{bruta}}$ & Pontuação de triagem antes da calibração & Eq.~\ref{eq:platt} \\
+$p_{\text{calibrada}}$ & Pontuação de triagem depois da calibração de Platt & Eq.~\ref{eq:platt} \\
+$a$, $b$ & Parâmetros aprendidos da calibração de Platt & Eq.~\ref{eq:platt} \\
+\addlinespace
+$P$, $C$ & Precisão e cobertura & Secção~\ref{sec:av_desenho} \\
+$F_1$ & Média harmónica da precisão e da cobertura, $2PC/(P+C)$ & Secção~\ref{sec:av_desenho} \\
+\end{symbols}
 
 \printnoidxglossary[type=\acronymtype, title=Lista de Acrónimos, nonumberlist]
 

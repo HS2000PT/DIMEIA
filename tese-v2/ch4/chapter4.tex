@@ -320,8 +320,8 @@ O efeito conjunto dos pontos de decisão é considerável. Sobre as notícias da
 2026, das $944$ notícias relevantes que entraram no sistema resultaram $42$ alertas, o que
 corresponde a uma razão aproximada de um para vinte e dois. O valor é um limite superior da
 seletividade da política atual, uma vez que o limite de duas mensagens por empresa entrou em vigor a
-11 de julho, a meio da janela observada. A Figura~\ref{fig:sis_seletividade} apresenta a distribuição
-por empresa.
+11 de julho, a meio da janela observada. A Figura~\ref{fig:sis_seletividade} apresenta a
+distribuição por empresa.
 
 \begin{figure}[ht]
 \centering
@@ -332,7 +332,7 @@ por empresa.
   bar width=5.5pt,
   enlarge y limits=0.07,
   symbolic y coords={NVDA,JPM,GOOGL,MSFT,NFLX,AMD,AMZN,AAPL,META,TSLA},
-  ytick=data,
+  ytick={NVDA,JPM,GOOGL,MSFT,NFLX,AMD,AMZN,AAPL,META,TSLA},
   xlabel={Títulos na janela observada},
   tick label style={font=\footnotesize},
   label style={font=\footnotesize},
@@ -356,9 +356,11 @@ por empresa.
 entregues, por empresa, na janela observada. O total é de $944$ títulos e $42$ alertas. A
 concentração dos alertas em três empresas não resulta de qualquer regra que privilegie essas
 empresas: decorre da interação entre o limiar de semelhança e a composição da base de casos, cuja
-cobertura por empresa é desigual.}
+cobertura por empresa é desigual. A Secção~\ref{sec:av_producao} confirma-o sobre uma amostra
+muito maior.}
 \label{fig:sis_seletividade}
 \end{figure}
+
 
 O comportamento num único dia permite localizar a eliminação de candidatas. A
 Figura~\ref{fig:sis_funil} distribui as $5\,060$ avaliações registadas a 15 de agosto de 2026 pelo
@@ -583,13 +585,15 @@ sistema é observável.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.60\textwidth]{figures/app_v6_empresa.png}
-
-\vspace{3mm}
-\includegraphics[width=0.74\textwidth]{figures/app_v6_silencio.png}
+\begin{minipage}[t]{0.46\textwidth}\centering
+\includegraphics[width=\linewidth]{figures/app_v6_empresa.png}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.50\textwidth}\centering
+\includegraphics[width=\linewidth]{figures/app_v6_silencio.png}
+\end{minipage}
 \caption[Vistas da aplicação web]{Aplicação web em funcionamento a 20 de agosto de 2026, durante a
-sessão norte-americana. Em cima, a vista de uma empresa. Em baixo, as decisões do dia pela ordem
-em que foram tomadas, com indicação da margem em falta quando aplicável.}
+sessão norte-americana. À esquerda, a vista de uma empresa. À direita, as decisões do dia pela
+ordem em que foram tomadas, com indicação da margem em falta quando aplicável.}
 \label{fig:sis_pagina}
 \end{figure}
 
@@ -800,14 +804,65 @@ ausência é deliberada e decorre do argumento desenvolvido na Secção~\ref{sec
 gerada constitui uma afirmação, ao passo que o sistema descrito entrega afirmações acompanhadas da
 evidência que as sustenta.
 
-\subsection{Limitações do ciclo}
+\subsection{O elo em falta: arquitetura de retreino}
 
 O ciclo não inclui retreino. Os parâmetros correspondem ao período de 2018 a 2023 e não foram
-reajustados, apesar de a deriva se encontrar medida. A operação seria tecnicamente possível, dado
-que os rótulos novos derivam dos preços observados; o impedimento é que o retreino com o registo
-de produção alteraria os valores reportados neste documento, e a avaliação dessa alteração exige
-tempo de observação que não estava disponível. A Secção~\ref{sec:con_futuro} enuncia-o como
-trabalho futuro.
+reajustados, apesar de a deriva se encontrar medida e de o índice de estabilidade populacional
+situar a entrada principal na banda de deslocamento significativo. A operação seria tecnicamente
+possível, dado que os rótulos novos derivam dos preços observados; o impedimento é que o retreino
+com o registo de produção alteraria os valores reportados neste documento, e a avaliação dessa
+alteração exige tempo de observação que não estava disponível.
+
+A ausência de execução não dispensa, contudo, a definição da arquitetura. A
+Figura~\ref{fig:sis_retreino} apresenta o ciclo de treino contínuo desenhado para este sistema, com
+os mecanismos que o tornariam seguro. Três decisões o caracterizam.
+
+A primeira é o \textbf{gatilho}, condicional e não temporal. O retreino desencadeia-se quando o
+índice de estabilidade populacional de qualquer entrada ultrapassa $0{,}25$, o limiar convencional
+de deslocamento significativo, ou ao fim de três meses sem revisão. A segunda é a \textbf{janela
+deslizante}: o treino cobre os vinte e quatro meses anteriores ao gatilho, e a validação e o teste
+os períodos seguintes, com o embargo de cinco dias da Secção~\ref{sec:met_triagem}. A divisão
+permanece cronológica, porque o problema não deixa de ser temporal por o modelo ser novo.
+
+A terceira, e a que distingue um ciclo de treino contínuo de uma automatização perigosa, é a
+\textbf{porta de promoção}. Um modelo recém-treinado não substitui o modelo em vigor por ser mais
+recente: substitui-o apenas se o superar sobre o mesmo bloco de teste reservado, e se a
+sobreposição do intervalo de confiança da diferença excluir zero. Um modelo que não passe essa
+porta é registado e descartado, e o modelo em vigor permanece com a deriva declarada. É a diferença
+entre adaptar-se à mudança e perseguir ruído.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\scriptsize, >={Stealth[length=2mm]},
+  cx/.style={draw, rounded corners=2pt, align=center, inner sep=3pt, text width=2.35cm,
+             minimum height=0.95cm, fill=black!5},
+  gat/.style={cx, dashed, fill=black!12},
+  art/.style={cx, fill=black!16, draw=black!55, thick},
+]
+  \node[cx]  (p) at (0,0)     {registo de decisões em produção};
+  \node[cx]  (m) at (2.9,0)   {maturação:\\ 8 dias};
+  \node[cx]  (r) at (5.8,0)   {rótulos novos, da mesma regra};
+  \node[gat] (g) at (8.7,0)   {\textbf{gatilho}\\ PSI $>0{,}25$\\ ou 3 meses};
+  \node[cx]  (t) at (8.7,-1.9) {retreino em janela de 24 meses};
+  \node[cx]  (v) at (5.8,-1.9) {validação e calibração novas};
+  \node[gat] (q) at (2.9,-1.9) {\textbf{porta de promoção}\\ supera o em vigor?};
+  \node[art] (n) at (0,-1.9)   {promove\\ e versiona};
+
+  \foreach \a/\b in {p/m, m/r, r/g} \draw[->, thick, black!55] (\a) -- (\b);
+  \draw[->, thick, black!55] (g) -- (t);
+  \foreach \a/\b in {t/v, v/q, q/n} \draw[->, thick, black!55] (\a) -- (\b);
+  \draw[->, thick, black!55] (n.north) |- ++(0,0.75) -| (p.south);
+  \draw[->, dashed, black!45] (q.north) -- ++(0,0.72)
+    node[above, align=center, black!60] {não supera:\\ regista e descarta};
+\end{tikzpicture}
+\caption[Arquitetura de retreino desenhada e não executada]{Ciclo de treino contínuo definido para
+este sistema e não executado no âmbito deste trabalho. O gatilho é condicional e não temporal; a
+janela é deslizante e a divisão permanece cronológica com embargo; e a porta de promoção impede que
+um modelo novo substitua o modelo em vigor sem o superar sobre um bloco reservado. A ligação a
+tracejado é o caminho de rejeição, e a sua existência é o que distingue o ciclo de uma
+automatização que persegue ruído.}
+\label{fig:sis_retreino}
+\end{figure}
 
 O ciclo não inclui igualmente qualquer forma de verdade humana. Os três rótulos utilizados neste
 trabalho, correspondentes a movimento anormal, pertença ao mesmo setor e percentil de movimento,

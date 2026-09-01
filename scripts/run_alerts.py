@@ -1427,6 +1427,14 @@ def process_bot_commands(state: dict, bot_cfg: dict, *, dry_run: bool) -> None:
     """
     if not bot_cfg.get("enabled", False):
         return
+    # ⚠️ O Telegram NÃO permite webhook e getUpdates ao mesmo tempo: com um webhook registado,
+    # esta chamada devolve 409 em todos os ciclos. Quando o webhook está ligado é ele que trata
+    # dos comandos (`investigator/telegram_bot/webhook.py`), e este caminho cala-se.
+    from investigator import config as _cfg
+
+    if _cfg.TELEGRAM_WEBHOOK_ENABLED:
+        print("[bot] webhook ativo — comandos tratados em /telegram/webhook, polling saltado.")
+        return
     if dry_run:
         print("[bot] dry-run — comandos pendentes não são processados nem respondidos.")
         return
@@ -1638,17 +1646,38 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     from investigator.explanation_engine.explainer import plain_text
 
     falhas = 0
-    for _ticker, text in mensagens:
+    # ⚠️ Pelo ÍNDICE, e não por `id()` do texto: duas mensagens com o mesmo texto são o mesmo
+    # objeto em Python (as cadeias são internadas), e um dicionário indexado por `id()` daria a
+    # ambas a chave da primeira. `mensagens` é `alerts` seguido das notas de mercado, portanto
+    # os primeiros `len(alerts)` elementos são exatamente os alertas.
+    n_alertas = len(alerts)
+    for i, (_ticker, text) in enumerate(mensagens):
         print("-" * 60)
         print(plain_text(text))
         if can_send:
             from investigator.telegram_bot.sender import send_message
 
+            # O teclado de feedback vai só nos ALERTAS, e não na nota de abertura nem no resumo
+            # de fecho. É uma escolha de amostra e não de conveniência: a pergunta que a tese
+            # faz é sobre alertas — decisões que as portas deixaram passar — e um resumo diário
+            # não é uma decisão dessas. Misturá-los daria uma taxa de utilidade que não
+            # responde a pergunta nenhuma.
+            teclado = None
+            chave = news_key(_ticker, text) if i < n_alertas else ""
+            if chave:
+                try:
+                    from investigator.telegram_bot.feedback import teclado as _teclado
+
+                    teclado = _teclado(chave)
+                except Exception as exc:  # noqa: BLE001
+                    # Um defeito na construção do teclado não pode impedir a ENTREGA: o alerta
+                    # sem botões continua a ser um alerta; um alerta não enviado não é nada.
+                    print(f"[feedback] teclado indisponível (o alerta segue): {exc}")
             # Um envio falhado (rede/Telegram intermitente) não pode abortar o ciclo nem
             # impedir as mensagens seguintes: o modo agendado (Actions) sairia com código
             # de erro e as restantes ficariam por entregar. Falha-suave e continua.
             try:
-                send_message(text)
+                send_message(text, reply_markup=teclado)
             except Exception as exc:  # noqa: BLE001
                 falhas += 1
                 # O envio leva o token do bot no URL: mascarar aqui não é opcional.
