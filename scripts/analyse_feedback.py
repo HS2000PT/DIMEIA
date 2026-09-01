@@ -19,6 +19,12 @@ com o ficheiro de votos vazio, e o relatório aplica-as sem exceção:
    este N. Intervalos de Wilson a 95%, e a palavra «piloto» em todo o lado.
 5. **Sobreposição de intervalos recusa uma afirmação, nunca a sustenta.** Com intervalos
    sobrepostos escreve-se «não é possível distinguir», e nunca «são iguais».
+6. **Só contam votos sobre alertas que existem no histórico partilhado.** Um voto cuja chave
+   não corresponde a nenhum alerta entregue não é um voto: é tráfego de teste, uma chave
+   antiga, ou alguém a experimentar o endereço. A filtragem é feita na leitura, e o número de
+   votos excluídos é reportado — nunca apagado do ficheiro, que é de acrescento e é a prova.
+   Se o histórico não estiver disponível, o relatório di-lo e **não** aplica o filtro em
+   silêncio.
 
 ## O que isto NÃO é
 
@@ -50,6 +56,7 @@ from investigator import feedback_log as FL  # noqa: E402
 from investigator.evaluation.proportions import wilson  # noqa: E402
 
 DEFAULT_VOTOS = REPO / "data" / "feedback.jsonl"
+DEFAULT_HISTORICO = REPO / "data" / "alerts_history.jsonl"
 OUT_MD = REPO / "docs" / "evaluation" / "evaluation_feedback.md"
 
 # ── Regras pré-registadas. Alterar qualquer uma destas depois de haver dados é um ato que
@@ -71,7 +78,32 @@ def _linha_proporcao(rotulo: str, k: int, n: int) -> str:
             f"IC 95% de Wilson: {_pct(lo)}–{_pct(hi)} |")
 
 
-def relatorio(registos: list[FL.FeedbackRecord]) -> str:
+def chaves_do_historico(caminho: str | Path) -> set[str] | None:
+    """Chaves dos alertas realmente entregues, ou `None` se o histórico não puder ser lido.
+
+    `None` e conjunto vazio são coisas diferentes e o relatório trata-as como tais: um
+    histórico ausente não pode servir de justificação para descartar todos os votos.
+    """
+    from investigator.alerts_history import load_jsonl as carregar_historico
+
+    try:
+        entradas = carregar_historico(caminho)
+    except Exception:  # noqa: BLE001
+        return None
+    if not entradas:
+        return None
+    return {e.key for e in entradas if e.key}
+
+
+def relatorio(registos: list[FL.FeedbackRecord],
+              chaves_validas: set[str] | None = None) -> str:
+    # Regra 6: votos sobre alertas que não existem não são votos.
+    excluidos = 0
+    if chaves_validas is not None:
+        antes = len(registos)
+        registos = [r for r in registos if r.chave_alerta in chaves_validas]
+        excluidos = antes - len(registos)
+
     efetivos = FL.votos_efetivos(registos)
     resumo = FL.resumo(registos)
     n = len(efetivos)
@@ -96,6 +128,17 @@ def relatorio(registos: list[FL.FeedbackRecord]) -> str:
     L.append(f"> Gerado por `scripts/analyse_feedback.py` a "
              f"{datetime.now(UTC).strftime('%Y-%m-%d %H:%M')} UTC.")
     L.append("")
+    if chaves_validas is None:
+        L.append("> ⚠️ **O filtro do histórico não foi aplicado**, por o histórico partilhado "
+                 "não estar disponível. Os números abaixo incluem, se existirem, votos sobre "
+                 "alertas que o canal nunca entregou — tráfego de teste ou chaves antigas. "
+                 "Correr de novo com o histórico presente antes de citar qualquer valor.")
+        L.append("")
+    elif excluidos:
+        L.append(f"> **{excluidos} voto(s) excluído(s)** por não corresponderem a nenhum alerta "
+                 f"do histórico partilhado. Não foram apagados do ficheiro, que é de acrescento "
+                 f"e é a prova; foram ignorados na contagem.")
+        L.append("")
 
     if not registos:
         L.append("## Ainda não há votos")
@@ -167,11 +210,17 @@ def relatorio(registos: list[FL.FeedbackRecord]) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--votos", default=str(DEFAULT_VOTOS))
+    ap.add_argument("--historico", default=str(DEFAULT_HISTORICO))
+    ap.add_argument("--sem-filtro", action="store_true",
+                    help="não filtrar pelo histórico (o relatório assinala-o)")
     ap.add_argument("--out", default=str(OUT_MD))
     args = ap.parse_args()
 
     registos = FL.load_jsonl(args.votos)
-    texto = relatorio(registos)
+    chaves = None if args.sem_filtro else chaves_do_historico(args.historico)
+    if chaves is None and not args.sem_filtro:
+        print(f"[feedback] ⚠️ histórico ilegível em {args.historico}: filtro NÃO aplicado.")
+    texto = relatorio(registos, chaves)
     saida = Path(args.out)
     saida.parent.mkdir(parents=True, exist_ok=True)
     saida.write_text(texto, encoding="utf-8")

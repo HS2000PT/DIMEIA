@@ -133,3 +133,47 @@ def test_as_ameacas_a_validade_estao_sempre_no_relatorio():
     texto = af.relatorio(_votos([(f"v{i}", FL.UTIL) for i in range(30)]))
     for ameaca in ("Autosseleção", "contrafactual", "decisão melhor", "Canal público"):
         assert ameaca in texto
+
+# ── regra 6: só contam votos sobre alertas que existem ───────────────────────────────────
+
+def test_votos_sobre_alertas_inexistentes_sao_excluidos():
+    """Tráfego de teste, chaves antigas e experiências com o endereço não são votos. Sem esta
+    regra, uma única mensagem de teste com botões contaminaria a amostra da dissertação."""
+    registos = _votos([("v1", FL.UTIL), ("v2", FL.UTIL)])  # chaves k0 e k1
+    texto = af.relatorio(registos, chaves_validas={"k0"})
+    assert "1 voto(s) excluído(s)" in texto
+    assert "Não foram apagados do ficheiro" in texto
+
+
+def test_sem_historico_o_filtro_nao_e_aplicado_em_silencio():
+    """`None` (histórico ilegível) e conjunto vazio são coisas diferentes: um histórico ausente
+    não pode servir de justificação para descartar todos os votos."""
+    texto = af.relatorio(_votos([("v1", FL.UTIL)]), chaves_validas=None)
+    assert "filtro do histórico não foi aplicado" in texto
+    assert "Correr de novo com o histórico presente" in texto
+
+
+def test_historico_vazio_devolve_none_e_nao_conjunto_vazio(tmp_path):
+    vazio = tmp_path / "alerts_history.jsonl"
+    vazio.write_text("", encoding="utf-8")
+    assert af.chaves_do_historico(vazio) is None
+    assert af.chaves_do_historico(tmp_path / "nao-existe.jsonl") is None
+
+
+def test_historico_com_chaves_e_lido(tmp_path):
+    import json
+
+    p = tmp_path / "alerts_history.jsonl"
+    p.write_text("\n".join(json.dumps(e) for e in [
+        {"date": "2026-09-01", "ticker": "TSLA", "kind": "news", "text": "x", "key": "abc123"},
+        {"date": "2026-09-01", "ticker": "NVDA", "kind": "summary", "text": "y", "key": ""},
+    ]) + "\n", encoding="utf-8")
+    assert af.chaves_do_historico(p) == {"abc123"}
+
+
+def test_filtro_nao_muda_o_resultado_quando_tudo_e_valido():
+    registos = _votos([(f"v{i}", FL.UTIL) for i in range(25)])
+    todas = {r.chave_alerta for r in registos}
+    com = af.relatorio(registos, chaves_validas=todas)
+    assert "excluído" not in com
+    assert "filtro do histórico não foi aplicado" not in com
