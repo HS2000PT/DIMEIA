@@ -1,5 +1,7 @@
 # Repository index — InvestiGator 🐊
 
+> ⛳ **PRIORIDADE MÁXIMA: ler `PLANO_FINAL_2026-09-01.md` na raiz de `DIMEIA/` antes de tocar em seja o que for.** Criado a 2026-09-01. Manda sobre este ficheiro e sobre todos os outros planos do repositório, incluindo `progress/PLANO_FINAL_ENTREGA.md`, `progress/PLANO_EMERGENCIA_DEFESA_2026-08-30.md` e `INVESTIGATOR_MASTER_PLAN.md`, que ficam como registo histórico.
+
 A map of where everything lives, so you can navigate the project at a glance. For a 10-minute
 written overview of the whole project, read **[`RELATORIO_FINAL.md`](RELATORIO_FINAL.md)**.
 

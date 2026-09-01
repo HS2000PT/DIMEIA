@@ -214,6 +214,21 @@ dados e com esta família de métodos, o sinal textual nada acrescenta ao que a 
 já indicava. O alcance do resultado limita-se, por isso, a um regime de recursos e a uma escolha de
 representação, e não se estende à linguagem.
 
+Há, ainda assim, uma leitura teórica que o enquadra e que convém enunciar com a mesma cautela. A
+forma semiforte da hipótese dos mercados eficientes \autocite{fama1970efficient} sustenta que a
+informação publicamente disponível se encontra já refletida no preço. Se assim for, um título
+público não tem, no momento em que é lido, informação que os preços recentes não contenham, e o
+resultado obtido é o que essa hipótese conduziria a esperar. A condição de recursos deste trabalho
+agrava a expectativa em vez de a atenuar: entre a publicação de uma notícia e a sua deteção por
+fontes gratuitas decorrem $353$ minutos de mediana, intervalo durante o qual qualquer reação do
+mercado já ocorreu. O sistema observa, por construção, informação que deixou de ser nova.
+
+Esta leitura é um enquadramento e não uma conclusão. O trabalho não testa a hipótese dos mercados
+eficientes, e um resultado negativo obtido com uma família de métodos sobre um corpus concreto não
+a confirma; confirmá-la exigiria um desenho que este não tem. O que a leitura acrescenta é a razão
+pela qual o resultado é menos surpreendente do que a hipótese inicial supunha, e por que motivo a
+sua correção mais provável não está na representação do texto mas no atraso com que ele chega.
+
 \section{Objetivos alcançados}
 \label{sec:con_objetivos}
 
@@ -391,7 +406,9 @@ voltaram a ser ajustados. Entre o bloco de treino e o de teste, o índice de est
 populacional situa a volatilidade dos vinte dias na banda de deslocamento significativo, com
 $0{,}281$, que é a entrada de que o modelo mais depende. A literatura de deriva de conceito trata
 deste problema, com uma taxonomia da mudança e estratégias de deteção e adaptação
-\autocite{gama2014survey}; aqui existe a deteção e não a adaptação.
+\autocite{gama2014survey}; aqui existe a deteção e não a adaptação. A arquitetura que a forneceria
+está definida na Secção~\ref{sec:sis_ciclo}, com gatilho condicional, janela deslizante e porta de
+promoção, e não foi executada: a limitação é de execução e não de desenho.
 
 A \textbf{cobertura das fontes é incompleta e desigual}. Existia pelo menos uma notícia relevante em
 $88{,}5\%$ dos $417$ dias considerados invulgares pelo detetor, e a empresa pior coberta situa-se
@@ -454,6 +471,26 @@ constitui uma justificação sob outra forma.
         \autocite{barber2008glitters}, um sistema que comunica a mesma história três vezes não está a
         informar, mas a amplificar o mesmo estímulo.
 
+  \item \textbf{Eliminar a assimetria de referencial do retorno do próprio dia.} A entrada
+        corresponde, no treino, ao movimento completo do dia da notícia, e em produção à última
+        barra disponível no momento da pontuação. Substituí-la pelo retorno acumulado até à
+        publicação, ou, de forma mais conservadora, pelo retorno da véspera, elimina a diferença e
+        permite reportar o desempenho sob um referencial único. A direção do efeito é conhecida e
+        favorece o resultado negativo, pelo que a correção o reforçaria em vez de o desfazer; o que
+        a experiência acrescenta é a medição desse reforço em vez da sua dedução.
+
+  \item \textbf{Agrupar os precedentes por par de empresa e dia antes da seleção.} A correção
+        aplicada ao texto do alerta tornou a afirmação verdadeira sem remover a causa. Selecionar os
+        candidatos depois de agrupar por dia, exibindo de cada dia apenas o título mais próximo,
+        elimina na origem a possibilidade de um dia observado três vezes ser apresentado como três
+        casos concordantes.
+
+  \item \textbf{Expor a qualidade do ajuste na própria mensagem.} A repartição de um movimento é
+        exibida com a mesma confiança quando o coeficiente de determinação da janela é elevado e
+        quando é negativo. Apresentá-lo junto da repartição, e acrescentar uma nota explícita abaixo
+        de um limiar mínimo, converte uma limitação hoje declarada apenas no documento numa
+        propriedade observável por quem lê o alerta.
+
   \item \textbf{Re-treinar o modelo com o registo de produção.} A deriva está medida e os rótulos
         novos derivam dos preços, pelo que a execução é possível. O impedimento não é técnico, uma
         vez que um re-treino alteraria os valores reportados neste documento e exigiria tempo de
@@ -497,3 +534,11 @@ momento em que é lida. Determina a forma da explicação, que apresenta casos i
 médias. E determina o critério de avaliação, que incide sobre a capacidade de identificar o que é
 invulgar e não sobre a de antecipar. Um sistema que apresente evidência em lugar de veredictos entrega menos do que um sistema
 que anuncie direções, e entrega apenas o que consegue sustentar.
+
+Convém, por isso, enunciar a contribuição no seu nível exato. O que este trabalho estabelece é que
+o sistema está tecnicamente preparado para sustentar explicações assentes em evidência histórica
+verificável: cada quantidade apresentada provém do componente que a calculou, é confrontável com o
+registo no momento em que é lida, e a política que decide o silêncio está documentada e medida. O
+que este trabalho não estabelece é que essa forma de explicação conduza o investidor particular a
+uma decisão melhor. Essa é a hipótese fundadora, permanece por testar, e o seu teste é o primeiro
+item da secção anterior.

@@ -1,8 +1,162 @@
 # ESTADO — reescrita em `tese-v2/`
 
+> ⛳ **PRIORIDADE MÁXIMA: ler `PLANO_FINAL_2026-09-01.md` na raiz de `DIMEIA/` antes de tocar em seja o que for.** Criado a 2026-09-01. Manda sobre este ficheiro e sobre todos os outros planos do repositório, incluindo `progress/PLANO_FINAL_ENTREGA.md`, `progress/PLANO_EMERGENCIA_DEFESA_2026-08-30.md` e `INVESTIGATOR_MASTER_PLAN.md`, que ficam como registo histórico.
+
 > Atualizar sempre no fim de cada sessão. Ler `BRIEF_REESCRITA.md` antes de começar.
 
 ## Sessão em curso
+
+TERMINADA 01:35 (01/09) — **frente 01 do plano: feedback do leitor no Telegram, construído e testado.**
+
+O código está todo escrito e verificado; falta **pôr no ar**, que são dois passos manuais
+descritos em `docs/design/telegram_feedback.md`. Nada disto toca na tese ainda: entra no
+documento quando houver dados.
+
+**O que foi construído.** Dois botões em cada alerta, um webhook em `api/main.py` que recebe os
+votos, um registo JSONL publicado na branch de dados, e um script de análise com as regras
+fixadas antes de existirem dados. 75 testes novos, todos a passar.
+
+**⚠️ A alteração com mais consequências:** o bot passa de long-polling a webhook, e **o Telegram
+não permite os dois** — com webhook registado, o `getUpdates` devolve 409. Por isso o webhook
+trata também dos comandos (`/watch`, `/list`, `/stop`) e o `process_bot_commands` do runner
+cala-se quando `TELEGRAM_WEBHOOK_ENABLED=1`. Registar o webhook sem definir essa variável deixa
+o `/watch` sem resposta e enche o registo do worker de 409.
+
+**Durabilidade, dita como é:** os votos sobrevivem ao reinício do dyno (JSONL publicado na
+branch, como o `gate_log`); as watchlists dos subscritores continuam em SQLite efémero e
+continuam a perder-se. Isso já era verdade antes — o fan-out já imprimia «sem base de
+subscritores» — e esta alteração não melhora nem piora esse ponto.
+
+**Uma rota foi retirada por um teste do próprio projeto.** A primeira versão expunha
+`/api/feedback`; o `test_a_api_nao_serve_nada_que_a_pagina_nao_use` apanhou-a, porque a página
+ainda não a consome. A razão ficou escrita no `api/main.py` e a rota volta na revisão do painel,
+no passo em que a página passar a mostrar as contagens.
+
+**Regras pré-registadas da análise** (em `scripts/analyse_feedback.py`, e com testes que falham
+se alguém as mudar): mínimo de 20 votos efetivos para reportar qualquer proporção; um voto por
+pessoa por alerta, com o último a substituir; salvaguarda do votante dominante acima de 40%;
+intervalos de Wilson; a palavra «significativo» nunca aparece. Alterar qualquer uma destas
+depois de haver dados tem de ficar registado aqui, com a data e a razão.
+
+**✅ NO AR desde 2026-09-01 02:08 UTC (release v51 na Heroku).** Verificado em produção:
+segredo errado devolve 403, segredo certo devolve 200 com o tratador a correr, corpo ilegível
+devolve 200, e o registo do worker diz «webhook ativo — comandos tratados em
+/telegram/webhook, polling saltado» sem um único 409. O webhook está registado com
+`allowed_updates` limitado a `message` e `callback_query`, e o `getWebhookInfo` não reporta
+erros. As variáveis `TELEGRAM_WEBHOOK_SECRET` e `TELEGRAM_WEBHOOK_ENABLED` estão definidas na
+plataforma e no `.env` local.
+
+⚠️ **O código está no ramo `feat/telegram-feedback`, e a `main` não foi tocada.** A Heroku foi
+servida com `git push heroku feat/telegram-feedback:main`. Para reverter em segundos:
+`git push heroku main:main --force` a partir da `main`, e apagar `TELEGRAM_WEBHOOK_ENABLED`.
+Para adotar: `git checkout main && git merge feat/telegram-feedback`.
+
+**Regra 6, acrescentada depois de o sistema estar no ar e antes de haver dados reais:** só
+contam votos cuja chave existe no histórico partilhado. Um voto sobre um alerta inexistente é
+tráfego de teste ou uma chave antiga, e é ignorado na contagem — nunca apagado do ficheiro. Foi
+esta regra que tornou seguro enviar uma mensagem de teste ao canal (message_id 637) para
+verificar os botões de ponta a ponta.
+
+**Ficheiros novos:** `investigator/telegram_bot/feedback.py`, `.../webhook.py`,
+`investigator/feedback_log.py`, `investigator/evaluation/proportions.py`,
+`scripts/telegram_webhook.py`, `scripts/analyse_feedback.py`,
+`docs/design/telegram_feedback.md`, `docs/evaluation/evaluation_feedback.md`, e quatro
+ficheiros de testes. **Alterados:** `sender.py`, `config.py`, `api/main.py`,
+`scripts/run_alerts.py`, `.env.example`.
+
+⚠️ **A VM Linux da ponte tem Python 3.10 e o projeto exige 3.11+** (`from datetime import UTC`).
+Os testes foram corridos no contentor da sessão. Quem continuar: correr a suite na máquina do
+aluno, com o `.venv`, antes de dar qualquer alteração por verificada.
+
+---
+
+
+TERMINADA 00:55 (01/09) — **conformidade com o modelo oficial MEIA v2, e correção do orçamento de páginas.**
+
+O modelo oficial (`modelo-oficial/`, copiado para o repositório nesta sessão) resolveu duas coisas
+que estavam erradas e uma que estava em falta.
+
+**1. A declaração de uso de IA estava no sítio errado.** O modelo manda-a, textualmente, para «a
+secção onde são abordadas as considerações éticas», e não para a página da Declaração de
+Integridade — que só lhe aponta. Aplicado: a Declaração passa a ter a redação do modelo palavra
+por palavra (incluindo o período das exceções), e a declaração de IA é agora a Secção 3.8.4,
+`\subsection{Utilização de ferramentas de inteligência artificial}`, a seguir a «Questões éticas e
+sociais» (3.8.3). A Declaração remete para ambas pelo número.
+
+**2. ⚠️ O LIMITE DE 120 PÁGINAS NÃO É O QUE EU ANDAVA A CONTAR.** O modelo diz *«The minimum number
+of pages is 60 and the maximum is 120 (not counting the Annexes). Small deviations are allowed.»*
+**Os apêndices não contam.** A posição real:
+
+| | Páginas |
+|---|---|
+| Pré-textuais (romanos) | 24 físicas, i–xxiv |
+| **Corpo + bibliografia — o que conta** | **90** (impressas 1–90) |
+| Apêndices A e B — não contam | 8 (impressas 91–98) |
+| Total físico do PDF | 122 |
+
+Contam **90 de 120**. Na leitura mais pessimista possível (todas as físicas menos anexos), 114.
+Em consequência, a Figura `fig:sis_seletividade` do `ch4`, removida na sessão anterior apenas para
+poupar duas páginas, **foi reposta**. Quem continuar: o número a vigiar é o das páginas impressas
+do corpo, não o total físico do PDF.
+
+**3. Faltava a Lista de Símbolos**, que a lista de verificação do modelo marca como obrigatória.
+Acrescentada no fim dos pré-textuais: vinte símbolos, cada um com a equação ou secção onde é
+definido, o que a torna também um índice. A Lista de Código e a Lista de Algoritmos continuam
+ausentes, e corretamente — o documento não tem nenhum dos dois, e o próprio modelo manda remover
+esses comandos nesse caso.
+
+**Divergências do `meia-style.cls` face ao oficial:** cinco, todas comentadas no ficheiro e todas
+defensáveis (babel PT-PT, palavras-chave próprias para o abstract EN, caminhos das imagens sem a
+barra inicial, guarda do bloco do júri, `\par` antes das palavras-chave). Verificado por diff
+contra o modelo nesta sessão.
+
+**Estado:** 90 páginas contadas · 122 físicas · 38 figuras · 13 tabelas · 70 referências ·
+0 pré-publicações. Compila a 0 erros, 0 referências indefinidas, 0 citações indefinidas.
+
+---
+
+
+TERMINADA 00:10 (01/09) — **aplicação de uma revisão crítica externa e reposição do limite de páginas.**
+
+**1. O que foi aplicado.**
+- `ch4`: nova subsecção «O elo em falta: arquitetura de retreino», com a Figura `fig:sis_retreino`.
+  Define o gatilho condicional (PSI > 0,25 em qualquer entrada, ou três meses sem revisão), a janela
+  deslizante de vinte e quatro meses com o embargo de cinco dias, e a porta de promoção que só
+  aceita o modelo novo se o intervalo de confiança da diferença excluir o zero. A limitação passa a
+  ser **de execução e não de desenho**, e o `ch6` remete para lá.
+- `ch6`: três itens novos de trabalho futuro (eliminar a assimetria de referencial do `ret_event`;
+  agrupar os precedentes por par empresa–dia antes da seleção; expor o R² da janela na própria
+  mensagem); enquadramento pela forma semiforte da hipótese dos mercados eficientes na QI3, com a
+  ressalva expressa de que o trabalho **não testa** essa hipótese; e atenuação da afirmação de
+  explicabilidade nas Considerações finais — o trabalho estabelece que o sistema está preparado
+  para sustentar explicações verificáveis, e **não** que essas explicações melhorem a decisão.
+- Compressões de prosa no `ch2` (4) e no `ch5` (2), sem perda de conteúdo.
+
+**2. O que foi recusado, e porquê.** Três pontos do relatório não foram aplicados por estarem
+errados ou por a medição os contrariar. Ficam registados porque podem voltar a ser levantados:
+- *«Citações na primeira pessoa».* As passagens apontadas são da **Declaração de Integridade**,
+  onde a primeira pessoa é a forma correta e exigida.
+- *«O `ret_event` contaminado invalida o resultado negativo».* O sinal do argumento está invertido.
+  A entrada contaminada pertence aos modelos **derrotados**; a linha de base vencedora usa apenas o
+  `vol20`, fechado na véspera. Corrigir a assimetria **reforça** o resultado negativo em vez de o
+  desfazer. É por isso que consta como trabalho futuro, e não como ameaça à validade.
+- *«Integrar os embeddings do SBERT na triagem».* Foi medido: 0,496 contra 0,542. É pior.
+
+**3. Páginas.** As adições levaram o documento a 122, dois acima do máximo oficial de 120. Reposto
+por: remoção da Figura `fig:sis_seletividade` do `ch4` (a mesma conclusão consta da
+Secção `sec:av_producao` sobre uma amostra muito maior), captura de ecrã da aplicação passada a duas
+`minipage` lado a lado, e eliminação no `ch5` de um parágrafo que repetia a legenda da Tabela 5.2 —
+a parte útil foi dobrada na própria legenda. **120 páginas.**
+
+**Estado:** 120 páginas, 37 figuras, 13 tabelas, 70 referências, 0 pré-publicações. Compila a
+0 erros, 0 referências indefinidas, 0 citações indefinidas. `check_escrita.py` (0 achados,
+autoteste a disparar), `check_floats.py` (49 flutuantes no corpo, todos invocados e com legenda
+curta e longa) e `check_tex_escapes.py` (0) passam sobre `tese-v2/`.
+
+⚠️ **120 é exatamente o máximo oficial.** Qualquer adição futura tem de vir acompanhada de um corte
+equivalente. Verificar sempre `pdfinfo main.pdf | grep Pages` antes de dar uma sessão por terminada.
+
+---
 
 TERMINADA 20:10 (31/08) — **auditoria, correção factual, legibilidade e regras do orientador.**
 

@@ -105,10 +105,9 @@ dia e um gráfico de preço. Não indica se essa variação é elevada
 para aquela ação em particular, não separa a componente de empresa da componente de mercado e não
 dispõe de memória de acontecimentos comparáveis.
 
-Os alertas de preço oferecidos por estas
-aplicações partilham a mesma limitação de forma mais acentuada: disparam quando um limiar fixo é
-atravessado, critério que ignora a volatilidade própria de cada ação e que por isso produz alertas
-frequentes nas empresas agitadas e raros nas empresas calmas. Comunicam ainda que um nível foi
+Os alertas de preço destas aplicações partilham a limitação de forma mais acentuada. Disparam
+quando um limiar fixo é atravessado, critério que ignora a volatilidade própria de cada ação e
+produz por isso alertas frequentes nas empresas agitadas e raros nas calmas. Comunicam ainda que um nível foi
 ultrapassado, e nunca porquê. Esta observação determina a opção metodológica descrita na
 Secção~\ref{sec:met_detecao}, que substitui o limiar absoluto por uma medida relativa à norma
 recente de cada empresa, e cuja diferença é quantificada na Secção~\ref{sec:av_qi1}.
@@ -374,12 +373,10 @@ esse alinhamento é o que distingue um corpus utilizável de uma coleção de t�
 utilizado neste trabalho é o \gls{FNSPID} \autocite{dong2024fnspid}, que reúne notícias e séries de
 preços correspondentes e cuja construção está documentada.
 
-A relevância entre duas notícias é aproximada, neste trabalho, pela pertença ao mesmo setor. A opção
-substitui uma anotação humana inexistente por um critério objetivo, e transporta a limitação
-correspondente: a validade de um agrupamento é uma propriedade mensurável, seja pela separação entre
-grupos \autocite{rousseeuw1987silhouettes}, seja pela concordância entre agrupamentos alternativos
-corrigida para o acaso \autocite{vinh2010ami}, e nenhuma dessas medidas foi aplicada ao mapa
-setorial adotado. O que o rótulo garante é objetividade e reprodutibilidade, e não que o setor seja
+A relevância entre duas notícias é aproximada, neste trabalho, pela pertença ao mesmo setor. A opção substitui uma anotação humana inexistente por um critério objetivo, e transporta a
+limitação correspondente. A validade de um agrupamento é mensurável, pela separação entre grupos
+\autocite{rousseeuw1987silhouettes} ou pela concordância entre agrupamentos alternativos corrigida
+para o acaso \autocite{vinh2010ami}. Nenhuma dessas medidas foi aplicada ao mapa setorial adotado. O que o rótulo garante é objetividade e reprodutibilidade, e não que o setor seja
 a partição mais informativa do corpus.
 
 \section{Estudos de evento e decomposição de retornos}
@@ -451,11 +448,9 @@ que sustentam a decisão, em vez da totalidade dos valores calculados.
 
 Há um segundo requisito, do mesmo lado, que condiciona não o conteúdo da explicação mas a frequência
 com que ela é entregue. Um destinatário exposto a avisos em excesso deixa de os processar, fenómeno
-documentado em domínios onde o custo de o ignorar é elevado \autocite{ancker2017alertfatigue}. A
-consequência para este trabalho é que a política de decisão não é um acessório do sistema mas parte
-do seu desenho: um alerta que não é lido tem o mesmo valor de um alerta que não foi enviado, e é por
-isso que o Capítulo~\ref{cap:sistema} trata os critérios de supressão com o mesmo cuidado com que
-trata os métodos que produzem o alerta.
+documentado em domínios onde o custo de o ignorar é elevado \autocite{ancker2017alertfatigue}. A consequência é que a política de decisão não é acessória mas parte do desenho. Um alerta que não
+é lido vale o mesmo que um alerta que não foi enviado, e é por isso que o
+Capítulo~\ref{cap:sistema} trata os critérios de supressão com o cuidado que dedica aos métodos.
 
 \section{Explicabilidade e confiança em sistemas automáticos}
 \label{sec:ctx_xai}
@@ -627,10 +622,9 @@ Por que razão acreditar?
 \end{tabular}
 \end{table}
 
-A lacuna não é, portanto, de método, mas de integração sob restrição. Os produtos que respondem às
-três perguntas são terminais profissionais, que não são disponibilizados em regime gratuito nem em
-regime acessível ao investidor particular; o seu preço não é publicado de forma que permita citá-lo
-aqui, e é a indisponibilidade, e não um valor concreto, que sustenta o argumento. Os produtos
+A lacuna não é, portanto, de método, mas de integração sob restrição. Os produtos que respondem às três perguntas são terminais profissionais, indisponíveis em regime
+gratuito ou acessível ao investidor particular. O seu preço não é publicado de forma citável, e é
+a indisponibilidade, e não um valor concreto, que sustenta o argumento. Os produtos
 gratuitos que declaram responder à terceira entregam uma afirmação sem a evidência que a sustenta.
 E os componentes académicos que resolveriam cada parte foram avaliados isoladamente, sobre corpora
 de referência, e não como um sistema em funcionamento contínuo contra fontes reais.
