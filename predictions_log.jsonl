@@ -21321,3 +21321,13 @@
 {"ts": "2026-09-01T14:11:29+00:00", "news_date": "2026-09-01", "ticker": "JPM", "headline": "Undercovered Dozen: JPMorgan, Sezzle, Kayne Anderson And More", "prob": 0.22639346569375518, "gate": 0.5, "kept": true}
 {"ts": "2026-09-01T14:11:30+00:00", "news_date": "2026-09-01", "ticker": "AMD", "headline": "AMD: Buy This Post-Earnings Pullback", "prob": 0.5436607413872797, "gate": 0.5, "kept": true}
 {"ts": "2026-09-01T14:11:31+00:00", "news_date": "2026-08-31", "ticker": "XOM", "headline": "What's Going on with ExxonMobil Shares on Monday?", "prob": 0.4071663054953806, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T14:13:10+00:00", "news_date": "2026-09-01", "ticker": "AAPL", "headline": "Should You Buy Apple Before Sept. 9? Here’s What History Says.", "prob": 0.38243418060424567, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T14:13:12+00:00", "news_date": "2026-08-31", "ticker": "MSFT", "headline": "Amazon Web Services, Microsoft Collaborate On Multicloud Networking", "prob": 0.3983662516868304, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T14:13:13+00:00", "news_date": "2026-09-01", "ticker": "NVDA", "headline": "Nvidia Just Proved It Doesn't Need China Anymore", "prob": 0.5020062408178658, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T14:13:14+00:00", "news_date": "2026-09-01", "ticker": "TSLA", "headline": "Tesla: This Week's Cybercab Launch Has A Lot To Prove", "prob": 0.4808192511516901, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T14:13:15+00:00", "news_date": "2026-09-01", "ticker": "AMZN", "headline": "Prediction: Amazon Could Be Worth This Much in 5 Years", "prob": 0.41962925109028393, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T14:13:16+00:00", "news_date": "2026-09-01", "ticker": "GOOGL", "headline": "Alphabet: Question Marks Behind The AI Boom", "prob": 0.41158896467281914, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T14:13:18+00:00", "news_date": "2026-08-31", "ticker": "META", "headline": "ChatGPT Ads Surge: How OpenAI's Rapid Expansion Imperils Google and Meta", "prob": 0.4332272617057744, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T14:13:19+00:00", "news_date": "2026-09-01", "ticker": "JPM", "headline": "Undercovered Dozen: JPMorgan, Sezzle, Kayne Anderson And More", "prob": 0.22640969515430773, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T14:13:21+00:00", "news_date": "2026-09-01", "ticker": "AMD", "headline": "AMD: Buy This Post-Earnings Pullback", "prob": 0.5435488269583411, "gate": 0.5, "kept": true}
+{"ts": "2026-09-01T14:13:22+00:00", "news_date": "2026-08-31", "ticker": "XOM", "headline": "What's Going on with ExxonMobil Shares on Monday?", "prob": 0.4071697811888988, "gate": 0.5, "kept": true}
