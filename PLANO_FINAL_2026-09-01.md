@@ -108,7 +108,7 @@ pergunta desmonta a tese inteira em dois minutos.
 
 ---
 
-## 2. Telegram — alerta imediato, contexto por edição  *(ponto 4)*
+## 2. Telegram — alerta imediato, contexto por edição  *(ponto 4 · ✅ metade NO AR (v53), metade recusada com razão)*
 
 ### A ideia é boa. A justificação que parece óbvia está errada, e é preciso saber disso antes da defesa
 
@@ -621,6 +621,25 @@ antes da defesa.
 
 ---
 
+## 9.5. Depois da defesa: a tese que o autor quer escrever
+
+O autor descreveu, a 2026-09-01, a sua visão de uma tese ideal — introdução ancorada no valor
+de negócio com números de 2026, revisão da literatura que não descarta nenhuma família de IA,
+e um desenho que testa todas as combinações de componentes. Está registada em
+`POS_PLANO_TESE_IDEAL.md`, **com três correções sem as quais não sobrevive a uma defesa** e com
+a separação entre o que cabe nos dias que faltam e o que é uma tese diferente.
+
+As duas correções que importam, em resumo: **o valor de negócio não pode ser a velocidade**
+(a medição diz 353 minutos, a QI3 é negativa, e a recusa de aconselhar é a posição ética do
+trabalho); e **testar todas as combinações e ficar com a melhor não é mais rigoroso, é menos**
+(comparações múltiplas sobre o teste enviesam o vencedor, e a dissertação atual já faz algo
+mais forte com comparações emparelhadas pré-registadas).
+
+O que **cabe** e entra como trabalho, se houver dias: introdução reescrita, tabela comparativa
+do estado da arte, e ablações pré-registadas sobre três a quatro componentes.
+
+---
+
 ## 10. O que este plano não faz
 
 Registado para não voltar a ser discutido a meio:
@@ -659,4 +678,5 @@ Registado para não voltar a ser discutido a meio:
 | 2026-09-01 | Chegou o modelo oficial MEIA v2. Ponto 6 resolvido e aplicado: Declaração de Integridade na redação do modelo, declaração de IA movida para a Secção 3.8.4, Lista de Símbolos acrescentada. |
 | 2026-09-01 | **Orçamento de páginas corrigido.** Os anexos não contam. Contam 90 de 120, e não 120 de 120. A Figura `fig:sis_seletividade` foi reposta no `ch4`. |
 | 2026-09-01 | Frente 8.5 acrescentada a pedido do autor: o «porquê?» em cadeia, mesmo no fim. Calendário passa de 18 para 20 dias. |
+| 2026-09-01 | **Frente 02 no ar** (release v53): desfecho observado a +1, +3 e +5 sessões, anexado à mensagem original. O envio do esboço antes da análise foi **recusado** — a medição dá 5 s de ganho, e os 7,5 s da recuperação são de arranque a frio, que o worker permanente não paga. Razão em `docs/design/telegram_dois_tempos.md`. |
 | 2026-09-01 | **Frente 01 no ar** (release v51). Construída e testada (75 testes novos). Falta pôr no ar: dois passos manuais em `docs/design/telegram_feedback.md`. Descoberta que mudou o desenho: o webhook desliga o `getUpdates`, por isso passou a tratar também dos comandos. |
