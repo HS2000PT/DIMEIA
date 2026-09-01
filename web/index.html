@@ -230,30 +230,47 @@
              border-left:1px solid var(--linha); padding-left:11px; }
 
   /* ── funil ─────────────────────────────────────────────────────────────── */
-  /* ⚠️ Uma grelha de colunas deixava buracos enormes: as etapas têm alturas muito
-     diferentes (uma empresa numa, sete noutra) e o CSS grid não as encaixa, empurra-as para
-     a linha seguinte e deixa metade do ecrã vazio. Só se viu ao capturar a figura.
-     Uma lista de linhas é também a forma certa: um funil lê-se de cima para baixo, pela
-     ordem em que as decisões acontecem. */
-  .funil { display:block; }
-  .etapa { display:grid; grid-template-columns:minmax(150px,210px) 1fr; gap:6px 20px;
-           padding:10px 0; border-top:1px solid var(--linha2); align-items:baseline; }
-  .etapa h3 { font-size:.88rem; margin:0; font-weight:600;
-              display:flex; align-items:baseline; gap:7px; }
-  .etapa h3 .n { color:var(--fraco); font-weight:400; font-size:.8rem; }
-  .etapa .porque { grid-column:1; color:var(--fraco); font-size:.78rem; margin:0; }
-  .etapa .nomes { grid-column:2; grid-row:1 / span 2; }
+  /* ⚠️ VERSÃO 6.2. A anterior imprimia onze blocos, cada um com título, contagem, uma frase de
+     prosa e a lista de empresas. Ocupava mais ecrã do que o gráfico e a lista de alertas
+     juntos, e era a última coisa que qualquer visitante via. O conteúdo era bom — o silêncio é
+     uma decisão e tem de ser inspeccionável — mas uma parede de prosa que ninguém lê não
+     inspecciona nada.
+     Agora é um funil a sério: uma linha por porta, com a barra a encurtar à medida que as
+     empresas caem. Lê-se num segundo. A prosa de cada porta continua lá, no `title` e por
+     baixo quando se escolhe a porta, em vez de estar toda ao mesmo tempo no ecrã. */
+  .funil { display:flex; flex-direction:column; gap:2px; }
+  .porta { display:grid; grid-template-columns:minmax(140px,190px) 1fr auto; gap:14px;
+           align-items:center; width:100%; text-align:left; background:none; border:0;
+           border-radius:6px; padding:5px 8px; font:inherit; color:inherit; cursor:pointer; }
+  .porta:hover { background:var(--linha2); }
+  .porta[aria-pressed="true"] { background:var(--acento-fraco); }
+  .porta .rot { font-size:.82rem; font-weight:600; }
+  .porta[aria-pressed="true"] .rot { color:var(--acento); }
+  /* A barra: a parte clara é quem entrou nesta porta, a escura é quem ela travou. A largura
+     em percentagem do total faz o encurtamento ser literal — o funil vê-se, não se lê. */
+  .barra { height:17px; border-radius:3px; background:var(--linha2); overflow:hidden;
+           display:flex; }
+  .barra .viva { background:var(--grelha); border-right:1px solid var(--linha); }
+  .barra .caiu { background:var(--parou); opacity:.72; }
+  .porta.enviou .barra .caiu { background:var(--acento); opacity:1; }
+  .porta .cont { font-size:.78rem; color:var(--fraco); font-variant-numeric:tabular-nums;
+                 white-space:nowrap; }
+  .porta .cont b { color:var(--tinta); font-weight:600; }
   @media (max-width:640px) {
-    .etapa { grid-template-columns:1fr; }
-    .etapa .porque, .etapa .nomes { grid-column:1; grid-row:auto; }
+    .porta { grid-template-columns:1fr auto; }
+    .porta .barra { grid-column:1 / -1; grid-row:2; }
   }
+
+  /* As empresas, por baixo do funil. Sem porta escolhida mostram-se todas, agrupadas; com uma
+     porta escolhida mostram-se as dessa porta, com a frase que a explica. */
+  .detFunil { margin-top:12px; padding-top:11px; border-top:1px solid var(--linha); }
+  .detFunil .explica { font-size:.82rem; color:var(--fraco); margin:0 0 8px; max-width:80ch; }
   .nomes { display:flex; flex-wrap:wrap; gap:5px; }
   .nome { border:1px solid var(--linha); border-radius:5px; padding:2px 7px; font-size:.79rem;
           background:var(--caixa); }
   .nome b { font-weight:600; } .nome span { color:var(--fraco); }
   .nome.eu { border-color:var(--acento); background:var(--acento-fraco); }
-  .etapa.passou { border-top-color:var(--acento); }
-  .etapa.passou h3 { color:var(--acento); }
+  .nome .porta-de { color:var(--fraco); font-size:.72rem; }
 
   /* No telemóvel, o cabeçalho fixo estava a comer 98 px (12% do ecrã) porque a assinatura da
      marca empurrava o estado para uma segunda linha. Numa página que se lê a rolar, a barra
@@ -347,11 +364,9 @@
 
   <section>
     <h2>Why it stayed quiet</h2>
-    <p class="sub" id="funilSub">
-      Nine out of ten scans send nothing. Silence is a decision, so here is where each company
-      stopped, in the order the decisions are taken.
-    </p>
+    <p class="sub" id="funilSub">Silence is a decision, so here is where each company stopped.</p>
     <div class="funil" id="funil"><p class="vazio">loading…</p></div>
+    <div class="detFunil" id="detFunil"></div>
   </section>
 </main>
 
@@ -417,6 +432,7 @@ const pct = v => (v >= 0 ? "+" : "") + (v * 100).toFixed(2) + "%";
 async function json(u) { const r = await fetch(u); if (!r.ok) throw new Error(u); return r.json(); }
 
 const S = { ticker:null, activo:null, dia:null, alertas:[], funil:[], linhas:[], ambito:"todos",
+            etapa:null,
       quantos:20 };
 
 /** A sessão de negociação em que um acontecimento pousa. Uma notícia de sábado não tem barra
@@ -662,6 +678,12 @@ function pintarFiltro() {
 // ── o funil ──────────────────────────────────────────────────────────────────
 // Só o dia mais recente: a pergunta é "porque é que está calado AGORA", e misturar dias faria a
 // mesma empresa aparecer em duas etapas ao mesmo tempo.
+//
+// ⚠️ O FUNIL É RECONSTRUÍDO, e não lido. O registo diz onde cada empresa PAROU, não por quantas
+// portas passou. Como as portas têm ordem fixa, quem parou na porta k passou por todas as
+// anteriores — e a partir daí a sobrevivência calcula-se exatamente: entram na porta k todas
+// menos as que já tinham caído antes. É isto que torna a barra um funil e não um gráfico de
+// barras com os mesmos números.
 function pintarFunil() {
   const todas = S.funil;
   const dia = todas.reduce((m, r) => r.date > m ? r.date : m, "");
@@ -671,24 +693,73 @@ function pintarFunil() {
     if (!porEtapa.has(r.stage)) porEtapa.set(r.stage, new Map());
     porEtapa.get(r.stage).set(r.ticker, r.detail || "");   // a última decisão de cada empresa
   }
-  const blocos = ETAPAS.filter(([k]) => porEtapa.has(k)).map(([k, titulo, porque]) => {
-    const entradas = [...porEtapa.get(k).entries()].sort();
-    const nomes = entradas.map(([t, d]) => {
-      const leg = legivel(d);
-      return `<span class="nome ${t === S.ticker ? "eu" : ""}"><b>${esc(t)}</b>` +
-             `${leg ? " <span>" + esc(leg) + "</span>" : ""}</span>`;
-    }).join("");
-    return `<div class="etapa${k === "alerted" ? " passou" : ""}">
-              <h3>${esc(titulo)} <span class="n">${entradas.length}</span></h3>
-              <p class="porque">${esc(porque)}</p>
-              <div class="nomes">${nomes}</div>
-            </div>`;
-  });
-  document.getElementById("funil").innerHTML = blocos.length
-    ? blocos.join("") : '<p class="vazio">No decisions recorded yet.</p>';
+  const total = new Set(hoje.map(r => r.ticker)).size;
+  const alvo = document.getElementById("funil");
+  if (!total) {
+    alvo.innerHTML = '<p class="vazio">No decisions recorded yet.</p>';
+    document.getElementById("detFunil").innerHTML = "";
+    return;
+  }
+
+  let vivas = total;
+  const linhas = [];
+  for (const [k, titulo, porque] of ETAPAS) {
+    if (!porEtapa.has(k)) continue;
+    const caiu = porEtapa.get(k).size;
+    const entraram = vivas;
+    const enviou = k === "alerted";
+    // Quem "cai" na porta final é quem passou: a mesma geometria, o outro significado, e é a
+    // cor que os separa. Um funil que pintasse o alerta como perda diria o contrário do que é.
+    linhas.push(
+      `<button class="porta${enviou ? " enviou" : ""}" data-etapa="${esc(k)}"` +
+      ` aria-pressed="false" title="${esc(porque)}">` +
+      `<span class="rot">${esc(titulo)}</span>` +
+      `<span class="barra" role="img" aria-label="${entraram} of ${total} still in, ` +
+      `${caiu} ${enviou ? "delivered" : "stopped here"}">` +
+      `<span class="viva" style="width:${(entraram - caiu) / total * 100}%"></span>` +
+      `<span class="caiu" style="width:${caiu / total * 100}%"></span></span>` +
+      `<span class="cont"><b>${caiu}</b> of ${entraram}</span></button>`);
+    vivas -= caiu;
+  }
+  alvo.innerHTML = linhas.join("");
+  alvo.querySelectorAll(".porta").forEach(b => b.addEventListener("click", () => {
+    const k = b.dataset.etapa;
+    S.etapa = (S.etapa === k) ? null : k;
+    alvo.querySelectorAll(".porta").forEach(o =>
+      o.setAttribute("aria-pressed", String(o.dataset.etapa === S.etapa)));
+    pintarDetalheFunil(porEtapa);
+  }));
+  S.etapa = null;
+  pintarDetalheFunil(porEtapa);
   document.getElementById("funilSub").textContent =
-    `Nine out of ten scans send nothing. Silence is a decision, so here is where each company ` +
-    `stopped on ${dia}, in the order the decisions are taken.`;
+    `Silence is a decision, so here is where each of the ${total} companies stopped on ${dia}, ` +
+    `in the order the gates are applied. Pick a gate to see which companies it stopped.`;
+}
+
+// As empresas por baixo do funil. Sem porta escolhida, todas — com a porta onde pararam ao lado,
+// que é a informação que a versão anterior só dava depois de rolar por onze blocos.
+function pintarDetalheFunil(porEtapa) {
+  const rotulo = new Map(ETAPAS.map(([k, t]) => [k, t]));
+  const porque = new Map(ETAPAS.map(([k, , p]) => [k, p]));
+  const ficha = (t, d, etapa) => {
+    const leg = legivel(d);
+    return `<span class="nome ${t === S.ticker ? "eu" : ""}"><b>${esc(t)}</b>` +
+           (etapa ? ` <span class="porta-de">${esc(rotulo.get(etapa) || etapa)}</span>` : "") +
+           (leg ? ` <span>${esc(leg)}</span>` : "") + `</span>`;
+  };
+  let explica = "", fichas = [];
+  if (S.etapa && porEtapa.has(S.etapa)) {
+    explica = porque.get(S.etapa) || "";
+    fichas = [...porEtapa.get(S.etapa).entries()].sort().map(([t, d]) => ficha(t, d, null));
+  } else {
+    for (const [k] of ETAPAS) {
+      if (!porEtapa.has(k)) continue;
+      fichas.push(...[...porEtapa.get(k).entries()].sort().map(([t, d]) => ficha(t, d, k)));
+    }
+  }
+  document.getElementById("detFunil").innerHTML =
+    (explica ? `<p class="explica">${esc(explica)}</p>` : "") +
+    `<div class="nomes">${fichas.join("")}</div>`;
 }
 
 // ── escolher uma empresa: uma selecção governa a página ──────────────────────

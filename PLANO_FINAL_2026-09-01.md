@@ -640,6 +640,18 @@ do estado da arte, e ablações pré-registadas sobre três a quatro componentes
 
 ---
 
+## 9.6. Depois da defesa: a auditoria integral pedida a 2026-09-01
+
+Registada em `POS_PLANO_AUDITORIA.md`. Uma auditoria baseada em evidência, comparando a tese e o
+sistema existentes contra a visão do autor, com plano de melhorias priorizado e treze secções de
+saída. **Sem alterar tese nem código na primeira fase**, por pedido expresso.
+
+Cinco pontos do pedido já estão resolvidos e não precisam de ser reabertos: a declaração de IA, os
+apêndices, a distinção entre deteção/explicação/causalidade/recomendação, a validação posterior
+dos alertas (v53) e a utilidade percebida (v51). Estão listados no ficheiro.
+
+---
+
 ## 10. O que este plano não faz
 
 Registado para não voltar a ser discutido a meio:
