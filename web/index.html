@@ -222,6 +222,9 @@
   .legenda .seta.sobe { border-bottom:8px solid var(--sobe); }
   .legenda .seta.desce { border-top:8px solid var(--desce); }
   .legenda-graf { margin:10px 0 0; }
+  /* O ponto da legenda existe fora do funil também; sem isto herdava largura zero e a legenda
+     do modal ficava com três palavras e nenhum símbolo. */
+  .legenda .p { width:9px; height:9px; border-radius:50%; flex:0 0 auto; }
 
   /* ── feed do canal ─────────────────────────────────────────────────────── */
   .f-cartao { background:var(--caixa); border:1px solid var(--linha); border-radius:var(--r);
@@ -412,18 +415,39 @@
 // ── portas do funil, pela ordem em que acontecem ─────────────────────────────
 // A ordem é a informação: quem parou na porta k passou por todas as anteriores, e é isso que
 // permite escrever o percurso de uma empresa em palavras dentro do modal.
+// ⚠️ Cada porta tem DUAS palavras, e a distinção não é cosmética.
+//
+// A coluna do meio é o nome da **rejeição** — é o que se diz quando a empresa parou ali, e é o
+// que aparece no cartão da empresa. A última coluna é o nome do **portão atravessado** — é o
+// que se diz quando a empresa passou por ali.
+//
+// Com uma só coluna, a lista lia-se ao contrário: uma empresa que passou por «No news at all»
+// ficava com «No news at all» escrito na lista, o que diz exactamente o oposto do que
+// aconteceu. Era o mesmo defeito que levou o autor a dizer «continuo sem perceber» da v6, a
+// aparecer outra vez noutro sítio.
 const ETAPAS = [
-  ["no_news",           "No news at all",         "the source returned nothing for this company"],
-  ["none_relevant",     "Nothing relevant",       "news arrived, but none of it named the company"],
-  ["stale",             "Too old",                "the newest relevant headline is past the freshness window"],
-  ["weak_precedent",    "No strong past case",    "no past headline was similar enough to be worth showing"],
-  ["triage_suppressed", "Below the volume floor", "the learned model scored it below the floor"],
-  ["ladder_floor",      "Second alert cost more", "an extra alert for the same company must clear a higher bar"],
-  ["duplicate_story",   "Same story, other words","already sent today under a different headline"],
-  ["already_sent",      "Already sent",           "this exact headline had already gone out today"],
-  ["daily_budget",      "Daily budget spent",     "the five slots for the day were already used"],
-  ["error",             "Error",                  "something failed while processing this company"],
-  ["alerted",           "Alert sent",             "cleared every gate and was delivered"],
+  ["no_news",           "No news at all",         "the source returned nothing for this company",
+                        "There was news"],
+  ["none_relevant",     "Nothing relevant",       "news arrived, but none of it named the company",
+                        "Some of it named this company"],
+  ["stale",             "Too old",                "the newest relevant headline is past the freshness window",
+                        "The headline was recent enough"],
+  ["weak_precedent",    "No strong past case",    "no past headline was similar enough to be worth showing",
+                        "A comparable past case existed"],
+  ["triage_suppressed", "Below the volume floor", "the learned model scored it below the floor",
+                        "It cleared the volume floor"],
+  ["ladder_floor",      "Second alert cost more", "an extra alert for the same company must clear a higher bar",
+                        "It cleared the bar for a second alert"],
+  ["duplicate_story",   "Same story, other words","already sent today under a different headline",
+                        "It was not the same story again"],
+  ["already_sent",      "Already sent",           "this exact headline had already gone out today",
+                        "It had not gone out already"],
+  ["daily_budget",      "Daily budget spent",     "the five slots for the day were already used",
+                        "A slot was still free"],
+  ["error",             "Error",                  "something failed while processing this company",
+                        "Nothing failed"],
+  ["alerted",           "Alert sent",             "cleared every gate and was delivered",
+                        "Alert sent"],
 ];
 const ORDEM = new Map(ETAPAS.map(([k], i) => [k, i]));
 const ROTULO = new Map(ETAPAS.map(([k, t]) => [k, t]));
@@ -555,9 +579,16 @@ function pintarKpis(linhas, estados) {
     `<div class="k ${destaque}"><dt>${rot}</dt><dd class="num">${val}</dd>` +
     `<div class="sub">${sub}</div>${extra}</div>`;
   $("#kpis").innerHTML = [
-    k("Companies watched", (v.watchlist || []).length, "scanned every 60 seconds",
+    // ⚠️ Cinco números lado a lado convidam a somar-se, e dois destes somam e um não.
+    // «Entregues» e «travadas» repartem as empresas vigiadas — por isso a primeira ficha diz a
+    // conta, em vez de deixar o leitor a fazê-la. «Movimentos fora do comum» conta outra coisa:
+    // é preço, e uma empresa pode estar nas duas listas ou em nenhuma. Sem isto escrito, a
+    // primeira pergunta de quem olha para a figura é porque é que 2 + 5 + 7 não dá 12.
+    k("Companies watched", (v.watchlist || []).length,
+      `${enviados} delivered + ${travados} stopped`,
       `<div class="fita">${fita}</div>`),
-    k("Unusual moves", assinalados, `beyond ±${v.threshold} on a ${v.window}-day window`),
+    k("Unusual moves", assinalados,
+      `price beyond ±${v.threshold} on a ${v.window}-day window — counted separately`),
     k("Alerts delivered", enviados, "today, out of five daily slots", "", "destaque"),
     k("Stopped at a gate", travados, "silence, and every one is inspectable"),
     k("Reader votes", votos, votos ? `${uteis} said the alert was useful` : "no votes yet"),
@@ -794,19 +825,30 @@ function modalDia(a, dia, z) {
 
 function modalEmpresa(t, estado) {
   const passos = [];
-  for (const [k, rot, porque] of ETAPAS) {
+  for (const [k, rot, porque, portao] of ETAPAS) {
     const i = ORDEM.get(k), j = ORDEM.get(estado.stage);
     if (i > j) break;
     const aqui = i === j;
+    const entregue = k === "alerted";
+    // Passou aqui → o nome do portão atravessado. Parou aqui → o nome da rejeição, e o porquê.
+    const titulo = aqui && !entregue ? `Stopped: ${rot}` : portao;
     passos.push(`<li><span class="p" style="background:var(--${
-      k === "alerted" ? "acento" : aqui ? "parou" : "linha"})"></span>
-      <div><b>${esc(rot)}</b>${aqui && estado.detail
-        ? ` — ${esc(legivel(estado.detail))}` : ""}<br><span>${esc(porque)}</span></div></li>`);
+      entregue ? "acento" : aqui ? "parou" : "linha"})"></span>
+      <div><b>${esc(titulo)}</b>${aqui && estado.detail
+        ? ` — ${esc(legivel(estado.detail))}` : ""}${
+        // o `porque` é a explicação genérica da porta; quando há `detail`, ele é a explicação
+        // deste caso concreto e diz o mesmo em melhor. Mostrar os dois é repetir-se.
+        aqui && !entregue && !estado.detail ? `<br><span>${esc(porque)}</span>` : ""}</div></li>`);
   }
   abrirModal(`${t} · why it is where it is`,
     `<h4>The gates it went through, in order</h4>
      <ul class="m-passos">${passos.join("")}</ul>
-     <p style="margin-top:14px">Silence is a decision this system makes, so it is written down
+     <p class="legenda" style="margin-top:12px">
+       <i><span class="p" style="background:var(--linha)"></span> gate cleared</i>
+       <i><span class="p" style="background:var(--parou)"></span> stopped here</i>
+       <i><span class="p" style="background:var(--acento)"></span> alert sent</i>
+     </p>
+     <p style="margin-top:12px">Silence is a decision this system makes, so it is written down
         the same way an alert is.</p>`);
 }
 
