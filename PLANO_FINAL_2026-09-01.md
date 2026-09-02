@@ -176,7 +176,7 @@ retira da lista de trabalho futuro o que passar a estar feito.
 
 ---
 
-## 3. Painel — tirar o ruído  *(ponto 1)*
+## 3. Painel — tirar o ruído  *(ponto 1 · ✅ NO AR, e as figuras do ch4 refeitas)*
 
 ### O que está no ar
 
@@ -225,7 +225,7 @@ aponta aos concorrentes.
 
 ---
 
-## 4. Marca — o retângulo, a cor, a peça única, o lema  *(ponto 2)*
+## 4. Marca — o retângulo, a cor, a peça única, o lema  *(ponto 2 · retângulo ✅ corrigido; falta cor, peças e lema)*
 
 ### O retângulo tem uma causa, e é um defeito de CSS
 
@@ -599,6 +599,39 @@ com os porquês resolvidos.
 
 ---
 
+## 8.75. Organização da pasta e do repositório  *(ponto 9 · pedido a 2026-09-01)*
+
+Pedido dele: o repositório é público e está desarrumado. Nada de ficheiros
+soltos na raiz; `code/` e `archive/` certos; e uma `dissertation/` com
+`thesis/`, `slides/` e `guide/` lá dentro.
+
+O plano completo, com os números do que está mal, a árvore proposta, o
+critério de arquivo e os seis passos de execução, está em
+`docs/design/reorganizacao.md`.
+
+Três coisas que vale a pena saber sem abrir esse ficheiro:
+
+**Cinco ficheiros ficam na raiz por obrigação técnica.** O *buildpack* de
+Python do Heroku deteta a aplicação na raiz. `Procfile`,
+`requirements.txt`, `.python-version`, `pyproject.toml` e `README.md`
+ficam. Há *buildpacks* de terceiros que contornam isto; não acrescento uma
+dependência externa não oficial ao caminho crítico a três semanas da
+defesa. O código em si muda de sítio — o `Procfile` passa a apontar para
+`code/`.
+
+**`tmp/` tem 406 ficheiros versionados e 66 MB**, dos quais 176 são páginas
+renderizadas de uma compilação de 29 de agosto. Estão num repositório
+público. Mover não chega: sai do índice com `git rm --cached` e entra no
+`.gitignore`. Isso tira-os da árvore de quem clona, mas **não do
+histórico** — para isso era preciso reescrever o histórico e forçar o
+*push*, o que quebra clones existentes. Antes da defesa, não.
+
+**Corre a seguir à frente 03, não no fim.** As frentes 05, 07 e 08 escrevem
+dentro de `tese-v2/`, das figuras e do guia. Deixar a mudança de caminhos
+para o último dia útil é como se perdem entregas.
+
+---
+
 ## 9. Calendário
 
 Vinte dias úteis, com folga. Os dias são de trabalho, não de calendário.
@@ -690,5 +723,7 @@ Registado para não voltar a ser discutido a meio:
 | 2026-09-01 | Chegou o modelo oficial MEIA v2. Ponto 6 resolvido e aplicado: Declaração de Integridade na redação do modelo, declaração de IA movida para a Secção 3.8.4, Lista de Símbolos acrescentada. |
 | 2026-09-01 | **Orçamento de páginas corrigido.** Os anexos não contam. Contam 90 de 120, e não 120 de 120. A Figura `fig:sis_seletividade` foi reposta no `ch4`. |
 | 2026-09-01 | Frente 8.5 acrescentada a pedido do autor: o «porquê?» em cadeia, mesmo no fim. Calendário passa de 18 para 20 dias. |
+| 2026-09-01 | **Frente 09 registada** (ponto 9, pedido a meio da frente 03): organização da pasta e do repositório. Plano em `docs/design/reorganizacao.md`. Corre a seguir ao painel v7. E `docs/REGISTO_PEDIDOS.md` passa a ser o sítio onde nenhum pedido dele se perde — regras permanentes, restrição de não prever preços, fila de trabalho e pendências dele. |
+| 2026-09-01 | **Frente 03 no ar.** Funil visual em vez da parede de prosa; dois defeitos apanhados por medição no DOM (sobreviventes negativos, e colisão de `.barra` com o cabeçalho); o retângulo do logótipo saiu de caminho (`.nome` → `.chip`); figuras do ch4 passam a ser geradas por `scripts/figuras/capturar_painel.py`. |
 | 2026-09-01 | **Frente 02 no ar** (release v53): desfecho observado a +1, +3 e +5 sessões, anexado à mensagem original. O envio do esboço antes da análise foi **recusado** — a medição dá 5 s de ganho, e os 7,5 s da recuperação são de arranque a frio, que o worker permanente não paga. Razão em `docs/design/telegram_dois_tempos.md`. |
 | 2026-09-01 | **Frente 01 no ar** (release v51). Construída e testada (75 testes novos). Falta pôr no ar: dois passos manuais em `docs/design/telegram_feedback.md`. Descoberta que mudou o desenho: o webhook desliga o `getUpdates`, por isso passou a tratar também dos comandos. |

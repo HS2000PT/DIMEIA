@@ -258,17 +258,23 @@ async def telegram_webhook(request: Request) -> JSONResponse:
     return JSONResponse({"ok": True})
 
 
-# ⚠️ NÃO HÁ `/api/feedback`, e a ausência é uma decisão.
-#
-# A primeira versão desta alteração expunha uma rota `/api/feedback` com o agregado dos votos.
-# O `test_a_api_nao_serve_nada_que_a_pagina_nao_use` apanhou-a: a página ainda não a consome, e
-# esse teste existe precisamente para que expor uma rota pública seja uma decisão e não um
-# resto — sete rotas foram retiradas a uma semana da entrega pela mesma razão.
-#
-# A análise da tese não precisa dela: lê o `feedback.jsonl` publicado na branch de dados, que é
-# a forma reproduzível de o fazer e a única que um terceiro consegue repetir. A rota volta na
-# revisão do painel, no mesmo passo em que a página passar a mostrar as contagens — que é
-# quando deixará de ser superfície sem consumidor.
+@app.get("/api/feedback")
+def feedback() -> dict:
+    """Votos dos leitores, em agregado. Sem identificadores, por construção.
+
+    A rota tinha sido retirada quando a página ainda não a consumia — o
+    `test_a_api_nao_serve_nada_que_a_pagina_nao_use` apanhou-a, e com razão. Volta agora porque a
+    v7 do painel mostra as contagens em cada alerta e no indicador do dia.
+
+    Devolve as contagens por chave de alerta e nada mais: o resumo do estudo vive no relatório de
+    avaliação, e um painel de produto não é o sítio para reportar proporções sobre uma amostra
+    que ainda não atingiu o mínimo pré-registado.
+    """
+    from investigator import feedback_log as FL
+
+    registos = FL.load_jsonl(_VOTOS)
+    return {"por_alerta": {c: list(FL.contagem(registos, c))
+                           for c in {r.chave_alerta for r in registos}}}
 
 
 # ── Estáticos ─────────────────────────────────────────────────────────────────

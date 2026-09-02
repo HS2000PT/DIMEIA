@@ -192,6 +192,20 @@ def news_days(ticker: str, limit: int = 400) -> list[dict]:
 
 # ── Alertas enviados e funil de gates ─────────────────────────────────────────
 
+def _chave(h) -> str:
+    """A chave de um alerta a partir de (ticker, texto sem tags), igual à do `news_key`."""
+    import hashlib
+
+    try:
+        from investigator.explanation_engine.explainer import plain_text
+
+        texto = plain_text(getattr(h, "text", "") or "")
+    except Exception:  # noqa: BLE001
+        texto = getattr(h, "text", "") or ""
+    return hashlib.sha1(
+        f"{getattr(h, 'ticker', '')}|{texto}".encode("utf-8")).hexdigest()[:12]
+
+
 def alerts() -> list[dict]:
     def _load():
         if os.environ.get("INVESTIGATOR_OFFLINE") == "1":
@@ -210,6 +224,13 @@ def alerts() -> list[dict]:
                 "text": getattr(h, "text", ""),
                 "event_at": getattr(h, "event_at", "") or "",
                 "sent_at": getattr(h, "sent_at", "") or "",
+                # ⚠️ A CHAVE, que é o que liga um alerta aos votos que recebeu. Sem ela o painel
+                # mostra os votos como zero e ninguém percebe porquê: a chave existe no registo,
+                # e era este dicionário que a deitava fora.
+                # Recalculada quando o campo está vazio — só os alertas de NOTÍCIA a trazem
+                # gravada, e os botões vão em todos. É a mesma correção que a regra 6 da análise
+                # da dissertação levou.
+                "key": getattr(h, "key", "") or _chave(h),
             })
         return out
     return cached("alerts", 60, _load)

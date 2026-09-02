@@ -6,6 +6,47 @@
 
 ## Sessão em curso
 
+TERMINADA 20:05 (01/09) — **frente 03 (painel) fechada, e o primeiro item da frente 04 de caminho.**
+
+**O funil.** A zona «Why it stayed quiet» deixou de ser onze blocos de prosa e passou a ser uma
+linha por porta, com a barra a encurtar pelas empresas que cada uma trava. De uma parede para
+346 px de altura. A prosa continua lá, no `title` e por baixo quando se escolhe a porta.
+
+**⚠️ Dois defeitos que só apareceram por eu ter renderizado a página e medido o DOM.**
+
+1. **Erro nos números, e era anterior a mim.** Com o ciclo de 60 s a mesma empresa é avaliada
+   dezenas de vezes por dia e pode parar em portas diferentes. Agrupar por porta sem resolver
+   isso conta a mesma empresa várias vezes: a barra imprimiu «6 de 2» e «5 de −4», sobreviventes
+   negativos. **Os mesmos dados que a versão em blocos mostrava sem ninguém dar por nada, porque
+   uma lista não soma e uma barra soma.** Resolve-se pela porta mais adiantada que cada empresa
+   alcançou nesse dia; o funil passa a fechar em 12.
+2. **Colisão de classes, e essa foi minha.** Chamei `.barra` à barra do funil — que é a classe do
+   cabeçalho da página, oitenta linhas acima. As barras ficavam em 57 px com os segmentos a zero
+   de altura. Renomeada para `.pbarra`.
+
+**O retângulo do logótipo foi corrigido de caminho.** As fichas do funil usavam `.nome`, e
+`.marca .nome` no cabeçalho herdava-lhes borda, raio, preenchimento e fundo. As fichas passaram a
+`.chip` e o nome da marca saiu da caixa. Era o primeiro item da frente 04.
+
+**Figuras do Cap. 4 passam a ser geradas**, por `scripts/figuras/capturar_painel.py`: a página
+real servida sobre um instantâneo congelado da API, fotografada com Playwright. O script imprime
+os valores que a figura mostra, para serem conferidos contra o texto. ⚠️ **A regra: o número da
+dissertação vem do script, nunca da leitura da imagem** — o parágrafo antigo descrevia uma empresa
+a $-0{,}41\%$ com motor de setor que a imagem já não mostrava.
+
+A empresa da figura passou a ser a **NFLX**, por ser o caso mais nítido do argumento da QI2: desce
+$0{,}38\%$ e a parcela da própria empresa é $+0{,}56\%$, positiva; a descida vem do mercado.
+
+**Duas armadilhas do Playwright documentadas no script:** `element.screenshot()` devolve as telas
+do gráfico em branco no Chromium sem interface, e o `lightweight-charts` fica no tamanho por
+defeito neste arnês e não pinta.
+
+**Estado:** 92 páginas contadas de 120, 124 físicas, 0 erros, 0 referências indefinidas.
+Releases v51 (feedback), v53 (desfecho), v54 e v55 (painel).
+
+---
+
+
 TERMINADA 19:20 (01/09) — **frente 02: o desfecho observado. No ar, release v53.**
 
 **O que mudou no produto.** Ao fim de 1, 3 e 5 sessões, o alerta já entregue é editado com o
