@@ -214,3 +214,118 @@ def publish_safe(path: str | Path) -> None:
         msg = f"[historico-api] falhou (ignorado): {type(exc).__name__}: {exc}"
     if msg:
         print(msg)
+
+
+# ══ FICHEIROS ACUMULATIVOS ═════════════════════════════════════════════════════════════════
+# ⚠️ **O defeito que estas duas funções corrigem, medido em produção a 2026-09-02.**
+#
+# O registo de votos usava o `publish_blob`, que **substitui**. O `publish_blob` foi escrito
+# para o instantâneo do painel, onde substituir é a operação certa porque a versão nova torna a
+# antiga obsoleta. Um registo de votos é o contrário: é acumulativo, como o histórico de
+# alertas, e o próprio `publish` já dizia porquê — «perder uma entrada seria perder um alerta
+# que aconteceu mesmo».
+#
+# O que acontecia na prática, em três passos, nenhum deles visível:
+#   1. um deploy reinicia o dyno e o `data/feedback.jsonl` local desaparece (disco efémero);
+#   2. chega o primeiro voto novo e é escrito sozinho no ficheiro local;
+#   3. a publicação substitui o ficheiro da branch — que tinha tudo — por essa única linha.
+# Resultado observado: os seis votos recolhidos antes do deploy das 19:10 desapareceram.
+#
+# Havia um segundo defeito, da mesma família e igualmente silencioso: o `/api/feedback` lia o
+# ficheiro **local do dyno web**, e quem escreve os votos é o **dyno worker**. São dois sistemas
+# de ficheiros separados, portanto o painel mostrava zero votos mesmo com votos a chegar. É
+# exactamente a razão pela qual o instantâneo do painel passou pela branch de dados; faltava
+# aplicar a mesma conclusão aqui.
+
+
+def fetch_jsonl(filename: str, repo: str = "", branch: str = "") -> list[str] | None:
+    """Lê as linhas de um JSONL da branch de dados. `None` quando não deu para ler.
+
+    `None` e `[]` querem dizer coisas diferentes, e a diferença importa: `[]` é «li, e está
+    vazio», e autoriza escrever; `None` é «não consegui ler», e nesse caso escrever seria
+    substituir às cegas. Quem chama tem de distinguir.
+    """
+    if not _enabled():
+        return None
+    token = _token()
+    if not token:
+        return None
+    repo = repo or os.environ.get("INVESTIGATOR_HISTORY_REPO", DEFAULT_REPO)
+    branch = branch or os.environ.get("INVESTIGATOR_HISTORY_BRANCH", DEFAULT_BRANCH)
+    try:
+        meta = _request(f"{_API}/repos/{repo}/contents/{filename}?ref={branch}", token)
+        bruto = base64.b64decode(meta.get("content", "")).decode("utf-8")
+        return [ln for ln in bruto.splitlines() if ln.strip()]
+    except urllib.error.HTTPError as exc:
+        return [] if exc.code == 404 else None      # 404 = ainda não existe, e isso é legítimo
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def publish_jsonl_merge(path: str | Path, filename: str,
+                        repo: str = "", branch: str = "") -> str:
+    """Publica um JSONL acumulativo **juntando** as linhas locais às remotas.
+
+    A junção é por linha inteira. Cada voto traz o instante em que foi dado, portanto duas
+    linhas iguais são o mesmo voto e uma delas é ruído de reenvio; qualquer diferença real
+    (outro votante, outra chave, outro instante) dá uma linha diferente e sobrevive.
+
+    A ordem é preservada: primeiro o que já lá estava, depois o que é novo. Um registo
+    append-only lido de trás para a frente continua a dar o voto mais recente de cada pessoa,
+    que é o que a `votos_efetivos` assume.
+
+    Nunca levanta, e nunca escreve às cegas: se a leitura falhar, desiste desta ronda. O
+    ficheiro local fica na mesma, e a ronda seguinte volta a tentar.
+    """
+    if not _enabled():
+        return ""
+    token = _token()
+    if not token:
+        return "[votos-api] INVESTIGATOR_HISTORY_API=1 mas falta o GITHUB_TOKEN."
+
+    repo = repo or os.environ.get("INVESTIGATOR_HISTORY_REPO", DEFAULT_REPO)
+    branch = branch or os.environ.get("INVESTIGATOR_HISTORY_BRANCH", DEFAULT_BRANCH)
+
+    try:
+        locais = [ln for ln in Path(path).read_text(encoding="utf-8").splitlines() if ln.strip()]
+    except FileNotFoundError:
+        locais = []
+    except Exception as exc:  # noqa: BLE001
+        return f"[votos-api] não li o ficheiro local (ignorado): {type(exc).__name__}"
+
+    sha = ""
+    remotas: list[str] = []
+    try:
+        meta = _request(f"{_API}/repos/{repo}/contents/{filename}?ref={branch}", token)
+        sha = meta.get("sha", "")
+        remotas = [ln for ln in base64.b64decode(meta.get("content", ""))
+                   .decode("utf-8").splitlines() if ln.strip()]
+    except urllib.error.HTTPError as exc:
+        if exc.code != 404:      # 404 = primeira publicação; qualquer outro erro é desistir
+            return f"[votos-api] leitura falhou (ignorado): HTTP {exc.code}"
+    except Exception as exc:  # noqa: BLE001
+        return f"[votos-api] leitura falhou (ignorado): {type(exc).__name__}"
+
+    vistas = set(remotas)
+    novas: list[str] = []
+    for ln in locais:
+        if ln not in vistas:
+            vistas.add(ln)
+            novas.append(ln)
+    if not novas:
+        return f"[votos-api] {filename} já tinha tudo ({len(remotas)} linhas)."
+
+    corpo = ("\n".join(remotas + novas) + "\n").encode("utf-8")
+    payload = {"message": f"Votos: +{len(novas)}",
+               "content": base64.b64encode(corpo).decode("ascii"), "branch": branch}
+    if sha:
+        payload["sha"] = sha
+    try:
+        _request(f"{_API}/repos/{repo}/contents/{filename}", token, "PUT", payload)
+        return f"[votos-api] {filename}: +{len(novas)}, total {len(remotas) + len(novas)}."
+    except urllib.error.HTTPError as exc:
+        if exc.code == 409:
+            return "[votos-api] conflito (outro produtor); tenta na próxima ronda."
+        return f"[votos-api] escrita falhou (ignorado): HTTP {exc.code}"
+    except Exception as exc:  # noqa: BLE001
+        return f"[votos-api] escrita falhou (ignorado): {type(exc).__name__}"

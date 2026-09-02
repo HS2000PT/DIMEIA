@@ -213,9 +213,12 @@ def _ctx_webhook():
     from investigator.telegram_bot import sender, store, webhook
 
     def publicar(caminho):
-        from investigator.history_publish import publish_blob
+        # ⚠️ `publish_jsonl_merge` e não `publish_blob`. O `publish_blob` substitui, e substituir
+        # um registo acumulativo a partir de um disco efémero apaga tudo o que foi recolhido
+        # antes do último reinício. Aconteceu a 2026-09-01. O porquê está escrito no módulo.
+        from investigator.history_publish import publish_jsonl_merge
 
-        publish_blob(caminho, "feedback.jsonl")
+        print(publish_jsonl_merge(caminho, "feedback.jsonl"))
 
     return webhook.Contexto(
         sal=config.FEEDBACK_SALT,
@@ -258,6 +261,50 @@ async def telegram_webhook(request: Request) -> JSONResponse:
     return JSONResponse({"ok": True})
 
 
+_VOTOS_CACHE: dict = {"at": 0.0, "linhas": None}
+_VOTOS_TTL = 45.0          # abaixo dos 30 s de sondagem do painel seria bater no GitHub por visita
+
+
+def _registos_votos():
+    """Os votos como o painel os tem de ver: o disco deste dyno **mais** a branch de dados.
+
+    ⚠️ Quem escreve os votos é o dyno **worker**; quem serve esta rota é o dyno **web**. São
+    dois sistemas de ficheiros separados e efémeros, portanto ler só o ficheiro local devolvia
+    zero votos com votos a entrar — foi o que o painel mostrou a 2026-09-02. A branch de dados é
+    o único sítio que os dois dynos já sabem partilhar, e é a mesma conclusão a que o
+    instantâneo do painel tinha chegado antes.
+
+    Nada é escrito no disco a partir daqui: o web lê, o worker escreve. A junção é em memória e
+    por linha inteira, e fica em cache uns segundos para não bater no GitHub uma vez por visita.
+    """
+    import time
+
+    from investigator import feedback_log as FL
+    from investigator.history_publish import fetch_jsonl
+
+    try:
+        locais = [ln for ln in _VOTOS.read_text(encoding="utf-8").splitlines() if ln.strip()]
+    except Exception:  # noqa: BLE001
+        locais = []
+
+    agora = time.monotonic()
+    if _VOTOS_CACHE["linhas"] is None or agora - _VOTOS_CACHE["at"] > _VOTOS_TTL:
+        remotas = fetch_jsonl("feedback.jsonl")
+        # `None` é «não consegui ler», e nesse caso o que já estava em cache vale mais do que
+        # nada; só um `[]` verdadeiro autoriza dizer que a branch está vazia.
+        if remotas is not None:
+            _VOTOS_CACHE["linhas"] = remotas
+            _VOTOS_CACHE["at"] = agora
+
+    vistas: set[str] = set()
+    juntas: list[str] = []
+    for ln in (_VOTOS_CACHE["linhas"] or []) + locais:
+        if ln not in vistas:
+            vistas.add(ln)
+            juntas.append(ln)
+    return FL.parse_jsonl_lines(juntas)
+
+
 @app.get("/api/feedback")
 def feedback() -> dict:
     """Votos dos leitores, em agregado. Sem identificadores, por construção.
@@ -270,9 +317,9 @@ def feedback() -> dict:
     avaliação, e um painel de produto não é o sítio para reportar proporções sobre uma amostra
     que ainda não atingiu o mínimo pré-registado.
     """
+    registos = _registos_votos()
     from investigator import feedback_log as FL
 
-    registos = FL.load_jsonl(_VOTOS)
     return {"por_alerta": {c: list(FL.contagem(registos, c))
                            for c in {r.chave_alerta for r in registos}}}
 

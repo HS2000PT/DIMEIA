@@ -38,9 +38,10 @@ Testável sem rede: todas as saídas são injetadas em `Contexto`.
 from __future__ import annotations
 
 import hmac
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from investigator import feedback_log as FL
 from investigator.telegram_bot import feedback as F

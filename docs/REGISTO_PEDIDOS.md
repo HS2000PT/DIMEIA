@@ -63,12 +63,23 @@ horizontes efetivamente medidos, e a anotação nunca antecipa nada.
 Ordem de execução. Uma frente só se fecha quando está verificada, não quando
 está escrita.
 
-### Frente 01 — Feedback no Telegram ✅ concluída
+### Frente 01 — Feedback no Telegram ✅ concluída (com um defeito grave corrigido a 2026-09-02)
 Pedido: «no telegram, considera e desenvolve a possibilidade de adicionar lá
 a opção de dar feedback positivo ou negativo».
 Feito: botões em todos os alertas, webhook, registo append-only, regras de
 leitura pré-registadas, fragmento LaTeX gerado para o capítulo 5. Em
 produção desde a v51. Ele confirmou que vai convidar pessoas para o canal.
+
+⚠️ **A 2026-09-02 apanhou-se um defeito que teria estragado a recolha.** Os
+votos eram publicados na branch de dados com uma função que *substitui* o
+ficheiro. O disco do Heroku é efémero: a cada reinício o ficheiro local
+volta a zero, e o primeiro voto novo substituía o ficheiro remoto — que
+tinha tudo — por essa única linha. Os seis votos recolhidos antes do deploy
+das 19:10 desapareceram assim. Corrigido: passa a juntar. Segundo defeito, da
+mesma família: o painel lia o disco do dyno *web* e quem escreve os votos é o
+*worker*, portanto mostrava sempre zero.
+Consequência prática para ele: **os votos que forem dados a partir de agora
+ficam**. Para analisar, `python scripts/analyse_feedback.py --da-branch`.
 
 ### Frente 02 — Alerta instantâneo e edição posterior ✅ concluída, com recusa medida
 Pedido: «a opcao de o alerta ser instantaneo, e só depois do nosso sistema

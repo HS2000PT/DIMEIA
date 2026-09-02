@@ -199,7 +199,7 @@ def test_um_alerta_de_mercado_tambem_e_reconhecido(tmp_path):
         {"date": "2026-09-01", "ticker": "TSLA", "kind": "market", "text": texto, "key": ""},
         {"date": "2026-09-01", "ticker": "NVDA", "kind": "news", "text": "y", "key": "abc123"},
     ]) + "\n", encoding="utf-8")
-    esperada = hashlib.sha1(f"TSLA|{texto}".encode("utf-8")).hexdigest()[:12]
+    esperada = hashlib.sha1(f"TSLA|{texto}".encode()).hexdigest()[:12]
     chaves = af.chaves_do_historico(p)
     assert esperada in chaves, "um voto num alerta de mercado não pode ser descartado"
     assert "abc123" in chaves, "e a chave já gravada continua a valer"
@@ -216,7 +216,7 @@ def test_o_texto_com_tags_e_sem_tags_dao_a_mesma_chave():
     from investigator.explanation_engine.explainer import plain_text
 
     html_ = '📰 <b>News alert for TSLA</b>\n"Recall &amp; fix"'
-    k_html = hashlib.sha1(f"TSLA|{plain_text(html_)}".encode("utf-8")).hexdigest()[:12]
+    k_html = hashlib.sha1(f"TSLA|{plain_text(html_)}".encode()).hexdigest()[:12]
     k_plain = hashlib.sha1(
-        f"TSLA|{plain_text(plain_text(html_))}".encode("utf-8")).hexdigest()[:12]
+        f"TSLA|{plain_text(plain_text(html_))}".encode()).hexdigest()[:12]
     assert k_html == k_plain

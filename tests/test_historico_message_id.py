@@ -13,8 +13,6 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
-import pytest
-
 from investigator.alerts_history import load_jsonl
 
 _SPEC = importlib.util.spec_from_file_location(

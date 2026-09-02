@@ -116,7 +116,7 @@ def chaves_do_historico(caminho: str | Path) -> set[str] | None:
         if e.key:
             return e.key
         return hashlib.sha1(
-            f"{e.ticker}|{plain_text(e.text)}".encode("utf-8")).hexdigest()[:12]
+            f"{e.ticker}|{plain_text(e.text)}".encode()).hexdigest()[:12]
 
     return {_chave(e) for e in entradas}
 
@@ -340,7 +340,34 @@ def main() -> int:
                     help="não filtrar pelo histórico (o relatório assinala-o)")
     ap.add_argument("--out", default=str(OUT_MD))
     ap.add_argument("--out-tex", default=str(OUT_TEX))
+    ap.add_argument("--da-branch", action="store_true",
+                    help="descarrega feedback.jsonl da branch de dados e junta ao ficheiro "
+                         "local antes de analisar (é lá que vivem os votos de produção)")
     args = ap.parse_args()
+
+    # ⚠️ O ficheiro local só tem os votos desta máquina. Os votos reais chegam pelo Telegram a
+    # um dyno do Heroku com disco efémero, e o sítio onde ficam é a branch de dados. Analisar o
+    # ficheiro local e dizer «N votos» seria contar uma amostra que não é a amostra.
+    if args.da_branch:
+        from investigator.history_publish import fetch_jsonl
+
+        remotas = fetch_jsonl("feedback.jsonl")
+        if remotas is None:
+            print("[feedback] ⚠️ não consegui ler a branch de dados; uso só o ficheiro local.")
+        else:
+            caminho = Path(args.votos)
+            locais = ([ln for ln in caminho.read_text(encoding="utf-8").splitlines() if ln.strip()]
+                      if caminho.exists() else [])
+            vistas: set[str] = set()
+            juntas: list[str] = []
+            for ln in remotas + locais:
+                if ln not in vistas:
+                    vistas.add(ln)
+                    juntas.append(ln)
+            caminho.parent.mkdir(parents=True, exist_ok=True)
+            caminho.write_text("\n".join(juntas) + "\n", encoding="utf-8")
+            print(f"[feedback] branch: {len(remotas)} linha(s); local depois da junção: "
+                  f"{len(juntas)}.")
 
     registos = FL.load_jsonl(args.votos)
     chaves = None if args.sem_filtro else chaves_do_historico(args.historico)

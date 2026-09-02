@@ -203,7 +203,7 @@ def _chave(h) -> str:
     except Exception:  # noqa: BLE001
         texto = getattr(h, "text", "") or ""
     return hashlib.sha1(
-        f"{getattr(h, 'ticker', '')}|{texto}".encode("utf-8")).hexdigest()[:12]
+        f"{getattr(h, 'ticker', '')}|{texto}".encode()).hexdigest()[:12]
 
 
 def alerts() -> list[dict]:

@@ -122,3 +122,144 @@ def test_publish_safe_engole_tudo(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(hp, "publish", rebenta)
     hp.publish_safe(tmp_path / "h.jsonl")   # o ciclo de alertas tem de continuar
     assert "ignorado" in capsys.readouterr().out
+
+
+# ══ VOTOS: O DEFEITO DE 2026-09-02 ══════════════════════════════════════════════════════════
+# O registo de votos usava o `publish_blob`, que substitui. Com um disco efémero isso significa
+# que o primeiro voto a chegar depois de um reinício apaga tudo o que foi recolhido antes.
+# Aconteceu: seis votos desapareceram no deploy das 19:10. Estes testes fixam a correcção.
+
+
+def _voto(chave: str, votante: str, at: str) -> str:
+    return json.dumps({"chave_alerta": chave, "votante": votante, "acao": "u", "at": at})
+
+
+def _rede(corpo_remoto: str | None, enviado: dict, sha: str = "abc123", erro_get: int = 0):
+    """Rede falsa. `corpo_remoto=None` + `erro_get=404` simula o ficheiro ainda não existir."""
+    import urllib.error
+
+    def falso(url, token, method="GET", payload=None):
+        if method == "GET":
+            if erro_get:
+                raise urllib.error.HTTPError(url, erro_get, "", {}, None)
+            return {"sha": sha, "content": base64.b64encode((corpo_remoto or "").encode()).decode()}
+        enviado.update(payload)
+        return {}
+
+    return falso
+
+
+def test_os_votos_juntam_se_e_nunca_substituem(tmp_path, monkeypatch):
+    """⚠️ O defeito, exactamente. Um dyno reiniciado tem um ficheiro local com UM voto; a branch
+    tem seis. Substituir deixaria um. Juntar deixa sete."""
+    monkeypatch.setenv("INVESTIGATOR_HISTORY_API", "1")
+    monkeypatch.setenv("GITHUB_TOKEN", "t")
+
+    remoto = "\n".join(_voto(f"k{i}", "v1", f"2026-09-01T10:0{i}:00Z") for i in range(6))
+    enviado: dict = {}
+    monkeypatch.setattr(hp, "_request", _rede(remoto, enviado))
+
+    p = tmp_path / "feedback.jsonl"
+    p.write_text(_voto("k-novo", "v2", "2026-09-02T00:09:00Z") + "\n", encoding="utf-8")
+
+    msg = hp.publish_jsonl_merge(p, "feedback.jsonl")
+    escrito = base64.b64decode(enviado["content"]).decode()
+    assert escrito.count("\n") == 7, f"perdeu linhas: {msg}"
+    assert "k0" in escrito and "k5" in escrito, "apagou os votos que já lá estavam"
+    assert "k-novo" in escrito, "não publicou o voto novo"
+    assert enviado["sha"] == "abc123", "sem o sha lido não há deteção de conflito"
+
+
+def test_as_linhas_remotas_ficam_primeiro_e_pela_ordem(tmp_path, monkeypatch):
+    """O registo é append-only e a `votos_efetivos` lê-o assumindo que o último vence.
+
+    Se a junção baralhasse a ordem, uma mudança de voto passaria a contar ao contrário — e nada
+    daria erro.
+    """
+    monkeypatch.setenv("INVESTIGATOR_HISTORY_API", "1")
+    monkeypatch.setenv("GITHUB_TOKEN", "t")
+    remoto = _voto("k1", "v1", "2026-09-01T10:00:00Z")
+    enviado: dict = {}
+    monkeypatch.setattr(hp, "_request", _rede(remoto, enviado))
+
+    p = tmp_path / "f.jsonl"
+    p.write_text(_voto("k1", "v1", "2026-09-02T11:00:00Z") + "\n", encoding="utf-8")
+
+    hp.publish_jsonl_merge(p, "feedback.jsonl")
+    linhas = base64.b64decode(enviado["content"]).decode().strip().splitlines()
+    assert "10:00:00" in linhas[0] and "11:00:00" in linhas[1], "a ordem inverteu-se"
+
+
+def test_uma_linha_repetida_nao_entra_duas_vezes(tmp_path, monkeypatch):
+    """Um reenvio do mesmo voto é ruído, não um voto novo."""
+    monkeypatch.setenv("INVESTIGATOR_HISTORY_API", "1")
+    monkeypatch.setenv("GITHUB_TOKEN", "t")
+    linha = _voto("k1", "v1", "2026-09-01T10:00:00Z")
+    enviado: dict = {}
+    monkeypatch.setattr(hp, "_request", _rede(linha, enviado))
+    p = tmp_path / "f.jsonl"
+    p.write_text(linha + "\n", encoding="utf-8")
+
+    msg = hp.publish_jsonl_merge(p, "feedback.jsonl")
+    assert "já tinha tudo" in msg
+    assert not enviado, "escreveu sem ter nada de novo para escrever"
+
+
+def test_leitura_falhada_desiste_em_vez_de_escrever_as_cegas(tmp_path, monkeypatch):
+    """Escrever sem conseguir ler é substituir sem saber o que se está a substituir."""
+    monkeypatch.setenv("INVESTIGATOR_HISTORY_API", "1")
+    monkeypatch.setenv("GITHUB_TOKEN", "t")
+    enviado: dict = {}
+    monkeypatch.setattr(hp, "_request", _rede(None, enviado, erro_get=500))
+    p = tmp_path / "f.jsonl"
+    p.write_text(_voto("k1", "v1", "2026-09-01T10:00:00Z") + "\n", encoding="utf-8")
+
+    msg = hp.publish_jsonl_merge(p, "feedback.jsonl")
+    assert "leitura falhou" in msg
+    assert not enviado, "escreveu às cegas depois de a leitura falhar"
+
+
+def test_primeira_publicacao_com_404_e_legitima(tmp_path, monkeypatch):
+    """404 é «ainda não existe», e aí escrever é criar, não substituir."""
+    monkeypatch.setenv("INVESTIGATOR_HISTORY_API", "1")
+    monkeypatch.setenv("GITHUB_TOKEN", "t")
+    enviado: dict = {}
+    monkeypatch.setattr(hp, "_request", _rede(None, enviado, erro_get=404))
+    p = tmp_path / "f.jsonl"
+    p.write_text(_voto("k1", "v1", "2026-09-01T10:00:00Z") + "\n", encoding="utf-8")
+
+    hp.publish_jsonl_merge(p, "feedback.jsonl")
+    assert "k1" in base64.b64decode(enviado["content"]).decode()
+    assert "sha" not in enviado, "mandou um sha numa criação"
+
+
+def test_fetch_distingue_vazio_de_nao_consegui_ler(monkeypatch):
+    """⚠️ `[]` e `None` não são a mesma coisa, e confundi-los apaga dados.
+
+    `[]` é «li, e está vazio» — autoriza publicar. `None` é «não li» — obriga a desistir. Um
+    `fetch` que devolvesse `[]` nos dois casos faria a rota do painel dizer «zero votos» de cada
+    vez que o GitHub estivesse em baixo.
+    """
+    import urllib.error
+
+    monkeypatch.setenv("INVESTIGATOR_HISTORY_API", "1")
+    monkeypatch.setenv("GITHUB_TOKEN", "t")
+
+    def erro(code):
+        def f(url, token, method="GET", payload=None):
+            raise urllib.error.HTTPError(url, code, "", {}, None)
+        return f
+
+    monkeypatch.setattr(hp, "_request", erro(404))
+    assert hp.fetch_jsonl("feedback.jsonl") == [], "404 é vazio, não é falha"
+    monkeypatch.setattr(hp, "_request", erro(503))
+    assert hp.fetch_jsonl("feedback.jsonl") is None, "503 tem de ser indistinguível de vazio? não"
+
+    monkeypatch.setattr(hp, "_request", lambda *a, **k: {
+        "content": base64.b64encode(b'{"a":1}\n\n{"b":2}\n').decode()})
+    assert hp.fetch_jsonl("feedback.jsonl") == ['{"a":1}', '{"b":2}'], "linhas em branco entraram"
+
+
+def test_desligado_por_omissao_tambem_para_os_votos(tmp_path):
+    assert hp.publish_jsonl_merge(tmp_path / "f.jsonl", "feedback.jsonl") == ""
+    assert hp.fetch_jsonl("feedback.jsonl") is None
