@@ -137,7 +137,7 @@ precedents, text = run_news_trigger(
 ## 2.5 Bot interativo — watchlist pessoal por utilizador (Fase B)
 
 ```bash
-./.venv/Scripts/python.exe scripts/run_bot.py    # ou duplo-clique em run/bot.bat
+./.venv/Scripts/python.exe scripts/run_bot.py    # ou duplo-clique em archive/streamlit-app/run/bot.bat
 ```
 Requer `TELEGRAM_BOT_TOKEN` no `.env`. Enquanto corre (long-polling, sem servidor), qualquer
 pessoa pode falar com o bot: `/start`, `/watch TSLA`, `/unwatch TSLA`, `/list`, `/stop`.
@@ -238,7 +238,7 @@ maturadas com o resultado REAL (mesmo rótulo do treino) e escreve
 
 ### 5.2 Notebook — mexer nos três componentes com as tuas mãos
 
-`notebooks/investigator_walkthrough.ipynb` (didático, corre na stack leve — sem torch):
+`archive/streamlit-app/notebooks/investigator_walkthrough.ipynb` (didático, corre na stack leve — sem torch):
 deteção de anomalias, recuperação semântica (KB curada + MiniLM em ONNX) e o **modelo de
 triagem que TU treinaste** (RQ4), com um exemplo real pontuado passo a passo. NÃO re-deriva
 os números da tese — esses ficam em `docs/evaluation/`; o notebook é o "toca-lhe" para estudar/
@@ -246,10 +246,10 @@ demonstrar.
 
 ```bash
 pip install -r requirements.txt -r requirements-notebook.txt
-jupyter notebook notebooks/investigator_walkthrough.ipynb
+jupyter notebook archive/streamlit-app/notebooks/investigator_walkthrough.ipynb
 
 # Para regenerar os outputs (nunca escrever números à mão):
-jupyter nbconvert --to notebook --execute --inplace notebooks/investigator_walkthrough.ipynb
+jupyter nbconvert --to notebook --execute --inplace archive/streamlit-app/notebooks/investigator_walkthrough.ipynb
 ```
 
 ---

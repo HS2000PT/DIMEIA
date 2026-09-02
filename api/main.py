@@ -121,6 +121,12 @@ def overview() -> dict:
         "alerts_today": len(today_alerts),
         "window": 20,
         "threshold": 1.5,
+        # ⚠️ O retorno do índice, não a contribuição do mercado por empresa: a segunda é β·r_m e
+        # muda com o beta de cada empresa. O painel usa este número para o estado da mascote, e
+        # a legenda tem de poder nomear o índice — dizer «NASDAQ» mostrando S&P seria uma
+        # afirmação errada no sítio onde toda a gente olha.
+        "market_index": snap.get("market_index"),
+        "market_move": snap.get("market_move"),
     }
 
 
@@ -148,6 +154,14 @@ def asset(ticker: str) -> dict:
         "vol_ratio": row.get("vol_ratio"),
         "closes": row.get("closes", []),
         "events": row.get("events", []),
+        # ⚠️ O intradiário já existia no instantâneo e não era servido, o que obrigava a página a
+        # abrir sempre num intervalo de meses. Numa página cujo assunto é «hoje», isso é uma
+        # contradição na primeira coisa que se vê. São ~78 barras de cinco minutos, e o
+        # `prev_close` é a referência sem a qual uma linha intradiária não diz se o dia é de
+        # subida ou de descida.
+        "intraday": row.get("intraday", []),
+        "intraday_day": row.get("intraday_day"),
+        "prev_close": row.get("prev_close"),
         "news": news,
         "alerts": alerts,
     }
@@ -213,9 +227,12 @@ def _ctx_webhook():
     from investigator.telegram_bot import sender, store, webhook
 
     def publicar(caminho):
-        from investigator.history_publish import publish_blob
+        # ⚠️ `publish_jsonl_merge` e não `publish_blob`. O `publish_blob` substitui, e substituir
+        # um registo acumulativo a partir de um disco efémero apaga tudo o que foi recolhido
+        # antes do último reinício. Aconteceu a 2026-09-01. O porquê está escrito no módulo.
+        from investigator.history_publish import publish_jsonl_merge
 
-        publish_blob(caminho, "feedback.jsonl")
+        print(publish_jsonl_merge(caminho, "feedback.jsonl"))
 
     return webhook.Contexto(
         sal=config.FEEDBACK_SALT,
@@ -258,17 +275,67 @@ async def telegram_webhook(request: Request) -> JSONResponse:
     return JSONResponse({"ok": True})
 
 
-# ⚠️ NÃO HÁ `/api/feedback`, e a ausência é uma decisão.
-#
-# A primeira versão desta alteração expunha uma rota `/api/feedback` com o agregado dos votos.
-# O `test_a_api_nao_serve_nada_que_a_pagina_nao_use` apanhou-a: a página ainda não a consome, e
-# esse teste existe precisamente para que expor uma rota pública seja uma decisão e não um
-# resto — sete rotas foram retiradas a uma semana da entrega pela mesma razão.
-#
-# A análise da tese não precisa dela: lê o `feedback.jsonl` publicado na branch de dados, que é
-# a forma reproduzível de o fazer e a única que um terceiro consegue repetir. A rota volta na
-# revisão do painel, no mesmo passo em que a página passar a mostrar as contagens — que é
-# quando deixará de ser superfície sem consumidor.
+_VOTOS_CACHE: dict = {"at": 0.0, "linhas": None}
+_VOTOS_TTL = 45.0          # abaixo dos 30 s de sondagem do painel seria bater no GitHub por visita
+
+
+def _registos_votos():
+    """Os votos como o painel os tem de ver: o disco deste dyno **mais** a branch de dados.
+
+    ⚠️ Quem escreve os votos é o dyno **worker**; quem serve esta rota é o dyno **web**. São
+    dois sistemas de ficheiros separados e efémeros, portanto ler só o ficheiro local devolvia
+    zero votos com votos a entrar — foi o que o painel mostrou a 2026-09-02. A branch de dados é
+    o único sítio que os dois dynos já sabem partilhar, e é a mesma conclusão a que o
+    instantâneo do painel tinha chegado antes.
+
+    Nada é escrito no disco a partir daqui: o web lê, o worker escreve. A junção é em memória e
+    por linha inteira, e fica em cache uns segundos para não bater no GitHub uma vez por visita.
+    """
+    import time
+
+    from investigator import feedback_log as FL
+    from investigator.history_publish import fetch_jsonl
+
+    try:
+        locais = [ln for ln in _VOTOS.read_text(encoding="utf-8").splitlines() if ln.strip()]
+    except Exception:  # noqa: BLE001
+        locais = []
+
+    agora = time.monotonic()
+    if _VOTOS_CACHE["linhas"] is None or agora - _VOTOS_CACHE["at"] > _VOTOS_TTL:
+        remotas = fetch_jsonl("feedback.jsonl")
+        # `None` é «não consegui ler», e nesse caso o que já estava em cache vale mais do que
+        # nada; só um `[]` verdadeiro autoriza dizer que a branch está vazia.
+        if remotas is not None:
+            _VOTOS_CACHE["linhas"] = remotas
+            _VOTOS_CACHE["at"] = agora
+
+    vistas: set[str] = set()
+    juntas: list[str] = []
+    for ln in (_VOTOS_CACHE["linhas"] or []) + locais:
+        if ln not in vistas:
+            vistas.add(ln)
+            juntas.append(ln)
+    return FL.parse_jsonl_lines(juntas)
+
+
+@app.get("/api/feedback")
+def feedback() -> dict:
+    """Votos dos leitores, em agregado. Sem identificadores, por construção.
+
+    A rota tinha sido retirada quando a página ainda não a consumia — o
+    `test_a_api_nao_serve_nada_que_a_pagina_nao_use` apanhou-a, e com razão. Volta agora porque a
+    v7 do painel mostra as contagens em cada alerta e no indicador do dia.
+
+    Devolve as contagens por chave de alerta e nada mais: o resumo do estudo vive no relatório de
+    avaliação, e um painel de produto não é o sítio para reportar proporções sobre uma amostra
+    que ainda não atingiu o mínimo pré-registado.
+    """
+    registos = _registos_votos()
+    from investigator import feedback_log as FL
+
+    return {"por_alerta": {c: list(FL.contagem(registos, c))
+                           for c in {r.chave_alerta for r in registos}}}
 
 
 # ── Estáticos ─────────────────────────────────────────────────────────────────

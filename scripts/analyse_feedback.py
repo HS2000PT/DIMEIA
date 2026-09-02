@@ -58,6 +58,10 @@ from investigator.evaluation.proportions import wilson  # noqa: E402
 DEFAULT_VOTOS = REPO / "data" / "feedback.jsonl"
 DEFAULT_HISTORICO = REPO / "data" / "alerts_history.jsonl"
 OUT_MD = REPO / "docs" / "evaluation" / "evaluation_feedback.md"
+# O fragmento que a dissertação faz `\\input`. Gerado, e nunca escrito à mão: é a mesma
+# disciplina do resto do trabalho — o número aparece no documento porque veio do
+# procedimento que o calculou, e não porque alguém o transcreveu.
+OUT_TEX = REPO / "tese-v2" / "ch5" / "feedback_auto.tex"
 
 # ── Regras pré-registadas. Alterar qualquer uma destas depois de haver dados é um ato que
 #    tem de ficar registado no ESTADO.md, com a data e a razão. ──────────────────────────
@@ -84,7 +88,10 @@ def chaves_do_historico(caminho: str | Path) -> set[str] | None:
     `None` e conjunto vazio são coisas diferentes e o relatório trata-as como tais: um
     histórico ausente não pode servir de justificação para descartar todos os votos.
     """
+    import hashlib
+
     from investigator.alerts_history import load_jsonl as carregar_historico
+    from investigator.explanation_engine.explainer import plain_text
 
     try:
         entradas = carregar_historico(caminho)
@@ -92,7 +99,26 @@ def chaves_do_historico(caminho: str | Path) -> set[str] | None:
         return None
     if not entradas:
         return None
-    return {e.key for e in entradas if e.key}
+
+    # ⚠️ A CHAVE É RECALCULADA QUANDO O CAMPO ESTÁ VAZIO, e não é um detalhe.
+    #
+    # O `key` do histórico só é preenchido para alertas de NOTÍCIA — é a chave de deduplicação
+    # entre produtores, e os alertas de mercado não precisam dela. Mas os botões de feedback vão
+    # em TODOS os alertas, com a chave calculada da mesma maneira. Resultado da primeira versão:
+    # cada voto num alerta de mercado era silenciosamente descartado pela regra 6, por não
+    # corresponder a chave nenhuma.
+    #
+    # Apanhado a 2026-09-01 com os dois primeiros votos reais da recolha — ambos em alertas de
+    # mercado (TSLA e AAPL), ambos deitados fora. Recalcular resolve-os aos dois, porque o
+    # `news_key` é determinista a partir de (ticker, texto sem tags) e o texto guardado é
+    # exatamente esse. Corrigir aqui, e não no que é gravado, deixa o caminho de envio intacto.
+    def _chave(e) -> str:
+        if e.key:
+            return e.key
+        return hashlib.sha1(
+            f"{e.ticker}|{plain_text(e.text)}".encode()).hexdigest()[:12]
+
+    return {_chave(e) for e in entradas}
 
 
 def relatorio(registos: list[FL.FeedbackRecord],
@@ -207,6 +233,105 @@ def relatorio(registos: list[FL.FeedbackRecord],
     return "\n".join(L) + "\n"
 
 
+def fragmento_latex(registos: list[FL.FeedbackRecord],
+                    chaves_validas: set[str] | None = None) -> str:
+    """A subsecção da dissertação, gerada a partir dos mesmos votos que o relatório.
+
+    **Escrita para ser correta com qualquer N, incluindo zero.** Abaixo do mínimo pré-registado
+    diz quantos votos houve e que não reporta proporção; acima, reporta com o intervalo de
+    Wilson. Assim a dissertação pode compilar hoje, com a recolha a decorrer, sem afirmar nada
+    que os dados não sustentem, e passa a estar certa no dia em que os votos cheguem — sem
+    ninguém ter de reescrever o parágrafo.
+    """
+    excluidos = 0
+    if chaves_validas is not None:
+        antes = len(registos)
+        registos = [r for r in registos if r.chave_alerta in chaves_validas]
+        excluidos = antes - len(registos)
+
+    efetivos = FL.votos_efetivos(registos)
+    r = FL.resumo(registos)
+    n = len(efetivos)
+    uteis = sum(1 for v in efetivos.values() if v.acao == FL.UTIL)
+    dias = sorted({v.at[:10] for v in efetivos.values()})
+    periodo = (f"entre {dias[0]} e {dias[-1]}" if len(dias) > 1
+               else (f"em {dias[0]}" if dias else "sem qualquer voto registado"))
+
+    L = ["% GERADO por scripts/analyse_feedback.py — NÃO EDITAR À MÃO.",
+         "% Correr o script outra vez depois de a recolha fechar; o texto acompanha os dados.",
+         r"\subsection{Utilidade percebida dos alertas entregues}",
+         r"\label{sec:av_feedback}", ""]
+
+    # ⚠️ «cada alerta», e não «cada alerta de notícia»: os botões vão nos alertas de mercado
+    # também, e os dois primeiros votos reais da recolha foram precisamente em alertas de
+    # mercado. A redação anterior descrevia o sistema de forma errada no próprio documento.
+    L.append("O canal passou a acompanhar cada alerta entregue com dois botões, "
+             "\\emph{útil} e \\emph{não ajudou}, e a registar o voto de quem carrega. "
+             "As regras de análise foram fixadas antes de existir um único voto e não foram "
+             "alteradas depois: mínimo de vinte votos efetivos para reportar qualquer proporção, "
+             "um voto por pessoa e por alerta com o último a substituir o anterior, "
+             "salvaguarda que reporta o resultado também sem o votante dominante quando este "
+             "representa mais de quarenta por cento dos votos, e intervalos de confiança de "
+             "Wilson, apropriados a proporções com amostras pequenas. Contam apenas votos sobre "
+             "alertas presentes no registo partilhado.")
+    L.append("")
+
+    if n == 0:
+        L.append("A recolha decorre à data de escrita e ainda não produziu votos. "
+                 "A ausência de dados não é um resultado de zero por cento, e por isso nada é "
+                 "reportado aqui; o mecanismo, as regras e as ameaças à validade abaixo ficam "
+                 "estabelecidos para que a medição, quando existir, não dependa de decisões "
+                 "tomadas depois de ver os números.")
+    else:
+        L.append(f"Foram registados {r['votos_brutos']} votos {periodo}, "
+                 f"que correspondem a {n} votos efetivos de {r['pessoas']} "
+                 f"{'pessoa' if r['pessoas'] == 1 else 'pessoas distintas'}, "
+                 f"sobre {r['alertas_votados']} alertas."
+                 + (f" {r['mudancas_de_voto']} votos foram posteriormente alterados pela mesma "
+                    f"pessoa, e apenas o último de cada par conta."
+                    if r['mudancas_de_voto'] else "")
+                 + (f" {excluidos} votos foram excluídos por não corresponderem a nenhum alerta "
+                    f"do registo partilhado." if excluidos else ""))
+        L.append("")
+        if n < N_MINIMO:
+            L.append(f"A amostra fica abaixo do mínimo de {N_MINIMO} votos efetivos fixado no "
+                     f"protocolo, pelo que \\textbf{{nenhuma proporção é reportada}}. "
+                     f"As contagens acima são o resultado, e são tudo o que esta amostra "
+                     f"sustenta. Uma percentagem sobre {n} votos daria ao leitor uma precisão "
+                     f"que os dados não têm.")
+        else:
+            lo, hi = wilson(uteis, n)
+            L.append(f"Dos {n} votos efetivos, {uteis} classificaram o alerta como útil, "
+                     f"ou seja {uteis / n * 100:.0f}\\%, com intervalo de confiança de Wilson a "
+                     f"95\\% entre {lo * 100:.0f}\\% e {hi * 100:.0f}\\%. A largura deste "
+                     f"intervalo é a medida honesta do que {n} votos permitem afirmar.")
+            por_pessoa = Counter(v for v, _ in efetivos)
+            dom, nd = por_pessoa.most_common(1)[0]
+            if nd / n > DOMINANCIA_MAX:
+                sem = {k: v for k, v in efetivos.items() if k[0] != dom}
+                us = sum(1 for v in sem.values() if v.acao == FL.UTIL)
+                lo2, hi2 = wilson(us, len(sem))
+                L.append("")
+                L.append(f"Uma única pessoa representa {nd / n * 100:.0f}\\% dos votos efetivos, "
+                         f"acima do limite de {DOMINANCIA_MAX * 100:.0f}\\% fixado no protocolo. "
+                         f"Excluindo-a, a proporção é de {us / len(sem) * 100:.0f}\\% sobre "
+                         f"{len(sem)} votos, com intervalo entre {lo2 * 100:.0f}\\% e "
+                         f"{hi2 * 100:.0f}\\%. É esta a leitura a reter.")
+    L.append("")
+    L.append("Quatro limitações acompanham este resultado e nenhuma delas se resolve com mais "
+             "votos. A primeira é a autosseleção: vota quem quer, e quem considera um alerta "
+             "indiferente tende a não carregar em nada, o que empurra a amostra para os "
+             "extremos. A segunda é a ausência de contrafactual, uma vez que nenhum grupo "
+             "recebeu a variação de preço sem a explicação que a acompanha; nada aqui atribui "
+             "a utilidade à explicação em si. A terceira é a distância entre utilidade "
+             "percebida e decisão melhor, que é a hipótese fundadora deste trabalho e "
+             "permanece por testar. A quarta é o desconhecimento de quem vota: o canal é "
+             "público e não se sabe se quem responde pertence ao público que a dissertação "
+             "assume.")
+    L.append("")
+    return "\n".join(L)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--votos", default=str(DEFAULT_VOTOS))
@@ -214,7 +339,35 @@ def main() -> int:
     ap.add_argument("--sem-filtro", action="store_true",
                     help="não filtrar pelo histórico (o relatório assinala-o)")
     ap.add_argument("--out", default=str(OUT_MD))
+    ap.add_argument("--out-tex", default=str(OUT_TEX))
+    ap.add_argument("--da-branch", action="store_true",
+                    help="descarrega feedback.jsonl da branch de dados e junta ao ficheiro "
+                         "local antes de analisar (é lá que vivem os votos de produção)")
     args = ap.parse_args()
+
+    # ⚠️ O ficheiro local só tem os votos desta máquina. Os votos reais chegam pelo Telegram a
+    # um dyno do Heroku com disco efémero, e o sítio onde ficam é a branch de dados. Analisar o
+    # ficheiro local e dizer «N votos» seria contar uma amostra que não é a amostra.
+    if args.da_branch:
+        from investigator.history_publish import fetch_jsonl
+
+        remotas = fetch_jsonl("feedback.jsonl")
+        if remotas is None:
+            print("[feedback] ⚠️ não consegui ler a branch de dados; uso só o ficheiro local.")
+        else:
+            caminho = Path(args.votos)
+            locais = ([ln for ln in caminho.read_text(encoding="utf-8").splitlines() if ln.strip()]
+                      if caminho.exists() else [])
+            vistas: set[str] = set()
+            juntas: list[str] = []
+            for ln in remotas + locais:
+                if ln not in vistas:
+                    vistas.add(ln)
+                    juntas.append(ln)
+            caminho.parent.mkdir(parents=True, exist_ok=True)
+            caminho.write_text("\n".join(juntas) + "\n", encoding="utf-8")
+            print(f"[feedback] branch: {len(remotas)} linha(s); local depois da junção: "
+                  f"{len(juntas)}.")
 
     registos = FL.load_jsonl(args.votos)
     chaves = None if args.sem_filtro else chaves_do_historico(args.historico)
@@ -226,6 +379,11 @@ def main() -> int:
     saida.write_text(texto, encoding="utf-8")
     print(f"[feedback] {len(registos)} voto(s) lido(s) de {args.votos}")
     print(f"[feedback] relatório escrito em {saida}")
+
+    tex = Path(args.out_tex)
+    tex.parent.mkdir(parents=True, exist_ok=True)
+    tex.write_text(fragmento_latex(registos, chaves), encoding="utf-8")
+    print(f"[feedback] fragmento da dissertação escrito em {tex}")
     return 0
 
 

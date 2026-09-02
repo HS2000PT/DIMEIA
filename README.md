@@ -22,14 +22,14 @@ reasoning chain — detected event → explanation → sources → historical pr
 ## Where things are
 | I want to… | Go to |
 |---|---|
-| Navigate the whole repo | [`INDEX.md`](INDEX.md) — the repository map |
+| Navigate the whole repo | [`docs/planos/INDEX.md`](docs/planos/INDEX.md) — the repository map |
 | **Read the dissertation being submitted** | **`tese/main.pdf`** — 114 pp, Portuguese. This is the one that is evaluated |
 | Read the earlier long versions | `thesis/main.pdf` (English, 130 pp) · `thesis-pt/main.pdf` (Português, 139 pp). Superseded, kept for the record |
 | Study for the defence | `tese/slides/main.pdf` (19) · `tese/guia/main.pdf` (20) · `tese/quiz/index.html`. Older material in `docs/defence/` targets the long thesis — read [`docs/defence/LEIA-ME-PRIMEIRO.md`](docs/defence/LEIA-ME-PRIMEIRO.md) first |
 | See it live | <https://investigator-ddc9d8618935.herokuapp.com> + Telegram <https://t.me/InvestiGatorMEIA> |
-| Get a 10-minute overview | [`RELATORIO_FINAL.md`](RELATORIO_FINAL.md) |
+| Get a 10-minute overview | [`archive/reports/RELATORIO_FINAL.md`](archive/reports/RELATORIO_FINAL.md) |
 | Run it myself | `python scripts/demo.py` · full guide `docs/design/how_to_run.md` |
-| See what's left to do | [`CHECKLIST.md`](CHECKLIST.md) |
+| See what's left to do | [`docs/planos/CHECKLIST.md`](docs/planos/CHECKLIST.md) |
 
 ## What it does
 - **Trigger 1 — Abrupt market move:** flags a statistical anomaly (rolling *z*-score, no lookahead) and
@@ -78,7 +78,7 @@ precedents **semantically** — the thesis's MiniLM model exported to ONNX (~23 
 numerical parity vs SBERT verified in `docs/evaluation/onnx_minilm_validation.md`) — falling back to
 the word-overlap baseline only if the model is unavailable.
 
-**Prefer a notebook?** `notebooks/investigator_walkthrough.ipynb` — the same three components
+**Prefer a notebook?** `archive/streamlit-app/notebooks/investigator_walkthrough.ipynb` — the same three components
 (anomaly detector, retrieval, the trained triage model), one hands-on cell at a time; see
 `docs/design/how_to_run.md` §5.2.
 
@@ -108,17 +108,17 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
   also delivers each subscriber's tickers (`bot.enabled` in `config/alerts.yaml`, off by default).
 
 ## 🖱️ Prefer clicking? (no console)
-- **Double-click** a launcher in **`run/`** (`dashboard.bat`, `demo.bat`, `tests.bat`, `thesis-pdf.bat`).
+- **Double-click** a launcher in **`archive/streamlit-app/run/`** (`dashboard.bat`, `demo.bat`, `tests.bat`, `thesis-pdf.bat`).
 - Or use the **VS Code** buttons: *Run and Debug* ▶ (Dashboard / Demo) and *Terminal → Run Task* (tests,
   compile thesis/slides/paper). Full guide: **`docs/design/run_in_vscode.md`**.
-- Track what's done vs pending in **[`CHECKLIST.md`](CHECKLIST.md)**.
+- Track what's done vs pending in **[`docs/planos/CHECKLIST.md`](docs/planos/CHECKLIST.md)**.
 
 ## Learn it / prepare the defence — ONE source
 - **THE study guide (PT-PT):** **`slides/guia_estudo/main.pdf`** — the single, consolidated source
   (83 slides): teaches the whole thesis from zero, the code line by line, the evaluation, **the oral
   script (3-min opening + per-RQ answers), the anticipated defence questions, the frozen-numbers table
   and the defence plan B**. Everything previously scattered across companion documents now lives here.
-- **Project summary (PT-PT):** **[`RELATORIO_FINAL.md`](RELATORIO_FINAL.md)** — everything in this
+- **Project summary (PT-PT):** **[`archive/reports/RELATORIO_FINAL.md`](archive/reports/RELATORIO_FINAL.md)** — everything in this
   repository and where it lives, in a 10-minute read.
 - **Defence slides (EN):** `slides/main.pdf` (17 frames) — the short deck for the day itself.
 
@@ -143,14 +143,14 @@ slides/        defence slides (Beamer, 17 frames)
   guia_estudo/   THE study guide (PT-PT, Beamer, 83 slides — single study source)
 investigator/  system code, one package per component (investigator/triage/ = the trained ML component, RQ4)
 models/        trained triage models (joblib, versioned; context-only variant runs in production)
-notebooks/     investigator_walkthrough.ipynb — hands-on tour of the 3 components, executed & committed
+archive/streamlit-app/notebooks/     investigator_walkthrough.ipynb — hands-on tour of the 3 components, executed & committed
 api/           FastAPI service: data routes over investigator/, plus the AI report and analyst
 web/           the served single-page client (Lightweight Charts v5, vendored, Apache 2.0)
 app/           earlier Streamlit generations (v1/v3/v4), kept because thesis figures cite them;
                verdict.py and method.py are still used — the API calls them, so the sentences
                the reader sees cannot drift from the tested Python that produces them
-deploy/        VM watch mode: systemd unit + setup script (docs/design/vm_watch.md)
-run/           double-click launchers (dashboard/demo/tests/thesis)
+archive/deploy/        VM watch mode: systemd unit + setup script (docs/design/vm_watch.md)
+archive/streamlit-app/run/           double-click launchers (dashboard/demo/tests/thesis)
 .vscode/       click-to-run: Run & Debug configs + tasks + recommended extensions
 scripts/       demo.py (run it) + run_alerts.py (alerts runner, --watch mode) + evaluation/build scripts
 config/        alerts.yaml — watchlist + thresholds + quality knobs for the alert runner

@@ -5,13 +5,13 @@
 > para o dashboard, `pip install -r requirements-app.txt`.
 
 ## 1. Duplo-clique no explorador de ficheiros (o mais simples)
-Na pasta [`run/`](../../run/), faz **duplo-clique**:
+Na pasta [`archive/streamlit-app/run/`](../../run/), faz **duplo-clique**:
 - `dashboard.bat` → abre o dashboard no browser.
 - `demo.bat` → corre a demo (notícia + mercado).
 - `tests.bat` → corre testes + lint.
 - `thesis-pdf.bat` → compila a tese.
 
-A janela fica aberta no fim para leres o resultado. (Detalhes em [`run/README.md`](../../run/README.md).)
+A janela fica aberta no fim para leres o resultado. (Detalhes em [`archive/streamlit-app/run/README.md`](../../run/README.md).)
 
 ## 2. VS Code — botão ▶ "Run and Debug" (corre e permite pausar/depurar)
 1. Abre o painel **Run and Debug** (ícone ▶ com um inseto na barra lateral, ou `Ctrl+Shift+D`).

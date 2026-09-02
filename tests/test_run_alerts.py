@@ -846,3 +846,101 @@ def test_semear_e_publicar_falham_abertos(tmp_path, monkeypatch):
     monkeypatch.setenv("INVESTIGATOR_HISTORY_REPO", "nao/existe-de-todo")
     _seed_from_branch_safe(tmp_path / "ausente.jsonl", "gate_log.jsonl")   # não levanta
     _publish_data_safe(tmp_path / "ausente.jsonl", "gate_log.jsonl")       # não levanta
+
+
+# ══ O ORÇAMENTO DIÁRIO E A MEMÓRIA DO DIA ═══════════════════════════════════════════════════
+# ⚠️ **O defeito, medido no registo público a 2026-09-02.** O canal tem orçamento de cinco
+# alertas de notícia por dia. O histórico partilhado mostra **vinte** no dia 26 de agosto, em
+# quatro rajadas de exactamente cinco, aos segundos coincidentes com arranques do processo
+# (00:03, 07:38, 13:04 e 22:24) — e as MESMAS cinco empresas nas quatro. O mesmo padrão nos dias
+# 25, 27, 28 e 29.
+#
+# A causa não é a política: é o contador. Vive em `data/alerts_state.json`, no disco efémero do
+# dyno, e volta a zero a cada arranque. O `seed_state_from_shared_history` existe justamente
+# para o repor a partir do histórico partilhado — mas era chamado com um `[]` indistinguível de
+# «não consegui ler», e um processo que não consegue ler fica a acreditar que ainda não enviou
+# nada.
+#
+# A correcção é uma distinção: `None` (não sei) contra `[]` (sei, e não saiu nada). E, só nesta
+# porta, falha FECHADA. Todo o resto do runner falha aberto de propósito; aqui o custo do erro
+# não é simétrico — não enviar perde um alerta, enviar sem saber enche o canal.
+
+
+def _estado_limpo(dia: str = "2026-08-15") -> dict:
+    return {"date": dia, "day": dia, "alerted_market": [], "alerted_news": [],
+            "news_count": {}, "news_words": {}}
+
+
+def test_sem_memoria_do_dia_o_orcamento_fecha():
+    """Um processo que não sabe o que já saiu hoje não gasta orçamento nenhum."""
+    from scripts.run_alerts import filter_new_alerts
+
+    estado = _estado_limpo() | {"memoria_do_dia": False}
+    cands = [(t, f"News alert for {t}\nlinha") for t in ("AAPL", "MSFT", "NVDA")]
+    suprimidas: dict[str, tuple[str, str]] = {}
+
+    saida = filter_new_alerts([], cands, estado, suppressed=suprimidas, daily_budget=5)
+
+    assert saida == [], "enviou sem saber quantos já tinham saído hoje"
+    assert suprimidas["AAPL"][0] == "daily_budget"
+    assert "unknown" in suprimidas["AAPL"][1], "a supressão tem de dizer que foi por não saber"
+
+
+def test_com_memoria_do_dia_o_orcamento_deixa_passar():
+    """A porta nova só fecha na ausência de informação; com informação, nada muda."""
+    from scripts.run_alerts import filter_new_alerts
+
+    estado = _estado_limpo() | {"memoria_do_dia": True}
+    cands = [(t, f"News alert for {t}\nlinha") for t in ("AAPL", "MSFT", "NVDA")]
+
+    assert len(filter_new_alerts([], cands, estado, daily_budget=5)) == 3
+
+
+def test_o_defeito_por_omissao_nao_muda_os_chamadores_antigos():
+    """`memoria_do_dia` é um facto que o chamador fornece; sem ele, o comportamento é o antigo.
+
+    A função é pura e tem outros chamadores (testes, dry-runs, o cron). Fazer o defeito ser
+    «fechado» calaria todos eles sem nada ter corrido mal. Quem tem de o afirmar é o `run_once`,
+    que é o único caminho de produção — e o teste seguinte fixa isso.
+    """
+    from scripts.run_alerts import filter_new_alerts
+
+    estado = _estado_limpo()          # sem a chave
+    cands = [("AAPL", "News alert for AAPL\nlinha")]
+    assert len(filter_new_alerts([], cands, estado, daily_budget=5)) == 1
+
+
+def test_o_historico_partilhado_distingue_vazio_de_ilegivel(monkeypatch):
+    """`[]` autoriza gastar o orçamento; `None` não. São coisas diferentes e têm de o parecer."""
+    import scripts.run_alerts as R
+
+    assert R._fetch_shared_history_safe({}) is None, "sem URL configurado não se sabe nada"
+
+    import investigator.alerts_history as AH
+
+    monkeypatch.setattr(AH, "fetch_remote", lambda url: [])
+    cfg = {"public": {"history_url": "https://exemplo/x.jsonl"}}
+    assert R._fetch_shared_history_safe(cfg) == [], "leu e estava vazio: isso é saber"
+
+    def rebenta(url):
+        raise OSError("rede em baixo")
+
+    monkeypatch.setattr(AH, "fetch_remote", rebenta)
+    assert R._fetch_shared_history_safe(cfg) is None, "falhou a leitura: isso é não saber"
+
+
+def test_run_once_afirma_a_memoria_do_dia():
+    """A garantia tem de estar no caminho de produção, e não só na função pura.
+
+    Sem esta linha no `run_cycle`, o defeito permissivo da função pura voltaria a ser o
+    comportamento de produção — que é exactamente o defeito que isto corrige.
+    """
+    import inspect
+
+    import scripts.run_alerts as R
+
+    fonte = inspect.getsource(R.run_cycle)
+    assert 'state["memoria_do_dia"]' in fonte, (
+        "o run_cycle deixou de afirmar se sabe o que já saiu hoje")
+    assert "partilhado is not None" in fonte, (
+        "a memória do dia voltou a não distinguir «li e estava vazio» de «não li»")

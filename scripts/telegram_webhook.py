@@ -50,7 +50,8 @@ def estado() -> int:
     print(f"URL                 : {info['url']}")
     print(f"Updates pendentes   : {info.get('pending_update_count', 0)}")
     print(f"Tipos subscritos    : {', '.join(info.get('allowed_updates') or ['(todos)'])}")
-    print(f"Segredo configurado : {'sim' if info.get('has_custom_certificate') is not None else '?'}")
+    segredo = "sim" if info.get("has_custom_certificate") is not None else "?"
+    print(f"Segredo configurado : {segredo}")
     if info.get("last_error_message"):
         # É aqui que se vê um webhook que responde 500 ou que não responde de todo, e é a
         # primeira coisa a olhar quando os votos param de chegar.

@@ -168,7 +168,11 @@ def test_historico_com_chaves_e_lido(tmp_path):
         {"date": "2026-09-01", "ticker": "TSLA", "kind": "news", "text": "x", "key": "abc123"},
         {"date": "2026-09-01", "ticker": "NVDA", "kind": "summary", "text": "y", "key": ""},
     ]) + "\n", encoding="utf-8")
-    assert af.chaves_do_historico(p) == {"abc123"}
+    # A chave gravada vale, e a que falta é recalculada — porque só os alertas de notícia
+    # trazem `key` e os botões vão em todos. Ver `test_um_alerta_de_mercado_tambem_e_reconhecido`.
+    chaves = af.chaves_do_historico(p)
+    assert "abc123" in chaves
+    assert len(chaves) == 2, "a entrada sem chave gravada tem de aparecer, recalculada"
 
 
 def test_filtro_nao_muda_o_resultado_quando_tudo_e_valido():
@@ -177,3 +181,42 @@ def test_filtro_nao_muda_o_resultado_quando_tudo_e_valido():
     com = af.relatorio(registos, chaves_validas=todas)
     assert "excluído" not in com
     assert "filtro do histórico não foi aplicado" not in com
+
+def test_um_alerta_de_mercado_tambem_e_reconhecido(tmp_path):
+    """A regressão que os dois primeiros votos reais da recolha revelaram.
+
+    O `key` do histórico só é preenchido para alertas de NOTÍCIA — é a chave de deduplicação
+    entre produtores. Mas os botões vão em todos os alertas, e a primeira versão da regra 6
+    descartava em silêncio cada voto num alerta de mercado. Recalcular a partir de
+    (ticker, texto sem tags) resolve-os, e é isso que este teste fixa.
+    """
+    import hashlib
+    import json
+
+    texto = "📈 TSLA (Tesla) · +5.51% so far today"
+    p = tmp_path / "alerts_history.jsonl"
+    p.write_text("\n".join(json.dumps(e) for e in [
+        {"date": "2026-09-01", "ticker": "TSLA", "kind": "market", "text": texto, "key": ""},
+        {"date": "2026-09-01", "ticker": "NVDA", "kind": "news", "text": "y", "key": "abc123"},
+    ]) + "\n", encoding="utf-8")
+    esperada = hashlib.sha1(f"TSLA|{texto}".encode()).hexdigest()[:12]
+    chaves = af.chaves_do_historico(p)
+    assert esperada in chaves, "um voto num alerta de mercado não pode ser descartado"
+    assert "abc123" in chaves, "e a chave já gravada continua a valer"
+
+
+def test_o_texto_com_tags_e_sem_tags_dao_a_mesma_chave():
+    """O botão é construído com o HTML e o histórico guarda a versão sem tags. Se as duas não
+    dessem a mesma chave, nenhum voto seria reconhecido — e a falha seria silenciosa."""
+    import hashlib
+    import sys
+    from pathlib import Path as _P
+
+    sys.path.insert(0, str(_P(__file__).resolve().parents[1]))
+    from investigator.explanation_engine.explainer import plain_text
+
+    html_ = '📰 <b>News alert for TSLA</b>\n"Recall &amp; fix"'
+    k_html = hashlib.sha1(f"TSLA|{plain_text(html_)}".encode()).hexdigest()[:12]
+    k_plain = hashlib.sha1(
+        f"TSLA|{plain_text(plain_text(html_))}".encode()).hexdigest()[:12]
+    assert k_html == k_plain

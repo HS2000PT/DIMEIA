@@ -62,7 +62,10 @@ def load_state(path: str | Path = _STATE, today: date | None = None) -> dict:
     today = today or date.today()
     state = {"date": today.isoformat(), "alerted_market": [], "alerted_news": [],
              "news_count": {}, "news_words": {}, "opening_sent": False, "summary_sent": False,
-             "bot_offset": None}
+             # Sem informação nenhuma sobre o dia, o defeito é «não sei» e não «não saiu nada».
+             # Quem sabe é o `run_once`, depois de tentar ler o histórico partilhado.
+             "memoria_do_dia": False,
+             "desfechos_anotados": False, "bot_offset": None}
     try:
         raw = json.loads(Path(path).read_text(encoding="utf-8"))
         state["bot_offset"] = raw.get("bot_offset")
@@ -75,6 +78,10 @@ def load_state(path: str | Path = _STATE, today: date | None = None) -> dict:
             state["news_words"] = {k: list(v) for k, v in (raw.get("news_words") or {}).items()}
             state["opening_sent"] = bool(raw.get("opening_sent", False))
             state["summary_sent"] = bool(raw.get("summary_sent", False))
+            # Sem esta linha a marca não sobrevivia ao reinício do dyno DENTRO do mesmo dia, e
+            # a anotação corria de novo — sem estragar nada (é idempotente e só edita quando há
+            # novidade), mas a puxar preços de doze empresas outra vez, de graça.
+            state["desfechos_anotados"] = bool(raw.get("desfechos_anotados", False))
     except (OSError, ValueError):
         pass  # sem estado (1.ª corrida do dia/da cache) → começa limpo
     return state
@@ -145,6 +152,19 @@ def seed_state_from_shared_history(state: dict, entries: list, today: str) -> No
     Com dois produtores possíveis (a VM em modo --watch e o cron do Actions como rede de
     segurança), o estado local de cada um não chega — o histórico partilhado (branch
     `alerts-history`) é a memória comum que impede alertas duplicados no canal.
+
+    ⚠️ **Este é o único sítio onde o runner descobre o que já saiu hoje depois de um reinício.**
+    O `data/alerts_state.json` vive no disco do dyno, que é efémero: cada arranque começa com o
+    contador do dia a zero. Se esta função não semear — porque a rede falhou, porque a
+    publicação do produtor anterior ainda não chegou à branch, ou porque o URL não está
+    configurado — o processo não fica a saber que já enviou nada; fica a **acreditar que não
+    enviou nada**, que é outra coisa.
+
+    Foi o que aconteceu entre 25 e 29 de agosto de 2026: o registo mostra rajadas de exactamente
+    cinco alertas de notícia, aos segundos coincidentes com arranques (00:03, 07:38, 13:04,
+    22:24 no dia 26), num dia com orçamento de cinco. Vinte alertas, e as mesmas cinco empresas
+    quatro vezes. O orçamento não foi violado por uma decisão errada: foi violado por um
+    contador que voltou ao princípio quatro vezes.
     """
     for e in entries:
         if e.date != today:
@@ -367,6 +387,16 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
         # notícia da tarde ainda não existe. São da mesma família; a avaliada é um limite
         # superior desta. A tese diz isso na Secção do veredicto da QI3.
         if daily_budget is not None:
+            # ⚠️ Falha FECHADA, e só esta porta. Todo o resto do runner falha aberto de
+            # propósito — suprimir por falta de informação seria decidir com base em nada. Aqui
+            # é o contrário: ENVIAR por falta de informação é que é decidir com base em nada, e
+            # o custo do erro não é simétrico. Não enviar um alerta hoje perde-se um alerta;
+            # enviar sem saber o que já saiu enche o canal e ensina o leitor a ignorá-lo, que é
+            # a única coisa que este trabalho não pode dar-se ao luxo de fazer.
+            if not state.get("memoria_do_dia", True):
+                if suppressed is not None:
+                    suppressed[ticker] = ("daily_budget", "day's count unknown this cycle")
+                continue
             total_hoje = sum(state["news_count"].values())
             if total_hoje >= daily_budget:
                 print(f"[noticias {ticker}] orçamento do dia gasto "
@@ -652,6 +682,37 @@ def maybe_daily_summary(state: dict, results: list[tuple[str, object]],
         return None
     state["summary_sent"] = True
     return build_daily_summary(results, threshold)
+
+
+def maybe_anotar_desfechos(state: dict, hour_utc: int, *, dry_run: bool = False) -> int:
+    """Uma vez por dia, depois do fecho americano, anexa a cada alerta recente o que a ação
+    veio a fazer a +1, +3 e +5 sessões.
+
+    **Porque corre aqui e não num agendador à parte.** O `worker` já é um processo permanente
+    com ciclo de 60 s e já tem este padrão para o resumo de fecho: uma marca no estado
+    partilhado e uma guarda de hora. Um agendador seria mais uma peça a manter, a pagar e a
+    falhar em silêncio, para fazer o que uma guarda de duas linhas faz.
+
+    **22 UTC e não 21**, que é a hora do resumo de fecho: a anotação precisa das barras de
+    fecho do próprio dia, e as fontes gratuitas só as consolidam mais tarde. Correr as duas na
+    mesma hora daria uma anotação sistematicamente atrasada de um dia.
+
+    Fail-open, como tudo neste caminho: nada aqui pode impedir um alerta de sair.
+    """
+    if hour_utc < 22 or state.get("desfechos_anotados"):
+        return 0
+    state["desfechos_anotados"] = True
+    try:
+        import importlib.util
+
+        caminho = Path(__file__).resolve().parent / "anotar_desfechos.py"
+        spec = importlib.util.spec_from_file_location("anotar_desfechos", caminho)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod.anotar_tudo(_HISTORY, dry_run=dry_run)
+    except Exception as exc:  # noqa: BLE001
+        print(f"[desfechos] anotação falhou (ignorada): {type(exc).__name__}: {sem_segredos(exc)}")
+        return 0
 
 
 def apply_materiality(text: str, scored: tuple | None, gate: float) -> str | None:
@@ -1125,7 +1186,9 @@ def _record_history_safe(alerts: list[tuple[str, str]], today: str,
                          event_times: dict[str, str] | None = None,
                          detected_at: str = "",
                          sent_at: str = "",
-                         price_sources: dict[str, str] | None = None) -> None:
+                         price_sources: dict[str, str] | None = None,
+                         message_ids: dict[int, int] | None = None,
+                         chat_id: str = "") -> None:
     """Regista os alertas REALMENTE enviados no histórico partilhado — a app lê este ficheiro
     em vez de recalcular, garantindo que mostra exatamente o que o Telegram recebeu.
 
@@ -1147,7 +1210,7 @@ def _record_history_safe(alerts: list[tuple[str, str]], today: str,
         from investigator.explanation_engine.explainer import plain_text
 
         new = []
-        for ticker, text in alerts:
+        for i, (ticker, text) in enumerate(alerts):
             kind = classify_kind(text)
             key = news_key(ticker, text) if kind == "news" else ""
             new.append(HistoryEntry(
@@ -1157,6 +1220,13 @@ def _record_history_safe(alerts: list[tuple[str, str]], today: str,
                 detected_at=detected_at,
                 sent_at=sent_at,
                 price_source=(price_sources or {}).get(ticker, ""),
+                # ⚠️ O HTML EXATO, além da versão sem tags. O `plain_text` tira o negrito e
+                # desfaz as entidades; reenviar isso numa edição perderia a formatação e, numa
+                # manchete com «<» ou «&», produziria HTML que o Telegram rejeita. O `text`
+                # continua a ser o que o painel lê — nada muda para ele.
+                text_html=text,
+                message_id=(message_ids or {}).get(i, 0),
+                chat_id=chat_id if (message_ids or {}).get(i) else "",
             ))
         save_jsonl(append_and_trim(load_jsonl(path), new), path)
     except Exception as exc:  # noqa: BLE001
@@ -1406,15 +1476,23 @@ def _push_history_safe(path: str | Path = _HISTORY) -> None:
         print(f"[historico] push falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
 
 
-def _fetch_shared_history_safe(cfg: dict) -> list:
-    """Histórico partilhado (fail-open) — a memória comum entre VM e Actions."""
+def _fetch_shared_history_safe(cfg: dict) -> list | None:
+    """Histórico partilhado — a memória comum entre VM e Actions.
+
+    ⚠️ Devolve `None` quando NÃO conseguiu ler, e `[]` quando leu e não havia nada. A distinção
+    não é preciosismo: `[]` significa «hoje ainda não saiu nada» e autoriza gastar o orçamento;
+    `None` significa «não sei o que já saiu» e não autoriza coisa nenhuma. Confundir os dois é
+    exactamente o que fez sair vinte alertas num dia de orçamento cinco.
+    """
     try:
         from investigator.alerts_history import fetch_remote
 
         url = (cfg.get("public", {}) or {}).get("history_url")
-        return fetch_remote(str(url)) if url else []
+        if not url:
+            return None
+        return fetch_remote(str(url))
     except Exception:  # noqa: BLE001
-        return []
+        return None
 
 
 def process_bot_commands(state: dict, bot_cfg: dict, *, dry_run: bool) -> None:
@@ -1517,7 +1595,15 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
 
     # Memória partilhada entre produtores (VM + Actions): o que QUALQUER um já enviou hoje
     # não se repete — sem isto, dois produtores duplicariam alertas no canal.
-    seed_state_from_shared_history(state, _fetch_shared_history_safe(cfg), state["date"])
+    partilhado = _fetch_shared_history_safe(cfg)
+    seed_state_from_shared_history(state, partilhado or [], state["date"])
+    # ⚠️ Memória do dia: ou o disco local já a tem, ou o histórico partilhado foi lido. Se
+    # nenhuma das duas se verifica, este processo não sabe quantos alertas já saíram hoje — e um
+    # orçamento gasto por quem não sabe o que já gastou não é um orçamento.
+    state["memoria_do_dia"] = bool(state["news_count"]) or partilhado is not None
+    if not state["memoria_do_dia"]:
+        print("[orçamento] sem memória do dia (disco vazio e histórico partilhado ilegível) — "
+              "nenhum alerta de notícia sai neste ciclo.")
 
     # Semear os ficheiros de série a partir da branch, se o disco local estiver vazio. No
     # contentor isso acontece a cada reinício, e publicar sem semear apagaria a série toda.
@@ -1629,6 +1715,9 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     # diárias sem a barra de hoje), os resultados intradiários servem — às 21h+ UTC a
     # sessão já fechou e a cotação Finnhub É o fecho do dia.
     summary = maybe_daily_summary(state, market_results or intra_results, threshold, hora_utc)
+    # Anotação dos desfechos: corre DEPOIS do resumo e antes de o estado ser gravado, para
+    # que a marca de "já corri hoje" persista como as outras.
+    maybe_anotar_desfechos(state, hora_utc, dry_run=dry_run)
 
     if not dry_run:
         save_state(state)  # persiste marcas do dia + offset do bot (cache no Actions)
@@ -1651,6 +1740,12 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     # ambas a chave da primeira. `mensagens` é `alerts` seguido das notas de mercado, portanto
     # os primeiros `len(alerts)` elementos são exatamente os alertas.
     n_alertas = len(alerts)
+    # ⚠️ A IDENTIDADE DA MENSAGEM, guardada no único momento em que existe. O Telegram não
+    # oferece maneira de reencontrar uma mensagem pelo conteúdo: se o `message_id` não for
+    # apanhado aqui, a mensagem fica inalcançável para sempre — não há como lhe acrescentar
+    # depois o desfecho observado a +1, +3 e +5 sessões. Os 522 alertas anteriores a
+    # 2026-09-01 são exatamente esse caso.
+    ids_por_indice: dict[int, int] = {}
     for i, (_ticker, text) in enumerate(mensagens):
         print("-" * 60)
         print(plain_text(text))
@@ -1677,7 +1772,17 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
             # impedir as mensagens seguintes: o modo agendado (Actions) sairia com código
             # de erro e as restantes ficariam por entregar. Falha-suave e continua.
             try:
-                send_message(text, reply_markup=teclado)
+                resposta = send_message(text, reply_markup=teclado)
+                try:
+                    from investigator.telegram_bot.sender import message_id_de
+
+                    mid = message_id_de(resposta)
+                    if mid:
+                        ids_por_indice[i] = mid
+                except Exception as exc:  # noqa: BLE001
+                    # Perder o identificador custa a anotação futura desta mensagem, e nada
+                    # mais. Nunca pode custar a entrega, que já aconteceu.
+                    print(f"[historico] message_id não apanhado (o alerta seguiu): {exc}")
             except Exception as exc:  # noqa: BLE001
                 falhas += 1
                 # O envio leva o token do bot no URL: mascarar aqui não é opcional.
@@ -1686,10 +1791,14 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     _fanout_safe(alerts, bot_cfg, dry_run=dry_run)  # fan-out só de alertas por ticker
 
     if can_send:
+        from investigator import config as _cfg_tg
+
         _record_history_safe(
             mensagens, date.today().isoformat(),
             event_times=event_times, detected_at=detected_at, sent_at=utc_stamp(),
             price_sources=price_source_log(),
+            message_ids=ids_por_indice,
+            chat_id=str(_cfg_tg.TELEGRAM_CHAT_ID or ""),
         )
         _push_history_safe()  # VM: git CLI (INVESTIGATOR_HISTORY_GIT=1); fail-open
         # Contentor (Heroku): não há checkout git no slug, por isso o caminho acima não faz

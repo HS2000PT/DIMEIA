@@ -208,6 +208,10 @@ def test_a_hiperligacao_da_fonte_sobrevive_ao_escape():
     padrao = next(li for li in html.splitlines() if "&lt;a href=" in li)
 
     assert "&quot;" in padrao, "sem isto o escape das aspas parte a ligação, e ninguém dá por isso"
+    assert "function comLigacoes" in html, \
+        "a v7 apagou a reconstrução da ligação; o leitor volta a ver a etiqueta impressa"
+    assert "soRotulo" in html, \
+        "o resumo do feed tem de ficar só com a etiqueta: um <a> dentro de um <button> é inválido"
 
 
 def test_a_pagina_recusa_um_href_que_nao_seja_http():
@@ -218,6 +222,11 @@ def test_a_pagina_recusa_um_href_que_nao_seja_http():
     """
     html = _PAGINA.read_text(encoding="utf-8")
     assert "const seguro" in html and "https?" in html
+    # Verificado no browser a 2026-09-01 com quatro entradas hostis: `javascript:`, `data:`,
+    # um href relativo e um `HTTPS://` legítimo. Os três primeiros perdem a ligação e ficam só
+    # com a etiqueta; o quarto passa, com o `&` reescapado.
+    assert 'rel="noopener noreferrer nofollow"' in html, \
+        "uma ligação para fora sem rel= entrega a página de origem ao destino"
 
 
 # ══ A PÁGINA (v6.1, revisão de produto F6) ══════════════════════════════════════════
@@ -259,6 +268,10 @@ def test_a_pagina_nao_corta_o_canal_em_silencio():
     """
     html = _PAGINA.read_text(encoding="utf-8")
     assert "older message" in html, "o resto do canal tem de estar alcançável e contado"
+    assert "S.feedLimite" in html, \
+        "a v7 cortou o feed num `slice` fixo; sem limite em estado não há como carregar mais"
+    assert "not shown — load" in html, \
+        "contar o que ficou de fora sem dar onde carregar continua a ser um corte"
 
 
 def test_uma_rota_de_api_inexistente_falha_como_api_e_nao_como_pagina(client):
@@ -292,22 +305,57 @@ def test_a_legenda_descreve_as_marcas_que_o_grafico_desenha_mesmo():
     O teste é estrutural de propósito: não sabe desenhar, sabe exigir que para cada forma que o
     gráfico usa exista uma classe de legenda declarada, e que a cor seja explicada quando carrega
     sentido.
+
+    Reescrito para a v7 a 2026-09-01. O gráfico mudou de marcas — deixou de usar um círculo
+    para o dia assinalado e passou a usar a seta, para cima ou para baixo conforme o fecho —,
+    portanto as afirmações antigas deixaram de descrever o desenho. A regra é a mesma e não se
+    negociou: para cada forma que o gráfico usa existe o mesmo símbolo na legenda, e a cor é
+    explicada porque carrega sentido.
+
+    Mudou também uma coisa que este teste não vigiava e passou a vigiar: as etiquetas `z` foram
+    retiradas dos marcadores. Com quinze dias assinalados em seis meses sobrepunham-se umas às
+    outras e à linha de preço — medido no browser, não suposto. A data e o z de cada dia estão
+    nas fichas por baixo do gráfico, que além de legíveis são navegáveis por teclado.
+
+    Reescrito outra vez a 2026-09-02, quando o gráfico ganhou camadas. Agora usa TRÊS formas —
+    o círculo para o alerta que saiu, as duas setas para o dia assinalado que não gerou alerta,
+    e o quadrado para a notícia que o sistema viu e não usou — e a distinção entre a primeira e
+    as segundas é a tese inteira: assinalar não é enviar.
+
+    E ganhou uma regra que não existia: **a legenda descreve o que está DESENHADO, não o que
+    está ligado.** No 1D a caixa dos alertas pode estar ligada e não haver marca nenhuma no
+    ecrã, porque o alerta saiu de madrugada e a janela intradiária começa na abertura. Uma
+    legenda ligada ao interruptor voltaria a descrever uma marca ausente.
     """
     html = _PAGINA.read_text(encoding="utf-8")
 
-    # o gráfico usa exactamente duas formas, e cada uma tem de ter o seu símbolo na legenda
-    assert 'shape:"arrowDown"' in html, "mudou a marca do alerta enviado; rever a legenda"
-    assert 'shape:"circle"' in html, "mudou a marca do dia assinalado; rever a legenda"
+    # as três formas que o gráfico usa, cada uma com o seu símbolo na legenda
+    assert 'shape: dir > 0 ? "arrowUp" : "arrowDown"' in html, \
+        "mudou a marca do dia assinalado; rever a legenda do gráfico"
+    assert 'shape:"circle"' in html, "o alerta enviado deixou de ter marca própria"
+    assert 'shape:"square"' in html, "a notícia sem alerta deixou de ter marca própria"
 
-    # o símbolo de "enviado" tem de ser um triângulo (bordas), e não um quadrado
-    assert "border-top:7px solid var(--acento)" in html, \
-        "o símbolo de 'sent' voltou a não ser uma seta"
+    # os símbolos da legenda são triângulos CSS, com a mesma orientação das setas do gráfico
+    assert "border-bottom:8px solid var(--sobe)" in html, "falta a seta para cima na legenda"
+    assert "border-top:8px solid var(--desce)" in html, "falta a seta para baixo na legenda"
+    assert ".legenda .quad" in html, "o quadrado da notícia não tem símbolo na legenda"
 
-    # o círculo é pintado pela direcção no gráfico, logo a legenda tem de mostrar as duas cores
-    assert ".chave i.sobe" in html and ".chave i.desce" in html, \
-        "a legenda voltou a mostrar uma só cor para uma marca que o gráfico pinta em duas"
-    assert "colour is the direction" in html, \
-        "a cor do círculo carrega sentido e a legenda não o explica"
+    # ⚠️ a legenda lê o que foi desenhado, e não as camadas ligadas
+    assert "S.desenhado" in html, \
+        "a legenda voltou a olhar para os interruptores em vez do que está no ecrã"
+    assert "const d = S.desenhado" in html, "a legenda deixou de ler o desenhado"
+
+    # a cor da seta é a direcção do movimento, e isso tem de estar escrito
+    assert "the colour is the direction" in html, \
+        "a cor da seta carrega sentido e a legenda não o explica"
+    # e o z, que é a unidade do eixo invisível, tem de ser dito onde as setas aparecem
+    assert "standard deviations" in html, \
+        "a legenda do gráfico mostra z sem dizer o que z é"
+    # ⚠️ as etiquetas dos marcadores ficaram de fora de propósito; ver o docstring
+    assert "text:`z ${z}`" not in html, \
+        "voltaram as etiquetas aos marcadores; sobrepõem-se, medido a 2026-09-01"
+    assert 'shape:"circle", text:"alert"' not in html, \
+        "voltaram as etiquetas aos alertas; sobrepõem-se, medido a 2026-09-02"
 
 
 def test_a_promessa_da_pagina_aparece_uma_vez_e_nao_duas():
@@ -326,12 +374,26 @@ def test_a_promessa_da_pagina_aparece_uma_vez_e_nao_duas():
     visivel = corpo.replace("<!--", "\x00").split("\x00")
     visivel = "".join(p.split("-->", 1)[-1] if "-->" in p else p for p in visivel)
 
-    assert "what was sent, and what was not" in html.split("<body>")[0], \
-        "a promessa saiu também do <title>, e o separador ficou sem identidade"
+    # ⚠️ Mudou na v7, por decisão do autor a 2026-09-01: «corrigir o tab title, ficar apenas
+    # InvestiGator». O separador passa a ter só o nome. A regra de fundo não mudou — a promessa
+    # aparece uma vez —, mudou o sítio: deixa de estar escrita em palavras e passa a estar
+    # cumprida pela página. É por isso que este teste deixou de exigir a frase e passou a exigir
+    # as duas metades dela.
+    assert "<title>InvestiGator</title>" in html, \
+        "o separador voltou a ter mais do que o nome"
     assert visivel.count("what was sent, and what was not") == 0, \
         "a assinatura voltou ao corpo da página: H1 diz que a promessa aparece uma vez"
-    assert "<h2>What was sent</h2>" in html and "Why it stayed quiet" in html, \
-        "as duas secções são a promessa; sem elas a página deixa de a cumprir"
+
+    # metade um: o que foi enviado, com o texto exacto
+    assert "<h2>What was sent</h2>" in html, \
+        "sem o espelho do canal a página deixa de cumprir metade da promessa"
+    assert "The exact text that reached the phone" in html, \
+        "o espelho tem de mostrar o texto tal como saiu, e dizê-lo"
+    # metade dois: o que não foi enviado, e porquê — na v7 é o modal por empresa
+    assert "why it is where it is" in html, \
+        "a segunda metade da promessa (o silêncio explicado) desapareceu da página"
+    assert "Silence is a decision this system makes" in html, \
+        "o silêncio voltou a ser ausência de informação em vez de uma decisão registada"
 
 
 def test_o_estado_da_bolsa_nao_esta_em_dois_sitios():
@@ -363,7 +425,15 @@ def test_os_logotipos_sao_servidos_por_nos_e_nunca_por_terceiros():
     html = _PAGINA.read_text(encoding="utf-8")
     externos = re.findall(r'<img[^>]+src="(https?://[^"]+)"', html)
     assert not externos, f"a página carrega imagens de terceiros: {externos}"
-    assert '/assets/logos/${t}.png' in html, "a barra deixou de mostrar os logótipos"
+    assert "/assets/logos/" in html, "a barra deixou de mostrar os logótipos"
+    # ⚠️ A v7 acrescentou uma segunda origem de terceiros, e esta não é uma imagem: a folha de
+    # estilo do Google Fonts. Cai na mesma regra — conta a um terceiro quem abriu a página — e
+    # por isso as letras passaram a ser servidas por nós, de `web/assets/fonts/`.
+    # Receita reproduzível em `scripts/preparar_fontes.sh`.
+    assert "fonts.googleapis.com/css" not in html, \
+        "as letras voltaram ao Google Fonts: o visitante volta a ser contado a um terceiro"
+    assert "/assets/fonts/IBMPlexSans-Regular.woff2" in html, \
+        "as letras deixaram de ser servidas por nós"
 
     pasta = _PAGINA.parent / "assets" / "logos"
     tem = {f.stem for f in pasta.glob("*.png")}

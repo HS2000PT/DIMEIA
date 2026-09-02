@@ -7,7 +7,7 @@ se só queres correr o sistema.
 | Ficheiro | Para quê |
 |----------|----------|
 | [design/how_to_run.md](design/how_to_run.md) | **Como correr** o sistema de ponta a ponta (começa no §0.0: 1 comando). |
-| [design/run_in_vscode.md](design/run_in_vscode.md) | **Correr por cliques** (duplo-clique em `run/` ou botões do VS Code). |
+| [design/run_in_vscode.md](design/run_in_vscode.md) | **Correr por cliques** (duplo-clique em `archive/streamlit-app/run/` ou botões do VS Code). |
 | [design/setup.md](design/setup.md) | Ambiente: venv 3.12, stack leve vs `--ml`, torch do índice CPU. |
 | [design/deployment.md](design/deployment.md) | Publicar o **dashboard** de graça (Streamlit Community Cloud). |
 | [design/going_live.md](design/going_live.md) | Pôr o sistema **24/7** (canal Telegram + timer do GitHub, sem servidor). |
@@ -93,7 +93,7 @@ se só queres correr o sistema.
 > **7. ENVIAR ao orientador:** [defence/mensagem_orientador.md](defence/mensagem_orientador.md) —
 > mensagem PT-PT pronta a copiar, com o que ele deve abrir e por que ordem.
 >
-> O resumo do projeto está na raiz: `RELATORIO_FINAL.md`. (Os antigos caderno de defesa e guia
+> O resumo do projeto está na raiz: `archive/reports/RELATORIO_FINAL.md`. (Os antigos caderno de defesa e guia
 > rápido foram absorvidos no guia de estudo.)
 
 ## study/ — materiais do estudo humano de utilidade (RQ3)

@@ -255,6 +255,91 @@ def _mean_precedent_impact(precedents: list[tuple[NewsRecord, float]], horizon: 
     return sum(vals) / len(vals) if vals else float("nan")
 
 
+# ── Alerta em dois tempos: o esboço, e depois a análise ───────────────────────────────────
+#
+# **Porque existe.** A recuperação semântica é o passo caro do percurso: o codificador de
+# frases custa cerca de sete segundos a carregar a frio, medidos, e é essa a razão declarada
+# para a recuperação estar fora do painel. Enquanto ela corre, o leitor não tem nada — e o
+# facto que o alerta comunica (esta empresa, esta manchete, este movimento) já está todo
+# apurado.
+#
+# **O que isto NÃO resolve, e é preciso dizê-lo antes que alguém o assuma.** A mediana entre a
+# publicação de uma notícia e a sua deteção pelas fontes gratuitas é de 353 minutos. Entre a
+# deteção e a chegada da mensagem são 5 segundos. Enviar o esboço primeiro poupa segundos, não
+# minutos, e não toca nos 353. O ganho está noutro sítio: o leitor vê o sistema a trabalhar, a
+# recuperação deixa de estar no caminho crítico, e a mesma mensagem passa a poder ser anotada
+# dias depois com o desfecho observado — que é a parte que nenhum produto comparável faz.
+#
+# **A regra que mantém isto honesto:** o esboço traz a advertência desde o primeiro segundo. Uma
+# mensagem que sai sem ela, mesmo por oito segundos, é uma mensagem que saiu sem ela.
+
+# ⚠️ «checking WHETHER there are», e não «looking for». A primeira redação dizia «looking for
+# similar past headlines», e um teste apanhou o problema: lida depressa, afirma que existem
+# casos semelhantes antes de o sistema ter procurado. É a mesma distinção entre «não há» e
+# «não vimos» que a própria página do painel recusa esbater.
+ESTADO_A_INVESTIGAR = ("🔍 <i>Investigating: checking whether there are comparable past cases, "
+                       "and what happened after them.</i>")
+AVISO_CURTO = "<i>Never a price prediction and never advice.</i>"
+
+
+def esboco_news_impact(
+    ticker: str,
+    headline: str,
+    date: str = "",
+    move: float | None = None,
+    move_note: str | None = None,
+    source: str = "",
+    url: str = "",
+) -> str:
+    """O alerta como sai no primeiro instante: o facto, e o aviso de que a análise vem a seguir.
+
+    Assinatura deliberadamente igual à de `explain_news_impact` menos `precedents`, `horizon`,
+    `materiality` e `today` — ou seja, menos exatamente aquilo que ainda não se sabe. Quem
+    chamar isto e depois `explain_news_impact` com os mesmos argumentos obtém um cabeçalho
+    byte a byte idêntico, e o leitor vê a mensagem crescer em vez de mudar.
+    """
+    return "\n".join([
+        _cabecalho_noticia(ticker, headline, date, move, move_note, source, url),
+        "",
+        ESTADO_A_INVESTIGAR,
+        AVISO_CURTO,
+    ])
+
+
+def _cabecalho_noticia(ticker: str, headline: str, date: str = "",
+                       move: float | None = None, move_note: str | None = None,
+                       source: str = "", url: str = "") -> str:
+    """O cabeçalho do alerta de notícia — tudo o que se sabe ANTES da recuperação semântica.
+
+    Extraído de `explain_news_impact` para poder ser enviado sozinho, de imediato, enquanto os
+    precedentes ainda estão a ser recuperados. O texto produzido é byte a byte o mesmo de
+    antes: quem lê o alerta completo não vê diferença nenhuma, e é isso que permite editar a
+    mensagem sem que o cabeçalho mude debaixo dos olhos de quem já o leu.
+    """
+    header = (f"📰 <b>News alert for {html.escape(ticker, quote=False)}"
+              f"{html.escape(_nome(ticker), quote=False)}</b>")
+    if date:
+        header += f" ({html.escape(date, quote=False)})"
+    header += f'\n"{html.escape(_clip(headline), quote=False)}"'
+    # ⚠️ DE ONDE VEIO, E COMO IR LÊ-LA. O `NewsItem` já trazia `source` e `url` da fonte, e o
+    # alerta deitava-os fora: citava uma manchete sem dizer quem a publicou nem deixar
+    # verificá-la. Num sistema cujo argumento é entregar a afirmação COM a evidência anexada,
+    # a fonte da própria manchete é a evidência mais básica de todas.
+    if source or url:
+        quem = html.escape(source, quote=False) if source else "source"
+        header += f'\n<a href="{html.escape(url, quote=True)}">{quem}</a>' if url else f"\n{quem}"
+    # ⚠️ O QUE O PREÇO ESTÁ A FAZER, que é o facto que faltava. Até 2026-08-15 um alerta de
+    # notícia falava de manchetes passadas e nunca dizia o que a acção fazia AGORA — o
+    # utilizador tinha de ir ver a outro lado a única coisa que lhe permitia julgar se a
+    # notícia interessava. Opcional: sem valor, o texto fica byte-igual ao de sempre.
+    if move is not None and move == move:
+        linha = f"Right now: <b>{move * 100:+.2f}%</b> today"
+        if move_note:
+            linha += f" · {html.escape(move_note, quote=False)}"
+        header += f"\n{linha}"
+    return header
+
+
 def explain_news_impact(
     ticker: str,
     headline: str,
@@ -279,27 +364,7 @@ def explain_news_impact(
     `today` (opcional): quando dado (produção/app), cada precedente mostra a idade
     ("2y ago") — sem ele (demo/tese), o output histórico fica byte-igual.
     """
-    header = (f"📰 <b>News alert for {html.escape(ticker, quote=False)}"
-              f"{html.escape(_nome(ticker), quote=False)}</b>")
-    if date:
-        header += f" ({html.escape(date, quote=False)})"
-    header += f'\n"{html.escape(_clip(headline), quote=False)}"'
-    # ⚠️ DE ONDE VEIO, E COMO IR LÊ-LA. O `NewsItem` já trazia `source` e `url` da fonte, e o
-    # alerta deitava-os fora: citava uma manchete sem dizer quem a publicou nem deixar
-    # verificá-la. Num sistema cujo argumento é entregar a afirmação COM a evidência anexada,
-    # a fonte da própria manchete é a evidência mais básica de todas.
-    if source or url:
-        quem = html.escape(source, quote=False) if source else "source"
-        header += f'\n<a href="{html.escape(url, quote=True)}">{quem}</a>' if url else f"\n{quem}"
-    # ⚠️ O QUE O PREÇO ESTÁ A FAZER, que é o facto que faltava. Até 2026-08-15 um alerta de
-    # notícia falava de manchetes passadas e nunca dizia o que a acção fazia AGORA — o
-    # utilizador tinha de ir ver a outro lado a única coisa que lhe permitia julgar se a
-    # notícia interessava. Opcional: sem valor, o texto fica byte-igual ao de sempre.
-    if move is not None and move == move:
-        linha = f"Right now: <b>{move * 100:+.2f}%</b> today"
-        if move_note:
-            linha += f" · {html.escape(move_note, quote=False)}"
-        header += f"\n{linha}"
+    header = _cabecalho_noticia(ticker, headline, date, move, move_note, source, url)
     if not precedents:
         out = header + "\nNo similar historical precedents found in the knowledge base."
         return f"{out}\n{materiality}" if materiality else out

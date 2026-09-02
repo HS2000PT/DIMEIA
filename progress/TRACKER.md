@@ -6,7 +6,7 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
 - [x] Verificação de ambiente (Git, Python, Node, LaTeX, remote GitHub)
 - [x] `.claude/settings.json` (allow/deny de permissões)
 - [x] `.gitignore`, `.gitattributes`, `.env.example`
-- [x] Esqueleto do repositório (§9): `investigator/`, `tests/`, `thesis/`, `docs/`, `progress/`, `scripts/`, `data/`, `notebooks/`, `presentation/`, `.github/`
+- [x] Esqueleto do repositório (§9): `investigator/`, `tests/`, `thesis/`, `docs/`, `progress/`, `scripts/`, `data/`, `archive/streamlit-app/notebooks/`, `presentation/`, `.github/`
 - [x] `CLAUDE.md` (memória persistente) + `README.md`
 - [x] Ficheiros `progress/` (TRACKER, SESSIONS, DECISIONS, PLANO_SESSOES, QUESTIONS)
 - [x] Stubs `docs/` (PT-PT)
@@ -197,7 +197,7 @@ Checklist sintética do que foi feito em cada sessão. Detalhe narrativo em `SES
   - [x] Diagrama de arquitetura redesenhado (sem cruzamentos) + fluxo do gatilho de notícias + **mockup do alerta Telegram**
   - [x] Figuras de avaliação PT→EN (números idênticos): era o "português" visível no PDF
   - [x] Identificadores de código removidos do corpo (0 `\texttt{}` de código); InvestiGator no abstract/resumo
-  - [x] **Declutter:** removidos `notebooks/`, `presentation/`, `investigator/impact_analyzer/` (stub); .py compilam; sem importações pendentes
+  - [x] **Declutter:** removidos `archive/streamlit-app/notebooks/`, `presentation/`, `investigator/impact_analyzer/` (stub); .py compilam; sem importações pendentes
   - [x] TRACKER semeado; CLAUDE.md + SESSIONS.md atualizados
 - [x] **S2 — Introdução (Cap. 1) + Métodos e Materiais (Cap. 3)**
   - [x] Cap. 3 aprofundado: **data card FNSPID** (tabela: fonte, licença CC BY-SA 4.0, 15 tickers, janela 2018–2023, governança), pré-processamento + alinhamento anti-lookahead, camada live + dataset de avaliação, **IA responsável/ética** alargada, metodologia de avaliação + rigor

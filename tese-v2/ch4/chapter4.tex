@@ -578,32 +578,66 @@ Capítulo~\ref{cap:conclusoes} regista o facto como limitação.
 
 A mesma informação é disponibilizada numa aplicação web, que permite consultar o que foi entregue
 e, sobretudo, o que não foi. É nessa aplicação que reside o registo de decisões descrito na
-Secção~\ref{sec:sis_politica}. A Figura~\ref{fig:sis_pagina} apresenta as duas vistas principais.
-O desenho da interface não constitui contribuição desta dissertação, pelo que não é descrito; a
-sua apresentação justifica-se por ser o único local em que a ausência de comunicação por parte do
-sistema é observável.
+Secção~\ref{sec:sis_politica}. O desenho da interface não constitui contribuição desta
+dissertação, pelo que não é descrito; a sua apresentação justifica-se por ser o único local em que
+a ausência de comunicação por parte do sistema é observável. As Figuras~\ref{fig:sis_pagina},
+\ref{fig:sis_empresa} e~\ref{fig:sis_silencio} apresentam, por essa ordem, o estado do dia, a
+evidência de uma empresa e o registo de uma decisão de não comunicar.
 
 \begin{figure}[!htbp]
 \centering
-\begin{minipage}[t]{0.46\textwidth}\centering
-\includegraphics[width=\linewidth]{figures/app_v6_empresa.png}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.50\textwidth}\centering
-\includegraphics[width=\linewidth]{figures/app_v6_silencio.png}
-\end{minipage}
-\caption[Vistas da aplicação web]{Aplicação web em funcionamento a 20 de agosto de 2026, durante a
-sessão norte-americana. À esquerda, a vista de uma empresa. À direita, as decisões do dia pela
-ordem em que foram tomadas, com indicação da margem em falta quando aplicável.}
+\includegraphics[width=0.95\textwidth]{figures/app_v7_painel.png}
+\caption[Estado do dia na aplicação web]{Aplicação web a 2 de setembro de 2026, com a sessão
+norte-americana fechada. Os cinco indicadores repartem as doze empresas vigiadas em cinco alertas
+entregues e sete decisões de não comunicar; a contagem de movimentos fora do comum mede outra
+coisa, o preço, e por isso é apresentada como contagem separada. Cada empresa declara o seu estado
+à superfície, e toda a cor utilizada tem legenda, incluindo a da mascote, que acompanha a variação
+diária do índice de mercado utilizado na decomposição. As capturas são geradas a partir de um
+instantâneo da própria aplicação, e não recolhidas à mão; a largura de captura é de $960$ pixeis,
+por ser aquela em que o texto da interface permanece legível depois de reduzido à caixa de texto
+deste documento.}
 \label{fig:sis_pagina}
 \end{figure}
 
-A empresa apresentada na vista superior constitui um caso ilustrativo da segunda questão de
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.94\textwidth]{figures/app_v7_empresa.png}
+\caption[Evidência de uma empresa]{Vista de uma empresa: o veredicto em palavras antes de qualquer
+número, a repartição do movimento nas três parcelas, e a série de preço. As marcas separam as duas
+coisas que este trabalho distingue: o ponto assinala um dia em que um alerta foi entregue, e a seta
+um dia que o detetor assinalou e que nenhuma mensagem acompanhou. A faixa inferior mostra o valor
+de $z$ desses dias contra o limiar de $\pm1{,}5$, em eixo próprio por não partilhar unidade com o
+preço. A direção da seta é a do fecho e nada mais; a data e o valor de $z$ de cada dia estão nas
+fichas por baixo, e não sobre a linha, para não se sobreporem. A interface abre no dia corrente; a
+figura mostra o intervalo de seis meses, por ser aquele em que a distinção entre assinalar e
+comunicar se torna observável.}
+\label{fig:sis_empresa}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.72\textwidth]{figures/app_v7_silencio.png}
+\caption[Registo de uma decisão de não comunicar]{As portas que uma empresa atravessou, pela ordem
+da política da Secção~\ref{sec:sis_politica}. As portas transpostas são enunciadas pelo que a
+empresa cumpriu; apenas aquela em que parou é enunciada pela rejeição, com o motivo concreto. O
+silêncio é aqui uma decisão registada, e não ausência de informação.}
+\label{fig:sis_silencio}
+\end{figure}
+
+A empresa da Figura~\ref{fig:sis_empresa} constitui um caso ilustrativo da segunda questão de
 investigação, pela discordância entre a variação percentual e a repartição. A ação registava uma
-descida de $0{,}41\%$; o mercado e a componente específica da empresa apresentavam valores
-positivos, de $+0{,}08\%$ e $+0{,}07\%$; e a parcela que puxava o preço para baixo era a do setor,
-com $-0{,}56\%$. A variação percentual isolada indica uma descida da empresa e conduz à procura de
-uma causa interna que não existe. O veredicto termina na expressão \emph{``so far today''}, uma vez
-que a captura corresponde a meio da sessão e não a um fecho.
+descida de $0{,}30\%$, e a parcela específica da empresa era $+0{,}53\%$ — positiva. A descida
+provinha do mercado, com $-0{,}61\%$, e do setor, com $-0{,}22\%$. A variação percentual isolada
+indica que a empresa caiu e conduz à procura de uma causa interna que não existe; a repartição
+mostra que a empresa subiu contra um mercado em queda. O veredicto classifica o dia como comum:
+$204$ dos últimos $250$ dias de negociação registaram variação igual ou superior.
+
+A Figura~\ref{fig:sis_silencio} mostra a mesma exigência do lado do silêncio. Nesse dia, as sete
+empresas que não geraram alerta pararam todas na mesma porta — o orçamento diário de cinco alertas,
+esgotado às $14$h$02$~UTC. A leitura importante não é o número, mas a forma: a empresa transpôs oito
+portas, cada uma enunciada pelo critério que cumpriu, e parou numa restrição de desenho declarada
+à partida. Nenhuma das portas transpostas é apresentada como falha, o que evita a leitura inversa
+que a versão anterior da interface permitia.
 
 \section{Implantação e operação}
 \label{sec:sis_operacao}

@@ -106,7 +106,7 @@ Há uma divergência concreta a resolver antes de qualquer implantação: `app.j
 
 | Levar para `investigator/` (produção) | Guardar num arquivo de leitura apenas |
 |---|---|
-| `investigator/`, `api/`, `web/`, `config/alerts.yaml`, `models/triage_context_lr.joblib`, `data/samples/` necessário ao arranque, `scripts/run_alerts.py`, `scripts/post_validate.py`, `scripts/deploy_heroku.py`, `Procfile`, `app.json`, `requirements*.txt`, `pyproject.toml`, testes de runtime e workflows | `thesis/`, `thesis-pt/`, `thesis-examples/`, `paper/`, notebooks exploratórios, versões antigas Streamlit, slides e guias antigos, resultados intermédios e scripts de experiência não usados na operação |
+| `investigator/`, `api/`, `web/`, `config/alerts.yaml`, `models/triage_context_lr.joblib`, `data/samples/` necessário ao arranque, `scripts/run_alerts.py`, `scripts/post_validate.py`, `scripts/deploy_heroku.py`, `Procfile`, `app.json`, `requirements*.txt`, `pyproject.toml`, testes de runtime e workflows | `thesis/`, `thesis-pt/`, `archive/thesis-versions/thesis-examples/`, `paper/`, notebooks exploratórios, versões antigas Streamlit, slides e guias antigos, resultados intermédios e scripts de experiência não usados na operação |
 
 Não se move nada da árvore atual antes de criar um *release* imutável: `tese/` depende de
 `thesis/references.bib`, e as versões Streamlit ainda sustentam figuras e história de decisões.

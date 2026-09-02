@@ -140,7 +140,7 @@ servidor público.
 > (fail-open), mas as respostas ficam baralhadas entre os dois. Escolhe um modo.
 
 **Como ligar (2 passos):**
-1. `python scripts/run_bot.py` (ou duplo-clique em `run/bot.bat`, ou a tarefa VS Code
+1. `python scripts/run_bot.py` (ou duplo-clique em `archive/streamlit-app/run/bot.bat`, ou a tarefa VS Code
    "Bot interativo"). Requer `TELEGRAM_BOT_TOKEN` no `.env`. Qualquer pessoa pode então falar com
    o bot: `/start`, `/watch TSLA`, `/unwatch TSLA`, `/list`, `/stop`, `/help`. As subscrições
    ficam em `data/bot_users.db` (SQLite, stdlib, gitignored).

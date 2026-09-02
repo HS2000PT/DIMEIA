@@ -30,10 +30,10 @@ encontrar algo), (5) com `--git`, inicia um repo com **1 commit** (sem remote, s
 | `thesis/` | a dissertação (fonte LaTeX + `main.pdf`) — o trabalho do aluno |
 | `paper/` | o artigo IEEE destilado da tese |
 | `scripts/`, `tests/` | reprodutibilidade + credibilidade (199 testes) |
-| `notebooks/` | o walkthrough executado |
+| `archive/streamlit-app/notebooks/` | o walkthrough executado |
 | `models/`, `config/`, `data/samples/` | modelos congelados pequenos, config sem segredos, amostras |
 | `docs/design/`, `docs/evaluation/`, `docs/decisions/` | desenho, provas de avaliação, glossário/learning/citações |
-| `deploy/`, `run/`, `.github/`, `.streamlit/`, `.vscode/`, `.devcontainer/` | deploy + CI (segredos ficam nos Actions, não em ficheiros) |
+| `archive/deploy/`, `archive/streamlit-app/run/`, `.github/`, `.streamlit/`, `.vscode/`, `.devcontainer/` | deploy + CI (segredos ficam nos Actions, não em ficheiros) |
 | `README.md`, `CITATION.cff`, `pyproject.toml`, `requirements*.txt`, `.env.example`, `.gitignore`, `.gitattributes`, `.python-version` | porta de entrada + como correr |
 
 ## O que FICA DE FORA (só-interno)
@@ -45,14 +45,14 @@ encontrar algo), (5) com `--git`, inicia um repo com **1 commit** (sem remote, s
 | `.claude/` | settings + planos internos |
 | `docs/defence/` | caderno de defesa + guia rápido (estudo **privado**) |
 | `slides/` | slides de defesa + guia de estudo (preparação **privada**) |
-| `CHECKLIST.md`, `RELATORIO_FINAL.md` | listas/relatório internos para o orientador |
+| `docs/planos/CHECKLIST.md`, `archive/reports/RELATORIO_FINAL.md` | listas/relatório internos para o orientador |
 | `.env`, corpora grandes | nunca versionados (gitignored) — o bundle parte de `git ls-files` |
 
 ## Decisões de julgamento (defaults, muda se quiseres)
 
 - **`slides/` e `docs/defence/` ficam de fora por defeito** (material de estudo pessoal). Se
   quiseres o *deck* de defesa público, tira `slides/` do `EXCLUDE_PREFIXES` no script.
-- **`RELATORIO_FINAL.md` fica de fora** (é um resumo interno para o orientador). Sem problema em
+- **`archive/reports/RELATORIO_FINAL.md` fica de fora** (é um resumo interno para o orientador). Sem problema em
   incluir se preferires.
 - **`paper/` entra** (é um artefacto publicável).
 

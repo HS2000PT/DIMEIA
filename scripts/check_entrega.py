@@ -158,7 +158,8 @@ def main() -> int:
         return 1
     print("Tudo o que se verifica por máquina está feito.")
     print("O que sobra é humano: a leitura final, a redação da declaração de IA e a licença")
-    print("com o orientador, os agradecimentos, e rodar as credenciais. Está no CHECKLIST.md.")
+    print("com o orientador, os agradecimentos, e rodar as credenciais. "
+          "Está no docs/planos/CHECKLIST.md.")
     return 0
 
 

@@ -110,7 +110,7 @@ page; read-only; better logo/slogan; guarantee always-online or an alternative."
 - **Identidade:** logo.svg profissional (linha de mercado → "olho" vigilante) + slogan
   "Market intelligence, explained." (app + README).
 - **Sempre-online honesto:** keep-alive no workflow (ping por corrida) + alternativa 24/7
-  real na VM (deploy/investigator-app.service, porta 8501; vm_watch.md §Bónus).
+  real na VM (archive/deploy/investigator-app.service, porta 8501; vm_watch.md §Bónus).
 - **Screenshot real novo** (TSLA, marcadores visíveis) → Fig. 4.5 atualizada (frase+caption);
   tese 78 pp/slides 17/guia 71 recompilam 0 erros. Docs deployment/RELATORIO/README em sync.
 - **167 testes + ruff verdes.**
@@ -152,7 +152,7 @@ market triggers… alerts on weekends… near real time… single study source".
   auto-salta via bar_is_fresh); dedup ENTRE produtores via histórico partilhado (campo `key`).
 - **F3 quase-tempo-real:** `run_alerts.py --watch` (loop ~5 min, SIGTERM limpo) + push git
   opcional do histórico (INVESTIGATOR_HISTORY_GIT=1) + runbook `docs/design/vm_watch.md` +
-  systemd + `deploy/setup_vm.sh` — decisão do aluno: VM Oracle Free; cron fica de rede de segurança.
+  systemd + `archive/deploy/setup_vm.sh` — decisão do aluno: VM Oracle Free; cron fica de rede de segurança.
 - **F4 limpeza:** APAGADOS (git preserva) ML_PLAN/PLANO_FINAL/PLANO_SESSOES (planos concluídos),
   editorial_review/review_log/implementation_review (auditorias one-off), start/end_session.sh,
   fnspid-overnight.bat/kb-fnspid.cmd; ARQUIVADOS caderno_de_defesa/guia_rapido/QUESTIONS/proposta_ml
@@ -181,7 +181,7 @@ pedido de um plano de vários dias + pergunta direta "fomos por um caminho errad
   (RQ4, novo `score_background`) todos os dias, gráfico Plotly anotado, histórico, "Method &
   evaluation" num expander. 2 bugs reais (IDs de gráfico duplicados; expander aninhado) apanhados
   pelos testes antes de produção; confirmado também com arranque real do servidor.
-- **Fase 3:** `notebooks/investigator_walkthrough.ipynb` (anomalia+retrieval+modelo treinado),
+- **Fase 3:** `archive/streamlit-app/notebooks/investigator_walkthrough.ipynb` (anomalia+retrieval+modelo treinado),
   executado de ponta a ponta, 0 erros.
 - **Fase 4:** screenshots reais (Playwright, servidor local) inseridos na tese (Fig. 4.5, 78 pp),
   slides (17 pp) e guia (64 pp) — 0 erros em todos; documentação toda sincronizada.
@@ -213,7 +213,7 @@ pedido de um plano de vários dias + pergunta direta "fomos por um caminho errad
 ### Sessão 32 — adenda FECHO ("organize everything and put an end to this")
 - **Sync Telegram↔Streamlit:** "Markets now" ganhou "Today's alerts (as sent to the Telegram
   channel)" — mesmo detetor, config e texto (`plain_text(explain_anomaly)`); AppTest exige a secção.
-- **`RELATORIO_FINAL.md` (raiz):** relatório de 10 min para o orientador (tudo o que existe + mapa
+- **`archive/reports/RELATORIO_FINAL.md` (raiz):** relatório de 10 min para o orientador (tudo o que existe + mapa
   do repo + números verificados + o que falta).
 - **Guia de estudo em 2 camadas:** 64 slides atualizados (ONNX/paridade/intradiário; 0 erros) +
   NOVO `docs/defence/guia_rapido.md` (versão de bolso; números todos verificados contra os
@@ -336,7 +336,7 @@ Reflow legítimo 74→76 pp (densidade verificada página a página — sem pág
   como `src/`→`investigator/`. Caderno: mapa do repo ganhou `models/`+`app/` e "14 frames"→16.
 - **Validação:** 93 testes + ruff verdes; demo reproduz +6,46%; guia recompila (63 slides, 0 erros).
 
-**P3 — KB de retrieval FNSPID multi-ano (commit f6553a2):** build destacado (`run/kb-fnspid.cmd`,
+**P3 — KB de retrieval FNSPID multi-ano (commit f6553a2):** build destacado (`archive/streamlit-app/run/kb-fnspid.cmd`,
 log `data/kb_build.log`, HF offline) → **79.753 registos** SBERT 384-d (~691 MB, gitignored);
 amostra de 50 num caminho NOVO (o `--sample` por defeito esmagaria a `kb_sample.jsonl` da
 demo/tese com dim 384≠64 — armadilha apanhada antes de disparar). Validação honesta em
@@ -348,7 +348,7 @@ tese e deploy intocados; avaliação multi-ano continua futuro (Cap. 6), agora c
 **P4 — S-APP Fase B (bot interativo, sem servidor):** decisão-chave = **long-polling** (getUpdates)
 em vez de webhook → corre em qualquer máquina, grátis, sem host; utilizadores em SQLite stdlib
 (`data/bot_users.db`). Novo: `investigator/telegram_bot/{store,commands,interactive}.py` (lógica
-pura separada do transporte), `scripts/run_bot.py`, `run/bot.bat`, tarefa VS Code; runner ganha
+pura separada do transporte), `scripts/run_bot.py`, `archive/streamlit-app/run/bot.bat`, tarefa VS Code; runner ganha
 fan-out por subscritor (`bot.enabled` no alerts.yaml, **off por defeito, fail-open provado** —
 sem base: "fan-out saltado", nunca vermelho). Produto responsável: limite 20 tickers, /stop
 reversível, validação sintática, moldura "evidência, nunca previsão". **10 testes novos → 103
@@ -466,7 +466,7 @@ decidiu **renomear tudo, incluindo a tese**.
 - **Revisão pós-rebrand (mesma sessão):** (1) **história reparada** — um replace global tinha mangled as
   entradas de continuidade (o par "nome antigo→nome novo" tinha virado "nome novo→nome novo");
   redação restaurada e tornada à prova de replaces futuros. (2) **Coerência de números:** 43→47 testes (README ×2,
-  run_in_vscode, run/README, slide do guia) e 14→15 frames (slides/README); guia recompilado (60 pp,
+  run_in_vscode, archive/streamlit-app/run/README, slide do guia) e 14→15 frames (slides/README); guia recompilado (60 pp,
   0 erros). (3) **Limpeza:** removidos `.gitkeep` obsoletos (tests/, thesis/figures/, data/samples/;
   data/.gitkeep fica — pasta gitignored). (4) **Reciclagem:** novo `investigator/console.py::force_utf8_stdout`
   usado por demo.py e run_alerts.py (scripts de avaliação congelados ficam como estão — reproduzem os
@@ -498,8 +498,8 @@ desenho** — manter: sem treino, sem previsão de preços).
   ponta-a-ponta (sem exceções; clique devolve 3 precedentes). ruff cobre `app/`.
 
 **Correr por cliques (P3 UX):** para quem evita a consola — `.vscode/` (Run & Debug ▶ + tarefas: demo,
-dashboard, testes, compilar tese/slides/guia/paper, setup), `run/*.bat` (duplo-clique), guia
-`docs/design/run_in_vscode.md`, e **`CHECKLIST.md`** (lista viva do que está feito/por fazer). Aditivo.
+dashboard, testes, compilar tese/slides/guia/paper, setup), `archive/streamlit-app/run/*.bat` (duplo-clique), guia
+`docs/design/run_in_vscode.md`, e **`docs/planos/CHECKLIST.md`** (lista viva do que está feito/por fazer). Aditivo.
 
 **Going-live 24/7 (P4, grátis, sem servidor):** pedido "app sempre up + notificações no telemóvel +
 webpage a qualquer hora, tudo grátis". Faseado (confirmado): **Fase A** construída — `config/alerts.yaml`
@@ -634,7 +634,7 @@ moderada; defesa = guia único PT-PT; sequência = declutter já, reorganizaçã
   **regenerados com números idênticos** (anomalia spread 0.017/0.343, F1 0.524; retrieval P@5 0.549/0.569).
 - **De-tech:** removidos todos os identificadores de código do corpo (0 `\texttt{}` de código; era 72 no Cap. 5);
   detalhe técnico movido para o Apêndice A (Reproducibility). InvestiGator no abstract/resumo.
-- **Declutter:** removidos `notebooks/`, `presentation/`, `investigator/impact_analyzer/` (stub nunca usado).
+- **Declutter:** removidos `archive/streamlit-app/notebooks/`, `presentation/`, `investigator/impact_analyzer/` (stub nunca usado).
 - **Plano mestre** aprovado e registado (`.claude/plans/…`; checklist em `TRACKER.md`).
 - Compila: **60 pp, 0 erros, 0 citações/refs indefinidas**.
 

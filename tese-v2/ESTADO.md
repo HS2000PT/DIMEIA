@@ -1,10 +1,95 @@
 # ESTADO — reescrita em `tese-v2/`
 
-> ⛳ **PRIORIDADE MÁXIMA: ler `PLANO_FINAL_2026-09-01.md` na raiz de `DIMEIA/` antes de tocar em seja o que for.** Criado a 2026-09-01. Manda sobre este ficheiro e sobre todos os outros planos do repositório, incluindo `progress/PLANO_FINAL_ENTREGA.md`, `progress/PLANO_EMERGENCIA_DEFESA_2026-08-30.md` e `INVESTIGATOR_MASTER_PLAN.md`, que ficam como registo histórico.
+> ⛳ **PRIORIDADE MÁXIMA: ler `docs/planos/PLANO_FINAL_2026-09-01.md` na raiz de `DIMEIA/` antes de tocar em seja o que for.** Criado a 2026-09-01. Manda sobre este ficheiro e sobre todos os outros planos do repositório, incluindo `progress/PLANO_FINAL_ENTREGA.md`, `progress/PLANO_EMERGENCIA_DEFESA_2026-08-30.md` e `archive/reports/INVESTIGATOR_MASTER_PLAN.md`, que ficam como registo histórico.
 
 > Atualizar sempre no fim de cada sessão. Ler `BRIEF_REESCRITA.md` antes de começar.
 
 ## Sessão em curso
+
+TERMINADA 20:05 (01/09) — **frente 03 (painel) fechada, e o primeiro item da frente 04 de caminho.**
+
+**O funil.** A zona «Why it stayed quiet» deixou de ser onze blocos de prosa e passou a ser uma
+linha por porta, com a barra a encurtar pelas empresas que cada uma trava. De uma parede para
+346 px de altura. A prosa continua lá, no `title` e por baixo quando se escolhe a porta.
+
+**⚠️ Dois defeitos que só apareceram por eu ter renderizado a página e medido o DOM.**
+
+1. **Erro nos números, e era anterior a mim.** Com o ciclo de 60 s a mesma empresa é avaliada
+   dezenas de vezes por dia e pode parar em portas diferentes. Agrupar por porta sem resolver
+   isso conta a mesma empresa várias vezes: a barra imprimiu «6 de 2» e «5 de −4», sobreviventes
+   negativos. **Os mesmos dados que a versão em blocos mostrava sem ninguém dar por nada, porque
+   uma lista não soma e uma barra soma.** Resolve-se pela porta mais adiantada que cada empresa
+   alcançou nesse dia; o funil passa a fechar em 12.
+2. **Colisão de classes, e essa foi minha.** Chamei `.barra` à barra do funil — que é a classe do
+   cabeçalho da página, oitenta linhas acima. As barras ficavam em 57 px com os segmentos a zero
+   de altura. Renomeada para `.pbarra`.
+
+**O retângulo do logótipo foi corrigido de caminho.** As fichas do funil usavam `.nome`, e
+`.marca .nome` no cabeçalho herdava-lhes borda, raio, preenchimento e fundo. As fichas passaram a
+`.chip` e o nome da marca saiu da caixa. Era o primeiro item da frente 04.
+
+**Figuras do Cap. 4 passam a ser geradas**, por `scripts/figuras/capturar_painel.py`: a página
+real servida sobre um instantâneo congelado da API, fotografada com Playwright. O script imprime
+os valores que a figura mostra, para serem conferidos contra o texto. ⚠️ **A regra: o número da
+dissertação vem do script, nunca da leitura da imagem** — o parágrafo antigo descrevia uma empresa
+a $-0{,}41\%$ com motor de setor que a imagem já não mostrava.
+
+A empresa da figura passou a ser a **NFLX**, por ser o caso mais nítido do argumento da QI2: desce
+$0{,}38\%$ e a parcela da própria empresa é $+0{,}56\%$, positiva; a descida vem do mercado.
+
+**Duas armadilhas do Playwright documentadas no script:** `element.screenshot()` devolve as telas
+do gráfico em branco no Chromium sem interface, e o `lightweight-charts` fica no tamanho por
+defeito neste arnês e não pinta.
+
+**Estado:** 92 páginas contadas de 120, 124 físicas, 0 erros, 0 referências indefinidas.
+Releases v51 (feedback), v53 (desfecho), v54 e v55 (painel).
+
+---
+
+
+TERMINADA 19:20 (01/09) — **frente 02: o desfecho observado. No ar, release v53.**
+
+**O que mudou no produto.** Ao fim de 1, 3 e 5 sessões, o alerta já entregue é editado com o
+que a ação veio a fazer. Não uma mensagem nova: a mesma, no sítio onde a afirmação foi feita e
+para quem a leu. Corre no próprio worker às 22 UTC, com o mesmo padrão de marca no estado que o
+resumo de fecho já usa — sem agendador novo.
+
+**⚠️ Metade da frente 02 NÃO foi feita, e a razão fica registada** em
+`docs/design/telegram_dois_tempos.md`. O «enviar o esboço primeiro e editar com a análise» não
+se sustenta na medição: a mediana entre deteção e entrega é de 5 segundos, e os 7,5 s da
+recuperação semântica são de **arranque a frio** — o worker é permanente e tem o modelo quente.
+Reestruturar o percurso de varredura de um sistema em produção, a três semanas da defesa, por
+cinco segundos, é uma troca má. As peças ficam construídas e testadas (`esboco_news_impact`,
+com o cabeçalho extraído para `_cabecalho_noticia` e um teste a garantir que é byte a byte
+igual ao do alerta completo), para o caso de a medição mudar.
+
+**Dois campos novos no histórico, e a razão de serem dois.** `message_id` porque o Telegram não
+oferece maneira de reencontrar uma mensagem pelo conteúdo — sem o apanhar no envio, a mensagem
+fica inalcançável para sempre. `text_html` porque o `text` do histórico é a versão sem tags
+(`plain_text` tira o negrito e desfaz as entidades): reenviá-la numa edição perderia a
+formatação e, numa manchete com «<» ou «&», produziria HTML que o Telegram rejeita. O `text`
+continua a ser o que o painel lê; nada muda para ele.
+
+⚠️ **Os 522 alertas anteriores a 2026-09-01 são inalcançáveis.** Não têm `message_id`. A
+anotação começa nos alertas enviados a partir da release v53. Verificado com o histórico real:
+527 entradas lidas, 0 alcançáveis, 0 candidatas.
+
+**As seis regras que impedem isto de virar uma previsão disfarçada** estão no cabeçalho de
+`investigator/explanation_engine/desfecho.py`, cada uma com um teste. A que mais custou:
+a primeira versão escrevia «+5d not yet available» como espaço reservado, e isso fazia o
+sistema ver a linha já presente e nunca a atualizar quando o valor chegasse. Um espaço
+reservado que impede a informação de chegar é pior do que a sua ausência.
+
+**Recolha de feedback (frente 01), ao fim de 17 horas no ar:** 6 votos, 2 sobre alertas reais
+(`5848d39dde6b` às 13:02 e `ec1ec5783b3a` às 15:07) e 4 sobre a mensagem de teste, que a regra 6
+exclui. Uma pessoa. Muito longe dos 20 votos efetivos que a regra pré-registada exige para
+reportar qualquer proporção.
+
+**Ramo `feat/desfecho-observado`, a `main` não foi tocada.** A Heroku foi servida com
+`git push heroku feat/desfecho-observado:main`. Reverter: `git push heroku main:main --force`.
+
+---
+
 
 TERMINADA 01:35 (01/09) — **frente 01 do plano: feedback do leitor no Telegram, construído e testado.**
 

@@ -3,788 +3,1351 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>InvestiGator — what was sent, and what was not</title>
+<title>InvestiGator</title>
 <link rel="icon" href="/assets/icon.svg">
 <!--
-  A PÁGINA. Versão 6.1 — revisão de produto (F6).
+  As letras são servidas por nós, e não pelo Google Fonts. Três razões, por ordem de peso:
 
-  ## O que esta página é
+  1. A folha de estilo do Google é *render-blocking* e vive noutro domínio: o navegador paga
+     DNS + TLS a dois anfitriões antes de desenhar o primeiro pixel. Aqui é a mesma origem,
+     na mesma ligação que já está aberta.
+  2. Sem terceiros não há pedido do visitante a sair para fora do painel. Num trabalho sobre
+     transparência, a página não deve contar a ninguém quem a abriu.
+  3. As figuras da tese são capturadas num contentor sem saída para o fonts.googleapis.com.
+     Com a folha remota, saíam com a letra de recurso — e uma figura com a letra errada passa
+     despercebida até estar impressa.
 
-  Um espelho do canal, mais o que o canal não pode mostrar: o **silêncio**. Nove em cada dez
-  varreduras não enviam nada, e essa é a decisão mais frequente que o sistema toma. Um produto
-  que só mostra o que enviou apresenta as vitórias e esconde o critério.
+  Ficheiros: subconjunto latino, gerado com `pyftsubset` a partir dos pacotes oficiais
+  `@ibm/plex-sans` e `@ibm/plex-mono` (licença SIL OFL 1.1). 116 KB no total, contra os 372 KB
+  dos ficheiros completos. Receita em `docs/design/painel_v7.md`.
+-->
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/IBMPlexSans-Regular.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/IBMPlexMono-Text.woff2" crossorigin>
+<style>
+  /* font-display: swap — o texto aparece logo com a letra de recurso e troca quando a nossa
+     chega. O contrário (block) deixa a página em branco à espera de uma letra. */
+  @font-face { font-family:"IBM Plex Sans"; font-style:normal; font-weight:400; font-display:swap;
+               src:url("/assets/fonts/IBMPlexSans-Regular.woff2") format("woff2"); }
+  @font-face { font-family:"IBM Plex Sans"; font-style:normal; font-weight:500; font-display:swap;
+               src:url("/assets/fonts/IBMPlexSans-Medium.woff2") format("woff2"); }
+  @font-face { font-family:"IBM Plex Sans"; font-style:normal; font-weight:600; font-display:swap;
+               src:url("/assets/fonts/IBMPlexSans-SemiBold.woff2") format("woff2"); }
+  @font-face { font-family:"IBM Plex Sans"; font-style:normal; font-weight:700; font-display:swap;
+               src:url("/assets/fonts/IBMPlexSans-Bold.woff2") format("woff2"); }
+  @font-face { font-family:"IBM Plex Mono"; font-style:normal; font-weight:450; font-display:swap;
+               src:url("/assets/fonts/IBMPlexMono-Text.woff2") format("woff2"); }
+  @font-face { font-family:"IBM Plex Mono"; font-style:normal; font-weight:600; font-display:swap;
+               src:url("/assets/fonts/IBMPlexMono-SemiBold.woff2") format("woff2"); }
+</style>
+<!--
+  O PAINEL. Versão 7.
 
-  ## O que mudou na 6.1, e porquê
+  ## O que mudou face à v6, e porquê
 
-  1. **UMA SELECÇÃO GOVERNA A PÁGINA.** Antes, o gráfico era de uma empresa e as duas listas
-     por baixo eram de todas. Duas representações com estados diferentes no mesmo ecrã obrigam
-     o leitor a perguntar-se se estão a falar da mesma coisa. Agora a empresa escolhida governa
-     o gráfico, a lista de acontecimentos, o detalhe do dia e — por defeito — o que foi enviado,
-     com um botão explícito para ver o canal inteiro.
+  A v6 era uma página de leitura: três secções longas, muito texto, e o estado de cada empresa
+  espalhado por uma lista de portas com nomes técnicos, longe da empresa a que dizia respeito.
+  O autor leu-a e disse a frase que define esta versão: «continuo sem perceber».
 
-  2. **A SEGUNDA DAS TRÊS PERGUNTAS VOLTOU AO ECRÃ.** A v6 mostrava *foi invulgar?* e *já
-     aconteceu antes?*, e tinha deixado cair *foi a empresa ou foi o mercado?* — que é uma das
-     três perguntas fundadoras do trabalho. A repartição já vinha na API (`decomp`) e era
-     deitada fora pelo cliente. Volta como barra, com o motor nomeado por palavras.
+  A v7 inverte a regra. **A superfície mostra estado e número; o clique mostra a explicação
+  inteira.** Nada foi apagado — mudou de camada. O texto exato que o Telegram recebeu continua
+  acessível, palavra por palavra, dentro do detalhe de cada empresa.
 
-  3. **O VEREDICTO EM PALAVRAS, ANTES DO NÚMERO.** `app/verdict.py` tem 29 testes, resolve o
-     caso das duas réguas que discordam e impõe a proibição de prever por varrimento. Estava a
-     ser calculado no servidor e ignorado no cliente. Uma frase antes da percentagem é a regra
-     de apresentação deste projecto desde a v3.
+  ## As decisões que não são óbvias
 
-  4. **OS ALERTAS DEIXARAM DE SER UM MURO.** Vinte e cinco mensagens de quinze linhas cada uma
-     é texto a mais para se ler seja o que for. Cada uma passa a mostrar o essencial e a abrir
-     para o texto **exacto** que saiu. Nenhuma palavra é reescrita e nada é deitado fora: a
-     promessa da secção é essa, e é ela que a torna verificável.
+  1. **O funil deixou de ser uma secção.** O estado passou para o cartão da empresa, como um
+     sinal de três cores com legenda. A pergunta «porque é que esta está calada» passa a ter
+     resposta onde a pergunta é feita, e não a duas rolagens de distância.
+  2. **A mascote é o relator do dia**, e não decoração: dá voz à única frase que a página precisa
+     de ter em destaque, e desaparece no modo histórico, onde não há dia para relatar.
+  3. **Sondagem, não WebSocket.** O produtor publica um ficheiro a cada sessenta segundos; uma
+     ligação permanente custaria mais do que resolve. De trinta em trinta segundos compara-se o
+     `as_of` e só se recarrega quando ele muda.
+  4. **Sem framework.** Um ficheiro, uma folha de estilo, e o `lightweight-charts` que já é
+     servido por nós. A página tem de abrir de imediato numa demonstração ao vivo.
 
-  5. **OS TRINTA E OITO BOTÕES DE DATA VIRARAM UMA LISTA.** Eram a via de teclado para os
-     marcadores do gráfico (um marcador desenhado numa tela não existe para um leitor de ecrã),
-     e continuam a sê-lo — mas como lista legível, com o que aconteceu em cada dia, e ligada ao
-     gráfico nos dois sentidos.
+  ## O que NÃO mudou, e não pode mudar
 
-  6. **O ECRÃ INTEIRO.** Uma coluna de 860 px num monitor de 1920 desperdiça metade da página e
-     obriga a rolar por tudo. Duas colunas a partir dos 1100 px.
+  Cada uma destas custou um defeito e está fixada em `tests/test_api.py`:
+  a promessa aparece uma vez e não duas; a página só chama rotas que a API serve; os logótipos
+  são servidos por nós e nunca por terceiros; o texto do alerta é mostrado tal como saiu e nunca
+  reescrito; a probabilidade da triagem não aparece; o silêncio é inspecionável.
 
-  ⚠️ O QUE ESTA PÁGINA NÃO ACRESCENTA: nada que a medição não sustente (critério H4), nenhuma
-  direcção prevista, nenhum conselho. O texto dos alertas traz a estimativa de materialidade
-  porque foi assim que ela chegou ao telemóvel, e com a moldura que o critério H2 exige — de
-  probabilidade *de haver movimento*, em qualquer direcção. A página não a recalcula nem a
-  destaca.
+  ⚠️ E uma regra de nomes, que já custou dois defeitos nesta página (o nome da marca dentro de um
+  retângulo, e as barras do funil a colidir com o cabeçalho): **classes de componente levam
+  prefixo**. `.k-` indicador, `.e-` empresa, `.f-` feed, `.d-` detalhe, `.m-` modal.
 -->
 <style>
+  /* ── fichas de cor ─────────────────────────────────────────────────────── */
   :root {
-    --tinta:#12151a; --fundo:#fbfbfa; --caixa:#ffffff; --linha:#e3e3df; --linha2:#efefec;
-    /* --fraco era #6b7280. Sobre o --fundo dava 4.67:1 e passava, mas o texto secundario
-       do funil assenta em --linha2 (#efefec) e ali caia para 4.20:1, abaixo dos 4.5 que a
-       WCAG pede para texto pequeno. Medido no browser, nao estimado: o par que falhava era
-       "all 5 slots used". #4b5563 da 6.56:1 sobre --linha2 e 7.30:1 sobre o fundo. */
-    --fraco:#4b5563; --acento:#0a7f4f; --acento-fraco:#0a7f4f14;
-    --sobe:#0f766e; --desce:#b91c1c; --parou:#b45309; --grelha:#eeeeea;
+    --tinta:#0f1216; --tinta2:#3d4550; --fraco:#5b6472;
+    --fundo:#f7f7f5; --caixa:#ffffff; --linha:#e2e2dd; --linha2:#eeeeea;
+    --acento:#0a7f4f; --acento-fraco:#0a7f4f14; --acento-forte:#086a42;
+    --sobe:#0f766e; --desce:#b3261e; --parou:#b45309; --parou-fraco:#b4530914;
+    --sombra:0 1px 2px #0f121608, 0 8px 24px #0f121610;
+    --r:14px; --r2:10px;
+    --sans:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --tinta:#e9e9e5; --fundo:#0d0f13; --caixa:#14171c; --linha:#252932; --linha2:#1b1f26;
-            --fraco:#98a0ac; --acento:#23c67a; --acento-fraco:#23c67a1f;
-            --sobe:#5eead4; --desce:#f87171; --parou:#fbbf24; --grelha:#1c2027; }
+    :root {
+      --tinta:#eef0f2; --tinta2:#b9c0c9; --fraco:#8d96a3;
+      --fundo:#0b0d11; --caixa:#14171d; --linha:#242932; --linha2:#1b1f26;
+      --acento:#2fd07f; --acento-fraco:#2fd07f1c; --acento-forte:#4ee59a;
+      --sobe:#5eead4; --desce:#f87171; --parou:#f0a72e; --parou-fraco:#f0a72e1c;
+      --sombra:0 1px 2px #0006, 0 10px 30px #0008;
+    }
   }
-  * { box-sizing:border-box; }
+  *, *::before, *::after { box-sizing:border-box; }
   html { -webkit-text-size-adjust:100%; }
-  body { margin:0; background:var(--fundo); color:var(--tinta);
-         font:15px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-         font-variant-numeric:tabular-nums; }
+  body { margin:0; background:var(--fundo); color:var(--tinta); font-family:var(--sans);
+         font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  h1,h2,h3 { margin:0; font-weight:600; letter-spacing:-.015em; }
   button { font:inherit; color:inherit; }
-  :focus-visible { outline:2px solid var(--acento); outline-offset:2px; border-radius:4px; }
-  a { color:var(--acento); }
+  :focus-visible { outline:2px solid var(--acento); outline-offset:2px; border-radius:6px; }
+  .num { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+  .sobe { color:var(--sobe); } .desce { color:var(--desce); }
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; transition:none !important; } }
 
   /* ── cabeçalho ─────────────────────────────────────────────────────────── */
-  header { position:sticky; top:0; z-index:5; background:var(--fundo);
-           border-bottom:1px solid var(--linha); }
-  .barra { max-width:1560px; margin:0 auto; padding:10px 22px;
-           display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-  .marca { display:flex; align-items:center; gap:9px; text-decoration:none; color:inherit; }
-  .marca .tail { width:26px; height:26px; display:block; color:var(--acento); flex:0 0 auto; }
-  .marca .nome { font-weight:650; letter-spacing:-.015em; font-size:1.02rem; }
-  .marca .nome b { color:var(--acento); font-weight:750; }
-  /* O estado do mercado, que estava no rodapé. Fica encostado à marca e não ao estado do
-     sistema, porque são coisas diferentes: um diz se a BOLSA está aberta, o outro se o SISTEMA
-     está a reportar. Juntá-los faria ler "closed" como avaria. */
-  .mercado { margin-left:18px; display:flex; align-items:baseline; gap:8px;
-             font-size:.82rem; color:var(--fraco); min-width:0; }
-  .mercado .bolsas { font-weight:600; color:var(--tinta); letter-spacing:.01em; }
-  .mercado #mercado, .mercado .det { white-space:nowrap; }
-  .estado { margin-left:auto; display:flex; align-items:center; gap:8px;
-            font-size:.82rem; color:var(--fraco); flex:0 0 auto; }
-  .ponto { width:7px; height:7px; border-radius:50%; background:var(--acento); }
-  .ponto.frio { background:var(--parou); }
+  .topo { position:sticky; top:0; z-index:30; background:color-mix(in srgb,var(--fundo) 88%,transparent);
+          backdrop-filter:saturate(1.6) blur(10px); border-bottom:1px solid var(--linha); }
+  .topo-in { max-width:1680px; margin:0 auto; padding:11px 24px; display:flex;
+             align-items:center; gap:18px; flex-wrap:wrap; }
+  .marca { display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit; }
+  .marca svg { width:28px; height:28px; color:var(--acento); flex:0 0 auto; }
+  .marca b { font-size:1.16rem; font-weight:700; letter-spacing:-.02em; }
+  /* O trocadilho inteiro: inveSTIGATE + alliGATOR. Cinco letras e não uma — a uma letra
+     lê-se como gralha a três metros de distância. */
+  .marca b i { font-style:normal; color:var(--acento); }
+  .bolsa { font-size:.86rem; color:var(--fraco); display:flex; gap:8px; align-items:baseline; }
+  .bolsa b { color:var(--tinta); font-weight:600; }
+  .bolsa .aberto { color:var(--acento); font-weight:600; }
+  .modos { margin-left:auto; display:flex; gap:4px; background:var(--linha2);
+           border-radius:999px; padding:3px; }
+  .modos button { border:0; background:none; padding:6px 15px; border-radius:999px;
+                  font-size:.86rem; font-weight:500; color:var(--fraco); cursor:pointer;
+                  transition:background .15s, color .15s; }
+  .modos button[aria-pressed="true"] { background:var(--caixa); color:var(--tinta);
+                                        box-shadow:var(--sombra); font-weight:600; }
+  .vivo { display:flex; align-items:center; gap:7px; font-size:.8rem; color:var(--fraco);
+          font-family:var(--mono); }
+  .pulso { width:8px; height:8px; border-radius:50%; background:var(--acento); flex:0 0 auto;
+           animation:pulso 2.4s ease-out infinite; }
+  .pulso.frio { background:var(--parou); animation:none; }
+  @keyframes pulso { 0%,100%{box-shadow:0 0 0 0 var(--acento-fraco)} 50%{box-shadow:0 0 0 7px transparent} }
 
-  /* ── estrutura ─────────────────────────────────────────────────────────── */
-  main { max-width:1560px; margin:0 auto; padding:20px 22px 72px; }
-  .colunas { display:grid; grid-template-columns:1fr; gap:32px; align-items:start; }
-  @media (min-width:1100px) {
-    .colunas { grid-template-columns:minmax(0,7fr) minmax(0,5fr); gap:40px; }
-    .direita { position:sticky; top:56px; max-height:calc(100vh - 76px);
-               display:flex; flex-direction:column; }
-  }
-  h2 { font-size:.78rem; text-transform:uppercase; letter-spacing:.09em; color:var(--fraco);
-       font-weight:650; margin:0 0 10px; }
-  .sub { color:var(--fraco); font-size:.85rem; margin:-4px 0 12px; }
-  .vazio { color:var(--fraco); font-style:italic; font-size:.9rem; }
-  section + section { margin-top:38px; }
+  main { max-width:1680px; margin:0 auto; padding:22px 24px 40px; }
 
-  /* ── barra de empresas ─────────────────────────────────────────────────── */
-  .rail { display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; margin:0 0 18px;
-          scrollbar-width:thin; }
-  .tk { flex:0 0 auto; border:1px solid var(--linha); background:var(--caixa); border-radius:7px;
-        padding:6px 10px 5px; cursor:pointer; text-align:left; line-height:1.25;
-        transition:border-color .12s, background .12s; }
-  .tk:hover { border-color:var(--fraco); }
-  .tk[aria-pressed="true"] { border-color:var(--acento); background:var(--acento-fraco); }
-  .tk .cab { display:flex; align-items:center; gap:5px; }
-  /* O logótipo é reconhecimento, não informação: um utilizador encontra a Apple pela maçã mais
-     depressa do que por "AAPL". Por isso fica pequeno e ao lado do ticker, que continua a ser o
-     que identifica sem ambiguidade. `object-fit: contain` porque os doze ficheiros têm rácios
-     diferentes e esticá-los deformaria marcas registadas. */
-  .tk .lg { width:16px; height:16px; object-fit:contain; border-radius:3px; flex:0 0 auto; }
-  .tk b { font-size:.83rem; font-weight:650; letter-spacing:.01em; }
-  .tk s { display:block; font-size:.78rem; text-decoration:none; color:var(--fraco); }
-  .tk s.pos { color:var(--sobe); } .tk s.neg { color:var(--desce); }
-  .tk .flag { display:inline-block; width:5px; height:5px; border-radius:50%;
-              background:var(--parou); margin-left:5px; vertical-align:middle; }
+  /* ── o dia, com a mascote a relatá-lo ──────────────────────────────────── */
+  .hoje { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:22px; align-items:end;
+          margin-bottom:20px; }
+  .balao { position:relative; background:var(--caixa); border:1px solid var(--linha);
+           border-radius:var(--r); padding:18px 22px; box-shadow:var(--sombra); }
+  .balao .dia { font-family:var(--mono); font-size:.76rem; letter-spacing:.1em;
+                text-transform:uppercase; color:var(--fraco); margin-bottom:7px; }
+  .balao p { margin:0; font-size:1.42rem; line-height:1.32; font-weight:500;
+             letter-spacing:-.015em; max-width:44ch; text-wrap:balance; }
+  .balao::after { content:""; position:absolute; right:-9px; bottom:30px; width:16px; height:16px;
+                  background:var(--caixa); border-right:1px solid var(--linha);
+                  border-top:1px solid var(--linha); transform:rotate(45deg); }
+  .mascote { width:168px; height:auto; display:block; flex:0 0 auto;
+             filter:drop-shadow(0 10px 22px #0f121620); }
+  @media (max-width:900px) { .hoje { grid-template-columns:1fr; } .mascote { display:none; }
+                             .balao::after { display:none; } }
 
-  /* ── cabeça da empresa ─────────────────────────────────────────────────── */
-  .quem { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin:0 0 2px; }
-  .quem h1 { font-size:1.5rem; margin:0; letter-spacing:-.022em; font-weight:650; }
-  .quem .tick { color:var(--fraco); font-size:.85rem; letter-spacing:.06em; }
-  .quem .mv { margin-left:auto; font-size:1.5rem; font-weight:650; letter-spacing:-.02em; }
-  .mv.pos { color:var(--sobe); } .mv.neg { color:var(--desce); }
-  .veredicto { font-size:1.02rem; margin:2px 0 16px; max-width:62ch; }
+  /* ── indicadores ───────────────────────────────────────────────────────── */
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:12px;
+          margin-bottom:24px; }
+  .k { background:var(--caixa); border:1px solid var(--linha); border-radius:var(--r);
+       padding:15px 17px; box-shadow:var(--sombra); }
+  .k dt { font-size:.78rem; color:var(--fraco); font-weight:500; margin-bottom:6px; }
+  .k dd { margin:0; font-family:var(--mono); font-size:2rem; font-weight:600; line-height:1;
+          letter-spacing:-.02em; }
+  .k .sub { font-size:.76rem; color:var(--fraco); margin-top:6px; font-family:var(--sans); }
+  .k.destaque dd { color:var(--acento); }
+  /* A barra do dia: doze empresas, cada segmento uma. É o funil inteiro num objeto de 6 px,
+     e o detalhe está no cartão de cada empresa — que é onde a pergunta é feita. */
+  .fita { display:flex; gap:2px; margin-top:9px; height:7px; }
+  .fita span { flex:1; border-radius:2px; background:var(--linha); }
+  .fita span.enviou { background:var(--acento); }
+  .fita span.travou { background:var(--parou); }
 
-  /* ── repartição do movimento ───────────────────────────────────────────── */
-  .rep { margin:0 0 18px; }
-  .rep .barras { display:flex; flex-direction:column; gap:5px; }
-  .rep .l { display:grid; grid-template-columns:66px 1fr 62px; align-items:center; gap:10px;
-            font-size:.82rem; }
-  .rep .l span:first-child { color:var(--fraco); }
-  /* A cor diz o SINAL e nada mais. A primeira versão pintava de verde a parcela que era o
-     motor, e verde já quer dizer "subiu" no resto da página: uma parcela negativa a verde só
-     porque era a maior era uma contradição a olhar para o leitor. O motor distingue-se pelo
-     rótulo a negrito, e a barra pela direcção. */
-  .rep .t { position:relative; height:7px; background:var(--linha2); border-radius:3px; }
-  .rep .t::before { content:""; position:absolute; left:50%; top:-2px; width:1px; height:11px;
-                    background:var(--linha); }
-  .rep .t i { position:absolute; top:0; height:7px; border-radius:3px; background:var(--sobe);
-              min-width:2px; }
-  .rep .t i.neg { background:var(--desce); }
-  .rep .l.motor span:first-child { color:var(--tinta); font-weight:600; }
-  .rep .eixo { color:var(--fraco); font-size:.72rem; text-align:center; margin:3px 0 0;
-               letter-spacing:.04em; }
-  .rep .v { text-align:right; font-variant-numeric:tabular-nums; }
-  .rep .nota { color:var(--fraco); font-size:.82rem; margin:8px 0 0; }
+  /* ── grelha principal ──────────────────────────────────────────────────── */
+  .grelha { display:grid; grid-template-columns:minmax(0,1fr); gap:22px; }
+  @media (min-width:1180px) { .grelha { grid-template-columns:minmax(0,1fr) 400px; } }
+  @media (min-width:1520px) { .grelha { grid-template-columns:minmax(0,1fr) 460px; } }
 
-  /* ── gráfico ───────────────────────────────────────────────────────────── */
-  #grafico { height:clamp(280px, 34vh, 430px); border:1px solid var(--linha); border-radius:9px;
-             background:var(--caixa); display:flex; align-items:center; justify-content:center;
-             color:var(--fraco); font-size:.85rem; }
-  .legenda { color:var(--fraco); font-size:.82rem; margin:9px 0 0;
-             display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
-  .chave { display:inline-flex; align-items:center; gap:6px; }
-  /* ⚠️ OS SIMBOLOS DA LEGENDA TEM DE SER OS MESMOS QUE O GRAFICO DESENHA, e nao eram.
-     O grafico marca um alerta enviado com uma SETA PARA BAIXO (shape:"arrowDown") e a legenda
-     mostrava um quadrado; marca um dia assinalado com um circulo VERDE ou VERMELHO conforme a
-     direcao do movimento, e a legenda mostrava um circulo cinzento. Ou seja: das duas marcas
-     que o grafico usa, nenhuma aparecia na legenda com a forma certa, e a cor de uma delas
-     carregava sentido que nada explicava. E a mesma classe de defeito que a legenda do funil
-     tinha na 2.a parte da sessao 61: duas contas do mesmo facto a discordar no mesmo ecra. */
-  .chave i { width:8px; height:8px; border-radius:50%; display:block; background:var(--fraco); }
-  .chave i.sobe { background:var(--sobe); }
-  .chave i.desce { background:var(--desce); }
-  .chave i.env { width:0; height:0; border-radius:0; background:none;
-                 border-left:5px solid transparent; border-right:5px solid transparent;
-                 border-top:7px solid var(--acento); }
+  /* ── empresas ──────────────────────────────────────────────────────────── */
+  .titulo { display:flex; align-items:baseline; gap:12px; margin:0 0 12px; }
+  .titulo h2 { font-size:1.06rem; }
+  .titulo .nota { font-size:.82rem; color:var(--fraco); }
+  .titulo .direita { margin-left:auto; display:flex; gap:8px; align-items:center; }
+  .e-grelha { display:grid; grid-template-columns:repeat(auto-fill,minmax(178px,1fr)); gap:12px; }
+  .e { position:relative; text-align:left; width:100%; background:var(--caixa); cursor:pointer;
+       border:1px solid var(--linha); border-radius:var(--r); padding:14px 15px 13px;
+       box-shadow:var(--sombra); transition:transform .16s cubic-bezier(.2,.8,.3,1),
+       border-color .16s, box-shadow .16s; }
+  .e:hover { transform:translateY(-3px); border-color:var(--tinta2);
+             box-shadow:0 2px 4px #0f121610, 0 14px 34px #0f121618; }
+  .e[aria-pressed="true"] { border-color:var(--acento); box-shadow:0 0 0 2px var(--acento-fraco); }
+  .e-topo { display:flex; align-items:center; gap:10px; margin-bottom:11px; }
+  .e-logo { width:34px; height:34px; border-radius:9px; object-fit:contain; background:#fff;
+            padding:3px; flex:0 0 auto; border:1px solid var(--linha2); }
+  .e-nome { min-width:0; }
+  .e-nome b { display:block; font-size:.95rem; font-weight:600; overflow:hidden;
+              text-overflow:ellipsis; white-space:nowrap; }
+  .e-nome span { font-family:var(--mono); font-size:.72rem; color:var(--fraco);
+                 letter-spacing:.04em; }
+  .e-mv { font-family:var(--mono); font-size:1.5rem; font-weight:600; letter-spacing:-.02em;
+          line-height:1; }
+  .e-pe { display:flex; align-items:center; gap:7px; margin-top:10px; font-size:.76rem;
+          color:var(--fraco); }
+  .sinal { width:9px; height:9px; border-radius:50%; flex:0 0 auto; background:var(--linha); }
+  .sinal.enviou { background:var(--acento); box-shadow:0 0 0 3px var(--acento-fraco); }
+  .sinal.travou { background:var(--parou); box-shadow:0 0 0 3px var(--parou-fraco); }
+  /* A faísca: um ano de fechos em 44 px. Não tem eixos nem números de propósito — é forma, e a
+     leitura exata está no gráfico do detalhe. */
+  .e-faisca { display:block; width:100%; height:26px; margin-top:11px; overflow:visible; }
 
-  /* ── acontecimentos ────────────────────────────────────────────────────── */
-  .dias { margin:16px 0 0; border-top:1px solid var(--linha2); max-height:280px; overflow-y:auto; }
-  .dia { display:grid; grid-template-columns:92px 1fr auto; gap:10px; align-items:baseline;
-         width:100%; text-align:left; background:none; border:0;
-         border-bottom:1px solid var(--linha2); padding:8px 8px 8px 2px; cursor:pointer;
-         font-size:.86rem; }
-  .dia:hover { background:var(--linha2); }
-  .dia[aria-pressed="true"] { background:var(--acento-fraco);
-                              box-shadow:inset 2px 0 0 var(--acento); }
-  .dia .quando { color:var(--fraco); font-variant-numeric:tabular-nums; }
-  .dia .z { color:var(--fraco); font-size:.8rem; }
-  .dia .quieto { color:var(--fraco); }
-  .dia .selo { color:var(--acento); font-weight:600; font-size:.78rem;
-               text-transform:uppercase; letter-spacing:.05em; }
-  @keyframes surge { from { opacity:0; transform:translateY(-3px); } }
-  .detalhe { animation:surge .14s ease-out; border:1px solid var(--linha);
-             border-left:2px solid var(--acento);
-             border-radius:0 8px 8px 0; background:var(--caixa); padding:12px 14px;
-             margin:14px 0 0; }
-  @media (prefers-reduced-motion: reduce) { .detalhe { animation:none; } }
-  .detalhe .quando { color:var(--fraco); font-size:.78rem; letter-spacing:.04em; }
+  /* ⚠️ `[hidden]` é um atributo, e a folha por omissão do browser aplica-lhe `display:none`
+     com especificidade ZERO. Qualquer regra nossa com um `display` — `.hoje{display:grid}`,
+     `.kpis{display:grid}` — ganha-lhe, e o elemento fica escondido no DOM e visível no ecrã.
+     Foi exactamente o que aconteceu com a vista de histórico: o `hidden` estava lá, o teste
+     dizia que estava lá, e as duas vistas apareciam ao mesmo tempo. */
+  [hidden] { display:none !important; }
 
-  /* ── mensagens ─────────────────────────────────────────────────────────── */
-  .filtro { display:flex; gap:6px; margin:0 0 12px; }
-  .filtro button { border:1px solid var(--linha); background:var(--caixa); border-radius:6px;
-                   padding:3px 10px; font-size:.8rem; cursor:pointer; }
-  .filtro button[aria-pressed="true"] { border-color:var(--acento); background:var(--acento-fraco);
-                                        font-weight:600; }
-  .feed { overflow-y:auto; flex:1; min-height:0; padding-right:4px; }
-  .msg { border-bottom:1px solid var(--linha2); padding:12px 2px; }
-  .msg:first-child { padding-top:0; }
-  .msg .cab { display:flex; gap:8px; align-items:baseline; font-size:.78rem; color:var(--fraco); }
-  .msg .cab b { color:var(--tinta); font-weight:650; letter-spacing:.02em; }
-  .msg .tipo { margin-left:auto; text-transform:uppercase; letter-spacing:.06em; font-size:.68rem;
-               border:1px solid var(--linha); border-radius:4px; padding:0 5px; }
-  .msg .cabeca { margin:5px 0 0; font-weight:550; }
-  .msg .agora { color:var(--fraco); font-size:.84rem; margin:3px 0 0; }
-  .msg details { margin:7px 0 0; }
-  .msg summary { color:var(--fraco); font-size:.8rem; cursor:pointer; width:max-content; }
-  .msg summary:hover { color:var(--acento); }
-  .mais { display:block; width:100%; margin:14px 0 0; padding:8px; cursor:pointer;
-          border:1px solid var(--linha); border-radius:7px; background:var(--caixa);
-          color:var(--fraco); font-size:.82rem; }
-  .mais:hover { border-color:var(--acento); color:var(--acento); }
-  .msg pre { margin:8px 0 0; white-space:pre-wrap; word-wrap:break-word; color:var(--tinta);
-             font:.82rem/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-             border-left:1px solid var(--linha); padding-left:11px; }
+  /* ── legenda: toda a cor e todo o sinal são explicados ─────────────────── */
+  .legenda { display:flex; flex-wrap:wrap; gap:7px 18px; margin:14px 0 0; padding:12px 15px;
+             background:var(--linha2); border-radius:var(--r2); font-size:.79rem;
+             color:var(--fraco); }
+  .legenda i { font-style:normal; display:inline-flex; align-items:center; gap:7px; }
+  /* ⚠️ Os símbolos da legenda são desenhados com a MESMA forma que o gráfico usa. Uma legenda
+     que mostra um círculo para uma seta não é uma imprecisão: ensina errado, e o leitor sai
+     com a ideia trocada sem nunca ver um erro. */
+  .legenda .seta { width:0; height:0; border-left:5px solid transparent;
+                   border-right:5px solid transparent; }
+  .legenda .seta.sobe { border-bottom:8px solid var(--sobe); }
+  .legenda .seta.desce { border-top:8px solid var(--desce); }
+  .legenda-graf { margin:10px 0 0; }
+  .nota-mercado { margin:10px 0 0; font-size:.78rem; color:var(--fraco);
+                  font-family:var(--mono); }
+  .legenda .quad { width:8px; height:8px; background:var(--fraco); border-radius:2px;
+                   flex:0 0 auto; }
+  .legenda .tracejado { width:16px; height:0; border-top:2px dashed var(--fraco); flex:0 0 auto; }
 
-  /* ── funil ─────────────────────────────────────────────────────────────── */
-  /* ⚠️ Uma grelha de colunas deixava buracos enormes: as etapas têm alturas muito
-     diferentes (uma empresa numa, sete noutra) e o CSS grid não as encaixa, empurra-as para
-     a linha seguinte e deixa metade do ecrã vazio. Só se viu ao capturar a figura.
-     Uma lista de linhas é também a forma certa: um funil lê-se de cima para baixo, pela
-     ordem em que as decisões acontecem. */
-  .funil { display:block; }
-  .etapa { display:grid; grid-template-columns:minmax(150px,210px) 1fr; gap:6px 20px;
-           padding:10px 0; border-top:1px solid var(--linha2); align-items:baseline; }
-  .etapa h3 { font-size:.88rem; margin:0; font-weight:600;
-              display:flex; align-items:baseline; gap:7px; }
-  .etapa h3 .n { color:var(--fraco); font-weight:400; font-size:.8rem; }
-  .etapa .porque { grid-column:1; color:var(--fraco); font-size:.78rem; margin:0; }
-  .etapa .nomes { grid-column:2; grid-row:1 / span 2; }
-  @media (max-width:640px) {
-    .etapa { grid-template-columns:1fr; }
-    .etapa .porque, .etapa .nomes { grid-column:1; grid-row:auto; }
-  }
-  .nomes { display:flex; flex-wrap:wrap; gap:5px; }
-  .nome { border:1px solid var(--linha); border-radius:5px; padding:2px 7px; font-size:.79rem;
-          background:var(--caixa); }
-  .nome b { font-weight:600; } .nome span { color:var(--fraco); }
-  .nome.eu { border-color:var(--acento); background:var(--acento-fraco); }
-  .etapa.passou { border-top-color:var(--acento); }
-  .etapa.passou h3 { color:var(--acento); }
+  /* ── o registo, na vista de histórico ───────────────────────────────────── */
+  .hist { margin-bottom:20px; }
+  .hist-cx { background:var(--caixa); border:1px solid var(--linha); border-radius:var(--r);
+             box-shadow:var(--sombra); padding:16px 18px; }
+  .hist-barras { display:flex; align-items:flex-end; gap:2px; height:132px;
+                 overflow-x:auto; padding-bottom:2px; }
+  .hist-d { flex:1 1 0; min-width:11px; max-width:46px; display:flex; flex-direction:column;
+            justify-content:flex-end; gap:1px; background:none; border:0; padding:0;
+            cursor:pointer; height:100%; border-radius:3px 3px 0 0; }
+  .hist-d:hover { background:var(--linha2); }
+  .hist-d[aria-pressed="true"] { background:var(--acento-fraco); outline:1px solid var(--acento); }
+  .hist-d i { display:block; border-radius:2px 2px 0 0; }
+  .hist-d .n { font-family:var(--mono); font-size:.6rem; color:var(--fraco);
+               text-align:center; padding-top:3px; }
 
-  /* No telemóvel, o cabeçalho fixo estava a comer 98 px (12% do ecrã) porque a assinatura da
-     marca empurrava o estado para uma segunda linha. Numa página que se lê a rolar, a barra
-     fixa é imposto puro: fica a marca e o estado, numa linha só. */
-  @media (max-width:640px) {
-    /* No telemóvel a barra fixa é imposto puro: fica a marca, se a bolsa está aberta, e o
-       estado do sistema. O "opens Mon 09:30 EDT" é detalhe e sai. */
-    .mercado { margin-left:12px; gap:6px; }
-    .mercado .bolsas, .mercado .det { display:none; }
-    .barra { padding:8px 16px; flex-wrap:nowrap; }
-    main { padding:14px 16px 56px; }
-  }
+  /* ── camadas do gráfico ─────────────────────────────────────────────────── */
+  .camadas { display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center;
+             margin:0 0 10px; font-size:.79rem; color:var(--tinta2); }
+  .cx { display:inline-flex; align-items:center; gap:6px; cursor:pointer;
+        user-select:none; }
+  .cx input { accent-color:var(--acento); width:14px; height:14px; cursor:pointer; margin:0; }
+  .cx.inerte { opacity:.42; cursor:default; }
+  .cx.inerte input { cursor:default; }
+  .cx-nota { color:var(--fraco); font-size:.74rem; }
+  .d-z { margin-top:8px; border:1px solid var(--linha2); border-radius:var(--r2);
+         overflow:hidden; height:108px; }
+  /* O ponto da legenda existe fora do funil também; sem isto herdava largura zero e a legenda
+     do modal ficava com três palavras e nenhum símbolo. */
+  .legenda .p { width:9px; height:9px; border-radius:50%; flex:0 0 auto; }
 
-  footer { max-width:1560px; margin:0 auto; padding:22px; border-top:1px solid var(--linha);
-           color:var(--fraco); font-size:.82rem; display:flex; gap:18px; flex-wrap:wrap; }
+  /* ── feed do canal ─────────────────────────────────────────────────────── */
+  .f-cartao { background:var(--caixa); border:1px solid var(--linha); border-radius:var(--r);
+              box-shadow:var(--sombra); overflow:hidden; }
+  .f-topo { padding:15px 17px 12px; border-bottom:1px solid var(--linha2); }
+  .f-lista { max-height:min(72vh,860px); overflow-y:auto; }
+  .f-item { width:100%; text-align:left; background:none; border:0; cursor:pointer;
+            border-bottom:1px solid var(--linha2); padding:13px 17px; display:block;
+            transition:background .13s; }
+  .f-item:hover { background:var(--linha2); }
+  .f-mais { width:100%; background:none; border:0; border-top:1px solid var(--linha);
+            padding:14px 17px; cursor:pointer; font:inherit; font-size:.82rem;
+            color:var(--fraco); text-align:center; }
+  .f-mais:hover { background:var(--linha2); color:var(--tinta); }
+  .f-cab { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+  .f-cab b { font-family:var(--mono); font-size:.78rem; letter-spacing:.03em; }
+  .f-cab time { font-size:.72rem; color:var(--fraco); font-family:var(--mono); }
+  .selo { margin-left:auto; font-size:.65rem; font-weight:600; letter-spacing:.07em;
+          text-transform:uppercase; padding:2px 7px; border-radius:5px;
+          background:var(--linha2); color:var(--fraco); }
+  .selo.news { background:var(--acento-fraco); color:var(--acento); }
+  .f-item p { margin:0; font-size:.88rem; line-height:1.42; color:var(--tinta2);
+              display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
+              overflow:hidden; }
+  .f-votos { margin-top:7px; font-size:.74rem; color:var(--fraco); font-family:var(--mono); }
+  .f-novo { animation:entrar .5s cubic-bezier(.2,.8,.3,1); }
+  @keyframes entrar { from { opacity:0; transform:translateY(-9px); } }
+
+  /* ── detalhe da empresa ────────────────────────────────────────────────── */
+  .d { background:var(--caixa); border:1px solid var(--linha); border-radius:var(--r);
+       box-shadow:var(--sombra); padding:20px 22px; margin-top:22px; }
+  .d-cab { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
+  .d-cab img { width:44px; height:44px; border-radius:11px; object-fit:contain; background:#fff;
+               padding:4px; border:1px solid var(--linha2); }
+  .d-cab h2 { font-size:1.5rem; }
+  .d-cab .tick { font-family:var(--mono); font-size:.8rem; color:var(--fraco); }
+  .d-cab .mv { margin-left:auto; font-family:var(--mono); font-size:1.8rem; font-weight:600;
+               letter-spacing:-.02em; }
+  .d-ver { font-size:1.02rem; color:var(--tinta2); margin:0 0 16px; max-width:76ch; }
+  .d-rep { display:grid; gap:6px; margin-bottom:6px; }
+  .d-lin { display:grid; grid-template-columns:88px minmax(0,1fr) 74px; gap:12px;
+           align-items:center; font-size:.86rem; }
+  .d-lin .rot { color:var(--fraco); } .d-lin .rot.motor { color:var(--tinta); font-weight:600; }
+  .d-pista { position:relative; height:11px; background:var(--linha2); border-radius:4px; }
+  .d-pista i { position:absolute; top:0; bottom:0; border-radius:4px; display:block;
+               transition:width .5s cubic-bezier(.2,.8,.3,1); }
+  .d-pista::before { content:""; position:absolute; left:50%; top:-3px; bottom:-3px; width:1px;
+                     background:var(--linha); }
+  .d-lin .val { text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums; }
+  .d-nota { font-size:.78rem; color:var(--fraco); text-align:center; margin:2px 0 14px; }
+  .d-graf { position:relative; height:340px; border:1px solid var(--linha2); border-radius:var(--r2);
+            overflow:hidden; }
+  .intervalos { display:flex; gap:4px; }
+  .intervalos button { border:1px solid var(--linha); background:var(--caixa); border-radius:8px;
+                       padding:4px 11px; font-size:.78rem; font-family:var(--mono);
+                       color:var(--fraco); cursor:pointer; transition:.14s; }
+  .intervalos button[aria-pressed="true"] { background:var(--acento); border-color:var(--acento);
+                                            color:#fff; font-weight:600; }
+  .d-dias { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+  .dia-b { border:1px solid var(--linha); background:var(--caixa); border-radius:8px;
+           padding:4px 9px; font-family:var(--mono); font-size:.75rem; cursor:pointer;
+           display:inline-flex; align-items:center; gap:6px; transition:.14s; }
+  .dia-b:hover { border-color:var(--tinta2); }
+  .dia-b .p { width:7px; height:7px; border-radius:50%; }
+
+  /* ── modal ─────────────────────────────────────────────────────────────── */
+  .m { border:0; padding:0; border-radius:var(--r); background:var(--caixa); color:var(--tinta);
+       max-width:min(720px,94vw); width:100%; box-shadow:0 24px 70px #0f121633; }
+  .m::backdrop { background:#0f1216aa; backdrop-filter:blur(3px); }
+  .m[open] { animation:sobe .22s cubic-bezier(.2,.8,.3,1); }
+  @keyframes sobe { from { opacity:0; transform:translateY(14px) scale(.985); } }
+  .m-topo { display:flex; align-items:center; gap:12px; padding:18px 22px 14px;
+            border-bottom:1px solid var(--linha2); }
+  .m-topo h3 { font-size:1.12rem; }
+  .m-fechar { margin-left:auto; border:1px solid var(--linha); background:var(--caixa);
+              border-radius:9px; width:32px; height:32px; cursor:pointer; font-size:1.05rem;
+              line-height:1; color:var(--fraco); }
+  .m-corpo { padding:18px 22px 22px; max-height:70vh; overflow-y:auto; }
+  .m-corpo h4 { font-family:var(--mono); font-size:.74rem; letter-spacing:.1em;
+                text-transform:uppercase; color:var(--fraco); margin:18px 0 8px; font-weight:500; }
+  .m-corpo h4:first-child { margin-top:0; }
+  .m-corpo p { margin:0 0 10px; font-size:.92rem; line-height:1.55; color:var(--tinta2); }
+  /* O texto EXATO que o Telegram recebeu. Monoespaçado e pré-formatado de propósito: é uma
+     prova, não uma citação — e a promessa da página é que não é reescrito. */
+  .m-exato { font-family:var(--mono); font-size:.8rem; line-height:1.55; white-space:pre-wrap;
+             word-break:break-word; background:var(--linha2); border-radius:var(--r2);
+             padding:14px 16px; margin:0; }
+  .m-exato a { color:var(--acento); text-underline-offset:2px; }
+  .m-passos { list-style:none; margin:0; padding:0; }
+  .m-passos li { display:grid; grid-template-columns:14px 1fr; gap:11px; padding:8px 0;
+                 border-bottom:1px solid var(--linha2); font-size:.9rem; }
+  .m-passos li:last-child { border-bottom:0; }
+  .m-passos .p { width:9px; height:9px; border-radius:50%; margin-top:6px; background:var(--linha); }
+  .m-passos b { font-weight:600; } .m-passos span { color:var(--fraco); }
+
+  .rodape { max-width:1680px; margin:0 auto; padding:26px 24px 44px; color:var(--fraco);
+            font-size:.82rem; border-top:1px solid var(--linha); display:flex; gap:8px 22px;
+            flex-wrap:wrap; }
+  .vazio { color:var(--fraco); font-size:.88rem; padding:22px 17px; margin:0; }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="barra">
-    <!-- O aria-label também levava a assinatura, e para quem usa um leitor de ecrã isso é
-         exactamente uma segunda vez: ouve-a como nome do link e volta a encontrá-la nos títulos
-         das duas secções. O que o link precisa de dizer é para onde vai. -->
+<header class="topo">
+  <div class="topo-in">
     <a class="marca" href="/" aria-label="InvestiGator, home">
-      <!-- A marca por extenso: o glifo "The Tail" mais o nome, que é o que o autor pediu ao
-           rever a página — o ícone sozinho não diz o nome a quem chega. As duas peças já
-           existiam em `app/assets/` (logo.svg e logo-wordmark.svg) e nunca tinham sido postas
-           juntas no produto.
-
-           Desenhado aqui em linha, e não com <img>, por uma razão concreta: um SVG carregado
-           por <img> não herda a cor do texto, portanto teria de haver duas cópias (clara e
-           escura) que alguém teria de manter sincronizadas. Assim a tinta é `currentColor` e
-           acompanha o tema, e o verde é o mesmo `--acento` do resto da página.
-
-           O "G" a verde é o trocadilho inteiro, e é a única letra colorida: inveSTIGATE +
-           alliGATOR. -->
-      <svg class="tail" viewBox="0 0 256 256" aria-hidden="true">
+      <!-- A marca é a CAUDA, desenhada em linha para herdar a cor do tema. O jacaré da mascote
+           é outra coisa e vive no cartão do dia: um é a marca, o outro é a personagem. -->
+      <svg viewBox="0 0 256 256" aria-hidden="true">
         <path d="M22 206 C 74 202, 122 180, 158 142 C 182 116, 202 86, 226 52
                  L 214 46 L 202 70 L 186 60 L 170 88 L 152 78 L 134 108 L 112 98
                  L 92 130 L 66 120 L 44 154 L 16 146 Z" fill="currentColor"/>
       </svg>
-      <span class="nome">Investi<b>G</b>ator</span>
+      <b>Investi<i>Gator</i></b>
     </a>
-    <!-- ⚠️ A ASSINATURA "what was sent, and what was not" SAIU DAQUI, e sair é o que o critério
-         H1 pede. Ele diz que a promessa aparece UMA vez; aparecia duas, porque a página inteira
-         já é a promessa: as duas secções chamam-se "What was sent" e "Why it stayed quiet". Pô-la
-         também por baixo do nome era repeti-la em palavras ao lado da estrutura que a cumpre.
-         O próprio `app/assets/logo-lockup.svg` já tinha a decisão escrita no cabeçalho: "SEM
-         assinatura, de propósito ... para capas há a variante -tagline". A página contradizia o
-         ficheiro da própria marca. Fica no <title>, que é a identidade do separador e não uma
-         segunda afirmação no ecrã. -->
-    <div class="mercado">
-      <!-- As doze empresas vigiadas são das duas bolsas, e dizer QUAL o utilizador está a ver é
-           a informação em falta: um "closed" sem bolsa não diz de onde. Estava só no rodapé, ou
-           seja fora de vista numa página que se lê a rolar; passa para cima e SAI do rodapé, em
-           vez de ficar nos dois sítios. -->
-      <span class="bolsas">NASDAQ&nbsp;·&nbsp;NYSE</span>
-      <span id="mercado">…</span><span id="mercado-det" class="det"></span>
+    <div class="bolsa"><b>NASDAQ&nbsp;·&nbsp;NYSE</b><span id="mercado">…</span></div>
+    <div class="modos" role="group" aria-label="View">
+      <button id="mHoje" aria-pressed="true">Today</button>
+      <button id="mHist" aria-pressed="false">History</button>
     </div>
-    <div class="estado"><span class="ponto" id="ponto"></span><span id="estado">loading…</span></div>
+    <div class="vivo"><span class="pulso" id="pulso"></span><span id="estado">loading…</span></div>
   </div>
 </header>
 
 <main>
-  <div class="rail" id="rail" role="group" aria-label="Companies"></div>
-
-  <div class="colunas">
-    <div class="esquerda">
-      <section aria-label="The selected company">
-        <div class="quem">
-          <h1 id="nome">…</h1><span class="tick" id="tick"></span>
-          <span class="mv" id="mv"></span>
-        </div>
-        <p class="veredicto" id="veredicto"></p>
-        <div class="rep" id="rep"></div>
-        <div id="grafico">drawing the last year of sessions…</div>
-        <p class="legenda" id="legenda"></p>
-        <div class="dias" id="dias"></div>
-        <div id="detalhe"></div>
-      </section>
+  <section class="hoje" id="secHoje" aria-label="Today">
+    <div class="balao">
+      <div class="dia" id="dataHoje">—</div>
+      <p id="frase">Reading the day…</p>
+      <p class="nota-mercado" id="notaMercado"></p>
     </div>
-
-    <div class="direita">
-      <h2>What was sent</h2>
-      <p class="sub">The exact text that reached the phone. Nothing is rewritten.</p>
-      <div class="filtro" id="filtro"></div>
-      <div class="feed" id="alertas"><p class="vazio">loading…</p></div>
-    </div>
-  </div>
-
-  <section>
-    <h2>Why it stayed quiet</h2>
-    <p class="sub" id="funilSub">
-      Nine out of ten scans send nothing. Silence is a decision, so here is where each company
-      stopped, in the order the decisions are taken.
-    </p>
-    <div class="funil" id="funil"><p class="vazio">loading…</p></div>
+    <img class="mascote" id="mascote" src="/assets/mascote-plano-small.png"
+         alt="" width="380" height="337">
   </section>
+
+  <dl class="kpis" id="kpis"></dl>
+
+  <!-- ⚠️ O botão «History» escondia a mascote e os indicadores e não mostrava mais nada. Era
+       subtractivo: a vista mudava tirando coisas, e por isso ninguém percebia o que o botão
+       fazia — o autor disse-o por escrito. Passa a ter assunto próprio: o registo do canal ao
+       longo do tempo, que é a pergunta que «hoje» não responde. -->
+  <section class="hist" id="secHist" aria-label="The record so far" hidden>
+    <div class="titulo"><h2>The record so far</h2>
+      <span class="nota" id="histNota"></span></div>
+    <dl class="kpis" id="histKpis"></dl>
+    <div class="hist-cx">
+      <div class="titulo" style="margin:0 0 10px">
+        <h2 style="font-size:.94rem">Alerts per day</h2>
+        <span class="nota">click a day to read what went out that day</span>
+      </div>
+      <div class="hist-barras" id="histBarras"></div>
+      <p class="legenda" style="margin-top:12px">
+        <i><span class="p" style="background:var(--acento)"></span> news alert</i>
+        <i><span class="p" style="background:var(--parou)"></span> market alert</i>
+        <i>the taller the bar, the more the channel said that day</i>
+      </p>
+    </div>
+  </section>
+
+  <div class="grelha">
+    <div id="colEsq">
+      <div class="titulo">
+        <h2>Watchlist</h2>
+        <span class="nota" id="notaEmpresas"></span>
+      </div>
+      <div class="e-grelha" id="empresas"></div>
+      <p class="legenda" aria-label="Legend">
+        <i><span class="sinal enviou"></span> alert delivered</i>
+        <i><span class="sinal travou"></span> flagged, stopped at a gate</i>
+        <i><span class="sinal"></span> nothing unusual</i>
+        <i><span class="num sobe">+0.00%</span> up on the day</i>
+        <i><span class="num desce">−0.00%</span> down on the day</i>
+        <i>the small line is one year of closes</i>
+      </p>
+      <div id="detalhe"></div>
+    </div>
+
+    <aside class="f-cartao" aria-label="What was sent">
+      <div class="f-topo">
+        <div class="titulo" style="margin:0">
+          <h2>What was sent</h2>
+          <span class="direita intervalos">
+            <button id="fTodos" aria-pressed="true">All</button>
+            <button id="fEmpresa" aria-pressed="false">This company</button>
+          </span>
+        </div>
+        <p class="nota" style="margin:6px 0 0;font-size:.8rem;color:var(--fraco)">
+          The exact text that reached the phone, frozen at the moment it was sent — so a
+          percentage here will differ from the same company's card above, which shows the day
+          as it stands now. Click one to read it as it was sent.</p>
+      </div>
+      <div class="f-lista" id="feed"><p class="vazio">loading…</p></div>
+    </aside>
+  </div>
 </main>
 
-<footer>
+<footer class="rodape">
   <span>Observed past outcomes. Never a price prediction, never advice.</span>
   <span id="rodape"></span>
 </footer>
 
+<dialog class="m" id="modal" aria-labelledby="mTit">
+  <div class="m-topo"><h3 id="mTit">Detail</h3>
+    <button class="m-fechar" id="mFechar" aria-label="Close">✕</button></div>
+  <div class="m-corpo" id="mCorpo"></div>
+</dialog>
+
 <script src="/assets/vendor/lightweight-charts.js"></script>
 <script>
-// As portas pela ORDEM em que acontecem. É o ponto da última secção: ver o funil como etapas de
-// um caminho, e não como uma lista solta de razões.
+"use strict";
+
+// ── portas do funil, pela ordem em que acontecem ─────────────────────────────
+// A ordem é a informação: quem parou na porta k passou por todas as anteriores, e é isso que
+// permite escrever o percurso de uma empresa em palavras dentro do modal.
+// ⚠️ Cada porta tem DUAS palavras, e a distinção não é cosmética.
+//
+// A coluna do meio é o nome da **rejeição** — é o que se diz quando a empresa parou ali, e é o
+// que aparece no cartão da empresa. A última coluna é o nome do **portão atravessado** — é o
+// que se diz quando a empresa passou por ali.
+//
+// Com uma só coluna, a lista lia-se ao contrário: uma empresa que passou por «No news at all»
+// ficava com «No news at all» escrito na lista, o que diz exactamente o oposto do que
+// aconteceu. Era o mesmo defeito que levou o autor a dizer «continuo sem perceber» da v6, a
+// aparecer outra vez noutro sítio.
 const ETAPAS = [
-  ["no_news",           "No news at all",         "the source returned nothing for this company"],
-  ["none_relevant",     "Nothing relevant",       "news arrived, but none of it named the company"],
-  ["stale",             "Too old",                "the newest relevant headline is past the freshness window"],
-  ["weak_precedent",    "No strong past case",    "no past headline was similar enough to be worth showing"],
-  ["triage_suppressed", "Below the volume floor", "the learned model scored it below the floor"],
-  ["ladder_floor",      "Second alert cost more", "an extra alert for the same company must clear a higher bar"],
-  ["duplicate_story",   "Same story, other words","already sent today under a different headline"],
-  ["already_sent",      "Already sent",           "this exact headline had already gone out today"],
-  ["daily_budget",      "Daily budget spent",     "the five slots for the day were already used"],
-  ["error",             "Error",                  "something failed while processing this company"],
-  ["alerted",           "Alert sent",             "cleared every gate and was delivered"],
+  ["no_news",           "No news at all",         "the source returned nothing for this company",
+                        "There was news"],
+  ["none_relevant",     "Nothing relevant",       "news arrived, but none of it named the company",
+                        "Some of it named this company"],
+  ["stale",             "Too old",                "the newest relevant headline is past the freshness window",
+                        "The headline was recent enough"],
+  ["weak_precedent",    "No strong past case",    "no past headline was similar enough to be worth showing",
+                        "A comparable past case existed"],
+  ["triage_suppressed", "Below the volume floor", "the learned model scored it below the floor",
+                        "It cleared the volume floor"],
+  ["ladder_floor",      "Second alert cost more", "an extra alert for the same company must clear a higher bar",
+                        "It cleared the bar for a second alert"],
+  ["duplicate_story",   "Same story, other words","already sent today under a different headline",
+                        "It was not the same story again"],
+  ["already_sent",      "Already sent",           "this exact headline had already gone out today",
+                        "It had not gone out already"],
+  ["daily_budget",      "Daily budget spent",     "the five slots for the day were already used",
+                        "A slot was still free"],
+  ["error",             "Error",                  "something failed while processing this company",
+                        "Nothing failed"],
+  ["alerted",           "Alert sent",             "cleared every gate and was delivered",
+                        "Alert sent"],
 ];
+const ORDEM = new Map(ETAPAS.map(([k], i) => [k, i]));
+const ROTULO = new Map(ETAPAS.map(([k, t]) => [k, t]));
+const PORQUE = new Map(ETAPAS.map(([k, , p]) => [k, p]));
+
+// O registo do funil é escrito em português pelo runner (é um log interno). A interface é em
+// inglês; traduz-se SÓ para mostrar, e o registo fica como está, porque é a prova.
+const DETALHE = [
+  [/^melhor sim ([\d.]+) < ([\d.]+)$/, m => `best match ${m[1]}, floor ${m[2]}`],
+  [/^P=([\d.]+) < ([\d.]+)$/,          m => `scored ${m[1]}, floor ${m[2]}`],
+  [/^mais recente (\S+) > (\d+)d$/,    m => `newest is ${m[1]}, ${m[2]} days past the window`],
+  [/^same story, other words$/,        () => "sent under another headline"],
+  [/^budget (\d+)\/day spent$/,        m => `all ${m[1]} slots for the day were used`],
+  [/^cap (\d+)\/day reached$/,         m => `cap of ${m[1]} reached`],
+  [/^(\d+) manchete\(s\) brutas$/,     m => `${m[1]} headlines, none about this company`],
+];
+const legivel = d => { for (const [rx, f] of DETALHE) { const m = rx.exec(d || ""); if (m) return f(m); }
+                       return d || ""; };
 
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c =>
   ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+const pct = v => (v == null || Number.isNaN(v)) ? "—"
+  : `${v >= 0 ? "+" : "−"}${Math.abs(v * 100).toFixed(2)}%`;
+const cls = v => v > 0 ? "sobe" : v < 0 ? "desce" : "";
+const $ = s => document.querySelector(s);
 
-// O registo do funil é escrito em português pelo runner (é um log interno). A interface é em
-// inglês, e misturar as duas línguas no mesmo ecrã é confuso. Traduz-se **só para mostrar**; o
-// registo fica como está, porque é a prova.
-const DETALHE = [
-  [/^melhor sim ([\d.]+) < ([\d.]+)$/,  m => `best match ${m[1]}, floor ${m[2]}`],
-  [/^P=([\d.]+) < ([\d.]+)$/,           m => `scored ${m[1]}, floor ${m[2]}`],
-  [/^mais recente (\S+) > (\d+)d$/,     m => `newest is ${m[1]}, past ${m[2]} days`],
-  [/^same story, other words$/,         () => "sent under another headline"],
-  [/^budget (\d+)\/day spent$/,         m => `all ${m[1]} slots used`],
-  [/^cap (\d+)\/day reached$/,          m => `cap of ${m[1]} reached`],
-  [/^(\d+) manchete\(s\) brutas$/,      m => `${m[1]} headlines, none relevant`],
+// ⚠️ Regressão medida no browser a 2026-08-20: ZERO ligações reais em 25 alertas.
+// O texto do alerta traz a fonte já em HTML — `<a href="…">Zacks Investment Research</a>` — e
+// é escapado antes de entrar na página, porque vem de fora. O escape transforma as aspas em
+// `&quot;`, portanto um padrão que procure aspas literais nunca casa, e o leitor fica a ver a
+// etiqueta impressa em vez da ligação. Estas duas funções fecham o ciclo: reconhecem a forma
+// escapada e decidem o que fazer com ela.
+const LIGACAO = /&lt;a href=(?:&quot;|")([\s\S]*?)(?:&quot;|")&gt;([\s\S]*?)&lt;\/a&gt;/g;
+
+// ⚠️ O href vem de uma API de notícias, logo é dado de terceiros. `javascript:` num href seria
+// execução de código a partir daí — na única parte da página que insere HTML vindo de fora.
+// Só http e https passam; qualquer outra coisa perde a ligação e fica só com a etiqueta.
+function comLigacoes(escapado) {
+  return String(escapado).replace(LIGACAO, (_, cru, rotulo) => {
+    const url = cru.replace(/&amp;/g, "&");
+    const seguro = /^https?:\/\//i.test(url) ? url : "";
+    return seguro
+      ? `<a href="${esc(seguro)}" target="_blank" rel="noopener noreferrer nofollow">${rotulo}</a>`
+      : rotulo;
+  });
+}
+
+// No resumo do feed a ligação fica só com a etiqueta: um <a> dentro de um <button> é HTML
+// inválido e um cartão que não se sabe se abre o detalhe se sai da página.
+const soRotulo = escapado => String(escapado).replace(LIGACAO, (_, __, rotulo) => rotulo);
+
+// ⚠️ `intervalo:"1D"`. A página abre em «today» e o cartão do dia diz «today»; abrir o gráfico
+// em seis meses era a página a contradizer-se na primeira coisa que se vê. O intradiário já
+// existia no instantâneo e não estava a ser servido.
+//
+// `camadas` são o que o gráfico desenha. Nem todas ligadas: mostrar tudo de uma vez foi o
+// defeito da v6, e acrescentar seis interruptores todos ligados seria reconstruí-lo com outro
+// nome. Ligadas por omissão ficam as três que respondem à pergunta da página — o que se
+// enviou, o que se assinalou e não se enviou, e a referência para saber se o dia é de subida.
+const S = { modo:"hoje", ticker:null, intervalo:"1D", feedTodos:true, feedLimite:120, asOf:null,
+            camadas:{ alertas:true, assinalados:true, referencia:true, zscore:true, noticias:false },
+            diaHist:null,
+            visao:null, funil:[], alertas:[], votos:{}, asset:null, grafico:null, novos:new Set() };
+
+// ── leitura da API ──────────────────────────────────────────────────────────
+const json = async (u) => { const r = await fetch(u, { cache:"no-store" });
+                            if (!r.ok) throw new Error(`${u}: ${r.status}`); return r.json(); };
+
+async function carregar(primeira) {
+  const [v, f, a, fb] = await Promise.all([
+    json("/api/overview"), json("/api/screener"), json("/api/alerts"),
+    json("/api/feedback").catch(() => ({ por_alerta:{} })),
+  ]);
+  const antes = new Set(S.alertas.map(x => x.date + x.ticker + x.text.slice(0, 40)));
+  S.visao = v; S.funil = f.rows || []; S.alertas = a.rows || [];
+  S.votos = fb.por_alerta || {};
+  S.asOf = v.as_of;
+  if (!primeira) {
+    S.novos = new Set(S.alertas.filter(x => !antes.has(x.date + x.ticker + x.text.slice(0, 40)))
+                               .map(x => x.date + x.ticker));
+  }
+  if (!S.ticker) S.ticker = (v.rows || [])[0]?.ticker || null;
+  pintarTudo();
+  if (S.ticker) await abrirEmpresa(S.ticker, true);
+}
+
+// ── a mascote como semáforo do mercado ──────────────────────────────────────
+// ⚠️ O que o semáforo mede é o retorno do ÍNDICE, e o índice é o SPY. Toda a decomposição
+// deste trabalho usa o S&P 500 como mercado (`MARKET_INDEX = "SPY"` em
+// `investigator/news_fetcher/relevance.py`); o «NASDAQ · NYSE» do cabeçalho são as bolsas onde
+// as doze empresas transaccionam, e não um índice. Dizer NASDAQ e mostrar SPY seria uma
+// afirmação errada no sítio do ecrã onde toda a gente olha primeiro.
+//
+// ⚠️ E mede o índice, não a saúde do sistema. A arte manda: a mascote segura um GRÁFICO, logo
+// só pode querer dizer movimento de preço. Fazê-la significar «três empresas assinaladas» seria
+// uma imagem que não bate com o que quer dizer — o defeito que este painel já teve duas vezes.
+//
+// A banda de ±0,25% não é arbitrária de propósito: é aí que um dia deixa de ser «o mercado
+// esteve parado» para a maioria dos leitores. Não é medida, é uma convenção, e está escrita
+// aqui e na legenda para que se veja que é uma convenção.
+const BANDA_MERCADO = 0.0025;
+const SEMAFORO = [
+  ["sobe",  "the market closed up",   m => m > BANDA_MERCADO],
+  ["desce", "the market closed down", m => m < -BANDA_MERCADO],
+  ["plano", "the market barely moved", () => true],
 ];
-const legivel = d => {
-  for (const [rx, fn] of DETALHE) { const m = rx.exec(d || ""); if (m) return fn(m); }
-  return d || "";
+
+function pintarMascote() {
+  const img = $("#mascote"); if (!img) return;
+  const m = S.visao?.market_move;
+  const idx = S.visao?.market_index || "the market index";
+  const nota = $("#notaMercado");
+  if (m == null) {
+    // Sem número não se escolhe uma cor: um semáforo que adivinha é pior do que semáforo nenhum.
+    img.src = "/assets/mascote-plano-small.png";
+    if (nota) nota.textContent = "";
+    return;
+  }
+  const [estado, frase] = SEMAFORO.find(([, , teste]) => teste(m));
+  img.src = `/assets/mascote-${estado}-small.png`;
+  img.alt = `${frase} (${idx} ${pct(m)})`;
+  if (nota) nota.textContent = `${idx} ${pct(m)} · ${frase}`;
+}
+
+// ── o dia, em palavras, pela boca da mascote ────────────────────────────────
+// Uma frase e um número. É o único texto em destaque da página, e por isso tem de ser derivado
+// dos dados e nunca escrito à mão — uma frase fixa mentiria no primeiro dia diferente.
+function fraseDoDia(linhas, estados) {
+  const enviados = [...estados.values()].filter(e => e.stage === "alerted").length;
+  const travados = [...estados.values()].filter(e => e.stage !== "alerted").length;
+  const moveu = linhas.filter(r => r.flagged).map(r => r.ticker);
+  if (!estados.size) return "No scan has been recorded yet today.";
+  if (!enviados && !moveu.length)
+    return `Quiet day. ${linhas.length} companies watched, nothing unusual, nothing sent.`;
+  const p1 = enviados
+    ? `${enviados} alert${enviados > 1 ? "s" : ""} sent today`
+    : "Nothing sent today";
+  const p2 = moveu.length
+    ? `${moveu.length} compan${moveu.length > 1 ? "ies" : "y"} moved unusually (${moveu.slice(0,3).join(", ")}${moveu.length > 3 ? "…" : ""})`
+    : "no unusual moves";
+  return `${p1}, ${p2}. ${travados} stopped at a gate — tap a company to see which.`;
+}
+
+// ── estado de cada empresa hoje ─────────────────────────────────────────────
+// ⚠️ UMA EMPRESA, UMA PORTA. Com o ciclo de 60 s a mesma empresa é avaliada dezenas de vezes por
+// dia e pode parar em portas diferentes; agrupar sem resolver isso conta a mesma empresa várias
+// vezes. Fica a porta MAIS ADIANTADA que alcançou: quem alertou às 14h00 e apanhou "already sent"
+// às 14h01 chegou a alertar.
+function estadosDoDia() {
+  const dia = S.funil.reduce((m, r) => r.date > m ? r.date : m, "");
+  const melhor = new Map();
+  for (const r of S.funil) {
+    if (r.date !== dia) continue;
+    const i = ORDEM.has(r.stage) ? ORDEM.get(r.stage) : -1;
+    const j = melhor.has(r.ticker) ? ORDEM.get(melhor.get(r.ticker).stage) : -2;
+    if (i > j) melhor.set(r.ticker, { stage:r.stage, detail:r.detail || "", date:dia });
+  }
+  return melhor;
+}
+
+// ── indicadores ─────────────────────────────────────────────────────────────
+function pintarKpis(linhas, estados) {
+  const v = S.visao, enviados = [...estados.values()].filter(e => e.stage === "alerted").length;
+  const travados = estados.size - enviados;
+  const assinalados = linhas.filter(r => r.flagged).length;
+  // ⚠️ Só contam votos sobre alertas que EXISTEM no registo — é a mesma regra 6 da análise da
+  // dissertação. Um voto cuja chave não corresponde a alerta nenhum é tráfego de teste, e
+  // somá-lo aqui daria ao painel um número que o documento não reconhece.
+  const chaves = new Set(S.alertas.map(x => x.key).filter(Boolean));
+  const pares = Object.entries(S.votos).filter(([k]) => chaves.has(k)).map(([, v]) => v);
+  const votos = pares.reduce((a, [u, n]) => a + u + n, 0);
+  const uteis = pares.reduce((a, [u]) => a + u, 0);
+  const fita = [...estados.entries()].sort()
+    .map(([t, e]) => `<span class="${e.stage === "alerted" ? "enviou" : "travou"}" title="${esc(t)}"></span>`)
+    .join("") || Array.from({ length:(v.watchlist || []).length }, () => "<span></span>").join("");
+  const k = (rot, val, sub, extra = "", destaque = "") =>
+    `<div class="k ${destaque}"><dt>${rot}</dt><dd class="num">${val}</dd>` +
+    `<div class="sub">${sub}</div>${extra}</div>`;
+  $("#kpis").innerHTML = [
+    // ⚠️ Cinco números lado a lado convidam a somar-se, e dois destes somam e um não.
+    // «Entregues» e «travadas» repartem as empresas vigiadas — por isso a primeira ficha diz a
+    // conta, em vez de deixar o leitor a fazê-la. «Movimentos fora do comum» conta outra coisa:
+    // é preço, e uma empresa pode estar nas duas listas ou em nenhuma. Sem isto escrito, a
+    // primeira pergunta de quem olha para a figura é porque é que 2 + 5 + 7 não dá 12.
+    k("Companies watched", (v.watchlist || []).length,
+      `${enviados} delivered + ${travados} stopped`,
+      `<div class="fita">${fita}</div>`),
+    k("Unusual moves", assinalados,
+      `price beyond ±${v.threshold} on a ${v.window}-day window — counted separately`),
+    k("Alerts delivered", enviados, "today, out of five daily slots", "", "destaque"),
+    k("Stopped at a gate", travados, "silence, and every one is inspectable"),
+    k("Reader votes", votos, votos ? `${uteis} said the alert was useful` : "no votes yet"),
+  ].join("");
+}
+
+// ── cartões das empresas ────────────────────────────────────────────────────
+function faisca(fechos) {
+  if (!fechos || fechos.length < 2) return "";
+  const v = fechos.map(c => c[1]), lo = Math.min(...v), hi = Math.max(...v), r = hi - lo || 1;
+  const n = v.length;
+  const d = v.map((y, i) => `${(i / (n - 1) * 100).toFixed(2)},${(26 - (y - lo) / r * 24).toFixed(2)}`);
+  const sobe = v[n - 1] >= v[0];
+  return `<svg class="e-faisca" viewBox="0 0 100 26" preserveAspectRatio="none" aria-hidden="true">
+    <polyline points="${d.join(" ")}" fill="none" stroke="var(--${sobe ? "sobe" : "desce"})"
+      stroke-width="1.4" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
+}
+
+function pintarEmpresas(linhas, estados) {
+  $("#empresas").innerHTML = linhas.map(r => {
+    const e = estados.get(r.ticker);
+    const sinal = !e ? "" : e.stage === "alerted" ? "enviou" : "travou";
+    const nota = !e ? "no scan recorded"
+      : e.stage === "alerted" ? "alert delivered"
+      : `stopped: ${ROTULO.get(e.stage) || e.stage}`;
+    return `<button class="e" data-t="${esc(r.ticker)}"
+              aria-pressed="${r.ticker === S.ticker}">
+      <div class="e-topo">
+        <img class="e-logo" src="/assets/logos/${esc(r.ticker)}.png" alt="" loading="lazy">
+        <span class="e-nome"><b>${esc(r.name || r.ticker)}</b><span>${esc(r.ticker)}</span></span>
+      </div>
+      <div class="e-mv ${cls(r.move)}">${pct(r.move)}</div>
+      <div class="e-pe"><span class="sinal ${sinal}"></span>${esc(nota)}</div>
+      ${faisca(r.closes)}</button>`;
+  }).join("");
+  $("#empresas").querySelectorAll(".e").forEach(b =>
+    b.addEventListener("click", () => abrirEmpresa(b.dataset.t)));
+  $("#notaEmpresas").textContent =
+    `${linhas.length} companies · tap one for the evidence behind its state`;
+}
+
+// ── feed ────────────────────────────────────────────────────────────────────
+function pintarFeed() {
+  // ⚠️ Mostrar as primeiras N e calar o resto é um corte silencioso: o leitor não tem como
+  // saber que existe mais nada. A página é o espelho do canal, portanto ou mostra tudo ou diz
+  // quanto não coube e dá onde carregar. É a mesma regra que os relatórios de avaliação seguem
+  // quando limitam cobertura.
+  let todas = (S.feedTodos ? S.alertas : S.alertas.filter(a => a.ticker === S.ticker))
+    .slice().reverse();
+  // No histórico, escolher um dia na barra filtra o que está por baixo. É o que torna a barra
+  // uma navegação e não um enfeite.
+  if (S.modo === "hist" && S.diaHist)
+    todas = todas.filter(a => (a.date || "").slice(0, 10) === S.diaHist);
+  const rows = todas.slice(0, S.feedLimite);
+  const restantes = todas.length - rows.length;
+  $("#feed").innerHTML = rows.length ? rows.map((a, i) => {
+    const chave = a.key || "";
+    const v = S.votos[chave];
+    const novo = S.novos.has(a.date + a.ticker);
+    return `<button class="f-item ${novo ? "f-novo" : ""}" data-i="${i}"
+              style="${novo ? `animation-delay:${i * 40}ms` : ""}">
+      <div class="f-cab"><b>${esc(a.ticker)}</b><time>${esc(a.date)}</time>
+        <span class="selo ${a.kind === "news" ? "news" : ""}">${esc(a.kind)}</span></div>
+      <p>${soRotulo(esc(a.text.split("\n").slice(0, 3).join(" · ")))}</p>
+      ${v ? `<div class="f-votos">👍 ${v[0]} · 👎 ${v[1]}</div>` : ""}</button>`;
+  }).join("") : '<p class="vazio">Nothing here yet.</p>';
+  if (restantes > 0) {
+    $("#feed").insertAdjacentHTML("beforeend",
+      `<button class="f-mais" id="fMais">${restantes} older message${restantes > 1 ? "s" : ""}
+         not shown — load ${Math.min(restantes, 120)} more</button>`);
+    $("#fMais").addEventListener("click", () => { S.feedLimite += 120; pintarFeed(); });
+  }
+  $("#feed").querySelectorAll(".f-item").forEach(b =>
+    b.addEventListener("click", () => modalAlerta(rows[+b.dataset.i])));
+  S.novos = new Set();
+}
+
+// ── detalhe da empresa ──────────────────────────────────────────────────────
+async function abrirEmpresa(t, manter) {
+  S.ticker = t;
+  document.querySelectorAll(".e").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.t === t)));
+  if (!S.feedTodos) pintarFeed();
+  try { S.asset = await json(`/api/asset/${encodeURIComponent(t)}`); }
+  catch { S.asset = null; }
+  pintarDetalhe();
+  if (!manter) $("#detalhe").scrollIntoView({ behavior:"smooth", block:"nearest" });
+}
+
+function pintarDetalhe() {
+  const a = S.asset;
+  if (!a) { $("#detalhe").innerHTML = ""; return; }
+  const d = a.decomp || {};
+  const maior = Math.max(Math.abs(d.market || 0), Math.abs(d.sector || 0),
+                         Math.abs(d.company || 0)) || 1;
+  const linha = (rot, v, motor) => {
+    const w = Math.abs(v || 0) / maior * 50;              // metade da pista por lado
+    const neg = (v || 0) < 0;
+    return `<div class="d-lin"><span class="rot ${motor ? "motor" : ""}">${rot}</span>
+      <span class="d-pista"><i style="width:${w}%;${neg ? `right:50%` : `left:50%`};
+        background:var(--${neg ? "desce" : "sobe"})"></i></span>
+      <span class="val ${cls(v)}">${pct(v)}</span></div>`;
+  };
+  $("#detalhe").innerHTML = `<div class="d">
+    <div class="d-cab">
+      <img src="/assets/logos/${esc(a.ticker)}.png" alt="">
+      <h2>${esc(a.name || a.ticker)}</h2><span class="tick">${esc(a.ticker)}</span>
+      <span class="mv num ${cls(a.move)}">${pct(a.move)}</span>
+    </div>
+    <p class="d-ver">${esc(veredicto(a))}</p>
+    <div class="d-rep">
+      ${linha("Market", d.market, d.driver === "market")}
+      ${linha("Sector", d.sector, d.driver === "sector")}
+      ${linha("Company", d.company, d.driver === "company")}
+    </div>
+    <p class="d-nota">the three add up to the day's move · left of the centre line is down</p>
+    <div class="titulo"><h2 style="font-size:.98rem">${esc(TITULO_GRAFICO[S.intervalo])}</h2>
+      <span class="direita intervalos" id="intervalos">
+        ${INTERVALOS.map(r =>
+          `<button data-r="${r}" aria-pressed="${r === S.intervalo}">${r}</button>`).join("")}
+      </span></div>
+    <div class="camadas" id="camadas" role="group" aria-label="Chart layers">${camadasHTML()}</div>
+    <div class="d-graf" id="graf"></div>
+    <div class="d-z" id="grafZ" ${S.intervalo === "1D" || !S.camadas.zscore ? "hidden" : ""}></div>
+    <p class="legenda legenda-graf" aria-label="Chart legend" id="legGraf"></p>
+    <div class="d-dias" id="dias"></div></div>`;
+  $("#intervalos").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    S.intervalo = b.dataset.r; pintarDetalhe();
+  }));
+  $("#camadas").querySelectorAll("input").forEach(i => i.addEventListener("change", () => {
+    S.camadas[i.dataset.c] = i.checked; pintarDetalhe(); }));
+  desenharGrafico(a);
+  desenharZ(a);
+  pintarLegendaGrafico();
+  pintarDias(a);
+}
+
+// ── as camadas do gráfico ───────────────────────────────────────────────────
+// O preço não é uma camada: é o gráfico. Uma caixa para o desligar seria uma caixa para deixar
+// a página sem assunto.
+const CAMADAS = [
+  ["alertas",     "Alerts sent",          "when a message actually went to the channel"],
+  ["assinalados", "Flagged, not sent",    "the detector fired and a gate stopped it"],
+  ["referencia",  "Yesterday's close",    "the line that says whether today is up or down"],
+  ["zscore",      "How unusual (z)",      "the strip under the price, with the ±threshold"],
+  ["noticias",    "News with no alert",   "headlines the system saw and did not act on"],
+];
+const INTERVALOS = ["1D", "1M", "3M", "6M", "1Y"];
+const TITULO_GRAFICO = {
+  "1D": "Today, minute by minute",
+  "1M": "One month of closes", "3M": "Three months of closes",
+  "6M": "Six months of closes", "1Y": "One year of closes",
 };
 
-// ⚠️ A HIPERLIGAÇÃO DA FONTE TEM DE FUNCIONAR. É ela que torna a notícia verificável, e é a
-// diferença entre mostrar evidência e mostrar uma afirmação. A versão anterior desta página não
-// a convertia e o `<a href>` saía como TEXTO CRU: o `esc()` converte as aspas em `&quot;` e o
-// padrão procurava aspas literais, portanto nunca casava. Aceitam-se as duas formas.
-//
-// E o URL vem de uma API externa, portanto NÃO se confia nele: só `http` e `https` viram
-// ligação. Um `javascript:` no href seria execução de código a partir de dados de terceiros.
-const seguro = u => /^https?:\/\//i.test(u);
-const comLinks = t => esc(t)
-  .replace(/&lt;a href=(?:"|&quot;)([^"&]+?)(?:"|&quot;)&gt;(.*?)&lt;\/a&gt;/g,
-           (todo, url, texto) => seguro(url)
-             ? `<a href="${url}" target="_blank" rel="noopener noreferrer">${texto}</a>`
-             : texto)
-  .replace(/&lt;\/?b&gt;/g, "").replace(/&lt;\/?i&gt;/g, "");
-
-const pct = v => (v >= 0 ? "+" : "") + (v * 100).toFixed(2) + "%";
-async function json(u) { const r = await fetch(u); if (!r.ok) throw new Error(u); return r.json(); }
-
-const S = { ticker:null, activo:null, dia:null, alertas:[], funil:[], linhas:[], ambito:"todos",
-      quantos:20 };
-
-/** A sessão de negociação em que um acontecimento pousa. Uma notícia de sábado não tem barra
- *  onde assentar: ancora-se na primeira sessão >= à data, que é a MESMA regra com que o impacto
- *  foi medido. Sem isto, o gráfico e a lista divergem. */
-function sessao(data, serie) {
-  for (const p of serie) if (p.time >= data) return p.time;
-  return null;
+function camadasHTML() {
+  return CAMADAS.map(([k, rot, porque]) => {
+    // ⚠️ O z é uma estatística DIÁRIA, calculada sobre uma janela de vinte fechos. Não existe z
+    // intradiário, e inventar um seria uma segunda definição da mesma coisa. A caixa desliga-se
+    // sozinha no 1D e diz porquê, em vez de ficar activa a não fazer nada.
+    const inerte = (k === "zscore" || k === "assinalados" || k === "noticias")
+                   && S.intervalo === "1D";
+    return `<label class="cx ${inerte ? "inerte" : ""}" title="${esc(porque)}">
+      <input type="checkbox" data-c="${k}" ${S.camadas[k] ? "checked" : ""}
+             ${inerte ? "disabled" : ""}>
+      <span>${esc(rot)}</span></label>`;
+  }).join("") + (S.intervalo === "1D"
+    ? `<span class="cx-nota">z, flagged days and news are per day — pick a longer range</span>`
+    : "");
 }
 
-// ── a empresa escolhida ──────────────────────────────────────────────────────
-function cabeca(a, linha) {
-  document.getElementById("nome").textContent = a.name || a.ticker;
-  document.getElementById("tick").textContent = a.ticker;
-  const mv = document.getElementById("mv");
-  if (typeof a.move === "number") {
-    mv.textContent = pct(a.move);
-    mv.className = "mv " + (a.move >= 0 ? "pos" : "neg");
-  } else { mv.textContent = ""; mv.className = "mv"; }
-  // A FRASE ANTES DO NÚMERO. Vem de `app/verdict.py`, que é testado; escrevê-la outra vez em
-  // JavaScript criaria uma segunda verdade que ninguém verificava.
-  document.getElementById("veredicto").textContent = (linha && linha.verdict) || "";
-  repartir(a.decomp, a.name || a.ticker);
+// O veredicto vem do servidor quando existe (é `app/verdict.py`, com 29 testes e a proibição de
+// prever imposta por varrimento). Reescrevê-lo em JavaScript criaria uma segunda verdade que
+// ninguém testaria, e as duas divergiriam na primeira alteração.
+function veredicto(a) {
+  const r = (S.visao.rows || []).find(x => x.ticker === a.ticker);
+  if (r && r.verdict) return r.verdict;
+  const rar = a.rarity || {};
+  return rar.n ? `${rar.count} of the last ${rar.n} trading days moved this much or more.`
+               : "No rarity baseline for this company yet.";
 }
 
-/** A segunda das três perguntas do trabalho: foi a empresa, ou foi o mercado?
- *  As três parcelas somam ao movimento do dia por construção. A escala é comum às três, senão
- *  a barra maior deixaria de querer dizer a maior parcela. */
-function repartir(d, nome) {
-  const box = document.getElementById("rep");
-  if (!d || typeof d.company !== "number") { box.innerHTML = ""; return; }
-  const partes = [["Market", d.market, "market"], ["Sector", d.sector, "sector"],
-                  ["Company", d.company, "company"]];
-  const max = Math.max(...partes.map(p => Math.abs(p[1] || 0)), 1e-9);
-  const linhas = partes.map(([rot, v, chave]) => {
-    const w = (Math.abs(v || 0) / max) * 50;                       // metade da barra por lado
-    const esquerda = (v || 0) < 0 ? 50 - w : 50;
-    return `<div class="l ${d.driver === chave ? "motor" : ""}">
-              <span>${rot}</span>
-              <span class="t"><i class="${(v || 0) < 0 ? "neg" : ""}"
-                    style="left:${esquerda}%;width:${w}%"></i></span>
-              <span class="v">${pct(v || 0)}</span>
-            </div>`;
-  }).join("");
-  const motor = { market:"the market as a whole", sector:"its sector",
-                  company:"the company itself" }[d.driver] || "";
-  box.innerHTML = `<div class="barras">${linhas}</div>` +
-    `<p class="eixo">the three add up to the day's move · left of the line is down</p>` +
-    (motor ? `<p class="nota">Today's move in ${esc(nome)} came mostly from ${motor}.</p>` : "");
+const MESES = { "1M":21, "3M":63, "6M":126, "1Y":252 };
+
+// Cores das marcas. Uma marca só pode significar uma coisa, e cada uma tem entrada na legenda.
+function paleta() {
+  const escuro = matchMedia("(prefers-color-scheme: dark)").matches;
+  return {
+    escuro,
+    linha:   escuro ? "#2fd07f" : "#0a7f4f",
+    sobe:    escuro ? "#5eead4" : "#0f766e",
+    desce:   escuro ? "#f87171" : "#b3261e",
+    alerta:  escuro ? "#f0a72e" : "#b45309",
+    noticia: escuro ? "#8d96a3" : "#8a929c",
+    grelha:  escuro ? "#1b1f26" : "#eeeeea",
+    texto:   escuro ? "#8d96a3" : "#5b6472",
+  };
 }
 
-// ── o gráfico ────────────────────────────────────────────────────────────────
-function desenhar(a) {
-  const box = document.getElementById("grafico");
-  box.innerHTML = "";
-  const css = getComputedStyle(document.documentElement);
-  const cor = n => css.getPropertyValue(n).trim();
-
-  const chart = LightweightCharts.createChart(box, {
-    // `autoSize` em vez de uma largura fixa: sem isto o gráfico ficava com a largura que tinha
-    // no primeiro desenho e um monitor redimensionado deixava-o cortado ou a flutuar.
-    autoSize: true,
-    layout: { background:{ color:"transparent" }, textColor:cor("--fraco"), fontSize:11 },
-    grid: { vertLines:{ color:cor("--grelha") }, horzLines:{ color:cor("--grelha") } },
-    rightPriceScale: { borderColor:cor("--linha") },
-    timeScale: { borderColor:cor("--linha") },
-    crosshair: { mode:0 },
-    handleScale: false, handleScroll: false,
+function criarGrafico(alvo, altura, eixoOculto) {
+  const P = paleta();
+  return LightweightCharts.createChart(alvo, {
+    width: alvo.clientWidth, height: altura || alvo.clientHeight,
+    layout: { background:{ color:"transparent" }, textColor:P.texto,
+              fontFamily:"IBM Plex Mono, monospace", fontSize:11 },
+    grid: { vertLines:{ visible:false }, horzLines:{ color:P.grelha } },
+    // ⚠️ `minimumWidth` fixo nas duas telas. Sem isto a escala do preço (três dígitos e duas
+    // casas) e a do z (um dígito) têm larguras diferentes, as áreas de desenho ficam desalinhadas
+    // por umas dezenas de pixeis, e «olhar para baixo para ver porque é que o dia foi
+    // assinalado» — que é a razão de existir da faixa — deixa de funcionar.
+    rightPriceScale: { borderVisible:false, minimumWidth:64 },
+    timeScale: { borderVisible:false, fixLeftEdge:true, fixRightEdge:true,
+                 timeVisible: S.intervalo === "1D", secondsVisible:false,
+                 // Um só eixo do tempo para o par. Quando a faixa do z está no ar, é ela que o
+                 // mostra, por estar por baixo; o de cima seria uma segunda régua a dizer o mesmo.
+                 visible: !(eixoOculto && alvo.id === "graf") },
+    crosshair: { mode:0 }, handleScale:false, handleScroll:false,
   });
-  const serie = chart.addSeries(LightweightCharts.LineSeries, {
-    color: cor("--tinta"), lineWidth:2, priceLineVisible:false, lastValueVisible:false,
-  });
-  const dados = (a.closes || []).map(([d, v]) => ({ time:d, value:v }));
-  serie.setData(dados);
-
-  // Um alerta é um acontecimento que SAIU; um evento é um que o detetor assinalou e pode não ter
-  // saído. Marcas diferentes para os dois é o que torna o custo das portas visível.
-  // ⚠️ UM ALERTA PODE SER MAIS RECENTE DO QUE O ÚLTIMO FECHO DESENHADO. Quando isso acontece
-  // não há barra onde o pousar, e a versão anterior deitava-o fora em silêncio: a legenda dizia
-  // "0 sent" para a JNJ enquanto a lista ao lado mostrava um alerta da JNJ. Duas contas do mesmo
-  // facto a discordar no mesmo ecrã. Agora conta-se à parte e diz-se.
-  const ultimo = dados.length ? dados[dados.length - 1].time : null;
-  const enviados = new Map();
-  const posteriores = [];
-  for (const al of (a.alerts || [])) {
-    const t = sessao(al.date, dados);
-    if (t) enviados.set(t, al);
-    else if (ultimo && al.date > ultimo) posteriores.push(al);
-  }
-  const marcas = [];
-  for (const t of enviados.keys()) {
-    marcas.push({ time:t, position:"aboveBar", shape:"arrowDown", color:cor("--acento") });
-  }
-  const eventos = new Map();
-  for (const evento of (a.events || [])) {
-    const [d, z, direcaoGuardada] = evento;
-    const t = sessao(d, dados);
-    if (!t) continue;
-    const direcao = direcaoGuardada || (z < 0 ? -1 : 1);
-    eventos.set(t, { z, direcao });
-    if (enviados.has(t)) continue;                     // já tem a marca mais forte
-    marcas.push({ time:t, position:"belowBar", shape:"circle", size:0.8,
-                  color: cor(direcao < 0 ? "--desce" : "--sobe") });
-  }
-  marcas.sort((x, y) => x.time < y.time ? -1 : 1);
-  if (marcas.length) LightweightCharts.createSeriesMarkers(serie, marcas);
-  chart.timeScale().fitContent();
-  chart.subscribeClick(p => { if (p.time) abrirDia(String(p.time)); });
-
-  // ⚠️ OS MESMOS DIAS, ALCANÇÁVEIS PELO TECLADO. Não é redundância: um marcador desenhado numa
-  // tela não se alcança com o teclado nem existe para um leitor de ecrã, portanto uma interface
-  // que só responde ao clique no gráfico é inutilizável para quem não usa rato. Na v6 eram
-  // trinta e oito botões soltos, ilegíveis; aqui são uma lista que diz o que aconteceu.
-  const soltos = new Map(posteriores.map(al => [al.date, al]));
-  const todos = [...new Set([...soltos.keys(), ...enviados.keys(), ...eventos.keys()])]
-    .sort().reverse();
-
-  // ⚠️ A LEGENDA CONTA-SE A PARTIR DESTA LISTA, e não por aritmética à parte. A versão anterior
-  // fazia `eventos.size - enviados.size`, o que supõe que todo o dia com alerta foi também um dia
-  // assinalado pelo detector — e é falso: um alerta de NOTÍCIA sai em dias que o detector nunca
-  // assinalou. Medido em produção a 2026-08-20 na TSLA: a lista mostrava 34 dias sem alerta e a
-  // legenda, três centímetros acima, dizia 22. Dois números do mesmo facto a discordar no mesmo
-  // ecrã, que é exactamente o defeito que esta revisão veio corrigir noutros sítios.
-  const nEnv = todos.filter(d => enviados.has(d) || soltos.has(d)).length;
-  const nEv = todos.filter(d => !enviados.has(d) && !soltos.has(d)).length;
-  document.getElementById("legenda").innerHTML =
-    `<span>${dados.length} sessions</span>` +
-    `<span class="chave"><i class="env"></i>${nEnv} sent</span>` +
-    `<span class="chave"><i class="sobe"></i><i class="desce"></i>` +
-      `${nEv} flagged, stopped at a gate (colour is the direction)</span>` +
-    (posteriores.length
-      ? `<span>${posteriores.length} of those after the last close shown</span>` : "");
-  document.getElementById("dias").innerHTML = todos.length
-    ? todos.map(d => {
-        const al = enviados.get(d) || soltos.get(d), evento = eventos.get(d);
-        // ⚠️ A frase "Flagged by the detector, no alert" repetida vinte e nove vezes seguidas
-        // é ruído, não informação: o que ela diz já está na legenda por cima. Os dias que
-        // interessam dizem o que foram; os outros ficam quietos, com o z alinhado a duas casas.
-        const que = soltos.has(d) ? "Alert sent, after the last close shown"
-                  : al ? (al.kind === "market" ? "Unusual move, alert sent" : "News alert sent")
-                  : "no alert";
-        return `<button class="dia" data-dia="${esc(d)}" aria-pressed="false">
-                  <span class="quando">${esc(d)}</span>
-                  <span class="${al ? "" : "quieto"}">${esc(que)}</span>
-                  <span class="${al ? "selo" : "z"}">${al ? "sent"
-                      : (evento ? (evento.z == null ? "flat baseline"
-                                                   : "z " + Number(evento.z).toFixed(2)) : "")}</span>
-                </button>`;
-      }).join("")
-    : `<p class="vazio" style="padding:10px 2px">No flagged day in this window.</p>`;
-  for (const b of document.querySelectorAll("#dias .dia")) {
-    b.addEventListener("click", () => abrirDia(b.dataset.dia));
-  }
 }
 
-/** O detalhe de um dia. Se houve alerta mostra-se o texto EXACTO que foi enviado; se não houve,
- *  diz-se o que o detetor viu, sem inventar uma explicação para o silêncio. */
-function abrirDia(dia) {
-  const a = S.activo;
-  if (!a) return;
-  S.dia = dia;
-  for (const b of document.querySelectorAll("#dias .dia")) {
-    const meu = b.dataset.dia === dia;
-    b.setAttribute("aria-pressed", String(meu));
-    if (meu) b.scrollIntoView({ block:"nearest" });
-  }
-  const serie = (a.closes || []).map(([d, v]) => ({ time:d, value:v }));
-  const alerta = (a.alerts || []).find(x => sessao(x.date, serie) === dia || x.date === dia);
-  const ev = (a.events || []).find(([d]) => sessao(d, serie) === dia);
-  const noticias = (a.news || []).filter(n => n.date === dia);
-
-  let corpo;
-  if (alerta) {
-    corpo = `<pre>${comLinks(alerta.text)}</pre>`;
-  } else if (ev) {
-    const estatistica = ev[1] == null ? "after a flat baseline; z-score undefined"
-                                      : `with z = ${esc(ev[1])}`;
-    corpo = `<p style="margin:4px 0 0">The detector flagged this day ${estatistica} and no
-             alert was sent. The last section shows which gate stops each company.</p>`;
-  } else {
-    corpo = `<p style="margin:4px 0 0">Nothing was flagged on this day.</p>`;
-  }
-  const extra = noticias.length
-    ? `<p class="sub" style="margin:8px 0 0">${noticias.length} headline${noticias.length === 1 ? "" : "s"} captured that day.</p>`
-    : "";
-  document.getElementById("detalhe").innerHTML =
-    `<div class="detalhe"><div class="quando">${esc(dia)} · ${esc(a.ticker)}</div>${corpo}${extra}</div>`;
+// ⚠️ Os alertas são posicionados pelo `sent_at`, que é a hora a que a mensagem saiu, e não pela
+// data do dia. No 1D isso é a diferença entre «houve um alerta hoje» e «o alerta saiu às 00:02,
+// antes da abertura» — que é precisamente o que a secção da latência da dissertação discute.
+function marcasDeAlertas(a, desdeTs, ate) {
+  const P = paleta();
+  return (a.alerts || []).map(al => {
+    const iso = al.sent_at || (al.date ? `${al.date}T12:00:00Z` : "");
+    if (!iso) return null;
+    const ts = Math.floor(Date.parse(iso) / 1000);
+    if (!Number.isFinite(ts) || ts < desdeTs || (ate && ts > ate)) return null;
+    // ⚠️ Sem `text`. Onze alertas em seis meses agrupam-se nas mesmas semanas e as etiquetas
+    // sobrepõem-se umas às outras — medido, não suposto, e é a mesma lição que as etiquetas do
+    // z já tinham dado. A forma está na legenda e as datas estão nas fichas por baixo.
+    return { tempo: S.intervalo === "1D" ? ts : (al.date || iso.slice(0, 10)),
+             position:"aboveBar", color:P.alerta, shape:"circle", text:"" };
+  }).filter(Boolean);
 }
 
-// ── as mensagens ─────────────────────────────────────────────────────────────
-/** Vinte e cinco mensagens de quinze linhas é texto a mais para se ler seja o que for.
- *  Mostra-se o essencial e abre-se para o texto exacto. **Nada é reescrito e nada é deitado
- *  fora**: as linhas do resumo são as primeiras linhas da própria mensagem, e o texto completo
- *  está sempre a um clique. */
-function resumo(t) {
-  const linhas = String(t || "").split("\n").filter(l => l.trim());
-  const cabeca = linhas[1] && /^["“]/.test(linhas[1].trim()) ? linhas[1] : linhas[0];
-  const agora = linhas.find(l => /^Right now:/.test(l)) || (cabeca === linhas[0] ? linhas[1] : "");
-  return { cabeca, agora: agora === cabeca ? "" : agora };
+// A faixa do z aparece? O gráfico de cima precisa de saber ANTES de se desenhar, para decidir
+// se mostra o eixo do tempo ou se o deixa para ela.
+function mostraZ(a) {
+  if (S.intervalo === "1D" || !S.camadas.zscore) return false;
+  const desde = (a.closes || []).slice(-MESES[S.intervalo])[0]?.[0] || "";
+  return (a.events || []).some(e => e[0] >= desde);
 }
 
-function pintarAlertas() {
-  const alvo = S.ambito === "um" ? S.ticker : null;
-  const todas = S.alertas
-    .filter(a => !alvo || a.ticker === alvo)
-    .slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-  const rows = todas.slice(0, S.quantos);
-  // Um canal com duzentas mensagens não se despeja de uma vez — no telemóvel eram nove mil
-  // píxeis de rolagem. Mas também não se corta em silêncio: quantas ficaram por mostrar é dito,
-  // e o botão traz o resto.
-  const faltam = todas.length - rows.length;
+function desenharGrafico(a) {
+  const alvo = $("#graf");
+  if (!alvo || typeof LightweightCharts === "undefined") return;
+  const P = paleta();
+  const umDia = S.intervalo === "1D";
 
-  document.getElementById("alertas").innerHTML = rows.length
-    ? rows.map(a => {
-        const r = resumo(a.text);
-        return `<article class="msg">
-          <div class="cab"><b>${esc(a.ticker)}</b><span>${esc(a.date)}</span>
-            <span class="tipo">${esc(a.kind || "alert")}</span></div>
-          <p class="cabeca">${comLinks(r.cabeca)}</p>
-          ${r.agora ? `<p class="agora">${comLinks(r.agora)}</p>` : ""}
-          <details><summary>full message as sent</summary><pre>${comLinks(a.text)}</pre></details>
-        </article>`;
-      }).join("") + (faltam
-        ? `<button class="mais" id="mais">${faltam} older message${faltam === 1 ? "" : "s"}</button>`
-        : "")
-    : `<p class="vazio">${alvo ? "Nothing has been sent about " + esc(alvo) + " yet." : "Nothing has been sent yet."}</p>`;
-  const mais = document.getElementById("mais");
-  if (mais) mais.addEventListener("click", () => { S.quantos += 40; pintarAlertas(); });
-}
-
-function pintarFiltro() {
-  const meus = S.alertas.filter(a => a.ticker === S.ticker).length;
-  document.getElementById("filtro").innerHTML =
-    `<button data-a="um"    aria-pressed="${S.ambito === "um"}">${esc(S.ticker || "")} · ${meus}</button>
-     <button data-a="todos" aria-pressed="${S.ambito === "todos"}">All companies · ${S.alertas.length}</button>`;
-  for (const b of document.querySelectorAll("#filtro button")) {
-    b.addEventListener("click", () => {
-      S.ambito = b.dataset.a; S.quantos = 20; pintarFiltro(); pintarAlertas();
-    });
-  }
-}
-
-// ── o funil ──────────────────────────────────────────────────────────────────
-// Só o dia mais recente: a pergunta é "porque é que está calado AGORA", e misturar dias faria a
-// mesma empresa aparecer em duas etapas ao mesmo tempo.
-function pintarFunil() {
-  const todas = S.funil;
-  const dia = todas.reduce((m, r) => r.date > m ? r.date : m, "");
-  const hoje = todas.filter(r => r.date === dia);
-  const porEtapa = new Map();
-  for (const r of hoje) {
-    if (!porEtapa.has(r.stage)) porEtapa.set(r.stage, new Map());
-    porEtapa.get(r.stage).set(r.ticker, r.detail || "");   // a última decisão de cada empresa
-  }
-  const blocos = ETAPAS.filter(([k]) => porEtapa.has(k)).map(([k, titulo, porque]) => {
-    const entradas = [...porEtapa.get(k).entries()].sort();
-    const nomes = entradas.map(([t, d]) => {
-      const leg = legivel(d);
-      return `<span class="nome ${t === S.ticker ? "eu" : ""}"><b>${esc(t)}</b>` +
-             `${leg ? " <span>" + esc(leg) + "</span>" : ""}</span>`;
-    }).join("");
-    return `<div class="etapa${k === "alerted" ? " passou" : ""}">
-              <h3>${esc(titulo)} <span class="n">${entradas.length}</span></h3>
-              <p class="porque">${esc(porque)}</p>
-              <div class="nomes">${nomes}</div>
-            </div>`;
-  });
-  document.getElementById("funil").innerHTML = blocos.length
-    ? blocos.join("") : '<p class="vazio">No decisions recorded yet.</p>';
-  document.getElementById("funilSub").textContent =
-    `Nine out of ten scans send nothing. Silence is a decision, so here is where each company ` +
-    `stopped on ${dia}, in the order the decisions are taken.`;
-}
-
-// ── escolher uma empresa: uma selecção governa a página ──────────────────────
-async function escolher(t, porEscolha) {
-  S.ticker = t;
-  // Ao chegar, a pergunta é "o que fez o sistema hoje", e a resposta é o canal inteiro.
-  // A partir do momento em que se escolhe uma empresa, a página inteira passa a ser sobre
-  // ela: dois estados diferentes no mesmo ecrã é a confusão que esta revisão veio corrigir.
-  if (porEscolha) { S.ambito = "um"; S.quantos = 20; }
-  for (const b of document.querySelectorAll("#rail .tk")) {
-    const meu = b.dataset.t === t;
-    b.setAttribute("aria-pressed", String(meu));
-    if (meu) b.scrollIntoView({ block:"nearest", inline:"nearest" });
-  }
-  document.getElementById("detalhe").innerHTML = "";
-  const linha = S.linhas.find(r => r.ticker === t);
-  pintarFiltro(); pintarAlertas(); pintarFunil();
-  try {
-    S.activo = await json(`/api/asset/${t}`);
-    cabeca(S.activo, linha);
-    desenhar(S.activo);
-  } catch (e) {
-    document.getElementById("legenda").textContent = "Could not load this company.";
-  }
-  history.replaceState(null, "", `?t=${t}`);
-}
-
-(async () => {
-  try {
-    const [saude, visao, alertas, funil] = await Promise.all([
-      json("/api/health"), json("/api/overview"), json("/api/alerts"), json("/api/screener"),
-    ]);
-
-    const idade = Math.round(saude.age_s || 0);
-    const quanto = idade < 120 ? idade + "s" : idade < 7200 ? Math.round(idade / 60) + " min"
-                                             : Math.round(idade / 3600) + " h";
-    document.getElementById("estado").textContent = saude.fresh
-      ? `checked ${quanto} ago`
-      : `last check ${quanto} ago — not reporting in`;
-    document.getElementById("ponto").className = "ponto" + (saude.fresh ? "" : " frio");
-    // O estado do mercado subiu para a barra. NÃO fica também no rodapé: dois sítios a dizer o
-    // mesmo facto é a classe de defeito que esta página já corrigiu duas vezes (a legenda do
-    // funil, e a contagem de alertas por empresa).
-    const m = visao.market || {};
-    // Duas peças e não uma cadeia só: no telemóvel o detalhe SAI (a folha de estilo esconde
-    // `.det`), em vez de ser cortado com reticências. Cortar dá uma frase truncada que se lê pior
-    // do que a sua ausência: "opens Mon 09:3..." não informa ninguém.
-    document.getElementById("mercado").textContent = (m.label || "").toLowerCase();
-    document.getElementById("mercado-det").textContent = m.detail ? " · " + m.detail : "";
-    document.getElementById("rodape").textContent =
-      visao.alerts_total ? visao.alerts_total + " alerts sent to date" : "";
-
-    S.linhas  = visao.rows || [];
-    S.alertas = alertas.rows || [];
-    S.funil   = funil.rows || [];
-
-    // ⚠️ OS LOGÓTIPOS SÃO SERVIDOS DAQUI, e não de um CDN da empresa. Um <img> apontado a um
-    // domínio de terceiros diria a esse terceiro quem visita esta página e que empresas está a
-    // ver, o que contradiz a posição de privacidade que o trabalho assume. Os ficheiros vivem em
-    // web/assets/logos/ e vêm com a página. Se um faltar, o `onerror` esconde-o e o botão fica
-    // exactamente como estava: o nome nunca depende da imagem.
-    document.getElementById("rail").innerHTML = S.linhas.map(r => {
-      const n = typeof r.move === "number";
-      const t = esc(r.ticker);
-      return `<button class="tk" data-t="${t}" aria-pressed="false"
-                title="${esc(r.name || r.ticker)}">
-                <span class="cab"><img class="lg" src="/assets/logos/${t}.png" alt=""
-                       onerror="this.remove()"><b>${t}${
-                       r.flagged ? '<span class="flag"></span>' : ""}</b></span>
-                <s class="${n ? (r.move >= 0 ? "pos" : "neg") : ""}">${n ? pct(r.move) : "—"}</s>
-              </button>`;
-    }).join("");
-    for (const b of document.querySelectorAll("#rail .tk")) {
-      b.addEventListener("click", () => escolher(b.dataset.t, true));
+  // ── os pontos da linha ────────────────────────────────────────────────────
+  let pontos, desdeTs = 0, ateTs = 0;
+  if (umDia) {
+    const barras = a.intraday || [];
+    if (barras.length < 2) {
+      alvo.innerHTML = `<p class="vazio">No intraday series for ${esc(a.intraday_day || "today")}
+        — the market may not have opened yet. Pick a longer range.</p>`;
+      return;
     }
-
-    // A URL guarda a empresa: partilhar a página partilha o que se estava a ver, e o botão
-    // "voltar" do browser continua a funcionar.
-    // A empresa de entrada é a que o próprio sistema destacou — a sinalizada, ou, se nenhuma
-    // o foi, a que mais se moveu. Abrir sempre na primeira da lista gastava a vista principal
-    // com uma empresa onde não aconteceu nada.
-    const pedido = new URLSearchParams(location.search).get("t");
-    const notavel = S.linhas.slice().sort((a, b) =>
-      (b.flagged ? 1 : 0) - (a.flagged ? 1 : 0) ||
-      Math.abs(b.move || 0) - Math.abs(a.move || 0))[0];
-    const inicial = S.linhas.find(r => r.ticker === pedido) ? pedido
-                  : (notavel && notavel.ticker);
-    if (inicial) await escolher(inicial);
-
-  } catch (e) {
-    document.getElementById("estado").textContent = "could not reach the system";
-    document.getElementById("ponto").className = "ponto frio";
-    document.getElementById("alertas").innerHTML =
-      '<p class="vazio">Nothing is shown rather than something made up.</p>';
+    pontos = barras.map(([t, v]) => ({ time:t, value:v }));
+    desdeTs = barras[0][0]; ateTs = barras[barras.length - 1][0];
+  } else {
+    const fechos = (a.closes || []).slice(-MESES[S.intervalo]);
+    if (fechos.length < 2) { alvo.innerHTML = '<p class="vazio">No price series.</p>'; return; }
+    pontos = fechos.map(([t, v]) => ({ time:t, value:v }));
+    desdeTs = Math.floor(Date.parse(fechos[0][0] + "T00:00:00Z") / 1000);
   }
-})();
+
+  const c = criarGrafico(alvo, 0, mostraZ(a));
+  // ⚠️ v5 do lightweight-charts: `addLineSeries` deixou de existir. A série cria-se com
+  // `addSeries(LightweightCharts.LineSeries, ...)` e os marcadores com `createSeriesMarkers`,
+  // que é uma função do módulo e não um método da série.
+  const s = c.addSeries(LightweightCharts.LineSeries, {
+    color:P.linha, lineWidth:2, priceLineVisible:false, lastValueVisible:false });
+  s.setData(pontos);
+
+  // ── a referência: o fecho de ontem ────────────────────────────────────────
+  // Sem ela, uma linha intradiária não diz se o dia é de subida ou de descida — diz só a forma.
+  if (S.camadas.referencia && umDia && a.prev_close != null) {
+    s.createPriceLine({ price:a.prev_close, color:P.texto, lineWidth:1,
+                        lineStyle:2, axisLabelVisible:true, title:"prev close" });
+  }
+
+  // ── as marcas ─────────────────────────────────────────────────────────────
+  const marcas = [];
+  if (S.camadas.assinalados && !umDia) {
+    for (const [t, z, dir] of (a.events || [])) {
+      if (t < pontos[0].time) continue;
+      // Um dia assinalado que gerou alerta não se marca duas vezes: a marca do alerta manda,
+      // porque a distinção que interessa é entre o que saiu e o que ficou por sair.
+      if (S.camadas.alertas && (a.alerts || []).some(al => al.date === t)) continue;
+      marcas.push({ tempo:t, position: dir > 0 ? "aboveBar" : "belowBar",
+                    color: dir > 0 ? P.sobe : P.desce,
+                    shape: dir > 0 ? "arrowUp" : "arrowDown", text:"" });
+    }
+  }
+  if (S.camadas.noticias && !umDia) {
+    const comAlerta = new Set((a.alerts || []).map(al => al.date));
+    for (const n of (a.news || [])) {
+      if (!n.date || n.date < pontos[0].time || comAlerta.has(n.date)) continue;
+      marcas.push({ tempo:n.date, position:"belowBar", color:P.noticia,
+                    shape:"square", text:"" });
+    }
+  }
+  let fora = 0;
+  if (S.camadas.alertas) {
+    const dentro = marcasDeAlertas(a, desdeTs, ateTs);
+    marcas.push(...dentro);
+    // ⚠️ Um alerta pode ter saído fora da janela desenhada — tipicamente de madrugada, horas
+    // antes da abertura. Não se arrasta o marcador para a borda, porque isso mentiria sobre a
+    // hora; conta-se, e diz-se por baixo. É o mesmo facto que a secção da latência mede.
+    if (umDia) {
+      const hoje = (a.intraday_day || "").slice(0, 10);
+      fora = (a.alerts || []).filter(al => (al.date || "") === hoje).length - dentro.length;
+    }
+  }
+  S.desenhado = {
+    alertas: marcas.filter(m => m.shape === "circle").length,
+    assinalados: marcas.filter(m => m.shape !== "circle" && m.shape !== "square").length,
+    noticias: marcas.filter(m => m.shape === "square").length,
+    referencia: !!(S.camadas.referencia && umDia && a.prev_close != null),
+    fora: Math.max(0, fora),
+  };
+
+  if (marcas.length) {
+    LightweightCharts.createSeriesMarkers(s, marcas
+      .sort((x, y) => (x.tempo > y.tempo ? 1 : -1))
+      .map(m => ({ time:m.tempo, position:m.position, color:m.color,
+                   shape:m.shape, text:m.text || "" })));
+  }
+  c.timeScale().fitContent();
+  // ⚠️ O gráfico não se redimensiona sozinho. Sem isto, mudar a janela deixa-o cortado — e num
+  // painel que se mostra ao vivo é o primeiro defeito que alguém vê.
+  if (S.obs) S.obs.disconnect();
+  S.obs = new ResizeObserver(() => c.applyOptions({ width: alvo.clientWidth }));
+  S.obs.observe(alvo);
+  S.grafico = c;
+}
+
+// ── a faixa do z ────────────────────────────────────────────────────────────
+// ⚠️ O z NÃO vai para o eixo do preço. São unidades diferentes — dólares e desvios-padrão — e
+// sobrepô-las obrigaria a um segundo eixo, que convida a ler correlação entre duas curvas que
+// só partilham o tempo. Fica numa faixa própria por baixo, com o mesmo eixo horizontal: para
+// saber porque é que um dia foi assinalado, olha-se para baixo.
+//
+// ⚠️ E só há pontos nos dias assinalados. O instantâneo traz o z apenas desses; calcular o z
+// dos restantes no browser seria uma segunda implementação do detetor, a divergir da primeira
+// no dia em que uma delas mudasse.
+function desenharZ(a) {
+  const alvo = $("#grafZ");
+  if (!alvo) return;
+  if (S.intervalo === "1D" || !S.camadas.zscore) { alvo.hidden = true; alvo.innerHTML = ""; return; }
+  alvo.hidden = false; alvo.innerHTML = "";
+  if (typeof LightweightCharts === "undefined") return;
+
+  const P = paleta();
+  const fechos = (a.closes || []).slice(-MESES[S.intervalo]);
+  const desde = fechos[0]?.[0] || "";
+  const ev = (a.events || []).filter(e => e[0] >= desde);
+  if (!ev.length) {
+    alvo.innerHTML = '<p class="vazio" style="padding:10px 14px">No flagged day in this range.</p>';
+    return;
+  }
+  const c = criarGrafico(alvo, 108, false);
+  const lim = S.visao?.threshold ?? 1.5;
+  // Uma série invisível que cobre o intervalo todo, para o eixo do tempo bater certo com o de
+  // cima mesmo quando os dias assinalados são poucos e esparsos.
+  const base = c.addSeries(LightweightCharts.LineSeries, {
+    color:"rgba(0,0,0,0)", lineWidth:1, priceLineVisible:false, lastValueVisible:false });
+  base.setData(fechos.map(([t]) => ({ time:t, value:0 })));
+  // Sem `title`: o rótulo do eixo já diz o valor, e o título repeti-lo-ia ao lado.
+  base.createPriceLine({ price: lim, color:P.sobe, lineWidth:1, lineStyle:2,
+                         axisLabelVisible:true, title:"" });
+  base.createPriceLine({ price:-lim, color:P.desce, lineWidth:1, lineStyle:2,
+                         axisLabelVisible:true, title:"" });
+  const sobe = c.addSeries(LightweightCharts.HistogramSeries, { color:P.sobe, priceLineVisible:false });
+  const desce = c.addSeries(LightweightCharts.HistogramSeries, { color:P.desce, priceLineVisible:false });
+  sobe.setData(ev.filter(e => e[1] >= 0).map(([t, z]) => ({ time:t, value:z })));
+  desce.setData(ev.filter(e => e[1] < 0).map(([t, z]) => ({ time:t, value:z })));
+  c.timeScale().fitContent();
+  if (S.obsZ) S.obsZ.disconnect();
+  S.obsZ = new ResizeObserver(() => c.applyOptions({ width: alvo.clientWidth }));
+  S.obsZ.observe(alvo);
+}
+
+// A legenda só nomeia as marcas que estão MESMO desenhadas. Uma legenda que descreve uma marca
+// desligada ensina o leitor a procurar uma coisa que não está lá.
+// ⚠️ A legenda nomeia o que está MESMO desenhado, e não o que está ligado. São coisas
+// diferentes: no 1D a caixa dos alertas pode estar ligada e não haver marca nenhuma no ecrã,
+// porque o alerta saiu de madrugada e a janela intradiária começa na abertura. Uma legenda que
+// descreve uma marca ausente manda o leitor procurar uma coisa que não está lá — foi assim que
+// a legenda do funil e a do gráfico já falharam duas vezes neste painel.
+function pintarLegendaGrafico() {
+  const el = $("#legGraf"); if (!el) return;
+  const d = S.desenhado || {};
+  const umDia = S.intervalo === "1D";
+  const L = [];
+  if (d.alertas)
+    L.push(`<i><span class="p" style="background:var(--parou)"></span> an alert went out</i>`);
+  if (d.assinalados) {
+    L.push(`<i><span class="seta sobe"></span> flagged, closed up, no alert</i>`);
+    L.push(`<i><span class="seta desce"></span> flagged, closed down, no alert</i>`);
+    // ⚠️ Esta frase não é redundante com as duas de cima. Elas dizem o que a cor É; esta diz o
+    // que a cor NÃO é. Verde num painel financeiro lê-se como «bom», e este sistema não emite
+    // juízos sobre se um movimento é bom — nem sequer sobre se vai continuar.
+    L.push(`<i>the colour is the direction of that day's move, and nothing more</i>`);
+  }
+  if (d.noticias)
+    L.push(`<i><span class="quad"></span> a headline the system saw and did not act on</i>`);
+  if (d.referencia)
+    L.push(`<i><span class="tracejado"></span> yesterday's close</i>`);
+  if (S.camadas.zscore && !umDia && $("#grafZ") && !$("#grafZ").hidden)
+    L.push(`<i>z = distance from this company's own ${S.visao?.window ?? 20}-day norm, in standard deviations</i>`);
+  if (d.fora)
+    L.push(`<i><b>${d.fora} alert${d.fora > 1 ? "s" : ""} today went out before the session
+      opened</b>, so ${d.fora > 1 ? "they are" : "it is"} not on this chart — the times are below</i>`);
+  el.innerHTML = L.join("");
+  el.hidden = !L.length;
+}
+
+// Os dias assinalados como BOTÕES, e não só como marcadores no gráfico: um marcador desenhado
+// numa tela não existe para um leitor de ecrã, nem para quem navega por teclado.
+function pintarDias(a) {
+  if (S.intervalo === "1D") {
+    // No 1D as fichas passam a ser os alertas de hoje, com a hora a que saíram: é a única lista
+    // do dia que existe, e é a que dá sentido às marcas do gráfico.
+    const hoje = (a.intraday_day || "").slice(0, 10);
+    const alertasHoje = (a.alerts || []).filter(al => (al.date || "") === hoje);
+    $("#dias").innerHTML = alertasHoje.length ? alertasHoje.map((al, i) =>
+      `<button class="dia-b" data-a="${i}">
+        <span class="p" style="background:var(--parou)"></span>
+        ${esc(horaDe(al.sent_at))} <span style="color:var(--fraco)">${esc(al.kind || "")}</span>
+      </button>`).join("")
+      : `<span class="vazio" style="padding:0">No alert for this company today.</span>`;
+    $("#dias").querySelectorAll(".dia-b").forEach(b =>
+      b.addEventListener("click", () => modalAlerta(alertasHoje[+b.dataset.a])));
+    return;
+  }
+  const desde = (a.closes || []).slice(-MESES[S.intervalo])[0]?.[0] || "";
+  const ev = (a.events || []).filter(e => e[0] >= desde).slice().reverse().slice(0, 40);
+  $("#dias").innerHTML = ev.length ? ev.map(([t, z, dir]) =>
+    `<button class="dia-b" data-d="${esc(t)}" data-z="${z}">
+      <span class="p" style="background:var(--${dir > 0 ? "sobe" : "desce"})"></span>
+      ${esc(t)} <span style="color:var(--fraco)">z ${z}</span></button>`).join("")
+    : `<span class="vazio" style="padding:0">No flagged day in this range.</span>`;
+  $("#dias").querySelectorAll(".dia-b").forEach(b =>
+    b.addEventListener("click", () => modalDia(a, b.dataset.d, b.dataset.z)));
+}
+
+const horaDe = iso => {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  return Number.isNaN(+d) ? "—"
+    : d.toLocaleTimeString("en-GB", { hour:"2-digit", minute:"2-digit", timeZone:"UTC" }) + " UTC";
+};
+
+// ── modais ──────────────────────────────────────────────────────────────────
+function abrirModal(titulo, html) {
+  $("#mTit").textContent = titulo; $("#mCorpo").innerHTML = html; $("#modal").showModal();
+}
+$("#mFechar").addEventListener("click", () => $("#modal").close());
+$("#modal").addEventListener("click", e => { if (e.target.id === "modal") $("#modal").close(); });
+
+function modalAlerta(a) {
+  if (!a) return;
+  const v = S.votos[a.key || ""];
+  abrirModal(`${a.ticker} · ${a.date}`,
+    `<h4>The exact text that was sent</h4><pre class="m-exato">${comLigacoes(esc(a.text))}</pre>` +
+    (v ? `<h4>What readers said</h4><p>👍 ${v[0]} useful · 👎 ${v[1]} did not help. ` +
+         `A vote is one per person per alert, and the last one replaces the previous.</p>` : "") +
+    (a.sent_at ? `<h4>When</h4><p>Detected and delivered at ${esc(a.sent_at)}` +
+      (a.event_at ? `, from a headline published at ${esc(a.event_at)}.` : ".") + `</p>` : ""));
+}
+
+function modalDia(a, dia, z) {
+  const alerta = (a.alerts || []).find(x => x.date === dia);
+  const noticia = (a.news || []).find(x => x.date === dia);
+  abrirModal(`${a.ticker} · ${dia}`,
+    `<h4>Why this day is marked</h4>
+     <p>The move was ${esc(z)} standard deviations from this company's own previous twenty days.
+        The threshold is ±${S.visao.threshold}. It is a measure of how unusual the day was for
+        this stock, and nothing else.</p>` +
+    (noticia ? `<h4>A headline from that day</h4><p>“${esc(noticia.headline)}”</p>
+        <p>What followed, measured and not predicted: ${pct(noticia.d1)} after one session,
+           ${pct(noticia.d5)} after five.</p>` : "") +
+    (alerta ? `<h4>The alert that went out</h4><pre class="m-exato">${esc(alerta.text)}</pre>`
+            : `<h4>No alert</h4><p>The day was flagged by the detector, but a gate stopped it
+                 before delivery, or the daily budget was already spent.</p>`));
+}
+
+function modalEmpresa(t, estado) {
+  const passos = [];
+  for (const [k, rot, porque, portao] of ETAPAS) {
+    const i = ORDEM.get(k), j = ORDEM.get(estado.stage);
+    if (i > j) break;
+    const aqui = i === j;
+    const entregue = k === "alerted";
+    // Passou aqui → o nome do portão atravessado. Parou aqui → o nome da rejeição, e o porquê.
+    const titulo = aqui && !entregue ? `Stopped: ${rot}` : portao;
+    passos.push(`<li><span class="p" style="background:var(--${
+      entregue ? "acento" : aqui ? "parou" : "linha"})"></span>
+      <div><b>${esc(titulo)}</b>${aqui && estado.detail
+        ? ` — ${esc(legivel(estado.detail))}` : ""}${
+        // o `porque` é a explicação genérica da porta; quando há `detail`, ele é a explicação
+        // deste caso concreto e diz o mesmo em melhor. Mostrar os dois é repetir-se.
+        aqui && !entregue && !estado.detail ? `<br><span>${esc(porque)}</span>` : ""}</div></li>`);
+  }
+  abrirModal(`${t} · why it is where it is`,
+    `<h4>The gates it went through, in order</h4>
+     <ul class="m-passos">${passos.join("")}</ul>
+     <p class="legenda" style="margin-top:12px">
+       <i><span class="p" style="background:var(--linha)"></span> gate cleared</i>
+       <i><span class="p" style="background:var(--parou)"></span> stopped here</i>
+       <i><span class="p" style="background:var(--acento)"></span> alert sent</i>
+     </p>
+     <p style="margin-top:12px">Silence is a decision this system makes, so it is written down
+        the same way an alert is.</p>`);
+}
+
+// ── modos e atualização ─────────────────────────────────────────────────────
+function pintarTudo() {
+  const linhas = S.visao.rows || [];
+  const estados = estadosDoDia();
+  const dia = [...estados.values()][0]?.date || "";
+  $("#dataHoje").textContent = dia || "—";
+  $("#frase").textContent = fraseDoDia(linhas, estados);
+  $("#mercado").innerHTML = S.visao.market
+    ? `<span class="${S.visao.market.open ? "aberto" : ""}">${esc(S.visao.market.label)}</span>` +
+      ` · ${esc(S.visao.market.detail || "")}` : "";
+  $("#estado").textContent = `checked ${S.visao.age_label || "—"}`;
+  $("#pulso").className = "pulso" + (S.visao.fresh ? "" : " frio");
+  $("#rodape").textContent = `${S.visao.alerts_total} alerts sent to date`;
+  pintarMascote();
+  pintarKpis(linhas, estados);
+  pintarEmpresas(linhas, estados);
+  pintarFeed();
+  // O clique longo no sinal abre o percurso; o clique normal escolhe a empresa. Dois gestos no
+  // mesmo cartão seriam ambíguos, por isso o percurso tem o seu próprio alvo.
+  $("#empresas").querySelectorAll(".e").forEach(b => {
+    const e = estados.get(b.dataset.t);
+    const pe = b.querySelector(".e-pe");
+    if (!e || !pe) return;
+    pe.style.cursor = "help";
+    pe.addEventListener("click", ev => { ev.stopPropagation(); modalEmpresa(b.dataset.t, e); });
+  });
+}
+
+$("#mHoje").addEventListener("click", () => trocarModo("hoje"));
+$("#mHist").addEventListener("click", () => trocarModo("hist"));
+function trocarModo(m) {
+  S.modo = m;
+  $("#mHoje").setAttribute("aria-pressed", String(m === "hoje"));
+  $("#mHist").setAttribute("aria-pressed", String(m === "hist"));
+  // As duas vistas respondem a perguntas diferentes, e por isso mostram coisas diferentes.
+  // «Hoje» responde ao que aconteceu hoje: a mascote relata, os indicadores contam, a watchlist
+  // mostra o estado de cada empresa agora. «History» responde ao que este canal tem feito ao
+  // longo do tempo, e para isso a watchlist de hoje não serve — sai também.
+  const hoje = m === "hoje";
+  $("#secHoje").hidden = !hoje;
+  $("#kpis").hidden = !hoje;
+  $("#secHist").hidden = hoje;
+  $("#colEsq").hidden = !hoje;
+  document.querySelector(".grelha").style.gridTemplateColumns = hoje ? "" : "1fr";
+  if (!hoje) { S.diaHist = null; pintarHistorico(); }
+  S.feedTodos = hoje ? S.feedTodos : true;
+  $("#fTodos").setAttribute("aria-pressed", String(S.feedTodos));
+  $("#fEmpresa").setAttribute("aria-pressed", String(!S.feedTodos));
+  pintarFeed();
+}
+
+// ── o registo, ao longo do tempo ────────────────────────────────────────────
+// ⚠️ Só se mostra o que os dados sustentam. As portas por dia dariam a melhor barra do mundo, e
+// não estão aqui: o `/api/screener` descreve o dia corrente, não o passado, e desenhar uma série
+// histórica de portas obrigaria a inventá-la. O que existe é o registo de alertas, e é esse que
+// se mostra.
+function pintarHistorico() {
+  const porDia = new Map();
+  for (const a of S.alertas) {
+    const d = (a.date || "").slice(0, 10); if (!d) continue;
+    const e = porDia.get(d) || { news:0, market:0, total:0 };
+    e[a.kind === "news" ? "news" : "market"] += 1; e.total += 1;
+    porDia.set(d, e);
+  }
+  const dias = [...porDia.entries()].sort((x, y) => (x[0] < y[0] ? -1 : 1));
+  // ⚠️ `MARKET` é o pseudo-ticker do resumo de abertura e de fecho, não uma empresa. Sem esta
+  // linha o cartão dizia «13 companies heard from of 12 watched» — treze de doze, que é o tipo
+  // de número que se vê e não se acredita, e com razão.
+  const vigiadas = new Set(S.visao.watchlist || []);
+  const tickers = new Set(S.alertas.map(a => a.ticker).filter(t => t && vigiadas.has(t)));
+  const totais = dias.map(([, e]) => e.total);
+  const mediana = totais.length
+    ? totais.slice().sort((a, b) => a - b)[Math.floor(totais.length / 2)] : 0;
+  const chaves = new Set(S.alertas.map(x => x.key).filter(Boolean));
+  const votos = Object.entries(S.votos).filter(([k]) => chaves.has(k))
+    .reduce((n, [, v]) => n + v[0] + v[1], 0);
+
+  const k = (rot, val, sub) =>
+    `<div class="k"><dt>${rot}</dt><dd class="num">${val}</dd><div class="sub">${sub}</div></div>`;
+  $("#histKpis").innerHTML = [
+    k("Alerts on record", S.alertas.length, `across ${dias.length} day${dias.length === 1 ? "" : "s"}`),
+    k("Busiest day", Math.max(0, ...totais), "the most the channel ever said in one day"),
+    k("Typical day", mediana, "the median, which is the day you should expect"),
+    k("Companies heard from", tickers.size, `of ${(S.visao.watchlist || []).length} watched`),
+    k("Reader votes", votos, votos ? "on the alerts on record" : "no votes yet"),
+  ].join("");
+  $("#histNota").textContent = dias.length
+    ? `${dias[0][0]} to ${dias[dias.length - 1][0]}` : "";
+
+  const alto = Math.max(1, ...totais);
+  $("#histBarras").innerHTML = dias.map(([d, e]) => {
+    const h = t => `height:${Math.round(t / alto * 96)}px`;
+    return `<button class="hist-d" data-d="${esc(d)}" title="${esc(d)}: ${e.total}"
+              aria-pressed="${S.diaHist === d}">
+      ${e.market ? `<i style="${h(e.market)};background:var(--parou)"></i>` : ""}
+      ${e.news ? `<i style="${h(e.news)};background:var(--acento)"></i>` : ""}
+      <span class="n">${e.total}</span></button>`;
+  }).join("") || '<p class="vazio">No alert on record yet.</p>';
+
+  $("#histBarras").querySelectorAll(".hist-d").forEach(b =>
+    b.addEventListener("click", () => {
+      S.diaHist = S.diaHist === b.dataset.d ? null : b.dataset.d;
+      pintarHistorico(); pintarFeed();
+    }));
+  // o dia escolhido fica visível sem ter de se procurar
+  const sel = $("#histBarras").querySelector('[aria-pressed="true"]');
+  if (sel) sel.scrollIntoView({ block:"nearest", inline:"center" });
+}
+$("#fTodos").addEventListener("click", () => { S.feedTodos = true; trocarModo(S.modo); });
+$("#fEmpresa").addEventListener("click", () => { S.feedTodos = false; trocarModo(S.modo); });
+
+// ── sondagem ────────────────────────────────────────────────────────────────
+// ⚠️ Sondagem e não WebSocket, de propósito: o produtor escreve um ficheiro a cada sessenta
+// segundos, e uma ligação permanente custaria mais do que resolve. Trinta segundos é metade do
+// ciclo, o que garante que nada fica mais de um ciclo por mostrar. Só se recarrega quando o
+// `as_of` muda — sondar não é recarregar.
+async function sondar() {
+  try {
+    const h = await json("/api/health");
+    if (h.as_of && h.as_of !== S.asOf) await carregar(false);
+    else { $("#estado").textContent = `checked ${Math.round(h.age_s || 0)}s ago`;
+           $("#pulso").className = "pulso" + (h.fresh ? "" : " frio"); }
+  } catch { /* uma sondagem falhada não é um erro do produto: a próxima corre daqui a 30 s */ }
+}
+
+carregar(true).then(() => { setInterval(sondar, 30000); })
+  .catch(e => { $("#frase").textContent = "Could not read the snapshot. The worker writes one every cycle.";
+                console.error(e); });
 </script>
 </body>
 </html>

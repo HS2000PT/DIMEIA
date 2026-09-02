@@ -7,7 +7,7 @@
 ## 0. Regra de ouro
 
 O trabalho consiste em **reescrever a dissertação do zero em `tese-v2/`**, imitando ao máximo a
-dissertação de referência (`thesis-examples/dissertação_Rafael Silva.pdf`), adaptada ao tema.
+dissertação de referência (`archive/thesis-versions/thesis-examples/dissertação_Rafael Silva.pdf`), adaptada ao tema.
 A tese antiga vive em `tese/` e serve **apenas como fonte de factos, números e figuras**.
 **Nenhum parágrafo de `tese/` pode ser copiado para `tese-v2/`.** O texto é escrito de novo.
 
@@ -112,6 +112,6 @@ Copiar `tese-v2/` para o contentor, compilar lá, e trazer só o resultado.
 
 - `tese/` — a dissertação antiga: todos os números, figuras TikZ e resultados.
 - `docs/evaluation/*.md` — os relatórios gerados pelos procedimentos de avaliação.
-- `AUDITORIA_CRITICA_PRE_DEFESA.md` — as fragilidades conhecidas e como estão declaradas.
-- `AUDITORIA_REPRODUCAO.md` — que números foram reproduzidos de raiz e batem certo.
-- `thesis-examples/` — as quatro dissertações aprovadas; a do Rafael Silva é a referência.
+- `archive/reports/AUDITORIA_CRITICA_PRE_DEFESA.md` — as fragilidades conhecidas e como estão declaradas.
+- `archive/reports/AUDITORIA_REPRODUCAO.md` — que números foram reproduzidos de raiz e batem certo.
+- `archive/thesis-versions/thesis-examples/` — as quatro dissertações aprovadas; a do Rafael Silva é a referência.

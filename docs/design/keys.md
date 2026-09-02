@@ -79,7 +79,7 @@ chave se cola mais do que uma vez**.
 |---|---|---|
 | **PC local** | ficheiro `.env` | copiar o bloco acima e preencher |
 | **GitHub Actions** (alertas agendados) | *Settings → Secrets and variables → Actions → New repository secret* | um segredo por nome, **exatamente** o mesmo nome |
-| **VM Oracle** (loop de polling) | ficheiro `.env` na VM | `deploy/setup_vm.sh` copia-o |
+| **VM Oracle** (loop de polling) | ficheiro `.env` na VM | `archive/deploy/setup_vm.sh` copia-o |
 | **Streamlit Cloud** (app pública) | *Manage app → Settings → Secrets* | formato TOML: `GEMINI_API_KEY = "…"` |
 
 ⚠️ **Os nomes têm de bater certo em todos os cofres.** O workflow lê

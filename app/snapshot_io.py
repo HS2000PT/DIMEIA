@@ -19,7 +19,7 @@ from __future__ import annotations
 import json
 import os
 import pathlib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
@@ -52,6 +52,12 @@ class Instantaneo:
     gerado_em: datetime
     idade_s: float
     remoto: bool = False
+    # ⚠️ Os campos do instantâneo que NÃO são por empresa. Sem isto, tudo o que o produtor
+    # acrescentasse ao topo do ficheiro morria aqui em silêncio: o objecto só copiava as linhas
+    # e o carimbo, e a API lia deste objecto e não do ficheiro. Aconteceu com o `market_index`,
+    # que o produtor escrevia, a branch guardava, e a página recebia como `null` — sem erro
+    # nenhum em lado nenhum, e com o ficheiro certo à vista a dois cliques.
+    extra: dict = field(default_factory=dict)
 
     @property
     def fresco(self) -> bool:
@@ -93,11 +99,15 @@ def _interpretar(bruto: dict, agora: datetime | None, remoto: bool) -> Instantan
     if not linhas:
         return None
     ref = agora or datetime.now(UTC)
+    # Tudo o que não é linha nem carimbo passa como está: quem acrescentar um campo ao
+    # produtor não tem de se lembrar de o acrescentar também aqui.
+    conhecidos = {"rows", "generated_at", "build_seconds"}
     return Instantaneo(
         linhas=linhas,
         gerado_em=gerado,
         idade_s=max(0.0, (ref - gerado).total_seconds()),
         remoto=remoto,
+        extra={k: v for k, v in bruto.items() if k not in conhecidos},
     )
 
 

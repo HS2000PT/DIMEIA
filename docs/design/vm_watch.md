@@ -52,7 +52,7 @@ Funciona em Windows também (Ctrl+C para parar). A VM é só a versão "sempre l
 
 ```bash
 git clone https://github.com/HS2000PT/DIMEIA.git && cd DIMEIA
-bash deploy/setup_vm.sh
+bash archive/deploy/setup_vm.sh
 ```
 O script pede-te 2 coisas:
 - **PAT do GitHub** (para a VM publicar o histórico partilhado): GitHub → Settings →
@@ -72,7 +72,7 @@ journalctl -u investigator-watch -f        # ver os ciclos ao vivo
 O Streamlit Community Cloud (grátis) hiberna sem visitas. Para um site 24/7 sem hibernação:
 
 ```bash
-sudo cp deploy/investigator-app.service /etc/systemd/system/
+sudo cp archive/deploy/investigator-app.service /etc/systemd/system/
 sudo sed -i "s|/home/investigator|$HOME|g; s|^User=investigator|User=$(whoami)|"   /etc/systemd/system/investigator-app.service
 sudo systemctl daemon-reload && sudo systemctl enable --now investigator-app
 ```

@@ -228,7 +228,7 @@ O aluno escolheu **Oracle Cloud + WebSocket**. A revisão adversária recomenda 
 - **A Oracle cortou o Always Free a meio de 2026** e há relatos de "out of host capacity" na criação.
 
 **Alternativa recomendada:** o loop de polling de 60s **que já está escrito** (`run_alerts.py --watch`,
-`deploy/setup_vm.sh`, unidade systemd). 8–12h em vez de 30h, latência ~1 min em vez de ~2h — 99% do
+`archive/deploy/setup_vm.sh`, unidade systemd). 8–12h em vez de 30h, latência ~1 min em vez de ~2h — 99% do
 ganho por 30% do custo.
 
 **Salvaguarda obrigatória, seja qual for a escolha:** timebox de **1 dia** na semana 1, com critério
@@ -361,7 +361,7 @@ bilingue. É mecânico e um modelo mais barato faz igual.
   corpora), remove caminhos internos (`progress/`, `CLAUDE.md`, `.claude/`, `docs/defence/`,
   `slides/`, CHECKLIST, RELATORIO), corre scan de segredos e faz **1 commit**. Nunca faz push — o
   push é clique do aluno. Testado: 210 ficheiros, 21 internos excluídos, scan limpo.
-- **Hospedagem 24/7 grátis.** Com a VM Oracle já existe `deploy/investigator-app.service` para servir
+- **Hospedagem 24/7 grátis.** Com a VM Oracle já existe `archive/deploy/investigator-app.service` para servir
   o Streamlit na mesma máquina (porta 8501). Somar **Cloudflare Tunnel** dá HTTPS + domínio próprio,
   grátis, sem abrir portas. Alternativa para o chat: **Gradio em Hugging Face Spaces** (grátis,
   sempre-ligado na prática).
@@ -389,7 +389,7 @@ o critério estético não tem condição de paragem — foi o que aconteceu nas
 
 1. ✅ **Tempo real = polling de 60s na VM Oracle.** WebSocket **cortado** (o aluno tinha escolhido
    WebSocket antes da análise adversária; reverteu com a evidência). Código já escrito:
-   `run_alerts.py --watch`, `deploy/setup_vm.sh`, unidade systemd. Timebox de 1 dia na semana 1.
+   `run_alerts.py --watch`, `archive/deploy/setup_vm.sh`, unidade systemd. Timebox de 1 dia na semana 1.
 2. ✅ **Cortes da §6 aceites na íntegra** — price targets de analistas, carteira/holdings,
    insider/MSPR/Form 4, feed de SEC filings, reescrita do Streamlit do zero, chatbot multi-turno,
    enquadramento multi-agente, RQ5/RQ6 novas, bolsas europeias em destaque.

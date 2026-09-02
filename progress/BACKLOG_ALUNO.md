@@ -359,7 +359,7 @@ ligado a nada depois da mudança de marca.
 
 ## 6. Quaisquer pendências que restem nos TODOs do repositório
 
-Varrer [`CHECKLIST.md`](../CHECKLIST.md), os `TODO` no código e nos `.tex`, e o que sobrar do
+Varrer [`docs/planos/CHECKLIST.md`](../CHECKLIST.md), os `TODO` no código e nos `.tex`, e o que sobrar do
 [`v3_backlog.md`](../docs/design/v3_backlog.md).
 
 ### ✅ Varredura feita a 2026-08-07 — e o resultado é "não há nada", com prova
