@@ -154,7 +154,7 @@ todos os DOI e URL para confirmar que resolvem. Metadados do PDF.
 Pedido: «falta os slides finais, e o guia de estudo».
 Inclui os *prompts* para NotebookLM, Gamma, Canva e Figma.
 
-### Frente 09 — Organização da pasta e do repositório ⏳ pendente
+### Frente 09 — Organização da pasta e do repositório 🔄 metade feita
 Pedido (dado a 2026-09-01): «devemos perder algum tempo a organizar a folder
 e o repositorio... tudo o que não esteja de momento a ser usado ativamente,
 ou que não irá constar dos ficheiros finais essenciais deve ser movido para
@@ -163,7 +163,18 @@ code (e as subpastas) e archive (e tudo nao final) são certos, e depois acho
 que Dissertation, que dentro terá Thesis, Slides, Guide.»
 Motivo dado: o repositório é público.
 Plano detalhado em `docs/design/reorganizacao.md`.
-Quando: **a seguir à frente 03**, antes da 04. O motivo está escrito no plano.
+
+✅ **Metade A, feita a 2026-09-02** — a que não tem risco: `tmp/` fora do
+índice (406 ficheiros, 66 MB), `archive/` com critério escrito, e os 17
+ficheiros `.md` soltos da raiz reduzidos a 3, com as 30 referências
+reescritas e verificadas.
+
+⏳ **Metade B, adiada com motivo** — o `code/` e reduzir as cinco árvores de
+tese a uma. Ao executar a metade A descobriu-se que `app/` é importado por
+onze ficheiros e que `thesis/` recebe as figuras de nove scripts de
+avaliação. Mover qualquer um obriga a repontar scripts, e as frentes 05 e 07
+ainda vão escrever nesses caminhos. Faz-se quando o conteúdo parar de se
+mexer.
 
 ### Frente 8½ — A cadeia de «porquês» ⏳ pendente, corre em último
 Pedido: «no final, mas apenas só mesmo no final de tudo, devemos fazer as
