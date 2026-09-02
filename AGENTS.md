@@ -1,6 +1,6 @@
 # AGENTS.md — Memória Persistente do Projeto
 
-> ⛳ **PRIORIDADE MÁXIMA: ler `PLANO_FINAL_2026-09-01.md` na raiz de `DIMEIA/` antes de tocar em seja o que for.** Criado a 2026-09-01. Manda sobre este ficheiro e sobre todos os outros planos do repositório, incluindo `progress/PLANO_FINAL_ENTREGA.md`, `progress/PLANO_EMERGENCIA_DEFESA_2026-08-30.md` e `INVESTIGATOR_MASTER_PLAN.md`, que ficam como registo histórico.
+> ⛳ **PRIORIDADE MÁXIMA: ler `docs/planos/PLANO_FINAL_2026-09-01.md` na raiz de `DIMEIA/` antes de tocar em seja o que for.** Criado a 2026-09-01. Manda sobre este ficheiro e sobre todos os outros planos do repositório, incluindo `progress/PLANO_FINAL_ENTREGA.md`, `progress/PLANO_EMERGENCIA_DEFESA_2026-08-30.md` e `archive/reports/INVESTIGATOR_MASTER_PLAN.md`, que ficam como registo histórico.
 
 > Ficheiro mais crítico do projeto. É o mecanismo principal de continuidade entre sessões e dispositivos.
 > **REGRA ABSOLUTA: atualizar este ficheiro no fim de TODAS as sessões, sem exceção.**
@@ -558,7 +558,7 @@
 - **🆕 SESSÃO 61 — 4.ª parte (2026-08-20): A DIRECTIVA-MESTRA FOI REENVIADA, e desta vez foi
   EXECUTADA pela §78 — inspeccionar antes de mexer. Produziu uma experiência nova e um achado que
   a tese não dizia.**
-  **AUDITORIA:** [`INVESTIGATOR_MASTER_AUDIT.md`](INVESTIGATOR_MASTER_AUDIT.md), tudo medido com
+  **AUDITORIA:** [`archive/reports/INVESTIGATOR_MASTER_AUDIT.md`](archive/reports/INVESTIGATOR_MASTER_AUDIT.md), tudo medido com
   comandos e não citado de memória: 8 214 linhas em `investigator/` contra 16 531 em `scripts/`
   (a experiência pesa o dobro do produto, que é o que a §2 pede); as **nove decisões** que o
   sistema toma antes de interromper alguém, cada uma classificada como aprendida, determinística
@@ -676,7 +676,7 @@
   em grelha de colunas deixava **buracos enormes** (etapas de alturas muito diferentes); passa a
   lista de linhas, que é também a forma certa de ler um funil.
   **(G) A DIRECTIVA-MESTRA, VALIDADA e não executada** — §12b novo no
-  `INVESTIGATOR_MASTER_PLAN.md`, ponto a ponto. A directiva descreve um programa que ela própria
+  `archive/reports/INVESTIGATOR_MASTER_PLAN.md`, ponto a ponto. A directiva descreve um programa que ela própria
   admite durar *"semanas ou meses"*; faltam **24 dias**. A maior parte já está satisfeita; o que
   falta é sobretudo do tipo que a própria directiva manda **declarar** em vez de fabricar (§60,
   §63, §64). Fica escrito o que conscientemente **não** se faz e porquê: agentes e aprendizagem
@@ -810,7 +810,7 @@
   accionada, e é ela que condiciona a licença do código.
   **(G) A CAPA.** Imprimia **`[A definir]` duas vezes** (o júri, que a escola só designa depois
   da entrega) e a data era `\today`, ou seja mudava a cada compilação. As quatro dissertações
-  aprovadas em `thesis-examples/` ~~**não mostram júri nenhum**~~ e usam mês e ano. Guarda no
+  aprovadas em `archive/thesis-versions/thesis-examples/` ~~**não mostram júri nenhum**~~ e usam mês e ano. Guarda no
   template para o bloco só aparecer com nomes; data fixada.
   ⚠️ **RISCADO A 2026-08-21: A AFIRMAÇÃO SOBRE O JÚRI ERA FALSA, e fez apagar um bloco
   obrigatório da capa.** As quatro **mostram-no todas** (verificado com `pdftotext -layout` nas
@@ -1052,7 +1052,7 @@
   saída real de cada um**; e os slides/guia não têm ainda a secção das métricas explicadas.
 - **🆕 SESSÃO 57 (2026-08-13 — o aluno deu uma directiva-mestra: auditar tudo antes de mexer em
   nada, e criar o plano-mestre do projecto):**
-  **(A) PLANO-MESTRE CRIADO:** [`INVESTIGATOR_MASTER_PLAN.md`](INVESTIGATOR_MASTER_PLAN.md) na raiz,
+  **(A) PLANO-MESTRE CRIADO:** [`archive/reports/INVESTIGATOR_MASTER_PLAN.md`](archive/reports/INVESTIGATOR_MASTER_PLAN.md) na raiz,
   sucede ao `PLANO_V2` (cadeia actualizada no `progress/README.md`; o V2 **não** foi movido — é
   citado por oito ficheiros e guarda as justificações dos cortes). Traz a matriz de selecção de
   métodos de IA, a análise das candidatas a RQ (**veredicto: NÃO renumerar**, com a razão escrita),
@@ -1117,7 +1117,7 @@
   (H2) e a v5 serve-a em `/api/triage`, `/api/evidence` e no pacote de evidência — **o critério é que
   está desactualizado**, não o produto; **zero testes tocam `api/` ou `web/`** enquanto o Streamlit
   retirado tem 67; o **mapa de competências não tem linha para a camada generativa** (a UC de
-  *Generative AI*, e a resposta à pergunta D5); `CHECKLIST.md:44` diz PT 134 pp e são **139**.
+  *Generative AI*, e a resposta à pergunta D5); `docs/planos/CHECKLIST.md:44` diz PT 134 pp e são **139**.
   **⚠️ (F) A AUDITORIA AUTOMÁTICA MORREU 7/8 no limite de gasto, INCLUINDO TODOS os verificadores**
   (6.ª vez neste projecto). **O aluno mandou continuar à mão, e a manual encontrou o que a
   automática não viu** — incluindo o furo da guarda abaixo.
@@ -1956,7 +1956,7 @@
   — os 12 logótipos agrupados por ETF de setor (**XLK ×9 · XLF · XLE · XLV**, lido do
   `relevance.py`, não de memória) com a razão da mudança 10→12 e o exemplo medido ao vivo
   (**XOM −0,98% com o setor a +0,93%**). É a decisão de **avaliação**, não decoração.
-  **(H) APP DE AUTOTESTE PARA O TELEMÓVEL** (`quiz/index.html`, novo; publicada em
+  **(H) APP DE AUTOTESTE PARA O TELEMÓVEL** (`archive/streamlit-app/quiz/index.html`, novo; publicada em
   <https://Codex.ai/code/artifact/9ec979e9-d46a-450c-b4d9-375cf81edc23>). **44 perguntas**, um
   único ficheiro sem dependências externas (funciona **offline** depois de abrir — foi feita
   para o metro), progresso em `localStorage`, filtros por bloco e por nível 🔴🟡🟢, fila de
@@ -2662,7 +2662,7 @@ ef` vira **CR** e o `	` de
   guia/README/RELATORIO; paper verificado **sincronizado nos números** (0.514/0.542/0.496/0.271…).
   (2) **Limpeza do repo (267→258 ficheiros):** removidos `docs/_archive/` (6), `product_critique.md`,
   `ROOT_PROMPT_CLAUDE_CODE.md`, `evaluation_triage_smoke.md` + refs corrigidas; **scripts/evaluation/
-  models MANTIDOS** (= reprodutibilidade da tese, não lixo). `INDEX.md` mapeia o repo.
+  models MANTIDOS** (= reprodutibilidade da tese, não lixo). `docs/planos/INDEX.md` mapeia o repo.
   (3) **Alertas — decisão tese-primeiro: NÃO reescrever agora.** O CS3 mostra um formato limpo que o
   código já não produz (derivou verboso), mas reescrever `explain_news_impact` obrigava a mexer em
   testes que **não consigo correr aqui** (venv fora do PATH) + exemplo congelado bilingue → risco
@@ -2691,7 +2691,7 @@ ef` vira **CR** e o `	` de
   "para mostrar ao orientador/júri"→descrição por conteúdo; guião de defesa: removida a pergunta-ensaio
   "usaste IA?" (fica só o lembrete honesto de finalizar a declaração com o orientador). **Apagado
   `docs/design/migrar_repo.md`** (fora de âmbito; refs corrigidas em
-  CHECKLIST/RELATORIO/public_bundle/docs). **Novo `INDEX.md`** na raiz (mapa do repo, ligado do topo do
+  CHECKLIST/RELATORIO/public_bundle/docs). **Novo `docs/planos/INDEX.md`** na raiz (mapa do repo, ligado do topo do
   README). **Sem lixo rastreado** (o `.gitignore` já cobre build/caches; 0 artefactos LaTeX/pyc
   commitados). **Contagens corrigidas:** tese EN **90 pp** / PT **92 pp** (compilam a 0 erros, 0 refs
   indefinidas, 0 `??`). 0 ficheiros `.py` tocados ⇒ testes/ruff inalterados (CI revalida no push).
@@ -3029,7 +3029,7 @@ ef` vira **CR** e o `	` de
   **Sempre-online (resposta honesta ao "guarantee me"):** Community Cloud hiberna sem visitas
   e não tem SLA → (1) passo **keep-alive** no workflow Alerts (ping à app em cada corrida,
   semana+fim de semana — na prática mantém-na acordada); (2) alternativa 24/7 A SÉRIO:
-  `deploy/investigator-app.service` (o dashboard na MESMA VM Oracle do vigia, porta 8501;
+  `archive/deploy/investigator-app.service` (o dashboard na MESMA VM Oracle do vigia, porta 8501;
   instruções no vm_watch.md §Bónus). Docs deployment/vm_watch atualizados.
   **Detalhe técnico:** `_event_positions` mapeia eventos a posições no intervalo atual (em
   intraday, ao 1.º bar do dia); markers só com data (HistoryEntry não tem hora — limitação
@@ -3090,8 +3090,8 @@ ef` vira **CR** e o `	` de
   `seed_state_from_shared_history`; `news_key` agora sobre plain_text).
   **F3:** `run_alerts.py --watch --interval 300` (loop com jitter, SIGTERM limpo, config a
   quente; `run_cycle()` extraído e reutilizado) + `_push_history_safe` (INVESTIGATOR_HISTORY_GIT=1,
-  PAT só na VM) + `docs/design/vm_watch.md` + `deploy/investigator-watch.service` +
-  `deploy/setup_vm.sh`. Cron do GitHub fica de rede de segurança (dedup impede duplicados).
+  PAT só na VM) + `docs/design/vm_watch.md` + `archive/deploy/investigator-watch.service` +
+  `archive/deploy/setup_vm.sh`. Cron do GitHub fica de rede de segurança (dedup impede duplicados).
   **F4 limpeza:** APAGADOS ML_PLAN/PLANO_FINAL/PLANO_SESSOES + editorial_review/review_log/
   implementation_review + start/end_session.sh + fnspid-overnight.bat/kb-fnspid.cmd (git preserva;
   citation_log/page_audit/product_review/learning/glossary/ROOT_PROMPT INTOCÁVEIS — proveniência);
@@ -3132,7 +3132,7 @@ ef` vira **CR** e o `	` de
   abas (mesma chave auto-gerada); `st.expander` aninhado (Streamlit não permite) — ambos só
   apareceram ao correr o AppTest a sério, e foram confirmados também com um arranque REAL do
   servidor Streamlit (não só AppTest), health 200.
-  **Fase 3 — notebook:** `notebooks/investigator_walkthrough.ipynb` (âmbito alargado, confirmado
+  **Fase 3 — notebook:** `archive/streamlit-app/notebooks/investigator_walkthrough.ipynb` (âmbito alargado, confirmado
   com o aluno): anomalia + retrieval + o modelo treinado, executado de ponta a ponta
   (`jupyter nbconvert --execute`), 0 erros, outputs reais (2 caminhos locais que escaparam para
   os outputs foram limpos antes do commit).
@@ -3176,7 +3176,7 @@ ef` vira **CR** e o `	` de
   sent to the Telegram channel)"* — o MESMO detetor, config (alerts.yaml) e TEXTO
   (`plain_text(explain_anomaly(...))`) que o canal recebe; estado vazio honesto; AppTest
   atualizado exige a secção; docstring da app corrigido (dizia "baseline embedder", agora ONNX).
-  (2) **`RELATORIO_FINAL.md` na RAIZ** — relatório de 10 min para o orientador/júri: o que existe,
+  (2) **`archive/reports/RELATORIO_FINAL.md` na RAIZ** — relatório de 10 min para o orientador/júri: o que existe,
   números congelados (verificados contra os .md de avaliação), mapa do repo, o que falta (humano).
   (3) **Guia de estudo em 2 versões**: detalhado = 64 slides (atualizado: frame do produto com
   ONNX/paridade 0,992 + intradiário; frame do Embedder com OnnxMiniLMEmbedder; recompila 0 erros);
@@ -3243,7 +3243,7 @@ ef` vira **CR** e o `	` de
   testes + ruff verdes; demo reproduz +6,46%; guia recompila 63 slides 0 erros**. Caderno: mapa do
   repo ganhou `models/`+`app/` e "14 frames"→16.
   **P3 FEITO (commit `f6553a2` — KB de retrieval FNSPID multi-ano como ARTEFACTO local):** build
-  destacado (`run/kb-fnspid.cmd` + tarefa VS Code; log `data/kb_build.log`; HF offline) →
+  destacado (`archive/streamlit-app/run/kb-fnspid.cmd` + tarefa VS Code; log `data/kb_build.log`; HF offline) →
   **79.753 registos** SBERT 384-d em `data/kb_fnspid_sbert.jsonl` (~691 MB, gitignored); amostra de
   50 em `data/samples/kb_fnspid_sample.jsonl` — caminho NOVO de propósito (o `--sample` por defeito
   esmagaria a `kb_sample.jsonl` da demo/tese, dim 384≠64). Validação honesta em
@@ -3255,7 +3255,7 @@ ef` vira **CR** e o `	` de
   **P4 FEITO (S-APP Fase B — bot interativo SEM servidor):** decisão-chave = **long-polling**
   (getUpdates) em vez de webhook → grátis, sem host, atrás de NAT. Novo:
   `investigator/telegram_bot/{store,commands,interactive}.py` (lógica pura separada do transporte;
-  SQLite stdlib em `data/bot_users.db` gitignored), `scripts/run_bot.py`, `run/bot.bat`, tarefa
+  SQLite stdlib em `data/bot_users.db` gitignored), `scripts/run_bot.py`, `archive/streamlit-app/run/bot.bat`, tarefa
   VS Code "Bot interativo"; comandos `/start /watch /unwatch /list /stop /help`. Runner: scanners
   devolvem (ticker, texto) e `_fanout_safe` distribui por subscritor — **`bot.enabled` no
   alerts.yaml, off por defeito, fail-open provado** (sem base → "fan-out saltado"; dry-run por
@@ -3294,9 +3294,9 @@ ef` vira **CR** e o `	` de
   **(P0 reprodutibilidade/CI/organização)** — (C1) `requirements.txt` passou a **leve**; nova `requirements-ml.txt` (torch CPU + SBERT, com `--extra-index-url` da PyTorch no próprio ficheiro); `setup_env.sh` leve por defeito + flag `--ml` — **corrige o "correr num comando" que falhava numa máquina limpa** (torch `+cpu` não está no PyPI). (C2/C3) novo **`.github/workflows/ci.yml`** (pytest+ruff em runner limpo a cada push de código) — o CI antes só compilava a tese; afirmação "CI corre testes" corrigida. **CITATION.cff** novo; **`docs/README.md`** índice; `ROOT_PROMPT_CLAUDE_CODE.md` → `docs/internal/`; badges no README; **licença de código deixada por decidir com o orientador** (nota honesta, sem escolher IP).
   **(P2 flagship)** — **`app/streamlit_app.py`**: dashboard interativo sem estado por cima das funções validadas (Home, News trigger com tabela de precedentes real, Market trigger z-score ao vivo, Evaluation com números validados, How it works com grafo, About/cite). Validado: boota headless (health `ok`) + **AppTest ponta-a-ponta** (Home/News/Evaluation sem exceções; clique devolve 3 precedentes). `requirements-app.txt` + `docs/design/deployment.md` (Streamlit Community Cloud, grátis); ruff cobre `app/`. **Honesto:** sem previsão, não envia nada, usa o embedder baseline (SBERT fica na página Evaluation).
   **DEFERIDO (com razão):** renomear `src/`→`investigator/` (pacote instalável, tirar o `sys.path`) — benefício interno vs. **grande churn de docs** (inventário no AGENTS.md, caderno, learning/glossary, slides do guia referenciavam `src/…`); merece **sessão dedicada** com sync de docs. Verificado que **nem a tese nem o paper referenciam `src/`** (a reescrita tirou identificadores de código), por isso o rename não afeta a tese quando for feito. **→ EXECUTADO (P2 do PLANO_FINAL, 2026-07-05): pacote `investigator/` instalável (pyproject + `-e .`), hacks sys.path removidos, bundles re-serializados com probe idêntico.**
-  **(P3 UX / correr por cliques)** — para quem evita a consola: **`.vscode/`** versionado (Run & Debug ▶ Dashboard/Demo/ficheiro + tarefas: Tests, "Tests + lint (verify)", compilar Thesis/Slides/Guia/Paper, Setup leve/`--ml`), **`run/*.bat`** (duplo-clique: dashboard/demo/tests/thesis), guia **`docs/design/run_in_vscode.md`**, e **`CHECKLIST.md`** na raiz (lista viva com caixas: feito / humano / polimento / tese / futuro). Tudo aditivo (config/docs); 43 testes + ruff verdes.
+  **(P3 UX / correr por cliques)** — para quem evita a consola: **`.vscode/`** versionado (Run & Debug ▶ Dashboard/Demo/ficheiro + tarefas: Tests, "Tests + lint (verify)", compilar Thesis/Slides/Guia/Paper, Setup leve/`--ml`), **`archive/streamlit-app/run/*.bat`** (duplo-clique: dashboard/demo/tests/thesis), guia **`docs/design/run_in_vscode.md`**, e **`docs/planos/CHECKLIST.md`** (lista viva com caixas: feito / humano / polimento / tese / futuro). Tudo aditivo (config/docs); 43 testes + ruff verdes.
   **(P4 going-live 24/7, grátis, sem servidor)** — o aluno pediu "app sempre up, users com notificações no telemóvel, webpage a qualquer hora, tudo grátis". Decisão (confirmada): **faseado** — Fase A agora sem servidor; Fase B (bot interativo por utilizador, host do Student Pack + BD) só desenhada. **Clarificados 3 equívocos** ao aluno: NÃO há modelo treinado (por desenho — SBERT pré-treinado em cache HF + KB construída + matemática pura); NÃO havia timer/servidor/listener (cada gatilho corria 1x e saía); para push agendado NÃO é preciso servidor always-on (cron grátis do GitHub Actions ≫ mais simples). **Construído (Fase A):** `config/alerts.yaml` (watchlist 10 tickers, window/threshold, news opt-in; sem segredos), `scripts/run_alerts.py` (varre watchlist → `detect_latest` → `explain_anomaly` → envia ao canal Telegram; `--dry-run`; **no-op seguro e exit 0 sem segredos**; news scan opcional via Finnhub), `.github/workflows/alerts.yml` (cron `30 21 * * 1-5` UTC ~pós-fecho US + `workflow_dispatch`; `permissions: contents: read`; stack leve; segredos só em Actions Secrets), `tests/test_run_alerts.py` (4 testes puros), runbook **`docs/design/going_live.md`** (PT-PT: criar canal, 3 segredos, testar, caveats do cron UTC/best-effort/60-dias, Fase B com Student Pack). **Validado:** dry-run ao vivo apanhou anomalia real (META +8,44%, z=+3,31) sem enviar; **47 testes** (43+4) + ruff verdes. `.env.example` nota canal; README secção "📡 Live 24/7"; CHECKLIST com os cliques humanos.
-  **Próximo humano:** (1) declaração ISEP de IA + data; (2) leitura final; (3) **escolher a licença de código** com o Prof. Luís Gomes; (4) **go-live**: criar canal Telegram + 3 segredos no GitHub + correr o workflow "Alerts" 1x + publicar o dashboard e colar o URL. **Acompanhar em `CHECKLIST.md`.**
+  **Próximo humano:** (1) declaração ISEP de IA + data; (2) leitura final; (3) **escolher a licença de código** com o Prof. Luís Gomes; (4) **go-live**: criar canal Telegram + 3 segredos no GitHub + correr o workflow "Alerts" 1x + publicar o dashboard e colar o URL. **Acompanhar em `docs/planos/CHECKLIST.md`.**
 - **ORGANIZAÇÃO & SINCRONIZAÇÃO (Sessão 26, 2026-07-01):** fecho do workstream "correr a app / organização e qualidade" pedido pelo aluno ("avança com 2 e 3 e com o que puderes e mais além… sobretudo a nível de organização e qualidade"). (1) **README como porta de entrada** reescrito: bloco "▶ Run it in one command" (`bash scripts/setup_env.sh` → `python scripts/demo.py`), secção "Learn it / prepare the defence" (guia de estudo 60 slides + slides 15 frames + caderno), números corrigidos (43 testes, ~72 pp), layout do repo atualizado (`slides/guia_estudo/`, `scripts/demo.py`), comandos de build de todos os artefactos. (2) **Slides de defesa sincronizados** com a tese reescrita: `\tikzset` anti-hifenização global no preâmbulo (mesma regra da tese, sem cortes de palavra) + **novo frame "The data model — the objects"** logo após a arquitetura (NewsItem→esquema partilhado→NewsRecord=caso→1..\*→KB; Embedder→embedding; AnomalyResult) — render confirmado limpo → **15 páginas, 0 erros**. (3) **Guia de estudo: +3 frames de exemplos/organização** (agora **60 slides, 0 erros**): exemplo honesto "quando o baseline **falha** e porquê" (consulta de banca JPM → scores baixos AAPL 0.25/JPM 0.15 porque o HashingEmbedder só vê sobreposição de palavras → motiva o SBERT: problema de vocabulário); "**Constrói a tua própria KB**" (mini-tutorial `scripts/build_kb.py` baseline vs `--sbert`); "**Onde continuar a estudar**" (cross-links demo↔how_to_run↔tese↔slides↔caderno). **Números da tese inalterados; demo reproduz +6,46%; 43 testes + ruff verdes; citações 50/50.** (Opcional futuro: sincronizar `paper/` com a tese reescrita; estender o guia.)
 - **POLIMENTO VISUAL + GUIA DE ESTUDO (Sessão 25, 2026-06-28):** (1) **Figuras presentation-quality:** regra global em `main.tex` para os nós de diagrama nunca cortarem palavras a meio (corrige "Abrupt mar-ket move"); auditadas por render as 15 figuras (9 diagramas TikZ + 6 gráficos) — sem cortes, sem colisões, rótulos legíveis; gráficos vetoriais de alta resolução; tabelas 0 overfull. Nenhum número alterado; tese compila 72 pp, 0 erros. (2) **Novo guia de estudo do zero** em `slides/guia_estudo/main.tex` (Beamer PT-PT, 51 slides, compila 0 erros): ENSINA (não resume) a quem não tem base em IA. Partes: P0 capa/pitch; **P1 IA do zero só o que a tese usa** (+ slide honesto "o que NÃO usa: sem treino/CNN/visão computacional" — a tese usa SBERT pré-treinado, estatística, cosseno, event study) + glossário; P2 problema/contribuição; P3 sistema (modelo de dados, componentes, gatilhos); P4 dados a olho (CSV e um caso JSON REAIS de `data/samples/`); P5 **código módulo-a-módulo** (snippets fiéis ao `investigator/`, linha a linha); P6 **workflow** com exemplos reais (TSLA z=+7,61; recuperação Nvidia + nota tema≠direção); P7 avaliação (reutiliza os gráficos validados); P8 decisões; P9 sensibilidade; P10 perguntas do júri + checklist. **Só conceitos/código/números reais; 0 fabricação.** (Opcional futuro: sincronizar paper/slides/caderno; estender o guia.)
 - **REESCRITA PROFUNDA (Sessão 24, 2026-06-28):** a pedido do aluno (a tese ainda lia densa/cansativa e o núcleo não ficava claro), reescrita de raiz para **clareza progressiva**, dentro dos 6 capítulos canónicos (decisões confirmadas: reescrever a própria tese; manter 6 capítulos; **foreground do system design no corpo**). Plano + registo por capítulo em `.Codex/plans/…squishy-yeti.md` e `docs/decisions/editorial_review.md`. **Feito (commits por capítulo):** Ch1 (secções guiadas por pergunta + **mapa do leitor**), Ch2 (cada secção com pergunta + takeaway "For InvestiGator"; **−4 pp**), Ch3 (**concept-first**: cada técnica abre por "What it is for:"; "três escolhas" → lista), **Ch4 = System Design reconstruído** (NOVO diagrama do **modelo de dados**: NewsItem/NewsRecord=caso/KB/Embedder/AnomalyResult; NOVA tabela **componente|responsabilidade|entrada→saída**; secção **Decision Logic**; reutiliza arquitetura/fluxo conectado/mockup), Ch5 (cada estudo abre com **pergunta+resposta**), Ch6 (vereditos RQ a negrito + limitações/futuro em listas). **Travessões conectores em prosa: 0** em todo o corpo. **Sem inventar nada:** nenhum número, equação, algoritmo, tabela, figura ou citação alterado; **citações 50/50** (0 órfãs/indefinidas). **Estado: compila 72 pp (era 78), 0 erros, 0 citações indefinidas, 0 overfull >15pt, 0 `??`; 43 testes verdes + ruff.** Falta: **leitura do aluno** (validar a nova voz/estrutura) + tarefas humanas (declaração ISEP). Pendente opcional: sincronizar paper/slides/caderno com a tese reescrita.
@@ -3308,7 +3308,7 @@ ef` vira **CR** e o `	` de
   citações — porta de submissão)** · F (publicação IEEE) · G (slides de defesa) · H (caderno de defesa visual).
   Continuidade multi-dispositivo: este ficheiro + `MASTER_PLAN.md` + `TRACKER.md`, commit/push por sessão.
 - **Fase atual + último passo concluído:** **REWORK COMPLETO — plano S1–S9 concluído.** O aluno leu o PDF e ficou desiludido (demasiado técnico/"software-ish", curto, desorganizado, literatura fraca, poucas figuras e confusas, nomes de pastas e **português visível**). Executado o plano definitivo multi-sessão (`.Codex/plans/…squishy-yeti.md`; checklist em `progress/TRACKER.md`):
-  **S1** estrutura canónica MEIA de 6 capítulos (Introduction · State of the Art · Methods and Materials · **InvestiGator** · Case Studies · Conclusions) + declutter (removidos `notebooks/`, `presentation/`, `impact_analyzer/`).
+  **S1** estrutura canónica MEIA de 6 capítulos (Introduction · State of the Art · Methods and Materials · **InvestiGator** · Case Studies · Conclusions) + declutter (removidos `archive/streamlit-app/notebooks/`, `presentation/`, `impact_analyzer/`).
   **S2** Cap. 3 aprofundado (data card FNSPID, IA responsável, metodologia de avaliação).
   **S3** Cap. 4 (InvestiGator) ao nível de desenho: arquitetura limpa + fluxos dos 2 gatilhos + **mockup Telegram** + tabela de decisões; detalhe técnico no Apêndice A.
   **S4** Case Studies com figuras reais novas (série temporal de anomalias TSLA; ablação à janela).

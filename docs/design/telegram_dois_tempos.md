@@ -1,7 +1,7 @@
 # Alerta em dois tempos e desfecho observado — frente 02
 
 > Escrito a 2026-09-01, depois de construir as peças e antes de as ligar ao caminho de envio.
-> Contém uma mudança de âmbito face ao `PLANO_FINAL_2026-09-01.md`, com a medição que a motiva.
+> Contém uma mudança de âmbito face ao `docs/planos/PLANO_FINAL_2026-09-01.md`, com a medição que a motiva.
 
 ## A mudança de âmbito, e a razão
 

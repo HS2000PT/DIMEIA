@@ -85,7 +85,7 @@ DIMEIA/
 │   ├── web/                      o painel
 │   ├── tests/
 │   ├── config/
-│   ├── deploy/
+│   ├── archive/deploy/
 │   ├── models/
 │   └── requirements/             requirements-app/ml/notebook/lock
 │
@@ -121,14 +121,14 @@ entrega final.** Não é «tudo o que parece velho».
 | Vai | Motivo |
 |-----|--------|
 | `tese/`, `thesis/`, `thesis-pt/` | versões anteriores da dissertação; a viva é `tese-v2` |
-| `thesis-examples/` | 24 MB de exemplos de terceiros |
+| `archive/thesis-versions/thesis-examples/` | 24 MB de exemplos de terceiros |
 | `paper/` | tentativa de artigo, abandonada |
-| `app/`, `run/`, `quiz/`, `notebooks/` | a aplicação Streamlit, substituída pelo painel |
+| `app/`, `archive/streamlit-app/run/`, `archive/streamlit-app/quiz/`, `archive/streamlit-app/notebooks/` | a aplicação Streamlit, substituída pelo painel |
 | `progress/` | diários de progresso |
 | 14 dos 17 `.md` da raiz | relatórios e auditorias já consumidos |
 
 Ficam na raiz, dos `.md`: `README.md`, `AGENTS.md`, `CLAUDE.md`.
-`PLANO_FINAL_2026-09-01.md` e os dois `POS_PLANO_*` passam para `docs/`,
+`docs/planos/PLANO_FINAL_2026-09-01.md` e os dois `POS_PLANO_*` passam para `docs/`,
 porque ainda estão a ser executados.
 
 ---
@@ -148,6 +148,50 @@ existente. Não recomendo fazer isso antes da defesa; recomendo fazê-lo
 depois, se ele quiser, e a decisão é dele.
 
 ---
+
+## 5.5. O que se descobriu ao executar, e que muda o plano
+
+Escrito a 2026-09-02, depois do primeiro passo. **A secção 4 assumia coisas
+que não se verificaram**, e fica aqui o que se mediu em vez do que se supôs.
+
+**`app/` não é a aplicação morta.** Onze ficheiros importam de lá —
+`api/main.py`, `api/services.py` e oito testes. O `app/verdict.py` é o
+veredicto que a página mostra em palavras antes de qualquer número. Arquivá-lo
+partia a API.
+
+**`thesis/` não é uma versão antiga esquecida.** Nove scripts de avaliação
+escrevem as figuras para `thesis/figures/`, e o `ci.yml` filtra por esse
+caminho. Só que a dissertação viva, a `tese-v2`, lê de `tese-v2/figures/`.
+
+Isso é um defeito por si só, e não de arrumação: **o pipeline que gera as
+figuras aponta para uma árvore, e o documento que as usa lê de outra.** Quer
+dizer que correr um `evaluate_*.py` hoje não actualiza nenhuma figura da
+dissertação — as que lá estão foram copiadas à mão em algum momento. É um
+alvo óbvio de pergunta na defesa («como é que as figuras são geradas?»), e é
+trabalho da frente 05, não desta.
+
+**`thesis-pt/`, `slides/`, `paper/` e `progress/`** têm todos quem os chame:
+`check_all_gates.py` lê o *frontmatter* do `thesis-pt`, o
+`make_public_bundle.py` lista `progress/` e `slides/` como exclusões, e o
+`ci.yml` filtra por `slides/**` e `paper/**`.
+
+### Consequência para o plano
+
+Passa a haver duas metades, e só a primeira é arrumação:
+
+| Metade | O que é | Risco | Quando |
+|--------|---------|-------|--------|
+| **A — arrumar** | tirar `tmp/` do índice, criar `archive/`, mover o que não tem quem o chame, tirar os ficheiros soltos da raiz | nenhum: nada referencia o que se move, e o que referenciava foi reescrito e verificado | ✅ feito a 2026-09-02 |
+| **B — repontar** | `code/`, e reduzir as cinco árvores de tese a uma | real: obriga a mudar ~10 scripts, o `ci.yml` e os caminhos de compilação | **depois das frentes 05 e 07**, que são as que ainda escrevem nesses caminhos |
+
+A razão de adiar a metade B é a mesma que antes fazia adiantá-la, aplicada a
+factos novos: mover ficheiros que ninguém chama é seguro em qualquer altura;
+mudar dez scripts que alimentam as figuras da dissertação, enquanto as frentes
+05 e 07 ainda estão a mexer nessas mesmas figuras, é criar conflitos com as
+minhas próprias mãos. A metade B faz-se quando o conteúdo parar de se mexer.
+
+**O que a metade A já deu**, em números: 406 ficheiros e 66 MB fora do índice,
+17 ficheiros `.md` na raiz reduzidos a 3, e 23 pastas na raiz reduzidas a 17.
 
 ## 6. Ordem de execução
 

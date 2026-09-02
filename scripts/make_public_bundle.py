@@ -41,8 +41,8 @@ EXCLUDE_PREFIXES = (
 )
 EXCLUDE_FILES = {
     "CLAUDE.md",          # memória de continuidade (processo interno)
-    "CHECKLIST.md",       # lista de tarefas interna
-    "RELATORIO_FINAL.md", # relatório interno para o orientador
+    "docs/planos/CHECKLIST.md",       # lista de tarefas interna
+    "archive/reports/RELATORIO_FINAL.md", # relatório interno para o orientador
 }
 
 # Padrões de segredo (defesa em profundidade — os ficheiros versionados já não têm .env).

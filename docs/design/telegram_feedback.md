@@ -1,6 +1,6 @@
 # Feedback do leitor no Telegram — o que foi construído, e como se liga
 
-> Frente 01 do `PLANO_FINAL_2026-09-01.md`. Implementado a 2026-09-01.
+> Frente 01 do `docs/planos/PLANO_FINAL_2026-09-01.md`. Implementado a 2026-09-01.
 
 ## O percurso de um voto, de ponta a ponta
 

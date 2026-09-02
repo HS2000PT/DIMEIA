@@ -21,7 +21,7 @@ PASSO 3. Caso contrário, escreve UM capítulo, o próximo da ordem recomendada 
 Regras que não podes violar:
 - Nenhum parágrafo pode ser copiado da tese antiga em DIMEIA/tese/. Essa pasta é fonte de FACTOS, NÚMEROS e FIGURAS. O texto escreve-se de raiz.
 - Nenhum número pode ser inventado. Todos existem em DIMEIA/tese/ ou em DIMEIA/docs/evaluation/. Se não conseguires confirmar um valor, não o escrevas.
-- Registo impessoal e declarativo, imitando thesis-examples/dissertação_Rafael Silva.pdf e o ch1. Proibido: comentários ao próprio texto ("convém dizer", "vale a pena notar", "fica registado"), perguntas retóricas, primeira pessoa, registo confessional.
+- Registo impessoal e declarativo, imitando archive/thesis-versions/thesis-examples/dissertação_Rafael Silva.pdf e o ch1. Proibido: comentários ao próprio texto ("convém dizer", "vale a pena notar", "fica registado"), perguntas retóricas, primeira pessoa, registo confessional.
 - Não acrescentes a opção oneside ao main.tex. O modelo oficial exige frente e verso.
 - Alvo global: cerca de 112 páginas, 36 000 palavras, 34 figuras, 8 tabelas.
 

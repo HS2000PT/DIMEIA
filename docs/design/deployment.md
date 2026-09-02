@@ -58,7 +58,7 @@ streamlit run app/dashboard_v4.py
   quando ficam sem visitas e acordam ao primeiro acesso (~30-60s) — não há SLA. Mitigações:
   (1) o workflow Alerts faz um **ping keep-alive** à app em cada corrida (semana + fim de
   semana), o que na prática a mantém acordada; (2) para um site 24/7 A SÉRIO, a mesma VM
-  Oracle Free do vigia pode servir o dashboard (`deploy/investigator-app.service` + abrir a
+  Oracle Free do vigia pode servir o dashboard (`archive/deploy/investigator-app.service` + abrir a
   porta 8501 — ver `vm_watch.md`), sem hibernação nenhuma.
 - **SBERT/torch:** continua fora da nuvem (pesado para o tier gratuito) — mas desde 2026-07-07
   a app usa o **mesmo modelo MiniLM em ONNX** (leve), pelo que o retrieval na nuvem já é

@@ -141,3 +141,15 @@ tese/guia_construir/*.toc
 tese/guia_construir/*.vrb
 tese/guia_construir/*.fdb_latexmk
 tese/guia_construir/*.fls
+
+# ── Rascunho ────────────────────────────────────────────────────────────────
+# ⚠️ Esta pasta esteve VERSIONADA: 406 ficheiros e 66 MB num repositório público, dos quais 176
+# eram páginas renderizadas de uma compilação de 29 de agosto de 2026. Saiu do índice a
+# 2026-09-02. Nada no repositório lê daqui — verificado por varrimento de scripts, workflows,
+# configuração e da própria tese — e o que aqui está é o que sobra de correr as coisas, não o
+# que se entrega.
+#
+# Sair do índice tira-os de quem clona. NÃO os tira do histórico: para isso seria preciso
+# reescrevê-lo e forçar o push, o que quebra clones existentes. Se se quiser fazer, é depois da
+# defesa e é decisão do autor.
+tmp/

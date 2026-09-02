@@ -188,7 +188,7 @@ Saída: `docs/defesa/PORQUES.md`.
 
 ## F. Pós-plano — só depois de toda a fila acima
 
-### F1 — A tese ideal (`POS_PLANO_TESE_IDEAL.md`)
+### F1 — A tese ideal (`docs/planos/POS_PLANO_TESE_IDEAL.md`)
 A visão dele: introdução com números de valor de negócio de 2026; revisão de
 literatura a cobrir produtos de mercado e todas as famílias de técnicas de
 IA com prós e contras e tabela comparativa; metodologia a testar todas as
@@ -199,7 +199,7 @@ contradizem-no); testar todas as combinações é *menos* rigoroso, não mais
 (comparações múltiplas enviesam o vencedor); «não descartar nada» precisa de
 critérios de exclusão fixados **antes** do levantamento.
 
-### F2 — Auditoria (`POS_PLANO_AUDITORIA.md`)
+### F2 — Auditoria (`docs/planos/POS_PLANO_AUDITORIA.md`)
 O *brief* completo dele: 8 perguntas, 13 secções de saída, cada melhoria com
 descrição, justificação, evidência, ficheiro, alteração, benefício, esforço,
 prioridade, dependências e risco de âmbito; classificação
