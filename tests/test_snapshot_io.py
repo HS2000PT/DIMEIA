@@ -147,3 +147,61 @@ def test_offline_nunca_toca_na_rede(tmp_path, monkeypatch):
     monkeypatch.setenv("INVESTIGATOR_OFFLINE", "1")
     monkeypatch.setattr("urllib.request.urlopen", _explode)
     assert carregar(tmp_path / "nao-existe.json", url="https://exemplo/snap.json") is None
+
+
+# ══ CAMPOS DE TOPO ══════════════════════════════════════════════════════════════════════════
+# ⚠️ **O defeito, medido a 2026-09-02.** O produtor passou a escrever `market_index` e
+# `market_move` no topo do instantâneo — o índice usado na decomposição e o seu retorno diário,
+# que é o que o semáforo da mascote mostra. O ficheiro na branch tinha-os. A API devolvia
+# `null`.
+#
+# A causa: o `Instantaneo` copiava as linhas e o carimbo e deitava fora o resto, e a API lia do
+# objecto e não do ficheiro. Nada levantou, nada ficou registado, e o ficheiro certo estava à
+# vista a dois cliques — o pior formato possível para um defeito.
+#
+# A correcção é estrutural e não pontual: o que não é linha nem carimbo passa como está. Quem
+# acrescentar um campo ao produtor não tem de se lembrar de o acrescentar aqui também.
+
+
+def test_os_campos_de_topo_sobrevivem_a_leitura():
+    from datetime import UTC, datetime
+
+    from app.snapshot_io import _interpretar
+
+    bruto = {
+        "generated_at": "2026-09-02T06:58:31+00:00",
+        "build_seconds": 4.2,
+        "window": 20,
+        "threshold": 1.5,
+        "market_index": "SPY",
+        "market_move": -0.0068,
+        "rows": [{"ticker": "AAPL", "move": 0.01}],
+    }
+    snap = _interpretar(bruto, datetime(2026, 9, 2, 7, 0, tzinfo=UTC), remoto=True)
+
+    assert snap is not None
+    assert snap.extra["market_index"] == "SPY"
+    assert snap.extra["market_move"] == -0.0068
+    assert snap.extra["window"] == 20 and snap.extra["threshold"] == 1.5
+    # e o que já tinha lugar próprio não se duplica no saco
+    assert "rows" not in snap.extra
+    assert "generated_at" not in snap.extra
+
+
+def test_um_campo_novo_no_produtor_chega_sozinho_a_api():
+    """A regra é «tudo o que não conheço passa», e não uma lista de campos a manter em dia.
+
+    Uma lista teria de ser actualizada a cada campo novo, e esquecê-la não dá erro nenhum —
+    dá um `null` na página, que foi exactamente o que aconteceu.
+    """
+    from datetime import UTC, datetime
+
+    from app.snapshot_io import _interpretar
+
+    bruto = {"generated_at": "2026-09-02T06:58:31+00:00",
+             "um_campo_que_ainda_nao_existe": 42,
+             "rows": [{"ticker": "AAPL"}]}
+    snap = _interpretar(bruto, datetime(2026, 9, 2, 7, 0, tzinfo=UTC), remoto=False)
+
+    assert snap is not None
+    assert snap.extra["um_campo_que_ainda_nao_existe"] == 42

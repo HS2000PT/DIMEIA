@@ -93,6 +93,9 @@ def snapshot() -> dict:
         if not snap:
             return {}
         return {
+            # `**snap.extra` primeiro, para os campos calculados aqui mandarem sobre os do
+            # ficheiro em caso de colisão de nome.
+            **snap.extra,
             "rows": snap.linhas,
             "as_of": snap.gerado_em.isoformat(timespec="seconds"),
             "age_s": round(snap.idade_s, 1),
