@@ -316,18 +316,34 @@ def test_a_legenda_descreve_as_marcas_que_o_grafico_desenha_mesmo():
     retiradas dos marcadores. Com quinze dias assinalados em seis meses sobrepunham-se umas às
     outras e à linha de preço — medido no browser, não suposto. A data e o z de cada dia estão
     nas fichas por baixo do gráfico, que além de legíveis são navegáveis por teclado.
+
+    Reescrito outra vez a 2026-09-02, quando o gráfico ganhou camadas. Agora usa TRÊS formas —
+    o círculo para o alerta que saiu, as duas setas para o dia assinalado que não gerou alerta,
+    e o quadrado para a notícia que o sistema viu e não usou — e a distinção entre a primeira e
+    as segundas é a tese inteira: assinalar não é enviar.
+
+    E ganhou uma regra que não existia: **a legenda descreve o que está DESENHADO, não o que
+    está ligado.** No 1D a caixa dos alertas pode estar ligada e não haver marca nenhuma no
+    ecrã, porque o alerta saiu de madrugada e a janela intradiária começa na abertura. Uma
+    legenda ligada ao interruptor voltaria a descrever uma marca ausente.
     """
     html = _PAGINA.read_text(encoding="utf-8")
 
-    # o gráfico usa exactamente duas formas, e cada uma tem de ter o seu símbolo na legenda
+    # as três formas que o gráfico usa, cada uma com o seu símbolo na legenda
     assert 'shape: dir > 0 ? "arrowUp" : "arrowDown"' in html, \
         "mudou a marca do dia assinalado; rever a legenda do gráfico"
-    assert 'shape:"circle"' not in html, \
-        "voltou o círculo ao gráfico sem voltar à legenda"
+    assert 'shape:"circle"' in html, "o alerta enviado deixou de ter marca própria"
+    assert 'shape:"square"' in html, "a notícia sem alerta deixou de ter marca própria"
 
     # os símbolos da legenda são triângulos CSS, com a mesma orientação das setas do gráfico
     assert "border-bottom:8px solid var(--sobe)" in html, "falta a seta para cima na legenda"
     assert "border-top:8px solid var(--desce)" in html, "falta a seta para baixo na legenda"
+    assert ".legenda .quad" in html, "o quadrado da notícia não tem símbolo na legenda"
+
+    # ⚠️ a legenda lê o que foi desenhado, e não as camadas ligadas
+    assert "S.desenhado" in html, \
+        "a legenda voltou a olhar para os interruptores em vez do que está no ecrã"
+    assert "const d = S.desenhado" in html, "a legenda deixou de ler o desenhado"
 
     # a cor da seta é a direcção do movimento, e isso tem de estar escrito
     assert "the colour is the direction" in html, \
@@ -338,6 +354,8 @@ def test_a_legenda_descreve_as_marcas_que_o_grafico_desenha_mesmo():
     # ⚠️ as etiquetas dos marcadores ficaram de fora de propósito; ver o docstring
     assert "text:`z ${z}`" not in html, \
         "voltaram as etiquetas aos marcadores; sobrepõem-se, medido a 2026-09-01"
+    assert 'shape:"circle", text:"alert"' not in html, \
+        "voltaram as etiquetas aos alertas; sobrepõem-se, medido a 2026-09-02"
 
 
 def test_a_promessa_da_pagina_aparece_uma_vez_e_nao_duas():

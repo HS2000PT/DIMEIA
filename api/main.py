@@ -121,6 +121,12 @@ def overview() -> dict:
         "alerts_today": len(today_alerts),
         "window": 20,
         "threshold": 1.5,
+        # ⚠️ O retorno do índice, não a contribuição do mercado por empresa: a segunda é β·r_m e
+        # muda com o beta de cada empresa. O painel usa este número para o estado da mascote, e
+        # a legenda tem de poder nomear o índice — dizer «NASDAQ» mostrando S&P seria uma
+        # afirmação errada no sítio onde toda a gente olha.
+        "market_index": snap.get("market_index"),
+        "market_move": snap.get("market_move"),
     }
 
 
@@ -148,6 +154,14 @@ def asset(ticker: str) -> dict:
         "vol_ratio": row.get("vol_ratio"),
         "closes": row.get("closes", []),
         "events": row.get("events", []),
+        # ⚠️ O intradiário já existia no instantâneo e não era servido, o que obrigava a página a
+        # abrir sempre num intervalo de meses. Numa página cujo assunto é «hoje», isso é uma
+        # contradição na primeira coisa que se vê. São ~78 barras de cinco minutos, e o
+        # `prev_close` é a referência sem a qual uma linha intradiária não diz se o dia é de
+        # subida ou de descida.
+        "intraday": row.get("intraday", []),
+        "intraday_day": row.get("intraday_day"),
+        "prev_close": row.get("prev_close"),
         "news": news,
         "alerts": alerts,
     }

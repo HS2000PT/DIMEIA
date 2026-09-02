@@ -62,6 +62,9 @@ def load_state(path: str | Path = _STATE, today: date | None = None) -> dict:
     today = today or date.today()
     state = {"date": today.isoformat(), "alerted_market": [], "alerted_news": [],
              "news_count": {}, "news_words": {}, "opening_sent": False, "summary_sent": False,
+             # Sem informação nenhuma sobre o dia, o defeito é «não sei» e não «não saiu nada».
+             # Quem sabe é o `run_once`, depois de tentar ler o histórico partilhado.
+             "memoria_do_dia": False,
              "desfechos_anotados": False, "bot_offset": None}
     try:
         raw = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -149,6 +152,19 @@ def seed_state_from_shared_history(state: dict, entries: list, today: str) -> No
     Com dois produtores possíveis (a VM em modo --watch e o cron do Actions como rede de
     segurança), o estado local de cada um não chega — o histórico partilhado (branch
     `alerts-history`) é a memória comum que impede alertas duplicados no canal.
+
+    ⚠️ **Este é o único sítio onde o runner descobre o que já saiu hoje depois de um reinício.**
+    O `data/alerts_state.json` vive no disco do dyno, que é efémero: cada arranque começa com o
+    contador do dia a zero. Se esta função não semear — porque a rede falhou, porque a
+    publicação do produtor anterior ainda não chegou à branch, ou porque o URL não está
+    configurado — o processo não fica a saber que já enviou nada; fica a **acreditar que não
+    enviou nada**, que é outra coisa.
+
+    Foi o que aconteceu entre 25 e 29 de agosto de 2026: o registo mostra rajadas de exactamente
+    cinco alertas de notícia, aos segundos coincidentes com arranques (00:03, 07:38, 13:04,
+    22:24 no dia 26), num dia com orçamento de cinco. Vinte alertas, e as mesmas cinco empresas
+    quatro vezes. O orçamento não foi violado por uma decisão errada: foi violado por um
+    contador que voltou ao princípio quatro vezes.
     """
     for e in entries:
         if e.date != today:
@@ -371,6 +387,16 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
         # notícia da tarde ainda não existe. São da mesma família; a avaliada é um limite
         # superior desta. A tese diz isso na Secção do veredicto da QI3.
         if daily_budget is not None:
+            # ⚠️ Falha FECHADA, e só esta porta. Todo o resto do runner falha aberto de
+            # propósito — suprimir por falta de informação seria decidir com base em nada. Aqui
+            # é o contrário: ENVIAR por falta de informação é que é decidir com base em nada, e
+            # o custo do erro não é simétrico. Não enviar um alerta hoje perde-se um alerta;
+            # enviar sem saber o que já saiu enche o canal e ensina o leitor a ignorá-lo, que é
+            # a única coisa que este trabalho não pode dar-se ao luxo de fazer.
+            if not state.get("memoria_do_dia", True):
+                if suppressed is not None:
+                    suppressed[ticker] = ("daily_budget", "day's count unknown this cycle")
+                continue
             total_hoje = sum(state["news_count"].values())
             if total_hoje >= daily_budget:
                 print(f"[noticias {ticker}] orçamento do dia gasto "
@@ -1450,15 +1476,23 @@ def _push_history_safe(path: str | Path = _HISTORY) -> None:
         print(f"[historico] push falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
 
 
-def _fetch_shared_history_safe(cfg: dict) -> list:
-    """Histórico partilhado (fail-open) — a memória comum entre VM e Actions."""
+def _fetch_shared_history_safe(cfg: dict) -> list | None:
+    """Histórico partilhado — a memória comum entre VM e Actions.
+
+    ⚠️ Devolve `None` quando NÃO conseguiu ler, e `[]` quando leu e não havia nada. A distinção
+    não é preciosismo: `[]` significa «hoje ainda não saiu nada» e autoriza gastar o orçamento;
+    `None` significa «não sei o que já saiu» e não autoriza coisa nenhuma. Confundir os dois é
+    exactamente o que fez sair vinte alertas num dia de orçamento cinco.
+    """
     try:
         from investigator.alerts_history import fetch_remote
 
         url = (cfg.get("public", {}) or {}).get("history_url")
-        return fetch_remote(str(url)) if url else []
+        if not url:
+            return None
+        return fetch_remote(str(url))
     except Exception:  # noqa: BLE001
-        return []
+        return None
 
 
 def process_bot_commands(state: dict, bot_cfg: dict, *, dry_run: bool) -> None:
@@ -1561,7 +1595,15 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
 
     # Memória partilhada entre produtores (VM + Actions): o que QUALQUER um já enviou hoje
     # não se repete — sem isto, dois produtores duplicariam alertas no canal.
-    seed_state_from_shared_history(state, _fetch_shared_history_safe(cfg), state["date"])
+    partilhado = _fetch_shared_history_safe(cfg)
+    seed_state_from_shared_history(state, partilhado or [], state["date"])
+    # ⚠️ Memória do dia: ou o disco local já a tem, ou o histórico partilhado foi lido. Se
+    # nenhuma das duas se verifica, este processo não sabe quantos alertas já saíram hoje — e um
+    # orçamento gasto por quem não sabe o que já gastou não é um orçamento.
+    state["memoria_do_dia"] = bool(state["news_count"]) or partilhado is not None
+    if not state["memoria_do_dia"]:
+        print("[orçamento] sem memória do dia (disco vazio e histórico partilhado ilegível) — "
+              "nenhum alerta de notícia sai neste ciclo.")
 
     # Semear os ficheiros de série a partir da branch, se o disco local estiver vazio. No
     # contentor isso acontece a cada reinício, e publicar sem semear apagaria a série toda.

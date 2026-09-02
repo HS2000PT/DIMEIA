@@ -155,7 +155,7 @@ def linha_de(ticker: str) -> dict | None:
         return None
 
 
-def juntar_decomposicao(linhas: list[dict]) -> None:
+def juntar_decomposicao(linhas: list[dict], fora: dict) -> None:
     """Acrescenta mercado/setor/empresa a cada linha, in-place.
 
     Vive no instantâneo e não na página porque é a **segunda das três perguntas** do trabalho,
@@ -183,6 +183,16 @@ def juntar_decomposicao(linhas: list[dict]) -> None:
     mercado = serie(MARKET_INDEX)
     if mercado is None:
         return
+    # ⚠️ O retorno do PRÓPRIO índice, e não a contribuição do mercado por empresa. São coisas
+    # diferentes: a contribuição é β·r_m, portanto muda de empresa para empresa conforme o beta,
+    # e nenhuma delas é «quanto o mercado andou hoje». O painel precisa do segundo número.
+    try:
+        import math
+        fora["market_index"] = MARKET_INDEX
+        fora["market_move"] = float(math.exp(float(mercado.to_numpy()[-1])) - 1.0)
+    except Exception:  # noqa: BLE001
+        fora["market_index"] = MARKET_INDEX
+        fora["market_move"] = None
     for linha in linhas:
         try:
             t = linha["ticker"]
@@ -209,9 +219,11 @@ def construir() -> dict:
     tickers = _watchlist()
     t0 = time.perf_counter()
     linhas = [x for x in (linha_de(t) for t in tickers) if x]
-    juntar_decomposicao(linhas)
+    extra: dict = {}
+    juntar_decomposicao(linhas, extra)
     custo = time.perf_counter() - t0
     return {
+        **extra,
         # Carimbo em UTC: o critério C3 exige que a idade seja VISÍVEL no ecrã e que não passe
         # de 90 s em operação normal. Sem isto, um instantâneo velho é indistinguível de um
         # fresco, e um número velho apresentado como actual é pior do que nenhum número.

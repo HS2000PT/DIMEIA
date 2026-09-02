@@ -209,6 +209,13 @@
      leitura exata está no gráfico do detalhe. */
   .e-faisca { display:block; width:100%; height:26px; margin-top:11px; overflow:visible; }
 
+  /* ⚠️ `[hidden]` é um atributo, e a folha por omissão do browser aplica-lhe `display:none`
+     com especificidade ZERO. Qualquer regra nossa com um `display` — `.hoje{display:grid}`,
+     `.kpis{display:grid}` — ganha-lhe, e o elemento fica escondido no DOM e visível no ecrã.
+     Foi exactamente o que aconteceu com a vista de histórico: o `hidden` estava lá, o teste
+     dizia que estava lá, e as duas vistas apareciam ao mesmo tempo. */
+  [hidden] { display:none !important; }
+
   /* ── legenda: toda a cor e todo o sinal são explicados ─────────────────── */
   .legenda { display:flex; flex-wrap:wrap; gap:7px 18px; margin:14px 0 0; padding:12px 15px;
              background:var(--linha2); border-radius:var(--r2); font-size:.79rem;
@@ -222,6 +229,38 @@
   .legenda .seta.sobe { border-bottom:8px solid var(--sobe); }
   .legenda .seta.desce { border-top:8px solid var(--desce); }
   .legenda-graf { margin:10px 0 0; }
+  .nota-mercado { margin:10px 0 0; font-size:.78rem; color:var(--fraco);
+                  font-family:var(--mono); }
+  .legenda .quad { width:8px; height:8px; background:var(--fraco); border-radius:2px;
+                   flex:0 0 auto; }
+  .legenda .tracejado { width:16px; height:0; border-top:2px dashed var(--fraco); flex:0 0 auto; }
+
+  /* ── o registo, na vista de histórico ───────────────────────────────────── */
+  .hist { margin-bottom:20px; }
+  .hist-cx { background:var(--caixa); border:1px solid var(--linha); border-radius:var(--r);
+             box-shadow:var(--sombra); padding:16px 18px; }
+  .hist-barras { display:flex; align-items:flex-end; gap:2px; height:132px;
+                 overflow-x:auto; padding-bottom:2px; }
+  .hist-d { flex:1 1 0; min-width:11px; max-width:46px; display:flex; flex-direction:column;
+            justify-content:flex-end; gap:1px; background:none; border:0; padding:0;
+            cursor:pointer; height:100%; border-radius:3px 3px 0 0; }
+  .hist-d:hover { background:var(--linha2); }
+  .hist-d[aria-pressed="true"] { background:var(--acento-fraco); outline:1px solid var(--acento); }
+  .hist-d i { display:block; border-radius:2px 2px 0 0; }
+  .hist-d .n { font-family:var(--mono); font-size:.6rem; color:var(--fraco);
+               text-align:center; padding-top:3px; }
+
+  /* ── camadas do gráfico ─────────────────────────────────────────────────── */
+  .camadas { display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center;
+             margin:0 0 10px; font-size:.79rem; color:var(--tinta2); }
+  .cx { display:inline-flex; align-items:center; gap:6px; cursor:pointer;
+        user-select:none; }
+  .cx input { accent-color:var(--acento); width:14px; height:14px; cursor:pointer; margin:0; }
+  .cx.inerte { opacity:.42; cursor:default; }
+  .cx.inerte input { cursor:default; }
+  .cx-nota { color:var(--fraco); font-size:.74rem; }
+  .d-z { margin-top:8px; border:1px solid var(--linha2); border-radius:var(--r2);
+         overflow:hidden; height:108px; }
   /* O ponto da legenda existe fora do funil também; sem isto herdava largura zero e a legenda
      do modal ficava com três palavras e nenhum símbolo. */
   .legenda .p { width:9px; height:9px; border-radius:50%; flex:0 0 auto; }
@@ -354,14 +393,38 @@
     <div class="balao">
       <div class="dia" id="dataHoje">—</div>
       <p id="frase">Reading the day…</p>
+      <p class="nota-mercado" id="notaMercado"></p>
     </div>
-    <img class="mascote" src="/assets/mascote-small.png" alt="" width="286" height="380">
+    <img class="mascote" id="mascote" src="/assets/mascote-plano-small.png"
+         alt="" width="380" height="337">
   </section>
 
   <dl class="kpis" id="kpis"></dl>
 
+  <!-- ⚠️ O botão «History» escondia a mascote e os indicadores e não mostrava mais nada. Era
+       subtractivo: a vista mudava tirando coisas, e por isso ninguém percebia o que o botão
+       fazia — o autor disse-o por escrito. Passa a ter assunto próprio: o registo do canal ao
+       longo do tempo, que é a pergunta que «hoje» não responde. -->
+  <section class="hist" id="secHist" aria-label="The record so far" hidden>
+    <div class="titulo"><h2>The record so far</h2>
+      <span class="nota" id="histNota"></span></div>
+    <dl class="kpis" id="histKpis"></dl>
+    <div class="hist-cx">
+      <div class="titulo" style="margin:0 0 10px">
+        <h2 style="font-size:.94rem">Alerts per day</h2>
+        <span class="nota">click a day to read what went out that day</span>
+      </div>
+      <div class="hist-barras" id="histBarras"></div>
+      <p class="legenda" style="margin-top:12px">
+        <i><span class="p" style="background:var(--acento)"></span> news alert</i>
+        <i><span class="p" style="background:var(--parou)"></span> market alert</i>
+        <i>the taller the bar, the more the channel said that day</i>
+      </p>
+    </div>
+  </section>
+
   <div class="grelha">
-    <div>
+    <div id="colEsq">
       <div class="titulo">
         <h2>Watchlist</h2>
         <span class="nota" id="notaEmpresas"></span>
@@ -499,7 +562,17 @@ function comLigacoes(escapado) {
 // inválido e um cartão que não se sabe se abre o detalhe se sai da página.
 const soRotulo = escapado => String(escapado).replace(LIGACAO, (_, __, rotulo) => rotulo);
 
-const S = { modo:"hoje", ticker:null, intervalo:"6M", feedTodos:true, feedLimite:120, asOf:null,
+// ⚠️ `intervalo:"1D"`. A página abre em «today» e o cartão do dia diz «today»; abrir o gráfico
+// em seis meses era a página a contradizer-se na primeira coisa que se vê. O intradiário já
+// existia no instantâneo e não estava a ser servido.
+//
+// `camadas` são o que o gráfico desenha. Nem todas ligadas: mostrar tudo de uma vez foi o
+// defeito da v6, e acrescentar seis interruptores todos ligados seria reconstruí-lo com outro
+// nome. Ligadas por omissão ficam as três que respondem à pergunta da página — o que se
+// enviou, o que se assinalou e não se enviou, e a referência para saber se o dia é de subida.
+const S = { modo:"hoje", ticker:null, intervalo:"1D", feedTodos:true, feedLimite:120, asOf:null,
+            camadas:{ alertas:true, assinalados:true, referencia:true, zscore:true, noticias:false },
+            diaHist:null,
             visao:null, funil:[], alertas:[], votos:{}, asset:null, grafico:null, novos:new Set() };
 
 // ── leitura da API ──────────────────────────────────────────────────────────
@@ -522,6 +595,44 @@ async function carregar(primeira) {
   if (!S.ticker) S.ticker = (v.rows || [])[0]?.ticker || null;
   pintarTudo();
   if (S.ticker) await abrirEmpresa(S.ticker, true);
+}
+
+// ── a mascote como semáforo do mercado ──────────────────────────────────────
+// ⚠️ O que o semáforo mede é o retorno do ÍNDICE, e o índice é o SPY. Toda a decomposição
+// deste trabalho usa o S&P 500 como mercado (`MARKET_INDEX = "SPY"` em
+// `investigator/news_fetcher/relevance.py`); o «NASDAQ · NYSE» do cabeçalho são as bolsas onde
+// as doze empresas transaccionam, e não um índice. Dizer NASDAQ e mostrar SPY seria uma
+// afirmação errada no sítio do ecrã onde toda a gente olha primeiro.
+//
+// ⚠️ E mede o índice, não a saúde do sistema. A arte manda: a mascote segura um GRÁFICO, logo
+// só pode querer dizer movimento de preço. Fazê-la significar «três empresas assinaladas» seria
+// uma imagem que não bate com o que quer dizer — o defeito que este painel já teve duas vezes.
+//
+// A banda de ±0,25% não é arbitrária de propósito: é aí que um dia deixa de ser «o mercado
+// esteve parado» para a maioria dos leitores. Não é medida, é uma convenção, e está escrita
+// aqui e na legenda para que se veja que é uma convenção.
+const BANDA_MERCADO = 0.0025;
+const SEMAFORO = [
+  ["sobe",  "the market closed up",   m => m > BANDA_MERCADO],
+  ["desce", "the market closed down", m => m < -BANDA_MERCADO],
+  ["plano", "the market barely moved", () => true],
+];
+
+function pintarMascote() {
+  const img = $("#mascote"); if (!img) return;
+  const m = S.visao?.market_move;
+  const idx = S.visao?.market_index || "the market index";
+  const nota = $("#notaMercado");
+  if (m == null) {
+    // Sem número não se escolhe uma cor: um semáforo que adivinha é pior do que semáforo nenhum.
+    img.src = "/assets/mascote-plano-small.png";
+    if (nota) nota.textContent = "";
+    return;
+  }
+  const [estado, frase] = SEMAFORO.find(([, , teste]) => teste(m));
+  img.src = `/assets/mascote-${estado}-small.png`;
+  img.alt = `${frase} (${idx} ${pct(m)})`;
+  if (nota) nota.textContent = `${idx} ${pct(m)} · ${frase}`;
 }
 
 // ── o dia, em palavras, pela boca da mascote ────────────────────────────────
@@ -636,8 +747,12 @@ function pintarFeed() {
   // saber que existe mais nada. A página é o espelho do canal, portanto ou mostra tudo ou diz
   // quanto não coube e dá onde carregar. É a mesma regra que os relatórios de avaliação seguem
   // quando limitam cobertura.
-  const todas = (S.feedTodos ? S.alertas : S.alertas.filter(a => a.ticker === S.ticker))
+  let todas = (S.feedTodos ? S.alertas : S.alertas.filter(a => a.ticker === S.ticker))
     .slice().reverse();
+  // No histórico, escolher um dia na barra filtra o que está por baixo. É o que torna a barra
+  // uma navegação e não um enfeite.
+  if (S.modo === "hist" && S.diaHist)
+    todas = todas.filter(a => (a.date || "").slice(0, 10) === S.diaHist);
   const rows = todas.slice(0, S.feedLimite);
   const restantes = todas.length - rows.length;
   $("#feed").innerHTML = rows.length ? rows.map((a, i) => {
@@ -701,24 +816,58 @@ function pintarDetalhe() {
       ${linha("Company", d.company, d.driver === "company")}
     </div>
     <p class="d-nota">the three add up to the day's move · left of the centre line is down</p>
-    <div class="titulo"><h2 style="font-size:.98rem">Price, and the days the detector flagged</h2>
+    <div class="titulo"><h2 style="font-size:.98rem">${esc(TITULO_GRAFICO[S.intervalo])}</h2>
       <span class="direita intervalos" id="intervalos">
-        ${["1M","3M","6M","1Y"].map(r =>
+        ${INTERVALOS.map(r =>
           `<button data-r="${r}" aria-pressed="${r === S.intervalo}">${r}</button>`).join("")}
       </span></div>
+    <div class="camadas" id="camadas" role="group" aria-label="Chart layers">${camadasHTML()}</div>
     <div class="d-graf" id="graf"></div>
-    <p class="legenda legenda-graf" aria-label="Chart legend">
-      <i><span class="seta sobe"></span> flagged day, closed up</i>
-      <i><span class="seta desce"></span> flagged day, closed down</i>
-      <i>the colour is the direction of that day's move, and nothing more</i>
-      <i>z = distance from this company's own 20-day norm, in standard deviations</i>
-    </p>
+    <div class="d-z" id="grafZ" ${S.intervalo === "1D" || !S.camadas.zscore ? "hidden" : ""}></div>
+    <p class="legenda legenda-graf" aria-label="Chart legend" id="legGraf"></p>
     <div class="d-dias" id="dias"></div></div>`;
   $("#intervalos").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
     S.intervalo = b.dataset.r; pintarDetalhe();
   }));
+  $("#camadas").querySelectorAll("input").forEach(i => i.addEventListener("change", () => {
+    S.camadas[i.dataset.c] = i.checked; pintarDetalhe(); }));
   desenharGrafico(a);
+  desenharZ(a);
+  pintarLegendaGrafico();
   pintarDias(a);
+}
+
+// ── as camadas do gráfico ───────────────────────────────────────────────────
+// O preço não é uma camada: é o gráfico. Uma caixa para o desligar seria uma caixa para deixar
+// a página sem assunto.
+const CAMADAS = [
+  ["alertas",     "Alerts sent",          "when a message actually went to the channel"],
+  ["assinalados", "Flagged, not sent",    "the detector fired and a gate stopped it"],
+  ["referencia",  "Yesterday's close",    "the line that says whether today is up or down"],
+  ["zscore",      "How unusual (z)",      "the strip under the price, with the ±threshold"],
+  ["noticias",    "News with no alert",   "headlines the system saw and did not act on"],
+];
+const INTERVALOS = ["1D", "1M", "3M", "6M", "1Y"];
+const TITULO_GRAFICO = {
+  "1D": "Today, minute by minute",
+  "1M": "One month of closes", "3M": "Three months of closes",
+  "6M": "Six months of closes", "1Y": "One year of closes",
+};
+
+function camadasHTML() {
+  return CAMADAS.map(([k, rot, porque]) => {
+    // ⚠️ O z é uma estatística DIÁRIA, calculada sobre uma janela de vinte fechos. Não existe z
+    // intradiário, e inventar um seria uma segunda definição da mesma coisa. A caixa desliga-se
+    // sozinha no 1D e diz porquê, em vez de ficar activa a não fazer nada.
+    const inerte = (k === "zscore" || k === "assinalados" || k === "noticias")
+                   && S.intervalo === "1D";
+    return `<label class="cx ${inerte ? "inerte" : ""}" title="${esc(porque)}">
+      <input type="checkbox" data-c="${k}" ${S.camadas[k] ? "checked" : ""}
+             ${inerte ? "disabled" : ""}>
+      <span>${esc(rot)}</span></label>`;
+  }).join("") + (S.intervalo === "1D"
+    ? `<span class="cx-nota">z, flagged days and news are per day — pick a longer range</span>`
+    : "");
 }
 
 // O veredicto vem do servidor quando existe (é `app/verdict.py`, com 29 testes e a proibição de
@@ -733,39 +882,155 @@ function veredicto(a) {
 }
 
 const MESES = { "1M":21, "3M":63, "6M":126, "1Y":252 };
+
+// Cores das marcas. Uma marca só pode significar uma coisa, e cada uma tem entrada na legenda.
+function paleta() {
+  const escuro = matchMedia("(prefers-color-scheme: dark)").matches;
+  return {
+    escuro,
+    linha:   escuro ? "#2fd07f" : "#0a7f4f",
+    sobe:    escuro ? "#5eead4" : "#0f766e",
+    desce:   escuro ? "#f87171" : "#b3261e",
+    alerta:  escuro ? "#f0a72e" : "#b45309",
+    noticia: escuro ? "#8d96a3" : "#8a929c",
+    grelha:  escuro ? "#1b1f26" : "#eeeeea",
+    texto:   escuro ? "#8d96a3" : "#5b6472",
+  };
+}
+
+function criarGrafico(alvo, altura, eixoOculto) {
+  const P = paleta();
+  return LightweightCharts.createChart(alvo, {
+    width: alvo.clientWidth, height: altura || alvo.clientHeight,
+    layout: { background:{ color:"transparent" }, textColor:P.texto,
+              fontFamily:"IBM Plex Mono, monospace", fontSize:11 },
+    grid: { vertLines:{ visible:false }, horzLines:{ color:P.grelha } },
+    // ⚠️ `minimumWidth` fixo nas duas telas. Sem isto a escala do preço (três dígitos e duas
+    // casas) e a do z (um dígito) têm larguras diferentes, as áreas de desenho ficam desalinhadas
+    // por umas dezenas de pixeis, e «olhar para baixo para ver porque é que o dia foi
+    // assinalado» — que é a razão de existir da faixa — deixa de funcionar.
+    rightPriceScale: { borderVisible:false, minimumWidth:64 },
+    timeScale: { borderVisible:false, fixLeftEdge:true, fixRightEdge:true,
+                 timeVisible: S.intervalo === "1D", secondsVisible:false,
+                 // Um só eixo do tempo para o par. Quando a faixa do z está no ar, é ela que o
+                 // mostra, por estar por baixo; o de cima seria uma segunda régua a dizer o mesmo.
+                 visible: !(eixoOculto && alvo.id === "graf") },
+    crosshair: { mode:0 }, handleScale:false, handleScroll:false,
+  });
+}
+
+// ⚠️ Os alertas são posicionados pelo `sent_at`, que é a hora a que a mensagem saiu, e não pela
+// data do dia. No 1D isso é a diferença entre «houve um alerta hoje» e «o alerta saiu às 00:02,
+// antes da abertura» — que é precisamente o que a secção da latência da dissertação discute.
+function marcasDeAlertas(a, desdeTs, ate) {
+  const P = paleta();
+  return (a.alerts || []).map(al => {
+    const iso = al.sent_at || (al.date ? `${al.date}T12:00:00Z` : "");
+    if (!iso) return null;
+    const ts = Math.floor(Date.parse(iso) / 1000);
+    if (!Number.isFinite(ts) || ts < desdeTs || (ate && ts > ate)) return null;
+    // ⚠️ Sem `text`. Onze alertas em seis meses agrupam-se nas mesmas semanas e as etiquetas
+    // sobrepõem-se umas às outras — medido, não suposto, e é a mesma lição que as etiquetas do
+    // z já tinham dado. A forma está na legenda e as datas estão nas fichas por baixo.
+    return { tempo: S.intervalo === "1D" ? ts : (al.date || iso.slice(0, 10)),
+             position:"aboveBar", color:P.alerta, shape:"circle", text:"" };
+  }).filter(Boolean);
+}
+
+// A faixa do z aparece? O gráfico de cima precisa de saber ANTES de se desenhar, para decidir
+// se mostra o eixo do tempo ou se o deixa para ela.
+function mostraZ(a) {
+  if (S.intervalo === "1D" || !S.camadas.zscore) return false;
+  const desde = (a.closes || []).slice(-MESES[S.intervalo])[0]?.[0] || "";
+  return (a.events || []).some(e => e[0] >= desde);
+}
+
 function desenharGrafico(a) {
   const alvo = $("#graf");
   if (!alvo || typeof LightweightCharts === "undefined") return;
-  const fechos = (a.closes || []).slice(-MESES[S.intervalo]);
-  if (fechos.length < 2) { alvo.innerHTML = '<p class="vazio">No price series.</p>'; return; }
-  const escuro = matchMedia("(prefers-color-scheme: dark)").matches;
-  const c = LightweightCharts.createChart(alvo, {
-    width: alvo.clientWidth, height: alvo.clientHeight,
-    layout: { background:{ color:"transparent" }, textColor: escuro ? "#8d96a3" : "#5b6472",
-              fontFamily:"IBM Plex Mono, monospace", fontSize:11 },
-    grid: { vertLines:{ visible:false },
-            horzLines:{ color: escuro ? "#1b1f26" : "#eeeeea" } },
-    rightPriceScale: { borderVisible:false },
-    timeScale: { borderVisible:false, fixLeftEdge:true, fixRightEdge:true },
-    crosshair: { mode:0 }, handleScale:false, handleScroll:false,
-  });
+  const P = paleta();
+  const umDia = S.intervalo === "1D";
+
+  // ── os pontos da linha ────────────────────────────────────────────────────
+  let pontos, desdeTs = 0, ateTs = 0;
+  if (umDia) {
+    const barras = a.intraday || [];
+    if (barras.length < 2) {
+      alvo.innerHTML = `<p class="vazio">No intraday series for ${esc(a.intraday_day || "today")}
+        — the market may not have opened yet. Pick a longer range.</p>`;
+      return;
+    }
+    pontos = barras.map(([t, v]) => ({ time:t, value:v }));
+    desdeTs = barras[0][0]; ateTs = barras[barras.length - 1][0];
+  } else {
+    const fechos = (a.closes || []).slice(-MESES[S.intervalo]);
+    if (fechos.length < 2) { alvo.innerHTML = '<p class="vazio">No price series.</p>'; return; }
+    pontos = fechos.map(([t, v]) => ({ time:t, value:v }));
+    desdeTs = Math.floor(Date.parse(fechos[0][0] + "T00:00:00Z") / 1000);
+  }
+
+  const c = criarGrafico(alvo, 0, mostraZ(a));
   // ⚠️ v5 do lightweight-charts: `addLineSeries` deixou de existir. A série cria-se com
   // `addSeries(LightweightCharts.LineSeries, ...)` e os marcadores com `createSeriesMarkers`,
   // que é uma função do módulo e não um método da série.
   const s = c.addSeries(LightweightCharts.LineSeries, {
-    color: escuro ? "#2fd07f" : "#0a7f4f", lineWidth:2,
-    priceLineVisible:false, lastValueVisible:false });
-  s.setData(fechos.map(([t, v]) => ({ time:t, value:v })));
-  const desde = fechos[0][0];
-  const marcas = (a.events || []).filter(e => e[0] >= desde).map(([t, z, dir]) => ({
-    time:t, position: dir > 0 ? "aboveBar" : "belowBar",
-    color: dir > 0 ? (escuro ? "#5eead4" : "#0f766e") : (escuro ? "#f87171" : "#b3261e"),
-    // ⚠️ Sem `text`. Com quinze dias assinalados em seis meses, as etiquetas `z` sobrepõem-se
-    // umas às outras e sobre a linha de preço — medido, não suposto. A data e o z de cada dia
-    // estão nas fichas por baixo do gráfico, que além de legíveis são navegáveis por teclado.
-    shape: dir > 0 ? "arrowUp" : "arrowDown",
-  }));
-  if (marcas.length) LightweightCharts.createSeriesMarkers(s, marcas);
+    color:P.linha, lineWidth:2, priceLineVisible:false, lastValueVisible:false });
+  s.setData(pontos);
+
+  // ── a referência: o fecho de ontem ────────────────────────────────────────
+  // Sem ela, uma linha intradiária não diz se o dia é de subida ou de descida — diz só a forma.
+  if (S.camadas.referencia && umDia && a.prev_close != null) {
+    s.createPriceLine({ price:a.prev_close, color:P.texto, lineWidth:1,
+                        lineStyle:2, axisLabelVisible:true, title:"prev close" });
+  }
+
+  // ── as marcas ─────────────────────────────────────────────────────────────
+  const marcas = [];
+  if (S.camadas.assinalados && !umDia) {
+    for (const [t, z, dir] of (a.events || [])) {
+      if (t < pontos[0].time) continue;
+      // Um dia assinalado que gerou alerta não se marca duas vezes: a marca do alerta manda,
+      // porque a distinção que interessa é entre o que saiu e o que ficou por sair.
+      if (S.camadas.alertas && (a.alerts || []).some(al => al.date === t)) continue;
+      marcas.push({ tempo:t, position: dir > 0 ? "aboveBar" : "belowBar",
+                    color: dir > 0 ? P.sobe : P.desce,
+                    shape: dir > 0 ? "arrowUp" : "arrowDown", text:"" });
+    }
+  }
+  if (S.camadas.noticias && !umDia) {
+    const comAlerta = new Set((a.alerts || []).map(al => al.date));
+    for (const n of (a.news || [])) {
+      if (!n.date || n.date < pontos[0].time || comAlerta.has(n.date)) continue;
+      marcas.push({ tempo:n.date, position:"belowBar", color:P.noticia,
+                    shape:"square", text:"" });
+    }
+  }
+  let fora = 0;
+  if (S.camadas.alertas) {
+    const dentro = marcasDeAlertas(a, desdeTs, ateTs);
+    marcas.push(...dentro);
+    // ⚠️ Um alerta pode ter saído fora da janela desenhada — tipicamente de madrugada, horas
+    // antes da abertura. Não se arrasta o marcador para a borda, porque isso mentiria sobre a
+    // hora; conta-se, e diz-se por baixo. É o mesmo facto que a secção da latência mede.
+    if (umDia) {
+      const hoje = (a.intraday_day || "").slice(0, 10);
+      fora = (a.alerts || []).filter(al => (al.date || "") === hoje).length - dentro.length;
+    }
+  }
+  S.desenhado = {
+    alertas: marcas.filter(m => m.shape === "circle").length,
+    assinalados: marcas.filter(m => m.shape !== "circle" && m.shape !== "square").length,
+    noticias: marcas.filter(m => m.shape === "square").length,
+    referencia: !!(S.camadas.referencia && umDia && a.prev_close != null),
+    fora: Math.max(0, fora),
+  };
+
+  if (marcas.length) {
+    LightweightCharts.createSeriesMarkers(s, marcas
+      .sort((x, y) => (x.tempo > y.tempo ? 1 : -1))
+      .map(m => ({ time:m.tempo, position:m.position, color:m.color,
+                   shape:m.shape, text:m.text || "" })));
+  }
   c.timeScale().fitContent();
   // ⚠️ O gráfico não se redimensiona sozinho. Sem isto, mudar a janela deixa-o cortado — e num
   // painel que se mostra ao vivo é o primeiro defeito que alguém vê.
@@ -775,9 +1040,105 @@ function desenharGrafico(a) {
   S.grafico = c;
 }
 
+// ── a faixa do z ────────────────────────────────────────────────────────────
+// ⚠️ O z NÃO vai para o eixo do preço. São unidades diferentes — dólares e desvios-padrão — e
+// sobrepô-las obrigaria a um segundo eixo, que convida a ler correlação entre duas curvas que
+// só partilham o tempo. Fica numa faixa própria por baixo, com o mesmo eixo horizontal: para
+// saber porque é que um dia foi assinalado, olha-se para baixo.
+//
+// ⚠️ E só há pontos nos dias assinalados. O instantâneo traz o z apenas desses; calcular o z
+// dos restantes no browser seria uma segunda implementação do detetor, a divergir da primeira
+// no dia em que uma delas mudasse.
+function desenharZ(a) {
+  const alvo = $("#grafZ");
+  if (!alvo) return;
+  if (S.intervalo === "1D" || !S.camadas.zscore) { alvo.hidden = true; alvo.innerHTML = ""; return; }
+  alvo.hidden = false; alvo.innerHTML = "";
+  if (typeof LightweightCharts === "undefined") return;
+
+  const P = paleta();
+  const fechos = (a.closes || []).slice(-MESES[S.intervalo]);
+  const desde = fechos[0]?.[0] || "";
+  const ev = (a.events || []).filter(e => e[0] >= desde);
+  if (!ev.length) {
+    alvo.innerHTML = '<p class="vazio" style="padding:10px 14px">No flagged day in this range.</p>';
+    return;
+  }
+  const c = criarGrafico(alvo, 108, false);
+  const lim = S.visao?.threshold ?? 1.5;
+  // Uma série invisível que cobre o intervalo todo, para o eixo do tempo bater certo com o de
+  // cima mesmo quando os dias assinalados são poucos e esparsos.
+  const base = c.addSeries(LightweightCharts.LineSeries, {
+    color:"rgba(0,0,0,0)", lineWidth:1, priceLineVisible:false, lastValueVisible:false });
+  base.setData(fechos.map(([t]) => ({ time:t, value:0 })));
+  // Sem `title`: o rótulo do eixo já diz o valor, e o título repeti-lo-ia ao lado.
+  base.createPriceLine({ price: lim, color:P.sobe, lineWidth:1, lineStyle:2,
+                         axisLabelVisible:true, title:"" });
+  base.createPriceLine({ price:-lim, color:P.desce, lineWidth:1, lineStyle:2,
+                         axisLabelVisible:true, title:"" });
+  const sobe = c.addSeries(LightweightCharts.HistogramSeries, { color:P.sobe, priceLineVisible:false });
+  const desce = c.addSeries(LightweightCharts.HistogramSeries, { color:P.desce, priceLineVisible:false });
+  sobe.setData(ev.filter(e => e[1] >= 0).map(([t, z]) => ({ time:t, value:z })));
+  desce.setData(ev.filter(e => e[1] < 0).map(([t, z]) => ({ time:t, value:z })));
+  c.timeScale().fitContent();
+  if (S.obsZ) S.obsZ.disconnect();
+  S.obsZ = new ResizeObserver(() => c.applyOptions({ width: alvo.clientWidth }));
+  S.obsZ.observe(alvo);
+}
+
+// A legenda só nomeia as marcas que estão MESMO desenhadas. Uma legenda que descreve uma marca
+// desligada ensina o leitor a procurar uma coisa que não está lá.
+// ⚠️ A legenda nomeia o que está MESMO desenhado, e não o que está ligado. São coisas
+// diferentes: no 1D a caixa dos alertas pode estar ligada e não haver marca nenhuma no ecrã,
+// porque o alerta saiu de madrugada e a janela intradiária começa na abertura. Uma legenda que
+// descreve uma marca ausente manda o leitor procurar uma coisa que não está lá — foi assim que
+// a legenda do funil e a do gráfico já falharam duas vezes neste painel.
+function pintarLegendaGrafico() {
+  const el = $("#legGraf"); if (!el) return;
+  const d = S.desenhado || {};
+  const umDia = S.intervalo === "1D";
+  const L = [];
+  if (d.alertas)
+    L.push(`<i><span class="p" style="background:var(--parou)"></span> an alert went out</i>`);
+  if (d.assinalados) {
+    L.push(`<i><span class="seta sobe"></span> flagged, closed up, no alert</i>`);
+    L.push(`<i><span class="seta desce"></span> flagged, closed down, no alert</i>`);
+    // ⚠️ Esta frase não é redundante com as duas de cima. Elas dizem o que a cor É; esta diz o
+    // que a cor NÃO é. Verde num painel financeiro lê-se como «bom», e este sistema não emite
+    // juízos sobre se um movimento é bom — nem sequer sobre se vai continuar.
+    L.push(`<i>the colour is the direction of that day's move, and nothing more</i>`);
+  }
+  if (d.noticias)
+    L.push(`<i><span class="quad"></span> a headline the system saw and did not act on</i>`);
+  if (d.referencia)
+    L.push(`<i><span class="tracejado"></span> yesterday's close</i>`);
+  if (S.camadas.zscore && !umDia && $("#grafZ") && !$("#grafZ").hidden)
+    L.push(`<i>z = distance from this company's own ${S.visao?.window ?? 20}-day norm, in standard deviations</i>`);
+  if (d.fora)
+    L.push(`<i><b>${d.fora} alert${d.fora > 1 ? "s" : ""} today went out before the session
+      opened</b>, so ${d.fora > 1 ? "they are" : "it is"} not on this chart — the times are below</i>`);
+  el.innerHTML = L.join("");
+  el.hidden = !L.length;
+}
+
 // Os dias assinalados como BOTÕES, e não só como marcadores no gráfico: um marcador desenhado
 // numa tela não existe para um leitor de ecrã, nem para quem navega por teclado.
 function pintarDias(a) {
+  if (S.intervalo === "1D") {
+    // No 1D as fichas passam a ser os alertas de hoje, com a hora a que saíram: é a única lista
+    // do dia que existe, e é a que dá sentido às marcas do gráfico.
+    const hoje = (a.intraday_day || "").slice(0, 10);
+    const alertasHoje = (a.alerts || []).filter(al => (al.date || "") === hoje);
+    $("#dias").innerHTML = alertasHoje.length ? alertasHoje.map((al, i) =>
+      `<button class="dia-b" data-a="${i}">
+        <span class="p" style="background:var(--parou)"></span>
+        ${esc(horaDe(al.sent_at))} <span style="color:var(--fraco)">${esc(al.kind || "")}</span>
+      </button>`).join("")
+      : `<span class="vazio" style="padding:0">No alert for this company today.</span>`;
+    $("#dias").querySelectorAll(".dia-b").forEach(b =>
+      b.addEventListener("click", () => modalAlerta(alertasHoje[+b.dataset.a])));
+    return;
+  }
   const desde = (a.closes || []).slice(-MESES[S.intervalo])[0]?.[0] || "";
   const ev = (a.events || []).filter(e => e[0] >= desde).slice().reverse().slice(0, 40);
   $("#dias").innerHTML = ev.length ? ev.map(([t, z, dir]) =>
@@ -788,6 +1149,13 @@ function pintarDias(a) {
   $("#dias").querySelectorAll(".dia-b").forEach(b =>
     b.addEventListener("click", () => modalDia(a, b.dataset.d, b.dataset.z)));
 }
+
+const horaDe = iso => {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  return Number.isNaN(+d) ? "—"
+    : d.toLocaleTimeString("en-GB", { hour:"2-digit", minute:"2-digit", timeZone:"UTC" }) + " UTC";
+};
 
 // ── modais ──────────────────────────────────────────────────────────────────
 function abrirModal(titulo, html) {
@@ -865,6 +1233,7 @@ function pintarTudo() {
   $("#estado").textContent = `checked ${S.visao.age_label || "—"}`;
   $("#pulso").className = "pulso" + (S.visao.fresh ? "" : " frio");
   $("#rodape").textContent = `${S.visao.alerts_total} alerts sent to date`;
+  pintarMascote();
   pintarKpis(linhas, estados);
   pintarEmpresas(linhas, estados);
   pintarFeed();
@@ -885,14 +1254,79 @@ function trocarModo(m) {
   S.modo = m;
   $("#mHoje").setAttribute("aria-pressed", String(m === "hoje"));
   $("#mHist").setAttribute("aria-pressed", String(m === "hist"));
-  // O histórico não tem dia para relatar, por isso a mascote e os indicadores do dia saem. É a
-  // diferença entre as duas vistas, e tem de se ver.
-  $("#secHoje").hidden = m !== "hoje";
-  $("#kpis").hidden = m !== "hoje";
-  S.feedTodos = m === "hist" ? true : S.feedTodos;
+  // As duas vistas respondem a perguntas diferentes, e por isso mostram coisas diferentes.
+  // «Hoje» responde ao que aconteceu hoje: a mascote relata, os indicadores contam, a watchlist
+  // mostra o estado de cada empresa agora. «History» responde ao que este canal tem feito ao
+  // longo do tempo, e para isso a watchlist de hoje não serve — sai também.
+  const hoje = m === "hoje";
+  $("#secHoje").hidden = !hoje;
+  $("#kpis").hidden = !hoje;
+  $("#secHist").hidden = hoje;
+  $("#colEsq").hidden = !hoje;
+  document.querySelector(".grelha").style.gridTemplateColumns = hoje ? "" : "1fr";
+  if (!hoje) { S.diaHist = null; pintarHistorico(); }
+  S.feedTodos = hoje ? S.feedTodos : true;
   $("#fTodos").setAttribute("aria-pressed", String(S.feedTodos));
   $("#fEmpresa").setAttribute("aria-pressed", String(!S.feedTodos));
   pintarFeed();
+}
+
+// ── o registo, ao longo do tempo ────────────────────────────────────────────
+// ⚠️ Só se mostra o que os dados sustentam. As portas por dia dariam a melhor barra do mundo, e
+// não estão aqui: o `/api/screener` descreve o dia corrente, não o passado, e desenhar uma série
+// histórica de portas obrigaria a inventá-la. O que existe é o registo de alertas, e é esse que
+// se mostra.
+function pintarHistorico() {
+  const porDia = new Map();
+  for (const a of S.alertas) {
+    const d = (a.date || "").slice(0, 10); if (!d) continue;
+    const e = porDia.get(d) || { news:0, market:0, total:0 };
+    e[a.kind === "news" ? "news" : "market"] += 1; e.total += 1;
+    porDia.set(d, e);
+  }
+  const dias = [...porDia.entries()].sort((x, y) => (x[0] < y[0] ? -1 : 1));
+  // ⚠️ `MARKET` é o pseudo-ticker do resumo de abertura e de fecho, não uma empresa. Sem esta
+  // linha o cartão dizia «13 companies heard from of 12 watched» — treze de doze, que é o tipo
+  // de número que se vê e não se acredita, e com razão.
+  const vigiadas = new Set(S.visao.watchlist || []);
+  const tickers = new Set(S.alertas.map(a => a.ticker).filter(t => t && vigiadas.has(t)));
+  const totais = dias.map(([, e]) => e.total);
+  const mediana = totais.length
+    ? totais.slice().sort((a, b) => a - b)[Math.floor(totais.length / 2)] : 0;
+  const chaves = new Set(S.alertas.map(x => x.key).filter(Boolean));
+  const votos = Object.entries(S.votos).filter(([k]) => chaves.has(k))
+    .reduce((n, [, v]) => n + v[0] + v[1], 0);
+
+  const k = (rot, val, sub) =>
+    `<div class="k"><dt>${rot}</dt><dd class="num">${val}</dd><div class="sub">${sub}</div></div>`;
+  $("#histKpis").innerHTML = [
+    k("Alerts on record", S.alertas.length, `across ${dias.length} day${dias.length === 1 ? "" : "s"}`),
+    k("Busiest day", Math.max(0, ...totais), "the most the channel ever said in one day"),
+    k("Typical day", mediana, "the median, which is the day you should expect"),
+    k("Companies heard from", tickers.size, `of ${(S.visao.watchlist || []).length} watched`),
+    k("Reader votes", votos, votos ? "on the alerts on record" : "no votes yet"),
+  ].join("");
+  $("#histNota").textContent = dias.length
+    ? `${dias[0][0]} to ${dias[dias.length - 1][0]}` : "";
+
+  const alto = Math.max(1, ...totais);
+  $("#histBarras").innerHTML = dias.map(([d, e]) => {
+    const h = t => `height:${Math.round(t / alto * 96)}px`;
+    return `<button class="hist-d" data-d="${esc(d)}" title="${esc(d)}: ${e.total}"
+              aria-pressed="${S.diaHist === d}">
+      ${e.market ? `<i style="${h(e.market)};background:var(--parou)"></i>` : ""}
+      ${e.news ? `<i style="${h(e.news)};background:var(--acento)"></i>` : ""}
+      <span class="n">${e.total}</span></button>`;
+  }).join("") || '<p class="vazio">No alert on record yet.</p>';
+
+  $("#histBarras").querySelectorAll(".hist-d").forEach(b =>
+    b.addEventListener("click", () => {
+      S.diaHist = S.diaHist === b.dataset.d ? null : b.dataset.d;
+      pintarHistorico(); pintarFeed();
+    }));
+  // o dia escolhido fica visível sem ter de se procurar
+  const sel = $("#histBarras").querySelector('[aria-pressed="true"]');
+  if (sel) sel.scrollIntoView({ block:"nearest", inline:"center" });
 }
 $("#fTodos").addEventListener("click", () => { S.feedTodos = true; trocarModo(S.modo); });
 $("#fEmpresa").addEventListener("click", () => { S.feedTodos = false; trocarModo(S.modo); });

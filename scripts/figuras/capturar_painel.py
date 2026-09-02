@@ -77,7 +77,8 @@ ATIVOS = ["MSFT", "TSLA", "NFLX", "AAPL", "JNJ"]
 def descarregar() -> None:
     DADOS.mkdir(parents=True, exist_ok=True)
     for r in ROTAS:
-        (DADOS / f"{r}.json").write_bytes(urllib.request.urlopen(f"{BASE}/api/{r}", timeout=60).read())
+        bruto = urllib.request.urlopen(f"{BASE}/api/{r}", timeout=60).read()
+        (DADOS / f"{r}.json").write_bytes(bruto)
         print(f"  {r}.json")
     for t in ATIVOS:
         alvo = DADOS / f"asset_{t}.json"
@@ -110,7 +111,8 @@ def confirmar_escolhas() -> None:
     if mov is None or emp is None or (mov < 0) == (emp < 0):
         sys.exit(f"!! {ALVO_DETALHE} deixou de ter titular e parcela da empresa em sinais "
                  f"opostos (titular {mov}, empresa {emp}); escolher outra empresa.")
-    print(f"  {ALVO_DETALHE}: titular {mov * 100:+.2f}%, parcela da empresa {emp * 100:+.2f}% — serve")
+    print(f"  {ALVO_DETALHE}: titular {mov * 100:+.2f}%, "
+          f"parcela da empresa {emp * 100:+.2f}% — serve")
 
 
 def capturar() -> None:
@@ -139,7 +141,8 @@ def capturar() -> None:
 
         print("FIGURA 1 — o estado do dia")
         print("  frase:", pg.eval_on_selector("#frase", "e=>e.innerText"))
-        for k in pg.eval_on_selector_all(".k", "els=>els.map(e=>e.innerText.replace(/\\n/g,' · '))"):
+        for k in pg.eval_on_selector_all(
+                ".k", "els=>els.map(e=>e.innerText.replace(/\\n/g,' · '))"):
             print("  kpi:", k)
         fim = pg.eval_on_selector(".legenda", "e => e.getBoundingClientRect().bottom + scrollY")
         pg.screenshot(path=str(FIGURAS / "app_v7_painel.png"), full_page=True,
@@ -150,15 +153,17 @@ def capturar() -> None:
         pg.evaluate("""t => { const b=[...document.querySelectorAll('.e')].find(x=>x.dataset.t===t);
                               if (b) b.click(); }""", ALVO_DETALHE)
         pg.wait_for_timeout(3000)
-        pintados = pg.evaluate("""() => { const c=document.querySelector('#graf canvas'); if(!c) return 0;
+        pintados = pg.evaluate("""() => {
+            const c=document.querySelector('#graf canvas'); if(!c) return 0;
             const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data; let n=0;
             for(let i=3;i<d.length;i+=4) if(d[i]!==0) n++; return n; }""")
         if pintados < 1000:
             sys.exit("!! o grafico saiu em branco (ver armadilha 3); nao usar estas figuras")
         print("  veredicto:", pg.eval_on_selector(".d-ver", "e=>e.innerText"))
         print("  titular:", pg.eval_on_selector(".d-cab .mv", "e=>e.innerText"))
-        for l in pg.eval_on_selector_all(".d-lin", "els=>els.map(e=>e.innerText.replace(/\\n/g,' '))"):
-            print("  parcela:", l)
+        for linha in pg.eval_on_selector_all(
+                ".d-lin", "els=>els.map(e=>e.innerText.replace(/\\n/g,' '))"):
+            print("  parcela:", linha)
         recortar(pg, ".d", FIGURAS / "app_v7_empresa.png")
 
         print("FIGURA 3 — o silencio de", ALVO_MODAL)
