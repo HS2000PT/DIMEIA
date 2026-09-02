@@ -181,6 +181,8 @@ Saída: `docs/defesa/PORQUES.md`.
 | E1 | **Rodar a chave da API do Heroku.** Foi colada no chat, portanto está queimada. Heroku → Account settings → API Key → Regenerate. | ⚠️ **por fazer, é dele** |
 | E2 | Re-execução coordenada dos 31 avaliadores, uma única vez, no fim. | ⏳ |
 | E3 | Decidir se compra um domínio próprio. Sem domínio, o URL fica com o sufixo do Heroku — não há volta. | ⏳ decisão dele |
+| E4 | **Decidir o orçamento diário de alertas.** Está em 5. O varrimento (`docs/evaluation/evaluation_budget_sweep.md`) mostra que de 5 para 15 a precisão cai 1,7% e a cobertura triplica. Subir ajuda a recolha de feedback; obriga a acertar o número no texto da tese. Não escolher o k pela tabela — isso seria selecionar sobre o conjunto de teste. | ⏳ decisão dele |
+| E5 | **Levar os commits para o `main` do GitHub.** O workflow `alerts.yml` corre `run_alerts.py` a partir do ramo por omissão, em cron. Enquanto o `main` não tiver estas correcções, existe um segundo produtor a correr código antigo — incluindo o do orçamento. | ⚠️ **é dele** |
 
 ---
 

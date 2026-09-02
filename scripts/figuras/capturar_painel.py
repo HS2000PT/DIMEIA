@@ -144,7 +144,11 @@ def capturar() -> None:
         for k in pg.eval_on_selector_all(
                 ".k", "els=>els.map(e=>e.innerText.replace(/\\n/g,' · '))"):
             print("  kpi:", k)
-        fim = pg.eval_on_selector(".legenda", "e => e.getBoundingClientRect().bottom + scrollY")
+        # ⚠️ `#colEsq > .legenda` e nao `.legenda`: desde que o grafico e o modal ganharam
+        # legendas proprias, o primeiro `.legenda` do documento pode ser um deles, vazio e
+        # escondido — e o recorte saia com doze pixeis de altura, sem erro nenhum.
+        fim = pg.eval_on_selector("#colEsq > .legenda",
+                                  "e => e.getBoundingClientRect().bottom + scrollY")
         pg.screenshot(path=str(FIGURAS / "app_v7_painel.png"), full_page=True,
                       clip={"x": 0, "y": 0, "width": 960, "height": round(fim) + 12})
         print(f"  app_v7_painel.png: 960x{round(fim) + 12} css px")
@@ -152,7 +156,13 @@ def capturar() -> None:
         print("FIGURA 2 — a evidencia de", ALVO_DETALHE)
         pg.evaluate("""t => { const b=[...document.querySelectorAll('.e')].find(x=>x.dataset.t===t);
                               if (b) b.click(); }""", ALVO_DETALHE)
-        pg.wait_for_timeout(3000)
+        pg.wait_for_timeout(2000)
+        # ⚠️ A figura vai em 6M e nao no 1D que a pagina abre por defeito. Nao e para embelezar:
+        # o que esta figura tem de mostrar e a distincao entre o que foi assinalado e o que foi
+        # enviado, e essa so existe ao longo de meses. O 1D mostra um dia, que e outra pergunta.
+        pg.evaluate("""() => { const b=[...document.querySelectorAll('#intervalos button')]
+                                 .find(x=>x.dataset.r==='6M'); if (b) b.click(); }""")
+        pg.wait_for_timeout(2500)
         pintados = pg.evaluate("""() => {
             const c=document.querySelector('#graf canvas'); if(!c) return 0;
             const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data; let n=0;
