@@ -163,6 +163,14 @@ def test_ultimo_voto_de_cada_pessoa_ganha():
     assert FL.contagem(rs, "k1") == (0, 2)
 
 
+def test_uma_linha_antiga_restaurada_no_fim_nao_substitui_a_nova():
+    rs = [
+        _r("k1", "v1", FL.INUTIL, "2026-09-02T10:00:00Z"),
+        _r("k1", "v1", FL.UTIL, "2026-09-01T10:00:00Z"),
+    ]
+    assert FL.contagem(rs, "k1") == (0, 1)
+
+
 def test_contagem_e_por_alerta():
     rs = [_r("k1", "v1", FL.UTIL), _r("k2", "v1", FL.INUTIL)]
     assert FL.contagem(rs, "k1") == (1, 0)
@@ -180,7 +188,39 @@ def test_resumo_separa_votos_de_pessoas():
     assert s["pessoas"] == 2
     assert s["alertas_votados"] == 2
     assert s["mudancas_de_voto"] == 1
+    assert s["repeticoes_iguais"] == 0
     assert (s["uteis"], s["inuteis"]) == (2, 1)
+
+
+def test_repetir_a_mesma_escolha_nao_e_mudar_de_voto():
+    rs = [_r("k1", "v1", FL.UTIL), _r("k1", "v1", FL.UTIL)]
+    s = FL.resumo(rs)
+    assert s["mudancas_de_voto"] == 0
+    assert s["repeticoes_iguais"] == 1
+    assert s["votos_efetivos"] == 1
+
+
+def test_retirada_remove_os_votos_anteriores_mas_preserva_a_linha():
+    rs = [
+        _r("k1", "v1", FL.UTIL),
+        _r("k2", "v1", FL.INUTIL),
+        _r("*", "v1", FL.RETIRAR),
+        _r("k1", "v2", FL.UTIL),
+    ]
+    s = FL.resumo(rs)
+    assert s["retiradas"] == 1
+    assert s["votos_efetivos"] == 1
+    assert FL.contagem(rs, "k2") == (0, 0)
+
+
+def test_um_voto_depois_da_retirada_inicia_nova_participacao():
+    rs = [
+        _r("k1", "v1", FL.UTIL),
+        _r("*", "v1", FL.RETIRAR),
+        _r("k2", "v1", FL.INUTIL),
+    ]
+    assert FL.contagem(rs, "k1") == (0, 0)
+    assert FL.contagem(rs, "k2") == (0, 1)
 
 
 def test_aparar_mantem_os_mais_recentes(tmp_path):

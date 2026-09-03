@@ -160,6 +160,9 @@ def _tratar_comando(update: dict[str, Any], ctx: Contexto) -> str:
         if par is None:
             return "[webhook] update sem comando nem voto (ignorado)"
         chat_id, texto = par
+        comando = texto.split()[0].split("@")[0].lower()
+        if comando in {"/apagar", "/deletefeedback"}:
+            return _retirar_feedback(update, chat_id, ctx)
         if ctx.ligacao_db is None:
             ctx.enviar("O bot está a arrancar. Tenta outra vez daqui a um minuto.",
                        chat_id=chat_id)
@@ -169,3 +172,41 @@ def _tratar_comando(update: dict[str, Any], ctx: Contexto) -> str:
         return f"[webhook] comando {texto.split()[0]!r} de {chat_id}"
     except Exception as exc:  # noqa: BLE001
         return f"[webhook] comando falhou (ignorado): {type(exc).__name__}: {exc}"
+
+
+def _retirar_feedback(update: dict[str, Any], chat_id: str, ctx: Contexto) -> str:
+    """Regista a retirada sem reescrever o histórico acrescentável.
+
+    A linha ``d`` funciona como marca de retirada: a análise apaga logicamente todos os votos
+    anteriores desse resumo. As linhas pseudonimizadas permanecem no histórico Git, o que é
+    explicado na resposta e no consentimento; prometer eliminação física seria falso.
+    """
+    mensagem = update.get("message") or {}
+    autor = mensagem.get("from") or {}
+    if "id" not in autor:
+        ctx.enviar("I could not identify which feedback to withdraw.", chat_id=chat_id)
+        return "[webhook] retirada sem identificador"
+
+    try:
+        votante = F.resumir_votante(autor["id"], ctx.sal)
+        FL.append_jsonl(
+            FL.FeedbackRecord(
+                chave_alerta="*",
+                votante=votante,
+                acao=FL.RETIRAR,
+                at=FL.agora(),
+            ),
+            ctx.caminho_votos,
+        )
+        _publicar(ctx)
+    except Exception as exc:  # noqa: BLE001
+        ctx.enviar("I could not withdraw the feedback. Please try again later.", chat_id=chat_id)
+        return f"[webhook] retirada falhou: {type(exc).__name__}"
+
+    ctx.enviar(
+        "Your previous feedback has been withdrawn from the analysis. The versioned log keeps "
+        "pseudonymised audit lines, but they no longer count. A future vote starts new "
+        "participation.",
+        chat_id=chat_id,
+    )
+    return f"[webhook] feedback retirado por {votante[:8]}"

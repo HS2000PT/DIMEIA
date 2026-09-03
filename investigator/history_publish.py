@@ -262,6 +262,31 @@ def fetch_jsonl(filename: str, repo: str = "", branch: str = "") -> list[str] | 
         return None
 
 
+def seed_jsonl_once(path: str | Path, filename: str,
+                    repo: str = "", branch: str = "") -> bool:
+    """Semeia um JSONL local vazio com a cópia remota, sem sobrescrever trabalho local.
+
+    Devolve ``True`` quando o ficheiro já tinha dados ou quando a leitura remota foi conclusiva.
+    ``False`` significa que a branch não pôde ser lida; o chamador pode continuar, mas não deve
+    apresentar uma contagem local como se fosse a contagem acumulada.
+    """
+    destino = Path(path)
+    try:
+        if destino.exists() and destino.stat().st_size > 0:
+            return True
+    except OSError:
+        return False
+    remotas = fetch_jsonl(filename, repo=repo, branch=branch)
+    if remotas is None:
+        return False
+    try:
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        destino.write_text("\n".join(remotas) + ("\n" if remotas else ""), encoding="utf-8")
+    except OSError:
+        return False
+    return True
+
+
 def publish_jsonl_merge(path: str | Path, filename: str,
                         repo: str = "", branch: str = "") -> str:
     """Publica um JSONL acumulativo **juntando** as linhas locais às remotas.

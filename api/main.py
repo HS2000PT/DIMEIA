@@ -224,7 +224,13 @@ def _ctx_webhook():
     e reinicia pelo menos uma vez por dia. É o mesmo mecanismo que o `gate_log` já usa.
     """
     from investigator import config
+    from investigator.history_publish import seed_jsonl_once
     from investigator.telegram_bot import sender, store, webhook
+
+    # O disco do dyno recomeça vazio. Semear antes do primeiro voto mantém a contagem visível
+    # dos botões alinhada com o registo acumulado da branch; sem isto, voltaria a "1" depois de
+    # cada reinício apesar de os votos antigos continuarem guardados.
+    seed_jsonl_once(_VOTOS, "feedback.jsonl")
 
     def publicar(caminho):
         # ⚠️ `publish_jsonl_merge` e não `publish_blob`. O `publish_blob` substitui, e substituir

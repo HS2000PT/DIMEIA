@@ -4,7 +4,7 @@
 
 > **Todas as regras de análise foram fixadas antes de existirem dados** e estão no cabeçalho de `scripts/analyse_feedback.py`. Nenhuma foi alterada depois.
 
-> Gerado por `scripts/analyse_feedback.py` a 2026-09-01 19:34 UTC.
+> Gerado por `scripts/analyse_feedback.py` a 2026-09-03 16:16 UTC.
 
 > **4 voto(s) excluído(s)** por não corresponderem a nenhum alerta do histórico partilhado. Não foram apagados do ficheiro, que é de acrescento e é a prova; foram ignorados na contagem.
 
@@ -12,22 +12,23 @@
 
 | Medida | Valor |
 |---|---|
-| Votos registados | 2 |
-| Votos efetivos (um por pessoa e alerta) | 2 |
-| Pessoas distintas | 1 |
-| Alertas votados | 2 |
-| Mudanças de voto | 0 |
+| Votos válidos registados | 31 |
+| Votos efetivos (um por pessoa e alerta) | 20 |
+| Pessoas distintas | 2 |
+| Alertas votados | 16 |
+| Mudanças de voto | 5 |
+| Cliques repetidos sem mudança | 6 |
 
 ## Resultado
 
 | Recorte | Contagem | Proporção | Nota |
 |---|---|---|---|
-| Alertas considerados úteis | 2 de 2 | não reportada | abaixo do mínimo pré-registado de 20 |
-| O mesmo, sem o votante dominante | 0 de 0 | não reportada | abaixo do mínimo pré-registado de 20 |
+| Alertas considerados úteis | 19 de 20 | 95% | IC 95% de Wilson: 76%–99% |
+| O mesmo, sem o votante dominante | 4 de 4 | não reportada | abaixo do mínimo pré-registado de 20 |
 
-⚠️ **Salvaguarda do votante dominante aplicada.** Uma só pessoa representa 100% dos votos efetivos, acima do limite pré-registado de 40%. A segunda linha da tabela mostra o mesmo cálculo sem essa pessoa. Se as duas linhas divergirem, a leitura a reportar é a segunda.
+⚠️ **Salvaguarda do votante dominante aplicada.** Uma só pessoa forneceu 80% dos votos efetivos, excedendo o limite pré-registado de 40%. Sem essa pessoa restam 4 votos, abaixo do mínimo de 20; a segunda linha mostra apenas a contagem e nenhuma proporção desse recorte é reportada.
 
-**Nenhuma proporção é reportada.** Há 2 votos efetivos e a regra pré-registada exige 20. As contagens acima são o resultado, e são tudo o que esta amostra sustenta.
+A proporção de alertas considerados úteis é de 95%, com intervalo de confiança de Wilson a 95% entre 76% e 99%. A largura deste intervalo é a medida honesta do que 20 votos permitem afirmar, e é por isso que é reportada ao lado do valor central e nunca depois dele.
 
 ## Ameaças à validade, e nenhuma delas é resolúvel com mais votos
 

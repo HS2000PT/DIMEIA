@@ -72,7 +72,8 @@ def test_abaixo_do_n_minimo_nenhuma_proporcao_aparece():
 
 def test_no_n_minimo_a_proporcao_aparece_com_intervalo():
     pares = [(f"v{i}", FL.UTIL if i < 15 else FL.INUTIL) for i in range(af.N_MINIMO)]
-    texto = af.relatorio(_votos(pares))
+    registos = _votos(pares)
+    texto = af.relatorio(registos, chaves_validas={r.chave_alerta for r in registos})
     assert "não reportada" not in texto
     assert "Wilson" in texto
     assert "75%" in texto
@@ -93,6 +94,22 @@ def test_votante_dominante_dispara_a_segunda_leitura():
     texto = af.relatorio(registos)
     assert "Salvaguarda do votante dominante aplicada" in texto
     assert "sem o votante dominante" in texto
+
+
+def test_recorte_sem_dominante_tambem_respeita_o_n_minimo():
+    pares = [("entusiasta", FL.UTIL)] * 15 + [(f"v{i}", FL.INUTIL) for i in range(10)]
+    texto = af.relatorio(_votos(pares))
+    linha = next(linha for linha in texto.splitlines() if "sem o votante dominante" in linha)
+    assert "não reportada" in linha
+    assert "0 de 10" in linha
+
+
+def test_fragmento_nao_divide_por_zero_quando_um_votante_tem_tudo():
+    registos = _votos([("entusiasta", FL.UTIL)] * af.N_MINIMO)
+    chaves = {r.chave_alerta for r in registos}
+    texto = af.fragmento_latex(registos, chaves)
+    assert "restam 0 votos" in texto
+    assert "nenhuma segunda proporção é reportada" in texto
 
 
 def test_sem_dominancia_a_salvaguarda_nao_aparece():
@@ -153,6 +170,13 @@ def test_sem_historico_o_filtro_nao_e_aplicado_em_silencio():
     assert "Correr de novo com o histórico presente" in texto
 
 
+def test_fragmento_sem_historico_nao_afirma_que_filtrou():
+    texto = af.fragmento_latex(_votos([("v1", FL.UTIL)]), chaves_validas=None)
+    assert "registo partilhado não esteve disponível" in texto
+    assert "Contaram apenas votos" not in texto
+    assert "Nenhuma proporção é reportada" in texto
+
+
 def test_historico_vazio_devolve_none_e_nao_conjunto_vazio(tmp_path):
     vazio = tmp_path / "alerts_history.jsonl"
     vazio.write_text("", encoding="utf-8")
@@ -181,6 +205,52 @@ def test_filtro_nao_muda_o_resultado_quando_tudo_e_valido():
     com = af.relatorio(registos, chaves_validas=todas)
     assert "excluído" not in com
     assert "filtro do histórico não foi aplicado" not in com
+
+
+def test_filtro_preserva_uma_retirada_de_participacao():
+    registos = [
+        FL.FeedbackRecord("k0", "v1", FL.UTIL, "2026-09-01T10:00:00Z"),
+        FL.FeedbackRecord("*", "v1", FL.RETIRAR, "2026-09-01T10:01:00Z"),
+    ]
+    texto = af.relatorio(registos, chaves_validas={"k0"})
+    assert "Votos efetivos (um por pessoa e alerta) | 0" in texto
+    assert "Retiradas de participação | 1" in texto
+
+
+def test_juncao_da_branch_preserva_ordem_e_remove_duplicados(tmp_path):
+    destino = tmp_path / "feedback.jsonl"
+    destino.write_text("b\nc\n", encoding="utf-8")
+    total = af._juntar_linhas_da_branch(["a", "b"], destino)
+    assert total == 3
+    assert destino.read_text(encoding="utf-8").splitlines() == ["a", "b", "c"]
+
+
+def test_leitura_git_fixa_um_so_commit_para_os_dois_ficheiros(monkeypatch):
+    """Um fetch concorrente não pode pôr votos e histórico em commits diferentes."""
+    chamadas: list[list[str]] = []
+
+    class Resultado:
+        def __init__(self, returncode=0, stdout=""):
+            self.returncode = returncode
+            self.stdout = stdout
+
+    def executar(comando, **_kwargs):
+        chamadas.append(comando)
+        if comando[1] == "rev-parse":
+            return Resultado(stdout="abc123\n")
+        if comando[1] == "show":
+            return Resultado(stdout="linha\n")
+        return Resultado()
+
+    monkeypatch.setattr(af.subprocess, "run", executar)
+    lidos = af._ler_branch_por_git(("feedback.jsonl", "alerts_history.jsonl"))
+
+    assert lidos == {"feedback.jsonl": ["linha"], "alerts_history.jsonl": ["linha"]}
+    shows = [c for c in chamadas if c[1] == "show"]
+    assert [c[2] for c in shows] == [
+        "abc123:feedback.jsonl", "abc123:alerts_history.jsonl",
+    ]
+    assert all("FETCH_HEAD" not in parte for c in chamadas for parte in c)
 
 def test_um_alerta_de_mercado_tambem_e_reconhecido(tmp_path):
     """A regressão que os dois primeiros votos reais da recolha revelaram.

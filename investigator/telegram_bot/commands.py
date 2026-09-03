@@ -20,6 +20,8 @@ HELP = (
     "<b>Alerts</b>\n"
     "/stop — pause (your list is kept)\n"
     "/start — resume\n\n"
+    "<b>Feedback privacy</b>\n"
+    "/deletefeedback — withdraw your previous feedback from the analysis\n\n"
     "<i>Every alert shows its evidence (unusual move or similar past news). "
     "Never a forecast, never advice.</i>"
 )

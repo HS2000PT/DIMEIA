@@ -36,7 +36,8 @@ def cliente(tmp_path, monkeypatch):
     monkeypatch.setattr(sender, "send_message", lambda *a, **k: {"ok": True})
     monkeypatch.setattr(sender, "answer_callback_query", lambda *a, **k: {"ok": True})
     monkeypatch.setattr(sender, "edit_message_reply_markup", lambda *a, **k: {"ok": True})
-    monkeypatch.setattr(history_publish, "publish_blob", lambda *a, **k: "")
+    monkeypatch.setattr(history_publish, "seed_jsonl_once", lambda *a, **k: True)
+    monkeypatch.setattr(history_publish, "publish_jsonl_merge", lambda *a, **k: "")
     return TestClient(M.app)
 
 

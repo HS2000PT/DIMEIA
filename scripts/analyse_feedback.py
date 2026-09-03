@@ -13,8 +13,9 @@ com o ficheiro de votos vazio, e o relatório aplica-as sem exceção:
 2. **Um voto por pessoa por alerta.** O último substitui o anterior. As mudanças de opinião
    são contadas à parte, porque são interessantes e não são ruído.
 3. **Salvaguarda do votante dominante.** Se uma só pessoa representar mais de 40% dos votos
-   efetivos, a proporção é reportada duas vezes — com e sem essa pessoa — e o relatório diz
-   que o fez. Num canal pequeno, um leitor entusiasta pode sozinho decidir o resultado.
+   efetivos, o cálculo é repetido sem essa pessoa. A segunda proporção só é reportada se o
+   recorte também tiver os 20 votos mínimos; caso contrário, sai apenas a contagem. Num canal
+   pequeno, um leitor entusiasta pode sozinho decidir o resultado.
 4. **Nunca se escreve «significativo».** Não há teste de hipótese aqui, e não vai haver com
    este N. Intervalos de Wilson a 95%, e a palavra «piloto» em todo o lado.
 5. **Sobreposição de intervalos recusa uma afirmação, nunca a sustenta.** Com intervalos
@@ -43,6 +44,7 @@ Uso:
 from __future__ import annotations
 
 import argparse
+import subprocess
 from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
@@ -121,14 +123,35 @@ def chaves_do_historico(caminho: str | Path) -> set[str] | None:
     return {_chave(e) for e in entradas}
 
 
+def _filtrar_por_historico(
+    registos: list[FL.FeedbackRecord],
+    chaves_validas: set[str] | None,
+) -> tuple[list[FL.FeedbackRecord], int]:
+    """Filtra votos inválidos sem remover marcas de retirada.
+
+    A marca ``d`` não pertence a um alerta concreto; eliminá-la por não ter uma chave no
+    histórico faria reaparecer precisamente os votos que a pessoa retirou.
+    """
+    if chaves_validas is None:
+        return list(registos), 0
+    saida = [
+        r
+        for r in registos
+        if r.acao == FL.RETIRAR or r.chave_alerta in chaves_validas
+    ]
+    excluidos = sum(
+        1
+        for r in registos
+        if r.acao != FL.RETIRAR and r.chave_alerta not in chaves_validas
+    )
+    return saida, excluidos
+
+
 def relatorio(registos: list[FL.FeedbackRecord],
               chaves_validas: set[str] | None = None) -> str:
     # Regra 6: votos sobre alertas que não existem não são votos.
-    excluidos = 0
-    if chaves_validas is not None:
-        antes = len(registos)
-        registos = [r for r in registos if r.chave_alerta in chaves_validas]
-        excluidos = antes - len(registos)
+    registos, excluidos = _filtrar_por_historico(registos, chaves_validas)
+    amostra_verificada = chaves_validas is not None
 
     efetivos = FL.votos_efetivos(registos)
     resumo = FL.resumo(registos)
@@ -178,34 +201,59 @@ def relatorio(registos: list[FL.FeedbackRecord],
     L.append("")
     L.append("| Medida | Valor |")
     L.append("|---|---|")
-    L.append(f"| Votos registados | {resumo['votos_brutos']} |")
+    L.append(f"| Votos válidos registados | {resumo['votos_brutos']} |")
     L.append(f"| Votos efetivos (um por pessoa e alerta) | {resumo['votos_efetivos']} |")
     L.append(f"| Pessoas distintas | {resumo['pessoas']} |")
     L.append(f"| Alertas votados | {resumo['alertas_votados']} |")
     L.append(f"| Mudanças de voto | {resumo['mudancas_de_voto']} |")
+    L.append(f"| Cliques repetidos sem mudança | {resumo['repeticoes_iguais']} |")
+    if resumo["retiradas"]:
+        L.append(f"| Retiradas de participação | {resumo['retiradas']} |")
     L.append("")
 
     L.append("## Resultado")
     L.append("")
     L.append("| Recorte | Contagem | Proporção | Nota |")
     L.append("|---|---|---|---|")
-    L.append(_linha_proporcao("Alertas considerados úteis", uteis, n))
+    if amostra_verificada:
+        L.append(_linha_proporcao("Alertas considerados úteis", uteis, n))
+    else:
+        L.append(f"| Alertas considerados úteis | {uteis} de {n} | não reportada | "
+                 "filtro do histórico indisponível |")
 
     if fracao_dominante > DOMINANCIA_MAX and n:
         sem = {k: v for k, v in efetivos.items() if k[0] != dominante}
         uteis_sem = sum(1 for r in sem.values() if r.acao == FL.UTIL)
-        L.append(_linha_proporcao("O mesmo, sem o votante dominante", uteis_sem, len(sem)))
+        if amostra_verificada:
+            L.append(_linha_proporcao("O mesmo, sem o votante dominante", uteis_sem, len(sem)))
+        else:
+            L.append(f"| O mesmo, sem o votante dominante | {uteis_sem} de {len(sem)} | "
+                     "não reportada | filtro do histórico indisponível |")
     L.append("")
 
     if fracao_dominante > DOMINANCIA_MAX:
-        L.append(f"⚠️ **Salvaguarda do votante dominante aplicada.** Uma só pessoa representa "
-                 f"{_pct(fracao_dominante)} dos votos efetivos, acima do limite pré-registado "
-                 f"de {_pct(DOMINANCIA_MAX)}. A segunda linha da tabela mostra o mesmo cálculo "
-                 f"sem essa pessoa. Se as duas linhas divergirem, a leitura a reportar é a "
-                 f"segunda.")
+        sem_n = n - n_dominante
+        if n >= N_MINIMO and amostra_verificada:
+            dominio = f"{_pct(fracao_dominante)} dos votos efetivos"
+        else:
+            dominio = f"{n_dominante} dos {n} votos efetivos"
+        if sem_n >= N_MINIMO and amostra_verificada:
+            leitura = ("A segunda linha reporta o cálculo sem essa pessoa; se as duas linhas "
+                       "divergirem, essa é a leitura a reter.")
+        else:
+            leitura = (f"Sem essa pessoa restam {sem_n} votos, abaixo do mínimo de "
+                       f"{N_MINIMO}; a segunda linha mostra apenas a contagem e nenhuma "
+                       "proporção desse recorte é reportada.")
+        L.append(f"⚠️ **Salvaguarda do votante dominante aplicada.** Uma só pessoa forneceu "
+                 f"{dominio}, excedendo o limite pré-registado de {_pct(DOMINANCIA_MAX)}. "
+                 f"{leitura}")
         L.append("")
 
-    if n < N_MINIMO:
+    if not amostra_verificada:
+        L.append("**Nenhuma proporção é reportada.** O histórico partilhado não esteve "
+                 "disponível para confirmar que cada voto corresponde a um alerta entregue. "
+                 "As contagens são provisórias e não podem ser citadas como resultado.")
+    elif n < N_MINIMO:
         L.append(f"**Nenhuma proporção é reportada.** Há {n} votos efetivos e a regra "
                  f"pré-registada exige {N_MINIMO}. As contagens acima são o resultado, e são "
                  f"tudo o que esta amostra sustenta.")
@@ -243,11 +291,8 @@ def fragmento_latex(registos: list[FL.FeedbackRecord],
     que os dados não sustentem, e passa a estar certa no dia em que os votos cheguem — sem
     ninguém ter de reescrever o parágrafo.
     """
-    excluidos = 0
-    if chaves_validas is not None:
-        antes = len(registos)
-        registos = [r for r in registos if r.chave_alerta in chaves_validas]
-        excluidos = antes - len(registos)
+    registos, excluidos = _filtrar_por_historico(registos, chaves_validas)
+    amostra_verificada = chaves_validas is not None
 
     efetivos = FL.votos_efetivos(registos)
     r = FL.resumo(registos)
@@ -270,20 +315,25 @@ def fragmento_latex(registos: list[FL.FeedbackRecord],
              "As regras de análise foram fixadas antes de existir um único voto e não foram "
              "alteradas depois: mínimo de vinte votos efetivos para reportar qualquer proporção, "
              "um voto por pessoa e por alerta com o último a substituir o anterior, "
-             "salvaguarda que reporta o resultado também sem o votante dominante quando este "
-             "representa mais de quarenta por cento dos votos, e intervalos de confiança de "
-             "Wilson, apropriados a proporções com amostras pequenas. Contam apenas votos sobre "
-             "alertas presentes no registo partilhado.")
+             "salvaguarda que repete o cálculo sem o votante dominante quando este representa "
+             "mais de quarenta por cento dos votos, sempre sujeita ao mesmo mínimo, e intervalos "
+             "de confiança de Wilson, apropriados a proporções com amostras pequenas.")
+    if amostra_verificada:
+        L.append("Contaram apenas votos sobre alertas presentes no registo partilhado.")
+    else:
+        L.append("O registo partilhado não esteve disponível nesta execução. As contagens são "
+                 "por isso provisórias e nenhuma proporção pode ser reportada até o filtro ser "
+                 "aplicado.")
     L.append("")
 
     if n == 0:
-        L.append("A recolha decorre à data de escrita e ainda não produziu votos. "
+        L.append("A recolha decorre à data de escrita e não contém votos efetivos. "
                  "A ausência de dados não é um resultado de zero por cento, e por isso nada é "
                  "reportado aqui; o mecanismo, as regras e as ameaças à validade abaixo ficam "
                  "estabelecidos para que a medição, quando existir, não dependa de decisões "
                  "tomadas depois de ver os números.")
     else:
-        L.append(f"Foram registados {r['votos_brutos']} votos {periodo}, "
+        L.append(f"Foram registados {r['votos_brutos']} votos válidos {periodo}, "
                  f"que correspondem a {n} votos efetivos de {r['pessoas']} "
                  f"{'pessoa' if r['pessoas'] == 1 else 'pessoas distintas'}, "
                  f"sobre {r['alertas_votados']} alertas."
@@ -293,7 +343,12 @@ def fragmento_latex(registos: list[FL.FeedbackRecord],
                  + (f" {excluidos} votos foram excluídos por não corresponderem a nenhum alerta "
                     f"do registo partilhado." if excluidos else ""))
         L.append("")
-        if n < N_MINIMO:
+        if not amostra_verificada:
+            L.append("O histórico partilhado não esteve disponível para confirmar que cada "
+                     "voto corresponde a um alerta entregue. \\textbf{Nenhuma proporção é "
+                     "reportada}; as contagens acima são provisórias e não podem ser citadas "
+                     "como resultado.")
+        elif n < N_MINIMO:
             L.append(f"A amostra fica abaixo do mínimo de {N_MINIMO} votos efetivos fixado no "
                      f"protocolo, pelo que \\textbf{{nenhuma proporção é reportada}}. "
                      f"As contagens acima são o resultado, e são tudo o que esta amostra "
@@ -310,13 +365,21 @@ def fragmento_latex(registos: list[FL.FeedbackRecord],
             if nd / n > DOMINANCIA_MAX:
                 sem = {k: v for k, v in efetivos.items() if k[0] != dom}
                 us = sum(1 for v in sem.values() if v.acao == FL.UTIL)
-                lo2, hi2 = wilson(us, len(sem))
                 L.append("")
                 L.append(f"Uma única pessoa representa {nd / n * 100:.0f}\\% dos votos efetivos, "
                          f"acima do limite de {DOMINANCIA_MAX * 100:.0f}\\% fixado no protocolo. "
-                         f"Excluindo-a, a proporção é de {us / len(sem) * 100:.0f}\\% sobre "
-                         f"{len(sem)} votos, com intervalo entre {lo2 * 100:.0f}\\% e "
-                         f"{hi2 * 100:.0f}\\%. É esta a leitura a reter.")
+                         f"Excluindo-a, restam {len(sem)} votos, dos quais {us} classificam o "
+                         "alerta como útil.")
+                if len(sem) < N_MINIMO:
+                    L.append(f"Este recorte também fica abaixo do mínimo de {N_MINIMO}; nenhuma "
+                             "segunda proporção é reportada e a amostra não sustenta uma leitura "
+                             "independente do votante dominante.")
+                else:
+                    lo2, hi2 = wilson(us, len(sem))
+                    L.append(f"A proporção sem essa pessoa é de "
+                             f"{us / len(sem) * 100:.0f}\\%, com intervalo entre "
+                             f"{lo2 * 100:.0f}\\% e {hi2 * 100:.0f}\\%. É esta a leitura a "
+                             "reter.")
     L.append("")
     L.append("Quatro limitações acompanham este resultado e nenhuma delas se resolve com mais "
              "votos. A primeira é a autosseleção: vota quem quer, e quem considera um alerta "
@@ -332,6 +395,68 @@ def fragmento_latex(registos: list[FL.FeedbackRecord],
     return "\n".join(L)
 
 
+def _juntar_linhas_da_branch(remotas: list[str], caminho: str | Path) -> int:
+    """Guarda a união ordenada branch+local e devolve o total de linhas."""
+    destino = Path(caminho)
+    locais = (
+        [linha for linha in destino.read_text(encoding="utf-8").splitlines() if linha.strip()]
+        if destino.exists()
+        else []
+    )
+    vistas: set[str] = set()
+    juntas: list[str] = []
+    for linha in remotas + locais:
+        if linha not in vistas:
+            vistas.add(linha)
+            juntas.append(linha)
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    destino.write_text("\n".join(juntas) + ("\n" if juntas else ""), encoding="utf-8")
+    return len(juntas)
+
+
+def _ler_branch_por_git(ficheiros: tuple[str, ...]) -> dict[str, list[str]] | None:
+    """Lê um instantâneo coerente da branch quando a API autenticada não está configurada."""
+    fetch = subprocess.run(
+        ["git", "fetch", "--quiet", "origin",
+         "+refs/heads/alerts-history:refs/remotes/origin/alerts-history"],
+        cwd=REPO,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=120,
+    )
+    if fetch.returncode != 0:
+        return None
+    resolve = subprocess.run(
+        ["git", "rev-parse", "--verify", "refs/remotes/origin/alerts-history^{commit}"],
+        cwd=REPO,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=30,
+    )
+    snapshot = resolve.stdout.strip()
+    if resolve.returncode != 0 or not snapshot:
+        return None
+    saida: dict[str, list[str]] = {}
+    for ficheiro in ficheiros:
+        show = subprocess.run(
+            ["git", "show", f"{snapshot}:{ficheiro}"],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+        )
+        if show.returncode != 0:
+            return None
+        saida[ficheiro] = [linha for linha in show.stdout.splitlines() if linha.strip()]
+    return saida
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--votos", default=str(DEFAULT_VOTOS))
@@ -341,8 +466,8 @@ def main() -> int:
     ap.add_argument("--out", default=str(OUT_MD))
     ap.add_argument("--out-tex", default=str(OUT_TEX))
     ap.add_argument("--da-branch", action="store_true",
-                    help="descarrega feedback.jsonl da branch de dados e junta ao ficheiro "
-                         "local antes de analisar (é lá que vivem os votos de produção)")
+                    help="descarrega feedback.jsonl e alerts_history.jsonl da branch de dados "
+                         "antes de analisar (é lá que vivem os dados de produção)")
     args = ap.parse_args()
 
     # ⚠️ O ficheiro local só tem os votos desta máquina. Os votos reais chegam pelo Telegram a
@@ -351,23 +476,29 @@ def main() -> int:
     if args.da_branch:
         from investigator.history_publish import fetch_jsonl
 
-        remotas = fetch_jsonl("feedback.jsonl")
-        if remotas is None:
-            print("[feedback] ⚠️ não consegui ler a branch de dados; uso só o ficheiro local.")
-        else:
-            caminho = Path(args.votos)
-            locais = ([ln for ln in caminho.read_text(encoding="utf-8").splitlines() if ln.strip()]
-                      if caminho.exists() else [])
-            vistas: set[str] = set()
-            juntas: list[str] = []
-            for ln in remotas + locais:
-                if ln not in vistas:
-                    vistas.add(ln)
-                    juntas.append(ln)
-            caminho.parent.mkdir(parents=True, exist_ok=True)
-            caminho.write_text("\n".join(juntas) + "\n", encoding="utf-8")
-            print(f"[feedback] branch: {len(remotas)} linha(s); local depois da junção: "
-                  f"{len(juntas)}.")
+        votos_remotos = fetch_jsonl("feedback.jsonl")
+        historico_remoto = fetch_jsonl("alerts_history.jsonl")
+        origem = "API autenticada"
+        if votos_remotos is None or historico_remoto is None:
+            por_git = _ler_branch_por_git(("feedback.jsonl", "alerts_history.jsonl"))
+            if por_git is not None:
+                votos_remotos = por_git["feedback.jsonl"]
+                historico_remoto = por_git["alerts_history.jsonl"]
+                origem = "git origin/alerts-history"
+        if votos_remotos is None or historico_remoto is None:
+            print("[feedback] ERRO: não consegui ler votos e histórico da branch; "
+                  "os relatórios existentes não foram substituídos.")
+            return 2
+        if not historico_remoto:
+            print("[feedback] ERRO: a branch não contém histórico; "
+                  "não é possível validar os votos.")
+            return 2
+        total_votos = _juntar_linhas_da_branch(votos_remotos, args.votos)
+        total_historico = _juntar_linhas_da_branch(historico_remoto, args.historico)
+        print(f"[feedback] branch ({origem}): {len(votos_remotos)} voto(s); "
+              f"local depois da junção: {total_votos}.")
+        print(f"[feedback] histórico da branch: {len(historico_remoto)} linha(s); "
+              f"local depois da junção: {total_historico}.")
 
     registos = FL.load_jsonl(args.votos)
     chaves = None if args.sem_filtro else chaves_do_historico(args.historico)

@@ -156,6 +156,37 @@ def test_comando_sem_base_avisa_em_vez_de_ficar_calado(tmp_path):
     assert ctx.enviar.chamadas, "um comando sem resposta lê-se como bot avariado"
 
 
+@pytest.mark.parametrize("comando", ["/apagar", "/deletefeedback"])
+def test_retirar_feedback_nao_precisa_da_base_de_watchlists(tmp_path, comando):
+    ctx = _ctx(tmp_path, ligacao_db=None)
+    W.processar(_voto(user=71), ctx)
+    update = {
+        "message": {
+            "text": comando,
+            "from": {"id": 71},
+            "chat": {"id": 71},
+        }
+    }
+
+    linha = W.processar(update, ctx)
+
+    registos = FL.load_jsonl(ctx.caminho_votos)
+    assert registos[-1].acao == FL.RETIRAR
+    assert FL.resumo(registos)["votos_efetivos"] == 0
+    assert "retirado" in linha
+    resposta = ctx.enviar.chamadas[-1][0][0]
+    assert "withdrawn" in resposta
+    assert "pseudonymised" in resposta
+
+
+def test_retirada_sem_identificador_explica_o_erro(tmp_path):
+    ctx = _ctx(tmp_path)
+    update = {"message": {"text": "/deletefeedback", "chat": {"id": 71}}}
+    linha = W.processar(update, ctx)
+    assert "sem identificador" in linha
+    assert "could not identify" in ctx.enviar.chamadas[-1][0][0]
+
+
 @pytest.mark.parametrize("update", [
     {}, {"edited_message": {"chat": {"id": 1}}}, {"message": {"chat": {"id": 1}}},
     {"my_chat_member": {"chat": {"id": 1}}},

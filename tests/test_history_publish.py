@@ -263,3 +263,27 @@ def test_fetch_distingue_vazio_de_nao_consegui_ler(monkeypatch):
 def test_desligado_por_omissao_tambem_para_os_votos(tmp_path):
     assert hp.publish_jsonl_merge(tmp_path / "f.jsonl", "feedback.jsonl") == ""
     assert hp.fetch_jsonl("feedback.jsonl") is None
+
+
+def test_semear_jsonl_recupera_a_contagem_depois_do_reinicio(tmp_path, monkeypatch):
+    destino = tmp_path / "feedback.jsonl"
+    monkeypatch.setattr(hp, "fetch_jsonl", lambda *a, **k: ['{"a":1}', '{"b":2}'])
+    assert hp.seed_jsonl_once(destino, "feedback.jsonl") is True
+    assert destino.read_text(encoding="utf-8").splitlines() == ['{"a":1}', '{"b":2}']
+
+
+def test_semear_jsonl_nunca_sobrescreve_dados_locais(tmp_path, monkeypatch):
+    destino = tmp_path / "feedback.jsonl"
+    destino.write_text('{"local":1}\n', encoding="utf-8")
+
+    def nao_devia_ser_chamado(*args, **kwargs):
+        raise AssertionError("um ficheiro não vazio não pode ser substituído")
+
+    monkeypatch.setattr(hp, "fetch_jsonl", nao_devia_ser_chamado)
+    assert hp.seed_jsonl_once(destino, "feedback.jsonl") is True
+    assert destino.read_text(encoding="utf-8") == '{"local":1}\n'
+
+
+def test_semear_jsonl_assinala_leitura_remota_inconclusiva(tmp_path, monkeypatch):
+    monkeypatch.setattr(hp, "fetch_jsonl", lambda *a, **k: None)
+    assert hp.seed_jsonl_once(tmp_path / "feedback.jsonl", "feedback.jsonl") is False

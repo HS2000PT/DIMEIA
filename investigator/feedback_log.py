@@ -26,6 +26,7 @@ from pathlib import Path
 
 UTIL = "u"
 INUTIL = "n"
+RETIRAR = "d"
 
 
 @dataclass(frozen=True)
@@ -40,7 +41,7 @@ class FeedbackRecord:
 
     chave_alerta: str
     votante: str
-    acao: str  # "u" | "n"
+    acao: str  # "u" | "n" | "d" (retirada dos votos anteriores da pessoa)
     at: str  # ISO 8601 UTC
     chat_id: str = ""
     message_id: int = 0
@@ -69,7 +70,7 @@ def parse_jsonl_lines(linhas: list[str]) -> list[FeedbackRecord]:
             carga = json.loads(linha)
         except (ValueError, TypeError):
             continue
-        if not isinstance(carga, dict) or carga.get("acao") not in (UTIL, INUTIL):
+        if not isinstance(carga, dict) or carga.get("acao") not in (UTIL, INUTIL, RETIRAR):
             continue
         try:
             saida.append(FeedbackRecord(**{k: v for k, v in carga.items() if k in _CAMPOS}))
@@ -99,10 +100,28 @@ def append_jsonl(registo: FeedbackRecord, caminho: str | Path,
         p.write_text("\n".join(linhas[-max_entries:]) + "\n", encoding="utf-8")
 
 
+def _cronologicos(registos: list[FeedbackRecord]) -> list[FeedbackRecord]:
+    """Ordena por instante, preservando a ordem de chegada em empates.
+
+    Uma recuperação pode voltar a acrescentar hoje uma linha antiga. Usar apenas a posição no
+    ficheiro faria esse voto antigo substituir um voto posterior da mesma pessoa.
+    """
+    numerados = enumerate(registos)
+    return [r for _, r in sorted(numerados, key=lambda par: (par[1].at or "", par[0]))]
+
+
 def votos_efetivos(registos: list[FeedbackRecord]) -> dict[tuple[str, str], FeedbackRecord]:
-    """O último voto de cada par (votante, alerta). É aqui que mudar de opinião é resolvido."""
+    """Último voto por pessoa e alerta, respeitando retiradas de participação.
+
+    Uma linha ``d`` é uma marca de retirada: elimina da análise todos os votos anteriores da
+    pessoa. Mantém-se no registo acrescentável para a retirada sobreviver às junções entre
+    produtores. Se a pessoa voltar a votar depois, esse novo gesto constitui nova participação.
+    """
     efetivos: dict[tuple[str, str], FeedbackRecord] = {}
-    for r in registos:  # o ficheiro está por ordem de chegada; o último a passar fica
+    for r in _cronologicos(registos):
+        if r.acao == RETIRAR:
+            efetivos = {par: voto for par, voto in efetivos.items() if par[0] != r.votante}
+            continue
         efetivos[(r.votante, r.chave_alerta)] = r
     return efetivos
 
@@ -129,12 +148,32 @@ def resumo(registos: list[FeedbackRecord]) -> dict[str, int]:
     """
     efetivos = votos_efetivos(registos)
     c = Counter(r.acao for r in efetivos.values())
+    ultimas_acoes: dict[tuple[str, str], str] = {}
+    mudancas = repeticoes = retiradas = 0
+    votos_brutos = 0
+    for r in _cronologicos(registos):
+        if r.acao == RETIRAR:
+            retiradas += 1
+            ultimas_acoes = {
+                par: acao for par, acao in ultimas_acoes.items() if par[0] != r.votante
+            }
+            continue
+        votos_brutos += 1
+        par = (r.votante, r.chave_alerta)
+        if par in ultimas_acoes:
+            if ultimas_acoes[par] == r.acao:
+                repeticoes += 1
+            else:
+                mudancas += 1
+        ultimas_acoes[par] = r.acao
     return {
-        "votos_brutos": len(registos),
+        "votos_brutos": votos_brutos,
         "votos_efetivos": len(efetivos),
         "uteis": c.get(UTIL, 0),
         "inuteis": c.get(INUTIL, 0),
         "pessoas": len({v for v, _ in efetivos}),
         "alertas_votados": len({a for _, a in efetivos}),
-        "mudancas_de_voto": len(registos) - len(efetivos),
+        "mudancas_de_voto": mudancas,
+        "repeticoes_iguais": repeticoes,
+        "retiradas": retiradas,
     }

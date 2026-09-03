@@ -29,19 +29,8 @@ anterior ("The Stare") falhou.
 
 Para regenerar depois de mexer no SVG:
 
-```bash
-python - <<'PY'
-import pathlib
-from playwright.sync_api import sync_playwright
-svg = pathlib.Path('app/assets/icon.svg').read_text(encoding='utf-8')
-with sync_playwright() as p:
-    b = p.chromium.launch(); pg = b.new_page()
-    pg.set_viewport_size({"width": 512, "height": 512})
-    pg.set_content(f'<style>html,body{{margin:0}}svg{{width:512px;height:512px;display:block}}</style>{svg}')
-    pathlib.Path('app/assets/telegram_avatar.png').write_bytes(
-        pg.query_selector('svg').screenshot(omit_background=True))
-    b.close()
-PY
+```powershell
+.\.venv\Scripts\python.exe scripts\build_brand_assets.py
 ```
 
 ## Descrição do canal
@@ -83,13 +72,33 @@ O que NUNCA vais receber:
 Painel ao vivo: https://investigator-ddc9d8618935.herokuapp.com
 
 Trabalho académico (dissertação de Mestrado, ISEP). Não é aconselhamento financeiro.
+
+Feedback voluntário:
+• Os botões “Useful” e “Didn't help” guardam a escolha, a hora, a mensagem e um resumo
+  criptográfico estável do identificador de utilizador. Não são guardados nome, username ou
+  identificador pessoal em claro. O registo pseudonimizado é versionado na branch pública de
+  dados do projeto e serve apenas a avaliação agregada da dissertação.
+• Uma pessoa conta no máximo uma vez por alerta; a escolha mais recente substitui a anterior.
+• /deletefeedback (ou /apagar) retira da análise todos os votos anteriores dessa pessoa.
+  Por o registo ser versionado e de auditoria, as linhas pseudonimizadas anteriores permanecem
+  no histórico Git, mas deixam de contar. Um voto posterior inicia nova participação.
+• Votar é opcional e não altera os alertas recebidos.
 ```
 
 ## Nota de tom
 
 Os alertas do canal são em **inglês** — mesma regra da interface: o código e os comentários são
 PT-PT, o que o utilizador lê é EN. A descrição e a mensagem fixada seguem a mesma regra, com a
-excepção da linha final da mensagem fixada, que identifica o trabalho académico.
+exceção da identificação académica. A nota de feedback permanece bilingue nos comandos para que
+`/apagar`, exigido no plano de consentimento, continue fácil de encontrar.
+
+## Antes de convidar participantes
+
+São duas ações manuais do proprietário do canal, porque nenhum script deve alterar a apresentação
+ou notificar pessoas sem confirmação:
+
+1. substituir a mensagem fixada pela versão acima e voltar a fixá-la;
+2. carregar o `telegram_avatar.png` regenerado se a imagem do canal ainda usar uma versão antiga.
 
 ## Ver também
 
