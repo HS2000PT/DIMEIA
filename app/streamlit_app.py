@@ -265,7 +265,7 @@ def _risk_score(ticker: str):
 def _header() -> None:
     st.markdown("### InvestiGator")
     st.markdown(
-        "**Every move investigated, never predicted.** This tool answers three questions "
+        "**Markets move. We investigate.** This tool answers three questions "
         "about your watchlist: *is this move unusual*, *is it the company or the market*, "
         "and *has something like it happened before*, with real numbers you can check. "
         "It never predicts prices and never gives advice."

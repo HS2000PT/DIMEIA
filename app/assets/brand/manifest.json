@@ -1,0 +1,25 @@
+{
+  "name": "InvestiGator",
+  "slogan": "Markets move. We investigate.",
+  "source_mark": "app/assets/logo.svg",
+  "source_fonts": [
+    "web/assets/fonts/IBMPlexSans-SemiBold.woff2",
+    "web/assets/fonts/IBMPlexMono-SemiBold.woff2"
+  ],
+  "pieces": [
+    "logo-lockup",
+    "logo-lockup-tagline",
+    "logo-empilhado",
+    "logo-marca",
+    "logo-nome"
+  ],
+  "variants": [
+    "light",
+    "dark",
+    "mono"
+  ],
+  "wordmark_split": {
+    "ink": "Investi",
+    "accent": "Gator"
+  }
+}

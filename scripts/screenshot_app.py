@@ -2,7 +2,7 @@
 
 Arranca a app localmente (headless), espera o gráfico renderizar e grava um PNG com Playwright.
 Reprodutível: não fabrica nada — é a app implantada a correr, com a marca atual ("The Tail",
-`app/assets/logo.svg`) e o slogan "Every move investigated, never predicted.".
+`app/assets/logo.svg`) e o slogan "Markets move. We investigate.".
 
 Uso:
     python scripts/screenshot_app.py                          # → thesis/figures/app_dashboard.png

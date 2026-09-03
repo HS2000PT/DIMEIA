@@ -11,7 +11,7 @@ import pathlib
 
 from playwright.sync_api import sync_playwright
 
-RAIZ = pathlib.Path(r"c:\Users\henri\Desktop\DIMEIA")
+RAIZ = pathlib.Path(__file__).resolve().parents[1]
 SAIDA = RAIZ / "app/assets/concepts/comparacao.png"
 TAMANHOS = [16, 24, 32, 48, 88, 160]
 

@@ -602,7 +602,7 @@ def main() -> None:
     # Uma vez por página, depois do conteúdo. Não se repete por cartão (H1) e não desaparece
     # (que era o defeito): é o que distingue este produto dos que resumem sem se comprometer.
     st.markdown(
-        '<div class="foot">Every move investigated, never predicted. '
+        '<div class="foot">Markets move. We investigate. '
         'InvestiGator explains what already happened and shows the evidence behind it. '
         'It does not forecast prices and is not investment advice.</div>',
         unsafe_allow_html=True,
