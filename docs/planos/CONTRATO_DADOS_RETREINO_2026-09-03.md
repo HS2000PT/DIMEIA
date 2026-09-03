@@ -123,3 +123,69 @@ constante) e produz o relatório corretamente; `ruff` limpo. Os números só val
   confirmação exige ver o sistema no ar.
 - Quantas linhas o registo tem hoje, e desde quando. Depende do ponto 1.
 - Se a suite de testes passa nesta árvore. Não a corri.
+
+---
+
+## 6. Fecho do passo 1 — 2026-09-04
+
+A auditoria correu contra o registo real, e o número que ela devolveu contradiz este documento.
+
+### O que a auditoria mediu
+
+| | |
+|---|---|
+| Linhas | 39 595 |
+| Títulos distintos | 257 |
+| Período | 2026-08-27 a 2026-09-03 |
+| Mediana de decisões por título | 78 (máximo 1406) |
+| Mediana de títulos distintos por dia | 28 |
+| `feature_snapshot` presente | **0,0%** |
+| `kept` verdadeiro | **100,0%** |
+
+**A secção 1 deste documento estava errada, e é a correção mais importante da passagem.**
+Dizia que o contrato de *snapshot* estava «ligado de ponta a ponta» e que «o relógio do
+retreino começou hoje». Não tinha começado: o código existia apenas na árvore de trabalho,
+nunca foi commitado nem implantado. Zero linhas de classe A tinham sido recolhidas.
+
+R2 e R4 ficam confirmados por medição, e não por inspeção: `kept` é constante, portanto o
+contraste mantidas/suprimidas não é recalculável nesta janela; e a duplicação por reavaliação
+é real e não uniforme.
+
+### Decisão R1 do autor: registar antes das portas
+
+Escolhida a saída **(a)**. O registo passa a receber toda a manchete relevante, com `stage` a
+dizer onde cada candidata morreu. A razão é a que o próprio contrato deu: o conjunto anterior
+era um sobrevivente filtrado, e é essa filtragem que a dissertação já dá como causa de o
+modelo não ajudar em produção.
+
+`stage` substitui `kept` como variável discriminante, porque `kept` deixou de discriminar.
+
+Uma linha por `(news_date, ticker, headline)`. Resolve R4 no ponto de escrita em vez de a
+jusante, e tira do ficheiro a duplicação que fazia o peso de cada empresa ser a frequência
+com que o sistema a republica.
+
+### Verificado num ciclo real
+
+691 candidatas registadas, todas com *snapshot*: 408 `not_latest`, 283 `stale`. Contra a
+mediana de 28 títulos por dia do esquema anterior.
+
+E o registo passou a mostrar sozinho o que exigia um script à parte: três manchetes AAPL do
+mesmo dia pontuam `0,38588`, `0,38595` e `0,38602`. A única entrada que difere entre elas é o
+comprimento do título. É o item 15 da matriz dos anexos, agora observável na saída de
+produção.
+
+### ⚠️ O que falta, e é um passo humano
+
+O **worker do Heroku continua a correr o código antigo**. Não há implantação automática, e
+esta máquina não tem a CLI do Heroku nem o respetivo token. Até o worker ser implantado, a
+recolha de classe A vem só do cron do GitHub Actions, que corre `run_alerts.py` a partir do
+`main` de 30 em 30 minutos em horário de mercado — muito menos denso do que o ciclo de 60 s.
+
+Comando, numa máquina com a CLI: `heroku login` e depois
+`python scripts/deploy_heroku.py`.
+
+### O que continua por fixar
+
+Os mínimos e os critérios de aceitação, que dependem da data da defesa. O horizonte primário
+do rótulo é de **3 dias de bolsa** (`build_dataset.py`, `--primary-horizon 3`), ou seja cerca
+de cinco de calendário: dados recolhidos a menos de cinco dias da defesa não maturam a tempo.
