@@ -9,6 +9,106 @@
 ---
 
 ## Estado Atual
+- **2026-09-03 — integridade dos anexos e raciocínio final fechados.** Cópias preservadas são
+  textualmente idênticas aos quatro ficheiros recebidos: 115/56/69/57 linhas; matriz tem 44 itens.
+  Ordem definitiva: verificar críticas → corrigir/retreinar → estabilizar/organizar → tese PT
+  concisa → TODAS as figuras EN → vídeo/slides/guia/artigo → eventual tradução. Raciocínio
+  consolidado no fim de `docs/planos/REVISAO_PRIORITARIA_ANEXOS.md`. Próximo trabalho técnico:
+  itens 12–17 e contrato de dados; sem retreino, deploy ou alteração do PDF nesta passagem.
+- **2026-09-03 — PRIORIDADE MÁXIMA: quatro anexos lidos integralmente e preservados.**
+  Entrada obrigatória: `docs/planos/REVISAO_PRIORITARIA_ANEXOS.md`, 44 itens com origem,
+  estado/evidência e ação. Originais em `docs/planos/anexos-revisao-2026-09-03/`.
+  TODAS as figuras serão refeitas EM INGLÊS para o artigo; tese PT por agora; piloto rejeitado.
+  Auditoria crítica não fica para depois da defesa; verificar antes de cristalizar retreino.
+  Anexos não são factos: IA só gramatical contradiz ch3; repetição 36,8% não significa todos
+  no mesmo dia; código local já distingue dias; glossário tem 27 definições, PDF por conferir.
+  Wilson não demonstra estudo independente. Não adiar artigo sem confirmar prazo/regras.
+  README e CLAUDE apontam à mesma entrada. Revisão ainda parcial; sem código/treino/deploy.
+- **2026-09-03 — PRIORIDADE ALTERADA PELO AUTOR: desenvolver retreino; piloto REJEITADO.**
+  Anexo reenviado lido até ao fim, incluindo dependências, portabilidade, vídeo e artigo.
+  Ordem atualizada na secção 0 do plano final; plano técnico em
+  `docs/planos/RETREINO_CONTROLADO.md`. Inspeção confirma registo sem features/model_id e
+  treinador com saídas fixas que sobrescrevem modelos/relatórios. Não o executar como retreino.
+  Próximo: auditar chamadas/dados e implementar snapshot rastreável. Sem treino/deploy nesta
+  passagem. Não pedir novamente aprovação do piloto; figuras académicas independentes da marca.
+- **2026-09-03 — pedido extenso relido e reconciliado, sem alteração à tese ou ao código.**
+  Complementos e dependências em `docs/planos/POS_PLANO_AUDITORIA.md`: concisão, arquitetura,
+  acrónimos, portabilidade segura, vídeo e artigo. Achado documental confirmado: generalização
+  sem fonte no parágrafo de `tese-v2/ch1/chapter1.tex:45`; encaminhada para escrita/verificação.
+  Retreino ausente confirmado em ch4:848. Não confundir triagem com auditoria integral, nem
+  reenvio do pedido com aprovação do piloto Figma. Mantém-se a decisão pendente da Figura 4.10.
+  Feedback exclusivamente real na tese; simulações nunca passam por participantes humanos.
+- **2026-09-03 — piloto revisto para impressão.** Mesmo frame Figma `1:2`, rótulos/fases
+  aumentados a 22 px, equivalentes a 8,03 pt em 390 pt de largura. Caixas mais altas e conectores
+  reposicionados; cor/cinzentos inspecionados. Prova atualizada em
+  `output/pdf/comparacao-ciclo-modelo.pdf`. Resolve a perda de leitura anterior à custa de altura.
+  Tese intacta; pedir decisão do autor antes de substituir. Não repetir diagnóstico de 6,57 pt.
+- **2026-09-03 — comparação do piloto concluída, substituição não recomendada.** Exportação
+  recuperada com download_assets; prova em `output/pdf/comparacao-ciclo-modelo.pdf` (gerador
+  `scripts/figures/compare_lifecycle_pilot.py`). Mesma largura de 390 pt: piloto 6,57 pt nos
+  rótulos/5,84 pt nas fases, atual cerca de 8 pt. Cor/cinzentos inspecionados, contraste mantém-se,
+  mas leitura piora. Tese intacta. PDF Figma tem Type 3 incorporada, não contornos confirmados.
+  Não continuar a tratar exportação como bloqueada. Rever escala antes de propor substituição.
+- **2026-09-03 — piloto Figma criado após religação.** Ficheiro
+  https://www.figma.com/design/sNfbRq1WUSM8gRK95FjtWy, frame `1:2`: nove etapas editáveis,
+  duas faixas, passagem do mesmo modelo e retorno tracejado interrompido com retreino ausente.
+  Captura a escala 1 inspecionada, sem cortes/sobreposições. Exportação PDF devolveu 250 712
+  bytes, mas nenhum ficheiro acessível: falta obter e verificar localmente, comparar à largura
+  final e em cinzentos, e receber decisão do autor. Não recriar o ficheiro. Tese intacta.
+- **2026-09-03 — piloto Figma bloqueado por autenticação.** Consulta whoami devolveu
+  UNAUTHORIZED / Reauthentication required; nenhum ficheiro externo criado e tese intacta.
+  Brief pronto em `docs/design/PILOTO_CICLO_MODELO.md`: duas faixas, nove etapas, identidade
+  avaliado/implantado e retreino ausente. Retomar após o autor religar Figma; comparar piloto
+  separado com Figura 4.10, sem substituição automática. Não repetir tentativas com token expirado.
+- **2026-09-03 — gráfico setorial harmonizado e gerador corrigido.** Figura 5.7 regenerada
+  dos artefactos existentes: método verde, taxa-base branca com trama, títulos encurtados e
+  valores anotados com vírgula. O destino por defeito do gerador passou de tese/ para tese-v2/.
+  Dois testes novos confirmam setores/protocolos/margens e destino canónico; ambos passaram,
+  ruff e diff-check limpos. Figura isolada e página física 81 inspecionadas; PDF 126/94 e porta
+  canónica passou com júri pendente. A tipografia continua Matplotlib, não é redesenho nativo.
+  Restante harmonização e piloto conceptual externo pendentes; sem commit/deploy.
+- **2026-09-03 — quarta passagem visual validada.** Janela implantada em verde (5.5),
+  volatilidade neutra na sensibilidade (5.10), legenda da ablação corrigida: variantes não são
+  remoções cumulativas (5.12). Corrigida também referência residual à terceira/quarta barras
+  eliminadas na passagem anterior. Páginas físicas 78/85/87 renderizadas e aprovadas; PDF 126/94,
+  porta canónica passou com nomes do júri pendentes. Não houve novos resultados nem deploy.
+  Próximo: restante harmonização, gráfico setorial externo e piloto conceptual; suite integral
+  e commit/push/deploy ainda pendentes. Frente 05 não está fechada.
+- **2026-09-03 — redundância orçamento/ponta a ponta resolvida.** Figura 5.11 fica com as
+  duas referências (alfabética/aleatória); modelo e volatilidade permanecem na 5.18, com remissão.
+  Verde cheio identifica o implantado na 5.18. Legendas deixam de depender de primeira/segunda
+  barra; corrigida a frase que considerava a política aleatória não utilizável (só o oráculo o é).
+  Valores 0,379/0,375 preservados nos respetivos artefactos, sem recalcular. Páginas físicas 86/96
+  renderizadas e aprovadas; PDF 126/94 e porta canónica passou com júri pendente. Restante
+  harmonização e piloto externo abertos; suite integral e commit/push/deploy ainda pendentes.
+- **2026-09-03 — funil da tese corrigido e validado visualmente.** Figura 4.4 agora mostra
+  todas as seis categorias que somam 5 060 avaliações, incluindo 333 passagens; cinco mensagens
+  entregues ficam num bloco separado, sem misturar unidades. Não foi fabricada uma etapa de
+  328 duplicados. Mantida a ressalva da configuração antiga e do instantâneo parcial.
+  Página física 63 renderizada e inspecionada; PDF 126/94, porta canónica passou com nomes do
+  júri pendentes. Sem commit/deploy. Próximo: harmonização restante e redundâncias da frente 05.
+- **2026-09-03 — primeira vaga visual VALIDADA.** Inspecionadas as páginas físicas 70, 72,
+  77, 78, 80, 83, 84 e 85. A renderização revelou retângulo a ocultar rótulo (4.10), rótulo
+  cortado (5.3) e valores cortados (5.4); corrigidos e reinspecionados. Compilação final limpa,
+  126 páginas físicas / 94 contadas; porta canónica passou com nomes do júri pendentes.
+  176 testes dirigidos passaram; ruff e git diff --check limpos. Relatório em
+  `docs/design/REVISAO_VISUAL_2026-09-03.md`. Frente 05 inteira ainda aberta: harmonização,
+  funil, redundâncias e piloto conceptual externo. Suite integral, commit/push/deploy pendentes.
+- **Fecho da retoma de 2026-09-03:** reconstrução limpa concluída, 126 páginas físicas,
+  94/120 antes dos apêndices. `check_tese_v2.py --permitir-pendencias-humanas` passou todas as
+  verificações; apenas os nomes do júri ficam por preencher. `git diff --check` limpo.
+  Continua pendente a inspeção renderizada das oito figuras alteradas; sem commit/deploy.
+- **2026-09-03 — Frente 05 em curso, NÃO fechada.** Inventário independente: 40 figuras,
+  13 tabelas, 4 equações numeradas; candidato de 126 páginas físicas / 94 antes dos apêndices.
+  Criado `tese-v2/figures/estilo.tex`; alterados seis gráficos do ch5 (dispersão dos detetores,
+  pares EWMA/direção, recuperação com MiniLM distinto, triagem com IC, rótulos em três painéis).
+  Corrigidas nas fontes duas colisões nos ciclos do ch4. Falta inspeção renderizada destas mudanças.
+  Erro de estilo TikZ e legenda repetida corrigidos. Duas compilações sobrepostas foram interrompidas;
+  reconstrução única iniciada para recuperar auxiliares. Não herdar validação anterior do PDF.
+  Mudanças de marca/feedback/portas continuam locais, sem commit nem deploy; recuperação dos seis
+  votos reais já publicada em alerts-history (504371db0). Suite integral ainda não concluída.
+  Próximo: terminar compilação única, correr check_tese_v2, renderizar páginas alteradas e fechar
+  semântica cromática; só depois testes integrais, commit/push/deploy. Consentimento ainda manual.
 - **🆕 SESSÃO 63 — PLANO DE EMERGÊNCIA DE DEFESA FECHADO (2026-08-30): NÃO HOUVE ALTERAÇÃO À
   TESE, AO CÓDIGO OU AOS RESULTADOS; SÓ FOI CRIADO O PLANO PARA REVISÃO INDEPENDENTE.** Perante o
   pedido urgente do aluno, a decisão é **não recomeçar de zero**: tese/ já é a versão curta

@@ -42,7 +42,7 @@ RESTOS = [
     ("\x07", ["lign", "utocite", "ddlinespace", "rraybackslash"]),  # \a
 ]
 
-ALVOS = ["tese", "thesis", "thesis-pt", "paper"]
+ALVOS = ["tese-v2", "tese", "thesis", "thesis-pt", "paper"]
 
 
 def main() -> int:

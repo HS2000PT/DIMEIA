@@ -10,9 +10,17 @@ import sys
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-RAIZ = pathlib.Path(__file__).resolve().parents[1] / "tese"
-FICH = ["frontmatter/frontmatter.tex"] + [f"cap{i}/capitulo{i}.tex" for i in range(1, 7)] + [
-    "apendices/apendiceA.tex"]
+REPO = pathlib.Path(__file__).resolve().parents[1]
+BASE = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else "tese"
+RAIZ = REPO / BASE
+if (RAIZ / "ch1").is_dir():
+    FICH = (["frontmatter/frontmatter.tex"]
+            + [f"ch{i}/chapter{i}.tex" for i in range(1, 7)]
+            + ["appendices/appendixA.tex", "appendices/appendixB.tex"])
+else:
+    FICH = (["frontmatter/frontmatter.tex"]
+            + [f"cap{i}/capitulo{i}.tex" for i in range(1, 7)]
+            + ["apendices/apendiceA.tex", "apendices/apendiceB.tex"])
 
 inv = []
 partes = {}

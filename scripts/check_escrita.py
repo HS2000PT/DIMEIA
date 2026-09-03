@@ -27,7 +27,8 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
-T = RAIZ / "tese"
+BASE = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else "tese"
+T = RAIZ / BASE
 
 BRASILEIRISMOS = [
     "usuário", "usuários", "arquivo", "arquivos", "tela", "telas", "time", "gerenciar",
@@ -72,8 +73,16 @@ UM_NOME = [
     ("aplicação", [r"\bApp\b", r"\bapps\b"]),
 ]
 
-FICHEIROS = (sorted(T.rglob("cap*/capitulo*.tex"))
-             + [T / "apendices" / "apendiceA.tex", T / "frontmatter" / "frontmatter.tex"])
+if (T / "ch1").is_dir():
+    FICHEIROS = ([T / "frontmatter" / "frontmatter.tex"]
+                 + [T / f"ch{i}" / f"chapter{i}.tex" for i in range(1, 7)]
+                 + [T / "appendices" / "appendixA.tex",
+                    T / "appendices" / "appendixB.tex"])
+else:
+    FICHEIROS = (sorted(T.rglob("cap*/capitulo*.tex"))
+                 + [T / "apendices" / "apendiceA.tex",
+                    T / "apendices" / "apendiceB.tex",
+                    T / "frontmatter" / "frontmatter.tex"])
 
 
 def limpa(t: str) -> str:
@@ -86,6 +95,7 @@ def limpa(t: str) -> str:
     t = re.sub(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}", " ", t, flags=re.S)
     t = re.sub(r"\\begin\{lstlisting\}.*?\\end\{lstlisting\}", " ", t, flags=re.S)
     t = re.sub(r"\\includegraphics(\[[^\]]*\])?\{[^}]*\}", " ", t)
+    t = re.sub(r"\\(?:input|include)\{[^}]*\}", " ", t)  # ficheiros LaTeX incluídos
     t = re.sub(r"\\texttt\{[^}]*\}", " ", t)          # identificadores de código
     t = re.sub(r"\\(?:label|ref|autocite|textcite|cite\w*)\{[^}]*\}", " ", t)
     return t
@@ -105,6 +115,12 @@ def varre(nome: str, termos, achados: list, *, palavra=True) -> None:
 
 
 def main() -> int:
+    ausentes = [f for f in FICHEIROS if not f.exists()]
+    if ausentes:
+        print(f"ERRO: faltam {len(ausentes)} ficheiro(s) do corpus em {T}:")
+        for f in ausentes:
+            print(f"  - {f.relative_to(RAIZ)}")
+        return 2
     achados: list = []
     varre("brasileirismo", [re.escape(x) for x in BRASILEIRISMOS], achados)
     varre("pré-Acordo", [re.escape(x) for x in PRE_ACORDO], achados)

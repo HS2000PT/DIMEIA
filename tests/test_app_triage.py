@@ -104,7 +104,9 @@ def test_F6_sem_dados_de_preco_degrada_com_mensagem_honesta(monkeypatch):
 def test_F3_promessa_aparece_uma_unica_vez(monkeypatch):
     _com_historico(monkeypatch, [])
     at = AppTest.from_file(APP, default_timeout=90).run()
-    assert _texto(at).count("never predicted") == 1
+    texto = _texto(at)
+    assert texto.count("Markets move. We investigate.") == 1
+    assert texto.count("never predicts prices and never gives advice") == 1
 
 
 # ── F4: zero previsões e zero conselho em texto visível, em TODAS as vistas ─────

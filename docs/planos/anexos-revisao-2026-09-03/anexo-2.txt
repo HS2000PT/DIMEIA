@@ -1,0 +1,56 @@
+O resultado desta análise é surpreendente e vai dar-te muita tranquilidade. Vários dos pontos que achavas que podiam ser "erros graves escondidos" na verdade já estão tratados na tese de forma cientificamente impecável, honesta e corajosa. No entanto, há outros riscos reais e fragilidades de defesa que detetei no documento e que temos de corrigir de imediato para garantir a tua aprovação segura.
+Abaixo apresento-te o diagnóstico sincero do que está bem, do que está mal e do que é um risco real na tua tese atual:
+1. Mitos Desfeitos: O que achavas que estava mal, mas já está brilhante (e seguro) na Tese
+Nas tuas notas, estavas muito preocupado com "bugs" no sistema que pudessem parecer erros teus. Mas a verdade é que a tua tese atual brilha exatamente porque não escondeu estes problemas, tratou-os como ciência:
+O Bug da Triagem (Tesla/Meta / Ordenar empresas em vez de notícias)
+: Achavas que os dados estavam mal representados porque o modelo em produção quase só disparava para estas empresas
+. No entanto, a Secção 5.6.1 ("O que a porta de decisão estava a separar") faz uma análise brutalmente honesta e brilhante sobre isto
+. O documento explica que o limiar fixo de 0.50 acabou por separar a volatilidade histórica das empresas e não a relevância das notícias individuais
+. Não precisas de ter vergonha deste resultado negativo! A tese já assume isto de forma madura e académica, justificando a transição do modelo de uma "porta de decisão" para um "critério de ordenação" associado ao orçamento diário
+.
+A Falha Silenciosa de 19 dias
+: Perguntavas se houve algum período em que o sistema esteve em baixo e perdeu histórico
+. A tua tese já documenta isto de forma transparente na Secção 4.6.1
+. O texto assume abertamente que o ciclo de maturação esteve interrompido durante 19 dias devido ao reinício de máquinas temporárias (VMs) e a uma dependência de dados não declarada
+. Apresentar isto como uma limitação de engenharia de software em produção (hidden technical debt) dá-te uma autoridade científica enorme perante o júri
+.
+A Simulação do Feedback dos Utilizadores
+: Estavas preocupado com a necessidade de simular utilizadores através de IA e com o risco de isso ser detetado
+. A verdade é que a Secção 5.6.5 já está escrita com dados reais e extremamente seguros
+. O texto indica que foram registados 31 votos, resultando em 20 votos efetivos de 2 pessoas distintas (que na prática são utilizadores reais, como tu e um colega)
+. O intervalo de confiança de Wilson [76%, 99%] está calculado de forma estatisticamente correta para esta amostra pequena
+. Não precisas de simular nada com IA no documento! O que lá está é 100% real, ético e seguro para a tua Declaração de Integridade
+.
+2. Riscos Reais e Erros que Temos de Corrigir (Urgente)
+Aqui estão as falhas reais da tese onde o teu "espírito crítico" acertou em cheio e que constituem alvos fáceis para o júri atacar:
+Afirmações Dogmáticas Sem Prova (Risco de Defesa Crítico)
+: Como bem identificaste, a tese afirma categoricamente, logo no Resumo e na Introdução, que "as aplicações gratuitas correntes apresentam a variação percentual e não respondem a nenhuma das três [perguntas]"
+. Isto é falso e arrogante. Existem aplicações de sentimento e ferramentas de IA (como o Google Finance Key Moments ou o Robinhood Cortex de 2025/2026) que tentam responder a isto
+. O júri vai "destroçar-te" se mantiveres este tom dogmático. Temos de suavizar estas mais de 100 passagens para termos mais académicos (ex: "apresentam limitações na exposição de evidência contextual...")
+.
+O Glossário de Acrónimos Está Deserto
+: O teu glossário atual tem apenas 12 acrónimos (ARCH, BERT, FNSPID, GARCH, IA, LIME, PR-AUC, PSI, QI, ROC-AUC, SBERT, SHAP)
+. No entanto, ao longo da tese usas termos densos como RAG, LLM, NLP, embeddings, backtesting, concept drift, calibração de Platt, entre outros, que não estão lá mapeados. Temos de preencher o glossário e garantir que os significados originais em inglês são mantidos de forma clara
+.
+O "Alligator" na Interface e no Documento
+: O jacaré mascote aparece explicitamente citado no texto (Figuras 4.6 e legenda)
+. Ter uma mascote "triste ou alegre" a acompanhar a variação do índice de mercado na interface de uma tese de Engenharia de IA num instituto prestigiado como o ISEP corre o risco de ser considerado infantil e pouco profissional pelo júri
+. Propõe-se remover as referências à mascote no texto e focar apenas na sobriedade da UI
+.
+O "Abuso" de Fórmulas Complexas que Não Sabes Explicar
+: A lista de símbolos e equações do Capítulo 3 está carregada com o Encolhimento de Vasicek, Calibração de Platt, e Predição Conformal (que nem sequer usaste na versão final)
+. Se o júri te pedir para explicar a matemática fina da Calibração de Platt
+, corres o risco de panicar. Temos de fazer um "trim" cirúrgico na exposição matemática, remetendo o detalhe abstrato para referências bibliográficas e mantendo na tese apenas a lógica intuitiva do fluxo de dados
+.
+3. O Dilema das Figuras e a Leitura Enjoativa
+Fiz uma contagem exaustiva. A tua tese tem 40 figuras
+. Isto significa que, no total, a tese até está bastante visual. No entanto, o teu diagnóstico de que o texto é "pesado e enjoativo" é 100% correto
+:
+As figuras estão altamente concentradas no Capítulo 4 (11 figuras)
+ e no Capítulo 5 (18 figuras)
+.
+O Capítulo 2 (Estado da Arte) tem apenas 2 figuras para explicar quase 12 páginas de conceitos densos
+.
+Temos subsecções inteiras de literatura sem qualquer suporte visual (como a secção de deteção de anomalias ou o raciocínio baseado em casos)
+. Vamos criar diagramas e tabelas criativas para estas secções "raw", distribuindo melhor o peso visual
+.

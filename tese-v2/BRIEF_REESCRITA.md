@@ -90,7 +90,7 @@ Cada secção por escrever está marcada com `% POR ESCREVER` no `.tex` respetiv
 ## 6. Verificação obrigatória antes de terminar
 
 ```bash
-cd tese-v2 && latexmk -pdf -interaction=nonstopmode main.tex
+cd tese-v2 && latexmk -r latexmkrc -pdf -interaction=nonstopmode main.tex
 ```
 Exigir: **0 erros**, 0 referências e citações indefinidas.
 Depois, a partir da raiz do repositório:

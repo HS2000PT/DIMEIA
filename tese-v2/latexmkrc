@@ -1,0 +1,4 @@
+# latexmkrc — configuração carregada automaticamente pelo latexmk.
+# O glossário usa \makenoidxglossaries (não precisa de makeglossaries externo).
+$pdf_mode = 1;     # gerar PDF via pdflatex
+$bibtex_use = 2;   # processar bibliografia (biber detetado pelo .bcf) e limpar

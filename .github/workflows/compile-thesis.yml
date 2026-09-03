@@ -1,17 +1,26 @@
 name: Compile thesis (LaTeX)
 
 # Compila o PDF da dissertação a cada push (fonte de verdade do PDF).
-# Filtrado por caminho: só corre quando há alterações em thesis/ (ativa a partir da Fase D,
-# quando o template ISEP for integrado em thesis/main.tex). Nenhum segredo no YAML.
+# Filtrado pela árvore canónica de entrega. Nenhum segredo no YAML.
 
 on:
   push:
     paths:
-      - "thesis/**"
+      - "tese-v2/**"
+      - "scripts/check_tese_v2.py"
+      - "scripts/check_references.py"
+      - "scripts/check_escrita.py"
+      - "scripts/check_floats.py"
+      - "scripts/check_tex_escapes.py"
       - ".github/workflows/compile-thesis.yml"
   pull_request:
     paths:
-      - "thesis/**"
+      - "tese-v2/**"
+      - "scripts/check_tese_v2.py"
+      - "scripts/check_references.py"
+      - "scripts/check_escrita.py"
+      - "scripts/check_floats.py"
+      - "scripts/check_tex_escapes.py"
   workflow_dispatch:
 
 jobs:
@@ -24,12 +33,18 @@ jobs:
       - name: Compile LaTeX (latexmk + biber)
         uses: xu-cheng/latex-action@v3
         with:
-          working_directory: thesis
+          working_directory: tese-v2
           root_file: main.tex
+
+      - name: Install PDF inspection tools
+        run: sudo apt-get update && sudo apt-get install --yes poppler-utils
+
+      - name: Validate canonical dissertation
+        run: python scripts/check_tese_v2.py --permitir-pendencias-humanas
 
       - name: Upload PDF artefact
         uses: actions/upload-artifact@v4
         with:
-          name: thesis-pdf
-          path: thesis/main.pdf
+          name: tese-v2-pdf
+          path: tese-v2/main.pdf
           if-no-files-found: error

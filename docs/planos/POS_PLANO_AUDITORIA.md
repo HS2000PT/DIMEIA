@@ -5,6 +5,51 @@
 
 ## O que é pedido
 
+### Reconfirmação e complemento recebidos a 2026-09-03
+
+O autor reenviou o pedido e reiterou: concluir primeiro as pendências atuais, depois executar
+esta auditoria, sem alterar automaticamente tese ou código na sua primeira fase. O reenvio não
+aprova por si o piloto Figma nem manda recomeçar a dissertação. Esta passagem foi uma triagem
+documental, não a auditoria integral e não uma nova validação do sistema em produção.
+
+Evidência diretamente relida nesta passagem:
+
+- `tese-v2/ch1/chapter1.tex:45`: generalização sobre aplicações gratuitas que não respondem a
+  nenhuma das três perguntas; o parágrafo não inclui fonte ou delimitação de produtos. Prioridade
+  alta na frente de escrita: confrontar com a comparação documentada e substituir a generalização
+  por uma afirmação sustentada. Não foi determinada nesta passagem a veracidade para cada produto.
+- `tese-v2/ch4/chapter4.tex:848`: retreino expressamente ausente; a arquitetura subsequente é
+  proposta, não executada. Acumulação de dados, pós-validação e melhoria medida do modelo são três
+  estados distintos. Qualquer experiência nova deve ter protocolo, validação temporal e comparação
+  antes de reivindicar aprendizagem contínua.
+- `tese-v2/ch4/chapter4.tex:656`: latência documentada; não converter rapidez de organização ou
+  potencial poupança de tempo em vantagem financeira demonstrada.
+
+Complementos a preservar na fila, com dependências explícitas:
+
+| Pedido | Encaminhamento e critério |
+|---|---|
+| Texto curto e defensável; fórmulas compreensíveis | Frentes 06/07: cortar redundância, preservar evidência e explicar cada fórmula mantida com finalidade, entradas e leitura. Não eliminar limites para facilitar a defesa. |
+| Figuras variadas; arquitetura completa | Frente 05: cada visual responde a uma pergunta; versão simples no corpo e detalhe horizontal no apêndice quando necessário. Não impor uma figura por subsecção nem uma extensão artificial ao índice. |
+| Acrónimos, termos ingleses, agradecimentos, negrito | Frente 07: verificar cobertura e consistência, manter empréstimos técnicos quando mais claros, agradecimento sóbrio e ênfase seletiva. |
+| Histórico, concentração por empresa, limites e dados em falta | Auditoria técnica: distinguir universo observado, portas, orçamento e falhas de recolha antes de aumentar limites ou dados. Não escolher amostras para aparentar melhores resultados. |
+| Painel intuitivo e mascote | Reavaliar com tarefas concretas de um leigo, incluindo clique em eventos, sem confundir preferência estética com falha funcional. |
+| Repositório limpo e instalação num clique | Frente 09 e extensão de portabilidade: mapear dependências antes de mover; inventário de requisitos, modelos e dados, verificação em máquina limpa e reparações autorizadas. |
+| Credenciais transportáveis | Estudar armazenamento cifrado com chave separada e acesso autorizado; nunca incluir segredos em claro ou a chave de desencriptação no repositório. Downloads sujeitos a licença e acesso. |
+| Continuidade entre ferramentas e computadores | Plano final como entrada única, estado com evidência e próximo passo; evitar planos concorrentes. |
+| Vídeo de Telegram e painel | Frente 08, depois de estabilizar produto: guião, gravação ensaiada e cópia local para defesa, identificando o que é demonstração gravada. |
+| Artigo científico | Entrega dependente dos resultados fechados. Prazo, formato e regra dos dois valores foram relatados pelo autor, não verificados nesta passagem; confirmar antes de calendarizar a submissão. |
+| Inglês ou edição bilingue | Decisão final do autor, após ficar confortável com a versão portuguesa; não duplicar agora as árvores da tese. |
+| Modelos e conectores de apoio | Avaliar quando a tarefa correspondente começar; verificar disponibilidade e capacidades atuais, não inferir qualidade pelo nome ou instalar ferramentas em bloco. |
+
+Feedback: preparar estrutura e análise para pessoas reais. Simulações, se usadas para testar o
+software, devem ficar identificadas e excluídas da evidência humana. Não fabricar participantes,
+ocultar a origem de avaliações ou manipular metadados para dissimular autoria. A revisão da escrita
+visa clareza e correção, mantendo a declaração transparente de uso de IA.
+
+Próximo passo da fila atual: decisão sobre o piloto revisto da Figura 4.10; a tese permanece
+intacta nesta triagem. A auditoria integral continua pendente e terá as treze secções abaixo.
+
 Uma auditoria baseada em evidência — nunca genérica, sempre com o sítio onde a coisa está — que
 compare a tese e o InvestiGator **já existentes** contra a visão do autor, e produza um plano de
 melhorias priorizado. Nada de tese nova nem de sistema novo: o ponto de partida é o que existe.

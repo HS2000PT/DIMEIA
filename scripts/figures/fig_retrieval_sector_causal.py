@@ -66,7 +66,7 @@ def _causal_rows(path: Path) -> list[dict[str, str]]:
 
 def _annotate(ax, bars, values) -> None:
     for bar, value in zip(bars, values, strict=True):
-        ax.text(bar.get_x() + bar.get_width() / 2, value + 0.018, f"{value:.3f}",
+        ax.text(bar.get_x() + bar.get_width() / 2, value + 0.018, f"{value:.3f}".replace(".", ","),
                 ha="center", va="bottom", fontsize=8, color="#222222")
 
 
@@ -83,8 +83,8 @@ def build(sectors_path: Path, causal_path: Path, output: Path) -> None:
     causal_floor = [float(row["chão"]) for row in causal]
     margins = [row["margem"] for row in causal]
 
-    method_color = "#0B6E75"
-    floor_color = "#D68128"
+    method_color = "#0B7A53"
+    floor_color = "#FFFFFF"
     fig, (left, right) = plt.subplots(
         1, 2, figsize=(10.2, 4.25), gridspec_kw={"width_ratios": [1.55, 1.0]}
     )
@@ -93,24 +93,27 @@ def build(sectors_path: Path, causal_path: Path, output: Path) -> None:
     width = 0.36
     b1 = left.bar(x - width / 2, method, width, color=method_color, label="MiniLM, P@5")
     b2 = left.bar(x + width / 2, sector_floor, width, color=floor_color,
+                  edgecolor="#66736F", hatch="///", linewidth=0.7,
                   label="Taxa-base aleatória")
     _annotate(left, b1, method)
     _annotate(left, b2, sector_floor)
     left.set_xticks(x, labels)
     left.set_ylabel("Precisão@5")
-    left.set_title("A. O método supera o chão nos cinco setores", loc="left", fontweight="bold")
+    left.set_title("A. Comparação dentro de cada setor", loc="left", fontweight="bold")
     left.legend(frameon=False, fontsize=8, loc="upper right")
 
     x2 = np.arange(len(protocol_labels))
     b3 = right.bar(x2 - width / 2, precision, width, color=method_color, label="Precisão@5")
-    b4 = right.bar(x2 + width / 2, causal_floor, width, color=floor_color, label="Chão")
+    b4 = right.bar(x2 + width / 2, causal_floor, width, color=floor_color,
+                   edgecolor="#66736F", hatch="///", linewidth=0.7, label="Taxa-base aleatória")
     _annotate(right, b3, precision)
     _annotate(right, b4, causal_floor)
     right.set_xticks(x2, protocol_labels)
-    right.set_title("B. Restringir ao passado preserva a margem", loc="left", fontweight="bold")
+    right.set_title("B. Restrição ao passado", loc="left", fontweight="bold")
     right.legend(frameon=False, fontsize=8, loc="upper right")
     for pos, margin in zip(x2, margins, strict=True):
-        right.text(pos, 0.08, f"margem {margin}", ha="center", va="center", fontsize=8,
+        right.text(pos, 0.08, f"margem {margin}".replace(".", ","),
+                   ha="center", va="center", fontsize=8,
                    fontweight="bold", color="#222222",
                    bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.9, "pad": 1.5})
 
@@ -123,7 +126,8 @@ def build(sectors_path: Path, causal_path: Path, output: Path) -> None:
 
     fig.tight_layout(w_pad=2.0)
     output.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output, bbox_inches="tight")
+    fig.savefig(output, bbox_inches="tight",
+                metadata={"Title": "Recuperação por setor e restrição temporal"})
     plt.close(fig)
 
 
@@ -134,7 +138,7 @@ def main() -> None:
     parser.add_argument("--causal", type=Path,
                         default=REPO / "docs/evaluation/evaluation_retrieval_causal.md")
     parser.add_argument("--output", type=Path,
-                        default=REPO / "tese/figures/eval_retrieval_sector_causal.pdf")
+                        default=REPO / "tese-v2/figures/eval_retrieval_sector_causal.pdf")
     args = parser.parse_args()
     build(args.sectors, args.causal, args.output)
     print(f"Figura escrita em {args.output}")

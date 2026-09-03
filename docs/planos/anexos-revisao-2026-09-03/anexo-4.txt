@@ -1,0 +1,57 @@
+# Relatório de Investigação: Análise Comparativa e Fracos do InvestiGator
+
+Este relatório estabelece uma comparação crítica entre o sistema **InvestiGator** e o estado da arte científico e comercial atual (2025/2026) em processamento de linguagem natural (NLP), deteção de anomalias e finanças comportamentais para investidores de retalho.
+
+---
+
+## 📰 Ferramentas Comerciais e Científicas Comparáveis (3)
+
+| # | Título | Origem / Publicação | Data |
+|---|-------|----------------------|------|
+| 1 | [AI meets behavioural finance: Smarter tools for retail investors](https://www.suerf.org/publications/suerf-policy-notes-and-briefs/ai-meets-behavioural-finance-smarter-tools-for-retail-investors/) | SUERF Policy Note | 2026 |
+| 2 | [Modeling News Interactions and Influence for Financial Market Prediction](https://arxiv.org/html/2410.10614v1) | arXiv (Edimburgo) | Outubro 2024 |
+| 3 | [Explainable AI for Financial-News Sentiment Mining](https://www.preprints.org/frontend/manuscript/4337fb64eb1d422d484ded0278aeec90/download_pub) | Preprints | Junho 2025 |
+
+### (1) SUERF / Amundi (2026): Nudges Comportamentais no Retalho
+*   **O que faz**: Analisa a integração de ferramentas de Inteligência Artificial com finanças comportamentais, focado em robô-orientadores (*robo-advisors*) e assistentes de linguagem natural.
+*   **Comparação**: Enquanto estas ferramentas comerciais recentes (como as atualizações do Google Finance em 2026 ou o Robinhood Cortex de 2025) focam em resumos fluentes mas sem evidência auditável, o **InvestiGator** escolhe a "explicabilidade por desenho" e evidência histórica direta (precedentes do mesmo setor), recusando explicitamente a geração livre de prosa por modelos de linguagem (RAG completo) para evitar alucinações e proteger a veracidade.
+
+### (2) Wang et al. (2024): Interações e Difusão de Notícias
+*   **O que faz**: Demonstra que as notícias financeiras não afetam o mercado de forma isolada; há um "efeito de memória longa" e uma interação dinâmica (notícias mais importantes e urgentes abafam ou dão relevância retrospetiva a notícias anteriores).
+*   **Comparação**: O **InvestiGator** processa cada notícia de forma independente e isolada. Esta é uma **fraqueza metodológica crítica** do InvestiGator, que não modela o contexto competitivo do dia nem a interação temporal entre títulos.
+
+### (3) Explainable AI for Financial News (2025): Modelos Transparentes vs. Post-Hoc
+*   **O que faz**: Propõe uma pipeline de classificação de sentimento e extração baseada em léxicos transparentes (VADER e Loughran-McDonald) e regressão linear com extrações SHAP em fontes de dados gratuitas (API Marketaux).
+*   **Comparação**: Semelhante ao InvestiGator, foca-se na transparência em prol do utilizador final e no uso de infraestruturas sem custo. No entanto, o InvestiGator vai mais longe ao rejeitar previsões direcionais, focando-se exclusivamente em fornecer o "contexto estatístico e precedentes do setor", o que o protege contra responsabilidade de aconselhamento financeiro regulado.
+
+---
+
+## 🔍 Análise Crítica dos Pontos Fracos do InvestiGator
+
+Ao analisar a dissertação e os resultados do sistema em operação, identificam-se as seguintes fraquezas estruturais, metodológicas e práticas:
+
+### 1. O Dilema do Modelo de Triagem (Incapacidade de Distinguir Notícias)
+*   **O Problema**: A avaliação revela que o modelo supervisionado de triagem (regressão logística com 9 variáveis de entrada) perdeu para a linha de base de uma só variável: a volatilidade histórica dos 20 dias anteriores. 
+*   **A Causa**: Sete das nove variáveis de entrada do modelo eram de nível da empresa (e, portanto, estáticas ao longo do dia); uma era de nível do dia (igual para todas as notícias); e apenas uma distinguia as notícias entre si (o comprimento do título, que não carrega semântica). O modelo aprendeu a identificar as *empresas historicamente voláteis* e não as *notícias individualmente materiais*. Na prática, o modelo é uma simples tabela de consulta por empresa.
+*   **A Consequência**: O InvestiGator falha no seu objetivo de "triar as notícias mais relevantes para poupar o tempo do investidor". Se a AMD tiver 10 notícias no mesmo dia, o modelo dará a mesma pontuação a todas, poluindo o canal e o utilizador ou dependendo de um critério arbitrário de ordem alfabética.
+
+### 2. O Calcanhar de Aquiles das Fontes Gratuitas (A Latência e a Incoerência)
+*   **O Problema**: O sistema assume que ajuda o utilizador a obter informação mais rapidamente para ganhar vantagem competitiva ("tempo é dinheiro no retalho"). No entanto, a mediana medida de latência de descoberta foi de **353 minutos (quase 6 horas)**.
+*   **A Causa**: A restrição estrita de usar apenas APIs gratuitas (Finnhub, Alpha Vantage, Polygon) faz com que as notícias entrem na pipeline muito depois de serem publicadas na sua fonte primária ou de o mercado já ter digerido o impacto.
+*   **A Consequência**: Em termos de usabilidade, receber um alerta sobre uma queda da Meta 6 horas depois de ela acontecer destrói completamente o valor competitivo de negócio do InvestiGator para o investidor de retalho. O utilizador já viu a queda em qualquer outra aplicação ou rede social antes de o robô apitar.
+
+### 3. Falta de Validação Humana / Usabilidade com Utilizadores Reais
+*   **O Problema**: O trabalho afirma repetidamente que o seu grande valor é "explicar os movimentos e as notícias aos leigos de forma intuitiva". Porém, **não foi realizado qualquer estudo real com utilizadores**.
+*   **A Causa**: A avaliação de usabilidade consistiu apenas numa votação simples no canal do Telegram (onde restaram apenas 20 votos efetivos de apenas 2 utilizadores distintos).
+*   **A Consequência**: Cientificamente, a tese baseia-se na hipótese de que a explicação baseada em precedentes históricos e semelhança do cosseno ajuda o utilizador. Contudo, apresentar valores brutos de semelhança (ex: `sim 0.56`, `sim 0.51`) e tabelas com desvios-padrão pode, na verdade, confundir ou assustar um utilizador leigo de retalho, aumentando a complexidade em vez de a reduzir.
+
+### 4. Fragmentação e Fragilidade das Fórmulas Matemáticas Expostas
+*   **O Problema**: A tese expõe conceitos de alta densidade matemática, como a Decomposição de Vasicek, a Calibração de Platt e até a Predição Conformal.
+*   **A Causa**: Muitas destas fórmulas foram adicionadas para "dar robustez teórica" ao documento (ou por influência dos orientadores/revisão automática), mas algumas delas (como a Predição Conformal) foram totalmente descartadas no final, e outras (como a Calibração de Platt) servem apenas para ajustar a probabilidade final.
+*   **A Consequência**: Se o júri de defesa confrontar o autor com o formalismo matemático e as premissas estritas destas equações (como a permutabilidade temporal exigida pelo teorema conformal), o autor corre sérios riscos de reprovar ou perder pontos por não conseguir defender a matemática fina na apresentação oral.
+
+### 5. Coincidência de Precedentes e "Falsa Evidência"
+*   **O Problema**: Em 36.8% dos alertas entregues, os casos passados exibidos como concordantes correspondem ao mesmo dia histórico (a mesma data e empresa) repetida três vezes porque o impacto foi medido ao nível do dia. O robô exibe ao utilizador "3 de 3 casos passados caíram" como se fossem 3 provas históricas distintas, quando na verdade é apenas o mesmo dia que continha 3 títulos de notícias parecidos. Isto cria um viés de sobreconfiança artificialmente induzido (*false consensus*), que colide com os princípios de explicabilidade honesta do sistema.
+
+---
+*Relatório gerado em 3 de setembro de 2026 para fins de auditoria de dissertação no ISEP.*

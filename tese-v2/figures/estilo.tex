@@ -1,0 +1,52 @@
+% Gramática visual comum dos gráficos da dissertação.
+% A cor identifica papéis semânticos, mas marcadores, traços e contornos mantêm
+% todas as distinções quando o documento é impresso em escala de cinzentos.
+\definecolor{igGreen}{HTML}{0B7A53}
+\definecolor{igGreenDark}{HTML}{07523B}
+\definecolor{igGreenLight}{HTML}{DCEFE8}
+\definecolor{igInk}{HTML}{1D2824}
+\definecolor{igSlate}{HTML}{66736F}
+\definecolor{igMist}{HTML}{E8EEEC}
+
+\usepgfplotslibrary{groupplots}
+
+\tikzset{
+  ig connector/.style={draw=igSlate, line width=0.8pt},
+  ig current mark/.style={only marks, mark=square*, mark size=2.8pt,
+    draw=igGreenDark, fill=igGreen},
+  ig alternative mark/.style={only marks, mark=o, mark size=3.1pt,
+    draw=igInk, fill=white, line width=0.9pt},
+  ig interval/.style={draw=igSlate, line width=1.4pt},
+}
+
+\pgfplotsset{
+  ig axis/.style={
+    axis lines*=left,
+    tick label style={font=\footnotesize, text=igInk},
+    label style={font=\footnotesize, text=igInk},
+    title style={font=\small\bfseries, text=igInk},
+    grid style={igSlate!18},
+  },
+  ig legend/.style={
+    legend style={draw=none, fill=none, font=\footnotesize,
+      cells={anchor=west}},
+  },
+  ig values/.style={
+    nodes near coords,
+    nodes near coords align={horizontal},
+    every node near coord/.append style={font=\footnotesize, text=igInk},
+    point meta=explicit symbolic,
+  },
+  ig current bar/.style={fill=igGreen, draw=igGreenDark, line width=0.7pt},
+  ig alternative bar/.style={fill=igMist, draw=igSlate, line width=0.6pt},
+  ig competitor bar/.style={fill=white, draw=igGreenDark, line width=1.0pt},
+  ig reference bar/.style={fill=white, draw=igInk, densely dashed, line width=0.8pt},
+  ig current line/.style={draw=igGreenDark, mark=*, mark options={fill=igGreen},
+    line width=1.4pt},
+  ig comparison line/.style={draw=igInk, mark=*, mark options={fill=igInk},
+    line width=1.4pt},
+  ig alternative line/.style={draw=igSlate, densely dashed, mark=triangle*,
+    mark options={fill=white}, line width=1.0pt},
+  ig reference line/.style={draw=igInk, densely dotted, mark=square*,
+    mark options={fill=white}, line width=1.0pt},
+}

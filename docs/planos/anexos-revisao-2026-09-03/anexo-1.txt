@@ -1,0 +1,115 @@
+Plano de Correções Sistémico e Exaustivo: Tese InvestiGator (Versão Final de Defesa)
+1. Introdução e Requadramento Estratégico
+A transição do InvestiGator de uma "demonstração laboratorial" para um "sistema de suporte à decisão de alto valor" é o pilar central desta revisão final. Em 2025/2026, a capitalização do mercado acionista dos EUA ultrapassou os 62 biliões de dólares (SIFMA Capital Markets Fact Book, 2025). Num mercado desta escala, a redução da latência de informação não é apenas uma conveniência técnica, mas uma democratização crítica de ferramentas de grau institucional para o investidor de retalho.
+Este plano eleva o tom da tese, transformando fragilidades de engenharia em demonstrações de maturidade científica e honestidade intelectual. O foco deixa de ser a "precisão do modelo" (objetivo falível em mercados eficientes) e passa a ser a "transparência da evidência" e a "robustez do sistema em produção".
+Nova Identidade e Posicionamento Profissional:
+"InvestiGator: Inteligência e Contexto para Decisões Financeiras de Alta Velocidade."
+"InvestiGator: Redução da Latência na Interpretação de Eventos de Mercado."
+"InvestiGator: Suporte à Decisão Baseado em Evidência e Precedentes Históricos."
+Esta visão estratégica estabelece a fundação para o Capítulo 2, onde a literatura deixa de ser um resumo passivo para se tornar um arsenal crítico contra a opacidade das soluções de mercado.
+2. Reestruturação do Estado da Arte (Capítulo 2)
+O Capítulo 2 deve evoluir para uma análise crítica das soluções de 2025/2026, posicionando o InvestiGator como uma alternativa de alta transparência face aos sistemas "caixa-preta" das Big Tech.
+Benchmarking de Mercado (Atualização 2025/2026): A análise deve citar especificamente o Robinhood Cortex (Março 2025) e o Google Finance Key Moments (Junho 2026) para demonstrar contemporaneidade.
+Solução
+Transparência de Dados
+Acesso Gratuito
+Recuperação de Precedentes
+Robinhood Cortex (2025)
+Baixa (Resumo Genérico)
+Sim (Integrado)
+Não Declarada
+Google Finance (2026)
+Média (Sumarização)
+Sim
+Não Declarada
+InvestiGator
+Total (Evidência Bruta)
+Sim
+Sim (Semântica)
+Arsenal Técnico de IA: Decisões e Justificações: Para mitigar ataques do júri, cada técnica deve ter uma justificação de adoção ou exclusão:
+BERT / FinBERT: Utilizados para representação contextual financeira superior.
+RAG (Retrieval-Augmented Generation): Implementada a componente de retrieval para evitar alucinações inerentes à geração de texto financeiro.
+SHAP / LIME: Descartados em favor de Modelos Transparentes por Construção (explicabilidade intrínseca vs. aproximação a posteriori).
+Predição Conformal: Excluída deliberadamente. A garantia de cobertura exige permutabilidade de dados, o que é violado pela natureza cronológica e pelo concept drift severo dos mercados financeiros.
+Vasicek / Calibração de Platt: Utilizados para encolhimento de betas e calibração de probabilidades, garantindo que o sistema comunica incerteza de forma honesta.
+3. Mitigação do Risco Académico: Reescrita de Afirmações
+A credibilidade do autor depende da humildade académica. Afirmações dogmáticas sem prova empírica (o "Erro das 100 Passagens") devem ser transformadas em hipóteses ou observações limitadas ao âmbito do estudo.
+Estratégia de Reescrita (Antes vs. Depois):
+Antes: "Nenhuma aplicação atual faz isto."
+Depois: "As ferramentas de retalho avaliadas apresentam limitações na recuperação de precedentes..."
+Antes: "O sistema garante que o utilizador compreende o mercado."
+Depois: "O sistema visa reduzir a sobrecarga informacional, fornecendo evidência para..."
+Antes: "As outras apps não têm esta funcionalidade."
+Depois: "Não foi encontrada evidência pública de funcionalidades similares em ferramentas de acesso gratuito até à data deste estudo."
+4. Diagnóstico de Engenharia de IA: O "Modelo de Ordenação"
+As falhas do modelo de Regressão Logística devem ser apresentadas como "lições de engenharia de produção", elevando o erro a contributo científico.
+O Dilema do Modelo de Triagem (ROC-AUC 0.486): O falhanço face ao baseline de volatilidade é um dado valioso. A análise revelou que a amplitude interna (0.072) é muito inferior à amplitude entre empresas (0.392).
+Pivô Estratégico: O modelo deve ser defendido como um "Critério de Ordenação" (Ranking) entre diferentes ativos, e não como uma "Porta de Decisão" (Binary Gate) para uma única empresa. Esta distinção demonstra maturidade estatística e salva a utilidade do componente na arquitetura.
+Post-Mortem Técnico de Bugs:
+Bug do Loop de 60 Segundos: Diagnóstico da falha na lógica de estado que gerou 333 aprovações para apenas 5 entregas.
+Falha Silenciosa de 19 Dias: Interrupção causada por reinício de VMs e dependências não declaradas. Esta "manutenção oculta" é reportada como um risco inerente a sistemas de IA em produção (Sculley et al., 2015).
+5. Engenharia de Software e Reprodutibilidade (One-Click)
+A reprodutibilidade é a métrica máxima da Engenharia de IA. O sistema deve ser operacionalizado para "correr à primeira".
+Automação e Higiene do Código:
+Script 'One-Click': Verificação automática de requisitos, chaves de API e integridade das bases de dados.
+Segurança: Implementação de variáveis de ambiente (.env) encriptadas.
+Higiene de Dados: Limpeza radical do repositório, movendo versões obsoletas e ficheiros temporários para a pasta /archive.
+6. Design Visual e Interface Profissional
+A remoção de elementos lúdicos é obrigatória para garantir a autoridade científica. O júri deve focar-se nos dados, não na mascote.
+Despedida do 'Alligator' e do Cérebro:
+Remoção imediata do jacaré e do logótipo do cérebro/circuito da interface e documentos.
+Substituição por uma identidade visual minimalista, inspirada em terminais financeiros (paleta de azuis profundos, cinzas e brancos).
+Estratégia de Diagramas (Meta: 2 Páginas de Índice):
+Transformação de descrições densas em diagramas de blocos.
+Todos os gráficos e diagramas gerados com labels em Inglês para facilitar a submissão científica internacional.
+7. Ética, Integridade e Transparência no Uso de IA
+O InvestiGator abandona qualquer simulação de dados em favor da integridade estatística absoluta.
+Pivot para Dados Reais (Wilson Interval): A simulação de feedback via LLM é eliminada. O sistema utiliza os 20 votos reais recolhidos no canal público do Telegram (95% utilidade).
+Rigor Estatístico: Apresentação do Intervalo de Wilson [76%, 99%] para validar a utilidade percebida, demonstrando que o resultado é estatisticamente significativo apesar da amostra pequena.
+Declaração de IA (Secção 3.8.4): Declaração explícita de que o Claude 3.5 Sonnet/Opus foi utilizado exclusivamente para refinamento gramatical e estrutural, mantendo a autoria intelectual e responsabilidade técnica integralmente no autor.
+8. Estratégia de Defesa e Gestão de Risco
+Para mitigar a "memória de peixe" e o risco técnico durante a defesa:
+Minimização da Superfície de Ataque:
+Corte radical de derivações matemáticas secundárias (ex: pormenores de Vasicek) que o autor não domine plenamente.
+Fallback Técnico Appendix: Criação de um apêndice com capturas de ecrã de alta resolução e vídeos pré-gravados de cada estado do sistema (Web/Telegram) para prevenir falhas de rede em direto.
+Redução de Densidade:
+Conversão sistemática de parágrafos técnicos densos em listas de pontos (bullet points). Isto serve como "teleprompter" visual para o autor durante a arguição.
+Planeamento Científico: Adiamento da submissão ICITS’27 (Springer LNNS) para após a aprovação da tese, garantindo foco total no encerramento do mestrado.
+9. Tabela de Priorização de Ações (Roadmap Final)
+As tarefas seguem uma hierarquia de risco e impacto na nota final.
+Ação
+Categoria
+Prioridade
+Impacto na Defesa
+Correção de Integridade (IA/Wilson Interval)
+Documental
+Crítica
+Elimina risco de fraude académica
+Correção de Bugs (Loop/VMs)
+Software
+Crítica
+Garante estabilidade da demo
+Pivô para "Modelo de Ordenação"
+Documental
+Alta
+Justifica cientificamente o ROC-AUC baixo
+Script One-Click e Limpeza /archive
+Software
+Alta
+Demonstra maturidade de engenharia
+Remoção de Branding "Nerd" / Alligator
+Visual
+Alta
+Eleva a autoridade perante o júri
+Redução de 20% da Densidade de Texto
+Documental
+Média
+Facilita a leitura e memorização
+Criação de Diagramas em Inglês
+Visual
+Média
+Prepara publicação científica
+Trimming de Fórmulas Secundárias
+Documental
+Baixa
+Reduz exposição a perguntas difíceis

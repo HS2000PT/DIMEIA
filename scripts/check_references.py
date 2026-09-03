@@ -33,11 +33,13 @@ FICHEIROS_EN = [
     "frontmatter/frontmatter.tex",
     *[f"ch{i}/chapter{i}.tex" for i in range(1, 7)],
     "appendices/appendixA.tex",
+    "appendices/appendixB.tex",
 ]
 FICHEIROS_PT = [
     "frontmatter/frontmatter.tex",
     *[f"cap{i}/capitulo{i}.tex" for i in range(1, 7)],
     "apendices/apendiceA.tex",
+    "apendices/apendiceB.tex",
 ]
 FICHEIROS = FICHEIROS_PT if (pathlib.Path(BASE) / "cap1").is_dir() else FICHEIROS_EN
 
@@ -202,3 +204,6 @@ if MOSTRAR_TUDO:
                 continue
             vistos.add(chave)
             print(f"    {f.split('/')[0]:12s} {pal:9s} ...{ctx[-88:]}")
+
+if maus or orfaos or ausentes:
+    raise SystemExit(1)

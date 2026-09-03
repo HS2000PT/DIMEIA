@@ -16,6 +16,36 @@
 
 ## 0. A decisão mais importante deste plano: a ordem não é a da lista
 
+### Atualização de prioridade do autor — 2026-09-03
+
+**Complemento mais recente, obrigatório:** ler `REVISAO_PRIORITARIA_ANEXOS.md` e os quatro
+originais ali ligados. Verificação prioritária, item a item, antes de consolidar alterações;
+não fica adiada para depois da defesa. Todas as figuras serão refeitas **em inglês** para
+reutilização no artigo; a tese inteira só muda de língua por decisão posterior. O calendário
+do artigo deve ser confirmado cedo, não automaticamente adiado como sugere um dos anexos.
+
+Esta atualização prevalece sobre a ordem histórica abaixo. O autor mandou desenvolver o
+retreino e rejeitou explicitamente o piloto Figma da Figura 4.10. Não voltar a pedir aprovação
+desse piloto. A identidade verde do software não define a apresentação da dissertação.
+
+Ordem por dependências, confirmada após leitura integral do anexo reenviado:
+
+1. Auditar dados, registos e treino existente; definir protocolo e desenvolver retreino
+   controlado. Plano e evidência em `docs/planos/RETREINO_CONTROLADO.md`.
+2. Verificar candidatos, integração e recuperação; estabilizar software e resultados. A
+   recolha de feedback real decorre em paralelo, com consentimento antes dos convites.
+3. Fechar organização e portabilidade com dependências mapeadas, sem apagar árvores ativas.
+4. Rever a tese canónica a partir da implementação verificada: cortar redundância, conferir
+   alegações, explicar fórmulas, atualizar arquitetura e aplicar apresentação académica neutra.
+5. Preparar gravação da demonstração, slides, guia e artigo sobre resultados estabilizados.
+   Confirmar calendário e requisitos do artigo antes de assumir submissão.
+6. Considerar tradução apenas no fim, por decisão do autor; não criar já duas teses paralelas.
+
+O pedido de auditoria global sem alterações continua válido para essa auditoria; o pedido
+específico posterior autoriza desenvolver o retreino. Não autoriza fabricar feedback, reescrever
+resultados antigos nem promover automaticamente um modelo não avaliado. A auditoria documental
+global não fica substituída por esta inspeção técnica inicial.
+
 A lista original tem oito pontos. Executá-los por essa ordem perde a coisa mais valiosa do
 conjunto.
 
@@ -41,68 +71,56 @@ Por isso a ordem de execução é:
 
 ---
 
-## 1. Telegram — feedback bidirecional  *(ponto 3 · ✅ NO AR desde 2026-09-01, release v51)*
+## 1. Telegram — feedback bidirecional  *(ponto 3 · ✅ NO AR; ⚠️ fixar consentimento antes dos convites)*
 
-### O que já existe, e que muda o custo disto
-
-O trabalho está quase todo feito e não estava a ser aproveitado:
+### Estado fechado a 2026-09-03
 
 | Peça | Ficheiro | Estado |
 |---|---|---|
-| Envio | `investigator/telegram_bot/sender.py` | Devolve o JSON do Telegram, incluindo o `message_id`. |
-| Receção | `investigator/telegram_bot/interactive.py` | Já tem `getUpdates` em long-polling, com `offset` e recuperação de falhas. |
-| Persistência | `investigator/telegram_bot/store.py` | SQLite da biblioteca padrão, já com esquema e migração. |
-| Interpretação | `investigator/telegram_bot/commands.py` | Pura e testável, separada da rede. |
+| Botões e chave | `investigator/telegram_bot/feedback.py` | Dois botões em todos os alertas; um voto por pessoa e alerta. |
+| Receção | `POST /telegram/webhook` em `api/main.py` | Webhook com segredo; responde sempre ao `callback_query`. |
+| Persistência | `feedback.jsonl` na branch `alerts-history` | Junção acrescentável; semente remota depois de reinícios. |
+| Privacidade | `feedback_log.py` e `webhook.py` | Utilizador resumido com BLAKE2b; `/deletefeedback` e `/apagar` retiram votos da análise. |
+| Análise | `scripts/analyse_feedback.py` | Obtém votos **e** histórico; falha antes de escrever se não conseguir validar. |
+| Tese | `tese-v2/ch5/feedback_auto.tex` | Fragmento dinâmico incluído pelo Capítulo 5. |
 
-Falta o botão, o `callback_query`, e uma tabela.
+O identificador pessoal do utilizador nunca é guardado em claro. O ficheiro contém a chave do
+alerta, o resumo do utilizador, a ação, a hora e os identificadores do canal e da mensagem. Os
+dois últimos não identificam o votante e são necessários para atualizar o teclado. A mensagem
+fixada preparada em `docs/design/telegram_channel.md` diz exatamente o que fica na branch pública.
 
-### O problema operacional, que é o verdadeiro risco
+O comando de retirada acrescenta uma marca `d`: os votos anteriores deixam de contar, mas as
+linhas pseudonimizadas permanecem no histórico Git. Esta limitação é dita ao participante; não
+se promete uma eliminação física que um repositório versionado não consegue cumprir.
 
-O poller corre na máquina do aluno (`python scripts/run_bot.py`). Uma recolha de três semanas
-não pode depender de um portátil ligado. O sistema já tem a solução instalada e não a usa: o
-`api/main.py` é um serviço FastAPI com URL público e HTTPS no Heroku, servido pelo `Procfile`.
-
-**Decisão: passar de long-polling para webhook, apontado ao `api/main.py`.** Sem dyno novo, sem
-custo, sem portátil. O poller fica como caminho alternativo para desenvolvimento local.
-
-### O que fazer
-
-1. `sender.py` — aceitar `reply_markup` e devolver `message_id` e `chat_id` de forma tipada.
-2. Anexar a cada alerta um teclado em linha de dois botões, com `callback_data` que carrega o
-   identificador do alerta:
-   `útil` / `não útil`. Duas opções e não cinco: uma escala de Likert num telemóvel tem
-   taxa de resposta pior e não sustenta melhor análise com o N que vamos ter.
-3. `POST /telegram/webhook` no `api/main.py`, com segredo no cabeçalho
-   `X-Telegram-Bot-Api-Secret-Token`. Responder `answerCallbackQuery` em menos de um segundo,
-   sempre, mesmo em erro — o Telegram reenvia o update se não houver resposta.
-4. Tabela `feedback` no `store.py`: `alert_id`, `chat_id` com dispersão criptográfica,
-   `voto`, `timestamp`, `message_id`. **O `chat_id` nunca é gravado em claro** — o que a análise
-   precisa é de distinguir pessoas, não de as identificar.
-5. Editar a mensagem depois do voto para mostrar a contagem. Um botão que não muda nada depois
-   de premido é lido como avariado, e deixa de ser premido.
-6. Escrever o consentimento: mensagem fixada no canal a dizer o que é recolhido, para quê, e
-   como se apaga. Comando `/apagar` que remove os votos de quem o pedir.
+⚠️ **Ação manual antes de convidar pessoas:** substituir e fixar a mensagem de consentimento.
+O texto está pronto; o sistema não deve publicar nem fixar mensagens no canal sem ação do dono.
 
 ### O que isto vale para a tese, e o que não vale
 
 Vale: o Capítulo 6 declara hoje, como limitação, que a hipótese fundadora — a de que uma
 explicação verificável conduz a melhor decisão — **não foi testada**. Isto não a testa. Testa
 uma coisa mais modesta e ainda assim nova no documento: se os alertas que o sistema decide
-enviar são considerados úteis por quem os recebe, e se a utilidade percebida se correlaciona com
-a pontuação de triagem que o modelo lhes deu. Essa segunda pergunta é a interessante, porque
-liga uma medida interna a um juízo externo, que é precisamente a ponte que falta no trabalho.
+enviar são considerados úteis por quem os recebe.
+
+A correlação com a pontuação de triagem, proposta na primeira versão deste plano, **não é
+recuperável**: o histórico entregue não guarda essa pontuação por alerta. Acrescentá-la agora não
+reconstrói o passado. A pergunta sai do piloto em vez de se fabricar uma ligação retrospetiva.
 
 Não vale: com um canal pequeno e três semanas, o N vai ser de dezenas de votos, não de milhares.
-**O plano é reportar o N exato, o intervalo de confiança, e dizer que é um piloto.** Um piloto
-honesto com N=40 é defensável. Um piloto apresentado como estudo não é, e um júri que faça essa
-pergunta desmonta a tese inteira em dois minutos.
+**O plano é reportar o N exato, o intervalo de confiança quando permitido, e dizer que é um
+piloto.** A 2026-09-03 há 20 votos efetivos de duas pessoas sobre 16 alertas, após recuperar seis
+linhas reais preservadas no Git e excluir quatro votos de teste. Uma pessoa representa 80% da
+amostra; sem ela restam quatro votos, abaixo do mesmo mínimo de 20. O documento reporta esta
+salvaguarda e não apresenta o piloto como estudo de utilizadores.
 
 ### Critério de aceitação
 
-- Um voto dado no telemóvel aparece na base em menos de dois segundos.
-- O webhook sobrevive a um alerta apagado, a um voto repetido e a um `callback_data` inválido.
-- Testes: `extract_callback` puro, com o JSON exato que a API devolve.
-- A mensagem fixada do canal explica a recolha antes de o primeiro botão existir.
+- [x] O voto chega ao registo, recebe confirmação e sobrevive ao reinício.
+- [x] Alertas inexistentes, votos repetidos, retiradas e `callback_data` inválido são tratados.
+- [x] O N mínimo e a salvaguarda dominante valem também para o fragmento LaTeX.
+- [x] Os seis votos apagados por substituição foram recuperados exatamente do commit que os guarda.
+- [ ] O dono do canal fixa a mensagem de consentimento antes de convidar participantes.
 
 **Esforço:** 1,5 dias. **Risco:** médio; toca no caminho de envio.
 
@@ -225,7 +243,7 @@ aponta aos concorrentes.
 
 ---
 
-## 4. Marca — o retângulo, a cor, a peça única, o lema  *(ponto 2 · retângulo ✅ corrigido; falta cor, peças e lema)*
+## 4. Marca — o retângulo, a cor, a peça única, o lema  *(ponto 2 · ✅ fechado a 2026-09-03)*
 
 ### O retângulo tem uma causa, e é um defeito de CSS
 
@@ -246,25 +264,15 @@ nome da marca está dentro de uma ficha de empresa.
 
 ### A cor
 
-Hoje só o `G` é verde: `.marca .nome b { color:var(--acento) }`. O pedido é que o **Gator**
-inteiro tenha cor.
-
-Vale a pena separar duas coisas. `investiGATOR` a verde nas últimas cinco letras mantém o
-trocadilho (*inveSTIGATE* + *alliGATOR*) e é mais legível de longe do que uma única letra.
-`InvestiGator` todo verde perde o trocadilho por completo. A recomendação é a primeira, e a
-decisão é tua — ficam as duas desenhadas para veres lado a lado antes de escolher.
+O cabeçalho web já tinha sido corrigido: `Investi` fica em tinta e **Gator** inteiro em verde.
+Os ficheiros de entrega ainda pintavam só o `G`; passaram a usar a mesma divisão. A comparação
+real está em `docs/design/brand-comparison.png`. A alternativa com o nome todo verde foi rejeitada
+porque apaga a separação semântica.
 
 ### A peça única, que já foi pedida várias vezes
 
-Existe `app/assets/logo-lockup.svg` com o glifo e o nome juntos. Não está a ser usado em lado
-nenhum, e tem dois defeitos que o tornam inutilizável como entrega:
-
-- O nome é `<text>` e não contornos. Numa máquina sem *Segoe UI* — que é o caso de qualquer
-  impressora, de qualquer Mac e do próprio LaTeX — o desenho muda.
-- Não tem a variante de cor pedida.
-
-**Entrega:** um conjunto fechado, com o nome vetorizado, sem dependência de tipos de letra
-instalados, e cada peça em claro, escuro e monocromático:
+**Entregue:** conjunto fechado, com IBM Plex local convertido em contornos, sem `<text>`, sem
+dependência de tipos de letra instalados, e cada peça em claro, escuro e monocromático:
 
 ```
 logo-lockup.svg          glifo + nome, horizontal        cabeçalhos, capa da tese
@@ -274,41 +282,76 @@ logo-marca.svg           só o glifo                      favicon, 16 px
 logo-nome.svg            só o nome                       rodapés
 ```
 
-E os PNG derivados a 512 px para o Telegram, gerados pelo procedimento que já está escrito em
-`docs/design/telegram_channel.md`.
+Os cinco PNG claros de 512 px estão em `app/assets/brand/png/`; o avatar quadrado foi regenerado
+em `app/assets/telegram_avatar.png`. O gerador e os testes são, respetivamente,
+`scripts/build_brand_assets.py` e `tests/test_brand_assets.py`.
 
 ### O lema
 
-O rodapé do painel já tem a frase que faz o trabalho todo:
-*«Every move investigated, never predicted.»*
+O lema anterior — *«Every move investigated, never predicted.»* — foi rejeitado pelo autor por
+ser longo, defensivo e pouco distintivo. O lema canónico passa a ser:
 
-É boa: diz o que o produto faz, diz o que recusa fazer, e usa o nome. Está a ser tratada como
-texto de rodapé e devia ser o lema. Proponho-a como principal, com versão portuguesa
-*«Cada movimento investigado, nenhum previsto»*, e três alternativas desenhadas para escolheres.
+> **Markets move. We investigate.**
+
+A advertência sobre previsão e aconselhamento continua no produto como advertência funcional,
+não como slogan.
 
 ### A hipótese de uma marca nova
 
-Fica em aberto, com uma reserva. A cauda serrada que se lê como linha de mercado é uma boa ideia,
-e o ficheiro `logo.svg` documenta que a marca anterior — um olho de crocodilo — foi rejeitada por
-falhar a 16 px e por ler como predador. Redesenhar a fundo a três semanas da defesa arrisca
-perder essa história por uma que não vai ter tempo de amadurecer. A proposta é: resolver o
-retângulo, a cor, a peça única e o lema, e apresentar duas alternativas de marca como estudo. Se
-alguma for claramente melhor, troca-se; se não, o que existe fica coerente.
+A “Tail” mantém-se. A geometria dos lockups antigos divergia da marca canónica e foi unificada
+com `logo.svg` e com o SVG inline do painel. Os estudos `logo-gator-g.svg` e `logo-jaws.svg`
+continuam explicitamente excluídos do conjunto canónico.
 
-**Esforço:** 1 dia para o defeito, a cor e o conjunto; mais meio dia para os estudos.
+**Estado:** concluído; a captura visual e 48 portas específicas passaram.
 
 ---
 
 ## 5. Artefactos visuais — revisão de um a um  *(ponto 5)*
 
+**Piloto conceptual:** conteúdo e critérios em `docs/design/PILOTO_CICLO_MODELO.md`.
+**Revisão posterior:** piloto com rótulos/fases a 8,03 pt à largura final; cor/cinzentos
+inspecionados. Prova atualizada. Mais alto que a atual; pronto para decisão, tese intacta.
+O diagnóstico de tipografia menor abaixo refere-se à primeira versão.
+**Comparação concluída:** `output/pdf/comparacao-ciclo-modelo.pdf`, cor/cinzentos inspecionados.
+Exportação resolvida. À mesma largura, rótulos descem de cerca de 8 para 6,57 pt; não substituir
+nesta versão. O registo de exportação pendente abaixo é histórico. Tese preservada.
+Figma religado em 2026-09-03; piloto criado e inspecionado:
+https://www.figma.com/design/sNfbRq1WUSM8gRK95FjtWy. Falta exportação local acessível e comparação
+à largura da tese/em cinzentos; o retorno de bytes da exportação não equivale a PDF entregue.
+Não substituir a Figura 4.10 sem produzir, inspecionar e comparar o piloto separado.
+
+**Quinta passagem validada:** Figura 5.7 harmonizada em verde/trama, sem números novos.
+Gerador aponta agora por defeito à árvore canónica; dois testes específicos passaram. Figura
+e página física 81 verificadas. PDF 126/94. Tipografia externa e piloto conceptual ainda por rever.
+
+**Quarta passagem validada:** janela implantada verde (5.5), alternativa volatilidade neutra
+(5.10), legenda de ablação não cumulativa (5.12). Remissão residual a barras retiradas corrigida.
+Páginas físicas 78/85/87 verificadas; PDF 126/94, porta canónica aprovada. Frente ainda aberta.
+
+**Terceira passagem validada:** removida a duplicação de modelo/volatilidade na Figura 5.11,
+mantendo-os na 5.18 com remissão explícita. Legendas clarificadas e verde cheio reservado ao
+implantado na comparação final. Páginas físicas 86/96 inspecionadas, PDF 126/94, porta aprovada.
+
+**Segunda passagem validada:** funil (Figura 4.4) mostra agora as seis categorias completas,
+totalizando 5 060 avaliações, e separa cinco mensagens das 333 passagens. Página física 63
+inspecionada; PDF mantém 126/94. Harmonização restante e redundâncias ainda pendentes.
+
+**Primeira vaga validada a 2026-09-03:** seis gráficos do ch5 e dois diagramas do ch4,
+com inspeção das oito páginas renderizadas. Três defeitos adicionais de composição corrigidos.
+PDF mantém 126 páginas físicas / 94 contadas; porta canónica passou. Relatório em
+`docs/design/REVISAO_VISUAL_2026-09-03.md`. A frente completa permanece aberta.
+
 ### Inventário medido
 
 | | Total | Composição |
 |---|---|---|
-| Figuras | **37** | 24 TikZ desenhado à mão · 16 pgfplots · 3 imagens importadas |
+| Figuras | **40** | 18 diagramas TikZ · 17 pgfplots · 4 imagens importadas · 1 reprodução textual |
 | Tabelas | **13** | todas nativas |
 
-Por capítulo: ch1 tem 2, ch2 tem 2, ch3 tem 6, ch4 tem 8, ch5 tem 18, ch6 tem 1.
+Por capítulo: ch1 tem 2, ch2 tem 2, ch3 tem 6, ch4 tem 11, ch5 tem 18, ch6 tem 1.
+
+**2026-09-03:** seis gráficos do ch5 alterados e duas colisões do ch4 corrigidas nas fontes.
+Estilo comum criado. Validação visual final pendente; esta frente ainda não está fechada.
 
 **O ch5 tem 18 das 37.** É aí que está a repetição de que te queixas: catorze gráficos pgfplots
 consecutivos, quase todos barras horizontais a comparar duas ou três alternativas. A monotonia é
@@ -675,6 +718,11 @@ do estado da arte, e ablações pré-registadas sobre três a quatro componentes
 
 ## 9.6. Depois da defesa: a auditoria integral pedida a 2026-09-01
 
+**Reconfirmada a 2026-09-03:** complementos e triagem de evidências registados em
+`docs/planos/POS_PLANO_AUDITORIA.md`, sem antecipar a auditoria nem alterar tese/código.
+Inclui concisão, terminologia, portabilidade segura, gravação da demonstração e artigo.
+A generalização de ch1:45 fica sinalizada para a frente 07. O piloto revisto aguarda decisão.
+
 Registada em `docs/planos/POS_PLANO_AUDITORIA.md`. Uma auditoria baseada em evidência, comparando a tese e o
 sistema existentes contra a visão do autor, com plano de melhorias priorizado e treze secções de
 saída. **Sem alterar tese nem código na primeira fase**, por pedido expresso.
@@ -707,9 +755,9 @@ Registado para não voltar a ser discutido a meio:
 | Quando | O quê |
 |---|---|
 | ~~Hoje~~ | ~~Email ao Luís Gomes a pedir o modelo MEIA em vigor.~~ **Feito a 2026-09-01: o modelo chegou, o ponto 6 está resolvido e aplicado, e não há mais nada bloqueado por terceiros.** |
-| **Hoje** | Confirmar que posso mexer no caminho de envio do canal em produção. Já disseste que sim; fica registado aqui. |
-| **Dia 2** | Escolher entre `investiGATOR` e `InvestiGator` para a cor, com as duas desenhadas à frente. |
-| **Dia 2** | Escolher o lema entre a proposta e as três alternativas. |
+| **Antes dos convites** | Substituir e fixar no canal a mensagem de consentimento de `docs/design/telegram_channel.md`; é a única ação manual ainda aberta nas frentes 01–04. |
+| ~~Dia 2~~ | ~~Escolher a divisão cromática.~~ **Feito:** `Investi` em tinta, `Gator` em verde. |
+| ~~Dia 2~~ | ~~Escolher o lema.~~ **Feito:** “Markets move. We investigate.” |
 | **Dia 6** | Ver as capturas de ecrã novas antes de entrarem no ch4. |
 | **Dia 7** | Ver a figura piloto do Figma ao lado da versão TikZ, impressas, e decidir se as outras cinco se fazem. |
 
@@ -719,6 +767,7 @@ Registado para não voltar a ser discutido a meio:
 
 | Data | O quê |
 |---|---|
+| 2026-09-03 | **Frentes 01 e 04 fechadas tecnicamente.** Feedback: os seis votos apagados por `publish_blob` foram recuperados byte a byte do commit `a9e098cda` e repostos em `alerts-history` (`504371db0`); o analisador passa a obter votos e histórico, falha fechado, ordena pelo instante, distingue mudança de clique repetido, preserva retiradas e aplica o N mínimo também ao recorte sem votante dominante. Estado ao regenerar: 20 votos efetivos, duas pessoas, 16 alertas, uma pessoa com 80%; a leitura independente continua abaixo do mínimo. Consentimento e `/deletefeedback`/`/apagar` ficaram prontos; falta ao dono fixar a mensagem antes dos convites. Marca: 5 peças × claro/escuro/mono, IBM Plex em contornos, `Gator` verde, geometria única, PNG 512 e lema “Markets move. We investigate.”; 48 portas específicas. |
 | 2026-09-01 | Criado. Ordem de execução alterada face à lista original, pela razão da secção 0. |
 | 2026-09-01 | Chegou o modelo oficial MEIA v2. Ponto 6 resolvido e aplicado: Declaração de Integridade na redação do modelo, declaração de IA movida para a Secção 3.8.4, Lista de Símbolos acrescentada. |
 | 2026-09-01 | **Orçamento de páginas corrigido.** Os anexos não contam. Contam 90 de 120, e não 120 de 120. A Figura `fig:sis_seletividade` foi reposta no `ch4`. |

@@ -6,6 +6,77 @@
 
 ## Sessão em curso
 
+**2026-09-03 — fecho do raciocínio dos anexos:** integridade 4/4 confirmada e sequência final
+registada em `docs/planos/REVISAO_PRIORITARIA_ANEXOS.md`. Sem alteração a LaTeX/PDF. A revisão
+da tese começa apenas depois de verificar críticas e estabilizar retreino/resultados.
+
+**2026-09-03 — quatro anexos prioritários:** matriz de 44 pontos em
+`docs/planos/REVISAO_PRIORITARIA_ANEXOS.md`. TODAS as figuras serão refeitas em inglês;
+tese mantém português até decisão posterior. Originais preservados; verificações parciais
+distintas de leitura integral. Nenhuma alteração às fontes/PDF nesta passagem.
+
+**2026-09-03 — decisão do autor:** piloto Figma rejeitado. Não substituir Figura 4.10 nem
+pedir nova aprovação. Separar estilo académico da marca verde. Retreino passou a prioridade
+antes de finalizar arquitetura/resultados/texto; plano em `docs/planos/RETREINO_CONTROLADO.md`.
+PDF inalterado nesta passagem; nenhuma melhoria científica nova foi medida.
+
+**Pedido relido, 2026-09-03:** triagem documental registada no pós-plano de auditoria.
+Generalização sobre aplicações gratuitas em ch1:45 precisa de fonte/delimitação; retreino
+ausente confirmado em ch4:848. Sem alteração às fontes/PDF. Reenvio não aprova o piloto;
+decisão da Figura 4.10 mantém-se pendente. Não declarar auditoria integral concluída.
+
+**Piloto revisto para impressão, 2026-09-03:** rótulos/fases agora 8,03 pt à largura final,
+caixas e ligações ajustadas. Prova atualizada, cor/cinzentos inspecionados. Mais alto que a atual;
+pronto para decisão do autor, sem alteração à tese. O diagnóstico de 6,57 pt abaixo é histórico.
+
+**Comparação do piloto, 2026-09-03:** exportação resolvida. Prova em
+`output/pdf/comparacao-ciclo-modelo.pdf`, inspecionada em cor/cinzentos a largura igual (390 pt).
+Piloto baixa rótulos de cerca de 8 para 6,57 pt; recomenda-se conservar a atual nesta versão.
+Tese intacta. Falta rever escala do piloto, não voltar a diagnosticar autenticação/exportação.
+
+**Piloto conceptual, 2026-09-03:** autenticação restabelecida; piloto criado e inspecionado
+em https://www.figma.com/design/sNfbRq1WUSM8gRK95FjtWy (frame `1:2`). Nove etapas editáveis,
+mesmo modelo e retreino ausente explícitos. Exportação devolveu bytes mas não ficheiro acessível;
+falta comparação local à largura da tese e em cinzentos. PDF da tese intacto, decisão pendente.
+
+**Quinta passagem, 2026-09-03:** Figura 5.7 harmonizada em verde/trama; gerador escreve agora
+na árvore canónica por defeito. Valores preservados, sem reavaliação. Dois testes novos passaram.
+Figura e página física 81 inspecionadas, PDF 126/94 e porta aprovada com júri pendente.
+Tipografia externa Matplotlib mantém-se; restante frente 05 e piloto conceptual ainda abertos.
+
+**Quarta passagem, 2026-09-03:** Figuras 5.5/5.10 harmonizadas sem confundir implantado e
+vencedor; legenda 5.12 corrigida para variantes não cumulativas. Referência residual a barras
+retiradas corrigida. Páginas físicas 78/85/87 verificadas; PDF 126/94 e porta canónica aprovada
+com júri pendente. Restante frente 05 aberta; sem resultados novos nem publicação.
+
+**Terceira passagem visual, 2026-09-03:** redundância entre Figuras 5.11 e 5.18 reduzida;
+primeira dedicada às referências alfabética/aleatória, segunda às cinco políticas. Legendas
+corrigidas, sem resultados novos. Páginas físicas 86/96 inspecionadas após recompilação; PDF
+126/94, porta canónica passou com nomes do júri pendentes. Restante frente 05 ainda aberta.
+
+**Avanço seguinte, 2026-09-03:** Figura 4.4 corrigida e inspecionada na página física 63.
+As seis categorias fecham 5 060 avaliações; cinco mensagens ficam separadas das 333 passagens.
+Sem números medidos novos. PDF 126/94 e porta canónica aprovada, salvo nomes do júri pendentes.
+Harmonização restante e redundâncias continuam abertas; sem commit/deploy.
+
+**Atualização após “avança”, 2026-09-03:** primeira vaga visual validada em oito páginas.
+Três defeitos encontrados apenas na renderização foram corrigidos e reinspecionados. PDF 126/94,
+porta canónica passou com nomes do júri pendentes, 176 testes dirigidos passaram e ruff limpo.
+Relatório: `docs/design/REVISAO_VISUAL_2026-09-03.md`. Restante frente 05 e suite integral abertos.
+
+**Fecho da retoma:** reconstrução limpa concluída com sucesso; PDF 126 páginas físicas / 94
+antes dos apêndices. Porta canónica passou com a exceção explícita dos nomes do júri. Falta
+inspeção renderizada das figuras alteradas; não declarar aprovação visual nem entrega final.
+
+**2026-09-03 — frente 05 em validação.** Seis gráficos do ch5 redesenhados e duas colisões do
+ch4 corrigidas nas fontes. Estilo comum em `figures/estilo.tex`. Inventário: 40 figuras, 13 tabelas,
+4 equações numeradas. Candidato anterior: 126 páginas físicas, 94 antes dos apêndices.
+Ainda falta inspeção visual do novo PDF; não considerar a frente encerrada. A compilação foi
+reiniciada numa única execução após sobreposição acidental de dois processos. Mudanças locais,
+sem commit/deploy. A suite integral de testes continua por concluir.
+
+### Registo anterior
+
 TERMINADA 20:05 (01/09) — **frente 03 (painel) fechada, e o primeiro item da frente 04 de caminho.**
 
 **O funil.** A zona «Why it stayed quiet» deixou de ser onze blocos de prosa e passou a ser uma
@@ -497,7 +568,7 @@ falha em silêncio: verificar sempre que os três `.deb` existem antes de extrai
    É uma correção do **ambiente**, não do documento: nada em `tese-v2/` foi alterado por causa dela.
    ⚠️ O teste de presença não pode ser `grep IfDocumentMetadataT`, porque o próprio `biblatex.sty`
    já usa o comando: procurar `providecommand.IfDocumentMetadataTF`.
-4. Compilar: `export PATH=$HOME/bin:$PATH && latexmk -pdf -interaction=nonstopmode main.tex`.
+4. Compilar: `export PATH=$HOME/bin:$PATH && latexmk -r latexmkrc -pdf -interaction=nonstopmode main.tex`.
    O `latexmk` deste contentor não aceita `-halt-on-error=false`.
 
 ## Notas para quem continuar

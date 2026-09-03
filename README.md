@@ -2,7 +2,9 @@
 
 # InvestiGator — Explainable Financial Alerts for Retail Investors
 
-*Every move investigated, never predicted.*
+> **Project continuity — read first:** [current priority and four-attachment review](docs/planos/REVISAO_PRIORITARIA_ANEXOS.md), then [master plan](docs/planos/PLANO_FINAL_2026-09-01.md), section 0. This applies to Codex, Claude and human contributors. All dissertation figures will be remade in English for the paper; the dissertation remains Portuguese unless the author later decides otherwise. Older checklists do not override these decisions.
+
+*Markets move. We investigate.*
 
 **▶ Try it live: <https://investigator-ddc9d8618935.herokuapp.com>**
 
@@ -23,8 +25,8 @@ reasoning chain — detected event → explanation → sources → historical pr
 | I want to… | Go to |
 |---|---|
 | Navigate the whole repo | [`docs/planos/INDEX.md`](docs/planos/INDEX.md) — the repository map |
-| **Read the dissertation being submitted** | **`tese/main.pdf`** — 114 pp, Portuguese. This is the one that is evaluated |
-| Read the earlier long versions | `thesis/main.pdf` (English, 130 pp) · `thesis-pt/main.pdf` (Português, 139 pp). Superseded, kept for the record |
+| **Read the dissertation being submitted** | **`tese-v2/main.pdf`** — Portuguese; current submission candidate |
+| Read the earlier versions | `tese/main.pdf` · `thesis/main.pdf` · `thesis-pt/main.pdf`. Superseded, kept for the record |
 | Study for the defence | `tese/slides/main.pdf` (19) · `tese/guia/main.pdf` (20) · `tese/quiz/index.html`. Older material in `docs/defence/` targets the long thesis — read [`docs/defence/LEIA-ME-PRIMEIRO.md`](docs/defence/LEIA-ME-PRIMEIRO.md) first |
 | See it live | <https://investigator-ddc9d8618935.herokuapp.com> + Telegram <https://t.me/InvestiGatorMEIA> |
 | Get a 10-minute overview | [`archive/reports/RELATORIO_FINAL.md`](archive/reports/RELATORIO_FINAL.md) |
@@ -123,21 +125,25 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 - **Defence slides (EN):** `slides/main.pdf` (17 frames) — the short deck for the day itself.
 
 ## Project status
-**Validated and submission-ready (pending human sign-off).** Both triggers are proven end to end;
-**626 automated tests** + lint green. The core components — including a **materiality-triage model trained
-by the author** on 79,753 multi-year FNSPID examples (RQ4; triage evidence, never a forecast) — are
-evaluated on **real data**, and the statistics reproduce exactly from versioned scripts. The **six-chapter
-dissertation** compiles cleanly (`thesis/main.pdf`, 130 pp, 0 errors), with **63 references each verified by
-DOI/arXiv/ISBN or primary source** (audit in `docs/decisions/page_audit.md`). An **IEEE paper** (`paper/`)
-and **defence slides** (`slides/`) compile. Remaining items are human-only: confirm the exact ISEP AI-use
-declaration wording + submission date, and the author's final read. The multi-year *retrieval* knowledge
-base is built as a local artefact (validated in `docs/evaluation/kb_fnspid_build.md`; a curated slice
-powers the public app) — retrieval on it has now been evaluated at scale (precision@5 0.595; see `docs/evaluation/evaluation_retrieval_fnspid.md`), leaving the market-adjusted impact-magnitude study as the open item. See
-`CLAUDE.md` for the exact state and `progress/SESSIONS.md` for per-session history.
+The current submission candidate is **`tese-v2/main.pdf`**: six chapters, 70 references,
+126 physical pages and **94 numbered pages before the annexes**, within the official 120-page limit.
+It compiles with zero errors, undefined references or undefined citations. The canonical quality gate
+checks every included source (including the generated Telegram-feedback fragment), the compilation log,
+the page limit, references, floats, PT-PT writing and damaged LaTeX escapes.
+
+The three evaluated components use real data and versioned procedures. The FNSPID corpus contains
+79,753 examples; the temporal training split used by the triage model contains 28,574. The live model
+is evidence triage, never a price forecast or an investment recommendation. The Telegram pilot currently
+has 20 effective votes from two people; 19 rate their alert useful, but one participant supplies 80% of
+the sample, so the dissertation explicitly says that the pilot does not support an independent reading.
+Remaining human inputs include the committee names, the final author read, consent-message pinning before
+inviting participants, credential rotation and the supervisor decisions listed in
+[`docs/REGISTO_PEDIDOS.md`](docs/REGISTO_PEDIDOS.md).
 
 ## Repository layout
 ```
-thesis/        LaTeX dissertation (6 chapters + front matter + appendix; 130 pp)
+tese-v2/       canonical Portuguese dissertation candidate (6 chapters + 2 appendices)
+tese/, thesis/, thesis-pt/  superseded dissertation trees, kept temporarily for traceability
 paper/         IEEE paper (IEEEtran) distilled from the thesis
 slides/        defence slides (Beamer, 17 frames)
   guia_estudo/   THE study guide (PT-PT, Beamer, 83 slides — single study source)
@@ -171,7 +177,10 @@ CITATION.cff   how to cite this work    requirements.txt (light) / requirements-
   (`requirements.txt`) — enough for the demo, the tests and the evaluations. The heavy ML stack (`torch` CPU,
   `sentence-transformers`, in `requirements-ml.txt`) is needed only for the real SBERT paths and installs with
   `bash scripts/setup_env.sh --ml` (it pulls `torch` from the PyTorch CPU index, not PyPI).
-- Verification loop: `bash scripts/verify.sh` (657 tests + lint + LaTeX note).
+- Canonical dissertation gate: `python scripts/check_tese_v2.py` (strict) or
+  `python scripts/check_tese_v2.py --permitir-pendencias-humanas` while committee names are unknown.
+- General verification loop: `bash scripts/verify.sh` (tests + lint; its historical LaTeX note is not
+  the canonical dissertation gate).
 - Secrets live only in a local, gitignored `.env` (see `.env.example` for variable names).
 - LaTeX builds locally (MiKTeX/TeX Live) and via GitHub Actions on each push.
 
@@ -184,7 +193,9 @@ python scripts/evaluate.py --news data/finnhub_news.csv \
 python scripts/evaluate_per_sector.py --news data/finnhub_news.csv   # per-sector precision
 python scripts/evaluate_anomaly.py                      # anomaly firing-rate + window ablation (pinned window)
 
-bash scripts/build_pdf.sh                               # thesis/main.pdf (also built in CI)
+cd tese-v2 && latexmk -r latexmkrc -pdf -recorder \
+    -interaction=nonstopmode main.tex                   # canonical dissertation, also built in CI
+python scripts/check_tese_v2.py --permitir-pendencias-humanas
 cd paper   && latexmk -pdf main.tex                     # paper/main.pdf
 cd slides  && latexmk -pdf main.tex                     # slides/main.pdf
 cd slides/guia_estudo && latexmk -pdf main.tex          # the study guide

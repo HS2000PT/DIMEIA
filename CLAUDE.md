@@ -9,6 +9,14 @@
 ---
 
 ## Estado Atual
+- **2026-09-03 — LER PRIMEIRO `docs/planos/REVISAO_PRIORITARIA_ANEXOS.md`.**
+  Quatro anexos integrais preservados e 44 itens de verificação. Este estado prevalece sobre
+  os registos históricos abaixo: tese canónica `tese-v2/main.pdf`; retreino autorizado, a
+  desenvolver após verificar contrato de dados; todas as figuras refeitas em inglês para
+  artigo, sem branding verde da aplicação; piloto Figma rejeitado. Tese PT por agora.
+  Auditoria prioritária, não adiada para depois da defesa. Não copiar recomendações falsas
+  de IA só gramatical ou eficácia humana demonstrada. Conferir prazo do artigo; feedback real.
+  Próximo passo e decisões na matriz e secção 0 do plano final; nenhuma nova medição nesta passagem.
 - **🆕 SESSÃO 62 (2026-08-30): AUDITORIA CRÍTICA EXTERNA DA TESE, PEDIDA PELO ALUNO, E DEPOIS
   EXECUTADA. Quatro pontos verificados no código, um achado novo que a tese não dizia, e
   dezassete correções aplicadas em texto. NENHUMA experiência foi corrida.**

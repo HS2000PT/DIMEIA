@@ -371,29 +371,34 @@ completo, pelo que os valores devem ser lidos como proporções.
 \centering
 \begin{tikzpicture}[font=\footnotesize]
 \begin{axis}[
-  xbar, width=0.78\textwidth, height=6.2cm,
+  ig axis, xbar, width=0.72\textwidth, height=6.2cm,
   xmin=0, xmax=3450,
   bar width=9pt,
   enlarge y limits=0.11,
-  symbolic y coords={entregues,orcamento,repetida,escada,triagem,precedente},
-  ytick=data,
-  yticklabels={{mensagens entregues},{orçamento diário esgotado},{história já comunicada},
+  symbolic y coords={passagens,orcamento,repetida,escada,triagem,precedente},
+  ytick={passagens,orcamento,repetida,escada,triagem,precedente},
+  yticklabels={{atravessou todas as portas},{orçamento diário esgotado},{história já comunicada},
                {piso escalonado},{abaixo do piso de triagem},{sem precedente suficiente}},
-  xlabel={Avaliações},
+  xlabel={avaliações registadas (total: $5\,060$)},
   tick label style={font=\footnotesize},
   label style={font=\footnotesize},
   nodes near coords, nodes near coords style={font=\scriptsize, black!65},
   grid=major, grid style={black!12},
   axis lines*=left,
 ]
-\addplot[fill=black!25, draw=black!50] coordinates {
-  (5,entregues) (21,orcamento) (249,repetida) (269,escada) (1194,triagem) (2994,precedente)};
+\addplot[bar shift=0pt, ig alternative bar] coordinates {
+  (21,orcamento) (249,repetida) (269,escada) (1194,triagem) (2994,precedente)};
+\addplot[bar shift=0pt, ig reference bar] coordinates {(333,passagens)};
 \end{axis}
 \end{tikzpicture}
-\caption[Distribuição das avaliações de um dia pelos pontos de decisão]{As $5\,060$ avaliações
-registadas a 15 de agosto de 2026, distribuídas pelo ponto em que cada uma terminou. As $333$
-avaliações que atravessaram todos os pontos de decisão não figuram no gráfico, pela razão
-apresentada no texto. O orçamento diário de cinco mensagens foi integralmente utilizado. A data é
+\par\smallskip
+\fbox{\parbox{0.78\textwidth}{\centering\small
+  \textbf{5 mensagens entregues}\quad$\ne$\quad\textbf{333 passagens pelas portas}\\
+  Uma avaliação não é uma notícia distinta; os mesmos títulos eram reavaliados.}}
+\caption[Distribuição completa das avaliações por ponto de decisão]{As $5\,060$ avaliações
+registadas em parte de 15 de agosto de 2026. As seis categorias somam o total; a barra tracejada
+inclui as $333$ passagens por todas as portas. As cinco mensagens entregues são uma contagem
+separada, não uma sétima categoria de avaliações. O orçamento diário foi integralmente utilizado. A data é
 também a do dia em que o piso de triagem deixou de exercer veto e passou a ordenar, pelo que a barra
 de $1\,194$ avaliações eliminadas nesse ponto pertence à configuração anterior à descrita na
 Tabela~\ref{tab:sis_portas}; nos dias seguintes esse ponto deixa de eliminar candidatas.}
@@ -753,7 +758,7 @@ não verificável. A Figura~\ref{fig:sis_lifecycle} representa as duas metades d
 
   \foreach \xa/\xb in {d/t, t/v, v/s, s/m} \draw[->, thick, black!55] (\xa) -- (\xb);
 
-  \node[fase] at (-1.55,-1.75) {observação};
+  \node[fase, anchor=west] at (-1.1,-2.7) {observação};
   \node[art] (p) at (0,-1.9)   {o \textbf{mesmo} modelo, em produção};
   \node[obs] (g) at (2.5,-1.9) {registo de cada decisão};
   \node[obs] (w) at (5.0,-1.9) {espera pela resposta do preço};
@@ -762,8 +767,8 @@ não verificável. A Figura~\ref{fig:sis_lifecycle} representa as duas metades d
   \draw[->, thick, black!55] (m.south) -- ++(0,-0.5) -| (p.north);
   \foreach \xa/\xb in {p/g, g/w, w/r} \draw[->, thick, black!55] (\xa) -- (\xb);
 
-  \draw[->, dashed, black!40] (r.east) -- ++(0.9,0) |- (10.0,-1.05)
-    node[pos=0.72, right, align=left, text width=2.2cm, black!55]
+  \draw[->, dashed, black!40] (r.east) -- ++(0.9,0) |- (10.0,-1.05);
+  \node[align=center, text width=1.3cm, text=black!70] at (10.4,-1.9)
     {retreino:\\ \textbf{ausente}};
 \end{tikzpicture}
 \caption[Ciclo de vida do componente aprendido]{As duas metades do ciclo. Na metade superior, a
@@ -886,8 +891,8 @@ entre adaptar-se à mudança e perseguir ruído.
   \draw[->, thick, black!55] (g) -- (t);
   \foreach \a/\b in {t/v, v/q, q/n} \draw[->, thick, black!55] (\a) -- (\b);
   \draw[->, thick, black!55] (n.north) |- ++(0,0.75) -| (p.south);
-  \draw[->, dashed, black!45] (q.north) -- ++(0,0.72)
-    node[above, align=center, black!60] {não supera:\\ regista e descarta};
+  \draw[->, dashed, black!45] (q.south) -- ++(0,-0.55)
+    node[below, align=center, black!60] {não supera:\\ regista e descarta};
 \end{tikzpicture}
 \caption[Arquitetura de retreino desenhada e não executada]{Ciclo de treino contínuo definido para
 este sistema e não executado no âmbito deste trabalho. O gatilho é condicional e não temporal; a
