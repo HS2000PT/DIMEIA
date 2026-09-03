@@ -444,21 +444,120 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
     return keep
 
 
+# Chaves (news_date, ticker, headline) já escritas no registo. O varrimento repontua a mesma
+# manchete de 60 em 60 segundos: sem esta guarda a mediana era de 78 linhas por título distinto
+# e o máximo 1406 (`registo_decisoes_auditoria.md`). Escrever a duplicação faz o peso de cada
+# empresa passar a ser a frequência com que o sistema a republica, e não a frequência com que
+# ela aparece nas notícias — e o ficheiro é republicado inteiro a cada ciclo, logo o custo é de
+# publicação. Uma linha por título, e a contagem de ciclos vive no `gate_log`, que é onde a
+# pergunta "onde é gasto o tempo do sistema" se responde.
+_DECISOES_VISTAS: tuple[str, set[tuple[str, str, str]]] | None = None
+
+
+def _seed_decision_keys() -> set[tuple[str, str, str]]:
+    """Lê o registo uma vez e devolve as chaves já escritas (vazio se não houver ficheiro).
+
+    A cache é indexada pelo CAMINHO do registo. Guardá-la sem o caminho faria uma troca de
+    ficheiro herdar as chaves do anterior e suprimir escritas legítimas em silêncio — que é
+    exactamente a classe de defeito que esta guarda existe para não introduzir.
+
+    Fail-open: um registo ilegível não pode impedir o varrimento de correr.
+    """
+    global _DECISOES_VISTAS
+    chave_ficheiro = str(_PRED_LOG)
+    if _DECISOES_VISTAS is not None and _DECISOES_VISTAS[0] == chave_ficheiro:
+        return _DECISOES_VISTAS[1]
+    vistas: set[tuple[str, str, str]] = set()
+    try:
+        from investigator.triage.postval import read_log
+
+        for r in read_log(_PRED_LOG):
+            vistas.add((str(r.get("news_date")), str(r.get("ticker")), str(r.get("headline"))))
+    except Exception as exc:  # noqa: BLE001
+        print(f"[postval] semente do registo falhou (ignorada): "
+              f"{type(exc).__name__}: {sem_segredos(exc)}")
+    _DECISOES_VISTAS = (chave_ficheiro, vistas)
+    return vistas
+
+
 def _log_decision_safe(news_date: str, ticker: str, headline: str,
                        scored: tuple | None, gate: float | None, kept: bool,
                        feature_snapshot: dict | None = None,
-                       model_info: dict | None = None) -> None:
+                       model_info: dict | None = None,
+                       stage: str | None = None) -> None:
     """Regista a decisão de notícia para o loop de pós-validação (M5.5, `scripts/
     post_validate.py`). Ficheiro local gitignored; uma falha aqui NUNCA pára o runner."""
     try:
         from investigator.triage.postval import log_decision
 
+        chave = (str(news_date), str(ticker), str(headline))
+        vistas = _seed_decision_keys()
+        if chave in vistas:
+            return
         log_decision(_PRED_LOG, news_date=news_date, ticker=ticker, headline=headline,
                      prob=(float(scored[0]) if scored is not None else None),
                      gate=(gate if scored is not None else None), kept=kept,
-                     feature_snapshot=feature_snapshot, model_info=model_info)
+                     feature_snapshot=feature_snapshot, model_info=model_info,
+                     stage=stage)
+        vistas.add(chave)
     except Exception as exc:  # noqa: BLE001
         print(f"[postval] registo falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
+
+
+def _registar_candidatas_safe(relevantes: list, latest, ticker: str, bundle,
+                              gate: float | None, max_age: int, hoje) -> None:
+    """Regista TODA a manchete relevante que o ciclo NÃO escolheu, com a porta onde morreu.
+
+    Decisão R1 do contrato de dados. Antes disto o registo só recebia a sobrevivente das portas
+    — o varrimento pontua uma manchete por empresa por ciclo, a mais recente relevante — e um
+    candidato treinado nesse registo herda o enviesamento que a dissertação já dá como a causa
+    de o modelo não ajudar em produção: quando é invocado, os filtros elementares já removeram
+    grande parte do que ele foi treinado para remover.
+
+    A `latest` NÃO é registada aqui; é registada a jusante, com a porta real onde acabou.
+
+    Custo: o modelo é uma regressão logística sobre nove entradas e a série de preços é obtida
+    UMA vez por empresa. O que é caro são os precedentes, e a pontuação não precisa deles.
+
+    ⚠️ Fixados a empresa e o dia, oito das nove entradas são constantes: só `headline_len`
+    separa duas manchetes da mesma empresa no mesmo ciclo. Registá-las todas é o que torna essa
+    afirmação mensurável a partir do registo, em vez de discutível.
+
+    Fail-open em todos os passos: nada aqui pode travar um alerta.
+    """
+    outras = [it for it in relevantes if it is not latest]
+    if not outras:
+        return
+    close = None
+    snapshot_de = {}
+    if bundle is not None:
+        try:
+            from investigator.market_data.prices import get_price_history
+
+            close = get_price_history(ticker)["Close"]
+        except Exception as exc:  # noqa: BLE001
+            print(f"[postval {ticker}] sem precos para pontuar candidatas "
+                  f"(ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
+    for it in outras:
+        etapa = "stale" if not news_is_fresh(it.date, hoje, max_age) else "not_latest"
+        scored = None
+        snapshot = None
+        if close is not None:
+            try:
+                from investigator.triage.infer import score_latest_with_snapshot
+
+                resultado = score_latest_with_snapshot(bundle, close, it.headline, ticker)
+                if resultado is not None:
+                    scored, snapshot = resultado
+            except Exception as exc:  # noqa: BLE001
+                snapshot_de.setdefault("erro", f"{type(exc).__name__}: {sem_segredos(exc)}")
+        _log_decision_safe(it.date, ticker, it.headline, scored, gate,
+                           kept=False, feature_snapshot=snapshot,
+                           model_info=(bundle.get("_model_info") if bundle is not None else None),
+                           stage=etapa)
+    if "erro" in snapshot_de:
+        print(f"[postval {ticker}] pontuacao de candidata falhou (ignorada): "
+              f"{snapshot_de['erro']}")
 
 
 def load_config(path: str | Path = _CONFIG) -> dict:
@@ -864,10 +963,16 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
             _capture_live_safe(relevantes, embedder)
             latest = max(relevantes, key=lambda it: it.date)  # a mais recente RELEVANTE
             max_age = int(n.get("max_age_days", 2))
+            # R1: o registo passa a receber a população real de candidatas, e não só a que
+            # sobrevive às portas. A `latest` é registada mais abaixo, na porta onde acabar.
+            _registar_candidatas_safe(relevantes, latest, ticker, bundle, gate,
+                                      max_age, date.today())
             if not news_is_fresh(latest.date, date.today(), max_age):
                 print(f"[noticias {ticker}] mais recente é de {latest.date} (>{max_age} dias) "
                       "— sem alerta (anti-repetição).")
                 _gate(ticker, "stale", f"mais recente {latest.date} > {max_age}d")
+                _log_decision_safe(latest.date, ticker, latest.headline, None, None,
+                                   kept=False, stage="stale")
                 continue
             precedents = merged_precedents(
                 latest.headline, kbs, embedder, top_k=top_k, today=date.today(),
@@ -889,6 +994,8 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
                 print(f"[noticias {ticker}] melhor precedente sim {best:.2f} < {min_sim:.2f} "
                       "— evidência fraca demais, sem alerta.")
                 _gate(ticker, "weak_precedent", f"melhor sim {best:.2f} < {min_sim:.2f}")
+                _log_decision_safe(latest.date, ticker, latest.headline, None, None,
+                                   kept=False, stage="weak_precedent")
                 continue
             if bundle is not None:
                 from investigator.market_data.prices import get_price_history
@@ -914,7 +1021,9 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
                 _log_decision_safe(latest.date, ticker, latest.headline, scored, gate,
                                    kept=so_ordena or gated is not None,
                                    feature_snapshot=feature_snapshot,
-                                   model_info=bundle.get("_model_info"))
+                                   model_info=bundle.get("_model_info"),
+                                   stage=("sobreviveu" if (so_ordena or gated is not None)
+                                          else "triage_suppressed"))
                 if gated is None and not so_ordena:
                     print(f"[triagem {ticker}] alerta de noticia suprimido pelo gate.")
                     p_str = f"P={scored[0]:.2f} < {gate:.2f}" if scored is not None else "sem P"
@@ -924,7 +1033,7 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
                     text = gated
             else:
                 _log_decision_safe(latest.date, ticker, latest.headline,
-                                   None, None, kept=True)
+                                   None, None, kept=True, stage="sobreviveu")
             alerts.append((ticker, text))
             # Canal lateral de instrumentação (mesmo padrão do `cache` dos scans de mercado):
             # guarda a HORA DE PUBLICAÇÃO da manchete que originou este alerta, indexada pela

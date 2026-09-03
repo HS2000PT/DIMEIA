@@ -26,11 +26,16 @@ from investigator.triage.dataset import abnormal_label
 def log_decision(path: str | Path, *, news_date: str, ticker: str, headline: str,
                  prob: float | None, gate: float | None, kept: bool,
                  feature_snapshot: dict | None = None,
-                 model_info: dict | None = None) -> None:
+                 model_info: dict | None = None,
+                 stage: str | None = None) -> None:
     """Acrescenta UMA decisão ao registo JSONL (cria ficheiro/pasta se preciso).
 
     `prob`/`gate` = None quando a triagem não pontuou (sem modelo/histórico);
     `kept` = a decisão final (alerta mantido vs suprimido pelo gate).
+
+    `stage` é a porta onde a candidata morreu, e existe porque `kept` deixou de discriminar:
+    com orçamento diário ligado a triagem ordena e não veta, logo `kept` é constante e não
+    sustenta comparação nenhuma. A porta é a variável que ficou no lugar dele.
     """
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -43,6 +48,8 @@ def log_decision(path: str | Path, *, news_date: str, ticker: str, headline: str
         rec["feature_snapshot"] = feature_snapshot
     if model_info is not None:
         rec["model_info"] = model_info
+    if stage is not None:
+        rec["stage"] = stage
     with open(path, "a", encoding="utf-8") as f:
         f.write(json.dumps(rec, ensure_ascii=False) + "\n")
 

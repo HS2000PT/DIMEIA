@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import json
+from datetime import date
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -164,3 +167,101 @@ def test_runner_registo_falhado_nao_levanta(monkeypatch, capsys):
     monkeypatch.setattr(runner, "_PRED_LOG", 123)  # caminho inválido de propósito
     runner._log_decision_safe("2026-07-01", "NVDA", "h", None, None, kept=True)
     assert "registo falhou" in capsys.readouterr().out
+
+
+# --- R1: o registo passa a receber a população real de candidatas ------------------------
+
+
+class _Item:
+    """Manchete mínima com a forma que o varrimento usa (`date`, `headline`)."""
+
+    def __init__(self, date: str, headline: str) -> None:
+        self.date = date
+        self.headline = headline
+
+
+def test_registo_nao_repete_a_mesma_manchete(tmp_path, monkeypatch):
+    """O varrimento repontua de 60 em 60 s; o registo tem de guardar UMA linha por título.
+
+    Sem a guarda a mediana era de 78 linhas por título distinto (máximo 1406), e o peso de
+    cada empresa passava a ser a frequência com que o sistema a republica.
+    """
+    monkeypatch.setattr(runner, "_PRED_LOG", tmp_path / "pred.jsonl")
+    monkeypatch.setattr(runner, "_DECISOES_VISTAS", None)
+    for _ in range(5):
+        runner._log_decision_safe("2026-09-04", "NVDA", "mesma manchete",
+                                  (0.36, []), 0.4, kept=False, stage="not_latest")
+    linhas = (tmp_path / "pred.jsonl").read_text(encoding="utf-8").strip().splitlines()
+    assert len(linhas) == 1
+
+
+def test_registo_distingue_manchetes_diferentes(tmp_path, monkeypatch):
+    """Controlo no sentido oposto: a guarda não pode engolir títulos genuinamente distintos."""
+    monkeypatch.setattr(runner, "_PRED_LOG", tmp_path / "pred.jsonl")
+    monkeypatch.setattr(runner, "_DECISOES_VISTAS", None)
+    for h in ("primeira", "segunda", "terceira"):
+        runner._log_decision_safe("2026-09-04", "NVDA", h, None, None, kept=False)
+    linhas = (tmp_path / "pred.jsonl").read_text(encoding="utf-8").strip().splitlines()
+    assert len(linhas) == 3
+
+
+def test_stage_vai_para_o_registo(tmp_path, monkeypatch):
+    """`kept` deixou de discriminar (100% verdadeiro); a porta é a variável que ficou."""
+    monkeypatch.setattr(runner, "_PRED_LOG", tmp_path / "pred.jsonl")
+    monkeypatch.setattr(runner, "_DECISOES_VISTAS", None)
+    runner._log_decision_safe("2026-09-04", "NVDA", "h", None, None,
+                              kept=False, stage="weak_precedent")
+    rec = json.loads((tmp_path / "pred.jsonl").read_text(encoding="utf-8").strip())
+    assert rec["stage"] == "weak_precedent"
+
+
+def test_registo_sem_stage_mantem_o_formato_antigo(tmp_path, monkeypatch):
+    """Retrocompatibilidade: sem `stage` o registo não ganha o campo."""
+    monkeypatch.setattr(runner, "_PRED_LOG", tmp_path / "pred.jsonl")
+    monkeypatch.setattr(runner, "_DECISOES_VISTAS", None)
+    runner._log_decision_safe("2026-09-04", "NVDA", "h", None, None, kept=True)
+    rec = json.loads((tmp_path / "pred.jsonl").read_text(encoding="utf-8").strip())
+    assert "stage" not in rec
+
+
+def test_candidatas_nao_escolhidas_ficam_registadas(tmp_path, monkeypatch):
+    """R1: as manchetes que o ciclo NÃO escolhe entram no registo, com a porta onde morreram.
+
+    Antes disto o conjunto de retreino era um sobrevivente das portas — o varrimento pontua
+    uma manchete por empresa por ciclo — e um candidato treinado nele herdava o enviesamento.
+    """
+    monkeypatch.setattr(runner, "_PRED_LOG", tmp_path / "pred.jsonl")
+    monkeypatch.setattr(runner, "_DECISOES_VISTAS", None)
+    hoje = date(2026, 9, 4)
+    latest = _Item("2026-09-04", "a escolhida")
+    outras = [_Item("2026-09-04", "outra de hoje"), _Item("2026-08-01", "uma velha")]
+    runner._registar_candidatas_safe([*outras, latest], latest, "NVDA",
+                                     None, 0.4, 2, hoje)
+    recs = [json.loads(x) for x in
+            (tmp_path / "pred.jsonl").read_text(encoding="utf-8").strip().splitlines()]
+    etapas = {r["headline"]: r["stage"] for r in recs}
+    # a escolhida é registada a jusante, com a porta REAL onde acabar — não aqui
+    assert "a escolhida" not in etapas
+    assert etapas["outra de hoje"] == "not_latest"
+    assert etapas["uma velha"] == "stale"
+
+
+def test_candidatas_sem_modelo_nao_levanta(tmp_path, monkeypatch):
+    """Fail-open: sem bundle regista na mesma, sem probabilidade e sem travar o alerta."""
+    monkeypatch.setattr(runner, "_PRED_LOG", tmp_path / "pred.jsonl")
+    monkeypatch.setattr(runner, "_DECISOES_VISTAS", None)
+    latest = _Item("2026-09-04", "escolhida")
+    runner._registar_candidatas_safe([_Item("2026-09-04", "outra"), latest], latest,
+                                     "NVDA", None, None, 2, date(2026, 9, 4))
+    rec = json.loads((tmp_path / "pred.jsonl").read_text(encoding="utf-8").strip())
+    assert rec["prob"] is None and rec["stage"] == "not_latest"
+
+
+def test_candidatas_uma_so_manchete_nao_escreve_nada(tmp_path, monkeypatch):
+    """Se a única relevante é a escolhida, não há candidata extra a registar."""
+    monkeypatch.setattr(runner, "_PRED_LOG", tmp_path / "pred.jsonl")
+    monkeypatch.setattr(runner, "_DECISOES_VISTAS", None)
+    latest = _Item("2026-09-04", "unica")
+    runner._registar_candidatas_safe([latest], latest, "NVDA", None, None, 2,
+                                     date(2026, 9, 4))
+    assert not (tmp_path / "pred.jsonl").exists()
