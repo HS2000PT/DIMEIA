@@ -9,6 +9,54 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 63 (2026-09-04): A AUDITORIA DO REGISTO CORREU PELA PRIMEIRA VEZ CONTRA DADOS
+  REAIS, E O NÚMERO QUE DEVOLVEU DIZ QUE O RETREINO NUNCA TINHA COMEÇADO.**
+  **⚠️ (A) O ACHADO: `feature_snapshot` presente em 0,0% de 39 595 linhas.** O
+  `CONTRATO_DADOS_RETREINO_2026-09-03.md` dava a instrumentação como «ligada de ponta a ponta»
+  e escrevia que «o relógio do retreino começou hoje». **Não tinha começado.** O código existia
+  **só na árvore de trabalho** — nunca commitado, nunca implantado. Zero linhas de classe A
+  recolhidas, e sem *snapshot* nenhuma linha é reproduzível, porque recalcular hoje as entradas
+  de um dia passado usaria uma série de preços que já contém o que veio a seguir.
+  **É a mesma classe do que a sessão 57 encontrou nos ficheiros parados: o código estava lá, e
+  ninguém tinha ido ver se estava no ar.** O plano final diz «cada dia que o mecanismo não está
+  no ar é um dia de dados que não existe na defesa», e o mecanismo não estava no ar.
+  **(B) R2 E R4 CONFIRMADOS POR MEDIÇÃO:** `kept` verdadeiro em **100%** das linhas (com
+  orçamento diário ligado a triagem ordena e não veta), logo o contraste mantidas/suprimidas
+  (`0,589` vs `0,617`) **não é recalculável** nesta janela; e a duplicação é real — mediana de
+  **78 linhas por título distinto**, máximo **1406**, sobre 257 títulos em 8 dias.
+  **✅ (C) DECISÃO R1 DO AUTOR: REGISTAR ANTES DAS PORTAS.** O varrimento pontua **uma manchete
+  por empresa por ciclo** (a mais recente relevante), logo o registo só recebia a sobrevivente —
+  e é essa mesma filtragem que a dissertação já dá como causa de o modelo não ajudar em
+  produção. Passa a pontuar e registar toda a manchete relevante, com **`stage`** a dizer onde
+  morreu. **`stage` substitui `kept` como variável discriminante, porque `kept` deixou de
+  discriminar.** Mais **uma linha por `(news_date, ticker, headline)`** — resolve R4 no ponto de
+  escrita, e a cache é indexada pelo **caminho** do registo (guardá-la sem o caminho faria uma
+  troca de ficheiro herdar chaves e suprimir escritas legítimas em silêncio).
+  **(D) VERIFICADO NUM CICLO REAL: 691 candidatas registadas, todas com snapshot** (408
+  `not_latest`, 283 `stale`), contra a mediana de 28 títulos/dia do esquema anterior. **E o
+  registo passou a mostrar sozinho o que exigia um script à parte:** três manchetes AAPL do
+  mesmo dia pontuam `0,38588`, `0,38595`, `0,38602`, e a única entrada que difere é o
+  comprimento do título — é o **item 15** da matriz dos anexos, na saída de produção.
+  **(E) FALSO ALARME MEU, e verifiquei antes de o reportar:** li `impact_1d` no `live_kb` e deu
+  100% nulo; o campo é **`impacts`** com chaves `'1'/'3'/'5'`. Com a chave certa: **0% em falta**,
+  10 933 casos, mais recente maturado 2026-08-25 — coerente com a janela de +5 dias. **O ciclo de
+  maturação está vivo e o item 17 da matriz passa a inspeção ao ar.**
+  **(F) 54 FICHEIROS ESTAVAM POR COMMITAR** (feedback do Telegram, marca, tese-v2, verificadores,
+  planos). Arrumados em cinco commits temáticos e no remoto.
+  **PORTAS: 959 testes (era 952), ruff limpo, produção viva com instantâneo a 15 s.** Sete testes
+  novos, **verificados a falhar sem a correcção**.
+  **⏭️ HUMANO, E É O QUE TRAVA A RECOLHA DENSA:** o **worker do Heroku continua a correr o código
+  antigo**. Não há implantação automática, e esta máquina não tem CLI do Heroku nem token — e a
+  regra do projecto proíbe colar chaves no chat. Até ser implantado, a classe A vem só do cron do
+  Actions (30/30 min em horário de mercado) e não do ciclo de 60 s. `heroku login` e depois
+  `python scripts/deploy_heroku.py`.
+  **⏭️ FALTAM DUAS DATAS DO AUTOR:** a da **defesa** (fixa os mínimos e os critérios de aceitação,
+  que têm de ser escritos **antes** de ver qualquer candidato) e a do **artigo**. O rótulo tem
+  horizonte primário de **3 dias de bolsa** (~5 de calendário): dados recolhidos a menos de cinco
+  dias da defesa não maturam a tempo, e a janela declarada (17/09–01/10) faz a diferença entre
+  ~250 e ~615 observações — contra 28 574 exemplos do conjunto congelado. **Se a recolha for
+  curta, o bloco novo vale como conjunto de AVALIAÇÃO sobre a população real de produção, e não
+  como substituto de treino** — cientificamente é o resultado mais forte que a janela permite.
 - **2026-09-03 — LER PRIMEIRO `docs/planos/REVISAO_PRIORITARIA_ANEXOS.md`.**
   Quatro anexos integrais preservados e 44 itens de verificação. Este estado prevalece sobre
   os registos históricos abaixo: tese canónica `tese-v2/main.pdf`; retreino autorizado, a
