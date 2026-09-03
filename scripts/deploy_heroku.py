@@ -49,18 +49,43 @@ def _run(*cmd: str) -> str:
 
 
 def _token() -> str:
-    # `shell=True` no Windows: o `heroku` é um `.cmd`, e o `CreateProcess` não o encontra
+    """Token do Heroku, do `.env` primeiro e da CLI depois.
+
+    O valor NUNCA e impresso, nem no caminho de erro. Este projecto ja teve duas fugas de
+    credencial da mesma familia (sessoes 44 e 51), e nas duas ninguem imprimiu a chave de
+    proposito: imprimiu-se a EXCEPCAO, e a mensagem trazia o URL com o segredo dentro. A
+    API do Heroku leva o token num cabecalho `Authorization` e nao no URL, o que fecha essa
+    porta, mas a regra fica escrita para nao ser reaberta por distraccao.
+
+    A ordem e deliberada. O `.env` e o cofre que o projecto ja usa para as outras chaves,
+    esta gitignored, e nao obriga a ter a CLI instalada, que era o que faltava na maquina
+    onde esta funcao passou a ser precisa.
+    """
+    import os
+
+    import investigator.config  # noqa: F401  (o import corre o load_dotenv do projecto)
+
+    do_env = (os.environ.get("HEROKU_API_KEY") or "").strip()
+    if do_env:
+        print("  token lido do .env")
+        return do_env
+    # `shell=True` no Windows: o `heroku` e um `.cmd`, e o `CreateProcess` nao o encontra
     # sem passar pelo interpretador de comandos. Sem isto sai `WinError 2`.
     out = subprocess.run("heroku auth:token", capture_output=True, text=True, cwd=RAIZ,
                          shell=True)  # noqa: S602 (comando fixo, sem input do utilizador)
-    # ⚠️ `heroku auth:token` sai com código 1 E imprime o token na mesma (avisa que o token
-    # é de curta duração). Um `set -e` mata o script aqui, e foi o que aconteceu na primeira
-    # tentativa desta sessão. Não se verifica o código de saída: verifica-se o TOKEN.
+    # `heroku auth:token` sai com codigo 1 E imprime o token na mesma. Nao se verifica o
+    # codigo de saida: verifica-se o TOKEN.
     for linha in (out.stdout + "\n" + out.stderr).splitlines():
         linha = linha.strip()
         if linha.startswith("HRKU-") or (len(linha) > 30 and " " not in linha):
             return linha
-    raise SystemExit("sem token do Heroku — corre `heroku login` primeiro")
+    raise SystemExit(
+        "sem token do Heroku." + chr(10)
+        + "  Opcao A (recomendada, nao precisa da CLI): poe a chave no .env, que esta"
+        + " gitignored, numa linha HEROKU_API_KEY=..." + chr(10)
+        + "  Obtem-se em https://dashboard.heroku.com/account -> API Key -> Reveal."
+        + chr(10) + "  Opcao B: instala a CLI do Heroku e corre `heroku login`."
+    )
 
 
 def _api(token: str, method: str, path: str, body: dict | None = None) -> dict:
