@@ -12,10 +12,12 @@ from investigator.triage.explain import materiality_line
 from investigator.triage.features import context_block
 from investigator.triage.infer import (
     DEFAULT_BUNDLE,
+    FEATURE_SCHEMA,
     load_context_bundle,
     score_background,
     score_context,
     score_latest,
+    score_latest_with_snapshot,
 )
 from investigator.triage.model import fit_platt, make_model, save_bundle
 from scripts.run_alerts import apply_materiality
@@ -76,6 +78,23 @@ def test_score_latest_fail_open_sem_historico(tmp_path):
     rng = np.random.default_rng(2)
     longa = pd.Series(100 * np.exp(np.cumsum(rng.normal(0, 0.01, 60))))
     assert score_latest(b, longa, "abc", "NVDA") is not None
+
+
+def test_score_latest_auditavel_guarda_vetor_data_e_modelo(tmp_path):
+    b = _tiny_bundle(tmp_path)
+    rng = np.random.default_rng(21)
+    idx = pd.bdate_range("2026-01-02", periods=60)
+    close = pd.Series(100 * np.exp(np.cumsum(rng.normal(0, 0.01, 60))), index=idx)
+    result = score_latest_with_snapshot(b, close, "Company beats earnings", "NVDA")
+    assert result is not None
+    scored, snapshot = result
+    assert scored == score_latest(b, close, "Company beats earnings", "NVDA")
+    assert snapshot["schema"] == FEATURE_SCHEMA
+    assert snapshot["as_of"] == idx[-1].isoformat()
+    assert list(snapshot["values"]) == b["feature_names"]
+    assert snapshot["values"]["headline_len"] == len("Company beats earnings")
+    assert b["_model_info"]["sha256"] and len(b["_model_info"]["sha256"]) == 64
+    assert b["_model_info"]["feature_schema"] == FEATURE_SCHEMA
 
 
 def test_score_background_pontua_sem_manchete(tmp_path):

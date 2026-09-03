@@ -31,6 +31,28 @@ def test_log_e_leitura_ida_e_volta(tmp_path):
     assert "ts" in recs[0]
 
 
+def test_log_guarda_snapshot_e_modelo_sem_quebrar_registos_antigos(tmp_path):
+    log = tmp_path / "pred.jsonl"
+    snapshot = {
+        "schema": "triage-context-v1",
+        "as_of": "2026-07-01T00:00:00",
+        "values": {"vol20": 0.02, "sector_tech": 1.0},
+    }
+    model = {"artifact": "triage_context_lr.joblib", "sha256": "a" * 64}
+    log_decision(
+        log, news_date="2026-07-01", ticker="NVDA", headline="h",
+        prob=0.7, gate=0.5, kept=True, feature_snapshot=snapshot, model_info=model,
+    )
+    log_decision(
+        log, news_date="2026-07-02", ticker="AAPL", headline="antigo",
+        prob=None, gate=None, kept=True,
+    )
+    recs = read_log(log)
+    assert recs[0]["feature_snapshot"] == snapshot
+    assert recs[0]["model_info"] == model
+    assert "feature_snapshot" not in recs[1] and "model_info" not in recs[1]
+
+
 def test_leitura_sem_ficheiro_devolve_vazio(tmp_path):
     assert read_log(tmp_path / "nao_existe.jsonl") == []
 
@@ -124,6 +146,18 @@ def test_runner_regista_decisao(tmp_path, monkeypatch):
     runner._log_decision_safe("2026-07-01", "NVDA", "h", (0.36, []), 0.4, kept=False)
     recs = read_log(tmp_path / "pred.jsonl")
     assert len(recs) == 1 and recs[0]["prob"] == 0.36 and recs[0]["gate"] == 0.4
+
+
+def test_runner_propaga_snapshot_e_identidade_do_modelo(tmp_path, monkeypatch):
+    monkeypatch.setattr(runner, "_PRED_LOG", tmp_path / "pred.jsonl")
+    snap = {"schema": "triage-context-v1", "as_of": "2026-07-01", "values": {}}
+    model = {"artifact": "m.joblib", "sha256": "b" * 64}
+    runner._log_decision_safe(
+        "2026-07-01", "NVDA", "h", (0.36, []), 0.4, kept=False,
+        feature_snapshot=snap, model_info=model,
+    )
+    rec = read_log(tmp_path / "pred.jsonl")[0]
+    assert rec["feature_snapshot"] == snap and rec["model_info"] == model
 
 
 def test_runner_registo_falhado_nao_levanta(monkeypatch, capsys):

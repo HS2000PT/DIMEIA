@@ -12,6 +12,8 @@ segue sem triagem (comportamento antigo intacto — integração off-by-default,
 
 from __future__ import annotations
 
+import hashlib
+import json
 import math
 from pathlib import Path
 
@@ -23,6 +25,7 @@ from investigator.triage.features import context_block
 
 _REPO = Path(__file__).resolve().parents[2]
 DEFAULT_BUNDLE = _REPO / "models" / "triage_context_lr.joblib"
+FEATURE_SCHEMA = "triage-context-v1"
 
 
 def load_context_bundle(path: str | Path = DEFAULT_BUNDLE) -> dict | None:
@@ -32,7 +35,22 @@ def load_context_bundle(path: str | Path = DEFAULT_BUNDLE) -> dict | None:
         return None
     from investigator.triage.model import load_bundle  # import tardio (joblib/sklearn)
 
-    return load_bundle(p)
+    bundle = load_bundle(p)
+    sidecar = p.with_suffix(".json")
+    meta: dict = {}
+    if sidecar.exists():
+        try:
+            meta = json.loads(sidecar.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            meta = {}
+    bundle["_model_info"] = {
+        "artifact": p.name,
+        "sha256": hashlib.sha256(p.read_bytes()).hexdigest(),
+        "trained_at": meta.get("gerado"),
+        "model_family": meta.get("modelo"),
+        "feature_schema": FEATURE_SCHEMA,
+    }
+    return bundle
 
 
 # Setor em tempo de INFERÊNCIA para nomes que a watchlist tem e o corpus de treino não.
@@ -64,6 +82,21 @@ def score_context(bundle: dict, vol20: float, mom5: float, ret_event: float,
     Ticker fora de qualquer mapa → one-hot todo a zeros ("setor desconhecido"). O modelo pontua
     na mesma, mas **fora da distribuição de treino** — ver `DEPLOY_SECTORS`.
     """
+    scored, _ = score_context_with_snapshot(
+        bundle, vol20, mom5, ret_event, headline, ticker
+    )
+    return scored
+
+
+def score_context_with_snapshot(
+    bundle: dict, vol20: float, mom5: float, ret_event: float,
+    headline: str, ticker: str, *, feature_as_of: str | None = None,
+) -> tuple[tuple[float, list[tuple[str, float]]], dict]:
+    """Pontua e devolve o vetor exato necessário para reproduzir a decisão.
+
+    O snapshot é apenas evidência de inferência. Não contém rótulos futuros e não afirma que a
+    barra usada era um fecho completo; `feature_as_of` regista a data que a fonte entregou.
+    """
     df = pd.DataFrame([{
         "vol20": vol20, "mom5": mom5, "ret_event": ret_event,
         "headline_len": float(len(headline)),
@@ -75,7 +108,12 @@ def score_context(bundle: dict, vol20: float, mom5: float, ret_event: float,
                          "(scripts/train_triage.py).")
     prob = float(bundle["calibrator"](bundle["model"].predict_proba(x)[:, 1])[0])
     contribs = lr_group_contributions(bundle["model"], x[0], bundle["feature_names"])
-    return prob, contribs
+    snapshot = {
+        "schema": FEATURE_SCHEMA,
+        "as_of": feature_as_of,
+        "values": {name: float(value) for name, value in zip(names, x[0], strict=True)},
+    }
+    return (prob, contribs), snapshot
 
 
 def score_latest(bundle: dict, close: pd.Series, headline: str, ticker: str,
@@ -94,14 +132,28 @@ def score_latest(bundle: dict, close: pd.Series, headline: str, ticker: str,
     presente mas com furos. Agora falha aberto do mesmo modo, e a diferença é que o log passa a
     dizer "sem dados" em vez de rebentar.
     """
+    result = score_latest_with_snapshot(bundle, close, headline, ticker)
+    return result[0] if result is not None else None
+
+
+def score_latest_with_snapshot(
+    bundle: dict, close: pd.Series, headline: str, ticker: str,
+) -> tuple[tuple[float, list[tuple[str, float]]], dict] | None:
+    """Versão auditável de :func:`score_latest`, sem alterar a API existente."""
     feats = event_features(close, len(close) - 1)
     if feats is None:
         return None
     if any(v is None or (isinstance(v, float) and math.isnan(v))
            for v in (feats["vol20"], feats["mom5"], feats["ret_event"])):
         return None
-    return score_context(bundle, feats["vol20"], feats["mom5"], feats["ret_event"],
-                         headline, ticker)
+    as_of = None
+    if len(close.index):
+        stamp = pd.Timestamp(close.index[-1])
+        as_of = stamp.isoformat()
+    return score_context_with_snapshot(
+        bundle, feats["vol20"], feats["mom5"], feats["ret_event"], headline, ticker,
+        feature_as_of=as_of,
+    )
 
 
 def score_background(bundle: dict, close: pd.Series, ticker: str,

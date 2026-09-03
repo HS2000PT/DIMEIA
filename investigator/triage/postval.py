@@ -24,7 +24,9 @@ from investigator.triage.dataset import abnormal_label
 
 
 def log_decision(path: str | Path, *, news_date: str, ticker: str, headline: str,
-                 prob: float | None, gate: float | None, kept: bool) -> None:
+                 prob: float | None, gate: float | None, kept: bool,
+                 feature_snapshot: dict | None = None,
+                 model_info: dict | None = None) -> None:
     """Acrescenta UMA decisão ao registo JSONL (cria ficheiro/pasta se preciso).
 
     `prob`/`gate` = None quando a triagem não pontuou (sem modelo/histórico);
@@ -37,6 +39,10 @@ def log_decision(path: str | Path, *, news_date: str, ticker: str, headline: str
         "news_date": news_date, "ticker": ticker, "headline": headline,
         "prob": prob, "gate": gate, "kept": kept,
     }
+    if feature_snapshot is not None:
+        rec["feature_snapshot"] = feature_snapshot
+    if model_info is not None:
+        rec["model_info"] = model_info
     with open(path, "a", encoding="utf-8") as f:
         f.write(json.dumps(rec, ensure_ascii=False) + "\n")
 

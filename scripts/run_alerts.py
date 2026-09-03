@@ -445,7 +445,9 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
 
 
 def _log_decision_safe(news_date: str, ticker: str, headline: str,
-                       scored: tuple | None, gate: float | None, kept: bool) -> None:
+                       scored: tuple | None, gate: float | None, kept: bool,
+                       feature_snapshot: dict | None = None,
+                       model_info: dict | None = None) -> None:
     """Regista a decisão de notícia para o loop de pós-validação (M5.5, `scripts/
     post_validate.py`). Ficheiro local gitignored; uma falha aqui NUNCA pára o runner."""
     try:
@@ -453,7 +455,8 @@ def _log_decision_safe(news_date: str, ticker: str, headline: str,
 
         log_decision(_PRED_LOG, news_date=news_date, ticker=ticker, headline=headline,
                      prob=(float(scored[0]) if scored is not None else None),
-                     gate=(gate if scored is not None else None), kept=kept)
+                     gate=(gate if scored is not None else None), kept=kept,
+                     feature_snapshot=feature_snapshot, model_info=model_info)
     except Exception as exc:  # noqa: BLE001
         print(f"[postval] registo falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
 
@@ -889,11 +892,13 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
                 continue
             if bundle is not None:
                 from investigator.market_data.prices import get_price_history
-                from investigator.triage.infer import score_latest
+                from investigator.triage.infer import score_latest_with_snapshot
 
-                scored = score_latest(
+                scored_result = score_latest_with_snapshot(
                     bundle, get_price_history(ticker)["Close"], latest.headline, ticker
                 )
+                scored = scored_result[0] if scored_result is not None else None
+                feature_snapshot = scored_result[1] if scored_result is not None else None
                 if scored is not None:
                     print(f"[triagem {ticker}] P(anormal)={scored[0]:.0%} "
                           f"(gate {gate:.0%})")
@@ -907,7 +912,9 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
                 gated = apply_materiality(text, scored, gate)
                 so_ordena = orcamento is not None
                 _log_decision_safe(latest.date, ticker, latest.headline, scored, gate,
-                                   kept=so_ordena or gated is not None)
+                                   kept=so_ordena or gated is not None,
+                                   feature_snapshot=feature_snapshot,
+                                   model_info=bundle.get("_model_info"))
                 if gated is None and not so_ordena:
                     print(f"[triagem {ticker}] alerta de noticia suprimido pelo gate.")
                     p_str = f"P={scored[0]:.2f} < {gate:.2f}" if scored is not None else "sem P"

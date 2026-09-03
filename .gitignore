@@ -153,3 +153,6 @@ tese/guia_construir/*.fls
 # reescrevê-lo e forçar o push, o que quebra clones existentes. Se se quiser fazer, é depois da
 # defesa e é decisão do autor.
 tmp/
+
+# artefactos de prova do piloto rejeitado (Figura 4.10)
+output/
