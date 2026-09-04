@@ -22,22 +22,31 @@ if hasattr(sys.stdout, "reconfigure"):
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 TESE = RAIZ / "tese"
 
+# ⚠️ O TERCEIRO CAMPO SÃO ARGUMENTOS, e existe por uma distinção que a porta não fazia.
+# Uma pendência HUMANA é um item real que NENHUM trabalho no repositório pode fechar: os
+# nomes do júri só existem depois de o ISEP o designar. Misturada com os defeitos, deixava
+# a porta permanentemente vermelha — e uma porta que nunca fica verde é uma porta que se
+# deixa de ler, que é o defeito que este projecto já pagou cinco vezes.
+#
+# O contrato é uma linha que começa por `aviso `: quem a imprime declara um item humano, e
+# esta porta recolhe-a numa secção própria em vez de a contar como falha. O item continua
+# VISÍVEL; o que muda é onde aparece, e o veredicto final diz que ele impede a entrega.
 VERIFICADORES = [
-    ("dissertação canónica tese-v2", "check_tese_v2.py"),
-    ("números contra a fonte", "check_tese_numeros.py"),
+    ("dissertação canónica tese-v2", "check_tese_v2.py", ["--permitir-pendencias-humanas"]),
+    ("números contra a fonte", "check_tese_numeros.py", []),
     # O de cima verifica uma lista curada contra o ficheiro que a produz: garante que os que estão
     # na lista estão certos, e nada diz sobre os que não estão. Este faz o inverso, e é por isso
     # que os dois coexistem: varre o documento inteiro e exige que TODO o número afirmado tenha
     # origem, ou uma justificação escrita.
-    ("todo o número tem origem", "auditar_numeros.py"),
-    ("escapes de LaTeX comidos", "check_tex_escapes.py"),
-    ("apêndice: cada número onde diz estar", "check_apendice_xref.py"),
-    ("materiais de estudo alinhados", "check_materiais.py"),
-    ("flutuantes referenciados", "check_floats.py"),
-    ("escrita: PT-PT e um termo por conceito", "check_escrita.py"),
+    ("todo o número tem origem", "auditar_numeros.py", []),
+    ("escapes de LaTeX comidos", "check_tex_escapes.py", []),
+    ("apêndice: cada número onde diz estar", "check_apendice_xref.py", []),
+    ("materiais de estudo alinhados", "check_materiais.py", []),
+    ("flutuantes referenciados", "check_floats.py", []),
+    ("escrita: PT-PT e um termo por conceito", "check_escrita.py", []),
     # O guia de construção promete código verbatim. Sem esta porta a promessa vale o que valer
     # a memória de quem o escreveu, e o código muda: um excerto correcto hoje deixa de o ser.
-    ("guia de construção: código verbatim", "check_guia_codigo.py"),
+    ("guia de construção: código verbatim", "check_guia_codigo.py", []),
 ]
 
 # ⚠️ A DISSERTAÇÃO A ENTREGAR É `tese-v2/`, e esta lista apontava para `tese/`. Corrigido a
@@ -110,17 +119,23 @@ def main() -> int:
         print(f"  ok  {nome}: {paginas(pdf)} páginas, compila limpo, mais recente do que a fonte")
 
     print("\n=== os verificadores ===")
-    for descricao, script in VERIFICADORES:
+    humanas: list[str] = []
+    for descricao, script, extra in VERIFICADORES:
         p = RAIZ / "scripts" / script
         if not p.exists():
             print(f"  !!  {descricao}: {script} não existe")
             falhas += 1
             continue
-        r = subprocess.run([sys.executable, str(p)], capture_output=True, cwd=RAIZ, timeout=1800)
+        r = subprocess.run([sys.executable, str(p), *extra], capture_output=True,
+                           cwd=RAIZ, timeout=1800)
+        saida = r.stdout.decode("utf-8", "replace")
+        humanas.extend(x.strip()[6:].strip() for x in saida.splitlines()
+                       if x.strip().startswith("aviso "))
         if r.returncode == 0:
             print(f"  ok  {descricao}")
         else:
-            print(f"  !!  {descricao}  ->  python scripts/{script}")
+            cmd = " ".join([f"python scripts/{script}", *extra]).strip()
+            print(f"  !!  {descricao}  ->  {cmd}")
             falhas += 1
 
     print("\n=== marcadores de trabalho por acabar no que vai ser entregue ===")
@@ -160,12 +175,24 @@ def main() -> int:
     else:
         print("  ok  fixada")
 
+    # ⚠️ SECÇÃO PRÓPRIA, E NÃO SILÊNCIO. Um item humano não é um defeito, mas continua a
+    # impedir a entrega. Escondê-lo para a porta ficar verde seria trocar um problema
+    # visível por um esquecido.
+    print(f"\n=== pendências humanas: {len(humanas)} ===")
+    for x in humanas:
+        print(f"  ..  {x}")
+    if not humanas:
+        print("  ok  nenhuma")
+
     print()
     if falhas:
         print(f"FALTA RESOLVER: {falhas}")
         return 1
     print("Tudo o que se verifica por máquina está feito.")
-    print("O que sobra é humano: a leitura final, a redação da declaração de IA e a licença")
+    if humanas:
+        print("⚠️  E NÃO ESTÁ PRONTO A ENTREGAR: as pendências humanas acima continuam por")
+        print("    fechar, e nenhuma delas se resolve com trabalho no repositório.")
+    print("O resto é humano: a leitura final, a redação da declaração de IA e a licença")
     print("com o orientador, os agradecimentos, e rodar as credenciais. "
           "Está no docs/planos/CHECKLIST.md.")
     return 0
