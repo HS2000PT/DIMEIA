@@ -55,20 +55,28 @@ construído sobre eles.
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-  ybar, width=0.86\textwidth, height=5.4cm, bar width=13pt,
-  ymin=0, ymax=72,
-  symbolic x coords={2015,2016,2017,2018,2019,2020,2021,2022,2023,2024},
-  xtick=data,
-  ylabel={Biliões de dólares},
+  % Serie temporal: a forma e' a linha, nao a barra. Dez barras rotuladas uma a uma
+  % competiam com a leitura que interessa, que e' a trajectoria e a quebra de 2022.
+  width=0.86\textwidth, height=5.4cm,
+  ymin=20, ymax=70, xmin=2014.4, xmax=2024.6,
+  xtick={2015,2017,2019,2021,2023,2024},
+  % anos NAO levam separador de milhares: sem isto o pgfplots escreve 2,015.
+  xticklabel style={/pgf/number format/.cd, fixed, 1000 sep={}},
+  ylabel={Trillions of US dollars},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
-  nodes near coords, nodes near coords style={font=\scriptsize, black!65},
-  every node near coord/.append style={/pgf/number format/.cd, fixed, fixed zerofill, precision=1,
-                                       use comma, 1000 sep={}},
   ymajorgrids, grid style={black!12}, axis lines*=left,
-]
-\addplot[fill=black!25, draw=black!55] coordinates {
-  (2015,25.1) (2016,27.4) (2017,32.1) (2018,30.4) (2019,34.1)
-  (2020,41.6) (2021,48.5) (2022,40.3) (2023,49.0) (2024,62.2)};
+  ]
+  \addplot[draw=none, fill=black!8, forget plot] coordinates {
+    (2015,20) (2015,25.1) (2016,27.4) (2017,32.1) (2018,30.4) (2019,34.1)
+    (2020,41.6) (2021,48.5) (2022,40.3) (2023,49.0) (2024,62.2) (2024,20)} \closedcycle;
+  \addplot[black!60, thick, mark=*, mark size=1.6pt,
+           mark options={fill=black!60, draw=none}] coordinates {
+    (2015,25.1) (2016,27.4) (2017,32.1) (2018,30.4) (2019,34.1)
+    (2020,41.6) (2021,48.5) (2022,40.3) (2023,49.0) (2024,62.2)};
+  % so os tres pontos que a prosa invoca: inicio, a quebra, e o fim.
+  \node[font=\scriptsize, black!65, below right] at (axis cs:2015,25.1) {25.1};
+  \node[font=\scriptsize, black!65, below] at (axis cs:2022,40.3) {40.3};
+  \node[font=\scriptsize, black!65, above left] at (axis cs:2024,62.2) {62.2};
 \end{axis}
 \end{tikzpicture}
 \caption[Capitalização do mercado acionista dos EUA]{Capitalização do mercado acionista dos
@@ -110,12 +118,12 @@ estabelecer qualquer conclusão.
   sis/.style={draw, rounded corners, fill=black!3, align=center, text width=2.6cm, minimum height=1.6cm},
   saida/.style={draw, rounded corners, fill=black!3, align=center, text width=3.8cm, minimum height=1.6cm},
 ]
-  \node[gat] (g1) {movimento invulgar\\ no preço};
-  \node[gat, below=7mm of g1] (g2) {notícia relevante\\ sobre a empresa};
+  \node[gat] (g1) {unusual price\\ movement};
+  \node[gat, below=7mm of g1] (g2) {relevant news\\ about the company};
   \node[sis] (sis) at ($(g1)!0.5!(g2) + (3.9,0)$) {\textbf{InvestiGator}};
-  \node[saida, right=1.3cm of sis] (out) {alerta explicado\\[2pt]
-    \footnotesize o que aconteceu\\ \footnotesize porquê · fontes\\ \footnotesize casos parecidos};
-  \node[right=1.0cm of out, align=center] (inv) {\footnotesize investidor};
+  \node[saida, right=1.3cm of sis] (out) {explained alert\\[2pt]
+    \footnotesize what happened\\ \footnotesize why · sources\\ \footnotesize precedents};
+  \node[right=1.0cm of out, align=center] (inv) {\footnotesize investor};
   \draw[->] (g1) -- (sis);
   \draw[->] (g2) -- (sis);
   \draw[->] (sis) -- (out);

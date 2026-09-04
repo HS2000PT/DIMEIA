@@ -233,15 +233,15 @@ detalhadas na Tabela~\ref{tab:ctx_texto}.
   g/.style={draw, rounded corners, align=center, text width=3.0cm, minimum height=3.3cm,
             inner sep=5pt, fill=black!3},
 ]
-  \node[g] (a) {\textbf{Contagem de palavras}\\[3pt]
-    \footnotesize cada palavra é\\ \footnotesize um símbolo isolado\\[3pt]
-    \footnotesize \emph{``subiu'' e ``valorizou''}\\ \footnotesize \emph{não têm relação}};
-  \node[g, right=0.85cm of a] (b) {\textbf{Vetores de palavra}\\[3pt]
-    \footnotesize palavras de uso\\ \footnotesize semelhante ficam próximas\\[3pt]
-    \footnotesize \emph{um só sentido}\\ \footnotesize \emph{por palavra}};
-  \node[g, right=0.85cm of b] (c) {\textbf{Vetores de frase}\\[3pt]
-    \footnotesize o sentido depende\\ \footnotesize do contexto\\[3pt]
-    \footnotesize \emph{representação}\\ \footnotesize \emph{adotada neste trabalho}};
+  \node[g] (a) {\textbf{Word counts}\\[3pt]
+    \footnotesize each word is\\ \footnotesize an isolated symbol\\[3pt]
+    \footnotesize \emph{``rose'' and ``gained''}\\ \footnotesize \emph{share no relation}};
+  \node[g, right=0.85cm of a] (b) {\textbf{Word vectors}\\[3pt]
+    \footnotesize words used in\\ \footnotesize similar ways lie close\\[3pt]
+    \footnotesize \emph{one sense}\\ \footnotesize \emph{per word}};
+  \node[g, right=0.85cm of b] (c) {\textbf{Sentence vectors}\\[3pt]
+    \footnotesize meaning depends\\ \footnotesize on context\\[3pt]
+    \footnotesize \emph{representation}\\ \footnotesize \emph{adopted in this work}};
   \draw[->, thick, black!45] (a) -- (b);
   \draw[->, thick, black!45] (b) -- (c);
 \end{tikzpicture}
@@ -253,7 +253,7 @@ frases diretamente pela posição dos respetivos vetores.}
 
 A primeira geração representa um documento pela frequência dos termos que contém. O modelo de
 espaço vetorial \autocite{salton1975vsm} é transparente e computacionalmente barato, e é cego a
-sinónimos: os termos ``subiu'' e ``valorizou'' constituem, para esta representação, símbolos sem
+sinónimos: os termos ``rose'' e ``gained'' constituem, para esta representação, símbolos sem
 relação. Dentro da mesma geração existe uma segunda linha, oriunda de um quadro probabilístico
 distinto, a das funções de ordenação de que o BM25 \autocite{robertson2009bm25} é o representante
 corrente; ambas permanecem linhas de base fortes em recuperação de informação e partilham aquela
@@ -475,14 +475,14 @@ organizados pelo tipo de objeto que explicam \autocite{guidotti2018survey}.
   o/.style={draw, rounded corners, align=center, text width=3.5cm, minimum height=1.4cm,
             inner sep=4pt, fill=black!3},
 ]
-  \node[r] (raiz) {\textbf{Explicar uma decisão}};
-  \node[t, below left=1.1cm and 0.35cm of raiz] (tr) {\textbf{Modelo transparente}\\
-    \footnotesize a explicação é o cálculo};
-  \node[o, below right=1.1cm and 0.35cm of raiz] (ph) {\textbf{Método a posteriori}\\
-    \footnotesize explica um modelo opaco};
+  \node[r] (raiz) {\textbf{Explaining a decision}};
+  \node[t, below left=1.1cm and 0.35cm of raiz] (tr) {\textbf{Transparent model}\\
+    \footnotesize the explanation is the computation};
+  \node[o, below right=1.1cm and 0.35cm of raiz] (ph) {\textbf{Post-hoc method}\\
+    \footnotesize explains an opaque model};
 
   \node[below=0.4cm of tr, align=center, font=\footnotesize, text width=3.6cm]
-    (trx) {regra, regressão linear,\\ contagem sobre a série};
+    (trx) {rule, linear regression,\\ count over the series};
   \node[below=0.4cm of ph, align=center, font=\footnotesize, text width=3.6cm]
     (phx) {\gls{LIME}, \gls{SHAP}};
 

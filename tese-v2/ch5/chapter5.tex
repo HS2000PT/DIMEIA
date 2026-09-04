@@ -30,18 +30,18 @@ cotações reajustadas pela fonte podem variar na terceira casa decimal.
   err/.style={draw, rounded corners=2pt, align=center, text width=3.6cm, minimum height=0.95cm,
               inner sep=3pt, fill=white},
 ]
-  \node[et] (a) {\textbf{1.} a pergunta};
-  \node[et, right=5mm of a] (b) {\textbf{2.} como se mede, e contra quê};
-  \node[et, right=5mm of b] (c) {\textbf{3.} o resultado};
-  \node[ult, right=5mm of c] (d) {\textbf{4.} o que não se conclui};
+  \node[et] (a) {\textbf{1.} the question};
+  \node[et, right=5mm of a] (b) {\textbf{2.} how it is measured, and against what};
+  \node[et, right=5mm of b] (c) {\textbf{3.} the result};
+  \node[ult, right=5mm of c] (d) {\textbf{4.} what does not follow};
   \foreach \xa/\xb in {a/b, b/c, c/d} \draw[->, thick, black!55] (\xa) -- (\xb);
 
   \node[err, below=9mm of b] (fp)
-    {\footnotesize \textbf{falso positivo}\\[-1pt]\footnotesize gasta a atenção de quem lê};
+    {\footnotesize \textbf{false positive}\\[-1pt]\footnotesize spends the reader's attention};
   \node[err, below=9mm of c] (fn)
-    {\footnotesize \textbf{falso negativo}\\[-1pt]\footnotesize deixa passar o dia que importava};
+    {\footnotesize \textbf{false negative}\\[-1pt]\footnotesize misses the day that mattered};
   \node[font=\scriptsize, text=black!60, align=center] at ($(fp)!0.5!(fn) + (0,-1.05)$)
-    {os dois erros custam coisas diferentes, e nenhuma medida deste capítulo os trata como iguais};
+    {the two errors cost different things, and no measure in this chapter treats them as equal};
 \end{tikzpicture}
 \caption[A forma comum aos quatro casos de estudo]{A forma seguida por todos os casos de estudo. O
 quarto passo delimita o alcance de cada resultado. Em baixo, os dois tipos de erro que as medidas
@@ -151,27 +151,27 @@ volatilidade de cada ação enquanto o \emph{z}-score se mantém quase constante
 \begin{axis}[
   name=esq, width=0.46\textwidth, height=5.0cm, ybar, bar width=15pt,
   ymin=0, ymax=0.40, symbolic x coords={zscore, fixo}, xtick=data,
-  xticklabels={\emph{z}-score, limiar fixo}, ylabel={amplitude de disparo},
+  xticklabels={\emph{z}-score, fixed threshold}, ylabel={firing-rate spread},
   nodes near coords, point meta=explicit symbolic,
   every node near coord/.append style={font=\footnotesize},
-  title={\small A. amplitude \emph{(menor é melhor)}},
+  title={\small A. amplitude \emph{(lower is better)}},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
   ymajorgrids, grid style={black!12}, axis lines*=left,
 ]
-\addplot[fill=black!55, draw=black!70] coordinates {(zscore,0.015) [0,015] (fixo,0.344) [0,344]};
+\addplot[fill=black!55, draw=black!70] coordinates {(zscore,0.015) [0.015] (fixo,0.344) [0.344]};
 \end{axis}
 \begin{axis}[
   name=dir, at={(esq.right of origin)}, anchor=left of origin, xshift=1.6cm,
   width=0.46\textwidth, height=5.0cm, ybar, bar width=15pt,
   ymin=0, ymax=0.62, symbolic x coords={zscore, fixo}, xtick=data,
-  xticklabels={\emph{z}-score, limiar fixo}, ylabel={$F_1$},
+  xticklabels={\emph{z}-score, fixed threshold}, ylabel={$F_1$},
   nodes near coords, point meta=explicit symbolic,
   every node near coord/.append style={font=\footnotesize},
-  title={\small B. $F_1$ \emph{(maior é melhor)}},
+  title={\small B. $F_1$ \emph{(higher is better)}},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
   ymajorgrids, grid style={black!12}, axis lines*=left,
 ]
-\addplot[fill=black!30, draw=black!60] coordinates {(zscore,0.516) [0,516] (fixo,0.218) [0,218]};
+\addplot[fill=black!30, draw=black!60] coordinates {(zscore,0.516) [0.516] (fixo,0.218) [0.218]};
 \end{axis}
 \end{tikzpicture}
 \caption[As duas medidas da primeira questão]{As duas medidas, lado a lado. Em A, a diferença entre
@@ -233,10 +233,10 @@ parametrização o faria. A Figura~\ref{fig:av_detetores} apresenta o resultado.
   width=0.78\textwidth, height=6.0cm,
   xmin=0, xmax=0.50, ymin=0, ymax=1.05,
   xtick={0,0.1,0.2,0.3,0.4,0.5},
-  xticklabels={{0,0},{0,1},{0,2},{0,3},{0,4},{0,5}},
+  xticklabels={{0.0},{0.1},{0.2},{0.3},{0.4},{0.5}},
   ytick={0,0.2,0.4,0.6,0.8,1.0},
-  yticklabels={{0,0},{0,2},{0,4},{0,6},{0,8},{1,0}},
-  xlabel={precisão}, ylabel={cobertura},
+  yticklabels={{0.0},{0.2},{0.4},{0.6},{0.8},{1.0}},
+  xlabel={precision}, ylabel={cobertura},
   xmajorgrids, ymajorgrids,
 ]
 \addplot[ig current mark] coordinates {(0.407,0.761)};
@@ -305,10 +305,10 @@ decaimento exponencial. A Figura~\ref{fig:av_ewma} apresenta o resultado.
   xmin=0, xmax=1.0,
   symbolic y coords={f,c,p}, ytick={f,c,p},
   enlarge y limits=0.28,
-  yticklabels={$F_1$, cobertura, precisão},
-  xlabel={valor da medida},
+  yticklabels={$F_1$, recall, precision},
+  xlabel={metric value},
   xtick={0,0.2,0.4,0.6,0.8,1.0},
-  xticklabels={{0,0},{0,2},{0,4},{0,6},{0,8},{1,0}},
+  xticklabels={{0.0},{0.2},{0.4},{0.6},{0.8},{1.0}},
   xmajorgrids,
   legend style={at={(0.5,1.04)}, anchor=south, legend columns=2},
 ]
@@ -355,21 +355,21 @@ A segunda experiência incide sobre a dimensão da janela, e a Figura~\ref{fig:a
 \begin{tikzpicture}
 \begin{axis}[
   width=0.72\textwidth, height=5.0cm,
-  xlabel={dimensão da janela de estimação (dias de negociação)},
-  ylabel={$F_1$ contra o rótulo aproximado},
+  xlabel={estimation window (trading days)},
+  ylabel={$F_1$ against the approximate label},
   xmin=4, xmax=72, ymin=0.30, ymax=0.76,
   xtick={10,20,60}, ytick={0.4,0.5,0.6,0.7},
-  yticklabels={{0,4},{0,5},{0,6},{0,7}},
+  yticklabels={{0.4},{0.5},{0.6},{0.7}},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
   ymajorgrids, grid style={black!12}, axis lines*=left,
   nodes near coords, point meta=explicit symbolic,
   every node near coord/.append style={font=\scriptsize, anchor=north west},
 ]
 \addplot[black!70, thick, mark=*, mark size=2pt]
-  coordinates {(10,0.385) [0,385] (20,0.516) [0,516] (60,0.678) [0,678]};
+  coordinates {(10,0.385) [0.385] (20,0.516) [0.516] (60,0.678) [0.678]};
 \addplot[ig current mark, nodes near coords={}] coordinates {(20,0.516)};
 \draw[dashed, igGreenDark] (axis cs:20,0.30) -- (axis cs:20,0.505);
-\node[text=igGreenDark, font=\scriptsize, anchor=south west] at (axis cs:21,0.31) {janela implantada};
+\node[text=igGreenDark, font=\scriptsize, anchor=south west] at (axis cs:21,0.31) {deployed window};
 \end{axis}
 \end{tikzpicture}
 \caption[Ablação à dimensão da janela]{Desempenho contra o rótulo aproximado para três dimensões da
@@ -443,18 +443,18 @@ alternativas triviais.
   xmin=0, xmax=0.66, enlarge y limits=0.10,
   symbolic y coords={rec, aleat, maior, lex, fin, mini, mpnet},
   ytick={rec, aleat, maior, lex, fin, mini, mpnet},
-  yticklabels={Mais recente, Escolha aleatória, Sempre o setor maior, Palavras em comum,
-               Codificador de finanças, Embeddings (MiniLM), Embeddings (MPNet)},
+  yticklabels={Most recent, Random choice, Always the largest sector, Shared words,
+               Finance encoder, Embeddings (MiniLM), Embeddings (MPNet)},
   ig values,
-  xlabel={precisão@5},
+  xlabel={precision@5},
   xmajorgrids,
 ]
 \addplot[bar shift=0pt, ig alternative bar] coordinates {
-  (0.126,rec) [0,126] (0.240,aleat) [0,240] (0.346,lex) [0,346]
-  (0.420,fin) [0,420]};
-\addplot[bar shift=0pt, ig reference bar] coordinates {(0.467,maior) [0,467]};
-\addplot[bar shift=0pt, ig current bar] coordinates {(0.514,mini) [0,514]};
-\addplot[bar shift=0pt, ig competitor bar] coordinates {(0.538,mpnet) [0,538]};
+  (0.126,rec) [0.126] (0.240,aleat) [0.240] (0.346,lex) [0.346]
+  (0.420,fin) [0.420]};
+\addplot[bar shift=0pt, ig reference bar] coordinates {(0.467,maior) [0.467]};
+\addplot[bar shift=0pt, ig current bar] coordinates {(0.514,mini) [0.514]};
+\addplot[bar shift=0pt, ig competitor bar] coordinates {(0.538,mpnet) [0.538]};
 \end{axis}
 \end{tikzpicture}
 \caption[Recuperação: o método contra seis alternativas]{Precisão@5 do MiniLM implantado, em verde
@@ -589,17 +589,17 @@ no exemplo apresentado no Capítulo~\ref{cap:sistema}. A Figura~\ref{fig:av_dire
   ig axis, ig legend,
   width=0.72\textwidth, height=3.2cm,
   xmin=0, xmax=1, ymin=0.6, ymax=1.4,
-  ytick={1}, yticklabels={mesma direção},
-  xlabel={concordância de direção entre a consulta e o precedente},
-  xtick={0,0.25,0.50,0.75,1.0}, xticklabels={{0,00},{0,25},{0,50},{0,75},{1,00}},
+  ytick={1}, yticklabels={same direction},
+  xlabel={direction agreement between query and precedent},
+  xtick={0,0.25,0.50,0.75,1.0}, xticklabels={{0.00},{0.25},{0.50},{0.75},{1.00}},
   xmajorgrids,
   legend style={at={(0.5,1.05)}, anchor=south, legend columns=2},
 ]
 \addplot[ig connector, forget plot] coordinates {(0.688,1) (0.708,1)};
 \addplot[ig alternative mark] coordinates {(0.688,1)};
-\addlegendentry{emparelhamento aleatório}
+\addlegendentry{random pairing}
 \addplot[ig current mark] coordinates {(0.708,1)};
-\addlegendentry{casos recuperados}
+\addlegendentry{retrieved cases}
 \node[font=\scriptsize, anchor=south east, text=igInk] at (axis cs:0.688,1) {0,688};
 \node[font=\scriptsize, anchor=south west, text=igGreenDark] at (axis cs:0.708,1) {0,708};
 \end{axis}
@@ -668,9 +668,9 @@ quase toda a extensão do eixo, o que estabelece que a diferença não é artefa
   xmin=0, xmax=0.66, enlarge y limits=0.12,
   symbolic y coords={texto, gbm, ctxtexto, ctx, vol},
   ytick={texto, gbm, ctxtexto, ctx, vol},
-  yticklabels={Só texto do título, Árvores com contexto e texto,
-               Contexto e texto, Só contexto de mercado, Só volatilidade},
-  xlabel={\gls{PRAUC} sobre o bloco de teste},
+  yticklabels={Headline text only, Trees with context and text,
+               Context and text, Market context only, Volatility only},
+  xlabel={\gls{PRAUC} on the test block},
   xmajorgrids,
 ]
 \addplot[ig interval] coordinates {(0.406,texto) (0.474,texto)};
@@ -688,7 +688,7 @@ quase toda a extensão do eixo, o que estabelece que a diferença não é artefa
 \addplot[ig current mark] coordinates {(0.538,ctx)};
 \draw[draw=igInk, densely dashed, line width=1pt] (axis cs:0.378,texto) -- (axis cs:0.378,vol);
 \node[font=\scriptsize, anchor=south west, text=igInk] at (axis cs:0.378,vol)
-  {prevalência 0,378};
+  {prevalence 0.378};
 \end{axis}
 \end{tikzpicture}
 \caption[Triagem: pontos e intervalos sobre o mesmo bloco de teste]{Área sob a curva de precisão e
@@ -748,28 +748,28 @@ horizonte, e a Figura~\ref{fig:av_rotulos} apresenta o resultado.
   ig axis, ig legend,
   width=0.29\textwidth, height=4.8cm,
   xmin=0.5, xmax=5.5, ymin=0, ymax=0.82,
-  xtick={1,3,5}, xlabel={horizonte (dias)},
+  xtick={1,3,5}, xlabel={horizon (days)},
   ytick={0,0.2,0.4,0.6,0.8},
-  yticklabels={{0,0},{0,2},{0,4},{0,6},{0,8}},
+  yticklabels={{0.0},{0.2},{0.4},{0.6},{0.8}},
   ymajorgrids,
   legend columns=3,
 ]
-\nextgroupplot[title={limiar 1,5\%}, ylabel={\gls{PRAUC}}, legend to name=leg:rotulos]
+\nextgroupplot[title={threshold 1.5\%}, ylabel={\gls{PRAUC}}, legend to name=leg:rotulos]
 \addplot[ig comparison line] coordinates {(1,0.449) (3,0.613) (5,0.716)};
-\addlegendentry{só volatilidade}
+\addlegendentry{volatility only}
 \addplot[ig alternative line] coordinates {(1,0.420) (3,0.572) (5,0.689)};
-\addlegendentry{contexto e texto}
+\addlegendentry{context and text}
 \addplot[ig reference line] coordinates {(1,0.277) (3,0.483) (5,0.597)};
-\addlegendentry{prevalência}
+\addlegendentry{prevalence}
 
-\nextgroupplot[title={limiar 2\%}]
+\nextgroupplot[title={threshold 2\%}]
 \path[fill=igGreenLight] (axis cs:2.55,0) rectangle (axis cs:3.45,0.82);
 \addplot[ig comparison line] coordinates {(1,0.334) (3,0.542) (5,0.620)};
 \addplot[ig alternative line] coordinates {(1,0.294) (3,0.496) (5,0.590)};
 \addplot[ig reference line] coordinates {(1,0.183) (3,0.378) (5,0.487)};
 \node[font=\scriptsize, text=igGreenDark, anchor=south] at (axis cs:3,0.72) {célula usada};
 
-\nextgroupplot[title={limiar 3\%}]
+\nextgroupplot[title={threshold 3\%}]
 \addplot[ig comparison line] coordinates {(1,0.228) (3,0.402) (5,0.489)};
 \addplot[ig alternative line] coordinates {(1,0.174) (3,0.369) (5,0.461)};
 \addplot[ig reference line] coordinates {(1,0.082) (3,0.232) (5,0.324)};
@@ -830,15 +830,15 @@ Figura~\ref{fig:av_pontaaponta}.
   xmin=0, xmax=0.80, enlarge y limits=0.18,
   symbolic y coords={alfa, acaso},
   ytick={alfa, acaso},
-  yticklabels={Desempate por ordem alfabética, Escolha aleatória},
+  yticklabels={Alphabetical tie-break, Random choice},
   nodes near coords, nodes near coords align={horizontal}, point meta=explicit symbolic,
   every node near coord/.append style={font=\footnotesize},
-  xlabel={precisão dentro do orçamento de cinco alertas por dia},
+  xlabel={precision within the five-alert daily budget},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
   xmajorgrids, grid style={black!12}, axis lines*=left,
 ]
-\addplot[bar shift=0pt, ig alternative bar] coordinates {(0.163,alfa) [0,163]};
-\addplot[bar shift=0pt, ig reference bar] coordinates {(0.379,acaso) [0,379]};
+\addplot[bar shift=0pt, ig alternative bar] coordinates {(0.163,alfa) [0.163]};
+\addplot[bar shift=0pt, ig reference bar] coordinates {(0.379,acaso) [0.379]};
 \end{axis}
 \end{tikzpicture}
 \caption[O desempate alfabético não é uma referência aleatória]{Duas formas de escolher as cinco
@@ -885,23 +885,23 @@ desmonta o modelo entrada a entrada, sob o protocolo congelado.
   xmin=0, xmax=0.80, enlarge y limits=0.08,
   symbolic y coords={comp, nada, semvol, tabela, semset, vol, ctx},
   ytick={comp, nada, semvol, tabela, semset, vol, ctx},
-  yticklabels={Só o comprimento do título, Sem nada de nível de empresa,
-               Sem volatilidade nem momento, Tabela de consulta por empresa,
-               Sem os indicadores de setor, Só volatilidade,
-               Contexto completo (o implantado)},
+  yticklabels={Headline length only, No company-level input,
+               No volatility or momentum, Per-company lookup table,
+               No sector indicators, Volatility only,
+               Full context (as deployed)},
   legend style={at={(0.5,1.02)}, anchor=south, legend columns=2, font=\footnotesize, draw=none},
   nodes near coords, nodes near coords align={horizontal}, point meta=explicit symbolic,
   every node near coord/.append style={font=\scriptsize},
-  xlabel={valor da medida},
+  xlabel={metric value},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
   xmajorgrids, grid style={black!12}, axis lines*=left,
 ]
 \addplot[fill=black!58, draw=black!75] coordinates {
-  (0.378,comp) [0,378] (0.378,nada) [0,378] (0.389,semvol) [0,389] (0.534,tabela) [0,534]
-  (0.543,semset) [0,543] (0.542,vol) [0,542] (0.538,ctx) [0,538]};
+  (0.378,comp) [0.378] (0.378,nada) [0.378] (0.389,semvol) [0.389] (0.534,tabela) [0.534]
+  (0.543,semset) [0.543] (0.542,vol) [0.542] (0.538,ctx) [0.538]};
 \addplot[fill=black!22, draw=black!50] coordinates {
-  (0.352,comp) [0,352] (0.368,nada) [0,368] (0.390,semvol) [0,390] (0.662,tabela) [0,662]
-  (0.629,semset) [0,629] (0.632,vol) [0,632] (0.632,ctx) [0,632]};
+  (0.352,comp) [0.352] (0.368,nada) [0.368] (0.390,semvol) [0.390] (0.662,tabela) [0.662]
+  (0.629,semset) [0.629] (0.632,vol) [0.632] (0.632,ctx) [0.632]};
 \legend{\gls{PRAUC}, precisão@5 no orçamento}
 \end{axis}
 \end{tikzpicture}
@@ -988,9 +988,9 @@ A Figura~\ref{fig:av_acrescimo} apresenta os três intervalos.
     node[above, font=\scriptsize, text=orange!60!black, align=center] {critério\\ prático};
 
   \foreach \yv/\xa/\xm/\xb/\xrot in {
-    3/0.0038/0.0123/0.0204/{o texto acrescenta à tabela de consulta},
-    2/-0.0321/0.0043/0.0366/{a tabela com texto contra a volatilidade isolada},
-    1/-0.0140/0.0057/0.0254/{o texto acrescenta à separação dentro da empresa}} {
+    3/0.0038/0.0123/0.0204/{text adds to the lookup table},
+    2/-0.0321/0.0043/0.0366/{lookup table with text vs volatility alone},
+    1/-0.0140/0.0057/0.0254/{text adds to separation within the company}} {
     \draw[line width=1.6pt, black!55] (\xa,\yv) -- (\xb,\yv);
     \draw[black!55] (\xa,\yv-0.11) -- (\xa,\yv+0.11);
     \draw[black!55] (\xb,\yv-0.11) -- (\xb,\yv+0.11);
@@ -1085,10 +1085,10 @@ produção. A Figura~\ref{fig:av_motor} apresenta as duas.
 \begin{axis}[
   name=pa, width=0.44\textwidth, height=4.6cm, ybar, bar width=16pt,
   ymin=0, ymax=10, symbolic x coords={emp, merc, set}, xtick=data,
-  xticklabels={empresa, mercado, setor}, ylabel={empresas},
+  xticklabels={company, market, sector}, ylabel={companies},
   nodes near coords, point meta=explicit symbolic,
   every node near coord/.append style={font=\footnotesize},
-  title={\small A. motor identificado},
+  title={\small A. identified driver},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
   ymajorgrids, grid style={black!12}, axis lines*=left,
 ]
@@ -1099,9 +1099,9 @@ produção. A Figura~\ref{fig:av_motor} apresenta as duas.
   width=0.44\textwidth, height=4.6cm,
   xmin=-0.10, xmax=1.05, ymin=0.4, ymax=1.6,
   ytick=\empty, xtick={0,0.25,0.5,0.75,1.0},
-  xticklabels={{0,00},{0,25},{0,50},{0,75},{1,00}},
-  xlabel={quota do movimento atribuída à empresa},
-  title={\small B. dispersão da repartição},
+  xticklabels={{0.00},{0.25},{0.50},{0.75},{1.00}},
+  xlabel={share of the movement attributed to the company},
+  title={\small B. spread of the split},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
   xmajorgrids, grid style={black!12}, axis lines*=left,
 ]
@@ -1181,7 +1181,7 @@ produção. A Figura~\ref{fig:av_porta} apresenta o resultado.
   }
   \node[right, align=left, text=orange!60!black] at (0.645,2) {passa\\ sempre};
   \node[right, align=left, black!55] at (0.56,10.5) {nunca\\ passa};
-  \node[right, align=left, black!62] at (0.605,6.5) {o limiar\\ decide};
+  \node[right, align=left, black!62] at (0.605,6.5) {the threshold\\ decides};
 \end{tikzpicture}
 \caption[O que a porta de decisão separava]{Intervalo de todas as pontuações atribuídas pelo modelo a
 cada empresa em produção, com a mediana assinalada. As barras claras nunca alcançam o limiar, as
@@ -1281,9 +1281,9 @@ já maturadas.
 \begin{axis}[
   name=pa, width=0.80\textwidth, height=4.4cm,
   xmin=0.528, xmax=0.688, ymin=0.20, ymax=2.75,
-  ytick={1,2}, yticklabels={{suprimidas ($n = 389$)}, {mantidas ($n = 436$)}},
-  xtick={0.55,0.60,0.65}, xticklabels={{0,55},{0,60},{0,65}},
-  title={\small A. fração de casos que se revelaram materiais},
+  ytick={1.2}, yticklabels={{suppressed ($n = 389$)}, {kept ($n = 436$)}},
+  xtick={0.55,0.60,0.65}, xticklabels={{0.55},{0.60},{0.65}},
+  title={\small A. share of cases that proved material},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
   xmajorgrids, grid style={black!12}, axis lines*=left,
 ]
@@ -1305,8 +1305,8 @@ já maturadas.
   xmin=0.385, xmax=0.605, ymin=0.4, ymax=1.75,
   ytick={1}, yticklabels={ROC-AUC},
   xtick={0.40,0.45,0.50,0.55,0.60},
-  xticklabels={{0,40},{0,45},{0,50},{0,55},{0,60}},
-  title={\small B. capacidade de ordenação},
+  xticklabels={{0.40},{0.45},{0.50},{0.55},{0.60}},
+  title={\small B. ranking ability},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
   xmajorgrids, grid style={black!12}, axis lines*=left,
 ]
@@ -1382,18 +1382,18 @@ $0{,}25$ deslocamento significativo. A Figura~\ref{fig:av_deriva} apresenta o re
   xbar, width=0.66\textwidth, height=4.8cm, bar width=9pt,
   xmin=0, xmax=0.36, enlarge y limits=0.16,
   symbolic y coords={mom, ret, comp, vol}, ytick={mom, ret, comp, vol},
-  yticklabels={Momento dos 5 dias, Retorno do próprio dia, Comprimento do título,
-               Volatilidade dos 20 dias},
+  yticklabels={5-day momentum, Same-day return, Headline length,
+               20-day volatility},
   nodes near coords, nodes near coords align={horizontal}, point meta=explicit symbolic,
   every node near coord/.append style={font=\footnotesize},
   xlabel={\gls{PSI} entre o bloco de treino e o de teste},
-  xtick={0,0.10,0.25,0.35}, xticklabels={{0,00},{0,10},{0,25},{0,35}},
+  xtick={0,0.10,0.25,0.35}, xticklabels={{0.00},{0.10},{0.25},{0.35}},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
   xmajorgrids, grid style={black!12}, axis lines*=left,
 ]
-\addplot[bar shift=0pt, fill=black!22, draw=black!50] coordinates {(0.014,mom) [0,014] (0.020,ret) [0,020]};
-\addplot[bar shift=0pt, fill=black!40, draw=black!60] coordinates {(0.111,comp) [0,111]};
-\addplot[bar shift=0pt, fill=black!65, draw=black!80] coordinates {(0.281,vol) [0,281]};
+\addplot[bar shift=0pt, fill=black!22, draw=black!50] coordinates {(0.014,mom) [0.014] (0.020,ret) [0.020]};
+\addplot[bar shift=0pt, fill=black!40, draw=black!60] coordinates {(0.111,comp) [0.111]};
+\addplot[bar shift=0pt, fill=black!65, draw=black!80] coordinates {(0.281,vol) [0.281]};
 \draw[dashed, orange!70!black] (axis cs:0.10,mom) -- (axis cs:0.10,vol);
 \draw[dashed, orange!70!black] (axis cs:0.25,mom) -- (axis cs:0.25,vol);
 \node[font=\scriptsize, text=orange!60!black, anchor=north] at (axis cs:0.175,mom) {moderada};
@@ -1445,18 +1445,18 @@ todas.
   xmin=0, xmax=1.12, enlarge y limits=0.14,
   symbolic y coords={acaso, mexeu, modelo, volat, oraculo},
   ytick={acaso, mexeu, modelo, volat, oraculo},
-  yticklabels={Escolha aleatória, Quem mais se moveu hoje, O modelo implantado,
-               Volatilidade da empresa, Oráculo},
+  yticklabels={Random choice, Biggest mover today, The deployed model,
+               Company volatility, Oracle},
   nodes near coords, nodes near coords align={horizontal}, point meta=explicit symbolic,
   every node near coord/.append style={font=\footnotesize},
-  xlabel={precisão@5 sob o mesmo protocolo},
+  xlabel={precision@5 under the same protocol},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
   xmajorgrids, grid style={black!12}, axis lines*=left,
 ]
-\addplot[bar shift=0pt, ig reference bar] coordinates {(0.375,acaso) [0,375]};
-\addplot[bar shift=0pt, ig alternative bar] coordinates {(0.489,mexeu) [0,489] (0.662,volat) [0,662]};
-\addplot[bar shift=0pt, ig current bar] coordinates {(0.632,modelo) [0,632]};
-\addplot[bar shift=0pt, ig reference bar] coordinates {(0.968,oraculo) [0,968]};
+\addplot[bar shift=0pt, ig reference bar] coordinates {(0.375,acaso) [0.375]};
+\addplot[bar shift=0pt, ig alternative bar] coordinates {(0.489,mexeu) [0.489] (0.662,volat) [0.662]};
+\addplot[bar shift=0pt, ig current bar] coordinates {(0.632,modelo) [0.632]};
+\addplot[bar shift=0pt, ig reference bar] coordinates {(0.968,oraculo) [0.968]};
 \end{axis}
 \end{tikzpicture}
 \caption[O sistema contra as alternativas já disponíveis]{Cinco políticas de seleção sobre o mesmo
