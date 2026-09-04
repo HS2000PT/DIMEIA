@@ -265,3 +265,37 @@ def test_candidatas_uma_so_manchete_nao_escreve_nada(tmp_path, monkeypatch):
     runner._registar_candidatas_safe([latest], latest, "NVDA", None, None, 2,
                                      date(2026, 9, 4))
     assert not (tmp_path / "pred.jsonl").exists()
+
+
+def test_scan_news_busca_precos_uma_so_vez_por_empresa(monkeypatch, tmp_path):
+    """Uma busca de precos por empresa por varrimento. Duas apagam a pontuacao em silencio.
+
+    Regressao de 2026-09-04, encontrada SO em producao. O registo das candidatas (decisao R1)
+    ia buscar a serie por sua conta, o que somava uma segunda chamada por empresa e por ciclo.
+    O yfinance passou a devolver 14 dias em vez do historico completo, `vol20` saiu NaN, e a
+    triagem deixou de pontuar no sistema inteiro: 139 linhas `[triagem]` antes da implantacao,
+    zero depois. Nenhum teste falhou e o `exit code` foi zero.
+    """
+    chamadas: list[str] = []
+
+    def _falso_hist(ticker, cache):
+        chamadas.append(ticker)
+        if ticker not in cache:
+            cache[ticker] = {"Close": pd.Series([1.0, 2.0, 3.0])}
+        return cache[ticker]
+
+    monkeypatch.setattr(runner, "_hist_cached", _falso_hist)
+    monkeypatch.setattr(runner, "_PRED_LOG", tmp_path / "pred.jsonl")
+    monkeypatch.setattr(runner, "_DECISOES_VISTAS", None)
+
+    # o helper NAO pode ir buscar precos: recebe-os ja obtidos
+    cache: dict = {}
+    close = _falso_hist("NVDA", cache)["Close"]
+    latest = _Item("2026-09-04", "escolhida")
+    runner._registar_candidatas_safe(
+        [_Item("2026-09-04", "a"), _Item("2026-09-04", "b"), latest],
+        latest, "NVDA", None, 0.4, 2, date(2026, 9, 4), close=close,
+    )
+    assert chamadas == ["NVDA"], (
+        f"esperava UMA busca de precos, houve {len(chamadas)}: {chamadas}"
+    )

@@ -140,6 +140,26 @@ def score_latest_with_snapshot(
     bundle: dict, close: pd.Series, headline: str, ticker: str,
 ) -> tuple[tuple[float, list[tuple[str, float]]], dict] | None:
     """Versão auditável de :func:`score_latest`, sem alterar a API existente."""
+    # A fonte de preços devolve a barra do dia corrente com fecho NaN enquanto a sessão não
+    # está liquidada. Pontuar sobre essa barra dá `ret_event` NaN e a função devolvia None —
+    # ou seja, a triagem DEIXAVA DE PONTUAR, em silêncio, durante parte de cada dia. Encontrado
+    # a 2026-09-04 a verificar produção: 139 linhas `[triagem]` às 23:30 e zero às 00:07, com a
+    # série a trazer um único NaN no fim. É a mesma família do incidente de 2026-08-04, e o
+    # guard que daí veio faz falhar aberto — o que evita a excepção e esconde a paragem.
+    #
+    # Cortar só o NaN FINAL e pontuar a última barra COMPLETA é o que a dissertação já descreve
+    # como comportamento de produção: `as_of` regista a barra usada, e a assimetria do
+    # `ret_event` entre treino e produção está declarada. Não se preenche nem se extrapola nada.
+    #
+    # ⚠️ UMA barra, e só uma. Duas ou mais em falta não são a sessão por liquidar: são a fonte
+    # partida, que foi o que aconteceu a 2026-08-04 em toda a watchlist. Nesse caso pontuar a
+    # última completa daria um score de dias antes apresentado como o de hoje, e isso é pior do
+    # que não pontuar. Além de uma, continua a falhar ABERTO — o invariante de 2026-08-04
+    # mantém-se, e tem teste próprio.
+    if hasattr(close, "iloc") and len(close) and close.iloc[-1] != close.iloc[-1]:
+        close = close.iloc[:-1]
+    if len(close) == 0:
+        return None
     feats = event_features(close, len(close) - 1)
     if feats is None:
         return None

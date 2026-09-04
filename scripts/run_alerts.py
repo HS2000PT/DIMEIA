@@ -505,7 +505,8 @@ def _log_decision_safe(news_date: str, ticker: str, headline: str,
 
 
 def _registar_candidatas_safe(relevantes: list, latest, ticker: str, bundle,
-                              gate: float | None, max_age: int, hoje) -> None:
+                              gate: float | None, max_age: int, hoje,
+                              close=None) -> None:
     """Regista TODA a manchete relevante que o ciclo NÃO escolheu, com a porta onde morreu.
 
     Decisão R1 do contrato de dados. Antes disto o registo só recebia a sobrevivente das portas
@@ -516,8 +517,13 @@ def _registar_candidatas_safe(relevantes: list, latest, ticker: str, bundle,
 
     A `latest` NÃO é registada aqui; é registada a jusante, com a porta real onde acabou.
 
-    Custo: o modelo é uma regressão logística sobre nove entradas e a série de preços é obtida
-    UMA vez por empresa. O que é caro são os precedentes, e a pontuação não precisa deles.
+    ⚠️ A série de preços vem de FORA, já obtida, e isso não é detalhe. A primeira versão
+    ia buscá-la aqui, o que somava uma segunda busca por empresa e por ciclo — doze chamadas
+    por minuto a mais. Em produção o efeito foi imediato e não aparecia em teste nenhum: o
+    yfinance começou a devolver séries de 14 dias em vez do histórico completo, `vol20` saiu
+    NaN, e a triagem DEIXOU DE PONTUAR NO SISTEMA INTEIRO — 139 linhas `[triagem]` antes da
+    implantação, zero depois. O `_hist_cached` já existia precisamente com este aviso escrito
+    no docstring; o que faltou foi usá-lo.
 
     ⚠️ Fixados a empresa e o dia, oito das nove entradas são constantes: só `headline_len`
     separa duas manchetes da mesma empresa no mesmo ciclo. Registá-las todas é o que torna essa
@@ -528,16 +534,9 @@ def _registar_candidatas_safe(relevantes: list, latest, ticker: str, bundle,
     outras = [it for it in relevantes if it is not latest]
     if not outras:
         return
-    close = None
     snapshot_de = {}
-    if bundle is not None:
-        try:
-            from investigator.market_data.prices import get_price_history
-
-            close = get_price_history(ticker)["Close"]
-        except Exception as exc:  # noqa: BLE001
-            print(f"[postval {ticker}] sem precos para pontuar candidatas "
-                  f"(ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
+    if bundle is None:
+        close = None
     for it in outras:
         etapa = "stale" if not news_is_fresh(it.date, hoje, max_age) else "not_latest"
         scored = None
@@ -551,9 +550,13 @@ def _registar_candidatas_safe(relevantes: list, latest, ticker: str, bundle,
                     scored, snapshot = resultado
             except Exception as exc:  # noqa: BLE001
                 snapshot_de.setdefault("erro", f"{type(exc).__name__}: {sem_segredos(exc)}")
+        # `model_info` SO quando houve pontuacao. Registar a identidade do modelo numa linha
+        # que ele nao pontuou afirma mais do que aconteceu, e a auditoria leria essas linhas
+        # como classe A quando nao sao.
         _log_decision_safe(it.date, ticker, it.headline, scored, gate,
                            kept=False, feature_snapshot=snapshot,
-                           model_info=(bundle.get("_model_info") if bundle is not None else None),
+                           model_info=(bundle.get("_model_info")
+                                       if (bundle is not None and scored is not None) else None),
                            stage=etapa)
     if "erro" in snapshot_de:
         print(f"[postval {ticker}] pontuacao de candidata falhou (ignorada): "
@@ -945,6 +948,10 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
         except Exception:  # noqa: BLE001
             pass
 
+    # UMA busca de precos por empresa por varrimento, partilhada entre o registo das
+    # candidatas e a triagem da escolhida. Duas buscas separadas esgotam o limite de ritmo
+    # do yfinance e a serie volta truncada, o que apaga a pontuacao em silencio.
+    precos_ciclo: dict = {}
     for ticker in n.get("tickers", []):
         try:
             items = _noticias_de_todas_as_fontes(ticker, start, end, n)
@@ -965,8 +972,15 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
             max_age = int(n.get("max_age_days", 2))
             # R1: o registo passa a receber a população real de candidatas, e não só a que
             # sobrevive às portas. A `latest` é registada mais abaixo, na porta onde acabar.
+            close_ticker = None
+            if bundle is not None:
+                try:
+                    close_ticker = _hist_cached(ticker, precos_ciclo)["Close"]
+                except Exception as exc:  # noqa: BLE001
+                    print(f"[precos {ticker}] sem serie para triagem (ignorado): "
+                          f"{type(exc).__name__}: {sem_segredos(exc)}")
             _registar_candidatas_safe(relevantes, latest, ticker, bundle, gate,
-                                      max_age, date.today())
+                                      max_age, date.today(), close=close_ticker)
             if not news_is_fresh(latest.date, date.today(), max_age):
                 print(f"[noticias {ticker}] mais recente é de {latest.date} (>{max_age} dias) "
                       "— sem alerta (anti-repetição).")
@@ -998,11 +1012,12 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
                                    kept=False, stage="weak_precedent")
                 continue
             if bundle is not None:
-                from investigator.market_data.prices import get_price_history
                 from investigator.triage.infer import score_latest_with_snapshot
 
-                scored_result = score_latest_with_snapshot(
-                    bundle, get_price_history(ticker)["Close"], latest.headline, ticker
+                scored_result = (
+                    score_latest_with_snapshot(
+                        bundle, close_ticker, latest.headline, ticker
+                    ) if close_ticker is not None else None
                 )
                 scored = scored_result[0] if scored_result is not None else None
                 feature_snapshot = scored_result[1] if scored_result is not None else None

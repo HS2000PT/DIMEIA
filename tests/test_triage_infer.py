@@ -209,3 +209,48 @@ def test_o_mapa_do_corpus_continua_a_ganhar_ao_de_implantacao():
 
     for t, setor in SECTORS.items():
         assert deploy_sector(t) == setor
+
+
+def test_barra_final_nan_nao_desliga_a_pontuacao():
+    """A barra do dia corrente vem com fecho NaN ate a sessao liquidar; pontuar a ultima
+    COMPLETA em vez de desistir.
+
+    Encontrado a 2026-09-04 a verificar producao: 139 linhas `[triagem]` as 23:30 e zero as
+    00:07, com a serie a trazer um unico NaN no fim. `ret_event` saia NaN, `score_latest`
+    devolvia None, e a triagem deixava de pontuar EM SILENCIO durante parte de cada dia --
+    o guard de 2026-08-04 faz falhar aberto, o que evita a excepcao e esconde a paragem.
+    """
+    import pandas as pd
+
+    from investigator.triage.infer import load_context_bundle, score_latest_with_snapshot
+
+    bundle = load_context_bundle()
+    if bundle is None:
+        pytest.skip("sem models/triage_context_lr.joblib nesta arvore")
+    rng = np.random.default_rng(20260904)
+    idx = pd.bdate_range("2026-03-02", periods=80)
+    precos = pd.Series(100 * np.exp(np.cumsum(rng.normal(0, 0.01, 80))), index=idx)
+
+    limpa = score_latest_with_snapshot(bundle, precos, "manchete de teste", "NVDA")
+    assert limpa is not None, "serie sem NaN tinha de pontuar"
+
+    com_nan = pd.concat([precos, pd.Series([np.nan],
+                        index=pd.bdate_range(idx[-1] + pd.Timedelta(days=1), periods=1))])
+    resultado = score_latest_with_snapshot(bundle, com_nan, "manchete de teste", "NVDA")
+    assert resultado is not None, "a barra NaN final desligou a pontuacao"
+    # pontua a ultima COMPLETA, logo o resultado e o mesmo da serie limpa
+    assert resultado[0][0] == pytest.approx(limpa[0][0])
+    assert resultado[1]["as_of"] == limpa[1]["as_of"]
+
+
+def test_serie_toda_nan_continua_a_falhar_aberto():
+    """Controlo no sentido oposto: sem uma unica barra utilizavel, devolve None e nao rebenta."""
+    import pandas as pd
+
+    from investigator.triage.infer import load_context_bundle, score_latest_with_snapshot
+
+    bundle = load_context_bundle()
+    if bundle is None:
+        pytest.skip("sem models/triage_context_lr.joblib nesta arvore")
+    vazia = pd.Series([np.nan] * 5, index=pd.bdate_range("2026-09-01", periods=5))
+    assert score_latest_with_snapshot(bundle, vazia, "h", "NVDA") is None
