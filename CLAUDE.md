@@ -219,6 +219,90 @@
   o que partiu o `deploy_heroku.py` em 23 erros de sintaxe. Restaurado do git e refeito com
   `chr(92)` num ficheiro à parte. **A regra que já estava escrita é a certa: não gerar código com
   escapes por heredoc — ficheiro à parte, ou `chr(92)`.**
+  **⚠️ (K) A PORTA DE ENTREGA ESTAVA A GUARDAR O DOCUMENTO ERRADO.** Quatro verificadores
+  apontavam para `tese/`, **superseda** por `tese-v2/`: davam garantia falsa sobre o canónico e
+  gritavam por defeitos que não contam. Mesma classe do `check_references` da sessão 58.
+  **⚠️ E CORRIGI-A MAL À PRIMEIRA, o que vale mais do que o defeito.** Apontei o
+  `check_tese_numeros` à árvore certa **sem corrigir a lista de ficheiros** (`cap4/capitulo4.tex`
+  contra `ch4/chapter4.tex`): passou a ler o frontmatter e mais nada — **seis decimais** no que
+  julgava ser a tese inteira — e reportou **cinquenta números correctos como «já não citados»**.
+  Quase mandei corrigir a tese, que estava certa. **Um verificador cego e um que acusa tudo são o
+  mesmo defeito visto de dois lados.** Segunda causa, independente: a tese escreve os decimais
+  com **vírgula** e o verificador procurava o ponto — três limitações **medidas** apareciam como
+  abandonadas quando estão lá todas. **Verifiquei lendo o texto, não o veredicto do verificador.**
+  O `check_materiais` precisa das **duas** árvores e acusava **comentários LaTeX**. Uma entrada
+  saiu do manifesto com a razão escrita: o R² da AMD, porque a reescrita passa a reportar a
+  **mediana** — um R² individual é anedota, a mediana é resumo.
+  **⚠️ (L) REVISÃO DE CONTEÚDO DA TESE CANÓNICA: três correcções.**
+  **(L1) O fecho do Cap. 5 contradizia a sua própria tabela**, quatro parágrafos acima: dizia
+  «**duas** ocasiões em que o sistema manteve a mais simples **por explicabilidade**», e a tabela
+  tem **três** linhas «Não obteve o melhor resultado», com razões **distintas** (explicabilidade,
+  responsividade, custo) que o Cap. 6 já enumerava. Errado na contagem e na atribuição.
+  **(L2) O Cap. 1 afirmava que as aplicações gratuitas «não respondem a nenhuma das três»**, e o
+  Cap. 2 nomeia **duas** que declaram responder (Robinhood Cortex, momentos-chave do Google
+  Finance). O Cap. 2 trata-as com o cuidado devido; era a introdução que prometia mais do que o
+  corpo sustenta. Mesmo defeito que a sessão 61 corrigira na tese anterior, **reintroduzido pela
+  reescrita**.
+  **(L3) UMA FRASE FICOU DESACTUALIZADA POR MIM, NO MESMO DIA.** O Cap. 5 dizia que o registo
+  «não guarda o valor das entradas» e que separar as duas causas «exigiria registar essas
+  entradas e voltar a observar durante semanas» — foi exactamente o que implantei. Passa a estar
+  **datada**, com o parágrafo da instrumentação e **duas consequências e nenhum resultado**.
+  **VERIFICADO E LIMPO, para não se repetir:** todas as promessas de contagem; a aritmética das
+  margens; **267 referências cruzadas, 0 incompatibilidades de tipo**. E uma que quase reportei
+  mal: «o sistema regista todas as decisões de triagem» parecia excessivo — o capítulo declara a
+  população filtrada oitenta linhas depois e chama-lhe a constatação com maior capacidade de
+  transferência do trabalho.
+  **✅ (M) PASSAGEM DE ESCRITA, contra as regras do `BRIEF_REESCRITA` e não contra gosto meu.**
+  Três violações do item 1 dos proibidos (comentar o próprio texto): «Fica registado», «que
+  convém enunciar», «Convém, por isso, enunciar».
+  **MEDIDO E LIMPO:** primeira pessoa 6 ocorrências, **todas legítimas** (integridade,
+  dedicatória, agradecimentos); ênfase dramática **0**; coloquialismos **0**; travessões **0**;
+  todas as secções abrem com prosa; todos os capítulos abrem a dizer o que fazem.
+  **⚠️ E O QUE DECIDI NÃO MEXER, com a razão:** as frases longas (o brief pede «parágrafos
+  densos» — encurtar trabalharia **contra** o alvo); os ecos de «modelo», «empresa», «limiar»
+  (é terminologia que o brief manda repetir); as oito frases a começar por «E» (fecho deliberado
+  de enumeração, e a sessão 61 **refutou 43 de 57** achados desta lente, com o autor a confirmar
+  as recusas). **O resumo PT: a minha primeira contagem deu 201 contra um limite de 200 e ia
+  corrigi-lo; contado a sério são 199** — a primeira contava as chavetas de um comando LaTeX.
+  **Perfil: 34 370 palavras (alvo ~36 000)**, figuras dentro do intervalo nos seis capítulos.
+  **✅ (N) AS 40 FIGURAS EM INGLÊS, com legendas em português.** O interior passa a inglês (é o
+  que permite reutilizá-las no artigo); a legenda é prosa do documento e fica.
+  **⚠️ QUATRO ARMADILHAS QUE UMA CONVERSÃO CEGA TERIA CRIADO:** (1) «Biliões de dólares» —
+  em PT-PT bilião é 10^12 e «billions» é 10^9, logo traduzir à letra deixava a figura **errada
+  por mil vezes**; ficou `Trillions` no eixo e «biliões» na legenda, ambos certos na sua língua.
+  (2) `fig:met_embeddings` vive de um trocadilho — o par partilha a palavra «**bate**» e a
+  legenda **cita-a**; passou a «**record**», que funciona em inglês, com a legenda a acompanhar.
+  (3) os exemplos usavam palavras portuguesas para ilustrar um sistema cujo corpus é **inglês**.
+  (4) **50 decimais com vírgula** (11 linhas de rótulos de eixo e 39 rótulos de valor desenhados).
+  **TRÊS MUDANÇAS DE FORMA, só onde a forma servia mal o conteúdo:** `fig:mercado_eua` (série
+  temporal desenhada em **barras**, passa a linha com área e três pontos rotulados);
+  `fig:sis_funil` (funil em barras, passa a **bandas descendentes**; a sequência reconcilia
+  exacto, 5060 menos 2994, 1194, 269, 249 e 21 dá 333, e as barras escondiam o resto acumulado);
+  `fig:sis_seletividade` (barras, passa a **lollipop**, porque **sete das dez empresas têm zero
+  alertas** e num gráfico de barras o zero é uma barra **invisível**).
+  **⚠️ E DUAS QUE PROPUS E ESTAVAM ERRADAS:** degraus para `fig:av_ablacao` — a legenda diz
+  explicitamente que «as linhas **não** formam uma sequência de remoções cumulativas», logo
+  degraus implicariam uma acumulação que os dados não têm; e pequenos múltiplos para as três
+  figuras com intervalos, que partiria a narrativa. **Variedade que custa a leitura não é
+  melhoria.**
+  **✅ (O) SLIDES E GUIA SINCRONIZADOS COM AS CAPTURAS v7.** Usavam **v6** enquanto a tese usa
+  v7: mostravam um produto que o documento já não descreve. **Trocar só a imagem mudava o defeito
+  de sítio** — o texto ao lado descrevia o ecrã antigo número a número. v6: a acção desce
+  0,41%, com o mercado e a empresa em alta e o **setor** a puxar. v7: Netflix menos 0,30%, e a
+  contribuição da própria empresa é **positiva** (mais 0,53%); quem a puxa é o **mercado**
+  (menos 0,61%). **Nenhum número sobrevivia à troca e a leitura invertia-se**, e o caso novo é
+  melhor para o argumento. A segunda captura mudou de **objecto**: a v6 dava o mapa do dia por
+  empresa, a v7 dá o percurso de **uma** candidata pelas portas até onde parou. **Fecha o
+  0,41% que os slides afirmavam e a tese não sustentava; o `check_materiais` passa.**
+  **PORTA DE ENTREGA: 8 para 1**, e o que resta são os **nomes do júri**, que o ISEP só designa
+  **depois** da submissão (a tese aprovada do Bruno Ribeiro foi depositada com os marcadores).
+  **Tese 126 pp (94 de 120 antes dos apêndices) · slides 22 · guia 25 · guia de construção 16,
+  todos 0 erros · 52/52 números · 973 testes · ruff limpo.**
+  **⚠️ E A LIÇÃO DE MÉTODO DESTAS PASSAGENS: renderizar apanhou o que o `exit code` não apanha.**
+  Os anos a saírem «2,015» (o pgfplots aplica separador de milhares a números que são anos), a
+  legenda do funil a descrever a figura antiga, os dois slides a **transbordarem** porque o meu
+  texto novo era mais longo, e uma chaveta apagada no guia que o LaTeX reportou apenas como
+  «File ended while scanning use of», sem apontar o sítio.
 - **2026-09-03 — LER PRIMEIRO `docs/planos/REVISAO_PRIORITARIA_ANEXOS.md`.**
   Quatro anexos integrais preservados e 44 itens de verificação. Este estado prevalece sobre
   os registos históricos abaixo: tese canónica `tese-v2/main.pdf`; retreino autorizado, a
@@ -1141,8 +1225,8 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 62 (auditoria crítica da tese, e execução do plano)
-- **Última atualização:** 2026-08-30
+- **Sessão nº:** 63 (retreino a recolher, R14 fechado, tese e materiais revistos)
+- **Última atualização:** 2026-09-04
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
   ter calma nas estatísticas, mostrando cada salto até ao valor final):**
@@ -2205,53 +2289,40 @@
   23+23 / guia 85 — todos 0 erros, 0 citações e referências indefinidas.**
   **PENDENTE HUMANO:** rodar as 3 credenciais (o PAT primeiro — tem `admin: true`); enviar
   `docs/defence/mensagem_orientador.md`; reclamar o domínio para o URL limpo.
-- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI (actualizado na sessão 57, 2026-08-15):**
-  **O aluno decidiu: fica com este repositório e acaba-o.** (Pediu também um prompt de raiz para um
-  projecto novo — está em `docs/design/PROMPT_V2_NOVO_PROJECTO.md` e é para **depois da entrega**;
-  começar repositório novo a 30 dias do prazo custaria a tese, e isso está lá escrito.)
-  **O QUE JÁ NÃO ESTÁ EM ABERTO:** a auditoria das 7 lentes (feita à mão, a automática morreu no
-  limite); a correcção do chão da RQ4 propagada a ~48 sítios em 20 ficheiros; a grelha de rótulos
-  (9/9) e o chão de similaridade (não derivável, e é esse o resultado); os sete itens de produto
-  (screener honesto, AMD/NFLX na distribuição, geradores parciais, filtro temporal, testes no
-  caminho vivo, calibração declarada, dedup de precedentes); e a publicação do funil e do registo de
-  decisões. **Tudo implantado e verificado ao vivo.**
-  **O QUE FALTA É HUMANO — e por esta ordem:**
-  **(1) O ESTUDO HUMANO. É o único item com relógio.** Fecha quatro coisas: a metade "útil" do
-  objectivo 4, a metade em aberto da RQ3 (que agora **cobre o texto gerado**, bloco C novo no
-  protocolo), a pergunta "chegou a história *certa*?", e a H5 — *dada uma frase com âncora, a pessoa
-  consegue abrir o facto e julgar se ele a sustenta, sem ajuda?* A garantia de ancoragem nunca foi
-  verificada por um humano. Pacote turn-key: `build_usefulness_pack.py` (6 estímulos, 2
-  tema/direcção) e `capture_report_stimuli.py` (4 relatórios reais congelados).
-  ⚠️ **Congelar o pacote antes do 1.º participante** — o canal cresce e a mesma semente dá
-  estímulos diferentes.
-  **(2) A LEITURA FINAL DAS DUAS TESES.** É pré-requisito da declaração de IA, que afirma "revi o
-  conteúdo desta dissertação".
-  **(3) COM O ORIENTADOR:** a redacção exacta da declaração de IA (não se inventou política) + a
-  data de entrega; e a **licença do código** — com as duas restrições que a auditoria encontrou:
-  três ficheiros distribuídos derivam do FNSPID (**CC BY-SA**, share-alike) e o `meia-style.cls` é
-  **CC BY-NC-SA** (share-alike **e** NonCommercial).
-  **(4) OS AGRADECIMENTOS na voz dele** (há rascunho EN+PT) e confirmar a dedicatória.
-  **(5) RODAR AS 4 CREDENCIAIS** (PAT do GitHub primeiro — tem admin).
-  **(6) OPCIONAL:** completar o red team da guarda (4 das 6 lentes nunca correram; a tese já diz que
-  a força medida é um **limite inferior**, logo é melhoria e não correcção).
-  **⚠️ LIMITE DE GASTO: continua a morder.** Nesta sessão, de três workflows, **7 de 8**, **2 de 4**
-  e **2 de 4** agentes morreram — e as corridas devolvem veredictos de aparência limpa que são a
-  **ausência de verificação** (7.ª vez). Para verificação factual, **fazer à mão é melhor**: foi
-  assim que saíram o furo da guarda, o chão alfabético e os dois ficheiros parados.
-  **⚠️ ARMADILHAS DE FERRAMENTA — a lista cresceu e todas custaram tempo real:**
-  **(a)** escrever LaTeX a partir de heredoc/`python -c`: o `
-` de `
-ef` vira **CR** e o `	` de
-  `	extbf` vira **TAB**. Usar a ferramenta de edição ou strings `r"..."`.
-  **(b)** uma expressão com **precedência errada** num `python -c` **truncou um script para 18
-  linhas**; restaurado do git. Não gerar código com aspas/escapes por `-c`.
-  **(c)** `grep` a um NÚMERO não encontra a mesma afirmação escrita **por palavras** — 13 sítios
-  diziam "quadruplica" sem citar o 0,163.
-  **(d)** um gerador que só regenera **parte** do documento **apaga o resto com exit 0**. Aconteceu
-  duas vezes no mesmo dia; ambos os scripts foram corrigidos.
-  **(e)** publicar um ficheiro de série **sem semear primeiro** apaga a série no contentor.
-  **(f)** o `heroku auth:token` sai com código 1 e imprime o token na mesma; o
-  `scripts/deploy_heroku.py` já trata disto.
+- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI (actualizado na sessão 63, 2026-09-04):**
+  **O CALENDÁRIO MANDA: 27/09 é a submissão do DOCUMENTO e a defesa é em outubro.** O que entra
+  na dissertação tem de estar congelado antes de 27/09; outubro serve para a apresentação.
+  **(1) A RECOLHA ESTÁ A CORRER, E É O ÚNICO ITEM COM RELÓGIO.** Desde 2026-09-04 o registo
+  guarda `feature_snapshot` (nove entradas, `as_of`, identidade do modelo com sha256). O
+  protocolo de aceitação está **pré-registado** em `docs/planos/PROTOCOLO_ACEITACAO_RETREINO.md`,
+  escrito antes de existir candidato. **Não o reabrir depois de ver um resultado.**
+  ⚠️ **Regra de treinabilidade:** só linhas com `as_of` **anterior ou igual** à data da notícia.
+  As `stale` deixaram de ser pontuadas; as anteriores a 04/09 com `as_of` posterior são histórico
+  e **não entram** em conjunto nenhum. **Marco: ~17/09**, a última data de notícia que ainda
+  matura a tempo. Correr `scripts/auditar_registo_decisoes.py` para ver a cobertura.
+  **(2) O QUE JÁ NÃO ESTÁ EM ABERTO:** o R14 (dyno `Standard-2X`, 0 ocorrências desde 01:30 de
+  04/09, com as quatro correcções de memória a valer na mesma); a decisão R1 e o lookahead que
+  ela abriu; a porta de entrega a apontar para a árvore canónica; a revisão de conteúdo, a
+  passagem de escrita, as 40 figuras em inglês, e os slides e o guia sincronizados com a v7.
+  **(3) O QUE FALTA, E É HUMANO:** os **nomes do júri** (o ISEP designa depois da submissão, e é
+  o único item que a porta de entrega ainda acusa); a **leitura final** da tese pelo autor, que é
+  pré-requisito da declaração de IA; a **licença** e a redacção da declaração com o orientador;
+  os **agradecimentos** na voz dele; e **rodar as credenciais** (PAT do GitHub primeiro, e agora
+  também a `HEROKU_API_KEY`, que é chave de conta).
+  **(4) OPCIONAL, POR ESTA ORDEM:** o estudo com pessoas (fecha a metade em aberto do objectivo
+  4 e a H5, e o pacote está turn-key mas **tem de ser congelado antes do primeiro participante**);
+  a gravação da demonstração; e o artigo, cujo prazo o autor deu como 27/09.
+  ⚠️ **ARMADILHAS DE FERRAMENTA, e todas voltaram a morder nesta sessão:**
+  **(a)** o heredoc **come um nível de barras invertidas mesmo entre plicas** — partiu o
+  `deploy_heroku.py`, um teste, um capítulo e duas passagens de figuras. **Ficheiro à parte com
+  `chr(92)`, ou ancorar a substituição só no TEXTO, sem tocar na estrutura LaTeX.** A segunda
+  forma é a que funcionou para as 40 figuras.
+  **(b)** um `tail -6` escondeu-me que eram **50 falhas e não 3**; ler o cabeçalho do relatório,
+  não a cauda.
+  **(c)** `/tmp/x.py` passado como ARGUMENTO é convertido pelo MSYS, mas `pathlib.Path('/tmp/…')`
+  dentro do Python **não** é: resolve para a raiz do disco.
+  **(d)** o `exit code` não apanha composição. Renderizar apanhou, nesta sessão, anos escritos
+  «2,015», uma legenda a descrever a figura antiga, e dois slides a transbordar.
 - **🧩 SESSÃO 47 (2026-08-03 — executar o backlog da v3; 4 commits):**
   **(A) LEGIBILIDADE.** A pílula `UNUSUAL` estava dentro da linha do topo, a disputá-la com
   logótipo, nome, ticker e o número grande — e o nome, único item sem largura própria, era
