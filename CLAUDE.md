@@ -71,6 +71,35 @@
   para treinar.** Regra de promoção pré-registada: IC da diferença emparelhada de PR-AUC a
   excluir zero contra o modelo atual **e** contra a volatilidade, Brier não pior, mínimo de 80
   clusters maturados. Se perder, **o modelo atual fica e o negativo é reportado**.
+  **✅ IMPLANTADO E VERIFICADO AO VIVO (releases `b929de9a` → `fa5a6119` → `f635fb4a`).** O
+  autor pôs a chave no `.env` e a implantação passou a ser autónoma. **E verificar produção — em
+  vez de confiar no `exit code` — encontrou DOIS defeitos que nenhum teste apanhava.**
+  **⚠️ (G1) A BARRA DO DIA POR LIQUIDAR DESLIGAVA A TRIAGEM EM SILÊNCIO, e é PRÉ-EXISTENTE.**
+  Depois da primeira implantação o registo recebeu 678 linhas com `stage` mas **`prob=None` e
+  zero snapshots**, e os registos do worker mostravam **139 linhas `[triagem]` às 23:30 e ZERO às
+  00:07**. Causa: a fonte devolve a barra do dia corrente com fecho **NaN** até a sessão liquidar,
+  `ret_event` sai NaN e o `score_latest` — **a função original, que eu não toquei** — devolve
+  None. O guard de 2026-08-04 faz **falhar aberto**, o que evita a excepção e **esconde a
+  paragem**. Passa a cortar **UMA** barra final NaN e a pontuar a última completa, que é o que a
+  dissertação já descreve (`as_of` regista a barra usada). **⚠️ E a primeira correcção era larga
+  demais: um `dropna()` inteiro. O teste que guarda o incidente de 2026-08-04 apanhou-a** — cinco
+  barras em falta não são a sessão por liquidar, são a fonte partida, e pontuar dados de dias
+  antes como se fossem de hoje é pior do que não pontuar. Limitado a uma barra.
+  **⚠️ (G2) EU INTRODUZI UMA SEGUNDA BUSCA DE PREÇOS POR EMPRESA E POR CICLO**, no registo das
+  candidatas. O `_hist_cached` **já existia com o aviso escrito no docstring** — *"sem isto, cada
+  ciclo duplicava as chamadas"* — e faltou usá-lo. Passa a haver **uma** busca por empresa por
+  varrimento, partilhada. Teste novo que conta as chamadas.
+  **✅ (G3) PROMOÇÃO DE LINHA NUA.** Os 678 títulos escritos sem snapshot ficariam presos nesse
+  estado para sempre pela guarda de dedup. A guarda passa a distinguir chaves **completas** (nunca
+  reescritas) de **nuas** (aceitam **uma** reescrita, e só se trouxer snapshot). Duas linhas por
+  título no máximo, e a segunda é sempre uma promoção.
+  **VERIFICADO EM PRODUÇÃO, NÃO NO CÓDIGO:** `[triagem]` de volta (AAPL 39%, NVDA 50%, TSLA 49%),
+  e o ramo de dados a receber **classe A completa** — 9 entradas, `as_of`, `prob`, e a identidade
+  do modelo com sha256 e esquema. **A recolha para o retreino começou mesmo.**
+  ⚠️ **Também visto e NÃO corrigido, porque é pré-existente e fail-open:** `R14 (Memory quota
+  exceeded)` no worker (88 ocorrências antes da implantação, logo não é desta sessão) e o Polygon
+  a devolver `429`. A máscara `<REDACTED>` da sessão 51 está a funcionar nos registos.
+  **963 testes** (era 952), ruff limpo.
   **✅ CHAVE DO HEROKU SEM PASSAR PELO CHAT:** `deploy_heroku.py` passa a ler `HEROKU_API_KEY` do
   `.env` (gitignored, o cofre que o projecto já usa para as outras onze chaves) antes de tentar a
   CLI, e o valor **nunca é impresso, nem no caminho de erro** — as duas fugas anteriores (sessões
