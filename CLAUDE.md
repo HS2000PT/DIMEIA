@@ -77,8 +77,7 @@
   44 e 51) foram assim, ninguém imprimiu a chave de propósito, imprimiu-se a **excepção**.
   Entrada nova no `.env.example`, com o aviso de que é chave de **conta** e não de aplicação.
   **⚠️ A ARMADILHA DO HEREDOC MORDEU OUTRA VEZ, e da forma exacta que este ficheiro documenta:**
-  `\n` dentro de um heredoc entre plicas chega ao Python como `
-` e vira newline **a sério**,
+  `\\n` dentro de um heredoc entre plicas chega ao Python como `\n` e vira newline **a sério**,
   o que partiu o `deploy_heroku.py` em 23 erros de sintaxe. Restaurado do git e refeito com
   `chr(92)` num ficheiro à parte. **A regra que já estava escrita é a certa: não gerar código com
   escapes por heredoc — ficheiro à parte, ou `chr(92)`.**
