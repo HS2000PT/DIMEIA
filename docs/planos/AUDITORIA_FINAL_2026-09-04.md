@@ -222,6 +222,49 @@ reutilize a errada.
 
 ---
 
+## E5. A cadeia das questões de investigação (§17)
+
+A matriz de evidência **já existia** no apêndice, com 24 linhas e estados *retirada*,
+*estreitada* e *nova*, e a Secção 4.7.1 já separa o que foi desenvolvido do que é consumido
+do exterior. Nenhuma das duas foi duplicada.
+
+O que faltava era a cadeia, e foi feita como **verificação e não como tabela**: uma tabela
+escrita por mim afirmaria a cadeia; o verificador testa-a. E encontrou um defeito: **o
+Cap. 6, ao responder à QI2, cita o chão de acaso sob a restrição da produção () e
+nenhum capítulo anterior o enuncia.** O Cap. 5 dava a margem e o valor do método, pelo que
+o  só se obtinha por subtracção a partir de uma legenda. Confirmado contra o
+artefacto e enunciado no Cap. 5, que é onde o resultado vive.
+
+ impõe: cada questão tem resultados e resposta; o Cap. 6 não cita
+decimais que os capítulos anteriores não estabeleçam; e cada questão delimita o que o
+resultado não permite concluir. Verificado com uma afirmação inventada plantada.
+
+---
+
+## E6. Auditoria visual (§38)
+
+Feita por medição sobre as 130 páginas, e não por leitura de todas — o que permite dirigir
+a inspecção visual às candidatas em vez de a diluir.
+
+| O que se mediu | Resultado |
+|---|---|
+| Caixas rebentadas | 5, **todas abaixo de 5,7 pt** |
+| Páginas de conteúdo com 8 linhas ou menos | **2**, e ambas legítimas: a dedicatória e o fim da Lista de Figuras |
+| Versos em branco | 14, normal em impressão frente e verso |
+| Flutuantes a mais de 2 páginas da invocação mais próxima | **1**, a 3 páginas |
+| Flutuantes sem invocação | **0** |
+
+Inspeccionadas visualmente as páginas das duas figuras refeitas, a da lista de acrónimos, a
+do apêndice novo, e duas páginas densas do Cap. 6. Nenhuma com defeito de composição.
+
+**⚠️ Três falsos positivos do meu próprio varrimento, resolvidos antes de reportar:** uma
+figura invocada numa frase que **termina em dois pontos** foi lida como legenda; uma
+**remissão para a frente** do capítulo dos métodos para os resultados foi contada como má
+colocação, quando é legítima; e três figuras apareceram como não invocadas porque a
+referência estava **quebrada entre linhas** no PDF — todas têm referência na fonte.
+
+---
+
 ## F. Afirmações reformuladas ou removidas
 
 | Afirmação | Estado |
