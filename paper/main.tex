@@ -9,7 +9,7 @@
 \usepackage{booktabs}
 \usepackage[T1]{fontenc}
 \usepackage{url}
-\graphicspath{{../thesis/figures/}}
+\graphicspath{{../tese-v2/figures/}}
 
 \begin{document}
 
@@ -32,13 +32,15 @@ explanation. The core is a news--market correlation engine that retrieves analog
 sentence embeddings and measures the impact those precedents had, in the manner of an event study and
 without lookahead. As an Artificial Intelligence Engineering contribution, the work integrates, applies
 and critically evaluates existing components in a functional, reproducible system. On real data, semantic
-retrieval reaches a cross-ticker precision@5 of $0.514\pm0.015$ against $0.240$ for random and $0.346$ for
-a lexical baseline, and a volatility-normalised detector fires far more consistently across instruments
+retrieval beats the sector base rate in all five sectors, and retains its margin under the
+temporal constraint the deployed system faces (precision@5 of $0.513$ against $0.259$ for
+random); and a volatility-normalised detector fires far more consistently across instruments
 (firing-rate range $0.015$) than a fixed threshold ($0.344$). A supervised materiality-triage model,
 trained on $79{,}753$ multi-year news--market examples, raises within-budget alert precision $1.67$-fold
 ($0.632$ vs $0.379$ for a random ranking), although no model reading the headline text beat a volatility-only baseline, a
-finding we report as it stands. All results are reproducible from versioned scripts, with limitations
-stated explicitly.
+finding we report as it stands: added to a per-company lookup table, the headline contributes
+$+0.012$ PR-AUC, an upper bound rather than a usable quantity. All results are reproducible from
+versioned scripts, with limitations stated explicitly.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -133,7 +135,10 @@ ends with an explicit no-prediction disclaimer.
 nothing in them \emph{combines} those objects, and the joint state space --- how many names were flagged,
 which component dominated each, whether headlines were captured, whether analogous cases exist and which
 way they went --- outgrows any template library. A generative layer performs that synthesis under a
-construction that prevents the language step from becoming a factual one. Inputs are serialised into an
+construction that prevents the language step from becoming a factual one. This layer is implemented
+and evaluated but is \emph{not} exposed in the deployed product, whose alert path composes every
+message from computed objects and uses no language model; the two are reported separately for that
+reason. Inputs are serialised into an
 \emph{evidence bundle}: records carrying a citable identifier, a value, and a declared provenance of
 \emph{measured}, \emph{computed} or \emph{model}. No record carries a \emph{generated} provenance, an
 invariant asserted by test. The generator sees only the bundle, cites identifiers inline, and its output
@@ -175,12 +180,21 @@ volatility, while the volatility-normalised \emph{z}-score is stable across all 
 \end{figure}
 
 \subsection{Precedent retrieval}
-On $3{,}714$ real headlines across five sectors, semantic retrieval clearly outperforms every baseline
-(Table~\ref{tab:retr}). MiniLM reaches a cross-ticker precision@5 of $0.514$ (about $2.1\times$ the random
-base rate), the larger MPNet slightly more ($0.538$), and both far exceed the lexical baseline ($0.346$);
-recency is worst, below the random rate. Small standard deviations ($\sim 0.01$) show the gap is robust;
-a follow-up on the multi-year FNSPID corpus ($\sim 80{,}000$ headlines) lifts precision@5 to $0.595$,
-confirming the retrieval at scale.
+On $3{,}714$ real headlines across five sectors, MiniLM reaches a cross-ticker precision@5 of
+$0.514$, the larger MPNet slightly more ($0.538$), and both exceed the lexical baseline ($0.346$);
+recency is worst, below the random rate (Table~\ref{tab:retr}).
+The aggregate is not, however, the right way to state the result, and we state the weaker claim
+the data supports. Almost half the corpus is technology news, which makes available a strategy
+that uses no model and does not even read the query: always return technology headlines. Its
+precision equals the fraction of technology queries, $0.467$, above the lexical baseline. That
+strategy is useless as a product, since it is right on every query in one sector and wrong in the
+four others, but its existence shows that the aggregate partly measures corpus composition.
+Two checks bound the claim. On the multi-year FNSPID corpus ($\sim 80{,}000$ headlines) precision@5
+rises to $0.595$; the base rate rises in the same proportion and the margin holds, so the method
+neither degrades nor improves with scale. Imposing the constraint the deployed system actually
+faces, that a precedent must predate the query, lowers precision to $0.513$ and the base rate to
+$0.259$, moving the margin by $0.008$: the method keeps its advantage when forced to operate as
+it does in production.
 Per sector (Fig.~\ref{fig:persector}), the lift over the base rate is largest where vocabulary is
 distinctive, in energy ($+0.377$) and health ($+0.348$), and smallest for the broad consumer sector
 ($+0.100$); technology has the highest raw precision ($0.712$) only because it dominates the corpus and so
@@ -238,8 +252,9 @@ against $0.538$ (context-only), $0.496$ (context$+$text), $0.469$ (gradient boos
 (text-only), floor $0.378$. As a product mechanism, however, triage is clearly worthwhile: within a
 budget of five alerts per day it raises the share of material alerts from $0.379$ to $0.632$, with
 calibrated probabilities (Brier $0.218$ against $0.622$). The same discipline was applied on the anomaly
-side, where an Isolation Forest \cite{liu2008isolation} trained causally on identical information lost to
-the $z$-score on the identical evaluation region ($F_1$ $0.271$ vs $0.530$). Both
+side, where an Isolation Forest \cite{liu2008isolation} and a Local Outlier Factor
+\cite{breunig2000lof}, both trained causally on identical information, lost to the $z$-score on the
+identical evaluation region ($F_1$ $0.269$ and $0.280$ against $0.530$). Both
 statistical-versus-learned comparisons were pre-committed, and both favoured the transparent choice. A
 cluster bootstrap and a fair re-test (tuned regularisation, a PCA-reduced text block, a finance-domain
 encoder) confirm the negative-on-text result is robust rather than an under-fit artefact.
@@ -270,8 +285,9 @@ InvestiGator shows that useful financial alerting for retail investors can be bo
 a volatility-normalised detector that explains every flag, a news--market correlation engine that
 retrieves analogous precedents and reports their measured impact as evidence rather than prediction, and
 a trained, calibrated triage model that raises within-budget alert precision $1.67$-fold while honestly
-failing to beat a volatility-only baseline with text, and a generative layer whose synthesis stays bound
-to the records it cites. The last of these carries the most transferable idea: placing generated text
+failing to beat a volatility-only baseline with text. Alongside these, and not exposed in the
+deployed product, a generative layer whose synthesis stays bound to the records it cites.
+The last of these carries the most transferable idea: placing generated text
 beside computed results is safe only if the binding is \emph{per claim} rather than per document, and if
 the guarantee that binding provides is stated at the strength it actually has. Future work is a
 market-adjusted impact-magnitude study over the multi-year precedents (retrieval already validated at

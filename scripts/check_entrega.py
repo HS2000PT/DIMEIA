@@ -47,6 +47,11 @@ VERIFICADORES = [
     # O guia de construção promete código verbatim. Sem esta porta a promessa vale o que valer
     # a memória de quem o escreveu, e o código muda: um excerto correcto hoje deixa de o ser.
     ("guia de construção: código verbatim", "check_guia_codigo.py", []),
+    # O artigo e a dissertação são lidos pelas mesmas pessoas, e a 2026-09-04 o artigo
+    # afirmava o que a dissertação tinha retirado -- sem que nada falhasse. Esta porta
+    # exige que todo o número do artigo tenha fonte e que os resultados estreitados na
+    # tese apareçam no artigo com a mesma ressalva.
+    ("artigo alinhado com a dissertação", "check_artigo_numeros.py", []),
 ]
 
 # ⚠️ A DISSERTAÇÃO A ENTREGAR É `tese-v2/`, e esta lista apontava para `tese/`. Corrigido a
