@@ -329,3 +329,43 @@ def test_linha_nua_pode_ser_promovida_uma_vez(tmp_path, monkeypatch):
     linhas = (tmp_path / "pred.jsonl").read_text(encoding="utf-8").strip().splitlines()
     assert len(linhas) == 2, "escreveu depois de ja estar completa"
     assert json.loads(linhas[-1])["feature_snapshot"]["schema"] == "triage-context-v1"
+
+
+def test_candidata_velha_nao_e_pontuada(tmp_path, monkeypatch):
+    """Uma manchete velha nao pode receber snapshot: seria lookahead.
+
+    `score_latest` usa a ULTIMA barra disponivel, logo uma manchete de ha dias seria descrita
+    por um mercado que ja viu o desfecho que o rotulo mede em (data, data+3]. Medido a
+    2026-09-04 no registo real: as `stale` tinham as_of de +1 a +107 dias sobre a data da
+    noticia, enquanto as `not_latest` ficavam em -1 a 0. Eram 430 linhas que pareciam material
+    de treino e nao eram.
+    """
+    import pandas as pd
+
+    monkeypatch.setattr(runner, "_PRED_LOG", tmp_path / "pred.jsonl")
+    monkeypatch.setattr(runner, "_DECISOES_VISTAS", None)
+    bundle = {"_model_info": {"artifact": "x"}}
+    close = pd.Series([1.0] * 60, index=pd.bdate_range("2026-06-01", periods=60))
+
+    chamadas = []
+
+    def _falso(*a, **k):
+        chamadas.append(1)
+        return (0.5, []), {"schema": "s", "as_of": "2026-09-04", "values": {}}
+
+    import investigator.triage.infer as inf
+    monkeypatch.setattr(inf, "score_latest_with_snapshot", _falso)
+
+    latest = _Item("2026-09-04", "a escolhida")
+    velha = _Item("2026-08-01", "manchete de ha um mes")
+    fresca = _Item("2026-09-04", "outra de hoje")
+    runner._registar_candidatas_safe([velha, fresca, latest], latest, "NVDA",
+                                     bundle, 0.5, 2, date(2026, 9, 4), close=close)
+
+    recs = [json.loads(x) for x in
+            (tmp_path / "pred.jsonl").read_text(encoding="utf-8").strip().splitlines()]
+    por_etapa = {r["stage"]: r for r in recs}
+    assert "feature_snapshot" not in por_etapa["stale"], "a velha foi pontuada"
+    assert por_etapa["stale"]["prob"] is None
+    assert "feature_snapshot" in por_etapa["not_latest"], "a fresca deixou de ser pontuada"
+    assert len(chamadas) == 1, f"pontuou {len(chamadas)} vezes; so a fresca devia"

@@ -105,3 +105,52 @@ que a técnica mais simples ganhou. Um quarto não a enfraquece.
 - **A comparação mantidas vs suprimidas continua irrecuperável** nesta janela (R2: `kept`
   constante). O `stage` substitui-a, e é uma variável diferente — diz onde a candidata morreu,
   não se a porta acertou.
+
+---
+
+## 8. Correção do calendário e a regra que decide o que é treinável — 2026-09-04
+
+### As duas datas não são a mesma coisa
+
+O autor esclareceu: **27/09 é o prazo de submissão do DOCUMENTO**; a **defesa** (apresentação)
+é em **outubro**.
+
+Isto **não alarga** a janela útil — aperta-a, e por uma razão melhor do que a que eu tinha
+assumido. Qualquer resultado que entre na dissertação tem de estar congelado antes de 27/09.
+Os dias de outubro servem para a apresentação, não para o documento.
+
+**O dimensionamento da secção 1 mantém-se, e o cálculo de potência da secção 3 também.** Nada
+do que está pré-registado muda.
+
+O que os dias extra permitem, e é legítimo: à data da defesa o sistema terá recolhido bastante
+mais, e a apresentação pode dizer *«continuou a correr, e sobre uma janela maior o número é
+este»*. É um acrescento oral sobre um documento cujo resultado ficou fechado a 27/09 — não uma
+segunda versão do resultado.
+
+### ⚠️ A regra que decide o que é treinável, e sem ela o retreino nascia viciado
+
+Medido no registo real a 2026-09-04, sobre 977 linhas com *snapshot*:
+
+| Etapa | `as_of` − `news_date` | Treinável? |
+|---|---|---|
+| `not_latest` | −1 a 0 dias | **Sim** |
+| `sobreviveu` | −2 a −1 dias | **Sim** |
+| `stale` | **+1 a +107 dias** | **Não** |
+
+`score_latest` usa a **última barra disponível**. Para uma manchete fresca isso é a véspera ou
+o próprio dia — a assimetria que a dissertação já declara. Para uma manchete de há dias, as
+entradas passam a descrever um mercado **que já viu o desfecho** que o rótulo mede em
+`(data, data+3]`. São **430 das 977 linhas**, e pareciam material de treino.
+
+O defeito entrou pela porta que a decisão R1 abriu: registar toda a candidata relevante trouxe
+também as velhas. O `as_of` é o que o torna detectável — foi para isto que o *snapshot* o
+guarda.
+
+**Fechado no ponto de escrita, e não por filtro a jusante:** as candidatas `stale` deixam de ser
+pontuadas. A linha continua a ser registada, porque o funil precisa dela, mas sem `prob` e sem
+`feature_snapshot`. Filtrar depois deixaria no ficheiro um *snapshot* que nunca pode ser usado, e
+a auditoria contá-lo-ia como classe A.
+
+**Regra para qualquer treino ou avaliação:** usar apenas linhas com `feature_snapshot.as_of`
+**anterior ou igual** à data da notícia. As linhas anteriores a esta correção que tenham
+`as_of` posterior ficam no registo como histórico e **não entram** em nenhum conjunto.

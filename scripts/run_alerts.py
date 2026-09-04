@@ -550,7 +550,17 @@ def _registar_candidatas_safe(relevantes: list, latest, ticker: str, bundle,
         etapa = "stale" if not news_is_fresh(it.date, hoje, max_age) else "not_latest"
         scored = None
         snapshot = None
-        if close is not None:
+        # ⚠️ UMA MANCHETE VELHA NÃO É PONTUADA, e a razão é a que este projecto inteiro
+        # existe para respeitar. `score_latest` usa a ÚLTIMA barra disponível, portanto uma
+        # manchete de há dias seria descrita por um mercado que já viu o desfecho que o rótulo
+        # mede em (data, data+3]. Medido a 2026-09-04 no registo real: as candidatas `stale`
+        # tinham `as_of` de +1 a +107 dias sobre a data da notícia, enquanto as `not_latest`
+        # ficavam em −1 a 0. São 430 linhas que pareciam material de treino e não são.
+        #
+        # Não basta filtrá-las depois: escrever um `feature_snapshot` que nunca pode ser usado
+        # é convidar alguém a usá-lo, e a auditoria contá-las-ia como classe A. A porta fecha-se
+        # aqui. A linha continua a ser registada — o funil precisa dela —, apenas sem pontuação.
+        if close is not None and etapa != "stale":
             try:
                 from investigator.triage.infer import score_latest_with_snapshot
 
