@@ -294,7 +294,7 @@ def _retrieval_kbs(kb_path: str):
                     kbs.append(HistoricalKB(vivos))
             except Exception:  # noqa: BLE001
                 pass
-        kbs.append(HistoricalKB.load(kb_path))
+        kbs.append(HistoricalKB.load(kb_path, lean=True))
         _ENGINE["kbs"] = kbs
     return _ENGINE["kbs"]
 

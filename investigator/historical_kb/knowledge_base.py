@@ -141,14 +141,35 @@ class HistoricalKB:
                 f.write(json.dumps(record.to_dict(), ensure_ascii=False) + "\n")
 
     @classmethod
-    def load(cls, path: str | Path) -> HistoricalKB:
-        """Carrega a KB de um ficheiro JSONL."""
+    def load(cls, path: str | Path, *, lean: bool = False) -> HistoricalKB:
+        """Carrega a KB de um ficheiro JSONL.
+
+        `lean=True` guarda os vectores numa matriz float32 única e **larga as listas de
+        `float` de Python** de cada registo. O ficheiro não muda; o que muda é a forma em
+        memória.
+
+        ⚠️ Existe pela mesma medição que criou o formato compacto, aplicada onde ela nunca
+        tinha sido aplicada. Medido a 2026-09-04 sobre a base viva real: **10 968 registos
+        custavam 136,7 MB** em JSONL, contra 21,7 MB para os **38 214** do formato compacto —
+        12,46 MB por mil registos contra 0,57, ou seja **22×**. O contentor tem 512 MB e o
+        worker corria entre 518 e 970, com `R14` a cada poucos minutos. E a base viva é
+        justamente a que **cresce**: deixá-la em listas de Python é escolher que o problema
+        piore sozinho.
+
+        Fica opt-in de propósito. `scripts/curate_kb_light.py` lê `record.embedding` depois de
+        carregar, e mudar o comportamento por defeito partia-o em silêncio.
+        """
         records: list[NewsRecord] = []
         with Path(path).open("r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line:
                     records.append(NewsRecord.from_dict(json.loads(line)))
+        if lean and records and all(r.embedding is not None for r in records):
+            matrix = np.asarray([r.embedding for r in records], dtype="float32")
+            for r in records:  # a matriz passa a ser a única cópia dos vectores
+                r.embedding = None
+            return cls(records, matrix=matrix)
         return cls(records)
 
     # ── Persistência compacta (metadados + matriz float32) ────────────────────

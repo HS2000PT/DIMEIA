@@ -918,7 +918,9 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
     kbs = []
     if _LIVE_KB.exists():
         try:
-            kb_viva = HistoricalKB.load(_LIVE_KB)
+            # `lean`: a base viva CRESCE, e em listas de Python custava 136,7 MB para
+            # 10 968 casos num contentor de 512 MB. Ver o docstring de `load`.
+            kb_viva = HistoricalKB.load(_LIVE_KB, lean=True)
             if len(kb_viva):
                 kbs.append(kb_viva)
                 print(f"[kb-viva] {len(kb_viva)} caso(s) recente(s) em uso.")
@@ -939,7 +941,7 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
                 print(f"[kb-ano] {len(kb_ano)} caso(s) do último ano em uso.")
         except Exception as exc:  # noqa: BLE001 — fail-open: sem ela o produto responde na mesma
             print(f"[kb-ano] indisponível (ignorada): {type(exc).__name__}: {sem_segredos(exc)}")
-    kbs.append(HistoricalKB.load(kb_path))
+    kbs.append(HistoricalKB.load(kb_path, lean=True))
 
     end = date.today().isoformat()
     start = (date.today() - timedelta(days=7)).isoformat()

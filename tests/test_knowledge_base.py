@@ -132,3 +132,64 @@ def test_amostra_kb_versionada_carrega_e_recupera():
     target = kb.records[0]
     hits = kb.find_precedents(target.headline, HashingEmbedder(dim=64), top_k=1)
     assert hits and hits[0][0].headline == target.headline
+
+
+def test_load_lean_da_os_mesmos_precedentes_e_larga_as_listas():
+    """`lean=True` muda a forma em memoria, nunca o resultado.
+
+    Medido a 2026-09-04 sobre a base viva real: 10 968 registos custavam 136,7 MB em listas
+    de `float` de Python e 22,3 MB com a matriz float32 -- 6,1x -- com top-5 identico em 6/6
+    consultas. O contentor tem 512 MB e o worker corria entre 518 e 970 MB, com R14 a cada
+    poucos minutos. A base viva e a que CRESCE, logo era a que mais precisava disto.
+    """
+    import json
+    import pathlib
+    import tempfile
+
+    import numpy as np
+
+    rng = np.random.default_rng(20260904)
+    linhas = []
+    for i in range(40):
+        v = rng.normal(size=16)
+        v = v / np.linalg.norm(v)
+        linhas.append({"date": f"2026-01-{i % 28 + 1:02d}", "ticker": "NVDA",
+                       "headline": f"manchete {i}",
+                       "impacts": {"1": 0.01, "3": 0.02, "5": 0.03},
+                       "embedding": [round(float(x), 5) for x in v]})
+    d = pathlib.Path(tempfile.mkdtemp()) / "kb.jsonl"
+    d.write_text("\n".join(json.dumps(x) for x in linhas), encoding="utf-8")
+
+    gordo = HistoricalKB.load(d)
+    magro = HistoricalKB.load(d, lean=True)
+    assert len(gordo) == len(magro) == 40
+
+    qv = list(np.ones(16) / 4.0)
+
+    class _Fixo:
+        """Consulta fixa: o que se compara e a KB, nao o embedder."""
+
+        def encode(self, textos):
+            return [qv]
+
+    a = [(r.ticker, r.headline) for r, _ in gordo.find_precedents("x", _Fixo(), top_k=5)]
+    b = [(r.ticker, r.headline) for r, _ in magro.find_precedents("x", _Fixo(), top_k=5)]
+    assert a == b, "lean mudou a ordem dos precedentes"
+
+    # as listas foram mesmo largadas: a matriz passa a ser a unica copia dos vectores
+    assert all(r.embedding is None for r in magro.records)
+    assert all(r.embedding is not None for r in gordo.records)
+
+
+def test_load_lean_com_registos_sem_embedding_nao_muda_nada():
+    """Controlo: se algum registo nao tem vector, `lean` desiste e devolve o caminho antigo."""
+    import json
+    import pathlib
+    import tempfile
+
+    d = pathlib.Path(tempfile.mkdtemp()) / "kb.jsonl"
+    d.write_text(json.dumps({"date": "2026-01-01", "ticker": "NVDA", "headline": "h",
+                             "impacts": {"1": 0.0}, "embedding": None}), encoding="utf-8")
+    kb = HistoricalKB.load(d, lean=True)
+    assert len(kb) == 1
+    assert kb._matrix is None
