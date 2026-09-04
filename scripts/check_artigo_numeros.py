@@ -74,6 +74,37 @@ def valores(texto: str, *, ingles: bool) -> set[float]:
     return out
 
 
+# A tabela de resultados da triagem, conferida por PAR e nao por presenca.
+# (rotulo no artigo, PR-AUC, Brier) tal como docs/evaluation/evaluation_triage.md os da.
+TABELA_TRIAGEM = [
+    ("Volatility only", "0.542", "0.218"),
+    ("Company and day context", "0.538", "0.224"),
+    ("Context and headline text", "0.496", "0.229"),
+    ("Gradient boosting", "0.469", "0.228"),
+    ("Headline text only", "0.439", "0.240"),
+    ("Always alert", "0.378", "0.622"),
+]
+
+
+def _confere_tabela(art: str, falhas: list[str]) -> None:
+    """Cada linha da tabela tem de trazer o PAR certo, e nao um numero plausivel."""
+    print("tabela de triagem, conferida linha a linha")
+    for rotulo, prauc, brier in TABELA_TRIAGEM:
+        linha = next((ln for ln in art.split(chr(10)) if ln.startswith(rotulo)), None)
+        if linha is None:
+            print(f"  .. {rotulo}: não aparece na tabela do artigo")
+            continue
+        ok_p, ok_b = prauc in linha, brier in linha
+        if ok_p and ok_b:
+            print(f"  ok  {rotulo}: {prauc} / {brier}")
+        else:
+            errado = [n for n, o in ((prauc, ok_p), (brier, ok_b)) if not o]
+            print(f"  !!  {rotulo}: a fonte diz {', '.join(errado)} e a linha não o traz")
+            print(f"      {linha.strip()[:88]}")
+            falhas.append(f"{rotulo} com valor errado")
+    print()
+
+
 def main() -> int:
     if not ARTIGO.exists():
         print("ERRO: paper/main.tex não existe. Um verificador que não vê o corpus "
@@ -118,6 +149,7 @@ def main() -> int:
         print("ok  todo o decimal do artigo existe também na dissertação canónica")
 
     print()
+    _confere_tabela(art_txt, falhas)
     for numero, ressalva, porque in ESTREITADOS:
         if numero not in art_txt.replace("{,}", ""):
             print(f"ok  o artigo não afirma {numero}")

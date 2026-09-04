@@ -1,301 +1,557 @@
-% IEEE conference paper distilled from the dissertation.
-% Builds on the VALIDATED implementation, experiments and statistics (Phase D/E).
-% Only verified citations (see references.bib; mirror of the thesis's verified set).
-\documentclass[conference]{IEEEtran}
-\IEEEoverridecommandlockouts
-\usepackage{cite}
-\usepackage{amsmath,amssymb}
+% ⚠️ SEM orcidID: um identificador de exemplo e um identificador INVENTADO, e este
+% projecto nao inventa identificadores. Se o autor tiver ORCID, acrescenta-se o real.
+% ICITS'27 -- 10th International Conference on Information Technology & Systems.
+% Cusco, Peru (and online), 27-29 January 2027. Submission 27 September 2026.
+% Proceedings: Springer LNNS, indexed in Scopus / WoS / DBLP. Up to 12 pages.
+%
+% Focus agreed with the supervision: the proposed architecture and the main evaluation
+% results, selecting from the dissertation only what serves that purpose.
+%
+% EVERY NUMBER HERE HAS A SOURCE. `python scripts/check_artigo_numeros.py` fails when a
+% figure appears that neither the dissertation nor docs/evaluation/ sustains, and when a
+% result the dissertation NARROWED appears here without the same caveat. That gate exists
+% because on 2026-09-04 this paper still claimed the aggregate retrieval result the
+% dissertation had already disowned.
+\documentclass[runningheads]{llncs}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{booktabs}
-\usepackage[T1]{fontenc}
-\usepackage{url}
-\graphicspath{{../tese-v2/figures/}}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, calc}
+\usepackage[hidelinks]{hyperref}
+
+\graphicspath{{../tese-pt/figures/}}
 
 \begin{document}
 
-\title{Explainable Financial Alerts for Retail Investors:\\
-Integrating Statistical Anomaly Detection and\\ News--Market Impact Correlation}
+\title{Explaining Without Predicting: Statistical Anomaly Detection and Precedent
+Retrieval for Verifiable Financial Alerts}
 
-\author{\IEEEauthorblockN{Henrique J.\ S.\ Santos, Lu\'is Gomes, Rafael Silva}
-\IEEEauthorblockA{\textit{Instituto Superior de Engenharia do Porto (ISEP)}\\
-Porto, Portugal\\
-1180934@isep.ipp.pt}}
+\titlerunning{Explaining Without Predicting}
+
+\author{Henrique J.\,S.\ Santos\inst{1} \and
+Lu\'is Gomes\inst{1} \and
+Rafael Silva\inst{1}}
+
+\authorrunning{H.\,J.\,S.\ Santos et al.}
+
+\institute{Instituto Superior de Engenharia do Porto (ISEP), Porto, Portugal\\
+\email{1180934@isep.ipp.pt}}
 
 \maketitle
 
 \begin{abstract}
-Retail investors face a continuous flood of price movements and financial news but lack the interpretive
-tools available to institutions. We present InvestiGator, an explainable (XAI-first) financial-alert system for
-the US equity market that raises Telegram alerts from two independent triggers (abrupt price movements,
-detected as statistical anomalies, and incoming news) and attaches to every alert a fully traceable
-explanation. The core is a news--market correlation engine that retrieves analogous historical news with
-sentence embeddings and measures the impact those precedents had, in the manner of an event study and
-without lookahead. As an Artificial Intelligence Engineering contribution, the work integrates, applies
-and critically evaluates existing components in a functional, reproducible system. On real data, semantic
-retrieval beats the sector base rate in all five sectors, and retains its margin under the
-temporal constraint the deployed system faces (precision@5 of $0.513$ against $0.259$ for
-random); and a volatility-normalised detector fires far more consistently across instruments
-(firing-rate range $0.015$) than a fixed threshold ($0.344$). A supervised materiality-triage model,
-trained on $79{,}753$ multi-year news--market examples, raises within-budget alert precision $1.67$-fold
-($0.632$ vs $0.379$ for a random ranking), although no model reading the headline text beat a volatility-only baseline, a
-finding we report as it stands: added to a per-company lookup table, the headline contributes
-$+0.012$ PR-AUC, an upper bound rather than a usable quantity. All results are reproducible from
-versioned scripts, with limitations stated explicitly.
+Retail investors face a continuous stream of price movements and financial news without
+the interpretive tools available to institutions. We present InvestiGator, an
+explainable financial alerting system for the US equity market, built exclusively on free
+data sources and deployed in continuous operation. The system answers three questions a
+retail investor faces when a price moves, and attaches to every alert the evidence that
+supports it: whether the movement is unusual for that company, whether its origin lies
+with the company or the market, and whether comparable precedents exist and what followed
+them. A design constraint runs through the architecture: the system issues no price
+forecasts, because a statement about a past event can be checked against the record at the
+moment it is read, whereas a forecast can only be assessed after the decision it informs
+has been taken. Each component is evaluated against transparent baselines declared in
+advance. Volatility-normalised detection fires at a near-constant rate across companies of
+very different volatility, with a spread of $0.015$ against $0.344$ for a fixed-threshold
+rule, and outperforms two learned detectors under an equivalent causal protocol. Semantic
+retrieval beats the sector base rate in all five sectors evaluated and retains its margin
+under the temporal constraint the deployed system faces. A supervised triage model
+\emph{does not} outperform a volatility-only baseline: added to a per-company lookup table,
+the headline text contributes $+0.012$ PR-AUC, an upper bound rather than a usable
+quantity. We report that negative result with the same prominence as the positive ones, and
+locate it: the information the text carries separates companies and periods, where the
+product needed it to separate news items.
+
+\keywords{Explainable AI \and Financial alerting \and Anomaly detection \and
+Semantic retrieval \and Retail investors}
 \end{abstract}
 
-\begin{IEEEkeywords}
-explainable AI, retail investing, anomaly detection, sentence embeddings, information retrieval, event
-study, financial NLP
-\end{IEEEkeywords}
-
+%======================================================================
 \section{Introduction}
-Most Americans now own stock, and a growing share trade through commission-free mobile apps rather than
-through professional institutions \cite{gallup2025stock}; the US equity market reached US\$62.2~trillion at
-the end of 2024 \cite{sifma2025factbook}. Yet the non-professional, or \emph{retail}, investor must contend
-with continuous price movements and a constant stream of news without the tools that banks and funds take
-for granted. Meanwhile, the AI now spreading through finance is largely opaque \cite{arrieta2020xai}, which
-is a poor fit for someone who must act on an alert and live with the result.
+%======================================================================
 
-This paper presents \textbf{InvestiGator}, an explainable financial-alert system that does \emph{not} attempt to
-predict prices. Instead, for each abrupt move or relevant news item, it shows what it detected, how it
-reached that conclusion, the sources, and which past events resemble the current one, alongside what
-happened to prices afterwards. The contribution is one of Artificial Intelligence \emph{Engineering}: not a
-new algorithm, but the disciplined integration, application and critical evaluation of existing components
-into a working, explainable and reproducible system, together with a documented methodology for relating
-news to market impact and a trained, calibrated materiality-triage model that ranks alerts without ever
-predicting price direction.
+Buying shares has become a low-friction operation. Most American adults now hold equities,
+directly or through funds and retirement plans~\cite{gallup2025stock}, in a market whose
+capitalisation exceeds 62 trillion US dollars~\cite{sifma2025factbook}. Ease of access has
+not extended to interpretation. When a price moves, the retail investor has limited means
+of determining what that movement means.
 
+Three concrete questions remain unanswered at the moment an investor observes a price
+move. First, \emph{is the movement unusual?} A four per cent change is a rare event for a
+low-volatility company and an ordinary day for a volatile one. Second, \emph{does the
+movement originate with the company or with the market?} A decline that tracks the index
+and an isolated decline are different situations. Third, \emph{are there precedents, and
+what followed them?}
+
+Free applications display the percentage change; the few that go further deliver a
+generated summary without the evidence behind it. Professional terminals answer all three,
+at subscription costs incompatible with this audience. The gap is not one of data
+availability, which is ample and free, but of verifiable context built on top of it.
+
+This paper presents InvestiGator, a deployed system that answers the three questions and
+exposes the evidence for each answer, and reports the evaluation of its components. As an
+Artificial Intelligence Engineering contribution, the work lies not in formulating a new
+algorithm but in the selection, integration and critical evaluation of established
+techniques until they constitute a functioning, explainable and reproducible system,
+including the result that contradicts the initial hypothesis.
+
+\paragraph{A design constraint.} The system produces \emph{no price forecasts}. It gives no
+directional indication, issues no buy or sell recommendations and displays no price
+targets. This has two justifications. The first is verifiability: a statement about a past
+event can be confirmed against the record at the moment it is read, whereas a forecast is
+only assessable after the investor's decision has been taken. The second is theoretical:
+the semi-strong form of the efficient market hypothesis~\cite{fama1970efficient} makes
+systematic anticipation from public information unlikely. This work neither tests that
+hypothesis nor relies on it to establish any conclusion.
+
+%======================================================================
 \section{Related Work}
-\textbf{Anomaly detection.} Financial anomaly detection is dominated by unsupervised methods because
-labelled anomalies are scarce \cite{chandola2009anomaly}. A rolling \emph{z}-score is a transparent
-statistical detector; more expressive alternatives such as Isolation Forest \cite{liu2008isolation} or deep
-detectors \cite{pang2021deep} trade interpretability for capacity. The need to normalise by recent
-volatility reflects volatility clustering, formalised by the ARCH/GARCH family
-\cite{engle1982arch,bollerslev1986garch}; we use a non-parametric rolling estimate for transparency.
+%======================================================================
 
-\textbf{Explainability and trust.} Surveys map the field and its transparent-versus-post-hoc divide
-\cite{arrieta2020xai}; a influential position argues for models that are interpretable by design in
-high-stakes settings \cite{rudin2019stop}, rather than post-hoc explanations of black boxes
-\cite{lundberg2017shap,ribeiro2016lime}. Human-factors work frames the goal as \emph{appropriate reliance}
-\cite{lee2004trust}, and recent evidence warns that explanations can induce over-reliance
-\cite{bansal2021whole}; we therefore explain with verifiable evidence rather than persuasive narrative.
+Each component the system uses exists in the literature in isolation. What does not exist
+is their combination under a zero-cost constraint, with the evidence delivered to the user
+at the moment the claim is made.
 
-\textbf{Text representation and retrieval.} Financial text analysis has moved from lexicons to learned
-representations; Sentence-BERT \cite{reimers2019sbert}, built on the Transformer \cite{devlin2019bert},
-yields directly comparable sentence vectors. Retrieval and its evaluation belong to information retrieval:
-the vector-space model \cite{salton1975vsm}, lexical ranking such as BM25 \cite{robertson2009bm25}, and
-precision@$k$ as the standard ranked-retrieval metric \cite{manning2008ir}.
+\paragraph{Anomaly detection in financial series.} Surveys of anomaly
+detection~\cite{chandola2009anomaly} distinguish statistical from learned approaches.
+Isolation Forest~\cite{liu2008isolation} and the Local Outlier
+Factor~\cite{breunig2000lof} define rarity geometrically and were designed for spaces with
+several interacting variables. Financial return series exhibit volatility clustering, the
+property that the ARCH and GARCH families formalise~\cite{engle1982arch,bollerslev1986garch}: periods of agitation follow periods of calm. That structure is
+temporal rather than geometric, which conditions the comparison reported in
+Sect.~\ref{sec:eval}.
 
-\textbf{Event studies and case-based reasoning.} The event-study design measures returns around an event
-\cite{fama1969adjustment,brown1985daily}; market efficiency \cite{fama1970efficient} explains why we
-\emph{measure} reactions rather than predict them. Using retrieved past cases as evidence is case-based
-reasoning \cite{aamodt1994cbr}. The FNSPID dataset \cite{dong2024fnspid} time-aligns news with prices,
-enabling a news-to-impact knowledge base.
+\paragraph{Sentence representation and retrieval.} Contextual encoders~\cite{devlin2019bert}
+transformed text representation, but their raw sentence embeddings are poorly suited to
+similarity search. Sentence-BERT~\cite{reimers2019sbert} adds the \emph{training
+objective} that places sentences in a space where distance means similarity, which is the
+property retrieval requires. Domain-specific financial encoders exist~\cite{liu2020finbert,huang2023finbert}; the natural assumption that they transfer to this task is tested in
+Sect.~\ref{sec:eval} and does not hold.
 
-\textbf{Learned triage.} Deciding \emph{which} news deserves an alert can be posed as supervised
-classification with event-study labels, without predicting direction. We use logistic regression,
-interpretable by design in the sense of \cite{rudin2019stop}, against gradient boosting
-\cite{friedman2001gbm} as a capacity ceiling, with probabilities calibrated by a sigmoid fitted on
-validation data (Platt scaling) \cite{niculescu2005calibration}.
+\paragraph{Event studies and case-based reasoning.} Measuring what followed an event is the
+subject of the event-study method~\cite{brown1985daily}, and sensitivity estimation
+benefits from shrinkage towards a reference~\cite{vasicek1973beta}. Presenting past cases
+rather than a rule is the premise of case-based reasoning~\cite{aamodt1994cbr}. The system
+combines the two: it retrieves semantically close cases and reports the price behaviour
+\emph{measured} after each, rather than a prediction derived from them.
 
+\paragraph{Explainability and trust.} The literature distinguishes explaining an opaque
+model \emph{post hoc}~\cite{ribeiro2016lime,lundberg2017shap} from building a system whose
+reasoning is inspectable by construction~\cite{rudin2019stop}. This work takes the second
+route, and the reason is one of risk: trust in automated systems fails in both
+directions~\cite{lee2004trust}, and the mere presence of an explanation increases
+acceptance of incorrect answers~\cite{bansal2021whole}. A generated sentence is an
+assertion; a sentence composed from computed objects is an assertion with the evidence
+attached, in which every displayed value points back to the measurement that produced it.
+
+%======================================================================
 \section{The InvestiGator System}
-InvestiGator is a pipeline of single-responsibility components linked by a common schema. Two data layers share
-that schema: a \emph{historical} layer (a knowledge base of past news, each entry storing date, ticker,
-headline, sentence embedding and measured post-event impact) and a \emph{live} layer (free price and news
-feeds). Two triggers converge on one explanation step before delivery via Telegram.
+\label{sec:system}
+%======================================================================
 
-\textbf{Market trigger.} Let $r_t$ be the log-return on day $t$ and let $\mu_t,\sigma_t$ be the mean and
-standard deviation over a trailing window of $w$ days ending strictly before $t$. The day is flagged when
-$|z_t|>k$ with $z_t=(r_t-\mu_t)/\sigma_t$. Every quantity behind the decision is exposed to the explanation
-engine, so the alert is faithful by construction.
-
-\textbf{News trigger.} An incoming headline is embedded with Sentence-BERT and compared by cosine
-similarity against the knowledge base; the top-$k$ precedents are returned with their observed impact at
-$+1$, $+3$ and $+5$ trading days, measured from the event-day close. The event day is the first trading day
-on or after the news date, and impact is accumulated strictly forward, which enforces a no-lookahead
-guarantee. This retrieve-and-reuse step is the case-based-reasoning core of the system.
-
-\textbf{Learned triage.} On top of the two transparent rules, a supervised model estimates the
-probability that an abnormal move of unusual size, in either direction, follows a news item. Labels come
-from the system's own event-study code: an example is material when the magnitude of the ticker's return
-minus the market's over the three trading days after the event exceeds $2\%$. Features respect a strict
-timing convention (pre-event volatility and momentum, the event-day return, headline length, sector, and
-the headline embedding), enforced by a unit test that mutates post-event prices and asserts that no
-feature changes while the label does. The deployed variant uses context features only, ships off by
-default behind a configuration gate, and each score is delivered with its additive per-feature
-contributions and a fixed clause: triage evidence, not a forecast. Once live, every decision is logged
-and later post-validated against the outcome that actually followed, yielding live precision and
-calibration monitoring.
-
-\textbf{Explanation.} Each alert is rendered directly from the computed objects (the $z$-score with its
-window and threshold, or the retrieved precedents with their similarity scores and measured impact) and
-ends with an explicit no-prediction disclaimer.
-
-\textbf{Grounded generation.} The components above each answer one question and return one object;
-nothing in them \emph{combines} those objects, and the joint state space --- how many names were flagged,
-which component dominated each, whether headlines were captured, whether analogous cases exist and which
-way they went --- outgrows any template library. A generative layer performs that synthesis under a
-construction that prevents the language step from becoming a factual one. This layer is implemented
-and evaluated but is \emph{not} exposed in the deployed product, whose alert path composes every
-message from computed objects and uses no language model; the two are reported separately for that
-reason. Inputs are serialised into an
-\emph{evidence bundle}: records carrying a citable identifier, a value, and a declared provenance of
-\emph{measured}, \emph{computed} or \emph{model}. No record carries a \emph{generated} provenance, an
-invariant asserted by test. The generator sees only the bundle, cites identifiers inline, and its output
-is verified before delivery; the interface resolves each citation back to its record, so the claim that
-generated text remains attached to its evidence is a traversal rather than an assertion about a prompt.
-
-Verification applies three conditions. Numbers are bound \emph{per sentence}: the identifiers a sentence
-cites determine the values it may use, and a value outside that set is a violation even when present
-elsewhere in the bundle. A global set --- the design this replaced --- lets a sentence cite one record and
-quote another's number, which permits a return to be restated as a $z$-score or a direction to be inverted
-using the oppositely signed value of a different record. Prediction, advice and asserted causation are
-rejected by pattern, with the honest disclaimers the system must be able to write removed beforehand by a
-closed allowlist; detecting negation contextually was tried and abandoned, because a negation placed
-nearby disables the check. Finally, every sentence making a checkable claim must cite a record. Rejection
-is per section, and a rejected section is replaced by a deterministic composition that must itself pass
-the same check.
-
-\section{Evaluation}
-The evaluation is fixed in advance. The anomaly detector is assessed primarily by the \emph{consistency} of
-its firing rate across instruments of different volatility (a label-free argument) and secondarily against
-an extreme-move proxy. The correlation engine is assessed as an information-retrieval task by cross-ticker
-precision@$k$ against a same-sector relevance proxy, compared with random, recency and lexical baselines
-over five random seeds. All numbers below are reproduced by versioned scripts.
-
-\subsection{Anomaly detection}
-Over three years of daily data for fifteen large-cap US tickers, the fixed $3\%$ threshold fires on $\sim
-1\%$ of days for a calm stock but $\sim 35\%$ for a volatile one, whereas the \emph{z}-score fires at a
-near-constant $2$--$3\%$ for all. The range of firing rates across tickers is more than twenty times
-tighter for the \emph{z}-score ($0.015$ vs $0.344$; Fig.~\ref{fig:anom}). Against the extreme-move proxy the
-\emph{z}-score reaches $F_1=0.516$ versus $0.218$ for the fixed rule, and a window ablation gives $F_1$ of
-$0.385$, $0.516$ and $0.678$ for $10$-, $20$- and $60$-day windows.
+Figure~\ref{fig:arch} shows the components and their connections. Sources on the left,
+methods in the centre, delivery channels on the right.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.95\columnwidth]{eval_anomaly_firing_rate.pdf}
-\caption{Firing rate per ticker: a fixed percentage threshold varies dramatically with each stock's
-volatility, while the volatility-normalised \emph{z}-score is stable across all tickers.}
-\label{fig:anom}
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=2mm]},
+  fonte/.style={draw, rounded corners=2pt, align=center, text width=2.0cm,
+                minimum height=0.95cm, fill=black!8, inner sep=2pt},
+  proc/.style={draw, rounded corners=2pt, align=center, text width=2.1cm,
+               minimum height=0.95cm, fill=black!3, inner sep=2pt},
+  saida/.style={draw, rounded corners=2pt, align=center, text width=2.0cm,
+                minimum height=0.8cm, fill=black!12, inner sep=2pt},
+]
+  \node[fonte] (p) {\textbf{Prices}\\ chain of four\\ fallbacks};
+  \node[fonte, below=4mm of p] (n) {\textbf{News}\\ three free\\ interfaces};
+  \node[fonte, below=4mm of n] (h) {\textbf{Case base}\\ precedents with\\ measured impact};
+
+  \node[proc, right=0.7cm of p] (det) {\textbf{Detection}\\ $z$-score};
+  \node[proc, right=0.7cm of n] (rec) {\textbf{Retrieval}\\ semantic\\ neighbours};
+  \node[proc, right=0.7cm of h] (tri) {\textbf{Triage}\\ calibrated\\ probability};
+  \node[proc, dashed, below=4mm of tri] (dec) {\textbf{Decomposition}\\ market, sector,\\ company};
+
+  \node[proc, right=0.7cm of rec, text width=2.3cm] (exp)
+    {\textbf{Explanation}\\ composed from\\ the computed objects};
+
+  \node[saida, right=0.7cm of exp, yshift=7mm] (tg) {\textbf{Messaging channel}};
+  \node[saida, right=0.7cm of exp, yshift=-7mm] (web) {\textbf{Web application}\\ decision log};
+
+  \draw[->] (p) -- (det); \draw[->] (n) -- (rec); \draw[->] (h) -- (rec);
+  \draw[->] (h) -- (tri); \draw[->] (n) -- (tri);
+  \draw[->, dashed] (p.south west) -- ++(-0.25,0) |- (dec.west);
+  \draw[->] (det.east) -- ++(0.2,0) |- (exp.west);
+  \draw[->] (rec) -- (exp);
+  \draw[->] (tri.east) -- ++(0.2,0) |- (exp.west);
+  \draw[->, dashed] (dec.east) -- ++(0.2,0) |- (exp.west);
+  \draw[->] (exp.east) -- ++(0.2,0) |- (tg.west);
+  \draw[->] (exp.east) -- ++(0.2,0) |- (web.west);
+\end{tikzpicture}
+\caption{System components and their connections. Decomposition is dashed because it is
+the only component that does not take part in every evaluation: without a price movement
+there is nothing to apportion.}
+\label{fig:arch}
 \end{figure}
 
-\subsection{Precedent retrieval}
-On $3{,}714$ real headlines across five sectors, MiniLM reaches a cross-ticker precision@5 of
-$0.514$, the larger MPNet slightly more ($0.538$), and both exceed the lexical baseline ($0.346$);
-recency is worst, below the random rate (Table~\ref{tab:retr}).
-The aggregate is not, however, the right way to state the result, and we state the weaker claim
-the data supports. Almost half the corpus is technology news, which makes available a strategy
-that uses no model and does not even read the query: always return technology headlines. Its
-precision equals the fraction of technology queries, $0.467$, above the lexical baseline. That
-strategy is useless as a product, since it is right on every query in one sector and wrong in the
-four others, but its existence shows that the aggregate partly measures corpus composition.
-Two checks bound the claim. On the multi-year FNSPID corpus ($\sim 80{,}000$ headlines) precision@5
-rises to $0.595$; the base rate rises in the same proportion and the margin holds, so the method
-neither degrades nor improves with scale. Imposing the constraint the deployed system actually
-faces, that a precedent must predate the query, lowers precision to $0.513$ and the base rate to
-$0.259$, moving the margin by $0.008$: the method keeps its advantage when forced to operate as
-it does in production.
-Per sector (Fig.~\ref{fig:persector}), the lift over the base rate is largest where vocabulary is
-distinctive, in energy ($+0.377$) and health ($+0.348$), and smallest for the broad consumer sector
-($+0.100$); technology has the highest raw precision ($0.712$) only because it dominates the corpus and so
-has a high base rate ($0.429$).
+\subsection{The Composition Rule}
+
+One construction rule runs through the whole implementation: the text delivered to the user
+is \emph{composed} from the objects the components produced, and is not written by a
+language model. Each displayed value comes from the object that computed it, so the alert
+cannot state a value other than the one the system obtained. Fidelity is therefore a
+property of the construction, not the outcome of a subsequent check.
+
+The system does implement a grounded generation layer, in which every sentence must cite an
+evidence record and a verifier rejects any sentence whose numbers do not belong to the
+records it cites. That layer is \emph{implemented and evaluated but not exposed} in the
+deployed product; it is reported separately in Sect.~\ref{sec:eval} for that reason.
+
+\subsection{Detection: What Counts as Unusual}
+
+A movement is unusual relative to the company's own recent behaviour, not to a fixed
+percentage. For each trading day $t$, the log return $r_t = \ln(P_t / P_{t-1})$ is compared
+with the mean and standard deviation of the preceding window:
+\begin{equation}
+z_t = \frac{r_t - \mu_{t-1}}{\sigma_{t-1}},
+\qquad
+\mu_{t-1}, \sigma_{t-1} \text{ over } [t-w,\, t-1].
+\label{eq:zscore}
+\end{equation}
+The day being assessed is \emph{excluded} from the window that defines its own norm.
+Without that exclusion the day would contribute to the mean and deviation against which it
+is compared, attenuating its own anomaly. The same discipline forbids the use of any
+information later than the day assessed, and an automated test enforces it by mutating the
+future of an example and requiring the inputs to remain identical while the label changes.
+
+\subsection{Decomposition: Company or Market}
+
+The observed return is apportioned into a market component, a sector component orthogonal
+to the market, and a company-specific residual:
+\begin{equation}
+r = \beta_m\, r_m + \beta_s\, \tilde{r}_s + \varepsilon .
+\label{eq:decomp}
+\end{equation}
+Sensitivities are estimated only on data \emph{prior} to the day being explained, and are
+shrunk towards a reference by precision weighting~\cite{vasicek1973beta} rather than
+clipped at an arbitrary bound. The distinction is not cosmetic: a clipping rule that falls
+back to a unit sensitivity whenever the estimate leaves a fixed range attributes the whole
+of an unusual movement to the company precisely on the days when the estimate is least
+reliable, which are the days the alert is about.
+
+\subsection{Retrieval: Precedents with Measured Outcomes}
+
+Each headline is encoded into a $384$-dimensional sentence
+embedding~\cite{reimers2019sbert}, and precedents are retrieved by cosine similarity from a
+case base of $38{,}214$ entries. What distinguishes retrieval here from a similarity search
+is that every retrieved case carries the price behaviour \emph{measured} after it, over
+$+1$, $+3$ and $+5$ trading days, aligned to the first session on or after the news date.
+Precedents are shown individually, with date, similarity and outcome, and never summarised
+into an average that could be read as a forecast.
+
+\subsection{Decision Policy}
+
+Communicating every candidate is equivalent to communicating nothing. A channel delivering
+fifteen messages a day stops being read, and the system loses the usefulness that justifies
+it. Five decision points act in sequence: the headline must name the company; it must be
+recent; a precedent must exceed a similarity floor; the triage score must exceed a floor;
+and a global budget of five alerts per day must not be exhausted. Over 1--3 September 2026
+the system evaluated $743$ distinct headlines from twelve companies and delivered $15$
+alerts to eight of them.
+
+That total of fifteen is the ceiling the budget imposes rather than a measurement: the
+budget was exhausted on all three days. What the per-company distribution measures is the
+ordering \emph{within} that ceiling, which the policy does not fix, since no company holds
+a quota of its own.
+
+%======================================================================
+\section{Evaluation}
+\label{sec:eval}
+%======================================================================
+
+Every comparison is against a baseline chosen and declared \emph{before} the measurement,
+which is the condition under which a result can come out negative. Each study states the
+question, the procedure and the alternative, the result obtained, and what the result does
+\emph{not} allow one to conclude.
+
+\subsection{Detection Is Consistent Across Companies}
+
+The primary argument is label-free: a detector that measures rarity relative to each
+company's own norm should fire at a comparable rate across companies of very different
+volatility. Over three years of daily data for fifteen large-cap US tickers, the spread
+between the most and the least flagged company is $0.015$ for the rolling $z$-score against
+$0.344$ for a fixed three per cent rule. Against an approximate extreme-move label the
+$z$-score reaches $F_1 = 0.516$ against $0.218$ for the fixed rule.
+
+Under an equivalent causal protocol the same method also outperforms two detectors designed
+for this task, with $F_1$ of $0.530$ against $0.269$ for the Isolation
+Forest~\cite{liu2008isolation} and $0.280$ for the Local Outlier
+Factor~\cite{breunig2000lof}. The literature situates that outcome: both learned detectors
+define rarity geometrically and were designed for multivariate spaces, whereas the problem
+here presents a single return series per company in which the relevant structure is
+temporal. When the assumption embedded in a simple method coincides with the actual
+structure of the problem, the margin for improving on it is small.
+
+\paragraph{What this does not establish.} The deployed configuration is not the best
+measured within its own family: an exponentially weighted estimator reaches $F_1 = 0.664$
+and a sixty-day window $0.678$, against $0.516$ in production. The window was kept for
+responsiveness and the equally weighted deviation for explainability. Those are decisions,
+not results, and the paper reports them as such.
+
+\subsection{Retrieval Beats the Base Rate in Every Sector}
+
+Relevance is approximated by sector membership, a verifiable proxy rather than the property
+one would wish to measure, and the query's own company is excluded so that the task cannot
+be solved by ticker matching. Over $3{,}714$ real headlines across five sectors, MiniLM
+reaches a cross-ticker precision@5 of $0.514$ and the larger MPNet $0.538$, both above the
+lexical baseline of $0.346$; recency, at $0.126$, is worse than random.
+
+The aggregate is not, however, the right way to state the result, and we state the weaker
+claim the data supports. Almost half the corpus is technology news, which makes available a
+strategy that uses no model and does not even read the query: always return technology
+headlines. Its precision equals the fraction of technology queries, $0.467$, above the
+lexical baseline. That strategy is useless as a product, since it is right on every query in
+one sector and wrong in the four others, but its existence shows that the aggregate partly
+measures corpus composition. The comparison that survives the objection is made
+\emph{within} each sector, where the method exceeds the corresponding reference value in all
+five (Fig.~\ref{fig:persector}).
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.95\columnwidth]{eval_retrieval_per_sector.pdf}
-\caption{Per-sector cross-ticker precision@5 against the random base rate. Retrieval beats the base rate in
-every sector; the lift is largest where the domain vocabulary is most distinctive.}
+\includegraphics[width=0.86\textwidth]{eval_retrieval_per_sector.pdf}
+\caption{Per-sector cross-ticker precision@5 against the sector base rate. The absolute
+margin is largest in the most abundant sector; in the scarce sectors, where the reference
+value is near $0.072$, the method reaches several times that value with a smaller absolute
+margin.}
 \label{fig:persector}
 \end{figure}
 
+Two checks bound the claim. On the multi-year corpus of approximately eighty thousand
+headlines, precision@5 rises to $0.595$ while the base rate rises in the same proportion:
+the method neither degrades nor improves with scale. Imposing the constraint the deployed
+system actually faces, that a precedent must predate the query, lowers precision to $0.513$
+and the base rate to $0.259$, moving the margin by $0.008$. The method keeps its advantage
+when forced to operate as it does in production.
+
+\paragraph{Theme is not direction.} Agreement between the direction of the query's movement
+and that of its precedents is $0.708$ against a chance value of $0.688$. Two headlines can
+concern the same subject and the prices move in opposite directions. The consequence for the
+product is the decision to present precedents individually, with date and outcome, rather
+than reducing them to an average that could be read as a forecast.
+
+\subsection{The Negative Result: Text Does Not Beat Volatility}
+
+The triage task is to decide, before delivery, which headlines justify interrupting the
+reader. We built a dataset of $79{,}753$ examples from the public FNSPID
+corpus~\cite{dong2024fnspid} and price series, with a single-day temporal split and an
+embargo, and trained six families. Table~\ref{tab:triage} reports them.
+
 \begin{table}[t]
-\caption{Cross-ticker precision@$k$, mean\,$\pm$\,std over five runs.}
-\label{tab:retr}
 \centering
+\caption{Triage, PR-AUC on the held-out test block (prevalence $0.378$). The baseline
+declared in advance was the volatility-only model.}
+\label{tab:triage}
 \begin{tabular}{lcc}
 \toprule
-Method & P@5 & P@10 \\
+Model & PR-AUC & Brier \\
 \midrule
-SBERT (MiniLM) & $0.514\pm0.015$ & $0.478\pm0.011$ \\
-SBERT (MPNet) & $\mathbf{0.538\pm0.011}$ & $\mathbf{0.506\pm0.010}$ \\
-Lexical (hashing) & $0.346\pm0.011$ & $0.314\pm0.008$ \\
-Recency & $0.126\pm0.006$ & $0.106\pm0.005$ \\
-Random (base rate) & $0.240\pm0.004$ & $0.240\pm0.004$ \\
+Volatility only (baseline) & $\mathbf{0.542}$ & $0.218$ \\
+Company and day context & $0.538$ & $0.224$ \\
+Context and headline text & $0.496$ & $0.229$ \\
+Gradient boosting & $0.469$ & $0.228$ \\
+Headline text only & $0.439$ & $0.240$ \\
+Always alert (floor) & $0.378$ & $0.622$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Faithfulness}
-Because each alert is rendered from the same objects the system computes, the explanation cannot diverge
-from the underlying computation; this is checked by an automated test that asserts the rendered alert
-reproduces each retrieved precedent's date, ticker and measured impact.
+No variant incorporating the headline text outperforms the volatility-only baseline. The
+result survives three checks. The first repeats the comparison granting the text the best
+available conditions, with tuned regularisation, a PCA-reduced text block and a
+finance-domain encoder, and raises its best value to $0.533$ without reaching the baseline.
+The second resamples by groups formed of company and day, and keeps the interval excluding
+zero. The third repeats the measurement for nine alternative combinations of label
+threshold and horizon, and volatility matches or exceeds the text model in all nine.
 
-For the generative layer, two quantities are measured because they answer different questions. An
-adversarial corpus of $23$ attacks, each of which must be rejected, measures the guard: $23/23$ are
-blocked. A set of $8$ faithful control sentences, each of which must pass, measures whether the guard is
-merely refusing everything: $8/8$ are admitted. The second is the load-bearing figure, since a guard that
-rejected all text would score perfectly on the first. The first two are deterministic and reproduce exactly. In one
-run of six reports, $27/27$ delivered sections satisfy the check and none carrying a violation reaches
-the reader; the section counts are a sample of that run, so the conforming rate rather than the counts
-is what carries over, whereas the zero is a property that must hold in every run and is verified rather
-than assumed, though circular, since the same checker decides and evaluates. What the guard rejects is itself informative: rejections were of asserted causation, advice
-and prediction rather than of fabricated numbers, indicating that the constraint is doing continuous work.
-The corpus retains every exploit reproduced against earlier versions of the guard as a permanent
-regression.
+\paragraph{The domain encoder is the weakest of all.} The finance-specific encoder reaches
+$0.420$, the lowest value among the models evaluated. The artefact assessed is the public
+checkpoint \texttt{ProsusAI/finbert}, applied by mean-pooling its vectors, which is the way
+to use it without further training. It is an encoder tuned for sentiment classification and
+not for placing sentences in a space where distance means similarity, and it is precisely
+that training objective that Sentence-BERT adds~\cite{reimers2019sbert}. The measurement
+establishes that this domain model, used in this way, performs worse than a general model
+trained for similarity; it does not establish that domain knowledge is irrelevant to the
+task.
 
-\subsection{Materiality triage}
-On the multi-year FNSPID corpus \cite{dong2024fnspid} ($79{,}753$ examples over 2018--2023, fourteen of
-the fifteen tickers, temporal split by unique days with a five-day embargo; test prevalence $0.378$),
-every trained ranker clears the always-alert floor by a wide margin, but no model that reads the headline
-text beats the volatility-only baseline: PR-AUC $0.542$ for a volatility-only logistic regression,
-against $0.538$ (context-only), $0.496$ (context$+$text), $0.469$ (gradient boosting) and $0.439$
-(text-only), floor $0.378$. As a product mechanism, however, triage is clearly worthwhile: within a
-budget of five alerts per day it raises the share of material alerts from $0.379$ to $0.632$, with
-calibrated probabilities (Brier $0.218$ against $0.622$). The same discipline was applied on the anomaly
-side, where an Isolation Forest \cite{liu2008isolation} and a Local Outlier Factor
-\cite{breunig2000lof}, both trained causally on identical information, lost to the $z$-score on the
-identical evaluation region ($F_1$ $0.269$ and $0.280$ against $0.530$). Both
-statistical-versus-learned comparisons were pre-committed, and both favoured the transparent choice. A
-cluster bootstrap and a fair re-test (tuned regularisation, a PCA-reduced text block, a finance-domain
-encoder) confirm the negative-on-text result is robust rather than an under-fit artefact.
+\subsection{Locating the Negative Result}
 
+Placing representations side by side answers which of them is better. The question with
+more use to whoever builds a system is different: does the text add to what is already
+known? Measured against a per-company lookup table, which contains everything the model
+knows about the company and nothing about the news item, the answer is affirmative: the
+headline adds $+0.012$ PR-AUC, with an interval between $+0.004$ and $+0.020$ that excludes
+zero. It is the only occasion on which a text representation shows a detectable increment
+in this task.
+
+The value falls below the $0.02$ threshold fixed before the measurements, and that
+threshold applies in both directions. What is established is an \emph{upper bound} on the
+effect of the text, not a quantity the system can use. Three further measurements prevent
+this increment from reopening the verdict: the sum does not exceed volatility alone; the
+increment does not survive the metric that describes the product, since precision within the
+five-alert budget remains at $0.662$ with and without text; and the ability to separate news
+items from the same company remains at chance level.
+
+What these measurements add to the negative answer is not a caveat but a \emph{location}:
+the information the text carries separates companies and periods, where the product needed
+it to separate news items.
+
+\paragraph{An engineering consequence.} A per-company lookup table of thirteen constants,
+containing no information from any headline, reaches $0.534$ against $0.538$ for the
+deployed variant, and the same precision within budget. The deployed model \emph{is}, in
+effect, a lookup table. That finding is what led to the policy change reported next.
+
+\subsection{The System in Operation}
+
+The system has run continuously on free infrastructure, monitoring twelve companies. Over
+the documented period it delivered $367$ messages and recorded $4{,}366$ triage decisions,
+while the precedent base accumulated $38{,}214$ cases with measured impact.
+
+\paragraph{A measured policy change.} Once the triage model was found to be a lookup table,
+it was changed from a veto into a ranking, under a global daily budget. The effect was
+measured, with a control. In news alerts, which the budget governs, concentration in the
+three most alerted companies falls from $0.713$ to $0.480$, with the interval of the
+difference excluding zero, and the number of companies reaching an alert rises from seven to
+nine of twelve. Price-movement alerts cross the same period, the same companies and the same
+conditions, and the budget does \emph{not} count them: in that series concentration moves
+from $0.449$ to $0.485$, with the interval containing zero. The governed quantity moved and
+the ungoverned one did not.
+
+\paragraph{Grounded generation, measured separately.} For the layer that is implemented but
+not exposed, two quantities are measured because they answer different questions. An
+adversarial corpus of $23$ attacks, each of which must be rejected, measures the guard:
+$23/23$ are blocked. A set of $8$ faithful control sentences, each of which must pass,
+measures whether the guard is merely refusing everything: $8/8$ are admitted. The second is
+the load-bearing figure, since a guard that rejected all text would score perfectly on the
+first.
+
+%======================================================================
 \section{Discussion and Limitations}
-The results support the design: transparent volatility-normalised detection is consistent where a fixed
-threshold is not, semantic retrieval surfaces markedly more sector-analogous precedents than lexical or
-trivial baselines, and learned triage adds a large budgeted-precision gain while confirming, against its
-own text features, that the transparent volatility evidence carries the signal. The limitations are
-stated plainly. Relevance is a same-sector proxy, not a human judgement; the primary retrieval corpus is
-a recent window from a free service, though a follow-up validated the retrieval at scale on FNSPID (the
-triage study also used the multi-year corpus); the displayed precedent impact is a raw post-event return, whereas the triage labels
-are market-adjusted; and no human usefulness study has yet been run, which now covers the generated text
-as well. The generative layer carries a further limitation stated rather than discovered: its
-\emph{linguistic} defence is a blocklist, and a blocklist over natural language loses in the limit, which
-is why the pushed alert path uses a closed-vocabulary allowlist and the two are not claimed to be
-equivalent. The check confirms that a cited record exists and that a sentence's numbers belong to it, not
-that the record supports the characterisation in words; and the adversarial exercise behind the current
-guard was interrupted, with two of six attack perspectives completing and no independent verification
-stage, so its measured strength is a lower bound. A further, conceptual limitation is that embedding similarity captures \emph{theme} rather
-than \emph{direction}: a retrieved cluster can mix positive and negative outcomes (a positive headline may
-retrieve a competitive-threat cluster), so the reported mean is evidence about a theme, not a directional
-forecast, which is why precedents are always shown individually and every alert disclaims prediction. By
-design, the system performs no price prediction or trading, so profit-based metrics are out of scope.
+%======================================================================
 
+\paragraph{No controlled user study.} This is the heaviest gap. The system rests on the
+hypothesis that an explanation accompanied by its evidence leads a non-specialist to a
+better decision, and that hypothesis has not been submitted to an experimental design. The
+protocol exists and has not been executed. What does exist is feedback collected in a real
+context: readers of the public channel classify the alerts they receive, under analysis
+rules fixed before the first vote. That feedback is observational: participation is
+self-selected, no group received the price change without the accompanying explanation, and
+the channel is public, so it is not known whether respondents belong to the audience this
+work assumes. The founding hypothesis concerns a better decision, which is a different
+quantity, and it remains untested.
+
+\paragraph{Latency is bounded by the sources, not by the cycle.} Between publication and
+detection the median is $353$ minutes, and between detection and delivery it is one second.
+The time is entirely in discovery, and shortening the polling cycle did not reduce it: free
+company-news interfaces are not real-time channels, and the most recent headline in a feed
+is not the most recent \emph{relevant} one. The system observes, by construction,
+information that is no longer new. That condition aggravates rather than attenuates the
+expectation behind the negative result of Sect.~\ref{sec:eval}.
+
+\paragraph{Labels are verifiable approximations.} Sector membership approximates relevance;
+a return threshold approximates materiality; a percentile approximates rarity. Each is
+verifiable and none is the property one would wish to measure. Closing that distance
+requires a human-annotated sample, which does not exist.
+
+\paragraph{Survivorship and coverage.} The companies were selected in 2026 and evaluated
+over the past, so they survived by construction. News coverage is incomplete and uneven:
+at least one headline was captured on $88.5\%$ of unusual days, which is an upper bound,
+since it asks whether \emph{a} story existed and not whether it was the right one.
+
+%======================================================================
 \section{Conclusion}
-InvestiGator shows that useful financial alerting for retail investors can be both transparent and reproducible:
-a volatility-normalised detector that explains every flag, a news--market correlation engine that
-retrieves analogous precedents and reports their measured impact as evidence rather than prediction, and
-a trained, calibrated triage model that raises within-budget alert precision $1.67$-fold while honestly
-failing to beat a volatility-only baseline with text. Alongside these, and not exposed in the
-deployed product, a generative layer whose synthesis stays bound to the records it cites.
-The last of these carries the most transferable idea: placing generated text
-beside computed results is safe only if the binding is \emph{per claim} rather than per document, and if
-the guarantee that binding provides is stated at the strength it actually has. Future work is a
-market-adjusted impact-magnitude study over the multi-year precedents (retrieval already validated at
-scale on FNSPID), a human relevance and usefulness study covering the generated reports, completing the
-interrupted adversarial evaluation of the guard, and closing the triage text gap with richer text than
-headlines.
+%======================================================================
 
-\bibliographystyle{IEEEtran}
-\bibliography{references}
+InvestiGator shows that useful financial alerting for retail investors can be transparent
+and reproducible at once: a volatility-normalised detector that explains every flag, a
+retrieval engine that returns analogous precedents and reports their \emph{measured}
+outcome as evidence rather than prediction, a decomposition that separates the company from
+the market, and a calibrated triage model that honestly fails to beat a volatility-only
+baseline with text.
+
+The most transferable observation is that last one, and it concerns evaluation rather than
+modelling. A component evaluated in isolation, over the distribution of its training set,
+and deployed behind filters that change that distribution, has not been evaluated on the
+distribution it will see. The metric was correct and the question it asked was not the one
+the product needed: PR-AUC over a full test set is dominated by variation \emph{between}
+companies, whereas the product required separation \emph{within} a company on a given day.
+Detecting that required comparing the deployed model against a lookup table of thirteen
+constants, which is a comparison worth making before concluding that a learned component
+earns its place.
+
+Future work is a market-adjusted impact-magnitude study over the multi-year precedents, the
+controlled user study whose protocol is already prepared, an annotated sample that would
+anchor all three labels at once, and closing the text gap with richer input than headlines.
+
+\subsubsection*{Reproducibility.} All results are produced by versioned scripts over frozen
+artefacts, with fixed seeds. The trained model, its calibration and the evaluation outputs
+are kept as versioned artefacts, and each figure in this paper is regenerated by the script
+that produced the corresponding measurement.
+
+\subsubsection*{Acknowledgements.} The authors thank the readers of the public channel who
+classify the alerts they receive.
+
+\begin{thebibliography}{99}
+\bibitem{gallup2025stock} Gallup: What Percentage of Americans Own Stock? (2025)
+\bibitem{sifma2025factbook} SIFMA: Capital Markets Fact Book. Securities Industry and
+Financial Markets Association (2025)
+\bibitem{fama1970efficient} Fama, E.F.: Efficient capital markets: a review of theory and
+empirical work. J. Finance \textbf{25}(2), 383--417 (1970)
+\bibitem{chandola2009anomaly} Chandola, V., Banerjee, A., Kumar, V.: Anomaly detection: a
+survey. ACM Comput. Surv. \textbf{41}(3), 1--58 (2009)
+\bibitem{liu2008isolation} Liu, F.T., Ting, K.M., Zhou, Z.-H.: Isolation forest. In: ICDM,
+pp.\ 413--422 (2008)
+\bibitem{breunig2000lof} Breunig, M.M., Kriegel, H.-P., Ng, R.T., Sander, J.: LOF:
+identifying density-based local outliers. In: SIGMOD, pp.\ 93--104 (2000)
+\bibitem{engle1982arch} Engle, R.F.: Autoregressive conditional heteroscedasticity with
+estimates of the variance of United Kingdom inflation. Econometrica \textbf{50}(4),
+987--1007 (1982)
+\bibitem{bollerslev1986garch} Bollerslev, T.: Generalized autoregressive conditional
+heteroskedasticity. J. Econom. \textbf{31}(3), 307--327 (1986)
+\bibitem{devlin2019bert} Devlin, J., Chang, M.-W., Lee, K., Toutanova, K.: BERT:
+pre-training of deep bidirectional transformers for language understanding. In: NAACL,
+pp.\ 4171--4186 (2019)
+\bibitem{reimers2019sbert} Reimers, N., Gurevych, I.: Sentence-BERT: sentence embeddings
+using Siamese BERT-networks. In: EMNLP-IJCNLP, pp.\ 3982--3992 (2019)
+\bibitem{liu2020finbert} Liu, Z., Huang, D., Huang, K., Li, Z., Zhao, J.: FinBERT: a
+pre-trained financial language representation model for financial text mining. In: IJCAI,
+pp.\ 4513--4519 (2020)
+\bibitem{huang2023finbert} Huang, A.H., Wang, H., Yang, Y.: FinBERT: a large language model
+for extracting information from financial text. Contemp. Account. Res. \textbf{40}(2),
+806--841 (2023)
+\bibitem{brown1985daily} Brown, S.J., Warner, J.B.: Using daily stock returns: the case of
+event studies. J. Financ. Econ. \textbf{14}(1), 3--31 (1985)
+\bibitem{vasicek1973beta} Vasicek, O.A.: A note on using cross-sectional information in
+Bayesian estimation of security betas. J. Finance \textbf{28}(5), 1233--1239 (1973)
+\bibitem{aamodt1994cbr} Aamodt, A., Plaza, E.: Case-based reasoning: foundational issues,
+methodological variations, and system approaches. AI Commun. \textbf{7}(1), 39--59 (1994)
+\bibitem{ribeiro2016lime} Ribeiro, M.T., Singh, S., Guestrin, C.: ``Why should I trust
+you?'': explaining the predictions of any classifier. In: KDD, pp.\ 1135--1144 (2016)
+\bibitem{lundberg2017shap} Lundberg, S.M., Lee, S.-I.: A unified approach to interpreting
+model predictions. In: NIPS, pp.\ 4765--4774 (2017)
+\bibitem{rudin2019stop} Rudin, C.: Stop explaining black box machine learning models for
+high stakes decisions and use interpretable models instead. Nat. Mach. Intell.
+\textbf{1}(5), 206--215 (2019)
+\bibitem{lee2004trust} Lee, J.D., See, K.A.: Trust in automation: designing for appropriate
+reliance. Hum. Factors \textbf{46}(1), 50--80 (2004)
+\bibitem{bansal2021whole} Bansal, G., Wu, T., Zhou, J., Fok, R., Nushi, B., Kamar, E.,
+Ribeiro, M.T., Weld, D.S.: Does the whole exceed its parts? The effect of AI explanations on
+complementary team performance. In: CHI, pp.\ 1--16 (2021)
+\bibitem{dong2024fnspid} Dong, Z., Fan, X., Peng, Z.: FNSPID: a comprehensive financial news
+dataset in time series. In: KDD, pp.\ 4918--4927 (2024)
+\end{thebibliography}
 
 \end{document}
