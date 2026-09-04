@@ -158,6 +158,26 @@
   sobre 27/09 — 10 dias de bolsa, 120 unidades independentes, meia-largura de IC de 0,074. Se a
   defesa for em outubro, a janela rotulável **mais do que duplica** e o cálculo de potência tem
   de ser refeito **antes** de ver qualquer candidato. Não refazer sobre uma ambiguidade.
+  **✅ ESCLARECIDO: 27/09 é a submissão do DOCUMENTO; a defesa é em outubro.** Não alarga a
+  janela útil — aperta-a, por uma razão melhor: o que entra na dissertação tem de estar congelado
+  antes de 27/09, e outubro serve para a apresentação. **O protocolo pré-registado mantém-se
+  exactamente**, dimensionamento e cálculo de potência incluídos. Os dias extra permitem apenas
+  dizer na defesa «continuou a correr, e sobre uma janela maior o número é este» — acrescento
+  oral sobre um resultado fechado, não uma segunda versão dele.
+  **⚠️ E VERIFICAR A RECOLHA ENCONTROU LOOKAHEAD QUE EU PRÓPRIO TINHA ABERTO.** A decisão R1
+  manda registar toda a candidata relevante, e isso trouxe também as **velhas**. `score_latest`
+  usa a **última barra disponível**: para uma manchete fresca é a véspera (a assimetria que a
+  tese declara), mas para uma de há dias as entradas descrevem um mercado **que já viu o
+  desfecho** que o rótulo mede em `(data, data+3]`. Medido sobre as 977 linhas com snapshot:
+  `not_latest` e `sobreviveu` têm `as_of` em **−2 a 0** dias sobre a notícia; `stale` de **+1 a
+  +107**. **São 430 de 977 que pareciam material de treino e não são.**
+  **Fechado no ponto de escrita e não por filtro a jusante:** as `stale` deixam de ser pontuadas;
+  a linha fica registada, porque o funil precisa dela, sem `prob` e sem snapshot. Filtrar depois
+  deixaria no ficheiro um snapshot que nunca pode ser usado, e a auditoria contá-lo-ia como
+  classe A. **O `as_of` é o que tornou isto detectável — foi exactamente para isto que o snapshot
+  o guarda**, e a secção 3 da auditoria, que estava a zeros por não haver snapshots, passou a ser
+  o instrumento que o mostra. O gerador passa a escrever também a **leitura** do número, e não só
+  o número. **973 testes.**
   **✅ CHAVE DO HEROKU SEM PASSAR PELO CHAT:** `deploy_heroku.py` passa a ler `HEROKU_API_KEY` do
   `.env` (gitignored, o cofre que o projecto já usa para as outras onze chaves) antes de tentar a
   CLI, e o valor **nunca é impresso, nem no caminho de erro** — as duas fugas anteriores (sessões
