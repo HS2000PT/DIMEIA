@@ -50,8 +50,15 @@ def _token() -> str:
     return (os.environ.get("GITHUB_TOKEN") or "").strip()
 
 
-def _request(url: str, token: str, method: str = "GET", payload: dict | None = None):
-    data = json.dumps(payload).encode() if payload is not None else None
+def _request(url: str, token: str, method: str = "GET", payload: dict | None = None,
+             raw: bytes | None = None):
+    """`raw` evita as cópias completas que `json.dumps` faria de um corpo muito grande.
+
+    Ver `publish_blob`: um ficheiro de 40 MB passava por cinco cópias em memória e produzia
+    um pico de ~256 MB num contentor de 512.
+    """
+    data = raw if raw is not None else (
+        json.dumps(payload).encode() if payload is not None else None)
     req = urllib.request.Request(url, data=data, method=method)
     req.add_header("Authorization", f"Bearer {token}")
     req.add_header("Accept", "application/vnd.github+json")
@@ -187,16 +194,28 @@ def publish_blob(path: str | Path, filename: str, repo: str = "", branch: str = 
     except Exception as exc:  # noqa: BLE001
         return f"[instantaneo-api] leitura falhou (ignorado): {type(exc).__name__}"
 
-    payload = {
+    # ⚠️ O CORPO É MONTADO EM BYTES, E ISSO NÃO É MICRO-OPTIMIZAÇÃO. Medido a 2026-09-04.
+    #
+    # A versão anterior fazia cinco cópias completas do ficheiro: os bytes lidos, o base64 em
+    # bytes, o mesmo em `str`, o JSON serializado, e o JSON codificado. Para o `live_kb.jsonl`,
+    # que hoje tem 40 MB, isso é um pico perto de **256 MB** — metade da quota do contentor,
+    # de uma só vez, e a cada publicação. Era a maior fatia do `R14`.
+    #
+    # O base64 é ASCII puro e não tem um único carácter que o JSON precise de escapar, logo
+    # pode ser inserido tal e qual entre aspas. Ficam duas cópias em vez de cinco, e as duas
+    # são libertadas mal o pedido saia.
+    b64 = base64.b64encode(corpo)
+    del corpo
+    cabeca = json.dumps({
         "message": "Painel: instantaneo do ciclo",
-        "content": base64.b64encode(corpo).decode("ascii"),
         "branch": branch,
-    }
-    if sha:
-        payload["sha"] = sha
+        **({"sha": sha} if sha else {}),
+    })[:-1].encode()  # sem o `}` final, para o conteúdo entrar a seguir
+    body = cabeca + b', "content": "' + b64 + b'"}'
+    del b64
 
     try:
-        _request(f"{_API}/repos/{repo}/contents/{filename}", token, "PUT", payload)
+        _request(f"{_API}/repos/{repo}/contents/{filename}", token, "PUT", raw=body)
         return f"[instantaneo-api] publicado {filename} em {branch}."
     except urllib.error.HTTPError as exc:
         if exc.code == 409:

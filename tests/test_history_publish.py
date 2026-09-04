@@ -287,3 +287,68 @@ def test_semear_jsonl_nunca_sobrescreve_dados_locais(tmp_path, monkeypatch):
 def test_semear_jsonl_assinala_leitura_remota_inconclusiva(tmp_path, monkeypatch):
     monkeypatch.setattr(hp, "fetch_jsonl", lambda *a, **k: None)
     assert hp.seed_jsonl_once(tmp_path / "feedback.jsonl", "feedback.jsonl") is False
+
+
+def test_publish_blob_monta_json_valido_sem_copias(tmp_path, monkeypatch):
+    """O corpo passa a ser montado em bytes, e tem de continuar a ser JSON valido.
+
+    Medido a 2026-09-04: a versao anterior fazia CINCO copias completas do ficheiro (bytes
+    lidos, base64, o mesmo em str, o JSON serializado, e o JSON codificado). Para o
+    `live_kb.jsonl`, que tem 40 MB, era um pico perto de 256 MB -- metade da quota do
+    contentor, a cada publicacao. Era a maior fatia do R14.
+    """
+    import base64
+    import json
+
+    import investigator.history_publish as hp
+
+    conteudo = b'{"a": 1}' * 500
+    f = tmp_path / "x.jsonl"
+    f.write_bytes(conteudo)
+
+    enviados = {}
+
+    def _falso(url, token, method="GET", payload=None, raw=None):
+        if method == "GET":
+            return {"sha": "shaantigo"}
+        enviados["raw"] = raw
+        enviados["payload"] = payload
+        return {}
+
+    monkeypatch.setattr(hp, "_request", _falso)
+    monkeypatch.setattr(hp, "_enabled", lambda: True)
+    monkeypatch.setattr(hp, "_token", lambda: "t")
+
+    hp.publish_blob(f, "x.jsonl", repo="o/r", branch="dados")
+
+    assert enviados["payload"] is None, "o corpo grande nao pode passar por json.dumps"
+    corpo = json.loads(enviados["raw"])          # tem de ser JSON valido
+    assert base64.b64decode(corpo["content"]) == conteudo, "o conteudo nao sobreviveu"
+    assert corpo["sha"] == "shaantigo"
+    assert corpo["branch"] == "dados"
+
+
+def test_publish_blob_sem_sha_na_primeira_publicacao(tmp_path, monkeypatch):
+    """Controlo: sem ficheiro remoto (404) o corpo sai sem `sha`, e continua valido."""
+    import json
+    import urllib.error
+
+    import investigator.history_publish as hp
+
+    f = tmp_path / "y.jsonl"
+    f.write_bytes(b"abc")
+    enviados = {}
+
+    def _falso(url, token, method="GET", payload=None, raw=None):
+        if method == "GET":
+            raise urllib.error.HTTPError(url, 404, "nao ha", {}, None)
+        enviados["raw"] = raw
+        return {}
+
+    monkeypatch.setattr(hp, "_request", _falso)
+    monkeypatch.setattr(hp, "_enabled", lambda: True)
+    monkeypatch.setattr(hp, "_token", lambda: "t")
+
+    hp.publish_blob(f, "y.jsonl", repo="o/r", branch="dados")
+    corpo = json.loads(enviados["raw"])
+    assert "sha" not in corpo
