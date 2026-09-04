@@ -299,3 +299,33 @@ def test_scan_news_busca_precos_uma_so_vez_por_empresa(monkeypatch, tmp_path):
     assert chamadas == ["NVDA"], (
         f"esperava UMA busca de precos, houve {len(chamadas)}: {chamadas}"
     )
+
+
+def test_linha_nua_pode_ser_promovida_uma_vez(tmp_path, monkeypatch):
+    """Um titulo registado sem snapshot aceita UMA reescrita, e so se ela trouxer snapshot.
+
+    A 2026-09-04 a barra do dia por liquidar desligou a pontuacao e 678 titulos entraram no
+    registo sem `feature_snapshot`. Sem esta promocao a guarda de dedup prendia-os nesse estado
+    para sempre, e sao 678 titulos que o retreino nunca poderia usar.
+    """
+    monkeypatch.setattr(runner, "_PRED_LOG", tmp_path / "pred.jsonl")
+    monkeypatch.setattr(runner, "_DECISOES_VISTAS", None)
+    # 1) linha nua (a pontuacao falhou)
+    runner._log_decision_safe("2026-09-04", "NVDA", "h", None, None, kept=False, stage="not_latest")
+    # 2) outra tentativa sem snapshot: nao acrescenta nada
+    runner._log_decision_safe("2026-09-04", "NVDA", "h", None, None, kept=False, stage="not_latest")
+    linhas = (tmp_path / "pred.jsonl").read_text(encoding="utf-8").strip().splitlines()
+    assert len(linhas) == 1, "linha nua repetida"
+    # 3) a pontuacao recupera: promove
+    runner._log_decision_safe("2026-09-04", "NVDA", "h", (0.42, []), 0.5, kept=False,
+                              feature_snapshot={"schema": "triage-context-v1", "values": {}},
+                              stage="not_latest")
+    linhas = (tmp_path / "pred.jsonl").read_text(encoding="utf-8").strip().splitlines()
+    assert len(linhas) == 2, "a promocao nao foi escrita"
+    # 4) e nao volta a escrever depois de completa
+    runner._log_decision_safe("2026-09-04", "NVDA", "h", (0.42, []), 0.5, kept=False,
+                              feature_snapshot={"schema": "triage-context-v1", "values": {}},
+                              stage="not_latest")
+    linhas = (tmp_path / "pred.jsonl").read_text(encoding="utf-8").strip().splitlines()
+    assert len(linhas) == 2, "escreveu depois de ja estar completa"
+    assert json.loads(linhas[-1])["feature_snapshot"]["schema"] == "triage-context-v1"

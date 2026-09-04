@@ -451,10 +451,14 @@ def filter_new_alerts(market: list[tuple[str, str]], news: list[tuple[str, str]]
 # ela aparece nas notícias — e o ficheiro é republicado inteiro a cada ciclo, logo o custo é de
 # publicação. Uma linha por título, e a contagem de ciclos vive no `gate_log`, que é onde a
 # pergunta "onde é gasto o tempo do sistema" se responde.
-_DECISOES_VISTAS: tuple[str, set[tuple[str, str, str]]] | None = None
+# Duas famílias, e a distinção é o que permite recuperar títulos registados num momento em que
+# a pontuação estava indisponível: as chaves COMPLETAS (com `feature_snapshot`) nunca voltam a
+# ser escritas; as que ficaram NUAS aceitam exactamente uma reescrita, e só se a nova trouxer
+# snapshot. O limite é duas linhas por título, e a segunda é sempre uma promoção.
+_DECISOES_VISTAS: tuple[str, set[tuple[str, str, str]], set[tuple[str, str, str]]] | None = None
 
 
-def _seed_decision_keys() -> set[tuple[str, str, str]]:
+def _seed_decision_keys() -> tuple[set[tuple[str, str, str]], set[tuple[str, str, str]]]:
     """Lê o registo uma vez e devolve as chaves já escritas (vazio se não houver ficheiro).
 
     A cache é indexada pelo CAMINHO do registo. Guardá-la sem o caminho faria uma troca de
@@ -466,18 +470,21 @@ def _seed_decision_keys() -> set[tuple[str, str, str]]:
     global _DECISOES_VISTAS
     chave_ficheiro = str(_PRED_LOG)
     if _DECISOES_VISTAS is not None and _DECISOES_VISTAS[0] == chave_ficheiro:
-        return _DECISOES_VISTAS[1]
-    vistas: set[tuple[str, str, str]] = set()
+        return _DECISOES_VISTAS[1], _DECISOES_VISTAS[2]
+    completas: set[tuple[str, str, str]] = set()
+    nuas: set[tuple[str, str, str]] = set()
     try:
         from investigator.triage.postval import read_log
 
         for r in read_log(_PRED_LOG):
-            vistas.add((str(r.get("news_date")), str(r.get("ticker")), str(r.get("headline"))))
+            k = (str(r.get("news_date")), str(r.get("ticker")), str(r.get("headline")))
+            (completas if r.get("feature_snapshot") else nuas).add(k)
+        nuas -= completas
     except Exception as exc:  # noqa: BLE001
         print(f"[postval] semente do registo falhou (ignorada): "
               f"{type(exc).__name__}: {sem_segredos(exc)}")
-    _DECISOES_VISTAS = (chave_ficheiro, vistas)
-    return vistas
+    _DECISOES_VISTAS = (chave_ficheiro, completas, nuas)
+    return completas, nuas
 
 
 def _log_decision_safe(news_date: str, ticker: str, headline: str,
@@ -491,15 +498,17 @@ def _log_decision_safe(news_date: str, ticker: str, headline: str,
         from investigator.triage.postval import log_decision
 
         chave = (str(news_date), str(ticker), str(headline))
-        vistas = _seed_decision_keys()
-        if chave in vistas:
+        completas, nuas = _seed_decision_keys()
+        if chave in completas:
             return
+        if chave in nuas and feature_snapshot is None:
+            return  # já existe a linha nua; sem snapshot novo não há nada a acrescentar
         log_decision(_PRED_LOG, news_date=news_date, ticker=ticker, headline=headline,
                      prob=(float(scored[0]) if scored is not None else None),
                      gate=(gate if scored is not None else None), kept=kept,
                      feature_snapshot=feature_snapshot, model_info=model_info,
                      stage=stage)
-        vistas.add(chave)
+        (completas if feature_snapshot is not None else nuas).add(chave)
     except Exception as exc:  # noqa: BLE001
         print(f"[postval] registo falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
 
