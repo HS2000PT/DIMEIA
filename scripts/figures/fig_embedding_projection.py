@@ -7,7 +7,7 @@ coloridos por setor, com a query da demo ("Nvidia demand surges on AI chip order
 embedded com o MESMO MiniLM-ONNX do produto) marcada como estrela e os seus top-3
 vizinhos por cosseno circundados. Sem rede quando o modelo ONNX já está em cache.
 
-Saída: thesis/figures/embedding_projection.pdf
+Saída: tese-v2/figures/embedding_projection.pdf
 Uso: python scripts/figures/fig_embedding_projection.py
 """
 
@@ -62,7 +62,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Projeção 2D real do espaço da KB (figura).")
     parser.add_argument("--kb", default="data/samples/kb_fnspid_light.jsonl")
     parser.add_argument("--query", default="Nvidia demand surges on AI chip orders")
-    parser.add_argument("--out", default="thesis/figures/embedding_projection.pdf")
+    parser.add_argument("--out", default="tese-v2/figures/embedding_projection.pdf")
     args = parser.parse_args()
 
     embs, tickers, headlines = load_kb(REPO / args.kb)

@@ -4,7 +4,7 @@ dias sinalizados como anomalia pelo detetor z-score (janela 20, limiar 3, sem lo
 Mostra o detetor a funcionar em dados reais: assinala os movimentos abruptos relativos
 à volatilidade recente, e não os movimentos grandes em termos absolutos.
 
-Saída: thesis/figures/anomaly_timeseries.pdf
+Saída: tese-v2/figures/anomaly_timeseries.pdf
 Uso: python scripts/figures/fig_anomaly_timeseries.py [--ticker TSLA]
      [--start 2023-06-01] [--end 2026-06-01] [--window 20] [--threshold 3.0]
 """
@@ -32,7 +32,7 @@ def main() -> None:
     parser.add_argument("--end", default="2026-06-01")
     parser.add_argument("--window", type=int, default=20)
     parser.add_argument("--threshold", type=float, default=3.0)
-    parser.add_argument("--out", default="thesis/figures/anomaly_timeseries.pdf")
+    parser.add_argument("--out", default="tese-v2/figures/anomaly_timeseries.pdf")
     args = parser.parse_args()
 
     import yfinance as yf

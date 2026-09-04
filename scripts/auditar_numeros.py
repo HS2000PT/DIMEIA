@@ -36,33 +36,24 @@ NAO_PROSA = ("tikzpicture", "lstlisting", "verbatim", "equation", "equation*", "
 # estao la, e um numero novo e verdadeiramente sem fonte passaria despercebido no meio deles.
 # Acrescentar aqui exige escrever a razao. Se a razao nao se escrever, o numero e um defeito.
 JUSTIFICADOS: dict[str, str] = {
-    # (a) instantaneos de dados reais mostrados verbatim: o valor E o dado, nao um resultado
-    "0.0112": "vetor de um registo real da base de casos (Cap. 3)",
-    "0.0243": "idem", "0.1301": "idem", "0.0662": "idem",
-    "0.0674": "impacto a +3d do mesmo registo real",
-    "0.01266203305026954": "linha real do conjunto de treino, mostrada com todas as casas (Cap. 3)",
-    "0.024854333506149767": "idem", "0.036392215960942983": "idem",
-    # (b) valores derivados cuja aritmetica a propria tese mostra a fazer
-    "0.0128": "logit por 80 caracteres; a tese mostra peso x escala no mesmo paragrafo",
-    "0.252": "parcela da volatilidade no exemplo trabalhado; a tabela mostra a soma",
-    "0.437": "3.700 x 0.507 - 2.313, escrito na propria celula",
-    "2.72": "sigma dos 20 dias da Tesla; a tabela ao lado mostra as parcelas",
-    "0.217": "reconstrucao do leitor a duas casas, contra o 0.218 reportado; a tese di-lo",
-    "7.63": "reconstrucao do leitor a duas casas, contra o 7.61 reportado; a tese di-lo",
-    "0.336": "0.968 - 0.632, escrito na mesma frase",
-    "0.143": "0.632 - 0.489, escrito na mesma frase",
-    "0.037": "limite superior de [-0.0321, +0.0366] em evaluation_triage_within.md, a 3 casas",
-    "0.462": "limite inferior de um IC do mesmo ficheiro, a 3 casas",
-    # (c) exemplo ilustrativo, marcado como tal ("do genero...")
-    "2.11": "linha de alerta dada como exemplo de FORMATO no Cap. 4", "1.71": "idem",
-    # (d) nao sao afirmacoes: composicao e versoes de bibliotecas
-    "1.15": "\\arraystretch, medida de composicao",
-    "3.11": "versao do matplotlib", "3.12": "versao do Python", "5.12": "versao do transformers",
-    # (e) o funil de um dia, agora com ficheiro proprio
+    # Cada entrada e um numero que a tese afirma e que nenhum ficheiro de avaliacao
+    # sustenta, com a razao pela qual isso esta certo. A lista e podada sempre que o
+    # verificador diz que uma entrada deixou de corresponder a alguma coisa: uma
+    # justificacao que ja nao justifica nada e folclore, e a lista perde autoridade.
+
+    # (a) nao sao afirmacoes: composicao e versoes de bibliotecas
+    "1.08": "\\arraystretch da matriz de evidencia, medida de composicao",
+    "3.11": "versao do matplotlib", "3.12": "versao do Python",
+
+    # (b) contagens de producao, datadas, que crescem com o sistema
+    "11445": "casos da base viva na branch de dados; instantaneo datado (Cap. 4)",
+    "10968": "registos da base viva no momento da medicao de memoria (apendice A.5)",
+
+    # (c) o funil de um dia, com ficheiro proprio
     "1194": "funil por porta, docs/evaluation/funil_por_porta.md",
-    "2994": "idem",
-    "1785": "candidatas por maturar no incidente do Cap. 4; lido do registo, dito no sitio",
 }
+
+
 
 
 def prosa_e_tabelas(texto: str) -> str:
@@ -84,9 +75,14 @@ def numeros(texto: str) -> set[str]:
 
 def main() -> int:
     corpo = ""
-    for f in sorted(glob.glob(str(RAIZ / "tese" / "cap*" / "*.tex"))) + \
-             sorted(glob.glob(str(RAIZ / "tese" / "apendices" / "*.tex"))) + \
-             [str(RAIZ / "tese" / "frontmatter" / "frontmatter.tex")]:
+    # A ARVORE E A CANONICA. Este verificador apontava para `tese/`, que foi superseda:
+    # reportava ok sobre um documento que nao e entregue, ou seja garantia falsa na
+    # porta. E os NOMES dos ficheiros mudam com a arvore -- apontar a arvore certa sem
+    # corrigir a lista deixa-o a ler o frontmatter e mais nada, que e o defeito que a
+    # sessao 63 pagou e quase mandou corrigir uma tese que estava certa.
+    for f in sorted(glob.glob(str(RAIZ / "tese-v2" / "ch*" / "chapter*.tex"))) + \
+             sorted(glob.glob(str(RAIZ / "tese-v2" / "appendices" / "*.tex"))) + \
+             [str(RAIZ / "tese-v2" / "frontmatter" / "frontmatter.tex")]:
         corpo += prosa_e_tabelas(open(f, encoding="utf-8", errors="replace").read())
 
     fontes = ""

@@ -11,7 +11,7 @@ texto (que a v1 já mostrou não bater a volatilidade). Corre em segundos, offli
 
 **Não escreve** em `models/` nem em `docs/evaluation/evaluation_triage.md` (congelados). Gera:
 - `docs/evaluation/evaluation_triage_ext.md`  (tabelas de resultados + contribuição marginal)
-- `thesis/figures/eval_triage_ext.pdf`         (barras da contribuição marginal por feature)
+- `tese-v2/figures/eval_triage_ext.pdf`         (barras da contribuição marginal por feature)
 
 Uso:
     python scripts/train_triage_ext.py
@@ -156,7 +156,7 @@ def main() -> int:
     ax.set_title("RQ4-ext: marginal contribution of each context signal (test)")
     ax.legend(fontsize=8, loc="lower right")
     fig.tight_layout()
-    figpath = REPO / "thesis" / "figures" / "eval_triage_ext.pdf"
+    figpath = REPO / "tese-v2" / "figures" / "eval_triage_ext.pdf"
     fig.savefig(figpath)
     print(f"\nFigura: {figpath}")
 
@@ -215,7 +215,7 @@ def main() -> int:
                      f"{m['loo_delta']:+.3f} |")
     lines += [
         "",
-        "![Contribuição marginal](../../thesis/figures/eval_triage_ext.pdf)",
+        "![Contribuição marginal](../../tese-v2/figures/eval_triage_ext.pdf)",
         "",
         "**Leitura honesta:** a ablação diz quais sinais valem e quais não — reportado tal como "
         "cai, com o mesmo rigor do resultado congelado (\"o texto não bate a volatilidade\"). "

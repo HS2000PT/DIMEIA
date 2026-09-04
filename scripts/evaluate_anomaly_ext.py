@@ -12,7 +12,7 @@ contaminação 0,02, seed 42) comparados NA MESMA região pontuada.
 
 Saídas NOVAS (o evaluation_anomaly.md congelado fica intocado):
   docs/evaluation/evaluation_anomaly_ext.md
-  thesis/figures/eval_anomaly_detectors.pdf
+  tese-v2/figures/eval_anomaly_detectors.pdf
 
 Uso: python scripts/evaluate_anomaly_ext.py
 """
@@ -87,7 +87,7 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--lam", type=float, default=0.94)
     parser.add_argument("--out", default="docs/evaluation/evaluation_anomaly_ext.md")
-    parser.add_argument("--fig", default="thesis/figures/eval_anomaly_detectors.pdf")
+    parser.add_argument("--fig", default="tese-v2/figures/eval_anomaly_detectors.pdf")
     args = parser.parse_args()
 
     print(f"A obter preços ({args.start}..{args.end})…")

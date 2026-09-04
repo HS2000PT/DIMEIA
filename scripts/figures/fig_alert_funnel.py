@@ -7,7 +7,7 @@ recebeu de facto — e por ticker, que mostra o ponto-chave: as notícias fluem 
 tickers, mas os gates de qualidade (frescura ≤2d, precedente com cosseno ≥0.45, triagem
 P≥0.5, teto 2/ticker/dia, dedup) só deixam passar evidência forte.
 
-Saídas: thesis/figures/alert_funnel.pdf
+Saídas: tese-v2/figures/alert_funnel.pdf
         docs/evaluation/alert_funnel.md (o snapshot com data — os números da tese citam-no)
 
 Uso: python scripts/figures/fig_alert_funnel.py            (lê da branch remota)
@@ -51,7 +51,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Funil de produção (figura+md).")
     parser.add_argument("--local", default=None,
                         help="diretório com alerts_history.jsonl e live_pending.jsonl")
-    parser.add_argument("--fig", default="thesis/figures/alert_funnel.pdf")
+    parser.add_argument("--fig", default="tese-v2/figures/alert_funnel.pdf")
     parser.add_argument("--out", default="docs/evaluation/alert_funnel.md")
     args = parser.parse_args()
 

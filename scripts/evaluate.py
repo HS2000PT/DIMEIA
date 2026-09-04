@@ -6,7 +6,7 @@ Métrica: precision@k por SETOR em recuperação cross-ticker
 
 Entrada: CSV de notícias (date, ticker, headline) — ex.: o de scripts/fetch_finnhub_news.py.
 Saída: tabela em docs/evaluation/evaluation_results.md
-       + figura em thesis/figures/eval_retrieval_precision.pdf.
+       + figura em tese-v2/figures/eval_retrieval_precision.pdf.
 
 Uso:
     python scripts/evaluate.py --news data/finnhub_news.csv
@@ -67,7 +67,7 @@ def main() -> None:
     parser.add_argument("--sbert-models", nargs="+", default=["all-MiniLM-L6-v2"],
                         help="modelos SBERT a comparar (ablação)")
     parser.add_argument("--out", default="docs/evaluation/evaluation_results.md")
-    parser.add_argument("--fig", default="thesis/figures/eval_retrieval_precision.pdf")
+    parser.add_argument("--fig", default="tese-v2/figures/eval_retrieval_precision.pdf")
     args = parser.parse_args()
 
     df = pd.read_csv(args.news).dropna(subset=["date", "ticker", "headline"])

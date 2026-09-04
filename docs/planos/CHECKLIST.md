@@ -16,7 +16,8 @@ verificadores, os marcadores de trabalho por acabar, e que a data não muda sozi
 a zero, tudo o que uma máquina consegue verificar está feito** — o que fica abaixo é o que só
 tu podes fazer.
 
-Estado a 2026-08-21: **sai a zero.** Tese 131 pp, slides 22, guia 25, quizz 41 perguntas.
+Estado a 2026-09-04: **sai a zero no técnico.** Dissertação canónica `tese-v2/` 128 pp,
+artigo 5 pp, slides 22, guia 25. 16 verificadores.
 
 ## 🧑 Cliques só teus (ninguém pode fazer por ti)
 
@@ -55,7 +56,7 @@ Estado a 2026-08-21: **sai a zero.** Tese 131 pp, slides 22, guia 25, quizz 41 p
       `docs/design/going_live.md` §1b).
 
 ### Académico (bloqueia a submissão)
-- [ ] **Leitura final da tese que vais entregar** (`tese/main.pdf`, **131 pp**, PT-PT) — o
+- [ ] **Leitura final da tese que vais entregar** (`tese-v2/main.pdf`, **128 pp**, PT-PT) — o
       texto é teu para defender.
 - [ ] **Licença do código** com o Prof. Luís Gomes + ficheiro `LICENSE`.
       ⚠️ **Não é uma escolha livre entre MIT e Apache**, e a auditoria encontrou duas

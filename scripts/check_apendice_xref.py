@@ -15,11 +15,17 @@ import sys
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-RAIZ = pathlib.Path(__file__).resolve().parents[1] / "tese"
+# A ARVORE E A CANONICA; apontava para `tese/`, superseda. Ver a nota em
+# auditar_numeros.py: nao basta trocar a arvore, os nomes dos ficheiros mudam.
+RAIZ = pathlib.Path(__file__).resolve().parents[1] / "tese-v2"
 NIVEL = {"section": 1, "subsection": 2, "subsubsection": 3}
 
 seccoes = {}
-ficheiros_capitulo = sorted(RAIZ.rglob("cap*/capitulo*.tex"))
+# Os NOMES mudam com a arvore: a canonica usa ch{i}/chapter{i}.tex, a anterior usava
+# cap{i}/capitulo{i}.tex. Trocar a arvore sem trocar os nomes deixa o verificador cego,
+# e por isso ele RECUSA-SE a validar quando nao encontra corpus.
+ficheiros_capitulo = (sorted(RAIZ.rglob("ch*/chapter*.tex"))
+                      or sorted(RAIZ.rglob("cap*/capitulo*.tex")))
 if not ficheiros_capitulo:
     print(f"ERRO: não encontrei capítulos em {RAIZ}. Não é seguro validar sem corpus.")
     sys.exit(2)
@@ -42,7 +48,9 @@ for f in ficheiros_capitulo:
         if lab:
             seccoes[lab.group(1)] = (titulo, bloco, f.parent.name)
 
-apendice = RAIZ / "apendices" / "apendiceA.tex"
+apendice = RAIZ / "appendices" / "appendixA.tex"
+if not apendice.exists():
+    apendice = RAIZ / "apendices" / "apendiceA.tex"
 if not apendice.exists():
     print(f"ERRO: não encontrei {apendice}. Não é seguro validar sem apêndice.")
     sys.exit(2)

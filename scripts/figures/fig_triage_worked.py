@@ -8,7 +8,7 @@ decisão de ponta a ponta com o bundle DE PRODUÇÃO (models/triage_context_lr.j
     features de contexto → contribuições aditivas ao log-odds (exatas, sem aproximação)
     → logit → σ(logit) = p_raw → calibração de Platt → p_cal → gate ≥ 0.5
 
-Saídas: thesis/figures/triage_contributions.pdf (barras assinadas)
+Saídas: tese-v2/figures/triage_contributions.pdf (barras assinadas)
         docs/evaluation/triage_worked_example.md (números para a tabela do Cap. 3)
 
 Uso: python scripts/figures/fig_triage_worked.py
@@ -43,7 +43,7 @@ def main() -> None:
     parser.add_argument("--ticker", default=DEFAULT_TICKER)
     parser.add_argument("--headline", default=DEFAULT_HEADLINE)
     parser.add_argument("--as-of", default=DEFAULT_ASOF)
-    parser.add_argument("--fig", default="thesis/figures/triage_contributions.pdf")
+    parser.add_argument("--fig", default="tese-v2/figures/triage_contributions.pdf")
     parser.add_argument("--out", default="docs/evaluation/triage_worked_example.md")
     args = parser.parse_args()
 
