@@ -55,9 +55,9 @@ que desencadeia a avaliação é uma notícia.
 
   \node[proc, right=0.8cm of p] (det) {\textbf{Detection}\\ \footnotesize $z$-score};
   \node[proc, right=0.8cm of n] (rec) {\textbf{Retrieval}\\ \footnotesize vizinhos semânticos};
-  \node[proc, right=0.8cm of h] (tri) {\textbf{Triagem}\\ \footnotesize probabilidade calibrada};
+  \node[proc, right=0.8cm of h] (tri) {\textbf{Triage}\\ \footnotesize calibrated probability};
   \node[proc, dashed, below=6mm of tri] (dec)
-    {\textbf{Decomposition}\\ \footnotesize mercado, setor,\\ \footnotesize empresa};
+    {\textbf{Decomposition}\\ \footnotesize market, sector,\\ \footnotesize company};
 
   \node[proc, right=0.9cm of rec, text width=2.8cm] (exp)
     {\textbf{Explanation}\\ \footnotesize composição a partir\\ \footnotesize dos objetos\\ \footnotesize calculados};
@@ -327,9 +327,11 @@ distribuição por empresa.
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-  xbar, width=0.80\textwidth, height=7.6cm,
-  xmin=0, xmax=178,
-  bar width=5.5pt,
+  % Lollipop, e nao barras emparelhadas: SETE das dez empresas tem zero alertas, e num
+  % grafico de barras o zero e' uma barra invisivel -- o achado principal comunicava-se por
+  % ausencia. O marcador quadrado esta sempre presente, e onde vale zero esta rotulado.
+  width=0.80\textwidth, height=7.6cm,
+  xmin=-6, xmax=178,
   enlarge y limits=0.07,
   symbolic y coords={NVDA,JPM,GOOGL,MSFT,NFLX,AMD,AMZN,AAPL,META,TSLA},
   ytick={NVDA,JPM,GOOGL,MSFT,NFLX,AMD,AMZN,AAPL,META,TSLA},
@@ -338,18 +340,21 @@ distribuição por empresa.
   label style={font=\footnotesize},
   legend style={font=\footnotesize, at={(0.5,-0.20)}, anchor=north, legend columns=2,
                 draw=black!30, column sep=1.2ex},
-  point meta=explicit symbolic,
-  nodes near coords, nodes near coords style={font=\tiny, black!60},
   grid=major, grid style={black!12},
   axis lines*=left,
-]
-\addplot[fill=black!18, draw=black!45] coordinates {
-  (56,NVDA) [56] (60,JPM) [60] (71,GOOGL) [71] (75,MSFT) [75] (83,NFLX) [83]
-  (88,AMD) [88] (91,AMZN) [91] (135,AAPL) [135] (137,META) [137] (148,TSLA) [148]};
-\addplot[fill=black!62, draw=black!62] coordinates {
-  (0,NVDA) [] (0,JPM) [] (0,GOOGL) [] (0,MSFT) [] (0,NFLX) []
-  (14,AMD) [14] (0,AMZN) [] (0,AAPL) [] (14,META) [14] (14,TSLA) [14]};
-\legend{relevant headlines, alerts delivered}
+  ]
+  % haste: do zero ate ao numero de titulos
+  \addplot[xbar, bar width=1.2pt, fill=black!30, draw=black!30, forget plot]
+    coordinates {(56,NVDA) (60,JPM) (71,GOOGL) (75,MSFT) (83,NFLX) (88,AMD) (91,AMZN) (135,AAPL) (137,META) (148,TSLA)};
+  \addplot[only marks, mark=*, mark size=2.2pt, black!45,
+           nodes near coords, point meta=explicit symbolic,
+           every node near coord/.append style={font=\tiny, black!55, anchor=west, xshift=2pt}]
+    coordinates {(56,NVDA) [56] (60,JPM) [60] (71,GOOGL) [71] (75,MSFT) [75] (83,NFLX) [83] (88,AMD) [88] (91,AMZN) [91] (135,AAPL) [135] (137,META) [137] (148,TSLA) [148]};
+  \addplot[only marks, mark=square*, mark size=2.4pt, black!75,
+           nodes near coords, point meta=explicit symbolic,
+           every node near coord/.append style={font=\tiny, black!75, anchor=east, xshift=-3pt}]
+    coordinates {(0,NVDA) [0] (0,JPM) [0] (0,GOOGL) [0] (0,MSFT) [0] (0,NFLX) [0] (14,AMD) [14] (0,AMZN) [0] (0,AAPL) [0] (14,META) [14] (14,TSLA) [14]};
+  \legend{relevant headlines, alerts delivered}
 \end{axis}
 \end{tikzpicture}
 \caption[Seletividade do sistema por empresa]{Títulos relevantes captados e alertas efetivamente
@@ -703,10 +708,10 @@ desfecho. A Figura~\ref{fig:sis_ciclo_kb} representa o ciclo.
   esp/.style={draw, dashed, rounded corners=3pt, align=center, inner sep=4pt, text width=2.4cm,
               minimum height=1.25cm, fill=white},
 ]
-  \node[et]  (a) at (0,0)     {\textbf{day $t$}\\ a varredura observa um título relevante};
+  \node[et]  (a) at (0,0)     {\textbf{day $t$}\\ the scan observes a relevant headline};
   \node[esp] (b) at (3.55,0)  {kept as a candidate, with its vector};
-  \node[et]  (c) at (7.0,0)   {\textbf{day $t+8$}\\ o impacto é observável};
-  \node[et]  (d) at (10.5,0)  {integra a \textbf{case base}};
+  \node[et]  (c) at (7.0,0)   {\textbf{day $t+8$}\\ the impact is observable};
+  \node[et]  (d) at (10.5,0)  {joins the \textbf{case base}};
 
   \draw[->, thick, black!55] (a) -- (b);
   \draw[->, thick, black!55] (b) -- (c);
@@ -758,15 +763,15 @@ não verificável. A Figura~\ref{fig:sis_lifecycle} representa as duas metades d
 ]
   \node[fase] at (-1.55,0.95) {construction};
   \node[cx]  (d) at (0,0)    {labelled dataset};
-  \node[cx]  (t) at (2.5,0)  {treino};
-  \node[cx]  (v) at (5.0,0)  {validação\\ \emph{calibration}};
+  \node[cx]  (t) at (2.5,0)  {training};
+  \node[cx]  (v) at (5.0,0)  {validation\\ \emph{calibration}};
   \node[cx]  (s) at (7.5,0)  {teste\\ \emph{single use}};
   \node[art] (m) at (10.0,0) {artefacto versionado};
 
   \foreach \xa/\xb in {d/t, t/v, v/s, s/m} \draw[->, thick, black!55] (\xa) -- (\xb);
 
   \node[fase, anchor=west] at (-1.1,-2.7) {observation};
-  \node[art] (p) at (0,-1.9)   {o \textbf{mesmo} modelo, em produção};
+  \node[art] (p) at (0,-1.9)   {the \textbf{mesmo} model, in production};
   \node[obs] (g) at (2.5,-1.9) {log of every decision};
   \node[obs] (w) at (5.0,-1.9) {wait for the price to respond};
   \node[obs] (r) at (7.5,-1.9) {post-validation and drift};

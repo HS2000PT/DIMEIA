@@ -154,7 +154,7 @@ volatilidade de cada ação enquanto o \emph{z}-score se mantém quase constante
   xticklabels={\emph{z}-score, fixed threshold}, ylabel={firing-rate spread},
   nodes near coords, point meta=explicit symbolic,
   every node near coord/.append style={font=\footnotesize},
-  title={\small A. amplitude \emph{(lower is better)}},
+  title={\small A. spread \emph{(lower is better)}},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
   ymajorgrids, grid style={black!12}, axis lines*=left,
 ]
@@ -236,7 +236,7 @@ parametrização o faria. A Figura~\ref{fig:av_detetores} apresenta o resultado.
   xticklabels={{0.0},{0.1},{0.2},{0.3},{0.4},{0.5}},
   ytick={0,0.2,0.4,0.6,0.8,1.0},
   yticklabels={{0.0},{0.2},{0.4},{0.6},{0.8},{1.0}},
-  xlabel={precision}, ylabel={cobertura},
+  xlabel={precision}, ylabel={recall},
   xmajorgrids, ymajorgrids,
 ]
 \addplot[ig current mark] coordinates {(0.407,0.761)};
@@ -316,9 +316,9 @@ decaimento exponencial. A Figura~\ref{fig:av_ewma} apresenta o resultado.
 \addplot[ig connector, forget plot] coordinates {(0.800,c) (0.800,c)};
 \addplot[ig connector, forget plot] coordinates {(0.516,f) (0.664,f)};
 \addplot[ig current mark] coordinates {(0.381,p) (0.800,c) (0.516,f)};
-\addlegendentry{pesos iguais (implantado)}
+\addlegendentry{equal weights (deployed)}
 \addplot[ig alternative mark] coordinates {(0.568,p) (0.800,c) (0.664,f)};
-\addlegendentry{decaimento exponencial}
+\addlegendentry{exponential decay}
 \node[font=\scriptsize, anchor=south east, text=igGreenDark] at (axis cs:0.381,p) {0,381};
 \node[font=\scriptsize, anchor=south west, text=igInk] at (axis cs:0.568,p) {0,568};
 \node[font=\scriptsize, anchor=south, text=igInk] at (axis cs:0.800,c) {0,800 nos dois};
@@ -902,7 +902,7 @@ desmonta o modelo entrada a entrada, sob o protocolo congelado.
 \addplot[fill=black!22, draw=black!50] coordinates {
   (0.352,comp) [0.352] (0.368,nada) [0.368] (0.390,semvol) [0.390] (0.662,tabela) [0.662]
   (0.629,semset) [0.629] (0.632,vol) [0.632] (0.632,ctx) [0.632]};
-\legend{\gls{PRAUC}, precisão@5 no orçamento}
+\legend{\gls{PRAUC}, precision@5 within budget}
 \end{axis}
 \end{tikzpicture}
 \caption[O modelo comparado com subconjuntos das entradas]{Cada linha corresponde a uma variante
@@ -1166,7 +1166,7 @@ produção. A Figura~\ref{fig:av_porta} apresenta o resultado.
   \foreach \xv in {0.25,0.35,0.45,0.55,0.65}
     \draw[black!40] (\xv,0) -- (\xv,-0.22) node[below, black!60] {\xv};
   \draw[dashed, thick, orange!70!black] (0.50,-0.6) -- (0.50,13.4)
-    node[above, align=center, text=orange!60!black] {limiar\\ $0{,}50$};
+    node[above, align=center, text=orange!60!black] {threshold\\ $0.50$};
   \foreach \xn/\xtk/\xa/\xm/\xb/\xcor in {
     12/JPM/0.242/0.248/0.258/black!30, 11/JNJ/0.298/0.298/0.324/black!30,
     10/NFLX/0.388/0.413/0.426/black!30, 9/XOM/0.390/0.399/0.407/black!30,
@@ -1179,8 +1179,8 @@ produção. A Figura~\ref{fig:av_porta} apresenta o resultado.
     \draw[line width=2.6pt, color=\xcor] (\xa,\xn) -- (\xb,\xn);
     \fill[black!85] (\xm,\xn) circle (1.1pt);
   }
-  \node[right, align=left, text=orange!60!black] at (0.645,2) {passa\\ sempre};
-  \node[right, align=left, black!55] at (0.56,10.5) {nunca\\ passa};
+  \node[right, align=left, text=orange!60!black] at (0.645,2) {always\\ passes};
+  \node[right, align=left, black!55] at (0.56,10.5) {never\\ passes};
   \node[right, align=left, black!62] at (0.605,6.5) {the threshold\\ decides};
 \end{tikzpicture}
 \caption[O que a porta de decisão separava]{Intervalo de todas as pontuações atribuídas pelo modelo a
