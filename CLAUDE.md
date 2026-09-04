@@ -303,6 +303,70 @@
   legenda do funil a descrever a figura antiga, os dois slides a **transbordarem** porque o meu
   texto novo era mais longo, e uma chaveta apagada no guia que o LaTeX reportou apenas como
   «File ended while scanning use of», sem apontar o sítio.
+  **✅ (P) AUDITORIA CRÍTICA PEDIDA PELO AUTOR, com a instrução de analisar sem reescrever.**
+  Relatório em [`docs/planos/AUDITORIA_2026-09-04.md`](docs/planos/AUDITORIA_2026-09-04.md),
+  secções A a L. **Três avisos de âmbito ficaram escritos antes de começar:** boa parte da
+  auditoria **já existia** (matriz de 44 itens de 03/09) e o relatório aponta para lá em vez de
+  duplicar; o roadmap de sete fases **não cabe em 23 dias** e sai dividido em «cabe» e «não
+  cabe»; e a preocupação do pedido com «apenas duas empresas com alertas» **estava
+  desactualizada** — são doze.
+  **⚠️ (P1) O ACHADO PRINCIPAL É POSITIVO E ESTAVA POR REPORTAR.** A alteração de desenho mais
+  importante do trabalho — o modelo deixar de vetar e passar a **ordenar**, com orçamento diário
+  — **funcionou**, e a tese descrevia a alteração (`ch5:1256`) sem nunca medir o efeito.
+  **✅ (P2) O QUE A AUDITORIA NÃO ENCONTROU, E A AUSÊNCIA É O RESULTADO:** nenhum problema que
+  comprometa o rigor científico. É o que sobra depois de 52/52 números verificados, todas as
+  promessas de contagem uma a uma, a aritmética das margens refeita, 267 referências cruzadas
+  sem incompatibilidade de tipo, e **zero dias úteis sem alerta em 54 dias** de operação.
+  **⚠️ (P3) DUAS AFIRMAÇÕES MINHAS CORRIGIDAS A MEIO DA AUDITORIA:** julguei o `feedback_log`
+  morto porque a minha análise estática **não seguia importações tardias** — está vivo, pelo
+  webhook; e julguei excessiva a frase «regista todas as decisões de triagem» — o capítulo
+  declara a população filtrada **oitenta linhas depois** e chama-lhe a constatação com maior
+  capacidade de transferência do trabalho. **Ler adiante antes de reportar.**
+  **(P4) Medições novas que ficam no relatório:** 4 árvores de tese e 11 planos versionados; 12
+  definições de acrónimo nunca usadas; 86 secções com 44 sem visual, mas só **uma** com 60+
+  linhas; e `investigator/intelligence/` — camada generativa completa, testada, **não exposta e
+  não reivindicada**, o que é coerente com a tese e fica como decisão do autor.
+  **✅ (Q) ACÇÃO 1: A ALTERAÇÃO DE POLÍTICA PASSA A SER MEDIDA, COM CONTROLO.** Nos alertas de
+  **notícia**, que são os que o orçamento governa, a concentração nos três nomes mais alertados
+  desce de `0,713` para `0,480`, com o IC da diferença a **excluir zero**, e as empresas que
+  chegam a alertar passam de **sete para nove** das doze.
+  **⚠️ O QUE O TORNA DEFENSÁVEL É O CONTROLO, e não a descida isolada.** Os alertas de
+  **movimento de preço** atravessam o mesmo período, as mesmas empresas e as mesmas condições, e
+  o orçamento **não os conta**: nessa série a concentração passa de `0,449` para `0,485`, com o
+  intervalo a **conter** zero. A quantidade governada deslocou-se e a não governada não.
+  **⚠️ CINCO DIAS EXCLUÍDOS, E A RAZÃO É ELA PRÓPRIA UM RESULTADO.** Entre **25 e 29 de agosto**
+  o orçamento de cinco foi excedido seis vezes, com um dia a **vinte**. O defeito já estava
+  documentado no próprio código: o contador vivia em disco efémero e voltava ao princípio a cada
+  arranque. A tese **declara a exclusão e publica o valor com esses dias incluídos** (`0,514`).
+  Sem investigar o desvio, teria escrito «o orçamento funciona» sobre uma janela em que ele
+  esteve parcialmente desligado.
+  A reamostragem é por **dia**, que é a unidade sobre a qual o orçamento actua.
+  Novo: `scripts/evaluate_budget_effect.py` → `docs/evaluation/evaluation_budget_effect.md`.
+  **⚠️ Escrevi `0,509` de cabeça para o valor contaminado e o real é `0,514`.** Apanhado pelo
+  artefacto regenerável antes de entrar na tese, que é exactamente para isso que a regra existe.
+  **✅ (R) ACÇÃO 2: a frase do retreino no `ch4` passa a estar DATADA**, com o parágrafo da
+  instrumentação e as **duas restrições fixadas antes de existir candidato** — só são utilizáveis
+  as decisões cuja barra de preço seja anterior ou igual à data da notícia, e a unidade de
+  análise é o par empresa-dia. **Nada se afirma sobre o resultado.**
+  **✅ (S) ACÇÃO 3: o Cap. 6 passa de 2 707 para 1 358 palavras por visual**, que era quase seis
+  vezes a densidade do Cap. 4 no capítulo que o júri lê por último. Duas figuras:
+  **`fig:con_futuro`**, as dez linhas futuras agrupadas pelo que cada uma **exige** (sete sobre
+  componentes que já existem, uma à espera de tempo de observação, **duas** que exigem julgamento
+  humano); e **`fig:con_fronteira`**, o limite exacto da afirmação — à esquerda o que o trabalho
+  estabelece, à direita a hipótese fundadora que não testou.
+  **⚠️ (S1) A FIGURA ENCONTROU UM ERRO NO TEXTO.** Classificar os dez itens obrigou a ler o que
+  cada um precisa, e a contagem não batia: o item 1 dizia ser **«o único item desta lista que não
+  pode ser acelerado por meios computacionais»**, e o item 3 chama-se «Construir um alvo com
+  **julgamento humano**». São dois. A frase passa a nomear o terceiro item.
+  **⚠️ E a minha primeira correcção dizia «o item SEGUINTE»**, que é o item 2 e não precisa de
+  pessoas nenhumas. **Nomear a posição exacta é mais seguro do que dizer «seguinte» numa lista
+  que pode ser reordenada.**
+  **(S2) TRÊS DEFEITOS MEUS, apanhados a renderizar ou pelas portas:** a figura da fronteira
+  ficou **sozinha numa página quase vazia** (movida e encolhida até caber no fluxo); ao encolher,
+  **as caixas transbordaram e colidiram**; e escrevi **«manchete»** no texto novo do `ch4` quando
+  o termo constante é «título» — **o `check_escrita` apanhou o meu próprio texto**.
+  **PORTAS: tese 128 pp, 96 de 120 antes dos apêndices, 0 erros, 55/55 números (eram 52), 973
+  testes, ruff limpo. Porta de entrega: tudo verde no técnico, 1 pendência humana.**
 - **2026-09-03 — LER PRIMEIRO `docs/planos/REVISAO_PRIORITARIA_ANEXOS.md`.**
   Quatro anexos integrais preservados e 44 itens de verificação. Este estado prevalece sobre
   os registos históricos abaixo: tese canónica `tese-v2/main.pdf`; retreino autorizado, a
@@ -2289,40 +2353,47 @@
   23+23 / guia 85 — todos 0 erros, 0 citações e referências indefinidas.**
   **PENDENTE HUMANO:** rodar as 3 credenciais (o PAT primeiro — tem `admin: true`); enviar
   `docs/defence/mensagem_orientador.md`; reclamar o domínio para o URL limpo.
-- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI (actualizado na sessão 63, 2026-09-04):**
+- **⏭️ PRÓXIMA SESSÃO COMEÇA AQUI (actualizado no fim da sessão 63, 2026-09-04):**
   **O CALENDÁRIO MANDA: 27/09 é a submissão do DOCUMENTO e a defesa é em outubro.** O que entra
   na dissertação tem de estar congelado antes de 27/09; outubro serve para a apresentação.
-  **(1) A RECOLHA ESTÁ A CORRER, E É O ÚNICO ITEM COM RELÓGIO.** Desde 2026-09-04 o registo
-  guarda `feature_snapshot` (nove entradas, `as_of`, identidade do modelo com sha256). O
-  protocolo de aceitação está **pré-registado** em `docs/planos/PROTOCOLO_ACEITACAO_RETREINO.md`,
-  escrito antes de existir candidato. **Não o reabrir depois de ver um resultado.**
+  **⛳ LER TAMBÉM [`docs/planos/AUDITORIA_2026-09-04.md`](docs/planos/AUDITORIA_2026-09-04.md)**,
+  que tem o roadmap dividido entre o que **cabe** antes de 27/09 e o que **não cabe**. As três
+  acções que ele classificou como executáveis **estão feitas**; sobra a quarta, que é de
+  calendário e não de trabalho.
+  **(1) ~17/09 É O MARCO, E É O ÚNICO ITEM COM RELÓGIO.** É a última data de notícia que ainda
+  matura a tempo de 27/09. Nessa altura, fechar a janela e correr a avaliação sobre a população
+  real de candidatas, **segundo o `PROTOCOLO_ACEITACAO_RETREINO.md` e sem o reabrir** — foi
+  fixado antes de existir candidato, e o cálculo de potência diz que a janela **não sustenta**
+  «o candidato bate o modelo atual». Se esse resultado for apresentado como se sustentasse, é aí
+  que a defesa cai.
   ⚠️ **Regra de treinabilidade:** só linhas com `as_of` **anterior ou igual** à data da notícia.
   As `stale` deixaram de ser pontuadas; as anteriores a 04/09 com `as_of` posterior são histórico
-  e **não entram** em conjunto nenhum. **Marco: ~17/09**, a última data de notícia que ainda
-  matura a tempo. Correr `scripts/auditar_registo_decisoes.py` para ver a cobertura.
-  **(2) O QUE JÁ NÃO ESTÁ EM ABERTO:** o R14 (dyno `Standard-2X`, 0 ocorrências desde 01:30 de
-  04/09, com as quatro correcções de memória a valer na mesma); a decisão R1 e o lookahead que
-  ela abriu; a porta de entrega a apontar para a árvore canónica; a revisão de conteúdo, a
-  passagem de escrita, as 40 figuras em inglês, e os slides e o guia sincronizados com a v7.
+  e **não entram** em conjunto nenhum. Cobertura: `scripts/auditar_registo_decisoes.py`.
+  **(2) O QUE JÁ NÃO ESTÁ EM ABERTO:** o R14 (dyno de 1 GB, zero ocorrências); a decisão R1 e o
+  lookahead que ela abriu; a porta de entrega a apontar para a árvore canónica, com as pendências
+  humanas em secção própria; a revisão de conteúdo; a passagem de escrita; as 40 figuras em
+  inglês; os slides e o guia sincronizados com a v7; a auditoria crítica; e as suas três acções.
   **(3) O QUE FALTA, E É HUMANO:** os **nomes do júri** (o ISEP designa depois da submissão, e é
-  o único item que a porta de entrega ainda acusa); a **leitura final** da tese pelo autor, que é
-  pré-requisito da declaração de IA; a **licença** e a redacção da declaração com o orientador;
-  os **agradecimentos** na voz dele; e **rodar as credenciais** (PAT do GitHub primeiro, e agora
+  o único item que a porta ainda acusa); a **leitura final** da tese pelo autor, pré-requisito da
+  declaração de IA; a **licença** e a redacção da declaração com o orientador; os
+  **agradecimentos** na voz dele; e **rodar as credenciais** (PAT do GitHub primeiro, e agora
   também a `HEROKU_API_KEY`, que é chave de conta).
-  **(4) OPCIONAL, POR ESTA ORDEM:** o estudo com pessoas (fecha a metade em aberto do objectivo
-  4 e a H5, e o pacote está turn-key mas **tem de ser congelado antes do primeiro participante**);
-  a gravação da demonstração; e o artigo, cujo prazo o autor deu como 27/09.
-  ⚠️ **ARMADILHAS DE FERRAMENTA, e todas voltaram a morder nesta sessão:**
-  **(a)** o heredoc **come um nível de barras invertidas mesmo entre plicas** — partiu o
-  `deploy_heroku.py`, um teste, um capítulo e duas passagens de figuras. **Ficheiro à parte com
-  `chr(92)`, ou ancorar a substituição só no TEXTO, sem tocar na estrutura LaTeX.** A segunda
-  forma é a que funcionou para as 40 figuras.
-  **(b)** um `tail -6` escondeu-me que eram **50 falhas e não 3**; ler o cabeçalho do relatório,
-  não a cauda.
-  **(c)** `/tmp/x.py` passado como ARGUMENTO é convertido pelo MSYS, mas `pathlib.Path('/tmp/…')`
-  dentro do Python **não** é: resolve para a raiz do disco.
-  **(d)** o `exit code` não apanha composição. Renderizar apanhou, nesta sessão, anos escritos
-  «2,015», uma legenda a descrever a figura antiga, e dois slides a transbordar.
+  **(4) DECIDIDO E NÃO A REABRIR:** não reduzir a tese (96 de 120 páginas, 34 370 de 36 000
+  palavras — cortar texto verificado a 23 dias do prazo gasta risco sem comprar nada); não
+  reestruturar; não mexer na interface antes da entrega; e o estudo com pessoas fica como a
+  única linha declaradamente em aberto, que é como o Cap. 6 já a apresenta.
+  ⚠️ **ARMADILHAS DE FERRAMENTA — a lista cresceu, e todas voltaram a morder nesta sessão:**
+  **(a)** o heredoc **come um nível de barras invertidas mesmo entre plicas**, e **rebenta com
+  plicas dentro de f-strings** (`x['k']`) e em blocos longos. **Ficheiro à parte com `chr(92)`,
+  ancorar só no TEXTO sem tocar na estrutura LaTeX, ou escrever por pedaços de 15-20 linhas.**
+  **(b)** um `tail -6` escondeu que eram **50 falhas e não 3**: ler o cabeçalho, não a cauda.
+  **(c)** `/tmp/x.py` como ARGUMENTO é convertido pelo MSYS; `pathlib.Path('/tmp/…')` **dentro**
+  do Python não é.
+  **(d)** o `exit code` não apanha composição: nesta sessão o render apanhou anos escritos
+  «2,015», uma legenda a descrever a figura antiga, dois slides a transbordar, uma figura sozinha
+  numa página vazia e caixas a colidir.
+  **(e)** correr um `cd` num comando composto perde o directório no comando seguinte: usar
+  caminhos absolutos ou repetir o `cd`.
 - **🧩 SESSÃO 47 (2026-08-03 — executar o backlog da v3; 4 commits):**
   **(A) LEGIBILIDADE.** A pílula `UNUSUAL` estava dentro da linha do topo, a disputá-la com
   logótipo, nome, ticker e o número grande — e o nome, único item sem largura própria, era
