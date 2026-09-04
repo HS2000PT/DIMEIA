@@ -49,21 +49,21 @@ que desencadeia a avaliação é uma notícia.
   proc/.style={cx, fill=black!3},
   saida/.style={cx, fill=black!16},
 ]
-  \node[fonte] (p) {\textbf{Prices}\\ \footnotesize cadeia de quatro\\ \footnotesize alternativas};
-  \node[fonte, below=6mm of p] (n) {\textbf{News}\\ \footnotesize três interfaces\\ \footnotesize gratuitas};
-  \node[fonte, below=6mm of n] (h) {\textbf{Case base}\\ \footnotesize precedentes com\\ \footnotesize impacto medido};
+  \node[fonte] (p) {\textbf{Prices}\\ \footnotesize chain of four\\ \footnotesize fallbacks};
+  \node[fonte, below=6mm of p] (n) {\textbf{News}\\ \footnotesize three free\\ \footnotesize interfaces};
+  \node[fonte, below=6mm of n] (h) {\textbf{Case base}\\ \footnotesize precedents with\\ \footnotesize measured impact};
 
   \node[proc, right=0.8cm of p] (det) {\textbf{Detection}\\ \footnotesize $z$-score};
-  \node[proc, right=0.8cm of n] (rec) {\textbf{Retrieval}\\ \footnotesize vizinhos semânticos};
+  \node[proc, right=0.8cm of n] (rec) {\textbf{Retrieval}\\ \footnotesize semantic neighbours};
   \node[proc, right=0.8cm of h] (tri) {\textbf{Triage}\\ \footnotesize calibrated probability};
   \node[proc, dashed, below=6mm of tri] (dec)
     {\textbf{Decomposition}\\ \footnotesize market, sector,\\ \footnotesize company};
 
   \node[proc, right=0.9cm of rec, text width=2.8cm] (exp)
-    {\textbf{Explanation}\\ \footnotesize composição a partir\\ \footnotesize dos objetos\\ \footnotesize calculados};
+    {\textbf{Explanation}\\ \footnotesize composed from\\ \footnotesize the computed\\ \footnotesize objects};
 
   \node[saida, right=0.8cm of exp, yshift=9mm] (tg) {\textbf{Messaging channel}};
-  \node[saida, right=0.8cm of exp, yshift=-9mm] (web) {\textbf{Web application}\\ \footnotesize registo de decisões};
+  \node[saida, right=0.8cm of exp, yshift=-9mm] (web) {\textbf{Web application}\\ \footnotesize decision log};
 
   \draw[->] (p) -- (det);
   \draw[->] (n) -- (rec);
@@ -232,12 +232,12 @@ ser descartada, situação em que o sistema não comunica.
   \node[et] (a) {collect\\ news};
   \node[porta, right=4mm of a] (b) {names the\\ company?};
   \node[porta, right=4mm of b] (c) {is it recent?};
-  \node[et, right=4mm of c] (d) {recuperar\\ precedentes};
+  \node[et, right=4mm of c] (d) {retrieve\\ precedents};
   \node[porta, below=7mm of d] (e) {enough\\ evidence?};
   \node[porta, left=4mm of e] (f) {triage\\ above the\\ floor?};
   \node[porta, left=4mm of f] (g) {already sent\\ today?};
   \node[et, left=4mm of g] (h) {compose the\\ explanation};
-  \node[et, below=7mm of h, fill=black!16] (i) {entregar e\\ registar};
+  \node[et, below=7mm of h, fill=black!16] (i) {deliver and\\ log};
 
   \foreach \x/\i in {a/1, b/2, c/3, d/4} { \node[n, above=0.5mm of \x] {\i}; }
   \foreach \x/\i in {e/5, f/6, g/7, h/8} { \node[n, above=0.5mm of \x] {\i}; }
