@@ -97,3 +97,31 @@ def test_recusa_abaixo_do_minimo_e_nao_publica_metrica(tmp_path, monkeypatch):
     assert "33" in texto and "80" in texto
     for proibido in ("ROC-AUC", "PR-AUC", "IC 95%"):
         assert proibido not in texto, "publicou " + proibido + " abaixo do minimo"
+
+
+def test_projecao_avisa_quando_a_recolha_nao_chega(tmp_path, monkeypatch):
+    """O controlo no sentido oposto: um minimo que so se descobre inalcancavel na vespera
+    nao serve de minimo."""
+    saida = tmp_path / "r.md"
+    monkeypatch.setattr(rp, "SAIDA", saida)
+    hoje = __import__("datetime").date.today()
+    prazo = (hoje + __import__("datetime").timedelta(days=7)).isoformat()
+    # ritmo de 1 par por dia contra um minimo de 500: nao chega de forma nenhuma
+    rp.escreve_insuficiente(3, 500, 9, 100,
+                            por_dia={"2026-09-0" + str(i): {"T"} for i in (1, 2, 3)},
+                            prazo=prazo)
+    texto = saida.read_text(encoding="utf-8")
+    assert "não chega ao mínimo a tempo" in texto
+    assert "ROC-AUC" not in texto
+
+
+def test_projecao_diz_no_caminho_certo_quando_chega(tmp_path, monkeypatch):
+    saida = tmp_path / "r.md"
+    monkeypatch.setattr(rp, "SAIDA", saida)
+    hoje = __import__("datetime").date.today()
+    prazo = (hoje + __import__("datetime").timedelta(days=30)).isoformat()
+    rp.escreve_insuficiente(3, 20, 60, 100,
+                            por_dia={"2026-09-0" + str(i): {"A", "B", "C"} for i in (1, 2, 3)},
+                            prazo=prazo)
+    texto = saida.read_text(encoding="utf-8")
+    assert "no caminho certo" in texto

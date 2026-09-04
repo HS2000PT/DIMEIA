@@ -169,7 +169,29 @@ def bootstrap(clusters: dict, chaves: list, metrica, coluna: str, rng) -> tuple:
     return obs, float(np.percentile(b, 2.5)), float(np.percentile(b, 97.5))
 
 
-def escreve_insuficiente(n_cl: int, minimo: int, n_linhas: int, n_brutas: int) -> None:
+def projecao(por_dia: dict, minimo: int, prazo: str) -> tuple:
+    """Ao ritmo observado, o minimo e alcancavel ate ao prazo?
+
+    Existe para que a recusa nao seja um beco: correr o script em qualquer dia diz `ainda
+    nao` E se a recolha esta no caminho certo. Um minimo que so' se descobre inalcancavel
+    na vespera nao serve de minimo.
+    """
+    if not por_dia:
+        return 0, 0, 0.0, False
+    import statistics
+    ritmo = statistics.median(sorted(len(v) for v in por_dia.values()))
+    hoje = datetime.date.today()
+    fim = datetime.date.fromisoformat(prazo)
+    uteis = sum(1 for i in range((fim - hoje).days + 1)
+                if (hoje + datetime.timedelta(days=i)).weekday() < 5)
+    tem = sum(len(v) for v in por_dia.values())
+    previsto = tem + uteis * ritmo
+    return tem, uteis, ritmo, previsto >= minimo
+
+
+def escreve_insuficiente(n_cl: int, minimo: int, n_linhas: int, n_brutas: int,
+                         por_dia: dict | None = None,
+                         prazo: str = "2026-09-17") -> None:
     gerado = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d %H:%M UTC")
     with SAIDA.open("w", encoding="utf-8") as f:
         w = f.write
@@ -189,6 +211,18 @@ def escreve_insuficiente(n_cl: int, minimo: int, n_linhas: int, n_brutas: int) -
           + str(n_linhas) + " |" + NL)
         w("| Pares empresa-dia com rótulo maturado | " + str(n_cl) + " |" + NL)
         w("| Mínimo exigido | " + str(minimo) + " |" + NL)
+        tem, uteis, ritmo, ok = projecao(por_dia or {}, minimo, prazo)
+        if uteis:
+            w(NL + "## A recolha chega ao mínimo a tempo?" + NL * 2)
+            veredicto = ("A recolha está no caminho certo." if ok else
+                         "**A recolha não chega ao mínimo a tempo.** A decisão do que "
+                         "fazer com isso é do autor.")
+            w("Ao ritmo observado de **" + format(ritmo, ".0f") + " pares por dia de "
+              "bolsa**, e com **" + str(uteis) + " dias de bolsa** até " + prazo
+              + ", a projeção é de **" + format(tem + uteis * ritmo, ".0f")
+              + " pares**, contra um mínimo de " + str(minimo) + ". " + veredicto + NL * 2)
+            w("A projeção supõe que o ritmo se mantém e que o sistema continua no ar, "
+              "e não é uma garantia." + NL)
     print("bloco insuficiente: " + str(n_cl) + " clusters maturados, minimo " + str(minimo))
 
 
@@ -243,7 +277,11 @@ def main() -> int:
         clusters[(d["ticker"], d["news_date"][:10])].append(d)
     chaves = sorted(clusters)
     if len(chaves) < args.min_clusters:
-        escreve_insuficiente(len(chaves), args.min_clusters, len(linhas), len(brutas))
+        pd_ = collections.defaultdict(set)
+        for d_ in linhas:
+            pd_[d_["news_date"][:10]].add(d_["ticker"])
+        escreve_insuficiente(len(chaves), args.min_clusters, len(linhas), len(brutas),
+                             por_dia=pd_)
         return 0
 
     rng = np.random.default_rng(20260904)
