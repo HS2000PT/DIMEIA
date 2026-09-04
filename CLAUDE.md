@@ -138,6 +138,26 @@
   312 USD que expira em 2028. A alternativa técnica seria tirar o `backfill` de 38 214 casos do
   worker, **e isso degrada a qualidade dos precedentes** — é escolha de produto e de tese, não
   minha. **972 testes**, ruff limpo.
+  **✅ (I) RESOLVIDO POR DECISÃO DO AUTOR: worker em `Standard-2X` (1 GB).** Autorizou o gasto
+  e alargou a defesa até outubro. **⚠️ E o Heroku recusa misturar escalões de dyno** — a mesma
+  restrição que a sessão 44 documentou —, portanto o `web` teve de subir também. Ficou
+  `web Standard-1X` (0,5 GB, e nunca teve um único R14) + `worker Standard-2X` (1 GB):
+  **~75 USD/mês contra os ~14 de antes**, e não os ~50 que eu tinha estimado, precisamente por
+  causa da regra de mistura. Com ~298 USD de saldo a expirar em 2028, dá cerca de quatro meses.
+  **MEDIDO DEPOIS DO REINÍCIO (01:30:45): R14 = 0 e R15 = 0 em 8 minutos, com 5 ciclos completos
+  e NENHUMA leitura de memória** — o Heroku só reporta ao ultrapassar a quota, logo o processo
+  nunca chegou perto de 1 GB. Antes eram ~2,3 R14 por minuto, com picos de 970 MB.
+  ⚠️ **As quatro correcções de memória continuam a valer e não foram desfeitas:** sem elas o
+  worker assentava em ~536 MB e os picos de publicação chegavam a 256 MB, ou seja o contentor
+  novo ficaria com pouca folga à medida que o `live_kb` cresce.
+  **A RECOLHA ESTÁ A ANDAR: 1 700 registos de formato novo, dos quais 977 de CLASSE A** (eram 38
+  há uma hora), instantâneo fresco a 69 s.
+  **⚠️ POR ESCLARECER, E MUDA O PROTOCOLO:** o autor disse primeiro «defesa e artigo até 27/09»
+  e depois «a defesa vai ser no máximo em outubro». O
+  [`PROTOCOLO_ACEITACAO_RETREINO.md`](docs/planos/PROTOCOLO_ACEITACAO_RETREINO.md) foi fixado
+  sobre 27/09 — 10 dias de bolsa, 120 unidades independentes, meia-largura de IC de 0,074. Se a
+  defesa for em outubro, a janela rotulável **mais do que duplica** e o cálculo de potência tem
+  de ser refeito **antes** de ver qualquer candidato. Não refazer sobre uma ambiguidade.
   **✅ CHAVE DO HEROKU SEM PASSAR PELO CHAT:** `deploy_heroku.py` passa a ler `HEROKU_API_KEY` do
   `.env` (gitignored, o cofre que o projecto já usa para as outras onze chaves) antes de tentar a
   CLI, e o valor **nunca é impresso, nem no caminho de erro** — as duas fugas anteriores (sessões
