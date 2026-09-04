@@ -243,8 +243,10 @@ os únicos elementos armazenados.
 
 A Figura~\ref{fig:ap_infra} reúne as peças externas de que o sistema depende, pelo ponto do
 percurso em que cada uma entra, e o texto que se lhe segue apresenta o custo efetivo da
-operação. Nenhuma foi escolhida por preferência: todas decorrem da restrição fundadora de
-utilizar apenas fontes gratuitas, e as duas exceções a essa restrição, que são o alojamento e
+operação. O codificador de frases é executado no formato \gls{ONNX}, que permite
+corrê-lo sem a biblioteca de treino. Nenhuma peça foi escolhida por preferência: todas decorrem
+da restrição fundadora de utilizar apenas fontes gratuitas, e as duas exceções a essa
+restrição, que são o alojamento e
 
 \begin{figure}[!htbp]
 \centering
@@ -274,7 +276,7 @@ utilizar apenas fontes gratuitas, e as duas exceções a essa restrição, que s
   \node[lg] at (2.20,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{huggingface.png}};
   \node[lg] at (3.30,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{onnx.png}};
   \node[lg] at (3.05,-0.30) {\includegraphics[height=6mm,width=13mm,keepaspectratio]{numpy.png}};
-  \node[font=\tiny, text=black!60, align=center] at (3.05,-0.95) {\gls{SBERT} em\ ONNX, 384-d};
+  \node[font=\tiny, text=black!60, align=center] at (3.05,-0.95) {\glsentryshort{SBERT}\\em ONNX};
 
   \node[lg] at (5.55,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{scikit-learn.png}};
   \node[lg] at (6.65,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{pandas.png}};

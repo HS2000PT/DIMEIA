@@ -115,16 +115,24 @@ boa companhia todos os dias.
 %	ÍNDICES
 %----------------------------------------------------------------------------------------
 \tableofcontents
+% As listas passam a constar do Índice. A Lista de Acrónimos já constava e as outras
+% três não, o que é a pior das configurações: o leitor aprende que as listas estão no
+% Índice e depois não encontra lá as que procura. A convenção seguida é a da dissertação
+% aprovada do Bruno Ribeiro, cujo Índice lista todas com página.
+% O cleardoublepage antes do addcontentsline garante que a entrada aponta para a página
+% onde a lista COMEÇA, e não para a anterior.
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Lista de Figuras}
 \listoffigures
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Lista de Tabelas}
 \listoftables
-% Sao dois excertos, e uma lista de duas linhas parece pouco. Fica na mesma, por duas razoes:
-% e a convencao do template (uma das dissertacoes aprovadas do mesmo mestrado tem-na), e a tese
-% apresenta um deles como "a garantia mais importante de todo o trabalho" — um leitor que o
-% procure nao tinha por onde o encontrar a partir da frente.
-% ⚠️ E o prefixo de cada legenda, que saía "Listing 3.1:" enquanto o corpo manda ler o
-% "Excerto 3.1". O `listings` não é traduzido pelo babel, e isto tem de ficar depois de
-% \begin{document} para não ser sobrescrito.
-\renewcommand{\lstlistingname}{Excerto}
+% A Lista de Excertos NAO e impressa e o comando de renomear o prefixo foi retirado: a
+% reescrita para esta arvore deixou o documento SEM UM UNICO EXCERTO de codigo, e o
+% comentario que aqui estava defendia manter uma lista que ja nao tem conteudo. A
+% garantia anti-lookahead, que era o excerto que valia a pena mostrar, passou a ser a
+% figura da janela deslizante nos metodos, que serve melhor o leitor a quem esta
+% dissertacao se dirige. Verificado a 2026-09-04: zero ambientes lstlisting no corpo.
 
 %----------------------------------------------------------------------------------------
 %	LISTA DE SÍMBOLOS
@@ -134,6 +142,8 @@ boa companhia todos os dias.
 % a equação ou secção onde cada um é introduzido, para que a lista sirva de índice e não apenas
 % de glossário. A Lista de Código e a Lista de Algoritmos não constam porque o documento não tem
 % nenhum dos dois, e o próprio modelo manda remover esses comandos nesse caso.
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Lista de Símbolos}
 \begin{symbols}{l p{0.60\textwidth} l}
 $P_t$ & Preço de fecho da sessão $t$ & Eq.~\ref{eq:zscore} \\
 $r_t$ & Retorno logarítmico do dia $t$, $\ln(P_t / P_{t-1})$ & Eq.~\ref{eq:zscore} \\
@@ -161,7 +171,11 @@ $P$, $C$ & Precisão e cobertura & Secção~\ref{sec:av_desenho} \\
 $F_1$ & Média harmónica da precisão e da cobertura, $2PC/(P+C)$ & Secção~\ref{sec:av_desenho} \\
 \end{symbols}
 
-\printnoidxglossary[type=\acronymtype, title=Lista de Acrónimos, nonumberlist]
+% nogroupskip: sem isto o espaco vertical VARIA conforme a letra inicial -- entradas
+% que partilham a inicial ficam coladas e as restantes separadas, o que se le como
+% espacamento arbitrario.
+\printnoidxglossary[type=\acronymtype, title=Lista de Acrónimos, nonumberlist,
+                   nogroupskip]
 
 \mainmatter
 \pagestyle{thesis}
