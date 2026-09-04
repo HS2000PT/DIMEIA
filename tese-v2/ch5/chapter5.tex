@@ -1228,9 +1228,21 @@ produzir valores de aparência normal.
 
 Existe uma segunda causa possível, que os registos não permitem separar da primeira. Uma das nove entradas é o retorno do próprio dia. No treino corresponde ao movimento completo do
 dia da notícia. Em produção é calculado sobre a última barra diária disponível, que durante a
-sessão é o fecho da véspera ou uma barra incompleta. As duas causas produzem o mesmo sintoma, e o registo
-guarda a probabilidade e o resultado mas não o valor das entradas no momento da pontuação. A sua
-separação exigiria registar essas entradas e voltar a observar durante semanas.
+sessão é o fecho da véspera ou uma barra incompleta. As duas causas produzem o mesmo sintoma, e
+o registo, à data desta medição, guardava a probabilidade e o resultado mas não o valor das
+entradas no momento da pontuação, pelo que a sua separação exigiria registar essas entradas e
+voltar a observar durante semanas.
+
+Essa instrumentação foi construída e implantada em 4 de setembro de 2026, e o registo passou a
+guardar, por decisão, o valor de cada uma das nove entradas, a data da última barra de preço
+utilizada e a identidade do modelo que pontuou. Duas consequências decorrem dela e nenhuma é um
+resultado. A primeira é que as decisões anteriores a essa data permanecem não reproduzíveis a
+partir do registo, uma vez que recalcular hoje as entradas de um dia passado utilizaria uma série
+de preços que já contém o que veio a seguir; as medições deste capítulo assentam nessas decisões
+e não são afetadas pela alteração. A segunda é que a janela de observação necessária para separar
+as duas causas começou nessa data, e o critério de aceitação de qualquer comparação futura foi
+fixado antes de existir candidato, pela mesma razão que o Capítulo~\ref{cap:metodologia}
+invoca para as restantes experiências. Nada se afirma aqui sobre o seu desfecho.
 
 A correção aparente consistiria em substituir o limiar fixo por um limiar relativo a cada empresa. A simulação dessa alternativa sobre as mesmas decisões resolve metade do problema, uma vez que as
 doze empresas passam a estar representadas, e introduz outro. Nas empresas cuja pontuação quase
@@ -1577,7 +1589,10 @@ sustenta e a justificação de responsividade não é quantitativa. A terceira r
 volatilidade, mantido por explicabilidade contra uma alternativa medida como superior.
 
 O capítulo documenta três ocasiões em que uma técnica mais simples superou uma técnica mais
-sofisticada em condições equivalentes, e duas ocasiões em que a técnica mais sofisticada obteve
-melhor resultado e o sistema manteve a mais simples por explicabilidade. A distinção entre estes dois
-casos é a distinção entre resultado e escolha, e o Capítulo~\ref{cap:conclusoes} retoma-a ao
-estabelecer o que este trabalho demonstra e o que apenas decide.
+sofisticada em condições equivalentes, e três ocasiões em que sucedeu o inverso e o sistema
+conservou mesmo assim a opção implantada. Nestas últimas a razão difere em cada caso, e nenhuma
+delas é o resultado da medição: o estimador de pesos iguais foi mantido por explicabilidade, a
+janela de vinte dias por responsividade, e o codificador de frases mais pequeno por custo
+computacional. A distinção entre os dois conjuntos é a distinção entre resultado e escolha, e o
+Capítulo~\ref{cap:conclusoes} retoma-a ao estabelecer o que este trabalho demonstra e o
+que apenas decide.
