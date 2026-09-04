@@ -230,12 +230,12 @@ do exterior. Nenhuma das duas foi duplicada.
 
 O que faltava era a cadeia, e foi feita como **verificação e não como tabela**: uma tabela
 escrita por mim afirmaria a cadeia; o verificador testa-a. E encontrou um defeito: **o
-Cap. 6, ao responder à QI2, cita o chão de acaso sob a restrição da produção () e
+Cap. 6, ao responder à QI2, cita o chão de acaso sob a restrição da produção (`0,259`) e
 nenhum capítulo anterior o enuncia.** O Cap. 5 dava a margem e o valor do método, pelo que
-o  só se obtinha por subtracção a partir de uma legenda. Confirmado contra o
+o `0,259` só se obtinha por subtracção a partir de uma legenda. Confirmado contra o
 artefacto e enunciado no Cap. 5, que é onde o resultado vive.
 
- impõe: cada questão tem resultados e resposta; o Cap. 6 não cita
+`check_qi_cadeia.py` impõe: cada questão tem resultados e resposta; o Cap. 6 não cita
 decimais que os capítulos anteriores não estabeleçam; e cada questão delimita o que o
 resultado não permite concluir. Verificado com uma afirmação inventada plantada.
 
