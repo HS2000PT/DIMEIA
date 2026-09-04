@@ -381,6 +381,14 @@ def fragmento_latex(registos: list[FL.FeedbackRecord],
                              f"{lo2 * 100:.0f}\\% e {hi2 * 100:.0f}\\%. É esta a leitura a "
                              "reter.")
     L.append("")
+    # A remissao para a limitacao do Cap. 6 vive AQUI e nao no .tex: o ficheiro e
+    # regenerado, e uma frase escrita a mao no destino desapareceria na corrida
+    # seguinte sem um unico aviso. Sem ela, o Cap. 5 mede utilidade com pessoas e o
+    # Cap. 6 declara que isso nao foi feito, e o leitor constroi a contradicao sozinho.
+    L.append("Estes votos não substituem a avaliação com utilizadores que a "
+             "Secção~\\ref{sec:con_limitacoes} identifica como a lacuna de maior peso "
+             "deste trabalho, e que permanece por realizar.")
+    L.append("")
     L.append("Quatro limitações acompanham este resultado e nenhuma delas se resolve com mais "
              "votos. A primeira é a autosseleção: vota quem quer, e quem considera um alerta "
              "indiferente tende a não carregar em nada, o que empurra a amostra para os "

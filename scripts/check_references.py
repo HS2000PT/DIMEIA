@@ -44,6 +44,28 @@ FICHEIROS_PT = [
 FICHEIROS = FICHEIROS_PT if (pathlib.Path(BASE) / "cap1").is_dir() else FICHEIROS_EN
 
 _encontrados = [f for f in FICHEIROS if (pathlib.Path(BASE) / f).exists()]
+
+# E os ficheiros que os capitulos INCLUEM. Sem isto, um label definido num fragmento
+# gerado (por exemplo ch5/feedback_auto.tex) e invisivel ao extractor, e um ref
+# legitimo para ele aparece como 'label nao encontrado': o verificador acusaria a
+# tese de um defeito que e dele. A classe de caracteres evita escrever a barra
+# invertida no padrao, que ja partiu edicoes deste projecto mais do que uma vez.
+# ATENCAO: a barra tem de ser DUPLICADA na fonte do padrao. Escrever [ barra ]
+# deixa a classe por fechar, porque a barra escapa o proprio fecho, e o padrao
+# passa a apanhar QUALQUER comando LaTeX. Aconteceu, e so se viu a imprimir.
+_RX_INPUT = re.compile(chr(92) * 2 + "(?:input|include) *[{]([^}]+)[}]")
+for _f in list(_encontrados):
+    _t = (pathlib.Path(BASE) / _f).read_text(encoding="utf-8", errors="ignore")
+    _t = "\n".join(ln for ln in _t.split("\n") if not ln.lstrip().startswith("%"))
+    for _alvo in _RX_INPUT.findall(_t):
+        _alvo = _alvo.strip()
+        if not _alvo.endswith(".tex"):
+            _alvo += ".tex"
+        if (pathlib.Path(BASE) / _alvo).exists() and _alvo not in _encontrados:
+            _encontrados.append(_alvo)
+# os dois varrimentos abaixo iteram FICHEIROS, e nao _encontrados: sem esta linha
+# os ficheiros incluidos ficavam de fora e a correccao acima nao servia de nada.
+FICHEIROS = list(_encontrados)
 if not _encontrados:
     print(f"ERRO: nenhum ficheiro do corpus encontrado em '{BASE}/'. "
           "Um verificador que não vê o corpus não pode dizer que está tudo bem.")
