@@ -133,7 +133,8 @@ def main() -> int:
     achados: list = []
     varre("brasileirismo", [re.escape(x) for x in BRASILEIRISMOS], achados)
     varre("possessivo sem artigo",
-          [r"(?<![A-Za-zÀ-ú])(?!(?:" + _ANTES_OK + r")\s)\w+\s+(?:sua|suas|seu|seus)(?![A-Za-zÀ-ú])"],
+          [r"(?<![A-Za-zÀ-ú])(?!(?:" + _ANTES_OK + r")\s)\w+\s+"
+           r"(?:sua|suas|seu|seus)(?![A-Za-zÀ-ú])"],
           achados)
     varre("pré-Acordo", [re.escape(x) for x in PRE_ACORDO], achados)
     varre("anglicismo", [re.escape(x) for x in ANGLICISMOS], achados)
