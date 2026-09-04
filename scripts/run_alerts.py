@@ -146,6 +146,21 @@ def quase_repetida(manchete: str, anteriores: list[list[str]], limiar: float = 0
     return is_near_duplicate(manchete, anteriores, limiar)
 
 
+def _manchete_do_alerta(texto: str) -> str:
+    """A manchete tal como o alerta a citou, para repor a memoria depois de um reinicio.
+
+    O formato e estavel e a citacao e literal: a primeira linha identifica a empresa e a
+    segunda traz o titulo entre aspas. Extrai-lo daqui e preferivel a acrescentar um campo
+    ao historico, porque funciona sobre os alertas que JA foram enviados -- e sao esses que
+    a memoria precisa de conhecer.
+    """
+    for linha in (texto or "").splitlines():
+        linha = linha.strip()
+        if len(linha) > 2 and linha.startswith('"') and linha.endswith('"'):
+            return linha[1:-1]
+    return ""
+
+
 def seed_state_from_shared_history(state: dict, entries: list, today: str) -> None:
     """Puro: semeia o estado com o que QUALQUER produtor já enviou hoje.
 
@@ -176,6 +191,17 @@ def seed_state_from_shared_history(state: dict, entries: list, today: str) -> No
             if k not in state["alerted_news"]:
                 state["alerted_news"].append(k)
                 state["news_count"][e.ticker] = state["news_count"].get(e.ticker, 0) + 1
+            # A memoria das MANCHETES tambem, e nao so a das chaves. A chave e um resumo do
+            # texto renderizado, que inclui os precedentes: quando a base de casos matura, o
+            # texto muda, a chave muda, e o "ja alertada hoje" nao reconhece a repeticao. A
+            # manchete nao muda. Sem esta linha, um reinicio apagava a unica memoria que
+            # apanha esse caso -- e apanhou-o uma vez, a 2026-09-04 na TSLA.
+            manchete = _manchete_do_alerta(e.text)
+            if manchete:
+                palavras = sorted(conteudo(manchete))
+                anteriores = state.setdefault("news_words", {}).setdefault(e.ticker, [])
+                if palavras not in anteriores:
+                    anteriores.append(palavras)
         elif e.kind == "summary":
             state["summary_sent"] = True
         elif e.kind == "open":
