@@ -50,13 +50,38 @@
   regra do projecto proíbe colar chaves no chat. Até ser implantado, a classe A vem só do cron do
   Actions (30/30 min em horário de mercado) e não do ciclo de 60 s. `heroku login` e depois
   `python scripts/deploy_heroku.py`.
-  **⏭️ FALTAM DUAS DATAS DO AUTOR:** a da **defesa** (fixa os mínimos e os critérios de aceitação,
-  que têm de ser escritos **antes** de ver qualquer candidato) e a do **artigo**. O rótulo tem
-  horizonte primário de **3 dias de bolsa** (~5 de calendário): dados recolhidos a menos de cinco
-  dias da defesa não maturam a tempo, e a janela declarada (17/09–01/10) faz a diferença entre
-  ~250 e ~615 observações — contra 28 574 exemplos do conjunto congelado. **Se a recolha for
-  curta, o bloco novo vale como conjunto de AVALIAÇÃO sobre a população real de produção, e não
-  como substituto de treino** — cientificamente é o resultado mais forte que a janela permite.
+  **✅ AS DUAS DATAS, DADAS PELO AUTOR: DEFESA E ARTIGO A 27/09.** Com elas fixei o
+  **`PROTOCOLO_ACEITACAO_RETREINO.md`**, escrito **antes de existir candidato** — um critério
+  escrito depois de ver um resultado não é critério, é descrição do resultado.
+  **⚠️ E O CÁLCULO DE POTÊNCIA MUDA A CONCLUSÃO DO RETREINO, ANTES DE ELE CORRER.** A janela
+  rotulável é 04/09→~17/09 = **10 dias de bolsa**. O rendimento medido subiu muito com a decisão
+  R1 (**~150–240 candidatas/dia** contra 28), **mas as linhas não são a unidade**: o rótulo é o
+  retorno anormal por `(ticker, dia)`, logo todas as manchetes da mesma empresa no mesmo dia
+  partilham desfecho — **12 empresas × 10 dias = 120 unidades independentes**, e é a mesma lição
+  que a sessão 55 já tinha pago (530 linhas eram 145 unidades). Bootstrap de cluster sobre 120
+  clusters dá **meia-largura de IC 95% da ROC-AUC = 0,074**, ou seja **só uma diferença acima de
+  ~0,15 seria distinguível do acaso**, quando o modelo atual mede `0,486` contra acaso `0,500`.
+  **Fica escrito antes de haver candidato: esta janela NÃO sustenta «o candidato bate o modelo
+  atual», por mais favorável que o número pareça a 22/09.**
+  **✅ O QUE ELA SUSTENTA, E É CONTRIBUIÇÃO NOVA:** a pós-validação publicada (`0,486`, ch5:1329)
+  foi medida sobre **239 pares que já tinham atravessado as portas**. A decisão R1 dá pela
+  primeira vez a **população real de candidatas**, logo a pergunta que se responde é *como é que
+  o modelo ordena aquilo que teria mesmo de triar* — que ataca directamente a fraqueza que a
+  dissertação já declara. **É avaliação, não retreino, e não depende de haver dados suficientes
+  para treinar.** Regra de promoção pré-registada: IC da diferença emparelhada de PR-AUC a
+  excluir zero contra o modelo atual **e** contra a volatilidade, Brier não pior, mínimo de 80
+  clusters maturados. Se perder, **o modelo atual fica e o negativo é reportado**.
+  **✅ CHAVE DO HEROKU SEM PASSAR PELO CHAT:** `deploy_heroku.py` passa a ler `HEROKU_API_KEY` do
+  `.env` (gitignored, o cofre que o projecto já usa para as outras onze chaves) antes de tentar a
+  CLI, e o valor **nunca é impresso, nem no caminho de erro** — as duas fugas anteriores (sessões
+  44 e 51) foram assim, ninguém imprimiu a chave de propósito, imprimiu-se a **excepção**.
+  Entrada nova no `.env.example`, com o aviso de que é chave de **conta** e não de aplicação.
+  **⚠️ A ARMADILHA DO HEREDOC MORDEU OUTRA VEZ, e da forma exacta que este ficheiro documenta:**
+  `\n` dentro de um heredoc entre plicas chega ao Python como `
+` e vira newline **a sério**,
+  o que partiu o `deploy_heroku.py` em 23 erros de sintaxe. Restaurado do git e refeito com
+  `chr(92)` num ficheiro à parte. **A regra que já estava escrita é a certa: não gerar código com
+  escapes por heredoc — ficheiro à parte, ou `chr(92)`.**
 - **2026-09-03 — LER PRIMEIRO `docs/planos/REVISAO_PRIORITARIA_ANEXOS.md`.**
   Quatro anexos integrais preservados e 44 itens de verificação. Este estado prevalece sobre
   os registos históricos abaixo: tese canónica `tese-v2/main.pdf`; retreino autorizado, a
