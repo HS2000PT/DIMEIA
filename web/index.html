@@ -320,8 +320,12 @@
   .intervalos button { border:1px solid var(--linha); background:var(--caixa); border-radius:8px;
                        padding:4px 11px; font-size:.78rem; font-family:var(--mono);
                        color:var(--fraco); cursor:pointer; transition:.14s; }
+  /* Texto ESCURO sobre o verde da marca, e nao branco. Medido a 2026-09-05: branco sobre
+     #2fd07f da 2.01:1 a 12.5px, abaixo dos 4.5 que a WCAG exige para texto pequeno --
+     era o unico elemento do painel abaixo do minimo, em 597 visiveis. Escurecer o texto
+     resolve sem tocar na cor da marca, que e o que a identidade nao permite mudar. */
   .intervalos button[aria-pressed="true"] { background:var(--acento); border-color:var(--acento);
-                                            color:#fff; font-weight:600; }
+                                            color:#0b0e13; font-weight:700; }
   .d-dias { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
   .dia-b { border:1px solid var(--linha); background:var(--caixa); border-radius:8px;
            padding:4px 9px; font-family:var(--mono); font-size:.75rem; cursor:pointer;
@@ -587,6 +591,7 @@ async function carregar(primeira) {
   const antes = new Set(S.alertas.map(x => x.date + x.ticker + x.text.slice(0, 40)));
   S.visao = v; S.funil = f.rows || []; S.alertas = a.rows || [];
   S.votos = fb.por_alerta || {};
+  S.pessoas = fb.pessoas || 0;
   S.asOf = v.as_of;
   if (!primeira) {
     S.novos = new Set(S.alertas.filter(x => !antes.has(x.date + x.ticker + x.text.slice(0, 40)))
@@ -702,7 +707,15 @@ function pintarKpis(linhas, estados) {
       `price beyond ±${v.threshold} on a ${v.window}-day window — counted separately`),
     k("Alerts delivered", enviados, "today, out of five daily slots", "", "destaque"),
     k("Stopped at a gate", travados, "silence, and every one is inspectable"),
-    k("Reader votes", votos, votos ? `${uteis} said the alert was useful` : "no votes yet"),
+    // ⚠️ Diz de quantos LEITORES, e nao a proporcao de uteis. Sem o numero de pessoas,
+    // 42 votos leem-se como 42 leitores, e o docstring de feedback_log.resumo existe para
+    // impedir exactamente essa leitura. E a proporcao nao pertence a um painel de produto
+    // enquanto a amostra nao atingir o minimo pre-registado -- o docstring da rota
+    // /api/feedback ja o dizia, e o mosaico reportava-a na mesma. O estudo vive no
+    // relatorio de avaliacao, com o intervalo de Wilson e a salvaguarda do votante
+    // dominante; aqui mostra-se o volume, que e o que um painel deve mostrar.
+    k("Reader votes", votos,
+      votos ? `from ${S.pessoas || "?"} reader${S.pessoas === 1 ? "" : "s"}` : "no votes yet"),
   ].join("");
 }
 

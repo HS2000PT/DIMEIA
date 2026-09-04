@@ -340,8 +340,12 @@ def feedback() -> dict:
     registos = _registos_votos()
     from investigator import feedback_log as FL
 
+    # `pessoas` acompanha as contagens porque sem ele o painel mostra 42 votos e o leitor
+    # entende 42 leitores. E uma contagem, nao um identificador: continua a nao sair daqui
+    # nada que ligue um voto a alguem.
     return {"por_alerta": {c: list(FL.contagem(registos, c))
-                           for c in {r.chave_alerta for r in registos}}}
+                           for c in {r.chave_alerta for r in registos}},
+            "pessoas": FL.resumo(registos).get("pessoas", 0)}
 
 
 # ── Estáticos ─────────────────────────────────────────────────────────────────
