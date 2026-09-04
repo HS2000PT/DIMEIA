@@ -30,7 +30,7 @@ if hasattr(sys.stdout, "reconfigure"):
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 ARTIGO = RAIZ / "paper" / "main.tex"
-TESE = RAIZ / "tese-v2"
+TESE = RAIZ / "tese-pt"
 FICHEIROS_TESE = [f"ch{i}/chapter{i}.tex" for i in range(1, 7)] + [
     "appendices/appendixA.tex", "frontmatter/frontmatter.tex"]
 

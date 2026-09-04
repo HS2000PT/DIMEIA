@@ -138,7 +138,7 @@ def main() -> None:
     parser.add_argument("--causal", type=Path,
                         default=REPO / "docs/evaluation/evaluation_retrieval_causal.md")
     parser.add_argument("--output", type=Path,
-                        default=REPO / "tese-v2/figures/eval_retrieval_sector_causal.pdf")
+                        default=REPO / "tese-pt/figures/eval_retrieval_sector_causal.pdf")
     args = parser.parse_args()
     build(args.sectors, args.causal, args.output)
     print(f"Figura escrita em {args.output}")

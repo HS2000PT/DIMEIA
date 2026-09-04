@@ -31,6 +31,6 @@ O contexto v1 aqui (PR-AUC 0.537) reproduz a âncora congelada (`evaluation_tria
 | vol_ratio (vol20/vol60) | 0.538 | +0.000 | -0.001 |
 | downside_vol20 (risco de queda) | 0.534 | -0.003 | -0.001 |
 
-![Contribuição marginal](../../thesis/figures/eval_triage_ext.pdf)
+![Contribuição marginal](../../tese-v2/figures/eval_triage_ext.pdf)
 
 **Leitura honesta:** a ablação diz quais sinais valem e quais não — reportado tal como cai, com o mesmo rigor do resultado congelado ("o texto não bate a volatilidade"). Δ pequenos (~0.00) significam que o sinal é redundante face aos que já lá estão; Δ negativos que atrapalha (ruído). Nada aqui muda a produção — a stack leve continua na variante só-contexto congelada; isto é ciência de features para a tese e futuro.

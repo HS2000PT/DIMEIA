@@ -20,7 +20,9 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
-TESE = RAIZ / "tese"
+# Os materiais de estudo passaram de `tese/` para `materiais/` a 2026-09-05,
+# quando as tres arvores supersedas foram arquivadas. A prosa canonica e tese-v2.
+TESE = RAIZ / "tese-pt"
 
 # ⚠️ O TERCEIRO CAMPO SÃO ARGUMENTOS, e existe por uma distinção que a porta não fazia.
 # Uma pendência HUMANA é um item real que NENHUM trabalho no repositório pode fechar: os
@@ -32,7 +34,7 @@ TESE = RAIZ / "tese"
 # esta porta recolhe-a numa secção própria em vez de a contar como falha. O item continua
 # VISÍVEL; o que muda é onde aparece, e o veredicto final diz que ele impede a entrega.
 VERIFICADORES = [
-    ("dissertação canónica tese-v2", "check_tese_v2.py", ["--permitir-pendencias-humanas"]),
+    ("dissertação canónica", "check_tese_pt.py", ["--permitir-pendencias-humanas"]),
     ("números contra a fonte", "check_tese_numeros.py", []),
     # O de cima verifica uma lista curada contra o ficheiro que a produz: garante que os que estão
     # na lista estão certos, e nada diz sobre os que não estão. Este faz o inverso, e é por isso
@@ -60,12 +62,12 @@ VERIFICADORES = [
     ("questões: enunciada, medida, respondida", "check_qi_cadeia.py", []),
 ]
 
-# ⚠️ A DISSERTAÇÃO A ENTREGAR É `tese-v2/`, e esta lista apontava para `tese/`. Corrigido a
+# ⚠️ A DISSERTAÇÃO A ENTREGAR É `tese-pt/`, e esta lista apontava para `tese/`. Corrigido a
 # 2026-09-04. Os materiais de estudo — slides, guia, guia de construção — nunca foram movidos
 # e continuam em `tese/`; a dissertação foi. Uma porta que confere o documento errado dá
 # garantia falsa sobre o que vai ser entregue E grita por defeitos que não contam, que é a
 # combinação que faz alguém deixar de a ler.
-TESE_V2 = RAIZ / "tese-v2"
+TESE_V2 = RAIZ / "tese-pt"
 
 PDFS = [
     ("dissertação (canónica)", TESE_V2 / "main.pdf", TESE_V2 / "main.tex"),

@@ -63,7 +63,7 @@ OUT_MD = REPO / "docs" / "evaluation" / "evaluation_feedback.md"
 # O fragmento que a dissertação faz `\\input`. Gerado, e nunca escrito à mão: é a mesma
 # disciplina do resto do trabalho — o número aparece no documento porque veio do
 # procedimento que o calculou, e não porque alguém o transcreveu.
-OUT_TEX = REPO / "tese-v2" / "ch5" / "feedback_auto.tex"
+OUT_TEX = REPO / "tese-pt" / "ch5" / "feedback_auto.tex"
 
 # ── Regras pré-registadas. Alterar qualquer uma destas depois de haver dados é um ato que
 #    tem de ficar registado no ESTADO.md, com a data e a razão. ──────────────────────────

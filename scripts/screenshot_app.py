@@ -5,7 +5,7 @@ Reprodutível: não fabrica nada — é a app implantada a correr, com a marca a
 `app/assets/logo.svg`) e o slogan "Markets move. We investigate.".
 
 Uso:
-    python scripts/screenshot_app.py                          # → tese-v2/figures/app_dashboard.png
+    python scripts/screenshot_app.py                          # → tese-pt/figures/app_dashboard.png
     python scripts/screenshot_app.py --out /tmp/app.png --port 8533
 """
 
@@ -36,7 +36,7 @@ def _wait_health(port: int, timeout: float = 60.0) -> bool:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Screenshot real do dashboard")
-    ap.add_argument("--out", default=str(REPO / "tese-v2" / "figures" / "app_dashboard.png"))
+    ap.add_argument("--out", default=str(REPO / "tese-pt" / "figures" / "app_dashboard.png"))
     ap.add_argument("--port", type=int, default=8533)
     ap.add_argument("--width", type=int, default=1500)
     ap.add_argument("--height", type=int, default=850)

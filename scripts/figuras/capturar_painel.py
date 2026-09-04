@@ -64,7 +64,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 WEB = REPO / "web"
 DADOS = REPO / "tmp" / "painel_snapshot"
-FIGURAS = REPO / "tese-v2" / "figures"
+FIGURAS = REPO / "tese-pt" / "figures"
 BASE = "https://investigator-ddc9d8618935.herokuapp.com"
 PORTA = 8899
 

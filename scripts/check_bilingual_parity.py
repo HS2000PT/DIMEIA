@@ -133,8 +133,9 @@ def main() -> int:
     print("\nAssimetrias EN->PT nas frases com citacao:\n")
     total = candidatos = 0
     for n in ("ch1", "ch2", "ch3", "ch4", "ch5", "ch6"):
-        en = RAIZ / "thesis" / n / f"chapter{n[-1]}.tex"
-        pt = RAIZ / "thesis-pt" / n / f"chapter{n[-1]}.tex"
+        en = RAIZ / "archive" / "thesis-versions" / "thesis-en-v1" / n / f"chapter{n[-1]}.tex"
+        pt = (RAIZ / "archive" / "thesis-versions" / "thesis-pt-parcial" / n
+              / f"chapter{n[-1]}.tex")
         if not (en.exists() and pt.exists()):
             continue
         fe, fp = frases_com_citacao(en), frases_com_citacao(pt)

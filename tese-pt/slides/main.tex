@@ -11,7 +11,11 @@
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, calc, decorations.pathreplacing}
 \tikzset{every node/.append style={execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000\relax}}}
-\graphicspath{{../figures/}{../../thesis/figures/}}
+% As figuras vem da arvore CANONICA. Antes vinham de ../figures (a arvore antiga, de
+% onde estes materiais foram movidos) e de ../../thesis, que foi arquivada. Sem isto o
+% LaTeX compila em modo rascunho, o numero de paginas nao muda, e o PDF sai SEM AS
+% IMAGENS -- que e um defeito que a contagem de paginas esconde.
+\graphicspath{{../figures/}}
 \usepackage{xcolor}
 % A marca: o verde de `app/assets/logo.svg`, e o "G" e o trocadilho inteiro --
 % inveSTIGATE + alliGATOR. Uma macro so, para o nome nunca sair escrito de duas

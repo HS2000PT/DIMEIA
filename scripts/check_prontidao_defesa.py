@@ -52,7 +52,7 @@ CHAVES = [
 ]
 
 DOCUMENTOS = [
-    ("tese-v2/main.pdf", "CRÍTICO"),
+    ("tese-pt/main.pdf", "CRÍTICO"),
     ("slides/guia_estudo/main.pdf", "AVISO"),
     ("docs/defence/guiao_de_defesa.md", "AVISO"),
     ("docs/defence/DEFENSE_QA.md", "AVISO"),

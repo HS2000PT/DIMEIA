@@ -1,4 +1,4 @@
-# ESTADO — reescrita em `tese-v2/`
+# ESTADO — reescrita em `tese-pt/`
 
 > ⛳ **PRIORIDADE MÁXIMA: ler `docs/planos/PLANO_FINAL_2026-09-01.md` na raiz de `DIMEIA/` antes de tocar em seja o que for.** Criado a 2026-09-01. Manda sobre este ficheiro e sobre todos os outros planos do repositório, incluindo `progress/PLANO_FINAL_ENTREGA.md`, `progress/PLANO_EMERGENCIA_DEFESA_2026-08-30.md` e `archive/reports/INVESTIGATOR_MASTER_PLAN.md`, que ficam como registo histórico.
 
@@ -307,7 +307,7 @@ a parte útil foi dobrada na própria legenda. **120 páginas.**
 **Estado:** 120 páginas, 37 figuras, 13 tabelas, 70 referências, 0 pré-publicações. Compila a
 0 erros, 0 referências indefinidas, 0 citações indefinidas. `check_escrita.py` (0 achados,
 autoteste a disparar), `check_floats.py` (49 flutuantes no corpo, todos invocados e com legenda
-curta e longa) e `check_tex_escapes.py` (0) passam sobre `tese-v2/`.
+curta e longa) e `check_tex_escapes.py` (0) passam sobre `tese-pt/`.
 
 ⚠️ **120 é exatamente o máximo oficial.** Qualquer adição futura tem de vir acompanhada de um corte
 equivalente. Verificar sempre `pdfinfo main.pdf | grep Pages` antes de dar uma sessão por terminada.
@@ -358,7 +358,7 @@ parte inferior do dashboard; slides; guia de estudo e defesa. Restam cinco lacun
 dados estruturados) e os 8 itens de re-execução da auditoria.
 
 ⚠️ **As portas de qualidade do projeto (`scripts/check_floats.py`, `check_tese_numeros.py`) apontam
-para `tese/` e não para `tese-v2/`.** Não cobrem o documento que vai ser entregue. `check_escrita.py`
+para `tese/` e não para `tese-pt/`.** Não cobrem o documento que vai ser entregue. `check_escrita.py`
 e `check_tex_escapes.py` cobrem, e passam.
 
 <!-- Formato: "INICIADA 2026-08-31 03:10 — a escrever ch4". Apagar e substituir por
@@ -405,13 +405,13 @@ tabelas, a das métricas e a síntese final.
 ## Sobreposição com a tese antiga (verificada a 2026-08-31)
 
 A regra 0 do brief proíbe copiar prosa de `tese/`. A verificação nunca tinha sido feita e foi feita
-nesta sessão, por comparação automática de sequências de palavras entre `tese-v2/` e a **versão
+nesta sessão, por comparação automática de sequências de palavras entre `tese-pt/` e a **versão
 commitada** de `tese/` (`git show HEAD:tese/...`, HEAD de 2026-08-30 18:47, anterior à reescrita).
 A comparação ignora comentários, tabelas, equações e ambientes de desenho, e é insensível a
 acentuação e maiúsculas.
 
 ⚠️ **A comparação tem de usar a versão commitada, e não a árvore de trabalho.** O
-`tese/cap1/capitulo1.tex` na árvore de trabalho é hoje **byte-idêntico** ao `tese-v2/ch1/chapter1.tex`
+`tese/cap1/capitulo1.tex` na árvore de trabalho é hoje **byte-idêntico** ao `tese-pt/ch1/chapter1.tex`
 (mesmo `md5`), e todos os capítulos de `tese/` têm alterações por commitar. Comparar contra a árvore
 de trabalho faz o `ch1` parecer integralmente copiado, quando é o inverso: o texto novo foi escrito
 para `tese-v2` e uma cópia ficou em `tese/`.
@@ -506,13 +506,13 @@ Verificadores da secção 6 do brief, todos a passar:
 `check_tex_escapes.py` (0 comandos comidos por escapes).
 
 ⚠️ Os três verificadores estão codificados para a pasta `tese/` com nomes `capN/capituloN.tex`.
-Para os correr sobre `tese-v2/` é preciso uma cópia temporária com esses nomes:
+Para os correr sobre `tese-pt/` é preciso uma cópia temporária com esses nomes:
 ⚠️ Usar `$HOME/vrep` e não `/tmp/vrep`: o `/tmp` do contentor conserva a pasta da sessão anterior
 com outro dono, e o `rm -rf` falha com `Permission denied` em todos os ficheiros.
 ```bash
 V=$HOME/vrep; rm -rf $V; mkdir -p $V/scripts $V/tese
 cp DIMEIA/scripts/check_{escrita,floats,tex_escapes}.py $V/scripts/
-cp -r tese-v2/* $V/tese/
+cp -r tese-pt/* $V/tese/
 cd $V/tese && for i in 1 2 3 4 5 6; do mkdir -p cap$i; cp ch$i/chapter$i.tex cap$i/capitulo$i.tex; done
 mkdir -p apendices && cp appendices/appendixA.tex apendices/apendiceA.tex \
                     && cp appendices/appendixB.tex apendices/apendiceB.tex
@@ -565,7 +565,7 @@ falha em silêncio: verificar sempre que os três `.deb` existem antes de extrai
    \providecommand\IfDocumentMetadataT[1]{}
    \providecommand\IfDocumentMetadataF[1]{#1}
    ```
-   É uma correção do **ambiente**, não do documento: nada em `tese-v2/` foi alterado por causa dela.
+   É uma correção do **ambiente**, não do documento: nada em `tese-pt/` foi alterado por causa dela.
    ⚠️ O teste de presença não pode ser `grep IfDocumentMetadataT`, porque o próprio `biblatex.sty`
    já usa o comando: procurar `providecommand.IfDocumentMetadataTF`.
 4. Compilar: `export PATH=$HOME/bin:$PATH && latexmk -r latexmkrc -pdf -interaction=nonstopmode main.tex`.

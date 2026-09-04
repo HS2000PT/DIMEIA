@@ -7,10 +7,10 @@ Colar tudo o que está abaixo da linha, no campo de instruções/prompt da taref
 Estás a continuar a reescrita de uma dissertação de mestrado, na pasta DIMEIA deste computador. Esta sessão é nova e não tem memória de conversas anteriores: todo o contexto está em ficheiro.
 
 PASSO 1, obrigatório antes de tudo o resto. Lê por inteiro, por esta ordem:
-1. tese-v2/BRIEF_REESCRITA.md
-2. tese-v2/ESTADO.md
-3. tese-v2/ch1/chapter1.tex — é a referência de registo de escrita
-4. tese-v2/ch3/chapter3.tex — o capítulo mais recente
+1. tese-pt/BRIEF_REESCRITA.md
+2. tese-pt/ESTADO.md
+3. tese-pt/ch1/chapter1.tex — é a referência de registo de escrita
+4. tese-pt/ch3/chapter3.tex — o capítulo mais recente
 
 Se não conseguires ler estes ficheiros, termina imediatamente e responde apenas "SEM ACESSO". Não inventes conteúdo nem prossigas.
 

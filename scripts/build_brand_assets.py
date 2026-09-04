@@ -382,7 +382,7 @@ def _render_pngs() -> list[pathlib.Path]:
         _render_svg(page, ASSETS / "icon.svg", avatar, width=512)
         outputs.append(avatar)
 
-        legacy_dir = ROOT / "tese" / "figures"
+        legacy_dir = ROOT / "archive" / "thesis-versions" / "tese-pt-v1" / "figures"
         legacy = (
             (ASSETS / "logo-marca.svg", legacy_dir / "logo_tail.png", 1024),
             (ASSETS / "icon.svg", legacy_dir / "logo_tail_icone.png", 512),

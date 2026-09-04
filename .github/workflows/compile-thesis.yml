@@ -6,7 +6,7 @@ name: Compile thesis (LaTeX)
 on:
   push:
     paths:
-      - "tese-v2/**"
+      - "tese-pt/**"
       - "scripts/check_tese_v2.py"
       - "scripts/check_references.py"
       - "scripts/check_escrita.py"
@@ -15,7 +15,7 @@ on:
       - ".github/workflows/compile-thesis.yml"
   pull_request:
     paths:
-      - "tese-v2/**"
+      - "tese-pt/**"
       - "scripts/check_tese_v2.py"
       - "scripts/check_references.py"
       - "scripts/check_escrita.py"
@@ -46,5 +46,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tese-v2-pdf
-          path: tese-v2/main.pdf
+          path: tese-pt/main.pdf
           if-no-files-found: error

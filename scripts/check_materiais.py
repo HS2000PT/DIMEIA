@@ -30,20 +30,20 @@ RAIZ = pathlib.Path(__file__).resolve().parents[1]
 
 # ⚠️ A ÁRVORE A VERIFICAR VEM POR ARGUMENTO, E O PADRÃO É A CANÓNICA. Corrigido a 2026-09-04.
 #
-# Este verificador apontava para `tese/`, que foi SUPERSEDA por `tese-v2/`. Continuava a passar
+# Este verificador apontava para `tese/`, que foi SUPERSEDA por `tese-pt/`. Continuava a passar
 # ou a falhar sobre um documento que já não é entregue — ou seja, gritava por defeitos que não
 # contam e ficava cego aos que contam. É a mesma classe que a sessão 58 encontrou no
 # `check_references`, que só conhecia os nomes ingleses e imprimia «0 referências» como se
 # fosse um estado saudável.
-BASE = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else "tese-v2"
+BASE = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else "tese-pt"
 T = RAIZ / BASE
 
 # ⚠️ DUAS ÁRVORES, E É DE PROPÓSITO. A prosa a verificar é a da dissertação CANÓNICA
-# (`tese-v2/`), mas os materiais de estudo — slides, guia, quizz, guião de gravação — nunca
+# (`tese-pt/`), mas os materiais de estudo — slides, guia, quizz, guião de gravação — nunca
 # foram movidos e continuam em `tese/`. Apontar as duas ao mesmo sítio faria uma delas ser
 # lida a partir de um caminho que não existe, e o relatório dizia «(ausente)» para tudo, que
 # se lê como «não há nada a verificar» e é «não olhei para nada».
-MATERIAIS_RAIZ = RAIZ / "tese"
+MATERIAIS_RAIZ = RAIZ / "tese-pt"
 MATERIAIS = [MATERIAIS_RAIZ / "slides" / "main.tex", MATERIAIS_RAIZ / "guia" / "main.tex",
              MATERIAIS_RAIZ / "quiz" / "index.html", MATERIAIS_RAIZ / "GRAVACAO.md"]
 

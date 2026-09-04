@@ -1,4 +1,4 @@
-# BRIEF — reescrita da dissertação em `tese-v2/`
+# BRIEF — reescrita da dissertação em `tese-pt/`
 
 > **Este ficheiro é auto-suficiente.** Uma sessão nova, sem memória de conversas anteriores,
 > deve conseguir ler só isto e continuar o trabalho corretamente. Ler por inteiro antes de tocar
@@ -6,10 +6,10 @@
 
 ## 0. Regra de ouro
 
-O trabalho consiste em **reescrever a dissertação do zero em `tese-v2/`**, imitando ao máximo a
+O trabalho consiste em **reescrever a dissertação do zero em `tese-pt/`**, imitando ao máximo a
 dissertação de referência (`archive/thesis-versions/thesis-examples/dissertação_Rafael Silva.pdf`), adaptada ao tema.
 A tese antiga vive em `tese/` e serve **apenas como fonte de factos, números e figuras**.
-**Nenhum parágrafo de `tese/` pode ser copiado para `tese-v2/`.** O texto é escrito de novo.
+**Nenhum parágrafo de `tese/` pode ser copiado para `tese-pt/`.** O texto é escrito de novo.
 
 ## 1. Regras oficiais (modelo MEIA/ISEP) — não negociáveis
 
@@ -106,7 +106,7 @@ E registar em `ESTADO.md`: páginas, palavras, figuras, tabelas.
 A máquina local não compila LaTeX (falta `biber` e o babel português). Compilar no contentor da
 sessão depois de instalar:
 `texlive-lang-portuguese biber lmodern texlive-fonts-extra texlive-plain-generic`.
-Copiar `tese-v2/` para o contentor, compilar lá, e trazer só o resultado.
+Copiar `tese-pt/` para o contentor, compilar lá, e trazer só o resultado.
 
 ## 8. Fontes de facto
 

@@ -11,8 +11,8 @@ written overview of the whole project, read **[`archive/reports/RELATORIO_FINAL.
 
 | What | Where |
 |------|-------|
-| **The dissertation (English)** | [`thesis/main.pdf`](thesis/main.pdf) |
-| **A dissertação (Português)** | [`thesis-pt/main.pdf`](thesis-pt/main.pdf) |
+| **The dissertation (English)** | [`thesis/main.pdf`](tese-v2/main.pdf) |
+| **A dissertação (Português)** | [`thesis-pt/main.pdf`](materiais/slides/main.pdf) |
 | **Project overview + how to run** | [`README.md`](README.md) |
 | **10-minute written summary** | [`archive/reports/RELATORIO_FINAL.md`](archive/reports/RELATORIO_FINAL.md) |
 | **The live product** | [`api/main.py`](api/main.py) + [`web/`](web/) — the v5 service and client, served by the `Procfile`. The Streamlit generations in `app/` are kept as a record and are no longer served |
@@ -24,12 +24,12 @@ written overview of the whole project, read **[`archive/reports/RELATORIO_FINAL.
 
 | Item | Where |
 |------|-------|
-| English source (chapters, front matter, appendix) | [`thesis/`](thesis/) — `ch1/`…`ch6/`, `frontmatter/`, `appendices/` |
-| Portuguese source (faithful translation, kept in sync) | [`thesis-pt/`](thesis-pt/) |
+| English source (chapters, front matter, appendix) | [`thesis/`](tese-v2/) — `ch1/`…`ch6/`, `frontmatter/`, `appendices/` |
+| Portuguese source (faithful translation, kept in sync) | [`thesis-pt/`](materiais/) |
 | Reproducible figures (scripts → PDF) | [`scripts/figures/`](scripts/figures/) → `thesis/figures/` |
 | IEEE paper (distilled from the thesis) | [`paper/main.pdf`](paper/main.pdf) |
-| Defence slides (short deck) | [`slides/main.pdf`](slides/main.pdf) |
-| Study guide (teaches the thesis from zero, PT-PT) | [`slides/guia_estudo/`](slides/guia_estudo/) |
+| Defence slides (short deck) | [`slides/main.pdf`](materiais/slides/main.pdf) |
+| Study guide (teaches the thesis from zero, PT-PT) | [`slides/guia_estudo/`](materiais/guia/) |
 | **Personal cheat sheet (PT-PT) — open this first before the defence** | [`docs/defence/guia_pessoal.md`](docs/defence/guia_pessoal.md) |
 | **Every number → origin, calculation, code:line, data, thesis section (PT-PT)** | [`docs/defence/THESIS_FACT_SHEET.md`](docs/defence/THESIS_FACT_SHEET.md) |
 | **Question → simple answer → technical answer → where to prove it (PT-PT)** | [`docs/defence/DEFENSE_QA.md`](docs/defence/DEFENSE_QA.md) |

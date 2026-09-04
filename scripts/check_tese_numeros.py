@@ -29,12 +29,12 @@ AVAL = RAIZ / "docs" / "evaluation"
 
 # ⚠️ A ÁRVORE A VERIFICAR VEM POR ARGUMENTO, E O PADRÃO É A CANÓNICA. Corrigido a 2026-09-04.
 #
-# Este verificador apontava para `tese/`, que foi SUPERSEDA por `tese-v2/`. Continuava a passar
+# Este verificador apontava para `tese/`, que foi SUPERSEDA por `tese-pt/`. Continuava a passar
 # ou a falhar sobre um documento que já não é entregue — ou seja, gritava por defeitos que não
 # contam e ficava cego aos que contam. É a mesma classe que a sessão 58 encontrou no
 # `check_references`, que só conhecia os nomes ingleses e imprimia «0 referências» como se
 # fosse um estado saudável.
-BASE = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else "tese-v2"
+BASE = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else "tese-pt"
 TESE = RAIZ / BASE
 
 # (numero como aparece na tese, ficheiro que o produz, o que e)

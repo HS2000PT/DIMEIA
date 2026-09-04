@@ -74,7 +74,8 @@ def gate_ruff() -> None:
 
 
 # ── 2. documentos ─────────────────────────────────────────────────────────────
-DOCS = [("thesis", "main"), ("thesis-pt", "main"), ("paper", "main"),
+DOCS = [("archive/thesis-versions/thesis-en-v1", "main"),
+        ("archive/thesis-versions/thesis-pt-parcial", "main"), ("paper", "main"),
         ("slides", "main"), ("slides", "main-pt"), ("slides/guia_estudo", "main")]
 
 
@@ -113,7 +114,8 @@ def _texto(base: str, cap: str) -> str:
 def gate_estrutura() -> None:
     difs = 0
     for cap in CAPS:
-        en, pt = _texto("thesis", cap), _texto("thesis-pt", cap)
+        en, pt = (_texto("archive/thesis-versions/thesis-en-v1", cap),
+              _texto("archive/thesis-versions/thesis-pt-parcial", cap))
         if not en or not pt:
             continue
         for _etiqueta, padrao in (("secções", r"\\section\{"), ("subsecções", r"\\subsection\{"),
@@ -132,7 +134,8 @@ def gate_citacoes() -> None:
 
 
 def gate_referencias() -> None:
-    for base in ("thesis", "thesis-pt"):
+    for base in ("archive/thesis-versions/thesis-en-v1",
+                 "archive/thesis-versions/thesis-pt-parcial"):
         r = corre([PY, "-X", "utf8", "scripts/check_references.py", base])
         mt = re.search(r"TIPO \(palavra vs alvo\): (\d+)", r.stdout)
         mr = re.search(r"(\d+) referências, (\d+) labels", r.stdout)

@@ -6,7 +6,7 @@ Markets Fact Book (fonte primária: World Federation of Exchanges). Verificado 2
 Valores extraídos do gráfico "US Equity Market Capitalization" do Fact Book.
 
 Uso:  python scripts/figures/fig_us_market_cap.py
-Saída: tese-v2/figures/us_equity_market_cap.pdf
+Saída: tese-pt/figures/us_equity_market_cap.pdf
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ ANOS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
 CAP_USD_T = [25.1, 27.4, 32.1, 30.4, 34.1, 41.6, 48.5, 40.3, 49.0, 62.2]
 
 SAIDA = (
-    pathlib.Path(__file__).resolve().parents[2] / "tese-v2" / "figures" / "us_equity_market_cap.pdf"
+    pathlib.Path(__file__).resolve().parents[2] / "tese-pt" / "figures" / "us_equity_market_cap.pdf"
 )
 
 

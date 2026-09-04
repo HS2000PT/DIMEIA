@@ -25,7 +25,7 @@ if hasattr(sys.stdout, "reconfigure"):
 
 BS = chr(92)
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
-BASE = RAIZ / (sys.argv[1] if len(sys.argv) > 1 else "tese-v2")
+BASE = RAIZ / (sys.argv[1] if len(sys.argv) > 1 else "tese-pt")
 
 RX_COM = re.compile("(?<![" + BS * 2 + "])%.*")
 RX_LAB = re.compile(re.escape(BS) + r"label\{(fig:[^}]+)\}")

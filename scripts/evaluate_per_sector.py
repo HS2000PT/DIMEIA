@@ -6,7 +6,7 @@ a recuperação semântica funciona melhor e o seu *lift* sobre a taxa-base alea
 
 Modelo: SBERT all-MiniLM-L6-v2 (o default da tese).
 Saída: docs/evaluation/evaluation_per_sector.md
-       + figura tese-v2/figures/eval_retrieval_per_sector.pdf.
+       + figura tese-pt/figures/eval_retrieval_per_sector.pdf.
 Uso: python scripts/evaluate_per_sector.py --news data/finnhub_news.csv
 """
 
@@ -48,7 +48,7 @@ def main() -> None:
     parser.add_argument("--k", type=int, nargs="+", default=[5, 10])
     parser.add_argument("--model", default="all-MiniLM-L6-v2")
     parser.add_argument("--out", default="docs/evaluation/evaluation_per_sector.md")
-    parser.add_argument("--fig", default="tese-v2/figures/eval_retrieval_per_sector.pdf")
+    parser.add_argument("--fig", default="tese-pt/figures/eval_retrieval_per_sector.pdf")
     args = parser.parse_args()
 
     df = pd.read_csv(args.news).dropna(subset=["date", "ticker", "headline"])

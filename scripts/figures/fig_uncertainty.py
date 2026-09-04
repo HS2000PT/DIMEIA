@@ -5,9 +5,9 @@ respetivos `docs/evaluation/*.md`. **Não recalcula nada**: os valores entram co
 copiadas dos relatórios, para que a figura e o texto não possam divergir em silêncio.
 
 Saídas (EN, como todas as figuras de dados da tese):
-    tese-v2/figures/eval_taxonomy.pdf
-    tese-v2/figures/eval_conformal.pdf
-    tese-v2/figures/eval_drift.pdf
+    tese-pt/figures/eval_taxonomy.pdf
+    tese-pt/figures/eval_conformal.pdf
+    tese-pt/figures/eval_drift.pdf
 
 Uso: python scripts/figures/fig_uncertainty.py
 """
@@ -27,7 +27,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
 REPO = Path(__file__).resolve().parent.parent.parent
-FIGS = REPO / "tese-v2" / "figures"
+FIGS = REPO / "tese-pt" / "figures"
 
 # ── Números medidos (docs/evaluation/evaluation_event_taxonomy.md) ────────────
 KS = [6, 8, 10, 12, 14, 16, 18, 20]

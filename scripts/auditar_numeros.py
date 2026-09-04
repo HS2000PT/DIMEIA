@@ -80,9 +80,9 @@ def main() -> int:
     # porta. E os NOMES dos ficheiros mudam com a arvore -- apontar a arvore certa sem
     # corrigir a lista deixa-o a ler o frontmatter e mais nada, que e o defeito que a
     # sessao 63 pagou e quase mandou corrigir uma tese que estava certa.
-    for f in sorted(glob.glob(str(RAIZ / "tese-v2" / "ch*" / "chapter*.tex"))) + \
-             sorted(glob.glob(str(RAIZ / "tese-v2" / "appendices" / "*.tex"))) + \
-             [str(RAIZ / "tese-v2" / "frontmatter" / "frontmatter.tex")]:
+    for f in sorted(glob.glob(str(RAIZ / "tese-pt" / "ch*" / "chapter*.tex"))) + \
+             sorted(glob.glob(str(RAIZ / "tese-pt" / "appendices" / "*.tex"))) + \
+             [str(RAIZ / "tese-pt" / "frontmatter" / "frontmatter.tex")]:
         corpo += prosa_e_tabelas(open(f, encoding="utf-8", errors="replace").read())
 
     fontes = ""

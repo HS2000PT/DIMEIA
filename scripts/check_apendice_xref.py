@@ -17,7 +17,7 @@ if hasattr(sys.stdout, "reconfigure"):
 
 # A ARVORE E A CANONICA; apontava para `tese/`, superseda. Ver a nota em
 # auditar_numeros.py: nao basta trocar a arvore, os nomes dos ficheiros mudam.
-RAIZ = pathlib.Path(__file__).resolve().parents[1] / "tese-v2"
+RAIZ = pathlib.Path(__file__).resolve().parents[1] / "tese-pt"
 NIVEL = {"section": 1, "subsection": 2, "subsubsection": 3}
 
 seccoes = {}

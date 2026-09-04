@@ -289,7 +289,7 @@
   o instrumento que o mostra. O gerador passa a escrever também a **leitura** do número, e não só
   o número. **973 testes.**
   **✅ (J) A PORTA DE ENTREGA ESTAVA A GUARDAR O DOCUMENTO ERRADO.** Quatro dos verificadores
-  apontavam para `tese/`, **superseda** por `tese-v2/`: davam garantia falsa sobre o canónico e
+  apontavam para `tese/`, **superseda** por `tese-pt/`: davam garantia falsa sobre o canónico e
   gritavam por defeitos que não contam. Mesma classe do `check_references` da sessão 58, que só
   conhecia os nomes ingleses e imprimia «0 referências» como se fosse saúde.
   **⚠️ E CORRIGI-A MAL À PRIMEIRA, o que é a parte que vale a pena guardar.** Apontei o
@@ -330,7 +330,7 @@
   `chr(92)` num ficheiro à parte. **A regra que já estava escrita é a certa: não gerar código com
   escapes por heredoc — ficheiro à parte, ou `chr(92)`.**
   **⚠️ (K) A PORTA DE ENTREGA ESTAVA A GUARDAR O DOCUMENTO ERRADO.** Quatro verificadores
-  apontavam para `tese/`, **superseda** por `tese-v2/`: davam garantia falsa sobre o canónico e
+  apontavam para `tese/`, **superseda** por `tese-pt/`: davam garantia falsa sobre o canónico e
   gritavam por defeitos que não contam. Mesma classe do `check_references` da sessão 58.
   **⚠️ E CORRIGI-A MAL À PRIMEIRA, o que vale mais do que o defeito.** Apontei o
   `check_tese_numeros` à árvore certa **sem corrigir a lista de ficheiros** (`cap4/capitulo4.tex`
@@ -509,7 +509,7 @@
   risco por arrumação. **981 testes, ruff limpo.**
 - **2026-09-03 — LER PRIMEIRO `docs/planos/REVISAO_PRIORITARIA_ANEXOS.md`.**
   Quatro anexos integrais preservados e 44 itens de verificação. Este estado prevalece sobre
-  os registos históricos abaixo: tese canónica `tese-v2/main.pdf`; retreino autorizado, a
+  os registos históricos abaixo: tese canónica `tese-pt/main.pdf`; retreino autorizado, a
   desenvolver após verificar contrato de dados; todas as figuras refeitas em inglês para
   artigo, sem branding verde da aplicação; piloto Figma rejeitado. Tese PT por agora.
   Auditoria prioritária, não adiada para depois da defesa. Não copiar recomendações falsas

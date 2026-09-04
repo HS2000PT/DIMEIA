@@ -27,7 +27,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
-BIB = RAIZ / "thesis" / "references.bib"
+BIB = RAIZ / "tese-pt" / "references.bib"
 
 UA = {"User-Agent": "Mozilla/5.0 (compatible; tese-meia/1.0; +mailto:1180934@isep.ipp.pt)"}
 TEMPO = 45

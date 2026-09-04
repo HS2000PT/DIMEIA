@@ -1,4 +1,4 @@
-"""Porta de qualidade da dissertação canónica em ``tese-v2/``.
+"""Porta de qualidade da dissertação canónica em ``tese-pt/``.
 
 Ao contrário das portas históricas, esta lê a árvore que vai ser entregue e considera todas as
 fontes e figuras, não apenas ``main.tex``, ao decidir se o PDF precisa de ser recompilado.
@@ -22,7 +22,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
-TESE = REPO / "tese-v2"
+TESE = REPO / "tese-pt"
 PDF = TESE / "main.pdf"
 LOG = TESE / "main.log"
 AUX = TESE / "main.aux"
@@ -154,7 +154,7 @@ def main() -> int:
         print(f"ok  corpus completo: {len(CORPUS)} ficheiros estruturais")
 
     if not PDF.exists():
-        falhas.append("tese-v2/main.pdf não existe")
+        falhas.append("tese-pt/main.pdf não existe")
     else:
         fontes = _fontes()
         recentes = [p for p in fontes if p.stat().st_mtime > PDF.stat().st_mtime]
@@ -166,7 +166,7 @@ def main() -> int:
             print(f"ok  PDF posterior às {len(fontes)} fontes e figuras")
         paginas = _paginas()
         if paginas is None:
-            falhas.append("pdfinfo não conseguiu ler tese-v2/main.pdf")
+            falhas.append("pdfinfo não conseguiu ler tese-pt/main.pdf")
         elif paginas == 0:
             falhas.append("o PDF tem zero páginas")
         else:
@@ -229,9 +229,9 @@ def main() -> int:
         print("ok  fragmento de feedback gerado e incluído uma vez")
 
     for descricao, script, args in (
-        ("referências e flutuantes", "check_references.py", ("tese-v2",)),
-        ("escrita PT-PT", "check_escrita.py", ("tese-v2",)),
-        ("flutuantes", "check_floats.py", ("tese-v2",)),
+        ("referências e flutuantes", "check_references.py", ("tese-pt",)),
+        ("escrita PT-PT", "check_escrita.py", ("tese-pt",)),
+        ("flutuantes", "check_floats.py", ("tese-pt",)),
         ("escapes LaTeX", "check_tex_escapes.py", ()),
     ):
         passou, detalhe = _executar_verificador(script, *args)

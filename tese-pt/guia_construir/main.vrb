@@ -1,0 +1,25 @@
+\frametitle{Fase 10: observar o que corre, e deixar-se contrariar}\framesubtitle {\footnotesize Sem esta fase o trabalho acabava numa métrica de teste. Cada decisão real é registada, e dias depois confrontada com o que o preço \emph {fez}. Foi assim que se soube que a porta \textbf {não estava a ajudar}.}
+\vspace{1mm}
+
+\fonte{investigator/triage/postval.py}
+\begin{lstlisting}
+    rep: dict = {
+        "n": n,
+        "n_mantidas": len(kept),
+        "precisao_mantidas": (float(np.mean([d["label"] for d in kept])) if kept else float("nan")),
+        "n_suprimidas": len(dropped),
+        "precisao_suprimidas": (float(np.mean([d["label"] for d in dropped]))
+                                if dropped else float("nan")),
+        "base_rate": (float(np.mean([d["label"] for d in labeled])) if labeled else float("nan")),
+        "brier": (float(np.mean([(d["prob"] - d["label"]) ** 2 for d in with_prob]))
+                  if with_prob else float("nan")),
+        "calibracao": [],
+    }
+\end{lstlisting}
+
+\linhaq{A \texttt{precisao\_suprimidas}. Comparar as mantidas com a taxa-base responde a
+\emph{a porta acerta?}, que é a pergunta fácil. A pergunta que interessa é \emph{a porta escolhe
+melhor do que aquilo que deitou fora?}, e essa exige medir também as suprimidas. Medido: mantidas
+$0.589$ contra suprimidas $\mathbf{0.617}$, ou seja o que a porta rejeitou era \emph{mais}
+material.}
+\verifica{python scripts/post\_validate.py}

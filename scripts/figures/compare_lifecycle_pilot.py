@@ -28,7 +28,7 @@ def main():
     c.drawString(48, 240, "Proposta para aprovação. A figura da tese não foi substituída.")
     c.save()
     page = PdfReader(buffer).pages[0]
-    thesis = deepcopy(PdfReader(ROOT / "tese-v2/main.pdf").pages[69])
+    thesis = deepcopy(PdfReader(ROOT / "tese-pt/main.pdf").pages[69])
     h = float(thesis.mediabox.height)
     thesis.cropbox = RectangleObject([90, h - 216, 480, h - 96])
     page.merge_transformed_page(thesis, Transformation().translate(-90 + 48, -(h - 216) + 600))

@@ -25,7 +25,7 @@ reasoning chain — detected event → explanation → sources → historical pr
 | I want to… | Go to |
 |---|---|
 | Navigate the whole repo | [`docs/planos/INDEX.md`](docs/planos/INDEX.md) — the repository map |
-| **Read the dissertation being submitted** | **`tese-v2/main.pdf`** — Portuguese; current submission candidate |
+| **Read the dissertation being submitted** | **`tese-pt/main.pdf`** — Portuguese; current submission candidate |
 | Read the earlier versions | `tese/main.pdf` · `thesis/main.pdf` · `thesis-pt/main.pdf`. Superseded, kept for the record |
 | Study for the defence | `tese/slides/main.pdf` (19) · `tese/guia/main.pdf` (20) · `tese/quiz/index.html`. Older material in `docs/defence/` targets the long thesis — read [`docs/defence/LEIA-ME-PRIMEIRO.md`](docs/defence/LEIA-ME-PRIMEIRO.md) first |
 | See it live | <https://investigator-ddc9d8618935.herokuapp.com> + Telegram <https://t.me/InvestiGatorMEIA> |
@@ -125,7 +125,7 @@ Full runbook (create the channel, set 3 GitHub secrets, deploy): **`docs/design/
 - **Defence slides (EN):** `slides/main.pdf` (17 frames) — the short deck for the day itself.
 
 ## Project status
-The current submission candidate is **`tese-v2/main.pdf`**: six chapters, 70 references,
+The current submission candidate is **`tese-pt/main.pdf`**: six chapters, 70 references,
 126 physical pages and **94 numbered pages before the annexes**, within the official 120-page limit.
 It compiles with zero errors, undefined references or undefined citations. The canonical quality gate
 checks every included source (including the generated Telegram-feedback fragment), the compilation log,
@@ -142,7 +142,7 @@ inviting participants, credential rotation and the supervisor decisions listed i
 
 ## Repository layout
 ```
-tese-v2/       canonical Portuguese dissertation candidate (6 chapters + 2 appendices)
+tese-pt/       canonical Portuguese dissertation candidate (6 chapters + 2 appendices)
 tese/, thesis/, thesis-pt/  superseded dissertation trees, kept temporarily for traceability
 paper/         IEEE paper (IEEEtran) distilled from the thesis
 slides/        defence slides (Beamer, 17 frames)

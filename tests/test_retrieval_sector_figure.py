@@ -22,4 +22,4 @@ def test_default_output_is_canonical(monkeypatch):
     monkeypatch.setattr("sys.argv", ["figure"])
     monkeypatch.setattr(figure, "build", lambda *args: captured.append(args))
     figure.main()
-    assert captured[0][2] == figure.REPO / "tese-v2/figures/eval_retrieval_sector_causal.pdf"
+    assert captured[0][2] == figure.REPO / "tese-pt/figures/eval_retrieval_sector_causal.pdf"

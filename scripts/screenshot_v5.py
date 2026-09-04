@@ -18,7 +18,7 @@ import pathlib
 import sys
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
-FIGURAS = RAIZ / "tese-v2" / "figures"
+FIGURAS = RAIZ / "tese-pt" / "figures"
 PROD = "https://investigator-ddc9d8618935.herokuapp.com"
 
 

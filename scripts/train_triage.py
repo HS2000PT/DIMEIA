@@ -6,7 +6,7 @@ com split temporal, calibra na validação (Platt) e avalia no teste. Grava:
 - models/triage_context_lr.joblib (+ .json) — variante SÓ-CONTEXTO para a stack leve
   (runner/app na nuvem não têm SBERT; ver investigator/triage/infer.py)
 - docs/evaluation/evaluation_triage.md  (tabela de resultados; NÃO editar à mão)
-- tese-v2/figures/eval_triage_pr.pdf e eval_triage_calibration.pdf
+- tese-pt/figures/eval_triage_pr.pdf e eval_triage_calibration.pdf
 
 Uso:
     python scripts/train_triage.py                          # SBERT (precisa da stack --ml)
@@ -158,7 +158,7 @@ def main() -> int:
     ax.set_xlabel("Recall"), ax.set_ylabel("Precision")
     ax.set_title("Materiality triage — PR curves (test)")
     ax.legend(fontsize=7), fig.tight_layout()
-    fig.savefig(REPO / "tese-v2" / "figures" / "eval_triage_pr.pdf")
+    fig.savefig(REPO / "tese-pt" / "figures" / "eval_triage_pr.pdf")
 
     fig2, ax2 = plt.subplots(figsize=(5.4, 4.0))
     s_full = bundles["full"][3]
@@ -173,7 +173,7 @@ def main() -> int:
     ax2.set_xlabel("Predicted probability"), ax2.set_ylabel("Observed frequency")
     ax2.set_title("Calibration curve (test)")
     ax2.legend(), fig2.tight_layout()
-    fig2.savefig(REPO / "tese-v2" / "figures" / "eval_triage_calibration.pdf")
+    fig2.savefig(REPO / "tese-pt" / "figures" / "eval_triage_calibration.pdf")
 
     # ── Markdown de resultados ───────────────────────────────────────────────
     md = REPO / "docs" / "evaluation" / "evaluation_triage.md"
@@ -212,7 +212,7 @@ def main() -> int:
     ]
     md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"\nEscrito: {md}")
-    print("Figuras: tese-v2/figures/eval_triage_pr.pdf + eval_triage_calibration.pdf")
+    print("Figuras: tese-pt/figures/eval_triage_pr.pdf + eval_triage_calibration.pdf")
     print("Modelos: models/triage_lr.joblib + triage_gbm.joblib + triage_context_lr.joblib")
     return 0
 

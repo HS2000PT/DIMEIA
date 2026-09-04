@@ -31,7 +31,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
-GUIA = RAIZ / "tese" / "guia_construir" / "main.tex"
+GUIA = RAIZ / "tese-pt" / "guia_construir" / "main.tex"
 B = chr(92)
 CORTE = "# ..."
 
