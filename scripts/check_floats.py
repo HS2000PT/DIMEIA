@@ -11,7 +11,9 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
-BASE = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else "tese"
+# A arvore canonica e tese-v2; tese/ foi superseda e continua no repositorio como
+# registo historico. Passa-se o nome por argumento para verificar a outra.
+BASE = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else "tese-v2"
 RAIZ = REPO / BASE
 if (RAIZ / "ch1").is_dir():
     FICH = (["frontmatter/frontmatter.tex"]

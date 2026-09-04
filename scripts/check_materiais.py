@@ -27,13 +27,34 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
-T = RAIZ / "tese"
 
-MATERIAIS = [T / "slides" / "main.tex", T / "guia" / "main.tex",
-             T / "quiz" / "index.html", T / "GRAVACAO.md"]
+# ⚠️ A ÁRVORE A VERIFICAR VEM POR ARGUMENTO, E O PADRÃO É A CANÓNICA. Corrigido a 2026-09-04.
+#
+# Este verificador apontava para `tese/`, que foi SUPERSEDA por `tese-v2/`. Continuava a passar
+# ou a falhar sobre um documento que já não é entregue — ou seja, gritava por defeitos que não
+# contam e ficava cego aos que contam. É a mesma classe que a sessão 58 encontrou no
+# `check_references`, que só conhecia os nomes ingleses e imprimia «0 referências» como se
+# fosse um estado saudável.
+BASE = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else "tese-v2"
+T = RAIZ / BASE
 
-PROSA = sorted(T.rglob("cap*/capitulo*.tex")) + [T / "apendices" / "apendiceA.tex",
-                                                 T / "frontmatter" / "frontmatter.tex"]
+# ⚠️ DUAS ÁRVORES, E É DE PROPÓSITO. A prosa a verificar é a da dissertação CANÓNICA
+# (`tese-v2/`), mas os materiais de estudo — slides, guia, quizz, guião de gravação — nunca
+# foram movidos e continuam em `tese/`. Apontar as duas ao mesmo sítio faria uma delas ser
+# lida a partir de um caminho que não existe, e o relatório dizia «(ausente)» para tudo, que
+# se lê como «não há nada a verificar» e é «não olhei para nada».
+MATERIAIS_RAIZ = RAIZ / "tese"
+MATERIAIS = [MATERIAIS_RAIZ / "slides" / "main.tex", MATERIAIS_RAIZ / "guia" / "main.tex",
+             MATERIAIS_RAIZ / "quiz" / "index.html", MATERIAIS_RAIZ / "GRAVACAO.md"]
+
+if (T / "ch1").is_dir():          # árvore nova: ch1/chapter1.tex
+    PROSA = ([T / "frontmatter" / "frontmatter.tex"]
+             + [T / f"ch{i}" / f"chapter{i}.tex" for i in range(1, 7)]
+             + [T / "appendices" / "appendixA.tex", T / "appendices" / "appendixB.tex"])
+else:                            # árvore antiga: cap5/capitulo5.tex
+    PROSA = sorted(T.rglob("cap*/capitulo*.tex")) + [T / "apendices" / "apendiceA.tex",
+                                                     T / "frontmatter" / "frontmatter.tex"]
+PROSA = [p for p in PROSA if p.exists()]
 
 RX_RESULTADO = re.compile(r"\d+\.\d{2}(?!\d)")
 
@@ -49,6 +70,15 @@ def limpa(t: str) -> str:
     # Sem isto o verificador acusava cinco larguras de coluna como afirmacoes sem fonte, e um
     # verificador que grita de mais deixa de ser lido -- este projecto ja pagou isso cinco vezes.
     t = re.sub(r"\d+\.\d+\s*\\(?:text|line|column|page)(?:width|height)", " ", t)
+    # ⚠️ UM COMENTARIO NAO E UMA AFIRMACAO, e este verificador acusava-os. Corrigido a
+    # 2026-09-04: uma nota de composicao («2mm punha a caixa 0.52pt acima do slide») era
+    # reportada como um numero que os materiais dizem e a tese nao. E a MESMA classe das
+    # larguras de coluna acima, uma linha antes, na mesma funcao.
+    #
+    # O `%` tem de NAO estar escapado: `\\%` e o sinal de percentagem e aparece
+    # dentro dos proprios numeros que interessa verificar, como `$0.41\\%$`.
+    # Apagar por ai cegava o verificador exactamente onde ele serve.
+    t = re.sub(r"(?<!\\)%.*", " ", t)
     return t
 
 

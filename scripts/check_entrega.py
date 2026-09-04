@@ -40,8 +40,15 @@ VERIFICADORES = [
     ("guia de construção: código verbatim", "check_guia_codigo.py"),
 ]
 
+# ⚠️ A DISSERTAÇÃO A ENTREGAR É `tese-v2/`, e esta lista apontava para `tese/`. Corrigido a
+# 2026-09-04. Os materiais de estudo — slides, guia, guia de construção — nunca foram movidos
+# e continuam em `tese/`; a dissertação foi. Uma porta que confere o documento errado dá
+# garantia falsa sobre o que vai ser entregue E grita por defeitos que não contam, que é a
+# combinação que faz alguém deixar de a ler.
+TESE_V2 = RAIZ / "tese-v2"
+
 PDFS = [
-    ("tese", TESE / "main.pdf", TESE / "main.tex"),
+    ("dissertação (canónica)", TESE_V2 / "main.pdf", TESE_V2 / "main.tex"),
     ("slides", TESE / "slides" / "main.pdf", TESE / "slides" / "main.tex"),
     ("guia", TESE / "guia" / "main.pdf", TESE / "guia" / "main.tex"),
     ("guia de construção", TESE / "guia_construir" / "main.pdf",
