@@ -55,12 +55,22 @@ Um `\label` definido num fragmento gerado era invisível ao extractor, e uma ref
 legítima para ele aparecia como defeito da tese. O verificador acusaria o documento de um
 problema que era dele.
 
-### B7. O artigo científico afirma o que a dissertação retirou — ALTA
+### B7. O artigo científico afirmava o que a dissertação retirou — ALTA, **corrigido**
 
-`paper/main.pdf` foi tocado a 13 de agosto, antes da reescrita para `tese-v2`. Tem os
-valores antigos da recuperação e **não tem** a estratégia trivial de `0,467` que leva a
-tese a abandonar o valor agregado em favor da afirmação setor a setor. **Ainda não
-corrigido** — ver secção K.
+Quatro divergências, todas verificadas contra os ficheiros:
+
+1. afirmava que a recuperação «clearly outperforms every baseline», com o agregado que a
+   tese abandona por causa da estratégia trivial de `0,467`;
+2. descrevia a **camada generativa como entregue**, quando as rotas que a expunham foram
+   retiradas da API e a tese justifica explicitamente a ausência de um modelo de
+   linguagem na composição das mensagens;
+3. citava `0,271` para o *Isolation Forest* e a tese cita `0,269` — os dois certos, em
+   artefactos diferentes;
+4. o `graphicspath` apontava para `thesis/`, árvore superseda.
+
+Correção na secção C. A camada generativa foi **estreitada e não removida**: o código
+existe e as medições são reais, pelo que removê-la apagaria trabalho medido, e
+descrevê-la como entregue seria descrever um produto que não existe.
 
 ### B8. A introdução e o estado da arte são os mais curtos das cinco dissertações — INFORMATIVO
 
@@ -79,6 +89,8 @@ Cap. 1 com 4 páginas contra 8, 8, 8 e 10 das quatro aprovadas; Cap. 2 com 14 co
 | C4 | Nota no fim do Cap. 1 sobre a língua das figuras, ancorada na razão que o Cap. 4 já dá | `ch1` |
 | C5 | Figura 4.3 refeita sobre uma janela única, com gerador novo e quatro testes | `ch4`, `scripts/` |
 | C6 | `check_references` passa a seguir `\input{}` e `\include{}` | `scripts/` |
+| C7 | Artigo alinhado com a dissertação nos quatro pontos de B7 | `paper/` |
+| C8 | Porta nova `check_artigo_numeros.py`, no `check_entrega` | `scripts/` |
 
 **Nota de método sobre C2, que vale para o futuro:** o `ch5/feedback_auto.tex` é
 **gerado**. A remissão foi escrita no `analyse_feedback.py` e não no `.tex` — uma frase
@@ -205,7 +217,8 @@ As onze da tabela do Cap. 6 mantêm-se, e nenhuma foi encerrada por esta auditor
 
 Por ordem do plano de submissão:
 
-1. **O artigo científico** (B7). É a pendência de maior consequência.
+1. ~~O artigo científico~~ — **fechado**, ver B7 e C7. Fica por decidir o destino de
+   publicação, que depende do prazo que a Prof.ª Goreti indicar.
 2. **Política linguística e figuras PT/EN** (§5, §6, §7 da directiva).
 3. **Agradecimentos** (§2) — voz do autor; o repositório tem um rascunho por reescrever.
 4. **Estrutura pré-textual e listas** (§3).
