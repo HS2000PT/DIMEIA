@@ -862,7 +862,17 @@ reajustados, apesar de a deriva se encontrar medida e de o índice de estabilida
 situar a entrada principal na banda de deslocamento significativo. A operação seria tecnicamente
 possível, dado que os rótulos novos derivam dos preços observados; o impedimento é que o retreino
 com o registo de produção alteraria os valores reportados neste documento, e a avaliação dessa
-alteração exige tempo de observação que não estava disponível.
+alteração exige tempo de observação que, à data em que este capítulo foi escrito, não existia.
+
+A instrumentação que o tornaria possível foi construída e implantada em 4 de setembro de 2026, e
+o registo passou a guardar, por decisão, o valor de cada entrada, a data da última barra de preço
+utilizada e a identidade do modelo. Duas restrições limitam o que dela se poderá retirar, e ambas
+foram fixadas antes de existir qualquer candidato. A primeira é que apenas são utilizáveis as
+decisões cuja barra de preço seja anterior ou igual à data da notícia, uma vez que uma barra
+posterior descreveria um mercado que já observou o desfecho que o rótulo mede. A segunda é que a
+unidade de análise é o par constituído pela empresa e pelo dia, e não o título, o que reduz
+substancialmente o número de observações independentes disponíveis numa janela curta. Nada se
+afirma neste documento sobre o resultado dessa comparação.
 
 A ausência de execução não dispensa, contudo, a definição da arquitetura. A
 Figura~\ref{fig:sis_retreino} apresenta o ciclo de treino contínuo desenhado para este sistema, com

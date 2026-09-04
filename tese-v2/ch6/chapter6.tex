@@ -429,7 +429,8 @@ tarde, seria atenuada por um serviço pago; as outras duas subsistem com qualque
 As linhas enunciadas nesta secção derivam das limitações da secção anterior, segundo a
 correspondência apresentada na Tabela~\ref{tab:con_limites}, e estão ordenadas pela relação entre o
 efeito esperado e o custo. Uma lista de trabalho futuro que não derive de limitações medidas
-constitui uma justificação sob outra forma.
+constitui uma justificação sob outra forma. A Figura~\ref{fig:con_futuro} agrupa-as pelo que
+cada uma exige antes de poder ser executada.
 
 \begin{enumerate}
   \item \textbf{Executar o estudo com utilizadores.} Seis a dez participantes, com sessões de
@@ -497,6 +498,41 @@ constitui uma justificação sob outra forma.
         avaliação próprio.
 \end{enumerate}
 
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  it/.style={draw, rounded corners=2pt, align=left, inner sep=4pt, text width=6.15cm,
+             minimum height=0.62cm, fill=black!4},
+  hum/.style={it, fill=black!14, draw=black!65, thick},
+  obs/.style={it, fill=white, draw=black!55, dashed},
+  rot/.style={font=\scriptsize\bfseries, text=black!60, anchor=west},
+]
+  \node[rot] at (0,0.62) {Exigem julgamento humano};
+  \node[hum] (a) at (3.1,0)     {1 · estudo com utilizadores};
+  \node[hum] (b) at (3.1,-0.78) {3 · alvo anotado por pessoas};
+
+  \node[rot] at (0,-1.62) {Exige tempo de observação};
+  \node[obs] (c) at (3.1,-2.24) {10 · retreino com o registo de produção};
+
+  \node[rot] at (0,-3.08) {Trabalho sobre o que já existe};
+  \node[it] (d) at (3.1,-3.70) {2 · entradas que variem com a notícia};
+  \node[it] (e) at (3.1,-4.48) {4 · rótulo com sensibilidades estimadas};
+  \node[it] (f) at (3.1,-5.26) {5 · ler o corpo dos artigos};
+  \node[it] (g) at (3.1,-6.04) {6 · repetições por significado};
+  \node[it] (h) at (3.1,-6.82) {7 · assimetria do retorno do dia};
+  \node[it] (i) at (3.1,-7.60) {8 · agrupar precedentes por empresa e dia};
+  \node[it] (j) at (3.1,-8.38) {9 · expor a qualidade do ajuste};
+\end{tikzpicture}
+\caption[As linhas futuras, por aquilo que as desbloqueia]{As dez linhas de trabalho futuro,
+agrupadas pelo que cada uma exige antes de poder ser executada. Sete operam sobre componentes que
+o sistema já possui e dependem apenas de trabalho técnico. Uma aguarda tempo de observação, que
+começou a decorrer em setembro de 2026. Duas exigem julgamento humano e são as únicas que nenhum
+meio computacional acelera, o que as coloca no caminho crítico apesar de não serem as de maior
+custo técnico. A numeração é a da lista desta secção, que está ordenada pela relação entre o
+efeito esperado e o custo.}
+\label{fig:con_futuro}
+\end{figure}
+
 Um caminho foi considerado e não seguido, e as razões ficam registadas por serem necessárias a quem
 retome o trabalho. A predição conformal permite devolver conjuntos de respostas com uma garantia
 livre de distribuição \autocite{vovk2005algorithmic, angelopoulos2023conformal}, o que se ajusta a
@@ -535,10 +571,44 @@ médias. E determina o critério de avaliação, que incide sobre a capacidade d
 invulgar e não sobre a de antecipar. Um sistema que apresente evidência em lugar de veredictos entrega menos do que um sistema
 que anuncie direções, e entrega apenas o que consegue sustentar.
 
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  est/.style={draw, rounded corners=2pt, align=left, inner sep=3pt, text width=5.1cm,
+              minimum height=0.95cm, fill=black!6},
+  abe/.style={draw, dashed, rounded corners=2pt, align=left, inner sep=3pt, text width=5.1cm,
+              minimum height=0.95cm, fill=white, draw=black!65, thick},
+  cab/.style={font=\scriptsize\bfseries, text=black!65},
+  >={Stealth[length=2.2mm]},
+]
+  \node[cab] at (0,0.82) {O QUE FICA ESTABELECIDO};
+  \node[est] (a) at (0,0.10)  {cada quantidade provém do componente que a calculou};
+  \node[est] (b) at (0,-0.95) {é confrontável com o registo no momento em que é lida};
+  \node[est] (c) at (0,-2.00) {a política que decide o silêncio está documentada e medida};
+
+  \node[cab] at (6.9,0.82) {O QUE NÃO FICA};
+  \node[abe] (d) at (6.9,-0.25) {que esta explicação conduza a uma
+    \textbf{decisão melhor}};
+  \node[align=left, text width=5.1cm, font=\scriptsize, text=black!62] (e) at (6.9,-1.75)
+    {É a hipótese fundadora do trabalho. Permanece por testar, e o seu teste é a primeira
+     linha do trabalho futuro.};
+  \draw[->, black!50] (d) -- (e);
+  \draw[black!25] (3.45,1.0) -- (3.45,-2.5);
+\end{tikzpicture}
+\caption[A fronteira daquilo que o trabalho estabelece]{O limite exato da afirmação. À esquerda,
+as três propriedades que o sistema demonstra e que se verificam por inspeção do que ele produz. À
+direita, a proposição que o trabalho não testou: que apresentar a evidência junto do alerta
+conduza a uma decisão melhor. A separação não é uma reserva de cortesia, uma vez que a segunda é
+a hipótese que motivou o trabalho, e distingui-la do que ficou demonstrado é o que impede que a
+primeira seja lida como se a segunda estivesse provada.}
+\label{fig:con_fronteira}
+\end{figure}
+
 A contribuição enuncia-se, por isso, no seu nível exato. O que este trabalho estabelece é que
 o sistema está tecnicamente preparado para sustentar explicações assentes em evidência histórica
 verificável: cada quantidade apresentada provém do componente que a calculou, é confrontável com o
 registo no momento em que é lida, e a política que decide o silêncio está documentada e medida. O
 que este trabalho não estabelece é que essa forma de explicação conduza o investidor particular a
 uma decisão melhor. Essa é a hipótese fundadora, permanece por testar, e o seu teste é o primeiro
-item da secção anterior.
+item da secção anterior. A Figura~\ref{fig:con_fronteira}
+apresenta a separação.
