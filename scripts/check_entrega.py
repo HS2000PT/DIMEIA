@@ -55,6 +55,9 @@ VERIFICADORES = [
     # A politica linguistica admite duas configuracoes; o que nao admite e uma figura
     # metade em cada. A 2026-09-04 duas das mais importantes do Cap. 4 estavam assim.
     ("figuras: uma so língua por figura", "check_figuras_lingua.py", []),
+    # A cadeia de cada questao: enunciada, medida, delimitada e respondida -- e a
+    # conclusao a nao citar valores que os resultados nao produziram.
+    ("questões: enunciada, medida, respondida", "check_qi_cadeia.py", []),
 ]
 
 # ⚠️ A DISSERTAÇÃO A ENTREGAR É `tese-v2/`, e esta lista apontava para `tese/`. Corrigido a
