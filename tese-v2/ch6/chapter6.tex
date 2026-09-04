@@ -270,7 +270,7 @@ Esta secção enumera as limitações do trabalho por ordem de importância. A
 Tabela~\ref{tab:con_limites} apresenta-as em conjunto, com o trabalho que encerraria cada uma e a
 natureza do respetivo custo; o texto que se segue desenvolve as quatro de maior consequência e
 resume as restantes. A maioria está quantificada. Duas não o estão por natureza: a ausência de
-avaliação com utilizadores é uma ausência e não uma medida, e a distância entre cada rótulo e a
+estudo controlado é uma ausência e não uma medida, e a distância entre cada rótulo e a
 propriedade que aproxima só seria mensurável contra uma anotação humana que não existe.
 
 \begin{table}[!htbp]
@@ -286,7 +286,7 @@ utilidade das explicações nem a qualidade dos rótulos deixam de ser aproxima�
 \toprule
 \tabhead{Limitação} & \tabhead{O que a encerra} & \tabhead{Custo} \\
 \midrule
-Nenhuma avaliação com pessoas & Executar o estudo desenhado, com seis a dez participantes &
+Nenhum estudo controlado com pessoas & Executar o protocolo desenhado, com seis a dez participantes &
 tempo de calendário \\
 A pontuação é quase constante dentro de cada empresa & Entradas que variem de um título para o
 seguinte & reduzido \\
@@ -309,11 +309,14 @@ instrumentação \\
 \end{tabular}
 \end{table}
 
-\paragraph{Não foi realizada qualquer avaliação com utilizadores.}
-Esta é a lacuna de maior peso. O sistema assenta na hipótese de que uma explicação acompanhada da
-respetiva evidência conduz um não especialista a uma decisão melhor, e essa hipótese não foi
-confrontada com pessoas. O desenho do estudo existe, com participantes, tarefas e critérios
-definidos, e não foi executado. A literatura é explícita quanto ao peso desta ausência: afirmações
+\paragraph{Não foi realizado um estudo controlado com utilizadores.}
+Esta é a lacuna de maior peso. O sistema assenta na hipótese de que uma explicação acompanhada
+da respetiva evidência conduz um não especialista a uma decisão melhor, e essa hipótese não foi
+submetida a um desenho experimental. O protocolo existe, com participantes, tarefas e critérios
+definidos, e não foi executado. O que existe, e está reportado na
+Secção~\ref{sec:av_feedback}, é retorno recolhido em contexto real: leitores do canal público
+classificam os alertas que recebem, sob regras de análise fixadas antes do primeiro voto, e a
+recolha prossegue. A literatura é explícita quanto ao peso desta ausência: afirmações
 de interpretabilidade exigem avaliação e não se estabelecem por declaração
 \autocite{doshivelez2018considerations}. A razão não é formal. O efeito de uma explicação sobre uma pessoa
 não é dedutível da sua construção: sabe-se que a confiança em sistemas automáticos falha nos dois
@@ -324,14 +327,13 @@ apresentando evidência em vez de emitir um veredicto, mas que o consiga permane
 ausência do estudo, os dois modos de falha são indistinguíveis nos registos: um alerta ignorado e um
 alerta indevidamente acreditado produzem a mesma ausência de dados.
 
-A Secção~\ref{sec:av_feedback} reporta votos de leitores do canal, e não constitui
-exceção a esta lacuna. Um botão colocado ao lado de um alerta público não é um estudo:
-vota quem quer, o que empurra a amostra para os extremos; nenhum grupo recebeu a variação
-de preço sem a explicação, pelo que nada atribui a utilidade à explicação em si; e o canal
-é público, pelo que se desconhece se quem responde pertence ao público que este trabalho
-assume. O que esses votos medem é utilidade percebida por quem se dispôs a responder, e a
-hipótese fundadora diz respeito a decisão melhor, que é outra quantidade. A ausência
-descrita neste parágrafo mantém-se por inteiro.
+A distinção entre as duas coisas determina o que cada uma permite afirmar. O retorno do
+canal é observacional: vota quem quer, o que desloca a amostra para os extremos; nenhum
+grupo recebeu a variação de preço sem a explicação que a acompanha, pelo que nada atribui a
+utilidade à explicação em si; e o canal é público, pelo que se desconhece se quem responde
+pertence ao público que este trabalho assume. O que esses votos medem é utilidade percebida
+por quem se dispôs a responder. A hipótese fundadora diz respeito a decisão melhor, que é
+outra quantidade, e é essa que permanece por testar.
 
 \paragraph{O modelo implantado não podia executar a função que lhe foi atribuída.}
 A variante colocada em produção como porta de decisão recebe sete entradas de nível de empresa, uma
