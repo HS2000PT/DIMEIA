@@ -9,6 +9,116 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 64 (2026-09-04/05): A CRÍTICA DE JÚRI, O ARTIGO, E A FIGURA 4.3 — QUE ERA UM
+  TETO DISFARÇADO DE MEDIÇÃO.**
+  **⚠️ (A) O ACHADO PRINCIPAL VEIO DO AUTOR, E ESTAVA CERTO.** Apontou a Figura 4.3 com
+  três empresas a **14** e todas as outras a **zero**, com `42 = 3 × 14`, e mandou
+  **investigar a origem em vez de substituir os números**. São **quatro** defeitos:
+  **(1) 14 é o TETO**, duas mensagens por empresa por dia × sete dias. Contado nos dados:
+  os primeiros 42 alertas do canal são **seis por dia**, que é três empresas × duas. As três
+  estavam saturadas todos os dias. **A legenda atribuía essa forma ao limiar de semelhança e
+  à composição da base de casos** — explicava por um mecanismo o que um limite produzia.
+  **(2) A razão 22:1 comparava populações diferentes.** O numerador vinha do
+  `live_pending.jsonl`, que é uma **janela deslizante** (um caso sai quando matura, ao fim de
+  oito dias); o denominador do `alerts_history.jsonl`, que é **cumulativo**.
+  **(3) A janela anunciada não era a janela contada** — o rótulo dizia 4–13 de julho e os
+  alertas estão datados de 13 a 20.
+  **(4) A política que a figura descrevia foi substituída a 2026-08-15**, e o resto do
+  Cap. 4 já descreve a nova: **a figura contradizia o próprio capítulo.**
+  **CORRIGIDA A CAUSA E SÓ DEPOIS A FIGURA.** `scripts/evaluate_funil_seletividade.py`
+  impõe o que faltava: a **janela é um argumento** e aplica-se aos dois lados; a unidade é o
+  **título distinto** (1 321 linhas eram 743 títulos, porque o sistema reavalia a cada
+  ciclo); e o relatório **diz quando um número é um teto**. Janela nova, 1–3/09: **743
+  títulos de 12 empresas → 15 alertas a 8 delas**, e o relatório declara sozinho que 15 é o
+  teto, porque o orçamento foi esgotado nos três dias.
+  ⚠️ **E não se escolheu a janela por dar melhor número** — qualquer um dos quatro defeitos
+  obrigava a refazer. Está escrito na tese que assim é. **Quatro testes**, e o central planta
+  a forma exacta de julho e exige o aviso; **verificado a falhar** sem o guarda.
+  **⚠️ (B) O ARTIGO AFIRMAVA O QUE A DISSERTAÇÃO RETIROU.** Tocado a 13/08, **antes** da
+  reescrita para `tese-v2`. Quatro divergências: dizia que a recuperação *«clearly
+  outperforms every baseline»* com o agregado que a tese **abandona** por causa da estratégia
+  trivial de `0,467`; descrevia a **camada generativa como entregue**, quando as rotas foram
+  retiradas e a tese justifica a **ausência** de um modelo de linguagem; citava `0,271` para
+  o Isolation Forest onde a tese cita `0,269` (os dois certos, artefactos diferentes); e o
+  `graphicspath` apontava para uma árvore superseda.
+  **A camada generativa foi ESTREITADA E NÃO REMOVIDA**, com a razão escrita: o código existe
+  e as medições são reais, logo removê-la apagaria trabalho medido; descrevê-la como entregue
+  seria descrever um produto que não existe. Passa a **implementada, avaliada e não exposta**.
+  **PORTA NOVA: `check_artigo_numeros.py`** — todo o número do artigo tem de ter fonte na
+  tese ou em `docs/evaluation/`, e os resultados **estreitados** têm de aparecer com a mesma
+  ressalva. Verificado com um número inventado plantado.
+  **✅ (C) CRÍTICA DE JÚRI À TESE, lida como se fosse a primeira vez** →
+  [`CRITICA_JURI_2026-09-04.md`](docs/planos/CRITICA_JURI_2026-09-04.md). Os dois achados
+  altos: **o resumo mantinha a afirmação absoluta que o Cap. 1 já tinha retirado**, nas duas
+  línguas, e é a primeira coisa que o júri lê; e **o Cap. 5 mede utilidade com pessoas
+  enquanto o Cap. 6 declara que isso não foi feito**, sem que nenhuma secção se referisse à
+  outra. Os dois corrigidos.
+  ⚠️ **E o sítio da segunda correcção é a lição:** o `ch5/feedback_auto.tex` é **gerado**. A
+  remissão foi escrita no `analyse_feedback.py` — uma frase à mão no destino desapareceria na
+  corrida seguinte sem um único aviso.
+  **ESTRUTURA, medida contra as quatro aprovadas:** Cap. 1 tem **4 páginas** contra 8, 8, 8 e
+  10; Cap. 2 tem **14** contra 18, 20, 24 e 26. O documento é pesado atrás e leve à frente, e
+  **a primeira impressão forma-se na parte leve**. Com a ressalva: o Cap. 2 é curto mas **não
+  é raso**. **Decisão do autor**, com as duas leituras no
+  [`PLANO_SUBMISSAO_2026-09-04.md`](docs/planos/PLANO_SUBMISSAO_2026-09-04.md).
+  **✅ (D) §3 e §4: as listas no Índice e os acrónimos.** Só a Lista de Acrónimos constava do
+  Índice; as de Figuras, Tabelas e Símbolos não. Decidido **contra as teses aprovadas**: o
+  Índice do Bruno Ribeiro lista todas com página. E **a Lista de Excertos era defendida por
+  um comentário e não existe** — a reescrita deixou o documento com **zero** ambientes
+  `lstlisting`, e a garantia anti-lookahead passou a ser a figura da janela deslizante.
+  Acrónimos: dos 27 declarados, **15 nunca são usados** e a lista imprime só os usados. Três
+  decisões diferentes: `HTTP` passa a `\gls`; `ONNX` entra na prosa porque só aparecia dentro
+  de uma figura; **`AI` e `SIFMA` ficam** — o primeiro está dentro de um **título de notícia
+  citado** e o segundo é parte do nome de uma publicação. Lista de 12 → 14, espaçamento
+  uniforme.
+  **A PERGUNTA SOBRE O FinBERT, RESPONDIDA: não está na lista porque não é um acrónimo.** A
+  tese nomeia-o pelo ponto de controlo `ProsusAI/finbert` e reporta `0,420` com o
+  enquadramento certo. Mesmo critério para MiniLM, MPNet, Platt, Vasicek e Telegram.
+  **✅ (E) §5–§7: POLÍTICA LINGUÍSTICA ESCRITA, e aplicá-la encontrou o defeito.**
+  → [`POLITICA_LINGUISTICA.md`](docs/planos/POLITICA_LINGUISTICA.md).
+  ⚠️ **A queixa tem uma versão falsificável e ela dá DUAS figuras, não 35.** Medido: 43
+  figuras, 35 com inglês no interior, ~761 palavras — mas **consistentemente** inglesas por
+  dentro e portuguesas nas legendas, e o Cap. 1 passou a dizer porquê. O que estava mesmo
+  misturado: **`fig:sis_arquitetura`, a Figura 4.1**, com títulos ingleses e subtítulos
+  **seis em português e três em inglês**; e **`fig:sis_caminho`**, sete nós em inglês e dois
+  em português. As duas uniformizadas e **verificadas a renderizar**.
+  **PORTA NOVA: `check_figuras_lingua.py`**, que olha só para os rótulos **desenhados**.
+  Verificado com uma mistura plantada. ⚠️ **Dois falsos positivos meus, corrigidos NO
+  VERIFICADOR:** `z-score` contém a palavra inglesa *score*, e o rótulo real é
+  `\emph{z}-score`, que nem casava até normalizar os comandos LaTeX.
+  **⚠️ E A CONVERSÃO PARA PORTUGUÊS NÃO FOI FEITA, DE PROPÓSITO — é decisão do autor.** O
+  custo está medido: o português é **mais largo** (a sessão 57 pagou 54 pt de caixa
+  rebentada), a conversão inversa encontrou **quatro armadilhas**, e perde-se a reutilização
+  no artigo. A política traz o mecanismo de fonte única (`\bl{pt}{en}`) que a directiva pede,
+  **mas ele resolve a divergência e não a conversão**. **Recomendação escrita: manter inglês
+  no interior.**
+  **✅ (F) §7 e §8 alargadas, medidas em vez de supostas.** A tese canónica usa **sete cores
+  não-cinzentas em todo o documento**, todas `orange!60!black` com o mesmo papel — **não há
+  verde nenhum no corpo**; o verde está nos slides, no guia e nas capturas. E a varredura de
+  todas as figuras e tabelas à procura da classe da Figura 4.3 **não encontrou mais nenhuma**.
+  **⚠️ TRÊS FALSOS ALARMES MEUS, apanhados antes de reportar:** «Zhangxin Liu» é o `biblatex`
+  a desambiguar contra os outros dois Liu; os 15 acrónimos por usar **não são impressos**; e
+  a Lista de Figuras não estava na página errada — a xiii é o **Índice**, e eu casava o texto
+  da própria listagem.
+  **⚠️ ARMADILHAS QUE VOLTARAM A MORDER, todas já documentadas:** o `{,}` é separador de
+  **milhares** em inglês e vírgula **decimal** em português (reintroduzi o defeito da sessão
+  56 no verificador do artigo); comentários `%%` **dentro** de uma entrada `.bib` são válidos
+  para o `biber` da tese e **partem** o `bibtex` do artigo; `[` + barra + `]` deixa a classe
+  de caracteres **por fechar** e o padrão passa a apanhar qualquer comando LaTeX; e o shell
+  come um nível de barras **mesmo entre plicas**, o que fez o `\s` de `\subsection` ser lido
+  como classe de espaço.
+  **PORTAS: tese 130 pp, artigo 5 pp, 0 erros, 55/55 números, 15 verificadores no
+  `check_entrega`, 985 testes, ruff limpo. Produção viva, instantâneo fresco.**
+  **⏭️ POR FAZER DA DIRECTIVA:** agradecimentos (§2, voz do autor); matriz de evidência e das
+  QI (§16–§18); painel e capturas (§11–§12, que o plano recomenda **depois** de 27/09);
+  auditoria visual página a página (§38).
+  **⚠️ TRÊS PONTOS DA DIRECTIVA NÃO SE APLICAM, e está escrito porquê:** a §19 pede para
+  uniformizar «FinXAI-Agents», «multi-agent system» e «arquitetura multiagente» — **este
+  sistema não tem agentes**, o nome não existe no repositório, e introduzi-los seria descrever
+  um sistema que não existe, o que a própria §37 proíbe. A §31 pede limitações do FinBERT e
+  alucinações, e o FinBERT só aparece como **alternativa medida**. E o **Evernote não humaniza
+  texto**: se a intenção for disfarçar assistência de IA, contradiz a declaração que a tese
+  assina. **Paperpal e LanguageTool são outra coisa e ficam recomendados.**
 - **🆕 SESSÃO 63 (2026-09-04): A AUDITORIA DO REGISTO CORREU PELA PRIMEIRA VEZ CONTRA DADOS
   REAIS, E O NÚMERO QUE DEVOLVEU DIZ QUE O RETREINO NUNCA TINHA COMEÇADO.**
   **⚠️ (A) O ACHADO: `feature_snapshot` presente em 0,0% de 39 595 linhas.** O
@@ -1319,7 +1429,7 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 63 (retreino a recolher, R14 fechado, tese e materiais revistos)
+- **Sessão nº:** 64 (crítica de júri, artigo alinhado, Figura 4.3 refeita, política linguística)
 - **Última atualização:** 2026-09-04
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
