@@ -1136,6 +1136,48 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
     return alerts
 
 
+# ⚠️ O FICHEIRO DE PENDENTES ERA LIDO DO DISCO UMA VEZ POR EMPRESA. Medido a 2026-09-04.
+#
+# `_capture_live_safe` corre DENTRO do ciclo por ticker, e cada chamada fazia
+# `load_pending(_LIVE_PENDING)` — o ficheiro inteiro, com um vector de 384 dimensões por
+# entrada. São 16,4 MB para 1 341 pendentes, doze vezes por ciclo, ou seja perto de 200 MB
+# de alocações por minuto só nisto. E o ficheiro CRESCE até os casos maturarem.
+#
+# Passa a ser lido uma vez e mantido em memória, com a cache indexada por `mtime` e tamanho.
+# Quem escreve actualiza a cache no mesmo passo, para o próximo ticker não voltar ao disco.
+_PENDING_CACHE: dict = {}
+
+
+def _pending_cached() -> list:
+    """Lista de pendentes, lida do disco só quando o ficheiro muda."""
+    from investigator.live_kb import load_pending
+
+    try:
+        st = _LIVE_PENDING.stat()
+        sig = (st.st_mtime_ns, st.st_size)
+    except OSError:
+        sig = (0, 0)
+    if _PENDING_CACHE.get("sig") == sig:
+        return _PENDING_CACHE["lista"]
+    lista = load_pending(_LIVE_PENDING)
+    _PENDING_CACHE["sig"] = sig
+    _PENDING_CACHE["lista"] = lista
+    return lista
+
+
+def _pending_guardar(lista: list) -> None:
+    """Grava e actualiza a cache no mesmo passo — senão o ticker seguinte relê o disco."""
+    from investigator.live_kb import save_pending
+
+    save_pending(lista, _LIVE_PENDING)
+    try:
+        st = _LIVE_PENDING.stat()
+        _PENDING_CACHE["sig"] = (st.st_mtime_ns, st.st_size)
+    except OSError:
+        _PENDING_CACHE.pop("sig", None)
+    _PENDING_CACHE["lista"] = lista
+
+
 def _capture_live_safe(items: list, embedder) -> None:
     """Captura manchetes relevantes para a KB viva (pendentes de maturação). Fail-open.
 
@@ -1146,15 +1188,9 @@ def _capture_live_safe(items: list, embedder) -> None:
     try:
         if not getattr(embedder, "semantic", False):
             return
-        from investigator.live_kb import (
-            PendingNews,
-            add_pending,
-            embed_text,
-            load_pending,
-            save_pending,
-        )
+        from investigator.live_kb import PendingNews, add_pending, embed_text
 
-        existentes = load_pending(_LIVE_PENDING)
+        existentes = _pending_cached()
         chaves = {e.key for e in existentes}
         novos_items = [i for i in items if news_key(i.ticker, i.headline) not in chaves]
         if not novos_items:
@@ -1167,7 +1203,7 @@ def _capture_live_safe(items: list, embedder) -> None:
                         embedding=[round(float(x), 5) for x in vec])
             for i, vec in zip(novos_items, vetores, strict=True)
         ]
-        save_pending(add_pending(existentes, novos), _LIVE_PENDING)
+        _pending_guardar(add_pending(existentes, novos))
         print(f"[kb-viva] +{len(novos)} pendente(s) capturado(s).")
     except Exception as exc:  # noqa: BLE001
         print(f"[kb-viva] captura falhou (ignorada): {type(exc).__name__}: {sem_segredos(exc)}")
@@ -1176,11 +1212,11 @@ def _capture_live_safe(items: list, embedder) -> None:
 def _mature_live_safe(today: date | None = None) -> None:
     """Matura pendentes cujo impacto já é observável e move-os para a KB viva. Fail-open."""
     try:
-        from investigator.live_kb import append_records, load_pending, mature_ready, save_pending
+        from investigator.live_kb import append_records, mature_ready
         from investigator.market_data.prices import load_close_series
 
         today = today or date.today()
-        pending = load_pending(_LIVE_PENDING)
+        pending = _pending_cached()
         prontos = [e for e in pending
                    if (today - date.fromisoformat(e.date)).days >= 8]
         if not prontos:
@@ -1192,7 +1228,7 @@ def _mature_live_safe(today: date | None = None) -> None:
         matured, still = mature_ready(pending, closes, today)
         if matured:
             append_records(matured, _LIVE_KB)
-            save_pending(still, _LIVE_PENDING)
+            _pending_guardar(still)
             print(f"[kb-viva] {len(matured)} caso(s) maturado(s) → live_kb.jsonl "
                   f"({len(still)} pendente(s)).")
     except Exception as exc:  # noqa: BLE001

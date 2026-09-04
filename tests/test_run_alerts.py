@@ -1014,3 +1014,61 @@ def test_embedder_carregado_uma_so_vez_por_processo(monkeypatch):
     monkeypatch.setattr(main_mod, "product_retrieval", _falso)
     assert r._retrieval_cached() is r._retrieval_cached()
     assert len(chamadas) == 1, f"product_retrieval chamado {len(chamadas)} vezes"
+
+
+def test_pendentes_lidos_do_disco_uma_so_vez(tmp_path, monkeypatch):
+    """O ficheiro de pendentes era lido uma vez POR EMPRESA. Medido a 2026-09-04.
+
+    `_capture_live_safe` corre dentro do ciclo por ticker, e cada chamada relia o ficheiro
+    inteiro -- 16,4 MB para 1 341 pendentes, com um vector de 384 dimensoes por entrada --
+    doze vezes por ciclo, perto de 200 MB de alocacoes por minuto num contentor de 512.
+    """
+    import scripts.run_alerts as r
+
+    leituras = []
+    alvo = tmp_path / "pend.jsonl"
+    alvo.write_text("", encoding="utf-8")
+    monkeypatch.setattr(r, "_LIVE_PENDING", alvo)
+    monkeypatch.setattr(r, "_PENDING_CACHE", {})
+
+    import investigator.live_kb as lk
+
+    def _falso(path):
+        leituras.append(str(path))
+        return []
+
+    monkeypatch.setattr(lk, "load_pending", _falso)
+    for _ in range(12):          # os doze tickers de um ciclo
+        r._pending_cached()
+    assert len(leituras) == 1, f"leu o disco {len(leituras)} vezes"
+
+
+def test_gravar_pendentes_actualiza_a_cache(tmp_path, monkeypatch):
+    """Controlo: quem grava tem de actualizar a cache, senao o ticker seguinte rele o disco.
+
+    E o inverso tambem importa -- uma cache que nao acompanha a escrita devolveria a lista
+    velha, e as manchetes capturadas neste ciclo desapareciam sem erro nenhum.
+    """
+    import scripts.run_alerts as r
+
+    alvo = tmp_path / "pend.jsonl"
+    monkeypatch.setattr(r, "_LIVE_PENDING", alvo)
+    monkeypatch.setattr(r, "_PENDING_CACHE", {})
+
+    import investigator.live_kb as lk
+
+    gravados = {}
+
+    from pathlib import Path
+
+    def _grava(lista, path):
+        gravados["lista"] = list(lista)
+        Path(path).write_text("x", encoding="utf-8")
+
+    monkeypatch.setattr(lk, "save_pending", _grava)
+    monkeypatch.setattr(lk, "load_pending", lambda p: ["do disco"])
+
+    r._pending_guardar(["novo"])
+    assert gravados["lista"] == ["novo"]
+    # a leitura seguinte devolve o que foi gravado, e nao o que o disco devolveria
+    assert r._pending_cached() == ["novo"]
