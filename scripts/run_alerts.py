@@ -856,6 +856,88 @@ def precedents_are_strong(precedents: list, min_similarity: float) -> bool:
     return any(score >= min_similarity for _, score in precedents)
 
 
+# ⚠️ AS BASES E O EMBEDDER VIVEM O PROCESSO, NÃO O CICLO. Medido a 2026-09-04.
+#
+# O `scan_news` corre a cada 60 s no worker, e carregava tudo do disco de cada vez: 10 968
+# registos da base viva, a base do ano e a curada, mais uma sessão ONNX nova. São ~44 MB
+# retidos e um pico de 187 MB de alocações Python POR MINUTO, mais a sessão nativa do
+# onnxruntime. O alocador do Python não devolve arenas libertadas ao sistema operativo, logo
+# o RSS sobe e fica — que é exactamente a serra observada, entre 518 e 970 MB contra uma
+# quota de 512, com `R14` a cada poucos minutos.
+#
+# Recarregar por ciclo nunca foi um requisito: era o efeito de o carregamento estar dentro da
+# função que corre. As bases são reconstruídas só quando um dos ficheiros muda — o que
+# acontece de facto quando a maturação acrescenta casos —, e a assinatura inclui `mtime` e
+# tamanho para que uma mudança nunca passe despercebida.
+_RETRIEVAL_CACHE: dict = {}
+_KBS_CACHE: dict = {}
+
+
+def _retrieval_cached():
+    """`(kb_path, embedder)` uma vez por processo. A sessão ONNX é cara e não muda."""
+    if "par" not in _RETRIEVAL_CACHE:
+        from investigator.main import product_retrieval
+
+        _RETRIEVAL_CACHE["par"] = product_retrieval(auto_download=True)
+    return _RETRIEVAL_CACHE["par"]
+
+
+def _assinatura_kbs(kb_path) -> tuple:
+    """`(caminho, mtime, tamanho)` de cada ficheiro que compõe as bases."""
+    marcas = []
+    for f in (_LIVE_KB, _BACKFILL_META, _BACKFILL_VEC, Path(kb_path)):
+        try:
+            st = f.stat()
+            marcas.append((str(f), st.st_mtime_ns, st.st_size))
+        except OSError:
+            marcas.append((str(f), 0, 0))
+    return tuple(marcas)
+
+
+def _kbs_cached(kb_path) -> list:
+    """Bases de casos, reconstruídas só quando um dos ficheiros muda."""
+    from investigator.historical_kb.knowledge_base import HistoricalKB
+
+    assinatura = _assinatura_kbs(kb_path)
+    if _KBS_CACHE.get("sig") == assinatura:
+        return _KBS_CACHE["kbs"]
+
+    kbs: list = []
+    if _LIVE_KB.exists():
+        try:
+            # `lean`: a base viva CRESCE, e em listas de Python custava 136,7 MB para
+            # 10 968 casos num contentor de 512 MB. Ver o docstring de `load`.
+            kb_viva = HistoricalKB.load(_LIVE_KB, lean=True)
+            if len(kb_viva):
+                kbs.append(kb_viva)
+                print(f"[kb-viva] {len(kb_viva)} caso(s) recente(s) em uso.")
+        except Exception as exc:  # noqa: BLE001
+            print(f"[kb-viva] ilegível (ignorada): {type(exc).__name__}: {sem_segredos(exc)}")
+    # Base reconstruída do último ano (2025-08 em diante), em formato compacto. É a que dá
+    # volume real de casos comparáveis: 38 214 contra os ~2 000 da curada.
+    #
+    # ⚠️ TEM de ser o formato compacto, e o número que o justifica está medido: a mesma base
+    # em JSONL custa **655 MB de RAM** e o contentor tem 512 MB. Em float32, com a matriz
+    # mapeada do disco, são **25 MB** e carrega em 0,44 s em vez de 9. Carregá-la em JSONL
+    # mataria o worker com falta de memória.
+    if _BACKFILL_META.exists() and _BACKFILL_VEC.exists():
+        try:
+            kb_ano = HistoricalKB.load_compact(_BACKFILL_META, _BACKFILL_VEC)
+            if len(kb_ano):
+                kbs.append(kb_ano)
+                print(f"[kb-ano] {len(kb_ano)} caso(s) do último ano em uso.")
+        except Exception as exc:  # noqa: BLE001 — fail-open: sem ela o produto responde na mesma
+            print(f"[kb-ano] indisponível (ignorada): {type(exc).__name__}: {sem_segredos(exc)}")
+    try:
+        kbs.append(HistoricalKB.load(kb_path, lean=True))
+    except Exception as exc:  # noqa: BLE001
+        print(f"[kb-curada] ilegível (ignorada): {type(exc).__name__}: {sem_segredos(exc)}")
+
+    _KBS_CACHE["sig"] = assinatura
+    _KBS_CACHE["kbs"] = kbs
+    return kbs
+
+
 def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
               gate_log: list | None = None,
               materiality: dict[str, float] | None = None,
@@ -876,7 +958,6 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
         return []
     from investigator import config
     from investigator.explanation_engine.explainer import explain_news_impact
-    from investigator.historical_kb.knowledge_base import HistoricalKB
     from investigator.live_kb import merged_precedents
     from investigator.news_fetcher.relevance import is_relevant
 
@@ -912,36 +993,8 @@ def scan_news(cfg: dict, event_times: dict[str, str] | None = None,
     # em Actions o modelo vem da cache do workflow, senão desce ~23 MB na primeira corrida).
     # A KB VIVA (casos recentes maturados neste próprio runner) entra em primeiro na fusão:
     # "timeline matters" — a idade desempata a favor do recente, o cosseno decide o tema.
-    from investigator.main import product_retrieval
-
-    kb_path, embedder = product_retrieval(auto_download=True)
-    kbs = []
-    if _LIVE_KB.exists():
-        try:
-            # `lean`: a base viva CRESCE, e em listas de Python custava 136,7 MB para
-            # 10 968 casos num contentor de 512 MB. Ver o docstring de `load`.
-            kb_viva = HistoricalKB.load(_LIVE_KB, lean=True)
-            if len(kb_viva):
-                kbs.append(kb_viva)
-                print(f"[kb-viva] {len(kb_viva)} caso(s) recente(s) em uso.")
-        except Exception as exc:  # noqa: BLE001
-            print(f"[kb-viva] ilegível (ignorada): {type(exc).__name__}: {sem_segredos(exc)}")
-    # Base reconstruída do último ano (2025-08 em diante), em formato compacto. É a que dá
-    # volume real de casos comparáveis: 38 214 contra os ~2 000 da curada.
-    #
-    # ⚠️ TEM de ser o formato compacto, e o número que o justifica está medido: a mesma base
-    # em JSONL custa **655 MB de RAM** e o contentor tem 512 MB. Em float32, com a matriz
-    # mapeada do disco, são **25 MB** e carrega em 0,44 s em vez de 9. Carregá-la em JSONL
-    # mataria o worker com falta de memória.
-    if _BACKFILL_META.exists() and _BACKFILL_VEC.exists():
-        try:
-            kb_ano = HistoricalKB.load_compact(_BACKFILL_META, _BACKFILL_VEC)
-            if len(kb_ano):
-                kbs.append(kb_ano)
-                print(f"[kb-ano] {len(kb_ano)} caso(s) do último ano em uso.")
-        except Exception as exc:  # noqa: BLE001 — fail-open: sem ela o produto responde na mesma
-            print(f"[kb-ano] indisponível (ignorada): {type(exc).__name__}: {sem_segredos(exc)}")
-    kbs.append(HistoricalKB.load(kb_path, lean=True))
+    kb_path, embedder = _retrieval_cached()
+    kbs = _kbs_cached(kb_path)
 
     end = date.today().isoformat()
     start = (date.today() - timedelta(days=7)).isoformat()

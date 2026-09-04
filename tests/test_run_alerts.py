@@ -944,3 +944,73 @@ def test_run_once_afirma_a_memoria_do_dia():
         "o run_cycle deixou de afirmar se sabe o que já saiu hoje")
     assert "partilhado is not None" in fonte, (
         "a memória do dia voltou a não distinguir «li e estava vazio» de «não li»")
+
+
+REGISTO_KB = ('{"date": "2026-01-01", "ticker": "NVDA", "headline": "h", '
+              '"impacts": {"1": 0.0}, "embedding": null}')
+
+
+# -- As bases vivem o PROCESSO, nao o ciclo ------------------------------------
+# Medido a 2026-09-04: o `scan_news` corre a cada 60 s e recarregava tudo do disco de cada
+# vez -- 10 968 registos da base viva, mais a do ano, mais uma sessao ONNX nova. Cerca de
+# 44 MB retidos e pico de 187 MB de alocacoes Python POR MINUTO, num contentor de 512. O
+# alocador do Python nao devolve arenas ao sistema operativo, logo o RSS subia e ficava:
+# entre 518 e 970 MB, com R14 a cada poucos minutos.
+
+def _sem_bases(r, tmp_path, monkeypatch):
+    """Aponta as bases opcionais para ficheiros que nao existem e limpa a cache."""
+    monkeypatch.setattr(r, "_LIVE_KB", tmp_path / "nao-existe.jsonl")
+    monkeypatch.setattr(r, "_BACKFILL_META", tmp_path / "nem-esta.jsonl")
+    monkeypatch.setattr(r, "_BACKFILL_VEC", tmp_path / "nem-esta.npy")
+    monkeypatch.setattr(r, "_KBS_CACHE", {})
+
+
+def test_kbs_nao_sao_recarregadas_quando_nada_muda(tmp_path, monkeypatch):
+    """Duas chamadas seguidas sem alteracao nos ficheiros devolvem o MESMO objecto."""
+    import scripts.run_alerts as r
+
+    kb = tmp_path / "curada.jsonl"
+    kb.write_text("", encoding="utf-8")
+    _sem_bases(r, tmp_path, monkeypatch)
+    assert r._kbs_cached(kb) is r._kbs_cached(kb), "recarregou sem nada ter mudado"
+
+
+def test_kbs_recarregam_quando_o_ficheiro_muda(tmp_path, monkeypatch):
+    """Controlo no sentido oposto: a maturacao acrescenta casos, e isso TEM de ser visto.
+
+    Uma cache que nao invalida seria pior do que nao ter cache nenhuma: o sistema deixaria
+    de ver os casos novos e ninguem daria por isso.
+    """
+    import time
+
+    import scripts.run_alerts as r
+
+    kb = tmp_path / "curada.jsonl"
+    kb.write_text("", encoding="utf-8")
+    _sem_bases(r, tmp_path, monkeypatch)
+
+    primeira = r._kbs_cached(kb)
+    assinatura = r._assinatura_kbs(kb)
+    time.sleep(0.02)
+    kb.write_text(REGISTO_KB, encoding="utf-8")
+    assert r._assinatura_kbs(kb) != assinatura, "a assinatura nao viu a alteracao"
+    assert r._kbs_cached(kb) is not primeira, "nao recarregou depois de o ficheiro mudar"
+
+
+def test_embedder_carregado_uma_so_vez_por_processo(monkeypatch):
+    """A sessao ONNX e cara e nao muda: uma por processo, nao uma por ciclo."""
+    import pathlib as _pl
+
+    import investigator.main as main_mod
+    import scripts.run_alerts as r
+
+    chamadas = []
+    monkeypatch.setattr(r, "_RETRIEVAL_CACHE", {})
+
+    def _falso(auto_download=True):
+        chamadas.append(1)
+        return _pl.Path("kb.jsonl"), object()
+
+    monkeypatch.setattr(main_mod, "product_retrieval", _falso)
+    assert r._retrieval_cached() is r._retrieval_cached()
+    assert len(chamadas) == 1, f"product_retrieval chamado {len(chamadas)} vezes"
