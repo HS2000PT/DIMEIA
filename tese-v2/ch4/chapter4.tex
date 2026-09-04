@@ -316,26 +316,39 @@ restrição.
 
 \subsection{Seletividade observada}
 
-O efeito conjunto dos pontos de decisão é considerável. Sobre as notícias datadas entre 4 e 13 de julho de
-2026, das $944$ notícias relevantes que entraram no sistema resultaram $42$ alertas, o que
-corresponde a uma razão aproximada de um para vinte e dois. O valor é um limite superior da
-seletividade da política atual, uma vez que o limite de duas mensagens por empresa entrou em vigor a
-11 de julho, a meio da janela observada. A Figura~\ref{fig:sis_seletividade} apresenta a
-distribuição por empresa.
+O efeito conjunto dos pontos de decisão é considerável. Sobre as notícias datadas entre 1 e 3 de
+setembro de 2026, o sistema avaliou $743$ títulos distintos de doze empresas e entregou $15$
+alertas, o que corresponde a uma razão aproximada de um para cinquenta. A janela é curta, e o
+registo de decisões que a sustenta conserva três dias, o que fixa o seu limite. A
+Figura~\ref{fig:sis_seletividade} apresenta a distribuição por empresa.
+
+Dois esclarecimentos condicionam a leitura destes números, e o segundo é o mais importante. O
+primeiro é o de que a unidade é o título distinto: o sistema reavalia os mesmos títulos a cada
+ciclo, pelo que o registo contém $1\,321$ linhas para os $743$ títulos, e contar avaliações
+inflacionaria o funil. O segundo é o de que o total de quinze alertas não mede a matéria-prima
+disponível, mas a política: o orçamento diário de cinco foi integralmente utilizado nos três dias,
+pelo que quinze é o teto que a política impõe e não uma quantidade observada. O que a repartição
+por empresa mede é a ordenação dentro desse teto, e essa não é imposta: nenhuma empresa dispõe de
+quota própria.
 
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-  % Lollipop, e nao barras emparelhadas: SETE das dez empresas tem zero alertas, e num
-  % grafico de barras o zero e' uma barra invisivel -- o achado principal comunicava-se por
-  % ausencia. O marcador quadrado esta sempre presente, e onde vale zero esta rotulado.
-  width=0.80\textwidth, height=7.6cm,
-  xmin=-6, xmax=178,
+  % Lollipop, e nao barras emparelhadas: quatro das doze empresas tem zero alertas, e num
+  % grafico de barras o zero e' uma barra invisivel -- comunicava-se por ausencia. O marcador
+  % quadrado esta sempre presente, e onde vale zero esta rotulado.
+  % DADOS: docs/evaluation/evaluation_funil_seletividade.md, janela 2026-09-01 a 2026-09-03.
+  % O instantaneo anterior (2026-07-13) foi retirado por quatro defeitos diagnosticados a
+  % 2026-09-04: comparava uma janela deslizante com um cumulativo, o rotulo da janela nao era
+  % a janela contada, o valor 14 repetido em tres empresas era o TECTO de 2/empresa/dia, e a
+  % politica que descrevia foi substituida a 2026-08-15 pelo orcamento global.
+  width=0.80\textwidth, height=8.4cm,
+  xmin=-6, xmax=160,
   enlarge y limits=0.07,
-  symbolic y coords={NVDA,JPM,GOOGL,MSFT,NFLX,AMD,AMZN,AAPL,META,TSLA},
-  ytick={NVDA,JPM,GOOGL,MSFT,NFLX,AMD,AMZN,AAPL,META,TSLA},
-  xlabel={Headlines in the observed window},
+  symbolic y coords={JNJ,XOM,JPM,NFLX,META,AMD,AMZN,MSFT,GOOGL,NVDA,TSLA,AAPL},
+  ytick={JNJ,XOM,JPM,NFLX,META,AMD,AMZN,MSFT,GOOGL,NVDA,TSLA,AAPL},
+  xlabel={Distinct headlines in the observed window},
   tick label style={font=\footnotesize},
   label style={font=\footnotesize},
   legend style={font=\footnotesize, at={(0.5,-0.20)}, anchor=north, legend columns=2,
@@ -345,24 +358,25 @@ distribuição por empresa.
   ]
   % haste: do zero ate ao numero de titulos
   \addplot[xbar, bar width=1.2pt, fill=black!30, draw=black!30, forget plot]
-    coordinates {(56,NVDA) (60,JPM) (71,GOOGL) (75,MSFT) (83,NFLX) (88,AMD) (91,AMZN) (135,AAPL) (137,META) (148,TSLA)};
+    coordinates {(14,JNJ) (17,XOM) (26,JPM) (28,NFLX) (38,META) (41,AMD) (68,AMZN) (71,MSFT) (90,GOOGL) (97,NVDA) (120,TSLA) (133,AAPL)};
   \addplot[only marks, mark=*, mark size=2.2pt, black!45,
            nodes near coords, point meta=explicit symbolic,
            every node near coord/.append style={font=\tiny, black!55, anchor=west, xshift=2pt}]
-    coordinates {(56,NVDA) [56] (60,JPM) [60] (71,GOOGL) [71] (75,MSFT) [75] (83,NFLX) [83] (88,AMD) [88] (91,AMZN) [91] (135,AAPL) [135] (137,META) [137] (148,TSLA) [148]};
+    coordinates {(14,JNJ) [14] (17,XOM) [17] (26,JPM) [26] (28,NFLX) [28] (38,META) [38] (41,AMD) [41] (68,AMZN) [68] (71,MSFT) [71] (90,GOOGL) [90] (97,NVDA) [97] (120,TSLA) [120] (133,AAPL) [133]};
   \addplot[only marks, mark=square*, mark size=2.4pt, black!75,
            nodes near coords, point meta=explicit symbolic,
            every node near coord/.append style={font=\tiny, black!75, anchor=east, xshift=-3pt}]
-    coordinates {(0,NVDA) [0] (0,JPM) [0] (0,GOOGL) [0] (0,MSFT) [0] (0,NFLX) [0] (14,AMD) [14] (0,AMZN) [0] (0,AAPL) [0] (14,META) [14] (14,TSLA) [14]};
+    coordinates {(0,JNJ) [0] (0,XOM) [0] (0,JPM) [0] (2,NFLX) [2] (2,META) [2] (2,AMD) [2] (1,AMZN) [1] (1,MSFT) [1] (0,GOOGL) [0] (3,NVDA) [3] (3,TSLA) [3] (1,AAPL) [1]};
   \legend{relevant headlines, alerts delivered}
 \end{axis}
 \end{tikzpicture}
-\caption[Seletividade do sistema por empresa]{Títulos relevantes captados e alertas efetivamente
-entregues, por empresa, na janela observada. O total é de $944$ títulos e $42$ alertas. A
-concentração dos alertas em três empresas não resulta de qualquer regra que privilegie essas
-empresas: decorre da interação entre o limiar de semelhança e a composição da base de casos, cuja
-cobertura por empresa é desigual. A Secção~\ref{sec:av_producao} confirma-o sobre uma amostra
-muito maior.}
+\caption[Seletividade do sistema por empresa]{Títulos distintos avaliados e alertas
+efetivamente entregues, por empresa, entre 1 e 3 de setembro de 2026. O total é de $743$ títulos e
+$15$ alertas, e as duas quantidades são contadas sobre a mesma janela. O total de alertas é o teto
+que o orçamento diário impõe, e não uma medição; o que a figura mostra é a repartição desse teto,
+que a política não fixa. Oito das doze empresas recebem pelo menos um alerta, e a empresa com mais
+títulos avaliados não é a mais alertada. A Secção~\ref{sec:av_producao} examina o efeito desta
+política sobre uma janela muito maior.}
 \label{fig:sis_seletividade}
 \end{figure}
 
@@ -427,8 +441,7 @@ registada como etapa.
 A consequência é relevante para a finalidade do registo. A vista construída para tornar as
 decisões do sistema inspecionáveis indicava $333$ aprovações num dia em que foram entregues cinco
 mensagens. A verificação de duplicação passou a constituir uma etapa com identificação própria,
-como as restantes, e existe um teste automático que falha caso volte a ser omitida. Os valores da
-figura são anteriores a essa correção.
+como as restantes, e existe um teste automático que falha caso volte a ser omitida. Os valores da Figura~\ref{fig:sis_funil} são anteriores a essa correção.
 
 \subsection{Limiares e sua proveniência}
 
