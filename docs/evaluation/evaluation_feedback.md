@@ -4,31 +4,31 @@
 
 > **Todas as regras de análise foram fixadas antes de existirem dados** e estão no cabeçalho de `scripts/analyse_feedback.py`. Nenhuma foi alterada depois.
 
-> Gerado por `scripts/analyse_feedback.py` a 2026-09-04 20:32 UTC.
+> Gerado por `scripts/analyse_feedback.py` a 2026-09-04 21:37 UTC.
 
-> **4 voto(s) excluído(s)** por não corresponderem a nenhum alerta do histórico partilhado. Não foram apagados do ficheiro, que é de acrescento e é a prova; foram ignorados na contagem.
+> **5 voto(s) excluído(s)** por não corresponderem a nenhum alerta do histórico partilhado. Não foram apagados do ficheiro, que é de acrescento e é a prova; foram ignorados na contagem.
 
 ## Dimensão da amostra
 
 | Medida | Valor |
 |---|---|
-| Votos válidos registados | 31 |
-| Votos efetivos (um por pessoa e alerta) | 20 |
-| Pessoas distintas | 2 |
-| Alertas votados | 16 |
-| Mudanças de voto | 5 |
-| Cliques repetidos sem mudança | 6 |
+| Votos válidos registados | 81 |
+| Votos efetivos (um por pessoa e alerta) | 42 |
+| Pessoas distintas | 3 |
+| Alertas votados | 29 |
+| Mudanças de voto | 10 |
+| Cliques repetidos sem mudança | 29 |
 
 ## Resultado
 
 | Recorte | Contagem | Proporção | Nota |
 |---|---|---|---|
-| Alertas considerados úteis | 19 de 20 | 95% | IC 95% de Wilson: 76%–99% |
-| O mesmo, sem o votante dominante | 4 de 4 | não reportada | abaixo do mínimo pré-registado de 20 |
+| Alertas considerados úteis | 41 de 42 | 98% | IC 95% de Wilson: 88%–100% |
+| O mesmo, sem o votante dominante | 14 de 14 | não reportada | abaixo do mínimo pré-registado de 20 |
 
-⚠️ **Salvaguarda do votante dominante aplicada.** Uma só pessoa forneceu 80% dos votos efetivos, excedendo o limite pré-registado de 40%. Sem essa pessoa restam 4 votos, abaixo do mínimo de 20; a segunda linha mostra apenas a contagem e nenhuma proporção desse recorte é reportada.
+⚠️ **Salvaguarda do votante dominante aplicada.** Uma só pessoa forneceu 67% dos votos efetivos, excedendo o limite pré-registado de 40%. Sem essa pessoa restam 14 votos, abaixo do mínimo de 20; a segunda linha mostra apenas a contagem e nenhuma proporção desse recorte é reportada.
 
-A proporção de alertas considerados úteis é de 95%, com intervalo de confiança de Wilson a 95% entre 76% e 99%. A largura deste intervalo é a medida honesta do que 20 votos permitem afirmar, e é por isso que é reportada ao lado do valor central e nunca depois dele.
+A proporção de alertas considerados úteis é de 98%, com intervalo de confiança de Wilson a 95% entre 88% e 100%. A largura deste intervalo é a medida honesta do que 42 votos permitem afirmar, e é por isso que é reportada ao lado do valor central e nunca depois dele.
 
 ## Ameaças à validade, e nenhuma delas é resolúvel com mais votos
 

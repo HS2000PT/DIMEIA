@@ -473,9 +473,14 @@ def main() -> int:
                     help="não filtrar pelo histórico (o relatório assinala-o)")
     ap.add_argument("--out", default=str(OUT_MD))
     ap.add_argument("--out-tex", default=str(OUT_TEX))
-    ap.add_argument("--da-branch", action="store_true",
-                    help="descarrega feedback.jsonl e alerts_history.jsonl da branch de dados "
-                         "antes de analisar (é lá que vivem os dados de produção)")
+    # ⚠️ A BRANCH E O VALOR POR OMISSAO, e era o contrario ate 2026-09-05. O aviso abaixo
+    # ja estava escrito e a opcao segura era a que era precisa PEDIR: o ficheiro local tinha
+    # 35 votos e a producao 86, e a dissertacao reportava metade da unica evidencia humana
+    # do trabalho. Uma salvaguarda cujo valor por omissao e a opcao insegura nao e uma
+    # salvaguarda -- e uma opcao.
+    ap.add_argument("--local", dest="da_branch", action="store_false", default=True,
+                    help="analisa o ficheiro local em vez da branch de dados. So para "
+                         "reproduzir um relatorio antigo: o local so tem os votos desta maquina")
     args = ap.parse_args()
 
     # ⚠️ O ficheiro local só tem os votos desta máquina. Os votos reais chegam pelo Telegram a
