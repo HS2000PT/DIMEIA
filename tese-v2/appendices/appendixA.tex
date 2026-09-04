@@ -237,6 +237,120 @@ destinatários. A exceção é a subscrição opcional de alertas personalizados
 o identificador de conversa atribuído pela plataforma e a lista de empresas escolhida, e esses são
 os únicos elementos armazenados.
 
+
+\section{Infraestrutura: o que entra no sistema, e a que custo}
+\label{sec:ap_infra}
+
+A Figura~\ref{fig:ap_infra} reúne as peças externas de que o sistema depende, pelo ponto do
+percurso em que cada uma entra, e o texto que se lhe segue apresenta o custo efetivo da
+operação. Nenhuma foi escolhida por preferência: todas decorrem da restrição fundadora de
+utilizar apenas fontes gratuitas, e as duas exceções a essa restrição, que são o alojamento e
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[font=\scriptsize, >={Stealth[length=2mm]},
+  et/.style={draw, rounded corners=2pt, align=center, inner sep=3pt, text width=2.35cm,
+             minimum height=2.45cm, fill=black!3},
+  cab/.style={font=\scriptsize\bfseries, text=black!70},
+  lg/.style={inner sep=0pt},
+]
+  \node[et] (a) at (0,0) {};
+  \node[et] (b) at (3.05,0) {};
+  \node[et] (c) at (6.10,0) {};
+  \node[et] (d) at (9.15,0) {};
+  \node[et] (e) at (12.2,0) {};
+
+  \node[cab] at (0,1.42)    {Fontes};
+  \node[cab] at (3.05,1.42) {Representação};
+  \node[cab] at (6.1,1.42)  {Decisão};
+  \node[cab] at (9.15,1.42) {Entrega};
+  \node[cab] at (12.2,1.42) {Operação};
+
+  \node[lg] at (-0.55,0.62) {\includegraphics[height=7mm,width=13mm,keepaspectratio]{finnhub.png}};
+  \node[lg] at (0.55,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{yfinance.png}};
+  \node[lg] at (0,-0.30)    {\includegraphics[height=6mm,width=13mm,keepaspectratio]{rss.png}};
+  \node[font=\tiny, text=black!60, align=center] at (0,-0.95) {preços e\ notícias};
+
+  \node[lg] at (2.20,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{huggingface.png}};
+  \node[lg] at (3.30,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{onnx.png}};
+  \node[lg] at (3.05,-0.30) {\includegraphics[height=6mm,width=13mm,keepaspectratio]{numpy.png}};
+  \node[font=\tiny, text=black!60, align=center] at (3.05,-0.95) {\gls{SBERT} em\ ONNX, 384-d};
+
+  \node[lg] at (5.55,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{scikit-learn.png}};
+  \node[lg] at (6.65,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{pandas.png}};
+  \node[lg] at (6.1,-0.30)  {\includegraphics[height=6mm,width=13mm,keepaspectratio]{python.png}};
+  \node[font=\tiny, text=black!60, align=center] at (6.1,-0.95) {\emph{z}-score\ e triagem};
+
+  \node[lg] at (9.15,0.55)  {\includegraphics[height=9mm,width=13mm,keepaspectratio]{telegram.png}};
+  \node[font=\tiny, text=black!60, align=center] at (9.15,-0.95) {canal\ público};
+
+  \node[lg] at (11.65,0.62) {\includegraphics[height=7mm,width=13mm,keepaspectratio]{heroku.png}};
+  \node[lg] at (12.75,0.62) {\includegraphics[height=7mm,width=13mm,keepaspectratio]{githubactions.png}};
+  \node[lg] at (12.2,-0.30) {\includegraphics[height=6mm,width=13mm,keepaspectratio]{pytest.png}};
+  \node[font=\tiny, text=black!60, align=center] at (12.2,-0.95) {ciclo\ de 60\,s};
+
+  \foreach \x/\y in {a/b, b/c, c/d, d/e} \draw[->, thick, black!45] (\x) -- (\y);
+\end{tikzpicture}
+\caption[As peças externas, por etapa do percurso]{As peças externas de que o sistema depende,
+pela ordem em que entram. As marcas pertencem aos respetivos titulares e a sua utilização aqui é
+nominativa, destinando-se a identificar a ferramenta empregue. A proveniência de cada ficheiro,
+com o resumo criptográfico correspondente, consta do manifesto que acompanha o repositório.}
+\label{fig:ap_infra}
+\end{figure}
+
+\subsection*{Custo da operação, e a razão do escalão escolhido}
+
+O sistema correu durante a maior parte do período documentado em contentores do escalão mais
+baixo, ao custo de sete dólares mensais por processo. Em 4 de setembro de 2026 o processo de
+recolha passou a exceder de forma persistente a quota de memória de $512$\,MB, com avisos de
+excesso a uma frequência de aproximadamente dois por minuto e leituras entre $518$ e $970$\,MB.
+
+Quatro causas foram medidas e corrigidas: a base de casos viva era carregada em listas de
+\emph{float} de Python, ao custo de $136{,}7$\,MB para $10\,968$ registos, contra $21{,}7$\,MB da
+mesma informação numa matriz de precisão simples; as bases e o codificador eram reconstruídos a
+cada ciclo de sessenta segundos; o ficheiro de casos pendentes era lido uma vez por empresa; e a
+publicação de um ficheiro de $40$\,MB produzia cinco cópias dele em memória. O conjunto reduziu o
+pico de $970$ para $663$\,MB.
+
+\textbf{As correções não bastaram, e é esse o resultado honesto.} O conjunto de trabalho da
+aplicação excede genuinamente um contentor de $512$\,MB: as bibliotecas numéricas e o motor de
+inferência ocupam, por si, $158$\,MB, e a matriz de precedentes torna-se residente assim que a
+primeira consulta lhe percorre as páginas. O processo assentava em $536$\,MB mesmo entre picos.
+
+A alternativa técnica seria retirar do processo a base de $38\,214$ precedentes, o que degradaria
+a qualidade da recuperação, isto é, trocaria uma limitação de infraestrutura por uma limitação de
+resultado. A opção tomada foi a inversa, e o custo consta da Tabela~\ref{tab:ap_custo}.
+
+\begin{table}[!htbp]
+\caption[Custo mensal da operação]{Escalões de contentor antes e depois de 4 de setembro de 2026.
+O fornecedor não permite misturar escalões na mesma aplicação, pelo que o processo web, que nunca
+excedeu a quota, subiu por arrasto. É a razão de o acréscimo ser de sessenta e um dólares e não
+dos quarenta e três que a alteração de um só processo custaria.}
+\label{tab:ap_custo}
+\centering
+\small
+\begin{tabular}{L{0.20\textwidth} L{0.20\textwidth} C{0.13\textwidth} C{0.13\textwidth}
+                L{0.20\textwidth}}
+\toprule
+\tabhead{Processo} & \tabhead{Escalão} & \tabhead{Memória} & \tabhead{Custo} & \tabhead{Razão} \\
+\midrule
+\multicolumn{5}{l}{\emph{Até 4 de setembro de 2026}} \\
+web & Basic & $0{,}5$\,GB & \$7 & nunca excedeu a quota \\
+recolha & Basic & $0{,}5$\,GB & \$7 & excedia de forma persistente \\
+\addlinespace
+\multicolumn{5}{l}{\emph{A partir de 4 de setembro de 2026}} \\
+web & Standard-1X & $0{,}5$\,GB & \$25 & subiu por não ser possível misturar escalões \\
+recolha & Standard-2X & $1{,}0$\,GB & \$50 & é o primeiro escalão acima de $0{,}5$\,GB \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Após a alteração, e sobre a mesma carga, não se registou um único aviso de excesso de memória. O
+saldo de crédito disponível cobre aproximadamente quatro meses de operação neste escalão, o que
+excede a duração prevista do trabalho. A restrição de utilizar apenas fontes gratuitas mantém-se
+para os \emph{dados}, que são a matéria da dissertação; o alojamento e o canal de mensagens são
+custos de operação e estão declarados como tal.
+
 \section{Desenho do estudo com utilizadores}
 \label{sec:ap_estudo}
 
