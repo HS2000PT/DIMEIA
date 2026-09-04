@@ -112,6 +112,12 @@ MANIFESTO: list[tuple[str, str, str]] = [
     ("0.460", "evaluation_decomposition.md", "R2 mediano sobre a watchlist"),
     ("0.487", "evaluation_decomposition.md", "quota especifica mediana"),
     # producao
+    # efeito da alteracao de politica: o orcamento diario. O controlo (mercado) fica de
+    # fora do manifesto de proposito -- 0.449 e 0.485 sao a serie NAO governada, e o que
+    # a tese afirma sobre eles e que o intervalo contem zero, nao um valor.
+    ("0.713", "evaluation_budget_effect.md", "concentracao antes do orcamento"),
+    ("0.480", "evaluation_budget_effect.md", "concentracao depois do orcamento"),
+    ("0.514", "evaluation_budget_effect.md", "concentracao com os cinco dias contaminados"),
     ("88.5", "evaluation_news_coverage.md", "cobertura de noticias em dias invulgares"),
     ("36.8", "evaluation_precedent_independence.md", "alertas com menos dias do que casos"),
     ("11.3", "evaluation_precedent_independence.md", "alertas assentes num unico dia"),

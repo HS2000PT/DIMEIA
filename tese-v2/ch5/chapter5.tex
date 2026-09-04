@@ -1260,6 +1260,33 @@ política de orçamento e o sistema implantava uma política de limiar, pelo que
 descrevia um sistema distinto do que estava em funcionamento. As duas políticas passaram a pertencer
 à mesma família sem se tornarem idênticas.
 
+A alteração foi medida sobre os alertas efetivamente entregues, e o efeito pretendido
+verifica-se. A quantidade observada é a concentração, definida como a fração dos alertas que
+pertence às três empresas mais alertadas, e a sua vantagem é ser adimensional, o que permite
+comparar janelas de dimensões distintas. Nos alertas de notícia, que são os que o orçamento
+governa, a concentração desce de $0{,}713$ para $0{,}480$, com intervalo de confiança da
+diferença a excluir zero, e o número de empresas que chegam a produzir um alerta passa de sete
+para nove das doze monitorizadas.
+
+O que sustenta a leitura não é, porém, a descida isolada, mas a comparação com uma série que a
+alteração não governa. Os alertas de movimento de preço atravessam o mesmo período, as mesmas
+empresas e as mesmas condições de mercado, e o orçamento diário não os conta. Nessa série a
+concentração passa de $0{,}449$ para $0{,}485$, com o intervalo a conter zero. A quantidade
+governada deslocou-se e a quantidade não governada não, o que afasta a explicação alternativa
+de que o mercado se teria distribuído de forma mais uniforme no segundo período.
+
+Cinco dias são excluídos da janela posterior, e a razão é registada por ser ela própria um
+resultado. Entre 25 e 29 de agosto de 2026 o contador diário residia em disco efémero e
+regressava ao valor inicial a cada arranque do processo, o que produziu séries de exatamente
+cinco alertas nos instantes dos arranques e um dia com vinte. Nesses dias o orçamento não estava
+em vigor, e a sua inclusão elevaria a concentração posterior para $0{,}514$. A reamostragem é
+efetuada por dia, que é a unidade sobre a qual o orçamento atua.
+
+A comparação não constitui um ensaio aleatorizado. A série de controlo partilha o período mas não
+foi atribuída ao acaso, e as duas janelas diferem em duração e em condições de mercado. O que se
+estabelece é que a quantidade governada se deslocou e a não governada não, e não que nenhuma
+outra causa exista.
+
 A métrica avaliada ordena todas as candidatas do bloco de
 teste e apenas depois preenche cinco lugares em cada dia, o que exige conhecer o dia completo antes
 de decidir e constitui por isso uma política diferida. O sistema implantado decide em linha, de
