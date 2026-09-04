@@ -169,7 +169,56 @@ empresas com o mesmo valor e as restantes a zero — e exige que o relatório a 
 **Verificado a falhar** com o guarda desligado. Mais o controlo no sentido oposto: uma
 distribuição desigual não dispara o aviso.
 
-### E2. Procura da mesma classe noutras figuras — em curso
+### E2. A mesma classe noutras figuras e tabelas — nenhuma
+
+Varridas todas as figuras com coordenadas embutidas e todas as tabelas, à procura de
+valores idênticos repetidos entre categorias, zeros que possam ser dados em falta, e
+múltiplos exactos de um limite conhecido. **Um único resultado, e é a figura nova**: quatro
+empresas a zero alertas e três com dois, o que é uma distribuição legítima e bem abaixo do
+limite por empresa. As repetições nas tabelas são anos, o tamanho da lista vigiada e
+números de secção.
+
+Verificada também a §23 da directiva, percentagens sem tamanho de amostra: os `n` estão
+declarados onde importa, incluindo a sub-população («dos 120 alertas que afirmam
+unanimidade»).
+
+---
+
+## E3. A estrutura pré-textual e os acrónimos
+
+**As listas no Índice.** Só a Lista de Acrónimos constava; as de Figuras, Tabelas e
+Símbolos não. Decidido contra as dissertações aprovadas e não por gosto: o Índice do Bruno
+Ribeiro lista todas com página. As três entram, e as páginas conferem.
+
+**A Lista de Excertos era defendida por um comentário e não existia.** O frontmatter
+argumentava por que valia a pena mantê-la, e a reescrita deixou o documento com zero
+excertos de código. A garantia anti-lookahead, que era o excerto que valia a pena mostrar,
+passou a ser a figura da janela deslizante. Nada se perdeu; o que ficou era código morto.
+
+**Acrónimos.** Dos 27 declarados, quinze nunca são usados — e a lista imprime apenas os
+usados, pelo que são invisíveis ao leitor. Três decisões diferentes para os que apareciam
+por expandir: `HTTP` passa a `\gls`; `ONNX` entra na prosa do apêndice porque só aparecia
+dentro de uma figura; e `AI` e `SIFMA` **ficam**, o primeiro por estar dentro de um título
+de notícia citado e o segundo por ser parte do nome de uma publicação. A lista passa de 12
+para 14, com espaçamento uniforme.
+
+**A pergunta sobre o FinBERT, respondida:** não está na lista porque **não é um acrónimo**.
+A tese nomeia-o pelo ponto de controlo público `ProsusAI/finbert`, que é o artefacto exacto
+sobre o qual a medição incide, e reporta o resultado (`0,420`, o mais baixo de todos) com o
+enquadramento certo. O mesmo critério vale para MiniLM, MPNet, Platt, Vasicek e Telegram.
+
+---
+
+## E4. Cor e uniformidade visual (§7)
+
+**Medido em vez de suposto.** A tese canónica usa **sete cores não-cinzentas em todo o
+documento**, todas `orange!60!black` e todas com o mesmo papel: marcar o critério prático
+ou o limiar. **Não há verde nenhum no corpo.** O verde que o autor viu está nos slides e no
+guia, que são materiais de marca, e nas capturas da aplicação.
+
+Registado e não corrigido: seis capturas superseda (v3, v5, v6) e três logótipos estão em
+`tese-v2/figures/` sem serem usados. Não entram no PDF, mas são uma armadilha para quem
+reutilize a errada.
 
 ---
 
