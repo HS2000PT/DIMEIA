@@ -651,8 +651,10 @@ function fraseDoDia(linhas, estados) {
   if (!enviados && !moveu.length)
     return `Quiet day. ${linhas.length} companies watched, nothing unusual, nothing sent.`;
   const p1 = enviados
-    ? `${enviados} alert${enviados > 1 ? "s" : ""} sent today`
-    : "Nothing sent today";
+    // "news alert", e nao "alert": o orcamento governa so as noticias, e o canal recebe
+    // tambem alertas de movimento de preco, a nota de abertura e o resumo de fecho.
+    ? `${enviados} news alert${enviados > 1 ? "s" : ""} sent today`
+    : "No news alerts sent today";
   const p2 = moveu.length
     ? `${moveu.length} compan${moveu.length > 1 ? "ies" : "y"} moved unusually (${moveu.slice(0,3).join(", ")}${moveu.length > 3 ? "…" : ""})`
     : "no unusual moves";
@@ -701,11 +703,16 @@ function pintarKpis(linhas, estados) {
     // é preço, e uma empresa pode estar nas duas listas ou em nenhuma. Sem isto escrito, a
     // primeira pergunta de quem olha para a figura é porque é que 2 + 5 + 7 não dá 12.
     k("Companies watched", (v.watchlist || []).length,
-      `${enviados} delivered + ${travados} stopped`,
+      `${enviados} news alerts + ${travados} stopped`,
       `<div class="fita">${fita}</div>`),
     k("Unusual moves", assinalados,
       `price beyond ±${v.threshold} on a ${v.window}-day window — counted separately`),
-    k("Alerts delivered", enviados, "today, out of five daily slots", "", "destaque"),
+    // ⚠️ Diz NEWS. O orcamento de cinco governa so os alertas de noticia: os de movimento
+    // de preco, a nota de abertura e o resumo de fecho nao sao contados, e o canal recebe
+    // por isso uma mediana de onze mensagens por dia. Sem esta palavra o leitor ve cinco e
+    // conta onze -- confundiu o proprio autor a 2026-09-05.
+    k("News alerts delivered", enviados, "today, out of five daily slots for news", "",
+      "destaque"),
     k("Stopped at a gate", travados, "silence, and every one is inspectable"),
     // ⚠️ Diz de quantos LEITORES, e nao a proporcao de uteis. Sem o numero de pessoas,
     // 42 votos leem-se como 42 leitores, e o docstring de feedback_log.resumo existe para

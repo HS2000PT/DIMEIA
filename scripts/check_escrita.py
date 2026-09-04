@@ -30,6 +30,15 @@ RAIZ = pathlib.Path(__file__).resolve().parents[1]
 BASE = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else "tese-pt"
 T = RAIZ / BASE
 
+# Determinantes que tornam a construcao correcta quando precedem o possessivo. Fora
+# desta lista, "sua/seu" sem artigo e' marca de PT-BR.
+_ANTES_OK = ("a|as|o|os|da|das|do|dos|na|nas|no|nos|à|às|ao|aos|pela|pelas|pelo|pelos|"
+             "uma|umas|um|uns|essa|essas|esse|esses|esta|estas|este|estes|aquela|aquele|"
+             "cuja|cujas|cujo|cujos|desta|deste|nesta|neste|por")
+# ⚠️ "por seu turno" e "por sua vez" sao expressoes fixas e CORRECTAS em PT-PT: por isso
+# "por" esta na lista acima. Sem essa entrada o verificador acusa prosa correcta, que e' o
+# defeito que faz um verificador deixar de ser lido.
+
 BRASILEIRISMOS = [
     "usuário", "usuários", "arquivo", "arquivos", "tela", "telas", "time", "gerenciar",
     "gerenciamento", "acessar", "planilha", "estoque", "cadastro", "rodar o", "aplicativo",
@@ -123,6 +132,9 @@ def main() -> int:
         return 2
     achados: list = []
     varre("brasileirismo", [re.escape(x) for x in BRASILEIRISMOS], achados)
+    varre("possessivo sem artigo",
+          [r"(?<![A-Za-zÀ-ú])(?!(?:" + _ANTES_OK + r")\s)\w+\s+(?:sua|suas|seu|seus)(?![A-Za-zÀ-ú])"],
+          achados)
     varre("pré-Acordo", [re.escape(x) for x in PRE_ACORDO], achados)
     varre("anglicismo", [re.escape(x) for x in ANGLICISMOS], achados)
     for canonico, alternativas in UM_NOME:
@@ -139,7 +151,8 @@ def main() -> int:
                 achados.append((f"regência ({porque})", f.name, m.group(0), ctx))
 
     # ⚠️ AUTOTESTE: sem isto, um regex partido dá "0 achados" e lê-se como corpus limpo.
-    planta = "O usuário abriu o arquivo e o projecto precisava setup."
+    planta = ("O usuário abriu o arquivo e o projecto precisava setup. "
+              "Limiares e sua proveniência.")
     controlo = []
     for nome, termos in (("b", [re.escape(x) for x in BRASILEIRISMOS]),
                          ("p", [re.escape(x) for x in PRE_ACORDO]),

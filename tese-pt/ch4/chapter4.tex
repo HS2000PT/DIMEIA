@@ -322,6 +322,16 @@ alertas, o que corresponde a uma razão aproximada de um para cinquenta. A janel
 registo de decisões que a sustenta conserva três dias, o que fixa o seu limite. A
 Figura~\ref{fig:sis_seletividade} apresenta a distribuição por empresa.
 
+O orçamento é, na configuração em operação, a restrição que efetivamente atua. Sobre o
+registo de decisões de produção, $98{,}0\%$ das avaliações terminam nele, contra $0{,}1\%$
+no limiar de semelhança e $1{,}1\%$ na verificação de repetição no mesmo dia. A leitura não
+é a de que as restantes portas sejam inúteis: é a de que a redução de volume que importa
+já ocorreu antes delas, no filtro de relevância e na seleção de um título por empresa por
+ciclo, e que a partir daí a quantidade governada é o total diário. É também a consequência
+direta da alteração de política descrita na Secção~\ref{sec:av_producao}: o modelo deixou
+de exercer veto e passou a ordenar dentro do orçamento, pelo que o orçamento ser a
+restrição ativa é a política a comportar-se como foi desenhada, e não um desvio dela.
+
 Dois esclarecimentos condicionam a leitura destes números, e o segundo é o mais importante. O
 primeiro é o de que a unidade é o título distinto: o sistema reavalia os mesmos títulos a cada
 ciclo, pelo que o registo contém $1\,321$ linhas para os $743$ títulos, e contar avaliações
@@ -443,14 +453,14 @@ decisões do sistema inspecionáveis indicava $333$ aprovações num dia em que 
 mensagens. A verificação de duplicação passou a constituir uma etapa com identificação própria,
 como as restantes, e existe um teste automático que falha caso volte a ser omitida. Os valores da Figura~\ref{fig:sis_funil} são anteriores a essa correção.
 
-\subsection{Limiares e sua proveniência}
+\subsection{Limiares e a sua proveniência}
 
 Cada ponto de decisão utiliza uma constante, e a origem dessas constantes é heterogénea. A
 Tabela~\ref{tab:sis_portas} distingue os valores derivados de uma análise dos valores escolhidos,
 distinção que é pertinente porque os dois casos admitem defesas de natureza diferente.
 
 \begin{table}[!htbp]
-\caption[Limiares da política de decisão e sua proveniência]{Constante associada a cada ponto de
+\caption[Limiares da política de decisão e a sua proveniência]{Constante associada a cada ponto de
 decisão e origem do respetivo valor. O primeiro ponto não utiliza constante, por corresponder a
 uma regra de correspondência textual. O orçamento diário atua depois dos pontos de decisão
 representados na Figura~\ref{fig:sis_caminho} e constitui, na configuração em operação, o
