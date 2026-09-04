@@ -103,7 +103,12 @@ MANIFESTO: list[tuple[str, str, str]] = [
     # decomposicao (tecnica 2)
     ("2.0143", "evaluation_decomposition.md", "beta de mercado da AMD, encolhido"),
     ("1.5888", "evaluation_decomposition.md", "beta de setor da AMD, encolhido"),
-    ("0.6577", "evaluation_decomposition.md", "R2 do ajuste da AMD"),
+    # ⚠️ `0.6577` (R2 do ajuste da AMD) SAIU do manifesto a 2026-09-04, e a razao fica
+    # escrita para nao voltar por engano. A reescrita canonica passou a reportar a MEDIANA
+    # do coeficiente sobre a watchlist (`0.460`, que continua no manifesto e passa) em vez
+    # do valor de uma empresa isolada. E a escolha mais defensavel: um R2 individual e uma
+    # anedota, a mediana e um resumo. O numero continua a existir na fonte; deixou de ser
+    # afirmado, e o que este verificador guarda sao as afirmacoes.
     ("0.460", "evaluation_decomposition.md", "R2 mediano sobre a watchlist"),
     ("0.487", "evaluation_decomposition.md", "quota especifica mediana"),
     # producao
@@ -112,11 +117,24 @@ MANIFESTO: list[tuple[str, str, str]] = [
     ("11.3", "evaluation_precedent_independence.md", "alertas assentes num unico dia"),
 ]
 
-FICHEIROS_TESE = [
-    "frontmatter/frontmatter.tex",
-    *[f"cap{i}/capitulo{i}.tex" for i in range(1, 7)],
-    "apendices/apendiceA.tex",
-]
+# ⚠️ AS DUAS ARVORES TEM NOMES DIFERENTES, e apontar a base certa sem corrigir isto e pior do
+# que nao mexer em nada: o verificador le UM ficheiro de oito, encontra seis decimais no que
+# julga ser a tese inteira, e reporta CINQUENTA numeros correctos como "ja nao citados". Foi o
+# que aconteceu a 2026-09-04, e a leitura errada quase me levou a mandar corrigir a tese --
+# que estava certa. Um verificador cego e um verificador que acusa tudo sao o mesmo defeito.
+if (TESE / "ch1").is_dir():          # arvore nova: ch4/chapter4.tex
+    FICHEIROS_TESE = [
+        "frontmatter/frontmatter.tex",
+        *[f"ch{i}/chapter{i}.tex" for i in range(1, 7)],
+        "appendices/appendixA.tex",
+        "appendices/appendixB.tex",
+    ]
+else:                                # arvore antiga: cap4/capitulo4.tex
+    FICHEIROS_TESE = [
+        "frontmatter/frontmatter.tex",
+        *[f"cap{i}/capitulo{i}.tex" for i in range(1, 7)],
+        "apendices/apendiceA.tex",
+    ]
 
 
 def valores(texto: str) -> set[float]:
@@ -170,6 +188,16 @@ def main() -> int:
         for f in FICHEIROS_TESE
         if (TESE / f).exists()
     )
+    # ⚠️ A TESE ESCREVE OS DECIMAIS COM VIRGULA, e sem esta linha o verificador nao os ve.
+    # Em PT-PT o separador decimal e a virgula, e em modo matematico escreve-se `$36{,}8$`.
+    # O verificador procurava `36.8` e reportava tres limitacoes MEDIDAS como "ja nao citadas",
+    # quando estao la todas, com seccao propria. Verificado a 2026-09-04 lendo o texto: a
+    # afirmacao do verificador era falsa e a tese estava certa.
+    #
+    # E a mesma classe do falso positivo da sessao 56, onde o comparador EN<->PT normalizava
+    # `{,}` da mesma maneira nas duas linguas e transformava o `88,5` do PT em `885`.
+    # Um verificador que inventa divergencias manda corrigir o que esta certo.
+    corpo = corpo.replace("{,}", ".")
     citados = valores(corpo)
 
     cache: dict[str, set[float]] = {}
