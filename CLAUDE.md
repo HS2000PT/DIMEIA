@@ -178,6 +178,37 @@
   o guarda**, e a secção 3 da auditoria, que estava a zeros por não haver snapshots, passou a ser
   o instrumento que o mostra. O gerador passa a escrever também a **leitura** do número, e não só
   o número. **973 testes.**
+  **✅ (J) A PORTA DE ENTREGA ESTAVA A GUARDAR O DOCUMENTO ERRADO.** Quatro dos verificadores
+  apontavam para `tese/`, **superseda** por `tese-v2/`: davam garantia falsa sobre o canónico e
+  gritavam por defeitos que não contam. Mesma classe do `check_references` da sessão 58, que só
+  conhecia os nomes ingleses e imprimia «0 referências» como se fosse saúde.
+  **⚠️ E CORRIGI-A MAL À PRIMEIRA, o que é a parte que vale a pena guardar.** Apontei o
+  `check_tese_numeros` à árvore certa **sem corrigir a lista de ficheiros** (`cap4/capitulo4.tex`
+  contra `ch4/chapter4.tex`): passou a ler o frontmatter e mais nada — **seis decimais** no que
+  julgava ser a tese inteira — e reportou **cinquenta números correctos como «já não citados»**.
+  Quase mandei corrigir a tese, que estava certa. **Um verificador cego e um que acusa tudo são
+  o mesmo defeito visto de dois lados.**
+  **⚠️ SEGUNDA CAUSA, INDEPENDENTE: a tese escreve os decimais com VÍRGULA** (`$36{,}8$`, a
+  convenção PT-PT em modo matemático) e o verificador procurava `36.8`. Três limitações
+  **medidas** — cobertura de notícias, independência dos precedentes — apareciam como
+  abandonadas quando estão lá todas, com secção própria (`ch4:563–580`). Mesma classe do falso
+  positivo da sessão 56 (`88,5` do PT lido como `885`). **Verifiquei lendo o texto, não o
+  veredicto do verificador.**
+  **(J2)** `check_materiais` precisa das **duas** árvores e agora di-lo: a prosa é a canónica, os
+  materiais de estudo nunca foram movidos. E acusava **comentários LaTeX** — uma nota de
+  composição («2mm punha a caixa 0,52 pt acima do slide») era reportada como número sem fonte.
+  O `%` tem de não estar escapado, senão apagava o sinal de percentagem dentro dos próprios
+  números a verificar.
+  **(J3) UMA ENTRADA SAIU DO MANIFESTO, COM A RAZÃO ESCRITA:** `0.6577` (R² do ajuste da AMD). A
+  reescrita passou a reportar a **mediana** sobre a watchlist (`0.460`, que fica) em vez do valor
+  de uma empresa — um R² individual é anedota, a mediana é resumo.
+  **PORTA: 8 → 2 por resolver, e os dois não são defeitos.** (1) os **nomes do júri** continuam
+  marcadores, e o ISEP só os designa **depois** da submissão — a tese aprovada do Bruno Ribeiro
+  foi depositada assim; (2) os **slides usam capturas v6** e a tese canónica usa **v7**, logo
+  mostram um produto que o documento já não descreve. Não é para agora: o plano manda fazer
+  slides **por último**, exactamente para não os refazer. **Dissertação canónica: 126 pp, 94 de
+  120 antes dos apêndices, 0 erros, 52/52 números conferidos, flutuantes e escrita limpos.**
+  Materiais recompilados: slides 22 pp, guia 25, guia de construção 16. **973 testes.**
   **✅ CHAVE DO HEROKU SEM PASSAR PELO CHAT:** `deploy_heroku.py` passa a ler `HEROKU_API_KEY` do
   `.env` (gitignored, o cofre que o projecto já usa para as outras onze chaves) antes de tentar a
   CLI, e o valor **nunca é impresso, nem no caminho de erro** — as duas fugas anteriores (sessões
