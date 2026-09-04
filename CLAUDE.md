@@ -367,6 +367,36 @@
   o termo constante é «título» — **o `check_escrita` apanhou o meu próprio texto**.
   **PORTAS: tese 128 pp, 96 de 120 antes dos apêndices, 0 erros, 55/55 números (eram 52), 973
   testes, ruff limpo. Porta de entrega: tudo verde no técnico, 1 pendência humana.**
+  **✅ (T) O INSTRUMENTO DA AVALIAÇÃO DE ~17/09, CONSTRUÍDO E TESTADO ANTES DE HAVER DADOS.**
+  A acção 4 do roadmap é de calendário, mas o instrumento não tinha de ser: construir sob pressão
+  na véspera é construir quando se erra, e construí-lo agora **operacionaliza as regras antes de
+  qualquer resultado ser visível**. `scripts/evaluate_ranking_producao.py` →
+  `docs/evaluation/evaluation_ranking_producao.md`.
+  **As quatro regras que impõe, todas fixadas antes de haver dados:** treinabilidade (só linhas
+  com `as_of` **anterior ou igual** à data da notícia); deduplicação por
+  `(news_date, ticker, headline)`; **agrupamento por `(ticker, dia)`**, com o bootstrap a
+  reamostrar **clusters e não linhas**, porque todas as manchetes da mesma empresa no mesmo dia
+  partilham o rótulo por construção; e **recusa abaixo de 80 pares maturados**. A linha de base de
+  volatilidade sai do **próprio snapshot** (`vol20`), logo corre sobre exactamente as mesmas
+  linhas, sem recalcular nada.
+  **HOJE ELE RECUSA, E ESTÁ CERTO:** 243 linhas utilizáveis, **0 pares maturados**, porque os
+  dados têm três dias e o rótulo precisa de +3 dias de bolsa.
+  **⚠️ E É POR ISSO QUE OS TESTES SÃO O ESSENCIAL.** Uma recusa é **indistinguível de uma
+  avaria**, e um script só exercitado no dia em que os dados chegam é um script que se descobre
+  partido no pior momento. Oito testes, e os que decidem: sobre 120 clusters sintéticos **com**
+  sinal vê `AUC > 0,85` com o intervalo acima do acaso; **sem** sinal o intervalo contém o acaso;
+  e a recusa **não publica** «ROC-AUC», «PR-AUC» nem «IC 95%» em lado nenhum.
+  **✅ (T1) A RECOLHA CHEGA A TEMPO, E O PRÓPRIO RELATÓRIO PASSA A DIZÊ-LO.** Medido: **12 pares
+  empresa-dia por dia de bolsa**, as doze empresas, todos os dias. Com 10 dias de bolsa até 17/09
+  são **~132 pares** contra um mínimo de **80** — no caminho certo, com margem.
+  **Uma recusa que só diz «ainda não» é um beco**, e um mínimo que só se descobre inalcançável na
+  véspera não serve de mínimo: o relatório passa a projectar, e há um teste no **sentido oposto**
+  que exige o aviso quando o ritmo não chega. A projeção supõe que o ritmo se mantém e que o
+  sistema continua no ar, e o relatório di-lo.
+  **⏸️ ONDE PAREI, E PORQUÊ.** Não avancei com o resto do plano de melhoria da auditoria —
+  arrumar a raiz, o glossário, dados de 2026. São de prioridade média ou baixa e **nenhum melhora
+  o documento que vai ser submetido**. A 13 dias do congelamento, mexer no repositório troca
+  risco por arrumação. **981 testes, ruff limpo.**
 - **2026-09-03 — LER PRIMEIRO `docs/planos/REVISAO_PRIORITARIA_ANEXOS.md`.**
   Quatro anexos integrais preservados e 44 itens de verificação. Este estado prevalece sobre
   os registos históricos abaixo: tese canónica `tese-v2/main.pdf`; retreino autorizado, a
@@ -2361,11 +2391,15 @@
   acções que ele classificou como executáveis **estão feitas**; sobra a quarta, que é de
   calendário e não de trabalho.
   **(1) ~17/09 É O MARCO, E É O ÚNICO ITEM COM RELÓGIO.** É a última data de notícia que ainda
-  matura a tempo de 27/09. Nessa altura, fechar a janela e correr a avaliação sobre a população
-  real de candidatas, **segundo o `PROTOCOLO_ACEITACAO_RETREINO.md` e sem o reabrir** — foi
-  fixado antes de existir candidato, e o cálculo de potência diz que a janela **não sustenta**
-  «o candidato bate o modelo atual». Se esse resultado for apresentado como se sustentasse, é aí
-  que a defesa cai.
+  matura a tempo de 27/09. **O INSTRUMENTO JÁ ESTÁ CONSTRUÍDO E TESTADO:** correr
+  `python scripts/evaluate_ranking_producao.py`. Ele impõe sozinho as quatro regras do
+  protocolo e **recusa-se a publicar** abaixo de 80 pares maturados; correr antes do tempo diz
+  «ainda não» e, na mesma passagem, se a recolha está no caminho certo. **Não reabrir o
+  `PROTOCOLO_ACEITACAO_RETREINO.md`** — foi fixado antes de existir candidato, e o cálculo de
+  potência diz que a janela **não sustenta** «o candidato bate o modelo atual». Se esse
+  resultado for apresentado como se sustentasse, é aí que a defesa cai.
+  ⚠️ **Projecção a 2026-09-04:** 12 pares por dia de bolsa, ~132 a 17/09 contra um mínimo de
+  80. No caminho certo, e o relatório reprojecta sozinho a cada corrida.
   ⚠️ **Regra de treinabilidade:** só linhas com `as_of` **anterior ou igual** à data da notícia.
   As `stale` deixaram de ser pontuadas; as anteriores a 04/09 com `as_of` posterior são histórico
   e **não entram** em conjunto nenhum. Cobertura: `scripts/auditar_registo_decisoes.py`.
