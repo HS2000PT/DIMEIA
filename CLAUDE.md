@@ -100,6 +100,44 @@
   exceeded)` no worker (88 ocorrências antes da implantação, logo não é desta sessão) e o Polygon
   a devolver `429`. A máscara `<REDACTED>` da sessão 51 está a funcionar nos registos.
   **963 testes** (era 952), ruff limpo.
+  **⚠️ (H) O R14 ATACADO A SÉRIO: QUATRO CAUSAS MEDIDAS E CORRIGIDAS, E O PROBLEMA NÃO FECHOU.**
+  O worker corria entre **518 e 970 MB** contra uma quota de **512**. Medido em vez de suposto,
+  e a sonda que decidiu foi corrida **no próprio dyno** (o mesmo método da sessão 44):
+  **estado estável 229 MB** — numpy e pandas **92**, sessão ONNX **66**, bases **53**.
+  **(H1) A base viva estava em JSONL.** 10 968 registos custavam **136,7 MB**, contra 21,7 MB
+  para os **38 214** do formato compacto — 12,46 MB por mil contra 0,57, ou seja **22×**. A
+  sessão 59 mediu isto, criou o formato compacto e aplicou-o ao `backfill`, que é **estático**;
+  a base viva, que é a que **cresce**, ficou de fora. `load(..., lean=True)` guarda os vectores
+  numa matriz float32 e larga as listas: **136,7 → 22,3 MB**, com **top-5 idêntico em 6/6**
+  consultas — a mesma verificação que a sessão 59 fez antes de aceitar o compacto.
+  **(H2) As bases e o embedder eram recarregados de 60 em 60 segundos.** O carregamento estava
+  **dentro** do `scan_news`, que é a função que corre a cada ciclo: ~44 MB retidos e **pico de
+  187 MB** de alocações Python por minuto, mais uma sessão ONNX nova. O alocador do Python não
+  devolve arenas ao SO, logo o RSS sobe e fica. Passam a viver o processo, com a cache indexada
+  por `mtime` e tamanho. ⚠️ **O teste que interessa é o do meio:** uma cache que não invalida
+  seria **pior** do que não ter cache, porque o sistema deixava de ver os casos maturados.
+  **(H3) O ficheiro de pendentes era lido uma vez POR EMPRESA.** `_capture_live_safe` corre
+  dentro do ciclo por ticker e relia os **16,4 MB** inteiros de cada vez — **~200 MB de
+  alocações por minuto** só nisto, num ficheiro que **cresce** até os casos maturarem.
+  **(H4) E A MAIOR: publicar um ficheiro de 40 MB fazia CINCO cópias dele.** Bytes lidos,
+  base64 em bytes, o mesmo em `str`, o JSON serializado, o JSON codificado — **pico perto de
+  256 MB**, metade da quota, a cada publicação do `live_kb`. O base64 é ASCII puro e não tem um
+  carácter que o JSON precise de escapar, logo entra tal e qual entre aspas: **duas** cópias em
+  vez de cinco, pico de ~108 MB.
+  **⚠️ RESULTADO HONESTO: o pico caiu de 970 para 663 MB (−307 MB), e o R14 CONTINUA.** O
+  processo assenta em ~536 MB, ou seja **acima da quota mesmo entre picos**. As quatro correcções
+  são melhorias reais e permanentes, e **não chegam**: o conjunto de trabalho desta aplicação
+  excede genuinamente um contentor de 512 MB. As bibliotecas sozinhas (numpy, pandas, ONNX) são
+  **158 MB**, e a matriz do `backfill`, apesar de `mmap`, fica residente assim que a primeira
+  consulta lhe toca todas as páginas.
+  **✅ E O QUE ISTO NÃO É:** `R15` — o que **mata** o dyno — está a **zero**. O R14 é aviso de
+  swap. Os 17 ciclos publicaram, a maturação corre, o instantâneo está fresco a 3,6 s, e os
+  reinícios contados são das minhas próprias implantações. **O sistema funciona; está apertado.**
+  **⏭️ A DECISÃO QUE SOBRA É DE CUSTO, E É DO AUTOR:** worker em `Standard-2X` (1 GB, ~50 USD/mês
+  contra os 7 do `Basic`) fecha o assunto por ~43 USD nos 23 dias que faltam, contra um saldo de
+  312 USD que expira em 2028. A alternativa técnica seria tirar o `backfill` de 38 214 casos do
+  worker, **e isso degrada a qualidade dos precedentes** — é escolha de produto e de tese, não
+  minha. **972 testes**, ruff limpo.
   **✅ CHAVE DO HEROKU SEM PASSAR PELO CHAT:** `deploy_heroku.py` passa a ler `HEROKU_API_KEY` do
   `.env` (gitignored, o cofre que o projecto já usa para as outras onze chaves) antes de tentar a
   CLI, e o valor **nunca é impresso, nem no caminho de erro** — as duas fugas anteriores (sessões
