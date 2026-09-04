@@ -1,49 +1,49 @@
 # O registo de decisões dá para retreinar?
 
 > **Gerado por** `scripts/auditar_registo_decisoes.py`. Não editar à mão.
-> **Fonte:** `origin/alerts-history:predictions_log.jsonl` · **Gerado a:** 2026-09-03 23:31 UTC.
+> **Fonte:** `origin/alerts-history:predictions_log.jsonl` · **Gerado a:** 2026-09-04 01:44 UTC.
 
 ## 1. Dimensão
 
 | | |
 |---|---|
-| Linhas | 39595 |
-| Títulos distintos (`news_date`, `ticker`, `headline`) | 257 |
-| Datas de notícia | 2026-08-27 a 2026-09-03 |
-| Carimbos de decisão | 2026-08-29T03:58:04+00:00 a 2026-09-03T23:28:49+00:00 |
+| Linhas | 41450 |
+| Títulos distintos (`news_date`, `ticker`, `headline`) | 1021 |
+| Datas de notícia | 2026-05-18 a 2026-09-04 |
+| Carimbos de decisão | 2026-08-29T03:58:04+00:00 a 2026-09-04T01:06:01+00:00 |
 | Empresas | 12 |
-| Dias com pelo menos um título | 8 |
-| Mediana de títulos distintos por dia | 28 |
+| Dias com pelo menos um título | 45 |
+| Mediana de títulos distintos por dia | 1 |
 
 **O número de linhas não é o número de observações.** Mediana de
-78 decisões por título distinto; máximo de 1406.
+2 decisões por título distinto; máximo de 1407.
 
 | Ticker | Decisões | Títulos distintos | Decisões por título |
 |---|---|---|---|
-| AAPL | 4094 | 27 | 152 |
-| NVDA | 4094 | 42 | 97 |
-| TSLA | 4094 | 31 | 132 |
-| AMZN | 4094 | 24 | 171 |
-| MSFT | 4090 | 25 | 164 |
-| META | 3997 | 19 | 210 |
-| AMD | 3713 | 22 | 169 |
-| GOOGL | 3635 | 24 | 151 |
-| JPM | 2297 | 13 | 177 |
-| XOM | 2122 | 7 | 303 |
-| NFLX | 1818 | 15 | 121 |
-| JNJ | 1547 | 8 | 193 |
+| AAPL | 4409 | 164 | 27 |
+| TSLA | 4364 | 143 | 31 |
+| NVDA | 4288 | 125 | 34 |
+| AMZN | 4263 | 90 | 47 |
+| MSFT | 4250 | 86 | 49 |
+| META | 4114 | 62 | 66 |
+| GOOGL | 3821 | 101 | 38 |
+| AMD | 3821 | 61 | 63 |
+| JPM | 2384 | 47 | 51 |
+| XOM | 2189 | 36 | 61 |
+| NFLX | 1930 | 70 | 28 |
+| JNJ | 1617 | 36 | 45 |
 
 ## 2. Esquema
 
 | Campo | Linhas | Fração |
 |---|---:|---:|
-| `prob` presente | 33445 | 84.5% |
-| `feature_snapshot` presente | 0 | 0.0% |
-| `model_info` presente | 0 | 0.0% |
-| `kept` verdadeiro | 39595 | 100.0% |
+| `prob` presente | 34565 | 83.4% |
+| `feature_snapshot` presente | 977 | 2.4% |
+| `model_info` presente | 1700 | 4.1% |
+| `kept` verdadeiro | 39770 | 95.9% |
 
-Primeira linha com `feature_snapshot`: **nenhuma**.
-Esquemas de features observados: nenhum.
+Primeira linha com `feature_snapshot`: 2026-09-04T00:25:25+00:00.
+Esquemas de features observados: {'triage-context-v1': 977}.
 
 ## 3. Momento das entradas
 
@@ -51,10 +51,17 @@ Comparação entre `feature_snapshot.as_of` — a última barra de preço usada 
 
 | Relação | Linhas |
 |---|---:|
-| `as_of` anterior à notícia | 0 |
-| `as_of` igual à notícia | 0 |
-| `as_of` posterior à notícia | 0 |
+| `as_of` anterior à notícia | 336 |
+| `as_of` igual à notícia | 211 |
+| `as_of` posterior à notícia | 430 |
 | snapshot sem `as_of` | 0 |
+
+**As linhas com `as_of` POSTERIOR à data da notícia não servem para treino nem para avaliação.**
+O rótulo mede o retorno anormal em `(data, data+3]`; se a barra usada é posterior, as entradas
+descrevem um mercado que **já viu esse desfecho**. Medido a 2026-09-04: as candidatas velhas
+tinham `as_of` de +1 a +107 dias, e eram 430 de 977. A pontuação de candidatas velhas foi
+desligada nessa data, portanto estas linhas são histórico e não crescem — mas continuam no
+ficheiro e **não podem entrar em nenhum conjunto**.
 
 Uma barra anterior à notícia significa que `ret_event` descreve a véspera e não o dia do
 acontecimento. É a assimetria que a dissertação declara entre treino e produção; aqui fica

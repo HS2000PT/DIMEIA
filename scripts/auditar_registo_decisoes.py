@@ -187,6 +187,13 @@ Comparação entre `feature_snapshot.as_of` — a última barra de preço usada 
 | `as_of` posterior à notícia | {posterior} |
 | snapshot sem `as_of` | {sem_as_of} |
 
+**As linhas com `as_of` POSTERIOR à data da notícia não servem para treino nem para avaliação.**
+O rótulo mede o retorno anormal em `(data, data+3]`; se a barra usada é posterior, as entradas
+descrevem um mercado que **já viu esse desfecho**. Medido a 2026-09-04: as candidatas velhas
+tinham `as_of` de +1 a +107 dias, e eram 430 de 977. A pontuação de candidatas velhas foi
+desligada nessa data, portanto estas linhas são histórico e não crescem — mas continuam no
+ficheiro e **não podem entrar em nenhum conjunto**.
+
 Uma barra anterior à notícia significa que `ret_event` descreve a véspera e não o dia do
 acontecimento. É a assimetria que a dissertação declara entre treino e produção; aqui fica
 contada em vez de suposta.
