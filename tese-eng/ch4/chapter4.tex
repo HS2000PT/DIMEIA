@@ -1,43 +1,44 @@
-\chapter{Implementação: InvestiGator}
+\chapter{Implementation: InvestiGator}
 \label{cap:sistema}
 
-Este capítulo descreve a realização do sistema: a sua arquitetura, a forma como cada método do
-Capítulo~\ref{cap:metodologia} é concretizado, a política que decide o que é comunicado ao
-utilizador, a construção da mensagem entregue, e o ciclo de vida do componente aprendido.
+This chapter describes the realisation of the system: its architecture, the way each method of
+Chapter~\ref{cap:metodologia} is put into effect, the policy that decides what is communicated to
+the user, the construction of the message delivered, and the life cycle of the learned
+component.
 
-O Capítulo~\ref{cap:metodologia} apresentou quatro métodos de forma isolada. A sua composição num sistema em funcionamento introduz problemas que nenhum deles apresenta
-isoladamente: a indisponibilidade das fontes, o volume de candidatos por ciclo, a coerência entre
-os valores calculados e o texto apresentado, e a degradação silenciosa dos componentes ao longo do
-tempo. A descrição que se segue organiza-se em
-torno desses problemas.
+Chapter~\ref{cap:metodologia} presented four methods in isolation. Composing them into a working
+system introduces problems that none of them presents on its own: the unavailability of the
+sources, the volume of candidates per cycle, the coherence between the values computed and the text
+presented, and the silent degradation of the components over time. The description that follows is
+organised around those problems.
 
-O sistema desenvolvido designa-se por InvestiGator e encontra-se em funcionamento contínuo,
-entregando alertas a um canal de mensagens e disponibilizando o registo das suas decisões numa
-aplicação web. Os valores apresentados neste capítulo foram lidos do registo do sistema em
-operação, e as datas em que cada medição foi efetuada são indicadas junto de cada uma.
+The system developed is called InvestiGator and is in continuous operation, delivering alerts to a
+messaging channel and making the record of its decisions available in a web application. The values
+presented in this chapter were read from the log of the system in operation, and the dates on which
+each measurement was taken are indicated alongside each one.
 
-\section{Arquitetura do sistema}
+\section{System architecture}
 \label{sec:sis_arquitetura}
 
-A arquitetura do InvestiGator foi definida de acordo com os seguintes requisitos, relativos a
-custo, modularidade, verificabilidade e resiliência:
+The architecture of InvestiGator was defined according to the following requirements, concerning
+cost, modularity, verifiability and resilience:
 
 \begin{itemize}
-  \item operar exclusivamente sobre fontes de dados gratuitas, sem subscrições nem custos por
-        pedido;
-  \item isolar cada método num componente com responsabilidade única, substituível sem alteração
-        dos restantes;
-  \item garantir que qualquer valor apresentado ao utilizador tem origem no componente que o
-        calculou, e não numa segunda derivação independente;
-  \item tolerar a indisponibilidade de qualquer fonte externa sem interrupção do serviço;
-  \item registar cada decisão tomada, incluindo as decisões de não comunicar.
+  \item to operate exclusively on free data sources, with no subscriptions and no per-request
+        costs;
+  \item to isolate each method in a component with a single responsibility, replaceable without
+        changing the others;
+  \item to guarantee that any value presented to the user originates in the component that
+        computed it, and not in a second independent derivation;
+  \item to tolerate the unavailability of any external source without interrupting the service;
+  \item to record every decision taken, including the decisions not to communicate.
 \end{itemize}
 
-O sistema organiza-se em cinco componentes, representados na Figura~\ref{fig:sis_arquitetura}:
-deteção, recuperação, triagem, explicação e entrega. A decomposição do movimento constitui um
-sexto componente, ativado apenas no percurso iniciado por movimento de preço, uma vez que a
-repartição incide sobre o retorno do dia e não existe objeto a repartir quando o acontecimento
-que desencadeia a avaliação é uma notícia.
+The system is organised into five components, shown in Figure~\ref{fig:sis_arquitetura}:
+detection, retrieval, triage, explanation and delivery. The decomposition of the movement is a
+sixth component, activated only on the path started by a price movement, since the split applies to
+the return of the day and there is no object to split when the event that triggers the assessment
+is a news item.
 
 \begin{figure}[ht]
 \centering
@@ -77,88 +78,87 @@ que desencadeia a avaliação é uma notícia.
   \draw[->] (exp.east) -- ++(0.35,0) |- (tg.west);
   \draw[->] (exp.east) -- ++(0.35,0) |- (web.west);
 \end{tikzpicture}
-\caption[Arquitetura do InvestiGator]{Componentes do sistema e respetivas ligações. À esquerda, as
-fontes de dados; ao centro, os métodos do Capítulo~\ref{cap:metodologia} e o componente que compõe
-o texto; à direita, os dois canais de entrega. A decomposição encontra-se a tracejado por ser o
-único componente que não intervém em todas as avaliações.}
+\caption[Architecture of InvestiGator]{Components of the system and their connections. On the
+left, the data sources; in the centre, the methods of Chapter~\ref{cap:metodologia} and the
+component that composes the text; on the right, the two delivery channels. The decomposition is
+dashed because it is the only component that does not take part in every assessment.}
 \label{fig:sis_arquitetura}
 \end{figure}
 
-Uma regra de construção atravessa a totalidade da implementação: o texto entregue ao utilizador é
-composto a partir dos objetos que os componentes produziram, e não redigido de forma independente.
-Quando o detetor calcula um valor de $z$ igual a $+7.61$, é esse valor que a mensagem apresenta.
-A alternativa, que consistiria em manter um local onde o texto é escrito e outro onde a quantidade
-é calculada, admite divergência entre os dois sem que essa divergência seja observável. A
-restrição elimina essa possibilidade por construção.
+One construction rule runs through the whole implementation: the text delivered to the user is
+composed from the objects the components produced, and not written independently. When the detector
+computes a $z$ value equal to $+7.61$, it is that value the message presents. The alternative,
+which would consist in keeping one place where the text is written and another where the quantity
+is computed, admits divergence between the two without that divergence being observable. The
+constraint eliminates that possibility by construction.
 
-\subsection{Comunicação entre componentes}
+\subsection{Communication between components}
 
-Os componentes comunicam por passagem direta de objetos dentro de um processo único, e não por
-protocolo de rede. A decisão decorre do perfil de utilização: o sistema serve uma lista reduzida
-de empresas, com um ciclo de avaliação de sessenta segundos, e o volume não justifica o custo de
-coordenação de uma arquitetura distribuída. A separação entre componentes é assegurada por
-interfaces explícitas, o que preserva a substituibilidade sem introduzir latência de comunicação.
+The components communicate by direct passing of objects within a single process, and not by
+network protocol. The decision follows from the usage profile: the system serves a small list of
+companies, with a sixty-second assessment cycle, and the volume does not justify the coordination
+cost of a distributed architecture. The separation between components is ensured by explicit
+interfaces, which preserves replaceability without introducing communication latency.
 
-Duas exceções operam sobre fronteiras de processo. A entrega utiliza a interface de robô do canal
-de mensagens, por pedido \gls{HTTP}. A aplicação web que expõe o registo de decisões corre como processo
-separado e lê o mesmo repositório de dados, sem escrever nele. Esta segunda separação garante que
-a consulta do registo não interfere com o ciclo de avaliação.
+Two exceptions operate across process boundaries. Delivery uses the bot interface of the messaging
+channel, by \gls{HTTP} request. The web application that exposes the decision log runs as a
+separate process and reads the same data repository, without writing to it. This second separation
+guarantees that consulting the log does not interfere with the assessment cycle.
 
-\section{Aquisição de dados}
+\section{Data acquisition}
 \label{sec:sis_dados}
 
-A restrição de custo nulo determina as decisões de aquisição. Um investidor particular que
-considere elevados os custos de corretagem não subscreve um terminal de informação financeira, e a
-utilidade do sistema para o destinatário definido no Capítulo~\ref{cap:introducao} depende de o
-sistema operar sem esse custo. As fontes gratuitas apresentam, contudo, três limitações
-sistemáticas: bloqueiam o acesso por excesso de pedidos, respondem com erro sem aviso, e publicam
-com atraso. As decisões descritas nesta secção respondem a essas limitações.
+The zero-cost constraint determines the acquisition decisions. A retail investor who considers
+brokerage costs high does not subscribe to a financial information terminal, and the usefulness of
+the system for the recipient defined in Chapter~\ref{cap:introducao} depends on the system
+operating without that cost. Free sources present, however, three systematic limitations: they
+block access for excess of requests, they answer with an error without warning, and they publish
+late. The decisions described in this section respond to those limitations.
 
-\subsection{Cotações}
+\subsection{Quotes}
 
-Os preços são obtidos através de uma cadeia de quatro alternativas, consultadas por ordem fixa,
-adotando-se a primeira que responde com dados válidos. O identificador da fonte que serviu cada
-valor é registado juntamente com o valor, uma vez que a proveniência de uma quantidade integra a
-sua explicação.
+Prices are obtained through a chain of four alternatives, consulted in a fixed order, the first
+that answers with valid data being adopted. The identifier of the source that served each value is
+recorded together with the value, since the provenance of a quantity is part of its
+explanation.
 
-A ordem da cadeia não é arbitrária nem definitiva. Uma das fontes foi despromovida na sequência da
-observação do conteúdo que devolvia, e uma candidata adicional foi rejeitada por responder com
-verificação anti-robô, o que a torna inutilizável em operação automática. Estas duas decisões
-resultaram de medição e não de preferência declarada.
+The order of the chain is neither arbitrary nor definitive. One of the sources was demoted after
+observing the content it returned, and an additional candidate was rejected for answering with an
+anti-robot check, which makes it unusable in automated operation. Both decisions resulted from
+measurement and not from declared preference.
 
-A redundância da cadeia tem uma consequência que ultrapassa a disponibilidade. Sem ela, um dia em
-que a fonte única bloqueia o acesso é indistinguível de um dia em que o mercado não abriu, e o
-sistema não dispõe de forma de separar as duas situações.
+The redundancy of the chain has a consequence that goes beyond availability. Without it, a day on
+which the single source blocks access is indistinguishable from a day on which the market did not
+open, and the system has no way of separating the two situations.
 
-\subsection{Notícias}
+\subsection{News}
 \label{sec:sis_fontes}
 
-As notícias são obtidas por empresa, a partir de três interfaces gratuitas. O material recebido
-inclui um volume elevado de conteúdo não aproveitável: listas automáticas de maiores variações do
-dia, textos que mencionam a empresa apenas de passagem, e comunicados de escritórios de advocacia.
-Um filtro de relevância, aplicado à entrada, exige que o título nomeie explicitamente a empresa e
-rejeita os padrões conhecidos de texto gerado automaticamente.
+News is obtained per company, from three free interfaces. The material received includes a high
+volume of unusable content: automatic lists of the day's largest movers, texts that mention the
+company only in passing, and press releases from law firms. A relevance filter, applied on entry,
+requires the headline to name the company explicitly and rejects the known patterns of
+automatically generated text.
 
-A utilização de três fontes em vez de uma foi avaliada por medição, sobre doze empresas e três
-dias. O critério adotado não é o número de títulos devolvidos por cada fonte, mas o número de
-títulos que sobrevive ao filtro de relevância, dado que o material rejeitado à entrada não chega a
-existir para o sistema. A Tabela~\ref{tab:sis_fontes} apresenta o resultado.
+The use of three sources rather than one was assessed by measurement, over twelve companies and
+three days. The criterion adopted is not the number of headlines returned by each source, but the
+number of headlines that survives the relevance filter, since material rejected on entry never
+comes to exist for the system. Table~\ref{tab:sis_fontes} presents the result.
 
 \begin{table}[!htbp]
-\caption[Caracterização das três fontes de notícias]{Material entregue por cada fonte gratuita
-após aplicação do filtro de relevância. A coluna \emph{exclusivos} indica os títulos que uma fonte
-traz e nenhuma das outras traz. Esse valor constitui um limite superior, uma vez que a comparação
-entre títulos é efetuada por correspondência textual após normalização, e duas fontes que
-descrevam o mesmo acontecimento por outras palavras produzem dois títulos contabilizados como
-distintos.}
+\caption[Characterisation of the three news sources]{Material delivered by each free source after
+the relevance filter is applied. The \emph{exclusive} column indicates the headlines that one
+source brings and none of the others brings. That value is an upper bound, since the comparison
+between headlines is made by textual matching after normalisation, and two sources that describe
+the same event in different words produce two headlines counted as distinct.}
 \label{tab:sis_fontes}
 \centering
 \small
 \begin{tabular}{L{0.20\textwidth} C{0.12\textwidth} C{0.11\textwidth} C{0.13\textwidth}
                 C{0.12\textwidth} C{0.13\textwidth}}
 \toprule
-\tabhead{Fonte} & \tabhead{Relevantes} & \tabhead{Precisão} & \tabhead{Frescura} &
-\tabhead{Cobertura} & \tabhead{Exclusivos} \\
+\tabhead{Source} & \tabhead{Relevant} & \tabhead{Precision} & \tabhead{Freshness} &
+\tabhead{Coverage} & \tabhead{Exclusive} \\
 \midrule
 Finnhub & $432$ & $\mathbf{35\%}$ & $15.8$ h & $\mathbf{12/12}$ & $401$ \\
 Alpha Vantage & $141$ & $24\%$ & $\mathbf{9.3}$ \textbf{h} & $\mathbf{12/12}$ & $119$ \\
@@ -167,58 +167,57 @@ Polygon & $429$ & $27\%$ & $52.6$ h & $8/12$ & $\mathbf{418}$ \\
 \end{tabular}
 \end{table}
 
-As três fontes apresentam perfis complementares, e é essa complementaridade, e não o volume
-agregado, que justifica a sua utilização conjunta. O Finnhub apresenta a maior precisão de
-etiquetagem e cobre a totalidade das empresas. A Alpha Vantage apresenta a menor mediana de idade
-das notícias, com $9.3$ horas contra $15.8$, o que a torna a fonte relevante para a redução do
-atraso dos alertas. O Polygon contribui com o maior número de títulos exclusivos, com uma mediana
-de idade de $52.6$ horas, o que o torna adequado à alimentação da base de casos e inadequado ao
-alerta em tempo útil. É essa a utilização que lhe está atribuída.
+The three sources have complementary profiles, and it is that complementarity, and not the
+aggregate volume, that justifies using them together. Finnhub has the highest labelling precision
+and covers all the companies. Alpha Vantage has the lowest median age of the news, at $9.3$ hours
+against $15.8$, which makes it the relevant source for reducing the delay of the alerts. Polygon
+contributes the largest number of exclusive headlines, with a median age of $52.6$ hours, which
+makes it suitable for feeding the case base and unsuitable for alerting in useful time. That is the
+use assigned to it.
 
-O conjunto das três fontes produz $970$ títulos relevantes distintos, contra os $432$ obtidos
-apenas com o Finnhub. O ganho concentra-se nas empresas com menor cobertura individual, que
-correspondem precisamente aos casos em que o sistema anteriormente não dispunha de material para
-comentar.
+The three sources together produce $970$ distinct relevant headlines, against the $432$ obtained
+with Finnhub alone. The gain concentrates on the companies with the lowest individual coverage,
+which are precisely the cases in which the system previously had no material to comment on.
 
-A agregação não garante, contudo, redução da latência em geral. As três fontes publicam com
-atrasos próprios, e o ganho num caso concreto depende de qual delas observou o acontecimento em
-primeiro lugar. A mediana de frescura melhora, e essa melhoria encontra-se medida; a afirmação de
-que os alertas passam a chegar mais cedo exigiria nova medição da latência de extremo a extremo
-sobre um período alargado, que não foi realizada.
+Aggregation does not, however, guarantee a reduction in latency in general. The three sources
+publish with delays of their own, and the gain in a concrete case depends on which of them observed
+the event first. The median freshness improves, and that improvement is measured; the claim that
+alerts now arrive earlier would require a new end-to-end latency measurement over an extended
+period, which was not carried out.
 
-\subsection{Base histórica e base implantada}
+\subsection{Historical base and deployed base}
 
-A recuperação de precedentes requer um corpo de casos passados com desfecho conhecido. O sistema
-utiliza dois conjuntos distintos, com finalidades distintas, e a sua separação é relevante para a
-leitura dos resultados do Capítulo~\ref{cap:avaliacao}.
+Precedent retrieval requires a body of past cases with a known outcome. The system uses two
+distinct sets, with distinct purposes, and their separation matters for reading the results of
+Chapter~\ref{cap:avaliacao}.
 
-O primeiro é o \gls{FNSPID} \autocite{dong2024fnspid}, um conjunto público de notícias financeiras
-alinhado com os preços correspondentes. Do alinhamento descrito na Secção~\ref{sec:met_dados}
-resultam $79{,}753$ exemplos entre 2018 e 2023, cada um com o movimento de preço subsequente. É
-sobre este conjunto que os métodos são avaliados.
+The first is \gls{FNSPID} \autocite{dong2024fnspid}, a public set of financial news aligned with
+the corresponding prices. From the alignment described in Section~\ref{sec:met_dados} result
+$79{,}753$ examples between 2018 and 2023, each with the subsequent price movement. It is on this
+set that the methods are evaluated.
 
-O segundo é a base de casos que o sistema implantado consulta, e resulta da fusão de duas origens
-que importa não confundir. A primeira é uma reconstrução de um ano de história, obtida executando os
-componentes de recolha e de maturação sobre o passado, com $38{,}214$ casos; a separação face ao
-registo do sistema em funcionamento é deliberada, uma vez que um caso reproduzido não é um caso
-observado. A segunda é a base viva, alimentada pela varredura, com $11{,}445$ casos. A recuperação
-percorre as duas em conjunto. Os vetores são armazenados como matriz de precisão simples mapeada em disco. O
-formato não é indiferente: as mesmas representações em estruturas nativas da linguagem excediam a
-memória disponível no contentor de execução, e a alteração de formato foi a condição que tornou a
-sua utilização possível.
+The second is the case base the deployed system consults, and it results from merging two origins
+that should not be confused. The first is a reconstruction of one year of history, obtained by
+running the collection and maturation components over the past, with $38{,}214$ cases; the
+separation from the log of the running system is deliberate, since a replayed case is not an
+observed case. The second is the live base, fed by the scan, with $11{,}445$ cases. Retrieval scans
+both together. The vectors are stored as a single-precision matrix mapped on disk. The format is
+not indifferent: the same representations in the language's native structures exceeded the memory
+available in the execution container, and the change of format was the condition that made their
+use possible.
 
-\section{Percurso de um acontecimento}
+\section{The path of an event}
 \label{sec:sis_percurso}
 
-O sistema admite dois percursos distintos, consoante o acontecimento que desencadeia a avaliação
-seja uma notícia ou um movimento de preço. Os dois convergem no componente de explicação e
-utilizam a mesma política de decisão, descrita na Secção~\ref{sec:sis_politica}.
+The system admits two distinct paths, depending on whether the event that triggers the assessment
+is a news item or a price movement. The two converge in the explanation component and use the same
+decision policy, described in Section~\ref{sec:sis_politica}.
 
-\subsection{Percurso iniciado por notícia}
+\subsection{Path started by a news item}
 
-O percurso iniciado por notícia compreende nove etapas, representadas na
-Figura~\ref{fig:sis_caminho}. Cinco dessas etapas são pontos de decisão em que a candidata pode
-ser descartada, situação em que o sistema não comunica.
+The path started by a news item comprises nine stages, shown in
+Figure~\ref{fig:sis_caminho}. Five of those stages are decision points at which the candidate can
+be discarded, in which case the system does not communicate.
 
 \begin{figure}[ht]
 \centering
@@ -247,74 +246,75 @@ ser descartada, situação em que o sistema não comunica.
   \draw[->] (d) -- (e); \draw[->] (e) -- (f); \draw[->] (f) -- (g); \draw[->] (g) -- (h);
   \draw[->] (h) -- (i);
 \end{tikzpicture}
-\caption[Etapas do percurso iniciado por notícia]{As nove etapas do percurso. As caixas a
-tracejado correspondem a pontos de decisão em que a candidata pode ser descartada. A
-Secção~\ref{sec:sis_politica} quantifica a proporção de candidatas eliminada em cada um.}
+\caption[Stages of the path started by a news item]{The nine stages of the path. The dashed boxes
+correspond to decision points at which the candidate can be discarded.
+Section~\ref{sec:sis_politica} quantifies the proportion of candidates eliminated at each one.}
 \label{fig:sis_caminho}
 \end{figure}
 
-O funcionamento do percurso é ilustrado por um alerta entregue a 12 de julho de 2026, relativo à
-Meta, com o título \emph{``Mark Zuckerberg Said Meta's AI Bets `Haven't Come to Fruition Yet' as
-Shares Fell 5\%''}. O título nomeia a empresa e não corresponde a nenhum dos padrões de texto automático. A data
-situa-se dentro do intervalo de dois dias exigido. Os três precedentes mais próximos são Microsoft
-de 2023-11-07, com semelhança $0.46$, Nvidia de 2023-08-02, com $0.51$, e Nvidia de
-2023-09-21, com $0.46$; a melhor delas fica acima do limiar de $0.45$. O modelo de triagem
-atribui uma probabilidade de $54\%$. E o alerta é o primeiro relativo à empresa nesse dia. A mensagem é então composta e registada.
+The operation of the path is illustrated by an alert delivered on 12 July 2026, concerning Meta,
+with the headline \emph{``Mark Zuckerberg Said Meta's AI Bets `Haven't Come to Fruition Yet' as
+Shares Fell 5\%''}. The headline names the company and matches none of the automatic text patterns.
+The date falls within the two-day interval required. The three closest precedents are Microsoft of
+2023-11-07, with similarity $0.46$, Nvidia of 2023-08-02, with $0.51$, and Nvidia of 2023-09-21,
+with $0.46$; the best of them is above the $0.45$ threshold. The triage model assigns a probability
+of $54\%$. And the alert is the first concerning the company on that day. The message is then
+composed and logged.
 
-Os precedentes recuperados neste caso pertencem a empresas distintas daquela sobre a qual o alerta
-incide, e são apresentados na mesma. A opção é deliberada e decorre da formulação da terceira
-questão de investigação: a comparabilidade é estabelecida pelo tema da notícia e não pela
-identidade da empresa. Notícias relativas a investimento em inteligência artificial em empresas
-tecnológicas de grande dimensão constituem casos comparáveis entre si.
+The precedents retrieved in this case belong to companies distinct from the one the alert concerns,
+and are presented nonetheless. The option is deliberate and follows from the formulation of the
+second research question: comparability is established by the topic of the news and not by the
+identity of the company. News items concerning investment in artificial intelligence at large
+technology companies are cases comparable with one another.
 
-Os desfechos dos três precedentes são divergentes, com movimentos de $+2.70\%$, $-3.87\%$ e
-$+5.05\%$. O sistema apresenta os três individualmente, e não a sua média, precisamente por essa
-razão. A média oculta a informação mais relevante do conjunto, que é a inexistência de um desfecho
-comum a casos semelhantes.
+The outcomes of the three precedents diverge, with movements of $+2.70\%$, $-3.87\%$ and
+$+5.05\%$. The system presents the three individually, and not their average, precisely for that
+reason. The average hides the most relevant piece of information in the set, which is the absence
+of a common outcome across similar cases.
 
-\subsection{Percurso iniciado por movimento de preço}
+\subsection{Path started by a price movement}
 
-O segundo percurso é substancialmente mais curto. O $z$-score é calculado por dois caminhos. Após o
-fecho de cada sessão, o sistema avalia o retorno do dia fechado de cada empresa da lista vigiada
-contra a norma dos vinte dias anteriores, conforme descrito na Secção~\ref{sec:met_detecao}. Durante
-a sessão, avalia o retorno em curso, obtido da cotação corrente contra o fecho anterior, contra a
-mesma norma diária, formada nesse caso pelos vinte dias completos mais recentes, uma vez que o dia
-em curso ainda não pertence à série. O segundo caminho antecipa a deteção sem alterar a definição de
-normalidade, e é o que permite comunicar um movimento enquanto a sessão decorre; é também o que não
-depende da fonte de séries históricas, cuja barra do dia pode chegar com atraso. Em qualquer dos
-caminhos, a ultrapassagem do limiar constitui condição suficiente para avaliação.
+The second path is substantially shorter. The $z$-score is computed by two routes. After the close
+of each session, the system assesses the return of the closed day of each company on the watched
+list against the norm of the twenty preceding days, as described in Section~\ref{sec:met_detecao}.
+During the session, it assesses the return in progress, obtained from the current quote against the
+previous close, against the same daily norm, formed in that case by the twenty most recent complete
+days, since the day in progress does not yet belong to the series. The second route brings the
+detection forward without changing the definition of normality, and is what allows a movement to be
+communicated while the session is under way; it is also the one that does not depend on the
+historical series source, whose bar for the day may arrive late. On either route, crossing the
+threshold is a sufficient condition for assessment.
 
-É neste percurso, e apenas neste, que intervém a decomposição do movimento. Ao alerta é acrescentada
-uma linha com a repartição calculada segundo a Secção~\ref{sec:met_decomposicao}, com a forma
-\emph{``NFLX $-2.11\%$ hoje $=$ $-0.08\%$ mercado $\cdot$ $-0.32\%$ setor $\cdot$
-$-1.71\%$ da própria empresa''}, seguida de uma frase que nomeia em linguagem corrente a parcela
-dominante. Quando a estimação da sensibilidade ao mercado não é possível, a linha é apresentada na
-mesma, declarando que foi assumida sensibilidade unitária e que a repartição tem carácter
-indicativo.
+It is on this path, and only on this one, that the decomposition of the movement intervenes. A line
+is added to the alert with the split computed according to Section~\ref{sec:met_decomposicao}, in
+the form \emph{``NFLX $-2.11\%$ today $=$ $-0.08\%$ market $\cdot$ $-0.32\%$ sector $\cdot$
+$-1.71\%$ company itself''}, followed by a sentence that names in plain language the dominant part.
+When estimating the sensitivity to the market is not possible, the line is presented all the same,
+declaring that unit sensitivity was assumed and that the split is indicative.
 
-Duas capacidades foram acrescentadas ao percurso após a entrada do sistema em funcionamento, ambas
-por observação do comportamento em operação. A primeira consiste na atribuição de níveis de
-severidade: um valor de $z$ de $1.6$ e um valor de $3.2$ passaram a ser descritos por termos
-distintos, em lugar de gerarem a mesma formulação. A segunda consiste na comparação com as
-restantes empresas do mesmo setor na mesma sessão, dado que um alerta que reporta uma descida sem
-indicar que o setor inteiro desceu transmite informação incompleta.
+Two capabilities were added to the path after the system entered operation, both from observing its
+behaviour in production. The first consists in assigning severity levels: a $z$ value of $1.6$ and a
+value of $3.2$ came to be described by distinct terms, instead of producing the same wording. The
+second consists in comparing with the remaining companies of the same sector in the same session,
+since an alert that reports a fall without indicating that the whole sector fell conveys incomplete
+information.
 
-A segunda correção resultou da leitura dos trinta primeiros alertas entregues. Em nove deles o
-texto era internamente contraditório: uma linha indicava que o movimento parecia comum ao setor, e
-a repartição apresentada duas linhas abaixo atribuía a maior parcela à empresa. As duas linhas
-estavam corretas isoladamente, e a contradição resultava de a comparação com os pares considerar
-apenas a direção do movimento das empresas vizinhas, e não a sua magnitude. A comparação passou a
-considerar ambas.
+The second correction resulted from reading the first thirty alerts delivered. In nine of them the
+text was internally contradictory: one line indicated that the movement appeared to be common to
+the sector, and the split presented two lines below attributed the largest part to the company. The
+two lines were correct in isolation, and the contradiction resulted from the comparison with peers
+considering only the direction of the movement of the neighbouring companies, and not its
+magnitude. The comparison came to consider both.
 
-\section{Política de decisão}
+\section{Decision policy}
 \label{sec:sis_politica}
 
-A comunicação de todas as candidatas avaliadas é equivalente à ausência de comunicação. Um canal
-que entregue quinze mensagens diárias deixa de ser lido, e o sistema perde a utilidade que
-justifica a sua existência. Os pontos de decisão da Figura~\ref{fig:sis_caminho} respondem a esta
-restrição.
+Communicating every candidate assessed is equivalent to communicating nothing. A channel that
+delivers fifteen messages a day stops being read, and the system loses the usefulness that
+justifies its existence. The decision points of Figure~\ref{fig:sis_caminho} respond to this
+constraint.
 
-\subsection{Seletividade observada}
+\subsection{Observed selectivity}
 
 O efeito conjunto dos pontos de decisão é considerável. Sobre as notícias datadas entre 1 e 3 de
 setembro de 2026, o sistema avaliou $743$ títulos distintos de doze empresas e entregou $15$
