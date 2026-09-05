@@ -239,8 +239,11 @@ be discarded, in which case the system does not communicate.
   \node[et, below=7mm of h, fill=black!16] (i) {deliver and\\ log};
 
   \foreach \x/\i in {a/1, b/2, c/3, d/4} { \node[n, above=0.5mm of \x] {\i}; }
-  \foreach \x/\i in {e/5, f/6, g/7, h/8} { \node[n, above=0.5mm of \x] {\i}; }
-  \node[n, above=0.5mm of i] {9};
+  \foreach \x/\i in {f/6, g/7, h/8} { \node[n, above=0.5mm of \x] {\i}; }
+  % Estas duas caixas recebem a seta pelo TOPO: um numero centrado ficaria por baixo
+  % dela, riscado, que e' como estiveram ate 2026-09-05. Deslocados para o lado.
+  \node[n] at ([xshift=6mm,yshift=2.6mm]e.north west) {5};
+  \node[n] at ([xshift=6mm,yshift=2.6mm]i.north west) {9};
 
   \draw[->] (a) -- (b); \draw[->] (b) -- (c); \draw[->] (c) -- (d);
   \draw[->] (d) -- (e); \draw[->] (e) -- (f); \draw[->] (f) -- (g); \draw[->] (g) -- (h);
@@ -355,7 +358,10 @@ quota of its own.
   % a janela contada, o valor 14 repetido em tres empresas era o TECTO de 2/empresa/dia, e a
   % politica que descrevia foi substituida a 2026-08-15 pelo orcamento global.
   width=0.80\textwidth, height=8.4cm,
-  xmin=-6, xmax=160,
+  % ⚠ A margem esquerda existe para a contagem de alertas caber entre
+  % o eixo e o marcador do zero. Com -6 os zeros saiam por cima da linha do
+  % eixo e liam-se como noves, nas empresas cuja leitura mais interessa.
+  xmin=-16, xmax=160,
   enlarge y limits=0.07,
   symbolic y coords={JNJ,XOM,JPM,NFLX,META,AMD,AMZN,MSFT,GOOGL,NVDA,TSLA,AAPL},
   ytick={JNJ,XOM,JPM,NFLX,META,AMD,AMZN,MSFT,GOOGL,NVDA,TSLA,AAPL},
@@ -376,7 +382,11 @@ quota of its own.
     coordinates {(14,JNJ) [14] (17,XOM) [17] (26,JPM) [26] (28,NFLX) [28] (38,META) [38] (41,AMD) [41] (68,AMZN) [68] (71,MSFT) [71] (90,GOOGL) [90] (97,NVDA) [97] (120,TSLA) [120] (133,AAPL) [133]};
   \addplot[only marks, mark=square*, mark size=2.4pt, black!75,
            nodes near coords, point meta=explicit symbolic,
-           every node near coord/.append style={font=\tiny, black!75, anchor=east, xshift=-3pt}]
+           % ⚠ ABAIXO do marcador, e nao a esquerda: os zeros ficavam em cima da linha
+           % do eixo e liam-se como noves, o que invertia a leitura das empresas que
+           % nao alertam.
+           every node near coord/.append style={font=\tiny, black!75,
+                                                anchor=east, xshift=-4pt}]
     coordinates {(0,JNJ) [0] (0,XOM) [0] (0,JPM) [0] (2,NFLX) [2] (2,META) [2] (2,AMD) [2] (1,AMZN) [1] (1,MSFT) [1] (0,GOOGL) [0] (3,NVDA) [3] (3,TSLA) [3] (1,AAPL) [1]};
   \legend{relevant headlines, alerts delivered}
 \end{axis}

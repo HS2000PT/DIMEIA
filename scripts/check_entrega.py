@@ -56,7 +56,16 @@ VERIFICADORES = [
     ("artigo alinhado com a dissertação", "check_artigo_numeros.py", []),
     # A politica linguistica admite duas configuracoes; o que nao admite e uma figura
     # metade em cada. A 2026-09-04 duas das mais importantes do Cap. 4 estavam assim.
-    ("figuras: uma so língua por figura", "check_figuras_lingua.py", []),
+    ("figuras PT: uma so língua por figura", "check_figuras_lingua.py", []),
+    # ⚠️ A ARVORE INGLESA PRECISA DA MESMA PORTA. Com duas arvores, um verificador que
+    # so olha para uma deixa metade do corpus sem guarda -- que e a classe de cegueira
+    # que esta porta existe para nao ter.
+    ("figuras EN: uma so língua por figura", "check_figuras_lingua.py", ["tese-eng"]),
+    # ⚠️ E AS DUAS PORTAS ACIMA COMPARAM CONTRA VOCABULARIO, logo uma expressao que
+    # nenhuma lista preveja e invisivel: foi assim que `promotion gate` atravessou uma
+    # figura portuguesa. Esta nao sabe vocabulario nenhum -- pergunta se o mesmo texto
+    # desenhado aparece nas duas arvores, o que so acontece se nao tiver sido traduzido.
+    ("figuras: nada por traduzir entre as árvores", "check_figuras_paridade.py", []),
     # A cadeia de cada questao: enunciada, medida, delimitada e respondida -- e a
     # conclusao a nao citar valores que os resultados nao produziram.
     ("questões: enunciada, medida, respondida", "check_qi_cadeia.py", []),

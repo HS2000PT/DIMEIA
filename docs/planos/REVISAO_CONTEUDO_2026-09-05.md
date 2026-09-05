@@ -303,3 +303,85 @@ imperativa. A ordem que ele fixou é esta: primeiro a `tese-eng` completa, depoi
 figuras da PT. As figuras inline em TikZ já estão traduzidas nos rótulos desenhados da árvore
 inglesa; o que falta são as **34 figuras em PDF/PNG** de `figures/`, que são geradas por
 `scripts/figures/` e por capturas, e que hoje as duas árvores partilham.
+
+---
+
+## As figuras da `tese-pt` em português
+
+Feita a conversão que o autor tinha fixado como imperativa. **172 rótulos desenhados** em 38
+figuras inline, mais o único gráfico gerado, que passou a sair nas duas línguas do mesmo
+gerador. As armadilhas de tradução (o *bilião* que vale mil vezes mais em português, o
+trocadilho da figura dos *embeddings*, os títulos de notícia citados que ficam em inglês
+porque o corpus é inglês) estão registadas acima.
+
+### O que a inspeção visual encontrou, e que nenhum verificador via
+
+O log do LaTeX ficou limpo do princípio ao fim — máximo de 5,68 pt de *overfull* — e mesmo
+assim havia cinco defeitos nas figuras. **Nenhum deles produz aviso**, porque dois nós
+sobrepostos são composição válida.
+
+1. **Os números 5 e 9 da Figura 4.2 estavam desenhados por cima das setas.** As duas caixas
+   alcançadas por uma seta vertical recebiam o número `above`, que é exatamente onde a seta
+   entra: os dois algarismos saíam riscados a meio. Pré-existente e nas duas árvores.
+
+2. **As contagens de alerta da Figura 4.3 caíam sobre a linha do eixo, e um zero riscado
+   lê-se como nove** — nas quatro empresas que não alertam, que são precisamente aquelas
+   cuja leitura a figura existe para sustentar. A causa não era a posição do rótulo: era a
+   margem esquerda, que não deixava espaço entre o eixo e o marcador do zero. ⚠️ Duas
+   tentativas de correção falharam antes desta e as duas só se viram a renderizar — por
+   baixo do marcador o rótulo assentava no eixo horizontal; por cima ficava a meio caminho
+   entre duas linhas, e o leitor atribuía-o à empresa errada, que é **pior** do que o
+   defeito original.
+
+3. **A Figura 5.16 nomeava uma só das suas duas séries.** `ytick={1.2}` desenha uma marca a
+   meio caminho entre as duas linhas e deixa a outra sem nome, num painel cuja leitura
+   inteira depende de distinguir as mantidas das suprimidas. Um caráter — `{1,2}` é a lista
+   de duas marcas que o painel precisa. Pré-existente e nas duas árvores.
+
+4. **Os eixos usavam ponto decimal e os valores anotados vírgula, na mesma figura.** 49
+   rótulos de eixo e 34 valores desenhados. Nenhuma das duas convenções está errada
+   isoladamente, e é essa a razão pela qual estiveram lado a lado sem ninguém dar por isso.
+   ⚠️ Só se tocou em `xticklabels`/`yticklabels`: uma vírgula dentro de `xtick=` ou de
+   `coordinates` separa argumentos e parte a figura.
+
+5. **`metric value` num eixo português e `somam` dentro da tese inglesa** — uma fuga em cada
+   sentido.
+
+⚠️ **Dois falsos alarmes meus, e os dois vinham de olhar em baixa resolução.** A 100 dpi o
+rótulo rodado do eixo da Figura 1.1 aparece com traços por cima que se leem como colisão, e
+a Figura 4.12 parecia ter texto sobreposto. A 400 dpi as duas estão limpas: era
+rasterização. Ampliar antes de corrigir o que está certo.
+
+### O verificador de línguas tinha a cegueira simétrica da que já tinha sido corrigida
+
+A 2026-09-04 o lado português da deteção passou a ter um sinal independente de vocabulário —
+a ortografia acentuada — porque uma lista fechada tinha deixado passar `artefacto
+versionado`. **O lado inglês ficou como estava**, e a Figura 4.12 atravessou o verificador
+com `promotion gate` e `does not win: log and discard` ao lado de doze rótulos portugueses:
+nenhuma dessas palavras constava da lista, e o lado português disparava pela ortografia.
+
+Duas correções, de naturezas diferentes:
+
+- **No verificador existente**, dois sinais que não dependem de saber vocabulário: palavras
+  funcionais inglesas inequívocas e terminações que o inglês tem e o português não (`-tion`,
+  `-ment`, `-ing`, `-ness`, `-ity`, `-ly`, `-ed`). ⚠️ Três falsos positivos apareceram de
+  imediato e **todos eram do verificador**: `no` é palavra portuguesa e entrou na lista de
+  palavras funcionais inglesas ao lado de `not`; `Isolation Forest` disparava o sufixo
+  `-tion` sendo nome próprio de um método; e o material entre aspas — títulos de notícia de
+  um corpus inglês, que a política manda manter — disparava `-ed` em `gained`. Um
+  verificador que acusa figuras corretas gasta-se, porque se deixa de olhar para ele.
+
+- **Um verificador novo, `check_figuras_paridade.py`**, que não sabe vocabulário nenhum.
+  Existem duas árvores que são traduções uma da outra: se o mesmo texto desenhado aparece
+  nas duas, ou é nome próprio, ou é número, ou é material citado — ou escapou à tradução.
+  ⚠️ **A direção da lista é o que distingue os dois.** A lista do verificador de línguas é
+  de *acusação*, e fechá-la cega-o; a deste é de *isenção*, logo um rótulo que ninguém
+  previu faz a verificação **falhar** em vez de passar. Foi ele que encontrou o `metric
+  value` e o `somam`, que os dois verificadores de vocabulário não viam.
+
+⚠️ **Um `git checkout` meu apagou trabalho por commitar.** Corri-o para desfazer um defeito
+plantado num teste de controlo, e ele devolveu o `ch4` ao último commit — levando com ele a
+tradução das figuras do capítulo e as três correções desta passagem. A tradução recuperou-se
+por o script que a produziu estar guardado; o resto foi refeito. **A regra é guardar o
+ficheiro antes de plantar o defeito e restaurar dessa cópia**, que foi o que fiz nos dois
+controlos anteriores e não neste.

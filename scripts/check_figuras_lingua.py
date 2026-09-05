@@ -66,6 +66,27 @@ POR = re.compile(r"(?<![A-Za-zÀ-ú])(de|da|do|das|dos|para|com|sem|não|por|que
 # monolingue. Daí este segundo sinal, que não depende de vocabulário nenhum: a ortografia.
 ORTO = re.compile(r"[àáâãçéêíóôõú]", re.IGNORECASE)
 
+# ⚠️ E O LADO INGLÊS TINHA A MESMA CEGUEIRA, encontrada no mesmo dia pelo outro lado: a
+# figura do ciclo de retreino atravessou o verificador com `promotion gate` e `does not
+# win: log and discard`, porque nenhuma dessas palavras estava na lista de cima e o lado
+# português disparava pela ortografia. Dois sinais que não dependem do vocabulário desta
+# tese, simétricos ao ORTO.
+#
+# Palavras funcionais escolhidas por NÃO existirem em português: `a`, `e`, `no`, `as`,
+# `os`, `ou`, `se`, `da` ficariam a acusar todas as figuras portuguesas.
+FUNC = re.compile(r"(?<![A-Za-zÀ-ú])(the|and|of|to|is|are|was|were|with|for|not|nor|"
+                  r"does|did|from|by|that|this|these|those|its|it|each|both|than|then|"
+                  r"when|where|what|how|why|only|still|they|their|there|been|have|has|"
+                  r"had|but|into|onto|over|under|about|after|before|while|which|whose|"
+                  r"any|all|none|such|same|other|another|between|within|without)"
+                  r"(?![A-Za-zÀ-ú])", re.IGNORECASE)
+
+# Terminações que o inglês tem e o português não. ⚠️ A fronteira final é o que separa
+# `-ment` de `momento` e `-tion` de `ordenação`: sem ela, metade das figuras portuguesas
+# passaria a ser acusada.
+SUFX = re.compile(r"(?<![A-Za-zÀ-ú])[A-Za-z]{3,}"
+                  r"(?:tion|ment|ing|ness|ity|ly|ed)(?![A-Za-zÀ-ú])")
+
 FICH = [BASE / f"ch{i}/chapter{i}.tex" for i in range(1, 7)]
 FICH += [BASE / "appendices/appendixA.tex"]
 _exist = [f for f in FICH if f.exists()]
@@ -79,11 +100,28 @@ if not _exist:
 # nenhuma das duas línguas, e sem isto 'z-score' fazia uma figura portuguesa parecer
 # mista, porque contém a palavra inglesa 'score'.
 BILINGUE = re.compile(r"z-score|bootstrap|Brier|PR-AUC|ROC-AUC|Platt|Vasicek|SBERT|"
-                      r"ONNX|MiniLM|MPNet|FNSPID|beta|softmax|embedding", re.IGNORECASE)
+                      r"ONNX|MiniLM|MPNet|FNSPID|beta|softmax|embedding|"
+                      # nomes próprios de métodos, sem tradução nas duas línguas
+                      r"Isolation Forest|Local Outlier Factor|Random Forest|"
+                      r"Sentence-BERT|BERT|FinBERT|GARCH|ARCH|Wilson|PSI",
+                      re.IGNORECASE)
+
+
+# O texto entre aspas é material citado de um corpus inglês, e a política manda-o ficar
+# como está: traduzir um título de notícia quebra a correspondência com a fonte, que é a
+# propriedade que este trabalho existe para preservar. Sai antes de comparar, pela mesma
+# razão pela qual a legenda já saía.
+RX_CITA = re.compile(r"``[^`']*''|`[^`']*'")
 
 
 def _limpa(t: str) -> str:
+    t = RX_CITA.sub(" ", t)
+    # ⚠️ O DELIMITADOR DE MATEMATICA TAMBEM ESCONDE UM TERMO BILINGUE. `\emph{z}-score`
+    # perde o comando aqui e passa a casar com a lista BILINGUE; `$z$-score` nao tem
+    # comando nenhum, sobrevivia inteiro, e a palavra `score` disparava o lado ingles
+    # numa figura inteiramente portuguesa. E a terceira forma da mesma armadilha.
     t = re.sub(re.escape(BS) + r"[a-zA-Z]+", " ", t)
+    t = t.replace("$", "")
     return t.replace("{", "").replace("}", "")
 
 
@@ -115,7 +153,8 @@ def main() -> int:
             # 'emph{z}-score' não casava com o termo bilingue 'z-score' e uma figura
             # inteiramente portuguesa aparecia como mista.
             labs = [BILINGUE.sub(" ", _limpa(t)) for t in labs]
-            en = [t for t in labs if ING.search(t)]
+            en = [t for t in labs
+                  if ING.search(t) or FUNC.search(t) or SUFX.search(t)]
             pt = [t for t in labs if POR.search(t) or ORTO.search(t)]
             if en and pt:
                 mistas.append((f.parts[-2], rot, pt, en))

@@ -62,7 +62,7 @@ construído sobre eles.
   xtick={2015,2017,2019,2021,2023,2024},
   % anos NAO levam separador de milhares: sem isto o pgfplots escreve 2,015.
   xticklabel style={/pgf/number format/.cd, fixed, 1000 sep={}},
-  ylabel={Trillions of US dollars},
+  ylabel={Biliões de dólares},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
   ymajorgrids, grid style={black!12}, axis lines*=left,
   ]
@@ -74,9 +74,9 @@ construído sobre eles.
     (2015,25.1) (2016,27.4) (2017,32.1) (2018,30.4) (2019,34.1)
     (2020,41.6) (2021,48.5) (2022,40.3) (2023,49.0) (2024,62.2)};
   % so os tres pontos que a prosa invoca: inicio, a quebra, e o fim.
-  \node[font=\scriptsize, black!65, below right] at (axis cs:2015,25.1) {25.1};
-  \node[font=\scriptsize, black!65, below] at (axis cs:2022,40.3) {40.3};
-  \node[font=\scriptsize, black!65, above left] at (axis cs:2024,62.2) {62.2};
+  \node[font=\scriptsize, black!65, below right] at (axis cs:2015,25.1) {25,1};
+  \node[font=\scriptsize, black!65, below] at (axis cs:2022,40.3) {40,3};
+  \node[font=\scriptsize, black!65, above left] at (axis cs:2024,62.2) {62,2};
 \end{axis}
 \end{tikzpicture}
 \caption[Capitalização do mercado acionista dos EUA]{Capitalização do mercado acionista dos
@@ -118,12 +118,12 @@ estabelecer qualquer conclusão.
   sis/.style={draw, rounded corners, fill=black!3, align=center, text width=2.6cm, minimum height=1.6cm},
   saida/.style={draw, rounded corners, fill=black!3, align=center, text width=3.8cm, minimum height=1.6cm},
 ]
-  \node[gat] (g1) {unusual price\\ movement};
-  \node[gat, below=7mm of g1] (g2) {relevant news\\ about the company};
+  \node[gat] (g1) {movimento de preço\\ invulgar};
+  \node[gat, below=7mm of g1] (g2) {notícia relevante\\ sobre a empresa};
   \node[sis] (sis) at ($(g1)!0.5!(g2) + (3.9,0)$) {\textbf{InvestiGator}};
-  \node[saida, right=1.3cm of sis] (out) {explained alert\\[2pt]
-    \footnotesize what happened\\ \footnotesize why · sources\\ \footnotesize precedents};
-  \node[right=1.0cm of out, align=center] (inv) {\footnotesize investor};
+  \node[saida, right=1.3cm of sis] (out) {alerta explicado\\[2pt]
+    \footnotesize o que aconteceu\\ \footnotesize porquê · fontes\\ \footnotesize precedentes};
+  \node[right=1.0cm of out, align=center] (inv) {\footnotesize investidor};
   \draw[->] (g1) -- (sis);
   \draw[->] (g2) -- (sis);
   \draw[->] (sis) -- (out);
@@ -208,10 +208,11 @@ as respostas, identifica as limitações do trabalho e enuncia as linhas de dese
 Cada mecanismo descrito é ilustrado sobre um caso real, com os valores efetivamente calculados
 pelo sistema, e não sobre exemplos construídos para o efeito.
 
-Uma convenção de apresentação atravessa o documento e enuncia-se aqui para que não seja
-lida como descuido. O texto interior das figuras está em inglês, ao passo que a prosa e as
-legendas estão em português. A razão é a mesma que a Secção~\ref{sec:sis_explicacao} invoca
-a propósito das mensagens do sistema: os títulos de notícia, os identificadores de empresa e
-os nomes das métricas provêm de fontes em inglês e são citados sem tradução, porque traduzi-los
-quebraria a correspondência com o material que o leitor pode consultar. Manter o interior das
-figuras nessa língua evita que uma mesma quantidade apareça com dois nomes no mesmo documento.
+Duas categorias de material aparecem em inglês, e enunciam-se aqui para que não sejam lidas
+como descuido. A primeira são os títulos de notícia citados e os identificadores de empresa,
+que provêm de fontes em inglês e são reproduzidos sem tradução: traduzi-los quebraria a
+correspondência com o material que o leitor pode consultar, que é a propriedade que este
+trabalho existe para preservar. A segunda são as capturas da aplicação, cuja interface é
+redigida em inglês por decisão de produto, pela razão que a Secção~\ref{sec:sis_explicacao}
+desenvolve; uma captura traduzida mostraria um ecrã que não existe. Tudo o resto, incluindo o
+texto desenhado no interior das figuras, está em português.

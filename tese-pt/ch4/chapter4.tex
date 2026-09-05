@@ -49,21 +49,21 @@ que desencadeia a avaliação é uma notícia.
   proc/.style={cx, fill=black!3},
   saida/.style={cx, fill=black!16},
 ]
-  \node[fonte] (p) {\textbf{Prices}\\ \footnotesize chain of four\\ \footnotesize fallbacks};
-  \node[fonte, below=6mm of p] (n) {\textbf{News}\\ \footnotesize three free\\ \footnotesize interfaces};
-  \node[fonte, below=6mm of n] (h) {\textbf{Case base}\\ \footnotesize precedents with\\ \footnotesize measured impact};
+  \node[fonte] (p) {\textbf{Preços}\\ \footnotesize cadeia de quatro\\ \footnotesize alternativas};
+  \node[fonte, below=6mm of p] (n) {\textbf{Notícias}\\ \footnotesize três interfaces\\ \footnotesize gratuitas};
+  \node[fonte, below=6mm of n] (h) {\textbf{Base de casos}\\ \footnotesize precedentes com\\ \footnotesize impacto medido};
 
-  \node[proc, right=0.8cm of p] (det) {\textbf{Detection}\\ \footnotesize $z$-score};
-  \node[proc, right=0.8cm of n] (rec) {\textbf{Retrieval}\\ \footnotesize semantic neighbours};
-  \node[proc, right=0.8cm of h] (tri) {\textbf{Triage}\\ \footnotesize calibrated probability};
+  \node[proc, right=0.8cm of p] (det) {\textbf{Deteção}\\ \footnotesize $z$-score};
+  \node[proc, right=0.8cm of n] (rec) {\textbf{Recuperação}\\ \footnotesize vizinhos semânticos};
+  \node[proc, right=0.8cm of h] (tri) {\textbf{Triagem}\\ \footnotesize probabilidade calibrada};
   \node[proc, dashed, below=6mm of tri] (dec)
-    {\textbf{Decomposition}\\ \footnotesize market, sector,\\ \footnotesize company};
+    {\textbf{Decomposição}\\ \footnotesize mercado, setor,\\ \footnotesize empresa};
 
   \node[proc, right=0.9cm of rec, text width=2.8cm] (exp)
-    {\textbf{Explanation}\\ \footnotesize composed from\\ \footnotesize the computed\\ \footnotesize objects};
+    {\textbf{Explicação}\\ \footnotesize composta a\\ \footnotesize partir dos objetos\\ \footnotesize calculados};
 
-  \node[saida, right=0.8cm of exp, yshift=9mm] (tg) {\textbf{Messaging channel}};
-  \node[saida, right=0.8cm of exp, yshift=-9mm] (web) {\textbf{Web application}\\ \footnotesize decision log};
+  \node[saida, right=0.8cm of exp, yshift=9mm] (tg) {\textbf{Canal de mensagens}};
+  \node[saida, right=0.8cm of exp, yshift=-9mm] (web) {\textbf{Aplicação web}\\ \footnotesize registo de decisões};
 
   \draw[->] (p) -- (det);
   \draw[->] (n) -- (rec);
@@ -229,19 +229,22 @@ ser descartada, situação em que o sistema não comunica.
   porta/.style={et, dashed, fill=black!12},
   n/.style={font=\bfseries\footnotesize, text=black!45},
 ]
-  \node[et] (a) {collect\\ news};
-  \node[porta, right=4mm of a] (b) {names the\\ company?};
-  \node[porta, right=4mm of b] (c) {is it recent?};
-  \node[et, right=4mm of c] (d) {retrieve\\ precedents};
-  \node[porta, below=7mm of d] (e) {enough\\ evidence?};
-  \node[porta, left=4mm of e] (f) {triage\\ above the\\ floor?};
-  \node[porta, left=4mm of f] (g) {already sent\\ today?};
-  \node[et, left=4mm of g] (h) {compose the\\ explanation};
-  \node[et, below=7mm of h, fill=black!16] (i) {deliver and\\ log};
+  \node[et] (a) {recolher\\ notícias};
+  \node[porta, right=4mm of a] (b) {nomeia a\\ empresa?};
+  \node[porta, right=4mm of b] (c) {é recente?};
+  \node[et, right=4mm of c] (d) {recuperar\\ precedentes};
+  \node[porta, below=7mm of d] (e) {evidência\\ suficiente?};
+  \node[porta, left=4mm of e] (f) {triagem\\ acima do\\ piso?};
+  \node[porta, left=4mm of f] (g) {já enviada\\ hoje?};
+  \node[et, left=4mm of g] (h) {compor a\\ explicação};
+  \node[et, below=7mm of h, fill=black!16] (i) {entregar e\\ registar};
 
   \foreach \x/\i in {a/1, b/2, c/3, d/4} { \node[n, above=0.5mm of \x] {\i}; }
-  \foreach \x/\i in {e/5, f/6, g/7, h/8} { \node[n, above=0.5mm of \x] {\i}; }
-  \node[n, above=0.5mm of i] {9};
+  \foreach \x/\i in {f/6, g/7, h/8} { \node[n, above=0.5mm of \x] {\i}; }
+  % Estas duas caixas recebem a seta pelo TOPO: um numero centrado ficaria por baixo
+  % dela, riscado, que e' como estiveram ate 2026-09-05. Deslocados para o lado.
+  \node[n] at ([xshift=6mm,yshift=2.6mm]e.north west) {5};
+  \node[n] at ([xshift=6mm,yshift=2.6mm]i.north west) {9};
 
   \draw[->] (a) -- (b); \draw[->] (b) -- (c); \draw[->] (c) -- (d);
   \draw[->] (d) -- (e); \draw[->] (e) -- (f); \draw[->] (f) -- (g); \draw[->] (g) -- (h);
@@ -355,11 +358,14 @@ quota própria.
   % a janela contada, o valor 14 repetido em tres empresas era o TECTO de 2/empresa/dia, e a
   % politica que descrevia foi substituida a 2026-08-15 pelo orcamento global.
   width=0.80\textwidth, height=8.4cm,
-  xmin=-6, xmax=160,
+  % ⚠ A margem esquerda existe para a contagem de alertas caber entre
+  % o eixo e o marcador do zero. Com -6 os zeros saiam por cima da linha do
+  % eixo e liam-se como noves, nas empresas cuja leitura mais interessa.
+  xmin=-16, xmax=160,
   enlarge y limits=0.07,
   symbolic y coords={JNJ,XOM,JPM,NFLX,META,AMD,AMZN,MSFT,GOOGL,NVDA,TSLA,AAPL},
   ytick={JNJ,XOM,JPM,NFLX,META,AMD,AMZN,MSFT,GOOGL,NVDA,TSLA,AAPL},
-  xlabel={Distinct headlines in the observed window},
+  xlabel={Títulos distintos na janela observada},
   tick label style={font=\footnotesize},
   label style={font=\footnotesize},
   legend style={font=\footnotesize, at={(0.5,-0.20)}, anchor=north, legend columns=2,
@@ -376,9 +382,9 @@ quota própria.
     coordinates {(14,JNJ) [14] (17,XOM) [17] (26,JPM) [26] (28,NFLX) [28] (38,META) [38] (41,AMD) [41] (68,AMZN) [68] (71,MSFT) [71] (90,GOOGL) [90] (97,NVDA) [97] (120,TSLA) [120] (133,AAPL) [133]};
   \addplot[only marks, mark=square*, mark size=2.4pt, black!75,
            nodes near coords, point meta=explicit symbolic,
-           every node near coord/.append style={font=\tiny, black!75, anchor=east, xshift=-3pt}]
+           every node near coord/.append style={font=\tiny, black!75, anchor=east, xshift=-4pt}]
     coordinates {(0,JNJ) [0] (0,XOM) [0] (0,JPM) [0] (2,NFLX) [2] (2,META) [2] (2,AMD) [2] (1,AMZN) [1] (1,MSFT) [1] (0,GOOGL) [0] (3,NVDA) [3] (3,TSLA) [3] (1,AAPL) [1]};
-  \legend{relevant headlines, alerts delivered}
+  \legend{títulos relevantes, alertas entregues}
 \end{axis}
 \end{tikzpicture}
 \caption[Seletividade do sistema por empresa]{Títulos distintos avaliados e alertas
@@ -405,32 +411,32 @@ completo, pelo que os valores devem ser lidos como proporções.
   % leitura que interessa: 5060 menos 2994, 1194, 269, 249 e 21 da exactamente 333.
   \fill[black!22, draw=black!45] (-4.70,0.00) rectangle (4.70,-0.62);
   \node[font=\scriptsize, black!75] at (0,-0.31) {5060};
-  \node[left, font=\scriptsize, black!70, align=right] at (-4.85,-0.31) {entering the funnel};
+  \node[left, font=\scriptsize, black!70, align=right] at (-4.85,-0.31) {à entrada do funil};
   \fill[black!14, draw=black!45] (-1.92,-0.82) rectangle (1.92,-1.44);
   \node[font=\scriptsize, black!75] at (0,-1.13) {2066};
-  \node[left, font=\scriptsize, black!70, align=right] at (-4.85,-1.13) {no strong enough precedent};
+  \node[left, font=\scriptsize, black!70, align=right] at (-4.85,-1.13) {sem precedente forte};
   \node[right, font=\scriptsize, black!55] at (4.85,-1.13) {$-$2994};
   \fill[black!14, draw=black!45] (-0.81,-1.64) rectangle (0.81,-2.26);
   \node[font=\scriptsize, black!75] at (0,-1.95) {872};
-  \node[left, font=\scriptsize, black!70, align=right] at (-4.85,-1.95) {below the triage floor};
+  \node[left, font=\scriptsize, black!70, align=right] at (-4.85,-1.95) {abaixo do piso da triagem};
   \node[right, font=\scriptsize, black!55] at (4.85,-1.95) {$-$1194};
   \fill[black!14, draw=black!45] (-0.56,-2.46) rectangle (0.56,-3.08);
   \node[font=\scriptsize, black!75] at (0,-2.77) {603};
-  \node[left, font=\scriptsize, black!70, align=right] at (-4.85,-2.77) {stepped floor};
+  \node[left, font=\scriptsize, black!70, align=right] at (-4.85,-2.77) {piso escalonado};
   \node[right, font=\scriptsize, black!55] at (4.85,-2.77) {$-$269};
   \fill[black!14, draw=black!45] (-0.33,-3.28) rectangle (0.33,-3.90);
   \node[font=\scriptsize, black!75] at (0,-3.59) {354};
-  \node[left, font=\scriptsize, black!70, align=right] at (-4.85,-3.59) {story already sent};
+  \node[left, font=\scriptsize, black!70, align=right] at (-4.85,-3.59) {história já enviada};
   \node[right, font=\scriptsize, black!55] at (4.85,-3.59) {$-$249};
   \fill[black!14, draw=black!45] (-0.31,-4.10) rectangle (0.31,-4.72);
   \node[font=\scriptsize, black!75] at (0,-4.41) {333};
-  \node[left, font=\scriptsize, black!70, align=right] at (-4.85,-4.41) {daily budget exhausted};
+  \node[left, font=\scriptsize, black!70, align=right] at (-4.85,-4.41) {orçamento diário esgotado};
   \node[right, font=\scriptsize, black!55] at (4.85,-4.41) {$-$21};
 \end{tikzpicture}
 \par\smallskip
 \fbox{\parbox{0.78\textwidth}{\centering\small
-  \textbf{5 messages delivered}\quad$\ne$\quad\textbf{333 passages through the gates}\\
-  An evaluation is not a distinct headline; the same titles were re-evaluated.}}
+  \textbf{5 mensagens entregues}\quad$\ne$\quad\textbf{333 passagens pelas portas}\\
+  Uma avaliação não é um título distinto; os mesmos títulos foram reavaliados.}}
 \caption[Distribuição completa das avaliações por ponto de decisão]{As $5\,060$ avaliações
 registadas em parte de 15 de agosto de 2026. Cada banda representa o que resta depois da porta
 indicada, e o valor à direita o que essa porta eliminou; as eliminações somam as $5\,060$
@@ -795,10 +801,10 @@ desfecho. A Figura~\ref{fig:sis_ciclo_kb} representa o ciclo.
   esp/.style={draw, dashed, rounded corners=3pt, align=center, inner sep=4pt, text width=2.4cm,
               minimum height=1.25cm, fill=white},
 ]
-  \node[et]  (a) at (0,0)     {\textbf{day $t$}\\ the scan observes a relevant headline};
-  \node[esp] (b) at (3.55,0)  {kept as a candidate, with its vector};
-  \node[et]  (c) at (7.0,0)   {\textbf{day $t+8$}\\ the impact is observable};
-  \node[et]  (d) at (10.5,0)  {joins the \textbf{case base}};
+  \node[et]  (a) at (0,0)     {\textbf{dia $t$}\\ a varredura observa um título relevante};
+  \node[esp] (b) at (3.55,0)  {guardado como candidato, com o seu vetor};
+  \node[et]  (c) at (7.0,0)   {\textbf{dia $t+8$}\\ o impacto é observável};
+  \node[et]  (d) at (10.5,0)  {entra na \textbf{base de casos}};
 
   \draw[->, thick, black!55] (a) -- (b);
   \draw[->, thick, black!55] (b) -- (c);
@@ -806,7 +812,7 @@ desfecho. A Figura~\ref{fig:sis_ciclo_kb} representa o ciclo.
 
   \draw[->, thick, black!55] (d.south) -- ++(0,-0.85) -| (a.south)
     node[pos=0.25, below, font=\scriptsize, black!65]
-    {later evaluations compare against the cases already matured};
+    {as avaliações seguintes comparam com os casos já maturados};
 \end{tikzpicture}
 \caption[Ciclo de crescimento da base de casos]{Percurso de um título entre a sua observação e a
 sua disponibilidade como precedente. O intervalo de oito dias decorre de o impacto de um caso só
@@ -848,27 +854,27 @@ não verificável. A Figura~\ref{fig:sis_lifecycle} representa as duas metades d
   obs/.style={cx, fill=white, draw=black!45},
   fase/.style={font=\scriptsize\bfseries, text=black!60},
 ]
-  \node[fase] at (-1.55,0.95) {construction};
-  \node[cx]  (d) at (0,0)    {labelled dataset};
-  \node[cx]  (t) at (2.5,0)  {training};
-  \node[cx]  (v) at (5.0,0)  {validation\\ \emph{calibration}};
-  \node[cx]  (s) at (7.5,0)  {test\\ \emph{single use}};
-  \node[art] (m) at (10.0,0) {versioned artefact};
+  \node[fase] at (-1.55,0.95) {construção};
+  \node[cx]  (d) at (0,0)    {conjunto rotulado};
+  \node[cx]  (t) at (2.5,0)  {treino};
+  \node[cx]  (v) at (5.0,0)  {validação\\ \emph{calibração}};
+  \node[cx]  (s) at (7.5,0)  {teste\\ \emph{uso único}};
+  \node[art] (m) at (10.0,0) {artefacto versionado};
 
   \foreach \xa/\xb in {d/t, t/v, v/s, s/m} \draw[->, thick, black!55] (\xa) -- (\xb);
 
-  \node[fase, anchor=west] at (-1.1,-2.7) {observation};
-  \node[art] (p) at (0,-1.9)   {the \textbf{same} model, in production};
-  \node[obs] (g) at (2.5,-1.9) {log of every decision};
-  \node[obs] (w) at (5.0,-1.9) {wait for the price to respond};
-  \node[obs] (r) at (7.5,-1.9) {post-validation and drift};
+  \node[fase, anchor=west] at (-1.1,-2.7) {observação};
+  \node[art] (p) at (0,-1.9)   {o \textbf{mesmo} modelo, em produção};
+  \node[obs] (g) at (2.5,-1.9) {registo de cada decisão};
+  \node[obs] (w) at (5.0,-1.9) {esperar que o preço responda};
+  \node[obs] (r) at (7.5,-1.9) {pós-validação e deriva};
 
   \draw[->, thick, black!55] (m.south) -- ++(0,-0.5) -| (p.north);
   \foreach \xa/\xb in {p/g, g/w, w/r} \draw[->, thick, black!55] (\xa) -- (\xb);
 
   \draw[->, dashed, black!40] (r.east) -- ++(0.9,0) |- (10.0,-1.05);
   \node[align=center, text width=1.3cm, text=black!70] at (10.4,-1.9)
-    {retraining:\\ \textbf{absent}};
+    {retreino:\\ \textbf{ausente}};
 \end{tikzpicture}
 \caption[Ciclo de vida do componente aprendido]{As duas metades do ciclo. Na metade superior, a
 construção: os dados são rotulados, a divisão é cronológica, a calibração é ajustada no bloco de
@@ -985,7 +991,7 @@ os períodos seguintes, com o embargo de cinco dias da Secção~\ref{sec:met_tri
 permanece cronológica, porque o problema não deixa de ser temporal por o modelo ser novo.
 
 A terceira, e a que distingue um ciclo de treino contínuo de uma automatização perigosa, é a
-\textbf{promotion gate}. Um modelo recém-treinado não substitui o modelo em vigor por ser mais
+\textbf{porta de promoção}. Um modelo recém-treinado não substitui o modelo em vigor por ser mais
 recente: substitui-o apenas se o superar sobre o mesmo bloco de teste reservado, e se a
 sobreposição do intervalo de confiança da diferença excluir zero. Um modelo que não passe essa
 porta é registado e descartado, e o modelo em vigor permanece com a deriva declarada. É a diferença
@@ -999,13 +1005,13 @@ entre adaptar-se à mudança e perseguir ruído.
   gat/.style={cx, dashed, fill=black!12},
   art/.style={cx, fill=black!16, draw=black!55, thick},
 ]
-  \node[cx]  (p) at (0,0)     {decision log in production};
-  \node[cx]  (m) at (2.9,0)   {maturation:\\ 8 days};
-  \node[cx]  (r) at (5.8,0)   {new labels, from the same rule};
+  \node[cx]  (p) at (0,0)     {registo de decisões em produção};
+  \node[cx]  (m) at (2.9,0)   {maturação:\\ 8 dias};
+  \node[cx]  (r) at (5.8,0)   {rótulos novos, da mesma regra};
   \node[gat] (g) at (8.7,0)   {\textbf{gatilho}\\ PSI $>0{,}25$\\ ou 3 meses};
-  \node[cx]  (t) at (8.7,-1.9) {retraining over a 24-month window};
-  \node[cx]  (v) at (5.8,-1.9) {fresh validation and calibration};
-  \node[gat] (q) at (2.9,-1.9) {\textbf{promotion gate}\\ supera o em vigor?};
+  \node[cx]  (t) at (8.7,-1.9) {retreino sobre janela de 24 meses};
+  \node[cx]  (v) at (5.8,-1.9) {validação e calibração novas};
+  \node[gat] (q) at (2.9,-1.9) {\textbf{porta de promoção}\\ supera o em vigor?};
   \node[art] (n) at (0,-1.9)   {promove\\ e versiona};
 
   \foreach \a/\b in {p/m, m/r, r/g} \draw[->, thick, black!55] (\a) -- (\b);
@@ -1013,7 +1019,7 @@ entre adaptar-se à mudança e perseguir ruído.
   \foreach \a/\b in {t/v, v/q, q/n} \draw[->, thick, black!55] (\a) -- (\b);
   \draw[->, thick, black!55] (n.north) |- ++(0,0.75) -| (p.south);
   \draw[->, dashed, black!45] (q.south) -- ++(0,-0.55)
-    node[below, align=center, black!60] {does not win:\\ log and discard};
+    node[below, align=center, black!60] {não supera:\\ regista-se e descarta-se};
 \end{tikzpicture}
 \caption[Arquitetura de retreino desenhada e não executada]{Ciclo de treino contínuo definido para
 este sistema e não executado no âmbito deste trabalho. O gatilho é condicional e não temporal; a

@@ -1334,7 +1334,10 @@ already matured.
 \begin{axis}[
   name=pa, width=0.80\textwidth, height=4.4cm,
   xmin=0.528, xmax=0.688, ymin=0.20, ymax=2.75,
-  ytick={1.2}, yticklabels={{suppressed ($n = 389$)}, {kept ($n = 436$)}},
+  % Two series, two ticks: with `ytick={1.2}` pgfplots drew ONE label
+  % halfway between the rows and left the other unnamed, in a panel
+  % whose reading depends on telling one from the other.
+  ytick={1,2}, yticklabels={{suppressed ($n = 389$)}, {kept ($n = 436$)}},
   xtick={0.55,0.60,0.65}, xticklabels={{0.55},{0.60},{0.65}},
   title={\small A. share of cases that proved material},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},

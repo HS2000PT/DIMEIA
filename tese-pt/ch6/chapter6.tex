@@ -66,23 +66,23 @@ três.
   ver/.style={font=\bfseries\large, align=center},
   num/.style={align=left, text width=4.6cm, font=\scriptsize, text=black!70},
 ]
-  \node[cx] (q1) at (0,0) {\textbf{\gls{QI}1 · detection}\\[2pt]
-    Detect unusual movements consistently across companies?};
-  \node[ver] at (3.35,0) {YES};
-  \node[num] at (7.2,0) {firing-rate spread of $0.015$ against $0.344$ for the fixed-threshold
-    rule, and $F_1$ above two learned detectors};
+  \node[cx] (q1) at (0,0) {\textbf{\gls{QI}1 · deteção}\\[2pt]
+    Detetar movimentos invulgares de forma consistente entre empresas?};
+  \node[ver] at (3.35,0) {SIM};
+  \node[num] at (7.2,0) {amplitude da taxa de disparo de $0{,}015$ contra $0{,}344$ da regra
+    de limiar fixo, e $F_1$ acima de dois detetores aprendidos};
 
-  \node[cx] (q2) at (0,-2.35) {\textbf{\gls{QI}2 · precedents}\\[2pt]
-    Retrieve past news from another company in the same sector?};
-  \node[ver] at (3.35,-2.35) {YES};
-  \node[num] at (7.2,-2.35) {beats the reference value in all five sectors; under the temporal
-    constraint of production, precision@5 of $0.513$ against chance of $0.259$};
+  \node[cx] (q2) at (0,-2.35) {\textbf{\gls{QI}2 · precedentes}\\[2pt]
+    Recuperar notícias passadas de outra empresa do mesmo setor?};
+  \node[ver] at (3.35,-2.35) {SIM};
+  \node[num] at (7.2,-2.35) {supera o valor de referência nos cinco setores; sob a restrição
+    temporal da produção, precisão@5 de $0{,}513$ contra acaso de $0{,}259$};
 
-  \node[neg] (q3) at (0,-4.85) {\textbf{\gls{QI}3 · triage}\\[2pt]
-    Does a trained model prioritise news better than a simple baseline?};
-  \node[ver] at (3.35,-4.85) {NO};
-  \node[num] at (7.2,-4.85) {\gls{PRAUC} of $0.496$ with text against $0.542$ with volatility
-    alone, a result that survives three checks of the experimental setup};
+  \node[neg] (q3) at (0,-4.85) {\textbf{\gls{QI}3 · triagem}\\[2pt]
+    Um modelo treinado prioriza notícias melhor do que uma linha de base simples?};
+  \node[ver] at (3.35,-4.85) {NÃO};
+  \node[num] at (7.2,-4.85) {\gls{PRAUC} de $0{,}496$ com texto contra $0{,}542$ só com
+    volatilidade, resultado que resiste a três verificações à montagem experimental};
 
   \draw[black!35] (3.35,-5.85) -- (3.35,0.95);
 \end{tikzpicture}

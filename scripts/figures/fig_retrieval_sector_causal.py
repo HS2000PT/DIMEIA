@@ -12,13 +12,38 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 REPO = Path(__file__).resolve().parents[2]
-SECTOR_LABELS = {
-    "Technology": "Tecnologia",
-    "Banking": "Banca",
-    "Energy": "Energia",
-    "Health": "Saúde",
-    "Consumer": "Consumo",
+
+# ⚠️ A FIGURA SAI NAS DUAS LINGUAS, e a razao e' que existem duas arvores de tese. Ate
+# 2026-09-05 o gerador so produzia portugues e a arvore inglesa recebia uma copia do mesmo
+# PDF, ou seja a tese inglesa tinha um grafico portugues. Nenhum verificador de lingua o
+# via: eles leem rotulos TikZ do .tex e nao entram dentro de um PDF.
+TEXTO = {
+    "pt": {
+        "setores": {"Technology": "Tecnologia", "Banking": "Banca", "Energy": "Energia",
+                    "Health": "Saúde", "Consumer": "Consumo"},
+        "protocolos": ["Simétrico\n(escala)", "Causal\n(produção)"],
+        "metodo": "MiniLM, P@5",
+        "chao": "Taxa-base aleatória",
+        "precisao": "Precisão@5",
+        "titulo_a": "A. Comparação dentro de cada setor",
+        "titulo_b": "B. Restrição ao passado",
+        "margem": "margem",
+        "decimal": ",",
+    },
+    "en": {
+        "setores": {"Technology": "Technology", "Banking": "Banking", "Energy": "Energy",
+                    "Health": "Health", "Consumer": "Consumer"},
+        "protocolos": ["Symmetric\n(scale)", "Causal\n(production)"],
+        "metodo": "MiniLM, P@5",
+        "chao": "Random base rate",
+        "precisao": "Precision@5",
+        "titulo_a": "A. Comparison within each sector",
+        "titulo_b": "B. Restriction to the past",
+        "margem": "margin",
+        "decimal": ".",
+    },
 }
+SECTOR_LABELS = TEXTO["pt"]["setores"]
 
 
 def _cells(line: str) -> list[str]:
@@ -64,21 +89,24 @@ def _causal_rows(path: Path) -> list[dict[str, str]]:
     raise ValueError(f"Tabela causal não encontrada em {path}")
 
 
-def _annotate(ax, bars, values) -> None:
+def _annotate(ax, bars, values, decimal: str = ",") -> None:
     for bar, value in zip(bars, values, strict=True):
-        ax.text(bar.get_x() + bar.get_width() / 2, value + 0.018, f"{value:.3f}".replace(".", ","),
+        ax.text(bar.get_x() + bar.get_width() / 2, value + 0.018,
+                f"{value:.3f}".replace(".", decimal),
                 ha="center", va="bottom", fontsize=8, color="#222222")
 
 
-def build(sectors_path: Path, causal_path: Path, output: Path) -> None:
+def build(sectors_path: Path, causal_path: Path, output: Path,
+          lingua: str = "pt") -> None:
+    T = TEXTO[lingua]
     sectors = _sector_rows(sectors_path)
     causal = _causal_rows(causal_path)
 
-    labels = [SECTOR_LABELS[row["Setor"]] for row in sectors]
+    labels = [T["setores"][row["Setor"]] for row in sectors]
     method = [float(row["P@5"]) for row in sectors]
     sector_floor = [float(row["Aleatório (base)"]) for row in sectors]
 
-    protocol_labels = ["Simétrico\n(escala)", "Causal\n(produção)"]
+    protocol_labels = T["protocolos"]
     precision = [float(row["precisão@5"]) for row in causal]
     causal_floor = [float(row["chão"]) for row in causal]
     margins = [row["margem"] for row in causal]
@@ -91,28 +119,29 @@ def build(sectors_path: Path, causal_path: Path, output: Path) -> None:
 
     x = np.arange(len(labels))
     width = 0.36
-    b1 = left.bar(x - width / 2, method, width, color=method_color, label="MiniLM, P@5")
+    b1 = left.bar(x - width / 2, method, width, color=method_color, label=T["metodo"])
     b2 = left.bar(x + width / 2, sector_floor, width, color=floor_color,
                   edgecolor="#66736F", hatch="///", linewidth=0.7,
-                  label="Taxa-base aleatória")
-    _annotate(left, b1, method)
-    _annotate(left, b2, sector_floor)
+                  label=T["chao"])
+    _annotate(left, b1, method, T["decimal"])
+    _annotate(left, b2, sector_floor, T["decimal"])
     left.set_xticks(x, labels)
-    left.set_ylabel("Precisão@5")
-    left.set_title("A. Comparação dentro de cada setor", loc="left", fontweight="bold")
+    left.set_ylabel(T["precisao"])
+    left.set_title(T["titulo_a"], loc="left", fontweight="bold")
     left.legend(frameon=False, fontsize=8, loc="upper right")
 
     x2 = np.arange(len(protocol_labels))
-    b3 = right.bar(x2 - width / 2, precision, width, color=method_color, label="Precisão@5")
+    b3 = right.bar(x2 - width / 2, precision, width, color=method_color, label=T["precisao"])
     b4 = right.bar(x2 + width / 2, causal_floor, width, color=floor_color,
-                   edgecolor="#66736F", hatch="///", linewidth=0.7, label="Taxa-base aleatória")
-    _annotate(right, b3, precision)
-    _annotate(right, b4, causal_floor)
+                   edgecolor="#66736F", hatch="///", linewidth=0.7, label=T["chao"])
+    _annotate(right, b3, precision, T["decimal"])
+    _annotate(right, b4, causal_floor, T["decimal"])
     right.set_xticks(x2, protocol_labels)
-    right.set_title("B. Restrição ao passado", loc="left", fontweight="bold")
+    right.set_title(T["titulo_b"], loc="left", fontweight="bold")
     right.legend(frameon=False, fontsize=8, loc="upper right")
     for pos, margin in zip(x2, margins, strict=True):
-        right.text(pos, 0.08, f"margem {margin}".replace(".", ","),
+        right.text(pos, 0.08,
+                   f'{T["margem"]} {margin}'.replace(".", T["decimal"]),
                    ha="center", va="center", fontsize=8,
                    fontweight="bold", color="#222222",
                    bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.9, "pad": 1.5})
@@ -123,6 +152,10 @@ def build(sectors_path: Path, causal_path: Path, output: Path) -> None:
         ax.set_axisbelow(True)
         ax.spines[["top", "right"]].set_visible(False)
         ax.tick_params(axis="both", labelsize=8)
+        # ⚠️ Os valores anotados usavam virgula e os ticks do eixo ponto, na MESMA
+        # figura. Nenhum dos dois errado isoladamente, e as duas convencoes lado a lado.
+        if T["decimal"] == ",":
+            ax.set_yticklabels([f"{v:.1f}".replace(".", ",") for v in ax.get_yticks()])
 
     fig.tight_layout(w_pad=2.0)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -137,10 +170,12 @@ def main() -> None:
                         default=REPO / "docs/evaluation/evaluation_per_sector.md")
     parser.add_argument("--causal", type=Path,
                         default=REPO / "docs/evaluation/evaluation_retrieval_causal.md")
+    parser.add_argument("--lingua", choices=("pt", "en"), default="pt",
+                        help="lingua dos rotulos desenhados na figura")
     parser.add_argument("--output", type=Path,
                         default=REPO / "tese-pt/figures/eval_retrieval_sector_causal.pdf")
     args = parser.parse_args()
-    build(args.sectors, args.causal, args.output)
+    build(args.sectors, args.causal, args.output, args.lingua)
     print(f"Figura escrita em {args.output}")
 
 
