@@ -837,11 +837,10 @@ periods.
 
 \subsection{Usefulness under the budget constraint}
 
-O produto apresenta no máximo cinco alertas por dia, pelo que a pergunta com significado operacional
-é a de qual a fração de acertos entre as cinco notícias escolhidas em cada dia. A
-Figura~\ref{fig:av_orcamento} isola duas referências que parecem equivalentes, mas não são.
-O modelo e a alternativa baseada em volatilidade são comparados na
-Figura~\ref{fig:av_pontaaponta}.
+The product presents at most five alerts per day, so the question with operational meaning is what
+fraction of the five news items chosen each day are hits. Figure~\ref{fig:av_orcamento} isolates
+two references that look equivalent but are not. The model and the volatility-based alternative are
+compared in Figure~\ref{fig:av_pontaaponta}.
 
 \begin{figure}[ht]
 \centering
@@ -862,41 +861,40 @@ Figura~\ref{fig:av_pontaaponta}.
 \addplot[bar shift=0pt, ig reference bar] coordinates {(0.379,acaso) [0.379]};
 \end{axis}
 \end{tikzpicture}
-\caption[O desempate alfabético não é uma referência aleatória]{Duas formas de escolher as cinco
-notícias do dia, sobre o mesmo bloco de teste. O desempate alfabético não mede escolha às cegas;
-a escolha aleatória obtém $0.379 \pm 0.017$ sobre
-quarenta sementes. As duas políticas escolhem conhecendo o dia completo, pelo que os valores são
-limites superiores do que uma política em linha consegue obter.}
+\caption[The alphabetical tie-break is not a random reference]{Two ways of choosing the five news
+items of the day, over the same test block. The alphabetical tie-break does not measure blind
+choice; random choice obtains $0.379 \pm 0.017$ over forty seeds. Both policies choose knowing the
+complete day, so the values are upper bounds on what an online policy can obtain.}
 \label{fig:av_orcamento}
 \end{figure}
 
-A referência alfabética exige uma explicação: a designação original, «alertar sempre», induz em erro. O modelo que
-alerta sempre atribui a mesma pontuação a todas as notícias, e quando todas empatam a métrica
-seleciona pela ordem em que as linhas surgem no ficheiro, que está ordenado por data e por nome da
-empresa. Esse valor de $0.163$ mede a escolha por ordem alfabética e não a escolha aleatória, e
-todas as linhas que seleciona pertencem à empresa que ocupa a primeira posição no alfabeto. Comparado
-com o valor de referência correto, o ganho do modelo é de $1.67$ vezes e não das quase quatro vezes
-que a primeira leitura sugeriria. A lição é geral e aplica-se ao restante capítulo: verificar o que a
-linha de base mede é tão necessário quanto verificar o que o modelo faz.
+The alphabetical reference requires an explanation: the original name, ``always alert'', is
+misleading. The model that always alerts assigns the same score to every news item, and when they
+all tie the metric selects by the order in which the rows appear in the file, which is sorted by
+date and by company name. That value of $0.163$ measures choice in alphabetical order and not
+random choice, and every row it selects belongs to the company that comes first in the alphabet.
+Compared with the correct reference value, the gain of the model is $1.67$ times and not the almost
+four times the first reading would suggest. The lesson is general and applies to the rest of the
+chapter: checking what the baseline measures is as necessary as checking what the model does.
 
-A comparação com a volatilidade, na Figura~\ref{fig:av_pontaaponta}, contém o resultado incómodo. Uma tabela de treze constantes,
-correspondentes à volatilidade média de cada empresa, calculada exclusivamente sobre o bloco de
-treino e sem leitura de um único título, obtém $0.662$ e supera o modelo treinado. A comparação
-tem uma reserva que a torna menos limpa do que parece: $17.1\%$ das linhas do bloco de teste
-pertencem a uma empresa ausente do treino e recebem a mediana global em vez de uma constante
-própria. É, ainda assim, o terceiro caso do capítulo em que o método mais simples obtém melhor
-resultado. O que a evidência sustenta é
-que ordenar por volatilidade compensa, e não que aprender compense.
+The comparison with volatility, in Figure~\ref{fig:av_pontaaponta}, contains the uncomfortable
+result. A table of thirteen constants, corresponding to the mean volatility of each company,
+computed exclusively over the training block and without reading a single headline, obtains $0.662$
+and beats the trained model. The comparison has a reservation that makes it less clean than it
+looks: $17.1\%$ of the rows of the test block belong to a company absent from training and receive
+the global median instead of a constant of their own. It is, even so, the third case in the chapter
+in which the simpler method obtains the better result. What the evidence supports is that ranking
+by volatility pays off, and not that learning pays off.
 
 \subsection{Ablação das entradas do modelo}
 \label{sec:av_ablacao}
 
-O resultado anterior sugere que o modelo implantado reconhece a empresa e não a notícia. A
-verificação dessa hipótese consiste em tentar reproduzi-lo com uma tabela de consulta que atribua a
-cada empresa um único número fixado no bloco de treino, correspondente à fração das suas notícias que
-se revelaram materiais. Essa tabela não observa o título, não observa o dia e devolve invariavelmente
-o mesmo valor para a mesma empresa. A Figura~\ref{fig:av_ablacao} compara-a com o modelo implantado e
-desmonta o modelo entrada a entrada, sob o protocolo congelado.
+The previous result suggests that the deployed model recognises the company and not the news item.
+Checking that hypothesis consists in trying to reproduce it with a lookup table that assigns to each
+company a single number fixed on the training block, corresponding to the fraction of its news items
+that proved material. That table does not look at the headline, does not look at the day and
+invariably returns the same value for the same company. Figure~\ref{fig:av_ablacao} compares it
+with the deployed model and takes the model apart input by input, under the frozen protocol.
 
 \begin{figure}[ht]
 \centering
@@ -926,75 +924,74 @@ desmonta o modelo entrada a entrada, sob o protocolo congelado.
 \legend{\gls{PRAUC}, precision@5 within budget}
 \end{axis}
 \end{tikzpicture}
-\caption[O modelo comparado com subconjuntos das entradas]{Cada linha corresponde a uma variante
-com um subconjunto das entradas ou a uma referência alternativa; as linhas não formam uma sequência
-de remoções cumulativas. A linha decisiva é a da tabela de consulta, que não observa a notícia e
-iguala o modelo implantado na primeira medida e o supera na segunda. As duas linhas inferiores, que
-não dispõem de qualquer entrada de nível de empresa, situam-se exatamente na prevalência do bloco de
-teste.}
+\caption[The model compared with subsets of the inputs]{Each row corresponds to a variant with a
+subset of the inputs or to an alternative reference; the rows do not form a sequence of cumulative
+removals. The decisive row is that of the lookup table, which does not look at the news item and
+matches the deployed model on the first measure and beats it on the second. The two lowest rows,
+which have no company-level input at all, sit exactly at the prevalence of the test block.}
 \label{fig:av_ablacao}
 \end{figure}
 
-Três leituras resultam da figura, e nenhuma depende de interpretação.
+Three readings follow from the figure, and none depends on interpretation.
 
-A tabela de consulta iguala o modelo e supera-o numa das medidas. Na \gls{PRAUC} obtém $0.534$
-contra $0.538$, uma diferença de $0.004$; na precisão dentro do orçamento, que é a medida mais
-próxima da utilização real, obtém $0.662$ contra $0.632$. Esta segunda diferença não foi
-acompanhada de reamostragem por grupos, ao contrário das diferenças de \gls{PRAUC} desta secção, pelo
-que se reporta como observação e não como superioridade estabelecida. Um número por empresa, fixado
-meses antes e nunca atualizado, produz o mesmo efeito que o modelo treinado.
+The lookup table matches the model and beats it on one of the measures. On \gls{PRAUC} it obtains
+$0.534$ against $0.538$, a difference of $0.004$; on precision within the budget, which is the
+measure closest to real use, it obtains $0.662$ against $0.632$. This second difference was not
+accompanied by resampling by groups, unlike the \gls{PRAUC} differences of this section, and is
+therefore reported as an observation and not as established superiority. One number per company,
+fixed months earlier and never updated, produces the same effect as the trained model.
 
-Sem as entradas de nível de empresa não subsiste sinal. Retirando-as, a \gls{PRAUC} desce para
-$0.378$, que é precisamente a prevalência do bloco de teste e o valor definido na
-Secção~\ref{sec:av_desenho} como correspondente à ausência de informação.
+Without the company-level inputs no signal remains. Removing them, \gls{PRAUC} falls to $0.378$,
+which is precisely the prevalence of the test block and the value defined in
+Section~\ref{sec:av_desenho} as corresponding to the absence of information.
 
-A única entrada que descreve a notícia nada acrescenta. O comprimento do título, isoladamente,
-produz igualmente $0.378$, o que torna a única informação por título recebida pelo modelo
-implantado indistinguível da ausência de informação.
+The only input that describes the news item adds nothing. The length of the headline, on its own,
+likewise produces $0.378$, which makes the only per-headline information the deployed model
+receives indistinguishable from the absence of information.
 
-Estas leituras obrigam a separar duas afirmações. A conclusão científica da \gls{QI}3 mantém-se: a
-variante com texto dispõe de trezentos e oitenta e quatro números por título, possuindo por isso
-informação real sobre a notícia, e ainda assim obteve $0.496$ contra os $0.542$ da volatilidade,
-sendo essa a comparação que responde à questão. A decisão de produto, por seu turno, estava errada
-por razão distinta: o que foi implantado como porta de decisão foi a variante sem texto, escolhida
-por uma métrica que não formulava a pergunta de que o produto necessitava.
+These readings require two claims to be separated. The scientific conclusion of \gls{QI}3 stands:
+the variant with text has three hundred and eighty-four numbers per headline, and therefore has
+real information about the news item, and still obtained $0.496$ against the $0.542$ of volatility,
+that being the comparison that answers the question. The product decision, for its part, was wrong
+for a distinct reason: what was deployed as a decision gate was the variant without text, chosen by
+a metric that did not pose the question the product needed.
 
-A manutenção da variante de nove entradas não decorre de esta apresentar o melhor valor entre as que
-cabiam no contentor de execução. Pelo critério fixado antes dos resultados, quatro valores são indistinguíveis entre si: os
-$0.542$ da volatilidade, os $0.543$ da variante sem indicadores de setor, os $0.538$ da
-variante implantada e os $0.534$ da tabela de consulta. As diferenças situam-se entre $0.004$
-e $0.009$, muito abaixo do limite de $0.02$. Aplicar esse limite apenas quando desfavorece uma
-conclusão seria não o ter fixado. A única diferença que o
-critério separa nesta comparação é a que distingue estas quatro variantes do bloco com texto, de
-$+0.048$ com intervalo entre $+0.032$ e $+0.066$. A escolha entre as quatro é, por isso,
-inteiramente de explicabilidade e não tem preço mensurável em \gls{PRAUC}: apenas a variante de nove
-entradas permite ao alerta apresentar as contribuições que elevam e reduzem a pontuação, conforme a
-Figura~\ref{fig:sis_alerta} exibe.
+Keeping the nine-input variant does not follow from its having the best value among those that
+fitted in the execution container. By the criterion fixed before the results, four values are
+indistinguishable from one another: the $0.542$ of volatility, the $0.543$ of the variant without
+sector indicators, the $0.538$ of the deployed variant and the $0.534$ of the lookup table. The
+differences lie between $0.004$ and $0.009$, far below the $0.02$ limit. Applying that limit only
+when it disfavours a conclusion would amount to not having fixed it. The only difference the
+criterion separates in this comparison is the one that distinguishes these four variants from the
+block with text, of $+0.048$ with an interval between $+0.032$ and $+0.066$. The choice among the
+four is therefore entirely one of explainability and has no measurable price in \gls{PRAUC}: only
+the nine-input variant allows the alert to present the contributions that raise and lower the
+score, as Figure~\ref{fig:sis_alerta} shows.
 
-A lição de método permanece: a \gls{PRAUC} sobre o conjunto completo pode assumir valor elevado
-quando a variação entre empresas domina, mesmo na ausência de qualquer capacidade de distinguir
-notícias dentro da mesma empresa. A métrica respondia à pergunta sobre a ordenação do conjunto,
-enquanto o produto necessitava da pergunta sobre a distinção entre duas notícias da mesma empresa.
+The methodological lesson stands: \gls{PRAUC} over the complete set can take a high value when the
+variation between companies dominates, even in the absence of any ability to distinguish news items
+within the same company. The metric answered the question about the ordering of the set, while the
+product needed the question about the distinction between two news items of the same company.
 
-\subsection{O texto como acréscimo e não como substituto}
+\subsection{Text as an increment and not as a substitute}
 
-Comparar a volatilidade, o contexto e o texto isoladamente responde a qual das representações é
-melhor, e não a se o texto acrescenta informação. A resposta a esta segunda pergunta exige somá-lo a
-uma base que conheça a empresa sem conhecer a notícia.
+Comparing volatility, context and text in isolation answers which of the representations is better,
+and not whether the text adds information. Answering this second question requires adding it to a
+base that knows the company without knowing the news item.
 
-A variante que combina contexto e texto não constitui essa base, por somar o texto a um bloco que
-contém informação da notícia através da entrada de retorno do próprio dia. A base adequada é a tabela
-de consulta por empresa, e a razão é metodológica e não de desempenho: ela contém tudo o que o modelo
-conhece sobre a empresa e nada sobre a notícia, pelo que somar-lhe o título isola a contribuição do
-texto. A tabela de consulta não é o melhor preditor conhecido, dado que na \gls{PRAUC} a volatilidade
-isolada se situa acima dela, com $0.542$ contra $0.534$.
+The variant that combines context and text is not that base, since it adds the text to a block
+that contains information about the news item through the same-day return input. The appropriate
+base is the per-company lookup table, and the reason is methodological and not one of performance:
+it contains everything the model knows about the company and nothing about the news item, so adding
+the headline to it isolates the contribution of the text. The lookup table is not the best known
+predictor, since on \gls{PRAUC} volatility alone sits above it, at $0.542$ against $0.534$.
 
-O critério foi fixado antes da medição: um acréscimo apenas conta se o intervalo de confiança a
-noventa e cinco por cento da diferença, obtido por reamostragem por grupos constituídos pela empresa
-e pelo dia, excluir zero. A representação de texto não foi afinada para esta experiência, utilizando
-a mesma redução a trinta e duas dimensões da verificação anterior, de modo que o resultado não decorra
-da procura da configuração conveniente. A reamostragem utiliza mil repetições sobre $1{,}951$ grupos.
-A Figura~\ref{fig:av_acrescimo} apresenta os três intervalos.
+The criterion was fixed before the measurement: an increment only counts if the ninety-five per
+cent confidence interval of the difference, obtained by resampling by groups formed by company and
+day, excludes zero. The text representation was not tuned for this experiment, using the same
+reduction to thirty-two dimensions as the previous check, so that the result does not follow from
+searching for the convenient configuration. The resampling uses a thousand repetitions over
+$1{,}951$ groups. Figure~\ref{fig:av_acrescimo} presents the three intervals.
 
 \begin{figure}[ht]
 \centering
