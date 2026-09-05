@@ -1,61 +1,63 @@
-\chapter{Conclusões}
+\chapter{Conclusions}
 \label{cap:conclusoes}
 
-O Capítulo~\ref{cap:avaliacao} mediu cada componente isoladamente. Este reúne o que dessas
-medições se retira. Sintetiza o trabalho realizado, apresenta a resposta obtida para cada questão de
-investigação, identifica as limitações do estudo e enuncia as linhas de desenvolvimento futuro.
+Chapter~\ref{cap:avaliacao} measured each component in isolation. This one brings together what
+those measurements yield. It synthesises the work carried out, presents the answer obtained for
+each research question, identifies the limitations of the study and sets out the lines of future
+development.
 
-\section{Conclusões principais}
+\section{Main conclusions}
 \label{sec:con_principais}
 
-O trabalho produziu um sistema em funcionamento e uma avaliação de cada uma das técnicas que o
-compõem. O InvestiGator monitoriza doze empresas em ciclo contínuo, entrega alertas explicados a um
-canal público e disponibiliza uma página onde ficam registadas tanto as mensagens enviadas como as
-decisões que conduziram ao silêncio. Ao longo dos períodos documentados no
-Capítulo~\ref{cap:avaliacao} foram entregues $367$ mensagens, entre 9 de julho e 13 de
-agosto de 2026, e registadas $36{,}925$ decisões de triagem sobre uma janela mais
-ampla, e a base de precedentes acumulou $38{,}214$ casos com impacto medido. Estes números
-descrevem um sistema implantado e não uma demonstração construída para o efeito.
+The work produced a system in operation and an evaluation of each of the techniques that compose
+it. InvestiGator monitors twelve companies in a continuous cycle, delivers explained alerts to a
+public channel and provides a page on which both the messages sent and the decisions that led to
+silence are recorded. Over the periods documented in Chapter~\ref{cap:avaliacao}, $367$ messages
+were delivered, between 9 July and 13 August 2026, and $36{,}925$ triage decisions were logged over
+a wider window, and the precedent base accumulated $38{,}214$ cases with measured impact. These
+numbers describe a deployed system and not a demonstration built for the purpose.
 
-A componente que confere ao trabalho o carácter de dissertação não é, contudo, o sistema, mas a
-avaliação a que foi submetido. Três das quatro técnicas foram comparadas com alternativas mais
-simples, escolhidas e declaradas antes de a medição ser realizada, o que é a condição para que o
-resultado possa ser negativo. Numa delas o resultado foi efetivamente negativo. A quarta técnica, a decomposição do movimento, não admite comparação da mesma natureza, uma vez
-que a repartição de um retorno não possui referente externo observável. Dela mediu-se o que
-permanece falsificável: a qualidade do ajuste que a sustenta, e a capacidade de produzir respostas
-distintas para empresas distintas.
+The component that gives the work the character of a dissertation is not, however, the system, but
+the evaluation to which it was submitted. Three of the four techniques were compared with simpler
+alternatives, chosen and declared before the measurement was carried out, which is the condition
+for the result to be able to be negative. In one of them the result was indeed negative. The fourth
+technique, the decomposition of the movement, does not admit a comparison of the same nature, since
+the split of a return has no observable external referent. What was measured of it is what remains
+falsifiable: the quality of the fit that supports it, and the ability to produce distinct answers
+for distinct companies.
 
-A contribuição de engenharia não reside na dimensão do modelo aprendido. O sistema treina um único
-modelo, com nove entradas, e esse modelo perde para uma linha de base de uma só variável. A confiança nesse valor, e na conclusão negativa que ele sustenta, depende do que foi preciso
-construir em volta dele. A Secção~\ref{sec:sis_ciclo} descreve as sete peças. O conjunto de dados
-é rotulado a partir de duas fontes independentes. O rótulo é declarado como decisão, e nove
-definições alternativas são medidas em vez de a adotada ser assumida. A separação temporal é verificada por um
-procedimento automático. A calibração vem acompanhada da medição e da declaração do enviesamento
-que a afeta. Os artefactos ficam sob controlo de versões. O modelo implantado é comprovadamente o
-modelo avaliado. E o sistema em funcionamento continua a ser observado. É nesse conjunto, e não no
-modelo, que reside o trabalho.
+The engineering contribution does not lie in the size of the learned model. The system trains a
+single model, with nine inputs, and that model loses to a one-variable baseline. Confidence in that
+value, and in the negative conclusion it supports, depends on what had to be built around it.
+Section~\ref{sec:sis_ciclo} describes the seven pieces. The dataset is labelled from two
+independent sources. The label is declared as a decision, and nine alternative definitions are
+measured instead of the one adopted being assumed. The temporal separation is verified by an
+automatic procedure. The calibration comes with the measurement and the declaration of the bias
+that affects it. The artefacts are kept under version control. The deployed model is demonstrably
+the model evaluated. And the system in operation continues to be observed. It is in that set, and
+not in the model, that the work resides.
 
-Uma segunda conclusão atravessa os quatro casos de estudo e não pertence a nenhum deles em
-particular. Em três ocasiões distintas, uma técnica mais simples obteve melhor resultado do que uma
-técnica mais sofisticada em condições equivalentes: o \emph{z}-score deslizante contra dois
-detetores aprendidos, a volatilidade recente contra as representações de texto, e uma tabela de
-treze constantes contra o modelo treinado. Em três outras ocasiões sucedeu o inverso, com a alternativa medida a obter melhor resultado. O
-sistema conservou a opção implantada por razões distintas em cada caso: o estimador de pesos
-iguais por explicabilidade, a janela de vinte dias por responsividade, e o codificador de frases
-mais pequeno por custo computacional.
+A second conclusion runs across the four case studies and belongs to none of them in particular.
+On three distinct occasions, a simpler technique obtained a better result than a more sophisticated
+one under equivalent conditions: the rolling \emph{z}-score against two learned detectors, recent
+volatility against text representations, and a table of thirteen constants against the trained
+model. On three other occasions the reverse happened, with the alternative measured obtaining the
+better result. The system kept the deployed option for distinct reasons in each case: the equally
+weighted estimator for explainability, the twenty-day window for responsiveness, and the smaller
+sentence encoder for computational cost.
 
-A distinção entre estes dois casos é a distinção entre resultado e escolha, e o
-presente capítulo mantém-na explícita: o que a medição estabelece é reportado como resultado, e o
-que o autor decidiu apesar da medição é reportado como decisão, acompanhada do que essa decisão
-custa quando a medição separa as alternativas, e da declaração de que nada custa em \gls{PRAUC}
-quando não as separa.
+The distinction between these two cases is the distinction between a result and a choice, and the
+present chapter keeps it explicit: what the measurement establishes is reported as a result, and
+what the author decided in spite of the measurement is reported as a decision, accompanied by what
+that decision costs when the measurement separates the alternatives, and by the statement that it
+costs nothing in \gls{PRAUC} when it does not separate them.
 
-\section{As respostas às questões de investigação}
+\section{The answers to the research questions}
 \label{sec:con_respostas}
 
-Esta secção responde às três questões enunciadas na Secção~\ref{sec:intro_objetivos} e delimita, em
-cada caso, o que a resposta permite e não permite afirmar. A Figura~\ref{fig:con_scorecard} reúne as
-três.
+This section answers the three questions stated in Section~\ref{sec:intro_objetivos} and
+delimits, in each case, what the answer does and does not allow to be claimed.
+Figure~\ref{fig:con_scorecard} brings the three together.
 
 \begin{figure}[ht]
 \centering
@@ -86,429 +88,436 @@ três.
 
   \draw[black!35] (3.35,-5.85) -- (3.35,0.95);
 \end{tikzpicture}
-\caption[As três questões de investigação e as respostas obtidas]{As três respostas, com a resposta
-negativa apresentada com o mesmo destaque das duas restantes. A terceira linha é a que atribui
-crédito às outras: um trabalho que reporte apenas os resultados favoráveis não permite determinar se
-as respostas afirmativas foram medidas ou pressupostas.}
+\caption[The three research questions and the answers obtained]{The three answers, with the
+negative answer presented with the same prominence as the other two. The third row is the one that
+gives credit to the others: a work that reports only the favourable results does not allow one to
+determine whether the affirmative answers were measured or presumed.}
 \label{fig:con_scorecard}
 \end{figure}
 
-\subsection{Deteção de movimentos invulgares}
+\subsection{Detection of unusual movements}
 
-A resposta à \gls{QI}1 é afirmativa. Um \emph{z}-score sobre uma janela deslizante de vinte dias assinala dias raros a uma taxa
-praticamente idêntica em empresas de volatilidades muito distintas. A amplitude entre a empresa
-mais e a menos assinalada é de $0.015$, contra $0.344$ de uma regra de limiar fixo em três por
-cento. Contra um rótulo aproximado, o método obtém
-$F_1 = 0.516$ e a regra fixa $0.218$. Sujeito a um protocolo causal equivalente, o mesmo método
-supera ainda dois detetores concebidos para esta tarefa, com $F_1$ de $0.530$ contra $0.269$ do
-\emph{Isolation Forest} \autocite{liu2008isolation} e $0.280$ do \emph{Local Outlier Factor}
+The answer to \gls{QI}1 is affirmative. A \emph{z}-score over a rolling twenty-day window flags
+rare days at a practically identical rate in companies of very different volatilities. The spread
+between the most and the least flagged company is $0.015$, against $0.344$ for a fixed threshold
+rule at three per cent. Against an approximate label, the method obtains $F_1 = 0.516$ and the
+fixed rule $0.218$. Subjected to an equivalent causal protocol, the same method further beats two
+detectors designed for this task, with $F_1$ of $0.530$ against $0.269$ for \emph{Isolation Forest}
+\autocite{liu2008isolation} and $0.280$ for the \emph{Local Outlier Factor}
 \autocite{breunig2000lof}.
 
-A configuração implantada não é, porém, a melhor medida dentro da própria família. Com a mesma
-cobertura, um estimador com decaimento exponencial obtém $F_1 = 0.664$ e uma janela de sessenta
-dias obtém $0.678$, contra os $0.516$ da configuração em produção. O que a \gls{QI}1 estabelece
-é que a família deslizante supera o limiar fixo e os dois detetores aprendidos, e não que a
-parametrização escolhida seja a melhor dessa família.
+The deployed configuration is not, however, the best measured within the family itself. With the
+same recall, an exponentially weighted estimator obtains $F_1 = 0.664$ and a sixty-day window
+obtains $0.678$, against the $0.516$ of the configuration in production. What \gls{QI}1 establishes
+is that the rolling family beats the fixed threshold and the two learned detectors, and not that
+the parameterisation chosen is the best of that family.
 
-Este resultado é menos surpreendente do que a diferença de valores sugere, e a literatura permite
-situá-lo. Os dois detetores aprendidos definem raridade a partir da geometria dos dados, um por
-isolamento do ponto e outro por comparação de densidades, e foram concebidos para espaços com
-múltiplas variáveis em interação. O problema tratado apresenta uma única série de retornos por empresa, na qual a estrutura
-relevante é temporal e não geométrica: períodos de agitação sucedem-se a períodos calmos. É a
-propriedade que os modelos \gls{ARCH} e \gls{GARCH} formalizam \autocite{engle1982arch,
-bollerslev1986garch}. A janela deslizante capta-a diretamente; um detetor treinado sobre o
-conjunto completo teria de a aprender. Quando a suposição embutida
-num método simples coincide com a estrutura efetiva do problema, a margem para a superar é reduzida.
+This result is less surprising than the difference in values suggests, and the literature allows
+it to be situated. The two learned detectors define rarity from the geometry of the data, one by
+isolating the point and the other by comparing densities, and were designed for spaces with
+multiple interacting variables. The problem treated here has a single series of returns per
+company, in which the relevant structure is temporal and not geometric: agitated periods follow
+calm ones. It is the property that \gls{ARCH} and \gls{GARCH} models formalise
+\autocite{engle1982arch, bollerslev1986garch}. The rolling window captures it directly; a detector
+trained over the complete set would have to learn it. When the assumption built into a simple
+method coincides with the actual structure of the problem, the margin for beating it is small.
 
-O alcance da resposta é delimitado por três condições. A comparação incide sobre quinze empresas de
-grande capitalização, selecionadas em 2026 e avaliadas sobre o passado, que sobreviveram por
-construção; sobre três anos de cotações e sobre um único mercado. O rótulo utilizado como argumento
-secundário é ele próprio relativo à volatilidade de cada empresa, razão pela qual o argumento
-principal é a consistência da taxa de disparo, que não depende de rótulos. O limiar de três por cento
-da regra alternativa não foi otimizado, pelo que o que a comparação estabelece não é que nenhum
-limiar fixo obtivesse melhor resultado, mas que uma regra de limiar fixo mede uma quantidade distinta
-da pretendida.
+The reach of the answer is delimited by three conditions. The comparison covers fifteen
+large-capitalisation companies, selected in 2026 and evaluated over the past, which survived by
+construction; three years of quotes; and a single market. The label used as a secondary argument is
+itself relative to the volatility of each company, which is why the principal argument is the
+consistency of the firing rate, which does not depend on labels. The three per cent threshold of
+the alternative rule was not optimised, so what the comparison establishes is not that no fixed
+threshold would obtain a better result, but that a fixed threshold rule measures a quantity
+distinct from the one intended.
 
-\subsection{Recuperação de precedentes}
+\subsection{Precedent retrieval}
 
-A resposta à \gls{QI}2 é afirmativa, e a sua formulação exige o nível do setor. Sobre o corpus
-recente, a recuperação por semelhança de frase \autocite{reimers2019sbert} obtém precisão@5 de
-$0.514$, contra $0.346$ da sobreposição de vocabulário, $0.240$ da escolha aleatória e
-$0.126$ da apresentação das notícias mais recentes. Também aqui o modelo implantado não é o melhor
-medido: uma variante de maior dimensão obtém $0.538$ sobre o mesmo protocolo, e foi preterida por
-custo computacional.
+The answer to \gls{QI}2 is affirmative, and its formulation requires the sector level. Over the
+recent corpus, retrieval by sentence similarity \autocite{reimers2019sbert} obtains precision@5 of
+$0.514$, against $0.346$ for vocabulary overlap, $0.240$ for random choice and $0.126$ for
+presenting the most recent news. Here too the deployed model is not the best measured: a larger
+variant obtains $0.538$ under the same protocol, and was set aside on computational cost.
 
-O valor agregado não constitui, porém, a forma adequada de enunciar o resultado. Quase metade das
-notícias do corpus pertence ao setor da tecnologia, o que torna disponível uma estratégia que
-dispensa qualquer modelo e sequer observa a consulta, consistindo em devolver invariavelmente
-notícias desse setor; a sua precisão iguala a fração de consultas de tecnologia, $0.467$. Essa
-estratégia é inútil enquanto produto, dado que acerta em todas as consultas de um setor e em nenhuma
-dos quatro restantes, mas a sua existência demonstra que o agregado mede em parte a composição do
+The aggregate value is not, however, the appropriate way of stating the result. Almost half the
+news in the corpus belongs to the technology sector, which makes available a strategy that
+dispenses with any model and does not even look at the query, consisting in invariably returning
+news from that sector; its precision equals the fraction of technology queries, $0.467$. That
+strategy is useless as a product, since it is right on every query of one sector and on none of the
+remaining four, but its existence shows that the aggregate measures in part the composition of the
 corpus.
 
-A comparação que resiste à objeção realiza-se dentro de cada setor, onde o método supera o
-respetivo valor de referência nos cinco. A margem absoluta é maior no setor mais abundante, com
-$+0.283$ na tecnologia; nos setores escassos, onde o valor de referência ronda $0.072$, o método
-obtém várias vezes esse valor com margem absoluta menor. É esta a afirmação que o trabalho
-sustenta.
+The comparison that survives the objection is carried out within each sector, where the method
+beats the respective reference value in all five. The absolute margin is largest in the most
+abundant sector, at $+0.283$ in technology; in the sparse sectors, where the reference value is
+around $0.072$, the method obtains several times that value with a smaller absolute margin. This is
+the claim the work supports.
 
-Duas verificações adicionais delimitam a resposta. Sobre o corpus histórico completo, com aproximadamente oitenta mil notícias de seis anos, a
-precisão sobe para $0.595$. O valor de referência sobe na mesma proporção, e a margem mantém-se.
-O método não se degrada com a escala, nem melhora com ela. A imposição da restrição que o sistema
-efetivamente enfrenta, segundo a qual o precedente tem de ser anterior à consulta, reduz a precisão
-para $0.513$ e o valor de referência para $0.259$, com a margem a variar $0.008$. O método
-conserva a vantagem quando obrigado a operar como opera em produção.
+Two further checks delimit the answer. Over the complete historical corpus, with approximately
+eighty thousand news items from six years, precision rises to $0.595$. The reference value rises in
+the same proportion, and the margin holds. The method does not degrade with scale, nor does it
+improve with it. Imposing the constraint the system actually faces, under which the precedent must
+be prior to the query, reduces precision to $0.513$ and the reference value to $0.259$, with the
+margin varying by $0.008$. The method keeps its advantage when forced to operate as it operates in
+production.
 
-A segunda ressalva tem consequências diretas sobre o produto. A recuperação identifica tema e não
-direção: a concordância entre o sentido do movimento da notícia de consulta e o dos precedentes
-situa-se em $0.708$ contra um valor de acaso de $0.688$, uma diferença de $0.020$. Duas
-notícias podem tratar do mesmo assunto e o preço evoluir em sentidos opostos. O resultado é
-coerente com o que a forma semiforte da hipótese dos mercados eficientes conduziria a esperar
-\autocite{fama1970efficient}, segundo a qual a informação pública se encontra já refletida no preço,
-sem que o trabalho a teste ou nela se apoie para estabelecer qualquer conclusão. A consequência
-prática é a decisão de apresentar os precedentes individualmente, com data e desfecho, em vez de os
-resumir a uma média suscetível de ser lida como previsão.
+The second caveat has direct consequences for the product. Retrieval identifies topic and not
+direction: the agreement between the direction of the movement of the query news item and that of
+the precedents stands at $0.708$ against a chance value of $0.688$, a difference of $0.020$. Two
+news items can deal with the same subject and the price move in opposite directions. The result is
+consistent with what the semi-strong form of the efficient market hypothesis would lead one to
+expect \autocite{fama1970efficient}, under which public information is already reflected in the
+price, without the work testing it or relying on it to establish any conclusion. The practical
+consequence is the decision to present the precedents individually, with date and outcome, rather
+than summarising them into an average liable to be read as a forecast.
 
-Uma delimitação final respeita ao rótulo. A pertença ao mesmo setor é uma aproximação verificável de
-relevância, e não a propriedade que se pretendia medir. A linha de base lexical é a forma mais elementar da sua família, sem ponderação pela raridade dos
-termos nem normalização pelo comprimento. Os dezassete pontos percentuais de vantagem medem a
-distância a um ponto de partida, e não a uma função de ordenação afinada
-\autocite{robertson2009bm25}.
+A final delimitation concerns the label. Membership of the same sector is a verifiable
+approximation of relevance, and not the property one intended to measure. The lexical baseline is
+the most elementary form of its family, without weighting by the rarity of terms and without
+normalisation by length. The seventeen percentage points of advantage measure the distance to a
+starting point, and not to a tuned ranking function \autocite{robertson2009bm25}.
 
-\subsection{Triagem de notícias}
+\subsection{News triage}
 
-A resposta à \gls{QI}3 é negativa. Nenhuma variante que incorpora o texto do título supera uma linha
-de base construída apenas com a volatilidade dos vinte dias anteriores, com $0.496$ de \gls{PRAUC}
-contra $0.542$, e o índice de Brier acompanha a mesma ordenação. O resultado resiste a três verificações. A primeira repete a comparação concedendo ao texto as
-melhores condições disponíveis, e eleva o seu melhor valor para $0.533$, sem alcançar a linha de
-base. A segunda reamostra por grupos constituídos pela empresa e pelo dia, e mantém o intervalo a
-excluir zero. A terceira repete a medição para nove combinações alternativas de limiar e horizonte
-do rótulo, e a volatilidade iguala ou supera o modelo com texto nas nove.
+The answer to \gls{QI}3 is negative. No variant incorporating the text of the headline beats a
+baseline built only on the volatility of the twenty preceding days, with $0.496$ of \gls{PRAUC}
+against $0.542$, and the Brier score follows the same ordering. The result survives three checks.
+The first repeats the comparison granting the text the best conditions available, and raises its
+best value to $0.533$, without reaching the baseline. The second resamples by groups formed by
+company and day, and keeps the interval excluding zero. The third repeats the measurement for nine
+alternative combinations of label threshold and horizon, and volatility matches or beats the model
+with text in all nine.
 
-A resposta ganhou precisão no decurso do trabalho e essa precisão altera o que dela se retira. As
-comparações anteriores colocam as representações lado a lado e respondem, por conseguinte, à pergunta
-sobre qual delas é melhor. A pergunta com maior utilidade para quem constrói um sistema é distinta e
-consiste em determinar se o texto acrescenta ao que já é conhecido. Medida sobre a tabela de consulta
-por empresa, que contém tudo o que o modelo conhece da empresa e nada da notícia, a resposta é
-afirmativa: o título acrescenta $+0.012$ de \gls{PRAUC}, com intervalo entre $+0.004$ e
-$+0.020$, que exclui zero. É a única ocasião em que uma representação de texto apresenta um
-acréscimo detetável nesta tarefa.
+The answer gained precision over the course of the work and that precision changes what is drawn
+from it. The earlier comparisons place the representations side by side and therefore answer the
+question of which of them is better. The question of greater use to whoever builds a system is a
+different one, and consists in determining whether the text adds to what is already known. Measured
+against the per-company lookup table, which contains everything the model knows about the company
+and nothing about the news, the answer is affirmative: the headline adds $+0.012$ of \gls{PRAUC},
+with an interval between $+0.004$ and $+0.020$, which excludes zero. It is the only occasion on
+which a text representation shows a detectable increment on this task.
 
-O valor situa-se abaixo do limite de $0.02$ que o Capítulo~\ref{cap:avaliacao} fixou antes das
-medições, e esse limite aplica-se nos dois sentidos. Fica estabelecido um limite superior para o
-efeito do texto, e não uma quantidade de que o sistema possa dispor.
+The value falls below the $0.02$ limit that Chapter~\ref{cap:avaliacao} fixed before the
+measurements, and that limit applies in both directions. What is established is an upper bound on
+the effect of the text, and not a quantity the system can make use of.
 
-Três medições impedem que este acréscimo reabra o veredicto. A soma não supera a volatilidade isolada, e o intervalo da diferença contém zero. O acréscimo não
-sobrevive à métrica que descreve o produto: a precisão dentro do orçamento de cinco alertas por
-dia permanece em $0.662$ com e sem texto. E a capacidade de separar notícias da mesma empresa
-mantém-se ao nível do acaso. O que estas medições acrescentam à resposta negativa não é uma ressalva mas uma localização: a
-informação que o texto transporta distingue empresas e períodos, quando o produto necessitava de
-distinguir notícias. A formulação que subsiste é a mais fraca das possíveis, correspondendo a um
-limite superior de um efeito e não a uma descoberta.
+Three measurements prevent this increment from reopening the verdict. The sum does not beat
+volatility alone, and the interval of the difference contains zero. The increment does not survive
+the metric that describes the product: precision within the budget of five alerts per day stays at
+$0.662$ with and without text. And the ability to separate news items of the same company remains
+at the level of chance. What these measurements add to the negative answer is not a caveat but a
+location: the information the text carries distinguishes companies and periods, when the product
+needed it to distinguish news items. The formulation that survives is the weakest possible,
+corresponding to an upper bound on an effect and not to a discovery.
 
-Existe uma linha de investigação estabelecida que utiliza texto para antecipar movimentos de preço
-\autocite{xing2018nlffsurvey, ding2015deep}, e este resultado não a contradiz. A diferença não reside na dimensão do texto, uma vez que \textcite{ding2015deep} operam igualmente
-sobre títulos, mas no tratamento que lhe é dado. Aqueles autores extraem estruturas de
-acontecimento e treinam uma rede para prever a direção do movimento. Aqui os títulos são
-comparados por semelhança, e a direção nunca é objeto de previsão. Os corpora e os horizontes de avaliação diferem igualmente. A
-afirmação que este trabalho sustenta é mais estreita do que uma refutação: sob esta restrição de
-dados e com esta família de métodos, o sinal textual nada acrescenta ao que a volatilidade recente
-já indicava. O alcance do resultado limita-se, por isso, a um regime de recursos e a uma escolha de
-representação, e não se estende à linguagem.
+There is an established line of research that uses text to anticipate price movements
+\autocite{xing2018nlffsurvey, ding2015deep}, and this result does not contradict it. The difference
+does not lie in the size of the text, since \textcite{ding2015deep} likewise operate on headlines,
+but in the treatment given to it. Those authors extract event structures and train a network to
+predict the direction of the movement. Here headlines are compared by similarity, and direction is
+never the object of a prediction. The corpora and the evaluation horizons likewise differ. The
+claim this work supports is narrower than a refutation: under this data constraint and with this
+family of methods, the textual signal adds nothing to what recent volatility already indicated. The
+reach of the result is therefore limited to a regime of resources and to a choice of
+representation, and does not extend to language.
 
-Existe, ainda assim, uma leitura teórica que o enquadra e que se enuncia com a mesma cautela. A
-forma semiforte da hipótese dos mercados eficientes \autocite{fama1970efficient} sustenta que a
-informação publicamente disponível se encontra já refletida no preço. Se assim for, um título
-público não tem, no momento em que é lido, informação que os preços recentes não contenham, e o
-resultado obtido é o que essa hipótese conduziria a esperar. A condição de recursos deste trabalho
-agrava a expectativa em vez de a atenuar: entre a publicação de uma notícia e a sua deteção por
-fontes gratuitas decorrem $353$ minutos de mediana, intervalo durante o qual qualquer reação do
-mercado já ocorreu. O sistema observa, por construção, informação que deixou de ser nova.
+There is, even so, a theoretical reading that frames it and that is stated with the same caution.
+The semi-strong form of the efficient market hypothesis \autocite{fama1970efficient} holds that
+publicly available information is already reflected in the price. If that is so, a public headline
+has, at the moment it is read, no information that recent prices do not contain, and the result
+obtained is what that hypothesis would lead one to expect. The resource condition of this work
+worsens the expectation rather than easing it: between the publication of a news item and its
+detection by free sources a median of $353$ minutes passes, an interval during which any market
+reaction has already occurred. The system observes, by construction, information that has ceased to
+be new.
 
-Esta leitura é um enquadramento e não uma conclusão. O trabalho não testa a hipótese dos mercados
-eficientes, e um resultado negativo obtido com uma família de métodos sobre um corpus concreto não
-a confirma; confirmá-la exigiria um desenho que este não tem. O que a leitura acrescenta é a razão
-pela qual o resultado é menos surpreendente do que a hipótese inicial supunha, e por que motivo a
-sua correção mais provável não está na representação do texto mas no atraso com que ele chega.
+This reading is a framing and not a conclusion. The work does not test the efficient market
+hypothesis, and a negative result obtained with one family of methods over a concrete corpus does
+not confirm it; confirming it would require a design this one does not have. What the reading adds
+is the reason why the result is less surprising than the initial hypothesis assumed, and why its
+most likely correction lies not in the representation of the text but in the delay with which it
+arrives.
 
-\section{Objetivos alcançados}
+\section{Objectives achieved}
 \label{sec:con_objetivos}
 
-Dos quatro objetivos enunciados na Secção~\ref{sec:intro_objetivos}, três encontram-se integralmente
-cumpridos e um cumprido com a ressalva descrita adiante.
+Of the four objectives stated in Section~\ref{sec:intro_objetivos}, three are fully met and one is
+met with the caveat described below.
 
-O primeiro objetivo, construir o sistema completo desde a aquisição de dados até à entrega do alerta,
-está cumprido. Os dois gatilhos funcionam de ponta a ponta em produção, sobre fontes gratuitas, e o
-percurso de um acontecimento está documentado no Capítulo~\ref{cap:sistema} com os valores de um caso
-real.
+The first objective, to build the complete system from data acquisition to the delivery of the
+alert, is met. Both triggers work end to end in production, on free sources, and the path of an
+event is documented in Chapter~\ref{cap:sistema} with the values of a real case.
 
-O segundo objetivo, avaliar cada componente contra linhas de base transparentes, está cumprido
-para as três técnicas em que existe um referente externo. Num dos casos foi além do previsto: o
-detetor foi comparado não apenas com uma regra de limiar fixo, mas também com dois métodos
-aprendidos.
-A decomposição do movimento constitui a ressalva: não existe verdade de terreno contra a qual medir a
-exatidão de uma repartição, pelo que se mediu o que nela permanece falsificável, correspondente à
-qualidade do ajuste e à capacidade de discriminar. Ficaram por realizar comparações internas que
-seriam possíveis, como a do modelo de um fator contra o de dois fatores ou a das sensibilidades
-brutas contra as encolhidas.
+The second objective, to evaluate each component against transparent baselines, is met for the
+three techniques in which an external referent exists. In one of the cases it went beyond what was
+planned: the detector was compared not only with a fixed threshold rule, but also with two learned
+methods.
+The decomposition of the movement is the caveat: there is no ground truth against which to measure
+the accuracy of a split, so what was measured is what remains falsifiable in it, corresponding to
+the quality of the fit and to the ability to discriminate. Internal comparisons that would be
+possible were not carried out, such as that of the one-factor model against the two-factor model,
+or that of the raw sensitivities against the shrunk ones.
 
-O terceiro objetivo, garantir que as explicações apresentadas são fiéis ao que o sistema calculou,
-está cumprido por construção e não por verificação posterior. Cada valor exibido provém do objeto que
-o calculou, e o texto é composto a partir dessas peças, pelo que não é possível ao alerta enunciar um
-valor distinto do que o sistema obteve. A fidelidade é, contudo, uma propriedade do sistema, e não da
-relação entre o sistema e quem o lê; a utilidade das explicações para um investidor particular não
-foi medida, e a Secção~\ref{sec:con_limitacoes} trata essa ausência.
+The third objective, to ensure that the explanations presented are faithful to what the system
+computed, is met by construction and not by subsequent verification. Every value displayed comes
+from the object that computed it, and the text is composed from those pieces, so it is not possible
+for the alert to state a value distinct from the one the system obtained. Faithfulness is, however,
+a property of the system, and not of the relation between the system and whoever reads it; the
+usefulness of the explanations for a retail investor was not measured, and
+Section~\ref{sec:con_limitacoes} deals with that absence.
 
-O quarto objetivo, reportar os resultados obtidos incluindo os que não confirmem as expectativas
-iniciais, está cumprido. A resposta negativa à \gls{QI}3 aparece na Figura~\ref{fig:con_scorecard}
-e no corpo deste capítulo com o mesmo destaque das restantes, acompanhada das três verificações a
-que foi submetida e das três ocasiões em que uma técnica mais simples superou uma mais
-sofisticada.
+The fourth objective, to report the results obtained including those that do not confirm the
+initial expectations, is met. The negative answer to \gls{QI}3 appears in
+Figure~\ref{fig:con_scorecard} and in the body of this chapter with the same prominence as the
+others, accompanied by the three checks to which it was submitted and by the three occasions on
+which a simpler technique beat a more sophisticated one.
 
-\section{Limitações}
+\section{Limitations}
 \label{sec:con_limitacoes}
 
-Esta secção enumera as limitações do trabalho por ordem de importância. A
-Tabela~\ref{tab:con_limites} apresenta-as em conjunto, com o trabalho que encerraria cada uma e a
-natureza do respetivo custo; o texto que se segue desenvolve as quatro de maior consequência e
-resume as restantes. A maioria está quantificada. Duas não o estão por natureza: a ausência de
-estudo controlado é uma ausência e não uma medida, e a distância entre cada rótulo e a
-propriedade que aproxima só seria mensurável contra uma anotação humana que não existe.
+This section lists the limitations of the work in order of importance.
+Table~\ref{tab:con_limites} presents them together, with the work that would close each one and the
+nature of its cost; the text that follows develops the four of greatest consequence and summarises
+the rest. Most are quantified. Two are not, by their nature: the absence of a controlled study is an
+absence and not a measure, and the distance between each label and the property it approximates
+would only be measurable against a human annotation that does not exist.
 
 \begin{table}[!htbp]
-\caption[As limitações e o trabalho que as encerraria]{As onze limitações, por ordem de
-importância, com o trabalho que encerraria cada uma e a natureza do custo desse trabalho. As duas
-que dependem de tempo de calendário são as que exigem julgamento humano, e são também as duas de
-que as restantes mais dependem: enquanto não existir uma amostra anotada por pessoas, nem a
-utilidade das explicações nem a qualidade dos rótulos deixam de ser aproximações.}
+\caption[The limitations and the work that would close them]{The eleven limitations, in order of
+importance, with the work that would close each one and the nature of the cost of that work. The
+two that depend on calendar time are the ones that require human judgement, and they are also the
+two on which the rest most depend: until a sample annotated by people exists, neither the
+usefulness of the explanations nor the quality of the labels ceases to be an approximation.}
 \label{tab:con_limites}
 \centering
 \footnotesize
 \begin{tabular}{@{}L{0.33\textwidth} L{0.32\textwidth} L{0.20\textwidth}@{}}
 \toprule
-\tabhead{Limitação} & \tabhead{O que a encerra} & \tabhead{Custo} \\
+\tabhead{Limitation} & \tabhead{What closes it} & \tabhead{Cost} \\
 \midrule
-Nenhum estudo controlado com pessoas & Executar o protocolo desenhado, com seis a dez participantes &
-tempo de calendário \\
-A pontuação é quase constante dentro de cada empresa & Entradas que variem de um título para o
-seguinte & reduzido \\
-O rótulo pode favorecer a linha de base vencedora & Reconstruir o alvo com sensibilidades
-estimadas & reduzido \\
-Os rótulos são aproximações verificáveis & Anotar uma amostra com julgamento humano &
-tempo de calendário \\
-O alerta afirma mais evidência do que a que possui & Medir o impacto por notícia e não por dia &
-dados intradiários \\
-Os três blocos quase não partilham empresas & Uma divisão de composição constante & reduzido \\
-Apenas o título é lido, e não o corpo do artigo & Recolher e representar o texto integral &
-dados novos \\
-A repartição nem sempre está bem estimada & Exibir o ajuste junto de cada repartição & reduzido \\
-A deriva é medida e não corrigida & Re-treinar com o registo de produção & reduzido \\
-A cobertura das fontes é incompleta e desigual & Acrescentar fontes, ou declarar o limite &
-fora de controlo \\
-As três causas do atraso não estão separadas & Registar quando cada item surge no fluxo &
-instrumentação \\
+No controlled study with people & Run the protocol designed, with six to ten participants &
+calendar time \\
+The score is almost constant within each company & Inputs that vary from one headline to the next &
+small \\
+The label may favour the winning baseline & Rebuild the target with estimated sensitivities &
+small \\
+The labels are verifiable approximations & Annotate a sample with human judgement &
+calendar time \\
+The alert claims more evidence than it has & Measure impact per news item and not per day &
+intraday data \\
+The three blocks barely share companies & A split of constant composition & small \\
+Only the headline is read, not the body of the article & Collect and represent the full text &
+new data \\
+The split is not always well estimated & Display the fit alongside each split & small \\
+Drift is measured and not corrected & Retrain with the production log & small \\
+Source coverage is incomplete and uneven & Add sources, or declare the limit &
+outside our control \\
+The three causes of the delay are not separated & Log when each item appears in the feed &
+instrumentation \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{Não foi realizado um estudo controlado com utilizadores.}
-Esta é a lacuna de maior peso. O sistema assenta na hipótese de que uma explicação acompanhada
-da respetiva evidência conduz um não especialista a uma decisão melhor, e essa hipótese não foi
-submetida a um desenho experimental. O protocolo existe, com participantes, tarefas e critérios
-definidos, e não foi executado. O que existe, e está reportado na
-Secção~\ref{sec:av_feedback}, é retorno recolhido em contexto real: leitores do canal público
-classificam os alertas que recebem, sob regras de análise fixadas antes do primeiro voto, e a
-recolha prossegue. A literatura é explícita quanto ao peso desta ausência: afirmações
-de interpretabilidade exigem avaliação e não se estabelecem por declaração
-\autocite{doshivelez2018considerations}. A razão não é formal. O efeito de uma explicação sobre uma pessoa
-não é dedutível da sua construção: sabe-se que a confiança em sistemas automáticos falha nos dois
-sentidos, com o utilizador a ignorar um aviso correto ou a aceitar um aviso incorreto
-\autocite{lee2004trust}, e que a mera presença de uma explicação aumenta a aceitação de respostas
-erradas \autocite{bansal2021whole}. O sistema foi construído para produzir confiança apropriada,
-apresentando evidência em vez de emitir um veredicto, mas que o consiga permanece uma hipótese. Na
-ausência do estudo, os dois modos de falha são indistinguíveis nos registos: um alerta ignorado e um
-alerta indevidamente acreditado produzem a mesma ausência de dados.
+\paragraph{No controlled study with users was carried out.}
+This is the gap of greatest weight. The system rests on the hypothesis that an explanation
+accompanied by its evidence leads a non-specialist to a better decision, and that hypothesis was not
+submitted to an experimental design. The protocol exists, with participants, tasks and criteria
+defined, and was not executed. What does exist, and is reported in Section~\ref{sec:av_feedback}, is
+feedback collected in a real context: readers of the public channel rate the alerts they receive,
+under analysis rules fixed before the first vote, and the collection continues. The literature is
+explicit about the weight of this absence: claims of interpretability demand evaluation and are not
+established by declaration \autocite{doshivelez2018considerations}. The reason is not a formal one.
+The effect of an explanation on a person is not deducible from its construction: it is known that
+trust in automated systems fails in both directions, with the user ignoring a correct warning or
+accepting an incorrect one \autocite{lee2004trust}, and that the mere presence of an explanation
+increases the acceptance of wrong answers \autocite{bansal2021whole}. The system was built to
+produce appropriate trust, presenting evidence rather than issuing a verdict, but that it succeeds
+remains a hypothesis. In the absence of the study, the two failure modes are indistinguishable in
+the logs: an ignored alert and an unduly believed alert produce the same absence of data.
 
-A distinção entre as duas coisas determina o que cada uma permite afirmar. O retorno do
-canal é observacional: vota quem quer, o que desloca a amostra para os extremos; nenhum
-grupo recebeu a variação de preço sem a explicação que a acompanha, pelo que nada atribui a
-utilidade à explicação em si; e o canal é público, pelo que se desconhece se quem responde
-pertence ao público que este trabalho assume. O que esses votos medem é utilidade percebida
-por quem se dispôs a responder. A hipótese fundadora diz respeito a decisão melhor, que é
-outra quantidade, e é essa que permanece por testar.
+The distinction between the two determines what each one allows to be claimed. The channel
+feedback is observational: whoever wants to votes, which shifts the sample towards the extremes; no
+group received the price change without the explanation that accompanies it, so nothing attributes
+the usefulness to the explanation itself; and the channel is public, so it is not known whether
+those who answer belong to the audience this work assumes. What those votes measure is perceived
+usefulness among those who chose to answer. The founding hypothesis concerns a better decision,
+which is another quantity, and it is that one which remains untested.
 
-\paragraph{O modelo implantado não podia executar a função que lhe foi atribuída.}
-A variante colocada em produção como porta de decisão recebe sete entradas de nível de empresa, uma
-de nível do dia e uma única que varia de um título para o seguinte, correspondente ao comprimento do
-título. A sua pontuação é, por aritmética e não por acidente, quase constante dentro de cada
-empresa: a amplitude média dentro de cada empresa é de $0.072$ e a amplitude entre as medianas das
-empresas é de $0.392$. Em $48\%$ dos títulos distintos, o resultado estava determinado antes de o
-título ser lido.
+\paragraph{The deployed model could not perform the function assigned to it.}
+The variant put into production as a decision gate receives seven company-level inputs, one
+day-level input and a single one that varies from one headline to the next, the length of the
+headline. Its score is, by arithmetic and not by accident, almost constant within each company: the
+mean spread within each company is $0.072$ and the spread between the medians of the companies is
+$0.392$. In $48\%$ of the distinct headlines, the outcome was determined before the headline was
+read.
 
-Duas afirmações têm de ser separadas, uma vez que apenas uma corresponde a erro. O resultado da
-\gls{QI}3 mantém-se, porque a variante com texto dispunha de trezentos e oitenta e quatro números
-por título e ainda assim perdeu. A decisão de produto estava errada, e a razão é de método: a
-escolha foi tomada por uma métrica que interroga a ordenação do conjunto completo, quando o produto
-necessitava da distinção entre dois títulos da mesma empresa.
+Two claims must be separated, since only one of them is an error. The result of \gls{QI}3 stands,
+because the variant with text had three hundred and eighty-four numbers per headline and still
+lost. The product decision was wrong, and the reason is methodological: the choice was made by a
+metric that interrogates the ordering of the complete set, when the product needed the distinction
+between two headlines of the same company.
 
-O sistema foi alterado e o modelo deixou de constituir porta para passar a critério de ordenação.
-Essa alteração não está validada. Sobre as $825$ decisões maturadas em produção, agrupadas nas $239$
-unidades independentes que o rótulo admite, a capacidade de ordenação é de $0.486$, com intervalo
-entre $0.403$ e $0.571$, que contém o acaso. A ordenação é a utilização menos indefensável do
-modelo, e não uma utilização demonstrada.
+The system was changed and the model ceased to be a gate and became a ranking criterion. That
+change is not validated. Over the $825$ decisions matured in production, grouped into the $239$
+independent units the label admits, the ranking ability is $0.486$, with an interval between $0.403$
+and $0.571$, which contains chance. Ranking is the least indefensible use of the model, and not a
+demonstrated use.
 
-Esta falha pertence a uma classe descrita na literatura de sistemas de aprendizagem em produção.
-\textcite{sculley2015debt} identificam um custo que não figura em nenhuma métrica de qualidade, e
-que vem de dependências de dados e do emaranhamento entre componentes: a validade de uma peça
-depende de suposições sobre outra que nunca foram enunciadas. O modelo foi avaliado isoladamente,
-sobre a distribuição do conjunto de treino, e implantado atrás de dois filtros que a alteram. Nenhum
-teste falhou e nenhum registo assinalou anomalia. Um componente aprendido é avaliado onde é treinado
-e é útil onde é colocado, e quando esses dois lugares diferem a diferença não se anuncia.
+This failure belongs to a class described in the literature on machine learning systems in
+production. \textcite{sculley2015debt} identify a cost that appears in no quality metric, and that
+comes from data dependencies and from entanglement between components: the validity of one piece
+depends on assumptions about another that were never stated. The model was evaluated in isolation,
+over the distribution of the training set, and deployed behind two filters that alter it. No test
+failed and no log flagged an anomaly. A learned component is evaluated where it is trained and is
+useful where it is placed, and when those two places differ the difference does not announce
+itself.
 
-\paragraph{O rótulo pode favorecer a linha de base vencedora.}
-O rótulo desconta o movimento do mercado assumindo sensibilidade unitária, pelo que o seu erro não é
-aleatório: é maior nas ações mais sensíveis ao mercado, que são tipicamente as mais voláteis. A
-linha de base vencedora é exatamente a volatilidade. Com o que está medido não é possível separar a
-hipótese de a volatilidade prever melhor a materialidade da hipótese de a volatilidade prever melhor
-o erro do rótulo. Tanto o nível como a ordenação das métricas da \gls{QI}3 ficam por isso
-condicionados ao rótulo utilizado.
+\paragraph{The label may favour the winning baseline.}
+The label discounts the movement of the market assuming unit sensitivity, so its error is not
+random: it is larger in the stocks most sensitive to the market, which are typically the most
+volatile. The winning baseline is precisely volatility. With what is measured it is not possible to
+separate the hypothesis that volatility better predicts materiality from the hypothesis that
+volatility better predicts the error of the label. Both the level and the ordering of the
+\gls{QI}3 metrics are therefore conditional on the label used.
 
-\paragraph{O alerta afirma mais evidência do que a que possui.}
-Quando exibe três precedentes concordantes quanto ao sentido do movimento, o alerta apresenta essa
-concordância como resultante de três observações. O impacto é, porém, medido por par constituído
-pela empresa e pelo dia, pelo que três títulos da mesma empresa no mesmo dia partilham o valor por
-construção. Sobre os $247$ alertas com precedentes entregues, em $36.8\%$ os casos exibidos
-assentam em menos dias distintos do que casos exibidos, e em $11.3\%$ correspondem todos ao mesmo
-dia; dos $120$ alertas que afirmam unanimidade, $23.3\%$ apoiam-se num único dia. A formulação do
-texto foi corrigida para contar dias e não títulos, o que torna a afirmação verdadeira. A causa
-subsiste: enquanto o impacto for medido por dia, duas notícias do mesmo dia não constituem duas
-observações independentes.
+\paragraph{The alert claims more evidence than it has.}
+When it displays three precedents that agree on the direction of the movement, the alert presents
+that agreement as resulting from three observations. The impact is, however, measured per pair
+formed by company and day, so three headlines of the same company on the same day share the value
+by construction. Over the $247$ alerts with precedents delivered, in $36.8\%$ the cases displayed
+rest on fewer distinct days than cases displayed, and in $11.3\%$ they all correspond to the same
+day; of the $120$ alerts that claim unanimity, $23.3\%$ rest on a single day. The wording of the
+text was corrected to count days and not headlines, which makes the claim true. The cause remains:
+while impact is measured per day, two news items of the same day are not two independent
+observations.
 
-\paragraph{As restantes sete, em síntese.}
-Os \textbf{rótulos são aproximações}: relevância é aproximada pela pertença ao mesmo setor,
-materialidade pela ocorrência de um movimento acima de um limiar, e raridade por um percentil dos
-retornos da própria empresa. As três são objetivas e verificáveis, e nenhuma corresponde exatamente
-à propriedade que se pretendia medir. A dependência de aproximações não é particularidade deste
-trabalho: em domínios financeiros vizinhos, como a deteção de fraude, os métodos não supervisionados
-ocupam posição central pela escassez de anomalias rotuladas \autocite{ahmed2016financial}.
+\paragraph{The remaining seven, in summary.}
+The \textbf{labels are approximations}: relevance is approximated by membership of the same sector,
+materiality by the occurrence of a movement above a threshold, and rarity by a percentile of the
+company's own returns. All three are objective and verifiable, and none corresponds exactly to the
+property one intended to measure. Dependence on approximations is not peculiar to this work: in
+neighbouring financial domains, such as fraud detection, unsupervised methods occupy a central
+position because labelled anomalies are scarce \autocite{ahmed2016financial}.
 
-Os \textbf{três blocos de dados quase não partilham empresas}. O bloco de treino contém treze
-empresas e o de teste nove, cinco empresas do treino não figuram uma única vez no teste, e uma
-empresa responsável por $17.1\%$ das linhas de teste nunca figura no treino. A constatação atua
-nos dois sentidos: reforça o resultado negativo, porque um modelo cujo sinal é essencialmente a
-identidade da empresa estima-a sobre um conjunto quase ausente do bloco onde é avaliado; e
-limita-o, porque não permite separar a hipótese de o modelo ser pior da hipótese de a identidade não
-transferir entre estes dois períodos.
+The \textbf{three data blocks barely share companies}. The training block contains thirteen
+companies and the test block nine, five companies from training do not appear once in the test, and
+one company accounting for $17.1\%$ of the test rows never appears in training. The finding acts in
+both directions: it reinforces the negative result, because a model whose signal is essentially the
+identity of the company estimates it over a set almost absent from the block where it is evaluated;
+and it limits it, because it does not allow the hypothesis that the model is worse to be separated
+from the hypothesis that identity does not transfer between these two periods.
 
-As \textbf{notícias são lidas apenas ao nível do título}. O sistema representa o título e não o
-corpo do artigo, o que limita o que a representação de texto pode captar e constitui explicação
-plausível, ainda que não confirmada, para o resultado negativo da \gls{QI}3. As revisões de análise
-textual em finanças descrevem trabalhos que operam sobre documentos completos
-\autocite{kearney2014textual}, e um título é a parte do documento onde mais informação foi
-descartada.
+The \textbf{news is read only at headline level}. The system represents the headline and not the
+body of the article, which limits what the text representation can capture and is a plausible,
+though unconfirmed, explanation for the negative result of \gls{QI}3. Reviews of textual analysis in
+finance describe works that operate over complete documents \autocite{kearney2014textual}, and a
+headline is the part of the document where the most information has been discarded.
 
-A \textbf{repartição de um movimento nem sempre está bem estimada}. A soma das três parcelas
-verifica-se por construção e não valida coisa alguma. A medida informativa é o coeficiente de
-determinação na janela de estimação, cuja mediana foi de $0.460$ e que numa das dezassete empresas
-assumiu valor negativo; nesses casos a repartição continua a ser exibida e deve ser lida como
-indicativa. O encolhimento ponderado pela precisão \autocite{vasicek1973beta} limita o dano de uma
-estimativa má sem a transformar numa estimativa boa.
+The \textbf{split of a movement is not always well estimated}. The sum of the three parts holds by
+construction and validates nothing. The informative measure is the coefficient of determination in
+the estimation window, whose median was $0.460$ and which in one of the seventeen companies took a
+negative value; in those cases the split continues to be displayed and should be read as
+indicative. Precision-weighted shrinkage \autocite{vasicek1973beta} limits the damage of a bad
+estimate without turning it into a good one.
 
-A \textbf{deriva é medida e não corrigida}. Os parâmetros foram estimados entre 2018 e 2023 e não
-voltaram a ser ajustados. Entre o bloco de treino e o de teste, o índice de estabilidade
-populacional situa a volatilidade dos vinte dias na banda de deslocamento significativo, com
-$0.281$, que é a entrada de que o modelo mais depende. A literatura de deriva de conceito trata
-deste problema, com uma taxonomia da mudança e estratégias de deteção e adaptação
-\autocite{gama2014survey}; aqui existe a deteção e não a adaptação. A arquitetura que a forneceria
-está definida na Secção~\ref{sec:sis_ciclo}, com gatilho condicional, janela deslizante e porta de
-promoção, e não foi executada: a limitação é de execução e não de desenho.
+\textbf{Drift is measured and not corrected}. The parameters were estimated between 2018 and 2023
+and were not readjusted. Between the training block and the test block, the population stability
+index places twenty-day volatility in the band of significant displacement, at $0.281$, and that is
+the input on which the model most depends. The concept drift literature deals with this problem,
+with a taxonomy of the change and strategies for detection and adaptation
+\autocite{gama2014survey}; here detection exists and adaptation does not. The architecture that
+would supply it is defined in Section~\ref{sec:sis_ciclo}, with a conditional trigger, a rolling
+window and a promotion gate, and was not executed: the limitation is one of execution and not of
+design.
 
-A \textbf{cobertura das fontes é incompleta e desigual}. Existia pelo menos uma notícia relevante em
-$88.5\%$ dos $417$ dias considerados invulgares pelo detetor, e a empresa pior coberta situa-se
-nos $50\%$. Nos dias restantes nenhuma alteração ao sistema produz efeito, uma vez que uma notícia
-não associada à empresa pela fonte não chega a entrar no percurso. O valor é um limite superior:
-estabelece que existia uma notícia, e não que tenha chegado a notícia adequada.
+\textbf{Source coverage is incomplete and uneven}. There was at least one relevant news item on
+$88.5\%$ of the $417$ days the detector considered unusual, and the worst covered company stands at
+$50\%$. On the remaining days no change to the system has any effect, since a news item not
+associated with the company by the source never enters the path. The value is an upper bound: it
+establishes that a news item existed, and not that the appropriate news item arrived.
 
-O \textbf{atraso está na descoberta, e as suas três causas não estão separadas}. Sobre os $278$ alertas
-com hora de publicação e de envio, a mediana entre a publicação e a deteção é de $353$ minutos, e a
-mediana entre a deteção e a entrega é de $5$ segundos. A passagem de um agendador de melhor esforço
-para um ciclo de sessenta segundos não reduziu o atraso, o que exclui a cadência de consulta como
-explicação. Restam três causas que o histórico não separa, e apenas uma delas, a de a fonte listar
-tarde, seria atenuada por um serviço pago; as outras duas subsistem com qualquer fonte.
+The \textbf{delay is in discovery, and its three causes are not separated}. Over the $278$ alerts
+with a publication time and a send time, the median between publication and detection is $353$
+minutes, and the median between detection and delivery is $5$ seconds. The move from a best-effort
+scheduler to a sixty-second cycle did not reduce the delay, which rules out the polling cadence as
+the explanation. Three causes remain that the history does not separate, and only one of them, the
+source listing late, would be mitigated by a paid service; the other two persist with any
+source.
 
-\section{Trabalho futuro}
+\section{Future work}
 \label{sec:con_futuro}
 
-As linhas enunciadas nesta secção derivam das limitações da secção anterior, segundo a
-correspondência apresentada na Tabela~\ref{tab:con_limites}, e estão ordenadas pela relação entre o
-efeito esperado e o custo. Uma lista de trabalho futuro que não derive de limitações medidas
-constitui uma justificação sob outra forma. A Figura~\ref{fig:con_futuro} agrupa-as pelo que
-cada uma exige antes de poder ser executada.
+The lines stated in this section derive from the limitations of the previous section, according to
+the correspondence presented in Table~\ref{tab:con_limites}, and are ordered by the relation
+between expected effect and cost. A list of future work that does not derive from measured
+limitations is a justification in another form. Figure~\ref{fig:con_futuro} groups them by what
+each one requires before it can be carried out.
 
 \begin{enumerate}
-  \item \textbf{Executar o estudo com utilizadores.} Seis a dez participantes, com sessões de
-        aproximadamente quinze minutos, comparando a leitura de um facto isolado com a leitura do
-        alerta completo. Encerra a afirmação central do trabalho, que é a de que a evidência
-        apresentada junto do alerta conduz a uma decisão melhor. Partilha com a construção de um
-        alvo anotado, terceiro item desta lista, a propriedade de nenhum meio computacional o
-        acelerar, uma vez que ambos dependem de julgamento humano. Outras afirmações permanecem
-        por verificar independentemente dele, entre as quais a qualidade dos três rótulos, a
-        utilidade do modelo sobre a população que efetivamente observa e a estabilidade do
-        resultado entre períodos.
-  \item \textbf{Dotar o modelo de decisão de entradas que variem com a notícia.} É a correção direta
-        da limitação de maior consequência técnica, e o seu custo é reduzido, dado que as duas
-        quantidades mais evidentes já são calculadas pelo sistema: a semelhança do melhor precedente
-        recuperado e a concordância de direção entre os precedentes. Ao contrário da volatilidade e
-        do setor, ambas variam de um título para o seguinte.
+  \item \textbf{Run the study with users.} Six to ten participants, with sessions of approximately
+        fifteen minutes, comparing the reading of an isolated fact with the reading of the complete
+        alert. It closes the central claim of the work, which is that the evidence presented
+        alongside the alert leads to a better decision. It shares with the construction of an
+        annotated target, the third item of this list, the property that no computational means
+        accelerates it, since both depend on human judgement. Other claims remain to be verified
+        independently of it, among them the quality of the three labels, the usefulness of the
+        model over the population it actually observes and the stability of the result across
+        periods.
+  \item \textbf{Give the decision model inputs that vary with the news.} It is the direct
+        correction of the limitation of greatest technical consequence, and its cost is small, since
+        the two most obvious quantities are already computed by the system: the similarity of the
+        best precedent retrieved and the direction agreement among the precedents. Unlike volatility
+        and sector, both vary from one headline to the next.
 
-  \item \textbf{Construir um alvo com julgamento humano.} A anotação de uma amostra de dias,
-        identificando quais das notícias hoje suprimidas deveriam passar e quais das que passam nada
-        acrescentam, forneceria pela primeira vez um alvo real para otimizar, em substituição do
-        ajuste de constantes contra uma aproximação. A mesma amostra permitiria estimar a qualidade
-        dos três rótulos utilizados.
+  \item \textbf{Build a target with human judgement.} Annotating a sample of days, identifying
+        which of the news items suppressed today should pass and which of those that pass add
+        nothing, would supply for the first time a real target to optimise, in place of tuning
+        constants against an approximation. The same sample would allow the quality of the three
+        labels used to be estimated.
 
-  \item \textbf{Reconstruir o rótulo com sensibilidades estimadas.} O rótulo da triagem desconta o
-        movimento do mercado assumindo sensibilidade unitária, o que introduz um erro correlacionado
-        com a volatilidade da empresa, que é precisamente a linha de base vencedora. Refazer o alvo
-        com as sensibilidades encolhidas descritas na Secção~\ref{sec:met_decomposicao} e repetir as
-        seis famílias de modelos determinaria se a ordenação obtida resiste a uma definição
-        alternativa de materialidade.
+  \item \textbf{Rebuild the label with estimated sensitivities.} The triage label discounts the
+        movement of the market assuming unit sensitivity, which introduces an error correlated with
+        the volatility of the company, which is precisely the winning baseline. Redoing the target
+        with the shrunk sensitivities described in Section~\ref{sec:met_decomposicao} and repeating
+        the six families of models would determine whether the ordering obtained survives an
+        alternative definition of materiality.
 
-  \item \textbf{Ler o corpo dos artigos e não apenas o título.} É a hipótese mais direta para
-        explicar o resultado negativo da \gls{QI}3 e é verificável com o protocolo já construído,
-        exigindo apenas a recolha do texto integral.
+  \item \textbf{Read the body of the articles and not only the headline.} It is the most direct
+        hypothesis for explaining the negative result of \gls{QI}3 and is testable with the protocol
+        already built, requiring only the collection of the full text.
 
-  \item \textbf{Detetar histórias repetidas por significado.} A supressão de repetições assenta hoje
-        em sobreposição de vocabulário, e a sua realização por semelhança utilizaria a técnica de que
-        o sistema já dispõe. O ponto é mais relevante do que a sua dimensão técnica sugere: se o
-        investidor particular adquire os ativos que lhe captam a atenção
-        \autocite{barber2008glitters}, um sistema que comunica a mesma história três vezes não está a
-        informar, mas a amplificar o mesmo estímulo.
+  \item \textbf{Detect repeated stories by meaning.} Suppression of repetitions rests today on
+        vocabulary overlap, and doing it by similarity would use the technique the system already
+        has. The point matters more than its technical size suggests: if the retail investor buys
+        the assets that capture their attention \autocite{barber2008glitters}, a system that
+        communicates the same story three times is not informing, but amplifying the same
+        stimulus.
 
-  \item \textbf{Eliminar a assimetria de referencial do retorno do próprio dia.} A entrada
-        corresponde, no treino, ao movimento completo do dia da notícia, e em produção à última
-        barra disponível no momento da pontuação. Substituí-la pelo retorno acumulado até à
-        publicação, ou, de forma mais conservadora, pelo retorno da véspera, elimina a diferença e
-        permite reportar o desempenho sob um referencial único. A direção do efeito é conhecida e
-        favorece o resultado negativo, pelo que a correção o reforçaria em vez de o desfazer; o que
-        a experiência acrescenta é a medição desse reforço em vez da sua dedução.
+  \item \textbf{Remove the asymmetry of reference in the same-day return.} The input corresponds,
+        in training, to the complete movement of the day of the news, and in production to the last
+        bar available at the moment of scoring. Replacing it with the return accumulated up to
+        publication, or, more conservatively, with the previous day's return, removes the difference
+        and allows performance to be reported under a single reference. The direction of the effect
+        is known and favours the negative result, so the correction would reinforce it rather than
+        undo it; what the experiment adds is the measurement of that reinforcement instead of its
+        deduction.
 
-  \item \textbf{Agrupar os precedentes por par de empresa e dia antes da seleção.} A correção
-        aplicada ao texto do alerta tornou a afirmação verdadeira sem remover a causa. Selecionar os
-        candidatos depois de agrupar por dia, exibindo de cada dia apenas o título mais próximo,
-        elimina na origem a possibilidade de um dia observado três vezes ser apresentado como três
-        casos concordantes.
+  \item \textbf{Group the precedents by company-day pair before selection.} The correction applied
+        to the text of the alert made the claim true without removing the cause. Selecting the
+        candidates after grouping by day, displaying from each day only the closest headline,
+        eliminates at source the possibility of one day observed three times being presented as
+        three agreeing cases.
 
-  \item \textbf{Expor a qualidade do ajuste na própria mensagem.} A repartição de um movimento é
-        exibida com a mesma confiança quando o coeficiente de determinação da janela é elevado e
-        quando é negativo. Apresentá-lo junto da repartição, e acrescentar uma nota explícita abaixo
-        de um limiar mínimo, converte uma limitação hoje declarada apenas no documento numa
-        propriedade observável por quem lê o alerta.
+  \item \textbf{Expose the quality of the fit in the message itself.} The split of a movement is
+        displayed with the same confidence when the coefficient of determination of the window is
+        high and when it is negative. Presenting it alongside the split, and adding an explicit note
+        below a minimum threshold, turns a limitation declared today only in the document into a
+        property observable by whoever reads the alert.
 
-  \item \textbf{Re-treinar o modelo com o registo de produção.} A deriva está medida e os rótulos
-        novos derivam dos preços, pelo que a execução é possível. O impedimento não é técnico, uma
-        vez que um re-treino alteraria os valores reportados neste documento e exigiria tempo de
-        avaliação próprio.
+  \item \textbf{Retrain the model with the production log.} Drift is measured and the new labels
+        derive from prices, so execution is possible. The impediment is not technical, since a
+        retraining would change the values reported in this document and would require evaluation
+        time of its own.
 \end{enumerate}
 
 \begin{figure}[ht]
@@ -520,69 +529,69 @@ cada uma exige antes de poder ser executada.
   obs/.style={it, fill=white, draw=black!55, dashed},
   rot/.style={font=\scriptsize\bfseries, text=black!60, anchor=west},
 ]
-  \node[rot] at (0,0.62) {Exigem julgamento humano};
-  \node[hum] (a) at (3.1,0)     {1 · estudo com utilizadores};
-  \node[hum] (b) at (3.1,-0.78) {3 · alvo anotado por pessoas};
+  \node[rot] at (0,0.62) {Require human judgement};
+  \node[hum] (a) at (3.1,0)     {1 · study with users};
+  \node[hum] (b) at (3.1,-0.78) {3 · target annotated by people};
 
-  \node[rot] at (0,-1.62) {Exige tempo de observação};
-  \node[obs] (c) at (3.1,-2.24) {10 · retreino com o registo de produção};
+  \node[rot] at (0,-1.62) {Requires observation time};
+  \node[obs] (c) at (3.1,-2.24) {10 · retraining with the production log};
 
-  \node[rot] at (0,-3.08) {Trabalho sobre o que já existe};
-  \node[it] (d) at (3.1,-3.70) {2 · entradas que variem com a notícia};
-  \node[it] (e) at (3.1,-4.48) {4 · rótulo com sensibilidades estimadas};
-  \node[it] (f) at (3.1,-5.26) {5 · ler o corpo dos artigos};
-  \node[it] (g) at (3.1,-6.04) {6 · repetições por significado};
-  \node[it] (h) at (3.1,-6.82) {7 · assimetria do retorno do dia};
-  \node[it] (i) at (3.1,-7.60) {8 · agrupar precedentes por empresa e dia};
-  \node[it] (j) at (3.1,-8.38) {9 · expor a qualidade do ajuste};
+  \node[rot] at (0,-3.08) {Work on what already exists};
+  \node[it] (d) at (3.1,-3.70) {2 · inputs that vary with the news};
+  \node[it] (e) at (3.1,-4.48) {4 · label with estimated sensitivities};
+  \node[it] (f) at (3.1,-5.26) {5 · read the body of the articles};
+  \node[it] (g) at (3.1,-6.04) {6 · repetitions by meaning};
+  \node[it] (h) at (3.1,-6.82) {7 · asymmetry of the same-day return};
+  \node[it] (i) at (3.1,-7.60) {8 · group precedents by company and day};
+  \node[it] (j) at (3.1,-8.38) {9 · expose the quality of the fit};
 \end{tikzpicture}
-\caption[As linhas futuras, por aquilo que as desbloqueia]{As dez linhas de trabalho futuro,
-agrupadas pelo que cada uma exige antes de poder ser executada. Sete operam sobre componentes que
-o sistema já possui e dependem apenas de trabalho técnico. Uma aguarda tempo de observação, que
-começou a decorrer em setembro de 2026. Duas exigem julgamento humano e são as únicas que nenhum
-meio computacional acelera, o que as coloca no caminho crítico apesar de não serem as de maior
-custo técnico. A numeração é a da lista desta secção, que está ordenada pela relação entre o
-efeito esperado e o custo.}
+\caption[The future lines, by what unblocks them]{The ten lines of future work, grouped by what
+each one requires before it can be carried out. Seven operate on components the system already has
+and depend only on technical work. One awaits observation time, which began to run in September
+2026. Two require human judgement and are the only ones that no computational means accelerates,
+which places them on the critical path despite not being the ones of greatest technical cost. The
+numbering is that of the list in this section, which is ordered by the relation between expected
+effect and cost.}
 \label{fig:con_futuro}
 \end{figure}
 
-Um caminho foi considerado e não seguido, e as razões ficam registadas por serem necessárias a quem
-retome o trabalho. A predição conformal permite devolver conjuntos de respostas com uma garantia
-livre de distribuição \autocite{vovk2005algorithmic, angelopoulos2023conformal}, o que se ajusta a
-uma ferramenta que recusa afirmar mais do que aquilo que sabe. Duas razões afastaram-na. A primeira é
-que a garantia é marginal, valendo em média sobre os casos e não caso a caso, que é precisamente a
-leitura que um utilizador não especializado faria.
+One path was considered and not followed, and the reasons are recorded because they are needed by
+whoever takes up the work. Conformal prediction allows sets of answers to be returned with a
+distribution-free guarantee \autocite{vovk2005algorithmic, angelopoulos2023conformal}, which suits
+a tool that refuses to claim more than it knows. Two reasons ruled it out. The first is that the
+guarantee is marginal, holding on average over cases and not case by case, which is precisely the
+reading a non-specialist user would make.
 
-A segunda é mais determinante: a garantia exige
-permutabilidade entre calibração e teste, e estes dados constituem uma série temporal, na qual os
-títulos chegam por ordem. É a mesma suposição que este trabalho recusa ao dividir o conjunto por data
-e com embargo. A aplicação do método sem tratamento desse ponto produziria intervalos com uma
-garantia que os dados não sustentam, substituindo um valor honesto por um valor com aparência de
-rigor.
+The second is more decisive: the guarantee requires exchangeability between calibration and test,
+and these data are a time series, in which the headlines arrive in order. It is the same assumption
+this work refuses when it splits the set by date and with an embargo. Applying the method without
+addressing that point would produce intervals with a guarantee the data do not support, replacing
+an honest value with a value that has the appearance of rigour.
 
-\section{Considerações finais}
+\section{Final considerations}
 \label{sec:con_final}
 
-O trabalho partiu de três perguntas que um investidor particular formula perante um movimento de
-preço, e a que as ferramentas gratuitas não respondem. Se o movimento é invulgar. Se a origem é a
-empresa ou o mercado. E se existem precedentes com desfecho conhecido. Construiu-se um
-sistema que responde às três com evidência verificável e sem emitir previsões, e avaliou-se cada
-componente contra alternativas mais simples declaradas antes da medição.
+The work started from three questions a retail investor asks when faced with a price movement, and
+which free tools do not answer. Whether the movement is unusual. Whether the origin is the company
+or the market. And whether precedents with a known outcome exist. A system was built that answers
+all three with verifiable evidence and without issuing forecasts, and each component was evaluated
+against simpler alternatives declared before the measurement.
 
-O resultado com maior valor informativo é negativo. A hipótese de que o texto das notícias transportaria informação ausente dos preços não foi
-confirmada sobre este corpus. A sua investigação produziu um diagnóstico de alcance superior ao da
-questão que a originou. O componente aprendido foi avaliado sobre uma distribuição e implantado
-sobre outra, e a métrica pela qual foi selecionado formulava uma pergunta distinta da que o
-produto necessitava. Nenhum
-teste automático assinalou a discrepância, porque cada componente cumpria o seu contrato e o que
-estava errado era uma suposição sobre a ligação entre eles.
+The result with the greatest informative value is negative. The hypothesis that the text of the
+news would carry information absent from the prices was not confirmed over this corpus.
+Investigating it produced a diagnosis of wider reach than the question that gave rise to it. The
+learned component was evaluated over one distribution and deployed over another, and the metric by
+which it was selected posed a question distinct from the one the product needed. No automatic test
+flagged the discrepancy, because each component fulfilled its contract and what was wrong was an
+assumption about the link between them.
 
-A restrição fundadora do trabalho, segundo a qual o sistema não produz previsões de preço, revelou-se
-a decisão de maior alcance. Determina o que pode ser afirmado: toda a afirmação do sistema é confirmável contra o registo no
-momento em que é lida. Determina a forma da explicação, que apresenta casos individuais em vez de
-médias. E determina o critério de avaliação, que incide sobre a capacidade de identificar o que é
-invulgar e não sobre a de antecipar. Um sistema que apresente evidência em lugar de veredictos entrega menos do que um sistema
-que anuncie direções, e entrega apenas o que consegue sustentar.
+The founding constraint of the work, under which the system produces no price forecasts, proved to
+be the decision of widest reach. It determines what can be claimed: every claim of the system is
+confirmable against the record at the moment it is read. It determines the form of the explanation,
+which presents individual cases instead of averages. And it determines the evaluation criterion,
+which bears on the ability to identify what is unusual and not on the ability to anticipate. A
+system that presents evidence instead of verdicts delivers less than a system that announces
+directions, and delivers only what it can support.
 
 \begin{figure}[!htbp]
 \centering
@@ -594,34 +603,34 @@ que anuncie direções, e entrega apenas o que consegue sustentar.
   cab/.style={font=\scriptsize\bfseries, text=black!65},
   >={Stealth[length=2.2mm]},
 ]
-  \node[cab] at (0,0.82) {O QUE FICA ESTABELECIDO};
-  \node[est] (a) at (0,0.10)  {cada quantidade provém do componente que a calculou};
-  \node[est] (b) at (0,-0.95) {é confrontável com o registo no momento em que é lida};
-  \node[est] (c) at (0,-2.00) {a política que decide o silêncio está documentada e medida};
+  \node[cab] at (0,0.82) {WHAT IS ESTABLISHED};
+  \node[est] (a) at (0,0.10)  {every quantity comes from the component that computed it};
+  \node[est] (b) at (0,-0.95) {it can be checked against the record when it is read};
+  \node[est] (c) at (0,-2.00) {the policy that decides the silence is documented and measured};
 
-  \node[cab] at (6.9,0.82) {O QUE NÃO FICA};
-  \node[abe] (d) at (6.9,-0.25) {que esta explicação conduza a uma
-    \textbf{decisão melhor}};
+  \node[cab] at (6.9,0.82) {WHAT IS NOT};
+  \node[abe] (d) at (6.9,-0.25) {that this explanation leads to a
+    \textbf{better decision}};
   \node[align=left, text width=5.1cm, font=\scriptsize, text=black!62] (e) at (6.9,-1.75)
-    {É a hipótese fundadora do trabalho. Permanece por testar, e o seu teste é a primeira
-     linha do trabalho futuro.};
+    {It is the founding hypothesis of the work. It remains untested, and its test is the
+     first line of future work.};
   \draw[->, black!50] (d) -- (e);
   \draw[black!25] (3.45,1.0) -- (3.45,-2.5);
 \end{tikzpicture}
-\caption[A fronteira daquilo que o trabalho estabelece]{O limite exato da afirmação. À esquerda,
-as três propriedades que o sistema demonstra e que se verificam por inspeção do que ele produz. À
-direita, a proposição que o trabalho não testou: que apresentar a evidência junto do alerta
-conduza a uma decisão melhor. A separação não é uma reserva de cortesia, uma vez que a segunda é
-a hipótese que motivou o trabalho, e distingui-la do que ficou demonstrado é o que impede que a
-primeira seja lida como se a segunda estivesse provada.}
+\caption[The boundary of what the work establishes]{The exact limit of the claim. On the left, the
+three properties the system demonstrates and that are verified by inspecting what it produces. On
+the right, the proposition the work did not test: that presenting the evidence alongside the alert
+leads to a better decision. The separation is not a courtesy caveat, since the second is the
+hypothesis that motivated the work, and distinguishing it from what was demonstrated is what
+prevents the first from being read as though the second were proved.}
 \label{fig:con_fronteira}
 \end{figure}
 
-A contribuição enuncia-se, por isso, no seu nível exato. O que este trabalho estabelece é que
-o sistema está tecnicamente preparado para sustentar explicações assentes em evidência histórica
-verificável: cada quantidade apresentada provém do componente que a calculou, é confrontável com o
-registo no momento em que é lida, e a política que decide o silêncio está documentada e medida. O
-que este trabalho não estabelece é que essa forma de explicação conduza o investidor particular a
-uma decisão melhor. Essa é a hipótese fundadora, permanece por testar, e o seu teste é o primeiro
-item da secção anterior. A Figura~\ref{fig:con_fronteira}
-apresenta a separação.
+The contribution is therefore stated at its exact level. What this work establishes is that the
+system is technically prepared to support explanations resting on verifiable historical evidence:
+every quantity presented comes from the component that computed it, can be checked against the
+record at the moment it is read, and the policy that decides the silence is documented and
+measured. What this work does not establish is that this form of explanation leads the retail
+investor to a better decision. That is the founding hypothesis, it remains untested, and its test
+is the first item of the previous section. Figure~\ref{fig:con_fronteira} presents the
+separation.
