@@ -1299,34 +1299,34 @@ the change does not govern. The price movement alerts run through the same perio
 companies and the same market conditions, and the daily budget does not count them. In that series
 concentration goes from $0.449$ to $0.485$, with the interval containing zero. The governed
 quantity shifted and the ungoverned quantity did not, which rules out the alternative explanation
-de que o mercado se teria distribuído de forma mais uniforme no segundo período.
+that the market would have distributed itself more evenly in the second period.
 
-Cinco dias são excluídos da janela posterior, e a razão é registada por ser ela própria um
-resultado. Entre 25 e 29 de agosto de 2026 o contador diário residia em disco efémero e
-regressava ao valor inicial a cada arranque do processo, o que produziu séries de exatamente
-cinco alertas nos instantes dos arranques e um dia com vinte. Nesses dias o orçamento não estava
-em vigor, e a sua inclusão elevaria a concentração posterior para $0.514$. A reamostragem é
-efetuada por dia, que é a unidade sobre a qual o orçamento atua.
+Five days are excluded from the later window, and the reason is recorded because it is itself a
+result. Between 25 and 29 August 2026 the daily counter resided on ephemeral disk and returned to
+its initial value at every start of the process, which produced runs of exactly five alerts at the
+moments of the restarts and one day with twenty. On those days the budget was not in force, and
+including them would raise the later concentration to $0.514$. The resampling is done by day, which
+is the unit on which the budget acts.
 
-A comparação não constitui um ensaio aleatorizado. A série de controlo partilha o período mas não
-foi atribuída ao acaso, e as duas janelas diferem em duração e em condições de mercado. O que se
-estabelece é que a quantidade governada se deslocou e a não governada não, e não que nenhuma
-outra causa exista.
+The comparison is not a randomised trial. The control series shares the period but was not
+assigned at random, and the two windows differ in duration and in market conditions. What is
+established is that the governed quantity shifted and the ungoverned one did not, and not that no
+other cause exists.
 
-A métrica avaliada ordena todas as candidatas do bloco de
-teste e apenas depois preenche cinco lugares em cada dia, o que exige conhecer o dia completo antes
-de decidir e constitui por isso uma política diferida. O sistema implantado decide em linha, de
-sessenta em sessenta segundos, e gasta o primeiro lugar na primeira notícia que atravesse as portas,
-porque no momento da decisão a notícia da tarde ainda não existe. A precisão dentro do orçamento
-reportada neste capítulo é, por conseguinte, um limite superior do que a política implantada obtém.
+The metric evaluated ranks all the candidates of the test block and only then fills five slots on
+each day, which requires knowing the complete day before deciding and is therefore a deferred
+policy. The deployed system decides online, every sixty seconds, and spends the first slot on the
+first news item that crosses the gates, because at the moment of the decision the afternoon news
+item does not yet exist. The precision within the budget reported in this chapter is therefore an
+upper bound on what the deployed policy obtains.
 
-\subsection{O desempenho do modelo sobre as decisões que tomou}
+\subsection{The performance of the model over the decisions it took}
 
-O sistema regista todas as decisões de triagem e, decorridos os dias necessários para o preço
-responder, confronta-as com o resultado efetivo. Duas medições resultam desse registo: a fração de
-casos que se revelaram materiais de cada lado da porta, e a capacidade de ordenação do modelo,
-medida pela \gls{ROCAUC}. A Figura~\ref{fig:av_posvalidacao} apresenta ambas, sobre $825$ decisões
-já maturadas.
+The system logs every triage decision and, once the days needed for the price to respond have
+passed, confronts them with the actual outcome. Two measurements result from that log: the fraction
+of cases that proved material on each side of the gate, and the ranking ability of the model,
+measured by \gls{ROCAUC}. Figure~\ref{fig:av_posvalidacao} presents both, over $825$ decisions
+already matured.
 
 \begin{figure}[ht]
 \centering
@@ -1342,7 +1342,7 @@ já maturadas.
 ]
 \addplot[draw=none, forget plot] coordinates {(0.60,1.5)};
 \draw[dashed, black!55] (axis cs:0.602,0.20) -- (axis cs:0.602,2.30);
-\node[font=\scriptsize, black!60, anchor=west] at (axis cs:0.606,0.42) {taxa-base $0.602$};
+\node[font=\scriptsize, black!60, anchor=west] at (axis cs:0.606,0.42) {base rate $0.602$};
 \draw[line width=1.4pt, black!55] (axis cs:0.543,2) -- (axis cs:0.635,2);
 \draw[black!55] (axis cs:0.543,1.82) -- (axis cs:0.543,2.18);
 \draw[black!55] (axis cs:0.635,1.82) -- (axis cs:0.635,2.18);
@@ -1366,57 +1366,57 @@ já maturadas.
 \addplot[draw=none, forget plot] coordinates {(0.50,1)};
 \draw[dashed, orange!70!black] (axis cs:0.50,0.4) -- (axis cs:0.50,1.42);
 \node[font=\scriptsize, text=orange!60!black, anchor=south] at (axis cs:0.50,1.42)
-  {acaso $0.500$};
+  {chance $0.500$};
 \draw[line width=1.4pt, black!55] (axis cs:0.403,1) -- (axis cs:0.571,1);
 \draw[black!55] (axis cs:0.403,0.86) -- (axis cs:0.403,1.14);
 \draw[black!55] (axis cs:0.571,0.86) -- (axis cs:0.571,1.14);
 \fill[black] (axis cs:0.486,1) circle (1.7pt);
 \end{axis}
 \end{tikzpicture}
-\caption[O modelo sobre as decisões que tomou em produção]{Em A, a fração de casos que se revelaram
-materiais entre as decisões que o modelo deixou passar e entre as que travou, com intervalos de
-confiança a noventa e cinco por cento e a taxa-base do conjunto. As suprimidas apresentam fração
-superior às mantidas, mas os dois intervalos sobrepõem-se em quase toda a extensão e não as
-separam. Em B, a capacidade de ordenação medida sobre as $239$ unidades independentes, com o
-intervalo a conter confortavelmente o valor de acaso.}
+\caption[The model over the decisions it took in production]{In A, the fraction of cases that
+proved material among the decisions the model let through and among those it stopped, with
+ninety-five per cent confidence intervals and the base rate of the set. The suppressed ones show a
+higher fraction than the kept ones, but the two intervals overlap over almost their whole extent
+and do not separate them. In B, the ranking ability measured over the $239$ independent units, with
+the interval comfortably containing the chance value.}
 \label{fig:av_posvalidacao}
 \end{figure}
 
-Sobre a população que efetivamente observa, esta amostra não distingue o modelo do acaso em nenhuma
-das duas medidas. As notícias que deixou passar revelaram-se materiais em $58.9\%$ dos casos,
-contra $61.7\%$ das que travou, sobre uma taxa-base de $60.2\%$; os intervalos das duas frações
-sobrepõem-se, pelo que a ordenação aparente não é estabelecida. O que fica medido é a ausência de
-benefício detetável com esta dimensão de amostra, e não a ausência de benefício.
+Over the population it actually observes, this sample does not distinguish the model from chance on
+either measure. The news items it let through proved material in $58.9\%$ of cases, against $61.7\%$
+of those it stopped, over a base rate of $60.2\%$; the intervals of the two fractions overlap, so
+the apparent ordering is not established. What is measured is the absence of a detectable benefit
+at this sample size, and not the absence of benefit.
 
-Estes valores exigem uma reserva de precisão considerável: as $825$ decisões
-não constituem $825$ observações independentes, dado que o rótulo é atribuído por par formado pela
-empresa e pelo dia, e as linhas repartem-se por apenas $239$ pares distintos. Medida sobre essas
-unidades, a capacidade de ordenação situa-se em $0.486$ com intervalo de confiança entre $0.403$
-e $0.571$, num intervalo em que o acaso vale exatamente $0.500$. A leitura correta não é a de que
-o modelo seja pior do que a ausência de modelo, mas a de que esta amostra não o distingue do acaso.
+These values require a considerable reservation about precision: the $825$ decisions are not $825$
+independent observations, since the label is assigned per pair formed by company and day, and the
+rows are distributed across only $239$ distinct pairs. Measured over those units, the ranking
+ability stands at $0.486$ with a confidence interval between $0.403$ and $0.571$, an interval in
+which chance is exactly $0.500$. The correct reading is not that the model is worse than no model,
+but that this sample does not distinguish it from chance.
 
-A medição foi repetida quando o registo dispunha de $825$ decisões maturadas contra as $530$ da
-primeira leitura, e quase nada se alterou: a diferença entre mantidas e suprimidas estreitou-se, a
-capacidade de ordenação passou de $0.494$ para $0.486$ e o intervalo encolheu. Com metade mais
-evidência, o veredicto mantém-se e torna-se mais firme.
+The measurement was repeated when the log had $825$ matured decisions against the $530$ of the
+first reading, and almost nothing changed: the difference between kept and suppressed narrowed, the
+ranking ability went from $0.494$ to $0.486$ and the interval shrank. With half as much evidence
+again, the verdict stands and becomes firmer.
 
-A explicação mais provável não é a de que o modelo esteja avariado, mas a de que esteja em excesso.
-Quando é invocado, as notícias já atravessaram o filtro de relevância e o filtro de frescura, e esses
-filtros elementares removeram grande parte daquilo que o modelo foi treinado para remover, restando
-pouco para separar. Um modelo avaliado isoladamente e implantado atrás de filtros nunca foi avaliado
-na distribuição que efetivamente observa, e esta é a constatação com maior capacidade de
-transferência do trabalho.
+The most likely explanation is not that the model is broken, but that it is redundant. When it is
+invoked, the news has already crossed the relevance filter and the freshness filter, and those
+elementary filters removed a large part of what the model was trained to remove, leaving little to
+separate. A model evaluated in isolation and deployed behind filters was never evaluated on the
+distribution it actually observes, and this is the finding of the work with the greatest capacity
+to transfer.
 
-Três das doze empresas monitorizadas, a AMD, a Netflix e a Meta, não figuram no corpus de treino, e
-uma quarta, a Microsoft, figura apenas no bloco de teste. O modelo pontua-as na mesma, porque o que
-recebe são valores numéricos e não a identidade da empresa, mas fá-lo sobre uma combinação de
-entradas que não observou. Duas das ausentes, a AMD e a Meta, estão entre as que se situam sempre
-acima do limiar, pelo que a determinação por empresa descrita acima se concentra precisamente em
-nomes que o modelo nunca observou. Constitui um segundo sentido, mais literal, em que o modelo
-implantado opera fora da distribuição em que foi avaliado, e as decisões dessas empresas entram
-nas $825$ acima como quaisquer outras.
+Three of the twelve companies monitored, AMD, Netflix and Meta, do not appear in the training
+corpus, and a fourth, Microsoft, appears only in the test block. The model scores them all the
+same, because what it receives are numerical values and not the identity of the company, but it
+does so over a combination of inputs it has not observed. Two of the absent ones, AMD and Meta, are
+among those that always sit above the threshold, so the determination by company described above
+concentrates precisely on names the model never observed. It is a second, more literal sense in
+which the deployed model operates outside the distribution on which it was evaluated, and the
+decisions of those companies enter the $825$ above like any others.
 
-\subsection{Deriva das distribuições}
+\subsection{Drift of the distributions}
 
 Uma segunda razão, independente da anterior, pode fazer com que um modelo implantado deixe de servir:
 os dados alteram-se. O modelo foi treinado sobre o período de 2018 a 2023 e opera em 2026. A medida
