@@ -1,15 +1,3 @@
-{"date": "2026-09-03", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-03", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-03", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-03", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-03", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-03", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-03", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-03", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-04", "ticker": "AAPL", "stage": "alerted", "detail": "Apple (AAPL) Faces Mixed Outlook Ahead of Foldable iPhone Launch"}
-{"date": "2026-09-04", "ticker": "MSFT", "stage": "alerted", "detail": "Microsoft Finally Reveals Azure's $29.4 Billion Core"}
-{"date": "2026-09-04", "ticker": "NVDA", "stage": "alerted", "detail": "Nvidia’s $5 Billion Intel Bet Was Worth $30 Billion by June. Is the Partnership "}
-{"date": "2026-09-04", "ticker": "TSLA", "stage": "alerted", "detail": "Dow Jones Futures: Stocks Jump On Fed's Waller; Tesla Cybercab Event Private, Jo"}
 {"date": "2026-09-04", "ticker": "AMZN", "stage": "alerted", "detail": "Amazon vs. Microsoft: 1 Key Metric Identifies the Superior Artificial Intelligen"}
 {"date": "2026-09-04", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-04", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
@@ -17406,6 +17394,18 @@
 {"date": "2026-09-05", "ticker": "NFLX", "stage": "no_news", "detail": "0 manchete(s) brutas"}
 {"date": "2026-09-05", "ticker": "XOM", "stage": "no_news", "detail": "0 manchete(s) brutas"}
 {"date": "2026-09-05", "ticker": "JNJ", "stage": "no_news", "detail": "0 manchete(s) brutas"}
+{"date": "2026-09-05", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-05", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-05", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-05", "ticker": "TSLA", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-05", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-05", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-05", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-05", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-05", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-05", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-05", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-05", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-05", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-05", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-05", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
