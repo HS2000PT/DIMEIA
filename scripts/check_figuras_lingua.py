@@ -32,7 +32,10 @@ RX_LAB = re.compile(re.escape(BS) + r"label\{(fig:[^}]+)\}")
 # só o que é DESENHADO: conteúdo de \node[...]{...} e de xlabel/ylabel/legend
 RX_NODE = re.compile(re.escape(BS) + r"node\s*(?:\[[^\]]*\])?\s*(?:\([^)]*\))?\s*"
                      r"(?:at\s*\([^)]*\))?\s*\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}")
-RX_EIXO = re.compile(r"(?:xlabel|ylabel|legend|legend entries)\s*=\s*\{([^{}]+)\}")
+# ⚠️ [^{}]+ NAO CHEGA: um `xlabel={\\gls{PSI} entre o bloco...}` tem chavetas
+# la dentro e o padrao antigo nao casava com ele -- logo um rotulo de eixo portugues ao
+# lado de ticks ingleses passava. Encontrado a 2026-09-05 na figura da deriva.
+RX_EIXO = re.compile(r"(?:xlabel|ylabel|xticklabels|yticklabels|legend|legend entries)\s*=\s*\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}")
 
 ING = re.compile(r"(?<![A-Za-zÀ-ú])(the|and|of|for|with|per|from|day|days|news|headline|"
                  r"headlines|alert|alerts|market|company|companies|sector|price|score|"
@@ -51,7 +54,8 @@ POR = re.compile(r"(?<![A-Za-zÀ-ú])(de|da|do|das|dos|para|com|sem|não|por|que
                 r"teste|testes|mesmo|mesma|mesmos|mesmas|retreino|ausente|ausência|"
                 r"construção|observação|validação|calibração|conjunto|rotulado|dados|"
                 r"decisão|decisões|treino|aguardar|espera|produção|única|único|"
-                r"deriva|repartição|semelhança|orçamento|manchete|manchetes)"
+                r"deriva|repartição|semelhança|orçamento|manchete|manchetes|moderada|"
+                r"moderado|significativa|significativo|bloco|entre|treino)"
                  r"(?![A-Za-zÀ-ú])", re.IGNORECASE)
 
 # ⚠️ A LISTA FECHADA FOI A CAUSA DE UMA CEGUEIRA REAL, a 2026-09-05: a figura do ciclo

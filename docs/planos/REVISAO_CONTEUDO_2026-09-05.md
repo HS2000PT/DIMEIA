@@ -52,3 +52,30 @@ causa do sinal novo, que **não depende de vocabulário nenhum** — a ortografi
 (`ç`, `ã`, acentos) num rótulo desenhado. Uma lista fechada nunca a teria apanhado.
 
 **Controlo:** com o rótulo original replantado, o verificador dispara e nomeia a figura.
+
+### C5-1 — E a mesma classe tinha **três** cegueiras no verificador, não uma
+
+Ao corrigir a lista fechada apareceu `fig:av_rotulos`. Ao ler a secção da deriva apareceu
+`fig:av_deriva`, que o verificador continuava a não ver **por duas razões independentes**:
+
+1. **`\gls{}` dentro de um rótulo de eixo.** O padrão era `\{([^{}]+)\}`, que para na
+   primeira chaveta interior: `xlabel={\gls{PSI} entre o bloco de treino e o de teste}`
+   **não casava de todo**, logo um eixo em português ao lado de escalas inglesas passava.
+2. **Os rótulos de escala nunca eram olhados.** `xticklabels` e `yticklabels` são texto
+   **desenhado** e não constavam do padrão. A figura da deriva tem
+   `5-day momentum, Same-day return, Headline length` desenhados à esquerda, e era esse o
+   lado inglês da mistura — invisível ao verificador.
+
+**Três figuras corrigidas** (`fig:sis_lifecycle`, `fig:av_rotulos`, `fig:av_deriva`) e
+três defeitos do verificador, cada um encontrado só depois de o anterior ser corrigido.
+**A lição não é a lista: é que um verificador que só olha para parte do que é desenhado
+dá a mesma saída de um corpus limpo.**
+
+### C5-2 — Verificado e **não** é defeito: as três empresas fora do corpus de treino
+
+`ch5:1385` afirma que a AMD, a Netflix e a Meta não figuram no corpus de treino. O registo
+do projeto nomeava só duas (sessão 61). Conferido: são coisas diferentes — a sessão 61
+tratava do mapa de setores (`SECTORS`), onde a Meta **está** e as outras duas não; o
+corpus indexa a Meta como `FB`, pelo que sob o símbolo `META` está mesmo ausente
+(`docs/evaluation/kb_fnspid_build.md`). **As duas afirmações são compatíveis.** Fica
+registado para ninguém voltar a gastar tempo aqui.

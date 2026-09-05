@@ -1414,7 +1414,7 @@ $0{,}25$ deslocamento significativo. A Figura~\ref{fig:av_deriva} apresenta o re
                20-day volatility},
   nodes near coords, nodes near coords align={horizontal}, point meta=explicit symbolic,
   every node near coord/.append style={font=\footnotesize},
-  xlabel={\gls{PSI} entre o bloco de treino e o de teste},
+  xlabel={\gls{PSI}, training block vs test block},
   xtick={0,0.10,0.25,0.35}, xticklabels={{0.00},{0.10},{0.25},{0.35}},
   tick label style={font=\footnotesize}, label style={font=\footnotesize},
   xmajorgrids, grid style={black!12}, axis lines*=left,
@@ -1424,9 +1424,9 @@ $0{,}25$ deslocamento significativo. A Figura~\ref{fig:av_deriva} apresenta o re
 \addplot[bar shift=0pt, fill=black!65, draw=black!80] coordinates {(0.281,vol) [0.281]};
 \draw[dashed, orange!70!black] (axis cs:0.10,mom) -- (axis cs:0.10,vol);
 \draw[dashed, orange!70!black] (axis cs:0.25,mom) -- (axis cs:0.25,vol);
-\node[font=\scriptsize, text=orange!60!black, anchor=north] at (axis cs:0.175,mom) {moderada};
+\node[font=\scriptsize, text=orange!60!black, anchor=north] at (axis cs:0.175,mom) {moderate};
 \node[font=\scriptsize, text=orange!60!black, anchor=north] at (axis cs:0.30,mom)
-  {significativa};
+  {significant};
 \end{axis}
 \end{tikzpicture}
 \caption[Deslocamento das distribuições de entrada]{Índice de estabilidade populacional de cada
