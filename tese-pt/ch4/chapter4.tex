@@ -942,6 +942,18 @@ ausência é deliberada e decorre do argumento desenvolvido na Secção~\ref{sec
 gerada constitui uma afirmação, ao passo que o sistema descrito entrega afirmações acompanhadas da
 evidência que as sustenta.
 
+Uma camada de geração ancorada encontra-se, ainda assim, implementada e avaliada, e não é
+exposta. Nela, cada frase tem de citar um facto do conjunto de evidência que a acompanha, e uma
+verificação recusa a frase cujo número não pertença ao facto que ela cita. Sobre um corpo de
+vinte e três tentativas de contornar essa verificação, todas foram recusadas, e sobre oito textos
+fiéis nenhum o foi; nas secções efetivamente compostas não se registou uma única violação
+entregue. A razão para a não expor não é o desempenho dessa verificação, mas a natureza da
+garantia: no texto entregue ao utilizador a composição parte de um vocabulário fechado, ao passo
+que a verificação da camada gerada enumera o que proíbe, e uma enumeração do proibido é mais
+fraca do que uma enumeração do permitido. Nenhuma comparação com uma arquitetura completa de
+geração aumentada por recuperação foi realizada, pelo que nada se afirma sobre o que ela
+acrescentaria.
+
 \subsection{O elo em falta: arquitetura de retreino}
 
 O ciclo não inclui retreino. Os parâmetros correspondem ao período de 2018 a 2023 e não foram

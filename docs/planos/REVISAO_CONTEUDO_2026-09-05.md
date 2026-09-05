@@ -175,3 +175,57 @@ quando o comando corre e nunca é retirado, e o ficheiro diz quantos dias tem.
 legenda curta dizia «As sete regras» com nove filas.
 
 **Controlo:** os três defeitos de figura replantados um a um, e o verificador dispara nos três.
+
+---
+
+## Segunda passagem — Cap. 3 e Cap. 2
+
+### C3-1 — A tabela de conjuntos declarava o registo de decisões pela janela curta
+
+`ch3:120`. A linha dizia «2026-07-22 a 2026-08-15, $4\,366$ decisões». É a mesma janela que
+o Cap. 5 chama **«anterior e mais curta»**, e a medição que o capítulo usa cobre
+**2026-07-22 a 2026-08-20 com $36\,925$**. O inventário dos dados declarava menos dados do
+que a análise consome, e é a mesma incoerência de C6-1, uma camada atrás. Corrigido contra
+`evaluation_gate_selectivity_unicos.md`, que é a fonte que dá a janela.
+
+### C3-2 — «questões» onde o Cap. 2 diz «perguntas», e o termo colide
+
+`ch3:36` dizia que as três primeiras decisões correspondem «às questões enunciadas no
+Capítulo 1». No documento, **«questões» é o termo técnico das questões de investigação** e
+as do investidor chamam-se «perguntas» — é assim no Cap. 2 e na Figura 2.1. Lido como
+questões de investigação, a frase fica errada, porque a decomposição **não** dá origem a
+uma. Passa a nomear as três perguntas do investidor.
+
+### C2-1 — A tabela afirmava um preço que a síntese do mesmo capítulo declara não citável
+
+`ch2:88` dava «milhares por ano» para o terminal profissional, e `ch2:626` diz que **«o seu
+preço não é publicado de forma citável, e é a indisponibilidade, e não um valor concreto,
+que sustenta o argumento»**. Uma célula com um valor sem fonte, contradita 538 linhas
+adiante pelo próprio capítulo. Passa a «não publicado», que é o que se sabe.
+
+### C4-4 — ⚠️ O artigo afirma uma camada generativa que a tese não menciona em lado nenhum
+
+O artigo diz que o sistema *«does implement a grounded generation layer»*, **«implemented and
+evaluated but not exposed»**, e reporta quantidades sobre ela. A tese só diz que o sistema
+**não** integra um modelo de linguagem no texto entregue — verdadeiro e insuficiente: um
+arguente que leia os dois documentos encontra no artigo trabalho medido que a dissertação
+não reivindica.
+
+Verificado antes de escrever: a camada existe (`investigator/intelligence/`, cinco módulos),
+tem testes próprios, tem artefacto de avaliação, e **não está exposta** — o próprio
+`api/main.py` regista que as rotas foram retiradas e o código não.
+
+**A correcção é na tese e não no artigo**, pela razão já decidida: remover do artigo apagaria
+trabalho medido, e descrever a camada como entregue descreveria um produto que não existe.
+A tese ganha um parágrafo na mesma formulação estreita — implementada, avaliada, não
+exposta — com a razão que decide, que é a **natureza da garantia** e não o desempenho da
+verificação: o texto entregue parte de um vocabulário fechado, a camada gerada enumera o que
+proíbe, e enumerar o proibido é mais fraco do que enumerar o permitido. Mais uma remissão do
+Cap. 2 e uma linha na tabela de origem dos resultados do apêndice.
+
+**Verificado e certo no Cap. 3:** as seis versões de biblioteca batem uma a uma com os
+ficheiros de dependências; a conversão de retorno logarítmico (`exp(0,1982) − 1 = 21,92\%`);
+a repartição da AMD soma exacto e o seu retorno simples confere; o decaimento de meia-vida
+(`2^{-365/120} = 0,12`). **No Cap. 2:** os produtos que o Cap. 1 promete nomeados estão
+nomeados; a atribuição a Engle e Bollerslev é correcta, incluindo a ressalva de que ambos
+formalizam sobre séries de inflação.
