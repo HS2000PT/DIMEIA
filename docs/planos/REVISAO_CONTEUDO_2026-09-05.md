@@ -14,19 +14,18 @@
 
 | capítulo | lido | achados | corrigidos |
 |---|---|---|---|
-| 4 | integral | 3 | 3 |
-| 5 | resultados, produção, deriva, ablação, síntese | 2 | 2 |
+| 4 | integral | 4 | 4 |
+| 5 | integral | 2 | 2 |
 | 6 | integral | 3 | 3 |
-| 3 | triagem, ética, declaração de IA | 0 | — |
-| 2 | ferramentas, incerteza, deriva | 0 | — |
+| 3 | integral | 2 | 2 |
+| 2 | integral | 1 | 1 |
 | 1 | integral | 0 | — |
 
-**Oito achados, oito corrigidos. Três eram meus, de ontem.** E dois falsos alarmes meus,
-apanhados antes de reportar.
+**Doze achados, doze corrigidos. Três eram meus, de ontem.** E três falsos alarmes meus,
+todos apanhados antes de reportar.
 
-**Por ler em detalhe** (o mais provável sítio para o que falta): Cap. 5 §5.1 desenho e
-métricas, §5.2 deteção e §5.5 decomposição; Cap. 3 metodologia, dados, deteção,
-decomposição e recuperação; Cap. 2 na íntegra.
+**Os seis capítulos foram lidos por inteiro.** O que resta por fazer não é revisão de
+conteúdo: é a tradução, e a decisão do título.
 
 ---
 
@@ -229,3 +228,28 @@ a repartição da AMD soma exacto e o seu retorno simples confere; o decaimento 
 (`2^{-365/120} = 0,12`). **No Cap. 2:** os produtos que o Cap. 1 promete nomeados estão
 nomeados; a atribuição a Engle e Bollerslev é correcta, incluindo a ressalva de que ambos
 formalizam sobre séries de inflação.
+
+---
+
+## Terceira passagem — o que faltava do Cap. 5 e do Cap. 2
+
+Nenhum achado novo. Fica registado o que foi **conferido a valer**, para ninguém repetir:
+
+- **A aritmética que a tese mostra fecha toda.** $F_1$ do *z*-score
+  ($2 \times 0{,}381 \times 0{,}800 / 1{,}181 = 0{,}516$) e da regra fixa ($0{,}218$); o Brier
+  de anunciar sempre a unidade ($1 - 0{,}378 = 0{,}622$); a conversão de retorno logarítmico
+  ($\exp(0{,}1982) - 1 = 21{,}92\%$); a repartição da AMD, que soma exacto e cujo retorno
+  simples confere; o decaimento de meia-vida ($2^{-365/120} = 0{,}12$).
+- **As seis versões de biblioteca** do Cap. 3 batem uma a uma com os ficheiros de dependências.
+- **Cap. 2 sem mais achados:** a atribuição a Engle e Bollerslev é correcta e traz a ressalva
+  de que ambos formalizam sobre séries de inflação; a secção da calibração **declara que a
+  fonte citada não favorece a opção tomada** e remete para a medição; os produtos que o
+  Cap. 1 promete nomeados estão nomeados.
+
+### Terceiro falso alarme meu, apanhado a tempo
+
+A figura da decomposição diz «mediana $0{,}487$» e o apêndice diz $0{,}460$. **São
+quantidades diferentes** e a fonte tem as duas: $0{,}487$ é a mediana da quota do movimento
+atribuída à empresa, $0{,}460$ é a mediana do $R^2$ do ajuste. A tese distingue-as no
+parágrafo seguinte, e chega a dizer que o segundo «não é o coeficiente do ajuste por mínimos
+quadrados». **Ler o parágrafo seguinte antes de reportar** — é a mesma lição da sessão 64.
