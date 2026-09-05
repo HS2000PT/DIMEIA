@@ -282,7 +282,8 @@ def relatorio(registos: list[FL.FeedbackRecord],
 
 
 def fragmento_latex(registos: list[FL.FeedbackRecord],
-                    chaves_validas: set[str] | None = None) -> str:
+                    chaves_validas: set[str] | None = None,
+                    lingua: str = "pt") -> str:
     """A subsecção da dissertação, gerada a partir dos mesmos votos que o relatório.
 
     **Escrita para ser correta com qualquer N, incluindo zero.** Abaixo do mínimo pré-registado
@@ -290,7 +291,14 @@ def fragmento_latex(registos: list[FL.FeedbackRecord],
     Wilson. Assim a dissertação pode compilar hoje, com a recolha a decorrer, sem afirmar nada
     que os dados não sustentem, e passa a estar certa no dia em que os votos cheguem — sem
     ninguém ter de reescrever o parágrafo.
+
+    ⚠️ **Sai nas duas línguas, e é por isso que existe o parâmetro.** A árvore inglesa inclui
+    este mesmo ficheiro traduzido, e traduzi-lo à mão no destino faria a tradução desaparecer
+    na corrida seguinte. A lógica é uma só; muda apenas o texto.
     """
+    def t(pt: str, en: str) -> str:
+        return en if lingua == "en" else pt
+
     registos, excluidos = _filtrar_por_historico(registos, chaves_validas)
     amostra_verificada = chaves_validas is not None
 
@@ -299,106 +307,184 @@ def fragmento_latex(registos: list[FL.FeedbackRecord],
     n = len(efetivos)
     uteis = sum(1 for v in efetivos.values() if v.acao == FL.UTIL)
     dias = sorted({v.at[:10] for v in efetivos.values()})
-    periodo = (f"entre {dias[0]} e {dias[-1]}" if len(dias) > 1
-               else (f"em {dias[0]}" if dias else "sem qualquer voto registado"))
+    if len(dias) > 1:
+        periodo = t(f"entre {dias[0]} e {dias[-1]}", f"between {dias[0]} and {dias[-1]}")
+    elif dias:
+        periodo = t(f"em {dias[0]}", f"on {dias[0]}")
+    else:
+        periodo = t("sem qualquer voto registado", "with no vote recorded")
 
     L = ["% GERADO por scripts/analyse_feedback.py — NÃO EDITAR À MÃO.",
          "% Correr o script outra vez depois de a recolha fechar; o texto acompanha os dados.",
-         r"\subsection{Utilidade percebida dos alertas entregues}",
+         t(r"\subsection{Utilidade percebida dos alertas entregues}",
+           r"\subsection{Perceived usefulness of the alerts delivered}"),
          r"\label{sec:av_feedback}", ""]
 
     # ⚠️ «cada alerta», e não «cada alerta de notícia»: os botões vão nos alertas de mercado
     # também, e os dois primeiros votos reais da recolha foram precisamente em alertas de
     # mercado. A redação anterior descrevia o sistema de forma errada no próprio documento.
-    L.append("O canal passou a acompanhar cada alerta entregue com dois botões, "
-             "\\emph{útil} e \\emph{não ajudou}, e a registar o voto de quem carrega. "
-             "As regras de análise foram fixadas antes de existir um único voto e não foram "
-             "alteradas depois: mínimo de vinte votos efetivos para reportar qualquer proporção, "
-             "um voto por pessoa e por alerta com o último a substituir o anterior, "
-             "salvaguarda que repete o cálculo sem o votante dominante quando este representa "
-             "mais de quarenta por cento dos votos, sempre sujeita ao mesmo mínimo, e intervalos "
-             "de confiança de Wilson, apropriados a proporções com amostras pequenas.")
+    L.append(t(
+        "O canal passou a acompanhar cada alerta entregue com dois botões, "
+        "\\emph{útil} e \\emph{não ajudou}, e a registar o voto de quem carrega. "
+        "As regras de análise foram fixadas antes de existir um único voto e não foram "
+        "alteradas depois: mínimo de vinte votos efetivos para reportar qualquer proporção, "
+        "um voto por pessoa e por alerta com o último a substituir o anterior, "
+        "salvaguarda que repete o cálculo sem o votante dominante quando este representa "
+        "mais de quarenta por cento dos votos, sempre sujeita ao mesmo mínimo, e intervalos "
+        "de confiança de Wilson, apropriados a proporções com amostras pequenas.",
+        "The channel now accompanies every alert delivered with two buttons, "
+        "\\emph{useful} and \\emph{did not help}, and records the vote of whoever presses. "
+        "The analysis rules were fixed before a single vote existed and were not changed "
+        "afterwards: a minimum of twenty effective votes to report any proportion, one vote "
+        "per person and per alert with the last replacing the previous one, a safeguard that "
+        "repeats the computation without the dominant voter when that voter accounts for more "
+        "than forty per cent of the votes, always subject to the same minimum, and Wilson "
+        "confidence intervals, appropriate to proportions with small samples."))
     if amostra_verificada:
-        L.append("Contaram apenas votos sobre alertas presentes no registo partilhado.")
+        L.append(t("Contaram apenas votos sobre alertas presentes no registo partilhado.",
+                   "Only votes on alerts present in the shared log were counted."))
     else:
-        L.append("O registo partilhado não esteve disponível nesta execução. As contagens são "
-                 "por isso provisórias e nenhuma proporção pode ser reportada até o filtro ser "
-                 "aplicado.")
+        L.append(t(
+            "O registo partilhado não esteve disponível nesta execução. As contagens são "
+            "por isso provisórias e nenhuma proporção pode ser reportada até o filtro ser "
+            "aplicado.",
+            "The shared log was not available in this run. The counts are therefore "
+            "provisional and no proportion can be reported until the filter is applied."))
     L.append("")
 
     if n == 0:
-        L.append("A recolha decorre à data de escrita e não contém votos efetivos. "
-                 "A ausência de dados não é um resultado de zero por cento, e por isso nada é "
-                 "reportado aqui; o mecanismo, as regras e as ameaças à validade abaixo ficam "
-                 "estabelecidos para que a medição, quando existir, não dependa de decisões "
-                 "tomadas depois de ver os números.")
+        L.append(t(
+            "A recolha decorre à data de escrita e não contém votos efetivos. "
+            "A ausência de dados não é um resultado de zero por cento, e por isso nada é "
+            "reportado aqui; o mecanismo, as regras e as ameaças à validade abaixo ficam "
+            "estabelecidos para que a medição, quando existir, não dependa de decisões "
+            "tomadas depois de ver os números.",
+            "The collection is under way at the time of writing and contains no effective "
+            "votes. The absence of data is not a result of zero per cent, and therefore "
+            "nothing is reported here; the mechanism, the rules and the threats to validity "
+            "below are established so that the measurement, when it exists, does not depend "
+            "on decisions taken after seeing the numbers."))
     else:
-        L.append(f"Foram registados {r['votos_brutos']} votos válidos {periodo}, "
-                 f"que correspondem a {n} votos efetivos de {r['pessoas']} "
-                 f"{'pessoa' if r['pessoas'] == 1 else 'pessoas distintas'}, "
-                 f"sobre {r['alertas_votados']} alertas."
-                 + (f" {r['mudancas_de_voto']} votos foram posteriormente alterados pela mesma "
-                    f"pessoa, e apenas o último de cada par conta."
-                    if r['mudancas_de_voto'] else "")
-                 + (f" {excluidos} votos foram excluídos por não corresponderem a nenhum alerta "
-                    f"do registo partilhado." if excluidos else ""))
+        pessoas = t("pessoa" if r["pessoas"] == 1 else "pessoas distintas",
+                    "person" if r["pessoas"] == 1 else "distinct people")
+        base = t(
+            f"Foram registados {r['votos_brutos']} votos válidos {periodo}, "
+            f"que correspondem a {n} votos efetivos de {r['pessoas']} {pessoas}, "
+            f"sobre {r['alertas_votados']} alertas.",
+            f"{r['votos_brutos']} valid votes were recorded {periodo}, "
+            f"corresponding to {n} effective votes from {r['pessoas']} {pessoas}, "
+            f"on {r['alertas_votados']} alerts.")
+        if r["mudancas_de_voto"]:
+            base += t(
+                f" {r['mudancas_de_voto']} votos foram posteriormente alterados pela mesma "
+                f"pessoa, e apenas o último de cada par conta.",
+                f" {r['mudancas_de_voto']} votes were later changed by the same person, and "
+                f"only the last of each pair counts.")
+        if excluidos:
+            base += t(
+                f" {excluidos} votos foram excluídos por não corresponderem a nenhum alerta "
+                f"do registo partilhado.",
+                f" {excluidos} votes were excluded for not corresponding to any alert in the "
+                f"shared log.")
+        L.append(base)
         L.append("")
         if not amostra_verificada:
-            L.append("O histórico partilhado não esteve disponível para confirmar que cada "
-                     "voto corresponde a um alerta entregue. \\textbf{Nenhuma proporção é "
-                     "reportada}; as contagens acima são provisórias e não podem ser citadas "
-                     "como resultado.")
+            L.append(t(
+                "O histórico partilhado não esteve disponível para confirmar que cada "
+                "voto corresponde a um alerta entregue. \\textbf{Nenhuma proporção é "
+                "reportada}; as contagens acima são provisórias e não podem ser citadas "
+                "como resultado.",
+                "The shared history was not available to confirm that each vote corresponds "
+                "to a delivered alert. \\textbf{No proportion is reported}; the counts above "
+                "are provisional and cannot be cited as a result."))
         elif n < N_MINIMO:
-            L.append(f"A amostra fica abaixo do mínimo de {N_MINIMO} votos efetivos fixado no "
-                     f"protocolo, pelo que \\textbf{{nenhuma proporção é reportada}}. "
-                     f"As contagens acima são o resultado, e são tudo o que esta amostra "
-                     f"sustenta. Uma percentagem sobre {n} votos daria ao leitor uma precisão "
-                     f"que os dados não têm.")
+            L.append(t(
+                f"A amostra fica abaixo do mínimo de {N_MINIMO} votos efetivos fixado no "
+                f"protocolo, pelo que \\textbf{{nenhuma proporção é reportada}}. "
+                f"As contagens acima são o resultado, e são tudo o que esta amostra "
+                f"sustenta. Uma percentagem sobre {n} votos daria ao leitor uma precisão "
+                f"que os dados não têm.",
+                f"The sample falls below the minimum of {N_MINIMO} effective votes fixed in "
+                f"the protocol, so \\textbf{{no proportion is reported}}. The counts above are "
+                f"the result, and they are all this sample supports. A percentage over {n} "
+                f"votes would give the reader a precision the data do not have."))
         else:
             lo, hi = wilson(uteis, n)
-            L.append(f"Dos {n} votos efetivos, {uteis} classificaram o alerta como útil, "
-                     f"ou seja {uteis / n * 100:.0f}\\%, com intervalo de confiança de Wilson a "
-                     f"95\\% entre {lo * 100:.0f}\\% e {hi * 100:.0f}\\%. A largura deste "
-                     f"intervalo é a medida honesta do que {n} votos permitem afirmar.")
+            L.append(t(
+                f"Dos {n} votos efetivos, {uteis} classificaram o alerta como útil, "
+                f"ou seja {uteis / n * 100:.0f}\\%, com intervalo de confiança de Wilson a "
+                f"95\\% entre {lo * 100:.0f}\\% e {hi * 100:.0f}\\%. A largura deste "
+                f"intervalo é a medida honesta do que {n} votos permitem afirmar.",
+                f"Of the {n} effective votes, {uteis} rated the alert as useful, that is "
+                f"{uteis / n * 100:.0f}\\%, with a 95\\% Wilson confidence interval between "
+                f"{lo * 100:.0f}\\% and {hi * 100:.0f}\\%. The width of this interval is the "
+                f"honest measure of what {n} votes allow one to claim."))
             por_pessoa = Counter(v for v, _ in efetivos)
             dom, nd = por_pessoa.most_common(1)[0]
             if nd / n > DOMINANCIA_MAX:
                 sem = {k: v for k, v in efetivos.items() if k[0] != dom}
                 us = sum(1 for v in sem.values() if v.acao == FL.UTIL)
                 L.append("")
-                L.append(f"Uma única pessoa representa {nd / n * 100:.0f}\\% dos votos efetivos, "
-                         f"acima do limite de {DOMINANCIA_MAX * 100:.0f}\\% fixado no protocolo. "
-                         f"Excluindo-a, restam {len(sem)} votos, dos quais {us} classificam o "
-                         "alerta como útil.")
+                L.append(t(
+                    f"Uma única pessoa representa {nd / n * 100:.0f}\\% dos votos efetivos, "
+                    f"acima do limite de {DOMINANCIA_MAX * 100:.0f}\\% fixado no protocolo. "
+                    f"Excluindo-a, restam {len(sem)} votos, dos quais {us} classificam o "
+                    "alerta como útil.",
+                    f"A single person accounts for {nd / n * 100:.0f}\\% of the effective "
+                    f"votes, above the limit of {DOMINANCIA_MAX * 100:.0f}\\% fixed in the "
+                    f"protocol. Excluding that person, {len(sem)} votes remain, of which {us} "
+                    "rate the alert as useful."))
                 if len(sem) < N_MINIMO:
-                    L.append(f"Este recorte também fica abaixo do mínimo de {N_MINIMO}; nenhuma "
-                             "segunda proporção é reportada e a amostra não sustenta uma leitura "
-                             "independente do votante dominante.")
+                    L.append(t(
+                        f"Este recorte também fica abaixo do mínimo de {N_MINIMO}; nenhuma "
+                        "segunda proporção é reportada e a amostra não sustenta uma leitura "
+                        "independente do votante dominante.",
+                        f"This subset also falls below the minimum of {N_MINIMO}; no second "
+                        "proportion is reported and the sample does not support a reading "
+                        "independent of the dominant voter."))
                 else:
                     lo2, hi2 = wilson(us, len(sem))
-                    L.append(f"A proporção sem essa pessoa é de "
-                             f"{us / len(sem) * 100:.0f}\\%, com intervalo entre "
-                             f"{lo2 * 100:.0f}\\% e {hi2 * 100:.0f}\\%. É esta a leitura a "
-                             "reter.")
+                    L.append(t(
+                        f"A proporção sem essa pessoa é de {us / len(sem) * 100:.0f}\\%, com "
+                        f"intervalo entre {lo2 * 100:.0f}\\% e {hi2 * 100:.0f}\\%. É esta a "
+                        "leitura a reter.",
+                        f"The proportion without that person is {us / len(sem) * 100:.0f}\\%, "
+                        f"with an interval between {lo2 * 100:.0f}\\% and "
+                        f"{hi2 * 100:.0f}\\%. This is the reading to retain."))
     L.append("")
     # A remissao para a limitacao do Cap. 6 vive AQUI e nao no .tex: o ficheiro e
     # regenerado, e uma frase escrita a mao no destino desapareceria na corrida
     # seguinte sem um unico aviso. Sem ela, o Cap. 5 mede utilidade com pessoas e o
     # Cap. 6 declara que isso nao foi feito, e o leitor constroi a contradicao sozinho.
-    L.append("Estes votos constituem retorno observacional em contexto real e não substituem "
-             "o estudo controlado que a Secção~\\ref{sec:con_limitacoes} identifica como a "
-             "lacuna de maior peso deste trabalho, e que permanece por realizar.")
+    L.append(t(
+        "Estes votos constituem retorno observacional em contexto real e não substituem "
+        "o estudo controlado que a Secção~\\ref{sec:con_limitacoes} identifica como a "
+        "lacuna de maior peso deste trabalho, e que permanece por realizar.",
+        "These votes are observational feedback in a real context and do not replace the "
+        "controlled study that Section~\\ref{sec:con_limitacoes} identifies as the gap of "
+        "greatest weight in this work, and which remains to be carried out."))
     L.append("")
-    L.append("Quatro limitações acompanham este resultado e nenhuma delas se resolve com mais "
-             "votos. A primeira é a autosseleção: vota quem quer, e quem considera um alerta "
-             "indiferente tende a não carregar em nada, o que empurra a amostra para os "
-             "extremos. A segunda é a ausência de contrafactual, uma vez que nenhum grupo "
-             "recebeu a variação de preço sem a explicação que a acompanha; nada aqui atribui "
-             "a utilidade à explicação em si. A terceira é a distância entre utilidade "
-             "percebida e decisão melhor, que é a hipótese fundadora deste trabalho e "
-             "permanece por testar. A quarta é o desconhecimento de quem vota: o canal é "
-             "público e não se sabe se quem responde pertence ao público que a dissertação "
-             "assume.")
+    L.append(t(
+        "Quatro limitações acompanham este resultado e nenhuma delas se resolve com mais "
+        "votos. A primeira é a autosseleção: vota quem quer, e quem considera um alerta "
+        "indiferente tende a não carregar em nada, o que empurra a amostra para os "
+        "extremos. A segunda é a ausência de contrafactual, uma vez que nenhum grupo "
+        "recebeu a variação de preço sem a explicação que a acompanha; nada aqui atribui "
+        "a utilidade à explicação em si. A terceira é a distância entre utilidade "
+        "percebida e decisão melhor, que é a hipótese fundadora deste trabalho e "
+        "permanece por testar. A quarta é o desconhecimento de quem vota: o canal é "
+        "público e não se sabe se quem responde pertence ao público que a dissertação "
+        "assume.",
+        "Four limitations accompany this result and none of them is resolved by more votes. "
+        "The first is self-selection: whoever wants to votes, and those who find an alert "
+        "indifferent tend to press nothing, which pushes the sample towards the extremes. "
+        "The second is the absence of a counterfactual, since no group received the price "
+        "change without the explanation that accompanies it; nothing here attributes the "
+        "usefulness to the explanation itself. The third is the distance between perceived "
+        "usefulness and a better decision, which is the founding hypothesis of this work and "
+        "remains untested. The fourth is not knowing who votes: the channel is public and it "
+        "is not known whether those who answer belong to the audience the dissertation "
+        "assumes."))
     L.append("")
     return "\n".join(L)
 
@@ -473,6 +559,10 @@ def main() -> int:
                     help="não filtrar pelo histórico (o relatório assinala-o)")
     ap.add_argument("--out", default=str(OUT_MD))
     ap.add_argument("--out-tex", default=str(OUT_TEX))
+    # ⚠️ A arvore inglesa inclui o MESMO fragmento traduzido. Sai daqui, e nao de
+    # uma edicao a mao do .tex, que a corrida seguinte apagaria sem avisar.
+    ap.add_argument("--lingua", choices=("pt", "en"), default="pt",
+                    help="lingua do fragmento LaTeX (o relatorio .md fica em PT)")
     # ⚠️ A BRANCH E O VALOR POR OMISSAO, e era o contrario ate 2026-09-05. O aviso abaixo
     # ja estava escrito e a opcao segura era a que era precisa PEDIR: o ficheiro local tinha
     # 35 votos e a producao 86, e a dissertacao reportava metade da unica evidencia humana
@@ -526,7 +616,7 @@ def main() -> int:
 
     tex = Path(args.out_tex)
     tex.parent.mkdir(parents=True, exist_ok=True)
-    tex.write_text(fragmento_latex(registos, chaves), encoding="utf-8")
+    tex.write_text(fragmento_latex(registos, chaves, args.lingua), encoding="utf-8")
     print(f"[feedback] fragmento da dissertação escrito em {tex}")
     return 0
 
