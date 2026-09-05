@@ -29,6 +29,7 @@ import argparse
 import collections
 import json
 import pathlib
+import re
 import sys
 import urllib.request
 
@@ -101,6 +102,21 @@ def tabela(contagens: collections.Counter, entregues: int | None) -> list[str]:
     return linhas
 
 
+def _dias_ja_escritos() -> dict[str, list[str]]:
+    """Os dias que o ficheiro já tem, para não os perder ao regenerar."""
+    if not SAIDA.exists():
+        return {}
+    partes = re.split(r"\n### (\d{4}-\d{2}-\d{2})[^\n]*\n", SAIDA.read_text(encoding='utf-8'))
+    fora: dict[str, list[str]] = {}
+    for i in range(1, len(partes), 2):
+        linhas = partes[i + 1].split(chr(10))
+        corte = next((k for k, ln in enumerate(linhas)
+                      if ln.startswith('---') or ln.startswith('**Leitura')),
+                     len(linhas))
+        fora[partes[i]] = [ln for ln in linhas[:corte] if ln.strip()]
+    return fora
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--local", action="store_true", help="ler data/gate_log.jsonl em vez da branch")
@@ -129,9 +145,22 @@ def main() -> int:
            f"Esta é a Tabela~`tab:sis_funil` do Capítulo 4. É {TESE['nota']}. O dia já saiu do",
            "registo e não volta; fica escrito aqui para que o número impresso tenha origem.", ""]
     out += tabela(collections.Counter(TESE["contagens"]), TESE["entregues"])
-    out += ["", "---", "", "## O que o mesmo comando dá hoje", ""]
-    for dia in sorted(por_dia):
-        out += [f"### {dia}", ""] + tabela(por_dia[dia], None) + [""]
+    # ⚠️ ACUMULAR, NÃO SUBSTITUIR. O registo guarda três dias e este gerador reescrevia
+    # o ficheiro inteiro: corrê-lo em setembro apagava os dias de agosto, e a dissertação
+    # cita a AMPLITUDE do que cada porta elimina entre dias, que só existe se os dias
+    # forem guardados. É a classe da sessão 57 -- um artefacto regenerável regenerado
+    # noutro dia é indistinguível de um correcto, e nada avisa.
+    ja = _dias_ja_escritos()
+    novos = {dia: tabela(por_dia[dia], None) for dia in sorted(por_dia)}
+    ja.update(novos)
+    out += ["", "---", "",
+            f"## O que o mesmo comando deu, dia a dia ({len(ja)} dias acumulados)", "",
+            "Cada dia entra quando o comando corre e **nunca é retirado**; o registo de",
+            "produção só guarda três dias de cada vez, pelo que um dia perdido não volta.",
+            ""]
+    for dia in sorted(ja):
+        marca = "" if dia in novos else "  *(dia anterior, conservado)*"
+        out += [f"### {dia}{marca}", ""] + ja[dia] + [""]
     out += ["**Leitura honesta do que mudou.** No dia citado pela dissertação o corte estava",
             "repartido pelas portas de evidência; nos dias acima é o **orçamento diário** que",
             "domina, e por uma razão de contagem e não de política: gastos os cinco alertas, cada",

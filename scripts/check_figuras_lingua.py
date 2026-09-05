@@ -35,7 +35,9 @@ RX_NODE = re.compile(re.escape(BS) + r"node\s*(?:\[[^\]]*\])?\s*(?:\([^)]*\))?\s
 # ⚠️ [^{}]+ NAO CHEGA: um `xlabel={\\gls{PSI} entre o bloco...}` tem chavetas
 # la dentro e o padrao antigo nao casava com ele -- logo um rotulo de eixo portugues ao
 # lado de ticks ingleses passava. Encontrado a 2026-09-05 na figura da deriva.
-RX_EIXO = re.compile(r"(?:xlabel|ylabel|xticklabels|yticklabels|legend|legend entries)\s*=\s*\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}")
+RX_EIXO = re.compile(r"(?:xlabel|ylabel|xticklabels|yticklabels"
+                     r"|legend|legend entries)\s*=\s*\{([^{}]*"
+                     r"(?:\{[^{}]*\}[^{}]*)*)\}")
 
 ING = re.compile(r"(?<![A-Za-zÀ-ú])(the|and|of|for|with|per|from|day|days|news|headline|"
                  r"headlines|alert|alerts|market|company|companies|sector|price|score|"

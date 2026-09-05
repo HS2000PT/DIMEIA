@@ -137,3 +137,34 @@ sim. Corrigido nos dois sítios.
 Cap. 1 (e as três QI também); o item 1 do trabalho futuro remete para o «terceiro item
 desta lista» e o terceiro é mesmo o do julgamento humano; a distinção entre utilidade
 percebida e decisão melhor está feita nos dois sítios.
+
+### C4-3 — ⚠️ O achado maior desta passagem é **meu**: os números da figura das razões vinham de um registo que rola
+
+A figura que acrescentei ontem imprimia `98,0%` para o orçamento, `0,1%` para o limiar de
+semelhança e `1,1%` para a repetição. **Três defeitos, e o terceiro é o pior:**
+
+1. **Vinham de uma leitura única de um registo que guarda três dias.** Medido em seis dias
+   — 19 a 21 de agosto e 3 a 5 de setembro — o que o orçamento elimina vai de **77,7% a
+   99,8%**, e a repetição de **0% a 14,0%**. Imprimir `98,0%` como se fosse uma propriedade
+   do sistema é o mesmo erro que a própria Figura 4.3 existia para corrigir, cometido por
+   mim no dia seguinte.
+2. **Não tinham fonte em `docs/evaluation/`**, contra a regra do projeto, e por isso o
+   `check_tese_numeros` deixava-os passar **sem os ver** — 55/55 batia certo enquanto quatro
+   números sem origem estavam impressos.
+3. **Escrevi que o piso escalonado «deixou de vetar». É falso.** O código aplica-o ao
+   segundo alerta da mesma empresa no mesmo dia (`run_alerts.py:457`), e o comentário do
+   `config/alerts.yaml` di-lo. O que é verdade é que **nunca atuou** nos seis dias, porque o
+   orçamento se esgota antes de uma empresa alcançar um segundo alerta. São afirmações
+   diferentes: uma diz que o mecanismo foi desligado, a outra que não chega a ser alcançado.
+
+**⚠️ E corrigi-lo destapou o mesmo defeito no gerador.** O `snapshot_funil.py` **reescrevia
+o ficheiro inteiro**: corrê-lo hoje apagava os três dias de agosto e a amplitude deixaria de
+existir. É a classe que a sessão 57 documentou **duas vezes** — um artefacto regenerável
+regenerado noutro dia é indistinguível de um correcto. Passa a **acumular**: cada dia entra
+quando o comando corre e nunca é retirado, e o ficheiro diz quantos dias tem.
+
+**Corrigido:** a coluna passa a amplitude com a janela nomeada; a legenda diz que a unidade
+é a **avaliação** e não a notícia; os quatro números entraram no manifesto (55 → 59); e a
+legenda curta dizia «As sete regras» com nove filas.
+
+**Controlo:** os três defeitos de figura replantados um a um, e o verificador dispara nos três.

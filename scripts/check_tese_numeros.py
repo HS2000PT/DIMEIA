@@ -50,6 +50,14 @@ MANIFESTO: list[tuple[str, str, str]] = [
     ("0.269", "evaluation_anomaly_ext.md", "F1 do Isolation Forest"),
     ("0.280", "evaluation_anomaly_ext.md", "F1 do Local Outlier Factor"),
     ("0.407", "evaluation_anomaly.md", "precisao do z-score"),
+    # Politica de decisao -- a amplitude do que cada ponto elimina, seis dias
+    # ⚠️ Estes vieram para o manifesto a 2026-09-05 porque NAO TINHAM FONTE: foram
+    # escritos de uma leitura unica de um registo que so guarda tres dias, e por isso
+    # mudavam sozinhos de um dia para o outro sem nada avisar.
+    ("77.7", "funil_por_porta.md", "minimo diario do que o orcamento elimina"),
+    ("99.8", "funil_por_porta.md", "maximo diario do que o orcamento elimina"),
+    ("4.6", "funil_por_porta.md", "maximo diario do limiar de semelhanca"),
+    ("14.0", "funil_por_porta.md", "maximo diario da repeticao no mesmo dia"),
     # QI2 -- recuperacao
     ("0.513", "evaluation_retrieval_causal.md", "precisao@5 so com o passado"),
     ("0.259", "evaluation_retrieval_causal.md", "chao de acaso no protocolo causal"),

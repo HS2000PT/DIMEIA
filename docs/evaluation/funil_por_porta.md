@@ -34,9 +34,12 @@ registo e não volta; fica escrito aqui para que o número impresso tenha origem
 
 ---
 
-## O que o mesmo comando dá hoje
+## O que o mesmo comando deu, dia a dia (6 dias acumulados)
 
-### 2026-08-19
+Cada dia entra quando o comando corre e **nunca é retirado**; o registo de
+produção só guarda três dias de cada vez, pelo que um dia perdido não volta.
+
+### 2026-08-19  *(dia anterior, conservado)*
 
 | Onde morreu | Avaliações | % | O que é |
 |---|---:|---:|---|
@@ -48,7 +51,7 @@ registo e não volta; fica escrito aqui para que o número impresso tenha origem
 | Sobreviveu às portas | 5 | 0.1% | chegou ao fim do funil |
 | **Total avaliado** | **7 044** | | |
 
-### 2026-08-20
+### 2026-08-20  *(dia anterior, conservado)*
 
 | Onde morreu | Avaliações | % | O que é |
 |---|---:|---:|---|
@@ -60,7 +63,7 @@ registo e não volta; fica escrito aqui para que o número impresso tenha origem
 | Sobreviveu às portas | 5 | 0.1% | chegou ao fim do funil |
 | **Total avaliado** | **7 092** | | |
 
-### 2026-08-21
+### 2026-08-21  *(dia anterior, conservado)*
 
 | Onde morreu | Avaliações | % | O que é |
 |---|---:|---:|---|
@@ -70,6 +73,34 @@ registo e não volta; fica escrito aqui para que o número impresso tenha origem
 | Já avisei hoje | 799 | 13.8% | este título já saiu neste dia |
 | Sobreviveu às portas | 5 | 0.1% | chegou ao fim do funil |
 | **Total avaliado** | **5 808** | | |
+
+### 2026-09-03
+
+| Onde morreu | Avaliações | % | O que é |
+|---|---:|---:|---|
+| Sem precedente forte | 12 | 0.7% | nenhum caso passado acima do chão de semelhança |
+| Orçamento esgotado | 1 621 | 95.4% | o dia já tinha gasto os cinco alertas |
+| Sem notícias | 67 | 3.9% | a fonte não devolveu nada para esta empresa |
+| **Total avaliado** | **1 700** | | |
+
+### 2026-09-04
+
+| Onde morreu | Avaliações | % | O que é |
+|---|---:|---:|---|
+| Orçamento esgotado | 11 174 | 99.8% | o dia já tinha gasto os cinco alertas |
+| Já avisei hoje | 17 | 0.2% | este título já saiu neste dia |
+| Sobreviveu às portas | 5 | 0.0% | chegou ao fim do funil |
+| **Total avaliado** | **11 196** | | |
+
+### 2026-09-05
+
+| Onde morreu | Avaliações | % | O que é |
+|---|---:|---:|---|
+| Orçamento esgotado | 7 059 | 99.4% | o dia já tinha gasto os cinco alertas |
+| Já avisei hoje | 34 | 0.5% | este título já saiu neste dia |
+| Sem notícias | 6 | 0.1% | a fonte não devolveu nada para esta empresa |
+| Sobreviveu às portas | 5 | 0.1% | chegou ao fim do funil |
+| **Total avaliado** | **7 104** | | |
 
 **Leitura honesta do que mudou.** No dia citado pela dissertação o corte estava
 repartido pelas portas de evidência; nos dias acima é o **orçamento diário** que

@@ -323,8 +323,9 @@ registo de decisões que a sustenta conserva três dias, o que fixa o seu limite
 Figura~\ref{fig:sis_seletividade} apresenta a distribuição por empresa.
 
 O orçamento é, na configuração em operação, a restrição que efetivamente atua. Sobre o
-registo de decisões de produção, $98{,}0\%$ das avaliações terminam nele, contra $0{,}1\%$
-no limiar de semelhança e $1{,}1\%$ na verificação de repetição no mesmo dia. A leitura não
+registo de decisões de produção, e em cada um dos seis dias medidos, entre $77{,}7\%$ e
+$99{,}8\%$ das avaliações terminam nele, contra um máximo de $4{,}6\%$ no limiar de semelhança
+e de $14{,}0\%$ na verificação de repetição no mesmo dia. A leitura não
 é a de que as restantes portas sejam inúteis: é a de que a redução de volume que importa
 já ocorreu antes delas, no filtro de relevância e na seleção de um título por empresa por
 ciclo, e que a partir daí a quantidade governada é o total diário. É também a consequência
@@ -529,15 +530,15 @@ assegura coerência temática, e não seleciona casos com maior valor preditivo.
 
   % (nome, valor, derivado?, quota, y)
   \foreach \nome/\valor/\tipo/\quota/\y in {
-      {Não havia notícia}/{---}/{e}/{0{,}3\%}/{0.05},
-      {Nomeia a empresa}/{regra}/{e}/{antes do registo}/{-0.55},
-      {É recente}/{2 dias}/{e}/{antes do registo}/{-1.15},
-      {Evidência suficiente}/{0{,}45}/{e}/{0{,}1\%}/{-1.75},
+      {Nomeia a empresa}/{regra}/{e}/{antes do registo}/{0.05},
+      {Não havia notícia}/{---}/{e}/{0 a 3{,}9\%}/{-0.55},
+      {É recente}/{2 dias}/{e}/{0 a 3{,}5\%}/{-1.15},
+      {Evidência suficiente}/{0{,}45}/{e}/{0 a 4{,}6\%}/{-1.75},
       {Triagem acima do piso}/{50\%}/{d}/{deixou de vetar}/{-2.35},
-      {Mesma história}/{---}/{e}/{0{,}4\%}/{-2.95},
-      {Já enviada hoje}/{---}/{e}/{1{,}1\%}/{-3.55},
-      {Piso escalonado}/{0{,}64}/{d}/{deixou de vetar}/{-4.15},
-      {Orçamento diário}/{5 por dia}/{e}/{98{,}0\%}/{-4.75}} {
+      {Mesma história}/{---}/{e}/{0 a 1{,}8\%}/{-2.95},
+      {Já enviada hoje}/{---}/{e}/{0 a 14{,}0\%}/{-3.55},
+      {Piso escalonado}/{0{,}64}/{d}/{nunca atuou}/{-4.15},
+      {Orçamento diário}/{5 por dia}/{e}/{77{,}7 a 99{,}8\%}/{-4.75}} {
     \node[lin] at (0,\y) {\nome};
     \node[val] at (4.9,\y) {\valor};
     \ifthenelse{\equal{\tipo}{d}}
@@ -550,19 +551,23 @@ assegura coerência temática, e não seleciona casos com maior valor preditivo.
 
   \draw[black!25] (0,-5.35) -- (12.4,-5.35);
   \node[lin, font=\scriptsize, text=black!65, text width=12.2cm] at (0,-5.95)
-    {O ponto que elimina quase tudo é um dos escolhidos. Os dois cujo valor foi derivado de uma
-     análise de custos não eliminam nada na configuração em operação, por terem deixado de vetar
-     em 15 de agosto de 2026. E os dois primeiros pontos atuam antes de existir registo de
-     etapa, pelo que a fração que eliminam não é observável aqui.};
+    {O ponto que elimina quase tudo é um dos escolhidos, e é-o em todos os dias medidos. Dos dois
+     cujo valor foi derivado de uma análise de custos, o piso da triagem deixou de vetar em 15 de
+     agosto de 2026 e o piso escalonado continua armado mas nunca atuou, por o orçamento se esgotar
+     antes de uma empresa alcançar um segundo alerta. O filtro de relevância atua antes de existir
+     registo de etapa, pelo que a fração que elimina não é observável aqui.};
 \end{tikzpicture}
-\caption[As sete regras, a origem do seu valor e o que cada uma elimina]{Cada ponto de decisão,
+\caption[Os nove pontos de decisão, a origem do seu valor e o que cada um elimina]{Cada ponto de decisão,
 a origem do valor que utiliza e a fração das avaliações que nele termina, medida sobre o registo
-de decisões de produção. A distinção entre valor derivado e valor escolhido é a mesma da
+de decisões de produção em seis dias, entre 19 e 21 de agosto e entre 3 e 5 de setembro de 2026.
+A coluna apresenta a amplitude entre esses dias e não um valor único, uma vez que o registo
+conserva apenas três dias de cada vez e as frações variam com o dia. A unidade é a avaliação
+e não a notícia: o sistema repontua os mesmos títulos a cada ciclo de sessenta segundos, pelo que
+estes valores medem onde o tempo do sistema é gasto e não quantas histórias distintas cada ponto
+eliminou. A distinção entre valor derivado e valor escolhido é a mesma da
 Tabela~\ref{tab:sis_portas}. A leitura que a figura permite, e que a tabela sozinha não dá, é a
 de que a redução de volume não é feita pelos pontos cujo valor foi derivado: é feita pelo
-orçamento, cujo valor foi escolhido. As frações somam menos de cem por cento porque
-$0{,}1\%$ das avaliações atravessam todas as portas e dão origem a um alerta, e porque os dois
-primeiros pontos de decisão atuam antes de existir registo de etapa.}
+orçamento, cujo valor foi escolhido, e assim é em cada um dos seis dias. Os valores provêm do registo de decisões publicado com o sistema.}
 \label{fig:sis_razoes}
 \end{figure}
 
