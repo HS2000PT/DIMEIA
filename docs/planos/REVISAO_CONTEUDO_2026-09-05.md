@@ -122,3 +122,18 @@ a terceira verificação da QI3, e das mais defensáveis do conjunto. Acrescenta
 2. Julguei uma frase da QI3 partida a meio e sem citação. **O meu próprio filtro de
    leitura** (`grep -v` de linhas começadas por barra) apagava a linha do `\autocite`, que
    levava as duas citações e metade da frase. **Ler a prosa em bruto, não filtrada.**
+
+### C6-3 — O parágrafo da latência contradizia-se a si próprio em duas linhas
+
+`ch6:432` afirmava a negrito que **«a sua causa não está identificada»** e a frase seguinte
+diz **«Restam três causas que o histórico não separa»**. A tabela de limitações repetia a
+primeira versão. O Cap. 4 identifica as três, nomeia-as e mede uma delas com um exemplo.
+
+O que é verdade é que estão **identificadas e não separadas**, e a diferença não é de
+estilo: «não identificada» convida à pergunta *então investigaram?*, e a resposta é que
+sim. Corrigido nos dois sítios.
+
+**Cap. 6 verificado e certo no resto:** os quatro objetivos batem um a um com os quatro do
+Cap. 1 (e as três QI também); o item 1 do trabalho futuro remete para o «terceiro item
+desta lista» e o terceiro é mesmo o do julgamento humano; a distinção entre utilidade
+percebida e decisão melhor está feita nos dois sítios.
