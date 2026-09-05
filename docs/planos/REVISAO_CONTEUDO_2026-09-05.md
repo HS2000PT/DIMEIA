@@ -14,12 +14,19 @@
 
 | capítulo | lido | achados | corrigidos |
 |---|---|---|---|
-| 4 | §4.1–§4.7 | 1 | 1 |
-| 5 | — | — | — |
-| 3 | — | — | — |
-| 6 | — | — | — |
-| 2 | — | — | — |
-| 1 | — | — | — |
+| 4 | integral | 3 | 3 |
+| 5 | resultados, produção, deriva, ablação, síntese | 2 | 2 |
+| 6 | integral | 3 | 3 |
+| 3 | triagem, ética, declaração de IA | 0 | — |
+| 2 | ferramentas, incerteza, deriva | 0 | — |
+| 1 | integral | 0 | — |
+
+**Oito achados, oito corrigidos. Três eram meus, de ontem.** E dois falsos alarmes meus,
+apanhados antes de reportar.
+
+**Por ler em detalhe** (o mais provável sítio para o que falta): Cap. 5 §5.1 desenho e
+métricas, §5.2 deteção e §5.5 decomposição; Cap. 3 metodologia, dados, deteção,
+decomposição e recuperação; Cap. 2 na íntegra.
 
 ---
 
