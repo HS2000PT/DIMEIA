@@ -316,31 +316,31 @@ constraint.
 
 \subsection{Observed selectivity}
 
-O efeito conjunto dos pontos de decisão é considerável. Sobre as notícias datadas entre 1 e 3 de
-setembro de 2026, o sistema avaliou $743$ títulos distintos de doze empresas e entregou $15$
-alertas, o que corresponde a uma razão aproximada de um para cinquenta. A janela é curta, e o
-registo de decisões que a sustenta conserva três dias, o que fixa o seu limite. A
-Figura~\ref{fig:sis_seletividade} apresenta a distribuição por empresa.
+The joint effect of the decision points is considerable. Over the news dated between 1 and 3
+September 2026, the system assessed $743$ distinct headlines from twelve companies and delivered
+$15$ alerts, which corresponds to a ratio of roughly one in fifty. The window is short, and the
+decision log that supports it keeps three days, which fixes its limit.
+Figure~\ref{fig:sis_seletividade} presents the distribution by company.
 
-O orçamento é, na configuração em operação, a restrição que efetivamente atua. Sobre o
-registo de decisões de produção, e em cada um dos seis dias medidos, entre $77.7\%$ e
-$99.8\%$ das avaliações terminam nele, contra um máximo de $4.6\%$ no limiar de semelhança
-e de $14.0\%$ na verificação de repetição no mesmo dia. A leitura não
-é a de que as restantes portas sejam inúteis: é a de que a redução de volume que importa
-já ocorreu antes delas, no filtro de relevância e na seleção de um título por empresa por
-ciclo, e que a partir daí a quantidade governada é o total diário. É também a consequência
-direta da alteração de política descrita na Secção~\ref{sec:av_producao}: o modelo deixou
-de exercer veto e passou a ordenar dentro do orçamento, pelo que o orçamento ser a
-restrição ativa é a política a comportar-se como foi desenhada, e não um desvio dela.
+The budget is, in the configuration in operation, the constraint that actually binds. Over the
+production decision log, and on each of the six days measured, between $77.7\%$ and $99.8\%$ of the
+assessments end there, against a maximum of $4.6\%$ at the similarity threshold and of $14.0\%$ at
+the same-day repetition check. The reading is not that the remaining gates are useless: it is that
+the reduction in volume that matters has already occurred before them, in the relevance filter and
+in the selection of one headline per company per cycle, and that from there on the governed
+quantity is the daily total. It is also the direct consequence of the policy change described in
+Section~\ref{sec:av_producao}: the model ceased to exercise a veto and came to rank within the
+budget, so the budget being the active constraint is the policy behaving as it was designed, and
+not a departure from it.
 
-Dois esclarecimentos condicionam a leitura destes números, e o segundo é o mais importante. O
-primeiro é o de que a unidade é o título distinto: o sistema reavalia os mesmos títulos a cada
-ciclo, pelo que o registo contém $1{,}321$ linhas para os $743$ títulos, e contar avaliações
-inflacionaria o funil. O segundo é o de que o total de quinze alertas não mede a matéria-prima
-disponível, mas a política: o orçamento diário de cinco foi integralmente utilizado nos três dias,
-pelo que quinze é o teto que a política impõe e não uma quantidade observada. O que a repartição
-por empresa mede é a ordenação dentro desse teto, e essa não é imposta: nenhuma empresa dispõe de
-quota própria.
+Two clarifications condition the reading of these numbers, and the second is the more important.
+The first is that the unit is the distinct headline: the system re-assesses the same headlines at
+every cycle, so the log contains $1{,}321$ rows for the $743$ headlines, and counting assessments
+would inflate the funnel. The second is that the total of fifteen alerts does not measure the raw
+material available, but the policy: the daily budget of five was used in full on all three days, so
+fifteen is the ceiling the policy imposes and not an observed quantity. What the distribution by
+company measures is the ordering within that ceiling, and that is not imposed: no company has a
+quota of its own.
 
 \begin{figure}[ht]
 \centering
@@ -381,21 +381,21 @@ quota própria.
   \legend{relevant headlines, alerts delivered}
 \end{axis}
 \end{tikzpicture}
-\caption[Seletividade do sistema por empresa]{Títulos distintos avaliados e alertas
-efetivamente entregues, por empresa, entre 1 e 3 de setembro de 2026. O total é de $743$ títulos e
-$15$ alertas, e as duas quantidades são contadas sobre a mesma janela. O total de alertas é o teto
-que o orçamento diário impõe, e não uma medição; o que a figura mostra é a repartição desse teto,
-que a política não fixa. Oito das doze empresas recebem pelo menos um alerta, e a empresa com mais
-títulos avaliados não é a mais alertada. A Secção~\ref{sec:av_producao} examina o efeito desta
-política sobre uma janela muito maior.}
+\caption[Selectivity of the system by company]{Distinct headlines assessed and alerts actually
+delivered, by company, between 1 and 3 September 2026. The total is $743$ headlines and $15$
+alerts, and the two quantities are counted over the same window. The total of alerts is the ceiling
+the daily budget imposes, and not a measurement; what the figure shows is the distribution of that
+ceiling, which the policy does not fix. Eight of the twelve companies receive at least one alert,
+and the company with the most headlines assessed is not the most alerted.
+Section~\ref{sec:av_producao} examines the effect of this policy over a much larger window.}
 \label{fig:sis_seletividade}
 \end{figure}
 
 
-O comportamento num único dia permite localizar a eliminação de candidatas. A
-Figura~\ref{fig:sis_funil} distribui as $5{,}060$ avaliações registadas a 15 de agosto de 2026 pelo
-ponto de decisão em que cada uma terminou. O registo lido corresponde a parte do dia e não ao dia
-completo, pelo que os valores devem ser lidos como proporções.
+The behaviour on a single day makes it possible to locate where candidates are eliminated.
+Figure~\ref{fig:sis_funil} distributes the $5{,}060$ assessments recorded on 15 August 2026 by the
+decision point at which each one ended. The log read corresponds to part of the day and not to the
+complete day, so the values should be read as proportions.
 
 \begin{figure}[ht]
 \centering
@@ -431,86 +431,87 @@ completo, pelo que os valores devem ser lidos como proporções.
 \fbox{\parbox{0.78\textwidth}{\centering\small
   \textbf{5 messages delivered}\quad$\ne$\quad\textbf{333 passages through the gates}\\
   An evaluation is not a distinct headline; the same titles were re-evaluated.}}
-\caption[Distribuição completa das avaliações por ponto de decisão]{As $5{,}060$ avaliações
-registadas em parte de 15 de agosto de 2026. Cada banda representa o que resta depois da porta
-indicada, e o valor à direita o que essa porta eliminou; as eliminações somam as $5{,}060$
-avaliações e deixam $333$ passagens. As cinco mensagens entregues são uma contagem separada,
-não uma categoria de avaliações. O orçamento diário foi integralmente utilizado. A data é
-também a do dia em que o piso de triagem deixou de exercer veto e passou a ordenar, pelo que a banda
-de $1{,}194$ avaliações eliminadas nesse ponto pertence à configuração anterior à descrita na
-Tabela~\ref{tab:sis_portas}; nos dias seguintes esse ponto deixa de eliminar candidatas.}
+\caption[Complete distribution of assessments by decision point]{The $5{,}060$ assessments
+recorded during part of 15 August 2026. Each band represents what remains after the gate indicated,
+and the value on the right what that gate eliminated; the eliminations sum to the $5{,}060$
+assessments and leave $333$ passages. The five messages delivered are a separate count, not a
+category of assessments. The daily budget was used in full. The date is also that of the day on
+which the triage floor ceased to exercise a veto and came to rank, so the band of $1{,}194$
+assessments eliminated at that point belongs to the configuration prior to the one described in
+Table~\ref{tab:sis_portas}; on the following days that point stops eliminating candidates.}
 \label{fig:sis_funil}
 \end{figure}
 
-A leitura destes valores expõe um defeito de instrumentação. As $333$ avaliações que atravessaram
-todos os pontos de decisão não correspondem a $333$ candidatas distintas aprovadas para entrega. O
-sistema reavalia os mesmos títulos em cada ciclo de sessenta segundos, e um título já entregue
-nesse dia voltava a atravessar todos os pontos de decisão em cada ciclo. A entrega era impedida no
-final, por uma verificação de duplicação que, ao contrário de todas as restantes, não estava
-registada como etapa.
+Reading these values exposes an instrumentation defect. The $333$ assessments that crossed every
+decision point do not correspond to $333$ distinct candidates approved for delivery. The system
+re-assesses the same headlines at every sixty-second cycle, and a headline already delivered that
+day crossed every decision point again at every cycle. Delivery was prevented at the end, by a
+duplication check that, unlike all the others, was not recorded as a stage.
 
-A consequência é relevante para a finalidade do registo. A vista construída para tornar as
-decisões do sistema inspecionáveis indicava $333$ aprovações num dia em que foram entregues cinco
-mensagens. A verificação de duplicação passou a constituir uma etapa com identificação própria,
-como as restantes, e existe um teste automático que falha caso volte a ser omitida. Os valores da Figura~\ref{fig:sis_funil} são anteriores a essa correção.
+The consequence matters for the purpose of the log. The view built to make the system's decisions
+inspectable reported $333$ approvals on a day on which five messages were delivered. The
+duplication check became a stage with an identifier of its own, like the rest, and there is an
+automatic test that fails if it is omitted again. The values of Figure~\ref{fig:sis_funil} predate
+that correction.
 
-\subsection{Limiares e a sua proveniência}
+\subsection{Thresholds and their provenance}
 
-Cada ponto de decisão utiliza uma constante, e a origem dessas constantes é heterogénea. A
-Tabela~\ref{tab:sis_portas} distingue os valores derivados de uma análise dos valores escolhidos,
-distinção que é pertinente porque os dois casos admitem defesas de natureza diferente.
+Each decision point uses a constant, and the origin of those constants is heterogeneous.
+Table~\ref{tab:sis_portas} distinguishes the values derived from an analysis from the values
+chosen, a distinction that matters because the two cases admit defences of a different nature.
 
 \begin{table}[!htbp]
-\caption[Limiares da política de decisão e a sua proveniência]{Constante associada a cada ponto de
-decisão e origem do respetivo valor. O primeiro ponto não utiliza constante, por corresponder a
-uma regra de correspondência textual. O orçamento diário atua depois dos pontos de decisão
-representados na Figura~\ref{fig:sis_caminho} e constitui, na configuração em operação, o
-mecanismo que efetivamente limita o volume.}
+\caption[Thresholds of the decision policy and their provenance]{Constant associated with each
+decision point and the origin of its value. The first point uses no constant, since it corresponds
+to a textual matching rule. The daily budget acts after the decision points shown in
+Figure~\ref{fig:sis_caminho} and constitutes, in the configuration in operation, the mechanism that
+actually limits the volume.}
 \label{tab:sis_portas}
 \centering
 \small
 \begin{tabular}{L{0.22\textwidth} L{0.16\textwidth} p{0.50\textwidth}}
 \toprule
-\tabhead{Ponto de decisão} & \tabhead{Valor} & \tabhead{Proveniência} \\
+\tabhead{Decision point} & \tabhead{Value} & \tabhead{Provenance} \\
 \midrule
-Movimento invulgar & $|z| \geq 1.5$ & Escolhido, e distinto do valor de $3.0$ sob o qual o
-detetor é avaliado no Capítulo~\ref{cap:avaliacao}. A avaliação fixa um valor exigente para
-caracterizar o método; a implantação adota um valor mais permissivo por decisão de produto,
-compensado pelos níveis de severidade que distinguem $1.5$, $2.0$ e $3.0$ na formulação
-apresentada. Os dois valores respondem a perguntas diferentes. \\
-Nomeia a empresa & --- & Regra textual, definida após inspeção do material que atravessava o
-filtro inicial. \\
-É recente & 2 dias & Escolhido, por cobrir um fim de semana. \\
-Evidência suficiente & $0.45$ & Escolhido. É o ponto que elimina o maior número de candidatas. \\
-Triagem acima do piso & $50\%$ & Derivado de uma análise de custos, que produz $0.49$ na
-condição de custo simétrico entre movimento não comunicado e falso alarme; o valor implantado
-corresponde ao arredondamento desse resultado. Na configuração em operação não exerce veto:
-ordena as candidatas do mesmo ciclo. \\
-Orçamento diário & 5 por dia & Escolhido. Os cinco lugares são atribuídos por ordem de chegada e
-não às cinco candidatas com maior pontuação do dia, uma vez que a decisão é tomada ciclo a ciclo,
-sem conhecimento das candidatas posteriores. Acresce a um limite de duas mensagens por empresa por
-dia, que se mantém em vigor e é verificado depois deste. Os dois respondem a problemas distintos: o
-limite por empresa impede a saturação por um único nome, e o orçamento global impede que doze
-empresas a duas mensagens cada produzam vinte e quatro interrupções num dia. \\
+Unusual movement & $|z| \geq 1.5$ & Chosen, and distinct from the value of $3.0$ under which the
+detector is evaluated in Chapter~\ref{cap:avaliacao}. The evaluation fixes a demanding value in
+order to characterise the method; the deployment adopts a more permissive value as a product
+decision, offset by the severity levels that distinguish $1.5$, $2.0$ and $3.0$ in the wording
+presented. The two values answer different questions. \\
+Names the company & --- & Textual rule, defined after inspecting the material that was crossing
+the initial filter. \\
+Is it recent & 2 days & Chosen, so as to cover a weekend. \\
+Enough evidence & $0.45$ & Chosen. It is the point that eliminates the largest number of
+candidates. \\
+Triage above the floor & $50\%$ & Derived from a cost analysis, which produces $0.49$ under the
+condition of symmetric cost between an uncommunicated movement and a false alarm; the deployed
+value is the rounding of that result. In the configuration in operation it exercises no veto: it
+ranks the candidates of the same cycle. \\
+Daily budget & 5 per day & Chosen. The five slots are assigned in order of arrival and not to the
+five highest-scoring candidates of the day, since the decision is taken cycle by cycle, without
+knowledge of later candidates. It is additional to a limit of two messages per company per day,
+which remains in force and is checked after this one. The two answer distinct problems: the
+per-company limit prevents saturation by a single name, and the global budget prevents twelve
+companies at two messages each from producing twenty-four interruptions in a day. \\
 \addlinespace
-Piso escalonado & segundo alerta: $0.64$ & A configuração conserva os valores derivados $0.49$
-e $0.64$, e o primeiro é explicitamente ignorado quando o orçamento global está ativo: o
-primeiro alerta diário de cada empresa não tem piso de triagem. O mecanismo atua assim apenas
-como limitador de repetição dentro da mesma empresa. \\
+Stepped floor & second alert: $0.64$ & The configuration keeps the derived values $0.49$ and
+$0.64$, and the first is explicitly ignored when the global budget is active: the first daily
+alert of each company has no triage floor. The mechanism thus acts only as a limiter of
+repetition within the same company. \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-O limiar de semelhança requer tratamento separado, por ser o menos fundamentado dos sete. Numa
-varredura medida em julho de 2026, quando a lista vigiada tinha dez empresas e o orçamento diário
-ainda não existia, sete candidatas foram eliminadas neste ponto, quatro delas por diferenças de
-$0.04$ ou inferiores, e era então o ponto que mais eliminava. Deixou de o ser: sob a política
-em operação, a ordem de grandeza do que cada ponto elimina é a da
-Figura~\ref{fig:sis_razoes}. Foi testada a
-hipótese de valores mais elevados de semelhança corresponderem a precedentes mais informativos, e
-a hipótese não se confirma: a concordância de direção entre o caso passado e o caso em avaliação
-situa-se ao nível do acaso em ambos os lados do limiar. O limiar controla o volume de alertas e
-assegura coerência temática, e não seleciona casos com maior valor preditivo.
+The similarity threshold requires separate treatment, since it is the least grounded of the seven.
+In a scan measured in July 2026, when the watched list had ten companies and the daily budget did
+not yet exist, seven candidates were eliminated at this point, four of them by differences of
+$0.04$ or less, and it was then the point that eliminated the most. It ceased to be: under the
+policy in operation, the order of magnitude of what each point eliminates is that of
+Figure~\ref{fig:sis_razoes}. The hypothesis that higher similarity values correspond to more
+informative precedents was tested, and the hypothesis is not confirmed: the agreement in direction
+between the past case and the case under assessment is at the level of chance on both sides of the
+threshold. The threshold controls the volume of alerts and ensures thematic coherence, and does not
+select cases with greater predictive value.
 
 \begin{figure}[!htbp]
 \centering
@@ -522,93 +523,97 @@ assegura coerência temática, e não seleciona casos com maior valor preditivo.
   cor/.style={font=\scriptsize, anchor=east, text=black!65},
 ]
   % Cabecalhos
-  \node[lin, font=\scriptsize\bfseries, text=black!60] at (0,0.75) {PONTO DE DECISÃO};
-  \node[val, font=\scriptsize\bfseries, text=black!60] at (4.9,0.75) {VALOR};
-  \node[lin, font=\scriptsize\bfseries, text=black!60] at (7.0,0.75) {ORIGEM};
-  \node[cor, font=\scriptsize\bfseries, text=black!60] at (12.4,0.75) {DO QUE ELIMINA};
+  \node[lin, font=\scriptsize\bfseries, text=black!60] at (0,0.75) {DECISION POINT};
+  \node[val, font=\scriptsize\bfseries, text=black!60] at (4.9,0.75) {VALUE};
+  \node[lin, font=\scriptsize\bfseries, text=black!60] at (7.0,0.75) {ORIGIN};
+  \node[cor, font=\scriptsize\bfseries, text=black!60] at (12.4,0.75) {OF WHAT IT ELIMINATES};
   \draw[black!25] (0,0.5) -- (12.4,0.5);
 
   % (nome, valor, derivado?, quota, y)
   \foreach \nome/\valor/\tipo/\quota/\y in {
-      {Nomeia a empresa}/{regra}/{e}/{antes do registo}/{0.05},
-      {Não havia notícia}/{---}/{e}/{0 a 3.9\%}/{-0.55},
-      {É recente}/{2 dias}/{e}/{0 a 3.5\%}/{-1.15},
-      {Evidência suficiente}/{0.45}/{e}/{0 a 4.6\%}/{-1.75},
-      {Triagem acima do piso}/{50\%}/{d}/{deixou de vetar}/{-2.35},
-      {Mesma história}/{---}/{e}/{0 a 1.8\%}/{-2.95},
-      {Já enviada hoje}/{---}/{e}/{0 a 14.0\%}/{-3.55},
-      {Piso escalonado}/{0.64}/{d}/{nunca atuou}/{-4.15},
-      {Orçamento diário}/{5 por dia}/{e}/{77.7 a 99.8\%}/{-4.75}} {
+      {Names the company}/{rule}/{e}/{before the log}/{0.05},
+      {No news at all}/{---}/{e}/{0 to 3.9\%}/{-0.55},
+      {Is it recent}/{2 days}/{e}/{0 to 3.5\%}/{-1.15},
+      {Enough evidence}/{0.45}/{e}/{0 to 4.6\%}/{-1.75},
+      {Triage above the floor}/{50\%}/{d}/{no longer vetoes}/{-2.35},
+      {Same story}/{---}/{e}/{0 to 1.8\%}/{-2.95},
+      {Already sent today}/{---}/{e}/{0 to 14.0\%}/{-3.55},
+      {Stepped floor}/{0.64}/{d}/{never acted}/{-4.15},
+      {Daily budget}/{5 per day}/{e}/{77.7 to 99.8\%}/{-4.75}} {
     \node[lin] at (0,\y) {\nome};
     \node[val] at (4.9,\y) {\valor};
     \ifthenelse{\equal{\tipo}{d}}
       {\node[der, minimum width=2.6mm, minimum height=2.6mm, inner sep=0] at (7.15,\y) {};
-       \node[lin, font=\scriptsize, text=black!70] at (7.4,\y) {derivado};}
+       \node[lin, font=\scriptsize, text=black!70] at (7.4,\y) {derived};}
       {\node[esc, minimum width=2.6mm, minimum height=2.6mm, inner sep=0] at (7.15,\y) {};
-       \node[lin, font=\scriptsize, text=black!70] at (7.4,\y) {escolhido};}
+       \node[lin, font=\scriptsize, text=black!70] at (7.4,\y) {chosen};}
     \node[cor] at (12.4,\y) {\quota};
   }
 
   \draw[black!25] (0,-5.35) -- (12.4,-5.35);
   \node[lin, font=\scriptsize, text=black!65, text width=12.2cm] at (0,-5.95)
-    {O ponto que elimina quase tudo é um dos escolhidos, e é-o em todos os dias medidos. Dos dois
-     cujo valor foi derivado de uma análise de custos, o piso da triagem deixou de vetar em 15 de
-     agosto de 2026 e o piso escalonado continua armado mas nunca atuou, por o orçamento se esgotar
-     antes de uma empresa alcançar um segundo alerta. O filtro de relevância atua antes de existir
-     registo de etapa, pelo que a fração que elimina não é observável aqui.};
+    {The point that eliminates almost everything is one of the chosen ones, and it is so on every
+     day measured. Of the two whose value was derived from a cost analysis, the triage floor ceased
+     to veto on 15 August 2026 and the stepped floor remains armed but never acted, because the
+     budget runs out before a company reaches a second alert. The relevance filter acts before a
+     stage log exists, so the fraction it eliminates is not observable here.};
 \end{tikzpicture}
-\caption[Os nove pontos de decisão, a origem do seu valor e o que cada um elimina]{Cada ponto de decisão,
-a origem do valor que utiliza e a fração das avaliações que nele termina, medida sobre o registo
-de decisões de produção em seis dias, entre 19 e 21 de agosto e entre 3 e 5 de setembro de 2026.
-A coluna apresenta a amplitude entre esses dias e não um valor único, uma vez que o registo
-conserva apenas três dias de cada vez e as frações variam com o dia. A unidade é a avaliação
-e não a notícia: o sistema repontua os mesmos títulos a cada ciclo de sessenta segundos, pelo que
-estes valores medem onde o tempo do sistema é gasto e não quantas histórias distintas cada ponto
-eliminou. A distinção entre valor derivado e valor escolhido é a mesma da
-Tabela~\ref{tab:sis_portas}. A leitura que a figura permite, e que a tabela sozinha não dá, é a
-de que a redução de volume não é feita pelos pontos cujo valor foi derivado: é feita pelo
-orçamento, cujo valor foi escolhido, e assim é em cada um dos seis dias. Os valores provêm do registo de decisões publicado com o sistema.}
+\caption[The nine decision points, the origin of their value and what each one eliminates]{Each
+decision point, the origin of the value it uses and the fraction of assessments that ends there,
+measured over the production decision log across six days, between 19 and 21 August and between 3
+and 5 September 2026. The column presents the range across those days and not a single value, since
+the log keeps only three days at a time and the fractions vary with the day. The unit is the
+assessment and not the news item: the system re-scores the same headlines at every sixty-second
+cycle, so these values measure where the system's time is spent and not how many distinct stories
+each point eliminated. The distinction between a derived value and a chosen value is the same as in
+Table~\ref{tab:sis_portas}. The reading the figure allows, and that the table alone does not give,
+is that the reduction in volume is not made by the points whose value was derived: it is made by
+the budget, whose value was chosen, and so it is on each of the six days. The values come from the
+decision log published with the system.}
 \label{fig:sis_razoes}
 \end{figure}
 
 
-\section{Construção da explicação}
+\section{Construction of the explanation}
 \label{sec:sis_explicacao}
 
-A mensagem entregue não é uma frase única, mas uma estrutura com quatro partes, sempre presentes e
-sempre pela mesma ordem:
+The message delivered is not a single sentence, but a structure with four parts, always present
+and always in the same order:
 
 \begin{enumerate}
-  \item o facto observado, expresso em valores, com indicação da fonte;
-  \item os casos passados recuperados, apresentados individualmente, com data, semelhança e
-        movimento subsequente;
-  \item a ressalva de que os casos apresentados constituem história observada e não previsão;
-  \item a estimativa de probabilidade de reação do mercado, sem indicação de direção.
+  \item the observed fact, expressed in values, with the source indicated;
+  \item the past cases retrieved, presented individually, with date, similarity and subsequent
+        movement;
+  \item the caveat that the cases presented are observed history and not a forecast;
+  \item the estimated probability of a market reaction, with no indication of direction.
 \end{enumerate}
 
-A ordem responde a duas restrições. O facto precede a estatística porque um alerta iniciado por um
-valor de $z$ perde o leitor na primeira linha, e o destinatário definido no
-Capítulo~\ref{cap:introducao} não dispõe da formação que tornaria esse valor imediatamente
-interpretável. A estimativa ocupa a última posição por ser a única quantidade da mensagem que se
-refere ao futuro, o que assegura que a leitura interrompida antes do fim retém factos e histórico.
+The order responds to two constraints. The fact precedes the statistic because an alert that opens
+with a $z$ value loses the reader on the first line, and the recipient defined in
+Chapter~\ref{cap:introducao} does not have the training that would make that value immediately
+interpretable. The estimate occupies the last position because it is the only quantity in the
+message that refers to the future, which ensures that a reading interrupted before the end retains
+facts and history.
 
-No percurso iniciado por movimento de preço, a primeira parte integra também a caracterização
-estatística em linguagem corrente, dado que nesse caso o facto observado é o próprio movimento. No
-percurso iniciado por notícia, essa posição é ocupada pelo título e pela ligação para o artigo.
+On the path started by a price movement, the first part also carries the statistical
+characterisation in plain language, since in that case the observed fact is the movement itself. On
+the path started by a news item, that position is occupied by the headline and the link to the
+article.
 
-O número de precedentes apresentados é igualmente uma decisão de desenho. O sistema exibe três dos
-casos recuperados e não a totalidade, e a razão não é de espaço disponível. A investigação sobre
-explicação estabelece que as pessoas procuram razões seletivas e contrastivas, e não enumerações
-exaustivas dos fatores que contribuíram para um resultado \autocite{miller2019explanation}. Uma
-lista de trinta casos seria mais completa e menos utilizável. O mesmo princípio determina que a
-mensagem exiba as quantidades que sustentam a decisão e não o cálculo integral que as produziu.
+The number of precedents presented is likewise a design decision. The system displays three of the
+cases retrieved and not all of them, and the reason is not available space. Research on explanation
+establishes that people look for selective and contrastive reasons, and not exhaustive enumerations
+of the factors that contributed to an outcome \autocite{miller2019explanation}. A list of thirty
+cases would be more complete and less usable. The same principle determines that the message
+displays the quantities that support the decision and not the full computation that produced
+them.
 
-A Figura~\ref{fig:sis_alerta} reproduz um alerta tal como foi entregue, copiado do registo do
-canal sem edição. A mensagem, tal como a interface, é redigida em inglês. A opção decorre do
-domínio: as empresas monitorizadas são norte-americanas e as notícias recolhidas das três fontes
-gratuitas são publicadas em inglês, pelo que traduzir o título citado quebraria a verificabilidade,
-que é a propriedade que o sistema existe para preservar. As figuras que reproduzem o sistema em
-funcionamento conservam por isso a língua original.
+Figure~\ref{fig:sis_alerta} reproduces an alert exactly as it was delivered, copied from the
+channel log without editing. The headline it quotes is reproduced verbatim, since translating or
+paraphrasing quoted material would break the verifiability that the system exists to preserve.
+% ⚠️ Na arvore PT segue-se aqui um paragrafo que justifica a mensagem estar em ingles enquanto
+% a prosa esta em portugues. Nao se aplica nesta arvore, onde as duas estao na mesma lingua, e
+% explica-lo descreveria uma divergencia que nao existe.
 
 \begin{figure}[ht]
 \centering
@@ -634,158 +639,161 @@ funcionamento conservam por isso a língua original.
 \hspace*{1em}recent momentum (5d). This estimates whether the market reacts, never\\
 \hspace*{1em}which way: it is not a price forecast and not advice.
 \end{tcolorbox}
-\caption[Alerta entregue ao canal]{Alerta entregue a 13 de agosto de 2026, reproduzido do registo
-sem edição. Os números entre parênteses retos identificam as quatro partes da estrutura. Todos os
-valores provêm dos componentes que os calcularam: a semelhança, do motor de recuperação; o
-movimento a cinco dias, da medição de impacto; e a probabilidade de $57\%$, do modelo calibrado. A
-parte \textnormal{[1]} contém um título que é ele próprio uma previsão, com alvo e prazo; trata-se
-de conteúdo de terceiros reproduzido literalmente, e a Secção~\ref{sec:met_etica} discute o
-alcance da garantia de não previsão nesse contexto. A parte \textnormal{[2]} exibe a semelhança em
-valor bruto, fiel ao que o motor calculou e não interpretável por quem a lê.}
+\caption[Alert delivered to the channel]{Alert delivered on 13 August 2026, reproduced from the log
+without editing. The numbers in square brackets identify the four parts of the structure. Every
+value comes from the component that computed it: the similarity, from the retrieval engine; the
+five-day movement, from the impact measurement; and the probability of $57\%$, from the calibrated
+model. Part \textnormal{[1]} contains a headline that is itself a forecast, with a target and a
+horizon; it is third-party content reproduced literally, and Section~\ref{sec:met_etica} discusses
+the reach of the no-forecast guarantee in that context. Part \textnormal{[2]} displays the
+similarity as a raw value, faithful to what the engine computed and not interpretable by whoever
+reads it.}
 \label{fig:sis_alerta}
 \end{figure}
 
-A probabilidade apresentada na última linha não corresponde à pontuação bruta do modelo. Resulta
-da sua conversão em probabilidade, por ajuste de uma sigmoide sobre um bloco de validação
-reservado \autocite{niculescu2005calibration}. A distinção é operacionalmente relevante: uma
-pontuação bruta ordena as candidatas sem admitir interpretação isolada, ao passo que uma
-probabilidade calibrada estabelece que, entre os títulos aos quais o sistema atribui $57\%$,
-aproximadamente essa fração apresenta efetivamente movimento invulgar. É a diferença entre uma
-quantidade utilizável apenas internamente e uma quantidade que pode ser apresentada.
+The probability presented on the last line is not the raw score of the model. It results from its
+conversion into a probability, by fitting a sigmoid over a held-out validation block
+\autocite{niculescu2005calibration}. The distinction is operationally relevant: a raw score orders
+the candidates without admitting interpretation in isolation, whereas a calibrated probability
+establishes that, among the headlines to which the system assigns $57\%$, approximately that
+fraction does show an unusual movement. It is the difference between a quantity usable only
+internally and a quantity that can be presented.
 
-A garantia tem limites declarados. A Secção~\ref{sec:av_qi3} reporta o erro médio desta
-probabilidade e regista que a calibração é ajustada num bloco cuja prevalência não coincide com a
-do bloco a que é aplicada, o que desloca a escala em cerca de cinco pontos percentuais no sentido
-otimista. A ordenação entre candidatas não é afetada, uma vez que a transformação preserva a
-ordem; o valor absoluto anunciado é.
+The guarantee has declared limits. Section~\ref{sec:av_qi3} reports the mean error of this
+probability and records that the calibration is fitted on a block whose prevalence does not
+coincide with that of the block to which it is applied, which shifts the scale by about five
+percentage points in the optimistic direction. The ordering between candidates is not affected,
+since the transformation preserves the order; the absolute value announced is.
 
-\subsection{Discordância entre a afirmação e a evidência}
+\subsection{Disagreement between the claim and the evidence}
 
-O alerta da Figura~\ref{fig:sis_alerta} apresenta três precedentes com impacto idêntico, de
-$-2.73\%$, e data idêntica. A coincidência não é fortuita: o impacto é medido por par
-constituído por empresa e dia, pelo que três títulos da mesma empresa no mesmo dia partilham o
-mesmo valor por construção. A formulação \emph{``3 of 3 shown cases moved down''} apresenta como
-concordância entre três casos aquilo que constitui um dia observado três vezes.
+The alert of Figure~\ref{fig:sis_alerta} presents three precedents with an identical impact of
+$-2.73\%$, and an identical date. The coincidence is not accidental: the impact is measured per
+pair formed by company and day, so three headlines of the same company on the same day share the
+same value by construction. The wording \emph{``3 of 3 shown cases moved down''} presents as
+agreement between three cases what is one day observed three times.
 
-A extensão do problema foi medida sobre os $247$ alertas de notícia com precedentes entregues entre
-11 de julho e 13 de agosto de 2026.
-Em $36.8\%$ deles os casos exibidos assentam num número de dias distintos inferior ao número de
-casos apresentados, e em $11.3\%$ os três casos correspondem ao mesmo dia. Dos $120$ alertas que
-afirmam unanimidade de direção, $23.3\%$ apoiam-se num único dia.
+The extent of the problem was measured over the $247$ news alerts with precedents delivered
+between 11 July and 13 August 2026. In $36.8\%$ of them the cases displayed rest on a number of
+distinct days lower than the number of cases presented, and in $11.3\%$ the three cases correspond
+to the same day. Of the $120$ alerts that claim unanimity of direction, $23.3\%$ rest on a single
+day.
 
-O efeito é circunscrito. Nenhuma métrica reportada no Capítulo~\ref{cap:avaliacao} é afetada, uma
-vez que a precisão em $k$ contabiliza títulos e a concordância de direção é medida par a par sobre
-o corpus histórico. O que é afetado é a força que o alerta reivindica perante o utilizador, e o
-Capítulo~\ref{cap:conclusoes} regista o facto como limitação.
+The effect is circumscribed. No metric reported in Chapter~\ref{cap:avaliacao} is affected, since
+precision at $k$ counts headlines and direction agreement is measured pair by pair over the
+historical corpus. What is affected is the strength the alert claims before the user, and
+Chapter~\ref{cap:conclusoes} records the fact as a limitation.
 
-\subsection{Aplicação web}
+\subsection{Web application}
 
-A mesma informação é disponibilizada numa aplicação web, que permite consultar o que foi entregue
-e, sobretudo, o que não foi. É nessa aplicação que reside o registo de decisões descrito na
-Secção~\ref{sec:sis_politica}. O desenho da interface não constitui contribuição desta
-dissertação, pelo que não é descrito; a sua apresentação justifica-se por ser o único local em que
-a ausência de comunicação por parte do sistema é observável. As Figuras~\ref{fig:sis_pagina},
-\ref{fig:sis_empresa} e~\ref{fig:sis_silencio} apresentam, por essa ordem, o estado do dia, a
-evidência de uma empresa e o registo de uma decisão de não comunicar.
+The same information is made available in a web application, which allows what was delivered and,
+above all, what was not, to be consulted. It is in that application that the decision log described
+in Section~\ref{sec:sis_politica} resides. The design of the interface is not a contribution of
+this dissertation and is therefore not described; presenting it is justified by its being the only
+place in which the system's absence of communication is observable. Figures~\ref{fig:sis_pagina}, \ref{fig:sis_empresa} and~\ref{fig:sis_silencio} present, in that
+order, the state of the day, the evidence for one company, and the record of a decision not to
+communicate.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/app_v7_painel.png}
-\caption[Estado do dia na aplicação web]{Aplicação web a 2 de setembro de 2026, com a sessão
-norte-americana fechada. Os cinco indicadores repartem as doze empresas vigiadas em cinco alertas
-entregues e sete decisões de não comunicar; a contagem de movimentos fora do comum mede outra
-coisa, o preço, e por isso é apresentada como contagem separada. Cada empresa declara o seu estado
-à superfície, e toda a cor utilizada tem legenda, incluindo a da mascote, que acompanha a variação
-diária do índice de mercado utilizado na decomposição. As capturas são geradas a partir de um
-instantâneo da própria aplicação, e não recolhidas à mão; a largura de captura é de $960$ pixeis,
-por ser aquela em que o texto da interface permanece legível depois de reduzido à caixa de texto
-deste documento.}
+\caption[State of the day in the web application]{Web application on 2 September 2026, with the
+United States session closed. The five indicators split the twelve watched companies into five
+alerts delivered and seven decisions not to communicate; the count of out-of-the-ordinary movements
+measures something else, the price, and is therefore presented as a separate count. Each company
+declares its state on the surface, and every colour used has a legend, including that of the
+mascot, which follows the daily change of the market index used in the decomposition. The captures
+are generated from a snapshot of the application itself, and not collected by hand; the capture
+width is $960$ pixels, since that is the width at which the interface text stays legible after
+being reduced to the text box of this document.}
 \label{fig:sis_pagina}
 \end{figure}
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.94\textwidth]{figures/app_v7_empresa.png}
-\caption[Evidência de uma empresa]{Vista de uma empresa: o veredicto em palavras antes de qualquer
-número, a repartição do movimento nas três parcelas, e a série de preço. As marcas separam as duas
-coisas que este trabalho distingue: o ponto assinala um dia em que um alerta foi entregue, e a seta
-um dia que o detetor assinalou e que nenhuma mensagem acompanhou. A faixa inferior mostra o valor
-de $z$ desses dias contra o limiar de $\pm1.5$, em eixo próprio por não partilhar unidade com o
-preço. A direção da seta é a do fecho e nada mais; a data e o valor de $z$ de cada dia estão nas
-fichas por baixo, e não sobre a linha, para não se sobreporem. A interface abre no dia corrente; a
-figura mostra o intervalo de seis meses, por ser aquele em que a distinção entre assinalar e
-comunicar se torna observável.}
+\caption[Evidence for one company]{View of one company: the verdict in words before any number,
+the split of the movement into the three parts, and the price series. The marks separate the two
+things this work distinguishes: the dot marks a day on which an alert was delivered, and the arrow
+a day the detector flagged that no message accompanied. The lower band shows the $z$ value of those
+days against the $\pm1.5$ threshold, on an axis of its own since it shares no unit with the price.
+The direction of the arrow is that of the close and nothing more; the date and the $z$ value of
+each day are on the cards below, and not on the line, so that they do not overlap. The interface
+opens on the current day; the figure shows the six-month range, since that is the one in which the
+distinction between flagging and communicating becomes observable.}
 \label{fig:sis_empresa}
 \end{figure}
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.72\textwidth]{figures/app_v7_silencio.png}
-\caption[Registo de uma decisão de não comunicar]{As portas que uma empresa atravessou, pela ordem
-da política da Secção~\ref{sec:sis_politica}. As portas transpostas são enunciadas pelo que a
-empresa cumpriu; apenas aquela em que parou é enunciada pela rejeição, com o motivo concreto. O
-silêncio é aqui uma decisão registada, e não ausência de informação.}
+\caption[Record of a decision not to communicate]{The gates a company crossed, in the order of the
+policy of Section~\ref{sec:sis_politica}. The gates crossed are stated by what the company
+satisfied; only the one at which it stopped is stated by the rejection, with the concrete reason.
+Silence is here a recorded decision, and not an absence of information.}
 \label{fig:sis_silencio}
 \end{figure}
 
-A empresa da Figura~\ref{fig:sis_empresa} constitui um caso ilustrativo da segunda questão de
-investigação, pela discordância entre a variação percentual e a repartição. A ação registava uma
-descida de $0.30\%$, e a parcela específica da empresa era $+0.53\%$ — positiva. A descida
-provinha do mercado, com $-0.61\%$, e do setor, com $-0.22\%$. A variação percentual isolada
-indica que a empresa caiu e conduz à procura de uma causa interna que não existe; a repartição
-mostra que a empresa subiu contra um mercado em queda. O veredicto classifica o dia como comum:
-$204$ dos últimos $250$ dias de negociação registaram variação igual ou superior.
+The company of Figure~\ref{fig:sis_empresa} is an illustrative case of the investor's second
+question, through the disagreement between the percentage change and the split. The stock recorded
+a fall of $0.30\%$, and the company-specific part was $+0.53\%$ — positive. The fall came from the
+market, at $-0.61\%$, and from the sector, at $-0.22\%$. The percentage change alone indicates that
+the company fell and leads to the search for an internal cause that does not exist; the split shows
+that the company rose against a falling market. The verdict classifies the day as ordinary: $204$
+of the last $250$ trading days recorded an equal or larger change.
 
-A Figura~\ref{fig:sis_silencio} mostra a mesma exigência do lado do silêncio. Nesse dia, as sete
-empresas que não geraram alerta pararam todas na mesma porta — o orçamento diário de cinco alertas,
-esgotado às $14$h$02$~UTC. A leitura importante não é o número, mas a forma: a empresa transpôs oito
-portas, cada uma enunciada pelo critério que cumpriu, e parou numa restrição de desenho declarada
-à partida. Nenhuma das portas transpostas é apresentada como falha, o que evita a leitura inversa
-que a versão anterior da interface permitia.
+Figure~\ref{fig:sis_silencio} shows the same requirement on the side of silence. On that day, the
+seven companies that generated no alert all stopped at the same gate: the daily budget of five
+alerts, exhausted at $14$:$02$~UTC. The important reading is not the number, but the form: the
+company crossed eight gates, each stated by the criterion it satisfied, and stopped at a design
+constraint declared from the outset. None of the gates crossed is presented as a failure, which
+avoids the inverse reading that the previous version of the interface allowed.
 
-\section{Implantação e operação}
+\section{Deployment and operation}
 \label{sec:sis_operacao}
 
-O sistema corre como processo permanente, com ciclo de varredura de sessenta segundos, sobre
-créditos de alojamento incluídos num plano académico. A primeira versão utilizava um agendador
-gratuito de melhor esforço, cuja periodicidade efetiva era de aproximadamente hora e meia. A
-alteração para processo permanente foi motivada pela redução do atraso dos alertas.
+The system runs as a permanent process, with a sixty-second scan cycle, on hosting credits
+included in an academic plan. The first version used a free best-effort scheduler, whose effective
+period was approximately one and a half hours. The change to a permanent process was motivated by
+reducing the delay of the alerts.
 
-A latência foi medida sobre os $278$ alertas de notícia entregues entre 29 de julho e 30 de agosto
-de 2026 que registam hora de publicação e hora de envio. A mediana do percurso completo é de $353$
-minutos, com percentil noventa de $964$ minutos. A repartição localiza esse tempo sem ambiguidade:
-a mediana entre a publicação e a deteção é de $353$ minutos, e a mediana entre a deteção e a
-chegada da mensagem é de $5$ segundos, com percentil noventa de $16$ segundos. O sistema entrega em
-segundos aquilo que a fonte lhe dá.
+Latency was measured over the $278$ news alerts delivered between 29 July and 30 August 2026 that
+record a publication time and a send time. The median of the complete path is $353$ minutes, with a
+ninetieth percentile of $964$ minutes. The breakdown locates that time without ambiguity: the
+median between publication and detection is $353$ minutes, and the median between detection and the
+arrival of the message is $5$ seconds, with a ninetieth percentile of $16$ seconds. The system
+delivers in seconds what the source gives it.
 
-A separação por configuração não confirma a expectativa que motivou a alteração. Sobre os $28$
-alertas entregues pelo agendador a mediana é de $196$ minutos; sobre os $250$ entregues pelo
-processo permanente é de $402$ minutos. O ciclo mais curto não reduziu a latência observada. A
-comparação não é interpretável como efeito do ciclo, uma vez que as duas configurações não
-operaram em paralelo, entre elas alteraram-se as fontes de notícias e o período de calendário, e
-as amostras são de dimensão muito desigual. O que a medição estabelece é que encurtar o ciclo só
-compensaria se o tempo estivesse na cadência com que o sistema consulta a fonte, e não está.
+The separation by configuration does not confirm the expectation that motivated the change. Over
+the $28$ alerts delivered by the scheduler the median is $196$ minutes; over the $250$ delivered by
+the permanent process it is $402$ minutes. The shorter cycle did not reduce the observed latency.
+The comparison is not interpretable as an effect of the cycle, since the two configurations did not
+operate in parallel, the news sources and the calendar period changed between them, and the samples
+are of very unequal size. What the measurement establishes is that shortening the cycle would only
+pay off if the time were in the cadence with which the system consults the source, and it is
+not.
 
-Três causas concorrem para o atraso da descoberta, e este histórico não as separa. A primeira é a
-fonte listar a notícia horas depois da hora que ela própria declara. A segunda é a notícia mais
-recente do fluxo não ser a mais recente \emph{relevante}: numa amostra recolhida a 7 de agosto de
-2026, o fluxo de uma das empresas trazia $250$ títulos com o mais recente publicado às 11:39, mas
-o mais recente entre os $30$ relevantes era das 08:14. O alerta sai sobre o título correto, e é
-esse título que é antigo. A terceira é o orçamento diário já estar gasto, que não aparece nesta
-medição porque um alerta que não é entregue não regista hora de envio. Apenas a primeira seria
-atenuada por um serviço pago de notícias, e a sua contribuição não está medida.
+Three causes contribute to the delay in discovery, and this history does not separate them. The
+first is the source listing the news hours after the time it itself declares. The second is that
+the most recent item in the feed is not the most recent \emph{relevant} one: in a sample collected
+on 7 August 2026, the feed of one of the companies carried $250$ headlines with the most recent
+published at 11:39, but the most recent among the $30$ relevant ones was from 08:14. The alert goes
+out on the correct headline, and it is that headline that is old. The third is that the daily
+budget is already spent, which does not appear in this measurement because an alert that is not
+delivered records no send time. Only the first would be mitigated by a paid news service, and its
+contribution is not measured.
 
-Todos estes valores constituem um limite inferior da latência sentida pelo utilizador, uma vez que
-a hora de publicação é a declarada pela fonte e não o instante do acontecimento.
+All these values are a lower bound on the latency felt by the user, since the publication time is
+the one declared by the source and not the instant of the event.
 
-\subsection{Crescimento da base de casos}
+\subsection{Growth of the case base}
 \label{sec:sis_base}
 
-Todo o título relevante observado pela varredura é conservado como candidato a precedente. Oito
-dias depois, quando o impacto no preço se torna observável, o candidato é medido pela mesma regra
-de alinhamento da Secção~\ref{sec:met_recuperacao} e integra a base de casos. O intervalo de
-espera não constitui ineficiência: é a condição que impede um caso de conhecer o seu próprio
-desfecho. A Figura~\ref{fig:sis_ciclo_kb} representa o ciclo.
+Every relevant headline observed by the scan is kept as a candidate precedent. Eight days later,
+when the impact on the price becomes observable, the candidate is measured by the same alignment
+rule of Section~\ref{sec:met_recuperacao} and joins the case base. The waiting interval is not
+inefficiency: it is the condition that prevents a case from knowing its own outcome.
+Figure~\ref{fig:sis_ciclo_kb} represents the cycle.
 
 \begin{figure}[ht]
 \centering
@@ -808,36 +816,36 @@ desfecho. A Figura~\ref{fig:sis_ciclo_kb} representa o ciclo.
     node[pos=0.25, below, font=\scriptsize, black!65]
     {later evaluations compare against the cases already matured};
 \end{tikzpicture}
-\caption[Ciclo de crescimento da base de casos]{Percurso de um título entre a sua observação e a
-sua disponibilidade como precedente. O intervalo de oito dias decorre de o impacto de um caso só
-ser observável após o movimento do preço. O ciclo mantém atualizada a evidência apresentada pelo
-sistema, e não os parâmetros do modelo: nenhum componente é retreinado.}
+\caption[Growth cycle of the case base]{Path of a headline between its observation and its
+availability as a precedent. The eight-day interval follows from the impact of a case being
+observable only after the price movement. The cycle keeps up to date the evidence the system
+presents, and not the parameters of the model: no component is retrained.}
 \label{fig:sis_ciclo_kb}
 \end{figure}
 
-O mecanismo atualiza a evidência exibida e não os parâmetros do modelo. Na taxonomia de deriva de
-conceito de \textcite{gama2014survey}, o sistema dispõe da deteção da mudança e não da adaptação a
-ela.
+The mechanism updates the evidence displayed and not the parameters of the model. In the concept
+drift taxonomy of \textcite{gama2014survey}, the system has detection of the change and not
+adaptation to it.
 
-Verificou-se, com o sistema já em funcionamento, que este ciclo estivera interrompido durante
-dezanove dias sem registo de qualquer erro. Os dois processos correm em máquinas separadas cujo
-sistema de ficheiros é reinicializado a cada arranque, e os ficheiros intermédios de maturação não
-estavam a ser publicados no repositório de dados. Corresponde à classe de custo que
-\textcite{sculley2015debt} designam por dependência de dados não declarada: cada componente cumpre
-o seu contrato, e a suposição que os liga não está expressa em parte alguma. O
-Capítulo~\ref{cap:conclusoes} retoma o caso como limitação.
+It was found, with the system already in operation, that this cycle had been interrupted for
+nineteen days without any error being recorded. The two processes run on separate machines whose
+file system is reinitialised at every start, and the intermediate maturation files were not being
+published to the data repository. It corresponds to the class of cost that
+\textcite{sculley2015debt} call an undeclared data dependency: each component fulfils its contract,
+and the assumption that links them is expressed nowhere. Chapter~\ref{cap:conclusoes} returns to
+the case as a limitation.
 
-\section{Ciclo de vida do componente aprendido}
+\section{Life cycle of the learned component}
 \label{sec:sis_ciclo}
 
-O sistema treina um único modelo, que é a regressão logística de nove entradas descrita na
-Secção~\ref{sec:met_triagem}. Medido contra uma linha de base de uma só variável, esse modelo
-apresenta desempenho inferior, resultado reportado na Secção~\ref{sec:av_qi3}.
+The system trains a single model, the nine-input logistic regression described in
+Section~\ref{sec:met_triagem}. Measured against a one-variable baseline, that model performs worse,
+a result reported in Section~\ref{sec:av_qi3}.
 
-A contribuição de engenharia não reside na dimensão do modelo, mas na infraestrutura que torna
-esse resultado, e a conclusão negativa que ele sustenta, defensáveis. Essa infraestrutura tem sete
-componentes, cada um dos quais existe porque a sua ausência produziria um resultado favorável e
-não verificável. A Figura~\ref{fig:sis_lifecycle} representa as duas metades do ciclo.
+The engineering contribution does not lie in the size of the model, but in the infrastructure that
+makes that result, and the negative conclusion it supports, defensible. That infrastructure has
+seven components, each of which exists because its absence would produce a favourable and
+unverifiable result. Figure~\ref{fig:sis_lifecycle} represents the two halves of the cycle.
 
 \begin{figure}[ht]
 \centering
@@ -870,126 +878,125 @@ não verificável. A Figura~\ref{fig:sis_lifecycle} representa as duas metades d
   \node[align=center, text width=1.3cm, text=black!70] at (10.4,-1.9)
     {retraining:\\ \textbf{absent}};
 \end{tikzpicture}
-\caption[Ciclo de vida do componente aprendido]{As duas metades do ciclo. Na metade superior, a
-construção: os dados são rotulados, a divisão é cronológica, a calibração é ajustada no bloco de
-validação e o bloco de teste é utilizado uma única vez. Na metade inferior, a observação: o modelo
-em produção é o modelo avaliado, cada decisão é registada, e dias mais tarde é confrontada com o
-movimento efetivamente observado. A ligação a tracejado fecharia o ciclo e não existe: a deriva é
-medida e não é corrigida.}
+\caption[Life cycle of the learned component]{The two halves of the cycle. In the upper half,
+construction: the data are labelled, the split is chronological, the calibration is fitted on the
+validation block and the test block is used only once. In the lower half, observation: the model in
+production is the model evaluated, every decision is logged, and days later it is confronted with
+the movement actually observed. The dashed link would close the cycle and does not exist: drift is
+measured and is not corrected.}
 \label{fig:sis_lifecycle}
 \end{figure}
 
 \begin{description}
-  \item[Construção do conjunto de dados.] O \gls{FNSPID} fornece títulos datados, e os preços
-        provêm de fonte distinta. O alinhamento das duas séries, a atribuição de uma notícia de
-        sábado ao dia de negociação correspondente, e a derivação do rótulo a partir do movimento
-        futuro constituem o trabalho que produz os $79{,}753$ exemplos da
-        Secção~\ref{sec:met_dados}.
+  \item[Construction of the dataset.] \gls{FNSPID} supplies dated headlines, and the prices come
+        from a distinct source. The alignment of the two series, the assignment of a Saturday news
+        item to the corresponding trading day, and the derivation of the label from the future
+        movement constitute the work that produces the $79{,}753$ examples of
+        Section~\ref{sec:met_dados}.
 
-  \item[Declaração do rótulo como decisão.] A existência de movimento anormal nos três dias
-        seguintes não é um facto presente nos dados: é uma definição, com limiar e horizonte
-        escolhidos. A Secção~\ref{sec:av_qi3} mede nove definições alternativas em lugar de
-        assumir a adotada.
+  \item[Declaration of the label as a decision.] The existence of an abnormal movement in the
+        following three days is not a fact present in the data: it is a definition, with a chosen
+        threshold and horizon. Section~\ref{sec:av_qi3} measures nine alternative definitions
+        instead of assuming the one adopted.
 
-  \item[Verificação da separação temporal.] Aos blocos cronológicos e ao embargo junta-se um
-        teste executável: perturbado o futuro de um exemplo, as suas entradas têm de permanecer
-        inalteradas e o seu rótulo tem de mudar. A ausência de fuga passa assim de afirmação a
-        propriedade verificada a cada execução.
+  \item[Verification of the temporal separation.] To the chronological blocks and the embargo is
+        added an executable test: if the future of an example is perturbed, its inputs must stay
+        unchanged and its label must change. The absence of leakage thus goes from a claim to a
+        property verified at every run.
 
-  \item[Calibração com enviesamento medido.] A saída do classificador é um valor no intervalo
-        unitário, que serve simultaneamente para ordenar candidatas e para as excluir. O ajuste de
-        Platt corre sobre um bloco que nunca participou no treino, e a discrepância de prevalência
-        entre esse bloco e o de teste é declarada no Capítulo~\ref{cap:avaliacao} em vez de ficar
-        implícita.
+  \item[Calibration with measured bias.] The output of the classifier is a value in the unit
+        interval, which serves both to rank candidates and to exclude them. The Platt fit runs on a
+        block that never took part in training, and the prevalence discrepancy between that block
+        and the test block is declared in Chapter~\ref{cap:avaliacao} instead of being left
+        implicit.
 
-  \item[Versionamento dos artefactos.] O modelo treinado, o calibrador e um descritor da execução,
-        contendo dimensão de cada bloco, prevalência, semente e métricas, residem no repositório.
-        Uma métrica desacompanhada do artefacto que a produziu não é reproduzível.
+  \item[Versioning of the artefacts.] The trained model, the calibrator and a descriptor of the
+        run, containing the size of each block, the prevalence, the seed and the metrics, reside in
+        the repository. A metric unaccompanied by the artefact that produced it is not
+        reproducible.
 
-  \item[Identidade entre modelo avaliado e modelo implantado.] O codificador de frases utilizado
-        na avaliação depende de uma biblioteca cujo volume excede o contentor de produção. Em vez
-        da substituição por outro modelo, que faria a dissertação descrever um sistema distinto do
-        que se encontra em funcionamento, o mesmo modelo foi exportado para formato de execução
-        leve e a fidelidade da conversão foi medida.
+  \item[Identity between the model evaluated and the model deployed.] The sentence encoder used in
+        the evaluation depends on a library whose size exceeds the production container. Instead of
+        substituting another model, which would make the dissertation describe a system distinct
+        from the one in operation, the same model was exported to a lightweight execution format
+        and the fidelity of the conversion was measured.
 
-  \item[Observação do sistema implantado.] Cada decisão de triagem é registada. Decorridos os dias
-        necessários, um segundo procedimento rotula essas decisões pela mesma regra utilizada no
-        treino e mede o contributo do modelo. Foi por esta via que se estabeleceu a ausência de
-        contributo reportada na Secção~\ref{sec:av_qi3}. A deriva das entradas é medida pelo mesmo
-        mecanismo.
+  \item[Observation of the deployed system.] Every triage decision is logged. Once the necessary
+        days have passed, a second procedure labels those decisions by the same rule used in
+        training and measures the contribution of the model. It was by this route that the absence
+        of contribution reported in Section~\ref{sec:av_qi3} was established. The drift of the
+        inputs is measured by the same mechanism.
 \end{description}
 
-\subsection{Componentes desenvolvidos e componentes consumidos}
+\subsection{Components developed and components consumed}
 
-O único modelo consumido do exterior é um codificador de frases pré-treinado, utilizado sem
-qualquer ajuste. O trabalho não reivindica contribuição sobre esse componente além da sua seleção
-por medição, efetuada contra quatro alternativas, entre as quais um modelo de maior dimensão, dois
-codificadores mais recentes e um modelo específico do domínio financeiro, que apresentou o pior
-desempenho do conjunto. A dependência é essencial, uma vez que não existe recuperação semântica
-sem representação de frases, e é simultaneamente substituível: a interface que o isola dispõe de
-uma implementação alternativa que degrada para sobreposição lexical quando o modelo não está
-disponível.
+The only model consumed from outside is a pre-trained sentence encoder, used without any tuning.
+The work claims no contribution over that component beyond its selection by measurement, carried
+out against four alternatives, among them a larger model, two more recent encoders and a model
+specific to the financial domain, which had the worst performance of the set. The dependency is
+essential, since there is no semantic retrieval without sentence representation, and it is at the
+same time replaceable: the interface that isolates it has an alternative implementation that
+degrades to lexical overlap when the model is not available.
 
-Foi desenvolvido no âmbito deste trabalho tudo o resto. O conjunto de dados rotulado e o
-procedimento de alinhamento que o protege de fuga temporal. O detetor, com a janela de estimação
-que exclui o dia explicado. A repartição do movimento com encolhimento dos coeficientes. A base de
-precedentes com impacto medido. O classificador de triagem e a sua calibração. A política de
-decisão e as constantes da Tabela~\ref{tab:sis_portas}. A camada que compõe o texto a partir dos
-objetos calculados. E o mecanismo que observa o sistema depois de implantado.
+Everything else was developed within this work. The labelled dataset and the alignment procedure
+that protects it from temporal leakage. The detector, with the estimation window that excludes the
+day being explained. The split of the movement with shrinkage of the coefficients. The precedent
+base with measured impact. The triage classifier and its calibration. The decision policy and the
+constants of Table~\ref{tab:sis_portas}. The layer that composes the text from the computed
+objects. And the mechanism that observes the system after deployment.
 
-O sistema não integra um modelo de linguagem na produção do texto entregue ao utilizador. A
-ausência é deliberada e decorre do argumento desenvolvido na Secção~\ref{sec:ctx_xai}: uma frase
-gerada constitui uma afirmação, ao passo que o sistema descrito entrega afirmações acompanhadas da
-evidência que as sustenta.
+The system does not integrate a language model in the production of the text delivered to the
+user. The absence is deliberate and follows from the argument developed in
+Section~\ref{sec:ctx_xai}: a generated sentence is a statement, whereas the system described
+delivers statements accompanied by the evidence that supports them.
 
-Uma camada de geração ancorada encontra-se, ainda assim, implementada e avaliada, e não é
-exposta. Nela, cada frase tem de citar um facto do conjunto de evidência que a acompanha, e uma
-verificação recusa a frase cujo número não pertença ao facto que ela cita. Sobre um corpo de
-vinte e três tentativas de contornar essa verificação, todas foram recusadas, e sobre oito textos
-fiéis nenhum o foi; nas secções efetivamente compostas não se registou uma única violação
-entregue. A razão para a não expor não é o desempenho dessa verificação, mas a natureza da
-garantia: no texto entregue ao utilizador a composição parte de um vocabulário fechado, ao passo
-que a verificação da camada gerada enumera o que proíbe, e uma enumeração do proibido é mais
-fraca do que uma enumeração do permitido. Nenhuma comparação com uma arquitetura completa de
-geração aumentada por recuperação foi realizada, pelo que nada se afirma sobre o que ela
-acrescentaria.
+A grounded generation layer is, even so, implemented and evaluated, and is not exposed. In it,
+every sentence must cite a fact from the evidence bundle that accompanies it, and a check rejects
+any sentence whose number does not belong to the fact it cites. Over a corpus of twenty-three
+attempts to circumvent that check, all were rejected, and over eight faithful texts none was; in
+the sections actually composed not a single delivered violation was recorded. The reason for not
+exposing it is not the performance of that check, but the nature of the guarantee: in the text
+delivered to the user the composition starts from a closed vocabulary, whereas the check of the
+generated layer enumerates what it forbids, and an enumeration of the forbidden is weaker than an
+enumeration of the permitted. No comparison with a complete retrieval-augmented generation
+architecture was carried out, so nothing is asserted about what it would add.
 
-\subsection{O elo em falta: arquitetura de retreino}
+\subsection{The missing link: retraining architecture}
 
-O ciclo não inclui retreino. Os parâmetros correspondem ao período de 2018 a 2023 e não foram
-reajustados, apesar de a deriva se encontrar medida e de o índice de estabilidade populacional
-situar a entrada principal na banda de deslocamento significativo. A operação seria tecnicamente
-possível, dado que os rótulos novos derivam dos preços observados; o impedimento é que o retreino
-com o registo de produção alteraria os valores reportados neste documento, e a avaliação dessa
-alteração exige tempo de observação que, à data em que este capítulo foi escrito, não existia.
+The cycle does not include retraining. The parameters correspond to the period from 2018 to 2023
+and were not readjusted, even though drift is measured and the population stability index places
+the main input in the band of significant displacement. The operation would be technically
+possible, since new labels derive from observed prices; the impediment is that retraining with the
+production log would change the values reported in this document, and assessing that change
+requires observation time which, at the date this chapter was written, did not exist.
 
-A instrumentação que o tornaria possível foi construída e implantada em 4 de setembro de 2026, e
-o registo passou a guardar, por decisão, o valor de cada entrada, a data da última barra de preço
-utilizada e a identidade do modelo. Duas restrições limitam o que dela se poderá retirar, e ambas
-foram fixadas antes de existir qualquer candidato. A primeira é que apenas são utilizáveis as
-decisões cuja barra de preço seja anterior ou igual à data da notícia, uma vez que uma barra
-posterior descreveria um mercado que já observou o desfecho que o rótulo mede. A segunda é que a
-unidade de análise é o par constituído pela empresa e pelo dia, e não o título, o que reduz
-substancialmente o número de observações independentes disponíveis numa janela curta. Nada se
-afirma neste documento sobre o resultado dessa comparação.
+The instrumentation that would make it possible was built and deployed on 4 September 2026, and
+the log came to store, per decision, the value of each input, the date of the last price bar used
+and the identity of the model. Two restrictions limit what can be drawn from it, and both were
+fixed before any candidate existed. The first is that only decisions whose price bar is prior to or
+equal to the date of the news are usable, since a later bar would describe a market that has
+already observed the outcome the label measures. The second is that the unit of analysis is the
+pair formed by company and day, and not the headline, which substantially reduces the number of
+independent observations available in a short window. Nothing is asserted in this document about
+the result of that comparison.
 
-A ausência de execução não dispensa, contudo, a definição da arquitetura. A
-Figura~\ref{fig:sis_retreino} apresenta o ciclo de treino contínuo desenhado para este sistema, com
-os mecanismos que o tornariam seguro. Três decisões o caracterizam.
+The absence of execution does not, however, dispense with defining the architecture.
+Figure~\ref{fig:sis_retreino} presents the continuous training cycle designed for this system, with
+the mechanisms that would make it safe. Three decisions characterise it.
 
-A primeira é o \textbf{gatilho}, condicional e não temporal. O retreino desencadeia-se quando o
-índice de estabilidade populacional de qualquer entrada ultrapassa $0.25$, o limiar convencional
-de deslocamento significativo, ou ao fim de três meses sem revisão. A segunda é a \textbf{janela
-deslizante}: o treino cobre os vinte e quatro meses anteriores ao gatilho, e a validação e o teste
-os períodos seguintes, com o embargo de cinco dias da Secção~\ref{sec:met_triagem}. A divisão
-permanece cronológica, porque o problema não deixa de ser temporal por o modelo ser novo.
+The first is the \textbf{trigger}, conditional and not temporal. Retraining is set off when the
+population stability index of any input exceeds $0.25$, the conventional threshold of significant
+displacement, or after three months without review. The second is the \textbf{rolling window}:
+training covers the twenty-four months preceding the trigger, and validation and test the following
+periods, with the five-day embargo of Section~\ref{sec:met_triagem}. The split stays chronological,
+because the problem does not cease to be temporal just because the model is new.
 
-A terceira, e a que distingue um ciclo de treino contínuo de uma automatização perigosa, é a
-\textbf{promotion gate}. Um modelo recém-treinado não substitui o modelo em vigor por ser mais
-recente: substitui-o apenas se o superar sobre o mesmo bloco de teste reservado, e se a
-sobreposição do intervalo de confiança da diferença excluir zero. Um modelo que não passe essa
-porta é registado e descartado, e o modelo em vigor permanece com a deriva declarada. É a diferença
-entre adaptar-se à mudança e perseguir ruído.
+The third, and the one that distinguishes a continuous training cycle from dangerous automation,
+is the \textbf{promotion gate}. A newly trained model does not replace the model in force by virtue
+of being more recent: it replaces it only if it beats it over the same held-out test block, and if
+the confidence interval of the difference excludes zero. A model that does not pass that gate is
+logged and discarded, and the model in force remains with the drift declared. It is the difference
+between adapting to change and chasing noise.
 
 \begin{figure}[ht]
 \centering
@@ -1002,11 +1009,11 @@ entre adaptar-se à mudança e perseguir ruído.
   \node[cx]  (p) at (0,0)     {decision log in production};
   \node[cx]  (m) at (2.9,0)   {maturation:\\ 8 days};
   \node[cx]  (r) at (5.8,0)   {new labels, from the same rule};
-  \node[gat] (g) at (8.7,0)   {\textbf{gatilho}\\ PSI $>0.25$\\ ou 3 meses};
+  \node[gat] (g) at (8.7,0)   {\textbf{trigger}\\ PSI $>0.25$\\ or 3 months};
   \node[cx]  (t) at (8.7,-1.9) {retraining over a 24-month window};
   \node[cx]  (v) at (5.8,-1.9) {fresh validation and calibration};
-  \node[gat] (q) at (2.9,-1.9) {\textbf{promotion gate}\\ supera o em vigor?};
-  \node[art] (n) at (0,-1.9)   {promove\\ e versiona};
+  \node[gat] (q) at (2.9,-1.9) {\textbf{promotion gate}\\ beats the one in force?};
+  \node[art] (n) at (0,-1.9)   {promote\\ and version};
 
   \foreach \a/\b in {p/m, m/r, r/g} \draw[->, thick, black!55] (\a) -- (\b);
   \draw[->, thick, black!55] (g) -- (t);
@@ -1015,17 +1022,16 @@ entre adaptar-se à mudança e perseguir ruído.
   \draw[->, dashed, black!45] (q.south) -- ++(0,-0.55)
     node[below, align=center, black!60] {does not win:\\ log and discard};
 \end{tikzpicture}
-\caption[Arquitetura de retreino desenhada e não executada]{Ciclo de treino contínuo definido para
-este sistema e não executado no âmbito deste trabalho. O gatilho é condicional e não temporal; a
-janela é deslizante e a divisão permanece cronológica com embargo; e a porta de promoção impede que
-um modelo novo substitua o modelo em vigor sem o superar sobre um bloco reservado. A ligação a
-tracejado é o caminho de rejeição, e a sua existência é o que distingue o ciclo de uma
-automatização que persegue ruído.}
+\caption[Retraining architecture designed and not executed]{Continuous training cycle defined for
+this system and not executed within this work. The trigger is conditional and not temporal; the
+window is rolling and the split stays chronological with embargo; and the promotion gate prevents a
+new model from replacing the model in force without beating it over a held-out block. The dashed
+link is the rejection path, and its existence is what distinguishes the cycle from automation that
+chases noise.}
 \label{fig:sis_retreino}
 \end{figure}
 
-O ciclo não inclui igualmente qualquer forma de verdade humana. Os três rótulos utilizados neste
-trabalho, correspondentes a movimento anormal, pertença ao mesmo setor e percentil de movimento,
-constituem aproximações verificáveis que nunca foram confrontadas com o julgamento de um
-avaliador humano. É a limitação de que as restantes mais dependem, e o
-Capítulo~\ref{cap:conclusoes} retoma-a.
+The cycle likewise includes no form of human ground truth. The three labels used in this work,
+corresponding to abnormal movement, membership of the same sector and percentile of movement, are
+verifiable approximations that were never confronted with the judgement of a human assessor. It is
+the limitation on which the others most depend, and Chapter~\ref{cap:conclusoes} returns to it.
