@@ -1,45 +1,44 @@
-\chapter{Métodos e materiais}
+\chapter{Methods and materials}
 \label{cap:metodologia}
 
-O Capítulo~\ref{cap:contexto} estabeleceu que as três perguntas do investidor particular têm
-resposta na literatura mas não em nenhuma ferramenta gratuita. Este capítulo descreve as opções
-tomadas para lhes responder. Apresenta-se primeiro a metodologia de investigação e os conjuntos de
-dados. Descrevem-se em seguida os quatro métodos selecionados, um para cada decisão que o sistema
-tem de tomar. Indicam-se as ferramentas empregues. E enunciam-se, por fim, os desafios tecnológicos
-e sociais do domínio.
+Chapter~\ref{cap:contexto} established that the three questions of the retail investor have an
+answer in the literature but not in any free tool. This chapter describes the options taken to
+answer them. It first presents the research methodology and the datasets. It then describes the
+four methods selected, one for each decision the system has to take. It indicates the tools
+employed. And it finally states the technological and social challenges of the domain.
 
-\section{Metodologia de investigação}
+\section{Research methodology}
 \label{sec:met_metodologia}
 
-Esta dissertação enquadra-se na investigação por desenho \autocite{hevner2004design}, na qual o
-objeto de estudo é um artefacto construído para resolver uma classe de problema e o conhecimento
-produzido reside tanto no artefacto como no processo da sua avaliação. Trata-se do enquadramento
-adequado quando a contribuição é um sistema, e distingue-se de um estudo puramente empírico pelo
-facto de o objeto avaliado não existir antes da sua construção.
+This dissertation is framed within design science research \autocite{hevner2004design}, in which
+the object of study is an artefact built to solve a class of problem and the knowledge produced
+resides both in the artefact and in the process of its evaluation. It is the appropriate framing
+when the contribution is a system, and it differs from a purely empirical study in that the object
+evaluated does not exist before it is built.
 
-A literatura de investigação por desenho estabelece que a avaliação do artefacto deve ser rigorosa
-e constituir uma atividade central do processo, e não um passo final de confirmação
-\autocite{hevner2004design, peffers2007dsrm}. Este requisito é cumprido através de três
-compromissos assumidos antes da execução das experiências.
+The design science literature establishes that the evaluation of the artefact must be rigorous and
+constitute a central activity of the process, and not a final confirmation step
+\autocite{hevner2004design, peffers2007dsrm}. This requirement is met through three commitments
+made before the experiments were carried out.
 
-O primeiro consiste em comparar cada componente com uma alternativa mais simples, selecionada e
-declarada antes de a medição ser realizada, de modo que o resultado possa ser negativo. O segundo
-consiste em fixar o critério de sucesso de cada comparação juntamente com a métrica, e não após a
-observação dos valores obtidos. O terceiro consiste em avaliar o artefacto duas vezes: sobre dados
-históricos retidos e, posteriormente, em funcionamento, sobre as decisões que o sistema toma
-autonomamente em produção. A terceira avaliação é a menos comum das três e é a que produz o
-resultado descrito na Secção~\ref{sec:av_producao}.
+The first consists in comparing each component with a simpler alternative, selected and declared
+before the measurement is carried out, so that the result can be negative. The second consists in
+fixing the success criterion of each comparison together with the metric, and not after observing
+the values obtained. The third consists in evaluating the artefact twice: over held-out historical
+data and, subsequently, in operation, over the decisions the system takes autonomously in
+production. The third evaluation is the least common of the three and is the one that produces the
+result described in Section~\ref{sec:av_producao}.
 
-A exigência não é cumprida na totalidade, e a lacuna é declarada. Utilidade, no sentido em que a
-literatura de investigação por desenho emprega o termo, é utilidade para quem usa o artefacto, e
-essa propriedade determina-se com utilizadores. O que nesta dissertação foi medido é a fidelidade
-das explicações produzidas, propriedade que pertence ao sistema; a utilidade, que depende da
-relação entre o sistema e quem o lê, permanece por medir.
+The requirement is not met in full, and the gap is declared. Utility, in the sense in which the
+design science literature employs the term, is utility for whoever uses the artefact, and that
+property is determined with users. What this dissertation measured is the faithfulness of the
+explanations produced, a property that belongs to the system; utility, which depends on the
+relation between the system and whoever reads it, remains unmeasured.
 
-O sistema toma quatro decisões distintas, representadas na Figura~\ref{fig:met_decisoes}. As três
-primeiras correspondem às três perguntas do investidor enunciadas no Capítulo~\ref{cap:introducao}; a quarta não é uma
-questão do investidor, mas do próprio sistema, e existe porque responder às três primeiras não
-implica interromper o utilizador.
+The system takes four distinct decisions, shown in Figure~\ref{fig:met_decisoes}. The first three
+correspond to the three investor questions stated in Chapter~\ref{cap:introducao}; the fourth is
+not a question of the investor, but of the system itself, and exists because answering the first
+three does not imply interrupting the user.
 
 \begin{figure}[ht]
 \centering
@@ -65,115 +64,115 @@ implica interromper o utilizador.
   \draw[->, thick, black!50] (b) -- (c);
   \draw[->, thick, black!50] (c) -- (d);
 \end{tikzpicture}
-\caption[As quatro decisões do sistema]{As quatro decisões do sistema e a família de técnicas
-associada a cada uma. As três primeiras correspondem às perguntas enunciadas no
-Capítulo~\ref{cap:introducao}. A cada coluna corresponde uma secção deste capítulo, entre a
-Secção~\ref{sec:met_detecao} e a Secção~\ref{sec:met_triagem}.}
+\caption[The four decisions of the system]{The four decisions of the system and the family of
+techniques associated with each. The first three correspond to the questions stated in
+Chapter~\ref{cap:introducao}. Each column corresponds to a section of this chapter, between
+Section~\ref{sec:met_detecao} and Section~\ref{sec:met_triagem}.}
 \label{fig:met_decisoes}
 \end{figure}
 
 
-\section{Conjuntos de dados}
+\section{Datasets}
 \label{sec:met_dados}
 
-Esta secção descreve os conjuntos de dados utilizados no treino e na avaliação do sistema, bem
-como os registos produzidos pelo sistema em funcionamento.
+This section describes the datasets used in the training and evaluation of the system, as well as
+the records produced by the system in operation.
 
-A camada histórica assenta no \gls{FNSPID} \autocite{dong2024fnspid}, um corpus público de notícias
-financeiras que associa a cada título uma data e uma empresa. O corpus não contém preços, reação de mercado nem qualquer indicação de
-relevância: essa informação é construída neste trabalho, alinhando cada título com as séries de
-preços correspondentes. Do alinhamento resulta o conjunto de treino do modelo de triagem, com
-79{,}753 exemplos.
+The historical layer rests on \gls{FNSPID} \autocite{dong2024fnspid}, a public corpus of financial
+news that associates a date and a company with each headline. The corpus contains no prices, no
+market reaction and no indication of relevance: that information is built in this work, by aligning
+each headline with the corresponding price series. From the alignment comes the training set of the
+triage model, with 79{,}753 examples.
 
-A avaliação do detetor de anomalias utiliza um conjunto distinto, composto por três anos de
-cotações diárias. A escolha de um conjunto próprio é deliberada: a avaliação exige variedade de
-volatilidade entre empresas, ao passo que a lista monitorizada em produção é uma decisão de
-produto. Avaliar o detetor exatamente sobre o conjunto que ele foi construído para servir
-produziria uma medição sem valor informativo.
+The evaluation of the anomaly detector uses a distinct dataset, made up of three years of daily
+quotes. The choice of a separate set is deliberate: the evaluation requires variety of volatility
+across companies, whereas the list monitored in production is a product decision. Evaluating the
+detector on exactly the set it was built to serve would produce a measurement with no informative
+value.
 
-Todos os preços utilizados são fechos ajustados para desdobramentos e distribuição de dividendos.
-O ajuste não é um pormenor no período considerado, que contém um desdobramento de quatro para um
-da Apple e dois da Tesla: sobre séries não ajustadas, o detetor assinalaria quedas de trinta a
-oitenta por cento em dias sem qualquer acontecimento.
+All prices used are closes adjusted for splits and dividend distributions. The adjustment is not a
+detail in the period considered, which contains a four-for-one split of Apple and two of Tesla: on
+unadjusted series, the detector would flag falls of thirty to eighty per cent on days with no event
+at all.
 
-A Tabela~\ref{tab:met_conjuntos} reúne os conjuntos utilizados, e a
-Tabela~\ref{tab:met_universos} os conjuntos de empresas, cujas contagens diferem por razões
-descritas na coluna respetiva.
+Table~\ref{tab:met_conjuntos} brings together the datasets used, and
+Table~\ref{tab:met_universos} the company sets, whose counts differ for reasons described in the
+respective column.
 
 \begin{table}[!htbp]
-\caption[Conjuntos de dados utilizados]{Conjuntos de dados utilizados no trabalho, com o intervalo
-temporal e a dimensão lidos dos ficheiros. As três últimas linhas correspondem ao sistema em
-funcionamento.}
+\caption[Datasets used]{Datasets used in the work, with the time span and the size read from the
+files. The last three rows correspond to the system in operation.}
 \label{tab:met_conjuntos}
 \centering
 \small
 \begin{tabular}{L{0.30\textwidth} L{0.26\textwidth} L{0.34\textwidth}}
 \toprule
-\tabhead{Conjunto} & \tabhead{Intervalo} & \tabhead{Dimensão} \\
+\tabhead{Dataset} & \tabhead{Span} & \tabhead{Size} \\
 \midrule
-\multicolumn{3}{l}{\emph{Histórico}} \\
-Conjunto de treino da triagem & 2018-01-02 a 2023-12-18 & $79{,}753$ exemplos, 14 empresas \\
-Preços para avaliação da deteção & 2023-06-01 a 2026-06-01 & 15 empresas, $\approx 750$ dias cada \\
+\multicolumn{3}{l}{\emph{Historical}} \\
+Triage training set & 2018-01-02 to 2023-12-18 & $79{,}753$ examples, 14 companies \\
+Prices for the detection evaluation & 2023-06-01 to 2026-06-01 & 15 companies, $\approx 750$ days each \\
 \midrule
-\multicolumn{3}{l}{\emph{Operação}} \\
-Base de precedentes implantada & um ano de recolha própria & $38{,}214$ casos com impacto medido \\
-Alertas entregues & 2026-07-09 a 2026-08-13 & 367 mensagens \\
-Registo de decisões de triagem & 2026-07-22 a 2026-08-20 & $36{,}925$ decisões \\
+\multicolumn{3}{l}{\emph{Operation}} \\
+Deployed precedent base & one year of own collection & $38{,}214$ cases with measured impact \\
+Alerts delivered & 2026-07-09 to 2026-08-13 & 367 messages \\
+Triage decision log & 2026-07-22 to 2026-08-20 & $36{,}925$ decisions \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[!htbp]
-\caption[Conjuntos de empresas]{Conjuntos de empresas utilizados. As contagens diferem porque cada
-conjunto serve um propósito distinto. Os conjuntos não são encaixados: a lista monitorizada em
-produção contém duas empresas ausentes de todos os conjuntos históricos.}
+\caption[Company sets]{Company sets used. The counts differ because each set serves a distinct
+purpose. The sets are not nested: the list monitored in production contains two companies absent
+from every historical set.}
 \label{tab:met_universos}
 \centering
 \small
 \begin{tabular}{L{0.30\textwidth} C{0.10\textwidth} L{0.48\textwidth}}
 \toprule
-\tabhead{Conjunto} & \tabhead{Empresas} & \tabhead{Propósito} \\
+\tabhead{Set} & \tabhead{Companies} & \tabhead{Purpose} \\
 \midrule
-Mapa de setores alargado & 17 & Universo percorrido pela decomposição do movimento \\
-Mapa canónico do histórico & 15 & Rótulo de relevância na avaliação da recuperação \\
-Preços para a deteção & 15 & Variedade de volatilidade na avaliação do detetor \\
-Conjunto de dados da triagem & 14 & Resultado do alinhamento entre notícias e preços \\
-\quad coberto pelo bloco de treino & 13 & Empresas efetivamente presentes no treino \\
-\quad coberto pelo bloco de teste & 9 & Empresas presentes na avaliação \\
-Lista monitorizada em produção & 12 & Decisão de produto \\
+Extended sector map & 17 & Universe covered by the movement decomposition \\
+Canonical historical map & 15 & Relevance label in the retrieval evaluation \\
+Prices for detection & 15 & Variety of volatility in the detector evaluation \\
+Triage dataset & 14 & Result of the alignment between news and prices \\
+\quad covered by the training block & 13 & Companies actually present in training \\
+\quad covered by the test block & 9 & Companies present in the evaluation \\
+List monitored in production & 12 & Product decision \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Deteção de movimentos invulgares}
+\section{Detection of unusual movements}
 \label{sec:met_detecao}
 
-A primeira decisão do sistema consiste em determinar se o movimento observado num dia é invulgar
-para a empresa em causa. Uma regra de limiar fixo, do tipo assinalar variações superiores a três
-por cento, é inadequada para este fim, porque a mesma percentagem corresponde a acontecimentos de
-raridade muito distinta consoante a volatilidade da empresa.
+The first decision of the system consists in determining whether the movement observed on a day is
+unusual for the company in question. A fixed threshold rule, of the kind that flags changes above
+three per cent, is inadequate for this purpose, because the same percentage corresponds to events
+of very different rarity depending on the volatility of the company.
 
-O método adotado pertence à família estatística da taxonomia de deteção de anomalias
-\autocite{chandola2009anomaly}, que define normalidade a partir da distribuição recente dos
-próprios dados. O movimento do dia é comparado com o comportamento recente da mesma ação e
-expresso em desvios-padrão:
+The method adopted belongs to the statistical family of the anomaly detection taxonomy
+\autocite{chandola2009anomaly}, which defines normality from the recent distribution of the data
+themselves. The movement of the day is compared with the recent behaviour of the same stock and
+expressed in standard deviations:
 
 \begin{equation}
 z_t = \frac{r_t - \mu}{\sigma}
 \label{eq:zscore}
 \end{equation}
 
-onde $r_t$ é o retorno logarítmico do dia, $r_t = \ln(P_t / P_{t-1})$, e $\mu$ e $\sigma$ são a
-média e o desvio-padrão dos retornos dos vinte dias anteriores. A utilização de retornos
-logarítmicos segue a convenção corrente em séries financeiras, por tornar os retornos aditivos ao
-longo do tempo e simétricos entre subidas e descidas. Os valores apresentados diferem, por essa
-razão, dos exibidos por uma aplicação de bolsa: um retorno logarítmico de $+19.82\%$ corresponde
-a uma variação de preço de $+21.92\%$.
+where $r_t$ is the logarithmic return of the day, $r_t = \ln(P_t / P_{t-1})$, and $\mu$ and
+$\sigma$ are the mean and the standard deviation of the returns of the twenty preceding days. The
+use of logarithmic returns follows the current convention in financial series, since it makes
+returns additive over time and symmetric between rises and falls. The values presented therefore
+differ from those displayed by a stock application: a logarithmic return of $+19.82\%$ corresponds
+to a price change of $+21.92\%$.
 
-A janela desliza a cada dia, e o dia avaliado é excluído da janela que define a sua própria norma,
-como representado na Figura~\ref{fig:met_janela}. Sem esta exclusão, o dia contribuiria para a
-média e para o desvio-padrão contra os quais é comparado, atenuando a sua própria anomalia. A
-mesma disciplina impede a utilização de qualquer informação posterior ao dia avaliado.
+The window slides each day, and the day being assessed is excluded from the window that defines
+its own norm, as shown in Figure~\ref{fig:met_janela}. Without this exclusion, the day would
+contribute to the mean and to the standard deviation against which it is compared, attenuating its
+own anomaly. The same discipline prevents the use of any information posterior to the day being
+assessed.
 
 \begin{figure}[ht]
 \centering
@@ -194,94 +193,98 @@ mesma disciplina impede a utilização de qualquer informação posterior ao dia
   \draw[->, thick, black!45] (20*0.32+0.6,0.6) -- (20*0.32+1.5,0.6)
     node[right, align=left, black!60] {\footnotesize tomorrow the window\\[-2pt]\footnotesize slides one day};
 \end{tikzpicture}
-\caption[A janela deslizante do \emph{z}-score]{A janela que estabelece o comportamento habitual da
-ação. O dia avaliado \textbf{fica de fora} do cálculo da norma contra a qual é comparado, separação
-que impede a utilização de informação indisponível no momento da decisão.}
+\caption[The rolling window of the \emph{z}-score]{The window that establishes the usual behaviour
+of the stock. The day being assessed is \textbf{left out} of the computation of the norm against
+which it is compared, a separation that prevents the use of information unavailable at the moment
+of the decision.}
 \label{fig:met_janela}
 \end{figure}
 
-Quando o desvio-padrão da janela é nulo, a Equação~\ref{eq:zscore} não está definida. O sistema
-distingue dois casos: a manutenção do valor constante não constitui anomalia, ao passo que um
-afastamento dessa norma plana é assinalado sem lhe ser atribuído um valor de $z$, indicando-se que
-a variância anterior era nula. Esta distinção evita que a proteção contra a divisão por zero
-silencie precisamente o primeiro movimento após um período constante.
+When the standard deviation of the window is zero, Equation~\ref{eq:zscore} is undefined. The
+system distinguishes two cases: holding the value constant does not constitute an anomaly, whereas
+a departure from that flat norm is flagged without a $z$ value being assigned to it, stating that
+the preceding variance was zero. This distinction prevents the guard against division by zero from
+silencing precisely the first movement after a constant period.
 
-A aplicação do método ao maior movimento do período estudado, registado pela Tesla a 24 de outubro
-de 2024, produz um retorno diário de $+19.82\%$ contra uma média de $-0.92\%$ e um
-desvio-padrão de $2.72\%$ nos vinte dias anteriores, o que corresponde a $z = +7.61$. O valor
-não decorre da dimensão absoluta do movimento, mas do facto de este exceder em sete vezes e meia a
-oscilação habitual da ação naquelas semanas.
+Applying the method to the largest movement of the period studied, recorded by Tesla on 24 October
+2024, produces a daily return of $+19.82\%$ against a mean of $-0.92\%$ and a standard deviation of
+$2.72\%$ in the twenty preceding days, which corresponds to $z = +7.61$. The value does not follow
+from the absolute size of the movement, but from the fact that it exceeds by seven and a half times
+the usual oscillation of the stock in those weeks.
 
 
-\section{Decomposição do movimento observado}
+\section{Decomposition of the observed movement}
 \label{sec:met_decomposicao}
 
-A técnica anterior quantifica a dimensão do movimento, mas não identifica a sua origem. A segunda
-decisão do sistema consiste em repartir o retorno observado nas suas componentes de mercado, de
-setor e específica da empresa:
+The previous technique quantifies the size of the movement, but does not identify its origin. The
+second decision of the system consists in splitting the observed return into its market, sector and
+company-specific components:
 
 \begin{equation}
-r = \underbrace{\beta_m r_m}_{\text{mercado}} + \underbrace{\beta_s \tilde{r}_s}_{\text{setor}} + \underbrace{\varepsilon}_{\text{empresa}}
+r = \underbrace{\beta_m r_m}_{\text{market}} + \underbrace{\beta_s \tilde{r}_s}_{\text{sector}} + \underbrace{\varepsilon}_{\text{company}}
 \label{eq:decomposicao}
 \end{equation}
 
-As variáveis $r_m$ e $\tilde{r}_s$ designam, respetivamente, o retorno diário do índice de mercado
-e o do setor, ao passo que $\beta_m$ e $\beta_s$ quantificam a sensibilidade histórica da ação a
-cada uma dessas fontes. A componente específica da empresa é
-definida como o resíduo, pelo que a soma das três parcelas reproduz sempre o movimento observado.
-O mercado é representado pelo fundo cotado que segue o índice largo norte-americano, e o setor
-pelo fundo setorial correspondente, escolhidos por serem os mais líquidos da sua classe e por
-disporem de histórico longo em fontes gratuitas.
+The variables $r_m$ and $\tilde{r}_s$ denote, respectively, the daily return of the market index
+and that of the sector, whereas $\beta_m$ and $\beta_s$ quantify the historical sensitivity of the
+stock to each of those sources. The company-specific component is defined as the residual, so that
+the sum of the three parts always reproduces the observed movement. The market is represented by
+the exchange-traded fund that tracks the broad United States index, and the sector by the
+corresponding sector fund, chosen for being the most liquid of their class and for having a long
+history in free sources.
 
-Três aspetos determinam a validade da repartição.
+Three aspects determine the validity of the split.
 
-O primeiro é a ortogonalização do fator setorial. Um fundo setorial e o índice de mercado
-apresentam movimentos fortemente correlacionados, e a sua introdução conjunta na regressão produz
-coeficientes instáveis por colinearidade. O fator utilizado não é, por isso, o retorno do setor,
-mas o resíduo de uma primeira regressão do setor sobre o mercado.
+The first is the orthogonalisation of the sector factor. A sector fund and the market index move
+in strongly correlated ways, and introducing them jointly in the regression produces unstable
+coefficients through collinearity. The factor used is therefore not the sector return, but the
+residual of a first regression of the sector on the market.
 
-O segundo é a restrição temporal da estimação. A janela termina no dia anterior ao dia explicado,
-pela mesma disciplina aplicada à deteção.
+The second is the temporal restriction of the estimation. The window ends on the day before the
+day being explained, by the same discipline applied to detection.
 
-O terceiro é o tratamento do ruído. Uma sensibilidade estimada sobre vinte observações é imprecisa,
-e estimativas extremas em janelas agitadas produzem repartições sem significado. A literatura de
-finanças documenta que os betas estimados regridem para a média entre períodos sucessivos
-\autocite{blume1971risk}, do que decorreu a prática de encolher a estimativa com um peso fixo. Essa
-prática aplica a mesma correção a estimativas precisas e imprecisas. A alternativa adotada pondera
-o encolhimento pela imprecisão da própria estimativa \autocite{vasicek1973beta}:
+The third is the treatment of noise. A sensitivity estimated over twenty observations is
+imprecise, and extreme estimates in agitated windows produce meaningless splits. The finance
+literature documents that estimated betas regress towards the mean between successive periods
+\autocite{blume1971risk}, from which followed the practice of shrinking the estimate with a fixed
+weight. That practice applies the same correction to precise and imprecise estimates. The
+alternative adopted weights the shrinkage by the imprecision of the estimate itself
+\autocite{vasicek1973beta}:
 
 \begin{equation}
 \beta = w \hat{\beta} + (1-w)\,\beta_{\text{ref}}, \qquad w = \frac{\sigma^2_{\text{ref}}}{\sigma^2_{\text{ref}} + \mathrm{SE}^2(\hat{\beta})}
 \label{eq:vasicek}
 \end{equation}
 
-Quando o ajuste é preciso, o erro-padrão é reduzido, $w$ aproxima-se da unidade e a estimativa é
-praticamente preservada; quando a janela é ruidosa, o erro-padrão cresce e a estimativa recai sobre
-o valor de referência. O ajuste é gradual e não dicotómico. A formulação original estima
-$\beta_{\text{ref}}$ e $\sigma^2_{\text{ref}}$ a partir da distribuição transversal dos betas;
-neste trabalho são fixados, e cada um tem justificação própria. Para o mercado adota-se
-$\beta_{\text{ref}} = 1.0$, que corresponde à hipótese de a ação acompanhar o índice na ausência
-de informação local fiável, e é o valor para o qual a média transversal dos betas tende por
-construção do próprio índice. Para o fator setorial, já ortogonalizado face ao mercado, adota-se
-$\beta_{\text{ref}} = 0.0$, uma vez que o resíduo de uma ortogonalização tem média nula e a
-ausência de exposição setorial é, por isso, a hipótese neutra. O desvio-padrão comum de $0.5$
-determina a rapidez da transição entre a estimativa amostral e o valor de referência: fixa-o de
-modo que uma janela com erro-padrão dessa mesma ordem receba peso aproximadamente igual das duas
-origens, o que situa o ponto de equilíbrio dentro da gama de erros-padrão efetivamente observada em
-janelas de vinte dias. A estimação destes valores a partir da amostra não foi realizada, e a razão
-é declarada: doze a dezassete empresas não constituem um corte transversal representativo, pelo que
-um prior estimado sobre elas teria aparência empírica sem o ser.
+When the fit is precise, the standard error is small, $w$ approaches unity and the estimate is
+practically preserved; when the window is noisy, the standard error grows and the estimate falls
+back on the reference value. The adjustment is gradual and not dichotomous. The original
+formulation estimates $\beta_{\text{ref}}$ and $\sigma^2_{\text{ref}}$ from the cross-sectional
+distribution of betas; in this work they are fixed, and each has its own justification. For the
+market, $\beta_{\text{ref}} = 1.0$ is adopted, which corresponds to the assumption that the stock
+follows the index in the absence of reliable local information, and is the value towards which the
+cross-sectional mean of the betas tends by construction of the index itself. For the sector factor,
+already orthogonalised with respect to the market, $\beta_{\text{ref}} = 0.0$ is adopted, since the
+residual of an orthogonalisation has zero mean and the absence of sector exposure is therefore the
+neutral assumption. The common standard deviation of $0.5$ determines how quickly the transition
+between the sample estimate and the reference value takes place: it is fixed so that a window with
+a standard error of that same order receives approximately equal weight from the two origins, which
+places the point of balance within the range of standard errors actually observed in twenty-day
+windows. Estimating these values from the sample was not done, and the reason is declared: twelve
+to seventeen companies do not constitute a representative cross-section, so a prior estimated over
+them would have an empirical appearance without being one.
 
-Três salvaguardas completam a estimação. Abaixo de dez observações utilizáveis a regressão não é
-tentada, assumindo-se sensibilidade unitária ao mercado e nula ao setor, situação que é declarada
-ao utilizador. Uma estimativa cujo módulo exceda dez é tratada como falha numérica da janela e não
-como sensibilidade económica, recaindo no mesmo recuo; a guarda destina-se a janelas degeneradas e
-não substitui o encolhimento, que é o mecanismo que trata o ruído. Por fim, o termo constante é
-recalculado sobre os coeficientes já encolhidos, uma vez que o valor devolvido pela regressão está
-centrado nos coeficientes brutos e a sua reutilização descentraria o modelo efetivamente reportado.
+Three safeguards complete the estimation. Below ten usable observations the regression is not
+attempted, unit sensitivity to the market and zero to the sector being assumed, a situation that is
+declared to the user. An estimate whose absolute value exceeds ten is treated as a numerical
+failure of the window and not as an economic sensitivity, falling back in the same way; the guard
+is meant for degenerate windows and does not replace the shrinkage, which is the mechanism that
+handles noise. Finally, the constant term is recomputed over the already shrunk coefficients, since
+the value returned by the regression is centred on the raw coefficients and reusing it would
+decentre the model actually reported.
 
-A Figura~\ref{fig:met_decomposicao} apresenta a repartição de um movimento real, em que as
-componentes de mercado e de setor atuam em sentido contrário ao movimento observado.
+Figure~\ref{fig:met_decomposicao} presents the split of a real movement, in which the market and
+sector components act in the direction opposite to the observed movement.
 
 \begin{figure}[ht]
 \centering
@@ -314,64 +317,64 @@ componentes de mercado e de setor atuam em sentido contrário ao movimento obser
   \node[font=\footnotesize, black!60, align=left, text width=2.1cm]
     at (9.6,3.4) {the three parts always sum to the day's movement};
 \end{tikzpicture}
-\caption[Um movimento repartido em três parcelas]{Repartição de um dia da AMD, o de 15 de agosto de
-2026, em retornos logarítmicos. As componentes de mercado e de setor atuaram em sentido
-descendente, pelo que a subida é integralmente atribuída à empresa. A igualdade entre a soma das
-parcelas e o movimento observado verifica-se por construção e, por essa razão, nada estabelece
-quanto à qualidade do ajuste, ponto retomado na Secção~\ref{sec:av_decomposicao}.}
+\caption[A movement split into three parts]{Split of one day of AMD, that of 15 August 2026, in
+logarithmic returns. The market and sector components acted downwards, so the rise is attributed
+entirely to the company. The equality between the sum of the parts and the observed movement holds
+by construction and, for that reason, establishes nothing about the quality of the fit, a point
+taken up in Section~\ref{sec:av_decomposicao}.}
 \label{fig:met_decomposicao}
 \end{figure}
 
-Neste caso, registado pela AMD a 15 de agosto de 2026, o retorno logarítmico de $+6.2944\%$,
-correspondente a uma variação simples do preço de $+6.50\%$, reparte-se em $-0.3992\%$ de mercado, $-0.0362\%$ de setor e $+6.7298\%$ específicos da
-empresa, com $\beta_m = 2.0143$ e $\beta_s = 1.5888$ estimados sobre os vinte dias anteriores.
-A informação transmitida excede a percentagem isolada: a ação subiu apesar de o contexto ter
-atuado em sentido contrário, e o beta de mercado indica uma ação que historicamente amplifica os
-movimentos do índice.
+In this case, recorded by AMD on 15 August 2026, the logarithmic return of $+6.2944\%$,
+corresponding to a simple price change of $+6.50\%$, splits into $-0.3992\%$ of market, $-0.0362\%$
+of sector and $+6.7298\%$ specific to the company, with $\beta_m = 2.0143$ and $\beta_s = 1.5888$
+estimated over the twenty preceding days. The information conveyed exceeds the percentage alone:
+the stock rose despite the context acting in the opposite direction, and the market beta indicates
+a stock that historically amplifies the movements of the index.
 
-A soma exata das três parcelas não constitui validação do método. A igualdade verifica-se por
-construção, uma vez que a componente específica é definida como resíduo, e uma repartição sem
-significado somaria igualmente. A medida informativa sobre a qualidade do ajuste é o coeficiente
-de determinação na janela de estimação, cujo valor é reportado no Capítulo~\ref{cap:avaliacao}.
+The exact sum of the three parts does not constitute validation of the method. The equality holds
+by construction, since the specific component is defined as the residual, and a meaningless split
+would sum just as well. The informative measure of the quality of the fit is the coefficient of
+determination in the estimation window, whose value is reported in
+Chapter~\ref{cap:avaliacao}.
 
-\section{Recuperação de precedentes}
+\section{Precedent retrieval}
 \label{sec:met_recuperacao}
 
-A terceira decisão consiste em identificar notícias passadas comparáveis com a notícia em análise
-e medir o comportamento subsequente do preço. A procura por correspondência de palavras é
-inadequada por duas razões simétricas: notícias com o mesmo significado podem não partilhar
-vocabulário, e notícias com vocabulário comum podem tratar de assuntos distintos.
+The third decision consists in identifying past news items comparable with the news item under
+analysis and measuring the subsequent behaviour of the price. Search by word matching is inadequate
+for two symmetric reasons: news items with the same meaning may share no vocabulary, and news items
+with common vocabulary may deal with distinct subjects.
 
-A representação adotada é um modelo de embeddings de frase \autocite{reimers2019sbert}, que
-converte cada título num vetor de 384 dimensões cuja posição no espaço reflete o significado da
-frase. A contribuição relevante deste modelo não é a arquitetura, mas o objetivo de treino: os
-vetores são aprendidos de modo que a distância entre dois deles corresponda a semelhança de
-sentido. Um codificador da mesma família treinado para outra tarefa não herda esta propriedade,
-observação que o Capítulo~\ref{cap:avaliacao} confirma experimentalmente.
+The representation adopted is a sentence embedding model \autocite{reimers2019sbert}, which
+converts each headline into a 384-dimensional vector whose position in the space reflects the
+meaning of the sentence. The relevant contribution of this model is not the architecture, but the
+training objective: the vectors are learned so that the distance between two of them corresponds to
+similarity of meaning. An encoder of the same family trained for another task does not inherit this
+property, an observation that Chapter~\ref{cap:avaliacao} confirms experimentally.
 
-A proximidade entre duas frases é medida pela semelhança do cosseno, ou seja pelo ângulo entre os
-vetores e não pela distância entre as suas extremidades, o que torna a medida independente do
-comprimento do texto. Os vetores são devolvidos com norma unitária, pelo que o cosseno se reduz ao
-produto interno, propriedade que permite percorrer a base de casos completa sem aproximação. Sobre
-dois pares reais da base de casos, dois títulos sobre a descida de empresas de tecnologia e
-semicondutores obtêm $\cos = +0.956$, e um título sobre a Peloton comparado com outro sobre o
-impacto da pandemia na indústria automóvel obtém $\cos = -0.086$. O limiar de semelhança
-utilizado em produção é de $0.45$.
+The proximity between two sentences is measured by cosine similarity, that is, by the angle
+between the vectors and not by the distance between their endpoints, which makes the measure
+independent of the length of the text. The vectors are returned with unit norm, so the cosine
+reduces to the inner product, a property that allows the complete case base to be scanned without
+approximation. On two real pairs from the case base, two headlines about falls in technology and
+semiconductor companies obtain $\cos = +0.956$, and a headline about Peloton compared with another
+about the impact of the pandemic on the automotive industry obtains $\cos = -0.086$. The similarity
+threshold used in production is $0.45$.
 
-A ordenação dos candidatos não é, contudo, o cosseno isolado. Casos próximos no tema mas distantes
-no tempo descrevem um regime de mercado que já não é o vigente, pelo que a ordenação aplica um
-decaimento exponencial sobre a idade do caso, na forma $\cos \times 2^{-\text{idade}/h}$, com
-meia-vida $h$ de cento e vinte dias. Um caso com um ano entra assim com peso aproximado de $0.12$
-e prevalece apenas na ausência de material mais recente sobre o mesmo tema.
+The ordering of the candidates is not, however, the cosine alone. Cases close in topic but distant
+in time describe a market regime that is no longer the prevailing one, so the ordering applies an
+exponential decay over the age of the case, in the form $\cos \times 2^{-\text{age}/h}$, with a
+half-life $h$ of one hundred and twenty days. A case one year old thus enters with an approximate
+weight of $0.12$ and prevails only in the absence of more recent material on the same topic.
 
-O decaimento ordena e
-não é apresentado: o valor exibido junto de cada precedente é sempre o cosseno, uma vez que
-apresentar uma pontuação composta sob o nome de semelhança produziria um número que o utilizador
-não pode verificar. As duas decisões compõem-se em série, pelo que o limiar de $0.45$ incide sobre
-um conjunto já selecionado pela ordenação, e não sobre os vizinhos de maior cosseno. A Figura~\ref{fig:met_embeddings} representa a propriedade que
-esta medida explora: títulos com o mesmo significado ocupam posições próximas ainda que não
-partilhem vocabulário, ao passo que títulos que partilham vocabulário e tratam de assuntos distintos
-ficam afastados.
+The decay orders and is not displayed: the value shown next to each precedent is always the
+cosine, since presenting a composite score under the name of similarity would produce a number the
+user cannot verify. The two decisions compose in series, so the $0.45$ threshold applies to a set
+already selected by the ordering, and not to the neighbours with the highest cosine.
+Figure~\ref{fig:met_embeddings} represents the property this measure exploits: headlines with the
+same meaning occupy nearby positions even when they share no vocabulary, whereas headlines that
+share vocabulary and deal with distinct subjects end up far apart.
 
 \begin{figure}[ht]
 \centering
@@ -390,53 +393,56 @@ ficam afastados.
   \draw[orange!55, dashed] (5.65,1.25) circle (0.8);
   \node[orange!60!black, font=\footnotesize\itshape] at (6.3,2.35) {layoffs};
 \end{tikzpicture}
-\caption[Frases como pontos num espaço]{Cada frase corresponde a um ponto do espaço. Frases de
-significado próximo ocupam posições vizinhas ainda que não partilhem vocabulário, ao passo que
-frases com vocabulário comum (``record'') e assunto distinto ficam afastadas. A representação é
-bidimensional para permitir a leitura; o modelo utiliza 384 dimensões.}
+\caption[Sentences as points in a space]{Each sentence corresponds to a point in the space.
+Sentences of close meaning occupy neighbouring positions even when they share no vocabulary,
+whereas sentences with common vocabulary (``record'') and distinct subject end up far apart. The
+representation is two-dimensional to allow it to be read; the model uses 384 dimensions.}
 \label{fig:met_embeddings}
 \end{figure}
 
-A medição do desfecho adapta o estudo de evento \autocite{brown1985daily}: fixado o dia da notícia,
-mede-se a variação do preço a um, três e cinco dias. Duas decisões de detalhe condicionam o
-resultado. Notícias publicadas fora de dias de negociação são alinhadas com o primeiro dia de
-negociação seguinte. A medição inicia-se no fecho do dia da notícia, e não na abertura, opção
-conservadora que evita atribuir à notícia a parte do movimento anterior à sua publicação.
+The measurement of the outcome adapts the event study \autocite{brown1985daily}: with the day of
+the news fixed, the price change is measured at one, three and five days. Two detailed decisions
+condition the result. News published outside trading days is aligned with the first following
+trading day. The measurement begins at the close of the day of the news, and not at the open, a
+conservative option that avoids attributing to the news the part of the movement prior to its
+publication.
 
-O valor apresentado ao utilizador é o retorno bruto e não o retorno anormal que a fonte
-normaliza. A opção é deliberada e tem um custo declarado. O retorno bruto é verificável pelo utilizador na
-sua própria aplicação, mas incorpora o movimento do mercado no período. Em períodos de queda
-generalizada, os precedentes aparentam desfechos piores do que os atribuíveis à notícia. O desconto do mercado é aplicado onde é indispensável, na construção do
-rótulo descrito na secção seguinte.
+The value presented to the user is the raw return and not the abnormal return the source
+normalises. The option is deliberate and has a declared cost. The raw return is verifiable by the
+user in their own application, but it incorporates the movement of the market over the period. In
+periods of generalised decline, the precedents appear to have worse outcomes than those
+attributable to the news. The market is discounted where it is indispensable, in the construction
+of the label described in the following section.
 
 
-\section{Triagem de notícias}
+\section{News triage}
 \label{sec:met_triagem}
 
-A quarta decisão determina que notícias justificam a interrupção do utilizador. Ao contrário das
-anteriores, não dispõe de uma formulação analítica evidente, constituindo o ponto natural para
-aprendizagem a partir dos dados.
+The fourth decision determines which news items justify interrupting the user. Unlike the previous
+ones, it has no obvious analytical formulation, and constitutes the natural point for learning from
+the data.
 
-O rótulo formaliza a pergunta como a ocorrência de um movimento anormalmente grande após a
-notícia. Mede-se o retorno da ação nos três dias seguintes, subtrai-se o movimento do mercado no
-mesmo período e classifica-se o exemplo como positivo quando o valor absoluto do resíduo excede
-dois por cento. O uso do valor absoluto é deliberado: o modelo aprende sobre materialidade e nunca
-sobre direção, o que preserva a restrição fundadora do trabalho.
+The label formalises the question as the occurrence of an abnormally large movement after the
+news. The return of the stock over the following three days is measured, the movement of the market
+over the same period is subtracted, and the example is classified as positive when the absolute
+value of the residual exceeds two per cent. The use of the absolute value is deliberate: the model
+learns about materiality and never about direction, which preserves the founding constraint of the
+work.
 
-A subtração do movimento do mercado assume uma sensibilidade unitária, o que constitui uma
-incoerência com a técnica descrita na Secção~\ref{sec:met_decomposicao}, que recusa precisamente
-essa suposição. Numa ação de beta elevado, o resíduo retém parte do movimento do mercado, e o
-rótulo pode classificar como material um dia em que apenas o mercado se moveu. Todas as famílias de
-modelos avaliadas no Capítulo~\ref{cap:avaliacao} são treinadas e avaliadas contra o mesmo rótulo,
-pelo que a comparação entre elas é internamente consistente sob esta definição de alvo. Tal não
-garante, porém, que a ordenação resista a uma definição alternativa, uma vez que o erro introduzido
-pode estar correlacionado com a empresa e com a volatilidade.
+Subtracting the movement of the market assumes unit sensitivity, which is an inconsistency with
+the technique described in Section~\ref{sec:met_decomposicao}, which refuses precisely that
+assumption. In a high-beta stock, the residual retains part of the movement of the market, and the
+label may classify as material a day on which only the market moved. All the families of model
+evaluated in Chapter~\ref{cap:avaliacao} are trained and evaluated against the same label, so the
+comparison between them is internally consistent under this definition of target. That does not
+guarantee, however, that the ordering survives an alternative definition, since the error
+introduced may be correlated with the company and with volatility.
 
-O modelo recebe nove entradas: a volatilidade dos vinte dias anteriores, o momento dos cinco dias
-anteriores, o retorno do próprio dia, o comprimento do título e cinco indicadores de setor. Uma
-variante adicional incorpora o vetor de 384 dimensões do título. A Figura~\ref{fig:met_entradas}
-agrupa as entradas pelo nível de informação que cada uma descreve, distinção que o
-Capítulo~\ref{cap:avaliacao} demonstra ser determinante.
+The model receives nine inputs: the volatility of the twenty preceding days, the momentum of the
+five preceding days, the return of the day itself, the length of the headline and five sector
+indicators. An additional variant incorporates the 384-dimensional vector of the headline.
+Figure~\ref{fig:met_entradas} groups the inputs by the level of information each one describes, a
+distinction that Chapter~\ref{cap:avaliacao} shows to be decisive.
 
 \begin{figure}[ht]
 \centering
@@ -475,27 +481,27 @@ Capítulo~\ref{cap:avaliacao} demonstra ser determinante.
   \draw[black!25] (-3.9,-1.55) -- (9.3,-1.55);
   \draw[black!25] (-3.9,-2.75) -- (9.3,-2.75);
 \end{tikzpicture}
-\caption[As nove entradas, por nível]{As nove entradas do modelo implantado, agrupadas segundo o
-que cada uma permite distinguir. Sete caracterizam a \textbf{empresa} e variam lentamente ou
-permanecem constantes; uma caracteriza o \textbf{dia} e assume o mesmo valor para todas as notícias
-desse dia; \textbf{apenas uma} varia entre títulos consecutivos. Desta composição decorre a
-expectativa de que o modelo não separe duas notícias da mesma empresa no mesmo dia, expectativa que
-a ablação da Secção~\ref{sec:av_ablacao} confirma.}
+\caption[The nine inputs, by level]{The nine inputs of the deployed model, grouped according to
+what each one allows to be distinguished. Seven characterise the \textbf{company} and vary slowly
+or stay constant; one characterises the \textbf{day} and takes the same value for every news item
+of that day; \textbf{only one} varies between consecutive headlines. From this composition follows
+the expectation that the model does not separate two news items of the same company on the same
+day, an expectation the ablation of Section~\ref{sec:av_ablacao} confirms.}
 \label{fig:met_entradas}
 \end{figure}
 
-Sete entradas descrevem a empresa e variam lentamente ou são constantes; uma descreve o dia e é
-idêntica para todas as notícias desse dia; e apenas uma, o comprimento do título, distingue dois
-títulos da mesma empresa no mesmo dia.
+Seven inputs describe the company and vary slowly or are constant; one describes the day and is
+identical for every news item of that day; and only one, the length of the headline, distinguishes
+two headlines of the same company on the same day.
 
-A divisão dos dados é cronológica e não aleatória, como representado na
-Figura~\ref{fig:met_divisao}. Uma divisão aleatória permitiria treinar sobre notícias posteriores
-às utilizadas na avaliação, invertendo a ordem temporal que o sistema enfrenta em funcionamento.
-Entre blocos consecutivos existe um embargo de cinco dias, necessário porque o rótulo de uma
-notícia depende dos três dias seguintes: sem o embargo, o rótulo das notícias no final de um bloco
-seria determinado por dias pertencentes ao bloco seguinte. O embargo descarta 820 das 79{,}753
-linhas, ou seja $1.03\%$, ficando 28{,}574 exemplos para treino, 17{,}710 para validação e 32{,}649
-para teste.
+The split of the data is chronological and not random, as shown in
+Figure~\ref{fig:met_divisao}. A random split would allow training on news posterior to that used in
+the evaluation, inverting the temporal order the system faces in operation. Between consecutive
+blocks there is a five-day embargo, necessary because the label of a news item depends on the
+following three days: without the embargo, the label of the news items at the end of a block would
+be determined by days belonging to the following block. The embargo discards 820 of the 79{,}753
+rows, that is, $1.03\%$, leaving 28{,}574 examples for training, 17{,}710 for validation and
+32{,}649 for testing.
 
 \begin{figure}[ht]
 \centering
@@ -516,143 +522,142 @@ para teste.
   \node[orange!60!black, font=\footnotesize, rotate=90] at (8.75,1.35) {embargo};
   \draw[->, black!45] (0,-0.4) -- (10.5,-0.4) node[right, black!60, font=\footnotesize] {time};
 \end{tikzpicture}
-\caption[Divisão temporal com embargo]{A divisão dos dados obedece à \textbf{ordem cronológica} e
-não a um sorteio. Entre blocos consecutivos intercala-se um \emph{embargo} de cinco dias, uma vez
-que o rótulo de cada notícia depende dos três dias seguintes: sem ele, o final do bloco de treino
-seria determinado por dias pertencentes ao bloco seguinte.}
+\caption[Temporal split with embargo]{The split of the data follows \textbf{chronological order}
+and not a draw. Between consecutive blocks a five-day \emph{embargo} is inserted, since the label
+of each news item depends on the following three days: without it, the end of the training block
+would be determined by days belonging to the following block.}
 \label{fig:met_divisao}
 \end{figure}
 
-O bloco de teste contém mais exemplos do que o de treino. O corte é feito em dias de negociação,
-segundo a proporção de setenta, quinze e quinze por cento, e a assimetria resulta da densidade de
-notícias, que cresce acentuadamente ao longo do período coberto pelo corpus. A divisão por dias, e
-não por número de exemplos, é necessária para que notícias do mesmo dia não sejam repartidas por
-blocos distintos.
+The test block contains more examples than the training block. The cut is made on trading days,
+according to a proportion of seventy, fifteen and fifteen per cent, and the asymmetry results from
+the density of news, which grows markedly over the period covered by the corpus. Splitting by days,
+and not by number of examples, is necessary so that news items of the same day are not distributed
+across distinct blocks.
 
-A pontuação produzida pelo modelo não constitui, por si, uma probabilidade. Uma vez que o valor é
-apresentado ao utilizador, é convertido através de calibração \emph{a posteriori}, ajustando uma
-sigmoide de dois parâmetros sobre o bloco de validação reservado \autocite{niculescu2005calibration}:
+The score produced by the model is not, in itself, a probability. Since the value is presented to
+the user, it is converted through \emph{post-hoc} calibration, fitting a two-parameter sigmoid over
+the held-out validation block \autocite{niculescu2005calibration}:
 
 \begin{equation}
-p_{\text{calibrada}} = \frac{1}{1 + e^{-(a\,p_{\text{bruta}} + b)}}
+p_{\text{calibrated}} = \frac{1}{1 + e^{-(a\,p_{\text{raw}} + b)}}
 \label{eq:platt}
 \end{equation}
 
-Os valores aprendidos são $a = 3.700$ e $b = -2.313$. O sinal negativo de $b$ indica que o
-modelo, sem calibração, produz valores sistematicamente superiores à frequência observada. Parte
-deste comportamento decorre da reponderação das classes durante o treino, que desloca as pontuações
-para cima por construção.
+The learned values are $a = 3.700$ and $b = -2.313$. The negative sign of $b$ indicates that the
+model, without calibration, produces values systematically above the observed frequency. Part of
+this behaviour follows from the reweighting of the classes during training, which shifts the scores
+upwards by construction.
 
-A calibração é ajustada num bloco cuja prevalência de casos positivos difere da do bloco de teste,
-consequência da divisão cronológica. O efeito é mensurável e está reportado no
-Capítulo~\ref{cap:avaliacao}. A transformação é monótona e preserva a ordenação entre notícias, que
-é o que a política de decisão utiliza; o valor absoluto apresentado é o que fica afetado.
+The calibration is fitted on a block whose prevalence of positive cases differs from that of the
+test block, a consequence of the chronological split. The effect is measurable and is reported in
+Chapter~\ref{cap:avaliacao}. The transformation is monotonic and preserves the ordering between
+news items, which is what the decision policy uses; it is the absolute value presented that is
+affected.
 
-\section{Ferramentas e infraestrutura}
+\section{Tools and infrastructure}
 \label{sec:met_ferramentas}
 
-O sistema está escrito em Python 3.12. As dependências que produzem os resultados desta dissertação
-estão fixadas em versões exatas, e não em intervalos, de modo que o ambiente possa ser recriado
-noutra máquina: \texttt{numpy}~2.1.3, \texttt{pandas}~2.2.3, \texttt{scikit-learn}~1.9.0,
-\texttt{matplotlib}~3.11.0, \texttt{sentence-transformers}~5.6.0 e \texttt{torch}~2.12.1 na variante
-para CPU. Nenhum resultado exige unidade de processamento gráfico, consequência das opções
-descritas neste capítulo.
+The system is written in Python 3.12. The dependencies that produce the results of this
+dissertation are pinned to exact versions, and not to ranges, so that the environment can be
+recreated on another machine: \texttt{numpy}~2.1.3, \texttt{pandas}~2.2.3,
+\texttt{scikit-learn}~1.9.0, \texttt{matplotlib}~3.11.0, \texttt{sentence-transformers}~5.6.0 and
+\texttt{torch}~2.12.1 in the CPU variant. No result requires a graphics processing unit, a
+consequence of the options described in this chapter.
 
-Todas as fontes de dados são gratuitas. Os preços provêm de uma cadeia de fornecedores alternativos
-consultados por ordem fixa, uma vez que nenhuma fonte gratuita apresenta fiabilidade suficiente
-isoladamente; o sistema regista sempre qual delas respondeu. As notícias provêm de três fornecedores
-complementares, cuja comparação é apresentada no Capítulo~\ref{cap:sistema}. A entrega utiliza a
-interface de robô do Telegram.
+All data sources are free. Prices come from a chain of alternative providers consulted in a fixed
+order, since no free source is sufficiently reliable on its own; the system always records which
+one answered. News comes from three complementary providers, whose comparison is presented in
+Chapter~\ref{cap:sistema}. Delivery uses the Telegram bot interface.
 
-\section{Desafios tecnológicos e sociais}
+\section{Technological and social challenges}
 \label{sec:met_desafios}
 
-Esta secção enuncia os riscos que um sistema com estas características levanta e as decisões de
-desenho que respondem a cada um.
+This section states the risks that a system with these characteristics raises and the design
+decisions that respond to each of them.
 
-\subsection{Privacidade e proteção de dados}
+\subsection{Privacy and data protection}
 \label{sec:met_privacidade}
 
-Uma carteira de investimentos revela rendimento, aversão ao risco e projetos de vida, informação
-que o Regulamento Geral sobre a Proteção de Dados trata como merecedora de proteção reforçada
-quando permite traçar o perfil de uma pessoa.
+An investment portfolio reveals income, risk aversion and life plans, information that the General
+Data Protection Regulation treats as deserving reinforced protection when it allows a person to be
+profiled.
 
-A decisão de desenho que responde a este risco é a minimização: o sistema não conhece as posições
-dos utilizadores e não as solicita. Não existe carteira, não existem posições nem montantes, e o
-canal público não identifica destinatários. Um alerta sobre uma empresa é idêntico para todos os
-leitores. O custo desta opção é a impossibilidade de personalização, uma vez que o sistema alerta
-sobre uma lista fixa de empresas e não sobre as posições de quem lê.
+The design decision that responds to this risk is minimisation: the system does not know the
+users' positions and does not ask for them. There is no portfolio, there are no positions and no
+amounts, and the public channel does not identify recipients. An alert about a company is identical
+for every reader. The cost of this option is the impossibility of personalisation, since the system
+alerts on a fixed list of companies and not on the positions of whoever reads it.
 
-Existe uma exceção que importa nomear. Os utilizadores que optem por receber alertas personalizados
-através do robô do Telegram ficam associados a dois elementos: o identificador de conversa
-atribuído pela plataforma e a lista de empresas selecionadas. Não são armazenados nome, contacto
-nem montantes. O tratamento assenta no pedido expresso do próprio utilizador, que o inicia ao
-subscrever e o termina através de um comando que elimina o registo.
+There is one exception worth naming. Users who choose to receive personalised alerts through the
+Telegram bot are associated with two elements: the conversation identifier assigned by the platform
+and the list of companies selected. No name, contact or amounts are stored. The processing rests on
+the express request of the user, who begins it by subscribing and ends it through a command that
+deletes the record.
 
-\subsection{Segurança}
+\subsection{Security}
 \label{sec:met_seguranca}
 
-Um sistema autónomo que consome serviços externos detém credenciais. As chaves residem em variáveis
-de ambiente e no cofre de segredos da plataforma, nunca no repositório, e o texto enviado para os
-registos passa por uma função que mascara parâmetros com nome de credencial. Esta segunda
-salvaguarda responde ao facto de as mensagens de erro de bibliotecas de comunicação reproduzirem o
-endereço do pedido, e de algumas interfaces transportarem a chave nesse endereço.
+An autonomous system that consumes external services holds credentials. The keys reside in
+environment variables and in the platform's secret store, never in the repository, and the text
+sent to the logs passes through a function that masks parameters with a credential name. This
+second safeguard responds to the fact that the error messages of communication libraries reproduce
+the address of the request, and that some interfaces carry the key in that address.
 
-O codificador de frases é obtido sob pedido e confrontado com uma soma de controlo fixada no
-código. Na ausência dessa verificação, um ficheiro corrompido ou substituído modificaria sem aviso
-o critério de semelhança utilizado pelo sistema.
+The sentence encoder is fetched on demand and checked against a checksum fixed in the code.
+Without that verification, a corrupted or substituted file would silently modify the similarity
+criterion used by the system.
 
-\subsection{Questões éticas e sociais}
+\subsection{Ethical and social questions}
 \label{sec:met_etica}
 
-A restrição fundadora do trabalho é também a sua principal salvaguarda ética. Um sistema que
-anunciasse o comportamento futuro do preço emitiria uma previsão não verificável no momento da
-leitura; um sistema que indicasse instrumentos a adquirir entraria numa atividade regulada. Esta
-fronteira é de desenho, traçada por prudência e não a partir de uma análise do direito aplicável:
-não houve parecer jurídico, e a operação do sistema como serviço exigiria obtê-lo previamente.
+The founding constraint of the work is also its main ethical safeguard. A system that announced
+the future behaviour of the price would issue a forecast not verifiable at the moment of reading; a
+system that indicated instruments to buy would enter a regulated activity. This boundary is one of
+design, drawn out of prudence and not from an analysis of the applicable law: there was no legal
+opinion, and operating the system as a service would require obtaining one first.
 
-A garantia aplica-se ao que o sistema escreve e não ao que reproduz. Os títulos de terceiros são
-citados na íntegra, uma vez que constituem o facto que desencadeia o alerta e permitem a
-verificação na fonte, e alguns são eles próprios especulativos. Daqui decorre uma limitação sem
-solução no âmbito assumido: o filtro de relevância determina se um título é sobre a empresa, e não
-se é factual. A distinção entre notícia e opinião exigiria um classificador que o sistema não
-possui.
+The guarantee applies to what the system writes and not to what it reproduces. Third-party
+headlines are quoted in full, since they constitute the fact that triggers the alert and allow
+verification at the source, and some are themselves speculative. From this follows a limitation
+without a solution within the scope assumed: the relevance filter determines whether a headline is
+about the company, and not whether it is factual. The distinction between news and opinion would
+require a classifier the system does not have.
 
-A interrupção repetida constitui o segundo risco. O efeito está documentado em sistemas de apoio à
-decisão clínica, onde \textcite{ancker2017alertfatigue} medem que a probabilidade de aceitação de um
-alerta decresce à medida que o volume de alertas recebidos aumenta, e que o efeito se acentua com a
-repetição do mesmo alerta. O domínio é distinto e o que se transfere é o mecanismo: quem é
-interrompido com frequência deixa de distinguir as interrupções, momento a partir do qual um aviso
-correto e um aviso incorreto passam a ter o mesmo efeito. O sistema responde com um orçamento
-diário de alertas, um limiar crescente para alertas repetidos da mesma empresa e supressão de
-notícias que reproduzem uma história já comunicada.
+Repeated interruption is the second risk. The effect is documented in clinical decision support
+systems, where \textcite{ancker2017alertfatigue} measure that the probability of accepting an alert
+decreases as the volume of alerts received increases, and that the effect is accentuated by
+repetition of the same alert. The domain is distinct and what transfers is the mechanism: whoever
+is interrupted frequently stops distinguishing the interruptions, from which point a correct
+warning and an incorrect warning have the same effect. The system responds with a daily alert
+budget, a rising threshold for repeated alerts of the same company, and suppression of news that
+reproduces a story already communicated.
 
-O terceiro risco decorre da própria explicação. A confiança em sistemas automáticos falha nos dois
-sentidos, com o utilizador a ignorar um aviso correto ou a aceitar um aviso incorreto
-\autocite{lee2004trust}, e a presença de uma explicação aumenta a aceitação de respostas erradas
-\autocite{bansal2021whole}. O sistema apresenta, por essa razão, os casos passados individualmente,
-com data e desfecho, em vez de os resumir a uma média suscetível de ser lida como previsão. Que
-esta opção produza confiança apropriada constitui uma hipótese e não um resultado, uma vez que o
-estudo controlado necessário para a verificar não foi realizado.
+The third risk follows from the explanation itself. Trust in automated systems fails in both
+directions, with the user ignoring a correct warning or accepting an incorrect one
+\autocite{lee2004trust}, and the presence of an explanation increases the acceptance of wrong
+answers \autocite{bansal2021whole}. The system therefore presents past cases individually, with
+date and outcome, rather than summarising them into an average liable to be read as a forecast.
+That this option produces appropriate trust is a hypothesis and not a result, since the controlled
+study needed to verify it was not carried out.
 
 
-\subsection{Utilização de ferramentas de inteligência artificial}
+\subsection{Use of artificial intelligence tools}
 \label{sec:met_ia}
 
-Esta subsecção declara, conforme a Declaração de Integridade remete, como foram utilizadas
-ferramentas de inteligência artificial generativa neste trabalho e com que finalidade.
+This subsection declares, as the Statement of Integrity refers, how generative artificial
+intelligence tools were used in this work and for what purpose.
 
-A conceção é do autor: o problema, as questões de investigação, as restrições que definem o
-sistema — apenas fontes gratuitas, explicabilidade primeiro, e a recusa de prever preços —, o
-desenho de cada experiência, o critério de sucesso fixado antes de a correr, e todas as decisões
-sobre o que construir, manter ou descartar. Nenhuma conclusão deste documento foi delegada.
+The conception is the author's: the problem, the research questions, the constraints that define
+the system — free sources only, explainability first, and the refusal to forecast prices —, the
+design of each experiment, the success criterion fixed before running it, and every decision about
+what to build, keep or discard. No conclusion in this document was delegated.
 
-A execução foi assistida, e em extensão substancial. Essas ferramentas escreveram e reestruturaram
-parte considerável do código do sistema e dos seus testes, implementaram os procedimentos de
-avaliação, redigiram e editaram prosa neste documento, e conduziram revisões que encontraram
-defeitos no software e no texto. Onde uma medição contrariou uma afirmação do autor, a afirmação
-foi retirada em vez de defendida, e o Apêndice~\ref{ap:reprodutibilidade} regista as que foram
-retiradas.
+The execution was assisted, and to a substantial extent. Those tools wrote and restructured a
+considerable part of the system's code and of its tests, implemented the evaluation procedures,
+drafted and edited prose in this document, and conducted reviews that found defects in the software
+and in the text. Where a measurement contradicted a claim of the author, the claim was withdrawn
+rather than defended, and Appendix~\ref{ap:reprodutibilidade} records those that were withdrawn.
 
-O conteúdo deste documento foi revisto pelo autor. Ele, os erros que nele restem, e a sua defesa
-são da sua responsabilidade.
+The content of this document was reviewed by the author. It, the errors that remain in it, and
+its defence are his responsibility.
