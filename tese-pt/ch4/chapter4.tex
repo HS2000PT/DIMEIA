@@ -847,13 +847,13 @@ não verificável. A Figura~\ref{fig:sis_lifecycle} representa as duas metades d
   \node[cx]  (d) at (0,0)    {labelled dataset};
   \node[cx]  (t) at (2.5,0)  {training};
   \node[cx]  (v) at (5.0,0)  {validation\\ \emph{calibration}};
-  \node[cx]  (s) at (7.5,0)  {teste\\ \emph{single use}};
-  \node[art] (m) at (10.0,0) {artefacto versionado};
+  \node[cx]  (s) at (7.5,0)  {test\\ \emph{single use}};
+  \node[art] (m) at (10.0,0) {versioned artefact};
 
   \foreach \xa/\xb in {d/t, t/v, v/s, s/m} \draw[->, thick, black!55] (\xa) -- (\xb);
 
   \node[fase, anchor=west] at (-1.1,-2.7) {observation};
-  \node[art] (p) at (0,-1.9)   {the \textbf{mesmo} model, in production};
+  \node[art] (p) at (0,-1.9)   {the \textbf{same} model, in production};
   \node[obs] (g) at (2.5,-1.9) {log of every decision};
   \node[obs] (w) at (5.0,-1.9) {wait for the price to respond};
   \node[obs] (r) at (7.5,-1.9) {post-validation and drift};
@@ -863,7 +863,7 @@ não verificável. A Figura~\ref{fig:sis_lifecycle} representa as duas metades d
 
   \draw[->, dashed, black!40] (r.east) -- ++(0.9,0) |- (10.0,-1.05);
   \node[align=center, text width=1.3cm, text=black!70] at (10.4,-1.9)
-    {retreino:\\ \textbf{ausente}};
+    {retraining:\\ \textbf{absent}};
 \end{tikzpicture}
 \caption[Ciclo de vida do componente aprendido]{As duas metades do ciclo. Na metade superior, a
 construção: os dados são rotulados, a divisão é cronológica, a calibração é ajustada no bloco de

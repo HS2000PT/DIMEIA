@@ -47,8 +47,18 @@ POR = re.compile(r"(?<![A-Za-zÀ-ú])(de|da|do|das|dos|para|com|sem|não|por|que
                  r"orçamento|janela|precedente|precedentes|entregue|entregues|entregar|"
                  r"enviado|taxa|deteção|recuperação|recuperar|triagem|modelo|texto|"
                  r"título|títulos|alerta|alertas|resposta|evidência|retorno|retornos|"
-                 r"registar|exige|estabelecido|ciclo)"
+                 r"registar|exige|estabelecido|ciclo|artefacto|artefactos|versionado|versionada|"
+                r"teste|testes|mesmo|mesma|mesmos|mesmas|retreino|ausente|ausência|"
+                r"construção|observação|validação|calibração|conjunto|rotulado|dados|"
+                r"decisão|decisões|treino|aguardar|espera|produção|única|único|"
+                r"deriva|repartição|semelhança|orçamento|manchete|manchetes)"
                  r"(?![A-Za-zÀ-ú])", re.IGNORECASE)
+
+# ⚠️ A LISTA FECHADA FOI A CAUSA DE UMA CEGUEIRA REAL, a 2026-09-05: a figura do ciclo
+# de vida tinha `artefacto versionado`, `teste` e `retreino: ausente` ao lado de rótulos
+# ingleses, e nenhuma dessas palavras estava na lista, pelo que a figura contava como
+# monolingue. Daí este segundo sinal, que não depende de vocabulário nenhum: a ortografia.
+ORTO = re.compile(r"[àáâãçéêíóôõú]", re.IGNORECASE)
 
 FICH = [BASE / f"ch{i}/chapter{i}.tex" for i in range(1, 7)]
 FICH += [BASE / "appendices/appendixA.tex"]
@@ -100,7 +110,7 @@ def main() -> int:
             # inteiramente portuguesa aparecia como mista.
             labs = [BILINGUE.sub(" ", _limpa(t)) for t in labs]
             en = [t for t in labs if ING.search(t)]
-            pt = [t for t in labs if POR.search(t)]
+            pt = [t for t in labs if POR.search(t) or ORTO.search(t)]
             if en and pt:
                 mistas.append((f.parts[-2], rot, pt, en))
 
