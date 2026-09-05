@@ -1,230 +1,231 @@
-\chapter{Estado da arte}
+\chapter{State of the art}
 \label{cap:contexto}
 
-Este capítulo apresenta o enquadramento científico e tecnológico do trabalho. Caracteriza-se
-primeiro o público a que o sistema se dirige e as limitações que definem o problema; examinam-se
-depois as soluções atualmente disponíveis; percorrem-se por fim as áreas técnicas de onde provêm
-os componentes utilizados, situando a contribuição desta dissertação em relação a cada uma.
+This chapter presents the scientific and technological framing of the work. It first characterises
+the audience the system addresses and the limitations that define the problem; it then examines the
+solutions currently available; and it finally surveys the technical areas from which the components
+used are drawn, situating the contribution of this dissertation in relation to each of them.
 
-\section{O investidor particular e o problema da atenção}
+\section{The retail investor and the attention problem}
 \label{sec:ctx_investidor}
 
-Esta secção caracteriza o comportamento documentado do público a que o sistema se dirige, uma vez
-que são as limitações desse comportamento, e não a dimensão do mercado, que delimitam o problema
-tratado.
+This section characterises the documented behaviour of the audience the system addresses, since it
+is the limitations of that behaviour, and not the size of the market, that delimit the problem
+treated here.
 
-O Capítulo~\ref{cap:introducao} estabeleceu a escala do universo em causa. A caracterização que
-falta é de comportamento, e começa por uma observação que contraria a representação corrente do
-investidor particular como agente que apenas reage em pânico. Durante a queda de março de 2020, os
-investidores particulares de uma plataforma sem comissões aumentaram as suas posições agregadas em
-vez de reduzirem a exposição \autocite{welch2022robinhood}. Trata-se de um público que decide com
-regularidade, e que por isso beneficia de melhor informação no momento da decisão.
+Chapter~\ref{cap:introducao} established the scale of the universe in question. The
+characterisation that is missing is behavioural, and it begins with an observation that runs
+counter to the current portrayal of the retail investor as an agent who only reacts in panic.
+During the fall of March 2020, retail investors on a commission-free platform increased their
+aggregate positions rather than reducing exposure \autocite{welch2022robinhood}. This is an
+audience that decides regularly, and that therefore benefits from better information at the moment
+of the decision.
 
-A literatura de finanças comportamentais estabelece que essas decisões se afastam de forma
-sistemática do ideal racional \autocite{barberis2003behavioral}. Duas regularidades condicionam
-diretamente o desenho de um sistema de alertas. A primeira é a aversão à perda
-\autocite{kahneman1979prospect}, já enunciada no capítulo anterior, e cuja consequência para este
-trabalho é que o custo da ausência de contexto é assimétrico: é maior precisamente quando a
-informação é desfavorável.
+The behavioural finance literature establishes that those decisions depart systematically from the
+rational ideal \autocite{barberis2003behavioral}. Two regularities bear directly on the design of
+an alerting system. The first is loss aversion \autocite{kahneman1979prospect}, already stated in
+the previous chapter, whose consequence for this work is that the cost of the absence of context is
+asymmetric: it is greater precisely when the information is unfavourable.
 
-A segunda é o efeito da atenção, e é a que fundamenta o problema. \textcite{barber2008glitters}
-estabelecem que os investidores particulares são compradores líquidos das ações que lhes captam a
-atenção, identificadas por três indicadores observáveis, que são a presença em notícias, o volume
-de transação anormal e o retorno extremo num único dia. O mecanismo proposto pelos autores é o do
-problema de procura: perante um número muito elevado de alternativas, o investidor não avalia todas
-e a sua escolha recai sobre o subconjunto que lhe foi tornado visível.
+The second is the attention effect, and it is the one that grounds the problem.
+\textcite{barber2008glitters} establish that retail investors are net buyers of the stocks that
+capture their attention, identified by three observable indicators, namely presence in the news,
+abnormal trading volume and an extreme return on a single day. The mechanism the authors propose is
+that of the search problem: faced with a very large number of alternatives, the investor does not
+assess them all and the choice falls on the subset that has been made visible.
 
-Os autores delimitam o
-alcance da afirmação, que respeita a um desequilíbrio agregado entre compras e vendas e não a um
-comportamento universal, e reportam a conclusão que justifica este trabalho: o padrão de aquisição
-assim formado não gera retornos superiores. A base empírica são registos de corretoras
-norte-americanas entre 1991 e 1999, anteriores à negociação por telemóvel e à ausência de
-comissões, pelo que o que se assume transferível é o mecanismo e não os valores medidos. A
-centralidade da atenção neste processo é de tal ordem que se tornou mensurável através do volume de
-pesquisas na internet \autocite{da2011attention}.
+The authors delimit the reach of the claim, which concerns an aggregate imbalance between purchases
+and sales and not a universal behaviour, and report the conclusion that justifies this work: the
+buying pattern so formed does not generate superior returns. The empirical basis is records from
+United States brokerages between 1991 and 1999, prior to trading by mobile phone and to the absence
+of commissions, so what is assumed transferable is the mechanism and not the measured values. The
+centrality of attention in this process is such that it became measurable through the volume of
+internet searches \autocite{da2011attention}.
 
-Os três indicadores identificados pela literatura são calculados por este sistema, mas o estatuto
-de cada um difere. A notícia e o movimento extremo constituem os dois gatilhos descritos no
-Capítulo~\ref{cap:introducao} e podem, por si, originar um alerta. O volume é calculado e
-apresentado como contexto, e não interrompe o utilizador. A razão desta assimetria é empírica e
-está reportada na Secção~\ref{sec:av_sintese}: a combinação do volume com os restantes sinais
-melhorou a triagem em apenas um de três orçamentos considerados, resultado que não sustenta a
-introdução de uma terceira via de interrupção. A ideia de fundir sinais de origens distintas num
-indicador único provém de um painel de informação em tempo real com essa arquitetura
-\autocite{worldmonitor2026}, sugerido pelo coorientador deste trabalho, e entra na dissertação na
-condição em que foi avaliada, ou seja como alternativa medida e não adotada.
+The three indicators identified by the literature are all computed by this system, but the status
+of each differs. News and the extreme movement are the two triggers described in
+Chapter~\ref{cap:introducao} and can, on their own, give rise to an alert. Volume is computed and
+presented as context, and does not interrupt the user. The reason for this asymmetry is empirical
+and is reported in Section~\ref{sec:av_sintese}: combining volume with the remaining signals
+improved triage in only one of three budgets considered, a result that does not support introducing
+a third route of interruption. The idea of fusing signals of distinct origins into a single
+indicator comes from a real-time information panel with that architecture
+\autocite{worldmonitor2026}, suggested by the co-supervisor of this work, and enters the
+dissertation in the condition in which it was evaluated, that is, as a measured and not adopted
+alternative.
 
-Do lado das instituições financeiras, a adoção de inteligência artificial deixou de ser
-experimental, como documenta o inquérito a empresas do setor conduzido pelo
-\textcite{ccaf2026aifs}. Esse inquérito não mede a população dos produtos destinados ao investidor
-particular, pelo que não sustenta afirmações sobre ela; a caracterização dessa população assenta no
-que os próprios fornecedores declaram, e é objeto da secção seguinte.
+On the side of financial institutions, the adoption of artificial intelligence has ceased to be
+experimental, as documented by the survey of firms in the sector conducted by the
+\textcite{ccaf2026aifs}. That survey does not measure the population of products aimed at the
+retail investor, and therefore does not support claims about it; the characterisation of that
+population rests on what the providers themselves declare, and is the object of the following
+section.
 
-\section{Ferramentas de informação financeira para o retalho}
+\section{Financial information tools for retail}
 \label{sec:ctx_ferramentas}
 
-Esta secção examina as soluções atualmente disponíveis, avaliando cada uma contra um critério fixo,
-que são as três perguntas enunciadas no Capítulo~\ref{cap:introducao}. A
-Tabela~\ref{tab:ctx_ferramentas} apresenta o resultado dessa avaliação.
+This section examines the solutions currently available, assessing each one against a fixed
+criterion, namely the three questions stated in Chapter~\ref{cap:introducao}.
+Table~\ref{tab:ctx_ferramentas} presents the result of that assessment.
 
 \begin{table}[!htbp]
-\caption[As ferramentas existentes contra as três perguntas]{As categorias de ferramenta existentes
-avaliadas contra as três perguntas do Capítulo~\ref{cap:introducao}. A classificação
-\emph{parcial} indica que a ferramenta fornece matéria-prima para a resposta e deixa a
-interpretação ao utilizador.}
+\caption[Existing tools against the three questions]{The categories of existing tool assessed
+against the three questions of Chapter~\ref{cap:introducao}. The classification \emph{partial}
+indicates that the tool supplies raw material for the answer and leaves the interpretation to the
+user.}
 \label{tab:ctx_ferramentas}
 \centering
 \small
 \begin{tabular}{L{0.22\textwidth} C{0.11\textwidth} C{0.15\textwidth} C{0.12\textwidth}
                 L{0.17\textwidth}}
 \toprule
-\tabhead{Ferramenta} & \tabhead{É invulgar?} & \tabhead{Empresa ou mercado?} &
-\tabhead{Já aconteceu?} & \tabhead{Custo} \\
+\tabhead{Tool} & \tabhead{Is it unusual?} & \tabhead{Company or market?} &
+\tabhead{Has it happened?} & \tabhead{Cost} \\
 \midrule
-Aplicação da corretora & não & não & não & incluído \\
-Agregador de notícias & não & não & não & gratuito \\
-Aplicação de sentimento & parcial & não & não & gratuito ou baixo \\
-Gestor automático de carteira & não & não & não & percentagem da carteira \\
-Terminal profissional & sim & sim & sim & não publicado \\
+Brokerage application & no & no & no & included \\
+News aggregator & no & no & no & free \\
+Sentiment application & partial & no & no & free or low \\
+Automated portfolio manager & no & no & no & percentage of the portfolio \\
+Professional terminal & yes & yes & yes & not published \\
 \midrule
-\textbf{Este trabalho} & \textbf{sim} & \textbf{sim} & \textbf{sim} & \textbf{gratuito} \\
+\textbf{This work} & \textbf{yes} & \textbf{yes} & \textbf{yes} & \textbf{free} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-A tabela evidencia o essencial. A linha que responde às três perguntas existe e é a mais dispendiosa
-de todas. O problema não é, portanto, de natureza científica, mas de acesso: as respostas são
-conhecidas e estão condicionadas a uma subscrição incompatível com o perfil de investidor em causa.
+The table makes the essential point. The row that answers all three questions exists and is the
+most expensive of all. The problem is therefore not scientific in nature, but one of access: the
+answers are known and are conditional on a subscription incompatible with the investor profile in
+question.
 
-Três categorias merecem exame individual, uma vez que cada uma falha por uma razão distinta e essas
-razões informam decisões tomadas nos capítulos seguintes.
+Three categories deserve individual examination, since each fails for a distinct reason and those
+reasons inform decisions taken in the following chapters.
 
-A aplicação da corretora é o instrumento de acesso mais imediato ao preço, e é aquele cuja
-documentação pública descreve o menor conjunto de indicadores. Apresenta a variação percentual do
-dia e um gráfico de preço. Não indica se essa variação é elevada
-para aquela ação em particular, não separa a componente de empresa da componente de mercado e não
-dispõe de memória de acontecimentos comparáveis.
+The brokerage application is the most immediate instrument of access to the price, and it is the
+one whose public documentation describes the smallest set of indicators. It displays the day's
+percentage change and a price chart. It does not indicate whether that change is large for that
+particular stock, does not separate the company component from the market component, and has no
+memory of comparable events.
 
-Os alertas de preço destas aplicações partilham a limitação de forma mais acentuada. Disparam
-quando um limiar fixo é atravessado, critério que ignora a volatilidade própria de cada ação e
-produz por isso alertas frequentes nas empresas agitadas e raros nas calmas. Comunicam ainda que um nível foi
-ultrapassado, e nunca porquê. Esta observação determina a opção metodológica descrita na
-Secção~\ref{sec:met_detecao}, que substitui o limiar absoluto por uma medida relativa à norma
-recente de cada empresa, e cuja diferença é quantificada na Secção~\ref{sec:av_qi1}.
+The price alerts of these applications share the limitation in a more pronounced form. They fire
+when a fixed threshold is crossed, a criterion that ignores the volatility proper to each stock and
+therefore produces frequent alerts in agitated companies and rare ones in calm companies. They
+further communicate that a level was crossed, and never why. This observation determines the
+methodological option described in Section~\ref{sec:met_detecao}, which replaces the absolute
+threshold with a measure relative to the recent norm of each company, and whose difference is
+quantified in Section~\ref{sec:av_qi1}.
 
-As aplicações de sentimento classificam notícias como positivas ou negativas e apresentam o
-resultado dessa classificação. Fornecem matéria-prima para a primeira pergunta e não avançam além
-dela. A Secção~\ref{sec:av_qi2} apresenta ainda uma medição própria segundo a qual o tema de uma
-notícia e a direção do movimento que se lhe segue coincidem com menos frequência do que a intuição
-sugere, o que limita o alcance de uma pontuação de sentimento como indicador de impacto.
+Sentiment applications classify news as positive or negative and present the result of that
+classification. They supply raw material for the first question and go no further. Section
+\ref{sec:av_qi2} additionally presents a measurement of our own according to which the topic of a
+news item and the direction of the movement that follows it coincide less often than intuition
+suggests, which limits the reach of a sentiment score as an indicator of impact.
 
-Os gestores automáticos de carteira respondem sobretudo a uma pergunta distinta, a da distribuição
-de capital por um conjunto de ativos. A literatura reconhece-lhes benefícios genuínos, embora não
-uniformes: \textcite{dacunto2019robo} medem uma melhoria da diversificação e uma redução da
-volatilidade nos investidores que detinham menos de cinco ações antes da adesão, ao passo que para
-os que já detinham mais de dez o efeito sobre a diversificação é próximo de nulo. A contenção de
-enviesamentos comportamentais é o benefício mais consistentemente reportado
-\autocite{dacunto2019robo, cardillo2024robo}. A diferença face a este trabalho é de objeto e não de
-transparência: um gestor automático recomenda uma carteira e executa-a, ao passo que este sistema
-não formula recomendações e entrega evidência sobre um acontecimento concreto. Acresce que a
-prestação de aconselhamento sobre investimentos constitui atividade regulada, fronteira que o
-presente trabalho evita por desenho, conforme discutido na Secção~\ref{sec:met_etica}.
+Automated portfolio managers answer above all a different question, that of the allocation of
+capital across a set of assets. The literature recognises genuine, though not uniform, benefits:
+\textcite{dacunto2019robo} measure an improvement in diversification and a reduction in volatility
+among investors who held fewer than five stocks before joining, whereas for those who already held
+more than ten the effect on diversification is close to nil. The containment of behavioural biases
+is the most consistently reported benefit \autocite{dacunto2019robo, cardillo2024robo}. The
+difference with respect to this work is one of object and not of transparency: an automated manager
+recommends a portfolio and executes it, whereas this system makes no recommendations and delivers
+evidence about a concrete event. Moreover, providing investment advice is a regulated activity, a
+boundary that the present work avoids by design, as discussed in Section~\ref{sec:met_etica}.
 
-Existem, por fim, produtos recentes que declaram responder exatamente à pergunta tratada nesta
-dissertação. O Robinhood Cortex, anunciado em março de 2025, declara na página do próprio
-fornecedor destinar-se a responder à questão de saber por que razão uma ação está a subir ou a
-descer num dado dia \autocite{robinhood2025cortex}. Os momentos-chave do Google Finance,
-apresentados em junho de 2026, propõem-se explicar por que razão uma ação se moveu
-\autocite{google2026finance}. Trata-se da mesma pergunta, formulada por organizações com recursos e
-base de utilizadores incomparavelmente maiores.
+There are, finally, recent products that claim to answer exactly the question treated in this
+dissertation. Robinhood Cortex, announced in March 2025, states on the provider's own page that it
+is intended to answer the question of why a stock is going up or down on a given day
+\autocite{robinhood2025cortex}. Google Finance's key moments, presented in June 2026, propose to
+explain why a stock moved \autocite{google2026finance}. This is the same question, posed by
+organisations with incomparably greater resources and user bases.
 
-A diferença situa-se no que as respetivas páginas
-declaram ser entregue. Ambas descrevem um resumo em linguagem natural, e nenhuma descreve a
-apresentação dos casos passados individualizados, com datas, semelhanças medidas e comportamento
-observado do preço após cada um, que é o que este trabalho entrega. A distinção reivindicada não é
-de fluência, mas de verificabilidade, e respeita ao que as páginas declaram: os produtos não foram
-testados, pelo que nada se afirma sobre o que efetivamente entregam.
+The difference lies in what the respective pages declare to be delivered. Both describe a summary
+in natural language, and neither describes the presentation of individual past cases, with dates,
+measured similarities and observed behaviour of the price after each of them, which is what this
+work delivers. The distinction claimed is not one of fluency, but of verifiability, and it concerns
+what the pages declare: the products were not tested, so nothing is asserted about what they
+actually deliver.
 
-A objeção mais razoável ao trabalho consiste em perguntar por que razão um assistente de
-inteligência artificial genérico não resolveria o mesmo problema. Não foi realizada uma comparação
-com nenhum desses assistentes, pelo que o que se segue é um argumento de desenho e não um resultado.
-Um assistente que não disponha de acesso externo a dados de mercado não dispõe de três elementos.
-O primeiro é a volatilidade recente da ação, que permite determinar se uma variação é elevada. O
-segundo é a separação entre a componente de mercado e a componente específica da empresa. O
-terceiro é uma base de casos passados sobre a qual efetuar uma recuperação.
+The most reasonable objection to the work consists in asking why a general-purpose artificial
+intelligence assistant would not solve the same problem. No comparison with any such assistant was
+carried out, so what follows is a design argument and not a result. An assistant without external
+access to market data lacks three elements. The first is the recent volatility of the stock, which
+allows one to determine whether a change is large. The second is the separation between the market
+component and the company-specific component. The third is a base of past cases over which to
+perform a retrieval.
 
-Quanto a este último ponto, um modelo de linguagem recorda
-casos vistos durante o treino, o que não constitui recuperação e não é verificável pelo leitor.
-Existem modelos de grande dimensão especializados em texto financeiro, cuja capacidade está
-documentada \autocite{li2023llmfinance}. A saída de qualquer deles permanece uma afirmação que se lê com facilidade e não se confere.
+On this last point, a language model recalls cases seen during training, which does not constitute
+retrieval and is not verifiable by the reader. There are large models specialised in financial
+text, whose capability is documented \autocite{li2023llmfinance}. The output of any of them remains
+a statement that is read with ease and not checked.
 
-A
-literatura de explicabilidade dá razões para desconfiar dela. \textcite{lipton2018mythos}
-argumenta que a interpretabilidade não designa uma propriedade única e que um sistema deve
-declarar qual delas oferece. \textcite{rudin2019stop} argumenta que uma explicação produzida sobre
-um modelo opaco é uma aproximação que pode induzir em erro. Nenhum dos dois trata de texto gerado por modelos de linguagem, pelo que a transposição é do
-autor e o que dela se retira é uma razão de desenho e não um resultado da literatura. É esta a razão pela qual a linguagem nunca produz
-factos neste sistema: os números provêm dos componentes que os calcularam, e o texto é composto a
-partir deles, conforme descrito na Secção~\ref{sec:sis_explicacao}.
+The explainability literature gives reasons to distrust it. \textcite{lipton2018mythos} argues that
+interpretability does not designate a single property and that a system should declare which of
+them it offers. \textcite{rudin2019stop} argues that an explanation produced over an opaque model
+is an approximation that may mislead. Neither deals with text generated by language models, so the
+transposition is the author's and what follows from it is a design reason and not a result of the
+literature. This is why language never produces facts in this system: the numbers come from the
+components that computed them, and the text is composed from those, as described in
+Section~\ref{sec:sis_explicacao}.
 
-\section{Deteção de anomalias em séries temporais financeiras}
+\section{Anomaly detection in financial time series}
 \label{sec:ctx_anomalias}
 
-Esta secção situa a primeira decisão do sistema no campo da deteção de anomalias e enuncia as
-famílias de método consideradas.
+This section situates the first decision of the system in the field of anomaly detection and states
+the families of method considered.
 
-A deteção de anomalias constitui uma área estabelecida, com uma taxonomia consolidada que separa os
-métodos pela forma como definem normalidade \autocite{chandola2009anomaly, pang2021deep}. Três
-famílias são relevantes para séries temporais financeiras.
+Anomaly detection is an established area, with a consolidated taxonomy that separates methods by
+the way they define normality \autocite{chandola2009anomaly, pang2021deep}. Three families are
+relevant for financial time series.
 
-A família estatística define normalidade a partir da distribuição local dos próprios dados,
-estimada numa janela deslizante, e assinala como anómalas as observações que dela se afastam além
-de um limiar. A explicação de uma deteção coincide com o cálculo que a produziu, o que a torna
-integralmente comunicável ao utilizador. Em contrapartida, supõe que a distribuição dos retornos é
-localmente estável.
+The statistical family defines normality from the local distribution of the data themselves,
+estimated in a rolling window, and flags as anomalous the observations that depart from it beyond a
+threshold. The explanation of a detection coincides with the computation that produced it, which
+makes it fully communicable to the user. In exchange, it assumes that the distribution of returns
+is locally stable.
 
-A família aprendida não supervisionada define normalidade a partir da estrutura geométrica dos
-dados. O Isolation Forest \autocite{liu2008isolation} identifica como anómalos os pontos que uma
-partição aleatória isola com poucos cortes; o Local Outlier Factor \autocite{breunig2000lof}
-identifica-os pela densidade reduzida face à dos seus vizinhos. Ambos dispensam rótulos e captam
-padrões multivariados que uma regra sobre uma única série não capta, ao custo de a decisão deixar
-de ser enunciável numa frase.
+The unsupervised learned family defines normality from the geometric structure of the data.
+Isolation Forest \autocite{liu2008isolation} identifies as anomalous the points that a random
+partition isolates with few cuts; the Local Outlier Factor \autocite{breunig2000lof} identifies
+them by their reduced density relative to that of their neighbours. Both dispense with labels and
+capture multivariate patterns that a rule over a single series does not capture, at the cost of the
+decision ceasing to be statable in one sentence.
 
-A família profunda aprende um modelo de normalidade através de uma rede \autocite{pang2021deep}.
-Oferece maior capacidade de representação, exige volumes de dados superiores e afasta-se do
-requisito de explicabilidade que estrutura este trabalho.
+The deep family learns a model of normality through a network \autocite{pang2021deep}. It offers
+greater representational capacity, requires larger volumes of data, and departs from the
+explainability requirement that structures this work.
 
-Uma restrição prática condiciona toda esta escolha. Em domínios financeiros vizinhos, como a
-deteção de fraude, os métodos não supervisionados ocupam posição central precisamente porque
-anomalias rotuladas são escassas e os padrões se alteram ao longo do tempo
-\autocite{ahmed2016financial}. A mesma condição verifica-se aqui: não existe um conjunto de dados
-em que tenha sido registado, dia a dia, que movimentos justificariam um alerta. Esta ausência
-determina a forma como o Capítulo~\ref{cap:avaliacao} pode avaliar o componente, e é a razão pela
-qual a avaliação assenta num critério derivado dos próprios dados em vez de um julgamento humano.
+A practical constraint conditions this whole choice. In neighbouring financial domains, such as
+fraud detection, unsupervised methods occupy a central position precisely because labelled
+anomalies are scarce and the patterns change over time \autocite{ahmed2016financial}. The same
+condition holds here: there is no dataset in which it has been recorded, day by day, which
+movements would justify an alert. This absence determines the way in which
+Chapter~\ref{cap:avaliacao} can evaluate the component, and is the reason why the evaluation rests
+on a criterion derived from the data themselves rather than on human judgement.
 
-A suposição de estabilidade local em que a família estatística assenta é confrontada e não
-escondida. Os modelos de volatilidade condicional, introduzidos por \textcite{engle1982arch} e
-generalizados por \textcite{bollerslev1986garch}, formalizam o agrupamento de volatilidade, ou seja
-a tendência de os períodos calmos e os períodos agitados ocorrerem em séries. Ambos os artigos
-formalizam o fenómeno sobre séries de inflação, pelo que a sua transposição para retornos de ações
-não é assumida: a Secção~\ref{sec:av_qi1} mede-a nos dados deste trabalho, comparando a janela de
-pesos iguais com uma variante que atribui maior peso às observações recentes. Uma janela deslizante
-acompanha parcialmente o fenómeno, uma vez que a norma contra a qual cada dia é comparado é
-reestimada diariamente a partir do passado próximo. A escolha não elimina o problema, e a medição
-referida quantifica o que custa mantê-la.
+The assumption of local stability on which the statistical family rests is confronted and not
+hidden. Conditional volatility models, introduced by \textcite{engle1982arch} and generalised by
+\textcite{bollerslev1986garch}, formalise volatility clustering, that is, the tendency of calm and
+agitated periods to occur in runs. Both papers formalise the phenomenon over inflation series, so
+its transposition to stock returns is not assumed: Section~\ref{sec:av_qi1} measures it on the data
+of this work, comparing the equally weighted window with a variant that assigns greater weight to
+recent observations. A rolling window follows the phenomenon in part, since the norm against which
+each day is compared is re-estimated daily from the near past. The choice does not eliminate the
+problem, and the measurement referred to quantifies what it costs to keep it.
 
-A comparação entre a família estatística e a família aprendida não permanece no plano do argumento.
-O Capítulo~\ref{cap:avaliacao} executa ambas sobre os mesmos dados e reporta o resultado obtido.
+The comparison between the statistical family and the learned family does not remain at the level
+of argument. Chapter~\ref{cap:avaliacao} runs both on the same data and reports the result
+obtained.
 
-\section{Representação de texto e recuperação semântica}
+\section{Text representation and semantic retrieval}
 \label{sec:ctx_texto}
 
-Esta secção percorre as formas de representar texto que tornam possível comparar notícias por
-significado, e enuncia o critério de avaliação da recuperação que delas decorre.
+This section surveys the ways of representing text that make it possible to compare news by
+meaning, and states the criterion for evaluating retrieval that follows from them.
 
-A comparação de notícias por significado depende inteiramente da representação adotada, e essa
-representação atravessou três gerações, esquematizadas na Figura~\ref{fig:ctx_geracoes} e
-detalhadas na Tabela~\ref{tab:ctx_texto}.
+Comparing news by meaning depends entirely on the representation adopted, and that representation
+went through three generations, sketched in Figure~\ref{fig:ctx_geracoes} and detailed in
+Table~\ref{tab:ctx_texto}.
 
 \begin{figure}[ht]
 \centering
@@ -245,225 +246,233 @@ detalhadas na Tabela~\ref{tab:ctx_texto}.
   \draw[->, thick, black!45] (a) -- (b);
   \draw[->, thick, black!45] (b) -- (c);
 \end{tikzpicture}
-\caption[Três gerações de representação de texto]{As três gerações de representação de texto. Cada
-uma resolve uma limitação identificada na anterior, e a terceira é a que permite comparar duas
-frases diretamente pela posição dos respetivos vetores.}
+\caption[Three generations of text representation]{The three generations of text representation.
+Each one resolves a limitation identified in the previous one, and the third is the one that allows
+two sentences to be compared directly by the position of their vectors.}
 \label{fig:ctx_geracoes}
 \end{figure}
 
-A primeira geração representa um documento pela frequência dos termos que contém. O modelo de
-espaço vetorial \autocite{salton1975vsm} é transparente e computacionalmente barato, e é cego a
-sinónimos: os termos ``rose'' e ``gained'' constituem, para esta representação, símbolos sem
-relação. Dentro da mesma geração existe uma segunda linha, oriunda de um quadro probabilístico
-distinto, a das funções de ordenação de que o BM25 \autocite{robertson2009bm25} é o representante
-corrente; ambas permanecem linhas de base fortes em recuperação de informação e partilham aquela
-cegueira. Em texto financeiro existe ainda uma variante especializada, os léxicos de domínio, que
-corrigem o facto de os dicionários de sentimento genéricos interpretarem incorretamente palavras
-correntes na linguagem financeira \autocite{loughran2011liability}. São integralmente
-transparentes, e ficam limitados ao vocabulário que foi compilado.
+The first generation represents a document by the frequency of the terms it contains. The vector
+space model \autocite{salton1975vsm} is transparent and computationally cheap, and it is blind to
+synonyms: the terms ``rose'' and ``gained'' are, for this representation, symbols without relation.
+Within the same generation there is a second line, coming from a distinct probabilistic framework,
+that of ranking functions of which BM25 \autocite{robertson2009bm25} is the current
+representative; both remain strong baselines in information retrieval and share that blindness. In
+financial text there is also a specialised variant, the domain lexicons, which correct the fact
+that generic sentiment dictionaries misread words that are common in financial language
+\autocite{loughran2011liability}. They are entirely transparent, and are limited to the vocabulary
+that was compiled.
 
-A segunda geração representa cada palavra como um vetor num espaço onde a proximidade traduz uso
-semelhante, aprendido a partir do contexto local \autocite{mikolov2013word2vec} ou da coocorrência
-global \autocite{pennington2014glove}. Esta representação aproxima sinónimos, resolvendo a limitação
-anterior, e introduz uma nova: cada palavra recebe um vetor único, independentemente da frase em
-que ocorre.
+The second generation represents each word as a vector in a space where proximity reflects similar
+use, learned from local context \autocite{mikolov2013word2vec} or from global co-occurrence
+\autocite{pennington2014glove}. This representation brings synonyms together, resolving the
+previous limitation, and introduces a new one: each word receives a single vector, regardless of
+the sentence in which it occurs.
 
-A terceira geração remove essa limitação. O Transformer \autocite{vaswani2017attention} tornou
-viável o processamento da frase completa com dependências de longo alcance, e o \gls{BERT}
-\autocite{devlin2019bert} produziu representações contextuais, nas quais o vetor de uma palavra
-depende das que a rodeiam. Um passo adicional é necessário para o problema aqui tratado: comparar
-duas frases com um modelo dessa natureza exigiria processá-las conjuntamente, uma vez por par, o
-que não é praticável sobre uma base com dezenas de milhares de casos. O \gls{SBERT}
-\autocite{reimers2019sbert} resolve esta questão produzindo um vetor por frase, calculado uma única
-vez, de modo que a comparação passa a ser uma operação aritmética entre vetores já existentes.
+The third generation removes that limitation. The Transformer \autocite{vaswani2017attention} made
+it feasible to process the complete sentence with long-range dependencies, and \gls{BERT}
+\autocite{devlin2019bert} produced contextual representations, in which the vector of a word
+depends on those surrounding it. An additional step is needed for the problem treated here:
+comparing two sentences with a model of that nature would require processing them jointly, once per
+pair, which is not practicable over a base with tens of thousands of cases. \gls{SBERT}
+\autocite{reimers2019sbert} resolves this by producing one vector per sentence, computed only once,
+so that the comparison becomes an arithmetic operation between vectors that already exist.
 
-A contribuição do \gls{SBERT} que importa a este trabalho não reside na arquitetura mas no objetivo
-de treino: os vetores são aprendidos de forma que a distância entre dois deles traduza semelhança
-de sentido. Os autores reportam que um codificador da família \gls{BERT} utilizado diretamente para
-comparar frases produz representações fracas para esse fim, ficando por vezes atrás da média
-simples de vetores de palavra \autocite{reimers2019sbert}. Daqui decorre que um codificador ajustado
-a outra tarefa não herda esta propriedade pelo facto de ter sido treinado no domínio adequado.
+The contribution of \gls{SBERT} that matters to this work does not lie in the architecture but in
+the training objective: the vectors are learned so that the distance between two of them reflects
+similarity of meaning. The authors report that an encoder of the \gls{BERT} family used directly to
+compare sentences produces weak representations for that purpose, at times falling behind the
+simple average of word vectors \autocite{reimers2019sbert}. It follows that an encoder tuned to
+another task does not inherit this property by virtue of having been trained in the appropriate
+domain.
 
 \begin{table}[!htbp]
-\caption[Abordagens de representação de texto]{As abordagens consideradas para representar notícias
-financeiras, com a representação que cada uma produz e as implicações da sua adoção.}
+\caption[Text representation approaches]{The approaches considered for representing financial news,
+with the representation each one produces and the implications of adopting it.}
 \label{tab:ctx_texto}
 \centering
 \small
 \begin{tabular}{L{0.22\textwidth} L{0.28\textwidth} L{0.36\textwidth}}
 \toprule
-\tabhead{Abordagem} & \tabhead{Representação} & \tabhead{Forças e limitações} \\
+\tabhead{Approach} & \tabhead{Representation} & \tabhead{Strengths and limitations} \\
 \midrule
-Contagem de termos \newline \autocite{salton1975vsm, robertson2009bm25}
-  & Frequência ponderada de palavras
-  & Transparente e rápida; cega a sinónimos \\
+Term counts \newline \autocite{salton1975vsm, robertson2009bm25}
+  & Weighted word frequency
+  & Transparent and fast; blind to synonyms \\
 \addlinespace
-Léxicos financeiros \newline \autocite{loughran2011liability}
-  & Listas de palavras com polaridade atribuída
-  & Totalmente transparente; limitada ao vocabulário compilado \\
+Financial lexicons \newline \autocite{loughran2011liability}
+  & Word lists with assigned polarity
+  & Fully transparent; limited to the compiled vocabulary \\
 \addlinespace
-Vetores de palavra \newline \autocite{mikolov2013word2vec, pennington2014glove}
-  & Um vetor fixo por palavra
-  & Aproxima sinónimos; um só sentido por palavra \\
+Word vectors \newline \autocite{mikolov2013word2vec, pennington2014glove}
+  & One fixed vector per word
+  & Brings synonyms together; a single sense per word \\
 \addlinespace
-Vetores de frase \newline \autocite{devlin2019bert, reimers2019sbert}
-  & Um vetor por frase, sensível ao contexto
-  & Compara frases diretamente; modelo maior e menos legível internamente \\
+Sentence vectors \newline \autocite{devlin2019bert, reimers2019sbert}
+  & One vector per sentence, sensitive to context
+  & Compares sentences directly; larger model, less legible internally \\
 \addlinespace
-Modelos de domínio \newline \autocite{liu2020finbert, huang2023finbert}
-  & Como acima, ajustada a texto financeiro
-  & Vocabulário do domínio; superioridade nesta tarefa não é automática \\
+Domain models \newline \autocite{liu2020finbert, huang2023finbert}
+  & As above, tuned to financial text
+  & Domain vocabulary; superiority on this task is not automatic \\
 \addlinespace
-Modelos de grande dimensão \newline \autocite{li2023llmfinance}
-  & Geração de texto sobre conhecimento amplo
-  & Capacidade elevada; dispendiosos, opacos e fora da restrição de gratuitidade \\
+Large models \newline \autocite{li2023llmfinance}
+  & Text generation over broad knowledge
+  & High capability; expensive, opaque and outside the free-of-charge constraint \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Para texto financeiro existem modelos treinados especificamente para o domínio
-\autocite{liu2020finbert, huang2023finbert}. A suposição natural
-é a de que sejam superiores nesta tarefa por essa razão. A suposição não é automaticamente
-verdadeira, e a Secção~\ref{sec:av_qi2} mede-a em vez de a assumir.
+For financial text there are models trained specifically for the domain
+\autocite{liu2020finbert, huang2023finbert}. The natural assumption is that they are superior on
+this task for that reason. The assumption is not automatically true, and
+Section~\ref{sec:av_qi2} measures it rather than assuming it.
 
-O trabalho inscreve-se na literatura mais vasta de processamento de linguagem natural aplicado a
-finanças. A revisão de \textcite{kearney2014textual} cobre o estado dessa área até 2014, dominado
-pelos léxicos de domínio e por classificadores supervisionados sobre contagens de palavras; as
-representações contextuais de frase utilizadas neste trabalho são posteriores e não constam dessa
-revisão. Existe ainda uma linha de investigação substancial que utiliza texto para antecipar
-movimentos de preço \autocite{xing2018nlffsurvey, ding2015deep}. O presente trabalho situa-se fora
-dessa linha por opção de desenho: o texto é aqui empregue para localizar casos anteriores
-comparáveis, cujo desfecho já ocorreu e já foi medido, e não para gerar uma previsão.
+The work belongs to the wider literature of natural language processing applied to finance. The
+review of \textcite{kearney2014textual} covers the state of that area up to 2014, dominated by
+domain lexicons and by supervised classifiers over word counts; the contextual sentence
+representations used in this work are later and do not appear in that review. There is also a
+substantial line of research that uses text to anticipate price movements
+\autocite{xing2018nlffsurvey, ding2015deep}. The present work stands outside that line by design
+choice: text is used here to locate comparable earlier cases, whose outcome has already occurred
+and has already been measured, and not to generate a forecast.
 
-A representação de cada notícia por um vetor converte a identificação de casos comparáveis num
-problema de recuperação de informação. A medida de proximidade adotada é a semelhança do cosseno,
-cuja mecânica é descrita na Secção~\ref{sec:met_recuperacao}. A operação é exata, uma vez que se
-percorre a totalidade da base de casos e se ordena o resultado, pelo que este não depende de
-qualquer aproximação. A escalas substancialmente superiores, a procura exaustiva pode ser
-substituída por um índice aproximado \autocite{johnson2021faiss} sem alteração da representação, o
-que constitui caminho de crescimento e não necessidade presente.
+Representing each news item by a vector turns the identification of comparable cases into an
+information retrieval problem. The proximity measure adopted is cosine similarity, whose mechanics
+are described in Section~\ref{sec:met_recuperacao}. The operation is exact, since the whole case
+base is scanned and the result ordered, so it does not depend on any approximation. At
+substantially larger scales, exhaustive search can be replaced by an approximate index
+\autocite{johnson2021faiss} without changing the representation, which is a path for growth and not
+a present necessity.
 
-Uma vez que a recuperação devolve uma lista ordenada, a sua avaliação recorre a medidas sensíveis à
-ordem \autocite{manning2008ir}. A adotada neste trabalho é a precisão nos $k$ primeiros resultados,
-ou seja a fração desses $k$ resultados que são relevantes. A definição de relevância, que é onde uma
-avaliação desta natureza se decide, é estabelecida na Secção~\ref{sec:met_recuperacao} juntamente
-com as linhas de base contra as quais o resultado é comparado.
+Since retrieval returns an ordered list, its evaluation resorts to order-sensitive measures
+\autocite{manning2008ir}. The one adopted in this work is precision at the first $k$ results, that
+is, the fraction of those $k$ results that are relevant. The definition of relevance, which is
+where an evaluation of this nature is decided, is established in Section~\ref{sec:met_recuperacao}
+together with the baselines against which the result is compared.
 
-\subsection{Recuperação com geração, e por que razão o sistema para antes dela}
+\subsection{Retrieval with generation, and why the system stops before it}
 
-A arquitetura hoje corrente para responder a uma pergunta a partir de um corpo de documentos é a
-geração aumentada por recuperação, na qual um recuperador seleciona passagens e um modelo de
-linguagem redige a resposta a partir delas \autocite{lewis2020rag}. A literatura sobre a família é
-extensa e encontra-se sistematizada \autocite{huang2026ragsurvey}.
+The architecture in current use for answering a question from a body of documents is
+retrieval-augmented generation, in which a retriever selects passages and a language model writes
+the answer from them \autocite{lewis2020rag}. The literature on the family is extensive and has
+been systematised \autocite{huang2026ragsurvey}.
 
-O sistema aqui descrito executa a primeira metade dessa arquitetura e detém-se antes da segunda, e a
-razão é a mesma que atravessa o trabalho. A recuperação devolve objetos verificáveis: um título, uma
-data, uma semelhança medida e um movimento de preço observado. A geração converte esses objetos numa
-afirmação em prosa, cuja fidelidade ao que foi recuperado é ela própria uma propriedade a avaliar, e
-que o destinatário deste sistema não tem meios para confrontar. A opção não decorre de limitação
-técnica, e a distinção deve ser feita com clareza: acrescentar a geração é possível e barato; o que
-não é barato é a avaliação de que ela não desloca o significado da evidência. Nenhuma comparação com
-uma arquitetura completa foi realizada neste trabalho, pelo que o que aqui se afirma é uma razão de
-desenho e não um resultado. A Secção~\ref{sec:sis_ciclo} descreve a camada de geração ancorada que
-chegou a ser construída e avaliada, e a razão pela qual não é exposta.
+The system described here executes the first half of that architecture and stops before the second,
+and the reason is the one that runs through the work. Retrieval returns verifiable objects: a
+headline, a date, a measured similarity and an observed price movement. Generation converts those
+objects into a statement in prose, whose faithfulness to what was retrieved is itself a property to
+be evaluated, and which the recipient of this system has no means to confront. The option does not
+follow from a technical limitation, and the distinction should be drawn clearly: adding generation
+is possible and cheap; what is not cheap is the evaluation that it does not displace the meaning of
+the evidence. No comparison with a complete architecture was carried out in this work, so what is
+asserted here is a design reason and not a result. Section~\ref{sec:sis_ciclo} describes the
+grounded generation layer that was in fact built and evaluated, and the reason why it is not
+exposed.
 
-\subsection{Corpora de notícias financeiras e rótulos de setor}
+\subsection{Financial news corpora and sector labels}
 
-A avaliação de recuperação sobre notícias financeiras exige um corpo de texto alinhado com preços, e
-esse alinhamento é o que distingue um corpus utilizável de uma coleção de títulos. O conjunto
-utilizado neste trabalho é o \gls{FNSPID} \autocite{dong2024fnspid}, que reúne notícias e séries de
-preços correspondentes e cuja construção está documentada.
+Evaluating retrieval over financial news requires a body of text aligned with prices, and that
+alignment is what distinguishes a usable corpus from a collection of headlines. The dataset used in
+this work is \gls{FNSPID} \autocite{dong2024fnspid}, which brings together news and the
+corresponding price series and whose construction is documented.
 
-A relevância entre duas notícias é aproximada, neste trabalho, pela pertença ao mesmo setor. A opção substitui uma anotação humana inexistente por um critério objetivo, e transporta a
-limitação correspondente. A validade de um agrupamento é mensurável, pela separação entre grupos
-\autocite{rousseeuw1987silhouettes} ou pela concordância entre agrupamentos alternativos corrigida
-para o acaso \autocite{vinh2010ami}. Nenhuma dessas medidas foi aplicada ao mapa setorial adotado. O que o rótulo garante é objetividade e reprodutibilidade, e não que o setor seja
-a partição mais informativa do corpus.
+Relevance between two news items is approximated, in this work, by belonging to the same sector.
+The option replaces a non-existent human annotation with an objective criterion, and carries the
+corresponding limitation. The validity of a grouping is measurable, by the separation between
+groups \autocite{rousseeuw1987silhouettes} or by the agreement between alternative groupings
+corrected for chance \autocite{vinh2010ami}. Neither of those measures was applied to the sector
+map adopted. What the label guarantees is objectivity and reproducibility, and not that the sector
+is the most informative partition of the corpus.
 
-\section{Estudos de evento e decomposição de retornos}
+\section{Event studies and return decomposition}
 \label{sec:ctx_evento}
 
-Esta secção apresenta o instrumento com que se mede o efeito de um acontecimento sobre o preço, bem
-como a correção estatística de que depende a separação entre a componente de empresa e a componente
-de mercado.
+This section presents the instrument with which the effect of an event on the price is measured, as
+well as the statistical correction on which the separation between the company component and the
+market component depends.
 
-O instrumento adotado é o estudo de evento, cuja formulação remonta a
-\textcite{fama1969adjustment}. O comportamento do método sobre retornos diários foi examinado por
-\textcite{brown1985daily}, que confrontam formas alternativas de estimar o retorno esperado e
-concluem que os procedimentos correntes, assentes na estimação do modelo de mercado por mínimos
-quadrados, permanecem bem especificados em janelas curtas em torno do acontecimento. O alcance
-desta conclusão é delimitado pelos próprios autores: a variante mais simples, que subtrai apenas a
-média histórica da ação, perde potência estatística e pode tornar-se mal especificada quando as
-datas dos acontecimentos coincidem. É este resultado que motiva a ordem de grandeza das
-janelas de um, três e cinco dias adotadas neste trabalho. A transposição não é direta, e a diferença
-está declarada na
-Secção~\ref{sec:met_recuperacao}, segundo a qual o valor apresentado ao utilizador é o retorno bruto
-e não o retorno anormal que aqueles autores estudam.
+The instrument adopted is the event study, whose formulation goes back to
+\textcite{fama1969adjustment}. The behaviour of the method over daily returns was examined by
+\textcite{brown1985daily}, who compare alternative ways of estimating the expected return and
+conclude that the current procedures, based on estimating the market model by least squares, remain
+well specified in short windows around the event. The reach of this conclusion is delimited by the
+authors themselves: the simplest variant, which subtracts only the historical mean of the stock,
+loses statistical power and may become misspecified when the event dates coincide. It is this
+result that motivates the order of magnitude of the one, three and five day windows adopted in this
+work. The transposition is not direct, and the difference is declared in
+Section~\ref{sec:met_recuperacao}, according to which the value presented to the user is the raw
+return and not the abnormal return that those authors study.
 
-A existência de uma relação estatística entre o texto publicado e os movimentos do mercado é
-observação antiga \autocite{tetlock2007media}. O verbo adequado é o da evidência de uma relação
-estatística, e não o da demonstração de causalidade.
+The existence of a statistical relation between published text and market movements is a long
+standing observation \autocite{tetlock2007media}. The appropriate verb is that of evidence of a
+statistical relation, and not that of a demonstration of causality.
 
-Um ponto metodológico condiciona a segunda pergunta do trabalho, a da separação entre a empresa e o
-mercado. Essa separação exige estimar a sensibilidade de cada ação ao mercado, e a estimativa é
-ruidosa, sobretudo em empresas voláteis ou com histórico curto. \textcite{blume1971risk} estabelece
-que os coeficientes assim estimados tendem a regredir para a média entre períodos sucessivos, ou
-seja que uma estimativa extrema num período tende a sê-lo menos no seguinte; daí decorreu a prática,
-corrente mas posterior ao próprio artigo, de encolher a estimativa com um peso fixo. Essa prática
-aplica a mesma correção a estimativas precisas e imprecisas. A alternativa adotada neste trabalho
-pondera o encolhimento pela imprecisão da própria estimativa \autocite{vasicek1973beta}, de modo que
-uma estimativa fiável é praticamente preservada e uma estimativa frágil é aproximada do valor de
-referência. A formulação é apresentada na Secção~\ref{sec:met_decomposicao}.
+One methodological point conditions the second question of the work, that of the separation between
+the company and the market. That separation requires estimating the sensitivity of each stock to
+the market, and the estimate is noisy, especially in volatile companies or those with a short
+history. \textcite{blume1971risk} establishes that the coefficients so estimated tend to regress
+towards the mean between successive periods, that is, that an extreme estimate in one period tends
+to be less so in the next; from this followed the practice, current but subsequent to the paper
+itself, of shrinking the estimate with a fixed weight. That practice applies the same correction to
+precise and imprecise estimates. The alternative adopted in this work weights the shrinkage by the
+imprecision of the estimate itself \autocite{vasicek1973beta}, so that a reliable estimate is
+practically preserved and a fragile one is brought closer to the reference value. The formulation
+is presented in Section~\ref{sec:met_decomposicao}.
 
-O enquadramento teórico que justifica a recusa de prever pertence igualmente a esta área. A
-hipótese dos mercados eficientes, na sua forma semiforte, sustenta que os preços refletem já a
-informação publicamente disponível \autocite{fama1970efficient}, do que decorre que movimentos
-futuros não deveriam ser sistematicamente previsíveis a partir dessa informação. Constitui uma das
-razões pelas quais o sistema mede o que já ocorreu em vez de projetar o que virá; a segunda, de
-natureza prática, é que apenas o passado é verificável por quem lê.
+The theoretical framing that justifies the refusal to forecast also belongs to this area. The
+efficient market hypothesis, in its semi-strong form, holds that prices already reflect publicly
+available information \autocite{fama1970efficient}, from which it follows that future movements
+should not be systematically predictable from that information. It is one of the reasons why the
+system measures what has already happened rather than projecting what is to come; the second, of a
+practical nature, is that only the past is verifiable by the reader.
 
-\section{Raciocínio baseado em casos}
+\section{Case-based reasoning}
 \label{sec:ctx_casos}
 
-Esta secção enquadra a terceira técnica do sistema numa linha estabelecida de inteligência
-artificial e delimita a parte dessa linha que o trabalho implementa.
+This section frames the third technique of the system within an established line of artificial
+intelligence and delimits the part of that line the work implements.
 
-O raciocínio baseado em casos \autocite{aamodt1994cbr} aborda um problema novo através da
-recuperação de problemas anteriores semelhantes e do aproveitamento do que sobre eles é conhecido,
-dispensando o recurso exclusivo a conhecimento geral do domínio. A fonte organiza o método num
-ciclo de quatro processos, a saber recuperar, reutilizar, rever e reter, e considera os quatro
-necessários à resolução completa de um problema.
+Case-based reasoning \autocite{aamodt1994cbr} approaches a new problem through the retrieval of
+similar earlier problems and the use of what is known about them, dispensing with exclusive
+recourse to general domain knowledge. The source organises the method into a cycle of four
+processes, namely retrieve, reuse, revise and retain, and considers all four necessary to the
+complete resolution of a problem.
 
-A técnica descrita na Secção~\ref{sec:met_recuperacao} implementa os dois primeiros e interrompe-se
-deliberadamente antes dos restantes: recupera casos semelhantes e apresenta o que neles foi medido,
-sem adaptar esse desfecho ao caso presente. A adaptação produziria uma expectativa sobre o que virá
-a acontecer, ou seja precisamente a previsão que o trabalho recusa. A implementação parcial de um
-ciclo estabelecido é, neste caso, uma consequência da restrição fundadora e não uma insuficiência.
+The technique described in Section~\ref{sec:met_recuperacao} implements the first two and stops
+deliberately before the rest: it retrieves similar cases and presents what was measured on them,
+without adapting that outcome to the present case. Adaptation would produce an expectation about
+what is going to happen, which is precisely the forecast the work refuses. The partial
+implementation of an established cycle is, in this case, a consequence of the founding constraint
+and not a shortcoming.
 
-A opção encontra apoio adicional do lado de quem lê. A investigação sobre explicação em ciências
-sociais estabelece que as pessoas procuram razões contrastivas e seletivas, e não uma enumeração
-exaustiva de tudo o que contribuiu para um resultado \autocite{miller2019explanation}. Um conjunto
-reduzido de casos concretos, com data e desfecho, corresponde melhor a essa expectativa do que um
-coeficiente. É por essa razão que cada alerta apresenta alguns precedentes e as quantidades exatas
-que sustentam a decisão, em vez da totalidade dos valores calculados.
+The option finds additional support on the side of the reader. Research on explanation in the
+social sciences establishes that people look for contrastive and selective reasons, and not for an
+exhaustive enumeration of everything that contributed to an outcome
+\autocite{miller2019explanation}. A small set of concrete cases, with dates and outcomes,
+corresponds better to that expectation than a coefficient. It is for that reason that each alert
+presents a few precedents and the exact quantities that support the decision, rather than the
+totality of the values computed.
 
-Há um segundo requisito, do mesmo lado, que condiciona não o conteúdo da explicação mas a frequência
-com que ela é entregue. Um destinatário exposto a avisos em excesso deixa de os processar, fenómeno
-documentado em domínios onde o custo de o ignorar é elevado \autocite{ancker2017alertfatigue}. A consequência é que a política de decisão não é acessória mas parte do desenho. Um alerta que não
-é lido vale o mesmo que um alerta que não foi enviado, e é por isso que o
-Capítulo~\ref{cap:sistema} trata os critérios de supressão com o cuidado que dedica aos métodos.
+There is a second requirement, on the same side, that conditions not the content of the explanation
+but the frequency with which it is delivered. A recipient exposed to excessive warnings stops
+processing them, a phenomenon documented in domains where the cost of ignoring them is high
+\autocite{ancker2017alertfatigue}. The consequence is that the decision policy is not incidental
+but part of the design. An alert that is not read is worth the same as an alert that was not sent,
+and that is why Chapter~\ref{cap:sistema} treats the suppression criteria with the care it devotes
+to the methods.
 
-\section{Explicabilidade e confiança em sistemas automáticos}
+\section{Explainability and trust in automated systems}
 \label{sec:ctx_xai}
 
-Esta secção situa o requisito de explicabilidade que atravessa o trabalho e apresenta as cautelas
-que a literatura associa à apresentação de explicações.
+This section situates the explainability requirement that runs through the work and presents the
+cautions that the literature associates with the presentation of explanations.
 
-A exigência de que um sistema demonstre como chegou a uma conclusão constitui uma área própria, com
-revisões consolidadas \autocite{arrieta2020xai, adadi2018peeking}. A área divide-se em duas vias,
-representadas na Figura~\ref{fig:ctx_xai}: os modelos transparentes, interpretáveis em si mesmos, e
-os métodos \emph{a posteriori}, que explicam um modelo opaco já treinado e que podem ser
-organizados pelo tipo de objeto que explicam \autocite{guidotti2018survey}.
+The demand that a system show how it reached a conclusion is an area in its own right, with
+consolidated reviews \autocite{arrieta2020xai, adadi2018peeking}. The area divides into two routes,
+shown in Figure~\ref{fig:ctx_xai}: transparent models, interpretable in themselves, and
+\emph{post-hoc} methods, which explain an opaque model already trained and which can be organised
+by the type of object they explain \autocite{guidotti2018survey}.
 
 \begin{figure}[ht]
 \centering
@@ -492,171 +501,173 @@ organizados pelo tipo de objeto que explicam \autocite{guidotti2018survey}.
   \draw[-, black!35] (tr) -- (trx);
   \draw[-, black!35] (ph) -- (phx);
 \end{tikzpicture}
-\caption[As duas vias para a explicabilidade]{As duas vias distinguidas pela literatura
-\autocite{arrieta2020xai, guidotti2018survey}: construir modelos transparentes por desenho, ou
-explicar um modelo opaco depois de treinado. Este trabalho segue a primeira.}
+\caption[The two routes to explainability]{The two routes distinguished by the literature
+\autocite{arrieta2020xai, guidotti2018survey}: building models that are transparent by design, or
+explaining an opaque model after training. This work follows the first.}
 \label{fig:ctx_xai}
 \end{figure}
 
-Os dois métodos \emph{a posteriori} de utilização mais generalizada operam de formas distintas. O
-\gls{LIME} ajusta um modelo simples na vizinhança de uma previsão individual, aproximando
-localmente o comportamento do modelo opaco \autocite{ribeiro2016lime}. O \gls{SHAP} atribui uma
-previsão às variáveis que a produziram recorrendo a valores de Shapley \autocite{lundberg2017shap}.
-Ambos são genéricos e ambos são úteis.
+The two most widely used \emph{post-hoc} methods operate in distinct ways. \gls{LIME} fits a simple
+model in the neighbourhood of an individual prediction, locally approximating the behaviour of the
+opaque model \autocite{ribeiro2016lime}. \gls{SHAP} attributes a prediction to the variables that
+produced it using Shapley values \autocite{lundberg2017shap}. Both are generic and both are useful.
 
-Ambos partilham, contudo, uma propriedade determinante neste contexto. Perante decisões de
-consequência séria, \textcite{rudin2019stop} defende o abandono dos modelos opacos em favor de
-modelos interpretáveis por construção, com o argumento de que toda a explicação \emph{a posteriori}
-constitui ela própria uma aproximação, e uma aproximação pode conduzir a leituras erradas. O
-utilizador recebe nesse caso dois objetos cuja relação não está em condições de avaliar, que são
-uma decisão e uma explicação que pode não lhe corresponder.
+Both share, however, a property that is decisive in this context. Faced with decisions of serious
+consequence, \textcite{rudin2019stop} argues for abandoning opaque models in favour of models
+interpretable by construction, on the grounds that every \emph{post-hoc} explanation is itself an
+approximation, and an approximation can lead to mistaken readings. The user receives in that case
+two objects whose relation they are not in a position to assess, namely a decision and an
+explanation that may not correspond to it.
 
-Este trabalho segue a via conservadora. Em lugar de explicar \emph{a posteriori} um modelo opaco,
-recorre a componentes em que a explicação e o cálculo coincidem. Um afastamento face a uma norma
-recente, uma repartição aditiva cuja soma reproduz o movimento observado e um conjunto de casos
-anteriores com os desfechos medidos constituem objetos apresentáveis por inteiro. A explicação
-não constitui um segundo objeto produzido sobre a decisão: é a decisão, enunciada por extenso.
+This work follows the conservative route. Instead of explaining an opaque model \emph{post hoc}, it
+resorts to components in which the explanation and the computation coincide. A departure from a
+recent norm, an additive split whose sum reproduces the observed movement, and a set of earlier
+cases with the outcomes measured are objects presentable in full. The explanation is not a second
+object produced over the decision: it is the decision, stated at length.
 
-Duas cautelas da literatura fecham esta secção, e ambas condicionam a organização do
-Capítulo~\ref{cap:avaliacao}.
+Two cautions from the literature close this section, and both condition the organisation of
+Chapter~\ref{cap:avaliacao}.
 
-A primeira é que interpretabilidade não designa uma propriedade única \autocite{lipton2018mythos},
-pelo que um sistema deve declarar o tipo de interpretabilidade que oferece em vez de reclamar o
-termo sem qualificação. Este trabalho oferece transparência de mecanismo, ou seja o utilizador pode
-seguir o cálculo que conduziu à decisão, e não oferece uma explicação causal do acontecimento no
-mundo.
+The first is that interpretability does not designate a single property
+\autocite{lipton2018mythos}, so a system should declare the type of interpretability it offers
+rather than claiming the term without qualification. This work offers transparency of mechanism,
+that is, the user can follow the computation that led to the decision, and does not offer a causal
+explanation of the event in the world.
 
-A segunda respeita ao efeito da própria explicação sobre quem a recebe. A confiança em sistemas
-automáticos falha em dois sentidos simétricos, com o utilizador a ignorar um aviso correto ou a
-aceitar um aviso incorreto, pelo que o objetivo não é maximizar a confiança mas torná-la ajustada à
-capacidade real do sistema \autocite{lee2004trust}. \textcite{bansal2021whole} acrescentam que a
-presença de uma explicação aumenta a probabilidade de aceitação da resposta do sistema quer esta
-esteja certa quer esteja errada, ou seja que o ganho observado não decorre de a pessoa passar a
-distinguir melhor os dois casos. As consequências de desenho que daqui decorrem estão descritas na
-Secção~\ref{sec:met_etica}.
+The second concerns the effect of the explanation itself on the person who receives it. Trust in
+automated systems fails in two symmetric directions, with the user ignoring a correct warning or
+accepting an incorrect one, so the objective is not to maximise trust but to make it appropriate to
+the real capability of the system \autocite{lee2004trust}. \textcite{bansal2021whole} add that the
+presence of an explanation increases the probability of accepting the system's answer whether it is
+right or wrong, that is, that the observed gain does not come from the person becoming better at
+distinguishing the two cases. The design consequences that follow are described in
+Section~\ref{sec:met_etica}.
 
-Acresce que afirmações de interpretabilidade exigem avaliação rigorosa e não se estabelecem por
-declaração \autocite{doshivelez2018considerations}. É por essa razão que o Capítulo~\ref{cap:avaliacao}
-mede o que é mensurável por procedimento automático e identifica explicitamente a parte que
-permanece por avaliar por ausência de um estudo controlado com utilizadores.
+Furthermore, claims of interpretability demand rigorous evaluation and are not established by
+declaration \autocite{doshivelez2018considerations}. It is for that reason that
+Chapter~\ref{cap:avaliacao} measures what is measurable by automatic procedure and explicitly
+identifies the part that remains unevaluated for lack of a controlled study with users.
 
-\section{Aprendizagem automática em ambiente de produção}
+\section{Machine learning in a production environment}
 \label{sec:ctx_producao}
 
-Esta secção reúne a literatura relativa ao componente aprendido do sistema, organizada segundo as
-três questões que a sua implantação levanta.
+This section brings together the literature relating to the learned component of the system,
+organised according to the three questions its deployment raises.
 
-A primeira questão é a de determinar contra que referência superior comparar um modelo simples.
-Conjuntos de árvores treinados por reforço do gradiente \autocite{friedman2001gbm} captam interações
-e efeitos não lineares que uma regressão logística não capta, e desempenham por isso essa função no
-Capítulo~\ref{cap:avaliacao}. Não se afirma que constituam o melhor método existente, uma vez que
-tal seria uma afirmação sobre um campo inteiro.
+The first question is that of determining against what stronger reference a simple model should be
+compared. Ensembles of trees trained by gradient boosting \autocite{friedman2001gbm} capture
+interactions and non-linear effects that a logistic regression does not capture, and therefore play
+that role in Chapter~\ref{cap:avaliacao}. It is not claimed that they constitute the best existing
+method, since that would be a claim about an entire field.
 
-A segunda questão respeita à honestidade do valor apresentado. Uma pontuação só é interpretável
-como probabilidade se estiver calibrada, e as pontuações em bruto de muitos classificadores não o
-estão; a calibração \emph{a posteriori} sobre um bloco de validação reservado corrige essa
-distorção \autocite{niculescu2005calibration}. A mesma fonte não favorece, contudo, a opção tomada
-neste trabalho: identifica a regressão logística como já bem calibrada à partida e conclui que,
-acima de cerca de mil casos de calibração, a regressão isotónica iguala ou supera a sigmoide. O
-modelo implantado é uma regressão logística com um bloco de validação muito acima desse limiar,
-pelo que ambas as afirmações se lhe aplicam. A opção justifica-se por medição e não por autoridade:
-a comparação das duas variantes sobre a mesma validação está reportada na
-Tabela~\ref{tab:av_alternativas}.
+The second question concerns the honesty of the value presented. A score is only interpretable as a
+probability if it is calibrated, and the raw scores of many classifiers are not; \emph{post-hoc}
+calibration over a held-out validation block corrects that distortion
+\autocite{niculescu2005calibration}. The same source does not, however, favour the option taken in
+this work: it identifies logistic regression as already well calibrated to begin with and concludes
+that, above roughly a thousand calibration cases, isotonic regression matches or exceeds the
+sigmoid. The deployed model is a logistic regression with a validation block far above that
+threshold, so both statements apply to it. The option is justified by measurement and not by
+authority: the comparison of the two variants over the same validation set is reported in
+Table~\ref{tab:av_alternativas}.
 
-Uma via alternativa foi considerada e não adotada. A predição conformal devolve um conjunto de
-rótulos com uma garantia livre de distribuição, válida em amostras finitas
-\autocite{vovk2005algorithmic, angelopoulos2023conformal}. Duas precisões determinam que não é aplicável nas condições deste trabalho. A cobertura da
-variante corrente é marginal: vale em média sobre os casos, e não caso a caso. E a garantia exige
-permutabilidade entre o bloco de calibração e o de teste, hipótese que a divisão cronológica com
-embargo da Secção~\ref{sec:met_triagem} recusa por construção. A Secção~\ref{sec:con_futuro} retoma o método
-como caminho a explorar.
+An alternative route was considered and not adopted. Conformal prediction returns a set of labels
+with a distribution-free guarantee, valid in finite samples \autocite{vovk2005algorithmic,
+angelopoulos2023conformal}. Two clarifications determine that it is not applicable under the
+conditions of this work. The coverage of the current variant is marginal: it holds on average over
+cases, and not case by case. And the guarantee requires exchangeability between the calibration
+block and the test block, an assumption that the chronological split with embargo of
+Section~\ref{sec:met_triagem} refuses by construction. Section~\ref{sec:con_futuro} returns to the
+method as a path to explore.
 
-A terceira questão é a da permanência do desempenho ao longo do tempo. Um modelo implantado enfrenta
-alteração da distribuição dos dados que observa, e a literatura de deriva de conceito estabelece a
-taxonomia dessa mudança e as estratégias de deteção e adaptação \autocite{gama2014survey}. Este
-trabalho mede a deriva sobre os seus próprios dados em vez de a assumir ausente.
+The third question is that of the persistence of performance over time. A deployed model faces
+change in the distribution of the data it observes, and the concept drift literature establishes
+the taxonomy of that change and the strategies for detecting and adapting to it
+\autocite{gama2014survey}. This work measures drift on its own data rather than assuming it absent.
 
-Existe, por fim, um custo que não é captado por nenhuma métrica de qualidade.
-\textcite{sculley2015debt} estabelecem que os componentes de aprendizagem automática acumulam
-manutenção oculta, em particular através do emaranhamento entre peças e de dependências de dados
-instáveis e não declaradas. O Capítulo~\ref{cap:conclusoes} regressa a este ponto com um exemplo
-medido no presente sistema, em que parte do ciclo de aprendizagem se interrompeu sem que qualquer
-erro fosse registado.
+There is, finally, a cost that is captured by no quality metric. \textcite{sculley2015debt}
+establish that machine learning components accumulate hidden maintenance, in particular through
+entanglement between parts and through unstable, undeclared data dependencies.
+Chapter~\ref{cap:conclusoes} returns to this point with an example measured in the present system,
+in which part of the learning cycle stopped without any error being recorded.
 
-\section{Síntese e posicionamento do trabalho}
+\section{Synthesis and positioning of the work}
 \label{sec:ctx_sintese}
 
-Esta secção localiza o trabalho relativamente à revisão apresentada e enuncia as decisões de âmbito
-que dela decorrem.
+This section locates the work with respect to the review presented and states the scope decisions
+that follow from it.
 
-A revisão permite delimitar com precisão o espaço em que o trabalho se inscreve, e esse espaço não
-constitui um vazio técnico. Cada componente utilizado existe, está publicado e está avaliado, como
-a Tabela~\ref{tab:ctx_posicionamento} torna explícito.
+The review allows the space in which the work is inscribed to be delimited precisely, and that
+space is not a technical void. Every component used exists, is published and is evaluated, as
+Table~\ref{tab:ctx_posicionamento} makes explicit.
 
 \begin{table}[!htbp]
-\caption[Posicionamento do trabalho face à literatura]{Cada componente do sistema existe na
-literatura de forma isolada. O que não existe é a sua combinação sob a restrição de custo nulo, com
-a evidência entregue ao utilizador no momento em que a afirmação lhe é apresentada.}
+\caption[Positioning of the work with respect to the literature]{Every component of the system
+exists in the literature in isolation. What does not exist is their combination under the
+zero-cost constraint, with the evidence delivered to the user at the moment the statement is
+presented.}
 \label{tab:ctx_posicionamento}
 \centering
 \small
 \begin{tabular}{L{0.24\textwidth} L{0.30\textwidth} L{0.34\textwidth}}
 \toprule
-\tabhead{Pergunta} & \tabhead{O que a literatura oferece} & \tabhead{O que falta ao público-alvo} \\
+\tabhead{Question} & \tabhead{What the literature offers} & \tabhead{What the target audience
+lacks} \\
 \midrule
-É invulgar?
-  & Deteção de anomalias, estatística e aprendida \autocite{chandola2009anomaly, liu2008isolation}
-  & Uma medida relativa à norma da própria empresa, comunicada em linguagem acessível \\
+Is it unusual?
+  & Anomaly detection, statistical and learned \autocite{chandola2009anomaly, liu2008isolation}
+  & A measure relative to the company's own norm, communicated in accessible language \\
 \addlinespace
-É a empresa ou o mercado?
-  & Estudo de evento e estimação de sensibilidade \autocite{brown1985daily, vasicek1973beta}
-  & Disponibilidade fora de um terminal profissional \\
+Is it the company or the market?
+  & Event study and sensitivity estimation \autocite{brown1985daily, vasicek1973beta}
+  & Availability outside a professional terminal \\
 \addlinespace
-Já aconteceu antes?
-  & Representação de frases e recuperação \autocite{reimers2019sbert, manning2008ir}
-  & Uma base de casos com desfechos medidos, e não recordados \\
+Has it happened before?
+  & Sentence representation and retrieval \autocite{reimers2019sbert, manning2008ir}
+  & A case base with measured outcomes, and not recalled ones \\
 \addlinespace
-Por que razão acreditar?
-  & Explicabilidade e literatura de confiança \autocite{rudin2019stop, lee2004trust}
-  & A evidência entregue junto da afirmação e verificável no momento da leitura \\
+Why believe it?
+  & Explainability and the trust literature \autocite{rudin2019stop, lee2004trust}
+  & The evidence delivered alongside the statement and verifiable at the moment of reading \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-A lacuna não é, portanto, de método, mas de integração sob restrição. Os produtos que respondem às três perguntas são terminais profissionais, indisponíveis em regime
-gratuito ou acessível ao investidor particular. O seu preço não é publicado de forma citável, e é
-a indisponibilidade, e não um valor concreto, que sustenta o argumento. Os produtos
-gratuitos que declaram responder à terceira entregam uma afirmação sem a evidência que a sustenta.
-E os componentes académicos que resolveriam cada parte foram avaliados isoladamente, sobre corpora
-de referência, e não como um sistema em funcionamento contínuo contra fontes reais.
+The gap is therefore not one of method, but of integration under constraint. The products that
+answer the three questions are professional terminals, unavailable free of charge or at a price
+accessible to the retail investor. Their price is not published in a citable form, and it is
+unavailability, and not a concrete value, that supports the argument. The free products that claim
+to answer the third deliver a statement without the evidence that supports it. And the academic
+components that would solve each part were evaluated in isolation, over reference corpora, and not
+as a system in continuous operation against real sources.
 
-Esta observação determina a distinção que atravessa o trabalho e que o Capítulo~\ref{cap:sistema}
-retoma ao justificar a ausência de um modelo de linguagem na composição das mensagens. Uma frase
-gerada é uma afirmação: apresenta-se ao leitor num registo fluente e não lhe fornece meios para a
-confrontar com aquilo que a sustenta. Uma frase composta a partir de objetos calculados é uma
-afirmação acompanhada da evidência, na qual cada valor apresentado remete para a medição que o
-produziu e o leitor pode confirmar cada elemento no momento em que o lê. É esta a propriedade que o sistema procura preservar, e é ela que fixa a natureza da contribuição.
-Não é a formulação de um método novo. É a seleção, integração e avaliação crítica de métodos
-existentes num sistema funcional, sob restrições declaradas, e com os resultados que não favorecem
-as opções tomadas incluídos na avaliação.
+This observation determines the distinction that runs through the work and that
+Chapter~\ref{cap:sistema} takes up when justifying the absence of a language model in the
+composition of the messages. A generated sentence is a statement: it presents itself to the reader
+in a fluent register and gives no means of confronting it with what supports it. A sentence
+composed from computed objects is a statement accompanied by the evidence, in which every value
+presented points back to the measurement that produced it and the reader can confirm each element
+at the moment of reading. This is the property the system seeks to preserve, and it is what fixes
+the nature of the contribution. It is not the formulation of a new method. It is the selection,
+integration and critical evaluation of existing methods in a working system, under declared
+constraints, and with the results that do not favour the options taken included in the evaluation.
 
-Quatro decisões de âmbito decorrem deste posicionamento, e cada uma exclui deliberadamente uma
-classe de funcionalidade.
+Four scope decisions follow from this positioning, and each one deliberately excludes a class of
+functionality.
 
 \begin{description}
-  \item[Responder às três perguntas, e apenas a essas.] Não são incorporadas funcionalidades que
-        não sirvam uma delas, o que mantém o sistema com dimensão compatível com a sua explicação
-        integral.
-  \item[Não produzir previsões de preço.] Nem direção, nem alvo, nem recomendação. Além da razão de
-        verificabilidade enunciada no Capítulo~\ref{cap:introducao}, aplica-se o enquadramento
-        teórico da Secção~\ref{sec:ctx_evento} \autocite{fama1970efficient}.
-  \item[Não gerir carteiras nem prestar aconselhamento.] O sistema não conhece as posições do
-        utilizador e não lhe indica que ação tomar, o que evita a recolha de dados pessoais e
-        mantém o trabalho fora da fronteira do aconselhamento financeiro regulado.
-  \item[Utilizar exclusivamente fontes gratuitas.] A restrição torna o sistema acessível ao público
-        a que se destina e converte as limitações resultantes em quantidades medidas e reportadas.
+  \item[Answer the three questions, and only those.] No functionality is incorporated that does not
+        serve one of them, which keeps the system at a size compatible with explaining it in full.
+  \item[Produce no price forecasts.] Neither direction, nor target, nor recommendation. Besides the
+        verifiability reason stated in Chapter~\ref{cap:introducao}, the theoretical framing of
+        Section~\ref{sec:ctx_evento} applies \autocite{fama1970efficient}.
+  \item[Manage no portfolios and give no advice.] The system does not know the user's positions and
+        does not tell them what action to take, which avoids collecting personal data and keeps the
+        work outside the boundary of regulated financial advice.
+  \item[Use free sources exclusively.] The constraint makes the system accessible to the audience
+        it addresses and turns the resulting limitations into measured and reported quantities.
 \end{description}
 
-A última decisão tem um custo real que importa enunciar sem atenuação. As notícias chegam com
-atraso e a cobertura dos acontecimentos é incompleta. O Capítulo~\ref{cap:sistema} quantifica
-ambas as limitações e o Capítulo~\ref{cap:conclusoes} avalia as suas consequências.
+The last decision has a real cost that should be stated without mitigation. News arrives late and
+the coverage of events is incomplete. Chapter~\ref{cap:sistema} quantifies both limitations and
+Chapter~\ref{cap:conclusoes} assesses their consequences.
