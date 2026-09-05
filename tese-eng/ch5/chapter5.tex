@@ -1,25 +1,26 @@
-\chapter{Casos de estudo}
+\chapter{Case studies}
 \label{cap:avaliacao}
 
-Os dois capítulos anteriores descreveram os métodos escolhidos e o sistema que os põe a funcionar.
-Este determina o que cada um deles vale. Descreve-se primeiro o desenho experimental e as métricas
-utilizadas. Seguem-se quatro casos de estudo: três correspondem às questões de investigação, e o
-quarto ao comportamento do sistema em operação, onde as escolhas dos capítulos anteriores encontram
-dados que não estavam disponíveis quando foram tomadas.
+The two previous chapters described the methods chosen and the system that puts them to work. This
+one determines what each of them is worth. The experimental design and the metrics used are
+described first. Four case studies follow: three correspond to the research questions, and the
+fourth to the behaviour of the system in operation, where the choices of the previous chapters meet
+data that were not available when they were made.
 
-\section{Desenho experimental e métricas}
+\section{Experimental design and metrics}
 \label{sec:av_desenho}
 
-Esta secção fixa a forma comum a todos os casos de estudo e define as medidas empregues, com
-especial atenção ao valor que cada uma assume na ausência de informação.
+This section fixes the form common to all the case studies and defines the measures employed, with
+particular attention to the value each one takes in the absence of information.
 
-Cada caso de estudo segue quatro passos, representados na Figura~\ref{fig:av_forma}: a pergunta, o
-procedimento de medição e a alternativa contra a qual a comparação é feita, o resultado obtido, e o
-que esse resultado não permite concluir. O quarto passo é o que distingue uma avaliação de uma
-demonstração. Os valores medidos sobre conjuntos históricos congelados são produzidos por procedimentos
-automáticos com semente fixa e reproduzem-se exatamente. Duas classes de valor não têm essa propriedade, e são identificadas onde aparecem. Os valores
-lidos do sistema em operação são instantâneos datados, que crescem com o canal. Os que dependem de
-cotações reajustadas pela fonte podem variar na terceira casa decimal.
+Each case study follows four steps, shown in Figure~\ref{fig:av_forma}: the question, the
+measurement procedure and the alternative against which the comparison is made, the result
+obtained, and what that result does not allow to be concluded. The fourth step is what distinguishes
+an evaluation from a demonstration. The values measured over frozen historical sets are produced by
+automatic procedures with a fixed seed and reproduce exactly. Two classes of value do not have that
+property, and are identified where they appear. The values read from the system in operation are
+dated snapshots, which grow with the channel. Those that depend on quotes readjusted by the source
+may vary in the third decimal place.
 
 \begin{figure}[ht]
 \centering
@@ -43,22 +44,23 @@ cotações reajustadas pela fonte podem variar na terceira casa decimal.
   \node[font=\scriptsize, text=black!60, align=center] at ($(fp)!0.5!(fn) + (0,-1.05)$)
     {the two errors cost different things, and no measure in this chapter treats them as equal};
 \end{tikzpicture}
-\caption[A forma comum aos quatro casos de estudo]{A forma seguida por todos os casos de estudo. O
-quarto passo delimita o alcance de cada resultado. Em baixo, os dois tipos de erro que as medidas
-desta secção equilibram, e o custo distinto de cada um no domínio de aplicação.}
+\caption[The form common to the four case studies]{The form followed by all the case studies. The
+fourth step delimits the reach of each result. Below, the two types of error that the measures of
+this section balance, and the distinct cost of each one in the application domain.}
 \label{fig:av_forma}
 \end{figure}
 
-Todas as medidas assentam nas quatro combinações entre o que o sistema afirma e o que se verifica.
-A precisão é a fração de acertos entre as ocasiões em que o sistema falou,
-$\mathrm{VP}/(\mathrm{VP}+\mathrm{FP})$; a cobertura, também chamada \emph{recall}, é a fração dos
-casos relevantes que foram assinalados, $\mathrm{VP}/(\mathrm{VP}+\mathrm{FN})$. As duas variam em
-sentidos opostos, e uma regra que assinale quase tudo atinge cobertura elevada com precisão baixa.
+All the measures rest on the four combinations between what the system claims and what is
+observed. Precision is the fraction of correct calls among the occasions on which the system spoke,
+$\mathrm{TP}/(\mathrm{TP}+\mathrm{FP})$; recall is the fraction of the relevant cases that were
+flagged, $\mathrm{TP}/(\mathrm{TP}+\mathrm{FN})$. The two vary in opposite directions, and a rule
+that flags almost everything reaches high recall with low precision.
 
-O $F_1$ é a média harmónica das duas, $2PC/(P+C)$, e aproxima-se do pior dos dois valores, o que
-impede que um extremo seja premiado. Para o \emph{z}-score, com precisão $0.381$ e cobertura
-$0.800$, resulta $0.516$; para a regra de limiar fixo, com precisão $0.122$ e cobertura
-$0.992$, resulta $0.218$.
+$F_1$ is the harmonic mean of
+the two, $2PC/(P+C)$, and stays close to the worse of the two values, which prevents an extreme from
+being rewarded. For the \emph{z}-score, with precision $0.381$ and recall $0.800$, it gives
+$0.516$; for the fixed threshold rule, with precision $0.122$ and recall $0.992$, it gives
+$0.218$.
 
 A precisão@$k$ aplica-se à recuperação, que devolve uma lista ordenada de que o utilizador lê apenas
 o início. Mede a fração dos $k$ primeiros resultados que são relevantes \autocite{manning2008ir},
@@ -82,67 +84,71 @@ e este capítulo documenta três ocasiões em que isso sucedeu. A Tabela~\ref{ta
 esse valor para cada medida.
 
 \begin{table}[!htbp]
-\caption[As medidas utilizadas e o valor que cada uma tem sem informação]{Cada medida, a pergunta a
-que responde, o valor que um método sem informação obtém, e o caso de estudo em que é utilizada. A
-coluna central é a que impede a leitura otimista de uma percentagem isolada.}
+\caption[The measures used and the value each one has without information]{Each measure, the
+question it answers, the value a method without information obtains, and the case study in which it
+is used. The central column is the one that prevents the optimistic reading of an isolated
+percentage.}
 \label{tab:av_metricas}
 \centering
 \small
 \begin{tabular}{L{0.17\textwidth} L{0.33\textwidth} L{0.24\textwidth} C{0.11\textwidth}}
 \toprule
-\tabhead{Medida} & \tabhead{Responde a} & \tabhead{Valor sem informação} & \tabhead{Utilizada em} \\
+\tabhead{Measure} & \tabhead{Answers} & \tabhead{Value without information} &
+\tabhead{Used in} \\
 \midrule
-Amplitude de disparo & O detetor comporta-se do mesmo modo em empresas distintas? &
-zero é o ótimo, e é atingível sem informação & \gls{QI}1 \\
+Firing-rate spread & Does the detector behave the same way in distinct companies? &
+zero is the optimum, and is attainable without information & \gls{QI}1 \\
 \addlinespace
-$F_1$ & Acerta quando fala, e fala quando devia? & depende dos dados & \gls{QI}1 \\
+$F_1$ & Is it right when it speaks, and does it speak when it should? & depends on the data &
+\gls{QI}1 \\
 \addlinespace
-Precisão@5 & Das cinco apresentadas, quantas são relevantes? & $0.240$, medido por escolha
-aleatória & \gls{QI}2 \\
+Precision@5 & Of the five presented, how many are relevant? & $0.240$, measured by random
+choice & \gls{QI}2 \\
 \addlinespace
-\gls{PRAUC} & Ordena bem, qualquer que seja o limiar? & $0.378$, a prevalência do bloco de teste &
-\gls{QI}3 \\
+\gls{PRAUC} & Does it rank well, whatever the threshold? & $0.378$, the prevalence of the test
+block & \gls{QI}3 \\
 \addlinespace
-Índice de Brier & A percentagem anunciada corresponde à frequência observada? & $0.622$, obtido
-por anunciar sempre a unidade & \gls{QI}3 \\
+Brier score & Does the percentage announced match the observed frequency? & $0.622$, obtained by
+always announcing one & \gls{QI}3 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-A primeira linha da Tabela~\ref{tab:av_metricas} é a única medida do capítulo que não utiliza
-rótulos. A amplitude de disparo é a diferença entre a taxa a que o detetor assinala na empresa em que mais
-fala e a taxa na empresa em que menos fala. Assenta num único princípio: um detetor universal deve
-comportar-se de forma semelhante em empresas distintas. A sua propriedade menos
-evidente, e que a Secção~\ref{sec:av_qi1} desenvolve, é a de que o ótimo é atingível sem qualquer
-informação.
+The first row of Table~\ref{tab:av_metricas} is the only measure in the chapter that uses no
+labels. The firing-rate spread is the difference between the rate at which the detector flags in
+the company where it speaks most and the rate in the company where it speaks least. It rests on a
+single principle: a universal detector should behave in a similar way in distinct companies. Its
+least obvious property, and one that Section~\ref{sec:av_qi1} develops, is that the optimum is
+attainable without any information.
 
-\section{Deteção consistente entre empresas}
+\section{Detection consistent across companies}
 \label{sec:av_qi1}
 
-O primeiro caso de estudo responde à \gls{QI}1: um \emph{z}-score deslizante deteta movimentos
-invulgares de forma mais consistente entre empresas do que uma regra de limiar fixo. A resposta é
-afirmativa, com uma margem de mais de vinte vezes na medida principal.
+The first case study answers \gls{QI}1: a rolling \emph{z}-score detects unusual movements more
+consistently across companies than a fixed threshold rule. The answer is affirmative, with a margin
+of more than twenty times on the principal measure.
 
-\subsection{Procedimento}
+\subsection{Procedure}
 
-A avaliação utiliza três anos de cotações diárias de quinze empresas de grande capitalização, entre
-junho de 2023 e junho de 2026, o que corresponde a aproximadamente setecentos e cinquenta dias por
-empresa. O conjunto é distinto da lista de doze empresas monitorizadas em produção, pela razão
-enunciada na Secção~\ref{sec:met_dados}: a avaliação exige variedade de volatilidade, e a lista
-implantada é uma decisão de produto.
+The evaluation uses three years of daily quotes from fifteen large-capitalisation companies,
+between June 2023 and June 2026, which corresponds to approximately seven hundred and fifty days
+per company. The set is distinct from the list of twelve companies monitored in production, for the
+reason stated in Section~\ref{sec:met_dados}: the evaluation requires variety of volatility, and
+the deployed list is a product decision.
 
-O argumento principal não recorre a rótulos. Um detetor destinado a assinalar dias raros deve
-disparar a uma taxa semelhante em empresas distintas; se dispara com frequência elevada numa e
-raramente noutra, o que está a medir é a volatilidade da empresa e não a raridade do dia. Como
-argumento de apoio utiliza-se um rótulo aproximado, que classifica como extremo um dia situado no
-percentil noventa e nove dos retornos da própria empresa. O rótulo é imperfeito, por ser ele próprio
-relativo à volatilidade, e ocupa por isso a posição secundária.
+The principal argument uses no labels. A detector meant to flag rare days should fire at a similar
+rate in distinct companies; if it fires frequently in one and rarely in another, what it is
+measuring is the volatility of the company and not the rarity of the day. As a supporting argument
+an approximate label is used, which classifies as extreme a day in the ninety-ninth percentile of
+the company's own returns. The label is imperfect, being itself relative to volatility, and
+therefore occupies the secondary position.
 
-\subsection{Resultado}
+\subsection{Result}
 
-A Figura~\ref{fig:av_amplitude} resume as duas medidas. É a primeira que sustenta a conclusão: o
-que distingue os métodos não é o nível a que disparam, mas o facto de o limiar fixo acompanhar a
-volatilidade de cada ação enquanto o \emph{z}-score se mantém quase constante entre elas.
+Figure~\ref{fig:av_amplitude} summarises the two measures. It is the first that supports the
+conclusion: what distinguishes the methods is not the level at which they fire, but the fact that
+the fixed threshold follows the volatility of each stock while the \emph{z}-score stays almost
+constant across them.
 
 
 \begin{figure}[ht]
@@ -174,56 +180,58 @@ volatilidade de cada ação enquanto o \emph{z}-score se mantém quase constante
 \addplot[fill=black!30, draw=black!60] coordinates {(zscore,0.516) [0.516] (fixo,0.218) [0.218]};
 \end{axis}
 \end{tikzpicture}
-\caption[As duas medidas da primeira questão]{As duas medidas, lado a lado. Em A, a diferença entre
-a taxa máxima e a taxa mínima entre as quinze empresas; o limiar fixo assinala $0.9\%$ dos dias na
-empresa mais calma e $35.3\%$ na mais volátil, enquanto o \emph{z}-score se mantém entre $1.6\%$
-e $3.1\%$ em todas. Em B, o desempenho contra o rótulo aproximado.}
+\caption[The two measures of the first question]{The two measures, side by side. In A, the
+difference between the maximum and the minimum rate across the fifteen companies; the fixed
+threshold flags $0.9\%$ of the days in the calmest company and $35.3\%$ in the most volatile, while
+the \emph{z}-score stays between $1.6\%$ and $3.1\%$ in all of them. In B, the performance against
+the approximate label.}
 \label{fig:av_amplitude}
 \end{figure}
 
-A amplitude da taxa de disparo é de $0.015$ para o \emph{z}-score e de $0.344$ para o limiar
-fixo, uma diferença superior a vinte vezes. Contra o rótulo aproximado, o \emph{z}-score obtém
-$F_1 = 0.516$ e o limiar fixo $0.218$.
+The firing-rate spread is $0.015$ for the \emph{z}-score and $0.344$ for the fixed threshold, a
+difference of more than twenty times. Against the approximate label, the \emph{z}-score obtains
+$F_1 = 0.516$ and the fixed threshold $0.218$.
 
-A comparação envolve uma assimetria de tratamento. A janela do \emph{z}-score é variada mais adiante
-nesta secção, ao passo que o limiar de três por cento da regra fixa é o valor convencional e não foi
-otimizado. O que a comparação estabelece com segurança não é que nenhum limiar fixo obteria melhor
-resultado, mas que um limiar fixo mede uma quantidade diferente da pretendida, porque a mesma
-percentagem corresponde a raridades distintas em empresas distintas. Este argumento não depende do
-valor escolhido.
+The comparison involves an asymmetry of treatment. The window of the \emph{z}-score is varied
+later in this section, whereas the three per cent threshold of the fixed rule is the conventional
+value and was not optimised. What the comparison establishes with confidence is not that no fixed
+threshold would obtain a better result, but that a fixed threshold measures a quantity different
+from the one intended, because the same percentage corresponds to distinct rarities in distinct
+companies. This argument does not depend on the value chosen.
 
-\subsection{O que a medida principal não exclui}
+\subsection{What the principal measure does not exclude}
 
-A amplitude da taxa de disparo tem o zero como ótimo, e esse ótimo é atingível por um método sem
-qualquer informação. Um detetor que assinalasse em cada empresa uma fração fixa de dias escolhidos
-ao acaso apresentaria amplitude praticamente nula, superando o \emph{z}-score precisamente na medida
-que esta secção elege como principal. A afirmação decorre da construção do método e não exige
-execução.
+The firing-rate spread has zero as its optimum, and that optimum is attainable by a method with no
+information at all. A detector that flagged in each company a fixed fraction of days chosen at
+random would show a practically null spread, beating the \emph{z}-score precisely on the measure
+this section elects as principal. The claim follows from the construction of the method and
+requires no execution.
 
-A consequência não é a invalidação da medida, mas a obrigação de a ler em conjunto com a segunda, e
-é essa a razão de existirem duas. A amplitude exclui o limiar fixo, que dispara em função da
-volatilidade da empresa e não da raridade do dia. O $F_1$ exclui o disparo aleatório, que se situa
-ao nível do acaso contra qualquer rótulo. Nenhuma das duas medidas é suficiente isoladamente, e
-apenas a regra deslizante satisfaz ambas.
+The consequence is not that the measure is invalid, but that it must be read together with the
+second, and that is why there are two. The spread excludes the fixed threshold, which fires as a
+function of the volatility of the company and not of the rarity of the day. $F_1$ excludes random
+firing, which sits at the level of chance against any label. Neither measure is sufficient on its
+own, and only the rolling rule satisfies both.
 
 
-Regista-se ainda uma assimetria no padrão de evidência aplicado ao longo do capítulo. Os valores
-desta secção e da seguinte são pontos, sem intervalo de confiança, ao passo que os da
-Secção~\ref{sec:av_qi3}, onde reside o resultado que contraria a hipótese inicial, são acompanhados
-de reamostragem por grupos. A justificação parcial reside na ordem de grandeza das diferenças aqui
-observadas, que nenhuma reamostragem plausível inverteria. A justificação não é completa, uma vez
-que dias da mesma empresa também não constituem observações independentes neste caso, pela mesma
-razão de agrupamento de volatilidade invocada mais adiante.
+An asymmetry in the standard of evidence applied throughout the chapter should also be recorded.
+The values of this section and of the next are points, without confidence intervals, whereas those
+of Section~\ref{sec:av_qi3}, where the result that contradicts the initial hypothesis resides, come
+with resampling by groups. The partial justification lies in the order of magnitude of the
+differences observed here, which no plausible resampling would reverse. The justification is not
+complete, since days of the same company are also not independent observations in this case, for
+the same reason of volatility clustering invoked later on.
 
-\subsection{Comparação com detetores aprendidos}
+\subsection{Comparison with learned detectors}
 
-A comparação mais exigente confronta a regra estatística com métodos de aprendizagem automática
-concebidos para detetar anomalias. Foram avaliados dois, sobre a mesma informação e sob a mesma
-disciplina de não utilizar informação posterior ao dia avaliado: o \emph{Isolation Forest}
-\autocite{liu2008isolation} e o \emph{Local Outlier Factor} \autocite{breunig2000lof}. Ambos correram numa única configuração, sem procura de hiperparâmetros, o que limita o alcance da
-sua derrota pela mesma razão invocada adiante para o modelo de árvores. Fica estabelecido que
-estes detetores, assim parametrizados e sobre estas entradas, não superam a regra; não que nenhuma
-parametrização o faria. A Figura~\ref{fig:av_detetores} apresenta o resultado.
+The most demanding comparison sets the statistical rule against machine learning methods designed
+to detect anomalies. Two were evaluated, over the same information and under the same discipline of
+not using information posterior to the day assessed: \emph{Isolation Forest}
+\autocite{liu2008isolation} and the \emph{Local Outlier Factor} \autocite{breunig2000lof}. Both ran
+in a single configuration, without a hyperparameter search, which limits the reach of their defeat
+for the same reason invoked later for the tree model. What is established is that these detectors,
+parameterised in this way and over these inputs, do not beat the rule; not that no parameterisation
+would. Figure~\ref{fig:av_detetores} presents the result.
 
 \begin{figure}[ht]
 \centering
@@ -252,49 +260,51 @@ parametrização o faria. A Figura~\ref{fig:av_detetores} apresenta o resultado.
   at (axis cs:0.163,0.989) {Local Outlier Factor\\$F_1=0.280$};
 \end{axis}
 \end{tikzpicture}
-\caption[A regra transparente contra dois detetores aprendidos]{Os três detetores sobre os mesmos
-dados e sob o mesmo protocolo, restrito à região que os três conseguem pontuar. Os dois métodos
-aprendidos ocupam a região de cobertura quase total e precisão baixa; a regra troca alguma
-cobertura por precisão. O $F_1$ junto de cada ponto resume esse compromisso. A amplitude da taxa de disparo acompanha o mesmo padrão, com
-$0.017$ para a regra contra $0.140$ e $0.183$ para os detetores aprendidos.}
+\caption[The transparent rule against two learned detectors]{The three detectors over the same data
+and under the same protocol, restricted to the region all three can score. The two learned methods
+occupy the region of near-total recall and low precision; the rule trades some recall for
+precision. The $F_1$ beside each point summarises that trade-off. The firing-rate spread follows
+the same pattern, at $0.017$ for the rule against $0.140$ and $0.183$ for the learned
+detectors.}
 \label{fig:av_detetores}
 \end{figure}
 
-A regra transparente supera os dois métodos, com quase o dobro do $F_1$ e com consistência entre
-empresas substancialmente melhor. Este é o primeiro de três casos, ao longo do capítulo, em que uma
-técnica mais sofisticada é comparada em condições equivalentes com uma técnica mais simples e não
-obtém melhor resultado. A escolha do método simples passa assim a estar justificada por medição e
-não por preferência.
+The transparent rule beats both methods, with almost twice the $F_1$ and with substantially better
+consistency across companies. This is the first of three cases, throughout the chapter, in which a
+more sophisticated technique is compared under equivalent conditions with a simpler one and does
+not obtain a better result. The choice of the simple method thus becomes justified by measurement
+and not by preference.
 
-A explicação não reside na qualidade dos métodos. Ambos determinam o que é invulgar a partir da geometria dos dados, por vias opostas. O
-\emph{Isolation Forest} identifica o ponto raro pela facilidade com que sucessivos cortes
-aleatórios o separam dos restantes \autocite{liu2008isolation}. O \emph{Local Outlier Factor}
-confronta a densidade na vizinhança de cada ponto com a dos pontos que o rodeiam
-\autocite{breunig2000lof}.
+The explanation does not lie in the quality of the methods. Both determine what is unusual from
+the geometry of the data, by opposite routes. \emph{Isolation Forest} identifies the rare point by
+how easily successive random cuts separate it from the rest \autocite{liu2008isolation}. The
+\emph{Local Outlier Factor} compares the density in the neighbourhood of each point with that of
+the points surrounding it \autocite{breunig2000lof}.
 
-Trata-se de
-métodos não paramétricos, exteriores à família estatística que \textcite{chandola2009anomaly}
-caracteriza pela modelação da distribuição dos dados normais, e foram concebidos para conjuntos com
-muitas variáveis em interação. O problema aqui tratado apresenta outra forma: uma série de retornos
-por empresa, cuja estrutura pertinente é temporal. O agrupamento da volatilidade, formalizado pelos
-modelos \gls{ARCH} e \gls{GARCH} \autocite{engle1982arch, bollerslev1986garch}, desloca ao longo do
-tempo o limiar do que constitui um dia invulgar; uma janela deslizante acompanha essa deslocação
-por construção, enquanto um detetor ajustado ao conjunto completo tem de a inferir.
+These are non-parametric methods, outside the statistical family that
+\textcite{chandola2009anomaly} characterises by the modelling of the distribution of normal data,
+and they were designed for sets with many interacting variables. The problem treated here has
+another form: one series of returns per company, whose relevant structure is temporal. Volatility
+clustering, formalised by \gls{ARCH} and \gls{GARCH} models \autocite{engle1982arch,
+bollerslev1986garch}, moves over time the threshold of what constitutes an unusual day; a rolling
+window follows that movement by construction, whereas a detector fitted to the complete set has to
+infer it.
 
-Uma nota sobre a compatibilidade entre os valores: o \emph{z}-score aparece com $F_1 = 0.530$ nesta
-comparação e com $0.516$ na anterior. Os dois valores medem o mesmo detetor sob protocolos
-distintos. O segundo abrange todos os dias avaliados, enquanto o primeiro se restringe à região que
-os três detetores conseguem pontuar, única em que a comparação entre eles é equitativa. A amplitude
-segue a mesma regra, sendo $0.017$ neste protocolo e $0.015$ no anterior.
+A note on the compatibility between the values: the \emph{z}-score appears with $F_1 = 0.530$ in
+this comparison and with $0.516$ in the previous one. The two values measure the same detector
+under distinct protocols. The second covers all the days assessed, while the first is restricted to
+the region all three detectors can score, the only one in which the comparison between them is
+fair. The spread follows the same rule, being $0.017$ under this protocol and $0.015$ under the
+previous one.
 
-\subsection{Duas comparações que não confirmam as escolhas implantadas}
+\subsection{Two comparisons that do not confirm the deployed choices}
 
-Duas experiências adicionais foram concebidas para justificar opções tomadas, e nenhuma delas as
-confirmou. Ambas ficam reportadas tal como resultaram.
+Two additional experiments were designed to justify options taken, and neither of them confirmed
+them. Both are reported as they came out.
 
-A primeira incide sobre o estimador de volatilidade. A alternativa a atribuir o mesmo peso aos vinte
-dias da janela consiste em atribuir maior peso aos dias recentes, através de uma média com
-decaimento exponencial. A Figura~\ref{fig:av_ewma} apresenta o resultado.
+The first concerns the volatility estimator. The alternative to giving the same weight to the
+twenty days of the window consists in giving greater weight to the recent days, through an
+exponentially weighted average. Figure~\ref{fig:av_ewma} presents the result.
 
 \begin{figure}[ht]
 \centering
@@ -319,36 +329,37 @@ decaimento exponencial. A Figura~\ref{fig:av_ewma} apresenta o resultado.
 \addlegendentry{equal weights (deployed)}
 \addplot[ig alternative mark] coordinates {(0.568,p) (0.800,c) (0.664,f)};
 \addlegendentry{exponential decay}
-\node[font=\scriptsize, anchor=south east, text=igGreenDark] at (axis cs:0.381,p) {0,381};
-\node[font=\scriptsize, anchor=south west, text=igInk] at (axis cs:0.568,p) {0,568};
-\node[font=\scriptsize, anchor=south, text=igInk] at (axis cs:0.800,c) {0,800 nos dois};
-\node[font=\scriptsize, anchor=south east, text=igGreenDark] at (axis cs:0.516,f) {0,516};
-\node[font=\scriptsize, anchor=south west, text=igInk] at (axis cs:0.664,f) {0,664};
+\node[font=\scriptsize, anchor=south east, text=igGreenDark] at (axis cs:0.381,p) {0.381};
+\node[font=\scriptsize, anchor=south west, text=igInk] at (axis cs:0.568,p) {0.568};
+\node[font=\scriptsize, anchor=south, text=igInk] at (axis cs:0.800,c) {0.800 in both};
+\node[font=\scriptsize, anchor=south east, text=igGreenDark] at (axis cs:0.516,f) {0.516};
+\node[font=\scriptsize, anchor=south west, text=igInk] at (axis cs:0.664,f) {0.664};
 \end{axis}
 \end{tikzpicture}
-\caption[Dois estimadores de volatilidade sobre o mesmo protocolo]{Os dois estimadores, com a mesma
-cobertura; cada segmento liga o resultado implantado à alternativa na mesma medida. A alternativa
-com decaimento exponencial elimina quase metade dos falsos alarmes,
-elevando a precisão de $0.381$ para $0.568$, e é ainda mais consistente entre empresas, com
-amplitude de $0.012$ contra $0.015$. O sistema mantém o estimador que obteve o resultado
-inferior, pela razão exposta no texto.}
+\caption[Two volatility estimators under the same protocol]{The two estimators, with the same
+recall; each segment links the deployed result to the alternative on the same measure. The
+exponentially weighted alternative removes almost half the false alarms, raising precision from
+$0.381$ to $0.568$, and is even more consistent across companies, with a spread of $0.012$ against
+$0.015$. The system keeps the estimator that obtained the inferior result, for the reason set out
+in the text.}
 \label{fig:av_ewma}
 \end{figure}
 
-Com cobertura idêntica, a alternativa obtém $F_1 = 0.664$ contra $0.516$ do estimador
-implantado. O mecanismo é compreensível. Movimentos grandes ocorrem em grupo. Uma média de vinte dias com
-pesos iguais dilui um choque por vinte observações e continua a assinalar os dias seguintes
-durante semanas; uma média que privilegia o passado recente absorve-o de imediato.
+With identical recall, the alternative obtains $F_1 = 0.664$ against $0.516$ for the deployed
+estimator. The mechanism is understandable. Large movements occur in clusters. A twenty-day average
+with equal weights dilutes a shock over twenty observations and keeps flagging the following days
+for weeks; an average that favours the recent past absorbs it immediately.
 
-O sistema mantém o estimador que obteve o resultado inferior. A razão é a que atravessa o trabalho:
-a média e o desvio-padrão dos últimos vinte dias são explicáveis em duas frases a qualquer leitor, e
-pesos com decaimento exponencial não o são. Numa ferramenta cujo argumento central é a
-explicabilidade, um ganho de precisão obtido à custa da explicação não constitui inequivocamente um
-ganho. Fica, porém, registado como escolha e não como resultado: a alternativa está medida, o ganho
-está quantificado, e a sua adoção constitui uma alteração de pequena dimensão caso a explicabilidade
-deixe de ser a restrição dominante.
+The system keeps the estimator that obtained the inferior result. The reason is the one that runs
+through the work: the mean and the standard deviation of the last twenty days can be explained in
+two sentences to any reader, and exponentially decaying weights cannot. In a tool whose central
+argument is explainability, a gain in precision obtained at the cost of the explanation is not
+unequivocally a gain. It is recorded, however, as a choice and not as a result: the alternative is
+measured, the gain is quantified, and adopting it would be a small change should explainability
+cease to be the dominant constraint.
 
-A segunda experiência incide sobre a dimensão da janela, e a Figura~\ref{fig:av_janela} apresenta-a.
+The second experiment concerns the size of the window, and Figure~\ref{fig:av_janela} presents
+it.
 
 \begin{figure}[ht]
 \centering
@@ -372,62 +383,62 @@ A segunda experiência incide sobre a dimensão da janela, e a Figura~\ref{fig:a
 \node[text=igGreenDark, font=\scriptsize, anchor=south west] at (axis cs:21,0.31) {deployed window};
 \end{axis}
 \end{tikzpicture}
-\caption[Ablação à dimensão da janela]{Desempenho contra o rótulo aproximado para três dimensões da
-janela. O valor cresce de forma monótona com a dimensão da janela, e a janela implantada não é a que
-obtém o melhor resultado. O texto expõe as duas razões pelas quais a janela mais longa não foi
-adotada, sendo a segunda uma reserva sobre a validade desta própria medição.}
+\caption[Ablation on the size of the window]{Performance against the approximate label for three
+window sizes. The value grows monotonically with the size of the window, and the deployed window is
+not the one that obtains the best result. The text sets out the two reasons why the longer window
+was not adopted, the second being a reservation about the validity of this measurement itself.}
 \label{fig:av_janela}
 \end{figure}
 
-Uma janela de sessenta dias obtém $F_1 = 0.678$ contra os $0.516$ da janela de vinte. Duas razões
-justificam a manutenção da janela mais curta. A primeira é de responsividade: uma janela de sessenta
-dias demora três meses a reagir a uma mudança de regime, e uma empresa que transite de calma a
-volátil continuaria a ser julgada pela norma anterior.
+A sixty-day window obtains $F_1 = 0.678$ against the $0.516$ of the twenty-day window. Two reasons
+justify keeping the shorter window. The first is responsiveness: a sixty-day window takes three
+months to react to a change of regime, and a company moving from calm to volatile would continue to
+be judged by the previous norm.
 
-A segunda respeita à validade desta medição
-concreta. O rótulo é construído a partir do percentil de movimento da própria empresa, sendo por isso
-relativo à volatilidade; uma janela mais longa produz uma norma menos adaptativa, que assinala com
-maior frequência a cauda extrema, que é precisamente o que este rótulo premeia. Existe circularidade,
-e ela favorece a janela longa por construção. Esta é a razão pela qual o argumento principal desta
-secção é a consistência da taxa de disparo, que não recorre a rótulos. A formulação que subsiste é
-que a janela de vinte dias foi escolhida por responsividade, e que a única medição existente sobre
-este ponto não a sustenta.
+The second concerns the validity of this particular measurement. The label is built from the
+percentile of movement of the company itself, and is therefore relative to volatility; a longer
+window produces a less adaptive norm, which flags the extreme tail more often, which is precisely
+what this label rewards. Circularity exists, and it favours the long window by construction. This
+is why the principal argument of this section is the consistency of the firing rate, which uses no
+labels. The formulation that survives is that the twenty-day window was chosen for responsiveness,
+and that the only measurement available on this point does not support it.
 
-\subsection{Limites da conclusão}
+\subsection{Limits of the conclusion}
 
-O rótulo é aproximado e relativo à volatilidade, razão pela qual o argumento de peso é o da
-consistência, que dele não depende. As quinze empresas são todas de grande capitalização e foram
-selecionadas em 2026, com a avaliação a percorrer o passado: sobreviveram por construção, e nenhuma
-delas saiu de bolsa, foi absorvida ou desapareceu da lista. O que se mede é o comportamento do
-método em empresas que subsistiram, e não na população de que foram extraídas. A comparação incide
-ainda sobre este conjunto e este período, e nada nela permite antecipar o resultado noutro mercado
-ou noutra década.
+The label is approximate and relative to volatility, which is why the argument that carries weight
+is the one about consistency, which does not depend on it. The fifteen companies are all
+large-capitalisation and were selected in 2026, with the evaluation running over the past: they
+survived by construction, and none of them was delisted, absorbed or dropped from the list. What is
+measured is the behaviour of the method in companies that persisted, and not in the population from
+which they were drawn. The comparison covers
+this set and this period only, and nothing in it allows the result in another market or another
+decade to be anticipated.
 
-\section{Recuperação de precedentes}
+\section{Precedent retrieval}
 \label{sec:av_qi2}
 
-O segundo caso de estudo responde à \gls{QI}2: a recuperação por significado encontra notícias
-passadas de outra empresa do mesmo setor melhor do que alternativas triviais. A resposta é
-afirmativa nos cinco setores avaliados, e a formulação por setor é necessária, uma vez que o valor
-agregado é enganador nos dois sentidos.
+The second case study answers \gls{QI}2: retrieval by meaning finds past news from another company
+in the same sector better than trivial alternatives. The answer is affirmative in the five sectors
+assessed, and the per-sector formulation is necessary, since the aggregate value is misleading in
+both directions.
 
 \subsection{Procedimento}
 
-A avaliação de sistemas de recuperação enfrenta a ausência de uma lista de respostas corretas, dado
-que nenhum conjunto de pares de notícias se encontra anotado como relacionado. Utiliza-se por isso
-uma aproximação verificável: considera-se relevante a notícia recuperada que pertença ao mesmo setor
-da notícia de consulta. A aproximação é imperfeita, porque duas notícias do mesmo setor podem tratar
-de assuntos distintos, mas é objetiva e foi fixada antes de os resultados serem observados.
+Evaluating retrieval systems faces the absence of a list of correct answers, since no set of pairs
+of news items is annotated as related. A verifiable approximation is therefore used: a retrieved
+news item is considered relevant if it belongs to the same sector as the query news item. The
+approximation is imperfect, because two news items from the same sector may deal with distinct
+subjects, but it is objective and was fixed before the results were observed.
 
-Impõe-se ainda uma restrição que torna a tarefa mais difícil: a notícia recuperada tem de pertencer a
-uma empresa diferente. Sem ela, o sistema obteria bom desempenho devolvendo notícias da própria
-empresa, que pertencem quase sempre ao mesmo setor por construção. O corpus contém $3{,}714$ notícias
-distribuídas por cinco setores, recolhidas ao longo de vinte e sete dias, e a medição utiliza
-quinhentas consultas por repetição em cinco repetições com sementes distintas. A amplitude do corpus
-delimita o que a medição estabelece: vinte e sete dias não sustentam afirmações sobre generalização
-temporal. O protocolo não exige que o candidato seja anterior à consulta, e apenas $31.1\%$ dos vizinhos o
-são. A verificação sob restrição causal foi feita em agregado sobre o corpus histórico, onde a
-margem sobre o acaso se conserva, e não por setor.
+A further constraint is imposed that makes the task harder: the retrieved news item must belong to
+a different company. Without it, the system would perform well by returning news from the company
+itself, which almost always belongs to the same sector by construction. The corpus contains
+$3{,}714$ news items distributed across five sectors, collected over twenty-seven days, and the
+measurement uses five hundred queries per repetition across five repetitions with distinct seeds.
+The span of the corpus delimits what the measurement establishes: twenty-seven days do not support
+claims about temporal generalisation. The protocol does not require the candidate to be prior to
+the query, and only $31.1\%$ of the neighbours are. The check under the causal constraint was made
+in aggregate over the historical corpus, where the margin over chance holds, and not per sector.
 
 \subsection{Resultado}
 
@@ -601,8 +612,8 @@ no exemplo apresentado no Capítulo~\ref{cap:sistema}. A Figura~\ref{fig:av_dire
 \addlegendentry{random pairing}
 \addplot[ig current mark] coordinates {(0.708,1)};
 \addlegendentry{retrieved cases}
-\node[font=\scriptsize, anchor=south east, text=igInk] at (axis cs:0.688,1) {0,688};
-\node[font=\scriptsize, anchor=south west, text=igGreenDark] at (axis cs:0.708,1) {0,708};
+\node[font=\scriptsize, anchor=south east, text=igInk] at (axis cs:0.688,1) {0.688};
+\node[font=\scriptsize, anchor=south west, text=igGreenDark] at (axis cs:0.708,1) {0.708};
 \end{axis}
 \end{tikzpicture}
 \caption[Tema e direção não são a mesma propriedade]{Fração de casos recuperados cujo preço evoluiu
