@@ -440,10 +440,10 @@ claims about temporal generalisation. The protocol does not require the candidat
 the query, and only $31.1\%$ of the neighbours are. The check under the causal constraint was made
 in aggregate over the historical corpus, where the margin over chance holds, and not per sector.
 
-\subsection{Resultado}
+\subsection{Result}
 
-A Figura~\ref{fig:av_recuperacao} apresenta o método utilizado, uma variante de maior dimensão e as
-alternativas triviais.
+Figure~\ref{fig:av_recuperacao} presents the method used, a larger variant and the trivial
+alternatives.
 
 \begin{figure}[ht]
 \centering
@@ -468,131 +468,136 @@ alternativas triviais.
 \addplot[bar shift=0pt, ig competitor bar] coordinates {(0.538,mpnet) [0.538]};
 \end{axis}
 \end{tikzpicture}
-\caption[Recuperação: o método contra seis alternativas]{Precisão@5 do MiniLM implantado, em verde
-cheio, contra seis alternativas. O contorno verde identifica a variante MPNet de maior dimensão; as
-barras cinzentas reúnem duas linhas de base, uma linha lexical e um codificador específico do domínio
-financeiro. A alternativa tracejada de devolver sempre notícias do setor maior obtém $0.467$ sem
-qualquer modelo, valor discutido no texto e que obriga a ler o agregado com reserva.}
+\caption[Retrieval: the method against six alternatives]{Precision@5 of the deployed MiniLM, in
+solid green, against six alternatives. The green outline identifies the larger MPNet variant; the
+grey bars bring together two baselines, a lexical one and an encoder specific to the financial
+domain. The dashed alternative of always returning news from the largest sector obtains $0.467$
+without any model, a value discussed in the text and one that requires the aggregate to be read
+with reservation.}
 \label{fig:av_recuperacao}
 \end{figure}
 
-A escolha aleatória acerta em $24.0\%$ dos casos, e é esse o valor de referência, e não zero, uma
-vez que os setores existem em número finito e têm dimensões distintas. A procura por palavras em
-comum eleva o resultado para $34.6\%$, e a comparação de significado para $51.4\%$.
+Random choice is right in $24.0\%$ of cases, and that is the reference value, and not zero, since
+the sectors are finite in number and of distinct sizes. Search by words in common raises the result
+to $34.6\%$, and comparison by meaning to $51.4\%$.
 
-A linha lexical corresponde à forma mais simples dessa família: contagem de palavras projetada por
-dispersão e comparada pelo cosseno, sem ponderação pela raridade dos termos, sem saturação da
-frequência e sem normalização pelo comprimento do texto. Pertence à tradição que vai do modelo de
-espaço vetorial \autocite{salton1975vsm} às funções de ordenação probabilísticas como o BM25
-\autocite{robertson2009bm25}, situando-se no degrau inicial dessa família. Os dezassete pontos
-percentuais que a representação de frases \autocite{reimers2019sbert} acrescenta medem, por
-conseguinte, a distância a um ponto de partida elementar e não a distância a um sistema lexical
-afinado. A comparação com uma função de ordenação bem parametrizada constitui trabalho por realizar,
-e é a que tornaria esta conclusão mais forte.
+The lexical baseline is the simplest form of that family: word counts projected by hashing and
+compared by cosine, without weighting by the rarity of terms, without frequency saturation and
+without normalisation by the length of the text. It belongs to the tradition that runs from the
+vector space model \autocite{salton1975vsm} to probabilistic ranking functions such as BM25
+\autocite{robertson2009bm25}, sitting on the first step of that family. The seventeen percentage
+points that the sentence representation \autocite{reimers2019sbert} adds therefore measure the
+distance to an elementary starting point and not the distance to a tuned lexical system. The
+comparison with a well-parameterised ranking function is work still to be done, and it is the one
+that would make this conclusion stronger.
 
-O codificador específico do domínio financeiro obtém $0.420$, o valor mais baixo de todos os
-modelos avaliados. O modelo avaliado é o ponto de controlo público \texttt{ProsusAI/finbert},
-identificado desta forma por ser o artefacto exato sobre o qual a medição incide; pertence à
-família de codificadores financeiros de que \textcite{liu2020finbert} e \textcite{huang2023finbert}
-são as versões documentadas em publicações revistas por pares. Foi utilizado com a média dos seus vetores como
-representação da frase, que é a forma de o aplicar sem novo treino. Trata-se de um codificador
-ajustado para classificação de sentimento e não para posicionar frases num espaço onde a distância
-signifique semelhança, e é precisamente esse objetivo de treino que o Sentence-BERT acrescenta
-\autocite{reimers2019sbert}. A medição estabelece que este modelo de domínio, utilizado desta forma,
-obtém resultado inferior a um modelo genérico treinado para semelhança; não estabelece que
-conhecimento de domínio seja irrelevante para a tarefa.
+The encoder specific to the financial domain obtains $0.420$, the lowest value of all the models
+assessed. The model assessed is the public checkpoint \texttt{ProsusAI/finbert}, identified in this
+way because it is the exact artefact the measurement bears on; it belongs to the family of
+financial encoders of which \textcite{liu2020finbert} and \textcite{huang2023finbert} are the
+versions documented in peer-reviewed publications. It was used with the mean of its vectors as the
+sentence representation, which is the way to apply it without further training. It is an encoder
+tuned for sentiment classification and not for positioning sentences in a space where distance
+means similarity, and it is precisely that training objective that Sentence-BERT adds
+\autocite{reimers2019sbert}. The measurement establishes that this domain model, used in this way,
+obtains a result inferior to a generic model trained for similarity; it does not establish that
+domain knowledge is irrelevant to the task.
 
-\subsection{A alternativa trivial que o valor agregado esconde}
+\subsection{The trivial alternative the aggregate hides}
 
-O corpus não está equilibrado: $1{,}736$ das $3{,}714$ notícias, quase metade, pertencem ao setor da
-tecnologia. Existe por isso uma estratégia que dispensa qualquer modelo e não observa sequer a
-consulta, consistindo em devolver invariavelmente cinco notícias de tecnologia. Acerta em todas as
-consultas de tecnologia e em nenhuma das restantes, pelo que a sua precisão iguala exatamente a
-fração de consultas que são de tecnologia, $0.467$. Medida contra esta alternativa, e não contra o
-acaso uniforme, a margem do método reduz-se de $+0.274$ para $+0.047$, e a linha lexical de
-$0.346$ passa a situar-se abaixo do valor de referência.
+The corpus is not balanced: $1{,}736$ of the $3{,}714$ news items, almost half, belong to the
+technology sector. There is therefore a strategy that dispenses with any model and does not even
+look at the query, consisting in invariably returning five technology news items. It is right on
+every technology query and on none of the others, so its precision equals exactly the fraction of
+queries that are about technology, $0.467$. Measured against this alternative, and not against
+uniform chance, the margin of the method falls from $+0.274$ to $+0.047$, and the lexical baseline
+of $0.346$ comes to sit below the reference value.
 
-O valor agregado é, contudo, o elemento enganador, e não o método. A estratégia trivial obtém
-$1.000$ nas consultas de tecnologia e $0.000$ em todas as outras, devolvendo notícias de
-semicondutores a quem consulta sobre uma petrolífera. O que ela explora não é uma propriedade do
-problema, mas a composição deste corpus.
+The aggregate value is, however, the misleading element, and not the method. The trivial strategy
+obtains $1.000$ on technology queries and $0.000$ on all the others, returning semiconductor news to
+someone querying about an oil company. What it exploits is not a property of the problem, but the
+composition of this corpus.
 
-A comparação que resiste a esta objeção é a que se realiza dentro de cada setor, onde a estratégia
-trivial não tem por onde se apoiar. O painel A da Figura~\ref{fig:av_setor_causal} apresenta-a.
+The comparison that survives this objection is the one carried out within each sector, where the
+trivial strategy has nothing to lean on. Panel A of Figure~\ref{fig:av_setor_causal} presents
+it.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.96\textwidth]{figures/eval_retrieval_sector_causal.pdf}
-\caption[Recuperação por setor e sob a restrição temporal]{Em A, a precisão@5 e o valor de acaso
-correspondente dentro de cada setor: o método situa-se acima do respetivo valor de referência nos
-cinco. Em B, o protocolo simétrico do teste de escala e o protocolo causal que reproduz a restrição
-da produção, cada um ao lado do seu valor de referência. A precisão desce de $0.595$ para
-$0.513$ e o valor de acaso de $0.333$ para $0.259$, pelo que a margem varia apenas de
-$+0.262$ para $+0.254$.}
+\caption[Retrieval by sector and under the temporal constraint]{In A, precision@5 and the
+corresponding chance value within each sector: the method sits above its reference value in all
+five. In B, the symmetric protocol of the scale test and the causal protocol that reproduces the
+constraint of production, each beside its reference value. Precision falls from $0.595$ to $0.513$
+and the chance value from $0.333$ to $0.259$, so the margin varies only from $+0.262$ to
+$+0.254$.}
 \label{fig:av_setor_causal}
 \end{figure}
 
-O valor de acaso é de $0.429$ na tecnologia e situa-se em torno de $0.072$ em cada um dos quatro
-setores restantes. O método obtém $0.712$ na tecnologia, $0.448$ na energia, $0.419$ na saúde,
-$0.272$ na banca e $0.171$ no consumo. Onde o valor agregado é dominado, o método acrescenta
-$0.283$; onde o corpus é escasso, obtém várias vezes o valor de referência. O agregado subestima o
-método e sobrestima a alternativa trivial pela mesma razão, que é a de quase metade das consultas
-provir do único setor onde o valor de referência já era elevado. A afirmação que o trabalho sustenta
-é por isso a mais estreita: a recuperação semântica supera a taxa-base dentro de cada um dos cinco
-setores, e o valor agregado não é a forma adequada de o enunciar.
+The chance value is $0.429$ in technology and stands around $0.072$ in each of the four remaining
+sectors. The method obtains $0.712$ in technology, $0.448$ in energy, $0.419$ in health, $0.272$ in
+banking and $0.171$ in consumer. Where the aggregate is dominated, the method adds $0.283$; where
+the corpus is sparse, it obtains several times the reference value. The aggregate underestimates
+the method and overestimates the trivial alternative for the same reason, which is that almost half
+the queries come from the single sector where the reference value was already high. The claim the
+work supports is therefore the narrowest one: semantic retrieval beats the base rate within each of
+the five sectors, and the aggregate value is not the appropriate way of stating it.
 
-A variante de maior dimensão obtém $0.538 \pm 0.011$ contra $0.514 \pm 0.015$ da utilizada,
-sobre cinco sementes; a diferença é pequena face à dispersão e nenhum teste de significância foi
-realizado. Dois codificadores mais recentes obtêm $0.504$ e $0.513$, indistinguíveis do
-implantado. A adoção do modelo
-mais pequeno em produção decorreu do custo computacional e não de uma vantagem de qualidade,
-constituindo uma troca explícita cujo preço em precisão está quantificado. A alternativa aparentemente mais
-razoável, que consiste em apresentar as notícias mais recentes, obtém $0.126$, o valor mais baixo
-de todos, o que é coerente com a ausência de qualquer razão para a notícia mais recente sobre outra
-empresa estar relacionada com a notícia em análise.
+The larger variant obtains $0.538 \pm 0.011$ against $0.514 \pm 0.015$ for the one used, over five
+seeds; the difference is small relative to the dispersion and no significance test was carried out.
+Two more recent encoders obtain $0.504$ and $0.513$, indistinguishable from the deployed one. The
+adoption of the smaller model in production followed from computational cost and not from an
+advantage in quality, and is an explicit trade whose price in precision is quantified. The
+apparently most reasonable alternative, which consists in presenting the most recent news, obtains
+$0.126$, the lowest value of all, which is consistent with there being no reason for the most
+recent news item about another company to be related to the news item under analysis.
 
-\subsection{Comportamento à escala e sob a restrição da produção}
+\subsection{Behaviour at scale and under the production constraint}
 
-A avaliação anterior incide sobre um corpus recente e de dimensão limitada. Para verificar que o
-resultado não depende desse corpus, a mesma medição foi repetida sobre o conjunto histórico
-completo, com aproximadamente oitenta mil notícias de seis anos. Neste protocolo simétrico, que
-ainda admite candidatos posteriores à consulta, a precisão@5 sobe para $0.595$. A subida não deve,
-porém, ser lida na íntegra como ganho: o valor de acaso sobe igualmente, de $0.240$ para $0.333$,
-porque a composição por setores é distinta. Medida contra o valor de referência respetivo, a margem
-é de $+0.274$ no primeiro caso e de $+0.262$ no segundo. O resultado estabelece que o método não
-se degrada quando o corpus passa de recente e curto para seis anos, e não que melhore com mais dados.
+The previous evaluation bears on a recent corpus of limited size. To verify that the result does
+not depend on that corpus, the same measurement was repeated over the complete historical set, with
+approximately eighty thousand news items from six years. Under this symmetric protocol, which still
+admits candidates posterior to the query, precision@5 rises to $0.595$. The rise should not,
+however, be read in full as a gain: the chance value rises likewise, from $0.240$ to $0.333$,
+because the composition by sector is different. Measured against the respective reference value,
+the margin is $+0.274$ in the first case and $+0.262$ in the second. The result establishes that the
+method does not degrade when the corpus goes from recent and short to six years, and not that it
+improves with more data.
 
-O protocolo anterior concede uma liberdade que o sistema em produção não possui. A única restrição
-imposta é a de o candidato pertencer a outra empresa, o que permite que seja posterior à consulta, e
-esse caso é comum: no corpus recente, $38.7\%$ dos vizinhos devolvidos têm data posterior à da
-consulta e outros $30.2\%$ são do mesmo dia. O sistema implantado não dispõe dessa liberdade, uma
-vez que a base de precedentes só recebe um caso oito dias após a sua observação, conforme a
-Secção~\ref{sec:sis_base} descreve.
+The previous protocol grants a freedom the system in production does not have. The only constraint
+imposed is that the candidate belong to another company, which allows it to be posterior to the
+query, and that case is common: in the recent corpus, $38.7\%$ of the neighbours returned are dated
+after the query and another $30.2\%$ are from the same day. The deployed system does not have that
+freedom, since the precedent base only receives a case eight days after it is observed, as
+Section~\ref{sec:sis_base} describes.
 
-Não é utilização de informação futura no sentido corrente. O critério de acerto é a pertença ao
-mesmo setor, e o setor de uma notícia não varia com o tempo, pelo que a direção temporal não pode
-inflacionar a precisão. O que está em causa é a correspondência
-entre o valor reportado e a tarefa que a questão de investigação descreve, que fala em notícias
-passadas. A medição repete o protocolo acrescentando à máscara a condição de o candidato ser
-estritamente anterior à consulta, e reproduz o valor simétrico na mesma execução para que a
-comparação seja emparelhada. Nenhuma das $2{,}500$ consultas ficou sem passado suficiente. O
-resultado consta do painel B da Figura~\ref{fig:av_setor_causal}: a precisão desce $0.082$, o valor
-de referência desce quase outro tanto, e a margem varia $0.008$. O método conserva praticamente
-toda a vantagem quando obrigado a operar como opera em produção.
+This is not use of future information in the usual sense. The criterion for a hit is membership of
+the same sector, and the sector of a news item does not vary with time, so the temporal direction
+cannot inflate precision. What is at stake is the correspondence between the value reported and the
+task the research question describes, which speaks of past news. The measurement repeats the
+protocol adding to the mask the condition that the candidate be strictly prior to the query, and
+reproduces the symmetric value in the same run so that the comparison is paired. None of the
+$2{,}500$ queries was left without sufficient past. The result appears in panel B of
+Figure~\ref{fig:av_setor_causal}: precision falls by $0.082$, the reference value falls by almost
+as much, and the margin varies by $0.008$. The method keeps practically all of its advantage when
+forced to operate as it operates in production.
 
-Esta é a terceira ocasião no capítulo em que a leitura de uma precisão sem o valor de referência
-correspondente conduziria à conclusão errada. Sucedeu na passagem do corpus recente para o completo,
-sucede na precisão dentro do orçamento tratada na Secção~\ref{sec:av_qi3}, e sucede aqui. A precisão
-é uma quantidade sem significado próprio, que apenas o adquire ao lado da alternativa sem informação.
+This is the third occasion in the chapter on which reading a precision without its corresponding
+reference value would lead to the wrong conclusion. It happened in the move from the recent corpus
+to the complete one, it happens with the precision within the budget treated in
+Section~\ref{sec:av_qi3}, and it happens here. Precision is a quantity with no meaning of its own,
+which it acquires only alongside the alternative that has no information.
 
 \subsection{Limites da conclusão}
 
-A pertença ao mesmo setor não equivale a relação entre notícias, sendo uma aproximação construída por
-ser verificável e não por corresponder exatamente à propriedade pretendida.
+Membership of the same sector is not equivalent to a relation between news items; it is an
+approximation built because it is verifiable and not because it corresponds exactly to the property
+intended.
 
-A segunda observação tem consequências para o produto: a recuperação capta tema e não direção. Duas
-notícias podem tratar do mesmo assunto e o preço evoluir em sentidos opostos, que foi o que sucedeu
-no exemplo apresentado no Capítulo~\ref{cap:sistema}. A Figura~\ref{fig:av_direcao} quantifica-o.
+The second observation has consequences for the product: retrieval captures topic and not
+direction. Two news items can deal with the same subject and the price move in opposite directions,
+which is what happened in the example presented in Chapter~\ref{cap:sistema}.
+Figure~\ref{fig:av_direcao} quantifies it.
 
 \begin{figure}[ht]
 \centering
@@ -616,24 +621,25 @@ no exemplo apresentado no Capítulo~\ref{cap:sistema}. A Figura~\ref{fig:av_dire
 \node[font=\scriptsize, anchor=south west, text=igGreenDark] at (axis cs:0.708,1) {0.708};
 \end{axis}
 \end{tikzpicture}
-\caption[Tema e direção não são a mesma propriedade]{Fração de casos recuperados cujo preço evoluiu
-no mesmo sentido que o da notícia de consulta, contra o valor obtido por emparelhamento aleatório sob
-as mesmas restrições, numa escala completa entre zero e um. A diferença é de $0.020$. O sistema apresenta por isso os casos
-individualmente, e o texto do alerta declara que a semelhança é de tema.}
+\caption[Topic and direction are not the same property]{Fraction of retrieved cases whose price
+moved in the same direction as that of the query news item, against the value obtained by random
+pairing under the same constraints, on a full scale between zero and one. The difference is
+$0.020$. The system therefore presents the cases individually, and the text of the alert states
+that the similarity is one of topic.}
 \label{fig:av_direcao}
 \end{figure}
 
-A concordância de direção entre a notícia de consulta e os casos recuperados situa-se em $0.708$
-contra um valor de acaso de $0.688$. É por esta razão que o sistema apresenta os casos um a um e
-nunca os resume a uma média, que seria lida como previsão, e que o texto do alerta declara
-explicitamente tratar-se de casos semelhantes quanto ao tema.
+The direction agreement between the query news item and the retrieved cases stands at $0.708$
+against a chance value of $0.688$. It is for this reason that the system presents the cases one by
+one and never summarises them into an average, which would be read as a forecast, and that the text
+of the alert explicitly states that these are cases similar in topic.
 
-\section{Triagem de notícias}
+\section{News triage}
 \label{sec:av_qi3}
 
-O terceiro caso de estudo responde à \gls{QI}3: um modelo treinado prioriza notícias melhor do que
-uma linha de base baseada apenas em volatilidade. A resposta é negativa, e é o resultado com maior
-valor informativo do trabalho.
+The third case study answers \gls{QI}3: a trained model prioritises news better than a baseline
+built only on volatility. The answer is negative, and it is the result with the greatest
+informative value in the work.
 
 \subsection{Procedimento}
 
