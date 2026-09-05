@@ -1418,15 +1418,15 @@ decisions of those companies enter the $825$ above like any others.
 
 \subsection{Drift of the distributions}
 
-Uma segunda razão, independente da anterior, pode fazer com que um modelo implantado deixe de servir:
-os dados alteram-se. O modelo foi treinado sobre o período de 2018 a 2023 e opera em 2026. A medida
-utilizada é o \gls{PSI}, que confronta aqui a distribuição de cada entrada no bloco de treino,
-compreendido entre 2018 e 2022, com a do bloco de teste, de 2023. Não é, portanto, a distância entre
-o treino e o presente, que a subsecção seguinte discute em separado: é a deriva interna ao próprio
-protocolo. As bandas são as convencionadas em risco de crédito, segundo as quais valores
-abaixo de $0.10$
-indicam estabilidade, valores entre $0.10$ e $0.25$ deslocamento moderado e valores acima de
-$0.25$ deslocamento significativo. A Figura~\ref{fig:av_deriva} apresenta o resultado.
+A second reason, independent of the previous one, can make a deployed model cease to serve: the
+data change. The model was trained over the period from 2018 to 2023 and operates in 2026. The
+measure used is the \gls{PSI}, which here compares the distribution of each input in the training
+block, between 2018 and 2022, with that of the test block, of 2023. It is not, therefore, the
+distance between training and the present, which the following subsection discusses separately: it
+is the drift internal to the protocol itself. The bands are those conventional in credit risk, under
+which values below $0.10$ indicate stability, values between $0.10$ and $0.25$ moderate
+displacement and values above $0.25$ significant displacement. Figure~\ref{fig:av_deriva} presents
+the result.
 
 \begin{figure}[ht]
 \centering
@@ -1454,41 +1454,41 @@ $0.25$ deslocamento significativo. A Figura~\ref{fig:av_deriva} apresenta o resu
   {significant};
 \end{axis}
 \end{tikzpicture}
-\caption[Deslocamento das distribuições de entrada]{Índice de estabilidade populacional de cada
-entrada entre o bloco de treino, de 2018 a 2022, e o bloco de teste, de 2023, com as bandas
-convencionadas assinaladas. A entrada de que o modelo mais depende é a que mais se deslocou. A
-prevalência do rótulo passa de $0.3854$ para $0.3781$ entre as duas pontas, mas não é estável
-pelo meio: no bloco de validação, temporalmente entre ambas, chega a $0.4704$.}
+\caption[Displacement of the input distributions]{Population stability index of each input between
+the training block, from 2018 to 2022, and the test block, of 2023, with the conventional bands
+marked. The input the model most depends on is the one that shifted most. The prevalence of the
+label goes from $0.3854$ to $0.3781$ between the two ends, but it is not stable in between: in the
+validation block, temporally between the two, it reaches $0.4704$.}
 \label{fig:av_deriva}
 \end{figure}
 
-O resultado tem duas metades. A entrada que mais se deslocou é a volatilidade dos vinte dias
-anteriores, situada na banda significativa, ao passo que as restantes permanecem estáveis ou
-moderadas. O rótulo desloca-se pouco entre as pontas, com a prevalência de positivos a passar de
-$0.3854$ para $0.3781$, mas não é estável: o bloco de validação, temporalmente entre os dois,
-chega a $0.4704$. A prevalência oscila com o regime de volatilidade em vez de derivar numa
-direção, o que é coerente com a volatilidade ser a entrada que mais se desloca.
+The result has two halves. The input that shifted most is the volatility of the twenty preceding
+days, in the significant band, whereas the rest remain stable or moderate. The label shifts little
+between the ends, with the prevalence of positives going from $0.3854$ to $0.3781$, but it is not
+stable: the validation block, temporally between the two, reaches $0.4704$. The prevalence
+oscillates with the volatility regime instead of drifting in one direction, which is consistent
+with volatility being the input that shifts most.
 
-A leitura correta desta medição é a de que a deriva não é externa aos valores deste capítulo: é a
-que o próprio protocolo atravessa, uma vez que treina em 2018--2022 e avalia em 2023. A \gls{PRAUC}
-reportada é já uma medida sob esta deriva, e a combinação é desfavorável porque a entrada de que o
-modelo mais depende é precisamente a que mais se deslocou.
+The correct reading of this measurement is that the drift is not external to the values of this
+chapter: it is the one the protocol itself runs through, since it trains on 2018--2022 and evaluates
+on 2023. The \gls{PRAUC} reported is already a measure under this drift, and the combination is
+unfavourable because the input the model most depends on is precisely the one that shifted most.
 
-O que esta medição não estabelece é a distância entre o treino e 2026, que é o período em que o
-sistema opera. Um instantâneo sobre cotações atuais aponta na mesma direção, com a volatilidade a ser de novo a
-entrada que mais se desloca. Assenta, porém, em janelas deslizantes consecutivas que partilham a
-quase totalidade das observações, o que inflaciona o índice e torna a sua magnitude não comparável
-com a da figura. O valor permanece por medir, e não é estimado por analogia. A
-deriva é, em qualquer dos casos, medida e não corrigida, e a Secção~\ref{sec:con_futuro} enuncia o
-que seria necessário para a corrigir.
+What this measurement does not establish is the distance between training and 2026, which is the
+period in which the system operates. A snapshot over current quotes points in the same direction,
+with volatility again being the input that shifts most. It rests, however, on consecutive rolling
+windows that share almost all their observations, which inflates the index and makes its magnitude
+not comparable with that of the figure. The value remains unmeasured, and is not estimated by
+analogy. Drift is, in either case, measured and not corrected, and Section~\ref{sec:con_futuro}
+states what would be needed to correct it.
 
-\subsection{O sistema completo contra as alternativas existentes}
+\subsection{The complete system against the existing alternatives}
 
-As secções anteriores comparam componente a componente. Falta a comparação ao nível do sistema:
-dadas as notícias de um dia, a política escolhe as cinco a apresentar melhor do que uma regra
-disponível sem custo. A Figura~\ref{fig:av_pontaaponta} responde. Todas as políticas escolhem cinco
-por dia, sobre o mesmo bloco de teste e com o mesmo rótulo, e o desempate é aleatório e explícito em
-todas.
+The previous sections compare component by component. What is missing is the comparison at system
+level: given the news of a day, does the policy choose the five to present better than a rule
+available at no cost. Figure~\ref{fig:av_pontaaponta} answers. All the policies choose five per
+day, over the same test block and with the same label, and the tie-break is random and explicit in
+all of them.
 
 \begin{figure}[ht]
 \centering
@@ -1512,49 +1512,50 @@ todas.
 \addplot[bar shift=0pt, ig reference bar] coordinates {(0.968,oraculo) [0.968]};
 \end{axis}
 \end{tikzpicture}
-\caption[O sistema contra as alternativas já disponíveis]{Cinco políticas de seleção sobre o mesmo
-bloco de teste. A escolha aleatória serve de referência; o oráculo é um máximo teórico não utilizável,
-obtido com conhecimento das respostas. Todas escolhem conhecendo o dia
-completo, pelo que cada valor é um limite superior do que a mesma regra obteria decidindo ao minuto.}
+\caption[The system against the alternatives already available]{Five selection policies over the
+same test block. Random choice serves as the reference; the oracle is a theoretical maximum that is
+not usable, obtained with knowledge of the answers. All of them choose knowing the complete day, so
+each value is an upper bound on what the same rule would obtain deciding minute by minute.}
 \label{fig:av_pontaaponta}
 \end{figure}
 
-Três leituras resultam da figura. A primeira é que o sistema supera a alternativa realista: apresentar
-notícias das empresas com maior movimento do dia é o que qualquer aplicação de bolsa já faz sem
-custo, e obtém $0.489$, contra $0.632$ do sistema, um ganho de $0.143$ sob o mesmo protocolo.
-Este valor mede a capacidade de ordenar o rótulo aproximado no bloco histórico, e não a utilidade
-percebida por uma pessoa nem o valor causal dos alertas em funcionamento.
+Three readings follow from the figure. The first is that the system beats the realistic
+alternative: presenting news from the companies with the largest movement of the day is what any
+stock application already does at no cost, and it obtains $0.489$, against $0.632$ for the system,
+a gain of $0.143$ under the same protocol. This value measures the ability to rank the approximate
+label on the historical block, and not the usefulness perceived by a person nor the causal value of
+the alerts in operation.
 
-A segunda é que o sistema continua a não superar a volatilidade. Treze constantes calculadas
-exclusivamente sobre o bloco de treino obtêm $0.662$, o que é coerente com a ablação da
-Secção~\ref{sec:av_ablacao}: o modelo é, na prática, uma tabela por empresa, e a volatilidade é outra
-tabela por empresa, mais simples, sendo esta a que dispensa treino.
+The second is that the system still does not beat volatility. Thirteen constants computed
+exclusively over the training block obtain $0.662$, which is consistent with the ablation of
+Section~\ref{sec:av_ablacao}: the model is, in practice, a table per company, and volatility is
+another table per company, simpler, and the one that requires no training.
 
-A terceira, e mais útil, é a localização da limitação pelo máximo teórico. O melhor resultado
-possível, escolhendo com conhecimento das respostas, seria de $0.968$, o que significa que em quase
-todos os dias existem efetivamente cinco notícias materiais no conjunto disponível. O sistema não
-está limitado por escassez de matéria-prima, mas pela incapacidade de identificar quais são. A margem
-entre $0.632$ e $0.968$ é de $0.336$ e reside quase integralmente na separação de notícias
-dentro de cada empresa, que é precisamente o que o modelo implantado não consegue realizar. É a mesma
-conclusão obtida por um terceiro caminho independente.
+The third, and most useful, is the location of the limitation given by the theoretical maximum. The
+best possible result, choosing with knowledge of the answers, would be $0.968$, which means that on
+almost every day there are indeed five material news items in the available set. The system is not
+limited by scarcity of raw material, but by the inability to identify which they are. The margin
+between $0.632$ and $0.968$ is $0.336$ and resides almost entirely in the separation of news items
+within each company, which is precisely what the deployed model cannot do. It is the same
+conclusion obtained by a third independent route.
 
-Todas as políticas desta comparação escolhem de entre o que a fonte entregou, o que deixa de fora a
-pergunta anterior a todas, relativa aos dias em que nada foi entregue. Sobre um ano de notícias
-captadas, existia pelo menos uma notícia relevante em $88.5\%$ dos dias que o detetor considerou
-invulgares, num total de $417$, e em $47$ dos $52$ dias mais extremos, dimensão que não permite
-distinguir as duas frações. Nos restantes, nenhuma alteração ao sistema produz
-efeito, uma vez que uma notícia não associada à empresa pela fonte gratuita não chega a entrar no
-percurso. A cobertura é ainda muito desigual, com a empresa pior coberta a situar-se nos $50\%$. Este
-valor é um limite superior, e a distinção determina o que ele vale: estabelece que existia uma
-notícia, e não que tenha chegado a notícia correta. A Secção~\ref{sec:con_limitacoes} retoma-o como
-limitação.
+All the policies in this comparison choose from among what the source delivered, which leaves out
+the question prior to them all, concerning the days on which nothing was delivered. Over a year of
+captured news, there was at least one relevant news item on $88.5\%$ of the days the detector
+considered unusual, out of a total of $417$, and on $47$ of the $52$ most extreme days, a size that
+does not allow the two fractions to be distinguished. On the remainder, no change to the system has
+any effect, since a news item not associated with the company by the free source never enters the
+path. Coverage is also very uneven, with the worst covered company standing at $50\%$. This value
+is an upper bound, and the distinction determines what it is worth: it establishes that a news item
+existed, and not that the right news item arrived. Section~\ref{sec:con_limitacoes} takes it up as
+a limitation.
 
-Uma linha de base não foi medida, e a razão fica registada. A alternativa mais natural consistiria em
-apresentar as primeiras cinco notícias a chegar. Não é mensurável neste protocolo, uma vez que o
-conjunto de dados histórico não conserva a hora de publicação e está ordenado por data e por empresa,
-pelo que utilizar a ordem do ficheiro mediria a ordem alfabética das empresas. Seria o mesmo
-artefacto documentado na Secção~\ref{sec:av_qi3}, desta vez introduzido deliberadamente. Uma linha de
-base errada é pior do que uma linha de base em falta.
+One baseline was not measured, and the reason is recorded. The most natural alternative would
+consist in presenting the first five news items to arrive. It is not measurable under this
+protocol, since the historical dataset does not keep the publication time and is sorted by date and
+by company, so using the order of the file would measure the alphabetical order of the companies.
+It would be the same artefact documented in Section~\ref{sec:av_qi3}, this time introduced
+deliberately. A wrong baseline is worse than a missing baseline.
 
 % A subsecção da utilidade percebida é GERADA por scripts/analyse_feedback.py a partir dos
 % votos recolhidos no canal, e não escrita à mão. É a mesma disciplina do resto do trabalho: o
