@@ -95,3 +95,30 @@ etapas, as sete entradas de nível de empresa em nove, as três causas do atraso
 leituras da ablação, as duas razões da janela, as duas precisões da predição conforme e
 as duas propriedades da decomposição. O varrimento das promessas de contagem devolveu
 **70 candidatas e um único defeito.**
+
+### C6-1 — O Cap. 6 abria a citar a janela que o Cap. 5 declara **superseda**
+
+`ch6:15`. O primeiro parágrafo que descreve o registo operacional do sistema dizia
+«registadas $4\,366$ decisões de triagem», e o Cap. 5, para o qual remete, chama a essa
+janela **«anterior e mais curta»** e reporta $36\,925$ como a medição principal. O
+capítulo que resume estava a citar o número que o capítulo resumido substituiu — por um
+fator de oito, e para baixo.
+
+⚠️ **E as duas contagens da mesma frase são de janelas diferentes**, que é a forma exacta
+do defeito da Figura 4.3: as $367$ mensagens são de 9 de julho a 13 de agosto e as
+decisões de uma janela mais ampla. A frase passa a **datar as mensagens e a dizer que a
+outra janela é mais ampla**, em vez de as apresentar como um par.
+
+### C6-2 — «as seis peças» contra as **sete** que o Cap. 4 enumera
+
+`ch6:30` remete para a `sec:sis_ciclo` e conta seis; a secção diz «sete componentes» e tem
+sete `\item`. A que faltava é **a declaração do rótulo como decisão** — a peça que sustenta
+a terceira verificação da QI3, e das mais defensáveis do conjunto. Acrescentada.
+
+### Método — dois falsos alarmes meus, os dois apanhados antes de reportar
+
+1. A legenda da figura dos rótulos promete «faixa verde» e eu vi só uma anotação de texto.
+   **Existe**: `\path[fill=igGreenLight] rectangle`, no mesmo bloco.
+2. Julguei uma frase da QI3 partida a meio e sem citação. **O meu próprio filtro de
+   leitura** (`grep -v` de linhas começadas por barra) apagava a linha do `\autocite`, que
+   levava as duas citações e metade da frase. **Ler a prosa em bruto, não filtrada.**
