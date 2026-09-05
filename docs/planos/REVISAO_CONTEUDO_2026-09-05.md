@@ -79,3 +79,19 @@ tratava do mapa de setores (`SECTORS`), onde a Meta **está** e as outras duas n
 corpus indexa a Meta como `FB`, pelo que sob o símbolo `META` está mesmo ausente
 (`docs/evaluation/kb_fnspid_build.md`). **As duas afirmações são compatíveis.** Fica
 registado para ninguém voltar a gastar tempo aqui.
+
+### C4-2 — A prosa prometia **quatro** pontos de decisão e a figura desenha **cinco**
+
+`ch4:220`, imediatamente antes da `fig:sis_caminho`. As caixas a tracejado são cinco —
+*nomeia a empresa*, *é recente*, *evidência suficiente*, *triagem acima do piso*, *já
+enviada hoje* — e o exemplo trabalhado que se segue atravessa as cinco, uma a uma.
+
+É a classe que já mordeu duas vezes (a legenda das cinco portas na sessão 61, a contagem
+das ocasiões na 63), e incide sobre **o núcleo do trabalho**: os pontos de decisão são o
+que a dissertação tem de próprio. Corrigido para cinco.
+
+**Verificadas e certas**, na mesma varredura: as cinco componentes do sistema, as nove
+etapas, as sete entradas de nível de empresa em nove, as três causas do atraso, as três
+leituras da ablação, as duas razões da janela, as duas precisões da predição conforme e
+as duas propriedades da decomposição. O varrimento das promessas de contagem devolveu
+**70 candidatas e um único defeito.**
