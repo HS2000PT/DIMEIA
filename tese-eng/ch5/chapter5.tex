@@ -62,26 +62,26 @@ being rewarded. For the \emph{z}-score, with precision $0.381$ and recall $0.800
 $0.516$; for the fixed threshold rule, with precision $0.122$ and recall $0.992$, it gives
 $0.218$.
 
-A precisão@$k$ aplica-se à recuperação, que devolve uma lista ordenada de que o utilizador lê apenas
-o início. Mede a fração dos $k$ primeiros resultados que são relevantes \autocite{manning2008ir},
-com $k = 5$, valor que corresponde ao que cabe num alerta.
+Precision@$k$ applies to retrieval, which returns an ordered list of which the user reads only the
+beginning. It measures the fraction of the first $k$ results that are relevant
+\autocite{manning2008ir}, with $k = 5$, the value that corresponds to what fits in an alert.
 
-A \gls{PRAUC} aplica-se à triagem, que devolve uma probabilidade e não uma decisão. Cada limiar
-possível produz um par de precisão e cobertura, e o conjunto desses pares desenha a curva de
-precisão e cobertura; a área sob essa curva resume o modelo em todos os limiares simultaneamente,
-em vez de o julgar num limiar escolhido manualmente. É preferível à percentagem de acertos porque,
-com classes desequilibradas, responder invariavelmente que a notícia não é material acerta
-$62.2\%$ das vezes sem qualquer aprendizagem.
+\gls{PRAUC} applies to triage, which returns a probability and not a decision. Each possible
+threshold produces a precision-recall pair, and the set of those pairs draws the precision-recall
+curve; the area under that curve summarises the model across all thresholds simultaneously, instead
+of judging it at a manually chosen threshold. It is preferable to the percentage of correct answers
+because, with unbalanced classes, invariably answering that the news item is not material is right
+$62.2\%$ of the time without any learning.
 
-O índice de Brier observa o valor da probabilidade e não a ordenação, sendo a média do quadrado do
-erro entre a probabilidade anunciada e o resultado observado, com valores menores a corresponder a
-melhor desempenho. O quadrado penaliza de forma mais do que proporcional os enganos confiantes, que
-é a propriedade adequada num sistema que exibe percentagens a um destinatário sem meios para as
-questionar.
+The Brier score looks at the value of the probability and not at the ordering, being the mean
+squared error between the probability announced and the observed outcome, with lower values
+corresponding to better performance. The square penalises confident mistakes more than
+proportionally, which is the appropriate property in a system that displays percentages to a
+recipient without the means to question them.
 
-Uma medida lida sem o valor que lhe corresponde na ausência de informação conduz à conclusão errada,
-e este capítulo documenta três ocasiões em que isso sucedeu. A Tabela~\ref{tab:av_metricas} fixa
-esse valor para cada medida.
+A measure read without the value that corresponds to it in the absence of information leads to the
+wrong conclusion, and this chapter documents three occasions on which that happened.
+Table~\ref{tab:av_metricas} fixes that value for each measure.
 
 \begin{table}[!htbp]
 \caption[The measures used and the value each one has without information]{Each measure, the
@@ -886,7 +886,7 @@ the global median instead of a constant of their own. It is, even so, the third 
 in which the simpler method obtains the better result. What the evidence supports is that ranking
 by volatility pays off, and not that learning pays off.
 
-\subsection{Ablação das entradas do modelo}
+\subsection{Ablation of the model inputs}
 \label{sec:av_ablacao}
 
 The previous result suggests that the deployed model recognises the company and not the news item.
@@ -1003,7 +1003,7 @@ $1{,}951$ groups. Figure~\ref{fig:av_acrescimo} presents the three intervals.
   }
   \draw[thick, black!65] (0,-0.08) -- (0,3.60);
   \draw[dashed, orange!70!black] (0.02,-0.08) -- (0.02,3.60)
-    node[above, font=\scriptsize, text=orange!60!black, align=center] {critério\\ prático};
+    node[above, font=\scriptsize, text=orange!60!black, align=center] {practical\\ criterion};
 
   \foreach \yv/\xa/\xm/\xb/\xrot in {
     3/0.0038/0.0123/0.0204/{text adds to the lookup table},
@@ -1179,10 +1179,10 @@ system.
 
 \subsection{What the decision gate was separating}
 
-A porta implantada era um limiar fixo sobre a probabilidade calibrada, que deixava passar as
-candidatas acima de $0.50$. A pergunta com significado é a de saber se esse limiar separava títulos
-ou separava empresas, e a medição foi realizada sobre as $4{,}366$ decisões efetivamente tomadas em
-produção. A Figura~\ref{fig:av_porta} apresenta o resultado.
+The deployed gate was a fixed threshold on the calibrated probability, which let through the
+candidates above $0.50$. The question with meaning is whether that threshold separated headlines or
+separated companies, and the measurement was carried out over the $4{,}366$ decisions actually
+taken in production. Figure~\ref{fig:av_porta} presents the result.
 
 \begin{figure}[ht]
 \centering
@@ -1208,96 +1208,97 @@ produção. A Figura~\ref{fig:av_porta} apresenta o resultado.
   \node[right, align=left, black!55] at (0.56,10.5) {never\\ passes};
   \node[right, align=left, black!62] at (0.605,6.5) {the threshold\\ decides};
 \end{tikzpicture}
-\caption[O que a porta de decisão separava]{Intervalo de todas as pontuações atribuídas pelo modelo a
-cada empresa em produção, com a mediana assinalada. As barras claras nunca alcançam o limiar, as
-escuras atravessam-no e as alaranjadas situam-se sempre acima. Oito das doze empresas encontram-se
-inteiramente de um dos lados, o que significa que para essas a decisão estava tomada antes de o
-título ser lido.}
+\caption[What the decision gate was separating]{Range of all the scores the model assigned to each
+company in production, with the median marked. The light bars never reach the threshold, the dark
+ones cross it and the orange ones sit always above it. Eight of the twelve companies lie entirely
+on one side, which means that for those the decision was taken before the headline was read.}
 \label{fig:av_porta}
 \end{figure}
 
-Os valores confirmam a leitura da figura. Sobre as $36{,}925$ decisões registadas, a amplitude média
-das pontuações dentro de cada empresa é de $0.072$, ao passo que a amplitude entre as medianas das
-empresas é de $0.392$, isto é, $5.4$ vezes superior. Duas empresas situavam-se sempre acima do
-limiar e cinco nunca o alcançavam, pelo que apenas em cinco das doze o limiar chegava a decidir. Em $48\%$ dos títulos distintos o resultado estava determinado pela empresa antes de o título ser
-lido. Contada por decisão registada, a fração sobe para $60\%$. Cita-se a primeira: a repontuação
-dos mesmos títulos a cada ciclo de sessenta segundos inflaciona a segunda, e de forma desigual
-entre empresas.
+The values confirm the reading of the figure. Over the $36{,}925$ decisions logged, the mean spread
+of the scores within each company is $0.072$, whereas the spread between the medians of the
+companies is $0.392$, that is, $5.4$ times larger. Two companies were always above the threshold
+and five never reached it, so in only five of the twelve did the threshold get to decide. In $48\%$
+of the distinct headlines the outcome was determined by the company before the headline was read.
+Counted per logged decision, the fraction rises to $60\%$. The first is the one cited: the
+re-scoring of the same headlines at every sixty-second cycle inflates the second, and unevenly
+across companies.
 
-Numa janela anterior e mais curta, de $4{,}366$ decisões, os mesmos
-indicadores valiam $0.064$, $0.385$ e $6.1$ vezes, com três empresas sempre acima e quatro em
-que o limiar decidia. A conclusão estrutural não depende da janela. Em nenhuma das avaliações
-registadas a Apple alcançou o limiar, com um máximo observado de $0.472$, ao passo que a AMD o
-ultrapassou em todas.
+In an earlier and shorter window, of $4{,}366$ decisions, the same indicators were $0.064$,
+$0.385$ and $6.1$ times, with three companies always above and four in which the threshold decided.
+The structural conclusion does not depend on the window. In none of the assessments logged did
+Apple reach the threshold, with an observed maximum of $0.472$, whereas AMD exceeded it in all of
+them.
 
-As duas contagens medem quantidades distintas e ambas são reportadas. O sistema repontua os mesmos
-títulos a cada ciclo de sessenta segundos, e a duplicação é maior nas empresas com menos notícias,
-que são as que nunca ultrapassam o limiar, pelo que contar decisões desloca a fração para cima.
-Contada uma vez por título distinto, sobre uma janela mais ampla de $36{,}925$ decisões, a fração é de
-$48\%$. A conclusão estrutural não depende da contagem escolhida: continuam a existir empresas
-inteiramente de um dos lados do limiar, e a amplitude entre empresas continua a ser várias vezes a
-amplitude dentro de cada uma.
+The two counts measure distinct quantities and both are reported. The system re-scores the same
+headlines at every sixty-second cycle, and the duplication is greater in the companies with fewer
+news items, which are the ones that never exceed the threshold, so counting decisions shifts the
+fraction upwards. Counted once per distinct headline, over a wider window of $36{,}925$ decisions,
+the fraction is $48\%$. The structural conclusion does not depend on the count chosen: there
+continue to be companies entirely on one side of the threshold, and the spread between companies
+continues to be several times the spread within each one.
 
-O defeito tem a mesma forma que o identificado na Secção~\ref{sec:av_qi1}, uma camada acima. Naquele
-caso, um limiar fixo sobre o retorno mede a volatilidade da empresa em vez da raridade do dia; neste,
-um limiar fixo sobre uma pontuação quase constante por empresa ordena empresas em vez de notícias.
+The defect has the same form as the one identified in Section~\ref{sec:av_qi1}, one layer up. In
+that case, a fixed threshold on the return measures the volatility of the company instead of the
+rarity of the day; in this one, a fixed threshold on a score that is almost constant per company
+ranks companies instead of news items.
 
-Nenhum dos testes automáticos existentes o cobria. O modelo foi avaliado sobre a distribuição do
-conjunto de treino e implantado atrás de dois filtros que a alteram, e cada componente cumpria o seu
-contrato. O teste que o teria apanhado é o que este trabalho passou a executar: comparar a amplitude
-das pontuações dentro de cada empresa com a amplitude entre empresas. O
-que estava errado era uma suposição sobre a ligação entre eles, não enunciada em nenhum ponto.
-Corresponde à classe de custo que \textcite{sculley2015debt} arrumam sob dependências de dados e
-emaranhamento entre componentes, com o sintoma que os autores descrevem: o sistema continua a
-produzir valores de aparência normal.
+None of the existing automatic tests covered it. The model was evaluated over the distribution of
+the training set and deployed behind two filters that alter it, and each component fulfilled its
+contract. The test that would have caught it is the one this work now runs: comparing the spread of
+the scores within each company with the spread between companies. What was wrong was an assumption
+about the link between them, stated nowhere. It corresponds to the class of cost that
+\textcite{sculley2015debt} place under data dependencies and entanglement between components, with
+the symptom the authors describe: the system goes on producing normal-looking values.
 
-Existe uma segunda causa possível, que os registos não permitem separar da primeira. Uma das nove entradas é o retorno do próprio dia. No treino corresponde ao movimento completo do
-dia da notícia. Em produção é calculado sobre a última barra diária disponível, que durante a
-sessão é o fecho da véspera ou uma barra incompleta. As duas causas produzem o mesmo sintoma, e
-o registo, à data desta medição, guardava a probabilidade e o resultado mas não o valor das
-entradas no momento da pontuação, pelo que a sua separação exigiria registar essas entradas e
-voltar a observar durante semanas.
+There is a second possible cause, which the logs do not allow to be separated from the first. One
+of the nine inputs is the same-day return. In training it corresponds to the complete movement of
+the day of the news. In production it is computed over the last daily bar available, which during
+the session is the previous close or an incomplete bar. The two causes produce the same symptom,
+and the log, at the date of this measurement, stored the probability and the outcome but not the
+value of the inputs at the moment of scoring, so separating them would require logging those inputs
+and observing again for weeks.
 
-Essa instrumentação foi construída e implantada em 4 de setembro de 2026, e o registo passou a
-guardar, por decisão, o valor de cada uma das nove entradas, a data da última barra de preço
-utilizada e a identidade do modelo que pontuou. Duas consequências decorrem dela e nenhuma é um
-resultado. A primeira é que as decisões anteriores a essa data permanecem não reproduzíveis a
-partir do registo, uma vez que recalcular hoje as entradas de um dia passado utilizaria uma série
-de preços que já contém o que veio a seguir; as medições deste capítulo assentam nessas decisões
-e não são afetadas pela alteração. A segunda é que a janela de observação necessária para separar
-as duas causas começou nessa data, e o critério de aceitação de qualquer comparação futura foi
-fixado antes de existir candidato, pela mesma razão que o Capítulo~\ref{cap:metodologia}
-invoca para as restantes experiências. Nada se afirma aqui sobre o seu desfecho.
+That instrumentation was built and deployed on 4 September 2026, and the log came to store, per
+decision, the value of each of the nine inputs, the date of the last price bar used and the
+identity of the model that scored. Two consequences follow from it and neither is a result. The
+first is that the decisions prior to that date remain non-reproducible from the log, since
+recomputing today the inputs of a past day would use a price series that already contains what came
+after; the measurements of this chapter rest on those decisions and are not affected by the change.
+The second is that the observation window needed to separate the two causes began on that date, and
+the acceptance criterion of any future comparison was fixed before a candidate existed, for the same
+reason that Chapter~\ref{cap:metodologia} invokes for the remaining experiments. Nothing is
+asserted here about its outcome.
 
-A correção aparente consistiria em substituir o limiar fixo por um limiar relativo a cada empresa. A simulação dessa alternativa sobre as mesmas decisões resolve metade do problema, uma vez que as
-doze empresas passam a estar representadas, e introduz outro. Nas empresas cuja pontuação quase
-não varia, o percentil recai sobre a constante e quase todas as decisões empatam acima dele; uma
-delas passa a gerar $874$ alertas. O limiar relativo deixa de escolher por materialidade e passa a
-escolher por desempate, que é precisamente o artefacto documentado na Secção~\ref{sec:av_qi3}. Dentro
-de uma empresa a pontuação do modelo quase não varia com o título, e nenhuma regra de decisão
-aplicada a essa pontuação a pode tornar sensível à notícia, porque a informação que distinguiria um
-título do seguinte não está presente.
+The apparent correction would consist in replacing the fixed threshold with a threshold relative to
+each company. Simulating that alternative over the same decisions solves half the problem, since
+the twelve companies come to be represented, and introduces another. In the companies whose score
+barely varies, the percentile falls on the constant and almost every decision ties above it; one of
+them comes to generate $874$ alerts. The relative threshold stops choosing by materiality and
+starts choosing by tie-break, which is precisely the artefact documented in
+Section~\ref{sec:av_qi3}. Within a company the score of the model barely varies with the headline,
+and no decision rule applied to that score can make it sensitive to the news, because the
+information that would distinguish one headline from the next is not present.
 
-Em consequência, o modelo deixou de constituir porta e passou a constituir critério de ordenação, que
-é a utilização que a medição sustenta, e o controlo de volume passou para um orçamento diário de
-cinco alertas. Esta alteração aproxima duas políticas que divergiam: a dissertação avaliava uma
-política de orçamento e o sistema implantava uma política de limiar, pelo que o valor reportado
-descrevia um sistema distinto do que estava em funcionamento. As duas políticas passaram a pertencer
-à mesma família sem se tornarem idênticas.
+As a consequence, the model ceased to be a gate and became a ranking criterion, which is the use
+the measurement supports, and volume control moved to a daily budget of five alerts. This change
+brings together two policies that diverged: the dissertation evaluated a budget policy and the
+system deployed a threshold policy, so the value reported described a system distinct from the one
+in operation. The two policies came to belong to the same family without becoming identical.
 
-A alteração foi medida sobre os alertas efetivamente entregues, e o efeito pretendido
-verifica-se. A quantidade observada é a concentração, definida como a fração dos alertas que
-pertence às três empresas mais alertadas, e a sua vantagem é ser adimensional, o que permite
-comparar janelas de dimensões distintas. Nos alertas de notícia, que são os que o orçamento
-governa, a concentração desce de $0.713$ para $0.480$, com intervalo de confiança da
-diferença a excluir zero, e o número de empresas que chegam a produzir um alerta passa de sete
-para nove das doze monitorizadas.
+The change was measured over the alerts actually delivered, and the intended effect is observed.
+The quantity observed is concentration, defined as the fraction of the alerts that belongs to the
+three most alerted companies, and its advantage is being dimensionless, which allows windows of
+distinct sizes to be compared. In news alerts, which are the ones the budget governs, concentration
+falls from $0.713$ to $0.480$, with the confidence interval of the difference excluding zero, and
+the number of companies that come to produce an alert goes from seven to nine of the twelve
+monitored.
 
-O que sustenta a leitura não é, porém, a descida isolada, mas a comparação com uma série que a
-alteração não governa. Os alertas de movimento de preço atravessam o mesmo período, as mesmas
-empresas e as mesmas condições de mercado, e o orçamento diário não os conta. Nessa série a
-concentração passa de $0.449$ para $0.485$, com o intervalo a conter zero. A quantidade
-governada deslocou-se e a quantidade não governada não, o que afasta a explicação alternativa
+What supports the reading is not, however, the fall on its own, but the comparison with a series
+the change does not govern. The price movement alerts run through the same period, the same
+companies and the same market conditions, and the daily budget does not count them. In that series
+concentration goes from $0.449$ to $0.485$, with the interval containing zero. The governed
+quantity shifted and the ungoverned quantity did not, which rules out the alternative explanation
 de que o mercado se teria distribuído de forma mais uniforme no segundo período.
 
 Cinco dias são excluídos da janela posterior, e a razão é registada por ser ela própria um
