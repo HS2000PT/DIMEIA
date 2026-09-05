@@ -1,0 +1,821 @@
+%% references.bib — APENAS entradas verificadas (docs/decisions/citation_log.md, §6.4).
+%% 63 entradas, todas com identificador resolúvel (DOI, arXiv, ISBN ou URL canónico).
+%% Verificação faseada: 2026-06-21 a 2026-08-07 (data por entrada no citation_log).
+%% Backend: biber; estilo: authoryear-comp. Partilhado com thesis-pt/ (uma só fonte).
+%%
+%% Verificação automática: `python scripts/verify_bibliography.py --escrever` resolve cada
+%% identificador contra o Crossref/arXiv e compara campo a campo, incluindo se o DOI resolve
+%% para ESTE trabalho e não para outro de título parecido. Relatório em
+%% docs/decisions/bibliography_verification.md.
+
+@article{chandola2009anomaly,
+  author    = {Chandola, Varun and Banerjee, Arindam and Kumar, Vipin},
+  title     = {Anomaly Detection: A Survey},
+  journal   = {ACM Computing Surveys},
+  year      = {2009},
+  volume    = {41},
+  number    = {3},
+  pages     = {15:1--15:58},
+  doi       = {10.1145/1541880.1541882}
+}
+
+@article{brown1985daily,
+  author    = {Brown, Stephen J. and Warner, Jerold B.},
+  title     = {Using Daily Stock Returns: The Case of Event Studies},
+  journal   = {Journal of Financial Economics},
+  year      = {1985},
+  volume    = {14},
+  number    = {1},
+  pages     = {3--31},
+  doi       = {10.1016/0304-405X(85)90042-X}
+}
+
+@inproceedings{reimers2019sbert,
+  author    = {Reimers, Nils and Gurevych, Iryna},
+  title     = {Sentence-{BERT}: Sentence Embeddings using Siamese {BERT}-Networks},
+  booktitle = {Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)},
+  year      = {2019},
+  pages     = {3982--3992},
+  doi       = {10.18653/v1/D19-1410}
+}
+
+@inproceedings{lundberg2017shap,
+  author    = {Lundberg, Scott M. and Lee, Su-In},
+  title     = {A Unified Approach to Interpreting Model Predictions},
+  booktitle = {Advances in Neural Information Processing Systems 30 (NeurIPS 2017)},
+  year      = {2017},
+  pages     = {4765--4774},
+  %% Estava SEM identificador nenhum, o que contraria o protocolo 6.4 do projecto. As actas da
+  %% NeurIPS nao emitem DOI; o URL canonico e o identificador estavel que existe, e e a mesma
+  %% solucao ja usada no sculley2015debt. Verificado a 2026-08-21: HTTP 200 e o <title> da
+  %% pagina bate com o titulo desta entrada.
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2017/hash/8a20a8621978632d76c43dfd28b67767-Abstract.html}
+}
+
+@article{arrieta2020xai,
+  author    = {Barredo Arrieta, Alejandro and D{\'i}az-Rodr{\'i}guez, Natalia and Del Ser, Javier and Bennetot, Adrien and Tabik, Siham and Barbado, Alberto and Garc{\'i}a, Salvador and Gil-L{\'o}pez, Sergio and Molina, Daniel and Benjamins, Richard and Chatila, Raja and Herrera, Francisco},
+  title     = {Explainable Artificial Intelligence ({XAI}): Concepts, Taxonomies, Opportunities and Challenges toward Responsible {AI}},
+  journal   = {Information Fusion},
+  year      = {2020},
+  volume    = {58},
+  pages     = {82--115},
+  doi       = {10.1016/j.inffus.2019.12.012}
+}
+
+@article{adadi2018peeking,
+  author    = {Adadi, Amina and Berrada, Mohammed},
+  title     = {Peeking Inside the Black-Box: A Survey on Explainable Artificial Intelligence ({XAI})},
+  journal   = {IEEE Access},
+  year      = {2018},
+  volume    = {6},
+  pages     = {52138--52160},
+  doi       = {10.1109/ACCESS.2018.2870052}
+}
+
+%% Citada a versão REVISTA POR PARES (KDD '24), não a pré-publicação. Verificado a 2026-08-04:
+%% o mesmo trabalho, os mesmos três autores, publicado nas actas do KDD '24, pp. 4918--4927.
+%% Como é o conjunto de dados sobre o qual assenta a tese inteira, e é a referência mais citada
+%% do corpo (7 instâncias), citar o arXiv quando existe versão publicada seria o reparo mais
+%% fácil de fazer a esta bibliografia. O arXiv fica como campo secundário, que é informação a
+%% mais e não a menos.
+@inproceedings{dong2024fnspid,
+  author       = {Dong, Zihan and Fan, Xinyu and Peng, Zhiyuan},
+  title        = {{FNSPID}: A Comprehensive Financial News Dataset in Time Series},
+  booktitle    = {Proceedings of the 30th {ACM} {SIGKDD} Conference on Knowledge Discovery and Data Mining (KDD '24)},
+  publisher    = {Association for Computing Machinery},
+  year         = {2024},
+  pages        = {4918--4927},
+  doi          = {10.1145/3637528.3671629},
+  eprintclass  = {q-fin.ST}
+}
+
+%% --- Contextualização (fontes atuais 2025–2026, §6.1) — verificadas em docs/citation_log.md ---
+
+@online{sifma2025factbook,
+  author  = {{Securities Industry and Financial Markets Association (SIFMA)}},
+  title   = {2025 Capital Markets Fact Book},
+  year    = {2025},
+  url     = {https://www.sifma.org/resources/research/fact-book/},
+  urldate = {2026-06-21}
+}
+
+@online{gallup2025stock,
+  author  = {{Gallup}},
+  title   = {What Percentage of Americans Own Stock?},
+  year    = {2025},
+  url     = {https://news.gallup.com/poll/266807/percentage-americans-owns-stock.aspx},
+  urldate = {2026-06-21}
+}
+
+@report{ccaf2026aifs,
+  author      = {{Cambridge Centre for Alternative Finance}},
+  title       = {Global AI in Financial Services Report: Adoption, Impact and Risks},
+  institution = {Cambridge Judge Business School, University of Cambridge},
+  year        = {2026},
+  url         = {https://www.jbs.cam.ac.uk/faculty-research/centres/alternative-finance/publications/2026-global-ai-in-financial-services-report/},
+  urldate     = {2026-06-21}
+}
+
+%% --- Literatura adicional (revisão de literatura, Cap. 3) — verificadas (Crossref/arXiv, 2026-06-21) ---
+
+@inproceedings{liu2008isolation,
+  author    = {Liu, Fei Tony and Ting, Kai Ming and Zhou, Zhi-Hua},
+  title     = {Isolation Forest},
+  booktitle = {2008 Eighth IEEE International Conference on Data Mining (ICDM)},
+  year      = {2008},
+  pages     = {413--422},
+  doi       = {10.1109/ICDM.2008.17}
+}
+
+@inproceedings{ribeiro2016lime,
+  author    = {Ribeiro, Marco Tulio and Singh, Sameer and Guestrin, Carlos},
+  title     = {``Why Should {I} Trust You?'': Explaining the Predictions of Any Classifier},
+  booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+  year      = {2016},
+  pages     = {1135--1144},
+  doi       = {10.1145/2939672.2939778}
+}
+
+@inproceedings{devlin2019bert,
+  author     = {Devlin, Jacob and Chang, Ming-Wei and Lee, Kenton and Toutanova, Kristina},
+  title      = {{BERT}: Pre-training of Deep Bidirectional Transformers for Language Understanding},
+  booktitle  = {Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL-HLT)},
+  year       = {2019},
+  pages      = {4171--4186},
+  publisher  = {Association for Computational Linguistics},
+  doi        = {10.18653/v1/N19-1423}
+}
+
+@inproceedings{mikolov2013word2vec,
+  author    = {Mikolov, Tomas and Sutskever, Ilya and Chen, Kai and Corrado, Greg S.
+               and Dean, Jeffrey},
+  title     = {Distributed Representations of Words and Phrases and their Compositionality},
+  booktitle = {Advances in Neural Information Processing Systems 26 (NIPS 2013)},
+  publisher = {Curran Associates, Inc.},
+  volume    = {26},
+  pages     = {3111--3119},
+  year      = {2013},
+  %% Substitui a pre-publicacao arXiv 1301.3781 pela versao nas actas, revista por pares, que
+  %% apresenta o mesmo modelo skip-gram treinado a partir do contexto local. As actas do NIPS de
+  %% 2013 nao emitem DOI; o URL canonico da NeurIPS e o identificador estavel que existe, tal
+  %% como em sculley2015debt. Autores, volume e paginas lidos do BibTeX oficial da NeurIPS a
+  %% 2026-08-19.
+  url       = {https://papers.nips.cc/paper_files/paper/2013/hash/9aa42b31882ec039965f3c4923ce901b-Abstract.html}
+}
+
+%% --- Expansão do Estado da Arte (Cap. 2) — verificadas (Crossref/arXiv/DOI, 2026-06-22) ---
+
+@article{barber2008glitters,
+  author    = {Barber, Brad M. and Odean, Terrance},
+  title     = {All That Glitters: The Effect of Attention and News on the Buying Behavior of Individual and Institutional Investors},
+  journal   = {The Review of Financial Studies},
+  year      = {2008},
+  volume    = {21},
+  number    = {2},
+  pages     = {785--818},
+  doi       = {10.1093/rfs/hhm079}
+}
+
+@article{tetlock2007media,
+  author    = {Tetlock, Paul C.},
+  title     = {Giving Content to Investor Sentiment: The Role of Media in the Stock Market},
+  journal   = {The Journal of Finance},
+  year      = {2007},
+  volume    = {62},
+  number    = {3},
+  pages     = {1139--1168},
+  doi       = {10.1111/j.1540-6261.2007.01232.x}
+}
+
+@article{welch2022robinhood,
+  author    = {Welch, Ivo},
+  title     = {The Wisdom of the Robinhood Crowd},
+  journal   = {The Journal of Finance},
+  year      = {2022},
+  volume    = {77},
+  number    = {3},
+  pages     = {1489--1527},
+  doi       = {10.1111/jofi.13128}
+}
+
+@article{fama1969adjustment,
+  author    = {Fama, Eugene F. and Fisher, Lawrence and Jensen, Michael C. and Roll, Richard},
+  title     = {The Adjustment of Stock Prices to New Information},
+  journal   = {International Economic Review},
+  year      = {1969},
+  volume    = {10},
+  number    = {1},
+  pages     = {1--21},
+  doi       = {10.2307/2525569}
+}
+
+@article{loughran2011liability,
+  author    = {Loughran, Tim and McDonald, Bill},
+  title     = {When Is a Liability Not a Liability? Textual Analysis, Dictionaries, and 10-{Ks}},
+  journal   = {The Journal of Finance},
+  year      = {2011},
+  volume    = {66},
+  number    = {1},
+  pages     = {35--65},
+  doi       = {10.1111/j.1540-6261.2010.01625.x}
+}
+
+@article{pang2021deep,
+  author    = {Pang, Guansong and Shen, Chunhua and Cao, Longbing and van den Hengel, Anton},
+  title     = {Deep Learning for Anomaly Detection: A Review},
+  journal   = {ACM Computing Surveys},
+  year      = {2021},
+  volume    = {54},
+  number    = {2},
+  pages     = {38:1--38:38},
+  doi       = {10.1145/3439950}
+}
+
+@article{guidotti2018survey,
+  author    = {Guidotti, Riccardo and Monreale, Anna and Ruggieri, Salvatore and Turini, Franco and Giannotti, Fosca and Pedreschi, Dino},
+  title     = {A Survey of Methods for Explaining Black Box Models},
+  journal   = {ACM Computing Surveys},
+  year      = {2018},
+  volume    = {51},
+  number    = {5},
+  pages     = {93:1--93:42},
+  doi       = {10.1145/3236009}
+}
+
+@article{rudin2019stop,
+  author    = {Rudin, Cynthia},
+  title     = {Stop Explaining Black Box Machine Learning Models for High Stakes Decisions and Use Interpretable Models Instead},
+  journal   = {Nature Machine Intelligence},
+  year      = {2019},
+  volume    = {1},
+  number    = {5},
+  pages     = {206--215},
+  doi       = {10.1038/s42256-019-0048-x}
+}
+
+@inproceedings{vaswani2017attention,
+  author    = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, {\L}ukasz and Polosukhin, Illia},
+  title     = {Attention Is All You Need},
+  booktitle = {Advances in Neural Information Processing Systems 30 (NeurIPS 2017)},
+  year      = {2017},
+  pages     = {5998--6008},
+  %% Idem: sem identificador ate 2026-08-21. URL canonico da NeurIPS, verificado a 200 e com o
+  %% <title> da pagina a bater ("Attention is All you Need").
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html}
+}
+
+@inproceedings{pennington2014glove,
+  author    = {Pennington, Jeffrey and Socher, Richard and Manning, Christopher D.},
+  title     = {{GloVe}: Global Vectors for Word Representation},
+  booktitle = {Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  year      = {2014},
+  pages     = {1532--1543},
+  doi       = {10.3115/v1/D14-1162}
+}
+
+%% --- 2.ª expansão do Estado da Arte (Cap. 2) — verificadas (DOI/arXiv, 2026-06-24) ---
+
+@inproceedings{breunig2000lof,
+  author    = {Breunig, Markus M. and Kriegel, Hans-Peter and Ng, Raymond T. and Sander, J{\"o}rg},
+  title     = {{LOF}: Identifying Density-Based Local Outliers},
+  booktitle = {Proceedings of the 2000 ACM SIGMOD International Conference on Management of Data},
+  year      = {2000},
+  pages     = {93--104},
+  %% O DOI 10.1145/335191.335388 resolve para o registo de REVISTA (ACM SIGMOD Record 29(2)),
+  %% não para as actas declaradas acima. Mesmo trabalho e mesmas páginas, mas a entrada e o
+  %% identificador diziam locais diferentes. Trocado pelo DOI das actas a 2026-08-04.
+  doi       = {10.1145/342009.335388}
+}
+
+@article{ahmed2016financial,
+  author    = {Ahmed, Mohiuddin and Mahmood, Abdun Naser and Islam, Md. Rafiqul},
+  title     = {A Survey of Anomaly Detection Techniques in Financial Domain},
+  journal   = {Future Generation Computer Systems},
+  year      = {2016},
+  volume    = {55},
+  pages     = {278--288},
+  doi       = {10.1016/j.future.2015.01.001}
+}
+
+@article{miller2019explanation,
+  author    = {Miller, Tim},
+  title     = {Explanation in Artificial Intelligence: Insights from the Social Sciences},
+  journal   = {Artificial Intelligence},
+  year      = {2019},
+  volume    = {267},
+  pages     = {1--38},
+  doi       = {10.1016/j.artint.2018.07.007}
+}
+
+@article{lipton2018mythos,
+  author     = {Lipton, Zachary C.},
+  title      = {The Mythos of Model Interpretability},
+  journal    = {Communications of the ACM},
+  year       = {2018},
+  volume     = {61},
+  number     = {10},
+  pages      = {36--43},
+  doi        = {10.1145/3233231}
+}
+
+@article{da2011attention,
+  author    = {Da, Zhi and Engelberg, Joseph and Gao, Pengjie},
+  title     = {In Search of Attention},
+  journal   = {The Journal of Finance},
+  year      = {2011},
+  volume    = {66},
+  number    = {5},
+  pages     = {1461--1499},
+  doi       = {10.1111/j.1540-6261.2011.01679.x}
+}
+
+@article{kearney2014textual,
+  author    = {Kearney, Colm and Liu, Sha},
+  title     = {Textual Sentiment in Finance: A Survey of Methods and Models},
+  journal   = {International Review of Financial Analysis},
+  year      = {2014},
+  volume    = {33},
+  pages     = {171--185},
+  doi       = {10.1016/j.irfa.2014.02.006}
+}
+
+@inproceedings{ding2015deep,
+  author    = {Ding, Xiao and Zhang, Yue and Liu, Ting and Duan, Junwen},
+  title     = {Deep Learning for Event-Driven Stock Prediction},
+  booktitle = {Proceedings of the 24th International Joint Conference on Artificial Intelligence (IJCAI)},
+  year      = {2015},
+  pages     = {2327--2333},
+  url       = {https://www.ijcai.org/Abstract/15/329}
+}
+
+@article{johnson2021faiss,
+  author    = {Johnson, Jeff and Douze, Matthijs and J{\'e}gou, Herv{\'e}},
+  title     = {Billion-Scale Similarity Search with {GPUs}},
+  journal   = {IEEE Transactions on Big Data},
+  year      = {2021},
+  volume    = {7},
+  number    = {3},
+  pages     = {535--547},
+  doi       = {10.1109/TBDATA.2019.2921572}
+}
+
+%% --- 3.ª expansão do Estado da Arte (Cap. 2) — verificadas (DOI/venue, 2026-06-24) ---
+
+@article{aamodt1994cbr,
+  author    = {Aamodt, Agnar and Plaza, Enric},
+  title     = {Case-Based Reasoning: Foundational Issues, Methodological Variations, and System Approaches},
+  journal   = {AI Communications},
+  year      = {1994},
+  volume    = {7},
+  number    = {1},
+  pages     = {39--59},
+  doi       = {10.3233/AIC-1994-7104}
+}
+
+@article{kahneman1979prospect,
+  author    = {Kahneman, Daniel and Tversky, Amos},
+  title     = {Prospect Theory: An Analysis of Decision under Risk},
+  journal   = {Econometrica},
+  year      = {1979},
+  volume    = {47},
+  number    = {2},
+  pages     = {263--291},
+  doi       = {10.2307/1914185}
+}
+
+@incollection{barberis2003behavioral,
+  author    = {Barberis, Nicholas and Thaler, Richard},
+  title     = {A Survey of Behavioral Finance},
+  booktitle = {Handbook of the Economics of Finance},
+  editor    = {Constantinides, George M. and Harris, Milton and Stulz, Ren{\'e} M.},
+  publisher = {Elsevier},
+  year      = {2003},
+  volume    = {1},
+  chapter   = {18},
+  pages     = {1053--1128},
+  doi       = {10.1016/S1574-0102(03)01027-6}
+}
+
+@article{xing2018nlffsurvey,
+  author    = {Xing, Frank Z. and Cambria, Erik and Welsch, Roy E.},
+  title     = {Natural Language Based Financial Forecasting: A Survey},
+  journal   = {Artificial Intelligence Review},
+  year      = {2018},
+  volume    = {50},
+  number    = {1},
+  pages     = {49--73},
+  doi       = {10.1007/s10462-017-9588-9}
+}
+
+@article{dacunto2019robo,
+  author    = {D'Acunto, Francesco and Prabhala, Nagpurnanand and Rossi, Alberto G.},
+  title     = {The Promises and Pitfalls of Robo-Advising},
+  journal   = {The Review of Financial Studies},
+  year      = {2019},
+  volume    = {32},
+  number    = {5},
+  pages     = {1983--2020},
+  doi       = {10.1093/rfs/hhz014}
+}
+
+@article{cardillo2024robo,
+  author    = {Cardillo, Giovanni and Chiappini, Helen},
+  title     = {Robo-advisors: A Systematic Literature Review},
+  journal   = {Finance Research Letters},
+  year      = {2024},
+  volume    = {62},
+  pages     = {105119},
+  doi       = {10.1016/j.frl.2024.105119}
+}
+
+@article{salton1975vsm,
+  author    = {Salton, Gerard and Wong, A. and Yang, C. S.},
+  title     = {A Vector Space Model for Automatic Indexing},
+  journal   = {Communications of the ACM},
+  year      = {1975},
+  volume    = {18},
+  number    = {11},
+  pages     = {613--620},
+  doi       = {10.1145/361219.361220}
+}
+
+@article{robertson2009bm25,
+  author    = {Robertson, Stephen and Zaragoza, Hugo},
+  title     = {The Probabilistic Relevance Framework: {BM25} and Beyond},
+  journal   = {Foundations and Trends in Information Retrieval},
+  year      = {2009},
+  volume    = {4},
+  number    = {1--2},
+  pages     = {1--174},
+  doi       = {10.1561/1500000019}
+}
+
+@book{manning2008ir,
+  author    = {Manning, Christopher D. and Raghavan, Prabhakar and Sch{\"u}tze, Hinrich},
+  title     = {Introduction to Information Retrieval},
+  publisher = {Cambridge University Press},
+  year      = {2008},
+  address   = {Cambridge, England},
+  isbn      = {978-0-521-86571-5}
+}
+
+@article{fama1970efficient,
+  author    = {Fama, Eugene F.},
+  title     = {Efficient Capital Markets: A Review of Theory and Empirical Work},
+  journal   = {The Journal of Finance},
+  year      = {1970},
+  volume    = {25},
+  number    = {2},
+  pages     = {383--417},
+  doi       = {10.2307/2325486}
+}
+
+@article{lee2004trust,
+  author    = {Lee, John D. and See, Katrina A.},
+  title     = {Trust in Automation: Designing for Appropriate Reliance},
+  journal   = {Human Factors},
+  year      = {2004},
+  volume    = {46},
+  number    = {1},
+  pages     = {50--80},
+  doi       = {10.1518/hfes.46.1.50_30392}
+}
+
+@inproceedings{bansal2021whole,
+  author    = {Bansal, Gagan and Wu, Tongshuang and Zhou, Joyce and Fok, Raymond and Nushi, Besmira and Kamar, Ece and Ribeiro, Marco Tulio and Weld, Daniel},
+  title     = {Does the Whole Exceed its Parts? The Effect of {AI} Explanations on Complementary Team Performance},
+  booktitle = {Proceedings of the 2021 CHI Conference on Human Factors in Computing Systems},
+  year      = {2021},
+  doi       = {10.1145/3411764.3445717}
+}
+
+@article{engle1982arch,
+  author    = {Engle, Robert F.},
+  title     = {Autoregressive Conditional Heteroscedasticity with Estimates of the Variance of United Kingdom Inflation},
+  journal   = {Econometrica},
+  year      = {1982},
+  volume    = {50},
+  number    = {4},
+  pages     = {987--1007},
+  doi       = {10.2307/1912773}
+}
+
+@article{bollerslev1986garch,
+  author    = {Bollerslev, Tim},
+  title     = {Generalized Autoregressive Conditional Heteroskedasticity},
+  journal   = {Journal of Econometrics},
+  year      = {1986},
+  volume    = {31},
+  number    = {3},
+  pages     = {307--327},
+  doi       = {10.1016/0304-4076(86)90063-1}
+}
+
+@article{friedman2001gbm,
+  author    = {Friedman, Jerome H.},
+  title     = {Greedy Function Approximation: A Gradient Boosting Machine},
+  journal   = {The Annals of Statistics},
+  year      = {2001},
+  volume    = {29},
+  number    = {5},
+  pages     = {1189--1232},
+  doi       = {10.1214/aos/1013203451}
+}
+
+@inproceedings{niculescu2005calibration,
+  author    = {Niculescu-Mizil, Alexandru and Caruana, Rich},
+  title     = {Predicting Good Probabilities with Supervised Learning},
+  booktitle = {Proceedings of the 22nd International Conference on Machine Learning (ICML '05)},
+  year      = {2005},
+  pages     = {625--632},
+  doi       = {10.1145/1102351.1102430}
+}
+
+% ── Incerteza, deriva e avaliação de agrupamento (sessão 43) ──────────────────
+% Todas verificadas contra a fonte primária; ver docs/decisions/citation_log.md
+% para o registo, incluindo as ARMADILHAS que a verificação apanhou.
+
+% ATENÇÃO: existem DUAS edições substancialmente diferentes (2005, 324 pp; 2022,
+% 476 pp, com três capítulos novos). Esta entrada é a PRIMEIRA. Nunca citar uma
+% página ou teorema sem dizer a edição.
+@book{vovk2005algorithmic,
+  author    = {Vovk, Vladimir and Gammerman, Alexander and Shafer, Glenn},
+  title     = {Algorithmic Learning in a Random World},
+  publisher = {Springer},
+  address   = {New York},
+  year      = {2005},
+  doi       = {10.1007/b106715},
+  isbn      = {978-0-387-00152-4}
+}
+
+@article{angelopoulos2023conformal,
+  author    = {Angelopoulos, Anastasios N. and Bates, Stephen},
+  title     = {Conformal Prediction: A Gentle Introduction},
+  journal   = {Foundations and Trends in Machine Learning},
+  year      = {2023},
+  volume    = {16},
+  number    = {4},
+  pages     = {494--591},
+  doi       = {10.1561/2200000101}
+}
+
+@article{gama2014survey,
+  author    = {Gama, Jo{\~a}o and {\v{Z}}liobait{\.e}, Indr{\.e} and Bifet, Albert
+               and Pechenizkiy, Mykola and Bouchachia, Abdelhamid},
+  title     = {A Survey on Concept Drift Adaptation},
+  journal   = {ACM Computing Surveys},
+  year      = {2014},
+  volume    = {46},
+  number    = {4},
+  pages     = {1--37},
+  doi       = {10.1145/2523813}
+}
+
+% SEM DOI: o identificador da ACM (10.5555/...) não está registado na Crossref e
+% não resolve por doi.org. As páginas vêm do volume impresso da Curran (o BibTeX
+% oficial das atas tem `pages` vazio, por serem atas eletrónicas). O primeiro
+% autor assina "D. Sculley" com inicial nua, e vai entre chavetas para o estilo
+% não o expandir. Em 2015 a conferência chamava-se NIPS.
+@inproceedings{sculley2015debt,
+  author    = {{D. Sculley} and Holt, Gary and Golovin, Daniel and Davydov, Eugene
+               and Phillips, Todd and Ebner, Dietmar and Chaudhary, Vinay
+               and Young, Michael and Crespo, Jean-Fran{\c{c}}ois and Dennison, Dan},
+  title     = {Hidden Technical Debt in Machine Learning Systems},
+  booktitle = {Advances in Neural Information Processing Systems 28 (NIPS 2015)},
+  publisher = {Curran Associates, Inc.},
+  year      = {2015},
+  pages     = {2503--2511},
+  %% Era a ÚNICA entrada sem identificador nenhum, o que contraria o protocolo §6.4 do próprio
+  %% projecto ("nenhuma entrada entra no .bib sem identificador verificado"). As actas do NIPS
+  %% de 2015 não emitem DOI; o URL canónico da NeurIPS é o identificador estável que existe.
+  %% Verificado a 2026-08-04: título e lista de autores conferem exactamente.
+  url       = {https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html}
+}
+
+% SEM DOI, e corretamente: a JMLR não atribuiu DOI ao volume 11 (2010).
+@article{vinh2010ami,
+  author    = {Vinh, Nguyen Xuan and Epps, Julien and Bailey, James},
+  title     = {Information Theoretic Measures for Clusterings Comparison: Variants,
+               Properties, Normalization and Correction for Chance},
+  journal   = {Journal of Machine Learning Research},
+  year      = {2010},
+  volume    = {11},
+  number    = {95},
+  pages     = {2837--2854},
+  url       = {https://www.jmlr.org/papers/v11/vinh10a.html}
+}
+
+% Ferramenta, não artigo. Entra como @online porque é isso que é, e com data de acesso,
+% porque um sítio muda. Recomendada pelo coorientador; ver docs/decisions/citation_log.md.
+@online{robinhood2025cortex,
+  author       = {{Robinhood Markets}},
+  title        = {Introducing Robinhood Strategies, Robinhood Banking, and Robinhood Cortex},
+  url          = {https://robinhood.com/us/en/newsroom/introducing-strategies-banking-and-cortex/},
+  urldate      = {2026-08-07},
+  year         = {2025},
+  month        = {3}
+}
+
+@online{google2026finance,
+  author       = {{Google}},
+  title        = {Our latest Google Finance upgrades, including a new app},
+  url          = {https://blog.google/products-and-platforms/products/search/google-finance-updates-june-2026/},
+  urldate      = {2026-08-07},
+  year         = {2026},
+  month        = {6}
+}
+
+@online{worldmonitor2026,
+  title        = {World Monitor},
+  subtitle     = {Real-time global intelligence dashboard},
+  url          = {https://worldmonitor.app},
+  urldate      = {2026-07-31},
+  year         = {2026}
+}
+
+@article{rousseeuw1987silhouettes,
+  author    = {Rousseeuw, Peter J.},
+  title     = {Silhouettes: a graphical aid to the interpretation and validation
+               of cluster analysis},
+  journal   = {Journal of Computational and Applied Mathematics},
+  year      = {1987},
+  volume    = {20},
+  pages     = {53--65},
+  doi       = {10.1016/0377-0427(87)90125-7}
+}
+
+%% Encolhimento de beta. Verificados a 2026-08-05 pelo protocolo §6.4 (Crossref, campo a campo):
+%% titulo, autor, revista, volume, numero, paginas e ano conferem com o registo canonico.
+%% O proprio codigo (correlation_engine/decomposition.py) trazia o aviso de que estas duas
+%% referencias tinham de ser verificadas antes de entrarem na tese.
+@article{vasicek1973beta,
+  author    = {Vasicek, Oldrich A.},
+  title     = {A Note on Using Cross-Sectional Information in {B}ayesian Estimation of Security Betas},
+  journal   = {The Journal of Finance},
+  year      = {1973},
+  volume    = {28},
+  number    = {5},
+  pages     = {1233--1239},
+  doi       = {10.1111/j.1540-6261.1973.tb01452.x}
+}
+
+@article{blume1971risk,
+  author    = {Blume, Marshall E.},
+  title     = {On the Assessment of Risk},
+  journal   = {The Journal of Finance},
+  year      = {1971},
+  volume    = {26},
+  number    = {1},
+  pages     = {1--10},
+  doi       = {10.1111/j.1540-6261.1971.tb00584.x}
+}
+
+@inproceedings{liu2020finbert,
+  author    = {Liu, Zhuang and Huang, Degen and Huang, Kaiyu and Li, Zhuang and Zhao, Jun},
+  title     = {{FinBERT}: A Pre-trained Financial Language Representation Model for Financial
+               Text Mining},
+  booktitle = {Proceedings of the Twenty-Ninth International Joint Conference on Artificial
+               Intelligence (IJCAI-20)},
+  publisher = {International Joint Conferences on Artificial Intelligence Organization},
+  pages     = {4513--4519},
+  year      = {2020},
+  %% Verificada no Crossref a 2026-08-19: titulo, cinco autores, actas e paginas conferem.
+  doi       = {10.24963/ijcai.2020/622}
+}
+
+@article{huang2023finbert,
+  author  = {Huang, Allen H. and Wang, Hui and Yang, Yi},
+  title   = {{FinBERT}: A Large Language Model for Extracting Information from Financial Text},
+  journal = {Contemporary Accounting Research},
+  volume  = {40},
+  number  = {2},
+  pages   = {806--841},
+  year    = {2023},
+  %% Verificada no Crossref a 2026-08-19: titulo, tres autores, revista, volume, numero, ano e
+  %% paginas conferem. E a versao revista por pares da linhagem FinBERT de Yi Yang, cuja
+  %% pre-publicacao (yang2020finbert) ficou citada apenas no corpo mais antigo.
+  doi     = {10.1111/1911-3846.12832}
+}
+
+@article{hevner2004design,
+  %% Verificada no Crossref a 2026-08-20: titulo, quatro autores, revista, volume 28,
+  %% numero 1, ano 2004 e paginas 75-106 conferem. O titulo no registo traz um "1" final
+  %% (marca de nota de rodape do proprio artigo) que aqui se omite.
+  author    = {Hevner, Alan R. and March, Salvatore T. and Park, Jinsoo and Ram, Sudha},
+  title     = {Design Science in Information Systems Research},
+  journal   = {MIS Quarterly},
+  year      = {2004},
+  volume    = {28},
+  number    = {1},
+  pages     = {75--106},
+  doi       = {10.2307/25148625}
+}
+
+@article{peffers2007dsrm,
+  %% Verificada no Crossref a 2026-08-20: titulo, quatro autores, revista, volume 24,
+  %% numero 3, ano 2007 e paginas 45-77 conferem.
+  author    = {Peffers, Ken and Tuunanen, Tuure and Rothenberger, Marcus A. and
+               Chatterjee, Samir},
+  title     = {A Design Science Research Methodology for Information Systems Research},
+  journal   = {Journal of Management Information Systems},
+  year      = {2007},
+  volume    = {24},
+  number    = {3},
+  pages     = {45--77},
+  doi       = {10.2753/MIS0742-1222240302}
+}
+
+@article{ancker2017alertfatigue,
+  %% Verificada no Crossref a 2026-08-30: DOI resolve para este trabalho; titulo, seis
+  %% autores nomeados, revista, volume 17, numero 1, ano 2017 e numero de artigo 36 conferem.
+  author    = {Ancker, Jessica S. and Edwards, Alison and Nosal, Sarah and Hauser, Diane
+               and Mauer, Elizabeth and Kaushal, Rainu},
+  title     = {Effects of Workload, Work Complexity, and Repeated Alerts on Alert Fatigue
+               in a Clinical Decision Support System},
+  journal   = {BMC Medical Informatics and Decision Making},
+  year      = {2017},
+  volume    = {17},
+  number    = {1},
+  pages     = {36},
+  doi       = {10.1186/s12911-017-0430-8}
+}
+
+@incollection{doshivelez2018considerations,
+  author    = {Doshi-Velez, Finale and Kim, Been},
+  title     = {Considerations for Evaluation and Generalization in Interpretable Machine
+               Learning},
+  booktitle = {Explainable and Interpretable Models in Computer Vision and Machine Learning},
+  editor    = {Escalante, Hugo Jair and Escalera, Sergio and Guyon, Isabelle and Bar\'o, Xavier
+               and G\"u\c{c}l\"ut\"urk, Ya\u{g}mur and G\"u\c{c}l\"u, Umut and van Gerven, Marcel},
+  series    = {The Springer Series on Challenges in Machine Learning},
+  publisher = {Springer},
+  address   = {Cham},
+  pages     = {3--17},
+  year      = {2018},
+  %% Verificada a 2026-08-31 (Springer Link): versao revista por pares do argumento antes
+  %% disponivel apenas em pre-publicacao. Substitui doshivelez2017rigorous.
+  isbn      = {978-3-319-98130-7},
+  doi       = {10.1007/978-3-319-98131-4_1}
+}
+
+@inproceedings{li2023llmfinance,
+  author    = {Li, Yinheng and Wang, Shaofei and Ding, Han and Chen, Hang},
+  title     = {Large Language Models in Finance: A Survey},
+  booktitle = {Proceedings of the Fourth ACM International Conference on AI in Finance
+               (ICAIF '23)},
+  publisher = {Association for Computing Machinery},
+  pages     = {374--382},
+  year      = {2023},
+  %% Verificada no Crossref a 2026-08-31: quatro autores, actas, paginas e DOI conferem.
+  %% Substitui wu2023bloomberggpt, que so existia em pre-publicacao.
+  doi       = {10.1145/3604237.3626869}
+}
+
+%% --- Evidencia recente para a contextualizacao (Cap. 1) — verificadas no Crossref, 2026-08-31 ---
+@article{cahill2025attention,
+  author  = {Cahill, Daniel and Liu, Zhangxin and Smales, Lee A.},
+  title   = {Investigating proxies for retail investor attention in financial markets},
+  journal = {Accounting \& Finance},
+  volume  = {65},
+  number  = {1},
+  pages   = {521--550},
+  year    = {2025},
+  %% Verificada no Crossref a 2026-08-31: tres autores, revista, volume, numero, paginas e ano.
+  doi     = {10.1111/acfi.13338}
+}
+
+@article{ernst2026retail,
+  author  = {Ernst, Thomas H. and Spatt, Chester S.},
+  title   = {Retail Investors and Trading Execution},
+  journal = {Annual Review of Financial Economics},
+  year    = {2026},
+  %% Verificada no Crossref a 2026-08-31: autores, titulo, revista e ano. Publicacao antecipada
+  %% em linha, ainda sem volume nem paginas atribuidos.
+  doi     = {10.1146/annurev-financial-111424-124712}
+}
+
+%% --- Geracao aumentada por recuperacao (Cap. 2) — verificadas a 2026-08-31 ---
+@inproceedings{lewis2020rag,
+  author    = {Lewis, Patrick and Perez, Ethan and Piktus, Aleksandra and Petroni, Fabio and
+               Karpukhin, Vladimir and Goyal, Naman and K\"uttler, Heinrich and Lewis, Mike and
+               Yih, Wen-tau and Rockt\"aschel, Tim and Riedel, Sebastian and Kiela, Douwe},
+  title     = {Retrieval-Augmented Generation for Knowledge-Intensive {NLP} Tasks},
+  booktitle = {Advances in Neural Information Processing Systems 33 (NeurIPS 2020)},
+  publisher = {Curran Associates},
+  pages     = {9459--9474},
+  year      = {2020},
+  %% Actas revistas por pares (NeurIPS), nao pre-publicacao. Verificada a 2026-08-31 nas actas
+  %% oficiais e no indice da ACM (10.5555/3495724.3496517).
+  url       = {https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html}
+}
+
+@article{huang2026ragsurvey,
+  author  = {Huang, Yizheng and Huang, Jimmy Xiangji},
+  title   = {A Survey on Retrieval-Augmented Text Generation for Large Language Models},
+  journal = {ACM Computing Surveys},
+  volume  = {58},
+  pages   = {1--38},
+  year    = {2026},
+  %% Verificada no Crossref a 2026-08-31: dois autores, revista, volume, paginas e ano.
+  doi     = {10.1145/3805774}
+}

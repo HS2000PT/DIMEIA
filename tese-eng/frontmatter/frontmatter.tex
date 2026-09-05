@@ -1,0 +1,196 @@
+% Front matter — English thesis.
+% ⚠️ Mirror of tese-pt/frontmatter/frontmatter.tex with the two abstracts SWAPPED: here the
+% main `abstract` is English and `abstractotherlanguage` carries the Portuguese resumo. The
+% content of both is the same text as the Portuguese tree, so a change to one has to be
+% mirrored in the other.
+
+\frontmatter
+\pagestyle{plain}
+
+\maketitlepage
+
+%----------------------------------------------------------------------------------------
+%	STATEMENT OF INTEGRITY
+%----------------------------------------------------------------------------------------
+
+\begin{soi}
+
+\vspace{1cm}
+
+I hereby declare having conducted this academic work with integrity.
+
+I have not plagiarised or applied any form of undue use of information or falsification of
+results along the process leading to its elaboration.
+
+Therefore the work presented in this document is original and authored by me, having not been
+previously used for any other end. The exceptions are explicitly acknowledged in the section
+that addresses the ethical considerations, Section~\ref{sec:met_etica}.
+Section~\ref{sec:met_ia}, which follows it, declares how Artificial Intelligence tools were
+used and for what purpose.
+
+I further declare that I have fully acknowledged the Code of Ethical Conduct of P.PORTO.
+
+\vspace{1cm}
+
+% The wording above is that of the official MEIA template (v2, 2026), word for word, including
+% the sentence on exceptions, which applies here and therefore stays. It is the template that
+% sends the declaration on the use of AI to the ethical considerations section
+% (Section~\ref{sec:met_ia}) rather than to this page.
+% The date follows the one on the cover (set in main.tex). It used to be \today and changed on
+% its own at every compilation, which on a SIGNED declaration is worse than on the cover.
+ISEP, Porto, September 2026
+
+\end{soi}
+
+%----------------------------------------------------------------------------------------
+%	DEDICATION
+%----------------------------------------------------------------------------------------
+\begin{dedicatory}
+To my family.
+\end{dedicatory}
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT
+%----------------------------------------------------------------------------------------
+
+\begin{abstract}
+When a stock price moves abruptly, retail investors need to determine whether the movement is
+unusual, whether its origin lies with the company or the market, and whether comparable precedents
+exist. Free applications display the percentage change, and the few that go further do not
+expose the evidence behind them;
+professional terminals do answer them, at a cost incompatible with this investor profile.
+
+This dissertation presents InvestiGator, a financial alerting system built exclusively on free data
+sources, which answers the three questions and exposes the evidence supporting each answer. The
+system integrates four techniques: anomaly detection through a rolling \emph{z}-score, decomposition
+of returns into market, sector and company components with beta shrinkage, precedent retrieval by
+semantic similarity with measurement of the observed outcome, and a supervised triage model trained
+on a purpose-built dataset.
+
+Each component was evaluated against transparent baselines. Volatility-normalised detection proves
+consistent across companies; semantic retrieval outperforms the base rate in every sector assessed;
+the triage model does not outperform a volatility-only baseline, a negative result that is reported
+and analysed.
+
+By design, the system does not produce price forecasts.
+\end{abstract}
+
+\begin{abstractotherlanguage}
+Quando o preço de uma ação se move de forma abrupta, o investidor particular necessita de
+determinar se o movimento é invulgar, se a sua origem é a empresa ou o mercado, e se existem
+precedentes. As aplicações gratuitas apresentam a variação percentual, e as poucas que vão
+além disso não expõem a evidência que as sustenta; os terminais profissionais respondem, a
+um custo incompatível com este investidor.
+
+Esta dissertação apresenta o InvestiGator, um sistema de alertas financeiros assente exclusivamente
+em fontes de dados gratuitas, que responde às três questões e expõe a evidência de cada
+resposta. O sistema integra quatro técnicas: deteção de anomalias por \emph{z}-score deslizante,
+decomposição do retorno em mercado, setor e empresa com encolhimento do beta, recuperação de
+precedentes por semelhança semântica com medição do desfecho observado, e um modelo supervisionado
+de triagem treinado sobre um conjunto de dados próprio.
+
+Cada componente foi avaliado contra linhas de base transparentes. A deteção normalizada pela
+volatilidade revela-se consistente entre empresas; a recuperação semântica supera a taxa-base nos
+cinco setores avaliados; o modelo de triagem não supera uma linha de base baseada apenas em
+volatilidade, resultado negativo reportado e analisado.
+
+Por desenho, o sistema não produz previsões de preço.
+\end{abstractotherlanguage}
+
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+% DRAFT IN THE AUTHOR'S VOICE, FOR HIM TO REWRITE. Acknowledgements are the one section of
+% the document nobody can write for someone else: what is here is a factual base, with the
+% right people and without sentimentality, and not the final wording.
+%
+% Two rules that governed the drafting and that should not be lost on rewriting:
+%   1. THANK THOSE WHO TOOK PART, AND ONLY THOSE. People who rate the channel's alerts did
+%      take part, and that feedback is reported in Section 5.6.5. What CANNOT be written is
+%      thanks to participants of a controlled study, because none was run and Chapter 6
+%      states so.
+%   2. SPECIFICITY REPLACES EMOTION. "For the conversations that set the direction" says
+%      more, and reads better, than "for all the support".
+\begin{acknowledgements}
+To Prof.\ Luís Gomes, supervisor, and to Rafael Silva, co-supervisor, for the conversations
+that set the direction of this work, for the examples that showed me what already exists in
+the field, and for the guidance on writing the document. Some of the decisions described here
+were taken after one of those conversations.
+
+To my family, for the support over these months.
+
+To my colleagues at Sistrade, and to Sistrade, for the flexibility that made it possible to
+reconcile this master's degree with work, and for the conversations about the application
+while it was being built.
+
+To those who follow the channel and rate the alerts they receive. That feedback is the only
+information in this work that did not come from an automatic measurement.
+\end{acknowledgements}
+
+%----------------------------------------------------------------------------------------
+%	CONTENTS
+%----------------------------------------------------------------------------------------
+\tableofcontents
+% The lists are listed in the Contents. The List of Acronyms already was and the other three
+% were not, which is the worst of the configurations: the reader learns that the lists are in
+% the Contents and then does not find there the ones being looked for. The convention followed
+% is that of Bruno Ribeiro's approved dissertation, whose Contents lists all of them with a
+% page number. The cleardoublepage before addcontentsline ensures that the entry points to the
+% page where the list BEGINS, and not to the previous one.
+\cleardoublepage
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
+\cleardoublepage
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
+% The List of Listings is NOT printed and the command renaming its prefix was removed: the
+% rewrite for this tree left the document WITHOUT A SINGLE code listing, and the comment that
+% used to be here defended keeping a list that no longer has content. The anti-lookahead
+% guarantee, which was the listing worth showing, became the rolling-window figure in the
+% methods chapter, which serves better the reader this dissertation addresses.
+
+%----------------------------------------------------------------------------------------
+%	LIST OF SYMBOLS
+%----------------------------------------------------------------------------------------
+% Required by the checklist of the official MEIA template (v2, 2026), which marks it as
+% mandatory. Only the symbols the document uses and defines are listed; the third column points
+% to the equation or section where each is introduced, so that the list works as an index and
+% not merely as a glossary. The List of Listings and the List of Algorithms are absent because
+% the document has neither, and the template itself instructs removing those commands in that
+% case.
+\cleardoublepage
+\addcontentsline{toc}{chapter}{List of Symbols}
+\begin{symbols}{l p{0.60\textwidth} l}
+$P_t$ & Closing price of session $t$ & Eq.~\ref{eq:zscore} \\
+$r_t$ & Logarithmic return of day $t$, $\ln(P_t / P_{t-1})$ & Eq.~\ref{eq:zscore} \\
+$\mu$, $\sigma$ & Mean and standard deviation of the returns in the window preceding the day & Eq.~\ref{eq:zscore} \\
+$z_t$ & Rarity of the return of day $t$ against the preceding window & Eq.~\ref{eq:zscore} \\
+\addlinespace
+$r_m$, $\tilde{r}_s$ & Daily return of the market index and of the sector index & Eq.~\ref{eq:decomposicao} \\
+$\beta_m$, $\beta_s$ & Historical sensitivity of the stock to the market and to the sector & Eq.~\ref{eq:decomposicao} \\
+$\varepsilon$ & Part of the return explained neither by the market nor by the sector & Eq.~\ref{eq:decomposicao} \\
+$\hat{\beta}$ & Beta estimate obtained by regression over the window & Eq.~\ref{eq:vasicek} \\
+$\beta_{\text{ref}}$ & Reference beta towards which the estimate is shrunk & Eq.~\ref{eq:vasicek} \\
+$\mathrm{SE}(\hat{\beta})$ & Standard error of the beta estimate & Eq.~\ref{eq:vasicek} \\
+$\sigma^2_{\text{ref}}$ & Reference variance that sets the strength of the shrinkage & Eq.~\ref{eq:vasicek} \\
+$w$ & Weight of the Vasicek shrinkage, between zero and one & Eq.~\ref{eq:vasicek} \\
+\addlinespace
+$\cos$ & Cosine similarity between two sentence vectors & Section~\ref{sec:met_recuperacao} \\
+$h$ & Half-life of the recency decay applied to precedents & Section~\ref{sec:met_recuperacao} \\
+$k$ & Number of precedents retrieved and presented & Section~\ref{sec:met_recuperacao} \\
+\addlinespace
+$p_{\text{bruta}}$ & Triage score before calibration & Eq.~\ref{eq:platt} \\
+$p_{\text{calibrada}}$ & Triage score after Platt calibration & Eq.~\ref{eq:platt} \\
+$a$, $b$ & Learned parameters of the Platt calibration & Eq.~\ref{eq:platt} \\
+\addlinespace
+$P$, $C$ & Precision and recall & Section~\ref{sec:av_desenho} \\
+$F_1$ & Harmonic mean of precision and recall, $2PC/(P+C)$ & Section~\ref{sec:av_desenho} \\
+\end{symbols}
+
+% nogroupskip: without it the vertical space VARIES with the initial letter -- entries sharing
+% an initial end up tight together and the rest spaced apart, which reads as arbitrary spacing.
+\printnoidxglossary[type=\acronymtype, title=List of Acronyms, nonumberlist,
+                   nogroupskip]
+
+\mainmatter
+\pagestyle{thesis}
