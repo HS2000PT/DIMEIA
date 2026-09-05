@@ -641,41 +641,46 @@ The third case study answers \gls{QI}3: a trained model prioritises news better 
 built only on volatility. The answer is negative, and it is the result with the greatest
 informative value in the work.
 
-\subsection{Procedimento}
+\subsection{Procedure}
 
-O conjunto de dados contém $79{,}753$ exemplos entre 2018 e 2023, cada um correspondente a uma notícia
-com o contexto de mercado do dia e o rótulo definido na Secção~\ref{sec:met_triagem}. A divisão é
-cronológica com embargo, e a prevalência de casos positivos no bloco de teste é de $0.378$. A
-métrica principal é a \gls{PRAUC}, adequada quando as duas classes estão desequilibradas.
+The dataset contains $79{,}753$ examples between 2018 and 2023, each corresponding to a news item
+with the market context of the day and the label defined in Section~\ref{sec:met_triagem}. The
+split is chronological with an embargo, and the prevalence of positive cases in the test block is
+$0.378$. The principal metric is \gls{PRAUC}, appropriate when the two classes are
+unbalanced.
 
-Para efeitos práticos, uma diferença de \gls{PRAUC} inferior a $0.02$ é tratada como
-indistinguível, mesmo quando o intervalo emparelhado exclui zero. O limite é uma escolha do autor,
-declarada antes dos resultados, o que obriga à sua aplicação nos dois sentidos.
+For practical purposes, a \gls{PRAUC} difference below $0.02$ is treated as indistinguishable,
+even when the paired interval excludes zero. The limit is a choice of the author, declared before
+the results, which requires it to be applied in both directions.
 
-Dois cuidados de montagem asseguram que a comparação não favorece a conclusão obtida. O primeiro é a
-inclusão de um conjunto de árvores treinado por reforço do gradiente \autocite{friedman2001gbm}, o
-mais expressivo dos modelos comparados, por captar interações e efeitos não lineares que a regressão
-logística não capta por construção. Este modelo foi executado com os parâmetros por defeito da
-biblioteca, sem procura de hiperparâmetros, o que limita o alcance da sua derrota: estabelece que o
-texto não produz vantagem nesta montagem, e não que a não produziria num modelo não linear afinado.
-O segundo cuidado é a conversão de todas as pontuações em probabilidades por calibração \emph{a
-posteriori} sobre um bloco de validação reservado \autocite{niculescu2005calibration}, sem a qual a
-comparação pelo índice de Brier não seria válida entre modelos.
+Two precautions in the setup ensure that the comparison does not favour the conclusion obtained.
+The first is the inclusion of an ensemble of trees trained by gradient boosting
+\autocite{friedman2001gbm}, the most expressive of the models compared, since it captures
+interactions and non-linear effects that logistic regression does not capture by construction. This
+model was run with the library's default parameters, without a hyperparameter search, which limits
+the reach of its defeat: it establishes that text produces no advantage in this setup, and not that
+it would produce none in a tuned non-linear model. The second precaution is the conversion of all
+scores into probabilities by \emph{post-hoc} calibration over a held-out validation block
+\autocite{niculescu2005calibration}, without which the comparison by the Brier score would not be
+valid across models.
 
-Uma entrada não está disponível no mesmo referencial em produção. O retorno do próprio dia
-corresponde, no conjunto histórico, ao movimento completo do dia da notícia, ao passo que em produção
-a notícia é pontuada antes de esse dia encerrar. O resultado apresentado avalia por isso o modelo com
-a variável diária completa e não demonstra paridade com a pontuação intradiária. A direção da assimetria é conhecida. A entrada em causa pertence ao bloco de contexto, presente
-nos modelos de resultado inferior. A linha de base vencedora usa uma só entrada: a volatilidade
-dos vinte dias anteriores, fechada na véspera. O referencial mais generoso
-encontra-se do lado dos modelos que a comparação não favorece, e a sua correção só poderia tornar o
-resultado negativo mais forte.
+One input is not available in the same reference frame in production. The same-day return
+corresponds, in the historical set, to the complete movement of the day of the news, whereas in
+production the news is scored before that day closes. The result presented therefore evaluates the
+model with the complete daily variable and does not demonstrate parity with intraday scoring. The
+direction of the asymmetry is known. The input in question belongs to the context block, present in
+the models with the inferior result. The winning baseline uses a single input: the volatility of
+the twenty preceding days, closed on the previous day. The more generous reference frame is on the
+side of the models the comparison does not favour, and correcting it could only make the negative
+result stronger.
 
-\subsection{Resultado}
+\subsection{Result}
 
-A Figura~\ref{fig:av_triagem} apresenta os cinco modelos e a referência sem informação comparados. As curvas completas, de que estes valores são a área, constam dos artefactos identificados no
-Apêndice~\ref{ap:reprodutibilidade}. Nelas a curva da volatilidade situa-se acima das restantes em
-quase toda a extensão do eixo, o que estabelece que a diferença não é artefacto do valor agregado.
+Figure~\ref{fig:av_triagem} presents the five models and the no-information reference compared. The
+complete curves, of which these values are the area, appear in the artefacts identified in
+Appendix~\ref{ap:reprodutibilidade}. In them the volatility curve sits above the rest over almost
+the whole extent of the axis, which establishes that the difference is not an artefact of the
+aggregate value.
 
 \begin{figure}[ht]
 \centering
@@ -709,53 +714,51 @@ quase toda a extensão do eixo, o que estabelece que a diferença não é artefa
   {prevalence 0.378};
 \end{axis}
 \end{tikzpicture}
-\caption[Triagem: pontos e intervalos sobre o mesmo bloco de teste]{Área sob a curva de precisão e
-cobertura de cinco modelos, com intervalos marginais a noventa e cinco por cento obtidos por
-reamostragem dos $1{,}951$ grupos. A linha tracejada assinala a prevalência do bloco de teste, que é o valor
-obtido por um modelo que atribua a mesma probabilidade a todos os exemplos. Os valores são pontos, e
-os intervalos são amplos e sobrepõem-se: $[0.492;\,0.597]$ para a volatilidade, $[0.487;\,0.592]$ para o
-contexto e $[0.453;\,0.540]$ para o contexto com texto. A comparação que a subsecção seguinte
-sustenta é a diferença emparelhada entre modelos sobre as mesmas reamostragens, e não a distância
-entre dois pontos.}
+\caption[Triage: points and intervals over the same test block]{Area under the precision-recall
+curve of five models, with marginal ninety-five per cent intervals obtained by resampling the
+$1{,}951$ groups. The dashed line marks the prevalence of the test block, which is the value
+obtained by a model that assigns the same probability to every example. The values are points, and
+the intervals are wide and overlapping: $[0.492;\,0.597]$ for volatility, $[0.487;\,0.592]$ for
+context and $[0.453;\,0.540]$ for context with text. The comparison the following subsection
+supports is the paired difference between models over the same resamples, and not the distance
+between two points.}
 \label{fig:av_triagem}
 \end{figure}
 
 
-O valor mais elevado pertence ao modelo mais simples de todos, o que utiliza apenas a volatilidade
-recente. Acrescentar-lhe o restante contexto não altera o resultado de forma distinguível, com
-$0.538$ contra $0.542$; acrescentar o texto do título deteriora-o de forma distinguível, com
-$0.496$. O índice de Brier acompanha a mesma ordenação, com $0.218$ para o modelo de
-volatilidade contra $0.229$ para o modelo com texto e $0.622$ para o modelo que anuncia sempre a
-unidade. A hipótese inicial, segundo a qual o texto da notícia traria informação ausente dos preços,
-não é confirmada sobre este corpus.
+The highest value belongs to the simplest model of all, the one that uses only recent volatility.
+Adding the rest of the context to it does not change the result distinguishably, at $0.538$ against
+$0.542$; adding the text of the headline degrades it distinguishably, at $0.496$. The Brier score
+follows the same ordering, with $0.218$ for the volatility model against $0.229$ for the model with
+text and $0.622$ for the model that always announces one. The initial hypothesis, that the text of
+the news would bring information absent from the prices, is not confirmed over this corpus.
 
-\subsection{Três verificações à montagem experimental}
+\subsection{Three checks on the experimental setup}
 
-O resultado negativo foi submetido a três verificações destinadas a determinar se decorre da montagem
-experimental.
+The negative result was submitted to three checks intended to determine whether it follows from the
+experimental setup.
 
-A primeira respeita ao ajuste do modelo de texto. A comparação foi repetida concedendo ao texto as
-melhores condições disponíveis, com regularização afinada, redução do bloco de texto a trinta e duas
-dimensões e um modelo de linguagem especializado em finanças. O melhor resultado do texto sobe para
-$0.533$ e permanece abaixo dos $0.542$ da volatilidade.
+The first concerns the fit of the text model. The comparison was repeated granting the text the
+best conditions available, with tuned regularisation, reduction of the text block to thirty-two
+dimensions and a language model specialised in finance. The best result of the text rises to
+$0.533$ and stays below the $0.542$ of volatility.
 
-A segunda respeita ao ruído de amostragem. O bloco de teste foi reamostrado mil vezes por grupos
-constituídos pela empresa e pelo dia, uma vez que notícias do mesmo dia sobre a mesma empresa
-partilham o rótulo e não constituem observações independentes. A diferença entre a volatilidade e a
-variante com texto é de $+0.048$, com intervalo entre $+0.032$ e $+0.066$, que exclui zero e
-supera o limite prático de $0.02$. É a única comparação desta secção que o supera.
+The second concerns sampling noise. The test block was resampled a thousand times by groups formed
+by company and day, since news items of the same day about the same company share the label and are
+not independent observations. The difference between volatility and the variant with text is
+$+0.048$, with an interval between $+0.032$ and $+0.066$, which excludes zero and exceeds the
+practical limit of $0.02$. It is the only comparison in this section that exceeds it.
 
-O alcance deste
-intervalo é, contudo, limitado: a reamostragem realiza-se dentro de
-um único bloco de teste, com duzentos e vinte e um dias de negociação, pelo que mede o ruído de
-amostragem nesse período e nada estabelece sobre a estabilidade entre períodos. A distinção não é
-teórica neste trabalho, dado que a Secção~\ref{sec:av_producao} reporta um deslocamento significativo
-na distribuição da entrada principal. Uma origem rolante com três ou quatro cortes sucessivos
-responderia à pergunta mais larga, e não foi realizada.
+The reach of this interval is, however, limited: the resampling takes place within a single test
+block, with two hundred and twenty-one trading days, so it measures the sampling noise in that
+period and establishes nothing about stability across periods. The distinction is not theoretical
+in this work, since Section~\ref{sec:av_producao} reports a significant displacement in the
+distribution of the principal input. A rolling origin with three or four successive cuts would
+answer the wider question, and was not carried out.
 
-A terceira respeita à definição do rótulo, que utiliza um limiar de dois por cento e um horizonte de
-três dias, ambos escolhidos pelo autor. A comparação foi repetida para nove combinações de limiar e
-horizonte, e a Figura~\ref{fig:av_rotulos} apresenta o resultado.
+The third concerns the definition of the label, which uses a threshold of two per cent and a
+horizon of three days, both chosen by the author. The comparison was repeated for nine combinations
+of threshold and horizon, and Figure~\ref{fig:av_rotulos} presents the result.
 
 \begin{figure}[ht]
 \centering
@@ -795,44 +798,44 @@ horizonte, e a Figura~\ref{fig:av_rotulos} apresenta o resultado.
 \end{tikzpicture}
 \par\smallskip
 \pgfplotslegendfromname{leg:rotulos}
-\caption[O resultado sob nove definições alternativas de rótulo]{Desempenho das duas famílias sob
-os três horizontes, em três painéis correspondentes aos limiares, com a prevalência de cada célula
-como referência. A faixa verde identifica a definição utilizada no restante capítulo. A
-volatilidade iguala ou supera o modelo com texto nas nove combinações, com prevalências entre
-$0.082$ e $0.597$.}
+\caption[The result under nine alternative label definitions]{Performance of the two families
+under the three horizons, in three panels corresponding to the thresholds, with the prevalence of
+each cell as reference. The green band identifies the definition used in the rest of the chapter.
+Volatility matches or beats the model with text in all nine combinations, with prevalences between
+$0.082$ and $0.597$.}
 \label{fig:av_rotulos}
 \end{figure}
 
-O resultado negativo resiste às três verificações. A volatilidade iguala ou supera o modelo com texto
-nas nove definições de rótulo, com prevalências entre $0.082$ e $0.597$, o que retira à escolha
-concreta de limiar e horizonte o estatuto de ponto de ataque.
+The negative result survives the three checks. Volatility matches or beats the model with text in
+all nine label definitions, with prevalences between $0.082$ and $0.597$, which removes from the
+concrete choice of threshold and horizon the status of a point of attack.
 
-Uma quarta verificação incide sobre a composição dos blocos e conduz a uma conclusão que atua nos
-dois sentidos. Os três blocos quase não partilham empresas. O bloco de treino decorre entre 2 de
-janeiro de 2018 e 3 de março de 2022 e contém treze empresas; o bloco de teste decorre entre 2 de
-fevereiro e 18 de dezembro de 2023 e contém nove. Cinco empresas do treino não figuram uma única vez
-no teste, e uma empresa do teste, responsável por $17.1\%$ das suas linhas, nunca figura no treino.
-Para as empresas presentes em ambos os lados, a taxa de positivos desloca-se de forma acentuada, e a
-Apple passa de $0.448$ no treino para $0.183$ no teste. Estes valores leem-se diretamente das
-colunas de identificação e de bloco do conjunto congelado e não exigem qualquer execução adicional.
+A fourth check bears on the composition of the blocks and leads to a conclusion that acts in both
+directions. The three blocks barely share companies. The training block runs between 2 January 2018
+and 3 March 2022 and contains thirteen companies; the test block runs between 2 February and 18
+December 2023 and contains nine. Five companies from training do not appear once in the test, and
+one company in the test, accounting for $17.1\%$ of its rows, never appears in training. For the
+companies present on both sides, the positive rate shifts markedly, and Apple goes from $0.448$ in
+training to $0.183$ in the test. These values are read directly from the identifier and block
+columns of the frozen set and require no additional execution.
 
-Não se trata de utilização de informação futura nem de erro de divisão: o corte é realizado por dia,
-e a proporção respeita a definida na Secção~\ref{sec:met_triagem}. É a composição do corpus que varia
-com o tempo, pela mesma razão que torna o bloco de teste maior do que o de treino, uma vez que as
-empresas sobre as quais se escreve em 2018 não são as mesmas de 2023.
+This is not use of future information nor an error in the split: the cut is made by day, and the
+proportion respects the one defined in Section~\ref{sec:met_triagem}. It is the composition of the
+corpus that varies with time, for the same reason that makes the test block larger than the
+training block, since the companies written about in 2018 are not the same as in 2023.
 
-A favor do resultado negativo pesa o seguinte. O sinal do modelo é essencialmente a identidade da
-empresa, conforme a Secção~\ref{sec:av_ablacao} estabelece, e essa identidade é estimada sobre um
-conjunto de empresas quase ausente do bloco onde é avaliada. A volatilidade dos vinte dias
-anteriores, fechada na véspera, é comparável entre empresas e não depende da identidade de
-nenhuma. Contra o
-resultado, a comparação não separa a hipótese de o modelo ser pior da hipótese de a identidade não
-transferir entre estes dois períodos, separação que exigiria uma divisão de composição constante. A
-mesma constatação explica, sem recurso ao acaso, a prevalência de $47.0\%$ da validação contra
-$37.8\%$ do teste, que correspondem a conjuntos de empresas distintos e não apenas a períodos
-distintos.
+In favour of the negative result weighs the following. The signal of the model is essentially the
+identity of the company, as Section~\ref{sec:av_ablacao} establishes, and that identity is
+estimated over a set of companies almost absent from the block where it is evaluated. The
+volatility of the twenty preceding days, closed on the previous day, is comparable across companies
+and depends on the identity of none. Against the result, the comparison does not separate the
+hypothesis that the model is worse from the hypothesis that identity does not transfer between
+these two periods, a separation that would require a split of constant composition. The same
+finding explains, without recourse to chance, the prevalence of $47.0\%$ in validation against
+$37.8\%$ in the test, which correspond to distinct sets of companies and not merely to distinct
+periods.
 
-\subsection{Utilidade sob a restrição de orçamento}
+\subsection{Usefulness under the budget constraint}
 
 O produto apresenta no máximo cinco alertas por dia, pelo que a pergunta com significado operacional
 é a de qual a fração de acertos entre as cinco notícias escolhidas em cada dia. A
