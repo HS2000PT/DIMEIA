@@ -253,3 +253,53 @@ quantidades diferentes** e a fonte tem as duas: $0{,}487$ é a mediana da quota 
 atribuída à empresa, $0{,}460$ é a mediana do $R^2$ do ajuste. A tese distingue-as no
 parágrafo seguinte, e chega a dizer que o segundo «não é o coeficiente do ajuste por mínimos
 quadrados». **Ler o parágrafo seguinte antes de reportar** — é a mesma lição da sessão 64.
+
+---
+
+## `tese-eng/` — árvore inglesa completa
+
+Os seis capítulos, o *front matter*, o glossário e os dois apêndices estão traduzidos. A
+árvore compila a **130 páginas, 0 erros**.
+
+**Quatro conversões mecânicas antes de traduzir**, e a ordem entre duas delas decide: `babel`
+para `main=english`, a opção da classe, **441 decimais** de vírgula para ponto e **34
+milhares** de espaço fino para vírgula — nesta ordem, porque a inversa faria `79 753` sair
+como `79.753`, que em inglês se lê como setenta e nove vírgula sete.
+
+### Três adaptações que não são tradução, cada uma com a razão escrita no ficheiro
+
+1. **O parágrafo da convenção linguística do Cap. 1 foi retirado.** Explica porque é que o
+   interior das figuras está em inglês e a prosa em português; aqui as duas estão na mesma
+   língua. ⚠️ Terá de sair também da árvore PT quando as figuras lá forem convertidas.
+2. **O parágrafo equivalente no Cap. 4**, que justifica a mensagem do sistema estar em
+   inglês. A decisão de desenho que ele defende — citar os títulos sem traduzir — fica, e
+   passa a ser dita directamente.
+3. **`\gls{QI}` mantém a chave e imprime `RQ`**; `\gls{IA}` foi remapeado para `\gls{AI}`,
+   senão a lista de acrónimos imprimia a mesma sigla duas vezes. E os dois resumos trocaram
+   de lugar.
+
+### C5-3 — Sete rótulos **desenhados** escaparam à conversão numérica
+
+A conversão só apanhou a forma de modo matemático, `{,}`. Ficaram sete rótulos com vírgula
+simples — `0,381`, `0,516` — e um deles, **`0,800 nos dois`**, era ao mesmo tempo vírgula
+decimal e português. Num documento inglês a vírgula lê-se como separador de milhares.
+
+### O ficheiro gerado saiu do gerador, e não de uma edição à mão
+
+O `ch5/feedback_auto.tex` é **gerado** e diz na primeira linha para não ser editado.
+Traduzi-lo no destino faria a tradução desaparecer na corrida seguinte — a mesma disciplina
+que a sessão 63 aplicou à remissão para o Cap. 6. O `analyse_feedback.py` ganhou
+`--lingua {pt,en}`; **toda a lógica fica intacta** (mínimo de vinte votos, salvaguarda do
+votante dominante, intervalo de Wilson, recusa de reportar proporção abaixo do mínimo).
+
+⚠️ E correr o gerador reescreveu o relatório `.md` com o carimbo de hoje sobre dados
+idênticos. **Reposto:** um artefacto que muda só na data sugere uma medição nova que não
+houve.
+
+### O que fica por fazer
+
+As **figuras da `tese-pt` continuam em inglês**, e é a pendência que o autor nomeou como
+imperativa. A ordem que ele fixou é esta: primeiro a `tese-eng` completa, depois converter as
+figuras da PT. As figuras inline em TikZ já estão traduzidas nos rótulos desenhados da árvore
+inglesa; o que falta são as **34 figuras em PDF/PNG** de `figures/`, que são geradas por
+`scripts/figures/` e por capturas, e que hoje as duas árvores partilham.

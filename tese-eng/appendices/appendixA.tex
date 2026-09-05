@@ -1,255 +1,256 @@
-\chapter{Reprodutibilidade}
+\chapter{Reproducibility}
 \label{ap:reprodutibilidade}
 
-Este apêndice documenta a proveniência dos resultados apresentados no corpo da dissertação. Enumera
-os artefactos conservados, estabelece a correspondência entre cada resultado reportado e o
-procedimento que o produz, apresenta o estado em que ficou cada afirmação substantiva depois de
-medida, e regista as condições de licenciamento dos dados utilizados. Encerra com o desenho do
-estudo com utilizadores que a Secção~\ref{sec:con_limitacoes} identifica como a lacuna de maior
-peso do trabalho.
+This appendix documents the provenance of the results presented in the body of the dissertation. It
+lists the artefacts kept, establishes the correspondence between each result reported and the
+procedure that produces it, presents the state in which each substantive claim was left after being
+measured, and records the licensing conditions of the data used. It closes with the design of the
+study with users that Section~\ref{sec:con_limitacoes} identifies as the gap of greatest weight in
+the work.
 
-\section{Artefactos conservados}
+\section{Artefacts kept}
 \label{sec:ap_artefactos}
 
-Esta secção enumera o que é conservado no repositório de código e o que não é, com a razão de cada
-caso.
+This section lists what is kept in the code repository and what is not, with the reason in each
+case.
 
-O ambiente de execução está descrito na Secção~\ref{sec:met_ferramentas}, com as versões exatas das
-bibliotecas que produziram os valores deste documento. As versões estão fixadas, e não expressas em
-intervalos, porque uma biblioteca que se atualize sozinha altera resultados sem emitir aviso.
-Nenhum dos procedimentos exige unidade de processamento gráfico.
+The execution environment is described in Section~\ref{sec:met_ferramentas}, with the exact
+versions of the libraries that produced the values in this document. The versions are pinned, and
+not expressed as ranges, because a library that updates itself changes results without issuing a
+warning. None of the procedures requires a graphics processing unit.
 
-São conservadas três classes de artefacto. A primeira é o componente aprendido, que compreende o
-modelo treinado, o calibrador ajustado sobre o bloco de validação e um ficheiro descritivo da
-execução que os produziu, com a dimensão de cada bloco, a prevalência de casos positivos, a semente
-utilizada e as métricas obtidas. A segunda é o conjunto de ficheiros de resultados, um por
-procedimento de avaliação, que o texto cita. A terceira é a base de precedentes que a aplicação
-implantada consulta, com cinquenta e seis megabytes de vetores e oito de metadados. Esta última não
-constitui uma amostra: é o artefacto de que o sistema necessita para arrancar, e sem ele não
-existiriam precedentes para apresentar.
+Three classes of artefact are kept. The first is the learned component, comprising the trained
+model, the calibrator fitted on the validation block and a descriptor file of the run that produced
+them, with the size of each block, the prevalence of positive cases, the seed used and the metrics
+obtained. The second is the set of results files, one per evaluation procedure, that the text
+cites. The third is the precedent base the deployed application consults, with fifty-six megabytes
+of vectors and eight of metadata. This last one is not a sample: it is the artefact the system needs
+in order to start, and without it there would be no precedents to present.
 
-Os corpora de origem não são conservados no repositório. O conjunto histórico ocupa várias centenas
-de megabytes e é reconstruído pelos procedimentos de preparação descritos na
-Secção~\ref{sec:met_dados}. Acompanham o código amostras reduzidas, cuja finalidade é permitir que a
-verificação automática decorra sem acesso à rede, incluindo o teste que impõe a separação temporal
-descrita na Secção~\ref{sec:met_triagem}.
+The source corpora are not kept in the repository. The historical set occupies several hundred
+megabytes and is rebuilt by the preparation procedures described in Section~\ref{sec:met_dados}.
+Reduced samples accompany the code, whose purpose is to let the automatic verification run without
+network access, including the test that enforces the temporal separation described in
+Section~\ref{sec:met_triagem}.
 
-\section{Origem de cada resultado}
+\section{Origin of each result}
 \label{sec:ap_numeros}
 
-Esta secção estabelece a correspondência entre cada resultado reportado no corpo do documento e o
-procedimento que o gera.
+This section establishes the correspondence between each result reported in the body of the
+document and the procedure that generates it.
 
-Nenhum resultado desta dissertação foi introduzido manualmente no texto. Cada um é produzido por um
-procedimento automático de semente fixa, que escreve o seu próprio ficheiro de resultados, e é esse
-ficheiro que o texto cita. Uma segunda execução sobre os mesmos dados devolve os mesmos valores. A
-Tabela~\ref{tab:ap_numeros} reúne os resultados reportados e identifica a secção em que cada um
-aparece; o repositório de código nomeia, para cada resultado, o ficheiro que o contém e o
-procedimento que o produz.
+No result in this dissertation was entered manually into the text. Each one is produced by an
+automatic procedure with a fixed seed, which writes its own results file, and it is that file the
+text cites. A second run over the same data returns the same values. Table~\ref{tab:ap_numeros}
+brings together the results reported and identifies the section in which each one appears; the code
+repository names, for each result, the file that contains it and the procedure that produces it.
 
-A garantia de determinismo aplica-se ao bloco superior da tabela. As linhas do bloco inferior são de
-outra natureza, e por isso estão separadas: constituem medições sobre a operação do sistema, cujo
-valor depende do momento em que o registo foi lido e não de uma semente. A secção em que cada uma é
-apresentada declara o período e o conjunto sobre que foi realizada.
+The determinism guarantee applies to the upper block of the table. The rows of the lower block are
+of another nature, and are therefore separated: they are measurements over the operation of the
+system, whose value depends on the moment at which the log was read and not on a seed. The section
+in which each one is presented declares the period and the set over which it was carried out.
 
-Uma dessas medições não é regenerável, e a distinção fica registada em vez de omitida. A repartição
-do funil por porta, apresentada na Secção~\ref{sec:sis_politica}, foi lida do registo de decisões
-num dia concreto, e esse registo conserva apenas três dias, pela razão indicada na
-Secção~\ref{sec:met_dados}: é republicado a cada ciclo, pelo que o custo é de publicação e não de
-armazenamento. A execução do mesmo procedimento numa data posterior produz outro dia, e não o mesmo.
-O valor consta de um ficheiro de resultados, com a data da leitura e o procedimento que a produziu,
-de modo que qualquer leitura futura tenha origem declarada ainda que aquele dia não se repita.
+One of those measurements is not regenerable, and the distinction is recorded rather than omitted.
+The breakdown of the funnel by gate, presented in Section~\ref{sec:sis_politica}, was read from the
+decision log on a concrete day, and that log keeps only three days, for the reason given in
+Section~\ref{sec:met_dados}: it is republished at every cycle, so the cost is one of publication and
+not of storage. Running the same procedure on a later date produces another day, and not the same
+one. The value appears in a results file, with the date of the reading and the procedure that
+produced it, so that any future reading has a declared origin even though that day does not
+recur.
 
 \begin{table}[!htbp]
-\caption[Cada resultado e o procedimento que o produz]{Os resultados reportados no corpo do
-documento e a secção em que aparecem. O bloco superior é determinístico e reproduz-se exatamente
-sobre os mesmos dados; o bloco inferior reúne medições sobre a operação, cujo valor depende da data
-de leitura do registo.}
+\caption[Each result and the procedure that produces it]{The results reported in the body of the
+document and the section in which they appear. The upper block is deterministic and reproduces
+exactly over the same data; the lower block brings together measurements over the operation, whose
+value depends on the date the log was read.}
 \label{tab:ap_numeros}
 \centering
 \small
 \begin{tabular}{p{0.46\textwidth} L{0.21\textwidth} L{0.19\textwidth}}
 \toprule
-\tabhead{Resultado} & \tabhead{Valor} & \tabhead{Onde aparece} \\
+\tabhead{Result} & \tabhead{Value} & \tabhead{Where it appears} \\
 \midrule
-Amplitude da taxa de disparo, desvio relativo contra limiar fixo & $0.015$ contra $0.344$ &
+Firing-rate spread, relative deviation against a fixed threshold & $0.015$ against $0.344$ &
 §\ref{sec:av_qi1} \\
-$F_1$ contra o critério aproximado & $0.516$ contra $0.218$ & §\ref{sec:av_qi1} \\
-Comparação com dois detetores aprendidos & $0.530$ / $0.269$ / $0.280$ & §\ref{sec:av_qi1} \\
-Ablação à janela e ao peso do desvio & $0.678$ e $0.664$ contra $0.516$ & §\ref{sec:av_qi1} \\
+$F_1$ against the approximate criterion & $0.516$ against $0.218$ & §\ref{sec:av_qi1} \\
+Comparison with two learned detectors & $0.530$ / $0.269$ / $0.280$ & §\ref{sec:av_qi1} \\
+Ablation on the window and on the weighting & $0.678$ and $0.664$ against $0.516$ &
+§\ref{sec:av_qi1} \\
 \addlinespace
-Precisão@5 da recuperação, quatro métodos & $0.514$ / $0.346$ / $0.240$ / $0.126$ &
+Retrieval precision@5, four methods & $0.514$ / $0.346$ / $0.240$ / $0.126$ & §\ref{sec:av_qi2} \\
+Reference value of the most represented sector & $0.467$ & §\ref{sec:av_qi2} \\
+Precision@5 under the symmetric protocol at scale & $0.595$ with chance $0.333$ &
 §\ref{sec:av_qi2} \\
-Valor de referência do setor mais representado & $0.467$ & §\ref{sec:av_qi2} \\
-Precisão@5 no protocolo simétrico à escala & $0.595$ com acaso $0.333$ & §\ref{sec:av_qi2} \\
-Precisão@5 apenas com precedentes anteriores & $0.513$ com acaso $0.259$ & §\ref{sec:av_qi2} \\
-Concordância de direção contra o valor de acaso & $0.708$ contra $0.688$ & §\ref{sec:av_qi2} \\
+Precision@5 with prior precedents only & $0.513$ with chance $0.259$ & §\ref{sec:av_qi2} \\
+Direction agreement against the chance value & $0.708$ against $0.688$ & §\ref{sec:av_qi2} \\
 \addlinespace
-Triagem, \gls{PRAUC} das seis famílias & de $0.378$ a $0.542$ & §\ref{sec:av_qi3} \\
-Precisão dentro do orçamento, quatro políticas & $0.163$ / $0.379$ / $0.662$ / $0.632$ &
+Triage, \gls{PRAUC} of the six families & from $0.378$ to $0.542$ & §\ref{sec:av_qi3} \\
+Precision within the budget, four policies & $0.163$ / $0.379$ / $0.662$ / $0.632$ &
 §\ref{sec:av_qi3} \\
-Grelha de nove definições de critério & $9$ de $9$ & §\ref{sec:av_qi3} \\
-Ablação da identidade, tabela de consulta contra modelo & $0.534$ contra $0.538$ &
-§\ref{sec:av_ablacao} \\
-Acréscimo do texto sobre a tabela de consulta & $0.547$ contra $0.534$ & §\ref{sec:av_ablacao} \\
+Grid of nine criterion definitions & $9$ of $9$ & §\ref{sec:av_qi3} \\
+Identity ablation, lookup table against model & $0.534$ against $0.538$ & §\ref{sec:av_ablacao} \\
+Increment of the text over the lookup table & $0.547$ against $0.534$ & §\ref{sec:av_ablacao} \\
 \addlinespace
-Qualidade do ajuste da decomposição, mediana e casos negativos & $0.460$, $1$ em $17$ &
+Quality of the decomposition fit, median and negative cases & $0.460$, $1$ in $17$ &
 §\ref{sec:av_decomposicao} \\
-Seletividade da porta, dentro e entre empresas & $0.072$ contra $0.392$ &
+Gate selectivity, within and between companies & $0.072$ against $0.392$ &
 §\ref{sec:av_producao} \\
-Deriva de distribuição, \gls{PSI} da volatilidade & $0.281$ & §\ref{sec:av_producao} \\
-Sistema completo contra as alternativas & $0.489$ / $0.632$ / $0.662$ / $0.968$ &
+Distribution drift, \gls{PSI} of volatility & $0.281$ & §\ref{sec:av_producao} \\
+Complete system against the alternatives & $0.489$ / $0.632$ / $0.662$ / $0.968$ &
 §\ref{sec:av_producao} \\
 \addlinespace
-Verificação da geração ancorada, ataques e controlos & $23$ de $23$ e $8$ de $8$ &
+Grounded generation check, attacks and controls & $23$ of $23$ and $8$ of $8$ &
 §\ref{sec:sis_ciclo} \\
 \midrule
-\multicolumn{3}{l}{\emph{Medições sobre a operação: o valor depende da data de leitura do registo}}
+\multicolumn{3}{l}{\emph{Measurements over the operation: the value depends on the date the log was read}}
 \\
-Decisões maturadas, mantidas contra suprimidas & $58.9\%$ contra $61.7\%$ &
+Matured decisions, kept against suppressed & $58.9\%$ against $61.7\%$ &
 §\ref{sec:av_producao} \\
-Capacidade de ordenação sobre as decisões tomadas & $0.486$ & §\ref{sec:av_producao} \\
-Cobertura de notícias em dias invulgares & $88.5\%$ & §\ref{sec:av_producao} \\
-Latência, descoberta e entrega & $353$ min e $5$ s & §\ref{sec:sis_operacao} \\
-Funil de seletividade, títulos distintos até entregues & $743 \rightarrow 15$ & §\ref{sec:sis_politica} \\
-Funil de um dia, repartido por porta & $5{,}060$ avaliações & §\ref{sec:sis_politica} \\
+Ranking ability over the decisions taken & $0.486$ & §\ref{sec:av_producao} \\
+News coverage on unusual days & $88.5\%$ & §\ref{sec:av_producao} \\
+Latency, discovery and delivery & $353$ min and $5$ s & §\ref{sec:sis_operacao} \\
+Selectivity funnel, distinct headlines to delivered & $743 \rightarrow 15$ &
+§\ref{sec:sis_politica} \\
+Funnel of one day, split by gate & $5{,}060$ assessments & §\ref{sec:sis_politica} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Os restantes valores numéricos do documento pertencem a três categorias. Os valores extraídos da
-literatura estão citados no local em que aparecem. As constantes de configuração constam da
-Tabela~\ref{tab:sis_portas}, com a distinção entre as que foram derivadas de uma medição e as que
-foram escolhidas. A terceira categoria reúne medições que servem uma passagem e não um resultado,
-como as linhas descartadas pelo embargo, o desvio-padrão do caso trabalhado da
-Secção~\ref{sec:met_detecao} ou as contagens por fonte de notícias; cada uma declara, no local em
-que aparece, o conjunto sobre que foi realizada.
+The remaining numerical values in the document belong to three categories. Values taken from the
+literature are cited where they appear. The configuration constants appear in
+Table~\ref{tab:sis_portas}, with the distinction between those derived from a measurement and those
+chosen. The third category brings together measurements that serve a passage and not a result, such
+as the rows discarded by the embargo, the standard deviation of the worked case of
+Section~\ref{sec:met_detecao} or the counts per news source; each one declares, where it appears,
+the set over which it was carried out.
 
-\section{Matriz de evidência}
+\section{Evidence matrix}
 \label{sec:ap_matriz}
 
-Esta secção submete cada afirmação substantiva do trabalho à evidência que a sustenta e regista o
-estado em que ficou.
+This section submits each substantive claim of the work to the evidence that supports it and records
+the state in which it was left.
 
-A tabela da secção anterior enumera resultados. A Tabela~\ref{tab:ap_matriz} enumera afirmações,
-exame mais exigente, uma vez que uma afirmação pode não sobreviver à evidência que a suportava. As
-afirmações retiradas permanecem na tabela, dado que uma matriz que enumere apenas as sobreviventes
-não constitui uma auditoria.
+The table of the previous section lists results. Table~\ref{tab:ap_matriz} lists claims, a more
+demanding examination, since a claim may not survive the evidence that supported it. The claims
+withdrawn remain in the table, since a matrix that lists only the survivors is not an audit.
 
 \begin{table}[!htbp]
-\caption[Matriz de evidência]{Cada afirmação substantiva, a evidência que a sustenta e o estado em
-que ficou. O estado \emph{retirada} indica que o trabalho a abandonou depois de a medir; o estado
-\emph{estreitada} indica que subsiste numa formulação mais restrita do que a inicial.}
+\caption[Evidence matrix]{Each substantive claim, the evidence that supports it and the state in
+which it was left. The state \emph{withdrawn} indicates that the work abandoned it after measuring
+it; the state \emph{narrowed} indicates that it survives in a more restricted formulation than the
+initial one.}
 \label{tab:ap_matriz}
 \centering
 \scriptsize
 \renewcommand{\arraystretch}{1.08}
 \begin{tabular}{p{0.34\textwidth} p{0.36\textwidth} L{0.18\textwidth}}
 \toprule
-\tabhead{Afirmação} & \tabhead{Evidência} & \tabhead{Estado} \\
+\tabhead{Claim} & \tabhead{Evidence} & \tabhead{State} \\
 \midrule
-\multicolumn{3}{l}{\textbf{Deteção de movimentos invulgares}} \\
-Dispara a ritmo comparável entre empresas de volatilidade muito distinta &
-  Amplitude de $0.015$ contra $0.344$, sem recurso a rótulos & Mantida \\
-Supera um limiar fixo no critério aproximado & $F_1$ de $0.516$ contra $0.218$ &
-  Mantida, com o critério declarado como aproximação \\
-Supera dois detetores aprendidos com a mesma informação &
-  $F_1$ de $0.530$ contra $0.269$ e $0.280$ & Mantida \\
-Não utiliza informação posterior ao dia avaliado &
-  A janela exclui esse dia, e um teste automático impõe a exclusão & Mantida \\
-A janela de vinte dias e o desvio de pesos iguais são as melhores opções &
-  Variantes alternativas obtêm $0.678$ e $0.664$ contra $0.516$ &
-  \textbf{Retirada}: mantidas por explicabilidade, não por desempenho \\
+\multicolumn{3}{l}{\textbf{Detection of unusual movements}} \\
+Fires at a comparable rate across companies of very distinct volatility &
+  Spread of $0.015$ against $0.344$, without recourse to labels & Kept \\
+Beats a fixed threshold on the approximate criterion & $F_1$ of $0.516$ against $0.218$ &
+  Kept, with the criterion declared as an approximation \\
+Beats two learned detectors on the same information &
+  $F_1$ of $0.530$ against $0.269$ and $0.280$ & Kept \\
+Uses no information posterior to the day assessed &
+  The window excludes that day, and an automatic test enforces the exclusion & Kept \\
+The twenty-day window and the equally weighted deviation are the best options &
+  Alternative variants obtain $0.678$ and $0.664$ against $0.516$ &
+  \textbf{Withdrawn}: kept for explainability, not for performance \\
 \midrule
-\multicolumn{3}{l}{\textbf{Recuperação de precedentes}} \\
-Supera as alternativas lexical e triviais &
-  Precisão@5 de $0.514$ contra $0.346$, $0.240$ e $0.126$ & Mantida \\
-Supera por larga margem o melhor valor de referência trivial &
-  A escolha do setor mais representado obtém $0.467$, o que reduz a margem de $+0.274$ para
-  $+0.047$ & \textbf{Estreitada}: a afirmação passa a ser por setor, onde se mantém nos cinco \\
-Resiste ao aumento de escala do corpus &
-  Precisão@5 de $0.595$ com acaso de $0.333$ & Mantida como teste de escala \\
-Resiste à restrição temporal da produção &
-  Precisão@5 de $0.513$ com acaso de $0.259$: a margem varia $0.008$ &
-  \textbf{Estreitada}: o valor simétrico descreve tarefa menos exigente \\
-Capta tema e não direção & Concordância de $0.708$ contra acaso de $0.688$ &
-  Mantida, e reportada como limitação \\
-A pertença ao mesmo setor equivale a relação entre notícias & --- &
-  \textbf{Não afirmado}: é uma aproximação declarada \\
+\multicolumn{3}{l}{\textbf{Precedent retrieval}} \\
+Beats the lexical and trivial alternatives &
+  Precision@5 of $0.514$ against $0.346$, $0.240$ and $0.126$ & Kept \\
+Beats the best trivial reference value by a wide margin &
+  Choosing the most represented sector obtains $0.467$, which reduces the margin from $+0.274$ to
+  $+0.047$ & \textbf{Narrowed}: the claim becomes per sector, where it holds in all five \\
+Survives an increase in the scale of the corpus &
+  Precision@5 of $0.595$ with chance of $0.333$ & Kept as a scale test \\
+Survives the temporal constraint of production &
+  Precision@5 of $0.513$ with chance of $0.259$: the margin varies by $0.008$ &
+  \textbf{Narrowed}: the symmetric value describes a less demanding task \\
+Captures topic and not direction & Agreement of $0.708$ against chance of $0.688$ &
+  Kept, and reported as a limitation \\
+Membership of the same sector is equivalent to a relation between news items & --- &
+  \textbf{Not claimed}: it is a declared approximation \\
 \midrule
-\multicolumn{3}{l}{\textbf{Triagem de notícias}} \\
-Nenhuma variante com texto supera a volatilidade &
-  \gls{PRAUC} de $0.496$ contra $0.542$, com nove definições de critério e reamostragem por
-  grupos & Mantida \\
-O texto acrescenta informação sobre a tabela de consulta &
-  \gls{PRAUC} de $0.547$ contra $0.534$, com intervalo entre $+0.004$ e $+0.020$ &
-  \textbf{Nova}, positiva, e sem efeito na precisão dentro do orçamento \\
-As entradas não incorporam informação futura &
-  Alterar o futuro de um exemplo deixa as entradas iguais e altera o critério & Mantida \\
-A triagem quadruplica a precisão dentro do orçamento &
-  O valor de referência de $0.163$ resulta de ordenação alfabética; a escolha aleatória obtém
-  $0.379$ & \textbf{Retirada}: o ganho é de $1.67$ vezes \\
-O ganho dentro do orçamento provém da aprendizagem &
-  Treze constantes por empresa obtêm $0.662$ contra $0.632$ do modelo & \textbf{Retirada} \\
-O modelo implantado seleciona melhor do que o acaso &
-  $58.9\%$ de casos materiais entre as mantidas contra $61.7\%$ entre as suprimidas &
-  \textbf{Retirada} \\
+\multicolumn{3}{l}{\textbf{News triage}} \\
+No variant with text beats volatility &
+  \gls{PRAUC} of $0.496$ against $0.542$, with nine criterion definitions and resampling by
+  groups & Kept \\
+The text adds information over the lookup table &
+  \gls{PRAUC} of $0.547$ against $0.534$, with an interval between $+0.004$ and $+0.020$ &
+  \textbf{New}, positive, and with no effect on precision within the budget \\
+The inputs incorporate no future information &
+  Changing the future of an example leaves the inputs identical and changes the criterion & Kept \\
+Triage quadruples precision within the budget &
+  The reference value of $0.163$ results from alphabetical ordering; random choice obtains
+  $0.379$ & \textbf{Withdrawn}: the gain is $1.67$ times \\
+The gain within the budget comes from learning &
+  Thirteen constants per company obtain $0.662$ against $0.632$ for the model &
+  \textbf{Withdrawn} \\
+The deployed model selects better than chance &
+  $58.9\%$ of material cases among the kept against $61.7\%$ among the suppressed &
+  \textbf{Withdrawn} \\
 \midrule
-\multicolumn{3}{l}{\textbf{Sistema}} \\
-O texto do alerta não pode divergir do cálculo &
-  É composto a partir dos objetos calculados, sem geração de linguagem & Mantida \\
-A restrição de gratuitidade limita a cobertura &
-  Pelo menos uma notícia relevante em $88.5\%$ dos dias invulgares & Mantida como limite superior \\
-As explicações são úteis a uma pessoa & --- & \textbf{Não afirmado} \\
+\multicolumn{3}{l}{\textbf{System}} \\
+The text of the alert cannot diverge from the computation &
+  It is composed from the computed objects, without language generation & Kept \\
+The free-of-charge constraint limits coverage &
+  At least one relevant news item on $88.5\%$ of the unusual days & Kept as an upper bound \\
+The explanations are useful to a person & --- & \textbf{Not claimed} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Duas observações incidem sobre a tabela no seu conjunto e não sobre qualquer linha isolada.
+Two observations bear on the table as a whole and not on any single row.
 
-A primeira é que as afirmações retiradas o foram por medições do próprio trabalho, e nenhuma por
-revisão externa. Constitui o comportamento pretendido de um plano de avaliação fixado antes das
-experiências, cuja utilidade reside precisamente na capacidade de produzir uma resposta negativa.
+The first is that the claims withdrawn were withdrawn by measurements of the work itself, and none
+by external review. It is the intended behaviour of an evaluation plan fixed before the
+experiments, whose usefulness lies precisely in the ability to produce a negative answer.
 
-A segunda é que as duas linhas assinaladas como não afirmadas têm o mesmo peso das restantes. Uma
-delas é a utilidade das explicações para o utilizador, que não foi medida por ausência de estudo com
-pessoas. Onde não existe evidência, não é formulada afirmação.
+The second is that the two rows marked as not claimed carry the same weight as the rest. One of
+them is the usefulness of the explanations to the user, which was not measured for lack of a study
+with people. Where there is no evidence, no claim is made.
 
-\section{Dados, licenças e atribuição}
+\section{Data, licences and attribution}
 \label{sec:ap_dados}
 
-Esta secção regista a origem dos dados utilizados e as obrigações que o seu licenciamento impõe.
+This section records the origin of the data used and the obligations their licensing imposes.
 
-O conjunto histórico que sustenta a base de precedentes é o \gls{FNSPID}
-\autocite{dong2024fnspid}, utilizado ao abrigo da licença Creative Commons BY-SA 4.0, cuja
-atribuição é aqui cumprida. Do corpus constam no documento apenas excertos mínimos de títulos, a
-título ilustrativo.
+The historical set that underpins the precedent base is \gls{FNSPID}
+\autocite{dong2024fnspid}, used under the Creative Commons BY-SA 4.0 licence, whose attribution is
+fulfilled here. Only minimal excerpts of headlines from the corpus appear in the document, for
+illustration.
 
-Essa licença comporta uma segunda obrigação, que é acionada neste caso. Uma vez que o repositório
-distribui ficheiros derivados do \gls{FNSPID}, a cláusula de partilha nos mesmos termos aplica-se a
-esses ficheiros. A licença do código constitui uma decisão que permanece em aberto neste documento,
-e é esta a restrição que a condiciona.
+That licence carries a second obligation, which is triggered in this case. Since the repository
+distributes files derived from \gls{FNSPID}, the share-alike clause applies to those files. The
+licence of the code is a decision that remains open in this document, and this is the constraint
+that conditions it.
 
-Os preços provêm de serviços gratuitos de dados de mercado, através da cadeia de alternativas
-descrita na Secção~\ref{sec:sis_dados}; as notícias em tempo real provêm de três interfaces
-gratuitas, dentro dos respetivos limites de utilização, comparadas na Secção~\ref{sec:sis_fontes}.
+Prices come from free market data services, through the chain of alternatives described in
+Section~\ref{sec:sis_dados}; real-time news comes from three free interfaces, within their
+respective usage limits, compared in Section~\ref{sec:sis_fontes}.
 
-Quanto a dados pessoais, a formulação exata consta da Secção~\ref{sec:met_privacidade}: o sistema
-não conhece as posições dos utilizadores e não as solicita, e o canal público não identifica
-destinatários. A exceção é a subscrição opcional de alertas personalizados, em que ficam associados
-o identificador de conversa atribuído pela plataforma e a lista de empresas escolhida, e esses são
-os únicos elementos armazenados.
+As to personal data, the exact formulation appears in Section~\ref{sec:met_privacidade}: the
+system does not know the users' positions and does not ask for them, and the public channel does
+not identify recipients. The exception is the optional subscription to personalised alerts, in
+which the conversation identifier assigned by the platform and the list of companies chosen are
+associated, and those are the only elements stored.
 
 
-\section{Infraestrutura: o que entra no sistema, e a que custo}
+\section{Infrastructure: what enters the system, and at what cost}
 \label{sec:ap_infra}
 
-A Figura~\ref{fig:ap_infra} reúne as peças externas de que o sistema depende, pelo ponto do
-percurso em que cada uma entra, e o texto que se lhe segue apresenta o custo efetivo da
-operação. O codificador de frases é executado no formato \gls{ONNX}, que permite
-corrê-lo sem a biblioteca de treino. Nenhuma peça foi escolhida por preferência: todas decorrem
-da restrição fundadora de utilizar apenas fontes gratuitas, e as duas exceções a essa
-restrição, que são o alojamento e
+Figure~\ref{fig:ap_infra} brings together the external parts the system depends on, by the point of
+the path at which each one enters, and the text that follows presents the actual cost of operation.
+The sentence encoder is executed in the \gls{ONNX} format, which allows it to be run without the
+training library. No part was chosen out of preference: all of them follow from the founding
+constraint of using only free sources, and the two exceptions to that constraint, which are the
+hosting and
 
 \begin{figure}[!htbp]
 \centering
@@ -265,120 +266,122 @@ restrição, que são o alojamento e
   \node[et] (d) at (9.15,0) {};
   \node[et] (e) at (12.2,0) {};
 
-  \node[cab] at (0,1.42)    {Fontes};
-  \node[cab] at (3.05,1.42) {Representação};
-  \node[cab] at (6.1,1.42)  {Decisão};
-  \node[cab] at (9.15,1.42) {Entrega};
-  \node[cab] at (12.2,1.42) {Operação};
+  \node[cab] at (0,1.42)    {Sources};
+  \node[cab] at (3.05,1.42) {Representation};
+  \node[cab] at (6.1,1.42)  {Decision};
+  \node[cab] at (9.15,1.42) {Delivery};
+  \node[cab] at (12.2,1.42) {Operation};
 
   \node[lg] at (-0.55,0.62) {\includegraphics[height=7mm,width=13mm,keepaspectratio]{finnhub.png}};
   \node[lg] at (0.55,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{yfinance.png}};
   \node[lg] at (0,-0.30)    {\includegraphics[height=6mm,width=13mm,keepaspectratio]{rss.png}};
-  \node[font=\tiny, text=black!60, align=center] at (0,-0.95) {preços e\ notícias};
+  \node[font=\tiny, text=black!60, align=center] at (0,-0.95) {prices and\ news};
 
   \node[lg] at (2.20,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{huggingface.png}};
   \node[lg] at (3.30,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{onnx.png}};
   \node[lg] at (3.05,-0.30) {\includegraphics[height=6mm,width=13mm,keepaspectratio]{numpy.png}};
-  \node[font=\tiny, text=black!60, align=center] at (3.05,-0.95) {\glsentryshort{SBERT}\\em ONNX};
+  \node[font=\tiny, text=black!60, align=center] at (3.05,-0.95) {\glsentryshort{SBERT}\\in ONNX};
 
   \node[lg] at (5.55,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{scikit-learn.png}};
   \node[lg] at (6.65,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{pandas.png}};
   \node[lg] at (6.1,-0.30)  {\includegraphics[height=6mm,width=13mm,keepaspectratio]{python.png}};
-  \node[font=\tiny, text=black!60, align=center] at (6.1,-0.95) {\emph{z}-score\ e triagem};
+  \node[font=\tiny, text=black!60, align=center] at (6.1,-0.95) {\emph{z}-score\ and triage};
 
   \node[lg] at (9.15,0.55)  {\includegraphics[height=9mm,width=13mm,keepaspectratio]{telegram.png}};
-  \node[font=\tiny, text=black!60, align=center] at (9.15,-0.95) {canal\ público};
+  \node[font=\tiny, text=black!60, align=center] at (9.15,-0.95) {public\ channel};
 
   \node[lg] at (11.65,0.62) {\includegraphics[height=7mm,width=13mm,keepaspectratio]{heroku.png}};
   \node[lg] at (12.75,0.62) {\includegraphics[height=7mm,width=13mm,keepaspectratio]{githubactions.png}};
   \node[lg] at (12.2,-0.30) {\includegraphics[height=6mm,width=13mm,keepaspectratio]{pytest.png}};
-  \node[font=\tiny, text=black!60, align=center] at (12.2,-0.95) {ciclo\ de 60\,s};
+  \node[font=\tiny, text=black!60, align=center] at (12.2,-0.95) {60\,s\ cycle};
 
   \foreach \x/\y in {a/b, b/c, c/d, d/e} \draw[->, thick, black!45] (\x) -- (\y);
 \end{tikzpicture}
-\caption[As peças externas, por etapa do percurso]{As peças externas de que o sistema depende,
-pela ordem em que entram. As marcas pertencem aos respetivos titulares e a sua utilização aqui é
-nominativa, destinando-se a identificar a ferramenta empregue. A proveniência de cada ficheiro,
-com o resumo criptográfico correspondente, consta do manifesto que acompanha o repositório.}
+\caption[The external parts, by stage of the path]{The external parts the system depends on, in the
+order in which they enter. The marks belong to their respective holders and their use here is
+nominative, intended to identify the tool employed. The provenance of each file, with its
+corresponding cryptographic digest, appears in the manifest that accompanies the repository.}
 \label{fig:ap_infra}
 \end{figure}
 
-\subsection*{Custo da operação, e a razão do escalão escolhido}
+\subsection*{Cost of operation, and the reason for the tier chosen}
 
-O sistema correu durante a maior parte do período documentado em contentores do escalão mais
-baixo, ao custo de sete dólares mensais por processo. Em 4 de setembro de 2026 o processo de
-recolha passou a exceder de forma persistente a quota de memória de $512$\,MB, com avisos de
-excesso a uma frequência de aproximadamente dois por minuto e leituras entre $518$ e $970$\,MB.
+The system ran for most of the documented period in containers of the lowest tier, at a cost of
+seven dollars per month per process. On 4 September 2026 the collection process began persistently
+exceeding the memory quota of $512$\,MB, with over-quota warnings at a frequency of approximately
+two per minute and readings between $518$ and $970$\,MB.
 
-Quatro causas foram medidas e corrigidas: a base de casos viva era carregada em listas de
-\emph{float} de Python, ao custo de $136.7$\,MB para $10{,}968$ registos, contra $21.7$\,MB da
-mesma informação numa matriz de precisão simples; as bases e o codificador eram reconstruídos a
-cada ciclo de sessenta segundos; o ficheiro de casos pendentes era lido uma vez por empresa; e a
-publicação de um ficheiro de $40$\,MB produzia cinco cópias dele em memória. O conjunto reduziu o
-pico de $970$ para $663$\,MB.
+Four causes were measured and corrected: the live case base was loaded into Python \emph{float}
+lists, at a cost of $136.7$\,MB for $10{,}968$ records, against $21.7$\,MB for the same information
+in a single-precision matrix; the bases and the encoder were rebuilt at every sixty-second cycle;
+the file of pending cases was read once per company; and publishing a $40$\,MB file produced five
+copies of it in memory. Together they reduced the peak from $970$ to $663$\,MB.
 
-\textbf{As correções não bastaram, e é esse o resultado honesto.} O conjunto de trabalho da
-aplicação excede genuinamente um contentor de $512$\,MB: as bibliotecas numéricas e o motor de
-inferência ocupam, por si, $158$\,MB, e a matriz de precedentes torna-se residente assim que a
-primeira consulta lhe percorre as páginas. O processo assentava em $536$\,MB mesmo entre picos.
+\textbf{The corrections were not enough, and that is the honest result.} The working set of the
+application genuinely exceeds a $512$\,MB container: the numerical libraries and the inference
+engine occupy, on their own, $158$\,MB, and the precedent matrix becomes resident as soon as the
+first query walks its pages. The process settled at $536$\,MB even between peaks.
 
-A alternativa técnica seria retirar do processo a base de $38{,}214$ precedentes, o que degradaria
-a qualidade da recuperação, isto é, trocaria uma limitação de infraestrutura por uma limitação de
-resultado. A opção tomada foi a inversa, e o custo consta da Tabela~\ref{tab:ap_custo}.
+The technical alternative would be to remove the base of $38{,}214$ precedents from the process,
+which would degrade the quality of retrieval, that is, would trade an infrastructure limitation for
+a limitation of result. The option taken was the reverse, and the cost appears in
+Table~\ref{tab:ap_custo}.
 
 \begin{table}[!htbp]
-\caption[Custo mensal da operação]{Escalões de contentor antes e depois de 4 de setembro de 2026.
-O fornecedor não permite misturar escalões na mesma aplicação, pelo que o processo web, que nunca
-excedeu a quota, subiu por arrasto. É a razão de o acréscimo ser de sessenta e um dólares e não
-dos quarenta e três que a alteração de um só processo custaria.}
+\caption[Monthly cost of operation]{Container tiers before and after 4 September 2026. The
+provider does not allow tiers to be mixed within the same application, so the web process, which
+never exceeded the quota, was dragged up with it. That is why the increase is sixty-one dollars and
+not the forty-three that changing a single process would cost.}
 \label{tab:ap_custo}
 \centering
 \small
 \begin{tabular}{L{0.20\textwidth} L{0.20\textwidth} C{0.13\textwidth} C{0.13\textwidth}
                 L{0.20\textwidth}}
 \toprule
-\tabhead{Processo} & \tabhead{Escalão} & \tabhead{Memória} & \tabhead{Custo} & \tabhead{Razão} \\
+\tabhead{Process} & \tabhead{Tier} & \tabhead{Memory} & \tabhead{Cost} & \tabhead{Reason} \\
 \midrule
-\multicolumn{5}{l}{\emph{Até 4 de setembro de 2026}} \\
-web & Basic & $0.5$\,GB & \$7 & nunca excedeu a quota \\
-recolha & Basic & $0.5$\,GB & \$7 & excedia de forma persistente \\
+\multicolumn{5}{l}{\emph{Until 4 September 2026}} \\
+web & Basic & $0.5$\,GB & \$7 & never exceeded the quota \\
+collection & Basic & $0.5$\,GB & \$7 & exceeded it persistently \\
 \addlinespace
-\multicolumn{5}{l}{\emph{A partir de 4 de setembro de 2026}} \\
-web & Standard-1X & $0.5$\,GB & \$25 & subiu por não ser possível misturar escalões \\
-recolha & Standard-2X & $1.0$\,GB & \$50 & é o primeiro escalão acima de $0.5$\,GB \\
+\multicolumn{5}{l}{\emph{From 4 September 2026}} \\
+web & Standard-1X & $0.5$\,GB & \$25 & moved up because tiers cannot be mixed \\
+collection & Standard-2X & $1.0$\,GB & \$50 & it is the first tier above $0.5$\,GB \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Após a alteração, e sobre a mesma carga, não se registou um único aviso de excesso de memória. O
-saldo de crédito disponível cobre aproximadamente quatro meses de operação neste escalão, o que
-excede a duração prevista do trabalho. A restrição de utilizar apenas fontes gratuitas mantém-se
-para os \emph{dados}, que são a matéria da dissertação; o alojamento e o canal de mensagens são
-custos de operação e estão declarados como tal.
+After the change, and under the same load, not a single memory over-quota warning was recorded.
+The available credit balance covers approximately four months of operation at this tier, which
+exceeds the planned duration of the work. The constraint of using only free sources holds for the
+\emph{data}, which are the subject matter of the dissertation; the hosting and the messaging
+channel are costs of operation and are declared as such.
 
-\section{Desenho do estudo com utilizadores}
+\section{Design of the study with users}
 \label{sec:ap_estudo}
 
-Esta secção apresenta o desenho do estudo referido na Secção~\ref{sec:con_futuro}.
+This section presents the design of the study referred to in Section~\ref{sec:con_futuro}.
 
-O estudo compara duas condições sobre seis alertas reais extraídos do canal. A condição A apresenta
-o facto sem explicação e a condição B apresenta o alerta completo. Dois dos seis casos são situações
-em que o tema da notícia e a direção do movimento discordam, configuração em que a
-Secção~\ref{sec:av_qi2} mostra o sistema ser mais suscetível de interpretação incorreta.
+The study compares two conditions over six real alerts taken from the channel. Condition A presents
+the fact without an explanation and condition B presents the complete alert. Two of the six cases
+are situations in which the topic of the news and the direction of the movement disagree, a
+configuration in which Section~\ref{sec:av_qi2} shows the system to be more liable to incorrect
+interpretation.
 
-O contrabalanço cruza dois fatores, que são a ordem das condições e a metade dos estímulos que serve
-de condição A. O segundo fator é necessário porque as duas condições recorrem a alertas distintos,
-sob pena de a segunda medir memória em vez de compreensão; sem o cruzamento, qualquer diferença
-entre condições ficaria confundida com a maior acessibilidade de uma das metades.
+The counterbalancing crosses two factors, the order of the conditions and which half of the stimuli
+serves as condition A. The second factor is necessary because the two conditions use distinct
+alerts, on pain of the second measuring memory instead of comprehension; without the crossing, any
+difference between conditions would be confounded with the greater accessibility of one of the
+halves.
 
-A pergunta central é a que a verificação automática não alcança. A correspondência entre cada frase
-do alerta e o facto que a sustenta está garantida por construção, mas a afirmação do produto
-descreve um percurso realizado por um leitor: dada uma frase com remissão, aceder ao facto
-correspondente e julgar autonomamente se este a sustenta. A questão é qualitativa e não exige
-amostra de grande dimensão.
+The central question is the one the automatic check does not reach. The correspondence between each
+sentence of the alert and the fact that supports it is guaranteed by construction, but the claim of
+the product describes a path travelled by a reader: given a sentence with a reference, to reach the
+corresponding fact and judge autonomously whether it supports the sentence. The question is
+qualitative and does not require a large sample.
 
-Duas salvaguardas metodológicas estão fixadas no código antes de existirem dados: o limiar de oito
-participantes para o teste estatístico, cuja alteração ficaria registada no histórico de versões, e
-o procedimento de análise, que sobre a folha por preencher não produz resultado algum. Um terceiro
-bloco do desenho original, relativo a texto gerado, não é executável, uma vez que as vias que o
-serviam foram retiradas do sistema.
+Two methodological safeguards are fixed in the code before any data exist: the threshold of eight
+participants for the statistical test, whose alteration would be recorded in the version history,
+and the analysis procedure, which over the unfilled sheet produces no result at all. A third block
+of the original design, concerning generated text, is not executable, since the routes that served
+it were removed from the system.
