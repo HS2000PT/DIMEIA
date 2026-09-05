@@ -588,7 +588,7 @@ to the complete one, it happens with the precision within the budget treated in
 Section~\ref{sec:av_qi3}, and it happens here. Precision is a quantity with no meaning of its own,
 which it acquires only alongside the alternative that has no information.
 
-\subsection{Limites da conclusão}
+\subsection{Limits of the conclusion}
 
 Membership of the same sector is not equivalent to a relation between news items; it is an
 approximation built because it is verifiable and not because it corresponds exactly to the property
@@ -1016,86 +1016,91 @@ $1{,}951$ groups. Figure~\ref{fig:av_acrescimo} presents the three intervals.
     \node[above=4pt, font=\scriptsize, black!70, align=center] at (\xm,\yv) {\xrot};
   }
 \end{tikzpicture}
-\caption[Os três acréscimos, com intervalo de confiança]{Diferenças de desempenho e respetivos
-intervalos de confiança a noventa e cinco por cento, obtidos por reamostragem por grupos. As duas
-primeiras linhas são diferenças de \gls{PRAUC} e a terceira é uma diferença de capacidade de
-ordenação dentro de cada empresa. Apenas a primeira exclui zero, e fá-lo abaixo do critério prático
-fixado antes da medição.}
+\caption[The three increments, with confidence intervals]{Differences in performance and their
+ninety-five per cent confidence intervals, obtained by resampling by groups. The first two rows are
+\gls{PRAUC} differences and the third is a difference in ranking ability within each company. Only
+the first excludes zero, and it does so below the practical criterion fixed before the
+measurement.}
 \label{fig:av_acrescimo}
 \end{figure}
 
-O título acrescenta a essa base $+0.012$ de \gls{PRAUC}, com intervalo entre $+0.004$ e
-$+0.020$, que exclui zero. É a primeira ocasião em que uma representação de texto apresenta um
-acréscimo detetável nesta tarefa, e o valor situa-se abaixo do critério prático de $0.02$ fixado
-antes dos resultados.
+The headline adds to that base $+0.012$ of \gls{PRAUC}, with an interval between $+0.004$ and
+$+0.020$, which excludes zero. It is the first occasion on which a text representation shows a
+detectable increment on this task, and the value sits below the practical criterion of $0.02$ fixed
+before the results.
 
-Três reservas delimitam o alcance deste acréscimo, e todas são medições. A primeira é que a soma não
-supera a volatilidade isolada: o valor obtido é de $0.547$ contra $0.542$, e a diferença tem
-intervalo entre $-0.032$ e $+0.037$, que contém zero. A segunda é que o acréscimo não chega ao produto. A precisão dentro do orçamento de cinco alertas
-por dia é de $0.662$ com e sem o texto, sem uma casa decimal de diferença. O acréscimo existe na
-ordenação do conjunto completo e desaparece quando apenas cinco notícias por dia são selecionadas.
+Three reservations delimit the reach of this increment, and all of them are measurements. The
+first is that the sum does not beat volatility alone: the value obtained is $0.547$ against
+$0.542$, and the difference has an interval between $-0.032$ and $+0.037$, which contains zero. The
+second is that the increment does not reach the product. Precision within the budget of five alerts
+per day is $0.662$ with and without the text, without a decimal place of difference. The increment
+exists in the ordering of the complete set and disappears when only five news items per day are
+selected.
 
-A terceira é que o texto
-continua a não separar notícias da mesma empresa. A capacidade de ordenação dentro de cada empresa
-vale $0.500$ por construção para a tabela de consulta e sobe para $0.512$ quando se lhe soma o
-título. Para o modelo implantado é de $0.502$, com intervalo entre $0.462$ e $0.542$, e sobe
-para $0.508$ com o texto, num acréscimo de $+0.006$ cujo intervalo, entre $-0.014$ e
-$+0.025$, contém zero. Nenhum dos dois se distingue do acaso. A informação que o texto traz distingue empresas e períodos, e não
-notícias.
+The third is that the text still does not separate news items of the same company. The ranking
+ability within each company is $0.500$ by construction for the lookup table and rises to $0.512$
+when the headline is added to it. For the deployed model it is $0.502$, with an interval between
+$0.462$ and $0.542$, and rises to $0.508$ with the text, an increment of $+0.006$ whose interval,
+between $-0.014$ and $+0.025$, contains zero. Neither of the two is distinguishable from chance.
+The information the text brings distinguishes companies and periods, and not news items.
 
-A resposta à \gls{QI}3 mantém-se negativa e torna-se mais precisa. Nenhum modelo com texto supera a
-volatilidade, e o texto não é inútil: acrescenta ao que o modelo já conhece sobre a empresa, de forma
-pequena e mensurável. O que impede esse acréscimo de alterar o sistema não é a ausência de
-informação, mas a natureza da informação, que distingue empresas quando o produto necessita de
-distinguir notícias. O trabalho seguinte requer um rótulo por notícia, e não apenas um modelo de
-maior dimensão.
+The answer to \gls{QI}3 remains negative and becomes more precise. No model with text beats
+volatility, and the text is not useless: it adds to what the model already knows about the company,
+in a small and measurable way. What prevents that increment from changing the system is not the
+absence of information, but the nature of the information, which distinguishes companies when the
+product needs to distinguish news items. The next step requires a label per news item, and not
+merely a larger model.
 
-Uma reserva final aplica-se ao próprio método. Este é mais um modelo avaliado sobre o mesmo bloco de
-teste, que já serviu várias comparações do capítulo, e quanto mais vezes um conjunto de teste é
-observado, mais provável se torna encontrar nele uma diferença pequena. As duas defesas utilizadas,
-que consistem em não afinar a configuração e em declarar o critério antes da medição, reduzem esse
-risco sem o eliminarem. A formulação que subsiste é a mais fraca das possíveis: não é possível
-rejeitar que o título acrescente informação, e o acréscimo, a existir, é inferior ao critério prático
-fixado antes da medição. Trata-se de um limite superior de um efeito e não de uma descoberta.
+A final reservation applies to the method itself. This is one more model evaluated over the same
+test block, which has already served several comparisons in the chapter, and the more often a test
+set is looked at, the more likely it becomes to find a small difference in it. The two defences
+used, which are not tuning the configuration and declaring the criterion before the measurement,
+reduce that risk without eliminating it. The formulation that survives is the weakest possible: it
+is not possible to reject that the headline adds information, and the increment, if it exists, is
+below the practical criterion fixed before the measurement. It is an upper bound on an effect and
+not a discovery.
 
-\subsection{Limites da conclusão}
+\subsection{Limits of the conclusion}
 
-O resultado não estabelece que o texto de notícias seja inútil. Foi avaliada uma única representação,
-constituída por títulos sem o corpo do artigo, sobre um único corpus. Com textos completos e maior
-volume de dados a resposta poderia ser distinta, o que constitui trabalho futuro.
+The result does not establish that news text is useless. A single representation was evaluated,
+made up of headlines without the body of the article, over a single corpus. With full texts and a
+larger volume of data the answer could be different, which is future work.
 
-Existe ainda uma hipótese alternativa que estas medições não excluem. O rótulo desconta o movimento
-do mercado assumindo sensibilidade unitária, pela incoerência declarada na
-Secção~\ref{sec:met_triagem}. Numa ação de sensibilidade elevada, o resíduo da subtração retém
-movimento do mercado, pelo que o erro do rótulo não é aleatório: é maior nas ações mais sensíveis ao
-mercado, que são tipicamente também as mais voláteis. Ora a linha de base vencedora é exatamente a
-volatilidade. Com o que está medido não é possível separar a hipótese de a volatilidade prever melhor
-a materialidade da hipótese de a volatilidade prever melhor o erro introduzido pelo rótulo. A experiência que resolveria a questão consiste em reconstruir o alvo com sensibilidades estimadas
-e encolhidas, como faz a Secção~\ref{sec:met_decomposicao}, e repetir as seis famílias. Não foi
-realizada. O nível e a ordenação das métricas ficam condicionados ao rótulo utilizado.
+There is also an alternative hypothesis that these measurements do not exclude. The label discounts
+the movement of the market assuming unit sensitivity, through the inconsistency declared in
+Section~\ref{sec:met_triagem}. In a stock of high sensitivity, the residual of the subtraction
+retains movement of the market, so the error of the label is not random: it is larger in the stocks
+most sensitive to the market, which are typically also the most volatile. And the winning baseline
+is precisely volatility. With what is measured it is not possible to separate the hypothesis that
+volatility better predicts materiality from the hypothesis that volatility better predicts the error
+introduced by the label. The experiment that would resolve the question consists in rebuilding the
+target with estimated and shrunk sensitivities, as Section~\ref{sec:met_decomposicao} does, and
+repeating the six families. It was not carried out. The level and the ordering of the metrics remain
+conditional on the label used.
 
-\section{O que permanece mensurável na decomposição}
+\section{What remains measurable in the decomposition}
 \label{sec:av_decomposicao}
 
-A decomposição do movimento não dá origem a uma questão de investigação. Esta secção estabelece a
-razão dessa ausência e o que, apesar dela, permanece falsificável na técnica.
+The decomposition of the movement does not give rise to a research question. This section
+establishes the reason for that absence and what, in spite of it, remains falsifiable in the
+technique.
 
-A diferença face às três técnicas anteriores é a existência de um alvo externo. Para a deteção existe
-um critério de movimento extremo, o que permite contar acertos e falhas; para a recuperação existe
-uma noção verificável de relevância, de que decorre a precisão@$k$; para a triagem existe um rótulo
-construído a partir de preços posteriores. Em todos estes casos a técnica pode revelar-se errada
-contra um alvo que lhe é exterior.
+The difference from the three previous techniques is the existence of an external target. For
+detection there is a criterion of extreme movement, which allows hits and misses to be counted; for
+retrieval there is a verifiable notion of relevance, from which precision@$k$ follows; for triage
+there is a label built from subsequent prices. In all these cases the technique can turn out to be
+wrong against a target external to it.
 
-Na decomposição esse alvo não existe. Nenhuma fonte de dados publica qual foi a parcela verdadeira do
-mercado no movimento de uma ação num dado dia, uma vez que essa quantidade não é observável e apenas
-existe relativamente a um modelo. Fixadas as sensibilidades, a repartição é uma identidade
-contabilística e não uma previsão suscetível de sair certa ou errada. A construção de uma medida de
-exatidão neste ponto produziria um valor sem referente.
+In the decomposition that target does not exist. No data source publishes what the true market
+share of the movement of a stock on a given day was, since that quantity is not observable and
+exists only relative to a model. With the sensitivities fixed, the split is an accounting identity
+and not a prediction that can turn out right or wrong. Constructing a measure of accuracy at this
+point would produce a value without a referent.
 
-A técnica não fica por avaliar, mas por avaliar dessa forma, o que obriga a determinar o que nela
-permanece falsificável. São duas propriedades, e ambas se medem sobre as dezassete empresas do mapa
-de setores, que é o conjunto percorrido pelo procedimento de avaliação e não a lista monitorizada em
-produção. A Figura~\ref{fig:av_motor} apresenta as duas.
+The technique is not left unevaluated, but unevaluated in that way, which requires determining what
+in it remains falsifiable. There are two properties, and both are measured over the seventeen
+companies of the sector map, which is the set the evaluation procedure covers and not the list
+monitored in production. Figure~\ref{fig:av_motor} presents the two.
 
 \begin{figure}[ht]
 \centering
@@ -1132,45 +1137,47 @@ produção. A Figura~\ref{fig:av_motor} apresenta as duas.
 \node[font=\scriptsize, black!55, anchor=north] at (axis cs:0.939,0.82) {$0.939$};
 \end{axis}
 \end{tikzpicture}
-\caption[A decomposição discrimina entre empresas no mesmo dia]{As dezassete empresas do mapa de
-setores, decompostas no mesmo dia. Em A, a componente identificada como maior parcela do mesmo sinal
-que o movimento observado. Em B, a dispersão da quota atribuída à empresa. A repartição produz
-respostas distintas para empresas distintas no mesmo dia, que é a condição mínima para a sua
-utilidade.}
+\caption[The decomposition discriminates between companies on the same day]{The seventeen companies
+of the sector map, decomposed on the same day. In A, the component identified as the largest part of
+the same sign as the observed movement. In B, the dispersion of the share attributed to the company.
+The split produces distinct answers for distinct companies on the same day, which is the minimum
+condition for it to be useful.}
 \label{fig:av_motor}
 \end{figure}
 
-A primeira propriedade é a capacidade de discriminar. Uma decomposição que atribuísse a totalidade do
-movimento à empresa em todos os dias seria inútil ainda que aritmeticamente correta. No dia medido, o
-motor identificado foi a própria empresa em oito casos, o mercado em cinco e o setor em quatro, e a
-quota do movimento atribuída à empresa apresentou mediana de $0.487$, com extremos em $0.064$ e
-$0.939$.
+The first property is the ability to discriminate. A decomposition that attributed the whole of the
+movement to the company on every day would be useless even if arithmetically correct. On the day
+measured, the driver identified was the company itself in eight cases, the market in five and the
+sector in four, and the share of the movement attributed to the company had a median of $0.487$,
+with extremes at $0.064$ and $0.939$.
 
-A segunda propriedade é a qualidade da estimação das sensibilidades, e é a que pode efetivamente
-estar errada. A medida apropriada é o coeficiente de determinação na janela de estimação, cuja
-mediana foi de $0.460$. Não se trata do coeficiente do ajuste por mínimos quadrados, que, calculado
-dentro da amostra e com termo constante, nunca poderia ser negativo, mas do coeficiente do modelo
-efetivamente utilizado, com as sensibilidades já encolhidas e o termo constante recentrado. É esta a
-medida adequada, por corresponder ao modelo cuja repartição é apresentada ao utilizador, e é por essa
-razão que pode assumir valor negativo. Numa das dezassete empresas assumiu, o que significa que,
-naquela janela, o mercado e o setor não explicavam a variação daquela ação melhor do que a sua própria
-média, e que a repartição desse dia assenta num ajuste que não descreve os dados.
+The second property is the quality of the estimation of the sensitivities, and it is the one that
+can actually be wrong. The appropriate measure is the coefficient of determination in the estimation
+window, whose median was $0.460$. This is not the coefficient of the least squares fit, which,
+computed within the sample and with a constant term, could never be negative, but the coefficient of
+the model actually used, with the sensitivities already shrunk and the constant term recentred. This
+is the appropriate measure, since it corresponds to the model whose split is presented to the user,
+and it is for that reason that it can take a negative value. In one of the seventeen companies it
+did, which means that, in that window, the market and the sector did not explain the variation of
+that stock better than its own mean, and that the split of that day rests on a fit that does not
+describe the data.
 
-O resultado não estabelece que a repartição esteja correta pelo facto de as parcelas somarem. Elas
-somam sempre, com diferença nula até à precisão da máquina, porque a parcela da empresa é definida
-como resíduo, e uma repartição sem qualquer significado somaria igualmente. A soma exata constitui
-uma verificação de implementação e não uma validação de método. O resultado também não estabelece que
-o valor apresentado ao utilizador seja fiável em todos os dias, o que no caso de coeficiente negativo
-não sucede, e é por essa razão que a limitação consta do Capítulo~\ref{cap:conclusoes}.
+The result does not establish that the split is correct because the parts sum. They always sum,
+with a null difference to machine precision, because the company part is defined as the residual,
+and a split with no meaning at all would sum just as well. The exact sum is an implementation check
+and not a validation of method. The result also does not establish that the value presented to the
+user is reliable on every day, which in the case of a negative coefficient it is not, and it is for
+that reason that the limitation appears in Chapter~\ref{cap:conclusoes}.
 
-\section{O sistema em operação}
+\section{The system in operation}
 \label{sec:av_producao}
 
-O quarto caso de estudo incide sobre o comportamento do sistema depois de implantado, sobre as
-decisões que toma autonomamente. É a avaliação menos comum das três descritas na
-Secção~\ref{sec:met_metodologia}, e a que produz o diagnóstico que alterou o sistema.
+The fourth case study bears on the behaviour of the system after deployment, on the decisions it
+takes autonomously. It is the least common of the three evaluations described in
+Section~\ref{sec:met_metodologia}, and the one that produces the diagnosis that changed the
+system.
 
-\subsection{O que a porta de decisão estava a separar}
+\subsection{What the decision gate was separating}
 
 A porta implantada era um limiar fixo sobre a probabilidade calibrada, que deixava passar as
 candidatas acima de $0.50$. A pergunta com significado é a de saber se esse limiar separava títulos
