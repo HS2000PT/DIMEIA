@@ -1,7 +1,16 @@
-%% paper/references.bib - subconjunto VERIFICADO (espelho de thesis/references.bib).
-%% Online/report entries converted to misc for classic BibTeX + IEEEtran.bst.
+% Espelho verificavel das fontes do artigo -- NAO e' entrada de compilacao.
+%
+% O artigo segue o estilo LNCS e imprime um `thebibliography` escrito a mao. Este
+% ficheiro existe para que essas fontes continuem a passar pelo
+% `scripts/verify_bibliography.py`, e por isso tem de conter EXACTAMENTE as entradas
+% que o artigo imprime, nem mais nem menos.
+%
+% ⚠ Ate 2026-09-05 divergia nos dois sentidos: tres das impressas nao
+% tinham entrada aqui (o artigo imprimia fontes que esta via nunca confrontou) e oito
+% entradas nao eram impressas, sobras de versoes anteriores. Regenerado a partir de
+% `tese-pt/references.bib`, que e' onde estas entradas sao mantidas.
 
-@misc{gallup2025stock,
+@online{gallup2025stock,
   author  = {{Gallup}},
   title   = {What Percentage of Americans Own Stock?},
   year    = {2025},
@@ -9,7 +18,7 @@
   urldate = {2026-06-21}
 }
 
-@misc{sifma2025factbook,
+@online{sifma2025factbook,
   author  = {{Securities Industry and Financial Markets Association (SIFMA)}},
   title   = {2025 Capital Markets Fact Book},
   year    = {2025},
@@ -17,14 +26,15 @@
   urldate = {2026-06-21}
 }
 
-@article{arrieta2020xai,
-  author    = {Barredo Arrieta, Alejandro and D{\'i}az-Rodr{\'i}guez, Natalia and Del Ser, Javier and Bennetot, Adrien and Tabik, Siham and Barbado, Alberto and Garc{\'i}a, Salvador and Gil-L{\'o}pez, Sergio and Molina, Daniel and Benjamins, Richard and Chatila, Raja and Herrera, Francisco},
-  title     = {Explainable Artificial Intelligence ({XAI}): Concepts, Taxonomies, Opportunities and Challenges toward Responsible {AI}},
-  journal   = {Information Fusion},
-  year      = {2020},
-  volume    = {58},
-  pages     = {82--115},
-  doi       = {10.1016/j.inffus.2019.12.012}
+@article{fama1970efficient,
+  author    = {Fama, Eugene F.},
+  title     = {Efficient Capital Markets: A Review of Theory and Empirical Work},
+  journal   = {The Journal of Finance},
+  year      = {1970},
+  volume    = {25},
+  number    = {2},
+  pages     = {383--417},
+  doi       = {10.2307/2325486}
 }
 
 @article{chandola2009anomaly,
@@ -47,15 +57,16 @@
   doi       = {10.1109/ICDM.2008.17}
 }
 
-@article{pang2021deep,
-  author    = {Pang, Guansong and Shen, Chunhua and Cao, Longbing and van den Hengel, Anton},
-  title     = {Deep Learning for Anomaly Detection: A Review},
-  journal   = {ACM Computing Surveys},
-  year      = {2021},
-  volume    = {54},
-  number    = {2},
-  pages     = {38:1--38:38},
-  doi       = {10.1145/3439950}
+@inproceedings{breunig2000lof,
+  author    = {Breunig, Markus M. and Kriegel, Hans-Peter and Ng, Raymond T. and Sander, J{\"o}rg},
+  title     = {{LOF}: Identifying Density-Based Local Outliers},
+  booktitle = {Proceedings of the 2000 ACM SIGMOD International Conference on Management of Data},
+  year      = {2000},
+  pages     = {93--104},
+  %% O DOI 10.1145/335191.335388 resolve para o registo de REVISTA (ACM SIGMOD Record 29(2)),
+  %% não para as actas declaradas acima. Mesmo trabalho e mesmas páginas, mas a entrada e o
+  %% identificador diziam locais diferentes. Trocado pelo DOI das actas a 2026-08-04.
+  doi       = {10.1145/342009.335388}
 }
 
 @article{engle1982arch,
@@ -80,25 +91,83 @@
   doi       = {10.1016/0304-4076(86)90063-1}
 }
 
-@article{rudin2019stop,
-  author    = {Rudin, Cynthia},
-  title     = {Stop Explaining Black Box Machine Learning Models for High Stakes Decisions and Use Interpretable Models Instead},
-  journal   = {Nature Machine Intelligence},
-  year      = {2019},
-  volume    = {1},
-  number    = {5},
-  pages     = {206--215},
-  doi       = {10.1038/s42256-019-0048-x}
+@inproceedings{devlin2019bert,
+  author     = {Devlin, Jacob and Chang, Ming-Wei and Lee, Kenton and Toutanova, Kristina},
+  title      = {{BERT}: Pre-training of Deep Bidirectional Transformers for Language Understanding},
+  booktitle  = {Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL-HLT)},
+  year       = {2019},
+  pages      = {4171--4186},
+  publisher  = {Association for Computational Linguistics},
+  doi        = {10.18653/v1/N19-1423}
 }
 
-@inproceedings{lundberg2017shap,
-  author    = {Lundberg, Scott M. and Lee, Su-In},
-  title     = {A Unified Approach to Interpreting Model Predictions},
-  booktitle = {Advances in Neural Information Processing Systems 30 (NeurIPS 2017)},
-  year      = {2017},
-  pages     = {4765--4774},
-  eprint    = {1705.07874},
-  eprinttype = {arXiv}
+@inproceedings{reimers2019sbert,
+  author    = {Reimers, Nils and Gurevych, Iryna},
+  title     = {Sentence-{BERT}: Sentence Embeddings using Siamese {BERT}-Networks},
+  booktitle = {Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)},
+  year      = {2019},
+  pages     = {3982--3992},
+  doi       = {10.18653/v1/D19-1410}
+}
+
+@inproceedings{liu2020finbert,
+  author    = {Liu, Zhuang and Huang, Degen and Huang, Kaiyu and Li, Zhuang and Zhao, Jun},
+  title     = {{FinBERT}: A Pre-trained Financial Language Representation Model for Financial
+               Text Mining},
+  booktitle = {Proceedings of the Twenty-Ninth International Joint Conference on Artificial
+               Intelligence (IJCAI-20)},
+  publisher = {International Joint Conferences on Artificial Intelligence Organization},
+  pages     = {4513--4519},
+  year      = {2020},
+  %% Verificada no Crossref a 2026-08-19: titulo, cinco autores, actas e paginas conferem.
+  doi       = {10.24963/ijcai.2020/622}
+}
+
+@article{huang2023finbert,
+  author  = {Huang, Allen H. and Wang, Hui and Yang, Yi},
+  title   = {{FinBERT}: A Large Language Model for Extracting Information from Financial Text},
+  journal = {Contemporary Accounting Research},
+  volume  = {40},
+  number  = {2},
+  pages   = {806--841},
+  year    = {2023},
+  %% Verificada no Crossref a 2026-08-19: titulo, tres autores, revista, volume, numero, ano e
+  %% paginas conferem. E a versao revista por pares da linhagem FinBERT de Yi Yang, cuja
+  %% pre-publicacao (yang2020finbert) ficou citada apenas no corpo mais antigo.
+  doi     = {10.1111/1911-3846.12832}
+}
+
+@article{brown1985daily,
+  author    = {Brown, Stephen J. and Warner, Jerold B.},
+  title     = {Using Daily Stock Returns: The Case of Event Studies},
+  journal   = {Journal of Financial Economics},
+  year      = {1985},
+  volume    = {14},
+  number    = {1},
+  pages     = {3--31},
+  doi       = {10.1016/0304-405X(85)90042-X}
+}
+
+@article{vasicek1973beta,
+  author    = {Vasicek, Oldrich A.},
+  title     = {A Note on Using Cross-Sectional Information in {B}ayesian Estimation of Security Betas},
+  journal   = {The Journal of Finance},
+  year      = {1973},
+  volume    = {28},
+  number    = {5},
+  pages     = {1233--1239},
+  doi       = {10.1111/j.1540-6261.1973.tb01452.x}
+}
+
+@article{aamodt1994cbr,
+  author    = {Aamodt, Agnar and Plaza, Enric},
+  title     = {Case-Based Reasoning: Foundational Issues, Methodological Variations, and System Approaches},
+  journal   = {AI Communications},
+  year      = {1994},
+  volume    = {7},
+  number    = {1},
+  pages     = {39--59},
+  doi       = {10.3233/AIC-1994-7104}
 }
 
 @inproceedings{ribeiro2016lime,
@@ -108,6 +177,30 @@
   year      = {2016},
   pages     = {1135--1144},
   doi       = {10.1145/2939672.2939778}
+}
+
+@inproceedings{lundberg2017shap,
+  author    = {Lundberg, Scott M. and Lee, Su-In},
+  title     = {A Unified Approach to Interpreting Model Predictions},
+  booktitle = {Advances in Neural Information Processing Systems 30 (NeurIPS 2017)},
+  year      = {2017},
+  pages     = {4765--4774},
+  %% Estava SEM identificador nenhum, o que contraria o protocolo 6.4 do projecto. As actas da
+  %% NeurIPS nao emitem DOI; o URL canonico e o identificador estavel que existe, e e a mesma
+  %% solucao ja usada no sculley2015debt. Verificado a 2026-08-21: HTTP 200 e o <title> da
+  %% pagina bate com o titulo desta entrada.
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2017/hash/8a20a8621978632d76c43dfd28b67767-Abstract.html}
+}
+
+@article{rudin2019stop,
+  author    = {Rudin, Cynthia},
+  title     = {Stop Explaining Black Box Machine Learning Models for High Stakes Decisions and Use Interpretable Models Instead},
+  journal   = {Nature Machine Intelligence},
+  year      = {2019},
+  volume    = {1},
+  number    = {5},
+  pages     = {206--215},
+  doi       = {10.1038/s42256-019-0048-x}
 }
 
 @article{lee2004trust,
@@ -129,139 +222,13 @@
   doi       = {10.1145/3411764.3445717}
 }
 
-@inproceedings{reimers2019sbert,
-  author    = {Reimers, Nils and Gurevych, Iryna},
-  title     = {Sentence-{BERT}: Sentence Embeddings using Siamese {BERT}-Networks},
-  booktitle = {Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)},
-  year      = {2019},
-  pages     = {3982--3992},
-  doi       = {10.18653/v1/D19-1410}
-}
-
-@inproceedings{devlin2019bert,
-  author     = {Devlin, Jacob and Chang, Ming-Wei and Lee, Kenton and Toutanova, Kristina},
-  title      = {{BERT}: Pre-training of Deep Bidirectional Transformers for Language Understanding},
-  booktitle  = {Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL-HLT)},
-  year       = {2019},
-  eprint     = {1810.04805},
-  eprinttype = {arXiv}
-}
-
-@article{salton1975vsm,
-  author    = {Salton, Gerard and Wong, A. and Yang, C. S.},
-  title     = {A Vector Space Model for Automatic Indexing},
-  journal   = {Communications of the ACM},
-  year      = {1975},
-  volume    = {18},
-  number    = {11},
-  pages     = {613--620},
-  doi       = {10.1145/361219.361220}
-}
-
-@article{robertson2009bm25,
-  author    = {Robertson, Stephen and Zaragoza, Hugo},
-  title     = {The Probabilistic Relevance Framework: {BM25} and Beyond},
-  journal   = {Foundations and Trends in Information Retrieval},
-  year      = {2009},
-  volume    = {4},
-  number    = {1--2},
-  pages     = {1--174},
-  doi       = {10.1561/1500000019}
-}
-
-@book{manning2008ir,
-  author    = {Manning, Christopher D. and Raghavan, Prabhakar and Sch{\"u}tze, Hinrich},
-  title     = {Introduction to Information Retrieval},
-  publisher = {Cambridge University Press},
-  year      = {2008},
-  address   = {Cambridge, England},
-  isbn      = {978-0-521-86571-5}
-}
-
-@article{fama1969adjustment,
-  author    = {Fama, Eugene F. and Fisher, Lawrence and Jensen, Michael C. and Roll, Richard},
-  title     = {The Adjustment of Stock Prices to New Information},
-  journal   = {International Economic Review},
-  year      = {1969},
-  volume    = {10},
-  number    = {1},
-  pages     = {1--21},
-  doi       = {10.2307/2525569}
-}
-
-@article{brown1985daily,
-  author    = {Brown, Stephen J. and Warner, Jerold B.},
-  title     = {Using Daily Stock Returns: The Case of Event Studies},
-  journal   = {Journal of Financial Economics},
-  year      = {1985},
-  volume    = {14},
-  number    = {1},
-  pages     = {3--31},
-  doi       = {10.1016/0304-405X(85)90042-X}
-}
-
-@article{fama1970efficient,
-  author    = {Fama, Eugene F.},
-  title     = {Efficient Capital Markets: A Review of Theory and Empirical Work},
-  journal   = {The Journal of Finance},
-  year      = {1970},
-  volume    = {25},
-  number    = {2},
-  pages     = {383--417},
-  doi       = {10.2307/2325486}
-}
-
-@article{aamodt1994cbr,
-  author    = {Aamodt, Agnar and Plaza, Enric},
-  title     = {Case-Based Reasoning: Foundational Issues, Methodological Variations, and System Approaches},
-  journal   = {AI Communications},
-  year      = {1994},
-  volume    = {7},
-  number    = {1},
-  pages     = {39--59},
-  doi       = {10.3233/AIC-1994-7104}
-}
-
-%% Espelha thesis/references.bib: citada a versão revista por pares do KDD '24, não o arXiv.
-%% As duas bibliografias são ficheiros separados, portanto uma correcção numa e não na outra
-%% publicaria a inconsistência — que é precisamente o que um leitor atento compara.
 @inproceedings{dong2024fnspid,
   author       = {Dong, Zihan and Fan, Xinyu and Peng, Zhiyuan},
   title        = {{FNSPID}: A Comprehensive Financial News Dataset in Time Series},
-  booktitle    = {Proc. 30th ACM SIGKDD Conf. Knowledge Discovery and Data Mining (KDD '24)},
+  booktitle    = {Proceedings of the 30th {ACM} {SIGKDD} Conference on Knowledge Discovery and Data Mining (KDD '24)},
+  publisher    = {Association for Computing Machinery},
   year         = {2024},
   pages        = {4918--4927},
-  doi          = {10.1145/3637528.3671629}
-}
-
-@article{friedman2001gbm,
-  author  = {Friedman, Jerome H.},
-  title   = {Greedy Function Approximation: A Gradient Boosting Machine},
-  journal = {The Annals of Statistics},
-  year    = {2001},
-  volume  = {29},
-  number  = {5},
-  pages   = {1189--1232},
-  doi     = {10.1214/aos/1013203451}
-}
-
-@inproceedings{niculescu2005calibration,
-  author    = {Niculescu-Mizil, Alexandru and Caruana, Rich},
-  title     = {Predicting Good Probabilities with Supervised Learning},
-  booktitle = {Proceedings of the 22nd International Conference on Machine Learning (ICML '05)},
-  year      = {2005},
-  pages     = {625--632},
-  doi       = {10.1145/1102351.1102430}
-}
-
-% O DOI 10.1145/335191.335388 resolve para o registo de REVISTA (ACM SIGMOD Record 29(2)),
-% não para as actas declaradas acima. Mesmo trabalho e mesmas páginas, mas a entrada e o
-% identificador diziam locais diferentes. Trocado pelo DOI das actas a 2026-08-04.
-@inproceedings{breunig2000lof,
-  author    = {Breunig, Markus M. and Kriegel, Hans-Peter and Ng, Raymond T. and Sander, J{\"o}rg},
-  title     = {{LOF}: Identifying Density-Based Local Outliers},
-  booktitle = {Proceedings of the 2000 ACM SIGMOD International Conference on Management of Data},
-  year      = {2000},
-  pages     = {93--104},
-  doi       = {10.1145/342009.335388}
+  doi          = {10.1145/3637528.3671629},
+  eprintclass  = {q-fin.ST}
 }

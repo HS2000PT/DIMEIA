@@ -23,7 +23,10 @@
 \usetikzlibrary{arrows.meta, positioning, calc}
 \usepackage[hidelinks]{hyperref}
 
-\graphicspath{{../tese-pt/figures/}}
+% As figuras do artigo sao as da arvore INGLESA, por ser essa a sua lingua. Enquanto
+% as duas arvores partilhavam ficheiros identicos isto nao tinha efeito visivel; deixou
+% de ter quando a primeira figura passou a existir em duas linguas.
+\graphicspath{{../tese-eng/figures/}}
 
 \begin{document}
 
@@ -322,19 +325,22 @@ five (Fig.~\ref{fig:persector}).
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.86\textwidth]{eval_retrieval_per_sector.pdf}
-\caption{Per-sector cross-ticker precision@5 against the sector base rate. The absolute
-margin is largest in the most abundant sector; in the scarce sectors, where the reference
-value is near $0.072$, the method reaches several times that value with a smaller absolute
-margin.}
+\includegraphics[width=\textwidth]{eval_retrieval_sector_causal.pdf}
+\caption{Left, per-sector cross-ticker precision@5 against the sector base rate: the
+absolute margin is largest in the most abundant sector, while in the scarce sectors, where
+the reference value is near $0.072$, the method reaches several times that value with a
+smaller absolute margin. Right, the same measurement under the constraint the deployed
+system faces, that a precedent must predate the query: precision falls to $0.513$ and the
+base rate to $0.259$, so that the margin over chance moves by $0.008$.}
 \label{fig:persector}
 \end{figure}
 
-Two checks bound the claim. On the multi-year corpus of approximately eighty thousand
-headlines, precision@5 rises to $0.595$ while the base rate rises in the same proportion:
-the method neither degrades nor improves with scale. Imposing the constraint the deployed
-system actually faces, that a precedent must predate the query, lowers precision to $0.513$
-and the base rate to $0.259$, moving the margin by $0.008$. The method keeps its advantage
+Two checks bound the claim, and the right-hand panel of Fig.~\ref{fig:persector} shows
+them. On the multi-year corpus of approximately eighty thousand headlines, precision@5
+rises to $0.595$ while the base rate rises in the same proportion: the method neither
+degrades nor improves with scale. Imposing the constraint the deployed system actually
+faces, that a precedent must predate the query, lowers precision to $0.513$ and the base
+rate to $0.259$, moving the margin by $0.008$. The method keeps its advantage
 when forced to operate as it does in production.
 
 \paragraph{Theme is not direction.} Agreement between the direction of the query's movement

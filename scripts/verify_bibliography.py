@@ -49,7 +49,15 @@ import urllib.parse
 import urllib.request
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
-BIBS = [RAIZ / "thesis" / "references.bib", RAIZ / "paper" / "references.bib"]
+# ⚠️ APONTAVA PARA `thesis/`, ARVORE QUE JA NAO EXISTE, e o ciclo la em baixo saltava
+# o ficheiro em falta em silencio: o programa dizia «26 entradas em 1 ficheiros» e a
+# bibliografia da dissertacao canonica nunca era verificada. Corrigido a 2026-09-05.
+# A arvore inglesa NAO entra aqui: e a mesma lista, e verifica-la contra o Crossref
+# seria repetir sessenta e tres consultas de rede para obter a mesma resposta. Em vez
+# disso confronta-se chave a chave com a portuguesa, mais abaixo, que e barato e
+# responde a pergunta que interessa -- se as duas teses citam a mesma coisa.
+BIBS = [RAIZ / "tese-pt" / "references.bib",
+        RAIZ / "paper" / "references.bib"]
 RELATORIO = RAIZ / "docs" / "decisions" / "bibliography_verification.md"
 
 # O Crossref pede um contacto no User-Agent e, em troca, dá o "polite pool" (mais fiável).
@@ -288,7 +296,17 @@ def verificar(e: dict) -> dict:
                 else:
                     achados.append(f"páginas diferem — .bib {pag_bib}, registo {pag_reg}")
 
-            nomes_reg = [normalizar(a.get("family", "")) for a in reg.get("author", []) or []]
+            # ⚠️ Um autor COLECTIVO ("with the HITEC Investigators") vem do Crossref com o
+            # campo `name` e sem `family`. Contá-lo como pessoa fazia o verificador acusar
+            # o `ancker2017alertfatigue` de lhe faltar um autor, que era falso. Fica como
+            # nota, porque omitir um colectivo verdadeiro seria um defeito a sério e a
+            # decisão de o nomear na entrada é do autor.
+            pessoas = [a for a in reg.get("author", []) or [] if a.get("family")]
+            coletivos = [a.get("name", "") for a in reg.get("author", []) or []
+                         if not a.get("family") and a.get("name")]
+            for g in coletivos:
+                notas.append(f"o registo declara também o autor coletivo «{g}»")
+            nomes_reg = [normalizar(a.get("family", "")) for a in pessoas]
             nomes_bib = apelidos(c.get("author", ""))
             if nomes_reg and nomes_bib:
                 if len(nomes_reg) != len(nomes_bib):
@@ -371,9 +389,29 @@ def main() -> int:
     args = p.parse_args()
 
     todas: list[dict] = []
+    # ⚠️ EXIGIR, e nao saltar. Um ficheiro declarado e ausente e' um erro de configuracao
+    # do verificador, e saltar em silencio foi o que o manteve cego durante a mudanca de
+    # nome das arvores. Um verificador que nao ve o corpus tem de falhar.
+    em_falta = [b for b in BIBS if not b.exists()]
+    if em_falta:
+        print("ERRO: bibliografia declarada e ausente: "
+              + ", ".join(str(b.relative_to(RAIZ)) for b in em_falta))
+        return 2
     for caminho in BIBS:
-        if caminho.exists():
-            todas.extend(ler_entradas(caminho))
+        todas.extend(ler_entradas(caminho))
+
+    # As duas arvores sao traducoes uma da outra e partilham a lista de fontes. Se
+    # divergirem, uma das duas teses cita algo que a outra nao tem, e isso e' um achado.
+    chaves = {}
+    for arv in ("tese-pt", "tese-eng"):
+        b = RAIZ / arv / "references.bib"
+        chaves[arv] = {e["chave"] for e in ler_entradas(b)}
+    so_pt = sorted(chaves["tese-pt"] - chaves["tese-eng"])
+    so_en = sorted(chaves["tese-eng"] - chaves["tese-pt"])
+    if so_pt or so_en:
+        print(f"AVISO: as duas arvores divergem — so em PT: {so_pt} · so em EN: {so_en}\n")
+    else:
+        print(f"as duas arvores partilham as mesmas {len(chaves['tese-pt'])} chaves\n")
 
     print(f"{len(todas)} entradas em {len([b for b in BIBS if b.exists()])} ficheiros\n")
     resultados = []

@@ -6,9 +6,13 @@ implementação, experiências e estatística já validadas** (Fases D/E).
 ## Conteúdo
 - `main.tex` — artigo IEEE (conference): introdução, trabalho relacionado, sistema InvestiGator, avaliação
   (anomalia + recuperação + fidelidade), discussão/limitações, conclusão.
-- `references.bib` — **subconjunto verificado** das referências da tese (23 entradas; espelho de
-  `thesis/references.bib`; entradas *online/report* convertidas para *misc* para o BibTeX clássico).
-- Reutiliza as figuras reprodutíveis da tese via `\graphicspath{{../thesis/figures/}}`.
+- `references.bib` — **subconjunto verificado** das referências da dissertação (26 entradas;
+  espelho de `tese-pt/references.bib`). ⚠️ **Não é entrada de compilação**: o artigo segue o
+  estilo LNCS e imprime um ambiente `thebibliography` escrito à mão. O ficheiro existe para que
+  as fontes do artigo continuem a passar pelo `scripts/verify_bibliography.py`, e é por isso que
+  pode divergir do que é impresso sem que a compilação o note.
+- Reutiliza as figuras da **árvore inglesa**, via `\graphicspath{{../tese-eng/figures/}}`, por ser
+  essa a língua do artigo.
 
 ## Como compilar
 ```bash

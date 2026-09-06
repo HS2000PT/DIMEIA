@@ -32,7 +32,9 @@ import urllib.parse
 import urllib.request
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
-BIB = RAIZ / "thesis" / "references.bib"
+# ⚠️ `thesis/` foi substituida por `tese-pt/`, e este caminho ficou para tras: o
+# programa rebentava com um rasto de excepcao em vez de verificar seja o que for.
+BIB = RAIZ / "tese-pt" / "references.bib"
 SAIDA = RAIZ / "docs" / "decisions" / "doi_verification.md"
 UA = "InvestiGator-thesis-check/1.0 (mailto:1180934@isep.ipp.pt)"
 
