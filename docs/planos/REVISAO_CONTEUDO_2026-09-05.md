@@ -844,3 +844,28 @@ falharam por outra razão. Corrigido com `mod['main'].__globals__`.
 caráter falha e os outros três continuam a passar. Reposta, passam os quatro.
 
 **998 testes** (eram 990), ruff limpo, 16/16 verificadores.
+
+---
+
+## A raiz do repositório (2026-09-06)
+
+O pedido de arrumação do autor era sobre a **raiz** («quantos menos ficheiros soltos melhor»).
+Varrida: doze ficheiros, todos com função, e cinco pastas de trabalho (`tmp/`, `output/`,
+`investigator.egg-info/`) já ignoradas. **Uma exceção.**
+
+⚠️ **`fb_tmp.jsonl` estava versionado na raiz** — 86 votos reais do canal, com a chave do
+alerta, o carimbo, o identificador da mensagem e o resumo do votante. Comparado registo a
+registo com `data/feedback.jsonl`: **86 iguais, zero únicos de qualquer dos lados**. É uma
+cópia integral, e **nada no repositório a lia**. Entrou por um `git add -A`.
+
+⚠️ **E o mecanismo é o que interessa, porque se repete:** a regra que protege os dados
+operacionais é `data/**`, ou seja **de caminho**. Uma cópia escrita **fora** desse caminho
+escapa-lhe em silêncio. O `.gitignore` passa a cobrir também a raiz (`/*.jsonl`,
+`*_tmp.jsonl`), verificado nos dois sentidos: apanha um `.jsonl` novo na raiz e **não toca**
+nos seis ficheiros de amostra que estão versionados de propósito em `data/samples/`.
+
+**O conteúdo não é uma fuga de dados pessoais**, e verifiquei antes de o afirmar: o campo
+`votante` é um resumo criptográfico com sal, nunca o identificador do Telegram, e o
+`feedback_log.py` di-lo no próprio docstring. ⚠️ **Mas removê-lo da árvore não o remove da
+história** — fica lá, como o blob de 84 MB da sessão 59. O que se corrigiu foi a porta por onde
+entrou.

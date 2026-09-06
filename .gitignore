@@ -156,3 +156,11 @@ tmp/
 
 # artefactos de prova do piloto rejeitado (Figura 4.10)
 output/
+
+# ⚠️ A REGRA QUE PROTEGE OS DADOS OPERACIONAIS E DE CAMINHO, e uma copia escrita FORA
+# desse caminho escapa-lhe em silencio. Foi assim que o `fb_tmp.jsonl` -- copia integral
+# do `data/feedback.jsonl`, com os 86 votos reais do canal -- ficou versionado na RAIZ,
+# apanhado por um `git add -A`. Nada no repositorio o lia.
+fb_tmp.jsonl
+*_tmp.jsonl
+/*.jsonl
