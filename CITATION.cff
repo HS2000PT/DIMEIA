@@ -24,7 +24,7 @@ keywords:
 date-released: "2026-07-01"
 preferred-citation:
   type: thesis
-  title: "Explainable Financial Alerts for Retail Investors: Integrating Statistical Anomaly Detection and News–Market Impact Correlation"
+  title: "Explaining without predicting: anomaly detection and precedent retrieval for verifiable financial alerts"
   authors:
     - family-names: "Santos"
       given-names: "Henrique José da Silva"

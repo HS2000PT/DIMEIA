@@ -385,3 +385,74 @@ tradução das figuras do capítulo e as três correções desta passagem. A tra
 por o script que a produziu estar guardado; o resto foi refeito. **A regra é guardar o
 ficheiro antes de plantar o defeito e restaurar dessa cópia**, que foi o que fiz nos dois
 controlos anteriores e não neste.
+
+---
+
+## O título, decidido a 2026-09-06
+
+> **Explicar sem prever: deteção de anomalias e recuperação de precedentes em alertas
+> financeiros verificáveis**
+
+Em inglês, na capa interior: *Explaining without predicting: anomaly detection and precedent
+retrieval for verifiable financial alerts.*
+
+⚠️ **A decisão mudou porque a premissa em que a anterior assentava é falsa.** O registo da
+sessão 61 afirma que «as quatro dissertações aprovadas nomeiam todas a sua máquina», e foi
+isso que pôs «InvestiGator» na capa. Medido nas quatro capas: **nenhuma usa nome de
+produto** — Bruno é técnica + domínio + restrição, Helder é tipo de arquitetura + finalidade
++ domínio, Joana é metáfora, dois pontos, substância, e Rafael é descrição simples. E
+**nenhuma usa subtítulo**: todas imprimem um título único, que é também o formato que a
+submissão ao ISEP recebe.
+
+### Porque é o menos arriscado
+
+Cada termo tem onde se sustentar, e o que não está lá conta tanto como o que está:
+
+| no título | onde se sustenta |
+|---|---|
+| deteção de anomalias | QI1, respondida **sim** — amplitude de $0{,}015$ contra $0{,}344$ |
+| recuperação de precedentes | QI2, respondida **sim** — acima da taxa-base nos cinco setores |
+| verificáveis | a contribuição estabelecida, o lado esquerdo da Figura 6.3 |
+| sem prever | a restrição fundadora do Capítulo 1 |
+
+**Nada no título toca a triagem**, que é o resultado negativo. Um título com «modelo
+treinado» ou «priorização» prometeria exatamente a única coisa que a dissertação reporta
+como não tendo funcionado, e é aí que uma defesa cai. «Sem prever» desarma ainda a pergunta
+mais perigosa que existe contra este trabalho, antes de ela ser feita.
+
+**106 caracteres**, dentro do intervalo das três longas aprovadas (115, 116 e 123); o
+anterior tinha **74**, abaixo do intervalo. A forma — metade evocativa, dois pontos, metade
+substantiva — é a da Joana, que passou, e a dela é bastante mais decorativa.
+
+O nome do sistema **não desaparece**: continua no resumo, no Capítulo 4 e no produto. Sai
+apenas da capa, que é onde nenhuma das aprovadas o põe.
+
+### O risco que esta escolha tem, dito em voz alta
+
+Um título que declara o que o trabalho **não** faz pode ser lido como defensivo. Aqui não é
+uma desculpa — é a decisão de desenho de que tudo o resto decorre — mas quem lê a capa ainda
+não sabe isso. A alternativa que o evitava trocava «verificáveis» por «para o investidor
+particular», e perdia a contribuição para ganhar o público, que já está na primeira frase do
+resumo.
+
+### Propagação
+
+Capa PT e EN, capa dos slides (que passa a ser o título partido nos dois pontos, palavra por
+palavra), a citação da dissertação no `CITATION.cff` — que ainda trazia o título de junho,
+duas gerações atrás — e a abertura do guião de defesa, que mandava dizer uma frase que agora
+**é** o título.
+
+⚠️ **E o subtítulo foi retirado, não esvaziado:** o `meia-style.cls` decide com
+`\ifdefined\tsubtitle`, pelo que um subtítulo vazio continuaria definido e imprimiria uma
+linha em branco com a quebra.
+
+### Um defeito de porta apanhado a propagar
+
+O `check_tese_pt` acusava «PDF anterior a slides/main.pdf». Os materiais de estudo vivem
+dentro de `tese-pt/` desde a reorganização, e o `.pdf` conta como extensão de fonte porque as
+figuras são PDF — logo o PDF **dos slides** era lido como figura da dissertação. ⚠️ E não era
+cosmético: recompilar os slides passava a exigir recompilar a tese, e o `latexmk` **não
+recompila um documento que não mudou**, pelo que a porta acusava algo que compilar não
+resolvia. A regra nova não conhece nomes de pastas: **uma subpasta com o seu próprio
+`main.tex` é outro documento**. Verificada nos dois sentidos — uma fonte verdadeira continua
+a invalidar o PDF.

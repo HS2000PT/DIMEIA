@@ -270,7 +270,7 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 
 | # | Slide | Tempo | O essencial a dizer |
 |---|-------|-------|---------------------|
-| 1 | Título + 1 frase | 0:30 | Quem sou, o título, e "alertas financeiros explicáveis; nunca prevejo". |
+| 1 | Título + 1 frase | 0:30 | Quem sou e o título — «Explicar sem prever: deteção de anomalias e recuperação de precedentes em alertas financeiros verificáveis». A frase que se acrescenta é o público: «para quem não tem terminal profissional». |
 | 2 | O problema | 1:30 | Sobrecarga de informação; o investidor de retalho; **porque NÃO prever** (eficiência de mercado). |
 | 3 | A ideia central | 1:00 | 2 gatilhos (movimento / notícia), XAI-first, engenharia de IA (integrar+avaliar, não inventar). |
 | 4 | Arquitetura | 1:30 | O diagrama: sensores → motor único → explicação → Telegram/painel. |

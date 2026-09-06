@@ -56,11 +56,26 @@ def _sem_comentario(linha: str) -> str:
     return linha
 
 
+def _subdocumentos() -> set[pathlib.Path]:
+    """Subpastas que sao documentos por direito proprio, e nao fontes desta tese.
+
+    ⚠️ Os materiais de estudo vivem dentro de `tese-pt/` desde a reorganizacao, e o
+    `.pdf` conta como extensao de fonte porque as figuras sao PDF. Sem esta exclusao, o
+    `slides/main.pdf` era lido como figura da dissertacao: recompilar os slides passava a
+    exigir recompilar a tese, e o `latexmk` nao recompila um documento que nao mudou.
+    A regra nao conhece nomes de pastas -- uma subpasta com o seu proprio `main.tex` e
+    outro documento.
+    """
+    return {m.parent for m in TESE.glob("*/main.tex")}
+
+
 def _fontes() -> list[pathlib.Path]:
+    outros = _subdocumentos()
     fontes = {
         p for p in TESE.rglob("*")
         if p.is_file() and p != PDF and p.suffix.lower() in EXTENSOES_FONTE
         and "build" not in p.parts
+        and not any(d in p.parents for d in outros)
     }
     # ``latexmkrc`` não tem extensão, mas altera a forma como o PDF canónico é produzido.
     # Tem, por isso, de invalidar um PDF mais antigo tal como qualquer fonte LaTeX.
