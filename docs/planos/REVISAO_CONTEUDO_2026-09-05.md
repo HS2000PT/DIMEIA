@@ -816,3 +816,31 @@ métrica é publicada.
 ⚠️ **E o que este parágrafo não faz é prometer um resultado.** É uma afirmação sobre **método**
 — o que foi montado e o que foi fixado antes de existir candidato — e continua verdadeira se a
 avaliação vier a recusar por falta de pares maturados. Nada nele se torna falso nesse caso.
+
+---
+
+## Os controlos de hoje, tornados permanentes (2026-09-06)
+
+Corri a suite completa depois de um dia inteiro a mexer em verificadores: **990 passaram,
+exatamente como antes**. E é isso que interessa — escreveu-se um verificador novo e mudaram-se
+seis, e a contagem não se moveu. **Os controlos que corri foram manuais e não ficam.**
+
+Dois ficheiros de teste novos, que fixam os dois achados de maior alcance:
+
+- **`test_check_resumos.py`** — os quatro exemplares do resumo. Planta a divergência exata da
+  sessão 56, um abstract acima do limite, e a árvore ausente, e exige que os três disparem.
+- **`test_check_materiais_travessao.py`** — as duas formas do travessão. ⚠️ E guarda o lado
+  oposto, que é onde este projeto se magoa mais vezes: um `—` num título de Markdown **não**
+  pode disparar, porque a regra é da dissertação e ligá-la sem escopo deu 151 achados quase
+  todos legítimos.
+
+⚠️ **E fazê-los apanhou uma armadilha que valia por si.** A primeira versão apontava o
+verificador à árvore de teste com `mod['RAIZ'] = raiz`, e `runpy.run_path` devolve uma **cópia**
+dos globals: a função continuava a ler o repositório real e **os testes passavam sempre**. É a
+forma mais silenciosa possível de um teste não testar nada, e só se viu porque três dos quatro
+falharam por outra razão. Corrigido com `mod['main'].__globals__`.
+
+**E o controlo foi feito a sério:** retirada apenas a alternativa unicode do padrão, o teste do
+caráter falha e os outros três continuam a passar. Reposta, passam os quatro.
+
+**998 testes** (eram 990), ruff limpo, 16/16 verificadores.
