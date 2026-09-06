@@ -73,7 +73,8 @@ aprendizagem por reforço. Diz isso sem hesitar.
 \small
 \begin{tabular}{p{0.24\textwidth} p{0.68\textwidth}}
 \toprule
-\key{Features} & As colunas que o modelo vê. Na tua: volatilidade, momento, movimento do dia,
+\key{Features} & As colunas que o modelo vê. \textbf{Na tese escreves «entradas»}: se ouvires
+\emph{features}, é disto que falam. Na tua: volatilidade, momento, movimento do dia,
 comprimento do título, setor. \\
 \key{Rótulo} & A resposta certa, conhecida. Na tua: houve movimento anormal a seguir? Sim/não. \\
 \key{Treino / teste} & Ensinas com uns dados, avalias com \emph{outros}. Se avaliasses com os
@@ -115,7 +116,9 @@ Três coisas diferentes que é fácil confundir:\\
 \vspace{4mm}
 \begin{block}{Guarda esta frase}
 ``As aplicações gratuitas mostram a percentagem, que é o \emph{princípio} da primeira pergunta e não
-a resposta. Os terminais profissionais respondem às três e custam milhares por ano.
+a resposta. Os terminais profissionais respondem às três e não estão ao alcance deste
+investidor. Se te perguntarem quanto custam, a resposta é que o preço não é publicado de
+forma citável, e é a indisponibilidade que sustenta o argumento, não um valor concreto.
 \textbf{O problema não é científico, é de acesso.}''
 \end{block}
 \end{frame}
@@ -346,11 +349,11 @@ digas que ganha;\\
 \key{9 de 9} & células da grelha em que a volatilidade ganha & QI3 \\
 \key{0{,}379} $\to$ \key{0{,}632} & precisão no orçamento: acaso $\to$ modelo ($1{,}67\times$) & QI3 \\
 \key{0{,}662} & o prior de 13 constantes, que \textbf{bate} o modelo & QI3 \\
-\key{84\%} & decisões determinadas pela \textbf{empresa}, não pela notícia & QI3 \\
-\key{0{,}064} vs \key{0{,}385} & variação do score dentro vs entre empresas ($6{,}1\times$) & QI3 \\
+\key{48\%} & títulos distintos determinados pela \textbf{empresa}, não pela notícia & QI3 \\
+\key{0{,}072} vs \key{0{,}392} & variação do score dentro vs entre empresas ($5{,}4\times$) & QI3 \\
 \key{79\,753} & exemplos do teu conjunto de dados & --- \\
 \key{88,5\%} & dias invulgares com notícia captada (limite superior) & limitação \\
-\key{944 $\to$ 42} & funil de produção: captadas $\to$ enviadas & sistema \\
+\key{743 $\to$ 15} & funil de produção: títulos distintos $\to$ alertas & sistema \\
 \bottomrule
 \end{tabular}
 \end{frame}
@@ -438,9 +441,10 @@ trabalho futuro que aponto.''
 \small
 \begin{block}{``O vosso modelo não serve para nada, então?''}
 ``Serve para o que a medição sustenta: \textbf{ordenar} empresas. Não serve para o que eu lhe
-estava a pedir. Medi o que ele fazia quando decidia e a pontuação varia \key{0{,}064} dentro de cada
-empresa e \key{0{,}385} entre empresas: o limiar estava a separar empresas, não títulos. Em
-\key{84\%} das decisões o resultado estava determinado antes de a notícia ser lida.''
+estava a pedir. Medi o que ele fazia quando decidia e a pontuação varia \key{0{,}072} dentro de cada
+empresa e \key{0{,}392} entre empresas, cinco vezes mais: o limiar estava a separar empresas,
+não títulos. Em \key{48\%} dos títulos distintos o resultado estava determinado antes de a
+notícia ser lida.''
 \end{block}
 \begin{block}{``E porque não puseram o limiar relativo a cada empresa?''}
 ``Simulei isso \textbf{antes} de mexer no código. Resolve metade, e cria outro problema: nas

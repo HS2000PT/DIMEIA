@@ -100,8 +100,8 @@ perigoso, porque a pergunta seguinte é a Q3 e tu acabaste de lhes dar a deixa.
   frente**. Sem nada de nível de empresa, o modelo cai para `0.378`, que é exatamente a prevalência,
   isto é, o chão. Só o comprimento do título dá o mesmo chão.
 - **Porque é que isso acontece, e não é acidente.** É **aritmética**: das nove entradas do modelo
-  implantado, uma só distingue dois títulos da mesma empresa no mesmo dia. Em produção, **84%** das
-  decisões estavam determinadas pela empresa antes de a notícia ser lida.
+  implantado, uma só distingue dois títulos da mesma empresa no mesmo dia. Em produção, **48%** dos
+  títulos distintos estavam determinados pela empresa antes de a notícia ser lida.
 - **A lição de método, que é o que interessa.** A PR-AUC corre sobre o conjunto todo, onde a
   variação entre empresas domina. A métrica estava certa; a pergunta que ela faz não era a pergunta
   de que o produto precisava.
@@ -247,7 +247,7 @@ defender uma afirmação sobre eficiência de mercados que a tese não faz.
 
 ---
 
-## Q9. "Chama a isto alertas, com 158 minutos de atraso?"
+## Q9. "Chama a isto alertas, com 353 minutos de atraso?"
 
 > *"A latência mediana entre a publicação e a captação é de quase três horas. O mercado já reagiu."*
 
@@ -307,8 +307,8 @@ do que qualquer arquitetura.
 | `0.496` vs `0.542` | PR-AUC: contexto+texto vs só volatilidade (QI3) |
 | `0.534` vs `0.538` | tabela de consulta vs modelo implantado |
 | `+0.012` `[+0.004, +0.020]` | o que o texto acrescenta por cima da tabela |
-| `158 min` / `1 s` | descoberta / entrega |
-| `84%` | decisões determinadas pela empresa antes de ler a notícia |
+| `353 min` / `5 s` | descoberta / entrega |
+| `48%` | títulos distintos determinados pela empresa antes de ler a notícia |
 
 **O que NÃO dizer, em nenhuma circunstância:**
 
