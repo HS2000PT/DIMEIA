@@ -1,5 +1,26 @@
 # PLANO FINAL — InvestiGator
 
+> ## ⚠️ LER ISTO ANTES DO RESTO — atualizado a 2026-09-06
+>
+> Este plano é de **1 de setembro** e continua a valer como registo das decisões desse dia.
+> **Três das suas directivas foram invertidas por instruções posteriores do autor**, e uma
+> sessão que o tome como autoridade sem ler este bloco desfaz trabalho já feito.
+>
+> | o plano diz | o que vale hoje |
+> |---|---|
+> | «todas as figuras serão refeitas **em inglês**» | **Invertido a 05/09.** Figuras portuguesas na `tese-pt`, inglesas na `tese-eng`, e são as inglesas que o artigo usa. São 172 rótulos convertidos: reconvertê-los desfaz a instrução expressa do autor. |
+> | «**não criar já duas teses paralelas**» | As duas árvores existem, por instrução posterior. `check_bilingual_parity` e `check_figuras_paridade` existem para as manter iguais. |
+> | «defesa daqui a 16 a 30 dias» | **27/09 é a submissão do DOCUMENTO**; a defesa é em outubro. E há um prazo anterior a ambos: **o título até 13/09**. |
+>
+> **O cabeçalho de estado abaixo também está velho:** são 98 páginas de 120, **17**
+> verificadores, e o canal tem mais alertas do que os 522 que ali estão.
+>
+> **Estado corrente e o que falta:** [`CHECKLIST.md`](CHECKLIST.md).
+> **O que foi revisto e porquê:** [`REVISAO_CONTEUDO_2026-09-05.md`](REVISAO_CONTEUDO_2026-09-05.md).
+> **A regra da avaliação de setembro:** [`PROTOCOLO_ACEITACAO_RETREINO.md`](PROTOCOLO_ACEITACAO_RETREINO.md)
+> — e ela corre a **~22/09**, não a 17/09, que é a última data de *notícia*.
+
+
 > **PRIORIDADE MÁXIMA.** Este ficheiro manda sobre tudo o resto em `DIMEIA/`.
 > Se algum outro documento (`archive/reports/INVESTIGATOR_MASTER_PLAN.md`, `docs/planos/CHECKLIST.md`, `archive/reports/REBUILD_MASTER.md`)
 > disser outra coisa, este ganha.

@@ -1,5 +1,23 @@
 # Política linguística do projeto
 
+> ## ⚠️ A DECISÃO DA §2 FOI TOMADA AO CONTRÁRIO — atualizado a 2026-09-06
+>
+> A recomendação abaixo era **manter inglês no interior das figuras**, e media o custo da
+> conversão: o português é mais largo, a conversão inversa encontrara quatro armadilhas, e
+> perdia-se a reutilização no artigo.
+>
+> **O autor decidiu ao contrário a 05/09, e a decisão resolve o custo em vez de o ignorar:**
+> existem agora **duas árvores**, pelo que a reutilização no artigo fica garantida pela
+> `tese-eng` e o português só tem de caber na `tese-pt`. Foram convertidos **172 rótulos**, e
+> as quatro armadilhas que este documento previa apareceram todas — o *bilião* que vale mil
+> vezes mais em português, o trocadilho da figura dos *embeddings*, os exemplos com palavras
+> portuguesas num corpus inglês, e os decimais.
+>
+> **O que continua a valer aqui:** as regras da §1 por artefacto, o mecanismo de fonte única, e
+> a razão pela qual os títulos de notícia citados e as capturas ficam em inglês nas duas
+> árvores. **O que não vale é a recomendação da §2.**
+
+
 Escrita a 2026-09-04, a pedido da §5 da directiva de revisão final. Fixa as regras que já
 estavam a ser seguidas sem estarem escritas, e mede o custo da única mudança que continua
 em aberto, que é uma decisão do autor e não minha.

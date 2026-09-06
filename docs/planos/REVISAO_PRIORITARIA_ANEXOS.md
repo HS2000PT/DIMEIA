@@ -1,5 +1,19 @@
 # Revisão prioritária — quatro anexos, ponto a ponto
 
+> ## ⚠️ UMA DIRECTIVA DESTE DOCUMENTO FOI INVERTIDA — atualizado a 2026-09-06
+>
+> Este ficheiro repete quatro vezes que **«todas as figuras serão refeitas em inglês»**, e o
+> `CLAUDE.md` manda lê-lo primeiro. **Essa instrução foi substituída a 05/09:** figuras
+> portuguesas na `tese-pt`, inglesas na `tese-eng`, e são as inglesas que o artigo usa.
+>
+> A razão da directiva original era a reutilização no artigo, e a decisão posterior de manter
+> **duas árvores** garante-a por outra via. Reconverter as figuras hoje desfaz 172 rótulos e
+> contraria a instrução expressa do autor.
+>
+> Tudo o resto neste documento — os quatro anexos preservados e os 44 itens de verificação —
+> continua a valer.
+
+
 Atualizado: 2026-09-03. Pedido direto do autor: ler todos os anexos, verificar cada ponto e
 preservar a prioridade entre plataformas. Os quatro foram lidos integralmente nesta passagem.
 Leitura completa não significa validação completa. A matriz abaixo distingue ambas.
