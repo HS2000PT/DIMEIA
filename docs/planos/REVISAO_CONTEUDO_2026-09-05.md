@@ -740,3 +740,48 @@ hoje: os dois pares idênticos, resumo de 201 palavras contadas sem comandos e a
 de **183**, dentro do limite de 200. ⚠️ A contagem ignora comandos LaTeX de propósito: a
 sessão 64 quase corrigiu um resumo que estava certo porque contava as chavetas de um comando
 como palavras.
+
+---
+
+## O Apêndice B, e a regra de escrita que ninguém verificava (2026-09-06)
+
+### O mapa curricular afirmava o que o corpo já tinha retirado
+
+A linha de **Linguagem Natural e Sistemas Conversacionais** dizia que o sistema «recusa
+produzir texto» sobre a evidência. O corpo diz outra coisa desde a passagem de 04/09: existe
+uma **camada de geração ancorada implementada e avaliada, que não é exposta** — 23 tentativas
+de a contornar, todas recusadas, 8 textos fiéis, nenhum recusado — e a razão para não a expor
+não é o desempenho, é a natureza da garantia.
+
+É a mesma classe que a sessão 64 encontrou entre o resumo e o Cap. 1: uma afirmação absoluta a
+sobreviver num sítio depois de o corpo a ter retirado.
+
+⚠️ **E o sítio é o pior possível.** Esta tabela existe para mostrar ao júri o que cada unidade
+curricular contribuiu. Dizer «sem geração» na linha de Linguagem Natural, quando o repositório
+contém uma camada generativa construída, guardada e medida, **esconde trabalho feito
+precisamente onde ele devia aparecer**. Errado duas vezes: contradiz o corpo e subestima a
+dissertação. Corrigido nas duas árvores.
+
+### A regra «zero travessões» só era verificada contra metade das suas formas
+
+Ao escrever a correção acima usei travessões, e **a porta não disse nada**. Fui ver porquê:
+procura `\w\s*---\s*\w`, a forma que se escreve em LaTeX, e o caráter `—` (U+2014) **rende
+exatamente igual no PDF** e passava invisível.
+
+Medido no corpus: **cinco** ocorrências do caráter, zero da forma LaTeX. Três eram prosa da
+dissertação e violavam a regra; duas não, e a distinção é o que importa:
+
+- as duas de `ch4` estão dentro da caixa que **reproduz um alerta tal como foi entregue,
+  copiado do registo do canal sem edição**. ⚠️ Alterar ali um caráter é o defeito que a sessão
+  61 encontrou com o título do Coronavirus: uma citação mudada em silêncio, numa tese cuja
+  afirmação central é que a evidência é *verbatim*. Ficam, e a caixa passa a ser retirada antes
+  de comparar, como já acontece com o TikZ e com os excertos de código.
+
+⚠️ **E ligar o caráter sem mais deu 151 achados**, quase todos legítimos: a regra vem do brief
+de reescrita da **dissertação**, e os documentos de defesa são notas de trabalho em Markdown
+onde um `—` num título é pontuação corrente. Limitada ao corpus LaTeX, ficam **os dois reais**.
+
+⚠️ **E um terceiro não aparece nem com o verificador corrigido:** o padrão exige uma palavra de
+cada lado, e ali o que vem antes é o `$` que fecha o modo matemático. Corrigi-o na mesma, e a
+limitação fica escrita no verificador — é preferível a um padrão mais largo que passasse a
+acusar sinais de menos.

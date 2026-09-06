@@ -90,6 +90,11 @@ def limpa(t: str) -> str:
     t = re.sub(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}", " ", t, flags=re.S)
     t = re.sub(r"<style.*?</style>", " ", t, flags=re.S | re.I)
     t = re.sub(r"\\begin\{lstlisting\}.*?\\end\{lstlisting\}", " ", t, flags=re.S)
+    # ⚠️ A `tcolorbox` do Capitulo 4 reproduz um alerta TAL COMO FOI ENTREGUE, copiado
+    # do registo do canal sem edicao. O que la esta e citacao, nao prosa: alterar um
+    # caracter ali e o defeito que a sessao 61 encontrou com o titulo do Coronavirus,
+    # numa tese cuja afirmacao central e que a evidencia e verbatim.
+    t = re.sub(r"\\begin\{tcolorbox\}.*?\\end\{tcolorbox\}", " ", t, flags=re.S)
     t = re.sub(r"```.*?```", " ", t, flags=re.S)
     # ⚠️ MEDIDAS DE COMPOSICAO NAO SAO RESULTADOS. Um "0.62" em `egin{column}{0.62	extwidth}`
     # ou em `height=0.78	extheight` e uma fraccao da pagina, nao um numero que a tese afirme.
@@ -186,7 +191,9 @@ def main() -> int:
     # de ser lido, e este projecto ja pagou isso mais do que uma vez.
     travessoes, virgulas = [], []
     for p in corpo + [x for x in MATERIAIS if x.exists()]:
-        md = p.suffix.lower() == ".md"
+        # `md` marca o que NAO e corpus LaTeX: Markdown e o quizz em HTML sao material
+        # informal, e a regra do travessao e da dissertacao.
+        md = p.suffix.lower() in (".md", ".html")
         texto = limpa(p.read_text(encoding="utf-8", errors="replace"))
         for n, linha in enumerate(texto.split("\n"), 1):
             if linha.lstrip().startswith("%"):
@@ -194,7 +201,18 @@ def main() -> int:
             # travessao a serio: entre palavras. Em Markdown, `---` sozinho e uma barra
             # horizontal e `|---|` e uma tabela: nenhum dos dois e travessao.
             barra = md and linha.lstrip().startswith(("|", "-"))
-            if re.search(r"\w\s*---\s*\w", linha) and not barra:
+            # ⚠️ AS DUAS FORMAS. Ate 2026-09-06 so se procurava `---`, a forma que se
+            # escreve em LaTeX; o caracter `—` (U+2014) rende exactamente igual no PDF
+            # e passava invisivel. Foi assim que dois travessoes meus entraram no
+            # Apendice B sem esta porta dizer nada.
+            # ⚠️ O CARACTER SO CONTA NO CORPUS LaTeX. A regra «zero travessoes em
+            # prosa» vem do brief de reescrita da DISSERTACAO; os documentos de defesa
+            # sao notas de trabalho em Markdown e o quizz e HTML, onde um `—` num
+            # titulo e pontuacao corrente. Aplicar-lhes a regra dava 151 achados, quase
+            # todos legitimos.
+            padrao = (r"\w\s*---\s*\w" if md
+                      else r"\w\s*(?:---|\u2014)\s*\w")
+            if re.search(padrao, linha) and not barra:
                 travessoes.append(f"{p.name}:{n}  {linha.strip()[:60]}")
             if re.search(r"\$[^$]*\d,\d[^$]*\$", linha):
                 virgulas.append(f"{p.name}:{n}  {linha.strip()[:60]}")
