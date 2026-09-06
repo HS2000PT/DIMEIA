@@ -15,7 +15,7 @@ A tese antiga vive em `tese/` e serve **apenas como fonte de factos, números e 
 
 | Regra | Valor | Estado |
 |---|---|---|
-| Páginas totais | mínimo 60, **máximo 120** | a tese antiga tinha 134: tem de descer |
+| Páginas em numeração árabe | mínimo 60, **máximo 120** | ✅ está a 108. **Não são páginas totais:** medido nas quatro aprovadas a 2026-09-06, o Bruno Ribeiro tem 139 físicas e termina no fólio 120, e o Helder Pereira 133 e 114 — duas das quatro passam de 120 físicas. Ver a secção N do `docs/planos/AUDITORIA_FORENSE_2026-09-06.md` |
 | Resumo (PT) | **≤ 200 palavras** | ✅ está a 199 |
 | Abstract (EN) | **≤ 200 palavras** | ✅ está a 175 |
 | Palavras-chave | máximo 6 | ✅ tem 5 |

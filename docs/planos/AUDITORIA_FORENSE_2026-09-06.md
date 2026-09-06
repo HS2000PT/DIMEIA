@@ -239,7 +239,7 @@ Ordenadas pelo risco. As que ficam **abertas** são as que recomendo preparar.
 | 17 | «Se o ciclo de 60 s não reduziu a latência, para que serviu?» | **Sim** — §4.6, e diz que a comparação **não é interpretável** como efeito do ciclo |
 | 18 | «A recuperação supera o acaso — mas o corpus é metade tecnologia.» | **Sim** — §5.3.3, e a afirmação é estreitada para o nível do setor |
 | 19 | «Porque é que a Lista de Acrónimos tem 14 entradas e o glossário declara 27?» | **Sim, por construção** — só os usados são impressos. Vale saber dizê-lo |
-| 20 | «A dissertação tem 132 páginas e o limite são 120.» | **Aberta** — ver L2 |
+| 20 | «A dissertação tem 132 páginas e o limite são 120.» | **Sim, e com o corpus medido** — o limite incide sobre a numeração árabe, a nossa está em 108, e a do Bruno Ribeiro foi aprovada com 139 físicas e fólio 120. Ver a secção N |
 
 ---
 
@@ -273,11 +273,8 @@ página · overfull máx 5,68 / 8,61 pt · 11/11 verificadores · **998 testes**
 1. **Nomes do júri.** A capa imprime `[Nome do Presidente, Categoria, Escola]`. O ISEP designa-os
    depois da submissão, e a dissertação aprovada do Bruno Ribeiro foi depositada assim. Não é
    defeito; é o único item que a porta de entrega ainda acusa.
-2. **O limite de páginas.** O `BRIEF_REESCRITA.md` escreve «Páginas totais — mínimo 60, **máximo
-   120**», e o PDF tem **132 páginas físicas** (108 numeradas em árabe, das quais 97 até ao fim da
-   bibliografia). Os planos do projeto assumem que os anexos não contam e que o limite incide
-   sobre o corpo, o que dá 96 de 120. **Não reabri a decisão**, mas o número que o júri vê ao
-   folhear é 132, e vale confirmar a regra com o orientador.
+2. ~~**O limite de páginas.**~~ **RESOLVIDO POR MEDIÇÃO a 2026-09-06 — ver a secção N.** Ficava
+   aqui como decisão do orientador; as quatro dissertações aprovadas respondem sozinhas.
 3. **§2.2 e as aplicações de sentimento** (F3) — depende do que se pretendia afirmar.
 4. **«custo incompatível»** (F4) — manter como qualitativo, ou alinhar com a §2.9.
 5. **Datar os 11 445 casos** da base viva (F2).
@@ -292,7 +289,7 @@ página · overfull máx 5,68 / 8,61 pt · 11/11 verificadores · **998 testes**
 **Pronta com pequenos ajustes.**
 
 Não é «pronta para entrega» apenas por causa da secção L, e nenhum dos itens dessa lista é
-técnico: são a designação do júri pela escola, a confirmação de uma regra de formatação, e a
+técnico: são a designação do júri pela escola e a
 leitura final que torna verdadeira a frase «o conteúdo deste documento foi revisto pelo autor».
 
 Nos eixos que esta auditoria mede — validade dos resultados, correspondência entre o texto, os
@@ -302,3 +299,51 @@ tocou num resultado**: a aritmética fecha em todos os sítios onde a refiz, cad
 procedimento que o produz, e as três respostas às questões de investigação estão enunciadas,
 medidas, delimitadas e respondidas — incluindo a negativa, que continua a ser o que dá crédito
 às outras duas.
+
+---
+
+## N. O limite de páginas, medido contra as quatro dissertações aprovadas
+
+Este ponto estava na secção L como decisão do orientador. Não precisa de ser: as quatro
+dissertações aprovadas em `archive/thesis-versions/thesis-examples/` respondem sozinhas, e a
+medição está aqui para não voltar a ser discutida.
+
+**Método.** Para cada PDF, a página física em que o Capítulo 1 abre e o fólio impresso na última
+página. As duas convenções de numeração que o corpus contém obrigam a este cuidado: três teses
+**reiniciam** a numeração em árabe no Capítulo 1, e a do Rafael Silva usa um **contador contínuo**
+— a página física 16 imprime «xvi» e a 17 imprime «17». Comparar «último fólio árabe» entre as
+duas convenções daria números que não querem dizer a mesma coisa.
+
+| dissertação | páginas físicas | Cap. 1 abre na física | último fólio | **corpo em numeração árabe** |
+|---|---|---|---|---|
+| Bruno Ribeiro (aprovada) | 139 | 20 | 120 | **120** |
+| Helder Pereira (aprovada) | 133 | 20 | 114 | **114** |
+| **NOSSA** | **132** | **25** | **108** | **108** |
+| Rafael Silva (aprovada) | 109 | 17 | 109 | **93** |
+| Joana Figueiredo (aprovada) | 104 | 22 | 82 | **83** |
+
+As contas fecham em três das cinco até à unidade: $139-20+1 = 120$, $133-20+1 = 114$ e
+$132-25+1 = 108$. A da Joana difere de um por uma página final em branco, e a do Rafael Silva é
+$109-17+1 = 93$ sob o contador contínuo.
+
+**Três conclusões, e nenhuma é de interpretação.**
+
+1. **O limite não incide sobre páginas físicas.** Duas das quatro aprovadas têm **139** e **133**
+   páginas físicas, ambas acima de 120. Se a regra fosse sobre o total impresso, duas
+   dissertações aprovadas violavam-na.
+2. **Incide sobre a numeração árabe, e a tese do Bruno Ribeiro assenta exactamente no limite:**
+   termina no fólio **120**, sobre 139 páginas físicas. É a evidência mais forte que o corpus
+   contém — uma dissertação aprovada precisamente em cima da regra sob esta leitura, e dezanove
+   páginas acima dela sob a outra.
+3. **A nossa está em 108**, ou seja **doze abaixo do limite**, abaixo de duas aprovadas e acima
+   das outras duas. Excluindo os apêndices, que ocupam os fólios 99 a 108, são **97**.
+
+**Uma precisão que corrige os registos internos.** Os planos do projeto escrevem «96 de 120»,
+contando até ao fim do Capítulo 6. O número comparável com as aprovadas é **108**, porque o 120
+do Bruno Ribeiro e o 114 do Helder Pereira **incluem a bibliografia** — a última página do Bruno,
+fólio 120, é uma página de referências. A margem real é de doze páginas e não de vinte e quatro.
+Nenhuma das duas aprovadas tem apêndices; a nossa tem dois, e mesmo assim fica abaixo.
+
+**O que estava errado era a redação do `BRIEF_REESCRITA.md`**, que escreve «Páginas **totais** —
+mínimo 60, máximo 120». O corpus mostra que o limite não é sobre totais. A linha foi corrigida,
+com a medição ao lado.

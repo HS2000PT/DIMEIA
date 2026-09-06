@@ -86,19 +86,35 @@
   **⚠️ (L) A ARMADILHA DOS ESCAPES MORDEU NUMA VARIANTE NOVA, e esta ainda não estava escrita.**
   Não foi o heredoc: foi `python -c "..."` entre **aspas duplas**, onde o shell expande `$0` antes
   de o Python ver a cadeia — `$0{,}632$` chegou ao `.tex` como **`/usr/bin/bash{,}632$`** e
-  partiu a compilação com `Missing $ inserted`. **Regra que passa a valer: um `python -c` que
-  escreva LaTeX com `$` tem de usar plicas simples, ou ficheiro à parte.** Apanhado pelo
-  `erros=1` do log, não por leitura.
+  partiu a compilação com `Missing $ inserted`. Apanhado pelo `erros=1` do log, não por
+  leitura. ⚠️ **E MORDEU SEGUNDA VEZ, noutra forma:** um `` ` `` dentro do mesmo `python -c`
+  entre aspas duplas é **substituição de comando**, e o nome de ficheiro que eu queria citar
+  desapareceu do `BRIEF_REESCRITA`, deixando «Ver a secção N do  |». **Regra que passa a
+  valer: um `python -c` que escreva Markdown ou LaTeX com `$` ou `` ` `` usa plicas simples,
+  ou ficheiro à parte.**
+  **✅ (M) O LIMITE DE PÁGINAS, RESOLVIDO POR MEDIÇÃO E NÃO POR DECISÃO — secção N do
+  relatório.** Ficava para o orientador; as quatro dissertações aprovadas respondem sozinhas.
+  Medido o fólio impresso de cada uma: **Bruno Ribeiro 139 páginas físicas e termina no fólio
+  120**, Helder Pereira 133 e 114, Rafael Silva 109 e 93, Joana Figueiredo 104 e 83; a nossa
+  132 e **108**. ⚠️ **Duas das quatro aprovadas passam de 120 páginas FÍSICAS**, logo o limite
+  não incide sobre elas — e a do Bruno Ribeiro assenta **exactamente** em 120 na numeração
+  árabe, que é a evidência mais forte que o corpus contém. A nossa está **doze abaixo**.
+  ⚠️ **E corrige os registos internos:** os planos escrevem «96 de 120», contando até ao fim
+  do Cap. 6; o número comparável é **108**, porque o 120 do Bruno e o 114 do Helder **incluem
+  a bibliografia** — a última página do Bruno, fólio 120, é uma página de referências. A
+  margem é de doze páginas e não de vinte e quatro. Nenhuma das duas tem apêndices; a nossa
+  tem dois, e mesmo assim fica abaixo. O que estava errado era a redação do
+  `BRIEF_REESCRITA` («Páginas **totais**»), corrigida com a medição ao lado.
+  ⚠️ **E as duas convenções de numeração obrigaram a cuidado:** três teses reiniciam em árabe
+  no Cap. 1 e a do Rafael Silva usa um contador **contínuo** (a física 16 imprime «xvi» e a 17
+  imprime «17»); comparar «último fólio» entre as duas daria números que não dizem o mesmo.
   **PORTAS: tese-pt 132 pp · tese-eng 130 pp · 0 erros · 0 referências indefinidas · 0 floats fora
   da página · overfull máx 5,68 pt (PT) e 8,61 pt (EN) · 11/11 verificadores · 998 testes ·
   ruff limpo · 59/59 números conferidos · 91/91 entradas de bibliografia · 70 = 70 = 70 no
   `.bib`, citadas e renderizadas.** Dois commits, 26 ficheiros, simétricos entre as duas árvores,
   em `origin/main`.
   **⏭️ O QUE FICA, E NENHUM É TÉCNICO:** os **nomes do júri** (o ISEP designa-os depois da
-  submissão); **o limite de páginas** — o `BRIEF_REESCRITA` escreve «Páginas totais, máximo 120» e
-  o PDF tem **132 físicas**, 108 em numeração árabe e 96 até ao fim do Cap. 6, e os planos assumem
-  que os anexos não contam: **vale confirmar a regra com o orientador, porque o número que o júri
-  folheia é 132**; **se o autor está entre os três votantes** do §5.6.5, que é a pergunta mais
+  submissão); **se o autor está entre os três votantes** do §5.6.5, que é a pergunta mais
   desconfortável que essa secção abre; e três pontos de redação que dependem do que se pretendia
   dizer, listados na secção L do relatório (as aplicações de sentimento e a «primeira pergunta»,
   o «custo incompatível» sem fonte contra a §2.9 que declara o preço não citável, e datar os
