@@ -139,11 +139,12 @@ Não encontrar nada e aprovar tudo têm o mesmo aspeto no ecrã, e as duas segui
 
 Nenhum destes está provado como erro. Ficam listados porque um júri pode perguntar.
 
-1. **$0{,}662$ pertence a dois preditores diferentes.** A tabela de consulta por empresa (taxa de
-   positivos) e o prior de volatilidade por empresa dão ambos $0{,}662$ na precisão dentro do
-   orçamento. É plausível — a métrica só depende da ordenação das empresas, e as duas constantes
-   ordenam-nas igual — mas é uma coincidência que convém saber explicar. Os dois artefactos são
-   `evaluation_triage_identity.md` e `evaluation_budget_baselines.md`.
+1. **$0{,}662$ pertence a TRÊS preditores diferentes**, e não a dois: a taxa de positivos por
+   empresa, a mediana da volatilidade por empresa e a média da volatilidade por empresa. A
+   explicação está preparada em [perguntas abertas](../defence/perguntas_abertas_2026-09-06.md) — a métrica só vê a
+   ordenação que a constante induz sobre as empresas, e que as três ordenações coincidam é o
+   resultado da §5.4.5 dito uma segunda vez. ⚠️ **Não afirmar que são o mesmo número:** concordam
+   às três casas, e o ficheiro do orçamento reporta $0{,}6624$.
 2. ~~Os 11 445 casos da base viva sem data.~~ **RESOLVIDO — secção O.**
 3. ~~§2.2 e a «matéria-prima para a primeira pergunta».~~ **RESOLVIDO — secção O.**
 4. ~~«custo incompatível com este investidor».~~ **RESOLVIDO — secção O.**
@@ -214,9 +215,9 @@ Ordenadas pelo risco. As que ficam **abertas** são as que recomendo preparar.
 |---|---|---|
 | 1 | «O seu modelo perde para uma tabela de treze constantes. Para que serviu treiná-lo?» | **Sim** — §5.4.5 e §6.1 separam resultado de escolha, e a contribuição é declarada como sendo a infraestrutura que torna o negativo defensável |
 | 2 | «Mediu a utilidade? A hipótese fundadora foi testada?» | **Sim, pela negativa** — Fig. 6.3 e §6.4 declaram-no como o que não fica estabelecido |
-| 3 | «Quem votou nos 42 votos? O autor está entre os três?» | **Aberta.** §5.6.5 diz que se desconhece quem responde, mas não diz se o autor votou. Preparar a resposta |
+| 3 | «Quem votou nos 42 votos? O autor está entre os três?» | **Preparada** em [perguntas abertas](../defence/perguntas_abertas_2026-09-06.md), com as três respostas possíveis. ⚠️ O apuramento é do autor: `python scripts/quem_votou.py` |
 | 4 | «Porque é que a Figura 5.12 dá $0{,}632$ à volatilidade e a Figura 5.18 dá $0{,}662$?» | **Sim, agora** — C7 |
-| 5 | «$0{,}662$ para duas linhas de base diferentes. É a mesma experiência?» | **Aberta** — ver F1 |
+| 5 | «$0{,}662$ para duas linhas de base diferentes. É a mesma experiência?» | **Preparada** em [perguntas abertas](../defence/perguntas_abertas_2026-09-06.md): são **três** constantes por empresa, e a métrica só vê a ordenação que elas induzem |
 | 6 | «A tese diz que os terminais custam demasiado. Quanto custam?» | **Sim** — a afirmação deixou de ser sobre preço e passou a ser sobre acesso, que é o que a §2.9 sustenta. Ver a secção O |
 | 7 | «Porque é que o bloco de teste é maior do que o de treino?» | **Sim** — §3.6, com a densidade de notícias como causa |
 | 8 | «$88{,}5\%$ de cobertura — em quantos dias, e é um limite superior de quê?» | **Sim** — 417 dias, e a distinção «existia uma notícia» ≠ «chegou a notícia certa» está escrita |
