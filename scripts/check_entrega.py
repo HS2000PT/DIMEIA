@@ -82,6 +82,10 @@ VERIFICADORES = [
     # A cadeia de cada questao: enunciada, medida, delimitada e respondida -- e a
     # conclusao a nao citar valores que os resultados nao produziram.
     ("questões: enunciada, medida, respondida", "check_qi_cadeia.py", []),
+    # Os dois ficheiros de continuidade declaram a mesma sessao, e e' a do registo mais
+    # recente de cada um. O rodape do AGENTS.md ficou cinco sessoes atras do seu proprio
+    # topo sem nada disparar: sao duas linhas de texto valido.
+    ("continuidade: os dois ficheiros de memória", "check_memoria.py", []),
 ]
 
 # ⚠️ A DISSERTAÇÃO A ENTREGAR É `tese-pt/`, e esta lista apontava para `tese/`. Corrigido a
