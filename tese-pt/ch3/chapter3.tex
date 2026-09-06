@@ -202,8 +202,9 @@ que impede a utilização de informação indisponível no momento da decisão.}
 \end{figure}
 
 A separação não é apenas uma convenção de escrita: é uma fatia. O Excerto~\ref{lst:janela}
-reproduz o cálculo tal como é executado. A linha que a garante é a quinta, em que o intervalo
-termina no penúltimo elemento e exclui, por construção, o dia que está a ser avaliado.
+reproduz o cálculo tal como é executado. A linha que a garante é a que estabelece a janela
+\texttt{recent}, cujo intervalo termina no penúltimo elemento e exclui, por construção, o dia que
+está a ser avaliado.
 
 \begin{lstlisting}[caption={[A janela que exclui o dia avaliado]A janela que exclui o dia
 avaliado. O intervalo \texttt{[-window-1:-1]} termina antes do último elemento, pelo que o
@@ -549,7 +550,7 @@ procedimento executável, reproduzido no Excerto~\ref{lst:lookahead}, que constr
 idênticas até ao dia da notícia e divergentes depois dele, e exige as duas propriedades que
 distinguem uma entrada legítima de uma fuga: as entradas do modelo têm de permanecer iguais, e
 o rótulo tem de mudar. Uma entrada que passasse a depender do futuro faria falhar a primeira
-igualdade; um rótulo que não dependesse dele faria falhar a segunda.
+propriedade; um rótulo que não dependesse dele faria falhar a segunda.
 
 \begin{lstlisting}[caption={[O teste que muta o futuro]O procedimento que impõe a separação
 temporal. As duas séries coincidem até ao dia do acontecimento e divergem a seguir. As entradas

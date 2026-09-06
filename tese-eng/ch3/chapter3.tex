@@ -203,8 +203,8 @@ of the decision.}
 
 The separation is not merely a convention of writing: it is a slice.
 Listing~\ref{lst:janela} reproduces the calculation as it is executed. The line that
-guarantees it is the fifth, in which the interval ends at the penultimate element and
-excludes, by construction, the day being assessed.
+guarantees it is the one that establishes the \texttt{recent} window, whose interval ends at the
+penultimate element and excludes, by construction, the day being assessed.
 
 \begin{lstlisting}[caption={[The window that excludes the day assessed]The window that
 excludes the day assessed. The interval \texttt{[-window-1:-1]} ends before the last element,
@@ -555,7 +555,7 @@ nature is not established by declaration. It is therefore enforced by an executa
 reproduced in Listing~\ref{lst:lookahead}, which builds two series identical up to the day of the
 news item and divergent after it, and requires the two properties that separate a legitimate input
 from a leak: the inputs of the model have to remain equal, and the label has to change. An input
-that came to depend on the future would break the first equality; a label that did not depend on
+that came to depend on the future would break the first property; a label that did not depend on
 it would break the second.
 
 \begin{lstlisting}[caption={[The test that mutates the future]The procedure that enforces the
