@@ -909,3 +909,17 @@ tese inglesa, que não é nem uma coisa nem outra. Corrigido, e à primeira corr
 inglesa apareceu **o par do travessão que eu tinha corrigido hoje só do lado português**.
 
 Porta 17 no `check_entrega`. **998 testes, ruff limpo, 17/17 verdes.**
+
+### E o deck novo entrou na porta de paridade
+
+Um documento novo de 22 páginas com figuras desenhadas e **nenhuma porta a olhar para elas**:
+as figuras do Beamer são `tikzpicture` dentro de `frame`, e não ambientes `figure`, pelo que o
+verificador de línguas não as via. É a mesma fresta que deixou o `promotion gate` passar.
+
+Os decks entram agora no `check_figuras_paridade`, que não sabe vocabulário nenhum — pergunta
+apenas se o mesmo texto desenhado aparece nas duas árvores. Passou de 205 para **226 rótulos**.
+Os seis achados iniciais eram todos legítimos e ficam declarados com a razão: `NVDA` é um
+ticker, `VALID.` escreve-se igual nas duas línguas — traduzi-la seria inventar uma diferença
+que não existe — e quatro são variáveis de `\foreach`, que não são texto desenhado.
+
+Verificado com um rótulo do deck deixado por traduzir: dispara.

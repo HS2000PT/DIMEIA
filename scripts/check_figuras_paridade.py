@@ -50,6 +50,11 @@ ISENTOS = {
     "embargo",
     # argumentos de macro em ciclos \foreach: não são texto desenhado, são substituídos
     BS + "i", BS + "nome", BS + "quota", BS + "valor", BS + "xrot", BS + "xtk",
+    BS + "x", BS + "xcus", BS + "xfut", BS + "xlim",
+    # ⚠️ Os quatro acima vieram dos decks, que entraram nesta porta a 2026-09-06. O
+    # `NVDA` é um ticker e `VALID.` é a abreviatura de validação, que se escreve igual
+    # nas duas línguas: traduzi-las seria inventar uma diferença que não existe.
+    "NVDA", "VALID.",
 }
 
 
@@ -58,6 +63,10 @@ def rotulos(arvore: str) -> set[str]:
     base = RAIZ / arvore
     fich = [base / f"ch{i}/chapter{i}.tex" for i in range(1, 7)]
     fich += [base / "appendices/appendixA.tex"]
+    # ⚠️ OS DECKS TAMBEM. O deck ingles nasceu a 2026-09-06 com os exemplos do
+    # trocadilho ainda em portugues, e nenhuma porta os via: as figuras do Beamer sao
+    # `tikzpicture` dentro de `frame`, e nao ambientes `figure`.
+    fich += [base / "slides/main.tex"]
     if not any(f.exists() for f in fich):
         print(f"ERRO: nenhum capítulo encontrado em '{arvore}'. Um verificador que não vê "
               "o corpus tem de ser indistinguível de um que falha.")
