@@ -144,17 +144,9 @@ Nenhum destes está provado como erro. Ficam listados porque um júri pode pergu
    orçamento. É plausível — a métrica só depende da ordenação das empresas, e as duas constantes
    ordenam-nas igual — mas é uma coincidência que convém saber explicar. Os dois artefactos são
    `evaluation_triage_identity.md` e `evaluation_budget_baselines.md`.
-2. **Os 11 445 casos da base viva (§4.2.3) não têm data**, num capítulo cuja abertura promete que
-   «as datas em que cada medição foi efetuada são indicadas junto de cada uma».
-3. **§2.2 diz que as aplicações de sentimento «fornecem matéria-prima para a primeira pergunta»**,
-   e a primeira pergunta é *o movimento é invulgar?*. Uma classificação de sentimento não é
-   matéria-prima para isso. A Tabela 2.1 marca-as «parcial» nessa coluna. Não alterei: a legenda
-   define «parcial» de forma suficientemente lata para o sustentar, e a correção depende de saber
-   o que se pretendia dizer.
-4. **«custo incompatível com este investidor»** (resumo, abstract, §1.1) é uma afirmação
-   quantitativa sem fonte, e a §2.9 declara explicitamente que o preço «não é publicado de forma
-   citável». As duas coisas são compatíveis se se ler a primeira como qualitativa; um arguente
-   pode não a ler assim.
+2. ~~Os 11 445 casos da base viva sem data.~~ **RESOLVIDO — secção O.**
+3. ~~§2.2 e a «matéria-prima para a primeira pergunta».~~ **RESOLVIDO — secção O.**
+4. ~~«custo incompatível com este investidor».~~ **RESOLVIDO — secção O.**
 5. **A extração de texto do PDF perde as ligaturas `fi`/`fl`** («nanceiro» em vez de
    «financeiro»). É comportamento conhecido do `pdftotext` com estas fontes e **não é um defeito
    do documento**; verifiquei que não corresponde a nenhum problema de composição. Fica registado
@@ -225,7 +217,7 @@ Ordenadas pelo risco. As que ficam **abertas** são as que recomendo preparar.
 | 3 | «Quem votou nos 42 votos? O autor está entre os três?» | **Aberta.** §5.6.5 diz que se desconhece quem responde, mas não diz se o autor votou. Preparar a resposta |
 | 4 | «Porque é que a Figura 5.12 dá $0{,}632$ à volatilidade e a Figura 5.18 dá $0{,}662$?» | **Sim, agora** — C7 |
 | 5 | «$0{,}662$ para duas linhas de base diferentes. É a mesma experiência?» | **Aberta** — ver F1 |
-| 6 | «A tese diz que os terminais custam demasiado. Quanto custam?» | **Parcialmente** — a §2.9 assume que o preço não é citável; o resumo afirma-o na mesma. Ver F4 |
+| 6 | «A tese diz que os terminais custam demasiado. Quanto custam?» | **Sim** — a afirmação deixou de ser sobre preço e passou a ser sobre acesso, que é o que a §2.9 sustenta. Ver a secção O |
 | 7 | «Porque é que o bloco de teste é maior do que o de treino?» | **Sim** — §3.6, com a densidade de notícias como causa |
 | 8 | «$88{,}5\%$ de cobertura — em quantos dias, e é um limite superior de quê?» | **Sim** — 417 dias, e a distinção «existia uma notícia» ≠ «chegou a notícia certa» está escrita |
 | 9 | «Uma janela de 60 dias dá $F_1$ de $0{,}678$ contra $0{,}516$. Porque manteve 20?» | **Sim** — §5.2.5, com a reserva de circularidade do rótulo declarada |
@@ -275,9 +267,9 @@ página · overfull máx 5,68 / 8,61 pt · 11/11 verificadores · **998 testes**
    defeito; é o único item que a porta de entrega ainda acusa.
 2. ~~**O limite de páginas.**~~ **RESOLVIDO POR MEDIÇÃO a 2026-09-06 — ver a secção N.** Ficava
    aqui como decisão do orientador; as quatro dissertações aprovadas respondem sozinhas.
-3. **§2.2 e as aplicações de sentimento** (F3) — depende do que se pretendia afirmar.
-4. **«custo incompatível»** (F4) — manter como qualitativo, ou alinhar com a §2.9.
-5. **Datar os 11 445 casos** da base viva (F2).
+3. ~~**§2.2 e as aplicações de sentimento**~~ **RESOLVIDO — ver a secção O.**
+4. ~~**«custo incompatível»**~~ **RESOLVIDO — ver a secção O.**
+5. ~~**Datar os 11 445 casos**~~ **RESOLVIDO — ver a secção O.**
 6. **Quem votou** (J3) — é a pergunta de júri mais desconfortável que a §5.6.5 abre.
 7. Os itens que já estavam pendentes e não são de auditoria: leitura final do autor, redação da
    declaração de IA e escolha da licença com o orientador, agradecimentos na voz do autor.
@@ -288,9 +280,11 @@ página · overfull máx 5,68 / 8,61 pt · 11/11 verificadores · **998 testes**
 
 **Pronta com pequenos ajustes.**
 
-Não é «pronta para entrega» apenas por causa da secção L, e nenhum dos itens dessa lista é
-técnico: são a designação do júri pela escola e a
-leitura final que torna verdadeira a frase «o conteúdo deste documento foi revisto pelo autor».
+Não é «pronta para entrega» apenas por causa da secção L, que depois das secções N e O ficou
+reduzida a três itens, e nenhum deles é técnico: a designação do júri pela escola, a leitura final
+que torna verdadeira a frase «o conteúdo deste documento foi revisto pelo autor», e a redação da
+declaração de IA e da licença com o orientador. Nada disso se resolve com trabalho no
+repositório.
 
 Nos eixos que esta auditoria mede — validade dos resultados, correspondência entre o texto, os
 artefactos e o código, integridade das citações, coerência interna e composição — o documento
@@ -347,3 +341,66 @@ Nenhuma das duas aprovadas tem apêndices; a nossa tem dois, e mesmo assim fica 
 **O que estava errado era a redação do `BRIEF_REESCRITA.md`**, que escreve «Páginas **totais** —
 mínimo 60, máximo 120». O corpus mostra que o limite não é sobre totais. A linha foi corrigida,
 com a medição ao lado.
+
+---
+
+## O. Os três pontos de redação, resolvidos
+
+Ficavam na secção L por dependerem do que o autor pretendia afirmar. Resolvem-se sem inventar
+nada: em cada um, a formulação defensável já estava escrita noutro sítio do documento, e o que
+faltava era a coerência entre os dois sítios.
+
+### O1 · As aplicações de sentimento e a «primeira pergunta»
+
+A §2.2 dizia: «Fornecem matéria-prima para a primeira pergunta e não avançam além dela». A
+primeira pergunta é *o movimento é invulgar?*, e uma classificação de sentimento é sobre a
+**notícia**, não sobre o **movimento** — não diz se uma variação é elevada para aquela ação.
+
+**Não se alterou a Tabela 2.1**, e a razão é que a classificação *parcial* que ela atribui é
+defensável: a legenda define *parcial* como «fornece matéria-prima para a resposta e deixa a
+interpretação ao utilizador». O que faltava era dizer **de que matéria-prima se trata**. Passa a:
+
+> «O que fornecem é uma leitura da notícia e não do movimento: uma classificação fortemente
+> negativa indica que algo terá acontecido, e não estabelece se a variação do preço é elevada
+> para aquela ação, que é a primeira pergunta. É neste sentido restrito que a Tabela 2.1 lhes
+> atribui uma resposta parcial, e não avançam além dela.»
+
+A frase seguinte, sobre o tema e a direção não coincidirem, ganha força com isto em vez de a
+perder: passa a explicar por que razão a matéria-prima é fraca, e já remete para a §5.3.5, onde
+a concordância de direção está medida em $0{,}708$ contra um acaso de $0{,}688$.
+
+### O2 · «custo incompatível com este investidor»
+
+A afirmação aparecia em três sítios — resumo, *abstract* e §1.1 — e é **económica e sem fonte**,
+enquanto a §2.9 declara em voz alta que o preço dos terminais «não é publicado de forma citável, e
+é a indisponibilidade, e não um valor concreto, que sustenta o argumento».
+
+**Não se foi procurar um preço.** A posição da §2.9 é a correta — os fornecedores não publicam
+tabelas citáveis, e inventar um valor contrariaria o protocolo de citações do próprio trabalho.
+O que se fez foi alinhar os três sítios com ela, trocando a afirmação sobre **preço** por uma
+sobre **acesso**:
+
+| onde | antes | depois |
+|---|---|---|
+| resumo | «respondem, a um custo incompatível com este investidor» | «respondem, e não estão acessíveis a este investidor» |
+| *abstract* | «at a cost incompatible with this investor profile» | «and are not accessible to this investor profile» |
+| §1.1 | «com custos de subscrição incompatíveis com o perfil de investidor em causa» | «e não estão disponíveis em regime gratuito nem acessível ao perfil de investidor em causa» |
+
+⚠️ **As substituições foram construídas para preservar a contagem de palavras**: onze por onze no
+resumo e treze por treze no *abstract*. O resumo mantém-se em **200/200** e o *abstract* em
+**183/200**, verificado pelo `check_resumos`. Um resumo que passasse do limite ao corrigir uma
+afirmação trocaria um defeito por outro.
+
+### O3 · Os 11 445 casos da base viva
+
+O Capítulo 4 abre a prometer que «os valores apresentados neste capítulo foram lidos do registo do
+sistema em operação, e as datas em que cada medição foi efetuada são indicadas junto de cada uma».
+A §4.2.3 dava os $11\,445$ casos da base viva **sem data**, e é a única quantidade do capítulo que
+cresce sozinha — a base viva é alimentada pela varredura a cada ciclo.
+
+A leitura é de **20 de agosto de 2026**, registada na 5.ª parte da sessão 61 do `CLAUDE.md`, na
+mesma medição que fixou o corte de idade dos precedentes em `null`. A frase passa a dizê-lo e a
+declarar que o número cresce com a operação.
+
+Os $38\,214$ da reconstrução **não** levam data, e a diferença é a que interessa: são um artefacto
+estático e versionado, descrito como tal no Apêndice A.1, e não um instantâneo.

@@ -108,6 +108,27 @@
   ⚠️ **E as duas convenções de numeração obrigaram a cuidado:** três teses reiniciam em árabe
   no Cap. 1 e a do Rafael Silva usa um contador **contínuo** (a física 16 imprime «xvi» e a 17
   imprime «17»); comparar «último fólio» entre as duas daria números que não dizem o mesmo.
+  **✅ (N) OS TRÊS PONTOS DE REDAÇÃO, RESOLVIDOS — secção O do relatório.** Ficavam por
+  dependerem do que o autor pretendia afirmar, e resolvem-se sem inventar nada: em cada um, a
+  formulação defensável já estava escrita noutro sítio do documento.
+  ⚠️ **(N1) As aplicações de sentimento.** O §2.2 dizia que «fornecem matéria-prima para a
+  primeira pergunta», e a primeira pergunta é *o movimento é invulgar?* — uma classificação de
+  sentimento é sobre a **notícia** e não sobre o **movimento**. **A Tabela 2.1 NÃO mudou**, e a
+  razão é que o *parcial* que ela atribui é defensável pela sua própria legenda; o que faltava
+  era dizer de que matéria-prima se trata. A frase passa a dizê-lo, e a que se lhe segue, sobre
+  tema e direção, passa a explicar por que razão essa matéria-prima é fraca.
+  ⚠️ **(N2) O «custo incompatível» sai dos três sítios onde estava.** Era uma afirmação
+  económica sem fonte no resumo, no *abstract* e no §1.1, contra uma §2.9 que declara que o
+  preço «não é publicado de forma citável». **Não se foi procurar um preço** — a posição da §2.9
+  é a correcta. Trocou-se a afirmação sobre **preço** por uma sobre **acesso**, e as
+  substituições foram construídas para **preservar a contagem de palavras**: onze por onze no
+  resumo e treze por treze no *abstract*. Continuam em **200/200** e **183/200**. Um resumo que
+  passasse do limite ao corrigir uma afirmação trocaria um defeito por outro.
+  ⚠️ **(N3) Os 11 445 casos passam a ter data.** O Capítulo 4 abre a prometer que cada medição
+  traz a data em que foi feita, e este era o único valor do capítulo que **cresce sozinho** sem
+  a trazer. Lidos a **20 de agosto de 2026**, na mesma medição que fixou o corte de idade dos
+  precedentes em `null`. Os $38\,214$ da reconstrução **não** levam data, e a diferença é a que
+  interessa: são artefacto estático e versionado, não instantâneo.
   **PORTAS: tese-pt 132 pp · tese-eng 130 pp · 0 erros · 0 referências indefinidas · 0 floats fora
   da página · overfull máx 5,68 pt (PT) e 8,61 pt (EN) · 11/11 verificadores · 998 testes ·
   ruff limpo · 59/59 números conferidos · 91/91 entradas de bibliografia · 70 = 70 = 70 no
@@ -115,10 +136,8 @@
   em `origin/main`.
   **⏭️ O QUE FICA, E NENHUM É TÉCNICO:** os **nomes do júri** (o ISEP designa-os depois da
   submissão); **se o autor está entre os três votantes** do §5.6.5, que é a pergunta mais
-  desconfortável que essa secção abre; e três pontos de redação que dependem do que se pretendia
-  dizer, listados na secção L do relatório (as aplicações de sentimento e a «primeira pergunta»,
-  o «custo incompatível» sem fonte contra a §2.9 que declara o preço não citável, e datar os
-  11 445 casos da base viva).
+  desconfortável que essa secção abre; e a leitura final, a declaração de IA e a licença com o
+  orientador, que já estavam pendentes e não são de auditoria.
   **⚠️ E O QUE CONSCIENTEMENTE NÃO SE FEZ:** nenhuma medição nova, nenhuma reestruturação, nenhum
   número alterado. Onde a correção dependia de saber o que o autor pretendia afirmar, o defeito
   ficou **reportado e não corrigido** — é a regra que o próprio pedido fixou.
