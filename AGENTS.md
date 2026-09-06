@@ -1246,8 +1246,8 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 61 (10.ª parte — a crítica de júri externa, verificada uma a uma)
-- **Última atualização:** 2026-08-23
+- **Sessão nº:** 66 (auditoria forense: a figura de uma janela sob o texto de outra, e duas portas cegas)
+- **Última atualização:** 2026-09-06
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
   ter calma nas estatísticas, mostrando cada salto até ao valor final):**
