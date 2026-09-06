@@ -578,3 +578,44 @@ E quatro valores ficam **isentos por lista, com a razão ao lado**: o par `0,667
 ⚠️ É o inverso exato do defeito que a porta existe para apanhar: um valor retirado
 apresentado como afirmação é o defeito; apresentado **com** a retratação é o antídoto.
 Verificada nos dois sentidos com um valor fabricado.
+
+---
+
+## O pacote de defesa (2026-09-06)
+
+Os onze documentos de `docs/defence/` são o que o autor **decora**, e estavam fora de
+qualquer porta. O `check_materiais` cobria os slides, o guia, o quizz e o guião de gravação,
+e não estes — apesar de ser exatamente aqui que esta classe de defeito já aconteceu: a
+sessão 55 encontrou o guião de defesa a listar, na tabela dos números a saber, um par que
+tinha sido **retirado**, e o simulacro a mandar decorá-lo.
+
+**Os números estavam limpos** — 110 valores, todos com par na tese ou nos artefactos. O que
+não estava foi uma afirmação, e é a terceira aparição da mesma.
+
+### A latência antiga, em três documentos, e num deles com a conclusão invertida
+
+O `gravar_demo.md` foi reescrito a 2026-08-07 **precisamente para o autor deixar de dizer uma
+coisa falsa**, e avisa: «Se disseres a frase antiga, um arguente que abra o documento
+apanha-te.» ⚠️ **O aviso passou a aplicar-se ao próprio documento.** Ensinava que, separando
+as eras, a mediana «desce de ~196 min para ~143 min e fica lá». A dissertação mede hoje
+**196 minutos no agendador e 402 no processo permanente**, e conclui o contrário: *o ciclo
+mais curto não reduziu a latência observada.*
+
+⚠️ **E havia uma segunda coisa a corrigir, mais subtil.** A tese não diz que o ciclo piorou:
+diz que a comparação **não é interpretável como efeito do ciclo**, porque as configurações
+não operaram em paralelo, entre elas mudaram as fontes e o período, e as amostras são de 28
+contra 250. A resposta ensaiada não podia trocar uma afirmação causal por outra — tinha de
+**retirar** a afirmação causal.
+
+Mais o par de números do sistema, errado nos três ficheiros: **353 minutos** até detetar e
+**5 segundos** até entregar. Somando o artigo e os slides, **uma só atualização de medição
+deixou cinco documentos a dizer o valor antigo**, e em todos ele era o mais favorável.
+
+### A porta passa a cobri-los
+
+⚠️ **E um separador de milhares à portuguesa parece um decimal:** em prosa PT-PT escreve-se
+`2.478` para dois mil quatrocentos e setenta e oito, e `0.542` para o decimal. A regra que os
+separa sem ambiguidade neste corpus é que **um valor deste trabalho tem parte inteira zero** —
+são precisões, PR-AUC e taxas —, e um separador de milhares nunca a tem. Mais as remissões de
+secção, que não são números afirmados. Com isso, **zero ruído** sobre os onze documentos, e o
+controlo dispara com um valor fabricado.

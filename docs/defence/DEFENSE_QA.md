@@ -293,7 +293,7 @@ decidia. É determinístico e funciona sem rede.
 **Provar:** `demonstracao.md` · `python scripts/demo_defesa.py --offline`
 
 ### E3. «O alerta chega a tempo?»
-**Simples:** *"Do nosso lado, ~1 segundo. O tempo todo está na descoberta: ~2,5 horas até a
+**Simples:** *"Do nosso lado, ~5 segundos. O tempo todo está na descoberta: ~353 minutos até a
 fonte gratuita publicar a notícia."*
 **Técnica:** reporto as duas componentes separadas de propósito, porque um número agregado não
 distingue "somos lentos" de "a fonte é lenta", e as duas afirmações pedem coisas opostas — a

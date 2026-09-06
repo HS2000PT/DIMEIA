@@ -51,6 +51,12 @@ MATERIAIS_RAIZ = RAIZ / "tese-pt"
 MATERIAIS = [MATERIAIS_RAIZ / "slides" / "main.tex", MATERIAIS_RAIZ / "guia" / "main.tex",
              MATERIAIS_RAIZ / "quiz" / "index.html", MATERIAIS_RAIZ / "GRAVACAO.md"]
 
+# ⚠️ O PACOTE DE DEFESA E O QUE O AUTOR DECORA, e estava fora desta porta. A sessao 55
+# encontrou o guiao a listar, na tabela dos numeros a saber, um par que tinha sido RETIRADO,
+# e o simulacro a mandar decora-lo. A 2026-09-06 encontrou-se ali a latencia antiga em tres
+# ficheiros, um deles com a conclusao invertida — e nada olhava para eles.
+MATERIAIS += sorted((RAIZ / "docs" / "defence").glob("*.md"))
+
 if (T / "ch1").is_dir():          # árvore nova: ch1/chapter1.tex
     PROSA = ([T / "frontmatter" / "frontmatter.tex"]
              + [T / f"ch{i}" / f"chapter{i}.tex" for i in range(1, 7)]
@@ -75,6 +81,12 @@ def _valor(cadeia: str) -> str:
 
 def limpa(t: str) -> str:
     """Fora o que nao e afirmacao: desenhos, estilos e blocos de codigo."""
+    # ⚠️ EM PROSA PT-PT, `2.478` E DOIS MIL QUATROCENTOS E SETENTA E OITO, nao um decimal.
+    # A regra que os separa sem ambiguidade neste corpus: um valor deste trabalho tem parte
+    # inteira ZERO — sao precisoes, PR-AUC e taxas —, e um separador de milhares nunca a tem.
+    # Mais as remissoes de seccao, que nao sao numeros afirmados.
+    t = re.sub(r"(?<![\d.])[1-9]\d{0,2}\.\d{3}(?![\d])", " ", t)
+    t = re.sub(r"§\s*\d+\.\d+", " ", t)
     t = re.sub(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}", " ", t, flags=re.S)
     t = re.sub(r"<style.*?</style>", " ", t, flags=re.S | re.I)
     t = re.sub(r"\\begin\{lstlisting\}.*?\\end\{lstlisting\}", " ", t, flags=re.S)

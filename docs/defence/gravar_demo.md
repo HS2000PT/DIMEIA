@@ -77,24 +77,29 @@ Abre um alerta de notícia com precedentes e diz a frase que desarma a pergunta 
 falsa.** Ela mandava-te explicar um número alto com *"a mediana ainda inclui o agendador antigo e
 vai descer à medida que o histórico se renova"*. Isso foi **medido e é falso**
 ([`evaluation_latency.md`](../evaluation/evaluation_latency.md)): separando as duas eras, a mediana
-desce de ~196 min para ~143 min e fica lá. Se disseres a frase antiga, um arguente que abra o
-documento apanha-te.
+a mediana do agendador é de ~196 min e a do processo permanente de ~402 min, ou seja o
+ciclo mais curto **não** reduziu a latência observada. ⚠️ Este próprio parágrafo já ensinou
+o contrário — dizia que descia para ~143 min — e a medição sobre a série completa
+inverteu-o. Se disseres qualquer das frases antigas, um arguente que abra o documento
+apanha-te.
 
 **O ecrã mostra agora duas medidas, e é isso que torna a resposta forte:**
 
 > *"A latência está decomposta de propósito, porque um número agregado não distingue duas coisas
-> com consequências opostas. Do lado do sistema — da deteção até à entrega — a mediana é de **um
-> segundo**. Da publicação até à deteção são cerca de **duas horas e meia**, e isso é a fonte
+> com consequências opostas. Do lado do sistema — da deteção até à entrega — a mediana é de **cinco
+> segundos**. Da publicação até à deteção são **353 minutos** de mediana, e isso é a fonte
 > gratuita a listar tarde, mais o facto de o título mais recente que passa o filtro de
 > relevância ser tipicamente mais velha do que a mais recente do feed."*
 
 Se te perguntarem se o ciclo de 60 segundos valeu a pena, a resposta honesta é a mais
 interessante que tens:
 
-> *"Menos do que eu tinha assumido, e é por isso que está escrito. Assumi que a mediana alta era
-> contaminação do agendador antigo, medi, e o ciclo não era a restrição dominante. O ganho está
-> medido e é real; é pequeno face ao total. Encurtar o ciclo só paga se o tempo estiver na
-> descoberta por causa da cadência, e não está."*
+> *"A medição não confirma a expectativa que motivou a alteração. Assumi que a mediana alta era
+> contaminação do agendador antigo; medida a série completa, o agendador tem 196 minutos e o
+> processo permanente 402. Não digo que o ciclo piorou, porque a comparação não isola o ciclo:
+> as duas configurações não operaram em paralelo, entre elas mudaram as fontes e o período, e as
+> amostras são de 28 contra 250. O que fica estabelecido é que encurtar o ciclo só paga se o
+> tempo estiver na cadência com que consulto a fonte, e não está."*
 
 O argumento é o mesmo e é o que interessa: **a latência é uma quantidade medida do facto até à
 entrega, não uma promessa**, e foi por ter sido instrumentada antes que a medição pôde contrariar

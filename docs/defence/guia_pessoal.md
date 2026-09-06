@@ -240,7 +240,7 @@ integração, não de modelação — e só apareceu porque instrumentei o gate.
 | Onde está o modelo? | `.joblib` de 1,8 KB + `.json` de metadados | §4.9 | teste de reprodução |
 | Aprende continuamente? | **Não.** Inferência + recolha de rótulos | §3.3.4 | — |
 | O modelo funciona? | Offline sim; ao vivo não (ROC-AUC 0,486) | §6.5 | `evaluation_live_transfer.md` |
-| A latência? | ~2,5 h de descoberta + ~1 s de entrega | §6.2 | `evaluation_latency.md` |
+| A latência? | 353 min de descoberta + 5 s de entrega | §6.2 | `evaluation_latency.md` |
 | Está mesmo a correr? | Sim, 332 alertas com carimbos | Apêndice A | branch `alerts-history` |
 
 ---
