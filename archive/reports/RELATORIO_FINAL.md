@@ -2,8 +2,15 @@
 
 > **Dissertação MEIA/ISEP** — Henrique José da Silva Santos (nº 1180934)
 > Orientador: Prof. Luís Gomes · Coorientador: Rafael Silva · Data: 2026-07-11
-> Este documento resume o que existe neste repositório e onde está, numa leitura de cerca de
-> 10 minutos.
+> Este documento resumia o que existia neste repositório a 11 de julho de 2026, numa leitura
+> de cerca de 10 minutos.
+>
+> ⚠️ **REGISTO HISTÓRICO — não descreve o repositório de hoje.** Descreve uma árvore
+> `thesis/` em inglês com 130 páginas, que foi substituída: a dissertação canónica é
+> `tese-pt/`, em português, e existe uma tradução completa em `tese-eng/`. Está aqui pela
+> mesma razão pela qual os planos superados ficam em `progress/_historico/` — um documento
+> que se lê como actual e descreve uma estrutura que já não existe manda quem o lê procurar
+> ficheiros que não estão lá. **O estado corrente está em `docs/planos/CHECKLIST.md`.**
 
 ---
 

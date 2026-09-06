@@ -16,8 +16,15 @@ verificadores, os marcadores de trabalho por acabar, e que a data não muda sozi
 a zero, tudo o que uma máquina consegue verificar está feito** — o que fica abaixo é o que só
 tu podes fazer.
 
-Estado a 2026-09-04: **sai a zero no técnico.** Dissertação canónica `tese-pt/` 128 pp,
-artigo 5 pp, slides 22, guia 25. 16 verificadores.
+Estado a 2026-09-06: **sai a zero no técnico.** Dissertação canónica `tese-pt/` **132 pp**
+e a sua tradução `tese-eng/` **130 pp**; artigo **11 pp** (limite de 12 do ICITS), slides 22,
+guia 25, guia de construção 16. **14 verificadores**, mais as verificações de PDF, marcadores e data.
+
+**Título fixado a 2026-09-06, para submeter até 13/09:** «Explicar sem prever: deteção de
+anomalias e recuperação de precedentes em alertas financeiros verificáveis». Em inglês, na
+capa interior: *Explaining without predicting: anomaly detection and precedent retrieval for
+verifiable financial alerts*. A razão da escolha está em
+[`REVISAO_CONTEUDO_2026-09-05.md`](REVISAO_CONTEUDO_2026-09-05.md).
 
 ## 🧑 Cliques só teus (ninguém pode fazer por ti)
 
@@ -56,7 +63,12 @@ artigo 5 pp, slides 22, guia 25. 16 verificadores.
       `docs/design/going_live.md` §1b).
 
 ### Académico (bloqueia a submissão)
-- [ ] **Leitura final da tese que vais entregar** (`tese-pt/main.pdf`, **128 pp**, PT-PT) — o
+- [ ] **⏰ SUBMETER O TÍTULO ao ISEP até 13/09** — é o item com prazo mais curto de toda
+      esta lista, e é anterior à entrega do documento. O título está fixado acima, nas duas
+      línguas. ⚠️ Submetido o título, o documento tem de o imprimir tal e qual: se o
+      formulário obrigar a alguma alteração, ela tem de voltar às capas PT e EN, à capa dos
+      slides e ao `CITATION.cff`, que é onde ele aparece.
+- [ ] **Leitura final da tese que vais entregar** (`tese-pt/main.pdf`, **132 pp**, PT-PT) — o
       texto é teu para defender.
 - [ ] **Licença do código** com o Prof. Luís Gomes + ficheiro `LICENSE`.
       ⚠️ **Não é uma escolha livre entre MIT e Apache**, e a auditoria encontrou duas
