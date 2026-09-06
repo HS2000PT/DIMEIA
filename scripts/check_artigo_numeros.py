@@ -28,6 +28,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
+BS_ = chr(92)
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 ARTIGO = RAIZ / "paper" / "main.tex"
 TESE = RAIZ / "tese-pt"
@@ -64,6 +65,10 @@ def valores(texto: str, *, ingles: bool) -> set[float]:
     passa a ponto: 0{,}514 é 0.514. A sessão 56 pagou este defeito no sentido
     inverso, com o 88,5 do português lido como 885.
     """
+    # ⚠️ EM PT-PT O SEPARADOR DE MILHARES E O ESPACO FINO `\\,`, e nao o
+    # `{,}`, que fica reservado a virgula decimal. Sem esta linha, `38\\,214`
+    # era lido como dois numeros e a contagem do artigo aparecia sem fonte na tese.
+    texto = re.sub(r"(?<=\d)\\,(?=\d)", "", texto)
     texto = texto.replace("{,}", "" if ingles else ".")
     out: set[float] = set()
     for m in re.findall(r"\d+(?:\.\d+)?", texto):
@@ -113,12 +118,37 @@ def main() -> int:
 
     art_txt = ARTIGO.read_text(encoding="utf-8", errors="replace")
     art_txt = re.sub(r"(?<!\\)%.*", " ", art_txt)
+    # A bibliografia do artigo vive DENTRO do main.tex, por ser estilo LNCS, ao passo
+    # que a da tese esta num .bib a parte que este verificador nao le. Sem este corte,
+    # os intervalos de pagina das referencias entram como contagens sem fonte.
+    art_txt = art_txt.split(BS_ + "begin{thebibliography}")[0]
+    # O numero de aluno no endereco de correio nao e uma afirmacao sobre o sistema.
+    art_txt = art_txt.split(BS_ + "maketitle")[-1]
     tese_txt = "\n".join((TESE / f).read_text(encoding="utf-8", errors="replace")
                          for f in FICHEIROS_TESE if (TESE / f).exists())
 
-    # só os decimais interessam: os inteiros são anos, contagens e coordenadas
-    art_dec = {v for v in valores(art_txt, ingles=True) if v != int(v)}
-    tese_dec = {v for v in valores(tese_txt, ingles=False) if v != int(v)}
+    # ⚠️ A ISENÇÃO DOS INTEIROS ERA LARGA DEMAIS, e custou um defeito real: o artigo
+    # afirmava `4 366` decisões de triagem, número que não existe em lado nenhum da
+    # dissertação atual, onde o valor canónico é `36 925`. O comentário anterior dizia
+    # «os inteiros são anos, contagens e coordenadas» — e é justamente a contagem que é
+    # uma afirmação sobre o sistema implantado, tão verificável como uma PR-AUC.
+    #
+    # A regra é estreita para não produzir um verificador que grita: só inteiros a partir
+    # de mil, que a esta escala não são coordenadas nem corpos de letra. Os anos ficam de
+    # fora, salvo com separador de milhares — ninguém escreve `2{,}026`, logo essa forma
+    # é sempre uma contagem.
+    def _conta(v: float, texto: str) -> bool:
+        if v != int(v) or v < 1000:
+            return False
+        if 1900 <= v <= 2100:
+            n = f"{int(v)}"
+            return (n[0] + "{,}" + n[1:]) in texto
+        return True
+
+    art_dec = {v for v in valores(art_txt, ingles=True)
+               if v != int(v) or _conta(v, art_txt)}
+    tese_dec = {v for v in valores(tese_txt, ingles=False)
+                if v != int(v) or _conta(v, tese_txt)}
 
     # Um número que o artigo tenha e a tese não NÃO é, por si só, um defeito: o artigo
     # pode reportar mais. O que é defeito é não ter fonte nenhuma. Por isso a segunda
@@ -126,27 +156,48 @@ def main() -> int:
     so_no_artigo = sorted(v for v in art_dec - tese_dec if v not in COMPOSICAO)
     falhas: list[str] = []
 
-    print(f"artigo: {len(art_dec)} decimais · tese canónica: {len(tese_dec)}")
+    print(f"artigo: {len(art_dec)} valores (decimais e contagens) · tese canónica: {len(tese_dec)}")
     print()
 
     aval_txt = "\n".join(f.read_text(encoding="utf-8", errors="replace")
                          for f in sorted(AVAL.glob("*.md")))
     aval_dec = valores(aval_txt, ingles=True)
 
-    sem_fonte = [v for v in so_no_artigo if v not in aval_dec]
+    # ⚠️ UMA CONTAGEM TEM DE VIR DA DISSERTACAO, e nao de um artefacto qualquer. O
+    # controlo de 2026-09-06 nao disparou por causa disto: replantado o `4 366` que
+    # escapara, a porta passou, porque esse numero existe mesmo em
+    # `evaluation_gate_selectivity.md` — e a janela curta de uma figura, e a dissertacao
+    # reporta `36 925`. Um resultado decimal pode existir so num artefacto, porque o artigo
+    # pode reportar uma medicao que a tese comprime; uma contagem e uma afirmacao sobre o
+    # sistema implantado, e os dois documentos sao lidos pelas mesmas pessoas.
+    contagens = sorted(v for v in art_dec if v == int(v) and v >= 1000)
+    fora_da_tese = [v for v in contagens if v not in tese_dec]
+    if fora_da_tese:
+        print(f"contagens do artigo que a dissertação NÃO reporta: {len(fora_da_tese)}")
+        for v in fora_da_tese:
+            onde = " (existe em docs/evaluation/)" if v in aval_dec else ""
+            print(f"   {int(v)}{onde}")
+        print("   Uma contagem é uma afirmação sobre o sistema implantado. Se os dois "
+              "documentos\n   dão contagens diferentes, o leitor vê dois sistemas.")
+        falhas.append(f"{len(fora_da_tese)} contagens fora da dissertação")
+    else:
+        print(f"ok  as {len(contagens)} contagens do artigo são as da dissertação")
+
+    sem_fonte = [v for v in so_no_artigo if v not in aval_dec and not (
+        v == int(v) and v >= 1000)]
     if sem_fonte:
-        print(f"decimais do artigo SEM fonte em lado nenhum: {len(sem_fonte)}")
+        print(f"valores do artigo SEM fonte em lado nenhum: {len(sem_fonte)}")
         for v in sem_fonte:
             print(f"   {v:g}")
         print("   Não estão na dissertação nem em docs/evaluation/. Ou são novos e "
               "precisam de gerador, ou são resto de uma versão anterior.")
-        falhas.append(f"{len(sem_fonte)} decimais sem fonte")
+        falhas.append(f"{len(sem_fonte)} valores sem fonte")
     elif so_no_artigo:
-        print(f"ok  {len(so_no_artigo)} decimais só no artigo, todos com fonte em "
+        print(f"ok  {len(so_no_artigo)} valores só no artigo, todos com fonte em "
               "docs/evaluation/")
         print("    " + ", ".join(f"{v:g}" for v in so_no_artigo))
     else:
-        print("ok  todo o decimal do artigo existe também na dissertação canónica")
+        print("ok  todo o valor do artigo existe também na dissertação canónica")
 
     print()
     _confere_tabela(art_txt, falhas)

@@ -456,3 +456,62 @@ recompila um documento que não mudou**, pelo que a porta acusava algo que compi
 resolvia. A regra nova não conhece nomes de pastas: **uma subpasta com o seu próprio
 `main.tex` é outro documento**. Verificada nos dois sentidos — uma fonte verdadeira continua
 a invalidar o PDF.
+
+---
+
+## O artigo lido contra a dissertação revista (2026-09-06)
+
+O artigo foi escrito **antes** da revisão de conteúdo que corrigiu doze defeitos na tese, e
+herdou dois deles. A porta de números passava, porque nenhum dos dois é um número inventado.
+
+### (1) Duas janelas fundidas numa frase
+
+O artigo dizia: «over the documented period it delivered $367$ messages and recorded
+$4{,}366$ triage decisions». A frase paralela da tese (`ch6:15`) diz o contrário com
+cuidado: $367$ mensagens **entre 9 de julho e 13 de agosto**, e $36\,925$ decisões **sobre
+uma janela mais ampla**.
+
+⚠️ **E o que primeiro pareceu ser o defeito não era.** Julguei que o artigo citava um número
+que a tese já não tem — e a tese **tem** o $4\,366$, duas vezes, na §5.6.1, declarado como
+«uma janela anterior e mais curta». O defeito não é o valor: é o «over the documented
+period», que junta ao mesmo período uma contagem que pertence a outro. Nenhuma verificação
+numérica apanha isto, e foi por isso que ler o artigo contra a tese valeu a pena.
+
+### (2) O número mais favorável de duas subpopulações
+
+O artigo dizia que entre a deteção e a entrega a mediana é de **um segundo**. O
+`evaluation_latency.md` traz esse valor numa linha só — a do agendador do GitHub Actions,
+com $n=28$. A mediana sobre os $278$ alertas é de **cinco segundos**, percentil noventa de
+$16$, e é isso que a tese reporta.
+
+⚠️ É o que mais incomoda dos dois. Não é um número velho: é o número do lado que nos convém,
+ainda que sem intenção, num trabalho cuja tese central é que cada valor apresentado tem de
+ser confrontável com o registo.
+
+### A porta cobria menos do que parecia
+
+O `check_artigo_numeros` só olhava para **decimais** — «os inteiros são anos, contagens e
+coordenadas». A isenção é certa para anos e coordenadas e errada para contagens: uma
+contagem é uma afirmação sobre o sistema implantado, tão verificável como uma PR-AUC.
+
+Passa a cobrir inteiros a partir de mil (que a essa escala não são coordenadas nem corpos de
+letra), com os anos de fora salvo quando trazem separador de milhares — ninguém escreve
+`2{,}026`. E as **contagens exigem a dissertação como fonte**, não bastando um artefacto de
+avaliação: um resultado decimal pode existir só num artefacto, porque o artigo pode reportar
+uma medição que a tese comprime, mas se os dois documentos derem contagens diferentes o
+leitor vê dois sistemas. Verificado com uma contagem plantada que a tese não tem.
+
+⚠️ **E fica dito o que a porta continua a não apanhar:** nem a fusão de janelas de (1) nem o
+«um segundo» de (2), que é uma palavra. A porta cobre agora uma classe a mais; a leitura
+contra a tese continua a ser o que apanha as afirmações.
+
+**Dois falsos positivos do próprio verificador, fechados antes de reportarem nada:** os
+intervalos de página da bibliografia — que no artigo vive **dentro** do `main.tex`, por ser
+LNCS, ao passo que a da tese está num `.bib` à parte — e o número de aluno no endereço de
+correio. Mais uma cegueira real: **o separador de milhares em PT-PT é o espaço fino `\,` e
+não o `{,}`**, que fica reservado à vírgula decimal, e o analisador só conhecia o segundo —
+lia `38\,214` como dois números.
+
+⚠️ **E usei `git checkout` sobre trabalho por commitar pela segunda vez no mesmo dia**, desta
+vez no `paper/main.tex`. Recuperado da cópia `cp` que tinha feito antes de plantar o
+controlo. A regra já estava escrita depois da primeira vez; o que faltou foi segui-la.

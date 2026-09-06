@@ -423,8 +423,9 @@ effect, a lookup table. That finding is what led to the policy change reported n
 \subsection{The System in Operation}
 
 The system has run continuously on free infrastructure, monitoring twelve companies. Over
-the documented period it delivered $367$ messages and recorded $4{,}366$ triage decisions,
-while the precedent base accumulated $38{,}214$ cases with measured impact.
+the periods documented it delivered $367$ messages, between 9 July and 13 August 2026, and
+recorded $36{,}925$ triage decisions over a wider window, while the precedent base
+accumulated $38{,}214$ cases with measured impact.
 
 \paragraph{A measured policy change.} Once the triage model was found to be a lookup table,
 it was changed from a veto into a ranking, under a global daily budget. The effect was
@@ -460,7 +461,8 @@ work assumes. The founding hypothesis concerns a better decision, which is a dif
 quantity, and it remains untested.
 
 \paragraph{Latency is bounded by the sources, not by the cycle.} Between publication and
-detection the median is $353$ minutes, and between detection and delivery it is one second.
+detection the median is $353$ minutes, and between detection and delivery it is five seconds,
+with a ninetieth percentile of sixteen.
 The time is entirely in discovery, and shortening the polling cycle did not reduce it: free
 company-news interfaces are not real-time channels, and the most recent headline in a feed
 is not the most recent \emph{relevant} one. The system observes, by construction,
