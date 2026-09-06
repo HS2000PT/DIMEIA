@@ -515,3 +515,66 @@ lia `38\,214` como dois números.
 ⚠️ **E usei `git checkout` sobre trabalho por commitar pela segunda vez no mesmo dia**, desta
 vez no `paper/main.tex`. Recuperado da cópia `cp` que tinha feito antes de plantar o
 controlo. A regra já estava escrita depois da primeira vez; o que faltou foi segui-la.
+
+---
+
+## Os materiais de estudo lidos contra a tese revista (2026-09-06)
+
+Mesma leitura que se fez ao artigo, pela mesma razão: os slides, o guia e o quizz também são
+anteriores à revisão de conteúdo. Três achados, e o primeiro é o mesmo defeito do artigo.
+
+### A latência antiga, outra vez, e outra vez a nosso favor
+
+O slide das limitações dizia «$\approx$2,5 h até detetar, 1 s até entregar». A dissertação
+mede **353 minutos** entre a publicação e a deteção, e **5 segundos** entre a deteção e a
+entrega. O `2,5 h` é a medição antiga do processo permanente e o `1 s` é a linha do
+agendador, com $n=28$ — a mesma subpopulação que o artigo citava. Passam a ser os valores
+publicados, e o contraste fica **mais** forte, não mais fraco.
+
+### O segundo slide afirmava o que a tese se recusa a afirmar
+
+O quadro «O que existe hoje» dava traço a toda a gente nas três perguntas, salvo o terminal
+profissional. O Capítulo 2 nomeia **dois produtos que declaram responder à mesma pergunta** —
+Robinhood Cortex e os momentos-chave do Google Finance — e trata-os com cuidado: a diferença
+reivindicada não é de fluência mas de **verificabilidade**, e a tese diz em voz alta que os
+produtos não foram testados. ⚠️ É o segundo slide do *deck*: um arguente que conheça o Cortex
+via a apresentação a afirmar o que a dissertação declina afirmar, e a posição mais fraca era
+a do slide. Nenhuma porta apanha isto — é uma afirmação, não um número.
+
+### Duas convenções decimais no mesmo dia
+
+Medido: a dissertação imprime **307 decimais com vírgula e zero com ponto**; os slides tinham
+**48 com ponto contra 7 com vírgula** e o guia **13 contra 21**, internamente misturado.
+Convertidos 53, 39 e 14. Ficam com ponto os excertos de **código real** do guia de
+construção, porque o Python usa ponto e os excertos são cortados dos ficheiros por script.
+
+⚠️ **E a primeira conversão mexeu em 195 sítios onde havia 48 a converter**: apanhou as
+coordenadas TikZ, `(6.1,-\xn*0.92)` → `(6{,}1,...)`, o que parte a figura. Restaurado das
+cópias e refeito com o ambiente de fora.
+
+### E converter cegou a porta, que é pior do que o defeito
+
+O `check_materiais` procura decimais com **ponto**, e o seu próprio comentário dizia «a tese
+usa ponto, incluindo em modo matemático» — deixou de ser verdade na reescrita. No instante em
+que os materiais foram convertidos, a porta passou a ver **1 decimal nos slides** em vez de
+dezenas e a declarar «0 sem par na tese». **Não encontrar nada e aprovar tudo têm o mesmo
+aspeto no ecrã**, e esta é justamente a porta que existe porque um documento de defesa já
+mandou decorar um valor retirado.
+
+Corrigida em quatro pontos, e cada um veio de um achado:
+
+1. reconhece as **duas convenções** e compara por **valor**, não por cadeia;
+2. passa de decimais de duas casas para **duas ou três** — a forma da esmagadora maioria dos
+   valores deste trabalho. Via 23 números nos três materiais; vê 133;
+3. aceita **`docs/evaluation/` como segunda fonte**, pelo mesmo critério da porta do artigo:
+   os slides mostram o mínimo e o máximo da taxa de disparo e a tese só a amplitude que deles
+   resulta;
+4. no quizz compara apenas a **opção certa**. ⚠️ Um banco de escolha múltipla *tem* de conter
+   números errados — são os distractores —, e exigir que todas as opções existam na tese é
+   pedir um quizz que não pergunta nada.
+
+E quatro valores ficam **isentos por lista, com a razão ao lado**: o par `0,667` contra
+`0,455` e o seu intervalo `[0,391;\,0,862]`, que o guia cita para ensinar a **não** os dizer.
+⚠️ É o inverso exato do defeito que a porta existe para apanhar: um valor retirado
+apresentado como afirmação é o defeito; apresentado **com** a retratação é o antídoto.
+Verificada nos dois sentidos com um valor fabricado.

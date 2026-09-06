@@ -256,8 +256,8 @@ def cosine_similarity(a, b) -> float:
     return float(np.dot(a, b) / (na * nb))
 \end{lstlisting}
 
-\linhaq{A guarda \texttt{if na == 0.0 or nb == 0.0}. Um vector nulo não tem direcção, logo o
-ângulo não existe e a divisão rebentaria. Devolver $0.0$ diz \emph{não se parece com nada}, que é
+\linhaq{A guarda \texttt{if na == 0{,}0 or nb == 0{,}0}. Um vector nulo não tem direcção, logo o
+ângulo não existe e a divisão rebentaria. Devolver $0{,}0$ diz \emph{não se parece com nada}, que é
 a leitura correcta, e mantém a função total: nenhuma consulta pode derrubar o sistema por causa de
 um registo degenerado.}
 \verifica{pytest tests/test\_similarity.py}
@@ -322,7 +322,7 @@ def _shrink(beta_raw: float, std_err: float, prior: float,
 \end{lstlisting}
 
 \linhaq{O peso \texttt{w} do \texttt{\_shrink}. Um beta estimado em vinte dias é ruidoso, e numa
-janela agitada a AMD deu $\beta = 4.43$. Cortar em $\pm 4$ seria outra constante por justificar;
+janela agitada a AMD deu $\beta = 4{,}43$. Cortar em $\pm 4$ seria outra constante por justificar;
 aqui o encolhimento é \textbf{proporcional à precisão da estimativa}: com erro-padrão pequeno o
 beta fica intacto, com erro grande aproxima-se da referência.}
 \verifica{pytest tests/test\_decomposition.py}
@@ -390,7 +390,7 @@ def fit_platt(scores_val: np.ndarray, y_val: np.ndarray, seed: int = 42) -> Plat
 \linhaq{O \texttt{scores\_val}, no nome do argumento. A calibração ajusta-se na
 \textbf{validação} e nunca no treino: ajustada no treino, corrigiria o sobreajustamento em vez da
 escala, e as probabilidades sairiam confiantes de mais onde o modelo está errado. Aqui
-$a = 3.700$ e $b = -2.313$.}
+$a = 3{,}700$ e $b = -2{,}313$.}
 \verifica{pytest tests/test\_triage\_model.py}
 \end{frame}
 
@@ -420,7 +420,7 @@ porta \textbf{não estava a ajudar}.}
 \linhaq{A \texttt{precisao\_suprimidas}. Comparar as mantidas com a taxa-base responde a
 \emph{a porta acerta?}, que é a pergunta fácil. A pergunta que interessa é \emph{a porta escolhe
 melhor do que aquilo que deitou fora?}, e essa exige medir também as suprimidas. Medido: mantidas
-$0.589$ contra suprimidas $\mathbf{0.617}$, ou seja o que a porta rejeitou era \emph{mais}
+$0{,}589$ contra suprimidas $\mathbf{0{,}617}$, ou seja o que a porta rejeitou era \emph{mais}
 material.}
 \verifica{python scripts/post\_validate.py}
 \end{frame}
@@ -444,8 +444,8 @@ Lidos de seguida, são a parte deste trabalho que mais se aprende, e são a melh
 vazios propagavam-se em silêncio, sem uma única excepção. Numa cadeia de recurso, a resposta
 vazia tem de ser tratada como falha. \\
 \addlinespace
-2. detetor & A Microsoft a $+4.82\%$ com o cartão a dizer \emph{``an ordinary day''}. O $z$ era
-$+1.11$, abaixo do limiar, mas só $5$ dos últimos $249$ dias se tinham movido tanto. Duas réguas
+2. detetor & A Microsoft a $+4{,}82\%$ com o cartão a dizer \emph{``an ordinary day''}. O $z$ era
+$+1{,}11$, abaixo do limiar, mas só $5$ dos últimos $249$ dias se tinham movido tanto. Duas réguas
 a discordar, e a interface escolhia em silêncio a mais tranquilizadora. \\
 \addlinespace
 3. relevância & Sem o filtro, a mesma história contava duas vezes e um escritório de advogados
@@ -466,16 +466,16 @@ tinha. \\
 \textbf{fase} & \textbf{o erro, e porque é que passou despercebido} \\
 \midrule
 6. impacto & O impacto é medido por (empresa, dia), portanto três títulos do mesmo dia partilham
-o mesmo valor \emph{por construção}. Em $36.8\%$ dos alertas os casos assentavam em menos dias
+o mesmo valor \emph{por construção}. Em $36{,}8\%$ dos alertas os casos assentavam em menos dias
 distintos do que casos mostrados: o alerta afirmava mais evidência independente do que tinha. \\
 \addlinespace
 7. decomposição & O motor era escolhido pela maior componente \textbf{em módulo}, e uma empresa
 a subir com o setor a puxar ao contrário saía descrita como \emph{``foi o setor''}. O sinal
 importa, e o módulo deita-o fora. \\
 \addlinespace
-9. calibração & O ajuste é feito numa validação a $47.0\%$ de prevalência e aplicado a um teste a
-$37.8\%$. A ordenação não muda, mas os limiares implantados assentam nessa escala, e por isso a
-probabilidade média prevista sai $0.050$ acima da observada. \\
+9. calibração & O ajuste é feito numa validação a $47{,}0\%$ de prevalência e aplicado a um teste a
+$37{,}8\%$. A ordenação não muda, mas os limiares implantados assentam nessa escala, e por isso a
+probabilidade média prevista sai $0{,}050$ acima da observada. \\
 \addlinespace
 10. observação & Os dois registos que alimentam esta fase eram escritos em disco local, num
 contentor cujo disco é efémero e pertence a outro processo. Estiveram parados

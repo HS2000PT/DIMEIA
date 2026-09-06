@@ -20,6 +20,6 @@
 \linhaq{A \texttt{precisao\_suprimidas}. Comparar as mantidas com a taxa-base responde a
 \emph{a porta acerta?}, que é a pergunta fácil. A pergunta que interessa é \emph{a porta escolhe
 melhor do que aquilo que deitou fora?}, e essa exige medir também as suprimidas. Medido: mantidas
-$0.589$ contra suprimidas $\mathbf{0.617}$, ou seja o que a porta rejeitou era \emph{mais}
+$0{,}589$ contra suprimidas $\mathbf{0{,}617}$, ou seja o que a porta rejeitou era \emph{mais}
 material.}
 \verifica{python scripts/post\_validate.py}

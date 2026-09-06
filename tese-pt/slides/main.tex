@@ -77,6 +77,7 @@ Aplicação da corretora & --- & --- & --- & incluído \\
 Agregador de notícias & --- & --- & --- & grátis \\
 \emph{Robo-advisor} & --- & --- & --- & \% da carteira \\
 Terminal profissional & \checkmark & \checkmark & \checkmark & milhares/ano \\
+Resumo gerado (2025--26) & \multicolumn{3}{c}{\footnotesize \emph{declaram responder; não mostram a evidência}} & grátis \\
 \midrule
 \textbf{Este trabalho} & \checkmark & \checkmark & \checkmark & \textbf{grátis} \\
 \bottomrule
@@ -84,8 +85,9 @@ Terminal profissional & \checkmark & \checkmark & \checkmark & milhares/ano \\
 \vspace{5mm}
 
 \begin{center}
-A linha que responde às três \textbf{já existe}. É a mais cara de todas.\\
-\textbf{O problema não é científico: é de acesso.}
+Dois produtos recentes declaram responder à mesma pergunta. Nenhum declara \textbf{mostrar
+a evidência} — os casos passados, um a um, com data e desfecho medido.\\
+\textbf{A diferença que reivindico não é de fluência: é de verificabilidade.}
 \end{center}
 \end{frame}
 
@@ -176,7 +178,7 @@ mostra \textbf{o mesmo número} nos dois casos.
 A AMD subiu \textbf{apesar} de o mercado e o setor terem puxado ao contrário.
 Os \emph{betas} são estimados \textbf{só com dias anteriores}.\\
 \textbf{Ressalva:} as parcelas somam sempre, porque a da empresa é o resto, e isso não prova que
-estejam bem estimadas. $R^2$ mediano $0.460$, e num dos casos negativo.\\
+estejam bem estimadas. $R^2$ mediano $0{,}460$, e num dos casos negativo.\\
 \textbf{É a única das quatro sem questão de investigação:} não há resposta certa contra a qual
 comparar, e por isso o que se mede nela é o ajuste, e não o acerto.
 \end{frame}
@@ -257,8 +259,8 @@ to Fruition Yet' as Shares Fell 5\%''}
 \midrule
 2 & nomeia a empresa? & ``Meta'', ``Zuckerberg'' \checkmark \\
 3 & é recente? & menos de 2 dias \checkmark \\
-4 & casos parecidos & MSFT $0.46$ · NVDA $0.51$ · NVDA $0.46$ \\
-5 & evidência forte? & melhor $0.51 \ge 0.45$ \checkmark \\
+4 & casos parecidos & MSFT $0{,}46$ · NVDA $0{,}51$ · NVDA $0{,}46$ \\
+5 & evidência forte? & melhor $0{,}51 \ge 0{,}45$ \checkmark \\
 6 & merece avisar? & $54\% \ge 50\%$ \checkmark \\
 9 & enviado & ao canal, e guardado \\
 \bottomrule
@@ -280,8 +282,8 @@ Um bom detetor deve disparar a um ritmo \textbf{parecido} em empresas diferentes
 \toprule
 & \textbf{mín} & \textbf{máx} & \textbf{amplitude} \\
 \midrule
-\emph{z}-score & $0.016$ & $0.031$ & $\mathbf{0.015}$ \\
-Limiar fixo de 3\% & $0.009$ & $0.353$ & $0.344$ \\
+\emph{z}-score & $0{,}016$ & $0{,}031$ & $\mathbf{0{,}015}$ \\
+Limiar fixo de 3\% & $0{,}009$ & $0{,}353$ & $0{,}344$ \\
 \bottomrule
 \end{tabular}
 \vspace{4mm}
@@ -289,7 +291,7 @@ Limiar fixo de 3\% & $0.009$ & $0.353$ & $0.344$ \\
 \begin{center}
 Mais de \textbf{20 vezes} mais consistente.\\[2mm]
 \small E ganha também a dois métodos aprendidos:
-$F_1$ $\mathbf{0.530}$ contra $0.269$ e $0.280$.
+$F_1$ $\mathbf{0{,}530}$ contra $0{,}269$ e $0{,}280$.
 \end{center}
 \end{frame}
 
@@ -299,23 +301,23 @@ $F_1$ $\mathbf{0.530}$ contra $0.269$ e $0.280$.
 \toprule
 \textbf{método} & \textbf{precisão@5} \\
 \midrule
-\textbf{Por significado (o método)} & $\mathbf{0.514}$ \\
-Sempre o setor maior & $0.467$ \\
-Por palavras em comum & $0.346$ \\
-Ao acaso (o chão) & $0.240$ \\
-As mais recentes & $0.126$ \\
+\textbf{Por significado (o método)} & $\mathbf{0{,}514}$ \\
+Sempre o setor maior & $0{,}467$ \\
+Por palavras em comum & $0{,}346$ \\
+Ao acaso (o chão) & $0{,}240$ \\
+As mais recentes & $0{,}126$ \\
 \bottomrule
 \end{tabular}
 \vspace{2mm}
 
 \begin{itemize}
   \small
-  \item Metade do corpus é tecnologia: \textbf{devolver sempre tecnologia} vale $0.467$
-        sem modelo nenhum. A margem real é $+0.047$, e não $+0.274$.
+  \item Metade do corpus é tecnologia: \textbf{devolver sempre tecnologia} vale $0{,}467$
+        sem modelo nenhum. A margem real é $+0{,}047$, e não $+0{,}274$.
   \item \textbf{Mas essa alternativa acerta em tudo num setor e em nada nos outros quatro.}
-        Dentro de cada setor o método ganha nos \textbf{cinco}: $0.448$ na energia, com chão $0.072$.
-  \item No corpus completo, sob a restrição causal da produção: \textbf{0.513}, com chão
-        \textbf{0.259} e margem \textbf{$+0.254$}. O \textbf{0.595} é o teste simétrico de escala.
+        Dentro de cada setor o método ganha nos \textbf{cinco}: $0{,}448$ na energia, com chão $0{,}072$.
+  \item No corpus completo, sob a restrição causal da produção: \textbf{0{,}513}, com chão
+        \textbf{0{,}259} e margem \textbf{$+0{,}254$}. O \textbf{0{,}595} é o teste simétrico de escala.
   \item E \textbf{capta tema, não direção}, que é porque os casos aparecem um a um.
 \end{itemize}
 \end{frame}
@@ -326,10 +328,10 @@ As mais recentes & $0.126$ \\
 \toprule
 \textbf{modelo} & \textbf{PR-AUC} \\
 \midrule
-\textbf{Só volatilidade} & $\mathbf{0.542}$ \\
-Só contexto & $0.538$ \\
-Contexto + texto & $0.496$ \\
-Só texto & $0.439$ \\
+\textbf{Só volatilidade} & $\mathbf{0{,}542}$ \\
+Só contexto & $0{,}538$ \\
+Contexto + texto & $0{,}496$ \\
+Só texto & $0{,}439$ \\
 \bottomrule
 \end{tabular}
 \vspace{3mm}
@@ -340,16 +342,16 @@ Só texto & $0.439$ \\
 \vspace{2mm}
 \footnotesize
 Era o contrário do que eu esperava. Verifiquei por três caminhos:
-re-teste em condições favoráveis ao texto ($0.533$, ainda abaixo),
+re-teste em condições favoráveis ao texto ($0{,}533$, ainda abaixo),
 reamostragem por grupos, e \textbf{nove} definições diferentes do rótulo: a volatilidade ganha
 nas nove.
 \end{frame}
 
 \begin{frame}{O erro que encontrei em mim próprio}
-Eu tinha escrito que a triagem \emph{``quase quadruplica''} a precisão: de $0.163$ para $0.632$.
+Eu tinha escrito que a triagem \emph{``quase quadruplica''} a precisão: de $0{,}163$ para $0{,}632$.
 \vspace{3mm}
 
-O $0.163$ vinha do modelo ``alertar sempre'', que dá a mesma pontuação a tudo.\\
+O $0{,}163$ vinha do modelo ``alertar sempre'', que dá a mesma pontuação a tudo.\\
 \textbf{Com tudo empatado, a métrica desempata pela ordem do ficheiro}, que está ordenado por data
 e por nome da empresa.
 \vspace{3mm}
@@ -359,14 +361,14 @@ e por nome da empresa.
 \end{center}
 \vspace{3mm}
 \footnotesize
-Ao acaso a sério dá $0.379$ $\Rightarrow$ o ganho é de \textbf{1.67$\times$}, não de quase quatro.\\
-E uma tabela de \textbf{13 constantes} dá $0.662$: bate o modelo treinado.
+Ao acaso a sério dá $0{,}379$ $\Rightarrow$ o ganho é de \textbf{1{,}67$\times$}, não de quase quatro.\\
+E uma tabela de \textbf{13 constantes} dá $0{,}662$: bate o modelo treinado.
 \end{frame}
 
 \begin{frame}{E encontrei-o outra vez, um nível acima}
 \small
 O sistema decidia se avisava com um \textbf{limiar fixo} sobre a pontuação do modelo: passa quem
-estiver acima de $0.50$.
+estiver acima de $0{,}50$.
 \vspace{-1mm}
 \begin{center}
 \begin{tikzpicture}[font=\tiny, x=7.0cm, y=0.245cm]
@@ -437,15 +439,15 @@ título.}
 \toprule
 \textbf{o que vê} & \textbf{PR-AUC} \\
 \midrule
-o implantado, nove entradas & $0.538$ \\
-\textbf{só a empresa} & $\mathbf{0.534}$ \\
-sem nada da empresa & $0.378$ \\
-só o comprimento do título & $0.378$ \\
+o implantado, nove entradas & $0{,}538$ \\
+\textbf{só a empresa} & $\mathbf{0{,}534}$ \\
+sem nada da empresa & $0{,}378$ \\
+só o comprimento do título & $0{,}378$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 \vspace{1mm}
-{\scriptsize Diferença de $0.004$, e $0.378$ é o chão. \textbf{O modelo implantado é uma tabela de
+{\scriptsize Diferença de $0{,}004$, e $0{,}378$ é o chão. \textbf{O modelo implantado é uma tabela de
 consulta.}}
 \end{column}
 \begin{column}{0.47\textwidth}
@@ -457,11 +459,11 @@ consulta.}}
 \toprule
 \textbf{política} & \textbf{prec.@5} \\
 \midrule
-ao acaso & $0.375$ \\
-quem mais se mexeu hoje & $0.489$ \\
-\textbf{o sistema} & $\mathbf{0.632}$ \\
-volatilidade, treze constantes & $0.662$ \\
-oráculo & $0.968$ \\
+ao acaso & $0{,}375$ \\
+quem mais se mexeu hoje & $0{,}489$ \\
+\textbf{o sistema} & $\mathbf{0{,}632}$ \\
+volatilidade, treze constantes & $0{,}662$ \\
+oráculo & $0{,}968$ \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -553,7 +555,7 @@ depois com o que o preço fez. Foi assim que se soube que \emph{não} estava a a
 \end{center}
 \vspace{0.5mm}
 {\footnotesize \textbf{Mais duas:} o atraso é da \emph{fonte} e não da infraestrutura
-($\approx$2.5\,h até detetar, 1\,s até entregar); e \textbf{nada volta a ser treinado}, porque a
+($\approx$353\,min até detetar, 5\,s até entregar); e \textbf{nada volta a ser treinado}, porque a
 base de casos cresce sozinha, os pesos não.}
 \end{frame}
 

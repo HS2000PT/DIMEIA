@@ -8,10 +8,14 @@ valor que tinha sido retirado.
 Verifica tres coisas de uma vez, sobre tese/:
   1. cada decimal de resultado dos materiais existe tambem na tese
   2. zero travessoes em prosa (a regra de escrita deste trabalho)
-  3. zero decimais escritos com virgula (a tese usa ponto, incluindo em modo matematico)
+  3. zero decimais com virgula NUA em modo matematico (a forma correcta e `0{,}5`, que
+     da o espacamento certo; `0,5` da espacamento de enumeracao)
 
-So se comparam decimais com DUAS casas: sao os resultados. Coordenadas de desenho, anos,
-versoes e valores de CSS nao sao afirmacoes.
+Comparam-se decimais com DUAS OU TRES casas: sao os resultados. Coordenadas de desenho,
+anos, versoes e valores de CSS nao sao afirmacoes.
+
+Ate 2026-09-06 so se comparavam duas casas, e a maioria dos valores deste trabalho tem
+tres: a porta via 23 numeros nos tres materiais quando ha 133.
 
     python scripts/check_materiais.py
 """
@@ -56,7 +60,17 @@ else:                            # árvore antiga: cap5/capitulo5.tex
                                                      T / "frontmatter" / "frontmatter.tex"]
 PROSA = [p for p in PROSA if p.exists()]
 
-RX_RESULTADO = re.compile(r"\d+\.\d{2}(?!\d)")
+# ⚠️ AS DUAS CONVENCOES, e comparadas por VALOR e nao por cadeia. Ate 2026-09-06 esta
+# expressao so conhecia o ponto, e a dissertacao ja escrevia `$0{,}542$`: no dia em que
+# os materiais foram convertidos, a porta passou a ver 1 decimal nos slides em vez de
+# dezenas e a declarar «0 sem par na tese». Nao encontrar nada e aprovar tudo tem o
+# mesmo aspecto no ecra.
+RX_RESULTADO = re.compile(r"\d+(?:\.|\{,\})\d{2,3}(?!\d)")
+
+
+def _valor(cadeia: str) -> str:
+    """Normaliza as duas convencoes decimais para uma so, para comparar numeros."""
+    return cadeia.replace("{,}", ".")
 
 
 def limpa(t: str) -> str:
@@ -82,6 +96,38 @@ def limpa(t: str) -> str:
     return t
 
 
+# Valores que os materiais podem trazer sem que a tese os afirme, com a razao ao lado.
+# ⚠️ A lista e de ISENCAO e nao de acusacao: um numero novo que ninguem previu faz a
+# verificacao FALHAR, em vez de passar em silencio.
+ISENTOS: dict[str, str] = {
+    # O guia ensina a NAO dizer estes, e explica porque foram retirados: eram 12 decisoes,
+    # com intervalo que contem a taxa-base. Cita-los com a retratacao e o antidoto do
+    # defeito que esta porta existe para apanhar, nao o defeito.
+    "0.667": "precisao ao vivo RETIRADA, citada como retirada (guia, Nivel 5)",
+    "0.455": "taxa-base do par retirado, citada como retirada",
+    "0.391": "limite inferior do intervalo do par retirado",
+    "0.862": "limite superior do intervalo do par retirado",
+}
+
+
+def _opcoes_certas(html: str) -> str:
+    """So a opcao CERTA do banco de perguntas.
+
+    ⚠️ Um quizz TEM de conter numeros errados: sao os distractores. Exigir que todas as
+    opcoes existam na tese e pedir um quizz que nao pergunta nada. O que tem de existir na
+    tese e a resposta certa, e o formato do banco da-a: `opts:[...], ok:<indice>`.
+    """
+    saida = []
+    for m in re.finditer(r"opts:\s*\[(.*?)\]\s*,\s*ok:\s*(\d+)", html, re.S):
+        opts = re.findall(r'"((?:[^"\\]|\\.)*)"', m.group(1))
+        i = int(m.group(2))
+        if i < len(opts):
+            saida.append(opts[i])
+    # o enunciado tambem conta: e prosa, e afirma
+    saida += re.findall(r'q:\s*"((?:[^"\\]|\\.)*)"', html)
+    return "\n".join(saida)
+
+
 def main() -> int:
     corpo = [p for p in PROSA if p.exists()]
     if not corpo:
@@ -90,7 +136,16 @@ def main() -> int:
         return 2
 
     tese = "\n".join(p.read_text(encoding="utf-8") for p in corpo).replace("{,}", ".")
-    tese_n = set(RX_RESULTADO.findall(tese))
+    tese_n = {_valor(x) for x in RX_RESULTADO.findall(tese)}
+
+    # ⚠️ SEGUNDA FONTE, pelo mesmo criterio da porta do artigo: um material pode mostrar as
+    # parcelas de um numero que a tese resume. Os slides dao o minimo e o maximo da taxa de
+    # disparo e a tese so a amplitude que deles resulta -- os tres estao em
+    # `evaluation_anomaly.md`, que e a saida do proprio protocolo.
+    aval = RAIZ / "docs" / "evaluation"
+    aval_txt = "\n".join(f.read_text(encoding="utf-8", errors="replace")
+                         for f in sorted(aval.glob("*.md"))) if aval.exists() else ""
+    fontes_n = tese_n | {_valor(x) for x in RX_RESULTADO.findall(aval_txt)}
 
     falhas = 0
 
@@ -100,8 +155,10 @@ def main() -> int:
             print(f"  (ausente) {p.parent.name}/{p.name}")
             continue
         t = limpa(p.read_text(encoding="utf-8", errors="replace"))
-        n = set(RX_RESULTADO.findall(t))
-        fora = sorted(n - tese_n)
+        if p.suffix == ".html":
+            t = _opcoes_certas(t)
+        n = {_valor(x) for x in RX_RESULTADO.findall(t)}
+        fora = sorted(x for x in n - fontes_n if x not in ISENTOS)
         marca = "ok  " if not fora else "!!  "
         print(f"  {marca}{p.parent.name}/{p.name}: {len(n)} decimais, {len(fora)} sem par na tese")
         for x in fora:
