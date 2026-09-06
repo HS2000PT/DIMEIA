@@ -9,6 +9,77 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 66 (2026-09-06, 4.ª parte): A METADE CEGA DA PORTA DOS MATERIAIS, FECHADA — E O
+  ALERTA QUE A TESE DIZ REPRODUZIR «SEM EDIÇÃO» PASSA A TER QUEM O VERIFIQUE.**
+  Três commits: `ef5c98ff4`, `2a137d8e6`, `20335e747`.
+  **⚠️ (A) A VARREDURA DOS INTEIROS: 23 ACERTOS, DEZANOVE LEGÍTIMOS E QUATRO REAIS.** A 3.ª
+  parte documentou que o `check_materiais` só compara **decimais**; esta correu a metade que
+  falta. Os dezanove legítimos aparecem dentro de avisos «não digas X», que é o uso certo. Os
+  quatro reais, todos corrigidos: o **`DEFENSE_QA`** ensinava «o alerta chega em **~1 s** desde a
+  deteção — isso está medido» (a tese mede **5 segundos** sobre 278 alertas; o `1 s` era a era do
+  agendador com n=28), e passa a dizer também os **353 minutos** até detetar, porque é para aí que
+  o arguente vai; a **`demonstracao`** mandava «contar o funil de cabeça: 944 títulos, 42 alertas,
+  22:1» no plano B, ou seja **a recitar**; a **`THESIS_FACT_SHEET`**, que é a folha dos números a
+  saber, trazia os três; e o **`simulacro_tese_curta`** ensinava a dizer «top-3 idênticos em
+  **20 de 23** consultas» — resultado da tese **longa**, retirado por *n* pequeno de mais, e a
+  tese curta **não contém esse teste**: dito em voz alta, o júri procura-o e não o encontra.
+  **✅ (B) E A VARREDURA PASSA A SER PORTA: `check_numeros_retirados.py`.** Nove afirmações
+  retiradas, cada uma com o que dizer em vez dela e porquê. **A isenção é o que a torna
+  utilizável:** um número retirado **deve** aparecer dentro de um aviso — o `LEIA-ME-PRIMEIRO` tem
+  uma tabela inteira deles e os slides têm o frame «onde me enganei», que é dos melhores momentos
+  da defesa. Doze controlos negativos, 14 testes, e o do corpus real **verificado a falhar** com o
+  defeito replantado. `check_entrega`: 19 → **20 verificadores**.
+  **⚠️ (C) TRÊS FALSOS POSITIVOS DELE, fechados antes de reportarem nada, e dois ficam no
+  autoteste:** o `LEIA-ME-PRIMEIRO` **é** o registo dos retirados e não se verifica a si próprio
+  (acusá-lo seria acusar a solução); **`0,385` é TAMBÉM a prevalência do rótulo por bloco**
+  (0,385 / 0,470 / 0,378), sem relação nenhuma, em **quatro** documentos corretos — o `0,064` é
+  inequívoco e chega, porque na afirmação retirada aparecem sempre juntos; e a resposta do quizz
+  cita o erro **ao lado da correção**, que é como se ensina.
+  **⚠️ (D) O QUIZZ ENSINAVA O PREÇO QUE A TESE DECLARA NÃO CITÁVEL.** «E custa milhares por ano»,
+  na resposta sobre a matriz do Capítulo 2 — a única ocorrência que restava em toda a árvore de
+  entrega. A frase **seguinte** já dizia o argumento certo («o problema não é científico, é de
+  acesso»), logo a correção melhora a resposta em vez de a encurtar. A afirmação entra na lista
+  dos retirados, e não é um número: cabe lá pela mesma razão que o «quase quadruplica».
+  **✅ E o banco validado a sério, corrido em `node`: 42 perguntas** (24 de escolha, 18 abertas),
+  **todas** as de escolha com índice de resposta dentro do intervalo, 0 mal formadas, 0 etiquetas
+  HTML por fechar. É a verificação que a sessão 61 fez à mão depois de duas perguntas terem sido
+  escritas com `correct:` onde o quizz lê `ok:` — nunca teriam pontuado.
+  **✅ (E) O ALERTA DO CAP. 4 CONFERIDO CONTRA O REGISTO DO CANAL, e passa.** A legenda declara-o
+  «reproduzido do registo sem edição» e **nada o verificava**: a caixa é LaTeX escrito à mão e uma
+  alteração ali compila a zero erros. Não é hipotético — a sessão 61 encontrou uma citação
+  alterada em silêncio, o travessão do título do Coronavirus trocado por dois pontos, numa tabela
+  que declarava os títulos reais. Lido o `alerts_history.jsonl` da branch de dados: o alerta AMZN
+  de 2026-08-13 existe, e as **quatro citações são idênticas caractere a caractere**, apóstrofos e
+  cifrões incluídos, tal como as semelhanças, os impactos e os 57%. As diferenças são o emoji e os
+  marcadores, que a legenda declara como transcrição tipográfica.
+  Congelado em `tests/alerta_ch4_verbatim.txt` com a proveniência escrita, **para o teste correr
+  offline**: uma porta que precisa de rede falha por falta de rede e lê-se como defeito. Seis
+  testes, e o principal **verificado a falhar** com um apóstrofo tipográfico plantado.
+  **✅ (F) O QUE A VARREDURA NÃO ENCONTROU, E A AUSÊNCIA É O RESULTADO.**
+  **Figuras:** 17 desenham 159 valores de três casas e **todos têm origem** em `docs/evaluation/`
+  ou na prosa; atribuindo cada figura ao artefacto que contém mais dos seus valores, **cada uma
+  cai no artefacto certo para o seu assunto** — a `fig:av_porta` dá agora 34/35 no `_unicos.md` e
+  o texto ao lado nomeia as duas janelas. **A classe do achado principal desta sessão está
+  fechada.** **Datas:** 55 na PT e 56 na EN, nenhuma no futuro, nenhuma impossível, e a única
+  assimetria é um **comentário LaTeX**. **Bibliografia:** 64 entradas renderizadas, 0 sem ano, 0
+  `n.d.`, 0 parênteses por fechar, 0 campos vazios. **Palavras-chave:** na ordem certa e
+  espelhadas nas duas árvores. **A tese não afirma contagens do repositório** (testes, commits,
+  ficheiros), que é a classe que derrapa sozinha.
+  **⚠️ (G) E UM ACHADO MEU QUE NÃO ERA UM, apanhado por ler adiante.** Os três precedentes do
+  alerta são **todos do mesmo dia** (AAPL 2026-08-05) com impacto idêntico, e a legenda, que
+  enumera as outras ressalvas, não o diz — ia reportá-lo. A subsecção **«Discordância entre a
+  afirmação e a evidência»**, dezassete linhas abaixo, cita a figura pelo nome, explica que é um
+  dia observado três vezes, quantifica a extensão (36,8% · 11,3% · 23,3%) e circunscreve o efeito.
+  **Está tratado melhor do que eu ia sugerir**, e há um teste que obriga a reler essa secção se
+  alguém trocar o exemplo.
+  ⚠️ **Armadilhas que voltaram a morder, e a lição é sempre a mesma:** o heredoc comeu barras em
+  **três** scripts (`\b` → `b`, `\s` → classe de espaço, `\` → `\`) e a saída foi sempre um
+  `PatternError` ou uma âncora não encontrada — **a regra que funciona é escrever o script com a
+  ferramenta de ficheiro, não por heredoc**. E `pdftotext` perde as ligaturas: `Bibliografia` sai
+  «Bibliograa» e uma procura por ela devolve **zero páginas**, o que se lê como «não existe».
+  **PORTAS: 1026 testes (eram 998 no início do dia) · ruff limpo · `check_entrega` verde nos 20
+  verificadores · tese-pt 132 pp · tese-eng 130 · slides 22+22 · guia 25 · artigo 11 · quizz 42
+  perguntas.** Pendência única: os **nomes do júri**.
 - **🆕 SESSÃO 66 (2026-09-06, 3.ª parte): OS MATERIAIS DE ESTUDO ENSINAVAM A JANELA QUE A TESE
   SUBSTITUIU, E A PORTA QUE OS GUARDA VIA-OS ALINHADOS.**
   O pedido foi «continua a analisar; PT e EN em sincronia; slides, artigo e guia perfeitos; e diz
@@ -1736,7 +1807,7 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 66 (auditoria forense da tese; e depois os materiais de estudo a ensinarem a janela que ela substituiu)
+- **Sessão nº:** 66 (auditoria forense da tese; os materiais a ensinarem a janela que ela substituiu; e a porta que os via alinhados)
 - **Última atualização:** 2026-09-06
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
