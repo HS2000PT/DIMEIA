@@ -9,6 +9,93 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 66 (2026-09-06, 3.ª parte): OS MATERIAIS DE ESTUDO ENSINAVAM A JANELA QUE A TESE
+  SUBSTITUIU, E A PORTA QUE OS GUARDA VIA-OS ALINHADOS.**
+  O pedido foi «continua a analisar; PT e EN em sincronia; slides, artigo e guia perfeitos; e diz
+  o que se pode retirar da tese». Quatro commits: `f2b9b1ce5`, `7e1b34f87`, `82aae9acf`,
+  `7ac8488bb`.
+  **⚠️ (A) O ACHADO: QUATRO NÚMEROS RETIRADOS SOBREVIVIAM NOS MATERIAIS, E O PIOR ESTAVA NA
+  RESPOSTA MODELO.** É a classe que este ficheiro documenta desde a sessão 60 — os documentos de
+  defesa ensinam a versão anterior — e é a mais cara de todas, porque são os números que o autor
+  **decora para dizer em voz alta**. O slide do guia intitulado «a pergunta mais dura, e a tua
+  melhor resposta» ensinava-o a dizer «Em **84%** das decisões o resultado estava determinado
+  antes de a notícia ser lida». A tese diz **48% dos títulos distintos**, e o próprio artefacto
+  que produz a fração avisa que contar decisões a empurra para cima **na direção que convém à
+  conclusão**, porque o sistema repontua o mesmo título de minuto a minuto e a duplicação é maior
+  nas empresas que nunca alertam. Mais `0,064 / 0,385 / 6,1×` (a tese: **0,072 / 0,392 / 5,4×**
+  sobre 36 925 decisões), o funil `944 → 42` (a tese: **743 → 15**, cerca de 1 para 50) e a
+  latência `158 min / 1 s` (a tese: **353 minutos e 5 segundos** — o `1 s` era a era do agendador,
+  com n=28).
+  **⚠️ (B) E O SLIDE 15 DOS DOIS DECKS DESENHAVA A JANELA ANTIGA.** «84% das decisões», o gráfico
+  com os intervalos das 4 366 decisões de julho (a **META alaranjada** quando `0,498`–`0,545`
+  atravessa o piso), o «963 de 963» da AMD, e o eixo e o rótulo do piso com **ponto decimal num
+  deck português**, a duas linhas de valores com vírgula. Refeitos com a janela de 36 925, com os
+  60% ao lado dos 48% e a razão pela qual se cita o primeiro.
+  **⚠️ (C) A PORTA VIA-OS ALINHADOS, E A RAZÃO É ESTRUTURAL: VERIFICA QUE UM NÚMERO TEM FONTE,
+  NÃO QUE É USADO NO MESMO SENTIDO.** O `0,064` e o `0,385` **têm** par na tese — ela declara-os
+  em voz alta como a janela **anterior e mais curta**, que é o tratamento correto. O guia
+  citava-os como se fossem *o* resultado. E os outros dois, `84%` e `944`, são **inteiros**, que
+  o `RX_RESULTADO` nem olha. Fica escrito no ficheiro; não foi corrigido, porque a correção a
+  sério é comparar contexto e não valor.
+  **✅ (D) A PORTA CORRIGIDA PARA UM DEFEITO DIFERENTE: LIA «Figura 5.12» COMO UM RESULTADO.** O
+  documento de perguntas abertas escrito nesta sessão é o primeiro material da lista que nomeia
+  figuras pelo número, e o `check_materiais` acusou **dois números corretos** de serem afirmações
+  sem fonte. A regra já existia para o `§5.6` e faltava para os nomes; entra estreita, só apaga o
+  número **que se segue** a Figura/Tabela/Secção/Equação/Algoritmo.
+  **⚠️ E FICA MEDIDO O QUE ESTA PORTA NÃO GARANTE, em vez de suposto:** a união das duas fontes
+  tem **563 decimais distintos**, 337 deles da forma `0.xyz`, ou seja **33,7% desse espaço**. Um
+  número inventado com três casas tem cerca de **uma hipótese em três** de encontrar par por
+  coincidência e passar. A porta apanha a maioria dos números **retirados**, que é para o que
+  serve, e **não** é prova de que todo o número dos materiais foi verificado.
+  **⚠️ (E) O MEU CONTROLO NEGATIVO FALHOU, E POR CULPA MINHA.** Plantei `0.913` a supor que fosse
+  inventado; existe mesmo, em dois artefactos de avaliação **e** no Capítulo 5, logo a porta
+  aprovou-o com razão e eu li isso como um furo. Refeito com um valor ausente do corpus (`0.101`,
+  escolhido por enumeração e não por palpite): dispara e sai a 1; retirado, sai a 0 e o ficheiro
+  fica byte-igual. **Um controlo negativo que usa um valor real não prova nada e lê-se como uma
+  porta furada.**
+  ⚠️ **E uma armadilha de shell nova, apanhada duas vezes:** `cmd | tail -6; echo $?` reporta o
+  estado do **`tail`**, não do script — cheguei a dar por passada uma porta que estava a falhar.
+  E `re.split(chr(92) + r"section...")` faz o `\s` ser lido como **classe de espaço**, que é a
+  mesma armadilha que a sessão 64 documentou com `\subsection`: em padrão, `chr(92)*2`.
+  **⚠️ (F) A MESMA AFIRMAÇÃO RETIRADA NOS TRÊS MATERIAIS AO MESMO TEMPO:** «os terminais
+  profissionais custam **milhares por ano**», quando a Tabela 2.1 escreve «não publicado» e a §2.9
+  explica que é a **indisponibilidade**, e não um valor, que sustenta o argumento. No guia estava
+  dentro de um quadro **«Guarda esta frase»**. O artigo dizia o mesmo por outras palavras («at
+  subscription costs incompatible with this audience») e **fundia duas janelas** no parágrafo de
+  operação — «367 messages and 4 366 triage decisions» ao mesmo período, quando são períodos
+  diferentes que a tese separa em voz alta.
+  **⚠️ (G) E O `LEIA-ME-PRIMEIRO` APONTAVA PARA UM DOCUMENTO COM NÚMEROS RETIRADOS**, dizendo que
+  era «o único desta pasta que não precisa de tradução mental». **Um documento que se declara
+  alinhado é o mais perigoso de todos, porque é aquele por onde se estuda sem desconfiar.** Passa
+  a dizê-lo, com os quatro na tabela dos retirados e com os caminhos corrigidos (apontava para
+  `tese/` com 114 páginas; é `tese-pt/` com 132, e o guia tem 25 slides e não 24).
+  **✅ (H) SINCRONIA PT ↔ EN VERIFICADA, e está limpa:** estrutura idêntica nas sete unidades e
+  **351 números de prosa comparados, 0 divergências**.
+  ⚠️ **Mas o comparador falhou três vezes antes de funcionar, e as três lições ficam:** decidir o
+  separador pela **contagem de dígitos** em vez da língua; **a geometria LaTeX usa ponto nas duas
+  línguas**, logo varrer `.` como decimal apagava o lado PT e mantinha o EN, inventando centenas
+  de divergências; e um `$…$` emparelha mal quando há TikZ pelo meio, porque o TikZ contém `$`.
+  Só a quarta versão — retirar `figure`/`table`/`tikzpicture` **primeiro** — deu um número em que
+  se pode confiar.
+  **✅ (I) O QUE SE PODE RETIRAR DA TESE: PRATICAMENTE NADA, E A RESPOSTA É MEDIDA.**
+  **108 páginas em numeração árabe** contra as **120 exactas** onde a tese aprovada do Bruno
+  Ribeiro acaba. Forma dos capítulos **4 · 14 · 12 · 20 · 28 · 14**; o capítulo fora de linha é o
+  **Cap. 1, com 4 páginas contra 8, 8, 8 e 10** das aprovadas — **é curto de mais, não longo**.
+  Repetição literal entre capítulos: **5,9% no Cap. 6 e ≤1,2% no resto**; e a §6.6 «Considerações
+  finais», que era o **único candidato medido**, tem **0% de sobreposição de 8 palavras** com o
+  resto do capítulo. **Flutuantes que nenhuma frase invoca: 0.**
+  **⏭️ OS DOIS CANDIDATOS NOMEADOS, COM O CUSTO, E A RECOMENDAÇÃO É MANTER OS DOIS:** o
+  **Apêndice B** (2 pp, sem precedente nas quatro aprovadas, mas é o único sítio que mapeia a
+  dissertação ao plano curricular para um júri do MEIA — e a sessão 65 encontrou-o a
+  **subestimar** o trabalho); e a **§A.6** (2 pp, o desenho de um estudo que não correu — mas o
+  Cap. 6 diz «o mesmo protocolo já montado» e sem ela o leitor não o pode ver).
+  **O que gasta tempo ao júri não são páginas, são afirmações que convidam uma pergunta sem
+  retorno — e essas estavam todas nos materiais, não na tese.** A 21 dias do congelamento, cortar
+  conteúdo verificado troca risco por arrumação.
+  **PORTAS: 1006 testes (eram 998) · ruff limpo · `check_entrega` verde nos 19 verificadores ·
+  tese-pt 132 pp · tese-eng 130 · slides 22+22 · guia 25 · artigo 11 · guia de construção 16 ·
+  0 erros em todos.** Pendência única: os **nomes do júri**, que o ISEP designa depois da
+  submissão.
 - **🆕 SESSÃO 66 (2026-09-06, 2.ª parte): AUDITORIA FORENSE DA TESE, EM PAPEL DE JÚRI HOSTIL.
   VINTE E TRÊS DEFEITOS, E O PRINCIPAL ESTÁ TODO NUMA SÓ PÁGINA.**
   Relatório integral em
@@ -1281,7 +1368,7 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 66 (auditoria forense: a figura de uma janela sob o texto de outra, e duas portas cegas)
+- **Sessão nº:** 66 (auditoria forense da tese; e depois os materiais de estudo a ensinarem a janela que ela substituiu)
 - **Última atualização:** 2026-09-06
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
