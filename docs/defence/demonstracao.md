@@ -109,8 +109,12 @@ perdeste nada.
 1. Sem rede → `--offline` (é o modo normal na sala).
 2. Sem portátil teu → os PDFs bastam: o Apêndice A tem a **Matriz de Evidência** e a §4.5 tem a
    viagem de uma notícia em dez etapas.
-3. Sem nada → conta o funil de cabeça: **944 títulos relevantes capturadas em cinco dias,
-   42 alertas, 22:1**. E o que travou a maioria: precedente fraco e triagem.
+3. Sem nada → conta o funil de cabeça: **743 títulos distintos de doze empresas entre 1 e 3 de
+   setembro de 2026, 15 alertas entregues, cerca de um para cinquenta**. E o que travou a
+   maioria: precedente fraco e triagem.
+   ⚠️ A unidade é o **título distinto** e não a avaliação: o sistema reavalia os mesmos títulos
+   a cada ciclo de sessenta segundos, e as $1\,321$ linhas do registo são esses 743 títulos.
+   Contar linhas dá uma razão maior e mais favorável, e é por isso que se conta títulos.
 
 ---
 

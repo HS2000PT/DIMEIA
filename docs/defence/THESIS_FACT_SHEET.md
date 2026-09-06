@@ -145,9 +145,9 @@ Se alguém re-treinar com outra semente, a suite parte.
 | Cobertura conformal a 90% | decisão definida em **39,5%** | bloco de teste | conjuntos de predição split-conformal | `evaluate_conformal.py` | idem | §5.7 |
 | AMI tipo de evento vs ticker | **0,358** vs 0,188 | FNSPID | informação mútua ajustada, mesmas linhas | `evaluate_event_taxonomy.py` | idem | §5.6 |
 | Fusão vs melhor sinal | ganha em **1 de 3** orçamentos | 1.951 pares | P@k por orçamento | `evaluate_convergence.py` | idem | §5.9 |
-| Latência: publicação→detecção | **~158 min** (mediana) | 101 alertas | `detected_at − event_at` | `evaluate_latency.py` | `alerts_history.jsonl` | §6.2 |
-| Latência: detecção→entrega | **~1 s** | idem | `sent_at − detected_at` | idem | idem | §6.2 |
-| Funil de produção | 944 títulos → **42** alertas (22:1) | 5 dias ao vivo | contagens do registo | `alert_funnel.md` | branch de dados | §4.8 |
+| Latência: publicação→detecção | **353 min** (mediana, p90 964) | 278 alertas, 29 jul–30 ago 2026 | `detected_at − event_at` | `evaluate_latency.py` | `alerts_history.jsonl` | §4.6 |
+| Latência: detecção→entrega | **5 s** (p90 16 s) | idem | `sent_at − detected_at` | idem | idem | §4.6 |
+| Funil de produção | 743 títulos distintos → **15** alertas (~1:50) | 1–3 set 2026, 12 empresas | contagens do registo, por título e não por avaliação | `evaluate_funil_seletividade.py` | branch de dados | §4.4 |
 | Alertas reais entregues | **332** | produção | linhas do histórico partilhado | — | `alerts_history.jsonl` | Apêndice A |
 
 ---

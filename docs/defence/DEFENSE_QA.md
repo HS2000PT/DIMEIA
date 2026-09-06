@@ -279,9 +279,13 @@ estrutural: passou a ser uma fatia de um vector que o browser já tem.
 
 ### E1. «O sistema funciona?»
 **Simples:** *"Depende do que 'funciona' quer dizer, e vale a pena separar."*
-**Técnica:** a API responde, a app abre, o alerta é gerado, o alerta chega em ~1 s desde a
-detecção — isso está medido. Se o alerta é **útil** ao investidor não está medido, e é a única
-lacuna real da tese.
+**Técnica:** a API responde, a app abre, o alerta é gerado, e a mediana entre a deteção e a
+chegada da mensagem é de **5 segundos** — isso está medido, sobre 278 alertas. Se o alerta é
+**útil** ao investidor não está medido, e é a única lacuna real da tese.
+
+⚠️ **Não digas «1 segundo».** Era a medição antiga, sobre 101 alertas; e não digas «chega em
+segundos» sem dizer o resto, porque a mediana **até detetar** é de 353 minutos e é aí que o
+arguente vai. A frase que aguenta é: *o sistema entrega em segundos aquilo que a fonte lhe dá*.
 **Provar:** §6.5 (limitações) · Apêndice A (332 alertas com carimbos)
 
 ### E2. «Porque é que a demo é uma gravação e não ao vivo?»

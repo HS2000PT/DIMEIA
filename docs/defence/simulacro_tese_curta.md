@@ -282,9 +282,12 @@ defensivo.
   treino que o Sentence-BERT acrescenta. Logo o que mostro é que *este* modelo de domínio, usado
   *desta* forma, perde — não que conhecimento de domínio não sirva.
 - **Está em treinar um modelo e publicar que ele perdeu**, com a ablação que explica porquê.
-- **Está na engenharia de produção:** exportar o mesmo modelo para correr num contentor de 512 MB e
-  **provar** que continua a ser o mesmo (top-3 idênticos em 20 de 23 consultas), instrumentar as
-  decisões depois de implantar, e apanhar por medição que o modelo estava a mais.
+- **Está na engenharia de produção:** correr o mesmo codificador num contentor de 512 MB sem a
+  biblioteca de treino, instrumentar as decisões depois de implantar, e apanhar por medição que
+  o modelo estava a mais.
+  ⚠️ **Não cites «top-3 idênticos em 20 de 23 consultas».** É resultado da tese longa, foi retirado
+  por *n* pequeno de mais, e a tese curta não contém esse teste: se o disseres, o júri procura-o
+  no documento e não o encontra. O que o Apêndice A afirma é o formato de execução, e chega.
 
 **⚠️ A armadilha:** pedir desculpa por não haver *deep learning* novo. A tese é de **Engenharia** de
 IA: a contribuição é integrar, aplicar e avaliar criticamente. Dizer isso com naturalidade vale mais

@@ -44,6 +44,12 @@ VERIFICADORES = [
     ("escapes de LaTeX comidos", "check_tex_escapes.py", []),
     ("apêndice: cada número onde diz estar", "check_apendice_xref.py", []),
     ("materiais de estudo alinhados", "check_materiais.py", []),
+    # ⚠️ A METADE CEGA DO DE CIMA. Ele compara VALORES decimais, logo nao ve nem os
+    # inteiros («84% das decisoes», «944 -> 42», «~1 s») nem os valores que continuam
+    # na tese noutro sentido (o `0,064` esta la, declarado como a janela anterior). A
+    # 2026-09-06 quatro afirmacoes retiradas viviam em cinco documentos por causa
+    # disso, uma delas na resposta modelo do slide «a pergunta mais dura».
+    ("números que a tese retirou", "check_numeros_retirados.py", []),
     # ⚠️ O deck ingles existe desde 2026-09-06, para a audiencia do artigo, e tem de ser
     # conferido contra a arvore INGLESA. Corrido sobre ela, encontrou logo o travessao
     # que a passagem daquele dia tinha corrigido so do lado portugues.
