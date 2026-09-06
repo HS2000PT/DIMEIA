@@ -1410,6 +1410,17 @@ separate. A model evaluated in isolation and deployed behind filters was never e
 distribution it actually observes, and this is the finding of the work with the greatest capacity
 to transfer.
 
+Observing that distribution has been instrumented. On 4 September 2026 the decision log
+began to retain, for every candidate assessed and not only for the survivor of each
+cycle, the value of each input and the date of the last price bar used, as described in
+Section~\ref{sec:sis_ciclo}. That change makes observable, for the first time,
+the population the model would have to rank if it were the one triaging, rather than only
+the fraction the elementary filters hand it. The analysis protocol was fixed before any
+measurement existed: the unit is the pair formed by company and day, only decisions whose
+price bar is no later than the news date are usable, and below a minimum number of
+matured pairs no metric is published. Nothing is asserted in this document about the
+outcome of that observation, which did not exist at the time of writing.
+
 Three of the twelve companies monitored, AMD, Netflix and Meta, do not appear in the training
 corpus, and a fourth, Microsoft, appears only in the test block. The model scores them all the
 same, because what it receives are numerical values and not the identity of the company, but it

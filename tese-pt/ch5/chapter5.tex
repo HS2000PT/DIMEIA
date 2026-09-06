@@ -1385,6 +1385,18 @@ pouco para separar. Um modelo avaliado isoladamente e implantado atrás de filtr
 na distribuição que efetivamente observa, e esta é a constatação com maior capacidade de
 transferência do trabalho.
 
+A observação dessa distribuição foi instrumentada. Em 4 de setembro de 2026 o registo de
+decisões passou a conservar, para cada candidata avaliada e não apenas para a
+sobrevivente de cada ciclo, o valor de cada entrada e a data da última barra de preço
+utilizada, conforme descrito na Secção~\ref{sec:sis_ciclo}. É essa alteração que
+torna observável, pela primeira vez, a população que o modelo teria de ordenar se fosse
+ele a triar, e não apenas a fração que os filtros elementares lhe entregam. O protocolo
+de análise foi fixado antes de existir qualquer medição: a unidade é o par formado pela
+empresa e pelo dia, só são utilizáveis as decisões cuja barra de preço seja anterior ou
+igual à data da notícia, e abaixo de um número mínimo de pares maturados nenhuma métrica
+é publicada. Nada se afirma neste documento sobre o resultado dessa observação, que à
+data de escrita não existia.
+
 Três das doze empresas monitorizadas, a AMD, a Netflix e a Meta, não figuram no corpus de treino, e
 uma quarta, a Microsoft, figura apenas no bloco de teste. O modelo pontua-as na mesma, porque o que
 recebe são valores numéricos e não a identidade da empresa, mas fá-lo sobre uma combinação de

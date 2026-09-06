@@ -785,3 +785,34 @@ onde um `—` num título é pontuação corrente. Limitada ao corpus LaTeX, fic
 cada lado, e ali o que vem antes é o `$` que fecha o modo matemático. Corrigi-o na mesma, e a
 limitação fica escrita no verificador — é preferível a um padrão mais largo que passasse a
 acusar sinais de menos.
+
+---
+
+## O sítio onde o resultado de setembro aterra (2026-09-06)
+
+O Capítulo 5 escreve, sobre a pós-validação: *«Um modelo avaliado isoladamente e implantado
+atrás de filtros nunca foi avaliado na distribuição que efetivamente observa, e esta é a
+constatação com maior capacidade de transferência do trabalho.»* É o achado mais forte do
+capítulo, e está certo.
+
+⚠️ **Mas a instrumentação implantada a 4 de setembro existe precisamente para produzir essa
+distribuição pela primeira vez, e o capítulo calava-o.** O Capítulo 4 menciona a instrumentação
+a propósito do **retreino**, que é outra coisa: o que está a ser recolhido serve primeiro uma
+**avaliação** — como é que o modelo ordena a população real de candidatas —, e essa não depende
+de haver dados suficientes para treinar.
+
+Duas consequências de o calar. A primeira é de calendário: se a medição chegar por volta de
+22/09, cinco dias antes do congelamento, não há sítio preparado, e quem a integrar inventa uma
+subsecção sob pressão — que é exatamente o que um protocolo pré-registado existe para evitar. A
+segunda é de leitura: quem visse a lacuna enunciada como a constatação central ficava sem saber
+que ela tinha sido instrumentada, o que **subestima o trabalho**.
+
+Parágrafo novo nas duas árvores, imediatamente a seguir a essa frase, com a alteração de 4 de
+setembro, a remissão para o ciclo de vida do Capítulo 4, e as três regras fixadas antes de
+existir medição: a unidade é o par empresa-dia, só são utilizáveis as decisões cuja barra de
+preço não seja posterior à data da notícia, e abaixo do mínimo de pares maturados nenhuma
+métrica é publicada.
+
+⚠️ **E o que este parágrafo não faz é prometer um resultado.** É uma afirmação sobre **método**
+— o que foi montado e o que foi fixado antes de existir candidato — e continua verdadeira se a
+avaliação vier a recusar por falta de pares maturados. Nada nele se torna falso nesse caso.
