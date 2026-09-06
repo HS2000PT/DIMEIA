@@ -648,7 +648,7 @@ funcionamento conservam por isso a língua original.
 \hspace*{1em}which way: it is not a price forecast and not advice.
 \end{tcolorbox}
 \caption[Alerta entregue ao canal]{Alerta entregue a 13 de agosto de 2026, reproduzido do registo
-reproduzido do registo do canal, com a supressão dos marcadores tipográficos e a numeração das
+do canal, com a supressão dos marcadores tipográficos e a numeração das
 quatro partes acrescentada; nenhum número, palavra ou sinal de pontuação foi alterado. Os números
 entre parênteses retos identificam as quatro partes da estrutura. Todos os
 valores provêm dos componentes que os calcularam: a semelhança, do motor de recuperação; o
@@ -689,7 +689,7 @@ Figura~\ref{fig:sis_alerta}.
 última linha do alerta enuncia. O produto do vetor de coeficientes pelo vetor normalizado dá a
 contribuição de cada entrada para o logit; as parcelas são agrupadas e ordenadas por módulo
 decrescente. A explicação apresentada ao utilizador é esta soma, e não um segundo modelo
-ajustado sobre o primeiro. Omite-se a documentação interna da função.}, label={lst:contrib}]
+ajustado sobre o primeiro. Omite-se a documentação interna da função.}, label={lst:contrib}, float=htbp]
 scaler = pipeline.named_steps["scale"]
 lr = pipeline.named_steps["lr"]
 x_scaled = scaler.transform(np.asarray(x_row, dtype="float64").reshape(1, -1))[0]

@@ -656,8 +656,8 @@ paraphrasing quoted material would break the verifiability that the system exist
 \hspace*{1em}recent momentum (5d). This estimates whether the market reacts, never\\
 \hspace*{1em}which way: it is not a price forecast and not advice.
 \end{tcolorbox}
-\caption[Alert delivered to the channel]{Alert delivered on 13 August 2026, reproduced from the log
-reproduced from the channel log, with typographic markers suppressed and the numbering of the four
+\caption[Alert delivered to the channel]{Alert delivered on 13 August 2026, reproduced from the channel
+log, with typographic markers suppressed and the numbering of the four
 parts added; no number, word or punctuation mark was altered. The numbers in square brackets
 identify the four parts of the structure. Every
 value comes from the component that computed it: the similarity, from the retrieval engine; the
@@ -700,7 +700,7 @@ the last line of the alert states. The product of the coefficient vector by the 
 vector gives the contribution of each input to the logit; the terms are grouped and ordered by
 decreasing magnitude. The explanation presented to the user is this sum, and not a second model
 fitted over the first. The internal documentation of the function is omitted.},
-label={lst:contrib}]
+label={lst:contrib}, float=htbp]
 scaler = pipeline.named_steps["scale"]
 lr = pipeline.named_steps["lr"]
 x_scaled = scaler.transform(np.asarray(x_row, dtype="float64").reshape(1, -1))[0]
