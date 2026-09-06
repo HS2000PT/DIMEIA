@@ -130,13 +130,22 @@ def main() -> int:
 
     # ASCII de propósito: a consola do Windows usa cp1252 e uma seta Unicode aqui rebentava
     # o script DEPOIS de o controlo negativo passar, que é o pior sítio possível para rebentar.
-    print("\nAssimetrias EN->PT nas frases com citacao:\n")
+    # ⚠️ A DIRECCAO INVERTEU-SE COM A REESCRITA. Este verificador nasceu quando a tese
+    # canonica era a INGLESA e o risco era a traducao portuguesa endurecer o verbo. Hoje a
+    # canonica e a PORTUGUESA (`tese-pt/`) e a inglesa (`tese-eng/`) e que e traduzida, pelo
+    # que o risco mudou de lado: uma ressalva perdida no caminho para a arvore que acompanha
+    # o artigo. Ate 2026-09-06 comparava as arvores ARQUIVADAS, e imprimia «0 candidatos
+    # sobre 89 chaves» -- saude sobre documentos que nunca serao entregues.
+    print("\nAssimetrias PT->EN nas frases com citacao:\n")
     total = candidatos = 0
+    faltam = []
     for n in ("ch1", "ch2", "ch3", "ch4", "ch5", "ch6"):
-        en = RAIZ / "archive" / "thesis-versions" / "thesis-en-v1" / n / f"chapter{n[-1]}.tex"
-        pt = (RAIZ / "archive" / "thesis-versions" / "thesis-pt-parcial" / n
-              / f"chapter{n[-1]}.tex")
+        pt = RAIZ / "tese-pt" / n / f"chapter{n[-1]}.tex"
+        en = RAIZ / "tese-eng" / n / f"chapter{n[-1]}.tex"
         if not (en.exists() and pt.exists()):
+            # ⚠️ Saltar em silencio era o que permitia dizer «0 candidatos sobre 0 chaves»
+            # com exit 0 se o corpus nao estivesse la.
+            faltam.append(n)
             continue
         fe, fp = frases_com_citacao(en), frases_com_citacao(pt)
         for chave in sorted(set(fe) & set(fp)):
@@ -144,9 +153,15 @@ def main() -> int:
             if endurece(fe[chave], fp[chave]):
                 candidatos += 1
                 print(f"[{n}] {chave}")
-                print(f"   EN: {fe[chave][:240]}")
-                print(f"   PT: {fp[chave][:240]}\n")
+                print(f"   PT: {fp[chave][:240]}")
+                print(f"   EN: {fe[chave][:240]}\n")
 
+    if faltam:
+        print("ERRO: capitulos em falta em tese-pt/ ou tese-eng/: "
+              + ", ".join(faltam)
+              + ". Um verificador que nao ve o corpus tem de ser indistinguivel de "
+              "um que falha.")
+        return 2
     print(f"{candidatos} candidato(s) a leitura humana, sobre {total} chaves comparadas")
     return 1 if candidatos else 0
 

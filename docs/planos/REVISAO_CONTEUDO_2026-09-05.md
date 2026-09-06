@@ -654,3 +654,46 @@ que esses pares existem, e quantos há hoje.
 tabela:** escrevi «hoje há 12 pares maturados» três linhas abaixo de «pares maturados: 0».
 O `por_dia` é construído sobre as linhas **utilizáveis**, antes de rotular — conta pares
 **recolhidos**. São 12 recolhidos e 0 maturados, e é isso que passa a dizer.
+
+---
+
+## As duas árvores, verificadas uma contra a outra (2026-09-06)
+
+Só uma delas foi editada hoje, e são supostas ser traduções uma da outra.
+
+**Paridade estrutural: perfeita.** Secções, subsecções, figuras, tabelas, *labels* e citações
+batem uma a uma nos oito ficheiros — seis capítulos e dois apêndices.
+
+### Um comentário que mandava uma sessão futura cometer uma regressão
+
+Quando a árvore inglesa foi construída, deixou-se lá um comentário a explicar por que razão o
+parágrafo da convenção linguística **não** existe no `ch1` inglês: em inglês, prosa e figuras
+partilham a língua e não há divergência a explicar. Até aí, correto. Mas acrescentava uma
+previsão: *«quando as figuras da árvore portuguesa forem convertidas, esse parágrafo tem de
+ser removido também, pela mesma razão.»*
+
+⚠️ As figuras foram convertidas hoje e **o parágrafo foi reescrito, não removido** — porque
+duas categorias de material continuam em inglês do lado português por razões que sobrevivem à
+conversão: os títulos de notícia citados, cujo corpus é inglês e cuja correspondência com a
+fonte se quebraria na tradução, e as capturas, cuja interface é inglesa por decisão de
+produto. **Uma sessão futura que lesse aquele comentário apagaria o parágrafo**, e isso seria
+uma regressão. Passa a dizer o que aconteceu e porquê.
+
+### O verificador de paridade bilingue comparava as árvores arquivadas
+
+Lia `thesis-en-v1` contra `thesis-pt-parcial`, os dois superseus, e imprimia «0 candidatos
+sobre 89 chaves» — saúde sobre documentos que nunca serão entregues. É a terceira família de
+verificadores com esta cegueira hoje, depois dos três da bibliografia.
+
+⚠️ **E a direção inverteu-se com a reescrita.** O verificador nasceu quando a tese canónica
+era a **inglesa** e o risco era a tradução portuguesa endurecer o verbo. Hoje a canónica é a
+**portuguesa** e a inglesa é que é traduzida, pelo que o risco mudou de lado: uma ressalva
+perdida no caminho para a árvore que acompanha o artigo. Comparar na direção antiga mediria o
+oposto do que interessa. ⚠️ E o ciclo **saltava em silêncio** os capítulos que não encontrava,
+pelo que apontado a nada diria «0 candidatos sobre 0 chaves» com saída zero.
+
+Corrigido: compara `tese-pt` → `tese-eng`, exige o corpus, e passou a **121 chaves** contra as
+89 anteriores. **Zero assimetrias** — a tradução não endurece nem perde nenhuma ressalva nas
+frases com citação. O seu autoteste, que planta um endurecimento e uma ressalva perdida e
+exige que os dois disparem, continua a passar. Entra no `check_entrega`, que passa a ter
+**15 verificadores**.

@@ -18,7 +18,7 @@ tu podes fazer.
 
 Estado a 2026-09-06: **sai a zero no técnico.** Dissertação canónica `tese-pt/` **132 pp**
 e a sua tradução `tese-eng/` **130 pp**; artigo **11 pp** (limite de 12 do ICITS), slides 22,
-guia 25, guia de construção 16. **14 verificadores**, mais as verificações de PDF, marcadores e data.
+guia 25, guia de construção 16. **15 verificadores**, mais as verificações de PDF, marcadores e data.
 
 **Título fixado a 2026-09-06, para submeter até 13/09:** «Explicar sem prever: deteção de
 anomalias e recuperação de precedentes em alertas financeiros verificáveis». Em inglês, na

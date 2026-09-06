@@ -66,6 +66,11 @@ VERIFICADORES = [
     # figura portuguesa. Esta nao sabe vocabulario nenhum -- pergunta se o mesmo texto
     # desenhado aparece nas duas arvores, o que so acontece se nao tiver sido traduzido.
     ("figuras: nada por traduzir entre as árvores", "check_figuras_paridade.py", []),
+    # ⚠️ A porta acima compara o texto DESENHADO; esta compara a PROSA — as frases com
+    # citação nas duas árvores, à procura de uma ressalva que se perca na tradução. Até
+    # 2026-09-06 comparava as árvores arquivadas e dizia «0 candidatos» sobre documentos
+    # que nunca serão entregues.
+    ("tradução: nenhuma ressalva perdida", "check_bilingual_parity.py", []),
     # A cadeia de cada questao: enunciada, medida, delimitada e respondida -- e a
     # conclusao a nao citar valores que os resultados nao produziram.
     ("questões: enunciada, medida, respondida", "check_qi_cadeia.py", []),
