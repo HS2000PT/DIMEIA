@@ -79,8 +79,8 @@ with the measured outcome.
 \midrule
 Broker application & --- & --- & --- & included \\
 News aggregator & --- & --- & --- & free \\
-\emph{Robo-advisor} & --- & --- & --- & \% of portfolio \\
-Professional terminal & \checkmark & \checkmark & \checkmark & thousands/year \\
+Automated portfolio manager & --- & --- & --- & \% of portfolio \\
+Professional terminal & \checkmark & \checkmark & \checkmark & not published \\
 Generated summary (2025--26) & \multicolumn{3}{c}{\footnotesize \emph{claim to answer; do not show the evidence}} & free \\
 \midrule
 \textbf{This work} & \checkmark & \checkmark & \checkmark & \textbf{free} \\
@@ -386,28 +386,28 @@ above $0.50$ passes.
   % tambem DENTRO das palavras. Ver a Figura 6.1, onde \c transformava "avaliacao"
   % em "avalia<custo>cao" sem um unico aviso de compilacao.
   \foreach \xn/\xtk/\xa/\xb/\xcor in {
-    12/JPM/0.242/0.258/black!30, 11/JNJ/0.298/0.324/black!30,
-    10/NFLX/0.388/0.426/black!30, 9/XOM/0.390/0.407/black!30,
+    12/JPM/0.237/0.258/black!30, 11/JNJ/0.294/0.324/black!30,
+    10/XOM/0.390/0.407/black!30, 9/NFLX/0.388/0.486/black!30,
     8/AAPL/0.423/0.472/black!30, 7/NVDA/0.457/0.501/black!62,
-    6/GOOGL/0.444/0.528/black!62, 5/MSFT/0.417/0.557/black!62,
-    4/AMZN/0.411/0.571/black!62, 3/META/0.525/0.545/orange!65,
-    2/TSLA/0.545/0.630/orange!65, 1/AMD/0.549/0.633/orange!65}
+    6/META/0.498/0.545/black!62, 5/GOOGL/0.444/0.528/black!62,
+    4/MSFT/0.417/0.561/black!62, 3/AMZN/0.411/0.571/black!62,
+    2/TSLA/0.545/0.630/orange!65, 1/AMD/0.549/0.641/orange!65}
   { \node[left, black!70] at (0.235,\xn) {\xtk};
     \draw[line width=2.2pt, color=\xcor] (\xa,\xn) -- (\xb,\xn); }
   \node[right, text=black!55] at (0.56,10.5) {never passes};
-  \node[right, text=orange!60!black] at (0.655,2.5) {always passes};
+  \node[right, text=orange!60!black] at (0.655,1.5) {always passes};
   \draw[black!40] (0.23,-0.5) -- (0.68,-0.5);
   \foreach \x in {0.25,0.35,0.45,0.55,0.65}
-    \node[below, black!55] at (\x,-0.5) {\x};
+    \node[below, black!55] at (\x,-0.5) {$\x$};
 \end{tikzpicture}
 \end{center}
 \vspace{-1mm}
 \begin{center}
-In \textbf{84\%} of the decisions, the outcome was determined\\
+In \textbf{48\%} of the distinct headlines, the outcome was determined\\
 by the \textbf{company} before the headline was read.
 \end{center}
 \vspace{1mm}
-{\footnotesize Apple could not produce a news alert at all. AMD passed in $963$ of $963$.}
+{\footnotesize In no logged assessment did Apple reach the floor, with a maximum of $0.472$; AMD exceeded it in all of them. Counted per decision the fraction rises to $60\%$, inflated by the minute-by-minute re-scoring.}
 \end{frame}
 
 \begin{frame}{And the obvious fix was wrong too}
