@@ -47,7 +47,10 @@ T = RAIZ / BASE
 # foram movidos e continuam em `tese/`. Apontar as duas ao mesmo sítio faria uma delas ser
 # lida a partir de um caminho que não existe, e o relatório dizia «(ausente)» para tudo, que
 # se lê como «não há nada a verificar» e é «não olhei para nada».
-MATERIAIS_RAIZ = RAIZ / "tese-pt"
+# ⚠️ OS MATERIAIS SEGUEM A ARVORE. Estavam presos a `tese-pt`, pelo que
+# `check_materiais.py tese-eng` teria comparado os slides PORTUGUESES contra a tese inglesa --
+# nem uma coisa nem outra. O deck ingles existe desde 2026-09-06, para a audiencia do artigo.
+MATERIAIS_RAIZ = T
 MATERIAIS = [MATERIAIS_RAIZ / "slides" / "main.tex", MATERIAIS_RAIZ / "guia" / "main.tex",
              MATERIAIS_RAIZ / "quiz" / "index.html", MATERIAIS_RAIZ / "GRAVACAO.md"]
 
@@ -55,7 +58,9 @@ MATERIAIS = [MATERIAIS_RAIZ / "slides" / "main.tex", MATERIAIS_RAIZ / "guia" / "
 # encontrou o guiao a listar, na tabela dos numeros a saber, um par que tinha sido RETIRADO,
 # e o simulacro a mandar decora-lo. A 2026-09-06 encontrou-se ali a latencia antiga em tres
 # ficheiros, um deles com a conclusao invertida — e nada olhava para eles.
-MATERIAIS += sorted((RAIZ / "docs" / "defence").glob("*.md"))
+# O pacote de defesa e portugues e nao tem versao inglesa: so entra com a arvore PT.
+if BASE == "tese-pt":
+    MATERIAIS += sorted((RAIZ / "docs" / "defence").glob("*.md"))
 
 if (T / "ch1").is_dir():          # árvore nova: ch1/chapter1.tex
     PROSA = ([T / "frontmatter" / "frontmatter.tex"]

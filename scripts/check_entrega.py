@@ -44,6 +44,10 @@ VERIFICADORES = [
     ("escapes de LaTeX comidos", "check_tex_escapes.py", []),
     ("apêndice: cada número onde diz estar", "check_apendice_xref.py", []),
     ("materiais de estudo alinhados", "check_materiais.py", []),
+    # ⚠️ O deck ingles existe desde 2026-09-06, para a audiencia do artigo, e tem de ser
+    # conferido contra a arvore INGLESA. Corrido sobre ela, encontrou logo o travessao
+    # que a passagem daquele dia tinha corrigido so do lado portugues.
+    ("materiais EN alinhados", "check_materiais.py", ["tese-eng"]),
     ("flutuantes referenciados", "check_floats.py", []),
     ("escrita: PT-PT e um termo por conceito", "check_escrita.py", []),
     # O guia de construção promete código verbatim. Sem esta porta a promessa vale o que valer

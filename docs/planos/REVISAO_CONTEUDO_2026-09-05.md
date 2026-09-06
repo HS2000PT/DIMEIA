@@ -869,3 +869,43 @@ nos seis ficheiros de amostra que estão versionados de propósito em `data/samp
 `feedback_log.py` di-lo no próprio docstring. ⚠️ **Mas removê-lo da árvore não o remove da
 história** — fica lá, como o blob de 84 MB da sessão 59. O que se corrigiu foi a porta por onde
 entrou.
+
+---
+
+## O deck em inglês (2026-09-06)
+
+Construído em `tese-eng/slides/`, 22 páginas, o par do português. **Não é para a defesa**, que é
+em português: existe para a audiência do artigo, o ICITS'27 em Cusco, se ele for aceite. O
+ficheiro di-lo no cabeçalho, para ninguém o levar para a sala errada.
+
+Traduzido por âncoras exatas, nunca retranscrito: cada bloco falha alto se a âncora não casar
+uma só vez, o que impede inventar texto que o deck português não tenha. Os decimais voltam ao
+**ponto**, que é o inverso exato da conversão feita hoje na árvore portuguesa e pela mesma
+razão. O título de notícia citado fica em inglês nos dois, porque é *verbatim* de um corpus
+inglês.
+
+### Traduzir encontrou três defeitos, e o primeiro estava no deck português
+
+⚠️ **O slide 1 contradizia o slide 2, e fui eu que o parti hoje.** Ao corrigir o quadro «O que
+existe hoje» para reconhecer os dois produtos que declaram responder à mesma pergunta, deixei o
+slide anterior a fechar com «as aplicações gratuitas não respondem a nenhuma delas» — o mesmo
+excesso que a revisão já tinha retirado do Cap. 1. Dois minutos de intervalo, na mesma
+apresentação. Corrigido nos dois decks, com a formulação do Cap. 1.
+
+⚠️ **A figura do trocadilho não sobrevive à tradução literal.** Ela vive de dois títulos com a
+**mesma palavra** e sentidos opostos; em português a palavra é «bate». A dissertação inglesa já
+tinha resolvido isso com «record» — *record quarterly profit* contra *record year for job cuts*
+— e o deck passa a usar exatamente esses exemplos, para a tese e os slides não ilustrarem o
+mesmo ponto com pares diferentes.
+
+⚠️ **E a tabela do slide 3 transbordava**, porque o inglês é mais largo ali. Só se vê a
+renderizar.
+
+### E pôr o deck debaixo de uma porta encontrou mais um
+
+O `check_materiais` aceita a árvore por argumento desde 04/09, mas os **materiais** estavam
+presos a `tese-pt`: corrê-lo com `tese-eng` teria comparado os slides **portugueses** contra a
+tese inglesa, que não é nem uma coisa nem outra. Corrigido, e à primeira corrida sobre a árvore
+inglesa apareceu **o par do travessão que eu tinha corrigido hoje só do lado português**.
+
+Porta 17 no `check_entrega`. **998 testes, ruff limpo, 17/17 verdes.**
