@@ -40,7 +40,7 @@ fraqueza.
 | **F1 0.664 vs 0.516** | EWMA vs volatilidade deslizante | "A EWMA melhora — reporto-o. Mantenho a deslizante por ser explicável numa frase; o ganho fica como futuro VALIDADO." |
 | **P@5 0.514 (±0.015)** | Recuperação SBERT-MiniLM, cross-ticker (corpus preliminar) | ⚠️ **NÃO dizer "2,1× o acaso".** O chão trivial mais forte é **0,467**. A defesa é por setor: o método ganha nos cinco. No FNSPID, sob a restrição causal da produção, dá **0,513** contra chão **0,259**, margem **+0,254**. |
 | **+0.377 / +0.348 / +0.100** | Lift energia / saúde / consumo | "O motor vale mais onde o vocabulário é distintivo; menos no consumo, genérico." |
-| **z = +7.61** | Tesla, 24 Out 2024, pós-resultados | "Exemplo real: μ=−0.92%, σ=2.72%, r=+19.8% → z=+7.61. A mesma regra que ignora ±2% apanha isto." |
+| **z = +7.61** | Tesla, 24 Out 2024, pós-resultados | "Exemplo real: μ=−0.92%, σ=2.725%, r=+19.82% → z=+7.61. A mesma regra que ignora ±2% apanha isto." |
 | **0.542 / 0.538 / 0.496** | PR-AUC triagem: volatilidade / contexto / contexto+texto | "O TEXTO não ajuda; o sinal vive no contexto de mercado. 2.º teste justo — e **robusto** (re-teste justo com PCA/FinBERT nunca bate a volatilidade)." |
 | **0.632 vs 0.379** | Precisão@orçamento (5 alertas/dia) vs ordenação aleatória | "Ganho offline no proxy, 1,67x; limite superior da política online, não utilidade humana." |
 | **p = 0.539 (54%)** | Decisão META real, 12 Jul 2026 | "u=+0.699 (vol + setor dominam) → σ → Platt → 54%, o número exato enviado ao canal." |

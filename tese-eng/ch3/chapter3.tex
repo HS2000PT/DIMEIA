@@ -201,6 +201,26 @@ of the decision.}
 \label{fig:met_janela}
 \end{figure}
 
+The separation is not merely a convention of writing: it is a slice.
+Listing~\ref{lst:janela} reproduces the calculation as it is executed. The line that
+guarantees it is the fifth, in which the interval ends at the penultimate element and
+excludes, by construction, the day being assessed.
+
+\begin{lstlisting}[caption={[The window that excludes the day assessed]The window that
+excludes the day assessed. The interval \texttt{[-window-1:-1]} ends before the last element,
+so the return of the day under assessment does not enter the mean or the standard deviation
+against which it is compared. The body of the detection function is reproduced, without the
+indentation it carries in the source file. The comment is in the original.}, label={lst:janela}]
+r = pd.Series(list(returns), dtype="float64").dropna().reset_index(drop=True)
+if len(r) < window + 1:
+    raise ValueError(f"São precisos pelo menos {window + 1} retornos (recebidos {len(r)}).")
+
+recent = r.iloc[-window - 1 : -1]  # janela ANTES do último (sem lookahead)
+last = float(r.iloc[-1])
+mu = float(recent.mean())
+sigma = float(recent.std(ddof=1))
+\end{lstlisting}
+
 When the standard deviation of the window is zero, Equation~\ref{eq:zscore} is undefined. The
 system distinguishes two cases: holding the value constant does not constitute an anomaly, whereas
 a departure from that flat norm is flagged without a $z$ value being assigned to it, stating that
@@ -209,7 +229,7 @@ silencing precisely the first movement after a constant period.
 
 Applying the method to the largest movement of the period studied, recorded by Tesla on 24 October
 2024, produces a daily return of $+19.82\%$ against a mean of $-0.92\%$ and a standard deviation of
-$2.72\%$ in the twenty preceding days, which corresponds to $z = +7.61$. The value does not follow
+$2.725\%$ in the twenty preceding days, which corresponds to $z = +7.61$. The value does not follow
 from the absolute size of the movement, but from the fact that it exceeds by seven and a half times
 the usual oscillation of the stock in those weeks.
 
@@ -529,6 +549,31 @@ of each news item depends on the following three days: without it, the end of th
 would be determined by days belonging to the following block.}
 \label{fig:met_divisao}
 \end{figure}
+
+The chronological discipline is a claim about what the dataset contains, and a claim of that
+nature is not established by declaration. It is therefore enforced by an executable procedure,
+reproduced in Listing~\ref{lst:lookahead}, which builds two series identical up to the day of the
+news item and divergent after it, and requires the two properties that separate a legitimate input
+from a leak: the inputs of the model have to remain equal, and the label has to change. An input
+that came to depend on the future would break the first equality; a label that did not depend on
+it would break the second.
+
+\begin{lstlisting}[caption={[The test that mutates the future]The procedure that enforces the
+temporal separation. The two series coincide up to the day of the event and diverge afterwards.
+The inputs have to come out identical, because none of them may observe the future; the labels
+have to come out different, because it is precisely the future that they measure. The test runs
+on every execution of the automatic verification. Identifiers and comments are in the
+original.}, label={lst:lookahead}]
+def test_anti_lookahead_mutar_o_futuro_muda_o_rotulo_mas_nao_as_features():
+    base = [100.0] * 25
+    sobe = _serie(base + [100, 110, 120, 130])   # movimento anormal enorme
+    plano = _serie(base + [100, 100, 100, 100])  # nada acontece
+    mercado = _serie([100.0] * 29)
+    d = 25
+    assert event_features(sobe, d) == event_features(plano, d)          # features iguais
+    assert abnormal_label(sobe, mercado, d, 0.02, 3) == 1               # rótulos diferentes
+    assert abnormal_label(plano, mercado, d, 0.02, 3) == 0
+\end{lstlisting}
 
 The test block contains more examples than the training block. The cut is made on trading days,
 according to a proportion of seventy, fifteen and fifteen per cent, and the asymmetry results from

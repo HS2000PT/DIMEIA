@@ -60,7 +60,8 @@ $F_1$ is the harmonic mean of
 the two, $2PC/(P+C)$, and stays close to the worse of the two values, which prevents an extreme from
 being rewarded. For the \emph{z}-score, with precision $0.381$ and recall $0.800$, it gives
 $0.516$; for the fixed threshold rule, with precision $0.122$ and recall $0.992$, it gives
-$0.218$.
+$0.218$. The two terms are rounded to the third decimal place, so the calculation redone over the
+printed values may differ in the last.
 
 Precision@$k$ applies to retrieval, which returns an ordered list of which the user reads only the
 beginning. It measures the fraction of the first $k$ results that are relevant
@@ -747,7 +748,9 @@ The second concerns sampling noise. The test block was resampled a thousand time
 by company and day, since news items of the same day about the same company share the label and are
 not independent observations. The difference between volatility and the variant with text is
 $+0.048$, with an interval between $+0.032$ and $+0.066$, which excludes zero and exceeds the
-practical limit of $0.02$. It is the only comparison in this section that exceeds it.
+practical limit of $0.02$. The value is the mean over the resamplings and does not coincide exactly
+with the difference between the two points, of $+0.046$. Of the comparisons in this section against
+the volatility baseline, it is the only one that exceeds it.
 
 The reach of this interval is, however, limited: the resampling takes place within a single test
 block, with two hundred and twenty-one trading days, so it measures the sampling noise in that
@@ -840,7 +843,7 @@ periods.
 The product presents at most five alerts per day, so the question with operational meaning is what
 fraction of the five news items chosen each day are hits. Figure~\ref{fig:av_orcamento} isolates
 two references that look equivalent but are not. The model and the volatility-based alternative are
-compared in Figure~\ref{fig:av_pontaaponta}.
+compared in Figure~\ref{fig:av_pontaaponta}, on page~\pageref{fig:av_pontaaponta}.
 
 \begin{figure}[ht]
 \centering
@@ -877,12 +880,13 @@ Compared with the correct reference value, the gain of the model is $1.67$ times
 four times the first reading would suggest. The lesson is general and applies to the rest of the
 chapter: checking what the baseline measures is as necessary as checking what the model does.
 
-The comparison with volatility, in Figure~\ref{fig:av_pontaaponta}, contains the uncomfortable
+The comparison with volatility, in Figure~\ref{fig:av_pontaaponta} on
+page~\pageref{fig:av_pontaaponta}, contains the uncomfortable
 result. A table of thirteen constants, corresponding to the mean volatility of each company,
 computed exclusively over the training block and without reading a single headline, obtains $0.662$
 and beats the trained model. The comparison has a reservation that makes it less clean than it
 looks: $17.1\%$ of the rows of the test block belong to a company absent from training and receive
-the global mean instead of a constant of their own. It is, even so, the third case in the chapter
+the global fallback value instead of a constant of their own. It is, even so, the third case in the chapter
 in which the simpler method obtains the better result. What the evidence supports is that ranking
 by volatility pays off, and not that learning pays off.
 
@@ -963,7 +967,8 @@ sector indicators, the $0.538$ of the deployed variant and the $0.534$ of the lo
 None of the differences between them exceeds $0.009$, far below the $0.02$ limit. Applying that limit only
 when it disfavours a conclusion would amount to not having fixed it. The only difference the
 criterion separates in this comparison is the one that distinguishes these four variants from the
-block with text, of $+0.048$ with an interval between $+0.032$ and $+0.066$. The choice among the
+block with text; measured against the volatility baseline, it is $+0.048$, with an interval between
+$+0.032$ and $+0.066$. The choice among the
 four is therefore entirely one of explainability and has no measurable price in \gls{PRAUC}: only
 the nine-input variant allows the alert to present the contributions that raise and lower the
 score, as Figure~\ref{fig:sis_alerta} shows.
@@ -1441,7 +1446,8 @@ decisions of those companies enter the $825$ above like any others.
 
 A second reason, independent of the previous one, can make a deployed model cease to serve: the
 data change. The model was trained over the period from 2018 to 2023 and operates in 2026. The
-measure used is the \gls{PSI}, which here compares the distribution of each input in the training
+measure used is the \glsentryshort{PSI}, or population stability index, which here compares the
+distribution of each input in the training
 block, between 2018 and 2022, with that of the test block, of 2023. It is not, therefore, the
 distance between training and the present, which the following subsection discusses separately: it
 is the drift internal to the protocol itself. The bands are those conventional in credit risk, under
@@ -1558,6 +1564,17 @@ quantity that Figure~\ref{fig:av_ablacao} labels \emph{volatility only}, which i
 volatility and obtains $0.632$ on this metric; here volatility enters as a constant per
 company.
 
+Two distinct constants per company obtain, on this metric, the same value of $0.662$: the mean
+volatility of each company, here, and the fraction of its news items that proved material, in
+Section~\ref{sec:av_ablacao}. The coincidence is not fortuitous and follows from the shape of the
+measure itself. Precision within the budget depends only on which five news items are chosen on
+each day; and a score that is constant per company reduces that choice to an ordering of the
+companies that have news on that day. Two predictors that order the companies in the same way
+therefore select exactly the same news items, and obtain the same value, even though the quantity
+they assign to each company is different. That two such distinct quantities produce the same
+ordering is the observation of this section in another form: what separates the companies in this
+set is, to a large extent, their volatility.
+
 The third, and most useful, is the location of the limitation given by the theoretical maximum. The
 best possible result, choosing with knowledge of the answers, would be $0.968$, which means that on
 almost every day there are indeed five material news items in the available set. The system is not
@@ -1644,7 +1661,8 @@ Logistic regression & Gradient boosted trees: \gls{PRAUC} of $0.469$ against $0.
 expressive model did not obtain a better result, and the simple model is explainable. \\
 \addlinespace
 Platt calibration & Isotonic regression, compared over the same validation set & Platt calibration
-matches or beats it on the Brier score in every family assessed. \\
+matches or beats it on the Brier score in all five families assessed: $0.218$ against $0.223$ on the
+volatility one and $0.224$ against $0.226$ on the deployed one. \\
 \addlinespace
 Cosine similarity & Euclidean distance & With normalised vectors the two produce the same ordering,
 and the first has a more direct reading. \\

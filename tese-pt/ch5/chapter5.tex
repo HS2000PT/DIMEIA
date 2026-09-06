@@ -58,7 +58,8 @@ sentidos opostos, e uma regra que assinale quase tudo atinge cobertura elevada c
 O $F_1$ é a média harmónica das duas, $2PC/(P+C)$, e aproxima-se do pior dos dois valores, o que
 impede que um extremo seja premiado. Para o \emph{z}-score, com precisão $0{,}381$ e cobertura
 $0{,}800$, resulta $0{,}516$; para a regra de limiar fixo, com precisão $0{,}122$ e cobertura
-$0{,}992$, resulta $0{,}218$.
+$0{,}992$, resulta $0{,}218$. As duas parcelas estão arredondadas à terceira casa, pelo que a
+conta refeita sobre os valores impressos pode diferir na última.
 
 A precisão@$k$ aplica-se à recuperação, que devolve uma lista ordenada de que o utilizador lê apenas
 o início. Mede a fração dos $k$ primeiros resultados que são relevantes \autocite{manning2008ir},
@@ -726,7 +727,9 @@ A segunda respeita ao ruído de amostragem. O bloco de teste foi reamostrado mil
 constituídos pela empresa e pelo dia, uma vez que notícias do mesmo dia sobre a mesma empresa
 partilham o rótulo e não constituem observações independentes. A diferença entre a volatilidade e a
 variante com texto é de $+0{,}048$, com intervalo entre $+0{,}032$ e $+0{,}066$, que exclui zero e
-supera o limite prático de $0{,}02$. É a única comparação desta secção que o supera.
+supera o limite prático de $0{,}02$. O valor é a média sobre as reamostragens e não coincide
+exatamente com a diferença entre os dois pontos, de $+0{,}046$. Das comparações desta secção com
+a linha de base de volatilidade, é a única que o supera.
 
 O alcance deste
 intervalo é, contudo, limitado: a reamostragem realiza-se dentro de
@@ -821,7 +824,7 @@ O produto apresenta no máximo cinco alertas por dia, pelo que a pergunta com si
 é a de qual a fração de acertos entre as cinco notícias escolhidas em cada dia. A
 Figura~\ref{fig:av_orcamento} isola duas referências que parecem equivalentes, mas não são.
 O modelo e a alternativa baseada em volatilidade são comparados na
-Figura~\ref{fig:av_pontaaponta}.
+Figura~\ref{fig:av_pontaaponta}, na página~\pageref{fig:av_pontaaponta}.
 
 \begin{figure}[ht]
 \centering
@@ -859,12 +862,13 @@ com o valor de referência correto, o ganho do modelo é de $1{,}67$ vezes e nã
 que a primeira leitura sugeriria. A lição é geral e aplica-se ao restante capítulo: verificar o que a
 linha de base mede é tão necessário quanto verificar o que o modelo faz.
 
-A comparação com a volatilidade, na Figura~\ref{fig:av_pontaaponta}, contém o resultado incómodo. Uma tabela de treze constantes,
+A comparação com a volatilidade, na Figura~\ref{fig:av_pontaaponta} da
+página~\pageref{fig:av_pontaaponta}, contém o resultado incómodo. Uma tabela de treze constantes,
 correspondentes à volatilidade média de cada empresa, calculada exclusivamente sobre o bloco de
 treino e sem leitura de um único título, obtém $0{,}662$ e supera o modelo treinado. A comparação
 tem uma reserva que a torna menos limpa do que parece: $17{,}1\%$ das linhas do bloco de teste
-pertencem a uma empresa ausente do treino e recebem a média global em vez de uma constante
-própria. É, ainda assim, o terceiro caso do capítulo em que o método mais simples obtém melhor
+pertencem a uma empresa ausente do treino e recebem o valor global de recuo em vez de uma
+constante própria. É, ainda assim, o terceiro caso do capítulo em que o método mais simples obtém melhor
 resultado. O que a evidência sustenta é
 que ordenar por volatilidade compensa, e não que aprender compense.
 
@@ -945,8 +949,9 @@ $0{,}542$ da volatilidade, os $0{,}543$ da variante sem indicadores de setor, os
 variante implantada e os $0{,}534$ da tabela de consulta. Nenhuma das diferenças entre elas excede
 $0{,}009$, muito abaixo do limite de $0{,}02$. Aplicar esse limite apenas quando desfavorece uma
 conclusão seria não o ter fixado. A única diferença que o
-critério separa nesta comparação é a que distingue estas quatro variantes do bloco com texto, de
-$+0{,}048$ com intervalo entre $+0{,}032$ e $+0{,}066$. A escolha entre as quatro é, por isso,
+critério separa nesta comparação é a que distingue estas quatro variantes do bloco com texto;
+medida sobre a linha de base de volatilidade, é de $+0{,}048$, com intervalo entre $+0{,}032$ e
+$+0{,}066$. A escolha entre as quatro é, por isso,
 inteiramente de explicabilidade e não tem preço mensurável em \gls{PRAUC}: apenas a variante de nove
 entradas permite ao alerta apresentar as contribuições que elevam e reduzem a pontuação, conforme a
 Figura~\ref{fig:sis_alerta} exibe.
@@ -1421,7 +1426,8 @@ nas $825$ acima como quaisquer outras.
 
 Uma segunda razão, independente da anterior, pode fazer com que um modelo implantado deixe de servir:
 os dados alteram-se. O modelo foi treinado sobre o período de 2018 a 2023 e opera em 2026. A medida
-utilizada é o \gls{PSI}, que confronta aqui a distribuição de cada entrada no bloco de treino,
+utilizada é o \glsentryshort{PSI}, ou índice de estabilidade populacional, que confronta aqui a
+distribuição de cada entrada no bloco de treino,
 compreendido entre 2018 e 2022, com a do bloco de teste, de 2023. Não é, portanto, a distância entre
 o treino e o presente, que a subsecção seguinte discute em separado: é a deriva interna ao próprio
 protocolo. As bandas são as convencionadas em risco de crédito, segundo as quais valores
@@ -1537,6 +1543,17 @@ que a Figura~\ref{fig:av_ablacao} designa por \emph{só volatilidade}, que é um
 volatilidade diária e obtém $0{,}632$ nesta métrica; aqui a volatilidade entra como uma constante
 por empresa.
 
+Duas constantes por empresa distintas obtêm, nesta métrica, o mesmo valor de $0{,}662$: a
+volatilidade média de cada empresa, aqui, e a fração das suas notícias que se revelaram materiais,
+na Secção~\ref{sec:av_ablacao}. A coincidência não é fortuita e decorre da forma da própria
+medida. A precisão dentro do orçamento depende apenas de quais as cinco notícias escolhidas em
+cada dia; e uma pontuação constante por empresa reduz essa escolha a uma ordenação das empresas
+que têm notícia nesse dia. Dois preditores que ordenem as empresas da mesma maneira selecionam,
+por isso, exatamente as mesmas notícias, e obtêm o mesmo valor, ainda que a quantidade que
+atribuem a cada empresa seja diferente. Que duas quantidades tão distintas produzam a mesma
+ordenação é a observação desta secção sob outra forma: o que separa as empresas neste conjunto é,
+em larga medida, a sua volatilidade.
+
 A terceira, e mais útil, é a localização da limitação pelo máximo teórico. O melhor resultado
 possível, escolhendo com conhecimento das respostas, seria de $0{,}968$, o que significa que em quase
 todos os dias existem efetivamente cinco notícias materiais no conjunto disponível. O sistema não
@@ -1621,7 +1638,8 @@ Regressão logística & Árvores com reforço do gradiente: \gls{PRAUC} de $0{,}
 O modelo mais expressivo não obteve melhor resultado, e o modelo simples é explicável. \\
 \addlinespace
 Calibração de Platt & Regressão isotónica, comparada sobre a mesma validação & A calibração de Platt
-iguala ou supera no índice de Brier em todas as famílias avaliadas. \\
+iguala ou supera no índice de Brier nas cinco famílias avaliadas: $0{,}218$ contra $0{,}223$ na de
+volatilidade e $0{,}224$ contra $0{,}226$ na implantada. \\
 \addlinespace
 Semelhança do cosseno & Distância euclidiana & Com vetores normalizados as duas produzem a mesma
 ordenação, e a primeira dispõe de leitura mais direta. \\

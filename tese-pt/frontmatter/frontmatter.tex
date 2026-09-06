@@ -138,12 +138,15 @@ informação deste trabalho que não veio de uma medição automática.
 \cleardoublepage
 \addcontentsline{toc}{chapter}{Lista de Tabelas}
 \listoftables
-% A Lista de Excertos NAO e impressa e o comando de renomear o prefixo foi retirado: a
-% reescrita para esta arvore deixou o documento SEM UM UNICO EXCERTO de codigo, e o
-% comentario que aqui estava defendia manter uma lista que ja nao tem conteudo. A
-% garantia anti-lookahead, que era o excerto que valia a pena mostrar, passou a ser a
-% figura da janela deslizante nos metodos, que serve melhor o leitor a quem esta
-% dissertacao se dirige. Verificado a 2026-09-04: zero ambientes lstlisting no corpo.
+% A Lista de Excertos VOLTA a ser impressa. O documento tem tres excertos, e o modelo
+% oficial MEIA manda imprimir a lista quando existem. Os excertos entraram porque o juri
+% le o PDF e mais nada: uma garantia afirmada e' uma afirmacao, e as tres que este
+% trabalho faz -- a janela que exclui o dia avaliado, a separacao temporal imposta por um
+% teste, e a explicacao que e' o proprio calculo -- so sao inspeccionaveis se o codigo que
+% as produz estiver impresso aqui.
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Lista de Excertos}
+\lstlistoflistings
 
 %----------------------------------------------------------------------------------------
 %	LISTA DE SÍMBOLOS
@@ -151,8 +154,8 @@ informação deste trabalho que não veio de uma medição automática.
 % Exigida pela lista de verificação do modelo oficial MEIA (v2, 2026), que a marca como
 % obrigatória. Só entram os símbolos que o documento usa e define; a terceira coluna remete para
 % a equação ou secção onde cada um é introduzido, para que a lista sirva de índice e não apenas
-% de glossário. A Lista de Código e a Lista de Algoritmos não constam porque o documento não tem
-% nenhum dos dois, e o próprio modelo manda remover esses comandos nesse caso.
+% de glossário. A Lista de Algoritmos não consta porque o documento não tem algoritmos formais, e o
+% próprio modelo manda remover esse comando nesse caso.
 \cleardoublepage
 \addcontentsline{toc}{chapter}{Lista de Símbolos}
 \begin{symbols}{l p{0.60\textwidth} l}

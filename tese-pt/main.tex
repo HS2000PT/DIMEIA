@@ -28,6 +28,33 @@ headsepline,
 \usepackage{makecell}
 \usepackage{float}
 \usepackage{amsmath}
+
+% ── Excertos de código ────────────────────────────────────────────────────────
+% O modelo carrega o `listings` com `language=Java` e palavras-chave a azul e verde.
+% Este documento é monocromático (a única cor não-cinzenta é o laranja das figuras),
+% pelo que o estilo abaixo passa a Python e a cinzentos. O `literate` existe porque o
+% `listings` não lê UTF-8 por si: sem ele, um comentário com acento sai truncado.
+\lstdefinestyle{ig}{
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\bfseries,
+  commentstyle=\itshape\color{black!55},
+  stringstyle=\color{black!65},
+  numbers=left, numberstyle=\tiny\color{black!45}, numbersep=7pt,
+  frame=single, rulecolor=\color{black!45},
+  framexleftmargin=2pt, xleftmargin=14pt,
+  showstringspaces=false, breaklines=true, captionpos=b,
+  literate={á}{{\'a}}1 {à}{{\`a}}1 {â}{{\^a}}1 {ã}{{\~a}}1
+           {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1
+           {ó}{{\'o}}1 {ô}{{\^o}}1 {õ}{{\~o}}1
+           {ú}{{\'u}}1 {ç}{{\c c}}1
+           {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+}
+\lstset{style=ig}
+
+\renewcommand{\lstlistingname}{Excerto}
+\renewcommand{\lstlistlistingname}{Lista de Excertos}
+
 \usepackage{array}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}

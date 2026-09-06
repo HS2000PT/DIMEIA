@@ -11,8 +11,10 @@ peso do trabalho.
 \section{Artefactos conservados}
 \label{sec:ap_artefactos}
 
-Esta secção enumera o que é conservado no repositório de código e o que não é, com a razão de cada
-caso.
+Esta secção enumera o que é conservado com o trabalho e o que não é, com a razão de cada caso.
+O conjunto do código, dos ficheiros de resultados e dos artefactos do modelo aqui descritos
+acompanha a dissertação e pode ser disponibilizado ao júri; o presente apêndice existe para que a
+proveniência de cada valor seja verificável a partir deste documento, sem depender desse acesso.
 
 O ambiente de execução está descrito na Secção~\ref{sec:met_ferramentas}, com as versões exatas das
 bibliotecas que produziram os valores deste documento. As versões estão fixadas, e não expressas em
@@ -28,11 +30,11 @@ implantada consulta, com cinquenta e seis megabytes de vetores e oito de metadad
 constitui uma amostra: é o artefacto de que o sistema necessita para arrancar, e sem ele não
 existiriam precedentes para apresentar.
 
-Os corpora de origem não são conservados no repositório. O conjunto histórico ocupa várias centenas
-de megabytes e é reconstruído pelos procedimentos de preparação descritos na
-Secção~\ref{sec:met_dados}. Acompanham o código amostras reduzidas, cuja finalidade é permitir que a
-verificação automática decorra sem acesso à rede, incluindo o teste que impõe a separação temporal
-descrita na Secção~\ref{sec:met_triagem}.
+Os corpora de origem não são conservados. O conjunto histórico ocupa várias centenas de megabytes
+e é reconstruído pelos procedimentos de preparação descritos na Secção~\ref{sec:met_dados}. No seu
+lugar são conservadas amostras reduzidas, cuja finalidade é permitir que a verificação automática
+decorra sem acesso à rede, incluindo o teste que impõe a separação temporal descrita na
+Secção~\ref{sec:met_triagem} e que o Excerto~\ref{lst:lookahead} reproduz.
 
 \section{Origem de cada resultado}
 \label{sec:ap_numeros}
@@ -44,8 +46,15 @@ Nenhum resultado desta dissertação foi introduzido manualmente no texto. Cada 
 procedimento automático de semente fixa, que escreve o seu próprio ficheiro de resultados, e é esse
 ficheiro que o texto cita. Uma segunda execução sobre os mesmos dados devolve os mesmos valores. A
 Tabela~\ref{tab:ap_numeros} reúne os resultados reportados e identifica a secção em que cada um
-aparece; o repositório de código nomeia, para cada resultado, o ficheiro que o contém e o
-procedimento que o produz.
+aparece.
+
+A verificação que esta cadeia permite é possível a partir deste documento, e é essa a razão de o
+apêndice a descrever em vez de a delegar. A secção indicada na terceira coluna enuncia, para cada
+resultado, o protocolo, a linha de base contra a qual foi comparado e a população sobre que
+incidiu; e a Secção~\ref{sec:met_ferramentas} fixa as versões exatas das bibliotecas e a semente.
+Um leitor que disponha dos dados de origem, cuja proveniência e licenciamento constam da
+Secção~\ref{sec:ap_dados}, dispõe do necessário para reconstruir qualquer uma das medições sem
+recorrer a este trabalho.
 
 A garantia de determinismo aplica-se ao bloco superior da tabela. As linhas do bloco inferior são de
 outra natureza, e por isso estão separadas: constituem medições sobre a operação do sistema, cujo
@@ -57,8 +66,8 @@ do funil por porta, apresentada na Secção~\ref{sec:sis_politica}, foi lida do 
 num dia concreto, e esse registo conserva apenas três dias, pela razão indicada na
 Secção~\ref{sec:met_dados}: é republicado a cada ciclo, pelo que o custo é de publicação e não de
 armazenamento. A execução do mesmo procedimento numa data posterior produz outro dia, e não o mesmo.
-O valor consta de um ficheiro de resultados, com a data da leitura e o procedimento que a produziu,
-de modo que qualquer leitura futura tenha origem declarada ainda que aquele dia não se repita.
+O valor foi conservado com a data da leitura e a identificação do procedimento que a produziu, de
+modo que qualquer leitura futura tenha origem declarada ainda que aquele dia não se repita.
 
 \begin{table}[!htbp]
 \caption[Cada resultado e o procedimento que o produz]{Os resultados reportados no corpo do
@@ -182,7 +191,8 @@ Nenhuma variante com texto supera a volatilidade &
   \gls{PRAUC} de $0{,}496$ contra $0{,}542$, com nove definições de critério e reamostragem por
   grupos & Mantida \\
 O texto acrescenta informação sobre a tabela de consulta &
-  \gls{PRAUC} de $0{,}547$ contra $0{,}534$, com intervalo entre $+0{,}004$ e $+0{,}020$ &
+  \gls{PRAUC} de $0{,}547$ contra $0{,}534$, com acréscimo emparelhado de $+0{,}012$ e intervalo
+  entre $+0{,}004$ e $+0{,}020$ &
   \textbf{Nova}, positiva, e sem efeito na precisão dentro do orçamento \\
 As entradas não incorporam informação futura &
   Alterar o futuro de um exemplo deixa as entradas iguais e altera o critério & Mantida \\
@@ -227,9 +237,9 @@ O conjunto histórico que sustenta a base de precedentes é o \gls{FNSPID}
 atribuição é aqui cumprida. Do corpus constam no documento apenas excertos mínimos de títulos, a
 título ilustrativo.
 
-Essa licença comporta uma segunda obrigação, que é acionada neste caso. Uma vez que o repositório
-distribui ficheiros derivados do \gls{FNSPID}, a cláusula de partilha nos mesmos termos aplica-se a
-esses ficheiros. A licença do código constitui uma decisão que permanece em aberto neste documento,
+Essa licença comporta uma segunda obrigação, que é acionada neste caso. Uma vez que são
+distribuídos ficheiros derivados do \gls{FNSPID}, a cláusula de partilha nos mesmos termos aplica-se
+a esses ficheiros. A licença do código constitui uma decisão que permanece em aberto neste documento,
 e é esta a restrição que a condiciona.
 
 Os preços provêm de serviços gratuitos de dados de mercado, através da cadeia de alternativas
@@ -306,7 +316,7 @@ dados.
 \caption[As peças externas, por etapa do percurso]{As peças externas de que o sistema depende,
 pela ordem em que entram. As marcas pertencem aos respetivos titulares e a sua utilização aqui é
 nominativa, destinando-se a identificar a ferramenta empregue. A proveniência de cada ficheiro,
-com o resumo criptográfico correspondente, consta do manifesto que acompanha o repositório.}
+com o resumo criptográfico correspondente, consta do manifesto conservado com o trabalho.}
 \label{fig:ap_infra}
 \end{figure}
 

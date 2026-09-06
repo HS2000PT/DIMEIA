@@ -201,6 +201,25 @@ que impede a utilização de informação indisponível no momento da decisão.}
 \label{fig:met_janela}
 \end{figure}
 
+A separação não é apenas uma convenção de escrita: é uma fatia. O Excerto~\ref{lst:janela}
+reproduz o cálculo tal como é executado. A linha que a garante é a quinta, em que o intervalo
+termina no penúltimo elemento e exclui, por construção, o dia que está a ser avaliado.
+
+\begin{lstlisting}[caption={[A janela que exclui o dia avaliado]A janela que exclui o dia
+avaliado. O intervalo \texttt{[-window-1:-1]} termina antes do último elemento, pelo que o
+retorno do dia em avaliação não entra na média nem no desvio-padrão contra os quais é
+comparado. Reproduz-se o corpo da função de deteção, sem a indentação que ela tem no ficheiro
+de origem.}, label={lst:janela}]
+r = pd.Series(list(returns), dtype="float64").dropna().reset_index(drop=True)
+if len(r) < window + 1:
+    raise ValueError(f"São precisos pelo menos {window + 1} retornos (recebidos {len(r)}).")
+
+recent = r.iloc[-window - 1 : -1]  # janela ANTES do último (sem lookahead)
+last = float(r.iloc[-1])
+mu = float(recent.mean())
+sigma = float(recent.std(ddof=1))
+\end{lstlisting}
+
 Quando o desvio-padrão da janela é nulo, a Equação~\ref{eq:zscore} não está definida. O sistema
 distingue dois casos: a manutenção do valor constante não constitui anomalia, ao passo que um
 afastamento dessa norma plana é assinalado sem lhe ser atribuído um valor de $z$, indicando-se que
@@ -209,7 +228,7 @@ silencie precisamente o primeiro movimento após um período constante.
 
 A aplicação do método ao maior movimento do período estudado, registado pela Tesla a 24 de outubro
 de 2024, produz um retorno diário de $+19{,}82\%$ contra uma média de $-0{,}92\%$ e um
-desvio-padrão de $2{,}72\%$ nos vinte dias anteriores, o que corresponde a $z = +7{,}61$. O valor
+desvio-padrão de $2{,}725\%$ nos vinte dias anteriores, o que corresponde a $z = +7{,}61$. O valor
 não decorre da dimensão absoluta do movimento, mas do facto de este exceder em sete vezes e meia a
 oscilação habitual da ação naquelas semanas.
 
@@ -523,6 +542,30 @@ que o rótulo de cada notícia depende dos três dias seguintes: sem ele, o fina
 seria determinado por dias pertencentes ao bloco seguinte.}
 \label{fig:met_divisao}
 \end{figure}
+
+A disciplina cronológica é uma afirmação sobre o que o conjunto de dados contém, e uma
+afirmação dessa natureza não se estabelece por declaração. É por isso imposta por um
+procedimento executável, reproduzido no Excerto~\ref{lst:lookahead}, que constrói duas séries
+idênticas até ao dia da notícia e divergentes depois dele, e exige as duas propriedades que
+distinguem uma entrada legítima de uma fuga: as entradas do modelo têm de permanecer iguais, e
+o rótulo tem de mudar. Uma entrada que passasse a depender do futuro faria falhar a primeira
+igualdade; um rótulo que não dependesse dele faria falhar a segunda.
+
+\begin{lstlisting}[caption={[O teste que muta o futuro]O procedimento que impõe a separação
+temporal. As duas séries coincidem até ao dia do acontecimento e divergem a seguir. As entradas
+têm de sair idênticas, porque nenhuma delas pode observar o futuro; os rótulos têm de sair
+diferentes, porque é precisamente o futuro que eles medem. O teste corre a cada execução da
+verificação automática.}, label={lst:lookahead}]
+def test_anti_lookahead_mutar_o_futuro_muda_o_rotulo_mas_nao_as_features():
+    base = [100.0] * 25
+    sobe = _serie(base + [100, 110, 120, 130])   # movimento anormal enorme
+    plano = _serie(base + [100, 100, 100, 100])  # nada acontece
+    mercado = _serie([100.0] * 29)
+    d = 25
+    assert event_features(sobe, d) == event_features(plano, d)          # features iguais
+    assert abnormal_label(sobe, mercado, d, 0.02, 3) == 1               # rótulos diferentes
+    assert abnormal_label(plano, mercado, d, 0.02, 3) == 0
+\end{lstlisting}
 
 O bloco de teste contém mais exemplos do que o de treino. O corte é feito em dias de negociação,
 segundo a proporção de setenta, quinze e quinze por cento, e a assimetria resulta da densidade de
