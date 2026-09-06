@@ -9,6 +9,94 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 65 (2026-09-06): O TÍTULO DECIDIDO, AS FIGURAS EM PORTUGUÊS, E CINCO
+  DOCUMENTOS A DIZER O MESMO NÚMERO ANTIGO — SEMPRE O MAIS FAVORÁVEL.**
+  **✅ (A) O TÍTULO, DECIDIDO E PROPAGADO. É o que se submete ao ISEP até 13/09.**
+  «**Explicar sem prever: deteção de anomalias e recuperação de precedentes em alertas
+  financeiros verificáveis**»; em inglês, *Explaining without predicting: anomaly detection
+  and precedent retrieval for verifiable financial alerts*.
+  ⚠️ **A DECISÃO MUDOU PORQUE A PREMISSA ERA FALSA.** O registo da sessão 61 afirma que «as
+  quatro dissertações aprovadas nomeiam todas a sua máquina», e foi isso que pôs
+  «InvestiGator» na capa. Medido nas quatro capas: **nenhuma usa nome de produto**, e
+  **nenhuma usa subtítulo** — todas imprimem um título único, que é o formato que a submissão
+  recebe. Cada termo do novo tem onde se sustentar (QI1 sim, QI2 sim, a contribuição da
+  Fig. 6.3, a restrição do Cap. 1) e **nada nele toca a triagem**, que é o resultado negativo:
+  um título com «modelo treinado» prometeria a única coisa que a tese reporta como não tendo
+  funcionado. 106 caracteres, dentro do intervalo das três longas aprovadas (115, 116, 123);
+  o anterior tinha 74, **abaixo**. Propagado às capas PT e EN, à capa dos slides, ao
+  `CITATION.cff` (que ainda trazia o título de junho, duas gerações atrás) e ao guião de
+  defesa. ⚠️ O subtítulo foi **retirado e não esvaziado**: o `.cls` decide com
+  `\ifdefined\tsubtitle`.
+  **✅ (B) AS FIGURAS DA `tese-pt` EM PORTUGUÊS.** 172 rótulos desenhados em 38 figuras, mais
+  o único gráfico gerado, que passa a sair nas duas línguas do **mesmo** gerador — até aqui
+  produzia português e a árvore inglesa recebia uma cópia, ou seja **a tese inglesa tinha um
+  gráfico português**, e nenhum verificador o via porque leem `.tex` e não entram num PDF.
+  **⚠️ (C) CINCO DEFEITOS DE FIGURA COM O LOG LIMPO** (máx. 5,68 pt). Dois nós sobrepostos são
+  composição válida: os números **5** e **9** da Fig. 4.2 desenhados **por cima das setas**;
+  as contagens de alerta da Fig. 4.3 sobre a linha do eixo, onde **um zero riscado se lê
+  nove**, nas quatro empresas que não alertam; a Fig. 5.16 a nomear **uma** das suas duas
+  séries (`ytick={1.2}` desenha uma marca a meio e deixa a outra sem nome); eixos com ponto e
+  valores com vírgula **na mesma figura**; e `metric value` num eixo português contra `somam`
+  dentro da tese inglesa. ⚠️ **Duas correções falharam antes da terceira e as duas só se viram
+  a renderizar** — por baixo do marcador o rótulo assentava no eixo, por cima ficava a meio
+  caminho entre linhas e o leitor atribuía-o à empresa errada, **pior** do que o original.
+  ⚠️ **E a primeira conversão mexeu em 195 sítios onde havia 48**: apanhou coordenadas TikZ.
+  **⚠️ (D) O MESMO NÚMERO ANTIGO EM CINCO DOCUMENTOS, E SEMPRE O MAIS FAVORÁVEL.** A latência
+  «~2,5 h até detetar, 1 s até entregar» sobrevivia no artigo, nos slides, no `DEFENSE_QA`, no
+  `guia_pessoal` e no `gravar_demo`. A tese mede **353 minutos** e **5 segundos**; o `1 s` é a
+  linha do agendador com n=28, uma subpopulação. ⚠️ **E o `gravar_demo` foi reescrito a
+  2026-08-07 para o autor deixar de dizer uma coisa falsa**, e avisa «se disseres a frase
+  antiga, um arguente apanha-te» — o aviso passou a aplicar-se ao próprio documento, que
+  ensinava «desce para ~143 min e fica lá» quando a tese conclui que **o ciclo não reduziu a
+  latência**. ⚠️ E a correção não podia trocar uma afirmação causal por outra: a tese diz que
+  a comparação **não é interpretável como efeito do ciclo**.
+  **⚠️ (E) O ARTIGO FUNDIA DUAS JANELAS E O APÊNDICE B ESCONDIA TRABALHO FEITO.** «Over the
+  documented period... 367 messages and 4 366 triage decisions» junta ao mesmo período uma
+  contagem de outro; a tese separa-as em voz alta. ⚠️ **E o que primeiro pareceu ser o defeito
+  não era**: a tese **tem** o 4 366, declarado como janela anterior e mais curta. E a linha de
+  Linguagem Natural do Apêndice B dizia que o sistema «recusa produzir texto», quando o corpo
+  descreve uma camada generativa **implementada, avaliada e não exposta** — no mapa curricular,
+  que existe para mostrar ao júri o que cada UC contribuiu, isso **subestima a dissertação**.
+  **✅ (F) O SÍTIO ONDE O RESULTADO DE ~22/09 ATERRA.** O Cap. 5 nomeia a lacuna como «a
+  constatação com maior capacidade de transferência do trabalho» e calava que a instrumentação
+  de 04/09 existe para a fechar. Parágrafo novo nas duas árvores, com as três regras
+  pré-registadas e **nenhuma afirmação sobre o resultado** — continua verdadeiro se a avaliação
+  recusar.
+  **⚠️ (G) SEIS FAMÍLIAS DE VERIFICADORES CEGOS, NUM SÓ DIA.** Três de bibliografia apontados a
+  `thesis/` (o `verify_bibliography` **saltava em silêncio** e dizia «26 entradas em 1
+  ficheiros»); o de paridade bilingue a comparar as árvores **arquivadas**, e na **direção
+  invertida**, porque a canónica passou a ser a portuguesa; o omnibus `check_all_gates` a
+  rebentar **a meio**, depois de minutos a compilar; e o `check_materiais` a ver **1 decimal
+  nos slides** assim que a convenção mudou. **Não encontrar nada e aprovar tudo têm o mesmo
+  aspeto no ecrã.** Corrigidos, com o corpus exigido em vez de saltado.
+  **✅ (H) PORTAS NOVAS: 13 → 16.** `check_figuras_paridade` (um rótulo idêntico nas duas
+  árvores não foi traduzido — não sabe vocabulário nenhum, e foi ela que apanhou o `metric
+  value` e o `somam`), `check_bilingual_parity` repontado (**121 chaves**, 0 assimetrias) e
+  `check_resumos` (os quatro exemplares; a sessão 56 encontrou-os a divergir **sem nenhuma das
+  teses falhar a compilar**). O `check_artigo_numeros` deixa de isentar contagens e **exige a
+  dissertação** como fonte; o `check_materiais` cobre `docs/defence/`, compara duas **ou três**
+  casas (via 23 números, vê 133) e conhece **as duas formas do travessão**.
+  ⚠️ **E cada porta nova trouxe falsos positivos SEUS, fechados antes de reportarem nada:**
+  `no` é palavra portuguesa e entrou na lista de funcionais inglesas; `Isolation` dispara
+  `-tion` sendo nome próprio; `gained` dispara `-ed` sendo material citado; **`2.478` em PT-PT
+  é dois mil e tal**; e as páginas da bibliografia do artigo, que vive **dentro** do `main.tex`.
+  **✅ (I) 998 TESTES (eram 990), e a contagem não se moveu o dia todo.** Escreveu-se um
+  verificador novo e mudaram-se seis sem um único teste: os controlos eram **manuais**. Dois
+  ficheiros novos fixam-nos. ⚠️ **E fazê-los apanhou a armadilha que valia por si:** apontar o
+  verificador à árvore de teste com `mod['RAIZ']` não funciona, porque `runpy.run_path` devolve
+  uma **cópia** dos globals — a função lia o repositório real e **os testes passavam sempre**.
+  ⚠️ **ARMADILHA MINHA, DUAS VEZES:** corri `git checkout` sobre ficheiros com trabalho por
+  commitar, para desfazer defeitos **plantados em controlos**. Perdeu-se a tradução do Cap. 4
+  (recuperada por o script estar guardado) e as correções do artigo (recuperadas da cópia `cp`).
+  **A regra é copiar antes de plantar e restaurar dessa cópia.**
+  **PORTAS: tese-pt 132 pp · tese-eng 130 pp · artigo 11 pp (limite 12) · slides 22 · guia 25 ·
+  guia de construção 16 · 0 erros · 0 referências indefinidas · 16/16 verificadores · 998
+  testes · ruff limpo · 91 entradas de bibliografia sem achados.**
+  **⏭️ RECOLHA VIVA E VERIFICADA:** 41 747 linhas, *snapshots* de classe A de 977 → **1 272**,
+  notícias até 05/09. ⚠️ **E o relatório que a descreve lia-se ao contrário:** dizia «120 pares
+  até 17/09», e 17/09 é a última **data de notícia**, não a data de correr a avaliação — corrido
+  nesse dia devolveria uma recusa que **não** significa falha da recolha. **A avaliação corre a
+  ~22/09.**
 - **2026-09-03 — integridade dos anexos e raciocínio final fechados.** Cópias preservadas são
   textualmente idênticas aos quatro ficheiros recebidos: 115/56/69/57 linhas; matriz tem 44 itens.
   Ordem definitiva: verificar críticas → corrigir/retreinar → estabilizar/organizar → tese PT
