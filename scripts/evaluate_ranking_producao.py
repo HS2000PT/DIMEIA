@@ -221,8 +221,23 @@ def escreve_insuficiente(n_cl: int, minimo: int, n_linhas: int, n_brutas: int,
               "bolsa**, e com **" + str(uteis) + " dias de bolsa** até " + prazo
               + ", a projeção é de **" + format(tem + uteis * ritmo, ".0f")
               + " pares**, contra um mínimo de " + str(minimo) + ". " + veredicto + NL * 2)
-            w("A projeção supõe que o ritmo se mantém e que o sistema continua no ar, "
-              "e não é uma garantia." + NL)
+            # ⚠️ O PRAZO E A DATA DA ULTIMA NOTICIA, NAO A DATA DE CORRER ISTO. Sem esta
+            # ressalva o número acima le-se como «a 17/09 tens 120 pares», e nao tens: o
+            # rotulo mede (d, d+3] dias de bolsa, pelo que os pares dos ultimos tres dias
+            # ainda nao maturaram. Correr o script no proprio prazo devolveria uma recusa
+            # que se le como avaria da recolha — o beco que este script existe para nao ter.
+            w("⚠️ **" + prazo + " é a última data de NOTÍCIA rotulável, não a data de "
+              "correr esta avaliação.** O rótulo mede a janela `(d, d+3]` em dias de bolsa, "
+              "pelo que os pares dos últimos três dias de recolha ainda não maturaram nesse "
+              "dia. O protocolo fixa o congelamento dos resultados em **~2026-09-22**, que é "
+              "quando a projeção acima existe de facto. Correr isto a " + prazo
+              + " devolve uma recusa que **não** significa que a recolha falhou." + NL * 2)
+            # ⚠️ `tem` conta pares RECOLHIDOS, nao maturados: o `por_dia` e construido
+            # sobre as linhas utilizaveis, antes de rotular. Chamar-lhes maturados poria
+            # o relatorio a contradizer a sua propria tabela tres linhas acima.
+            w("Hoje há **" + str(tem) + "** pares recolhidos, dos quais **" + str(n_cl)
+              + "** já maturaram. A projeção supõe que o ritmo se mantém e que o "
+              "sistema continua no ar, e não é uma garantia." + NL)
     print("bloco insuficiente: " + str(n_cl) + " clusters maturados, minimo " + str(minimo))
 
 

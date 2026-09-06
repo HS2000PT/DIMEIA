@@ -619,3 +619,38 @@ separa sem ambiguidade neste corpus é que **um valor deste trabalho tem parte i
 são precisões, PR-AUC e taxas —, e um separador de milhares nunca a tem. Mais as remissões de
 secção, que não são números afirmados. Com isso, **zero ruído** sobre os onze documentos, e o
 controlo dispara com um valor fabricado.
+
+---
+
+## A recolha para a avaliação de setembro (2026-09-06)
+
+Verificada porque é a única coisa nesta lista que **não se recupera**: um dia em que o
+mecanismo não esteja no ar é um dia de dados que não existe na defesa, e a sessão 63 já
+encontrou exatamente esse modo de falha — o código existia só na árvore de trabalho, nunca
+implantado.
+
+**Está viva.** O registo tem notícias até 05/09 e cresceu de 39 595 para **41 747 linhas**;
+os *snapshots* de classe A passaram de 977 para **1 272**. Os utilizáveis mantêm-se em 243
+porque só houve **um dia de bolsa** desde que a recolha começou (04/09 foi sexta-feira).
+
+### O relatório estava certo e lia-se ao contrário
+
+Dizia: «com 9 dias de bolsa até 2026-09-17, a projeção é de 120 pares». Isso lê-se como *«a
+17/09 tens 120 pares maturados»*. **Não tens.** O 17/09 é a última **data de notícia**
+rotulável, não a data de correr a avaliação: o rótulo mede `(d, d+3]` dias de bolsa, e os
+pares dos últimos três dias só maturam depois. O protocolo fixa o congelamento em ~22/09,
+mas isso está noutro documento — e o que alguém lê no dia é o relatório gerado.
+
+⚠️ **A consequência é exatamente o beco que este script existe para evitar.** O seu próprio
+comentário diz que a recusa não pode ser um beco. Corrido a 17/09, encontraria cerca de 72 a
+84 pares maturados, recusaria, e quem o lesse concluiria que a recolha falhou — quando ela só
+não maturou ainda. **Uma recusa indistinguível de uma avaria é o defeito que o script foi
+escrito para não ter.**
+
+A aritmética fica como está, porque está certa. O que muda é o relatório dizer **quando** é
+que esses pares existem, e quantos há hoje.
+
+⚠️ **E a primeira versão da minha correção pôs o relatório a contradizer a sua própria
+tabela:** escrevi «hoje há 12 pares maturados» três linhas abaixo de «pares maturados: 0».
+O `por_dia` é construído sobre as linhas **utilizáveis**, antes de rotular — conta pares
+**recolhidos**. São 12 recolhidos e 0 maturados, e é isso que passa a dizer.

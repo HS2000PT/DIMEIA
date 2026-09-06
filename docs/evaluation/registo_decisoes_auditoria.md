@@ -1,18 +1,18 @@
 # O registo de decisões dá para retreinar?
 
 > **Gerado por** `scripts/auditar_registo_decisoes.py`. Não editar à mão.
-> **Fonte:** `origin/alerts-history:predictions_log.jsonl` · **Gerado a:** 2026-09-04 01:44 UTC.
+> **Fonte:** `origin/alerts-history:predictions_log.jsonl` · **Gerado a:** 2026-09-06 08:23 UTC.
 
 ## 1. Dimensão
 
 | | |
 |---|---|
-| Linhas | 41450 |
-| Títulos distintos (`news_date`, `ticker`, `headline`) | 1021 |
-| Datas de notícia | 2026-05-18 a 2026-09-04 |
-| Carimbos de decisão | 2026-08-29T03:58:04+00:00 a 2026-09-04T01:06:01+00:00 |
+| Linhas | 41747 |
+| Títulos distintos (`news_date`, `ticker`, `headline`) | 1318 |
+| Datas de notícia | 2026-05-18 a 2026-09-05 |
+| Carimbos de decisão | 2026-08-29T03:58:04+00:00 a 2026-09-05T14:14:02+00:00 |
 | Empresas | 12 |
-| Dias com pelo menos um título | 45 |
+| Dias com pelo menos um título | 47 |
 | Mediana de títulos distintos por dia | 1 |
 
 **O número de linhas não é o número de observações.** Mediana de
@@ -20,30 +20,30 @@
 
 | Ticker | Decisões | Títulos distintos | Decisões por título |
 |---|---|---|---|
-| AAPL | 4409 | 164 | 27 |
-| TSLA | 4364 | 143 | 31 |
-| NVDA | 4288 | 125 | 34 |
-| AMZN | 4263 | 90 | 47 |
-| MSFT | 4250 | 86 | 49 |
-| META | 4114 | 62 | 66 |
-| GOOGL | 3821 | 101 | 38 |
-| AMD | 3821 | 61 | 63 |
-| JPM | 2384 | 47 | 51 |
-| XOM | 2189 | 36 | 61 |
-| NFLX | 1930 | 70 | 28 |
-| JNJ | 1617 | 36 | 45 |
+| TSLA | 4448 | 227 | 20 |
+| AAPL | 4443 | 198 | 22 |
+| NVDA | 4343 | 180 | 24 |
+| AMZN | 4283 | 110 | 39 |
+| MSFT | 4278 | 114 | 38 |
+| META | 4131 | 79 | 52 |
+| GOOGL | 3838 | 118 | 33 |
+| AMD | 3829 | 69 | 55 |
+| JPM | 2397 | 60 | 40 |
+| XOM | 2197 | 44 | 50 |
+| NFLX | 1939 | 79 | 25 |
+| JNJ | 1621 | 40 | 41 |
 
 ## 2. Esquema
 
 | Campo | Linhas | Fração |
 |---|---:|---:|
-| `prob` presente | 34565 | 83.4% |
-| `feature_snapshot` presente | 977 | 2.4% |
-| `model_info` presente | 1700 | 4.1% |
-| `kept` verdadeiro | 39770 | 95.9% |
+| `prob` presente | 34860 | 83.5% |
+| `feature_snapshot` presente | 1272 | 3.0% |
+| `model_info` presente | 1995 | 4.8% |
+| `kept` verdadeiro | 39856 | 95.5% |
 
 Primeira linha com `feature_snapshot`: 2026-09-04T00:25:25+00:00.
-Esquemas de features observados: {'triage-context-v1': 977}.
+Esquemas de features observados: {'triage-context-v1': 1272}.
 
 ## 3. Momento das entradas
 
@@ -51,9 +51,9 @@ Comparação entre `feature_snapshot.as_of` — a última barra de preço usada 
 
 | Relação | Linhas |
 |---|---:|
-| `as_of` anterior à notícia | 336 |
-| `as_of` igual à notícia | 211 |
-| `as_of` posterior à notícia | 430 |
+| `as_of` anterior à notícia | 440 |
+| `as_of` igual à notícia | 383 |
+| `as_of` posterior à notícia | 449 |
 | snapshot sem `as_of` | 0 |
 
 **As linhas com `as_of` POSTERIOR à data da notícia não servem para treino nem para avaliação.**
