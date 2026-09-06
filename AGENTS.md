@@ -9,6 +9,89 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 66 (2026-09-06, 5.ª parte): AUDITORIA FINAL EM PAPEL DE JÚRI HOSTIL, COM O PEDIDO
+  DE CORRIGIR TUDO — E A RESTRIÇÃO QUE MUDOU A ARQUITETURA DO DOCUMENTO: **O JÚRI SÓ VÊ O PDF.**
+  Três commits: `5fc95c8`, `e1f8de4`, `04eb3c6`. Vinte achados corrigidos, CI verde nos quatro
+  jobs.
+  **⚠️ (A) O ACHADO ESTRUTURAL, e não é um erro — é uma suposição que deixou de valer.** O autor
+  disse que os professores **não terão acesso ao repositório**. O Apêndice A estava escrito a
+  **delegar a verificação para lá** («o repositório de código nomeia, para cada resultado, o
+  ficheiro que o contém»), e o Cap. 4 falava de ficheiros que «residem no repositório». Num PDF
+  entregue sozinho, cada remissão dessas é um apelo a evidência que o leitor **não pode
+  inspecionar** — e a tese cuja afirmação central é que tudo se confere passava a apontar para
+  fora de si própria. É a mesma classe que a **sessão 55** documentou (repo privado ⇒ cada «isto é
+  reproduzível por um script versionado» vira apelo a evidência inacessível), **e a decisão
+  perdeu-se na reescrita para `tese-v2`**. O §A.1 e o §A.2 passam a dizer o que o júri pode
+  verificar **a partir deste documento**: a terceira coluna da tabela enuncia protocolo, linha de
+  base e população, e o §3.7 fixa versões e semente.
+  **✅ (B) E É POR ISSO QUE ENTRAM TRÊS EXCERTOS DE CÓDIGO, com a Lista de Excertos reposta.** A
+  pergunta do autor («não há situações em que devemos mostrar blocos de código?») tem resposta
+  em três sítios, e só três: a **janela deslizante** (§3.3), porque a garantia anti-lookahead é
+  **uma fatia** e descrevê-la em prosa é pedir que se acredite; o **teste que muta o futuro**
+  (§3.6), porque é o único sítio onde a separação temporal é *imposta* e não afirmada; e a
+  **repartição aditiva** (§4.5), porque o alerta afirma que a explicação é lida do cálculo e não
+  redigida. Todos **verbatim** dos ficheiros de origem. A tese tinha **zero** ambientes
+  `lstlisting` desde a reescrita — a sessão 64 documentou que a Lista de Excertos era «defendida
+  por um comentário e não existe». Estilo `ig` novo, a cinzento: o `.cls` trazia `language=Java`
+  com palavras-chave a azul e cadeias a verde, num documento **monocromático**.
+  **⚠️ (C) DOIS DEFEITOS QUE SÓ A LEITURA DO PDF RENDERIZADO MOSTROU, e nenhum dos 20
+  verificadores os via.** (C1) A legenda da Figura 4.6 imprimia **a frase repetida**: trocar «sem
+  edição» por «com a supressão dos marcadores tipográficos» deixou o «reproduzido do registo»
+  original no sítio, e saía «reproduzido do registo **reproduzido do registo** do canal», **nas
+  duas árvores**. Texto repetido é texto válido. (C2) Os excertos **não eram flutuantes**, e dois
+  partiam-se ao meio: o 3.2 com **três linhas** numa página e as outras seis mais a legenda na
+  seguinte; o 4.1 com o código todo numa página e a **legenda sozinha** na página a seguir.
+  Passam a `float=htbp`, como as figuras. **É a lição que este ficheiro repete desde a sessão 60:
+  o `exit code` não apanha composição.**
+  **⚠️ (D) A PORTA QUE COMPILA A TESE ESTAVA PARTIDA, e o que isso significa é maior do que
+  parece.** O `compile-thesis.yml` apontava para `tese-v2` e para `check_tese_v2.py`, árvores
+  renomeadas para `tese-pt`. Ou seja: **desde a renomeação não houve uma única compilação
+  verificada em ambiente limpo** — e é o CI que corre o `check_tese_pt`, que por sua vez lê o
+  `main.fls` para confirmar que o PDF contém mesmo os 12 ficheiros estruturais. O `latexmkrc`
+  não tinha `$recorder = 1`, logo o `main.fls` nem era escrito. Corrigidos os dois.
+  **⚠️ (E) A ARITMÉTICA DO CASO TRABALHADO NÃO FECHAVA, E O GUIA ENSINAVA-A.** A tese escrevia
+  σ = 2,72% e z = +7,61; com 2,72 a conta dá **7,63**. O valor real é **2,725**. Um arguente que
+  refizesse a divisão — que é exatamente o que a secção convida a fazer — encontrava o desencontro.
+  E o `guiao_de_defesa.md` e o `tese-pt/guia/` **traziam a mesma conta partida**, ou seja o autor
+  ia decorá-la assim. Apanhado pelo `check_materiais`, que exigiu a sincronização.
+  **⚠️ (F) MAIS DEZASSEIS, entre eles:** o glossário declarava **`AI` e `IA` em duplicado** para
+  Inteligência Artificial; o §5.4.4 dizia que as empresas sem prior «recebem a **média** global»
+  quando o código faz um recuo global; **dois preditores diferentes obtêm o mesmo `0,662`** e nada
+  o reconciliava (a precisão dentro do orçamento depende **só da ordenação induzida**, e duas
+  quantidades distintas que ordenem igual selecionam as mesmas notícias — passa a estar escrito);
+  o `+0,048` era média de reamostragem apresentada como diferença pontual; a Tabela 5.2 anunciava
+  calibração sem os valores de Brier; e o Apêndice B remetia a UC de Linguagem Natural para a
+  secção da **QI2**, que é recuperação e não geração.
+  **✅ (G) O QUE A AUDITORIA NÃO ENCONTROU, E A AUSÊNCIA É O RESULTADO.** Refiz ~120 números
+  contra os artefactos de `docs/evaluation/` e **fecham todos**: o funil ($5\,060-2\,994-1\,194-
+  269-249-21 = 333$), a decomposição da AMD e da NFLX, a taxa-base `0,602` como média ponderada
+  de `0,589` e `0,617`, o embargo ($28\,574+17\,710+32\,649 = 79\,753-820$), os doze intervalos
+  da Fig. 5.15 a reproduzirem `0,072` e `0,392`, e o Platt ($3{,}700 \times 0{,}668 - 2{,}313
+  \to 0{,}5396$ = os 54% enviados). **E a classe de defeito que o próprio pedido nomeou — «três
+  empresas exatamente a 14 e todas as outras a zero» — está fechada:** varridas as 44 figuras,
+  o único valor que se repete três vezes é `0.800` na Fig. 5.4, que é o *recall* declaradamente
+  idêntico dos dois estimadores.
+  **⚠️ (H) UMA AFIRMAÇÃO FACTUAL QUE ESCREVI POR ELE, e fica sinalizada em vez de escondida.** O
+  §5.6.5 passa a declarar que «o autor não figura entre os votantes contabilizados», porque uma
+  secção que mede utilidade sem dizer quem votou é a pergunta mais desconfortável que ela abre. A
+  frase é gerada a partir de `AUTOR_ENTRE_VOTANTES = False` no `analyse_feedback.py`, com o aviso
+  escrito por cima: **só o autor a pode fixar**. Se for `True`, a secção tem de o dizer em voz alta.
+  ⚠️ **ARMADILHAS NOVAS, e as três valem a pena:** (1) `\textcolor` dentro de `postbreak` do
+  `listings` rebenta com «Missing number, treated as zero» **e o erro aponta para a primeira linha
+  do excerto, não para a definição do estilo** — só se isola num ficheiro mínimo; a forma que
+  funciona é `{\mbox{\tiny\ensuremath{\hookrightarrow}}}`. (2) O `pypdf` não importa neste
+  contentor (`_cffi_backend` em falta, pânico do pyo3 no `cryptography`) — resolve-se com um stub
+  em `sys.modules`. (3) A extração de texto **perde as ligaturas** `fi`/`fl`: «Bibliografia» sai
+  «Bibliograa» e «não figura» sai «não gura», logo **procurar ortografia no `.tex` e usar o PDF
+  só para composição**.
+  **PORTAS: PT 138 pp (102 de 120 antes dos apêndices) · EN 0 erros · overfull máx 5,68 pt (PT)
+  e 8,61 pt (EN), os dois iguais ao registo de antes destas edições · 3 excertos · guia 25 slides ·
+  CI verde nos quatro jobs do `04eb3c6`.**
+  **⏭️ AS TRÊS PENDÊNCIAS SÃO HUMANAS E NENHUMA É TÉCNICA:** o `AUTOR_ENTRE_VOTANTES`; os nomes
+  das **dez unidades curriculares** do Apêndice B contra o plano de estudos oficial (escrevi-os
+  do que o repositório sabia, e o repositório pode estar errado); e a **leitura integral pelo
+  autor**, que é o que torna verdadeira a frase «o conteúdo deste documento foi revisto pelo
+  autor» do §3.8.4. Mais os **nomes do júri**, que o ISEP designa depois da submissão.
 - **🆕 SESSÃO 66 (2026-09-06, 4.ª parte): A METADE CEGA DA PORTA DOS MATERIAIS, FECHADA — E O
   ALERTA QUE A TESE DIZ REPRODUZIR «SEM EDIÇÃO» PASSA A TER QUEM O VERIFIQUE.**
   Três commits: `ef5c98ff4`, `2a137d8e6`, `20335e747`.
@@ -1439,7 +1522,7 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 66 (auditoria forense da tese; os materiais a ensinarem a janela que ela substituiu; e a porta que os via alinhados)
+- **Sessão nº:** 66 (auditoria final em papel de júri hostil; o PDF passa a bastar-se a si próprio; e os dois defeitos que só a leitura do renderizado mostrou)
 - **Última atualização:** 2026-09-06
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
