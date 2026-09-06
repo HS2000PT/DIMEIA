@@ -9,6 +9,103 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 66 (2026-09-06, 2.ª parte): AUDITORIA FORENSE DA TESE, EM PAPEL DE JÚRI HOSTIL.
+  VINTE E TRÊS DEFEITOS, E O PRINCIPAL ESTÁ TODO NUMA SÓ PÁGINA.**
+  Relatório integral em
+  [`docs/planos/AUDITORIA_FORENSE_2026-09-06.md`](docs/planos/AUDITORIA_FORENSE_2026-09-06.md),
+  com as secções A a M que o pedido fixou. **Nenhum resultado foi alterado**; o que mudou foi a
+  correspondência entre o que o documento afirma e o que os seus próprios artefactos dizem.
+  **⚠️ (A) O ACHADO: A FIGURA DESENHAVA UMA JANELA E O PARÁGRAFO SEGUINTE CITAVA OUTRA.** Na
+  página 70, por esta ordem e sem nada entre eles: «a medição foi realizada sobre as **4 366**
+  decisões»; a Figura 5.15 com **três** barras alaranjadas e a legenda «**Oito** das doze
+  empresas encontram-se inteiramente de um dos lados»; e «**Os valores confirmam a leitura da
+  figura.** Sobre as **36 925** decisões… **Duas** empresas situavam-se sempre acima do limiar…
+  apenas em **cinco** das doze o limiar chegava a decidir». **Quem conta as barras obtém três e
+  lê duas uma linha abaixo**, e a frase de transição afirma concordância exactamente onde ela não
+  existe. Causa: existem **dois** artefactos, o `evaluation_gate_selectivity.md` (4 366, até
+  15/08) e o `_unicos.md` (36 925, até 20/08), e a figura ficou no primeiro quando o texto passou
+  ao segundo. Reconstruída a partir do artefacto certo, com a janela e as datas na legenda.
+  ⚠️ **E arrasta uma terceira afirmação:** o §5.6.2 dizia que «a AMD e a **Meta**» se situam
+  sempre acima do limiar — nessa janela são a **AMD e a TSLA**, e a Meta tem mínimo `0,498`.
+  **⚠️ (B) O APÊNDICE IMPRIMIA UMA FRASE TRUNCADA, E ESTAVA ASSIM NO PDF.** A secção A.5 acabava
+  em «…e as duas exceções a essa restrição, que são o alojamento e» e passava à figura. Nas duas
+  línguas. **Compila a zero erros**, porque uma frase por acabar é texto válido — é a mesma
+  classe do `extbf` da sessão 60 e do `declará-claradas` da 61: **só se vê a ler**.
+  **⚠️ (C) A ARITMÉTICA DOS VOTOS NÃO FECHAVA, NA SECÇÃO CUJO ARGUMENTO É QUE TUDO FECHA.** O
+  §5.6.5 dizia «81 votos válidos → 42 efetivos» e explicava 10 alterações e 5 exclusões:
+  $81-10-5 = 66$, e não 42. Faltavam **29 cliques repetidos sem mudança**, que o
+  `evaluation_feedback.md` **já publicava** («Cliques repetidos sem mudança | 29») e que o
+  gerador não escrevia no fragmento da dissertação. $42+10+29 = 81$, exacto.
+  ⚠️ **Corrigido no `analyse_feedback.py` e não no `.tex`**, que é gerado — a lição da sessão 64.
+  **⚠️ (D) DUAS FIGURAS DO CAP. 4 CONTRADIZIAM-SE A DUAS PÁGINAS DE DISTÂNCIA.** O funil de 15/08
+  mostra o **piso escalonado a eliminar 269 avaliações** e a Figura 4.5 dizia «**nunca atuou**».
+  As duas estão certas em janelas diferentes; nenhuma o dizia. Passa a «0% nos seis dias».
+  **(E) O DOCUMENTO NOMEAVA 5, 7 E 9 «PONTOS DE DECISÃO»** — a Figura 4.2 (percurso da notícia), a
+  Tabela 4.2 (os que têm constante) e a Figura 4.5 (a contabilidade completa) — sem nada os
+  reconciliar. A legenda da Figura 4.5 passa a enumerar os quatro que a 4.2 não mostra.
+  **⚠️ (F) DUAS PORTAS ESTAVAM CEGAS, e é sempre a mesma forma: não encontrar nada e aprovar tudo
+  têm o mesmo aspeto no ecrã.** O `check_resumos` aplicava o limite de 200 palavras **só ao
+  abstract inglês**, e o resumo português tinha passado a **201** com a porta a imprimir «ok». O
+  `check_apendice_xref` não lia o `ch5/feedback_auto.tex`, que é **gerado** e não se chama
+  `chapter*`: reportava «label nao existe» sobre uma remissão que o LaTeX resolvia sem um único
+  aviso — **o verificador via menos documento do que o compilador**. As duas corrigidas.
+  **(G) UMA SÓ INCONSISTÊNCIA CÓDIGO↔TESE, e é de uma palavra:** o §5.4.4 dizia que as empresas
+  sem prior «recebem a **mediana** global» e o `evaluate_endtoend_baselines.py:139` faz `.mean()`.
+  Tudo o resto confere — nove entradas, `a=3,6996675` e `b=-2,3133665` no `.joblib`, limiares do
+  `alerts.yaml`, meia-vida de 120 dias com o decaimento a ordenar e o cosseno a ser mostrado, o
+  `precedents_are_strong` a correr sobre a lista já ordenada, `DEPLOY_SECTORS = {AMD, NFLX}`, e as
+  dimensões dos três blocos.
+  **(H) MAIS ONZE MENORES, todos corrigidos:** `\gls{QI}1` imprimia «Questão de Investigação
+  **(QI)1**» na primeira utilização, com o número colado ao parêntese, nas próprias questões de
+  investigação (resolvido com `\glsunset`); a Figura 5.15 era **a única do documento com ponto
+  decimal** nos rótulos desenhados, a duas linhas do `0,50` do limiar; «as diferenças situam-se
+  entre 0,004 e 0,009» quando a menor par a par é **0,001**; a citação do SIFMA saía com
+  **parênteses encaixados** (resolvido com `shortauthor`); a Figura A.1 mostrava o **RSS**, que o
+  caminho vivo não invoca, e omitia a Alpha Vantage e o Polygon; o `PSI` aparecia na página 50 e
+  era definido na 74; o `$2PC/(P+C)$` partia-se ao meio na Lista de Símbolos; a Tabela 3.1
+  chamava «base implantada» a **metade** dela; e a matriz de evidência dizia que a utilidade não
+  tinha evidência **nenhuma** depois de o §5.6.5 passar a reportar 42 votos.
+  **✅ (I) O QUE A AUDITORIA NÃO ENCONTROU, e a ausência é o resultado.** Refiz a aritmética em
+  vez de aceitar o valor impresso e **fecha em todos os sítios**: a divisão com embargo
+  ($28\,574+17\,710+32\,649 = 79\,753-820$, e $820/79\,753 = 1{,}03\%$), a decomposição da AMD,
+  os três $F_1$ reproduzidos das coordenadas desenhadas, o funil, os 743 títulos e os 15 alertas
+  da Fig. 4.3, a taxa-base `0,602` como média ponderada exacta de `0,589` e `0,617`, a Tabela 4.1
+  (1002−970 = 32 duplicados; 1002−64 = 938 exclusivas), o Wilson de 41/42, e os 61 contra 43
+  dólares do escalão. **Nenhum dos 23 defeitos toca um resultado.**
+  **⚠️ (J) QUATRO FALSOS ALARMES MEUS, apanhados antes de reportar, e valem mais do que alguns
+  achados:** a Lista de Símbolos parecia **baralhada** na extração de texto e renderiza perfeita —
+  é o `pdftotext` a desmontar uma tabela de células com quebra; as aspas rectas que acusei estão
+  **todas dentro do alerta do Telegram reproduzido**, onde são o carácter correcto; a perda das
+  ligaturas `fi`/`fl` («nanceiro») é artefacto do extractor e **não do documento**; e o
+  «Cahill, **Zhangxin** Liu e Smales» é o `biblatex` a desambiguar contra os outros dois Liu.
+  **⚠️ (K) UM DEFEITO INTRODUZIDO POR MIM, E É A LIÇÃO DE MÉTODO DA SESSÃO.** A linha que
+  acrescentei à Tabela A.2 fê-la exceder a página, e na árvore inglesa **o traço inferior da
+  tabela colidia com o número de página**. Confirmei que era meu compilando a versão de `HEAD` do
+  apêndice — **zero avisos** — e encurtei a célula até recuperar a altura original. O `exit code`
+  era 0 nas duas situações; o que o apanhou foi o `Float too large for page`, que **não é erro**.
+  **⚠️ (L) A ARMADILHA DOS ESCAPES MORDEU NUMA VARIANTE NOVA, e esta ainda não estava escrita.**
+  Não foi o heredoc: foi `python -c "..."` entre **aspas duplas**, onde o shell expande `$0` antes
+  de o Python ver a cadeia — `$0{,}632$` chegou ao `.tex` como **`/usr/bin/bash{,}632$`** e
+  partiu a compilação com `Missing $ inserted`. **Regra que passa a valer: um `python -c` que
+  escreva LaTeX com `$` tem de usar plicas simples, ou ficheiro à parte.** Apanhado pelo
+  `erros=1` do log, não por leitura.
+  **PORTAS: tese-pt 132 pp · tese-eng 130 pp · 0 erros · 0 referências indefinidas · 0 floats fora
+  da página · overfull máx 5,68 pt (PT) e 8,61 pt (EN) · 11/11 verificadores · 998 testes ·
+  ruff limpo · 59/59 números conferidos · 91/91 entradas de bibliografia · 70 = 70 = 70 no
+  `.bib`, citadas e renderizadas.** Dois commits, 26 ficheiros, simétricos entre as duas árvores,
+  em `origin/main`.
+  **⏭️ O QUE FICA, E NENHUM É TÉCNICO:** os **nomes do júri** (o ISEP designa-os depois da
+  submissão); **o limite de páginas** — o `BRIEF_REESCRITA` escreve «Páginas totais, máximo 120» e
+  o PDF tem **132 físicas**, 108 em numeração árabe e 96 até ao fim do Cap. 6, e os planos assumem
+  que os anexos não contam: **vale confirmar a regra com o orientador, porque o número que o júri
+  folheia é 132**; **se o autor está entre os três votantes** do §5.6.5, que é a pergunta mais
+  desconfortável que essa secção abre; e três pontos de redação que dependem do que se pretendia
+  dizer, listados na secção L do relatório (as aplicações de sentimento e a «primeira pergunta»,
+  o «custo incompatível» sem fonte contra a §2.9 que declara o preço não citável, e datar os
+  11 445 casos da base viva).
+  **⚠️ E O QUE CONSCIENTEMENTE NÃO SE FEZ:** nenhuma medição nova, nenhuma reestruturação, nenhum
+  número alterado. Onde a correção dependia de saber o que o autor pretendia afirmar, o defeito
+  ficou **reportado e não corrigido** — é a regra que o próprio pedido fixou.
 - **🆕 SESSÃO 65 (2026-09-06): O TÍTULO DECIDIDO, AS FIGURAS EM PORTUGUÊS, E CINCO
   DOCUMENTOS A DIZER O MESMO NÚMERO ANTIGO — SEMPRE O MAIS FAVORÁVEL.**
   **✅ (A) O TÍTULO, DECIDIDO E PROPAGADO. É o que se submete ao ISEP até 13/09.**
@@ -1517,7 +1614,7 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 65 (título decidido, figuras em português, seis verificadores cegos)
+- **Sessão nº:** 66 (auditoria forense: a figura de uma janela sob o texto de outra, e duas portas cegas)
 - **Última atualização:** 2026-09-06
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
