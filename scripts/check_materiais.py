@@ -92,6 +92,12 @@ def limpa(t: str) -> str:
     # Mais as remissoes de seccao, que nao sao numeros afirmados.
     t = re.sub(r"(?<![\d.])[1-9]\d{0,2}\.\d{3}(?![\d])", " ", t)
     t = re.sub(r"§\s*\d+\.\d+", " ", t)
+    # ⚠️ E AS REMISSOES POR NOME, pela mesma razao. `a Figura 5.12` nao afirma o valor
+    # cinco virgula doze -- e um ponteiro. Ate 2026-09-06 nenhum material desta lista nomeava
+    # figuras por numero, e o primeiro que o fez fez a porta gritar por dois numeros correctos.
+    # A regra e estreita de proposito: so apaga o numero QUE SE SEGUE a uma destas palavras.
+    t = re.sub(r"\b(?:Figuras?|Fig\.|Tabelas?|Table|Figure|Sec\w{2,3}o|Section|Equa\w{2,3}o|"
+               r"Equation|Algoritmos?|Algorithms?)\s*\d+\.\d+", " ", t)
     t = re.sub(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}", " ", t, flags=re.S)
     t = re.sub(r"<style.*?</style>", " ", t, flags=re.S | re.I)
     t = re.sub(r"\\begin\{lstlisting\}.*?\\end\{lstlisting\}", " ", t, flags=re.S)
@@ -161,6 +167,13 @@ def main() -> int:
     tese_n = {_valor(x) for x in RX_RESULTADO.findall(tese)}
 
     # ⚠️ SEGUNDA FONTE, pelo mesmo criterio da porta do artigo: um material pode mostrar as
+    # ⚠️ O QUE ESTA PORTA NAO GARANTE, medido a 2026-09-06 para nao ser suposto: a
+    # uniao das duas fontes tem 563 decimais distintos, dos quais 337 da forma `0.xyz` -- ou
+    # seja 33,7% desse espaco. Um numero inventado ao acaso com tres casas tem cerca de uma
+    # hipotese em tres de encontrar par por coincidencia e passar. A porta apanha a maioria
+    # dos numeros retirados, que e para o que serve, e NAO e prova de que todo o numero dos
+    # materiais foi verificado. Quem quiser essa prova le a Tabela A.1.
+    #
     # parcelas de um numero que a tese resume. Os slides dao o minimo e o maximo da taxa de
     # disparo e a tese so a amplitude que deles resulta -- os tres estao em
     # `evaluation_anomaly.md`, que e a saida do proprio protocolo.
