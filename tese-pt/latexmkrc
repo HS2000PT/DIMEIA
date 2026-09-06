@@ -2,3 +2,8 @@
 # O glossário usa \makenoidxglossaries (não precisa de makeglossaries externo).
 $pdf_mode = 1;     # gerar PDF via pdflatex
 $bibtex_use = 2;   # processar bibliografia (biber detetado pelo .bcf) e limpar
+# O `check_tese_pt.py` confronta a lista de ficheiros que o LaTeX leu (main.fls) com o
+# corpus estrutural declarado: e' o que apanha um capitulo que deixou de ser incluido
+# sem que a compilacao se queixe. Sem -recorder nao ha .fls, e essa porta reportava
+# «main.fls nao existe» em vez de verificar seja o que for.
+$recorder = 1;
