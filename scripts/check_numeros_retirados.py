@@ -69,6 +69,15 @@ RETIRADOS: list[tuple[str, str, str, str]] = [
     ("live-0667", r"0(?:[.,]|\{,\})667\s*(?:vs|contra|/)\s*0(?:[.,]|\{,\})455",
      "0,589 contra 0,617",
      "eram 12 decisões; com 825 o sinal inverte-se"),
+    # ⚠️ NÃO É UM NÚMERO, É UMA AFIRMAÇÃO — e cabe aqui pela mesma razão que o «quase
+    # quadruplica»: a tese retirou-a, e um material que a ensine põe o autor a dizer em
+    # voz alta o que a Secção 2.9 declara não ser citável. Estava nos slides, no guia
+    # (dentro de um quadro «Guarda esta frase»), no artigo e no quizz.
+    ("preco-dos-terminais",
+     r"custam?\s+milhares|milhares\s*(?:por ano|/ano)|thousands\s*(?:per|a)\s*year",
+     "não estão ao alcance deste investidor",
+     "o preço não é publicado de forma citável, e é a indisponibilidade, e não um valor "
+     "concreto, que sustenta o argumento"),
     ("onnx-20-23", r"\b20\s+(?:de|of)\s+23\b",
      "o Apêndice A afirma o formato de execução, e chega",
      "retirado por n pequeno de mais, e a tese curta não contém esse teste"),
@@ -143,6 +152,9 @@ def autoteste() -> bool:
          {"a.md": "Onde me enganei: eu tinha escrito que quase quadruplica a precisão."}, False),
         ("amplitude antiga nua", {"a.md": "A pontuação varia 0,064 dentro e 0,385 entre."}, True),
         ("20 de 23 nu", {"a.md": "Top-3 idênticos em 20 de 23 consultas."}, True),
+        ("preço dos terminais nu",
+         {"a.md": "Os terminais respondem às três e custam milhares por ano."},
+         True),
         # ⚠️ Os dois casos abaixo são falsos positivos que ESTE verificador teve na
         # primeira corrida, sobre texto correcto. Ficam no autoteste para não voltarem.
         ("prevalência do rótulo, que não é a amplitude",
