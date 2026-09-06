@@ -697,3 +697,46 @@ Corrigido: compara `tese-pt` → `tese-eng`, exige o corpus, e passou a **121 ch
 frases com citação. O seu autoteste, que planta um endurecimento e uma ressalva perdida e
 exige que os dois disparem, continua a passar. Entra no `check_entrega`, que passa a ter
 **15 verificadores**.
+
+---
+
+## A varredura dos verificadores cegos (2026-09-06)
+
+Três famílias de verificadores apontados a árvores superseus num só dia deixou de parecer
+coincidência, por isso varreram-se todos os `scripts/*.py`. Sobrou **um** caminho vivo para
+uma árvore inexistente, e ele estava num sítio que interessa.
+
+### O verificador que rebentava a meio
+
+O `check_all_gates.py` era a porta omnibus antes do `check_entrega.py`. Lia
+`thesis/frontmatter/frontmatter.tex` e `thesis-pt/...`, e **nenhuma das duas árvores existe**.
+⚠️ Corrido hoje, rebentava com `FileNotFoundError` **a meio**, depois de já ter gasto minutos
+a compilar — e um verificador que rebenta a meio é pior do que um que não existe, porque quem
+o corre não sabe se o que passou antes do rebentamento vale alguma coisa.
+
+Passa a parar à entrada e a apontar para o substituto. O corpo fica, e não apagado: guarda a
+forma de várias portas que foram migrando para o `check_entrega` e serve de registo de como
+cresceram.
+
+⚠️ **E parti-o duas vezes a tentar reformá-lo.** Primeiro envolvi o corpo numa cadeia de
+texto — que o corpo contém `"""` lá dentro e a fecha a meio, deixando o resto a ser lido como
+código. Depois pus a guarda antes do `from __future__ import annotations`, que tem de ser a
+primeira instrução do ficheiro. Restaurado do git nas duas — e aqui o `git checkout` era o
+gesto certo, porque a única alteração por commitar era a minha, partida.
+
+### A verificação que era só dele, salva
+
+Tinha uma coisa que nenhuma outra porta faz: **os quatro exemplares do resumo**. Cada árvore
+imprime dois resumos — o da sua língua e a tradução —, logo há quatro textos e apenas dois
+conteúdos, e os pares têm de ser idênticos.
+
+⚠️ Não é hipotético: a sessão 56 encontrou o **resumo português a divergir entre as duas
+teses** — a cópia dentro da tese inglesa omitia o resultado negativo da triagem em produção
+que a portuguesa trazia. Um leitor português lia um resumo diferente consoante o ficheiro que
+abrisse, **e nenhuma das duas falhava a compilar**.
+
+Novo `scripts/check_resumos.py`, no `check_entrega`, que passa a **16 verificadores**. Estado
+hoje: os dois pares idênticos, resumo de 201 palavras contadas sem comandos e abstract inglês
+de **183**, dentro do limite de 200. ⚠️ A contagem ignora comandos LaTeX de propósito: a
+sessão 64 quase corrigiu um resumo que estava certo porque contava as chavetas de um comando
+como palavras.

@@ -71,6 +71,10 @@ VERIFICADORES = [
     # 2026-09-06 comparava as árvores arquivadas e dizia «0 candidatos» sobre documentos
     # que nunca serão entregues.
     ("tradução: nenhuma ressalva perdida", "check_bilingual_parity.py", []),
+    # ⚠️ Cada arvore imprime DOIS resumos — o da sua lingua e a traducao —, logo ha
+    # quatro textos e dois conteudos. A sessao 56 encontrou o resumo portugues a
+    # divergir entre as duas teses, e nenhuma das duas falhava a compilar.
+    ("os quatro resumos dizem o mesmo", "check_resumos.py", []),
     # A cadeia de cada questao: enunciada, medida, delimitada e respondida -- e a
     # conclusao a nao citar valores que os resultados nao produziram.
     ("questões: enunciada, medida, respondida", "check_qi_cadeia.py", []),

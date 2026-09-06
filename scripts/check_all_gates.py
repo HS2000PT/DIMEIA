@@ -18,6 +18,26 @@ USO
 
 from __future__ import annotations
 
+# ⚠️ SUPERSEDIDO por `scripts/check_entrega.py`, e por isso para aqui.
+#
+# Lia `thesis/frontmatter/frontmatter.tex` e `thesis-pt/...`, e NENHUMA das duas arvores
+# existe: foram substituidas por `tese-pt/` e `tese-eng/`. Corrido hoje, rebentava com
+# FileNotFoundError a MEIO, depois de ja ter gasto minutos a compilar -- e um verificador
+# que rebenta a meio e pior do que um que nao existe, porque quem o corre nao sabe se o
+# que passou antes do rebentamento vale alguma coisa.
+#
+# A unica verificacao que era SO dele -- os quatro exemplares do resumo e o limite de
+# palavras do abstract -- passou para `scripts/check_resumos.py`, que entrou no
+# `check_entrega`. O resto ja la estava. O corpo fica por baixo, e nao apagado, porque
+# guarda a forma de varias portas que foram migrando e serve de registo de como cresceram.
+import sys as _sys
+
+if __name__ == "__main__":
+    print("SUPERSEDIDO: corre 'python scripts/check_entrega.py'.")
+    print("Este lia thesis/ e thesis-pt/, arvores que ja nao existem.")
+    print("A verificacao que era so dele vive em scripts/check_resumos.py.")
+    _sys.exit(2)
+
 import argparse
 import pathlib
 import re
