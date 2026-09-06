@@ -70,6 +70,19 @@ OUT_TEX = REPO / "tese-pt" / "ch5" / "feedback_auto.tex"
 N_MINIMO = 20          # votos efetivos abaixo dos quais NÃO se reporta proporção
 DOMINANCIA_MAX = 0.40  # acima disto, reporta-se também sem o votante dominante
 
+# ⚠️ DECLARAÇÃO DE INDEPENDÊNCIA — tem de ser verdadeira, e só o autor a pode fixar.
+#
+# A secção reporta 42 votos efetivos de TRÊS pessoas, uma delas com 67% deles. A primeira
+# pergunta que um arguente faz perante uma amostra assim é «e o senhor, votou?». A resposta
+# tem de estar escrita: improvisá-la à frente do júri, numa dissertação cujo argumento
+# central é que a evidência é verificável, é o pior sítio possível para hesitar.
+#
+# False → o autor NÃO figura entre os votantes contabilizados.
+# True  → figura, e a subsecção di-lo em voz alta. A proporção reportada mantém-se, porque
+#         retirar votos depois de os ver contraria o protocolo pré-registado; o que se
+#         acrescenta é a declaração, que é o que o leitor precisa para os pesar.
+AUTOR_ENTRE_VOTANTES = False
+
 
 def _pct(x: float) -> str:
     return "—" if x != x else f"{x * 100:.0f}%"
@@ -466,6 +479,26 @@ def fragmento_latex(registos: list[FL.FeedbackRecord],
     # regenerado, e uma frase escrita a mao no destino desapareceria na corrida
     # seguinte sem um unico aviso. Sem ela, o Cap. 5 mede utilidade com pessoas e o
     # Cap. 6 declara que isso nao foi feito, e o leitor constroi a contradicao sozinho.
+    L.append(t(
+        "A independência entre quem constrói o sistema e quem o classifica é "
+        + ("uma condição que esta amostra não cumpre integralmente: o autor figura entre os "
+           "votantes contabilizados. A proporção acima não foi recalculada sem ele, porque "
+           "retirar votos depois de os observar contraria o protocolo fixado antes da "
+           "recolha; o que se declara é a composição da amostra, para que o leitor a pese."
+           if AUTOR_ENTRE_VOTANTES else
+           "condição desta amostra: o autor não figura entre os votantes contabilizados. Os "
+           "votos provêm de leitores do canal público, e o registo conserva de cada um apenas "
+           "o identificador de conversa atribuído pela plataforma."),
+        "The independence between whoever builds the system and whoever rates it is "
+        + ("a condition this sample does not fully meet: the author is among the votes "
+           "counted. The proportion above was not recomputed without him, because removing "
+           "votes after observing them contradicts the protocol fixed before collection; what "
+           "is declared is the composition of the sample, so that the reader may weigh it."
+           if AUTOR_ENTRE_VOTANTES else
+           "a condition of this sample: the author is not among the votes counted. The votes "
+           "come from readers of the public channel, and the log keeps of each only the "
+           "conversation identifier assigned by the platform.")))
+    L.append("")
     L.append(t(
         "Estes votos constituem retorno observacional em contexto real e não substituem "
         "o estudo controlado que a Secção~\\ref{sec:con_limitacoes} identifica como a "

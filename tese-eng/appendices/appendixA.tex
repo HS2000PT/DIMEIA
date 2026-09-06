@@ -11,8 +11,10 @@ the work.
 \section{Artefacts kept}
 \label{sec:ap_artefactos}
 
-This section lists what is kept in the code repository and what is not, with the reason in each
-case.
+This section lists what is kept with the work and what is not, with the reason in each case. The
+code, the results files and the model artefacts described here accompany the dissertation and can
+be made available to the committee; this appendix exists so that the provenance of every value is
+verifiable from this document, without depending on that access.
 
 The execution environment is described in Section~\ref{sec:met_ferramentas}, with the exact
 versions of the libraries that produced the values in this document. The versions are pinned, and
@@ -27,11 +29,11 @@ cites. The third is the precedent base the deployed application consults, with f
 of vectors and eight of metadata. This last one is not a sample: it is the artefact the system needs
 in order to start, and without it there would be no precedents to present.
 
-The source corpora are not kept in the repository. The historical set occupies several hundred
-megabytes and is rebuilt by the preparation procedures described in Section~\ref{sec:met_dados}.
-Reduced samples accompany the code, whose purpose is to let the automatic verification run without
-network access, including the test that enforces the temporal separation described in
-Section~\ref{sec:met_triagem}.
+The source corpora are not kept. The historical set occupies several hundred megabytes and is
+rebuilt by the preparation procedures described in Section~\ref{sec:met_dados}. Reduced samples are
+kept in their place, whose purpose is to let the automatic verification run without network access,
+including the test that enforces the temporal separation described in
+Section~\ref{sec:met_triagem} and that Listing~\ref{lst:lookahead} reproduces.
 
 \section{Origin of each result}
 \label{sec:ap_numeros}
@@ -42,8 +44,14 @@ document and the procedure that generates it.
 No result in this dissertation was entered manually into the text. Each one is produced by an
 automatic procedure with a fixed seed, which writes its own results file, and it is that file the
 text cites. A second run over the same data returns the same values. Table~\ref{tab:ap_numeros}
-brings together the results reported and identifies the section in which each one appears; the code
-repository names, for each result, the file that contains it and the procedure that produces it.
+brings together the results reported and identifies the section in which each one appears.
+
+The verification this chain permits is possible from this document, and that is why the appendix
+describes it rather than delegating it. The section given in the third column states, for each
+result, the protocol, the baseline against which it was compared and the population it covered; and
+Section~\ref{sec:met_ferramentas} pins the exact library versions and the seed. A reader who has
+the source data, whose provenance and licensing are given in Section~\ref{sec:ap_dados}, has what
+is needed to rebuild any of the measurements without recourse to this work.
 
 The determinism guarantee applies to the upper block of the table. The rows of the lower block are
 of another nature, and are therefore separated: they are measurements over the operation of the
@@ -55,9 +63,9 @@ The breakdown of the funnel by gate, presented in Section~\ref{sec:sis_politica}
 decision log on a concrete day, and that log keeps only three days, for the reason given in
 Section~\ref{sec:met_dados}: it is republished at every cycle, so the cost is one of publication and
 not of storage. Running the same procedure on a later date produces another day, and not the same
-one. The value appears in a results file, with the date of the reading and the procedure that
-produced it, so that any future reading has a declared origin even though that day does not
-recur.
+one. The value was kept together with the date of the reading and the identification of the
+procedure that produced it, so that any future reading has a declared origin even though that day
+does not recur.
 
 \begin{table}[!htbp]
 \caption[Each result and the procedure that produces it]{The results reported in the body of the
@@ -182,7 +190,8 @@ No variant with text beats volatility &
   \gls{PRAUC} of $0.496$ against $0.542$, with nine criterion definitions and resampling by
   groups & Kept \\
 The text adds information over the lookup table &
-  \gls{PRAUC} of $0.547$ against $0.534$, with an interval between $+0.004$ and $+0.020$ &
+  \gls{PRAUC} of $0.547$ against $0.534$, with a paired increment of $+0.012$ and an interval
+  between $+0.004$ and $+0.020$ &
   \textbf{New}, positive, and with no effect on precision within the budget \\
 The inputs incorporate no future information &
   Changing the future of an example leaves the inputs identical and changes the criterion & Kept \\
@@ -228,8 +237,8 @@ The historical set that underpins the precedent base is \gls{FNSPID}
 fulfilled here. Only minimal excerpts of headlines from the corpus appear in the document, for
 illustration.
 
-That licence carries a second obligation, which is triggered in this case. Since the repository
-distributes files derived from \gls{FNSPID}, the share-alike clause applies to those files. The
+That licence carries a second obligation, which is triggered in this case. Since files derived
+from \gls{FNSPID} are distributed, the share-alike clause applies to those files. The
 licence of the code is a decision that remains open in this document, and this is the constraint
 that conditions it.
 
@@ -306,7 +315,7 @@ hosting and the messaging channel, are costs of operation and not data sources.
 \caption[The external parts, by stage of the path]{The external parts the system depends on, in the
 order in which they enter. The marks belong to their respective holders and their use here is
 nominative, intended to identify the tool employed. The provenance of each file, with its
-corresponding cryptographic digest, appears in the manifest that accompanies the repository.}
+corresponding cryptographic digest, is recorded in the manifest kept with the work.}
 \label{fig:ap_infra}
 \end{figure}
 

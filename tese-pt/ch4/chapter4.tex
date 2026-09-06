@@ -49,7 +49,7 @@ que desencadeia a avaliação é uma notícia.
   proc/.style={cx, fill=black!3},
   saida/.style={cx, fill=black!16},
 ]
-  \node[fonte] (p) {\textbf{Preços}\\ \footnotesize cadeia de quatro\\ \footnotesize alternativas};
+  \node[fonte] (p) {\textbf{Preços}\\ \footnotesize cadeia de cinco\\ \footnotesize fontes};
   \node[fonte, below=6mm of p] (n) {\textbf{Notícias}\\ \footnotesize três interfaces\\ \footnotesize gratuitas};
   \node[fonte, below=6mm of n] (h) {\textbf{Base de casos}\\ \footnotesize precedentes com\\ \footnotesize impacto medido};
 
@@ -101,7 +101,7 @@ interfaces explícitas, o que preserva a substituibilidade sem introduzir latên
 
 Duas exceções operam sobre fronteiras de processo. A entrega utiliza a interface de robô do canal
 de mensagens, por pedido \gls{HTTP}. A aplicação web que expõe o registo de decisões corre como processo
-separado e lê o mesmo repositório de dados, sem escrever nele. Esta segunda separação garante que
+separado e lê o mesmo armazenamento de dados, sem escrever nele. Esta segunda separação garante que
 a consulta do registo não interfere com o ciclo de avaliação.
 
 \section{Aquisição de dados}
@@ -116,15 +116,15 @@ com atraso. As decisões descritas nesta secção respondem a essas limitações
 
 \subsection{Cotações}
 
-Os preços são obtidos através de uma cadeia de quatro alternativas, consultadas por ordem fixa,
+Os preços são obtidos através de uma cadeia de cinco fontes, consultadas por ordem fixa,
 adotando-se a primeira que responde com dados válidos. O identificador da fonte que serviu cada
 valor é registado juntamente com o valor, uma vez que a proveniência de uma quantidade integra a
 sua explicação.
 
-A ordem da cadeia não é arbitrária nem definitiva. Uma das fontes foi despromovida na sequência da
-observação do conteúdo que devolvia, e uma candidata adicional foi rejeitada por responder com
-verificação anti-robô, o que a torna inutilizável em operação automática. Estas duas decisões
-resultaram de medição e não de preferência declarada.
+A ordem da cadeia não é arbitrária nem definitiva. Uma das fontes foi despromovida ao passar a
+responder com uma verificação anti-robô, que a torna inutilizável de forma fiável em operação
+automática; permanece na cadeia, em posição inferior, como tentativa oportunista. A decisão
+resultou da observação do que a fonte devolvia, e não de preferência declarada.
 
 A redundância da cadeia tem uma consequência que ultrapassa a disponibilidade. Sem ela, um dia em
 que a fonte única bloqueia o acesso é indistinguível de um dia em que o mercado não abriu, e o
@@ -440,8 +440,8 @@ completo, pelo que os valores devem ser lidos como proporções.
   Uma avaliação não é um título distinto; os mesmos títulos foram reavaliados.}}
 \caption[Distribuição completa das avaliações por ponto de decisão]{As $5\,060$ avaliações
 registadas em parte de 15 de agosto de 2026. Cada banda representa o que resta depois da porta
-indicada, e o valor à direita o que essa porta eliminou; as eliminações somam as $5\,060$
-avaliações e deixam $333$ passagens. As cinco mensagens entregues são uma contagem separada,
+indicada, e o valor à direita o que essa porta eliminou; as eliminações somam $4\,727$ e deixam
+$333$ das $5\,060$ avaliações. As cinco mensagens entregues são uma contagem separada,
 não uma categoria de avaliações. O orçamento diário foi integralmente utilizado. A data é
 também a do dia em que o piso de triagem deixou de exercer veto e passou a ordenar, pelo que a banda
 de $1\,194$ avaliações eliminadas nesse ponto pertence à configuração anterior à descrita na
@@ -648,7 +648,9 @@ funcionamento conservam por isso a língua original.
 \hspace*{1em}which way: it is not a price forecast and not advice.
 \end{tcolorbox}
 \caption[Alerta entregue ao canal]{Alerta entregue a 13 de agosto de 2026, reproduzido do registo
-sem edição. Os números entre parênteses retos identificam as quatro partes da estrutura. Todos os
+do canal, com a supressão dos marcadores tipográficos e a numeração das
+quatro partes acrescentada; nenhum número, palavra ou sinal de pontuação foi alterado. Os números
+entre parênteses retos identificam as quatro partes da estrutura. Todos os
 valores provêm dos componentes que os calcularam: a semelhança, do motor de recuperação; o
 movimento a cinco dias, da medição de impacto; e a probabilidade de $57\%$, do modelo calibrado. A
 parte \textnormal{[1]} contém um título que é ele próprio uma previsão, com alvo e prazo; trata-se
@@ -671,6 +673,39 @@ probabilidade e regista que a calibração é ajustada num bloco cuja prevalênc
 do bloco a que é aplicada, o que desloca a escala em cerca de cinco pontos percentuais no sentido
 otimista. A ordenação entre candidatas não é afetada, uma vez que a transformação preserva a
 ordem; o valor absoluto anunciado é.
+
+A última linha do alerta não se limita a apresentar a probabilidade: nomeia as entradas que a
+elevam e as que a reduzem. Essa enumeração não é redigida, é lida do próprio cálculo. O
+Excerto~\ref{lst:contrib} mostra a operação que a produz. Numa regressão logística com
+normalização, o logit é a soma do termo constante com o produto de cada coeficiente pelo valor
+normalizado da respetiva entrada, pelo que cada parcela dessa soma é a contribuição exata de uma
+entrada, e não uma aproximação obtida sobre o modelo depois de treinado. As centenas de
+dimensões do vetor do título são somadas numa só parcela, para que a mensagem permaneça legível;
+as entradas de contexto aparecem uma a uma. É desta ordenação que saem as palavras
+\emph{``raised by recent volatility (20d) and sector; lowered by today's own move''} da
+Figura~\ref{fig:sis_alerta}.
+
+\begin{lstlisting}[caption={[A repartição aditiva que a mensagem enuncia]A repartição que a
+última linha do alerta enuncia. O produto do vetor de coeficientes pelo vetor normalizado dá a
+contribuição de cada entrada para o logit; as parcelas são agrupadas e ordenadas por módulo
+decrescente. A explicação apresentada ao utilizador é esta soma, e não um segundo modelo
+ajustado sobre o primeiro. Omite-se a documentação interna da função.}, label={lst:contrib}, float=htbp]
+scaler = pipeline.named_steps["scale"]
+lr = pipeline.named_steps["lr"]
+x_scaled = scaler.transform(np.asarray(x_row, dtype="float64").reshape(1, -1))[0]
+contribs = lr.coef_[0] * x_scaled
+
+grouped: dict[str, float] = {}
+for name, c in zip(feature_names, contribs, strict=True):
+    if name.startswith("emb_"):
+        key = "headline content"
+    elif name.startswith("sector_"):
+        key = "sector"
+    else:
+        key = _FRIENDLY.get(name, name)
+    grouped[key] = grouped.get(key, 0.0) + float(c)
+return sorted(grouped.items(), key=lambda kv: -abs(kv[1]))
+\end{lstlisting}
 
 \subsection{Discordância entre a afirmação e a evidência}
 
@@ -835,7 +870,7 @@ ela.
 Verificou-se, com o sistema já em funcionamento, que este ciclo estivera interrompido durante
 dezanove dias sem registo de qualquer erro. Os dois processos correm em máquinas separadas cujo
 sistema de ficheiros é reinicializado a cada arranque, e os ficheiros intermédios de maturação não
-estavam a ser publicados no repositório de dados. Corresponde à classe de custo que
+estavam a ser publicados no armazenamento de dados partilhado. Corresponde à classe de custo que
 \textcite{sculley2015debt} designam por dependência de dados não declarada: cada componente cumpre
 o seu contrato, e a suposição que os liga não está expressa em parte alguma. O
 Capítulo~\ref{cap:conclusoes} retoma o caso como limitação.
@@ -905,9 +940,9 @@ medida e não é corrigida.}
         assumir a adotada.
 
   \item[Verificação da separação temporal.] Aos blocos cronológicos e ao embargo junta-se um
-        teste executável: perturbado o futuro de um exemplo, as suas entradas têm de permanecer
-        inalteradas e o seu rótulo tem de mudar. A ausência de fuga passa assim de afirmação a
-        propriedade verificada a cada execução.
+        teste executável, reproduzido no Excerto~\ref{lst:lookahead}: perturbado o futuro de um
+        exemplo, as suas entradas têm de permanecer inalteradas e o seu rótulo tem de mudar. A
+        ausência de fuga passa assim de afirmação a propriedade verificada a cada execução.
 
   \item[Calibração com enviesamento medido.] A saída do classificador é um valor no intervalo
         unitário, que serve simultaneamente para ordenar candidatas e para as excluir. O ajuste de
@@ -916,7 +951,8 @@ medida e não é corrigida.}
         implícita.
 
   \item[Versionamento dos artefactos.] O modelo treinado, o calibrador e um descritor da execução,
-        contendo dimensão de cada bloco, prevalência, semente e métricas, residem no repositório.
+        contendo dimensão de cada bloco, prevalência, semente e métricas, são conservados com a
+        dissertação.
         Uma métrica desacompanhada do artefacto que a produziu não é reproduzível.
 
   \item[Identidade entre modelo avaliado e modelo implantado.] O codificador de frases utilizado
@@ -991,7 +1027,7 @@ Figura~\ref{fig:sis_retreino} apresenta o ciclo de treino contínuo desenhado pa
 os mecanismos que o tornariam seguro. Três decisões o caracterizam.
 
 A primeira é o \textbf{gatilho}, condicional e não temporal. O retreino desencadeia-se quando o
-índice de estabilidade populacional (\glsentryshort{PSI}) de qualquer entrada ultrapassa $0{,}25$, o limiar convencional
+\gls{PSI} de qualquer entrada ultrapassa $0{,}25$, o limiar convencional
 de deslocamento significativo, ou ao fim de três meses sem revisão. A segunda é a \textbf{janela
 deslizante}: o treino cobre os vinte e quatro meses anteriores ao gatilho, e a validação e o teste
 os períodos seguintes, com o embargo de cinco dias da Secção~\ref{sec:met_triagem}. A divisão

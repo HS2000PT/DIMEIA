@@ -51,6 +51,9 @@ JUSTIFICADOS: dict[str, str] = {
 
     # (c) o funil de um dia, com ficheiro proprio
     "1194": "funil por porta, docs/evaluation/funil_por_porta.md",
+    # (d) aritmetica que a propria figura mostra
+    "4727": ("soma das eliminacoes da Figura do funil (2994+1194+269+249+21); "
+             "a legenda enuncia-a para que o leitor a possa refazer, e 5060-4727=333"),
 }
 
 

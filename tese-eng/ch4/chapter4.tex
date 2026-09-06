@@ -50,7 +50,7 @@ is a news item.
   proc/.style={cx, fill=black!3},
   saida/.style={cx, fill=black!16},
 ]
-  \node[fonte] (p) {\textbf{Prices}\\ \footnotesize chain of four\\ \footnotesize fallbacks};
+  \node[fonte] (p) {\textbf{Prices}\\ \footnotesize chain of five\\ \footnotesize sources};
   \node[fonte, below=6mm of p] (n) {\textbf{News}\\ \footnotesize three free\\ \footnotesize interfaces};
   \node[fonte, below=6mm of n] (h) {\textbf{Case base}\\ \footnotesize precedents with\\ \footnotesize measured impact};
 
@@ -102,7 +102,7 @@ interfaces, which preserves replaceability without introducing communication lat
 
 Two exceptions operate across process boundaries. Delivery uses the bot interface of the messaging
 channel, by \gls{HTTP} request. The web application that exposes the decision log runs as a
-separate process and reads the same data repository, without writing to it. This second separation
+separate process and reads the same data store, without writing to it. This second separation
 guarantees that consulting the log does not interfere with the assessment cycle.
 
 \section{Data acquisition}
@@ -117,15 +117,15 @@ late. The decisions described in this section respond to those limitations.
 
 \subsection{Quotes}
 
-Prices are obtained through a chain of four alternatives, consulted in a fixed order, the first
-that answers with valid data being adopted. The identifier of the source that served each value is
+Prices are obtained through a chain of five sources, consulted in a fixed order, the first that
+answers with valid data being adopted. The identifier of the source that served each value is
 recorded together with the value, since the provenance of a quantity is part of its
 explanation.
 
 The order of the chain is neither arbitrary nor definitive. One of the sources was demoted after
-observing the content it returned, and an additional candidate was rejected for answering with an
-anti-robot check, which makes it unusable in automated operation. Both decisions resulted from
-measurement and not from declared preference.
+it began answering with an anti-robot check, which makes it unusable in a reliable way in
+automated operation; it remains in the chain, in a lower position, as an opportunistic attempt.
+The decision resulted from observing what the source returned, and not from declared preference.
 
 The redundancy of the chain has a consequence that goes beyond availability. Without it, a day on
 which the single source blocks access is indistinguishable from a day on which the market did not
@@ -444,8 +444,8 @@ complete day, so the values should be read as proportions.
   An evaluation is not a distinct headline; the same titles were re-evaluated.}}
 \caption[Complete distribution of assessments by decision point]{The $5{,}060$ assessments
 recorded during part of 15 August 2026. Each band represents what remains after the gate indicated,
-and the value on the right what that gate eliminated; the eliminations sum to the $5{,}060$
-assessments and leave $333$ passages. The five messages delivered are a separate count, not a
+and the value on the right what that gate eliminated; the eliminations sum to $4{,}727$ and leave
+$333$ of the $5{,}060$ assessments. The five messages delivered are a separate count, not a
 category of assessments. The daily budget was used in full. The date is also that of the day on
 which the triage floor ceased to exercise a veto and came to rank, so the band of $1{,}194$
 assessments eliminated at that point belongs to the configuration prior to the one described in
@@ -656,8 +656,10 @@ paraphrasing quoted material would break the verifiability that the system exist
 \hspace*{1em}recent momentum (5d). This estimates whether the market reacts, never\\
 \hspace*{1em}which way: it is not a price forecast and not advice.
 \end{tcolorbox}
-\caption[Alert delivered to the channel]{Alert delivered on 13 August 2026, reproduced from the log
-without editing. The numbers in square brackets identify the four parts of the structure. Every
+\caption[Alert delivered to the channel]{Alert delivered on 13 August 2026, reproduced from the channel
+log, with typographic markers suppressed and the numbering of the four
+parts added; no number, word or punctuation mark was altered. The numbers in square brackets
+identify the four parts of the structure. Every
 value comes from the component that computed it: the similarity, from the retrieval engine; the
 five-day movement, from the impact measurement; and the probability of $57\%$, from the calibrated
 model. Part \textnormal{[1]} contains a headline that is itself a forecast, with a target and a
@@ -681,6 +683,40 @@ probability and records that the calibration is fitted on a block whose prevalen
 coincide with that of the block to which it is applied, which shifts the scale by about five
 percentage points in the optimistic direction. The ordering between candidates is not affected,
 since the transformation preserves the order; the absolute value announced is.
+
+The last line of the alert does not merely present the probability: it names the inputs that
+raise it and those that lower it. That enumeration is not drafted, it is read off the calculation
+itself. Listing~\ref{lst:contrib} shows the operation that produces it. In a logistic regression
+with standardisation, the logit is the sum of the constant term with the product of each
+coefficient by the standardised value of the corresponding input, so each term of that sum is the
+exact contribution of one input, and not an approximation obtained over the model after training.
+The hundreds of dimensions of the headline vector are summed into a single term, so that the
+message remains legible; the context inputs appear one by one. It is from this ordering that the
+words \emph{``raised by recent volatility (20d) and sector; lowered by today's own move''} of
+Figure~\ref{fig:sis_alerta} come.
+
+\begin{lstlisting}[caption={[The additive decomposition the message states]The decomposition that
+the last line of the alert states. The product of the coefficient vector by the standardised
+vector gives the contribution of each input to the logit; the terms are grouped and ordered by
+decreasing magnitude. The explanation presented to the user is this sum, and not a second model
+fitted over the first. The internal documentation of the function is omitted.},
+label={lst:contrib}, float=htbp]
+scaler = pipeline.named_steps["scale"]
+lr = pipeline.named_steps["lr"]
+x_scaled = scaler.transform(np.asarray(x_row, dtype="float64").reshape(1, -1))[0]
+contribs = lr.coef_[0] * x_scaled
+
+grouped: dict[str, float] = {}
+for name, c in zip(feature_names, contribs, strict=True):
+    if name.startswith("emb_"):
+        key = "headline content"
+    elif name.startswith("sector_"):
+        key = "sector"
+    else:
+        key = _FRIENDLY.get(name, name)
+    grouped[key] = grouped.get(key, 0.0) + float(c)
+return sorted(grouped.items(), key=lambda kv: -abs(kv[1]))
+\end{lstlisting}
 
 \subsection{Disagreement between the claim and the evidence}
 
@@ -847,7 +883,7 @@ adaptation to it.
 It was found, with the system already in operation, that this cycle had been interrupted for
 nineteen days without any error being recorded. The two processes run on separate machines whose
 file system is reinitialised at every start, and the intermediate maturation files were not being
-published to the data repository. It corresponds to the class of cost that
+published to the shared data store. It corresponds to the class of cost that
 \textcite{sculley2015debt} call an undeclared data dependency: each component fulfils its contract,
 and the assumption that links them is expressed nowhere. Chapter~\ref{cap:conclusoes} returns to
 the case as a limitation.
@@ -917,9 +953,9 @@ measured and is not corrected.}
         instead of assuming the one adopted.
 
   \item[Verification of the temporal separation.] To the chronological blocks and the embargo is
-        added an executable test: if the future of an example is perturbed, its inputs must stay
-        unchanged and its label must change. The absence of leakage thus goes from a claim to a
-        property verified at every run.
+        added an executable test, reproduced in Listing~\ref{lst:lookahead}: if the future of an
+        example is perturbed, its inputs must stay unchanged and its label must change. The
+        absence of leakage thus goes from a claim to a property verified at every run.
 
   \item[Calibration with measured bias.] The output of the classifier is a value in the unit
         interval, which serves both to rank candidates and to exclude them. The Platt fit runs on a
@@ -928,8 +964,8 @@ measured and is not corrected.}
         implicit.
 
   \item[Versioning of the artefacts.] The trained model, the calibrator and a descriptor of the
-        run, containing the size of each block, the prevalence, the seed and the metrics, reside in
-        the repository. A metric unaccompanied by the artefact that produced it is not
+        run, containing the size of each block, the prevalence, the seed and the metrics, are kept
+        with the dissertation. A metric unaccompanied by the artefact that produced it is not
         reproducible.
 
   \item[Identity between the model evaluated and the model deployed.] The sentence encoder used in
@@ -1002,7 +1038,7 @@ Figure~\ref{fig:sis_retreino} presents the continuous training cycle designed fo
 the mechanisms that would make it safe. Three decisions characterise it.
 
 The first is the \textbf{trigger}, conditional and not temporal. Retraining is set off when the
-population stability index (\glsentryshort{PSI}) of any input exceeds $0.25$, the conventional threshold of significant
+\gls{PSI} of any input exceeds $0.25$, the conventional threshold of significant
 displacement, or after three months without review. The second is the \textbf{rolling window}:
 training covers the twenty-four months preceding the trigger, and validation and test the following
 periods, with the five-day embargo of Section~\ref{sec:met_triagem}. The split stays chronological,

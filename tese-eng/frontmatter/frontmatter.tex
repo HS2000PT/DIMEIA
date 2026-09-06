@@ -143,11 +143,15 @@ information in this work that did not come from an automatic measurement.
 \cleardoublepage
 \addcontentsline{toc}{chapter}{List of Tables}
 \listoftables
-% The List of Listings is NOT printed and the command renaming its prefix was removed: the
-% rewrite for this tree left the document WITHOUT A SINGLE code listing, and the comment that
-% used to be here defended keeping a list that no longer has content. The anti-lookahead
-% guarantee, which was the listing worth showing, became the rolling-window figure in the
-% methods chapter, which serves better the reader this dissertation addresses.
+% The List of Listings is printed again. The document has three listings, and the official
+% MEIA template requires the list when they exist. The listings were added because the
+% committee reads the PDF and nothing else: an asserted guarantee is an assertion, and the
+% three this work makes -- the window that excludes the day assessed, the temporal separation
+% enforced by a test, and the explanation that is the calculation itself -- are inspectable
+% only if the code that produces them is printed here.
+\cleardoublepage
+\addcontentsline{toc}{chapter}{List of Listings}
+\lstlistoflistings
 
 %----------------------------------------------------------------------------------------
 %	LIST OF SYMBOLS
