@@ -55,6 +55,9 @@ ISENTOS = {
     # `NVDA` é um ticker e `VALID.` é a abreviatura de validação, que se escreve igual
     # nas duas línguas: traduzi-las seria inventar uma diferença que não existe.
     "NVDA", "VALID.",
+    # nomes de fornecedores na figura das pecas externas do Apendice A: sao marcas
+    # registadas e escrevem-se igual nas duas linguas.
+    "Alpha Vantage\\\\ Polygon",
 }
 
 

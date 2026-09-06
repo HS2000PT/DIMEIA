@@ -4,7 +4,7 @@
 
 > **Todas as regras de análise foram fixadas antes de existirem dados** e estão no cabeçalho de `scripts/analyse_feedback.py`. Nenhuma foi alterada depois.
 
-> Gerado por `scripts/analyse_feedback.py` a 2026-09-04 21:37 UTC.
+> Gerado por `scripts/analyse_feedback.py` a 2026-09-06 17:34 UTC.
 
 > **5 voto(s) excluído(s)** por não corresponderem a nenhum alerta do histórico partilhado. Não foram apagados do ficheiro, que é de acrescento e é a prova; foram ignorados na contagem.
 

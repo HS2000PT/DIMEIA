@@ -882,7 +882,7 @@ result. A table of thirteen constants, corresponding to the mean volatility of e
 computed exclusively over the training block and without reading a single headline, obtains $0.662$
 and beats the trained model. The comparison has a reservation that makes it less clean than it
 looks: $17.1\%$ of the rows of the test block belong to a company absent from training and receive
-the global median instead of a constant of their own. It is, even so, the third case in the chapter
+the global mean instead of a constant of their own. It is, even so, the third case in the chapter
 in which the simpler method obtains the better result. What the evidence supports is that ranking
 by volatility pays off, and not that learning pays off.
 
@@ -960,7 +960,7 @@ Keeping the nine-input variant does not follow from its having the best value am
 fitted in the execution container. By the criterion fixed before the results, four values are
 indistinguishable from one another: the $0.542$ of volatility, the $0.543$ of the variant without
 sector indicators, the $0.538$ of the deployed variant and the $0.534$ of the lookup table. The
-differences lie between $0.004$ and $0.009$, far below the $0.02$ limit. Applying that limit only
+None of the differences between them exceeds $0.009$, far below the $0.02$ limit. Applying that limit only
 when it disfavours a conclusion would amount to not having fixed it. The only difference the
 criterion separates in this comparison is the one that distinguishes these four variants from the
 block with text, of $+0.048$ with an interval between $+0.032$ and $+0.066$. The choice among the
@@ -1181,8 +1181,9 @@ system.
 
 The deployed gate was a fixed threshold on the calibrated probability, which let through the
 candidates above $0.50$. The question with meaning is whether that threshold separated headlines or
-separated companies, and the measurement was carried out over the $4{,}366$ decisions actually
-taken in production. Figure~\ref{fig:av_porta} presents the result.
+separated companies, and the measurement was carried out over the $36{,}925$ decisions actually
+taken in production between 22 July and 20 August 2026. Figure~\ref{fig:av_porta} presents the
+result.
 
 \begin{figure}[ht]
 \centering
@@ -1192,25 +1193,30 @@ taken in production. Figure~\ref{fig:av_porta} presents the result.
     \draw[black!40] (\xv,0) -- (\xv,-0.22) node[below, black!60] {\xv};
   \draw[dashed, thick, orange!70!black] (0.50,-0.6) -- (0.50,13.4)
     node[above, align=center, text=orange!60!black] {threshold\\ $0.50$};
+  % DATA: docs/evaluation/evaluation_gate_selectivity_unicos.md, window 2026-07-22 to
+  % 2026-08-20, 36,925 decisions — the SAME window the text reports. The previous version of
+  % this figure drew the 4,366-decision window while the following paragraph cited the
+  % 36,925 one, which put three orange bars under a sentence that said two.
   \foreach \xn/\xtk/\xa/\xm/\xb/\xcor in {
-    12/JPM/0.242/0.248/0.258/black!30, 11/JNJ/0.298/0.298/0.324/black!30,
-    10/NFLX/0.388/0.413/0.426/black!30, 9/XOM/0.390/0.399/0.407/black!30,
-    8/AAPL/0.423/0.457/0.472/black!30, 7/NVDA/0.457/0.481/0.501/black!62,
-    6/GOOGL/0.444/0.489/0.528/black!62, 5/MSFT/0.417/0.555/0.557/black!62,
-    4/AMZN/0.411/0.568/0.571/black!62, 3/META/0.525/0.537/0.545/orange!65,
-    2/TSLA/0.545/0.586/0.630/orange!65, 1/AMD/0.549/0.632/0.633/orange!65}
+    12/JPM/0.237/0.241/0.258/black!30, 11/JNJ/0.294/0.298/0.324/black!30,
+    10/XOM/0.390/0.399/0.407/black!30, 9/NFLX/0.388/0.439/0.486/black!30,
+    8/AAPL/0.423/0.457/0.472/black!30, 7/NVDA/0.457/0.475/0.501/black!62,
+    6/META/0.498/0.506/0.545/black!62, 5/GOOGL/0.444/0.513/0.528/black!62,
+    4/MSFT/0.417/0.557/0.561/black!62, 3/AMZN/0.411/0.568/0.571/black!62,
+    2/TSLA/0.545/0.586/0.630/orange!65, 1/AMD/0.549/0.633/0.641/orange!65}
   {
     \node[left, black!75] at (0.22,\xn) {\xtk};
     \draw[line width=2.6pt, color=\xcor] (\xa,\xn) -- (\xb,\xn);
     \fill[black!85] (\xm,\xn) circle (1.1pt);
   }
-  \node[right, align=left, text=orange!60!black] at (0.645,2) {always\\ passes};
+  \node[right, align=left, text=orange!60!black] at (0.652,1.5) {always\\ passes};
   \node[right, align=left, black!55] at (0.56,10.5) {never\\ passes};
-  \node[right, align=left, black!62] at (0.605,6.5) {the threshold\\ decides};
+  \node[right, align=left, black!62] at (0.60,5) {the threshold\\ decides};
 \end{tikzpicture}
 \caption[What the decision gate was separating]{Range of all the scores the model assigned to each
-company in production, with the median marked. The light bars never reach the threshold, the dark
-ones cross it and the orange ones sit always above it. Eight of the twelve companies lie entirely
+company in production, over the $36{,}925$ decisions logged between 22 July and 20 August 2026,
+with the median marked. The light bars never reach the threshold, the dark
+ones cross it and the orange ones sit always above it. Seven of the twelve companies lie entirely
 on one side, which means that for those the decision was taken before the headline was read.}
 \label{fig:av_porta}
 \end{figure}
@@ -1424,9 +1430,10 @@ outcome of that observation, which did not exist at the time of writing.
 Three of the twelve companies monitored, AMD, Netflix and Meta, do not appear in the training
 corpus, and a fourth, Microsoft, appears only in the test block. The model scores them all the
 same, because what it receives are numerical values and not the identity of the company, but it
-does so over a combination of inputs it has not observed. Two of the absent ones, AMD and Meta, are
-among those that always sit above the threshold, so the determination by company described above
-concentrates precisely on names the model never observed. It is a second, more literal sense in
+does so over a combination of inputs it has not observed. One of the absent ones, AMD, is one of the
+two companies that always sit above the threshold, and another, Meta, has a median immediately above
+it, so the determination by company described above also bears on
+names the model never observed. It is a second, more literal sense in
 which the deployed model operates outside the distribution on which it was evaluated, and the
 decisions of those companies enter the $825$ above like any others.
 
@@ -1513,7 +1520,7 @@ all of them.
   symbolic y coords={acaso, mexeu, modelo, volat, oraculo},
   ytick={acaso, mexeu, modelo, volat, oraculo},
   yticklabels={Random choice, Biggest mover today, The deployed model,
-               Company volatility, Oracle},
+               Thirteen volatility constants, Oracle},
   nodes near coords, nodes near coords align={horizontal}, point meta=explicit symbolic,
   every node near coord/.append style={font=\footnotesize},
   xlabel={precision@5 under the same protocol},
@@ -1527,7 +1534,10 @@ all of them.
 \end{axis}
 \end{tikzpicture}
 \caption[The system against the alternatives already available]{Five selection policies over the
-same test block. Random choice serves as the reference; the oracle is a theoretical maximum that is
+same test block. Random choice serves as the reference, and obtains $0.375$ here against the $0.379$
+of Figure~\ref{fig:av_orcamento}: they are two runs of the same draw by distinct procedures, and the
+difference lies within the spread across seeds of either of them. The oracle is a theoretical
+maximum that is
 not usable, obtained with knowledge of the answers. All of them choose knowing the complete day, so
 each value is an upper bound on what the same rule would obtain deciding minute by minute.}
 \label{fig:av_pontaaponta}
@@ -1543,7 +1553,10 @@ the alerts in operation.
 The second is that the system still does not beat volatility. Thirteen constants computed
 exclusively over the training block obtain $0.662$, which is consistent with the ablation of
 Section~\ref{sec:av_ablacao}: the model is, in practice, a table per company, and volatility is
-another table per company, simpler, and the one that requires no training.
+another table per company, simpler, and the one that requires no training. It is not the same
+quantity that Figure~\ref{fig:av_ablacao} labels \emph{volatility only}, which is a regression on daily
+volatility and obtains $0.632$ on this metric; here volatility enters as a constant per
+company.
 
 The third, and most useful, is the location of the limitation given by the theoretical maximum. The
 best possible result, choosing with knowledge of the answers, would be $0.968$, which means that on

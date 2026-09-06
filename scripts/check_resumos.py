@@ -87,12 +87,18 @@ def main() -> int:
                 print(f"      um é mais longo: {len(t1.split())} contra {len(t2.split())} "
                       "palavras")
 
-    n = len(lidos["tese-eng"]["própria"].split())
-    if n <= LIMITE:
-        print(f"  ok  abstract inglês dentro do limite: {n}/{LIMITE} palavras")
-    else:
-        falhas += 1
-        print(f"  !!  abstract inglês acima do limite: {n}/{LIMITE} palavras")
+    # ⚠️ O LIMITE APLICA-SE AOS DOIS, e durante um tempo só o inglês era verificado. O modelo
+    # oficial declara-o para «the abstract», e o brief da reescrita fixa-o para ambos; a
+    # verificação de um só deixava o resumo português crescer sem nada disparar, e foi o que
+    # aconteceu — passou a 201 palavras e o gate imprimia «ok» na mesma.
+    for nome, (arv, papel) in (("abstract inglês", ("tese-eng", "própria")),
+                               ("resumo português", ("tese-pt", "própria"))):
+        n = len(lidos[arv][papel].split())
+        if n <= LIMITE:
+            print(f"  ok  {nome} dentro do limite: {n}/{LIMITE} palavras")
+        else:
+            falhas += 1
+            print(f"  !!  {nome} acima do limite: {n}/{LIMITE} palavras")
 
     print()
     if falhas:

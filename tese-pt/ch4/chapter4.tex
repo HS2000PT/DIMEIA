@@ -444,7 +444,9 @@ avaliações e deixam $333$ passagens. As cinco mensagens entregues são uma con
 não uma categoria de avaliações. O orçamento diário foi integralmente utilizado. A data é
 também a do dia em que o piso de triagem deixou de exercer veto e passou a ordenar, pelo que a banda
 de $1\,194$ avaliações eliminadas nesse ponto pertence à configuração anterior à descrita na
-Tabela~\ref{tab:sis_portas}; nos dias seguintes esse ponto deixa de eliminar candidatas.}
+Tabela~\ref{tab:sis_portas}; nos dias seguintes esse ponto deixa de eliminar candidatas. O
+mesmo se aplica à banda do piso escalonado, que a Figura~\ref{fig:sis_razoes} regista a
+zero nos seis dias posteriores.}
 \label{fig:sis_funil}
 \end{figure}
 
@@ -468,8 +470,8 @@ distinção que é pertinente porque os dois casos admitem defesas de natureza d
 
 \begin{table}[!htbp]
 \caption[Limiares da política de decisão e a sua proveniência]{Constante associada a cada ponto de
-decisão e origem do respetivo valor. O primeiro ponto não utiliza constante, por corresponder a
-uma regra de correspondência textual. O orçamento diário atua depois dos pontos de decisão
+decisão e origem do respetivo valor. O ponto que verifica se o título nomeia a empresa não
+utiliza constante, por corresponder a uma regra de correspondência textual. O orçamento diário atua depois dos pontos de decisão
 representados na Figura~\ref{fig:sis_caminho} e constitui, na configuração em operação, o
 mecanismo que efetivamente limita o volume.}
 \label{tab:sis_portas}
@@ -543,7 +545,7 @@ assegura coerência temática, e não seleciona casos com maior valor preditivo.
       {Triagem acima do piso}/{50\%}/{d}/{deixou de vetar}/{-2.35},
       {Mesma história}/{---}/{e}/{0 a 1{,}8\%}/{-2.95},
       {Já enviada hoje}/{---}/{e}/{0 a 14{,}0\%}/{-3.55},
-      {Piso escalonado}/{0{,}64}/{d}/{nunca atuou}/{-4.15},
+      {Piso escalonado}/{0{,}64}/{d}/{0\% nos seis dias}/{-4.15},
       {Orçamento diário}/{5 por dia}/{e}/{77{,}7 a 99{,}8\%}/{-4.75}} {
     \node[lin] at (0,\y) {\nome};
     \node[val] at (4.9,\y) {\valor};
@@ -559,7 +561,8 @@ assegura coerência temática, e não seleciona casos com maior valor preditivo.
   \node[lin, font=\scriptsize, text=black!65, text width=12.2cm] at (0,-5.95)
     {O ponto que elimina quase tudo é um dos escolhidos, e é-o em todos os dias medidos. Dos dois
      cujo valor foi derivado de uma análise de custos, o piso da triagem deixou de vetar em 15 de
-     agosto de 2026 e o piso escalonado continua armado mas nunca atuou, por o orçamento se esgotar
+     agosto de 2026 e o piso escalonado continua armado e nada eliminou em nenhum dos seis dias
+     medidos, por o orçamento se esgotar
      antes de uma empresa alcançar um segundo alerta. O filtro de relevância atua antes de existir
      registo de etapa, pelo que a fração que elimina não é observável aqui.};
 \end{tikzpicture}
@@ -571,8 +574,11 @@ conserva apenas três dias de cada vez e as frações variam com o dia. A unidad
 e não a notícia: o sistema repontua os mesmos títulos a cada ciclo de sessenta segundos, pelo que
 estes valores medem onde o tempo do sistema é gasto e não quantas histórias distintas cada ponto
 eliminou. A distinção entre valor derivado e valor escolhido é a mesma da
-Tabela~\ref{tab:sis_portas}. A leitura que a figura permite, e que a tabela sozinha não dá, é a
-de que a redução de volume não é feita pelos pontos cujo valor foi derivado: é feita pelo
+Tabela~\ref{tab:sis_portas}. Os nove incluem os cinco representados na
+Figura~\ref{fig:sis_caminho} e mais quatro que atuam fora dela: a ausência de notícia, a
+supressão de histórias repetidas, o piso escalonado e o orçamento diário. A leitura que a
+figura permite, e que a tabela sozinha não dá, é a de que a redução de volume não é feita
+pelos pontos cujo valor foi derivado: é feita pelo
 orçamento, cujo valor foi escolhido, e assim é em cada um dos seis dias. Os valores provêm do registo de decisões publicado com o sistema.}
 \label{fig:sis_razoes}
 \end{figure}
@@ -984,7 +990,7 @@ Figura~\ref{fig:sis_retreino} apresenta o ciclo de treino contínuo desenhado pa
 os mecanismos que o tornariam seguro. Três decisões o caracterizam.
 
 A primeira é o \textbf{gatilho}, condicional e não temporal. O retreino desencadeia-se quando o
-índice de estabilidade populacional de qualquer entrada ultrapassa $0{,}25$, o limiar convencional
+índice de estabilidade populacional (\glsentryshort{PSI}) de qualquer entrada ultrapassa $0{,}25$, o limiar convencional
 de deslocamento significativo, ou ao fim de três meses sem revisão. A segunda é a \textbf{janela
 deslizante}: o treino cobre os vinte e quatro meses anteriores ao gatilho, e a validação e o teste
 os períodos seguintes, com o embargo de cinco dias da Secção~\ref{sec:met_triagem}. A divisão

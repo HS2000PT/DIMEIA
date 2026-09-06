@@ -201,7 +201,8 @@ The text of the alert cannot diverge from the computation &
   It is composed from the computed objects, without language generation & Kept \\
 The free-of-charge constraint limits coverage &
   At least one relevant news item on $88.5\%$ of the unusual days & Kept as an upper bound \\
-The explanations are useful to a person & --- & \textbf{Not claimed} \\
+The explanations are useful to a person & Observational feedback, no counterfactual &
+  \textbf{Not claimed} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -213,8 +214,9 @@ by external review. It is the intended behaviour of an evaluation plan fixed bef
 experiments, whose usefulness lies precisely in the ability to produce a negative answer.
 
 The second is that the two rows marked as not claimed carry the same weight as the rest. One of
-them is the usefulness of the explanations to the user, which was not measured for lack of a study
-with people. Where there is no evidence, no claim is made.
+them is the usefulness of the explanations to the user, which is not established for lack of a
+controlled study, despite the observational feedback reported in Section~\ref{sec:av_feedback}.
+Where the available evidence does not support the claim, the claim is not made.
 
 \section{Data, licences and attribution}
 \label{sec:ap_dados}
@@ -250,7 +252,7 @@ the path at which each one enters, and the text that follows presents the actual
 The sentence encoder is executed in the \gls{ONNX} format, which allows it to be run without the
 training library. No part was chosen out of preference: all of them follow from the founding
 constraint of using only free sources, and the two exceptions to that constraint, which are the
-hosting and
+hosting and the messaging channel, are costs of operation and not data sources.
 
 \begin{figure}[!htbp]
 \centering
@@ -274,7 +276,11 @@ hosting and
 
   \node[lg] at (-0.55,0.62) {\includegraphics[height=7mm,width=13mm,keepaspectratio]{finnhub.png}};
   \node[lg] at (0.55,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{yfinance.png}};
-  \node[lg] at (0,-0.30)    {\includegraphics[height=6mm,width=13mm,keepaspectratio]{rss.png}};
+  % O logotipo do RSS saiu daqui: o modulo existe no codigo mas NAO e invocado pelo
+  % caminho vivo, e esta figura enumera as pecas de que o sistema DEPENDE. As duas fontes
+  % de noticias que faltavam nao tem logotipo disponivel e entram por nome.
+  \node[font=\tiny, text=black!70, align=center] at (0,-0.30)
+    {Alpha Vantage\\ Polygon};
   \node[font=\tiny, text=black!60, align=center] at (0,-0.95) {prices and\ news};
 
   \node[lg] at (2.20,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{huggingface.png}};

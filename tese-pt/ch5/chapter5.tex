@@ -863,7 +863,7 @@ A comparação com a volatilidade, na Figura~\ref{fig:av_pontaaponta}, contém o
 correspondentes à volatilidade média de cada empresa, calculada exclusivamente sobre o bloco de
 treino e sem leitura de um único título, obtém $0{,}662$ e supera o modelo treinado. A comparação
 tem uma reserva que a torna menos limpa do que parece: $17{,}1\%$ das linhas do bloco de teste
-pertencem a uma empresa ausente do treino e recebem a mediana global em vez de uma constante
+pertencem a uma empresa ausente do treino e recebem a média global em vez de uma constante
 própria. É, ainda assim, o terceiro caso do capítulo em que o método mais simples obtém melhor
 resultado. O que a evidência sustenta é
 que ordenar por volatilidade compensa, e não que aprender compense.
@@ -942,8 +942,8 @@ por uma métrica que não formulava a pergunta de que o produto necessitava.
 A manutenção da variante de nove entradas não decorre de esta apresentar o melhor valor entre as que
 cabiam no contentor de execução. Pelo critério fixado antes dos resultados, quatro valores são indistinguíveis entre si: os
 $0{,}542$ da volatilidade, os $0{,}543$ da variante sem indicadores de setor, os $0{,}538$ da
-variante implantada e os $0{,}534$ da tabela de consulta. As diferenças situam-se entre $0{,}004$
-e $0{,}009$, muito abaixo do limite de $0{,}02$. Aplicar esse limite apenas quando desfavorece uma
+variante implantada e os $0{,}534$ da tabela de consulta. Nenhuma das diferenças entre elas excede
+$0{,}009$, muito abaixo do limite de $0{,}02$. Aplicar esse limite apenas quando desfavorece uma
 conclusão seria não o ter fixado. A única diferença que o
 critério separa nesta comparação é a que distingue estas quatro variantes do bloco com texto, de
 $+0{,}048$ com intervalo entre $+0{,}032$ e $+0{,}066$. A escolha entre as quatro é, por isso,
@@ -1157,36 +1157,46 @@ Secção~\ref{sec:met_metodologia}, e a que produz o diagnóstico que alterou o 
 
 A porta implantada era um limiar fixo sobre a probabilidade calibrada, que deixava passar as
 candidatas acima de $0{,}50$. A pergunta com significado é a de saber se esse limiar separava títulos
-ou separava empresas, e a medição foi realizada sobre as $4\,366$ decisões efetivamente tomadas em
-produção. A Figura~\ref{fig:av_porta} apresenta o resultado.
+ou separava empresas, e a medição foi realizada sobre as $36\,925$ decisões efetivamente tomadas
+em produção entre 22 de julho e 20 de agosto de 2026. A Figura~\ref{fig:av_porta} apresenta o
+resultado.
 
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[font=\footnotesize, x=13cm, y=0.42cm]
   \draw[black!45] (0.22,0) -- (0.68,0);
-  \foreach \xv in {0.25,0.35,0.45,0.55,0.65}
-    \draw[black!40] (\xv,0) -- (\xv,-0.22) node[below, black!60] {\xv};
+  % O rótulo é escrito à mão, e não interpolado do valor: `{\xv}` imprimia `0.25`, com PONTO
+  % decimal, na única figura do documento que o fazia — e a duas linhas do `0{,}50` do limiar,
+  % dentro da mesma figura.
+  \foreach \xv/\xl in {0.25/{0{,}25}, 0.35/{0{,}35}, 0.45/{0{,}45}, 0.55/{0{,}55},
+                       0.65/{0{,}65}}
+    \draw[black!40] (\xv,0) -- (\xv,-0.22) node[below, black!60] {$\xl$};
   \draw[dashed, thick, orange!70!black] (0.50,-0.6) -- (0.50,13.4)
     node[above, align=center, text=orange!60!black] {limiar\\ $0{,}50$};
+  % DADOS: docs/evaluation/evaluation_gate_selectivity_unicos.md, janela 2026-07-22 a
+  % 2026-08-20, 36 925 decisões — a MESMA janela que o texto reporta. A versão anterior
+  % desta figura desenhava a janela de 4 366 decisões enquanto o parágrafo seguinte citava
+  % a de 36 925, o que punha três barras alaranjadas por baixo de uma frase que dizia duas.
   \foreach \xn/\xtk/\xa/\xm/\xb/\xcor in {
-    12/JPM/0.242/0.248/0.258/black!30, 11/JNJ/0.298/0.298/0.324/black!30,
-    10/NFLX/0.388/0.413/0.426/black!30, 9/XOM/0.390/0.399/0.407/black!30,
-    8/AAPL/0.423/0.457/0.472/black!30, 7/NVDA/0.457/0.481/0.501/black!62,
-    6/GOOGL/0.444/0.489/0.528/black!62, 5/MSFT/0.417/0.555/0.557/black!62,
-    4/AMZN/0.411/0.568/0.571/black!62, 3/META/0.525/0.537/0.545/orange!65,
-    2/TSLA/0.545/0.586/0.630/orange!65, 1/AMD/0.549/0.632/0.633/orange!65}
+    12/JPM/0.237/0.241/0.258/black!30, 11/JNJ/0.294/0.298/0.324/black!30,
+    10/XOM/0.390/0.399/0.407/black!30, 9/NFLX/0.388/0.439/0.486/black!30,
+    8/AAPL/0.423/0.457/0.472/black!30, 7/NVDA/0.457/0.475/0.501/black!62,
+    6/META/0.498/0.506/0.545/black!62, 5/GOOGL/0.444/0.513/0.528/black!62,
+    4/MSFT/0.417/0.557/0.561/black!62, 3/AMZN/0.411/0.568/0.571/black!62,
+    2/TSLA/0.545/0.586/0.630/orange!65, 1/AMD/0.549/0.633/0.641/orange!65}
   {
     \node[left, black!75] at (0.22,\xn) {\xtk};
     \draw[line width=2.6pt, color=\xcor] (\xa,\xn) -- (\xb,\xn);
     \fill[black!85] (\xm,\xn) circle (1.1pt);
   }
-  \node[right, align=left, text=orange!60!black] at (0.645,2) {passa\\ sempre};
+  \node[right, align=left, text=orange!60!black] at (0.652,1.5) {passa\\ sempre};
   \node[right, align=left, black!55] at (0.56,10.5) {nunca\\ passa};
-  \node[right, align=left, black!62] at (0.605,6.5) {o limiar\\ decide};
+  \node[right, align=left, black!62] at (0.60,5) {o limiar\\ decide};
 \end{tikzpicture}
 \caption[O que a porta de decisão separava]{Intervalo de todas as pontuações atribuídas pelo modelo a
-cada empresa em produção, com a mediana assinalada. As barras claras nunca alcançam o limiar, as
-escuras atravessam-no e as alaranjadas situam-se sempre acima. Oito das doze empresas encontram-se
+cada empresa em produção, sobre as $36\,925$ decisões registadas entre 22 de julho e 20 de agosto
+de 2026, com a mediana assinalada. As barras claras nunca alcançam o limiar, as
+escuras atravessam-no e as alaranjadas situam-se sempre acima. Sete das doze empresas encontram-se
 inteiramente de um dos lados, o que significa que para essas a decisão estava tomada antes de o
 título ser lido.}
 \label{fig:av_porta}
@@ -1400,8 +1410,9 @@ data de escrita não existia.
 Três das doze empresas monitorizadas, a AMD, a Netflix e a Meta, não figuram no corpus de treino, e
 uma quarta, a Microsoft, figura apenas no bloco de teste. O modelo pontua-as na mesma, porque o que
 recebe são valores numéricos e não a identidade da empresa, mas fá-lo sobre uma combinação de
-entradas que não observou. Duas das ausentes, a AMD e a Meta, estão entre as que se situam sempre
-acima do limiar, pelo que a determinação por empresa descrita acima se concentra precisamente em
+entradas que não observou. Uma das ausentes, a AMD, é uma das duas empresas que se situam sempre
+acima do limiar, e outra, a Meta, apresenta mediana imediatamente acima dele, pelo que a
+determinação por empresa descrita acima incide também sobre
 nomes que o modelo nunca observou. Constitui um segundo sentido, mais literal, em que o modelo
 implantado opera fora da distribuição em que foi avaliado, e as decisões dessas empresas entram
 nas $825$ acima como quaisquer outras.
@@ -1489,7 +1500,7 @@ todas.
   symbolic y coords={acaso, mexeu, modelo, volat, oraculo},
   ytick={acaso, mexeu, modelo, volat, oraculo},
   yticklabels={Escolha aleatória, Quem mais se moveu hoje, O modelo implantado,
-               Volatilidade da empresa, Oráculo},
+               Treze constantes de volatilidade, Oráculo},
   nodes near coords, nodes near coords align={horizontal}, point meta=explicit symbolic,
   every node near coord/.append style={font=\footnotesize},
   xlabel={precisão@5 sob o mesmo protocolo},
@@ -1503,7 +1514,10 @@ todas.
 \end{axis}
 \end{tikzpicture}
 \caption[O sistema contra as alternativas já disponíveis]{Cinco políticas de seleção sobre o mesmo
-bloco de teste. A escolha aleatória serve de referência; o oráculo é um máximo teórico não utilizável,
+bloco de teste. A escolha aleatória serve de referência, e obtém aqui $0{,}375$ contra os
+$0{,}379$ da Figura~\ref{fig:av_orcamento}: são duas execuções do mesmo sorteio por
+procedimentos distintos, e a diferença situa-se dentro da dispersão entre sementes de
+qualquer uma delas. O oráculo é um máximo teórico não utilizável,
 obtido com conhecimento das respostas. Todas escolhem conhecendo o dia
 completo, pelo que cada valor é um limite superior do que a mesma regra obteria decidindo ao minuto.}
 \label{fig:av_pontaaponta}
@@ -1518,7 +1532,10 @@ percebida por uma pessoa nem o valor causal dos alertas em funcionamento.
 A segunda é que o sistema continua a não superar a volatilidade. Treze constantes calculadas
 exclusivamente sobre o bloco de treino obtêm $0{,}662$, o que é coerente com a ablação da
 Secção~\ref{sec:av_ablacao}: o modelo é, na prática, uma tabela por empresa, e a volatilidade é outra
-tabela por empresa, mais simples, sendo esta a que dispensa treino.
+tabela por empresa, mais simples, sendo esta a que dispensa treino. Não é a mesma quantidade
+que a Figura~\ref{fig:av_ablacao} designa por \emph{só volatilidade}, que é uma regressão sobre a
+volatilidade diária e obtém $0{,}632$ nesta métrica; aqui a volatilidade entra como uma constante
+por empresa.
 
 A terceira, e mais útil, é a localização da limitação pelo máximo teórico. O melhor resultado
 possível, escolhendo com conhecimento das respostas, seria de $0{,}968$, o que significa que em quase

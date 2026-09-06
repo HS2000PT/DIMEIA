@@ -200,7 +200,8 @@ O texto do alerta não pode divergir do cálculo &
   É composto a partir dos objetos calculados, sem geração de linguagem & Mantida \\
 A restrição de gratuitidade limita a cobertura &
   Pelo menos uma notícia relevante em $88{,}5\%$ dos dias invulgares & Mantida como limite superior \\
-As explicações são úteis a uma pessoa & --- & \textbf{Não afirmado} \\
+As explicações são úteis a uma pessoa & Retorno observacional do canal, sem contrafactual &
+  \textbf{Não afirmado} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -212,8 +213,9 @@ revisão externa. Constitui o comportamento pretendido de um plano de avaliaçã
 experiências, cuja utilidade reside precisamente na capacidade de produzir uma resposta negativa.
 
 A segunda é que as duas linhas assinaladas como não afirmadas têm o mesmo peso das restantes. Uma
-delas é a utilidade das explicações para o utilizador, que não foi medida por ausência de estudo com
-pessoas. Onde não existe evidência, não é formulada afirmação.
+delas é a utilidade das explicações para o utilizador, que não fica estabelecida por ausência
+de estudo controlado, apesar do retorno observacional reportado na Secção~\ref{sec:av_feedback}.
+Onde a evidência disponível não sustenta a afirmação, ela não é formulada.
 
 \section{Dados, licenças e atribuição}
 \label{sec:ap_dados}
@@ -249,7 +251,8 @@ percurso em que cada uma entra, e o texto que se lhe segue apresenta o custo efe
 operação. O codificador de frases é executado no formato \gls{ONNX}, que permite
 corrê-lo sem a biblioteca de treino. Nenhuma peça foi escolhida por preferência: todas decorrem
 da restrição fundadora de utilizar apenas fontes gratuitas, e as duas exceções a essa
-restrição, que são o alojamento e
+restrição, que são o alojamento e o canal de mensagens, são custos de operação e não fontes de
+dados.
 
 \begin{figure}[!htbp]
 \centering
@@ -273,7 +276,11 @@ restrição, que são o alojamento e
 
   \node[lg] at (-0.55,0.62) {\includegraphics[height=7mm,width=13mm,keepaspectratio]{finnhub.png}};
   \node[lg] at (0.55,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{yfinance.png}};
-  \node[lg] at (0,-0.30)    {\includegraphics[height=6mm,width=13mm,keepaspectratio]{rss.png}};
+  % O logotipo do RSS saiu daqui: o modulo existe no codigo mas NAO e invocado pelo
+  % caminho vivo, e esta figura enumera as pecas de que o sistema DEPENDE. As duas fontes
+  % de noticias que faltavam nao tem logotipo disponivel e entram por nome.
+  \node[font=\tiny, text=black!70, align=center] at (0,-0.30)
+    {Alpha Vantage\\ Polygon};
   \node[font=\tiny, text=black!60, align=center] at (0,-0.95) {preços e\ notícias};
 
   \node[lg] at (2.20,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{huggingface.png}};

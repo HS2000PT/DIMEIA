@@ -24,8 +24,13 @@ seccoes = {}
 # Os NOMES mudam com a arvore: a canonica usa ch{i}/chapter{i}.tex, a anterior usava
 # cap{i}/capitulo{i}.tex. Trocar a arvore sem trocar os nomes deixa o verificador cego,
 # e por isso ele RECUSA-SE a validar quando nao encontra corpus.
+# ⚠️ O `ch5/feedback_auto.tex` é GERADO e não se chama `chapter*`, pelo que o padrão acima o
+# deixava de fora — e com ele a secção `sec:av_feedback`, que é uma subsecção real do Capítulo 5.
+# Uma remissão do apêndice para ela era reportada como «label nao existe» enquanto o LaTeX a
+# resolvia sem um único aviso: o verificador via menos documento do que o compilador.
 ficheiros_capitulo = (sorted(RAIZ.rglob("ch*/chapter*.tex"))
                       or sorted(RAIZ.rglob("cap*/capitulo*.tex")))
+ficheiros_capitulo += sorted(RAIZ.rglob("ch*/*_auto.tex"))
 if not ficheiros_capitulo:
     print(f"ERRO: não encontrei capítulos em {RAIZ}. Não é seguro validar sem corpus.")
     sys.exit(2)

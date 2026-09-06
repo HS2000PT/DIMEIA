@@ -448,7 +448,9 @@ assessments and leave $333$ passages. The five messages delivered are a separate
 category of assessments. The daily budget was used in full. The date is also that of the day on
 which the triage floor ceased to exercise a veto and came to rank, so the band of $1{,}194$
 assessments eliminated at that point belongs to the configuration prior to the one described in
-Table~\ref{tab:sis_portas}; on the following days that point stops eliminating candidates.}
+Table~\ref{tab:sis_portas}; on the following days that point stops eliminating candidates.
+The same applies to the stepped-floor band, which Figure~\ref{fig:sis_razoes} records at
+zero over the six later days.}
 \label{fig:sis_funil}
 \end{figure}
 
@@ -472,8 +474,8 @@ chosen, a distinction that matters because the two cases admit defences of a dif
 
 \begin{table}[!htbp]
 \caption[Thresholds of the decision policy and their provenance]{Constant associated with each
-decision point and the origin of its value. The first point uses no constant, since it corresponds
-to a textual matching rule. The daily budget acts after the decision points shown in
+decision point and the origin of its value. The point that checks whether the headline names the
+company uses no constant, since it corresponds to a textual matching rule. The daily budget acts after the decision points shown in
 Figure~\ref{fig:sis_caminho} and constitutes, in the configuration in operation, the mechanism that
 actually limits the volume.}
 \label{tab:sis_portas}
@@ -548,7 +550,7 @@ select cases with greater predictive value.
       {Triage above the floor}/{50\%}/{d}/{no longer vetoes}/{-2.35},
       {Same story}/{---}/{e}/{0 to 1.8\%}/{-2.95},
       {Already sent today}/{---}/{e}/{0 to 14.0\%}/{-3.55},
-      {Stepped floor}/{0.64}/{d}/{never acted}/{-4.15},
+      {Stepped floor}/{0.64}/{d}/{0\% over the six days}/{-4.15},
       {Daily budget}/{5 per day}/{e}/{77.7 to 99.8\%}/{-4.75}} {
     \node[lin] at (0,\y) {\nome};
     \node[val] at (4.9,\y) {\valor};
@@ -564,7 +566,8 @@ select cases with greater predictive value.
   \node[lin, font=\scriptsize, text=black!65, text width=12.2cm] at (0,-5.95)
     {The point that eliminates almost everything is one of the chosen ones, and it is so on every
      day measured. Of the two whose value was derived from a cost analysis, the triage floor ceased
-     to veto on 15 August 2026 and the stepped floor remains armed but never acted, because the
+     to veto on 15 August 2026 and the stepped floor remains armed and eliminated nothing on any
+     of the six days measured, because the
      budget runs out before a company reaches a second alert. The relevance filter acts before a
      stage log exists, so the fraction it eliminates is not observable here.};
 \end{tikzpicture}
@@ -576,8 +579,11 @@ the log keeps only three days at a time and the fractions vary with the day. The
 assessment and not the news item: the system re-scores the same headlines at every sixty-second
 cycle, so these values measure where the system's time is spent and not how many distinct stories
 each point eliminated. The distinction between a derived value and a chosen value is the same as in
-Table~\ref{tab:sis_portas}. The reading the figure allows, and that the table alone does not give,
-is that the reduction in volume is not made by the points whose value was derived: it is made by
+Table~\ref{tab:sis_portas}. The nine include the five shown in
+Figure~\ref{fig:sis_caminho} plus four that act outside it: the absence of news, the
+suppression of repeated stories, the stepped floor and the daily budget. The reading the
+figure allows, and that the table alone does not give, is that the reduction in volume is not
+made by the points whose value was derived: it is made by
 the budget, whose value was chosen, and so it is on each of the six days. The values come from the
 decision log published with the system.}
 \label{fig:sis_razoes}
@@ -995,7 +1001,7 @@ Figure~\ref{fig:sis_retreino} presents the continuous training cycle designed fo
 the mechanisms that would make it safe. Three decisions characterise it.
 
 The first is the \textbf{trigger}, conditional and not temporal. Retraining is set off when the
-population stability index of any input exceeds $0.25$, the conventional threshold of significant
+population stability index (\glsentryshort{PSI}) of any input exceeds $0.25$, the conventional threshold of significant
 displacement, or after three months without review. The second is the \textbf{rolling window}:
 training covers the twenty-four months preceding the trigger, and validation and test the following
 periods, with the five-day embargo of Section~\ref{sec:met_triagem}. The split stays chronological,

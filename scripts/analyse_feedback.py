@@ -380,6 +380,16 @@ def fragmento_latex(registos: list[FL.FeedbackRecord],
                 f"pessoa, e apenas o último de cada par conta.",
                 f" {r['mudancas_de_voto']} votes were later changed by the same person, and "
                 f"only the last of each pair counts.")
+        # ⚠️ SEM ESTA CONTAGEM A ARITMÉTICA DA SECÇÃO NÃO FECHA, e é a primeira coisa que um
+        # arguente faz com dois números seguidos. O relatório longo já publicava os cliques
+        # repetidos; a subsecção da dissertação omitia-os, pelo que o leitor via «81 votos
+        # válidos → 42 efetivos» com apenas 15 das 39 remoções explicadas.
+        if r["repeticoes_iguais"]:
+            base += t(
+                f" Outros {r['repeticoes_iguais']} repetem um voto anterior sem o alterar e "
+                f"contam uma só vez.",
+                f" Another {r['repeticoes_iguais']} repeat an earlier vote without changing it "
+                f"and count only once.")
         if excluidos:
             base += t(
                 f" {excluidos} votos foram excluídos por não corresponderem a nenhum alerta "
