@@ -18,7 +18,7 @@ RAIZ = REPO / BASE
 if (RAIZ / "ch1").is_dir():
     FICH = (["frontmatter/frontmatter.tex"]
             + [f"ch{i}/chapter{i}.tex" for i in range(1, 7)]
-            + ["appendices/appendixA.tex", "appendices/appendixB.tex"])
+            + ["appendices/appendixA.tex"])
 else:
     FICH = (["frontmatter/frontmatter.tex"]
             + [f"cap{i}/capitulo{i}.tex" for i in range(1, 7)]

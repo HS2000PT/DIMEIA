@@ -65,7 +65,7 @@ if BASE == "tese-pt":
 if (T / "ch1").is_dir():          # árvore nova: ch1/chapter1.tex
     PROSA = ([T / "frontmatter" / "frontmatter.tex"]
              + [T / f"ch{i}" / f"chapter{i}.tex" for i in range(1, 7)]
-             + [T / "appendices" / "appendixA.tex", T / "appendices" / "appendixB.tex"])
+             + [T / "appendices" / "appendixA.tex"])
 else:                            # árvore antiga: cap5/capitulo5.tex
     PROSA = sorted(T.rglob("cap*/capitulo*.tex")) + [T / "apendices" / "apendiceA.tex",
                                                      T / "frontmatter" / "frontmatter.tex"]

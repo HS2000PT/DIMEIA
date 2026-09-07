@@ -33,7 +33,6 @@ FICHEIROS_EN = [
     "frontmatter/frontmatter.tex",
     *[f"ch{i}/chapter{i}.tex" for i in range(1, 7)],
     "appendices/appendixA.tex",
-    "appendices/appendixB.tex",
 ]
 FICHEIROS_PT = [
     "frontmatter/frontmatter.tex",
