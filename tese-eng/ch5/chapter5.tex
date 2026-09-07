@@ -1307,7 +1307,36 @@ As a consequence, the model ceased to be a gate and became a ranking criterion, 
 the measurement supports, and volume control moved to a daily budget of five alerts. This change
 brings together two policies that diverged: the dissertation evaluated a budget policy and the
 system deployed a threshold policy, so the value reported described a system distinct from the one
-in operation. The two policies came to belong to the same family without becoming identical.
+in operation. The two policies came to belong to the same family without becoming identical. Table~\ref{tab:av_politicas} brings the three
+policies together with what each one produces.
+
+\begin{table}[!htbp]
+\caption[The three decision policies]{The three decision policies considered for the gate, and what
+each produces over the same twelve companies. The second was never deployed: it was simulated over
+the logged decisions, and it is that simulation which rules it out. The concentration values refer
+to the news alerts actually delivered; the figure of $874$ is the number of alerts the simulation
+assigns to a single company.}
+\label{tab:av_politicas}
+\centering
+\begin{tabular}{L{0.24\textwidth} L{0.32\textwidth} L{0.30\textwidth}}
+\toprule
+\tabhead{Policy} & \tabhead{What it does} & \tabhead{What it produces} \\
+\midrule
+Fixed threshold \newline \emph{(the one in place)} &
+  The model vetoes: a news item passes if its score exceeds a single value &
+  7 of the 12 companies get to alert; concentration $0.713$ \\
+\addlinespace
+Per-company threshold \newline \emph{(simulated, rejected)} &
+  The value is no longer single and becomes a percentile within each company &
+  In companies whose score barely varies the percentile falls on the constant: one of them would
+  generate $874$ alerts \\
+\addlinespace
+Ranking with a budget \newline \emph{(the one deployed)} &
+  The model stops vetoing and starts ranking; volume is cut by a budget of five alerts per day &
+  9 of the 12 companies get to alert; concentration $0.480$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 The change was measured over the alerts actually delivered, and the intended effect is observed.
 The quantity observed is concentration, defined as the fraction of the alerts that belongs to the

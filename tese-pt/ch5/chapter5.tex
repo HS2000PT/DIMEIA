@@ -1287,7 +1287,37 @@ Em consequência, o modelo deixou de constituir porta e passou a constituir crit
 cinco alertas. Esta alteração aproxima duas políticas que divergiam: a dissertação avaliava uma
 política de orçamento e o sistema implantava uma política de limiar, pelo que o valor reportado
 descrevia um sistema distinto do que estava em funcionamento. As duas políticas passaram a pertencer
-à mesma família sem se tornarem idênticas.
+à mesma família sem se tornarem idênticas. A Tabela~\ref{tab:av_politicas} reúne as três
+políticas e o que cada uma produz.
+
+\begin{table}[!htbp]
+\caption[As três políticas de decisão]{As três políticas de decisão consideradas para a porta, e o
+que cada uma produz sobre as mesmas doze empresas. A segunda não chegou a ser implantada: foi
+simulada sobre as decisões registadas, e é essa simulação que a exclui. Os valores de concentração
+referem-se aos alertas de notícia efetivamente entregues; o valor de $874$ é o número de alertas que
+a simulação atribui a uma única empresa.}
+\label{tab:av_politicas}
+\centering
+\begin{tabular}{L{0.24\textwidth} L{0.32\textwidth} L{0.30\textwidth}}
+\toprule
+\tabhead{Política} & \tabhead{O que faz} & \tabhead{O que produz} \\
+\midrule
+Limiar fixo \newline \emph{(a que estava)} &
+  O modelo veta: a notícia passa se a pontuação exceder um valor único &
+  7 das 12 empresas chegam a alertar; concentração $0{,}713$ \\
+\addlinespace
+Limiar por empresa \newline \emph{(simulada, rejeitada)} &
+  O valor deixa de ser único e passa a um percentil dentro de cada empresa &
+  Nas empresas de pontuação quase constante o percentil recai sobre a constante: uma delas geraria
+  $874$ alertas \\
+\addlinespace
+Ordenação com orçamento \newline \emph{(a implantada)} &
+  O modelo deixa de vetar e passa a ordenar; o volume é cortado por um orçamento de cinco alertas
+  por dia &
+  9 das 12 empresas chegam a alertar; concentração $0{,}480$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 A alteração foi medida sobre os alertas efetivamente entregues, e o efeito pretendido
 verifica-se. A quantidade observada é a concentração, definida como a fração dos alertas que
