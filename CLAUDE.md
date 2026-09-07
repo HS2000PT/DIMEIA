@@ -9,6 +9,79 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 66 (2026-09-07, 6.ª parte): A TESE DE 138 PARA 120 PÁGINAS — E O NÚMERO QUE
+  ASSUSTAVA O AUTOR NÃO ERA O NÚMERO QUE O JÚRI CONTA.**
+  Quatro commits, fundidos em `c186949`. O pedido foi de redução: o autor disse que 138 páginas
+  passavam «a imagem de um trabalho excessivo», que cansariam o júri e abririam superfície de
+  pergunta, e que o objetivo é **passar despercebido, confortável**. Alvo declarado: ≤120.
+  **✅ (A) O ACHADO, E RESOLVE QUASE TUDO SOZINHO: 17 DAS 138 PÁGINAS ESTAVAM EM BRANCO.**
+  Medido: 102 do corpo em numeração árabe, 10 de apêndices, 14 de front matter, **17 versos em
+  branco** e a capa. As 17 existem para que cada capítulo abra em página ímpar quando o documento
+  é **impresso** frente e verso — e o júri recebe um PDF. `oneside, openany`: **138 → 121, sem
+  tocar numa palavra**, 0 erros, overfull inalterado. **Reversível numa palavra**, se o depósito
+  físico exigir frente e verso.
+  ⚠️ **E a comparação que devia ter sido feita antes de qualquer ansiedade:** a tese aprovada do
+  **Bruno Ribeiro tem 139 páginas físicas** e acaba no fólio 120; esta tinha **138** e acabava no
+  **112**. Nunca esteve acima da norma do corpus. A sessão 66 (2.ª parte) já tinha medido isto e
+  o número continuou a assustar, porque **o que se vê ao abrir um PDF é a contagem física**, não
+  o fólio. Vale a pena dizê-lo em voz alta a quem pergunte.
+  **✅ (B) DUAS SECÇÕES FORA, POR DECISÃO DO AUTOR, com o custo escrito.** O **Apêndice B** (plano
+  curricular, 2 pp): nenhuma das quatro aprovadas tem um apêndice destes, e o critério dele — ver
+  o que os colegas têm — resolve-o; o que se perde é o único sítio que mapeava a dissertação ao
+  plano de estudos, e que declarava duas unidades **sem aplicação**, o que é honesto e é também
+  superfície de pergunta. A **§A.6** (desenho do estudo que não correu, 2 pp), com a frase da
+  introdução do apêndice que a anunciava — deixá-la prometeria uma secção que já não existe.
+  **A dedicatória FICA**, contra a sugestão inicial dele: custa uma página e é a única linha
+  humana num documento muito técnico. Nenhuma remissão apontava para as duas secções.
+  **⚠️ (C) E CINCO PORTAS PRECISAVAM DE SABER — DUAS RECUSARAM-SE A CORRER, que é o
+  comportamento certo.** O `check_floats` e o `check_escrita` pararam com «faltam 1 ficheiro(s) do
+  corpus» em vez de aprovarem em silêncio. É a defesa contra a classe que este ficheiro documenta
+  desde a sessão 63: **não encontrar nada e aprovar tudo têm o mesmo aspeto no ecrã.** Corpus
+  atualizado em `check_tese_pt` (12 → **11** ficheiros estruturais, confirmados no `main.fls`),
+  `check_floats`, `check_escrita`, `check_materiais`, `check_references` e `check_tese_numeros`.
+  **✅ (D) O QUE MELHOROU NA LEITURA, e é o que o autor realmente queria.** As três diretivas
+  dele: números e fórmulas mais fáceis, **nem que se acrescentem visuais**; nada de longas
+  corridas de prosa sem visual a intercalar; texto fluido e conexo.
+  **(D1) §5.6 tinha um parágrafo REPETIDO.** O que começava «As duas contagens medem quantidades
+  distintas» repetia, quase palavra por palavra, as três últimas frases de um parágrafo **três
+  parágrafos acima**: o leitor recebia duas vezes a reconciliação entre os 48% e os 60%.
+  **(D2) E catorze números a correr em prosa** (`0,072 / 0,392 / 5,4 / 48% / 60%`, depois
+  `0,064 / 0,385 / 6,1 / 0,472`), agora numa tabela com as duas janelas lado a lado.
+  **(D3) A §5.6 tinha 3,7 PÁGINAS DE PROSA SEGUIDA sem um único visual**, na secção mais
+  importante do capítulo. O argumento é bom e **não se cortou**; faltava um visual que o
+  carregasse. Tabela nova com as três políticas — limiar fixo, limiar por empresa (simulada e
+  **rejeitada**, porque uma empresa geraria 874 alertas) e ordenação com orçamento. A corrida
+  passa a 2,4 páginas.
+  **⚠️ (E) A LIÇÃO DE MÉTODO DA SESSÃO, E FOI UM ERRO MEU APANHADO A MEIO.** Anunciei ao autor
+  que o pior sítio do documento — **37 números em 479 palavras**, no veredicto da QI3 — pedia uma
+  tabela. Fui escrevê-la e encontrei o **`fig:av_acrescimo` duas linhas acima, que já desenha
+  exatamente esses intervalos** — e a prosa até já dizia «A Figura 5.13 apresenta os três
+  intervalos» antes de os repetir todos por extenso. **A tabela teria duplicado uma figura que
+  existe, e acrescentado uma página.**
+  **O defeito não era falta de estrutura: era a prosa a reler os rótulos do visual ao lado.**
+  As três reservas passam a lista numerada e os intervalos ficam na figura. **Regra que passa a
+  valer: antes de acrescentar um visual para explicar números, ver se o visual já lá está.**
+  **⚠️ (F) O QUE NÃO SE TIROU, E A RAZÃO É UMA PORTA.** O Apêndice A **promete** que `0,534`,
+  `0,538` e `0,547` aparecem na §5.4.5, e o `check_apendice_xref` verifica-o. O critério aplicado:
+  **os números que sustentam um argumento ficam; saem os que repetem um visual.** Ficou também o
+  intervalo `[0,462; 0,542]`, que **não** está na figura e é o que sustenta «nenhum dos dois se
+  distingue do acaso» — sem ele a afirmação passaria de mostrada a afirmada.
+  **✅ (G) O QUE SE MEDIU E SE DECIDIU NÃO FAZER.** Varridas as corridas de prosa sem visual nos
+  Cap. 3, 4 e 5 e ordenadas por **densidade de números por cem palavras**, que é o que torna um
+  parágrafo ilegível. Depois das correções restam **onze corridas de 1,2 a 2,4 páginas**, com
+  densidade de 1,3 a 6,3 — normal para um capítulo de resultados. Uma delas (`ch4:971`) tem
+  **zero números** em 402 palavras: uma tabela ali seria forçada. **Recomendação escrita e aceite:
+  parar.** A cada tabela nova corresponde uma oportunidade de introduzir um defeito num documento
+  verificado, e a 21 dias do congelamento isso troca risco real por arrumação que ninguém nota.
+  ⚠️ **E o primeiro detetor de prosa que escrevi CONTAVA O CORPO DAS FIGURAS TikZ como prosa** —
+  a «pior corrida do documento», com 1 554 palavras, era uma figura. Refeito a substituir cada
+  ambiente flutuante por um marcador antes de contar. **Um detetor que grita de mais é a mesma
+  classe do detetor cego**, e este projeto já pagou as duas.
+  **PORTAS: PT 120 pp (97 de 120 antes dos apêndices) · EN 0 erros · overfull máx 5,68 pt e
+  8,61 pt, os dois iguais ao registo de antes de QUALQUER edição desta sessão · 18 verificadores
+  verdes neste contentor e CI verde nos quatro jobs · nenhum número mudou de valor.**
+  **⏭️ AS PENDÊNCIAS SÃO AS MESMAS TRÊS, E NENHUMA É TÉCNICA:** o `AUTOR_ENTRE_VOTANTES`; a
+  leitura integral pelo autor; e os nomes do júri, que o ISEP designa depois da submissão.
 - **🆕 SESSÃO 66 (2026-09-06, 5.ª parte): AUDITORIA FINAL EM PAPEL DE JÚRI HOSTIL, COM O PEDIDO
   DE CORRIGIR TUDO — E A RESTRIÇÃO QUE MUDOU A ARQUITETURA DO DOCUMENTO: **O JÚRI SÓ VÊ O PDF.**
   Três commits: `5fc95c8`, `e1f8de4`, `04eb3c6`. Vinte achados corrigidos, CI verde nos quatro
@@ -1890,8 +1963,8 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 66 (auditoria final em papel de júri hostil; o PDF passa a bastar-se a si próprio; e os dois defeitos que só a leitura do renderizado mostrou)
-- **Última atualização:** 2026-09-06
+- **Sessão nº:** 66 (a tese de 138 para 120 páginas; as 17 folhas em branco; e a tabela que eu ia acrescentar por cima de uma figura que já existia)
+- **Última atualização:** 2026-09-07
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
   ter calma nas estatísticas, mostrando cada salto até ao valor final):**
