@@ -37,7 +37,6 @@ CORPUS = [
     *[TESE / f"ch{i}" / f"chapter{i}.tex" for i in range(1, 7)],
     TESE / "ch5" / "feedback_auto.tex",
     TESE / "appendices" / "appendixA.tex",
-    TESE / "appendices" / "appendixB.tex",
 ]
 
 

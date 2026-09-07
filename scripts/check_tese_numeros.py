@@ -141,7 +141,6 @@ if (TESE / "ch1").is_dir():          # arvore nova: ch4/chapter4.tex
         "frontmatter/frontmatter.tex",
         *[f"ch{i}/chapter{i}.tex" for i in range(1, 7)],
         "appendices/appendixA.tex",
-        "appendices/appendixB.tex",
     ]
 else:                                # arvore antiga: cap4/capitulo4.tex
     FICHEIROS_TESE = [

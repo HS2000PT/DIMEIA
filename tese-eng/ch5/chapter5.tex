@@ -939,7 +939,7 @@ which have no company-level input at all, sit exactly at the prevalence of the t
 Three readings follow from the figure, and none depends on interpretation.
 
 The lookup table matches the model and beats it on one of the measures. On \gls{PRAUC} it obtains
-$0.534$ against $0.538$, a difference of $0.004$; on precision within the budget, which is the
+$0.534$ against $0.538$; on precision within the budget, which is the
 measure closest to real use, it obtains $0.662$ against $0.632$. This second difference was not
 accompanied by resampling by groups, unlike the \gls{PRAUC} differences of this section, and is
 therefore reported as an observation and not as established superiority. One number per company,
@@ -950,7 +950,7 @@ which is precisely the prevalence of the test block and the value defined in
 Section~\ref{sec:av_desenho} as corresponding to the absence of information.
 
 The only input that describes the news item adds nothing. The length of the headline, on its own,
-likewise produces $0.378$, which makes the only per-headline information the deployed model
+produces the same value, which makes the only per-headline information the deployed model
 receives indistinguishable from the absence of information.
 
 These readings require two claims to be separated. The scientific conclusion of \gls{QI}3 stands:
@@ -1035,18 +1035,26 @@ detectable increment on this task, and the value sits below the practical criter
 before the results.
 
 Three reservations delimit the reach of this increment, and all of them are measurements. The
-first is that the sum does not beat volatility alone: the value obtained is $0.547$ against
-$0.542$, and the difference has an interval between $-0.032$ and $+0.037$, which contains zero. The
-second is that the increment does not reach the product. Precision within the budget of five alerts
+intervals of the first and the third are the ones Figure~\ref{fig:av_acrescimo} draws, and neither
+of them excludes zero.
+
+\begin{enumerate}
+\item \textbf{The sum does not beat volatility alone.} The variant that adds the headline to the
+lookup table obtains $0.547$ against the $0.542$ of volatility, and the interval of that difference
+contains zero.
+
+\item \textbf{The increment does not reach the product.} Precision within the budget of five alerts
 per day is $0.662$ with and without the text, without a decimal place of difference. The increment
 exists in the ordering of the complete set and disappears when only five news items per day are
 selected.
 
-The third is that the text still does not separate news items of the same company. The ranking
-ability within each company is $0.500$ by construction for the lookup table and rises to $0.512$
-when the headline is added to it. For the deployed model it is $0.502$, with an interval between
-$0.462$ and $0.542$, and rises to $0.508$ with the text, an increment of $+0.006$ whose interval,
-between $-0.014$ and $+0.025$, contains zero. Neither of the two is distinguishable from chance.
+\item \textbf{The text still does not separate news items of the same company.} The ranking ability
+within each company is $0.500$ by construction for the lookup table and rises to $0.512$ when the
+headline is added to it. For the deployed model it is $0.502$, with an interval between $0.462$ and
+$0.542$, and rises to $0.508$ with the text, an increment whose interval contains zero. Neither of
+the two is distinguishable from chance.
+\end{enumerate}
+
 The information the text brings distinguishes companies and periods, and not news items.
 
 The answer to \gls{QI}3 remains negative and becomes more precise. No model with text beats
@@ -1226,28 +1234,40 @@ on one side, which means that for those the decision was taken before the headli
 \label{fig:av_porta}
 \end{figure}
 
-The values confirm the reading of the figure. Over the $36{,}925$ decisions logged, the mean spread
-of the scores within each company is $0.072$, whereas the spread between the medians of the
-companies is $0.392$, that is, $5.4$ times larger. Two companies were always above the threshold
-and five never reached it, so in only five of the twelve did the threshold get to decide. In $48\%$
-of the distinct headlines the outcome was determined by the company before the headline was read.
-Counted per logged decision, the fraction rises to $60\%$. The first is the one cited: the
-re-scoring of the same headlines at every sixty-second cycle inflates the second, and unevenly
-across companies.
+The values confirm the reading of the figure, and they reproduce across two distinct observation
+windows, as Table~\ref{tab:av_porta} shows.
 
-In an earlier and shorter window, of $4{,}366$ decisions, the same indicators were $0.064$,
-$0.385$ and $6.1$ times, with three companies always above and four in which the threshold decided.
-The structural conclusion does not depend on the window. In none of the assessments logged did
-Apple reach the threshold, with an observed maximum of $0.472$, whereas AMD exceeded it in all of
-them.
+\begin{table}[!htbp]
+\caption[Gate selectivity across two windows]{Selectivity indicators for the decision gate across
+two observation windows. In both, the spread between companies is several times the spread within
+each one: the conclusion that the score separates companies, and not headlines, does not depend on
+the window chosen.}
+\label{tab:av_porta}
+\centering
+\begin{tabular}{L{0.42\textwidth} C{0.20\textwidth} C{0.20\textwidth}}
+\toprule
+ & \tabhead{36,925 decisions} & \tabhead{4,366 decisions} \\
+\tabhead{Indicator} & \tabhead{22/07 to 20/08} & \tabhead{to 15/08} \\
+\midrule
+Mean spread within each company & $0.072$ & $0.064$ \\
+Spread between the company medians & $0.392$ & $0.385$ \\
+Ratio between the two & $5.4\times$ & $6.1\times$ \\
+\midrule
+Companies always above the threshold & 2 of 12 & 3 of 12 \\
+Companies where the threshold decides & 5 of 12 & 4 of 12 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-The two counts measure distinct quantities and both are reported. The system re-scores the same
-headlines at every sixty-second cycle, and the duplication is greater in the companies with fewer
-news items, which are the ones that never exceed the threshold, so counting decisions shifts the
-fraction upwards. Counted once per distinct headline, over a wider window of $36{,}925$ decisions,
-the fraction is $48\%$. The structural conclusion does not depend on the count chosen: there
-continue to be companies entirely on one side of the threshold, and the spread between companies
-continues to be several times the spread within each one.
+What the score separates is companies, not headlines. In none of the assessments logged did Apple
+reach the threshold, with an observed maximum of $0.472$, whereas AMD exceeded it in all of them.
+
+The fraction of cases in which the outcome was determined before the headline was read admits two
+counts, and both are reported. Counted once per distinct headline it is $48\%$; counted per logged
+decision it rises to $60\%$. The first is the one cited, and the reason is that the system re-scores
+the same headlines at every sixty-second cycle: that duplication is greater in the companies with
+fewer news items, which are precisely the ones that never exceed the threshold, so counting
+decisions shifts the fraction upwards, and in the direction that suits the conclusion.
 
 The defect has the same form as the one identified in Section~\ref{sec:av_qi1}, one layer up. In
 that case, a fixed threshold on the return measures the volatility of the company instead of the
@@ -1295,7 +1315,36 @@ As a consequence, the model ceased to be a gate and became a ranking criterion, 
 the measurement supports, and volume control moved to a daily budget of five alerts. This change
 brings together two policies that diverged: the dissertation evaluated a budget policy and the
 system deployed a threshold policy, so the value reported described a system distinct from the one
-in operation. The two policies came to belong to the same family without becoming identical.
+in operation. The two policies came to belong to the same family without becoming identical. Table~\ref{tab:av_politicas} brings the three
+policies together with what each one produces.
+
+\begin{table}[!htbp]
+\caption[The three decision policies]{The three decision policies considered for the gate, and what
+each produces over the same twelve companies. The second was never deployed: it was simulated over
+the logged decisions, and it is that simulation which rules it out. The concentration values refer
+to the news alerts actually delivered; the figure of $874$ is the number of alerts the simulation
+assigns to a single company.}
+\label{tab:av_politicas}
+\centering
+\begin{tabular}{L{0.24\textwidth} L{0.32\textwidth} L{0.30\textwidth}}
+\toprule
+\tabhead{Policy} & \tabhead{What it does} & \tabhead{What it produces} \\
+\midrule
+Fixed threshold \newline \emph{(the one in place)} &
+  The model vetoes: a news item passes if its score exceeds a single value &
+  7 of the 12 companies get to alert; concentration $0.713$ \\
+\addlinespace
+Per-company threshold \newline \emph{(simulated, rejected)} &
+  The value is no longer single and becomes a percentile within each company &
+  In companies whose score barely varies the percentile falls on the constant: one of them would
+  generate $874$ alerts \\
+\addlinespace
+Ranking with a budget \newline \emph{(the one deployed)} &
+  The model stops vetoing and starts ranking; volume is cut by a budget of five alerts per day &
+  9 of the 12 companies get to alert; concentration $0.480$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 The change was measured over the alerts actually delivered, and the intended effect is observed.
 The quantity observed is concentration, defined as the fraction of the alerts that belongs to the
