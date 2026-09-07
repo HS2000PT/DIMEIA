@@ -1,15 +1,3 @@
-{"date": "2026-09-05", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-05", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-05", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-05", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-05", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-05", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-05", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-05", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-06", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-06", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-06", "ticker": "NVDA", "stage": "alerted", "detail": "Prediction: Amazon Will Join Nvidia, Apple, and Alphabet in the $4 Trillion Club"}
-{"date": "2026-09-06", "ticker": "TSLA", "stage": "alerted", "detail": "Elon Musk Says Cybercab Is Gold to Reflect 'Golden Era' of Mobility as Tesla Lau"}
 {"date": "2026-09-06", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-06", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-06", "ticker": "META", "stage": "alerted", "detail": "Meta stands to gain as Mark Zuckerberg makes shocking decision"}
@@ -19410,6 +19398,18 @@
 {"date": "2026-09-07", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-07", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-07", "ticker": "JNJ", "stage": "stale", "detail": "mais recente 2026-09-04 > 2d"}
+{"date": "2026-09-07", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-07", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-07", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-07", "ticker": "TSLA", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-07", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-07", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-07", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-07", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-07", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-07", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-07", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-07", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-07", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-07", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-07", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
