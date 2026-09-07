@@ -1226,28 +1226,40 @@ on one side, which means that for those the decision was taken before the headli
 \label{fig:av_porta}
 \end{figure}
 
-The values confirm the reading of the figure. Over the $36{,}925$ decisions logged, the mean spread
-of the scores within each company is $0.072$, whereas the spread between the medians of the
-companies is $0.392$, that is, $5.4$ times larger. Two companies were always above the threshold
-and five never reached it, so in only five of the twelve did the threshold get to decide. In $48\%$
-of the distinct headlines the outcome was determined by the company before the headline was read.
-Counted per logged decision, the fraction rises to $60\%$. The first is the one cited: the
-re-scoring of the same headlines at every sixty-second cycle inflates the second, and unevenly
-across companies.
+The values confirm the reading of the figure, and they reproduce across two distinct observation
+windows, as Table~\ref{tab:av_porta} shows.
 
-In an earlier and shorter window, of $4{,}366$ decisions, the same indicators were $0.064$,
-$0.385$ and $6.1$ times, with three companies always above and four in which the threshold decided.
-The structural conclusion does not depend on the window. In none of the assessments logged did
-Apple reach the threshold, with an observed maximum of $0.472$, whereas AMD exceeded it in all of
-them.
+\begin{table}[!htbp]
+\caption[Gate selectivity across two windows]{Selectivity indicators for the decision gate across
+two observation windows. In both, the spread between companies is several times the spread within
+each one: the conclusion that the score separates companies, and not headlines, does not depend on
+the window chosen.}
+\label{tab:av_porta}
+\centering
+\begin{tabular}{L{0.42\textwidth} C{0.20\textwidth} C{0.20\textwidth}}
+\toprule
+ & \tabhead{36,925 decisions} & \tabhead{4,366 decisions} \\
+\tabhead{Indicator} & \tabhead{22/07 to 20/08} & \tabhead{to 15/08} \\
+\midrule
+Mean spread within each company & $0.072$ & $0.064$ \\
+Spread between the company medians & $0.392$ & $0.385$ \\
+Ratio between the two & $5.4\times$ & $6.1\times$ \\
+\midrule
+Companies always above the threshold & 2 of 12 & 3 of 12 \\
+Companies where the threshold decides & 5 of 12 & 4 of 12 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-The two counts measure distinct quantities and both are reported. The system re-scores the same
-headlines at every sixty-second cycle, and the duplication is greater in the companies with fewer
-news items, which are the ones that never exceed the threshold, so counting decisions shifts the
-fraction upwards. Counted once per distinct headline, over a wider window of $36{,}925$ decisions,
-the fraction is $48\%$. The structural conclusion does not depend on the count chosen: there
-continue to be companies entirely on one side of the threshold, and the spread between companies
-continues to be several times the spread within each one.
+What the score separates is companies, not headlines. In none of the assessments logged did Apple
+reach the threshold, with an observed maximum of $0.472$, whereas AMD exceeded it in all of them.
+
+The fraction of cases in which the outcome was determined before the headline was read admits two
+counts, and both are reported. Counted once per distinct headline it is $48\%$; counted per logged
+decision it rises to $60\%$. The first is the one cited, and the reason is that the system re-scores
+the same headlines at every sixty-second cycle: that duplication is greater in the companies with
+fewer news items, which are precisely the ones that never exceed the threshold, so counting
+decisions shifts the fraction upwards, and in the direction that suits the conclusion.
 
 The defect has the same form as the one identified in Section~\ref{sec:av_qi1}, one layer up. In
 that case, a fixed threshold on the return measures the volatility of the company instead of the

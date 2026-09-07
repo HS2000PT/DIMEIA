@@ -1207,27 +1207,40 @@ título ser lido.}
 \label{fig:av_porta}
 \end{figure}
 
-Os valores confirmam a leitura da figura. Sobre as $36\,925$ decisões registadas, a amplitude média
-das pontuações dentro de cada empresa é de $0{,}072$, ao passo que a amplitude entre as medianas das
-empresas é de $0{,}392$, isto é, $5{,}4$ vezes superior. Duas empresas situavam-se sempre acima do
-limiar e cinco nunca o alcançavam, pelo que apenas em cinco das doze o limiar chegava a decidir. Em $48\%$ dos títulos distintos o resultado estava determinado pela empresa antes de o título ser
-lido. Contada por decisão registada, a fração sobe para $60\%$. Cita-se a primeira: a repontuação
-dos mesmos títulos a cada ciclo de sessenta segundos inflaciona a segunda, e de forma desigual
-entre empresas.
+Os valores confirmam a leitura da figura, e reproduzem-se em duas janelas de observação distintas,
+como mostra a Tabela~\ref{tab:av_porta}.
 
-Numa janela anterior e mais curta, de $4\,366$ decisões, os mesmos
-indicadores valiam $0{,}064$, $0{,}385$ e $6{,}1$ vezes, com três empresas sempre acima e quatro em
-que o limiar decidia. A conclusão estrutural não depende da janela. Em nenhuma das avaliações
-registadas a Apple alcançou o limiar, com um máximo observado de $0{,}472$, ao passo que a AMD o
-ultrapassou em todas.
+\begin{table}[!htbp]
+\caption[Seletividade da porta em duas janelas]{Indicadores de seletividade da porta de decisão em
+duas janelas de observação. A amplitude entre empresas é, nas duas, várias vezes a amplitude dentro
+de cada uma: a conclusão de que a pontuação separa empresas, e não notícias, não depende da janela
+escolhida.}
+\label{tab:av_porta}
+\centering
+\begin{tabular}{L{0.42\textwidth} C{0.20\textwidth} C{0.20\textwidth}}
+\toprule
+ & \tabhead{36 925 decisões} & \tabhead{4 366 decisões} \\
+\tabhead{Indicador} & \tabhead{22/07 a 20/08} & \tabhead{até 15/08} \\
+\midrule
+Amplitude média dentro de cada empresa & $0{,}072$ & $0{,}064$ \\
+Amplitude entre as medianas das empresas & $0{,}392$ & $0{,}385$ \\
+Razão entre as duas & $5{,}4\times$ & $6{,}1\times$ \\
+\midrule
+Empresas sempre acima do limiar & 2 de 12 & 3 de 12 \\
+Empresas em que o limiar chega a decidir & 5 de 12 & 4 de 12 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-As duas contagens medem quantidades distintas e ambas são reportadas. O sistema repontua os mesmos
-títulos a cada ciclo de sessenta segundos, e a duplicação é maior nas empresas com menos notícias,
-que são as que nunca ultrapassam o limiar, pelo que contar decisões desloca a fração para cima.
-Contada uma vez por título distinto, sobre uma janela mais ampla de $36\,925$ decisões, a fração é de
-$48\%$. A conclusão estrutural não depende da contagem escolhida: continuam a existir empresas
-inteiramente de um dos lados do limiar, e a amplitude entre empresas continua a ser várias vezes a
-amplitude dentro de cada uma.
+O que a pontuação separa são empresas, e não notícias. Em nenhuma das avaliações registadas a Apple
+alcançou o limiar, com um máximo observado de $0{,}472$, ao passo que a AMD o ultrapassou em todas.
+
+A fração de casos em que o resultado estava determinado antes de o título ser lido admite duas
+contagens, e ambas se reportam. Contada uma vez por título distinto é de $48\%$; contada por decisão
+registada sobe para $60\%$. Cita-se a primeira, e a razão é que o sistema repontua os mesmos títulos
+a cada ciclo de sessenta segundos: essa duplicação é maior nas empresas com menos notícias, que são
+precisamente as que nunca ultrapassam o limiar, pelo que contar decisões desloca a fração para cima,
+e na direção que convém à conclusão.
 
 O defeito tem a mesma forma que o identificado na Secção~\ref{sec:av_qi1}, uma camada acima. Naquele
 caso, um limiar fixo sobre o retorno mede a volatilidade da empresa em vez da raridade do dia; neste,
