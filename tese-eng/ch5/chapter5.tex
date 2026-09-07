@@ -939,7 +939,7 @@ which have no company-level input at all, sit exactly at the prevalence of the t
 Three readings follow from the figure, and none depends on interpretation.
 
 The lookup table matches the model and beats it on one of the measures. On \gls{PRAUC} it obtains
-$0.534$ against $0.538$, a difference of $0.004$; on precision within the budget, which is the
+$0.534$ against $0.538$; on precision within the budget, which is the
 measure closest to real use, it obtains $0.662$ against $0.632$. This second difference was not
 accompanied by resampling by groups, unlike the \gls{PRAUC} differences of this section, and is
 therefore reported as an observation and not as established superiority. One number per company,
@@ -950,7 +950,7 @@ which is precisely the prevalence of the test block and the value defined in
 Section~\ref{sec:av_desenho} as corresponding to the absence of information.
 
 The only input that describes the news item adds nothing. The length of the headline, on its own,
-likewise produces $0.378$, which makes the only per-headline information the deployed model
+produces the same value, which makes the only per-headline information the deployed model
 receives indistinguishable from the absence of information.
 
 These readings require two claims to be separated. The scientific conclusion of \gls{QI}3 stands:
@@ -1035,18 +1035,26 @@ detectable increment on this task, and the value sits below the practical criter
 before the results.
 
 Three reservations delimit the reach of this increment, and all of them are measurements. The
-first is that the sum does not beat volatility alone: the value obtained is $0.547$ against
-$0.542$, and the difference has an interval between $-0.032$ and $+0.037$, which contains zero. The
-second is that the increment does not reach the product. Precision within the budget of five alerts
+intervals of the first and the third are the ones Figure~\ref{fig:av_acrescimo} draws, and neither
+of them excludes zero.
+
+\begin{enumerate}
+\item \textbf{The sum does not beat volatility alone.} The variant that adds the headline to the
+lookup table obtains $0.547$ against the $0.542$ of volatility, and the interval of that difference
+contains zero.
+
+\item \textbf{The increment does not reach the product.} Precision within the budget of five alerts
 per day is $0.662$ with and without the text, without a decimal place of difference. The increment
 exists in the ordering of the complete set and disappears when only five news items per day are
 selected.
 
-The third is that the text still does not separate news items of the same company. The ranking
-ability within each company is $0.500$ by construction for the lookup table and rises to $0.512$
-when the headline is added to it. For the deployed model it is $0.502$, with an interval between
-$0.462$ and $0.542$, and rises to $0.508$ with the text, an increment of $+0.006$ whose interval,
-between $-0.014$ and $+0.025$, contains zero. Neither of the two is distinguishable from chance.
+\item \textbf{The text still does not separate news items of the same company.} The ranking ability
+within each company is $0.500$ by construction for the lookup table and rises to $0.512$ when the
+headline is added to it. For the deployed model it is $0.502$, with an interval between $0.462$ and
+$0.542$, and rises to $0.508$ with the text, an increment whose interval contains zero. Neither of
+the two is distinguishable from chance.
+\end{enumerate}
+
 The information the text brings distinguishes companies and periods, and not news items.
 
 The answer to \gls{QI}3 remains negative and becomes more precise. No model with text beats

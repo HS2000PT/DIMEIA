@@ -922,7 +922,7 @@ teste.}
 Três leituras resultam da figura, e nenhuma depende de interpretação.
 
 A tabela de consulta iguala o modelo e supera-o numa das medidas. Na \gls{PRAUC} obtém $0{,}534$
-contra $0{,}538$, uma diferença de $0{,}004$; na precisão dentro do orçamento, que é a medida mais
+contra $0{,}538$; na precisão dentro do orçamento, que é a medida mais
 próxima da utilização real, obtém $0{,}662$ contra $0{,}632$. Esta segunda diferença não foi
 acompanhada de reamostragem por grupos, ao contrário das diferenças de \gls{PRAUC} desta secção, pelo
 que se reporta como observação e não como superioridade estabelecida. Um número por empresa, fixado
@@ -933,7 +933,7 @@ $0{,}378$, que é precisamente a prevalência do bloco de teste e o valor defini
 Secção~\ref{sec:av_desenho} como correspondente à ausência de informação.
 
 A única entrada que descreve a notícia nada acrescenta. O comprimento do título, isoladamente,
-produz igualmente $0{,}378$, o que torna a única informação por título recebida pelo modelo
+produz o mesmo valor, o que torna a única informação por título recebida pelo modelo
 implantado indistinguível da ausência de informação.
 
 Estas leituras obrigam a separar duas afirmações. A conclusão científica da \gls{QI}3 mantém-se: a
@@ -1017,19 +1017,26 @@ $+0{,}020$, que exclui zero. É a primeira ocasião em que uma representação d
 acréscimo detetável nesta tarefa, e o valor situa-se abaixo do critério prático de $0{,}02$ fixado
 antes dos resultados.
 
-Três reservas delimitam o alcance deste acréscimo, e todas são medições. A primeira é que a soma não
-supera a volatilidade isolada: o valor obtido é de $0{,}547$ contra $0{,}542$, e a diferença tem
-intervalo entre $-0{,}032$ e $+0{,}037$, que contém zero. A segunda é que o acréscimo não chega ao produto. A precisão dentro do orçamento de cinco alertas
-por dia é de $0{,}662$ com e sem o texto, sem uma casa decimal de diferença. O acréscimo existe na
+Três reservas delimitam o alcance deste acréscimo, e todas são medições. Os intervalos da primeira
+e da terceira são os que a Figura~\ref{fig:av_acrescimo} desenha, e nenhum deles exclui zero.
+
+\begin{enumerate}
+\item \textbf{A soma não supera a volatilidade isolada.} A variante que junta o título à tabela de
+consulta obtém $0{,}547$ contra os $0{,}542$ da volatilidade, e o intervalo dessa diferença contém
+zero.
+
+\item \textbf{O acréscimo não chega ao produto.} A precisão dentro do orçamento de cinco alertas por
+dia é de $0{,}662$ com e sem o texto, sem uma casa decimal de diferença. O acréscimo existe na
 ordenação do conjunto completo e desaparece quando apenas cinco notícias por dia são selecionadas.
 
-A terceira é que o texto
-continua a não separar notícias da mesma empresa. A capacidade de ordenação dentro de cada empresa
-vale $0{,}500$ por construção para a tabela de consulta e sobe para $0{,}512$ quando se lhe soma o
-título. Para o modelo implantado é de $0{,}502$, com intervalo entre $0{,}462$ e $0{,}542$, e sobe
-para $0{,}508$ com o texto, num acréscimo de $+0{,}006$ cujo intervalo, entre $-0{,}014$ e
-$+0{,}025$, contém zero. Nenhum dos dois se distingue do acaso. A informação que o texto traz distingue empresas e períodos, e não
-notícias.
+\item \textbf{O texto continua a não separar notícias da mesma empresa.} A capacidade de ordenação
+dentro de cada empresa vale $0{,}500$ por construção para a tabela de consulta e sobe para $0{,}512$
+quando se lhe soma o título. Para o modelo implantado é de $0{,}502$, com intervalo entre $0{,}462$ e
+$0{,}542$, e sobe para $0{,}508$ com o texto, num acréscimo cujo intervalo contém zero. Nenhum dos
+dois se distingue do acaso.
+\end{enumerate}
+
+A informação que o texto traz distingue empresas e períodos, e não notícias.
 
 A resposta à \gls{QI}3 mantém-se negativa e torna-se mais precisa. Nenhum modelo com texto supera a
 volatilidade, e o texto não é inútil: acrescenta ao que o modelo já conhece sobre a empresa, de forma
