@@ -17,9 +17,33 @@
   **✅ (A) O ACHADO, E RESOLVE QUASE TUDO SOZINHO: 17 DAS 138 PÁGINAS ESTAVAM EM BRANCO.**
   Medido: 102 do corpo em numeração árabe, 10 de apêndices, 14 de front matter, **17 versos em
   branco** e a capa. As 17 existem para que cada capítulo abra em página ímpar quando o documento
-  é **impresso** frente e verso — e o júri recebe um PDF. `oneside, openany`: **138 → 121, sem
-  tocar numa palavra**, 0 erros, overfull inalterado. **Reversível numa palavra**, se o depósito
-  físico exigir frente e verso.
+  é **impresso** frente e verso — e o júri recebe um PDF.
+  ⚠️ **A PRIMEIRA CORREÇÃO FOI `oneside` E ESTAVA ERRADA. O ESTADO FINAL É `openany` SOZINHO,
+  COM 123 PÁGINAS.** Quem ler só a frase anterior tira a conclusão errada, e por isso ela fica
+  corrigida aqui e não noutro sítio. O `oneside` dava 121 páginas com **zero** folhas em branco,
+  e foi **uma pergunta do autor** — «o dos outros exemplos, como é? a minha deve ser igual,
+  não?» — que obrigou a medir o corpus. **As quatro aprovadas mantêm TODAS versos em branco:**
+  Bruno Ribeiro 139/9, Helder Pereira 133/7, Joana Figueiredo 104/8, Rafael Silva 109/7. As
+  nossas 17 eram **o dobro** de qualquer uma; zero não é o que nenhuma tem.
+  ⚠️ **E o `oneside` fazia mais do que apagar folhas, o que é a parte que quase escapou.** A
+  classe do ISEP usa `inner=3.5cm, outer=2.6cm` — margens **assimétricas** que com `twoside`
+  **alternam** entre páginas pares e ímpares, que é a disposição para encadernar. Com `oneside`
+  deixam de alternar, e a geometria do documento passa a diferir da dos colegas em **todas** as
+  páginas, não só nas que desapareceram. Um `documentclass` que parece mexer só na contagem
+  mexia na composição inteira.
+  **O que gera as folhas em branco não é o frente e verso: é o `openright`**, que FORÇA cada
+  capítulo a abrir em página ímpar. Largando só isso: **PT 138 → 123 com 3 em branco**, e a
+  árvore inglesa, que até aí não tinha recebido alteração nenhuma, **132 → 120**. Quinze das
+  dezoito páginas poupadas, com a geometria do corpus. Fundido em `ff34e84`.
+  ⚠️ **O que NÃO se pode afirmar, e fica escrito para não ser lido como certeza:** não se
+  encontrou nenhuma regra do ISEP que exija frente e verso. O que há é que as quatro aprovadas
+  o usam **sem exceção** — evidência da convenção, não prova de obrigação. Pergunta para o
+  orientador.
+  ⚠️ **E UMA ARMADILHA NOVA DO `latexmk`, que custou uma medição errada:** ele **não recompilou**
+  e saiu a **exit 0 com o PDF errado no disco**. A base de dados dele já descrevia a versão de
+  teste, e o PDF antigo tinha sido reposto por cima com `git checkout`, pelo que se julgou
+  atualizado. **Só se apanha a contar as páginas do PDF, nunca pelo `exit code`.** Resolve-se
+  com `latexmk -gg`.
   ⚠️ **E a comparação que devia ter sido feita antes de qualquer ansiedade:** a tese aprovada do
   **Bruno Ribeiro tem 139 páginas físicas** e acaba no fólio 120; esta tinha **138** e acabava no
   **112**. Nunca esteve acima da norma do corpus. A sessão 66 (2.ª parte) já tinha medido isto e
@@ -1963,7 +1987,7 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 66 (a tese de 138 para 120 páginas; as 17 folhas em branco; e a tabela que eu ia acrescentar por cima de uma figura que já existia)
+- **Sessão nº:** 66 (a tese de 138 para 123 páginas; o `oneside` que estava errado e a pergunta do autor que o apanhou; e a tabela que eu ia acrescentar por cima de uma figura que já existia)
 - **Última atualização:** 2026-09-07
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
