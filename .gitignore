@@ -168,3 +168,11 @@ fb_tmp.jsonl
 # Rascunho de auditoria (contact sheets, PDF anteriores, registos de compilacao).
 # Nao entra no repositorio: sao 18 MB de imagens reproduziveis a partir do PDF.
 work/
+
+# ⚠️ CORPORA EM BRUTO, FORA DE `data/`. O `data/**` acima nao protege um caminho NOVO de
+# topo, e foi assim que o `fb_tmp.jsonl` ficou versionado na raiz. A 2026-09-08 apareceu
+# `fnspid/` com **28 GB** (o FNSPID em bruto, 23,2 GB so' o NASDAQ): um `git add -A` estagiava
+# tudo, e a sessao 59 ja' pos 84 MB permanentes na historia do git por um descuido igual --
+# a historia publicada nao se reescreve, logo o custo e' para sempre.
+fnspid/
+data-temp/
