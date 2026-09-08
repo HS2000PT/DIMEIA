@@ -248,3 +248,60 @@ coordenada fixa e um centímetro entre linhas.
 responder no painel da esquerda. Entra em `ISENTOS` com a razão escrita, e não por
 alargamento do filtro dos valores «sem língua» — alargá-lo cegaria o verificador para
 rótulos futuros que tivessem pontuação por dentro.
+
+
+---
+
+## 4. Fecho: o plano está executado
+
+Os doze itens da proposta correspondem, um a um, aos blocos A e B:
+
+| proposta | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| plano | A1 | A2 | A3 | A6 | A7 | A4 | A8 | A9 | B1 | A5 | B2 | A10 |
+
+Mais o A11, que era o achado da auditoria por confirmar. **Todos feitos.**
+
+### O que fica por fazer, e porquê
+
+Os quatro itens da Tabela 6.1 que exigem re-treinar continuam **materialmente inexecutáveis
+nesta máquina**, e voltei a verificá-lo em vez de o repetir de memória: `data/triage_dataset.csv`
+e o corpus FNSPID **não existem aqui**. O que existe são os registos de produção, que servem
+outra pergunta.
+
+### A verificação de composição que o crescimento obrigou
+
+O documento passou de 122 para **129 páginas**. Tudo o que é flutuante mudou de sítio, e a
+disciplina deste plano manda verificar no PDF renderizado. Medido página a página:
+
+| medição | resultado |
+|---|---|
+| `Float too large` | **0** nas duas árvores |
+| `Overfull`/`Underfull vbox` | **0** nas duas |
+| páginas de corpo quase vazias | **nenhuma** (só a dedicatória, por desenho) |
+| flutuantes impressos depois da primeira remissão | três, e **dois são remissões deliberadas** de páginas de orientação |
+
+**Um achado real:** a `fig:av_deriva` é invocada na página 68 e impressa na 81, e a frase manda
+o leitor lá para ver de onde vem uma prevalência arredondada. As **duas** remissões longas à
+`fig:av_pontaaponta` já levavam `\pageref` — a decisão estava tomada e aplicada a duas das três.
+A terceira passou a levar também. Não se resolve movendo o flutuante: a figura está na secção a
+que pertence, e o que atravessa treze páginas é a remissão.
+
+⚠️ **E A MEDIÇÃO TEVE DE SER REFEITA DUAS VEZES ANTES DE SER DE CONFIANÇA.** A primeira usava
+o `\label` anterior mais próximo no ficheiro como aproximação da página da remissão, o que dá
+um número sem significado. A segunda partia a extração em alimentações de página, e **o
+documento tem alimentações parasitas dentro das equações**: para um PDF de 129 páginas a divisão
+dava **148 pedaços**, e todos os números de página que ela imprimiu estavam deslocados — com ar
+de certos. Só a extração página a página é de confiança. É a terceira vez que este projeto paga
+a mesma lição: um detetor que grita de mais e um detetor cego são o mesmo defeito visto de dois
+lados.
+
+### O único item com relógio, medido hoje
+
+`scripts/evaluate_ranking_producao.py`, com os registos refrescados da branch de dados:
+**12 pares maturados contra um mínimo de 80**, e o script **recusa**, que é o comportamento
+correto. Ao ritmo observado de 12 pares por dia de bolsa projeta **176** até 2026-09-17.
+A recolha está no caminho certo.
+
+⚠️ **2026-09-17 é a última data de NOTÍCIA rotulável, e não a data de correr a avaliação.**
+O congelamento fica em ~2026-09-22.
