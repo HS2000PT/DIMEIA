@@ -9,6 +9,84 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 67 (2026-09-08): O PEDIDO ERA «CUSTE O QUE CUSTAR» E O QUE ELE PRODUZIU FOI
+  UMA LIMITAÇÃO ENCERRADA NO PRODUTO, UMA FIGURA DE ABERTURA, E SETE DEFEITOS QUE NENHUMA
+  PORTA VIA.**
+  Plano registado em
+  [`PLANO_LEITOR_EXECUCAO_2026-09-07.md`](docs/planos/PLANO_LEITOR_EXECUCAO_2026-09-07.md),
+  com o registo de execução preenchido bloco a bloco.
+  **✅ (A) BLOCO A FECHADO E VERIFICADO.** A1 a A11: a §4.8 da camada de inteligência, cinco
+  figuras novas, a página «Como ler esta tese» com quatro percursos, e treze reescritas do A9.
+  **⚠️ E A INSPEÇÃO VISUAL APANHOU TRÊS DEFEITOS DA MESMA FAMÍLIA, que compilam a zero erros,
+  zero overfull e passam os dezanove verificadores:** `minimum width` é um **piso** e não um
+  tecto, logo uma caixa com texto mais largo cresce e come o intervalo entre colunas. Na
+  `fig:sis_inteligencia` os rótulos das setas imprimiam-se **por cima** dos títulos das caixas;
+  na mesma figura a `resposta` ficou encostada à `âncora aberta`; e na `fig:con_cadeia` duas
+  caixas da QI1 encostaram e **o TikZ desenhou a seta ao contrário**, numa figura cujo assunto
+  é o sentido da cadeia. As duas passaram a `text width`. Mais um quarto, só na árvore inglesa:
+  a nota da QI2 não cabia e deixava a palavra `sector` sozinha encostada ao fundo das caixas.
+  **✅ (B) BLOCO B1 — A LINHA 8 DA TABELA 6.1 NOMEAVA O SEU PRÓPRIO REMÉDIO, E ESTAVA POR
+  FAZER.** «Exibir o ajuste junto de cada repartição». O `decompose_move` devolve `r_squared`
+  e `fallback` desde que existe, e **os dois caminhos que constroem a decomposição para o ecrã
+  descartavam os dois campos** — a mesma classe que a sessão 61 encontrou na v6: uma
+  quantidade medida, servida e invisível.
+  **⚠️ A LIMITAÇÃO ESTREITA-SE E NÃO SE FECHA, e a distinção é a parte que se pode escrever a
+  mais.** Exibir o coeficiente **não melhora a estimativa**; o que muda é que o leitor deixa de
+  precisar de a aceitar sem saber quando é fraca. A linha passa a nomear o que falta (comparar
+  um fator com dois, que o §6.3 já enumerava) e as **onze** limitações continuam onze.
+  A frase do ecrã é ancorada na **mediana medida** de $0{,}460$, publicada em
+  `docs/evaluation/evaluation_decomposition.md`, com um teste que parte se alguém mexer num sem
+  mexer no outro. Não viola o critério H2, que proíbe números sobre o **futuro**.
+  **✅ E A FIGURA DA EMPRESA PASSA A MOSTRAR A RESSALVA.** O caso foi escolhido por três
+  propriedades e nenhuma é conveniência: as três parcelas **somam exactamente** ao movimento
+  com duas casas ($-0{,}47 - 0{,}54 + 2{,}00 = +0{,}99$), ao contrário da candidata anterior,
+  que dava $-0{,}14$ contra um movimento de $-0{,}15$ **numa figura que convida a somá-la**; há
+  discordância, que é o que a passagem ilustra; e o ajuste fica **abaixo** da mediana, pelo que
+  a figura mostra a ressalva a funcionar em vez de a mostrar no caso favorável.
+  **⚠️ E FOI UMA PORTA QUE APANHOU O RESTO.** O `check_materiais` acusou `0.53` e `0.61` nos
+  slides — as parcelas do caso substituído. **São os números que o autor decora para dizer
+  em voz alta**, e de todos os sítios onde um número fica desactualizado é o pior. Slides PT e
+  EN e guia sincronizados.
+  **⚠️ (C) QUATRO DEFEITOS DE PRODUTO, ENCONTRADOS A OLHAR PARA AS CAPTURAS.** O `--ticker` do
+  gerador **não escolhia nada** (construía `?t=` e a v8 não guarda estado na URL; verificado ao
+  vivo: pedido GOOGL, obtido AAPL) — e o script até imprimia a empresa real, pelo que só
+  quem lesse a documentação ficava enganado. Os meses do eixo saíam **em português**, porque a
+  biblioteca formata pela língua do browser e **nenhum verificador entra dentro de um PNG**. A
+  altura da faixa do $z$ estava em **dois sítios** (JS e CSS) com `overflow:hidden` por cima, e
+  o desacordo aparecia como o rótulo `-3.02` **cortado a meio** em vez de como erro. E o eixo
+  não tinha intervalo fixado.
+  **⚠️ E UMA CORRECÇÃO MINHA QUE ESTAVA ERRADA:** tentei resolver o corte com **margem** no
+  eixo. Não resolve — o gerador de marcas adapta-se à margem e volta a pôr uma no bordo. O
+  que resolve é **fixar o intervalo**.
+  **✅ (D) BLOCO B2 — A FIGURA DE ABERTURA QUE O CAPÍTULO 1 NÃO TINHA.** O mesmo dia da
+  mesma empresa, à esquerda como uma cotação o apresenta e à direita como o sistema o entrega.
+  **Os valores são verbatim de um alerta real** (META, `2026-09-08T00:01:17Z`), que é a
+  mitigação do risco que a proposta nomeou: uma figura de abertura com números inventados
+  leria-se como material promocional.
+  **⚠️ A TERCEIRA COLUNA É A PARTE HONESTA:** o alerta responde à primeira e à terceira
+  perguntas e **não responde à segunda** — a repartição precisa do fecho do dia e vive na
+  página. Atribuir as três ao alerta afirmaria mais do que o produto faz.
+  **⚠️ E o caso do §3.4 foi considerado e rejeitado por uma razão concreta:** a legenda declara
+  que **a data das barras não ficou preservada**, logo a raridade daquele dia não é calculável,
+  e a primeira pergunta ficaria sem resposta ou seria inventada.
+  **⚠️ (E) TRÊS DEFEITOS MEUS NO TEXTO, todos só visíveis a renderizar:** «Nesse dia» passou a
+  apontar para o dia errado assim que as figuras deixaram de ser do mesmo dia (ancorado agora à
+  figura que **tem data**); o texto novo era mais comprido do que o que substituiu, pelo que o
+  slide e o guia **transbordaram**; e a primeira versão da figura de abertura tinha os três
+  blocos **sobrepostos** e o texto a começar **fora da caixa**.
+  **⚠️ (F) E O `check_escrita` APANHOU O MEU PRÓPRIO TEXTO:** escrevi «watchlist» três vezes em
+  prosa portuguesa. O termo da tese é **lista vigiada**.
+  **⚠️ (G) AS ARMADILHAS DE FERRAMENTA MORDERAM QUATRO VEZES, todas já documentadas:** o
+  heredoc comeu barras e transformou `\textbf` em **TAB + extbf** (regra que funciona:
+  escrever o script com a ferramenta de ficheiro); as **plicas invertidas** numa mensagem de
+  commit entre aspas duplas são **substituição de comando** e apagaram três palavras da
+  mensagem (corrigido com `-F ficheiro`); um `re` com `[^)]*` parou dentro de `Math.abs(...)`;
+  e o `pdftotext` continua a perder ligaturas.
+  **PORTAS FINAIS: PT 129 pp · EN 126 pp · 0 erros · 0 referências indefinidas · overfull máx
+  5,68 pt e 8,61 pt, iguais ao registo anterior a QUALQUER edição desta sessão · `check_entrega`
+  verde · 1039 testes (eram 1027) · ruff limpo · slides 22+22 · guia 25.** Três implantações em
+  produção, verificadas ao vivo. As três pendências continuam humanas: o `AUTOR_ENTRE_VOTANTES`,
+  a leitura integral pelo autor, e os nomes do júri.
 - **🆕 SESSÃO 66 (2026-09-07, 7.ª parte): A VERIFICAÇÃO QUE FALTAVA À AUDITORIA EXTERNA, E
   DEPOIS UMA SEGUNDA AUDITORIA EM PAPEL DE ARGUENTE HOSTIL. DEZ ACHADOS, SEIS APLICADOS, E
   O ARTEFACTO DESMENTIU A CORREÇÃO QUE EU PRÓPRIO TINHA CHAMADO «A MENOS INVASIVA».**
@@ -1747,8 +1825,8 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 66 (a verificação que faltava à auditoria externa, a segunda auditoria em papel de arguente hostil, e o artefacto que desmentiu a correção que eu tinha chamado «a menos invasiva»)
-- **Última atualização:** 2026-09-07
+- **Sessão nº:** 67 (a limitação da repartição encerrada no produto, a figura de abertura do Cap. 1, e sete defeitos de composição que nenhuma porta via)
+- **Última atualização:** 2026-09-08
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
   ter calma nas estatísticas, mostrando cada salto até ao valor final):**

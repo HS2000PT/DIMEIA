@@ -101,7 +101,7 @@ Preenchido à medida. Cada linha diz o que ficou feito e o que se partiu pelo ca
 | A10 | ✅ | feito — a AMD nomeada no §1.5 como fio dos três capítulos, com remissão de volta no Cap. 5. |
 | A11 | ✅ | feito nas duas. ⚠️ o heredoc comeu a barra de `\ref` e produziu CR + `ef`; reparado em modo binário. |
 | B1 | ✅ | feito, e mais fundo do que o previsto — ver o registo abaixo. |
-| B2 | | |
+| B2 | ✅ | feito — `fig:intro_lacuna`, com valores verbatim de um alerta real. |
 
 ### Verificação do Bloco A (2026-09-08)
 
@@ -207,3 +207,44 @@ por ser parâmetro de composição e não medição.
 Os três testes que decidem foram **verificados a falhar** com o defeito replantado: sem os
 campos no instantâneo, sem a chamada no cartão, e com o limiar da página afastado da medição
 publicada.
+
+
+### Registo do Bloco B2 (2026-09-08)
+
+A figura de abertura do Capítulo~1 (`fig:intro_lacuna`): o mesmo dia da mesma empresa, à
+esquerda como uma cotação o apresenta e à direita como o sistema o entrega.
+
+**Os valores da direita são reproduzidos de um alerta real** — o da META enviado a
+`2026-09-08T00:01:17Z` — e não de uma composição ilustrativa. É a mitigação do risco que
+a própria proposta nomeou: uma figura de abertura construída com números inventados leria-se
+como material promocional, e este documento não tem onde a defender.
+
+⚠️ **A TERCEIRA COLUNA É A PARTE HONESTA, e foi ela que decidiu o desenho.** O
+alerta responde à primeira e à terceira perguntas e **não responde à segunda**: a repartição
+depende do fecho do dia e por isso vive na página. Uma figura que atribuísse as três ao
+alerta afirmaria mais do que o produto faz, e a coluna «no alerta / na página» diz onde cada
+resposta está em vez de o esconder.
+
+⚠️ **O caso do §3.4 foi considerado e rejeitado por uma razão concreta.** A AMD é
+o fio que o A10 nomeia e seria a escolha natural, mas a legenda dessa figura declara que **a
+data das barras não ficou preservada no registo**, pelo que a raridade daquele dia não é
+calculável. Sem ela, a primeira das três perguntas ficaria sem resposta — ou seria
+inventada.
+
+⚠️ **A primeira versão tinha a geometria errada, e só se viu a renderizar:** os três
+blocos da direita **sobrepunham-se uns aos outros** e o texto começava **fora da caixa**.
+Compila a zero erros e a zero overfull nas duas situações. Refeita com âncora a oeste em
+coordenada fixa e um centímetro entre linhas.
+
+| porta | estado |
+|---|---|
+| `check_entrega` | verde |
+| testes | 1039 |
+| `ruff` | limpo |
+| páginas | PT **129** · EN 126 |
+| overfull máximo | 5,68 pt · 8,61 pt, iguais ao registo |
+
+⚠️ **E a porta da paridade acusou o `?`**, que é o símbolo das três perguntas por
+responder no painel da esquerda. Entra em `ISENTOS` com a razão escrita, e não por
+alargamento do filtro dos valores «sem língua» — alargá-lo cegaria o verificador para
+rótulos futuros que tivessem pontuação por dentro.
