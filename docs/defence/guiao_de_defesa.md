@@ -42,7 +42,7 @@ fraqueza.
 | **+0.377 / +0.348 / +0.100** | Lift energia / saúde / consumo | "O motor vale mais onde o vocabulário é distintivo; menos no consumo, genérico." |
 | **z = +7.61** | Tesla, 24 Out 2024, pós-resultados | "Exemplo real: μ=−0.92%, σ=2.725%, r=+19.82% → z=+7.61. A mesma regra que ignora ±2% apanha isto." |
 | **0.542 / 0.538 / 0.496** | PR-AUC triagem: volatilidade / contexto / contexto+texto | "O TEXTO não ajuda; o sinal vive no contexto de mercado. 2.º teste justo — e **robusto** (re-teste justo com PCA/FinBERT nunca bate a volatilidade)." |
-| **0.632 vs 0.379** | Precisão@orçamento (5 alertas/dia) vs ordenação aleatória | "Ganho offline no proxy, 1,67x; limite superior da política online, não utilidade humana." |
+| **0.632 vs 0.379** | Precisão@orçamento (5 alertas/dia) vs ordenação aleatória | "Ganho offline no proxy, 1,67x; seleção com o dia completo, sem garantia sobre a precisão online." |
 | **p = 0.539 (54%)** | Decisão META real, 12 Jul 2026 | "u=+0.699 (vol + setor dominam) → σ → Platt → 54%, o número exato enviado ao canal." |
 | **ROC-AUC 0.486** | Gate de triagem medido AO VIVO (825 decisões, 239 pares ticker-dia) | "Em produção o gate ordena ao acaso — IC [0.403, 0.571]. Fica como controlo de volume, e a afirmação de que seleciona materialidade está retirada." |
 | **P@5 0.513 vs 0.259 (80k)** | Recuperação causal no FNSPID multi-ano *(síntese)* | "Só precedentes anteriores; margem +0,254, como no produto." |
@@ -99,7 +99,7 @@ quatro DOIs da JSTOR. Não é incoerente?"*
 > "Pré-comprometi-me com a comparação decisiva: nenhum modelo que lê o TEXTO do título bateu a
 > volatilidade (PR-AUC 0.496 vs 0.542). **Mas isto é um resultado, não um fracasso** — como
 > MECANISMO OFFLINE, a triagem sobe a precisão 1,67x dentro do orçamento (0.632 vs 0.379). É um
-> limite superior da política online e não mede utilidade humana. O sinal
+> resultado de seleção com o dia completo, sem garantia sobre a precisão online nem medição de utilidade humana. O sinal
 > vive no contexto de mercado, e a variante em produção usa exatamente essas features. É a 2.ª vez
 > que a escolha transparente venceu num teste justo. Reporto-o tal como caiu."
 

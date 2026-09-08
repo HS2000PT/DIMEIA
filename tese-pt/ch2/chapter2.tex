@@ -4,7 +4,7 @@
 Este capítulo apresenta o enquadramento científico e tecnológico do trabalho. Caracteriza-se
 primeiro o público a que o sistema se dirige e as limitações que definem o problema; examinam-se
 depois as soluções atualmente disponíveis; percorrem-se por fim as áreas técnicas de onde provêm
-os componentes utilizados, situando a contribuição desta dissertação em relação a cada uma.
+os componentes utilizados, situando a contribuição desta dissertação em relação a cada uma. Quem o leia fica a saber que as três perguntas do investidor já têm resposta na literatura, e por que razão nenhuma ferramenta gratuita as junta.
 
 \section{O investidor particular e o problema da atenção}
 \label{sec:ctx_investidor}
@@ -35,8 +35,8 @@ problema de procura: perante um número muito elevado de alternativas, o investi
 e a sua escolha recai sobre o subconjunto que lhe foi tornado visível.
 
 Os autores delimitam o
-alcance da afirmação, que respeita a um desequilíbrio agregado entre compras e vendas e não a um
-comportamento universal, e reportam a conclusão que justifica este trabalho: o padrão de aquisição
+alcance da afirmação, que respeita a um desequilíbrio agregado entre compras e vendas, sem
+abranger um comportamento universal, e reportam a conclusão que justifica este trabalho: o padrão de aquisição
 assim formado não gera retornos superiores. A base empírica são registos de corretoras
 norte-americanas entre 1991 e 1999, anteriores à negociação por telemóvel e à ausência de
 comissões, pelo que o que se assume transferível é o mecanismo e não os valores medidos. A
@@ -92,8 +92,8 @@ Terminal profissional & sim & sim & sim & não publicado \\
 \end{tabular}
 \end{table}
 
-A tabela evidencia o essencial. A linha que responde às três perguntas existe e é a mais dispendiosa
-de todas. O problema não é, portanto, de natureza científica, mas de acesso: as respostas são
+A tabela evidencia o essencial. A única ferramenta existente que responde às três perguntas é
+também a mais dispendiosa de todas. O problema não é, portanto, de natureza científica, mas de acesso: as respostas são
 conhecidas e estão condicionadas a uma subscrição incompatível com o perfil de investidor em causa.
 
 Três categorias merecem exame individual, uma vez que cada uma falha por uma razão distinta e essas
@@ -353,6 +353,7 @@ avaliação desta natureza se decide, é estabelecida na Secção~\ref{sec:met_r
 com as linhas de base contra as quais o resultado é comparado.
 
 \subsection{Recuperação com geração, e por que razão o sistema para antes dela}
+\label{sec:ctx_rag}
 
 A arquitetura hoje corrente para responder a uma pergunta a partir de um corpo de documentos é a
 geração aumentada por recuperação, na qual um recuperador seleciona passagens e um modelo de
@@ -437,6 +438,35 @@ dispensando o recurso exclusivo a conhecimento geral do domínio. A fonte organi
 ciclo de quatro processos, a saber recuperar, reutilizar, rever e reter, e considera os quatro
 necessários à resolução completa de um problema.
 
+A Figura~\ref{fig:ctx_cbr} representa o ciclo e assinala onde o sistema se detém.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  cheio/.style={draw=black!75, line width=0.9pt, rounded corners=2pt, fill=black!6,
+            minimum width=2.45cm, minimum height=1.05cm, align=center},
+  vazio/.style={draw=black!45, densely dashed, line width=0.8pt, rounded corners=2pt,
+            fill=white, minimum width=2.45cm, minimum height=1.05cm, align=center,
+            text=black!55},
+  leg/.style={font=\scriptsize, text=black!65, align=center},
+  seta/.style={-{Stealth[length=4pt]}, draw=black!50},
+]
+  \node[cheio] (n0) at (0.0,0) {\textbf{recuperar}\\[1pt]\scriptsize encontra casos\\ semelhantes};
+  \node[cheio] (n1) at (3.15,0) {\textbf{reutilizar}\\[1pt]\scriptsize aproveita o que\\ neles foi medido};
+  \node[vazio] (n2) at (6.3,0) {\textbf{rever}\\[1pt]\scriptsize corrige o desfecho\\ para o caso novo};
+  \node[vazio] (n3) at (9.45,0) {\textbf{reter}\\[1pt]\scriptsize guarda a solução\\ como caso futuro};
+  \draw[seta] (n0) -- (n1);
+  \draw[seta] (n1) -- (n2);
+  \draw[seta] (n2) -- (n3);
+  \draw[seta, densely dashed, draw=black!35] (n3) -- ++(0,-0.95) -- node[leg, below]{} (0,-0.95) -- (n0);
+  \node[leg] at (1.58,0.95) {o sistema implementa};
+  \node[leg] at (7.87,0.95) {o sistema para aqui};
+  \draw[draw=black!30] (4.72,1.15) -- (4.72,-0.62);
+  \node[leg, text width=8.2cm] at (4.72,-1.7) {porque adaptar produziria uma expectativa sobre o que vem a seguir, que é a previsão que o trabalho recusa};
+\end{tikzpicture}
+\caption[O ciclo do raciocínio baseado em casos, e onde o sistema para]{Os quatro processos que \textcite{aamodt1994cbr} consideram necessários à resolução completa de um problema. O sistema executa os dois primeiros a cheio e detém-se antes dos dois seguintes. A interrupção não é uma insuficiência de implementação: \emph{rever} adapta o desfecho de um caso passado ao caso presente, e essa adaptação é uma expectativa sobre o futuro, ou seja exatamente a previsão que a restrição fundadora recusa. O que o sistema apresenta é o desfecho medido de cada caso, tal como ocorreu.}
+\label{fig:ctx_cbr}
+\end{figure}
 A técnica descrita na Secção~\ref{sec:met_recuperacao} implementa os dois primeiros e interrompe-se
 deliberadamente antes dos restantes: recupera casos semelhantes e apresenta o que neles foi medido,
 sem adaptar esse desfecho ao caso presente. A adaptação produziria uma expectativa sobre o que virá
@@ -452,7 +482,7 @@ que sustentam a decisão, em vez da totalidade dos valores calculados.
 
 Há um segundo requisito, do mesmo lado, que condiciona não o conteúdo da explicação mas a frequência
 com que ela é entregue. Um destinatário exposto a avisos em excesso deixa de os processar, fenómeno
-documentado em domínios onde o custo de o ignorar é elevado \autocite{ancker2017alertfatigue}. A consequência é que a política de decisão não é acessória mas parte do desenho. Um alerta que não
+documentado em domínios onde o custo de o ignorar é elevado \autocite{ancker2017alertfatigue}. A consequência é que a política de decisão constitui parte do desenho. Um alerta que não
 é lido vale o mesmo que um alerta que não foi enviado, e é por isso que o
 Capítulo~\ref{cap:sistema} trata os critérios de supressão com o cuidado que dedica aos métodos.
 
@@ -631,7 +661,7 @@ gratuito ou acessível ao investidor particular. O seu preço não é publicado 
 a indisponibilidade, e não um valor concreto, que sustenta o argumento. Os produtos
 gratuitos que declaram responder à terceira entregam uma afirmação sem a evidência que a sustenta.
 E os componentes académicos que resolveriam cada parte foram avaliados isoladamente, sobre corpora
-de referência, e não como um sistema em funcionamento contínuo contra fontes reais.
+de referência, nunca como um sistema em funcionamento contínuo contra fontes reais.
 
 Esta observação determina a distinção que atravessa o trabalho e que o Capítulo~\ref{cap:sistema}
 retoma ao justificar a ausência de um modelo de linguagem na composição das mensagens. Uma frase

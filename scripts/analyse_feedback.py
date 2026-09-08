@@ -274,9 +274,9 @@ def relatorio(registos: list[FL.FeedbackRecord],
         lo, hi = wilson(uteis, n)
         L.append(f"A proporção de alertas considerados úteis é de {_pct(uteis / n)}, com "
                  f"intervalo de confiança de Wilson a 95% entre {_pct(lo)} e {_pct(hi)}. "
-                 f"A largura deste intervalo é a medida honesta do que {n} votos permitem "
-                 f"afirmar, e é por isso que é reportada ao lado do valor central e nunca "
-                 f"depois dele.")
+                 "Este cálculo binomial não corrige a dependência entre votos da mesma "
+                 "pessoa ou sobre o mesmo alerta; a sua largura não representa toda a "
+                 "incerteza desta amostra.")
     L.append("")
 
     L.append("## Ameaças à validade, e nenhuma delas é resolúvel com mais votos")
@@ -344,7 +344,7 @@ def fragmento_latex(registos: list[FL.FeedbackRecord],
         "um voto por pessoa e por alerta com o último a substituir o anterior, "
         "salvaguarda que repete o cálculo sem o votante dominante quando este representa "
         "mais de quarenta por cento dos votos, sempre sujeita ao mesmo mínimo, e intervalos "
-        "de confiança de Wilson, apropriados a proporções com amostras pequenas.",
+        "de confiança de Wilson, calculados sem correção por agrupamento.",
         "The channel now accompanies every alert delivered with two buttons, "
         "\\emph{useful} and \\emph{did not help}, and records the vote of whoever presses. "
         "The analysis rules were fixed before a single vote existed and were not changed "
@@ -352,7 +352,7 @@ def fragmento_latex(registos: list[FL.FeedbackRecord],
         "per person and per alert with the last replacing the previous one, a safeguard that "
         "repeats the computation without the dominant voter when that voter accounts for more "
         "than forty per cent of the votes, always subject to the same minimum, and Wilson "
-        "confidence intervals, appropriate to proportions with small samples."))
+        "confidence intervals, calculated without adjustment for clustering."))
     if amostra_verificada:
         L.append(t("Contaram apenas votos sobre alertas presentes no registo partilhado.",
                    "Only votes on alerts present in the shared log were counted."))
@@ -436,12 +436,14 @@ def fragmento_latex(registos: list[FL.FeedbackRecord],
             L.append(t(
                 f"Dos {n} votos efetivos, {uteis} classificaram o alerta como útil, "
                 f"ou seja {uteis / n * 100:.0f}\\%, com intervalo de confiança de Wilson a "
-                f"95\\% entre {lo * 100:.0f}\\% e {hi * 100:.0f}\\%. A largura deste "
-                f"intervalo é a medida honesta do que {n} votos permitem afirmar.",
+                f"95\\% entre {lo * 100:.0f}\\% e {hi * 100:.0f}\\%. Este cálculo binomial "
+                "não corrige a dependência entre votos da mesma pessoa ou sobre o mesmo "
+                "alerta; a sua largura não representa toda a incerteza desta amostra.",
                 f"Of the {n} effective votes, {uteis} rated the alert as useful, that is "
                 f"{uteis / n * 100:.0f}\\%, with a 95\\% Wilson confidence interval between "
-                f"{lo * 100:.0f}\\% and {hi * 100:.0f}\\%. The width of this interval is the "
-                f"honest measure of what {n} votes allow one to claim."))
+                f"{lo * 100:.0f}\\% and {hi * 100:.0f}\\%. This binomial calculation does not "
+                "adjust for dependence between votes by the same person or on the same "
+                "alert; its width does not represent all the uncertainty in this sample."))
             por_pessoa = Counter(v for v, _ in efetivos)
             dom, nd = por_pessoa.most_common(1)[0]
             if nd / n > DOMINANCIA_MAX:

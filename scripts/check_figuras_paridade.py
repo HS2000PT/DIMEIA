@@ -57,7 +57,15 @@ ISENTOS = {
     "NVDA", "VALID.",
     # nomes de fornecedores na figura das pecas externas do Apendice A: sao marcas
     # registadas e escrevem-se igual nas duas linguas.
-    "Alpha Vantage\\\\ Polygon",
+    # ⚠️ O `Finnhub` entrou nesta linha a 2026-09-07. Ja tinha logotipo na figura, mas a
+    # marca dele e um quadrado sem palavra nenhuma e nao se le como nome -- e e' a fonte
+    # que a Tabela 4.1 mostra ser a de melhor precisao e cobertura. Passa a entrar tambem
+    # por nome, como as outras duas.
+    "Finnhub\\\\ Alpha Vantage\\\\ Polygon",
+    # ⚠️ O `0` da caixa do dia da noticia, na figura da janela do estudo de evento, entrou a
+    # 2026-09-08. E' o numero zero e nao uma palavra: traduzi-lo seria inventar uma diferenca
+    # que nao existe, pela mesma razao que o `NVDA` e o `VALID.` acima.
+    BS + "scriptsize " + BS + "textbf{0}",
 }
 
 

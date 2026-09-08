@@ -23,8 +23,10 @@ São conservadas três classes de artefacto. A primeira é o componente aprendid
 modelo treinado, o calibrador ajustado sobre o bloco de validação e um ficheiro descritivo da
 execução que os produziu, com a dimensão de cada bloco, a prevalência de casos positivos, a semente
 utilizada e as métricas obtidas. A segunda é o conjunto de ficheiros de resultados, um por
-procedimento de avaliação, que o texto cita. A terceira é a base de precedentes que a aplicação
-implantada consulta, com cinquenta e seis megabytes de vetores e oito de metadados. Esta última não
+procedimento de avaliação, que o texto cita. A terceira é a componente reconstruída da base de
+precedentes, com cinquenta e seis megabytes de vetores e oito de metadados; a base que a aplicação
+implantada consulta é a fusão desta com a base viva, conforme a
+Secção~\ref{sec:sis_bases} descreve. Esta última não
 constitui uma amostra: é o artefacto de que o sistema necessita para arrancar, e sem ele não
 existiriam precedentes para apresentar.
 
@@ -63,7 +65,7 @@ Uma dessas medições não é regenerável, e a distinção fica registada em ve
 do funil por porta, apresentada na Secção~\ref{sec:sis_politica}, foi lida do registo de decisões
 num dia concreto, e esse registo conserva apenas três dias, pela razão indicada na
 Secção~\ref{sec:met_dados}: é republicado a cada ciclo, pelo que o custo é de publicação e não de
-armazenamento. A execução do mesmo procedimento numa data posterior produz outro dia, e não o mesmo.
+armazenamento. A execução do mesmo procedimento numa data posterior produz um dia diferente.
 O valor foi conservado com a data da leitura e a identificação do procedimento que a produziu, de
 modo que qualquer leitura futura tenha origem declarada ainda que aquele dia não se repita.
 
@@ -81,7 +83,7 @@ de leitura do registo.}
 \midrule
 Amplitude da taxa de disparo, desvio relativo contra limiar fixo & $0{,}015$ contra $0{,}344$ &
 §\ref{sec:av_qi1} \\
-$F_1$ contra o critério aproximado & $0{,}516$ contra $0{,}218$ & §\ref{sec:av_qi1} \\
+$F_1$ contra o rótulo aproximado & $0{,}516$ contra $0{,}218$ & §\ref{sec:av_qi1} \\
 Comparação com dois detetores aprendidos & $0{,}530$ / $0{,}269$ / $0{,}280$ & §\ref{sec:av_qi1} \\
 Ablação à janela e ao peso do desvio & $0{,}678$ e $0{,}664$ contra $0{,}516$ & §\ref{sec:av_qi1} \\
 \addlinespace
@@ -95,10 +97,10 @@ Concordância de direção contra o valor de acaso & $0{,}708$ contra $0{,}688$ 
 Triagem, \gls{PRAUC} das seis famílias & de $0{,}378$ a $0{,}542$ & §\ref{sec:av_qi3} \\
 Precisão dentro do orçamento, quatro políticas & $0{,}163$ / $0{,}379$ / $0{,}662$ / $0{,}632$ &
 §\ref{sec:av_qi3} \\
-Grelha de nove definições de critério & $9$ de $9$ & §\ref{sec:av_qi3} \\
+Grelha de nove definições de rótulo & $9$ de $9$ & §\ref{sec:av_qi3} \\
 Ablação da identidade, tabela de consulta contra modelo & $0{,}534$ contra $0{,}538$ &
 §\ref{sec:av_ablacao} \\
-Acréscimo do texto sobre a tabela de consulta & $0{,}547$ contra $0{,}534$ & §\ref{sec:av_ablacao} \\
+Acréscimo do texto sobre a tabela de consulta & $0{,}547$ contra $0{,}534$ & §\ref{sec:av_acrescimo} \\
 \addlinespace
 Qualidade do ajuste da decomposição, mediana e casos negativos & $0{,}460$, $1$ em $17$ &
 §\ref{sec:av_decomposicao} \\
@@ -158,8 +160,8 @@ que ficou. O estado \emph{retirada} indica que o trabalho a abandonou depois de 
 \multicolumn{3}{l}{\textbf{Deteção de movimentos invulgares}} \\
 Dispara a ritmo comparável entre empresas de volatilidade muito distinta &
   Amplitude de $0{,}015$ contra $0{,}344$, sem recurso a rótulos & Mantida \\
-Supera um limiar fixo no critério aproximado & $F_1$ de $0{,}516$ contra $0{,}218$ &
-  Mantida, com o critério declarado como aproximação \\
+Supera um limiar fixo no rótulo aproximado & $F_1$ de $0{,}516$ contra $0{,}218$ &
+  Mantida, com o rótulo declarado como aproximação \\
 Supera dois detetores aprendidos com a mesma informação &
   $F_1$ de $0{,}530$ contra $0{,}269$ e $0{,}280$ & Mantida \\
 Não utiliza informação posterior ao dia avaliado &
@@ -169,16 +171,16 @@ A janela de vinte dias e o desvio de pesos iguais são as melhores opções &
   \textbf{Retirada}: mantidas por explicabilidade, não por desempenho \\
 \midrule
 \multicolumn{3}{l}{\textbf{Recuperação de precedentes}} \\
-Supera as alternativas lexical e triviais &
+Supera as alternativas lexical e triviais avaliadas &
   Precisão@5 de $0{,}514$ contra $0{,}346$, $0{,}240$ e $0{,}126$ & Mantida \\
 Supera por larga margem o melhor valor de referência trivial &
   A escolha do setor mais representado obtém $0{,}467$, o que reduz a margem de $+0{,}274$ para
-  $+0{,}047$ & \textbf{Estreitada}: a afirmação passa a ser por setor, onde se mantém nos cinco \\
+  $+0{,}047$ & \textbf{Estreitada}: por setor, face ao acaso; não avalia um filtro pelo setor da consulta \\
 Resiste ao aumento de escala do corpus &
   Precisão@5 de $0{,}595$ com acaso de $0{,}333$ & Mantida como teste de escala \\
-Resiste à restrição temporal da produção &
+Resiste à restrição de anterioridade da consulta &
   Precisão@5 de $0{,}513$ com acaso de $0{,}259$: a margem varia $0{,}008$ &
-  \textbf{Estreitada}: o valor simétrico descreve tarefa menos exigente \\
+  \textbf{Estreitada}: não testa a maturação de oito dias da produção \\
 Capta tema e não direção & Concordância de $0{,}708$ contra acaso de $0{,}688$ &
   Mantida, e reportada como limitação \\
 A pertença ao mesmo setor equivale a relação entre notícias & --- &
@@ -186,14 +188,14 @@ A pertença ao mesmo setor equivale a relação entre notícias & --- &
 \midrule
 \multicolumn{3}{l}{\textbf{Triagem de notícias}} \\
 Nenhuma variante com texto supera a volatilidade &
-  \gls{PRAUC} de $0{,}496$ contra $0{,}542$, com nove definições de critério e reamostragem por
+  \gls{PRAUC} de $0{,}496$ contra $0{,}542$, com nove definições de rótulo e reamostragem por
   grupos & Mantida \\
 O texto acrescenta informação sobre a tabela de consulta &
   \gls{PRAUC} de $0{,}547$ contra $0{,}534$, com acréscimo emparelhado de $+0{,}012$ e intervalo
   entre $+0{,}004$ e $+0{,}020$ &
   \textbf{Nova}, positiva, e sem efeito na precisão dentro do orçamento \\
-As entradas não incorporam informação futura &
-  Alterar o futuro de um exemplo deixa as entradas iguais e altera o critério & Mantida \\
+As entradas não incorporam retornos posteriores ao dia da notícia &
+  Alterar as sessões posteriores deixa as entradas iguais e altera o rótulo & Mantida \\
 A triagem quadruplica a precisão dentro do orçamento &
   O valor de referência de $0{,}163$ resulta de ordenação alfabética; a escolha aleatória obtém
   $0{,}379$ & \textbf{Retirada}: o ganho é de $1{,}67$ vezes \\
@@ -216,9 +218,9 @@ As explicações são úteis a uma pessoa & Retorno observacional do canal, sem 
 
 Duas observações incidem sobre a tabela no seu conjunto e não sobre qualquer linha isolada.
 
-A primeira é que as afirmações retiradas o foram por medições do próprio trabalho, e nenhuma por
-revisão externa. Constitui o comportamento pretendido de um plano de avaliação fixado antes das
-experiências, cuja utilidade reside precisamente na capacidade de produzir uma resposta negativa.
+A primeira é que as afirmações retiradas são confrontadas com medições do próprio trabalho.
+A possibilidade de obter respostas negativas faz parte da avaliação; a revisão do seu alcance
+também exige conferir se a interpretação corresponde ao protocolo medido.
 
 A segunda é que as duas linhas assinaladas como não afirmadas têm o mesmo peso das restantes. Uma
 delas é a utilidade das explicações para o utilizador, que não fica estabelecida por ausência
@@ -285,10 +287,12 @@ dados.
   \node[lg] at (-0.55,0.62) {\includegraphics[height=7mm,width=13mm,keepaspectratio]{finnhub.png}};
   \node[lg] at (0.55,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{yfinance.png}};
   % O logotipo do RSS saiu daqui: o modulo existe no codigo mas NAO e invocado pelo
-  % caminho vivo, e esta figura enumera as pecas de que o sistema DEPENDE. As duas fontes
-  % de noticias que faltavam nao tem logotipo disponivel e entram por nome.
-  \node[font=\tiny, text=black!70, align=center] at (0,-0.30)
-    {Alpha Vantage\\ Polygon};
+  % caminho vivo, e esta figura enumera as pecas de que o sistema DEPENDE.
+  % As TRES fontes de noticias entram por nome, incluindo o Finnhub, que ja tem logotipo
+  % acima: a marca dele e um quadrado sem palavra nenhuma e nao se le como nome, e e' a
+  % fonte que a Tabela 4.1 mostra ser a de melhor precisao e cobertura.
+  \node[font=\tiny, text=black!70, align=center] at (0,-0.32)
+    {Finnhub\\ Alpha Vantage\\ Polygon};
   \node[font=\tiny, text=black!60, align=center] at (0,-0.95) {preços e\ notícias};
 
   \node[lg] at (2.20,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{huggingface.png}};
@@ -332,7 +336,7 @@ cada ciclo de sessenta segundos; o ficheiro de casos pendentes era lido uma vez 
 publicação de um ficheiro de $40$\,MB produzia cinco cópias dele em memória. O conjunto reduziu o
 pico de $970$ para $663$\,MB.
 
-\textbf{As correções não bastaram, e é esse o resultado honesto.} O conjunto de trabalho da
+O conjunto de trabalho da
 aplicação excede genuinamente um contentor de $512$\,MB: as bibliotecas numéricas e o motor de
 inferência ocupam, por si, $158$\,MB, e a matriz de precedentes torna-se residente assim que a
 primeira consulta lhe percorre as páginas. O processo assentava em $536$\,MB mesmo entre picos.

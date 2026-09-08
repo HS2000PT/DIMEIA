@@ -6,7 +6,7 @@ resposta na literatura mas não em nenhuma ferramenta gratuita. Este capítulo d
 tomadas para lhes responder. Apresenta-se primeiro a metodologia de investigação e os conjuntos de
 dados. Descrevem-se em seguida os quatro métodos selecionados, um para cada decisão que o sistema
 tem de tomar. Indicam-se as ferramentas empregues. E enunciam-se, por fim, os desafios tecnológicos
-e sociais do domínio.
+e sociais do domínio. Quem o leia fica a saber como cada uma das quatro decisões é tomada, e que garantia impede cada uma de utilizar informação que ainda não existia.
 
 \section{Metodologia de investigação}
 \label{sec:met_metodologia}
@@ -22,12 +22,13 @@ e constituir uma atividade central do processo, e não um passo final de confirm
 \autocite{hevner2004design, peffers2007dsrm}. Este requisito é cumprido através de três
 compromissos assumidos antes da execução das experiências.
 
-O primeiro consiste em comparar cada componente com uma alternativa mais simples, selecionada e
-declarada antes de a medição ser realizada, de modo que o resultado possa ser negativo. O segundo
+O primeiro consiste em comparar deteção, recuperação e triagem com alternativas mais simples,
+selecionadas antes da medição, de modo que o resultado possa ser negativo. A decomposição recebe
+apenas uma verificação descritiva da repartição e do ajuste. O segundo
 consiste em fixar o critério de sucesso de cada comparação juntamente com a métrica, e não após a
 observação dos valores obtidos. O terceiro consiste em avaliar o artefacto duas vezes: sobre dados
 históricos retidos e, posteriormente, em funcionamento, sobre as decisões que o sistema toma
-autonomamente em produção. A terceira avaliação é a menos comum das três e é a que produz o
+autonomamente em produção. Esta segunda avaliação produz o
 resultado descrito na Secção~\ref{sec:av_producao}.
 
 A exigência não é cumprida na totalidade, e a lacuna é declarada. Utilidade, no sentido em que a
@@ -79,10 +80,10 @@ Secção~\ref{sec:met_detecao} e a Secção~\ref{sec:met_triagem}.}
 Esta secção descreve os conjuntos de dados utilizados no treino e na avaliação do sistema, bem
 como os registos produzidos pelo sistema em funcionamento.
 
-A camada histórica assenta no \gls{FNSPID} \autocite{dong2024fnspid}, um corpus público de notícias
-financeiras que associa a cada título uma data e uma empresa. O corpus não contém preços, reação de mercado nem qualquer indicação de
-relevância: essa informação é construída neste trabalho, alinhando cada título com as séries de
-preços correspondentes. Do alinhamento resulta o conjunto de treino do modelo de triagem, com
+A camada histórica utiliza a componente de notícias do \gls{FNSPID} \autocite{dong2024fnspid}, que
+associa a cada título uma data e uma empresa. Embora o conjunto publicado também inclua preços,
+neste trabalho os retornos e os rótulos são construídos alinhando os títulos com séries de preços
+obtidas separadamente. Do alinhamento resulta o conjunto de treino do modelo de triagem, com
 79\,753 exemplos.
 
 A avaliação do detetor de anomalias utiliza um conjunto distinto, composto por três anos de
@@ -284,8 +285,9 @@ neste trabalho são fixados, e cada um tem justificação própria. Para o merca
 $\beta_{\text{ref}} = 1{,}0$, que corresponde à hipótese de a ação acompanhar o índice na ausência
 de informação local fiável, e é o valor para o qual a média transversal dos betas tende por
 construção do próprio índice. Para o fator setorial, já ortogonalizado face ao mercado, adota-se
-$\beta_{\text{ref}} = 0{,}0$, uma vez que o resíduo de uma ortogonalização tem média nula e a
-ausência de exposição setorial é, por isso, a hipótese neutra. O desvio-padrão comum de $0{,}5$
+$\beta_{\text{ref}} = 0{,}0$, como escolha de regularização para ausência de exposição setorial
+adicional quando a estimativa é imprecisa. A média nula do fator ortogonalizado não implica um
+coeficiente nulo. O desvio-padrão comum de $0{,}5$
 determina a rapidez da transição entre a estimativa amostral e o valor de referência: fixa-o de
 modo que uma janela com erro-padrão dessa mesma ordem receba peso aproximadamente igual das duas
 origens, o que situa o ponto de equilíbrio dentro da gama de erros-padrão efetivamente observada em
@@ -335,15 +337,15 @@ componentes de mercado e de setor atuam em sentido contrário ao movimento obser
   \node[font=\footnotesize, black!60, align=left, text width=2.1cm]
     at (9.6,3.4) {as três parcelas somam sempre o movimento do dia};
 \end{tikzpicture}
-\caption[Um movimento repartido em três parcelas]{Repartição de um dia da AMD, o de 15 de agosto de
-2026, em retornos logarítmicos. As componentes de mercado e de setor atuaram em sentido
+\caption[Um movimento repartido em três parcelas]{Repartição de um movimento da AMD em retornos
+logarítmicos. A data das barras não ficou preservada no registo desta avaliação. As componentes de mercado e de setor atuaram em sentido
 descendente, pelo que a subida é integralmente atribuída à empresa. A igualdade entre a soma das
 parcelas e o movimento observado verifica-se por construção e, por essa razão, nada estabelece
 quanto à qualidade do ajuste, ponto retomado na Secção~\ref{sec:av_decomposicao}.}
 \label{fig:met_decomposicao}
 \end{figure}
 
-Neste caso, registado pela AMD a 15 de agosto de 2026, o retorno logarítmico de $+6{,}2944\%$,
+Neste caso da AMD, o retorno logarítmico de $+6{,}2944\%$,
 correspondente a uma variação simples do preço de $+6{,}50\%$, reparte-se em $-0{,}3992\%$ de mercado, $-0{,}0362\%$ de setor e $+6{,}7298\%$ específicos da
 empresa, com $\beta_m = 2{,}0143$ e $\beta_s = 1{,}5888$ estimados sobre os vinte dias anteriores.
 A informação transmitida excede a percentagem isolada: a ação subiu apesar de o contexto ter
@@ -423,6 +425,39 @@ mede-se a variação do preço a um, três e cinco dias. Duas decisões de detal
 resultado. Notícias publicadas fora de dias de negociação são alinhadas com o primeiro dia de
 negociação seguinte. A medição inicia-se no fecho do dia da notícia, e não na abertura, opção
 conservadora que evita atribuir à notícia a parte do movimento anterior à sua publicação.
+ A Figura~\ref{fig:met_evento} representa as duas decisões.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  ses/.style={draw=black!45, fill=black!3, minimum width=1.35cm, minimum height=0.62cm},
+  fech/.style={draw=black!80, fill=black!12, line width=0.9pt, minimum width=1.35cm,
+           minimum height=0.62cm},
+  leg/.style={font=\scriptsize, text=black!65, align=center},
+  seta/.style={-{Stealth[length=4pt]}, draw=black!55},
+]
+  \node[fech] (s0) at (0.0,0) {\scriptsize \textbf{0}};
+  \node[ses] (s1) at (1.45,0) {};
+  \node[ses] (s2) at (2.9,0) {};
+  \node[ses] (s3) at (4.35,0) {};
+  \node[ses] (s4) at (5.8,0) {};
+  \node[ses] (s5) at (7.25,0) {};
+  \node[leg] at (1.45,-0.95) {+1};
+  \draw[seta] (s0.south) ++(0,-0.02) .. controls +(0.55,-0.6) and +(-0.55,-0.6) .. (s1.south);
+  \node[leg] at (4.35,-0.95) {+3};
+  \draw[seta] (s0.south) ++(0,-0.02) .. controls +(0.55,-0.6) and +(-0.55,-0.6) .. (s3.south);
+  \node[leg] at (7.25,-0.95) {+5};
+  \draw[seta] (s0.south) ++(0,-0.02) .. controls +(0.55,-0.6) and +(-0.55,-0.6) .. (s5.south);
+  \node[leg] at (3.62,-1.42) {dias de negociação};
+  \node[leg, anchor=east] (sab) at (-1.25,0.8) {notícia de sábado};
+  \draw[seta, densely dashed] (sab.east) -- ++(0.42,0) -- (s0.north);
+  \node[leg, anchor=west] at (0.5,0.8) {alinhada ao primeiro\\ dia de negociação};
+  \node[leg, anchor=north, text width=3.6cm] at (0.1,-1.92) {a medição começa no fecho\\ deste dia, não na abertura};
+  \node[leg, anchor=north, text width=4.6cm] at (5.3,-1.92) {o movimento anterior à publicação fica de fora};
+\end{tikzpicture}
+\caption[A janela do estudo de evento e as duas decisões que a fixam]{As duas decisões de detalhe que condicionam todos os desfechos medidos neste trabalho. Uma notícia publicada fora de um dia de negociação é alinhada com o primeiro dia seguinte em que o mercado abre, e a medição inicia-se no fecho desse dia, assinalado a cheio. A segunda decisão é conservadora por construção: começar na abertura atribuiria à notícia a parte do movimento que a antecedeu.}
+\label{fig:met_evento}
+\end{figure}
 
 O valor apresentado ao utilizador é o retorno bruto e não o retorno anormal que a fonte
 normaliza. A opção é deliberada e tem um custo declarado. O retorno bruto é verificável pelo utilizador na
@@ -499,9 +534,9 @@ Capítulo~\ref{cap:avaliacao} demonstra ser determinante.
 \caption[As nove entradas, por nível]{As nove entradas do modelo implantado, agrupadas segundo o
 que cada uma permite distinguir. Sete caracterizam a \textbf{empresa} e variam lentamente ou
 permanecem constantes; uma caracteriza o \textbf{dia} e assume o mesmo valor para todas as notícias
-desse dia; \textbf{apenas uma} varia entre títulos consecutivos. Desta composição decorre a
-expectativa de que o modelo não separe duas notícias da mesma empresa no mesmo dia, expectativa que
-a ablação da Secção~\ref{sec:av_ablacao} confirma.}
+desse dia; \textbf{apenas uma} varia entre títulos consecutivos. A ablação da
+Secção~\ref{sec:av_ablacao} mede a dependência dominante da empresa; o rótulo partilhado não permite
+avaliar a distinção entre títulos do mesmo dia.}
 \label{fig:met_entradas}
 \end{figure}
 
@@ -554,7 +589,7 @@ propriedade; um rótulo que não dependesse dele faria falhar a segunda.
 
 \begin{lstlisting}[caption={[O teste que muta o futuro]O procedimento que impõe a separação
 temporal. As duas séries coincidem até ao dia do acontecimento e divergem a seguir. As entradas
-têm de sair idênticas, porque nenhuma delas pode observar o futuro; os rótulos têm de sair
+têm de sair idênticas, porque nenhuma delas pode observar as sessões seguintes; os rótulos têm de sair
 diferentes, porque é precisamente o futuro que eles medem. O teste corre a cada execução da
 verificação automática.}, label={lst:lookahead}, float=htbp]
 def test_anti_lookahead_mutar_o_futuro_muda_o_rotulo_mas_nao_as_features():
@@ -602,6 +637,12 @@ noutra máquina: \texttt{numpy}~2.1.3, \texttt{pandas}~2.2.3, \texttt{scikit-lea
 \texttt{matplotlib}~3.11.0, \texttt{sentence-transformers}~5.6.0 e \texttt{torch}~2.12.1 na variante
 para CPU. Nenhum resultado exige unidade de processamento gráfico, consequência das opções
 descritas neste capítulo.
+
+O treino da triagem, a calibração e a reamostragem por empresa e dia usam a semente $42$.
+As cinco repetições da recuperação, incluindo a avaliação com anterioridade, usam as sementes
+$42$ a $46$. A linha de base aleatória da análise do orçamento usa $40$ sementes, de $0$ a $39$.
+Estas escolhas fixam as operações aleatórias de cada protocolo; não tornam iguais conjuntos
+de dados recolhidos em momentos diferentes.
 
 Todas as fontes de dados são gratuitas. Os preços provêm de uma cadeia de fornecedores alternativos
 consultados por ordem fixa, uma vez que nenhuma fonte gratuita apresenta fiabilidade suficiente
@@ -676,7 +717,8 @@ O terceiro risco decorre da própria explicação. A confiança em sistemas auto
 sentidos, com o utilizador a ignorar um aviso correto ou a aceitar um aviso incorreto
 \autocite{lee2004trust}, e a presença de uma explicação aumenta a aceitação de respostas erradas
 \autocite{bansal2021whole}. O sistema apresenta, por essa razão, os casos passados individualmente,
-com data e desfecho, em vez de os resumir a uma média suscetível de ser lida como previsão. Que
+com data e desfecho. A média que acompanha os casos no alerta é descritiva e não permite antecipar
+o desfecho da notícia atual. Que
 esta opção produza confiança apropriada constitui uma hipótese e não um resultado, uma vez que o
 estudo controlado necessário para a verificar não foi realizado.
 

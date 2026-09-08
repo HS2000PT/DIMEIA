@@ -3,7 +3,7 @@
 
 Este capítulo apresenta a contextualização do trabalho descrito nesta dissertação, o problema
 que motiva a sua realização, as questões de investigação e os objetivos definidos, as
-contribuições científicas e a organização do documento.
+contribuições científicas e a organização do documento. Quem o leia fica a saber que problema o trabalho resolve, para quem, e o que o sistema recusa fazer por decisão e não por limitação.
 
 \section{Contextualização}
 \label{sec:intro_origem}
@@ -153,9 +153,9 @@ critério de sucesso definidos antes da execução das experiências:
   \item \textbf{\gls{QI}1, deteção.} Consegue um método estatístico simples e transparente detetar
         movimentos invulgares de forma consistente entre empresas com volatilidades distintas, e
         fazê-lo melhor do que uma regra de limiar fixo?
-  \item \textbf{\gls{QI}2, precedentes.} Consegue o sistema recuperar notícias passadas de outra
-        empresa do mesmo setor melhor do que alternativas triviais, e medir o comportamento
-        subsequente do preço sem recorrer a informação posterior ao momento da consulta?
+  \item \textbf{\gls{QI}2, precedentes.} Consegue o sistema recuperar notícias de outra
+        empresa do mesmo setor melhor do que as alternativas textuais e de ordenação avaliadas,
+        e conservar vantagem sobre o acaso quando se exigem notícias anteriores à consulta?
   \item \textbf{\gls{QI}3, triagem.} Consegue um modelo treinado decidir que notícias justificam um
         alerta melhor do que uma linha de base baseada apenas em volatilidade?
 \end{itemize}
@@ -171,7 +171,7 @@ Estas questões concretizam-se em quatro objetivos:
 
 \begin{enumerate}
   \item construir o sistema completo, desde a aquisição de dados até à entrega do alerta;
-  \item avaliar cada componente contra linhas de base transparentes;
+  \item avaliar os componentes, com linhas de base transparentes para deteção, recuperação e triagem;
   \item garantir que as explicações apresentadas são fiéis ao que o sistema calculou;
   \item reportar os resultados obtidos, incluindo os que não confirmem as expectativas iniciais.
 \end{enumerate}
@@ -194,7 +194,7 @@ constituírem um sistema funcional, explicável e reprodutível. Identificam-se 
         construídos a partir do corpus público \gls{FNSPID} \autocite{dong2024fnspid} e de séries
         de preços, com o modelo, a calibração e as métricas conservados como artefactos
         versionados.
-  \item \textbf{Uma avaliação de cada componente contra linhas de base transparentes}, incluindo o
+  \item \textbf{Uma avaliação dos componentes, com linhas de base para três das quatro técnicas}, incluindo o
         resultado que contraria a hipótese inicial, reportado como tal.
 \end{enumerate}
 
@@ -210,7 +210,12 @@ os resultados obtidos para cada questão de investigação. O Capítulo~\ref{cap
 as respostas, identifica as limitações do trabalho e enuncia as linhas de desenvolvimento futuro.
 
 Cada mecanismo descrito é ilustrado sobre um caso real, com os valores efetivamente calculados
-pelo sistema, e não sobre exemplos construídos para o efeito.
+pelo sistema, e não sobre exemplos construídos para o efeito. Uma das doze empresas, a AMD,
+reaparece em três papéis distintos ao longo do documento, e serve de fio a quem quiser seguir
+um nome só: é o movimento que a Secção~\ref{sec:met_decomposicao} reparte nas suas três
+parcelas, é a empresa que a porta de decisão deixava passar em todas as avaliações
+registadas, e é uma das que o modelo pontua sem nunca as ter observado no treino. São três
+momentos da mesma empresa e não do mesmo acontecimento.
 
 Duas categorias de material aparecem em inglês, e enunciam-se aqui para que não sejam lidas
 como descuido. A primeira são os títulos de notícia citados e os identificadores de empresa,

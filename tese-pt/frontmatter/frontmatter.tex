@@ -63,7 +63,7 @@ decomposição do retorno em mercado, setor e empresa com encolhimento do beta, 
 precedentes por semelhança semântica com medição do desfecho observado, e um modelo supervisionado
 de triagem treinado sobre um conjunto de dados próprio.
 
-Cada componente foi avaliado contra linhas de base transparentes. A deteção normalizada pela
+Três técnicas foram comparadas com linhas de base transparentes. A deteção normalizada pela
 volatilidade revela-se consistente entre empresas; a recuperação semântica supera a taxa-base nos
 cinco setores avaliados; o modelo de triagem não supera uma linha de base apenas com
 volatilidade, resultado negativo reportado e analisado.
@@ -85,7 +85,7 @@ of returns into market, sector and company components with beta shrinkage, prece
 semantic similarity with measurement of the observed outcome, and a supervised triage model trained
 on a purpose-built dataset.
 
-Each component was evaluated against transparent baselines. Volatility-normalised detection proves
+Three techniques were compared with transparent baselines. Volatility-normalised detection proves
 consistent across companies; semantic retrieval outperforms the base rate in every sector assessed;
 the triage model does not outperform a volatility-only baseline, a negative result that is reported
 and analysed.
@@ -133,9 +133,11 @@ informação deste trabalho que não veio de uma medição automática.
 % O cleardoublepage antes do addcontentsline garante que a entrada aponta para a página
 % onde a lista COMEÇA, e não para a anterior.
 \cleardoublepage
+\phantomsection
 \addcontentsline{toc}{chapter}{Lista de Figuras}
 \listoffigures
 \cleardoublepage
+\phantomsection
 \addcontentsline{toc}{chapter}{Lista de Tabelas}
 \listoftables
 % A Lista de Excertos VOLTA a ser impressa. O documento tem tres excertos, e o modelo
@@ -145,6 +147,7 @@ informação deste trabalho que não veio de uma medição automática.
 % teste, e a explicacao que e' o proprio calculo -- so sao inspeccionaveis se o codigo que
 % as produz estiver impresso aqui.
 \cleardoublepage
+\phantomsection
 \addcontentsline{toc}{chapter}{Lista de Excertos}
 \lstlistoflistings
 
@@ -157,6 +160,7 @@ informação deste trabalho que não veio de uma medição automática.
 % de glossário. A Lista de Algoritmos não consta porque o documento não tem algoritmos formais, e o
 % próprio modelo manda remover esse comando nesse caso.
 \cleardoublepage
+\phantomsection
 \addcontentsline{toc}{chapter}{Lista de Símbolos}
 \begin{symbols}{l p{0.60\textwidth} l}
 $P_t$ & Preço de fecho da sessão $t$ & Eq.~\ref{eq:zscore} \\
@@ -164,7 +168,7 @@ $r_t$ & Retorno logarítmico do dia $t$, $\ln(P_t / P_{t-1})$ & Eq.~\ref{eq:zsco
 $\mu$, $\sigma$ & Média e desvio-padrão dos retornos da janela anterior ao dia & Eq.~\ref{eq:zscore} \\
 $z_t$ & Raridade do retorno do dia $t$ face à janela anterior & Eq.~\ref{eq:zscore} \\
 \addlinespace
-$r_m$, $\tilde{r}_s$ & Retorno diário do índice de mercado e do índice de setor & Eq.~\ref{eq:decomposicao} \\
+$r_m$, $\tilde{r}_s$ & Retorno diário do mercado e retorno do setor ortogonalizado face ao mercado & Eq.~\ref{eq:decomposicao} \\
 $\beta_m$, $\beta_s$ & Sensibilidade histórica da ação ao mercado e ao setor & Eq.~\ref{eq:decomposicao} \\
 $\varepsilon$ & Parte do retorno que não é explicada nem pelo mercado nem pelo setor & Eq.~\ref{eq:decomposicao} \\
 $\hat{\beta}$ & Estimativa do beta obtida por regressão sobre a janela & Eq.~\ref{eq:vasicek} \\
@@ -193,3 +197,41 @@ $F_1$ & Média harmónica da precisão e da cobertura, \mbox{$2PC/(P+C)$} & Sec�
 
 \mainmatter
 \pagestyle{thesis}
+
+\chapter*{Como ler esta tese}
+\addcontentsline{toc}{chapter}{Como ler esta tese}
+\markboth{Como ler esta tese}{Como ler esta tese}
+
+Este documento descreve um sistema que responde a três perguntas de um investidor particular, e
+mede quanto vale cada uma das respostas. Tem cerca de cem páginas de corpo, e nem todos os
+leitores procuram a mesma coisa. Esta página propõe quatro percursos.
+
+\begin{description}
+  \item[Quem quer saber o que o trabalho conclui] pode ler o Capítulo~\ref{cap:introducao}, que
+    enuncia as três perguntas, e depois a Secção~\ref{sec:con_respostas}, onde cada uma recebe a
+    sua resposta com o alcance delimitado. São cerca de doze páginas, e a
+    Figura~\ref{fig:con_cadeia} resume o percurso de cada questão numa só imagem.
+
+  \item[Quem quer saber como foi medido] deve ler o Capítulo~\ref{cap:metodologia}, que descreve
+    as quatro técnicas e a disciplina temporal que impede cada uma de usar informação que ainda
+    não existia, e em seguida a Secção~\ref{sec:av_desenho}, que fixa as métricas e, o que mais
+    importa, o valor que cada uma assume na ausência de informação.
+
+  \item[Quem quer saber como o sistema funciona] deve ler o Capítulo~\ref{cap:sistema}. O
+    percurso de uma notícia está na Secção~\ref{sec:sis_percurso}, a política que decide o
+    silêncio na Secção~\ref{sec:sis_politica}, e a camada que compõe o texto entregue na
+    Secção~\ref{sec:sis_explicacao}.
+
+  \item[Quem quer verificar] deve ir ao Apêndice~\ref{ap:reprodutibilidade}. A
+    Tabela~\ref{tab:ap_numeros} liga cada resultado reportado à secção que o produz, e a
+    Tabela~\ref{tab:ap_matriz} enumera cada afirmação substantiva com o estado em que ficou
+    depois de medida, incluindo as que foram retiradas.
+\end{description}
+
+Três convenções atravessam o documento e vale a pena enunciá-las antes de começar. Nenhum número
+foi escrito à mão: cada um é produzido por um procedimento automático e o texto cita o ficheiro
+que o contém. Nenhuma comparação é apresentada sem o valor que um método sem informação obteria,
+porque uma percentagem lida sozinha conduz à conclusão errada, e o documento regista três ocasiões
+em que isso quase sucedeu. E cada resultado é acompanhado do que dele \emph{não} decorre, que é o
+passo que distingue uma avaliação de uma demonstração.
+

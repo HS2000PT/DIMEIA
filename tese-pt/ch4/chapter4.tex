@@ -3,7 +3,7 @@
 
 Este capítulo descreve a realização do sistema: a sua arquitetura, a forma como cada método do
 Capítulo~\ref{cap:metodologia} é concretizado, a política que decide o que é comunicado ao
-utilizador, a construção da mensagem entregue, e o ciclo de vida do componente aprendido.
+utilizador, a construção da mensagem entregue, e o ciclo de vida do componente aprendido. Quem o leia fica a saber o percurso de uma notícia desde a recolha até à mensagem, e por que razão nove em cada dez candidatas não chegam a ser comunicadas.
 
 O Capítulo~\ref{cap:metodologia} apresentou quatro métodos de forma isolada. A sua composição num sistema em funcionamento introduz problemas que nenhum deles apresenta
 isoladamente: a indisponibilidade das fontes, o volume de candidatos por ciclo, a coerência entre
@@ -187,6 +187,7 @@ que os alertas passam a chegar mais cedo exigiria nova medição da latência de
 sobre um período alargado, que não foi realizada.
 
 \subsection{Base histórica e base implantada}
+\label{sec:sis_bases}
 
 A recuperação de precedentes requer um corpo de casos passados com desfecho conhecido. O sistema
 utiliza dois conjuntos distintos, com finalidades distintas, e a sua separação é relevante para a
@@ -266,15 +267,15 @@ de 2023-11-07, com semelhança $0{,}46$, Nvidia de 2023-08-02, com $0{,}51$, e N
 atribui uma probabilidade de $54\%$. E o alerta é o primeiro relativo à empresa nesse dia. A mensagem é então composta e registada.
 
 Os precedentes recuperados neste caso pertencem a empresas distintas daquela sobre a qual o alerta
-incide, e são apresentados na mesma. A opção é deliberada e decorre da formulação da terceira
+incide, e são apresentados na mesma. A opção é deliberada e decorre da formulação da segunda
 questão de investigação: a comparabilidade é estabelecida pelo tema da notícia e não pela
 identidade da empresa. Notícias relativas a investimento em inteligência artificial em empresas
 tecnológicas de grande dimensão constituem casos comparáveis entre si.
 
 Os desfechos dos três precedentes são divergentes, com movimentos de $+2{,}70\%$, $-3{,}87\%$ e
-$+5{,}05\%$. O sistema apresenta os três individualmente, e não a sua média, precisamente por essa
-razão. A média oculta a informação mais relevante do conjunto, que é a inexistência de um desfecho
-comum a casos semelhantes.
+$+5{,}05\%$. O sistema apresenta os três individualmente, acompanhados da amplitude e da média.
+A média resume apenas os casos exibidos; isolada, ocultaria a inexistência de um desfecho comum
+a casos semelhantes e não sustentaria uma previsão para a notícia atual.
 
 \subsection{Percurso iniciado por movimento de preço}
 
@@ -490,7 +491,8 @@ apresentada. Os dois valores respondem a perguntas diferentes. \\
 Nomeia a empresa & --- & Regra textual, definida após inspeção do material que atravessava o
 filtro inicial. \\
 É recente & 2 dias & Escolhido, por cobrir um fim de semana. \\
-Evidência suficiente & $0{,}45$ & Escolhido. É o ponto que elimina o maior número de candidatas. \\
+Evidência suficiente & $0{,}45$ & Escolhido. Eliminava mais candidatas na configuração anterior;
+na atual predomina o orçamento diário. \\
 Triagem acima do piso & $50\%$ & Derivado de uma análise de custos, que produz $0{,}49$ na
 condição de custo simétrico entre movimento não comunicado e falso alarme; o valor implantado
 corresponde ao arredondamento desse resultado. Na configuração em operação não exerce veto:
@@ -559,7 +561,7 @@ assegura coerência temática, e não seleciona casos com maior valor preditivo.
   }
 
   \draw[black!25] (0,-5.35) -- (12.4,-5.35);
-  \node[lin, font=\scriptsize, text=black!65, text width=12.2cm] at (0,-5.95)
+  \node[lin, anchor=north west, font=\scriptsize, text=black!65, text width=12.2cm] at (0,-5.65)
     {O ponto que elimina quase tudo é um dos escolhidos, e é-o em todos os dias medidos. Dos dois
      cujo valor foi derivado de uma análise de custos, o piso da triagem deixou de vetar em 15 de
      agosto de 2026 e o piso escalonado continua armado e nada eliminou em nenhum dos seis dias
@@ -610,7 +612,7 @@ estatística em linguagem corrente, dado que nesse caso o facto observado é o p
 percurso iniciado por notícia, essa posição é ocupada pelo título e pela ligação para o artigo.
 
 O número de precedentes apresentados é igualmente uma decisão de desenho. O sistema exibe três dos
-casos recuperados e não a totalidade, e a razão não é de espaço disponível. A investigação sobre
+casos recuperados em vez da totalidade, e a razão não é de espaço disponível. A investigação sobre
 explicação estabelece que as pessoas procuram razões seletivas e contrastivas, e não enumerações
 exaustivas dos fatores que contribuíram para um resultado \autocite{miller2019explanation}. Uma
 lista de trinta casos seria mais completa e menos utilizável. O mesmo princípio determina que a
@@ -776,12 +778,13 @@ silêncio é aqui uma decisão registada, e não ausência de informação.}
 \label{fig:sis_silencio}
 \end{figure}
 
-A empresa da Figura~\ref{fig:sis_empresa} constitui um caso ilustrativo da segunda questão de
-investigação, pela discordância entre a variação percentual e a repartição. A ação registava uma
+A empresa da Figura~\ref{fig:sis_empresa} constitui um caso ilustrativo da segunda pergunta do
+investidor, pela discordância entre a variação percentual e a repartição. A ação registava uma
 descida de $0{,}30\%$, e a parcela específica da empresa era $+0{,}53\%$, ou seja positiva. A descida
-provinha do mercado, com $-0{,}61\%$, e do setor, com $-0{,}22\%$. A variação percentual isolada
-indica que a empresa caiu e conduz à procura de uma causa interna que não existe; a repartição
-mostra que a empresa subiu contra um mercado em queda. O veredicto classifica o dia como comum:
+era atribuída pelo modelo ao mercado, com $-0{,}61\%$, e ao setor, com $-0{,}22\%$. A ação caiu,
+mas o resíduo positivo indica desempenho superior ao que essas duas componentes estimadas
+sugeririam. Esta repartição estatística não exclui a existência de causas internas.
+O veredicto classifica o dia como comum:
 $204$ dos últimos $250$ dias de negociação registaram variação igual ou superior.
 
 A Figura~\ref{fig:sis_silencio} mostra a mesma exigência do lado do silêncio. Nesse dia, as sete
@@ -863,7 +866,7 @@ sistema, e não os parâmetros do modelo: nenhum componente é retreinado.}
 \label{fig:sis_ciclo_kb}
 \end{figure}
 
-O mecanismo atualiza a evidência exibida e não os parâmetros do modelo. Na taxonomia de deriva de
+O mecanismo atualiza a evidência exibida, sem tocar nos parâmetros do modelo. Na taxonomia de deriva de
 conceito de \textcite{gama2014survey}, o sistema dispõe da deteção da mudança e não da adaptação a
 ela.
 
@@ -900,7 +903,7 @@ não verificável. A Figura~\ref{fig:sis_lifecycle} representa as duas metades d
   \node[cx]  (d) at (0,0)    {conjunto rotulado};
   \node[cx]  (t) at (2.5,0)  {treino};
   \node[cx]  (v) at (5.0,0)  {validação\\ \emph{calibração}};
-  \node[cx]  (s) at (7.5,0)  {teste\\ \emph{uso único}};
+  \node[cx]  (s) at (7.5,0)  {teste\\ \emph{reservado}};
   \node[art] (m) at (10.0,0) {artefacto versionado};
 
   \foreach \xa/\xb in {d/t, t/v, v/s, s/m} \draw[->, thick, black!55] (\xa) -- (\xb);
@@ -920,7 +923,9 @@ não verificável. A Figura~\ref{fig:sis_lifecycle} representa as duas metades d
 \end{tikzpicture}
 \caption[Ciclo de vida do componente aprendido]{As duas metades do ciclo. Na metade superior, a
 construção: os dados são rotulados, a divisão é cronológica, a calibração é ajustada no bloco de
-validação e o bloco de teste é utilizado uma única vez. Na metade inferior, a observação: o modelo
+validação e as comparações são realizadas no bloco de teste reservado. A reutilização desse bloco
+limita a independência das comparações, como discutido na Secção~\ref{sec:av_qi3}.
+Na metade inferior, a observação: o modelo
 em produção é o modelo avaliado, cada decisão é registada, e dias mais tarde é confrontada com o
 movimento efetivamente observado. A ligação a tracejado fecharia o ciclo e não existe: a deriva é
 medida e não é corrigida.}
@@ -992,16 +997,8 @@ gerada constitui uma afirmação, ao passo que o sistema descrito entrega afirma
 evidência que as sustenta.
 
 Uma camada de geração ancorada encontra-se, ainda assim, implementada e avaliada, e não é
-exposta. Nela, cada frase tem de citar um facto do conjunto de evidência que a acompanha, e uma
-verificação recusa a frase cujo número não pertença ao facto que ela cita. Sobre um corpo de
-vinte e três tentativas de contornar essa verificação, todas foram recusadas, e sobre oito textos
-fiéis nenhum o foi; nas secções efetivamente compostas não se registou uma única violação
-entregue. A razão para a não expor não é o desempenho dessa verificação, mas a natureza da
-garantia: no texto entregue ao utilizador a composição parte de um vocabulário fechado, ao passo
-que a verificação da camada gerada enumera o que proíbe, e uma enumeração do proibido é mais
-fraca do que uma enumeração do permitido. Nenhuma comparação com uma arquitetura completa de
-geração aumentada por recuperação foi realizada, pelo que nada se afirma sobre o que ela
-acrescentaria.
+exposta ao utilizador. A Secção~\ref{sec:sis_inteligencia} descreve-a, com a garantia que oferece
+e a razão pela qual permanece fechada.
 
 \subsection{O elo em falta: arquitetura de retreino}
 
@@ -1078,3 +1075,113 @@ trabalho, correspondentes a movimento anormal, pertença ao mesmo setor e percen
 constituem aproximações verificáveis que nunca foram confrontadas com o julgamento de um
 avaliador humano. É a limitação de que as restantes mais dependem, e o
 Capítulo~\ref{cap:conclusoes} retoma-a.
+
+\section{A camada de inteligência}
+\label{sec:sis_inteligencia}
+
+As secções anteriores descreveram um sistema que compõe texto a partir de objetos calculados, com
+um vocabulário fechado. Esta secção descreve a camada que faz o mesmo com um modelo de linguagem,
+sob uma garantia diferente, e a razão pela qual não está exposta ao utilizador.
+
+A arquitetura corrente para responder a uma pergunta sobre um corpo de documentos é a geração
+aumentada por recuperação \autocite{lewis2020rag}, discutida na Secção~\ref{sec:ctx_rag}. O
+sistema em produção executa a primeira metade e detém-se antes da segunda. A camada aqui descrita
+executa as duas, e existe para determinar o que custaria fazê-lo com a mesma disciplina de
+evidência.
+
+\subsection{O contrato: a linguagem não produz factos}
+
+O objeto que atravessa esta camada é um \emph{pacote de evidência}. Cada facto que dele consta traz
+um identificador citável e a origem declarada, que é uma de três: medido a partir de preços,
+calculado por um dos motores do Capítulo~\ref{cap:metodologia}, ou produzido pelo modelo de triagem.
+Nenhum facto tem origem \emph{gerada}. A separação é a regra que estrutura a camada: o modelo de
+linguagem escreve a língua e nunca os números.
+
+A Figura~\ref{fig:sis_inteligencia} representa a travessia. Duas chamadas ao modelo, e a divisão
+entre elas é deliberada. A primeira não escreve texto: traduz a pergunta num plano que o sistema
+sabe executar. A segunda não decide nada: redige sobre factos que já existem. Entre as duas, são
+os componentes descritos neste capítulo que produzem a evidência, e nenhuma das chamadas tem
+acesso ao mercado.
+
+Um encaminhador determinístico cobre a primeira chamada quando não existe chave de interface
+disponível. Não é um recuo de conveniência: a restrição de utilizar apenas fontes gratuitas
+implica que a camada tem de continuar a responder quando o limite de utilização acabar, e uma
+interface conversacional que emudece nessa altura não serviria o público que o
+Capítulo~\ref{cap:introducao} define.
+
+\subsection{Dois níveis de garantia, e o mais fraco é este}
+
+A verificação de ancoragem recusa a frase cujo número não pertença ao facto que ela cita. A
+formulação importa: a ligação é por frase e não pelo pacote inteiro, porque de outro modo
+qualquer número do pacote poderia ser colado a qualquer afirmação.
+
+A garantia não é, contudo, da mesma natureza da que o alerta oferece, e a
+Tabela~\ref{tab:sis_garantias} separa as duas.
+
+\begin{table}[!htbp]
+\caption[Os dois níveis de garantia sobre o texto entregue]{As duas formas de garantir que o texto
+não afirma mais do que os componentes calcularam. A diferença não é de eficácia medida, mas de
+natureza: uma enumeração do que é permitido é fechada, e uma enumeração do que é proibido é uma
+lista que pode não estar completa.}
+\label{tab:sis_garantias}
+\centering
+\small
+\begin{tabular}{L{0.20\textwidth} L{0.36\textwidth} L{0.34\textwidth}}
+\toprule
+ & \tabhead{Alerta entregue} & \tabhead{Texto desta camada} \\
+\midrule
+Como chega ao leitor & empurrado, sem ser pedido & puxado, com a evidência ao lado \\
+Como se compõe & vocabulário fechado & modelo de linguagem \\
+O que a verificação enumera & o que é permitido & o que é proibido \\
+Força da garantia & fechada por construção & limitada pela lista \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A assimetria justifica-se pelo risco e não pelo desempenho. O alerta interrompe o utilizador sem
+que ele o tenha pedido, e o texto desta camada é consultado por quem já está a olhar para a
+evidência que o acompanha.
+
+\subsection{O que foi medido, e o que não se afirma}
+
+A verificação foi confrontada com um conjunto de tentativas de a contornar. Sobre vinte e três
+ataques, todos foram recusados; sobre oito textos fiéis, nenhum o foi; e nas secções efetivamente
+compostas não se registou uma única violação entregue.
+
+Estes números delimitam-se a si próprios. Os dois primeiros são determinísticos e reproduzem-se
+sobre o mesmo corpo de ataques; o terceiro é uma contagem sobre uma execução concreta. A força
+medida é um limite inferior, uma vez que o corpo de ataques foi construído pelo próprio autor e
+nada garante que esgote as formas de contornar a verificação.
+
+A camada não está exposta, e a razão não é o desempenho da verificação. É a natureza da garantia
+que a Tabela~\ref{tab:sis_garantias} descreve: expor ao utilizador um texto sob a garantia mais
+fraca, quando o resto do sistema opera sob a mais forte, tornaria a promessa do produto desigual
+conforme o ecrã. Nenhuma comparação com uma arquitetura completa de geração aumentada por
+recuperação foi realizada, pelo que nada se afirma sobre o que ela acrescentaria.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  cx/.style={draw=black!70, rounded corners=2pt, fill=black!5, align=center,
+        text width=2.36cm, minimum height=1.22cm},
+  leg/.style={font=\scriptsize, text=black!62, align=center},
+  seta/.style={-{Stealth[length=4pt]}, draw=black!55},
+]
+  \node[cx] (n0) at (0.0,0) {\textbf{pergunta}\\[1pt]\scriptsize em linguagem\\corrente};
+  \node[cx] (n1) at (3.02,0) {\textbf{plano}\\[1pt]\scriptsize o que o sistema\\sabe executar};
+  \node[cx] (n2) at (6.04,0) {\textbf{evidência}\\[1pt]\scriptsize factos com\\origem declarada};
+  \node[cx] (n3) at (9.06,0) {\textbf{resposta}\\[1pt]\scriptsize redigida sobre\\esses factos};
+  \node[cx] (n4) at (12.08,0) {\textbf{âncora aberta}\\[1pt]\scriptsize o leitor abre o\\facto citado};
+  \draw[seta] (n0) -- (n1);
+  \node[leg] at (1.51,0.84) {modelo lê};
+  \draw[seta] (n1) -- (n2);
+  \node[leg] at (4.53,0.84) {motores calculam};
+  \draw[seta] (n2) -- (n3);
+  \node[leg] at (7.55,0.84) {modelo redige};
+  \draw[seta] (n3) -- (n4);
+  \node[leg] at (10.57,0.84) {verificação};
+  \node[leg, text width=10.5cm] at (6.04,-1.2) {o modelo nunca toca no mercado: a primeira chamada não escreve, a segunda não decide};
+\end{tikzpicture}
+\caption[A travessia de uma pergunta até ao facto que a sustenta]{As duas chamadas ao modelo de linguagem estão separadas de propósito. A primeira traduz uma frase humana num plano que o sistema sabe executar e não escreve texto. A segunda redige sobre factos que já existem e não decide nada. Entre as duas, os motores descritos neste capítulo produzem a evidência, e cada facto chega com a origem declarada. A verificação final recusa a frase cujo número não pertença ao facto que ela cita, e é o que permite ao leitor abrir a âncora e confrontar a afirmação com aquilo que a sustenta.}
+\label{fig:sis_inteligencia}
+\end{figure}

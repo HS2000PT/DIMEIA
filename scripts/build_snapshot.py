@@ -205,11 +205,17 @@ def juntar_decomposicao(linhas: list[dict], fora: dict) -> None:
                 mercado.to_numpy()[-n:],
                 s.to_numpy()[-n:] if s is not None else None,
             )
+            # ⚠️ O `r2` e o `fallback` viajam com as parcelas de propósito. A Tabela 6.1
+            # declara que a repartição nem sempre está bem estimada, e sem estes dois
+            # campos o ecrã mostra três números sem nunca dizer quando são de fiar.
+            r2 = float(d.r_squared)
             linha["decomp"] = {
                 "market": float(d.market),
                 "sector": float(d.sector),
                 "company": float(d.idiosyncratic),
                 "driver": d.driver,
+                "r2": None if r2 != r2 else r2,          # NaN não sobrevive a JSON
+                "fallback": bool(d.fallback),
             }
         except Exception:  # noqa: BLE001
             linha["decomp"] = None

@@ -314,6 +314,7 @@
                      background:var(--linha); }
   .d-lin .val { text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums; }
   .d-nota { font-size:.78rem; color:var(--fraco); text-align:center; margin:2px 0 14px; }
+  .d-nota + .d-fit { margin-top:-11px; font-style:italic; }
   .d-graf { position:relative; height:340px; border:1px solid var(--linha2); border-radius:var(--r2);
             overflow:hidden; }
   .intervalos { display:flex; gap:4px; }
@@ -809,6 +810,30 @@ async function abrirEmpresa(t, manter) {
   if (!manter) $("#detalhe").scrollIntoView({ behavior:"smooth", block:"nearest" });
 }
 
+// ── quando é que a repartição é de fiar ────────────────────────────────────
+// A mediana de 0,460 é medida sobre a watchlist e está publicada em
+// docs/evaluation/evaluation_decomposition.md. Não é um limiar escolhido aqui.
+const R2_MEDIANA = 0.46;
+function qualidadeAjuste(d, nome) {
+  if (!d) return "";
+  if (d.fallback) {
+    return `the sensitivities could not be estimated from the past year, so this split ` +
+           `assumes ${nome} moves one-for-one with the market`;
+  }
+  const r = d.r2;
+  if (r === null || r === undefined || !isFinite(r)) return "";
+  if (r <= 0) {
+    return `over the past year, market and sector explained none of how ${nome} moves: ` +
+           `this split rests on a fit that does not describe the data`;
+  }
+  const pc = Math.round(r * 100);
+  return r >= R2_MEDIANA
+    ? `market and sector account for ${pc}% of ${nome}'s daily moves over the past year, ` +
+      `at or above the 46% median across the watchlist`
+    : `market and sector account for ${pc}% of ${nome}'s daily moves over the past year, ` +
+      `below the 46% median across the watchlist: read the split as indicative`;
+}
+
 function pintarDetalhe() {
   const a = S.asset;
   if (!a) { $("#detalhe").innerHTML = ""; return; }
@@ -836,6 +861,8 @@ function pintarDetalhe() {
       ${linha("Company", d.company, d.driver === "company")}
     </div>
     <p class="d-nota">the three add up to the day's move · left of the centre line is down</p>
+    ${(() => { const q = qualidadeAjuste(d, esc(a.name || a.ticker));
+        return q ? `<p class="d-nota d-fit">${q}</p>` : ""; })()}
     <div class="titulo"><h2 style="font-size:.98rem">${esc(TITULO_GRAFICO[S.intervalo])}</h2>
       <span class="direita intervalos" id="intervalos">
         ${INTERVALOS.map(r =>

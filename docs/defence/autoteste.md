@@ -130,7 +130,7 @@ título **piora**. O sinal vive no contexto de mercado.
 <details><summary>resposta</summary>
 
 Precisão dentro de um orçamento de 5 alertas/dia: **0,632** contra **0,379** de ordenar ao acaso
-(1,67×). É um resultado **offline no proxy** e um limite superior da política online, não uma
+(1,67×). É um resultado **offline no proxy**, com seleção diferida e sem garantir a precisão online; não é uma
 medição de utilidade humana ou de eficácia ao vivo.
 </details>
 

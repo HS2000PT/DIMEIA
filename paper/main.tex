@@ -57,17 +57,16 @@ with the company or the market, and whether comparable precedents exist and what
 them. A design constraint runs through the architecture: the system issues no price
 forecasts, because a statement about a past event can be checked against the record at the
 moment it is read, whereas a forecast can only be assessed after the decision it informs
-has been taken. Each component is evaluated against transparent baselines declared in
-advance. Volatility-normalised detection fires at a near-constant rate across companies of
+has been taken. Detection, retrieval and triage are compared with transparent baselines.
+Volatility-normalised detection fires at a near-constant rate across companies of
 very different volatility, with a spread of $0.015$ against $0.344$ for a fixed-threshold
 rule, and outperforms two learned detectors under an equivalent causal protocol. Semantic
 retrieval beats the sector base rate in all five sectors evaluated and retains its margin
-under the temporal constraint the deployed system faces. A supervised triage model
+when candidates must predate the query, without testing outcome maturity. A supervised triage model
 \emph{does not} outperform a volatility-only baseline: added to a per-company lookup table,
-the headline text contributes $+0.012$ PR-AUC, an upper bound rather than a usable
-quantity. We report that negative result with the same prominence as the positive ones, and
-locate it: the information the text carries separates companies and periods, where the
-product needed it to separate news items.
+the headline text contributes $+0.012$ PR-AUC, below the prespecified practical threshold.
+The company-day label cannot establish whether the text distinguishes individual news
+items within the same day. We report this limitation alongside the negative result.
 
 \keywords{Explainable AI \and Financial alerting \and Anomaly detection \and
 Semantic retrieval \and Retail investors}
@@ -323,14 +322,19 @@ measures corpus composition. The comparison that survives the objection is made
 \emph{within} each sector, where the method exceeds the corresponding reference value in all
 five (Fig.~\ref{fig:persector}).
 
+This comparison evaluates retrieval without using the query's sector to select candidates.
+A filter returning other companies in that known sector would satisfy the proxy by
+construction whenever enough eligible cases exist. The experiment therefore establishes
+sector information in the text, not an advantage over such a metadata filter.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{eval_retrieval_sector_causal.pdf}
 \caption{Left, per-sector cross-ticker precision@5 against the sector base rate: the
 absolute margin is largest in the most abundant sector, while in the scarce sectors, where
 the reference value is near $0.072$, the method reaches several times that value with a
-smaller absolute margin. Right, the same measurement under the constraint the deployed
-system faces, that a precedent must predate the query: precision falls to $0.513$ and the
+smaller absolute margin. Right, the measurement with candidates restricted to dates before
+the query, without enforcing the deployed eight-day maturation: precision falls to $0.513$ and the
 base rate to $0.259$, so that the margin over chance moves by $0.008$.}
 \label{fig:persector}
 \end{figure}
@@ -338,16 +342,17 @@ base rate to $0.259$, so that the margin over chance moves by $0.008$.}
 Two checks bound the claim, and the right-hand panel of Fig.~\ref{fig:persector} shows
 them. On the multi-year corpus of approximately eighty thousand headlines, precision@5
 rises to $0.595$ while the base rate rises in the same proportion: the method neither
-degrades nor improves with scale. Imposing the constraint the deployed system actually
-faces, that a precedent must predate the query, lowers precision to $0.513$ and the base
+degrades nor improves with scale. Requiring a precedent to predate the query lowers
+precision to $0.513$ and the base
 rate to $0.259$, moving the margin by $0.008$. The method keeps its advantage
-when forced to operate as it does in production.
+under this date restriction; the evaluation does not reproduce the availability of mature
+outcomes in production.
 
 \paragraph{Theme is not direction.} Agreement between the direction of the query's movement
 and that of its precedents is $0.708$ against a chance value of $0.688$. Two headlines can
 concern the same subject and the prices move in opposite directions. The consequence for the
-product is the decision to present precedents individually, with date and outcome, rather
-than reducing them to an average that could be read as a forecast.
+product is to present precedents individually, with date and outcome. Alerts also display
+their range and mean as descriptive summaries of those cases, not as forecasts.
 
 \subsection{The Negative Result: Text Does Not Beat Volatility}
 
@@ -374,6 +379,9 @@ Always alert (floor) & $0.378$ & $0.622$ \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+Always announcing one is a weak Brier reference. A constant equal to the training prevalence
+has a Brier of approximately $0.235$, calculated from the rounded training and test prevalences.
 
 No variant incorporating the headline text outperforms the volatility-only baseline. The
 result survives three checks. The first repeats the comparison granting the text the best
@@ -404,16 +412,16 @@ zero. It is the only occasion on which a text representation shows a detectable 
 in this task.
 
 The value falls below the $0.02$ threshold fixed before the measurements, and that
-threshold applies in both directions. What is established is an \emph{upper bound} on the
-effect of the text, not a quantity the system can use. Three further measurements prevent
+threshold applies in both directions. This is a measured increment below that practical
+criterion, not a guaranteed bound on the effect of the text. Three further measurements prevent
 this increment from reopening the verdict: the sum does not exceed volatility alone; the
 increment does not survive the metric that describes the product, since precision within the
 five-alert budget remains at $0.662$ with and without text; and the ability to separate news
 items from the same company remains at chance level.
 
-What these measurements add to the negative answer is not a caveat but a \emph{location}:
-the information the text carries separates companies and periods, where the product needed
-it to separate news items.
+The measurements do not establish useful incremental ranking for this target. All headlines
+from the same company-day share a label: swapping them cannot change budget precision.
+Distinguishing individual headlines requires a label at that level.
 
 \paragraph{An engineering consequence.} A per-company lookup table of thirteen constants,
 containing no information from any headline, reaches $0.534$ against $0.538$ for the
@@ -494,8 +502,8 @@ The most transferable observation is that last one, and it concerns evaluation r
 modelling. A component evaluated in isolation, over the distribution of its training set,
 and deployed behind filters that change that distribution, has not been evaluated on the
 distribution it will see. The metric was correct and the question it asked was not the one
-the product needed: PR-AUC over a full test set is dominated by variation \emph{between}
-companies, whereas the product required separation \emph{within} a company on a given day.
+the product needed: aggregate PR-AUC does not establish better selection under the daily
+budget, and the company-day target cannot reward distinctions between headlines in that group.
 Detecting that required comparing the deployed model against a lookup table of thirteen
 constants, which is a comparison worth making before concluding that a learned component
 earns its place.

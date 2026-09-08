@@ -4,7 +4,7 @@
 This chapter presents the scientific and technological framing of the work. It first characterises
 the audience the system addresses and the limitations that define the problem; it then examines the
 solutions currently available; and it finally surveys the technical areas from which the components
-used are drawn, situating the contribution of this dissertation in relation to each of them.
+used are drawn, situating the contribution of this dissertation in relation to each of them. Whoever reads it will know that the retail investor's three questions already have answers in the literature, and why no free tool brings them together.
 
 \section{The retail investor and the attention problem}
 \label{sec:ctx_investidor}
@@ -35,7 +35,7 @@ that of the search problem: faced with a very large number of alternatives, the 
 assess them all and the choice falls on the subset that has been made visible.
 
 The authors delimit the reach of the claim, which concerns an aggregate imbalance between purchases
-and sales and not a universal behaviour, and report the conclusion that justifies this work: the
+and sales, without extending to a universal behaviour, and report the conclusion that justifies this work: the
 buying pattern so formed does not generate superior returns. The empirical basis is records from
 United States brokerages between 1991 and 1999, prior to trading by mobile phone and to the absence
 of commissions, so what is assumed transferable is the mechanism and not the measured values. The
@@ -93,8 +93,8 @@ Professional terminal & yes & yes & yes & not published \\
 \end{tabular}
 \end{table}
 
-The table makes the essential point. The row that answers all three questions exists and is the
-most expensive of all. The problem is therefore not scientific in nature, but one of access: the
+The table makes the essential point. The only existing tool that answers all three questions is
+also the most expensive of all. The problem is therefore not scientific in nature, but one of access: the
 answers are known and are conditional on a subscription incompatible with the investor profile in
 question.
 
@@ -356,6 +356,7 @@ where an evaluation of this nature is decided, is established in Section~\ref{se
 together with the baselines against which the result is compared.
 
 \subsection{Retrieval with generation, and why the system stops before it}
+\label{sec:ctx_rag}
 
 The architecture in current use for answering a question from a body of documents is
 retrieval-augmented generation, in which a retriever selects passages and a language model writes
@@ -443,6 +444,35 @@ recourse to general domain knowledge. The source organises the method into a cyc
 processes, namely retrieve, reuse, revise and retain, and considers all four necessary to the
 complete resolution of a problem.
 
+Figure~\ref{fig:ctx_cbr} shows the cycle and marks where the system stops.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  cheio/.style={draw=black!75, line width=0.9pt, rounded corners=2pt, fill=black!6,
+            minimum width=2.45cm, minimum height=1.05cm, align=center},
+  vazio/.style={draw=black!45, densely dashed, line width=0.8pt, rounded corners=2pt,
+            fill=white, minimum width=2.45cm, minimum height=1.05cm, align=center,
+            text=black!55},
+  leg/.style={font=\scriptsize, text=black!65, align=center},
+  seta/.style={-{Stealth[length=4pt]}, draw=black!50},
+]
+  \node[cheio] (n0) at (0.0,0) {\textbf{retrieve}\\[1pt]\scriptsize finds similar\\ past cases};
+  \node[cheio] (n1) at (3.15,0) {\textbf{reuse}\\[1pt]\scriptsize draws on what\\ was measured in them};
+  \node[vazio] (n2) at (6.3,0) {\textbf{revise}\\[1pt]\scriptsize adapts the outcome\\ to the new case};
+  \node[vazio] (n3) at (9.45,0) {\textbf{retain}\\[1pt]\scriptsize stores the solution\\ as a future case};
+  \draw[seta] (n0) -- (n1);
+  \draw[seta] (n1) -- (n2);
+  \draw[seta] (n2) -- (n3);
+  \draw[seta, densely dashed, draw=black!35] (n3) -- ++(0,-0.95) -- (0,-0.95) -- (n0);
+  \node[leg] at (1.58,0.95) {the system implements};
+  \node[leg] at (7.87,0.95) {the system stops here};
+  \draw[draw=black!30] (4.72,1.15) -- (4.72,-0.62);
+  \node[leg, text width=8.2cm] at (4.72,-1.7) {because adapting would produce an expectation about what comes next, which is the forecast the work refuses};
+\end{tikzpicture}
+\caption[The case-based reasoning cycle, and where the system stops]{The four processes that \textcite{aamodt1994cbr} consider necessary to the complete resolution of a problem. The system runs the first two in full and stops before the next two. The interruption is not a shortfall of implementation: \emph{revise} adapts the outcome of a past case to the present one, and that adaptation is an expectation about the future, that is, exactly the forecast the founding constraint refuses. What the system presents is the measured outcome of each case, as it occurred.}
+\label{fig:ctx_cbr}
+\end{figure}
 The technique described in Section~\ref{sec:met_recuperacao} implements the first two and stops
 deliberately before the rest: it retrieves similar cases and presents what was measured on them,
 without adapting that outcome to the present case. Adaptation would produce an expectation about
@@ -461,8 +491,8 @@ totality of the values computed.
 There is a second requirement, on the same side, that conditions not the content of the explanation
 but the frequency with which it is delivered. A recipient exposed to excessive warnings stops
 processing them, a phenomenon documented in domains where the cost of ignoring them is high
-\autocite{ancker2017alertfatigue}. The consequence is that the decision policy is not incidental
-but part of the design. An alert that is not read is worth the same as an alert that was not sent,
+\autocite{ancker2017alertfatigue}. The consequence is that the decision policy forms part of the
+design. An alert that is not read is worth the same as an alert that was not sent,
 and that is why Chapter~\ref{cap:sistema} treats the suppression criteria with the care it devotes
 to the methods.
 
@@ -642,7 +672,7 @@ answer the three questions are professional terminals, unavailable free of charg
 accessible to the retail investor. Their price is not published in a citable form, and it is
 unavailability, and not a concrete value, that supports the argument. The free products that claim
 to answer the third deliver a statement without the evidence that supports it. And the academic
-components that would solve each part were evaluated in isolation, over reference corpora, and not
+components that would solve each part were evaluated in isolation, over reference corpora, never
 as a system in continuous operation against real sources.
 
 This observation determines the distinction that runs through the work and that

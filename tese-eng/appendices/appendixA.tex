@@ -23,8 +23,10 @@ Three classes of artefact are kept. The first is the learned component, comprisi
 model, the calibrator fitted on the validation block and a descriptor file of the run that produced
 them, with the size of each block, the prevalence of positive cases, the seed used and the metrics
 obtained. The second is the set of results files, one per evaluation procedure, that the text
-cites. The third is the precedent base the deployed application consults, with fifty-six megabytes
-of vectors and eight of metadata. This last one is not a sample: it is the artefact the system needs
+cites. The third is the reconstructed component of the precedent base, with fifty-six megabytes
+of vectors and eight of metadata; the base the deployed application consults is the fusion of
+this one with the live base, as Section~\ref{sec:sis_bases} describes. This last one is
+not a sample: it is the artefact the system needs
 in order to start, and without it there would be no precedents to present.
 
 The source corpora are not kept. The historical set occupies several hundred megabytes and is
@@ -60,8 +62,7 @@ One of those measurements is not regenerable, and the distinction is recorded ra
 The breakdown of the funnel by gate, presented in Section~\ref{sec:sis_politica}, was read from the
 decision log on a concrete day, and that log keeps only three days, for the reason given in
 Section~\ref{sec:met_dados}: it is republished at every cycle, so the cost is one of publication and
-not of storage. Running the same procedure on a later date produces another day, and not the same
-one. The value was kept together with the date of the reading and the identification of the
+not of storage. Running the same procedure on a later date produces a different day. The value was kept together with the date of the reading and the identification of the
 procedure that produced it, so that any future reading has a declared origin even though that day
 does not recur.
 
@@ -79,7 +80,7 @@ value depends on the date the log was read.}
 \midrule
 Firing-rate spread, relative deviation against a fixed threshold & $0.015$ against $0.344$ &
 §\ref{sec:av_qi1} \\
-$F_1$ against the approximate criterion & $0.516$ against $0.218$ & §\ref{sec:av_qi1} \\
+$F_1$ against the approximate label & $0.516$ against $0.218$ & §\ref{sec:av_qi1} \\
 Comparison with two learned detectors & $0.530$ / $0.269$ / $0.280$ & §\ref{sec:av_qi1} \\
 Ablation on the window and on the weighting & $0.678$ and $0.664$ against $0.516$ &
 §\ref{sec:av_qi1} \\
@@ -94,9 +95,9 @@ Direction agreement against the chance value & $0.708$ against $0.688$ & §\ref{
 Triage, \gls{PRAUC} of the six families & from $0.378$ to $0.542$ & §\ref{sec:av_qi3} \\
 Precision within the budget, four policies & $0.163$ / $0.379$ / $0.662$ / $0.632$ &
 §\ref{sec:av_qi3} \\
-Grid of nine criterion definitions & $9$ of $9$ & §\ref{sec:av_qi3} \\
+Grid of nine label definitions & $9$ of $9$ & §\ref{sec:av_qi3} \\
 Identity ablation, lookup table against model & $0.534$ against $0.538$ & §\ref{sec:av_ablacao} \\
-Increment of the text over the lookup table & $0.547$ against $0.534$ & §\ref{sec:av_ablacao} \\
+Increment of the text over the lookup table & $0.547$ against $0.534$ & §\ref{sec:av_acrescimo} \\
 \addlinespace
 Quality of the decomposition fit, median and negative cases & $0.460$, $1$ in $17$ &
 §\ref{sec:av_decomposicao} \\
@@ -157,8 +158,8 @@ initial one.}
 \multicolumn{3}{l}{\textbf{Detection of unusual movements}} \\
 Fires at a comparable rate across companies of very distinct volatility &
   Spread of $0.015$ against $0.344$, without recourse to labels & Kept \\
-Beats a fixed threshold on the approximate criterion & $F_1$ of $0.516$ against $0.218$ &
-  Kept, with the criterion declared as an approximation \\
+Beats a fixed threshold on the approximate label & $F_1$ of $0.516$ against $0.218$ &
+  Kept, with the label declared as an approximation \\
 Beats two learned detectors on the same information &
   $F_1$ of $0.530$ against $0.269$ and $0.280$ & Kept \\
 Uses no information posterior to the day assessed &
@@ -168,16 +169,16 @@ The twenty-day window and the equally weighted deviation are the best options &
   \textbf{Withdrawn}: kept for explainability, not for performance \\
 \midrule
 \multicolumn{3}{l}{\textbf{Precedent retrieval}} \\
-Beats the lexical and trivial alternatives &
+Beats the evaluated lexical and trivial alternatives &
   Precision@5 of $0.514$ against $0.346$, $0.240$ and $0.126$ & Kept \\
 Beats the best trivial reference value by a wide margin &
   Choosing the most represented sector obtains $0.467$, which reduces the margin from $+0.274$ to
-  $+0.047$ & \textbf{Narrowed}: the claim becomes per sector, where it holds in all five \\
+  $+0.047$ & \textbf{Narrowed}: per sector against chance; does not assess a query-sector filter \\
 Survives an increase in the scale of the corpus &
   Precision@5 of $0.595$ with chance of $0.333$ & Kept as a scale test \\
-Survives the temporal constraint of production &
+Survives the prior-to-query restriction &
   Precision@5 of $0.513$ with chance of $0.259$: the margin varies by $0.008$ &
-  \textbf{Narrowed}: the symmetric value describes a less demanding task \\
+  \textbf{Narrowed}: does not test production's eight-day maturation \\
 Captures topic and not direction & Agreement of $0.708$ against chance of $0.688$ &
   Kept, and reported as a limitation \\
 Membership of the same sector is equivalent to a relation between news items & --- &
@@ -185,14 +186,14 @@ Membership of the same sector is equivalent to a relation between news items & -
 \midrule
 \multicolumn{3}{l}{\textbf{News triage}} \\
 No variant with text beats volatility &
-  \gls{PRAUC} of $0.496$ against $0.542$, with nine criterion definitions and resampling by
+  \gls{PRAUC} of $0.496$ against $0.542$, with nine label definitions and resampling by
   groups & Kept \\
 The text adds information over the lookup table &
   \gls{PRAUC} of $0.547$ against $0.534$, with a paired increment of $+0.012$ and an interval
   between $+0.004$ and $+0.020$ &
   \textbf{New}, positive, and with no effect on precision within the budget \\
-The inputs incorporate no future information &
-  Changing the future of an example leaves the inputs identical and changes the criterion & Kept \\
+The inputs incorporate no returns after the news day &
+  Changing later sessions leaves the inputs identical and changes the label & Kept \\
 Triage quadruples precision within the budget &
   The reference value of $0.163$ results from alphabetical ordering; random choice obtains
   $0.379$ & \textbf{Withdrawn}: the gain is $1.67$ times \\
@@ -216,9 +217,9 @@ The explanations are useful to a person & Observational feedback, no counterfact
 
 Two observations bear on the table as a whole and not on any single row.
 
-The first is that the claims withdrawn were withdrawn by measurements of the work itself, and none
-by external review. It is the intended behaviour of an evaluation plan fixed before the
-experiments, whose usefulness lies precisely in the ability to produce a negative answer.
+The first is that withdrawn claims are compared with measurements of the work itself. The
+possibility of negative answers is part of evaluation; reviewing their scope also requires
+checking whether the interpretation matches the measured protocol.
 
 The second is that the two rows marked as not claimed carry the same weight as the rest. One of
 them is the usefulness of the explanations to the user, which is not established for lack of a
@@ -284,10 +285,12 @@ hosting and the messaging channel, are costs of operation and not data sources.
   \node[lg] at (-0.55,0.62) {\includegraphics[height=7mm,width=13mm,keepaspectratio]{finnhub.png}};
   \node[lg] at (0.55,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{yfinance.png}};
   % O logotipo do RSS saiu daqui: o modulo existe no codigo mas NAO e invocado pelo
-  % caminho vivo, e esta figura enumera as pecas de que o sistema DEPENDE. As duas fontes
-  % de noticias que faltavam nao tem logotipo disponivel e entram por nome.
-  \node[font=\tiny, text=black!70, align=center] at (0,-0.30)
-    {Alpha Vantage\\ Polygon};
+  % caminho vivo, e esta figura enumera as pecas de que o sistema DEPENDE.
+  % As TRES fontes de noticias entram por nome, incluindo o Finnhub, que ja tem logotipo
+  % acima: a marca dele e um quadrado sem palavra nenhuma e nao se le como nome, e e' a
+  % fonte que a Tabela 4.1 mostra ser a de melhor precisao e cobertura.
+  \node[font=\tiny, text=black!70, align=center] at (0,-0.32)
+    {Finnhub\\ Alpha Vantage\\ Polygon};
   \node[font=\tiny, text=black!60, align=center] at (0,-0.95) {prices and\ news};
 
   \node[lg] at (2.20,0.62)  {\includegraphics[height=7mm,width=13mm,keepaspectratio]{huggingface.png}};
@@ -330,7 +333,7 @@ in a single-precision matrix; the bases and the encoder were rebuilt at every si
 the file of pending cases was read once per company; and publishing a $40$\,MB file produced five
 copies of it in memory. Together they reduced the peak from $970$ to $663$\,MB.
 
-\textbf{The corrections were not enough, and that is the honest result.} The working set of the
+The working set of the
 application genuinely exceeds a $512$\,MB container: the numerical libraries and the inference
 engine occupy, on their own, $158$\,MB, and the precedent matrix becomes resident as soon as the
 first query walks its pages. The process settled at $536$\,MB even between peaks.

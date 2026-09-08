@@ -37,9 +37,9 @@ candidato fraco lista componentes; um candidato forte nomeia um resultado.
 2. **A restrição que define tudo o resto.** O sistema **nunca prevê**. Tudo o que ele escreve é
    sobre o que já aconteceu, e é isso que torna cada afirmação verificável no momento em que é
    lida. Não é modéstia: é a decisão de desenho de que decorre a explicabilidade.
-3. **A contribuição, que é o método e não o código.** Cada componente foi comparado com a
-   alternativa mais simples que responde à mesma pergunta, e **em três casos a simples ganhou** e
-   ficou. O trabalho é uma avaliação honesta de onde a aprendizagem automática ajuda e onde não
+3. **A contribuição, que é o método e não o código.** Deteção, recuperação e triagem foram
+   comparadas com linhas de base; na decomposição mediu-se o ajuste, sem comparação equivalente.
+   O trabalho avalia onde a aprendizagem automática ajuda e onde não
    ajuda, feita num sistema real, em produção, com o resultado negativo publicado com o mesmo
    destaque dos positivos.
 
@@ -304,7 +304,7 @@ do que qualquer arquitetura.
 | `0.015` vs `0.344` | amplitude de disparo: *z*-score vs limiar fixo (QI1) |
 | `0.530` vs `0.269` / `0.280` | F1: *z*-score vs Isolation Forest vs LOF |
 | `0.514` vs `0.467` | precisão@5 vs o chão trivial *sempre tecnologia* (QI2) |
-| `0.513` vs `0.259` | precisão@5 causal vs chão; margem `+0.254` |
+| `0.513` vs `0.259` | precisão@5 com anterioridade vs chão; margem `+0.254`; não impõe maturação |
 | `0.595` vs `0.333` | teste simétrico de escala; permite candidatos futuros |
 | `0.708` vs `0.688` | concordância de direção vs acaso: **tema ≠ direção** |
 | `0.496` vs `0.542` | PR-AUC: contexto+texto vs só volatilidade (QI3) |
@@ -325,8 +325,8 @@ do que qualquer arquitetura.
 **As três frases com que abres, se te esqueceres de tudo o resto:**
 
 > *"Construí um sistema que explica movimentos de mercado a quem não é especialista, e que nunca
-> prevê. Avaliei cada componente contra a alternativa mais simples que responde à mesma pergunta.
-> Em três casos a simples ganhou, e foi ela que ficou."*
+> prevê. Comparei deteção, recuperação e triagem com linhas de base e medi o ajuste da decomposição.
+> A recuperação superou os comparadores avaliados; na triagem o texto não superou a volatilidade."*
 
 **E a última coisa.** Duas críticas hostis geradas por ferramentas externas produziram vinte
 acusações a este trabalho, e **dezanove já estavam escritas na tese**, em parágrafos que existem

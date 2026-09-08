@@ -67,7 +67,7 @@ of returns into market, sector and company components with beta shrinkage, prece
 semantic similarity with measurement of the observed outcome, and a supervised triage model trained
 on a purpose-built dataset.
 
-Each component was evaluated against transparent baselines. Volatility-normalised detection proves
+Three techniques were compared with transparent baselines. Volatility-normalised detection proves
 consistent across companies; semantic retrieval outperforms the base rate in every sector assessed;
 the triage model does not outperform a volatility-only baseline, a negative result that is reported
 and analysed.
@@ -89,7 +89,7 @@ decomposição do retorno em mercado, setor e empresa com encolhimento do beta, 
 precedentes por semelhança semântica com medição do desfecho observado, e um modelo supervisionado
 de triagem treinado sobre um conjunto de dados próprio.
 
-Cada componente foi avaliado contra linhas de base transparentes. A deteção normalizada pela
+Três técnicas foram comparadas com linhas de base transparentes. A deteção normalizada pela
 volatilidade revela-se consistente entre empresas; a recuperação semântica supera a taxa-base nos
 cinco setores avaliados; o modelo de triagem não supera uma linha de base apenas com
 volatilidade, resultado negativo reportado e analisado.
@@ -138,9 +138,11 @@ information in this work that did not come from an automatic measurement.
 % page number. The cleardoublepage before addcontentsline ensures that the entry points to the
 % page where the list BEGINS, and not to the previous one.
 \cleardoublepage
+\phantomsection
 \addcontentsline{toc}{chapter}{List of Figures}
 \listoffigures
 \cleardoublepage
+\phantomsection
 \addcontentsline{toc}{chapter}{List of Tables}
 \listoftables
 % The List of Listings is printed again. The document has three listings, and the official
@@ -150,6 +152,7 @@ information in this work that did not come from an automatic measurement.
 % enforced by a test, and the explanation that is the calculation itself -- are inspectable
 % only if the code that produces them is printed here.
 \cleardoublepage
+\phantomsection
 \addcontentsline{toc}{chapter}{List of Listings}
 \lstlistoflistings
 
@@ -163,6 +166,7 @@ information in this work that did not come from an automatic measurement.
 % the document has neither, and the template itself instructs removing those commands in that
 % case.
 \cleardoublepage
+\phantomsection
 \addcontentsline{toc}{chapter}{List of Symbols}
 \begin{symbols}{l p{0.60\textwidth} l}
 $P_t$ & Closing price of session $t$ & Eq.~\ref{eq:zscore} \\
@@ -170,7 +174,7 @@ $r_t$ & Logarithmic return of day $t$, $\ln(P_t / P_{t-1})$ & Eq.~\ref{eq:zscore
 $\mu$, $\sigma$ & Mean and standard deviation of the returns in the window preceding the day & Eq.~\ref{eq:zscore} \\
 $z_t$ & Rarity of the return of day $t$ against the preceding window & Eq.~\ref{eq:zscore} \\
 \addlinespace
-$r_m$, $\tilde{r}_s$ & Daily return of the market index and of the sector index & Eq.~\ref{eq:decomposicao} \\
+$r_m$, $\tilde{r}_s$ & Daily market return and sector return orthogonalised against the market & Eq.~\ref{eq:decomposicao} \\
 $\beta_m$, $\beta_s$ & Historical sensitivity of the stock to the market and to the sector & Eq.~\ref{eq:decomposicao} \\
 $\varepsilon$ & Part of the return explained neither by the market nor by the sector & Eq.~\ref{eq:decomposicao} \\
 $\hat{\beta}$ & Beta estimate obtained by regression over the window & Eq.~\ref{eq:vasicek} \\
@@ -198,3 +202,42 @@ $F_1$ & Harmonic mean of precision and recall, \mbox{$2PC/(P+C)$} & Section~\ref
 
 \mainmatter
 \pagestyle{thesis}
+
+\chapter*{How to read this thesis}
+\addcontentsline{toc}{chapter}{How to read this thesis}
+\markboth{How to read this thesis}{How to read this thesis}
+
+This document describes a system that answers three questions a retail investor asks, and measures
+what each of those answers is worth. It runs to about a hundred pages of body text, and not every
+reader is after the same thing. This page proposes four paths.
+
+\begin{description}
+  \item[If you want to know what the work concludes] read Chapter~\ref{cap:introducao}, which
+    states the three questions, and then Section~\ref{sec:con_respostas}, where each one receives
+    its answer with the reach delimited. That is about twelve pages, and
+    Figure~\ref{fig:con_cadeia} summarises the path of each question in a single image.
+
+  \item[If you want to know how it was measured] read Chapter~\ref{cap:metodologia}, which
+    describes the four techniques and the temporal discipline that stops each one from using
+    information that did not yet exist, and then Section~\ref{sec:av_desenho}, which fixes the
+    metrics and, what matters most, the value each one takes in the absence of information.
+
+  \item[If you want to know how the system works] read Chapter~\ref{cap:sistema}. The path of a
+    news item is in Section~\ref{sec:sis_percurso}, the policy that decides silence in
+    Section~\ref{sec:sis_politica}, and the layer that composes the delivered text in
+    Section~\ref{sec:sis_explicacao}.
+
+  \item[If you want to verify] go to Appendix~\ref{ap:reprodutibilidade}.
+    Table~\ref{tab:ap_numeros} links every reported result to the section that produces it, and
+    Table~\ref{tab:ap_matriz} lists every substantive claim with the state it was left in after
+    being measured, including those that were withdrawn.
+\end{description}
+
+Three conventions run through the document and are worth stating before you start. No number was
+written by hand: each one is produced by an automatic procedure and the text cites the file that
+contains it. No comparison is presented without the value a method with no information would
+obtain, because a percentage read on its own leads to the wrong conclusion, and the document
+records three occasions on which that nearly happened. And every result comes with what does
+\emph{not} follow from it, which is the step that distinguishes an evaluation from a
+demonstration.
+

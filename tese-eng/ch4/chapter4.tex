@@ -4,7 +4,7 @@
 This chapter describes the realisation of the system: its architecture, the way each method of
 Chapter~\ref{cap:metodologia} is put into effect, the policy that decides what is communicated to
 the user, the construction of the message delivered, and the life cycle of the learned
-component.
+component. Whoever reads it will know the path of a news item from collection to message, and why nine in every ten candidates are never communicated.
 
 Chapter~\ref{cap:metodologia} presented four methods in isolation. Composing them into a working
 system introduces problems that none of them presents on its own: the unavailability of the
@@ -186,6 +186,7 @@ alerts now arrive earlier would require a new end-to-end latency measurement ove
 period, which was not carried out.
 
 \subsection{Historical base and deployed base}
+\label{sec:sis_bases}
 
 Precedent retrieval requires a body of past cases with a known outcome. The system uses two
 distinct sets, with distinct purposes, and their separation matters for reading the results of
@@ -272,9 +273,9 @@ identity of the company. News items concerning investment in artificial intellig
 technology companies are cases comparable with one another.
 
 The outcomes of the three precedents diverge, with movements of $+2.70\%$, $-3.87\%$ and
-$+5.05\%$. The system presents the three individually, and not their average, precisely for that
-reason. The average hides the most relevant piece of information in the set, which is the absence
-of a common outcome across similar cases.
+$+5.05\%$. The system presents the three individually, alongside their range and average.
+The average summarises only the displayed cases; on its own, it would hide the absence of a
+common outcome for similar cases and would not support a forecast for the current news item.
 
 \subsection{Path started by a price movement}
 
@@ -494,8 +495,8 @@ presented. The two values answer different questions. \\
 Names the company & --- & Textual rule, defined after inspecting the material that was crossing
 the initial filter. \\
 Is it recent & 2 days & Chosen, so as to cover a weekend. \\
-Enough evidence & $0.45$ & Chosen. It is the point that eliminates the largest number of
-candidates. \\
+Enough evidence & $0.45$ & Chosen. It eliminated most candidates under the previous configuration;
+the daily budget now dominates. \\
 Triage above the floor & $50\%$ & Derived from a cost analysis, which produces $0.49$ under the
 condition of symmetric cost between an uncommunicated movement and a false alarm; the deployed
 value is the rounding of that result. In the configuration in operation it exercises no veto: it
@@ -564,7 +565,7 @@ select cases with greater predictive value.
   }
 
   \draw[black!25] (0,-5.35) -- (12.4,-5.35);
-  \node[lin, font=\scriptsize, text=black!65, text width=12.2cm] at (0,-5.95)
+  \node[lin, anchor=north west, font=\scriptsize, text=black!65, text width=12.2cm] at (0,-5.65)
     {The point that eliminates almost everything is one of the chosen ones, and it is so on every
      day measured. Of the two whose value was derived from a cost analysis, the triage floor ceased
      to veto on 15 August 2026 and the stepped floor remains armed and eliminated nothing on any
@@ -618,7 +619,7 @@ the path started by a news item, that position is occupied by the headline and t
 article.
 
 The number of precedents presented is likewise a design decision. The system displays three of the
-cases retrieved and not all of them, and the reason is not available space. Research on explanation
+cases retrieved rather than all of them, and the reason is not available space. Research on explanation
 establishes that people look for selective and contrastive reasons, and not exhaustive enumerations
 of the factors that contributed to an outcome \autocite{miller2019explanation}. A list of thirty
 cases would be more complete and less usable. The same principle determines that the message
@@ -789,10 +790,10 @@ Silence is here a recorded decision, and not an absence of information.}
 
 The company of Figure~\ref{fig:sis_empresa} is an illustrative case of the investor's second
 question, through the disagreement between the percentage change and the split. The stock recorded
-a fall of $0.30\%$, and the company-specific part was $+0.53\%$ — positive. The fall came from the
-market, at $-0.61\%$, and from the sector, at $-0.22\%$. The percentage change alone indicates that
-the company fell and leads to the search for an internal cause that does not exist; the split shows
-that the company rose against a falling market. The verdict classifies the day as ordinary: $204$
+a fall of $0.30\%$, and the company-specific part was $+0.53\%$, hence positive. The model attributed
+the fall to the market, at $-0.61\%$, and to the sector, at $-0.22\%$. The stock fell, but the positive
+residual indicates performance above what the two estimated components would suggest. This
+statistical split does not rule out internal causes. The verdict classifies the day as ordinary: $204$
 of the last $250$ trading days recorded an equal or larger change.
 
 Figure~\ref{fig:sis_silencio} shows the same requirement on the side of silence. On that day, the
@@ -876,7 +877,7 @@ presents, and not the parameters of the model: no component is retrained.}
 \label{fig:sis_ciclo_kb}
 \end{figure}
 
-The mechanism updates the evidence displayed and not the parameters of the model. In the concept
+The mechanism updates the evidence displayed, without touching the parameters of the model. In the concept
 drift taxonomy of \textcite{gama2014survey}, the system has detection of the change and not
 adaptation to it.
 
@@ -913,7 +914,7 @@ unverifiable result. Figure~\ref{fig:sis_lifecycle} represents the two halves of
   \node[cx]  (d) at (0,0)    {labelled dataset};
   \node[cx]  (t) at (2.5,0)  {training};
   \node[cx]  (v) at (5.0,0)  {validation\\ \emph{calibration}};
-  \node[cx]  (s) at (7.5,0)  {test\\ \emph{single use}};
+  \node[cx]  (s) at (7.5,0)  {test\\ \emph{held out}};
   \node[art] (m) at (10.0,0) {versioned artefact};
 
   \foreach \xa/\xb in {d/t, t/v, v/s, s/m} \draw[->, thick, black!55] (\xa) -- (\xb);
@@ -933,7 +934,9 @@ unverifiable result. Figure~\ref{fig:sis_lifecycle} represents the two halves of
 \end{tikzpicture}
 \caption[Life cycle of the learned component]{The two halves of the cycle. In the upper half,
 construction: the data are labelled, the split is chronological, the calibration is fitted on the
-validation block and the test block is used only once. In the lower half, observation: the model in
+validation block and comparisons are carried out on the held-out test block. Reusing that block
+limits the independence of the comparisons, as discussed in Section~\ref{sec:av_qi3}.
+In the lower half, observation: the model in
 production is the model evaluated, every decision is logged, and days later it is confronted with
 the movement actually observed. The dashed link would close the cycle and does not exist: drift is
 measured and is not corrected.}
@@ -1003,16 +1006,7 @@ user. The absence is deliberate and follows from the argument developed in
 Section~\ref{sec:ctx_xai}: a generated sentence is a statement, whereas the system described
 delivers statements accompanied by the evidence that supports them.
 
-A grounded generation layer is, even so, implemented and evaluated, and is not exposed. In it,
-every sentence must cite a fact from the evidence bundle that accompanies it, and a check rejects
-any sentence whose number does not belong to the fact it cites. Over a corpus of twenty-three
-attempts to circumvent that check, all were rejected, and over eight faithful texts none was; in
-the sections actually composed not a single delivered violation was recorded. The reason for not
-exposing it is not the performance of that check, but the nature of the guarantee: in the text
-delivered to the user the composition starts from a closed vocabulary, whereas the check of the
-generated layer enumerates what it forbids, and an enumeration of the forbidden is weaker than an
-enumeration of the permitted. No comparison with a complete retrieval-augmented generation
-architecture was carried out, so nothing is asserted about what it would add.
+A grounded generation layer is, even so, implemented and evaluated, and is not exposed to the user. Section~\ref{sec:sis_inteligencia} describes it, with the guarantee it offers and the reason it remains closed.
 
 \subsection{The missing link: retraining architecture}
 
@@ -1088,3 +1082,112 @@ The cycle likewise includes no form of human ground truth. The three labels used
 corresponding to abnormal movement, membership of the same sector and percentile of movement, are
 verifiable approximations that were never confronted with the judgement of a human assessor. It is
 the limitation on which the others most depend, and Chapter~\ref{cap:conclusoes} returns to it.
+
+\section{The intelligence layer}
+\label{sec:sis_inteligencia}
+
+The previous sections described a system that composes text from computed objects, with a closed
+vocabulary. This section describes the layer that does the same with a language model, under a
+different guarantee, and the reason it is not exposed to the user.
+
+The current architecture for answering a question over a body of documents is retrieval-augmented
+generation \autocite{lewis2020rag}, discussed in Section~\ref{sec:ctx_rag}. The system in
+production runs the first half and stops before the second. The layer described here runs both,
+and exists to determine what it would cost to do so under the same discipline of evidence.
+
+\subsection{The contract: language does not produce facts}
+
+The object that crosses this layer is an \emph{evidence bundle}. Every fact in it carries a citable
+identifier and a declared origin, one of three: measured from prices, computed by one of the
+engines of Chapter~\ref{cap:metodologia}, or produced by the triage model. No fact has a
+\emph{generated} origin. That separation is the rule that structures the layer: the language model
+writes the language and never the numbers.
+
+Figure~\ref{fig:sis_inteligencia} shows the traversal. Two calls to the model, and the division
+between them is deliberate. The first writes no text: it translates the question into a plan the
+system knows how to run. The second decides nothing: it drafts over facts that already exist.
+Between them, the components described in this chapter produce the evidence, and neither call has
+access to the market.
+
+A deterministic router covers the first call when no interface key is available. It is not a
+fallback of convenience: the constraint of using only free sources implies that the layer has to
+keep answering when the usage limit runs out, and a conversational interface that falls silent at
+that point would not serve the audience Chapter~\ref{cap:introducao} defines.
+
+\subsection{Two levels of guarantee, and this is the weaker one}
+
+The grounding check refuses any sentence whose number does not belong to the fact it cites. The
+formulation matters: the link is per sentence and not over the whole bundle, because otherwise any
+number in the bundle could be attached to any claim.
+
+The guarantee is not, however, of the same nature as the one the alert offers, and
+Table~\ref{tab:sis_garantias} separates the two.
+
+\begin{table}[!htbp]
+\caption[The two levels of guarantee over the text delivered]{The two ways of guaranteeing that the
+text does not claim more than the components computed. The difference is not one of measured
+effectiveness, but of nature: an enumeration of what is permitted is closed, and an enumeration of
+what is forbidden is a list that may not be complete.}
+\label{tab:sis_garantias}
+\centering
+\small
+\begin{tabular}{L{0.20\textwidth} L{0.36\textwidth} L{0.34\textwidth}}
+\toprule
+ & \tabhead{Delivered alert} & \tabhead{Text of this layer} \\
+\midrule
+How it reaches the reader & pushed, unrequested & pulled, with the evidence beside it \\
+How it is composed & closed vocabulary & language model \\
+What the check enumerates & what is permitted & what is forbidden \\
+Strength of the guarantee & closed by construction & limited by the list \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The asymmetry is justified by risk and not by performance. The alert interrupts the user without
+being asked, and the text of this layer is consulted by someone already looking at the evidence
+that accompanies it.
+
+\subsection{What was measured, and what is not claimed}
+
+The check was confronted with a set of attempts to circumvent it. Over twenty-three attacks, all
+were refused; over eight faithful texts, none was; and in the sections actually composed not a
+single violation was delivered.
+
+These numbers delimit themselves. The first two are deterministic and reproduce over the same body
+of attacks; the third is a count over one concrete run. The measured strength is a lower bound,
+since the body of attacks was built by the author and nothing guarantees it exhausts the ways of
+circumventing the check.
+
+The layer is not exposed, and the reason is not the performance of the check. It is the nature of
+the guarantee that Table~\ref{tab:sis_garantias} describes: exposing to the user a text under the
+weaker guarantee, when the rest of the system operates under the stronger one, would make the
+product's promise uneven depending on the screen. No comparison with a complete
+retrieval-augmented generation architecture was carried out, so nothing is claimed about what it
+would add.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  cx/.style={draw=black!70, rounded corners=2pt, fill=black!5, align=center,
+        text width=2.36cm, minimum height=1.22cm},
+  leg/.style={font=\scriptsize, text=black!62, align=center},
+  seta/.style={-{Stealth[length=4pt]}, draw=black!55},
+]
+  \node[cx] (n0) at (0.0,0) {\textbf{question}\\[1pt]\scriptsize in plain\\language};
+  \node[cx] (n1) at (3.02,0) {\textbf{plan}\\[1pt]\scriptsize what the system\\knows how to run};
+  \node[cx] (n2) at (6.04,0) {\textbf{evidence}\\[1pt]\scriptsize facts with\\declared origin};
+  \node[cx] (n3) at (9.06,0) {\textbf{answer}\\[1pt]\scriptsize drafted over\\those facts};
+  \node[cx] (n4) at (12.08,0) {\textbf{open anchor}\\[1pt]\scriptsize the reader opens\\the cited fact};
+  \draw[seta] (n0) -- (n1);
+  \node[leg] at (1.51,0.84) {model reads};
+  \draw[seta] (n1) -- (n2);
+  \node[leg] at (4.53,0.84) {engines compute};
+  \draw[seta] (n2) -- (n3);
+  \node[leg] at (7.55,0.84) {model drafts};
+  \draw[seta] (n3) -- (n4);
+  \node[leg] at (10.57,0.84) {verification};
+  \node[leg, text width=10.5cm] at (6.04,-1.2) {the model never touches the market: the first call writes nothing, the second decides nothing};
+\end{tikzpicture}
+\caption[The traversal from a question to the fact that supports it]{The two calls to the language model are separated on purpose. The first translates a human sentence into a plan the system knows how to run and writes no text. The second drafts over facts that already exist and decides nothing. Between them, the engines described in this chapter produce the evidence, and each fact arrives with its origin declared. The final verification refuses any sentence whose number does not belong to the fact it cites, and that is what lets the reader open the anchor and confront the claim with what supports it.}
+\label{fig:sis_inteligencia}
+\end{figure}

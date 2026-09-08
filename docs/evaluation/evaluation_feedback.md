@@ -4,7 +4,7 @@
 
 > **Todas as regras de análise foram fixadas antes de existirem dados** e estão no cabeçalho de `scripts/analyse_feedback.py`. Nenhuma foi alterada depois.
 
-> Gerado por `scripts/analyse_feedback.py` a 2026-09-06 17:34 UTC.
+> Gerado por `scripts/analyse_feedback.py` a 2026-09-07 13:34 UTC.
 
 > **5 voto(s) excluído(s)** por não corresponderem a nenhum alerta do histórico partilhado. Não foram apagados do ficheiro, que é de acrescento e é a prova; foram ignorados na contagem.
 
@@ -28,7 +28,7 @@
 
 ⚠️ **Salvaguarda do votante dominante aplicada.** Uma só pessoa forneceu 67% dos votos efetivos, excedendo o limite pré-registado de 40%. Sem essa pessoa restam 14 votos, abaixo do mínimo de 20; a segunda linha mostra apenas a contagem e nenhuma proporção desse recorte é reportada.
 
-A proporção de alertas considerados úteis é de 98%, com intervalo de confiança de Wilson a 95% entre 88% e 100%. A largura deste intervalo é a medida honesta do que 42 votos permitem afirmar, e é por isso que é reportada ao lado do valor central e nunca depois dele.
+A proporção de alertas considerados úteis é de 98%, com intervalo de confiança de Wilson a 95% entre 88% e 100%. Este cálculo binomial não corrige a dependência entre votos da mesma pessoa ou sobre o mesmo alerta; a sua largura não representa toda a incerteza desta amostra.
 
 ## Ameaças à validade, e nenhuma delas é resolúvel com mais votos
 

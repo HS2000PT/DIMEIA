@@ -9,6 +9,134 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 66 (2026-09-07, 7.ª parte): A VERIFICAÇÃO QUE FALTAVA À AUDITORIA EXTERNA, E
+  DEPOIS UMA SEGUNDA AUDITORIA EM PAPEL DE ARGUENTE HOSTIL. DEZ ACHADOS, SEIS APLICADOS, E
+  O ARTEFACTO DESMENTIU A CORREÇÃO QUE EU PRÓPRIO TINHA CHAMADO «A MENOS INVASIVA».**
+  **✅ (A) O PENDENTE ERA A VERIFICAÇÃO, e estava escrito «em curso».** O
+  `CORRECOES_AUDITORIA_EXTERNA_2026-09-07.md` aplicava 24 achados e deixava o bloco de
+  verificação por preencher. Corrido: **PT 122 pp · EN 121 pp**, 0 erros, 0 referências ou
+  citações indefinidas, overfull máx **5,68 pt** e **8,61 pt** (iguais ao registo anterior às
+  correções), `check_entrega` verde nos 19 verificadores, **1027 testes**, ruff limpo.
+  ⚠️ **O A17 foi conferido no PDF e não no `.tex`**, que era o que o documento pedia: resolvidos
+  os destinos das 109 ligações do índice com `pypdf` — as cinco entradas das listas apontam para
+  as páginas físicas 11, 13, 15, 17 e 18, e os fólios aí impressos são xi, xiii, xv, xvii e
+  xviii. Refeitos à parte o Brier de referência (`0,23519`), a interseção de empresas
+  (`13−5 = 9−1 = 8`) e os metadados do Robertson e Zaragoza.
+  **⚠️ E ficou escrito o que as portas NÃO garantem:** A03, A04, A08, A20, A21 e A24 são
+  correções de **interpretação** — retiram ou estreitam uma afirmação sobre números que não
+  mudaram. Uma porta verde prova que nada partiu, não que a formulação nova é a certa.
+  **✅ (B) SEGUNDA AUDITORIA, com a restrição de só ver o PDF** →
+  [`AUDITORIA_EXTERNA_2026-09-07b.md`](docs/planos/AUDITORIA_EXTERNA_2026-09-07b.md), blocos A a
+  G. **Dez achados, e nenhum toca um resultado.** Os três de peso: o Cap. 6 afirmava que o valor
+  de referência «sobe na mesma proporção» quando sobe a **mais do dobro** do ritmo da precisão
+  (`0,240→0,333` contra `0,514→0,595`) e a margem desce `0,012`, e o Cap. 5 di-lo corretamente
+  vinte páginas antes; a Tabela 5.2 imprime `6,1×` onde `0,385/0,064` dá `6,0`, com a linha ao
+  lado (`5,4×`) a fechar exatamente; e o Apêndice A escrevia **critério** onde todo o corpo diz
+  **rótulo**, com uma célula a descrever o teste anti-lookahead como alterando «o critério»
+  quando o que ele altera é o rótulo.
+  **⚠️ (C) O PONTO DE ATAQUE QUE FICA ABERTO, e é o A01.** A alternativa mais forte à recuperação
+  semântica — filtrar pelo setor conhecido da consulta, que dá **precisão@5 = 1,000** — está
+  descrita em prosa na §5.3.3 e na §6.2.2 e **está ausente das duas figuras que carregam o
+  veredicto da QI2**, enquanto a alternativa trivial mais fraca (`0,467`) entra na figura. Não é
+  omissão: é tratamento desigual de duas objeções, e a mais incómoda ficou fora do desenho.
+  **⚠️ (D) A LIÇÃO DA SESSÃO, E É SOBRE A PRÓPRIA AUDITORIA.** Para o `6,1×` ofereci duas opções
+  e chamei «menos invasiva» à de imprimir `6,0×`. **Estava errada, e só se vê com o artefacto à
+  frente:** o gerador escreve `{entre/dentro:.1f}` sobre os valores **não arredondados** e o
+  `evaluation_gate_selectivity.md` publica `6.1×` ao lado de `0.064` e `0.385`. Imprimir `6,0×`
+  faria a tese divergir da sua própria fonte, e o `check_tese_numeros` apanharia. **Corrigiu-se a
+  explicação e não o número** — legenda nova a dizer que a razão é calculada sobre valores não
+  arredondados. **Uma auditoria cega ao artefacto pode diagnosticar bem e receitar mal.**
+  **✅ (E) B1 A B6 APLICADOS NAS DUAS ÁRVORES, ~12 palavras, zero números alterados:** a frase do
+  Cap. 6; a legenda da Tabela 5.2; seis ocorrências de `critério`→`rótulo` no apêndice
+  (`criterion`→`label`); «A **única ferramenta existente** que responde às três perguntas»; «na
+  **PR-AUC** exatamente na prevalência» na legenda da Figura 5.12; e o **Finnhub nomeado** na
+  Figura A.1 — a marca dele é um quadrado sem palavra nenhuma e não se lia como nome, sendo a
+  fonte que a Tabela 4.1 mostra ser a de melhor precisão e cobertura.
+  ⚠️ **O B5 foi escrito em texto simples e não com `\gls`**, porque **nenhuma legenda do
+  documento usa `\gls`** e não era este o sítio para abrir a exceção.
+  **⚠️ (F) O B6 FEZ DISPARAR UMA PORTA, E O DISPARO ESTAVA CERTO.** O `check_figuras_paridade`
+  acusou `Finnhub\\ Alpha Vantage\\ Polygon` como rótulo idêntico nas duas árvores por
+  traduzir. É isenção legítima — são marcas registadas — e entrou em `ISENTOS` com a razão
+  escrita, **a substituir a entrada anterior**, que de outro modo ficaria configuração morta.
+  **⚠️ (G) A LIGATURA MORDEU CINCO VEZES, e quatro alarmes meus foram retirados antes de
+  entrarem no relatório.** O `pdftotext` perde `fi`/`ff`: «Peffers» sai **«Peers»** e eu ia
+  reportar a bibliografia como tendo o apelido errado; «definições» sai «denições» e a procura
+  pela correção aplicada devolveu **zero** num PDF onde ela está. Mais: a extração **entrelaça
+  as duas séries de barras** da Figura 5.12 por posição vertical e eu li `0,368` onde o código
+  diz `0,378`; o Finnhub «ausente» da Figura A.1 estava lá como logótipo; e o `z` da Tesla só não
+  fechava porque a extração come o sinal de `−0,92%`. **Regra reafirmada: nenhum achado sobre
+  figura ou tabela sai de texto extraído — renderizar a página, ou ler o código do flutuante.**
+  **✅ (H) O QUE A AUDITORIA MEDIU E ESTAVA LIMPO, para não se gastar lá tempo outra vez:** ~30
+  cadeias aritméticas refeitas à mão, **todas fecham** (funil, embargo, decomposições, taxa-base
+  ponderada, Brier, F1, margens, fontes de notícias, custo de alojamento); a divisão cronológica
+  fecha por **três vias independentes** (`70/15/15` dos dias, as datas dos blocos, e os 1 951
+  grupos dentro de `9 × 221`); **39 valores partilhados entre o Cap. 5 e o Cap. 6, 0 divergências**;
+  todas as contagens prometidas («quatro contribuições», «onze limitações», «nove pontos de
+  decisão», «dez linhas de futuro»); as duas remissões com número de página; 109 ligações do
+  índice; 64 entradas de bibliografia; 26 acrónimos, nenhum usado antes de expandido; e os cinco
+  eixos metodológicos clássicos (fuga do futuro, sobreajuste ao teste, sobrevivência, preços não
+  ajustados, unidade de análise) — **todos declarados pelo próprio documento**.
+  **⚠️ (I) UM ACHADO DE ESCRITA QUE É MEDIÇÃO E NÃO GOSTO:** o documento constrói as suas
+  distinções com **uma só figura de retórica** — «X, e não Y» / «não X, mas Y» — **cem vezes em
+  ~34 500 palavras**, uma a cada 15 frases, com **cinco pares de frases consecutivas**. A
+  distinção é a espinha epistémica do trabalho e não se toca; o que se lê como máquina é a
+  uniformidade da superfície. **Recomendado mexer só nos cinco pares e mais uma dúzia**, e não
+  nas cem: cada frase reescrita num documento verificado é uma oportunidade de introduzir um
+  defeito.
+  **✅ (J) SEGUNDA PASSAGEM, TAMBÉM A PEDIDO: A01, A05 E A08.** Continuam zero números alterados
+  — o `1,000` já constava da §5.3.3. **A Figura 5.6 passa a mostrar o teto:** linha nova no topo,
+  `Filtro pelo setor da consulta` a `1,000`, no mesmo tracejado da outra estratégia sem modelo
+  para que as duas se leiam como um par, com a legenda a dizer o que o número **não** é («*não é
+  uma medição: é uma consequência aritmética da definição de relevância… não constitui
+  alternativa de produto, uma vez que devolveria casos do mesmo setor sem observar o tema da
+  notícia*»). Seis alternativas passam a sete. **A §5.4.4 recebe a reconciliação dos dois
+  `0,662`/`0,632`**, numa frase **mais curta do que a da §5.6.4 e a remeter para ela**, em vez de
+  a duplicar — duplicar alimentaria o achado (I). E a **§5.4.6 ganha a ressalva de
+  arredondamento** que fecha a distância entre `0,534 + 0,012` e o `0,547` impresso adiante.
+  **⚠️ E A PRIMEIRA VERSÃO DA FIGURA TINHA UM DEFEITO QUE SÓ O RENDER MOSTROU.** O rótulo
+  `1,000` assentava sobre o traço superior da própria barra, ao contrário de todos os outros, que
+  têm folga. **Não aparece em erro nem em overfull: o `exit code` é 0 nos dois casos.** Corrigido
+  com `yshift=1.5pt` nos rótulos desta figura e reconferido em imagem a 400 dpi.
+  ⚠️ **O custo do A01 é real e fica medido:** o eixo passa de `0,66` para `1,14` e encurta todas
+  as barras — o `0,126` passa de ~1,9 cm para ~1,1 cm —, e a figura mais alta levou a **árvore
+  inglesa de 121 para 122 páginas**. A ordenação e as distâncias entre as alternativas continuam
+  legíveis, e a comparação que a figura existe para fazer não se perde.
+  **PORTAS DEPOIS DE TUDO: PT 122 pp · EN 122 pp · 0 erros · 0 indefinidas · overfull 5,68 e
+  8,61 pt com as mesmas 5 e 4 caixas de antes de QUALQUER edição desta sessão · 0 `Float too
+  large` · 19 verificadores verdes · 1027 testes · ruff limpo.** As três pendências continuam
+  humanas e nenhuma é técnica: o `AUTOR_ENTRE_VOTANTES`, a leitura integral pelo autor, e os
+  nomes do júri.
+  **✅ (K) TERCEIRA PASSAGEM: O A09, E MEDIR OUTRA VEZ REDUZIU O ÂMBITO EM VEZ DE O ALARGAR.**
+  A receita do achado dizia «os cinco pares consecutivos e mais uma dúzia dos casos mais próximos
+  entre si», e a segunda metade assentava num pressuposto que **não se confirma**: varridos os
+  parágrafos um a um, **nenhum tem três ou mais** ocorrências. A construção não forma
+  aglomerados, está distribuída de forma quase uniforme. O alvo de «descer de 100 para ~70» tinha
+  sido construído sobre densidades que não existem.
+  **O que existe é o que um leitor perceciona: treze parágrafos com duas ocorrências cada**, seis
+  deles em frases consecutivas. Ninguém repara numa construção que aparece a cada quinze frases;
+  repara em duas na mesma passagem. Tratado esse conjunto, uma reescrita por parágrafo, treze ao
+  todo, espelhadas nas duas árvores: **PT 111 → 98, EN 118 → 107, pares contíguos 6 → 0 e 4 → 0.**
+  ⚠️ **A ocorrência que resta na árvore inglesa NÃO é assimetria entre as teses, é assimetria
+  entre os dois detetores:** o padrão português não apanha «a lacuna não é, portanto, de método,
+  mas de integração sob restrição» porque as vírgulas interrompem a janela. A frase existe nas
+  duas línguas e ficou intocada nas duas.
+  **⚠️ E DUAS DAS TREZE REESCRITAS INTRODUZIRAM UM DEFEITO NOVO, apanhado a ler o PDF e não pelas
+  portas.** Escrevi «delimitam o **alcance** da afirmação… sem **alcançar** um comportamento
+  universal», com o eco na mesma frase, e «o que daqui **decorre**» logo a seguir a «a afirmação
+  **decorre** da construção do método», com o eco em frases adjacentes. Corrigidos para
+  `abranger` e `daí resulta`, e o mesmo em inglês. **É a demonstração exata do custo que o
+  relatório descreve na secção F.2: cada frase reescrita num documento verificado é uma
+  oportunidade de introduzir um defeito, e duas em treze introduziram-no.**
+  ⚠️ **E a ligatura mordeu pela sexta vez:** três das treze passagens não apareceram na primeira
+  procura no PDF porque `verificável`, `verificação` e `fica` saem `vericável`, `vericação` e
+  `ca`. **Confirmadas as treze com a grafia sem ligatura.**
+  **PORTAS FINAIS: PT 122 pp · EN 122 pp · 0 erros · 0 indefinidas · overfull 5,68 e 8,61 pt,
+  ainda iguais ao registo anterior a QUALQUER edição desta sessão · 0 `Float too large` · 19
+  verificadores verdes, incluindo o «tradução: nenhuma ressalva perdida», que é o que garante que
+  nenhuma reescrita comeu uma ressalva · 1027 testes · ruff limpo.**
+  **⏭️ NÃO SE FEZ, e está justificado no bloco F.2:** reescrever as restantes 98 construções. A
+  distinção que elas carregam é a espinha epistémica do trabalho e fica; o que se tratou foi a
+  repetição audível, não a figura de retórica.
 - **🆕 SESSÃO 66 (2026-09-07, 6.ª parte): A TESE DE 138 PARA 120 PÁGINAS — E O NÚMERO QUE
   ASSUSTAVA O AUTOR NÃO ERA O NÚMERO QUE O JÚRI CONTA.**
   Quatro commits, fundidos em `c186949`. O pedido foi de redução: o autor disse que 138 páginas
@@ -1619,7 +1747,7 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 66 (a tese de 138 para 123 páginas; o `oneside` que estava errado e a pergunta do autor que o apanhou; e a tabela que eu ia acrescentar por cima de uma figura que já existia)
+- **Sessão nº:** 66 (a verificação que faltava à auditoria externa, a segunda auditoria em papel de arguente hostil, e o artefacto que desmentiu a correção que eu tinha chamado «a menos invasiva»)
 - **Última atualização:** 2026-09-07
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e

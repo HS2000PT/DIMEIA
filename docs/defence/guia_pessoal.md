@@ -198,7 +198,7 @@ re-treino, não um re-treino.
 - PR-AUC: volatilidade **0,542** > contexto 0,538 > contexto+texto **0,496** > GBM 0,469.
   **O texto piora.** Comparação pré-comprometida.
 - Resultado offline no proxy: a precisão dentro do orçamento de 5 alertas/dia sobe de **0,379**
-  para **0,632**. É um limite superior da política online, não utilidade humana medida.
+  para **0,632**. A seleção conhece o dia completo; não garante a precisão online nem mede utilidade humana.
 - **⚠️ Ao vivo não transfere:** ROC-AUC **0,486**, IC [0,403, 0,571] sobre 239 pares
   empresa-dia. Centrado no acaso.
 

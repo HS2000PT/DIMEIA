@@ -5,7 +5,7 @@ The two previous chapters described the methods chosen and the system that puts 
 one determines what each of them is worth. The experimental design and the metrics used are
 described first. Four case studies follow: three correspond to the research questions, and the
 fourth to the behaviour of the system in operation, where the choices of the previous chapters meet
-data that were not available when they were made.
+data that were not available when they were made. Whoever reads it will know what each technique is worth against a simpler alternative, and where the measurement did not confirm the deployed choice.
 
 \section{Experimental design and metrics}
 \label{sec:av_desenho}
@@ -109,8 +109,8 @@ choice & \gls{QI}2 \\
 \gls{PRAUC} & Does it rank well, whatever the threshold? & $0.378$, the prevalence of the test
 block & \gls{QI}3 \\
 \addlinespace
-Brier score & Does the percentage announced match the observed frequency? & $0.622$, obtained by
-always announcing one & \gls{QI}3 \\
+Brier score & Does the percentage announced match the observed frequency? & approximately $0.235$,
+announcing the training prevalence & \gls{QI}3 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -208,8 +208,8 @@ random would show a practically null spread, beating the \emph{z}-score precisel
 this section elects as principal. The claim follows from the construction of the method and
 requires no execution.
 
-The consequence is not that the measure is invalid, but that it must be read together with the
-second, and that is why there are two. The spread excludes the fixed threshold, which fires as a
+The measure is not invalidated; what it requires is that it be read together with
+the second, and that is why there are two. The spread excludes the fixed threshold, which fires as a
 function of the volatility of the company and not of the rarity of the day. $F_1$ excludes random
 firing, which sits at the level of chance against any label. Neither measure is sufficient on its
 own, and only the rolling rule satisfies both.
@@ -418,12 +418,12 @@ decade to be anticipated.
 \section{Precedent retrieval}
 \label{sec:av_qi2}
 
-The second case study answers \gls{QI}2: retrieval by meaning finds past news from another company
-in the same sector better than trivial alternatives. The answer is affirmative in the five sectors
-assessed, and the per-sector formulation is necessary, since the aggregate value is misleading in
-both directions.
+The second case study answers \gls{QI}2: retrieval by meaning finds news from another company
+in the same sector better than the text and ranking alternatives evaluated. The answer is
+affirmative against those comparators; the advantage over chance holds in all five sectors.
+The date restriction is evaluated separately, in aggregate over the historical corpus.
 
-\subsection{Procedimento}
+\subsection{Procedure}
 
 Evaluating retrieval systems faces the absence of a list of correct answers, since no set of pairs
 of news items is annotated as related. A verifiable approximation is therefore used: a retrieved
@@ -438,7 +438,7 @@ $3{,}714$ news items distributed across five sectors, collected over twenty-seve
 measurement uses five hundred queries per repetition across five repetitions with distinct seeds.
 The span of the corpus delimits what the measurement establishes: twenty-seven days do not support
 claims about temporal generalisation. The protocol does not require the candidate to be prior to
-the query, and only $31.1\%$ of the neighbours are. The check under the causal constraint was made
+the query, and only $31.1\%$ of the neighbours are. The check requiring earlier candidates was made
 in aggregate over the historical corpus, where the margin over chance holds, and not per sector.
 
 \subsection{Result}
@@ -451,12 +451,15 @@ alternatives.
 \begin{tikzpicture}
 \begin{axis}[
   ig axis,
-  xbar, width=0.70\textwidth, height=6.6cm, bar width=9pt,
-  xmin=0, xmax=0.66, enlarge y limits=0.10,
-  symbolic y coords={rec, aleat, maior, lex, fin, mini, mpnet},
-  ytick={rec, aleat, maior, lex, fin, mini, mpnet},
+  xbar, width=0.70\textwidth, height=7.2cm, bar width=9pt,
+  xmin=0, xmax=1.14, enlarge y limits=0.09,
+  symbolic y coords={rec, aleat, maior, lex, fin, mini, mpnet, setor},
+  % o rotulo do 1,000 assentava no traco superior da propria barra: 1,5pt de folga
+  every node near coord/.append style={yshift=1.5pt},
+  ytick={rec, aleat, maior, lex, fin, mini, mpnet, setor},
   yticklabels={Most recent, Random choice, Always the largest sector, Shared words,
-               Finance encoder, Embeddings (MiniLM), Embeddings (MPNet)},
+               Finance encoder, Embeddings (MiniLM), Embeddings (MPNet),
+               Filter by the query's sector},
   ig values,
   xlabel={precision@5},
   xmajorgrids,
@@ -464,17 +467,22 @@ alternatives.
 \addplot[bar shift=0pt, ig alternative bar] coordinates {
   (0.126,rec) [0.126] (0.240,aleat) [0.240] (0.346,lex) [0.346]
   (0.420,fin) [0.420]};
-\addplot[bar shift=0pt, ig reference bar] coordinates {(0.467,maior) [0.467]};
+\addplot[bar shift=0pt, ig reference bar] coordinates {(0.467,maior) [0.467]
+  (1.000,setor) [1.000]};
 \addplot[bar shift=0pt, ig current bar] coordinates {(0.514,mini) [0.514]};
 \addplot[bar shift=0pt, ig competitor bar] coordinates {(0.538,mpnet) [0.538]};
 \end{axis}
 \end{tikzpicture}
-\caption[Retrieval: the method against six alternatives]{Precision@5 of the deployed MiniLM, in
-solid green, against six alternatives. The green outline identifies the larger MPNet variant; the
+\caption[Retrieval: the method against seven alternatives]{Precision@5 of the deployed MiniLM, in
+solid green, against seven alternatives. The green outline identifies the larger MPNet variant; the
 grey bars bring together two baselines, a lexical one and an encoder specific to the financial
-domain. The dashed alternative of always returning news from the largest sector obtains $0.467$
-without any model, a value discussed in the text and one that requires the aggregate to be read
-with reservation.}
+domain. The two dashed bars dispense with any model: always returning news from the largest sector
+obtains $0.467$, a value discussed in the text and one that requires the aggregate to be read with
+reservation, and filtering the candidates by the query's known sector satisfies the label in every
+position of the list whenever five eligible candidates exist. The $1.000$ is not a measurement: it
+is an arithmetic consequence of the definition of relevance, and it appears here as the highest
+reference value this task admits. It is not a product alternative, since it would return cases from
+the same sector without looking at the topic of the news item.}
 \label{fig:av_recuperacao}
 \end{figure}
 
@@ -514,22 +522,22 @@ queries that are about technology, $0.467$. Measured against this alternative, a
 uniform chance, the margin of the method falls from $+0.274$ to $+0.047$, and the lexical baseline
 of $0.346$ comes to sit below the reference value.
 
-The aggregate value is, however, the misleading element, and not the method. The trivial strategy
+The misleading element is, however, the aggregate value. The trivial strategy
 obtains $1.000$ on technology queries and $0.000$ on all the others, returning semiconductor news to
 someone querying about an oil company. What it exploits is not a property of the problem, but the
 composition of this corpus.
 
-The comparison that survives this objection is the one carried out within each sector, where the
-trivial strategy has nothing to lean on. Panel A of Figure~\ref{fig:av_setor_causal} presents
-it.
+The comparison within each sector checks whether the advantage over chance also holds outside
+technology. Panel A of Figure~\ref{fig:av_setor_causal} presents it.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.96\textwidth]{figures/eval_retrieval_sector_causal.pdf}
 \caption[Retrieval by sector and under the temporal constraint]{In A, precision@5 and the
 corresponding chance value within each sector: the method sits above its reference value in all
-five. In B, the symmetric protocol of the scale test and the causal protocol that reproduces the
-constraint of production, each beside its reference value. Precision falls from $0.595$ to $0.513$
+five. In B, the symmetric protocol of the scale test and the protocol requiring earlier candidates,
+without reproducing the eight-day maturation in production, each beside its reference value.
+Precision falls from $0.595$ to $0.513$
 and the chance value from $0.333$ to $0.259$, so the margin varies only from $+0.262$ to
 $+0.254$.}
 \label{fig:av_setor_causal}
@@ -542,7 +550,14 @@ the corpus is sparse, it obtains several times the reference value. The aggregat
 the method and overestimates the trivial alternative for the same reason, which is that almost half
 the queries come from the single sector where the reference value was already high. The claim the
 work supports is therefore the narrowest one: semantic retrieval beats the base rate within each of
-the five sectors, and the aggregate value is not the appropriate way of stating it.
+the five sectors, against the comparators evaluated.
+
+This comparison does not measure the advantage over a rule that knows the query's sector.
+That sector is available in the company map: filtering candidates from other companies by the
+same sector would fill every slot correctly, provided five eligible candidates existed. This
+follows from the label, not from an additional experiment. The evaluation measures retrieval of
+this proxy from the text; it demonstrates neither superiority over a sector filter nor the
+additional semantic relevance the product aims to provide.
 
 The larger variant obtains $0.538 \pm 0.011$ against $0.514 \pm 0.015$ for the one used, over five
 seeds; the difference is small relative to the dispersion and no significance test was carried out.
@@ -553,7 +568,7 @@ apparently most reasonable alternative, which consists in presenting the most re
 $0.126$, the lowest value of all, which is consistent with there being no reason for the most
 recent news item about another company to be related to the news item under analysis.
 
-\subsection{Behaviour at scale and under the production constraint}
+\subsection{Behaviour at scale and with earlier candidates}
 
 The previous evaluation bears on a recent corpus of limited size. To verify that the result does
 not depend on that corpus, the same measurement was repeated over the complete historical set, with
@@ -572,16 +587,18 @@ after the query and another $30.2\%$ are from the same day. The deployed system 
 freedom, since the precedent base only receives a case eight days after it is observed, as
 Section~\ref{sec:sis_base} describes.
 
-This is not use of future information in the usual sense. The criterion for a hit is membership of
-the same sector, and the sector of a news item does not vary with time, so the temporal direction
-cannot inflate precision. What is at stake is the correspondence between the value reported and the
+The criterion for a hit is sector membership, which does not use the future price outcome.
+Nevertheless, admitting later candidates changes the retrieval task. What is at stake is the
+correspondence between the value reported and the
 task the research question describes, which speaks of past news. The measurement repeats the
 protocol adding to the mask the condition that the candidate be strictly prior to the query, and
 reproduces the symmetric value in the same run so that the comparison is paired. None of the
 $2{,}500$ queries was left without sufficient past. The result appears in panel B of
 Figure~\ref{fig:av_setor_causal}: precision falls by $0.082$, the reference value falls by almost
 as much, and the margin varies by $0.008$. The method keeps practically all of its advantage when
-forced to operate as it operates in production.
+earlier candidates are required. The mask neither imposes eight-day maturation nor checks the
+availability of outcomes at three and five sessions. The result therefore does not evaluate
+the base actually available at the instant of a production decision.
 
 This is the third occasion in the chapter on which reading a precision without its corresponding
 reference value would lead to the wrong conclusion. It happened in the move from the recent corpus
@@ -632,8 +649,8 @@ that the similarity is one of topic.}
 
 The direction agreement between the query news item and the retrieved cases stands at $0.708$
 against a chance value of $0.688$. It is for this reason that the system presents the cases one by
-one and never summarises them into an average, which would be read as a forecast, and that the text
-of the alert explicitly states that these are cases similar in topic.
+one and accompanies the range and mean with these individual cases. The mean describes the
+retrieved cases, not the next return; the alert states that the similarity concerns topic.
 
 \section{News triage}
 \label{sec:av_qi3}
@@ -668,12 +685,11 @@ valid across models.
 One input is not available in the same reference frame in production. The same-day return
 corresponds, in the historical set, to the complete movement of the day of the news, whereas in
 production the news is scored before that day closes. The result presented therefore evaluates the
-model with the complete daily variable and does not demonstrate parity with intraday scoring. The
-direction of the asymmetry is known. The input in question belongs to the context block, present in
-the models with the inferior result. The winning baseline uses a single input: the volatility of
-the twenty preceding days, closed on the previous day. The more generous reference frame is on the
-side of the models the comparison does not favour, and correcting it could only make the negative
-result stronger.
+model with the complete daily variable and does not demonstrate parity with intraday scoring.
+The input belongs to the context block; the winning baseline uses only the volatility of the
+twenty preceding days, closed on the previous day. Correcting the reference frame can change the
+fit and ordering of the context models in either direction. Its effect remains to be measured
+through retraining and evaluation; the negative result applies to the protocol executed here.
 
 \subsection{Result}
 
@@ -731,7 +747,10 @@ The highest value belongs to the simplest model of all, the one that uses only r
 Adding the rest of the context to it does not change the result distinguishably, at $0.538$ against
 $0.542$; adding the text of the headline degrades it distinguishably, at $0.496$. The Brier score
 follows the same ordering, with $0.218$ for the volatility model against $0.229$ for the model with
-text and $0.622$ for the model that always announces one. The initial hypothesis, that the text of
+text. Always announcing one yields $0.622$, but is a weak reference. The constant training
+prevalence, $q=0.3854$, yields approximately $0.235$ on the test:
+$\pi(1-q)^2+(1-\pi)q^2$, with $\pi=0.3781$. This is a descriptive calculation using the rounded
+prevalences in Figure~\ref{fig:av_deriva}, not a new run. The initial hypothesis, that the text of
 the news would bring information absent from the prices, is not confirmed over this corpus.
 
 \subsection{Three checks on the experimental setup}
@@ -814,10 +833,11 @@ all nine label definitions, with prevalences between $0.082$ and $0.597$, which 
 concrete choice of threshold and horizon the status of a point of attack.
 
 A fourth check bears on the composition of the blocks and leads to a conclusion that acts in both
-directions. The three blocks barely share companies. The training block runs between 2 January 2018
+directions. Company composition changes across blocks, with substantial overlap. The training block runs between 2 January 2018
 and 3 March 2022 and contains thirteen companies; the test block runs between 2 February and 18
 December 2023 and contains nine. Five companies from training do not appear once in the test, and
-one company in the test, accounting for $17.1\%$ of its rows, never appears in training. For the
+one company in the test, accounting for $17.1\%$ of its rows, never appears in training.
+Thus eight of the nine test companies appear in training and account for $82.9\%$ of test rows. For the
 companies present on both sides, the positive rate shifts markedly, and Apple goes from $0.448$ in
 training to $0.183$ in the test. These values are read directly from the identifier and block
 columns of the frozen set and require no additional execution.
@@ -825,18 +845,14 @@ columns of the frozen set and require no additional execution.
 This is not use of future information nor an error in the split: the cut is made by day, and the
 proportion respects the one defined in Section~\ref{sec:met_triagem}. It is the composition of the
 corpus that varies with time, for the same reason that makes the test block larger than the
-training block, since the companies written about in 2018 are not the same as in 2023.
+training block, since companies and their weights in the corpus vary between 2018 and 2023.
 
-In favour of the negative result weighs the following. The signal of the model is essentially the
-identity of the company, as Section~\ref{sec:av_ablacao} establishes, and that identity is
-estimated over a set of companies almost absent from the block where it is evaluated. The
-volatility of the twenty preceding days, closed on the previous day, is comparable across companies
-and depends on the identity of none. Against the result, the comparison does not separate the
-hypothesis that the model is worse from the hypothesis that identity does not transfer between
-these two periods, a separation that would require a split of constant composition. The same
-finding explains, without recourse to chance, the prevalence of $47.0\%$ in validation against
-$37.8\%$ in the test, which correspond to distinct sets of companies and not merely to distinct
-periods.
+The signal of the model is essentially company identity, as Section~\ref{sec:av_ablacao}
+establishes. The overlap allows evaluation on known companies, but their positive rates change
+between periods. The comparison does not separate model quality from the transfer of these rates
+and the change in composition; this would require an analysis with constant composition. The
+difference between $47.0\%$ positives in validation and $37.8\%$ in the test can combine both
+effects, whose individual contributions were not measured.
 
 \subsection{Usefulness under the budget constraint}
 
@@ -867,7 +883,7 @@ compared in Figure~\ref{fig:av_pontaaponta}, on page~\pageref{fig:av_pontaaponta
 \caption[The alphabetical tie-break is not a random reference]{Two ways of choosing the five news
 items of the day, over the same test block. The alphabetical tie-break does not measure blind
 choice; random choice obtains $0.379 \pm 0.017$ over forty seeds. Both policies choose knowing the
-complete day, so the values are upper bounds on what an online policy can obtain.}
+complete day; these values describe deferred selection and do not bound online precision.}
 \label{fig:av_orcamento}
 \end{figure}
 
@@ -884,7 +900,10 @@ The comparison with volatility, in Figure~\ref{fig:av_pontaaponta} on
 page~\pageref{fig:av_pontaaponta}, contains the uncomfortable
 result. A table of thirteen constants, corresponding to the mean volatility of each company,
 computed exclusively over the training block and without reading a single headline, obtains $0.662$
-and beats the trained model. The comparison has a reservation that makes it less clean than it
+and beats the trained model. The value is not that of the \emph{volatility only} row of
+Figure~\ref{fig:av_ablacao}, which is a regression on daily volatility and obtains $0.632$ on this
+metric: here volatility enters as a constant per company, and Section~\ref{sec:av_producao}
+reconciles the two. The comparison has a reservation that makes it less clean than it
 looks: $17.1\%$ of the rows of the test block belong to a company absent from training and receive
 the global fallback value instead of a constant of their own. It is, even so, the third case in the chapter
 in which the simpler method obtains the better result. What the evidence supports is that ranking
@@ -932,11 +951,12 @@ with the deployed model and takes the model apart input by input, under the froz
 subset of the inputs or to an alternative reference; the rows do not form a sequence of cumulative
 removals. The decisive row is that of the lookup table, which does not look at the news item and
 matches the deployed model on the first measure and beats it on the second. The two lowest rows,
-which have no company-level input at all, sit exactly at the prevalence of the test block.}
+which have no company-level input at all, sit on the PR-AUC exactly at the prevalence of the
+test block.}
 \label{fig:av_ablacao}
 \end{figure}
 
-Three readings follow from the figure, and none depends on interpretation.
+Three readings follow from the figure.
 
 The lookup table matches the model and beats it on one of the measures. On \gls{PRAUC} it obtains
 $0.534$ against $0.538$; on precision within the budget, which is the
@@ -963,7 +983,7 @@ a metric that did not pose the question the product needed.
 Keeping the nine-input variant does not follow from its having the best value among those that
 fitted in the execution container. By the criterion fixed before the results, four values are
 indistinguishable from one another: the $0.542$ of volatility, the $0.543$ of the variant without
-sector indicators, the $0.538$ of the deployed variant and the $0.534$ of the lookup table. The
+sector indicators, the $0.538$ of the deployed variant and the $0.534$ of the lookup table.
 None of the differences between them exceeds $0.009$, far below the $0.02$ limit. Applying that limit only
 when it disfavours a conclusion would amount to not having fixed it. The only difference the
 criterion separates in this comparison is the one that distinguishes these four variants from the
@@ -975,10 +995,11 @@ score, as Figure~\ref{fig:sis_alerta} shows.
 
 The methodological lesson stands: \gls{PRAUC} over the complete set can take a high value when the
 variation between companies dominates, even in the absence of any ability to distinguish news items
-within the same company. The metric answered the question about the ordering of the set, while the
-product needed the question about the distinction between two news items of the same company.
+within the same company. The company-day label cannot evaluate differences between headlines
+in the same group; that ability requires a label per news item.
 
 \subsection{Text as an increment and not as a substitute}
+\label{sec:av_acrescimo}
 
 Comparing volatility, context and text in isolation answers which of the representations is better,
 and not whether the text adds information. Answering this second question requires adding it to a
@@ -1032,7 +1053,8 @@ measurement.}
 The headline adds to that base $+0.012$ of \gls{PRAUC}, with an interval between $+0.004$ and
 $+0.020$, which excludes zero. It is the first occasion on which a text representation shows a
 detectable increment on this task, and the value sits below the practical criterion of $0.02$ fixed
-before the results.
+before the results. The increment and the base are rounded to three decimal places, so adding them
+may differ in the last place from the value the next reservation reports.
 
 Three reservations delimit the reach of this increment, and all of them are measurements. The
 intervals of the first and the third are the ones Figure~\ref{fig:av_acrescimo} draws, and neither
@@ -1048,21 +1070,17 @@ per day is $0.662$ with and without the text, without a decimal place of differe
 exists in the ordering of the complete set and disappears when only five news items per day are
 selected.
 
-\item \textbf{The text still does not separate news items of the same company.} The ranking ability
+\item \textbf{No ranking gain within the company is demonstrated.} The ranking ability
 within each company is $0.500$ by construction for the lookup table and rises to $0.512$ when the
 headline is added to it. For the deployed model it is $0.502$, with an interval between $0.462$ and
 $0.542$, and rises to $0.508$ with the text, an increment whose interval contains zero. Neither of
 the two is distinguishable from chance.
 \end{enumerate}
 
-The information the text brings distinguishes companies and periods, and not news items.
-
 The answer to \gls{QI}3 remains negative and becomes more precise. No model with text beats
-volatility, and the text is not useless: it adds to what the model already knows about the company,
-in a small and measurable way. What prevents that increment from changing the system is not the
-absence of information, but the nature of the information, which distinguishes companies when the
-product needs to distinguish news items. The next step requires a label per news item, and not
-merely a larger model.
+volatility. The small aggregate increment does not yield a budget gain or demonstrate better
+ranking within the company. The shared label cannot identify information specific to each
+headline on the same day; that evaluation requires a label per news item.
 
 A final reservation applies to the method itself. This is one more model evaluated over the same
 test block, which has already served several comparisons in the chapter, and the more often a test
@@ -1070,8 +1088,8 @@ set is looked at, the more likely it becomes to find a small difference in it. T
 used, which are not tuning the configuration and declaring the criterion before the measurement,
 reduce that risk without eliminating it. The formulation that survives is the weakest possible: it
 is not possible to reject that the headline adds information, and the increment, if it exists, is
-below the practical criterion fixed before the measurement. It is an upper bound on an effect and
-not a discovery.
+below the practical criterion fixed before the measurement. The observed value does not establish
+a guaranteed bound on the effect of the text.
 
 \subsection{Limits of the conclusion}
 
@@ -1112,8 +1130,8 @@ point would produce a value without a referent.
 
 The technique is not left unevaluated, but unevaluated in that way, which requires determining what
 in it remains falsifiable. There are two properties, and both are measured over the seventeen
-companies of the sector map, which is the set the evaluation procedure covers and not the list
-monitored in production. Figure~\ref{fig:av_motor} presents the two.
+companies of the sector map, which is the set the evaluation procedure covers, distinct from the
+list monitored in production. Figure~\ref{fig:av_motor} presents the two.
 
 \begin{figure}[ht]
 \centering
@@ -1186,7 +1204,7 @@ that reason that the limitation appears in Chapter~\ref{cap:conclusoes}.
 \label{sec:av_producao}
 
 The fourth case study bears on the behaviour of the system after deployment, on the decisions it
-takes autonomously. It is the least common of the three evaluations described in
+takes autonomously. It is the less common of the two evaluations described in
 Section~\ref{sec:met_metodologia}, and the one that produces the diagnosis that changed the
 system.
 
@@ -1241,7 +1259,9 @@ windows, as Table~\ref{tab:av_porta} shows.
 \caption[Gate selectivity across two windows]{Selectivity indicators for the decision gate across
 two observation windows. In both, the spread between companies is several times the spread within
 each one: the conclusion that the score separates companies, and not headlines, does not depend on
-the window chosen.}
+the window chosen. Both spreads are rounded to three decimal places and the ratio is computed on
+the unrounded values, so the division redone on the printed numbers may differ in the place
+shown.}
 \label{tab:av_porta}
 \centering
 \begin{tabular}{L{0.42\textwidth} C{0.20\textwidth} C{0.20\textwidth}}
@@ -1261,6 +1281,7 @@ Companies where the threshold decides & 5 of 12 & 4 of 12 \\
 
 What the score separates is companies, not headlines. In none of the assessments logged did Apple
 reach the threshold, with an observed maximum of $0.472$, whereas AMD exceeded it in all of them.
+It is the same company whose movement Section~\ref{sec:met_decomposicao} splits.
 
 The fraction of cases in which the outcome was determined before the headline was read admits two
 counts, and both are reported. Counted once per distinct headline it is $48\%$; counted per logged
@@ -1377,8 +1398,9 @@ The metric evaluated ranks all the candidates of the test block and only then fi
 each day, which requires knowing the complete day before deciding and is therefore a deferred
 policy. The deployed system decides online, every sixty seconds, and spends the first slot on the
 first news item that crosses the gates, because at the moment of the decision the afternoon news
-item does not yet exist. The precision within the budget reported in this chapter is therefore an
-upper bound on what the deployed policy obtains.
+item does not yet exist. The precision within the budget reported in this chapter describes that
+deferred selection. Knowing more candidates does not guarantee higher precision when scores can
+be wrong; the relationship with the online policy's precision remains to be measured.
 
 \subsection{The performance of the model over the decisions it took}
 
@@ -1593,8 +1615,9 @@ same test block. Random choice serves as the reference, and obtains $0.375$ here
 of Figure~\ref{fig:av_orcamento}: they are two runs of the same draw by distinct procedures, and the
 difference lies within the spread across seeds of either of them. The oracle is a theoretical
 maximum that is
-not usable, obtained with knowledge of the answers. All of them choose knowing the complete day, so
-each value is an upper bound on what the same rule would obtain deciding minute by minute.}
+not usable, obtained with knowledge of the answers. All of them choose knowing the complete day.
+The usable policies describe deferred selection; only the oracle establishes the maximum
+possible on this set.}
 \label{fig:av_pontaaponta}
 \end{figure}
 
@@ -1627,10 +1650,11 @@ set is, to a large extent, their volatility.
 The third, and most useful, is the location of the limitation given by the theoretical maximum. The
 best possible result, choosing with knowledge of the answers, would be $0.968$, which means that on
 almost every day there are indeed five material news items in the available set. The system is not
-limited by scarcity of raw material, but by the inability to identify which they are. The margin
-between $0.632$ and $0.968$ is $0.336$ and resides almost entirely in the separation of news items
-within each company, which is precisely what the deployed model cannot do. It is the same
-conclusion obtained by a third independent route.
+limited by scarcity of positively labelled rows, but by its selection. The margin between
+$0.632$ and $0.968$ is $0.336$. Since all headlines from a company on the same day share the
+label, exchanging headlines within that group does not change precision. This margin measures
+distance from ideal selection of company-day groups; it does not locate an inability to
+distinguish headlines within a group or independently verify that ability.
 
 All the policies in this comparison choose from among what the source delivered, which leaves out
 the question prior to them all, concerning the days on which nothing was delivered. Over a year of

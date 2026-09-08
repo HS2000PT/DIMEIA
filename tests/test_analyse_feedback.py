@@ -35,6 +35,20 @@ def _votos(pares: list[tuple[str, str]], chave: str = "k") -> list[FL.FeedbackRe
 
 # ── Wilson ───────────────────────────────────────────────────────────────────────────────
 
+
+def test_intervalo_reportado_declara_dependencias_em_ambas_as_linguas():
+    """Pares distintos não tornam independentes os votos da mesma pessoa."""
+    registos = _votos([("leitor", FL.UTIL)] * 21)
+    chaves = {r.chave_alerta for r in registos}
+    pt = af.fragmento_latex(registos, chaves, "pt")
+    en = af.fragmento_latex(registos, chaves, "en")
+    md = af.relatorio(registos, chaves)
+    assert "não corrige a dependência" in pt
+    assert "does not adjust for dependence" in en
+    assert "não corrige a dependência" in md
+    assert "medida honesta" not in pt + md
+    assert "honest measure" not in en
+
 def test_wilson_nao_colapsa_nos_extremos():
     """Com oito acertos em oito o intervalo normal daria largura zero, ou seja afirmaria
     certeza absoluta a partir de oito observações."""

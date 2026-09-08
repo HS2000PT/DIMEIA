@@ -427,8 +427,10 @@ def _decomposition(ticker: str) -> dict | None:
         rets = np.log(frame / frame.shift(1)).dropna()
         d = decompose_move(rets[ticker].to_numpy(), rets[MARKET_INDEX].to_numpy(),
                            rets[etf].to_numpy() if etf else None)
+        r2 = float(d.r_squared)
         return {"market": d.market, "sector": d.sector, "company": d.idiosyncratic,
-                "driver": d.driver, "total": d.total, "fallback": bool(d.fallback)}
+                "driver": d.driver, "total": d.total, "fallback": bool(d.fallback),
+                "r2": None if r2 != r2 else r2}
     except Exception:  # noqa: BLE001
         return None
 

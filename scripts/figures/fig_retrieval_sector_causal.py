@@ -21,7 +21,7 @@ TEXTO = {
     "pt": {
         "setores": {"Technology": "Tecnologia", "Banking": "Banca", "Energy": "Energia",
                     "Health": "Saúde", "Consumer": "Consumo"},
-        "protocolos": ["Simétrico\n(escala)", "Causal\n(produção)"],
+        "protocolos": ["Simétrico\n(escala)", "Anterioridade\n(sem maturação)"],
         "metodo": "MiniLM, P@5",
         "chao": "Taxa-base aleatória",
         "precisao": "Precisão@5",
@@ -33,7 +33,7 @@ TEXTO = {
     "en": {
         "setores": {"Technology": "Technology", "Banking": "Banking", "Energy": "Energy",
                     "Health": "Health", "Consumer": "Consumer"},
-        "protocolos": ["Symmetric\n(scale)", "Causal\n(production)"],
+        "protocolos": ["Symmetric\n(scale)", "Earlier candidates\n(no maturation)"],
         "metodo": "MiniLM, P@5",
         "chao": "Random base rate",
         "precisao": "Precision@5",
@@ -155,7 +155,9 @@ def build(sectors_path: Path, causal_path: Path, output: Path,
         # ⚠️ Os valores anotados usavam virgula e os ticks do eixo ponto, na MESMA
         # figura. Nenhum dos dois errado isoladamente, e as duas convencoes lado a lado.
         if T["decimal"] == ",":
-            ax.set_yticklabels([f"{v:.1f}".replace(".", ",") for v in ax.get_yticks()])
+            ax.yaxis.set_major_formatter(
+                matplotlib.ticker.FuncFormatter(lambda value, _: f"{value:.1f}".replace(".", ","))
+            )
 
     fig.tight_layout(w_pad=2.0)
     output.parent.mkdir(parents=True, exist_ok=True)

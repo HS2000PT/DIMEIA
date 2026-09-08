@@ -164,3 +164,7 @@ output/
 fb_tmp.jsonl
 *_tmp.jsonl
 /*.jsonl
+
+# Rascunho de auditoria (contact sheets, PDF anteriores, registos de compilacao).
+# Nao entra no repositorio: sao 18 MB de imagens reproduziveis a partir do PDF.
+work/

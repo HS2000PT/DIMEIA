@@ -1,10 +1,10 @@
 \chapter{Conclusions}
 \label{cap:conclusoes}
 
-Chapter~\ref{cap:avaliacao} measured each component in isolation. This one brings together what
+Chapter~\ref{cap:avaliacao} evaluated the four components. This one brings together what
 those measurements yield. It synthesises the work carried out, presents the answer obtained for
 each research question, identifies the limitations of the study and sets out the lines of future
-development.
+development. Whoever reads it will know what the work establishes, what it decides without establishing, and what remains untested.
 
 \section{Main conclusions}
 \label{sec:con_principais}
@@ -40,12 +40,32 @@ not in the model, that the work resides.
 
 A second conclusion runs across the four case studies and belongs to none of them in particular.
 On three distinct occasions, a simpler technique obtained a better result than a more sophisticated
-one under equivalent conditions: the rolling \emph{z}-score against two learned detectors, recent
-volatility against text representations, and a table of thirteen constants against the trained
-model. On three other occasions the reverse happened, with the alternative measured obtaining the
-better result. The system kept the deployed option for distinct reasons in each case: the equally
-weighted estimator for explainability, the twenty-day window for responsiveness, and the smaller
-sentence encoder for computational cost.
+one under equivalent conditions; on three others the reverse happened, and the system nonetheless
+kept the deployed option, for a distinct reason in each case.
+Figure~\ref{fig:con_simples} gathers the six.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\scriptsize,
+  cx/.style={draw=black!60, rounded corners=1.5pt, align=left, inner sep=4pt,
+        text width=5.2cm, minimum height=1.15cm},
+  ganha/.style={cx, fill=black!8, draw=black!78, line width=0.8pt},
+  perde/.style={cx, fill=white, draw=black!45, densely dashed},
+  cab/.style={font=\footnotesize\bfseries, align=center, text width=5.6cm},
+]
+  \node[cab] at (0,1.35) {the simple technique obtained\\the better result};
+  \node[cab] at (6.4,1.35) {the alternative obtained more,\\and the system kept its own};
+  \node[ganha] at (0,0.0) {\textbf{rolling z-score} against two learned detectors\\[1pt]\scriptsize $F_1$ of $0.530$ against $0.269$ and $0.280$};
+  \node[perde] at (6.4,0.0) {\textbf{exponential decay} obtains more, and was not adopted\\[1pt]\scriptsize $F_1$ of $0.664$ against $0.516$ · explainability};
+  \node[ganha] at (0,-1.62) {\textbf{recent volatility} against text representations\\[1pt]\scriptsize PR-AUC of $0.542$ against $0.496$};
+  \node[perde] at (6.4,-1.62) {\textbf{sixty-day window} obtains more, and was not adopted\\[1pt]\scriptsize $F_1$ of $0.678$ against $0.516$ · responsiveness};
+  \node[ganha] at (0,-3.24) {\textbf{thirteen constants per company} against the trained model\\[1pt]\scriptsize precision@5 of $0.662$ against $0.632$};
+  \node[perde] at (6.4,-3.24) {\textbf{MPNet} obtains more, and was not adopted\\[1pt]\scriptsize precision@5 of $0.538$ against $0.514$ · cost};
+  \draw[draw=black!30] (3.2,1.7) -- (3.2,-4.05);
+\end{tikzpicture}
+\caption[The three occasions in each direction]{On the left, the three occasions on which a simpler technique obtained a better result than a more sophisticated one under equivalent conditions. On the right, the three on which the reverse happened and the system nonetheless kept the deployed option, with the reason for each. The distinction between the two columns is the distinction between a result and a choice, and Table~\ref{tab:av_alternativas} gathers them with the rest.}
+\label{fig:con_simples}
+\end{figure}
 
 The distinction between these two cases is the distinction between a result and a choice, and the
 present chapter keeps it explicit: what the measurement establishes is reported as a result, and
@@ -78,8 +98,8 @@ Figure~\ref{fig:con_scorecard} brings the three together.
   \node[cx] (q2) at (0,-2.35) {\textbf{\gls{QI}2 · precedents}\\[2pt]
     Retrieve past news from another company in the same sector?};
   \node[ver] at (3.35,-2.35) {YES};
-  \node[num] at (7.2,-2.35) {beats the reference value in all five sectors; under the temporal
-    constraint of production, precision@5 of $0.513$ against chance of $0.259$};
+  \node[num] at (7.2,-2.35) {beats chance in all five sectors; with news prior to the query,
+    precision@5 of $0.513$ against chance of $0.259$};
 
   \node[neg] (q3) at (0,-4.85) {\textbf{\gls{QI}3 · triage}\\[2pt]
     Does a trained model prioritise news better than a simple baseline?};
@@ -90,10 +110,56 @@ Figure~\ref{fig:con_scorecard} brings the three together.
   \draw[black!35] (3.35,-5.85) -- (3.35,0.95);
 \end{tikzpicture}
 \caption[The three research questions and the answers obtained]{The three answers, with the
-negative answer presented with the same prominence as the other two. The third row is the one that
-gives credit to the others: a work that reports only the favourable results does not allow one to
-determine whether the affirmative answers were measured or presumed.}
+negative answer presented with the same prominence as the other two. The answer to the second
+question is limited to the evaluated alternatives and the proxy criterion of sector relevance.}
 \label{fig:con_scorecard}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\scriptsize,
+  cx/.style={draw=black!55, rounded corners=1.5pt, fill=black!4, align=center,
+        text width=2.7cm, minimum height=1.42cm, inner sep=2pt},
+  res/.style={cx, fill=black!10, draw=black!75, line width=0.8pt},
+  qi/.style={font=\bfseries\footnotesize, align=center},
+  cab/.style={font=\scriptsize\itshape, text=black!60, align=center},
+  nao/.style={font=\scriptsize, text=black!58, align=left, text width=13.7cm},
+  seta/.style={-{Stealth[length=3.5pt]}, draw=black!45},
+]
+  \node[cab] at (1.5,1.16) {the question};
+  \node[cab] at (4.6,1.16) {how it is measured};
+  \node[cab] at (7.7,1.16) {against what};
+  \node[cab] at (10.8,1.16) {the result};
+  \node[qi] at (-0.72,0.0) {RQ1};
+  \node[cx] (c00) at (1.5,0.0) {unusual movements, across companies?};
+  \node[cx] (c01) at (4.6,0.0) {firing-rate spread, without labels};
+  \node[cx] (c02) at (7.7,0.0) {fixed threshold of three per cent};
+  \node[res] (c03) at (10.8,0.0) {$0.015$\\ against $0.344$};
+  \draw[seta] (c00) -- (c01);
+  \draw[seta] (c01) -- (c02);
+  \draw[seta] (c02) -- (c03);
+  \node[nao, anchor=west] at (-0.35,-1.06) {what does not follow from this: not that the parameterisation chosen is the best of the family};
+  \node[qi] at (-0.72,-2.72) {RQ2};
+  \node[cx] (c10) at (1.5,-2.72) {precedents from another company in the sector?};
+  \node[cx] (c11) at (4.6,-2.72) {precision@5, label approximated by sector};
+  \node[cx] (c12) at (7.7,-2.72) {chance, shared words, recency};
+  \node[res] (c13) at (10.8,-2.72) {$0.514$\\ against $0.240$};
+  \draw[seta] (c10) -- (c11);
+  \draw[seta] (c11) -- (c12);
+  \draw[seta] (c12) -- (c13);
+  \node[nao, anchor=west] at (-0.35,-3.78) {what does not follow from this: it does not measure advantage over a sector filter};
+  \node[qi] at (-0.72,-5.44) {RQ3};
+  \node[cx] (c20) at (1.5,-5.44) {triage better than volatility?};
+  \node[cx] (c21) at (4.6,-5.44) {PR-AUC on the held-out test block};
+  \node[cx] (c22) at (7.7,-5.44) {volatility of the previous twenty days};
+  \node[res] (c23) at (10.8,-5.44) {$0.496$\\ against $0.542$};
+  \draw[seta] (c20) -- (c21);
+  \draw[seta] (c21) -- (c22);
+  \draw[seta] (c22) -- (c23);
+  \node[nao, anchor=west] at (-0.35,-6.5) {what does not follow from this: not that news text is useless for the task};
+\end{tikzpicture}
+\caption[The path of each question to its answer]{For each question, the path from the question to the result, and the line that delimits the reach of that result. The first three columns are the protocol, fixed before the measurement; the fourth is the value obtained against the alternative. The bottom line of each block is what distinguishes an evaluation from a demonstration, and is developed in the subsections that follow.}
+\label{fig:con_cadeia}
 \end{figure}
 
 \subsection{Detection of unusual movements}
@@ -134,7 +200,7 @@ distinct from the one intended.
 
 \subsection{Precedent retrieval}
 
-The answer to \gls{QI}2 is affirmative, and its formulation requires the sector level. Over the
+The answer to \gls{QI}2 is affirmative against the evaluated alternatives. Over the
 recent corpus, retrieval by sentence similarity \autocite{reimers2019sbert} obtains precision@5 of
 $0.514$, against $0.346$ for vocabulary overlap, $0.240$ for random choice and $0.126$ for
 presenting the most recent news. Here too the deployed model is not the best measured: a larger
@@ -148,19 +214,21 @@ strategy is useless as a product, since it is right on every query of one sector
 remaining four, but its existence shows that the aggregate measures in part the composition of the
 corpus.
 
-The comparison that survives the objection is carried out within each sector, where the method
+The comparison that controls for this composition is carried out within each sector, where the method
 beats the respective reference value in all five. The absolute margin is largest in the most
 abundant sector, at $+0.283$ in technology; in the sparse sectors, where the reference value is
-around $0.072$, the method obtains several times that value with a smaller absolute margin. This is
-the claim the work supports.
+around $0.072$, the method obtains several times that value with a smaller absolute margin. The
+scope is that of the evaluated alternatives: if selection could use the known sector of the query,
+filtering by that sector would suffice to satisfy the label, provided enough candidates existed.
+The per-sector analysis does not measure semantic advantage over that filter.
 
 Two further checks delimit the answer. Over the complete historical corpus, with approximately
-eighty thousand news items from six years, precision rises to $0.595$. The reference value rises in
-the same proportion, and the margin holds. The method does not degrade with scale, nor does it
-improve with it. Imposing the constraint the system actually faces, under which the precedent must
-be prior to the query, reduces precision to $0.513$ and the reference value to $0.259$, with the
-margin varying by $0.008$. The method keeps its advantage when forced to operate as it operates in
-production.
+eighty thousand news items from six years, precision rises to $0.595$. The reference value rises
+too, and faster, so the margin falls from $+0.274$ to $+0.262$. The method does not degrade with
+scale, nor does it improve with it. Requiring the precedent to be prior to the query reduces precision to $0.513$
+and the reference value to $0.259$, with the margin varying by $0.008$. The method keeps its
+advantage under this chronological restriction. The test does not impose the eight-day maturation
+used in production and therefore does not fully validate outcome availability.
 
 The second caveat has direct consequences for the product. Retrieval identifies topic and not
 direction: the agreement between the direction of the movement of the query news item and that of
@@ -169,11 +237,12 @@ news items can deal with the same subject and the price move in opposite directi
 consistent with what the semi-strong form of the efficient market hypothesis would lead one to
 expect \autocite{fama1970efficient}, under which public information is already reflected in the
 price, without the work testing it or relying on it to establish any conclusion. The practical
-consequence is the decision to present the precedents individually, with date and outcome, rather
-than summarising them into an average liable to be read as a forecast.
+consequence is to present the precedents individually, with date and outcome. The historical alert
+reproduced in Figure~\ref{fig:sis_alerta} also includes an average, which summarises those cases
+and does not constitute a forecast for the incoming news item.
 
-A final delimitation concerns the label. Membership of the same sector is a verifiable
-approximation of relevance, and not the property one intended to measure. The lexical baseline is
+A final delimitation concerns the label. Membership of the same sector approximates relevance in a
+verifiable way, without coinciding with the property one intended to measure. The lexical baseline is
 the most elementary form of its family, without weighting by the rarity of terms and without
 normalisation by length. The seventeen percentage points of advantage measure the distance to a
 starting point, and not to a tuned ranking function \autocite{robertson2009bm25}.
@@ -199,17 +268,16 @@ with an interval between $+0.004$ and $+0.020$, which excludes zero. It is the o
 which a text representation shows a detectable increment on this task.
 
 The value falls below the $0.02$ limit that Chapter~\ref{cap:avaliacao} fixed before the
-measurements, and that limit applies in both directions. What is established is an upper bound on
-the effect of the text, and not a quantity the system can make use of.
+measurements. The observed increment falls below that practical criterion; it does not establish
+a guaranteed bound on the effect of the text.
 
 Three measurements prevent this increment from reopening the verdict. The sum does not beat
 volatility alone, and the interval of the difference contains zero. The increment does not survive
 the metric that describes the product: precision within the budget of five alerts per day stays at
-$0.662$ with and without text. And the ability to separate news items of the same company remains
-at the level of chance. What these measurements add to the negative answer is not a caveat but a
-location: the information the text carries distinguishes companies and periods, when the product
-needed it to distinguish news items. The formulation that survives is the weakest possible,
-corresponding to an upper bound on an effect and not to a discovery.
+$0.662$ with and without text. Ranking within each company remains at chance level. These
+measurements do not demonstrate an operational gain from text: the label is shared by all news
+items of a company on the same day, so the metric evaluates company-day selection rather than
+distinguishing between headlines from that day.
 
 There is an established line of research that uses text to anticipate price movements
 \autocite{xing2018nlffsurvey, ding2015deep}, and this result does not contradict it. The difference
@@ -232,7 +300,7 @@ detection by free sources a median of $353$ minutes passes, an interval during w
 reaction has already occurred. The system observes, by construction, information that has ceased to
 be new.
 
-This reading is a framing and not a conclusion. The work does not test the efficient market
+This reading is a framing, without the standing of a conclusion. The work does not test the efficient market
 hypothesis, and a negative result obtained with one family of methods over a concrete corpus does
 not confirm it; confirming it would require a design this one does not have. What the reading adds
 is the reason why the result is less surprising than the initial hypothesis assumed, and why its
@@ -249,7 +317,7 @@ The first objective, to build the complete system from data acquisition to the d
 alert, is met. Both triggers work end to end in production, on free sources, and the path of an
 event is documented in Chapter~\ref{cap:sistema} with the values of a real case.
 
-The second objective, to evaluate each component against transparent baselines, is met for the
+The second objective, to evaluate the components with transparent baselines, is met for the
 three techniques in which an external referent exists. In one of the cases it went beyond what was
 planned: the detector was compared not only with a fixed threshold rule, but also with two learned
 methods.
@@ -260,7 +328,7 @@ possible were not carried out, such as that of the one-factor model against the 
 or that of the raw sensitivities against the shrunk ones.
 
 The third objective, to ensure that the explanations presented are faithful to what the system
-computed, is met by construction and not by subsequent verification. Every value displayed comes
+computed, is met by construction, without depending on subsequent verification. Every value displayed comes
 from the object that computed it, and the text is composed from those pieces, so it is not possible
 for the alert to state a value distinct from the one the system obtained. Faithfulness is, however,
 a property of the system, and not of the relation between the system and whoever reads it; the
@@ -299,18 +367,18 @@ usefulness of the explanations nor the quality of the labels ceases to be an app
 No controlled study with people & Run the protocol designed, with six to ten participants &
 calendar time \\
 The score is almost constant within each company & Inputs that vary from one headline to the next &
-small \\
+small; retrains \\
 The label may favour the winning baseline & Rebuild the target with estimated sensitivities &
-small \\
+small; retrains \\
 The labels are verifiable approximations & Annotate a sample with human judgement &
 calendar time \\
 The alert claims more evidence than it has & Measure impact per news item and not per day &
 intraday data \\
-The three blocks barely share companies & A split of constant composition & small \\
+Company composition varies across the three blocks & A split of constant composition & small; re-evaluates \\
 Only the headline is read, not the body of the article & Collect and represent the full text &
 new data \\
 The split is not always well estimated & Display the fit alongside each split & small \\
-Drift is measured and not corrected & Retrain with the production log & small \\
+Drift is measured and not corrected & Retrain with the production log & small; retrains \\
 Source coverage is incomplete and uneven & Add sources, or declare the limit &
 outside our control \\
 The three causes of the delay are not separated & Log when each item appears in the feed &
@@ -355,8 +423,9 @@ read.
 Two claims must be separated, since only one of them is an error. The result of \gls{QI}3 stands,
 because the variant with text had three hundred and eighty-four numbers per headline and still
 lost. The product decision was wrong, and the reason is methodological: the choice was made by a
-metric that interrogates the ordering of the complete set, when the product needed the distinction
-between two headlines of the same company.
+metric that interrogates the ordering of the complete set, when the product needed to select
+opportunities under a daily budget. The company-day label cannot evaluate the distinction between
+two headlines published within that same unit.
 
 The system was changed and the model ceased to be a gate and became a ranking criterion. That
 change is not validated. Over the $825$ decisions matured in production, grouped into the $239$
@@ -401,13 +470,11 @@ property one intended to measure. Dependence on approximations is not peculiar t
 neighbouring financial domains, such as fraud detection, unsupervised methods occupy a central
 position because labelled anomalies are scarce \autocite{ahmed2016financial}.
 
-The \textbf{three data blocks barely share companies}. The training block contains thirteen
-companies and the test block nine, five companies from training do not appear once in the test, and
-one company accounting for $17.1\%$ of the test rows never appears in training. The finding acts in
-both directions: it reinforces the negative result, because a model whose signal is essentially the
-identity of the company estimates it over a set almost absent from the block where it is evaluated;
-and it limits it, because it does not allow the hypothesis that the model is worse to be separated
-from the hypothesis that identity does not transfer between these two periods.
+The \textbf{company composition varies across the three data blocks}. Training contains thirteen
+companies and the test nine: eight are shared, five appear only in training and one only in the
+test. The latter accounts for $17.1\%$ of test rows; known companies account for the remaining
+$82.9\%$. There is substantial overlap, but the frequencies change. The comparison does not isolate
+the effect of that change from model performance, nor demonstrate uniform generalisation to new companies.
 
 The \textbf{news is read only at headline level}. The system represents the headline and not the
 body of the article, which limits what the text representation can capture and is a plausible,
@@ -499,10 +566,9 @@ each one requires before it can be carried out.
         in training, to the complete movement of the day of the news, and in production to the last
         bar available at the moment of scoring. Replacing it with the return accumulated up to
         publication, or, more conservatively, with the previous day's return, removes the difference
-        and allows performance to be reported under a single reference. The direction of the effect
-        is known and favours the negative result, so the correction would reinforce it rather than
-        undo it; what the experiment adds is the measurement of that reinforcement instead of its
-        deduction.
+        and allows performance to be reported under a single reference. The effect on the comparison
+        between models remains to be measured: it requires rebuilding the inputs and repeating
+        training and evaluation.
 
   \item \textbf{Group the precedents by company-day pair before selection.} The correction applied
         to the text of the alert made the claim true without removing the cause. Selecting the
@@ -570,14 +636,36 @@ this work refuses when it splits the set by date and with an embargo. Applying t
 addressing that point would produce intervals with a guarantee the data do not support, replacing
 an honest value with a value that has the appearance of rigour.
 
+Three technical directions are likewise recorded, and they are of another nature. They do not
+derive from measured limitations, and therefore do not belong to the list above; they follow from
+implementation decisions that Section~\ref{sec:ctx_texto} states and that the work had no reason
+to revisit.
+
+The first is reranking with a cross-encoder. Retrieval compares each pair of sentences through
+vectors computed once, an option the scale of the case base imposes. An encoder that processes the
+two sentences jointly produces a finer comparison and is impracticable over tens of thousands of
+cases, but practicable over the first twenty results of a query. The evaluation protocol already
+built measures exactly that list.
+
+The second is learning to rank under a budget constraint. The problem the product solves is not
+classifying each news item in isolation, but choosing five per day, and the main metric of
+Chapter~\ref{cap:avaliacao} asks the first formulation. There is a family of methods dedicated to
+the second, and the difference between the two is measured in this work without being named: it is
+the distance between the PR-AUC over the complete set and the precision within the budget.
+
+The third is replacing the exhaustive search with an approximate index
+\autocite{johnson2021faiss}, mentioned in Section~\ref{sec:ctx_texto} as a path of growth. At the
+current size of the base the exact search is practicable and exact, so the replacement is not
+justified today; it would be justified from an order of magnitude above.
+
 \section{Final considerations}
 \label{sec:con_final}
 
 The work started from three questions a retail investor asks when faced with a price movement, and
 which free tools do not answer. Whether the movement is unusual. Whether the origin is the company
 or the market. And whether precedents with a known outcome exist. A system was built that answers
-all three with verifiable evidence and without issuing forecasts, and each component was evaluated
-against simpler alternatives declared before the measurement.
+all three with verifiable evidence and without issuing forecasts. Three techniques were compared
+with simpler alternatives; for decomposition, the quality of fit was measured.
 
 The result with the greatest informative value is negative. The hypothesis that the text of the
 news would carry information absent from the prices was not confirmed over this corpus.
@@ -590,7 +678,7 @@ assumption about the link between them.
 The founding constraint of the work, under which the system produces no price forecasts, proved to
 be the decision of widest reach. It determines what can be claimed: every claim of the system is
 confirmable against the record at the moment it is read. It determines the form of the explanation,
-which presents individual cases instead of averages. And it determines the evaluation criterion,
+which allows individual cases and their outcomes to be inspected. And it determines the evaluation criterion,
 which bears on the ability to identify what is unusual and not on the ability to anticipate. A
 system that presents evidence instead of verdicts delivers less than a system that announces
 directions, and delivers only what it can support.

@@ -3,7 +3,7 @@
 
 This chapter presents the context of the work described in this dissertation, the problem that
 motivates it, the research questions and the objectives defined, the scientific contributions and
-the organisation of the document.
+the organisation of the document. Whoever reads it will know what problem the work solves, for whom, and what the system refuses to do by decision rather than by limitation.
 
 \section{Context}
 \label{sec:intro_origem}
@@ -150,9 +150,9 @@ success criterion defined before the experiments were carried out:
   \item \textbf{\gls{QI}1, detection.} Can a simple and transparent statistical method detect
         unusual movements consistently across companies with distinct volatilities, and do so
         better than a fixed threshold rule?
-  \item \textbf{\gls{QI}2, precedents.} Can the system retrieve past news from another company in
-        the same sector better than trivial alternatives, and measure the subsequent behaviour of
-        the price without resorting to information posterior to the moment of the query?
+  \item \textbf{\gls{QI}2, precedents.} Can the system retrieve news from another company in
+        the same sector better than the evaluated textual and ranking alternatives, and retain
+        an advantage over chance when only news prior to the query is allowed?
   \item \textbf{\gls{QI}3, triage.} Can a trained model decide which news items justify an alert
         better than a baseline built only on volatility?
 \end{itemize}
@@ -169,7 +169,7 @@ These questions take the form of four objectives:
 
 \begin{enumerate}
   \item to build the complete system, from data acquisition to the delivery of the alert;
-  \item to evaluate each component against transparent baselines;
+  \item to evaluate the components, with transparent baselines for detection, retrieval and triage;
   \item to ensure that the explanations presented are faithful to what the system computed;
   \item to report the results obtained, including those that do not confirm the initial
         expectations.
@@ -193,7 +193,7 @@ contributions are identified:
   \item \textbf{A purpose-built dataset and a model trained on it}, with 79{,}753 examples
         constructed from the public \gls{FNSPID} corpus \autocite{dong2024fnspid} and from price
         series, with the model, the calibration and the metrics kept as versioned artefacts.
-  \item \textbf{An evaluation of each component against transparent baselines}, including the
+  \item \textbf{An evaluation of the components, with baselines for three of the four techniques}, including the
         result that contradicts the initial hypothesis, reported as such.
 \end{enumerate}
 
@@ -209,7 +209,12 @@ the results obtained for each research question. Chapter~\ref{cap:conclusoes} sy
 answers, identifies the limitations of the work and sets out the lines of future development.
 
 Each mechanism described is illustrated on a real case, with the values actually computed by the
-system, and not on examples constructed for the purpose.
+system, and not on examples constructed for the purpose. One of the twelve companies, AMD,
+returns in three distinct roles across the document, and serves as a thread for anyone who
+wants to follow a single name: it is the movement that Section~\ref{sec:met_decomposicao} splits
+into its three components, it is the company the decision gate let through in every logged
+assessment, and it is one of those the model scores without ever having observed them in
+training. These are three moments of the same company, not of the same event.
 
 % ⚠️ THE PARAGRAPH ON THE LANGUAGE CONVENTION WAS REMOVED HERE, AND ITS ABSENCE IS DELIBERATE.
 % In the Portuguese tree the prose is Portuguese and the interior of the figures is English, and

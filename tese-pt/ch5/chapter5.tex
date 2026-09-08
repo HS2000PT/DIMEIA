@@ -5,7 +5,7 @@ Os dois capítulos anteriores descreveram os métodos escolhidos e o sistema que
 Este determina o que cada um deles vale. Descreve-se primeiro o desenho experimental e as métricas
 utilizadas. Seguem-se quatro casos de estudo: três correspondem às questões de investigação, e o
 quarto ao comportamento do sistema em operação, onde as escolhas dos capítulos anteriores encontram
-dados que não estavam disponíveis quando foram tomadas.
+dados que não estavam disponíveis quando foram tomadas. Quem o leia fica a saber quanto vale cada técnica contra uma alternativa mais simples, e onde a medição não confirmou a escolha implantada.
 
 \section{Desenho experimental e métricas}
 \label{sec:av_desenho}
@@ -104,8 +104,8 @@ aleatória & \gls{QI}2 \\
 \gls{PRAUC} & Ordena bem, qualquer que seja o limiar? & $0{,}378$, a prevalência do bloco de teste &
 \gls{QI}3 \\
 \addlinespace
-Índice de Brier & A percentagem anunciada corresponde à frequência observada? & $0{,}622$, obtido
-por anunciar sempre a unidade & \gls{QI}3 \\
+Índice de Brier & A percentagem anunciada corresponde à frequência observada? & cerca de $0{,}235$,
+anunciando a prevalência de treino & \gls{QI}3 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -201,8 +201,8 @@ ao acaso apresentaria amplitude praticamente nula, superando o \emph{z}-score pr
 que esta secção elege como principal. A afirmação decorre da construção do método e não exige
 execução.
 
-A consequência não é a invalidação da medida, mas a obrigação de a ler em conjunto com a segunda, e
-é essa a razão de existirem duas. A amplitude exclui o limiar fixo, que dispara em função da
+A medida não fica invalidada; o que daí resulta é a obrigação de a ler em conjunto com a
+segunda, e é essa a razão de existirem duas. A amplitude exclui o limiar fixo, que dispara em função da
 volatilidade da empresa e não da raridade do dia. O $F_1$ exclui o disparo aleatório, que se situa
 ao nível do acaso contra qualquer rótulo. Nenhuma das duas medidas é suficiente isoladamente, e
 apenas a regra deslizante satisfaz ambas.
@@ -408,9 +408,9 @@ ou noutra década.
 \label{sec:av_qi2}
 
 O segundo caso de estudo responde à \gls{QI}2: a recuperação por significado encontra notícias
-passadas de outra empresa do mesmo setor melhor do que alternativas triviais. A resposta é
-afirmativa nos cinco setores avaliados, e a formulação por setor é necessária, uma vez que o valor
-agregado é enganador nos dois sentidos.
+de outra empresa do mesmo setor melhor do que as alternativas textuais e de ordenação avaliadas.
+A resposta é afirmativa perante esses comparadores; a vantagem sobre o acaso verifica-se nos cinco
+setores. A anterioridade é avaliada em separado, em agregado sobre o corpus histórico.
 
 \subsection{Procedimento}
 
@@ -427,7 +427,7 @@ distribuídas por cinco setores, recolhidas ao longo de vinte e sete dias, e a m
 quinhentas consultas por repetição em cinco repetições com sementes distintas. A amplitude do corpus
 delimita o que a medição estabelece: vinte e sete dias não sustentam afirmações sobre generalização
 temporal. O protocolo não exige que o candidato seja anterior à consulta, e apenas $31{,}1\%$ dos vizinhos o
-são. A verificação sob restrição causal foi feita em agregado sobre o corpus histórico, onde a
+são. A verificação sob restrição de anterioridade foi feita em agregado sobre o corpus histórico, onde a
 margem sobre o acaso se conserva, e não por setor.
 
 \subsection{Resultado}
@@ -440,12 +440,15 @@ alternativas triviais.
 \begin{tikzpicture}
 \begin{axis}[
   ig axis,
-  xbar, width=0.70\textwidth, height=6.6cm, bar width=9pt,
-  xmin=0, xmax=0.66, enlarge y limits=0.10,
-  symbolic y coords={rec, aleat, maior, lex, fin, mini, mpnet},
-  ytick={rec, aleat, maior, lex, fin, mini, mpnet},
+  xbar, width=0.70\textwidth, height=7.2cm, bar width=9pt,
+  xmin=0, xmax=1.14, enlarge y limits=0.09,
+  symbolic y coords={rec, aleat, maior, lex, fin, mini, mpnet, setor},
+  % o rotulo do 1,000 assentava no traco superior da propria barra: 1,5pt de folga
+  every node near coord/.append style={yshift=1.5pt},
+  ytick={rec, aleat, maior, lex, fin, mini, mpnet, setor},
   yticklabels={Mais recente, Escolha aleatória, Sempre o maior setor, Palavras em comum,
-               Codificador financeiro, Embeddings (MiniLM), Embeddings (MPNet)},
+               Codificador financeiro, Embeddings (MiniLM), Embeddings (MPNet),
+               Filtro pelo setor da consulta},
   ig values,
   xlabel={precisão@5},
   xmajorgrids,
@@ -453,16 +456,22 @@ alternativas triviais.
 \addplot[bar shift=0pt, ig alternative bar] coordinates {
   (0.126,rec) [0{,}126] (0.240,aleat) [0{,}240] (0.346,lex) [0{,}346]
   (0.420,fin) [0{,}420]};
-\addplot[bar shift=0pt, ig reference bar] coordinates {(0.467,maior) [0{,}467]};
+\addplot[bar shift=0pt, ig reference bar] coordinates {(0.467,maior) [0{,}467]
+  (1.000,setor) [1{,}000]};
 \addplot[bar shift=0pt, ig current bar] coordinates {(0.514,mini) [0{,}514]};
 \addplot[bar shift=0pt, ig competitor bar] coordinates {(0.538,mpnet) [0{,}538]};
 \end{axis}
 \end{tikzpicture}
-\caption[Recuperação: o método contra seis alternativas]{Precisão@5 do MiniLM implantado, em verde
-cheio, contra seis alternativas. O contorno verde identifica a variante MPNet de maior dimensão; as
+\caption[Recuperação: o método contra sete alternativas]{Precisão@5 do MiniLM implantado, em verde
+cheio, contra sete alternativas. O contorno verde identifica a variante MPNet de maior dimensão; as
 barras cinzentas reúnem duas linhas de base, uma linha lexical e um codificador específico do domínio
-financeiro. A alternativa tracejada de devolver sempre notícias do setor maior obtém $0{,}467$ sem
-qualquer modelo, valor discutido no texto e que obriga a ler o agregado com reserva.}
+financeiro. As duas barras tracejadas dispensam qualquer modelo: devolver sempre notícias do setor
+maior obtém $0{,}467$, valor discutido no texto e que obriga a ler o agregado com reserva, e filtrar
+os candidatos pelo setor conhecido da consulta satisfaz o rótulo em todos os lugares da lista sempre
+que existam cinco candidatos elegíveis. O $1{,}000$ não é uma medição: é uma consequência
+aritmética da definição de relevância, e consta aqui por ser o valor de referência mais alto que
+esta tarefa admite. Não constitui alternativa de produto, uma vez que devolveria casos do mesmo
+setor sem observar o tema da notícia.}
 \label{fig:av_recuperacao}
 \end{figure}
 
@@ -502,21 +511,22 @@ fração de consultas que são de tecnologia, $0{,}467$. Medida contra esta alte
 acaso uniforme, a margem do método reduz-se de $+0{,}274$ para $+0{,}047$, e a linha lexical de
 $0{,}346$ passa a situar-se abaixo do valor de referência.
 
-O valor agregado é, contudo, o elemento enganador, e não o método. A estratégia trivial obtém
+O elemento enganador é, contudo, o valor agregado. A estratégia trivial obtém
 $1{,}000$ nas consultas de tecnologia e $0{,}000$ em todas as outras, devolvendo notícias de
 semicondutores a quem consulta sobre uma petrolífera. O que ela explora não é uma propriedade do
 problema, mas a composição deste corpus.
 
-A comparação que resiste a esta objeção é a que se realiza dentro de cada setor, onde a estratégia
-trivial não tem por onde se apoiar. O painel A da Figura~\ref{fig:av_setor_causal} apresenta-a.
+A comparação dentro de cada setor verifica se a vantagem sobre o acaso também existe fora da
+tecnologia. O painel A da Figura~\ref{fig:av_setor_causal} apresenta-a.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.96\textwidth]{figures/eval_retrieval_sector_causal.pdf}
 \caption[Recuperação por setor e sob a restrição temporal]{Em A, a precisão@5 e o valor de acaso
 correspondente dentro de cada setor: o método situa-se acima do respetivo valor de referência nos
-cinco. Em B, o protocolo simétrico do teste de escala e o protocolo causal que reproduz a restrição
-da produção, cada um ao lado do seu valor de referência. A precisão desce de $0{,}595$ para
+cinco. Em B, o protocolo simétrico do teste de escala e o protocolo que exige anterioridade,
+sem reproduzir a maturação de oito dias da produção, cada um ao lado do seu valor de referência.
+A precisão desce de $0{,}595$ para
 $0{,}513$ e o valor de acaso de $0{,}333$ para $0{,}259$, pelo que a margem varia apenas de
 $+0{,}262$ para $+0{,}254$.}
 \label{fig:av_setor_causal}
@@ -529,7 +539,14 @@ $0{,}283$; onde o corpus é escasso, obtém várias vezes o valor de referência
 método e sobrestima a alternativa trivial pela mesma razão, que é a de quase metade das consultas
 provir do único setor onde o valor de referência já era elevado. A afirmação que o trabalho sustenta
 é por isso a mais estreita: a recuperação semântica supera a taxa-base dentro de cada um dos cinco
-setores, e o valor agregado não é a forma adequada de o enunciar.
+setores, perante os comparadores avaliados.
+
+Esta comparação não mede a vantagem sobre uma regra que conheça o setor da consulta. Esse setor
+está disponível no mapa de empresas: filtrar candidatos de outra empresa pelo mesmo setor acertaria
+em todos os lugares da lista, desde que existissem cinco candidatos elegíveis. É uma consequência
+do rótulo, não uma experiência adicional. A avaliação mede a recuperação dessa aproximação a partir
+do texto; não demonstra superioridade sobre o filtro por setor nem mede a relevância semântica
+adicional que o produto pretende oferecer.
 
 A variante de maior dimensão obtém $0{,}538 \pm 0{,}011$ contra $0{,}514 \pm 0{,}015$ da utilizada,
 sobre cinco sementes; a diferença é pequena face à dispersão e nenhum teste de significância foi
@@ -541,7 +558,7 @@ razoável, que consiste em apresentar as notícias mais recentes, obtém $0{,}12
 de todos, o que é coerente com a ausência de qualquer razão para a notícia mais recente sobre outra
 empresa estar relacionada com a notícia em análise.
 
-\subsection{Comportamento à escala e sob a restrição da produção}
+\subsection{Comportamento à escala e sob restrição de anterioridade}
 
 A avaliação anterior incide sobre um corpus recente e de dimensão limitada. Para verificar que o
 resultado não depende desse corpus, a mesma medição foi repetida sobre o conjunto histórico
@@ -559,16 +576,17 @@ consulta e outros $30{,}2\%$ são do mesmo dia. O sistema implantado não dispõ
 vez que a base de precedentes só recebe um caso oito dias após a sua observação, conforme a
 Secção~\ref{sec:sis_base} descreve.
 
-Não é utilização de informação futura no sentido corrente. O critério de acerto é a pertença ao
-mesmo setor, e o setor de uma notícia não varia com o tempo, pelo que a direção temporal não pode
-inflacionar a precisão. O que está em causa é a correspondência
+O critério de acerto é a pertença ao mesmo setor, que não utiliza o desfecho futuro do preço.
+Ainda assim, permitir candidatos posteriores altera a tarefa de recuperação. Está em causa a correspondência
 entre o valor reportado e a tarefa que a questão de investigação descreve, que fala em notícias
 passadas. A medição repete o protocolo acrescentando à máscara a condição de o candidato ser
 estritamente anterior à consulta, e reproduz o valor simétrico na mesma execução para que a
 comparação seja emparelhada. Nenhuma das $2\,500$ consultas ficou sem passado suficiente. O
 resultado consta do painel B da Figura~\ref{fig:av_setor_causal}: a precisão desce $0{,}082$, o valor
 de referência desce quase outro tanto, e a margem varia $0{,}008$. O método conserva praticamente
-toda a vantagem quando obrigado a operar como opera em produção.
+toda a vantagem quando se exige anterioridade. A máscara não impõe os oito dias de maturação nem
+verifica a disponibilidade dos desfechos a três e cinco sessões. O resultado não equivale, por isso,
+a uma avaliação da base efetivamente disponível no instante da decisão em produção.
 
 Esta é a terceira ocasião no capítulo em que a leitura de uma precisão sem o valor de referência
 correspondente conduziria à conclusão errada. Sucedeu na passagem do corpus recente para o completo,
@@ -615,8 +633,8 @@ individualmente, e o texto do alerta declara que a semelhança é de tema.}
 
 A concordância de direção entre a notícia de consulta e os casos recuperados situa-se em $0{,}708$
 contra um valor de acaso de $0{,}688$. É por esta razão que o sistema apresenta os casos um a um e
-nunca os resume a uma média, que seria lida como previsão, e que o texto do alerta declara
-explicitamente tratar-se de casos semelhantes quanto ao tema.
+acompanha a amplitude e a média com esses casos individuais. A média descreve os casos recuperados,
+não antecipa o próximo retorno; o texto do alerta declara tratar-se de semelhança de tema.
 
 \section{Triagem de notícias}
 \label{sec:av_qi3}
@@ -649,11 +667,11 @@ comparação pelo índice de Brier não seria válida entre modelos.
 Uma entrada não está disponível no mesmo referencial em produção. O retorno do próprio dia
 corresponde, no conjunto histórico, ao movimento completo do dia da notícia, ao passo que em produção
 a notícia é pontuada antes de esse dia encerrar. O resultado apresentado avalia por isso o modelo com
-a variável diária completa e não demonstra paridade com a pontuação intradiária. A direção da assimetria é conhecida. A entrada em causa pertence ao bloco de contexto, presente
-nos modelos de resultado inferior. A linha de base vencedora usa uma só entrada: a volatilidade
-dos vinte dias anteriores, fechada na véspera. O referencial mais generoso
-encontra-se do lado dos modelos que a comparação não favorece, e a sua correção só poderia tornar o
-resultado negativo mais forte.
+a variável diária completa e não demonstra paridade com a pontuação intradiária. A entrada em causa
+pertence ao bloco de contexto; a linha de base vencedora usa apenas a volatilidade dos vinte dias
+anteriores, fechada na véspera. Corrigir o referencial pode alterar o ajuste e a ordenação dos
+modelos de contexto em qualquer sentido. O efeito permanece por medir mediante novo treino e
+avaliação; o resultado negativo vale para o protocolo aqui executado.
 
 \subsection{Resultado}
 
@@ -709,8 +727,10 @@ O valor mais elevado pertence ao modelo mais simples de todos, o que utiliza ape
 recente. Acrescentar-lhe o restante contexto não altera o resultado de forma distinguível, com
 $0{,}538$ contra $0{,}542$; acrescentar o texto do título deteriora-o de forma distinguível, com
 $0{,}496$. O índice de Brier acompanha a mesma ordenação, com $0{,}218$ para o modelo de
-volatilidade contra $0{,}229$ para o modelo com texto e $0{,}622$ para o modelo que anuncia sempre a
-unidade. A hipótese inicial, segundo a qual o texto da notícia traria informação ausente dos preços,
+volatilidade contra $0{,}229$ para o modelo com texto. Anunciar sempre a unidade produz $0{,}622$,
+mas é uma referência fraca. A constante igual à prevalência de treino, $q=0{,}3854$, produz cerca de
+$0{,}235$ no teste: $\pi(1-q)^2+(1-\pi)q^2$, com $\pi=0{,}3781$. Este é um cálculo descritivo
+com as prevalências arredondadas da Figura~\ref{fig:av_deriva}, não uma nova execução. A hipótese inicial, segundo a qual o texto da notícia traria informação ausente dos preços,
 não é confirmada sobre este corpus.
 
 \subsection{Três verificações à montagem experimental}
@@ -794,10 +814,11 @@ nas nove definições de rótulo, com prevalências entre $0{,}082$ e $0{,}597$,
 concreta de limiar e horizonte o estatuto de ponto de ataque.
 
 Uma quarta verificação incide sobre a composição dos blocos e conduz a uma conclusão que atua nos
-dois sentidos. Os três blocos quase não partilham empresas. O bloco de treino decorre entre 2 de
+dois sentidos. A composição por empresa muda entre os blocos, com sobreposição substancial. O bloco de treino decorre entre 2 de
 janeiro de 2018 e 3 de março de 2022 e contém treze empresas; o bloco de teste decorre entre 2 de
 fevereiro e 18 de dezembro de 2023 e contém nove. Cinco empresas do treino não figuram uma única vez
 no teste, e uma empresa do teste, responsável por $17{,}1\%$ das suas linhas, nunca figura no treino.
+Assim, oito das nove empresas de teste já aparecem no treino e representam $82{,}9\%$ das linhas de teste.
 Para as empresas presentes em ambos os lados, a taxa de positivos desloca-se de forma acentuada, e a
 Apple passa de $0{,}448$ no treino para $0{,}183$ no teste. Estes valores leem-se diretamente das
 colunas de identificação e de bloco do conjunto congelado e não exigem qualquer execução adicional.
@@ -805,18 +826,14 @@ colunas de identificação e de bloco do conjunto congelado e não exigem qualqu
 Não se trata de utilização de informação futura nem de erro de divisão: o corte é realizado por dia,
 e a proporção respeita a definida na Secção~\ref{sec:met_triagem}. É a composição do corpus que varia
 com o tempo, pela mesma razão que torna o bloco de teste maior do que o de treino, uma vez que as
-empresas sobre as quais se escreve em 2018 não são as mesmas de 2023.
+empresas e o peso de cada uma no corpus variam entre 2018 e 2023.
 
-A favor do resultado negativo pesa o seguinte. O sinal do modelo é essencialmente a identidade da
-empresa, conforme a Secção~\ref{sec:av_ablacao} estabelece, e essa identidade é estimada sobre um
-conjunto de empresas quase ausente do bloco onde é avaliada. A volatilidade dos vinte dias
-anteriores, fechada na véspera, é comparável entre empresas e não depende da identidade de
-nenhuma. Contra o
-resultado, a comparação não separa a hipótese de o modelo ser pior da hipótese de a identidade não
-transferir entre estes dois períodos, separação que exigiria uma divisão de composição constante. A
-mesma constatação explica, sem recurso ao acaso, a prevalência de $47{,}0\%$ da validação contra
-$37{,}8\%$ do teste, que correspondem a conjuntos de empresas distintos e não apenas a períodos
-distintos.
+O sinal do modelo é essencialmente a identidade da empresa, conforme a
+Secção~\ref{sec:av_ablacao} estabelece. A sobreposição permite avaliá-lo em empresas conhecidas,
+mas as suas taxas de positivos mudam entre períodos. A comparação não separa a qualidade do modelo
+da transferência dessas taxas e da mudança de composição; exigiria uma análise de composição
+constante. A diferença entre $47{,}0\%$ de positivos na validação e $37{,}8\%$ no teste pode
+combinar esses dois efeitos, cuja contribuição individual não foi medida.
 
 \subsection{Utilidade sob a restrição de orçamento}
 
@@ -848,8 +865,8 @@ Figura~\ref{fig:av_pontaaponta}, na página~\pageref{fig:av_pontaaponta}.
 \caption[O desempate alfabético não é uma referência aleatória]{Duas formas de escolher as cinco
 notícias do dia, sobre o mesmo bloco de teste. O desempate alfabético não mede escolha às cegas;
 a escolha aleatória obtém $0{,}379 \pm 0{,}017$ sobre
-quarenta sementes. As duas políticas escolhem conhecendo o dia completo, pelo que os valores são
-limites superiores do que uma política em linha consegue obter.}
+quarenta sementes. As duas políticas escolhem conhecendo o dia completo; estes valores descrevem
+seleção diferida e não estabelecem um limite para a precisão em linha.}
 \label{fig:av_orcamento}
 \end{figure}
 
@@ -865,7 +882,10 @@ linha de base mede é tão necessário quanto verificar o que o modelo faz.
 A comparação com a volatilidade, na Figura~\ref{fig:av_pontaaponta} da
 página~\pageref{fig:av_pontaaponta}, contém o resultado incómodo. Uma tabela de treze constantes,
 correspondentes à volatilidade média de cada empresa, calculada exclusivamente sobre o bloco de
-treino e sem leitura de um único título, obtém $0{,}662$ e supera o modelo treinado. A comparação
+treino e sem leitura de um único título, obtém $0{,}662$ e supera o modelo treinado. O valor não é
+o da linha \emph{só volatilidade} da Figura~\ref{fig:av_ablacao}, que é uma regressão sobre a
+volatilidade diária e obtém $0{,}632$ nesta métrica: aqui a volatilidade entra como uma constante
+por empresa, e a Secção~\ref{sec:av_producao} reconcilia as duas. A comparação
 tem uma reserva que a torna menos limpa do que parece: $17{,}1\%$ das linhas do bloco de teste
 pertencem a uma empresa ausente do treino e recebem o valor global de recuo em vez de uma
 constante própria. É, ainda assim, o terceiro caso do capítulo em que o método mais simples obtém melhor
@@ -914,12 +934,12 @@ desmonta o modelo entrada a entrada, sob o protocolo congelado.
 com um subconjunto das entradas ou a uma referência alternativa; as linhas não formam uma sequência
 de remoções cumulativas. A linha decisiva é a da tabela de consulta, que não observa a notícia e
 iguala o modelo implantado na primeira medida e o supera na segunda. As duas linhas inferiores, que
-não dispõem de qualquer entrada de nível de empresa, situam-se exatamente na prevalência do bloco de
-teste.}
+não dispõem de qualquer entrada de nível de empresa, situam-se na PR-AUC exatamente na
+prevalência do bloco de teste.}
 \label{fig:av_ablacao}
 \end{figure}
 
-Três leituras resultam da figura, e nenhuma depende de interpretação.
+Três leituras resultam da figura.
 
 A tabela de consulta iguala o modelo e supera-o numa das medidas. Na \gls{PRAUC} obtém $0{,}534$
 contra $0{,}538$; na precisão dentro do orçamento, que é a medida mais
@@ -958,10 +978,11 @@ Figura~\ref{fig:sis_alerta} exibe.
 
 A lição de método permanece: a \gls{PRAUC} sobre o conjunto completo pode assumir valor elevado
 quando a variação entre empresas domina, mesmo na ausência de qualquer capacidade de distinguir
-notícias dentro da mesma empresa. A métrica respondia à pergunta sobre a ordenação do conjunto,
-enquanto o produto necessitava da pergunta sobre a distinção entre duas notícias da mesma empresa.
+notícias dentro da mesma empresa. O rótulo empresa-dia não permite avaliar diferenças entre títulos
+do mesmo grupo; essa capacidade requer um alvo por notícia.
 
 \subsection{O texto como acréscimo e não como substituto}
+\label{sec:av_acrescimo}
 
 Comparar a volatilidade, o contexto e o texto isoladamente responde a qual das representações é
 melhor, e não a se o texto acrescenta informação. A resposta a esta segunda pergunta exige somá-lo a
@@ -1015,7 +1036,8 @@ fixado antes da medição.}
 O título acrescenta a essa base $+0{,}012$ de \gls{PRAUC}, com intervalo entre $+0{,}004$ e
 $+0{,}020$, que exclui zero. É a primeira ocasião em que uma representação de texto apresenta um
 acréscimo detetável nesta tarefa, e o valor situa-se abaixo do critério prático de $0{,}02$ fixado
-antes dos resultados.
+antes dos resultados. O acréscimo e a base estão arredondados à terceira casa, pelo que somá-los
+pode diferir na última do valor que a reserva seguinte reporta.
 
 Três reservas delimitam o alcance deste acréscimo, e todas são medições. Os intervalos da primeira
 e da terceira são os que a Figura~\ref{fig:av_acrescimo} desenha, e nenhum deles exclui zero.
@@ -1029,21 +1051,17 @@ zero.
 dia é de $0{,}662$ com e sem o texto, sem uma casa decimal de diferença. O acréscimo existe na
 ordenação do conjunto completo e desaparece quando apenas cinco notícias por dia são selecionadas.
 
-\item \textbf{O texto continua a não separar notícias da mesma empresa.} A capacidade de ordenação
+\item \textbf{Não se demonstra ganho de ordenação dentro da empresa.} A capacidade de ordenação
 dentro de cada empresa vale $0{,}500$ por construção para a tabela de consulta e sobe para $0{,}512$
 quando se lhe soma o título. Para o modelo implantado é de $0{,}502$, com intervalo entre $0{,}462$ e
 $0{,}542$, e sobe para $0{,}508$ com o texto, num acréscimo cujo intervalo contém zero. Nenhum dos
 dois se distingue do acaso.
 \end{enumerate}
 
-A informação que o texto traz distingue empresas e períodos, e não notícias.
-
 A resposta à \gls{QI}3 mantém-se negativa e torna-se mais precisa. Nenhum modelo com texto supera a
-volatilidade, e o texto não é inútil: acrescenta ao que o modelo já conhece sobre a empresa, de forma
-pequena e mensurável. O que impede esse acréscimo de alterar o sistema não é a ausência de
-informação, mas a natureza da informação, que distingue empresas quando o produto necessita de
-distinguir notícias. O trabalho seguinte requer um rótulo por notícia, e não apenas um modelo de
-maior dimensão.
+volatilidade. O pequeno acréscimo agregado não se traduz em ganho no orçamento nem demonstra melhor
+ordenação dentro da empresa. O rótulo partilhado não permite identificar informação específica de
+cada título no mesmo dia; essa avaliação requer um rótulo por notícia.
 
 Uma reserva final aplica-se ao próprio método. Este é mais um modelo avaliado sobre o mesmo bloco de
 teste, que já serviu várias comparações do capítulo, e quanto mais vezes um conjunto de teste é
@@ -1051,7 +1069,7 @@ observado, mais provável se torna encontrar nele uma diferença pequena. As dua
 que consistem em não afinar a configuração e em declarar o critério antes da medição, reduzem esse
 risco sem o eliminarem. A formulação que subsiste é a mais fraca das possíveis: não é possível
 rejeitar que o título acrescente informação, e o acréscimo, a existir, é inferior ao critério prático
-fixado antes da medição. Trata-se de um limite superior de um efeito e não de uma descoberta.
+fixado antes da medição. O valor observado não estabelece um limite garantido para o efeito do texto.
 
 \subsection{Limites da conclusão}
 
@@ -1089,8 +1107,8 @@ exatidão neste ponto produziria um valor sem referente.
 
 A técnica não fica por avaliar, mas por avaliar dessa forma, o que obriga a determinar o que nela
 permanece falsificável. São duas propriedades, e ambas se medem sobre as dezassete empresas do mapa
-de setores, que é o conjunto percorrido pelo procedimento de avaliação e não a lista monitorizada em
-produção. A Figura~\ref{fig:av_motor} apresenta as duas.
+de setores, que é o conjunto percorrido pelo procedimento de avaliação, distinto da lista
+monitorizada em produção. A Figura~\ref{fig:av_motor} apresenta as duas.
 
 \begin{figure}[ht]
 \centering
@@ -1162,7 +1180,7 @@ não sucede, e é por essa razão que a limitação consta do Capítulo~\ref{cap
 \label{sec:av_producao}
 
 O quarto caso de estudo incide sobre o comportamento do sistema depois de implantado, sobre as
-decisões que toma autonomamente. É a avaliação menos comum das três descritas na
+decisões que toma autonomamente. É a avaliação menos comum das duas descritas na
 Secção~\ref{sec:met_metodologia}, e a que produz o diagnóstico que alterou o sistema.
 
 \subsection{O que a porta de decisão estava a separar}
@@ -1221,7 +1239,9 @@ como mostra a Tabela~\ref{tab:av_porta}.
 \caption[Seletividade da porta em duas janelas]{Indicadores de seletividade da porta de decisão em
 duas janelas de observação. A amplitude entre empresas é, nas duas, várias vezes a amplitude dentro
 de cada uma: a conclusão de que a pontuação separa empresas, e não notícias, não depende da janela
-escolhida.}
+escolhida. As duas amplitudes estão arredondadas à terceira casa e a razão é calculada sobre os
+valores não arredondados, pelo que a divisão refeita sobre os números impressos pode diferir na
+casa apresentada.}
 \label{tab:av_porta}
 \centering
 \begin{tabular}{L{0.42\textwidth} C{0.20\textwidth} C{0.20\textwidth}}
@@ -1241,6 +1261,7 @@ Empresas em que o limiar chega a decidir & 5 de 12 & 4 de 12 \\
 
 O que a pontuação separa são empresas, e não notícias. Em nenhuma das avaliações registadas a Apple
 alcançou o limiar, com um máximo observado de $0{,}472$, ao passo que a AMD o ultrapassou em todas.
+É a mesma empresa cujo movimento a Secção~\ref{sec:met_decomposicao} reparte.
 
 A fração de casos em que o resultado estava determinado antes de o título ser lido admite duas
 contagens, e ambas se reportam. Contada uma vez por título distinto é de $48\%$; contada por decisão
@@ -1358,7 +1379,9 @@ teste e apenas depois preenche cinco lugares em cada dia, o que exige conhecer o
 de decidir e constitui por isso uma política diferida. O sistema implantado decide em linha, de
 sessenta em sessenta segundos, e gasta o primeiro lugar na primeira notícia que atravesse as portas,
 porque no momento da decisão a notícia da tarde ainda não existe. A precisão dentro do orçamento
-reportada neste capítulo é, por conseguinte, um limite superior do que a política implantada obtém.
+reportada neste capítulo descreve essa seleção diferida. Conhecer mais candidatas não garante maior
+precisão quando as pontuações podem errar; a relação com a precisão da política em linha permanece
+por medir.
 
 \subsection{O desempenho do modelo sobre as decisões que tomou}
 
@@ -1575,7 +1598,8 @@ $0{,}379$ da Figura~\ref{fig:av_orcamento}: são duas execuções do mesmo sorte
 procedimentos distintos, e a diferença situa-se dentro da dispersão entre sementes de
 qualquer uma delas. O oráculo é um máximo teórico não utilizável,
 obtido com conhecimento das respostas. Todas escolhem conhecendo o dia
-completo, pelo que cada valor é um limite superior do que a mesma regra obteria decidindo ao minuto.}
+completo. Os valores das políticas utilizáveis descrevem seleção diferida; apenas o oráculo
+estabelece o máximo possível neste conjunto.}
 \label{fig:av_pontaaponta}
 \end{figure}
 
@@ -1607,10 +1631,11 @@ em larga medida, a sua volatilidade.
 A terceira, e mais útil, é a localização da limitação pelo máximo teórico. O melhor resultado
 possível, escolhendo com conhecimento das respostas, seria de $0{,}968$, o que significa que em quase
 todos os dias existem efetivamente cinco notícias materiais no conjunto disponível. O sistema não
-está limitado por escassez de matéria-prima, mas pela incapacidade de identificar quais são. A margem
-entre $0{,}632$ e $0{,}968$ é de $0{,}336$ e reside quase integralmente na separação de notícias
-dentro de cada empresa, que é precisamente o que o modelo implantado não consegue realizar. É a mesma
-conclusão obtida por um terceiro caminho independente.
+está limitado por escassez de linhas com rótulo positivo, mas pela seleção que realiza. A margem
+entre $0{,}632$ e $0{,}968$ é de $0{,}336$. Como todos os títulos de uma empresa no mesmo dia
+partilham o rótulo, trocar títulos dentro desse grupo não altera a precisão. Esta margem mede uma
+distância à seleção ideal de grupos empresa-dia; não localiza uma incapacidade de distinguir
+títulos dentro de cada grupo nem constitui uma verificação independente dessa capacidade.
 
 Todas as políticas desta comparação escolhem de entre o que a fonte entregou, o que deixa de fora a
 pergunta anterior a todas, relativa aos dias em que nada foi entregue. Sobre um ano de notícias

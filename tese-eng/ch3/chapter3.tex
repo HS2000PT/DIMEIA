@@ -5,7 +5,7 @@ Chapter~\ref{cap:contexto} established that the three questions of the retail in
 answer in the literature but not in any free tool. This chapter describes the options taken to
 answer them. It first presents the research methodology and the datasets. It then describes the
 four methods selected, one for each decision the system has to take. It indicates the tools
-employed. And it finally states the technological and social challenges of the domain.
+employed. And it finally states the technological and social challenges of the domain. Whoever reads it will know how each of the four decisions is taken, and what guarantee stops each one from using information that did not yet exist.
 
 \section{Research methodology}
 \label{sec:met_metodologia}
@@ -21,12 +21,13 @@ constitute a central activity of the process, and not a final confirmation step
 \autocite{hevner2004design, peffers2007dsrm}. This requirement is met through three commitments
 made before the experiments were carried out.
 
-The first consists in comparing each component with a simpler alternative, selected and declared
-before the measurement is carried out, so that the result can be negative. The second consists in
+The first consists in comparing detection, retrieval and triage with simpler alternatives selected
+before measurement, so that the result can be negative. Decomposition receives only a descriptive
+check of the split and fit. The second consists in
 fixing the success criterion of each comparison together with the metric, and not after observing
 the values obtained. The third consists in evaluating the artefact twice: over held-out historical
 data and, subsequently, in operation, over the decisions the system takes autonomously in
-production. The third evaluation is the least common of the three and is the one that produces the
+production. This second evaluation produces the
 result described in Section~\ref{sec:av_producao}.
 
 The requirement is not met in full, and the gap is declared. Utility, in the sense in which the
@@ -78,10 +79,10 @@ Section~\ref{sec:met_detecao} and Section~\ref{sec:met_triagem}.}
 This section describes the datasets used in the training and evaluation of the system, as well as
 the records produced by the system in operation.
 
-The historical layer rests on \gls{FNSPID} \autocite{dong2024fnspid}, a public corpus of financial
-news that associates a date and a company with each headline. The corpus contains no prices, no
-market reaction and no indication of relevance: that information is built in this work, by aligning
-each headline with the corresponding price series. From the alignment comes the training set of the
+The historical layer uses the news component of \gls{FNSPID} \autocite{dong2024fnspid}, which
+associates a date and a company with each headline. Although the published dataset also includes
+prices, in this work returns and labels are constructed by aligning the headlines with price
+series obtained separately. From the alignment comes the training set of the
 triage model, with 79{,}753 examples.
 
 The evaluation of the anomaly detector uses a distinct dataset, made up of three years of daily
@@ -285,9 +286,10 @@ distribution of betas; in this work they are fixed, and each has its own justifi
 market, $\beta_{\text{ref}} = 1.0$ is adopted, which corresponds to the assumption that the stock
 follows the index in the absence of reliable local information, and is the value towards which the
 cross-sectional mean of the betas tends by construction of the index itself. For the sector factor,
-already orthogonalised with respect to the market, $\beta_{\text{ref}} = 0.0$ is adopted, since the
-residual of an orthogonalisation has zero mean and the absence of sector exposure is therefore the
-neutral assumption. The common standard deviation of $0.5$ determines how quickly the transition
+already orthogonalised with respect to the market, $\beta_{\text{ref}} = 0.0$ is adopted as a
+regularisation choice for no additional sector exposure when the estimate is imprecise. A
+zero-mean orthogonalised factor does not imply a zero coefficient. The common standard deviation
+of $0.5$ determines how quickly the transition
 between the sample estimate and the reference value takes place: it is fixed so that a window with
 a standard error of that same order receives approximately equal weight from the two origins, which
 places the point of balance within the range of standard errors actually observed in twenty-day
@@ -338,15 +340,15 @@ sector components act in the direction opposite to the observed movement.
   \node[font=\footnotesize, black!60, align=left, text width=2.1cm]
     at (9.6,3.4) {the three parts always sum to the day's movement};
 \end{tikzpicture}
-\caption[A movement split into three parts]{Split of one day of AMD, that of 15 August 2026, in
-logarithmic returns. The market and sector components acted downwards, so the rise is attributed
+\caption[A movement split into three parts]{Split of an AMD movement into logarithmic returns.
+The bar dates were not preserved in this evaluation record. The market and sector components acted downwards, so the rise is attributed
 entirely to the company. The equality between the sum of the parts and the observed movement holds
 by construction and, for that reason, establishes nothing about the quality of the fit, a point
 taken up in Section~\ref{sec:av_decomposicao}.}
 \label{fig:met_decomposicao}
 \end{figure}
 
-In this case, recorded by AMD on 15 August 2026, the logarithmic return of $+6.2944\%$,
+In this AMD case, the logarithmic return of $+6.2944\%$,
 corresponding to a simple price change of $+6.50\%$, splits into $-0.3992\%$ of market, $-0.0362\%$
 of sector and $+6.7298\%$ specific to the company, with $\beta_m = 2.0143$ and $\beta_s = 1.5888$
 estimated over the twenty preceding days. The information conveyed exceeds the percentage alone:
@@ -427,6 +429,39 @@ condition the result. News published outside trading days is aligned with the fi
 trading day. The measurement begins at the close of the day of the news, and not at the open, a
 conservative option that avoids attributing to the news the part of the movement prior to its
 publication.
+Figure~\ref{fig:met_evento} shows the two decisions.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  ses/.style={draw=black!45, fill=black!3, minimum width=1.35cm, minimum height=0.62cm},
+  fech/.style={draw=black!80, fill=black!12, line width=0.9pt, minimum width=1.35cm,
+           minimum height=0.62cm},
+  leg/.style={font=\scriptsize, text=black!65, align=center},
+  seta/.style={-{Stealth[length=4pt]}, draw=black!55},
+]
+  \node[fech] (s0) at (0.0,0) {\scriptsize \textbf{0}};
+  \node[ses] (s1) at (1.45,0) {};
+  \node[ses] (s2) at (2.9,0) {};
+  \node[ses] (s3) at (4.35,0) {};
+  \node[ses] (s4) at (5.8,0) {};
+  \node[ses] (s5) at (7.25,0) {};
+  \node[leg] at (1.45,-0.95) {+1};
+  \draw[seta] (s0.south) ++(0,-0.02) .. controls +(0.55,-0.6) and +(-0.55,-0.6) .. (s1.south);
+  \node[leg] at (4.35,-0.95) {+3};
+  \draw[seta] (s0.south) ++(0,-0.02) .. controls +(0.55,-0.6) and +(-0.55,-0.6) .. (s3.south);
+  \node[leg] at (7.25,-0.95) {+5};
+  \draw[seta] (s0.south) ++(0,-0.02) .. controls +(0.55,-0.6) and +(-0.55,-0.6) .. (s5.south);
+  \node[leg] at (3.62,-1.42) {trading days};
+  \node[leg, anchor=east] (sab) at (-1.25,0.8) {Saturday news item};
+  \draw[seta, densely dashed] (sab.east) -- ++(0.42,0) -- (s0.north);
+  \node[leg, anchor=west] at (0.5,0.8) {aligned to the first\\ trading day};
+  \node[leg, anchor=north, text width=3.6cm] at (0.1,-1.92) {measurement starts at the close\\ of this day, not at the open};
+  \node[leg, anchor=north, text width=4.6cm] at (5.3,-1.92) {the movement before publication is left out};
+\end{tikzpicture}
+\caption[The event-study window and the two decisions that fix it]{The two detail decisions that condition every outcome measured in this work. A news item published outside a trading day is aligned with the first following day on which the market opens, and measurement starts at the close of that day, marked solid. The second decision is conservative by construction: starting at the open would attribute to the news the part of the movement that preceded it.}
+\label{fig:met_evento}
+\end{figure}
 
 The value presented to the user is the raw return and not the abnormal return the source
 normalises. The option is deliberate and has a declared cost. The raw return is verifiable by the
@@ -505,9 +540,9 @@ distinction that Chapter~\ref{cap:avaliacao} shows to be decisive.
 \caption[The nine inputs, by level]{The nine inputs of the deployed model, grouped according to
 what each one allows to be distinguished. Seven characterise the \textbf{company} and vary slowly
 or stay constant; one characterises the \textbf{day} and takes the same value for every news item
-of that day; \textbf{only one} varies between consecutive headlines. From this composition follows
-the expectation that the model does not separate two news items of the same company on the same
-day, an expectation the ablation of Section~\ref{sec:av_ablacao} confirms.}
+of that day; \textbf{only one} varies between consecutive headlines. The ablation in
+Section~\ref{sec:av_ablacao} measures the dominant dependence on company; the shared label cannot
+evaluate distinctions between headlines from the same day.}
 \label{fig:met_entradas}
 \end{figure}
 
@@ -560,7 +595,7 @@ it would break the second.
 
 \begin{lstlisting}[caption={[The test that mutates the future]The procedure that enforces the
 temporal separation. The two series coincide up to the day of the event and diverge afterwards.
-The inputs have to come out identical, because none of them may observe the future; the labels
+The inputs have to come out identical, because none of them may observe later sessions; the labels
 have to come out different, because it is precisely the future that they measure. The test runs
 on every execution of the automatic verification. Identifiers and comments are in the
 original.}, label={lst:lookahead}, float=htbp]
@@ -610,6 +645,12 @@ recreated on another machine: \texttt{numpy}~2.1.3, \texttt{pandas}~2.2.3,
 \texttt{scikit-learn}~1.9.0, \texttt{matplotlib}~3.11.0, \texttt{sentence-transformers}~5.6.0 and
 \texttt{torch}~2.12.1 in the CPU variant. No result requires a graphics processing unit, a
 consequence of the options described in this chapter.
+
+Triage training, calibration and resampling by company and day use seed $42$.
+The five retrieval repetitions, including the evaluation with temporal precedence, use seeds
+$42$ to $46$. The random baseline in the budget analysis uses $40$ seeds, from $0$ to $39$.
+These choices fix the random operations of each protocol; they do not make datasets collected
+at different times identical.
 
 All data sources are free. Prices come from a chain of alternative providers consulted in a fixed
 order, since no free source is sufficiently reliable on its own; the system always records which
@@ -683,7 +724,8 @@ The third risk follows from the explanation itself. Trust in automated systems f
 directions, with the user ignoring a correct warning or accepting an incorrect one
 \autocite{lee2004trust}, and the presence of an explanation increases the acceptance of wrong
 answers \autocite{bansal2021whole}. The system therefore presents past cases individually, with
-date and outcome, rather than summarising them into an average liable to be read as a forecast.
+date and outcome. The average that accompanies the cases in the alert is descriptive and cannot
+anticipate the outcome of the current news item.
 That this option produces appropriate trust is a hypothesis and not a result, since the controlled
 study needed to verify it was not carried out.
 

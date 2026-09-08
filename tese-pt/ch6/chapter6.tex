@@ -1,9 +1,9 @@
 \chapter{Conclusões}
 \label{cap:conclusoes}
 
-O Capítulo~\ref{cap:avaliacao} mediu cada componente isoladamente. Este reúne o que dessas
+O Capítulo~\ref{cap:avaliacao} avaliou os quatro componentes. Este reúne o que dessas
 medições se retira. Sintetiza o trabalho realizado, apresenta a resposta obtida para cada questão de
-investigação, identifica as limitações do estudo e enuncia as linhas de desenvolvimento futuro.
+investigação, identifica as limitações do estudo e enuncia as linhas de desenvolvimento futuro. Quem o leia fica a saber o que o trabalho estabelece, o que decide sem estabelecer, e o que fica por testar.
 
 \section{Conclusões principais}
 \label{sec:con_principais}
@@ -36,12 +36,32 @@ modelo, que reside o trabalho.
 
 Uma segunda conclusão atravessa os quatro casos de estudo e não pertence a nenhum deles em
 particular. Em três ocasiões distintas, uma técnica mais simples obteve melhor resultado do que uma
-técnica mais sofisticada em condições equivalentes: o \emph{z}-score deslizante contra dois
-detetores aprendidos, a volatilidade recente contra as representações de texto, e uma tabela de
-treze constantes contra o modelo treinado. Em três outras ocasiões sucedeu o inverso, com a alternativa medida a obter melhor resultado. O
-sistema conservou a opção implantada por razões distintas em cada caso: o estimador de pesos
-iguais por explicabilidade, a janela de vinte dias por responsividade, e o codificador de frases
-mais pequeno por custo computacional.
+mais sofisticada em condições equivalentes; em três outras sucedeu o inverso, e o sistema conservou
+mesmo assim a opção implantada, por uma razão distinta em cada caso. A
+Figura~\ref{fig:con_simples} reúne as seis.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\scriptsize,
+  cx/.style={draw=black!60, rounded corners=1.5pt, align=left, inner sep=4pt,
+        text width=5.2cm, minimum height=1.15cm},
+  ganha/.style={cx, fill=black!8, draw=black!78, line width=0.8pt},
+  perde/.style={cx, fill=white, draw=black!45, densely dashed},
+  cab/.style={font=\footnotesize\bfseries, align=center, text width=5.6cm},
+]
+  \node[cab] at (0,1.35) {a técnica simples obteve\\melhor resultado};
+  \node[cab] at (6.4,1.35) {a alternativa obteve mais,\\e o sistema manteve a sua};
+  \node[ganha] at (0,0.0) {\textbf{z-score deslizante} contra dois detetores aprendidos\\[1pt]\scriptsize $F_1$ de $0{,}530$ contra $0{,}269$ e $0{,}280$};
+  \node[perde] at (6.4,0.0) {\textbf{decaimento exponencial} obtém mais, e não foi adotado\\[1pt]\scriptsize $F_1$ de $0{,}664$ contra $0{,}516$ · explicabilidade};
+  \node[ganha] at (0,-1.62) {\textbf{volatilidade recente} contra as representações de texto\\[1pt]\scriptsize PR-AUC de $0{,}542$ contra $0{,}496$};
+  \node[perde] at (6.4,-1.62) {\textbf{janela de sessenta dias} obtém mais, e não foi adotada\\[1pt]\scriptsize $F_1$ de $0{,}678$ contra $0{,}516$ · responsividade};
+  \node[ganha] at (0,-3.24) {\textbf{treze constantes por empresa} contra o modelo treinado\\[1pt]\scriptsize precisão@5 de $0{,}662$ contra $0{,}632$};
+  \node[perde] at (6.4,-3.24) {\textbf{MPNet} obtém mais, e não foi adotado\\[1pt]\scriptsize precisão@5 de $0{,}538$ contra $0{,}514$ · custo};
+  \draw[draw=black!30] (3.2,1.7) -- (3.2,-4.05);
+\end{tikzpicture}
+\caption[As três ocasiões em cada sentido]{À esquerda, as três ocasiões em que uma técnica mais simples obteve melhor resultado do que uma mais sofisticada em condições equivalentes. À direita, as três em que sucedeu o inverso e o sistema conservou mesmo assim a opção implantada, com a razão de cada uma. A distinção entre as duas colunas é a distinção entre resultado e escolha, e a Tabela~\ref{tab:av_alternativas} reúne-as com as restantes.}
+\label{fig:con_simples}
+\end{figure}
 
 A distinção entre estes dois casos é a distinção entre resultado e escolha, e o
 presente capítulo mantém-na explícita: o que a medição estabelece é reportado como resultado, e o
@@ -74,8 +94,8 @@ três.
   \node[cx] (q2) at (0,-2.35) {\textbf{\gls{QI}2 · precedentes}\\[2pt]
     Recuperar notícias passadas de outra empresa do mesmo setor?};
   \node[ver] at (3.35,-2.35) {SIM};
-  \node[num] at (7.2,-2.35) {supera o valor de referência nos cinco setores; sob a restrição
-    temporal da produção, precisão@5 de $0{,}513$ contra acaso de $0{,}259$};
+  \node[num] at (7.2,-2.35) {supera o acaso nos cinco setores; com notícias anteriores à
+    consulta, precisão@5 de $0{,}513$ contra acaso de $0{,}259$};
 
   \node[neg] (q3) at (0,-4.85) {\textbf{\gls{QI}3 · triagem}\\[2pt]
     Um modelo treinado prioriza notícias melhor do que uma linha de base simples?};
@@ -86,10 +106,56 @@ três.
   \draw[black!35] (3.35,-5.85) -- (3.35,0.95);
 \end{tikzpicture}
 \caption[As três questões de investigação e as respostas obtidas]{As três respostas, com a resposta
-negativa apresentada com o mesmo destaque das duas restantes. A terceira linha é a que atribui
-crédito às outras: um trabalho que reporte apenas os resultados favoráveis não permite determinar se
-as respostas afirmativas foram medidas ou pressupostas.}
+negativa apresentada com o mesmo destaque das duas restantes. A resposta à segunda questão
+limita-se às alternativas avaliadas e ao critério aproximado de relevância setorial.}
 \label{fig:con_scorecard}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\scriptsize,
+  cx/.style={draw=black!55, rounded corners=1.5pt, fill=black!4, align=center,
+        text width=2.7cm, minimum height=1.42cm, inner sep=2pt},
+  res/.style={cx, fill=black!10, draw=black!75, line width=0.8pt},
+  qi/.style={font=\bfseries\footnotesize, align=center},
+  cab/.style={font=\scriptsize\itshape, text=black!60, align=center},
+  nao/.style={font=\scriptsize, text=black!58, align=left, text width=13.7cm},
+  seta/.style={-{Stealth[length=3.5pt]}, draw=black!45},
+]
+  \node[cab] at (1.5,1.16) {a pergunta};
+  \node[cab] at (4.6,1.16) {como se mede};
+  \node[cab] at (7.7,1.16) {contra o quê};
+  \node[cab] at (10.8,1.16) {o resultado};
+  \node[qi] at (-0.72,0.0) {QI1};
+  \node[cx] (c00) at (1.5,0.0) {movimentos invulgares, entre empresas?};
+  \node[cx] (c01) at (4.6,0.0) {amplitude da taxa de disparo, sem rótulos};
+  \node[cx] (c02) at (7.7,0.0) {limiar fixo de três por cento};
+  \node[res] (c03) at (10.8,0.0) {$0{,}015$\\ contra $0{,}344$};
+  \draw[seta] (c00) -- (c01);
+  \draw[seta] (c01) -- (c02);
+  \draw[seta] (c02) -- (c03);
+  \node[nao, anchor=west] at (-0.35,-1.06) {o que daqui não decorre: não que a parametrização escolhida seja a melhor da família};
+  \node[qi] at (-0.72,-2.72) {QI2};
+  \node[cx] (c10) at (1.5,-2.72) {precedentes de outra empresa do setor?};
+  \node[cx] (c11) at (4.6,-2.72) {precisão@5, rótulo aproximado pelo setor};
+  \node[cx] (c12) at (7.7,-2.72) {acaso, sobreposição de palavras, recência};
+  \node[res] (c13) at (10.8,-2.72) {$0{,}514$\\ contra $0{,}240$};
+  \draw[seta] (c10) -- (c11);
+  \draw[seta] (c11) -- (c12);
+  \draw[seta] (c12) -- (c13);
+  \node[nao, anchor=west] at (-0.35,-3.78) {o que daqui não decorre: não mede vantagem sobre um filtro pelo setor da consulta};
+  \node[qi] at (-0.72,-5.44) {QI3};
+  \node[cx] (c20) at (1.5,-5.44) {triagem melhor que a volatilidade?};
+  \node[cx] (c21) at (4.6,-5.44) {PR-AUC no bloco de teste reservado};
+  \node[cx] (c22) at (7.7,-5.44) {volatilidade dos vinte dias anteriores};
+  \node[res] (c23) at (10.8,-5.44) {$0{,}496$\\ contra $0{,}542$};
+  \draw[seta] (c20) -- (c21);
+  \draw[seta] (c21) -- (c22);
+  \draw[seta] (c22) -- (c23);
+  \node[nao, anchor=west] at (-0.35,-6.5) {o que daqui não decorre: não que o texto de notícias seja inútil para a tarefa};
+\end{tikzpicture}
+\caption[O percurso de cada questão até à resposta]{Para cada questão, o percurso da pergunta até ao resultado, e a linha que delimita o alcance desse resultado. As três primeiras colunas são o protocolo, fixado antes da medição; a quarta é o valor obtido contra a alternativa. A linha inferior de cada bloco é a que distingue uma avaliação de uma demonstração, e é desenvolvida nas subsecções que se seguem.}
+\label{fig:con_cadeia}
 \end{figure}
 
 \subsection{Deteção de movimentos invulgares}
@@ -130,7 +196,7 @@ da pretendida.
 
 \subsection{Recuperação de precedentes}
 
-A resposta à \gls{QI}2 é afirmativa, e a sua formulação exige o nível do setor. Sobre o corpus
+A resposta à \gls{QI}2 é afirmativa face às alternativas avaliadas. Sobre o corpus
 recente, a recuperação por semelhança de frase \autocite{reimers2019sbert} obtém precisão@5 de
 $0{,}514$, contra $0{,}346$ da sobreposição de vocabulário, $0{,}240$ da escolha aleatória e
 $0{,}126$ da apresentação das notícias mais recentes. Também aqui o modelo implantado não é o melhor
@@ -145,18 +211,22 @@ estratégia é inútil enquanto produto, dado que acerta em todas as consultas d
 dos quatro restantes, mas a sua existência demonstra que o agregado mede em parte a composição do
 corpus.
 
-A comparação que resiste à objeção realiza-se dentro de cada setor, onde o método supera o
+A comparação que controla esta composição realiza-se dentro de cada setor, onde o método supera o
 respetivo valor de referência nos cinco. A margem absoluta é maior no setor mais abundante, com
 $+0{,}283$ na tecnologia; nos setores escassos, onde o valor de referência ronda $0{,}072$, o método
-obtém várias vezes esse valor com margem absoluta menor. É esta a afirmação que o trabalho
-sustenta.
+obtém várias vezes esse valor com margem absoluta menor. O alcance é o das alternativas avaliadas:
+se a seleção pudesse usar o setor conhecido da consulta, bastaria filtrar por esse setor para
+satisfazer o rótulo, desde que existissem candidatos suficientes. A análise por setor não mede
+vantagem semântica sobre esse filtro.
 
 Duas verificações adicionais delimitam a resposta. Sobre o corpus histórico completo, com aproximadamente oitenta mil notícias de seis anos, a
-precisão sobe para $0{,}595$. O valor de referência sobe na mesma proporção, e a margem mantém-se.
-O método não se degrada com a escala, nem melhora com ela. A imposição da restrição que o sistema
-efetivamente enfrenta, segundo a qual o precedente tem de ser anterior à consulta, reduz a precisão
+precisão sobe para $0{,}595$. O valor de referência sobe também, e mais depressa, pelo que a
+margem desce de $+0{,}274$ para $+0{,}262$.
+O método não se degrada com a escala, nem melhora com ela. Exigir que o precedente seja anterior
+à consulta reduz a precisão
 para $0{,}513$ e o valor de referência para $0{,}259$, com a margem a variar $0{,}008$. O método
-conserva a vantagem quando obrigado a operar como opera em produção.
+conserva a vantagem sob esta restrição de anterioridade. O teste não impõe a maturação de oito
+dias usada em produção e, por isso, não valida integralmente a disponibilidade dos desfechos.
 
 A segunda ressalva tem consequências diretas sobre o produto. A recuperação identifica tema e não
 direção: a concordância entre o sentido do movimento da notícia de consulta e o dos precedentes
@@ -165,11 +235,12 @@ notícias podem tratar do mesmo assunto e o preço evoluir em sentidos opostos. 
 coerente com o que a forma semiforte da hipótese dos mercados eficientes conduziria a esperar
 \autocite{fama1970efficient}, segundo a qual a informação pública se encontra já refletida no preço,
 sem que o trabalho a teste ou nela se apoie para estabelecer qualquer conclusão. A consequência
-prática é a decisão de apresentar os precedentes individualmente, com data e desfecho, em vez de os
-resumir a uma média suscetível de ser lida como previsão.
+prática é apresentar os precedentes individualmente, com data e desfecho. O alerta histórico
+reproduzido na Figura~\ref{fig:sis_alerta} inclui também uma média, que resume aqueles casos e
+não constitui previsão para a notícia recebida.
 
-Uma delimitação final respeita ao rótulo. A pertença ao mesmo setor é uma aproximação verificável de
-relevância, e não a propriedade que se pretendia medir. A linha de base lexical é a forma mais elementar da sua família, sem ponderação pela raridade dos
+Uma delimitação final respeita ao rótulo. A pertença ao mesmo setor aproxima a relevância de forma
+verificável, sem coincidir com a propriedade que se pretendia medir. A linha de base lexical é a forma mais elementar da sua família, sem ponderação pela raridade dos
 termos nem normalização pelo comprimento. Os dezassete pontos percentuais de vantagem medem a
 distância a um ponto de partida, e não a uma função de ordenação afinada
 \autocite{robertson2009bm25}.
@@ -194,16 +265,15 @@ $+0{,}020$, que exclui zero. É a única ocasião em que uma representação de 
 acréscimo detetável nesta tarefa.
 
 O valor situa-se abaixo do limite de $0{,}02$ que o Capítulo~\ref{cap:avaliacao} fixou antes das
-medições, e esse limite aplica-se nos dois sentidos. Fica estabelecido um limite superior para o
-efeito do texto, e não uma quantidade de que o sistema possa dispor.
+medições. O acréscimo observado fica abaixo desse critério prático; não estabelece um limite
+garantido para o efeito do texto.
 
 Três medições impedem que este acréscimo reabra o veredicto. A soma não supera a volatilidade isolada, e o intervalo da diferença contém zero. O acréscimo não
 sobrevive à métrica que descreve o produto: a precisão dentro do orçamento de cinco alertas por
-dia permanece em $0{,}662$ com e sem texto. E a capacidade de separar notícias da mesma empresa
-mantém-se ao nível do acaso. O que estas medições acrescentam à resposta negativa não é uma ressalva mas uma localização: a
-informação que o texto transporta distingue empresas e períodos, quando o produto necessitava de
-distinguir notícias. A formulação que subsiste é a mais fraca das possíveis, correspondendo a um
-limite superior de um efeito e não a uma descoberta.
+dia permanece em $0{,}662$ com e sem texto. A ordenação dentro de cada empresa mantém-se ao
+nível do acaso. Estas medições não demonstram ganho operacional do texto: o rótulo é comum a
+todas as notícias de uma empresa no mesmo dia, pelo que a métrica avalia a seleção de dias de
+empresa e não a distinção entre títulos desse dia.
 
 Existe uma linha de investigação estabelecida que utiliza texto para antecipar movimentos de preço
 \autocite{xing2018nlffsurvey, ding2015deep}, e este resultado não a contradiz. A diferença não reside na dimensão do texto, uma vez que \textcite{ding2015deep} operam igualmente
@@ -224,7 +294,7 @@ agrava a expectativa em vez de a atenuar: entre a publicação de uma notícia e
 fontes gratuitas decorrem $353$ minutos de mediana, intervalo durante o qual qualquer reação do
 mercado já ocorreu. O sistema observa, por construção, informação que deixou de ser nova.
 
-Esta leitura é um enquadramento e não uma conclusão. O trabalho não testa a hipótese dos mercados
+Esta leitura é um enquadramento, sem estatuto de conclusão. O trabalho não testa a hipótese dos mercados
 eficientes, e um resultado negativo obtido com uma família de métodos sobre um corpus concreto não
 a confirma; confirmá-la exigiria um desenho que este não tem. O que a leitura acrescenta é a razão
 pela qual o resultado é menos surpreendente do que a hipótese inicial supunha, e por que motivo a
@@ -241,7 +311,7 @@ está cumprido. Os dois gatilhos funcionam de ponta a ponta em produção, sobre
 percurso de um acontecimento está documentado no Capítulo~\ref{cap:sistema} com os valores de um caso
 real.
 
-O segundo objetivo, avaliar cada componente contra linhas de base transparentes, está cumprido
+O segundo objetivo, avaliar os componentes com linhas de base transparentes, está cumprido
 para as três técnicas em que existe um referente externo. Num dos casos foi além do previsto: o
 detetor foi comparado não apenas com uma regra de limiar fixo, mas também com dois métodos
 aprendidos.
@@ -252,7 +322,7 @@ seriam possíveis, como a do modelo de um fator contra o de dois fatores ou a da
 brutas contra as encolhidas.
 
 O terceiro objetivo, garantir que as explicações apresentadas são fiéis ao que o sistema calculou,
-está cumprido por construção e não por verificação posterior. Cada valor exibido provém do objeto que
+está cumprido por construção, sem depender de verificação posterior. Cada valor exibido provém do objeto que
 o calculou, e o texto é composto a partir dessas peças, pelo que não é possível ao alerta enunciar um
 valor distinto do que o sistema obteve. A fidelidade é, contudo, uma propriedade do sistema, e não da
 relação entre o sistema e quem o lê; a utilidade das explicações para um investidor particular não
@@ -290,18 +360,18 @@ utilidade das explicações nem a qualidade dos rótulos deixam de ser aproxima�
 Nenhum estudo controlado com pessoas & Executar o protocolo desenhado, com seis a dez participantes &
 tempo de calendário \\
 A pontuação é quase constante dentro de cada empresa & Entradas que variem de um título para o
-seguinte & reduzido \\
+seguinte & reduzido; re-treina \\
 O rótulo pode favorecer a linha de base vencedora & Reconstruir o alvo com sensibilidades
-estimadas & reduzido \\
+estimadas & reduzido; re-treina \\
 Os rótulos são aproximações verificáveis & Anotar uma amostra com julgamento humano &
 tempo de calendário \\
 O alerta afirma mais evidência do que a que possui & Medir o impacto por notícia e não por dia &
 dados intradiários \\
-Os três blocos quase não partilham empresas & Uma divisão de composição constante & reduzido \\
+A composição por empresa varia entre os três blocos & Uma divisão de composição constante & reduzido; reavalia \\
 Apenas o título é lido, e não o corpo do artigo & Recolher e representar o texto integral &
 dados novos \\
 A repartição nem sempre está bem estimada & Exibir o ajuste junto de cada repartição & reduzido \\
-A deriva é medida e não corrigida & Re-treinar com o registo de produção & reduzido \\
+A deriva é medida e não corrigida & Re-treinar com o registo de produção & reduzido; re-treina \\
 A cobertura das fontes é incompleta e desigual & Acrescentar fontes, ou declarar o limite &
 fora de controlo \\
 As três causas do atraso não estão separadas & Registar quando cada item surge no fluxo &
@@ -348,7 +418,8 @@ Duas afirmações têm de ser separadas, uma vez que apenas uma corresponde a er
 \gls{QI}3 mantém-se, porque a variante com texto dispunha de trezentos e oitenta e quatro números
 por título e ainda assim perdeu. A decisão de produto estava errada, e a razão é de método: a
 escolha foi tomada por uma métrica que interroga a ordenação do conjunto completo, quando o produto
-necessitava da distinção entre dois títulos da mesma empresa.
+necessitava de selecionar oportunidades sob um orçamento diário. O rótulo por empresa e dia
+não permite avaliar a distinção entre dois títulos publicados nessa mesma unidade.
 
 O sistema foi alterado e o modelo deixou de constituir porta para passar a critério de ordenação.
 Essa alteração não está validada. Sobre as $825$ decisões maturadas em produção, agrupadas nas $239$
@@ -392,13 +463,11 @@ retornos da própria empresa. As três são objetivas e verificáveis, e nenhuma
 trabalho: em domínios financeiros vizinhos, como a deteção de fraude, os métodos não supervisionados
 ocupam posição central pela escassez de anomalias rotuladas \autocite{ahmed2016financial}.
 
-Os \textbf{três blocos de dados quase não partilham empresas}. O bloco de treino contém treze
-empresas e o de teste nove, cinco empresas do treino não figuram uma única vez no teste, e uma
-empresa responsável por $17{,}1\%$ das linhas de teste nunca figura no treino. A constatação atua
-nos dois sentidos: reforça o resultado negativo, porque um modelo cujo sinal é essencialmente a
-identidade da empresa estima-a sobre um conjunto quase ausente do bloco onde é avaliado; e
-limita-o, porque não permite separar a hipótese de o modelo ser pior da hipótese de a identidade não
-transferir entre estes dois períodos.
+A \textbf{composição por empresa varia entre os três blocos}. O treino contém treze empresas e
+o teste nove: oito são comuns, cinco só aparecem no treino e uma só no teste. Esta última
+representa $17{,}1\%$ das linhas de teste; as empresas conhecidas representam os restantes
+$82{,}9\%$. Existe sobreposição substancial, mas as frequências mudam. A comparação não isola
+o efeito dessa mudança do desempenho do modelo, nem demonstra generalização uniforme a empresas novas.
 
 As \textbf{notícias são lidas apenas ao nível do título}. O sistema representa o título e não o
 corpo do artigo, o que limita o que a representação de texto pode captar e constitui explicação
@@ -419,7 +488,7 @@ voltaram a ser ajustados. Entre o bloco de treino e o de teste, o índice de est
 populacional situa a volatilidade dos vinte dias na banda de deslocamento significativo, com
 $0{,}281$, que é a entrada de que o modelo mais depende. A literatura de deriva de conceito trata
 deste problema, com uma taxonomia da mudança e estratégias de deteção e adaptação
-\autocite{gama2014survey}; aqui existe a deteção e não a adaptação. A arquitetura que a forneceria
+\autocite{gama2014survey}; aqui existe a deteção, sem a adaptação. A arquitetura que a forneceria
 está definida na Secção~\ref{sec:sis_ciclo}, com gatilho condicional, janela deslizante e porta de
 promoção, e não foi executada: a limitação é de execução e não de desenho.
 
@@ -489,9 +558,8 @@ cada uma exige antes de poder ser executada.
         corresponde, no treino, ao movimento completo do dia da notícia, e em produção à última
         barra disponível no momento da pontuação. Substituí-la pelo retorno acumulado até à
         publicação, ou, de forma mais conservadora, pelo retorno da véspera, elimina a diferença e
-        permite reportar o desempenho sob um referencial único. A direção do efeito é conhecida e
-        favorece o resultado negativo, pelo que a correção o reforçaria em vez de o desfazer; o que
-        a experiência acrescenta é a medição desse reforço em vez da sua dedução.
+        permite reportar o desempenho sob um referencial único. O efeito na comparação entre
+        modelos permanece por medir: exige reconstruir as entradas e repetir o treino e a avaliação.
 
   \item \textbf{Agrupar os precedentes por par de empresa e dia antes da seleção.} A correção
         aplicada ao texto do alerta tornou a afirmação verdadeira sem remover a causa. Selecionar os
@@ -560,14 +628,35 @@ e com embargo. A aplicação do método sem tratamento desse ponto produziria in
 garantia que os dados não sustentam, substituindo um valor honesto por um valor com aparência de
 rigor.
 
+Três direções técnicas ficam igualmente registadas, e são de outra natureza. Não derivam de
+limitações medidas, pelo que não integram a lista anterior; decorrem de decisões de implementação
+que a Secção~\ref{sec:ctx_texto} enuncia e que o trabalho não teve razão para revisitar.
+
+A primeira é a reordenação por codificador cruzado. A recuperação compara cada par de frases
+através de vetores calculados uma única vez, opção que a escala da base de casos impõe. Um
+codificador que processe as duas frases em conjunto produz uma comparação mais fina e é
+impraticável sobre dezenas de milhares de casos, mas praticável sobre os vinte primeiros
+resultados de uma consulta. O protocolo de avaliação já construído mede exatamente essa lista.
+
+A segunda é a aprendizagem de ordenação sob restrição de orçamento. O problema que o produto
+resolve não é classificar cada notícia isoladamente, mas escolher cinco por dia, e a métrica
+principal do Capítulo~\ref{cap:avaliacao} interroga a primeira formulação. Existe uma família de
+métodos dedicada à segunda, e a diferença entre as duas está medida neste trabalho sem ser
+nomeada: é a distância entre a PR-AUC sobre o conjunto completo e a precisão dentro do orçamento.
+
+A terceira é a substituição da procura exaustiva por um índice aproximado
+\autocite{johnson2021faiss}, referida na Secção~\ref{sec:ctx_texto} como caminho de
+crescimento. Com a dimensão atual da base a procura exata é praticável e exata, pelo que a
+substituição não se justifica hoje; justificar-se-ia a partir de uma ordem de grandeza acima.
+
 \section{Considerações finais}
 \label{sec:con_final}
 
 O trabalho partiu de três perguntas que um investidor particular formula perante um movimento de
 preço, e a que as ferramentas gratuitas não respondem. Se o movimento é invulgar. Se a origem é a
 empresa ou o mercado. E se existem precedentes com desfecho conhecido. Construiu-se um
-sistema que responde às três com evidência verificável e sem emitir previsões, e avaliou-se cada
-componente contra alternativas mais simples declaradas antes da medição.
+sistema que responde às três com evidência verificável e sem emitir previsões. Três técnicas foram
+comparadas com alternativas mais simples; na decomposição mediu-se a qualidade do ajuste.
 
 O resultado com maior valor informativo é negativo. A hipótese de que o texto das notícias transportaria informação ausente dos preços não foi
 confirmada sobre este corpus. A sua investigação produziu um diagnóstico de alcance superior ao da
@@ -579,8 +668,8 @@ estava errado era uma suposição sobre a ligação entre eles.
 
 A restrição fundadora do trabalho, segundo a qual o sistema não produz previsões de preço, revelou-se
 a decisão de maior alcance. Determina o que pode ser afirmado: toda a afirmação do sistema é confirmável contra o registo no
-momento em que é lida. Determina a forma da explicação, que apresenta casos individuais em vez de
-médias. E determina o critério de avaliação, que incide sobre a capacidade de identificar o que é
+momento em que é lida. Determina a forma da explicação, que permite inspecionar os casos individuais
+e os seus desfechos. E determina o critério de avaliação, que incide sobre a capacidade de identificar o que é
 invulgar e não sobre a de antecipar. Um sistema que apresente evidência em lugar de veredictos entrega menos do que um sistema
 que anuncie direções, e entrega apenas o que consegue sustentar.
 
