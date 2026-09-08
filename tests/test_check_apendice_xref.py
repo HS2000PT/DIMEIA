@@ -23,6 +23,7 @@ propriedade se perder:
 
 from __future__ import annotations
 
+import os
 import pathlib
 import re
 import subprocess
@@ -59,6 +60,12 @@ def test_uma_remissao_errada_e_apanhada(tmp_path):
     """⚠️ O teste que decide. Sem ele, a passagem no corpus real não prova nada: um
     verificador que não olha para nada também devolve zero problemas."""
     original = APENDICE.read_bytes()
+    # ⚠️ A DATA TAMBEM E' RESTAURADA, e nao e' detalhe. O `check_tese_pt` compara a data do
+    # PDF com a dos ficheiros de origem para apanhar um PDF por recompilar. Restaurar o
+    # conteudo sem restaurar a data deixa o apendice mais recente do que o PDF e faz essa
+    # porta acusar uma desactualizacao que nao existe -- um teste que faz uma porta gritar
+    # de mais e' um defeito, e nao um teste.
+    data = APENDICE.stat()
     guardado = tmp_path / "appendixA.tex"
     guardado.write_bytes(original)                    # copiar ANTES de plantar
     try:
@@ -77,7 +84,9 @@ def test_uma_remissao_errada_e_apanhada(tmp_path):
         assert "linhas com problema: 0" not in r.stdout
     finally:
         APENDICE.write_bytes(original)
+        os.utime(APENDICE, (data.st_atime, data.st_mtime))
         assert APENDICE.read_bytes() == original, "o apêndice não foi restaurado"
+        assert APENDICE.stat().st_mtime == data.st_mtime, "a data não foi restaurada"
 
 
 def test_uma_coordenada_de_desenho_nao_conta_como_afirmacao():

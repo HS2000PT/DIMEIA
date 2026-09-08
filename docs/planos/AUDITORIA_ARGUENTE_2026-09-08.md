@@ -188,6 +188,16 @@ ter uma lista de «flutuantes a 101 páginas da remissão» inteiramente artefac
 
 ---
 
+### D5 — o meu proprio teste fez uma porta gritar de mais
+
+O teste de sabotagem do A01 reescreve o apendice e repoe-o. Repor o CONTEUDO nao chega: a
+data do ficheiro fica mais recente do que a do PDF, e o `check_tese_pt`, que compara as duas
+para apanhar um PDF por recompilar, passou a acusar uma desactualizacao que nao existia.
+**Um teste que faz uma porta gritar de mais e um defeito, e nao um teste.** Passa a repor
+tambem a data, e ha' uma asserçao que o exige.
+
+---
+
 ## E. Suspeitas que ficam por confirmar
 
 **E01 — «o documento regista três ocasiões em que isso quase sucedeu».** A afirmação é da
