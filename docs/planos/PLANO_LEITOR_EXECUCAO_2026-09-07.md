@@ -31,6 +31,40 @@ produção. Correr qualquer um exigiria a máquina onde o corpus vive — a mesm
 **Isto não é uma recusa.** Se o autor tiver acesso a essa máquina, o item 3 da Tabela 6.1 é o que
 mais acrescentaria, e o protocolo está escrito. Aqui, fica declarado e não fabricado.
 
+### ⚠️ ADENDA 2026-09-08: A IMPOSSIBILIDADE ACABOU
+
+**O quadro acima deixou de estar correto no dia em que foi escrito.** O autor colocou
+`fnspid/` na raiz, com **28 GB**, e a verificacao muda duas linhas da tabela:
+
+| artefacto | estado a 2026-09-07 | estado a 2026-09-08 |
+|---|---|---|
+| corpus FNSPID | ❌ ausente | ✅ **presente**, `fnspid/data/raw/fnspid_nasdaq.csv`, 23,2 GB |
+| `torch` · `sentence-transformers` · `scikit-learn` | ✅ | ✅ (2.12.1+cpu · 5.6.0 · 1.9.0) |
+| `data/triage_dataset.csv` | ❌ ausente | ❌ ausente, mas **reconstruivel** |
+
+**E' o corpus verdadeiro, e nao um homonimo.** O cabecalho bate coluna a coluna com o que a
+tese descreve: `Date, Article_title, Stock_symbol, Url, Publisher, Author, Article,
+Lsa_summary, Luhn_summary, Textrank_summary, Lexrank_summary`. Medido: ~23,2 GB, cerca de
+212 bytes por linha, e uma varredura completa custa **minutos e nao uma noite** — o
+`download_data.py` estimava 3,4 h porque descarregava do Hugging Face; a partir de disco local
+o custo e' de leitura.
+
+⚠️ **MAS O `processed/` NAO SERVE ESTA TESE, e a distincao importa.** Aquela arvore e'
+de **outro pipeline**: traz `news_enriched.parquet` com pontuacoes **FinBERT** ja' calculadas,
+`multimodal_features` e `market_features` a tres horizontes. Esta dissertacao **mediu o FinBERT
+e rejeitou-o** — precisao@5 de $0{,}420$, o pior dos quatro codificadores avaliados
+(§5.3). Usar aqueles ficheiros seria correr **uma experiencia diferente** e nao reproduzir
+esta. O que serve e' so' o `raw/`.
+
+⚠️ **E OS 28 GB ESTAVAM A UM `git add -A` DA HISTORIA.** O `data/**` do `.gitignore`
+nao protege um caminho novo de topo. A sessao 59 ja' pos **84 MB permanentes** na historia por
+um descuido da mesma forma, e historia publicada nao se reescreve. `fnspid/` e `data-temp/`
+entraram no `.gitignore` com a razao escrita.
+
+**A decisao sobre o que fazer com isto e' do autor, e as tres opcoes tem custos muito
+diferentes.** Fica escrito que a barreira agora e' de **risco de calendario**, e ja' nao de
+material — que era o que este documento afirmava.
+
 ---
 
 ## 1. O que vai ser feito, por blocos
