@@ -1,5 +1,13 @@
 # data_card.md — Cartão de dados (reproduzível)
 
+> ⚠️ **O corpus em bruto esteve nesta máquina a 2026-09-08 e foi apagado depois de
+> extraído.** O que existe hoje são os 15 tickers da tese em
+> `data/fnspid_news_subset.csv` (6,5 MB) e os artigos em
+> `data/fnspid_artigos_15tickers.csv.gz` (108 MB), no lugar de 28 GB. O extracto reproduz
+> **50 em 50** os títulos da amostra versionada em julho, o que confirma ser o mesmo corpus
+> que gerou os números da tese. O que foi guardado, o que foi deitado fora e por que razão
+> não se perde nada está em [`fnspid_corpus_local.md`](fnspid_corpus_local.md).
+
 > Fonte, licença, atribuição, subconjunto exato de tickers e janela temporal escolhidos, e cada decisão de
 > pré-processamento/limpeza (para o dataset ser reproduzível).
 
