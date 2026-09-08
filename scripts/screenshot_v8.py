@@ -74,7 +74,12 @@ def main() -> int:
     from playwright.sync_api import sync_playwright
 
     FIGURAS.mkdir(parents=True, exist_ok=True)
-    alvo = f"{args.url}/?t={args.ticker}" if args.ticker else args.url
+    # ⚠️ `?t=NOME` NÃO ESCOLHE NADA. A v6 guardava a empresa na URL e a v8 não guarda: pedir
+    # `?t=GOOGL` devolve a empresa que a página destaca sozinha, verificado ao vivo a
+    # 2026-09-08 (pedido GOOGL, obtido AAPL). O `--ticker` ficou a prometer um controlo que
+    # a página não honra, e uma captura da empresa errada com a legenda da certa é o defeito
+    # que este ficheiro existe para evitar. Passa a clicar, e a falhar alto se não pegar.
+    alvo = args.url
     saidas: list[str] = []
 
     with sync_playwright() as pw:
@@ -82,12 +87,29 @@ def main() -> int:
         # Tema claro à força: a dissertação é impressa em papel branco, e um recorte escuro
         # gasta tinta e perde contraste. `device_scale_factor=2` porque a figura é reduzida
         # à largura do texto e a 1x o tipo de letra sairia esfarrapado.
+        # ⚠️ `locale` FIXADO, e não é detalhe. A biblioteca do gráfico formata os meses pela
+        # língua do browser, que segue a da máquina: numa máquina portuguesa o eixo saía
+        # «abr. mai. jun.» dentro de uma captura cujo resto está todo em inglês. As figuras
+        # desta dissertação são inglesas por dentro por decisão declarada, e uma captura
+        # tirada noutra máquina mudaria a língua do eixo sem ninguém dar por isso -- nenhum
+        # verificador entra dentro de um PNG.
         pg = b.new_page(viewport={"width": 1420, "height": 1100}, device_scale_factor=2,
-                        color_scheme="light")
+                        color_scheme="light", locale="en-US")
         pg.goto(alvo, wait_until="networkidle", timeout=60000)
         pg.wait_for_selector("#kpis .k", timeout=45000)
         pg.wait_for_selector("#empresas .e", timeout=45000)
         pg.wait_for_timeout(2000)  # as faíscas e o gráfico acabam de ser desenhados
+
+        if args.ticker:
+            alvo_pedido = args.ticker.upper()
+            pg.locator(f'#empresas .e[data-t="{alvo_pedido}"]').click()
+            pg.wait_for_timeout(1500)
+            obtida = pg.eval_on_selector('.e[aria-pressed="true"]', "e => e.dataset.t")
+            if obtida != alvo_pedido:
+                raise SystemExit(
+                    f"pediu-se {alvo_pedido} e a página ficou em {obtida}: a captura seria "
+                    "de uma empresa e a legenda de outra"
+                )
 
         escolhida = pg.eval_on_selector(
             '.e[aria-pressed="true"]', "e => e.dataset.t || e.textContent.trim().slice(0,6)")
@@ -112,7 +134,19 @@ def main() -> int:
         # ── 2) a empresa escolhida ──────────────────────────────────────────
         det = pg.locator("#detalhe")
         det.scroll_into_view_if_needed()
-        pg.wait_for_timeout(800)
+        # ⚠️ A página abre no dia corrente e a legenda promete SEIS MESES, que é o intervalo
+        # em que a distinção entre assinalar e comunicar se torna observável -- num só dia
+        # não há marcas nenhumas para separar. O intervalo era escolhido à mão e por isso
+        # não se voltava a produzir; passa a ser parte da receita.
+        pg.locator('#intervalos button[data-r="6M"]').click()
+        pg.wait_for_timeout(1800)
+        intervalo = pg.eval_on_selector('#intervalos button[aria-pressed="true"]',
+                                        "e => e.dataset.r")
+        if intervalo != "6M":
+            raise SystemExit(f"o intervalo ficou em {intervalo} e a legenda promete 6M")
+        ajuste = pg.eval_on_selector_all(".d-fit", "n => n.map(e => e.textContent.trim())")
+        print("ajuste    ·", ajuste[0] if ajuste else "AUSENTE (a linha do ajuste não saiu)")
+        pg.wait_for_timeout(400)
         det.screenshot(path=str(FIGURAS / f"app_{args.sufixo}_empresa.png"))
         saidas.append(f"app_{args.sufixo}_empresa.png")
         print(f"empresa   · {escolhida}")

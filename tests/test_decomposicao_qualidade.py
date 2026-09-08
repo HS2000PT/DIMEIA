@@ -155,3 +155,35 @@ def test_as_tres_bandas_dizem_coisas_diferentes(r2, espera):
     """Sem isto, as três bandas podiam colapsar na mesma frase sem ninguém dar por isso."""
     f = _funcao()
     assert espera in f, f"a banda de r2={r2} não tem frase própria"
+
+
+# ── a faixa do z: uma altura, um sítio ────────────────────────────────────────────────
+
+
+def test_a_altura_da_faixa_do_z_vive_num_so_sitio():
+    """Estava em dois números soltos, e o `overflow:hidden` escondia o desacordo.
+
+    ⚠️ Este é o teste que o incidente justifica. A tela do z era criada com uma altura em
+    JavaScript e a caixa que a contém tinha outra em CSS, com `overflow:hidden` por cima.
+    Quando as duas divergiram, o resultado não foi um erro: foi o rótulo `-3.02` impresso
+    **cortado a meio**, numa faixa cuja única função é deixar ler o valor de $z$. Um
+    desacordo que se manifesta como composição e não como exceção não tem quem o apanhe,
+    e por isso a altura passou a ter uma só origem.
+    """
+    txt = PAGINA.read_text(encoding="utf-8")
+    assert "--z-alt:" in txt, "a variável da altura da faixa desapareceu"
+    assert "height:var(--z-alt)" in txt, "a caixa deixou de ler a variável"
+    assert re.search(r"getPropertyValue\('--z-alt'\)", txt), (
+        "o gráfico deixou de ler a variável e voltou a ter altura própria"
+    )
+    assert not re.search(r"criarGrafico\(alvo,\s*\d+\s*,\s*false\)", txt), (
+        "a altura da faixa voltou a ser um número solto no JavaScript"
+    )
+
+
+def test_a_faixa_do_z_afasta_os_extremos_do_bordo():
+    """Sem margem, a marca mais alta assenta na moldura e o rótulo sai cortado."""
+    txt = PAGINA.read_text(encoding="utf-8")
+    m = re.search(r"scaleMargins:\s*\{\s*top:\s*([0-9.]+),\s*bottom:\s*([0-9.]+)", txt)
+    assert m, "a faixa do z perdeu a margem do eixo"
+    assert float(m.group(1)) > 0.05 and float(m.group(2)) > 0.05, m.groups()

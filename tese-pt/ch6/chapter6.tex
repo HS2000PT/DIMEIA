@@ -370,7 +370,7 @@ dados intradiários \\
 A composição por empresa varia entre os três blocos & Uma divisão de composição constante & reduzido; reavalia \\
 Apenas o título é lido, e não o corpo do artigo & Recolher e representar o texto integral &
 dados novos \\
-A repartição nem sempre está bem estimada & Exibir o ajuste junto de cada repartição & reduzido \\
+A repartição nem sempre está bem estimada & Comparar um fator com dois; o ajuste já é exibido & reduzido; reavalia \\
 A deriva é medida e não corrigida & Re-treinar com o registo de produção & reduzido; re-treina \\
 A cobertura das fontes é incompleta e desigual & Acrescentar fontes, ou declarar o limite &
 fora de controlo \\
@@ -479,8 +479,11 @@ descartada.
 A \textbf{repartição de um movimento nem sempre está bem estimada}. A soma das três parcelas
 verifica-se por construção e não valida coisa alguma. A medida informativa é o coeficiente de
 determinação na janela de estimação, cuja mediana foi de $0{,}460$ e que numa das dezassete empresas
-assumiu valor negativo; nesses casos a repartição continua a ser exibida e deve ser lida como
-indicativa. O encolhimento ponderado pela precisão \autocite{vasicek1973beta} limita o dano de uma
+assumiu valor negativo, o que significa que naquela janela o ajuste não descrevia os dados.
+A interface passou a exibir esse coeficiente ao lado das três parcelas, comparado com a mediana
+da watchlist, e a nomear em palavras o caso em que o ajuste não descreve os dados. A estimativa
+não melhora por ser exibida, e a limitação subsiste; o que deixa de suceder é o leitor receber
+uma repartição sem meio de saber quando ela é fraca. O encolhimento ponderado pela precisão \autocite{vasicek1973beta} limita o dano de uma
 estimativa má sem a transformar numa estimativa boa.
 
 A \textbf{deriva é medida e não corrigida}. Os parâmetros foram estimados entre 2018 e 2023 e não

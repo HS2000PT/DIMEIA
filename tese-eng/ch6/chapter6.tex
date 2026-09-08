@@ -377,7 +377,7 @@ intraday data \\
 Company composition varies across the three blocks & A split of constant composition & small; re-evaluates \\
 Only the headline is read, not the body of the article & Collect and represent the full text &
 new data \\
-The split is not always well estimated & Display the fit alongside each split & small \\
+The split is not always well estimated & Compare one factor with two; the fit is now shown & small; re-evaluates \\
 Drift is measured and not corrected & Retrain with the production log & small; retrains \\
 Source coverage is incomplete and uneven & Add sources, or declare the limit &
 outside our control \\
@@ -485,8 +485,11 @@ headline is the part of the document where the most information has been discard
 The \textbf{split of a movement is not always well estimated}. The sum of the three parts holds by
 construction and validates nothing. The informative measure is the coefficient of determination in
 the estimation window, whose median was $0.460$ and which in one of the seventeen companies took a
-negative value; in those cases the split continues to be displayed and should be read as
-indicative. Precision-weighted shrinkage \autocite{vasicek1973beta} limits the damage of a bad
+negative value, which means that in that window the fit did not describe the data.
+The interface now shows that coefficient alongside the three parts, compared against the median
+across the watchlist, and names in words the case in which the fit does not describe the data.
+The estimate does not improve by being displayed, and the limitation remains; what stops
+happening is the reader receiving a split with no way of knowing when it is weak. Precision-weighted shrinkage \autocite{vasicek1973beta} limits the damage of a bad
 estimate without turning it into a good one.
 
 \textbf{Drift is measured and not corrected}. The parameters were estimated between 2018 and 2023

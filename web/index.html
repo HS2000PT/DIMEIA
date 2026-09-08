@@ -260,7 +260,12 @@
   .cx.inerte input { cursor:default; }
   .cx-nota { color:var(--fraco); font-size:.74rem; }
   .d-z { margin-top:8px; border:1px solid var(--linha2); border-radius:var(--r2);
-         overflow:hidden; height:108px; }
+         overflow:hidden; height:var(--z-alt); }
+  /* ⚠️ A altura da faixa vive AQUI e o `criarGrafico` lê-a. Estavam nos dois sítios,
+     em número solto, e o `overflow:hidden` fazia o desacordo aparecer como um rótulo
+     cortado a meio em vez de um erro: a tela desenhava 150 px dentro de uma caixa de
+     108 e o «-3.02» ficava de fora, numa faixa que existe para se ler o valor. */
+  :root { --z-alt: 138px; }
   /* O ponto da legenda existe fora do funil também; sem isto herdava largura zero e a legenda
      do modal ficava com três palavras e nenhum símbolo. */
   .legenda .p { width:9px; height:9px; border-radius:50%; flex:0 0 auto; }
@@ -1111,7 +1116,9 @@ function desenharZ(a) {
     alvo.innerHTML = '<p class="vazio" style="padding:10px 14px">No flagged day in this range.</p>';
     return;
   }
-  const c = criarGrafico(alvo, 108, false);
+  const altZ = parseInt(getComputedStyle(document.documentElement)
+    .getPropertyValue('--z-alt'), 10) || 138;
+  const c = criarGrafico(alvo, altZ, false);
   const lim = S.visao?.threshold ?? 1.5;
   // Uma série invisível que cobre o intervalo todo, para o eixo do tempo bater certo com o de
   // cima mesmo quando os dias assinalados são poucos e esparsos.
@@ -1127,6 +1134,12 @@ function desenharZ(a) {
   const desce = c.addSeries(LightweightCharts.HistogramSeries, { color:P.desce, priceLineVisible:false });
   sobe.setData(ev.filter(e => e[1] >= 0).map(([t, z]) => ({ time:t, value:z })));
   desce.setData(ev.filter(e => e[1] < 0).map(([t, z]) => ({ time:t, value:z })));
+  // ⚠️ Margem no eixo, e a razão vê-se com um z grande. A faixa tem 108 px fixos: quando o
+  // intervalo de z é estreito os rótulos das pontas cabem, mas num dia de z=7,9 as marcas
+  // extremas caem em cima da moldura e o rótulo sai CORTADO A MEIO — «10.00» e «−3.02»
+  // impressos meios, numa faixa que existe para se ler o valor. A margem afasta os extremos
+  // do bordo sem mexer na escala.
+  c.priceScale("right").applyOptions({ scaleMargins: { top: 0.16, bottom: 0.16 } });
   c.timeScale().fitContent();
   if (S.obsZ) S.obsZ.disconnect();
   S.obsZ = new ResizeObserver(() => c.applyOptions({ width: alvo.clientWidth }));
