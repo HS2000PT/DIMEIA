@@ -230,3 +230,74 @@ protegem enquanto alguém as puser à prova.
 
 A porta que falhou tinha três rondas de correção documentadas no próprio cabeçalho e um teste
 de sabotagem que ela passara. Não bastou. O que a apanhou foi voltar a sabotá-la de propósito.
+
+
+---
+
+# Quarta passagem — as portas postas à prova, uma a uma
+
+A terceira auditoria encontrou **uma** das dezanove portas cega: aprovava uma remissão
+apontada de propósito para a secção errada. A pergunta óbvia é se há mais, e a única forma
+honesta de responder é **plantar em cada porta o defeito exato que ela promete apanhar** e
+exigir que ela falhe.
+
+## Resultado: catorze postas à prova, catorze vivas
+
+| porta | defeito plantado | veredicto |
+|---|---|---|
+| `check_apendice_xref` | remissão para a secção errada | **viva** (estava cega; corrigida hoje) |
+| `check_figuras_lingua` | palavra inglesa num nó de figura portuguesa | viva |
+| `check_figuras_paridade` | rótulo desenhado igual nas duas árvores | viva |
+| `check_qi_cadeia` | Cap. 6 a responder com um valor que o Cap. 5 não estabelece | viva |
+| `check_tex_escapes` | comando comido por um escape (TAB + `extbf`) | viva |
+| `check_floats` | flutuante que nenhuma frase invoca | viva |
+| `check_references` | tabela invocada como figura | viva |
+| `check_materiais` | número de três casas inventado num material de estudo | viva |
+| `check_numeros_retirados` | afirmação retirada a reaparecer | viva |
+| `check_resumos` | um dos quatro exemplares a divergir | viva |
+| `check_guia_codigo` | excerto que já não é verbatim | viva |
+| `check_escrita` | palavra fora do vocabulário fixado | viva |
+| `check_memoria` | os dois ficheiros a declarar sessões diferentes | viva |
+| `check_bilingual_parity` | tradução PT a endurecer o verbo numa frase citada | viva |
+
+**A conclusão é a que interessa: o defeito de ontem era um caso isolado, e não a ponta de um
+padrão.** Treze portas apanharam o defeito à primeira; a décima quarta apanhou-o assim que a
+sabotagem passou a ser válida.
+
+## ⚠️ E a parte mais instrutiva é sobre o auditor, não sobre as portas
+
+**Sete das minhas sabotagens foram inválidas, e cada uma delas tinha exatamente o aspeto de
+uma porta cega:** verde antes, verde depois, «0 problemas» nas duas.
+
+| o que plantei | porque não valia |
+|---|---|
+| palavra inglesa em prosa do Cap. 2 | a porta só olha para **rótulos desenhados**; a prosa não é âmbito |
+| valor no `fig:con_cadeia` | mudei um rótulo de **outra** figura, não a prosa que a QI responde |
+| `0.4711` num material | a porta compara decimais de **duas ou três** casas; quatro cai fora |
+| `---` em prosa portuguesa | o `check_escrita` é de **vocabulário**; a regra do travessão vive noutro sítio |
+| `\autocite` removido | a paridade compara a **força da ressalva**, não a presença da citação |
+| ressalva endurecida numa frase **sem citação** | fora do conjunto que a porta compara |
+| ressalva endurecida **a seguir** à chave | caiu na frase seguinte, não na frase citada |
+
+**A lição é a mesma que este projeto já paga desde a sessão 63, agora do outro lado da mesa:
+uma sabotagem falhada e uma porta cega são indistinguíveis no ecrã.** Quem testa uma porta
+tem de provar primeiro que o defeito que plantou está **dentro do âmbito** dela — e a forma de
+o provar é ler o que a porta faz, não supor.
+
+⚠️ **Se eu tivesse parado na primeira leitura, este relatório teria acusado quatro portas
+saudáveis de estarem cegas** — `check_figuras_lingua`, `check_qi_cadeia`, `check_escrita` e
+`check_bilingual_parity` —, o que é o defeito mais caro que uma auditoria pode ter: mandar
+consertar o que está bom, e gastar a confiança de quem a lê.
+
+## O que fica escrito para a próxima passagem
+
+**Sete portas passam a ter cobertura de sabotagem registada** e não precisam de ser
+re-testadas à mão. As que trazem autoteste no próprio ficheiro (`check_escrita`,
+`check_bilingual_parity`, `check_memoria`, `check_numeros_retirados`, `check_tese_numeros`,
+`check_artigo_numeros`) já se defendem sozinhas: imprimem o resultado do seu controlo antes
+do veredicto, e recusam-se a reportar «0 achados» se o controlo não disparar.
+
+⚠️ **A que não tem autoteste e ficou por instrumentar é a que falhou ontem.** O
+`check_apendice_xref` recebeu hoje sete testes, incluindo o que planta a remissão errada — mas
+foi preciso uma auditoria para os escrever. **Uma porta sem autoteste é uma porta que só se
+sabe viva no dia em que alguém desconfia dela.**
