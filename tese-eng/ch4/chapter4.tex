@@ -757,15 +757,15 @@ alerts delivered and seven decisions not to communicate; the count of out-of-the
 measures something else, the price, and is therefore presented as a separate count. Each company
 declares its state on the surface, and every colour used has a legend, including that of the
 mascot, which follows the daily change of the market index used in the decomposition. The captures
-are generated from a snapshot of the application itself, and not collected by hand; the capture
-width is $960$ pixels, since that is the width at which the interface text stays legible after
-being reduced to the text box of this document.}
+are generated from a snapshot of the application itself, and not collected by hand, with the
+capture width fixed in the generator of each one, since it is on that width that the interface
+text stays legible after being reduced to the text box of this document.}
 \label{fig:sis_pagina}
 \end{figure}
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.94\textwidth]{figures/app_v7_empresa.png}
+\includegraphics[width=0.94\textwidth]{figures/app_v8_empresa.png}
 \caption[Evidence for one company]{View of one company: the verdict in words before any number,
 the split of the movement into the three parts, and the price series. The marks separate the two
 things this work distinguishes: the dot marks a day on which an alert was delivered, and the arrow
@@ -774,7 +774,9 @@ days against the $\pm1.5$ threshold, on an axis of its own since it shares no un
 The direction of the arrow is that of the close and nothing more; the date and the $z$ value of
 each day are on the cards below, and not on the line, so that they do not overlap. The interface
 opens on the current day; the figure shows the six-month range, since that is the one in which the
-distinction between flagging and communicating becomes observable.}
+distinction between flagging and communicating becomes observable. The italic line beneath the
+split states the quality of the fit that produced it, compared against the median across the
+watchlist, and is what lets the reader know when the split is to be trusted.}
 \label{fig:sis_empresa}
 \end{figure}
 
@@ -790,14 +792,21 @@ Silence is here a recorded decision, and not an absence of information.}
 
 The company of Figure~\ref{fig:sis_empresa} is an illustrative case of the investor's second
 question, through the disagreement between the percentage change and the split. The stock recorded
-a fall of $0.30\%$, and the company-specific part was $+0.53\%$, hence positive. The model attributed
-the fall to the market, at $-0.61\%$, and to the sector, at $-0.22\%$. The stock fell, but the positive
-residual indicates performance above what the two estimated components would suggest. This
-statistical split does not rule out internal causes. The verdict classifies the day as ordinary: $204$
-of the last $250$ trading days recorded an equal or larger change.
+a rise of $0.99\%$, and the market and the sector were both pulling the other way, at $-0.47\%$ and
+$-0.54\%$; the company-specific part was $+2.00\%$, more than twice the observed movement. The
+model attributes the rise entirely to the company, and not to the environment in which it trades.
+This statistical split does not rule out unmodelled external causes. The verdict classifies the
+day as ordinary: $141$ of the last $250$ trading days recorded an equal or larger change.
 
-Figure~\ref{fig:sis_silencio} shows the same requirement on the side of silence. On that day, the
-seven companies that generated no alert all stopped at the same gate: the daily budget of five
+The same figure shows the caveat that accompanies it. The coefficient of determination for this
+company is $0.26$, below the watchlist median of $0.46$, and the interface states this beneath the
+split, with the instruction to read it as indicative. The two statements coexist by design: the
+split is the best estimate available and, for this company, the market and the sector explain only
+a quarter of the daily variation. Omitting the second would make the first more persuasive than
+the fit that supports it, which is the defect that Section~\ref{sec:con_limitacoes} names.
+
+Figure~\ref{fig:sis_silencio} shows the same requirement on the side of silence, on the day of
+Figure~\ref{fig:sis_pagina}: the seven companies that generated no alert all stopped at the same gate: the daily budget of five
 alerts, exhausted at $14$:$02$~UTC. The important reading is not the number, but the form: the
 company crossed eight gates, each stated by the criterion it satisfied, and stopped at a design
 constraint declared from the outset. None of the gates crossed is presented as a failure, which
