@@ -50,6 +50,49 @@ not available free of charge or at a cost accessible to the investor profile in 
 from the unavailability of data, which exist in quantity and are free, but from the absence of
 verifiable context built on them.
 
+Figure~\ref{fig:intro_lacuna} shows the difference on a concrete event.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  cx/.style={draw=black!45, rounded corners=2pt, inner sep=0pt},
+  tit/.style={font=\scriptsize\itshape, text=black!60},
+  q/.style={font=\scriptsize, align=left, anchor=west, text width=6.35cm},
+  onde/.style={font=\scriptsize, text=black!55, anchor=east},
+]
+  % left box: 0.00 to 4.10 · right box: 4.70 to 13.70
+  \node[cx, fill=black!4, minimum width=4.1cm, minimum height=3.1cm] at (2.05,1.35) {};
+  \node[cx, fill=black!4, minimum width=9.0cm, minimum height=3.1cm] at (9.2,1.35) {};
+
+  \node[tit] at (2.05,3.16) {what the percentage says};
+  \node[tit] at (9.2,3.16) {what the system delivers, on the same day};
+
+  \node[font=\large\bfseries] at (2.05,2.32) {META $+1.00\%$};
+  \node[font=\scriptsize, align=left, text=black!62, anchor=west] at (0.42,1.15)
+       {is it unusual?\\[3pt] was it the company?\\[3pt] has it happened before?};
+  \node[font=\Large, text=black!30] at (3.65,1.15) {?};
+
+  \node[q] at (5.00,2.35)
+       {\textbf{is it unusual?} no: $73$ of the last $126$ days\\ moved at least as much};
+  \node[q] at (5.00,1.35)
+       {\textbf{was it the company?} the split of the move\\ into market, sector and company};
+  \node[q] at (5.00,0.35)
+       {\textbf{has it happened before?} $3$ similar cases, with a\\ five-day move from $+2.38\%$ to $+14.81\%$};
+  \node[onde] at (13.42,2.35) {in the alert};
+  \node[onde] at (13.42,1.35) {on the page};
+  \node[onde] at (13.42,0.35) {in the alert};
+\end{tikzpicture}
+\caption[The same event, with and without context]{The same day of the same company, on the
+left as a price quote presents it and on the right as the system delivers it. The values on
+the right are reproduced from the alert sent to the channel on 8 September 2026, and were not
+constructed for the purpose. The third column indicates where each answer lives, and the
+distinction is not incidental: the alert answers the first and the third question at the moment
+it interrupts the reader, whereas the split depends on the day's close and is therefore
+presented in the application, as Figure~\ref{fig:sis_empresa} shows.}
+\label{fig:intro_lacuna}
+\end{figure}
+
+
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}

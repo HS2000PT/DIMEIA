@@ -51,6 +51,49 @@ regime gratuito nem acessível ao perfil de investidor em causa. A lacuna não d
 dados, que existem em quantidade e são gratuitos, mas da ausência de contexto verificável
 construído sobre eles.
 
+A Figura~\ref{fig:intro_lacuna} apresenta a diferença sobre um acontecimento concreto.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\footnotesize,
+  cx/.style={draw=black!45, rounded corners=2pt, inner sep=0pt},
+  tit/.style={font=\scriptsize\itshape, text=black!60},
+  q/.style={font=\scriptsize, align=left, anchor=west, text width=6.35cm},
+  onde/.style={font=\scriptsize, text=black!55, anchor=east},
+]
+  % caixa da esquerda: de 0,00 a 4,10 · caixa da direita: de 4,70 a 13,70
+  \node[cx, fill=black!4, minimum width=4.1cm, minimum height=3.1cm] at (2.05,1.35) {};
+  \node[cx, fill=black!4, minimum width=9.0cm, minimum height=3.1cm] at (9.2,1.35) {};
+
+  \node[tit] at (2.05,3.16) {o que a percentagem diz};
+  \node[tit] at (9.2,3.16) {o que o sistema entrega, no mesmo dia};
+
+  \node[font=\large\bfseries] at (2.05,2.32) {META $+1{,}00\%$};
+  \node[font=\scriptsize, align=left, text=black!62, anchor=west] at (0.42,1.15)
+       {é invulgar?\\[3pt] foi a empresa?\\[3pt] já aconteceu?};
+  \node[font=\Large, text=black!30] at (3.45,1.15) {?};
+
+  \node[q] at (5.00,2.35)
+       {\textbf{é invulgar?} não: $73$ dos últimos $126$\\ dias moveram-se pelo menos tanto};
+  \node[q] at (5.00,1.35)
+       {\textbf{foi a empresa?} a repartição do movimento\\ em mercado, setor e empresa};
+  \node[q] at (5.00,0.35)
+       {\textbf{já aconteceu?} $3$ casos semelhantes, com\\ movimento a cinco dias de $+2{,}38\%$ a $+14{,}81\%$};
+  \node[onde] at (13.42,2.35) {no alerta};
+  \node[onde] at (13.42,1.35) {na página};
+  \node[onde] at (13.42,0.35) {no alerta};
+\end{tikzpicture}
+\caption[O mesmo acontecimento, com e sem contexto]{O mesmo dia da mesma empresa, à esquerda
+como uma cotação o apresenta e à direita como o sistema o entrega. Os valores da direita são
+reproduzidos do alerta enviado ao canal a 8 de setembro de 2026, e não construídos para o
+efeito. A terceira coluna indica onde vive cada resposta, e a distinção não é acessória: o
+alerta responde à primeira e à terceira perguntas no momento em que interrompe o leitor, ao
+passo que a repartição depende do fecho do dia e por isso é apresentada na aplicação, como
+mostra a Figura~\ref{fig:sis_empresa}.}
+\label{fig:intro_lacuna}
+\end{figure}
+
+
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}

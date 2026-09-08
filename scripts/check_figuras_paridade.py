@@ -66,6 +66,12 @@ ISENTOS = {
     # 2026-09-08. E' o numero zero e nao uma palavra: traduzi-lo seria inventar uma diferenca
     # que nao existe, pela mesma razao que o `NVDA` e o `VALID.` acima.
     BS + "scriptsize " + BS + "textbf{0}",
+    # ⚠️ O ponto de interrogacao sozinho, na figura de abertura do Cap. 1, entrou a
+    # 2026-09-08. E' pontuacao e nao palavra: e' o simbolo que marca as tres perguntas por
+    # responder no painel da esquerda, e escreve-se igual em qualquer lingua. A alternativa
+    # -- alargar o filtro dos valores "sem lingua" para aceitar pontuacao — cegaria o
+    # verificador para rotulos futuros que a tivessem por dentro.
+    "?",
 }
 
 
