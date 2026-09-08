@@ -181,9 +181,16 @@ def test_a_altura_da_faixa_do_z_vive_num_so_sitio():
     )
 
 
-def test_a_faixa_do_z_afasta_os_extremos_do_bordo():
-    """Sem margem, a marca mais alta assenta na moldura e o rótulo sai cortado."""
+def test_a_faixa_do_z_fixa_o_intervalo_em_vez_de_o_deixar_automatico():
+    """Em automático a marca extrema assenta na moldura e o rótulo sai cortado.
+
+    ⚠️ Uma margem no eixo NÃO resolve, e tentá-lo foi o caminho errado: o gerador de marcas
+    adapta-se à margem e volta a colocar uma no bordo. O que resolve é fixar o intervalo,
+    simétrico à volta de zero — a faixa mede distância à norma nos dois sentidos — com
+    folga suficiente para o rótulo mais alto ficar dentro.
+    """
     txt = PAGINA.read_text(encoding="utf-8")
-    m = re.search(r"scaleMargins:\s*\{\s*top:\s*([0-9.]+),\s*bottom:\s*([0-9.]+)", txt)
-    assert m, "a faixa do z perdeu a margem do eixo"
-    assert float(m.group(1)) > 0.05 and float(m.group(2)) > 0.05, m.groups()
+    assert "autoscaleInfoProvider" in txt, "a faixa do z voltou à escala automática"
+    m = re.search(r"const zMax = Math\.max\(1\.5,.*\* ([0-9.]+);", txt)
+    assert m, "o intervalo da faixa deixou de ser calculado a partir dos dados"
+    assert float(m.group(1)) >= 1.3, f"folga de {m.group(1)} é pouca para o rótulo do topo"

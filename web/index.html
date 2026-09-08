@@ -1134,12 +1134,15 @@ function desenharZ(a) {
   const desce = c.addSeries(LightweightCharts.HistogramSeries, { color:P.desce, priceLineVisible:false });
   sobe.setData(ev.filter(e => e[1] >= 0).map(([t, z]) => ({ time:t, value:z })));
   desce.setData(ev.filter(e => e[1] < 0).map(([t, z]) => ({ time:t, value:z })));
-  // ⚠️ Margem no eixo, e a razão vê-se com um z grande. A faixa tem 108 px fixos: quando o
-  // intervalo de z é estreito os rótulos das pontas cabem, mas num dia de z=7,9 as marcas
-  // extremas caem em cima da moldura e o rótulo sai CORTADO A MEIO — «10.00» e «−3.02»
-  // impressos meios, numa faixa que existe para se ler o valor. A margem afasta os extremos
-  // do bordo sem mexer na escala.
-  c.priceScale("right").applyOptions({ scaleMargins: { top: 0.16, bottom: 0.16 } });
+  // ⚠️ O INTERVALO É FIXADO À MÃO, e a razão vê-se com um z grande. Deixada em automático,
+  // a escala encosta a marca mais extrema à moldura e o rótulo do eixo sai CORTADO A MEIO —
+  // «10.00» e «−3.02» impressos meios, numa faixa que existe justamente para se ler o valor.
+  // Uma margem não chega: o gerador de marcas adapta-se à margem e volta a pôr uma no bordo.
+  // Simétrico à volta de zero, porque a faixa mede distância à norma nos dois sentidos, e com
+  // meia amplitude de folga para o rótulo mais alto ficar sempre dentro.
+  const zMax = Math.max(1.5, ...ev.map(e => Math.abs(e[1]))) * 1.5;
+  base.applyOptions({ autoscaleInfoProvider: () => ({
+    priceRange: { minValue: -zMax, maxValue: zMax } }) });
   c.timeScale().fitContent();
   if (S.obsZ) S.obsZ.disconnect();
   S.obsZ = new ResizeObserver(() => c.applyOptions({ width: alvo.clientWidth }));
