@@ -141,4 +141,4 @@ ensinar:
 | «a AMD e a Meta estão sempre acima do limiar» | «a AMD e a **TSLA**; a Meta tem mediana imediatamente acima dele» |
 | «oito das doze empresas estão inteiramente de um dos lados» | «**sete** das doze» — a figura passou a desenhar a janela de 36 925 decisões, que é a que o texto reporta |
 | «o piso escalonado nunca atuou» | «**não eliminou nada nos seis dias medidos**» — no funil de 15 de agosto eliminou 269 avaliações |
-| «a tese tem 132 páginas contra um limite de 120» | «**108** em numeração árabe contra 120; a dissertação aprovada do Bruno Ribeiro tem 139 páginas físicas e termina no fólio 120» |
+| «a tese tem 129 páginas contra um limite de 120» | «**111** em numeração árabe contra 120; a dissertação aprovada do Bruno Ribeiro tem 139 páginas físicas e termina no fólio 120» |

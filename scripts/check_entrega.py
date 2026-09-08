@@ -85,6 +85,11 @@ VERIFICADORES = [
     # quatro textos e dois conteudos. A sessao 56 encontrou o resumo portugues a
     # divergir entre as duas teses, e nenhuma das duas falhava a compilar.
     ("os quatro resumos dizem o mesmo", "check_resumos.py", []),
+    # ⚠️ As paginas sobem e descem a cada figura, e os materiais afirmam a contagem por
+    # extenso. A 2026-09-08 diziam 132 e o PDF tinha 129 -- inclusive na resposta preparada
+    # para o juri, que ensinava a dizer o numero errado em voz alta. Nenhuma porta via, porque
+    # o `check_materiais` compara decimais e uma contagem de paginas e um inteiro.
+    ("as paginas afirmadas batem com os PDF", "check_paginas.py", []),
     # A cadeia de cada questao: enunciada, medida, delimitada e respondida -- e a
     # conclusao a nao citar valores que os resultados nao produziram.
     ("questões: enunciada, medida, respondida", "check_qi_cadeia.py", []),

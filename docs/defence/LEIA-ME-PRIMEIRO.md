@@ -19,8 +19,8 @@ Os outros continuam bons para estudar o raciocínio, com os avisos abaixo.
 ## O que se passa
 
 Estes documentos foram escritos para a **tese longa em inglês** (arquivada em
-`archive/thesis-versions/`, 130 páginas), ao longo de várias sessões. O que vais entregar e
-defender é a **tese em português** (`tese-pt/`, 132 páginas), que é um documento diferente: tem
+`archive/thesis-versions/`, 126 páginas), ao longo de várias sessões. O que vais entregar e
+defender é a **tese em português** (`tese-pt/`, 129 páginas), que é um documento diferente: tem
 menos resultados, outra numeração e alguns números corrigidos.
 
 Não os apaguei porque o conteúdo continua a ser bom para estudar o raciocínio. Mas há três
