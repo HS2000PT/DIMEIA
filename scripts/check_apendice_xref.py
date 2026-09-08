@@ -72,14 +72,25 @@ for fisica in ap.split("\n"):
 linhas = [x for x in logicas if "&" in x and "ref{sec:" in x]
 print(f"linhas da tabela com referencia a seccao: {len(linhas)}\n")
 
+BS_CH = chr(92)
 maus = 0
+nao_verificadas: list[str] = []
 for linha in linhas:
     lab = re.search(r"\\ref\{(sec:[^}]+)\}", linha).group(1)
     celulas = [c.strip() for c in linha.split("&")]
     # ⚠️ So DECIMAIS. Um inteiro solto ("17", "20", "5") e generico de mais para verificar,
     # e o corpo escreve-o muitas vezes por extenso ("dezassete"): testa-lo so produz alarmes
     # falsos, e um verificador que grita de mais deixa de ser lido.
-    valores = re.findall(r"[-+]?\d+[.,]\d+", celulas[1] if len(celulas) > 1 else "")
+    #
+    # ⚠️ E A CELULA TEM DE SER NORMALIZADA ANTES, senao NAO SE EXTRAI VALOR NENHUM. A tese
+    # escreve os decimais na convencao PT-PT em modo matematico, `$0{,}015$`, e entre o `0`
+    # e o `015` esta' `{,}` e nao uma virgula: o padrao `\d+[.,]\d+` nao casa, a lista sai
+    # vazia, o ciclo de verificacao nao corre e a linha e' dada como `ok`. O palheiro ja'
+    # era normalizado umas linhas abaixo (`limpo`) e a agulha nao -- uma assimetria de uma
+    # linha que deixou este verificador a aprovar TUDO, incluindo uma referencia plantada de
+    # proposito para a seccao errada. Encontrado a 2026-09-08 por sabotagem deliberada.
+    bruto = celulas[1] if len(celulas) > 1 else ""
+    valores = re.findall(r"[-+]?\d+[.,]\d+", bruto.replace("{,}", ".").replace("\\,", ""))
     if lab not in seccoes:
         print(f"  !! {lab}: label nao existe")
         maus += 1
@@ -88,7 +99,18 @@ for linha in linhas:
     # ⚠️ As coordenadas de TikZ sao numeros e nao afirmacoes. Sem as tirar, um "(1.5,3.35)"
     # de um desenho fazia o verificador aceitar uma referencia errada, porque 0.015 lido em
     # percentagem da 1.5. Foi assim que ele passou no proprio teste de sabotagem.
-    sem_desenhos = re.sub(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}", " ", texto, flags=re.S)
+    # ⚠️ E DEITAR FORA O DESENHO INTEIRO TAMBEM NAO SERVE: varias linhas do apendice apontam
+    # para seccoes cuja evidencia E' a figura, e o valor so' la' existe desenhado. Deitar o
+    # desenho fora fazia o verificador acusar duas linhas CORRECTAS. O discriminador e'
+    # exacto e esta' no proprio ficheiro: dentro de um `tikzpicture`, uma COORDENADA
+    # escreve-se com ponto (`axis cs:0.158,0.913`, `(0.281,vol)`) e um ROTULO DESENHADO
+    # escreve-se na convencao do documento (`$F_1=0{,}269$`, `[0{,}281]`). So o segundo e'
+    # uma afirmacao que o leitor ve'.
+    def _so_rotulos(m: re.Match) -> str:
+        return " " + " ".join(re.findall(r"\d+\{,\}\d+", m.group(0))) + " "
+
+    sem_desenhos = re.sub(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}", _so_rotulos,
+                          texto, flags=re.S)
     limpo = sem_desenhos.replace("{,}", ".").replace("\\,", "")
     def _solto(agulha, palheiro):
         # ⚠️ Sem fronteiras, "1.5" casa dentro de "21.5" e o verificador aprova tudo.
@@ -114,12 +136,32 @@ for linha in linhas:
         return False
 
     faltam = [v for v in valores if not esta(v)]
+    # ⚠️ UMA LINHA SEM DECIMAL NAO E' UMA LINHA VERIFICADA, e imprimi-la como `ok` e' a
+    # forma exacta de um verificador mentir sem se enganar. Sao as linhas cujo valor e'
+    # so' inteiros -- `23 de 23`, `9 de 9`, `743 -> 15` --, que a regra dos decimais
+    # deliberadamente nao testa. Passam a dizer o que sao: NAO VERIFICADAS. Foi uma delas
+    # que escondeu, a 2026-09-08, uma remissao para a seccao errada.
+    if not valores:
+        # ⚠️ O agrupamento por linha logica arrasta tambem a legenda e o fecho da tabela,
+        # que nao sao linhas de resultado. Listá-los como «nao verificados» encheria o
+        # relatorio de ruido, e um relatorio ruidoso deixa de ser lido -- que e' o mesmo
+        # modo de falha que esta correcao esta' a fechar.
+        if not celulas[0].lstrip().startswith((BS_CH + "chapter", BS_CH + "bottomrule")):
+            nao_verificadas.append(celulas[0][:44].strip())
+        print(f"  -- {celulas[0][:44]:46s} -> {cap}/{titulo[:36]}  (sem decimal)")
+        continue
     marca = "ok " if not faltam else "!! "
     if faltam:
         maus += 1
     print(f"  {marca}{celulas[0][:44]:46s} -> {cap}/{titulo[:36]}")
     if faltam:
         print(f"       valores que NAO aparecem la: {faltam}")
+
+if nao_verificadas:
+    print(f"\n{len(nao_verificadas)} linha(s) SEM DECIMAL, que este verificador nao testa "
+          "(a remissao tem de ser conferida a olho):")
+    for n in nao_verificadas:
+        print(f"   .. {n}")
 
 print(f"\nlinhas com problema: {maus}")
 if not linhas:
