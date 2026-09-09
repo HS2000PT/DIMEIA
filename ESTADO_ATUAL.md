@@ -36,10 +36,54 @@ do `porta_colapso_direcao_v2_2026-09-09.md` fica fechada.
 0,009 para **0,012** pp acima da base, e o da direção de 0,022 para **0,016** pp abaixo. Nenhum
 se aproximou de ganhar com a mudança de ambiente.
 
-⏭️ **O QUE FICA, e é decisão do autor:** a **variante causal** continua bloqueada pelo defeito do
-`topo_k`, que devolve `[0 1 2 3 4]` em silêncio quando uma consulta não tem candidato elegível —
-corrigi-lo muda a população de medição, e por isso não o corrigi. O **braço de controlo C4**
-(`ProsusAI/finbert`) não correu (~3 h). E a QI4 ainda **não entrou na tese**.
+### ✅ E A VARIANTE CAUSAL TAMBÉM — o defeito do `topo_k` está corrigido
+
+O autor mandou correr tudo. O `topo_k` **rebenta** em vez de devolver `[0 1 2 3 4]`, e o filtro
+passou a ser do chamador (`consultas_viaveis`), aplicado **uma vez por lote antes de qualquer
+modelo** — só vê tickers e datas, logo os braços continuam emparelhados —, com a consola **e** o
+relatório a declararem quantas caíram. Extensão real: **2 de 2500 (0,08%)**, o que o diagnóstico
+previa.
+
+| Braço | Comparabilidade (pp) ↓ | Precisão@5 ↑ |
+|---|---:|---:|
+| base (sem ajuste) | **2,287 ± 0,049** | **0,747 ± 0,011** |
+| `magnitude_v2` | 2,309 ± 0,069 | 0,722 ± 0,013 |
+| `direcao_v2` | 2,289 ± 0,074 | 0,720 ± 0,012 |
+| acaso | 2,336 ± 0,067 | 0,621 ± 0,015 |
+
+**O negativo é robusto ao protocolo que a produção usa.** `+0,022` e `−0,002` pp face à base,
+com o mesmo custo em relevância temática (`−0,025` e `−0,027`).
+
+⚠️ **E dá uma observação que a variante simétrica não podia dar:** a margem da base sobre o acaso
+na comparabilidade **encolhe** de `0,086` pp (simétrico) para `0,049` pp (causal). No protocolo
+real, o codificador sem ajuste está **ainda mais perto do acaso** — o que reforça a motivação da
+QI4 e torna o negativo mais claro: havia mais espaço do que se pensava, e o ajuste não o ocupou.
+
+Artefacto: `data/_arquivo/_qi4_causal_local.md`. Prova de que o defeito era real, código antigo
+contra novo no mesmo input: sem candidato elegível devolvia `[0 1 2 3 4]`; no causal devolvia
+`[0 1 2]`, **incluindo a própria consulta e o futuro**.
+
+### ✅ A porta congelada, e a minha primeira hipótese estava ERRADA
+
+O `test_frozen_reproducibility` falhava nas três métricas. **Não era o `scipy`** — o
+`predict_proba` é bit-idêntico a uma sigmoide em `numpy` puro e o Brier à mão iguala o do
+`sklearn` exactamente. **E não era ruído de vírgula flutuante:** a deriva em `p` é ~6e-9 por
+elemento, sete ordens de grandeza acima do eps da dupla precisão.
+
+**A causa já estava diagnosticada no repositório** e eu não tinha lido o suficiente: §15 e §16 de
+`docs/design/reproducao_corpus_2026-09-09.md`. O sidecar foi gerado em julho **noutra máquina**,
+as features derivam dos preços, e os preços de setembro não são bit a bit os de julho (a `vol20`
+diverge do oitavo dígito, com **todos** os rótulos idênticos).
+
+Logo a porta era **inatingível por construção** aqui, e um critério que não pode passar deixa de
+ser porta. Passou a verificar as duas coisas que pode garantir, **com a razão escrita dentro do
+próprio teste**: o número que a tese publica (três casas) e um envelope medido de `1e-6` — oito
+vezes a maior deriva observada e mil vezes abaixo dessa terceira casa. Verificado que **dispara**
+com deriva dez vezes acima do envelope e com a terceira casa mudada.
+
+⏭️ **O QUE FICA:** o **C4** (`ProsusAI/finbert`) está **a treinar** — log em `data/_qi4_c4.log`,
+saída em `data/qi4_modelos/controlo_finbert`, ~3 h, mesmos hiperparâmetros do v2 para a comparação
+ser justa. E a QI4 ainda **não entrou na tese** (tarefas C7 e C8).
 
 ---
 

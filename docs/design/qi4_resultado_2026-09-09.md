@@ -58,7 +58,10 @@ a porta de colapso. **É a hipótese que não se confirma.** É o mesmo tipo de 
 já reporta, e defende-se pela mesma razão: está medido, tem controlo, e o mecanismo que o
 poderia explicar por avaria foi excluído antes de a tabela ser lida.
 
-## 3. ⚠️ Um defeito no `avaliar_qi4.py`, encontrado ao correr a variante causal
+## 3. ~~⚠️ Um defeito no `avaliar_qi4.py`~~ **CORRIGIDO a 2026-09-10** — ver a §6
+
+> O diagnóstico abaixo mantém-se como registo. A correção aplicada é a que este texto
+> recomendava: excluir as consultas inviáveis e declarar quantas. Detalhe na §6.
 
 **A variante causal nunca tinha corrido, e rebenta.** No protocolo causal exige-se que o
 precedente seja *estritamente anterior* à consulta. As consultas do primeiro dia do bloco ficam
@@ -181,3 +184,54 @@ A **variante causal** continua bloqueada pelo defeito da secção 3 — o `topo_
 `[0 1 2 3 4]` em silêncio quando uma consulta não tem candidato elegível, e corrigi-lo muda a
 população de medição. Decisão do autor, não minha. O **braço de controlo C4** (`ProsusAI/finbert`)
 também não correu.
+
+## 6. ✅ A VARIANTE CAUSAL, CORRIGIDA E CORRIDA — 2026-09-10
+
+### 6.1 A correção
+
+O `topo_k` **rebenta** em vez de devolver falsos vizinhos, e o filtro passou a ser do chamador
+(`consultas_viaveis`), aplicado **uma vez por lote e antes de qualquer modelo ser codificado** —
+o filtro só vê tickers e datas, não depende de modelo nenhum, logo os braços continuam
+emparelhados. A consola **e** o relatório gerado declaram quantas consultas caíram e porquê: um
+denominador que muda em silêncio é o defeito, não a solução.
+
+Extensão real, agora medida em vez de estimada: **2 de 2500 consultas (0,08%)**, exactamente o
+que o diagnóstico previa. O braço do acaso deixou de aceitar `replace=True`, que num conjunto
+pequeno inventaria repetições.
+
+**A prova de que o defeito era real** (mesmo input, código antigo contra novo):
+
+| Caso | Código antigo devolvia | Código novo |
+|---|---|---|
+| nenhum candidato elegível, k=5 | `[0 1 2 3 4]` | rebenta |
+| causal, consulta mais antiga do bloco, k=3 | `[0 1 2]` — inclui a **própria consulta** e o **futuro** | rebenta |
+
+Seis testes novos, incluindo o controlo no sentido oposto (a porta não pode disparar sobre um
+lote legítimo com exactamente `k` elegíveis).
+
+### 6.2 O resultado causal — e o negativo é robusto ao protocolo da produção
+
+Mesmo bloco, mesmo `k`, mesmas repetições; a diferença é que o precedente tem de ser
+**estritamente anterior** à consulta, que é o que a produção faz.
+
+| Braço | Comparabilidade (pp) ↓ | Precisão@5 ↑ |
+|---|---:|---:|
+| base (sem ajuste) | **2,287 ± 0,049** | **0,747 ± 0,011** |
+| `magnitude_v2` | 2,309 ± 0,069 | 0,722 ± 0,013 |
+| `direcao_v2` | 2,289 ± 0,074 | 0,720 ± 0,012 |
+| acaso | 2,336 ± 0,067 | 0,621 ± 0,015 |
+
+**A leitura não muda em nada.** O braço da grandeza fica `0,022` pp **acima** da base — pior — e
+o da direção `0,002` pp abaixo, ou seja indistinguível. As duas diferenças continuam a ser uma
+fração do desvio entre repetições. E o custo em relevância temática mantém-se e é do mesmo
+tamanho: `−0,025` e `−0,027` na precisão@5.
+
+⚠️ **E há aqui uma observação que a variante simétrica não podia dar.** A margem da base sobre o
+acaso na comparabilidade **encolhe** com a restrição causal: de `0,086` pp no protocolo simétrico
+(2,173 contra 2,259) para `0,049` pp no causal (2,287 contra 2,336). Ou seja, no protocolo que a
+produção realmente usa, o codificador sem ajuste está **ainda mais perto do acaso** na
+comparabilidade de materialidade do que a §3.2 deste documento sugeria. Isso **reforça** a
+motivação da QI4 e ao mesmo tempo torna o negativo mais claro: o espaço para melhorar era maior
+do que se pensava, e o ajuste não o ocupou.
+
+Artefacto: `data/_arquivo/_qi4_causal_local.md`.
