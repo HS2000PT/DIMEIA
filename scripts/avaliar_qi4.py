@@ -45,7 +45,15 @@ def vizinhos_ao_acaso(consultas: np.ndarray, tickers: np.ndarray, datas: np.ndar
     saida = np.empty((len(consultas), k), dtype="int64")
     for i in range(len(consultas)):
         pool = np.flatnonzero(elegivel[i])
-        saida[i] = rng.choice(pool, size=k, replace=len(pool) < k)
+        if len(pool) < k:
+            # Nao se chega aqui com o lote filtrado por `consultas_viaveis`. Se se chegar, e
+            # defeito de quem chamou: `replace=True` sobre um conjunto pequeno inventaria
+            # repeticoes e sobre um conjunto vazio nao tem sentido nenhum.
+            raise ValueError(
+                f"consulta {consultas[i]} tem {len(pool)} candidatos elegiveis para k={k}; "
+                "filtrar o lote com A.consultas_viaveis antes de medir"
+            )
+        saida[i] = rng.choice(pool, size=k, replace=False)
     return saida
 
 
@@ -94,6 +102,23 @@ def main() -> int:
     lotes = [A.amostrar_consultas(len(df), args.consultas, seed=args.seed + r)
              for r in range(args.repeticoes)]
 
+    # E são filtradas ANTES também, pela mesma razão: uma consulta sem `k` candidatos elegíveis
+    # não tem resposta possível, e o filtro não depende de modelo nenhum, pelo que aplicá-lo
+    # aqui mantém os braços emparelhados. O que não se pode é filtrar em silêncio.
+    sorteadas = sum(len(c) for c in lotes)
+    lotes = [c[A.consultas_viaveis(c, tickers, datas, args.k)] for c in lotes]
+    viaveis = sum(len(c) for c in lotes)
+    excluidas = sorteadas - viaveis
+    if excluidas:
+        print(f"⚠ excluídas {excluidas} de {sorteadas} consultas ({excluidas / sorteadas:.2%}) "
+              f"por terem menos de k={args.k} candidatos elegíveis "
+              f"({'protocolo causal' if args.causal else 'protocolo simétrico'})")
+    else:
+        print(f"{viaveis} consultas, nenhuma excluída (todas com ≥ k={args.k} elegíveis)")
+    if not viaveis:
+        print("ERRO: nenhuma consulta viável — nada a medir.")
+        return 1
+
     acaso_c, acaso_p = [], []
     for r, consultas in enumerate(lotes):
         viz = vizinhos_ao_acaso(consultas, tickers, datas, args.k,
@@ -135,11 +160,27 @@ def main() -> int:
     apm, apsd = ms(acaso_p)
     print(f"\nacaso: comparabilidade {am * 100:.3f} pp (±{asd * 100:.3f}) · "
           f"precisão@{args.k} {apm:.3f} (±{apsd:.3f})")
-    return escrever(args, df, resultados, (am, asd), (apm, apsd))
+    return escrever(args, df, resultados, (am, asd), (apm, apsd), (sorteadas, viaveis))
+
+
+def _linha_populacao(populacao: tuple[int, int], args) -> str:
+    """Declara a população medida. Um denominador que muda em silêncio é o defeito, não a
+    solução: uma consulta sem `k` candidatos elegíveis não tem resposta possível, e antes desta
+    correção recebia os primeiros índices por ordem como se fossem vizinhos."""
+    sorteadas, viaveis = populacao
+    fora = sorteadas - viaveis
+    if not fora:
+        return (f"- **População:** {viaveis} consultas medidas, **nenhuma excluída** — todas "
+                f"tinham pelo menos k={args.k} candidatos elegíveis.")
+    return (f"- **População:** {viaveis} de {sorteadas} consultas medidas; **{fora} excluídas "
+            f"({fora / sorteadas:.2%})** por terem menos de k={args.k} candidatos elegíveis. "
+            "No protocolo causal são as consultas do início do bloco, que não têm passado "
+            "dentro dele. O filtro é o mesmo em todos os braços e não depende de modelo "
+            "nenhum, pelo que as comparações continuam emparelhadas.")
 
 
 def escrever(args, df: pd.DataFrame, resultados: dict, acaso_c: tuple,
-             acaso_p: tuple) -> int:
+             acaso_p: tuple, populacao: tuple[int, int]) -> int:
     """Grava o relatório. O nome de cada braço aparece tal como foi passado na linha de comando."""
     am, asd = acaso_c
     apm, apsd = acaso_p
@@ -157,6 +198,7 @@ def escrever(args, df: pd.DataFrame, resultados: dict, acaso_c: tuple,
         f"horizonte +{args.horizonte}d.",
         "- **Consultas idênticas para todos os braços** (sorteadas antes de qualquer modelo), "
         "logo as comparações são emparelhadas.",
+        _linha_populacao(populacao, args),
         f"- **Gerado:** {datetime.now(UTC).strftime('%Y-%m-%d %H:%M')} UTC · seed {args.seed}.",
         "",
         "## As duas métricas",

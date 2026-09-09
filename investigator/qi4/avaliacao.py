@@ -43,6 +43,28 @@ def mascara(consultas: np.ndarray, tickers: np.ndarray, datas: np.ndarray | None
     return m
 
 
+def contar_elegiveis(consultas: np.ndarray, tickers: np.ndarray, datas: np.ndarray | None,
+                    datas_consulta: np.ndarray | None = None) -> np.ndarray:
+    """Quantos candidatos elegíveis tem cada consulta. Não depende de modelo nenhum."""
+    return mascara(consultas, tickers, datas,
+                   datas_consulta if datas_consulta is not None
+                   else (datas[consultas] if datas is not None else None)).sum(axis=1)
+
+
+def consultas_viaveis(consultas: np.ndarray, tickers: np.ndarray, datas: np.ndarray | None,
+                      k: int, datas_consulta: np.ndarray | None = None) -> np.ndarray:
+    """Máscara booleana das consultas com **pelo menos `k`** candidatos elegíveis.
+
+    **Porque isto existe.** No protocolo causal exige-se que o precedente seja estritamente
+    anterior à consulta, e as consultas do primeiro dia do bloco ficam sem um único candidato.
+    Uma consulta assim não tem resposta possível: preenchê-la mede o que o protocolo proíbe e
+    deixá-la cair sem dizer nada muda o denominador em silêncio. Filtra-se aqui, **antes** de
+    qualquer modelo entrar, para que o filtro seja idêntico em todos os braços e as comparações
+    continuem emparelhadas — e quem chama tem de declarar quantas caíram.
+    """
+    return contar_elegiveis(consultas, tickers, datas, datas_consulta) >= k
+
+
 def topo_k(vetores: np.ndarray, consultas: np.ndarray, tickers: np.ndarray, k: int,
            datas: np.ndarray | None, datas_consulta: np.ndarray | None = None) -> np.ndarray:
     """Índices dos `k` candidatos mais próximos por cosseno, respeitando a máscara.
@@ -50,11 +72,24 @@ def topo_k(vetores: np.ndarray, consultas: np.ndarray, tickers: np.ndarray, k: i
     Os vetores entram normalizados, pelo que o produto interno é o cosseno. Candidatos
     inelegíveis recebem `-inf` em vez de serem removidos: mantém a matriz rectangular e o
     índice original, que é o que as métricas depois usam.
+
+    **Rebenta** se alguma consulta tiver menos de `k` candidatos elegíveis, e a razão é um
+    defeito real: com a linha toda a `-inf` o `argsort` devolvia `[0 1 2 3 4]` — os primeiros
+    índices por ordem — e esses falsos vizinhos entravam nas métricas **sem exceção e sem
+    aviso**. Filtrar as consultas inviáveis é do chamador, com `consultas_viaveis`, porque
+    muda a população de medição e isso tem de ser declarado.
     """
-    sims = vetores[consultas] @ vetores.T
     elegivel = mascara(consultas, tickers, datas,
                        datas_consulta if datas_consulta is not None
                        else (datas[consultas] if datas is not None else None))
+    faltam = int((elegivel.sum(axis=1) < k).sum())
+    if faltam:
+        raise ValueError(
+            f"{faltam} de {len(consultas)} consultas têm menos de k={k} candidatos elegíveis. "
+            "Sem filtro, estas linhas receberiam os primeiros índices por ordem como se fossem "
+            "vizinhos. Filtrar com `consultas_viaveis` e declarar quantas caíram."
+        )
+    sims = vetores[consultas] @ vetores.T
     sims = np.where(elegivel, sims, -np.inf)
     return np.argsort(-sims, axis=1)[:, :k]
 

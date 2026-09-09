@@ -54,15 +54,54 @@ def test_o_bloco_de_teste_tem_a_forma_declarada(frozen):
     assert test["label"].mean() == pytest.approx(meta["positivos"]["test"], abs=1e-12)
 
 
+# ⚠️ A tolerância deixou de ser `1e-12` a 2026-09-10, e a razão fica escrita aqui e não noutro
+# ficheiro, porque um critério afrouxado em silêncio é indistinguível de um critério contornado.
+#
+# O sidecar foi gerado a 2026-07-04 **noutra máquina** — o caminho de dataset que ele próprio
+# grava aponta para outro perfil de utilizador — e as features de contexto derivam dos **preços**.
+# Os preços de setembro não são bit a bit os de julho: a amostra versionada mostra a `vol20` a
+# divergir do oitavo dígito significativo (0,011042942691755403 contra 0,011042962612463809).
+# Nenhum rótulo virou — a contagem de positivos é idêntica e o teste da forma do bloco continua
+# a passar a `1e-12` —, mas o `p` desloca-se ~6e-9 por elemento e as métricas ~1e-8.
+#
+# Medido, e não suposto: a deriva **não** é ruído de vírgula flutuante (está sete ordens de
+# grandeza acima do eps da dupla precisão) e **não** vem das bibliotecas — o `predict_proba` é
+# bit-idêntico a uma sigmoide em `numpy` puro, e o Brier calculado à mão iguala o do `sklearn`
+# exactamente. Vem dos dados de entrada. Levantamento completo nas secções 15 e 16 de
+# `docs/design/reproducao_corpus_2026-09-09.md`.
+#
+# Exigir `1e-12` aqui é exigir que os preços de julho voltem, o que não é atingível — e um
+# critério que não pode passar deixa de ser porta e passa a ruído que se aprende a ignorar. O
+# que esta porta pode garantir, e passa a garantir, são duas coisas: **o número que a tese
+# publica** (três casas) e **o envelope medido** da deriva. A partir da cache de preços fixada
+# em `data/prices_kb/` esta deriva deixa de crescer.
+ENVELOPE = 1e-6  # ~8x a maior deriva observada (1,3e-7 na ROC-AUC), e 1000x abaixo da 3.ª casa
+
+
 @pytest.mark.parametrize("metrica", ["pr_auc", "roc_auc", "brier"])
 def test_metricas_congeladas_reproduzem(frozen, metrica):
-    """Reprodução EXACTA, não aproximada: o modelo é determinístico e os dados são os mesmos,
-    por isso qualquer diferença é uma mudança real e deve falhar."""
+    """O valor publicado reproduz-se à casa que a tese cita, e o resíduo fica no envelope medido.
+
+    As duas asserções dizem coisas diferentes de propósito. A primeira é a afirmação da tese —
+    se ela falhar, um número impresso deixou de ser verdade. A segunda é a saúde do artefacto:
+    se o resíduo crescer para além do envelope, mudou alguma coisa que **não** é a deriva de
+    preços já explicada, e isso tem de parar a suite.
+    """
     from investigator.triage.model import metrics
 
     meta, test, p = frozen
     obtido = metrics(test["label"].to_numpy(), p)[metrica]
-    assert obtido == pytest.approx(meta["metricas_teste"][metrica], abs=1e-12)
+    congelado = meta["metricas_teste"][metrica]
+
+    assert round(obtido, 3) == round(congelado, 3), (
+        f"{metrica}: {obtido:.6f} contra {congelado:.6f} — a tese publica três casas e elas "
+        "mudaram. Isto não é a deriva de preços; é um resultado diferente."
+    )
+    assert obtido == pytest.approx(congelado, abs=ENVELOPE), (
+        f"{metrica}: resíduo {abs(obtido - congelado):.2e} acima do envelope {ENVELOPE:.0e}. "
+        "A deriva de preços explicada nas secções 15-16 da auditoria fica na ordem de 1e-8; "
+        "um resíduo maior é outra coisa e não deve ser aceite."
+    )
 
 
 def test_precisao_dentro_do_orcamento_reproduz(frozen):
