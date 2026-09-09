@@ -23,6 +23,7 @@ import pandas as pd
 
 from investigator.console import force_utf8_stdout
 from investigator.qi4 import avaliacao as A
+from investigator.qi4 import colapso as C
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -105,6 +106,18 @@ def main() -> int:
     for nome, caminho in modelos.items():
         print(f"\n{nome}: a codificar {len(textos):,} manchetes…", flush=True)
         v = codificar(caminho, textos)
+
+        # A porta que faltou na primeira tentativa: um modelo colapsado produz uma tabela
+        # plausível e sem valor nenhum. Mede-se ANTES de calcular qualquer métrica.
+        perfil = C.perfil(v[:1500])
+        marca = "COLAPSADO" if perfil["colapsou"] else "ok"
+        print(f"  dispersão [{marca}]: cosseno entre manchetes diferentes "
+              f"{perfil['cosseno_medio']:.4f} · norma do vetor médio "
+              f"{perfil['norma_do_vetor_medio']:.4f}")
+        if perfil["colapsou"]:
+            print(f"  ⚠️  {nome} perdeu a capacidade de distinguir manchetes. "
+                  "As métricas abaixo NÃO são interpretáveis.")
+
         comp, prec = [], []
         for consultas in lotes:
             c, p = medir(v, consultas, tickers, setores, grandeza, datas, args.k)
@@ -113,7 +126,7 @@ def main() -> int:
         cm, cs = ms(comp)
         pm, ps = ms(prec)
         resultados[nome] = {"caminho": caminho, "comparabilidade": cm, "comp_dp": cs,
-                            "precisao": pm, "prec_dp": ps,
+                            "precisao": pm, "prec_dp": ps, "dispersao": perfil,
                             "comp_por_repeticao": comp, "prec_por_repeticao": prec}
         print(f"  comparabilidade {cm * 100:.3f} pp (±{cs * 100:.3f}) · "
               f"precisão@{args.k} {pm:.3f} (±{ps:.3f})")
@@ -155,13 +168,22 @@ def escrever(args, df: pd.DataFrame, resultados: dict, acaso_c: tuple,
         "**Precisão@k por setor** — a métrica da §5.3. Está aqui para mostrar o que o ajuste "
         "custa, ou não, em relevância temática. **Maior é melhor.**",
         "",
-        f"| Braço | Comparabilidade (pp) | Precisão@{args.k} |",
-        "|---|---:|---:|",
+        f"| Braço | Comparabilidade (pp) | Precisão@{args.k} | Cosseno entre manchetes "
+        "diferentes |",
+        "|---|---:|---:|---:|",
     ]
     for nome, r in resultados.items():
+        d = r["dispersao"]
+        marca = " ⚠️ **COLAPSADO**" if d["colapsou"] else ""
         L.append(f"| {nome} | {r['comparabilidade'] * 100:.3f} ± {r['comp_dp'] * 100:.3f} "
-                 f"| {r['precisao']:.3f} ± {r['prec_dp']:.3f} |")
-    L.append(f"| **acaso** | {am * 100:.3f} ± {asd * 100:.3f} | {apm:.3f} ± {apsd:.3f} |")
+                 f"| {r['precisao']:.3f} ± {r['prec_dp']:.3f} "
+                 f"| {d['cosseno_medio']:.4f}{marca} |")
+    L.append(f"| **acaso** | {am * 100:.3f} ± {asd * 100:.3f} | {apm:.3f} ± {apsd:.3f} | — |")
+    if any(r["dispersao"]["colapsou"] for r in resultados.values()):
+        L += ["", "> ⚠️ **Pelo menos um braço colapsou.** Um codificador que mapeia todas as "
+              "manchetes para o mesmo vetor produz uma tabela plausível e sem significado. "
+              "As linhas marcadas não são interpretáveis. Ver "
+              "`investigator/qi4/colapso.py`."]
     L += [
         "",
         "## Leitura",
