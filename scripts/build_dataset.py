@@ -22,6 +22,7 @@ from pathlib import Path
 import pandas as pd
 
 from investigator.console import force_utf8_stdout
+from investigator.correlation_engine.event_study import abnormal_returns
 from investigator.triage.dataset import (
     MIN_HISTORY,
     SECTORS,
@@ -61,11 +62,15 @@ def fetch_closes(ticker: str, start: str, end: str) -> pd.Series:
 
 def build(news: pd.DataFrame, taus: list[float], horizons: list[int],
           primary_tau: float, primary_h: int, embargo: int,
-          ext: bool = False) -> tuple[pd.DataFrame, dict]:
+          ext: bool = False, continuos: bool = False) -> tuple[pd.DataFrame, dict]:
     """Constrói o dataset; devolve (df, contadores de descartes).
 
     `ext=True` (RQ4-ext) inclui as features estendidas (`event_features_ext`); default False
     reproduz o dataset congelado da tese byte-a-byte (as colunas novas nem aparecem).
+
+    `continuos=True` acrescenta `abn_h{h}` — o retorno anormal **contínuo**, que a QI4 precisa
+    para construir os pares e que o rótulo binário deita fora. Também por omissão desligado,
+    pela mesma razão: o dataset da triagem tem de continuar a ser o que a tese cita.
     """
     news = news[news["ticker"].isin(SECTORS)].copy()
     news["date"] = pd.to_datetime(news["date"])
@@ -113,6 +118,13 @@ def build(news: pd.DataFrame, taus: list[float], horizons: list[int],
                 for h in horizons:
                     lab = abnormal_label(aligned["t"], aligned["m"], idx, tau, h)
                     row[f"label_t{tau:g}_h{h}"] = lab if lab is not None else ""
+            if continuos:
+                # A QI4 precisa do retorno anormal CONTÍNUO, não do rótulo binário: o alvo dos
+                # pares é a distância entre percentis da grandeza. Fica atrás de um sinalizador
+                # para que o dataset por omissão continue a ser, coluna a coluna, o congelado.
+                abn = abnormal_returns(aligned["t"], aligned["m"], idx, tuple(horizons))
+                for h in horizons:
+                    row[f"abn_h{h}"] = abn[h]
             rows.append(row)
 
     df = pd.DataFrame(rows).sort_values(["date", "ticker"]).reset_index(drop=True)
@@ -133,21 +145,29 @@ def main() -> int:
                     help="dias únicos de embargo entre blocos (corpus-fumo de 4 semanas: usar 1)")
     ap.add_argument("--ext", action="store_true",
                     help="inclui features estendidas (RQ4-ext; ver docs/evaluation/roadmap_rq4.md)")
+    ap.add_argument("--continuos", action="store_true",
+                    help="acrescenta abn_h{h}, o retorno anormal contínuo que a QI4 usa")
     args = ap.parse_args()
 
     news = pd.read_csv(args.news)
     print(f"Notícias lidas: {len(news)}  (tickers no mapa de setores: {len(SECTORS)})")
     df, drops = build(news, args.taus, args.horizons, args.primary_tau,
-                      args.primary_horizon, args.embargo, ext=args.ext)
+                      args.primary_horizon, args.embargo, ext=args.ext,
+                      continuos=args.continuos)
 
-    # Com --ext, escrever num ficheiro SEPARADO por defeito (nunca esmagar o dataset congelado).
+    # Com --ext ou --continuos, escrever num ficheiro SEPARADO por defeito: o dataset congelado
+    # nunca é esmagado por uma variante.
     if args.ext and args.out == str(REPO / "data" / "triage_dataset.csv"):
         args.out = str(REPO / "data" / "triage_dataset_ext.csv")
+    elif args.continuos and args.out == str(REPO / "data" / "triage_dataset.csv"):
+        args.out = str(REPO / "data" / "qi4_dataset.csv")
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(out, index=False, encoding="utf-8")
-    sample = df.head(25)
-    sample.to_csv(REPO / "data" / "samples" / "triage_sample.csv", index=False, encoding="utf-8")
+    # A amostra versionada descreve o dataset da TESE. Uma variante não a pode redefinir.
+    if not (args.ext or args.continuos):
+        df.head(25).to_csv(REPO / "data" / "samples" / "triage_sample.csv",
+                           index=False, encoding="utf-8")
 
     print(f"Dataset: {len(df)} linhas -> {out}")
     print(f"Descartes: {drops}")
