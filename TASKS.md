@@ -406,6 +406,32 @@ ficheiro congelado citado pela tese.
       é parcialmente aprendível do texto, a direção não é, e é isso que os dois braços medem.
       A (b) é mais forte e é o que os resultados provavelmente sustentam, mas muda o
       enquadramento do Cap. 1. **Não avanço para o Cap. 6 sem isto decidido.**
+- [x] C3d · **Arnês de avaliação com DUAS métricas, e a razão de a segunda não bastar.**
+      A §5.3 mede por pertença ao setor, que não sabe nada sobre materialidade: um codificador
+      ajustado para aproximar grandezas parecidas pode descer nessa métrica e estar, ao mesmo
+      tempo, a fazer exactamente o que se lhe pediu. Avaliá-lo só por setor seria julgá-lo pela
+      métrica de outro trabalho.
+      `investigator/qi4/avaliacao.py` + `scripts/avaliar_qi4.py`: **comparabilidade de
+      materialidade** (diferença média de grandeza entre consulta e precedentes, em pontos —
+      menor é melhor) e **precisão@k por setor** (a da §5.3), sobre as **mesmas consultas**,
+      sorteadas antes de qualquer modelo entrar, logo emparelhadas.
+- [x] C3e · **A LINHA DE BASE, e é o melhor argumento que a QI4 podia ter.** Bloco de teste,
+      protocolo simétrico, 500 consultas × 5 repetições, k=5:
+
+      | | Comparabilidade (pp) | Precisão@5 |
+      |---|---:|---:|
+      | SBERT da tese, sem ajuste | **2,173 ± 0,062** | 0,771 ± 0,011 |
+      | acaso | **2,259 ± 0,107** | 0,629 ± 0,007 |
+
+      **O codificador da tese é praticamente indistinguível do acaso na comparabilidade de
+      materialidade**: 2,173 contra 2,259 pontos, uma diferença de 0,086 sobre desvios de
+      0,062 e 0,107. Os precedentes que ele devolve são tematicamente certos e, quanto à
+      grandeza do movimento, tão informativos como escolher ao acaso. **É exactamente a lacuna
+      que a QI4 existe para preencher, e agora está medida em vez de suposta.**
+      ⚠️ **Estes números NÃO se comparam com os `0,595`/`0,333` da §5.3.4.** O conjunto de
+      candidatos é outro: o bloco de teste tem **nove** empresas e o corpus completo tem
+      catorze, o que sobe a taxa-base de setor de 0,333 para 0,629. As comparações que valem
+      são as de dentro desta tabela, que são emparelhadas. Tem de constar do texto.
 - [ ] C4 · Braço de **controlo** — codificador de domínio + objetivo de semelhança que lhe falta.
       Despromovido de contribuição a controlo: o FinBERT2 (KDD 2025) já mostrou que resulta
 - [ ] C5 · Braço **principal** — ajuste contrastivo por materialidade comparável (`|impacto|`,

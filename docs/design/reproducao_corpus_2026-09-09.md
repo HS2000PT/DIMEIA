@@ -339,3 +339,28 @@ tocar: o `evaluation_triage.md` congelado, duas figuras da tese, e os **modelos 
 aplicação usa**. Os modelos chegaram a ser substituídos nesta execução e foram repostos por
 `git checkout`. O script ganhou `--out`, `--figuras-dir` e `--modelos-dir`; por omissão o
 comportamento é o de sempre.
+
+## 16. A deriva dos preços, vista linha a linha
+
+A Secção 15 explicou o resíduo do `gbm` por um argumento: as features contínuas derivam dos
+preços, e os preços de setembro não são bit a bit os de julho. A amostra versionada
+`data/samples/triage_sample.csv` deu a prova directa, porque o `build_dataset.py` a reescreve
+com precisão total. Regenerada hoje, sobre as mesmas 25 linhas:
+
+| Coluna | Julho | Hoje |
+|---|---|---|
+| `vol20` (BAC, 2018-01-02) | 0,011042942691755403 | 0,011042962612463809 |
+| `ret_event` (BAC, 2018-01-02) | 0,012790258754465276 | 0,012790259423978361 |
+| `mom5` (JNJ, 2018-01-02) | −0,009545234014027446 | −0,009544876726910562 |
+
+Diferenças a partir do **oitavo dígito significativo**. E as **catorze colunas de rótulo são
+idênticas nas 25 linhas** — nenhum rótulo virou, exactamente como a contagem de positivos já
+indicava.
+
+A amostra foi reposta na versão de julho: descreve o conjunto sobre o qual a tese foi
+avaliada, e não deve passar a descrever outro por efeito colateral de uma verificação.
+
+**Nota para quem reexecutar:** o `build_dataset.py` tem cache própria em `data/prices/`, que
+ficou povoada nesta sessão. A partir daqui as suas execuções são determinísticas — mas
+ancoradas a setembro, não a julho. Re-ancorar tudo a setembro é uma decisão a tomar de uma vez
+(reconstruir o conjunto, retreinar, actualizar os ficheiros congelados), nunca por acidente.
