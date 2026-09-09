@@ -4,9 +4,159 @@
 > plataforma (Claude Code, Codex, ChatGPT, Cowork) sem perder nada. É escrito **antes** de cada
 > bloco de acções, não depois.
 >
-> **Última escrita:** 2026-09-09, antes do bloco «avaliar o retreino v2».
+> **Última escrita:** 2026-09-10, depois de a porta de colapso **e** a avaliação da QI4
+> reproduzirem no ambiente canónico. A ressalva de proveniência que dominava este ficheiro
+> está **fechada** — ver o bloco verde imediatamente abaixo.
 > **Regra:** quem retomar actualiza esta secção antes de agir.
 
+### ✅ 2026-09-10 — A QI4 ESTÁ FECHADA NO AMBIENTE CANÓNICO
+
+A porta de colapso e a avaliação completa correram **nesta máquina** (`.venv`, Python 3.12.10,
+`sentence-transformers` 5.6, `HF_HUB_OFFLINE=1`). **O negativo confirma-se e a proveniência
+deixa de ser uma ressalva.** Detalhe na secção 5 de `docs/design/qi4_resultado_2026-09-09.md`.
+
+| Braço | Comparabilidade (pp) ↓ | contentor | Precisão@5 ↑ | contentor |
+|---|---:|---:|---:|---:|
+| base (sem ajuste) | **2,173 ± 0,062** | 2,168 | **0,771 ± 0,011** | 0,771 |
+| `magnitude_v2` | 2,185 ± 0,065 | 2,177 | 0,746 ± 0,009 | 0,746 |
+| `direcao_v2` | 2,157 ± 0,071 | 2,146 | 0,744 ± 0,006 | 0,744 |
+| acaso | 2,259 ± 0,107 | 2,259 | 0,629 ± 0,007 | 0,629 |
+
+**A precisão@5 reproduz exactamente nos quatro braços.** A comparabilidade difere 0,005 a
+0,012 pp — entre cinco e treze vezes menos do que o desvio entre repetições —, logo a divergência
+de 0,005 pp que estava declarada na base é do mesmo tamanho das outras três e não é uma anomalia
+dela.
+
+**E as duas colunas que faltavam ao `direcao_v2` estão preenchidas:** moveu-se face à base
+**0,7750** e preservou a geometria **0,6301** (contra 0,7820 e 0,6070 do braço da grandeza). Eram
+as que diziam se a direção *aprendeu* em vez de apenas *não ter degenerado*. Aprendeu. A ressalva
+do `porta_colapso_direcao_v2_2026-09-09.md` fica fechada.
+
+⚠️ **A leitura do negativo fica MAIS forte aqui, não mais fraca:** o braço da grandeza passa de
+0,009 para **0,012** pp acima da base, e o da direção de 0,022 para **0,016** pp abaixo. Nenhum
+se aproximou de ganhar com a mudança de ambiente.
+
+⏭️ **O QUE FICA, e é decisão do autor:** a **variante causal** continua bloqueada pelo defeito do
+`topo_k`, que devolve `[0 1 2 3 4]` em silêncio quando uma consulta não tem candidato elegível —
+corrigi-lo muda a população de medição, e por isso não o corrigi. O **braço de controlo C4**
+(`ProsusAI/finbert`) não correu (~3 h). E a QI4 ainda **não entrou na tese**.
+
+---
+
+### 🟢 O RESULTADO DO DIA — o colapso está resolvido
+
+`magnitude_v2` (pares estratificados, taxa 5e-6) **passou a porta de colapso**:
+
+| | base sem ajuste | `magnitude` (v1) | `magnitude_v2` |
+|---|---|---|---|
+| cosseno entre manchetes **diferentes** | 0,2052 | **0,9936** ⚠️ | **0,2709** ✅ |
+| norma do vetor médio | 0,4536 | 0,9968 ⚠️ | 0,5210 ✅ |
+| desvio por dimensão | 0,0451 | 0,0040 ⚠️ | 0,0433 ✅ |
+| moveu-se face à base (cosseno médio) | — | 0,2688 | 0,7820 |
+| preservou a geometria (correlação) | — | 0,2341 | 0,6070 |
+
+Leitura: o v2 **mexeu mesmo** no espaço (cosseno base↔ajustado 0,78; a geometria das semelhanças
+correlaciona 0,61 com a original) **sem degenerar**. O v1 continua confirmado como colapsado e os
+seus números continuam a não valer nada.
+
+**A causa era a amostragem de pares**, não a taxa de aprendizagem sozinha: pares ao acaso davam
+uma distribuição triangular do alvo (média 1/3), e o mínimo da perda era «prever a média para
+tudo». Com amostragem estratificada o alvo fica com média 0,499 e desvio 0,289.
+
+Reproduzir: `.venv\Scripts\python.exe scripts\_colapso_rapido.py data\qi4_modelos\magnitude_v2`
+
+### Estado do treino, verificado agora
+
+- `magnitude_v2`: **terminado**, EXITCODE=0. 1250 passos, 3351 s (2,68 s/passo).
+- `direcao_v2`: **terminado**, EXITCODE=0. 1250 passos, 2691 s (2,15 s/passo). Perda final
+  8,045 contra 8,031 do outro braço — as duas trajetórias correm praticamente sobrepostas.
+- Verificar com: `.venv\Scripts\python.exe scripts\_estado_treino.py data\_qi4_*.log`
+
+### 🟢 O `direcao_v2` também passa a porta de colapso — ~~com uma ressalva de proveniência~~
+
+> ⚠️ **RESSALVA FECHADA A 2026-09-10.** A porta correu nesta máquina e reproduz. As duas colunas
+> que faltavam ficaram preenchidas (0,7750 e 0,6301). O aviso em maiúsculas abaixo é **histórico**
+> — fica como registo de que os números foram aceites primeiro sob ressalva.
+
+| | base | `magnitude` (v1) | `magnitude_v2` | `direcao_v2` |
+|---|---|---|---|---|
+| cosseno entre manchetes diferentes | 0,2052 | **0,9936** ⚠️ | 0,2709 ✅ | **0,2771** ✅ |
+| norma do vetor médio | 0,4536 | 0,9968 ⚠️ | 0,5210 | **0,5269** ✅ |
+| desvio por dimensão | 0,0451 | 0,0040 ⚠️ | 0,0433 | **0,0431** ✅ |
+
+Os dois braços v2 são quase indistinguíveis um do outro: **a amostragem estratificada resolveu
+o colapso nos dois, e não só no da grandeza.**
+
+⚠️ **ESTA MEDIÇÃO NÃO FOI FEITA NESTA MÁQUINA.** Correu num contentor Linux com
+`sentence-transformers` 6.0.1 e `torch` 2.14 CPU. Foi aceite porque o **controlo passou**: o
+`magnitude_v2` reembebido nesse ambiente reproduziu o log original **às quatro casas nos quatro
+valores**. Mesmo assim **faltam duas colunas** — «moveu-se face à base» e «preservou a
+geometria» — porque o Hugging Face está bloqueado nesse contentor e o modelo base não se
+descarrega lá. São precisamente as que dizem se o braço da direção *aprendeu* em vez de apenas
+*não ter degenerado*. Detalhe em `docs/design/porta_colapso_direcao_v2_2026-09-09.md`.
+
+~~**Portanto o passo 1 abaixo NÃO está fechado: corre a porta aqui antes de ler qualquer métrica.**~~
+**FECHADO a 2026-09-10** — a porta correu aqui e nenhum braço colapsou.
+
+### Bloco em curso — plano pré-registado
+
+### 🔴 A QI4 TEM RESULTADO, E É NEGATIVO — ~~medido fora desta máquina~~ **confirmado aqui a 2026-09-10**
+
+> A tabela desta secção é a do **contentor**, e fica como está de propósito: é a comparação entre
+> ela e a do topo que sustenta a reprodução. Os números canónicos são os do bloco verde no topo.
+
+Bloco de teste, 32 649 manchetes, protocolo simétrico, consultas emparelhadas:
+
+| Braço | Comparabilidade (pp) ↓ | Precisão@5 ↑ |
+|---|---:|---:|
+| base (sem ajuste) | **2,168 ± 0,065** | **0,771 ± 0,011** |
+| `magnitude_v2` | 2,177 ± 0,069 | 0,746 ± 0,009 |
+| `direcao_v2` | 2,146 ± 0,068 | 0,744 ± 0,006 |
+| acaso | 2,259 ± 0,107 | 0,629 ± 0,007 |
+
+**O ajuste não melhora a comparabilidade** (as diferenças face à base, +0,009 e −0,022, são três
+vezes menores do que o desvio entre repetições) **e degrada a relevância temática** (−0,026 na
+precisão@5, com o mesmo sinal nos dois braços e maior do que a dispersão). O treino funcionou —
+os dois braços moveram o espaço (cosseno base↔ajustado 0,78/0,775) e preservaram a geometria
+(0,607/0,630) —, logo **é a hipótese que não se confirma, não a montagem que falhou.**
+
+⚠️ **DEFEITO POR DECIDIR: a variante causal rebenta.** Consultas do primeiro dia do bloco ficam
+sem candidato elegível e o `rng.choice` do acaso falha (2 em 2500). Pior: nessa situação o
+`topo_k` devolve `[0 1 2 3 4]` **em silêncio**, logo sem o rebentamento do acaso a tabela sairia
+com falsos vizinhos lá dentro. Não corrigi — muda a população de medição. Detalhe e as duas
+opções em `docs/design/qi4_resultado_2026-09-09.md`.
+
+**Retomar aqui:**
+
+1. ~~Esperar que `direcao_v2` termine~~ **FEITO** — EXITCODE=0.
+2. ~~Reproduzir a porta de colapso **e a avaliação** nesta máquina~~ **FEITO a 2026-09-10** —
+   as duas reproduzem, a precisão@5 exactamente, e as duas colunas que faltavam ficaram
+   preenchidas. Ver o bloco verde no topo deste ficheiro.
+3. ~~Correr a avaliação completa~~ **FEITO** — artefacto em
+   `data/_arquivo/_qi4_tres_v2_local.md`. Nenhum braço colapsou.
+4. ~~Se o `direcao_v2` colapsar...~~ **NÃO SE APLICA** — nenhum colapsou, e os dois braços são
+   quase indistinguíveis um do outro na porta.
+5. Registar em `TASKS.md` e em `docs/design/`.
+
+**Feito neste bloco (Capítulo 2, tarefa A12):** ver
+`docs/design/capitulo2_literatura_2026-09-09.md`. Resumo: quatro PDFs lidos por inteiro
+([Mun09], [Liu23d], [Oh07], [Du24]); inserções em §2.1, §2.2, §2.4, §2.6, §2.7, §2.9 e §6.4, nas
+**duas** línguas; oito entradas novas na bibliografia; `robertson2009bm25` corrigido; verificador
+de bibliografia corrigido com testes. **As duas árvores compilam com zero citações e zero
+referências por resolver** (`scripts\_compilar.py`).
+
+### Armadilhas novas, descobertas neste bloco
+
+1. **Nunca correr `python -c "..."` através da ponte.** O PowerShell parte a expressão. Escrever
+   sempre um `.py`. O mesmo para regex na linha de comandos: `|` é pipe do cmd e `^` é o escape
+   do cmd. Usar `scripts\_g.py` (aceita vários padrões como argumentos separados).
+2. **`latexmk` não tem opção `-halt-on-error=false`.** Com ela responde «Bad options specified»,
+   devolve 10 e **não compila nada** — e como o PDF antigo fica no sítio, um verificador ingénuo
+   diz «ok» sobre um ficheiro que ninguém gerou. O `_compilar.py` passou a exigir código 0 e a
+   imprimir o número de páginas.
+3. **`tese-eng` não tem `latexmkrc`** e a `tese-pt` tem. Assimetria a corrigir um dia.
+4. **A ponte cai com a máquina carregada.** Com treino a decorrer, lançar em segundo plano para
+   um ficheiro de log e ler o ficheiro depois, em vez de esperar pela saída.
 ---
 
 ## 0. Leitura obrigatória antes de tocar em seja o que for
@@ -82,6 +232,16 @@ E a variante causal, acrescentando `--causal` e outro `--out`.
 `--base ProsusAI/finbert` (já em cache HF). ~5× mais lento: contar ~3 h.
 
 ### 3.4 Depois da QI4: refazer a §5.3 sobre o FNSPID (C1h.4)
+
+⚠️ **LER PRIMEIRO `docs/design/plano_53_fnspid.md`** — levantamento completo, ocorrência a
+ocorrência, com dois ramos. **O corte pode não ser preciso:** a janela do corpus Finnhub fecha a
+2026-06-25 e o plano gratuito serve ~1 ano, logo a 09/09 ainda está ao alcance da API. O
+`fetch_finnhub_news.py` já leva uma opção `--fim` para a poder pedir. Tentar recolher **antes**
+de cortar — decisão do autor a 09-09.
+
+⚠️ **E os dois ramos precisam desta máquina:** o A precisa da API do Finnhub, o B precisa de
+regenerar a Figura 5.7 sem o painel A (690 MB de KB, não transferíveis).
+
 
 O corpus do Finnhub **não existe** e o Henrique confirmou que não aparece. Pela regra dele, os
 resultados que dele dependem saem. Afecta `evaluate.py`, `evaluate_per_sector.py`,
@@ -160,6 +320,48 @@ PDFs entregues · corpus Finnhub não existe · chave Finnhub pronta · narrador
 
 Falha conhecida e **alheia a este trabalho**: `test_brand_assets.py` — pertence ao ramo de
 trabalho da web/mascote, que tem alterações por submeter no directório de trabalho.
+
+### ⚠️ SEGUNDA FALHA, ENCONTRADA A 2026-09-10 E **NÃO CORRIGIDA** — decisão do autor
+
+`test_frozen_reproducibility.py::test_metricas_congeladas_reproduzem` falha nos **três**
+parâmetros. **Não é regressão desta sessão** (só se tocou em markdown) e **nenhum número que a
+tese cite muda**:
+
+| | congelado | obtido hoje | diferença |
+|---|---|---|---|
+| PR-AUC | 0,5384788504706477 | 0,538478789566183 | `6,1e-8` |
+| ROC-AUC | 0,6580584296750043 | 0,6580583020002979 | `1,3e-7` |
+| Brier | 0,22405218360456047 | 0,22405218975515875 | `6,2e-9` |
+
+A porta exige `abs=1e-12` — reprodução ao bit — e o docstring dela diz que «qualquer diferença é
+uma mudança real e deve falhar». Está a fazer o que foi escrita para fazer.
+
+**A causa não é a métrica, é o `p`.** Os outros dois testes do mesmo ficheiro **passam**, e um
+deles é o `test_precisao_dentro_do_orcamento_reproduz` — o `0,632` que a tese cita como número de
+produto, que depende da **ordenação** induzida pelo `p`. Ou seja: a ordenação sobrevive, e o que
+se move são os últimos oito dígitos significativos das probabilidades. As três métricas movem-se
+**juntas** (o Brier é uma média de quadrados em `numpy` puro, logo não podia derivar por mudança
+de código de métrica) e as duas baseadas em ordenação movem-se por umas quantas quase-igualdades
+que trocam de lado.
+
+**Vector provável, e é uma hipótese e não uma medição:** o `numpy` (2.1.3) e o `scikit-learn`
+(1.9.0) estão **exactamente nos pins**, mas o **`scipy` não está pinado em nenhum dos dois
+ficheiros de requisitos** e está em 1.18.0. O `predict_proba` da regressão logística passa pelo
+`expit` do `scipy`, o que explicaria uma deriva nos últimos bits. **Não confirmei** — confirmá-lo
+obriga a instalar outra versão do `scipy`, e isso é mexer no ambiente canónico a três semanas do
+congelamento.
+
+**Duas opções, e a escolha é do autor:**
+
+1. **Pinar o `scipy`** em `requirements.txt` e recriar o `.venv`. Fecha a porta como está escrita.
+   Risco: mexe no ambiente que produziu tudo o que está congelado.
+2. **Alargar a tolerância** para, digamos, `1e-6`, com a razão escrita ao lado e o intervalo
+   medido. Risco: um critério afrouxado é indistinguível de um critério contornado — é a regra que
+   este projecto já pagou duas vezes —, logo **teria de ficar dito em voz alta no próprio teste**,
+   não em silêncio.
+
+⛔ **NÃO FIZ NENHUMA DAS DUAS.** Alargar a tolerância por iniciativa própria seria exactamente o
+defeito que a regra proíbe, e pinar o `scipy` mexe no ambiente de onde saem os congelados.
 
 Portas específicas deste trabalho, todas verdes:
 `test_corpus_canonico.py` · `test_price_cache.py` · `test_precos_manifesto.py` ·

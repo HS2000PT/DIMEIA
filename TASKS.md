@@ -56,17 +56,39 @@
 > A §2.2 estabelece a lacuna inspecionando **produtos comerciais** e nunca a literatura académica
 > sobre esta classe de sistema, que existe desde 2004. É exposição real perante um júri de SI.
 
-- [ ] A12.1 · Integrar o corpo Muntermann ([Mun04], [Mun04b], [Mun05], [Mun05b], [Mun07], [Mun09])
-      em §2.2 e reformular a lacuna face à literatura, não só aos produtos
-- [ ] A12.2 · [Oh07] *Financial market monitoring by case-based reasoning* e [But91] em §2.6
-- [ ] A12.3 · [Liu23d] *Alert for Alerts*, [Ell20], [Arn19b] em §2.1 — o efeito medido dos alertas
-      no investidor de retalho, mesmo que complique a premissa fundadora
-- [ ] A12.4 · [Ber23] (contraevidência), [Dav21], [Cau23b], [Waa21], [Kim24], [Kim24b] em §2.7 e §6.4.
-      [Waa21] justifica empiricamente a opção por explicação baseada em casos, hoje sem apoio
+> **2026-09-09.** Os quatro PDFs que faltavam foram lidos em texto integral. O que cada um diz,
+> e o que mudou na tese por causa disso, está em `docs/design/capitulo2_literatura_2026-09-09.md`.
+> Oito entradas novas na bibliografia, todas verificadas; uma correção encontrada de caminho
+> (`robertson2009bm25`); uma correção no próprio verificador, com testes.
+
+- [x] A12.1 · [Mun09] em §2.2 — a lacuna passa a ser de **postura epistémica** (prever vs. explicar)
+      e não de ausência de sistemas. O MoFiN DSS é DSR, é para o mesmo público, e já usava
+      **magnitude** e não direção como definição de acontecimento relevante. §2.9 ressalvada.
+      *(Os outros cinco Muntermann não foram lidos; [Mun09] é o mais desenvolvido e chega.)*
+- [x] A12.2 · [Oh07] em §2.6 — CBR em finanças classifica o **mercado inteiro** e nunca mostra os
+      casos. Serve de contraste. *([But91] não foi obtido; não é necessário.)*
+- [x] A12.3 · [Liu23d] em §2.1 — três parágrafos no corpo, não em nota: alertas de limiar pioraram
+      o desempenho de investidores particulares em ~1 p.p. em seis meses. A resposta da tese é
+      limitada e declarada como tal. §2.6 deixou de transpor a fadiga de alertas do domínio
+      clínico por analogia. *([Ell20], [Arn19b] não obtidos; [Liu23d] sozinho sustenta o ponto.)*
+- [x] A12.4 · [Waa21], [Cau23b], [Ber23] em §2.7 — cinco parágrafos de contraevidência e resposta.
+      **⚠️ ERRO MEU CORRIGIDO:** eu tinha escrito que [Waa21] «justifica empiricamente a opção por
+      explicação baseada em casos». É o contrário: as explicações por exemplos **não se
+      distinguiram de não dar explicação nenhuma** (p = 0,796 e p = 0,283), e o domínio é diabetes,
+      não finanças. A resposta da tese usa o diagnóstico dos próprios autores.
+- [ ] A12.4b · Descarregar os PDFs de [Cau23b] e [Ber23] (ISEP) — hoje só se cita o que consta dos
+      resumos do editor. Sem os PDFs não se citam participantes nem valores. **Tarefa do Henrique.**
 - [ ] A12.5 · [Nee25] SPA, [Cha22c] DeepTrust, [Fer19] Squawk Bot em §2.2 — sistemas próximos e como diferem
 - [ ] A12.6 · [Fen21b] SIGIR em §6.5 — a direção técnica 2 deixa de ser especulativa
 - [ ] A12.7 · [Cor21] em §3.6/§5.4 — relevância de notícias sem anotação humana
-- [ ] A12.8 · Reconstruir a Tabela 2.3 e reavaliar a afirmação de lacuna da §2.9
+- [x] A12.8 · Tabela 2.3 reconstruída (linha «Por que razão acreditar?» passa a declarar que as
+      medições com pessoas não confirmam o ganho) e afirmação de lacuna da §2.9 reavaliada
+- [x] A12.11 · [Du24] em §2.4 — o vizinho revisto por pares mais próximo. A **ablação dele** mostra
+      que aprendizagem contrastiva só sobre texto **degrada** a exatidão. Terceira indicação
+      independente de que a direção é o sinal errado
+- [ ] A12.12 · **Fechar a ligação à QI4 em §2.2 e §2.4.** Hoje o texto descreve [Du24] e [Mun09]
+      sem dizer que esta tese ajusta o codificador e treina sobre magnitude, porque o Capítulo 1
+      ainda declara três questões. Meia frase em cada sítio, depois de C7/C8
 
 ## FASE B — Fechar as lacunas que a própria tese nomeia
 
@@ -495,9 +517,41 @@ ficheiro congelado citado pela tese.
       Cinco testes novos, incluindo um que **documenta o defeito** (a triangular) para que não
       volte, e um que compara as duas amostragens pela cauda dos pares dissemelhantes, que é o
       que as distingue.
-- [/] C5-v2 · Retreino dos dois braços com estratificação e `lr=5e-6`. A correr.
-- [ ] C5-v2b · Repetir o diagnóstico de colapso **antes** de olhar para qualquer métrica. Regra
-      nova: nenhuma tabela da QI4 se lê sem o cosseno entre manchetes diferentes ao lado.
+- [x] C5-v2 · **Retreino dos dois braços com estratificação e `lr=5e-6`: terminado.**
+      `magnitude_v2` 1250 passos / 3351 s · `direcao_v2` 1250 passos / 2691 s, os dois com
+      `EXITCODE=0`. Perda final 8,031 e 8,045 — as duas trajetórias praticamente sobrepostas.
+- [x] C5-v2b · **Diagnóstico de colapso repetido antes de qualquer métrica, e passa nos dois.**
+      Cosseno entre manchetes diferentes `0,2709` e `0,2771` contra `0,2052` da base (o v1
+      colapsado dava `0,9936`). E os dois **moveram** mesmo o espaço — cosseno base↔ajustado
+      `0,782` e `0,775` — preservando a geometria das semelhanças (`0,607` e `0,630`), que é o
+      que separa «aprendeu» de «não degenerou».
+- [x] C6-v2 · **AVALIAÇÃO CORRIDA NO AMBIENTE CANÓNICO A 2026-09-10, e o resultado é NEGATIVO.**
+      Bloco de teste, 32 649 manchetes, 9 empresas, protocolo simétrico, 500 consultas × 5
+      repetições, consultas idênticas nos três braços (logo emparelhadas):
+
+      | Braço | Comparabilidade (pp) ↓ | Precisão@5 ↑ |
+      |---|---:|---:|
+      | base (sem ajuste) | **2,173 ± 0,062** | **0,771 ± 0,011** |
+      | `magnitude_v2` | 2,185 ± 0,065 | 0,746 ± 0,009 |
+      | `direcao_v2` | 2,157 ± 0,071 | 0,744 ± 0,006 |
+      | acaso | 2,259 ± 0,107 | 0,629 ± 0,007 |
+
+      **Na métrica que o ajuste existe para melhorar, nada acontece:** `+0,012` pp e `−0,016` pp
+      face à base, ou seja **cerca de um quinto** do desvio entre repetições do próprio braço.
+      **E o ajuste tem um custo que se mede:** a precisão@5 por setor cai `0,026`, com o mesmo
+      sinal nos dois braços e acima da dispersão. Como o treino verificadamente funcionou (C5-v2b),
+      **é a hipótese que não se confirma, não a montagem que falhou.**
+      ⚠️ **A proveniência ficou fechada:** estes números foram primeiro medidos num contentor
+      Linux (`sentence-transformers` 6.0.1) e reproduziram-se aqui — a **precisão@5 exactamente
+      nos quatro braços**, a comparabilidade com 0,005 a 0,012 pp de diferença. Artefactos:
+      `data/_arquivo/_qi4_tres_v2.md` (contentor) e `_qi4_tres_v2_local.md` (canónico), que
+      coexistem de propósito. Detalhe em `docs/design/qi4_resultado_2026-09-09.md` §5.
+- [ ] C6b · **DEFEITO POR DECIDIR antes de a variante causal poder ser lida.** Consultas do
+      primeiro dia do bloco não têm candidato elegível: o `rng.choice` do braço do acaso
+      **rebenta** (2 em 2500) e — pior — o `topo_k` devolve `[0 1 2 3 4]` **em silêncio**, pelo
+      que sem o rebentamento do acaso a tabela sairia com falsos vizinhos lá dentro. Não
+      corrigido: qualquer das duas opções **muda a população de medição**, e isso é decisão do
+      autor. As duas opções estão escritas em `docs/design/qi4_resultado_2026-09-09.md` §3.
 - [ ] C4 · Braço de **controlo** — codificador de domínio + objetivo de semelhança que lhe falta.
       Despromovido de contribuição a controlo: o FinBERT2 (KDD 2025) já mostrou que resulta
 - [ ] C5 · Braço **principal** — ajuste contrastivo por materialidade comparável (`|impacto|`,
