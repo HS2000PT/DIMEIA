@@ -40,10 +40,17 @@ DEFAULT_TICKERS = [
 DEFAULT_START = "2018-01-01"
 DEFAULT_END = "2023-12-31"
 
-# URL de resolução do ficheiro de notícias no Hugging Face (público; CC BY-SA 4.0).
-# Configurável por --news-url caso o caminho do dataset mude.
+# ⚠️ REVISÃO FIXADA. Antes de 2026-09-09 esta constante apontava para `resolve/main`, que é um
+# ponteiro MÓVEL: o mesmo comando podia devolver conteúdo diferente em datas diferentes, sem
+# aviso e sem deixar rasto. Um corpus assim não é reproduzível ainda que o script o seja.
+#
+# A revisão abaixo foi lida da API do Hugging Face a 2026-09-09; o dataset não é modificado
+# desde 2024-04-09, pelo que fixá-la não perde nada e passa a garantir tudo.
+FNSPID_REVISION = "bf9189c41527198897d1af3e17b1a0095279fc45"
+FNSPID_REPO = "Zihan1004/FNSPID"
+
 DEFAULT_NEWS_URL = (
-    "https://huggingface.co/datasets/Zihan1004/FNSPID/resolve/main/"
+    f"https://huggingface.co/datasets/{FNSPID_REPO}/resolve/{FNSPID_REVISION}/"
     "Stock_news/nasdaq_exteral_data.csv"
 )
 
@@ -107,9 +114,20 @@ def stream_filter(
     kept: list[pd.DataFrame] = []
     scanned = 0
     seen_any = False
+    # AUDITORIA DE ORDENAÇÃO. A paragem antecipada só é correta se o ficheiro estiver mesmo
+    # ordenado por ticker; o código anterior assumia-o sem o verificar, e uma exceção à
+    # ordenação truncaria o corpus em silêncio. Guarda-se o maior ticker já visto e regista-se
+    # qualquer chunk que o contrarie, para que a suposição passe a ser um facto declarado.
+    audit = {"chunks": 0, "max_ticker_visto": "", "violacoes_ordenacao": 0, "parou_cedo": False}
     reader = pd.read_csv(resp.raw, chunksize=chunksize, usecols=usecols, low_memory=False)
     for chunk in reader:
         norm = normalize_columns(chunk)
+        if not norm["ticker"].empty:
+            cmin, cmax = str(norm["ticker"].min()), str(norm["ticker"].max())
+            if cmin < audit["max_ticker_visto"]:
+                audit["violacoes_ordenacao"] += 1
+            audit["max_ticker_visto"] = max(audit["max_ticker_visto"], cmax)
+        audit["chunks"] += 1
         mask = norm["ticker"].isin(wanted) & (norm["date"] >= start_d) & (norm["date"] <= end_d)
         matched = norm[mask]
         kept.append(matched)
@@ -124,12 +142,15 @@ def stream_filter(
         if early_stop and seen_any and not norm["ticker"].empty:
             if str(norm["ticker"].min()) > max_wanted:
                 print(f"  (passámos '{max_wanted}' — paragem antecipada por ordenação)")
+                audit["parou_cedo"] = True
                 break
     resp.close()
+    audit["linhas_varridas"] = scanned
     result = pd.concat(kept, ignore_index=True) if kept else pd.DataFrame(
         columns=["date", "ticker", "headline"]
     )
-    return result.sort_values(["ticker", "date"]).reset_index(drop=True)
+    result = result.sort_values(["ticker", "date"]).reset_index(drop=True)
+    return result, audit
 
 
 def main() -> None:
@@ -150,15 +171,59 @@ def main() -> None:
 
     print(f"A descarregar/filtrar FNSPID: {len(args.tickers)} tickers, {args.start}…{args.end}")
     print("Fonte: Zihan1004/FNSPID (CC BY-SA 4.0). Atribuição obrigatória.")
-    df = stream_filter(args.news_url, args.tickers, args.start, args.end,
-                       chunksize=args.chunksize, limit=args.limit,
-                       early_stop=not args.no_early_stop)
+    df, audit = stream_filter(args.news_url, args.tickers, args.start, args.end,
+                              chunksize=args.chunksize, limit=args.limit,
+                              early_stop=not args.no_early_stop)
     print(f"Total de notícias no subconjunto: {len(df):,}")
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(out, index=False)
     print(f"Subconjunto gravado em {out} (gitignored).")
+
+    # ── MANIFESTO ────────────────────────────────────────────────────────────
+    # O corpus não é versionado (tem centenas de MB), pelo que sem isto não há forma de
+    # saber, meses depois, QUE corpus produziu um número publicado. O manifesto é pequeno,
+    # é versionado, e é o que torna verdadeira a afirmação de reprodutibilidade do Apêndice A.
+    import hashlib
+    import json
+    from datetime import UTC, datetime
+
+    h = hashlib.sha256()
+    with open(out, "rb") as fh:
+        for bloco in iter(lambda: fh.read(1 << 20), b""):
+            h.update(bloco)
+
+    por_ticker = df.groupby("ticker").size().sort_index().to_dict()
+    manifesto = {
+        "gerado_em": datetime.now(UTC).isoformat(timespec="seconds"),
+        "fonte": {"repo": FNSPID_REPO, "revisao": FNSPID_REVISION, "url": args.news_url},
+        "parametros": {
+            "tickers": sorted(t.upper() for t in args.tickers),
+            "inicio": args.start,
+            "fim": args.end,
+            "chunksize": args.chunksize,
+            "limit": args.limit,
+            "early_stop": not args.no_early_stop,
+        },
+        "resultado": {
+            "linhas": int(len(df)),
+            "tickers_presentes": sorted(df["ticker"].unique().tolist()),
+            "data_min": str(df["date"].min()),
+            "data_max": str(df["date"].max()),
+            "linhas_por_ticker": {k: int(v) for k, v in por_ticker.items()},
+            "sha256": h.hexdigest(),
+        },
+        "auditoria_varredura": audit,
+    }
+    man_path = Path("docs/design/fnspid_corpus_manifest.json")
+    man_path.parent.mkdir(parents=True, exist_ok=True)
+    man_path.write_text(json.dumps(manifesto, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"Manifesto gravado em {man_path} (versionado).")
+    print(f"  sha256={h.hexdigest()[:16]}… · linhas={len(df):,} · "
+          f"tickers={len(manifesto['resultado']['tickers_presentes'])} · "
+          f"violações de ordenação={audit['violacoes_ordenacao']} · "
+          f"parou cedo={audit['parou_cedo']}")
 
     sample = df.head(args.sample_size)
     sample_path = Path(args.sample)
