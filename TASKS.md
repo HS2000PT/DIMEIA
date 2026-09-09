@@ -292,6 +292,12 @@ Duas, ambas do nosso lado — **a origem não derivou**: o dataset Hugging Face
       sustenta para este braço.
       Contraste: a réplica à escala da §5.3.4 **é** reproduzível de ponta a ponta, e ficou
       provada hoje.
+- [x] C1e.1b · **Procurado na máquina inteira: não está cá.** Varrido todo o perfil
+      `C:\Users\ruifa` (incluindo ficheiros ocultos): de `finnhub*` só existem o logótipo em
+      três sítios e a amostra de 30 linhas. Nenhum `*news*.csv` fora do repositório. E
+      **`triage_dataset.csv` também não existia** — ver C1f, onde se reconstruiu.
+      Os perfis desta máquina são `ruifa`, `1180934` e contas de sistema: **não há perfil
+      `henri` aqui**, logo o caminho que o `evaluation_triage.md` regista é de outra máquina.
 - [ ] C1e.2 · **PERGUNTA PARA O HENRIQUE, antes de escrever seja o que for na tese.**
       O `docs/evaluation/evaluation_triage.md` aponta para
       `C:\Users\henri\Desktop\DIMEIA\data\triage_dataset.csv` — **outro perfil de utilizador**.
@@ -302,6 +308,52 @@ Duas, ambas do nosso lado — **a origem não derivou**: o dataset Hugging Face
       Se aparecer: versioná-lo (ou a uma amostra) e fixá-lo por `sha256`, como se fez ao FNSPID.
       Se não aparecer: declarar em §5.3.1 e §5.3.5, e ponderar dar mais peso narrativo à §5.3.4,
       que é o braço que qualquer pessoa pode voltar a correr.
+
+### C1f — A QI3 também reproduz (o conjunto de treino não existia, e voltou)
+
+- [x] C1f.1 · **`data/triage_dataset.csv` não estava em disco.** O conjunto sobre o qual
+      assenta toda a §5.4 tinha desaparecido, tal como o do Finnhub. A diferença é decisiva:
+      **este é reconstruível**, porque o `build_dataset.py` o deriva do corpus (agora fixado
+      por `sha256`) e dos preços (agora fixados por manifesto).
+- [x] C1f.2 · **Reconstruído, e bate ao número.** `build_dataset.py` sobre o corpus canónico:
+      **79 753 linhas**, descartes todos a zero, e a divisão cronológica devolve
+      **embargo 820 · treino 28 574 · validação 17 710 · teste 32 649**, com prevalências de
+      **38,5% / 47,0% / 37,8%**. São exactamente os valores de
+      `docs/evaluation/evaluation_triage.md` e o `0,378` que a §5.4.1 cita como prevalência do
+      bloco de teste. **A QI3 é reproduzível a partir da origem fixada.**
+- [x] C1f.3 · **Acrescentados `--out` e `--figuras-dir` ao `train_triage.py`.** O script
+      escrevia sempre por cima do `evaluation_triage.md` congelado **e** de duas figuras da
+      tese (`eval_triage_pr.pdf`, `eval_triage_calibration.pdf`). Uma verificação não pode
+      correr esse risco; por omissão o comportamento é o de sempre.
+- [x] C1f.4 · **Os PR-AUC reproduzem — quatro dos cinco exactamente, e o quinto explica-se.**
+      Volatilidade **0,542**, contexto **0,538**, texto **0,439**, `full` **0,496** — iguais
+      aos publicados. O `gbm` dá **0,470** contra os **0,469** da tese.
+      O `git diff` do `models/triage_gbm.json` deu a comparação ao décimo dígito, sem
+      arredondamento: `full` desvia-se **2,7e-05** no PR-AUC e o `gbm` **6,0e-04** — vinte
+      vezes mais. As linhas, os blocos e as contagens de positivos são **idênticos**, a semente
+      é a mesma: nenhum rótulo virou. O que muda são as **features contínuas**, que derivam dos
+      preços, e os preços de setembro não são bit a bit os de julho. Um corte de árvore é
+      descontínuo e amplifica o que o modelo linear absorve.
+      **A conclusão da §5.4 não mexe**: 0,496 e 0,470 continuam abaixo de 0,542.
+      É exactamente a deriva que a cache de preços (C1c.13) elimina daqui para a frente.
+- [x] C1f.5 · **Duas armadilhas fechadas.** O `train_triage.py` escrevia sempre por cima do
+      `evaluation_triage.md` congelado, de duas figuras da tese **e dos modelos que a aplicação
+      usa** — os modelos chegaram a ser substituídos nesta execução e foram repostos por
+      `git checkout`. Ganhou `--out`, `--figuras-dir` e `--modelos-dir`, com o comportamento de
+      sempre por omissão. A mensagem final passou a imprimir os caminhos reais, em vez de
+      afirmar `tese-pt/figures` mesmo quando escreveu noutro sítio.
+
+### C1g — COLISÃO DE CACHES apanhada antes de morder
+
+- [x] C1g.1 · **Duas caches de preços, o mesmo nome de ficheiro, esquemas diferentes.**
+      O `build_dataset.py` guarda a sua cache em `data/prices/` como
+      `{ticker}_{inicio}_{fim}.csv`, gravando um `Series` com índice (colunas `Date,Close`) e
+      lendo `["Close"]`. A cache nova, na primeira versão, apontava para a **mesma pasta** com
+      o **mesmo nome** e o esquema `date,close` — e chegou a escrever catorze ficheiros lá.
+      Bastaria o `build_dataset.py` pedir a mesma janela para ler o ficheiro errado: `KeyError`
+      no melhor caso, valores errados no pior.
+      Corrigido: a cache nova vive em `data/prices_kb/`, com dois testes a impedir que as
+      pastas voltem a coincidir e a verificar que o `build_kb.py` aponta para a certa.
 
 #### O que NÃO era o problema
 

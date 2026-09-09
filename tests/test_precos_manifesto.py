@@ -23,7 +23,7 @@ import pytest
 
 RAIZ = Path(__file__).resolve().parents[1]
 MANIFESTO = RAIZ / "docs" / "design" / "precos_manifest.json"
-CACHE = RAIZ / "data" / "prices"
+CACHE = RAIZ / "data" / "prices_kb"
 
 #: As catorze empresas do corpus da tese — ver `tests/test_corpus_canonico.py`.
 TICKERS = {"TSLA", "NVDA", "AAPL", "MSFT", "WMT", "CVX", "XOM",

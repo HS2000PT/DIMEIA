@@ -276,3 +276,66 @@ e ficou provada nesta sessão.
 `docs/evaluation/evaluation_triage.md` aponta para `C:\\Users\\henri\\Desktop\\DIMEIA\\…` — outro
 perfil de utilizador. O corpus pode estar nessa máquina ou numa cópia de segurança, e afirmar
 que não foi conservado seria afirmar o que não está verificado.
+
+## 15. A QI3 também reproduz — e o resíduo diz porquê
+
+`data/triage_dataset.csv` **também não estava em disco**. A diferença face ao corpus do Finnhub
+é decisiva: este deriva do corpus (fixado por `sha256`) e dos preços (fixados por manifesto),
+logo reconstrói-se.
+
+Reconstruído, bate ao número:
+
+| | Reconstruído | `evaluation_triage.md` |
+|---|---:|---:|
+| Linhas | 79 753 | — |
+| Embargo | 820 | 820 (§5.4) |
+| Treino | 28 574 (38,5% pos.) | 28 574 (38.5%) |
+| Validação | 17 710 (47,0% pos.) | 17 710 (47.0%) |
+| Teste | 32 649 (37,8% pos.) | 32 649 (37.8%) |
+
+O `0,378` é o mesmo que a §5.4.1 cita como prevalência do bloco de teste. Descartes por falta
+de preços, de histórico ou de futuro: **todos a zero**.
+
+### Os modelos, ao décimo dígito
+
+O treino guarda um `.json` com as métricas completas, e o `git diff` contra o ficheiro de
+2026-07-04 dá a comparação exacta — não arredondada a três casas:
+
+| Métrica | Tese (04-07, máquina `henri`) | Hoje | Diferença |
+|---|---:|---:|---:|
+| `full` PR-AUC | 0,49614796 | 0,49617471 | +2,7e-05 |
+| `full` ROC-AUC | 0,62212465 | 0,62215450 | +3,0e-05 |
+| `full` Brier | 0,22879886 | 0,22879383 | −5,0e-06 |
+| `full` P@orçamento | 0,58461538 | 0,58461538 | **igual** |
+| `gbm` PR-AUC | 0,46948321 | 0,47007921 | +6,0e-04 |
+| `gbm` ROC-AUC | 0,62356308 | 0,62378419 | +2,2e-04 |
+| `gbm` Brier | 0,22760866 | 0,22734860 | −2,6e-04 |
+| `gbm` P@orçamento | 0,55113122 | 0,56018100 | +9,0e-03 |
+
+Os três *baselines* reproduzem-se ao terceiro decimal que a tese publica: volatilidade
+**0,542**, contexto **0,538**, texto **0,439**.
+
+### O resíduo tem explicação, e não é ruído
+
+As linhas, os blocos e as contagens de positivos são **idênticos**, a semente é a mesma e o
+embedder é o mesmo. O que muda são os **valores contínuos**: as características de contexto
+derivam dos preços, e os preços de setembro não são bit a bit os de julho. Nenhum rótulo virou
+— a contagem de positivos não mexeu —, mas as features deslocaram-se na sétima casa.
+
+O modelo linear desloca-se `1e-05`; o de árvores desloca-se **vinte vezes mais**, porque um
+corte é descontínuo e uma perturbação minúscula chega para o mudar de sítio. É por isso que o
+`gbm` lê `0,470` onde a tese diz `0,469`, e o `full` lê `0,496` nas duas.
+
+**A conclusão da §5.4 não mexe:** `full` (0,496) e `gbm` (0,470) continuam abaixo da linha de
+volatilidade (0,542), que é a comparação decisiva.
+
+E o resíduo é precisamente o argumento para a cache de preços da Secção 13: a partir de agora
+esta deriva desaparece, porque os preços deixaram de vir da rede a cada execução.
+
+### Duas armadilhas fechadas pelo caminho
+
+O `train_triage.py` escrevia **sempre** por cima de três coisas que uma verificação não pode
+tocar: o `evaluation_triage.md` congelado, duas figuras da tese, e os **modelos que a
+aplicação usa**. Os modelos chegaram a ser substituídos nesta execução e foram repostos por
+`git checkout`. O script ganhou `--out`, `--figuras-dir` e `--modelos-dir`; por omissão o
+comportamento é o de sempre.

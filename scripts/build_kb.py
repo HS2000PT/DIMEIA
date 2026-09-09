@@ -50,8 +50,10 @@ def main() -> None:
     parser.add_argument("--sbert", action="store_true",
                         help="usa SBERT real (senão HashingEmbedder)")
     parser.add_argument("--dim", type=int, default=64, help="dimensão do HashingEmbedder")
-    parser.add_argument("--precos-cache", default="data/prices",
-                        help="pasta onde as séries de preços ficam fixadas (vazio desliga)")
+    parser.add_argument("--precos-cache", default="data/prices_kb",
+                        help="pasta onde as séries de preços ficam fixadas (vazio desliga). "
+                             "NÃO usar data/prices: é a cache do build_dataset.py, com o mesmo "
+                             "nome de ficheiro e outro esquema")
     parser.add_argument("--refrescar-precos", action="store_true",
                         help="ignora a cache de preços e vai à rede outra vez")
     parser.add_argument("--precos-manifesto", default="docs/design/precos_manifest.json",

@@ -14,6 +14,13 @@ reconstrução é determinística, e a proveniência deixa de se perder.
 
 É **opcional de propósito**: a camada viva tem de continuar a ir à rede, por isso o
 comportamento sem `cache_dir` fica exatamente como estava.
+
+⚠️ **Não usar `data/prices/`.** O `scripts/build_dataset.py` já lá guarda a sua própria cache,
+com **o mesmo nome de ficheiro** — `{ticker}_{inicio}_{fim}.csv` — e **esquema diferente**:
+grava um `Series` com o índice, o que dá as colunas `Date,Close`, e lê `["Close"]`. Este
+módulo grava `date,close`. Partilhar a pasta faria um ler o ficheiro do outro e rebentar num
+`KeyError`, ou pior, ler valores errados. A pasta canónica deste módulo é `data/prices_kb/`,
+e há um teste que impede as duas de coincidirem.
 """
 
 from __future__ import annotations
@@ -25,6 +32,13 @@ from pathlib import Path
 import pandas as pd
 
 MANIFESTO = "manifesto.json"
+
+#: Pasta canónica desta cache. NÃO é `data/prices/` — ver o aviso no topo do módulo.
+PASTA_PADRAO = "data/prices_kb"
+
+#: Pasta da cache do `scripts/build_dataset.py`, que usa o mesmo nome de ficheiro com outro
+#: esquema. Existe aqui para o teste de colisão a poder nomear.
+PASTA_BUILD_DATASET = "data/prices"
 
 
 def chave(ticker: str, inicio: str, fim: str) -> str:

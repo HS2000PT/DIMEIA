@@ -181,3 +181,37 @@ def test_um_ticker_sem_dados_nao_entra_na_cache(tmp_path, monkeypatch):
     r = mod.load_close_series(["ZZZZ"], "2018-01-01", "2023-12-31", cache_dir=tmp_path)
     assert r == {}
     assert pc.manifesto(tmp_path)["series"] == {}
+
+
+# ── a colisão que quase aconteceu ─────────────────────────────────────────────
+
+def test_as_duas_caches_nao_podem_partilhar_pasta():
+    """Duas caches, o mesmo nome de ficheiro, esquemas diferentes.
+
+    O `scripts/build_dataset.py` guarda a sua cache em `data/prices/` com o nome
+    `{ticker}_{inicio}_{fim}.csv` — exactamente o nome que este módulo usa. Mas grava um
+    `Series` com o índice (colunas `Date,Close`) e lê `["Close"]`, enquanto aqui se grava
+    `date,close`. Na mesma pasta, um leria o ficheiro do outro: `KeyError` no melhor caso,
+    valores errados no pior.
+
+    A primeira versão desta cache apontava para `data/prices/` e chegou a escrever catorze
+    ficheiros lá. Este teste existe para que a separação seja uma propriedade verificada, e
+    não um comentário que alguém há de ler.
+    """
+    assert pc.PASTA_PADRAO != pc.PASTA_BUILD_DATASET
+    from pathlib import Path as _P
+    assert _P(pc.PASTA_PADRAO).resolve() != _P(pc.PASTA_BUILD_DATASET).resolve()
+
+
+def test_o_build_kb_aponta_para_a_pasta_desta_cache():
+    """A porta que interessa: o valor por omissão do script tem de ser o certo."""
+    import re
+    from pathlib import Path as _P
+
+    fonte = (_P(__file__).resolve().parents[1] / "scripts" / "build_kb.py").read_text(
+        encoding="utf-8")
+    m = re.search(r'"--precos-cache",\s*default="([^"]+)"', fonte)
+    assert m, "o build_kb.py deixou de declarar --precos-cache"
+    assert m.group(1) == pc.PASTA_PADRAO, (
+        f"o build_kb.py aponta para {m.group(1)!r}, e a pasta desta cache é "
+        f"{pc.PASTA_PADRAO!r}")

@@ -75,6 +75,14 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--daily-budget", type=int, default=5)
     ap.add_argument("--note", default="")
+    # Uma verificação não pode arriscar escrever por cima do artefacto que a tese cita, nem
+    # das figuras que ela publica. Por omissão o comportamento é o de sempre.
+    ap.add_argument("--out", default=None,
+                    help="destino do markdown; por omissão docs/evaluation/evaluation_triage.md")
+    ap.add_argument("--figuras-dir", default=None,
+                    help="destino das figuras; por omissão tese-pt/figures")
+    ap.add_argument("--modelos-dir", default=None,
+                    help="destino dos modelos; por omissão models/ (os que a app usa)")
     args = ap.parse_args()
 
     rng_tag = f"seed={args.seed}, embedder={args.embedder}"
@@ -135,10 +143,12 @@ def main() -> int:
         "embedder": args.embedder,
         "nota": args.note,
     }
+    modelos = Path(args.modelos_dir) if args.modelos_dir else (REPO / "models")
+    modelos.mkdir(parents=True, exist_ok=True)
     for name, fname in [("full", "triage_lr.joblib"), ("gbm", "triage_gbm.joblib"),
                         ("context", "triage_context_lr.joblib")]:
         model, cal, names, _ = bundles[name]
-        save_bundle(REPO / "models" / fname, model, cal, names,
+        save_bundle(modelos / fname, model, cal, names,
                     {**meta_common, "modelo": name, "metricas_teste": results[name]})
 
     # ── Figuras (PR + calibração) ────────────────────────────────────────────
@@ -158,7 +168,9 @@ def main() -> int:
     ax.set_xlabel("Recall"), ax.set_ylabel("Precision")
     ax.set_title("Materiality triage — PR curves (test)")
     ax.legend(fontsize=7), fig.tight_layout()
-    fig.savefig(REPO / "tese-pt" / "figures" / "eval_triage_pr.pdf")
+    figuras = Path(args.figuras_dir) if args.figuras_dir else (REPO / "tese-pt" / "figures")
+    figuras.mkdir(parents=True, exist_ok=True)
+    fig.savefig(figuras / "eval_triage_pr.pdf")
 
     fig2, ax2 = plt.subplots(figsize=(5.4, 4.0))
     s_full = bundles["full"][3]
@@ -173,10 +185,11 @@ def main() -> int:
     ax2.set_xlabel("Predicted probability"), ax2.set_ylabel("Observed frequency")
     ax2.set_title("Calibration curve (test)")
     ax2.legend(), fig2.tight_layout()
-    fig2.savefig(REPO / "tese-pt" / "figures" / "eval_triage_calibration.pdf")
+    fig2.savefig(figuras / "eval_triage_calibration.pdf")
 
     # ── Markdown de resultados ───────────────────────────────────────────────
-    md = REPO / "docs" / "evaluation" / "evaluation_triage.md"
+    md = Path(args.out) if args.out else (REPO / "docs" / "evaluation" / "evaluation_triage.md")
+    md.parent.mkdir(parents=True, exist_ok=True)
     lines = [
         "# evaluation_triage.md — Triagem de materialidade (RQ4; reprodutível)",
         "",
@@ -212,8 +225,8 @@ def main() -> int:
     ]
     md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"\nEscrito: {md}")
-    print("Figuras: tese-pt/figures/eval_triage_pr.pdf + eval_triage_calibration.pdf")
-    print("Modelos: models/triage_lr.joblib + triage_gbm.joblib + triage_context_lr.joblib")
+    print(f"Figuras: {figuras}/eval_triage_pr.pdf + eval_triage_calibration.pdf")
+    print(f"Modelos: {modelos}/triage_lr.joblib + triage_gbm.joblib + triage_context_lr.joblib")
     return 0
 
 
