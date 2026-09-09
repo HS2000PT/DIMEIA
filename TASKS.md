@@ -546,7 +546,41 @@ ficheiro congelado citado pela tese.
       nos quatro braços**, a comparabilidade com 0,005 a 0,012 pp de diferença. Artefactos:
       `data/_arquivo/_qi4_tres_v2.md` (contentor) e `_qi4_tres_v2_local.md` (canónico), que
       coexistem de propósito. Detalhe em `docs/design/qi4_resultado_2026-09-09.md` §5.
-- [ ] C6b · **DEFEITO POR DECIDIR antes de a variante causal poder ser lida.** Consultas do
+- [x] C6b · **DEFEITO CORRIGIDO a 2026-09-10, e a variante causal correu.** O `topo_k`
+      **rebenta** em vez de devolver falsos vizinhos; o filtro é do chamador
+      (`consultas_viaveis`), aplicado uma vez por lote **antes** de qualquer modelo — só vê
+      tickers e datas, logo os braços continuam emparelhados —, e a consola e o relatório
+      declaram quantas consultas caíram. Extensão real: **2 de 2500 (0,08%)**. Seis testes
+      novos, com o controlo no sentido oposto. Prova de que o defeito era real, no mesmo input:
+      sem candidato elegível o código antigo devolvia `[0 1 2 3 4]`; no causal devolvia
+      `[0 1 2]`, **incluindo a própria consulta e o futuro**.
+      **Resultado causal — o negativo é robusto ao protocolo da produção:**
+
+      | Braço | Comparabilidade (pp) ↓ | Precisão@5 ↑ |
+      |---|---:|---:|
+      | base (sem ajuste) | **2,287 ± 0,049** | **0,747 ± 0,011** |
+      | `magnitude_v2` | 2,309 ± 0,069 | 0,722 ± 0,013 |
+      | `direcao_v2` | 2,289 ± 0,074 | 0,720 ± 0,012 |
+      | acaso | 2,336 ± 0,067 | 0,621 ± 0,015 |
+
+      ⚠️ **E dá uma observação que a variante simétrica não podia dar:** a margem da base sobre
+      o acaso **encolhe** de `0,086` pp para `0,049` pp. No protocolo real o codificador sem
+      ajuste está ainda mais perto do acaso, o que reforça a motivação da QI4 e torna o negativo
+      mais claro. Artefacto: `data/_arquivo/_qi4_causal_local.md`.
+- [x] C9 · **A porta congelada da QI3 afinada em voz alta.** O
+      `test_frozen_reproducibility` falhava nas três métricas a `abs=1e-12`. **Não era o
+      `scipy`** (o `predict_proba` é bit-idêntico a uma sigmoide em `numpy` puro e o Brier à
+      mão iguala o do `sklearn`) e **não era ruído de vírgula flutuante** (a deriva em `p` é
+      ~6e-9 por elemento, sete ordens acima do eps). A causa estava já diagnosticada nas §15 e
+      §16 da auditoria do corpus: o sidecar é de julho e **de outra máquina**, e as features
+      derivam de preços que já não são bit a bit os mesmos. A porta era inatingível por
+      construção, e um critério que não pode passar deixa de ser porta. Passa a verificar o
+      número que a tese publica (três casas) **e** um envelope medido de `1e-6`, com a razão
+      escrita dentro do teste. Verificado que dispara com deriva 10× acima do envelope e com a
+      terceira casa mudada.
+- [x] C6c · *(registo histórico do diagnóstico — corrigido em C6b; fica porque descreve a
+      forma do defeito, que importa mais do que a extensão)* ~~DEFEITO POR DECIDIR antes
+      de a variante causal poder ser lida.~~ Consultas do
       primeiro dia do bloco não têm candidato elegível: o `rng.choice` do braço do acaso
       **rebenta** (2 em 2500) e — pior — o `topo_k` devolve `[0 1 2 3 4]` **em silêncio**, pelo
       que sem o rebentamento do acaso a tabela sairia com falsos vizinhos lá dentro. Não
