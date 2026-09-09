@@ -1,17 +1,5 @@
 {"date": "2026-09-08", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-08", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "META", "stage": "alerted", "detail": "Here is What to Know Beyond Why Meta Platforms, Inc. (META) is a Trending Stock"}
-{"date": "2026-09-08", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "AMD", "stage": "alerted", "detail": "AMD Is Behind The AI Chip Shift Nobody Is Talking About"}
-{"date": "2026-09-08", "ticker": "NFLX", "stage": "alerted", "detail": "Investors Heavily Search Netflix, Inc. (NFLX): Here is What You Need to Know"}
-{"date": "2026-09-08", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "NVDA", "stage": "already_sent", "detail": "same headline already delivered today"}
-{"date": "2026-09-08", "ticker": "TSLA", "stage": "already_sent", "detail": "same headline already delivered today"}
-{"date": "2026-09-08", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-08", "ticker": "META", "stage": "already_sent", "detail": "same headline already delivered today"}
 {"date": "2026-09-08", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-08", "ticker": "AMD", "stage": "already_sent", "detail": "same headline already delivered today"}
@@ -15352,6 +15340,18 @@
 {"date": "2026-09-09", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-09", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-09", "ticker": "NFLX", "stage": "duplicate_story", "detail": "same story, other words"}
+{"date": "2026-09-09", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-09", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-09", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-09", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-09", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-09", "ticker": "TSLA", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-09", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-09", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-09", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-09", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-09", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-09", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-09", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-09", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-09", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
