@@ -279,6 +279,40 @@ Duas, ambas do nosso lado — **a origem não derivou**: o dataset Hugging Face
       de texto reescreveria as 1 751 linhas do capítulo 5. Edições nos `.tex` fazem-se em
       **modo binário**, com o terminador preservado.
 
+### C1h — REGRA DO AUTOR (2026-09-09): o que não se reproduz aqui, desconsidera-se
+
+> «Tudo o que for resultados anteriores, que não tenhamos a certeza da sua viabilidade, ou que
+> não consigamos reproduzir atualmente neste computador, devem ser desconsiderados. Nem que
+> tenhamos que fazer download de modelos e de datasets do zero.»
+
+- [x] C1h.1 · **Inventário feito.** `scripts/auditar_reprodutibilidade.py` percorre os 50
+      documentos de `docs/evaluation/`, encontra o gerador de cada um e verifica se as entradas
+      existem. Saída em `docs/design/auditoria_reprodutibilidade.json`.
+- [x] C1h.2 · **Quatro documentos dependem do corpus do Finnhub, que não existe.** Os scripts
+      são `evaluate.py`, `evaluate_per_sector.py`, `evaluate_corpus_and_filter.py` e
+      `evaluate_retrieval_embedders.py`. Entre eles sustentam **§5.3.1, §5.3.2 (Figura 5.6),
+      §5.3.3 (Figura 5.7, painel A)** e a comparação de codificadores.
+      Pela regra acima: **saem, a menos que o ficheiro apareça** (ver tarefa manual nº 2).
+- [x] C1h.3 · **Os outros três «em falta» não são perdas.**
+      `data/_cache_volumes.csv` é uma cache que o próprio script refaz do yfinance;
+      `data/narrator_harness_log.jsonl` é **saída** do arnês, não entrada;
+      `data/triage_dataset_ext.csv` reconstrói-se com `build_dataset.py --ext`.
+- [ ] C1h.4 · **Refazer a §5.3 sobre o FNSPID.** É o plano se o Finnhub não aparecer, e é uma
+      melhoria mesmo que apareça: o resultado principal passa de um corpus de 27 dias
+      irrepetível para um de seis anos fixado por `sha256`. Inclui refazer a alternativa
+      trivial e a análise por setor (hoje na §5.3.3) e a comparação de codificadores.
+      **Nota já medida:** no bloco de teste do FNSPID a taxa-base de setor é 0,629 (nove
+      empresas) e no corpus completo 0,333 (catorze) — a escolha do conjunto de candidatos tem
+      de ser declarada, porque muda o acaso por um factor de dois.
+- [ ] C1h.5 · **Descarregar os codificadores da comparação** (MPNet, FinBERT, E5-small,
+      BGE-small) e refazer o `evaluation_retrieval_embedders.md` sobre o FNSPID. O autor
+      autorizou descarregar do zero.
+- [ ] C1h.6 · **`evaluate_anomaly.py` vai ao yfinance sem cache** — a §5.2 não é determinística
+      hoje. Aplicar-lhe a cache de preços, como se fez ao `build_kb.py`.
+- [ ] C1h.7 · **Verificar os 28 documentos cuja dependência a auditoria não detectou.** A
+      deteção por expressão regular não apanha caminhos construídos em `argparse`. Não é
+      «estão bem»: é «ainda não se sabe».
+
 ### C1e — ACHADO NOVO: o corpus da avaliação preliminar não existe
 
 - [ ] C1e.1 · **`data/finnhub_news.csv` não está em lado nenhum.** É o corpus das 3 714

@@ -1,0 +1,399 @@
+[
+  {
+    "doc": "alert_funnel.md",
+    "gerador": "scripts/figures/fig_alert_funnel.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "calibration_platt_vs_isotonic.md",
+    "gerador": "scripts/evaluate_calibration_ext.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/triage_dataset.csv"
+    ],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_anomaly.md",
+    "gerador": "scripts/evaluate_anomaly.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_anomaly_ext.md",
+    "gerador": "scripts/evaluate_anomaly_ext.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_budget_baselines.md",
+    "gerador": "scripts/evaluate_budget_baselines.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_budget_effect.md",
+    "gerador": "scripts/evaluate_budget_effect.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_budget_sweep.md",
+    "gerador": "scripts/evaluate_budget_sweep.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_conformal.md",
+    "gerador": "scripts/evaluate_conformal.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/triage_dataset.csv",
+      "models/triage_context_lr.joblib"
+    ],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_convergence.md",
+    "gerador": "scripts/evaluate_convergence.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/_cache_volumes.csv",
+      "data/triage_dataset.csv",
+      "models/triage_context_lr.joblib"
+    ],
+    "em_falta": [
+      "data/_cache_volumes.csv"
+    ]
+  },
+  {
+    "doc": "evaluation_decomposition.md",
+    "gerador": "scripts/evaluate_decomposition.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_drift.md",
+    "gerador": "scripts/evaluate_drift.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/triage_dataset.csv"
+    ],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_endtoend_baselines.md",
+    "gerador": "scripts/evaluate_endtoend_baselines.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_event_taxonomy.md",
+    "gerador": "scripts/evaluate_event_taxonomy.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/triage_dataset.csv",
+      "models/event_taxonomy.json"
+    ],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_feedback.md",
+    "gerador": "scripts/analyse_feedback.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/alerts_history.jsonl",
+      "data/feedback.jsonl"
+    ],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_funil_seletividade.md",
+    "gerador": "scripts/evaluate_funil_seletividade.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_gate_selectivity.md",
+    "gerador": "scripts/evaluate_gate_selectivity.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_gate_selectivity_unicos.md",
+    "gerador": "scripts/evaluate_gate_selectivity.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_intelligence_guard.md",
+    "gerador": "scripts/evaluate_intelligence_guard.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_latency.md",
+    "gerador": "python",
+    "gerador_existe": false,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_live_transfer.md",
+    "gerador": "scripts/evaluate_live_transfer.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_narrator.md",
+    "gerador": "scripts/evaluate_narrator.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/narrator_harness_log.jsonl"
+    ],
+    "em_falta": [
+      "data/narrator_harness_log.jsonl"
+    ]
+  },
+  {
+    "doc": "evaluation_news_coverage.md",
+    "gerador": "python",
+    "gerador_existe": false,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_news_sources.md",
+    "gerador": "scripts/evaluate_news_sources.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_onnx_parity.md",
+    "gerador": "scripts/evaluate_onnx_parity.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_per_sector.md",
+    "gerador": "scripts/evaluate_per_sector.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_policy_sweep.md",
+    "gerador": "scripts/evaluate_policy_sweep.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/triage_dataset.csv"
+    ],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_precedent_independence.md",
+    "gerador": "scripts/evaluate_precedent_independence.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_ranking_producao.md",
+    "gerador": "scripts/evaluate_ranking_producao.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_relevance_filter.md",
+    "gerador": "scripts/evaluate_corpus_and_filter.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_results.md",
+    "gerador": "scripts/evaluate.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_retrieval_bm25.md",
+    "gerador": "scripts/evaluate_retrieval_bm25.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/kb_fnspid_sbert.jsonl"
+    ],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_retrieval_causal.md",
+    "gerador": "scripts/evaluate_retrieval_causal.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/kb_fnspid_sbert.jsonl"
+    ],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_retrieval_embedders.md",
+    "gerador": "scripts/evaluate_retrieval_embedders.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/finnhub_news.csv"
+    ],
+    "em_falta": [
+      "data/finnhub_news.csv"
+    ]
+  },
+  {
+    "doc": "evaluation_retrieval_fnspid.md",
+    "gerador": "scripts/evaluate_retrieval_fnspid.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/kb_fnspid_sbert.jsonl"
+    ],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_similarity_floor.md",
+    "gerador": "scripts/evaluate_similarity_floor.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_triage.md",
+    "gerador": "scripts/train_triage.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/triage_dataset.csv"
+    ],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_triage_ext.md",
+    "gerador": "scripts/train_triage_ext.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/triage_dataset_ext.csv"
+    ],
+    "em_falta": [
+      "data/triage_dataset_ext.csv"
+    ]
+  },
+  {
+    "doc": "evaluation_triage_fairtext.md",
+    "gerador": "scripts/evaluate_triage_fairtext.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/triage_dataset.csv"
+    ],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_triage_identity.md",
+    "gerador": "scripts/evaluate_triage_identity.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_triage_labelgrid.md",
+    "gerador": "scripts/evaluate_triage_labelgrid.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_triage_uncertainty.md",
+    "gerador": "scripts/evaluate_triage_uncertainty.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/triage_dataset.csv"
+    ],
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_triage_within.md",
+    "gerador": "scripts/evaluate_triage_within.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "funil_por_porta.md",
+    "gerador": "scripts/snapshot_funil.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "kb_fnspid_build.md",
+    "gerador": null,
+    "gerador_existe": false,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "live_monitoring.md",
+    "gerador": "scripts/post_validate.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/predictions_log.jsonl"
+    ],
+    "em_falta": []
+  },
+  {
+    "doc": "onnx_minilm_validation.md",
+    "gerador": null,
+    "gerador_existe": false,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "registo_decisoes_auditoria.md",
+    "gerador": "scripts/auditar_registo_decisoes.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "roadmap_rq4.md",
+    "gerador": null,
+    "gerador_existe": false,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "sensibilidade_headline.md",
+    "gerador": "scripts/check_headline_sensitivity.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
+    "doc": "triage_worked_example.md",
+    "gerador": "scripts/figures/fig_triage_worked.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  }
+]
