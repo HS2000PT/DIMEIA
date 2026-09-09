@@ -1,0 +1,84 @@
+{
+  "gerado_em": "2026-09-09T05:30:05+00:00",
+  "procedimento": "scripts/build_corpus_canonical.py",
+  "fonte": {
+    "repo": "Zihan1004/FNSPID",
+    "revisao": "bf9189c41527198897d1af3e17b1a0095279fc45",
+    "ficheiro": "Stock_news/nasdaq_exteral_data.csv",
+    "bytes_em_bruto": 23232979597,
+    "sha256_em_bruto": "1a7a3eb8e6b97ec19f286f2cfca3371542bddb272ab1eb8f36e33ad98fa5c4da",
+    "sha256_verificado_nesta_execucao": false
+  },
+  "parametros": {
+    "tickers": [
+      "AAPL",
+      "AMZN",
+      "BAC",
+      "CVX",
+      "GOOGL",
+      "JNJ",
+      "JPM",
+      "KO",
+      "META",
+      "MSFT",
+      "NVDA",
+      "PFE",
+      "TSLA",
+      "WMT",
+      "XOM"
+    ],
+    "inicio": "2018-01-01",
+    "fim": "2023-12-31",
+    "chunksize": 200000,
+    "early_stop": false
+  },
+  "resultado": {
+    "linhas": 79753,
+    "tickers_presentes": [
+      "AAPL",
+      "AMZN",
+      "BAC",
+      "CVX",
+      "GOOGL",
+      "JNJ",
+      "JPM",
+      "KO",
+      "MSFT",
+      "NVDA",
+      "PFE",
+      "TSLA",
+      "WMT",
+      "XOM"
+    ],
+    "data_min": "2018-01-01",
+    "data_max": "2023-12-16",
+    "linhas_por_ticker": {
+      "AAPL": 9338,
+      "AMZN": 5060,
+      "BAC": 742,
+      "CVX": 7416,
+      "GOOGL": 1754,
+      "JNJ": 977,
+      "JPM": 2883,
+      "KO": 5236,
+      "MSFT": 8737,
+      "NVDA": 10059,
+      "PFE": 932,
+      "TSLA": 10587,
+      "WMT": 8686,
+      "XOM": 7346
+    },
+    "sha256": "af61708c46ec8a0af10501ea48738e8b1a2cf2b6c61b2764547373b421d0197b"
+  },
+  "auditoria_varredura": {
+    "chunks": 78,
+    "linhas_varridas": 15549299,
+    "violacoes_ordenacao": 18,
+    "primeira_violacao": {
+      "chunk": 12,
+      "min_do_chunk": "A",
+      "maior_ja_visto": "WSO-B"
+    },
+    "varredura_completa": true
+  }
+}

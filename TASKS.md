@@ -143,9 +143,21 @@ Duas, ambas do nosso lado — **a origem não derivou**: o dataset Hugging Face
       e **filtrar** localmente, com varredura completa, as vezes que forem precisas.
       Novo procedimento: `scripts/build_corpus_canonical.py`.
       Medido: ~20 MB/s → **~20 min de descarga**, contra as 3,4 h estimadas para o *stream*.
-- [/] C1c.6 · **Construção canónica a correr** (destacada, `data/_canonical.log`).
-      Varredura completa, sem paragem antecipada, com auditoria de ordenação por chunk.
-      Saída: `data/fnspid_news_canonical.csv` + manifesto. Não toca na amostra versionada.
+- [x] C1c.5c · **FICHEIRO EM BRUTO OBTIDO E IDENTIFICADO.** `data/raw/nasdaq_exteral_data.csv`
+      — **23 232 979 597 bytes**, descarregado por `scripts/fetch_fnspid_raw.py` (Range,
+      resumível), da revisão fixada.
+      **`sha256 = 1a7a3eb8e6b97ec19f286f2cfca3371542bddb272ab1eb8f36e33ad98fa5c4da`**
+      Tamanho e soma estão agora **codificados em `build_corpus_canonical.py`**, que recusa
+      correr se o ficheiro em disco não for este — falha em vez de produzir outro corpus em
+      silêncio, que é o defeito original.
+      A partir daqui, filtrar por outros tickers ou outras janelas é uma operação **local**,
+      determinística, de minutos, e nunca mais depende da rede.
+- [x] C1c.6 · **CORPUS DA TESE REPRODUZIDO EXATAMENTE.** Varredura completa do bruto fixado,
+      sem paragem antecipada: **79 753 linhas, catorze tickers, 2018-01-01…2023-12-16**,
+      `sha256 af61708c…d0197b`. Bate com `docs/evaluation/kb_fnspid_build.md` (2026-07-05)
+      **ticker a ticker, catorze em catorze**. Fecho independente pelo lado da triagem:
+      28 574 + 17 710 + 32 649 (blocos de `evaluation_triage.md`) + 820 (embargo, §5.4) =
+      **79 753**. Auditoria completa em `docs/design/reproducao_corpus_2026-09-09.md`.
 
 > **Nota de método (custou três tentativas):** a ponte remove os `$` de comandos PowerShell
 > inline, e processos lançados por sessão morrem com ela. Regra: comandos PowerShell vão em
@@ -153,14 +165,85 @@ Duas, ambas do nosso lado — **a origem não derivou**: o dataset Hugging Face
 > `Start-Process`, com registo em ficheiro.
 > Ficheiros temporários a apagar no fim: `scripts/_ps_*.ps1`, `scripts/_probe_fnspid.bat`,
 > `scripts/_run_canonical.bat`, `data/_probe*.{csv,log}`, `data/_canonical.log`.
-- [ ] C1c.7 · Comparar o canónico com o atual (78 481) e com o publicado (79 753); explicar a
-      diferença com os dados na mão, não por hipótese
-- [ ] C1c.8 · Teste que falha se o manifesto mudar sem decisão explícita
+- [x] C1c.7a · **Consistência interna PROVADA entre os dois artefactos em disco.**
+      `fnspid_artigos_15tickers.csv.gz` tem 93 093 linhas, das quais **14 612 são duplicados
+      exactos**. Deduplicado dá **78 481** — e bate com `fnspid_news_subset.csv`
+      **ticker a ticker, delta zero nos quinze**. Os dois ficheiros são a mesma extração.
+- [x] C1c.7b · **A explicação escrita em `fnspid_corpus_local.md` está errada.** Atribui a
+      diferença 79 753 → 78 481 a «deduplicação ligeiramente diferente». A conta não fecha:
+      a META traz 432 linhas **novas** (entra como `FB` no FNSPID e só agora é normalizada),
+      logo os restantes catorze tickers caíram de 79 753 para **78 049** — **menos 1 704
+      linhas, 2,1%**, e não 1,6%. É uma hipótese não medida.
+- [x] C1c.7c · ~~Pista: a janela de datas não é a mesma.~~ **HIPÓTESE REFUTADA.** As duas
+      datas reconciliam-se: `2018-01-01` é feriado e `2023-12-16` é sábado, e o alinhamento
+      remete-os para a sessão seguinte — `2018-01-02` e `2023-12-18`. A Tabela 3.1 mostra
+      **dias de negociação depois do alinhamento**, não datas de notícia. Não falta nada; o
+      que falta é a legenda dizê-lo (ver E-nova.4).
+- [x] C1c.7d · **As três perguntas, respondidas com a varredura completa:**
+      **(1) Não.** Nada depois de 2023-12-16 — é o máximo do próprio FNSPID (o primeiro
+      registo do bruto é `2023-12-16 23:00:00 UTC`, ordenado por data descendente).
+      **(2) 79 753**, catorze tickers, antes de deduplicar.
+      **(3) 1 704** duplicados exactos `(ticker, data, título)` no canónico — 2,1%, não os
+      14 612 (15,7%) que o `.gz` exibia. Ver C1c.7e.
+- [x] C1c.7e · **A extração antiga (`.gz`) duplicava linhas, e está provado.** Das 93 093
+      linhas, **12 927 são repetições byte a byte da linha inteira** (mesmo `Url`, mesmo
+      `Publisher`, mesmo corpo). Prova aritmética: o bruto contém no máximo **9 616**
+      ocorrências de `,AAPL,` em **todos** os anos, e o `.gz` declara **9 811** linhas de
+      AAPL só em 2018–2023 — impossível a partir de uma leitura limpa. Causa provável (não
+      medida): retoma da descarga em fluxo a reprocessar um bloco já lido.
+      **Conteúdo perdido: nenhum.** Descontado um espaço final em 140 títulos, a concordância
+      entre o `.gz` e o canónico é **total** — diferença simétrica zero sobre 78 049 trios.
+- [ ] C1c.10 · **A política de duplicados nunca foi declarada — e a decisão real é o
+      contrário do que se supôs.** O corpus da tese **conserva** 1 704 títulos exactamente
+      repetidos (2,1%), tal como o FNSPID os entrega; não desduplica coisa nenhuma. Isso é
+      uma decisão de construção e a §3.2 não a menciona. Tem de passar a constar, com o
+      número — é do mesmo tipo das nove definições de rótulo que a §5.4 mede em vez de assumir.
+      Acompanha-a uma verificação de sensibilidade (ver B7): repetir a medição sobre os
+      **78 049** títulos únicos e reportar a diferença.
+- [x] C1c.8 · **`tests/test_corpus_canonico.py`** — sete testes, todos a passar. Fixa a
+      identidade do corpus em três níveis: origem (revisão + `sha256` do bruto), manifesto
+      versionado (linhas, `sha256`, datas, contagem por ticker) e ficheiro local (soma de
+      controlo e composição, saltado quando ausente). Inclui o fecho independente pelos
+      blocos da triagem e a proibição explícita da paragem antecipada. Mudar o corpus passa
+      a exigir mudar este teste — ou seja, uma decisão consciente.
 - [x] C1c.3 · **Confirmado: a triagem partilha o mesmo CSV.** O ficheiro congelado
       `evaluation_retrieval_fnspid.md` diz «79753 manchetes · 14 tickers», e §3.2 diz
       «79 753 exemplos, 14 empresas». **O mesmo problema atinge a QI3**, não só a QI2.
-- [ ] C1c.9 · Depois do canónico: recorrer QI2 **e** QI3 e atualizar os números publicados de
-      forma consistente — incluindo os «79 753» de §1.4, §3.2, §4.2.3, §5.4.1 e §6.1
+- [x] C1c.9 · ~~Recorrer QI2 e QI3 e atualizar os «79 753»~~ — **desnecessário: os números
+      publicados estão certos.** O corpus foi reproduzido exactamente, logo §1.4, §3.2,
+      §4.2.3, §5.4.1 e §6.1 ficam **como estão**. O que estava errado era o ficheiro em disco
+      a 2026-09-08, não a tese. Corpus de trabalho reposto a partir do canónico; o divergente
+      ficou em `data/_arquivo/fnspid_news_subset_divergente_2026-09-08.csv`.
+- [x] C1c.11 · **A KB foi reconstruída sobre o corpus reposto: 79 753 registos, «0 descartes»**
+      — igual ao build congelado de 2026-07-05. Embedder SBERT `all-MiniLM-L6-v2` (dim 384),
+      `HF_HUB_OFFLINE=1`, amostra versionada protegida por `--sample` descartável.
+- [x] C1c.12 · **Sem desvio mensurável.** `scripts/verificar_desvio_kb.py` compara a KB
+      reconstruída com os 50 registos congelados de `data/samples/kb_fnspid_sample.jsonl`:
+      **50/50 encontrados**; impactos +1d/+3d/+5d com `|delta|` máximo de **2,3e-07**;
+      embeddings SBERT com **cosseno 1,000000000** em todos. Os preços do yfinance não se
+      moveram de forma detetável para estes tickers e datas, e o embedder é estável entre
+      versões. Um rótulo só mudaria se estivesse a menos de 2e-07 do limiar.
+- [ ] C1c.13 · **Os preços não estão congelados.** O `build_kb.py` vai ao yfinance no momento
+      do build, e os fechos ajustados são reescritos retroativamente a cada dividendo ou
+      desdobramento. O corpus está fixado por `sha256`; os preços não estão fixados por nada.
+      Decidir: congelar `data/prices/*.csv` e registar um manifesto, como se fez para o bruto.
+- [x] C1c.14 · **CADEIA VERIFICADA DE PONTA A PONTA.** A QI2 recorrida sobre a KB reconstruída
+      devolve **P@5 = 0,595 ± 0,024**, acaso **0,333** — os dois valores exactamente iguais aos
+      publicados. Bruto (`sha256`) → corpus (`sha256`, 79 753) → KB (impactos a sete casas,
+      embeddings idênticos) → **resultado publicado**. Escrito para
+      `data/_arquivo/_qi2_verificacao.md`; o ficheiro congelado ficou intacto.
+      Acrescentado `--out` ao `evaluate_retrieval_fnspid.py` para que uma verificação nunca
+      mais tenha de arriscar escrever por cima do artefacto citado pela tese.
+      **Isto confirma o que ficou dito a 2026-09-08: o `0,604` não era variação de semente.**
+- [x] C1c.15 · **B1 recorrido sobre a KB correta — resultado válido, e mais modesto do que o
+      anterior.** SBERT **0,5946±0,0240** · BM25 **0,5214±0,0159** · acaso 0,3333 · recência
+      0,0900. Diferença emparelhada **+0,0733±0,0112**, positiva nas cinco repetições
+      (+0,0584 a +0,0920). Zero colocações com pontuação nula no BM25.
+      **Leitura honesta:** a margem do BM25 sobre o acaso é +0,1881 e a do SBERT +0,2613 — o
+      *baseline* lexical sozinho capta **72%** da vantagem que a tese atribui à representação
+      semântica. O ganho semântico é real e consistente, mas é o menor dos dois efeitos, e a
+      §5.3 tem de o dizer.
+      (A execução de 2026-09-08 dava +0,0798 e 70%; corria sobre o corpus errado.)
 
 #### O que NÃO era o problema
 

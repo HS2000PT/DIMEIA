@@ -62,6 +62,9 @@ def main() -> int:
     ap.add_argument("--k", type=int, default=5)
     ap.add_argument("--horizon", type=int, default=3)
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--out", default=None,
+                    help="destino do relatório; por omissão escreve por cima do "
+                         "ficheiro congelado docs/evaluation/evaluation_retrieval_fnspid.md")
     args = ap.parse_args()
 
     print(f"A carregar {args.kb} …")
@@ -132,7 +135,9 @@ def main() -> int:
     print(f"  P@{k}: SBERT {ps_m:.3f}±{ps_s:.3f} · random {pr_m:.3f} · recency {pc_m:.3f}")
     print(f"  dispersão impacto(+{args.horizon}d) {d_m:.3f} · consistência-direção {dc_m:.3f}")
 
-    out = REPO / "docs" / "evaluation" / "evaluation_retrieval_fnspid.md"
+    out = Path(args.out) if args.out else (
+        REPO / "docs" / "evaluation" / "evaluation_retrieval_fnspid.md")
+    out.parent.mkdir(parents=True, exist_ok=True)
     L = [
         "# evaluation_retrieval_fnspid.md — Recuperação em ESCALA (RQ2; corpus multi-ano FNSPID)",
         "",

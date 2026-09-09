@@ -86,6 +86,28 @@ neste trabalho os retornos e os rótulos são construídos alinhando os títulos
 obtidas separadamente. Do alinhamento resulta o conjunto de treino do modelo de triagem, com
 79\,753 exemplos.
 
+O ficheiro de origem é identificado pela revisão, e não pelo nome. O \gls{FNSPID} é distribuído
+num repositório cujo endereço por omissão aponta para o ramo principal, e um ramo é um ponteiro que
+se move: um conjunto de dados assim referido não é reproduzível por construção. O corpus deste
+trabalho parte do ficheiro \texttt{Stock\_news/nasdaq\_exteral\_data.csv} numa revisão fixa, com
+23,2\,GB e soma de controlo SHA-256 de prefixo \texttt{1a7a3eb8}; a filtragem é local e
+determinística, e o corpus que dela resulta tem prefixo \texttt{af61708c}. As somas completas, a
+contagem por empresa e a auditoria do procedimento constam de um manifesto versionado no
+repositório, e um teste automático recusa qualquer corpus que não seja este.
+
+Duas decisões de construção ficam declaradas por afetarem a leitura dos resultados. A primeira é
+que os títulos são conservados tal como o \gls{FNSPID} os entrega: o corpus contém 1\,704 títulos
+exatamente repetidos, 2,1\% do total, que não foram removidos. A segunda é que a filtragem percorre
+o ficheiro inteiro, em vez de parar quando julga ter passado os símbolos procurados; o ficheiro não
+está globalmente ordenado por símbolo, e uma paragem antecipada truncaria o corpus em silêncio.
+
+O conjunto cobre catorze das quinze empresas do mapa canónico. A ausente é a Meta, e a razão está
+no conjunto de dados e não no procedimento: o \gls{FNSPID} indexa a empresa pelo símbolo antigo
+\texttt{FB}, pelo que a seleção pelo símbolo atual não devolve registo nenhum. Os registos sob o
+símbolo antigo existem, mas resumem-se a 432 títulos distribuídos por 87 dias entre fevereiro e
+junho de 2020 --- quatro meses num intervalo de seis anos. A empresa consta, por isso, da avaliação
+da deteção, que assenta em preços, e não do conjunto de notícias.
+
 A avaliação do detetor de anomalias utiliza um conjunto distinto, composto por três anos de
 cotações diárias. A escolha de um conjunto próprio é deliberada: a avaliação exige variedade de
 volatilidade entre empresas, ao passo que a lista monitorizada em produção é uma decisão de
@@ -102,9 +124,10 @@ Tabela~\ref{tab:met_universos} os conjuntos de empresas, cujas contagens diferem
 descritas na coluna respetiva.
 
 \begin{table}[!htbp]
-\caption[Conjuntos de dados utilizados]{Conjuntos de dados utilizados no trabalho, com o intervalo
-temporal e a dimensão lidos dos ficheiros. As três últimas linhas correspondem ao sistema em
-funcionamento.}
+\caption[Conjuntos de dados utilizados]{Conjuntos de dados utilizados no trabalho. O intervalo do
+conjunto de treino da triagem refere-se a dias de negociação, depois do alinhamento: os títulos vão
+de 2018-01-01 a 2023-12-16, e as duas datas extremas --- um feriado e um sábado --- são remetidas
+para a sessão seguinte. As três últimas linhas correspondem ao sistema em funcionamento.}
 \label{tab:met_conjuntos}
 \centering
 \small
@@ -127,8 +150,8 @@ Registo de decisões de triagem & 2026-07-22 a 2026-08-20 & $36\,925$ decisões 
 \begin{table}[!htbp]
 \caption[Conjuntos de empresas]{Conjuntos de empresas utilizados. As contagens diferem porque cada
 conjunto serve um propósito distinto. Os conjuntos não são encaixados: a lista monitorizada em
-produção contém duas empresas ausentes de todos os conjuntos históricos e uma terceira que
-consta do mapa canónico mas não do conjunto de dados da triagem.}
+produção contém duas empresas ausentes de todos os conjuntos históricos, e o mapa canónico contém
+uma terceira --- a Meta --- que não chega ao conjunto de dados da triagem, pela razão dada acima.}
 \label{tab:met_universos}
 \centering
 \small

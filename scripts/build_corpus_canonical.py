@@ -48,24 +48,44 @@ FICHEIRO_NOTICIAS = "Stock_news/nasdaq_exteral_data.csv"
 REPO = Path(__file__).resolve().parents[1]
 
 
-def obter_ficheiro_bruto() -> Path:
-    """Descarrega (ou reutiliza da cache) o CSV de notícias, fixado na revisão declarada.
+#: Ficheiro em bruto, descarregado por `scripts/fetch_fnspid_raw.py`, e as suas duas
+#: identidades verificadas a 2026-09-09. Constam aqui para que o procedimento FALHE se o
+#: ficheiro em disco não for o esperado, em vez de produzir um corpus diferente em silêncio.
+BRUTO_PADRAO = REPO / "data" / "raw" / "nasdaq_exteral_data.csv"
+BRUTO_BYTES = 23_232_979_597
+BRUTO_SHA256 = "1a7a3eb8e6b97ec19f286f2cfca3371542bddb272ab1eb8f36e33ad98fa5c4da"
 
-    O `hf_hub_download` é resumível e a cache é endereçada por conteúdo, pelo que a identidade
-    do ficheiro é garantida pela revisão — não é preciso somar 23 GB para o confirmar.
+
+def obter_ficheiro_bruto(caminho: Path | None = None, verificar_sha: bool = False) -> Path:
+    """Devolve o CSV em bruto local, confirmando que é o ficheiro fixado.
+
+    ⚠️ Não usa `hf_hub_download`. A 2026-09-09 esse cliente ficou 39 minutos sem escrever um
+    único byte, sem erro e sem progresso observável. A descarga é feita por
+    `scripts/fetch_fnspid_raw.py`, que retoma por pedidos `Range` e regista o progresso.
+
+    A verificação de tamanho é imediata e apanha um ficheiro truncado, que é o modo de falha
+    real. A soma de controlo completa demora minutos sobre 23 GB e corre a pedido.
     """
-    from huggingface_hub import hf_hub_download
-
-    print(f"Fonte: {FNSPID_REPO} @ {FNSPID_REVISION}")
-    print(f"Ficheiro: {FICHEIRO_NOTICIAS} (~23,2 GB; resumível, cache local)")
-    caminho = hf_hub_download(
-        repo_id=FNSPID_REPO,
-        filename=FICHEIRO_NOTICIAS,
-        repo_type="dataset",
-        revision=FNSPID_REVISION,
-    )
-    p = Path(caminho)
-    print(f"  em disco: {p}  ({p.stat().st_size / 1e9:.2f} GB)")
+    p = Path(caminho) if caminho else BRUTO_PADRAO
+    if not p.exists():
+        raise SystemExit(
+            f"Ficheiro em bruto ausente: {p}\n"
+            f"Corre primeiro:  python -m scripts.fetch_fnspid_raw"
+        )
+    n = p.stat().st_size
+    print(f"Fonte:    {FNSPID_REPO} @ {FNSPID_REVISION}")
+    print(f"Em bruto: {p}  ({n / 1e9:.2f} GB)")
+    if n != BRUTO_BYTES:
+        raise SystemExit(
+            f"Tamanho inesperado: {n:,} != {BRUTO_BYTES:,}. "
+            "O ficheiro está truncado ou não é o da revisão fixada."
+        )
+    if verificar_sha:
+        print("A verificar sha256 (alguns minutos)…", flush=True)
+        obtido = sha256(p)
+        if obtido != BRUTO_SHA256:
+            raise SystemExit(f"sha256 não bate:\n  obtido   {obtido}\n  esperado {BRUTO_SHA256}")
+        print("  sha256 confere.")
     return p
 
 
@@ -140,13 +160,12 @@ def main() -> int:
     ap.add_argument("--chunksize", type=int, default=200_000)
     ap.add_argument("--out", default="data/fnspid_news_canonical.csv")
     ap.add_argument("--manifesto", default="docs/design/fnspid_corpus_manifest.json")
-    ap.add_argument("--so-descarregar", action="store_true")
+    ap.add_argument("--bruto", default=None, help="caminho do CSV em bruto (por omissão data/raw/)")
+    ap.add_argument("--verificar-sha", action="store_true",
+                    help="soma o sha256 dos 23 GB antes de filtrar (minutos)")
     args = ap.parse_args()
 
-    bruto = obter_ficheiro_bruto()
-    if args.so_descarregar:
-        print("Descarga concluída; filtragem não pedida.")
-        return 0
+    bruto = obter_ficheiro_bruto(args.bruto, verificar_sha=args.verificar_sha)
 
     print(f"A filtrar: {len(args.tickers)} tickers, {args.inicio}…{args.fim} (varredura completa)")
     df, auditoria = filtrar(bruto, args.tickers, args.inicio, args.fim, args.chunksize)
@@ -165,6 +184,8 @@ def main() -> int:
             "revisao": FNSPID_REVISION,
             "ficheiro": FICHEIRO_NOTICIAS,
             "bytes_em_bruto": bruto.stat().st_size,
+            "sha256_em_bruto": BRUTO_SHA256,
+            "sha256_verificado_nesta_execucao": bool(args.verificar_sha),
         },
         "parametros": {
             "tickers": sorted(t.upper() for t in args.tickers),
