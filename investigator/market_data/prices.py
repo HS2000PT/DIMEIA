@@ -23,6 +23,7 @@ tardio**. A deteção de anomalias trabalha sobre RETORNOS (não preços) — ve
 from __future__ import annotations
 
 from datetime import date, timedelta
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -278,15 +279,35 @@ def log_returns(close: pd.Series) -> pd.Series:
     return np.log(close / close.shift(1)).dropna()
 
 
-def load_close_series(tickers: list[str], start: str, end: str) -> dict[str, pd.Series]:
+def load_close_series(tickers: list[str], start: str, end: str, *,
+                      cache_dir: str | Path | None = None,
+                      refrescar: bool = False) -> dict[str, pd.Series]:
     """Fechos diários por ticker numa janela (para construir KBs/datasets), com fallback.
 
     Índice tz-naive e ordenado — pronto para `searchsorted` contra datas de notícias.
     Tickers sem dados em NENHUMA fonte são avisados e ignorados (best-effort). A maturação
     da KB viva corre em cima disto no Actions — sem o fallback ficava cega como o resto.
+
+    `cache_dir` fixa as séries em disco, com a fonte e a soma de controlo registadas num
+    manifesto (ver `price_cache`). Sem ele nada muda: a camada viva precisa de ir à rede, e
+    quem reconstrói um artefacto citado pela tese precisa exactamente do contrário.
+    `refrescar=True` ignora o que está guardado e reescreve.
     """
+    from . import price_cache
+
     prices: dict[str, pd.Series] = {}
     for ticker in tickers:
+        if cache_dir is not None and not refrescar:
+            guardada = price_cache.carregar(cache_dir, ticker, start, end)
+            if guardada is not None:
+                prices[ticker] = guardada
+                reg = price_cache.manifesto(cache_dir)["series"].get(
+                    price_cache.chave(ticker, start, end), {})
+                fonte_reg = reg.get("fonte", "cache")
+                _LAST_SOURCE[ticker.upper()] = fonte_reg
+                print(f"  [cache] {ticker}: {len(guardada)} dias ({fonte_reg})")
+                continue
+
         fonte = "yfinance"
         try:
             df = _yf_history(ticker, start=start, end=end)
@@ -299,7 +320,10 @@ def load_close_series(tickers: list[str], start: str, end: str) -> dict[str, pd.
         close = df["Close"].copy()
         idx = pd.to_datetime(close.index)
         close.index = idx.tz_localize(None) if idx.tz is not None else idx
-        prices[ticker] = close.sort_index()
+        close = close.sort_index()
+        prices[ticker] = close
         _LAST_SOURCE[ticker.upper()] = fonte
+        if cache_dir is not None:
+            price_cache.guardar(cache_dir, ticker, start, end, close, fonte)
         print(f"  [ok] {ticker}: {len(close)} dias ({fonte})")
     return prices

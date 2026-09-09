@@ -1,0 +1,120 @@
+{
+  "series": {
+    "AAPL_2018-01-01_2023-12-26": {
+      "ficheiro": "AAPL_2018-01-01_2023-12-26.csv",
+      "fonte": "yfinance",
+      "dias": 1505,
+      "primeiro": "2018-01-02",
+      "ultimo": "2023-12-22",
+      "sha256": "d93e2b322ce68ae23d593a9daa24cc21f630f5022db9759d54f78887c51e0eb3"
+    },
+    "AMZN_2018-01-01_2023-12-26": {
+      "ficheiro": "AMZN_2018-01-01_2023-12-26.csv",
+      "fonte": "yfinance",
+      "dias": 1505,
+      "primeiro": "2018-01-02",
+      "ultimo": "2023-12-22",
+      "sha256": "55a644233e9ea54017f6c6fbed294f9f3ad4dea49251e2a6bba20246d1be9f9d"
+    },
+    "BAC_2018-01-01_2023-12-26": {
+      "ficheiro": "BAC_2018-01-01_2023-12-26.csv",
+      "fonte": "yfinance",
+      "dias": 1505,
+      "primeiro": "2018-01-02",
+      "ultimo": "2023-12-22",
+      "sha256": "bf468aae04a70880748abeaa56b65d94f19b31b3c5496f32c525fcdec315f02f"
+    },
+    "CVX_2018-01-01_2023-12-26": {
+      "ficheiro": "CVX_2018-01-01_2023-12-26.csv",
+      "fonte": "yfinance",
+      "dias": 1505,
+      "primeiro": "2018-01-02",
+      "ultimo": "2023-12-22",
+      "sha256": "6f4afa830218f10a0d9f76edd7eed6afb6439ce59bbc038d4c2e90f969c4ff20"
+    },
+    "GOOGL_2018-01-01_2023-12-26": {
+      "ficheiro": "GOOGL_2018-01-01_2023-12-26.csv",
+      "fonte": "yfinance",
+      "dias": 1505,
+      "primeiro": "2018-01-02",
+      "ultimo": "2023-12-22",
+      "sha256": "78e587cd9db751b4650d9aa7218f190579e3f0010dc9e8c795f60fa96d835542"
+    },
+    "JNJ_2018-01-01_2023-12-26": {
+      "ficheiro": "JNJ_2018-01-01_2023-12-26.csv",
+      "fonte": "yfinance",
+      "dias": 1505,
+      "primeiro": "2018-01-02",
+      "ultimo": "2023-12-22",
+      "sha256": "11c5319ad19a0c8f57e883e8eed6d79ba953d7ac355175e9f0b8e2666f52492a"
+    },
+    "JPM_2018-01-01_2023-12-26": {
+      "ficheiro": "JPM_2018-01-01_2023-12-26.csv",
+      "fonte": "yfinance",
+      "dias": 1505,
+      "primeiro": "2018-01-02",
+      "ultimo": "2023-12-22",
+      "sha256": "b1bdefbb8d7e3e9ff9f288e7c853983a3fdb4f8c6634df834e9cd97f6b611f33"
+    },
+    "KO_2018-01-01_2023-12-26": {
+      "ficheiro": "KO_2018-01-01_2023-12-26.csv",
+      "fonte": "yfinance",
+      "dias": 1505,
+      "primeiro": "2018-01-02",
+      "ultimo": "2023-12-22",
+      "sha256": "91c15b1abdff972cf240e14fa37b805a79870e018a6c4458ad24f27f9ab497d9"
+    },
+    "MSFT_2018-01-01_2023-12-26": {
+      "ficheiro": "MSFT_2018-01-01_2023-12-26.csv",
+      "fonte": "yfinance",
+      "dias": 1505,
+      "primeiro": "2018-01-02",
+      "ultimo": "2023-12-22",
+      "sha256": "1d96d885bd765cc0fd615c1175be7ae12ac755813f6eb7433fc3a98388dd22b1"
+    },
+    "NVDA_2018-01-01_2023-12-26": {
+      "ficheiro": "NVDA_2018-01-01_2023-12-26.csv",
+      "fonte": "yfinance",
+      "dias": 1505,
+      "primeiro": "2018-01-02",
+      "ultimo": "2023-12-22",
+      "sha256": "6c35e8990d021ef8b8cdc026fec8061b1ba6847a1b52cc4352548ce6e01c1b79"
+    },
+    "PFE_2018-01-01_2023-12-26": {
+      "ficheiro": "PFE_2018-01-01_2023-12-26.csv",
+      "fonte": "yfinance",
+      "dias": 1505,
+      "primeiro": "2018-01-02",
+      "ultimo": "2023-12-22",
+      "sha256": "9266eff28457cac9b43b9ff6e24cb5c7811f5afb2aea2ebec6ec6a89c01e5fd9"
+    },
+    "TSLA_2018-01-01_2023-12-26": {
+      "ficheiro": "TSLA_2018-01-01_2023-12-26.csv",
+      "fonte": "yfinance",
+      "dias": 1505,
+      "primeiro": "2018-01-02",
+      "ultimo": "2023-12-22",
+      "sha256": "5e05e24b03b6e6bc5f6abff8a86e0ba828cb0f5364f8b59a49f3c4c66a489762"
+    },
+    "WMT_2018-01-01_2023-12-26": {
+      "ficheiro": "WMT_2018-01-01_2023-12-26.csv",
+      "fonte": "yfinance",
+      "dias": 1505,
+      "primeiro": "2018-01-02",
+      "ultimo": "2023-12-22",
+      "sha256": "eea57bea18aeddc38417e927fa810cdf5c3cb132a1a85884785ce0856c431565"
+    },
+    "XOM_2018-01-01_2023-12-26": {
+      "ficheiro": "XOM_2018-01-01_2023-12-26.csv",
+      "fonte": "yfinance",
+      "dias": 1505,
+      "primeiro": "2018-01-02",
+      "ultimo": "2023-12-22",
+      "sha256": "b3a125498048a424f1dd672815a3d672d3a1552350ccdc24c1dc394806f567de"
+    }
+  },
+  "janela": {
+    "inicio": "2018-01-01",
+    "fim": "2023-12-26"
+  }
+}

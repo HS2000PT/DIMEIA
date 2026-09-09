@@ -28,11 +28,17 @@ from investigator.historical_kb.embedder import HashingEmbedder
 from investigator.historical_kb.knowledge_base import HistoricalKB
 
 
-def load_prices(tickers: list[str], start: str, end: str) -> dict[str, pd.Series]:
-    """Preços de fecho diários por ticker — delega na camada de mercado do pacote."""
+def load_prices(tickers: list[str], start: str, end: str, *,
+                cache_dir=None, refrescar: bool = False) -> dict[str, pd.Series]:
+    """Preços de fecho diários por ticker — delega na camada de mercado do pacote.
+
+    Com `cache_dir`, as séries ficam fixadas em disco e a reconstrução deixa de depender da
+    rede. Isto importa aqui e não na camada viva: a KB histórica é um artefacto citado pela
+    tese, e um artefacto citado não pode mudar porque um dividendo reajustou o histórico.
+    """
     from investigator.market_data.prices import load_close_series
 
-    return load_close_series(tickers, start, end)
+    return load_close_series(tickers, start, end, cache_dir=cache_dir, refrescar=refrescar)
 
 
 def main() -> None:
@@ -44,6 +50,12 @@ def main() -> None:
     parser.add_argument("--sbert", action="store_true",
                         help="usa SBERT real (senão HashingEmbedder)")
     parser.add_argument("--dim", type=int, default=64, help="dimensão do HashingEmbedder")
+    parser.add_argument("--precos-cache", default="data/prices",
+                        help="pasta onde as séries de preços ficam fixadas (vazio desliga)")
+    parser.add_argument("--refrescar-precos", action="store_true",
+                        help="ignora a cache de preços e vai à rede outra vez")
+    parser.add_argument("--precos-manifesto", default="docs/design/precos_manifest.json",
+                        help="cópia versionada do manifesto da cache de preços")
     args = parser.parse_args()
 
     news = pd.read_csv(args.news)
@@ -54,8 +66,27 @@ def main() -> None:
     end = (news["date"].max() + pd.Timedelta(days=10)).strftime("%Y-%m-%d")  # margem p/ +5d
     print(f"Notícias: {len(news):,} | tickers: {tickers} | {start}…{end}")
 
-    print("A obter preços (yfinance)…")
-    prices = load_prices(tickers, start, end)
+    cache = Path(args.precos_cache) if args.precos_cache else None
+    if cache is None:
+        print("A obter preços (yfinance, SEM cache — a reconstrução não será determinística)…")
+    else:
+        print(f"A obter preços (cache em {cache})…")
+    prices = load_prices(tickers, start, end, cache_dir=cache,
+                         refrescar=args.refrescar_precos)
+
+    if cache is not None and args.precos_manifesto:
+        import json
+
+        from investigator.market_data import price_cache as _pc
+
+        man = _pc.manifesto(cache)
+        man["janela"] = {"inicio": start, "fim": end}
+        destino = Path(args.precos_manifesto)
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        destino.write_text(json.dumps(man, indent=2, ensure_ascii=False), encoding="utf-8")
+        fontes = sorted({r["fonte"] for r in man["series"].values()})
+        print(f"Manifesto dos preços em {destino} "
+              f"({len(man['series'])} séries, fontes: {', '.join(fontes) or 'nenhuma'}).")
 
     if args.sbert:
         from investigator.historical_kb.embedder import SbertEmbedder
