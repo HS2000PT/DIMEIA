@@ -466,6 +466,38 @@ ficheiro congelado citado pela tese.
       candidatos é outro: o bloco de teste tem **nove** empresas e o corpus completo tem
       catorze, o que sobe a taxa-base de setor de 0,333 para 0,629. As comparações que valem
       são as de dentro desta tabela, que são emparelhadas. Tem de constar do texto.
+- [x] C5-v1 · **PRIMEIRA TENTATIVA: colapso total da representação. Resultado descartado.**
+      Os dois braços treinaram (40 000 pares, 1 época, `lr=2e-5`, CoSENT) e a tabela parecia
+      um resultado nulo modesto — magnitude 2,156 pp contra 2,173 da base, direção 2,188.
+      **Não era um resultado nulo, era uma experiência partida**, e só se soube porque se foi
+      verificar se o modelo se tinha mexido:
+
+      | | cosseno entre manchetes DIFERENTES | norma do vetor médio |
+      |---|---:|---:|
+      | base | 0,2234 | 0,4732 |
+      | magnitude | **0,9929** | **0,9964** |
+      | direção | **0,9912** | **0,9956** |
+
+      Os modelos ajustados mapeiam **todas** as manchetes para praticamente o mesmo vetor. O
+      desvio por dimensão caiu dez vezes. Nenhum número dessa tabela vale nada.
+- [x] C5-v1b · **A causa: a amostragem de pares, e a culpa é do desenho, não do modelo.**
+      Sorteando dois índices ao acaso, a diferença de percentis é **triangular** — média `1/3`,
+      quase nada nos extremos — e o alvo `1 − |Δ|` fica agarrado a `0,665` (medido: média 0,665,
+      desvio 0,237). Com um alvo assim concentrado, a perda mínima obtém-se a prever a média
+      para tudo, e prever a média para tudo **é** colapsar a representação.
+- [x] C5-v1c · **Correcção: amostragem estratificada — e a primeira correcção também estava
+      errada.** Escrevi «sorteia um índice e soma-lhe `±d`, cortando a `[0,1]`». Falhou no
+      teste: `E[min(d, 1−p)] = 1/3` com `d` e `p` uniformes, ou seja **o corte devolvia
+      exactamente a triangular que se queria evitar**. A versão certa sorteia `d` primeiro e só
+      depois o ponto de partida dentro da margem que `d` admite, `p_a ~ U(0, 1−d)`, de forma
+      que `|Δ| = d` por construção. Sobre os dados reais: alvo médio **0,499**, desvio
+      **0,289** — a uniforme exacta.
+      Cinco testes novos, incluindo um que **documenta o defeito** (a triangular) para que não
+      volte, e um que compara as duas amostragens pela cauda dos pares dissemelhantes, que é o
+      que as distingue.
+- [/] C5-v2 · Retreino dos dois braços com estratificação e `lr=5e-6`. A correr.
+- [ ] C5-v2b · Repetir o diagnóstico de colapso **antes** de olhar para qualquer métrica. Regra
+      nova: nenhuma tabela da QI4 se lê sem o cosseno entre manchetes diferentes ao lado.
 - [ ] C4 · Braço de **controlo** — codificador de domínio + objetivo de semelhança que lhe falta.
       Despromovido de contribuição a controlo: o FinBERT2 (KDD 2025) já mostrou que resulta
 - [ ] C5 · Braço **principal** — ajuste contrastivo por materialidade comparável (`|impacto|`,

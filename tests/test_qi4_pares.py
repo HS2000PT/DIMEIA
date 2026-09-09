@@ -121,10 +121,18 @@ def test_mais_x_e_menos_x_sao_identicos_na_magnitude_e_opostos_na_direcao():
 
 
 def test_os_dois_bracos_produzem_alvos_diferentes_no_mesmo_quadro():
-    """Fecho ao nível do construtor: mesma semente, mesmos pares, alvos que têm de divergir."""
+    """Fecho ao nível do construtor: mesmos pares, alvos que têm de divergir.
+
+    Usa `estratificado=False` de propósito. Com estratificação a escolha dos pares **depende
+    dos valores**, logo os dois braços deixam de seleccionar os mesmos pares — o que é o
+    comportamento correcto, e não um defeito. Para comparar alvos sobre pares idênticos é
+    preciso a amostragem que ignora os valores.
+    """
     df = quadro()
-    a = P.construir_pares(df, coluna_retorno="abn_h3", arma="magnitude", n_pares=200, seed=7)
-    b = P.construir_pares(df, coluna_retorno="abn_h3", arma="direcao", n_pares=200, seed=7)
+    a = P.construir_pares(df, coluna_retorno="abn_h3", arma="magnitude", n_pares=200,
+                          seed=7, estratificado=False)
+    b = P.construir_pares(df, coluna_retorno="abn_h3", arma="direcao", n_pares=200,
+                          seed=7, estratificado=False)
     assert (a["texto_a"] == b["texto_a"]).all(), "os pares deviam ser os mesmos"
     assert not np.allclose(a["alvo"].to_numpy(), b["alvo"].to_numpy())
 
@@ -234,3 +242,82 @@ def test_recusa_um_braco_desconhecido():
     df = quadro(30)
     with pytest.raises(ValueError, match="arma"):
         P.construir_pares(df, coluna_retorno="abn_h3", arma="tendencia", n_pares=10, seed=1)
+
+
+# ── o colapso, e a amostragem que o evita ─────────────────────────────────────
+
+def test_a_amostragem_ao_acaso_concentra_o_alvo_no_meio():
+    """O defeito, documentado como teste: é isto que faz o codificador colapsar.
+
+    Sorteando dois índices ao acaso, a diferença de percentis é triangular — média 1/3, quase
+    nada nos extremos — e o alvo `1 − |Δ|` fica agarrado a 0,67. O modelo minimiza a perda a
+    prever a média para tudo, que é o mesmo que mapear todas as manchetes para o mesmo sítio.
+    Foi o que aconteceu no primeiro treino: o cosseno entre manchetes diferentes passou de
+    0,22 para 0,99.
+    """
+    df = quadro(300, semente=4)
+    p = P.construir_pares(df, coluna_retorno="abn_h3", arma="magnitude",
+                          n_pares=3000, seed=1, estratificado=False)
+    assert p["alvo"].mean() == pytest.approx(2 / 3, abs=0.05)
+    assert p["alvo"].std() < 0.26
+    nos_extremos = float(((p["alvo"] < 0.15) | (p["alvo"] > 0.95)).mean())
+    assert nos_extremos < 0.15, f"só {nos_extremos:.1%} de pares informativos"
+
+
+def test_a_amostragem_estratificada_cobre_o_intervalo_todo():
+    """A correcção: sorteia-se a distância pretendida e só depois se procura o par.
+
+    A comparação é contra a amostragem ao acaso, sobre o mesmo quadro e o mesmo número de
+    pares. Um limiar absoluto seria má ideia: com `|Δ|` uniforme a fracção de pares extremos
+    tem valor teórico exacto, e um teste posto em cima dele falha por ruído sem que nada esteja
+    errado.
+    """
+    df = quadro(300, semente=4)
+    acaso = P.construir_pares(df, coluna_retorno="abn_h3", arma="magnitude",
+                              n_pares=3000, seed=1, estratificado=False)
+    estrat = P.construir_pares(df, coluna_retorno="abn_h3", arma="magnitude",
+                               n_pares=3000, seed=1, estratificado=True)
+
+    assert estrat["alvo"].mean() == pytest.approx(0.5, abs=0.08)
+    assert estrat["alvo"].std() > acaso["alvo"].std()
+
+    # O que distingue as duas amostragens é a cauda dos pares MUITO DIFERENTES. Sob a
+    # triangular, P(alvo < 0,15) = (1 − 0,85)² ≈ 2%; sob a uniforme é 15%. Os pares muito
+    # PARECIDOS abundam nas duas, e por isso não servem de indicador.
+    def dissemelhantes(p):
+        return float((p["alvo"] < 0.15).mean())
+
+    assert dissemelhantes(acaso) < 0.05, "a triangular não devia produzir estes pares"
+    assert dissemelhantes(estrat) > 4 * dissemelhantes(acaso), (
+        f"estratificada {dissemelhantes(estrat):.1%} contra "
+        f"acaso {dissemelhantes(acaso):.1%}")
+
+
+def test_a_estratificada_mantem_as_garantias_todas():
+    df = pd.concat([quadro(200, "train", 1), quadro(200, "test", 2)], ignore_index=True)
+    p = P.construir_pares(df, coluna_retorno="abn_h3", arma="magnitude",
+                          n_pares=800, seed=3, blocos=("train",), estratificado=True)
+    assert set(p["split"]) == {"train"}
+    assert (p["ticker_a"] != p["ticker_b"]).all()
+    assert (p["texto_a"] != p["texto_b"]).all()
+    v = p["alvo"].to_numpy()
+    assert np.all((v >= 0.0) & (v <= 1.0))
+
+
+def test_a_estratificada_e_determinista():
+    df = quadro(200)
+    a = P.construir_pares(df, coluna_retorno="abn_h3", arma="magnitude",
+                          n_pares=400, seed=9, estratificado=True)
+    b = P.construir_pares(df, coluna_retorno="abn_h3", arma="magnitude",
+                          n_pares=400, seed=9, estratificado=True)
+    pd.testing.assert_frame_equal(a, b)
+
+
+def test_a_estratificada_e_o_comportamento_por_omissao():
+    """Quem não escolher, recebe a que não colapsa."""
+    df = quadro(200)
+    padrao = P.construir_pares(df, coluna_retorno="abn_h3", arma="magnitude",
+                               n_pares=400, seed=9)
+    estrat = P.construir_pares(df, coluna_retorno="abn_h3", arma="magnitude",
+                               n_pares=400, seed=9, estratificado=True)
+    pd.testing.assert_frame_equal(padrao, estrat)

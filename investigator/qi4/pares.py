@@ -105,8 +105,59 @@ def _amostrar_indices(n: int, quantos: int, tickers: np.ndarray,
     return np.concatenate(a_acc)[:quantos], np.concatenate(b_acc)[:quantos]
 
 
+def _amostrar_estratificado(percentis: np.ndarray, quantos: int, tickers: np.ndarray,
+                            rng: np.random.Generator) -> tuple[np.ndarray, np.ndarray]:
+    """Pares cujo alvo cobre `[0, 1]` de forma aproximadamente uniforme.
+
+    **Porque isto existe.** Amostrando índices ao acaso, a diferença de percentis entre dois
+    deles é triangular: média `1/3`, quase nada nos extremos. O alvo `1 − |Δ|` fica então
+    concentrado em `0,67`, e um codificador minimiza a perda a prever a média para tudo — que
+    é o mesmo que colapsar a representação. Foi exactamente o que aconteceu na primeira
+    tentativa: o cosseno entre manchetes diferentes subiu de `0,22` para `0,99`.
+
+    Aqui sorteia-se primeiro a **distância pretendida** `d ~ U(0,1)` e só depois se procuram
+    dois pares de percentis que a realizem. O treino passa a ver tanto pares muito parecidos
+    como muito diferentes, que é o que um objectivo de semelhança graduada precisa para ter
+    sinal.
+
+    ⚠️ **A primeira versão disto estava errada** e vale a pena registar porquê. Sorteava um
+    índice e somava-lhe `±d`, cortando o resultado a `[0, 1]`. Mas `E[min(d, 1 − p)] = 1/3`
+    quando `d` e `p` são uniformes: o corte devolvia a distribuição exactamente ao triângulo
+    que se queria evitar, e o alvo médio dava `0,67` outra vez. A correcção é sortear `d`
+    primeiro e só depois o ponto de partida **dentro da margem que `d` admite**, `p_a ~ U(0,
+    1 − d)`, de modo que `|Δ| = d` por construção e não por sorte.
+    """
+    ordem = np.argsort(percentis, kind="stable")
+    p_ord = percentis[ordem]
+    n = len(percentis)
+
+    d = rng.random(quantos)
+    p_a = rng.random(quantos) * (1.0 - d)
+    p_b = p_a + d
+    trocar = rng.random(quantos) < 0.5
+    p_a, p_b = np.where(trocar, p_b, p_a), np.where(trocar, p_a, p_b)
+
+    ia = ordem[np.clip(np.searchsorted(p_ord, p_a), 0, n - 1)]
+    pos_b = np.searchsorted(p_ord, p_b)
+
+    ib = np.empty(quantos, dtype="int64")
+    for k in range(quantos):
+        # janela crescente à volta da posição pretendida, até achar outra empresa
+        for raio in (0, 4, 16, 64, 256, n):
+            lo, hi = max(0, pos_b[k] - raio - 1), min(n, pos_b[k] + raio + 1)
+            cand = ordem[lo:hi]
+            ok = cand[(cand != ia[k]) & (tickers[cand] != tickers[ia[k]])]
+            if len(ok):
+                ib[k] = ok[np.argmin(np.abs(percentis[ok] - p_b[k]))]
+                break
+        else:  # pragma: no cover - só num bloco de uma só empresa
+            raise ValueError("bloco sem empresas suficientes para formar pares")
+    return ia, ib
+
+
 def construir_pares(df: pd.DataFrame, *, coluna_retorno: str, arma: str, n_pares: int,
                     seed: int, blocos: tuple[str, ...] = BLOCOS_PADRAO,
+                    estratificado: bool = True,
                     mapa: Callable[[np.ndarray], np.ndarray] | None = None) -> pd.DataFrame:
     """Pares `(texto_a, texto_b, alvo)` para ajustar o codificador.
 
@@ -136,7 +187,11 @@ def construir_pares(df: pd.DataFrame, *, coluna_retorno: str, arma: str, n_pares
     percentil = mapa if mapa is not None else mapa_percentil(valores)
 
     rng = np.random.default_rng(seed)
-    ia, ib = _amostrar_indices(len(sub), n_pares, sub["ticker"].to_numpy(), rng)
+    tickers = sub["ticker"].to_numpy()
+    if estratificado:
+        ia, ib = _amostrar_estratificado(percentil(valores), n_pares, tickers, rng)
+    else:
+        ia, ib = _amostrar_indices(len(sub), n_pares, tickers, rng)
 
     pa, pb = percentil(valores[ia]), percentil(valores[ib])
     return pd.DataFrame({
