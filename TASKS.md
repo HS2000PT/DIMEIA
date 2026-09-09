@@ -373,8 +373,39 @@ Reconstruir a KB sobrescreveu dois artefactos que não devia:
 Ambos revertidos com `git checkout`. **Regra a partir daqui:** `build_kb.py` corre sempre com
 `--sample` para um caminho descartável, e nenhuma avaliação nova escreve por cima de um
 ficheiro congelado citado pela tese.
-- [ ] C2 · Protocolo de construção de pares — declarado como decisão, com alternativas medidas
-- [ ] C3 · Teste anti-lookahead do construtor de pares (TDD, antes da lógica)
+- [x] C2 · **Protocolo de pares fixado e declarado.** `investigator/qi4/pares.py`.
+      Alvo de um par: `1 − |percentil(a) − percentil(b)|` sobre o retorno anormal ao horizonte
+      primário. O percentil, e não a diferença bruta, por duas razões declaradas: os retornos
+      têm cauda pesada e meio ponto percentual não significa o mesmo no meio e no extremo; e o
+      alvo fica em `[0,1]` por construção, que é o domínio da `CosineSimilarityLoss`, sem
+      escala arbitrária a justificar.
+      Pares **entre empresas diferentes**, para não ensinar o contrário do que a avaliação
+      exige; **dentro do mesmo bloco**; o **embargo nunca entra**.
+- [x] C3 · **Vinte testes, escritos antes da lógica.** `tests/test_qi4_pares.py`. Os três que
+      importam: nenhum par cruza fronteira de bloco; o embargo não entra; e **o mapa de
+      percentis é ajustado só no treino** — provado metendo valores absurdos no bloco de teste
+      e exigindo que os alvos do treino não mexam. É a fuga que nenhum teste de fronteiras
+      apanha, porque não há fronteira nenhuma a ser cruzada.
+- [x] C3b · **Um teste meu estava errado, e apanhou-me a mim.** Escrevi «inverter o sinal de
+      todos os retornos tem de mudar os alvos do braço de direção» — e falhou. Não era o
+      código: como o alvo assenta em **percentis**, uma inversão global só inverte a ordem, e
+      as diferenças de percentil ficam iguais. A inversão global **não** distingue os braços.
+      O que os distingue é um par concreto: para `+x` e `−x`, a magnitude dá alvo **1,0** e a
+      direção dá **0,1**. Está agora verificado à mão sobre `±1%…±5%`, com os dois percentis
+      calculados no papel. Sem esta correção, o teste teria dado uma falsa garantia sobre a
+      única comparação que **é** o resultado da QI4.
+- [ ] C3c · **PERGUNTA DE FUNDO, para decidir antes de treinar seja o que for.**
+      Se o codificador é ajustado para que a proximidade signifique grandeza comparável, então
+      os precedentes que ele devolve são aqueles cuja grandeza ele julga parecida com a do caso
+      novo — e mostrar os impactos deles é, na prática, uma estimativa de grandeza para o caso
+      novo. Isto roça a restrição fundadora («explicar sem prever»).
+      Duas respostas honestas, e a tese tem de escolher uma **em texto**, não por omissão:
+      (a) a restrição é sobre **direção**, e dizer «casos como este moveram-se isto» é uma
+      afirmação sobre o passado, não uma previsão do futuro;
+      (b) assumir que a QI4 **refina** a restrição em vez de a respeitar sem mais — a grandeza
+      é parcialmente aprendível do texto, a direção não é, e é isso que os dois braços medem.
+      A (b) é mais forte e é o que os resultados provavelmente sustentam, mas muda o
+      enquadramento do Cap. 1. **Não avanço para o Cap. 6 sem isto decidido.**
 - [ ] C4 · Braço de **controlo** — codificador de domínio + objetivo de semelhança que lhe falta.
       Despromovido de contribuição a controlo: o FinBERT2 (KDD 2025) já mostrou que resulta
 - [ ] C5 · Braço **principal** — ajuste contrastivo por materialidade comparável (`|impacto|`,
