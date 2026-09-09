@@ -175,7 +175,7 @@ Nenhum número publicado muda. O que falta é **declarar** o que sustenta esses 
 5. **Os preços não estão congelados.** O `load_prices` vai ao yfinance, que reajusta o
    histórico a cada dividendo. Ver a Secção 10.
 
-## 10. Ponto em aberto: os preços
+## 10. Os preços (ponto fechado na Secção 13)
 
 O corpus está fixado; os **preços não**. O `scripts/build_kb.py` obtém as séries por
 yfinance no momento do build, e os fechos ajustados são reescritos retroativamente sempre
@@ -228,3 +228,51 @@ margem que a tese atribui à representação semântica. O ganho do SBERT é rea
 mensurável, mas é o menor dos dois efeitos. Sem esta comparação, a §5.3 deixava em aberto a
 pergunta mais óbvia que um júri faz a um resultado de recuperação — e a resposta favorece menos a
 tese do que o silêncio deixava supor.
+
+## 13. Os preços, fixados — e um defeito que só um teste exigente apanhou
+
+O buraco era maior do que o reajuste dos dividendos. O `load_close_series` **não tinha cache
+nenhuma**: cada construção ia à rede. E por baixo tinha uma cadeia de cinco fontes — yfinance,
+Tiingo, Polygon, Stooq, Alpha Vantage. Se o yfinance falhasse num ticker, **outra servia, sem
+que isso aparecesse no resultado**. A mesma janela podia vir de fontes diferentes em execuções
+diferentes, e nada o denunciava.
+
+O que se fez, por TDD:
+
+- `investigator/market_data/price_cache.py` — cada série num CSV por `(ticker, janela)`, com
+  fonte, dimensão, extremos e `sha256` num manifesto ao lado;
+- `load_close_series` ganhou `cache_dir` e `refrescar`, **opcionais**: a camada viva tem de
+  continuar a ir à rede, e o comportamento sem eles fica exactamente como estava;
+- o `build_kb.py` usa a cache por omissão e publica `docs/design/precos_manifest.json`;
+- `tests/test_precos_manifesto.py` vigia o registo — incluindo um teste que **falha se alguma
+  série passar a vir de outra fonte**.
+
+### O defeito
+
+A primeira versão da cache **perdia dígitos**, e nenhum dos testes o via: o
+`assert_series_equal` compara com tolerância relativa de `1e-5` por omissão. Com
+`check_exact=True` e um caso escolhido à mão — `0,1 + 0,2`, que em dupla precisão vale
+`0,30000000000000004` — o `pandas` mostrou-se lossy **dos dois lados**: escrevia `0.3`, e mesmo
+depois de escrito com dezassete dígitos o leitor rápido devolvia `0.3`. Resolvido com
+`float_format="%.17g"` na escrita e `float_precision="round_trip"` na leitura.
+
+Uma cache que perde dígitos não fixa coisa nenhuma. O teste frouxo teria deixado passar
+exactamente aquilo que a cache existe para impedir — e é por isso que o caso está escrito com
+o valor à mão, e não com uma tolerância.
+
+## 14. O que fica por resolver: o corpus da avaliação preliminar
+
+`data/finnhub_news.csv` — as 3 714 manchetes sobre as quais assenta a §5.3.2, isto é, a
+Figura 5.6 e o resultado de recuperação que a tese apresenta **em primeiro lugar** — não está
+no disco, não está no histórico do git (`data/**` é ignorado) e não está no `archive/`.
+Sobrevivem apenas amostras: 30 linhas e 50 registos.
+
+A consequência é directa: **a Figura 5.6 não é reproduzível**, e `evaluation_results.md`, que a
+gerou, abre com «Resultados da avaliação (reprodutível)» — uma afirmação que hoje não se
+sustenta para este braço. A réplica à escala da §5.3.4, essa, é reproduzível de ponta a ponta,
+e ficou provada nesta sessão.
+
+**Não se escreve nada disto na tese enquanto não estiver esclarecido.** O
+`docs/evaluation/evaluation_triage.md` aponta para `C:\\Users\\henri\\Desktop\\DIMEIA\\…` — outro
+perfil de utilizador. O corpus pode estar nessa máquina ou numa cópia de segurança, e afirmar
+que não foi conservado seria afirmar o que não está verificado.

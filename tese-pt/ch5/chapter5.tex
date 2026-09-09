@@ -569,6 +569,21 @@ porque a composição por setores é distinta. Medida contra o valor de referên
 é de $+0{,}274$ no primeiro caso e de $+0{,}262$ no segundo. O resultado estabelece que o método não
 se degrada quando o corpus passa de recente e curto para seis anos, e não que melhore com mais dados.
 
+A escala permite ainda a comparação que o corpus preliminar não sustentava, e que é a primeira que
+um resultado de recuperação convida a fazer. A linha lexical da Figura~\ref{fig:av_recuperacao} é a
+sobreposição de palavras, que não pondera termos raros nem corrige o comprimento do título. Sobre o
+conjunto histórico, e no mesmo protocolo emparelhado, mediu-se em seu lugar o BM25
+\autocite{robertson2009bm25}, que é o método de referência da recuperação lexical: obtém $0{,}521$,
+contra $0{,}595$ do modelo semântico, com o acaso em $0{,}333$. A diferença emparelhada é de
+$+0{,}073$, positiva nas cinco repetições, e nenhuma consulta ficou com candidatos de pontuação nula.
+
+O número obriga a moderar a leitura. Medidas contra o acaso, a margem do BM25 é de $+0{,}188$ e a do
+modelo semântico de $+0{,}261$: a correspondência lexical, quando bem feita, capta cerca de três
+quartos da distância que separa o método do acaso. O ganho da representação semântica é real,
+consistente e mensurável, mas é o menor dos dois efeitos. Este resultado não estava na avaliação
+preliminar porque o comparador lexical aí usado é mais fraco, e a sua ausência deixava a vantagem
+semântica parecer maior do que é.
+
 O protocolo anterior concede uma liberdade que o sistema em produção não possui. A única restrição
 imposta é a de o candidato pertencer a outra empresa, o que permite que seja posterior à consulta, e
 esse caso é comum: no corpus recente, $38{,}7\%$ dos vizinhos devolvidos têm data posterior à da

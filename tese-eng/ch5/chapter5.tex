@@ -580,6 +580,21 @@ the margin is $+0.274$ in the first case and $+0.262$ in the second. The result 
 method does not degrade when the corpus goes from recent and short to six years, and not that it
 improves with more data.
 
+Scale also allows the comparison the preliminary corpus could not support, and which is the first
+one a retrieval result invites. The lexical line in Figure~\ref{fig:av_recuperacao} is word overlap,
+which neither weights rare terms nor corrects for headline length. Over the historical set, and
+under the same paired protocol, BM25 \autocite{robertson2009bm25} was measured in its place, as the
+reference method of lexical retrieval: it reaches $0.521$, against $0.595$ for the semantic model,
+with chance at $0.333$. The paired difference is $+0.073$, positive across all five repetitions, and
+no query was left with zero-scoring candidates.
+
+The figure forces a more moderate reading. Measured against chance, the margin of BM25 is $+0.188$
+and that of the semantic model $+0.261$: lexical matching, done well, captures about three quarters
+of the distance between the method and chance. The gain from semantic representation is real,
+consistent and measurable, but it is the smaller of the two effects. This result was absent from the
+preliminary evaluation because the lexical comparator used there is weaker, and its absence left the
+semantic advantage looking larger than it is.
+
 The previous protocol grants a freedom the system in production does not have. The only constraint
 imposed is that the candidate belong to another company, which allows it to be posterior to the
 query, and that case is common: in the recent corpus, $38.7\%$ of the neighbours returned are dated

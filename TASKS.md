@@ -223,10 +223,25 @@ Duas, ambas do nosso lado — **a origem não derivou**: o dataset Hugging Face
       embeddings SBERT com **cosseno 1,000000000** em todos. Os preços do yfinance não se
       moveram de forma detetável para estes tickers e datas, e o embedder é estável entre
       versões. Um rótulo só mudaria se estivesse a menos de 2e-07 do limiar.
-- [ ] C1c.13 · **Os preços não estão congelados.** O `build_kb.py` vai ao yfinance no momento
-      do build, e os fechos ajustados são reescritos retroativamente a cada dividendo ou
-      desdobramento. O corpus está fixado por `sha256`; os preços não estão fixados por nada.
-      Decidir: congelar `data/prices/*.csv` e registar um manifesto, como se fez para o bruto.
+- [x] C1c.13 · **Preços fixados, com proveniência registada.** Não havia cache nenhuma: cada
+      construção ia à rede, e por baixo estava uma cadeia de **cinco fontes** — se o yfinance
+      falhasse num ticker, outra servia **sem que isso aparecesse em lado nenhum**. Era um
+      buraco maior do que o reajuste retroativo dos dividendos.
+      Feito, por TDD (onze testes escritos antes da implementação):
+      `investigator/market_data/price_cache.py` grava cada série num CSV por
+      `(ticker, janela)` e regista fonte, dimensão, extremos e `sha256` num manifesto;
+      `load_close_series` ganhou `cache_dir` e `refrescar` — **opcionais**, para a camada viva
+      continuar a ir à rede; o `build_kb.py` passa a usar a cache por omissão e publica
+      `docs/design/precos_manifest.json` (versionado).
+      `tests/test_precos_manifesto.py` vigia a coerência do registo, incluindo um teste que
+      **falha se alguma série passar a vir de outra fonte**.
+- [x] C1c.13b · **A primeira versão da cache perdia dígitos, e foi um teste que a apanhou.**
+      O `assert_series_equal` compara com tolerância relativa de 1e-5 por omissão — deixava
+      passar exactamente o defeito. Com `check_exact=True` e um caso à mão (`0,1+0,2`, que em
+      dupla precisão vale `0,30000000000000004`), o `pandas` mostrou-se lossy **dos dois
+      lados**: escrevia `0.3` e, mesmo escrito com dezassete dígitos, o leitor rápido devolvia
+      `0.3`. Corrigido com `float_format="%.17g"` na escrita e `float_precision="round_trip"`
+      na leitura. **Uma cache que perde dígitos não fixa coisa nenhuma.**
 - [x] C1c.14 · **CADEIA VERIFICADA DE PONTA A PONTA.** A QI2 recorrida sobre a KB reconstruída
       devolve **P@5 = 0,595 ± 0,024**, acaso **0,333** — os dois valores exactamente iguais aos
       publicados. Bruto (`sha256`) → corpus (`sha256`, 79 753) → KB (impactos a sete casas,
@@ -253,8 +268,40 @@ Duas, ambas do nosso lado — **a origem não derivou**: o dataset Hugging Face
       de ordenação como razão. Legendas das Tabelas 3.1 e 3.2 corrigidas: as datas são dias de
       negociação depois do alinhamento, e a empresa em falta passa a ter nome.
       **Ambas compilam sem erro: PT 130 páginas, EN 126.**
-- [ ] C1c.17 · **§5.3 tem de acolher o BM25.** O resultado existe e é desfavorável à leitura
-      atual; deixá-lo fora do capítulo depois de medido seria pior do que nunca o ter medido.
+- [x] C1c.17 · **§5.3.4 acolheu o BM25, nas duas línguas.** Dois parágrafos: a medição
+      (0,521 contra 0,595, acaso 0,333, emparelhado +0,073 positivo nas cinco repetições) e a
+      leitura que ela obriga — o comparador lexical da Figura 5.6 é sobreposição de palavras,
+      mais fraco do que o BM25, e a sua ausência deixava a vantagem semântica parecer maior do
+      que é. Citação `robertson2009bm25`, já existente nas duas bibliografias.
+      **PT 130 páginas, EN 126, zero erros; as únicas advertências são formas de tipo de letra
+      que já lá estavam.**
+      Nota de método: o `chapter5.tex` usa CRLF e o `chapter3.tex` usa LF. Uma edição em modo
+      de texto reescreveria as 1 751 linhas do capítulo 5. Edições nos `.tex` fazem-se em
+      **modo binário**, com o terminador preservado.
+
+### C1e — ACHADO NOVO: o corpus da avaliação preliminar não existe
+
+- [ ] C1e.1 · **`data/finnhub_news.csv` não está em lado nenhum.** É o corpus das 3 714
+      manchetes sobre o qual assenta a §5.3.2 — a Figura 5.6, o resultado de recuperação que a
+      tese apresenta em primeiro lugar (MiniLM 0,514 · lexical 0,346 · acaso 0,240). Não está
+      no disco, não está no histórico do git (`data/**` é gitignored) e não está no `archive/`.
+      Só sobrevivem amostras: 30 linhas em `data/samples/finnhub_news_sample.csv` e 50 registos
+      em `kb_finnhub_sbert_sample.jsonl`.
+      **Consequência:** a Figura 5.6 não é reproduzível. E `evaluation_results.md`, que a
+      gerou, abre com «Resultados da avaliação (reprodutível)» — uma afirmação que hoje não se
+      sustenta para este braço.
+      Contraste: a réplica à escala da §5.3.4 **é** reproduzível de ponta a ponta, e ficou
+      provada hoje.
+- [ ] C1e.2 · **PERGUNTA PARA O HENRIQUE, antes de escrever seja o que for na tese.**
+      O `docs/evaluation/evaluation_triage.md` aponta para
+      `C:\Users\henri\Desktop\DIMEIA\data\triage_dataset.csv` — **outro perfil de utilizador**.
+      O corpus do Finnhub pode estar nessa máquina, ou numa cópia de segurança. Enquanto isso
+      não estiver esclarecido, **não se escreve na tese que o corpus não foi conservado**: era
+      afirmar o que não está verificado, e o teu próprio enunciado diz para assinalar em vez de
+      inventar.
+      Se aparecer: versioná-lo (ou a uma amostra) e fixá-lo por `sha256`, como se fez ao FNSPID.
+      Se não aparecer: declarar em §5.3.1 e §5.3.5, e ponderar dar mais peso narrativo à §5.3.4,
+      que é o braço que qualquer pessoa pode voltar a correr.
 
 #### O que NÃO era o problema
 
