@@ -85,6 +85,29 @@ prices, in this work returns and labels are constructed by aligning the headline
 series obtained separately. From the alignment comes the training set of the
 triage model, with 79{,}753 examples.
 
+The source file is identified by revision, not by name. \Gls{FNSPID} is distributed in a
+repository whose default address points at the main branch, and a branch is a pointer that moves:
+a dataset referred to that way is not reproducible by construction. The corpus in this work starts
+from the file \texttt{Stock\_news/nasdaq\_exteral\_data.csv} at a fixed revision, 23.2\,GB with
+SHA-256 checksum prefix \texttt{1a7a3eb8}; the filtering is local and deterministic, and the corpus
+it produces has prefix \texttt{af61708c}. The full checksums, the per-company counts and the audit
+of the procedure are recorded in a versioned manifest in the repository, and an automated test
+refuses any corpus that is not this one.
+
+Two construction decisions are declared here because they bear on how the results should be read.
+The first is that headlines are kept exactly as \gls{FNSPID} delivers them: the corpus contains
+1{,}704 exactly repeated headlines, 2.1\% of the total, which were not removed. The second is that
+the filtering scans the whole file rather than stopping when it believes it has passed the symbols
+being sought; the file is not globally sorted by symbol, and stopping early would truncate the
+corpus in silence.
+
+The set covers fourteen of the fifteen companies in the canonical map. The one missing is Meta, and
+the reason lies in the dataset rather than the procedure: \gls{FNSPID} indexes the company under its
+legacy symbol \texttt{FB}, so selecting by the current symbol returns no records at all. Records
+under the legacy symbol do exist, but they amount to 432 headlines spread over 87 days between
+February and June 2020 --- four months in a six-year span. The company therefore appears in the
+detection evaluation, which rests on prices, and not in the news dataset.
+
 The evaluation of the anomaly detector uses a distinct dataset, made up of three years of daily
 quotes. The choice of a separate set is deliberate: the evaluation requires variety of volatility
 across companies, whereas the list monitored in production is a product decision. Evaluating the
@@ -101,8 +124,10 @@ Table~\ref{tab:met_universos} the company sets, whose counts differ for reasons 
 respective column.
 
 \begin{table}[!htbp]
-\caption[Datasets used]{Datasets used in the work, with the time span and the size read from the
-files. The last three rows correspond to the system in operation.}
+\caption[Datasets used]{Datasets used in the work. The span of the triage training set refers to
+trading days, after alignment: the headlines run from 2018-01-01 to 2023-12-16, and the two extreme
+dates --- a holiday and a Saturday --- are carried forward to the following session. The last three
+rows correspond to the system in operation.}
 \label{tab:met_conjuntos}
 \centering
 \small
@@ -125,8 +150,8 @@ Triage decision log & 2026-07-22 to 2026-08-20 & $36{,}925$ decisions \\
 \begin{table}[!htbp]
 \caption[Company sets]{Company sets used. The counts differ because each set serves a distinct
 purpose. The sets are not nested: the list monitored in production contains two companies absent
-from every historical set and a third that appears in the canonical map but not in the triage
-dataset.}
+from every historical set, and the canonical map contains a third --- Meta --- that does not reach
+the triage dataset, for the reason given above.}
 \label{tab:met_universos}
 \centering
 \small

@@ -178,7 +178,7 @@ Duas, ambas do nosso lado — **a origem não derivou**: o dataset Hugging Face
       datas reconciliam-se: `2018-01-01` é feriado e `2023-12-16` é sábado, e o alinhamento
       remete-os para a sessão seguinte — `2018-01-02` e `2023-12-18`. A Tabela 3.1 mostra
       **dias de negociação depois do alinhamento**, não datas de notícia. Não falta nada; o
-      que falta é a legenda dizê-lo (ver E-nova.4).
+      que faltava era a legenda dizê-lo — **corrigido em C1c.16**.
 - [x] C1c.7d · **As três perguntas, respondidas com a varredura completa:**
       **(1) Não.** Nada depois de 2023-12-16 — é o máximo do próprio FNSPID (o primeiro
       registo do bruto é `2023-12-16 23:00:00 UTC`, ordenado por data descendente).
@@ -244,6 +244,17 @@ Duas, ambas do nosso lado — **a origem não derivou**: o dataset Hugging Face
       semântica. O ganho semântico é real e consistente, mas é o menor dos dois efeitos, e a
       §5.3 tem de o dizer.
       (A execução de 2026-09-08 dava +0,0798 e 70%; corria sobre o corpus errado.)
+- [x] C1c.16 · **§3.2 escrita, nas duas línguas.** Quatro declarações que faltavam entraram em
+      `tese-pt/ch3` e `tese-eng/ch3`: (a) a origem fixada por revisão e `sha256`, com o
+      manifesto e o teste que a guarda; (b) a política de duplicados — 1 704 repetições
+      exactas (2,1%) **conservadas** tal como o FNSPID as entrega; (c) porque são catorze
+      empresas e não quinze — o FNSPID indexa a Meta como `FB`, e isso são 432 títulos em 87
+      dias entre fevereiro e junho de 2020; (d) a varredura completa, com as dezoito violações
+      de ordenação como razão. Legendas das Tabelas 3.1 e 3.2 corrigidas: as datas são dias de
+      negociação depois do alinhamento, e a empresa em falta passa a ter nome.
+      **Ambas compilam sem erro: PT 130 páginas, EN 126.**
+- [ ] C1c.17 · **§5.3 tem de acolher o BM25.** O resultado existe e é desfavorável à leitura
+      atual; deixá-lo fora do capítulo depois de medido seria pior do que nunca o ter medido.
 
 #### O que NÃO era o problema
 
