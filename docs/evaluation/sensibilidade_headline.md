@@ -3,8 +3,8 @@
 > **Gerado por** `scripts/check_headline_sensitivity.py`. Não editar à mão.
 > **Fonte:** `models/triage_context_lr.joblib` (sha256 `2432e44e95417222…`), o artefacto congelado do
 > modelo implantado. Não usa registos de produção nem dados novos.
-> **Gerado a:** 2026-09-03 23:01 UTC ·
-> **scikit-learn:** 1.8.0. O artefacto foi gravado com a versão do venv do projeto; se a
+> **Gerado a:** 2026-09-10 19:32 UTC ·
+> **scikit-learn:** 1.9.0. O artefacto foi gravado com a versão do venv do projeto; se a
 > versão acima for outra, regerar antes de citar qualquer número deste ficheiro.
 
 ## A pergunta

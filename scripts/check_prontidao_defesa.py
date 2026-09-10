@@ -28,6 +28,17 @@ import shutil
 import sys
 import warnings
 
+# ⚠️ ESTE VERIFICADOR NÃO CORRIA DE TODO NUMA CONSOLA WINDOWS, e a razão é a mesma que a sessão 57
+# documentou no `check_all_gates.py`: o primeiro `print` de um cabeçalho com `─` levanta
+# UnicodeEncodeError em `cp1252` e o script morre **antes de verificar seja o que for**. Sobreviveu
+# aqui porque este é um dos verificadores que a porta omnibus não invoca, logo nunca corria numa
+# sessão normal e a sua morte nunca aparecia. Apanhado a 2026-09-10 a correr os seis de fora.
+for _fluxo in (sys.stdout, sys.stderr):
+    try:
+        _fluxo.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):  # fluxo redirecionado que não suporta reconfigure
+        pass
+
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
 
@@ -53,7 +64,10 @@ CHAVES = [
 
 DOCUMENTOS = [
     ("tese-pt/main.pdf", "CRÍTICO"),
-    ("slides/guia_estudo/main.pdf", "AVISO"),
+    # ⚠️ O caminho era `slides/guia_estudo/main.pdf` e a reorganização da sessão 68 moveu o guia
+    # para `tese-pt/guia/`. Este verificador acusava-o «em falta» e ninguém o via, porque a porta
+    # omnibus não o invoca. Corrigido a 2026-09-10, ao correr os seis que ficam de fora.
+    ("tese-pt/guia/main.pdf", "AVISO"),
     ("docs/defence/guiao_de_defesa.md", "AVISO"),
     ("docs/defence/DEFENSE_QA.md", "AVISO"),
     ("archive/streamlit-app/quiz/index.html", "AVISO"),

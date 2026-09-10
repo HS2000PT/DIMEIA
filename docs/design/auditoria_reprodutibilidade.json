@@ -19,14 +19,18 @@
     "doc": "evaluation_anomaly.md",
     "gerador": "scripts/evaluate_anomaly.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/samples/precos_qi1"
+    ],
     "em_falta": []
   },
   {
     "doc": "evaluation_anomaly_ext.md",
     "gerador": "scripts/evaluate_anomaly_ext.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/samples/precos_qi1"
+    ],
     "em_falta": []
   },
   {
@@ -198,6 +202,13 @@
     "em_falta": []
   },
   {
+    "doc": "evaluation_per_sector_composicao.md",
+    "gerador": "scripts/evaluate_per_sector.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
     "doc": "evaluation_policy_sweep.md",
     "gerador": "scripts/evaluate_policy_sweep.py",
     "gerador_existe": true,
@@ -235,6 +246,13 @@
     "em_falta": []
   },
   {
+    "doc": "evaluation_results_composicao.md",
+    "gerador": "scripts/evaluate.py",
+    "gerador_existe": true,
+    "entradas": [],
+    "em_falta": []
+  },
+  {
     "doc": "evaluation_retrieval_bm25.md",
     "gerador": "scripts/evaluate_retrieval_bm25.py",
     "gerador_existe": true,
@@ -259,9 +277,16 @@
     "entradas": [
       "data/finnhub_news.csv"
     ],
-    "em_falta": [
+    "em_falta": []
+  },
+  {
+    "doc": "evaluation_retrieval_embedders_composicao.md",
+    "gerador": "scripts/evaluate_retrieval_embedders.py",
+    "gerador_existe": true,
+    "entradas": [
       "data/finnhub_news.csv"
-    ]
+    ],
+    "em_falta": []
   },
   {
     "doc": "evaluation_retrieval_fnspid.md",

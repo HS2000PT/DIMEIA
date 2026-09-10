@@ -101,6 +101,40 @@
   tese desmente vinte páginas antes. O **D11** já está coberto e melhor: o `ch3:882` declara a
   fronteira como **de desenho** e não de direito aplicável, e escrever «não constitui prestação de
   serviço» seria uma **afirmação jurídica sem fonte** — o que a sessão 61 recusou por princípio.
+  **⚠️ (L) SEIS VERIFICADORES EXISTIAM SEM SEREM INVOCADOS POR PORTA NENHUMA, E UM DELES ESTAVA
+  MORTO.** O `check_entrega` invoca dezanove dos vinte e seis. Corridos os seis de fora: três
+  verdes, e o **`check_prontidao_defesa.py` não corria de todo** — `UnicodeEncodeError` no primeiro
+  cabeçalho, porque imprime `─` e a consola é `cp1252`. É o defeito **exacto** que a sessão 57
+  corrigiu no `check_all_gates.py`, com o comentário já escrito lá: «uma porta que rebenta antes de
+  verificar seja o que for é pior do que não existir». Sobreviveu por não ser invocado, logo a sua
+  morte nunca aparecia.
+  **✅ E CORRIGI-LO ENCONTROU DUAS COISAS REAIS QUE ESTAVAM INVISÍVEIS.** (1) **Três falhas
+  CRÍTICAS:** os três registos do `data/_demo_cache/` em falta, ou seja **a demonstração offline do
+  dia da defesa não corria nesta máquina**. Preparado a correr o `demo_defesa.py`, que os
+  descarrega do ramo público — e a listagem confirma o sistema **vivo hoje**: 9 048 decisões e 5
+  alertas a 2026-09-10. (2) **O caminho do guia estava velho** — procurava `slides/guia_estudo/` e a
+  reorganização da sessão 68 moveu-o para `tese-pt/guia/`. O verificador acusava-o «em falta» e
+  ninguém o via. Agora sai a **0, sem uma falha crítica**.
+  **✅ (M) O `check_references` PASSA A SER INVOCADO — 19 → 20 verificadores.** Existia desde a
+  sessão 56 e nenhuma porta o corria, apesar de fazer **o que o compilador não faz**: emparelha cada
+  `\ref` com o que o `\label` rotula e compara o tipo (`Figura~\ref{tab:x}` compila limpo e está
+  errado), e acusa flutuantes que nenhuma frase invoca. Verde: **357 referências, 150 labels, 0
+  incompatibilidades, 0 flutuantes órfãos**.
+  **⚠️ E OS OUTROS CINCO FICAM FORA, com a razão escrita para não se voltar a discutir:** quatro
+  **escrevem ficheiros**, e uma porta que regenera um artefacto a cada corrida é a classe que a
+  sessão 57 documentou duas vezes (um artefacto regenerado com outros argumentos é indistinguível
+  de um correcto, e apagou 23 linhas de evidência sem um único erro); o `check_links_vivos` precisa
+  de **rede**, e uma porta que falha por falta de rede lê-se como defeito do documento; e o de
+  prontidão verifica a **máquina** e não a entrega — numa máquina sem `.env` falharia por razão
+  alheia ao documento. Fica como **comando do dia da defesa**.
+  **⚠️ (N) E UMA CORRECÇÃO A MIM PRÓPRIO, a mais enganadora das três de método.** Escrevi que o
+  `exit 1` da porta «era a pendência humana». **Não era** — eram as três falhas reais que eu não
+  tinha visto por filtrar a saída. A porta distingue os dois casos e sai a **0** com a pendência
+  humana declarada. **Expliquei uma porta vermelha por uma causa benigna**, que é pior do que não a
+  ter corrido.
+  **⚠️ (O) A ARMADILHA DO HEREDOC MORDEU PELA QUARTA VEZ, E A REGRA ESTAVA DEMASIADO ESTREITA.** O projecto tinha escrito «não gerar **LaTeX** por heredoc». Hoje o que se estava a escrever era **Markdown** — a própria nota deste ficheiro — e a cadeia continha `\\ref`: chegou ao Python como `\ref`, e o Python lê `\r` como **CARRIAGE RETURN**. Ficou `<CR>ef` dentro do `CLAUDE.md` e do `AGENTS.md`, duas vezes em cada, num dia em que eu já tinha escrito três vezes que isto acontece.
+  **⚠️ E O AVISO ESTAVA À FRENTE:** `SyntaxWarning: invalid escape sequence '\l'`, do `\label` da mesma cadeia. **Um aviso de escape numa cadeia que também contém `\r` é sinal de que o `\r` colapsou** — a diferença é que o `\l` fica literal e **o `\r` é destrutivo**. Reparado **em bytes**, porque a tradução universal de mudanças de linha do Python converte o CR em `\n` antes de o ver e volta a mangá-lo no round-trip, que é como esta classe se escondeu nas sessões 56 e 61.
+  **A REGRA AFINADA, e passa a ser esta:** não gerar por heredoc **nenhuma cadeia que contenha uma barra invertida** — LaTeX, Markdown, padrões, mensagens. Ficheiro à parte com a ferramenta de ficheiro, ou `chr(92)`. E **verificar em bytes**, não por leitura de texto.
   **⏭️ A CONCLUSÃO OPERACIONAL: o `PLANO_REESCRITA_EXECUCAO.md` não é executável a partir da
   lista.** Foi escrito contra um documento que as sessões 63 a 67 já corrigiram. **O que resta da
   reescrita tem de ser rederivado do documento actual**, e o critério que funciona está escrito:
@@ -221,7 +255,7 @@
   invocam. Benefício de arrumação, custo de risco. **Depois da defesa.**
   **✅ BUNDLE PÚBLICO:** passa a excluir `archive/` inteiro e `docs/contexto/`; 755 copiados,
   **190 internos excluídos**, scan de segredos limpo.
-  **PORTAS: 1174 testes · `ruff` limpo · `check_entrega` verde nos 23 verificadores · as duas
+  **PORTAS: 1174 testes · `ruff` limpo · `check_entrega` verde nos 20 verificadores · as duas
   árvores a 0 erros · nenhum `.tex` tocado.** Pendência única e humana: os nomes do júri.
 - **2026-09-10 — Autor autorizou aplicação do logo e DEPLOY no Heroku.**
   Nova versão web 10.0: logo aprovado empilhado em `web/assets/logo.svg`, imagem WebP

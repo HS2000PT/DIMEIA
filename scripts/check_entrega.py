@@ -42,6 +42,12 @@ VERIFICADORES = [
     # origem, ou uma justificação escrita.
     ("todo o número tem origem", "auditar_numeros.py", []),
     ("escapes de LaTeX comidos", "check_tex_escapes.py", []),
+    # ⚠️ ESTE EXISTIA DESDE A SESSÃO 56 E NENHUMA PORTA O INVOCAVA. Faz o que o **compilador não
+    # faz**: emparelha cada `\ref` com o que o `\label` realmente rotula e compara o tipo com a
+    # palavra que o introduz — `Figura~\ref{tab:x}` compila limpo e está errado — e acusa os
+    # flutuantes que nenhuma frase invoca, que também compilam sem um único aviso. Um verificador
+    # que ninguém corre é garantia perdida, e este era um dos seis que ficavam de fora.
+    ("referências: tipo e flutuantes órfãos", "check_references.py", []),
     ("apêndice: cada número onde diz estar", "check_apendice_xref.py", []),
     ("materiais de estudo alinhados", "check_materiais.py", []),
     # ⚠️ A METADE CEGA DO DE CIMA. Ele compara VALORES decimais, logo nao ve nem os
