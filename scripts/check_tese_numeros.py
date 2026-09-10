@@ -123,7 +123,10 @@ MANIFESTO: list[tuple[str, str, str]] = [
     # do valor de uma empresa isolada. E a escolha mais defensavel: um R2 individual e uma
     # anedota, a mediana e um resumo. O numero continua a existir na fonte; deixou de ser
     # afirmado, e o que este verificador guarda sao as afirmacoes.
-    ("0.460", "evaluation_decomposition.md", "R2 mediano sobre a watchlist"),
+    ("0.460", "evaluation_decomposition.md",
+     # ⚠️ SOBRE OS 17 DE `SECTOR_OF`, e nao sobre os 12 da lista vigiada. A etiqueta
+     # dizia «watchlist» por heranca do cabecalho do artefacto, corrigido a 2026-09-10.
+     "R2 mediano sobre as 17 empresas do mapa de setores"),
     ("0.487", "evaluation_decomposition.md", "quota especifica mediana"),
     # producao
     # efeito da alteracao de politica: o orcamento diario. O controlo (mercado) fica de

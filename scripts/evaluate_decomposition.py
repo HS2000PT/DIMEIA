@@ -1,4 +1,11 @@
-"""A decomposicao de um movimento, medida sobre a watchlist implantada.
+"""A decomposicao de um movimento, medida sobre o mapa de setores alargado.
+
+⚠️ A POPULACAO SAO OS 17 DE `SECTOR_OF`, e nao os 12 da lista vigiada. Este ficheiro
+dizia «a watchlist implantada» e a seccao 2 do relatorio chamava-se «A watchlist toda»,
+enquanto o `main()` percorre `sorted(SECTOR_OF)`. A designacao errada propagou-se para
+dois sitios do Capitulo 4 e para a etiqueta da porta dos numeros: a mediana de 0,460 era
+atribuida a doze empresas e e' medida sobre dezassete. Corrigido a 2026-09-10 na raiz,
+para uma regeneracao nao reintroduzir o erro.
 
 Responde a segunda das tres perguntas do trabalho: *foi a empresa, ou foi o mercado?*
 Produz (a) um exemplo trabalhado com todos os passos intermedios, para a tese, e (b) a
@@ -8,7 +15,16 @@ resposta e "foi o mercado".
 Corre com:
     python scripts/evaluate_decomposition.py
 
-Escreve `docs/evaluation/evaluation_decomposition.md`. Nao toca em nada congelado.
+Escreve `docs/evaluation/evaluation_decomposition.md`, que a dissertacao CITA.
+
+⚠️ ESTE FICHEIRO E' CONGELADO NA PRATICA, e o docstring dizia o contrario ate 2026-09-10
+(«Nao toca em nada congelado»). A §5.5 cita dele a mediana `0,460`, a quota mediana `0,487`
+e o caso trabalhado da AMD. Uma corrida sem `--out` substitui os tres.
+
+⚠️ E A CORRIDA NAO E' REPRODUTIVEL: o caso trabalhado e' o maior movimento do DIA em que o
+script corre, sobre precos buscados ao vivo. Regenerar muda o exemplo -- verificado, passou
+de AMD `+6,2944%` a META `+6,3486%` -- e obriga a propagar para a §5.5. Usar `--out` para
+qualquer verificacao, e regenerar so' com intencao.
 """
 
 from __future__ import annotations
@@ -61,6 +77,18 @@ def carregar(tickers: list[str], dias: int = 120) -> dict[str, np.ndarray]:
 
 
 def main() -> int:
+    import argparse
+
+    ap = argparse.ArgumentParser(description="Decomposicao de um movimento.")
+    # ⚠️ O DEFAULT E' O CAMINHO CONGELADO, de proposito: mudar o default mudaria o
+    # comportamento de quem regenera legitimamente. O que faltava era a POSSIBILIDADE de
+    # nao o escrever, e era essa ausencia que tornava impossivel seguir a regra do brief.
+    ap.add_argument("--out", default=str(SAIDA),
+                    help="destino do relatorio; usar um caminho fora de docs/ para "
+                         "qualquer verificacao, para nao substituir o artefacto citado")
+    args = ap.parse_args()
+    saida = pathlib.Path(args.out)
+
     tickers = sorted(SECTOR_OF)
     etfs = sorted({e for e in (sector_etf(t) for t in tickers) if e})
     print(f"A carregar {len(tickers)} tickers + mercado + {len(etfs)} setores...")
@@ -99,8 +127,8 @@ def main() -> int:
     for _, _, dd in linhas:
         motores[dd.driver] = motores.get(dd.driver, 0) + 1
 
-    SAIDA.parent.mkdir(parents=True, exist_ok=True)
-    with SAIDA.open("w", encoding="utf-8") as f:
+    saida.parent.mkdir(parents=True, exist_ok=True)
+    with saida.open("w", encoding="utf-8") as f:
         w = f.write
         w("# Decomposicao de um movimento: mercado, setor, empresa\n\n")
         w("> Gerado por `scripts/evaluate_decomposition.py`. Nao editar a mao.\n")
@@ -136,7 +164,7 @@ def main() -> int:
         w("A soma fecha por construcao: o alfa e o residuo do dia entram na componente da\n")
         w("empresa, que e por definicao o que mercado e setor nao explicam.\n\n")
 
-        w("## 2. A watchlist toda, no mesmo dia\n\n")
+        w("## 2. As dezassete empresas do mapa de setores, no mesmo dia\n\n")
         w("| Ticker | Setor | Total | Mercado | Setor | Empresa | Motor | beta_m |\n")
         w("|---|---|---|---|---|---|---|---|\n")
         for tk, e, dd in linhas:
@@ -171,7 +199,7 @@ def main() -> int:
         w("decomposicao produz respostas diferentes para empresas diferentes no mesmo dia,\n")
         w("que e a condicao minima para a pergunta valer a pena ser feita.\n")
 
-    print(f"\nEscrito: {SAIDA}")
+    print(f"\nEscrito: {saida}")
     print(f"Exemplo: {t} {d.total:+.2%} = {d.market:+.2%} mercado · "
           f"{d.sector:+.2%} setor · {d.idiosyncratic:+.2%} empresa (motor: {d.driver})")
     return 0
