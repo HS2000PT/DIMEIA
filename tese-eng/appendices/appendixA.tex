@@ -46,9 +46,7 @@ automatic procedure with a fixed seed, which writes its own results file, and it
 text cites. A second run over the same data returns the same values. Table~\ref{tab:ap_numeros}
 brings together the results reported and identifies the section in which each one appears.
 
-The verification this chain permits is possible from this document, and that is why the appendix
-describes it rather than delegating it. The section given in the third column states, for each
-result, the protocol, the baseline against which it was compared and the population it covered; and
+The section given in the third column states, for each result, the protocol, the baseline against which it was compared and the population it covered; and
 Section~\ref{sec:met_ferramentas} pins the exact library versions and the seed. A reader who has
 the source data, whose provenance and licensing are given in Section~\ref{sec:ap_dados}, has what
 is needed to rebuild any of the measurements without recourse to this work.
@@ -328,16 +326,10 @@ seven dollars per month per process. On 4 September 2026 the collection process 
 exceeding the memory quota of $512$\,MB, with over-quota warnings at a frequency of approximately
 two per minute and readings between $518$ and $970$\,MB.
 
-Four causes were measured and corrected: the live case base was loaded into Python \emph{float}
-lists, at a cost of $136.7$\,MB for $10{,}968$ records, against $21.7$\,MB for the same information
-in a single-precision matrix; the bases and the encoder were rebuilt at every sixty-second cycle;
-the file of pending cases was read once per company; and publishing a $40$\,MB file produced five
-copies of it in memory. Together they reduced the peak from $970$ to $663$\,MB.
-
-The working set of the
-application genuinely exceeds a $512$\,MB container: the numerical libraries and the inference
-engine occupy, on their own, $158$\,MB, and the precedent matrix becomes resident as soon as the
-first query walks its pages. The process settled at $536$\,MB even between peaks.
+Four causes were measured and corrected, which together reduced the peak from $970$ to $663$\,MB
+and none of which was sufficient: the working set of the application genuinely exceeds a
+$512$\,MB container, since the numerical libraries and the inference engine occupy $158$\,MB on
+their own and the precedent matrix becomes resident as soon as the first query walks its pages.
 
 The technical alternative would be to remove the base of $38{,}214$ precedents from the process,
 which would degrade the quality of retrieval, that is, would trade an infrastructure limitation for

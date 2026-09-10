@@ -48,9 +48,7 @@ ficheiro que o texto cita. Uma segunda execução sobre os mesmos dados devolve 
 Tabela~\ref{tab:ap_numeros} reúne os resultados reportados e identifica a secção em que cada um
 aparece.
 
-A verificação que esta cadeia permite é possível a partir deste documento, e é essa a razão de o
-apêndice a descrever em vez de a delegar. A secção indicada na terceira coluna enuncia, para cada
-resultado, o protocolo, a linha de base contra a qual foi comparado e a população sobre que
+A secção indicada na terceira coluna enuncia, para cada resultado, o protocolo, a linha de base contra a qual foi comparado e a população sobre que
 incidiu; e a Secção~\ref{sec:met_ferramentas} fixa as versões exatas das bibliotecas e a semente.
 Um leitor que disponha dos dados de origem, cuja proveniência e licenciamento constam da
 Secção~\ref{sec:ap_dados}, dispõe do necessário para reconstruir qualquer uma das medições sem
@@ -330,17 +328,11 @@ baixo, ao custo de sete dólares mensais por processo. Em 4 de setembro de 2026 
 recolha passou a exceder de forma persistente a quota de memória de $512$\,MB, com avisos de
 excesso a uma frequência de aproximadamente dois por minuto e leituras entre $518$ e $970$\,MB.
 
-Quatro causas foram medidas e corrigidas: a base de casos viva era carregada em listas de
-\emph{float} de Python, ao custo de $136{,}7$\,MB para $10\,968$ registos, contra $21{,}7$\,MB da
-mesma informação numa matriz de precisão simples; as bases e o codificador eram reconstruídos a
-cada ciclo de sessenta segundos; o ficheiro de casos pendentes era lido uma vez por empresa; e a
-publicação de um ficheiro de $40$\,MB produzia cinco cópias dele em memória. O conjunto reduziu o
-pico de $970$ para $663$\,MB.
-
-O conjunto de trabalho da
-aplicação excede genuinamente um contentor de $512$\,MB: as bibliotecas numéricas e o motor de
-inferência ocupam, por si, $158$\,MB, e a matriz de precedentes torna-se residente assim que a
-primeira consulta lhe percorre as páginas. O processo assentava em $536$\,MB mesmo entre picos.
+Quatro causas foram medidas e corrigidas, que no conjunto reduziram o pico de $970$ para $663$\,MB
+e nenhuma das quais foi suficiente: o conjunto de trabalho da aplicação excede genuinamente um
+contentor de $512$\,MB, uma vez que as bibliotecas numéricas e o motor de inferência ocupam, por
+si, $158$\,MB, e a matriz de precedentes torna-se residente assim que a primeira consulta lhe
+percorre as páginas.
 
 A alternativa técnica seria retirar do processo a base de $38\,214$ precedentes, o que degradaria
 a qualidade da recuperação, isto é, trocaria uma limitação de infraestrutura por uma limitação de
