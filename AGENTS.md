@@ -82,6 +82,29 @@
   **⏭️ A DECISÃO QUE FICA, E É DO AUTOR:** dois capítulos medidos, dois orçamentos **indisponíveis a
   partir de redundância**, porque foram calculados sobre um documento que as sessões 63 a 67 já
   comprimiram. Atingir os alvos exige decisão **estrutural** — menos figuras, ou fundir subsecções.
+  **⚠️ (J) E OS SETE ITENS RESTANTES, MEDIDOS NUMA PASSAGEM: NENHUM É EXECUTÁVEL COMO ESTÁ
+  ESCRITO.** Treze itens deste plano foram medidos hoje; **dois eram reais e pequenos e foram
+  executados, e onze não eram o que a tarefa diz.** O **E6** é **×1 e não ×3** («geração aumentada
+  por recuperação» aparece uma única vez em toda a árvore). O **E12** é **obsoleto** — 81 e 42 não
+  existem, o artefacto publica 90 e 51 — **e o ficheiro é GERADO**, logo corrigi-lo à mão
+  desapareceria na corrida seguinte sem aviso. O **E2** tem âmbito errado (a ocorrência do Cap. 1 é
+  sobre a **magnitude** e nada tem de SBERT). O **D1** está feito. E o **D9** tem custo medido: além
+  do `chapter{}`, a prosa diz «casos de estudo» 9× no Cap. 5, 1× no Cap. 3 e 1× no Cap. 6, ou seja
+  **22 edições nas duas árvores** — é decisão do autor.
+  **⚠️ (K) E DOIS DOS ITENS DANIFICARIAM O DOCUMENTO SE FOSSEM EXECUTADOS.** O **E14** pedia
+  uniformizar «conjunto de dados» com «bloco de treino/validação/teste» e parecia o item mais
+  mecânico de todos: **é premissa falsa, e são dois conceitos** — o *conjunto* são os dados, o
+  *bloco* é a partição cronológica. Uniformizá-los tornaria a tese **errada sobre a sua própria
+  divisão temporal**. E o **D6** pedia retirar «face às alternativas avaliadas» do veredicto da QI2:
+  isso é **delimitação correcta**, porque a auditoria A01 da sessão 66 estabeleceu que a alternativa
+  mais forte dá precisão@5 de `1,000` — retirá-la transformaria a afirmação numa geral que a própria
+  tese desmente vinte páginas antes. O **D11** já está coberto e melhor: o `ch3:882` declara a
+  fronteira como **de desenho** e não de direito aplicável, e escrever «não constitui prestação de
+  serviço» seria uma **afirmação jurídica sem fonte** — o que a sessão 61 recusou por princípio.
+  **⏭️ A CONCLUSÃO OPERACIONAL: o `PLANO_REESCRITA_EXECUCAO.md` não é executável a partir da
+  lista.** Foi escrito contra um documento que as sessões 63 a 67 já corrigiram. **O que resta da
+  reescrita tem de ser rederivado do documento actual**, e o critério que funciona está escrito:
+  medir cada item contra o ficheiro, pela chave de citação, nos capítulos que o próprio item nomeia.
   **PORTAS: as duas árvores a 0 erros · overfull 6 e 4, iguais ao registo anterior a QUALQUER edição
   desta parte · 143 páginas antes e depois · `tradução: nenhuma ressalva perdida` verde, que é a
   porta que guarda contra um corte comer uma ressalva · 1200 testes · `ruff` limpo · paridade 0

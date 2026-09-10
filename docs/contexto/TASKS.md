@@ -609,27 +609,27 @@ ficheiro congelado citado pela tese.
 
 ## FASE D — Estrutura e secções novas
 
-- [ ] D1 · Nova §3.7 «Onde entra a inteligência artificial neste sistema» + figura
+- [x] D1 · **FEITO**: a §3.7 existe com a `tab:met_onde_ia`. A figura foi deliberadamente **não desenhada** — a `fig:met_decisoes` já carrega a família de técnica de cada decisão.
 - [ ] D2 · Parágrafo que enuncia «57% calibrado + modelo sem discriminação demonstrada»
 - [ ] D3 · Frase de enquadramento na abertura do Cap. 4 sobre o estatuto das suas medições
 - [ ] D4 · Retirar a Figura 4.4; aliviar a Tabela 4.2
 - [ ] D5 · Comprimir o Cap. 6 de 14 para ~10 páginas («o Cap. 5 mede, o Cap. 6 interpreta»)
-- [ ] D6 · Reformular a QI2 (retirar a autorreferência às «alternativas avaliadas»)
+- [x] D6 · **NÃO FAZER — REDUZIRIA A HONESTIDADE** (medido a 2026-09-10). «Face às alternativas avaliadas» é delimitação correcta: a auditoria A01 da sessão 66 estabeleceu que a alternativa mais forte (filtro pelo setor da consulta) dá precisão@5 de `1,000`. Retirar o âmbito transformaria a afirmação numa geral que a própria tese desmente vinte páginas antes.
 - [ ] D7 · Alinhar a Contribuição 2 (§1.4) com o que a §5.3 entrega
 - [ ] D8 · Frase que justifica o modelo continuar implantado
-- [ ] D9 · Renomear o Cap. 5 («Avaliação»); decidir o destino de §4.8 (promover, ligada a D1)
+- [ ] D9 · Renomear o Cap. 5 («Avaliação») — **custo medido a 2026-09-10**: além do `chapter{}`, a prosa diz «casos de estudo» **9× no Cap. 5, 1× no Cap. 3 e 1× no Cap. 6**, ou seja **22 edições nas duas árvores**. O fundamento é bom; **é decisão do autor** a 17 dias do congelamento.
 - [ ] D10 · Apêndice: fundir A.1+A.2, cortar A.5 a meia página, promover as linhas «Retirada» para o corpo
-- [ ] D11 · Frase sobre o canal público não constituir prestação de serviço (§3.8.3)
+- [x] D11 · **JÁ COBERTO, e melhor** (medido a 2026-09-10): o `ch3:882` declara a fronteira como **de desenho** e não de direito aplicável, e a linha seguinte que «não houve parecer jurídico, e a operação do sistema como serviço exigiria obtê-lo previamente». ⚠️ Escrever «não constitui prestação de serviço» seria uma **afirmação jurídica sem fonte**.
 - [ ] D12 · Resumo/Abstract: acrescentar operação contínua e o diagnóstico como resultado
 
 ## FASE E — Redundâncias e correções factuais
 
 - [x] E1 · **FEITO** a 2026-09-10: a reexplicação do mecanismo saiu do §2.5 nas duas árvores (−46 PT, −54 EN). Fica a literatura, a escolha e a remissão para o §3.4, que traz a equação. O parágrafo já remetia para lá.
-- [ ] E2 · Objetivo de treino do SBERT ×3 (§2.4, §3.5, §5.3.2) → uma vez
+- [ ] E2 · Objetivo de treino do SBERT — **⚠️ âmbito errado** (medido a 2026-09-10): das cinco ocorrências, a do Cap. 1 é sobre a **magnitude** e nada tem de SBERT, e a do Cap. 5 explica por que razão o FinBERT perde. Redundância real: ×1 no máximo. Reenunciar antes de cortar.
 - [ ] E3 · «Não é método novo, é seleção e integração» — **⚠️ âmbito por reenunciar** (medido a 2026-09-10): nenhuma das duas formulações existe na árvore, pelo que as três ocorrências não são localizáveis pelo texto que a tarefa cita. Reenunciar com a frase real antes de cortar.
 - [x] E4 · **FEITO** a 2026-09-10: o mecanismo clínico saiu do §2.7 nas duas árvores (−27 PT, −28 EN); fica a medição sobre investidores particulares. **O parágrafo contradizia-se** — citava o estudo clínico e declarava na mesma frase que a transposição já não era necessária. `ancker2017alertfatigue` continua citado no §3.8.3, logo nada ficou órfão. **⚠️ E o «×3» estava errado:** as duas ocorrências do Cap. 4 que a tarefa contava são falsos positivos da palavra «interrompida» — uma é a *leitura* interrompida antes do fim, a outra é o *ciclo* de maturação interrompido dezanove dias. **É ×2.**
 - [ ] E5 · Dívida técnica de Sculley ×4 → §2.8 + §5.6.1 — **confirmado real** a 2026-09-10 (`sculley2015debt` em ch2, ch4, ch5 e ch6). O do Cap. 6 reexplica o mecanismo do §5.6.1 com as palavras trocadas; o do Cap. 4 é o relato do incidente no sítio onde ocorreu e **ganha o seu lugar**. Corte defensável: ~40 palavras no Cap. 6.
-- [ ] E6 · Argumento RAG ×3 (§2.4.1, §4.7.1, §4.8) → §2.4.1 + §4.8
+- [x] E6 · **NÃO SE APLICA** (medido a 2026-09-10): «geração aumentada por recuperação» aparece **uma única vez** em toda a árvore (`ch2:471`). O «×3» não existe.
 - [ ] E7 · Três causas do atraso ×2 (§4.6, §6.4) → §4.6 — **⚠️ reavaliado a 2026-09-10**: as duas ocorrências do Cap. 6 são a **linha da `tab:con_limites`** e o resumo em prosa, que é o desenho que a secção declara («o texto desenvolve as quatro de maior consequência e resume as restantes»). Redundância real: contra o §4.6, não dentro do Cap. 6.
 - [ ] E8 · «Rótulo favorece a volatilidade» ×3 → §5.4.7 + Tab. 6.1
 - [ ] E9 · Defeito dos 36,8% ×2 (§4.5.1, §6.4) → §4.5.1 — **confirmado real** a 2026-09-10: o §6.4 repete o mecanismo **e os quatro números**. Corte defensável: ~55 palavras.
@@ -659,7 +659,7 @@ ficheiro congelado citado pela tese.
       E o docstring afirmava «Nao toca em nada congelado», o que é **falso**: a §5.5 cita
       dele `0,460`, `0,487` e o exemplo da AMD. Uma afirmação dessas no topo de um script
       autoriza precisamente a corrida que causa o dano.
-- [ ] E12 · **Erro:** aritmética dos votos em §5.6.5 (81−10−29−5 = 37, não 42) — reordenar
+- [x] E12 · **OBSOLETO** (medido a 2026-09-10): 81 e 42 **não existem** na árvore; o `feedback_auto.tex` publica **90 válidos e 51 efetivos**, e a sessão 66 corrigiu a aritmética no `analyse_feedback.py`. ⚠️ **É um fragmento GERADO** — corrigir à mão desaparece na corrida seguinte sem aviso. Qualquer acerto futuro entra no gerador.
 - [x] E13 · **RETIRADA: a premissa é falsa** (verificado a 2026-09-10). A `fig:av_triagem`,
       que está **na própria §5.4.2**, já desenha as **seis** famílias — `0,378`, `0,439`,
       `0,469`, `0,496`, `0,538` e `0,542` — com os intervalos ao lado. O valor não está «só
@@ -676,8 +676,8 @@ ficheiro congelado citado pela tese.
       **O que fica de verdadeiro na tarefa:** nada a fazer na §5.4.2. Se a prosa dela vier a
       ser reescrita, a regra é a inversa da que o E13 propunha — **não** reenumerar os seis
       valores, porque a figura os mostra.
-- [ ] E14 · Uniformizar «conjunto de dados» vs «bloco de treino/validação/teste» em todo o documento
-- [ ] E15 · Antecipar a nota que explica F1 0,516 vs 0,530 e amplitude 0,015 vs 0,017
+- [x] E14 · **NÃO FAZER — PREMISSA FALSA** (medido a 2026-09-10). Não é terminologia inconsistente: **são dois conceitos**. O *conjunto* são os dados, o *bloco* é a partição cronológica. ⚠️ **Uniformizá-los tornaria a tese errada sobre a sua própria divisão temporal.** Era o item que parecia mais mecânico e era o mais perigoso.
+- [x] E15 · **FEITO, e a premissa do plano é falsa** (medido a 2026-09-10): a nota está em `ch5:285`, **imediatamente onde o segundo valor aparece**, e não «tarde». Movê-la para o Cap. 3 explicaria uma contradição que o leitor ainda não encontrou.
 - [ ] E16 · Parágrafo-mapa na abertura de §5.4.5
 - [ ] E17 · Reescrever a abertura de §5.6.5 sem a percentagem em destaque
 - [ ] E18 · Subdividir ou numerar §5.6.1 (cinco argumentos interlaçados)

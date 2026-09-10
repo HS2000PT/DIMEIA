@@ -149,6 +149,32 @@ Sai também «não é método novo, é seleção e integração» (E3), que fica
 **O que entra:** as 578 palavras que faltam vão para o problema e para o público, que é a parte
 que um júri lê primeiro e onde o documento está mais fino.
 
+### ⚠️ OS SETE ITENS RESTANTES, MEDIDOS — 2026-09-10: nenhum é executável como está escrito
+
+Medidos numa passagem, pela chave de citação e pelo texto real. **Treze itens deste plano foram
+medidos hoje. Dois eram reais e pequenos, e foram executados. Onze não eram o que a tarefa diz.**
+
+| item | veredicto medido |
+|---|---|
+| **E2** · objetivo de treino do SBERT ×3 → uma vez | **âmbito errado.** As cinco ocorrências não são cópias: a do Cap. 1 é sobre a **magnitude** como objetivo de treino da questão, nada tem de SBERT; a do Cap. 3 explica o modelo; a do Cap. 5 explica **por que razão o FinBERT perde**, que é outro argumento. Redundância real: ×1 no máximo |
+| **E6** · argumento RAG ×3 → §2.4.1 + §4.8 | **é ×1.** «geração aumentada por recuperação» aparece **uma única vez** em toda a árvore, no `ch2:471`. Nada a desduplicar |
+| **E8** · «o rótulo favorece a volatilidade» ×3 | **por reenunciar.** O padrão largo dá 12 acertos e a maioria é outra coisa (uma linha de tabela do Cap. 3 sobre o universo da decomposição). As passagens que dizem mesmo isto são o `ch5` e o `ch6`, e a do `ch6` é o veredicto a resumir — que é o seu trabalho |
+| **E12** · aritmética dos votos (81−10−29−5) | **obsoleto, e o ficheiro é GERADO.** Os números 81 e 42 **não existem** na árvore; o `feedback_auto.tex` publica **90 votos válidos e 51 efetivos**. ⚠️ **E é um fragmento gerado pelo `analyse_feedback.py`** — uma correção à mão desaparece na corrida seguinte sem um único aviso, que é a lição da sessão 64. Qualquer acerto entra no gerador |
+| **E14** · uniformizar «conjunto de dados» vs «bloco de treino/validação/teste» | **⚠️ PREMISSA FALSA, E ERA O ITEM MAIS PERIGOSO DE TODOS, precisamente por parecer o mais mecânico.** Não é terminologia inconsistente: **são dois conceitos**. O *conjunto* são os dados (`ch3:86` «resulta o conjunto de treino do modelo de triagem»; `ch5:1323` o conjunto de teste reutilizado em várias comparações); o *bloco* é a **partição cronológica**. Uniformizá-los tornaria a tese **errada sobre a sua própria divisão temporal** |
+| **D1** · nova §3.7 + figura | **feito.** A §3.7 «Onde entra a inteligência artificial neste sistema» existe com a `tab:met_onde_ia`. A figura foi **deliberadamente não desenhada** — a `fig:met_decisoes` já carrega a família de técnica |
+| **D6** · retirar a autorreferência às «alternativas avaliadas» da QI2 | **⚠️ EXECUTÁ-LO REDUZIRIA A HONESTIDADE.** «Afirmativa **face às alternativas avaliadas**» é delimitação correcta: a auditoria da sessão 66 (A01) estabeleceu que a alternativa mais forte — filtrar pelo setor da consulta — dá precisão@5 de `1,000`. Retirar o âmbito transformaria uma afirmação delimitada numa afirmação geral que a própria tese desmente vinte páginas antes |
+| **D11** · frase sobre o canal público não constituir prestação de serviço | **já coberto, e melhor.** O `ch3:882` declara que a fronteira «é de desenho, traçada por prudência e não a partir de uma análise do direito aplicável», e a linha seguinte que «não houve parecer jurídico, e a operação do sistema como serviço exigiria obtê-lo previamente». ⚠️ **Escrever «não constitui prestação de serviço» seria uma afirmação jurídica sem fonte**, que é o que a sessão 61 recusou por princípio |
+
+**D9 · renomear o Cap. 5 para «Avaliação»:** o fundamento é bom («é o que o capítulo é»), e o custo
+é medido: além do `chapter{}`, a prosa diz «casos de estudo» **9 vezes no Cap. 5, 1 no Cap. 3 e 1 no
+Cap. 6**, o que dá **22 edições nas duas árvores**. Não é decisão minha a 17 dias do congelamento.
+
+**A CONCLUSÃO, e é operacional:** este plano **não é executável a partir da lista**. Foi escrito
+contra um documento que as sessões 63 a 67 já corrigiram, e os seus itens dividem-se em «já feito»,
+«premissa que não se confirma», «âmbito por reenunciar» e — em dois casos, o E14 e o D6 — «executá-lo
+danifica o documento». **O que resta da reescrita tem de ser rederivado do documento actual**, não
+executado deste plano.
+
 ### Capítulo 2 · Estado da arte — 7 999 → 6 500
 
 **Argumento:** as técnicas de que este sistema é feito existem e estão maduras; o que não existe é
