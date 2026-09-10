@@ -223,6 +223,42 @@ duas (E8) · «três ocasiões» ×3 → a figura basta (E10) · a prosa que ree
 para `81−10−29−5`, e o artefacto publica hoje **90 e 51**; a entrada refere números superados e é
 retirada com a razão escrita, não silenciosamente.
 
+### ⚠️ MEDIÇÃO DOS CORTES DO CAP. 5 — 2026-09-10: cinco manípulos, nenhum entrega
+
+O plano orçamentou **−2 816 palavras** no Cap. 5 e nomeou cinco sítios de onde as tirar. Testados
+um a um contra o ficheiro:
+
+| manípulo do plano | veredicto |
+|---|---|
+| o parágrafo repetido da §5.6 (reconciliação 48% / 60%) | **já feito.** A sessão 66 corrigiu-o. `48\%` e `60\%` não aparecem no Cap. 5 **em forma nenhuma** |
+| a prosa que reenumera os intervalos da `fig:av_acrescimo` | **já feito.** A prosa diz só «A Figura apresenta os três intervalos» |
+| E12, aritmética dos votos | **obsoleto.** Refere 81 e 42; o artefacto publica 90 e 51 |
+| E13, PR-AUC das árvores | **premissa falsa.** A figura da §5.4.2 já desenha as seis famílias |
+| legendas acima de 60 palavras (~1 800 palavras) | **não disponível** — ver abaixo |
+
+**As legendas são onde vivem as ressalvas, e não onde vive o enchimento.** Medidas as catorze
+acima de 60 palavras, que somam 1 147: **47%** do comprimento é ressalva por palavra-chave
+(«não é uma medição», «por construção», «limite superior», população, janela) e apenas **5%**,
+ou seja **54 palavras**, é descrição do que a figura já mostra — o único corte que não perde
+nada.
+
+⚠️ **E o meu próprio classificador subcontou as ressalvas.** Deu 0% à
+`fig:av_pontaaponta`, cujas 85 palavras são **todas** ressalva quando lidas: reconcilia `0,375`
+contra `0,379` («duas execuções do mesmo sorteio por procedimentos distintos», sem o que o leitor
+encontra dois valores para a mesma coisa e nenhuma explicação), declara o oráculo «não
+utilizável» e fixa o protocolo («todas escolhem conhecendo o dia completo»). Nenhuma dessas
+frases casou com a lista de padrões. **A percentagem real de ressalva é superior a 47%, e o corte
+seguro é próximo de zero.**
+
+**Conclusão, e é sobre o plano e não sobre o capítulo:** o Cap. 5 **já foi comprimido** pelas
+sessões 63 a 67, e o alvo de −2 816 assenta numa contagem de um documento que já não existe nessa
+forma. Reduzi-lo a partir daqui exige decisão **estrutural** — menos figuras, ou fundir
+subsecções — que é outra ordem de risco e é decisão do autor, não minha.
+
+**O que fica medido para essa decisão:** o Cap. 5 tem 25 flutuantes e 14 862 palavras contando
+legendas. Cortar figuras liberta as legendas com elas, mas cada legenda retirada leva as suas
+ressalvas, e existe uma porta (`tradução: nenhuma ressalva perdida`) que o apanha — por desenho.
+
 ### Capítulo 4 · Implementação — 8 279 → 7 000
 
 **Argumento:** o sistema que existe, o percurso de uma notícia da recolha à entrega, e as nove

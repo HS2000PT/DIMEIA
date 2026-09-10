@@ -633,7 +633,12 @@ ficheiro congelado citado pela tese.
 - [ ] E7 · Três causas do atraso ×2 (§4.6, §6.4) → §4.6
 - [ ] E8 · «Rótulo favorece a volatilidade» ×3 → §5.4.7 + Tab. 6.1
 - [ ] E9 · Defeito dos 36,8% ×2 (§4.5.1, §6.4) → §4.5.1
-- [ ] E10 · «Três ocasiões» ×3 (§5.7, §6.1, Fig. 6.1) → a figura basta
+- [ ] E10 · «Três ocasiões» — **⚠️ o «×3» conta três afirmações DIFERENTES** (verificado a
+      2026-09-10): «três ocasiões em que [ler uma medida sem o seu chão] sucedeu», «três
+      ocasiões em que uma técnica mais simples superou» e «três ocasiões em que sucedeu o
+      inverso», esta última em contraste deliberado com a anterior na frase seguinte. Só a
+      segunda e a do Cap. 6 são a mesma, e a do Cap. 6 é o veredicto a resumir, que é o seu
+      trabalho. **Redundância real: ×1, não ×3.** Reavaliar o âmbito antes de cortar.
 - [x] E11 · **Erro CONFIRMADO e corrigido na raiz** (2026-09-10). A §5.5 estava certa. A
       lista vigiada tem **doze** empresas (`config/alerts.yaml`) e o
       `evaluate_decomposition.py` percorre `sorted(SECTOR_OF)`, que tem **dezassete**; o
