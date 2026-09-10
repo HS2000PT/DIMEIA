@@ -341,32 +341,10 @@ first query walks its pages. The process settled at $536$\,MB even between peaks
 
 The technical alternative would be to remove the base of $38{,}214$ precedents from the process,
 which would degrade the quality of retrieval, that is, would trade an infrastructure limitation for
-a limitation of result. The option taken was the reverse, and the cost appears in
-Table~\ref{tab:ap_custo}.
-
-\begin{table}[!htbp]
-\caption[Monthly cost of operation]{Container tiers before and after 4 September 2026. The
-provider does not allow tiers to be mixed within the same application, so the web process, which
-never exceeded the quota, was dragged up with it. That is why the increase is sixty-one dollars and
-not the forty-three that changing a single process would cost.}
-\label{tab:ap_custo}
-\centering
-\small
-\begin{tabular}{L{0.20\textwidth} L{0.20\textwidth} C{0.13\textwidth} C{0.13\textwidth}
-                L{0.20\textwidth}}
-\toprule
-\tabhead{Process} & \tabhead{Tier} & \tabhead{Memory} & \tabhead{Cost} & \tabhead{Reason} \\
-\midrule
-\multicolumn{5}{l}{\emph{Until 4 September 2026}} \\
-web & Basic & $0.5$\,GB & \$7 & never exceeded the quota \\
-collection & Basic & $0.5$\,GB & \$7 & exceeded it persistently \\
-\addlinespace
-\multicolumn{5}{l}{\emph{From 4 September 2026}} \\
-web & Standard-1X & $0.5$\,GB & \$25 & moved up because tiers cannot be mixed \\
-collection & Standard-2X & $1.0$\,GB & \$50 & it is the first tier above $0.5$\,GB \\
-\bottomrule
-\end{tabular}
-\end{table}
+a limitation of result. The option taken was the reverse. The provider does not allow tiers to be mixed within the
+same application, so the web process, which never exceeded the quota, was dragged up with the
+collection process: the increase is sixty-one dollars a month and not the forty-three that
+changing a single process would cost.
 
 After the change, and under the same load, not a single memory over-quota warning was recorded.
 The available credit balance covers approximately four months of operation at this tier, which

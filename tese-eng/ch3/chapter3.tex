@@ -170,7 +170,89 @@ List monitored in production & 12 & Product decision \\
 \end{tabular}
 \end{table}
 
-\section{Detection of unusual movements}
+\section{Where artificial intelligence enters this system}
+\label{sec:met_onde_ia}
+
+The four decisions this chapter goes on to present draw on distinct families of technique, and
+the question of where machine learning sits in this work has a different answer for each of
+them. Table~\ref{tab:met_onde_ia}
+gathers that answer, which would otherwise remain scattered across the sections that follow, and
+adds the decision that precedes all of them: the filter that determines which headlines come to
+be assessed at all.
+
+\begin{table}[!htbp]
+\caption[Where learning enters, decision by decision]{The system's five decisions, the origin of
+their parameters, and what learning each of them from data would require. The middle column
+separates three situations that the generic label of artificial intelligence conflates:
+parameters estimated in this work, parameters of a model trained by others and used without
+adjustment, and the absence of parameters. The values in the first row are measured and discussed in the
+subsection that follows.}
+\label{tab:met_onde_ia}
+\centering
+\small
+\begin{tabular}{L{0.20\textwidth} L{0.24\textwidth} L{0.44\textwidth}}
+\toprule
+\tabhead{Decision} & \tabhead{Origin of the parameters} & \tabhead{What learning it would
+require} \\
+\midrule
+Headline relevance & rule; no estimated parameters & labels independent of the rule itself. The
+only one available is its own output, which makes the exercise circular \\
+\addlinespace
+Rarity of the move & none; mean and deviation of the preceding window & rarity labels that were
+not themselves a function of volatility \\
+\addlinespace
+Attribution of the move & estimated by regression, with shrinkage & they are already estimated;
+what is missing is an observable reference value for the attribution \\
+\addlinespace
+Comparability of news items & model pre-trained by others, used without adjustment & it was
+attempted, and is Section~\ref{sec:met_qi4}; the result is in Section~\ref{sec:av_qi4} \\
+\addlinespace
+Materiality of the news item & estimated in this work, on the historical set & they are already
+estimated; the result is in Section~\ref{sec:av_qi3} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{The decision that comes before the others, and is a rule}
+\label{sec:met_relevancia_nota}
+
+Before any of the four, the system decides whether a headline concerns the company at hand. The
+rule requires the company to be mentioned, by name or by one of its alternative names, and
+rejects a closed set of market-summary patterns. Measured over the ten companies the watched
+list covers, it retains $4\,843$ of $16\,840$ headlines, that is $28.8\%$, and discards
+$71.2\%$. Breaking the discards down locates the work: the mention rule accounts for $68.3\%$
+of the total and the pattern list for only $3.0\%$.
+
+In proportion, it is the most aggressive filter in the system, and it is the only one that
+remains a rule. The reason is not convenience. Learning this decision would require headlines
+annotated for pertinence, and the only label available in quantity is the output of the rule
+itself, which would make the exercise circular. The honest alternative is manual annotation,
+which Section~\ref{sec:con_futuro} lists among the lines requiring human judgement. Until it
+exists, the retention rate depends on the list of alternative names, and a company without an
+entry in that list falls back on requiring the ticker symbol, which almost no headline writes.
+
+\subsection*{What this means for reading the results}
+
+The five decisions correspond to five distinct situations, and the table separates them one by
+one. Relevance is a rule with no parameters. Rarity has no parameters: it compares the day with
+the mean and deviation of the preceding window. Attribution has estimated coefficients, but
+estimated without labels, from that same series of returns. Comparability rests on a model
+trained by others and used without adjustment. And only materiality has parameters trained on
+labelled examples, which makes it the only decision learned in the ordinary sense of the word. The only place where a representation was trained for
+this problem is the contrastive adjustment of the encoder, whose answer is given in
+Chapter~\ref{cap:avaliacao}.
+
+This distribution is not an accident of execution, and it is what gives meaning to the
+comparison running through the evaluation. The two decisions where this work's own learning was
+applied, materiality and the attempt to adjust the encoder, are also the two whose answers are
+negative; the affirmative answers come from a statistical rule and from a model used as it
+stands. The comparison between each adopted technique and the corresponding learned alternative
+is presented in each case study, and it is this work's most transferable finding. The generic
+label of artificial intelligence would poorly describe a system in which learning occupies one
+of five decisions; naming the place of each family of technique is how to describe it without
+promising what it does not do.
+
+\section{Detection of unusual movements: the rolling \emph{z}-score}
 \label{sec:met_detecao}
 
 The first decision of the system consists in determining whether the movement observed on a day is
@@ -260,7 +342,7 @@ from the absolute size of the movement, but from the fact that it exceeds by sev
 the usual oscillation of the stock in those weeks.
 
 
-\section{Decomposition of the observed movement}
+\section{Decomposition of the observed movement: two-factor regression with shrinkage}
 \label{sec:met_decomposicao}
 
 The previous technique quantifies the size of the movement, but does not identify its origin. The
@@ -386,7 +468,7 @@ would sum just as well. The informative measure of the quality of the fit is the
 determination in the estimation window, whose value is reported in
 Chapter~\ref{cap:avaliacao}.
 
-\section{Precedent retrieval}
+\section{Precedent retrieval: sentence embeddings and cosine similarity}
 \label{sec:met_recuperacao}
 
 The third decision consists in identifying past news items comparable with the news item under
@@ -495,6 +577,31 @@ periods of generalised decline, the precedents appear to have worse outcomes tha
 attributable to the news. The market is discounted where it is indispensable, in the construction
 of the label described in the following section.
 
+Listing~\ref{lst:cosseno} reproduces the comparison as it is executed over the whole case base. The line that decides the behaviour of the system is the last: a record without a usable vector receives a similarity of zero and falls to the bottom of the ordering, instead of interrupting the cycle.
+
+\begin{lstlisting}[caption={[The comparison at the core of retrieval]The comparison at the core of retrieval, vectorised over the whole case base. The decision that matters is the last one: a null vector receives a similarity of zero rather than raising, because a record without an embedding must fall to the bottom of the ordering and not interrupt the cycle. Reproduced from the source file; the comment is in the original.}, label={lst:cosseno}, float=htbp]
+def cosine_similarities(query, matrix) -> np.ndarray:
+    """Similaridade do cosseno entre um vetor `query` (1D) e cada linha de `matrix` (2D).
+
+    Vetorizado: devolve um array (n_amostras,) com a similaridade de cada linha ao query.
+    Linhas nulas (ou query nulo) recebem 0.0.
+    """
+    query = np.asarray(query, dtype="float64")
+    matrix = np.asarray(matrix, dtype="float64")
+    if matrix.ndim != 2:
+        raise ValueError("`matrix` tem de ser 2D (n_amostras, dim).")
+    if query.ndim != 1 or query.shape[0] != matrix.shape[1]:
+        raise ValueError("dimensões incompatíveis entre `query` e `matrix`.")
+    qn = float(np.linalg.norm(query))
+    row_norms = np.linalg.norm(matrix, axis=1)
+    denom = row_norms * qn
+    dots = matrix @ query
+    out = np.zeros_like(dots, dtype="float64")
+    nz = denom > 0
+    out[nz] = dots[nz] / denom[nz]
+    return out
+\end{lstlisting}
+
 \subsection{Adjusting the encoder for comparable materiality}
 \label{sec:met_qi4}
 
@@ -578,7 +685,7 @@ plausible and entirely meaningless table of metrics: every query returns the sam
 nothing in the table gives it away.
 
 
-\section{News triage}
+\section{News triage: a model learned from labelled examples}
 \label{sec:met_triagem}
 
 The fourth decision determines which news items justify interrupting the user. Unlike the previous
@@ -737,92 +844,31 @@ model, without calibration, produces values systematically above the observed fr
 this behaviour follows from the reweighting of the classes during training, which shifts the scores
 upwards by construction.
 
+The two parameters are not chosen by hand. Listing~\ref{lst:platt} reproduces the fitting as it is executed: a logistic regression of one variable over the held-out validation block, which is what makes the two values above reproducible rather than asserted.
+
+\begin{lstlisting}[caption={[Where a score becomes a probability]Where a score becomes a probability. The two parameters are not chosen: they are fitted by a logistic regression over the held-out validation block, which is what makes the value in Equation~\ref{eq:platt} reproducible. The class and the fitting function are reproduced from the source file; the comment and the identifiers are in the original.}, label={lst:platt}, float=htbp]
+class PlattCalibrator:
+    """p_calibrada = sigmóide(a·score + b), com (a,b) ajustados na validação."""
+
+    a: float
+    b: float
+
+    def __call__(self, scores: np.ndarray) -> np.ndarray:
+        z = self.a * np.asarray(scores, dtype="float64") + self.b
+        return 1.0 / (1.0 + np.exp(-z))
+
+
+def fit_platt(scores_val: np.ndarray, y_val: np.ndarray, seed: int = 42) -> PlattCalibrator:
+    lr = LogisticRegression(max_iter=1000, random_state=seed)
+    lr.fit(np.asarray(scores_val, dtype="float64").reshape(-1, 1), y_val)
+    return PlattCalibrator(a=float(lr.coef_[0][0]), b=float(lr.intercept_[0]))
+\end{lstlisting}
+
 The calibration is fitted on a block whose prevalence of positive cases differs from that of the
 test block, a consequence of the chronological split. The effect is measurable and is reported in
 Chapter~\ref{cap:avaliacao}. The transformation is monotonic and preserves the ordering between
 news items, which is what the decision policy uses; it is the absolute value presented that is
 affected.
-
-\section{Where artificial intelligence enters this system}
-\label{sec:met_onde_ia}
-
-The four decisions presented so far draw on distinct families of technique, and the question of
-where machine learning sits in this work has a different answer for each of them. Table~\ref{tab:met_onde_ia}
-gathers that answer, which would otherwise remain scattered across the preceding sections, and
-adds the decision that precedes all of them: the filter that determines which headlines come to
-be assessed at all.
-
-\begin{table}[!htbp]
-\caption[Where learning enters, decision by decision]{The system's five decisions, the origin of
-their parameters, and what learning each of them from data would require. The middle column
-separates three situations that the generic label of artificial intelligence conflates:
-parameters estimated in this work, parameters of a model trained by others and used without
-adjustment, and the absence of parameters. The values in the first row are measured and discussed in the
-subsection that follows.}
-\label{tab:met_onde_ia}
-\centering
-\small
-\begin{tabular}{L{0.20\textwidth} L{0.24\textwidth} L{0.44\textwidth}}
-\toprule
-\tabhead{Decision} & \tabhead{Origin of the parameters} & \tabhead{What learning it would
-require} \\
-\midrule
-Headline relevance & rule; no estimated parameters & labels independent of the rule itself. The
-only one available is its own output, which makes the exercise circular \\
-\addlinespace
-Rarity of the move & none; mean and deviation of the preceding window & rarity labels that were
-not themselves a function of volatility \\
-\addlinespace
-Attribution of the move & estimated by regression, with shrinkage & they are already estimated;
-what is missing is an observable reference value for the attribution \\
-\addlinespace
-Comparability of news items & model pre-trained by others, used without adjustment & it was
-attempted, and is Section~\ref{sec:met_qi4}; the result is in Section~\ref{sec:av_qi4} \\
-\addlinespace
-Materiality of the news item & estimated in this work, on the historical set & they are already
-estimated; the result is in Section~\ref{sec:av_qi3} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection*{The decision that comes before the others, and is a rule}
-\label{sec:met_relevancia_nota}
-
-Before any of the four, the system decides whether a headline concerns the company at hand. The
-rule requires the company to be mentioned, by name or by one of its alternative names, and
-rejects a closed set of market-summary patterns. Measured over the ten companies the watched
-list covers, it retains $4\,843$ of $16\,840$ headlines, that is $28.8\%$, and discards
-$71.2\%$. Breaking the discards down locates the work: the mention rule accounts for $68.3\%$
-of the total and the pattern list for only $3.0\%$.
-
-In proportion, it is the most aggressive filter in the system, and it is the only one that
-remains a rule. The reason is not convenience. Learning this decision would require headlines
-annotated for pertinence, and the only label available in quantity is the output of the rule
-itself, which would make the exercise circular. The honest alternative is manual annotation,
-which Section~\ref{sec:con_futuro} lists among the lines requiring human judgement. Until it
-exists, the retention rate depends on the list of alternative names, and a company without an
-entry in that list falls back on requiring the ticker symbol, which almost no headline writes.
-
-\subsection*{What this means for reading the results}
-
-The five decisions correspond to five distinct situations, and the table separates them one by
-one. Relevance is a rule with no parameters. Rarity has no parameters: it compares the day with
-the mean and deviation of the preceding window. Attribution has estimated coefficients, but
-estimated without labels, from that same series of returns. Comparability rests on a model
-trained by others and used without adjustment. And only materiality has parameters trained on
-labelled examples, which makes it the only decision learned in the ordinary sense of the word. The only place where a representation was trained for
-this problem is the contrastive adjustment of the encoder, whose answer is given in
-Chapter~\ref{cap:avaliacao}.
-
-This distribution is not an accident of execution, and it is what gives meaning to the
-comparison running through the evaluation. The two decisions where this work's own learning was
-applied, materiality and the attempt to adjust the encoder, are also the two whose answers are
-negative; the affirmative answers come from a statistical rule and from a model used as it
-stands. The comparison between each adopted technique and the corresponding learned alternative
-is presented in each case study, and it is this work's most transferable finding. The generic
-label of artificial intelligence would poorly describe a system in which learning occupies one
-of five decisions; naming the place of each family of technique is how to describe it without
-promising what it does not do.
 
 \section{Tools and infrastructure}
 \label{sec:met_ferramentas}

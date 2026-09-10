@@ -344,31 +344,7 @@ primeira consulta lhe percorre as páginas. O processo assentava em $536$\,MB me
 
 A alternativa técnica seria retirar do processo a base de $38\,214$ precedentes, o que degradaria
 a qualidade da recuperação, isto é, trocaria uma limitação de infraestrutura por uma limitação de
-resultado. A opção tomada foi a inversa, e o custo consta da Tabela~\ref{tab:ap_custo}.
-
-\begin{table}[!htbp]
-\caption[Custo mensal da operação]{Escalões de contentor antes e depois de 4 de setembro de 2026.
-O fornecedor não permite misturar escalões na mesma aplicação, pelo que o processo web, que nunca
-excedeu a quota, subiu por arrasto. É a razão de o acréscimo ser de sessenta e um dólares e não
-dos quarenta e três que a alteração de um só processo custaria.}
-\label{tab:ap_custo}
-\centering
-\small
-\begin{tabular}{L{0.20\textwidth} L{0.20\textwidth} C{0.13\textwidth} C{0.13\textwidth}
-                L{0.20\textwidth}}
-\toprule
-\tabhead{Processo} & \tabhead{Escalão} & \tabhead{Memória} & \tabhead{Custo} & \tabhead{Razão} \\
-\midrule
-\multicolumn{5}{l}{\emph{Até 4 de setembro de 2026}} \\
-web & Basic & $0{,}5$\,GB & \$7 & nunca excedeu a quota \\
-recolha & Basic & $0{,}5$\,GB & \$7 & excedia de forma persistente \\
-\addlinespace
-\multicolumn{5}{l}{\emph{A partir de 4 de setembro de 2026}} \\
-web & Standard-1X & $0{,}5$\,GB & \$25 & subiu por não ser possível misturar escalões \\
-recolha & Standard-2X & $1{,}0$\,GB & \$50 & é o primeiro escalão acima de $0{,}5$\,GB \\
-\bottomrule
-\end{tabular}
-\end{table}
+resultado. A opção tomada foi a inversa. O fornecedor não permite misturar escalões dentro da mesma aplicação, pelo que o processo web, que nunca excedeu a quota, subiu arrastado pelo processo de recolha: o aumento é de sessenta e um dólares por mês e não dos quarenta e três que custaria mudar um só processo.
 
 Após a alteração, e sobre a mesma carga, não se registou um único aviso de excesso de memória. O
 saldo de crédito disponível cobre aproximadamente quatro meses de operação neste escalão, o que

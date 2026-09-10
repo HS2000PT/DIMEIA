@@ -170,7 +170,89 @@ Lista monitorizada em produção & 12 & Decisão de produto \\
 \end{tabular}
 \end{table}
 
-\section{Deteção de movimentos invulgares}
+\section{Onde entra a inteligência artificial neste sistema}
+\label{sec:met_onde_ia}
+
+As quatro decisões que este capítulo apresenta a seguir recorrem a famílias de técnicas distintas, e a
+pergunta sobre o lugar da aprendizagem automática neste trabalho tem uma resposta diferente
+para cada uma. A Tabela~\ref{tab:met_onde_ia} reúne essa resposta, que de outro modo ficaria dispersa pelas
+secções que se seguem, e acrescenta a decisão que as antecede a todas: o filtro que determina
+quais os títulos que chegam a ser avaliados.
+
+\begin{table}[!htbp]
+\caption[Onde entra a aprendizagem, decisão a decisão]{As cinco decisões do sistema, a origem
+dos respetivos parâmetros, e o que seria necessário para aprender cada uma a partir de dados.
+A coluna central distingue três situações que a designação genérica de inteligência artificial
+confunde: parâmetros estimados neste trabalho, parâmetros de um modelo treinado por terceiros e
+utilizado sem ajuste, e ausência de parâmetros. Os valores da primeira linha são medidos e discutidos na
+subsecção seguinte.}
+\label{tab:met_onde_ia}
+\centering
+\small
+\begin{tabular}{L{0.20\textwidth} L{0.24\textwidth} L{0.44\textwidth}}
+\toprule
+\tabhead{Decisão} & \tabhead{Origem dos parâmetros} & \tabhead{O que seria preciso para a
+aprender} \\
+\midrule
+Relevância do título & regra; sem parâmetros estimados & rótulos independentes da própria
+regra. O único disponível é a saída dela, o que torna o exercício circular \\
+\addlinespace
+Raridade do movimento & nenhum; média e desvio da janela anterior & rótulos de raridade que não
+fossem eles próprios função da volatilidade \\
+\addlinespace
+Repartição do movimento & estimados por regressão, com encolhimento & já são estimados; o que
+falta é um valor de referência observável para a repartição \\
+\addlinespace
+Comparabilidade de notícias & modelo pré-treinado por terceiros, utilizado sem ajuste & foi
+tentado, e é a Secção~\ref{sec:met_qi4}; o resultado consta da Secção~\ref{sec:av_qi4} \\
+\addlinespace
+Materialidade da notícia & estimados neste trabalho, sobre o conjunto histórico & já são
+estimados; o resultado consta da Secção~\ref{sec:av_qi3} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{A decisão que antecede as outras, e é uma regra}
+\label{sec:met_relevancia_nota}
+
+Antes de qualquer das quatro, o sistema decide se um título diz respeito à empresa em causa. A
+regra exige a menção da empresa, por nome ou por um dos seus nomes alternativos, e rejeita um
+conjunto fechado de padrões de resumo de mercado. Medida sobre as dez empresas que a lista
+vigiada percorre, retém $4\,843$ de $16\,840$ títulos, ou seja $28{,}8\%$, e descarta
+$71{,}2\%$. A decomposição dos descartes localiza o trabalho: a regra da menção explica
+$68{,}3\%$ do total e a lista de padrões apenas $3{,}0\%$.
+
+É, em proporção, o filtro mais agressivo do sistema, e é o único que permanece uma regra. A
+razão não é de conveniência. Aprender esta decisão exigiria títulos anotados quanto à sua
+pertinência, e o único rótulo disponível em quantidade é a saída da própria regra, o que
+tornaria o exercício circular. A alternativa honesta seria anotação manual, que a
+Secção~\ref{sec:con_futuro} enuncia entre as linhas que exigem julgamento humano. Enquanto não
+existir, a taxa de retenção depende da lista de nomes alternativos, e uma empresa sem entrada
+nessa lista recai na exigência do símbolo, que quase nenhum título escreve.
+
+\subsection*{O que isto significa para a leitura dos resultados}
+
+As cinco decisões correspondem a cinco situações distintas, e a tabela distingue-as uma a
+uma. A relevância é uma regra sem parâmetros. A raridade não tem parâmetros: compara o dia com a
+média e o desvio da janela anterior. A repartição tem coeficientes estimados, mas estimados sem
+rótulos, a partir dessa mesma série de retornos. A comparabilidade assenta num modelo treinado
+por terceiros e utilizado sem ajuste. E só a materialidade tem parâmetros treinados sobre
+exemplos rotulados, o que a torna a única decisão aprendida no sentido corrente do termo. O único lugar onde uma
+representação foi treinada para este problema é o ajuste contrastivo do codificador, cuja
+resposta consta do Capítulo~\ref{cap:avaliacao}.
+
+Esta distribuição não é um acidente de execução, e é ela que dá sentido à comparação que
+atravessa a avaliação. As duas decisões em que a aprendizagem deste trabalho foi aplicada, a
+materialidade e a tentativa de ajustar o codificador, são também as duas cujas respostas são
+negativas; as respostas afirmativas vêm de uma regra estatística e de um modelo utilizado como
+está. A comparação entre cada técnica adotada e a alternativa aprendida correspondente é
+apresentada em cada caso de estudo, e é a constatação com maior capacidade de transferência
+deste trabalho. A designação
+genérica de inteligência artificial descreveria mal um sistema em que a aprendizagem ocupa uma
+das cinco decisões; nomear o lugar de cada família de técnicas é a forma de o descrever sem
+prometer o que ele não faz.
+
+\section{Deteção de movimentos invulgares: o \emph{z}-score deslizante}
 \label{sec:met_detecao}
 
 A primeira decisão do sistema consiste em determinar se o movimento observado num dia é invulgar
@@ -258,7 +340,7 @@ não decorre da dimensão absoluta do movimento, mas do facto de este exceder em
 oscilação habitual da ação naquelas semanas.
 
 
-\section{Decomposição do movimento observado}
+\section{Decomposição do movimento observado: regressão de dois fatores com encolhimento}
 \label{sec:met_decomposicao}
 
 A técnica anterior quantifica a dimensão do movimento, mas não identifica a sua origem. A segunda
@@ -380,7 +462,7 @@ construção, uma vez que a componente específica é definida como resíduo, e 
 significado somaria igualmente. A medida informativa sobre a qualidade do ajuste é o coeficiente
 de determinação na janela de estimação, cujo valor é reportado no Capítulo~\ref{cap:avaliacao}.
 
-\section{Recuperação de precedentes}
+\section{Recuperação de precedentes: embeddings de frase e semelhança do cosseno}
 \label{sec:met_recuperacao}
 
 A terceira decisão consiste em identificar notícias passadas comparáveis com a notícia em análise
@@ -488,6 +570,31 @@ sua própria aplicação, mas incorpora o movimento do mercado no período. Em p
 generalizada, os precedentes aparentam desfechos piores do que os atribuíveis à notícia. O desconto do mercado é aplicado onde é indispensável, na construção do
 rótulo descrito na secção seguinte.
 
+O Excerto~\ref{lst:cosseno} reproduz a comparação tal como é executada sobre a base de casos inteira. A linha que decide o comportamento do sistema é a última: um registo sem vetor utilizável recebe semelhança zero e cai para o fim da ordenação, em vez de interromper o ciclo.
+
+\begin{lstlisting}[caption={[A comparação no núcleo da recuperação]A comparação no núcleo da recuperação, vetorizada sobre a base de casos inteira. A decisão que importa é a última: um vetor nulo recebe semelhança zero em vez de levantar erro, porque um registo sem representação tem de cair para o fim da ordenação e não interromper o ciclo.}, label={lst:cosseno}, float=htbp]
+def cosine_similarities(query, matrix) -> np.ndarray:
+    """Similaridade do cosseno entre um vetor `query` (1D) e cada linha de `matrix` (2D).
+
+    Vetorizado: devolve um array (n_amostras,) com a similaridade de cada linha ao query.
+    Linhas nulas (ou query nulo) recebem 0.0.
+    """
+    query = np.asarray(query, dtype="float64")
+    matrix = np.asarray(matrix, dtype="float64")
+    if matrix.ndim != 2:
+        raise ValueError("`matrix` tem de ser 2D (n_amostras, dim).")
+    if query.ndim != 1 or query.shape[0] != matrix.shape[1]:
+        raise ValueError("dimensões incompatíveis entre `query` e `matrix`.")
+    qn = float(np.linalg.norm(query))
+    row_norms = np.linalg.norm(matrix, axis=1)
+    denom = row_norms * qn
+    dots = matrix @ query
+    out = np.zeros_like(dots, dtype="float64")
+    nz = denom > 0
+    out[nz] = dots[nz] / denom[nz]
+    return out
+\end{lstlisting}
+
 \subsection{Ajuste do codificador por materialidade comparável}
 \label{sec:met_qi4}
 
@@ -569,7 +676,7 @@ preservada. A razão é que um codificador colapsado produz uma tabela de métri
 significado nenhum: todas as consultas devolvem os mesmos vizinhos, e nada na tabela o denuncia.
 
 
-\section{Triagem de notícias}
+\section{Triagem de notícias: um modelo aprendido de exemplos rotulados}
 \label{sec:met_triagem}
 
 A quarta decisão determina que notícias justificam a interrupção do utilizador. Ao contrário das
@@ -726,92 +833,30 @@ modelo, sem calibração, produz valores sistematicamente superiores à frequên
 deste comportamento decorre da reponderação das classes durante o treino, que desloca as pontuações
 para cima por construção.
 
+Os dois parâmetros não são escolhidos à mão. O Excerto~\ref{lst:platt} reproduz o ajuste tal como é executado: uma regressão logística de uma variável sobre o bloco de validação reservado, o que é o que torna os dois valores acima reproduzíveis em vez de afirmados.
+
+\begin{lstlisting}[caption={[Onde uma pontuação passa a ser uma probabilidade]Onde uma pontuação passa a ser uma probabilidade. Os dois parâmetros não são escolhidos: são ajustados por uma regressão logística sobre o bloco de validação reservado, o que é o que torna o valor da Equação~\ref{eq:platt} reproduzível. A classe e a função de ajuste são reproduzidas do ficheiro de origem.}, label={lst:platt}, float=htbp]
+class PlattCalibrator:
+    """p_calibrada = sigmóide(a·score + b), com (a,b) ajustados na validação."""
+
+    a: float
+    b: float
+
+    def __call__(self, scores: np.ndarray) -> np.ndarray:
+        z = self.a * np.asarray(scores, dtype="float64") + self.b
+        return 1.0 / (1.0 + np.exp(-z))
+
+
+def fit_platt(scores_val: np.ndarray, y_val: np.ndarray, seed: int = 42) -> PlattCalibrator:
+    lr = LogisticRegression(max_iter=1000, random_state=seed)
+    lr.fit(np.asarray(scores_val, dtype="float64").reshape(-1, 1), y_val)
+    return PlattCalibrator(a=float(lr.coef_[0][0]), b=float(lr.intercept_[0]))
+\end{lstlisting}
+
 A calibração é ajustada num bloco cuja prevalência de casos positivos difere da do bloco de teste,
 consequência da divisão cronológica. O efeito é mensurável e está reportado no
 Capítulo~\ref{cap:avaliacao}. A transformação é monótona e preserva a ordenação entre notícias, que
 é o que a política de decisão utiliza; o valor absoluto apresentado é o que fica afetado.
-
-\section{Onde entra a inteligência artificial neste sistema}
-\label{sec:met_onde_ia}
-
-As quatro decisões apresentadas até aqui recorrem a famílias de técnicas distintas, e a
-pergunta sobre o lugar da aprendizagem automática neste trabalho tem uma resposta diferente
-para cada uma. A Tabela~\ref{tab:met_onde_ia} reúne essa resposta, que de outro modo ficaria dispersa pelas
-secções anteriores, e acrescenta a decisão que as antecede a todas: o filtro que determina
-quais os títulos que chegam a ser avaliados.
-
-\begin{table}[!htbp]
-\caption[Onde entra a aprendizagem, decisão a decisão]{As cinco decisões do sistema, a origem
-dos respetivos parâmetros, e o que seria necessário para aprender cada uma a partir de dados.
-A coluna central distingue três situações que a designação genérica de inteligência artificial
-confunde: parâmetros estimados neste trabalho, parâmetros de um modelo treinado por terceiros e
-utilizado sem ajuste, e ausência de parâmetros. Os valores da primeira linha são medidos e discutidos na
-subsecção seguinte.}
-\label{tab:met_onde_ia}
-\centering
-\small
-\begin{tabular}{L{0.20\textwidth} L{0.24\textwidth} L{0.44\textwidth}}
-\toprule
-\tabhead{Decisão} & \tabhead{Origem dos parâmetros} & \tabhead{O que seria preciso para a
-aprender} \\
-\midrule
-Relevância do título & regra; sem parâmetros estimados & rótulos independentes da própria
-regra. O único disponível é a saída dela, o que torna o exercício circular \\
-\addlinespace
-Raridade do movimento & nenhum; média e desvio da janela anterior & rótulos de raridade que não
-fossem eles próprios função da volatilidade \\
-\addlinespace
-Repartição do movimento & estimados por regressão, com encolhimento & já são estimados; o que
-falta é um valor de referência observável para a repartição \\
-\addlinespace
-Comparabilidade de notícias & modelo pré-treinado por terceiros, utilizado sem ajuste & foi
-tentado, e é a Secção~\ref{sec:met_qi4}; o resultado consta da Secção~\ref{sec:av_qi4} \\
-\addlinespace
-Materialidade da notícia & estimados neste trabalho, sobre o conjunto histórico & já são
-estimados; o resultado consta da Secção~\ref{sec:av_qi3} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection*{A decisão que antecede as outras, e é uma regra}
-\label{sec:met_relevancia_nota}
-
-Antes de qualquer das quatro, o sistema decide se um título diz respeito à empresa em causa. A
-regra exige a menção da empresa, por nome ou por um dos seus nomes alternativos, e rejeita um
-conjunto fechado de padrões de resumo de mercado. Medida sobre as dez empresas que a lista
-vigiada percorre, retém $4\,843$ de $16\,840$ títulos, ou seja $28{,}8\%$, e descarta
-$71{,}2\%$. A decomposição dos descartes localiza o trabalho: a regra da menção explica
-$68{,}3\%$ do total e a lista de padrões apenas $3{,}0\%$.
-
-É, em proporção, o filtro mais agressivo do sistema, e é o único que permanece uma regra. A
-razão não é de conveniência. Aprender esta decisão exigiria títulos anotados quanto à sua
-pertinência, e o único rótulo disponível em quantidade é a saída da própria regra, o que
-tornaria o exercício circular. A alternativa honesta seria anotação manual, que a
-Secção~\ref{sec:con_futuro} enuncia entre as linhas que exigem julgamento humano. Enquanto não
-existir, a taxa de retenção depende da lista de nomes alternativos, e uma empresa sem entrada
-nessa lista recai na exigência do símbolo, que quase nenhum título escreve.
-
-\subsection*{O que isto significa para a leitura dos resultados}
-
-As cinco decisões correspondem a cinco situações distintas, e a tabela distingue-as uma a
-uma. A relevância é uma regra sem parâmetros. A raridade não tem parâmetros: compara o dia com a
-média e o desvio da janela anterior. A repartição tem coeficientes estimados, mas estimados sem
-rótulos, a partir dessa mesma série de retornos. A comparabilidade assenta num modelo treinado
-por terceiros e utilizado sem ajuste. E só a materialidade tem parâmetros treinados sobre
-exemplos rotulados, o que a torna a única decisão aprendida no sentido corrente do termo. O único lugar onde uma
-representação foi treinada para este problema é o ajuste contrastivo do codificador, cuja
-resposta consta do Capítulo~\ref{cap:avaliacao}.
-
-Esta distribuição não é um acidente de execução, e é ela que dá sentido à comparação que
-atravessa a avaliação. As duas decisões em que a aprendizagem deste trabalho foi aplicada, a
-materialidade e a tentativa de ajustar o codificador, são também as duas cujas respostas são
-negativas; as respostas afirmativas vêm de uma regra estatística e de um modelo utilizado como
-está. A comparação entre cada técnica adotada e a alternativa aprendida correspondente é
-apresentada em cada caso de estudo, e é a constatação com maior capacidade de transferência
-deste trabalho. A designação
-genérica de inteligência artificial descreveria mal um sistema em que a aprendizagem ocupa uma
-das cinco decisões; nomear o lugar de cada família de técnicas é a forma de o descrever sem
-prometer o que ele não faz.
 
 \section{Ferramentas e infraestrutura}
 \label{sec:met_ferramentas}
