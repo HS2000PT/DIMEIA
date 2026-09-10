@@ -793,8 +793,8 @@ being read}, because a collapsed representation produces a plausible table whose
 
 With stratified sampling both arms pass the diagnostic, and pass it similarly to one another. The
 last two rows of the table are the ones that separate \emph{not having degenerated} from
-\emph{having learnt}: both arms displaced the space substantially relative to the starting model
---- mean cosine of $0.782$ and $0.775$ between the initial and the adjusted representation ---
+\emph{having learnt}: both arms displaced the space substantially relative to the starting model,
+with a mean cosine of $0.782$ and $0.775$ between the initial and the adjusted representation,
 and preserved the geometry of the similarities, with correlations of $0.607$ and $0.630$. The
 training, therefore, worked.
 
@@ -861,6 +861,34 @@ Two of the two thousand five hundred queries were excluded, there being not a si
 prior to them within the block. The exclusion is declared here and in the generated report, and
 the filter is applied before any model is, so it is identical across the three arms.
 
+\subsection{The control arm collapsed, and the reason is measurable}
+
+The third arm starts from a domain encoder, to answer the objection that the result above might
+follow from having used a general-purpose model. It trained with the same stratified sampling, the
+same learning rate and the same number of pairs as the other two, and cost $35{,}386$ seconds
+against $3{,}351$ for the main arm, that is $28.3$ seconds per step against $2.7$.
+
+\textbf{It collapsed.} The mean cosine between \emph{different} headlines stands at $0.970$, the
+standard deviation per dimension at $0.006$, and the correlation of the similarity geometry with
+the starting point at $0.281$. \textbf{Its retrieval metrics were not read}, for the same reason
+those of the first attempt were not.
+
+The explanation is measured in the diagnostic itself, and is not a conjecture. The domain encoder,
+\emph{before} any adjustment, shows a mean cosine of $0.599$ between different headlines, against
+$0.205$ for the sentence encoder. It starts, therefore, from a far less dispersed space, and a
+learning rate the sentence encoder tolerates is enough to tip it over. The threshold beyond which
+the adjustment degenerates is not a property of the recipe: it is a property of the starting
+model, and has to be determined for each one.
+
+This measurement corroborates, by an independent route, what Section~\ref{sec:av_qi2} establishes
+about the same encoder: applied in this way, the space in which it places sentences is little
+dispersed before any training, which is precisely the property a similarity measure requires and
+which it does not have.
+
+What this arm does \emph{not} establish is that a domain encoder cannot be adjusted. It
+establishes that it cannot be adjusted at this rate. A lower rate was not attempted, and the
+reason is cost: each run of this arm occupies the machine for about ten hours.
+
 \subsection{Limits of the conclusion}
 
 The result is negative about one training objective, one target and one configuration, and not
@@ -870,7 +898,9 @@ differently. The second is the configuration: one epoch ran over forty thousand 
 learning rate, chosen because it is the one that avoids collapse, and no hyperparameter search
 was carried out. The third is the loss function: the classical alternative, which minimises the
 squared error between the cosine and the target, was declared in Section~\ref{sec:met_qi4} and
-was not run.
+was not run. To these is added the learning rate of the control arm, which the preceding
+subsection shows must be determined per starting model and which was not determined for the
+domain encoder.
 
 What the result does establish, and which does not depend on those limits, is the value of the
 gate: a collapsed representation produces metrics of normal appearance, and without the

@@ -337,6 +337,12 @@ indistinguishable from one another, in the diagnostic as much as in the two meas
 conjecture that magnitude would be partially learnable from text where direction is not therefore
 remains without support in this setup.
 
+A third arm, starting from a domain encoder, was trained as a control and collapsed, so its
+metrics were not read either. The diagnostic shows why: the space of that encoder is, before
+any adjustment, far less dispersed than that of the sentence encoder, and the rate the latter
+tolerates is enough to make it degenerate. The collapse threshold is a property of the
+starting model and not of the recipe.
+
 The consequence for the system is to keep what it already did. The case base is organised by
 theme, and the alert states that the similarity concerns topic; this result establishes that, by
 this route, the guarantee that the precedent's magnitude is comparable cannot be added to it. The

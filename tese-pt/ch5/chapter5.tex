@@ -779,8 +779,8 @@ significado é nulo.
 Com a amostragem estratificada os dois braços passam o diagnóstico, e passam-no de forma
 semelhante entre si. As duas últimas linhas da tabela são as que distinguem \emph{não ter
 degenerado} de \emph{ter aprendido}: os dois braços deslocaram substancialmente o espaço face ao
-modelo de partida --- cosseno médio de $0{,}782$ e $0{,}775$ entre a representação inicial e a
-ajustada --- e preservaram a geometria das semelhanças, com correlação de $0{,}607$ e $0{,}630$.
+modelo de partida, com cosseno médio de $0{,}782$ e $0{,}775$ entre a representação inicial e a
+ajustada, e preservaram a geometria das semelhanças, com correlação de $0{,}607$ e $0{,}630$.
 O treino, portanto, funcionou.
 
 \subsection{Resultado}
@@ -845,6 +845,35 @@ Duas das duas mil e quinhentas consultas foram excluídas, por não existir um �
 anterior a elas dentro do bloco. A exclusão é declarada aqui e no relatório gerado, e o filtro é
 aplicado antes de qualquer modelo ser aplicado, pelo que é idêntico nos três braços.
 
+\subsection{O braço de controlo colapsou, e a razão é mensurável}
+
+O terceiro braço parte de um codificador de domínio, para responder à objeção de que o resultado
+acima poderia decorrer de se ter usado um modelo generalista. Treinou com a mesma amostragem
+estratificada, a mesma taxa de aprendizagem e o mesmo número de pares dos outros dois, e custou
+$35\,386$ segundos contra $3\,351$ do braço principal, isto é $28{,}3$ segundos por passo contra
+$2{,}7$.
+
+\textbf{Colapsou.} O cosseno médio entre títulos \emph{diferentes} situa-se em $0{,}970$, o desvio
+por dimensão em $0{,}006$ e a correlação da geometria das semelhanças com o ponto de partida em
+$0{,}281$. \textbf{As suas métricas de recuperação não foram lidas}, pela mesma razão que as da
+primeira tentativa não o foram.
+
+A explicação está medida no próprio diagnóstico, e não é uma conjetura. O codificador de domínio,
+\emph{antes} de qualquer ajuste, apresenta um cosseno médio de $0{,}599$ entre títulos diferentes,
+contra $0{,}205$ do codificador de frases. Parte, portanto, de um espaço muito menos disperso, e
+uma taxa de aprendizagem que o codificador de frases tolera é suficiente para o fazer tombar. O
+limiar a partir do qual o ajuste degenera não é uma propriedade da receita: é uma propriedade do
+modelo de partida, e tem de ser determinado para cada um.
+
+Esta medição corrobora, por via independente, o que a Secção~\ref{sec:av_qi2} estabelece sobre o
+mesmo codificador: aplicado desta forma, o espaço em que ele coloca as frases é pouco disperso
+antes de qualquer treino, o que é precisamente a propriedade que uma medida de semelhança exige e
+que ele não tem.
+
+O que este braço \emph{não} estabelece é que um codificador de domínio não possa ser ajustado.
+Estabelece que não pode ser ajustado com esta taxa. Uma taxa mais baixa não foi ensaiada, e a
+razão é de custo: cada execução deste braço ocupa a máquina durante cerca de dez horas.
+
 \subsection{Limites da conclusão}
 
 O resultado é negativo sobre um objetivo de treino, um alvo e uma configuração, e não sobre a
@@ -854,7 +883,9 @@ de outro modo. O segundo é a configuração: correu uma época sobre quarenta m
 de aprendizagem baixa, escolhida por ser a que evita o colapso, e não se procuraram
 hiperparâmetros. O terceiro é a função de perda: a alternativa clássica, que minimiza o erro
 quadrático entre o cosseno e o alvo, ficou declarada na Secção~\ref{sec:met_qi4} e não foi
-corrida.
+corrida. A estes acresce a taxa do braço de controlo, que a subsecção anterior mostra ter de
+ser determinada por modelo de partida e que não foi determinada para o codificador de
+domínio.
 
 O que o resultado estabelece, e que não depende desses limites, é o valor da porta: uma
 representação colapsada produz métricas de aparência normal, e sem o diagnóstico da
