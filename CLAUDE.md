@@ -9,6 +9,84 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 68 — 3.ª parte (2026-09-10): OS ORÇAMENTOS DE CORTE DO PLANO MEDIDOS UM A UM, E O
+  QUE SOBREVIVE À MEDIÇÃO É PEQUENO — MAS DUAS DAS SEIS FALHAS DE MEDIÇÃO FORAM MINHAS.**
+  Fechada a Fase Z, o pedido era avançar com a reescrita. **Medi cada capítulo antes de cortar, em
+  vez de executar a lista**, e o resultado é sobre o plano e não sobre a tese.
+  **⚠️ (A) O CAP. 5 NÃO ENTREGA POR NENHUM DOS CINCO MANÍPULOS QUE O PLANO NOMEIA.** O parágrafo
+  repetido da §5.6 **já tinha sido corrigido pela sessão 66** (`48\%` e `60\%` não aparecem no
+  capítulo em forma nenhuma); a prosa já não reenumera os intervalos da `fig:av_acrescimo`; o E12 é
+  **obsoleto** (cita 81 e 42, o artefacto publica 90 e 51); o E13 tem **premissa falsa** (a figura
+  já desenha as seis famílias); e o orçamento das legendas **não existe** — das catorze acima de 60
+  palavras, que somam 1 147, **47% do comprimento é ressalva** e só **5%**, ou seja 54 palavras, é
+  descrição do que a figura já mostra. ⚠️ **E o meu classificador subcontou as ressalvas:** deu 0% à
+  `fig:av_pontaaponta`, cujas 85 palavras são **todas** ressalva quando lidas (reconcilia `0,375`
+  contra `0,379`, declara o oráculo «não utilizável», fixa o protocolo). **A percentagem real é
+  superior a 47% e o corte seguro é próximo de zero.**
+  **⚠️ (B) O CAP. 6: A REGRA DO PLANO CONFERE E A REMEDIÇÃO VIVE ONDE NÃO PODE SAIR.** «O Cap. 5
+  mede, o Cap. 6 interpreta» — e **59 dos 85 decimais do Cap. 6 já estão no Cap. 5, ou seja 69%**.
+  Mas localizadas as passagens com quatro ou mais desses números, são **quatro parágrafos, 395
+  palavras, e são os veredictos das quatro QI**. Um veredicto sem o número que o sustenta deixa de
+  ser um veredicto. A secção das Limitações é o único bloco com massa (1 965 palavras) e **não é
+  remedição**: desenvolve as quatro de maior peso com literatura citada e a distinção entre retorno
+  observacional e estudo controlado — é a passagem mais honesta do documento.
+  **⚠️ (C) O MEU DETETOR LITERAL CONCLUIU O CONTRÁRIO, E IA REGISTÁ-LO.** A sobreposição de
+  8-gramas entre o Cap. 5 e o Cap. 6 é de **0,3%** (21 de 6 116) e dentro do Cap. 6 há **um**
+  8-grama repetido. **A redundância deste documento é parafraseada, não literal:** o parágrafo do
+  §6.4 sobre a dívida técnica reexplica o mecanismo do §5.6.1 com as palavras trocadas, e nenhum
+  8-grama casa. **Um detetor de repetição literal mede a forma e não a substância.**
+  **⚠️ (D) SEGUNDO ERRO MEU, DA MESMA CLASSE:** procurei «dívida técnica» e «três causas» **apenas
+  no Cap. 5 e no Cap. 6** quando o plano nomeia §2.8, §4.5.1 e §4.6, e dei os dois por inexistentes.
+  **São reais** — `sculley2015debt` está citado em ch2, ch4, ch5 e ch6. **A regra que funciona é
+  procurar a chave de citação, e nos ficheiros que o próprio item nomeia.**
+  **✅ (E) EXECUTADO O QUE SOBREVIVEU À MEDIÇÃO — dois cortes, nas duas árvores.** **E1:** a
+  reexplicação do encolhimento de Vasicek sai do §2.5 (−46 PT, −54 EN); fica a literatura, a escolha
+  e a remissão para o §3.4, **para onde o próprio parágrafo já remetia**, e que traz a equação.
+  **E4:** o mecanismo clínico da fadiga de alertas sai do §2.7 (−27 PT, −28 EN) e fica a medição
+  sobre investidores particulares. ⚠️ **E o parágrafo do E4 contradizia-se:** citava o estudo clínico
+  e declarava na mesma frase que a transposição «deixou de ser necessária» por existir medição de
+  retalho. Citar uma fonte para a seguir dizer que já não é precisa é pior do que não a citar.
+  **Verificado antes de aceitar:** `ancker2017alertfatigue` continua citado no §3.8.3 nas duas
+  árvores, logo **nada ficou órfão**; e a paridade passou de 139 para 138 chaves, que é exactamente
+  a frase com citação que saiu — coerente, e não uma assimetria.
+  **⚠️ (F) E O «×3» DO E4 ESTAVA ERRADO:** as duas ocorrências do Cap. 4 que a tarefa contava são
+  falsos positivos da palavra «interrompida» — uma é a **leitura** interrompida antes do fim, a
+  outra é o **ciclo** de maturação interrompido dezanove dias. **É ×2, e cortei o certo.**
+  **⚠️ (G) O CAP. 3 NÃO PRECISA DE NADA DO QUE O PLANO LHE PEDE.** O **F1** está deliberadamente
+  não desenhado (a `fig:met_decisoes` já carrega a família de técnica); o **F8** já está feito
+  (`ch3:403` traz os dois pares reais); e o **E15** já está feito **com a premissa do plano falsa** —
+  a nota que reconcilia `0,516` com `0,530` está em `ch5:285`, **imediatamente onde o segundo valor
+  aparece**, e não «tarde»: movê-la para o Cap. 3 explicaria uma contradição que o leitor ainda não
+  encontrou.
+  ⚠️ **(H) E UMA PORTA ESTAVA CEGA À ÚNICA FORMA COMO A FONTE MUDA — apanhei-a a aprovar-me.**
+  O `check_entrega` comparava `main.tex` contra `main.pdf` e mais nada. O `main.tex` não é tocado
+  há sessões, porque **cada capítulo vive em `chN/chapterN.tex`**: editei o `ch2` às 20:05, o
+  `main.pdf` **versionado** ficou das 19:42, e a porta imprimiu «143 páginas, compila limpo, **mais
+  recente do que a fonte**» sobre um PDF vinte e três minutos mais **antigo**. **Só se viu porque os
+  PDF não apareceram no `git diff`** — sem isso, o repositório entregava um PDF que não corresponde
+  ao `.tex`, que é exactamente o que esta porta existe para impedir. E a **árvore inglesa nem estava
+  na lista**, logo a frescura do PDF inglês nunca foi verificada. Passa a comparar contra o `.tex`
+  **mais recente da árvore**, com a `tese-eng` incluída. **Controlo negativo corrido no sítio:** a
+  porta antiga imprime «ok… mais recente do que a fonte» sobre o mesmo estado em que a nova diz
+  «`chapter2.tex` é MAIS RECENTE do que o .pdf entregue». **5 testes novos**, e o que decide exclui
+  o `build/` — incluí-lo tornaria o PDF fresco por construção, que é a mesma cegueira por outro
+  caminho.
+  **⚠️ (I) E DOIS DEFEITOS MEUS QUE AS PORTAS APANHARAM, no meu próprio texto novo.** O
+  `check_escrita` acusou «adota **em seu lugar**» — possessivo sem artigo, uma das três famílias que
+  ele varre em prosa PT-PT (é a segunda vez que esta porta apanha texto meu; a sessão 67 apanhou
+  «watchlist»). E o `check_memoria` acusou o rodapé: actualizei o `CLAUDE.md` e não o `AGENTS.md`,
+  que é quase um espelho. **⚠️ Mais um de método: dei as portas por verdes filtrando a saída por
+  palavras-chave**, e as linhas de falha não continham nenhuma — três verificadores estavam a
+  falhar e eu não os vi. É a armadilha do `tail -6` da sessão 66, noutra forma. **Ler a saída
+  inteira, ou filtrar pelo marcador de falha e não por palavras.**
+  **⏭️ A DECISÃO QUE FICA, E É DO AUTOR:** dois capítulos medidos, dois orçamentos **indisponíveis a
+  partir de redundância**, porque foram calculados sobre um documento que as sessões 63 a 67 já
+  comprimiram. Atingir os alvos exige decisão **estrutural** — menos figuras, ou fundir subsecções.
+  **PORTAS: as duas árvores a 0 erros · overfull 6 e 4, iguais ao registo anterior a QUALQUER edição
+  desta parte · 143 páginas antes e depois · `tradução: nenhuma ressalva perdida` verde, que é a
+  porta que guarda contra um corte comer uma ressalva · 1200 testes · `ruff` limpo · paridade 0
+  assimetrias em 138 chaves · `verify_bibliography` 103/103.**
+
 - **🆕 SESSÃO 68 — 2.ª parte (2026-09-10): O AUTOR MANDOU FECHAR O PENDENTE ANTES DE ESCREVER,
   E TINHA RAZÃO: DOIS DOS TRÊS ACHADOS NÃO ESTAVAM EM LISTA NENHUMA.**
   Pedido dele: «vê lá se temos trabalhos pendentes ainda em aberto; se tivermos será prioritário
@@ -2329,7 +2407,7 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 68 (o repositório reorganizado: raiz de treze para oito ficheiros, e duas afirmações de arrumação que estavam falsas)
+- **Sessão nº:** 68 (3.ª parte: os orçamentos de corte do plano medidos um a um — e duas das seis falhas de medição foram minhas)
 - **Última atualização:** 2026-09-10
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e

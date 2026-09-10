@@ -107,12 +107,31 @@ VERIFICADORES = [
 TESE_V2 = RAIZ / "tese-pt"
 
 PDFS = [
-    ("dissertação (canónica)", TESE_V2 / "main.pdf", TESE_V2 / "main.tex"),
-    ("slides", TESE / "slides" / "main.pdf", TESE / "slides" / "main.tex"),
-    ("guia", TESE / "guia" / "main.pdf", TESE / "guia" / "main.tex"),
-    ("guia de construção", TESE / "guia_construir" / "main.pdf",
-     TESE / "guia_construir" / "main.tex"),
+    ("dissertação (canónica)", TESE_V2 / "main.pdf", TESE_V2),
+    ("dissertação (inglesa)", RAIZ / "tese-eng" / "main.pdf", RAIZ / "tese-eng"),
+    ("slides", TESE / "slides" / "main.pdf", TESE / "slides"),
+    ("guia", TESE / "guia" / "main.pdf", TESE / "guia"),
+    ("guia de construção", TESE / "guia_construir" / "main.pdf", TESE / "guia_construir"),
 ]
+
+
+def fonte_mais_recente(arvore: pathlib.Path) -> tuple[pathlib.Path | None, float]:
+    """O `.tex` mais recente da árvore, e não o `main.tex`.
+
+    ⚠️ ESTA PORTA ESTEVE CEGA À ÚNICA FORMA COMO A FONTE MUDA, e apanhei-a a aprovar-me.
+    Comparava `main.tex` contra `main.pdf`; o `main.tex` não é tocado há sessões, e cada capítulo
+    vive em `chN/chapterN.tex`. A 2026-09-10 editei o `ch2/chapter2.tex` às 20:05, o `main.pdf`
+    versionado ficou das 19:42, e a porta imprimiu «mais recente do que a fonte» — sobre um PDF
+    vinte e três minutos MAIS ANTIGO. Só se viu porque os PDF não apareceram no `git diff`.
+
+    O `build/` é excluído: é onde o `latexmk` escreve, e incluí-lo tornaria o PDF fresco por
+    construção, o que é a mesma cegueira por outro caminho.
+    """
+    fontes = [x for x in arvore.rglob("*.tex") if "build" not in x.parts]
+    if not fontes:
+        return None, 0.0
+    recente = max(fontes, key=lambda x: x.stat().st_mtime)
+    return recente, recente.stat().st_mtime
 
 
 def paginas(pdf: pathlib.Path) -> str:
@@ -146,13 +165,19 @@ def main() -> int:
     falhas = 0
 
     print("=== os PDF existem e têm páginas ===")
-    for nome, pdf, tex in PDFS:
+    for nome, pdf, arvore in PDFS:
         if not pdf.exists():
             print(f"  !!  {nome}: {pdf.name} NÃO EXISTE — compila antes de entregar")
             falhas += 1
             continue
-        if tex.exists() and tex.stat().st_mtime > pdf.stat().st_mtime:
-            print(f"  !!  {nome}: o .tex é MAIS RECENTE do que o .pdf — recompila")
+        fonte, quando = fonte_mais_recente(arvore)
+        if fonte is None:
+            print(f"  !!  {nome}: nenhum .tex encontrado em {arvore.name} — corpus errado?")
+            falhas += 1
+            continue
+        if quando > pdf.stat().st_mtime:
+            print(f"  !!  {nome}: {fonte.name} é MAIS RECENTE do que o .pdf entregue — recompila "
+                  f"e copia o build/ para o {pdf.name} versionado")
             falhas += 1
             continue
         # ⚠️ E O REGISTO DE COMPILAÇÃO, que esta porta não olhava. O LaTeX **recupera** de quase

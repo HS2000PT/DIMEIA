@@ -529,13 +529,10 @@ One methodological point conditions the second question of the work, that of the
 the company and the market. That separation requires estimating the sensitivity of each stock to
 the market, and the estimate is noisy, especially in volatile companies or those with a short
 history. \textcite{blume1971risk} establishes that the coefficients so estimated tend to regress
-towards the mean between successive periods, that is, that an extreme estimate in one period tends
-to be less so in the next; from this followed the practice, current but subsequent to the paper
-itself, of shrinking the estimate with a fixed weight. That practice applies the same correction to
-precise and imprecise estimates. The alternative adopted in this work weights the shrinkage by the
-imprecision of the estimate itself \autocite{vasicek1973beta}, so that a reliable estimate is
-practically preserved and a fragile one is brought closer to the reference value. The formulation
-is presented in Section~\ref{sec:met_decomposicao}.
+towards the mean between successive periods, from which followed the practice of shrinking the
+estimate with a fixed weight. This work adopts instead the shrinkage weighted by the imprecision
+of the estimate itself \autocite{vasicek1973beta}, whose formulation and effect are presented
+in Section~\ref{sec:met_decomposicao}.
 
 The theoretical framing that justifies the refusal to forecast also belongs to this area. The
 efficient market hypothesis, in its semi-strong form, holds that prices already reflect publicly
@@ -624,10 +621,8 @@ totality of the values computed.
 
 There is a second requirement, on the same side, that conditions not the content of the explanation
 but the frequency with which it is delivered. A recipient exposed to excessive warnings stops
-processing them, a phenomenon documented in domains where the cost of ignoring them is high
-\autocite{ancker2017alertfatigue}, and whose transposition to this domain is no longer necessary
-now that a measurement made on retail investors exists \autocite{liu2023alerts}, discussed in
-Section~\ref{sec:ctx_investidor}. The consequence is that the decision policy forms part of the
+processing them, an effect measured on retail investors \autocite{liu2023alerts} and discussed
+in Section~\ref{sec:ctx_investidor}. The consequence is that the decision policy forms part of the
 design. An alert that is not read is worth the same as an alert that was not sent,
 and that is why Chapter~\ref{cap:sistema} treats the suppression criteria with the care it devotes
 to the methods.

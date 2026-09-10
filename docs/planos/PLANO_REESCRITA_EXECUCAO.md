@@ -171,6 +171,44 @@ compressão da prosa que repete a tabela comparativa.
 raso**. Cortar 1 499 palavras aproxima-o do limite inferior; se a leitura mostrar que perdeu
 substância, o corte reduz-se e compensa-se no Cap. 6, que tem folga maior.
 
+### ✅ CAP. 2 E CAP. 3 — 2026-09-10: dois cortes executados, e o terceiro item do Cap. 3 já estava feito
+
+**Executado nas duas árvores, com as portas verdes:**
+
+| item | o que saiu | poupança |
+|---|---|---|
+| **E1** · Vasicek no Cap. 2 | a reexplicação do mecanismo (o peso fixo aplica a mesma correção a estimativas precisas e imprecisas; uma estimativa fiável é preservada e uma frágil aproximada do valor de referência) — que a §3.4 faz por inteiro **com a equação**, e para onde o próprio parágrafo já remetia | −46 PT · −54 EN |
+| **E4** · fadiga de alertas no Cap. 2 | o mecanismo clínico e a sua transposição, que a §3.8.3 faz com o valor medido. **Fica a medição sobre investidores particulares**, que é a evidência mais forte e a que pertence a um estado da arte | −27 PT · −28 EN |
+
+⚠️ **O parágrafo do E4 contradizia-se a si próprio**, e é isso que torna o corte uma melhoria e não
+só uma poupança: citava o estudo clínico e dizia na mesma frase que a transposição «deixou de ser
+necessária desde que existe medição feita sobre investidores particulares». Citar uma fonte para a
+seguir declarar que ela já não é precisa é pior do que não a citar.
+
+**Verificado antes de aceitar:** `ancker2017alertfatigue` continua citado no Cap. 3 nas duas
+árvores, pelo que **nada ficou órfão** na bibliografia; e a paridade bilingue passou de 139 para
+138 chaves comparadas, que é exactamente a frase com citação que saiu do Cap. 2 — coerente, e não
+uma assimetria.
+
+**Portas:** as duas árvores a 0 erros, **overfull 6 e 4, iguais ao registo anterior a estas
+edições**; 143 páginas antes e depois; `tradução: nenhuma ressalva perdida` verde, que é a porta
+que guarda precisamente contra um corte comer uma ressalva; 1195 testes; `ruff` limpo;
+`verify_bibliography` 103/103.
+
+### ⚠️ CAP. 3 — o que o plano pede e já existe
+
+| item | veredicto medido |
+|---|---|
+| **F1** · figura da §3.7 | **deliberadamente não desenhada** — a `fig:met_decisoes` já carrega a família de técnica de cada decisão. Registado antes |
+| **F8** · Figura 3.4 com os pares reais | **já feito.** `ch3:403` traz $\cos = +0{,}956$ e $\cos = -0{,}086$ com os dois pares nomeados |
+| **E15** · a nota que reconcilia $F_1$ `0,516` contra `0,530` e a amplitude `0,015` contra `0,017` | **já feito, e a premissa do plano é falsa.** O plano diz que «hoje aparece tarde e faz o leitor pensar que há contradição». Está em `ch5:285`, **imediatamente onde o segundo valor aparece** (`ch5:249`), a declarar que os dois medem o mesmo detetor sob protocolos distintos. Movê-la para o Cap. 3 explicaria uma contradição que o leitor ainda não encontrou |
+
+**O padrão, medido cinco vezes num dia, é sobre o plano e não sobre a tese:** dos itens que ele
+nomeia, os que se verificam contra o ficheiro dividem-se em «já feito pelas sessões 63 a 67»,
+«premissa que não se confirma» e «âmbito por reenunciar». Os que sobrevivem à medição são poucos e
+pequenos, e foram executados. **A regra que passa a valer antes de executar qualquer item deste
+plano: medi-lo contra o ficheiro, pela chave de citação e nos capítulos que o próprio item nomeia.**
+
 ### Capítulo 3 · Métodos e materiais — 6 062 → 6 500
 
 **Argumento:** cada técnica é apresentada pelo que serve, com o protocolo da sua avaliação fixado
