@@ -87,9 +87,9 @@ $F_1$ contra o rótulo aproximado & $0{,}516$ contra $0{,}218$ & §\ref{sec:av_q
 Comparação com dois detetores aprendidos & $0{,}530$ / $0{,}269$ / $0{,}280$ & §\ref{sec:av_qi1} \\
 Ablação à janela e ao peso do desvio & $0{,}678$ e $0{,}664$ contra $0{,}516$ & §\ref{sec:av_qi1} \\
 \addlinespace
-Precisão@5 da recuperação, quatro métodos & $0{,}514$ / $0{,}346$ / $0{,}240$ / $0{,}126$ &
+Precisão@5 da recuperação, quatro métodos & $0{,}395$ / $0{,}196$ / $0{,}117$ / $0{,}204$ &
 §\ref{sec:av_qi2} \\
-Valor de referência do setor mais representado & $0{,}467$ & §\ref{sec:av_qi2} \\
+Valor de referência do setor mais representado & $0{,}840$ no corpus completo, $0{,}200$ no equilibrado & §\ref{sec:av_qi2} \\
 Precisão@5 no protocolo simétrico à escala & $0{,}595$ com acaso $0{,}333$ & §\ref{sec:av_qi2} \\
 Precisão@5 apenas com precedentes anteriores & $0{,}513$ com acaso $0{,}259$ & §\ref{sec:av_qi2} \\
 Concordância de direção contra o valor de acaso & $0{,}708$ contra $0{,}688$ & §\ref{sec:av_qi2} \\
@@ -172,10 +172,11 @@ A janela de vinte dias e o desvio de pesos iguais são as melhores opções &
 \midrule
 \multicolumn{3}{l}{\textbf{Recuperação de precedentes}} \\
 Supera as alternativas lexical e triviais avaliadas &
-  Precisão@5 de $0{,}514$ contra $0{,}346$, $0{,}240$ e $0{,}126$ & Mantida \\
+  Precisão@5 de $0{,}395$ contra $0{,}196$, $0{,}117$ e $0{,}204$ & Mantida \\
 Supera por larga margem o melhor valor de referência trivial &
-  A escolha do setor mais representado obtém $0{,}467$, o que reduz a margem de $+0{,}274$ para
-  $+0{,}047$ & \textbf{Estreitada}: por setor, face ao acaso; não avalia um filtro pelo setor da consulta \\
+  No corpus equilibrado a escolha do setor mais representado obtém $0{,}200$ e a margem do método
+  sobre o acaso é de $+0{,}278$; no corpus completo aquela obtém $0{,}840$ e ultrapassa o método &
+  \textbf{Estreitada}: por setor, face ao acaso; não avalia um filtro pelo setor da consulta \\
 Resiste ao aumento de escala do corpus &
   Precisão@5 de $0{,}595$ com acaso de $0{,}333$ & Mantida como teste de escala \\
 Resiste à restrição de anterioridade da consulta &

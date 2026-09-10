@@ -85,8 +85,8 @@ Comparison with two learned detectors & $0.530$ / $0.269$ / $0.280$ & §\ref{sec
 Ablation on the window and on the weighting & $0.678$ and $0.664$ against $0.516$ &
 §\ref{sec:av_qi1} \\
 \addlinespace
-Retrieval precision@5, four methods & $0.514$ / $0.346$ / $0.240$ / $0.126$ & §\ref{sec:av_qi2} \\
-Reference value of the most represented sector & $0.467$ & §\ref{sec:av_qi2} \\
+Retrieval precision@5, four methods & $0.395$ / $0.196$ / $0.117$ / $0.204$ & §\ref{sec:av_qi2} \\
+Reference value of the most represented sector & $0.840$ complete, $0.200$ balanced & §\ref{sec:av_qi2} \\
 Precision@5 under the symmetric protocol at scale & $0.595$ with chance $0.333$ &
 §\ref{sec:av_qi2} \\
 Precision@5 with prior precedents only & $0.513$ with chance $0.259$ & §\ref{sec:av_qi2} \\
@@ -170,10 +170,11 @@ The twenty-day window and the equally weighted deviation are the best options &
 \midrule
 \multicolumn{3}{l}{\textbf{Precedent retrieval}} \\
 Beats the evaluated lexical and trivial alternatives &
-  Precision@5 of $0.514$ against $0.346$, $0.240$ and $0.126$ & Kept \\
+  Precision@5 of $0.395$ against $0.196$, $0.117$ and $0.204$ & Kept \\
 Beats the best trivial reference value by a wide margin &
-  Choosing the most represented sector obtains $0.467$, which reduces the margin from $+0.274$ to
-  $+0.047$ & \textbf{Narrowed}: per sector against chance; does not assess a query-sector filter \\
+  On the balanced corpus, choosing the most represented sector obtains $0.200$ and the method's
+  margin over chance is $+0.278$; on the complete corpus it obtains $0.840$ and overtakes the
+  method & \textbf{Narrowed}: per sector against chance; does not assess a query-sector filter \\
 Survives an increase in the scale of the corpus &
   Precision@5 of $0.595$ with chance of $0.333$ & Kept as a scale test \\
 Survives the prior-to-query restriction &

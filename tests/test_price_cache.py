@@ -25,8 +25,8 @@ import json
 import pandas as pd
 import pytest
 
-from investigator.market_data import prices as mod
 from investigator.market_data import price_cache as pc
+from investigator.market_data import prices as mod
 
 
 def serie(valores: list[float], inicio: str = "2020-01-02") -> pd.Series:

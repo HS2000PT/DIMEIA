@@ -35,13 +35,17 @@ class Number:
 
 # ── RQ2 · recuperar precedentes ──────────────────────────────────────────────────────
 RETRIEVAL: tuple[Number, ...] = (
-    Number("Semantic (MiniLM) — the model in this product", "0.514",
+    # Refeitos a 2026-09-10 sobre o corpus fixado e equilibrado por setor. Os valores
+    # anteriores (0.514 / 0.538 / 0.346 / 0.126 / 0.240) vinham de um corpus cuja janela
+    # declarada nao era a recolhida, e cuja composicao setorial era um artefacto do tecto
+    # da API de noticias.
+    Number("Semantic (MiniLM) — the model in this product", "0.395",
            f"{EVAL}/evaluation_results.md"),
-    Number("Semantic (MPNet) — larger, not deployed", "0.538",
+    Number("Semantic (MPNet) — larger, not deployed", "0.422",
            f"{EVAL}/evaluation_results.md"),
-    Number("Word overlap (lexical baseline)", "0.346", f"{EVAL}/evaluation_results.md"),
-    Number("Most recent (recency baseline)", "0.126", f"{EVAL}/evaluation_results.md"),
-    Number("Random (chance)", "0.240", f"{EVAL}/evaluation_results.md"),
+    Number("Word overlap (lexical baseline)", "0.196", f"{EVAL}/evaluation_results.md"),
+    Number("Most recent (recency baseline)", "0.204", f"{EVAL}/evaluation_results.md"),
+    Number("Random (chance)", "0.117", f"{EVAL}/evaluation_results.md"),
     Number("Semantic, at scale on 80k headlines", "0.595",
            f"{EVAL}/evaluation_retrieval_fnspid.md",
            "Higher than the preliminary figure, on a far larger corpus."),

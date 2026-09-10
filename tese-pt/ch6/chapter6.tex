@@ -56,7 +56,7 @@ Figura~\ref{fig:con_simples} reúne as sete.
   \node[ganha] at (0,-1.62) {\textbf{volatilidade recente} contra as representações de texto\\[1pt]\scriptsize PR-AUC de $0{,}542$ contra $0{,}496$};
   \node[perde] at (6.4,-1.62) {\textbf{janela de sessenta dias} obtém mais, e não foi adotada\\[1pt]\scriptsize $F_1$ de $0{,}678$ contra $0{,}516$ · responsividade};
   \node[ganha] at (0,-3.24) {\textbf{treze constantes por empresa} contra o modelo treinado\\[1pt]\scriptsize precisão@5 de $0{,}662$ contra $0{,}632$};
-  \node[perde] at (6.4,-3.24) {\textbf{MPNet} obtém mais, e não foi adotado\\[1pt]\scriptsize precisão@5 de $0{,}538$ contra $0{,}514$ · custo};
+  \node[perde] at (6.4,-3.24) {\textbf{MPNet} obtém mais, e não foi adotado\\[1pt]\scriptsize precisão@5 de $0{,}422$ contra $0{,}395$ · custo};
   \node[ganha] at (0,-4.86) {\textbf{codificador sem ajuste} contra o ajustado por materialidade\\[1pt]\scriptsize precisão@5 de $0{,}771$ contra $0{,}746$};
   \draw[draw=black!30] (3.2,1.7) -- (3.2,-5.67);
 \end{tikzpicture}
@@ -145,7 +145,7 @@ limita-se às alternativas avaliadas e ao critério aproximado de relevância se
   \node[cx] (c10) at (1.5,-2.72) {precedentes de outra empresa do setor?};
   \node[cx] (c11) at (4.6,-2.72) {precisão@5, rótulo aproximado pelo setor};
   \node[cx] (c12) at (7.7,-2.72) {acaso, sobreposição de palavras, recência};
-  \node[res] (c13) at (10.8,-2.72) {$0{,}514$\\ contra $0{,}240$};
+  \node[res] (c13) at (10.8,-2.72) {$0{,}395$\\ contra $0{,}117$};
   \draw[seta] (c10) -- (c11);
   \draw[seta] (c11) -- (c12);
   \draw[seta] (c12) -- (c13);
@@ -205,15 +205,15 @@ da pretendida.
 
 A resposta à \gls{QI}2 é afirmativa face às alternativas avaliadas. Sobre o corpus
 recente, a recuperação por semelhança de frase \autocite{reimers2019sbert} obtém precisão@5 de
-$0{,}514$, contra $0{,}346$ da sobreposição de vocabulário, $0{,}240$ da escolha aleatória e
-$0{,}126$ da apresentação das notícias mais recentes. Também aqui o modelo implantado não é o melhor
-medido: uma variante de maior dimensão obtém $0{,}538$ sobre o mesmo protocolo, e foi preterida por
+$0{,}395$, contra $0{,}196$ da sobreposição de vocabulário, $0{,}117$ da escolha aleatória e
+$0{,}204$ da apresentação das notícias mais recentes. Também aqui o modelo implantado não é o melhor
+medido: uma variante de maior dimensão obtém $0{,}422$ sobre o mesmo protocolo, e foi preterida por
 custo computacional.
 
 O valor agregado não constitui, porém, a forma adequada de enunciar o resultado. Quase metade das
 notícias do corpus pertence ao setor da tecnologia, o que torna disponível uma estratégia que
 dispensa qualquer modelo e sequer observa a consulta, consistindo em devolver invariavelmente
-notícias desse setor; a sua precisão iguala a fração de consultas de tecnologia, $0{,}467$. Essa
+notícias desse setor; a sua precisão iguala a fração de consultas de tecnologia, $0{,}840$ no corpus completo. Essa
 estratégia é inútil enquanto produto, dado que acerta em todas as consultas de um setor e em nenhuma
 dos quatro restantes, mas a sua existência demonstra que o agregado mede em parte a composição do
 corpus.

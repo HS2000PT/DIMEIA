@@ -98,7 +98,7 @@ zero é o ótimo, e é atingível sem informação & \gls{QI}1 \\
 \addlinespace
 $F_1$ & Acerta quando fala, e fala quando devia? & depende dos dados & \gls{QI}1 \\
 \addlinespace
-Precisão@5 & Das cinco apresentadas, quantas são relevantes? & $0{,}240$, medido por escolha
+Precisão@5 & Das cinco apresentadas, quantas são relevantes? & $0{,}117$, medido por escolha
 aleatória & \gls{QI}2 \\
 \addlinespace
 \gls{PRAUC} & Ordena bem, qualquer que seja o limiar? & $0{,}378$, a prevalência do bloco de teste &
@@ -422,11 +422,29 @@ de assuntos distintos, mas é objetiva e foi fixada antes de os resultados serem
 
 Impõe-se ainda uma restrição que torna a tarefa mais difícil: a notícia recuperada tem de pertencer a
 uma empresa diferente. Sem ela, o sistema obteria bom desempenho devolvendo notícias da própria
-empresa, que pertencem quase sempre ao mesmo setor por construção. O corpus contém $3\,714$ notícias
-distribuídas por cinco setores, recolhidas ao longo de vinte e sete dias, e a medição utiliza
-quinhentas consultas por repetição em cinco repetições com sementes distintas. A amplitude do corpus
-delimita o que a medição estabelece: vinte e sete dias não sustentam afirmações sobre generalização
-temporal. O protocolo não exige que o candidato seja anterior à consulta, e apenas $31{,}1\%$ dos vizinhos o
+empresa, que pertencem quase sempre ao mesmo setor por construção. O corpus é recolhido do serviço de notícias por empresa, numa janela de vinte e oito dias
+encerrada a 25 de junho de 2026, e é fixado por soma de controlo com um manifesto versionado. A
+recolha exige uma precaução que só se descobre medindo: o serviço devolve no máximo cerca de
+duzentos e cinquenta itens por pedido e, ao atingir esse limite, ignora a data inicial do pedido.
+Solicitar cinco, treze ou vinte e sete dias da mesma empresa devolve exatamente as mesmas
+manchetes, todas dos últimos dias da janela, sem qualquer erro ou aviso. A janela é por isso
+pedida em fatias de um dia, o que garante que nenhum pedido atinge o limite e que a janela
+declarada é a janela recolhida. Restam cinco pares de empresa e dia acima do limite, todos da
+mesma empresa, correspondentes a $1{,}2\%$ dos pares: o dia é a granularidade mínima do serviço,
+pelo que essa fração é irredutível e fica declarada.
+
+O corpus assim obtido contém $18\,599$ notícias, e a sua composição setorial não é uniforme: $84\%$
+pertencem à tecnologia, porque sete das quinze empresas monitorizadas são tecnológicas e são
+também as de maior volume noticioso. Numa composição destas, a precisão agregada deixa de medir a
+capacidade de recuperar por tema e passa a medir a composição, como a
+Secção~\ref{sec:av_composicao} demonstra. A medição principal utiliza por isso um subconjunto
+\textbf{equilibrado por setor}, com $569$ notícias de cada um dos cinco, $2\,845$ no total,
+selecionadas com semente fixa e igualmente fixadas por manifesto. A quota é a dimensão do setor
+mais pequeno, para que nenhuma notícia seja contada duas vezes.
+
+A medição utiliza quinhentas consultas por repetição em cinco repetições com sementes distintas. A
+amplitude do corpus delimita o que a medição estabelece: vinte e oito dias não sustentam
+afirmações sobre generalização temporal. O protocolo não exige que o candidato seja anterior à consulta, e apenas $31{,}1\%$ dos vizinhos o
 são. A verificação sob restrição de anterioridade foi feita em agregado sobre o corpus histórico, onde a
 margem sobre o acaso se conserva, e não por setor.
 
@@ -442,11 +460,11 @@ alternativas triviais.
   ig axis,
   xbar, width=0.70\textwidth, height=7.2cm, bar width=9pt,
   xmin=0, xmax=1.14, enlarge y limits=0.09,
-  symbolic y coords={rec, aleat, maior, lex, fin, mini, mpnet, setor},
+  symbolic y coords={aleat, lex, maior, rec, fin, mini, mpnet, setor},
   % o rotulo do 1,000 assentava no traco superior da propria barra: 1,5pt de folga
   every node near coord/.append style={yshift=1.5pt},
-  ytick={rec, aleat, maior, lex, fin, mini, mpnet, setor},
-  yticklabels={Mais recente, Escolha aleatória, Sempre o maior setor, Palavras em comum,
+  ytick={aleat, lex, maior, rec, fin, mini, mpnet, setor},
+  yticklabels={Escolha aleatória, Palavras em comum, Sempre o maior setor, Mais recente,
                Codificador financeiro, Embeddings (MiniLM), Embeddings (MPNet),
                Filtro pelo setor da consulta},
   ig values,
@@ -454,42 +472,46 @@ alternativas triviais.
   xmajorgrids,
 ]
 \addplot[bar shift=0pt, ig alternative bar] coordinates {
-  (0.126,rec) [0{,}126] (0.240,aleat) [0{,}240] (0.346,lex) [0{,}346]
-  (0.420,fin) [0{,}420]};
-\addplot[bar shift=0pt, ig reference bar] coordinates {(0.467,maior) [0{,}467]
+  (0.117,aleat) [0{,}117] (0.196,lex) [0{,}196] (0.204,rec) [0{,}204]
+  (0.275,fin) [0{,}275]};
+\addplot[bar shift=0pt, ig reference bar] coordinates {(0.200,maior) [0{,}200]
   (1.000,setor) [1{,}000]};
-\addplot[bar shift=0pt, ig current bar] coordinates {(0.514,mini) [0{,}514]};
-\addplot[bar shift=0pt, ig competitor bar] coordinates {(0.538,mpnet) [0{,}538]};
+\addplot[bar shift=0pt, ig current bar] coordinates {(0.395,mini) [0{,}395]};
+\addplot[bar shift=0pt, ig competitor bar] coordinates {(0.422,mpnet) [0{,}422]};
 \end{axis}
 \end{tikzpicture}
 \caption[Recuperação: o método contra sete alternativas]{Precisão@5 do MiniLM implantado, em verde
 cheio, contra sete alternativas. O contorno verde identifica a variante MPNet de maior dimensão; as
 barras cinzentas reúnem duas linhas de base, uma linha lexical e um codificador específico do domínio
 financeiro. As duas barras tracejadas dispensam qualquer modelo: devolver sempre notícias do setor
-maior obtém $0{,}467$, valor discutido no texto e que obriga a ler o agregado com reserva, e filtrar
+maior obtém $0{,}200$, que neste subconjunto é o próprio valor de um em cinco por construção, e
+filtrar
 os candidatos pelo setor conhecido da consulta satisfaz o rótulo em todos os lugares da lista sempre
-que existam cinco candidatos elegíveis. O $1{,}000$ não é uma medição: é uma consequência
+que existam cinco candidatos elegíveis. No corpus completo, cuja composição não é uniforme, a
+primeira dessas alternativas obtém $0{,}840$ e ultrapassa o método, o que a
+Secção~\ref{sec:av_composicao} examina. O $1{,}000$ não é uma medição: é uma consequência
 aritmética da definição de relevância, e consta aqui por ser o valor de referência mais alto que
 esta tarefa admite. Não constitui alternativa de produto, uma vez que devolveria casos do mesmo
 setor sem observar o tema da notícia.}
 \label{fig:av_recuperacao}
 \end{figure}
 
-A escolha aleatória acerta em $24{,}0\%$ dos casos, e é esse o valor de referência, e não zero, uma
-vez que os setores existem em número finito e têm dimensões distintas. A procura por palavras em
-comum eleva o resultado para $34{,}6\%$, e a comparação de significado para $51{,}4\%$.
+A escolha aleatória acerta em $11{,}7\%$ dos casos, e é esse o valor de referência, e não um em
+cinco, porque o protocolo exclui os candidatos da própria empresa e nos setores servidos por duas
+empresas essa exclusão retira metade do setor. A procura por palavras em comum eleva o resultado
+para $19{,}6\%$, e a comparação de significado para $39{,}5\%$.
 
 A linha lexical corresponde à forma mais simples dessa família: contagem de palavras projetada por
 dispersão e comparada pelo cosseno, sem ponderação pela raridade dos termos, sem saturação da
 frequência e sem normalização pelo comprimento do texto. Pertence à tradição que vai do modelo de
 espaço vetorial \autocite{salton1975vsm} às funções de ordenação probabilísticas como o BM25
-\autocite{robertson2009bm25}, situando-se no degrau inicial dessa família. Os dezassete pontos
+\autocite{robertson2009bm25}, situando-se no degrau inicial dessa família. Os vinte pontos
 percentuais que a representação de frases \autocite{reimers2019sbert} acrescenta medem, por
 conseguinte, a distância a um ponto de partida elementar e não a distância a um sistema lexical
 afinado. A comparação com uma função de ordenação bem parametrizada constitui trabalho por realizar,
 e é a que tornaria esta conclusão mais forte.
 
-O codificador específico do domínio financeiro obtém $0{,}420$, o valor mais baixo de todos os
+O codificador específico do domínio financeiro obtém $0{,}275$, o valor mais baixo de todos os
 modelos avaliados. O modelo avaliado é o ponto de controlo público \texttt{ProsusAI/finbert},
 identificado desta forma por ser o artefacto exato sobre o qual a medição incide; pertence à
 família de codificadores financeiros de que \textcite{liu2020finbert} e \textcite{huang2023finbert}
@@ -503,18 +525,18 @@ conhecimento de domínio seja irrelevante para a tarefa.
 
 \subsection{A alternativa trivial que o valor agregado esconde}
 
-O corpus não está equilibrado: $1\,736$ das $3\,714$ notícias, quase metade, pertencem ao setor da
+O corpus completo não está equilibrado: $84\%$ das $18\,599$ notícias pertencem ao setor da
 tecnologia. Existe por isso uma estratégia que dispensa qualquer modelo e não observa sequer a
 consulta, consistindo em devolver invariavelmente cinco notícias de tecnologia. Acerta em todas as
 consultas de tecnologia e em nenhuma das restantes, pelo que a sua precisão iguala exatamente a
-fração de consultas que são de tecnologia, $0{,}467$. Medida contra esta alternativa, e não contra o
-acaso uniforme, a margem do método reduz-se de $+0{,}274$ para $+0{,}047$, e a linha lexical de
-$0{,}346$ passa a situar-se abaixo do valor de referência.
+fração de consultas que são de tecnologia, $0{,}840$ nesse corpus. Medida contra esta alternativa,
+e não contra o acaso, a margem do método passa de positiva a negativa: $0{,}779$ contra $0{,}840$.
 
 O elemento enganador é, contudo, o valor agregado. A estratégia trivial obtém
 $1{,}000$ nas consultas de tecnologia e $0{,}000$ em todas as outras, devolvendo notícias de
 semicondutores a quem consulta sobre uma petrolífera. O que ela explora não é uma propriedade do
-problema, mas a composição deste corpus.
+problema, mas a composição do corpus, e é essa a razão pela qual a medição principal desta secção
+utiliza o subconjunto equilibrado, onde a mesma estratégia obtém $0{,}200$.
 
 A comparação dentro de cada setor verifica se a vantagem sobre o acaso também existe fora da
 tecnologia. O painel A da Figura~\ref{fig:av_setor_causal} apresenta-a.
@@ -532,12 +554,12 @@ $+0{,}262$ para $+0{,}254$.}
 \label{fig:av_setor_causal}
 \end{figure}
 
-O valor de acaso é de $0{,}429$ na tecnologia e situa-se em torno de $0{,}072$ em cada um dos quatro
-setores restantes. O método obtém $0{,}712$ na tecnologia, $0{,}448$ na energia, $0{,}419$ na saúde,
-$0{,}272$ na banca e $0{,}171$ no consumo. Onde o valor agregado é dominado, o método acrescenta
-$0{,}283$; onde o corpus é escasso, obtém várias vezes o valor de referência. O agregado subestima o
-método e sobrestima a alternativa trivial pela mesma razão, que é a de quase metade das consultas
-provir do único setor onde o valor de referência já era elevado. A afirmação que o trabalho sustenta
+O valor de acaso é de $0{,}168$ na tecnologia e situa-se em torno de $0{,}100$ em cada um dos quatro
+setores restantes, sendo a diferença consequência do número de empresas que servem cada setor. O
+método obtém $0{,}589$ na energia, $0{,}468$ na saúde, $0{,}389$ na tecnologia, $0{,}322$ na banca e
+$0{,}224$ no consumo. Os acréscimos sobre o respetivo valor de referência são de $+0{,}479$,
+$+0{,}357$, $+0{,}220$, $+0{,}221$ e $+0{,}123$, isto é, entre pouco mais do dobro e mais de cinco
+vezes o acaso. A afirmação que o trabalho sustenta
 é por isso a mais estreita: a recuperação semântica supera a taxa-base dentro de cada um dos cinco
 setores, perante os comparadores avaliados.
 
@@ -548,15 +570,68 @@ do rótulo, não uma experiência adicional. A avaliação mede a recuperação 
 do texto; não demonstra superioridade sobre o filtro por setor nem mede a relevância semântica
 adicional que o produto pretende oferecer.
 
-A variante de maior dimensão obtém $0{,}538 \pm 0{,}011$ contra $0{,}514 \pm 0{,}015$ da utilizada,
+A variante de maior dimensão obtém $0{,}422 \pm 0{,}010$ contra $0{,}395 \pm 0{,}011$ da utilizada,
 sobre cinco sementes; a diferença é pequena face à dispersão e nenhum teste de significância foi
-realizado. Dois codificadores mais recentes obtêm $0{,}504$ e $0{,}513$, indistinguíveis do
+realizado. Dois codificadores mais recentes obtêm $0{,}375$ e $0{,}395$, o segundo indistinguível do
 implantado. A adoção do modelo
 mais pequeno em produção decorreu do custo computacional e não de uma vantagem de qualidade,
 constituindo uma troca explícita cujo preço em precisão está quantificado. A alternativa aparentemente mais
-razoável, que consiste em apresentar as notícias mais recentes, obtém $0{,}126$, o valor mais baixo
-de todos, o que é coerente com a ausência de qualquer razão para a notícia mais recente sobre outra
+razoável, que consiste em apresentar as notícias mais recentes, obtém $0{,}204$, indistinguível da
+linha lexical de $0{,}196$ perante desvios de $0{,}009$ e $0{,}004$, e ambas muito abaixo de
+qualquer codificador. As duas alternativas sem modelo semântico ficam assim empatadas no fundo da
+tabela, o que é coerente com a ausência de qualquer razão para a notícia mais recente sobre outra
 empresa estar relacionada com a notícia em análise.
+
+\subsection{Sensibilidade à composição do corpus}
+\label{sec:av_composicao}
+
+A subsecção anterior utiliza o subconjunto equilibrado, e esta mede o que acontece sem ele. A
+mesma medição sobre o corpus completo, $84\%$ tecnologia, produz a
+Tabela~\ref{tab:av_composicao}.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption[A precisão agregada sob duas composições do mesmo corpus]{A mesma medição, o mesmo
+protocolo e o mesmo período, sobre duas composições do mesmo corpus. À esquerda o subconjunto
+equilibrado, com $569$ notícias por setor; à direita o corpus completo, em que $84\%$ das notícias
+pertencem à tecnologia. A coluna da direita não corrige a da esquerda: mostra o que a precisão
+agregada mede quando a composição domina.}
+\label{tab:av_composicao}
+\begin{tabular}{lrr}
+\toprule
+Precisão@5 & equilibrado & completo \\
+\midrule
+Embeddings (MPNet)             & $0{,}422$ & $0{,}778$ \\
+Embeddings (MiniLM, implantado) & $0{,}395$ & $0{,}779$ \\
+BGE-small                      & $0{,}395$ & $0{,}778$ \\
+E5-small                       & $0{,}375$ & $0{,}775$ \\
+Codificador financeiro         & $0{,}275$ & $0{,}763$ \\
+Palavras em comum              & $0{,}196$ & $0{,}746$ \\
+Escolha aleatória              & $0{,}117$ & $0{,}685$ \\
+\midrule
+Sempre o maior setor           & $0{,}200$ & $\mathbf{0{,}840}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A coluna do corpus completo tem duas leituras, e nenhuma delas é uma correção da outra coluna. A
+primeira é que \textbf{todos os codificadores se tornam indistinguíveis}: os cinco situam-se entre
+$0{,}763$ e $0{,}779$, e o codificador de domínio, que no subconjunto equilibrado obtém o valor
+mais baixo de todos por uma margem de mais de doze centésimas, sobe para dentro de duas
+centésimas dos restantes. A segunda é que a estratégia trivial, que não observa a consulta, obtém
+$0{,}840$ e ultrapassa qualquer método.
+
+A explicação é a mesma nos dois casos e não envolve nenhum dos métodos. Num corpus em que $84\%$
+das notícias pertencem a um setor, devolver notícias desse setor é quase sempre a resposta certa,
+independentemente de como os candidatos foram escolhidos. A precisão agregada deixa de medir a
+capacidade de recuperar por tema e passa a medir a composição do corpus.
+
+Este resultado é a razão pela qual a medição principal utiliza o subconjunto equilibrado, e é
+também uma reserva que se aplica a qualquer trabalho que reporte precisão agregada por pertença a
+uma classe sem declarar a distribuição dessas classes. A comparação por setor, que a subsecção
+anterior apresenta, não é afetada: por construção compara cada consulta com o valor de referência
+do seu próprio setor.
 
 \subsection{Comportamento à escala e sob restrição de anterioridade}
 
@@ -564,9 +639,9 @@ A avaliação anterior incide sobre um corpus recente e de dimensão limitada. P
 resultado não depende desse corpus, a mesma medição foi repetida sobre o conjunto histórico
 completo, com aproximadamente oitenta mil notícias de seis anos. Neste protocolo simétrico, que
 ainda admite candidatos posteriores à consulta, a precisão@5 sobe para $0{,}595$. A subida não deve,
-porém, ser lida na íntegra como ganho: o valor de acaso sobe igualmente, de $0{,}240$ para $0{,}333$,
+porém, ser lida na íntegra como ganho: o valor de acaso sobe igualmente, de $0{,}117$ para $0{,}333$,
 porque a composição por setores é distinta. Medida contra o valor de referência respetivo, a margem
-é de $+0{,}274$ no primeiro caso e de $+0{,}262$ no segundo. O resultado estabelece que o método não
+é de $+0{,}278$ no primeiro caso e de $+0{,}262$ no segundo. O resultado estabelece que o método não
 se degrada quando o corpus passa de recente e curto para seis anos, e não que melhore com mais dados.
 
 A escala permite ainda a comparação que o corpus preliminar não sustentava, e que é a primeira que
@@ -1851,11 +1926,11 @@ Desvio-padrão de pesos iguais & Não obteve o melhor resultado: o decaimento ex
 de $0{,}664$ contra $0{,}516$ & Mantido por ser explicável a um leitor não especializado, e
 registado como escolha e não como resultado. \\
 \addlinespace
-Embeddings de frase & Sobreposição de palavras: precisão@5 de $0{,}346$ contra $0{,}514$ &
+Embeddings de frase & Sobreposição de palavras: precisão@5 de $0{,}196$ contra $0{,}395$ &
 Vocabulário comum não implica assunto comum, e assunto comum não exige vocabulário comum. \\
 \addlinespace
-MiniLM em vez de MPNet & Não obteve o melhor resultado: o MPNet produz $0{,}538$ contra $0{,}514$; um
-codificador de domínio financeiro produz $0{,}420$ & O modelo mais pesado é melhor e foi substituído
+MiniLM em vez de MPNet & Não obteve o melhor resultado: o MPNet produz $0{,}422$ contra $0{,}395$; um
+codificador de domínio financeiro produz $0{,}275$ & O modelo mais pesado é melhor e foi substituído
 por custo. O codificador de domínio obteve o pior resultado de todos, por medição e não por
 suposição. \\
 \addlinespace

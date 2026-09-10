@@ -2,14 +2,14 @@
 
 > Gerado por `scripts/evaluate_per_sector.py`. **Não editar à mão.**
 
-- **Gerado:** 2026-09-10 08:13 UTC. Modelo: SBERT all-MiniLM-L6-v2. População completa por setor (cross-ticker, sem amostragem).
+- **Gerado:** 2026-09-10 08:35 UTC. Modelo: SBERT all-MiniLM-L6-v2. População completa por setor (cross-ticker, sem amostragem).
 
 | Setor | N | P@5 | P@10 | Aleatório (base) | Lift P@5 |
 |---|---|---|---|---|---|
-| Technology | 569 | 0.389 | 0.367 | 0.168 | +0.220 |
-| Banking | 569 | 0.322 | 0.290 | 0.100 | +0.221 |
-| Energy | 569 | 0.589 | 0.555 | 0.110 | +0.479 |
-| Health | 569 | 0.468 | 0.440 | 0.111 | +0.357 |
-| Consumer | 569 | 0.224 | 0.207 | 0.100 | +0.123 |
+| Technology | 15624 | 0.887 | 0.884 | 0.808 | +0.079 |
+| Banking | 957 | 0.192 | 0.152 | 0.025 | +0.168 |
+| Energy | 721 | 0.347 | 0.312 | 0.020 | +0.328 |
+| Health | 569 | 0.243 | 0.227 | 0.015 | +0.228 |
+| Consumer | 728 | 0.071 | 0.068 | 0.018 | +0.053 |
 
 **Leitura:** a recuperação semântica supera a taxa-base aleatória em todos os setores; o *lift* é maior na energia e na saúde (vocabulário distintivo) e menor no consumo. A tecnologia tem a P@5 bruta mais alta apenas por dominar o corpus (taxa-base elevada). Avaliação preliminar (corpus recente do Finnhub).

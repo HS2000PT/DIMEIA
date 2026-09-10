@@ -60,7 +60,7 @@ Figure~\ref{fig:con_simples} gathers the seven.
   \node[ganha] at (0,-1.62) {\textbf{recent volatility} against text representations\\[1pt]\scriptsize PR-AUC of $0.542$ against $0.496$};
   \node[perde] at (6.4,-1.62) {\textbf{sixty-day window} obtains more, and was not adopted\\[1pt]\scriptsize $F_1$ of $0.678$ against $0.516$ · responsiveness};
   \node[ganha] at (0,-3.24) {\textbf{thirteen constants per company} against the trained model\\[1pt]\scriptsize precision@5 of $0.662$ against $0.632$};
-  \node[perde] at (6.4,-3.24) {\textbf{MPNet} obtains more, and was not adopted\\[1pt]\scriptsize precision@5 of $0.538$ against $0.514$ · cost};
+  \node[perde] at (6.4,-3.24) {\textbf{MPNet} obtains more, and was not adopted\\[1pt]\scriptsize precision@5 of $0.422$ against $0.395$ · cost};
   \node[ganha] at (0,-4.86) {\textbf{unadjusted encoder} against the one adjusted for materiality\\[1pt]\scriptsize precision@5 of $0.771$ against $0.746$};
   \draw[draw=black!30] (3.2,1.7) -- (3.2,-5.67);
 \end{tikzpicture}
@@ -149,7 +149,7 @@ question is limited to the evaluated alternatives and the proxy criterion of sec
   \node[cx] (c10) at (1.5,-2.72) {precedents from another company in the sector?};
   \node[cx] (c11) at (4.6,-2.72) {precision@5, label approximated by sector};
   \node[cx] (c12) at (7.7,-2.72) {chance, shared words, recency};
-  \node[res] (c13) at (10.8,-2.72) {$0.514$\\ against $0.240$};
+  \node[res] (c13) at (10.8,-2.72) {$0.395$\\ against $0.117$};
   \draw[seta] (c10) -- (c11);
   \draw[seta] (c11) -- (c12);
   \draw[seta] (c12) -- (c13);
@@ -209,14 +209,14 @@ distinct from the one intended.
 
 The answer to \gls{QI}2 is affirmative against the evaluated alternatives. Over the
 recent corpus, retrieval by sentence similarity \autocite{reimers2019sbert} obtains precision@5 of
-$0.514$, against $0.346$ for vocabulary overlap, $0.240$ for random choice and $0.126$ for
+$0.395$, against $0.196$ for vocabulary overlap, $0.117$ for random choice and $0.204$ for
 presenting the most recent news. Here too the deployed model is not the best measured: a larger
-variant obtains $0.538$ under the same protocol, and was set aside on computational cost.
+variant obtains $0.422$ under the same protocol, and was set aside on computational cost.
 
 The aggregate value is not, however, the appropriate way of stating the result. Almost half the
 news in the corpus belongs to the technology sector, which makes available a strategy that
 dispenses with any model and does not even look at the query, consisting in invariably returning
-news from that sector; its precision equals the fraction of technology queries, $0.467$. That
+news from that sector; its precision equals the fraction of technology queries, $0.840$ in the complete corpus. That
 strategy is useless as a product, since it is right on every query of one sector and on none of the
 remaining four, but its existence shows that the aggregate measures in part the composition of the
 corpus.

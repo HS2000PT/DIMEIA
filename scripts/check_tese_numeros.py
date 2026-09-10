@@ -61,11 +61,17 @@ MANIFESTO: list[tuple[str, str, str]] = [
     # QI2 -- recuperacao
     ("0.513", "evaluation_retrieval_causal.md", "precisao@5 so com o passado"),
     ("0.259", "evaluation_retrieval_causal.md", "chao de acaso no protocolo causal"),
-    ("0.514", "evaluation_results.md", "precisao@5, MiniLM"),
-    ("0.538", "evaluation_results.md", "precisao@5, MPNet"),
-    ("0.346", "evaluation_results.md", "precisao@5, palavras em comum"),
-    ("0.240", "evaluation_results.md", "precisao@5, acaso"),
-    ("0.126", "evaluation_results.md", "precisao@5, recencia"),
+    # Valores da 5.3 refeitos a 2026-09-10 sobre o corpus fixado. Os antigos (0.514 / 0.538 /
+    # 0.346 / 0.240 / 0.126) vinham de um corpus cuja janela declarada nao era a janela
+    # recolhida: a API devolvia ~250 itens por pedido e ignorava a data inicial, pelo que a
+    # cobertura real variava de 3 a 28 dias por empresa e a composicao setorial era a proporcao
+    # de EMPRESAS por setor. A medicao principal usa agora o subconjunto equilibrado.
+    ("0.395", "evaluation_results.md", "precisao@5, MiniLM"),
+    ("0.422", "evaluation_results.md", "precisao@5, MPNet"),
+    ("0.196", "evaluation_results.md", "precisao@5, palavras em comum"),
+    ("0.117", "evaluation_results.md", "precisao@5, acaso"),
+    ("0.204", "evaluation_results.md", "precisao@5, recencia"),
+    ("0.275", "evaluation_retrieval_embedders.md", "precisao@5, codificador de dominio"),
     ("0.595", "evaluation_retrieval_fnspid.md", "precisao@5 a escala"),
     ("0.708", "evaluation_retrieval_fnspid.md", "concordancia de direcao"),
     ("0.688", "evaluation_retrieval_fnspid.md", "chao de acaso da concordancia"),

@@ -16,8 +16,8 @@ verificadores, os marcadores de trabalho por acabar, e que a data não muda sozi
 a zero, tudo o que uma máquina consegue verificar está feito** — o que fica abaixo é o que só
 tu podes fazer.
 
-Estado a 2026-09-08: **sai a zero no técnico.** Dissertação canónica `tese-pt/` **130 pp**
-e a sua tradução `tese-eng/` **126 pp**; artigo **11 pp** (limite de 12 do ICITS), slides 22,
+Estado a 2026-09-08: **sai a zero no técnico.** Dissertação canónica `tese-pt/` **139 pp**
+e a sua tradução `tese-eng/` **138 pp**; artigo **11 pp** (limite de 12 do ICITS), slides 22,
 guia 25, guia de construção 16. **17 verificadores**, mais as verificações de PDF, marcadores e data.
 
 **Título fixado a 2026-09-06, para submeter até 13/09:** «Explicar sem prever: deteção de
@@ -68,7 +68,7 @@ verifiable financial alerts*. A razão da escolha está em
       línguas. ⚠️ Submetido o título, o documento tem de o imprimir tal e qual: se o
       formulário obrigar a alguma alteração, ela tem de voltar às capas PT e EN, à capa dos
       slides e ao `CITATION.cff`, que é onde ele aparece.
-- [ ] **Leitura final da tese que vais entregar** (`tese-pt/main.pdf`, **130 pp**, PT-PT) — o
+- [ ] **Leitura final da tese que vais entregar** (`tese-pt/main.pdf`, **139 pp**, PT-PT) — o
       texto é teu para defender.
 - [ ] **Licença do código** com o Prof. Luís Gomes + ficheiro `LICENSE`.
       ⚠️ **Não é uma escolha livre entre MIT e Apache**, e a auditoria encontrou duas

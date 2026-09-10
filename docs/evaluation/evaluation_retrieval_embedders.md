@@ -5,19 +5,19 @@
 > encoder de DOMÍNIO (FinBERT, mean-pooled) e um MODERNO (E5/BGE) — a comparação que
 > o Cap. 2 discutiu mas não tinha corrido. NÃO altera os números congelados.
 
-- **Corpus:** 3714 manchetes · 500 consultas × 5 sementes.
+- **Corpus:** 2845 manchetes · 500 consultas × 5 sementes.
 - **Protocolo:** cross-ticker precision@5 (exclui a própria empresa); proxy de setor.
-- **Gerado:** 2026-07-27 23:51 UTC · seed 42.
+- **Gerado:** 2026-09-10 08:18 UTC · seed 42.
 
 | Embedder | P@5 |
 |---|---|
-| SBERT MiniLM (tese) | 0.514 ± 0.015 |
-| SBERT MPNet | 0.538 ± 0.011 |
-| FinBERT (domínio, mean-pool) | 0.420 ± 0.010 |
-| E5-small (moderno) | 0.504 ± 0.016 |
-| BGE-small (moderno) | 0.513 ± 0.014 |
-| Lexical (baseline) | 0.346 ± 0.011 |
-| Recency | 0.126 ± 0.006 |
-| Random (base rate) | 0.240 ± 0.004 |
+| SBERT MiniLM (tese) | 0.395 ± 0.011 |
+| SBERT MPNet | 0.422 ± 0.010 |
+| FinBERT (domínio, mean-pool) | 0.275 ± 0.011 |
+| E5-small (moderno) | 0.375 ± 0.012 |
+| BGE-small (moderno) | 0.395 ± 0.012 |
+| Lexical (baseline) | 0.196 ± 0.004 |
+| Recency | 0.204 ± 0.009 |
+| Random (base rate) | 0.117 ± 0.001 |
 
-**Leitura honesta:** o MiniLM da tese reproduz-se em **0.514** (sanidade). O encoder de DOMÍNIO FinBERT dá **0.420** — pior que o MiniLM, coerente com o Cap. 2 (o FinBERT é afinado para sentimento, não para similaridade de frases). Os encoders MODERNOS (E5 0.504, BGE 0.513) **empatam com** MiniLM. Ou seja, a escolha do MiniLM está validada por MEDIÇÃO, não por argumento: um modelo pequeno, gratuito e de 2021 continua no 'sweet spot' para esta tarefa — trocar por um domínio-específico ou por um modelo mais recente não traria ganho. (E5 com prefixo 'query:' simétrico; FinBERT via mean-pooling do encoder.)
+**Leitura honesta:** o MiniLM da tese reproduz-se em **0.395** (sanidade). O encoder de DOMÍNIO FinBERT dá **0.275** — pior que o MiniLM, coerente com o Cap. 2 (o FinBERT é afinado para sentimento, não para similaridade de frases). Os encoders MODERNOS (E5 0.375, BGE 0.395) **empatam com** MiniLM. Ou seja, a escolha do MiniLM está validada por MEDIÇÃO, não por argumento: um modelo pequeno, gratuito e de 2021 continua no 'sweet spot' para esta tarefa — trocar por um domínio-específico ou por um modelo mais recente não traria ganho. (E5 com prefixo 'query:' simétrico; FinBERT via mean-pooling do encoder.)

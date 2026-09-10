@@ -16,6 +16,7 @@ Uso:
 from __future__ import annotations
 
 import argparse
+import pathlib
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -73,6 +74,11 @@ def main() -> int:
     ap.add_argument("--repeats", type=int, default=5)
     ap.add_argument("--k", type=int, default=5)
     ap.add_argument("--seed", type=int, default=42)
+    # Sem esta opcao o caminho de saida estava fixo no codigo, e qualquer verificacao
+    # escrevia por cima do artefacto congelado que a tese cita. E a mesma correcao que o
+    # `train_triage.py` recebeu, pela mesma razao.
+    ap.add_argument("--out", default=None,
+                    help="destino do relatorio; por omissao o artefacto congelado")
     args = ap.parse_args()
 
     df = pd.read_csv(args.news).dropna(subset=["date", "ticker", "headline"])
@@ -119,7 +125,9 @@ def main() -> int:
     for m in labels:
         print(f"  {m:34s} P@{k} = {res[m][0]:.3f} ± {res[m][1]:.3f}")
 
-    out = REPO / "docs" / "evaluation" / "evaluation_retrieval_embedders.md"
+    out = (pathlib.Path(args.out) if args.out
+           else REPO / "docs" / "evaluation" / "evaluation_retrieval_embedders.md")
+    out.parent.mkdir(parents=True, exist_ok=True)
     L = [
         "# evaluation_retrieval_embedders.md — Benchmark de embedders (RQ2; aditivo)",
         "",

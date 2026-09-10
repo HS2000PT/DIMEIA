@@ -103,7 +103,7 @@ zero is the optimum, and is attainable without information & \gls{QI}1 \\
 $F_1$ & Is it right when it speaks, and does it speak when it should? & depends on the data &
 \gls{QI}1 \\
 \addlinespace
-Precision@5 & Of the five presented, how many are relevant? & $0.240$, measured by random
+Precision@5 & Of the five presented, how many are relevant? & $0.117$, measured by random
 choice & \gls{QI}2 \\
 \addlinespace
 \gls{PRAUC} & Does it rank well, whatever the threshold? & $0.378$, the prevalence of the test
@@ -433,11 +433,29 @@ subjects, but it is objective and was fixed before the results were observed.
 
 A further constraint is imposed that makes the task harder: the retrieved news item must belong to
 a different company. Without it, the system would perform well by returning news from the company
-itself, which almost always belongs to the same sector by construction. The corpus contains
-$3{,}714$ news items distributed across five sectors, collected over twenty-seven days, and the
-measurement uses five hundred queries per repetition across five repetitions with distinct seeds.
-The span of the corpus delimits what the measurement establishes: twenty-seven days do not support
-claims about temporal generalisation. The protocol does not require the candidate to be prior to
+itself, which almost always belongs to the same sector by construction. The corpus is collected from the per-company news service, over a window of twenty-eight days
+closing on 25 June 2026, and is pinned by checksum with a versioned manifest. The collection calls
+for a precaution that is only discovered by measuring: the service returns at most around two
+hundred and fifty items per request and, on reaching that limit, ignores the start date of the
+request. Asking for five, thirteen or twenty-seven days of the same company returns exactly the
+same headlines, all from the last days of the window, with no error and no warning. The window is
+therefore requested in one-day slices, which ensures that no request reaches the limit and that
+the declared window is the window collected. Five company-day pairs remain above the limit, all
+from the same company, corresponding to $1.2\%$ of the pairs: the day is the service's finest
+granularity, so that fraction is irreducible and is declared.
+
+The corpus so obtained contains $18{,}599$ news items, and its sector composition is not uniform:
+$84\%$ belong to technology, because seven of the fifteen companies monitored are technological and
+are also those of greatest news volume. Under such a composition, aggregate precision stops
+measuring the ability to retrieve by topic and starts measuring the composition, as
+Section~\ref{sec:av_composicao} demonstrates. The main measurement therefore uses a subset
+\textbf{balanced by sector}, with $569$ news items from each of the five, $2{,}845$ in total,
+selected with a fixed seed and likewise pinned by manifest. The quota is the size of the smallest
+sector, so that no news item is counted twice.
+
+The measurement uses five hundred queries per repetition across five repetitions with distinct
+seeds. The span of the corpus delimits what the measurement establishes: twenty-eight days do not
+support claims about temporal generalisation. The protocol does not require the candidate to be prior to
 the query, and only $31.1\%$ of the neighbours are. The check requiring earlier candidates was made
 in aggregate over the historical corpus, where the margin over chance holds, and not per sector.
 
@@ -453,11 +471,11 @@ alternatives.
   ig axis,
   xbar, width=0.70\textwidth, height=7.2cm, bar width=9pt,
   xmin=0, xmax=1.14, enlarge y limits=0.09,
-  symbolic y coords={rec, aleat, maior, lex, fin, mini, mpnet, setor},
+  symbolic y coords={aleat, lex, maior, rec, fin, mini, mpnet, setor},
   % o rotulo do 1,000 assentava no traco superior da propria barra: 1,5pt de folga
   every node near coord/.append style={yshift=1.5pt},
-  ytick={rec, aleat, maior, lex, fin, mini, mpnet, setor},
-  yticklabels={Most recent, Random choice, Always the largest sector, Shared words,
+  ytick={aleat, lex, maior, rec, fin, mini, mpnet, setor},
+  yticklabels={Random choice, Shared words, Always the largest sector, Most recent,
                Finance encoder, Embeddings (MiniLM), Embeddings (MPNet),
                Filter by the query's sector},
   ig values,
@@ -465,42 +483,45 @@ alternatives.
   xmajorgrids,
 ]
 \addplot[bar shift=0pt, ig alternative bar] coordinates {
-  (0.126,rec) [0.126] (0.240,aleat) [0.240] (0.346,lex) [0.346]
-  (0.420,fin) [0.420]};
-\addplot[bar shift=0pt, ig reference bar] coordinates {(0.467,maior) [0.467]
+  (0.117,aleat) [0.117] (0.196,lex) [0.196] (0.204,rec) [0.204]
+  (0.275,fin) [0.275]};
+\addplot[bar shift=0pt, ig reference bar] coordinates {(0.200,maior) [0.200]
   (1.000,setor) [1.000]};
-\addplot[bar shift=0pt, ig current bar] coordinates {(0.514,mini) [0.514]};
-\addplot[bar shift=0pt, ig competitor bar] coordinates {(0.538,mpnet) [0.538]};
+\addplot[bar shift=0pt, ig current bar] coordinates {(0.395,mini) [0.395]};
+\addplot[bar shift=0pt, ig competitor bar] coordinates {(0.422,mpnet) [0.422]};
 \end{axis}
 \end{tikzpicture}
 \caption[Retrieval: the method against seven alternatives]{Precision@5 of the deployed MiniLM, in
 solid green, against seven alternatives. The green outline identifies the larger MPNet variant; the
 grey bars bring together two baselines, a lexical one and an encoder specific to the financial
 domain. The two dashed bars dispense with any model: always returning news from the largest sector
-obtains $0.467$, a value discussed in the text and one that requires the aggregate to be read with
-reservation, and filtering the candidates by the query's known sector satisfies the label in every
-position of the list whenever five eligible candidates exist. The $1.000$ is not a measurement: it
+obtains $0.200$, which in this subset is the one-in-five value itself by construction, and
+filtering the candidates by the query's known sector satisfies the label in every
+position of the list whenever five eligible candidates exist. On the complete corpus, whose
+composition is not uniform, the first of those alternatives obtains $0.840$ and overtakes the
+method, which Section~\ref{sec:av_composicao} examines. The $1.000$ is not a measurement: it
 is an arithmetic consequence of the definition of relevance, and it appears here as the highest
 reference value this task admits. It is not a product alternative, since it would return cases from
 the same sector without looking at the topic of the news item.}
 \label{fig:av_recuperacao}
 \end{figure}
 
-Random choice is right in $24.0\%$ of cases, and that is the reference value, and not zero, since
-the sectors are finite in number and of distinct sizes. Search by words in common raises the result
-to $34.6\%$, and comparison by meaning to $51.4\%$.
+Random choice is right in $11.7\%$ of cases, and that is the reference value, and not one in five,
+because the protocol excludes candidates from the query's own company and in the sectors served by
+two companies that exclusion removes half the sector. Search by words in common raises the result
+to $19.6\%$, and comparison by meaning to $39.5\%$.
 
 The lexical baseline is the simplest form of that family: word counts projected by hashing and
 compared by cosine, without weighting by the rarity of terms, without frequency saturation and
 without normalisation by the length of the text. It belongs to the tradition that runs from the
 vector space model \autocite{salton1975vsm} to probabilistic ranking functions such as BM25
-\autocite{robertson2009bm25}, sitting on the first step of that family. The seventeen percentage
+\autocite{robertson2009bm25}, sitting on the first step of that family. The twenty percentage
 points that the sentence representation \autocite{reimers2019sbert} adds therefore measure the
 distance to an elementary starting point and not the distance to a tuned lexical system. The
 comparison with a well-parameterised ranking function is work still to be done, and it is the one
 that would make this conclusion stronger.
 
-The encoder specific to the financial domain obtains $0.420$, the lowest value of all the models
+The encoder specific to the financial domain obtains $0.275$, the lowest value of all the models
 assessed. The model assessed is the public checkpoint \texttt{ProsusAI/finbert}, identified in this
 way because it is the exact artefact the measurement bears on; it belongs to the family of
 financial encoders of which \textcite{liu2020finbert} and \textcite{huang2023finbert} are the
@@ -514,18 +535,19 @@ domain knowledge is irrelevant to the task.
 
 \subsection{The trivial alternative the aggregate hides}
 
-The corpus is not balanced: $1{,}736$ of the $3{,}714$ news items, almost half, belong to the
+The complete corpus is not balanced: $84\%$ of the $18{,}599$ news items belong to the
 technology sector. There is therefore a strategy that dispenses with any model and does not even
 look at the query, consisting in invariably returning five technology news items. It is right on
 every technology query and on none of the others, so its precision equals exactly the fraction of
-queries that are about technology, $0.467$. Measured against this alternative, and not against
-uniform chance, the margin of the method falls from $+0.274$ to $+0.047$, and the lexical baseline
-of $0.346$ comes to sit below the reference value.
+queries that are about technology, $0.840$ in that corpus. Measured against this alternative, and
+not against chance, the margin of the method turns from positive to negative: $0.779$ against
+$0.840$.
 
 The misleading element is, however, the aggregate value. The trivial strategy
 obtains $1.000$ on technology queries and $0.000$ on all the others, returning semiconductor news to
 someone querying about an oil company. What it exploits is not a property of the problem, but the
-composition of this corpus.
+composition of the corpus, and that is the reason the main measurement of this section uses the
+balanced subset, where the same strategy obtains $0.200$.
 
 The comparison within each sector checks whether the advantage over chance also holds outside
 technology. Panel A of Figure~\ref{fig:av_setor_causal} presents it.
@@ -543,12 +565,12 @@ $+0.254$.}
 \label{fig:av_setor_causal}
 \end{figure}
 
-The chance value is $0.429$ in technology and stands around $0.072$ in each of the four remaining
-sectors. The method obtains $0.712$ in technology, $0.448$ in energy, $0.419$ in health, $0.272$ in
-banking and $0.171$ in consumer. Where the aggregate is dominated, the method adds $0.283$; where
-the corpus is sparse, it obtains several times the reference value. The aggregate underestimates
-the method and overestimates the trivial alternative for the same reason, which is that almost half
-the queries come from the single sector where the reference value was already high. The claim the
+The chance value is $0.168$ in technology and stands around $0.100$ in each of the four remaining
+sectors, the difference following from the number of companies serving each sector. The method
+obtains $0.589$ in energy, $0.468$ in health, $0.389$ in technology, $0.322$ in banking and
+$0.224$ in consumer. The gains over the respective reference value are $+0.479$, $+0.357$,
+$+0.220$, $+0.221$ and $+0.123$, that is, between a little over twice and more than five times
+chance. The claim the
 work supports is therefore the narrowest one: semantic retrieval beats the base rate within each of
 the five sectors, against the comparators evaluated.
 
@@ -559,14 +581,68 @@ follows from the label, not from an additional experiment. The evaluation measur
 this proxy from the text; it demonstrates neither superiority over a sector filter nor the
 additional semantic relevance the product aims to provide.
 
-The larger variant obtains $0.538 \pm 0.011$ against $0.514 \pm 0.015$ for the one used, over five
+The larger variant obtains $0.422 \pm 0.010$ against $0.395 \pm 0.011$ for the one used, over five
 seeds; the difference is small relative to the dispersion and no significance test was carried out.
-Two more recent encoders obtain $0.504$ and $0.513$, indistinguishable from the deployed one. The
+Two more recent encoders obtain $0.375$ and $0.395$, the second indistinguishable from the deployed
+one. The
 adoption of the smaller model in production followed from computational cost and not from an
 advantage in quality, and is an explicit trade whose price in precision is quantified. The
 apparently most reasonable alternative, which consists in presenting the most recent news, obtains
-$0.126$, the lowest value of all, which is consistent with there being no reason for the most
+$0.204$, indistinguishable from the lexical baseline of $0.196$ given deviations of $0.009$ and
+$0.004$, and both far below any encoder. The two alternatives without a semantic model are thus
+tied at the bottom of the table, which is consistent with there being no reason for the most
 recent news item about another company to be related to the news item under analysis.
+
+\subsection{Sensitivity to the composition of the corpus}
+\label{sec:av_composicao}
+
+The previous subsection uses the balanced subset, and this one measures what happens without it.
+The same measurement over the complete corpus, $84\%$ technology, produces
+Table~\ref{tab:av_composicao}.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption[Aggregate precision under two compositions of the same corpus]{The same measurement, the
+same protocol and the same period, over two compositions of the same corpus. On the left the
+balanced subset, with $569$ news items per sector; on the right the complete corpus, in which
+$84\%$ of the news items belong to technology. The right-hand column does not correct the
+left-hand one: it shows what aggregate precision measures when composition dominates.}
+\label{tab:av_composicao}
+\begin{tabular}{lrr}
+\toprule
+Precision@5 & balanced & complete \\
+\midrule
+Embeddings (MPNet)              & $0.422$ & $0.778$ \\
+Embeddings (MiniLM, deployed)   & $0.395$ & $0.779$ \\
+BGE-small                       & $0.395$ & $0.778$ \\
+E5-small                        & $0.375$ & $0.775$ \\
+Financial encoder               & $0.275$ & $0.763$ \\
+Words in common                 & $0.196$ & $0.746$ \\
+Random choice                   & $0.117$ & $0.685$ \\
+\midrule
+Always the largest sector       & $0.200$ & $\mathbf{0.840}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The complete-corpus column has two readings, and neither is a correction of the other column. The
+first is that \textbf{all the encoders become indistinguishable}: the five sit between $0.763$ and
+$0.779$, and the domain encoder, which in the balanced subset obtains the lowest value of all by a
+margin of more than twelve hundredths, rises to within two hundredths of the rest. The second is
+that the trivial strategy, which does not look at the query, obtains $0.840$ and overtakes any
+method.
+
+The explanation is the same in both cases and involves none of the methods. In a corpus where
+$84\%$ of the news items belong to one sector, returning news from that sector is almost always
+the right answer, regardless of how the candidates were chosen. Aggregate precision stops
+measuring the ability to retrieve by topic and starts measuring the composition of the corpus.
+
+This result is the reason the main measurement uses the balanced subset, and it is also a caveat
+that applies to any work reporting aggregate precision by membership of a class without declaring
+the distribution of those classes. The comparison by sector, which the previous subsection
+presents, is unaffected: by construction it compares each query with the reference value of its
+own sector.
 
 \subsection{Behaviour at scale and with earlier candidates}
 
@@ -574,7 +650,7 @@ The previous evaluation bears on a recent corpus of limited size. To verify that
 not depend on that corpus, the same measurement was repeated over the complete historical set, with
 approximately eighty thousand news items from six years. Under this symmetric protocol, which still
 admits candidates posterior to the query, precision@5 rises to $0.595$. The rise should not,
-however, be read in full as a gain: the chance value rises likewise, from $0.240$ to $0.333$,
+however, be read in full as a gain: the chance value rises likewise, from $0.117$ to $0.333$,
 because the composition by sector is different. Measured against the respective reference value,
 the margin is $+0.274$ in the first case and $+0.262$ in the second. The result establishes that the
 method does not degrade when the corpus goes from recent and short to six years, and not that it
@@ -1872,11 +1948,11 @@ Equally weighted standard deviation & Did not obtain the best result: exponentia
 $F_1$ of $0.664$ against $0.516$ & Kept for being explainable to a non-specialist reader, and
 recorded as a choice and not as a result. \\
 \addlinespace
-Sentence embeddings & Word overlap: precision@5 of $0.346$ against $0.514$ & Common vocabulary does
+Sentence embeddings & Word overlap: precision@5 of $0.196$ against $0.395$ & Common vocabulary does
 not imply a common subject, and a common subject does not require common vocabulary. \\
 \addlinespace
-MiniLM instead of MPNet & Did not obtain the best result: MPNet produces $0.538$ against $0.514$; a
-financial domain encoder produces $0.420$ & The heavier model is better and was set aside on cost.
+MiniLM instead of MPNet & Did not obtain the best result: MPNet produces $0.422$ against $0.395$; a
+financial domain encoder produces $0.275$ & The heavier model is better and was set aside on cost.
 The domain encoder obtained the worst result of all, by measurement and not by assumption. \\
 \addlinespace
 Logistic regression & Gradient boosted trees: \gls{PRAUC} of $0.469$ against $0.538$ & The more
