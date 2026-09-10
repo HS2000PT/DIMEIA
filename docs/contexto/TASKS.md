@@ -78,15 +78,15 @@
       não finanças. A resposta da tese usa o diagnóstico dos próprios autores.
 - [ ] A12.4b · Descarregar os PDFs de [Cau23b] e [Ber23] (ISEP) — hoje só se cita o que consta dos
       resumos do editor. Sem os PDFs não se citam participantes nem valores. **Tarefa do Henrique.**
-- [ ] A12.5 · [Nee25] SPA, [Cha22c] DeepTrust, [Fer19] Squawk Bot em §2.2 — sistemas próximos e como diferem
-- [ ] A12.6 · [Fen21b] SIGIR em §6.5 — a direção técnica 2 deixa de ser especulativa
-- [ ] A12.7 · [Cor21] em §3.6/§5.4 — relevância de notícias sem anotação humana
+- [ ] A12.5 · **→ consolidado em Z3.** [Nee25] SPA, [Cha22c] DeepTrust, [Fer19] Squawk Bot em §2.2
+- [ ] A12.6 · **→ consolidado em Z3.** [Fen21b] SIGIR em §6.5
+- [ ] A12.7 · **→ consolidado em Z3.** [Cor21] em §3.6/§5.4
 - [x] A12.8 · Tabela 2.3 reconstruída (linha «Por que razão acreditar?» passa a declarar que as
       medições com pessoas não confirmam o ganho) e afirmação de lacuna da §2.9 reavaliada
 - [x] A12.11 · [Du24] em §2.4 — o vizinho revisto por pares mais próximo. A **ablação dele** mostra
       que aprendizagem contrastiva só sobre texto **degrada** a exatidão. Terceira indicação
       independente de que a direção é o sinal errado
-- [ ] A12.12 · **Fechar a ligação à QI4 em §2.2 e §2.4.** Hoje o texto descreve [Du24] e [Mun09]
+- [x] A12.12 · **FEITO**: `du2024contrastive` está citado no corpo. Ficava: fechar a ligação à QI4 em §2.2 e §2.4, onde o texto descrevia [Du24] e [Mun09]
       sem dizer que esta tese ajusta o codificador e treina sobre magnitude, porque o Capítulo 1
       ainda declara três questões. Meia frase em cada sítio, depois de C7/C8
 
@@ -329,17 +329,17 @@ Duas, ambas do nosso lado — **a origem não derivou**: o dataset Hugging Face
       `data/_cache_volumes.csv` é uma cache que o próprio script refaz do yfinance;
       `data/narrator_harness_log.jsonl` é **saída** do arnês, não entrada;
       `data/triage_dataset_ext.csv` reconstrói-se com `build_dataset.py --ext`.
-- [ ] C1h.4 · **Refazer a §5.3 sobre o FNSPID.** É o plano se o Finnhub não aparecer, e é uma
+- [x] C1h.4 · **RESOLVIDO por outra via**: a §5.3 passou a medir sobre o subconjunto **equilibrado por setor** (569 de cada um dos cinco, 2 845 no total) do corpus Finnhub fixado por manifesto, e o Finnhub apareceu. O plano B era: refazer a §5.3 sobre o FNSPID, e era uma
       melhoria mesmo que apareça: o resultado principal passa de um corpus de 27 dias
       irrepetível para um de seis anos fixado por `sha256`. Inclui refazer a alternativa
       trivial e a análise por setor (hoje na §5.3.3) e a comparação de codificadores.
       **Nota já medida:** no bloco de teste do FNSPID a taxa-base de setor é 0,629 (nove
       empresas) e no corpus completo 0,333 (catorze) — a escolha do conjunto de candidatos tem
       de ser declarada, porque muda o acaso por um factor de dois.
-- [ ] C1h.5 · **Descarregar os codificadores da comparação** (MPNet, FinBERT, E5-small,
+- [x] C1h.5 · **FEITO**: o FinBERT está medido a `0{,}275` no corpus novo. Codificadores da comparação (MPNet, FinBERT, E5-small,
       BGE-small) e refazer o `evaluation_retrieval_embedders.md` sobre o FNSPID. O autor
       autorizou descarregar do zero.
-- [ ] C1h.6 · **`evaluate_anomaly.py` vai ao yfinance sem cache** — a §5.2 não é determinística
+- [ ] C1h.6 · **→ consolidado em Z2**, com a causa medida (o yfinance ajusta retroativamente). `evaluate_anomaly.py` vai ao yfinance sem cache e a §5.2 não é determinística
       hoje. Aplicar-lhe a cache de preços, como se fez ao `build_kb.py`.
 - [ ] C1h.7 · **Verificar os 28 documentos cuja dependência a auditoria não detectou.** A
       deteção por expressão regular não apanha caminhos construídos em `argparse`. Não é
@@ -347,7 +347,7 @@ Duas, ambas do nosso lado — **a origem não derivou**: o dataset Hugging Face
 
 ### C1e — ACHADO NOVO: o corpus da avaliação preliminar não existe
 
-- [ ] C1e.1 · **`data/finnhub_news.csv` não está em lado nenhum.** É o corpus das 3 714
+- [x] C1e.1 · **RESOLVIDO**: existe um CSV de notícias do Finnhub em `data/`, e a §5.3 passou a usar o subconjunto equilibrado (569 por setor) do corpus fixado por manifesto. Era o corpus das 3 714
       manchetes sobre o qual assenta a §5.3.2 — a Figura 5.6, o resultado de recuperação que a
       tese apresenta em primeiro lugar (MiniLM 0,514 · lexical 0,346 · acaso 0,240). Não está
       no disco, não está no histórico do git (`data/**` é gitignored) e não está no `archive/`.
@@ -460,7 +460,7 @@ ficheiro congelado citado pela tese.
       direção dá **0,1**. Está agora verificado à mão sobre `±1%…±5%`, com os dois percentis
       calculados no papel. Sem esta correção, o teste teria dado uma falsa garantia sobre a
       única comparação que **é** o resultado da QI4.
-- [ ] C3c · **PERGUNTA DE FUNDO, para decidir antes de treinar seja o que for.**
+- [x] C3c · **DECIDIDA**: o treino correu e a QI4 está fechada, logo a pergunta foi respondida pelos factos. Ficava: **pergunta de fundo, para decidir antes de treinar seja o que for.**
       Se o codificador é ajustado para que a proximidade signifique grandeza comparável, então
       os precedentes que ele devolve são aqueles cuja grandeza ele julga parecida com a do caso
       novo — e mostrar os impactos deles é, na prática, uma estimativa de grandeza para o caso
@@ -596,16 +596,16 @@ ficheiro congelado citado pela tese.
       que sem o rebentamento do acaso a tabela sairia com falsos vizinhos lá dentro. Não
       corrigido: qualquer das duas opções **muda a população de medição**, e isso é decisão do
       autor. As duas opções estão escritas em `docs/design/qi4_resultado_2026-09-09.md` §3.
-- [ ] C4 · Braço de **controlo** — codificador de domínio + objetivo de semelhança que lhe falta.
+- [x] C4 · Braço de **controlo** — **FEITO** (verificado a 2026-09-10): `docs/design/qi4_resultado_2026-09-09.md` nomeia «o braço de controlo C4 (`ProsusAI/finbert`)» e reporta o colapso. ⚠️ A minha primeira verificação deu falso negativo por exigir o cosseno `0,970` no mesmo ficheiro.
       Despromovido de contribuição a controlo: o FinBERT2 (KDD 2025) já mostrou que resulta
-- [ ] C5 · Braço **principal** — ajuste contrastivo por materialidade comparável (`|impacto|`,
+- [x] C5 · Braço **principal** — **FEITO**: o valor `2{,}185` está na tese e o artefacto existe. Ajuste contrastivo por materialidade comparável (`|impacto|`,
       nunca direção). Ajustar **o codificador**, não uma cabeça sobre embeddings congelados —
       é a limitação declarada de [Jeong26] e é o que faz disto extensão e não repetição
-- [ ] C5b · Braço de **replicação** — a mesma montagem com retorno **com sinal**, reproduzindo
+- [x] C5b · Braço de **replicação** — **FEITO**: `2{,}157` na tese. A mesma montagem com retorno **com sinal**, reproduzindo
       [Jeong26] no arnês desta tese. **A comparação magnitude vs. direção é o resultado da QI4**
-- [ ] C6 · Avaliar os três no arnês idêntico; ablações; intervalos por reamostragem
-- [ ] C7 · Redigir a QI4: pergunta, protocolo, resultado, e o que dele não decorre
-- [ ] C8 · Atualizar §1.3, §1.4, Cap. 2, §3.5, Cap. 5, Cap. 6 e a matriz de evidência
+- [x] C6 · **FEITO**: artefacto do resultado + os desvios (`± 0{,}062`) na tese. Avaliados os três no arnês idêntico, com intervalos por reamostragem
+- [x] C7 · **FEITO**: a secção existe no corpo (`sec:av_qi4`), com o que do resultado não decorre
+- [x] C8 · **FEITO** (verificado a 2026-09-10): a QI4 é nomeada no Cap. 1 (§1.3) e no Cap. 6. ⚠️ A minha verificação deu falso negativo por procurar `QI4` quando a tese escreve `\gls{QI}4` — é a terceira vez hoje que um padrão acerta ao lado da forma real.
 
 ## FASE D — Estrutura e secções novas
 
@@ -666,6 +666,45 @@ ficheiro congelado citado pela tese.
 - [ ] G5 · Agradecimentos: frase «uma dessas conversas», parágrafo da família, tratamento do coorientador
 - [ ] G6 · Decidir o título (depende do desfecho da Fase C)
 - [ ] G7 · Revisão palavra a palavra, capítulo a capítulo, preservando a voz
+
+## FASE Z — Garantias por fechar ANTES de escrever (achados de 2026-09-10)
+
+> Estes dois não estavam em lista nenhuma e são pré-requisitos da reescrita: são a rede que
+> distingue um número com fonte de uma gralha. Corrigi-los depois de escrever é descobrir os
+> defeitos com o documento já montado.
+
+- [ ] Z1 · **A porta «todo o número tem origem» não vê os decimais da árvore canónica.**
+      O `scripts/auditar_numeros.py` extrai `\d+\.\d{2,}` (ponto) e a tese escreve `$2{,}173$`
+      (vírgula, convenção PT-PT exigida por outra porta); o `prosa_e_tabelas` não normaliza `{,}`.
+      Declara «todos têm origem» depois de examinar **60** números, quando a prosa e as tabelas
+      têm **212 decimais com vírgula**. É a MESMA classe que a sessão 63 corrigiu no
+      `check_tese_numeros` e que nunca foi corrigida aqui.
+      **Medido antes de alargar** (para a porta não passar a gritar de mais): dos 212, **180 já
+      têm fonte**, **19 existem só em `docs/design/`** — a QI4 inteira, e a porta não lê essa
+      pasta — e **13 não têm fonte nenhuma**.
+      Trabalho: (a) ver a vírgula; (b) acrescentar `docs/design/*.md` às fontes; (c) triar os treze
+      um a um, cada um com fonte no artefacto ou entrada na lista dos justificados com a razão
+      escrita, como as dez que já lá estão. Os treze: `0,143` `0,226` `0,235` `0,289` `0,336`
+      `0,454` `0,462` `0,970` `0,994` `0,997` `1,71` `2,11` `2,725`.
+      ⚠️ Plantar o defeito e confirmar que dispara, **e** confirmar que um corpus limpo não a faz
+      disparar. O projeto já pagou as duas metades.
+
+- [ ] Z2 · **A §5.2 não é reproduzível de um artefacto fixado.** O `scripts/evaluate_anomaly.py`
+      chama `yf.Ticker(t).history(...)` ao vivo, sem cache e sem ficheiro de preços fixado. A
+      janela está fixada (`2023-06-01` a `2026-06-01`), mas o yfinance **ajusta retroativamente**
+      para desdobramentos e dividendos, logo uma corrida futura pode devolver fechos diferentes e
+      mover a amplitude `0{,}015` / `0{,}344` e o `F1 0{,}530`. Num capítulo cuja afirmação central
+      é que tudo se confere, é a única avaliação que depende da rede no momento da leitura.
+      Trabalho: fixar os preços num ficheiro versionado com `sha256` no manifesto, como o corpus
+      de notícias, e o script a lê-lo por defeito. ⚠️ **Reproduzir os valores congelados na mesma
+      passagem**, senão a correção troca um defeito por outro.
+
+- [ ] Z3 · **Cinco referências que a pesquisa encontrou e nunca entraram na bibliografia.**
+      `[Nee25]`, `[Cha22c]`, `[Fer19]` (A12.5, sistemas próximos em §2.2), `[Fen21b]` (A12.6, faz a
+      direção técnica 2 deixar de ser especulativa) e `[Cor21]` (A12.7, relevância sem anotação
+      humana, que sustenta a §3.6). **Verificado a 2026-09-10: as cinco etiquetas existem só neste
+      ficheiro, e zero vezes no `references.bib`.** Cada uma tem de ser verificada campo a campo
+      antes de ser escrita, pelo protocolo §6.4.
 
 ## FASE H — Validação
 
