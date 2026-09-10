@@ -233,6 +233,16 @@ These questions take the form of four objectives:
         expectations.
 \end{enumerate}
 
+The techniques these objectives call for come from different families, and the question of
+where machine learning sits in the work has a distinct answer for each of the five decisions
+the system takes before an alert reaches anyone. One of them is a rule with no estimated
+parameters. One uses no parameters beyond the mean and the deviation of the preceding window.
+One has its parameters estimated by regression, with shrinkage. One relies on a model
+pre-trained by others and used without adjustment. Only the last has parameters estimated in
+this work, on the historical set. The label of artificial intelligence conflates these
+situations, and Section~\ref{sec:met_onde_ia} separates them decision by decision, together with
+what learning each one from data would require.
+
 \section{Scientific contributions}
 \label{sec:intro_contribuicoes}
 

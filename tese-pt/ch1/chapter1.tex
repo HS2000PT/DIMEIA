@@ -233,6 +233,16 @@ Estas questões concretizam-se em quatro objetivos:
   \item reportar os resultados obtidos, incluindo os que não confirmem as expectativas iniciais.
 \end{enumerate}
 
+As técnicas que estes objetivos exigem pertencem a famílias distintas, e a questão de onde se
+situa a aprendizagem automática no trabalho tem resposta diferente para cada uma das cinco
+decisões que o sistema toma antes de um alerta chegar a alguém. Uma delas é uma regra sem
+parâmetros estimados. Uma não utiliza parâmetros além da média e do desvio da janela anterior.
+Uma tem os parâmetros estimados por regressão, com encolhimento. Uma recorre a um modelo
+pré-treinado por outros e utilizado sem ajuste. Apenas a última tem parâmetros estimados neste
+trabalho, sobre o conjunto histórico. O rótulo de inteligência artificial confunde estas
+situações, e a Secção~\ref{sec:met_onde_ia} separa-as decisão a decisão, com a aprendizagem que
+cada uma exigiria.
+
 \section{Contribuições científicas}
 \label{sec:intro_contribuicoes}
 
