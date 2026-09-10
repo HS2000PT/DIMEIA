@@ -28,6 +28,12 @@ RAIZ = pathlib.Path(__file__).resolve().parents[1]
 PAGINA = RAIZ / "web" / "index.html"
 
 
+def _fonte_painel():
+    return "\n".join(p.read_text(encoding="utf-8") for p in (
+        PAGINA, PAGINA.parent / "assets/dashboard.js",
+        PAGINA.parent / "assets/charts.js", PAGINA.parent / "assets/dashboard.css"))
+
+
 def _serie(n: int = 260, semente: int = 7) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Uma empresa que segue mesmo o mercado e o setor: ajuste bom por construção."""
     r = np.random.default_rng(semente)
@@ -109,7 +115,7 @@ def test_o_coeficiente_nunca_viaja_como_nan():
 
 
 def _funcao() -> str:
-    txt = PAGINA.read_text(encoding="utf-8")
+    txt = _fonte_painel()
     m = re.search(r"function qualidadeAjuste\(.*?\n\}", txt, re.S)
     assert m, "a função que traduz o coeficiente em frase desapareceu da página"
     return m.group(0)
@@ -128,7 +134,7 @@ def test_a_pagina_traduz_o_coeficiente_em_frase():
 def test_a_mediana_da_pagina_e_a_medida_e_nao_uma_escolha():
     """0,460 está publicado em docs/evaluation e citado no §5.4.6. Se alguém mexer no
     limiar da página sem mexer na medição, isto parte — que é o objetivo."""
-    txt = PAGINA.read_text(encoding="utf-8")
+    txt = _fonte_painel()
     m = re.search(r"const R2_MEDIANA = ([0-9.]+);", txt)
     assert m, "a constante da mediana desapareceu"
     artefacto = (RAIZ / "docs" / "evaluation" / "evaluation_decomposition.md").read_text(
@@ -144,7 +150,7 @@ def test_a_mediana_da_pagina_e_a_medida_e_nao_uma_escolha():
 def test_a_frase_aparece_no_cartao_e_nao_so_na_funcao():
     """Uma função que ninguém chama é a mesma coisa que não existir — e este projeto já
     pagou isso: a repartição vinha na API e o cliente deitava-a fora."""
-    txt = PAGINA.read_text(encoding="utf-8")
+    txt = _fonte_painel()
     assert "qualidadeAjuste(d," in txt.split("function qualidadeAjuste")[1], (
         "a função existe mas o cartão não a invoca"
     )
@@ -170,7 +176,7 @@ def test_a_altura_da_faixa_do_z_vive_num_so_sitio():
     desacordo que se manifesta como composição e não como exceção não tem quem o apanhe,
     e por isso a altura passou a ter uma só origem.
     """
-    txt = PAGINA.read_text(encoding="utf-8")
+    txt = _fonte_painel()
     assert "--z-alt:" in txt, "a variável da altura da faixa desapareceu"
     assert "height:var(--z-alt)" in txt, "a caixa deixou de ler a variável"
     assert re.search(r"getPropertyValue\('--z-alt'\)", txt), (
@@ -189,7 +195,7 @@ def test_a_faixa_do_z_fixa_o_intervalo_em_vez_de_o_deixar_automatico():
     simétrico à volta de zero — a faixa mede distância à norma nos dois sentidos — com
     folga suficiente para o rótulo mais alto ficar dentro.
     """
-    txt = PAGINA.read_text(encoding="utf-8")
+    txt = _fonte_painel()
     assert "autoscaleInfoProvider" in txt, "a faixa do z voltou à escala automática"
     m = re.search(r"const zMax = Math\.max\(1\.5,.*\* ([0-9.]+);", txt)
     assert m, "o intervalo da faixa deixou de ser calculado a partir dos dados"

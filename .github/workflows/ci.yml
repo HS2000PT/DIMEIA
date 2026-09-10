@@ -39,3 +39,11 @@ jobs:
 
       - name: Tests (pytest — excludes @telegram and @sbert)
         run: pytest
+
+      - name: Set up Node for browser-independent frontend tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Frontend contracts
+        run: node --test tests/dashboard.test.cjs

@@ -125,7 +125,7 @@ def test_a_api_nao_serve_nada_que_a_pagina_nao_use(client):
     """
     import re
 
-    html = _PAGINA.read_text(encoding="utf-8")
+    html = _fonte_painel()
     # A documentação do contrato fica, e é a única excepção: não é superfície de produto,
     # não corre lógica nenhuma, e numa defesa é a resposta a "o que é que isto serve?".
     DOCS = {"/api/docs", "/api/openapi.json"}
@@ -133,7 +133,7 @@ def test_a_api_nao_serve_nada_que_a_pagina_nao_use(client):
                 if getattr(r, "path", "").startswith("/api/")} - DOCS
     usadas = {m.group(1) for m in re.finditer(r'json\("(/api/[a-z]+)', html)}
     # `/api/asset/{ticker}` é montada com template literal, logo não aparece no varrimento
-    usadas.add("/api/asset/{ticker}")
+    usadas.update({"/api/asset/{ticker}", "/api/news/{ticker}"})
 
     assert servidas == usadas, f"rotas servidas e não usadas: {sorted(servidas - usadas)}"
 
@@ -170,6 +170,13 @@ def test_alertas_servem_os_MAIS_RECENTES_e_nao_os_primeiros(client, monkeypatch)
 _PAGINA = pathlib.Path(__file__).resolve().parents[1] / "web" / "index.html"
 
 
+def _fonte_painel():
+    # O contrato abrange os ficheiros efetivamente carregados pela página v9.
+    return "\n".join(p.read_text(encoding="utf-8") for p in (
+        _PAGINA, _PAGINA.parent / "assets/dashboard.js",
+        _PAGINA.parent / "assets/charts.js", _PAGINA.parent / "assets/dashboard.css"))
+
+
 def test_a_pagina_so_usa_rotas_que_a_api_serve():
     """Uma rota escrita à mão na página e inexistente na API é um ecrã vazio em produção.
 
@@ -178,7 +185,7 @@ def test_a_pagina_so_usa_rotas_que_a_api_serve():
     """
     import re
 
-    html = _PAGINA.read_text(encoding="utf-8")
+    html = _fonte_painel()
     pedidas = {m.group(1) for m in re.finditer(r'json\("(/api/[a-z]+)', html)}
     servidas = {r.path for r in api_main.app.routes
                 if getattr(r, "path", "").startswith("/api/")}
@@ -192,7 +199,7 @@ def test_a_pagina_nao_mostra_a_probabilidade_da_triagem():
 
     A v5 servia-o em três sítios. A v6 não pode voltar a fazê-lo por distração.
     """
-    html = _PAGINA.read_text(encoding="utf-8")
+    html = _fonte_painel()
     assert "/api/triage" not in html
     assert "/api/report" not in html and "/api/ask" not in html
 
@@ -204,7 +211,7 @@ def test_a_hiperligacao_da_fonte_sobrevive_ao_escape():
     `&quot;`. O padrão que reconstruía a ligação procurava aspas literais, portanto nunca
     casava, e o `<a href="...">` saía impresso no ecrã. A página tem de aceitar as duas formas.
     """
-    html = _PAGINA.read_text(encoding="utf-8")
+    html = _fonte_painel()
     padrao = next(li for li in html.splitlines() if "&lt;a href=" in li)
 
     assert "&quot;" in padrao, "sem isto o escape das aspas parte a ligação, e ninguém dá por isso"
@@ -220,7 +227,7 @@ def test_a_pagina_recusa_um_href_que_nao_seja_http():
     Um `javascript:` no href seria execução de código a partir de dados de terceiros, na única
     parte da página que insere HTML vindo de fora.
     """
-    html = _PAGINA.read_text(encoding="utf-8")
+    html = _fonte_painel()
     assert "const seguro" in html and "https?" in html
     # Verificado no browser a 2026-09-01 com quatro entradas hostis: `javascript:`, `data:`,
     # um href relativo e um `HTTPS://` legítimo. Os três primeiros perdem a ligação e ficam só
@@ -242,7 +249,7 @@ def test_a_pagina_usa_o_veredicto_que_o_servidor_calcula():
     uma camada testada, servida e ignorada. Reescrever a frase em JavaScript seria pior ainda,
     porque criava uma segunda verdade que ninguém verificava.
     """
-    html = _PAGINA.read_text(encoding="utf-8")
+    html = _fonte_painel()
     assert ".verdict" in html, "a página tem de mostrar o veredicto do servidor, não inventar um"
 
 
@@ -253,7 +260,7 @@ def test_a_pagina_mostra_a_reparticao_do_movimento():
     Um produto que responde a duas das três perguntas não é o produto que a dissertação
     descreve.
     """
-    html = _PAGINA.read_text(encoding="utf-8")
+    html = _fonte_painel()
     assert "decomp" in html
     for parte in ("market", "sector", "company"):
         assert parte in html, f"falta a parcela {parte} na repartição"
@@ -266,7 +273,7 @@ def test_a_pagina_nao_corta_o_canal_em_silencio():
     onde carregar. É a mesma regra que os relatórios de avaliação seguem quando limitam
     cobertura.
     """
-    html = _PAGINA.read_text(encoding="utf-8")
+    html = _fonte_painel()
     assert "older message" in html, "o resto do canal tem de estar alcançável e contado"
     assert "S.feedLimite" in html, \
         "a v7 cortou o feed num `slice` fixo; sem limite em estado não há como carregar mais"
@@ -327,7 +334,7 @@ def test_a_legenda_descreve_as_marcas_que_o_grafico_desenha_mesmo():
     ecrã, porque o alerta saiu de madrugada e a janela intradiária começa na abertura. Uma
     legenda ligada ao interruptor voltaria a descrever uma marca ausente.
     """
-    html = _PAGINA.read_text(encoding="utf-8")
+    html = _fonte_painel()
 
     # as três formas que o gráfico usa, cada uma com o seu símbolo na legenda
     assert 'shape: dir > 0 ? "arrowUp" : "arrowDown"' in html, \
@@ -369,7 +376,7 @@ def test_a_promessa_da_pagina_aparece_uma_vez_e_nao_duas():
     Fica no ``<title>``, que é a identidade do separador do browser e não uma segunda afirmação
     no ecrã.
     """
-    html = _PAGINA.read_text(encoding="utf-8")
+    html = _fonte_painel()
     corpo = html.split("<body>", 1)[1]
     visivel = corpo.replace("<!--", "\x00").split("\x00")
     visivel = "".join(p.split("-->", 1)[-1] if "-->" in p else p for p in visivel)
@@ -385,12 +392,12 @@ def test_a_promessa_da_pagina_aparece_uma_vez_e_nao_duas():
         "a assinatura voltou ao corpo da página: H1 diz que a promessa aparece uma vez"
 
     # metade um: o que foi enviado, com o texto exacto
-    assert "<h2>What was sent</h2>" in html, \
+    assert 'id="feedTitle">Recent events</h2>' in html, \
         "sem o espelho do canal a página deixa de cumprir metade da promessa"
     assert "The exact text that reached the phone" in html, \
         "o espelho tem de mostrar o texto tal como saiu, e dizê-lo"
     # metade dois: o que não foi enviado, e porquê — na v7 é o modal por empresa
-    assert "why it is where it is" in html, \
+    assert "recorded news decisions" in html, \
         "a segunda metade da promessa (o silêncio explicado) desapareceu da página"
     assert "Silence is a decision this system makes" in html, \
         "o silêncio voltou a ser ausência de informação em vez de uma decisão registada"
@@ -403,7 +410,7 @@ def test_o_estado_da_bolsa_nao_esta_em_dois_sitios():
     rodapé criaria dois sítios a dizer o mesmo, que é como nasceram o ``0 sent`` com alertas na
     lista ao lado e a legenda do funil a discordar da contagem.
     """
-    html = _PAGINA.read_text(encoding="utf-8")
+    html = _fonte_painel()
     assert 'id="mercado"' in html, "o estado da bolsa saiu da barra"
     assert "NASDAQ" in html and "NYSE" in html, \
         "a barra tem de dizer de QUE bolsas fala; 'closed' sozinho não diz de onde"
@@ -422,7 +429,7 @@ def test_os_logotipos_sao_servidos_por_nos_e_nunca_por_terceiros():
     """
     import re
 
-    html = _PAGINA.read_text(encoding="utf-8")
+    html = _fonte_painel()
     externos = re.findall(r'<img[^>]+src="(https?://[^"]+)"', html)
     assert not externos, f"a página carrega imagens de terceiros: {externos}"
     assert "/assets/logos/" in html, "a barra deixou de mostrar os logótipos"

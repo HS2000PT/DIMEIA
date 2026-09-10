@@ -1,0 +1,435 @@
+"use strict";
+const ETAPAS = [
+  ["no_news",           "No news at all",         "the source returned nothing for this company",
+                        "There was news"],
+  ["none_relevant",     "Nothing relevant",       "news arrived, but none of it named the company",
+                        "Some of it named this company"],
+  ["stale",             "Too old",                "the newest relevant headline is past the freshness window",
+                        "The headline was recent enough"],
+  ["weak_precedent",    "No strong past case",    "no past headline was similar enough to be worth showing",
+                        "A comparable past case existed"],
+  ["triage_suppressed", "Below the volume floor", "the learned model scored it below the floor",
+                        "It cleared the volume floor"],
+  ["ladder_floor",      "Second alert cost more", "an extra alert for the same company must clear a higher bar",
+                        "It cleared the bar for a second alert"],
+  ["duplicate_story",   "Same story, other words","already sent today under a different headline",
+                        "It was not the same story again"],
+  ["already_sent",      "Already sent",           "this exact headline had already gone out today",
+                        "It had not gone out already"],
+  ["daily_budget",      "Daily budget spent",     "the five slots for the day were already used",
+                        "A slot was still free"],
+  ["error",             "Error",                  "something failed while processing this company",
+                        "Nothing failed"],
+  ["alerted",           "Alert sent",             "cleared every gate and was delivered",
+                        "Alert sent"],
+];
+const ORDEM = new Map(ETAPAS.map(([k], i) => [k, i]));
+const ROTULO = new Map(ETAPAS.map(([k, t]) => [k, t]));
+const PORQUE = new Map(ETAPAS.map(([k, , p]) => [k, p]));
+
+const DETALHE = [
+  [/^melhor sim ([\d.]+) < ([\d.]+)$/, m => `best match ${m[1]}, floor ${m[2]}`],
+  [/^P=([\d.]+) < ([\d.]+)$/,          m => `scored ${m[1]}, floor ${m[2]}`],
+  [/^mais recente (\S+) > (\d+)d$/,    m => `newest is ${m[1]}, ${m[2]} days past the window`],
+  [/^same story, other words$/,        () => "sent under another headline"],
+  [/^budget (\d+)\/day spent$/,        m => `all ${m[1]} slots for the day were used`],
+  [/^cap (\d+)\/day reached$/,         m => `cap of ${m[1]} reached`],
+  [/^(\d+) manchete\(s\) brutas$/,     m => `${m[1]} headlines, none about this company`],
+];
+const legivel = d => { for (const [rx, f] of DETALHE) { const m = rx.exec(d || ""); if (m) return f(m); }
+                       return d || ""; };
+
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c =>
+  ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+const pct = v => (v == null || Number.isNaN(v)) ? "—"
+  : `${v >= 0 ? "+" : "−"}${Math.abs(v * 100).toFixed(2)}%`;
+const cls = v => v > 0 ? "sobe" : v < 0 ? "desce" : "";
+const $ = s => document.querySelector(s);
+
+const LIGACAO = /&lt;a href=(?:&quot;|")([\s\S]*?)(?:&quot;|")&gt;([\s\S]*?)&lt;\/a&gt;/g;
+
+function comLigacoes(escapado) {
+  return String(escapado).replace(LIGACAO, (_, cru, rotulo) => {
+    const url = cru.replace(/&amp;/g, "&");
+    const seguro = /^https?:\/\//i.test(url) ? url : "";
+    return seguro
+      ? `<a href="${esc(seguro)}" target="_blank" rel="noopener noreferrer nofollow">${rotulo}</a>`
+      : rotulo;
+  });
+}
+
+const soRotulo = escapado => String(escapado).replace(LIGACAO, (_, __, rotulo) => rotulo);
+
+
+const R2_MEDIANA = 0.46;
+function qualidadeAjuste(d, nome) {
+  if (!d) return "";
+  if (d.fallback) {
+    return `the sensitivities could not be estimated from the past year, so this split ` +
+           `assumes ${nome} moves one-for-one with the market`;
+  }
+  const r = d.r2;
+  if (r === null || r === undefined || !isFinite(r)) return "";
+  if (r <= 0) {
+    return `over the past year, market and sector explained none of how ${nome} moves: ` +
+           `this split rests on a fit that does not describe the data`;
+  }
+  const pc = Math.round(r * 100);
+  return r >= R2_MEDIANA
+    ? `market and sector account for ${pc}% of ${nome}'s daily moves over the past year, ` +
+      `at or above the 46% median across the watchlist`
+    : `market and sector account for ${pc}% of ${nome}'s daily moves over the past year, ` +
+      `below the 46% median across the watchlist: read the split as indicative`;
+}
+
+// Estado de navegação único. Dados remotos têm cache própria e não são copiados por vista.
+const S = {modo:"hoje", ticker:null, intervalo:"1D", visao:null, asset:null,
+  camadas:{alertas:true, assinalados:true, referencia:true, zscore:false, noticias:false},
+  alertas:[], votos:{}, funil:[], feedLimite:12, feedTicker:"", next:null, remaining:0,
+  total:0, diaHist:null, escolha:0, feedRequest:0, modalRequest:0, asOf:null};
+const cache = new Map(), pending = new Map();
+async function json(url, {ttl=30000, force=false}={}) {
+  const hit = cache.get(url);
+  if (!force && hit && Date.now()-hit.at < ttl) return hit.value;
+  if (pending.has(url)) return pending.get(url);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15000);
+  const task = (async () => {
+    const response = await fetch(url, {signal:controller.signal, cache:"no-store"});
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const value = await response.json();
+    cache.set(url, {at:Date.now(), value});
+    if (cache.size > 50) cache.delete(cache.keys().next().value);
+    return value;
+  })();
+  pending.set(url, task);
+  try { return await task; }
+  finally { clearTimeout(timer); pending.delete(url); }
+}
+const horaDe = iso => {
+  const d = new Date(iso);
+  return !iso || Number.isNaN(+d) ? "—" : d.toLocaleTimeString("en-GB",
+    {hour:"2-digit", minute:"2-digit", timeZone:"UTC"}) + " UTC";
+};
+const dataDe = day => day ? new Date(day.slice(0,10)+"T12:00:00Z").toLocaleDateString("en-GB",
+  {day:"numeric", month:"short", year:"numeric", timeZone:"UTC"}) : "date unavailable";
+const tipo = kind => ({news:"News",market:"Price move",summary:"Session summary",open:"Market open"}[kind] || "Message");
+function retry(target, text, action) {
+  target.innerHTML = `<p class="vazio">${esc(text)} <button class="text-button" data-retry>Try again</button></p>`;
+  target.querySelector("[data-retry]").onclick = action;
+}
+function notice(text="") { $("#notice").hidden = !text; $("#notice").textContent = text; }
+function updateStatus(v) {
+  $("#estado").textContent = v.as_of ? `${v.fresh ? "Updated" : "Delayed"} ${v.age_label || Math.round(v.age_s || 0)+"s ago"}` : "Data unavailable";
+  $("#pulso").className = "pulso"+(v.fresh ? "" : " frio");
+}
+function orderedRows() {
+  return [...(S.visao?.rows || [])].sort((a,b) => Number(b.flagged)-Number(a.flagged)
+    || Math.abs(b.z || 0)-Math.abs(a.z || 0) || a.ticker.localeCompare(b.ticker));
+}
+function pintarOverview() {
+  const v=S.visao, rows=orderedRows(), flagged=rows.filter(r=>r.flagged);
+  const day=rows.map(r=>r.price_day).filter(Boolean).sort().at(-1);
+  $("#dataHoje").textContent = `LATEST CLOSE · ${dataDe(day)}`;
+  $("#frase").textContent = !rows.length ? "No price snapshot available"
+    : flagged.length ? `${flagged.length} unusual move${flagged.length===1 ? "" : "s"} to examine`
+    : "No unusual moves at the latest close";
+  $("#resumo").textContent = `${rows.length} companies monitored. Select one to see what moved and the evidence behind it.`;
+  $("#mercado").textContent = v.market?.label || "Hours unavailable";
+  $("#mercado").title = v.market?.detail || "";
+  $("#notaMercado").innerHTML = v.market_move == null ? "" :
+    `<span>${esc(v.market_index || "Market index")} · latest close</span><strong class="num ${cls(v.market_move)}">${pct(v.market_move)}</strong>`;
+  $("#notaEmpresas").textContent = rows.length;
+  // Não substituir a lista se os valores não mudaram: mantém foco e posição de rolagem.
+  const signature = JSON.stringify(rows.map(r=>[r.ticker,r.name,r.move,r.flagged]));
+  if (S.rowSignature !== signature) {
+    $("#empresas").innerHTML = rows.map(r => `<button class="company" data-t="${esc(r.ticker)}" aria-pressed="${r.ticker===S.ticker}">
+      <img src="/assets/logos/${esc(r.ticker)}.png" alt="" width="30" height="30">
+      <span class="company-name"><b>${esc(r.name || r.ticker)}</b><small>${esc(r.ticker)}${r.flagged ? " · Unusual" : ""}</small></span>
+      <span class="num ${cls(r.move)}">${pct(r.move)}</span></button>`).join("") || '<p class="vazio">No companies available.</p>';
+    $("#empresas").querySelectorAll("button").forEach(b=>b.onclick=()=>abrirEmpresa(b.dataset.t));
+    const filter=$("#feedFilter"), chosen=filter.value;
+    filter.innerHTML = '<option value="">All companies</option>'+rows.map(r=>`<option value="${esc(r.ticker)}">${esc(r.name || r.ticker)}</option>`).join("");
+    filter.value=chosen; S.rowSignature=signature;
+  }
+  updateStatus(v);
+}
+
+let chartLibrary;
+function loadCharts() {
+  if (typeof LightweightCharts !== "undefined") return Promise.resolve();
+  if (!chartLibrary) chartLibrary = new Promise((resolve,reject)=>{
+    const script=document.createElement("script"); script.src="/assets/vendor/lightweight-charts.js";
+    script.onload=resolve; script.onerror=()=>{script.remove(); chartLibrary=null; reject(new Error("chart unavailable"));};
+    document.head.append(script);
+  });
+  return chartLibrary;
+}
+function disposeCharts() {
+  S.obs?.disconnect(); S.obsZ?.disconnect();
+  S.grafico?.remove(); S.graficoZ?.remove();
+  S.grafico=null; S.graficoZ=null; S.obs=null; S.obsZ=null;
+}
+const INTERVALOS=["1D","1M","3M","6M","1Y"];
+const TITULO_GRAFICO={"1D":"Intraday price","1M":"One month of closes","3M":"Three months of closes","6M":"Six months of closes","1Y":"One year of closes"};
+const CAMADAS=[
+  ["alertas","Delivered alerts"], ["referencia","Previous close"],
+  ["assinalados","Flagged days"], ["zscore","Rarity scale (z)"], ["noticias","Historical news"]
+];
+function camadasHTML() {
+  return CAMADAS.filter(([k])=>S.intervalo==="1D" ? ["alertas","referencia"].includes(k) : k!=="referencia")
+    .map(([k,label])=>`<label class="cx"><input type="checkbox" data-c="${k}" ${S.camadas[k]?"checked":""}>${label}</label>`).join("");
+}
+function veredicto(a) { return S.visao?.rows.find(r=>r.ticker===a.ticker)?.verdict || "Rarity baseline unavailable."; }
+async function abrirEmpresa(t, {focus=true, force=false, url=true}={}) {
+  if (!S.visao?.rows.some(r=>r.ticker===t)) return;
+  const request=++S.escolha;
+  S.ticker=t;
+  document.querySelectorAll(".company").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.t===t)));
+  if(matchMedia("(max-width:760px)").matches){const b=$('.company[aria-pressed="true"]');if(b)b.scrollIntoView({block:"nearest",inline:"center"});}
+  if (url) {const u=new URL(location.href); u.searchParams.set("t",t); history.replaceState(null,"",u);}
+  disposeCharts(); S.asset=null;
+  $("#detalhe").innerHTML=`<div class="d"><h2>${esc(S.visao.rows.find(r=>r.ticker===t)?.name || t)}</h2><p class="vazio" role="status">Loading the analysis…</p></div>`;
+  if (focus && matchMedia("(max-width:760px)").matches) $("#detalhe").scrollIntoView({block:"start",behavior:"smooth"});
+  try {
+    const a=await json(`/api/asset/${encodeURIComponent(t)}`,{force});
+    if (request!==S.escolha) return;
+    S.asset={...a,alerts:[],news:[]};
+    pintarDetalhe();
+    void companyAlerts(request,t);
+  } catch {
+    if (request!==S.escolha) return;
+    retry($("#detalhe"),`The analysis for ${t} is unavailable.`,()=>abrirEmpresa(t,{focus:false,force:true}));
+  }
+}
+async function companyAlerts(request,t) {
+  try {
+    const result=await json("/api/alerts"+`?ticker=${encodeURIComponent(t)}&limit=200`);
+    if(request!==S.escolha || !S.asset) return;
+    S.asset.alerts=result.rows || []; S.asset.alertsRemaining=result.remaining || 0;
+    S.asset.alertsLoaded=true;
+    if (S.modo==="hoje") await renderChart();
+  } catch {
+    if(request===S.escolha && $("#chartNotice")) $("#chartNotice").textContent="Alert markers unavailable. Price data is still shown.";
+  }
+}
+function pintarDetalhe() {
+  const a=S.asset; if(!a) return;
+  const d=a.decomp, max=d ? Math.max(...[d.market,d.sector,d.company].map(v=>Math.abs(v || 0)),0.000001) : 1;
+  const line=(label,value,key)=>`<div class="d-lin"><span class="rot ${d?.driver===key?"motor":""}">${label}</span>
+    <span class="d-pista"><i style="width:${Math.abs(value || 0)/max*50}%;${value<0?"right":"left"}:50%;background:var(--${value<0?"desce":"sobe"})"></i></span>
+    <span class="val ${cls(value)}">${pct(value)}</span></div>`;
+  $("#detalhe").innerHTML=`<div class="d">
+    <div class="d-cab"><img src="/assets/logos/${esc(a.ticker)}.png" alt="" width="44" height="44">
+      <div><p class="eyebrow">${esc(a.ticker)} · ${dataDe(a.price_day)}</p><h2>${esc(a.name || a.ticker)}</h2></div>
+      <span class="mv num ${cls(a.move)}">${pct(a.move)}<small>latest close</small></span></div>
+    <p class="d-ver">${esc(veredicto(a))}</p>
+    <div class="explanation"><h3>What contributed to the move?</h3>
+      ${d ? `<div class="d-rep">${line("Market",d.market,"market")}${line("Sector",d.sector,"sector")}${line("Company",d.company,"company")}</div>
+        <p class="d-nota">Contributions add up to the close-to-close move. This is a statistical split, not a causal attribution.</p>
+        <p class="fit-summary">${d.fallback?"Fallback estimate":d.r2==null?"Fit unavailable":`Model fit R² ${Number(d.r2).toFixed(2)}`}${d.fallback || d.r2<R2_MEDIANA ? " · Indicative split" : ""}</p>
+        <details class="fit-details"><summary>How reliable is this split?</summary><p>${qualidadeAjuste(d,esc(a.name || a.ticker)) || "No fit statistic is available for this estimate."}</p></details>`
+        : '<p class="summary-note">No decomposition is available for this session.</p>'}
+    </div>
+    <div class="chart-header"><h3 id="chartTitle">${TITULO_GRAFICO[S.intervalo]}</h3><div class="intervalos" id="intervalos" role="group" aria-label="Chart range">${INTERVALOS.map(r=>`<button data-r="${r}" aria-pressed="${r===S.intervalo}">${r}</button>`).join("")}</div></div>
+    <p class="summary-note" id="chartDate"></p>
+    <div class="d-graf" id="graf" role="img" aria-label="Price chart"></div>
+    <div class="d-z" id="grafZ" hidden role="img" aria-label="Daily rarity scale"></div>
+    <p id="chartNotice" class="summary-note" role="status"></p>
+    <details class="chart-options"><summary>Chart options</summary><div class="camadas" id="camadas">${camadasHTML()}</div></details>
+    <p class="legenda legenda-graf" id="legGraf" aria-label="Chart legend"></p>
+    <details class="evidence" id="chartDays"><summary>Explore events on this chart</summary><div class="d-dias" id="dias"></div></details>
+    <div class="evidence-actions"><button id="decision" class="quiet">Recorded news decisions</button><button id="news" class="quiet">Historical news & sources</button></div>
+    </div>`;
+  $("#intervalos").onclick=e=>{const b=e.target.closest("[data-r]"); if(!b) return;
+    S.intervalo=b.dataset.r; $("#intervalos").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    $("#camadas").innerHTML=camadasHTML(); void renderChart();};
+  $("#camadas").onchange=e=>{const k=e.target.dataset.c;if(!k)return;S.camadas[k]=e.target.checked;
+    if(k==="noticias" && e.target.checked) void loadNews(false); else void renderChart();};
+  $("#decision").onclick=()=>modalEmpresa(a.ticker);
+  $("#news").onclick=()=>loadNews(true);
+  void renderChart();
+}
+let renderId=0;
+async function renderChart() {
+  const id=++renderId, a=S.asset;
+  if(!a || S.modo!=="hoje") return;
+  try {
+    await loadCharts();
+    if(id!==renderId || a!==S.asset || S.modo!=="hoje") return;
+    disposeCharts(); $("#graf").replaceChildren(); $("#grafZ").replaceChildren();
+    $("#chartTitle").textContent=TITULO_GRAFICO[S.intervalo];
+    $("#chartDate").textContent=S.intervalo==="1D" ? `Session ${dataDe(a.intraday_day)} · times in UTC` : `Daily closes through ${dataDe(a.price_day)}`;
+    desenharGrafico(a); desenharZ(a); pintarLegendaGrafico(); pintarDias(a);
+    if(!a.alertsLoaded) $("#chartNotice").textContent="Loading delivered alerts…";
+    else $("#chartNotice").textContent=a.alertsRemaining ? `${a.alertsRemaining} older messages are available in History; their markers are outside this loaded record.` : "";
+  } catch {if(id===renderId) retry($("#graf"),"The chart could not load.",()=>renderChart());}
+}
+
+function abrirModal(title,html) {
+  ++S.modalRequest;
+  $("#mTit").textContent=title; $("#mCorpo").innerHTML=html;
+  if(!$("#modal").open) $("#modal").showModal();
+}
+$("#mFechar").onclick=()=>$("#modal").close();
+$("#modal").addEventListener("close",()=>++S.modalRequest);
+$("#modal").onclick=e=>{if(e.target===$("#modal"))$("#modal").close();};
+function modalAlerta(a) {
+  if(!a)return;
+  abrirModal(`${a.ticker} · ${tipo(a.kind)}`,`<p class="eyebrow">${dataDe(a.date)} · ${horaDe(a.sent_at)}</p>
+    <p>${soRotulo(esc(a.text.split("\n").filter(Boolean).slice(0,3).join(" · ")))}</p>
+    <p class="summary-note">Values recorded when this message was sent. The company view shows the latest close.</p>
+    <details class="evidence"><summary>Original message & evidence</summary><pre class="m-exato">${comLigacoes(esc(a.text))}</pre></details>
+    ${a.event_at?`<p class="summary-note">Source published: ${esc(a.event_at)}</p>`:""}
+    <div id="readerVotes"></div>
+    ${S.visao?.rows.some(r=>r.ticker===a.ticker)?'<button class="quiet" id="openCompany">Open company analysis</button>':""}`);
+  const request=S.modalRequest;
+  if($("#openCompany"))$("#openCompany").onclick=()=>{$("#modal").close();trocarModo("hoje");void abrirEmpresa(a.ticker);};
+  // Votos são evidência secundária, pedida só quando se abre uma mensagem.
+  json("/api/feedback",{ttl:60000}).then(result=>{
+    if(request!==S.modalRequest)return;
+    S.votos=result.por_alerta || {}; const v=S.votos[a.key];
+    $("#readerVotes").innerHTML=v?`<p class="summary-note">Reader feedback: ${v[0]} useful · ${v[1]} did not help. One vote per person per alert.</p>`:"";
+  }).catch(()=>{if(request===S.modalRequest)$("#readerVotes").textContent="Reader feedback unavailable.";});
+}
+async function modalEmpresa(t) {
+  abrirModal(`${t} · recorded news decisions`,'<p class="vazio">Reading the decision record…</p>');
+  const request=S.modalRequest;
+  try {
+    const result=await json("/api/screener",{ttl:120000}); if(request!==S.modalRequest)return;
+    const rows=(result.rows || []).filter(r=>r.ticker===t);
+    $("#mCorpo").innerHTML=`<p class="summary-note">These are recorded decisions about news. A price move can generate a separate alert.</p>
+      ${result.stale?'<p class="notice">The source is unavailable. Showing the last successful reading.</p>':""}
+      <ul class="decision-list">${rows.map(r=>`<li><b>${esc(ROTULO.get(r.stage) || r.stage)}</b><time>${esc(r.date)}</time><p>${esc(legivel(r.detail) || PORQUE.get(r.stage) || "")}</p></li>`).join("")}</ul>
+      ${!rows.length?'<p>No decision is recorded for this company in the available window.</p>':""}
+      <p class="summary-note">Silence is a decision this system makes. The record does not imply that every gate was traversed.</p>`;
+  } catch {if(request===S.modalRequest)retry($("#mCorpo"),"Decision record unavailable.",()=>modalEmpresa(t));}
+}
+async function loadNews(openModal) {
+  const a=S.asset;if(!a)return;
+  if(openModal)abrirModal(`${a.ticker} · historical news`,'<p class="vazio">Reading sources…</p>');
+  const request=S.modalRequest;
+  try {
+    const result=await json(`/api/news/${encodeURIComponent(a.ticker)}`,{ttl:900000});
+    if(a!==S.asset)return;
+    a.news=result.rows || [];
+    if(openModal && request===S.modalRequest) {
+      let shown=20;
+      const paint=()=>{
+        $("#mCorpo").innerHTML=`<p class="summary-note">Historical headlines with observed outcomes. These cases do not establish the cause of the latest move.</p>${result.stale?'<p class="notice">Showing the last successful reading.</p>':""}
+          ${a.news.slice(0,shown).map(n=>`<article class="news-item"><time>${esc(n.date)}</time><p>${esc(n.headline)}</p><p>${sourceLink(n.url,n.source || "Open source")}</p><p class="summary-note">Observed: +1 session ${pct(n.d1)} · +5 sessions ${pct(n.d5)}</p>${n.n>1?`<details><summary>${n.n-1} other headline${n.n>2?"s":""} that day</summary><ul>${(n.others || []).map(h=>`<li>${esc(h)}</li>`).join("")}</ul><p class="summary-note">Up to five additional titles shown; outcomes are shared by company and day.</p></details>`:""}</article>`).join("") || '<p>No historical news available.</p>'}
+          ${a.news.length>shown?`<button class="quiet" id="moreNews">${a.news.length-shown} older days — load 20 more</button>`:""}`;
+        if($("#moreNews"))$("#moreNews").onclick=()=>{const top=$("#mCorpo").scrollTop;shown+=20;paint();$("#mCorpo").scrollTop=top;};
+      };
+      paint();
+    }
+    if(S.camadas.noticias)await renderChart();
+  } catch {
+    if(openModal && request===S.modalRequest)retry($("#mCorpo"),"Historical sources are unavailable.",()=>loadNews(true));
+    else if(a===S.asset){S.camadas.noticias=false;const input=$("[data-c=noticias]");if(input)input.checked=false;$("#chartNotice").textContent="Historical news unavailable. Try again from Chart options.";}
+  }
+}
+function sourceLink(url,label) { return /^https?:\/\//i.test(url || "")?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer nofollow">${esc(label)}</a>`:"Source link unavailable"; }
+function modalDia(a,day,z) {
+  const alerts=(a.alerts || []).filter(x=>x.date===day), news=(a.news || []).find(x=>x.date===day);
+  abrirModal(`${a.ticker} · ${day}`,`<h4>Observed rarity</h4><p>The move was ${esc(z)} standard deviations from the previous ${S.visao.window} closes. The threshold is ±${S.visao.threshold}.</p>
+    ${news?`<h4>Historical source</h4><p>${esc(news.headline)}</p>${sourceLink(news.url,news.source || "Open source")}`:""}
+    ${alerts.length?alerts.map(x=>`<details class="evidence"><summary>${tipo(x.kind)} · ${horaDe(x.sent_at)}</summary><pre class="m-exato">${comLigacoes(esc(x.text))}</pre></details>`).join(""):"<p>No delivered alert for this day in the loaded record. The reason cannot be inferred from this chart.</p>"}`);
+}
+
+async function carregarFeed(more=false) {
+  const request=++S.feedRequest, chosen=S.feedTicker;
+  const params=new URLSearchParams({limit:String(S.feedLimite)});
+  if(chosen)params.set("ticker",chosen);
+  if(more && S.next)params.set("before",S.next);
+  const old=S.alertas;
+  if(!more){S.alertas=[];S.diaHist=null;$("#feed").innerHTML='<p class="vazio" role="status">Loading messages…</p>';}
+  try {
+    const result=await json("/api/alerts"+"?"+params,{force:more});
+    if(request!==S.feedRequest)return;
+    S.alertas=more?[...(result.rows || []),...old]:(result.rows || []);
+    S.next=result.next_before;S.remaining=result.remaining || 0;S.total=result.total || 0;
+    $("#rodape").textContent=`${S.total} messages ${chosen?"for "+chosen:"on record"}`;
+    $("#feedNota").textContent=result.stale?"Source unavailable. Showing the last successful reading.":"The exact text that reached the phone is available inside each event.";
+    pintarFeed();if(S.modo==="hist")pintarHistorico();
+  } catch {if(request===S.feedRequest){if(more){S.alertas=old;pintarFeed();$("#feedNota").textContent="Older messages could not load. Try the load button again.";}else retry($("#feed"),"Messages unavailable. Company data is still available.",()=>carregarFeed());}}
+}
+function pintarFeed() {
+  let rows=S.alertas.slice().reverse();
+  if(S.modo==="hist" && S.diaHist)rows=rows.filter(a=>a.date===S.diaHist);
+  $("#feed").innerHTML=rows.map((a,i)=>`<button class="f-item" data-i="${i}"><span class="f-cab"><b>${esc(a.ticker)}</b><span class="event-kind">${tipo(a.kind)}</span><time>${esc(a.date)} · ${horaDe(a.sent_at)}</time></span><p>${soRotulo(esc(a.text.split("\n").filter(Boolean).slice(0,3).join(" · ")))}</p><span class="read-event">Read explanation & evidence →</span></button>`).join("") || '<p class="vazio">No messages in this selection.</p>';
+  $("#feed").querySelectorAll(".f-item").forEach(b=>b.onclick=()=>modalAlerta(rows[+b.dataset.i]));
+  if(S.remaining) {
+    $("#feed").insertAdjacentHTML("beforeend",`<button class="f-mais" id="fMais">${S.remaining} older messages not shown — load ${Math.min(S.feedLimite,S.remaining)} more</button>`);
+    $("#fMais").onclick=async()=>{const b=$("#fMais");b.disabled=true;b.textContent="Loading older messages…";await carregarFeed(true);};
+  }
+}
+function pintarHistorico() {
+  const counts=new Map();for(const a of S.alertas)counts.set(a.date,(counts.get(a.date)||0)+1);
+  const days=[...counts.entries()].sort(), max=Math.max(1,...counts.values());
+  $("#histNota").textContent=`${S.alertas.length} of ${S.total} messages loaded${days.length?` · ${dataDe(days[0][0])} to ${dataDe(days.at(-1)[0])}`:""}. Load older messages to extend this window.`;
+  $("#histBarras").innerHTML=days.map(([d,n])=>`<button class="hist-d" data-d="${d}" aria-label="${d}: ${n} messages" aria-pressed="${S.diaHist===d}"><i style="height:${Math.max(3,n/max*96)}px;background:var(--acento)"></i><span class="n">${n}</span></button>`).join("");
+  $("#histFiltro").textContent=S.diaHist?`Showing ${dataDe(S.diaHist)}. Select the same day to clear.`:"Counts cover the loaded messages, including session summaries and market-open notes.";
+  $("#histBarras").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.diaHist=S.diaHist===b.dataset.d?null:b.dataset.d;pintarHistorico();pintarFeed();});
+}
+function trocarModo(mode) {
+  S.modo=mode;const today=mode==="hoje";
+  $("#mHoje").setAttribute("aria-pressed",String(today));$("#mHist").setAttribute("aria-pressed",String(!today));
+  $("#secHoje").hidden=!today;$("#secHist").hidden=today;$("#colEsq").hidden=!today;$("#detalhe").hidden=!today;
+  $("#workspace").classList.toggle("history-mode",!today);$("#feedTitle").textContent=today?"Recent events":"Delivered messages";
+  S.diaHist=null;
+  if(today){void renderChart();}else{disposeCharts();pintarHistorico();}
+  pintarFeed();
+}
+$("#mHoje").onclick=()=>trocarModo("hoje");$("#mHist").onclick=()=>trocarModo("hist");
+$("#feedFilter").onchange=e=>{S.feedTicker=e.target.value;void carregarFeed();};
+$("#about").onclick=()=>abrirModal("About the evidence",`<p>This research application monitors US stocks and connects observed moves with recorded evidence.</p><ul><li>Rarity compares a daily move with the company's past.</li><li>The split estimates market, sector and company contributions; R² describes the historical fit.</li><li>News and similar past cases provide context, not proof of causation.</li><li>Messages preserve what was sent, including historical model estimates. These are not a confidence score for today's explanation.</li></ul><p>Sources and timestamps remain attached to the evidence. No price forecasts or investment recommendations are produced by this interface.</p>`);
+
+let refreshing=false,pollTimer,polling=false,lastFeedCheck=0;
+async function refresh(force=false) {
+  if(refreshing)return;
+  refreshing=true;$("#refresh").disabled=true;
+  try {
+    const v=await json("/api/overview",{force});
+    const changed=S.asOf!==v.as_of;
+    S.visao=v;S.asOf=v.as_of;pintarOverview();
+    notice(!v.rows?.length?"Price data is unavailable. Retrying automatically.":!v.fresh?"The latest snapshot is delayed. Check the session dates before interpreting the values.":"");
+    if(!S.ticker){const wanted=new URL(location.href).searchParams.get("t");S.ticker=v.rows.some(r=>r.ticker===wanted)?wanted:orderedRows()[0]?.ticker;}
+    if(S.ticker && (!S.asset || force))void abrirEmpresa(S.ticker,{focus:false,force});
+    else if(changed)notice("A newer snapshot is available. Refresh to update the open analysis.");
+  } catch {notice("Connection interrupted. Keeping any previously loaded data; retrying automatically.");$("#estado").textContent="Connection interrupted";$("#pulso").className="pulso frio";}
+  finally{refreshing=false;$("#refresh").disabled=false;}
+}
+async function checkMessages() {
+  // Contagem independente do instantâneo; nunca interrompe a leitura do histórico.
+  const chosen=S.feedTicker, request=S.feedRequest;
+  const params=new URLSearchParams({limit:"1"});if(chosen)params.set("ticker",chosen);
+  const result=await json("/api/alerts"+"?"+params,{force:true});
+  lastFeedCheck=Date.now();
+  if(chosen!==S.feedTicker || request!==S.feedRequest)return;
+  if(result.total!==S.total) {
+    $("#feedNota").innerHTML='New messages are available. <button class="text-button" id="newMessages">Show latest messages</button>';
+    $("#newMessages").onclick=()=>carregarFeed();
+    if(S.asset)void companyAlerts(S.escolha,S.ticker);
+  }
+}
+async function poll() {
+  clearTimeout(pollTimer);
+  if(polling)return;polling=true;
+  if(!document.hidden) {
+    try {
+      const h=await json("/api/health",{force:true});
+      if(!S.visao || !S.asset || h.as_of!==S.asOf)await refresh(); else updateStatus(h);
+      if(Date.now()-lastFeedCheck>60000)await checkMessages();
+    } catch {notice("Connection interrupted. Retrying automatically.");$("#estado").textContent="Connection interrupted";$("#pulso").className="pulso frio";}
+  }
+  polling=false;
+  if(!document.hidden)pollTimer=setTimeout(poll,30000);
+}
+$("#refresh").onclick=()=>{void refresh(true);void carregarFeed();};
+document.addEventListener("visibilitychange",()=>{clearTimeout(pollTimer);if(!document.hidden)void poll();});
+window.addEventListener("online",()=>{void refresh(true);void carregarFeed();});
+window.addEventListener("pagehide",()=>{clearTimeout(pollTimer);disposeCharts();});
+window.addEventListener("pageshow",e=>{if(e.persisted){void renderChart();void poll();}});
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{if(S.asset)void renderChart();});
+void refresh();void carregarFeed();pollTimer=setTimeout(poll,30000);

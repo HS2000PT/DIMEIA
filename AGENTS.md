@@ -9,6 +9,87 @@
 ---
 
 ## Estado Atual
+- **2026-09-10 — Autor autorizou aplicação do logo e DEPLOY no Heroku.**
+  Nova versão web 10.0: logo aprovado empilhado em `web/assets/logo.svg`, imagem WebP
+  embebida e enquadrada por SVG (não vetor), fundo branco preservado; favicon só cabeça.
+  `scripts/prepare_web_logo.py` reproduz a preparação. Revisão desktop confirmada.
+  Testes focados API/marca/decomposição/worker: 154 passaram; seis Node passaram; ruff
+  dos módulos alterados limpo. Publicação/deploy em curso, verificar resultado antes de
+  declarar concluído. Não incluir trabalho concorrente da dissertação no commit do painel.
+- **2026-09-10 — Proposta visual da marca finalizada a pedido («finaliza»).**
+  Entrega: `docs/design/brand-final/investigator-logo.png`, cabeça três quartos,
+  lupa/candles, nome serifado POR BAIXO, menos linhas e sorriso reduzido. PNG fundo
+  branco; não é vetorial nem transparente. Exportação inicial de transparência falhou
+  (RGB com quadriculado incorporado), rejeitada e corrigida com image_gen. Detalhes em
+  `brand-final/README.md`. Site/Heroku/Telegram não alterados. Não afirmar que existem
+  SVG, avatar ou ícones finais validados desta proposta; são entregáveis distintos.
+- **2026-09-10 — Marca: composição vertical e lettering trabalhado pedidos pelo autor.**
+  Rejeitou o símbolo circular alligator/lupa por deixar de parecer alligator e rejeitou
+  texto à direita: o nome deve ficar POR BAIXO. Autor admite estilizar a tipografia e
+  recorrer a ferramentas externas. Retomada a cabeça em três quartos, com lupa/candles,
+  nome inferior em lettering serifado forte. Exploração gerada com image_gen:
+  `C:/Users/ruifa/.codex/generated_images/01a08340-fa21-7b73-87c8-074df49a3df4/exec-e8094efa-1e73-47c8-86e3-7232efea9ccd.png`.
+  Ainda não aprovada nem aplicada. Não chamar perfeita nem afirmar legibilidade de app
+  sem testar em tamanhos reais; o desenho mantém caráter ilustrativo e precisa de juízo
+  do autor. Site, Telegram e produção continuam sem esta nova identidade.
+- **2026-09-09 — Marca: chapéu rejeitado; explorar perspetiva e simplicidade.**
+  O autor achou o chapéu estranho e pediu considerar frente, reforçando que quer um logo
+  simples. Nova folha: A frontal, B três quartos; candles passam para dentro da lupa,
+  boca fechada e sem chapéu. Referência gerada:
+  `C:/Users/ruifa/.codex/generated_images/01a08340-fa21-7b73-87c8-074df49a3df4/exec-2c302eb9-c569-4630-a3b8-3620a66ef9fc.png`.
+  Avaliação: B preserva melhor o reconhecimento de alligator; A perde a silhueta do focinho.
+  Ainda exploratório, sem escolha final ou alteração no site/canal. Prioridade seguinte é
+  reduzir detalhes, não acrescentar acessórios. Manter as três associações já aceites.
+- **2026-09-09 — Direção da marca aceite: alligator + lupa + barras financeiras.**
+  O autor gostou da segunda exploração e disse «é por esta via». Pediu explorar mais
+  personalidade, sugerindo Sherlock Holmes, antes da escolha final. Comparação gerada:
+  A original, B chapéu deerstalker, C expressão perspicaz sem chapéu. Ficheiro de referência:
+  `C:/Users/ruifa/.codex/generated_images/01a08340-fa21-7b73-87c8-074df49a3df4/exec-ff956c19-9400-4a0c-b475-f9770e216ed5.png`.
+  A combinação conceptual está aceite; a variante final ainda não foi escolhida. Nenhuma
+  destas propostas foi implementada/publicada. Manter lupa, alligator e candles ao refinar.
+- **2026-09-09 — Segunda exploração da marca: A/B/C também não convenceram o autor.**
+  Faltava clareza nas três associações: alligator, investigação, investimento. Gerada nova
+  direção explícita: cabeça de alligator, lupa no olho, candles na abertura da mandíbula.
+  Imagem de exploração: `C:/Users/ruifa/.codex/generated_images/01a08340-fa21-7b73-87c8-074df49a3df4/exec-7e5e878b-e0f5-40ff-b36d-be4146cd1c76.png`.
+  Ainda não aprovada nem implementada. Leitura semântica mais direta, mas desenho precisa
+  de simplificação antes de ser considerado logo final, sobretudo em tamanhos pequenos.
+  Não interpretar as explorações como autorização para deploy ou atualização do Telegram.
+- **2026-09-09 — O autor REJEITOU o wordmark simples e monograma I.** Quer uma marca
+  mais chamativa, criativa e provocadora que evoque Invest, Investigate, Alligator e
+  Investigator. A indicação anterior «identidade aprovada» ficou ultrapassada. Geradas
+  explorações visuais com image_gen: A (G/mandíbula), B (olho/G), C (cauda/mercado), e
+  uma folha de comparação clara. Recomendação apresentada: A. Ainda nenhuma escolhida
+  ou implementada; site e Telegram não alterados nesta exploração. Referência animal
+  agora pedida como símbolo de marca; não reintroduzir automaticamente a antiga mascote.
+  Folha: `C:/Users/ruifa/.codex/generated_images/01a08340-fa21-7b73-87c8-074df49a3df4/exec-371a0dce-7fff-4ef8-8359-e25589040f07.png`.
+- **2026-09-09 — Identidade tipográfica aplicada ao painel, a pedido do autor.**
+  `web/assets/wordmark.svg`: InvestiGator numa só cor/peso, IBM Plex Sans SemiBold em
+  contornos, adaptação automática claro/escuro. `web/assets/icon.svg`: I da mesma fonte,
+  branco sobre verde, sem animal. Exportações em `docs/design/brand-v9/`, incluindo avatar
+  Telegram PNG 512 e wordmarks portáteis. Gerador: `python -m scripts.build_web_brand`.
+  Lema preparado: «Market moves, investigated.»; descrição em `brand-v9/README.md`.
+  Aplicação local em localhost:8879, sem deploy e sem alteração do canal Telegram.
+  Testes da marca: 48 aprovados; ruff do gerador limpo. Assets antigos da dissertação
+  preservados como históricos, não usar o gerador antigo para atualizar a marca web.
+- **2026-09-09 — Painel web simplificado, pronto para validação local; SEM DEPLOY.**
+  Pedido do autor: auditoria, arquitetura, implementação e segunda revisão antes de decidir
+  Heroku. Registo completo em `docs/design/AUDITORIA_WEB_2026-09-09.md`. HTML monolítico
+  dividido em página, estilos, controlador e gráficos; mascote e oito PNG públicos removidos;
+  visão geral compacta, histórico paginado e evidência/opções por pedido. API separa preço
+  de notícias, comprime respostas, conserva último valor válido e evita pedidos concorrentes
+  duplicados. Worker gera `dashboard_news.json` sem embeddings depois da entrega, com
+  publicação limitada; **essa projeção ainda não foi publicada remotamente por esta tarefa**.
+  Antes de um futuro deploy, publicar e verificar esse ficheiro. Motores/resultados da tese
+  preservados; capturas novas ficam em `output/`, não substituem as figuras da dissertação.
+  Revisão desktop/mobile corrigiu overflow do canvas. Testes focados de API, decomposição,
+  marca, entrega e publicação passaram; 6 testes Node passaram. A suite geral anterior teve
+  1069 aprovados e 1 falha no contrato antigo da mascote, corrigido e reconferido no conjunto
+  focado; não declarar essa execução como integralmente verde. Sem medição de p95/RSS Heroku.
+  Pré-visualização: `.venv/Scripts/python.exe -m scripts.preview_web --data output/web_audit
+  --port 8879`, URL `http://localhost:8879/`, só loopback. Dados reais capturados, preços até
+  2026-09-08 e 605 mensagens; aviso explícito de dados congelados, sem envio de alertas.
+  **Próximo passo: feedback do autor no browser; só depois decidir implantação.** Há trabalho
+  concorrente neste checkout; não incluir alterações alheias numa revisão/commit do painel.
 - **🆕 SESSÃO 67 (2026-09-08): O PEDIDO ERA «CUSTE O QUE CUSTAR» E O QUE ELE PRODUZIU FOI
   UMA LIMITAÇÃO ENCERRADA NO PRODUTO, UMA FIGURA DE ABERTURA, E SETE DEFEITOS QUE NENHUMA
   PORTA VIA.**

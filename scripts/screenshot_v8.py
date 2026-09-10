@@ -1,185 +1,82 @@
-"""Captura a página a partir da app IMPLANTADA, para as três figuras da dissertação.
+"""Capturas de revisão do painel atual (o nome do comando mantém compatibilidade).
 
-Aponta para produção de propósito. A alternativa — capturar um servidor local — produz uma
-figura que documenta o que está na máquina de quem a tirou, e este projecto já pagou esse
-defeito: durante uma sessão inteira a figura do painel descreveu um ecrã que já não estava
-no ar.
+Por omissão escreve em output/painel-v9. As figuras históricas das dissertações não são
+substituídas: isso exige rever, em ambas as línguas, a data, os números e a legenda.
 
-⚠️ **AS FIGURAS v7 NÃO TINHAM GERADOR.** Foram feitas à mão, e uma figura sem fonte não se
-volta a produzir: quando a página muda, ou se refaz o recorte de memória ou fica a figura
-antiga. Este script é a fonte que faltava.
+    python scripts/screenshot_v8.py --ticker AAPL
+    python scripts/screenshot_v8.py --url http://127.0.0.1:8879
 
-As três, e o que cada uma existe para mostrar:
-
-  1. `app_v8_painel.png`   — o dia inteiro: a frase, os cinco números que repartem a
-     watchlist, e a grelha de empresas com o estado de cada uma. É onde se vê que o
-     silêncio é a resposta mais frequente.
-  2. `app_v8_empresa.png`  — a empresa escolhida: o veredicto em palavras, a repartição do
-     movimento em mercado, setor e empresa, e o gráfico com os dias assinalados. É onde se
-     veem duas das três perguntas do Capítulo 1.
-  3. `app_v8_silencio.png` — a lista de empresas com o estado de cada uma, incluindo a
-     porta onde parou. É a parte que o canal não pode mostrar, e a razão de a página
-     existir.
-
-O recorte é de ELEMENTOS e não da página inteira: uma página com cinco mil píxeis de
-altura, encolhida para a largura de uma A4, fica ilegível — e uma figura ilegível numa
-dissertação é pior do que nenhuma, porque ocupa espaço e não se lê.
-
-O QUE TEM DE BATER COM A PROSA, quando estas figuras substituirem as v7
------------------------------------------------------------------------
-A sessao 63 pagou esta licao: trocar so a imagem MUDA O DEFEITO DE SITIO, porque o texto
-ao lado descreve o ecra antigo numero a numero. Antes de substituir, conferir:
-
-  1. A LEGENDA DIZ "largura de captura de 960 pixeis" e este script usa 1420. Ou se muda a
-     legenda, ou se muda o script -- mas os dois tem de dizer o mesmo.
-  2. A LEGENDA DA FIGURA DA EMPRESA diz que mostra "o intervalo de seis meses", e a pagina
-     abre no dia corrente. Sem escolher 6M antes de recortar, a legenda descreve outra
-     figura. E e' em 6M que a distincao entre assinalar e comunicar se torna observavel,
-     que e' a razao pela qual a legenda o pede.
-  3. A PROSA A SEGUIR AS FIGURAS usa a empresa como caso ilustrativo da segunda questao,
-     e precisa de DISCORDANCIA: preco a descer com a parcela da propria empresa POSITIVA.
-     A captura de 2026-09-04 (Apple, -2,54%) tem as tres parcelas negativas e nao serve
-     para esse paragrafo. Escolher a empresa com --ticker, ou reescrever o paragrafo.
-  4. A DATA na legenda.
-
-USO
----
-    python scripts/screenshot_v8.py                          # produção
-    python scripts/screenshot_v8.py --ticker AAPL            # empresa fixa
-    python scripts/screenshot_v8.py --url http://127.0.0.1:8010
+O intervalo de seis meses e a ressalva do ajuste fazem parte da captura da empresa.
+O modal mostra decisões registadas; não inventa um percurso linear pelas portas.
 """
-
 from __future__ import annotations
 
 import argparse
-import pathlib
-import sys
+from pathlib import Path
 
-if hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-
-RAIZ = pathlib.Path(__file__).resolve().parents[1]
-FIGURAS = RAIZ / "tese-pt" / "figures"
+RAIZ = Path(__file__).resolve().parents[1]
 PROD = "https://investigator-ddc9d8618935.herokuapp.com"
 
 
-def main() -> int:
-    p = argparse.ArgumentParser(description="Capturas da app para a dissertação.")
-    p.add_argument("--url", default=PROD)
-    p.add_argument("--ticker", default="",
-                   help="empresa a mostrar; por omissão, a que a própria página destaca")
-    p.add_argument("--sufixo", default="v8", help="prefixo dos ficheiros (app_<sufixo>_*.png)")
-    args = p.parse_args()
-
+def capturar(url: str, ticker: str, destino: Path, sufixo: str = "v9") -> None:
     from playwright.sync_api import sync_playwright
 
-    FIGURAS.mkdir(parents=True, exist_ok=True)
-    # ⚠️ `?t=NOME` NÃO ESCOLHE NADA. A v6 guardava a empresa na URL e a v8 não guarda: pedir
-    # `?t=GOOGL` devolve a empresa que a página destaca sozinha, verificado ao vivo a
-    # 2026-09-08 (pedido GOOGL, obtido AAPL). O `--ticker` ficou a prometer um controlo que
-    # a página não honra, e uma captura da empresa errada com a legenda da certa é o defeito
-    # que este ficheiro existe para evitar. Passa a clicar, e a falhar alto se não pegar.
-    alvo = args.url
-    saidas: list[str] = []
-
+    destino.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as pw:
-        b = pw.chromium.launch()
-        # Tema claro à força: a dissertação é impressa em papel branco, e um recorte escuro
-        # gasta tinta e perde contraste. `device_scale_factor=2` porque a figura é reduzida
-        # à largura do texto e a 1x o tipo de letra sairia esfarrapado.
-        # ⚠️ `locale` FIXADO, e não é detalhe. A biblioteca do gráfico formata os meses pela
-        # língua do browser, que segue a da máquina: numa máquina portuguesa o eixo saía
-        # «abr. mai. jun.» dentro de uma captura cujo resto está todo em inglês. As figuras
-        # desta dissertação são inglesas por dentro por decisão declarada, e uma captura
-        # tirada noutra máquina mudaria a língua do eixo sem ninguém dar por isso -- nenhum
-        # verificador entra dentro de um PNG.
-        pg = b.new_page(viewport={"width": 1420, "height": 1100}, device_scale_factor=2,
-                        color_scheme="light", locale="en-US")
-        pg.goto(alvo, wait_until="networkidle", timeout=60000)
-        pg.wait_for_selector("#kpis .k", timeout=45000)
-        pg.wait_for_selector("#empresas .e", timeout=45000)
-        pg.wait_for_timeout(2000)  # as faíscas e o gráfico acabam de ser desenhados
+        browser = pw.chromium.launch()
+        page = browser.new_page(viewport={"width": 1420, "height": 1100},
+                                device_scale_factor=2, color_scheme="light", locale="en-GB")
+        errors = []
+        page.on("pageerror", lambda e: errors.append(str(e)))
+        page.goto(url, wait_until="domcontentloaded", timeout=60000)
+        page.locator("#empresas .company").first.wait_for(timeout=45000)
+        if ticker:
+            page.locator(f'#empresas .company[data-t="{ticker.upper()}"]').click()
+        page.locator(".d-ver").wait_for(timeout=30000)
+        page.locator("#graf canvas").first.wait_for(timeout=30000)
+        chosen = page.locator('.company[aria-pressed="true"]').get_attribute("data-t")
+        if ticker and chosen != ticker.upper():
+            raise RuntimeError(f"Pedido {ticker}, obtido {chosen}")
+        page.screenshot(path=str(destino / f"app_{sufixo}_painel.png"))
 
-        if args.ticker:
-            alvo_pedido = args.ticker.upper()
-            pg.locator(f'#empresas .e[data-t="{alvo_pedido}"]').click()
-            pg.wait_for_timeout(1500)
-            obtida = pg.eval_on_selector('.e[aria-pressed="true"]', "e => e.dataset.t")
-            if obtida != alvo_pedido:
-                raise SystemExit(
-                    f"pediu-se {alvo_pedido} e a página ficou em {obtida}: a captura seria "
-                    "de uma empresa e a legenda de outra"
-                )
+        page.get_by_role("button", name="6M", exact=True).click()
+        page.locator(".fit-details summary").click()
+        page.locator(".chart-options summary").click()
+        page.get_by_label("Rarity scale (z)", exact=True).check()
+        page.locator("#grafZ canvas").first.wait_for()
+        page.locator(".chart-options summary").click()
 
-        escolhida = pg.eval_on_selector(
-            '.e[aria-pressed="true"]', "e => e.dataset.t || e.textContent.trim().slice(0,6)")
-        n_emp = pg.locator("#empresas .e").count()
+        def crop(selector, name):
+            # Canvas em capturas de elemento já saiu em branco: recortar a página inteira.
+            box = page.locator(selector).evaluate("""e => {
+                const r=e.getBoundingClientRect();
+                return {x:r.x+scrollX, y:r.y+scrollY, width:r.width, height:r.height};
+            }""")
+            page.screenshot(path=str(destino / f"app_{sufixo}_{name}.png"),
+                            full_page=True, clip=box)
 
-        # ── 1) o dia inteiro ────────────────────────────────────────────────
-        # Recorta do topo da secção do dia até ao fim da grelha de empresas. Sem o recorte
-        # entrava metade da coluna das mensagens cortada a meio de uma frase, que é o
-        # aspecto de uma captura tirada à pressa.
-        caixa = pg.evaluate("""() => {
-            const a = document.querySelector('#secHoje').getBoundingClientRect();
-            const b = document.querySelector('#empresas').getBoundingClientRect();
-            return {x: Math.max(0, a.left - 8), y: a.top + scrollY - 8,
-                    width: Math.min(a.width + 16, innerWidth),
-                    height: (b.top + scrollY) - (a.top + scrollY) + b.height + 16};
-        }""")
-        pg.screenshot(path=str(FIGURAS / f"app_{args.sufixo}_painel.png"),
-                      clip=caixa, full_page=True)
-        saidas.append(f"app_{args.sufixo}_painel.png")
-        print(f"painel    · {n_emp} empresas, empresa em destaque: {escolhida}")
+        crop("#detalhe", "empresa")
+        print("Empresa:", chosen, page.locator(".d-cab .mv").inner_text())
+        print("Veredicto:", page.locator(".d-ver").inner_text())
+        print("Ajuste:", page.locator(".fit-details").inner_text())
+        page.get_by_role("button", name="Recorded news decisions", exact=True).click()
+        page.locator(".decision-list").wait_for(timeout=30000)
+        crop("#modal", "decisoes")
+        print("Decisões:", page.locator(".decision-list").inner_text())
+        if errors:
+            raise RuntimeError(f"Erros JavaScript na captura: {errors}")
+        browser.close()
+    print("Capturas:", destino)
 
-        # ── 2) a empresa escolhida ──────────────────────────────────────────
-        det = pg.locator("#detalhe")
-        det.scroll_into_view_if_needed()
-        # ⚠️ A página abre no dia corrente e a legenda promete SEIS MESES, que é o intervalo
-        # em que a distinção entre assinalar e comunicar se torna observável -- num só dia
-        # não há marcas nenhumas para separar. O intervalo era escolhido à mão e por isso
-        # não se voltava a produzir; passa a ser parte da receita.
-        pg.locator('#intervalos button[data-r="6M"]').click()
-        pg.wait_for_timeout(1800)
-        intervalo = pg.eval_on_selector('#intervalos button[aria-pressed="true"]',
-                                        "e => e.dataset.r")
-        if intervalo != "6M":
-            raise SystemExit(f"o intervalo ficou em {intervalo} e a legenda promete 6M")
-        ajuste = pg.eval_on_selector_all(".d-fit", "n => n.map(e => e.textContent.trim())")
-        print("ajuste    ·", ajuste[0] if ajuste else "AUSENTE (a linha do ajuste não saiu)")
-        pg.wait_for_timeout(400)
-        det.screenshot(path=str(FIGURAS / f"app_{args.sufixo}_empresa.png"))
-        saidas.append(f"app_{args.sufixo}_empresa.png")
-        print(f"empresa   · {escolhida}")
 
-        # ── 3) o silêncio ───────────────────────────────────────────────────
-        # ⚠️ O que a legenda descreve é o MODAL de uma empresa que parou -- a lista das
-        # portas que atravessou, com a rejeição no fim. Não é a grelha: a grelha diz que
-        # parou, o modal diz ONDE e porquê, e é isso que torna o silêncio inspeccionável.
-        # O gatilho é o rodapé do cartão, não o cartão (que seleciona a empresa).
-        travadas = pg.evaluate(
-            "() => [...document.querySelectorAll('#empresas .e')]"
-            ".filter(e => /stopped/i.test(e.textContent)).map(e => e.dataset.t)")
-        if not travadas:
-            print("AVISO: nenhuma empresa parada numa porta; o modal do silêncio não foi "
-                  "capturado. Repetir num dia com o orçamento esgotado.")
-        else:
-            pg.set_viewport_size({"width": 1000, "height": 1100})
-            pg.wait_for_timeout(500)
-            alvo_e = travadas[0]
-            pg.locator(f'#empresas .e[data-t="{alvo_e}"] .e-pe').click()
-            pg.wait_for_selector("#modal[open]", timeout=10000)
-            pg.wait_for_timeout(600)
-            pg.locator("#modal").screenshot(
-                path=str(FIGURAS / f"app_{args.sufixo}_silencio.png"))
-            saidas.append(f"app_{args.sufixo}_silencio.png")
-            portas = pg.locator("#modal .m-passos li").count()
-            print(f"silêncio  · {alvo_e}, {portas} portas, {len(travadas)} de {n_emp} paradas")
-
-        b.close()
-
-    for f in saidas:
-        kb = (FIGURAS / f).stat().st_size // 1024
-        print(f"  {f}: {kb} KB")
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--url", default=PROD)
+    parser.add_argument("--ticker", default="")
+    parser.add_argument("--sufixo", default="v9")
+    parser.add_argument("--output", type=Path, default=RAIZ / "output/painel-v9")
+    args = parser.parse_args()
+    capturar(args.url, args.ticker, args.output, args.sufixo)
     return 0
 
 

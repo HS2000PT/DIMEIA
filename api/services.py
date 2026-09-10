@@ -1,23 +1,8 @@
-"""Acesso a dados para a API — os mesmos motores, sem o Streamlit à volta.
+"""Leituras do painel: snapshot, histórico, decisões e projeção de notícias.
 
-## Porque é que este ficheiro existe em vez de reaproveitar `app/dashboard.py`
-
-Porque as funções de lá estão decoradas com `@st.cache_data`, e esse decorador **importa o
-Streamlit e exige uma sessão**. A lógica era boa e está reutilizada tal como estava; o que
-mudou foi a cache, que passa a ser um dicionário com TTL em vez de uma dependência de
-framework. É o que permite ao processo web deixar de ser um servidor de Streamlit.
-
-## A decisão de desenho que interessa: o que é caro sai do caminho crítico
-
-A v4 teve de **retirar** os precedentes da página porque carregar o modelo semântico mais a
-base de casos custava ~7 s à carga a frio, contra um critério que pede menos de 2,5 s. Numa
-página monolítica isso é uma escolha entre a capacidade e a velocidade.
-
-Com uma API deixa de ser uma escolha: `/api/asset/{t}` responde com o que é barato e o
-cliente pede `/api/precedents/{t}` **depois de pintar**. A capacidade volta ao produto sem
-pagar o custo onde ele se nota. É a razão técnica mais concreta para separar o servidor do
-cliente, e é a mesma razão pela qual a recuperação — a terceira pergunta da tese — pode
-finalmente viver no ecrã principal.
+O worker calcula; este processo serve valores existentes. Cache por fonte, exclusão
+por chave, retenção do último valor válido e erro explícito se nunca houve leitura.
+Os motores de IA vivem em investigator e não são carregados por pedidos desta API.
 """
 
 from __future__ import annotations
@@ -33,7 +18,7 @@ from typing import Any
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 HISTORY_BRANCH = os.getenv("INVESTIGATOR_HISTORY_BRANCH", "alerts-history")
-BACKFILL = RAIZ / "data" / "samples" / "backfill_kb.jsonl"
+BACKFILL = RAIZ / "data" / "samples" / "backfill_kb_meta.jsonl"
 
 
 def raw_url(path: str) -> str:
@@ -46,30 +31,46 @@ _CACHE: dict[str, tuple[float, Any]] = {}
 _LOCK = threading.Lock()
 
 
-def cached(key: str, ttl: float, fn):
-    """Memoiza `fn()` por `ttl` segundos.
+_KEY_LOCKS: dict[str, threading.Lock] = {}
+_FAILURES: dict[str, float] = {}
 
-    O lock protege o dicionário, não a chamada: duas chamadas simultâneas com a cache fria
-    podem ambas executar `fn`. É deliberado — segurar o lock durante uma ida à rede
-    serializaria todos os pedidos da app atrás do mais lento.
+
+class DataUnavailable(RuntimeError):
+    """A fonte não respondeu; não é uma coleção vazia."""
+
+
+def cached(key: str, ttl: float, fn):
+    """Uma carga por chave; fontes independentes continuam em paralelo.
+
+    Em falha conserva o último valor válido e tenta novamente após 15 s. A idade do
+    snapshot é calculada fora desta cache, para os dados antigos nunca parecerem frescos.
     """
-    now = time.time()
     with _LOCK:
+        lock = _KEY_LOCKS.setdefault(key, threading.Lock())
+    with lock:
+        now = time.monotonic()
         hit = _CACHE.get(key)
         if hit and now - hit[0] < ttl:
             return hit[1]
-    value = fn()
-    with _LOCK:
-        _CACHE[key] = (now, value)
-    return value
+        if now - _FAILURES.get(key, -float("inf")) < 15:
+            if hit:
+                return hit[1]
+            raise DataUnavailable(key)
+        try:
+            value = fn()
+        except Exception as exc:
+            _FAILURES[key] = now
+            if hit:
+                return hit[1]
+            raise DataUnavailable(key) from exc
+        _CACHE[key] = (time.monotonic(), value)
+        _FAILURES.pop(key, None)
+        return value
 
 
-def _get_json_lines(url: str, timeout: float = 20.0) -> list[str]:
-    try:
-        with urllib.request.urlopen(url, timeout=timeout) as r:  # noqa: S310
-            return r.read().decode("utf-8", "replace").splitlines()
-    except Exception:  # noqa: BLE001
-        return []
+def _get_json_lines(url: str, timeout: float = 12.0) -> list[str]:
+    with urllib.request.urlopen(url, timeout=timeout) as r:  # noqa: S310
+        return r.read().decode("utf-8").splitlines()
 
 
 # ── Watchlist e instantâneo ───────────────────────────────────────────────────
@@ -86,24 +87,25 @@ def watchlist() -> list[str]:
 
 
 def snapshot() -> dict:
-    """A grelha pré-computada pelo worker. Nunca levanta; devolve `{}` se não houver."""
+    """Lê o instantâneo e calcula a idade em cada pedido, mesmo com cache."""
+    from app.snapshot_io import Instantaneo, carregar
+
     def _load():
-        from app.snapshot_io import carregar
         snap = carregar()
-        if not snap:
-            return {}
-        return {
-            # `**snap.extra` primeiro, para os campos calculados aqui mandarem sobre os do
-            # ficheiro em caso de colisão de nome.
-            **snap.extra,
-            "rows": snap.linhas,
+        if snap is None:
+            raise DataUnavailable("snapshot")
+        return snap
+
+    try:
+        saved = cached("snapshot", 30, _load)
+    except DataUnavailable:
+        return {}
+    age = max(0.0, (datetime.now(UTC) - saved.gerado_em).total_seconds())
+    snap = Instantaneo(saved.linhas, saved.gerado_em, age, saved.remoto, saved.extra)
+    return {**snap.extra, "rows": snap.linhas,
             "as_of": snap.gerado_em.isoformat(timespec="seconds"),
-            "age_s": round(snap.idade_s, 1),
-            "age_label": snap.idade_legivel,
-            "fresh": snap.fresco,
-            "remote": snap.remoto,
-        }
-    return cached("snapshot", 30, _load)
+            "age_s": round(age, 1), "age_label": snap.idade_legivel,
+            "fresh": snap.fresco, "remote": snap.remoto}
 
 
 def market_state() -> dict:
@@ -127,70 +129,30 @@ def market_state() -> dict:
 
 # ── Notícias captadas ─────────────────────────────────────────────────────────
 
-def _absorb(lines, out: dict[str, list[dict]], seen: set) -> None:
-    for line in lines:
-        if not line.strip():
-            continue
-        try:
-            r = json.loads(line)
-        except ValueError:
-            continue
-        key = (r.get("ticker"), r.get("date"), (r.get("headline") or "")[:80])
-        if key in seen:
-            continue
-        seen.add(key)
-        imp = r.get("impacts") or {}
-        out.setdefault(r.get("ticker", "?"), []).append({
-            "date": r.get("date", ""),
-            "headline": r.get("headline", ""),
-            "source": r.get("source", ""),
-            "published_at": r.get("published_at") or r.get("event_at") or "",
-            "url": r.get("url", ""),
-            "d1": imp.get("1"),
-            "d5": imp.get("5"),
-        })
-
-
 def news_by_ticker() -> dict[str, list[dict]]:
-    """Notícias com impacto medido, por ticker. Local primeiro, base viva depois.
+    """Lê exclusivamente a projeção sem embeddings, criada pelo worker.
 
-    A ordem é a mesma do painel anterior e pela mesma razão: se a rede falhar perde-se as
-    últimas semanas e mantém-se o ano reconstruído, em vez de se perder tudo.
+    Não há fallback remoto para a base de IA: voltaria a pôr 42 MB no pedido do leitor.
+    Sem projeção em produção, a rota devolve indisponibilidade e a página permite repetir.
     """
     def _load():
-        out: dict[str, list[dict]] = {}
-        seen: set = set()
-        if BACKFILL.exists():
-            try:
-                with BACKFILL.open(encoding="utf-8") as fh:
-                    _absorb(fh, out, seen)
-            except OSError:
-                pass
-        if os.environ.get("INVESTIGATOR_OFFLINE") != "1":
-            _absorb(_get_json_lines(raw_url("live_kb.jsonl"), 25), out, seen)
-        for v in out.values():
-            v.sort(key=lambda r: r["date"], reverse=True)
-        return out
+        if os.environ.get("INVESTIGATOR_OFFLINE") == "1":
+            from investigator.web_projection import news_projection
+
+            if BACKFILL.exists():
+                with BACKFILL.open(encoding="utf-8") as f:
+                    return news_projection(f)
+            return {}
+        with urllib.request.urlopen(raw_url("dashboard_news.json"), timeout=12) as r:  # noqa: S310
+            payload = json.load(r)
+        if not isinstance(payload.get("by_ticker"), dict):
+            raise DataUnavailable("news projection")
+        return payload["by_ticker"]
     return cached("news_by_ticker", 900, _load)
 
 
 def news_days(ticker: str, limit: int = 400) -> list[dict]:
-    """Uma entrada por DIA — a unidade em que o impacto existe.
-
-    Seis manchetes do mesmo dia partilham exactamente os mesmos +1d/+5d, portanto no gráfico
-    seriam seis marcas indistinguíveis no mesmo sítio. A contagem das outras vai em `n`.
-    """
-    rows = news_by_ticker().get(ticker.upper(), [])
-    by_day: dict[str, dict] = {}
-    for r in rows:
-        d = r["date"]
-        if d not in by_day:
-            by_day[d] = {**r, "n": 1, "others": []}
-        else:
-            by_day[d]["n"] += 1
-            if len(by_day[d]["others"]) < 5:
-                by_day[d]["others"].append(r["headline"])
-    return sorted(by_day.values(), key=lambda r: r["date"], reverse=True)[:limit]
+    return news_by_ticker().get(ticker.upper(), [])[:limit]
 
 
 # ── Alertas enviados e funil de gates ─────────────────────────────────────────
@@ -213,11 +175,9 @@ def alerts() -> list[dict]:
     def _load():
         if os.environ.get("INVESTIGATOR_OFFLINE") == "1":
             return []
-        try:
-            from investigator.alerts_history import fetch_remote
-            hist = fetch_remote(raw_url("alerts_history.jsonl")) or []
-        except Exception:  # noqa: BLE001
-            return []
+        from investigator.alerts_history import parse_jsonl_lines
+
+        hist = parse_jsonl_lines(_get_json_lines(raw_url("alerts_history.jsonl")))
         out = []
         for h in hist:
             out.append({
@@ -264,113 +224,12 @@ def screener() -> list[dict]:
                 "date": r.get("date", ""), "ticker": r.get("ticker", ""),
                 "stage": r.get("stage", ""), "detail": r.get("detail", ""),
             })
-        rows.sort(key=lambda r: r["date"], reverse=True)
-        return rows[:400]
+        # Um registo por empresa/etapa no último dia disponível, escolhido do fim.
+        # Cortar as primeiras 400 linhas de um dia perdia as decisões das horas seguintes.
+        day = max((r["date"] for r in rows), default="")
+        latest: dict[tuple, dict] = {}
+        for row in reversed(rows):
+            if row["date"] == day:
+                latest.setdefault((row["ticker"], row["stage"]), row)
+        return list(latest.values())
     return cached("screener", 120, _load)
-
-
-# ── Recuperação semântica (caro — fora do caminho crítico) ────────────────────
-
-_ENGINE: dict[str, Any] = {}
-
-
-def _retrieval_engine():
-    if "engine" not in _ENGINE:
-        from investigator.main import product_retrieval
-        _ENGINE["engine"] = product_retrieval(
-            auto_download=os.environ.get("INVESTIGATOR_OFFLINE") != "1")
-    return _ENGINE["engine"]
-
-
-def _retrieval_kbs(kb_path: str):
-    if "kbs" not in _ENGINE:
-        from investigator.historical_kb.knowledge_base import HistoricalKB
-        from investigator.live_kb import fetch_remote_records
-        kbs = []
-        if os.environ.get("INVESTIGATOR_OFFLINE") != "1":
-            try:
-                vivos = fetch_remote_records(raw_url("live_kb.jsonl"))
-                if vivos:
-                    kbs.append(HistoricalKB(vivos))
-            except Exception:  # noqa: BLE001
-                pass
-        kbs.append(HistoricalKB.load(kb_path, lean=True))
-        _ENGINE["kbs"] = kbs
-    return _ENGINE["kbs"]
-
-
-def precedents(ticker: str, top_k: int = 4, query: str | None = None) -> dict | None:
-    """*Já aconteceu antes, e o que se seguiu?* — a terceira pergunta da tese.
-
-    Os casos vêm de **outras empresas também**: é essa a aposta da RQ2 (P@5 0,595 à escala),
-    e por isso cada linha diz de quem é. O desfecho é **medido** com a regra de alinhamento
-    sem lookahead, nunca projectado.
-    """
-    t = ticker.upper()
-    key = f"prec:{t}:{top_k}:{(query or '')[:60]}"
-
-    def _load():
-        q = query
-        q_date = ""
-        if not q:
-            dias = news_days(t, limit=1)
-            if not dias:
-                return None
-            q, q_date = dias[0]["headline"], dias[0]["date"]
-        try:
-            from investigator.live_kb import merged_precedents
-            kb_path, embedder = _retrieval_engine()
-            casos = merged_precedents(q, _retrieval_kbs(str(kb_path)), embedder,
-                                      top_k=top_k, today=datetime.now(UTC).date())
-        except Exception:  # noqa: BLE001
-            return None
-        if not casos:
-            return None
-        linhas, up, down = [], 0, 0
-        for rec, sim in casos:
-            imp = rec.impacts.get("5")
-            if imp is not None and imp == imp:
-                up += imp > 0
-                down += imp < 0
-            else:
-                imp = None
-            linhas.append({"ticker": rec.ticker, "date": rec.date,
-                           "headline": rec.headline,
-                           "impact_pct": None if imp is None else round(float(imp), 2),
-                           "similarity": round(float(sim), 3)})
-        return {"query": q, "query_date": q_date, "cases": linhas, "up": up, "down": down,
-                "semantic": bool(getattr(embedder, "semantic", False))}
-
-    return cached(key, 900, _load)
-
-
-def triage_score(ticker: str, headline: str = "") -> dict | None:
-    """A pontuação do modelo treinado (RQ4) — probabilidade calibrada de movimento anormal.
-
-    ⚠️ **O que este número é, e a tese diz o mesmo:** estima se o mercado *reage*, nunca em que
-    *direcção*. Não é uma previsão de preço, e a interface tem de o dizer sempre que o mostra.
-
-    Fail-open em todas as etapas: sem modelo, sem preços, ou com furos na série, devolve
-    `None` e o produto diz que não sabe — em vez de mostrar um número que não existe.
-    """
-    def _load():
-        try:
-            from investigator.market_data.prices import get_price_history
-            from investigator.triage.infer import load_context_bundle, score_latest
-            bundle = load_context_bundle()
-            if not bundle:
-                return None
-            close = get_price_history(ticker.upper(), period="6mo")["Close"]
-            out = score_latest(bundle, close, headline, ticker.upper())
-            if out is None:
-                return None
-            prob, contribs = out
-            return {
-                "prob": float(prob),
-                "contributions": [{"name": n, "weight": round(float(w), 3)}
-                                  for n, w in contribs[:5]],
-                "for_headline": bool(headline),
-            }
-        except Exception:  # noqa: BLE001
-            return None
-    return cached(f"triage:{ticker}:{headline[:60]}", 600, _load)

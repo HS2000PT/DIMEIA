@@ -84,7 +84,11 @@ def test_tagline_is_outlined_and_current() -> None:
     assert "Every move investigated" not in source
 
 
-def test_web_header_uses_the_same_tail_and_colour_split() -> None:
+def test_web_header_uses_approved_stacked_logo() -> None:
+    """O autor aprovou a cabeça/lupa/mercados e autorizou aplicação e deploy.
+
+    Os assets históricos da dissertação continuam cobertos pelos restantes testes.
+    """
     source = (ROOT / "web" / "index.html").read_text(encoding="utf-8")
     match = re.search(
         r'<a class="marca".*?<svg.*?<path d="([^"]+)"',
@@ -92,10 +96,10 @@ def test_web_header_uses_the_same_tail_and_colour_split() -> None:
         flags=re.DOTALL,
     )
 
-    assert match is not None
-    assert _normalise_path(match.group(1)) == _normalise_path(TAIL_D)
-    assert "<b>Investi<i>Gator</i></b>" in source
-    assert re.search(r"\.marca b i\s*\{[^}]*color:var\(--acento\)", source)
+    assert match is None
+    assert '/assets/logo.svg?v=10.0' in source
+    assert 'aria-label="InvestiGator, home"' in source
+    assert "mascote" not in source
 
 
 @pytest.mark.parametrize("suffix", PALETTES)

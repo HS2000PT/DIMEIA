@@ -1590,6 +1590,48 @@ def _write_snapshot_safe() -> None:
         print(f"[instantaneo] falhou (ignorado): {type(exc).__name__}: {sem_segredos(exc)}")
 
 
+_NEWS_PROJECTION_AT: float | None = None
+
+
+def _write_news_projection_safe() -> None:
+    """Publica a vista leve que o web lê, ao ritmo da base viva (30 minutos).
+
+    O web lia 42 MB de embeddings para mostrar títulos. Só o worker precisa desses
+    vetores. Erros deixam a projeção anterior intacta e permitem tentar no ciclo seguinte.
+    """
+    global _NEWS_PROJECTION_AT
+    import time
+    from itertools import chain
+
+    if _NEWS_PROJECTION_AT is not None and time.monotonic() - _NEWS_PROJECTION_AT < 1800:
+        return
+    try:
+        from investigator.history_publish import publish_blob
+        from investigator.web_projection import news_projection
+
+        backfill = _BACKFILL_META
+        # A base viva é obrigatória: uma falha de semente não pode apagar notícias recentes.
+        with _LIVE_KB.open(encoding="utf-8") as live:
+            if backfill.exists():
+                with backfill.open(encoding="utf-8") as past:
+                    rows = news_projection(chain(past, live))
+            else:
+                rows = news_projection(live)
+        target = _LIVE_KB.parent / "dashboard_news.json"
+        temporary = target.with_suffix(".tmp")
+        temporary.write_text(json.dumps({"generated_at": utc_stamp(), "by_ticker": rows},
+                                        ensure_ascii=False, separators=(",", ":")),
+                             encoding="utf-8")
+        temporary.replace(target)
+        message = publish_blob(target, "dashboard_news.json")
+        if message:
+            print(message)
+        if not message or "publicado dashboard_news.json" in message:
+            _NEWS_PROJECTION_AT = time.monotonic()
+    except Exception as exc:  # noqa: BLE001
+        print(f"[noticias-painel] indisponível: {type(exc).__name__}: {sem_segredos(exc)}")
+
+
 def _reconcile_gates(records: list, suppressed: dict[str, tuple[str, str]]) -> None:
     """Puro: corrige o funil com o que foi suprimido DEPOIS da varredura.
 
@@ -1994,6 +2036,8 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     mensagens = alerts + [("MARKET", m) for m in (opening, summary) if m]
     if not mensagens:
         print("Sem alertas novos nesta corrida (nenhuma anomalia nova acima do limiar).")
+        if not dry_run:
+            _write_news_projection_safe()
         return 0
 
     from investigator import config
@@ -2085,6 +2129,8 @@ def run_cycle(cfg: dict, *, dry_run: bool, watch: bool = False) -> int:
     else:
         why = "modo --dry-run" if dry_run else "Telegram nao configurado (nada enviado)"
         print(f"\n[{len(mensagens)} mensagem(ns); {why}]")
+    if not dry_run:
+        _write_news_projection_safe()
     return len(mensagens)
 
 

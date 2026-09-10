@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Gera as tres capturas do painel para o Capitulo 4, a partir de um instantaneo congelado.
+"""Capturas de revisão v9 em output/painel-v9-congelado, sem substituir as teses.
+
+Histórico do gerador (v7/v8):
+Gera as tres capturas do painel para o Capitulo 4, a partir de um instantaneo congelado.
 
 ## Porque existe
 
@@ -64,7 +67,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 WEB = REPO / "web"
 DADOS = REPO / "tmp" / "painel_snapshot"
-FIGURAS = REPO / "tese-pt" / "figures"
+FIGURAS = REPO / "output" / "painel-v9-congelado"
 BASE = "https://investigator-ddc9d8618935.herokuapp.com"
 PORTA = 8899
 
@@ -87,6 +90,30 @@ def descarregar() -> None:
 
 
 class _Servidor(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        from urllib.parse import parse_qs, urlparse
+
+        parsed = urlparse(self.path)
+        if parsed.path == "/api/alerts":
+            query = parse_qs(parsed.query)
+            payload = json.loads((DADOS / "alerts.json").read_text(encoding="utf-8"))
+            rows = payload["rows"]
+            ticker = query.get("ticker", [None])[0]
+            if ticker:
+                rows = [r for r in rows if r["ticker"] == ticker]
+            limit = min(200, max(1, int(query.get("limit", [200])[0])))
+            # Primeira página; o total declara só a cobertura capturada, nunca o canal todo.
+            body = json.dumps({"rows": rows[-limit:], "total": len(rows),
+                               "remaining": max(0, len(rows)-limit),
+                               "next_before": None, "stale": False}).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        super().do_GET()
+
     def translate_path(self, path):
         p = path.split("?")[0]
         if p.startswith("/api/asset/"):
@@ -106,6 +133,8 @@ def confirmar_escolhas() -> None:
     """A escolha das empresas tem de continuar a servir o argumento. Se deixar de servir, para."""
     ov = json.loads((DADOS / "overview.json").read_text(encoding="utf-8"))
     linhas = {r["ticker"]: r for r in ov.get("rows", [])}
+    if any("price_day" not in row for row in linhas.values()):
+        sys.exit("Dados anteriores à v9. Correr --dados para capturar o contrato atual.")
     d = (linhas.get(ALVO_DETALHE) or {}).get("decomp") or {}
     mov, emp = (linhas.get(ALVO_DETALHE) or {}).get("move"), d.get("company")
     if mov is None or emp is None or (mov < 0) == (emp < 0):
@@ -116,82 +145,13 @@ def confirmar_escolhas() -> None:
 
 
 def capturar() -> None:
-    from playwright.sync_api import sync_playwright
+    import importlib.util
 
-    def recortar(pg, sel, path, folga=(2, 6, 4, 14)):
-        bb = pg.eval_on_selector(sel, """e => { const r = e.getBoundingClientRect();
-            return {x:r.x+scrollX, y:r.y+scrollY, width:r.width, height:r.height}; }""")
-        e, t, w, h = folga
-        pg.screenshot(path=str(path), full_page=True,
-                      clip={"x": max(0, round(bb["x"] - e)), "y": max(0, round(bb["y"] - t)),
-                            "width": round(bb["width"] + w), "height": round(bb["height"] + h)})
-        print(f"  {path.name}: {round(bb['width'])}x{round(bb['height'])} css px")
-
-    with sync_playwright() as p:
-        b = p.chromium.launch()
-        ctx = b.new_context(viewport={"width": 960, "height": 1200},
-                            device_scale_factor=2, locale="en-US")  # ver armadilha 3
-        pg = ctx.new_page()
-        erros: list[str] = []
-        pg.on("pageerror", lambda e: erros.append(str(e)))
-        pg.goto(f"http://127.0.0.1:{PORTA}/", wait_until="load", timeout=60000)
-        pg.wait_for_selector(".e", timeout=25000)
-        pg.wait_for_timeout(3500)
-        pg.add_style_tag(content="header, .barra { position: static !important; }")  # armadilha 4
-
-        print("FIGURA 1 — o estado do dia")
-        print("  frase:", pg.eval_on_selector("#frase", "e=>e.innerText"))
-        for k in pg.eval_on_selector_all(
-                ".k", "els=>els.map(e=>e.innerText.replace(/\\n/g,' · '))"):
-            print("  kpi:", k)
-        # ⚠️ `#colEsq > .legenda` e nao `.legenda`: desde que o grafico e o modal ganharam
-        # legendas proprias, o primeiro `.legenda` do documento pode ser um deles, vazio e
-        # escondido — e o recorte saia com doze pixeis de altura, sem erro nenhum.
-        fim = pg.eval_on_selector("#colEsq > .legenda",
-                                  "e => e.getBoundingClientRect().bottom + scrollY")
-        pg.screenshot(path=str(FIGURAS / "app_v7_painel.png"), full_page=True,
-                      clip={"x": 0, "y": 0, "width": 960, "height": round(fim) + 12})
-        print(f"  app_v7_painel.png: 960x{round(fim) + 12} css px")
-
-        print("FIGURA 2 — a evidencia de", ALVO_DETALHE)
-        pg.evaluate("""t => { const b=[...document.querySelectorAll('.e')].find(x=>x.dataset.t===t);
-                              if (b) b.click(); }""", ALVO_DETALHE)
-        pg.wait_for_timeout(2000)
-        # ⚠️ A figura vai em 6M e nao no 1D que a pagina abre por defeito. Nao e para embelezar:
-        # o que esta figura tem de mostrar e a distincao entre o que foi assinalado e o que foi
-        # enviado, e essa so existe ao longo de meses. O 1D mostra um dia, que e outra pergunta.
-        pg.evaluate("""() => { const b=[...document.querySelectorAll('#intervalos button')]
-                                 .find(x=>x.dataset.r==='6M'); if (b) b.click(); }""")
-        pg.wait_for_timeout(2500)
-        pintados = pg.evaluate("""() => {
-            const c=document.querySelector('#graf canvas'); if(!c) return 0;
-            const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data; let n=0;
-            for(let i=3;i<d.length;i+=4) if(d[i]!==0) n++; return n; }""")
-        if pintados < 1000:
-            sys.exit("!! o grafico saiu em branco (ver armadilha 3); nao usar estas figuras")
-        print("  veredicto:", pg.eval_on_selector(".d-ver", "e=>e.innerText"))
-        print("  titular:", pg.eval_on_selector(".d-cab .mv", "e=>e.innerText"))
-        for linha in pg.eval_on_selector_all(
-                ".d-lin", "els=>els.map(e=>e.innerText.replace(/\\n/g,' '))"):
-            print("  parcela:", linha)
-        recortar(pg, ".d", FIGURAS / "app_v7_empresa.png")
-
-        print("FIGURA 3 — o silencio de", ALVO_MODAL)
-        pg.evaluate("""t => { const b=[...document.querySelectorAll('.e')].find(x=>x.dataset.t===t);
-                              const pe = b && b.querySelector('.e-pe'); if (pe) pe.click(); }""",
-                    ALVO_MODAL)
-        pg.wait_for_timeout(1200)
-        if not pg.query_selector("#modal[open]"):
-            sys.exit(f"!! o modal de {ALVO_MODAL} nao abriu")
-        print("  titulo:", pg.eval_on_selector("#mTit", "e=>e.textContent"))
-        for li in pg.eval_on_selector_all(".m-passos li",
-                                          "els=>els.map(e=>e.innerText.replace(/\\n/g,' — '))"):
-            print("  passo:", li)
-        recortar(pg, "#modal", FIGURAS / "app_v7_silencio.png")
-
-        maus = [x for x in erros if "Invalid language" not in x]
-        print("erros de JS:", maus if maus else "nenhum")
-        b.close()
+    spec = importlib.util.spec_from_file_location(
+        "captura_atual", REPO / "scripts/screenshot_v8.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.capturar(f"http://127.0.0.1:{PORTA}", ALVO_DETALHE, FIGURAS)
 
 
 def main() -> int:

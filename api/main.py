@@ -28,9 +28,10 @@ from __future__ import annotations
 
 import pathlib
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Query, Request
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.gzip import GZipMiddleware
 
 from api import services as S
 
@@ -44,6 +45,26 @@ app = FastAPI(
     docs_url="/api/docs",
     openapi_url="/api/openapi.json",
 )
+app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=5)
+
+
+@app.exception_handler(S.DataUnavailable)
+async def unavailable(request: Request, exc: S.DataUnavailable):
+    return JSONResponse({"error": "Data temporarily unavailable. Please retry."},
+                        status_code=503, headers={"Retry-After": "15"})
+
+
+@app.middleware("http")
+async def cache_headers(request: Request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith("/assets/") and response.status_code == 200:
+        # Revalidável; a query de versão muda a cada revisão dos ficheiros do cliente.
+        response.headers["Cache-Control"] = "public, max-age=3600"
+    elif request.url.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-store"
+    else:
+        response.headers["Cache-Control"] = "no-cache"
+    return response
 
 
 # ── Dados ─────────────────────────────────────────────────────────────────────
@@ -105,9 +126,11 @@ def overview() -> dict:
     snap = S.snapshot()
     mkt = S.market_state()
     rows = _decorate(snap.get("rows", []), bool(mkt.get("open")))
-    alerts = S.alerts()
-    today_alerts = [a for a in alerts if a.get("date", "")[:10] == (
-        snap.get("as_of", "")[:10] or "___")]
+    # As séries só são transportadas para a empresa que o leitor escolhe.
+    rows = [{**{k: v for k, v in row.items()
+                if k not in {"closes", "events", "intraday"}},
+             "price_day": (row.get("closes") or [[None]])[-1][0]}
+            for row in rows]
     return {
         "as_of": snap.get("as_of", ""),
         "age_label": snap.get("age_label", ""),
@@ -117,12 +140,10 @@ def overview() -> dict:
         "market": mkt,
         "watchlist": S.watchlist(),
         "rows": rows,
-        "alerts_total": len(alerts),
-        "alerts_today": len(today_alerts),
         "window": 20,
         "threshold": 1.5,
         # ⚠️ O retorno do índice, não a contribuição do mercado por empresa: a segunda é β·r_m e
-        # muda com o beta de cada empresa. O painel usa este número para o estado da mascote, e
+        # muda com o beta de cada empresa. O painel apresenta o índice em texto, e
         # a legenda tem de poder nomear o índice — dizer «NASDAQ» mostrando S&P seria uma
         # afirmação errada no sítio onde toda a gente olha.
         "market_index": snap.get("market_index"),
@@ -132,15 +153,13 @@ def overview() -> dict:
 
 @app.get("/api/asset/{ticker}")
 def asset(ticker: str) -> dict:
-    """O que é barato de um activo. O caro (precedentes, triagem) tem rota própria."""
+    """Séries e medições de uma empresa; notícias e mensagens carregam-se à parte."""
     t = ticker.upper()
     snap = S.snapshot()
     row = next((r for r in snap.get("rows", []) if r.get("ticker") == t), None)
     if row is None:
         return JSONResponse({"error": f"{t} is not in the watchlist"}, status_code=404)
 
-    news = S.news_days(t, limit=400)
-    alerts = [a for a in S.alerts() if a.get("ticker") == t][:40]
     try:
         from investigator.news_fetcher.relevance import display_name, sector_etf
         name, sector = display_name(t), sector_etf(t)
@@ -152,6 +171,7 @@ def asset(ticker: str) -> dict:
         "move": row.get("move"), "z": row.get("z"), "flagged": row.get("flagged"),
         "rarity": row.get("rarity"), "decomp": row.get("decomp"),
         "vol_ratio": row.get("vol_ratio"),
+        "price_day": (row.get("closes") or [[None]])[-1][0],
         "closes": row.get("closes", []),
         "events": row.get("events", []),
         # ⚠️ O intradiário já existia no instantâneo e não era servido, o que obrigava a página a
@@ -162,9 +182,15 @@ def asset(ticker: str) -> dict:
         "intraday": row.get("intraday", []),
         "intraday_day": row.get("intraday_day"),
         "prev_close": row.get("prev_close"),
-        "news": news,
-        "alerts": alerts,
     }
+
+
+@app.get("/api/news/{ticker}")
+def news(ticker: str) -> dict:
+    t = ticker.upper()
+    if t not in S.watchlist():
+        return JSONResponse({"error": "Unknown company"}, status_code=404)
+    return {"rows": S.news_days(t), "stale": "news_by_ticker" in S._FAILURES}
 
 
 # ── O que esta API deliberadamente NÃO serve ──────────────────────────────────
@@ -200,16 +226,37 @@ def asset(ticker: str) -> dict:
 @app.get("/api/screener")
 def screener() -> dict:
     """Porque é que o sistema ficou calado sobre cada nome. Com a margem que faltou."""
-    return {"rows": S.screener()}
+    return {"rows": S.screener(), "stale": "screener" in S._FAILURES}
 
 
 @app.get("/api/alerts")
-def alerts() -> dict:
+def alerts(limit: int = Query(200, ge=1, le=200), before: str | None = None,
+           ticker: str | None = None) -> dict:
     # ⚠️ Os ÚLTIMOS 200, não os primeiros. O histórico está por ordem cronológica e cresce; com
     # `[:200]` a página deixava de ver alertas novos assim que o ficheiro passasse esse tamanho,
     # e servia em silêncio uma janela cada vez mais antiga. Apanhado a 2026-08-17, com o canal
     # em 391 alertas: a página mostrava como mais recente um alerta de 31 de julho.
-    return {"rows": S.alerts()[-200:]}
+    import hashlib
+
+    def cursor(row):
+        return hashlib.sha256((row.get("date", "") + "|" + row.get("ticker", "") + "|"
+                               + row.get("sent_at", "") + "|" + row.get("text", ""))
+                              .encode()).hexdigest()[:24]
+
+    history = S.alerts()
+    if ticker:
+        history = [a for a in history if a.get("ticker") == ticker.upper()]
+    end = len(history)
+    if before:
+        end = next((i for i, a in enumerate(history) if cursor(a) == before), -1)
+        if end < 0:
+            return JSONResponse({"error": "History changed; reload the latest messages."},
+                                status_code=409)
+    start = max(0, end - limit)
+    rows = history[start:end]
+    return {"rows": rows, "total": len(history), "remaining": start,
+            "next_before": cursor(rows[0]) if start and rows else None,
+            "stale": "alerts" in S._FAILURES}
 
 
 # ── Telegram: webhook (votos do leitor + comandos do bot) ─────────────────────────────────
