@@ -197,7 +197,7 @@ utilizador recebe a indicação de que um comunicado é relevante e não recebe 
 
 Três consequências para esta dissertação. A primeira é que a lacuna não pode ser enunciada como
 ausência de sistemas de alerta para o investidor particular, porque eles existem e estão
-publicados; tem de ser enunciada como diferença de postura epistémica, entre estimar o que vai
+publicados; face a este sistema, distingue-se pela postura epistémica, entre estimar o que vai
 acontecer e explicar o que já aconteceu, e como diferença naquilo que é entregue com o alerta. A
 segunda é que a medida de relevância de \textcite{muntermann2009ubiquitous} é um retorno anormal
 \emph{em valor absoluto}, ajustado pelo mercado e corrigido pelo comportamento habitual da própria
@@ -210,6 +210,22 @@ público é um apoio independente a uma opção que esta dissertação tomou por
 futura o estudo com utilizadores reais, exatamente a limitação que o
 Capítulo~\ref{cap:conclusoes} enuncia a respeito deste. Não é atenuante, mas situa o problema:
 trata-se de uma dificuldade da área e não de uma omissão isolada.
+
+Outros trabalhos aproximam-se da explicação do movimento observado. O \emph{Squawk Bot} de
+\textcite{dang2020squawk} aprende conjuntamente séries de preços e texto para selecionar notícias
+associadas ao comportamento da cotação. O \emph{DeepTrust} de \textcite{chan2022deeptrust}
+combina deteção de anomalias, recuperação de publicações do Twitter e avaliação da sua
+fiabilidade. Este último é uma dissertação disponibilizada no arXiv, cuja avaliação se concentra
+em dois episódios; a sua existência impede que explicar anomalias por recuperação de informação
+seja apresentado como novidade deste trabalho.
+
+O \emph{Stock Pattern Assistant} de \textcite{neela2025spa}, também disponibilizado no arXiv,
+segmenta preços em sequências monótonas, associa acontecimentos por proximidade temporal e propõe
+uma narrativa gerada a partir desses objetos, sem previsão nem atribuição causal. A demonstração
+usa acontecimentos de uma amostra construída, pelo que não equivale a uma avaliação contínua
+sobre notícias capturadas. Explicar sem prever é, portanto, uma opção partilhada. O posicionamento
+desta dissertação assenta na combinação das três perguntas, na evidência entregue e na avaliação
+dos componentes em funcionamento, sem reivindicar a prioridade daquela opção.
 
 A objeção mais razoável ao trabalho consiste em perguntar por que razão um assistente de
 inteligência artificial genérico não resolveria o mesmo problema. Não foi realizada uma comparação
@@ -825,22 +841,16 @@ A lacuna não é, portanto, de método, mas de integração sob restrição. Os 
 gratuito ou acessível ao investidor particular. O seu preço não é publicado de forma citável, e é
 a indisponibilidade, e não um valor concreto, que sustenta o argumento. Os produtos
 gratuitos que declaram responder à terceira entregam uma afirmação sem a evidência que a sustenta.
-E os componentes académicos que resolveriam cada parte foram avaliados isoladamente, sobre corpora
-de referência, nunca como um sistema em funcionamento contínuo contra fontes reais.
-
-Esta última afirmação precisa de uma ressalva, e a Secção~\ref{sec:ctx_ferramentas} deu-lhe o
-nome. Sistemas integrados para este público existem e estão publicados, sendo o mais desenvolvido
-o de \textcite{muntermann2009ubiquitous}. A diferença face a esse trabalho não é de integração,
-que ele também fez, mas de duas outras coisas. A primeira é a postura epistémica: aquele sistema
-estima o efeito de preço que se seguirá ao comunicado, e este mede o efeito que já se produziu e
-explica-o. A segunda é o objeto da avaliação: aquele mede a oportunidade económica por simulação,
-e este mede a qualidade daquilo que entrega, contra dados reais e ao longo de um período de
-funcionamento. Enunciada assim, a lacuna é mais estreita do que uma afirmação de ausência, e é
-defensável.
+Na literatura académica há sistemas integrados e propostas de explicação de movimentos passados,
+como a Secção~\ref{sec:ctx_ferramentas} documenta. A distinção face ao MoFiN DSS inclui a ausência
+de previsão; face ao DeepTrust e ao Stock Pattern Assistant, essa opção é partilhada. A
+contribuição deve, por isso, ser apreciada pela articulação entre raridade, decomposição e
+precedentes, pelas restrições de operação e pela avaliação da evidência entregue. Os trabalhos
+revistos delimitam esta contribuição; não demonstram uma ausência universal de sistemas comparáveis.
 
 Esta observação determina a distinção que atravessa o trabalho e que o Capítulo~\ref{cap:sistema}
 retoma ao justificar a ausência de um modelo de linguagem na composição das mensagens. Uma frase
-gerada é uma afirmação: apresenta-se ao leitor num registo fluente e não lhe fornece meios para a
+gerada sem ligação aos factos apresenta-se ao leitor num registo fluente e não lhe fornece meios para a
 confrontar com aquilo que a sustenta. Uma frase composta a partir de objetos calculados é uma
 afirmação acompanhada da evidência, na qual cada valor apresentado remete para a medição que o
 produziu e o leitor pode confirmar cada elemento no momento em que o lê. É esta a propriedade que o sistema procura preservar, e é ela que fixa a natureza da contribuição.

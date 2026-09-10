@@ -1,5 +1,12 @@
 # ESTADO ATUAL — retoma a frio
 
+### 2026-09-10 — Z3 em execução: literatura próxima
+
+Retoma após `a52c0ac7c`, com checkout limpo e sincronizado. Verificadas as identidades de
+SPA, DeepTrust, Squawk Bot e Feng et al. Próximo bloco: integrar nas duas línguas,
+estreitar a afirmação de novidade, compilar e verificar. `[Cor21]` continua sem título
+identificável; pedido ao autor o original. Não declarar Z3 totalmente fechado.
+
 > **Para que serve.** Se a sessão morrer a meio, este ficheiro chega para retomar noutra
 > plataforma (Claude Code, Codex, ChatGPT, Cowork) sem perder nada. É escrito **antes** de cada
 > bloco de acções, não depois.

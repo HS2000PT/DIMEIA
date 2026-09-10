@@ -1,5 +1,16 @@
 # citation_log.md — Registo de citações verificadas
 
+## Z3 — 2026-09-10
+
+| Chave | Identificador e confirmação |
+|---|---|
+| `neela2025spa` | arXiv 2512.15008, DOI 10.48550/arXiv.2512.15008: título, Sandeep Neela, 2025 no registo primário. |
+| `chan2022deeptrust` | arXiv 2203.08144, DOI 10.48550/arXiv.2203.08144: título, Pok Wah Chan, depósito 2022. Capa da dissertação: 2021, Imperial College London. |
+| `dang2020squawk` | DOI 10.24963/ijcai.2020/634: título, três autores, IJCAI 2020 e pp. 4597–4603 nas actas oficiais. |
+| `feng2021hybrid` | DOI 10.1145/3404835.3462969: título, cinco autores, SIGIR 2021 e pp. 233–243 no Crossref. |
+
+Fontes e âmbito da leitura: `docs/design/literatura_Z3_2026-09-10.md`.
+
 > **Protocolo de integridade de citações (§6.4):** nenhuma entrada entra no `.bib` sem identificador verificado.
 > Para cada referência: identificador (DOI / arXiv id / URL), data de verificação e fonte que confirmou.
 > **Se não se verifica, não entra na tese.**

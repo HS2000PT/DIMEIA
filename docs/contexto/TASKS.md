@@ -746,12 +746,35 @@ ficheiro congelado citado pela tese.
       reposta do git. **A porta `check_tese_pt` apanhou o resto**: acusou o PDF de ser anterior às
       figuras regeneradas, que é a defesa contra um PDF que não contém as figuras que declara.
 
-- [ ] Z3 · **Cinco referências que a pesquisa encontrou e nunca entraram na bibliografia.**
-      `[Nee25]`, `[Cha22c]`, `[Fer19]` (A12.5, sistemas próximos em §2.2), `[Fen21b]` (A12.6, faz a
-      direção técnica 2 deixar de ser especulativa) e `[Cor21]` (A12.7, relevância sem anotação
-      humana, que sustenta a §3.6). **Verificado a 2026-09-10: as cinco etiquetas existem só neste
-      ficheiro, e zero vezes no `references.bib`.** Cada uma tem de ser verificada campo a campo
-      antes de ser escrita, pelo protocolo §6.4.
+- [x] Z3 · **Quatro das cinco referências integradas; a quinta é pergunta ao autor.**
+      **FECHADO a 2026-09-10**, com registo em `docs/design/literatura_Z3_2026-09-10.md`.
+      | etiqueta | entrada | estado |
+      |---|---|---|
+      | `[Fer19]` | `dang2020squawk` (IJCAI 2020, pp. 4597–4603) | ✅ Crossref campo a campo. ⚠️ **Etiqueta corrigida**: cita-se a publicação de 2020 e não o preprint de 2019 |
+      | `[Fen21b]` | `feng2021hybrid` (SIGIR 2021, pp. 233–243) | ✅ Crossref. ⚠️ A página institucional **duplica** um autor; prevalecem os cinco das actas |
+      | `[Nee25]` | `neela2025spa` (arXiv 2512.15008) | ✅ conferida à mão; **preprint, sem revista** — e o texto di-lo |
+      | `[Cha22c]` | `chan2022deeptrust` (arXiv 2203.08144) | ✅ conferida à mão; **dissertação de mestrado**, e o texto di-lo |
+      | `[Cor21]` | — | ⚠️ **ABERTO, e não se inventa.** A etiqueta e «relevância sem anotação humana» não identificam uma publicação, e os documentos da pesquisa não estão neste *checkout*. **Pergunta ao Henrique: o título ou a ligação.** |
+      **⚠️ E O QUE ESTAS QUATRO OBRIGARAM A RETIRAR É O MAIS IMPORTANTE.** A §2.9 afirmava que os
+      componentes académicos «nunca» tinham sido integrados num sistema em funcionamento contínuo
+      contra fontes reais. É uma afirmação de **ausência universal**, a classe mais atacável que
+      existe, e três destes trabalhos mostram-na demasiado forte. Passa a dizer que os trabalhos
+      revistos **delimitam** a contribuição e não demonstram ausência de sistemas comparáveis.
+      **E concede que «explicar sem prever» é opção partilhada** com o DeepTrust e o SPA — o que
+      é o título da dissertação. Verificado antes de aceitar: **nenhum outro sítio** reivindica
+      essa opção como novidade ou prioridade (procurado no Cap. 1, Cap. 6 e *front matter*), logo
+      a concessão não abre contradição interna.
+      **O acrescento do §6.5 respeita a regra da Fase B:** o trabalho de Feng «oferece uma
+      formulação a explorar» e o benefício sob o orçamento diário **continua por medir**. Não diz
+      que o B6 foi feito.
+      **PORTAS: `verify_bibliography` 103/103 sem achados · as duas árvores a 0 erros e 0
+      referências por resolver · overfull 6 e 4, iguais ao registo anterior às edições · 141
+      páginas antes e depois · paridade PT↔EN 0 assimetrias em 139 chaves, com os dois controlos
+      a disparar · `check_entrega` verde nos 23 · 1195 testes · `ruff` limpo.**
+      ⚠️ **E uma leitura errada minha, apanhada a medir:** a porta disse «105 de 120 páginas»
+      antes e «116 de 120» depois, o que se lê como onze páginas por vinte e sete linhas de
+      texto. Não é — a primeira leitura veio do `main.pdf` da **raiz**, que estava obsoleto. É a
+      armadilha nº 1 do *brief*, e o efeito real destas edições na contagem física é **zero**.
 
 ## FASE H — Validação
 

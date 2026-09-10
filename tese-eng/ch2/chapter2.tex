@@ -199,8 +199,8 @@ measures the economic opportunity the notification opens, and not the quality of
 communicated. The user is told that an announcement is relevant and is not told why it is.
 
 Three consequences for this dissertation. The first is that the gap cannot be stated as an absence
-of alerting systems for the retail investor, because they exist and are published; it has to be
-stated as a difference in epistemic stance, between estimating what will happen and explaining what
+of alerting systems for the retail investor, because they exist and are published; relative to this
+system, it lies in epistemic stance, between estimating what will happen and explaining what
 already happened, and as a difference in what is delivered alongside the alert. The second is that
 the relevance measure of \textcite{muntermann2009ubiquitous} is an abnormal return \emph{in
 absolute value}, adjusted for the market and corrected for the usual behaviour of the stock itself,
@@ -213,6 +213,21 @@ is that that work evaluated its artefact by simulation and explicitly deferred t
 users to future research, exactly the limitation Chapter~\ref{cap:conclusoes} states about this
 one. This is no excuse, but it locates the problem: it is a difficulty of the field and not an
 isolated omission.
+
+Other works move towards explaining observed price movements. The \emph{Squawk Bot} of
+\textcite{dang2020squawk} jointly learns price series and text to select news associated with
+price behaviour. The \emph{DeepTrust} of \textcite{chan2022deeptrust} combines anomaly detection,
+retrieval of Twitter posts and assessment of their reliability. The latter is a dissertation
+made available on arXiv, whose evaluation concentrates on two episodes; its existence precludes
+presenting the explanation of anomalies through information retrieval as a novelty of this work.
+
+The \emph{Stock Pattern Assistant} of \textcite{neela2025spa}, also made available on arXiv,
+segments prices into monotonic runs, associates events by temporal proximity and proposes a
+narrative generated from those objects, without prediction or causal attribution. Its demonstration
+uses events from a constructed sample, so it does not amount to continuous evaluation on captured
+news. Explaining without predicting is therefore a shared choice. This dissertation is positioned
+through the combination of the three questions, the evidence delivered and the evaluation of
+components in operation, without claiming priority for that choice.
 
 The most reasonable objection to the work consists in asking why a general-purpose artificial
 intelligence assistant would not solve the same problem. No comparison with any such assistant was
@@ -834,23 +849,17 @@ The gap is therefore not one of method, but of integration under constraint. The
 answer the three questions are professional terminals, unavailable free of charge or at a price
 accessible to the retail investor. Their price is not published in a citable form, and it is
 unavailability, and not a concrete value, that supports the argument. The free products that claim
-to answer the third deliver a statement without the evidence that supports it. And the academic
-components that would solve each part were evaluated in isolation, over reference corpora, never
-as a system in continuous operation against real sources.
-
-This last claim needs a qualification, and Section~\ref{sec:ctx_ferramentas} gave it a name.
-Integrated systems for this audience exist and are published, the most developed being that of
-\textcite{muntermann2009ubiquitous}. The difference from that work is not one of integration, which
-it also achieved, but of two other things. The first is epistemic stance: that system estimates the
-price effect that will follow the announcement, and this one measures the effect that has already
-occurred and explains it. The second is the object of the evaluation: that one measures economic
-opportunity by simulation, and this one measures the quality of what it delivers, against real data
-and over a period of operation. Stated in this way, the gap is narrower than a claim of absence,
-and it is defensible.
+to answer the third deliver a statement without the evidence that supports it.
+The academic literature includes integrated systems and proposals for explaining past movements,
+as Section~\ref{sec:ctx_ferramentas} documents. The distinction from MoFiN DSS includes the absence
+of prediction; with DeepTrust and Stock Pattern Assistant, that choice is shared. The contribution
+must therefore be assessed through the combination of rarity, decomposition and precedents, the
+operating constraints and the evaluation of the evidence delivered. The reviewed works delimit
+this contribution; they do not demonstrate a universal absence of comparable systems.
 
 This observation determines the distinction that runs through the work and that
 Chapter~\ref{cap:sistema} takes up when justifying the absence of a language model in the
-composition of the messages. A generated sentence is a statement: it presents itself to the reader
+composition of the messages. A generated sentence without links to facts presents itself to the reader
 in a fluent register and gives no means of confronting it with what supports it. A sentence
 composed from computed objects is a statement accompanied by the evidence, in which every value
 presented points back to the measurement that produced it and the reader can confirm each element
