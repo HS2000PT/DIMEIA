@@ -9,6 +9,64 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 68 — 4.ª parte (2026-09-10/11): A MOLDURA DE IA PASSA PARA A FRENTE, E A REDUÇÃO DE
+  PÁGINAS FICA MEDIDA COMO IMPOSSÍVEL SEM APAGAR UMA QUESTÃO DE INVESTIGAÇÃO.**
+  O pedido era avançar e não esquecer o número de páginas. Avançou-se, e a medição do número de
+  páginas contradiz o alvo.
+  **✅ (A) O CAP. 3 REORDENADO: a resposta à pergunta «onde está a IA?» passa de SÉTIMA para
+  TERCEIRA**, antes das quatro técnicas que ela existe para enquadrar. ⚠️ **Duas frases tinham de
+  mudar, e deixá-las era pior do que não mover:** «As quatro decisões apresentadas até aqui» passava
+  a ser falso, e «dispersa pelas secções anteriores» invertia-se. Uma reordenação que deixe as frases
+  de orientação no sítio dá ao leitor uma promessa sobre texto que ele ainda não leu.
+  **✅ (B) OS QUATRO TÍTULOS PASSAM A NOMEAR A TÉCNICA**, para o próprio índice responder à pergunta.
+  ⚠️ **E a triagem ficou «um modelo aprendido de exemplos rotulados» e NÃO «regressão logística
+  calibrada» de propósito:** este capítulo não fixa a família, compara-as no Cap. 5. Um título que
+  nomeasse a família prometeria uma escolha que o capítulo deliberadamente não faz.
+  **✅ (C) EXCERTOS DE CÓDIGO 3 → 5** (2 → 4 no Cap. 3): o ajuste de Platt, que é onde uma pontuação
+  passa a ser uma probabilidade, e o cosseno vetorizado, cuja última linha decide que um registo sem
+  vetor cai para o fim da ordenação em vez de interromper o ciclo. **Cortados dos ficheiros POR
+  SCRIPT**, pela regra da sessão 61, que mediu sete excertos errados em dez quando escritos à mão.
+  ⚠️ **E o ponto médio de `sigmóide(a·score + b)` partiu a compilação** com «Invalid UTF-8 byte B7»
+  — o `listings` não lê UTF-8 por si, e o comentário do `main.tex` já o dizia. Declarado no
+  `literate` e **não retirado do código**: o excerto é verbatim, e mudar o código para caber no
+  LaTeX inverte a relação entre os dois.
+  **✅ (D) A TABELA DOS CUSTOS DE ALOJAMENTO SAI.** Cinco colunas de preços de contentor que não
+  sustentavam afirmação nenhuma; o único facto que carregava (o aumento é de 61 e não de 43 dólares
+  porque o fornecedor não mistura escalões) passa para a prosa. Um quadro de preços num apêndice de
+  reprodutibilidade convida uma pergunta sem retorno científico.
+  **⚠️ (E) E O NÚMERO QUE INTERESSA: CORTAR A TABELA POUPOU ZERO PÁGINAS EM INGLÊS e uma em
+  português.** O texto reempacotou. **É a medição que fecha o assunto: neste documento cortar um
+  flutuante de meia página não reduz a contagem de páginas.**
+  **⚠️ (F) E A DENSIDADE FOI MEDIDA PÁGINA A PÁGINA: não há folga nenhuma.** Das 140 páginas
+  inglesas, **3 estão em branco e 4 têm menos de 90 palavras — e as quatro são capa, dedicatória e
+  listas**. Zero páginas magras no corpo. Medido com `pypdf` e **não** com `pdftotext`, que parte as
+  páginas por form feeds a mais (deu 159 numa tese de 140) e não extrai texto de dentro do TikZ, o
+  que faz uma página cheia de figura parecer vazia.
+  **⚠️ (G) A ARITMÉTICA HONESTA, e é o que fica para decisão do autor.** EN: **122 páginas árabes**
+  (ch1 5 · ch2 17 · ch3 16 · ch4 22 · ch5 34 · ch6 15 · bibliografia 6 · apêndice 6), contra o
+  perfil do próprio *brief* (8 · 18 · 11 · 16 · 20 · 12). **O excesso está concentrado no Cap. 5:
+  34 contra 20** — e é o capítulo com 18 figuras e 7 tabelas, ou seja **os visuais que o autor pediu
+  para AUMENTAR**. Ler as 7 tabelas uma a uma: nenhuma duplica uma figura, todas sustentam um
+  argumento. **O alvo de ≤119 físicas exige −21 páginas de conteúdo verificado, ou seja apagar o
+  equivalente a uma questão de investigação.**
+  **⚠️ (H) E A COMPARAÇÃO QUE GERA O MEDO COMPARA DUAS MEDIDAS DIFERENTES.** O limite oficial é
+  **120 páginas ÁRABES** e a árvore inglesa está em **122** — duas acima, na medida que conta. As
+  140 físicas incluem 18 páginas de *front matter* impostas pelo modelo. **A tese aprovada do Bruno
+  Ribeiro tem 139 físicas.** Ou seja 140 físicas está exactamente em linha com trabalho aprovado, e
+  o número que se pode invocar contra o documento é o 122.
+  **⚠️ (I) TRÊS ITENS DA LISTA DE CORTES MORRERAM À MEDIÇÃO, e é o terceiro dia seguido em que isso
+  acontece.** A `fig:con_simples` está correcta (o defeito era a prosa, corrigido); nenhum
+  *screenshot* sai (as três têm duas referências cada e carregam argumentos); e a `fig:sis_retreino`
+  **fica** — lida por inteiro, a porta de promoção é o que distingue um ciclo de treino contínuo de
+  automação perigosa, ou seja é exactamente o conteúdo de Engenharia de IA que o autor pediu para
+  aumentar. **O `PLANO_REESCRITA_EXECUCAO.md` não é executável a partir da lista, e isto confirma-o
+  pela terceira vez.**
+  **PORTAS: as duas árvores a 0 erros e 0 referências indefinidas · EN 142 páginas (era 140; +2 dos
+  excertos) · PT 143 · overfull 4 e 5, iguais ao registo anterior · 1200 testes · `ruff` limpo ·
+  `check_entrega` exit 0 com a pendência humana declarada · paridade 0 assimetrias em 138 chaves ·
+  357 referências cruzadas com 0 incompatibilidades de tipo.**
+  **⏭️ A DECISÃO QUE FICA E É DO AUTOR:** o alvo de páginas e o pedido de «menos black box» são
+  **incompatíveis por medição**, e o documento não tem folga por onde os reconciliar.
 - **🆕 SESSÃO 68 — 3.ª parte (2026-09-10): OS ORÇAMENTOS DE CORTE DO PLANO MEDIDOS UM A UM, E O
   QUE SOBREVIVE À MEDIÇÃO É PEQUENO — MAS DUAS DAS SEIS FALHAS DE MEDIÇÃO FORAM MINHAS.**
   Fechada a Fase Z, o pedido era avançar com a reescrita. **Medi cada capítulo antes de cortar, em
@@ -2179,8 +2237,8 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 68 (3.ª parte: os orçamentos de corte do plano medidos um a um — e duas das seis falhas de medição foram minhas)
-- **Última atualização:** 2026-09-10
+- **Sessão nº:** 68 (4.ª parte: a moldura de IA passa para a frente, e a redução de páginas fica medida como impossível sem apagar uma questão)
+- **Última atualização:** 2026-09-11
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
   ter calma nas estatísticas, mostrando cada salto até ao valor final):**
