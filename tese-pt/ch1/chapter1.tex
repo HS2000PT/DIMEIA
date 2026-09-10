@@ -185,7 +185,7 @@ O objetivo geral desta dissertação é desenhar, construir e avaliar um sistema
 financeiros explicável para investidores particulares, utilizando exclusivamente fontes de dados
 gratuitas.
 
-Deste objetivo decorrem três questões de investigação, cada uma associada a uma medição e a um
+Deste objetivo decorrem quatro questões de investigação, cada uma associada a uma medição e a um
 critério de sucesso definidos antes da execução das experiências:
 % A forma longa do acrónimo é dispensada aqui: a frase anterior escreve-a por extenso, e
 % `\gls{QI}1` na primeira utilização imprimiria «Questão de Investigação (QI)1», com o
@@ -201,7 +201,21 @@ critério de sucesso definidos antes da execução das experiências:
         e conservar vantagem sobre o acaso quando se exigem notícias anteriores à consulta?
   \item \textbf{\gls{QI}3, triagem.} Consegue um modelo treinado decidir que notícias justificam um
         alerta melhor do que uma linha de base baseada apenas em volatilidade?
+  \item \textbf{\gls{QI}4, comparabilidade.} Consegue o ajuste contrastivo do codificador,
+        treinado para aproximar notícias cuja \emph{magnitude} de movimento subsequente é
+        semelhante, melhorar a comparabilidade de materialidade dos precedentes recuperados sem
+        custo na relevância temática?
 \end{itemize}
+
+A quarta questão exige uma justificação, porque toca a restrição fundadora deste trabalho. O
+sistema não prevê, e treinar um codificador sobre desfechos observados poderia parecer contrariar
+essa restrição. A distinção decisiva é entre \emph{direção} e \emph{magnitude}: o que a restrição
+proíbe é afirmar para onde o preço vai, e o objetivo de treino desta questão é a magnitude do
+movimento, tomada em valor absoluto. O que um codificador assim ajustado produz não é uma
+afirmação sobre a notícia em análise, mas uma organização da base de casos que aproxima notícias
+de materialidade comparável. Para que a distinção seja verificável e não apenas declarada, a
+experiência inclui um segundo braço, treinado sobre o retorno \emph{com sinal}: se a direção fosse
+tão aprendível como a magnitude, os dois braços seriam indistinguíveis e o argumento cairia.
 
 A segunda questão do investidor, relativa à separação entre a componente de mercado e a componente
 específica da empresa, é tratada por uma técnica descrita no Capítulo~\ref{cap:metodologia} mas não
@@ -224,7 +238,7 @@ Estas questões concretizam-se em quatro objetivos:
 
 Tratando-se de uma dissertação em Engenharia de \gls{IA}, a contribuição não reside na formulação
 de um algoritmo novo, mas na seleção, integração e avaliação crítica de técnicas estabelecidas até
-constituírem um sistema funcional, explicável e reprodutível. Identificam-se quatro contribuições:
+constituírem um sistema funcional, explicável e reprodutível. Identificam-se cinco contribuições:
 
 \begin{enumerate}
   \item \textbf{Um sistema completo em funcionamento}, com os dois gatilhos, assente em fontes
@@ -239,6 +253,11 @@ constituírem um sistema funcional, explicável e reprodutível. Identificam-se 
         versionados.
   \item \textbf{Uma avaliação dos componentes, com linhas de base para três das quatro técnicas}, incluindo o
         resultado que contraria a hipótese inicial, reportado como tal.
+  \item \textbf{Um resultado negativo sobre a aprendizagem de materialidade a partir do texto},
+        obtido com um protocolo fixado antes da execução e com um diagnóstico que rejeita
+        representações degeneradas antes de qualquer métrica ser interpretada. A primeira
+        tentativa produziu exactamente essa degeneração, e o diagnóstico apanhou-a; o
+        Capítulo~\ref{cap:avaliacao} reporta as duas.
 \end{enumerate}
 
 \section{Estrutura do documento}

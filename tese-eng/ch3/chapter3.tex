@@ -495,6 +495,88 @@ periods of generalised decline, the precedents appear to have worse outcomes tha
 attributable to the news. The market is discounted where it is indispensable, in the construction
 of the label described in the following section.
 
+\subsection{Adjusting the encoder for comparable materiality}
+\label{sec:met_qi4}
+
+The retrieval described above organises the case base by \emph{theme}. A precedent on the same
+theme may nevertheless have moved by a magnitude very different from the one at hand, and the
+alert presents it alongside as though the two were comparable. The fourth research question asks
+whether the encoder can be adjusted so that proximity also reflects comparable materiality, and
+Section~\ref{sec:intro_objetivos} justifies why that question does not contradict the
+no-prediction constraint.
+
+\subsubsection*{The training pairs}
+
+The target of a pair of headlines is $1 - |p(a) - p(b)|$, where $p$ is the percentile of the
+subsequent movement in the distribution of movements of the training block. Two reasons support
+the percentile rather than the raw difference. The first is that returns are heavy-tailed: half a
+percentage point does not mean the same thing at the centre of the distribution and in the tail,
+and a target built on the raw difference would spend almost its whole domain distinguishing
+extremes from one another. The percentile is invariant to monotone transformations and treats the
+two regions by the same standard. The second is that the target lies in $[0, 1]$ by construction,
+which is the domain expected by the loss functions used, with no arbitrary scale to justify.
+
+The percentile map is fitted \emph{only} on the training block and reused on the others. Fitting
+it on the complete set would constitute information leakage, and leakage of a kind that no
+boundary check would catch: the distribution of the test block would enter training without a
+single pair crossing the boundary. The embargo block is always left out, since it exists
+precisely to separate training from test.
+
+\subsubsection*{The sampling, and why it cannot be at random}
+
+The first construction drew two indices at random. The difference of percentiles between two
+uniform points is \emph{triangular}, with mean $1/3$ and almost no density at the extremes, so
+the target ends up concentrated around a single value: measured on the data, mean $0{,}665$ and
+standard deviation $0{,}237$. With such a target, the minimum of the loss is obtained by
+predicting the mean for every pair — and predicting the mean for everything is, in practice,
+collapsing the representation. Section~\ref{sec:av_qi4} reports that this is exactly what
+happened.
+
+The construction adopted draws the desired distance $d$ first and only then the starting point
+within the margin that $d$ admits, $p_a \sim U(0, 1-d)$, so that $|p(a) - p(b)| = d$ by
+construction. On the real data the target then has mean $0{,}499$ and standard deviation
+$0{,}289$, that is, the intended uniform distribution.
+
+\subsubsection*{The two arms, and what the comparison between them establishes}
+
+The main arm trains on the \emph{magnitude} of the movement, taken in absolute value. The
+replication arm trains on the \emph{signed} return, reproducing in this same harness the
+direction objective of \textcite{du2024contrastive}. The comparison between the two is what
+makes the
+distinction between magnitude and direction verifiable: were direction as learnable from text as
+magnitude, the two arms would be indistinguishable.
+
+The extension relative to that work lies in what is adjusted. \textcite{du2024contrastive}
+train a triplet network over text and price series, taking as positive the pair that shares
+the \emph{direction} label, and keep the sentence encoder \emph{frozen}. Here the encoder is
+adjusted, and the objective of the main arm is magnitude and not direction.
+
+\subsubsection*{Configuration and reproducibility}
+
+Both arms start from the same \texttt{all-MiniLM-L6-v2} used in
+Section~\ref{sec:met_recuperacao}, so that the comparison with unadjusted retrieval is
+like-for-like. The loss is \emph{CoSENT}, which orders pairs by graded similarity without
+imposing a scale on the output of the cosine. Training runs over forty thousand pairs, one epoch,
+batches of thirty-two examples and a learning rate of $5 \times 10^{-6}$, with the seed fixed at
+forty-two for the generators of \texttt{random}, \texttt{numpy} and \texttt{torch}. The complete
+configuration is kept alongside the weights.
+
+\subsubsection*{The two measures, and the diagnostic that precedes them}
+
+The measure of the objective is \textbf{materiality comparability}: the mean absolute difference,
+in percentage points, between the magnitude of the query's movement and that of the precedents
+returned. Lower values are better. The second measure is the \textbf{precision@5 by sector} of
+Section~\ref{sec:av_qi2}, and it is present to show what the adjustment costs, or does
+not cost, in thematic relevance. Measuring by sector alone would be evaluating the main arm by
+the metric of the arm it is not.
+
+Before either is interpreted, a degeneration diagnostic runs, measuring the mean cosine between
+\emph{different} headlines, the norm of the mean vector and the standard deviation per dimension,
+and further how far the space has moved relative to the starting model and whether the geometry
+of the similarities has been preserved. The reason is that a collapsed encoder produces a
+plausible and entirely meaningless table of metrics: every query returns the same neighbours, and
+nothing in the table gives it away.
+
 
 \section{News triage}
 \label{sec:met_triagem}

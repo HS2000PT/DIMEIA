@@ -235,3 +235,20 @@ motivação da QI4 e ao mesmo tempo torna o negativo mais claro: o espaço para 
 do que se pensava, e o ajuste não o ocupou.
 
 Artefacto: `data/_arquivo/_qi4_causal_local.md`.
+
+### 6.3 A correção não mexeu no protocolo simétrico — verificado, não suposto
+
+Repeti a avaliação simétrica **depois** da correção do `topo_k`, porque uma correção que muda
+números onde não devia mudar é indistinguível de uma correção que introduz um defeito. O
+protocolo simétrico não exclui consulta nenhuma (o relatório diz «2500 consultas, nenhuma
+excluída»), logo os quatro braços tinham de reproduzir exactamente:
+
+| Braço | Comparabilidade (pp) | antes | Precisão@5 | antes |
+|---|---:|---:|---:|---:|
+| base | 2,173 ± 0,062 | 2,173 ± 0,062 | 0,771 ± 0,011 | 0,771 ± 0,011 |
+| `magnitude_v2` | 2,185 ± 0,065 | 2,185 ± 0,065 | 0,746 ± 0,009 | 0,746 ± 0,009 |
+| `direcao_v2` | 2,157 ± 0,071 | 2,157 ± 0,071 | 0,744 ± 0,006 | 0,744 ± 0,006 |
+| acaso | 2,259 ± 0,107 | 2,259 ± 0,107 | 0,629 ± 0,007 | 0,629 ± 0,007 |
+
+**Idênticos nas oito colunas.** A correção actua só onde o protocolo causal a exige.
+Artefacto: `data/_arquivo/_qi4_tres_v2_local2.md`.

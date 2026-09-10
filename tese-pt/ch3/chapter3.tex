@@ -488,6 +488,86 @@ sua própria aplicação, mas incorpora o movimento do mercado no período. Em p
 generalizada, os precedentes aparentam desfechos piores do que os atribuíveis à notícia. O desconto do mercado é aplicado onde é indispensável, na construção do
 rótulo descrito na secção seguinte.
 
+\subsection{Ajuste do codificador por materialidade comparável}
+\label{sec:met_qi4}
+
+A recuperação descrita acima organiza a base de casos por \emph{tema}. Um precedente do mesmo
+tema pode, no entanto, ter-se movido por uma magnitude muito diferente daquela que está em causa,
+e o alerta apresenta-o ao lado dela como se fossem comparáveis. A quarta questão de investigação
+pergunta se o codificador pode ser ajustado de forma que a proximidade passe a refletir também
+materialidade comparável, e a Secção~\ref{sec:intro_objetivos} justifica por que razão essa
+pergunta não contraria a restrição de não previsão.
+
+\subsubsection*{Os pares de treino}
+
+O alvo de um par de títulos é $1 - |p(a) - p(b)|$, onde $p$ é o percentil do movimento
+subsequente na distribuição dos movimentos do bloco de treino. Duas razões sustentam o percentil
+em vez da diferença bruta. A primeira é que os retornos têm cauda pesada: meio ponto percentual
+não significa o mesmo no centro da distribuição e na cauda, e um alvo construído sobre a
+diferença bruta gastaria quase todo o seu domínio a distinguir extremos entre si. O percentil é
+invariante a transformações monótonas e trata as duas regiões pelo mesmo padrão. A segunda é que
+o alvo fica em $[0, 1]$ por construção, que é o domínio esperado pelas funções de perda
+utilizadas, sem escala arbitrária a justificar.
+
+O mapa de percentis é ajustado \emph{apenas} sobre o bloco de treino e reutilizado nos restantes.
+Ajustá-lo sobre o conjunto completo constituiria fuga de informação, e uma fuga de um tipo que
+nenhuma verificação de fronteiras apanharia: a distribuição do bloco de teste entraria no treino
+sem que um único par cruzasse a fronteira. O bloco de embargo fica sempre de fora, uma vez que
+existe precisamente para separar treino de teste.
+
+\subsubsection*{A amostragem, e a razão pela qual não pode ser ao acaso}
+
+A primeira construção sorteava dois índices ao acaso. A diferença de percentis entre dois pontos
+uniformes é \emph{triangular}, com média $1/3$ e densidade quase nula nos extremos, pelo que o
+alvo fica concentrado em torno de um valor único: medido sobre os dados, média $0{,}665$ e desvio
+$0{,}237$. Com um alvo assim, o mínimo da perda obtém-se prevendo a média para todos os pares — e
+prever a média para tudo é, na prática, colapsar a representação. A
+Secção~\ref{sec:av_qi4} reporta que foi exactamente isso que aconteceu.
+
+A construção adoptada sorteia primeiro a distância desejada $d$ e só depois o ponto de partida
+dentro da margem que $d$ admite, $p_a \sim U(0, 1-d)$, de modo que $|p(a) - p(b)| = d$ por
+construção. Sobre os dados reais o alvo passa a ter média $0{,}499$ e desvio $0{,}289$, ou seja a
+distribuição uniforme pretendida.
+
+\subsubsection*{Os dois braços, e o que a comparação entre eles estabelece}
+
+O braço principal treina sobre a \emph{magnitude} do movimento, tomada em valor absoluto. O braço
+de replicação treina sobre o retorno \emph{com sinal}, reproduzindo neste mesmo arnês o objetivo
+de direção de \textcite{du2024contrastive}. A comparação entre os dois é o que torna
+verificável a distinção
+entre magnitude e direção: se a direção fosse tão aprendível do texto como a magnitude, os dois
+braços seriam indistinguíveis.
+
+A extensão face a esse trabalho está no que é ajustado. \textcite{du2024contrastive} treinam
+uma rede de tripletos sobre texto e séries de preço, tomando como positivo o par que partilha
+o rótulo de \emph{direção}, e mantêm o codificador de frases \emph{congelado}. Aqui o
+codificador é ajustado, e o objetivo do braço principal é a magnitude e não a direção.
+
+\subsubsection*{Configuração e reprodutibilidade}
+
+Os dois braços partem do mesmo \texttt{all-MiniLM-L6-v2} utilizado na
+Secção~\ref{sec:met_recuperacao}, para que a comparação com a recuperação sem ajuste seja de igual
+para igual. A perda é a \emph{CoSENT}, que ordena pares por similaridade graduada sem impor uma
+escala à saída do cosseno. O treino corre sobre quarenta mil pares, uma época, lotes de trinta e
+dois exemplos e taxa de aprendizagem $5 \times 10^{-6}$, com semente fixada em quarenta e dois
+para o gerador do \texttt{random}, do \texttt{numpy} e do \texttt{torch}. A configuração completa
+é guardada ao lado dos pesos.
+
+\subsubsection*{As duas medidas, e o diagnóstico que as precede}
+
+A medida do objetivo é a \textbf{comparabilidade de materialidade}: a diferença média absoluta,
+em pontos percentuais, entre a magnitude do movimento da consulta e a dos precedentes devolvidos.
+Valores menores são melhores. A segunda medida é a \textbf{precisão@5 por setor} da
+Secção~\ref{sec:av_qi2}, e está presente para mostrar o que o ajuste custa, ou não custa,
+em relevância temática. Medir apenas por setor seria avaliar o braço principal pela métrica do
+braço que ele não é.
+
+Antes de qualquer das duas ser interpretada corre um diagnóstico de degeneração, que mede o
+cosseno médio entre títulos \emph{diferentes}, a norma do vetor médio e o desvio por dimensão, e
+ainda quanto o espaço se deslocou face ao modelo de partida e se a geometria das semelhanças foi
+preservada. A razão é que um codificador colapsado produz uma tabela de métricas plausível e sem
+significado nenhum: todas as consultas devolvem os mesmos vizinhos, e nada na tabela o denuncia.
+
 
 \section{Triagem de notícias}
 \label{sec:met_triagem}

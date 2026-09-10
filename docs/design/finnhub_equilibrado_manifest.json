@@ -1,0 +1,37 @@
+{
+  "gerado": "2026-09-10T00:29:00Z",
+  "derivado_de": "finnhub_news.csv",
+  "ficheiro": "finnhub_news_equilibrado.csv",
+  "sha256": "e829afceeccb4717dcb72b99e4b857d1ad75681dbc36e1b3cd00ae3914a17f6d",
+  "seed": 42,
+  "quota_por_setor": 569,
+  "manchetes": 2845,
+  "empresas": 15,
+  "janela": {
+    "primeiro": "2026-05-29",
+    "ultimo": "2026-06-25"
+  },
+  "por_setor": {
+    "banking": {
+      "manchetes": 569,
+      "fracao": 0.2
+    },
+    "consumer": {
+      "manchetes": 569,
+      "fracao": 0.2
+    },
+    "energy": {
+      "manchetes": 569,
+      "fracao": 0.2
+    },
+    "health": {
+      "manchetes": 569,
+      "fracao": 0.2
+    },
+    "tech": {
+      "manchetes": 569,
+      "fracao": 0.2
+    }
+  },
+  "nota": "A quota é o tamanho do setor mais pequeno do corpus completo, para que nenhuma manchete seja contada duas vezes. Existe para tornar o agregado interpretável: no corpus completo, 84% de tecnologia fazem o acaso subir a 0,685 e o agregado passa a medir composição em vez de capacidade de recuperação."
+}

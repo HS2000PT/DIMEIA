@@ -302,3 +302,68 @@ mexe em nenhum número — mas deixa a §5.3.3 a atribuir ao fluxo de notícias 
 do instrumento.
 
 **Nenhuma das duas foi executada. A escolha é do autor.**
+
+---
+
+## A TERCEIRA VISTA: O CORPUS EQUILIBRADO — e ela vindica a conclusão publicada
+
+O corpus honesto completo é **84% tecnologia**, e nessa composição o agregado deixa de conseguir
+distinguir o que a §5.3 existe para distinguir: o acaso sobe a `0,685` e a linha lexical fica a
+três pontos do modelo semântico. Derivou-se por isso um subconjunto **equilibrado por setor** —
+`569` manchetes por setor, `2 845` no total, semente fixa, manifesto próprio
+(`docs/design/finnhub_equilibrado_manifest.json`) — em que o agregado volta a ser legível e a
+janela continua a ser a janela recolhida.
+
+⚠️ **A quota é o tamanho do setor mais pequeno**, para que nenhuma manchete seja contada duas
+vezes. Reamostrar com repetição daria um corpus maior e uma manchete repetida não é uma segunda
+observação.
+
+### As três vistas, lado a lado
+
+| | publicado (truncado) | honesto completo | honesto **equilibrado** |
+|---|---:|---:|---:|
+| manchetes | 3 714 | 18 599 | 2 845 |
+| tecnologia | 46,7% | 84,0% | 20,0% |
+| janela por empresa | **3 a 28 dias** | 28 dias | 28 dias |
+| SBERT (MiniLM) | 0,514 | 0,779 | **0,395 ± 0,011** |
+| SBERT (MPNet) | 0,538 | *(a medir)* | **0,422 ± 0,010** |
+| lexical | 0,346 | 0,746 | 0,196 ± 0,004 |
+| recência | 0,126 | 0,560 | 0,204 ± 0,009 |
+| taxa-base do acaso | 0,240 | 0,685 | **0,117 ± 0,001** |
+| **margem sobre o acaso** | **+0,274** | +0,094 | **+0,278** |
+| margem do semântico sobre o lexical | +0,168 | +0,033 | **+0,199** |
+
+**O achado que decide tudo: a margem sobre o acaso no corpus equilibrado reproduz a margem
+publicada quase exactamente — `+0,278` contra `+0,274`.** E a margem do semântico sobre o lexical
+é ligeiramente **maior** do que a publicada (`+0,199` contra `+0,168`).
+
+⚠️ **A taxa-base do acaso desce a `0,117` e não a `0,200`, e a razão não é um defeito.** Com cinco
+setores de igual tamanho, um candidato ao acaso seria do mesmo setor uma vez em cinco — mas o
+protocolo exclui a própria empresa, e nos setores servidos por **duas** empresas essa exclusão
+retira metade do setor. O valor de `0,117` é a consequência dessa restrição, não do
+equilíbrio.
+
+### Por setor, no corpus equilibrado
+
+| setor | n | P@5 | acaso | razão |
+|---|---:|---:|---:|---:|
+| energia | 569 | 0,589 | 0,110 | **5,4×** |
+| saúde | 569 | 0,468 | 0,111 | **4,2×** |
+| tecnologia | 569 | 0,389 | 0,168 | 2,3× |
+| banca | 569 | 0,322 | 0,100 | 3,2× |
+| consumo | 569 | 0,224 | 0,100 | 2,2× |
+
+**O método bate a taxa-base nos cinco setores, de 2,2× a 5,4×** — que é a afirmação que a tese
+escolheu defender, agora medida sobre um corpus cuja janela é verdade.
+
+### O que isto muda na leitura da §5.3
+
+**A conclusão publicada estava certa; o que estava errado era a declaração da janela e a
+composição do corpus, que era artefacto do tecto da API.** Os valores absolutos mudam porque o
+corpus mudou, mas a quantidade que sustenta a QI2 — a margem sobre o acaso, dentro de cada setor
+e no agregado equilibrado — mantém-se, e no agregado equilibrado mantém-se com três casas.
+
+**Recomendação:** o corpus **equilibrado** passa a ser a medição primária da §5.3, com a janela
+declarada corretamente; o corpus **completo** entra como análise de sensibilidade à composição,
+que é em si um resultado metodológico (mostra que num corpus enviesado o agregado deixa de
+distinguir métodos); e a medição **por setor** atravessa as duas.

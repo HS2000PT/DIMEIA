@@ -182,7 +182,7 @@ and not merely the notification that the price has moved.}
 The general objective of this dissertation is to design, build and evaluate an explainable
 financial alerting system for retail investors, using exclusively free data sources.
 
-Three research questions follow from this objective, each associated with a measurement and a
+Four research questions follow from this objective, each associated with a measurement and a
 success criterion defined before the experiments were carried out:
 % The long form of the acronym is dispensed with here: the preceding sentence spells it out,
 % and `\gls{QI}1` on first use would print 'Research Question (RQ)1', with the number glued
@@ -198,7 +198,22 @@ success criterion defined before the experiments were carried out:
         an advantage over chance when only news prior to the query is allowed?
   \item \textbf{\gls{QI}3, triage.} Can a trained model decide which news items justify an alert
         better than a baseline built only on volatility?
+  \item \textbf{\gls{QI}4, comparability.} Can contrastive fine-tuning of the encoder, trained to
+        bring together news items whose subsequent movement has similar \emph{magnitude}, improve
+        the materiality comparability of the precedents retrieved without a cost in thematic
+        relevance?
 \end{itemize}
+
+The fourth question calls for a justification, because it touches the founding constraint of this
+work. The system does not predict, and training an encoder on observed outcomes might appear to
+contradict that constraint. The decisive distinction is between \emph{direction} and
+\emph{magnitude}: what the constraint forbids is asserting where the price will go, and the
+training objective of this question is the magnitude of the movement, taken in absolute value.
+What an encoder adjusted in this way produces is not an assertion about the news item under
+analysis, but an organisation of the case base that brings together news items of comparable
+materiality. So that the distinction is verifiable and not merely declared, the experiment
+includes a second arm, trained on the \emph{signed} return: were direction as learnable as
+magnitude, the two arms would be indistinguishable and the argument would fall.
 
 The investor's second question, concerning the separation between the market component and the
 company-specific component, is addressed by a technique described in
@@ -223,7 +238,7 @@ These questions take the form of four objectives:
 
 This being a dissertation in \gls{AI} Engineering, the contribution does not lie in the formulation
 of a new algorithm, but in the selection, integration and critical evaluation of established
-techniques until they constitute a working, explainable and reproducible system. Four
+techniques until they constitute a working, explainable and reproducible system. Five
 contributions are identified:
 
 \begin{enumerate}
@@ -238,6 +253,10 @@ contributions are identified:
         series, with the model, the calibration and the metrics kept as versioned artefacts.
   \item \textbf{An evaluation of the components, with baselines for three of the four techniques}, including the
         result that contradicts the initial hypothesis, reported as such.
+  \item \textbf{A negative result on learning materiality from text}, obtained with a protocol
+        fixed before execution and with a diagnostic that rejects degenerate representations
+        before any metric is interpreted. The first attempt produced exactly that degeneration,
+        and the diagnostic caught it; Chapter~\ref{cap:avaliacao} reports both.
 \end{enumerate}
 
 \section{Structure of the document}
