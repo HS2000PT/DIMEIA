@@ -54,6 +54,34 @@ indicator comes from a real-time information panel with that architecture
 dissertation in the condition in which it was evaluated, that is, as a measured and not adopted
 alternative.
 
+There is, on this point, field evidence that is more recent, closer to the object of this work, and
+that points in an unfavourable direction. \textcite{liu2023alerts} followed 20\,904 retail
+investors on a mutual fund platform in Taiwan, between January 2017 and June 2020, of whom 932
+activated the platform's own price alerts. Estimating the effect by difference in differences, they
+quantify it as a deterioration in portfolio performance of the order of one percentage point over
+six months. The two mechanisms they identify are an increase of about 7\% in the number of
+transactions, and the fact that the funds the investor adjusted after adoption performed worse than
+those left untouched. The authors read this as the alert directing attention towards short-term
+volatility and inducing excessive trading.
+
+The result is uncomfortable for a dissertation that builds an alerting system, which is why it
+appears in the body of the text and not in a footnote. It is worth being exact, even so, about what
+was measured. The alert studied fires when the price of a fund crosses a threshold set by the
+investor and reports the current price, with no indication of cause; it is the threshold alert that
+Section~\ref{sec:ctx_ferramentas} encounters again in brokerage applications. The mechanism of harm
+the authors describe --- feedback trading on price, as opposed to the use of information about the
+value of the firm --- is precisely what takes hold when the recipient is handed a number and
+nothing else. The authors themselves conclude that improving access to information is not enough,
+and that the capacity to process it must also be addressed.
+
+This dissertation takes that result as a reason for the design rather than as validation of the
+design it already had. Two decisions follow from it. The first is that the alert carries the
+evidence that justifies it, instead of reporting only that a threshold was crossed. The second is
+that the number of alerts is capped by explicit decision, and not by whatever the data produce, as
+described in Section~\ref{sec:sis_politica}. Whether these two decisions suffice to avoid the
+effect \textcite{liu2023alerts} measured remains to be demonstrated, and
+Chapter~\ref{cap:conclusoes} takes it up in those terms.
+
 On the side of financial institutions, the adoption of artificial intelligence has ceased to be
 experimental, as documented by the survey of firms in the sector conducted by the
 \textcite{ccaf2026aifs}. That survey does not measure the population of products aimed at the
@@ -149,6 +177,42 @@ measured similarities and observed behaviour of the price after each of them, wh
 work delivers. The distinction claimed is not one of fluency, but of verifiability, and it concerns
 what the pages declare: the products were not tested, so nothing is asserted about what they
 actually deliver.
+
+Up to this point the section has examined products. The academic literature is missing, and leaving
+it out would rest the claim of a gap on the inspection of vendor pages, which is a fragile basis.
+The class of system at issue here --- watching for events and notifying the retail investor --- has
+been treated in published research for some two decades, and the most developed example is the
+\emph{MoFiN DSS} of \textcite{muntermann2009ubiquitous}. The parallel is close to the point of
+being uncomfortable: it likewise addresses the retail investor, likewise starts from the
+observation that this investor reacts to news more strongly and less quickly than the institutional
+one, is likewise built and evaluated under the design science research paradigm that
+Section~\ref{sec:met_metodologia} adopts, and likewise publishes its evaluation in a journal
+article.
+
+It is worth being precise about what that system does, because the positioning of this work follows
+from that precision. Over 425 announcements by German firms published between 2003 and 2005, and
+minute-by-minute intraday price series, the author fits two regression models: one estimates the
+price effect that will follow the announcement, and the other estimates how long that effect will
+last. The announcement is pushed to the investor when the estimated effect exceeds the average
+effect observed. The evaluation is an \emph{ex ante} simulation of consumer surplus, that is, it
+measures the economic opportunity the notification opens, and not the quality of what is
+communicated. The user is told that an announcement is relevant and is not told why it is.
+
+Three consequences for this dissertation. The first is that the gap cannot be stated as an absence
+of alerting systems for the retail investor, because they exist and are published; it has to be
+stated as a difference in epistemic stance, between estimating what will happen and explaining what
+already happened, and as a difference in what is delivered alongside the alert. The second is that
+the relevance measure of \textcite{muntermann2009ubiquitous} is an abnormal return \emph{in
+absolute value}, adjusted for the market and corrected for the usual behaviour of the stock itself
+--- that is, magnitude, and not direction. It is in essence the same quantity that
+Section~\ref{sec:met_detecao} measures, with two differences that matter: here it is measured after
+the fact, and it serves to explain rather than to anticipate. That a work published in 2009 arrived
+at magnitude, and not direction, as the operational definition of a relevant event for this
+audience is independent support for a choice this dissertation reached by another route. The third
+is that that work evaluated its artefact by simulation and explicitly deferred the study with real
+users to future research, exactly the limitation Chapter~\ref{cap:conclusoes} states about this
+one. This is no excuse, but it locates the problem: it is a difficulty of the field and not an
+isolated omission.
 
 The most reasonable objection to the work consists in asking why a general-purpose artificial
 intelligence assistant would not solve the same problem. No comparison with any such assistant was
@@ -341,6 +405,39 @@ substantial line of research that uses text to anticipate price movements
 choice: text is used here to locate comparable earlier cases, whose outcome has already occurred
 and has already been measured, and not to generate a forecast.
 
+One recent work in that line deserves individual examination, being the closest to what is done
+here. \textcite{du2024contrastive} train a triplet network over social media messages and price
+series, and present to the user, alongside each prediction, the most similar historical case with
+the same outcome and the most similar one with the opposite outcome. This is retrieval of analogues
+used as explanation, over the same materials this work uses, and it is therefore the closest
+published neighbour.
+
+The differences are nonetheless fundamental, and worth stating because they delimit the
+contribution. The label that organises the triplets is the direction of the next day's movement,
+and the task evaluated is to predict it; magnitude enters only to define a dead band around zero.
+The sentence encoder is used frozen, as the input layer to a convolutional network and a recurrent
+network with attention, which are the ones actually trained --- that is, the space in which news
+items are compared is not changed. And the explanation is demonstrated through three case studies
+with attention maps, with no measurement of its quality and no participants.
+
+There is a result of their own in that work that deserves recording, because it concerns the
+difficulty of the task and not the method. In the ablation study, applying contrastive learning to
+the textual component alone degrades accuracy on all three benchmark datasets, falling below the
+variant that uses no contrastive learning at all; the gains come from the quantitative component,
+and the authors themselves conclude that textual information plays a complementary role. Anyone
+seeking to use text to anticipate the direction of a movement has here, published, an indication
+that the signal is weak; Section~\ref{sec:av_qi2} reaches a conclusion of the same sign by an
+entirely independent route.
+
+It is on those two differences that the fourth research question is built. If direction is the
+weak signal that their ablation study shows, and if the comparison space there remains
+unchanged, then two distinct questions are left open: whether the \emph{magnitude} of the
+movement --- which is not a direction and does not constitute a forecast --- is learnable from
+text, and whether the gain appears when the encoder itself is adjusted rather than a network
+placed on top of it. Section~\ref{sec:met_qi4} describes how both are put to the test, with an
+arm trained on magnitude and a replication arm trained on direction, and
+Section~\ref{sec:av_qi4} reports what was obtained.
+
 Representing each news item by a vector turns the identification of comparable cases into an
 information retrieval problem. The proximity measure adopted is cosine similarity, whose mechanics
 are described in Section~\ref{sec:met_recuperacao}. The operation is exact, since the whole case
@@ -470,7 +567,7 @@ Figure~\ref{fig:ctx_cbr} shows the cycle and marks where the system stops.
   \draw[draw=black!30] (4.72,1.15) -- (4.72,-0.62);
   \node[leg, text width=8.2cm] at (4.72,-1.7) {because adapting would produce an expectation about what comes next, which is the forecast the work refuses};
 \end{tikzpicture}
-\caption[The case-based reasoning cycle, and where the system stops]{The four processes that \textcite{aamodt1994cbr} consider necessary to the complete resolution of a problem. The system runs the first two in full and stops before the next two. The interruption is not a shortfall of implementation: \emph{revise} adapts the outcome of a past case to the present one, and that adaptation is an expectation about the future, that is, exactly the forecast the founding constraint refuses. What the system presents is the measured outcome of each case, as it occurred.}
+\caption[The case-based reasoning cycle, and where the system stops]{The four processes that \textcite{aamodt1994cbr} consider necessary to the complete resolution of a problem. The system runs the first two in full and stops before the next two. The interruption is not a shortfall of implementation: \emph{revise} adapts the outcome of a past case to the present one, and that adaptation is an expectation about the future, that is, exactly the forecast the founding constraint refuses. What the system presents is the measured outcome of each case, as it occurred. The first two processes, run in full and with the decision left to the person, correspond to what \textcite{kolodner1991aiding} calls case-based decision aiding.}
 \label{fig:ctx_cbr}
 \end{figure}
 The technique described in Section~\ref{sec:met_recuperacao} implements the first two and stops
@@ -479,6 +576,28 @@ without adapting that outcome to the present case. Adaptation would produce an e
 what is going to happen, which is precisely the forecast the work refuses. The partial
 implementation of an established cycle is, in this case, a consequence of the founding constraint
 and not a shortcoming.
+
+This stopping point has, moreover, a name of its own in the literature, and recognising it changes
+its status. \textcite{kolodner1991aiding} describes \emph{case-based decision aiding} as a
+methodology in which the system augments the person's memory by supplying analogous cases, and in
+which it is the person, not the machine, who decides, using those cases as guidance. The starting
+point is an observation from psychology: people reason well by analogy but remember the right cases
+poorly, whereas computers remember well. Put that way, what this system does ceases to be the
+execution of half a cycle and becomes the full execution of a distinct methodology, proposed in
+1991 by the person who defined the area. The difference is not one of pride: a partial
+implementation explains what it lacks, whereas a methodology declares what it delivers and to whom
+the decision belongs.
+
+It is worth recording, in the opposite direction, what case-based reasoning has actually done in
+this domain, so that the originality claimed is no larger than it is.
+\textcite{oh2007cbrmonitoring} build a daily indicator of the condition of the Korean financial
+market that classifies each day as a stable, unstable or crisis period, retrieving cases from a
+base built on the 1997 crisis. This is case-based reasoning applied to finance, and it is
+instructive for two reasons. The first is the object: the unit classified is the whole market, in a
+judgement about systemic risk, and not the movement of one company following a news item. The
+second is the destination of the retrieved cases, which serve to produce a label automatically; the
+article does not describe their presentation to anyone. Showing the cases, which is what is done
+with them here, is precisely what is left undone there.
 
 The option finds additional support on the side of the reader. Research on explanation in the
 social sciences establishes that people look for contrastive and selective reasons, and not for an
@@ -491,7 +610,9 @@ totality of the values computed.
 There is a second requirement, on the same side, that conditions not the content of the explanation
 but the frequency with which it is delivered. A recipient exposed to excessive warnings stops
 processing them, a phenomenon documented in domains where the cost of ignoring them is high
-\autocite{ancker2017alertfatigue}. The consequence is that the decision policy forms part of the
+\autocite{ancker2017alertfatigue}, and whose transposition to this domain is no longer necessary
+now that a measurement made on retail investors exists \autocite{liu2023alerts}, discussed in
+Section~\ref{sec:ctx_investidor}. The consequence is that the decision policy forms part of the
 design. An alert that is not read is worth the same as an alert that was not sent,
 and that is why Chapter~\ref{cap:sistema} treats the suppression criteria with the care it devotes
 to the methods.
@@ -577,6 +698,45 @@ right or wrong, that is, that the observed gain does not come from the person be
 distinguishing the two cases. The design consequences that follow are described in
 Section~\ref{sec:met_etica}.
 
+These cautions are general. On the concrete choice made by this dissertation --- to explain by
+cases --- there exists empirical evidence gathered with people that points the other way, and
+relegating it to a footnote would be the cheapest way of neutralising it.
+
+\textcite{waa2021xai} compared rule-based explanations, example-based explanations and no
+explanation, in two experiments with forty-five participants each, in a decision aid for insulin
+dosing. Rule-based explanations significantly improved identification of the decisive factor;
+example-based explanations were indistinguishable from no explanation at all, neither in factor
+identification ($p = 0.796$) nor in self-reported understanding ($p = 0.283$). The explanation the
+authors give for the result is the part that matters most here: both styles, they write, provide
+only the details relevant to a single decision, and not the underlying rationale or causality.
+
+Within the financial domain itself, and with non-experts, there are two recent studies.
+\textcite{cau2023logicstyle} compare three explanation styles in a stock trading task and conclude
+that the abductive and deductive styles improve performance when the model is confident, by
+comparison with the inductive style --- which is the example-based style, that is, the one closest
+to what this system delivers. \textcite{bertrand2023featurebased} test an automated life-insurance
+advisor with feature-based explanations and conclude that these improve neither understanding nor
+appropriate reliance, by comparison with giving no explanation at all, and that the more
+conversational format increases the user's trust, sometimes to the user's detriment.
+
+Three consequences follow for this dissertation. The first is that the choice of case-based
+explanation, justified in Section~\ref{sec:ctx_casos} by the literature on explanation in the
+social sciences \autocite{miller2019explanation}, has no support in the measurements with people
+that exist, and in one case has evidence from the domain itself against it. The second is that the
+diagnosis of \textcite{waa2021xai} names exactly what this system adds to the cases: an additive
+decomposition whose sum reproduces the observed movement, which is the underlying computation whose
+absence the authors hold responsible for the result. The system does not deliver cases alone; it
+delivers cases and the arithmetic that accompanies them. Whether that is sufficient is an open
+empirical question, and the work does not answer it. The third, and the most consequential, is that
+these results make the study with users more necessary and not less: there is published literature
+pointing against the founding hypothesis, and it is in those terms that
+Section~\ref{sec:con_limitacoes} states its absence.
+
+The second study supports, by contrast, a decision already taken. If the conversational format is
+what produces excessive trust, then not exposing the conversational layer described in
+Section~\ref{sec:sis_inteligencia} ceases to be merely engineering prudence and acquires empirical
+support within the domain.
+
 Furthermore, claims of interpretability demand rigorous evaluation and are not established by
 declaration \autocite{doshivelez2018considerations}. It is for that reason that
 Chapter~\ref{cap:avaliacao} measures what is measurable by automatic procedure and explicitly
@@ -661,8 +821,11 @@ Has it happened before?
   & A case base with measured outcomes, and not recalled ones \\
 \addlinespace
 Why believe it?
-  & Explainability and the trust literature \autocite{rudin2019stop, lee2004trust}
-  & The evidence delivered alongside the statement and verifiable at the moment of reading \\
+  & Explainability and the trust literature \autocite{rudin2019stop, lee2004trust}; measurements
+    with people that do not confirm the gain \autocite{waa2021xai, cau2023logicstyle,
+    bertrand2023featurebased}
+  & The evidence delivered alongside the statement and verifiable at the moment of reading ---
+    still to be demonstrated with users \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -674,6 +837,16 @@ unavailability, and not a concrete value, that supports the argument. The free p
 to answer the third deliver a statement without the evidence that supports it. And the academic
 components that would solve each part were evaluated in isolation, over reference corpora, never
 as a system in continuous operation against real sources.
+
+This last claim needs a qualification, and Section~\ref{sec:ctx_ferramentas} gave it a name.
+Integrated systems for this audience exist and are published, the most developed being that of
+\textcite{muntermann2009ubiquitous}. The difference from that work is not one of integration, which
+it also achieved, but of two other things. The first is epistemic stance: that system estimates the
+price effect that will follow the announcement, and this one measures the effect that has already
+occurred and explains it. The second is the object of the evaluation: that one measures economic
+opportunity by simulation, and this one measures the quality of what it delivers, against real data
+and over a period of operation. Stated in this way, the gap is narrower than a claim of absence,
+and it is defensible.
 
 This observation determines the distinction that runs through the work and that
 Chapter~\ref{cap:sistema} takes up when justifying the absence of a language model in the

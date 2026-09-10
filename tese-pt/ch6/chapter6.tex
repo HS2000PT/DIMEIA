@@ -35,10 +35,10 @@ modelo avaliado. E o sistema em funcionamento continua a ser observado. É nesse
 modelo, que reside o trabalho.
 
 Uma segunda conclusão atravessa os quatro casos de estudo e não pertence a nenhum deles em
-particular. Em três ocasiões distintas, uma técnica mais simples obteve melhor resultado do que uma
+particular. Em quatro ocasiões distintas, uma técnica mais simples obteve melhor resultado do que uma
 mais sofisticada em condições equivalentes; em três outras sucedeu o inverso, e o sistema conservou
 mesmo assim a opção implantada, por uma razão distinta em cada caso. A
-Figura~\ref{fig:con_simples} reúne as seis.
+Figura~\ref{fig:con_simples} reúne as sete.
 
 \begin{figure}[ht]
 \centering
@@ -57,9 +57,10 @@ Figura~\ref{fig:con_simples} reúne as seis.
   \node[perde] at (6.4,-1.62) {\textbf{janela de sessenta dias} obtém mais, e não foi adotada\\[1pt]\scriptsize $F_1$ de $0{,}678$ contra $0{,}516$ · responsividade};
   \node[ganha] at (0,-3.24) {\textbf{treze constantes por empresa} contra o modelo treinado\\[1pt]\scriptsize precisão@5 de $0{,}662$ contra $0{,}632$};
   \node[perde] at (6.4,-3.24) {\textbf{MPNet} obtém mais, e não foi adotado\\[1pt]\scriptsize precisão@5 de $0{,}538$ contra $0{,}514$ · custo};
-  \draw[draw=black!30] (3.2,1.7) -- (3.2,-4.05);
+  \node[ganha] at (0,-4.86) {\textbf{codificador sem ajuste} contra o ajustado por materialidade\\[1pt]\scriptsize precisão@5 de $0{,}771$ contra $0{,}746$};
+  \draw[draw=black!30] (3.2,1.7) -- (3.2,-5.67);
 \end{tikzpicture}
-\caption[As três ocasiões em cada sentido]{À esquerda, as três ocasiões em que uma técnica mais simples obteve melhor resultado do que uma mais sofisticada em condições equivalentes. À direita, as três em que sucedeu o inverso e o sistema conservou mesmo assim a opção implantada, com a razão de cada uma. A distinção entre as duas colunas é a distinção entre resultado e escolha, e a Tabela~\ref{tab:av_alternativas} reúne-as com as restantes.}
+\caption[As ocasiões em cada sentido]{À esquerda, as quatro ocasiões em que uma técnica mais simples obteve melhor resultado do que uma mais sofisticada em condições equivalentes; a última é a mais recente, e nela a técnica mais simples é a ausência de ajuste. À direita, as três em que sucedeu o inverso e o sistema conservou mesmo assim a opção implantada, com a razão de cada uma. A distinção entre as duas colunas é a distinção entre resultado e escolha, e a Tabela~\ref{tab:av_alternativas} reúne-as com as restantes.}
 \label{fig:con_simples}
 \end{figure}
 
@@ -72,9 +73,9 @@ quando não as separa.
 \section{As respostas às questões de investigação}
 \label{sec:con_respostas}
 
-Esta secção responde às três questões enunciadas na Secção~\ref{sec:intro_objetivos} e delimita, em
+Esta secção responde às quatro questões enunciadas na Secção~\ref{sec:intro_objetivos} e delimita, em
 cada caso, o que a resposta permite e não permite afirmar. A Figura~\ref{fig:con_scorecard} reúne as
-três.
+quatro.
 
 \begin{figure}[ht]
 \centering
@@ -103,10 +104,15 @@ três.
   \node[num] at (7.2,-4.85) {\gls{PRAUC} de $0{,}496$ com texto contra $0{,}542$ só com
     volatilidade, resultado que resiste a três verificações à montagem experimental};
 
-  \draw[black!35] (3.35,-5.85) -- (3.35,0.95);
+  \node[neg] (q4) at (0,-7.35) {\textbf{\gls{QI}4 · comparabilidade}\\[2pt]
+    O ajuste do codificador aproxima notícias de materialidade comparável?};
+  \node[ver] at (3.35,-7.35) {NÃO};
+  \node[num] at (7.2,-7.35) {$2{,}185$ pontos com ajuste contra $2{,}173$ sem ajuste, diferença de um quinto do desvio entre repetições, e precisão@5 a descer $0{,}026$};
+
+  \draw[black!35] (3.35,-8.35) -- (3.35,0.95);
 \end{tikzpicture}
-\caption[As três questões de investigação e as respostas obtidas]{As três respostas, com a resposta
-negativa apresentada com o mesmo destaque das duas restantes. A resposta à segunda questão
+\caption[As quatro questões de investigação e as respostas obtidas]{As quatro respostas, com as duas
+respostas negativas apresentadas com o mesmo destaque das duas afirmativas. A resposta à segunda questão
 limita-se às alternativas avaliadas e ao critério aproximado de relevância setorial.}
 \label{fig:con_scorecard}
 \end{figure}
@@ -195,6 +201,7 @@ limiar fixo obtivesse melhor resultado, mas que uma regra de limiar fixo mede um
 da pretendida.
 
 \subsection{Recuperação de precedentes}
+\label{sec:con_qi2}
 
 A resposta à \gls{QI}2 é afirmativa face às alternativas avaliadas. Sobre o corpus
 recente, a recuperação por semelhança de frase \autocite{reimers2019sbert} obtém precisão@5 de
@@ -299,6 +306,35 @@ eficientes, e um resultado negativo obtido com uma família de métodos sobre um
 a confirma; confirmá-la exigiria um desenho que este não tem. O que a leitura acrescenta é a razão
 pela qual o resultado é menos surpreendente do que a hipótese inicial supunha, e por que motivo a
 sua correção mais provável não está na representação do texto mas no atraso com que ele chega.
+
+\subsection{Comparabilidade de materialidade}
+\label{sec:con_qi4}
+
+A resposta é \textbf{não}, e é negativa nas duas metades da pergunta. O ajuste contrastivo do
+codificador não melhora a comparabilidade de materialidade dos precedentes recuperados: o braço
+treinado sobre a magnitude obtém $2{,}185$ pontos percentuais contra $2{,}173$ do modelo sem
+ajuste, ou seja um valor pior, e o treinado sobre a direção obtém $2{,}157$. As duas diferenças
+são cerca de um quinto do desvio entre repetições do próprio braço. E o ajuste tem um custo que a
+medição separa: a precisão@5 por setor desce cerca de $0{,}026$ nos dois braços, com o mesmo
+sinal e acima da dispersão.
+
+O que distingue este resultado de uma montagem que falhou é o diagnóstico que o precede. A
+primeira tentativa colapsou o codificador, e foi descartada sem que as suas métricas fossem
+lidas; os dois braços que produziram os valores acima deslocaram substancialmente o espaço face
+ao modelo de partida e preservaram a geometria das semelhanças. Treinaram, portanto, e o que não
+se confirma é a hipótese.
+
+A comparação entre os dois braços era a parte da experiência destinada a separar magnitude de
+direção, e não encontrou a assimetria que a motivou: os dois são praticamente indistinguíveis
+entre si, tanto no diagnóstico como nas duas medidas. A conjetura de que a magnitude seria
+parcialmente aprendível do texto onde a direção não o é permanece, por conseguinte, sem apoio
+nesta montagem.
+
+A consequência para o sistema é a de manter o que já fazia. A base de casos organiza-se por tema,
+e o alerta declara que a semelhança é de tema; este resultado estabelece que, por esta via, não é
+possível acrescentar-lhe a garantia de que a magnitude do precedente é comparável. Fica assim
+reforçada a decisão descrita na Secção~\ref{sec:con_qi2} de apresentar os casos um a um em vez de
+os resumir por uma média.
 
 \section{Objetivos alcançados}
 \label{sec:con_objetivos}
@@ -405,6 +441,25 @@ utilidade à explicação em si; e o canal é público, pelo que se desconhece s
 pertence ao público que este trabalho assume. O que esses votos medem é utilidade percebida
 por quem se dispôs a responder. A hipótese fundadora diz respeito a decisão melhor, que é
 outra quantidade, e é essa que permanece por testar.
+
+Duas observações da literatura alteram o peso desta ausência, em sentidos opostos, e ambas devem
+constar. A primeira agrava-o. A hipótese fundadora não é apenas indemonstrada neste trabalho: tem
+contra si medições publicadas. \textcite{waa2021xai} não encontraram diferença entre a explicação
+por exemplos e a ausência de explicação, e \textcite{cau2023logicstyle} encontraram, numa tarefa de
+negociação de ações com não-especialistas, desempenho inferior do estilo indutivo face aos estilos
+abdutivo e dedutivo quando o modelo está confiante. Enquanto o estudo não se fizer, a posição
+honesta não é «por demonstrar», é «por demonstrar, e com evidência publicada a apontar em sentido
+contrário». A Secção~\ref{sec:ctx_xai} enuncia a razão pela qual este trabalho pode ainda assim
+esperar desfecho diferente --- entrega o cálculo subjacente, e é a falta dele que aqueles autores
+responsabilizam pelo resultado --- mas uma expectativa fundamentada continua a ser uma expectativa.
+
+A segunda situa-o. O trabalho publicado mais próximo desta classe de sistema
+\autocite{muntermann2009ubiquitous} avaliou o artefacto por simulação e remeteu igualmente o
+estudo com utilizadores para investigação futura, quinze anos antes deste. Na revisão que sustenta
+o Capítulo~\ref{cap:contexto} não se encontrou, nesta classe de sistema, nenhum estudo que
+estabeleça por via causal que alertas acompanhados de evidência melhoram a decisão de um não
+especialista. Isto não desculpa a ausência nem a torna menos limitação, mas altera o que ela
+significa: não é uma etapa que este trabalho tenha saltado, é uma etapa que a área ainda não deu.
 
 \paragraph{O modelo implantado não podia executar a função que lhe foi atribuída.}
 A variante colocada em produção como porta de decisão recebe sete entradas de nível de empresa, uma

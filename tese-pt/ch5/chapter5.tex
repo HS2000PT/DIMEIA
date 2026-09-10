@@ -651,6 +651,141 @@ contra um valor de acaso de $0{,}688$. É por esta razão que o sistema apresent
 acompanha a amplitude e a média com esses casos individuais. A média descreve os casos recuperados,
 não antecipa o próximo retorno; o texto do alerta declara tratar-se de semelhança de tema.
 
+\section{Ajuste do codificador por materialidade comparável}
+\label{sec:av_qi4}
+
+\subsection{A medição que motiva a pergunta}
+
+A recuperação avaliada na secção anterior é medida por pertença ao setor, e nada nessa métrica
+diz respeito à magnitude do movimento. A primeira medição desta secção é, por isso, a que
+justifica fazer a pergunta: sobre o bloco de teste, o codificador sem ajuste obtém uma
+comparabilidade de materialidade de $2{,}173$ pontos percentuais, contra $2{,}259$ de um
+emparelhamento ao acaso sob as mesmas restrições. Os desvios entre repetições são $0{,}062$ e
+$0{,}107$, pelo que os dois valores não se distinguem. \textbf{Na quantidade que a
+Secção~\ref{sec:met_qi4} se propõe melhorar, a representação utilizada pelo sistema é
+indistinguível do acaso.} Há, portanto, espaço para melhorar, e é esse espaço que a experiência
+tenta ocupar.
+
+\subsection{A primeira tentativa colapsou o codificador}
+
+A primeira execução usou pares sorteados ao acaso, e o resultado foi o que a
+Secção~\ref{sec:met_qi4} antecipa como consequência do alvo concentrado: o codificador deixou de
+distinguir títulos. A Tabela~\ref{tab:av_qi4_colapso} reúne o diagnóstico.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption[Diagnóstico de degeneração dos codificadores ajustados]{Diagnóstico de degeneração,
+corrido antes de qualquer métrica de recuperação ser interpretada. A primeira coluna é o modelo
+de partida; a segunda é a primeira tentativa, com pares ao acaso; as duas últimas são os dois
+braços com amostragem estratificada. Um cosseno próximo da unidade entre títulos
+\emph{diferentes} significa que todas as consultas devolvem os mesmos vizinhos, e nenhuma tabela
+de precisão o denunciaria.}
+\label{tab:av_qi4_colapso}
+\begin{tabular}{lrrrr}
+\toprule
+ & sem ajuste & ao acaso & magnitude & direção \\
+\midrule
+Cosseno entre títulos diferentes & $0{,}205$ & $\mathbf{0{,}994}$ & $0{,}271$ & $0{,}277$ \\
+Norma do vetor médio             & $0{,}454$ & $\mathbf{0{,}997}$ & $0{,}521$ & $0{,}527$ \\
+Desvio por dimensão              & $0{,}045$ & $\mathbf{0{,}004}$ & $0{,}043$ & $0{,}043$ \\
+Deslocamento face ao inicial     & ---       & $0{,}269$          & $0{,}782$ & $0{,}775$ \\
+Correlação das semelhanças       & ---       & $0{,}234$          & $0{,}607$ & $0{,}630$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+O cosseno médio entre títulos diferentes subiu de $0{,}205$ para $0{,}994$ e o desvio por
+dimensão caiu de $0{,}045$ para $0{,}004$: o modelo passou a mapear todos os títulos
+praticamente para o mesmo vetor. \textbf{As métricas de recuperação dessa execução foram
+descartadas sem serem lidas}, porque uma representação colapsada produz uma tabela plausível cujo
+significado é nulo.
+
+Com a amostragem estratificada os dois braços passam o diagnóstico, e passam-no de forma
+semelhante entre si. As duas últimas linhas da tabela são as que distinguem \emph{não ter
+degenerado} de \emph{ter aprendido}: os dois braços deslocaram substancialmente o espaço face ao
+modelo de partida --- cosseno médio de $0{,}782$ e $0{,}775$ entre a representação inicial e a
+ajustada --- e preservaram a geometria das semelhanças, com correlação de $0{,}607$ e $0{,}630$.
+O treino, portanto, funcionou.
+
+\subsection{Resultado}
+
+A medição corre sobre as $32\,649$ manchetes do bloco de teste, com quinhentas consultas por
+repetição em cinco repetições, cinco vizinhos por consulta e horizonte de três dias. As consultas
+são sorteadas antes de qualquer modelo ser aplicado, pelo que são idênticas nos três braços e as
+comparações são emparelhadas. A Tabela~\ref{tab:av_qi4_resultado} apresenta os resultados.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption[Resultado do ajuste por materialidade comparável]{Comparabilidade de materialidade e
+precisão@5 por setor, sobre o bloco de teste. A comparabilidade é a diferença média absoluta, em
+pontos percentuais, entre a magnitude do movimento da consulta e a dos precedentes devolvidos, e
+\emph{valores menores são melhores}. A precisão@5 é a métrica da secção anterior e está aqui para
+mostrar o que o ajuste custa em relevância temática.}
+\label{tab:av_qi4_resultado}
+\begin{tabular}{lrr}
+\toprule
+Braço & Comparabilidade (pp) $\downarrow$ & Precisão@5 $\uparrow$ \\
+\midrule
+Sem ajuste                & $\mathbf{2{,}173 \pm 0{,}062}$ & $\mathbf{0{,}771 \pm 0{,}011}$ \\
+Ajustado pela magnitude   & $2{,}185 \pm 0{,}065$          & $0{,}746 \pm 0{,}009$ \\
+Ajustado pela direção     & $2{,}157 \pm 0{,}071$          & $0{,}744 \pm 0{,}006$ \\
+Emparelhamento ao acaso   & $2{,}259 \pm 0{,}107$          & $0{,}629 \pm 0{,}007$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Na quantidade que o ajuste existe para melhorar, nada acontece.} O braço da magnitude
+fica $0{,}012$ pontos \emph{acima} do modelo sem ajuste, isto é pior, e o da direção fica
+$0{,}016$ abaixo. As duas diferenças são cerca de um quinto do desvio entre repetições do próprio
+braço, pelo que não são efeitos.
+
+\textbf{E o ajuste tem um custo que se mede.} A precisão@5 por setor desce de $0{,}771$ para
+$0{,}746$ e $0{,}744$, uma perda de cerca de $0{,}026$ com o mesmo sinal nos dois braços e maior
+do que a dispersão entre repetições. O que o ajuste alterou na representação foi suficiente para
+degradar a relevância temática e insuficiente para melhorar a comparabilidade de materialidade.
+
+Uma vez que o diagnóstico da subsecção anterior estabelece que os dois braços treinaram e
+moveram o espaço, \textbf{a leitura é que a hipótese não se confirma, e não que a montagem
+falhou}. A comparação entre os dois braços acrescenta a segunda parte: sendo praticamente
+indistinguíveis entre si, a experiência não encontra a assimetria entre magnitude e direção que
+motivou a pergunta.
+
+\subsection{Sob restrição de anterioridade}
+
+O protocolo anterior não exige que o precedente seja anterior à consulta. Repetida a medição com
+essa exigência, que é a que a produção cumpre, as conclusões mantêm-se: a comparabilidade passa a
+$2{,}287$ sem ajuste, $2{,}309$ com o braço da magnitude e $2{,}289$ com o da direção, contra
+$2{,}336$ do acaso, e a precisão@5 desce de $0{,}747$ para $0{,}722$ e $0{,}720$.
+
+Há neste protocolo uma observação que o anterior não permite. A margem do modelo sem ajuste sobre
+o acaso \emph{encolhe} de $0{,}086$ para $0{,}049$ pontos percentuais quando se exige
+anterioridade. \textbf{No protocolo que a produção realmente cumpre, a representação está ainda
+mais próxima do acaso nesta quantidade do que a primeira medição desta secção indicava}, o que
+reforça a motivação da pergunta ao mesmo tempo que torna a resposta negativa mais nítida: o
+espaço para melhorar era maior do que se supunha, e o ajuste não o ocupou.
+
+Duas das duas mil e quinhentas consultas foram excluídas, por não existir um único candidato
+anterior a elas dentro do bloco. A exclusão é declarada aqui e no relatório gerado, e o filtro é
+aplicado antes de qualquer modelo ser aplicado, pelo que é idêntico nos três braços.
+
+\subsection{Limites da conclusão}
+
+O resultado é negativo sobre um objetivo de treino, um alvo e uma configuração, e não sobre a
+ideia de ajustar codificadores. Três limites delimitam-no. O primeiro é o alvo: a magnitude entra
+como percentil do movimento subsequente, e um alvo construído de outra forma poderia comportar-se
+de outro modo. O segundo é a configuração: correu uma época sobre quarenta mil pares com uma taxa
+de aprendizagem baixa, escolhida por ser a que evita o colapso, e não se procuraram
+hiperparâmetros. O terceiro é a função de perda: a alternativa clássica, que minimiza o erro
+quadrático entre o cosseno e o alvo, ficou declarada na Secção~\ref{sec:met_qi4} e não foi
+corrida.
+
+O que o resultado estabelece, e que não depende desses limites, é o valor da porta: uma
+representação colapsada produz métricas de aparência normal, e sem o diagnóstico da
+Tabela~\ref{tab:av_qi4_colapso} a primeira execução teria produzido uma tabela completa e sem
+significado.
+
 \section{Triagem de notícias}
 \label{sec:av_qi3}
 

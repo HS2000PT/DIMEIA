@@ -260,6 +260,41 @@ opções em `docs/design/qi4_resultado_2026-09-09.md`.
 de bibliografia corrigido com testes. **As duas árvores compilam com zero citações e zero
 referências por resolver** (`scripts\_compilar.py`).
 
+### ⚠️ ARMADILHA NOVA E CARA — 2026-09-10: o PDF velho na raiz esconde o build
+
+O `_compilar.py` constrói com `-outdir=build`, logo o artefacto fresco é
+`tese-pt/build/main.pdf`. **O `tese-pt/main.pdf` na raiz é um PDF VERSIONADO e velho** (de
+2026-09-09, commit `50821c06d`), e o `main.log`, o `main.fls` e o `main.aux` da raiz são da mesma
+época.
+
+Custou-me uma investigação inteira e um falso alarme: lendo o PDF da raiz concluí que **a secção
+da QI4 não estava no documento**, quando o `.tex` a tinha, o compile devolvia zero referências por
+resolver e a árvore inglesa a mostrava. Cheguei a suspeitar da compilação. O que estava errado era
+o ficheiro que eu lia.
+
+**Pior: os números que reportei a partir daí estavam todos errados** — dei 130 pp e 126 pp e a
+contagem real é 139 e 138, e o `main.fls` da raiz não listava o Cap. 5 enquanto o do build o lista
+cinco vezes.
+
+**Regra que passa a valer: qualquer verificação sobre o PDF lê-se de `build/main.pdf`.** O da raiz
+só é verdade imediatamente depois de alguém o copiar de lá — que é a convenção do projecto
+(`build(thesis): rebuild both PDFs`) e é fácil de esquecer.
+
+### 📏 A DIMENSÃO, MEDIDA NO BUILD REAL, E RESPONDE À ANSIEDADE DAS PÁGINAS
+
+| | páginas físicas | último fólio árabe |
+|---|---:|---:|
+| **esta tese, PT** | **139** | **121** |
+| **esta tese, EN** | **138** | **120** |
+| Bruno Ribeiro (aprovada) | 139 | 120 |
+| Helder Pereira (aprovada) | 133 | 114 |
+| Rafael Silva (aprovada) | 109 | 93 |
+| Joana Figueiredo (aprovada) | 104 | 83 |
+
+**Com a QI4 incluída, a tese fica na dimensão exacta da maior dissertação aprovada do corpus** —
+139 páginas físicas contra 139, e fólio 121 contra 120. Não está acima da norma; está no topo
+dela. A comparação é a da sessão 66, que mediu o fólio impresso de cada uma das quatro aprovadas.
+
 ### Armadilhas novas, descobertas neste bloco
 
 1. **Nunca correr `python -c "..."` através da ponte.** O PowerShell parte a expressão. Escrever

@@ -54,6 +54,34 @@ indicador único provém de um painel de informação em tempo real com essa arq
 \autocite{worldmonitor2026}, sugerido pelo coorientador deste trabalho, e entra na dissertação na
 condição em que foi avaliada, ou seja como alternativa medida e não adotada.
 
+Há, sobre este ponto, evidência de campo mais recente e mais próxima do objeto deste trabalho, e
+que aponta em sentido desfavorável. \textcite{liu2023alerts} acompanharam 20\,904 investidores
+particulares de uma plataforma de fundos de investimento em Taiwan, entre janeiro de 2017 e junho
+de 2020, dos quais 932 ativaram os alertas de preço da própria plataforma. Estimando o efeito por
+diferenças em diferenças, quantificam-no numa degradação do desempenho da carteira da ordem de um
+ponto percentual em seis meses. Os dois mecanismos que identificam são o aumento de cerca de 7\% no
+número de transações e o facto de os fundos que o investidor mexeu depois da adesão terem
+desempenho pior do que os que não mexeu. A leitura dos autores é a de que o alerta dirige a atenção
+para a volatilidade de curto prazo e induz negociação em excesso.
+
+O resultado é incómodo para uma dissertação que constrói um sistema de alertas, e é por isso que
+consta do corpo do texto e não de uma nota. Convém, ainda assim, ser exato quanto ao que foi
+medido. O alerta estudado dispara quando o preço de um fundo atravessa um limiar definido pelo
+próprio investidor e comunica-lhe o preço atual, sem qualquer indicação sobre a causa; é o alerta
+de limiar que a Secção~\ref{sec:ctx_ferramentas} volta a encontrar nas aplicações das corretoras. O
+mecanismo de dano que os autores descrevem --- negociação por realimentação do preço, por oposição
+ao uso de informação sobre o valor da empresa --- é precisamente o que se instala quando ao
+destinatário se entrega um número e mais nada. Os próprios autores concluem que melhorar o acesso à
+informação não basta, e que é preciso atender também à capacidade de a processar.
+
+Esta dissertação toma o resultado como razão de desenho e não como validação do desenho que já
+tinha. Dele decorrem duas opções. A primeira é que o alerta transporta a evidência que o justifica,
+em vez de comunicar apenas que um limiar foi atravessado. A segunda é que a quantidade de alertas é
+limitada por decisão explícita, e não pelo que os dados produzirem, conforme a
+Secção~\ref{sec:sis_politica}. Se estas duas opções bastam para evitar o efeito que
+\textcite{liu2023alerts} mediram é matéria por demonstrar, e o Capítulo~\ref{cap:conclusoes}
+retoma-a nesses termos.
+
 Do lado das instituições financeiras, a adoção de inteligência artificial deixou de ser
 experimental, como documenta o inquérito a empresas do setor conduzido pelo
 \textcite{ccaf2026aifs}. Esse inquérito não mede a população dos produtos destinados ao investidor
@@ -147,6 +175,41 @@ apresentação dos casos passados individualizados, com datas, semelhanças medi
 observado do preço após cada um, que é o que este trabalho entrega. A distinção reivindicada não é
 de fluência, mas de verificabilidade, e respeita ao que as páginas declaram: os produtos não foram
 testados, pelo que nada se afirma sobre o que efetivamente entregam.
+
+Até aqui esta secção examinou produtos. Falta a literatura académica, e omiti-la deixaria a
+afirmação de lacuna assente na inspeção de páginas de fornecedores, que é base frágil. A classe de
+sistema aqui em causa --- vigiar acontecimentos e notificar o investidor particular --- é tratada
+em investigação publicada há cerca de duas décadas, e o exemplo mais desenvolvido é o \emph{MoFiN
+DSS} de \textcite{muntermann2009ubiquitous}. O paralelo é próximo ao ponto de ser desconfortável:
+também se dirige ao investidor particular, também parte da observação de que este reage às
+notícias com mais intensidade e menos rapidez do que o investidor institucional, também é
+construído e avaliado segundo o paradigma de investigação por desenho que a
+Secção~\ref{sec:met_metodologia} adota, e também publica a avaliação num artigo de revista.
+
+Vale a pena precisar o que esse sistema faz, porque é dessa precisão que sai o posicionamento
+deste trabalho. Sobre 425 comunicados de empresas alemãs publicados entre 2003 e 2005, e séries de
+preços intradiárias ao minuto, o autor ajusta por regressão dois modelos: um estima o efeito de
+preço que se seguirá ao comunicado, e o outro estima durante quanto tempo esse efeito se
+mantém. O comunicado é notificado ao investidor quando o efeito estimado excede o efeito médio
+observado. A avaliação é uma simulação \emph{ex ante} do excedente do consumidor, ou seja mede a
+oportunidade económica que a notificação abre, e não a qualidade daquilo que é comunicado. O
+utilizador recebe a indicação de que um comunicado é relevante e não recebe a razão pela qual o é.
+
+Três consequências para esta dissertação. A primeira é que a lacuna não pode ser enunciada como
+ausência de sistemas de alerta para o investidor particular, porque eles existem e estão
+publicados; tem de ser enunciada como diferença de postura epistémica, entre estimar o que vai
+acontecer e explicar o que já aconteceu, e como diferença naquilo que é entregue com o alerta. A
+segunda é que a medida de relevância de \textcite{muntermann2009ubiquitous} é um retorno anormal
+\emph{em valor absoluto}, ajustado pelo mercado e corrigido pelo comportamento habitual da própria
+ação --- ou seja magnitude, e não direção. É, no essencial, a mesma grandeza que a
+Secção~\ref{sec:met_detecao} mede, com duas diferenças que interessam: aqui é medida depois do
+facto, e serve para explicar em vez de antecipar. Que um trabalho publicado em 2009 tenha chegado
+à magnitude, e não à direção, como definição operacional de acontecimento relevante para este
+público é um apoio independente a uma opção que esta dissertação tomou por outra via. A terceira
+é que aquele trabalho avaliou o artefacto por simulação e remeteu explicitamente para investigação
+futura o estudo com utilizadores reais, exatamente a limitação que o
+Capítulo~\ref{cap:conclusoes} enuncia a respeito deste. Não é atenuante, mas situa o problema:
+trata-se de uma dificuldade da área e não de uma omissão isolada.
 
 A objeção mais razoável ao trabalho consiste em perguntar por que razão um assistente de
 inteligência artificial genérico não resolveria o mesmo problema. Não foi realizada uma comparação
@@ -338,6 +401,39 @@ movimentos de preço \autocite{xing2018nlffsurvey, ding2015deep}. O presente tra
 dessa linha por opção de desenho: o texto é aqui empregue para localizar casos anteriores
 comparáveis, cujo desfecho já ocorreu e já foi medido, e não para gerar uma previsão.
 
+Um trabalho recente dessa linha merece exame individual, por ser o mais próximo daquilo que aqui
+se faz. \textcite{du2024contrastive} treinam uma rede de tripletos sobre mensagens de redes
+sociais e séries de preços, e apresentam ao utilizador, junto de cada previsão, o caso histórico
+mais semelhante com o mesmo desfecho e o mais semelhante com desfecho oposto. É recuperação de
+análogos usada como explicação, sobre os mesmos materiais que este trabalho usa, e é por isso o
+vizinho publicado mais próximo.
+
+As diferenças são, ainda assim, de fundo, e vale a pena enunciá-las porque delimitam a
+contribuição. O rótulo que organiza os tripletos é a direção do movimento do dia seguinte, e a
+tarefa avaliada é prevê-la; a magnitude entra apenas para definir uma faixa morta em torno de
+zero. O codificador de frases é usado congelado, como camada de entrada de uma rede convolucional
+e de uma rede recorrente com atenção, que são essas sim treinadas --- ou seja o espaço em que as
+notícias são comparadas não é alterado. E a explicação é demonstrada por três estudos de caso com
+mapas de atenção, sem medição da sua qualidade e sem participantes.
+
+Há naquele trabalho um resultado próprio que merece registo, porque diz respeito à dificuldade da
+tarefa e não ao método. No estudo de ablação, aplicar a aprendizagem contrastiva apenas à
+componente textual degrada a exatidão nos três conjuntos de referência, ficando abaixo da variante
+que não usa aprendizagem contrastiva nenhuma; os ganhos vêm da componente quantitativa, e os
+próprios autores concluem que a informação textual desempenha um papel complementar. Quem
+pretenda usar texto para antecipar a direção de um movimento tem aqui, publicada, uma indicação de
+que o sinal é fraco; a Secção~\ref{sec:av_qi2} chega, por via inteiramente independente, a uma
+conclusão do mesmo sinal.
+
+É sobre essas duas diferenças que a quarta questão de investigação se constrói. Se a direção é
+o sinal fraco que aquele estudo de ablação mostra, e se ali o espaço de comparação permanece
+inalterado, então ficam em aberto duas perguntas distintas: se a \emph{magnitude} do movimento
+--- que não é uma direção e não constitui previsão --- é aprendível do texto, e se o ganho
+aparece quando se ajusta o próprio codificador em vez de uma rede colocada por cima dele. A
+Secção~\ref{sec:met_qi4} descreve como ambas são postas à prova, com um braço treinado sobre a
+magnitude e um braço de replicação treinado sobre a direção, e a Secção~\ref{sec:av_qi4}
+reporta o que se obteve.
+
 A representação de cada notícia por um vetor converte a identificação de casos comparáveis num
 problema de recuperação de informação. A medida de proximidade adotada é a semelhança do cosseno,
 cuja mecânica é descrita na Secção~\ref{sec:met_recuperacao}. A operação é exata, uma vez que se
@@ -464,7 +560,7 @@ A Figura~\ref{fig:ctx_cbr} representa o ciclo e assinala onde o sistema se deté
   \draw[draw=black!30] (4.72,1.15) -- (4.72,-0.62);
   \node[leg, text width=8.2cm] at (4.72,-1.7) {porque adaptar produziria uma expectativa sobre o que vem a seguir, que é a previsão que o trabalho recusa};
 \end{tikzpicture}
-\caption[O ciclo do raciocínio baseado em casos, e onde o sistema para]{Os quatro processos que \textcite{aamodt1994cbr} consideram necessários à resolução completa de um problema. O sistema executa os dois primeiros a cheio e detém-se antes dos dois seguintes. A interrupção não é uma insuficiência de implementação: \emph{rever} adapta o desfecho de um caso passado ao caso presente, e essa adaptação é uma expectativa sobre o futuro, ou seja exatamente a previsão que a restrição fundadora recusa. O que o sistema apresenta é o desfecho medido de cada caso, tal como ocorreu.}
+\caption[O ciclo do raciocínio baseado em casos, e onde o sistema para]{Os quatro processos que \textcite{aamodt1994cbr} consideram necessários à resolução completa de um problema. O sistema executa os dois primeiros a cheio e detém-se antes dos dois seguintes. A interrupção não é uma insuficiência de implementação: \emph{rever} adapta o desfecho de um caso passado ao caso presente, e essa adaptação é uma expectativa sobre o futuro, ou seja exatamente a previsão que a restrição fundadora recusa. O que o sistema apresenta é o desfecho medido de cada caso, tal como ocorreu. Os dois primeiros processos, executados por inteiro e com a decisão entregue à pessoa, correspondem ao que \textcite{kolodner1991aiding} designa por apoio à decisão baseado em casos.}
 \label{fig:ctx_cbr}
 \end{figure}
 A técnica descrita na Secção~\ref{sec:met_recuperacao} implementa os dois primeiros e interrompe-se
@@ -472,6 +568,28 @@ deliberadamente antes dos restantes: recupera casos semelhantes e apresenta o qu
 sem adaptar esse desfecho ao caso presente. A adaptação produziria uma expectativa sobre o que virá
 a acontecer, ou seja precisamente a previsão que o trabalho recusa. A implementação parcial de um
 ciclo estabelecido é, neste caso, uma consequência da restrição fundadora e não uma insuficiência.
+
+Esta paragem tem, além disso, nome próprio na literatura, e reconhecê-lo altera-lhe o estatuto.
+\textcite{kolodner1991aiding} descreve o \emph{apoio à decisão baseado em casos} como uma
+metodologia em que o sistema aumenta a memória da pessoa fornecendo-lhe casos análogos, e em que é
+a pessoa, e não a máquina, quem decide, servindo-se desses casos como orientação. O ponto de
+partida é uma observação de psicologia: as pessoas raciocinam bem por analogia mas recordam mal os
+casos certos, ao passo que os computadores recordam bem. Enunciado assim, o que este sistema faz
+deixa de ser a execução de metade de um ciclo e passa a ser a execução completa de uma metodologia
+distinta, proposta em 1991 por quem definiu a área. A diferença não é de amor-próprio: uma
+implementação parcial explica o que lhe falta, ao passo que uma metodologia declara o que entrega
+e a quem cabe decidir.
+
+Convém, em sentido contrário, registar o que o raciocínio baseado em casos tem efetivamente feito
+neste domínio, para que a originalidade reivindicada não seja maior do que é.
+\textcite{oh2007cbrmonitoring} constroem um indicador diário da condição do mercado financeiro
+coreano que classifica cada dia como período estável, instável ou de crise, recuperando casos de
+uma base construída sobre a crise de 1997. É raciocínio baseado em casos aplicado a finanças, e é
+instrutivo por dois motivos. O primeiro é o objeto: a unidade classificada é o mercado inteiro,
+num juízo sobre risco sistémico, e não o movimento de uma empresa na sequência de uma notícia. O
+segundo é o destino dos casos recuperados, que servem para produzir automaticamente uma etiqueta;
+o artigo não descreve a sua apresentação a quem quer que seja. Mostrar os casos, que é o que aqui
+se faz com eles, é precisamente o que ali fica por fazer.
 
 A opção encontra apoio adicional do lado de quem lê. A investigação sobre explicação em ciências
 sociais estabelece que as pessoas procuram razões contrastivas e seletivas, e não uma enumeração
@@ -482,7 +600,10 @@ que sustentam a decisão, em vez da totalidade dos valores calculados.
 
 Há um segundo requisito, do mesmo lado, que condiciona não o conteúdo da explicação mas a frequência
 com que ela é entregue. Um destinatário exposto a avisos em excesso deixa de os processar, fenómeno
-documentado em domínios onde o custo de o ignorar é elevado \autocite{ancker2017alertfatigue}. A consequência é que a política de decisão constitui parte do desenho. Um alerta que não
+documentado em domínios onde o custo de o ignorar é elevado \autocite{ancker2017alertfatigue}, e
+cuja transposição para este domínio deixou de ser necessária desde que existe medição feita sobre
+investidores particulares \autocite{liu2023alerts}, discutida na
+Secção~\ref{sec:ctx_investidor}. A consequência é que a política de decisão constitui parte do desenho. Um alerta que não
 é lido vale o mesmo que um alerta que não foi enviado, e é por isso que o
 Capítulo~\ref{cap:sistema} trata os critérios de supressão com o cuidado que dedica aos métodos.
 
@@ -568,6 +689,47 @@ esteja certa quer esteja errada, ou seja que o ganho observado não decorre de a
 distinguir melhor os dois casos. As consequências de desenho que daqui decorrem estão descritas na
 Secção~\ref{sec:met_etica}.
 
+Estas cautelas são gerais. Sobre a opção concreta desta dissertação --- explicar por casos ---
+existe evidência empírica recolhida com pessoas que aponta em sentido contrário, e remetê-la para
+uma nota de rodapé seria a forma mais barata de a neutralizar.
+
+\textcite{waa2021xai} compararam explicações por regras, explicações por exemplos e ausência de
+explicação, em duas experiências com quarenta e cinco participantes cada, num apoio à decisão para
+dosagem de insulina. As explicações por regras melhoraram significativamente a identificação do
+fator decisivo; as explicações por exemplos não se distinguiram da ausência de explicação, nem na
+identificação do fator ($p = 0{,}796$) nem na compreensão auto-reportada ($p = 0{,}283$). A
+explicação que os autores dão para o resultado é a parte que mais interessa a este trabalho:
+ambos os estilos, escrevem, fornecem apenas os pormenores relevantes para uma decisão isolada, e
+não o raciocínio ou a causalidade que lhe estão por baixo.
+
+No próprio domínio financeiro, e com não-especialistas, existem dois estudos recentes.
+\textcite{cau2023logicstyle} comparam três estilos de explicação numa tarefa de negociação de
+ações e concluem que os estilos abdutivo e dedutivo melhoram o desempenho quando o modelo está
+confiante, por comparação com o estilo indutivo --- que é o estilo baseado em exemplos, ou seja o
+mais próximo daquilo que este sistema entrega. \textcite{bertrand2023featurebased} testam um
+consultor automático de seguros de vida com explicações por atributos e concluem que estas não
+melhoram nem a compreensão nem a adequação da confiança, por comparação com não dar explicação
+nenhuma, e que o formato mais conversacional aumenta a confiança do utilizador por vezes em
+prejuízo dele.
+
+Daqui decorrem três consequências para esta dissertação. A primeira é que a opção por explicação
+baseada em casos, justificada na Secção~\ref{sec:ctx_casos} pela literatura de explicação em
+ciências sociais \autocite{miller2019explanation}, não tem apoio nas medições com pessoas que
+existem, e num caso tem contra si evidência do próprio domínio. A segunda é que o diagnóstico de
+\textcite{waa2021xai} nomeia exatamente aquilo que este sistema acrescenta aos casos: uma
+repartição aditiva cuja soma reproduz o movimento observado, que é o cálculo subjacente cuja
+ausência os autores responsabilizam pelo resultado. O sistema não entrega apenas casos; entrega
+casos e a conta que os acompanha. Se isso é suficiente é uma pergunta empírica em aberto, e o
+trabalho não a responde. A terceira, e a mais consequente, é que estes resultados tornam o estudo
+com utilizadores mais necessário e não menos: existe literatura publicada a apontar contra a
+hipótese fundadora, e é nesses termos que a Secção~\ref{sec:con_limitacoes} enuncia a sua
+ausência.
+
+O segundo estudo apoia, em contrapartida, uma decisão já tomada. Se o formato conversacional é o
+que produz confiança excessiva, então não expor a camada conversacional descrita na
+Secção~\ref{sec:sis_inteligencia} deixa de ser apenas prudência de engenharia e passa a ter apoio
+empírico no domínio.
+
 Acresce que afirmações de interpretabilidade exigem avaliação rigorosa e não se estabelecem por
 declaração \autocite{doshivelez2018considerations}. É por essa razão que o Capítulo~\ref{cap:avaliacao}
 mede o que é mensurável por procedimento automático e identifica explicitamente a parte que
@@ -650,8 +812,11 @@ Já aconteceu antes?
   & Uma base de casos com desfechos medidos, e não recordados \\
 \addlinespace
 Por que razão acreditar?
-  & Explicabilidade e literatura de confiança \autocite{rudin2019stop, lee2004trust}
-  & A evidência entregue junto da afirmação e verificável no momento da leitura \\
+  & Explicabilidade e literatura de confiança \autocite{rudin2019stop, lee2004trust}; medições
+    com pessoas que não confirmam o ganho \autocite{waa2021xai, cau2023logicstyle,
+    bertrand2023featurebased}
+  & A evidência entregue junto da afirmação e verificável no momento da leitura --- por
+    demonstrar com utilizadores \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -662,6 +827,16 @@ a indisponibilidade, e não um valor concreto, que sustenta o argumento. Os prod
 gratuitos que declaram responder à terceira entregam uma afirmação sem a evidência que a sustenta.
 E os componentes académicos que resolveriam cada parte foram avaliados isoladamente, sobre corpora
 de referência, nunca como um sistema em funcionamento contínuo contra fontes reais.
+
+Esta última afirmação precisa de uma ressalva, e a Secção~\ref{sec:ctx_ferramentas} deu-lhe o
+nome. Sistemas integrados para este público existem e estão publicados, sendo o mais desenvolvido
+o de \textcite{muntermann2009ubiquitous}. A diferença face a esse trabalho não é de integração,
+que ele também fez, mas de duas outras coisas. A primeira é a postura epistémica: aquele sistema
+estima o efeito de preço que se seguirá ao comunicado, e este mede o efeito que já se produziu e
+explica-o. A segunda é o objeto da avaliação: aquele mede a oportunidade económica por simulação,
+e este mede a qualidade daquilo que entrega, contra dados reais e ao longo de um período de
+funcionamento. Enunciada assim, a lacuna é mais estreita do que uma afirmação de ausência, e é
+defensável.
 
 Esta observação determina a distinção que atravessa o trabalho e que o Capítulo~\ref{cap:sistema}
 retoma ao justificar a ausência de um modelo de linguagem na composição das mensagens. Uma frase

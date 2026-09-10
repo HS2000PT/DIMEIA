@@ -42,7 +42,7 @@ A second conclusion runs across the four case studies and belongs to none of the
 On three distinct occasions, a simpler technique obtained a better result than a more sophisticated
 one under equivalent conditions; on three others the reverse happened, and the system nonetheless
 kept the deployed option, for a distinct reason in each case.
-Figure~\ref{fig:con_simples} gathers the six.
+Figure~\ref{fig:con_simples} gathers the seven.
 
 \begin{figure}[ht]
 \centering
@@ -61,9 +61,10 @@ Figure~\ref{fig:con_simples} gathers the six.
   \node[perde] at (6.4,-1.62) {\textbf{sixty-day window} obtains more, and was not adopted\\[1pt]\scriptsize $F_1$ of $0.678$ against $0.516$ · responsiveness};
   \node[ganha] at (0,-3.24) {\textbf{thirteen constants per company} against the trained model\\[1pt]\scriptsize precision@5 of $0.662$ against $0.632$};
   \node[perde] at (6.4,-3.24) {\textbf{MPNet} obtains more, and was not adopted\\[1pt]\scriptsize precision@5 of $0.538$ against $0.514$ · cost};
-  \draw[draw=black!30] (3.2,1.7) -- (3.2,-4.05);
+  \node[ganha] at (0,-4.86) {\textbf{unadjusted encoder} against the one adjusted for materiality\\[1pt]\scriptsize precision@5 of $0.771$ against $0.746$};
+  \draw[draw=black!30] (3.2,1.7) -- (3.2,-5.67);
 \end{tikzpicture}
-\caption[The three occasions in each direction]{On the left, the three occasions on which a simpler technique obtained a better result than a more sophisticated one under equivalent conditions. On the right, the three on which the reverse happened and the system nonetheless kept the deployed option, with the reason for each. The distinction between the two columns is the distinction between a result and a choice, and Table~\ref{tab:av_alternativas} gathers them with the rest.}
+\caption[The occasions in each direction]{On the left, the four occasions on which a simpler technique obtained a better result than a more sophisticated one under equivalent conditions; the last is the most recent, and in it the simpler technique is the absence of adjustment. On the right, the three on which the reverse happened and the system nonetheless kept the deployed option, with the reason for each. The distinction between the two columns is the distinction between a result and a choice, and Table~\ref{tab:av_alternativas} gathers them with the rest.}
 \label{fig:con_simples}
 \end{figure}
 
@@ -76,9 +77,9 @@ costs nothing in \gls{PRAUC} when it does not separate them.
 \section{The answers to the research questions}
 \label{sec:con_respostas}
 
-This section answers the three questions stated in Section~\ref{sec:intro_objetivos} and
+This section answers the four questions stated in Section~\ref{sec:intro_objetivos} and
 delimits, in each case, what the answer does and does not allow to be claimed.
-Figure~\ref{fig:con_scorecard} brings the three together.
+Figure~\ref{fig:con_scorecard} brings the four together.
 
 \begin{figure}[ht]
 \centering
@@ -107,7 +108,12 @@ Figure~\ref{fig:con_scorecard} brings the three together.
   \node[num] at (7.2,-4.85) {\gls{PRAUC} of $0.496$ with text against $0.542$ with volatility
     alone, a result that survives three checks of the experimental setup};
 
-  \draw[black!35] (3.35,-5.85) -- (3.35,0.95);
+  \node[neg] (q4) at (0,-7.35) {\textbf{\gls{QI}4 · comparability}\\[2pt]
+    Does adjusting the encoder bring together news of comparable materiality?};
+  \node[ver] at (3.35,-7.35) {NO};
+  \node[num] at (7.2,-7.35) {$2.185$ points adjusted against $2.173$ unadjusted, a difference of a fifth of the deviation between repetitions, and precision@5 falling $0.026$};
+
+  \draw[black!35] (3.35,-8.35) -- (3.35,0.95);
 \end{tikzpicture}
 \caption[The three research questions and the answers obtained]{The three answers, with the
 negative answer presented with the same prominence as the other two. The answer to the second
@@ -199,6 +205,7 @@ threshold would obtain a better result, but that a fixed threshold rule measures
 distinct from the one intended.
 
 \subsection{Precedent retrieval}
+\label{sec:con_qi2}
 
 The answer to \gls{QI}2 is affirmative against the evaluated alternatives. Over the
 recent corpus, retrieval by sentence similarity \autocite{reimers2019sbert} obtains precision@5 of
@@ -307,6 +314,35 @@ is the reason why the result is less surprising than the initial hypothesis assu
 most likely correction lies not in the representation of the text but in the delay with which it
 arrives.
 
+\subsection{Materiality comparability}
+\label{sec:con_qi4}
+
+The answer is \textbf{no}, and it is negative in both halves of the question. Contrastive
+adjustment of the encoder does not improve the materiality comparability of the precedents
+retrieved: the arm trained on magnitude obtains $2.185$ percentage points against $2.173$ for the
+unadjusted model, that is a worse value, and the one trained on direction obtains $2.157$. Both
+differences are about a fifth of the deviation between repetitions of the arm itself. And the
+adjustment has a cost the measurement does separate: precision@5 by sector falls by about $0.026$
+in both arms, with the same sign and above the dispersion.
+
+What distinguishes this result from a setup that failed is the diagnostic that precedes it. The
+first attempt collapsed the encoder, and was discarded without its metrics being read; the two
+arms that produced the values above displaced the space substantially relative to the starting
+model and preserved the geometry of the similarities. They trained, therefore, and what is not
+confirmed is the hypothesis.
+
+The comparison between the two arms was the part of the experiment meant to separate magnitude
+from direction, and it did not find the asymmetry that motivated it: the two are practically
+indistinguishable from one another, in the diagnostic as much as in the two measures. The
+conjecture that magnitude would be partially learnable from text where direction is not therefore
+remains without support in this setup.
+
+The consequence for the system is to keep what it already did. The case base is organised by
+theme, and the alert states that the similarity concerns topic; this result establishes that, by
+this route, the guarantee that the precedent's magnitude is comparable cannot be added to it. The
+decision described in Section~\ref{sec:con_qi2} to present the cases one by one rather than
+summarise them by a mean is thereby reinforced.
+
 \section{Objectives achieved}
 \label{sec:con_objetivos}
 
@@ -411,6 +447,26 @@ the usefulness to the explanation itself; and the channel is public, so it is no
 those who answer belong to the audience this work assumes. What those votes measure is perceived
 usefulness among those who chose to answer. The founding hypothesis concerns a better decision,
 which is another quantity, and it is that one which remains untested.
+
+Two observations from the literature change the weight of this absence, in opposite directions,
+and both belong here. The first aggravates it. The founding hypothesis is not merely undemonstrated
+in this work: it has published measurements against it. \textcite{waa2021xai} found no difference
+between example-based explanation and no explanation, and \textcite{cau2023logicstyle} found, in a
+stock trading task with non-experts, lower performance for the inductive style than for the
+abductive and deductive styles when the model is confident. Until the study is carried out, the
+honest position is not ``still to be demonstrated'' but ``still to be demonstrated, with published
+evidence pointing the other way''. Section~\ref{sec:ctx_xai} states the reason this work may still
+expect a different outcome --- it delivers the underlying computation, and it is the absence of
+that computation those authors hold responsible for the result --- but a reasoned expectation
+remains an expectation.
+
+The second locates it. The closest published work in this class of system
+\autocite{muntermann2009ubiquitous} evaluated its artefact by simulation and likewise deferred the
+study with users to future research, fifteen years earlier. The review that supports
+Chapter~\ref{cap:contexto} found, within this class of system, no study establishing causally that
+alerts accompanied by evidence improve a non-expert's decision. This neither excuses the absence
+nor makes it less of a limitation, but it changes what it means: it is not a step this work
+skipped, it is a step the field has not yet taken.
 
 \paragraph{The deployed model could not perform the function assigned to it.}
 The variant put into production as a decision gate receives seven company-level inputs, one
