@@ -47,8 +47,31 @@ TICKERS = [
 ]
 
 
-def _returns(start: str, end: str) -> dict[str, np.ndarray]:
-    """Preços reais — yfinance primeiro, com a cadeia de fallback do produto."""
+def _returns(start: str, end: str, *, pasta: str = "data/samples/precos_qi1",
+             rede: bool = False) -> dict[str, np.ndarray]:
+    """Retornos da série FIXADA por defeito; do yfinance, com a cadeia de recurso, só com `--rede`.
+
+    ⚠️ ESTE SCRIPT ERA O MAIS EXPOSTO DOS DOIS, e produz o `0,269` do Isolation Forest e o
+    `0,280` do Local Outlier Factor que a dissertação cita. Ia ao yfinance e, se falhasse, à
+    cadeia de cinco fornecedores: a mesma janela podia ser servida por fontes diferentes sem que
+    o resultado o dissesse.
+
+    E a deriva estava DECLARADA neste ficheiro como irredutível («o IF difere ~0,002 do congelado
+    porque o yfinance reajusta os fechos históricos a cada dividendo novo»). Era redutível.
+    Medido a 2026-09-10: **duas buscas da mesma janela a minutos de distância devolvem fechos
+    diferentes** — 6e-05 na AAPL, 4e-05 na NVDA, zero na TSLA. É precisão de float32, não
+    acumulação de dividendos, e basta para virar uma decisão no limiar de um detetor que sinaliza
+    uma fração fixa dos pontos.
+
+    Com a série fixada, este artefacto e o `evaluation_anomaly.md` passam a publicar a MESMA
+    linha para o Isolation Forest (`0,158` / `0,913` / `0,269` / `0,140`), que era o desencontro
+    que a ressalva descrevia.
+    """
+    from investigator.market_data import price_cache
+
+    if not rede:
+        return price_cache.retornos_log(REPO / pasta, TICKERS, start, end)
+
     import yfinance as yf
 
     from investigator.market_data.prices import fallback_daily
@@ -88,10 +111,16 @@ def main() -> None:
     parser.add_argument("--lam", type=float, default=0.94)
     parser.add_argument("--out", default="docs/evaluation/evaluation_anomaly_ext.md")
     parser.add_argument("--fig", default="tese-pt/figures/eval_anomaly_detectors.pdf")
+    parser.add_argument("--precos", default="data/samples/precos_qi1",
+                        help="pasta da série de fechos fixada (versionada)")
+    parser.add_argument("--rede", action="store_true",
+                        help="ignora a série fixada e vai ao yfinance com a cadeia de recurso. "
+                             "⚠️ O resultado deixa de ser reprodutível: duas buscas da mesma "
+                             "janela a minutos de distância devolvem fechos diferentes")
     args = parser.parse_args()
 
     print(f"A obter preços ({args.start}..{args.end})…")
-    rets = _returns(args.start, args.end)
+    rets = _returns(args.start, args.end, pasta=args.precos, rede=args.rede)
 
     # ── 1. Detetores aprendidos vs z-score, NA MESMA região pontuada ────────────
     per = {k: [] for k in ("z", "if", "lof", "lbl")}
@@ -175,9 +204,17 @@ def _write_md(args, rets, prf, spread, prf_roll, prf_ewma,
         "informação (features [retorno, vol20 anterior]): ambos disparam demasiado "
         "(recall alto, precisão ~0,16) e com taxas inconsistentes entre tickers. "
         "**Fidelidade ao protocolo:** a linha do z-score reproduz os valores congelados do "
-        "CS1 (0,407/0,761/0,530); o IF difere ~0,002 do congelado porque o yfinance "
-        "reajusta os fechos históricos a cada dividendo novo desde a corrida de 2026-07-04 "
-        "(drift documentado, não um erro).",
+        "CS1 (0,407/0,761/0,530). ⚠️ **E a ressalva anterior deixou de valer, o que é a parte "
+        "que interessa.** Este documento declarava que o Isolation Forest diferia ~0,002 do "
+        "congelado «porque o yfinance reajusta os fechos históricos a cada dividendo novo», e "
+        "apresentava isso como deriva documentada e irredutível. Era redutível: a série de "
+        "fechos passou a estar **fixada e versionada** em `data/samples/precos_qi1/`, com soma "
+        "de controlo por empresa. Desde 2026-09-10 este artefacto e o `evaluation_anomaly.md` "
+        "publicam a mesma linha para o Isolation Forest, que era precisamente o desencontro que "
+        "a ressalva descrevia. E a causa medida não era a acumulação de dividendos: **duas "
+        "buscas da mesma janela a minutos de distância devolvem fechos diferentes** (6e-05 na "
+        "AAPL, 4e-05 na NVDA, zero na TSLA), o que é precisão de float32 e basta para virar uma "
+        "decisão no limiar de um detetor que sinaliza uma fração fixa dos pontos.",
         "",
         "## 2. Estimador de volatilidade: σ rolling (tese) vs σ EWMA (RiskMetrics)",
         "",

@@ -709,15 +709,42 @@ ficheiro congelado citado pela tese.
       coincidência. A porta apanha os **retirados** e as gralhas na metade livre; **não** é prova
       de que todo o número foi verificado.
 
-- [ ] Z2 · **A §5.2 não é reproduzível de um artefacto fixado.** O `scripts/evaluate_anomaly.py`
-      chama `yf.Ticker(t).history(...)` ao vivo, sem cache e sem ficheiro de preços fixado. A
-      janela está fixada (`2023-06-01` a `2026-06-01`), mas o yfinance **ajusta retroativamente**
-      para desdobramentos e dividendos, logo uma corrida futura pode devolver fechos diferentes e
-      mover a amplitude `0{,}015` / `0{,}344` e o `F1 0{,}530`. Num capítulo cuja afirmação central
-      é que tudo se confere, é a única avaliação que depende da rede no momento da leitura.
-      Trabalho: fixar os preços num ficheiro versionado com `sha256` no manifesto, como o corpus
-      de notícias, e o script a lê-lo por defeito. ⚠️ **Reproduzir os valores congelados na mesma
-      passagem**, senão a correção troca um defeito por outro.
+- [x] Z2 · **A §5.2 não era reproduzível de um artefacto fixado.** **FECHADO a 2026-09-10.**
+      Eram **dois** scripts, não um: o `evaluate_anomaly.py` e o `evaluate_anomaly_ext.py`, e o
+      segundo é o que produz o `0,269` do Isolation Forest e o `0,280` do Local Outlier Factor que
+      a dissertação cita. Iam ao yfinance ao vivo, e o `_ext` tinha por baixo uma cadeia de cinco
+      fornecedores de recurso — a mesma janela podia ser servida por fontes diferentes sem que o
+      documento o dissesse.
+      **⚠️ E A CAUSA DECLARADA ESTAVA ERRADA.** O `evaluation_anomaly_ext.md` dizia que o
+      Isolation Forest diferia ~0,002 do congelado «porque o yfinance reajusta os fechos
+      históricos a cada dividendo novo», e apresentava isso como deriva documentada e
+      **irredutível**. Medido: **duas buscas da mesma janela a MINUTOS de distância devolvem
+      fechos diferentes** — `6e-05` na AAPL, `4e-05` na NVDA, **zero** na TSLA. É precisão de
+      *float32*, não acumulação de dividendos. Basta para virar uma decisão no limiar de um
+      detetor que sinaliza uma fração fixa dos pontos, e foi o que fez o `F1` do Isolation Forest
+      andar **0,271 → 0,270 → 0,269 em três corridas do mesmo dia**.
+      **A série está fixada e VERSIONADA** em `data/samples/precos_qi1/` (15 séries, 751 fechos
+      cada, 376 KB, `sha256` por empresa no manifesto). ⚠️ A pasta importa: `data/**` está
+      gitignored e `data/prices/` tem **zero** ficheiros versionados, logo fixar lá tornava a
+      corrida determinística **só nesta máquina**, o que não é reprodutibilidade.
+      **Reutilizou-se o que já existia:** o `investigator/market_data/price_cache.py` foi escrito
+      para isto — o docstring dele já avisava do reajuste retroativo — e nunca tinha sido aplicado
+      aqui. Ganhou `retornos_log`, que **falha alto** quando falta uma série, porque uma avaliação
+      sobre catorze empresas publica uma amplitude que no ecrã se lê como a de quinze.
+      **✅ E FECHOU UM DESENCONTRO ENTRE ARTEFACTOS.** O `evaluation_anomaly.md` publicava
+      `0,159` / `0,271` e o `_ext` `0,158` / `0,269` para a **mesma** comparação. Com a série
+      fixada os dois publicam a mesma linha, que é a que a figura da tese já desenhava.
+      **Nada do que a tese cita se moveu:** amplitude `0,015` / `0,344`, `F1` `0,516` / `0,218` /
+      `0,530`, IF `0,269`, LOF `0,280`, EWMA `0,664` — todos byte-idênticos. O diff nos dois
+      artefactos é **uma linha de conteúdo em cada**.
+      Novos: `scripts/fixar_precos_qi1.py` (com `--verificar`) e
+      `tests/test_precos_qi1_fixados.py` (**9 testes**), incluindo o que garante que a pasta não
+      está gitignored e o que exige que os dois artefactos concordem no Isolation Forest — se
+      voltarem a divergir, alguém correu um deles com `--rede`.
+      ⚠️ **E apanhei-me na armadilha nº 7 a meio:** redirecionei o `--out` e não o `--fig`, e uma
+      verificação escreveu por cima de uma figura versionada. Mesmo tamanho e números idênticos,
+      reposta do git. **A porta `check_tese_pt` apanhou o resto**: acusou o PDF de ser anterior às
+      figuras regeneradas, que é a defesa contra um PDF que não contém as figuras que declara.
 
 - [ ] Z3 · **Cinco referências que a pesquisa encontrou e nunca entraram na bibliografia.**
       `[Nee25]`, `[Cha22c]`, `[Fer19]` (A12.5, sistemas próximos em §2.2), `[Fen21b]` (A12.6, faz a

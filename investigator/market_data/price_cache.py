@@ -116,3 +116,41 @@ def verificar(cache_dir: Path | str) -> list[str]:
         elif hashlib.sha256(p.read_bytes()).hexdigest() != reg["sha256"]:
             problemas.append(f"{nome}: soma de controlo não bate")
     return problemas
+
+
+def retornos_log(cache_dir: Path | str, tickers: list[str], inicio: str, fim: str,
+                 ) -> dict:
+    """Retornos logarítmicos de cada série FIXADA, ou erro se alguma faltar.
+
+    ⚠️ POR QUE E QUE ESTA FUNCAO VIVE AQUI e não em cada script. O `evaluate_anomaly.py` e o
+    `evaluate_anomaly_ext.py` tinham, cada um, o seu `_returns` a ir ao yfinance ao vivo. Duas
+    cópias da mesma leitura divergem: a do `_ext` ganhou uma cadeia de cinco fontes de recurso e
+    a outra não, pelo que a mesma janela podia ser servida por fornecedores diferentes nos dois
+    documentos que a dissertação cita lado a lado. A lição está escrita no projeto desde que o
+    `dedup.py` foi extraído: uma biblioteca não se importa de um script.
+
+    ⚠️ E FALHA ALTO, de propósito. Uma série em falta faria a avaliação correr sobre catorze
+    empresas e publicar uma amplitude entre catorze, que no ecrã se lê exatamente como a de
+    quinze. É a classe de defeito que este projeto documenta desde a sessão 63: não encontrar
+    nada e aprovar tudo têm o mesmo aspeto.
+    """
+    import numpy as np
+
+    d = Path(cache_dir)
+    if not d.exists():
+        raise FileNotFoundError(
+            f"a série fixada não existe em {d}. Correr `python scripts/fixar_precos_qi1.py` "
+            f"antes de avaliar, ou passar --rede para ir buscar aos fornecedores."
+        )
+    faltam = [t for t in tickers if carregar(d, t, inicio, fim) is None]
+    if faltam:
+        raise FileNotFoundError(
+            f"{len(faltam)} de {len(tickers)} séries em falta em {d} para {inicio}..{fim}: "
+            f"{', '.join(faltam)}. A avaliação correria sobre menos empresas e publicaria uma "
+            f"amplitude que se lê como a de {len(tickers)}."
+        )
+    out: dict[str, np.ndarray] = {}
+    for t in tickers:
+        serie = carregar(d, t, inicio, fim)
+        out[t] = np.diff(np.log(serie.to_numpy(dtype=float)))
+    return out

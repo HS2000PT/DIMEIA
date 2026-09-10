@@ -2,9 +2,9 @@
 
 > Gerado por `scripts/evaluate_anomaly.py`. **Não editar à mão.** Ver caveats no fim.
 
-- **Dados:** 15 tickers, preços reais (yfinance, 2023-06-01 a 2026-06-01).
+- **Dados:** 15 tickers, preços reais de série fixada (data/samples/precos_qi1), 2023-06-01 a 2026-06-01.
 - **z-score:** janela 20d, limiar ±3 (sem lookahead). **Baseline fixo:** |retorno| ≥ 3%. **Rótulo-proxy:** |retorno| ≥ percentil 0.99 por ticker.
-- **Gerado:** 2026-07-04 12:11 UTC.
+- **Gerado:** 2026-09-10 15:39 UTC.
 
 ## 1. Consistência da taxa de disparo entre tickers (argumento principal)
 
@@ -38,7 +38,7 @@ IF não-supervisionado (200 árvores, contaminação 0.02, seed 42) com features
 
 | Método (região pontuada) | Precision | Recall | F1 | Amplitude da taxa |
 |---|---|---|---|---|
-| Isolation Forest | 0.159 | 0.913 | 0.271 | 0.135 |
+| Isolation Forest | 0.158 | 0.913 | 0.269 | 0.140 |
 | z-score (mesma região) | 0.407 | 0.761 | 0.530 | — |
 
 **Leitura:** comparação 'regra estatística vs detetor aprendido' com a mesma informação e sem lookahead. O z-score continua a ser o detetor de produção salvo vantagem clara do IF — a própria comparação é o contributo (RQ4/M4).

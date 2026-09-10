@@ -1,0 +1,124 @@
+{
+  "series": {
+    "AAPL_2023-06-01_2026-06-01": {
+      "ficheiro": "AAPL_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "c1d29a8009e398795cfb74d9ace9813ba58adc759e5249223b14c90346b27c6f"
+    },
+    "MSFT_2023-06-01_2026-06-01": {
+      "ficheiro": "MSFT_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "357471c265c2591cab370864cbdcd47e898452de77e210f462fc4a041f778e2e"
+    },
+    "AMZN_2023-06-01_2026-06-01": {
+      "ficheiro": "AMZN_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "dce16dde615e65816d86bf5d50f664e1fc6cb3c21ec1a1a18bed46e24b11a12e"
+    },
+    "GOOGL_2023-06-01_2026-06-01": {
+      "ficheiro": "GOOGL_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "203b53126d8dc09d591485a4d7ecd936f32126bc157c88fe6d4fefd286b0c4d8"
+    },
+    "NVDA_2023-06-01_2026-06-01": {
+      "ficheiro": "NVDA_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "7536360cc48f55e10b7b169d85e7e9d8a5b45dcfeb9ed5cd0c956c62f7aab963"
+    },
+    "TSLA_2023-06-01_2026-06-01": {
+      "ficheiro": "TSLA_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "9600d2e38fa4b83fbb0f9f48797bbc7494aba79b2878f7fd248eb580a2bed08c"
+    },
+    "META_2023-06-01_2026-06-01": {
+      "ficheiro": "META_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "f1b37f4dd4255335269ebcfaed4d920c01f90a76f0c03a65c87f9073ecc80f13"
+    },
+    "JPM_2023-06-01_2026-06-01": {
+      "ficheiro": "JPM_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "e6f3525c8b311fd4cd9406e2c7ffcd6a647cdc0d888a3ef13d93b2976e722f24"
+    },
+    "BAC_2023-06-01_2026-06-01": {
+      "ficheiro": "BAC_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "2f850dbf11baa0279afebb15a8bff0d7b64bc17235e46cc570557fc92541ae81"
+    },
+    "XOM_2023-06-01_2026-06-01": {
+      "ficheiro": "XOM_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "14b211e30cfcb31e028219d22ffb4300527f97aa839a7240f51d950e0999fefb"
+    },
+    "CVX_2023-06-01_2026-06-01": {
+      "ficheiro": "CVX_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "c9833d31aa46763b332d63a28b79fc0747f7ad67abaae3dcf3d4f53cb20a73ff"
+    },
+    "JNJ_2023-06-01_2026-06-01": {
+      "ficheiro": "JNJ_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "bc455284f0428a461cbc658131ec4864dd9ff471b6205a0c525327ab0855afdd"
+    },
+    "PFE_2023-06-01_2026-06-01": {
+      "ficheiro": "PFE_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "0bbde0b1d182716d962a0597c3fa9f6d1da5f39d4a0af21cc0101a2efd467331"
+    },
+    "WMT_2023-06-01_2026-06-01": {
+      "ficheiro": "WMT_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "253b297cf6b2377845992d3f6108ab7f07f05b953c4cfcfa2c6fc3c08dcd7e35"
+    },
+    "KO_2023-06-01_2026-06-01": {
+      "ficheiro": "KO_2023-06-01_2026-06-01.csv",
+      "fonte": "yfinance",
+      "dias": 751,
+      "primeiro": "2023-06-01",
+      "ultimo": "2026-05-29",
+      "sha256": "74fe194c8bf441f6a62009452b0a880011677dd43e767da9c16ef30291476989"
+    }
+  }
+}

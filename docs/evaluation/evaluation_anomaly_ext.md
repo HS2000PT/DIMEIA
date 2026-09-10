@@ -6,7 +6,7 @@
 
 - **Dados:** 15 tickers, preços reais (2023-06-01 a 2026-06-01).
 - **Protocolo:** janela 20d, limiar ±3, rótulo-proxy |retorno| ≥ p99 por ticker; detetores aprendidos causais (treino 250d, contaminação 0.02, seed 42); métricas na MESMA região pontuada pelos três detetores.
-- **Gerado:** 2026-07-13 13:56 UTC.
+- **Gerado:** 2026-09-10 15:40 UTC.
 
 ## 1. Detetores: estatístico vs aprendidos (mesma região, mesmas features)
 
@@ -16,7 +16,7 @@
 | Isolation Forest | 0.158 | 0.913 | 0.269 | 0.140 |
 | Local Outlier Factor | 0.163 | 0.989 | 0.280 | 0.183 |
 
-**Leitura:** o LOF era citado na tese como alternativa mas nunca tinha sido testado — agora está, com o mesmo protocolo causal do IF. A regra estatística transparente ganha aos dois detetores aprendidos não-supervisionados com a mesma informação (features [retorno, vol20 anterior]): ambos disparam demasiado (recall alto, precisão ~0,16) e com taxas inconsistentes entre tickers. **Fidelidade ao protocolo:** a linha do z-score reproduz os valores congelados do CS1 (0,407/0,761/0,530); o IF difere ~0,002 do congelado porque o yfinance reajusta os fechos históricos a cada dividendo novo desde a corrida de 2026-07-04 (drift documentado, não um erro).
+**Leitura:** o LOF era citado na tese como alternativa mas nunca tinha sido testado — agora está, com o mesmo protocolo causal do IF. A regra estatística transparente ganha aos dois detetores aprendidos não-supervisionados com a mesma informação (features [retorno, vol20 anterior]): ambos disparam demasiado (recall alto, precisão ~0,16) e com taxas inconsistentes entre tickers. **Fidelidade ao protocolo:** a linha do z-score reproduz os valores congelados do CS1 (0,407/0,761/0,530). ⚠️ **E a ressalva anterior deixou de valer, o que é a parte que interessa.** Este documento declarava que o Isolation Forest diferia ~0,002 do congelado «porque o yfinance reajusta os fechos históricos a cada dividendo novo», e apresentava isso como deriva documentada e irredutível. Era redutível: a série de fechos passou a estar **fixada e versionada** em `data/samples/precos_qi1/`, com soma de controlo por empresa. Desde 2026-09-10 este artefacto e o `evaluation_anomaly.md` publicam a mesma linha para o Isolation Forest, que era precisamente o desencontro que a ressalva descrevia. E a causa medida não era a acumulação de dividendos: **duas buscas da mesma janela a minutos de distância devolvem fechos diferentes** (6e-05 na AAPL, 4e-05 na NVDA, zero na TSLA), o que é precisão de float32 e basta para virar uma decisão no limiar de um detetor que sinaliza uma fração fixa dos pontos.
 
 ## 2. Estimador de volatilidade: σ rolling (tese) vs σ EWMA (RiskMetrics)
 

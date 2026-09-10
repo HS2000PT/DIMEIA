@@ -39,7 +39,24 @@ TICKERS = [
 ]
 
 
-def _returns(start: str, end: str) -> dict[str, np.ndarray]:
+def _returns(start: str, end: str, *, pasta: str, rede: bool) -> tuple[dict[str, np.ndarray], str]:
+    """Retornos da série FIXADA por defeito; do yfinance só com `--rede`.
+
+    ⚠️ ISTO ERA A UNICA AVALIACAO DO TRABALHO QUE DEPENDIA DA REDE NO MOMENTO DA LEITURA, num
+    capítulo cuja afirmação central é que tudo se confere. A deriva não é hipotética: a 2026-09-10
+    a mesma janela devolveu o `F1` do Isolation Forest a `0,270` contra o `0,271` do artefacto
+    gerado a 2026-07-04 — os fechos ajustados são reescritos retroativamente a cada dividendo, e
+    basta um ponto no limiar mudar de lado para o detetor aprendido trocar uma decisão.
+
+    Devolve também a proveniência, que passa a ser escrita no artefacto: um documento que não diz
+    de onde vieram os preços não permite distinguir uma corrida fixada de uma corrida à rede.
+    """
+    from investigator.market_data import price_cache
+
+    if not rede:
+        rets = price_cache.retornos_log(REPO / pasta, TICKERS, start, end)
+        return rets, f"série fixada ({pasta})"
+
     import yfinance as yf
 
     out: dict[str, np.ndarray] = {}
@@ -52,7 +69,7 @@ def _returns(start: str, end: str) -> dict[str, np.ndarray]:
         r = np.diff(np.log(close))  # log-returns
         out[t] = r
         print(f"  [ok] {t}: {len(r)} retornos")
-    return out
+    return out, "yfinance ao vivo (NÃO reprodutível)"
 
 
 def main() -> None:
@@ -72,10 +89,18 @@ def main() -> None:
     parser.add_argument("--if-train-days", type=int, default=250)
     parser.add_argument("--if-contamination", type=float, default=0.02)
     parser.add_argument("--if-seed", type=int, default=42)
+    parser.add_argument("--precos", default="data/samples/precos_qi1",
+                        help="pasta da série de fechos fixada (versionada)")
+    parser.add_argument("--rede", action="store_true",
+                        help="ignora a série fixada e vai ao yfinance. ⚠️ O resultado deixa de "
+                             "ser reprodutível: os fechos ajustados são reescritos "
+                             "retroativamente e o F1 do Isolation Forest já se moveu por isso "
+                             "(0,271 -> 0,270 entre 2026-07-04 e 2026-09-10)")
     args = parser.parse_args()
 
-    print(f"A obter preços (yfinance, {args.start}..{args.end})…")
-    rets = _returns(args.start, args.end)
+    print(f"A obter preços ({args.start}..{args.end})…")
+    rets, args.fonte = _returns(args.start, args.end, pasta=args.precos, rede=args.rede)
+    print(f"  fonte: {args.fonte}")
 
     z_pred_all, fx_pred_all, label_all = [], [], []
     fire_z, fire_fx = {}, {}
@@ -147,7 +172,10 @@ def _write_md(args, rets, fire_z, fire_fx, z_prf, fx_prf, ablation,
         "",
         "> Gerado por `scripts/evaluate_anomaly.py`. **Não editar à mão.** Ver caveats no fim.",
         "",
-        f"- **Dados:** {len(rets)} tickers, preços reais (yfinance, {args.start} a {args.end}).",
+        # A PROVENIENCIA ENTRA NO ARTEFACTO. Sem ela, uma corrida sobre a serie fixada e uma
+        # corrida a rede produzem documentos indistinguiveis, e so um dos dois e' reprodutivel.
+        f"- **Dados:** {len(rets)} tickers, preços reais de {getattr(args, 'fonte', 'yfinance')}, "
+        f"{args.start} a {args.end}.",
         f"- **z-score:** janela {args.window}d, limiar ±{args.threshold:g} (sem lookahead). "
         f"**Baseline fixo:** |retorno| ≥ {args.fixed_pct*100:g}%. "
         f"**Rótulo-proxy:** |retorno| ≥ percentil {args.quantile:g} por ticker.",
