@@ -9,6 +9,87 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 68 — 2.ª parte (2026-09-10): O AUTOR MANDOU FECHAR O PENDENTE ANTES DE ESCREVER,
+  E TINHA RAZÃO: DOIS DOS TRÊS ACHADOS NÃO ESTAVAM EM LISTA NENHUMA.**
+  Pedido dele: «vê lá se temos trabalhos pendentes ainda em aberto; se tivermos será prioritário
+  fecharmos esses primeiro, e só quando tivermos tudo finalizado é que faz sentido passar à
+  escrita». Auditadas 22 entradas das fases A e C contra evidência: **onze estavam feitas e
+  marcadas abertas** (a QI4 inteira, C4 a C8, a comparação de codificadores, o corpus Finnhub).
+  **⚠️ (A) O MEU DETETOR ENGANOU-ME CINCO VEZES NUM DIA, e é a lição da sessão.** Dei o B4 e o
+  B5 por fechados porque um `grep` acertou em «assimetria de referencial» — **dentro da frase que
+  PROPÕE eliminá-la**; o C8 falhou por a tese escrever `\gls{QI}4` e eu procurar `QI4`; o C4 por
+  o artefacto nomear «o braço de controlo C4» sem repetir o cosseno de colapso; e o meu contador
+  de legendas devolveu **zero** por procurar `\caption{` quando as 65 do documento usam
+  `\caption[curta]{longa}`. **Cinco padrões a acertar ao lado da forma real, e é o argumento
+  para os dois achados seguintes.**
+  **⚠️ (B) Z1 — A PORTA «TODO O NÚMERO TEM ORIGEM» NÃO VIA UM ÚNICO DECIMAL DA ÁRVORE
+  CANÓNICA.** O `auditar_numeros.py` extraía `\d+\.\d{2,}` (**ponto**) e a tese escreve
+  `$2{,}173$` (**vírgula**, que outra porta exige). Declarava «todos têm origem» depois de
+  examinar **60** números, quando a prosa e as tabelas têm **263** — e a QI4 estava inteira do
+  lado invisível. É a MESMA classe que a sessão 63 corrigiu no `check_tese_numeros`, e sobreviveu
+  aqui **por não haver um único teste sobre este ficheiro**.
+  **Quatro correções, e a segunda só apareceu porque a primeira não bastava:** (a) o extrator vê
+  a vírgula; **(b) as FONTES também são normalizadas** — os relatórios de `docs/design/` são
+  Markdown em português com 148 decimais com vírgula, logo corrigir só o lado da tese teria
+  **movido** o defeito; (c) `docs/design/` entra nas fontes, porque é lá que vive a QI4; (d)
+  **reconhecimento de arredondamento** — o relatório de colapso publica `0,9936` e a tese imprime
+  `0{,}994`.
+  **Dos sete que sobreviveram, nenhum era defeito:** quatro são aritmética que a tese faz à
+  frente do leitor, um é o σ da Tesla, e **dois não são afirmações** — são o formato da linha do
+  alerta. ⚠️ **E o meu controlo negativo falhou por minha culpa:** plantei `0,101` do registo da
+  sessão 66 e o corpus mudou desde então. Refeito com `0,102`, por **enumeração contra as fontes
+  actuais**. **O controlo que decide é o do vizinho:** `0,995` dispara contra `0,9936`, ou seja o
+  remédio não trocou cegueira por permissividade. **12 testes novos.**
+  ⚠️ **E fica MEDIDA a limitação:** dos 900 valores `0,NNN` só **429** estão ausentes das fontes,
+  logo um número inventado tem **~52%** de encontrar par por coincidência. A porta apanha os
+  **retirados** e as gralhas na metade livre; **não** prova que todo o número foi verificado.
+  **⚠️ (C) Z2 — A §5.2 NÃO ERA REPRODUZÍVEL, E A CAUSA DECLARADA ESTAVA ERRADA.** Eram **dois**
+  scripts, e o `_ext` é o que produz o `0,269` do Isolation Forest e o `0,280` do LOF que a tese
+  cita; tinha por baixo uma cadeia de **cinco** fornecedores. O `evaluation_anomaly_ext.md`
+  declarava a deriva **irredutível** («o yfinance reajusta os fechos a cada dividendo novo»).
+  **Medido: duas buscas da mesma janela a MINUTOS de distância devolvem fechos diferentes** —
+  `6e-05` na AAPL, `4e-05` na NVDA, **zero** na TSLA. É precisão de *float32*, não dividendos, e
+  fez o `F1` do IF andar **0,271 → 0,270 → 0,269 em três corridas do mesmo dia**.
+  Série **fixada e VERSIONADA** em `data/samples/precos_qi1/` (15 séries, 376 KB, `sha256` por
+  empresa). ⚠️ **A pasta importa:** `data/**` está gitignored e `data/prices/` tem **zero**
+  ficheiros versionados, logo fixar lá dava determinismo **só nesta máquina**.
+  **Reutilizou-se o que já existia:** o `price_cache.py` foi escrito para isto, o docstring dele
+  já avisava do reajuste, e nunca tinha sido aplicado aqui. **✅ E fechou um desencontro:** os
+  dois artefactos publicavam `0,159`/`0,271` e `0,158`/`0,269` para a mesma comparação, e passam
+  a publicar a mesma linha — a que a figura da tese já desenhava. **Nada do que a tese cita se
+  moveu.** **9 testes novos.**
+  ⚠️ **E apanhei-me na armadilha nº 7:** redirecionei o `--out` e não o `--fig`, e escrevi por
+  cima de uma figura versionada. Reposta do git. **A porta `check_tese_pt` apanhou o resto** — o
+  PDF era anterior às figuras regeneradas.
+  **✅ (D) Z3 — QUATRO REFERÊNCIAS INTEGRADAS, E O QUE ELAS OBRIGARAM A RETIRAR É O MAIS
+  IMPORTANTE.** A §2.9 afirmava que os componentes académicos **«nunca»** tinham sido integrados
+  num sistema em funcionamento contínuo. É **ausência universal**, a afirmação mais atacável que
+  existe, e três destes trabalhos mostram-na demasiado forte. Passa a dizer que os trabalhos
+  revistos **delimitam** a contribuição. **E concede que «explicar sem prever» é opção
+  partilhada** — que é o título da dissertação. Verificado antes de aceitar: **nenhum outro sítio
+  a reivindica como novidade** (Cap. 1, Cap. 6 e *front matter*, zero ocorrências), logo não abre
+  contradição. O `[Fer19]` teve a **etiqueta corrigida** (cita-se a publicação IJCAI de 2020 e
+  não o preprint de 2019) e o `[Fen21b]` tinha um autor **duplicado** na página institucional.
+  ⚠️ **O `[Cor21]` fica ABERTO e não se inventa:** a etiqueta não identifica uma publicação.
+  **Pergunta ao autor.**
+  **⚠️ (E) E DOIS FICHEIROS AUTODECLARAVAM-SE PENDENTES SEM O SER, o que é a classe que manda a
+  sessão seguinte refazer tudo.** O `reorganizacao.md` dizia «ainda não foi executado» há nove
+  dias com metade feito, e o registo do Z3 deixou a verificação em «Em curso». Os dois fechados
+  com o que foi corrido **e com o que a verificação não garante**.
+  **⚠️ (F) E A PREMISSA DA REESCRITA ESTAVA ERRADA, medida antes de planear.** O *brief* afirma
+  **57 383 palavras** contra um alvo de 41 000, o que se lê como cortar 29%. A contagem honesta —
+  prosa **mais legendas**, que é o que o leitor lê — é **47 939**, ou seja **17% acima**. As
+  57 383 eram a contagem **bruta** (comandos LaTeX e corpo das figuras incluídos) comparada com
+  um alvo em **prosa**. E aparece um manípulo que o *brief* não nomeia: **4 787 palavras em 69
+  legendas**, 96 por legenda no Cap. 4, que é um parágrafo dentro de um flutuante.
+  Plano de execução em `docs/planos/PLANO_REESCRITA_EXECUCAO.md`.
+  **PORTAS: 1195 testes (eram 1174) · `ruff` limpo · `check_entrega` verde nos 23 · as duas
+  árvores a 0 erros, overfull 6 e 4 iguais ao registo anterior · 141 páginas antes e depois ·
+  116 de 120 antes dos apêndices · paridade 0 assimetrias em 139 chaves ·
+  `verify_bibliography` 103/103 · 263 números examinados, 0 sem origem.**
+  **⏭️ ABERTAS: 68**, das quais **53 são a reescrita**, 4 são limitações que a tese declara e têm
+  de continuar declaradas, 4 são leitura humana, e o `[Cor21]`.
+
 - **🆕 SESSÃO 68 (2026-09-10): O REPOSITÓRIO REORGANIZADO, E A RAIZ PASSOU A TER OITO
   FICHEIROS EM VEZ DE TREZE — MAIS DUAS AFIRMAÇÕES DE ARRUMAÇÃO QUE ESTAVAM FALSAS.**
   **⚠️ (A) CAMINHOS QUE MUDARAM, E QUEM RETOMAR TEM DE SABER:**
