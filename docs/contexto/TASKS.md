@@ -92,8 +92,18 @@
 
 ## FASE B — Fechar as lacunas que a própria tese nomeia
 
-- [ ] B1 · Linha de base BM25 na recuperação — §5.3.2 diz que é «a que tornaria esta conclusão mais forte»
-- [ ] B2 · Intervalos de confiança por setor em §5.3 (hoje a §5.4 tem reamostragem e a §5.3 não tem nada)
+> ⚠️ **B3 a B6 continuam ABERTAS, e a tese declara-o em voz alta.** Ao verificá-las, ler o
+> parágrafo e não fazer `grep`: o B5 acerta em «assimetria de referencial» porque a frase que
+> **propõe** eliminá-la usa o termo, e o B4 acerta em «sensibilidades encolhidas» dentro de
+> «*A experiência que resolveria a questão… Não foi*». Dei os dois por feitos a 2026-09-10 e
+> só a leitura do contexto mostrou o erro. **Se forem escritas como resolvidas, a tese passa a
+> afirmar o que não fez, nos quatro sítios que um arguente procura primeiro.**
+
+- [x] B1 · Linha de base BM25 na recuperação — **FEITO** (verificado a 2026-09-10):
+      `scripts/evaluate_retrieval_bm25.py` → `docs/evaluation/evaluation_retrieval_bm25.md`,
+      e o corpo cita BM25 sete vezes (§2 e §5). Estava marcado como aberto.
+- [x] B2 · Intervalos de confiança por setor em §5.3 — **FEITO** (verificado a 2026-09-10):
+      `docs/evaluation/evaluation_per_sector.md` e `evaluation_per_sector_composicao.md`.
 - [ ] B3 · Comparação com um assistente genérico: 20 acontecimentos, 3 perguntas, contar respostas
       com evidência conferível (data + fonte). Fecha a pergunta mais provável de 2026
 - [ ] B4 · Reconstruir o rótulo da triagem com sensibilidades estimadas e encolhidas (§3.4) e repetir

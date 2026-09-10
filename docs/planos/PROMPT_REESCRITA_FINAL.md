@@ -264,12 +264,38 @@ não a faz disparar. Este projeto já pagou as duas metades.
 |---|---|
 | todos os resultados medidos | `docs/evaluation/*.md`, um ficheiro por experiência |
 | os corpora e os preços, fixados | `docs/design/*_manifest.json`, com `sha256` |
-| o plano-mestre e as 82 tarefas abertas | `docs/contexto/TASKS.md` |
+| o plano-mestre e as **79** tarefas abertas (contadas a 2026-09-10) | `docs/contexto/TASKS.md` |
 | o estado de retoma e as armadilhas | `docs/contexto/ESTADO_ATUAL.md` |
 | a história das decisões, sessão a sessão | `CLAUDE.md` e `AGENTS.md` |
 | o que só o autor pode fazer | `docs/design/TAREFAS_MANUAIS_HENRIQUE.md` |
 | os números retirados | `docs/defence/LEIA-ME-PRIMEIRO.md` |
 | as quatro dissertações aprovadas, para calibrar | `archive/thesis-versions/thesis-examples/` |
+
+### ⚠️ 11.1 A armadilha da Fase B, e é a mais perigosa deste ficheiro
+
+O `TASKS.md` tem uma **Fase B** chamada «fechar as lacunas que a própria tese nomeia», com seis
+itens. **Duas estão feitas** (a linha de base BM25, com artefacto em
+`docs/evaluation/evaluation_retrieval_bm25.md` e sete citações no corpo; e os intervalos por setor,
+em `evaluation_per_sector.md`). **As outras quatro NÃO estão feitas, e a tese diz isso em voz
+alta:**
+
+| item | onde a tese o declara | o que a tese escreve |
+|---|---|---|
+| B3 · comparação com um assistente genérico | Cap. 6, trabalho futuro | não foi feita |
+| B4 · rótulo com sensibilidades estimadas e encolhidas | §5.4.7 | «*A experiência que resolveria a questão consiste em… Não foi*» |
+| B5 · eliminar a assimetria de referencial do retorno do próprio dia | Cap. 6, item 7 | proposta como direção futura |
+| B6 · reordenação por codificador cruzado | Cap. 6, direção técnica 1 | proposta como direção futura |
+
+**Estas quatro têm de continuar declaradas como não feitas.** Um verbo mal escolhido converte uma
+limitação honesta numa afirmação falsa — e são precisamente as quatro que um arguente procura,
+porque a tese as nomeia. Não escrevas «resolveu-se», «eliminou-se» nem «mediu-se» sobre nenhuma
+delas. Se a redação natural te empurrar para aí, mantém a forma que a tese já usa: nomear a
+experiência que fecharia a questão, e dizer que não correu.
+
+⚠️ **E não confies num `grep` para verificar isto.** A expressão «assimetria de referencial»
+aparece no documento — dentro da frase que **propõe** eliminá-la. Procurar o termo dá um acerto e a
+leitura errada. Foi o que me aconteceu ao preparar este aviso: dei dois itens por feitos e só a
+leitura do parágrafo mostrou que eram declarações da lacuna.
 
 ## 12. O plano que te peço, e a ordem
 
