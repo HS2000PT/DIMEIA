@@ -380,14 +380,15 @@ const BANCO = [
  principal da QI1, e não precisa de rótulos nenhuns.`},
 
 {b:"Os números", n:1, t:"escolha", q:"Precisão@5: método / palavras / acaso / recência?",
- opts:["0.514 / 0.346 / 0.240 / 0.126","0.346 / 0.514 / 0.126 / 0.240",
-       "0.595 / 0.514 / 0.346 / 0.240","0.632 / 0.379 / 0.240 / 0.126"], ok:0,
- a:`<b>0.514 / 0.346 / 0.240 / 0.126.</b> Repara que mostrar as mais recentes é a <b>pior</b> de
- todas. Faz sentido: a notícia mais recente sobre outra empresa não tem razão para estar
- relacionada.`},
+ opts:["0.395 / 0.196 / 0.117 / 0.204","0.196 / 0.395 / 0.204 / 0.117",
+       "0.595 / 0.395 / 0.196 / 0.117","0.632 / 0.379 / 0.117 / 0.204"], ok:0,
+ a:`<b>0.395 / 0.196 / 0.117 / 0.204.</b> ⚠️ E repara no que mudou: as mais recentes dão
+ <b>0.204</b>, acima do acaso (0.117) e a par das palavras em comum. No corpus antigo a recência
+ era a <b>pior</b> de todas, e essa afirmação deixou de ser verdade quando o corpus passou a ter
+ a janela que declara.`},
 
 {b:"As que doem", n:2, t:"escolha", q:"Que número deve resumir a QI2, que pergunta por notícias passadas?",
- opts:["0.513, chão 0.259, margem +0.254","0.595, chão 0.333","0.514, chão 0.240","0.467"], ok:0,
+ opts:["0.513, chão 0.259, margem +0.254","0.595, chão 0.333","0.395, chão 0.117","0.200"], ok:0,
  a:`<b>0.513, com chão 0.259 e margem +0.254.</b> O protocolo exige títulos anteriores à consulta,
  mas não impõe a maturação de oito dias usada no produto. O <b>0.595</b> continua útil como teste simétrico de escala
  em 80 mil títulos, mas permite candidatos futuros e não deve ser o número de síntese.`},

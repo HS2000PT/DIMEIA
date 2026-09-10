@@ -113,7 +113,7 @@ muito diferente.
 <details><summary>resposta</summary>
 
 P@5 = **0,514** (MiniLM), contra **0,346** lexical, **0,240** aleatório e **0,126** recência.
-⚠️ **E contra o chão que interessa: 0,467**, que é *devolver sempre tecnologia* (metade do corpus).
+⚠️ **E contra o chão que interessa: 0,200** no subconjunto equilibrado, que é *devolver sempre tecnologia*. No corpus completo, 84% tecnologia, essa mesma estratégia vale **0,840** e ultrapassa qualquer método — é por isso que a medição principal usa o equilibrado.
 A margem real é **+0,047**; a afirmação que se aguenta é a de **dentro de cada setor**, onde o
 método ganha nos cinco. No FNSPID, sob a restrição causal da produção, dá **0,513** contra chão
 **0,259**, margem **+0,254**. O **0,595** é o teste simétrico de escala e permite candidatos futuros.

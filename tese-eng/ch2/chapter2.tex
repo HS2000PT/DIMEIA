@@ -69,8 +69,8 @@ appears in the body of the text and not in a footnote. It is worth being exact, 
 was measured. The alert studied fires when the price of a fund crosses a threshold set by the
 investor and reports the current price, with no indication of cause; it is the threshold alert that
 Section~\ref{sec:ctx_ferramentas} encounters again in brokerage applications. The mechanism of harm
-the authors describe --- feedback trading on price, as opposed to the use of information about the
-value of the firm --- is precisely what takes hold when the recipient is handed a number and
+the authors describe, which is feedback trading on price rather than the use of information about
+the value of the firm, is precisely what takes hold when the recipient is handed a number and
 nothing else. The authors themselves conclude that improving access to information is not enough,
 and that the capacity to process it must also be addressed.
 
@@ -180,7 +180,7 @@ actually deliver.
 
 Up to this point the section has examined products. The academic literature is missing, and leaving
 it out would rest the claim of a gap on the inspection of vendor pages, which is a fragile basis.
-The class of system at issue here --- watching for events and notifying the retail investor --- has
+The class of system at issue here, which is watching for events and notifying the retail investor, has
 been treated in published research for some two decades, and the most developed example is the
 \emph{MoFiN DSS} of \textcite{muntermann2009ubiquitous}. The parallel is close to the point of
 being uncomfortable: it likewise addresses the retail investor, likewise starts from the
@@ -203,8 +203,8 @@ of alerting systems for the retail investor, because they exist and are publishe
 stated as a difference in epistemic stance, between estimating what will happen and explaining what
 already happened, and as a difference in what is delivered alongside the alert. The second is that
 the relevance measure of \textcite{muntermann2009ubiquitous} is an abnormal return \emph{in
-absolute value}, adjusted for the market and corrected for the usual behaviour of the stock itself
---- that is, magnitude, and not direction. It is in essence the same quantity that
+absolute value}, adjusted for the market and corrected for the usual behaviour of the stock itself,
+that is, magnitude and not direction. It is in essence the same quantity that
 Section~\ref{sec:met_detecao} measures, with two differences that matter: here it is measured after
 the fact, and it serves to explain rather than to anticipate. That a work published in 2009 arrived
 at magnitude, and not direction, as the operational definition of a relevant event for this
@@ -416,7 +416,7 @@ The differences are nonetheless fundamental, and worth stating because they deli
 contribution. The label that organises the triplets is the direction of the next day's movement,
 and the task evaluated is to predict it; magnitude enters only to define a dead band around zero.
 The sentence encoder is used frozen, as the input layer to a convolutional network and a recurrent
-network with attention, which are the ones actually trained --- that is, the space in which news
+network with attention, which are the ones actually trained, that is, the space in which news
 items are compared is not changed. And the explanation is demonstrated through three case studies
 with attention maps, with no measurement of its quality and no participants.
 
@@ -432,7 +432,7 @@ entirely independent route.
 It is on those two differences that the fourth research question is built. If direction is the
 weak signal that their ablation study shows, and if the comparison space there remains
 unchanged, then two distinct questions are left open: whether the \emph{magnitude} of the
-movement --- which is not a direction and does not constitute a forecast --- is learnable from
+movement, which is not a direction and does not constitute a forecast, is learnable from
 text, and whether the gain appears when the encoder itself is adjusted rather than a network
 placed on top of it. Section~\ref{sec:met_qi4} describes how both are put to the test, with an
 arm trained on magnitude and a replication arm trained on direction, and
@@ -698,8 +698,8 @@ right or wrong, that is, that the observed gain does not come from the person be
 distinguishing the two cases. The design consequences that follow are described in
 Section~\ref{sec:met_etica}.
 
-These cautions are general. On the concrete choice made by this dissertation --- to explain by
-cases --- there exists empirical evidence gathered with people that points the other way, and
+These cautions are general. On the concrete choice made by this dissertation, which is to explain by
+cases, there exists empirical evidence gathered with people that points the other way, and
 relegating it to a footnote would be the cheapest way of neutralising it.
 
 \textcite{waa2021xai} compared rule-based explanations, example-based explanations and no
@@ -713,7 +713,7 @@ only the details relevant to a single decision, and not the underlying rationale
 Within the financial domain itself, and with non-experts, there are two recent studies.
 \textcite{cau2023logicstyle} compare three explanation styles in a stock trading task and conclude
 that the abductive and deductive styles improve performance when the model is confident, by
-comparison with the inductive style --- which is the example-based style, that is, the one closest
+comparison with the inductive style, which is the example-based style and therefore the one closest
 to what this system delivers. \textcite{bertrand2023featurebased} test an automated life-insurance
 advisor with feature-based explanations and conclude that these improve neither understanding nor
 appropriate reliance, by comparison with giving no explanation at all, and that the more
@@ -824,7 +824,7 @@ Why believe it?
   & Explainability and the trust literature \autocite{rudin2019stop, lee2004trust}; measurements
     with people that do not confirm the gain \autocite{waa2021xai, cau2023logicstyle,
     bertrand2023featurebased}
-  & The evidence delivered alongside the statement and verifiable at the moment of reading ---
+  & The evidence delivered alongside the statement and verifiable at the moment of reading;
     still to be demonstrated with users \\
 \bottomrule
 \end{tabular}

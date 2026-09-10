@@ -50,10 +50,10 @@ script escreveu. Verifiquei isto exaustivamente — **os 3 dígitos decimais do 
 
 | O que digo | Valor | De onde veio | Como calculei | Código | Dados | Tese |
 |---|---|---|---|---|---|---|
-| P@5 semântica (MiniLM) | **0,514 ± 0,015** | 3.714 títulos | dos 5 vizinhos, quantos do mesmo setor; empresa própria **excluída**; média de 5 sementes | `retrieval_eval.py:33` | `data/finnhub_news.csv` | §5.3 |
+| P@5 semântica (MiniLM) | **0,395 ± 0,011** | 2.845 títulos, equilibrado por setor | dos 5 vizinhos, quantos do mesmo setor; empresa própria **excluída**; média de 5 sementes | `retrieval_eval.py:33` | `data/finnhub_news.csv` | §5.3 |
 | P@5 lexical | **0,346** | idem | mesma fórmula, embedder de sobreposição de palavras | `retrieval_eval.py:33` | idem | §5.3 |
 | P@5 acaso | **0,240** | idem | taxa-base do setor, medida por consulta | `retrieval_eval.py:58` | idem | §5.3 |
-| **P@5 sempre o setor maior** | **0,467** | idem | ⚠️ **o chão que interessa**: 1736/3714 do corpus é tecnologia, logo *devolver sempre tecnologia* vale a fração de consultas que são de tecnologia | fração, não medição | `evaluation_results.md` | §5.3 |
+| **P@5 sempre o setor maior** | **0,200** no equilibrado, **0,840** no corpus completo | 2.845 / 18.599 | ⚠️ **o chão que interessa**: no corpus completo 84% é tecnologia, logo *devolver sempre tecnologia* vale a fração de consultas de tecnologia e ultrapassa qualquer método. É a razão de a medição principal usar o subconjunto equilibrado | fração, não medição | `evaluation_results.md` | §5.3 |
 | P@5 recência | **0,126** | idem | k mais recentes | `retrieval_eval.py:80` | idem | §5.3 |
 | P@5 causal | **0,513**, chão **0,259**, margem **+0,254** | 80k títulos | só candidatos anteriores à consulta | `evaluate_retrieval_causal.py` | FNSPID | §5.5.4 |
 | P@5 simétrica à escala | **0,595**, chão **0,333** | 80k títulos | permite candidatos posteriores | `evaluate_retrieval_fnspid.py` | FNSPID | §5.5.3 |

@@ -426,8 +426,8 @@ empresa, que pertencem quase sempre ao mesmo setor por construção. O corpus é
 encerrada a 25 de junho de 2026, e é fixado por soma de controlo com um manifesto versionado. A
 recolha exige uma precaução que só se descobre medindo: o serviço devolve no máximo cerca de
 duzentos e cinquenta itens por pedido e, ao atingir esse limite, ignora a data inicial do pedido.
-Solicitar cinco, treze ou vinte e sete dias da mesma empresa devolve exatamente as mesmas
-manchetes, todas dos últimos dias da janela, sem qualquer erro ou aviso. A janela é por isso
+Solicitar cinco, treze ou vinte e sete dias da mesma empresa devolve exatamente os mesmos
+títulos, todos dos últimos dias da janela, sem qualquer erro ou aviso. A janela é por isso
 pedida em fatias de um dia, o que garante que nenhum pedido atinge o limite e que a janela
 declarada é a janela recolhida. Restam cinco pares de empresa e dia acima do limite, todos da
 mesma empresa, correspondentes a $1{,}2\%$ dos pares: o dia é a granularidade mínima do serviço,
@@ -647,7 +647,7 @@ se degrada quando o corpus passa de recente e curto para seis anos, e não que m
 A escala permite ainda a comparação que o corpus preliminar não sustentava, e que é a primeira que
 um resultado de recuperação convida a fazer. A linha lexical da Figura~\ref{fig:av_recuperacao} é a
 sobreposição de palavras, que não pondera termos raros nem corrige o comprimento do título. Sobre o
-conjunto histórico, e no mesmo protocolo emparelhado, mediu-se em seu lugar o BM25
+conjunto histórico, e no mesmo protocolo emparelhado, mediu-se no seu lugar o BM25
 \autocite{robertson2009bm25}, que é o método de referência da recuperação lexical: obtém $0{,}521$,
 contra $0{,}595$ do modelo semântico, com o acaso em $0{,}333$. A diferença emparelhada é de
 $+0{,}073$, positiva nas cinco repetições, e nenhuma consulta ficou com candidatos de pontuação nula.
@@ -785,7 +785,7 @@ O treino, portanto, funcionou.
 
 \subsection{Resultado}
 
-A medição corre sobre as $32\,649$ manchetes do bloco de teste, com quinhentas consultas por
+A medição corre sobre os $32\,649$ títulos do bloco de teste, com quinhentas consultas por
 repetição em cinco repetições, cinco vizinhos por consulta e horizonte de três dias. As consultas
 são sorteadas antes de qualquer modelo ser aplicado, pelo que são idênticas nos três braços e as
 comparações são emparelhadas. A Tabela~\ref{tab:av_qi4_resultado} apresenta os resultados.

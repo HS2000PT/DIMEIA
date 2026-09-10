@@ -105,7 +105,7 @@ The set covers fourteen of the fifteen companies in the canonical map. The one m
 the reason lies in the dataset rather than the procedure: \gls{FNSPID} indexes the company under its
 legacy symbol \texttt{FB}, so selecting by the current symbol returns no records at all. Records
 under the legacy symbol do exist, but they amount to 432 headlines spread over 87 days between
-February and June 2020 --- four months in a six-year span. The company therefore appears in the
+February and June 2020, four months in a six-year span. The company therefore appears in the
 detection evaluation, which rests on prices, and not in the news dataset.
 
 The evaluation of the anomaly detector uses a distinct dataset, made up of three years of daily
@@ -126,7 +126,7 @@ respective column.
 \begin{table}[!htbp]
 \caption[Datasets used]{Datasets used in the work. The span of the triage training set refers to
 trading days, after alignment: the headlines run from 2018-01-01 to 2023-12-16, and the two extreme
-dates --- a holiday and a Saturday --- are carried forward to the following session. The last three
+dates, a holiday and a Saturday, are carried forward to the following session. The last three
 rows correspond to the system in operation.}
 \label{tab:met_conjuntos}
 \centering
@@ -150,7 +150,7 @@ Triage decision log & 2026-07-22 to 2026-08-20 & $36{,}925$ decisions \\
 \begin{table}[!htbp]
 \caption[Company sets]{Company sets used. The counts differ because each set serves a distinct
 purpose. The sets are not nested: the list monitored in production contains two companies absent
-from every historical set, and the canonical map contains a third --- Meta --- that does not reach
+from every historical set, and the canonical map contains a third, Meta, that does not reach
 the triage dataset, for the reason given above.}
 \label{tab:met_universos}
 \centering
@@ -528,7 +528,7 @@ The first construction drew two indices at random. The difference of percentiles
 uniform points is \emph{triangular}, with mean $1/3$ and almost no density at the extremes, so
 the target ends up concentrated around a single value: measured on the data, mean $0{,}665$ and
 standard deviation $0{,}237$. With such a target, the minimum of the loss is obtained by
-predicting the mean for every pair — and predicting the mean for everything is, in practice,
+predicting the mean for every pair, and predicting the mean for everything is, in practice,
 collapsing the representation. Section~\ref{sec:av_qi4} reports that this is exactly what
 happened.
 

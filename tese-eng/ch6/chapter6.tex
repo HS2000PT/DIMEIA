@@ -213,8 +213,8 @@ $0.395$, against $0.196$ for vocabulary overlap, $0.117$ for random choice and $
 presenting the most recent news. Here too the deployed model is not the best measured: a larger
 variant obtains $0.422$ under the same protocol, and was set aside on computational cost.
 
-The aggregate value is not, however, the appropriate way of stating the result. Almost half the
-news in the corpus belongs to the technology sector, which makes available a strategy that
+The aggregate value is not, however, the appropriate way of stating the result. Eighty-four per cent of the
+news in the complete corpus belongs to the technology sector, which makes available a strategy that
 dispenses with any model and does not even look at the query, consisting in invariably returning
 news from that sector; its precision equals the fraction of technology queries, $0.840$ in the complete corpus. That
 strategy is useless as a product, since it is right on every query of one sector and on none of the
@@ -223,15 +223,15 @@ corpus.
 
 The comparison that controls for this composition is carried out within each sector, where the method
 beats the respective reference value in all five. The absolute margin is largest in the most
-abundant sector, at $+0.283$ in technology; in the sparse sectors, where the reference value is
-around $0.072$, the method obtains several times that value with a smaller absolute margin. The
+abundant sector, at $+0.220$ in technology; in the sparse sectors, where the reference value is
+around $0.100$, the method obtains several times that value with a smaller absolute margin. The
 scope is that of the evaluated alternatives: if selection could use the known sector of the query,
 filtering by that sector would suffice to satisfy the label, provided enough candidates existed.
 The per-sector analysis does not measure semantic advantage over that filter.
 
 Two further checks delimit the answer. Over the complete historical corpus, with approximately
 eighty thousand news items from six years, precision rises to $0.595$. The reference value rises
-too, and faster, so the margin falls from $+0.274$ to $+0.262$. The method does not degrade with
+too, and faster, so the margin falls from $+0.278$ to $+0.262$. The method does not degrade with
 scale, nor does it improve with it. Requiring the precedent to be prior to the query reduces precision to $0.513$
 and the reference value to $0.259$, with the margin varying by $0.008$. The method keeps its
 advantage under this chronological restriction. The test does not impose the eight-day maturation
@@ -462,8 +462,8 @@ stock trading task with non-experts, lower performance for the inductive style t
 abductive and deductive styles when the model is confident. Until the study is carried out, the
 honest position is not ``still to be demonstrated'' but ``still to be demonstrated, with published
 evidence pointing the other way''. Section~\ref{sec:ctx_xai} states the reason this work may still
-expect a different outcome --- it delivers the underlying computation, and it is the absence of
-that computation those authors hold responsible for the result --- but a reasoned expectation
+expect a different outcome, since it delivers the underlying computation and it is the absence of
+that computation those authors hold responsible for the result; but a reasoned expectation
 remains an expectation.
 
 The second locates it. The closest published work in this class of system

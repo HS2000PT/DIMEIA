@@ -105,7 +105,7 @@ O conjunto cobre catorze das quinze empresas do mapa canónico. A ausente é a M
 no conjunto de dados e não no procedimento: o \gls{FNSPID} indexa a empresa pelo símbolo antigo
 \texttt{FB}, pelo que a seleção pelo símbolo atual não devolve registo nenhum. Os registos sob o
 símbolo antigo existem, mas resumem-se a 432 títulos distribuídos por 87 dias entre fevereiro e
-junho de 2020 --- quatro meses num intervalo de seis anos. A empresa consta, por isso, da avaliação
+junho de 2020, quatro meses num intervalo de seis anos. A empresa consta, por isso, da avaliação
 da deteção, que assenta em preços, e não do conjunto de notícias.
 
 A avaliação do detetor de anomalias utiliza um conjunto distinto, composto por três anos de
@@ -126,7 +126,7 @@ descritas na coluna respetiva.
 \begin{table}[!htbp]
 \caption[Conjuntos de dados utilizados]{Conjuntos de dados utilizados no trabalho. O intervalo do
 conjunto de treino da triagem refere-se a dias de negociação, depois do alinhamento: os títulos vão
-de 2018-01-01 a 2023-12-16, e as duas datas extremas --- um feriado e um sábado --- são remetidas
+de 2018-01-01 a 2023-12-16, e as duas datas extremas, um feriado e um sábado, são remetidas
 para a sessão seguinte. As três últimas linhas correspondem ao sistema em funcionamento.}
 \label{tab:met_conjuntos}
 \centering
@@ -151,7 +151,7 @@ Registo de decisões de triagem & 2026-07-22 a 2026-08-20 & $36\,925$ decisões 
 \caption[Conjuntos de empresas]{Conjuntos de empresas utilizados. As contagens diferem porque cada
 conjunto serve um propósito distinto. Os conjuntos não são encaixados: a lista monitorizada em
 produção contém duas empresas ausentes de todos os conjuntos históricos, e o mapa canónico contém
-uma terceira --- a Meta --- que não chega ao conjunto de dados da triagem, pela razão dada acima.}
+uma terceira, a Meta, que não chega ao conjunto de dados da triagem, pela razão dada acima.}
 \label{tab:met_universos}
 \centering
 \small
@@ -520,9 +520,9 @@ existe precisamente para separar treino de teste.
 A primeira construção sorteava dois índices ao acaso. A diferença de percentis entre dois pontos
 uniformes é \emph{triangular}, com média $1/3$ e densidade quase nula nos extremos, pelo que o
 alvo fica concentrado em torno de um valor único: medido sobre os dados, média $0{,}665$ e desvio
-$0{,}237$. Com um alvo assim, o mínimo da perda obtém-se prevendo a média para todos os pares — e
+$0{,}237$. Com um alvo assim, o mínimo da perda obtém-se prevendo a média para todos os pares, e
 prever a média para tudo é, na prática, colapsar a representação. A
-Secção~\ref{sec:av_qi4} reporta que foi exactamente isso que aconteceu.
+Secção~\ref{sec:av_qi4} reporta que foi exatamente isso que aconteceu.
 
 A construção adoptada sorteia primeiro a distância desejada $d$ e só depois o ponto de partida
 dentro da margem que $d$ admite, $p_a \sim U(0, 1-d)$, de modo que $|p(a) - p(b)| = d$ por

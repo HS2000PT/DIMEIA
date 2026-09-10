@@ -44,10 +44,33 @@ RAIZ = pathlib.Path(__file__).resolve().parents[1]
 
 # (identificador, padrão, o que dizer em vez disso, porque foi retirado)
 RETIRADOS: list[tuple[str, str, str, str]] = [
+    # ⚠️ A 5.3 foi refeita a 2026-09-10 sobre um corpus cuja janela declarada e' a janela
+    # recolhida. Os valores antigos vinham de um corpus truncado pelo tecto da API de
+    # noticias, cuja composicao setorial era a proporcao de EMPRESAS por setor e nao de
+    # noticias. Ver `docs/design/plano_53_fnspid.md`.
+    ("p5-antiga",
+     r"0(?:[.,]|\{,\})514\s*(?:±|\+/-|contra|vs\.?|/)\s*0(?:[.,]|\{,\})(?:015|346|240|467)",
+     "precisao@5 de 0,395 contra 0,196 lexical, 0,117 acaso e 0,204 recencia",
+     "o corpus antigo declarava 27 dias e cobria de 3 a 28 por empresa"),
+    ("chao-trivial-antigo", r"0(?:[.,]|\{,\})467",
+     "0,840 no corpus completo e 0,200 no equilibrado",
+     "o 0,467 era 7/15 empresas por setor, artefacto do tecto da API"),
+    ("por-setor-antigo", r"0(?:[.,]|\{,\})712\s*(?:contra|vs\.?|na tecnologia.{0,24})\s*(?:um )?"
+     r"(?:chao|ch[ãa]o)?\s*(?:de\s*)?0(?:[.,]|\{,\})429",
+     "0,589 energia / 0,468 saude / 0,389 tecnologia / 0,322 banca / 0,224 consumo",
+     "os chaos por setor mudaram com a composicao do corpus"),
+    ("finbert-antigo", r"(?:FinBERT|dom[íi]nio)[^.\n]{0,40}0(?:[.,]|\{,\})420",
+     "o codificador de dominio obtem 0,275, e continua o pior de todos",
+     "mesmo veredicto, valor novo"),
     ("quase-4x", r"quase\s+(?:4|quatro)\s*(?:×|x|vezes)|quadrupl",
      "1,67× (de 0,379 para 0,632)",
      "o chão de 0,163 ordenava por ordem alfabética das empresas; ao acaso a sério é 0,379"),
-    ("84-por-cento", r"\b84\s*(?:\\)?%",
+    # ⚠️ O padrao exige o contexto das DECISOES. Era so o `84%` solto, e a 2026-09-10
+    # acusou uma frase legitima sobre a composicao do corpus («o corpus completo e 84%
+    # tecnologia»), que nada tem a ver com a afirmacao retirada. Um verificador que grita
+    # de mais deixa de ser lido, e este projecto ja pagou isso mais do que uma vez.
+    ("84-por-cento",
+     r"\b84\s*(?:\\)?%[^.\n]{0,60}decis|decis[^.\n]{0,60}\b84\s*(?:\\)?%",
      "48% dos títulos distintos",
      "contar decisões infla a fração, e na direção que convinha à conclusão: o sistema "
      "repontua o mesmo título a cada ciclo de sessenta segundos"),

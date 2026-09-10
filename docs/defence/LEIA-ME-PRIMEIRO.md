@@ -19,8 +19,8 @@ Os outros continuam bons para estudar o raciocínio, com os avisos abaixo.
 ## O que se passa
 
 Estes documentos foram escritos para a **tese longa em inglês** (arquivada em
-`archive/thesis-versions/`, 138 páginas), ao longo de várias sessões. O que vais entregar e
-defender é a **tese em português** (`tese-pt/`, 139 páginas), que é um documento diferente: tem
+`archive/thesis-versions/`, 130 páginas), ao longo de várias sessões. O que vais entregar e
+defender é a **tese em português** (`tese-pt/`, 141 páginas), que é um documento diferente: tem
 menos resultados, outra numeração e alguns números corrigidos.
 
 Não os apaguei porque o conteúdo continua a ser bom para estudar o raciocínio. Mas há três
@@ -49,6 +49,12 @@ a resposta é um **"Não"** firme — nenhum modelo com texto bate a volatilidad
 
 | Não digas | Diz | Porquê |
 |---|---|---|
+| "P@5 0,514 / 0,346 / 0,240 / 0,126" | **0,395 / 0,196 / 0,117 / 0,204** | A janela declarada do corpus nunca foi a recolhida: a API devolvia ~250 itens e ignorava a data inicial, pelo que a cobertura real ia de 3 a 28 dias por empresa |
+| "o chão trivial é 0,467" | **0,840** no corpus completo, **0,200** no equilibrado | O 0,467 era a proporção de **empresas** por setor (7/15), não de notícias — artefacto do mesmo tecto |
+| "a margem real é +0,047" | **+0,278** sobre o acaso, no corpus equilibrado | Reproduz quase exactamente a margem publicada de +0,274; o que estava errado era a composição, não a conclusão |
+| "0,712 na tecnologia (chão 0,429)" | **0,589** energia · **0,468** saúde · **0,389** tecnologia · **0,322** banca · **0,224** consumo | Os chãos por setor mudam com a composição; o método continua acima do acaso nos cinco |
+| "FinBERT 0,420" | **0,275** | Mesmo veredicto — continua o pior codificador de todos, e agora por margem maior |
+| "MPNet 0,538" | **0,422** | Continua acima do MiniLM implantado, que dá 0,395 |
 | "quase 4×" | **1,67×** (de 0,379 para 0,632) | O chão de `0,163` ordenava por ordem alfabética das empresas. Ao acaso a sério dá 0,379 |
 | "0,667 vs 0,455 ao vivo" | **0,589 vs 0,617** | Eram 12 decisões. Com 825, o sinal **inverte-se** |
 | "a triagem funciona em produção" | "em produção não mostra benefício" | Intervalo [0,403, 0,571], que contém o acaso |

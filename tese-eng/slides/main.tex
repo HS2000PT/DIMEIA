@@ -306,21 +306,23 @@ $F_1$ of $\mathbf{0.530}$ against $0.269$ and $0.280$.
 \toprule
 \textbf{method} & \textbf{precision@5} \\
 \midrule
-\textbf{By meaning (the method)} & $\mathbf{0.514}$ \\
-Always the largest sector & $0.467$ \\
-By shared words & $0.346$ \\
-At random (the floor) & $0.240$ \\
-The most recent & $0.126$ \\
+\textbf{By meaning (the method)} & $\mathbf{0.395}$ \\
+The most recent & $0.204$ \\
+Always the largest sector & $0.200$ \\
+By shared words & $0.196$ \\
+At random (the floor) & $0.117$ \\
 \bottomrule
 \end{tabular}
 \vspace{2mm}
 
 \begin{itemize}
   \small
-  \item Half the corpus is technology: \textbf{always returning technology} is worth $0.467$
-        with no model at all. The real margin is $+0.047$, not $+0.274$.
-  \item The method beats chance in all \textbf{five sectors}: $0.448$ in energy, with a floor
-        of $0.072$. No advantage over a \textbf{filter using the query's known sector} was measured.
+  \item The full corpus is 84\% technology, and there \textbf{always returning technology} is
+        worth $0.840$ with no model at all, above any method. That is why the primary
+        measurement uses the \textbf{balanced} subset, where the same strategy is worth $0.200$
+        the method clears it comfortably, and the margin over chance is $+0.278$.
+  \item The method beats chance in all \textbf{five sectors}: $0.589$ in energy, with a floor
+        of $0.110$. No advantage over a \textbf{filter using the query's known sector} was measured.
   \item Requiring earlier candidates: \textbf{0.513}, floor \textbf{0.259}, margin
         \textbf{$+0.254$}. The test does not impose the eight-day maturation used in production.
   \item \textbf{Similarity of theme does not guarantee direction}. Cases are shown one by one.

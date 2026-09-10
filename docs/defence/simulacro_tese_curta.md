@@ -117,24 +117,26 @@ que a maior parte dos trabalhos não faz.
 
 ---
 
-## Q4. QI2: "a sua margem é de 0.047, não de 0.274"
+## Q4. QI2: "no seu corpus, devolver sempre tecnologia bate o método"
 
-> *"Diz que a recuperação semântica obtém 0.514 contra 0.240 do acaso. Mas metade do seu corpus é
+> *"Diz que a recuperação semântica obtém 0.395 contra 0.117 do acaso. Mas o seu corpus é
 > tecnologia. Devolver sempre tecnologia, sem modelo nenhum e sem olhar para a pergunta, vale
-> 0.467. A sua margem real é 0.047."*
+> 0.840. A sua margem real é negativa."*
 
 **O que estão mesmo a testar:** se compreendes os teus próprios chãos de comparação. Se esta
 pergunta te apanhar de surpresa, perdeste-a.
 
 **A resposta.** Toma-lhes a pergunta da boca: **isso está na tese e fui eu que o medi.**
 
-- Confirma: o chão que estava na tabela era o mais generoso dos disponíveis, a margem cai de
-  `+0.274` para `+0.047`, e a linha lexical de `0.346` fica **abaixo** do chão.
+- Confirma: no corpus completo, 84% tecnologia, a estratégia trivial vale `0.840` e fica
+  **acima** de qualquer método, incluindo o nosso. É por isso que a medição principal passou a
+  usar o subconjunto equilibrado por setor, onde essa mesma estratégia vale `0.200` e o método
+  obtém `0.395`, com margem `+0.278` sobre o acaso.
 - **Mas o que engana é o agregado, não o método.** A estratégia trivial obtém `1.000` em tecnologia
   e **`0.000`** em todos os outros quatro setores. Devolveria semicondutores a quem perguntasse por
   uma petrolífera: como produto não serve para nada.
 - **Dentro de cada setor**, onde ela não se pode agarrar a nada, o método obtém `0.712` na
-  tecnologia (chão `0.429`), `0.448` na energia e `0.419` na saúde (chãos de `0.072` e `0.071`).
+  tecnologia (chão `0.168`), `0.589` na energia e `0.468` na saúde (chãos de `0.110` e `0.111`).
   Onde o corpus é fino, ganha **seis vezes o chão**.
 - **A afirmação que faço é a mais estreita:** a recuperação supera a taxa-base **nos cinco
   setores**, e o número agregado não é a forma certa de o dizer, porque subestima o método e
@@ -274,7 +276,7 @@ defender uma afirmação sobre eficiência de mercados que a tese não faz.
 defensivo.
 
 - **Está em escolher, medir e saber rejeitar.** Testei o encoder de domínio e dois modernos, no
-  mesmo protocolo: o FinBERT financeiro dá `0.420` contra `0.514` do genérico pequeno; o E5 e o BGE
+  mesmo protocolo: o FinBERT financeiro dá `0.275` contra `0.395` do genérico pequeno; o E5 e o BGE
   **empatam**. A escolha está validada por medição, não por conveniência.
 - **E sei explicar porque o de domínio perdeu**, que é a parte que vale: medi-o com a média dos seus
   vetores a servir de vetor de frase, e ele é afinado para **classificação de sentimento**, não
@@ -303,7 +305,7 @@ do que qualquer arquitetura.
 |---|---|
 | `0.015` vs `0.344` | amplitude de disparo: *z*-score vs limiar fixo (QI1) |
 | `0.530` vs `0.269` / `0.280` | F1: *z*-score vs Isolation Forest vs LOF |
-| `0.514` vs `0.467` | precisão@5 vs o chão trivial *sempre tecnologia* (QI2) |
+| `0.395` vs `0.200` | precisão@5 vs o chão trivial *sempre tecnologia*, no equilibrado (QI2) |
 | `0.513` vs `0.259` | precisão@5 com anterioridade vs chão; margem `+0.254`; não impõe maturação |
 | `0.595` vs `0.333` | teste simétrico de escala; permite candidatos futuros |
 | `0.708` vs `0.688` | concordância de direção vs acaso: **tema ≠ direção** |

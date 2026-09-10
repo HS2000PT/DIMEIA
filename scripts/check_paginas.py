@@ -97,6 +97,12 @@ def main() -> int:
         if not f.exists():
             continue
         for i, linha in enumerate(f.read_text(encoding="utf-8").splitlines(), start=1):
+            # ⚠️ ISENCAO POR CONTEXTO: uma linha que fale do arquivo esta a descrever um
+            # documento que nao e' nenhuma das teses vivas, e a sua contagem nao tem de bater
+            # com elas. Isentar pelo VALOR (juntando-o aos legitimos) deixaria passar o mesmo
+            # numero dito sobre a tese actual, que e' o que esta porta existe para apanhar.
+            if "archive/" in linha or "archive\\" in linha:
+                continue
             for m in rx.finditer(linha):
                 v = int(m.group(1))
                 if v in legitimos:

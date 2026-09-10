@@ -69,8 +69,8 @@ consta do corpo do texto e não de uma nota. Convém, ainda assim, ser exato qua
 medido. O alerta estudado dispara quando o preço de um fundo atravessa um limiar definido pelo
 próprio investidor e comunica-lhe o preço atual, sem qualquer indicação sobre a causa; é o alerta
 de limiar que a Secção~\ref{sec:ctx_ferramentas} volta a encontrar nas aplicações das corretoras. O
-mecanismo de dano que os autores descrevem --- negociação por realimentação do preço, por oposição
-ao uso de informação sobre o valor da empresa --- é precisamente o que se instala quando ao
+mecanismo de dano que os autores descrevem, que é a negociação por realimentação do preço em vez
+do uso de informação sobre o valor da empresa, é precisamente o que se instala quando ao
 destinatário se entrega um número e mais nada. Os próprios autores concluem que melhorar o acesso à
 informação não basta, e que é preciso atender também à capacidade de a processar.
 
@@ -178,7 +178,7 @@ testados, pelo que nada se afirma sobre o que efetivamente entregam.
 
 Até aqui esta secção examinou produtos. Falta a literatura académica, e omiti-la deixaria a
 afirmação de lacuna assente na inspeção de páginas de fornecedores, que é base frágil. A classe de
-sistema aqui em causa --- vigiar acontecimentos e notificar o investidor particular --- é tratada
+sistema aqui em causa, que é vigiar acontecimentos e notificar o investidor particular, é tratada
 em investigação publicada há cerca de duas décadas, e o exemplo mais desenvolvido é o \emph{MoFiN
 DSS} de \textcite{muntermann2009ubiquitous}. O paralelo é próximo ao ponto de ser desconfortável:
 também se dirige ao investidor particular, também parte da observação de que este reage às
@@ -201,7 +201,7 @@ publicados; tem de ser enunciada como diferença de postura epistémica, entre e
 acontecer e explicar o que já aconteceu, e como diferença naquilo que é entregue com o alerta. A
 segunda é que a medida de relevância de \textcite{muntermann2009ubiquitous} é um retorno anormal
 \emph{em valor absoluto}, ajustado pelo mercado e corrigido pelo comportamento habitual da própria
-ação --- ou seja magnitude, e não direção. É, no essencial, a mesma grandeza que a
+ação, ou seja magnitude e não direção. É, no essencial, a mesma grandeza que a
 Secção~\ref{sec:met_detecao} mede, com duas diferenças que interessam: aqui é medida depois do
 facto, e serve para explicar em vez de antecipar. Que um trabalho publicado em 2009 tenha chegado
 à magnitude, e não à direção, como definição operacional de acontecimento relevante para este
@@ -412,7 +412,7 @@ As diferenças são, ainda assim, de fundo, e vale a pena enunciá-las porque de
 contribuição. O rótulo que organiza os tripletos é a direção do movimento do dia seguinte, e a
 tarefa avaliada é prevê-la; a magnitude entra apenas para definir uma faixa morta em torno de
 zero. O codificador de frases é usado congelado, como camada de entrada de uma rede convolucional
-e de uma rede recorrente com atenção, que são essas sim treinadas --- ou seja o espaço em que as
+e de uma rede recorrente com atenção, que são essas sim treinadas, ou seja o espaço em que as
 notícias são comparadas não é alterado. E a explicação é demonstrada por três estudos de caso com
 mapas de atenção, sem medição da sua qualidade e sem participantes.
 
@@ -427,8 +427,8 @@ conclusão do mesmo sinal.
 
 É sobre essas duas diferenças que a quarta questão de investigação se constrói. Se a direção é
 o sinal fraco que aquele estudo de ablação mostra, e se ali o espaço de comparação permanece
-inalterado, então ficam em aberto duas perguntas distintas: se a \emph{magnitude} do movimento
---- que não é uma direção e não constitui previsão --- é aprendível do texto, e se o ganho
+inalterado, então ficam em aberto duas perguntas distintas: se a \emph{magnitude} do movimento,
+que não é uma direção e não constitui previsão, é aprendível do texto, e se o ganho
 aparece quando se ajusta o próprio codificador em vez de uma rede colocada por cima dele. A
 Secção~\ref{sec:met_qi4} descreve como ambas são postas à prova, com um braço treinado sobre a
 magnitude e um braço de replicação treinado sobre a direção, e a Secção~\ref{sec:av_qi4}
@@ -689,7 +689,7 @@ esteja certa quer esteja errada, ou seja que o ganho observado não decorre de a
 distinguir melhor os dois casos. As consequências de desenho que daqui decorrem estão descritas na
 Secção~\ref{sec:met_etica}.
 
-Estas cautelas são gerais. Sobre a opção concreta desta dissertação --- explicar por casos ---
+Estas cautelas são gerais. Sobre a opção concreta desta dissertação, que é explicar por casos,
 existe evidência empírica recolhida com pessoas que aponta em sentido contrário, e remetê-la para
 uma nota de rodapé seria a forma mais barata de a neutralizar.
 
@@ -705,7 +705,7 @@ não o raciocínio ou a causalidade que lhe estão por baixo.
 No próprio domínio financeiro, e com não-especialistas, existem dois estudos recentes.
 \textcite{cau2023logicstyle} comparam três estilos de explicação numa tarefa de negociação de
 ações e concluem que os estilos abdutivo e dedutivo melhoram o desempenho quando o modelo está
-confiante, por comparação com o estilo indutivo --- que é o estilo baseado em exemplos, ou seja o
+confiante, por comparação com o estilo indutivo, que é o estilo baseado em exemplos e portanto o
 mais próximo daquilo que este sistema entrega. \textcite{bertrand2023featurebased} testam um
 consultor automático de seguros de vida com explicações por atributos e concluem que estas não
 melhoram nem a compreensão nem a adequação da confiança, por comparação com não dar explicação
@@ -815,7 +815,7 @@ Por que razão acreditar?
   & Explicabilidade e literatura de confiança \autocite{rudin2019stop, lee2004trust}; medições
     com pessoas que não confirmam o ganho \autocite{waa2021xai, cau2023logicstyle,
     bertrand2023featurebased}
-  & A evidência entregue junto da afirmação e verificável no momento da leitura --- por
+  & A evidência entregue junto da afirmação e verificável no momento da leitura; por
     demonstrar com utilizadores \\
 \bottomrule
 \end{tabular}

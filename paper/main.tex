@@ -308,19 +308,21 @@ not results, and the paper reports them as such.
 
 Relevance is approximated by sector membership, a verifiable proxy rather than the property
 one would wish to measure, and the query's own company is excluded so that the task cannot
-be solved by ticker matching. Over $3{,}714$ real headlines across five sectors, MiniLM
-reaches a cross-ticker precision@5 of $0.514$ and the larger MPNet $0.538$, both above the
-lexical baseline of $0.346$; recency, at $0.126$, is worse than random.
+be solved by ticker matching. Over $2{,}845$ real headlines balanced across five sectors, drawn from the $18{,}599$
+collected in the same window, MiniLM reaches a cross-ticker precision@5 of $0.395$ and the
+larger MPNet $0.422$, both above the lexical baseline of $0.196$ and the chance base rate of
+$0.117$.
 
 The aggregate is not, however, the right way to state the result, and we state the weaker
-claim the data supports. Almost half the corpus is technology news, which makes available a
-strategy that uses no model and does not even read the query: always return technology
-headlines. Its precision equals the fraction of technology queries, $0.467$, above the
-lexical baseline. That strategy is useless as a product, since it is right on every query in
+claim the data supports. The corpus as collected is $84\%$ technology news, which makes
+available a strategy that uses no model and does not even read the query: always return
+technology headlines. Its precision equals the fraction of technology queries, $0.840$ on
+that corpus, above every method measured. That strategy is useless as a product, since it is right on every query in
 one sector and wrong in the four others, but its existence shows that the aggregate partly
-measures corpus composition. The comparison that survives the objection is made
-\emph{within} each sector, where the method exceeds the corresponding reference value in all
-five (Fig.~\ref{fig:persector}).
+measures corpus composition. Two things follow: the primary measurement uses the
+sector-balanced subset, where the same strategy is worth $0.200$; and the comparison that
+survives the objection is made \emph{within} each sector, where the method exceeds the
+corresponding reference value in all five (Fig.~\ref{fig:persector}).
 
 This comparison evaluates retrieval without using the query's sector to select candidates.
 A filter returning other companies in that known sector would satisfy the proxy by

@@ -180,7 +180,7 @@ re-treino, não um re-treino.
   Forest **0,269** vs LOF **0,280**.
 
 ### RQ2 — recuperar casos análogos · **SIM**
-- P@5 **0,514** vs **0,467** (*sempre tecnologia*, o chão certo), 0,346 (lexical), 0,240 (acaso
+- P@5 **0,395** vs **0,200** (*sempre tecnologia*, o chão certo no equilibrado), 0,196 (lexical), 0,117 (acaso
   uniforme). A afirmação forte é **por setor**: ganha nos cinco, 0,448 na energia contra 0,072.
 - No FNSPID, a tarefa causal da produção dá **0,513** contra chão **0,259**, margem **+0,254**.
   O **0,595** é o teste simétrico de escala e permite candidatos futuros.

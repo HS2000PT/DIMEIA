@@ -7,7 +7,7 @@
 >
 > 👉 **Estuda primeiro pelo [`simulacro_tese_curta.md`](simulacro_tese_curta.md)**, escrito a
 > 2026-08-23 para o documento que vais mesmo entregar, com a numeração QI e os números atuais
-> (o chão de `0.467`, a tabela de consulta, o protocolo do estudo na §A.5). Este ficheiro fica
+> (o chão trivial de `0.200`, a tabela de consulta, o protocolo do estudo na §A.5). Este ficheiro fica
 > como treino adicional das **cadeias de seguimento**, que continuam boas.
 
 > **Como usar:** lê a pergunta, tapa a resposta, responde **em voz alta** com as tuas palavras, só
@@ -175,7 +175,7 @@ avaliação foi montada para o poder revelar. Isso é engenharia de IA, não mon
 **🎓 Q3 (profundidade).** *"A sua 'IA' de recuperação é um encoder de 2021 off-the-shelf. Nem testou
 um encoder de domínio nem um moderno."*
 
-✅ *"Testei ambos, no mesmo protocolo. O FinBERT de domínio dá **0,420** — pior, coerente com ser
+✅ *"Testei ambos, no mesmo protocolo. O FinBERT de domínio dá **0,275** — pior, coerente com ser
 afinado para sentimento e não para similaridade de frases. Os modernos E5 e BGE **empatam** com o
 MiniLM (~0,51), não o superam. Ou seja, a escolha do MiniLM está validada por **medição**, não por
 conveniência: um modelo pequeno, gratuito e de 2021 continua no sweet spot para esta tarefa — e agora

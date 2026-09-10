@@ -303,20 +303,22 @@ $F_1$ $\mathbf{0{,}530}$ contra $0{,}269$ e $0{,}280$.
 \toprule
 \textbf{método} & \textbf{precisão@5} \\
 \midrule
-\textbf{Por significado (o método)} & $\mathbf{0{,}514}$ \\
-Sempre o setor maior & $0{,}467$ \\
-Por palavras em comum & $0{,}346$ \\
-Ao acaso (o chão) & $0{,}240$ \\
-As mais recentes & $0{,}126$ \\
+\textbf{Por significado (o método)} & $\mathbf{0{,}395}$ \\
+As mais recentes & $0{,}204$ \\
+Sempre o setor maior & $0{,}200$ \\
+Por palavras em comum & $0{,}196$ \\
+Ao acaso (o chão) & $0{,}117$ \\
 \bottomrule
 \end{tabular}
 \vspace{2mm}
 
 \begin{itemize}
   \small
-  \item Metade do corpus é tecnologia: \textbf{devolver sempre tecnologia} vale $0{,}467$
-        sem modelo nenhum. A margem real é $+0{,}047$, e não $+0{,}274$.
-  \item O método supera o acaso nos \textbf{cinco setores}: $0{,}448$ na energia, com chão $0{,}072$.
+  \item O corpus completo é 84\% tecnologia, e ali \textbf{devolver sempre tecnologia} vale
+        $0{,}840$ sem modelo nenhum, acima de qualquer método. É por isso que a medição
+        principal usa o subconjunto \textbf{equilibrado}, onde essa estratégia vale $0{,}200$
+        o método a supera com folga, e a margem sobre o acaso é $+0{,}278$.
+  \item O método supera o acaso nos \textbf{cinco setores}: $0{,}589$ na energia, com chão $0{,}110$.
         Não se mediu vantagem sobre um \textbf{filtro pelo setor conhecido} da consulta.
   \item Exigindo candidatos anteriores: \textbf{0{,}513}, chão \textbf{0{,}259}, margem
         \textbf{$+0{,}254$}. O teste não impõe a maturação de oito dias da produção.

@@ -39,7 +39,7 @@ fraqueza.
 | **F1 0.271 vs 0.530** | Isolation Forest vs z-score, mesma informação causal | "Dei ao modelo aprendido a MESMA informação e perdeu. 1.º teste justo." |
 | **F1 0.664 vs 0.516** | EWMA vs volatilidade deslizante | "A EWMA melhora — reporto-o. Mantenho a deslizante por ser explicável numa frase; o ganho fica como futuro VALIDADO." |
 | **P@5 0.514 (±0.015)** | Recuperação SBERT-MiniLM, cross-ticker (corpus preliminar) | ⚠️ **NÃO dizer "2,1× o acaso".** O chão trivial mais forte é **0,467**. A defesa é por setor: o método ganha nos cinco. No FNSPID, sob a restrição causal da produção, dá **0,513** contra chão **0,259**, margem **+0,254**. |
-| **+0.377 / +0.348 / +0.100** | Lift energia / saúde / consumo | "O motor vale mais onde o vocabulário é distintivo; menos no consumo, genérico." |
+| **+0.479 / +0.357 / +0.123** | Lift energia / saúde / consumo | "O motor vale mais onde o vocabulário é distintivo; menos no consumo, genérico." |
 | **z = +7.61** | Tesla, 24 Out 2024, pós-resultados | "Exemplo real: μ=−0.92%, σ=2.725%, r=+19.82% → z=+7.61. A mesma regra que ignora ±2% apanha isto." |
 | **0.542 / 0.538 / 0.496** | PR-AUC triagem: volatilidade / contexto / contexto+texto | "O TEXTO não ajuda; o sinal vive no contexto de mercado. 2.º teste justo — e **robusto** (re-teste justo com PCA/FinBERT nunca bate a volatilidade)." |
 | **0.632 vs 0.379** | Precisão@orçamento (5 alertas/dia) vs ordenação aleatória | "Ganho offline no proxy, 1,67x; seleção com o dia completo, sem garantia sobre a precisão online." |
@@ -48,7 +48,7 @@ fraqueza.
 | **P@5 0.513 vs 0.259 (80k)** | Recuperação causal no FNSPID multi-ano *(síntese)* | "Só precedentes anteriores; margem +0,254, como no produto." |
 | **P@5 0.595 vs 0.333 (80k)** | Teste simétrico de escala *(reforço)* | "Permite candidatos posteriores; prova escala, não a tarefa causal." |
 | **dir. 0.708 vs chão 0.688** | Consistência de direção dos precedentes *(reforço)* | "Recupera o TEMA, não a DIREÇÃO — tema≠direção quantificado." |
-| **FinBERT 0.420 · E5/BGE ~0.51** | Benchmark de embedders *(reforço)* | "MiniLM validado por medição: domínio pior, modernos empatam." |
+| **FinBERT 0.275 · E5 0.375 · BGE 0.395** | Benchmark de embedders *(reforço)* | "MiniLM validado por medição: domínio pior, modernos empatam." |
 | **texto justo 0.533 < 0.542** | RQ4 re-teste justo (C+PCA+FinBERT) *(reforço)* | "Negativo do texto robusto; PCA recupera de 0,499 mas nunca bate a volatilidade." |
 | **+0.012, IC [+0.004, +0.020]** | O texto **por cima** da tabela de consulta (§5.6.10) *(o resultado novo)* | "Acréscimo detetável neste protocolo, mas abaixo do critério prático de 0.02. Não bate a volatilidade, não muda a precisão no orçamento e não separa dias da mesma empresa." |
 | **AMI 0.358 vs 0.188** | Tipo de evento vs ticker, no espaço de embeddings *(Caso 5)* | "O espaço **sabe** o tipo de acontecimento, e sabe-o mais do que sabe a empresa. Mas a silhueta é 0,084: fraco demais para filtrar precedentes, por isso NÃO liguei." |

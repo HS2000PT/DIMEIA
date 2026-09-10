@@ -45,6 +45,18 @@ JUSTIFICADOS: dict[str, str] = {
     "1.08": "\\arraystretch da matriz de evidencia, medida de composicao",
     "3.11": "versao do matplotlib", "3.12": "versao do Python",
 
+    # (a2) contagens citadas da literatura: nao sao medicoes deste trabalho, logo nenhum
+    # ficheiro de avaliacao as pode sustentar. A fonte e a publicacao citada ao lado.
+    "20904": "investidores do estudo de Liu et al. (2023), citado no Cap. 2",
+
+    # (a3) propriedades do corpus fixado, declaradas na 3.2 e verificaveis no manifesto
+    "1704": ("titulos exatamente repetidos que o FNSPID entrega e que nao foram removidos; "
+             "propriedade do corpus fixado por sha256, declarada na 3.2"),
+
+    # (a4) tempo de maquina de um treino, registado em log gitignored
+    "35386": ("segundos do braco de controlo da QI4 (data/_qi4_c4.log, gitignored); "
+              "e tempo de maquina e nao um resultado, e o log declara-o ao lado dos passos"),
+
     # (b) contagens de producao, datadas, que crescem com o sistema
     "11445": "casos da base viva na branch de dados; instantaneo datado (Cap. 4)",
     "10968": "registos da base viva no momento da medicao de memoria (apendice A.5)",

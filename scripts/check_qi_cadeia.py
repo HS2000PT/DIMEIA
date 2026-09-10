@@ -37,6 +37,10 @@ QI = [
      "Deteção de movimentos invulgares"),
     ("QI2 · precedentes", "Recuperação de precedentes", "Recuperação de precedentes"),
     ("QI3 · triagem", "Triagem de notícias", "Triagem de notícias"),
+    # A QI4 entrou a 2026-09-10. A porta so conhecia tres questoes, e uma questao que a
+    # porta nao conhece e' uma questao cuja cadeia ninguem verifica.
+    ("QI4 · comparabilidade", "Ajuste do codificador por materialidade comparável",
+     "Comparabilidade de materialidade"),
 ]
 
 
@@ -120,7 +124,7 @@ def main() -> int:
     if falhas:
         print("FALHA: " + "; ".join(falhas))
         return 1
-    print("As três questões estão enunciadas, medidas, delimitadas e respondidas, e a "
+    print(f"As {len(QI)} questões estão enunciadas, medidas, delimitadas e respondidas, e a "
           "conclusão não vai além dos resultados.")
     return 0
 
