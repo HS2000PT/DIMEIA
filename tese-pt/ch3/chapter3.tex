@@ -731,6 +731,88 @@ consequência da divisão cronológica. O efeito é mensurável e está reportad
 Capítulo~\ref{cap:avaliacao}. A transformação é monótona e preserva a ordenação entre notícias, que
 é o que a política de decisão utiliza; o valor absoluto apresentado é o que fica afetado.
 
+\section{Onde entra a inteligência artificial neste sistema}
+\label{sec:met_onde_ia}
+
+As quatro decisões apresentadas até aqui recorrem a famílias de técnicas distintas, e a
+pergunta sobre o lugar da aprendizagem automática neste trabalho tem uma resposta diferente
+para cada uma. A Tabela~\ref{tab:met_onde_ia} reúne essa resposta, que de outro modo ficaria dispersa pelas
+secções anteriores, e acrescenta a decisão que as antecede a todas: o filtro que determina
+quais os títulos que chegam a ser avaliados.
+
+\begin{table}[!htbp]
+\caption[Onde entra a aprendizagem, decisão a decisão]{As cinco decisões do sistema, a origem
+dos respetivos parâmetros, e o que seria necessário para aprender cada uma a partir de dados.
+A coluna central distingue três situações que a designação genérica de inteligência artificial
+confunde: parâmetros estimados neste trabalho, parâmetros de um modelo treinado por terceiros e
+utilizado sem ajuste, e ausência de parâmetros. Os valores da primeira linha são medidos e discutidos na
+subsecção seguinte.}
+\label{tab:met_onde_ia}
+\centering
+\small
+\begin{tabular}{L{0.20\textwidth} L{0.24\textwidth} L{0.44\textwidth}}
+\toprule
+\tabhead{Decisão} & \tabhead{Origem dos parâmetros} & \tabhead{O que seria preciso para a
+aprender} \\
+\midrule
+Relevância do título & regra; sem parâmetros estimados & rótulos independentes da própria
+regra. O único disponível é a saída dela, o que torna o exercício circular \\
+\addlinespace
+Raridade do movimento & nenhum; média e desvio da janela anterior & rótulos de raridade que não
+fossem eles próprios função da volatilidade \\
+\addlinespace
+Repartição do movimento & estimados por regressão, com encolhimento & já são estimados; o que
+falta é um valor de referência observável para a repartição \\
+\addlinespace
+Comparabilidade de notícias & modelo pré-treinado por terceiros, utilizado sem ajuste & foi
+tentado, e é a Secção~\ref{sec:met_qi4}; o resultado consta da Secção~\ref{sec:av_qi4} \\
+\addlinespace
+Materialidade da notícia & estimados neste trabalho, sobre o conjunto histórico & já são
+estimados; o resultado consta da Secção~\ref{sec:av_qi3} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{A decisão que antecede as outras, e é uma regra}
+\label{sec:met_relevancia_nota}
+
+Antes de qualquer das quatro, o sistema decide se um título diz respeito à empresa em causa. A
+regra exige a menção da empresa, por nome ou por um dos seus nomes alternativos, e rejeita um
+conjunto fechado de padrões de resumo de mercado. Medida sobre as dez empresas que a lista
+vigiada percorre, retém $4\,843$ de $16\,840$ títulos, ou seja $28{,}8\%$, e descarta
+$71{,}2\%$. A decomposição dos descartes localiza o trabalho: a regra da menção explica
+$68{,}3\%$ do total e a lista de padrões apenas $3{,}0\%$.
+
+É, em proporção, o filtro mais agressivo do sistema, e é o único que permanece uma regra. A
+razão não é de conveniência. Aprender esta decisão exigiria títulos anotados quanto à sua
+pertinência, e o único rótulo disponível em quantidade é a saída da própria regra, o que
+tornaria o exercício circular. A alternativa honesta seria anotação manual, que a
+Secção~\ref{sec:con_futuro} enuncia entre as linhas que exigem julgamento humano. Enquanto não
+existir, a taxa de retenção depende da lista de nomes alternativos, e uma empresa sem entrada
+nessa lista recai na exigência do símbolo, que quase nenhum título escreve.
+
+\subsection*{O que isto significa para a leitura dos resultados}
+
+As cinco decisões correspondem a cinco situações distintas, e a tabela distingue-as uma a
+uma. A relevância é uma regra sem parâmetros. A raridade não tem parâmetros: compara o dia com a
+média e o desvio da janela anterior. A repartição tem coeficientes estimados, mas estimados sem
+rótulos, a partir dessa mesma série de retornos. A comparabilidade assenta num modelo treinado
+por terceiros e utilizado sem ajuste. E só a materialidade tem parâmetros treinados sobre
+exemplos rotulados, o que a torna a única decisão aprendida no sentido corrente do termo. O único lugar onde uma
+representação foi treinada para este problema é o ajuste contrastivo do codificador, cuja
+resposta consta do Capítulo~\ref{cap:avaliacao}.
+
+Esta distribuição não é um acidente de execução, e é ela que dá sentido à comparação que
+atravessa a avaliação. As duas decisões em que a aprendizagem deste trabalho foi aplicada, a
+materialidade e a tentativa de ajustar o codificador, são também as duas cujas respostas são
+negativas; as respostas afirmativas vêm de uma regra estatística e de um modelo utilizado como
+está. A comparação entre cada técnica adotada e a alternativa aprendida correspondente é
+apresentada em cada caso de estudo, e é a constatação com maior capacidade de transferência
+deste trabalho. A designação
+genérica de inteligência artificial descreveria mal um sistema em que a aprendizagem ocupa uma
+das cinco decisões; nomear o lugar de cada família de técnicas é a forma de o descrever sem
+prometer o que ele não faz.
+
 \section{Ferramentas e infraestrutura}
 \label{sec:met_ferramentas}
 
