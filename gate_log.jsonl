@@ -372,18 +372,6 @@
 {"date": "2026-09-08", "ticker": "TSLA", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-08", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-08", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "TSLA", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-08", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-08", "ticker": "META", "stage": "weak_precedent", "detail": "melhor sim 0.41 < 0.45"}
 {"date": "2026-09-08", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-08", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
@@ -19998,3 +19986,15 @@
 {"date": "2026-09-09", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-09", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-09", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-10", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-10", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-10", "ticker": "NVDA", "stage": "alerted", "detail": "The Overlooked Chip Stock Poised to Outperform Nvidia, AMD, and Broadcom in the "}
+{"date": "2026-09-10", "ticker": "TSLA", "stage": "alerted", "detail": "Could Tesla’s (TSLA) Cybercab Unlock a New Growth Driver?"}
+{"date": "2026-09-10", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-10", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-10", "ticker": "META", "stage": "alerted", "detail": "Meta Acquires Swedish AI Startup To Boost Automated Business Messaging"}
+{"date": "2026-09-10", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-10", "ticker": "AMD", "stage": "alerted", "detail": "Could Advanced Micro Devices (AMD)’s Partnership With Cisco Systems (CSCO) Unloc"}
+{"date": "2026-09-10", "ticker": "NFLX", "stage": "alerted", "detail": "Florida Accuses Netflix Of Privacy 'Bait-And-Switch'"}
+{"date": "2026-09-10", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-10", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
