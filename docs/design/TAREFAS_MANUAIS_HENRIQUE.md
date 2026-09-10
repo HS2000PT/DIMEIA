@@ -7,33 +7,45 @@
 
 ---
 
-## 1. CRÍTICO — Cinco PDFs da literatura, com o acesso do ISEP
+## 1. FEITO — Cinco PDFs da literatura ✅
 
-**Porquê:** cinco trabalhos entram no Capítulo 2 e não tenho o texto integral. Sem eles, ou os
-cito pelo resumo — o que é fraco e já me levou a **errar uma vez** o que o [Waa21] conclui — ou
-ficam de fora. Um deles é contraevidência directa à opção central da tese; citar mal isso seria
-pior do que não citar.
+Entregaste-os a 2026-09-09. Os quatro que faltavam foram lidos em texto integral nesse dia e
+estão integrados no Capítulo 2, nas duas línguas. O que cada um diz e o que mudou por causa
+disso está em `docs/design/capitulo2_literatura_2026-09-09.md`.
+
+**Valeu mesmo a pena, e por uma razão concreta:** eu tinha escrito, a partir do resumo, que o
+[Waa21] «justifica empiricamente a opção por explicação baseada em casos». Lido por inteiro, diz
+o contrário — as explicações por exemplos **não se distinguiram de não dar explicação nenhuma**
+(p = 0,796). Isso teria ido para a tese como uma afirmação falsa sobre um artigo com 385 citações.
+
+---
+
+## 1b. IMPORTANTE — Mais dois PDFs, quando puderes
+
+**Porquê:** são os dois estudos com pessoas **no domínio financeiro** que sustentam a secção
+mais honesta do Capítulo 2 (a contraevidência à opção por explicação baseada em casos, §2.7).
+Hoje cito-os **apenas pelo que consta do resumo do editor**, que verifiquei. Está correto assim,
+mas sem os PDFs não posso escrever quantos participantes tiveram nem os valores concretos --- e
+são esses números que dão peso ao parágrafo.
 
 **Passo a passo:**
 
-1. Abre `https://biblioteca.isep.ipp.pt` e entra com as credenciais do ISEP.
-   (Em alternativa, liga a VPN do IPP e usa os links directos abaixo.)
-2. Para cada um dos cinco, procura pelo DOI, descarrega o PDF e grava-o com **exactamente** o
-   nome indicado:
+1. Entra em `https://biblioteca.isep.ipp.pt` com as credenciais do ISEP (ou liga a VPN do IPP).
+2. Descarrega estes dois e grava-os com **exactamente** estes nomes:
 
    | Guardar como | Procurar por | DOI |
    |---|---|---|
-   | `waa2021_rules_vs_examples.pdf` | Evaluating XAI: a comparison of rule-based and example-based explanations | `10.1016/j.artint.2020.103404` |
-   | `oh2007_cbr_stock.pdf` | Oh & Kim, case-based reasoning, stock market | `10.1016/j.eswa.2006.01.044` |
-   | `muntermann2009.pdf` | Muntermann, mobile alerting, decision support | `10.1016/j.dss.2009.01.003` |
-   | `liu2023_alert_for_alerts.pdf` | Alert for Alerts (SSRN) | `10.2139/ssrn.4466498` |
-   | `du2024_explainable_contrastive.pdf` | Explainable Stock Price Movement Prediction using Contrastive Learning (CIKM 2024) | `10.1145/3627673.3679544` |
+   | `cau2023_logic_style.pdf` | Supporting High-Uncertainty Decisions through AI and Logic-Style Explanations (IUI 2023) | `10.1145/3581641.3584080` |
+   | `bertrand2023_feature_based.pdf` | Questioning the ability of feature-based explanations... (FAccT 2023) | `10.1145/3593013.3594053` |
 
-3. Cria a pasta `C:\Users\ruifa\Desktop\DIMEIA\data\literature\` e mete lá os cinco ficheiros.
-4. Diz-me «PDFs prontos». Eu leio-os e integro-os no Capítulo 2.
+   *Nota: o da FAccT costuma ser de acesso aberto na biblioteca digital da ACM. Se abrires
+   `https://dl.acm.org/doi/10.1145/3593013.3594053` a partir da rede do ISEP, deve descarregar
+   directamente. Eu não consigo lá chegar daqui.*
 
-**Nota:** a pasta `data/literature/` já está no `.gitignore`, portanto os PDFs **não** vão para
-o repositório. É de propósito — são material com direitos.
+3. Mete-os em `C:\Users\ruifa\Desktop\DIMEIA\data\literature\`.
+4. Diz-me «PDFs prontos». Leio-os e reforço a §2.7 com os números.
+
+**Se não conseguires:** não é bloqueante. A secção fica como está, correta e mais curta.
 
 ---
 

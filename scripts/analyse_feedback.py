@@ -66,7 +66,7 @@ OUT_MD = REPO / "docs" / "evaluation" / "evaluation_feedback.md"
 OUT_TEX = REPO / "tese-pt" / "ch5" / "feedback_auto.tex"
 
 # ── Regras pré-registadas. Alterar qualquer uma destas depois de haver dados é um ato que
-#    tem de ficar registado no ESTADO.md, com a data e a razão. ──────────────────────────
+#    tem de ficar registado no docs/contexto/ESTADO_REESCRITA.md, com a data e a razão. ──
 N_MINIMO = 20          # votos efetivos abaixo dos quais NÃO se reporta proporção
 DOMINANCIA_MAX = 0.40  # acima disto, reporta-se também sem o votante dominante
 

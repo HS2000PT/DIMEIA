@@ -1,7 +1,7 @@
 # Achados de citação: 134 achados, consumidos na fase F1
 
 > **ESTADO: CONSUMIDO.** O titulo deste ficheiro dizia "que nunca foram consumidos" e passou a
-> mentir a 2026-08-20, quando a fase F1 do `progress/PLANO_FINAL_ENTREGA.md` os aplicou. Um
+> mentir a 2026-08-20, quando a fase F1 do `archive/progress-historico/PLANO_FINAL_ENTREGA.md` os aplicou. Um
 > ficheiro que se auto-descreve como pendente, ao lado de trabalho feito, e pior do que nao
 > existir: manda uma sessao seguinte refazer o que ja esta feito. Fica como registo de
 > proveniencia, e nao como lista de tarefas.

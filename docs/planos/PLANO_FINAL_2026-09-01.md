@@ -760,7 +760,7 @@ Registado para não voltar a ser discutido a meio:
 
 - **Não reexecuta os 31 avaliadores.** Está identificado como dívida desde a auditoria e continua
   a ser a coisa certa a fazer. Não cabe em dezoito dias ao lado de tudo isto, e os valores atuais
-  já foram verificados um a um contra `docs/evaluation/`. Fica no `ESTADO.md` como dívida
+  já foram verificados um a um contra `docs/evaluation/`. Fica no `docs/contexto/ESTADO_REESCRITA.md` como dívida
   conhecida.
 - **Não fecha as cinco lacunas restantes do estado da arte** (enquadramento regulatório, deteção
   de quase-duplicados, seleção sob orçamento, geração a partir de dados estruturados). Custam

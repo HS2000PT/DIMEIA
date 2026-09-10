@@ -7,7 +7,9 @@
     "ficheiro": "Stock_news/nasdaq_exteral_data.csv",
     "bytes_em_bruto": 23232979597,
     "sha256_em_bruto": "1a7a3eb8e6b97ec19f286f2cfca3371542bddb272ab1eb8f36e33ad98fa5c4da",
-    "sha256_verificado_nesta_execucao": false
+    "sha256_verificado_nesta_execucao": true,
+    "sha256_verificado_em": "2026-09-10",
+    "sha256_verificado_nota": "Conferido contra data/raw/nasdaq_exteral_data.csv nesta maquina: 23 232 979 597 bytes e sha256 1a7a3eb8e6b97ec19f286f2cfca3371542bddb272ab1eb8f36e33ad98fa5c4da, ambos iguais ao declarado. Ate esta data a soma tinha sido registada da fonte e nunca conferida contra o ficheiro local, e o proprio manifesto dizia-o."
   },
   "parametros": {
     "tickers": [

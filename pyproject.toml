@@ -20,6 +20,10 @@ include = ["investigator*"]
 [tool.ruff]
 target-version = "py312"
 line-length = 100
+# archive/ guarda o que ja nao faz parte do documento, do codigo ou dos artefactos actuais.
+# Nao e codigo vivo e nao se linta: manter la 54 avisos de rascunho tornaria a porta do ruff
+# permanentemente vermelha, e uma porta que grita sempre e uma porta em que se deixa de olhar.
+extend-exclude = ["archive"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]

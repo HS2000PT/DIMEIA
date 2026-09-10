@@ -106,3 +106,8 @@ cinco letras de “Gator”, o lema e as dimensões dos PNG.
 - [x] geometria única no ativo e no painel;
 - [x] avatar RGBA de 512×512;
 - [x] slogan curto, sem previsão, aconselhamento ou causalidade implícita.
+# Identidade atual — atualização de 09/09/2026
+
+O autor aprovou uma identidade sem animal: wordmark InvestiGator numa só cor e monograma I.
+Ver [marca v9 e exportações](brand-v9/README.md). O registo abaixo descreve a identidade
+anterior, preservada nas figuras históricas da dissertação.

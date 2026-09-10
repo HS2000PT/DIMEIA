@@ -1,7 +1,7 @@
 # CHECKLIST — o que FALTA (só isso)
 
 > Lista viva, mínima de propósito: **apenas o que ainda não está feito.** O histórico completo
-> do que já foi construído vive em `progress/SESSIONS.md` (por sessão) e `progress/TRACKER.md`
+> do que já foi construído vive em `archive/progress-historico/SESSIONS.md` (por sessão) e `archive/progress-historico/TRACKER.md`
 > (por fase); o estado técnico detalhado em `CLAUDE.md`; o resumo para o júri em
 > `archive/reports/RELATORIO_FINAL.md`. Última limpeza: 2026-08-21.
 

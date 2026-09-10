@@ -108,6 +108,6 @@ se só queres correr o sistema.
 > correr: o guião contém o critério de correção, e publicá-lo antes enviesaria a medição.
 
 ## Notas internas de continuidade
-> Vivem em `progress/` e na raiz (`CLAUDE.md` — memória de trabalho do projeto). O plano ativo é
-> `progress/PLANO_V2.md`; `MASTER_PLAN`, `PRODUCT_ROADMAP` e `PLANO_MELHORIAS` estão marcados como
+> Vivem em `archive/progress-historico/` e na raiz (`CLAUDE.md` — memória de trabalho do projeto). O plano ativo é
+> `archive/progress-historico/PLANO_V2.md`; `MASTER_PLAN`, `PRODUCT_ROADMAP` e `PLANO_MELHORIAS` estão marcados como
 > superados e ficam só como registo.

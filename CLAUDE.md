@@ -1,6 +1,6 @@
 # CLAUDE.md — Memória Persistente do Projeto
 
-> ⛳ **PRIORIDADE MÁXIMA: ler `docs/planos/PLANO_FINAL_2026-09-01.md` na raiz de `DIMEIA/` antes de tocar em seja o que for.** Criado a 2026-09-01. Manda sobre este ficheiro e sobre todos os outros planos do repositório, incluindo `progress/PLANO_FINAL_ENTREGA.md`, `progress/PLANO_EMERGENCIA_DEFESA_2026-08-30.md` e `archive/reports/INVESTIGATOR_MASTER_PLAN.md`, que ficam como registo histórico.
+> ⛳ **PRIORIDADE MÁXIMA: ler `docs/planos/PLANO_FINAL_2026-09-01.md` na raiz de `DIMEIA/` antes de tocar em seja o que for.** Criado a 2026-09-01. Manda sobre este ficheiro e sobre todos os outros planos do repositório, incluindo `archive/progress-historico/PLANO_FINAL_ENTREGA.md`, `archive/progress-historico/PLANO_EMERGENCIA_DEFESA_2026-08-30.md` e `archive/reports/INVESTIGATOR_MASTER_PLAN.md`, que ficam como registo histórico.
 
 > Ficheiro mais crítico do projeto. É o mecanismo principal de continuidade entre sessões e dispositivos.
 > **REGRA ABSOLUTA: atualizar este ficheiro no fim de TODAS as sessões, sem exceção.**
@@ -9,6 +9,61 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 68 (2026-09-10): O REPOSITÓRIO REORGANIZADO, E A RAIZ PASSOU A TER OITO
+  FICHEIROS EM VEZ DE TREZE — MAIS DUAS AFIRMAÇÕES DE ARRUMAÇÃO QUE ESTAVAM FALSAS.**
+  **⚠️ (A) CAMINHOS QUE MUDARAM, E QUEM RETOMAR TEM DE SABER:**
+  `ESTADO_ATUAL.md` e `TASKS.md` → **`docs/contexto/`**; `BRIEF_REESCRITA.md`,
+  `PROMPT_TAREFA.md` e `ESTADO.md` saíram de dentro de `tese-pt/` para `docs/contexto/`
+  (o último renomeado para **`ESTADO_REESCRITA.md`**, senão eram dois ficheiros a dizer «o
+  estado é este»); `requirements-app/ml/lock` → **`config/requisitos/`**; `progress/` →
+  **`archive/progress-historico/`**; 17 *one-shots* gastos → **`archive/scripts-gastos/`**.
+  **Tudo com `git mv`** — o `git log --follow` sobrevive. 28 ficheiros de referência
+  reescritos, **zero referências órfãs** depois de verificado.
+  **⚠️ (B) A ÚNICA QUEBRA FUNCIONAL ERA UMA, e não estava onde eu esperava.** O
+  `setup_env.sh` instalava `requirements-ml.txt` pelo caminho antigo. Os quatro *workflows*
+  do CI estavam **limpos** — invocam `requirements.txt`, que fica na raiz por obrigação do
+  *buildpack*.
+  **✅ (C) A RAIZ: OITO SOLTOS, E OS OITO SÃO OBRIGATÓRIOS.** `Procfile`, `app.json`
+  (Heroku lê-os na raiz), `requirements.txt` (é o que faz o *buildpack* detectar a
+  aplicação), `pyproject.toml` (packaging + config do `pytest` e do `ruff`), `README.md`,
+  `CITATION.cff` (convenções do GitHub), `CLAUDE.md`, `AGENTS.md` (contexto de agente).
+  ⚠️ **E contei sete antes de contar oito.** A promessa de contagem estava escrita no
+  `README.md` antes de eu somar a tabela que a acompanha — é a classe de defeito que as
+  portas deste projecto apanham, e apanhou-me a mim.
+  **✅ (D) O `ruff` FICOU LIMPO PELA PRIMEIRA VEZ EM VÁRIAS SESSÕES, e a causa é
+  específica.** Os sete avisos arrastados eram todos dos `_patch_*.py` gastos. E mover o
+  rascunho de 47 MB para dentro da árvore fez o `ruff` passar a varrê-lo: **61 erros**, 54
+  deles meus por deslocação. Correcção certa: `extend-exclude = ["archive"]` — o arquivo
+  não é código vivo, e uma porta que grita sempre é uma porta em que se deixa de olhar.
+  **⚠️ (E) DUAS AFIRMAÇÕES DE ARRUMAÇÃO ESTAVAM FALSAS, e as duas mandavam proteger o que
+  já não existe.** O `archive/README.md` dizia que **`progress/`** tinha quem o chamasse —
+  `check_all_gates.py`, `make_public_bundle.py`, `ci.yml`. **Medido: nenhum dos três.** O
+  único acerto de `grep progress` nos *workflows* é `cancel-in-progress`, que não é a
+  pasta — a mesma classe de falso positivo que este projecto já pagou cinco vezes. E dizia
+  que `thesis/` e `thesis-pt/` tinham de ficar; estão em `archive/thesis-versions/` desde
+  há sessões.
+  **⚠️ (F) E O PLANO DESTA MESMA TAREFA AUTODECLARAVA-SE «AINDA NÃO EXECUTADO» HÁ NOVE
+  DIAS.** O `docs/design/reorganizacao.md` é de 2026-09-01 e **metade dele estava feita**
+  (`tmp/` de 66 MB fora, `archive/thesis-versions/`, raiz de 17 para 8 `.md`). Um plano
+  assim ao lado de trabalho feito **manda a sessão seguinte refazer tudo** — é o defeito
+  que a sessão 61 pagou com o `achados_citacoes_por_consumir.md`. Ficou com registo de
+  execução, item a item.
+  **⏭️ (G) O QUE CONSCIENTEMENTE NÃO SE FEZ, E É PARA NÃO REABRIR.** A §3 desse plano
+  propõe mover tudo para **`code/`** e **`dissertation/`**. Custo contado, não estimado:
+  os **dezanove verificadores** fixam `tese-pt/` e `tese-eng/` no caminho; o `Procfile`
+  passaria a depender de `PYTHONPATH`; os `latexmkrc` e o `graphicspath` mudam de raiz; os
+  manifestos de `docs/design/*_manifest.json` guardam caminhos com `sha256`; o CI tem
+  quatro *jobs* que os invocam. **O benefício é arrumação e o custo é risco**, e o júri
+  recebe um PDF — não abre o repositório. Se for para fazer, é **depois da defesa**.
+  **✅ (H) O BUNDLE PÚBLICO GANHOU DUAS EXCLUSÕES QUE DECORREM DA REORGANIZAÇÃO.** Excluía
+  só `progress/`; agora exclui **`archive/` inteiro** (que passou a ser o destino de tudo o
+  que não é entrega, incluindo relatórios internos e versões superadas da tese) e
+  **`docs/contexto/`**. Verificado a correr: 755 copiados, **190 internos excluídos**, scan
+  de segredos limpo, e nem `archive/` nem `docs/contexto/` entram.
+  **PORTAS: 1174 testes · `ruff` limpo · `check_entrega` verde nos 23 verificadores · as
+  duas árvores a 0 erros (PT 2 550 359 bytes · EN 2 500 715) · nenhum `.tex` tocado, logo a
+  composição é idêntica.** Pendência única e humana: os nomes do júri.
+
 - **🆕 SESSÃO 67 (2026-09-08): O PEDIDO ERA «CUSTE O QUE CUSTAR» E O QUE ELE PRODUZIU FOI
   UMA LIMITAÇÃO ENCERRADA NO PRODUTO, UMA FIGURA DE ABERTURA, E SETE DEFEITOS QUE NENHUMA
   PORTA VIA.**
@@ -1542,7 +1597,7 @@
   achados eu próprio**, um a um, contra os ficheiros: **onze confirmaram-se**, e várias
   severidades vinham inflacionadas. Ficam por correr quatro lentes: arguente hostil, figuras
   renderizadas, estrutura contra as quatro teses aprovadas, e escrita. **Plano completo em
-  [`progress/REVISAO_TESE_2026-08-21.md`](progress/REVISAO_TESE_2026-08-21.md)**, que separa o
+  [`archive/progress-historico/REVISAO_TESE_2026-08-21.md`](archive/progress-historico/REVISAO_TESE_2026-08-21.md)**, que separa o
   corrigido, o que ficou por decidir, e **o que foi verificado e estava limpo** — esta última
   parte para ninguém voltar a gastar tempo lá.
   **⚠️ (B) O ACHADO GRAVE: A TABELA DE CONSULTA NÃO É «O MELHOR PREDITOR QUE EXISTE», e fui eu
@@ -1997,7 +2052,7 @@
   **PORTAS: 741 testes a passar e `python scripts/check_entrega.py` sai a zero** — tese **114 pp**, slides **20**, guia
   **22**, 0 erros e 0 referências indefinidas nos três, overfull máx 5 pt na tese e **0** nos
   materiais, números a bater com a fonte, escapes limpos.
-  **⏭️ O QUE FICA É SÓ HUMANO, e está no `progress/PLANO_FINAL_ENTREGA.md`:** a leitura final; a
+  **⏭️ O QUE FICA É SÓ HUMANO, e está no `archive/progress-historico/PLANO_FINAL_ENTREGA.md`:** a leitura final; a
   declaração de IA e a licença com o orientador (com as duas restrições de partilha nos mesmos
   termos); a data de entrega; os agradecimentos; rodar as 4 credenciais; descarregar os 3 PDF da
   F1c e substituir o do Bollerslev; gravar a demonstração; e o estudo com utilizadores, que é o
@@ -2193,8 +2248,8 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 67 (a limitação da repartição encerrada no produto, a figura de abertura do Cap. 1, e sete defeitos de composição que nenhuma porta via)
-- **Última atualização:** 2026-09-08
+- **Sessão nº:** 68 (o repositório reorganizado: raiz de treze para oito ficheiros, e duas afirmações de arrumação que estavam falsas)
+- **Última atualização:** 2026-09-10
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
   ter calma nas estatísticas, mostrando cada salto até ao valor final):**
@@ -2285,7 +2340,7 @@
 - **🆕 SESSÃO 57 (2026-08-13 — o aluno deu uma directiva-mestra: auditar tudo antes de mexer em
   nada, e criar o plano-mestre do projecto):**
   **(A) PLANO-MESTRE CRIADO:** [`archive/reports/INVESTIGATOR_MASTER_PLAN.md`](archive/reports/INVESTIGATOR_MASTER_PLAN.md) na raiz,
-  sucede ao `PLANO_V2` (cadeia actualizada no `progress/README.md`; o V2 **não** foi movido — é
+  sucede ao `PLANO_V2` (cadeia actualizada no `archive/progress-historico/README.md`; o V2 **não** foi movido — é
   citado por oito ficheiros e guarda as justificações dos cortes). Traz a matriz de selecção de
   métodos de IA, a análise das candidatas a RQ (**veredicto: NÃO renumerar**, com a razão escrita),
   a matriz de rastreabilidade **componente→utilizador** (eixo diferente da Matriz de Evidência, que
@@ -2964,7 +3019,7 @@
   **⏭️ PENDENTE (não-código, decisões do aluno):** (1) aprovar/emendar
   `docs/design/dashboard_v4_acceptance.md` e decidir **promover a v4** (uma linha no `Procfile`,
   que abre dívida de tese como abriu na sessão 48); (2) escolher a marca/mascote com os renders à
-  frente; (3) tudo o que já estava no `progress/BACKLOG_ALUNO.md` (literatura com PDF, latência
+  frente; (3) tudo o que já estava no `archive/progress-historico/BACKLOG_ALUNO.md` (literatura com PDF, latência
   quase-real, 6ter comparação de mercado nomeada na tese, rodar as 4 credenciais).
 - **🚨 SESSÃO 51 (2026-08-06):**
   **(A) ⚠️ FUGA DE CREDENCIAL, apanhada a verificar a implantação — é o achado da sessão.**
@@ -3060,7 +3115,7 @@
   do "porque é que subiu hoje?"** (Robinhood Cortex, Google Finance, Perplexity), e trocar a lista
   de Sim/Não por **um mesmo acontecimento posto lado a lado** entre produtos.
   **⚠️ (0) NOVO BACKLOG DO ALUNO, POR ANALISAR:**
-  [`progress/BACKLOG_ALUNO.md`](progress/BACKLOG_ALUNO.md) — seis pedidos ditados no fim da
+  [`archive/progress-historico/BACKLOG_ALUNO.md`](archive/progress-historico/BACKLOG_ALUNO.md) — seis pedidos ditados no fim da
   sessão (refazer o painel; rever a literatura com o PDF real de cada fonte no repo; latência
   quase-real dos alertas; melhorar o guia; rever a escrita para soar humana; varrer os TODO que
   restam). **Ele disse explicitamente "não penses nisso ainda"** — está registado em bruto, sem
@@ -3105,9 +3160,9 @@
   **as duas passagens de paridade**). Verifiquei os dois achados **eu próprio** contra as fontes
   primárias antes de aplicar, e fiz a paridade por script. O limite é **intermitente** — abriu a
   meio da sessão e voltou a fechar.
-  **(D) ARRUMAÇÃO DO REPO, executada em parte:** `progress/_historico/` com os três planos que se
+  **(D) ARRUMAÇÃO DO REPO, executada em parte:** `archive/progress-historico/_historico/` com os três planos que se
   **auto-declaravam superados** (MASTER_PLAN → PRODUCT_ROADMAP → PLANO_MELHORIAS), mais
-  `progress/README.md` novo a explicar o que está vivo e porque é que um plano superado ao lado de
+  `archive/progress-historico/README.md` novo a explicar o que está vivo e porque é que um plano superado ao lado de
   um plano activo é **pior** do que não ter plano (as caixas por marcar incluem itens **cortados
   por decisão**). Todas as referências actualizadas, **0 links relativos partidos** (verificado).
   **⚠️ E o que NÃO se apagou, que é o mais importante:** o varrimento de órfãos acusava
@@ -3208,7 +3263,7 @@
   O varrimento de órfãos deu 24 nomes e a **maioria são falsos positivos**: os `__init__.py`
   são marcadores de pacote, os logótipos das empresas são carregados **por ticker em runtime**
   (nenhum ficheiro os nomeia), e os PNG do MEIA/DEI são do template do ISEP. Sobram ~4 a olhar
-  a sério: `docs/design/dashboard_v2_design.md` (a v2 foi rejeitada), `progress/_historico/PRODUCT_ROADMAP.md`,
+  a sério: `docs/design/dashboard_v2_design.md` (a v2 foi rejeitada), `archive/progress-historico/_historico/PRODUCT_ROADMAP.md`,
   e `scripts/figures/fig_{embedding_projection,uncertainty}.py`. **Apagar sem verificar cada um
   seria exactamente o tipo de limpeza que parte a compilação da tese** — fica para a próxima
   sessão, com os PDF a recompilar como porta.
@@ -3670,7 +3725,7 @@
 - **🧭 SESSÃO 42 (o aluno rejeitou o produto por inteiro: "the product sucks… the streamlit is
   completely dogshit… the alerts come too late… the AI usage is so short"; pediu repensar do zero,
   worldmonitor.app como referência de ambição, e disse "não tenho medo de mudar tudo"):**
-  **Plano-mestre novo: [`progress/PLANO_V2.md`](progress/PLANO_V2.md)** (substitui `PLANO_MELHORIAS.md`
+  **Plano-mestre novo: [`archive/progress-historico/PLANO_V2.md`](archive/progress-historico/PLANO_V2.md)** (substitui `PLANO_MELHORIAS.md`
   como plano ativo). **Método:** workflow multi-lente (5 lentes — trader ativo, investidor de longo
   prazo, análise competitiva, examinador do currículo MEIA, crítico de viabilidade) + 2 críticos
   adversários + síntese. **A revisão adversária corrigiu 3 erros meus:** (1) `abnormal_returns`
@@ -3986,7 +4041,7 @@
   queda" (tema≠direção, já no CS3; melhorar PRODUTO/clareza, NÃO fabricar número), critério de
   alerta mais sensível/customizável, história aparece tarde, ser crítico. (WS6) futuro: chatbot-
   mascote (RAG nos dados → net), multi-bolsa, auth robusta. **Plano completo, priorizado, com a
-  minha análise crítica e sugestões: [`progress/_historico/PLANO_MELHORIAS.md`](progress/_historico/PLANO_MELHORIAS.md).**
+  minha análise crítica e sugestões: [`archive/progress-historico/_historico/PLANO_MELHORIAS.md`](archive/progress-historico/_historico/PLANO_MELHORIAS.md).**
   **Fase 1 = WS1 (apêndice) + setas verdes + estado do mercado.** REGRA DURA em todo o roadmap:
   não fabricar; congelados byte-iguais; bilingue em sincronia; sem trailer de co-autoria nos commits.
   **✅ FEITO nesta corrida (PR #1, 13 commits, push direto autorizado "always push directly"):**
@@ -4000,7 +4055,7 @@
   **219 testes + ruff verdes; congelados byte-iguais; tese 90 pp.** Decisões do aluno: próximo
   foco = App value; setas 📈/📉; auth guest+admin. **Passo humano p/ ativar o painel:** segredos
   `admin_password` (+ opcional `github_token`) no Streamlit — sem eles, guest read-only (seguro).
-  Plano vivo: [`progress/_historico/PLANO_MELHORIAS.md`](progress/_historico/PLANO_MELHORIAS.md).
+  Plano vivo: [`archive/progress-historico/_historico/PLANO_MELHORIAS.md`](archive/progress-historico/_historico/PLANO_MELHORIAS.md).
   **✅ MAIS nesta sessão (o aluno insistiu "continue / you decide everything / always push
   directly" ~10×; PR #1 ~28 commits):** (a) **mascote crocodilo dia/noite** on-brand
   (`app/assets/mascot_{day,night}.svg`) sincronizada com a hora local via `day_phase()` — logo do
@@ -4113,7 +4168,7 @@
   pedido dos "logos das tecnologias/APIs" (badges de NOME, offline-safe, sem imagens de marca). Slides
   17→19 frames; guia 73→**76 slides**; Result 4 dos slides + frame do guia ganham a ablação RQ4-ext.
   **✅ F9 (commit 106ed97) — bundle público:** `scripts/make_public_bundle.py` (parte de `git ls-files`
-  ⇒ nunca inclui `.env`/segredos/corpora; remove os caminhos só-internos: progress/, CLAUDE.md,
+  ⇒ nunca inclui `.env`/segredos/corpora; remove os caminhos só-internos: archive/progress-historico/, CLAUDE.md,
   .claude/, docs/internal|_archive|defence/, slides/, CHECKLIST/RELATORIO; scan de segredos; `--git` =
   1 commit; **NUNCA faz push**) + manifesto `docs/design/public_bundle.md`. Testado: 210 ficheiros,
   21 internos excluídos, scan limpo, 1 commit "Initial public release of InvestiGator".
@@ -4452,7 +4507,7 @@
   construído): MiniLM-ONNX na nuvem (CHECKLIST, polimento).
 - **🎯 PLANO FINAL (as 4 frentes pós-ML)** — o aluno pediu "fazer TUDO": polimento da escrita da tese,
   rename `src/`→`investigator/`, KB FNSPID multi-ano e S-APP Fase B, pela ordem que fizesse mais sentido.
-  Ordem fixada e registada em **`progress/PLANO_FINAL.md`** (checkpoint multi-dispositivo): P1 escrita →
+  Ordem fixada e registada em **`archive/progress-historico/PLANO_FINAL.md`** (checkpoint multi-dispositivo): P1 escrita →
   P2 rename → P3 KB → P4 S-APP.
   **P1 FEITO (commit `5c4c099`):** passe editorial às secções novas da RQ4 (Ch2 §triage, Ch3 §met_triage,
   Ch5 CS4, Ch6 contribuições) — frases-comboio partidas, ecos removidos ("deliberately"×3→1 por zona,
@@ -4499,7 +4554,7 @@
   `python scripts/post_validate.py`; opcional renomear o repo GitHub). Para o bot ao vivo: correr
   `scripts/run_bot.py` numa máquina + `bot.enabled: true` no alerts.yaml.
 - **🤖 WORKSTREAM ML (RQ4) — M0–M6 + M7-TESE COMPLETOS.** Gate aberto pelo orientador (2026-07-04; confia no aluno, de férias). **M6 FEITO (madrugada de 05/07, processo destacado):** FNSPID 2018–2023 → **79.753 exemplos** (1.501 dias únicos, 0 descartes; **14/15 tickers** — META="FB" no corpus, reportado; positivos 38,5/47,0/37,8% — sem regime shift; densidade cresce: 2023=44% das linhas); retreino SBERT com HF_HUB_OFFLINE=1 (o hub falhou com o modelo em cache — 1.ª tentativa de retreino morreu nisso). **RESULTADO FINAL (teste, prevalência 0,378):** PR-AUC **vol 0,542** > contexto 0,538 > full 0,496 > GBM 0,469 > texto 0,439 > sempre 0,378 ⇒ **nenhum modelo com texto bate a volatilidade** (pré-comprometido, reportado tal como é); **MAS precisão@5/dia 0,632 vs 0,163** (quase 4×), Brier 0,218 vs 0,622 ⇒ triagem vale como mecanismo. 2.ª comparação "aprendido vs simples" ganha pela escolha transparente (1.ª = IF vs z-score). **M7-TESE FEITA:** RQ4 de ponta a ponta — Ch1 (RQ4+objetivo+contribuição), Ch2 (secção triagem; 52/52 citações verificadas), Ch3 (modelo+protocolo+data card FNSPID atualizado), Ch4 (componente+decision logic+deploy honesto), Ch5 (**Case Study 4** com tabela/figuras + IF no CS1 + "four studies"), Ch6 (veredicto RQ4 "No on the text hypothesis; yes on the mechanism" + 4 contribuições + limitações/futuro), abstract EN 197≤200 + resumo PT. **Compila 74 pp, 0 erros, 0 cit. indefinidas, overfull máx 12pt; 93 testes + ruff verdes.** learning.md §16 com números finais. **M7-MATERIAIS FEITOS (05/07):** paper IEEE **4 pp** (+2 refs; subsecção "Materiality triage"; abstract/related/system/discussão/conclusão), slides de defesa **16 frames** (+RQ4 no frame das perguntas, +frame "Result 4", limitações/conclusões atualizadas, +3 perguntas de júri sobre triagem/lookahead/RL), guia de estudo **63 slides** (+3 frames que ENSINAM a triagem do zero — tarefa/rótulo/split/calibração/métricas/resultado + loop de pós-validação; slide "o que usa/NÃO usa" corrigido: JÁ treina um modelo, deep learning continua fora), caderno de defesa (§5 secção RQ4 completa + 5 linhas novas no mapa de números + 4 perguntas de júri novas incl. "o vosso modelo perdeu — é um fracasso?"), app (métricas 93✓/52/52; "trains no model" corrigido para "one model trained by the author") e README (93 testes, 52 refs, ~74 pp, layout com models/ e investigator/triage/). Page-audit estendido (secção "Extensão M7"). Tudo compila 0 erros; 93 testes + ruff verdes. **O workstream ML está 100% fechado (M0–M7).** Loop M5.5 armado (3 decisões reais pendentes maturam ~08-09/07 → `python scripts/post_validate.py`).**
-  Plano-mestre multi-dispositivo: **`progress/ML_PLAN.md`** (caixas de estado no §3). Feito: dataset com
+  Plano-mestre multi-dispositivo: **`archive/progress-historico/ML_PLAN.md`** (caixas de estado no §3). Feito: dataset com
   rótulos anti-lookahead (testado por mutação do futuro), 6 famílias treinadas com SBERT real, calibração
   Platt, reproduzível (2 corridas = métricas idênticas; retreino do M5 = joblib **bit-idênticos**),
   **modelos versionados em `models/`** (LR 18 KB + GBM 1,1 MB + **contexto-só 1,8 KB de produção**).
@@ -4519,10 +4574,10 @@
   reais (Brier 0,25 = (0,5−1)² exato). **93 testes + ruff verdes.** **Falta:** M6 (FNSPID overnight,
   **click do aluno**) → M7 (tese/guia/slides, **gated no OK do Prof. Luís Gomes** — proposta pronta em
   `docs/internal/proposta_ml_orientador.md`, **o aluno tem de a enviar**).
-- **REBRANDING InvestiGator (Sessão 28, 2026-07-03):** o aluno escolheu o nome **"InvestiGator"** (investigate+alligator; mascote jacaré-detetive à Sherlock) e, avisado do peso académico (Cap. 4, abstracts, figuras, júri vê o trocadilho), **decidiu explicitamente: renomear TUDO, incluindo a tese**. Executado: **renomeação total do nome antigo → InvestiGator** em tese (96 menções; Ch4 = "InvestiGator: An Explainable Financial-Alert System…"), paper, slides de defesa, guia de estudo, caderno, app, README, docs de design, scripts, CITATION, config. **Técnica segura:** primeiro só o texto VISÍVEL (CAPS/small-caps→plain), com os *labels* LaTeX internos intactos (zero refs partidas); gramática EN corrigida ("A …"→"An InvestiGator"). **História:** o aluno correu depois um replace global próprio que renomeou também os registos datados (`progress/`, `docs/decisions/*`) e os labels LaTeX (consistente — verificado); o nome antigo fica preservado na história do git. **Validado:** tese recompila **72 pp, 0 erros, 0 citações/refs indefinidas** (TOC confirma o novo título do Cap. 4); paper 3 pp, slides 15 pp, guia 60 pp — todos 0 erros; **47 testes + ruff verdes**; AppTest sem exceções. **Mascote:** `app/assets/investigator.svg` (SVG desenhado à mão: jacaré com deerstalker, monóculo, lupa, laço) no `st.logo` + Home da app + topo do README; favicon 🐊; tagline *"Investigate. Don't speculate."* **Go-live (estado):** repo **público** (verificado por API; história limpa — scan de segredos aos 128 commits: 0), canal Telegram criado, 3 segredos definidos, workflow corrido; **URL vivo** <https://investigator-ddc9d8618935.herokuapp.com> no README/CHECKLIST. **Falta 1 clique humano:** a app ainda pede login (foi implantada com o repo privado) → share.streamlit.io → app → ⋮ → Settings → **Sharing → pública**. Opcional: renomear o repo GitHub `DIMEIA`→`InvestiGator` (redireciona; depois atualizar badges + re-ligar Streamlit).
+- **REBRANDING InvestiGator (Sessão 28, 2026-07-03):** o aluno escolheu o nome **"InvestiGator"** (investigate+alligator; mascote jacaré-detetive à Sherlock) e, avisado do peso académico (Cap. 4, abstracts, figuras, júri vê o trocadilho), **decidiu explicitamente: renomear TUDO, incluindo a tese**. Executado: **renomeação total do nome antigo → InvestiGator** em tese (96 menções; Ch4 = "InvestiGator: An Explainable Financial-Alert System…"), paper, slides de defesa, guia de estudo, caderno, app, README, docs de design, scripts, CITATION, config. **Técnica segura:** primeiro só o texto VISÍVEL (CAPS/small-caps→plain), com os *labels* LaTeX internos intactos (zero refs partidas); gramática EN corrigida ("A …"→"An InvestiGator"). **História:** o aluno correu depois um replace global próprio que renomeou também os registos datados (`archive/progress-historico/`, `docs/decisions/*`) e os labels LaTeX (consistente — verificado); o nome antigo fica preservado na história do git. **Validado:** tese recompila **72 pp, 0 erros, 0 citações/refs indefinidas** (TOC confirma o novo título do Cap. 4); paper 3 pp, slides 15 pp, guia 60 pp — todos 0 erros; **47 testes + ruff verdes**; AppTest sem exceções. **Mascote:** `app/assets/investigator.svg` (SVG desenhado à mão: jacaré com deerstalker, monóculo, lupa, laço) no `st.logo` + Home da app + topo do README; favicon 🐊; tagline *"Investigate. Don't speculate."* **Go-live (estado):** repo **público** (verificado por API; história limpa — scan de segredos aos 128 commits: 0), canal Telegram criado, 3 segredos definidos, workflow corrido; **URL vivo** <https://investigator-ddc9d8618935.herokuapp.com> no README/CHECKLIST. **Falta 1 clique humano:** a app ainda pede login (foi implantada com o repo privado) → share.streamlit.io → app → ⋮ → Settings → **Sharing → pública**. Opcional: renomear o repo GitHub `DIMEIA`→`InvestiGator` (redireciona; depois atualizar badges + re-ligar Streamlit).
 - **AUDITORIA + POLIMENTO + FLAGSHIP (Sessão 27, 2026-07-02):** o aluno pediu uma auditoria profunda ("team de arquiteto/staff eng/reviewer…") ao repositório (não à tese) e autorizou **relatório + polimento seguro + 1 feature** (runway: meses até submeter). **Relatório de auditoria** escrito no plano (`.claude/plans/…squishy-yeti.md`): scorecard honesto (Overall 8.5, Arch 9, Docs 9, Thesis 9.5, Reprodutibilidade 7, Deploy 3, UX 6, Maint 8.5, Debt baixo), Top-25, críticos/altos/médios, e desenhos de Streamlit/cloud/Telegram-onboarding/multi-mercado como **trabalho futuro** (desafiando o prompt genérico: a tese NÃO treina modelos nem prevê preços — manter assim). **Executado (tudo com 43 testes + ruff verdes, números da tese inalterados):**
-  **(P0 reprodutibilidade/CI/organização)** — (C1) `requirements.txt` passou a **leve**; nova `requirements-ml.txt` (torch CPU + SBERT, com `--extra-index-url` da PyTorch no próprio ficheiro); `setup_env.sh` leve por defeito + flag `--ml` — **corrige o "correr num comando" que falhava numa máquina limpa** (torch `+cpu` não está no PyPI). (C2/C3) novo **`.github/workflows/ci.yml`** (pytest+ruff em runner limpo a cada push de código) — o CI antes só compilava a tese; afirmação "CI corre testes" corrigida. **CITATION.cff** novo; **`docs/README.md`** índice; `ROOT_PROMPT_CLAUDE_CODE.md` → `docs/internal/`; badges no README; **licença de código deixada por decidir com o orientador** (nota honesta, sem escolher IP).
-  **(P2 flagship)** — **`app/streamlit_app.py`**: dashboard interativo sem estado por cima das funções validadas (Home, News trigger com tabela de precedentes real, Market trigger z-score ao vivo, Evaluation com números validados, How it works com grafo, About/cite). Validado: boota headless (health `ok`) + **AppTest ponta-a-ponta** (Home/News/Evaluation sem exceções; clique devolve 3 precedentes). `requirements-app.txt` + `docs/design/deployment.md` (Streamlit Community Cloud, grátis); ruff cobre `app/`. **Honesto:** sem previsão, não envia nada, usa o embedder baseline (SBERT fica na página Evaluation).
+  **(P0 reprodutibilidade/CI/organização)** — (C1) `requirements.txt` passou a **leve**; nova `config/requisitos/requirements-ml.txt` (torch CPU + SBERT, com `--extra-index-url` da PyTorch no próprio ficheiro); `setup_env.sh` leve por defeito + flag `--ml` — **corrige o "correr num comando" que falhava numa máquina limpa** (torch `+cpu` não está no PyPI). (C2/C3) novo **`.github/workflows/ci.yml`** (pytest+ruff em runner limpo a cada push de código) — o CI antes só compilava a tese; afirmação "CI corre testes" corrigida. **CITATION.cff** novo; **`docs/README.md`** índice; `ROOT_PROMPT_CLAUDE_CODE.md` → `docs/internal/`; badges no README; **licença de código deixada por decidir com o orientador** (nota honesta, sem escolher IP).
+  **(P2 flagship)** — **`app/streamlit_app.py`**: dashboard interativo sem estado por cima das funções validadas (Home, News trigger com tabela de precedentes real, Market trigger z-score ao vivo, Evaluation com números validados, How it works com grafo, About/cite). Validado: boota headless (health `ok`) + **AppTest ponta-a-ponta** (Home/News/Evaluation sem exceções; clique devolve 3 precedentes). `config/requisitos/requirements-app.txt` + `docs/design/deployment.md` (Streamlit Community Cloud, grátis); ruff cobre `app/`. **Honesto:** sem previsão, não envia nada, usa o embedder baseline (SBERT fica na página Evaluation).
   **DEFERIDO (com razão):** renomear `src/`→`investigator/` (pacote instalável, tirar o `sys.path`) — benefício interno vs. **grande churn de docs** (inventário no CLAUDE.md, caderno, learning/glossary, slides do guia referenciavam `src/…`); merece **sessão dedicada** com sync de docs. Verificado que **nem a tese nem o paper referenciam `src/`** (a reescrita tirou identificadores de código), por isso o rename não afeta a tese quando for feito. **→ EXECUTADO (P2 do PLANO_FINAL, 2026-07-05): pacote `investigator/` instalável (pyproject + `-e .`), hacks sys.path removidos, bundles re-serializados com probe idêntico.**
   **(P3 UX / correr por cliques)** — para quem evita a consola: **`.vscode/`** versionado (Run & Debug ▶ Dashboard/Demo/ficheiro + tarefas: Tests, "Tests + lint (verify)", compilar Thesis/Slides/Guia/Paper, Setup leve/`--ml`), **`archive/streamlit-app/run/*.bat`** (duplo-clique: dashboard/demo/tests/thesis), guia **`docs/design/run_in_vscode.md`**, e **`docs/planos/CHECKLIST.md`** (lista viva com caixas: feito / humano / polimento / tese / futuro). Tudo aditivo (config/docs); 43 testes + ruff verdes.
   **(P4 going-live 24/7, grátis, sem servidor)** — o aluno pediu "app sempre up, users com notificações no telemóvel, webpage a qualquer hora, tudo grátis". Decisão (confirmada): **faseado** — Fase A agora sem servidor; Fase B (bot interativo por utilizador, host do Student Pack + BD) só desenhada. **Clarificados 3 equívocos** ao aluno: NÃO há modelo treinado (por desenho — SBERT pré-treinado em cache HF + KB construída + matemática pura); NÃO havia timer/servidor/listener (cada gatilho corria 1x e saía); para push agendado NÃO é preciso servidor always-on (cron grátis do GitHub Actions ≫ mais simples). **Construído (Fase A):** `config/alerts.yaml` (watchlist 10 tickers, window/threshold, news opt-in; sem segredos), `scripts/run_alerts.py` (varre watchlist → `detect_latest` → `explain_anomaly` → envia ao canal Telegram; `--dry-run`; **no-op seguro e exit 0 sem segredos**; news scan opcional via Finnhub), `.github/workflows/alerts.yml` (cron `30 21 * * 1-5` UTC ~pós-fecho US + `workflow_dispatch`; `permissions: contents: read`; stack leve; segredos só em Actions Secrets), `tests/test_run_alerts.py` (4 testes puros), runbook **`docs/design/going_live.md`** (PT-PT: criar canal, 3 segredos, testar, caveats do cron UTC/best-effort/60-dias, Fase B com Student Pack). **Validado:** dry-run ao vivo apanhou anomalia real (META +8,44%, z=+3,31) sem enviar; **47 testes** (43+4) + ruff verdes. `.env.example` nota canal; README secção "📡 Live 24/7"; CHECKLIST com os cliques humanos.
@@ -4532,12 +4587,12 @@
 - **REESCRITA PROFUNDA (Sessão 24, 2026-06-28):** a pedido do aluno (a tese ainda lia densa/cansativa e o núcleo não ficava claro), reescrita de raiz para **clareza progressiva**, dentro dos 6 capítulos canónicos (decisões confirmadas: reescrever a própria tese; manter 6 capítulos; **foreground do system design no corpo**). Plano + registo por capítulo em `.claude/plans/…squishy-yeti.md` e `docs/decisions/editorial_review.md`. **Feito (commits por capítulo):** Ch1 (secções guiadas por pergunta + **mapa do leitor**), Ch2 (cada secção com pergunta + takeaway "For InvestiGator"; **−4 pp**), Ch3 (**concept-first**: cada técnica abre por "What it is for:"; "três escolhas" → lista), **Ch4 = System Design reconstruído** (NOVO diagrama do **modelo de dados**: NewsItem/NewsRecord=caso/KB/Embedder/AnomalyResult; NOVA tabela **componente|responsabilidade|entrada→saída**; secção **Decision Logic**; reutiliza arquitetura/fluxo conectado/mockup), Ch5 (cada estudo abre com **pergunta+resposta**), Ch6 (vereditos RQ a negrito + limitações/futuro em listas). **Travessões conectores em prosa: 0** em todo o corpo. **Sem inventar nada:** nenhum número, equação, algoritmo, tabela, figura ou citação alterado; **citações 50/50** (0 órfãs/indefinidas). **Estado: compila 72 pp (era 78), 0 erros, 0 citações indefinidas, 0 overfull >15pt, 0 `??`; 43 testes verdes + ruff.** Falta: **leitura do aluno** (validar a nova voz/estrutura) + tarefas humanas (declaração ISEP). Pendente opcional: sincronizar paper/slides/caderno com a tese reescrita.
 - **REVISÃO EDITORIAL (Sessão 23, 2026-06-28):** copy-edit humano de ponta a ponta, **capítulo a capítulo com pausa** (plano em `.claude/plans/…squishy-yeti.md`; registo por capítulo em `docs/decisions/editorial_review.md`). Decisões: **manter EN-GB** (resumo PT revisto também); **só a tese** (artefactos sincronizados no fim). **Feito:** Ch1–Ch6 + front matter (abstract/resumo) + Apêndice A revistos. **Travessões conectores em prosa: 117 → 1** em todo o corpo (resta 1 célula de tabela "não-aplicável"). Frases longas partidas, jargão simplificado ("desiderata"→"goals", "impounded"→"absorbed"), tiques removidos ("Crucially/moreover/precisely why/head on"), construções invertidas reescritas, rótulos de tabela harmonizados ("SBERT (MiniLM)"). **Declarações (integridade+IA) e Apêndice A deixados como estão** (formais/já limpos). **Nada de conteúdo, números, citações, equações, algoritmos, tabelas ou figuras alterado.** Gate final: coerência global verificada (terminologia consistente, 0 espaços duplos, 0 artefactos), abstract 192 palavras (≤200); artefactos (paper 3pp / slides 14pp) compilam e continuam alinhados. **Estado: compila 78 pp, 0 erros, 0 citações indefinidas, 0 overfull >15pt, 0 `??`; 43 testes verdes + ruff; citações 50/50.**
 - **REVISÃO TIPO-JÚRI (Sessão 22):** li os 6 capítulos + front matter + apêndice como orientador/revisor/examinador (plano em `.claude/plans/…squishy-yeti.md`, agora reescrito como relatório de revisão com severidades + scorecard por capítulo). **Correções implementadas (nenhuma citação/número alterado):** **M1** — parágrafo honesto no Cap. 5 (CS3): a recuperação semântica capta *tema*, não *direção*, por isso um título positivo recupera um *cluster* de ameaça competitiva com impacto médio negativo (−1,97%); a média é evidência sobre um tema, não previsão; notados os artefactos (mesma data; ticker duplicado partilha impacto) do corpus recente; liga a `lee2004trust`/`bansal2021whole`. **M2** — *data card* (Cap. 3) anotado como camada FNSPID *desenhada*, com nota a apontar para o corpus real avaliado (3 714 títulos recentes) usado no Cap. 5; cláusula correspondente no Cap. 5. **Mo2** — mockup do Telegram tornado internamente consistente (3 precedentes mostrados → média −2,2%). **Mo4** — parágrafo de produto responsável no Cap. 4 (fadiga de alertas; over-reliance; ranking por severidade, de-dup de precedentes, sinalizar discordância de direção) + linha no Cap. 6. **Mo3** — Apêndice A: tabela de versões fixadas (do lock file) + 3 comandos exatos de reprodução; LOF expandido no Cap. 2. **Mi1** — fraseado da RQ2 (baselines aplicam-se à recuperação, não ao impacto). **M3** — passagem de naturalidade: travessões `---` reduzidos de **117 → 39** (Cap. 2 48→23, Cap. 4 18→2, Cap. 5 26→2), preservando sentido. **Estado: compila 78 pp, 0 erros, 0 citações indefinidas, 0 overfull >15pt, 0 `??`; 42 testes verdes + ruff; integridade de citações 50/50 (0 órfãs, 0 indefinidas).**
-- **MASTER PLAN (estrada longa até submissão, publicação e defesa):** ver **`progress/_historico/MASTER_PLAN.md`** —
+- **MASTER PLAN (estrada longa até submissão, publicação e defesa):** ver **`archive/progress-historico/_historico/MASTER_PLAN.md`** —
   Fases A (conteúdo+visuais → ~80 pp) · B (naturalidade) · C (revisão crítica do zero) · D (revisão crítica
   da implementação + "como correr") · **E (validação ultra-rigorosa página-a-página + RE-VERIFICAR TODAS as
   citações — porta de submissão)** · F (publicação IEEE) · G (slides de defesa) · H (caderno de defesa visual).
   Continuidade multi-dispositivo: este ficheiro + `MASTER_PLAN.md` + `TRACKER.md`, commit/push por sessão.
-- **Fase atual + último passo concluído:** **REWORK COMPLETO — plano S1–S9 concluído.** O aluno leu o PDF e ficou desiludido (demasiado técnico/"software-ish", curto, desorganizado, literatura fraca, poucas figuras e confusas, nomes de pastas e **português visível**). Executado o plano definitivo multi-sessão (`.claude/plans/…squishy-yeti.md`; checklist em `progress/TRACKER.md`):
+- **Fase atual + último passo concluído:** **REWORK COMPLETO — plano S1–S9 concluído.** O aluno leu o PDF e ficou desiludido (demasiado técnico/"software-ish", curto, desorganizado, literatura fraca, poucas figuras e confusas, nomes de pastas e **português visível**). Executado o plano definitivo multi-sessão (`.claude/plans/…squishy-yeti.md`; checklist em `archive/progress-historico/TRACKER.md`):
   **S1** estrutura canónica MEIA de 6 capítulos (Introduction · State of the Art · Methods and Materials · **InvestiGator** · Case Studies · Conclusions) + declutter (removidos `archive/streamlit-app/notebooks/`, `presentation/`, `impact_analyzer/`).
   **S2** Cap. 3 aprofundado (data card FNSPID, IA responsável, metodologia de avaliação).
   **S3** Cap. 4 (InvestiGator) ao nível de desenho: arquitetura limpa + fluxos dos 2 gatilhos + **mockup Telegram** + tabela de decisões; detalhe técnico no Apêndice A.
@@ -4556,8 +4611,8 @@
 - **FASE H CONCLUÍDA:** `docs/defence/caderno_de_defesa.md` melhorado e **visual** — §2 workflow em diagramas, §4.5 exemplos reais passo-a-passo (TSLA z=7.61; recuperação Nvidia cross-ticker), §5.5 mapa dos números validados (número→script→tese), repo map atualizado, +2 perguntas do júri; números desatualizados corrigidos (0,55→0,514).
 - **MASTER PLAN A–H COMPLETO.** Estado entregável: tese 76 pp (0 erros, 0 citações indefinidas/órfãs, 0 overfull >15pt; 50 refs **re-verificadas** uma a uma); estatística **re-corrida e idêntica**; 42 testes + ruff verdes; `paper/` (IEEE) e `slides/` compilam; documentos de rigor (review_log, implementation_review, page_audit) commitados; tudo pushed.
 - **PRÓXIMO (só HUMANO — porta de submissão):** (1) confirmar com o Prof. Luís Gomes a **redação exata da declaração de uso de IA** exigida pela MEIA/ISEP + a **data de entrega**; (2) **leitura final do aluno** a toda a tese (o texto é seu para defender, §6.6). Opcional futuro: build FNSPID multi-ano; estudo humano de utilidade; expandir o paper para um *venue*.
-- **Nota de ambiente:** o venv 3.12 usa a **stack leve** (`requirements.txt`: numpy/pandas/matplotlib/yfinance/pytest/ruff) — chega para a demo, os testes e as avaliações. Para os testes `@sbert` e re-correr a recuperação completa (SBERT/torch), correr `bash scripts/setup_env.sh --ml` (stack pesada, `requirements-ml.txt`, torch do índice CPU da PyTorch). **CI:** `ci.yml` corre `pytest`+`ruff` a cada push de código (stack leve, runner limpo); `compile-thesis.yml` compila o PDF a cada push a `thesis/**`.
-- **Verificação de integridade da sessão:** confirmar que este ficheiro, `progress/TRACKER.md` e `progress/SESSIONS.md` foram lidos nesta sessão.
+- **Nota de ambiente:** o venv 3.12 usa a **stack leve** (`requirements.txt`: numpy/pandas/matplotlib/yfinance/pytest/ruff) — chega para a demo, os testes e as avaliações. Para os testes `@sbert` e re-correr a recuperação completa (SBERT/torch), correr `bash scripts/setup_env.sh --ml` (stack pesada, `config/requisitos/requirements-ml.txt`, torch do índice CPU da PyTorch). **CI:** `ci.yml` corre `pytest`+`ruff` a cada push de código (stack leve, runner limpo); `compile-thesis.yml` compila o PDF a cada push a `thesis/**`.
+- **Verificação de integridade da sessão:** confirmar que este ficheiro, `archive/progress-historico/TRACKER.md` e `archive/progress-historico/SESSIONS.md` foram lidos nesta sessão.
 
 ---
 
@@ -4581,7 +4636,7 @@
   conteúdo a uma língua TEM de ser espelhada (traduzida) na outra, no mesmo sítio — prosa, legendas,
   texto de figuras TikZ, tabelas, front matter. Números/citações/labels/estrutura idênticos; só a
   língua muda. Gráficos de dados (matplotlib `eval_*.pdf`) ficam EN nas duas (autorizado). Detalhe +
-  tracker por capítulo em `progress/BILINGUAL_PLAN.md`. **Verificar sempre:** as duas compilam a 0
+  tracker por capítulo em `archive/progress-historico/BILINGUAL_PLAN.md`. **Verificar sempre:** as duas compilam a 0
   erros e têm a mesma contagem de secções/figuras/tabelas.
 - **Idioma docs de aprendizagem/internos:** **PT-PT** (o único toggle do §0). Tese em EN **e** PT
   (bilingue, ver acima). [Sessão 0; revisto Sessão 40]
@@ -4592,7 +4647,7 @@
 - **Estrutura de capítulos:** 7 capítulos (Introduction · Contextualization · Literature Review · Methodology · Implementation · Evaluation · Conclusion), mapeados em `thesis/ch1..ch7/` do template ISEP. [Sessão 3 / Fase D]
 - **Layout LaTeX:** usar a estrutura/classe nativa do template ISEP (`meia-style.cls`, `authoryear-comp`, `chN/`); o esboço `thesis/chapters/0X_*.tex` do §9 é ilustrativo e será reconciliado na Fase D. [Sessão 0]
 - **Autonomia máxima (pedido do aluno, 2026-06-21):** **NÃO usar AskUserQuestion para confirmações de rotina** ("Yes, continue"). Prosseguir e decidir sozinho ao longo das fases/sessões, com defaults sensatos. Parar **apenas** para os limites rígidos do §2.2 (operações irreversíveis/destrutivas, gastar dinheiro, segredos) ou decisões académicas mesmo irreversíveis. `.claude/settings.json` alargado em conformidade. [D-009]
-- (Racional completo em `progress/DECISIONS.md`.)
+- (Racional completo em `archive/progress-historico/DECISIONS.md`.)
 
 ---
 
@@ -4670,7 +4725,7 @@
   originais eram `test_anomaly_detector` (4) + `test_event_study` (4) + `test_similarity` (7)
   + `test_knowledge_base` (5) + `test_smoke` + `test_sbert_embedder` (gated).
 - **Smoke/gated:** Telegram (`pytest -m telegram`, envio real confirmado) e SBERT (`pytest -m sbert`, validação semântica) — ambos excluídos do verify por defeito (`-m "not telegram and not sbert"`).
-- **Stack ML instalada e fixada:** torch 2.12.1+cpu (índice CPU), sentence-transformers 5.6.0, transformers 5.12.1, huggingface-hub 1.20.1, scikit-learn 1.9.0; `requirements.txt` atualizado + `requirements.lock.txt` (72 pkgs). numpy/pandas inalterados (2.1.3/2.2.3).
+- **Stack ML instalada e fixada:** torch 2.12.1+cpu (índice CPU), sentence-transformers 5.6.0, transformers 5.12.1, huggingface-hub 1.20.1, scikit-learn 1.9.0; `requirements.txt` atualizado + `config/requisitos/requirements.lock.txt` (72 pkgs). numpy/pandas inalterados (2.1.3/2.2.3).
 - **Pipeline KB validado:** `build_kb.py` (HashingEmbedder) → `kb_sample.jsonl` com impactos coerentes (ex.: TSLA −9,75%, MSFT +7,2%); `SbertEmbedder` validado por teste semântico. **Fonte FNSPID verificada** (HTTP 200, ~23,2 GB).
 - **Testes (41 + 2 gated, verde):** anomaly(4) + event_study(4) + similarity(7) + knowledge_base(5) + news_fetcher(3) + explainer(4, inclui fidelidade XAI) + retrieval_eval(5) + anomaly_eval(6) + smoke(3) + gated telegram/sbert.
 - **Em falta:** escrever Caps. 5–6 com o que está construído/avaliado; (opcional) download completo do FNSPID + KB SBERT multi-ano (job longo, R2); demo Gatilho 2 ao vivo (Finnhub→KB SBERT→Telegram); `impact_analyzer` (opcional, FinBERT).

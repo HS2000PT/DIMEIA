@@ -4,7 +4,50 @@ Pedido dele, a 2026-09-01: o repositório é público, e está uma confusão.
 Quer três coisas: nada de ficheiros soltos na raiz, `code/` e `archive/`
 certos, e uma `Dissertation/` com `Thesis/`, `Slides/` e `Guide/`.
 
-Este ficheiro é o plano. Ainda não foi executado.
+Este ficheiro é o plano.
+
+---
+
+## ⚠️ ESTADO DE EXECUÇÃO — atualizado a 2026-09-10
+
+**A frase «ainda não foi executado» era falsa e ficou aqui nove dias.** Um plano que se
+autodeclara pendente ao lado de trabalho feito manda a sessão seguinte refazer tudo — é a
+classe de defeito que a sessão 61 já pagou com o
+`achados_citacoes_por_consumir.md`. Fica corrigida aqui, e não noutro sítio.
+
+### Executado
+
+| Item do plano | Estado |
+|---|---|
+| `tmp/` versionado (406 ficheiros, 66 MB) | ✅ fora do repositório |
+| Versões antigas da tese | ✅ `archive/thesis-versions/` |
+| App Streamlit retirada | ✅ `archive/streamlit-app/` |
+| Relatórios soltos | ✅ `archive/reports/` |
+| `.md` soltos na raiz: 17 | ✅ **7**, e os sete são obrigatórios |
+| Planeamento multi-sessão | ✅ `archive/progress-historico/` |
+| Contextos (`.md` de continuidade) numa pasta própria | ✅ `docs/contexto/` |
+| Requisitos e ambientes numa pasta própria | ✅ `config/requisitos/` |
+| Lixo de build na raiz (`output/`, `checkpoints/`, `investigator.egg-info/`) | ✅ fora |
+
+### NÃO executado, por decisão, e a razão é medida
+
+Os dois movimentos grandes que a §3 propõe — **`code/`** (mover `investigator/`, `api/`,
+`scripts/`, `web/`, `tests/`, `config/`, `models/`) e **`dissertation/`** (mover `tese-pt/`
+e `tese-eng/`) — **não foram feitos, e não devem ser feitos antes da submissão.**
+
+O que eles obrigariam a mexer, contado e não estimado: os **dezanove verificadores** do
+`check_entrega.py` fixam `tese-pt/` e `tese-eng/` no caminho; o `Procfile` passaria a
+depender de `PYTHONPATH`; o `pyproject.toml` teria de redescobrir o pacote; os
+`latexmkrc` e o `graphicspath` das duas árvores mudam de raiz; os manifestos de
+`docs/design/*_manifest.json` guardam caminhos com `sha256`; e o CI tem quatro *jobs* que
+os invocam.
+
+**O benefício é de arrumação e o custo é de risco.** Este repositório já registou a mesma
+troca três vezes (sessões 63, 66 e 67) e a conclusão foi sempre a mesma: a dias do
+congelamento, mexer na estrutura gasta risco sem comprar nada que o júri veja. O júri
+recebe um PDF; não abre o repositório.
+
+**Se for para fazer, é depois da defesa**, e a receita está na §3 deste ficheiro, intacta.
 
 ---
 
@@ -124,7 +167,7 @@ entrega final.** Não é «tudo o que parece velho».
 | `archive/thesis-versions/thesis-examples/` | 24 MB de exemplos de terceiros |
 | `paper/` | tentativa de artigo, abandonada |
 | `app/`, `archive/streamlit-app/run/`, `archive/streamlit-app/quiz/`, `archive/streamlit-app/notebooks/` | a aplicação Streamlit, substituída pelo painel |
-| `progress/` | diários de progresso |
+| `archive/progress-historico/` | diários de progresso |
 | 14 dos 17 `.md` da raiz | relatórios e auditorias já consumidos |
 
 Ficam na raiz, dos `.md`: `README.md`, `AGENTS.md`, `CLAUDE.md`.
@@ -170,9 +213,9 @@ dissertação — as que lá estão foram copiadas à mão em algum momento. É 
 alvo óbvio de pergunta na defesa («como é que as figuras são geradas?»), e é
 trabalho da frente 05, não desta.
 
-**`thesis-pt/`, `slides/`, `paper/` e `progress/`** têm todos quem os chame:
+**`thesis-pt/`, `slides/`, `paper/` e `archive/progress-historico/`** têm todos quem os chame:
 `check_all_gates.py` lê o *frontmatter* do `thesis-pt`, o
-`make_public_bundle.py` lista `progress/` e `slides/` como exclusões, e o
+`make_public_bundle.py` lista `archive/progress-historico/` e `slides/` como exclusões, e o
 `ci.yml` filtra por `slides/**` e `paper/**`.
 
 ### Consequência para o plano

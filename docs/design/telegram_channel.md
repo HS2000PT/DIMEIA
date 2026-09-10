@@ -1,5 +1,10 @@
 # O canal de Telegram — identidade, textos e imagens
 
+> **Atualização de 09/09/2026:** a identidade atual aprovada é tipográfica e sem animal.
+> Avatar preparado: [telegram-avatar.png](brand-v9/telegram-avatar.png).
+> Lema e descrição: [identidade v9](brand-v9/README.md). Os materiais abaixo documentam a
+> configuração anterior. A nova imagem e descrição ainda não foram aplicadas ao canal.
+
 > **Porque é que este ficheiro existe.** O nome, a descrição, a mensagem fixada e o avatar do
 > canal viviam em três sítios: parte no [`going_live.md`](going_live.md), parte só na cabeça de
 > quem criou o canal, e o avatar em lado nenhum — havia um `icon.svg` desenhado de propósito

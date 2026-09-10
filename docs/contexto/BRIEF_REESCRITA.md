@@ -71,21 +71,21 @@ Comparar: ❌ "Escolhi um modelo que não podia fazer o que eu lhe pedia" →
 
 ## 4. Estado do trabalho
 
-Ficheiro de estado: **`ESTADO.md`** na mesma pasta. Atualizar sempre no fim de cada sessão.
+Ficheiro de estado: **`docs/contexto/ESTADO_REESCRITA.md`** na mesma pasta. Atualizar sempre no fim de cada sessão.
 Cada secção por escrever está marcada com `% POR ESCREVER` no `.tex` respetivo.
 
 ## 5. Procedimento de cada sessão
 
-1. Ler este ficheiro e `ESTADO.md`.
-2. Se `ESTADO.md` indicar uma sessão iniciada há menos de 90 minutos e ainda não terminada,
+1. Ler este ficheiro e `docs/contexto/ESTADO_REESCRITA.md`.
+2. Se `docs/contexto/ESTADO_REESCRITA.md` indicar uma sessão iniciada há menos de 90 minutos e ainda não terminada,
    **não fazer nada** e terminar: outra sessão está a trabalhar.
-3. Marcar em `ESTADO.md` o capítulo que se vai escrever e a hora de início.
+3. Marcar em `docs/contexto/ESTADO_REESCRITA.md` o capítulo que se vai escrever e a hora de início.
 4. Escrever **um capítulo por sessão**, no máximo. Ir buscar os factos, números e figuras à tese
    antiga em `tese/`, reescrevendo o texto de raiz.
 5. **Nenhum número pode ser inventado.** Todos os valores existem em `tese/` ou em
    `docs/evaluation/`. Em caso de dúvida sobre um número, não o escrever.
 6. Compilar e verificar (secção 6).
-7. Atualizar `ESTADO.md` com o resultado, as contagens e o que falta.
+7. Atualizar `docs/contexto/ESTADO_REESCRITA.md` com o resultado, as contagens e o que falta.
 
 ## 6. Verificação obrigatória antes de terminar
 
@@ -99,7 +99,7 @@ python3 scripts/check_escrita.py     # PT-PT, um termo por conceito
 python3 scripts/check_floats.py      # todo o flutuante referenciado e com legenda
 python3 scripts/check_tex_escapes.py
 ```
-E registar em `ESTADO.md`: páginas, palavras, figuras, tabelas.
+E registar em `docs/contexto/ESTADO_REESCRITA.md`: páginas, palavras, figuras, tabelas.
 
 ## 7. Se a compilação falhar
 

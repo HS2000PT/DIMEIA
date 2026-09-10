@@ -57,8 +57,8 @@ Nada disto precisa de cofre, porque não são segredos:
 |---|---|
 | `.python-version` | Python 3.12 |
 | `requirements.txt` | a stack base, com versões fixadas |
-| `requirements.lock.txt` | o conjunto completo resolvido |
-| `requirements-ml.txt` | a stack pesada (torch/SBERT), só para re-treinar |
+| `config/requisitos/requirements.lock.txt` | o conjunto completo resolvido |
+| `config/requisitos/requirements-ml.txt` | a stack pesada (torch/SBERT), só para re-treinar |
 | `scripts/setup_env.sh` | cria o ambiente virtual e instala tudo |
 
 O `setup_env.sh` sem argumentos instala a stack leve, que chega para a app, os alertas, os testes

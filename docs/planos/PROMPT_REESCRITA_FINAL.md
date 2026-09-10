@@ -134,7 +134,7 @@ Alvo: **≤ 120 páginas físicas** e **≤ 40 000 palavras**, distribuídas ass
 | 6 Conclusões | 7 973 | 4 500 |
 | Apêndice A | 3 108 | 2 000 |
 
-**Onde cortar, em concreto** — está tudo levantado no `TASKS.md`, fase E: dezoito repetições
+**Onde cortar, em concreto** — está tudo levantado no `docs/contexto/TASKS.md`, fase E: dezoito repetições
 identificadas, entre elas o encolhimento de Vasicek explicado duas vezes, o objetivo de treino do
 SBERT três vezes, «não é método novo, é seleção e integração» três vezes, a fadiga de alertas três
 vezes, a dívida técnica quatro vezes, e «três ocasiões» três vezes. **A regra de corte: o que
@@ -264,8 +264,8 @@ não a faz disparar. Este projeto já pagou as duas metades.
 |---|---|
 | todos os resultados medidos | `docs/evaluation/*.md`, um ficheiro por experiência |
 | os corpora e os preços, fixados | `docs/design/*_manifest.json`, com `sha256` |
-| o plano-mestre e as 82 tarefas abertas | `TASKS.md` |
-| o estado de retoma e as armadilhas | `ESTADO_ATUAL.md` |
+| o plano-mestre e as 82 tarefas abertas | `docs/contexto/TASKS.md` |
+| o estado de retoma e as armadilhas | `docs/contexto/ESTADO_ATUAL.md` |
 | a história das decisões, sessão a sessão | `CLAUDE.md` e `AGENTS.md` |
 | o que só o autor pode fazer | `docs/design/TAREFAS_MANUAIS_HENRIQUE.md` |
 | os números retirados | `docs/defence/LEIA-ME-PRIMEIRO.md` |

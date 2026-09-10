@@ -1,8 +1,8 @@
 # ESTADO — reescrita em `tese-pt/`
 
-> ⛳ **PRIORIDADE MÁXIMA: ler `docs/planos/PLANO_FINAL_2026-09-01.md` na raiz de `DIMEIA/` antes de tocar em seja o que for.** Criado a 2026-09-01. Manda sobre este ficheiro e sobre todos os outros planos do repositório, incluindo `progress/PLANO_FINAL_ENTREGA.md`, `progress/PLANO_EMERGENCIA_DEFESA_2026-08-30.md` e `archive/reports/INVESTIGATOR_MASTER_PLAN.md`, que ficam como registo histórico.
+> ⛳ **PRIORIDADE MÁXIMA: ler `docs/planos/PLANO_FINAL_2026-09-01.md` na raiz de `DIMEIA/` antes de tocar em seja o que for.** Criado a 2026-09-01. Manda sobre este ficheiro e sobre todos os outros planos do repositório, incluindo `archive/progress-historico/PLANO_FINAL_ENTREGA.md`, `archive/progress-historico/PLANO_EMERGENCIA_DEFESA_2026-08-30.md` e `archive/reports/INVESTIGATOR_MASTER_PLAN.md`, que ficam como registo histórico.
 
-> Atualizar sempre no fim de cada sessão. Ler `BRIEF_REESCRITA.md` antes de começar.
+> Atualizar sempre no fim de cada sessão. Ler `docs/contexto/BRIEF_REESCRITA.md` antes de começar.
 
 ## Sessão em curso
 

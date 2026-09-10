@@ -1,6 +1,6 @@
 #!/bin/bash
 # Cria o ambiente virtual (Python 3.12), instala dependências fixadas e verifica imports-chave.
-# Ver docs/design/setup.md e decisões D-003 / D-005 em progress/DECISIONS.md.
+# Ver docs/design/setup.md e decisões D-003 / D-005 em archive/progress-historico/DECISIONS.md.
 #
 # Uso:
 #   bash scripts/setup_env.sh          # stack LEVE (demo + testes + avaliações + figuras)
@@ -50,11 +50,11 @@ fi
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 
-# 4b) Stack pesada opcional (torch CPU + SBERT). O requirements-ml.txt já traz o --extra-index-url
+# 4b) Stack pesada opcional (torch CPU + SBERT). O config/requisitos/requirements-ml.txt já traz o --extra-index-url
 #     da PyTorch, por isso o torch "+cpu" resolve corretamente (não está no PyPI).
 if [ "$WITH_ML" -eq 1 ]; then
   echo "ℹ️ A instalar a stack pesada de ML (torch CPU + SBERT) — pode demorar alguns minutos."
-  pip install -r requirements-ml.txt
+  pip install -r config/requisitos/requirements-ml.txt
 fi
 
 # 5) Verificação mínima de imports.

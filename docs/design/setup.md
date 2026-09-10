@@ -6,19 +6,19 @@ Objetivo: reconstruir o ambiente com um comando, em qualquer dispositivo.
 > [`how_to_run.md`](how_to_run.md). Este ficheiro trata só do **ambiente**.
 
 ## Python
-- **Versão fixada: 3.12** (ver `.python-version`). Decisão D-003 (`progress/DECISIONS.md`).
+- **Versão fixada: 3.12** (ver `.python-version`). Decisão D-003 (`archive/progress-historico/DECISIONS.md`).
 - **Ambiente virtual:** `.venv/` (gitignored). Nunca instalar no Python do sistema.
 - **Criar/instalar (stack leve):** `bash scripts/setup_env.sh` — cria o venv com Python 3.12, instala a
   stack **leve** (`requirements.txt`) e verifica imports-chave. Chega para a demo, os testes (`verify.sh`),
   as avaliações sobre dados guardados e as figuras.
-- **Stack pesada de ML (opcional):** `bash scripts/setup_env.sh --ml` — acrescenta `requirements-ml.txt`
+- **Stack pesada de ML (opcional):** `bash scripts/setup_env.sh --ml` — acrescenta `config/requisitos/requirements-ml.txt`
   (torch CPU + sentence-transformers + transformers + huggingface-hub + scikit-learn). Só é precisa para a
   recuperação semântica real (`SbertEmbedder`) e os testes `@sbert`.
 - **⚠️ torch CPU:** o `torch==2.12.1+cpu` **não está no PyPI** — vem do índice dedicado da PyTorch. O
-  `requirements-ml.txt` já inclui a linha `--extra-index-url https://download.pytorch.org/whl/cpu`, por isso
-  o `--ml` resolve-o sozinho. (Instalação manual: `pip install -r requirements-ml.txt`.)
-- **Dependências:** `requirements.txt` (leve) + `requirements-ml.txt` (pesada), versões fixadas. Lockfile
-  completo do ambiente com ML em `requirements.lock.txt` (`pip freeze`).
+  `config/requisitos/requirements-ml.txt` já inclui a linha `--extra-index-url https://download.pytorch.org/whl/cpu`, por isso
+  o `--ml` resolve-o sozinho. (Instalação manual: `pip install -r config/requisitos/requirements-ml.txt`.)
+- **Dependências:** `requirements.txt` (leve) + `config/requisitos/requirements-ml.txt` (pesada), versões fixadas. Lockfile
+  completo do ambiente com ML em `config/requisitos/requirements.lock.txt` (`pip freeze`).
 
 > **Pendente (humano-only):** instalar Python 3.12. Até lá, `verify.sh` corre no Python disponível (3.14).
 

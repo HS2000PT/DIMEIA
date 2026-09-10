@@ -13,7 +13,7 @@
 
 ## 1. A app existe para responder a três perguntas
 
-São as mesmas três do posicionamento (`progress/PLANO_V2.md` §3). Cada ecrã responde a uma.
+São as mesmas três do posicionamento (`archive/progress-historico/PLANO_V2.md` §3). Cada ecrã responde a uma.
 Se um elemento do ecrã não ajuda a responder à pergunta desse ecrã, **não pertence ali**.
 
 | Ecrã | A pergunta | Motor que responde |

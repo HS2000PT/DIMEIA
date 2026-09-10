@@ -47,7 +47,7 @@ No anomaly for AAPL today (z-score +0.89, within ±3).
 Alternativa visual à demo de consola: os dois gatilhos + a avaliação, numa interface web local.
 
 ```bash
-pip install -r requirements.txt -r requirements-app.txt
+pip install -r requirements.txt -r config/requisitos/requirements-app.txt
 streamlit run app/dashboard_v4.py      # abre http://localhost:8501 (a app implantada)
 ```
 

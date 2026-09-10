@@ -9,6 +9,47 @@
 > está **fechada** — ver o bloco verde imediatamente abaixo.
 > **Regra:** quem retomar actualiza esta secção antes de agir.
 
+### ✅ 2026-09-10 — REPOSITÓRIO REORGANIZADO, E ESTE FICHEIRO MUDOU DE SÍTIO
+
+**⚠️ ESTE FICHEIRO VIVE AGORA EM `docs/contexto/ESTADO_ATUAL.md`.** Não está mais na raiz.
+Com ele mudaram: `TASKS.md` → `docs/contexto/TASKS.md`, e os três documentos de contexto que
+viviam dentro de `tese-pt/` (`BRIEF_REESCRITA.md`, `PROMPT_TAREFA.md`, e `ESTADO.md`, que passou
+a chamar-se `ESTADO_REESCRITA.md` para não se confundir com este).
+
+**A raiz tem oito ficheiros soltos e mais nenhum**, e os oito estão lá porque uma ferramenta
+os lê nesse sítio (Heroku, *buildpack* de Python, packaging, convenções do GitHub, contexto de
+agente). A tabela com a razão de cada um está no `README.md`, secção *Repository layout*.
+
+| Mudou | De | Para |
+|---|---|---|
+| continuidade | raiz | `docs/contexto/` |
+| requisitos e ambientes | raiz | `config/requisitos/` |
+| planeamento multi-sessão | `progress/` | `archive/progress-historico/` |
+| 17 *one-shots* gastos | `scripts/_*` | `archive/scripts-gastos/` |
+| rascunho da auditoria ao painel (47 MB) | `output/` | `archive/_rascunho-auditoria-web/`, **fora do git** |
+| lixo de build | `checkpoints/`, `investigator.egg-info/`, 20 `__pycache__/` | apagados (regeneráveis) |
+
+Tudo com `git mv`: o `git log --follow` continua a encontrar cada ficheiro.
+
+**⚠️ E O `ruff` FICOU LIMPO PELA PRIMEIRA VEZ EM VÁRIAS SESSÕES.** Os sete avisos que se
+arrastavam eram exactamente destes *one-shots* gastos. Mais um oitavo que **eu** introduzi ao
+reescrever caminhos dentro de um comentário de caixa alinhada, e que a porta apanhou.
+
+**⚠️ O QUE NÃO SE FEZ, E É DECISÃO A NÃO REABRIR.** O `docs/design/reorganizacao.md` propõe
+mover tudo para `code/` e `dissertation/`. **Não foi feito, e não deve ser antes da submissão:**
+os dezanove verificadores fixam `tese-pt/` e `tese-eng/` no caminho, o `Procfile` passaria a
+depender de `PYTHONPATH`, os manifestos guardam caminhos com `sha256`, e o CI tem quatro *jobs*
+que os invocam. O benefício é arrumação e o custo é risco. A razão está escrita nesse ficheiro,
+que **deixou de se autodeclarar «não executado»** — nove dias a dizer isso mandariam a sessão
+seguinte refazer a análise inteira.
+
+**PORTAS DEPOIS DE TUDO: 1174 testes · `ruff` limpo · `check_entrega` verde nos 23
+verificadores · as duas árvores compilam a 0 erros (PT 2 550 359 bytes, EN 2 500 715) · bundle
+público com 190 internos excluídos e scan de segredos limpo.** A única pendência que a porta
+acusa continua a ser humana: os nomes do júri.
+
+---
+
 ### ✅ 2026-09-10 — A QI4 ESTÁ FECHADA NO AMBIENTE CANÓNICO
 
 A porta de colapso e a avaliação completa correram **nesta máquina** (`.venv`, Python 3.12.10,
@@ -251,7 +292,7 @@ opções em `docs/design/qi4_resultado_2026-09-09.md`.
    `data/_arquivo/_qi4_tres_v2_local.md`. Nenhum braço colapsou.
 4. ~~Se o `direcao_v2` colapsar...~~ **NÃO SE APLICA** — nenhum colapsou, e os dois braços são
    quase indistinguíveis um do outro na porta.
-5. Registar em `TASKS.md` e em `docs/design/`.
+5. Registar em `docs/contexto/TASKS.md` e em `docs/design/`.
 
 **Feito neste bloco (Capítulo 2, tarefa A12):** ver
 `docs/design/capitulo2_literatura_2026-09-09.md`. Resumo: quatro PDFs lidos por inteiro
@@ -312,7 +353,7 @@ dela. A comparação é a da sessão 66, que mediu o fólio impresso de cada uma
 ## 0. Leitura obrigatória antes de tocar em seja o que for
 
 1. Este ficheiro.
-2. `TASKS.md` na raiz — o plano-mestre, fases A a H. É a fonte de verdade das tarefas.
+2. `docs/contexto/TASKS.md` na raiz — o plano-mestre, fases A a H. É a fonte de verdade das tarefas.
 3. `docs/design/reproducao_corpus_2026-09-09.md` — a auditoria de reprodutibilidade completa.
 4. `docs/design/TAREFAS_MANUAIS_HENRIQUE.md` — o que só ele pode fazer.
 

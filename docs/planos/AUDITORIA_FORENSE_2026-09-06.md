@@ -95,7 +95,7 @@ limiar, o que preserva o argumento sem afirmar o que os dados não mostram.
 | C1 | Fig. 4.4 vs Fig. 4.5 | O funil de 15/08 mostra o **piso escalonado a eliminar 269 avaliações**; a Figura 4.5, duas páginas à frente, dizia «**nunca atuou**» | «$0\%$ nos seis dias», e a legenda do funil remete para a Figura 4.5 ✅ |
 | C2 | §5.6.5 | «81 votos válidos → 42 efetivos», com 10 alterações e 5 exclusões explicadas: **faltavam 29** | O gerador passa a escrever os cliques repetidos. $42+10+29 = 81$ ✅ |
 | C3 | Tab. 3.1 vs §4.2.3 | A linha «Base de precedentes **implantada** — 38 214» descreve **metade** dela: o §4.2.3 diz que a base consultada funde 38 214 reconstruídos com 11 445 vivos | Passa a «Base de precedentes **reconstruída**»; o §6.1 acompanha ✅ |
-| C4 | Resumo PT | **201 palavras** contra o limite de 200 do modelo oficial e do próprio `BRIEF_REESCRITA.md` | «linha de base baseada apenas em» → «apenas com» (200 palavras, e resolve a cacofonia *base baseada*) ✅ |
+| C4 | Resumo PT | **201 palavras** contra o limite de 200 do modelo oficial e do próprio `docs/contexto/BRIEF_REESCRITA.md` | «linha de base baseada apenas em» → «apenas com» (200 palavras, e resolve a cacofonia *base baseada*) ✅ |
 | C5 | Fig. 5.11 vs Fig. 5.18 | «Escolha aleatória» aparece a **$0{,}379$** numa figura e a **$0{,}375$** noutra, ambas «40 sementes», mesmo bloco, mesmo orçamento | A legenda da Fig. 5.18 declara as duas e situa a diferença dentro da dispersão entre sementes ✅ |
 | C6 | Tab. A.2 | «As explicações são úteis a uma pessoa — evidência: **---**» depois de o §5.6.5 passar a reportar 42 votos | A célula nomeia o retorno observacional; o estado continua **Não afirmado** ✅ |
 | C7 | Fig. 5.12 vs Fig. 5.18 | A palavra «volatilidade» designava **dois preditores distintos**: a regressão sobre `vol20` ($0{,}632$) e as treze constantes ($0{,}662$) | A Fig. 5.18 passa a «Treze constantes de volatilidade» e o texto distingue-as explicitamente ✅ |
@@ -339,7 +339,7 @@ do Bruno Ribeiro e o 114 do Helder Pereira **incluem a bibliografia** — a últ
 fólio 120, é uma página de referências. A margem real é de doze páginas e não de vinte e quatro.
 Nenhuma das duas aprovadas tem apêndices; a nossa tem dois, e mesmo assim fica abaixo.
 
-**O que estava errado era a redação do `BRIEF_REESCRITA.md`**, que escreve «Páginas **totais** —
+**O que estava errado era a redação do `docs/contexto/BRIEF_REESCRITA.md`**, que escreve «Páginas **totais** —
 mínimo 60, máximo 120». O corpus mostra que o limite não é sobre totais. A linha foi corrigida,
 com a medição ao lado.
 

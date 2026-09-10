@@ -47,7 +47,7 @@ temática.
 $2{,}259$ do acaso: $0{,}09$ pp, com o desvio do acaso a valer $0{,}107$. A comparabilidade de
 materialidade a partir do texto é, nesta montagem, uma quantidade que **nenhum dos codificadores
 avaliados distingue do acaso** — o que é coerente com a linha de base pré-registada no
-`ESTADO_ATUAL.md` ($2{,}173$ contra $2{,}259$) e é precisamente a observação que motivou a QI4.
+`docs/contexto/ESTADO_ATUAL.md` ($2{,}173$ contra $2{,}259$) e é precisamente a observação que motivou a QI4.
 
 ### A leitura honesta
 
@@ -105,7 +105,7 @@ avaliação reproduz a linha pré-registada **exactamente** (2,259 ± 0,107 · 0
 é esperado por ser aritmética pura sobre `numpy`, sem modelo pelo meio.
 
 ⚠️ **Uma divergência, pequena e declarada:** a base dá aqui comparabilidade **2,168** contra os
-**2,173** registados no `ESTADO_ATUAL.md`. A diferença é de $0{,}005$ pp, cerca de treze vezes
+**2,173** registados no `docs/contexto/ESTADO_ATUAL.md`. A diferença é de $0{,}005$ pp, cerca de treze vezes
 menor do que o desvio entre repetições, e não altera nenhuma leitura acima — mas é real e vem
 provavelmente da versão do `sentence-transformers`. **É por isso que estes números são a
 antecipação e não o artefacto final.**

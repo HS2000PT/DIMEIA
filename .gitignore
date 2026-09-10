@@ -157,6 +157,11 @@ tmp/
 # artefactos de prova do piloto rejeitado (Figura 4.10)
 output/
 
+# Rascunho da auditoria ao painel: 39 ficheiros, 47 MB de capturas e JSON de sondagem.
+# Vive em archive/ para nao ficar solto na raiz, mas NAO entra no git -- nao e evidencia
+# de nada que a tese afirme, e 47 MB numa historia publica pagam-se em cada clone.
+archive/_rascunho-auditoria-web/
+
 # ⚠️ A REGRA QUE PROTEGE OS DADOS OPERACIONAIS E DE CAMINHO, e uma copia escrita FORA
 # desse caminho escapa-lhe em silencio. Foi assim que o `fb_tmp.jsonl` -- copia integral
 # do `data/feedback.jsonl`, com os 86 votos reais do canal -- ficou versionado na RAIZ,

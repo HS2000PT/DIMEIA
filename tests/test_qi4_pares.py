@@ -16,7 +16,7 @@ Três maneiras de estragar isto antes de começar, e um teste para cada:
    a comparação que **é** o resultado da QI4 não mede coisa nenhuma. Tem de estar provado que
    um ignora o sinal e o outro não.
 
-Ver `docs/design/reproducao_corpus_2026-09-09.md` e a Fase C do `TASKS.md`.
+Ver `docs/design/reproducao_corpus_2026-09-09.md` e a Fase C do `docs/contexto/TASKS.md`.
 """
 
 from __future__ import annotations

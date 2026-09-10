@@ -177,6 +177,23 @@ def crossref_por_doi(doi: str) -> dict | None:
         return None
 
 
+def doi_resolve(doi: str) -> bool:
+    """O DOI redireciona para alguma coisa viva?
+
+    Existir no Crossref e resolver sao perguntas diferentes, e o verificador confundia-as.
+    Nem todos os editores depositam no Crossref: a AAAI, por exemplo, nao depositou os
+    numeros de 1991 da AI Magazine, e a consulta a `api.crossref.org` devolve 404 para
+    `10.1609/aimag.v12i2.895` -- que, apesar disso, resolve em `doi.org` com 200 para a
+    pagina do editor. Chamar «nao resolve» a esse DOI e uma afirmacao falsa num relatorio
+    que existe precisamente para nao as ter.
+    """
+    try:
+        obter(f"https://doi.org/{urllib.parse.quote(doi, safe='/()')}", tentativas=2)
+        return True
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def crossref_por_titulo(titulo: str) -> dict | None:
     try:
         q = urllib.parse.urlencode({"query.bibliographic": titulo, "rows": 3})
@@ -226,7 +243,15 @@ def verificar(e: dict) -> dict:
     if doi:
         reg = crossref_por_doi(doi)
         if reg is None:
-            achados.append(f"DOI **não resolve**: `{doi}`")
+            # Sem registo no Crossref não quer dizer sem DOI válido — ver `doi_resolve`.
+            if doi_resolve(doi):
+                resolvido = f"doi.org `{doi}`"
+                notas.append(
+                    "sem registo no Crossref; o DOI resolve em doi.org, e os campos foram "
+                    "conferidos à mão contra a página do editor (ver comentário na entrada)"
+                )
+            else:
+                achados.append(f"DOI **não resolve**: `{doi}`")
         else:
             resolvido = f"Crossref `{doi}`"
             titulo_reg = (reg.get("title") or [""])[0]

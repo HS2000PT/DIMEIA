@@ -26,7 +26,12 @@ REPO = Path(__file__).resolve().parents[1]
 
 # Caminhos SÓ-INTERNOS (ficam de fora do bundle público). Ver o manifesto para a justificação.
 EXCLUDE_PREFIXES = (
-    "progress/",          # planeamento multi-sessão (PLANO_V2/TRACKER/SESSIONS + _historico/)
+    # ⚠️ A pasta archive/ INTEIRA fica de fora, e a razão é a reorganização de 2026-09-10:
+    # ela passou a ser o destino de tudo o que não faz parte do documento, do código ou dos
+    # artefactos actuais. Excluir só o planeamento (como estava) deixaria entrar no bundle
+    # público os relatórios internos e as versões superadas da tese que agora vivem lá.
+    "archive/",
+    "docs/contexto/",     # ESTADO_ATUAL + TASKS: continuidade entre sessões, processo interno
     ".claude/",           # settings + planos internos
     "docs/internal/",     # ROOT_PROMPT + proposta ao orientador
     "docs/_archive/",     # análises antigas de fase inicial

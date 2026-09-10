@@ -20,7 +20,7 @@ Se o modelo não estiver disponível, degrada para o baseline word-overlap — a
 
 ## Correr localmente (para testar antes de publicar)
 ```bash
-pip install -r requirements.txt -r requirements-app.txt
+pip install -r requirements.txt -r config/requisitos/requirements-app.txt
 streamlit run app/dashboard_v4.py
 # abre http://localhost:8501
 ```

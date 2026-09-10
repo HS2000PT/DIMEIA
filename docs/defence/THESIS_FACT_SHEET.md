@@ -225,7 +225,7 @@ Se alguém re-treinar com outra semente, a suite parte.
 
 ## 8. Reprodutibilidade — o que responder a *"como reproduzo isto?"*
 
-- **Python** 3.12 · dependências em `requirements.txt` (leve) e `requirements-ml.txt` (pesada)
+- **Python** 3.12 · dependências em `requirements.txt` (leve) e `config/requisitos/requirements-ml.txt` (pesada)
 - **Semente** 42 em todo o lado onde há aleatoriedade
 - **Modelo** versionado em `models/` (1,8 KB) com metadados `.json` ao lado
 - **Comandos** no Apêndice A, um por resultado

@@ -2,7 +2,7 @@
 
 > Para quem prefere clicar a escrever comandos. Há três formas, da mais simples à mais poderosa.
 > Pré-requisito (uma vez): ambiente criado — ver [setup.md](setup.md) (`bash scripts/setup_env.sh`);
-> para o dashboard, `pip install -r requirements-app.txt`.
+> para o dashboard, `pip install -r config/requisitos/requirements-app.txt`.
 
 ## 1. Duplo-clique no explorador de ficheiros (o mais simples)
 Na pasta [`archive/streamlit-app/run/`](../../run/), faz **duplo-clique**:
