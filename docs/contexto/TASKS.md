@@ -626,13 +626,13 @@ ficheiro congelado citado pela tese.
 
 - [ ] E1 · Encolhimento de Vasicek explicado por extenso em §2.5 e §3.4 → cortar de §2.5
 - [ ] E2 · Objetivo de treino do SBERT ×3 (§2.4, §3.5, §5.3.2) → uma vez
-- [ ] E3 · «Não é método novo, é seleção e integração» ×3 (§1.4, §2.9, §6.1) → uma vez
+- [ ] E3 · «Não é método novo, é seleção e integração» — **⚠️ âmbito por reenunciar** (medido a 2026-09-10): nenhuma das duas formulações existe na árvore, pelo que as três ocorrências não são localizáveis pelo texto que a tarefa cita. Reenunciar com a frase real antes de cortar.
 - [ ] E4 · Fadiga de alertas ×3 (§2.6, §3.8.3, §4.4) → §3.8.3
-- [ ] E5 · Dívida técnica de Sculley ×4 (§2.8, §4.6.1, §5.6.1, §6.4) → §2.8 + §5.6.1
+- [ ] E5 · Dívida técnica de Sculley ×4 → §2.8 + §5.6.1 — **confirmado real** a 2026-09-10 (`sculley2015debt` em ch2, ch4, ch5 e ch6). O do Cap. 6 reexplica o mecanismo do §5.6.1 com as palavras trocadas; o do Cap. 4 é o relato do incidente no sítio onde ocorreu e **ganha o seu lugar**. Corte defensável: ~40 palavras no Cap. 6.
 - [ ] E6 · Argumento RAG ×3 (§2.4.1, §4.7.1, §4.8) → §2.4.1 + §4.8
-- [ ] E7 · Três causas do atraso ×2 (§4.6, §6.4) → §4.6
+- [ ] E7 · Três causas do atraso ×2 (§4.6, §6.4) → §4.6 — **⚠️ reavaliado a 2026-09-10**: as duas ocorrências do Cap. 6 são a **linha da `tab:con_limites`** e o resumo em prosa, que é o desenho que a secção declara («o texto desenvolve as quatro de maior consequência e resume as restantes»). Redundância real: contra o §4.6, não dentro do Cap. 6.
 - [ ] E8 · «Rótulo favorece a volatilidade» ×3 → §5.4.7 + Tab. 6.1
-- [ ] E9 · Defeito dos 36,8% ×2 (§4.5.1, §6.4) → §4.5.1
+- [ ] E9 · Defeito dos 36,8% ×2 (§4.5.1, §6.4) → §4.5.1 — **confirmado real** a 2026-09-10: o §6.4 repete o mecanismo **e os quatro números**. Corte defensável: ~55 palavras.
 - [ ] E10 · «Três ocasiões» — **⚠️ o «×3» conta três afirmações DIFERENTES** (verificado a
       2026-09-10): «três ocasiões em que [ler uma medida sem o seu chão] sucedeu», «três
       ocasiões em que uma técnica mais simples superou» e «três ocasiões em que sucedeu o

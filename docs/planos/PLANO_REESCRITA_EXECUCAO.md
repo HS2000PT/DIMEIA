@@ -279,6 +279,54 @@ capítulo (D3) · «57% calibrado + modelo sem discriminação demonstrada» (D2
 modelo continuar implantado (D8) · a frase sobre o canal público não constituir prestação de
 serviço (D11).
 
+### ⚠️ MEDIÇÃO DO CAP. 6 — 2026-09-10: a remedição é 69%, e quase toda ela é indispensável
+
+O plano orçamentou **−2 505 palavras** com a regra «o Cap. 5 mede, o Cap. 6 interpreta». Medido:
+o capítulo tem **7 043 palavras** (6 617 de prosa + 426 de legendas), pelo que o alvo confere.
+**A regra também confere:** dos 85 decimais do Cap. 6, **59 já estão no Cap. 5 — 69%**. A
+remedição existe e é mensurável.
+
+**Mas ela vive onde não pode sair.** Localizadas as passagens com quatro ou mais números já
+afirmados no Cap. 5, são **quatro parágrafos, 395 palavras, e são os veredictos das quatro QI**.
+Um veredicto sem o número que o sustenta deixa de ser um veredicto.
+
+| item nomeado pelo plano | veredicto medido |
+|---|---|
+| E5 · dívida técnica ×4 (§2.8, §4.6.1, §5.6.1, §6.4) | **real.** `sculley2015debt` citado nos quatro capítulos, e o parágrafo do Cap. 6 reexplica o mecanismo que o Cap. 5 explica vinte páginas antes |
+| E9 · defeito dos 36,8% ×2 (§4.5.1, §6.4) | **real.** O Cap. 6 repete o mecanismo do Cap. 4 **e os quatro números** ($247$, $36{,}8\%$, $11{,}3\%$, $23{,}3\%$) |
+| E7 · três causas do atraso ×2 | **parcial.** As duas ocorrências do Cap. 6 são a **linha da tabela** e o resumo em prosa, que é o desenho declarado da secção |
+| E3 · «não é método novo» ×3 | **não localizável.** Nenhuma das duas formulações existe na árvore; o âmbito tem de ser reenunciado antes de se cortar |
+| as onze limitações passam de prosa a tabela | **já feito.** A `tab:con_limites` existe, com as onze linhas e o remédio de cada uma |
+
+**O corte real e defensável soma ~135 palavras** (os dois parágrafos do E5 e do E9, comprimidos
+para a interpretação com remissão), contra as 2 505 orçamentadas.
+
+⚠️ **E o meu primeiro detetor concluiu o contrário, pela razão que este projeto já pagou seis
+vezes.** A sobreposição **literal** entre o Cap. 5 e o Cap. 6 é de **0,3%** (21 8-gramas de
+6 116), e dentro do Cap. 6 há **um** 8-grama repetido. Ia registar «o capítulo não é redundante».
+**A redundância deste documento é parafraseada, não literal:** o parágrafo do §6.4 sobre a dívida
+técnica reexplica o mecanismo do §5.6.1 com as palavras trocadas, e **nenhum 8-grama casa**. Um
+detetor de repetição literal mede a forma e não a substância.
+
+⚠️ **Segundo erro meu, e é a mesma classe:** procurei «dívida técnica» e «três causas» **apenas no
+Cap. 5 e no Cap. 6**, quando o plano nomeia §2.8, §4.5.1 e §4.6. Dei os dois por inexistentes.
+São reais. **Procurar a chave de citação (`sculley`), não a paráfrase, e nos ficheiros que o
+próprio plano nomeia.**
+
+**Conclusão, e é sobre o plano:** tal como no Cap. 5, o orçamento do Cap. 6 assenta numa contagem
+anterior à compressão feita pelas sessões 63 a 67. Dois capítulos medidos, dois orçamentos
+indisponíveis a partir de redundância. Atingir os alvos exige decisão **estrutural** — menos
+figuras, ou fundir subsecções — que é de outra ordem de risco e é decisão do autor.
+
+**O que fica medido para essa decisão:** Cap. 6 com 6 figuras e 1 tabela; prosa por secção —
+Limitações **1 965**, Trabalho futuro **1 173**, Triagem de notícias **736**, Recuperação de
+precedentes **603**, Conclusões principais **494**, Deteção **419**, Considerações finais **382**,
+Comparabilidade **380**, Objetivos alcançados **342**. A secção das Limitações é o único bloco com
+massa, e a sua prosa **não é remedição**: desenvolve as quatro limitações de maior peso com
+literatura citada (\textcite{waa2021xai}, \textcite{cau2023logicstyle},
+\textcite{muntermann2009ubiquitous}) e a distinção entre retorno observacional e estudo
+controlado. Cortá-la retiraria a passagem mais honesta do documento.
+
 ### Capítulo 6 · Conclusões — 7 005 → 4 500
 
 **Argumento:** as quatro respostas, o que as delimita, e o que ficaria por fazer — e nada mais.
