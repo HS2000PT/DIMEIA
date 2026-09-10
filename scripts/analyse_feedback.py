@@ -403,12 +403,16 @@ def fragmento_latex(registos: list[FL.FeedbackRecord],
                 f"contam uma só vez.",
                 f" Another {r['repeticoes_iguais']} repeat an earlier vote without changing it "
                 f"and count only once.")
+        # ⚠️ «NAO ENTRAM NOS 81» e a parte que fecha a leitura. O filtro corre ANTES de
+        # contar os votos brutos, logo os excluidos nao estao dentro deles -- mas a frase
+        # anterior dizia so «foram excluidos», e quem subtraisse obtinha 81-10-29-5 = 37
+        # em vez de 42. A aritmetica fechava e a leitura nao.
         if excluidos:
             base += t(
-                f" {excluidos} votos foram excluídos por não corresponderem a nenhum alerta "
-                f"do registo partilhado.",
-                f" {excluidos} votes were excluded for not corresponding to any alert in the "
-                f"shared log.")
+                f" Outros {excluidos} votos, que não entram nos {r['votos_brutos']} acima, "
+                f"foram excluídos por não corresponderem a nenhum alerta do registo partilhado.",
+                f" A further {excluidos} votes, not counted among the {r['votos_brutos']} above, "
+                f"were excluded for not corresponding to any alert in the shared log.")
         L.append(base)
         L.append("")
         if not amostra_verificada:
@@ -662,6 +666,16 @@ def main() -> int:
     tex = Path(args.out_tex)
     tex.parent.mkdir(parents=True, exist_ok=True)
     tex.write_text(fragmento_latex(registos, chaves, args.lingua), encoding="utf-8")
+    # ⚠️ E A OUTRA ARVORE, NA MESMA CORRIDA. Sem isto o fragmento de uma lingua fica com
+    # os votos de hoje e o da outra com os de uma corrida anterior, e as duas dissertacoes
+    # afirmam numeros diferentes na mesma seccao sem que nenhuma falhe a compilar.
+    # Foi exactamente o que aconteceu a 2026-09-10: 90 votos na portuguesa, 81 na inglesa.
+    outra_lingua = "en" if args.lingua == "pt" else "pt"
+    outra_arvore = "tese-eng" if args.lingua == "pt" else "tese-pt"
+    outro = REPO / outra_arvore / "ch5" / "feedback_auto.tex"
+    if outro.resolve() != tex.resolve() and outro.parent.is_dir():
+        outro.write_text(fragmento_latex(registos, chaves, outra_lingua), encoding="utf-8")
+        print(f"[feedback] fragmento da outra arvore escrito em {outro}")
     print(f"[feedback] fragmento da dissertação escrito em {tex}")
     return 0
 

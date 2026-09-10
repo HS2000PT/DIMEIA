@@ -4,7 +4,7 @@
 
 > **Todas as regras de análise foram fixadas antes de existirem dados** e estão no cabeçalho de `scripts/analyse_feedback.py`. Nenhuma foi alterada depois.
 
-> Gerado por `scripts/analyse_feedback.py` a 2026-09-07 13:34 UTC.
+> Gerado por `scripts/analyse_feedback.py` a 2026-09-10 13:50 UTC.
 
 > **5 voto(s) excluído(s)** por não corresponderem a nenhum alerta do histórico partilhado. Não foram apagados do ficheiro, que é de acrescento e é a prova; foram ignorados na contagem.
 
@@ -12,10 +12,10 @@
 
 | Medida | Valor |
 |---|---|
-| Votos válidos registados | 81 |
-| Votos efetivos (um por pessoa e alerta) | 42 |
+| Votos válidos registados | 90 |
+| Votos efetivos (um por pessoa e alerta) | 51 |
 | Pessoas distintas | 3 |
-| Alertas votados | 29 |
+| Alertas votados | 38 |
 | Mudanças de voto | 10 |
 | Cliques repetidos sem mudança | 29 |
 
@@ -23,12 +23,12 @@
 
 | Recorte | Contagem | Proporção | Nota |
 |---|---|---|---|
-| Alertas considerados úteis | 41 de 42 | 98% | IC 95% de Wilson: 88%–100% |
+| Alertas considerados úteis | 50 de 51 | 98% | IC 95% de Wilson: 90%–100% |
 | O mesmo, sem o votante dominante | 14 de 14 | não reportada | abaixo do mínimo pré-registado de 20 |
 
-⚠️ **Salvaguarda do votante dominante aplicada.** Uma só pessoa forneceu 67% dos votos efetivos, excedendo o limite pré-registado de 40%. Sem essa pessoa restam 14 votos, abaixo do mínimo de 20; a segunda linha mostra apenas a contagem e nenhuma proporção desse recorte é reportada.
+⚠️ **Salvaguarda do votante dominante aplicada.** Uma só pessoa forneceu 73% dos votos efetivos, excedendo o limite pré-registado de 40%. Sem essa pessoa restam 14 votos, abaixo do mínimo de 20; a segunda linha mostra apenas a contagem e nenhuma proporção desse recorte é reportada.
 
-A proporção de alertas considerados úteis é de 98%, com intervalo de confiança de Wilson a 95% entre 88% e 100%. Este cálculo binomial não corrige a dependência entre votos da mesma pessoa ou sobre o mesmo alerta; a sua largura não representa toda a incerteza desta amostra.
+A proporção de alertas considerados úteis é de 98%, com intervalo de confiança de Wilson a 95% entre 90% e 100%. Este cálculo binomial não corrige a dependência entre votos da mesma pessoa ou sobre o mesmo alerta; a sua largura não representa toda a incerteza desta amostra.
 
 ## Ameaças à validade, e nenhuma delas é resolúvel com mais votos
 
