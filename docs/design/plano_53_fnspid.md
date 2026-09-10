@@ -223,3 +223,67 @@ reforçaria, e não enfraqueceria, o argumento que a §5.3.3 já faz.
 
 **Isto não está medido ainda** e não se escreve nada sobre ele antes de estar. É a próxima
 medição, sobre o corpus fatiado.
+
+---
+
+## A §5.3 MEDIDA NO CORPUS HONESTO — 2026-09-10
+
+Corrida sobre as 18 599 manchetes fatiadas, com `--out` e `--fig` para `data/_arquivo/`.
+**Nenhum congelado foi tocado.** Artefactos: `_53_agregado_honesto.md` e `_53_setor_honesto.md`.
+
+### O agregado — e a leitura corta nos dois sentidos
+
+| | original (3 709) | honesto (18 599) |
+|---|---:|---:|
+| SBERT (MiniLM), P@5 | 0,514 | **0,779 ± 0,016** |
+| lexical | 0,346 | 0,746 ± 0,021 |
+| recência | 0,126 | 0,560 ± 0,009 |
+| taxa-base do acaso | 0,467 | **0,685 ± 0,013** |
+| **margem sobre o acaso** | **+0,047** | **+0,094** |
+| trivial «devolver sempre tecnologia» | 0,467 | **0,840** |
+
+**Duas coisas verdadeiras que apontam para lados diferentes, e ambas têm de ser ditas.** A margem
+do método sobre o acaso **duplica** — de `+0,047` para `+0,094` —, o que é a favor do método. E ao
+mesmo tempo o chão trivial passa a `0,840` e **bate o método**, o que é contra o agregado como
+medida.
+
+⚠️ **A taxa-base do acaso não é igual ao chão trivial, e a diferença importa.** O acaso do script
+sorteia candidatos de **outra empresa** e mede quantos são do mesmo setor: `0,685`. O chão trivial
+da §5.3.3 devolve sempre tecnologia e acerta na fração de consultas que são de tecnologia:
+`0,840`. Compará-los como se fossem o mesmo número seria repetir, pelo lado da interpretação, o
+erro que este documento descreve.
+
+### Por setor — e é aqui que a conclusão da QI2 se decide
+
+| setor | n | P@5 | acaso | razão |
+|---|---:|---:|---:|---:|
+| tecnologia | 15 624 | 0,887 | 0,808 | 1,1× |
+| banca | 957 | 0,192 | 0,025 | **7,7×** |
+| energia | 721 | 0,347 | 0,020 | **17×** |
+| saúde | 569 | 0,243 | 0,015 | **16×** |
+| consumo | 728 | 0,071 | 0,018 | 3,9× |
+
+**✅ A afirmação defensável da QI2 SOBREVIVE.** A tese formula-a, desde a sessão 61, como *supera
+a taxa-base dentro de cada um dos cinco setores* — precisamente para não depender do agregado. No
+corpus honesto isso continua verdade **nos cinco**, e nos três setores pequenos por margens de 4 a
+17 vezes o acaso.
+
+⚠️ **O que muda, e não é pequeno:** a margem da tecnologia colapsa de `+0,283` (0,712 contra 0,429
+no corpus antigo) para `+0,079` (0,887 contra 0,808). Não é o método a piorar — é o acaso a subir,
+porque num corpus 84% tecnológico devolver tecnologia quase não é informação. E o **consumo** fica
+fraco em termos absolutos (`0,071`), ainda que 3,9× o acaso.
+
+### O que isto significa para a decisão
+
+O ramo 2 (re-medir) **não destrói a §5.3**: mantém a conclusão que a tese já escolheu defender e
+troca os números por números reproduzíveis, sobre uma janela que passa a ser verdade. O custo é
+propagação real — figuras, texto, slides e guia — e a §5.3.3 tem de ser reescrita, porque a
+alternativa trivial deixa de estar *perto* do método e passa a estar *acima* dele.
+
+O ramo 1 (reproduzir com tecto) mantém os números publicados e obriga a corrigir a declaração da
+janela para o que ela é: *as ~250 manchetes mais recentes por empresa antes do corte, com
+cobertura de 3 a 28 dias segundo o volume da empresa*. É a opção mais barata e a única que não
+mexe em nenhum número — mas deixa a §5.3.3 a atribuir ao fluxo de notícias um desequilíbrio que é
+do instrumento.
+
+**Nenhuma das duas foi executada. A escolha é do autor.**
