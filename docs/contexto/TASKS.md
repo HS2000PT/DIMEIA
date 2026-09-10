@@ -673,21 +673,41 @@ ficheiro congelado citado pela tese.
 > distingue um número com fonte de uma gralha. Corrigi-los depois de escrever é descobrir os
 > defeitos com o documento já montado.
 
-- [ ] Z1 · **A porta «todo o número tem origem» não vê os decimais da árvore canónica.**
-      O `scripts/auditar_numeros.py` extrai `\d+\.\d{2,}` (ponto) e a tese escreve `$2{,}173$`
-      (vírgula, convenção PT-PT exigida por outra porta); o `prosa_e_tabelas` não normaliza `{,}`.
-      Declara «todos têm origem» depois de examinar **60** números, quando a prosa e as tabelas
-      têm **212 decimais com vírgula**. É a MESMA classe que a sessão 63 corrigiu no
-      `check_tese_numeros` e que nunca foi corrigida aqui.
-      **Medido antes de alargar** (para a porta não passar a gritar de mais): dos 212, **180 já
-      têm fonte**, **19 existem só em `docs/design/`** — a QI4 inteira, e a porta não lê essa
-      pasta — e **13 não têm fonte nenhuma**.
-      Trabalho: (a) ver a vírgula; (b) acrescentar `docs/design/*.md` às fontes; (c) triar os treze
-      um a um, cada um com fonte no artefacto ou entrada na lista dos justificados com a razão
-      escrita, como as dez que já lá estão. Os treze: `0,143` `0,226` `0,235` `0,289` `0,336`
-      `0,454` `0,462` `0,970` `0,994` `0,997` `1,71` `2,11` `2,725`.
-      ⚠️ Plantar o defeito e confirmar que dispara, **e** confirmar que um corpus limpo não a faz
-      disparar. O projeto já pagou as duas metades.
+- [x] Z1 · **A porta «todo o número tem origem» estava cega aos decimais da árvore canónica.**
+      **FECHADO a 2026-09-10.** O `auditar_numeros.py` extraía `\d+\.\d{2,}` (ponto) e a tese
+      escreve `$2{,}173$` (vírgula, exigida por outra porta). Declarava «todos têm origem» depois
+      de examinar **60** números; passa a examinar **263**.
+      Quatro correções, e a segunda só apareceu porque a primeira não bastava:
+      (a) o extrator vê `$N{,}NNN$` e normaliza para a forma com ponto;
+      (b) **as fontes também são normalizadas** — os relatórios de `docs/design/` são Markdown em
+      português e escrevem 148 decimais com vírgula, logo corrigir só o lado da tese tinha movido
+      o defeito em vez de o fechar;
+      (c) `docs/design/*.md` e `*.json` entram nas fontes, porque é lá que vive a QI4 e sem isso a
+      porta acusaria o capítulo mais recente por um defeito que era dela;
+      (d) **reconhecimento de arredondamento**: o relatório de colapso publica `0,9936` e a tese
+      imprime `0{,}994`. São o mesmo valor, e exigir a cadeia exata reportava quatro números do
+      diagnóstico de degeneração como sem fonte — que é precisamente a evidência que torna a QI4
+      um resultado e não uma montagem falhada.
+      **Triagem dos sete que restaram:** nenhum era defeito. Quatro são aritmética que a tese faz
+      à frente do leitor (`0,143` = 0,632−0,489; `0,336` = 0,968−0,632; `0,235` = 0,378×0,622;
+      `0,289` = o desvio da uniforme que a construção passou a produzir), um é calculado no
+      exemplo trabalhado (`2,725`, o σ da Tesla), e dois **não são afirmações** — são o formato da
+      linha do alerta (`2,11` e `1,71`). Cada um com a razão escrita em `JUSTIFICADOS`.
+      **Duas justificações retiradas** por o próprio verificador as acusar de já não corresponderem
+      a nada: `3.11` e `3.12` ganharam fonte quando `docs/design/` entrou.
+      **Controlos nas duas metades, todos verificados:** um valor inventado dispara; um **vizinho**
+      de um valor publicado dispara (`0,995` contra `0,9936`) — é o controlo que garante que o
+      remédio não trocou cegueira por permissividade; um arredondamento legítimo não dispara; e o
+      corpus real não dispara. ⚠️ **E o meu primeiro controlo falhou por minha culpa:** plantei
+      `0,101` do registo da sessão 66 e o corpus mudou desde então. Refeito com `0,102`, escolhido
+      por **enumeração contra as fontes atuais**.
+      **`tests/test_auditar_numeros.py`, 12 testes** — não havia um único teste sobre este
+      verificador, e é por isso que a cegueira sobreviveu a uma correção da mesma classe na sessão
+      63. Um deles parte se a contagem cair abaixo de 200, para a cegueira não voltar em silêncio.
+      ⚠️ **E fica medida a limitação, em vez de suposta:** dos 900 valores `0,NNN`, só **429 estão
+      ausentes** das fontes. Um número inventado tem ~**52%** de probabilidade de encontrar par por
+      coincidência. A porta apanha os **retirados** e as gralhas na metade livre; **não** é prova
+      de que todo o número foi verificado.
 
 - [ ] Z2 · **A §5.2 não é reproduzível de um artefacto fixado.** O `scripts/evaluate_anomaly.py`
       chama `yf.Ticker(t).history(...)` ao vivo, sem cache e sem ficheiro de preços fixado. A
