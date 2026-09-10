@@ -341,9 +341,21 @@ Duas, ambas do nosso lado — **a origem não derivou**: o dataset Hugging Face
       autorizou descarregar do zero.
 - [ ] C1h.6 · **→ consolidado em Z2**, com a causa medida (o yfinance ajusta retroativamente). `evaluate_anomaly.py` vai ao yfinance sem cache e a §5.2 não é determinística
       hoje. Aplicar-lhe a cache de preços, como se fez ao `build_kb.py`.
-- [ ] C1h.7 · **Verificar os 28 documentos cuja dependência a auditoria não detectou.** A
-      deteção por expressão regular não apanha caminhos construídos em `argparse`. Não é
-      «estão bem»: é «ainda não se sabe».
+- [x] C1h.7 · **FEITO a 2026-09-10, e a causa era UMA PALAVRA.** A suposição era o `argparse`;
+      o defeito real é que o padrão procurava `REPO / "data" / …` e o repositório escreve
+      `RAIZ / "data" / …`. **Medido: 55 scripts declaram `RAIZ` e 4 declaram `REPO`** — e a
+      auditoria usa `REPO` para si própria, pelo que escreveu o padrão com o nome da sua
+      própria variável e era cega a 93% do repositório. Aceitar os dois apanha o `argparse`
+      de graça, porque é a mesma construção.
+      **Resultado: «gerador e entradas presentes» 17 → 33; «sem entradas detectadas» 30 → 13.**
+      ⚠️ **E a resposta ao «ainda não se sabe» é boa: ENTRADAS PERDIDAS = 0.** Os quatro casos
+      que a auditoria dava como «em falta» têm a entrada **gitignored** — são intermediários
+      derivados, ou seja **pré-requisito de regeneração nesta máquina e não defeito**. A
+      auditoria passa a distinguir as duas coisas, porque pedem acções opostas.
+      ⚠️ **Mais três falsos «gerador inexistente», e os três scripts existem:** o padrão
+      ficava-se pelo primeiro token de «Gerado por `python scripts/x.py --escrever`», que é
+      **`python`**. E três documentos não têm gerador **por desenho** (dois de prosa e uma nota
+      de validação supersedida); contá-los como falha era a metade «grita de mais» do par.
 
 ### C1e — ACHADO NOVO: o corpus da avaliação preliminar não existe
 

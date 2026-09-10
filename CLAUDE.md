@@ -135,6 +135,31 @@
   **⚠️ (O) A ARMADILHA DO HEREDOC MORDEU PELA QUARTA VEZ, E A REGRA ESTAVA DEMASIADO ESTREITA.** O projecto tinha escrito «não gerar **LaTeX** por heredoc». Hoje o que se estava a escrever era **Markdown** — a própria nota deste ficheiro — e a cadeia continha `\\ref`: chegou ao Python como `\ref`, e o Python lê `\r` como **CARRIAGE RETURN**. Ficou `<CR>ef` dentro do `CLAUDE.md` e do `AGENTS.md`, duas vezes em cada, num dia em que eu já tinha escrito três vezes que isto acontece.
   **⚠️ E O AVISO ESTAVA À FRENTE:** `SyntaxWarning: invalid escape sequence '\l'`, do `\label` da mesma cadeia. **Um aviso de escape numa cadeia que também contém `\r` é sinal de que o `\r` colapsou** — a diferença é que o `\l` fica literal e **o `\r` é destrutivo**. Reparado **em bytes**, porque a tradução universal de mudanças de linha do Python converte o CR em `\n` antes de o ver e volta a mangá-lo no round-trip, que é como esta classe se escondeu nas sessões 56 e 61.
   **A REGRA AFINADA, e passa a ser esta:** não gerar por heredoc **nenhuma cadeia que contenha uma barra invertida** — LaTeX, Markdown, padrões, mensagens. Ficheiro à parte com a ferramenta de ficheiro, ou `chr(92)`. E **verificar em bytes**, não por leitura de texto.
+  **✅ (P) O C1h.7 FECHADO, E A CAUSA ERA UMA PALAVRA.** A tarefa dizia «verificar os 28
+  documentos cuja dependência a auditoria não detectou» e supunha que a causa era o
+  `argparse`. **Não era:** o padrão procurava `REPO / "data" / …` e o repositório escreve
+  `RAIZ / "data" / …`. **Medido: 55 scripts declaram `RAIZ` e 4 declaram `REPO`** — e a
+  auditoria usa `REPO` para si própria, ou seja **escreveu o padrão com o nome da sua própria
+  variável e era cega a 93% do repositório**. Aceitar os dois apanha o `argparse` de graça,
+  porque `default=str(RAIZ / "data" / "x.csv")` é a mesma construção.
+  **Resultado: «gerador e entradas presentes» 17 → 33 · «sem entradas detectadas» 30 → 13 ·
+  «sem linha Gerado por» 5 → 0.**
+  **✅ E A RESPOSTA AO «AINDA NÃO SE SABE» É BOA: ENTRADAS PERDIDAS = 0.** Os quatro casos que
+  a auditoria dava como «em falta» têm a entrada **gitignored** — são intermediários derivados,
+  logo **pré-requisito de regeneração nesta máquina e não defeito**. A auditoria passa a
+  distinguir as duas coisas, porque pedem acções opostas: uma é um comando a correr, a outra é
+  um ficheiro perdido.
+  **⚠️ MAIS TRÊS FALSOS «GERADOR INEXISTENTE», e os três scripts existem:** o padrão ficava-se
+  pelo **primeiro token** de «Gerado por `python scripts/x.py --escrever`», que é **`python`**.
+  E três documentos não têm gerador **por desenho** — dois de prosa e uma nota de validação
+  parcialmente supersedida que remete para a medição reprodutível; contá-los como falha de
+  reprodutibilidade era a metade «grita de mais» do par que este ficheiro documenta.
+  **⚠️ (Q) E A ARMADILHA DO HEREDOC MORDEU A QUINTA VEZ, no comando seguinte ao que escreveu a
+  regra.** Ao encurtar uma linha para o `ruff`, um `\\n` chegou ao Python como `\n` e inseriu
+  uma **mudança de linha a sério dentro de um literal** — oito erros de sintaxe num verificador
+  que eu tinha acabado de corrigir. **Escrevi a regra e violei-a a seguir.** A forma que
+  funciona para partir uma cadeia é **concatenação implícita**, num ficheiro escrito com a
+  ferramenta de ficheiro.
   **⏭️ A CONCLUSÃO OPERACIONAL: o `PLANO_REESCRITA_EXECUCAO.md` não é executável a partir da
   lista.** Foi escrito contra um documento que as sessões 63 a 67 já corrigiram. **O que resta da
   reescrita tem de ser rederivado do documento actual**, e o critério que funciona está escrito:

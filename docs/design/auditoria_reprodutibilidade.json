@@ -37,21 +37,29 @@
     "doc": "evaluation_budget_baselines.md",
     "gerador": "scripts/evaluate_budget_baselines.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/triage_dataset.csv",
+      "models/triage_context_lr.joblib"
+    ],
     "em_falta": []
   },
   {
     "doc": "evaluation_budget_effect.md",
     "gerador": "scripts/evaluate_budget_effect.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/alerts_history.jsonl"
+    ],
     "em_falta": []
   },
   {
     "doc": "evaluation_budget_sweep.md",
     "gerador": "scripts/evaluate_budget_sweep.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/triage_dataset.csv",
+      "models/triage_context_lr.joblib"
+    ],
     "em_falta": []
   },
   {
@@ -97,7 +105,9 @@
     "doc": "evaluation_endtoend_baselines.md",
     "gerador": "scripts/evaluate_endtoend_baselines.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/triage_dataset.csv"
+    ],
     "em_falta": []
   },
   {
@@ -145,22 +155,30 @@
     "doc": "evaluation_intelligence_guard.md",
     "gerador": "scripts/evaluate_intelligence_guard.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/samples/dashboard_snapshot.json"
+    ],
     "em_falta": []
   },
   {
     "doc": "evaluation_latency.md",
-    "gerador": "python",
-    "gerador_existe": false,
-    "entradas": [],
+    "gerador": "scripts/evaluate_latency.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/alerts_history.jsonl"
+    ],
     "em_falta": []
   },
   {
     "doc": "evaluation_live_transfer.md",
     "gerador": "scripts/evaluate_live_transfer.py",
     "gerador_existe": true,
-    "entradas": [],
-    "em_falta": []
+    "entradas": [
+      "data/_live_predictions.jsonl"
+    ],
+    "em_falta": [
+      "data/_live_predictions.jsonl"
+    ]
   },
   {
     "doc": "evaluation_narrator.md",
@@ -175,9 +193,11 @@
   },
   {
     "doc": "evaluation_news_coverage.md",
-    "gerador": "python",
-    "gerador_existe": false,
-    "entradas": [],
+    "gerador": "scripts/evaluate_news_coverage.py",
+    "gerador_existe": true,
+    "entradas": [
+      "data/samples/backfill_kb.jsonl"
+    ],
     "em_falta": []
   },
   {
@@ -191,7 +211,9 @@
     "doc": "evaluation_onnx_parity.md",
     "gerador": "scripts/evaluate_onnx_parity.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/samples/kb_fnspid_light.jsonl"
+    ],
     "em_falta": []
   },
   {
@@ -228,14 +250,18 @@
     "doc": "evaluation_ranking_producao.md",
     "gerador": "scripts/evaluate_ranking_producao.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/predictions_log.jsonl"
+    ],
     "em_falta": []
   },
   {
     "doc": "evaluation_relevance_filter.md",
     "gerador": "scripts/evaluate_corpus_and_filter.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/finnhub_news.csv"
+    ],
     "em_falta": []
   },
   {
@@ -301,7 +327,9 @@
     "doc": "evaluation_similarity_floor.md",
     "gerador": "scripts/evaluate_similarity_floor.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/kb_fnspid_sbert.jsonl"
+    ],
     "em_falta": []
   },
   {
@@ -337,14 +365,18 @@
     "doc": "evaluation_triage_identity.md",
     "gerador": "scripts/evaluate_triage_identity.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/triage_dataset.csv"
+    ],
     "em_falta": []
   },
   {
     "doc": "evaluation_triage_labelgrid.md",
     "gerador": "scripts/evaluate_triage_labelgrid.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/triage_dataset.csv"
+    ],
     "em_falta": []
   },
   {
@@ -360,14 +392,18 @@
     "doc": "evaluation_triage_within.md",
     "gerador": "scripts/evaluate_triage_within.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/triage_dataset.csv"
+    ],
     "em_falta": []
   },
   {
     "doc": "funil_por_porta.md",
     "gerador": "scripts/snapshot_funil.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "data/gate_log.jsonl"
+    ],
     "em_falta": []
   },
   {
@@ -411,7 +447,9 @@
     "doc": "sensibilidade_headline.md",
     "gerador": "scripts/check_headline_sensitivity.py",
     "gerador_existe": true,
-    "entradas": [],
+    "entradas": [
+      "models/triage_context_lr.joblib"
+    ],
     "em_falta": []
   },
   {
