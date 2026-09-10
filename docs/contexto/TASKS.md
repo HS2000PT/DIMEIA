@@ -634,9 +634,43 @@ ficheiro congelado citado pela tese.
 - [ ] E8 · «Rótulo favorece a volatilidade» ×3 → §5.4.7 + Tab. 6.1
 - [ ] E9 · Defeito dos 36,8% ×2 (§4.5.1, §6.4) → §4.5.1
 - [ ] E10 · «Três ocasiões» ×3 (§5.7, §6.1, Fig. 6.1) → a figura basta
-- [ ] E11 · **Erro:** mediana de R² — §4.5.2 diz «lista vigiada», §5.5 diz «17 do mapa de setores»
+- [x] E11 · **Erro CONFIRMADO e corrigido na raiz** (2026-09-10). A §5.5 estava certa. A
+      lista vigiada tem **doze** empresas (`config/alerts.yaml`) e o
+      `evaluate_decomposition.py` percorre `sorted(SECTOR_OF)`, que tem **dezassete**; o
+      artefacto reporta «Tickers decompostos: 17» e «R² ≤ 0: 1 de 17».
+      **⚠️ A RAIZ ERA O ARTEFACTO, e é por isso que a correção não parou no `.tex`:** a
+      secção 2 do relatório chamava-se «A watchlist toda» e o docstring do gerador dizia
+      «medida sobre a watchlist implantada», enquanto os dois decompõem 17. A designação
+      errada propagou-se para **dois** sítios do Cap. 4 e para a etiqueta da própria porta
+      (`check_tese_numeros`: «R2 mediano sobre a watchlist»). Corrigidos os quatro. Corrigir
+      só a tese deixaria a regeneração seguinte a reintroduzir o erro.
+      **⚠️ E DOIS ACHADOS PELO CAMINHO, o primeiro com dano.** O
+      `evaluate_decomposition.py` **não tinha um único `add_argument`**: o `--out` que lhe
+      passei numa verificação foi ignorado em silêncio e a corrida escreveu por cima do
+      artefacto congelado **com números diferentes** — o caso trabalhado passou de AMD
+      `+6,2944%` a META `+6,3486%`, porque é escolhido como o maior movimento do **dia em
+      que o script corre**. Reposto do git, byte-intacto. A regra do *brief* («usar `--out`
+      em qualquer verificação») **não era seguível** neste script; passou a ser.
+      E o docstring afirmava «Nao toca em nada congelado», o que é **falso**: a §5.5 cita
+      dele `0,460`, `0,487` e o exemplo da AMD. Uma afirmação dessas no topo de um script
+      autoriza precisamente a corrida que causa o dano.
 - [ ] E12 · **Erro:** aritmética dos votos em §5.6.5 (81−10−29−5 = 37, não 42) — reordenar
-- [ ] E13 · **Erro:** PR-AUC 0,469 das árvores só existe na Tab. 5.4 — pôr em §5.4.2
+- [x] E13 · **RETIRADA: a premissa é falsa** (verificado a 2026-09-10). A `fig:av_triagem`,
+      que está **na própria §5.4.2**, já desenha as **seis** famílias — `0,378`, `0,439`,
+      `0,469`, `0,496`, `0,538` e `0,542` — com os intervalos ao lado. O valor não está «só
+      na Tab. 5.4»: está no visual da subsecção que a tarefa queria corrigir.
+      **⚠️ E ESCREVI A FRASE ANTES DE VER.** Acrescentei ~40 palavras a nomear em prosa os
+      dois valores que a figura ao lado desenha, e revertei. É o defeito que a sessão 66
+      documentou («o defeito não era falta de estrutura: era a prosa a reler os rótulos do
+      visual ao lado»), num capítulo que tem de perder 2 816 palavras.
+      **⚠️ E a minha busca estava cega, duas vezes.** Procurei `0{,}469` e a figura escreve
+      `(0.469,gbm)` — coordenadas TikZ usam **ponto**, que é a mesma cegueira vírgula/ponto
+      que o Z1 corrigiu na porta dos números, esta vez na minha procura. E a primeira
+      verificação da figura usou a âncora `fig:av_triagem` em vez de `label{...}`, apanhando
+      uma **remissão** anterior e portanto o bloco de outra figura.
+      **O que fica de verdadeiro na tarefa:** nada a fazer na §5.4.2. Se a prosa dela vier a
+      ser reescrita, a regra é a inversa da que o E13 propunha — **não** reenumerar os seis
+      valores, porque a figura os mostra.
 - [ ] E14 · Uniformizar «conjunto de dados» vs «bloco de treino/validação/teste» em todo o documento
 - [ ] E15 · Antecipar a nota que explica F1 0,516 vs 0,530 e amplitude 0,015 vs 0,017
 - [ ] E16 · Parágrafo-mapa na abertura de §5.4.5
