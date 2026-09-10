@@ -87,6 +87,70 @@ ser justa. E a QI4 ainda **não entrou na tese** (tarefas C7 e C8).
 
 ---
 
+### 🔴 2026-09-10 — O ACHADO MAIOR DO DIA: A JANELA DO FINNHUB NUNCA FOI A JANELA RECOLHIDA
+
+Corri o **ramo A** do `plano_53_fnspid.md` e o corpus **recupera-se** — 3 709 manchetes contra as
+3 714 originais, a 0,13%. Mas verificar a janela encontrou um terceiro problema, que o plano não
+previa e que **toca uma afirmação publicada**.
+
+**O `/company-news` gratuito devolve no máximo ~250 itens por pedido e, ao bater nesse tecto,
+ignora o `from`.** Pedir 5, 13 ou 27 dias de AAPL devolve **exactamente as mesmas 248 manchetes**,
+todas dos cinco dias anteriores ao `to`. Não há erro nem aviso: o corpus sai com a forma certa e o
+período errado.
+
+⚠️ **Verificado que não é do script** antes de o atribuir à API: o pedido constrói `from`/`to`
+correctamente e o tecto próprio do script (1 000) não dispara — o log imprime `248/248`.
+
+**A truncagem é proporcional ao volume da empresa**, logo a cobertura temporal fica entrelaçada
+com a identidade: NVDA **3 dias**, MSFT/GOOGL/AMZN 4, KO os 28 completos. Fatiando em pedidos de
+1 dia: AAPL 248 → **1 372**, NVDA 249 → **5 302**, KO 246 → 254 (o KO é o controlo que mostra que
+o efeito é do volume e não do método).
+
+**E a consequência fecha sobre a §5.3.3.** Ela lê o desequilíbrio como propriedade do fluxo de
+notícias: «1 736 das 3 714, quase metade, em tecnologia» = `0,4674`. O mapa de setores tem **sete
+de quinze** empresas em tecnologia = `0,4667`. **Os dois números são o mesmo à terceira casa**,
+porque o tecto dá ~248 a cada empresa independentemente do volume real dela — a composição
+setorial passa a ser a proporção de **empresas** por setor. A impressão digital são os outros
+quatro setores todos a **13,3–13,4%**, que é `2 × 248 / 3709`.
+
+**O chão trivial de `0,467`, que é o comparador mais importante da §5.3, é o tecto da API.**
+
+| | original (com tecto) | honesto (fatias de 1 dia) |
+|---|---:|---:|
+| manchetes | 3 709 | **18 599** (5,0×) |
+| tecnologia | 46,7% | **84,0%** |
+| outros quatro setores | 13,3–13,4% cada | 3,1–5,1% |
+| chão trivial | **0,467** | **0,840** |
+
+A tese cita o método a `0,514` contra o chão de `0,467`. **No corpus honesto o chão trivial bate o
+método com folga** — o que **reforça** o argumento que a §5.3.3 já faz (o agregado esconde uma
+alternativa trivial) em vez de o enfraquecer, mas com uma magnitude muito maior do que a escrita.
+
+**A frase afectada, no `ch5` das duas árvores:** «O corpus contém $3\,714$ notícias distribuídas
+por cinco setores, **recolhidas ao longo de vinte e sete dias**». Os vinte e sete dias são
+verdade da **união** entre empresas, não da amostragem: por empresa a cobertura vai de 3 a 28.
+
+**⏭️ A DECISÃO É DO AUTOR, e agora tem três ramos e não dois** — enunciados no fim do
+`docs/design/plano_53_fnspid.md`: (1) reproduzir o corpus com tecto e **corrigir a declaração da
+janela**; (2) re-medir a §5.3 sobre o corpus honesto (é medição nova, não actualização, e propaga
+por figuras, texto, slides e guia); (3) o ramo B, cortar a §5.3.
+
+⚠️ **Nada foi propagado e nenhum congelado foi tocado.** Todas as recolhas foram para
+`data/_arquivo/` com `--out` e `--sample` explícitos. A medição da §5.3 sobre o corpus honesto
+está **a correr** para dar o número que falta à decisão (logs `data/_53_agregado.log` e
+`data/_53_setor.log`).
+
+**O recolhedor ganhou três coisas:** `--fatiar N` (parte a janela, um pedido por fatia),
+**deteção de tecto** (grita quando um pedido volta ao tecto, com a cobertura real por ticker) e
+`--pausa` (1,1 s; o plano gratuito serve 60/min e sem pausa a recolha fatiada morre em 429 a meio
+e devolve um corpus incompleto).
+
+⚠️ **E o meu detector de tecto deu um falso positivo no KO** (marca tudo acima de 240 itens, e o
+KO tem 246 na janela inteira sem estar truncado). Fica — um aviso a mais é melhor do que um corpus
+truncado em silêncio —, mas **o aviso não é prova: a prova é fatiar e comparar.**
+
+---
+
 ### 🟢 O RESULTADO DO DIA — o colapso está resolvido
 
 `magnitude_v2` (pares estratificados, taxa 5e-6) **passou a porta de colapso**:
