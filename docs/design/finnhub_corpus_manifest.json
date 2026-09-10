@@ -1,0 +1,141 @@
+{
+  "gerado": "2026-09-10T00:20:36Z",
+  "fonte": "Finnhub /company-news (plano gratuito)",
+  "ficheiro": "finnhub_news.csv",
+  "sha256": "cab40b5c8882135e0a8da29fb123b8c42ade68dafedeaecf2ac57b63551745d2",
+  "manchetes": 18599,
+  "empresas": 15,
+  "janela": {
+    "primeiro": "2026-05-29",
+    "ultimo": "2026-06-26"
+  },
+  "recolha": {
+    "fatia_dias": 1,
+    "nota": "A janela é pedida em fatias de um dia porque a API devolve no máximo ~250 itens por pedido e, ao atingir esse tecto, ignora o `from`. Sem fatiar, pedir 27 dias devolvia as ~250 manchetes mais recentes e a cobertura real variava de 3 a 28 dias segundo o volume de notícias da empresa."
+  },
+  "por_empresa": {
+    "AAPL": {
+      "manchetes": 1346,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-25",
+      "dias_com_noticias": 28
+    },
+    "AMZN": {
+      "manchetes": 1878,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-26",
+      "dias_com_noticias": 29
+    },
+    "BAC": {
+      "manchetes": 362,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-25",
+      "dias_com_noticias": 28
+    },
+    "CVX": {
+      "manchetes": 399,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-25",
+      "dias_com_noticias": 26
+    },
+    "GOOGL": {
+      "manchetes": 2302,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-26",
+      "dias_com_noticias": 29
+    },
+    "JNJ": {
+      "manchetes": 299,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-25",
+      "dias_com_noticias": 27
+    },
+    "JPM": {
+      "manchetes": 595,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-25",
+      "dias_com_noticias": 28
+    },
+    "KO": {
+      "manchetes": 251,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-25",
+      "dias_com_noticias": 28
+    },
+    "META": {
+      "manchetes": 1490,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-25",
+      "dias_com_noticias": 28
+    },
+    "MSFT": {
+      "manchetes": 1947,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-26",
+      "dias_com_noticias": 29
+    },
+    "NVDA": {
+      "manchetes": 5233,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-26",
+      "dias_com_noticias": 29
+    },
+    "PFE": {
+      "manchetes": 270,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-25",
+      "dias_com_noticias": 27
+    },
+    "TSLA": {
+      "manchetes": 1428,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-25",
+      "dias_com_noticias": 28
+    },
+    "WMT": {
+      "manchetes": 477,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-25",
+      "dias_com_noticias": 28
+    },
+    "XOM": {
+      "manchetes": 322,
+      "primeiro": "2026-05-29",
+      "ultimo": "2026-06-25",
+      "dias_com_noticias": 28
+    }
+  },
+  "por_setor": {
+    "tech": {
+      "manchetes": 15624,
+      "fracao": 0.84
+    },
+    "banking": {
+      "manchetes": 957,
+      "fracao": 0.0515
+    },
+    "consumer": {
+      "manchetes": 728,
+      "fracao": 0.0391
+    },
+    "energy": {
+      "manchetes": 721,
+      "fracao": 0.0388
+    },
+    "health": {
+      "manchetes": 569,
+      "fracao": 0.0306
+    }
+  },
+  "truncagem_residual": {
+    "pares_ticker_dia": 420,
+    "pares_no_tecto": 5,
+    "fracao_pares": 0.0119,
+    "manchetes_em_dias_truncados": 1226,
+    "fracao_manchetes": 0.0659,
+    "empresas": [
+      "NVDA"
+    ],
+    "nota": "Irredutível com o plano gratuito: `from` e `to` são datas, logo o dia é a granularidade mínima e um dia em que uma empresa gere mais de ~250 manchetes não pode ser pedido em pedaços. Declara-se em vez de se esconder."
+  }
+}

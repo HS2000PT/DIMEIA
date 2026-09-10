@@ -122,9 +122,16 @@ quatro setores todos a **13,3–13,4%**, que é `2 × 248 / 3709`.
 | outros quatro setores | 13,3–13,4% cada | 3,1–5,1% |
 | chão trivial | **0,467** | **0,840** |
 
-A tese cita o método a `0,514` contra o chão de `0,467`. **No corpus honesto o chão trivial bate o
-método com folga** — o que **reforça** o argumento que a §5.3.3 já faz (o agregado esconde uma
-alternativa trivial) em vez de o enfraquecer, mas com uma magnitude muito maior do que a escrita.
+A tese cita o método a `0,514` contra o chão trivial de `0,467` e contra a taxa-base do **acaso**
+de `0,240`. **⚠️ E as duas margens pioram no corpus honesto, uma delas mudando de sinal:** sobre o
+acaso cai de `+0,274` para `+0,094`; sobre o trivial passa de `+0,047` **acima** para `0,061`
+**abaixo**. Não é o método a piorar — num corpus 84% tecnológico, devolver tecnologia já é quase
+sempre certo, logo o acaso e o trivial sobem muito e o agregado deixa de medir capacidade de
+recuperação e passa a medir composição do corpus.
+
+⚠️ **Escrevi primeiro que «a margem sobre o acaso duplica». Era falso** — tomei o `0,467`, que é o
+chão trivial, como se fosse a taxa-base do acaso, que o `evaluation_results.md` declara em
+`0,240`. Corrigido no `plano_53_fnspid.md`, com a correção escrita em vez de silenciada.
 
 **A frase afectada, no `ch5` das duas árvores:** «O corpus contém $3\,714$ notícias distribuídas
 por cinco setores, **recolhidas ao longo de vinte e sete dias**». Os vinte e sete dias são

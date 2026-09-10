@@ -231,27 +231,40 @@ medição, sobre o corpus fatiado.
 Corrida sobre as 18 599 manchetes fatiadas, com `--out` e `--fig` para `data/_arquivo/`.
 **Nenhum congelado foi tocado.** Artefactos: `_53_agregado_honesto.md` e `_53_setor_honesto.md`.
 
-### O agregado — e a leitura corta nos dois sentidos
+### O agregado — e a leitura é mais dura do que eu escrevi à primeira
+
+⚠️ **CORREÇÃO A UMA VERSÃO ANTERIOR DESTA SECÇÃO.** Escrevi que «a margem do método sobre o acaso
+duplica». **É falso, e o erro foi meu:** tomei o `0,467` — que é o chão **trivial** «devolver
+sempre tecnologia», medido na sessão 61 — como se fosse a taxa-base do **acaso** do corpus
+original. O artefacto congelado `evaluation_results.md` declara a taxa-base do acaso em
+**`0,240`**. Com o número certo a conclusão **inverte-se**: a margem sobre o acaso **encolhe**.
 
 | | original (3 709) | honesto (18 599) |
 |---|---:|---:|
 | SBERT (MiniLM), P@5 | 0,514 | **0,779 ± 0,016** |
+| SBERT (MPNet) | 0,538 | *(a medir)* |
 | lexical | 0,346 | 0,746 ± 0,021 |
 | recência | 0,126 | 0,560 ± 0,009 |
-| taxa-base do acaso | 0,467 | **0,685 ± 0,013** |
-| **margem sobre o acaso** | **+0,047** | **+0,094** |
-| trivial «devolver sempre tecnologia» | 0,467 | **0,840** |
+| taxa-base do **acaso** | **0,240** | **0,685 ± 0,013** |
+| **margem sobre o acaso** | **+0,274** | **+0,094** |
+| chão **trivial** «sempre tecnologia» | 0,467 | **0,840** |
+| **margem sobre o trivial** | **+0,047** | **−0,061** |
 
-**Duas coisas verdadeiras que apontam para lados diferentes, e ambas têm de ser ditas.** A margem
-do método sobre o acaso **duplica** — de `+0,047` para `+0,094` —, o que é a favor do método. E ao
-mesmo tempo o chão trivial passa a `0,840` e **bate o método**, o que é contra o agregado como
-medida.
+**As duas margens pioram, e a segunda muda de sinal.** Sobre o acaso, a margem cai a menos de
+metade — `+0,274` para `+0,094`. Sobre a alternativa trivial, o método passa de `+0,047` **acima**
+para `0,061` **abaixo**.
 
-⚠️ **A taxa-base do acaso não é igual ao chão trivial, e a diferença importa.** O acaso do script
-sorteia candidatos de **outra empresa** e mede quantos são do mesmo setor: `0,685`. O chão trivial
-da §5.3.3 devolve sempre tecnologia e acerta na fração de consultas que são de tecnologia:
-`0,840`. Compará-los como se fossem o mesmo número seria repetir, pelo lado da interpretação, o
-erro que este documento descreve.
+**E a razão é a mesma nos dois casos, e não é o método piorar:** num corpus 84% tecnológico,
+«devolver notícias de tecnologia» já é quase sempre a resposta certa, logo tanto o acaso como a
+estratégia trivial sobem muito. O agregado deixa de medir a capacidade de recuperar por tema e
+passa a medir, quase só, a composição do corpus.
+
+⚠️ **A taxa-base do acaso e o chão trivial são números diferentes e não se confundem.** O acaso
+sorteia candidatos de **outra empresa** e mede quantos são do mesmo setor (`0,240` → `0,685`); o
+trivial devolve sempre tecnologia e acerta na fração de consultas que são de tecnologia (`0,467` →
+`0,840`). Tratá-los como o mesmo número foi exactamente o erro que esta secção acabou de corrigir
+— e é a mesma classe de erro que este documento descreve na recolha: um número certo lido como
+resposta a outra pergunta.
 
 ### Por setor — e é aqui que a conclusão da QI2 se decide
 
@@ -275,10 +288,12 @@ fraco em termos absolutos (`0,071`), ainda que 3,9× o acaso.
 
 ### O que isto significa para a decisão
 
-O ramo 2 (re-medir) **não destrói a §5.3**: mantém a conclusão que a tese já escolheu defender e
-troca os números por números reproduzíveis, sobre uma janela que passa a ser verdade. O custo é
-propagação real — figuras, texto, slides e guia — e a §5.3.3 tem de ser reescrita, porque a
-alternativa trivial deixa de estar *perto* do método e passa a estar *acima* dele.
+O ramo 2 (re-medir) **não destrói a §5.3, mas encolhe-a**: a conclusão que a tese escolheu
+defender — supera a taxa-base **em cada setor** — mantém-se, e é ela que sustenta a QI2. O que se
+perde é o agregado, que num corpus 84% tecnológico deixa de ser informativo: a margem sobre o
+acaso cai a menos de metade e a alternativa trivial passa a estar **acima** do método. A §5.3.3
+tem de ser reescrita nesse sentido, e a leitura do agregado tem de sair ou passar a vir com a
+ressalva da composição.
 
 O ramo 1 (reproduzir com tecto) mantém os números publicados e obriga a corrigir a declaração da
 janela para o que ela é: *as ~250 manchetes mais recentes por empresa antes do corte, com
