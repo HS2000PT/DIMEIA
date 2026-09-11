@@ -222,6 +222,19 @@ def juntar_decomposicao(linhas: list[dict], fora: dict) -> None:
                 "beta_market": float(d.beta_market),
                 "beta_sector": float(d.beta_sector),
                 "window": int(d.window),
+                # ⚠️ E o beta EM BRUTO com o seu erro-padrão, porque foi uma pergunta do autor
+                # que mostrou que faltava: «porque é que para as empresas a percentagem do
+                # mercado é diferente?». A parcela não é o retorno do mercado — é
+                # `β_mercado × retorno do mercado`, e o β é desta empresa. Para o ecrã poder
+                # desdobrar até ao fim, o β final não basta: sem o bruto e a precisão, a
+                # interface explica o encolhimento de Vasicek e não o pode mostrar, o que pede
+                # ao leitor que acredite. Com os dois, o peso é refazível por quem lê.
+                **{k: (None if v != v else float(v)) for k, v in (
+                    ("beta_market_raw", d.beta_market_raw),
+                    ("beta_sector_raw", d.beta_sector_raw),
+                    ("beta_market_se", d.beta_market_se),
+                    ("beta_sector_se", d.beta_sector_se),
+                )},
             }
         except Exception:  # noqa: BLE001
             linha["decomp"] = None

@@ -207,3 +207,76 @@ def test_a_faixa_do_z_fixa_o_intervalo_em_vez_de_o_deixar_automatico():
     m = re.search(r"const zMax = Math\.max\(1\.5,.*\* ([0-9.]+);", txt)
     assert m, "o intervalo da faixa deixou de ser calculado a partir dos dados"
     assert float(m.group(1)) >= 1.3, f"folga de {m.group(1)} é pouca para o rótulo do topo"
+
+
+def test_a_parcela_do_mercado_diz_que_nao_e_o_retorno_do_mercado():
+    """A linha «Market −0,42%» lê-se como *o mercado caiu 0,42%*, e não é isso.
+
+    ⚠️ ESTE TESTE VEM DE UMA PERGUNTA DO AUTOR: «porque é que para as empresas o mercado
+    percentagem é diferente?». Ela apanhou um **rótulo enganador** e não uma explicação em
+    falta — o que a linha mostra é `β_mercado × retorno do mercado`, ou seja a fatia do
+    movimento DESTA empresa que o mercado explica. O retorno do fator é partilhado pelas doze
+    empresas; a sensibilidade é de cada uma, e é por isso que a linha difere no mesmo dia.
+
+    Sem guarda, a correção regride na primeira vez que alguém reescrever o painel: a
+    percentagem continua certa, a leitura volta a estar errada, e nada falha.
+    """
+    txt = _fonte_painel()
+    assert "This is not what the" in txt, (
+        "a linha deixou de dizer que a parcela não é o retorno do próprio fator"
+    )
+    assert "shared by every company" in txt and "this company's own" in txt, (
+        "desapareceu a frase que responde à pergunta: o fator é partilhado, o β é da empresa"
+    )
+    # A conta tem de estar na PRÓPRIA linha. Atrás de um `<details>` já estava, e a pergunta
+    # do autor é a prova de que ali não era encontrada.
+    assert "d-conta" in txt and "β ${b2(beta)} × ${pctc(rFator)}" in txt, (
+        "a multiplicação saiu da linha e voltou a estar só dentro de um painel escondido"
+    )
+
+
+def test_o_beta_desdobra_ate_ao_numero_em_bruto():
+    """O autor pediu subdetalhe sempre: o β não pode ser um número que se aceita.
+
+    O nível 2 mostra o estimado em bruto, o erro-padrão e o peso de Vasicek, para o
+    encolhimento poder ser **refeito** por quem lê. Isso exige que os campos cheguem ao
+    cliente — daí o guarda tocar também no gerador do instantâneo.
+    """
+    txt = _fonte_painel()
+    assert "Where does β" in txt, "o β deixou de se poder desdobrar"
+    for pedaco in ("beta_market_raw", "beta_market_se", "PRIOR_SD2"):
+        assert pedaco in txt, f"o desdobramento perdeu {pedaco}"
+    gerador = (RAIZ / "scripts" / "build_snapshot.py").read_text(encoding="utf-8")
+    for campo in ("beta_market_raw", "beta_market_se", "beta_sector_raw", "beta_sector_se"):
+        assert campo in gerador, (
+            f"{campo} deixou de ser publicado: o ecrã pede o desdobramento e recebe nada"
+        )
+
+
+def test_o_agregado_dos_votos_nunca_aparece_sem_as_suas_ressalvas():
+    """Uma proporção de 95% sobre três pessoas, dita sozinha, é indefensável.
+
+    ⚠️ O AUTOR PEDIU ESTE BLOCO COM A PALAVRA «prova»: os leitores votam no canal e isso
+    «prova o valor e utilidade real». A primeira metade é verdade — era uma quantidade medida,
+    servida e invisível, a mesma classe que este projeto encontrou na repartição do movimento e
+    no coeficiente de ajuste. A segunda não é, e é a diferença que este teste guarda: são três
+    pessoas, ninguém recebeu a variação de preço sem explicação, e utilidade percebida não é
+    decisão melhor. O Cap. 6 diz exatamente isto, e a aplicação não pode afirmar mais do que a
+    dissertação.
+    """
+    txt = _fonte_painel()
+    assert "not proof that the explanations work" in txt, (
+        "o painel deixou de recusar a leitura de «prova de utilidade»"
+    )
+    # As pessoas têm de viajar com os votos: sem elas, 91 votos leem-se como 91 leitores.
+    assert "readers" in txt and "r.pessoas" in txt, (
+        "o número de pessoas saiu do texto e a contagem passa a poder ler-se como leitores"
+    )
+    # A salvaguarda do votante dominante tem de aparecer quando dispara.
+    assert "dominante_excede" in txt and "of the ratings" in txt, (
+        "a salvaguarda do votante dominante deixou de ser mostrada com o número"
+    )
+    # E a proporção só se imprime quando o protocolo a autoriza.
+    assert "r.reportavel" in txt, (
+        "o painel voltou a imprimir uma proporção sem verificar o mínimo pré-registado"
+    )

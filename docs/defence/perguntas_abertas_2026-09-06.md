@@ -11,13 +11,22 @@
 
 ---
 
-## 1 · «Quem votou nos 42 votos? O senhor está entre os três?»
+## 1 · «Quem votou nos 91 votos? O senhor está entre os três?»
 
 ### Por que razão esta é a pergunta perigosa
 
-A Secção 5.6.5 reporta que **41 de 42 votos efetivos** classificaram o alerta como útil, ou seja
-98%, e diz na frase seguinte que **uma só pessoa forneceu 67% deles**. São três pessoas. Um
+A Secção 5.6.5 reporta que **86 de 91 votos efetivos** classificaram o alerta como útil, ou seja
+95%, e diz na frase seguinte que **uma só pessoa forneceu 58% deles**. São três pessoas. Um
 arguente que faça a subtração chega imediatamente à pergunta: quem são, e é o autor uma delas?
+
+> ⚠️ **Os números desta secção cresceram, e a resposta ficou MAIS forte — vale a pena saber
+> porquê.** Em setembro eram 42 votos efetivos, e retirar o votante dominante deixava 14, abaixo
+> do mínimo pré-registado de vinte: a verificação de robustez simplesmente **não existia**, e a
+> tabela imprimia «não reportada». Com 91 votos restam **38 sem o votante dominante, e dão 89%
+> com intervalo de Wilson de 76% a 96%**. A diferença é grande: antes só se podia dizer que o
+> protocolo recusava o recorte, agora pode dizer-se que **a conclusão sobrevive à remoção do
+> leitor mais ativo**. Confirmar os valores em `docs/evaluation/evaluation_feedback.md` antes da
+> defesa — a recolha continua e eles voltam a mudar.
 
 Se a resposta for «sim, e sou eu o votante dominante», o número deixa de medir utilidade percebida
 por terceiros e passa a ser o autor a classificar o seu próprio trabalho — numa dissertação cuja
@@ -70,8 +79,8 @@ colado num script versionado seria exactamente o dado pessoal que o resto do sis
 | se o apuramento der | a resposta na defesa | e antes disso |
 |---|---|---|
 | **não votei** | «Não. Verifiquei-o contra o registo, e nenhum dos três resumos é o meu.» | nada a alterar; vale a pena a frase constar da Secção 5.6.5 |
-| **votei, mas não sou o dominante** | «Votei em N alertas, o que é uma parte pequena dos 42. O votante dominante, que representa 67%, não sou eu.» | acrescentar a declaração à Secção 5.6.5 |
-| **sou o votante dominante** | «Sim, e é por isso que a proporção sem ele não é reportada: o protocolo recusa-a por ficar abaixo do mínimo. Os 98% incluem-me e não devem ser lidos como retorno de terceiros.» | **declarar isto na Secção 5.6.5 antes da entrega.** Não é aceitável que a primeira vez que se diga seja em resposta a uma pergunta |
+| **votei, mas não sou o dominante** | «Votei em N alertas, o que é uma parte pequena dos 91. O votante dominante, que representa 58%, não sou eu.» | acrescentar a declaração à Secção 5.6.5 |
+| **sou o votante dominante** | «Sim. E é por isso que o protocolo repete a conta sem mim: sem o meu voto restam 38 classificações, e 34 dessas — 89% — continuam a dizer útil. Os 95% incluem-me e não devem ser lidos como retorno de terceiros; os 89% são o número que não me inclui.» | **declarar isto na Secção 5.6.5 antes da entrega.** Não é aceitável que a primeira vez que se diga seja em resposta a uma pergunta |
 
 ⚠️ **Em nenhum dos três casos se retira a secção.** O retorno é observacional, está declarado como
 tal em três sítios, e a lacuna que ele não fecha — o estudo controlado — é a primeira limitação do

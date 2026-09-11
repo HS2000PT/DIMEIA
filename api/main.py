@@ -387,12 +387,45 @@ def feedback() -> dict:
     registos = _registos_votos()
     from investigator import feedback_log as FL
 
+    # ⚠️ REGRA 6, E SEM ELA O PAINEL E A TESE CONTAVAM POPULAÇÕES DIFERENTES. Um voto cuja
+    # chave não corresponde a nenhum alerta entregue não é um voto: é tráfego de teste, uma
+    # chave antiga, ou alguém a experimentar o endereço. A análise da dissertação filtra-os na
+    # leitura desde que existe; esta rota não filtrava, e media-se: o relatório publicava 91
+    # votos efetivos e a rota devolvia 92, porque cinco votos sem alerta correspondente
+    # entravam aqui e não lá. Uma proporção de produto sobre outra população que a da tese é a
+    # mesma divergência que este projeto já pagou na política de alertas — a tese avaliava
+    # precisão@orçamento e a produção implantava um limiar.
+    #
+    # Falha ABERTA de propósito: sem histórico disponível não se filtra em silêncio nem se
+    # deixa de responder — devolve-se o que há, que é o comportamento que a própria análise
+    # tem, e que ela declara em voz alta.
+    try:
+        validas = {a["key"] for a in S.alerts() if a.get("key")}
+        if validas:
+            registos = [r for r in registos if r.chave_alerta in validas]
+    except Exception:  # noqa: BLE001
+        pass
+
     # `pessoas` acompanha as contagens porque sem ele o painel mostra 42 votos e o leitor
     # entende 42 leitores. E uma contagem, nao um identificador: continua a nao sair daqui
     # nada que ligue um voto a alguem.
     return {"por_alerta": {c: list(FL.contagem(registos, c))
                            for c in {r.chave_alerta for r in registos}},
-            "pessoas": FL.resumo(registos).get("pessoas", 0)}
+            "pessoas": FL.resumo(registos).get("pessoas", 0),
+            # ⚠️ O AGREGADO PASSA A SAIR DAQUI, e a decisão anterior caducou por medição.
+            # Esta rota dizia que «um painel de produto não é o sítio para reportar proporções
+            # sobre uma amostra que ainda não atingiu o mínimo pré-registado» — e na altura não
+            # tinha atingido. A regra 1 pede 20 votos efetivos e há 91, logo a proporção é
+            # reportável pelo próprio protocolo, e continuar a esconder um número que as regras
+            # autorizam seria esconder a única evidência de utilidade que este trabalho recolheu
+            # em contexto real.
+            #
+            # E vem de `FL.agregado`, que é a MESMA função que gera a subsecção da dissertação.
+            # A API serve, não calcula: se o painel fizesse a sua própria conta, o produto e a
+            # tese podiam reportar proporções diferentes sob critérios diferentes sem nada as
+            # comparar. A salvaguarda do votante dominante viaja com o número, porque mostrar a
+            # proporção sem ela é mostrar meia medição.
+            "resumo": FL.agregado(registos)}
 
 
 # ── Estáticos ─────────────────────────────────────────────────────────────────

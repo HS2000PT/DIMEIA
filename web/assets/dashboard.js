@@ -64,47 +64,88 @@ const soRotulo = escapado => String(escapado).replace(LIGACAO, (_, __, rotulo) =
 const R2_MEDIANA = 0.46;
 
 // Percentagem com sinal e duas casas, para as linhas da conta.
-const pctc = v => (v == null || !isFinite(v)) ? "—" : (v >= 0 ? "+" : "") + (v * 100).toFixed(2) + "%";
+// Mesma grafia do sinal que o `pct`: o menos tipográfico e não o hífen. Os dois aparecem
+// agora na MESMA linha — a conta ao lado do resultado — e a mistura via-se.
+// Duas casas com o menos tipográfico. Um beta negativo — que é o caso interessante, porque
+// um β negativo vezes um fator negativo dá contribuição positiva — saía com hífen ASCII ao
+// lado de percentagens com menos tipográfico, na mesma linha.
+const b2 = v => `${v < 0 ? "−" : ""}${Math.abs(Number(v)).toFixed(2)}`;
+const pctc = v => (v == null || !isFinite(v)) ? "—"
+  : `${v >= 0 ? "+" : "−"}${Math.abs(v * 100).toFixed(2)}%`;
 
-/* A conta da repartição, passo a passo.
-   Mostra-se a equação, a equação com os valores deste dia, e o que cada parcela é. A parcela da
-   empresa é o resíduo — não há beta para ela — e isso é dito em voz alta, porque é a pergunta
-   que um leitor faz ao ver três números que somam ao total. */
-function contaDaReparticao(d, nome) {
-  if (!d || d.fallback || d.beta_market == null) return "";
-  const bm = Number(d.beta_market), bs = Number(d.beta_sector);
-  // O retorno de cada fator no próprio dia deriva-se da parcela e da sensibilidade.
-  const rm = bm ? d.market / bm : null;
-  const rs = bs ? d.sector / bs : null;
-  const linhas = [
-    `<span class="f-rot">market</span><span class="f-cal">${bm.toFixed(2)} × ${pctc(rm)}</span>` +
-      `<span class="f-res">${pctc(d.market)}</span>`,
-  ];
-  if (bs && rs != null) {
-    linhas.push(
-      `<span class="f-rot">sector</span><span class="f-cal">${bs.toFixed(2)} × ${pctc(rs)}</span>` +
-      `<span class="f-res">${pctc(d.sector)}</span>`);
-  }
-  linhas.push(
-    `<span class="f-rot">company</span><span class="f-cal">what is left over</span>` +
-    `<span class="f-res">${pctc(d.company)}</span>`);
-  return `
-    <p class="f-passo"><b>1. The equation.</b> The day's move is split into what the whole market
-      did, what ${esc(nome)}'s sector did beyond the market, and the rest.</p>
-    <p class="f-eq">move = β<sub>market</sub> × market return + β<sub>sector</sub> × sector return + company</p>
-    <p class="f-passo"><b>2. This day's numbers.</b> The two β values are ${esc(nome)}'s measured
-      sensitivities, estimated over the ${d.window} trading days before this one. The β and the factor return
-      are shown rounded to two places, while the parts are computed on the unrounded values, so
-      redoing a multiplication by hand can differ in the last digit.</p>
-    <div class="f-conta">${linhas.join("")}
-      <span class="f-rot f-tot">total</span><span class="f-cal"></span>
-      <span class="f-res f-tot">${pctc(d.total != null ? d.total : (d.market + d.sector + d.company))}</span></div>
-    <p class="f-passo"><b>3. Why the company figure has no formula.</b> Market and sector are
-      products: a sensitivity multiplied by what that factor did today. The company figure is not
-      calculated that way at all. It is the remainder — whatever the market and the sector do not
-      account for is attributed to the company by subtraction. That is why the three always add up
-      to the move exactly, and why anything the model failed to capture lands in this last line.</p>`;
+/* ── Uma parcela da repartição, com a conta na linha e o resto a desdobrar ───────────────
+   ⚠️ ESTA FUNÇÃO EXISTE POR CAUSA DE UMA PERGUNTA DO AUTOR, e a pergunta apanhou um RÓTULO
+   ENGANADOR e não uma explicação em falta: «porque é que para as empresas a percentagem do
+   mercado é diferente?». A linha dizia «Market −0,42%», e isso lê-se naturalmente como *o
+   mercado caiu 0,42%* — que seria o mesmo número para as doze empresas. O que ali está é
+   `β_mercado × retorno do mercado`, ou seja a fatia do movimento DESTA empresa que o mercado
+   explica; o retorno do mercado é partilhado e o β é dela.
+
+   A correção é mostrar a multiplicação na própria linha, porque é isso que faz a pergunta
+   responder-se a si mesma sem um clique. A conta já existia atrás de um `<details>` único
+   para a repartição inteira, e a pergunta é a prova de que ali não era encontrada.
+
+   E desdobra-se em dois níveis, como o autor pediu: nível 1 diz o que a parcela é, nível 2
+   diz de onde vem o β — com o estimado em bruto, o erro-padrão e o peso de Vasicek, para o
+   encolhimento poder ser refeito por quem lê em vez de aceito. */
+const PRIOR_SD2 = 0.25;           // σ²_prior do encolhimento (PRIOR_BETA_SD = 0,5)
+const PRIOR_BETA = {market: 1, sector: 0};
+
+function betaDesdobrado(chave, bruto, se, beta, nome) {
+  if (bruto == null || !isFinite(bruto)) return "";
+  const prior = PRIOR_BETA[chave];
+  const temSe = se != null && isFinite(se) && se > 0;
+  const w = temSe ? PRIOR_SD2 / (PRIOR_SD2 + se * se) : 1;
+  return `<details class="f-nivel"><summary>Where does β = ${b2(beta)} come from?</summary>
+    <p class="f-passo">β is measured, not chosen. A regression over the window above asks how much
+      ${esc(nome)} moved on days when this factor moved, which came out at
+      <b>${b2(bruto)}</b>.</p>
+    ${temSe ? `<p class="f-passo">A slope estimated from a few weeks is noisy, so it is pulled
+      towards the typical value of ${b2(prior)} in proportion to how precisely it was
+      measured — the noisier the estimate, the less of it is kept:</p>
+    <p class="f-eq">weight = σ²<sub>prior</sub> ÷ (σ²<sub>prior</sub> + standard error²)
+      = ${PRIOR_SD2.toFixed(2)} ÷ (${PRIOR_SD2.toFixed(2)} + ${se.toFixed(2)}²)
+      = ${w.toFixed(2)}</p>
+    <p class="f-eq">β = ${w.toFixed(2)} × ${b2(bruto)}
+      + ${(1 - w).toFixed(2)} × ${b2(prior)} = ${b2(beta)}</p>
+    <p class="f-passo">So ${Math.round(w * 100)}% of what this window measured is kept. Nothing is
+      capped or discarded: a clean fit keeps its slope, a noisy one falls back towards the typical
+      value. Every figure above is rounded to two places while the weighting runs on the full
+      values, so redoing the line by hand can land a little off the β shown.</p>`
+      : `<p class="f-passo">The fit left no room for error in this window, so the measured slope was
+        kept as it stands.</p>`}</details>`;
 }
+
+function parcela(d, chave, rotulo, valor, max, nome) {
+  const motor = d.driver === chave;
+  const beta = chave === "market" ? d.beta_market : chave === "sector" ? d.beta_sector : null;
+  const rFator = (beta && valor != null) ? valor / beta : null;
+  // A conta na linha: é o que responde, sem clique, a «porque é que isto difere por empresa?».
+  const conta = chave === "company" ? "the remainder"
+    : (beta && !d.fallback) ? `β ${b2(beta)} × ${pctc(rFator)}` : "";
+  const barra = `<span class="d-pista"><i style="width:${Math.abs(valor || 0) / max * 50}%;` +
+    `${valor < 0 ? "right" : "left"}:50%;background:var(--${valor < 0 ? "desce" : "sobe"})"></i></span>`;
+  const porque = chave === "company"
+    ? `<p class="f-passo">This one has no formula. Market and sector are products — a sensitivity
+        times what that factor did today. The company figure is whatever those two do not account
+        for, obtained by subtraction, which is why the three always add up to the move exactly and
+        why anything the model missed lands here.</p>`
+    : `<p class="f-passo">This is not what the ${chave} did. It is the part of ${esc(nome)}'s move
+        that the ${chave} accounts for: ${chave === "market" ? "the market" : "the sector"} moved
+        ${pctc(rFator)}, and ${esc(nome)} carries a sensitivity of ${b2(beta)} to it,
+        so the two multiply to ${pctc(valor)}. <b>The factor return is shared by every company; the
+        sensitivity is this company's own</b> — which is why this line differs from one company to
+        the next even on the same day.</p>
+       ${betaDesdobrado(chave, chave === "market" ? d.beta_market_raw : d.beta_sector_raw,
+                        chave === "market" ? d.beta_market_se : d.beta_sector_se,
+                        Number(beta), nome)}`;
+  return `<details class="d-parc"><summary class="d-lin">
+      <span class="rot ${motor ? "motor" : ""}">${rotulo}</span>
+      <span class="d-meio">${barra}${conta ? `<span class="d-conta">${conta}</span>` : ""}</span>
+      <span class="val ${cls(valor)}">${pct(valor)}</span>
+    </summary><div class="f-corpo">${porque}</div></details>`;
+}
+
 
 /* O R2 explicado do zero: o que mede, como se calcula, e o que ESTE valor quer dizer. */
 function explicarR2(d, nome) {
@@ -290,16 +331,20 @@ function pintarDetalhe() {
   const line=(label,value,key)=>`<div class="d-lin"><span class="rot ${d?.driver===key?"motor":""}">${label}</span>
     <span class="d-pista"><i style="width:${Math.abs(value || 0)/max*50}%;${value<0?"right":"left"}:50%;background:var(--${value<0?"desce":"sobe"})"></i></span>
     <span class="val ${cls(value)}">${pct(value)}</span></div>`;
+  const rep = d ? parcela(d, "market", "Market", d.market, max, a.name || a.ticker)
+                + parcela(d, "sector", "Sector", d.sector, max, a.name || a.ticker)
+                + parcela(d, "company", "Company", d.company, max, a.name || a.ticker)
+              : "";
   $("#detalhe").innerHTML=`<div class="d">
     <div class="d-cab"><img src="/assets/logos/${esc(a.ticker)}.png" alt="" width="44" height="44">
       <div><p class="eyebrow">${esc(a.ticker)} · ${dataDe(a.price_day)}</p><h2>${esc(a.name || a.ticker)}</h2></div>
       <span class="mv num ${cls(a.move)}">${pct(a.move)}<small>latest close</small></span></div>
     <p class="d-ver">${esc(veredicto(a))}</p>
     <div class="explanation"><h3>What contributed to the move?</h3>
-      ${d ? `<div class="d-rep">${line("Market",d.market,"market")}${line("Sector",d.sector,"sector")}${line("Company",d.company,"company")}</div>
+      ${d ? `<div class="d-rep">${rep}</div>
         <p class="d-nota">Contributions add up to the close-to-close move. This is a statistical split, not a causal attribution.</p>
         <p class="fit-summary">${d.fallback?"Fallback estimate":d.r2==null?"Fit unavailable":`Model fit R² ${Number(d.r2).toFixed(2)}`}${d.fallback || d.r2<R2_MEDIANA ? " · Indicative split" : ""}</p>
-        <details class="fit-details"><summary>Where do these three numbers come from?</summary><div class="f-corpo">${contaDaReparticao(d, a.name || a.ticker)}${explicarR2(d, a.name || a.ticker) || "<p class=\"f-passo\">No fit statistic is available for this estimate.</p>"}</div></details>`
+        <details class="fit-details"><summary>How reliable is this split?</summary><div class="f-corpo">${explicarR2(d, a.name || a.ticker) || "<p class=\"f-passo\">No fit statistic is available for this estimate.</p>"}</div></details>`
         : '<p class="summary-note">No decomposition is available for this session.</p>'}
     </div>
     <div class="chart-header"><h3 id="chartTitle">${TITULO_GRAFICO[S.intervalo]}</h3><div class="intervalos" id="intervalos" role="group" aria-label="Chart range">${INTERVALOS.map(r=>`<button data-r="${r}" aria-pressed="${r===S.intervalo}">${r}</button>`).join("")}</div></div>
@@ -364,6 +409,77 @@ function modalAlerta(a) {
     $("#readerVotes").innerHTML=v?`<p class="summary-note">Reader feedback: ${v[0]} useful · ${v[1]} did not help. One vote per person per alert.</p>`:"";
   }).catch(()=>{if(request===S.modalRequest)$("#readerVotes").textContent="Reader feedback unavailable.";});
 }
+/* ── O piloto de feedback dos leitores, em agregado ──────────────────────────────────────
+   ⚠️ ISTO ERA UMA QUANTIDADE MEDIDA, SERVIDA E INVISÍVEL — a classe de defeito que este
+   projeto já encontrou na repartição do movimento, no veredicto em palavras e no coeficiente
+   de ajuste. Os votos apareciam só dentro de cada mensagem («2 useful · 0 did not help») e o
+   agregado vivia apenas no relatório de avaliação: quem abria a aplicação não tinha como
+   saber que os alertas entregues foram classificados por quem os recebeu.
+
+   O NÚMERO NUNCA APARECE SOZINHO, e é essa a parte que o torna defensável. Vem com o número
+   de PESSOAS — sem ele, noventa e um votos leem-se como noventa e um leitores — e com a
+   salvaguarda do votante dominante quando ela dispara. Mostrar 95% sem dizer que um leitor
+   forneceu 58% dos votos é mostrar meia medição, e é a primeira coisa que um arguente pergunta.
+
+   E não se chama a isto uma prova de utilidade, porque não é: são três pessoas, ninguém
+   recebeu a variação de preço sem explicação, e utilidade percebida não é decisão melhor. A
+   dissertação diz exatamente isto no Cap. 6, e a aplicação não pode afirmar mais do que ela. */
+function textoVotos(r) {
+  if (!r || !r.votos_efetivos) return null;
+  const pessoas = r.pessoas === 1 ? "1 reader" : `${r.pessoas} readers`;
+  const curto = r.reportavel
+    ? `${r.uteis} of ${r.votos_efetivos} ratings called an alert useful`
+    : `${r.uteis} of ${r.votos_efetivos} ratings called an alert useful (too few to state a rate)`;
+  return {curto: `Readers rated ${r.alertas_votados} delivered alerts: ${curto} — from ${pessoas}.`,
+          pessoas};
+}
+
+function pintarVotos(r) {
+  const txt = textoVotos(r);
+  const linha = $("#votosLinha"), caixa = $("#votosCx");
+  if (!txt) { if (linha) linha.hidden = true; if (caixa) caixa.hidden = true; return; }
+  if (linha) {
+    linha.hidden = false;
+    linha.innerHTML = `<button class="text-button" id="votosAbrir">${esc(txt.curto)}</button>`;
+    $("#votosAbrir").onclick = () => abrirModal("What readers said", modalVotos(r));
+  }
+  if (caixa) {
+    caixa.hidden = false;
+    caixa.innerHTML = `<div class="titulo"><h2>What readers said</h2>
+        <span class="nota">two buttons on every message</span></div>
+      <div class="votos-num"><strong class="num">${r.reportavel
+          ? Math.round(r.proporcao * 100) + "%" : r.uteis + "/" + r.votos_efetivos}</strong>
+        <span>${esc(txt.curto)}</span></div>
+      <details class="votos-det"><summary>How this number should be read</summary>
+        <div class="f-corpo">${modalVotos(r)}</div></details>`;
+  }
+}
+
+function modalVotos(r) {
+  const ic = r.intervalo && r.intervalo[0] != null
+    ? ` The 95% Wilson interval runs from ${Math.round(r.intervalo[0] * 100)}% to
+        ${Math.round(r.intervalo[1] * 100)}%.` : "";
+  return `<p>Every alert carries two buttons. ${r.votos_brutos} presses were recorded and count as
+      <b>${r.votos_efetivos} ratings</b>, because only the latest press by the same person on the
+      same alert counts. Along the way a rating was changed ${r.mudancas_de_voto} times and a
+      button was pressed again without changing anything ${r.repeticoes_iguais} times.</p>
+    <p><b>${r.uteis} of ${r.votos_efetivos}</b> ratings, spread over ${r.alertas_votados} alerts,
+      called the alert useful.${r.reportavel ? ic
+        : ` No rate is stated: the rules fixed before any vote existed require at least
+            ${r.n_minimo} ratings before a proportion is reported.`}</p>
+    ${r.dominante_excede ? `<p>⚠️ One reader supplied
+      ${Math.round(r.dominante_fracao * 100)}% of the ratings. In a channel this small a single
+      enthusiastic reader can decide the result on their own, so the evaluation report repeats the
+      calculation without that person.</p>` : ""}
+    <p>This is a pilot with <b>${esc(r.pessoas === 1 ? "one reader" : r.pessoas + " readers")}</b>,
+      and it is not proof that the explanations work. Whoever wants to votes, which pushes the
+      sample towards the extremes; nobody received the price move without an explanation, so
+      nothing here credits the usefulness to the explanation itself; and a reader can find an
+      alert agreeable and still make a worse decision. What these buttons measure is perceived
+      usefulness, in a real setting, and no more than that.</p>`;
+}
+
+
 async function modalEmpresa(t) {
   abrirModal(`${t} · recorded news decisions`,'<p class="vazio">Reading the decision record…</p>');
   const request=S.modalRequest;
@@ -597,4 +713,8 @@ window.addEventListener("online",()=>{void refresh(true);void carregarFeed();});
 window.addEventListener("pagehide",()=>{clearTimeout(pollTimer);disposeCharts();});
 window.addEventListener("pageshow",e=>{if(e.persisted){void renderChart();void poll();}});
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{if(S.asset)void renderChart();});
+// O agregado dos votos é evidência da própria operação e não muda de minuto a minuto:
+// pedido uma vez no arranque, com a mesma cache de 60 s que o detalhe já usava, e falha em
+// silêncio — a página inteira funciona sem ele e os blocos ficam escondidos.
+void json("/api/feedback",{ttl:60000}).then(r=>pintarVotos(r && r.resumo)).catch(()=>{});
 void refresh();void carregarFeed();pollTimer=setTimeout(poll,30000);

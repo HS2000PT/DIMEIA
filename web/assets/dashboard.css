@@ -336,14 +336,19 @@
   .f-eq { margin:0; padding:8px 10px; border-radius:6px; background:var(--linha2);
           font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.78rem;
           color:var(--tinta); overflow-x:auto; }
-  .f-conta { display:grid; grid-template-columns:auto 1fr auto; gap:4px 12px;
-             align-items:baseline; padding:8px 10px; border-radius:6px; background:var(--linha2);
-             font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.78rem; }
-  .f-rot { color:var(--tinta2); }
-  .f-cal { color:var(--tinta); }
-  .f-res { text-align:right; color:var(--tinta); font-variant-numeric:tabular-nums; }
-  .f-conta .f-tot { border-top:1px solid var(--borda); padding-top:4px; font-weight:600;
-                    color:var(--tinta); }
+  /* Uma parcela que se desdobra. A linha é o nível 0 e continua a ler-se como uma linha:
+     o `<summary>` herda a grelha do `.d-lin`, e o triângulo do browser é retirado porque a
+     coluna do rótulo já é o alvo de clique. A pista e a conta partilham a coluna do meio —
+     a conta debaixo da barra, que é o que responde a «porque é que difere por empresa?». */
+  .d-parc > summary { list-style:none; width:auto; padding:6px 0; color:inherit;
+                      font-size:inherit; border-radius:6px; }
+  .d-parc > summary::-webkit-details-marker { display:none; }
+  .d-parc > summary:hover .rot, .d-parc[open] > summary .rot { color:var(--acento); }
+  .d-meio { display:grid; gap:3px; min-width:0; }
+  .d-conta { font-family:var(--mono); font-size:.72rem; color:var(--fraco);
+             font-variant-numeric:tabular-nums; }
+  .d-parc > .f-corpo { padding:2px 0 10px; }
+  .f-nivel > summary { font-size:.79rem; }
 
   details > summary { cursor:pointer; width:fit-content; color:var(--tinta2); font-size:.83rem; padding:8px 0; }
   details > summary:hover { color:var(--acento); }
@@ -424,3 +429,15 @@
     .rodape .text-button { margin-left:0; }
     .m-corpo, .m-topo { padding:16px; }
   }
+
+  /* O piloto de feedback: uma linha na abertura, um bloco no registo das mensagens.
+     O número grande fica ao lado da frase e nunca sozinho — a frase traz as pessoas, que é
+     o que impede a leitura mais fácil e mais errada, tomar votos por leitores. */
+  .votos-linha { margin:6px 0 0; }
+  .votos-linha .text-button { font-size:.84rem; text-align:left; }
+  .votos-cx { margin:14px 0 0; padding:14px 16px; border:1px solid var(--borda);
+              border-radius:10px; background:var(--caixa); }
+  .votos-num { display:flex; gap:14px; align-items:baseline; margin-top:6px; }
+  .votos-num strong { font-size:1.6rem; color:var(--acento); line-height:1; }
+  .votos-num span { font-size:.86rem; color:var(--tinta2); }
+  .votos-det > summary { padding-top:10px; }

@@ -177,3 +177,52 @@ def resumo(registos: list[FeedbackRecord]) -> dict[str, int]:
         "repeticoes_iguais": repeticoes,
         "retiradas": retiradas,
     }
+
+
+# ── As regras pré-registadas, e agora num sítio só ────────────────────────────────────────
+# ⚠️ ESTAS DUAS CONSTANTES VIVIAM DENTRO DO `scripts/analyse_feedback.py`, que gera a
+# subsecção da dissertação. Sobem para cá porque passaram a ter um SEGUNDO consumidor: o
+# painel, que mostra o mesmo agregado a quem abre a aplicação. Duas cópias da mesma regra
+# separam-se com o tempo sem ninguém reparar, porque nada as compara — e no dia em que se
+# separassem o produto estaria a reportar uma proporção sobre um critério diferente do da
+# tese, que é precisamente a divergência que este projeto encontrou na política de alertas
+# (a tese avaliava precisão@orçamento e a produção implantava um limiar).
+#
+# Alterar qualquer uma destas depois de haver dados é um ato que tem de ficar registado no
+# `docs/contexto/ESTADO_REESCRITA.md`, com a data e a razão.
+N_MINIMO = 20          # votos efetivos abaixo dos quais NÃO se reporta proporção
+DOMINANCIA_MAX = 0.40  # acima disto, reporta-se também sem o votante dominante
+
+
+def agregado(registos: list[FeedbackRecord]) -> dict:
+    """O piloto em agregado, com as regras pré-registadas já aplicadas.
+
+    Devolve o que se pode reportar e **não** o que se poderia calcular: com menos de
+    `N_MINIMO` votos efetivos, `proporcao` e `intervalo` vêm a `None`, para que quem consome
+    não tenha a proporção à mão para a imprimir por distração. A regra 1 existe porque uma
+    percentagem sobre sete votos engana quem a lê, incluindo quem a escreveu.
+
+    `dominante` traz a fração do votante mais ativo e se ela excede o limite. Num canal
+    pequeno, um leitor entusiasta decide sozinho o resultado, e quem mostrar a proporção sem
+    mostrar isto está a mostrar meia medição.
+    """
+    from investigator.evaluation.proportions import wilson
+
+    efetivos = votos_efetivos(registos)
+    n = len(efetivos)
+    uteis = sum(1 for r in efetivos.values() if r.acao == UTIL)
+    por_pessoa = Counter(v for v, _ in efetivos)
+    _, n_dominante = (por_pessoa.most_common(1) or [("", 0)])[0]
+    fracao = (n_dominante / n) if n else 0.0
+
+    reportavel = n >= N_MINIMO
+    lo, hi = wilson(uteis, n) if reportavel else (None, None)
+    return {
+        **resumo(registos),
+        "n_minimo": N_MINIMO,
+        "reportavel": reportavel,
+        "proporcao": (uteis / n) if reportavel else None,
+        "intervalo": [lo, hi] if reportavel else None,
+        "dominante_fracao": fracao,
+        "dominante_excede": fracao > DOMINANCIA_MAX,
+    }

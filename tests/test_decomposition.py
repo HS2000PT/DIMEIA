@@ -7,6 +7,8 @@ import pytest
 
 from investigator.correlation_engine.decomposition import (
     MIN_WINDOW,
+    PRIOR_BETA_MARKET,
+    PRIOR_BETA_SD,
     decompose_move,
     describe,
 )
@@ -209,3 +211,33 @@ def test_beta_alto_mas_bem_estimado_sobrevive():
     d = decompose_move(t, m)
     assert d.fallback is False
     assert d.beta_market > 3.0
+
+
+def test_a_proveniencia_do_beta_viaja_com_a_decomposicao():
+    """O β em bruto e o erro-padrão ficam no objeto, para o ecrã os poder MOSTRAR.
+
+    ⚠️ Isto existe por causa de uma pergunta do autor — «porque é que para as empresas a
+    percentagem do mercado é diferente?» — que apanhou um rótulo enganador: a parcela não é o
+    retorno do mercado, é `β_mercado × retorno do mercado`, e o β é desta empresa. Uma interface
+    que só recebe o β FINAL pode explicar o encolhimento de Vasicek e não o pode mostrar, o que
+    obriga o leitor a acreditar. Com o bruto e a precisão, o peso é refazível por quem lê — e este
+    teste verifica a identidade que a interface imprime.
+    """
+    rng = np.random.default_rng(7)
+    mercado = rng.normal(0, 0.01, 40)
+    ticker = 1.8 * mercado + rng.normal(0, 0.004, 40)
+    d = decompose_move(ticker, mercado, window=30)
+
+    assert not d.fallback
+    assert np.isfinite(d.beta_market_raw), "o beta em bruto tem de viajar"
+    assert np.isfinite(d.beta_market_se), "a precisão tem de viajar com ele"
+
+    # A identidade que o ecrã escreve: β = w·bruto + (1−w)·prior, com w da precisão.
+    w = PRIOR_BETA_SD**2 / (PRIOR_BETA_SD**2 + d.beta_market_se**2)
+    esperado = w * d.beta_market_raw + (1 - w) * PRIOR_BETA_MARKET
+    assert d.beta_market == pytest.approx(esperado, abs=1e-9), (
+        "a conta mostrada na interface deixou de reproduzir o beta servido"
+    )
+    # E o encolhimento aponta para o prior: o final fica entre o bruto e 1,0.
+    assert min(d.beta_market_raw, PRIOR_BETA_MARKET) <= d.beta_market <= max(
+        d.beta_market_raw, PRIOR_BETA_MARKET)

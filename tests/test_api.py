@@ -447,3 +447,30 @@ def test_os_logotipos_sao_servidos_por_nos_e_nunca_por_terceiros():
     faltam = {"AAPL", "MSFT", "NVDA", "TSLA", "AMZN", "GOOGL",
               "META", "JPM", "AMD", "NFLX", "XOM", "JNJ"} - tem
     assert not faltam, f"sem logótipo para {sorted(faltam)}; o botão fica sem imagem"
+
+
+def test_o_agregado_dos_votos_conta_a_mesma_populacao_que_a_tese(client):
+    """O painel e a dissertação não podem reportar proporções sobre populações diferentes.
+
+    ⚠️ ISTO FOI MEDIDO E ESTAVA ERRADO. A análise da dissertação aplica a regra 6 — um voto
+    cuja chave não corresponde a nenhum alerta entregue não é um voto, é tráfego de teste ou
+    uma chave antiga — e esta rota não a aplicava. Com dados reais, o relatório publicava 91
+    votos efetivos e a rota devolvia 92: cinco votos sem alerta correspondente entravam num
+    lado e não no outro. É a mesma classe de divergência que este trabalho já pagou na política
+    de alertas, onde a tese avaliava precisão@orçamento e a produção implantava um limiar.
+    """
+    r = client.get("/api/feedback")
+    assert r.status_code == 200
+    corpo = r.json()
+    assert "resumo" in corpo, "o agregado deixou de ser servido e o painel fica sem o número"
+    ag = corpo["resumo"]
+    for campo in ("votos_efetivos", "uteis", "pessoas", "alertas_votados",
+                  "reportavel", "dominante_fracao", "dominante_excede", "n_minimo"):
+        assert campo in ag, f"o agregado perdeu {campo}"
+    # A regra 1: nunca vem uma proporção sem estar autorizada pelo mínimo pré-registado.
+    if not ag["reportavel"]:
+        assert ag["proporcao"] is None and ag["intervalo"] is None, (
+            "uma proporção abaixo do mínimo chegou ao cliente, que a pode imprimir"
+        )
+    # E nada que ligue um voto a alguém: o agregado não traz identificadores.
+    assert "votantes" not in ag and "dominante" not in ag

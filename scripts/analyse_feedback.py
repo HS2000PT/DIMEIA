@@ -65,15 +65,22 @@ OUT_MD = REPO / "docs" / "evaluation" / "evaluation_feedback.md"
 # procedimento que o calculou, e não porque alguém o transcreveu.
 OUT_TEX = REPO / "tese-pt" / "ch5" / "feedback_auto.tex"
 
-# ── Regras pré-registadas. Alterar qualquer uma destas depois de haver dados é um ato que
-#    tem de ficar registado no docs/contexto/ESTADO_REESCRITA.md, com a data e a razão. ──
-N_MINIMO = 20          # votos efetivos abaixo dos quais NÃO se reporta proporção
-DOMINANCIA_MAX = 0.40  # acima disto, reporta-se também sem o votante dominante
+# ── Regras pré-registadas ─────────────────────────────────────────────────────────────────
+# ⚠️ VIVIAM AQUI E PASSARAM PARA `investigator/feedback_log.py`, porque ganharam um segundo
+# consumidor: o painel, que passou a mostrar o mesmo agregado a quem abre a aplicação. Duas
+# cópias da mesma regra separam-se sem ninguém reparar, e no dia em que se separassem o
+# produto reportaria uma proporção sob um critério diferente do da tese. Importadas, não
+# redefinidas: alterar o limite passa a ser uma alteração num sítio só.
+N_MINIMO = FL.N_MINIMO          # votos efetivos abaixo dos quais NÃO se reporta proporção
+DOMINANCIA_MAX = FL.DOMINANCIA_MAX  # acima disto, reporta-se também sem o votante dominante
 
 # ⚠️ DECLARAÇÃO DE INDEPENDÊNCIA — tem de ser verdadeira, e só o autor a pode fixar.
 #
-# A secção reporta 42 votos efetivos de TRÊS pessoas, uma delas com 67% deles. A primeira
-# pergunta que um arguente faz perante uma amostra assim é «e o senhor, votou?». A resposta
+# A secção reporta poucas dezenas de votos efetivos de um punhado de pessoas, uma delas com a
+# maioria deles — os valores exatos estão no relatório gerado, e não aqui, porque crescem a
+# cada corrida e um número transcrito para um comentário envelhece em silêncio (este dizia 42
+# votos e 67% quando o artefacto já publicava outros). A primeira pergunta que um arguente faz
+# perante uma amostra assim é «e o senhor, votou?». A resposta
 # tem de estar escrita: improvisá-la à frente do júri, numa dissertação cujo argumento
 # central é que a evidência é verificável, é o pior sítio possível para hesitar.
 #

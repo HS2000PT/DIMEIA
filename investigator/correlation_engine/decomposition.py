@@ -92,6 +92,19 @@ class MoveDecomposition:
     window: int
     r_squared: float
     fallback: bool  # True = betas não estimáveis; usou-se β_mercado=1, β_setor=0
+    # ── Proveniência do beta: o estimado em bruto e a precisão com que o foi ──────────
+    # ⚠️ ESTES CAMPOS EXISTEM PARA PODEREM SER MOSTRADOS, e a razão é uma pergunta do autor:
+    # «porque é que para as empresas a percentagem do mercado é diferente?». A resposta é que a
+    # parcela não é o retorno do mercado, é `β_mercado × retorno do mercado` — e o β é desta
+    # empresa. Uma interface que só mostra o beta FINAL pode explicar o encolhimento e não o
+    # pode mostrar, o que obriga o leitor a acreditar. Com o bruto e o erro-padrão ao lado, o
+    # peso de Vasicek — `w = σ²_prior/(σ²_prior + SE²)` — é refazível por quem lê.
+    # Vão no fim e com valor por omissão de propósito: quem constrói o objeto por posição
+    # (dois testes e o caminho de recuo) continua a funcionar sem alteração.
+    beta_market_raw: float = float("nan")
+    beta_sector_raw: float = float("nan")
+    beta_market_se: float = float("nan")
+    beta_sector_se: float = float("nan")
 
     @property
     def idiosyncratic_share(self) -> float:
@@ -249,6 +262,9 @@ def decompose_move(
         idiosyncratic=float(total - market_part - sector_part),
         beta_market=beta_m, beta_sector=beta_s,
         window=usable, r_squared=r2, fallback=False,
+        beta_market_raw=beta_m_raw, beta_sector_raw=beta_s_raw,
+        beta_market_se=float(errs[0]) if len(errs) > 0 else float("nan"),
+        beta_sector_se=float(errs[1]) if len(errs) > 1 else float("nan"),
     )
 
 

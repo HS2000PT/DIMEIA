@@ -6,12 +6,12 @@
 The channel now accompanies every alert delivered with two buttons, \emph{useful} and \emph{did not help}, and records the vote of whoever presses. The analysis rules were fixed before a single vote existed and were not changed afterwards: a minimum of twenty effective votes to report any proportion, one vote per person and per alert with the last replacing the previous one, a safeguard that repeats the computation without the dominant voter when that voter accounts for more than forty per cent of the votes, always subject to the same minimum, and Wilson confidence intervals, calculated without adjustment for clustering.
 Only votes on alerts present in the shared log were counted.
 
-90 valid votes were recorded between 2026-09-02 and 2026-09-07, corresponding to 51 effective votes from 3 distinct people, on 38 alerts. 10 votes were later changed by the same person, and only the last of each pair counts. Another 29 repeat an earlier vote without changing it and count only once. A further 5 votes, not counted among the 90 above, were excluded for not corresponding to any alert in the shared log.
+131 valid votes were recorded between 2026-09-02 and 2026-09-11, corresponding to 91 effective votes from 3 distinct people, on 62 alerts. 11 votes were later changed by the same person, and only the last of each pair counts. Another 29 repeat an earlier vote without changing it and count only once. A further 5 votes, not counted among the 131 above, were excluded for not corresponding to any alert in the shared log.
 
-Of the 51 effective votes, 50 rated the alert as useful, that is 98\%, with a 95\% Wilson confidence interval between 90\% and 100\%. This binomial calculation does not adjust for dependence between votes by the same person or on the same alert; its width does not represent all the uncertainty in this sample.
+Of the 91 effective votes, 86 rated the alert as useful, that is 95\%, with a 95\% Wilson confidence interval between 88\% and 98\%. This binomial calculation does not adjust for dependence between votes by the same person or on the same alert; its width does not represent all the uncertainty in this sample.
 
-A single person accounts for 73\% of the effective votes, above the limit of 40\% fixed in the protocol. Excluding that person, 14 votes remain, of which 14 rate the alert as useful.
-This subset also falls below the minimum of 20; no second proportion is reported and the sample does not support a reading independent of the dominant voter.
+A single person accounts for 58\% of the effective votes, above the limit of 40\% fixed in the protocol. Excluding that person, 38 votes remain, of which 34 rate the alert as useful.
+The proportion without that person is 89\%, with an interval between 76\% and 96\%. This is the reading to retain.
 
 The independence between whoever builds the system and whoever rates it is a condition of this sample: the author is not among the votes counted. The votes come from readers of the public channel, and the log keeps of each only the conversation identifier assigned by the platform.
 

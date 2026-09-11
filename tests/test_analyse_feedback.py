@@ -304,3 +304,55 @@ def test_o_texto_com_tags_e_sem_tags_dao_a_mesma_chave():
     k_plain = hashlib.sha1(
         f"TSLA|{plain_text(plain_text(html_))}".encode()).hexdigest()[:12]
     assert k_html == k_plain
+
+
+def test_o_agregado_aplica_as_regras_pre_registadas():
+    """A proporção só existe acima do mínimo, e a salvaguarda viaja sempre com ela.
+
+    ⚠️ ESTA FUNÇÃO GANHOU UM SEGUNDO CONSUMIDOR, e é isso que a torna um risco: além de gerar a
+    subsecção da dissertação, passou a alimentar o painel, porque o autor apontou que os votos
+    do canal estavam invisíveis na aplicação. Se as duas contas se separassem, o produto
+    reportaria uma proporção sob um critério diferente do da tese — a mesma divergência que este
+    trabalho já pagou na política de alertas, onde a tese avaliava precisão@orçamento e a
+    produção implantava um limiar.
+
+    E a regra 1 não é cosmética: abaixo do mínimo, `proporcao` vem a `None` em vez de vir
+    calculada, para que quem consome não tenha a percentagem à mão para a imprimir por
+    distração. Uma percentagem sobre sete votos engana quem a lê, incluindo quem a escreveu.
+    """
+    poucos = _votos([(f"p{i}", FL.UTIL) for i in range(5)])
+    ag = FL.agregado(poucos)
+    assert ag["votos_efetivos"] == 5
+    assert ag["reportavel"] is False
+    assert ag["proporcao"] is None, "a proporção não pode estar disponível abaixo do mínimo"
+    assert ag["intervalo"] is None
+
+    # Acima do mínimo, com um votante dominante: proporção sim, e a salvaguarda acusa.
+    muitos = [FL.FeedbackRecord(chave_alerta=f"a{i}", votante="dominante", acao=FL.UTIL,
+                                at=f"2026-09-01T10:{i:02d}:00Z") for i in range(30)]
+    muitos += [FL.FeedbackRecord(chave_alerta=f"b{i}", votante=f"p{i}", acao=FL.UTIL,
+                                 at=f"2026-09-01T11:{i:02d}:00Z") for i in range(10)]
+    ag = FL.agregado(muitos)
+    assert ag["reportavel"] is True
+    assert ag["proporcao"] == pytest.approx(1.0)
+    assert ag["intervalo"] and ag["intervalo"][0] is not None
+    assert ag["dominante_excede"] is True, "um votante com 75% dos votos deixou de ser sinalizado"
+    assert ag["dominante_fracao"] == pytest.approx(30 / 40)
+
+    # Controlo no sentido oposto: sem dominância, a salvaguarda cala-se.
+    plural = [FL.FeedbackRecord(chave_alerta=f"a{i}", votante=f"p{i}", acao=FL.UTIL,
+                                at=f"2026-09-01T12:{i:02d}:00Z") for i in range(25)]
+    assert FL.agregado(plural)["dominante_excede"] is False
+
+
+def test_as_regras_vivem_num_sitio_so():
+    """O script da tese e o painel têm de ler o MESMO limite.
+
+    Duas cópias da mesma regra separam-se com o tempo sem ninguém reparar, porque nada as
+    compara. O script tinha as suas; passa a importá-las da biblioteca, que é onde o painel
+    também as vai buscar.
+    """
+    import scripts.analyse_feedback as AF
+
+    assert AF.N_MINIMO is FL.N_MINIMO
+    assert AF.DOMINANCIA_MAX is FL.DOMINANCIA_MAX
