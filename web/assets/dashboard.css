@@ -111,7 +111,12 @@
   .hist-eixo-x { display:flex; justify-content:space-between; gap:6px;
                  margin:4px 0 0 calc(1.6rem + 12px); border-top:1px solid var(--borda);
                  padding-top:4px; font-size:.62rem; color:var(--fraco); }
-  .hist-eixo-x.esparso { justify-content:space-between; }
+  /* Com muitos dias os rótulos deixam de estar a espaço igual e passam a estar POSICIONADOS
+     sob a barra que nomeiam, o que obriga a posicionamento absoluto — a espaço igual, um
+     rótulo do meio cai sob a barra errada e a leitura fica pior do que não ter rótulo. */
+  .hist-eixo-x.esparso { display:block; position:relative; height:1.1em; }
+  .hist-eixo-x.esparso span { position:absolute; top:4px; white-space:nowrap; }
+  .nota-hist { margin:2px 0 6px; font-size:.72rem; color:var(--fraco); }
 
   /* ── Filtro por tipo de mensagem ───────────────────────────────────────────── */
   .kinds { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }

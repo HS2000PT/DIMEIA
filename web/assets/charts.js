@@ -9,6 +9,17 @@ function paleta() {
     sobe:    escuro ? "#5eead4" : "#0f766e",
     desce:   escuro ? "#f87171" : "#b3261e",
     alerta:  escuro ? "#f0a72e" : "#b45309",
+    // ── Uma cor por TIPO de alerta ────────────────────────────────────────────────────────
+    // ⚠️ O autor pediu «distintos icons para os tipos de alertas, em vez de só bolas
+    // amarelas», e as FORMAS não dão: a biblioteca tem quatro (círculo, quadrado, seta para
+    // cima, seta para baixo) e três já carregam sentido neste gráfico — o quadrado é notícia
+    // captada, as setas são dias assinalados com a sua direção. Sobrava o círculo.
+    // Logo a distinção é por cor e por uma letra, com a legenda a nomear as quatro. As cores
+    // são escolhidas para não colidirem com as que já significam subida, descida e notícia.
+    k_news:    escuro ? "#f0a72e" : "#b45309",   // notícia: mantém o âmbar de sempre
+    k_market:  escuro ? "#7aa2f7" : "#2c5fb8",   // movimento de preço
+    k_open:    escuro ? "#c4a7f7" : "#6b4fa8",   // nota de abertura
+    k_summary: escuro ? "#9aa5b1" : "#5b6472",   // resumo de fecho
     noticia: escuro ? "#8d96a3" : "#8a929c",
     grelha:  escuro ? "#1b1f26" : "#eeeeea",
     texto:   escuro ? "#8d96a3" : "#5b6472",
@@ -27,7 +38,22 @@ function criarGrafico(alvo, altura, eixoOculto) {
     // casas) e a do z (um dígito) têm larguras diferentes, as áreas de desenho ficam desalinhadas
     // por umas dezenas de pixeis, e «olhar para baixo para ver porque é que o dia foi
     // assinalado» — que é a razão de existir da faixa — deixa de funcionar.
-    rightPriceScale: { borderVisible:false, minimumWidth:64 },
+    // ⚠️ A MARGEM DE TOPO EXISTE PARA AS MARCAS EMPILHADAS, e o defeito era visível: a
+    // biblioteca empilha verticalmente as marcas do MESMO dia — que é como se vê que um dia
+    // teve vários alertas — e sem folga a letra da marca mais alta sai CORTADA pela moldura.
+    // É a mesma classe do rótulo do z cortado a meio, que a sessão 67 pagou: um desacordo que
+    // se manifesta como composição e não como exceção não tem quem o apanhe.
+    //
+    // Aqui a margem RESOLVE, ao contrário do que aconteceu no eixo do z: ali o gerador de
+    // marcas do eixo adaptava-se à margem e voltava a pôr uma no bordo, e o que resolveu foi
+    // fixar o intervalo. As marcas de alerta não se adaptam — assentam no preço do dia —,
+    // logo dar folga acima do máximo é exatamente o que lhes dá sítio.
+    // ⚠️ E O VALOR IMPORTA: o padrão da biblioteca já é `top: 0.2`, logo qualquer coisa abaixo
+    // disso AGRAVA o corte em vez de o resolver — a minha primeira tentativa foi 0,18 e era
+    // menos folga do que havia. As marcas empilham-se para cima do preço do dia, portanto a
+    // folga tem de acomodar a pilha e não só o máximo da série.
+    rightPriceScale: { borderVisible:false, minimumWidth:64,
+                       scaleMargins: { top:0.26, bottom:0.08 } },
     timeScale: { borderVisible:false, fixLeftEdge:true, fixRightEdge:true,
                  timeVisible: S.intervalo === "1D", secondsVisible:false,
                  // Um só eixo do tempo para o par. Quando a faixa do z está no ar, é ela que o
@@ -37,18 +63,46 @@ function criarGrafico(alvo, altura, eixoOculto) {
   });
 }
 
+// A inicial de cada tipo. As palavras são as do leitor — as mesmas do filtro da lista — e não
+// as do modelo: «Price move» e não «market», «Market close» e não «summary».
+const LETRA_ALERTA = {news:"N", market:"P", open:"O", summary:"C"};
+
+/* ⚠️ UMA MARCA POR DIA E POR TIPO, e não uma por alerta — e isto foi decidido A OLHAR para o
+   render, não no papel. Com uma marca por alerta, o intervalo de um mês da NVIDIA desenhava
+   pilhas de cinco círculos na mesma coluna: a letra da marca mais alta saía cortada pela
+   moldura mesmo com 32% de folga no topo, e o conjunto **tapava a linha de preço**, que é o
+   objeto do gráfico. Um gráfico que esconde a sua própria série para mostrar anotações trocou
+   o assunto pelo enfeite.
+
+   E O COLAPSO NÃO PERDE INFORMAÇÃO, porque a coluna É um dia: num intervalo diário as marcas
+   do mesmo dia partilham a MESMA posição no eixo, logo cinco círculos empilhados nunca foram
+   cinco pontos distinguíveis — eram um dia desenhado cinco vezes. A marca passa a dizer que
+   TIPOS de mensagem saíram nesse dia, e a lista por baixo diz quantas e quais: o clique
+   realça-as todas e a nota diz o número.
+
+   No intervalo de um dia não se colapsa: aí as marcas têm hora própria e sítio para ela. */
 function marcasDeAlertas(a, desdeTs, ate) {
   const P = paleta();
+  const vistos = new Set();
   return (a.alerts || []).map(al => {
     const iso = al.sent_at || (al.date ? `${al.date}T12:00:00Z` : "");
     if (!iso) return null;
     const ts = Math.floor(Date.parse(iso) / 1000);
     if (!Number.isFinite(ts) || ts < desdeTs || (ate && ts > ate)) return null;
-    // ⚠️ Sem `text`. Onze alertas em seis meses agrupam-se nas mesmas semanas e as etiquetas
-    // sobrepõem-se umas às outras — medido, não suposto, e é a mesma lição que as etiquetas do
-    // z já tinham dado. A forma está na legenda e as datas estão nas fichas por baixo.
-    return { tempo: S.intervalo === "1D" ? ts : (al.date || iso.slice(0, 10)),
-             position:"aboveBar", color:P.alerta, shape:"circle", text:"" };
+    // ⚠️ UMA LETRA, e não uma etiqueta. O texto tinha sido retirado porque onze alertas em
+    // seis meses se agrupam nas mesmas semanas e as etiquetas de data se sobrepunham — medido,
+    // não suposto. Uma letra é uma fração dessa largura, e é o que permite distinguir os tipos
+    // num intervalo diário, onde o tipo era invisível. Verificado a renderizar em 6M e 1Y.
+    const k = al.kind || "news";
+    const umDia = S.intervalo === "1D";
+    const tempo = umDia ? ts : (al.date || iso.slice(0, 10));
+    if (!umDia) {
+      const chave = `${tempo}|${k}`;
+      if (vistos.has(chave)) return null;   // o mesmo dia e o mesmo tipo: uma marca basta
+      vistos.add(chave);
+    }
+    return { tempo, position:"aboveBar", color:P[`k_${k}`] || P.alerta,
+             shape:"circle", text:(LETRA_ALERTA[k] || "") };
   }).filter(Boolean);
 }
 
@@ -131,7 +185,17 @@ function desenharGrafico(a) {
       fora = (a.alerts || []).filter(al => (al.date || "") === hoje).length - dentro.length;
     }
   }
+  // ⚠️ CONTADO A PARTIR DAS MARCAS DESENHADAS, e não da lista de alertas: um alerta fora da
+  // janela do gráfico não tem marca, e nomeá-lo na legenda mandaria procurar no gráfico o que
+  // lá não está. É a mesma disciplina das outras linhas da legenda, que só aparecem quando a
+  // marca correspondente foi desenhada.
+  const DE_LETRA = Object.fromEntries(Object.entries(LETRA_ALERTA).map(([k, v]) => [v, k]));
+  const tipos = {};
+  for (const m of marcas)
+    if (m.shape === "circle" && DE_LETRA[m.text])
+      tipos[DE_LETRA[m.text]] = (tipos[DE_LETRA[m.text]] || 0) + 1;
   S.desenhado = {
+    tipos,
     alertas: marcas.filter(m => m.shape === "circle").length,
     assinalados: marcas.filter(m => m.shape !== "circle" && m.shape !== "square").length,
     noticias: marcas.filter(m => m.shape === "square").length,
@@ -162,11 +226,14 @@ function desenharGrafico(a) {
                        + `${String(t.day).padStart(2, "0")}`
                      : new Date(t * 1000).toISOString().slice(0, 10));
     const aviso = document.querySelector("#chartNotice");
-    if (typeof focarAlertaEm === "function" && focarAlertaEm(data)) {
-      if (aviso) aviso.textContent = "";
-    } else if (aviso) {
-      aviso.textContent = `No message within three days of ${data}.`;
-    }
+    // ⚠️ `focarAlertaEm` PASSOU A SER ASSÍNCRONA, porque pode ter de carregar páginas do
+    // histórico para alcançar um dia que está atrás do «show more». Testar o valor de retorno
+    // directamente deixaria de funcionar sem dar erro: uma Promise é sempre verdadeira, logo o
+    // ramo de falha desapareceria e um clique sem mensagem nenhuma pareceria ter acertado.
+    if (typeof focarAlertaEm !== "function") return;
+    void Promise.resolve(focarAlertaEm(data)).then(acertou => {
+      if (!acertou && aviso) aviso.textContent = `No message within three days of ${data}.`;
+    });
   });
   S.grafico = c;
 }
@@ -225,8 +292,22 @@ function pintarLegendaGrafico() {
   const d = S.desenhado || {};
   const umDia = S.intervalo === "1D";
   const L = [];
-  if (d.alertas)
-    L.push(`<i><span class="p" style="background:var(--parou)"></span> an alert went out</i>`);
+  // ⚠️ A LEGENDA TEM DE NOMEAR OS TIPOS, senão as cores novas são um código sem chave — o que
+  // é pior do que quatro bolas iguais. Nomeiam-se só os tipos DESENHADOS: uma legenda que
+  // enumera categorias ausentes manda procurar no gráfico o que lá não está.
+  if (d.alertas) {
+    const P = paleta();
+    for (const [k, rotulo] of [["news", "news alert"], ["market", "price-move alert"],
+                               ["open", "market-open note"], ["summary", "market-close summary"]]) {
+      if ((d.tipos || {})[k])
+        L.push(`<i><span class="p" style="background:${P[`k_${k}`]}"></span> `
+               + `<b>${LETRA_ALERTA[k]}</b> ${rotulo}</i>`);
+    }
+    // ⚠️ E a descoberta: o autor disse que «deveria ser mais intuitivo que podemos interagir
+    // com o gráfico». Um gráfico clicável que não diz que o é não é clicado. A frase fica na
+    // legenda, que é onde o olho já vai para decifrar as marcas.
+    L.push(`<i>click any column to jump to that day's messages below</i>`);
+  }
   if (d.assinalados) {
     L.push(`<i><span class="seta sobe"></span> flagged, closed up</i>`);
     L.push(`<i><span class="seta desce"></span> flagged, closed down</i>`);

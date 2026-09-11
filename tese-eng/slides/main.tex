@@ -547,7 +547,7 @@ with what the price did. That is how it became known that it was \emph{not} help
   \node[font=\bfseries\scriptsize] at (10.0,1.0) {cost};
   % ATENCAO: nunca usar \c \l \i \t \o como variaveis do \foreach (sao comandos do LaTeX)
   \foreach \xn/\xlim/\xfut/\xcus in {%
-    0/{No evaluation with people}/{Run the study: 6 to 10 people}/{calendar},%
+    0/{No \emph{controlled} study with people}/{Run the study: 6 to 10 people}/{calendar},%
     1/{The deployed model is a lookup table}/{Inputs that vary with the headline}/{low},%
     2/{Coverage of $88.5\%$, and $50\%$ in the worst case}/{Human judgement over a sample}/{calendar},%
     3/{Reads the headline, not the body}/{Read the body of the articles}/{new data},%
@@ -568,6 +568,33 @@ case base grows on its own and the weights do not.}
 
 % Closes the loop of the first frame: the three questions the deck opened with, answered on
 % the screen of a REAL case, captured from production. The day was not picked for looking good.
+% Evidencia que o deck nao tinha: os votos dos leitores do canal. Numero E ressalva no mesmo
+% slide, de proposito -- e' isso que retira ao arguente a pergunta que ele ia fazer.
+\begin{frame}{Did it help anyone? The one piece of evidence collected in the open}
+Every alert carries two buttons. \textbf{The rules were fixed before the first vote existed}
+and none was changed afterwards.
+\vspace{2mm}
+\begin{center}
+\begin{tabular}{@{}lr@{}}
+\toprule
+Ratings, one per person per alert, over 62 alerts & \textbf{91} \\
+People & \textbf{3} \\
+\midrule
+Called the alert useful & \textbf{86 of 91} $= 95\%$ \; {\scriptsize $[88,98]$} \\
+The same, without the reader who gave $58\%$ of them & \textbf{34 of 38} $= 89\%$ \; {\scriptsize $[76,96]$} \\
+\bottomrule
+\end{tabular}
+\\[1mm]
+{\scriptsize in brackets, the 95\% Wilson interval}
+\end{center}
+\vspace{1.5mm}
+{\footnotesize \textbf{And what it is not.} Three people is a pilot, not a study. Whoever wants
+to votes, which pushes the sample to the extremes; nobody received the move \emph{without} an
+explanation, so nothing here credits the usefulness to the explanation itself; and perceived
+usefulness is not a better decision. \textbf{The controlled study is designed and was not run} --
+it is the first limitation of the conclusions.}
+\end{frame}
+
 \begin{frame}{The three questions, answered on screen}
 \begin{columns}[T]
 \begin{column}{0.62\textwidth}

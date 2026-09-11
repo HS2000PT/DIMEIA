@@ -187,7 +187,7 @@ function explicarR2(d, nome) {
 // Estado de navegação único. Dados remotos têm cache própria e não são copiados por vista.
 const S = {modo:"hoje", ticker:null, intervalo:"1D", visao:null, asset:null,
   camadas:{alertas:true, assinalados:true, referencia:true, zscore:false, noticias:false},
-  alertas:[], votos:{}, funil:[], feedLimite:12, feedTicker:"", feedKind:"", next:null, remaining:0,
+  alertas:[], votos:{}, funil:[], feedLimite:12, feedTicker:"", feedKind:"", histIntervalo:"3M", next:null, remaining:0,
   total:0, diaHist:null, escolha:0, feedRequest:0, modalRequest:0, asOf:null};
 const cache = new Map(), pending = new Map();
 async function json(url, {ttl=30000, force=false}={}) {
@@ -291,6 +291,75 @@ function sincronizarEscopo(t) {
   const e = $("#feedEscopo");
   if (e) e.textContent = todas ? "all companies" : t;
 }
+/* ── O âmbito «todas as empresas» passa a mostrar o MERCADO ──────────────────────────────
+   ⚠️ O AUTOR APONTOU UMA INCOERÊNCIA DE ESTADO, e tinha razão: com «events from all
+   companies» activo ficavam DUAS coisas activas ao mesmo tempo — a lista era do canal inteiro
+   e o gráfico continuava a ser de uma empresa, que ficava com o botão marcado. Ou seja o
+   controlo dizia «todas» e a metade de cima da página dizia «esta».
+
+   Das três saídas que ele nomeou — minimizar o gráfico, removê-lo, ou mostrar o mercado — a
+   terceira é a única que responde à pergunta em vez de a apagar: com o âmbito no conjunto, o
+   que interessa é o que o conjunto fez.
+
+   ⚠️ E O ÍNDICE É O SPY, NÃO O NASDAQ. O autor escreveu «o mercado, nasdaq no caso», e a
+   maioria das doze empresas é mesmo cotada no NASDAQ — mas o fator de mercado deste sistema é
+   o SPY, em toda a decomposição e em toda a dissertação. Desenhar o SPY com o rótulo NASDAQ
+   seria falso; e trocar o fator invalidaria os números congelados. Fica o SPY, dito pelo nome.
+
+   E CONSTRÓI-SE UM PSEUDO-ATIVO em vez de um segundo caminho de gráfico. Reimplementar o
+   desenho aqui deixaria dois desenhos a divergir sem nada os comparar, que é a classe de
+   defeito que este projeto pagou na política de alertas e nas frases do veredicto. */
+/* A frase do cabeçalho quando o âmbito é o conjunto. Conta o que a grelha já mediu — quantas
+   empresas foram assinaladas hoje — em vez de interpretar o movimento do índice, que é
+   precisamente o que este trabalho recusa fazer. */
+function frasedoMercado() {
+  const rows = S.visao?.rows || [];
+  const n = rows.filter(r => r.flagged).length;
+  const idx = S.visao?.market_index || "the market";
+  if (!rows.length) return `${idx}, the market factor used throughout this system.`;
+  return n === 0
+    ? `${idx}, the market factor used throughout this system. None of the ${rows.length} `
+      + "companies monitored moved unusually for its own past today."
+    : `${idx}, the market factor used throughout this system. ${n} of the ${rows.length} `
+      + `compan${rows.length === 1 ? "y" : "ies"} monitored moved unusually for its own past `
+      + "today.";
+}
+
+
+function ativoDoMercado() {
+  const v = S.visao; if (!v || !(v.market_closes || []).length) return null;
+  const closes = v.market_closes;
+  return {
+    ticker: v.market_index || "SPY",
+    name: `${v.market_index || "SPY"} · the market factor this system uses`,
+    mercado: true,
+    move: v.market_move, z: null, flagged: false, rarity: null, decomp: null,
+    vol_ratio: null, closes, events: [], alerts: [], alertsLoaded: true,
+    alertsRemaining: 0, intraday: null, intraday_day: null, prev_close: null,
+    price_day: closes[closes.length - 1][0],
+  };
+}
+
+function mostrarMercado() {
+  const a = ativoDoMercado();
+  S.ticker = null;
+  document.querySelectorAll(".company").forEach(b => b.setAttribute("aria-pressed", "false"));
+  if (!a) {   // falha aberto: sem série, diz-se, e não se finge um gráfico
+    S.asset = null;
+    $("#detalhe").innerHTML = '<p class="vazio">The market series is unavailable in this ' +
+      'snapshot. Select a company to see its own chart.</p>';
+    disposeCharts();
+    return;
+  }
+  S.asset = a;
+  // O intervalo intradiário não existe para o índice neste instantâneo: cai no diário em vez
+  // de abrir numa vista vazia, que foi um defeito real da v3.
+  if (S.intervalo === "1D") S.intervalo = "1M";
+  pintarDetalhe();
+  void renderChart();
+}
+
+
 async function abrirEmpresa(t, {focus=true, force=false, url=true}={}) {
   if (!S.visao?.rows.some(r=>r.ticker===t)) return;
   const request=++S.escolha;
@@ -336,12 +405,17 @@ function pintarDetalhe() {
                 + parcela(d, "company", "Company", d.company, max, a.name || a.ticker)
               : "";
   $("#detalhe").innerHTML=`<div class="d">
-    <div class="d-cab"><img src="/assets/logos/${esc(a.ticker)}.png" alt="" width="44" height="44">
+    <div class="d-cab">${a.mercado ? "" :
+      `<img src="/assets/logos/${esc(a.ticker)}.png" alt="" width="44" height="44">`}
       <div><p class="eyebrow">${esc(a.ticker)} · ${dataDe(a.price_day)}</p><h2>${esc(a.name || a.ticker)}</h2></div>
       <span class="mv num ${cls(a.move)}">${pct(a.move)}<small>latest close</small></span></div>
-    <p class="d-ver">${esc(veredicto(a))}</p>
-    <div class="explanation"><h3>What contributed to the move?</h3>
-      ${d ? `<div class="d-rep">${rep}</div>
+    <p class="d-ver">${esc(a.mercado ? frasedoMercado() : veredicto(a))}</p>
+    <div class="explanation"><h3>${a.mercado
+      ? "Why there is no split here" : "What contributed to the move?"}</h3>
+      ${a.mercado ? `<p class="d-nota">This is the market factor itself, so there is nothing to
+          split: every company&rsquo;s market line is this series multiplied by that company's own
+          sensitivity to it. Select a company to see its share of today's move.</p>`
+        : d ? `<div class="d-rep">${rep}</div>
         <p class="d-nota">Contributions add up to the close-to-close move. This is a statistical split, not a causal attribution.</p>
         <p class="fit-summary">${d.fallback?"Fallback estimate":d.r2==null?"Fit unavailable":`Model fit R² ${Number(d.r2).toFixed(2)}`}${d.fallback || d.r2<R2_MEDIANA ? " · Indicative split" : ""}</p>
         <details class="fit-details"><summary>How reliable is this split?</summary><div class="f-corpo">${explicarR2(d, a.name || a.ticker) || "<p class=\"f-passo\">No fit statistic is available for this estimate.</p>"}</div></details>`
@@ -549,7 +623,11 @@ async function carregarFeed(more=false) {
    perdeu. Não se aplica no modo history, onde a navegação é por dia. */
 const DIAS_INTERVALO = {"1D":1, "1M":31, "3M":93, "6M":186, "1Y":366};
 function dentroDoIntervalo(a) {
-  if (S.modo !== "hoje") return true;
+  // ⚠️ NO MODO HISTÓRICO O INTERVALO PASSA A SER O DELE. Antes esta função devolvia sempre
+  // `true` fora do modo «hoje», porque o histórico não tinha intervalo nenhum; agora tem, e
+  // se a lista o ignorasse voltaria o defeito que esta função existe para corrigir — o gráfico
+  // a mostrar três meses e a lista por baixo a mostrar tudo, na mesma página.
+  if (S.modo !== "hoje") return dentroDoHist(a.date);
   const dias = DIAS_INTERVALO[S.intervalo];
   if (!dias || !a.date) return true;
   const corte = new Date(Date.now() - dias * 864e5).toISOString().slice(0, 10);
@@ -559,21 +637,69 @@ function dentroDoIntervalo(a) {
 /* Salta para o alerta mais próximo de uma data e dá-lhe foco.
    ⚠️ Com tolerância, e não por igualdade: ninguém acerta no pixel de um marcador, e um clique
    que só funcionasse em cima da data exacta pareceria partido quase sempre. */
-function focarAlertaEm(data, toleranciaDias = 3) {
-  const itens = [...document.querySelectorAll("#feed .f-item")];
-  if (!itens.length || !data) return false;
-  let melhor = null, menor = Infinity;
-  for (const el of itens) {
-    const d = el.dataset.date;
-    if (!d) continue;
-    const dist = Math.abs((new Date(d) - new Date(data)) / 864e5);
-    if (dist < menor) { menor = dist; melhor = el; }
+/* ── Um clique no gráfico e TODAS as mensagens daquele dia ───────────────────────────────
+   ⚠️ DOIS DEFEITOS DO AUTOR, e o primeiro era real: «quando há várias bolas na mesma coluna, o
+   clique só vai para uma delas». Esta função escolhia a mensagem MAIS PRÓXIMA da data clicada,
+   logo num dia com três alertas duas eram inalcançáveis pelo gráfico — e nada no ecrã dizia que
+   existiam.
+
+   A correção não é distinguir as bolas: num intervalo diário elas partilham a MESMA posição no
+   eixo, porque a coluna é um dia. O que o clique pode fazer é honrar o que a coluna significa —
+   revelar as mensagens desse dia, todas, e dizer quantas são.
+
+   ⚠️ E O SEGUNDO: «se clicarmos num alerta do gráfico que estivesse no show more, a lista
+   deveria ir para essa linha». Ia falhar em silêncio — a data existia no gráfico e não na lista
+   carregada, e a função devolvia `false` sem nada acontecer, que se lê como um clique morto.
+   Passa a carregar mais páginas até alcançar o dia, com um tecto para não varrer o histórico
+   inteiro por causa de um clique. */
+const PAGINAS_MAX = 6;
+
+async function focarAlertaEm(data, toleranciaDias = 3) {
+  if (!data) return false;
+  for (let volta = 0; volta <= PAGINAS_MAX; volta++) {
+    const itens = [...document.querySelectorAll("#feed .f-item")];
+    const exactas = itens.filter(el => el.dataset.date === data);
+    if (exactas.length) return realcar(exactas, data);
+
+    // Nada exacto nesta página. Se o dia é ANTERIOR ao mais antigo carregado e há mais para
+    // carregar, a mensagem está atrás do «show more» — é o caso do autor.
+    const datas = itens.map(el => el.dataset.date).filter(Boolean).sort();
+    const maisAntiga = datas[0];
+    if (S.remaining && (!maisAntiga || data < maisAntiga) && volta < PAGINAS_MAX) {
+      const nota = $("#chartNotice");
+      if (nota) nota.textContent = "Loading the messages from that day…";
+      await carregarFeed(true);
+      continue;
+    }
+    // Sem mais páginas: cai na aproximação de antes, que cobre o alerta sem barra onde pousar.
+    let melhor = null, menor = Infinity;
+    for (const el of itens) {
+      const d = el.dataset.date;
+      if (!d) continue;
+      const dist = Math.abs((new Date(d) - new Date(data)) / 864e5);
+      if (dist < menor) { menor = dist; melhor = el; }
+    }
+    if (!melhor || menor > toleranciaDias) return false;
+    return realcar([melhor], data, menor);
   }
-  if (!melhor || menor > toleranciaDias) return false;
-  melhor.scrollIntoView({behavior:"smooth", block:"center"});
-  melhor.focus({preventScroll:true});
-  melhor.classList.add("f-alvo");
-  setTimeout(() => melhor.classList.remove("f-alvo"), 2200);
+  return false;
+}
+
+function realcar(alvos, data, distancia = 0) {
+  alvos[0].scrollIntoView({behavior:"smooth", block:"center"});
+  alvos[0].focus({preventScroll:true});
+  for (const el of alvos) {
+    el.classList.add("f-alvo");
+    setTimeout(() => el.classList.remove("f-alvo"), 2600);
+  }
+  const nota = $("#chartNotice");
+  if (nota) {
+    nota.textContent = alvos.length > 1
+      ? `${alvos.length} messages went out on ${dataDe(data)} — all of them are highlighted below.`
+      : distancia
+        ? `No message is recorded on ${dataDe(data)}; the nearest one is highlighted below.`
+        : `Highlighted the message from ${dataDe(data)} below.`;
+  }
   return true;
 }
 
@@ -623,10 +749,33 @@ function pintarFeed() {
     $("#fMais").onclick=async()=>{const b=$("#fMais");b.disabled=true;b.textContent="Loading older messages…";await carregarFeed(true);};
   }
 }
+/* ── O intervalo do histórico ────────────────────────────────────────────────────────────
+   ⚠️ O AUTOR PEDIU «filtro de datas melhor, como temos no chart», e a razão é concreta: o
+   modo «hoje» tem cinco botões de intervalo que governam a página inteira, e o modo histórico
+   não tinha nenhum — mostrava tudo o que estivesse carregado e a única maneira de estreitar
+   era clicar num dia. Dois modos da mesma página com controlos de tempo diferentes obrigam o
+   leitor a aprender duas interfaces.
+   Os intervalos são os mesmos do gráfico, para não haver um segundo vocabulário de tempo. */
+const HIST_INTERVALOS = [["1M", 31], ["3M", 93], ["6M", 186], ["1Y", 366], ["All", null]];
+
+function dentroDoHist(iso) {
+  const dias = (HIST_INTERVALOS.find(([r]) => r === S.histIntervalo) || [])[1];
+  if (!dias || !iso) return true;
+  const d = new Date(iso);
+  return isFinite(d) && (Date.now() - d) / 864e5 <= dias;
+}
+
 function pintarHistorico() {
-  const counts=new Map();for(const a of S.alertas)counts.set(a.date,(counts.get(a.date)||0)+1);
+  const counts=new Map();
+  for(const a of S.alertas) if(dentroDoHist(a.date)) counts.set(a.date,(counts.get(a.date)||0)+1);
   const days=[...counts.entries()].sort(), max=Math.max(1,...counts.values());
-  $("#histNota").textContent=`${S.alertas.length} of ${S.total} messages loaded${days.length?` · ${dataDe(days[0][0])} to ${dataDe(days.at(-1)[0])}`:""}. Load older messages to extend this window.`;
+  const cx=$("#histIntervalos");
+  if(cx) cx.innerHTML=HIST_INTERVALOS.map(([r])=>
+    `<button data-hr="${r}" aria-pressed="${r===S.histIntervalo}">${r}</button>`).join("");
+  const mostradas=S.alertas.filter(a=>dentroDoHist(a.date)).length;
+  $("#histNota").textContent=`${mostradas} of ${S.alertas.length} loaded messages in this range`
+    + ` (${S.total} in the record)${days.length?` · ${dataDe(days[0][0])} to ${dataDe(days.at(-1)[0])}`:""}.`
+    + " Load older messages to extend the record.";
   // ⚠️ As marcas do eixo dos y são inteiras: contam-se mensagens, e «2,5 mensagens» seria
   // falso sobre a própria grandeza. Escolhe-se um passo que dê 3 a 5 marcas.
   const passo=Math.max(1,Math.ceil(max/4));
@@ -636,17 +785,40 @@ function pintarHistorico() {
   $("#histEixoY").innerHTML=marcas.slice().reverse().map(v=>
     `<span style="bottom:${v/topo*96}px">${v}</span>`).join("");
   $("#histBarras").innerHTML=days.map(([d,n])=>`<button class="hist-d" data-d="${d}" aria-label="${d}: ${n} messages" aria-pressed="${S.diaHist===d}"><i style="height:${Math.max(3,n/topo*96)}px;background:var(--acento)"></i><span class="n">${n}</span></button>`).join("");
-  // O eixo dos x nomeia o primeiro e o último dia desenhados; com poucos dias, nomeia-os
-  // todos, porque aí cabem e a leitura fica exacta em vez de aproximada.
+  // ⚠️ O EIXO DOS X NOMEAVA SÓ O PRIMEIRO E O ÚLTIMO DIA, e o autor apontou-o: com sessenta
+  // barras entre dois rótulos, nenhuma barra tem data — o leitor vê uma forma e não sabe
+  // quando. Passa a nomear até cinco dias, POSICIONADOS pela fração do índice da barra, para
+  // o rótulo cair debaixo da barra que nomeia em vez de ficar distribuído a espaço igual.
+  // Com sete ou menos dias nomeiam-se todos, porque aí cabem e a leitura fica exacta.
   const eixoX=$("#histEixoX");
   if(eixoX){
-    eixoX.innerHTML = days.length===0 ? ""
-      : days.length<=7 ? days.map(([d])=>`<span>${dataDe(d)}</span>`).join("")
-      : `<span>${dataDe(days[0][0])}</span><span>${dataDe(days.at(-1)[0])}</span>`;
-    eixoX.classList.toggle("esparso", days.length>7);
+    const n=days.length;
+    if(n===0){ eixoX.innerHTML=""; }
+    else if(n<=7){
+      eixoX.innerHTML=days.map(([d])=>`<span>${dataDe(d)}</span>`).join("");
+    }else{
+      const quantos=Math.min(5,n);
+      const idx=[...new Set(Array.from({length:quantos},(_,i)=>
+        Math.round(i*(n-1)/(quantos-1))))];
+      eixoX.innerHTML=idx.map(i=>{
+        const frac=n>1 ? i/(n-1) : 0;
+        // O alinhamento acompanha a posição: o primeiro encosta à esquerda, o último à
+        // direita, e os do meio centram-se — senão os das pontas saem fora do eixo.
+        const t=frac<=0 ? "translateX(0)" : frac>=1 ? "translateX(-100%)" : "translateX(-50%)";
+        return `<span style="left:${(frac*100).toFixed(2)}%;transform:${t}">`
+             + `${dataDe(days[i][0])}</span>`;
+      }).join("");
+    }
+    eixoX.classList.toggle("esparso", n>7);
   }
   $("#histFiltro").textContent=S.diaHist?`Showing ${dataDe(S.diaHist)}. Select the same day to clear.`:"Counts cover the loaded messages, including session summaries and market-open notes.";
   $("#histBarras").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.diaHist=S.diaHist===b.dataset.d?null:b.dataset.d;pintarHistorico();pintarFeed();});
+  if(cx) cx.onclick=e=>{
+    const b=e.target.closest("[data-hr]"); if(!b) return;
+    S.histIntervalo=b.dataset.hr;
+    S.diaHist=null;          // um dia escolhido fora do novo intervalo seria um filtro invisível
+    pintarHistorico(); pintarFeed();
+  };
 }
 function trocarModo(mode) {
   S.modo=mode;const today=mode==="hoje";
@@ -659,8 +831,13 @@ function trocarModo(mode) {
 }
 $("#mHoje").onclick=()=>trocarModo("hoje");$("#mHist").onclick=()=>trocarModo("hist");
 $("#todasEmpresas").onclick=()=>{
-  // Alterna o ÂMBITO da lista sem tocar na empresa em análise.
-  S.feedTicker = S.feedTicker ? "" : (S.ticker || "");
+  // ⚠️ ANTES ALTERNAVA SÓ O ÂMBITO DA LISTA e deixava a empresa em análise no gráfico, com o
+  // botão dela marcado: o controlo dizia «todas» e a metade de cima da página dizia «esta».
+  // Agora governa a página inteira — só um âmbito activo de cada vez.
+  const paraTodas = !!S.feedTicker || !S.asset;
+  S.feedTicker = paraTodas ? "" : (S.ticker || S.anterior || "");
+  if (paraTodas) { S.anterior = S.ticker; mostrarMercado(); }
+  else if (S.feedTicker) void abrirEmpresa(S.feedTicker);
   sincronizarEscopo(S.feedTicker);
   void carregarFeed();
 };

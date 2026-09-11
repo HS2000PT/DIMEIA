@@ -6,17 +6,17 @@
   <meta name="color-scheme" content="light dark">
   <meta name="description" content="Financial monitoring with measured explanations and traceable evidence.">
   <title>InvestiGator</title>
-  <link rel="icon" type="image/svg+xml" href="/assets/icon.svg?v=11.2">
+  <link rel="icon" type="image/svg+xml" href="/assets/icon.svg?v=11.9">
   <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/IBMPlexSans-Regular.woff2" crossorigin>
-  <link rel="stylesheet" href="/assets/dashboard.css?v=11.2">
-  <script defer src="/assets/charts.js?v=11.2"></script>
-  <script defer src="/assets/dashboard.js?v=11.2"></script>
+  <link rel="stylesheet" href="/assets/dashboard.css?v=11.9">
+  <script defer src="/assets/charts.js?v=11.9"></script>
+  <script defer src="/assets/dashboard.js?v=11.9"></script>
 </head>
 <body>
 <a class="skip" href="#detalhe">Skip to company analysis</a>
 <header class="topo">
   <div class="topo-in">
-    <a class="marca" href="/" aria-label="InvestiGator, home"><picture><source srcset="/assets/logo-dark.svg?v=11.2" media="(prefers-color-scheme: dark)"><img src="/assets/logo.svg?v=11.2" alt="" width="1158" height="780" fetchpriority="high"></picture></a>
+    <a class="marca" href="/" aria-label="InvestiGator, home"><picture><source srcset="/assets/logo-dark.svg?v=11.9" media="(prefers-color-scheme: dark)"><img src="/assets/logo.svg?v=11.9" alt="" width="1158" height="780" fetchpriority="high"></picture></a>
     <nav class="modos" aria-label="View">
       <button id="mHoje" aria-pressed="true">Overview</button>
       <button id="mHist" aria-pressed="false">History</button>
@@ -43,7 +43,9 @@
     <p class="summary-note" id="histNota">Loading the record…</p>
     <div class="votos-cx" id="votosCx" hidden></div>
     <div class="hist-cx">
-      <div class="titulo"><h2>Messages per day</h2><span class="nota">Select a day to read it</span></div>
+      <div class="titulo"><h2>Messages per day</h2>
+        <div class="intervalos" id="histIntervalos" role="group" aria-label="History range"></div></div>
+      <p class="nota nota-hist">Select a day to read only that day.</p>
       <div class="hist-plot">
         <span class="hist-eixo-rot">messages</span>
         <div class="hist-eixo-y" id="histEixoY" aria-hidden="true"></div>

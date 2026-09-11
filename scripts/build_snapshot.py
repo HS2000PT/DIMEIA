@@ -193,6 +193,22 @@ def juntar_decomposicao(linhas: list[dict], fora: dict) -> None:
     except Exception:  # noqa: BLE001
         fora["market_index"] = MARKET_INDEX
         fora["market_move"] = None
+
+    # ⚠️ A SÉRIE DO ÍNDICE, que já estava buscada e era deitada fora. O autor apontou que com
+    # «events from all companies» activo ficam DUAS coisas activas ao mesmo tempo — o âmbito é o
+    # canal inteiro e o gráfico continua a ser de uma empresa — e propôs mostrar o mercado. Sem
+    # esta série a alternativa era esconder o gráfico, ou seja responder à pergunta «o que
+    # aconteceu hoje no conjunto?» com um espaço vazio.
+    # Custa zero pedidos: é a mesma série que a decomposição já usa, no mesmo formato das linhas.
+    try:
+        fechos = get_price_history(MARKET_INDEX, period="1y")["Close"].tail(260)
+        fora["market_closes"] = [
+            [d.strftime("%Y-%m-%d"), round(float(v), 4)]
+            for d, v in fechos.items()
+            if v == v  # NaN != NaN: descarta buracos sem os disfarçar
+        ]
+    except Exception:  # noqa: BLE001
+        fora["market_closes"] = []
     for linha in linhas:
         try:
             t = linha["ticker"]

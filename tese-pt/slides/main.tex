@@ -43,6 +43,33 @@
 \begin{frame}\titlepage\end{frame}
 
 % ══ 1. O PROBLEMA ═══════════════════════════════════════════════════════════
+% Evidencia que o deck nao tinha: os votos dos leitores do canal. Numero E ressalva no mesmo
+% slide, de proposito -- e' isso que retira ao arguente a pergunta que ele ia fazer.
+\begin{frame}{Serviu a alguém? A única evidência recolhida em aberto}
+Cada alerta leva dois botões. \textbf{As regras foram fixadas antes de existir o primeiro voto}
+e nenhuma foi alterada depois.
+\vspace{2mm}
+\begin{center}
+\begin{tabular}{@{}lr@{}}
+\toprule
+Votos, um por pessoa e alerta, sobre 62 alertas & \textbf{91} \\
+Pessoas & \textbf{3} \\
+\midrule
+Classificaram o alerta como útil & \textbf{86 de 91} $= 95\%$ \; {\scriptsize $[88;98]$} \\
+O mesmo, sem o leitor que deu $58\%$ deles & \textbf{34 de 38} $= 89\%$ \; {\scriptsize $[76;96]$} \\
+\bottomrule
+\end{tabular}
+\\[1mm]
+{\scriptsize entre parênteses, o intervalo de Wilson a 95\%}
+\end{center}
+\vspace{1.5mm}
+{\footnotesize \textbf{E o que isto não é.} Três pessoas são um piloto, não um estudo. Vota quem
+quer, o que empurra a amostra para os extremos; ninguém recebeu o movimento \emph{sem}
+explicação, logo nada aqui atribui a utilidade à explicação em si; e utilidade percebida não é
+decisão melhor. \textbf{O estudo controlado está desenhado e não foi corrido} --- é a primeira
+limitação das conclusões.}
+\end{frame}
+
 \begin{frame}{Uma pessoa abre a aplicação, vê isto, e fica com três perguntas}
 \begin{center}
 \begin{tikzpicture}
@@ -547,7 +574,7 @@ depois com o que o preço fez. Foi assim que se soube que \emph{não} estava a a
   \node[font=\bfseries\scriptsize] at (10.0,1.0) {custo};
   % ATENCAO: nunca usar \c \l \i \t \o como variaveis do \foreach (sao comandos do LaTeX)
   \foreach \xn/\xlim/\xfut/\xcus in {%
-    0/{Nenhuma avaliação com pessoas}/{Correr o estudo: 6 a 10 pessoas}/{calendário},%
+    0/{Nenhuma estudo \emph{controlado} com pessoas}/{Correr o estudo: 6 a 10 pessoas}/{calendário},%
     1/{O modelo implantado é uma tabela de consulta}/{Entradas que variem com o título}/{baixo},%
     2/{Cobertura de $88{,}5\%$, e $50\%$ na pior}/{Julgamento humano sobre uma amostra}/{calendário},%
     3/{Lê o título e não o corpo}/{Ler o corpo dos artigos}/{dados novos},%

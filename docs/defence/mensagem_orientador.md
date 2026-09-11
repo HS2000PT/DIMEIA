@@ -53,6 +53,13 @@ Dois dos quatro resultados são negativos, e é essa a parte que considero mais 
 as alternativas simples foram escolhidas e declaradas antes de medir, o que é a condição para o
 resultado poder correr mal.
 
+**O que os leitores dizem, e o que isso não é.** Cada alerta leva dois botões. Estão registados
+91 votos sobre 62 alertas, e 86 deles classificam o alerta como útil — 95%, ou 89% se retirar o
+leitor que deu 58% dos votos. As regras de análise ficaram fixadas antes do primeiro voto. Mas
+são **três pessoas**, ninguém recebeu o movimento sem explicação, e utilidade percebida não é
+decisão melhor: é um piloto observacional, e o estudo controlado está desenhado e não foi
+corrido. Digo-o assim no documento, e é a primeira limitação das conclusões.
+
 **Para verem a funcionar:**
 aplicação — <https://investigator-ddc9d8618935.herokuapp.com> ·
 canal — <https://t.me/InvestiGatorMEIA>
@@ -66,6 +73,13 @@ Duas perguntas práticas:
 1. Posso responder ao inquérito da Professora Goreti para ir a defesa?
 2. Concordam com o título? Neste momento é *«Explicar sem prever: deteção de anomalias e
    recuperação de precedentes em alertas financeiros verificáveis»*.
+3. Sobre o **artigo publicável** que a unidade curricular pede: tenho uma versão escrita em
+   formato de conferência IEEE, destilada da dissertação e com todos os números conferidos
+   contra ela. Queria confirmar três coisas — se esse formato é o que é aceite, se deve ser
+   submetido a algum sítio concreto ou se basta entregá-lo, e, caso deva ser submetido, se têm
+   sugestão de destino. Pelo que o trabalho é, parece-me caber melhor numa conferência de
+   sistemas inteligentes ou de IA aplicada a finanças do que numa revista, mas prefiro seguir o
+   que recomendarem.
 
 Obrigado pela disponibilidade,
 Henrique Santos

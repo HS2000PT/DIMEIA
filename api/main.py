@@ -148,6 +148,9 @@ def overview() -> dict:
         # afirmação errada no sítio onde toda a gente olha.
         "market_index": snap.get("market_index"),
         "market_move": snap.get("market_move"),
+        # A série do índice. Serve o gráfico do âmbito «todas as empresas», onde antes ficava
+        # o gráfico de UMA empresa enquanto a lista mostrava o canal inteiro.
+        "market_closes": snap.get("market_closes", []),
     }
 
 
