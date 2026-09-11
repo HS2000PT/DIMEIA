@@ -144,7 +144,7 @@ function explicarR2(d, nome) {
 // Estado de navegação único. Dados remotos têm cache própria e não são copiados por vista.
 const S = {modo:"hoje", ticker:null, intervalo:"1D", visao:null, asset:null,
   camadas:{alertas:true, assinalados:true, referencia:true, zscore:false, noticias:false},
-  alertas:[], votos:{}, funil:[], feedLimite:12, feedTicker:"", next:null, remaining:0,
+  alertas:[], votos:{}, funil:[], feedLimite:12, feedTicker:"", feedKind:"", next:null, remaining:0,
   total:0, diaHist:null, escolha:0, feedRequest:0, modalRequest:0, asOf:null};
 const cache = new Map(), pending = new Map();
 async function json(url, {ttl=30000, force=false}={}) {
@@ -204,12 +204,10 @@ function pintarOverview() {
   if (S.rowSignature !== signature) {
     $("#empresas").innerHTML = rows.map(r => `<button class="company" data-t="${esc(r.ticker)}" aria-pressed="${r.ticker===S.ticker}">
       <img src="/assets/logos/${esc(r.ticker)}.png" alt="" width="30" height="30">
-      <span class="company-name"><b>${esc(r.name || r.ticker)}</b><small>${esc(r.ticker)}${r.flagged ? " · Unusual" : ""}</small></span>
+      <span class="company-name"><b>${esc(r.name || r.ticker)}</b><small>${esc(r.ticker)}</small>${r.flagged ? '<span class="flag" title="Unusual move for this company"><span aria-hidden="true">\u25C6</span> Unusual</span>' : ""}</span>
       <span class="num ${cls(r.move)}">${pct(r.move)}</span></button>`).join("") || '<p class="vazio">No companies available.</p>';
     $("#empresas").querySelectorAll("button").forEach(b=>b.onclick=()=>abrirEmpresa(b.dataset.t));
-    const filter=$("#feedFilter"), chosen=filter.value;
-    filter.innerHTML = '<option value="">All companies</option>'+rows.map(r=>`<option value="${esc(r.ticker)}">${esc(r.name || r.ticker)}</option>`).join("");
-    filter.value=chosen; S.rowSignature=signature;
+    S.rowSignature=signature;
   }
   updateStatus(v);
 }
@@ -240,10 +238,22 @@ function camadasHTML() {
     .map(([k,label])=>`<label class="cx"><input type="checkbox" data-c="${k}" ${S.camadas[k]?"checked":""}>${label}</label>`).join("");
 }
 function veredicto(a) { return S.visao?.rows.find(r=>r.ticker===a.ticker)?.verdict || "Rarity baseline unavailable."; }
+/* Uma escolha governa a página: o detalhe E a lista de eventos. Antes havia um combobox
+   separado, ou seja dois controlos para a mesma decisão, e a lista podia estar a mostrar uma
+   empresa diferente daquela que o painel analisava. */
+function sincronizarEscopo(t) {
+  const todas = t === "";
+  const b = $("#todasEmpresas");
+  if (b) b.setAttribute("aria-pressed", String(todas));
+  const e = $("#feedEscopo");
+  if (e) e.textContent = todas ? "all companies" : t;
+}
 async function abrirEmpresa(t, {focus=true, force=false, url=true}={}) {
   if (!S.visao?.rows.some(r=>r.ticker===t)) return;
   const request=++S.escolha;
   S.ticker=t;
+  if (S.feedTicker !== t) { S.feedTicker = t; void carregarFeed(); }
+  sincronizarEscopo(t);
   document.querySelectorAll(".company").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.t===t)));
   if(matchMedia("(max-width:760px)").matches){const b=$('.company[aria-pressed="true"]');if(b)b.scrollIntoView({block:"nearest",inline:"center"});}
   if (url) {const u=new URL(location.href); u.searchParams.set("t",t); history.replaceState(null,"",u);}
@@ -302,6 +312,7 @@ function pintarDetalhe() {
     </div>`;
   $("#intervalos").onclick=e=>{const b=e.target.closest("[data-r]"); if(!b) return;
     S.intervalo=b.dataset.r; $("#intervalos").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    pintarFiltroTipos(); pintarFeed();  // o intervalo governa a página inteira, não só o gráfico
     $("#camadas").innerHTML=camadasHTML(); void renderChart();};
   $("#camadas").onchange=e=>{const k=e.target.dataset.c;if(!k)return;S.camadas[k]=e.target.checked;
     if(k==="noticias" && e.target.checked) void loadNews(false); else void renderChart();};
@@ -410,14 +421,85 @@ async function carregarFeed(more=false) {
     S.next=result.next_before;S.remaining=result.remaining || 0;S.total=result.total || 0;
     $("#rodape").textContent=`${S.total} messages ${chosen?"for "+chosen:"on record"}`;
     $("#feedNota").textContent=result.stale?"Source unavailable. Showing the last successful reading.":"The exact text that reached the phone is available inside each event.";
-    pintarFeed();if(S.modo==="hist")pintarHistorico();
+    pintarFiltroTipos();pintarFeed();if(S.modo==="hist")pintarHistorico();
   } catch {if(request===S.feedRequest){if(more){S.alertas=old;pintarFeed();$("#feedNota").textContent="Older messages could not load. Try the load button again.";}else retry($("#feed"),"Messages unavailable. Company data is still available.",()=>carregarFeed());}}
 }
+
+/* ── O intervalo do gráfico governa também a lista ────────────────────────────
+   Antes o intervalo governava só o gráfico: com "1M" escolhido o gráfico mostrava um mês e a
+   lista por baixo mostrava meio ano, na mesma página. É o invariante que a v3 tinha e a v5
+   perdeu. Não se aplica no modo history, onde a navegação é por dia. */
+const DIAS_INTERVALO = {"1D":1, "1M":31, "3M":93, "6M":186, "1Y":366};
+function dentroDoIntervalo(a) {
+  if (S.modo !== "hoje") return true;
+  const dias = DIAS_INTERVALO[S.intervalo];
+  if (!dias || !a.date) return true;
+  const corte = new Date(Date.now() - dias * 864e5).toISOString().slice(0, 10);
+  return a.date >= corte;
+}
+
+/* Salta para o alerta mais próximo de uma data e dá-lhe foco.
+   ⚠️ Com tolerância, e não por igualdade: ninguém acerta no pixel de um marcador, e um clique
+   que só funcionasse em cima da data exacta pareceria partido quase sempre. */
+function focarAlertaEm(data, toleranciaDias = 3) {
+  const itens = [...document.querySelectorAll("#feed .f-item")];
+  if (!itens.length || !data) return false;
+  let melhor = null, menor = Infinity;
+  for (const el of itens) {
+    const d = el.dataset.date;
+    if (!d) continue;
+    const dist = Math.abs((new Date(d) - new Date(data)) / 864e5);
+    if (dist < menor) { menor = dist; melhor = el; }
+  }
+  if (!melhor || menor > toleranciaDias) return false;
+  melhor.scrollIntoView({behavior:"smooth", block:"center"});
+  melhor.focus({preventScroll:true});
+  melhor.classList.add("f-alvo");
+  setTimeout(() => melhor.classList.remove("f-alvo"), 2200);
+  return true;
+}
+
+/* ── Filtro por tipo de mensagem ──────────────────────────────────────────────
+   Os quatro tipos já existiam no modelo e a lista mostrava-os todos sem os poder separar. A nota
+   de abertura e o resumo de fecho saem todos os dias úteis, portanto são justamente as que enchem
+   a lista de quem procura outra coisa. Os rótulos usam as palavras do leitor, não as do modelo. */
+const TIPOS = [["", "All"], ["news", "News"], ["market", "Price move"],
+               ["open", "Market open"], ["summary", "Market close"]];
+function pintarFiltroTipos() {
+  const alvo = $("#feedKinds");
+  if (!alvo) return;
+  // ⚠️ As contagens obedecem ao MESMO filtro de intervalo que a lista. Contá-las sobre todas as
+  // mensagens carregadas dava um número que não correspondia ao que o clique mostrava — a marca
+  // dizia «News 8» e a lista mostrava duas —, e um número que mente é pior do que nenhum.
+  const visiveis = S.alertas.filter(dentroDoIntervalo);
+  const contagem = new Map();
+  for (const a of visiveis) contagem.set(a.kind, (contagem.get(a.kind) || 0) + 1);
+  alvo.innerHTML = TIPOS.map(([v, r]) => {
+    const n = v ? (contagem.get(v) || 0) : visiveis.length;
+    return `<button class="kind" data-k="${v}" aria-pressed="${S.feedKind === v}"`
+         + `${!n && v ? " disabled" : ""}>${r}<span class="kind-n">${n}</span></button>`;
+  }).join("");
+  alvo.querySelectorAll("button").forEach(b => b.onclick = () => {
+    S.feedKind = b.dataset.k; pintarFiltroTipos(); pintarFeed();
+  });
+}
+
 function pintarFeed() {
   let rows=S.alertas.slice().reverse();
   if(S.modo==="hist" && S.diaHist)rows=rows.filter(a=>a.date===S.diaHist);
-  $("#feed").innerHTML=rows.map((a,i)=>`<button class="f-item" data-i="${i}"><span class="f-cab"><b>${esc(a.ticker)}</b><span class="event-kind">${tipo(a.kind)}</span><time>${esc(a.date)} · ${horaDe(a.sent_at)}</time></span><p>${soRotulo(esc(a.text.split("\n").filter(Boolean).slice(0,3).join(" · ")))}</p><span class="read-event">Read explanation & evidence →</span></button>`).join("") || '<p class="vazio">No messages in this selection.</p>';
+  const antesDoIntervalo=rows.length;
+  rows=rows.filter(dentroDoIntervalo);
+  const escondidos=antesDoIntervalo-rows.length;
+  if(S.feedKind)rows=rows.filter(a=>a.kind===S.feedKind);
+  $("#feed").innerHTML=rows.map((a,i)=>`<button class="f-item" data-i="${i}" data-date="${esc(a.date)}"><span class="f-cab"><b>${esc(a.ticker)}</b><span class="event-kind">${tipo(a.kind)}</span><time>${esc(a.date)} · ${horaDe(a.sent_at)}</time></span><p>${soRotulo(esc(a.text.split("\n").filter(Boolean).slice(0,3).join(" · ")))}</p><span class="read-event">Read explanation & evidence →</span></button>`).join("") || `<p class="vazio">${escondidos
+      ? `No messages inside the ${S.intervalo} window. `
+        + `${escondidos} older ${escondidos === 1 ? "message is" : "messages are"} hidden by it.`
+      : "No messages in this selection."}</p>`;
   $("#feed").querySelectorAll(".f-item").forEach(b=>b.onclick=()=>modalAlerta(rows[+b.dataset.i]));
+  if(escondidos && rows.length) {
+    $("#feed").insertAdjacentHTML("beforeend",
+      `<p class="f-corte">${escondidos} older ${escondidos === 1 ? "message" : "messages"} outside the ${S.intervalo} window ${escondidos === 1 ? "is" : "are"} not shown.</p>`);
+  }
   if(S.remaining) {
     $("#feed").insertAdjacentHTML("beforeend",`<button class="f-mais" id="fMais">${S.remaining} older messages not shown — load ${Math.min(S.feedLimite,S.remaining)} more</button>`);
     $("#fMais").onclick=async()=>{const b=$("#fMais");b.disabled=true;b.textContent="Loading older messages…";await carregarFeed(true);};
@@ -427,7 +509,24 @@ function pintarHistorico() {
   const counts=new Map();for(const a of S.alertas)counts.set(a.date,(counts.get(a.date)||0)+1);
   const days=[...counts.entries()].sort(), max=Math.max(1,...counts.values());
   $("#histNota").textContent=`${S.alertas.length} of ${S.total} messages loaded${days.length?` · ${dataDe(days[0][0])} to ${dataDe(days.at(-1)[0])}`:""}. Load older messages to extend this window.`;
-  $("#histBarras").innerHTML=days.map(([d,n])=>`<button class="hist-d" data-d="${d}" aria-label="${d}: ${n} messages" aria-pressed="${S.diaHist===d}"><i style="height:${Math.max(3,n/max*96)}px;background:var(--acento)"></i><span class="n">${n}</span></button>`).join("");
+  // ⚠️ As marcas do eixo dos y são inteiras: contam-se mensagens, e «2,5 mensagens» seria
+  // falso sobre a própria grandeza. Escolhe-se um passo que dê 3 a 5 marcas.
+  const passo=Math.max(1,Math.ceil(max/4));
+  const marcas=[];for(let v=0;v<=max;v+=passo)marcas.push(v);
+  if(marcas.at(-1)!==max)marcas.push(max);
+  const topo=marcas.at(-1);
+  $("#histEixoY").innerHTML=marcas.slice().reverse().map(v=>
+    `<span style="bottom:${v/topo*96}px">${v}</span>`).join("");
+  $("#histBarras").innerHTML=days.map(([d,n])=>`<button class="hist-d" data-d="${d}" aria-label="${d}: ${n} messages" aria-pressed="${S.diaHist===d}"><i style="height:${Math.max(3,n/topo*96)}px;background:var(--acento)"></i><span class="n">${n}</span></button>`).join("");
+  // O eixo dos x nomeia o primeiro e o último dia desenhados; com poucos dias, nomeia-os
+  // todos, porque aí cabem e a leitura fica exacta em vez de aproximada.
+  const eixoX=$("#histEixoX");
+  if(eixoX){
+    eixoX.innerHTML = days.length===0 ? ""
+      : days.length<=7 ? days.map(([d])=>`<span>${dataDe(d)}</span>`).join("")
+      : `<span>${dataDe(days[0][0])}</span><span>${dataDe(days.at(-1)[0])}</span>`;
+    eixoX.classList.toggle("esparso", days.length>7);
+  }
   $("#histFiltro").textContent=S.diaHist?`Showing ${dataDe(S.diaHist)}. Select the same day to clear.`:"Counts cover the loaded messages, including session summaries and market-open notes.";
   $("#histBarras").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.diaHist=S.diaHist===b.dataset.d?null:b.dataset.d;pintarHistorico();pintarFeed();});
 }
@@ -441,7 +540,12 @@ function trocarModo(mode) {
   pintarFeed();
 }
 $("#mHoje").onclick=()=>trocarModo("hoje");$("#mHist").onclick=()=>trocarModo("hist");
-$("#feedFilter").onchange=e=>{S.feedTicker=e.target.value;void carregarFeed();};
+$("#todasEmpresas").onclick=()=>{
+  // Alterna o ÂMBITO da lista sem tocar na empresa em análise.
+  S.feedTicker = S.feedTicker ? "" : (S.ticker || "");
+  sincronizarEscopo(S.feedTicker);
+  void carregarFeed();
+};
 $("#about").onclick=()=>abrirModal("About the evidence",`<p>This research application monitors US stocks and connects observed moves with recorded evidence.</p><ul><li>Rarity compares a daily move with the company's past.</li><li>The split estimates market, sector and company contributions; R² describes the historical fit.</li><li>News and similar past cases provide context, not proof of causation.</li><li>Messages preserve what was sent, including historical model estimates. These are not a confidence score for today's explanation.</li></ul><p>Sources and timestamps remain attached to the evidence. No price forecasts or investment recommendations are produced by this interface.</p>`);
 
 let refreshing=false,pollTimer,polling=false,lastFeedCheck=0;

@@ -97,6 +97,34 @@
   .hist { margin-bottom:20px; }
   .hist-cx { background:var(--caixa); border:1px solid var(--linha); border-radius:var(--r);
              box-shadow:var(--sombra); padding:16px 18px; }
+  /* ── Eixos do «mensagens por dia» ──────────────────────────────────────────
+     As barras traziam a contagem escrita por cima e mais nada: sem eixo dos y não se comparam
+     duas barras distantes, e sem eixo dos x não se sabe a que dia pertence nenhuma. */
+  .hist-plot { display:grid; grid-template-columns:auto 1fr; gap:0 8px; align-items:end;
+               position:relative; padding-left:4px; }
+  .hist-eixo-rot { position:absolute; top:-2px; left:4px; font-size:.6rem; color:var(--fraco);
+                   letter-spacing:.04em; text-transform:uppercase; }
+  .hist-eixo-y { position:relative; width:1.6rem; height:132px; }
+  .hist-eixo-y span { position:absolute; right:0; transform:translateY(50%);
+                      font-family:var(--mono); font-size:.6rem; color:var(--fraco);
+                      font-variant-numeric:tabular-nums; }
+  .hist-eixo-x { display:flex; justify-content:space-between; gap:6px;
+                 margin:4px 0 0 calc(1.6rem + 12px); border-top:1px solid var(--borda);
+                 padding-top:4px; font-size:.62rem; color:var(--fraco); }
+  .hist-eixo-x.esparso { justify-content:space-between; }
+
+  /* ── Filtro por tipo de mensagem ───────────────────────────────────────────── */
+  .kinds { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .kind { display:inline-flex; align-items:center; gap:5px; padding:4px 9px; border-radius:999px;
+          border:1px solid var(--borda); background:none; color:var(--tinta2);
+          font-size:.72rem; font-weight:500; cursor:pointer; }
+  .kind:hover:not(:disabled) { background:var(--linha2); color:var(--tinta); }
+  .kind[aria-pressed="true"] { background:var(--acento-fraco); border-color:var(--acento);
+                               color:var(--tinta); }
+  .kind:disabled { opacity:.42; cursor:default; }
+  .kind-n { font-family:var(--mono); font-size:.64rem; color:var(--fraco);
+            font-variant-numeric:tabular-nums; }
+
   .hist-barras { display:flex; align-items:flex-end; gap:2px; height:132px;
                  overflow-x:auto; padding-bottom:2px; }
   .hist-d { flex:1 1 0; min-width:11px; max-width:46px; display:flex; flex-direction:column;
@@ -259,6 +287,36 @@
   .company-name b { display:block; font-size:.88rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .company-name small { display:block; font-size:.7rem; color:var(--fraco); }
   .company > .num { font-size:.82rem; font-weight:500; white-space:nowrap; }
+
+  /* ── Marca de movimento invulgar ───────────────────────────────────────────
+     Era texto cinzento colado ao ticker e lia-se como parte dele. Passa a marca própria, na cor
+     de atenção que a página já define nos dois temas. O símbolo é decorativo e a palavra fica:
+     um losango sozinho não se lê num leitor de ecrã. */
+  .flag { display:inline-flex; align-items:center; gap:4px; margin-top:3px;
+          padding:1px 6px; border-radius:999px; font-size:.66rem; font-weight:600;
+          letter-spacing:.02em; color:var(--parou); background:var(--parou-fraco);
+          border:1px solid color-mix(in srgb, var(--parou) 35%, transparent); }
+  .flag [aria-hidden] { font-size:.6rem; line-height:1; }
+
+  /* ── Âmbito da lista de eventos ────────────────────────────────────────────
+     Substitui o combobox: uma escolha de empresa governa o detalhe E a lista, e este botão é a
+     única forma de alargar a lista sem mudar a empresa em análise. */
+  .scope { display:block; width:calc(100% - 32px); margin:0 16px 12px; padding:7px 10px;
+           border:1px solid var(--borda); border-radius:8px; background:none;
+           color:var(--tinta2); font-size:.74rem; font-weight:500; cursor:pointer;
+           text-align:center; }
+  .scope:hover { background:var(--linha2); color:var(--tinta); }
+  .scope[aria-pressed="true"] { background:var(--acento-fraco); border-color:var(--acento);
+                                color:var(--tinta); }
+  .feed-scope { margin-left:8px; padding:2px 7px; border-radius:999px; background:var(--linha2);
+                color:var(--tinta2); font-size:.7rem; font-weight:500;
+                font-variant-numeric:tabular-nums; }
+
+  /* O alerta para onde o gráfico saltou. O realce é temporário e some sozinho: um realce que
+     ficasse acumularia com o clique seguinte e deixaria de indicar coisa nenhuma. */
+  .f-item { scroll-margin-top:24px; }
+  .f-alvo { outline:2px solid var(--acento); outline-offset:-2px; background:var(--acento-fraco); }
+  .f-corte { margin:10px 14px 0; font-size:.72rem; color:var(--fraco); }
   #detalhe { scroll-margin-top:16px; }
   .d { box-shadow:none; }
   .d-cab .mv small { display:block; font-size:.72rem; font-family:var(--sans); color:var(--fraco); font-weight:400; text-align:right; }
@@ -303,8 +361,6 @@
   .evidence-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
   .d-dias { margin:8px 0 12px; }
   .titulo { align-items:center; justify-content:space-between; margin:0; }
-  .feed-filter { display:flex; align-items:center; gap:8px; font-size:.76rem; color:var(--fraco); }
-  .feed-filter select { max-width:180px; }
   .event-kind { font-size:.72rem; color:var(--fraco); padding:2px 6px; background:var(--linha2); border-radius:4px; }
   .f-cab time { margin-left:auto; }
   .read-event { display:block; font-size:.76rem; color:var(--acento); margin-top:8px; }
@@ -333,7 +389,10 @@
   @media (max-width:760px) {
     main { padding:22px 16px 28px; }
     .topo-in { padding:12px 16px; gap:12px; }
-    .marca img { width:100px; }
+    /* O bloco empilhado (figura sobre nome) tem 71 px de alto e empurra o cabeçalho para
+       três linhas, 169 px do primeiro ecrã de um telemóvel. Limita-se a altura em vez da
+       largura: o que faz a linha crescer é a altura, e `keepaspectratio` trata do resto. */
+    .marca img { width:auto; height:40px; }
     .modos { margin-left:auto; }
     .modos button { padding:7px 12px; }
     .bolsa { margin-left:0; flex:1 1 100%; order:3; flex-direction:row; gap:8px; flex-wrap:wrap; }

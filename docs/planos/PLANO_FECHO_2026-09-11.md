@@ -129,3 +129,44 @@ Os logótipos têm de ser botões focáveis.
 ⚠️ **A mensagem é o último passo por uma razão e não por arrumação:** ela anexa o documento e os
 slides, e enviá-la antes de as capturas corresponderem ao produto seria pedir a revisão de uma
 versão que já sabemos estar desactualizada.
+
+---
+
+## 6. Registo de execução — 2026-09-11
+
+### Tese
+- [x] **Comparação com as quatro aprovadas (P1).** Folios lidos dos índices delas. **Estamos 4
+      folios acima da mais longa (124 contra 120 do Bruno Ribeiro), não 21.** O outlier é o
+      **Cap. 6 com 15 páginas contra 7, 4, 4 e ~4**; o Cap. 1, com 5 contra 8 a 10, está **curto**.
+- [x] **§6.6 comprimida** — os três primeiros parágrafos recapitulavam a §6.1 e a §6.2 dez páginas
+      antes; fica o quarto, que é a fronteira da afirmação e não tem duplicado, com a figura.
+- [x] **Colocação de flutuantes afinada.** 44 figuras estavam em `[ht]`, que proíbe o fundo da
+      página e a página de flutuantes. Verificado além da contagem: das 59 figuras, **41 moveram-se
+      e todas para MAIS PERTO** do texto que as invoca. **EN 142 → 141 físicas, 124 → 123 árabes.**
+- [x] Moldura de IA promovida a §3.3, títulos a nomearem a técnica, excertos 3 → 5.
+
+⚠️ **MEDIDO CINCO VEZES: o documento não encolhe incrementalmente.** Cortar uma tabela de meia
+página, 84 palavras, 90 palavras, 270 palavras — **zero páginas** de cada vez. Só a colocação de
+flutuantes deu uma. Chegar a 120 exige material **contíguo**.
+
+### Aplicação
+- [x] **A1** logótipo — o branco estava em **três sítios**; recorte por preenchimento a partir das
+      bordas. ⚠️ E ao tirá-lo apareceu o problema real: a tinta dava **2,22:1**, abaixo do mínimo,
+      num logótipo que contém texto. Variante escura a **10,49:1**, servida por `prefers-color-scheme`.
+- [x] **A2 + A8** a conta da repartição, passo a passo. ⚠️ **A parcela da empresa não tem fórmula:
+      é o resíduo.** É por isso que as outras duas se percebiam e esta não.
+- [x] **A3 + A6** a empresa escolhida governa a lista; a *combobox* saiu.
+- [x] **A4** clique no gráfico salta para o alerta, com tolerância de três dias.
+- [x] **A5** o intervalo do gráfico filtra a lista, com o estado vazio a explicar-se.
+- [x] **A7** «Unusual» passa a marca com símbolo e cor de atenção.
+- [x] **A9** eixos no «mensagens por dia», com marcas **inteiras** no y.
+- [x] **A10** filtro por tipo, com «Market open» e «Market close» nomeados como o autor os chama.
+
+### A11 — melhorias observadas e NÃO executadas, para decisão
+1. **Cabeçalho no telemóvel: 143 px, 18% do primeiro ecrã** (era 169). Rola com a página, logo não
+   é permanente. Baixar mais exige tirar a linha das bolsas para dentro de um menu.
+2. **A lista carrega 12 mensagens de cada vez** e o filtro por tipo só vê essas 12 — «Market open»
+   aparece a zero não por não existir, mas por não ter sido carregada. **Filtrar no servidor
+   resolvia**; hoje o número é honesto sobre o que está carregado e pode enganar sobre o que existe.
+3. **O gráfico não tem estado de «nada para mostrar»** no intervalo 1D fora de sessão.
+4. **Não há ligação directa do alerta para o Telegram** de onde ele saiu.

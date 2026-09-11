@@ -6,17 +6,17 @@
   <meta name="color-scheme" content="light dark">
   <meta name="description" content="Financial monitoring with measured explanations and traceable evidence.">
   <title>InvestiGator</title>
-  <link rel="icon" type="image/svg+xml" href="/assets/icon.svg?v=10.2">
+  <link rel="icon" type="image/svg+xml" href="/assets/icon.svg?v=10.7">
   <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/IBMPlexSans-Regular.woff2" crossorigin>
-  <link rel="stylesheet" href="/assets/dashboard.css?v=10.2">
-  <script defer src="/assets/charts.js?v=10.2"></script>
-  <script defer src="/assets/dashboard.js?v=10.2"></script>
+  <link rel="stylesheet" href="/assets/dashboard.css?v=10.7">
+  <script defer src="/assets/charts.js?v=10.7"></script>
+  <script defer src="/assets/dashboard.js?v=10.7"></script>
 </head>
 <body>
 <a class="skip" href="#detalhe">Skip to company analysis</a>
 <header class="topo">
   <div class="topo-in">
-    <a class="marca" href="/" aria-label="InvestiGator, home"><picture><source srcset="/assets/logo-dark.svg?v=10.2" media="(prefers-color-scheme: dark)"><img src="/assets/logo.svg?v=10.2" alt="" width="1158" height="780" fetchpriority="high"></picture></a>
+    <a class="marca" href="/" aria-label="InvestiGator, home"><picture><source srcset="/assets/logo-dark.svg?v=10.7" media="(prefers-color-scheme: dark)"><img src="/assets/logo.svg?v=10.7" alt="" width="1158" height="780" fetchpriority="high"></picture></a>
     <nav class="modos" aria-label="View">
       <button id="mHoje" aria-pressed="true">Overview</button>
       <button id="mHist" aria-pressed="false">History</button>
@@ -42,7 +42,12 @@
     <p class="summary-note" id="histNota">Loading the record…</p>
     <div class="hist-cx">
       <div class="titulo"><h2>Messages per day</h2><span class="nota">Select a day to read it</span></div>
-      <div class="hist-barras" id="histBarras"></div>
+      <div class="hist-plot">
+        <span class="hist-eixo-rot">messages</span>
+        <div class="hist-eixo-y" id="histEixoY" aria-hidden="true"></div>
+        <div class="hist-barras" id="histBarras"></div>
+      </div>
+      <div class="hist-eixo-x" id="histEixoX" aria-hidden="true"></div>
       <p class="summary-note" id="histFiltro"></p>
     </div>
   </section>
@@ -50,15 +55,17 @@
     <aside class="watchlist" id="colEsq" aria-labelledby="watchTitle">
       <div class="watch-title"><h2 id="watchTitle">Companies</h2><span id="notaEmpresas" class="num"></span></div>
       <p class="watch-hint">Latest close · unusual moves first</p>
+      <!-- Governa o ÂMBITO DA LISTA de eventos, não a empresa em análise: são duas coisas,
+           e juntá-las deixaria o painel de detalhe sem empresa. -->
+      <button class="scope" id="todasEmpresas" aria-pressed="false">Events from all companies</button>
       <div id="empresas"><p class="vazio">Loading companies…</p></div>
     </aside>
     <div class="main-column">
       <section id="detalhe" tabindex="-1" aria-label="Company analysis"><p class="vazio">The company analysis will appear here.</p></section>
       <section class="f-cartao" aria-labelledby="feedTitle">
         <div class="f-topo">
-          <div class="titulo"><h2 id="feedTitle">Recent events</h2>
-            <label class="feed-filter">Company <select id="feedFilter" aria-label="Filter messages by company"><option value="">All companies</option></select></label>
-          </div>
+          <div class="titulo"><h2 id="feedTitle">Recent events</h2><span class="feed-scope" id="feedEscopo"></span></div>
+          <div class="kinds" id="feedKinds" role="group" aria-label="Filter by message type"></div>
           <p class="summary-note" id="feedNota">Open an event for its explanation and original evidence.</p>
         </div>
         <div id="feed" aria-live="polite"><p class="vazio">Loading recent events…</p></div>

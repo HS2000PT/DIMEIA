@@ -151,6 +151,23 @@ function desenharGrafico(a) {
   if (S.obs) S.obs.disconnect();
   S.obs = new ResizeObserver(() => c.applyOptions({ width: alvo.clientWidth }));
   S.obs.observe(alvo);
+  // ── clicar no gráfico salta para o alerta ────────────────────────────────
+  // O clique devolve a coordenada de tempo sob o cursor e não um marcador, por isso procura-se
+  // o alerta mais próximo dessa data. Sem tolerância, isto pareceria partido quase sempre.
+  c.subscribeClick(param => {
+    if (!param || !param.time) return;
+    const t = param.time;
+    const data = typeof t === "string" ? t
+      : (t && t.year ? `${t.year}-${String(t.month).padStart(2, "0")}-`
+                       + `${String(t.day).padStart(2, "0")}`
+                     : new Date(t * 1000).toISOString().slice(0, 10));
+    const aviso = document.querySelector("#chartNotice");
+    if (typeof focarAlertaEm === "function" && focarAlertaEm(data)) {
+      if (aviso) aviso.textContent = "";
+    } else if (aviso) {
+      aviso.textContent = `No message within three days of ${data}.`;
+    }
+  });
   S.grafico = c;
 }
 
