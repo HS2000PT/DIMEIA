@@ -125,6 +125,9 @@ function tabelaDeRetornos(d) {
   }
   const pm = new Map(mer.map(r => [r[0], r[1]]));
   const ps = new Map(set.map(r => [r[0], r[1]]));
+  // A coluna do setor pode faltar sozinha: uma serie por ETF, e o instantaneo salta a que
+  // falhar. Sem esta nota as vinte linhas a tracejado leem-se como «o setor esteve parado».
+  const semSetor = !set.length;
   const linhas = emp.filter(r => pm.has(r[0])).map(([dia, r]) =>
     `<tr><td>${dataDe(dia)}</td><td>${pctc(Math.expm1(r))}</td>`
     + `<td>${pctc(Math.expm1(pm.get(dia)))}</td>`
@@ -137,6 +140,9 @@ function tabelaDeRetornos(d) {
       <th>${esc(S.visao?.market_index || "index")}</th>
       <th>${esc(S.asset?.sector_etf || "sector")}</th></tr></thead>
       <tbody>${linhas.join("")}</tbody></table></div>
+    ${semSetor ? `<p class="f-passo">The sector fund's own series did not reach the browser for
+      this company, so its column is empty here. That is a missing reading, not a flat sector: the
+      sector share of the move above was computed from it on the server.</p>` : ""}
     <p class="f-passo">${linhas.length} day${linhas.length === 1 ? "" : "s"}. A day's change is the
       natural logarithm of its close divided by the previous close, which is the form that adds up
       across days; the percentages shown are that value turned back into a percentage to read.</p>`;
