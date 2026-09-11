@@ -97,7 +97,13 @@ def test_web_header_uses_approved_stacked_logo() -> None:
     )
 
     assert match is None
-    assert '/assets/logo.svg?v=10.0' in source
+    # A versão de cache muda sempre que o asset muda, que é o motivo de ela existir;
+    # fixá-la aqui fazia o teste partir a cada correção sem guardar nada. O que se exige é
+    # o logotipo E a variante escura, que existe porque a tinta clara dá 2,2:1 sobre o
+    # fundo escuro da página, abaixo do mínimo da WCAG para o texto que o logotipo contém.
+    assert '/assets/logo.svg?v=' in source
+    assert '/assets/logo-dark.svg?v=' in source
+    assert 'prefers-color-scheme: dark' in source
     assert 'aria-label="InvestiGator, home"' in source
     assert "mascote" not in source
 

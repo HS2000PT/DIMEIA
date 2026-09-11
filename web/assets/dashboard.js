@@ -62,25 +62,84 @@ const soRotulo = escapado => String(escapado).replace(LIGACAO, (_, __, rotulo) =
 
 
 const R2_MEDIANA = 0.46;
-function qualidadeAjuste(d, nome) {
+
+// Percentagem com sinal e duas casas, para as linhas da conta.
+const pctc = v => (v == null || !isFinite(v)) ? "—" : (v >= 0 ? "+" : "") + (v * 100).toFixed(2) + "%";
+
+/* A conta da repartição, passo a passo.
+   Mostra-se a equação, a equação com os valores deste dia, e o que cada parcela é. A parcela da
+   empresa é o resíduo — não há beta para ela — e isso é dito em voz alta, porque é a pergunta
+   que um leitor faz ao ver três números que somam ao total. */
+function contaDaReparticao(d, nome) {
+  if (!d || d.fallback || d.beta_market == null) return "";
+  const bm = Number(d.beta_market), bs = Number(d.beta_sector);
+  // O retorno de cada fator no próprio dia deriva-se da parcela e da sensibilidade.
+  const rm = bm ? d.market / bm : null;
+  const rs = bs ? d.sector / bs : null;
+  const linhas = [
+    `<span class="f-rot">market</span><span class="f-cal">${bm.toFixed(2)} × ${pctc(rm)}</span>` +
+      `<span class="f-res">${pctc(d.market)}</span>`,
+  ];
+  if (bs && rs != null) {
+    linhas.push(
+      `<span class="f-rot">sector</span><span class="f-cal">${bs.toFixed(2)} × ${pctc(rs)}</span>` +
+      `<span class="f-res">${pctc(d.sector)}</span>`);
+  }
+  linhas.push(
+    `<span class="f-rot">company</span><span class="f-cal">what is left over</span>` +
+    `<span class="f-res">${pctc(d.company)}</span>`);
+  return `
+    <p class="f-passo"><b>1. The equation.</b> The day's move is split into what the whole market
+      did, what ${esc(nome)}'s sector did beyond the market, and the rest.</p>
+    <p class="f-eq">move = β<sub>market</sub> × market return + β<sub>sector</sub> × sector return + company</p>
+    <p class="f-passo"><b>2. This day's numbers.</b> The two β values are ${esc(nome)}'s measured
+      sensitivities, estimated over the ${d.window} trading days before this one. The β and the factor return
+      are shown rounded to two places, while the parts are computed on the unrounded values, so
+      redoing a multiplication by hand can differ in the last digit.</p>
+    <div class="f-conta">${linhas.join("")}
+      <span class="f-rot f-tot">total</span><span class="f-cal"></span>
+      <span class="f-res f-tot">${pctc(d.total != null ? d.total : (d.market + d.sector + d.company))}</span></div>
+    <p class="f-passo"><b>3. Why the company figure has no formula.</b> Market and sector are
+      products: a sensitivity multiplied by what that factor did today. The company figure is not
+      calculated that way at all. It is the remainder — whatever the market and the sector do not
+      account for is attributed to the company by subtraction. That is why the three always add up
+      to the move exactly, and why anything the model failed to capture lands in this last line.</p>`;
+}
+
+/* O R2 explicado do zero: o que mede, como se calcula, e o que ESTE valor quer dizer. */
+function explicarR2(d, nome) {
   if (!d) return "";
   if (d.fallback) {
-    return `the sensitivities could not be estimated from the past year, so this split ` +
-           `assumes ${nome} moves one-for-one with the market`;
+    return `<p class="f-passo"><b>Reliability.</b> The sensitivities could not be estimated from
+      the past year, so this split assumes ${esc(nome)} moves one-for-one with the market. Read it
+      as a placeholder, not a measurement.</p>`;
   }
   const r = d.r2;
   if (r === null || r === undefined || !isFinite(r)) return "";
-  if (r <= 0) {
-    return `over the past year, market and sector explained none of how ${nome} moves: ` +
-           `this split rests on a fit that does not describe the data`;
-  }
   const pc = Math.round(r * 100);
-  return r >= R2_MEDIANA
-    ? `market and sector account for ${pc}% of ${nome}'s daily moves over the past year, ` +
-      `at or above the 46% median across the watchlist`
-    : `market and sector account for ${pc}% of ${nome}'s daily moves over the past year, ` +
-      `below the 46% median across the watchlist: read the split as indicative`;
+  if (r <= 0) {
+    return `<p class="f-passo"><b>4. How much to trust it.</b> R² came out at or below zero, which
+      means that over the past ${d.window} days this market-and-sector model described
+      ${esc(nome)} no better than a flat line would. The split above still adds up, but it rests on
+      a fit that does not describe the data.</p>`;
+  }
+  const acima = r >= R2_MEDIANA;
+  return `
+    <p class="f-passo"><b>4. How much to trust it: R².</b> R² answers one question — over the
+      ${d.window} trading days before this one, how much of ${esc(nome)}'s day-to-day movement did
+      this same market-and-sector model manage to track?</p>
+    <p class="f-eq">R² = 1 − (variation the model missed) ÷ (total variation)</p>
+    <p class="f-passo">A model that tracked every day perfectly would leave nothing missed and score
+      1. A model that tracked nothing would score 0. Here it is
+      <b>${r.toFixed(2)}</b>, so the model followed about <b>${pc}%</b> of ${esc(nome)}'s daily
+      movement and missed the other ${100 - pc}%. ${acima
+        ? `That is at or above the ${Math.round(R2_MEDIANA * 100)}% median across the monitored
+           companies, so the split above is on the firmer side of what this method achieves.`
+        : `That is below the ${Math.round(R2_MEDIANA * 100)}% median across the monitored companies.
+           Treat the split as indicative: the weaker the fit, the more of the move ends up in the
+           company line simply because the model could not place it.`}</p>`;
 }
+
 
 // Estado de navegação único. Dados remotos têm cache própria e não são copiados por vista.
 const S = {modo:"hoje", ticker:null, intervalo:"1D", visao:null, asset:null,
@@ -228,7 +287,7 @@ function pintarDetalhe() {
       ${d ? `<div class="d-rep">${line("Market",d.market,"market")}${line("Sector",d.sector,"sector")}${line("Company",d.company,"company")}</div>
         <p class="d-nota">Contributions add up to the close-to-close move. This is a statistical split, not a causal attribution.</p>
         <p class="fit-summary">${d.fallback?"Fallback estimate":d.r2==null?"Fit unavailable":`Model fit R² ${Number(d.r2).toFixed(2)}`}${d.fallback || d.r2<R2_MEDIANA ? " · Indicative split" : ""}</p>
-        <details class="fit-details"><summary>How reliable is this split?</summary><p>${qualidadeAjuste(d,esc(a.name || a.ticker)) || "No fit statistic is available for this estimate."}</p></details>`
+        <details class="fit-details"><summary>Where do these three numbers come from?</summary><div class="f-corpo">${contaDaReparticao(d, a.name || a.ticker)}${explicarR2(d, a.name || a.ticker) || "<p class=\"f-passo\">No fit statistic is available for this estimate.</p>"}</div></details>`
         : '<p class="summary-note">No decomposition is available for this session.</p>'}
     </div>
     <div class="chart-header"><h3 id="chartTitle">${TITULO_GRAFICO[S.intervalo]}</h3><div class="intervalos" id="intervalos" role="group" aria-label="Chart range">${INTERVALOS.map(r=>`<button data-r="${r}" aria-pressed="${r===S.intervalo}">${r}</button>`).join("")}</div></div>

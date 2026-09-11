@@ -116,7 +116,7 @@ def test_o_coeficiente_nunca_viaja_como_nan():
 
 def _funcao() -> str:
     txt = _fonte_painel()
-    m = re.search(r"function qualidadeAjuste\(.*?\n\}", txt, re.S)
+    m = re.search(r"function explicarR2\(.*?\n\}", txt, re.S)
     assert m, "a função que traduz o coeficiente em frase desapareceu da página"
     return m.group(0)
 
@@ -128,7 +128,10 @@ def test_a_pagina_traduz_o_coeficiente_em_frase():
         "o caso do ajuste que não descreve os dados é o único que a tese reporta como não "
         "fiável, e é o que o ecrã tem de nomear"
     )
-    assert "median across the watchlist" in f, "o valor tem de ser lido contra a mediana"
+    assert "median across the monitored companies" in f, (
+        "o valor tem de ser lido contra a mediana. A frase diz «monitored companies» "
+        "e não «watchlist» porque o autor pediu que o ecrã não exigisse jargão do sistema."
+    )
 
 
 def test_a_mediana_da_pagina_e_a_medida_e_nao_uma_escolha():
@@ -151,12 +154,15 @@ def test_a_frase_aparece_no_cartao_e_nao_so_na_funcao():
     """Uma função que ninguém chama é a mesma coisa que não existir — e este projeto já
     pagou isso: a repartição vinha na API e o cliente deitava-a fora."""
     txt = _fonte_painel()
-    assert "qualidadeAjuste(d," in txt.split("function qualidadeAjuste")[1], (
+    assert "explicarR2(d," in txt.split("function explicarR2")[1], (
         "a função existe mas o cartão não a invoca"
     )
 
 
-@pytest.mark.parametrize("r2,espera", [(0.62, "at or above"), (0.21, "below"), (-0.08, "none")])
+@pytest.mark.parametrize(
+    "r2,espera",
+    [(0.62, "at or above"), (0.21, "below"), (-0.08, "no better than a flat line")],
+)
 def test_as_tres_bandas_dizem_coisas_diferentes(r2, espera):
     """Sem isto, as três bandas podiam colapsar na mesma frase sem ninguém dar por isso."""
     f = _funcao()

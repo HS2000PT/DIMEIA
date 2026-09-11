@@ -48,7 +48,9 @@
   .topo-in { max-width:1680px; margin:0 auto; padding:11px 24px; display:flex;
              align-items:center; gap:18px; flex-wrap:wrap; }
   .marca { display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit; }
-  .marca { background:#fff; padding:5px 8px; border-radius:8px; flex:0 0 auto; }
+  /* O logotipo passou a ter canal alfa, logo deixa de precisar da placa branca que existia
+     para esconder o fundo pintado na imagem. */
+  .marca { padding:2px 0; flex:0 0 auto; }
   .marca img { display:block; width:116px; height:auto; flex:0 0 auto; }
 
   .bolsa { font-size:.86rem; color:var(--fraco); display:flex; gap:8px; align-items:baseline; }
@@ -266,6 +268,25 @@
   .explanation h3 { font-size:.96rem; margin-bottom:12px; }
   .d-nota { text-align:left; margin:10px 0 8px; }
   .fit-summary { margin:0; font-size:.8rem; color:var(--tinta2); font-weight:500; }
+
+  /* ── A conta da repartição, passo a passo ──────────────────────────────────
+     O leitor pediu para poder refazer a conta e não só ver o resultado, por isso as parcelas
+     alinham numa grelha de três colunas com os resultados à direita: assim a soma confere a olho. */
+  .f-corpo { display:grid; gap:10px; margin-top:4px; }
+  .f-passo { margin:0; font-size:.82rem; line-height:1.5; color:var(--tinta2); }
+  .f-passo b { color:var(--tinta); font-weight:600; }
+  .f-eq { margin:0; padding:8px 10px; border-radius:6px; background:var(--linha2);
+          font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.78rem;
+          color:var(--tinta); overflow-x:auto; }
+  .f-conta { display:grid; grid-template-columns:auto 1fr auto; gap:4px 12px;
+             align-items:baseline; padding:8px 10px; border-radius:6px; background:var(--linha2);
+             font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.78rem; }
+  .f-rot { color:var(--tinta2); }
+  .f-cal { color:var(--tinta); }
+  .f-res { text-align:right; color:var(--tinta); font-variant-numeric:tabular-nums; }
+  .f-conta .f-tot { border-top:1px solid var(--borda); padding-top:4px; font-weight:600;
+                    color:var(--tinta); }
+
   details > summary { cursor:pointer; width:fit-content; color:var(--tinta2); font-size:.83rem; padding:8px 0; }
   details > summary:hover { color:var(--acento); }
   details p { color:var(--fraco); font-size:.84rem; margin:4px 0 12px; }

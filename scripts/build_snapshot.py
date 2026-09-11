@@ -216,6 +216,12 @@ def juntar_decomposicao(linhas: list[dict], fora: dict) -> None:
                 "driver": d.driver,
                 "r2": None if r2 != r2 else r2,          # NaN não sobrevive a JSON
                 "fallback": bool(d.fallback),
+                # Os betas e a janela viajam para o ecrã poder mostrar a CONTA e não só o
+                # resultado. Com eles o cliente deriva o retorno de cada fator no próprio dia
+                # (parcela / beta) e o leitor vê a equação com os valores substituídos.
+                "beta_market": float(d.beta_market),
+                "beta_sector": float(d.beta_sector),
+                "window": int(d.window),
             }
         except Exception:  # noqa: BLE001
             linha["decomp"] = None
