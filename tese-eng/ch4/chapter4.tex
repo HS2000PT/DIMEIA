@@ -744,28 +744,28 @@ The same information is made available in a web application, which allows what w
 above all, what was not, to be consulted. It is in that application that the decision log described
 in Section~\ref{sec:sis_politica} resides. The design of the interface is not a contribution of
 this dissertation and is therefore not described; presenting it is justified by its being the only
-place in which the system's absence of communication is observable. Figures~\ref{fig:sis_pagina}, \ref{fig:sis_empresa} and~\ref{fig:sis_silencio} present, in that
-order, the state of the day, the evidence for one company, and the record of a decision not to
-communicate.
+place in which the system's absence of communication is observable. Figures~\ref{fig:sis_pagina}, \ref{fig:sis_empresa}, \ref{fig:sis_conta} and~\ref{fig:sis_silencio} present, in
+that order, the state of the day, the evidence for one company, the arithmetic behind that
+evidence, and the record of the decisions taken about one company's news.
 
-\begin{figure}[!htbp]
+\begin{figure}[htbp]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/app_v7_painel.png}
-\caption[State of the day in the web application]{Web application on 2 September 2026, with the
-United States session closed. The five indicators split the twelve watched companies into five
-alerts delivered and seven decisions not to communicate; the count of out-of-the-ordinary movements
-measures something else, the price, and is therefore presented as a separate count. Each company
-declares its state on the surface, and every colour used has a legend, including that of the
-mascot, which follows the daily change of the market index used in the decomposition. The captures
-are generated from a snapshot of the application itself, and not collected by hand, with the
-capture width fixed in the generator of each one, since it is on that width that the interface
-text stays legible after being reduced to the text box of this document.}
+\includegraphics[width=0.95\textwidth]{figures/app_v9_painel.png}
+\caption[State of the day in the web application]{Web application on 9 September 2026, with the
+United States session closed. The heading counts the movements the detector marked as unusual, and
+the list beside it holds the twelve watched companies ordered by that same criterion, each carrying
+its state on the surface. Choosing a company governs the whole page: the analysis, the chart and
+the list of events below all follow it, and widening the list back to every company is a separate
+control, since that choice does not change the company under analysis. The captures are generated
+from a snapshot of the application itself, and not collected by hand, with the capture width fixed
+in the generator of each one, since it is on that width that the interface text stays legible after
+being reduced to the text box of this document.}
 \label{fig:sis_pagina}
 \end{figure}
 
-\begin{figure}[!htbp]
+\begin{figure}[htbp]
 \centering
-\includegraphics[width=0.94\textwidth]{figures/app_v8_empresa.png}
+\includegraphics[width=0.94\textwidth]{figures/app_v9_empresa.png}
 \caption[Evidence for one company]{View of one company: the verdict in words before any number,
 the split of the movement into the three parts, and the price series. The marks separate the two
 things this work distinguishes: the dot marks a day on which an alert was delivered, and the arrow
@@ -774,48 +774,70 @@ days against the $\pm1.5$ threshold, on an axis of its own since it shares no un
 The direction of the arrow is that of the close and nothing more; the date and the $z$ value of
 each day are on the cards below, and not on the line, so that they do not overlap. The interface
 opens on the current day; the figure shows the six-month range, since that is the one in which the
-distinction between flagging and communicating becomes observable. The italic line beneath the
-split states the quality of the fit that produced it, compared against the median across the
-seventeen companies of the sector map, and is what lets the reader know when the split is to be trusted.}
+distinction between flagging and communicating becomes observable. The line beneath the split
+states the quality of the fit that produced it, compared against the median across the seventeen
+companies of the sector map, and is what lets the reader know when the split is to be trusted.}
 \label{fig:sis_empresa}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.82\textwidth]{figures/app_v9_conta.png}
+\caption[The arithmetic behind the split, as the interface presents it]{The panel that reconstructs
+the three figures of the previous illustration. It is the only place in the product where a reader
+can redo a number instead of accepting it, which is why it is shown: the equation, the equation
+with the day's values substituted, and the coefficient of determination stated in the terms of the
+question it answers. The third step is the one that matters most, and it is the answer to what a
+reader asks on seeing three parts that add up exactly: market and sector are products, a
+sensitivity multiplied by what that factor did on the day, whereas the company part is not computed
+at all. It is the remainder, so the sum closes by construction and anything the model failed to
+capture is attributed to the company. That is the same property the artefact of
+Section~\ref{sec:met_decomposicao} declares, stated where the reader meets the number.}
+\label{fig:sis_conta}
 \end{figure}
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.72\textwidth]{figures/app_v7_silencio.png}
-\caption[Record of a decision not to communicate]{The gates a company crossed, in the order of the
-policy of Section~\ref{sec:sis_politica}. The gates crossed are stated by what the company
-satisfied; only the one at which it stopped is stated by the rejection, with the concrete reason.
-Silence is here a recorded decision, and not an absence of information.}
+\includegraphics[width=0.72\textwidth]{figures/app_v9_decisoes.png}
+\caption[Record of the decisions taken about one company's news]{The decisions recorded for one
+company on one day, each naming the headline it concerns and, where the message was withheld, the
+concrete reason. Silence is here a recorded decision and not an absence of information. The
+interface declares what the record does not establish, in the line that closes it: these are the
+decisions that were logged, and the list does not imply that a headline traversed every gate of the
+policy of Section~\ref{sec:sis_politica}, since a headline stopped at the first gate never reaches
+the others.}
 \label{fig:sis_silencio}
 \end{figure}
 
 The company of Figure~\ref{fig:sis_empresa} is an illustrative case of the investor's second
-question, through the disagreement between the percentage change and the split. The stock recorded
-a rise of $0.99\%$, and the market and the sector were both pulling the other way, at $-0.47\%$ and
-$-0.54\%$; the company-specific part was $+2.00\%$, more than twice the observed movement. The
-model attributes the rise entirely to the company, and not to the environment in which it trades.
-This statistical split does not rule out unmodelled external causes. The verdict classifies the
-day as ordinary: $141$ of the last $250$ trading days recorded an equal or larger change.
+question, through the disagreement between the percentage change and the split. The stock fell
+$0.97\%$, and the contribution of the company itself was \emph{positive}, at $+0.11\%$: what pulled
+it down was the market, at $-0.53\%$, and the sector, at $-0.55\%$. An investor reading only the
+percentage would conclude that something had happened at the company, and the split states the
+opposite. The three parts add up to the observed movement by construction, as
+Figure~\ref{fig:sis_conta} shows, so the closing of the sum is not evidence that the split is well
+estimated; and this statistical split does not rule out unmodelled external causes. The quality of
+the fit reported for the day, $0.44$, falls below the median of $0.460$ across the seventeen
+companies of the sector map, and the interface marks the split as indicative for that reason. The
+verdict classifies the day as ordinary: $128$ of the last $248$ trading days recorded an equal or
+larger change.
 
-The rarity count the card presents runs over one year of sessions, whereas the alert's runs
-over the six months the scan holds at the moment it composes it. The denominator differs for
-that reason between Figure~\ref{fig:intro_lacuna} and this one, for the same company on the
-same day, and the fraction each expresses is close.
 
 The same figure shows the caveat that accompanies it. The coefficient of determination for this
-company is $0.26$, below the median of $0.46$ across the seventeen companies of the sector map, and the interface states this beneath the
-split, with the instruction to read it as indicative. The two statements coexist by design: the
-split is the best estimate available and, for this company, the market and the sector explain only
-a quarter of the daily variation. Omitting the second would make the first more persuasive than
-the fit that supports it, which is the defect that Section~\ref{sec:con_limitacoes} names.
+company is $0.44$, below the median of $0.460$ across the seventeen companies of the sector map,
+and the interface states this beneath the split, with the instruction to read it as indicative. The
+two statements coexist by design: the split is the best estimate available and, for this company,
+the market and the sector track under half of the daily variation. Omitting the second would make
+the first more persuasive than the fit that supports it, which is the defect that
+Section~\ref{sec:con_limitacoes} names.
 
-Figure~\ref{fig:sis_silencio} shows the same requirement on the side of silence, on the day of
-Figure~\ref{fig:sis_pagina}: the seven companies that generated no alert all stopped at the same gate: the daily budget of five
-alerts, exhausted at $14$:$02$~UTC. The important reading is not the number, but the form: the
-company crossed eight gates, each stated by the criterion it satisfied, and stopped at a design
-constraint declared from the outset. None of the gates crossed is presented as a failure, which
-avoids the inverse reading that the previous version of the interface allowed.
+Figure~\ref{fig:sis_silencio} shows the same requirement on the side of silence. Each decision
+names the headline it concerns and, where the message was withheld, the criterion that withheld it,
+so a reader can tell a headline the system never judged material from one it judged material and
+suppressed for a reason declared in advance. None of the decisions is presented as a failure, which
+avoids the inverse reading that an earlier version of the interface allowed. The record is also
+explicit about what it does not establish: it lists the decisions that were logged, and a headline
+stopped at the first gate never reaches the others, so the list is not a traversal of the policy.
 
 \section{Deployment and operation}
 \label{sec:sis_operacao}

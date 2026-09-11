@@ -735,18 +735,19 @@ e, sobretudo, o que não foi. É nessa aplicação que reside o registo de decis
 Secção~\ref{sec:sis_politica}. O desenho da interface não constitui contribuição desta
 dissertação, pelo que não é descrito; a sua apresentação justifica-se por ser o único local em que
 a ausência de comunicação por parte do sistema é observável. As Figuras~\ref{fig:sis_pagina},
-\ref{fig:sis_empresa} e~\ref{fig:sis_silencio} apresentam, por essa ordem, o estado do dia, a
-evidência de uma empresa e o registo de uma decisão de não comunicar.
+\ref{fig:sis_empresa}, \ref{fig:sis_conta} e~\ref{fig:sis_silencio} apresentam, por essa ordem, o estado do
+dia, a evidência de uma empresa, a aritmética que sustenta essa evidência, e o registo das
+decisões tomadas sobre as notícias de uma empresa.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/app_v7_painel.png}
-\caption[Estado do dia na aplicação web]{Aplicação web a 2 de setembro de 2026, com a sessão
-norte-americana fechada. Os cinco indicadores repartem as doze empresas vigiadas em cinco alertas
-entregues e sete decisões de não comunicar; a contagem de movimentos fora do comum mede outra
-coisa, o preço, e por isso é apresentada como contagem separada. Cada empresa declara o seu estado
-à superfície, e toda a cor utilizada tem legenda, incluindo a da mascote, que acompanha a variação
-diária do índice de mercado utilizado na decomposição. As capturas são geradas a partir de um
+\includegraphics[width=0.95\textwidth]{figures/app_v9_painel.png}
+\caption[Estado do dia na aplicação web]{Aplicação web a 9 de setembro de 2026, com a sessão
+norte-americana fechada. O cabeçalho conta os movimentos que o detetor assinalou como invulgares,
+e a lista ao lado contém as doze empresas vigiadas ordenadas por esse mesmo critério, cada uma
+com o seu estado à superfície. Escolher uma empresa governa a página inteira: a análise, o gráfico
+e a lista de acontecimentos por baixo seguem-na todos, e alargar a lista de novo a todas as
+empresas é um controlo separado, uma vez que essa escolha não muda a empresa em análise. As capturas são geradas a partir de um
 instantâneo da própria aplicação, e não recolhidas à mão, com a largura de captura fixada no
 gerador de cada uma, por ser dela que depende o texto da interface permanecer legível depois de
 reduzido à caixa de texto deste documento.}
@@ -755,7 +756,7 @@ reduzido à caixa de texto deste documento.}
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.94\textwidth]{figures/app_v8_empresa.png}
+\includegraphics[width=0.94\textwidth]{figures/app_v9_empresa.png}
 \caption[Evidência de uma empresa]{Vista de uma empresa: o veredicto em palavras antes de qualquer
 número, a repartição do movimento nas três parcelas, e a série de preço. As marcas separam as duas
 coisas que este trabalho distingue: o ponto assinala um dia em que um alerta foi entregue, e a seta
@@ -764,50 +765,69 @@ de $z$ desses dias contra o limiar de $\pm1{,}5$, em eixo próprio por não part
 preço. A direção da seta é a do fecho e nada mais; a data e o valor de $z$ de cada dia estão nas
 fichas por baixo, e não sobre a linha, para não se sobreporem. A interface abre no dia corrente; a
 figura mostra o intervalo de seis meses, por ser aquele em que a distinção entre assinalar e
-comunicar se torna observável. A linha em itálico por baixo da repartição declara a qualidade
+comunicar se torna observável. A linha por baixo da repartição declara a qualidade
 do ajuste que a produziu, comparada com a mediana das dezassete empresas do mapa de setores, e é o que permite ao leitor
 saber quando a repartição é de fiar.}
 \label{fig:sis_empresa}
 \end{figure}
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.82\textwidth]{figures/app_v9_conta.png}
+\caption[A aritmética da repartição, tal como a interface a apresenta]{O painel que reconstrói
+as três parcelas da ilustração anterior. É o único sítio do produto onde o leitor pode refazer um
+número em vez de o aceitar, e é essa a razão de o mostrar: a equação, a equação com os valores do
+dia substituídos, e o coeficiente de determinação enunciado nos termos da pergunta a que responde.
+O terceiro passo é o que mais importa, e é a resposta ao que um leitor pergunta ao ver três
+parcelas que somam exatamente: o mercado e o setor são produtos, uma sensibilidade multiplicada
+pelo que esse fator fez no dia, ao passo que a parcela da empresa não é calculada de todo. É o
+resto, pelo que a soma fecha por construção e tudo o que o modelo não conseguiu captar é atribuído
+à empresa. É a mesma propriedade que o artefacto da Secção~\ref{sec:met_decomposicao} declara,
+enunciada onde o leitor encontra o número.}
+\label{fig:sis_conta}
+\end{figure}
+
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.72\textwidth]{figures/app_v7_silencio.png}
-\caption[Registo de uma decisão de não comunicar]{As portas que uma empresa atravessou, pela ordem
-da política da Secção~\ref{sec:sis_politica}. As portas transpostas são enunciadas pelo que a
-empresa cumpriu; apenas aquela em que parou é enunciada pela rejeição, com o motivo concreto. O
-silêncio é aqui uma decisão registada, e não ausência de informação.}
+\includegraphics[width=0.72\textwidth]{figures/app_v9_decisoes.png}
+\caption[Registo das decisões tomadas sobre as notícias de uma empresa]{As decisões registadas
+para uma empresa num dia, cada uma nomeando o título a que diz respeito e, quando a mensagem foi
+retida, o motivo concreto. O silêncio é aqui uma decisão registada, e não ausência de informação.
+A interface declara o que o registo não estabelece, na linha que o fecha: são as decisões que
+ficaram registadas, e a lista não implica que um título tenha atravessado todas as portas da
+política da Secção~\ref{sec:sis_politica}, uma vez que um título detido na primeira porta nunca
+chega às seguintes.}
 \label{fig:sis_silencio}
 \end{figure}
 
 A empresa da Figura~\ref{fig:sis_empresa} constitui um caso ilustrativo da segunda pergunta do
-investidor, pela discordância entre a variação percentual e a repartição. A ação registava uma
-subida de $0{,}99\%$, e o mercado e o setor puxavam ambos em sentido contrário, com $-0{,}47\%$ e
-$-0{,}54\%$; a parcela específica da empresa era $+2{,}00\%$, ou seja mais do dobro do movimento
-observado. A subida é atribuída pelo modelo inteiramente à empresa, e não ao ambiente em que ela
-negoceia. Esta repartição estatística não exclui a existência de causas externas não modeladas.
-O veredicto classifica o dia como comum: $141$ dos últimos $250$ dias de negociação registaram
-variação igual ou superior.
+investidor, pela discordância entre a variação percentual e a repartição. A ação caiu $0{,}97\%$, e a
+contribuição da própria empresa foi \emph{positiva}, de $+0{,}11\%$: quem a puxou para baixo foram
+o mercado, com $-0{,}53\%$, e o setor, com $-0{,}55\%$. Um investidor que lesse apenas a percentagem
+concluiria que algo se tinha passado na empresa, e a repartição diz o contrário. As três parcelas
+somam ao movimento observado por construção, como a Figura~\ref{fig:sis_conta} mostra, pelo que o
+fecho da soma não é prova de que a repartição esteja bem estimada; e esta repartição estatística
+não exclui a existência de causas externas não modeladas. A qualidade do ajuste reportada para o dia,
+$0{,}44$, fica abaixo da mediana de $0{,}460$ das dezassete empresas do mapa de setores, e a interface
+assinala a repartição como indicativa por essa razão. O veredicto classifica o dia como comum:
+$128$ dos últimos $248$ dias de negociação registaram variação igual ou superior.
 
-A contagem de raridade que o cartão apresenta corre sobre um ano de sessões, ao passo que a
-do alerta corre sobre os seis meses que o varrimento carrega no momento em que o compõe. O
-denominador difere por essa razão entre a Figura~\ref{fig:intro_lacuna} e esta, para a mesma
-empresa no mesmo dia, e a fração que ambos exprimem é próxima.
 
 A mesma figura mostra a ressalva que a acompanha. O coeficiente de determinação desta empresa é
-de $0{,}26$, abaixo da mediana de $0{,}46$ das dezassete empresas do mapa de setores, e a interface declara-o por baixo da
-repartição, com a instrução de a ler como indicativa. As duas afirmações convivem de propósito:
-a repartição é a melhor estimativa disponível e, nesta empresa, o mercado e o setor explicam
-apenas um quarto da variação diária. Omitir a segunda tornaria a primeira mais persuasiva do que
+de $0{,}44$, abaixo da mediana de $0{,}460$ das dezassete empresas do mapa de setores, e a interface
+declara-o por baixo da repartição, com a instrução de a ler como indicativa. As duas afirmações
+convivem de propósito: a repartição é a melhor estimativa disponível e, nesta empresa, o mercado e
+o setor acompanham menos de metade da variação diária. Omitir a segunda tornaria a primeira mais persuasiva do que
 o ajuste que a sustenta, que é o defeito que a Secção~\ref{sec:con_limitacoes} nomeia.
 
-A Figura~\ref{fig:sis_silencio} mostra a mesma exigência do lado do silêncio, no dia da
-Figura~\ref{fig:sis_pagina}: as sete
-empresas que não geraram alerta pararam todas na mesma porta, a do orçamento diário de cinco alertas,
-esgotado às $14$h$02$~UTC. A leitura importante não é o número, mas a forma: a empresa transpôs oito
-portas, cada uma enunciada pelo critério que cumpriu, e parou numa restrição de desenho declarada
-à partida. Nenhuma das portas transpostas é apresentada como falha, o que evita a leitura inversa
-que a versão anterior da interface permitia.
+A Figura~\ref{fig:sis_silencio} mostra a mesma exigência do lado do silêncio. Cada decisão
+nomeia o título a que diz respeito e, quando a mensagem foi retida, o critério que a reteve, de
+modo que o leitor distingue um título que o sistema nunca julgou material de uma que julgou
+material e suprimiu por um motivo declarado à partida. Nenhuma das decisões é apresentada como
+falha, o que evita a leitura inversa que uma versão anterior da interface permitia. O registo é
+também explícito sobre o que não estabelece: enumera as decisões que ficaram registadas, e um
+título detido na primeira porta nunca chega às seguintes, pelo que a lista não é uma travessia
+da política.
 
 \section{Implantação e operação}
 \label{sec:sis_operacao}

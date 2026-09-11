@@ -12,7 +12,18 @@ O modal mostra decisões registadas; não inventa um percurso linear pelas porta
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
+
+# A aplicacao imprime o sinal menos tipografico (U+2212) e a consola do Windows e cp1252:
+# sem isto o script morre DEPOIS de capturar, ao imprimir o que capturou. E a mesma classe
+# que a sessao 68 corrigiu no check_prontidao_defesa -- um script que rebenta a relatar o
+# que fez e indistinguivel de um script que falhou.
+for _fluxo in (sys.stdout, sys.stderr):
+    try:
+        _fluxo.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
 
 RAIZ = Path(__file__).resolve().parents[1]
 PROD = "https://investigator-ddc9d8618935.herokuapp.com"
@@ -55,7 +66,14 @@ def capturar(url: str, ticker: str, destino: Path, sufixo: str = "v9") -> None:
             page.screenshot(path=str(destino / f"app_{sufixo}_{name}.png"),
                             full_page=True, clip=box)
 
+        # A vista da empresa vai com o painel da conta FECHADO, que é como a aplicação abre e
+        # é o que mantém o rácio da figura dentro de uma página; a conta sai em figura própria.
+        page.locator(".fit-details summary").click()
         crop("#detalhe", "empresa")
+        page.locator(".fit-details summary").click()
+        page.locator(".f-conta").wait_for(timeout=10000)
+        crop(".fit-details", "conta")
+        print("Conta:", page.locator(".f-conta").inner_text().replace(chr(10), " | "))
         print("Empresa:", chosen, page.locator(".d-cab .mv").inner_text())
         print("Veredicto:", page.locator(".d-ver").inner_text())
         print("Ajuste:", page.locator(".fit-details").inner_text())

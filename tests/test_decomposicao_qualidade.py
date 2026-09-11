@@ -128,9 +128,10 @@ def test_a_pagina_traduz_o_coeficiente_em_frase():
         "o caso do ajuste que não descreve os dados é o único que a tese reporta como não "
         "fiável, e é o que o ecrã tem de nomear"
     )
-    assert "median across the monitored companies" in f, (
-        "o valor tem de ser lido contra a mediana. A frase diz «monitored companies» "
-        "e não «watchlist» porque o autor pediu que o ecrã não exigisse jargão do sistema."
+    assert "seventeen companies of the sector map" in f, (
+        "o valor tem de ser lido contra a mediana, E a mediana tem de ser atribuída à população "
+        "certa: o artefacto mede-a sobre 17 tickers do mapa de setores, e a aplicação monitoriza "
+        "12. Dizer «monitored companies» atribuía-a às 12, que é a população errada."
     )
 
 

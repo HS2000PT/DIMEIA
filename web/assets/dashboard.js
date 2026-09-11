@@ -133,11 +133,13 @@ function explicarR2(d, nome) {
       1. A model that tracked nothing would score 0. Here it is
       <b>${r.toFixed(2)}</b>, so the model followed about <b>${pc}%</b> of ${esc(nome)}'s daily
       movement and missed the other ${100 - pc}%. ${acima
-        ? `That is at or above the ${Math.round(R2_MEDIANA * 100)}% median across the monitored
-           companies, so the split above is on the firmer side of what this method achieves.`
-        : `That is below the ${Math.round(R2_MEDIANA * 100)}% median across the monitored companies.
-           Treat the split as indicative: the weaker the fit, the more of the move ends up in the
-           company line simply because the model could not place it.`}</p>`;
+        ? `That is at or above the ${Math.round(R2_MEDIANA * 100)}% median measured across the
+           seventeen companies of the sector map, so the split above is on the firmer side of
+           what this method achieves.`
+        : `That is below the ${Math.round(R2_MEDIANA * 100)}% median measured across the seventeen
+           companies of the sector map. Treat the split as indicative: the weaker the fit, the
+           more of the move ends up in the company line simply because the model could not
+           place it.`}</p>`;
 }
 
 
