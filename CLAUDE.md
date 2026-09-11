@@ -169,13 +169,37 @@
   exit 0 com a pendência humana declarada · 1201 testes · `ruff` limpo · paridade 0 assimetrias em
   138 chaves · 361 referências cruzadas com 0 incompatibilidades de tipo · decks 22+22 a 0 erros e
   0 overfull · `check_materiais` alinhado · `check_numeros_retirados` limpo.**
-  **⏭️ O QUE FICA, E DUAS COISAS SÃO DECISÃO DO AUTOR.** (1) **Implantar**: as melhorias da
-  aplicação não estão no Heroku, e a mensagem manda os professores para lá — as capturas mostram a
-  aplicação real, mas o que o link serve é a versão anterior. (2) **O filtro por tipo só vê as 12
-  mensagens carregadas**, logo «Market open» aparece a zero por não ter sido carregada e não por não
-  existir; o número é honesto sobre o que está carregado e pode enganar sobre o que existe —
-  resolve-se filtrando no servidor. (3) A **leitura seguida** do documento pelo autor, os **nomes do
-  júri**, a **declaração de IA** e a **licença** continuam humanos.
+  **✅ (O) IMPLANTADO E VERIFICADO AO VIVO, a pedido do autor — `release 2d39f615`, de `fcb71ffc6`.**
+  E a verificação é o que justifica não ter aceitado o `exit code`: o build disse «succeeded», as
+  três rotas devolveram **200** e o instantâneo estava **fresco a 85 s** — e **as funcionalidades
+  novas não estavam na carga da API**. Os betas, de que o painel da conta depende, são escritos pelo
+  **worker**, e o instantâneo servido tinha sido construído **antes** do release; por cima disso, o
+  ramo de dados é lido através de um CDN com cache de minutos. **Foram precisas seis sondagens ao
+  longo de seis minutos** até o worker novo publicar (`as_of` 08:42:57 → 08:49:15). **Quem tivesse
+  lido o 200 como prova teria escrito «implantado e verificado» sobre a versão anterior.**
+  **Medido em produção e não no código:** o `<picture>` com a variante escura a ser escolhida pelo
+  browser (`logo-dark.svg?v=10.7`, 200), os 12 logótipos a 200, o botão de âmbito, o filtro por tipo
+  com «Market open» e «Market close», **0 erros de consola**, e a conta a fechar exactamente —
+  `-0,42 + 0,43 + 3,49 = +3,50%`. ⚠️ **E a linha do setor mostra o mecanismo melhor do que qualquer
+  explicação:** `-0,66 × -0,65% = +0,43%`, ou seja um beta negativo vezes um factor negativo dá uma
+  contribuição positiva. No telemóvel: barra de topo **143 px (18%)**, zero rolagem horizontal, e a
+  conta a caber sem cortar.
+  **⚠️ (P) E AS CAPTURAS DA TESE FICAM AS QUE ESTÃO, com a razão medida em vez de assumida.** Foram
+  tiradas do `localhost`, e a dúvida legítima era se representam o que o link serve. Capturada a
+  mesma vista de produção para uma pasta à parte e comparada: **a geometria é idêntica ao pixel** —
+  `2840×2200`, `2096×2298` e `1440×1166` nas três figuras principais. Mesmo código, mesmo desenho;
+  só os dados diferem, e a legenda **declara a data**.
+  **E recapturar seria pior, não melhor.** O caso de produção de hoje é a Netflix a **−0,03%** com
+  «246 dos últimos 249 dias» — um movimento minúsculo, em que a discordância entre a percentagem e a
+  repartição quase não se vê. O caso de 9 de setembro (**−0,97% com a empresa a +0,11%**) é melhor
+  pedagogia, e substituí-lo obrigava a reescrever a prosa uma **segunda** vez, num documento onde
+  cada reescrita de texto verificado é uma oportunidade de introduzir um defeito — duas em treze,
+  medido na sessão 66.
+  **⏭️ O QUE FICA, E É DECISÃO DO AUTOR.** (1) **O filtro por tipo só vê as 12 mensagens
+  carregadas**, logo «Market open» aparece a zero por não ter sido carregada e não por não existir;
+  o número é honesto sobre o que está carregado e pode enganar sobre o que existe — resolve-se
+  filtrando no servidor. (2) A **leitura seguida** do documento pelo autor, os
+  **nomes do júri**, a **declaração de IA** e a **licença** continuam humanos.
 - **🆕 SESSÃO 68 — 4.ª parte (2026-09-10/11): A MOLDURA DE IA PASSA PARA A FRENTE, E A REDUÇÃO DE
   PÁGINAS FICA MEDIDA COMO IMPOSSÍVEL SEM APAGAR UMA QUESTÃO DE INVESTIGAÇÃO.**
   O pedido era avançar e não esquecer o número de páginas. Avançou-se, e a medição do número de
