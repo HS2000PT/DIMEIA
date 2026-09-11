@@ -86,8 +86,25 @@ def test_janela_de_sessao_us():
 
     from scripts.run_alerts import is_us_market_session
 
-    assert is_us_market_session(datetime(2026, 7, 10, 15, 0))       # sexta, 15:00 UTC
+    assert is_us_market_session(datetime(2026, 7, 10, 15, 0))       # sexta, sessão de verão
     assert not is_us_market_session(datetime(2026, 7, 11, 15, 0))   # sábado
     assert not is_us_market_session(datetime(2026, 7, 10, 9, 0))    # sexta, pré-mercado
     assert not is_us_market_session(datetime(2026, 7, 10, 22, 30))  # sexta, pós-fecho
-    assert is_us_market_session(datetime(2026, 7, 10, 21, 15))      # fecho de inverno
+
+    # ⚠️ ESTA LINHA MUDOU DE VEREDICTO, E A MUDANÇA É A CORRECÇÃO. Afirmava que 21:15 UTC de
+    # 10 de julho estava dentro da sessão, com o comentário «fecho de inverno» — mas 10 de
+    # julho é VERÃO, e no verão a sessão fecha às 20:00 UTC. A asserção estava a fixar a folga
+    # da janela escrita à mão em vez do horário real, logo passava sobre um instante em que a
+    # bolsa está fechada. O guarda passou a delegar no módulo que converte para hora de Nova
+    # Iorque, e o `zoneinfo` acerta no DST por construção.
+    assert not is_us_market_session(datetime(2026, 7, 10, 21, 15))  # verão: já fechou às 20:00
+    # ⚠️ E ESCREVI ESTAS DUAS MAL À PRIMEIRA, contra o meu próprio comentário na linha acima:
+    # afirmei que 21:15 UTC estava dentro da sessão de inverno depois de escrever que ela fecha
+    # às 21:00. No inverno 16:00 em Nova Iorque são 21:00 UTC, logo 21:15 é depois do fecho.
+    assert is_us_market_session(datetime(2026, 1, 15, 20, 15))      # inverno: 15:15 em NY
+    assert not is_us_market_session(datetime(2026, 1, 15, 21, 5))   # inverno: fechou às 21:00
+
+    # ⚠️ O CASO QUE ESTA CORRECÇÃO EXISTE PARA IMPEDIR, com a hora real do incidente: a 10 de
+    # setembro sairam dois alertas de mercado às 13:02 UTC, e a abertura de verão é às 13:30.
+    assert not is_us_market_session(datetime(2026, 9, 10, 13, 2))   # pré-mercado, 28 min antes
+    assert is_us_market_session(datetime(2026, 9, 10, 13, 30))      # a abertura, ao minuto

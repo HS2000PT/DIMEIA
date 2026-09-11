@@ -209,6 +209,24 @@ def juntar_decomposicao(linhas: list[dict], fora: dict) -> None:
         ]
     except Exception:  # noqa: BLE001
         fora["market_closes"] = []
+
+    # ⚠️ E AS SÉRIES DOS SETORES, pela razão que o autor deu: «quero clicar sobre o 0.25 e ver
+    # como é que se chegou a este, sempre, até chegarmos mesmo ao valor base». Um desdobramento
+    # que pare na fórmula pede que se acredite; para chegar ao dado base o ecrã tem de ter as
+    # séries que a regressão consumiu — a da empresa (já vai em `closes`), a do índice (acima) e
+    # a do SETOR, que faltava. São cinco séries partilhadas pelas doze empresas, já buscadas
+    # aqui para a decomposição: publicá-las custa zero pedidos e ~25 KB.
+    fora["sector_closes"] = {}
+    for etf in {sector_etf(x["ticker"]) for x in linhas if sector_etf(x["ticker"])}:
+        try:
+            s = get_price_history(etf, period="1y")["Close"].tail(260)
+            fora["sector_closes"][etf] = [
+                [d.strftime("%Y-%m-%d"), round(float(v), 4)]
+                for d, v in s.items()
+                if v == v
+            ]
+        except Exception:  # noqa: BLE001
+            continue
     for linha in linhas:
         try:
             t = linha["ticker"]

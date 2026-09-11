@@ -230,8 +230,12 @@ def test_a_parcela_do_mercado_diz_que_nao_e_o_retorno_do_mercado():
     )
     # A conta tem de estar na PRÓPRIA linha. Atrás de um `<details>` já estava, e a pergunta
     # do autor é a prova de que ali não era encontrada.
-    assert "d-conta" in txt and "β ${b2(beta)} × ${pctc(rFator)}" in txt, (
-        "a multiplicação saiu da linha e voltou a estar só dentro de um painel escondido"
+    # ⚠️ ESTA ASSERÇÃO FIXAVA A SINTAXE e apanhou-me a mim ao mudá-la: a conta continua na
+    # linha, mas os dois factores passaram a ser botões que se desdobram. O requisito é que a
+    # multiplicação esteja NA LINHA — não que esteja escrita de uma forma concreta.
+    assert "d-conta" in txt, "a conta saiu da linha e voltou a estar só num painel escondido"
+    assert re.search(r'val\("beta_final".*"fator_mercado"', txt, re.S), (
+        "a multiplicação da linha deixou de ter os dois factores desdobráveis"
     )
 
 
@@ -279,4 +283,62 @@ def test_o_agregado_dos_votos_nunca_aparece_sem_as_suas_ressalvas():
     # E a proporção só se imprime quando o protocolo a autoriza.
     assert "r.reportavel" in txt, (
         "o painel voltou a imprimir uma proporção sem verificar o mínimo pré-registado"
+    )
+
+
+def test_as_constantes_do_ecra_sao_as_do_python():
+    """O painel ENSINA constantes. Se divergirem do código, ensina o número errado.
+
+    ⚠️ ISTO É O PEDIDO DO AUTOR LEVADO À SUA CONSEQUÊNCIA: «clicar sobre o 0.25 e ver como é que
+    se chegou a este». A partir do momento em que o ecrã explica de onde vem o `0,25`, ele passa
+    a afirmar uma coisa sobre o código — e duas cópias de uma constante separam-se sem ninguém
+    reparar, porque nada as compara. Aqui a cópia estaria a ensinar aritmética falsa sobre o
+    próprio sistema, que é pior do que não a explicar.
+    """
+    from investigator.correlation_engine import decomposition as D
+
+    txt = _fonte_painel()
+    pares = (
+        (r"const PRIOR_SD = ([0-9.]+);", D.PRIOR_BETA_SD, "PRIOR_BETA_SD"),
+        (r"const MIN_JANELA = ([0-9]+);", D.MIN_WINDOW, "MIN_WINDOW"),
+        (r"const PRIOR_SD2 = ([0-9.]+);", D.PRIOR_BETA_SD ** 2, "PRIOR_BETA_SD²"),
+    )
+    for padrao, esperado, nome in pares:
+        m = re.search(padrao, txt)
+        assert m, f"a constante {nome} desapareceu do painel"
+        assert float(m.group(1)) == pytest.approx(esperado), (
+            f"o ecrã ensina {m.group(1)} para {nome} e o código usa {esperado}"
+        )
+    m = re.search(r"const PRIOR_BETA = \{market: ([0-9.]+), sector: ([0-9.]+)\}", txt)
+    assert m, "os dois priors desapareceram do painel"
+    assert float(m.group(1)) == pytest.approx(D.PRIOR_BETA_MARKET)
+    assert float(m.group(2)) == pytest.approx(D.PRIOR_BETA_SECTOR)
+
+
+def test_o_desdobramento_desce_ate_aos_dados_base():
+    """Um desdobramento que para na fórmula pede ao leitor que acredite na fórmula.
+
+    ⚠️ O AUTOR FOI EXPLÍCITO: «até chegarmos mesmo ao valor base!!! uma pessoa que não saiba dos
+    conceitos tem que ficar a percebê-los». O fundo do desdobramento é a tabela dos retornos
+    diários que a regressão consumiu — e ela só existe se as séries chegarem ao cliente, o que
+    obrigou o gerador do instantâneo a publicar também as do índice e as dos setores.
+    """
+    txt = _fonte_painel()
+    assert "const EXPLICA" in txt, "o registo de explicações desapareceu"
+    # As chaves que o autor nomeou, mais as que compõem a equação do encolhimento.
+    for chave in ("sigma_prior", "prior_sd", "se", "beta_bruto", "janela",
+                  "r2_falta", "r2_total", "mediana"):
+        assert f"{chave}:" in txt, f"a explicação de «{chave}» desapareceu"
+    assert "tabelaDeRetornos" in txt and "retornosDaJanela" in txt, (
+        "a tabela dos dados base desapareceu: o desdobramento voltou a parar na fórmula"
+    )
+    # ⚠️ O anti-lookahead TEM de valer também aqui: a tabela que o leitor vê é a janela que a
+    # regressão usou, e o dia explicado não entra nela. Sem isto, o ecrã mostraria ao leitor
+    # uma janela diferente da que produziu o número — e ele não teria como saber.
+    assert "o último dia é o explicado: fica de fora" in txt, (
+        "o dia explicado voltou a entrar na tabela dos dados base"
+    )
+    gerador = (RAIZ / "scripts" / "build_snapshot.py").read_text(encoding="utf-8")
+    assert "sector_closes" in gerador and "market_closes" in gerador, (
+        "as séries que a tabela consome deixaram de ser publicadas"
     )

@@ -73,6 +73,204 @@ const b2 = v => `${v < 0 ? "−" : ""}${Math.abs(Number(v)).toFixed(2)}`;
 const pctc = v => (v == null || !isFinite(v)) ? "—"
   : `${v >= 0 ? "+" : "−"}${Math.abs(v * 100).toFixed(2)}%`;
 
+/* ══ Desdobramento recursivo: clicar num valor e ver de onde ele vem, até ao dado base ══
+   ⚠️ O AUTOR PEDIU ISTO EM TERMOS QUE NÃO DEIXAM MARGEM: «não quero só que substituas, agora
+   quero poder clicar por exemplo sobre o 0.25 e ver como é que se chegou a este... sempre...
+   até chegarmos mesmo ao valor base!!! uma pessoa que não saiba dos conceitos tem que ficar a
+   percebê-los!!!»
+
+   O QUE ISSO OBRIGA, E É A PARTE QUE IMPORTA: um desdobramento que pare numa fórmula pede ao
+   leitor que acredite na fórmula. Para chegar ao fundo, o ecrã tem de mostrar (a) as constantes
+   e de onde vêm, (b) as quantidades estimadas e a conta que as produz, e (c) **as séries de
+   preços que a regressão consumiu**. As três estão agora no cliente: a da empresa já vinha, a
+   do índice e as dos setores passaram a vir para isto.
+
+   COMO FUNCIONA: cada valor explicável é um botão com `data-exp`. Um só ouvinte em `#detalhe`
+   abre a explicação logo abaixo do valor — e como essa explicação também é feita de botões
+   `data-exp`, o mecanismo é recursivo sem código extra: desce-se pelo mesmo caminho.
+
+   ⚠️ E AS CONSTANTES SÃO AS DO PYTHON, não cópias: há um teste que as compara com o
+   `investigator/correlation_engine/decomposition.py`. Duas cópias de uma constante separam-se
+   sem ninguém reparar, e aqui a cópia estaria a ENSINAR o número errado. */
+const PRIOR_SD = 0.5;                 // PRIOR_BETA_SD
+const MIN_JANELA = 10;                // MIN_WINDOW
+
+// Um valor clicável. `t` é o que se lê; `k` é a chave da explicação.
+const val = (k, t, v = null) => `<button type="button" class="f-val" data-exp="${k}"${v == null ? "" : ` data-v="${v}"`} aria-expanded="false">${t}</button>`;
+
+const n2 = v => (v == null || !isFinite(v)) ? "—" : b2(v);
+
+/* Os retornos diários que a regressão consumiu, calculados no browser a partir das séries
+   servidas. É o fundo: abaixo disto só há os preços de fecho de onde saíram. */
+function retornosDaJanela(d, qual) {
+  const a = S.asset; if (!a) return [];
+  const fechos = qual === "empresa" ? (a.closes || [])
+    : qual === "mercado" ? (S.visao?.market_closes || [])
+    : ((S.visao?.sector_closes || {})[a.sector_etf] || []);
+  const n = (d.window || 20) + 2;
+  const ult = fechos.slice(-n);
+  const out = [];
+  for (let i = 1; i < ult.length - 1; i++)   // o último dia é o explicado: fica de fora
+    out.push([ult[i][0], Math.log(ult[i][1] / ult[i - 1][1])]);
+  return out.slice(-(d.window || 20));
+}
+
+function tabelaDeRetornos(d) {
+  const emp = retornosDaJanela(d, "empresa");
+  const mer = retornosDaJanela(d, "mercado");
+  const set = retornosDaJanela(d, "setor");
+  if (!emp.length || !mer.length) {
+    return `<p class="f-passo">The price series for this window did not reach the browser, so the
+      base rows cannot be listed here.</p>`;
+  }
+  const pm = new Map(mer.map(r => [r[0], r[1]]));
+  const ps = new Map(set.map(r => [r[0], r[1]]));
+  const linhas = emp.filter(r => pm.has(r[0])).map(([dia, r]) =>
+    `<tr><td>${dataDe(dia)}</td><td>${pctc(Math.expm1(r))}</td>`
+    + `<td>${pctc(Math.expm1(pm.get(dia)))}</td>`
+    + `<td>${ps.has(dia) ? pctc(Math.expm1(ps.get(dia))) : "—"}</td></tr>`);
+  return `<p class="f-passo"><b>The base rows.</b> These are the daily changes the regression
+      consumed: one row per trading day of the window, for the company, for the index and for the
+      sector fund. Under these there is nothing left but the closing prices they came from.</p>
+    <div class="f-tab"><table><thead><tr><th>day</th>
+      <th>${esc(S.asset?.ticker || "company")}</th>
+      <th>${esc(S.visao?.market_index || "index")}</th>
+      <th>${esc(S.asset?.sector_etf || "sector")}</th></tr></thead>
+      <tbody>${linhas.join("")}</tbody></table></div>
+    <p class="f-passo">${linhas.length} day${linhas.length === 1 ? "" : "s"}. A day's change is the
+      natural logarithm of its close divided by the previous close, which is the form that adds up
+      across days; the percentages shown are that value turned back into a percentage to read.</p>`;
+}
+
+/* O registo. Cada entrada devolve HTML, e esse HTML pode conter mais valores clicáveis. */
+const EXPLICA = {
+  beta_final: d => `<p class="f-passo"><b>What this number is.</b> It is this company's
+      sensitivity to the factor, and it is the one figure in the line that is <em>estimated</em>
+      rather than observed: the market's move is a fact, and this says how much of it lands here.
+      A value of 1 means moving one-for-one with the factor, 2 means twice as much, and a negative
+      value means moving against it.</p>
+    <p class="f-passo">It is not the raw result of the fit. The fit produced a slope, and that
+      slope was pulled towards the typical value in proportion to how precisely it was measured.
+      The panel below this line shows that whole calculation, and every number in it opens.</p>`,
+
+  sigma_prior: () => `<p class="f-passo"><b>Where ${n2(PRIOR_SD * PRIOR_SD)} comes from.</b> It is
+      ${val("prior_sd", n2(PRIOR_SD))} multiplied by itself: ${n2(PRIOR_SD)} × ${n2(PRIOR_SD)} =
+      ${n2(PRIOR_SD * PRIOR_SD)}. The weighting compares two spreads against each other, and a
+      spread enters such a comparison as a variance, which is a standard deviation times
+      itself.</p>`,
+
+  prior_sd: () => `<p class="f-passo"><b>Where ${n2(PRIOR_SD)} comes from, and what it is not.</b>
+      It is how far apart the sensitivities of different companies typically sit. Most shares move
+      between roughly half of the market's move and twice it, and ${n2(PRIOR_SD)} is that spread
+      written as a standard deviation.</p>
+    <p class="f-passo">It is an economic magnitude and not a cut-off: nothing is ever compared
+      against it and nothing is discarded by it. It decides only <em>how much</em> the typical
+      value is allowed to pull a noisy estimate, and another reasonable choice would move the
+      weighting slightly without changing which way it leans.</p>`,
+
+  se: (d, ds) => `<p class="f-passo"><b>Where ${n2(Number(ds.v))} comes from.</b> It is the standard error of
+      the slope: how much that slope would be expected to wobble if the same fit ran on a
+      different sample of days. It comes out of how far the
+      ${val("janela", (d.window || 20) + " days")} of the window fell from the fitted line,
+      measured against how widely the factor itself moved during them.</p>
+    <p class="f-passo">Two things make it large: days the model failed to track, and a factor that
+      barely moved — a factor that stays still carries almost no information about how strongly
+      this company follows it. This is the quantity that decides how much of the measured slope
+      survives the weighting.</p>
+    ${tabelaDeRetornos(d)}`,
+
+  beta_bruto: (d, ds) => `<p class="f-passo"><b>Where ${n2(Number(ds.v))} comes from.</b> It is the slope of
+      a straight line fitted through the ${val("janela", (d.window || 20) + " days")} before the
+      day being explained: on days when the factor moved one percent, this company moved about
+      ${n2(Number(ds.v))} percent. The line is placed so that the total squared distance from it to
+      the actual days is the smallest it can be.</p>
+    <p class="f-eq">slope = (how company and factor moved together) ÷ (how much the factor moved)</p>
+    <p class="f-passo">Both quantities in that division are read off the rows below, and nothing
+      else enters it.</p>
+    ${tabelaDeRetornos(d)}`,
+
+  janela: d => `<p class="f-passo"><b>Where ${d.window || 20} comes from.</b> It is the number of
+      trading days used to estimate the sensitivities, and it is the same window the rarity
+      measure uses, so that the page does not carry two different notions of «recent».</p>
+    <p class="f-passo"><b>And this is the part that decides whether any of it can be trusted:</b>
+      the window ends the day <em>before</em> the one being explained. Not one price from the day
+      under explanation, and none from after it, takes part in estimating the sensitivities. Below
+      ${MIN_JANELA} usable days the estimate is refused outright instead of reported as weak.</p>`,
+
+  prior_m: () => `<p class="f-passo"><b>Where 1.00 comes from.</b> It is the sensitivity of the
+      market to itself. A perfectly typical company moves one-for-one with the index, so when a
+      window is too noisy to say anything, «typical» is the honest place to fall back to. Nothing
+      was fitted to obtain it.</p>`,
+
+  prior_s: () => `<p class="f-passo"><b>Where 0.00 comes from.</b> The sector figure used here is
+      what the sector did <em>beyond</em> the market, with the market's own movement already taken
+      out of it. A company with no particular tie to its sector, past being in the market at all,
+      has zero sensitivity to that leftover — so zero is the neutral fallback.</p>`,
+
+  r2_falta: d => `<p class="f-passo"><b>What «variation the model missed» is.</b> For each of the
+      ${val("janela", (d.window || 20) + " days")} of the window the model predicts a move from the
+      index and the sector; the miss is the distance between that and what happened. The misses are
+      squared, so that being wrong in either direction counts, and then averaged.</p>
+    ${tabelaDeRetornos(d)}`,
+
+  r2_total: d => `<p class="f-passo"><b>What «total variation» is.</b> How much this company moved
+      from day to day over the same ${val("janela", (d.window || 20) + " days")}, measured against
+      its own average. It is what a model that knew nothing but that average would miss, and it is
+      the yardstick the misses are held against — which is why a model that tracked nothing scores
+      zero and one that tracked everything scores one.</p>`,
+
+  mediana: () => `<p class="f-passo"><b>Where 0.46 comes from.</b> The same split was run for each
+      of the seventeen companies of the sector map, and 0.46 is the middle value of their fit
+      coefficients: half came out above it and half below. It is a median rather than an average
+      precisely so that one badly fitting company cannot drag it.</p>
+    <p class="f-passo">It is here so that the coefficient above is read against something. On its
+      own, a number like 0.44 says nothing about whether it is normal for this method.</p>`,
+
+  fator_mercado: (d, ds) => `<p class="f-passo"><b>Where ${pctc(Number(ds.v))} comes from.</b> It is the change
+      of ${esc(S.visao?.market_index || "the index")} on this day, from the previous close to this
+      one — the same series the sensitivity was estimated against, so that both halves of the
+      multiplication describe the same thing.</p>
+    <p class="f-passo">This number is shared by every company on the page. What differs from one
+      company to the next is the sensitivity it gets multiplied by.</p>
+    ${tabelaDeRetornos(d)}`,
+
+  fator_setor: (d, ds) => `<p class="f-passo"><b>Where ${pctc(Number(ds.v))} comes from.</b> It is what
+      ${esc(S.asset?.sector_etf || "the sector fund")} did on this day <em>after</em> the market's
+      own movement is taken out of it. Removing the market first is what stops the same movement
+      from being counted twice, once as market and once as sector.</p>
+    ${tabelaDeRetornos(d)}`,
+};
+
+/* Um só ouvinte, e é o que torna o mecanismo recursivo: o HTML que ele injecta também tem
+   valores clicáveis, e volta a cair aqui. */
+function ligarDesdobramento() {
+  const raiz = $("#detalhe");
+  if (!raiz || raiz.dataset.exp === "1") return;
+  raiz.dataset.exp = "1";
+  raiz.addEventListener("click", e => {
+    const b = e.target.closest(".f-val");
+    if (!b || !raiz.contains(b)) return;
+    e.preventDefault();
+    e.stopPropagation();          // não fechar o <details> que contém o valor
+    const seg = b.nextElementSibling;
+    if (seg && seg.classList.contains("f-mais")) {
+      seg.remove(); b.setAttribute("aria-expanded", "false"); return;
+    }
+    const f = EXPLICA[b.dataset.exp];
+    if (!f) return;
+    const cx = document.createElement("div");
+    cx.className = "f-mais";
+    try {
+      cx.innerHTML = f(S.asset?.decomp || {}, b.dataset);
+    } catch {
+      cx.innerHTML = '<p class="f-passo">This value cannot be broken down further from the data '
+        + 'on this page.</p>';
+    }
+    b.after(cx);
+    b.setAttribute("aria-expanded", "true");
+  });
+}
+
 /* ── Uma parcela da repartição, com a conta na linha e o resto a desdobrar ───────────────
    ⚠️ ESTA FUNÇÃO EXISTE POR CAUSA DE UMA PERGUNTA DO AUTOR, e a pergunta apanhou um RÓTULO
    ENGANADOR e não uma explicação em falta: «porque é que para as empresas a percentagem do
@@ -99,15 +297,15 @@ function betaDesdobrado(chave, bruto, se, beta, nome) {
   return `<details class="f-nivel"><summary>Where does β = ${b2(beta)} come from?</summary>
     <p class="f-passo">β is measured, not chosen. A regression over the window above asks how much
       ${esc(nome)} moved on days when this factor moved, which came out at
-      <b>${b2(bruto)}</b>.</p>
+      <b>${val("beta_bruto", b2(bruto), bruto)}</b>.</p>
     ${temSe ? `<p class="f-passo">A slope estimated from a few weeks is noisy, so it is pulled
-      towards the typical value of ${b2(prior)} in proportion to how precisely it was
+      towards the typical value of ${val(chave === "market" ? "prior_m" : "prior_s", b2(prior))} in proportion to how precisely it was
       measured — the noisier the estimate, the less of it is kept:</p>
     <p class="f-eq">weight = σ²<sub>prior</sub> ÷ (σ²<sub>prior</sub> + standard error²)
-      = ${PRIOR_SD2.toFixed(2)} ÷ (${PRIOR_SD2.toFixed(2)} + ${se.toFixed(2)}²)
+      = ${val("sigma_prior", PRIOR_SD2.toFixed(2))} ÷ (${val("sigma_prior", PRIOR_SD2.toFixed(2))} + ${val("se", se.toFixed(2), se)}²)
       = ${w.toFixed(2)}</p>
-    <p class="f-eq">β = ${w.toFixed(2)} × ${b2(bruto)}
-      + ${(1 - w).toFixed(2)} × ${b2(prior)} = ${b2(beta)}</p>
+    <p class="f-eq">β = ${w.toFixed(2)} × ${val("beta_bruto", b2(bruto), bruto)}
+      + ${(1 - w).toFixed(2)} × ${val(chave === "market" ? "prior_m" : "prior_s", b2(prior))} = ${b2(beta)}</p>
     <p class="f-passo">So ${Math.round(w * 100)}% of what this window measured is kept. Nothing is
       capped or discarded: a clean fit keeps its slope, a noisy one falls back towards the typical
       value. Every figure above is rounded to two places while the weighting runs on the full
@@ -122,7 +320,9 @@ function parcela(d, chave, rotulo, valor, max, nome) {
   const rFator = (beta && valor != null) ? valor / beta : null;
   // A conta na linha: é o que responde, sem clique, a «porque é que isto difere por empresa?».
   const conta = chave === "company" ? "the remainder"
-    : (beta && !d.fallback) ? `β ${b2(beta)} × ${pctc(rFator)}` : "";
+    : (beta && !d.fallback)
+      ? `β ${val("beta_final", b2(beta))} × ${val(chave === "market" ? "fator_mercado" : "fator_setor", pctc(rFator), rFator)}`
+      : "";
   const barra = `<span class="d-pista"><i style="width:${Math.abs(valor || 0) / max * 50}%;` +
     `${valor < 0 ? "right" : "left"}:50%;background:var(--${valor < 0 ? "desce" : "sobe"})"></i></span>`;
   const porque = chave === "company"
@@ -167,17 +367,17 @@ function explicarR2(d, nome) {
   const acima = r >= R2_MEDIANA;
   return `
     <p class="f-passo"><b>4. How much to trust it: R².</b> R² answers one question — over the
-      ${d.window} trading days before this one, how much of ${esc(nome)}'s day-to-day movement did
+      ${val("janela", d.window + " trading days")} before this one, how much of ${esc(nome)}'s day-to-day movement did
       this same market-and-sector model manage to track?</p>
-    <p class="f-eq">R² = 1 − (variation the model missed) ÷ (total variation)</p>
+    <p class="f-eq">R² = 1 − ${val("r2_falta", "(variation the model missed)")} ÷ ${val("r2_total", "(total variation)")}</p>
     <p class="f-passo">A model that tracked every day perfectly would leave nothing missed and score
       1. A model that tracked nothing would score 0. Here it is
       <b>${r.toFixed(2)}</b>, so the model followed about <b>${pc}%</b> of ${esc(nome)}'s daily
       movement and missed the other ${100 - pc}%. ${acima
-        ? `That is at or above the ${Math.round(R2_MEDIANA * 100)}% median measured across the
+        ? `That is at or above the ${val("mediana", Math.round(R2_MEDIANA * 100) + "% median")} measured across the
            seventeen companies of the sector map, so the split above is on the firmer side of
            what this method achieves.`
-        : `That is below the ${Math.round(R2_MEDIANA * 100)}% median measured across the seventeen
+        : `That is below the ${val("mediana", Math.round(R2_MEDIANA * 100) + "% median")} measured across the seventeen
            companies of the sector map. Treat the split as indicative: the weaker the fit, the
            more of the move ends up in the company line simply because the model could not
            place it.`}</p>`;
@@ -431,6 +631,7 @@ function pintarDetalhe() {
     <details class="evidence" id="chartDays"><summary>Explore events on this chart</summary><div class="d-dias" id="dias"></div></details>
     <div class="evidence-actions"><button id="decision" class="quiet">Recorded news decisions</button><button id="news" class="quiet">Historical news & sources</button></div>
     </div>`;
+  ligarDesdobramento();
   $("#intervalos").onclick=e=>{const b=e.target.closest("[data-r]"); if(!b) return;
     S.intervalo=b.dataset.r; $("#intervalos").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
     pintarFiltroTipos(); pintarFeed();  // o intervalo governa a página inteira, não só o gráfico
@@ -442,6 +643,27 @@ function pintarDetalhe() {
   void renderChart();
 }
 let renderId=0;
+/* ── A linha da data, e porque e' que ela tinha de mudar ─────────────────────────────────
+   ⚠️ O AUTOR PERGUNTOU «hoje e' dia 11 de setembro e nao vejo no grafico o 11 de setembro».
+   O ecrã dizia «Session 10 Sept 2026 · times in UTC», que é verdade e **não responde à
+   pergunta**. A resposta é que a bolsa americana ainda não abriu: às 10:53 UTC de dia 11 a
+   sessão de hoje não existe, logo a série intradiária mais recente é a de ontem.
+
+   Um ecrã que mostra o dia anterior sem dizer porquê ensina o leitor a desconfiar dos dados
+   quando os dados estão certos. Passa a dizer as duas coisas: que sessão está desenhada, e
+   que a de hoje ainda não começou — usando o estado do mercado que a API já serve e que o
+   cabeçalho já mostra, em vez de um segundo cálculo de horários no cliente. */
+function legendaDaData(a) {
+  if (S.intervalo !== "1D") return `Daily closes through ${dataDe(a.price_day)}`;
+  const sessao = (a.intraday_day || "").slice(0, 10);
+  const hoje = (S.visao?.as_of || "").slice(0, 10);
+  const base = `Session ${dataDe(sessao)} · times in UTC`;
+  if (!sessao || !hoje || sessao === hoje) return base;
+  const estado = S.visao?.market?.label || "";
+  return `${base} — today's session has not produced data yet`
+    + (estado ? ` (${estado.toLowerCase()})` : "") + ".";
+}
+
 async function renderChart() {
   const id=++renderId, a=S.asset;
   if(!a || S.modo!=="hoje") return;
@@ -450,7 +672,7 @@ async function renderChart() {
     if(id!==renderId || a!==S.asset || S.modo!=="hoje") return;
     disposeCharts(); $("#graf").replaceChildren(); $("#grafZ").replaceChildren();
     $("#chartTitle").textContent=TITULO_GRAFICO[S.intervalo];
-    $("#chartDate").textContent=S.intervalo==="1D" ? `Session ${dataDe(a.intraday_day)} · times in UTC` : `Daily closes through ${dataDe(a.price_day)}`;
+    $("#chartDate").textContent=legendaDaData(a);
     desenharGrafico(a); desenharZ(a); pintarLegendaGrafico(); pintarDias(a);
     if(!a.alertsLoaded) $("#chartNotice").textContent="Loading delivered alerts…";
     else $("#chartNotice").textContent=a.alertsRemaining ? `${a.alertsRemaining} older messages are available in History; their markers are outside this loaded record.` : "";

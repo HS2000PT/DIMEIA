@@ -446,3 +446,22 @@
   .votos-num strong { font-size:1.6rem; color:var(--acento); line-height:1; }
   .votos-num span { font-size:.86rem; color:var(--tinta2); }
   .votos-det > summary { padding-top:10px; }
+
+  /* ── Valores clicáveis: o desdobramento até ao dado base ──────────────────────────────
+     Um valor que se pode abrir tem de se LER como parte da frase e ainda assim anunciar-se
+     como clicável — daí o tracejado por baixo em vez de cor de link, que num painel cheio de
+     números com cor de sinal seria mais um código a decifrar. */
+  .f-val { font: inherit; color:inherit; background:none; border:0; padding:0;
+           border-bottom:1px dashed var(--acento); cursor:pointer; }
+  .f-val:hover, .f-val[aria-expanded="true"] { color:var(--acento); }
+  .f-val[aria-expanded="true"] { border-bottom-style:solid; }
+  /* A explicação abre encostada à esquerda do valor, com uma barra que mostra a profundidade:
+     ao descer vários níveis, as barras encaixam e dizem quantos passos abaixo se está. */
+  .f-mais { margin:6px 0 6px 10px; padding-left:12px; border-left:2px solid var(--borda); }
+  .f-tab { overflow-x:auto; margin:6px 0 10px; }
+  .f-tab table { border-collapse:collapse; font-family:var(--mono); font-size:.72rem;
+                 width:100%; }
+  .f-tab th, .f-tab td { padding:2px 8px 2px 0; text-align:right; white-space:nowrap;
+                         font-variant-numeric:tabular-nums; }
+  .f-tab th:first-child, .f-tab td:first-child { text-align:left; }
+  .f-tab thead th { color:var(--fraco); font-weight:500; border-bottom:1px solid var(--borda); }

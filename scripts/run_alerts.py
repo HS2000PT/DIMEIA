@@ -1272,16 +1272,47 @@ def _mature_live_safe(today: date | None = None) -> None:
 
 
 def is_us_market_session(now_utc) -> bool:
-    """Puro: estamos dentro da sessão US (com folga)? Seg-sex, 13:00–21:30 UTC.
+    """Puro: estamos dentro da sessão regular US? Delega no módulo que sabe o DST.
 
-    Fora da sessão, a cotação `c` do Finnhub é o ÚLTIMO negócio (ex.: o fecho de sexta) —
-    avaliar isso ao sábado re-alertaria o movimento de ontem como se fosse "em curso".
-    A janela cobre verão e inverno (abertura 13:30/14:30, fecho 20:00/21:00 UTC).
+    ⚠️ ISTO ERA UMA JANELA LARGA ESCRITA À MÃO — seg-sex, 13:00 a 21:30 UTC — e a folga era
+    deliberada, para cobrir a abertura de verão e de inverno com uma só regra. A consequência
+    foi MEDIDA a 2026-09-11, a partir de uma pergunta do autor sobre o gráfico: a 10 de
+    setembro saíram dois alertas de mercado às **13:02 UTC**, e a abertura de verão é às
+    **13:30** — ou seja em pré-mercado, com o texto a dizer «so far today… the session is not
+    over» sobre uma sessão que ainda não tinha começado. E como o gráfico intradiário só
+    desenha a sessão, essas marcas não tinham onde pousar: é o mesmo defeito visto do outro
+    lado.
+
+    E A FOLGA NÃO ERA NECESSÁRIA DESTE LADO. A abertura mais cedo do ano é 13:30 UTC (verão);
+    no inverno é 14:30, ou seja mais tarde. Começar às 13:00 não cobria nada — só acrescentava
+    trinta minutos de pré-mercado no verão. O mesmo do lado do fecho: 21:00 no inverno, 20:00
+    no verão, e o limite estava em 21:30.
+
+    A correcção não é afinar a janela: é deixar de ter duas regras. O
+    `investigator/market_data/market_hours` converte para hora de Nova Iorque com `zoneinfo`,
+    logo acerta no DST por construção, e é o mesmo estado que o cabeçalho da página mostra —
+    passa a haver UMA resposta no repositório à pergunta «a bolsa está aberta?».
+
+    ⚠️ O que isto NÃO resolve, e continua declarado nos dois sítios: nenhum dos dois trata
+    FERIADOS da bolsa. Num feriado a cotação é o último negócio e a guarda deixa passar.
+    Falha ABERTA se o módulo não carregar, porque uma importação falhada não deve calar o
+    caminho de mercado inteiro.
     """
-    if now_utc.weekday() >= 5:
-        return False
-    minutos = now_utc.hour * 60 + now_utc.minute
-    return 13 * 60 <= minutos <= 21 * 60 + 30
+    # ⚠️ SEM PRE-VERIFICACAO DO DIA DA SEMANA, de proposito: contá-lo aqui seria contá-lo em
+    # UTC, e o módulo conta-o em Nova Iorque. Seriam outra vez duas regras a responder à mesma
+    # pergunta, que é o defeito que esta função acabou de deixar de ter. O módulo já trata
+    # fim de semana, e datas sem fuso são lidas como UTC por ele.
+    try:
+        from investigator.market_data.market_hours import us_market_status
+
+        return bool(us_market_status(now_utc).is_open)
+    except Exception:  # noqa: BLE001
+        # Recuo com a janela larga de antes: uma importação falhada não deve calar o caminho
+        # de mercado inteiro. Mantém o fim de semana, que aqui é a única guarda que resta.
+        if now_utc.weekday() >= 5:
+            return False
+        minutos = now_utc.hour * 60 + now_utc.minute
+        return 13 * 60 <= minutos <= 21 * 60 + 30
 
 
 def collect_intraday_results(cfg: dict, cache: dict | None = None) -> list[tuple[str, object]]:

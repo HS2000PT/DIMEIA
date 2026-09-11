@@ -173,7 +173,7 @@ function desenharGrafico(a) {
                     shape:"square", text:"" });
     }
   }
-  let fora = 0;
+  let fora = 0, hojeFora = 0;
   if (S.camadas.alertas) {
     const dentro = marcasDeAlertas(a, desdeTs, ateTs);
     marcas.push(...dentro);
@@ -181,8 +181,14 @@ function desenharGrafico(a) {
     // antes da abertura. Não se arrasta o marcador para a borda, porque isso mentiria sobre a
     // hora; conta-se, e diz-se por baixo. É o mesmo facto que a secção da latência mede.
     if (umDia) {
-      const hoje = (a.intraday_day || "").slice(0, 10);
-      fora = (a.alerts || []).filter(al => (al.date || "") === hoje).length - dentro.length;
+      const sessao = (a.intraday_day || "").slice(0, 10);
+      fora = (a.alerts || []).filter(al => (al.date || "") === sessao).length - dentro.length;
+      // O dia corrente vem do carimbo do instantâneo e não do relógio do browser: o que
+      // interessa é o dia dos dados servidos, e um browser com a hora errada não pode
+      // inventar um dia que o sistema não viu.
+      const hoje = (S.visao?.as_of || "").slice(0, 10);
+      if (hoje && hoje !== sessao)
+        hojeFora = (a.alerts || []).filter(al => (al.date || "") === hoje).length;
     }
   }
   // ⚠️ CONTADO A PARTIR DAS MARCAS DESENHADAS, e não da lista de alertas: um alerta fora da
@@ -201,6 +207,7 @@ function desenharGrafico(a) {
     noticias: marcas.filter(m => m.shape === "square").length,
     referencia: !!(S.camadas.referencia && umDia && a.prev_close != null),
     fora: Math.max(0, fora),
+    hoje_fora: Math.max(0, hojeFora),
   };
 
   if (marcas.length) {
@@ -322,8 +329,24 @@ function pintarLegendaGrafico() {
     L.push(`<i><span class="tracejado"></span> previous session's close</i>`);
   if (S.camadas.zscore && !umDia && $("#grafZ") && !$("#grafZ").hidden)
     L.push(`<i>z = distance from this company's own ${S.visao?.window ?? 20}-day norm, in standard deviations</i>`);
-  if (d.fora)
-    L.push(`<i><b>${d.fora} alert${d.fora > 1 ? "s" : ""} today went out outside the plotted session</b>, so ${d.fora > 1 ? "they are" : "it is"} not on this chart — the times are below</i>`);
+  // ⚠️ ESTA LINHA DIZIA «today» E ERA FALSO, e foi o que confundiu o autor: o «today» aqui
+  // significava o dia da SESSÃO DESENHADA, que fora de horas é a sessão anterior. Numa página
+  // cujo cabeçalho diz «latest close · 10 Sept» e num dia 11, chamar 10 de setembro «hoje» é
+  // uma afirmação errada. Passa a nomear a data.
+  if (d.fora) {
+    const dia = dataDe((S.asset?.intraday_day || "").slice(0, 10));
+    L.push(`<i><span><b>${d.fora} alert${d.fora > 1 ? "s" : ""} of ${dia} went out outside `
+      + `that session's hours</b>, so ${d.fora > 1 ? "they are" : "it is"} not on this `
+      + "chart — the times are in the list below</span></i>");
+  }
+  // ⚠️ E FALTAVA A OUTRA METADE, que é a pergunta que o autor fez: as mensagens de HOJE. O
+  // contador `fora` só olha para o dia da sessão desenhada, logo num dia em que a bolsa ainda
+  // não abriu as mensagens já enviadas hoje não eram contadas nem mencionadas em sítio nenhum —
+  // o ecrã ficava calado sobre elas em vez de dizer que existem.
+  if (d.hoje_fora)
+    L.push(`<i><span><b>${d.hoje_fora} message${d.hoje_fora > 1 ? "s" : ""} went out today</b>, `
+      + "before any session this chart can draw. Switch the range to place it in "
+      + "context, or read it in the list below</span></i>");
   el.innerHTML = L.join("");
   el.hidden = !L.length;
 }

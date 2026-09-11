@@ -151,6 +151,8 @@ def overview() -> dict:
         # A série do índice. Serve o gráfico do âmbito «todas as empresas», onde antes ficava
         # o gráfico de UMA empresa enquanto a lista mostrava o canal inteiro.
         "market_closes": snap.get("market_closes", []),
+        # As séries dos setores, para o desdobramento poder descer até ao dado base.
+        "sector_closes": snap.get("sector_closes", {}),
     }
 
 

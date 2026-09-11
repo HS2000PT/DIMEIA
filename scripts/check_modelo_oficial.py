@@ -88,6 +88,33 @@ ALTERACOES = {
 INTOCAVEIS = ("\\RequirePackage{geometry}", "inner=", "outer=", "\\RequirePackage{mathpazo}")
 
 
+def _opcao_activa(principal: pathlib.Path, opcao: str) -> bool:
+    r"""A opção está na LISTA do `\documentclass`, e não em qualquer sítio do ficheiro.
+
+    ⚠️ A PRIMEIRA VERSÃO PROCURAVA A PALAVRA NO FICHEIRO INTEIRO, e isso tornou-a errada no
+    momento exacto em que ela passou a importar: quando o autor decidiu retirar a opção, o
+    comentário que explica a remoção ficou a conter a palavra, e a porta continuou a reportar
+    uma não-conformidade já resolvida. É a metade «grita de mais» do par que este repositório
+    documenta — e um padrão a acertar numa palavra dentro de um comentário é o falso positivo
+    que já foi pago cinco vezes antes desta.
+
+    Lê-se só a lista de opções, com os comentários LaTeX retirados primeiro.
+    """
+    try:
+        bruto = principal.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return False
+    linhas = bruto.replace(chr(13), "").split(chr(10))
+    limpas = [("" if ln.lstrip().startswith("%") else ln.split("%", 1)[0]) for ln in linhas]
+    texto = chr(10).join(limpas)
+    i = texto.find(chr(92) + "documentclass[")
+    if i < 0:
+        return False
+    j = texto.find("]", i)
+    lista = texto[i:j] if j > i else texto[i:]
+    return any(x.strip() == opcao for x in lista.split(","))
+
+
 def normaliza(p: pathlib.Path) -> list[str]:
     return p.read_text(encoding="utf-8", errors="replace").replace("\r", "").splitlines()
 
@@ -136,8 +163,7 @@ def main() -> int:
 
         # A não-conformidade declarada, dita a cada corrida e sem fazer falhar.
         principal = RAIZ / arvore / "main.tex"
-        if principal.exists() and "openany" in principal.read_text(encoding="utf-8",
-                                                                   errors="replace"):
+        if principal.exists() and _opcao_activa(principal, "openany"):
             print("    ⚠️  `openany` está activo, e NÃO consta das opções do modelo (que abre")
             print("        cada capítulo à direita). Poupa páginas em branco; afasta-se da")
             print("        convenção das quatro dissertações aprovadas, que a mantêm todas.")

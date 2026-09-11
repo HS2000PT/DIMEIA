@@ -16,7 +16,7 @@ verificadores, os marcadores de trabalho por acabar, e que a data não muda sozi
 a zero, tudo o que uma máquina consegue verificar está feito** — o que fica abaixo é o que só
 tu podes fazer.
 
-Estado a 2026-09-08: **sai a zero no técnico.** Dissertação canónica `tese-pt/` **144 pp**
+Estado a 2026-09-08: **sai a zero no técnico.** Dissertação canónica `tese-pt/` **158 pp**
 e a sua tradução `tese-eng/` **139 pp**; artigo **11 pp** (limite de 12 do ICITS), slides 22,
 guia 25, guia de construção 16. **17 verificadores**, mais as verificações de PDF, marcadores e data.
 
