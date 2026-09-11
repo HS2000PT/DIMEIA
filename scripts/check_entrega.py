@@ -132,8 +132,19 @@ def fonte_mais_recente(arvore: pathlib.Path) -> tuple[pathlib.Path | None, float
 
     O `build/` é excluído: é onde o `latexmk` escreve, e incluí-lo tornaria o PDF fresco por
     construção, o que é a mesma cegueira por outro caminho.
+
+    ⚠️ E AS SUBÁRVORES COM `main.tex` PRÓPRIO TAMBÉM, e isto foi um defeito da primeira versão
+    desta correção: `slides/` e `guia/` são documentos independentes, com o seu PDF, e editar um
+    slide passou a acusar o PDF da TESE de estar velho. É a outra metade do par que este projeto
+    documenta — um verificador cego e um que acusa tudo são o mesmo defeito visto de dois lados —,
+    e uma porta que grita sempre é uma porta em que se deixa de olhar. O que fica é o que entra
+    mesmo no `main.pdf`: capítulos, front matter e apêndices.
     """
-    fontes = [x for x in arvore.rglob("*.tex") if "build" not in x.parts]
+    proprios = {x.parent for x in arvore.rglob("main.tex") if x.parent != arvore}
+    fontes = [
+        x for x in arvore.rglob("*.tex")
+        if "build" not in x.parts and not any(d in x.parents for d in proprios)
+    ]
     if not fontes:
         return None, 0.0
     recente = max(fontes, key=lambda x: x.stat().st_mtime)

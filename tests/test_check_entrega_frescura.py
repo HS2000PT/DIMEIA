@@ -80,6 +80,39 @@ def test_as_duas_arvores_da_tese_estao_na_lista(mod):
     assert {"tese-pt", "tese-eng"} <= arvores
 
 
+def test_um_documento_vizinho_nao_torna_velho_o_pdf_da_tese(mod, tmp_path):
+    """`slides/` e `guia/` compilam-se sozinhos e têm PDF próprio.
+
+    ⚠️ Isto foi um defeito da própria correção da frescura: ao passar de «compara o main.tex» para
+    «compara o .tex mais recente da árvore», a árvore passou a incluir os slides, e editar um slide
+    acusava o PDF da TESE de estar velho. É a outra metade do par — um verificador cego e um que
+    acusa tudo são o mesmo defeito visto de dois lados — e sem este teste o barulho volta.
+    """
+    arvore = tmp_path / "tese-x"
+    (arvore / "ch1").mkdir(parents=True)
+    (arvore / "slides").mkdir()
+    (arvore / "main.tex").write_text("raiz", encoding="utf-8")
+    capitulo = arvore / "ch1" / "chapter1.tex"
+    capitulo.write_text("capitulo", encoding="utf-8")
+    slide = arvore / "slides" / "main.tex"
+    slide.write_text("slide", encoding="utf-8")
+
+    import os
+    os.utime(capitulo, (1000, 1000))
+    os.utime(arvore / "main.tex", (1000, 1000))
+    os.utime(slide, (9000, 9000))          # o slide é, de longe, o mais recente
+
+    fonte, quando = mod["fonte_mais_recente"](arvore)
+    # O que se guarda é o TEMPO, e não qual dos ficheiros empatados ganha: o capítulo e o
+    # main.tex têm o mesmo carimbo de propósito, e desempatar entre eles não é a propriedade
+    # que interessa. O que não pode acontecer é o slide, muito mais recente, contar.
+    assert quando == 1000, (
+        f"escolheu {fonte} com t={quando}: um documento que se compila sozinho não conta "
+        "para a frescura do PDF da tese"
+    )
+    assert "slides" not in fonte.parts
+
+
 def test_os_pdf_entregues_nao_estao_velhos():
     """O corpus real: nenhum PDF versionado é mais antigo do que o `.tex` mais recente."""
     guardado = sys.argv
