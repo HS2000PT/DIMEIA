@@ -9,6 +9,173 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 68 — 5.ª parte (2026-09-11): A COMPARAÇÃO COM AS QUATRO APROVADAS MUDOU O ALVO, E
+  TRÊS LEGENDAS DESCREVIAM UMA APLICAÇÃO QUE JÁ NÃO EXISTE.**
+  O autor pediu quatro coisas numa passagem: rever a tese contra o **sistema vivo** («o aplicativo
+  web já foi atualizado e a imagem atual não dá match»), reduzir páginas **comparando com as quatro
+  aprovadas**, optimizar a aplicação antes de novas capturas (**onze pontos concretos**), e preparar
+  a **mensagem aos orientadores**. Plano registado em
+  [`PLANO_FECHO_2026-09-11.md`](docs/planos/PLANO_FECHO_2026-09-11.md), com registo de execução.
+  **✅ (A) A COMPARAÇÃO QUE O AUTOR PEDIU, E ELA REDEFINE O PROBLEMA.** Folios lidos dos **índices
+  das próprias aprovadas** (os PDF delas não trazem `page_labels`, logo o `pypdf` devolvia a
+  contagem física e a comparação daria números que não dizem o mesmo — que é o erro que gerou o
+  susto original).
+
+  | | Bruno | Helder | Joana | Rafael | **Nossa (EN)** |
+  |---|---|---|---|---|---|
+  | último folio | 120 | 114 | 83 | 93 | **124** |
+  | Cap. 1 | 8 | 8 | 10 | 8 | **5** |
+  | Cap. 2 | 26 | 24 | 20 | 18 | **17** |
+  | Cap. 3 | 10 | 14 | 14 | 10 | **16** |
+  | Cap. 4 | 22 | 24 | 14 | ~14 | **22** |
+  | Casos | 30 | 18 | 10 | ~16 | **34** |
+  | **Conclusões** | **7** | **4** | **4** | ~4 | **15** |
+
+  **Três conclusões, e duas contradizem o que eu andava a fazer.** Estamos **4 folios acima da mais
+  longa aprovada**, não 21. O **Cap. 1 está CURTO** (5 contra 8 a 10), o que valida acrescentar-lhe
+  visuais em vez de os cortar. E **o outlier é o Cap. 6, não o Cap. 5** — quinze páginas contra 7,
+  4, 4 e ~4, ou seja **duas a quatro vezes a norma**, no capítulo onde se fazem as afirmações, que é
+  por onde um arguente entra. O Bruno fecha com três secções; nós tínhamos seis, incluindo duas que
+  **nenhuma das quatro tem**.
+  **✅ (B) A §6.6 COMPRIMIDA DE 389 PARA 119 PALAVRAS, e o critério foi ler contra a §6.1.** Os três
+  primeiros parágrafos recapitulavam as três perguntas, o resultado negativo e a restrição
+  fundadora — tudo dito dez páginas antes. O quarto, **a fronteira entre o que o trabalho estabelece
+  e o que não estabelece**, não tem duplicado em sítio nenhum e é o que impede o resto do capítulo
+  de ser lido como prova da hipótese fundadora. Fica, com a figura. A secção passa a chamar-se pelo
+  que faz: «Considerações finais» é um título que não diz nada e convida a encher.
+  **⚠️ (C) E O NÚMERO QUE FECHA O ASSUNTO DAS PÁGINAS: CINCO CORTES, QUATRO A ZERO PÁGINAS.** Uma
+  tabela de meia página: **zero**. 84 palavras: **zero**. 90 palavras: **zero**. 270 palavras da
+  §6.6: **zero**. **Só a colocação de flutuantes deu uma.** O documento está num equilíbrio de
+  empacotamento e **não encolhe por aparar** — só por material contíguo.
+  **✅ (D) ONDE AS PÁGINAS ESTAVAM: NA COLOCAÇÃO, NÃO NA PROSA.** 49 figuras e 17 tabelas em ~110
+  páginas é um flutuante a cada 1,7 páginas, e **44 figuras estavam declaradas `[ht]`** — que proíbe
+  o fundo da página e a página de flutuantes. Com os valores por omissão, uma figura alta é
+  empurrada para uma página só dela que o LaTeX aceita **meia vazia**. Afinadas as fracções e
+  alargada a colocação: **EN 142 → 141 físicas, 124 → 123 folios**.
+  **⚠️ E VERIFICADO ALÉM DA CONTAGEM, porque nada disto aparece no `exit code`:** das 59 figuras,
+  **41 moveram-se e TODAS para mais perto** do texto que as invoca. O maior movimento é a `fig 4.6`,
+  quatro páginas mais cedo, e **não pode preceder a sua referência** — é declarada na linha 636 e
+  invocada na 629, e um flutuante só viaja para a frente.
+  **⚠️ (E) TRÊS LEGENDAS AFIRMAVAM COISAS FALSAS SOBRE A APLICAÇÃO, e o autor tinha razão em
+  suspeitar que havia mais do que a imagem.** (1) A `fig:sis_pagina` dizia «os cinco indicadores
+  repartem as doze empresas em cinco alertas entregues e sete decisões de não comunicar» — **não
+  existem cinco indicadores, existe um** — e falava «da cor da mascote, que acompanha a variação do
+  índice»: **não há mascote nenhuma**, foi removida, e há um teste que proíbe assets de mascote em
+  `web/`. A legenda descrevia a v6. (2) A `fig:sis_empresa` dizia «a linha em **itálico** por baixo
+  da repartição»; medido no ecrã, `font-style: normal`. (3) A `fig:sis_silencio` dizia «as portas que
+  a empresa atravessou, pela ordem da política», e o modal imprime hoje, na linha que o fecha,
+  **«The record does not imply that every gate was traversed»** — a legenda afirmava exactamente o
+  que o produto se dá ao trabalho de desmentir.
+  **⚠️ E TROCAR SÓ A IMAGEM TERIA MUDADO O DEFEITO DE SÍTIO.** A prosa descrevia o ecrã antigo
+  **número a número** — subida de `0,99%`, mercado `-0,47%`, setor `-0,54%`, empresa `+2,00%`, «141
+  de 250 dias» — e **nenhum desses valores existe nos dados de hoje**. Reescrita a partir do que a
+  captura mostra, lido da página no momento em que foi tirada.
+  **✅ E O CASO NOVO É MELHOR PARA O ARGUMENTO:** a Netflix **caiu `0,97%` e a contribuição da
+  própria empresa foi POSITIVA**, `+0,11%` — quem a puxou para baixo foram o mercado (`-0,53%`) e o
+  setor (`-0,55%`). É a segunda pergunta do investidor com a resposta mais instrutiva possível: *não
+  foi a sua empresa*. E o R² de `0,44` fica **abaixo** da mediana, logo a figura mostra a ressalva a
+  funcionar em vez de a mostrar no caso favorável.
+  **⚠️ UM PARÁGRAFO FOI RETIRADO EM VEZ DE ACTUALIZADO, e a razão importa:** reconciliava por que
+  razão a `fig:intro_lacuna` e a `fig:sis_empresa` imprimem denominadores diferentes «para a mesma
+  empresa no mesmo dia». Já não são a mesma empresa nem o mesmo dia, logo **não há inconsistência
+  aparente para reconciliar** e o parágrafo passaria a criar a confusão que existia para desfazer.
+  Verificado que a `fig:intro_lacuna` continua invocada pelo Cap. 1, logo não fica órfã.
+  **✅ (F) FIGURA NOVA: A CONTA.** O painel que reconstrói as três parcelas passa a ter figura
+  própria, por duas razões. De composição: juntá-lo à vista da empresa dava rácio **1,62**, mais
+  alto do que uma página — a armadilha que a sessão 67 pagou num slide. E de conteúdo: **é o único
+  sítio do produto onde o leitor pode REFAZER um número em vez de o aceitar**.
+  **✅ (G) A APLICAÇÃO: DEZ DOS ONZE PONTOS, e os dois que mais pesam produziram achados.**
+  **A1 o logótipo:** o branco estava em **três sítios** — um `<rect fill="white">`, uma placa branca
+  em CSS, e **pintado na própria imagem**, que é um WebP em modo RGB **sem canal alfa** (canto a
+  `(254,254,254)`). Recortado por **preenchimento a partir das bordas** e não por limiar de
+  quase-branco: um limiar comeria os brancos INTERIORES — os dentes e o brilho do olho — e deixaria
+  o desenho com buracos. 74% da imagem passou a transparente.
+  **⚠️ E TIRAR A PLACA ABRIU O PROBLEMA QUE ELA ESCONDIA:** a tinta é `rgb(0,92,59)` e dá **2,22:1**
+  sobre o fundo escuro — abaixo do mínimo de 3:1 para um gráfico, e muito abaixo dos 4,5:1 para
+  texto, **e este logótipo contém a palavra «InvestiGator»**. Gerada a variante escura em `#00E37A`,
+  a cor que a sessão 45 fixou para isto, que dá **10,49:1**, servida por `prefers-color-scheme`.
+  **Não** por filtro CSS: um `brightness()` sobre um raster lava as cores e acinzenta o branco.
+  **A2+A8 a conta, e é o pedido mais importante da lista:** o autor não conseguia reconstruir os
+  números, «sobretudo o da company». **A resposta é o achado, e o ecrã nunca a dizia** — o mercado e
+  o setor são **produtos** (uma sensibilidade vezes o que o factor fez no dia) e a parcela da
+  empresa **não é calculada de todo: é o RESÍDUO**. É por isso que ele percebia as duas primeiras e
+  não a terceira: duas são multiplicações e a terceira é uma subtracção. O painel passa a mostrar
+  quatro passos — a equação, a equação com os valores do dia, por que razão a parcela da empresa não
+  tem fórmula, e o R² nos termos da pergunta a que responde. Verificado ao vivo na META:
+  `1,21 × -0,47%` e `-0,26 × +0,60%` e `+7,06%` somam exactamente `+6,35%`.
+  **⚠️ Com a ressalva que este projecto já pagou uma vez:** `1,21 × -0,47%` dá `-0,57` e o ecrã
+  imprime `-0,56`, porque as parcelas são calculadas sobre valores **não arredondados** — a mesma
+  classe do `6,1×` da sessão 66. O painel di-lo, em vez de deixar o leitor encontrá-lo.
+  **A3+A6 uma selecção governa a página:** escolher uma empresa governava o gráfico e o detalhe mas
+  **não a lista de eventos**, logo a lista ao lado podia estar a mostrar outra empresa. A *combobox*
+  saiu. ⚠️ **E a acessibilidade foi verificada ANTES de a tirar, não depois:** um `select` é
+  navegável por teclado, e substituí-lo por «cliques nos logótipos» só é seguro porque os logótipos
+  **já são botões reais** com `aria-pressed`. Se fossem `div`, isto teria apagado a via de teclado.
+  **A4** clique no gráfico salta para o alerta, **com tolerância de três dias** — o `subscribeClick`
+  devolve a coordenada sob o cursor e não um marcador, e uma implementação por igualdade exacta
+  pareceria partida nove em cada dez vezes. **A5** o intervalo do gráfico filtra a lista, com o
+  estado vazio a explicar-se. **A7** «Unusual» passa a marca com símbolo e cor de atenção, com a
+  palavra a ficar porque um losango sozinho não se lê num leitor de ecrã. **A9** eixos no «mensagens
+  por dia», com marcas **inteiras** no y — contam-se mensagens, e «2,5 mensagens» seria falso sobre
+  a própria grandeza. **A10** filtro por tipo, com «Market open» e «Market close» nomeados como o
+  autor os chama e não como o modelo os guarda.
+  **⚠️ E UMA CONTAGEM QUE MENTIA, apanhada a testá-la:** as marcas contavam sobre todas as mensagens
+  carregadas enquanto a lista aplicava também o filtro de intervalo, logo uma marca dizia «News 8» e
+  a lista mostrava duas. **Um número que não corresponde ao que o clique produz é pior do que
+  nenhum.**
+  **✅ (H) OS SLIDES ENSINAVAM OS NÚMEROS QUE A TESE ACABARA DE RETIRAR.** A tese lê-se; os slides
+  **dizem-se**. É a classe que este projecto pagou quatro vezes, e os dois decks traziam a captura
+  antiga, «141 dos últimos 250 dias» e «a acção sobe 0,99%… a parcela da empresa é +2,00%».
+  **⚠️ E O SENTIDO DA FRASE INVERTE-SE, não só os dígitos:** o caso antigo era «foi toda ela» e o
+  novo é o contrário. Trocar só os números e deixar «Foi toda ela» produziria uma frase a
+  contradizer a figura ao lado, que é pior do que um número velho.
+  **✅ (I) A MENSAGEM AOS ORIENTADORES ESCRITA, e escrevê-la apanhou uma afirmação retirada.** A
+  minuta de agosto dizia que um terminal profissional responde às três perguntas «por cerca de 2.000
+  dólares por mês». A §2.9 declara que esse preço **não é publicado de forma citável**, e é a
+  indisponibilidade — não um valor — que sustenta o argumento. **Escapou às duas portas:** o
+  `check_materiais` compara decimais e `2.000` é separador de milhares, e o `check_numeros_retirados`
+  procura os números da sua lista. Numa mensagem ao orientador é o pior sítio possível: perguntado
+  de onde vem, não há fonte. Os **dois resultados negativos ficam na própria mensagem**, e não
+  escondidos no documento — são a parte mais defensável do trabalho.
+  **⚠️ (J) SEIS DEFEITOS MEUS, TODOS APANHADOS PELAS PORTAS, e um deles é da minha própria correcção
+  desta sessão.** (1) **A porta de frescura que reparei na 3.ª parte passou a gritar de mais:** ao
+  trocar «compara o `main.tex`» por «compara o `.tex` mais recente da árvore», a árvore passou a
+  incluir `slides/` e `guia/`, que são **documentos independentes com PDF próprio** — editar um slide
+  acusava o PDF da TESE de estar velho. É a outra metade do par que este ficheiro documenta: **um
+  verificador cego e um que acusa tudo são o mesmo defeito visto de dois lados.** Estreitada, com
+  teste **verificado a falhar sem a correcção**. (2) O `check_escrita` apanhou «investidor de
+  retalho» (o termo é «investidor particular») e (3) «manchete» seis vezes (o termo é «título») —
+  **terceira e quarta vez que esta porta apanha o meu texto**. (4) O `check_tese_pt` apanhou o PDF
+  anterior ao capítulo que eu tinha acabado de editar, na primeira ocasião real da porta reparada
+  hoje. (5) Um teste da marca **fixava `?v=10.0`**, logo partia-se no primeiro *cache-bust* enquanto
+  guardava coisa nenhuma. (6) Um teste proibia a palavra «mascote» nos assets e eu usei-a num
+  **comentário** de CSS.
+  **⚠️ (K) E A ARMADILHA DO HEREDOC MORDEU A SEXTA VEZ, a escrever o deck português:**
+  `\textheight` chegou ao Python como **TAB + `extheight`**. A regra está escrita neste ficheiro e
+  eu violei-a. Refeito com a ferramenta de ficheiro e **verificado em bytes: 0 TABs**.
+  **⚠️ (L) E O MEU TEXTO NOVO TRANSBORDOU UM SLIDE em 15,5 pt** — o defeito exacto da sessão 67.
+  Confirmado que era meu e não pré-existente **compilando o deck de `HEAD`**: 0 *overfull* lá, 1
+  aqui. Encurtado duas vezes até 0, cortando a glosa e guardando os quatro números e a ressalva do
+  ajuste, que são o que ele não pode inventar em voz alta.
+  **⚠️ (M) E A MINHA PRIMEIRA SONDA DE CONTRASTE DEU `1,0:1` numa marca que está a 5,9:1** — não
+  compunha o canal alfa, e `--parou-fraco` tem 11% de opacidade. É o falso alarme que a sessão 61
+  documentou. Composto o alfa: **4,96:1 a 12,97:1, todos a passar**.
+  **⚠️ (N) E UM ACHADO MEU QUE NÃO ERA UM, apanhado por contar em vez de supor.** A legenda promete
+  «as onze limitações» e a secção tem **sete** itens a negrito; ia reportá-lo. A **tabela** tem
+  exactamente **onze linhas** — a prosa desenvolve as de maior peso e a tabela lista todas. **Ler
+  adiante antes de reportar**, que é a regra que este projecto já pagou mais do que uma vez.
+  **PORTAS: EN 141 físicas / 123 folios · PT 144 / 126 · as duas árvores a 0 erros e 0 referências
+  indefinidas · overfull 4 e 5, iguais ao registo anterior · 0 `Float too large` · `check_entrega`
+  exit 0 com a pendência humana declarada · 1201 testes · `ruff` limpo · paridade 0 assimetrias em
+  138 chaves · 361 referências cruzadas com 0 incompatibilidades de tipo · decks 22+22 a 0 erros e
+  0 overfull · `check_materiais` alinhado · `check_numeros_retirados` limpo.**
+  **⏭️ O QUE FICA, E DUAS COISAS SÃO DECISÃO DO AUTOR.** (1) **Implantar**: as melhorias da
+  aplicação não estão no Heroku, e a mensagem manda os professores para lá — as capturas mostram a
+  aplicação real, mas o que o link serve é a versão anterior. (2) **O filtro por tipo só vê as 12
+  mensagens carregadas**, logo «Market open» aparece a zero por não ter sido carregada e não por não
+  existir; o número é honesto sobre o que está carregado e pode enganar sobre o que existe —
+  resolve-se filtrando no servidor. (3) A **leitura seguida** do documento pelo autor, os **nomes do
+  júri**, a **declaração de IA** e a **licença** continuam humanos.
 - **🆕 SESSÃO 68 — 4.ª parte (2026-09-10/11): A MOLDURA DE IA PASSA PARA A FRENTE, E A REDUÇÃO DE
   PÁGINAS FICA MEDIDA COMO IMPOSSÍVEL SEM APAGAR UMA QUESTÃO DE INVESTIGAÇÃO.**
   O pedido era avançar e não esquecer o número de páginas. Avançou-se, e a medição do número de
@@ -2547,7 +2714,7 @@
   **Portas finais: tese 85 pp físicas / 63 de corpo · 0 erros · 0 indefinidas · 0 overfull >15pt ·
   0 flutuantes órfãos · 120 referências sem incompatibilidades · 0 travessões em prosa ·
   736 testes · ruff limpo · congelados e teses longas intactos.**
-- **Sessão nº:** 68 (4.ª parte: a moldura de IA passa para a frente, e a redução de páginas fica medida como impossível sem apagar uma questão)
+- **Sessão nº:** 68 (5.ª parte: a comparação com as quatro aprovadas mudou o alvo, e três legendas descreviam uma aplicação que já não existe)
 - **Última atualização:** 2026-09-11
 - **🆕 SESSÃO 58 (2026-08-15 — o aluno pediu, por esta ordem: rever a tese curta de fio a pavio;
   tirar os travessões e os brasileirismos; transparência máxima nos dados, fontes e escolhas; e
