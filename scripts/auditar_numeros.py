@@ -77,7 +77,6 @@ JUSTIFICADOS: dict[str, str] = {
 
     # (b) contagens de producao, datadas, que crescem com o sistema
     "11445": "casos da base viva na branch de dados; instantaneo datado (Cap. 4)",
-    "10968": "registos da base viva no momento da medicao de memoria (apendice A.5)",
 
     # (c) o funil de um dia, com ficheiro proprio
     "1194": "funil por porta, docs/evaluation/funil_por_porta.md",
