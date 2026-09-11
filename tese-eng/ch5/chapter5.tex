@@ -22,7 +22,7 @@ property, and are identified where they appear. The values read from the system 
 dated snapshots, which grow with the channel. Those that depend on quotes readjusted by the source
 may vary in the third decimal place.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[font=\small, >={Stealth[length=2.2mm]},
   et/.style={draw, rounded corners=2pt, align=center, text width=2.5cm, minimum height=1.15cm,
@@ -152,7 +152,7 @@ the fixed threshold follows the volatility of each stock while the \emph{z}-scor
 constant across them.
 
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -234,7 +234,7 @@ for the same reason invoked later for the tree model. What is established is tha
 parameterised in this way and over these inputs, do not beat the rule; not that no parameterisation
 would. Figure~\ref{fig:av_detetores} presents the result.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -307,7 +307,7 @@ The first concerns the volatility estimator. The alternative to giving the same 
 twenty days of the window consists in giving greater weight to the recent days, through an
 exponentially weighted average. Figure~\ref{fig:av_ewma} presents the result.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -362,7 +362,7 @@ cease to be the dominant constraint.
 The second experiment concerns the size of the window, and Figure~\ref{fig:av_janela} presents
 it.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -464,7 +464,7 @@ in aggregate over the historical corpus, where the margin over chance holds, and
 Figure~\ref{fig:av_recuperacao} presents the method used, a larger variant and the trivial
 alternatives.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -552,7 +552,7 @@ balanced subset, where the same strategy obtains $0.200$.
 The comparison within each sector checks whether the advantage over chance also holds outside
 technology. Panel A of Figure~\ref{fig:av_setor_causal} presents it.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.96\textwidth]{figures/eval_retrieval_sector_causal.pdf}
 \caption[Retrieval by sector and under the temporal constraint]{In A, precision@5 and the
@@ -708,7 +708,7 @@ direction. Two news items can deal with the same subject and the price move in o
 which is what happened in the example presented in Chapter~\ref{cap:sistema}.
 Figure~\ref{fig:av_direcao} quantifies it.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -954,7 +954,7 @@ Appendix~\ref{ap:reprodutibilidade}. In them the volatility curve sits above the
 the whole extent of the axis, which establishes that the difference is not an artefact of the
 aggregate value.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1037,7 +1037,7 @@ The third concerns the definition of the label, which uses a threshold of two pe
 horizon of three days, both chosen by the author. The comparison was repeated for nine combinations
 of threshold and horizon, and Figure~\ref{fig:av_rotulos} presents the result.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{groupplot}[
@@ -1116,7 +1116,7 @@ fraction of the five news items chosen each day are hits. Figure~\ref{fig:av_orc
 two references that look equivalent but are not. The model and the volatility-based alternative are
 compared in Figure~\ref{fig:av_pontaaponta}, on page~\pageref{fig:av_pontaaponta}.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1174,7 +1174,7 @@ that proved material. That table does not look at the headline, does not look at
 invariably returns the same value for the same company. Figure~\ref{fig:av_ablacao} compares it
 with the deployed model and takes the model apart input by input, under the frozen protocol.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1274,7 +1274,7 @@ reduction to thirty-two dimensions as the previous check, so that the result doe
 searching for the convenient configuration. The resampling uses a thousand repetitions over
 $1{,}951$ groups. Figure~\ref{fig:av_acrescimo} presents the three intervals.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[font=\small, x=115cm, y=1.25cm]
   \draw[black!45] (-0.042,0) -- (0.042,0);
@@ -1388,7 +1388,7 @@ in it remains falsifiable. There are two properties, and both are measured over 
 companies of the sector map, which is the set the evaluation procedure covers, distinct from the
 list monitored in production. Figure~\ref{fig:av_motor} presents the two.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1471,7 +1471,7 @@ separated companies, and the measurement was carried out over the $36{,}925$ dec
 taken in production between 22 July and 20 August 2026. Figure~\ref{fig:av_porta} presents the
 result.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[font=\footnotesize, x=13cm, y=0.42cm]
   \draw[black!45] (0.22,0) -- (0.68,0);
@@ -1665,7 +1665,7 @@ of cases that proved material on each side of the gate, and the ranking ability 
 measured by \gls{ROCAUC}. Figure~\ref{fig:av_posvalidacao} presents both, over $825$ decisions
 already matured.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1781,7 +1781,7 @@ which values below $0.10$ indicate stability, values between $0.10$ and $0.25$ m
 displacement and values above $0.25$ significant displacement. Figure~\ref{fig:av_deriva} presents
 the result.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1843,7 +1843,7 @@ available at no cost. Figure~\ref{fig:av_pontaaponta} answers. All the policies 
 day, over the same test block and with the same label, and the tie-break is random and explicit in
 all of them.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[

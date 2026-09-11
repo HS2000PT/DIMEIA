@@ -44,7 +44,7 @@ one under equivalent conditions; on three others the reverse happened, and the s
 kept the deployed option, for a distinct reason in each case.
 Figure~\ref{fig:con_simples} gathers the seven.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[font=\scriptsize,
   cx/.style={draw=black!60, rounded corners=1.5pt, align=left, inner sep=4pt,
@@ -81,7 +81,7 @@ This section answers the four questions stated in Section~\ref{sec:intro_objetiv
 delimits, in each case, what the answer does and does not allow to be claimed.
 Figure~\ref{fig:con_scorecard} brings the four together.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[font=\footnotesize,
   cx/.style={draw, rounded corners=2pt, align=left, inner sep=5pt, text width=4.9cm,
@@ -122,7 +122,7 @@ relevance.}
 \label{fig:con_scorecard}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[font=\scriptsize,
   cx/.style={draw=black!55, rounded corners=1.5pt, fill=black!4, align=center,
@@ -654,7 +654,7 @@ each one requires before it can be carried out.
         time of its own.
 \end{enumerate}
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[font=\footnotesize,
   it/.style={draw, rounded corners=2pt, align=left, inner sep=4pt, text width=6.15cm,
@@ -727,30 +727,17 @@ The third is replacing the exhaustive search with an approximate index
 current size of the base the exact search is practicable and exact, so the replacement is not
 justified today; it would be justified from an order of magnitude above.
 
-\section{Final considerations}
+\section{The boundary of the claim}
 \label{sec:con_final}
 
-The work started from three questions a retail investor asks when faced with a price movement, and
-which free tools do not answer. Whether the movement is unusual. Whether the origin is the company
-or the market. And whether precedents with a known outcome exist. A system was built that answers
-all three with verifiable evidence and without issuing forecasts. Three techniques were compared
-with simpler alternatives; for decomposition, the quality of fit was measured.
-
-The result with the greatest informative value is negative. The hypothesis that the text of the
-news would carry information absent from the prices was not confirmed over this corpus.
-Investigating it produced a diagnosis of wider reach than the question that gave rise to it. The
-learned component was evaluated over one distribution and deployed over another, and the metric by
-which it was selected posed a question distinct from the one the product needed. No automatic test
-flagged the discrepancy, because each component fulfilled its contract and what was wrong was an
-assumption about the link between them.
-
-The founding constraint of the work, under which the system produces no price forecasts, proved to
-be the decision of widest reach. It determines what can be claimed: every claim of the system is
-confirmable against the record at the moment it is read. It determines the form of the explanation,
-which allows individual cases and their outcomes to be inspected. And it determines the evaluation criterion,
-which bears on the ability to identify what is unusual and not on the ability to anticipate. A
-system that presents evidence instead of verdicts delivers less than a system that announces
-directions, and delivers only what it can support.
+The contribution is stated at its exact level, and the separation matters more than either half
+of it. What this work establishes is that the system is technically prepared to support
+explanations resting on verifiable historical evidence: every quantity presented comes from the
+component that computed it, can be checked against the record at the moment it is read, and the
+policy that decides the silence is documented and measured. What this work does not establish is
+that this form of explanation leads the retail investor to a better decision. That is the founding
+hypothesis, it remains untested, and its test is the first item of the previous section.
+Figure~\ref{fig:con_fronteira} presents the separation.
 
 \begin{figure}[!htbp]
 \centering
@@ -784,12 +771,3 @@ hypothesis that motivated the work, and distinguishing it from what was demonstr
 prevents the first from being read as though the second were proved.}
 \label{fig:con_fronteira}
 \end{figure}
-
-The contribution is therefore stated at its exact level. What this work establishes is that the
-system is technically prepared to support explanations resting on verifiable historical evidence:
-every quantity presented comes from the component that computed it, can be checked against the
-record at the moment it is read, and the policy that decides the silence is documented and
-measured. What this work does not establish is that this form of explanation leads the retail
-investor to a better decision. That is the founding hypothesis, it remains untested, and its test
-is the first item of the previous section. Figure~\ref{fig:con_fronteira} presents the
-separation.

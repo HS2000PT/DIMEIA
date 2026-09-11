@@ -40,7 +40,7 @@ mais sofisticada em condições equivalentes; em três outras sucedeu o inverso,
 mesmo assim a opção implantada, por uma razão distinta em cada caso. A
 Figura~\ref{fig:con_simples} reúne as sete.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[font=\scriptsize,
   cx/.style={draw=black!60, rounded corners=1.5pt, align=left, inner sep=4pt,
@@ -77,7 +77,7 @@ Esta secção responde às quatro questões enunciadas na Secção~\ref{sec:intr
 cada caso, o que a resposta permite e não permite afirmar. A Figura~\ref{fig:con_scorecard} reúne as
 quatro.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[font=\footnotesize,
   cx/.style={draw, rounded corners=2pt, align=left, inner sep=5pt, text width=4.9cm,
@@ -117,7 +117,7 @@ limita-se às alternativas avaliadas e ao critério aproximado de relevância se
 \label{fig:con_scorecard}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[font=\scriptsize,
   cx/.style={draw=black!55, rounded corners=1.5pt, fill=black!4, align=center,
@@ -643,7 +643,7 @@ cada uma exige antes de poder ser executada.
         avaliação próprio.
 \end{enumerate}
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[font=\footnotesize,
   it/.style={draw, rounded corners=2pt, align=left, inner sep=4pt, text width=6.15cm,
@@ -716,29 +716,17 @@ A terceira é a substituição da procura exaustiva por um índice aproximado
 crescimento. Com a dimensão atual da base a procura exata é praticável e exata, pelo que a
 substituição não se justifica hoje; justificar-se-ia a partir de uma ordem de grandeza acima.
 
-\section{Considerações finais}
+\section{A fronteira da afirmação}
 \label{sec:con_final}
 
-O trabalho partiu de três perguntas que um investidor particular formula perante um movimento de
-preço, e a que as ferramentas gratuitas não respondem. Se o movimento é invulgar. Se a origem é a
-empresa ou o mercado. E se existem precedentes com desfecho conhecido. Construiu-se um
-sistema que responde às três com evidência verificável e sem emitir previsões. Três técnicas foram
-comparadas com alternativas mais simples; na decomposição mediu-se a qualidade do ajuste.
-
-O resultado com maior valor informativo é negativo. A hipótese de que o texto das notícias transportaria informação ausente dos preços não foi
-confirmada sobre este corpus. A sua investigação produziu um diagnóstico de alcance superior ao da
-questão que a originou. O componente aprendido foi avaliado sobre uma distribuição e implantado
-sobre outra, e a métrica pela qual foi selecionado formulava uma pergunta distinta da que o
-produto necessitava. Nenhum
-teste automático assinalou a discrepância, porque cada componente cumpria o seu contrato e o que
-estava errado era uma suposição sobre a ligação entre eles.
-
-A restrição fundadora do trabalho, segundo a qual o sistema não produz previsões de preço, revelou-se
-a decisão de maior alcance. Determina o que pode ser afirmado: toda a afirmação do sistema é confirmável contra o registo no
-momento em que é lida. Determina a forma da explicação, que permite inspecionar os casos individuais
-e os seus desfechos. E determina o critério de avaliação, que incide sobre a capacidade de identificar o que é
-invulgar e não sobre a de antecipar. Um sistema que apresente evidência em lugar de veredictos entrega menos do que um sistema
-que anuncie direções, e entrega apenas o que consegue sustentar.
+A contribuição enuncia-se ao seu nível exato, e a separação importa mais do que qualquer uma das
+metades. O que este trabalho estabelece é que o sistema está tecnicamente preparado para sustentar
+explicações assentes em evidência histórica verificável: toda a quantidade apresentada provém do
+componente que a calculou, pode ser conferida contra o registo no momento em que é lida, e a
+política que decide o silêncio está documentada e medida. O que este trabalho não estabelece é que
+esta forma de explicação conduza o investidor particular a uma decisão melhor. Essa é a hipótese
+fundadora, permanece por testar, e o seu teste é o primeiro item da secção anterior.
+A Figura~\ref{fig:con_fronteira} apresenta a separação.
 
 \begin{figure}[!htbp]
 \centering
@@ -772,12 +760,3 @@ a hipótese que motivou o trabalho, e distingui-la do que ficou demonstrado é o
 primeira seja lida como se a segunda estivesse provada.}
 \label{fig:con_fronteira}
 \end{figure}
-
-A contribuição enuncia-se, por isso, no seu nível exato. O que este trabalho estabelece é que
-o sistema está tecnicamente preparado para sustentar explicações assentes em evidência histórica
-verificável: cada quantidade apresentada provém do componente que a calculou, é confrontável com o
-registo no momento em que é lida, e a política que decide o silêncio está documentada e medida. O
-que este trabalho não estabelece é que essa forma de explicação conduza o investidor particular a
-uma decisão melhor. Essa é a hipótese fundadora, permanece por testar, e o seu teste é o primeiro
-item da secção anterior. A Figura~\ref{fig:con_fronteira}
-apresenta a separação.

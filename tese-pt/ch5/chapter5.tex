@@ -21,7 +21,7 @@ automáticos com semente fixa e reproduzem-se exatamente. Duas classes de valor 
 lidos do sistema em operação são instantâneos datados, que crescem com o canal. Os que dependem de
 cotações reajustadas pela fonte podem variar na terceira casa decimal.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[font=\small, >={Stealth[length=2.2mm]},
   et/.style={draw, rounded corners=2pt, align=center, text width=2.5cm, minimum height=1.15cm,
@@ -146,7 +146,7 @@ que distingue os métodos não é o nível a que disparam, mas o facto de o limi
 volatilidade de cada ação enquanto o \emph{z}-score se mantém quase constante entre elas.
 
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -226,7 +226,7 @@ sua derrota pela mesma razão invocada adiante para o modelo de árvores. Fica e
 estes detetores, assim parametrizados e sobre estas entradas, não superam a regra; não que nenhuma
 parametrização o faria. A Figura~\ref{fig:av_detetores} apresenta o resultado.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -297,7 +297,7 @@ A primeira incide sobre o estimador de volatilidade. A alternativa a atribuir o 
 dias da janela consiste em atribuir maior peso aos dias recentes, através de uma média com
 decaimento exponencial. A Figura~\ref{fig:av_ewma} apresenta o resultado.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -351,7 +351,7 @@ deixe de ser a restrição dominante.
 
 A segunda experiência incide sobre a dimensão da janela, e a Figura~\ref{fig:av_janela} apresenta-a.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -453,7 +453,7 @@ margem sobre o acaso se conserva, e não por setor.
 A Figura~\ref{fig:av_recuperacao} apresenta o método utilizado, uma variante de maior dimensão e as
 alternativas triviais.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -541,7 +541,7 @@ utiliza o subconjunto equilibrado, onde a mesma estratégia obtém $0{,}200$.
 A comparação dentro de cada setor verifica se a vantagem sobre o acaso também existe fora da
 tecnologia. O painel A da Figura~\ref{fig:av_setor_causal} apresenta-a.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.96\textwidth]{figures/eval_retrieval_sector_causal.pdf}
 \caption[Recuperação por setor e sob a restrição temporal]{Em A, a precisão@5 e o valor de acaso
@@ -692,7 +692,7 @@ A segunda observação tem consequências para o produto: a recuperação capta 
 notícias podem tratar do mesmo assunto e o preço evoluir em sentidos opostos, que foi o que sucedeu
 no exemplo apresentado no Capítulo~\ref{cap:sistema}. A Figura~\ref{fig:av_direcao} quantifica-o.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -935,7 +935,7 @@ A Figura~\ref{fig:av_triagem} apresenta os cinco modelos e a referência sem inf
 Apêndice~\ref{ap:reprodutibilidade}. Nelas a curva da volatilidade situa-se acima das restantes em
 quase toda a extensão do eixo, o que estabelece que a diferença não é artefacto do valor agregado.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1019,7 +1019,7 @@ A terceira respeita à definição do rótulo, que utiliza um limiar de dois por
 três dias, ambos escolhidos pelo autor. A comparação foi repetida para nove combinações de limiar e
 horizonte, e a Figura~\ref{fig:av_rotulos} apresenta o resultado.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{groupplot}[
@@ -1099,7 +1099,7 @@ Figura~\ref{fig:av_orcamento} isola duas referências que parecem equivalentes, 
 O modelo e a alternativa baseada em volatilidade são comparados na
 Figura~\ref{fig:av_pontaaponta}, na página~\pageref{fig:av_pontaaponta}.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1158,7 +1158,7 @@ se revelaram materiais. Essa tabela não observa o título, não observa o dia e
 o mesmo valor para a mesma empresa. A Figura~\ref{fig:av_ablacao} compara-a com o modelo implantado e
 desmonta o modelo entrada a entrada, sob o protocolo congelado.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1258,7 +1258,7 @@ a mesma redução a trinta e duas dimensões da verificação anterior, de modo 
 da procura da configuração conveniente. A reamostragem utiliza mil repetições sobre $1\,951$ grupos.
 A Figura~\ref{fig:av_acrescimo} apresenta os três intervalos.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[font=\small, x=115cm, y=1.25cm]
   \draw[black!45] (-0.042,0) -- (0.042,0);
@@ -1366,7 +1366,7 @@ permanece falsificável. São duas propriedades, e ambas se medem sobre as dezas
 de setores, que é o conjunto percorrido pelo procedimento de avaliação, distinto da lista
 monitorizada em produção. A Figura~\ref{fig:av_motor} apresenta as duas.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1447,7 +1447,7 @@ ou separava empresas, e a medição foi realizada sobre as $36\,925$ decisões e
 em produção entre 22 de julho e 20 de agosto de 2026. A Figura~\ref{fig:av_porta} apresenta o
 resultado.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[font=\footnotesize, x=13cm, y=0.42cm]
   \draw[black!45] (0.22,0) -- (0.68,0);
@@ -1647,7 +1647,7 @@ casos que se revelaram materiais de cada lado da porta, e a capacidade de ordena
 medida pela \gls{ROCAUC}. A Figura~\ref{fig:av_posvalidacao} apresenta ambas, sobre $825$ decisões
 já maturadas.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1764,7 +1764,7 @@ abaixo de $0{,}10$
 indicam estabilidade, valores entre $0{,}10$ e $0{,}25$ deslocamento moderado e valores acima de
 $0{,}25$ deslocamento significativo. A Figura~\ref{fig:av_deriva} apresenta o resultado.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -1826,7 +1826,7 @@ disponível sem custo. A Figura~\ref{fig:av_pontaaponta} responde. Todas as pol�
 por dia, sobre o mesmo bloco de teste e com o mesmo rótulo, e o desempate é aleatório e explícito em
 todas.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \begin{tikzpicture}
 \begin{axis}[

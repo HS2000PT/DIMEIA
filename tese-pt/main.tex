@@ -107,6 +107,23 @@ headsepline,
 \hypersetup{pdfauthor=\authorname}
 \hypersetup{pdfkeywords=\keywordnames}
 
+
+% ── Colocação de flutuantes ───────────────────────────────────────────────────
+% Este documento tem 49 figuras e 17 tabelas em cerca de 110 páginas, ou seja um flutuante a cada
+% 1,7 páginas. Com os valores por omissão, uma figura alta não cabe no topo de uma página de texto
+% e é empurrada para uma página só dela, que o LaTeX aceita com metade do espaço vazio. Os valores
+% abaixo permitem flutuantes maiores em páginas de texto e exigem que uma página de flutuantes
+% esteja substancialmente cheia. Nenhum conteúdo muda; muda onde o compositor pode pô-lo.
+\renewcommand{\topfraction}{0.88}
+\renewcommand{\bottomfraction}{0.55}
+\renewcommand{\textfraction}{0.10}
+\renewcommand{\floatpagefraction}{0.80}
+\renewcommand{\dbltopfraction}{0.88}
+\renewcommand{\dblfloatpagefraction}{0.80}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+
 \begin{document}
 
 \input{frontmatter/frontmatter}
