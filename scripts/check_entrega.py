@@ -48,6 +48,11 @@ VERIFICADORES = [
     # flutuantes que nenhuma frase invoca, que também compilam sem um único aviso. Um verificador
     # que ninguém corre é garantia perdida, e este era um dos seis que ficavam de fora.
     ("referências: tipo e flutuantes órfãos", "check_references.py", []),
+    # ⚠️ A classe `meia-style.cls` vive DENTRO de cada árvore, logo qualquer sessão a pode
+    #    editar sem nada comparar o resultado com o modelo oficial da universidade. Entra
+    #    aqui porque um verificador que existe e não é invocado é um verificador cuja
+    #    morte nunca aparece — foi o que sucedeu a seis deles até à sessão 68.
+    ("conformidade com o modelo oficial do MEIA", "check_modelo_oficial.py", []),
     ("apêndice: cada número onde diz estar", "check_apendice_xref.py", []),
     ("materiais de estudo alinhados", "check_materiais.py", []),
     # ⚠️ A METADE CEGA DO DE CIMA. Ele compara VALORES decimais, logo nao ve nem os
