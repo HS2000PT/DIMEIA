@@ -9,6 +9,191 @@
 ---
 
 ## Estado Atual
+- **🆕 SESSÃO 68 — 6.ª parte (2026-09-11): O LOGÓTIPO TINHA DOIS DEFEITOS E OS DOIS ERAM MEUS ·
+  UM RÓTULO DO PAINEL ESTAVA A ENGANAR · E O PILOTO DE FEEDBACK DEIXOU DE SER INVISÍVEL.**
+  **⚠️ (A) O LOGÓTIPO: A TINTA NÃO MUDOU, MEDIDO ANTES DE MEXER.** Comparado o raster anterior
+  com o actual sobre os 393 839 píxeis de tinta: desvio médio de **0,72** por canal, máximo 30, e
+  **607 píxeis** acima de 12. Recompressão não era a causa, logo recortar a tinta outra vez não
+  corrigia nada. **Eram dois defeitos distintos, ambos introduzidos por mim na 5.ª parte.**
+  **(A1) A AURÉOLA.** O meu preenchimento tornava transparente o que estava acima de um limiar e
+  deixava **opaco** todo o resto, incluindo os píxeis de anti-aliasing, que são uma mistura de
+  tinta com o branco do fundo. Invisíveis sobre branco; sobre fundo escuro leem-se como auréola
+  clara em volta do desenho inteiro, e o ganho de 2,47× da variante escura empurra-a para
+  quase-branco. **A correcção não é outro limiar:** um píxel de bordo vale
+  `pixel = a·tinta + (1−a)·255`, e como o verde da marca tem canal mínimo zero o alfa recupera-se
+  exactamente (`a = 1 − min(r,g,b)/255`). **62 002 píxeis** de bordo passaram a ter alfa parcial
+  onde antes eram zero, e esse zero era a auréola.
+  **⚠️ (A2) AS CONTRA-FORMAS DAS LETRAS, e era isto o «estranho».** Um preenchimento a partir das
+  bordas só alcança o branco **ligado ao exterior**. O interior do `n`, do `ti` e do `o` é branco
+  fechado por tinta, logo ficou opaco: invisível sobre branco, **mancha branca sobre escuro**.
+  **E A TOPOLOGIA NÃO SEPARA OS DOIS CASOS** — uma contra-forma de letra e um dente do jacaré são
+  ambos brancos fechados por tinta. A diferença não é de forma, é de **sítio**: na cabeça o branco
+  é desenho (dentes, brilho do olho, vidro da lupa) e na palavra é fundo a passar. Separado por
+  **medição**: existe uma faixa de **29 linhas sem uma única tinta** entre a cabeça e a palavra
+  (linhas 813-841, impressas pelo script). Dos 28 brancos fechados, **16 caem na palavra e ficam
+  transparentes; 12 estão na cabeça e ficam desenho**.
+  **⚠️ (A3) E OS VECTORES A SÉRIO FORAM CONSIDERADOS E REJEITADOS, com a razão, para não se
+  reabrir.** O `app/assets/logo-lockup.svg` e o `web/assets/wordmark.svg` são vectores genuínos e
+  teriam removido os dois defeitos na raiz. Trazem o lettering **anterior** (contornos do IBM
+  Plex) e não o slab-serif actual, logo usá-los mudava a identidade em vez de a reparar — e juntar
+  uma mascote raster a um wordmark vectorial diferente lê-se como duas marcas num logótipo.
+  **⚠️ (A4) E UM TERCEIRO DEFEITO CAIU DA CORRECÇÃO DO PRIMEIRO, pré-existente e pior do que
+  parecia:** o bitmap estava a **1254 px para ser desenhado a ~40 px** no cabeçalho — **trinta
+  vezes** a resolução necessária, num ficheiro com `fetchpriority="high"`. O recorte sem perdas
+  tornou o custo visível a 320 KB. O `<image width="1254">` é uma caixa em unidades de utilizador,
+  logo trocar 1254 px de píxeis por 502 muda o ficheiro e **não muda um único número do desenho**:
+  o `viewBox`, o `clip-path` do icon e as larguras do HTML ficam intactos. **63 KB, abaixo dos
+  74 KB de onde partiu**, com a auréola removida em vez de acrescentada.
+  **⚠️ (B) «PQ É QUE PARA AS EMPRESAS O MERCADO PERCENTAGEM É DIFERENTE?» — A PERGUNTA APANHOU UM
+  RÓTULO ENGANADOR E NÃO UMA EXPLICAÇÃO EM FALTA.** A linha dizia «Market −0,42%» debaixo de «What
+  contributed to the move?», e isso lê-se naturalmente como *o mercado caiu 0,42%*, que seria o
+  mesmo número para as doze empresas. O que ali está é `β_mercado × retorno do mercado`: a fatia
+  do movimento **desta** empresa que o mercado explica. O retorno do fator é partilhado; o beta é
+  dela. **A correcção é pôr a multiplicação na própria linha** (`β 0,72 × −0,47%`), porque é isso
+  que faz a pergunta responder-se sozinha sem um clique. A conta já existia atrás de um
+  `<details>` único, e **a pergunta do autor é a prova de que ali não era encontrada**.
+  **✅ (C) E DESDOBRA-SE, como ele pediu: «ir clicando nos valores e ir desdobrando sempre».**
+  Nível 1 diz o que a parcela é e nomeia a distinção fator-partilhado/beta-próprio; nível 2 diz de
+  onde vem o β, com o **estimado em bruto, o erro-padrão e o peso de Vasicek**, para
+  `β = w·bruto + (1−w)·prior` poder ser **refeito** por quem lê. Isso obrigou a carga nova:
+  `beta_market_raw`, `beta_sector_raw` e os dois erros-padrão passam a viajar no
+  `MoveDecomposition` e no instantâneo, porque **uma interface que só recebe o β final pode
+  explicar o encolhimento e não o pode mostrar**.
+  **⚠️ E a `contaDaReparticao` foi REMOVIDA como código morto** — ligar as linhas novas deixou-a
+  sem chamador, que é a classe «medido, servido e invisível», e foi a segunda vez que me apanhou
+  na mesma sessão.
+  **⚠️ (D) «EVENTS FROM ALL COMPANIES» ERA UM ESTADO INCOERENTE, e ele tinha razão.** O botão
+  mudava só o âmbito da LISTA e deixava o gráfico da empresa no sítio com o botão dela marcado: o
+  controlo dizia «todas» e a metade de cima da página dizia «esta». Das três saídas que ele nomeou
+  — minimizar, remover, ou mostrar o mercado — a terceira responde à pergunta em vez de a apagar.
+  A série do índice **já estava buscada** pelo `build_snapshot` para a decomposição e era deitada
+  fora, logo publicá-la custa zero pedidos; e o cliente constrói um **pseudo-ativo** em vez de um
+  segundo caminho de gráfico, porque dois desenhos da mesma coisa divergem sem nada os comparar.
+  **⚠️ E O ÍNDICE É O SPY, NÃO O NASDAQ.** Ele escreveu «o mercado, nasdaq no caso», e a maioria
+  das doze é mesmo cotada no NASDAQ — mas o **fator de mercado deste sistema é o SPY**, em toda a
+  decomposição e em toda a dissertação. Desenhar o SPY com rótulo NASDAQ seria falso, e trocar o
+  fator invalidaria números congelados.
+  **✅ (E) ÍCONES DISTINTOS POR TIPO DE ALERTA, e as FORMAS não davam:** a biblioteca tem quatro
+  (círculo, quadrado, seta para cima, seta para baixo) e três já carregam sentido — o quadrado é
+  notícia captada, as setas são dias assinalados com a sua direcção. Sobrava o círculo, logo a
+  distinção é **cor mais uma letra** (N/P/O/C), com a legenda a nomear só os tipos **desenhados**.
+  **⚠️ (F) E OLHAR PARA O RENDER MUDOU O DESENHO: uma marca por alerta estava errada.** O
+  intervalo de um mês da NVIDIA desenhava pilhas de círculos na mesma coluna, a letra da mais alta
+  saía **cortada pela moldura** mesmo com folga extra, e a pilha **tapava a linha de preço** — um
+  gráfico que esconde a sua própria série para mostrar anotações trocou o assunto pelo enfeite.
+  Colapsado a **uma marca por dia e por tipo**, e não perde informação: num intervalo diário a
+  coluna **é** um dia, logo cinco círculos empilhados nunca foram cinco pontos distinguíveis, eram
+  um dia desenhado cinco vezes. **Medido na NVIDIA: 22 alertas → 19 marcas, pilha máxima 3 → 2.**
+  **⚠️ E A MINHA PRIMEIRA CORRECÇÃO DE MARGEM TERIA PIORADO:** pus 0,18 no topo da escala quando o
+  **valor por omissão da biblioteca já é 0,2** — menos folga do que havia. Ficou 0,26.
+  **✅ (G) UM CLIQUE, TODAS AS MENSAGENS DO DIA — dois defeitos, e o segundo falhava em silêncio.**
+  «Quando há várias bolas na mesma coluna, o clique só vai para uma delas»: o foco escolhia a mais
+  **próxima**, logo num dia com três alertas dois eram inalcançáveis e nada dizia que existiam. E
+  «se clicarmos num alerta que estivesse no *show more*, a lista deveria ir para essa linha» —
+  devolvia `false` sem nada acontecer, que se lê como clique morto. Agora realça **todas** as
+  mensagens do dia, diz quantas foram, e carrega páginas do registo até alcançar o dia, com tecto.
+  **⚠️ E a função passou a ser assíncrona, o que obrigou a mudar o chamador:** testar uma Promise
+  pela verdade removeria o ramo de falha sem um único erro, e um clique que não acertasse em nada
+  pareceria ter acertado.
+  **✅ (H) O HISTÓRICO GANHOU INTERVALO E UM EIXO X A SÉRIO.** O modo «hoje» tinha cinco botões a
+  governar a página e o histórico não tinha nenhum, ou seja duas metades da mesma página com
+  noções de tempo diferentes. Os mesmos cinco intervalos, a governar as barras **e** a lista — o
+  `dentroDoIntervalo` devolvia `true` sem condição fora do modo «hoje», o que traria de volta o
+  defeito que essa função existe para impedir. E o eixo nomeava só o primeiro e o último dia: com
+  sessenta barras entre dois rótulos, nenhuma barra tem data. Passa a nomear até cinco,
+  **posicionados pela fracção do índice da barra**, para cada rótulo cair sob a barra que nomeia.
+  **⚠️ (I) O PILOTO DE FEEDBACK ERA MEDIDO, SERVIDO E INVISÍVEL — e o autor apanhou-o.** Disse que
+  «as pessoas têm votado no canal» e que isso «prova o valor e utilidade real». **A primeira
+  metade é verdade e foi executada:** os votos apareciam só dentro de cada mensagem («2 useful · 0
+  did not help») e o agregado vivia apenas no relatório de avaliação, logo quem abria a aplicação
+  não tinha como saber que os alertas entregues foram classificados. É a mesma classe da
+  repartição do movimento e do coeficiente de ajuste.
+  **⚠️ E REGENERAR O RELATÓRIO MUDOU OS NÚMEROS DE FORMA QUE TORNA O ARGUMENTO DELE MAIS FORTE DO
+  QUE ELE SABE.** A recolha continuou: **51 votos efectivos passaram a 91** e o votante dominante
+  caiu de **73% para 58%**. A consequência não é o valor de topo (98% → **95%**), é que **a
+  verificação de robustez passou a existir**: com 51 votos, retirar o votante dominante deixava 14
+  — abaixo do mínimo pré-registado de 20, logo o protocolo **recusava** reportar esse recorte. Com
+  91 restam 38, e dão **89% com intervalo de Wilson de 76% a 96%**. A conclusão passa a sobreviver
+  à remoção do leitor mais activo, o que antes não se podia mostrar.
+  **⚠️ E NÃO SE CHAMA A ISTO PROVA DE UTILIDADE, porque não é.** São **três pessoas**; ninguém
+  recebeu a variação de preço sem explicação, logo nada atribui a utilidade à explicação; e
+  utilidade percebida não é decisão melhor. O Cap. 6 diz exactamente isto, e **a aplicação não
+  pode afirmar mais do que a dissertação**. O painel mostra o piloto, o número de **pessoas** (sem
+  ele, 91 votos leem-se como 91 leitores) e a salvaguarda do votante dominante, com um teste que
+  falha se qualquer dos três cair.
+  **⚠️ (J) E A ROTA CONTAVA UMA POPULAÇÃO DIFERENTE DA DA TESE — medido, não suposto.** A regra 6
+  do protocolo pré-registado descarta um voto cuja chave não corresponde a nenhum alerta entregue;
+  a análise aplicava-a e esta rota não. Com dados reais o relatório publicava **91** votos
+  efectivos e a rota devolvia **92**: cinco votos sem alerta correspondente entravam num lado e
+  não no outro. É a mesma divergência que este trabalho pagou na política de alertas, onde a tese
+  avaliava precisão@orçamento e a produção implantava um limiar. Corrigida, e passa a coincidir ao
+  número: **131 brutos, 91 efectivos, 86 úteis, 62 alertas, 58,2% de dominância.**
+  **✅ E AS REGRAS PRÉ-REGISTADAS SUBIRAM PARA A BIBLIOTECA** pela mesma razão: `N_MINIMO` e
+  `DOMINANCIA_MAX` viviam dentro do script que gera a subsecção da dissertação, ganharam um
+  segundo consumidor, e duas cópias de uma regra separam-se porque nada as compara. O agregado vem
+  do **mesmo** `FL.agregado` que alimenta a tese, e abaixo do mínimo devolve `proporcao: None` em
+  vez de um número que um consumidor possa imprimir por distracção.
+  **⚠️ E A DECISÃO QUE ESTA ROTA TINHA ESCRITA CADUCOU:** o docstring dizia que um painel de
+  produto não é sítio para reportar proporções «sobre uma amostra que ainda não atingiu o mínimo
+  pré-registado» — e na altura não tinha atingido. A regra 1 pede 20 e há 91.
+  **✅ (K) E OS MATERIAIS NÃO MENCIONAVAM OS VOTOS UMA ÚNICA VEZ** — medido: zero ocorrências nos
+  dois decks e no guia. Cada deck recebe um frame; o guia recebe **dois**, um que ensina o
+  instrumento e outro que ensaia «e o senhor, votou?», que é a pergunta que a evidência convida.
+  **Em todos, a RESSALVA VEM ANTES DO NÚMERO**, de propósito: um guia que ensinasse «95% acharam
+  útil» punha o autor a dizer em voz alta a versão que um arguente derruba com uma subtracção.
+  **⚠️ E uma linha do quadro das limitações ficou imprecisa:** dizia «nenhuma avaliação com
+  pessoas», e com 91 classificações isso já não é verdade como estava escrito — o que falta é o
+  estudo **controlado**, que mede outra pergunta. Deixá-la concedia uma correcção fácil sobre a
+  própria dissertação, que distingue os dois instrumentos na primeira linha do relatório.
+  **✅ (L) A CONFORMIDADE COM O MODELO OFICIAL PASSA A SER MEDIDA, E NÃO ARGUMENTADA DE MEMÓRIA.**
+  Porta nova `check_modelo_oficial.py`, invocada pelo `check_entrega` (21 → **22 verificadores**),
+  porque a classe vive DENTRO de cada árvore e qualquer sessão a pode editar sem nada comparar com
+  o original arquivado. **⚠️ E a primeira medição enganava:** um diff cru dava **1182** linhas
+  diferentes numa árvore e 42 na outra — eram mudanças de linha. O número real é **oito blocos** em
+  cada, iguais.
+  **E SETE DOS OITO SÃO REPARAÇÕES A DEFEITOS DO PRÓPRIO MODELO**, não desvios: as três imagens da
+  capa estão escritas com **barra inicial** (`{/frontmatter/assets/...}`), que é caminho absoluto e
+  não compila em máquina nenhuma onde os ficheiros não estejam na raiz; as palavras-chave eram as
+  mesmas nos dois resumos, e por isso a página do *Abstract* inglês imprimia palavras-chave em
+  português; e o `bigskip` sem fim de parágrafo é espaço **dentro** do parágrafo, o que colava as
+  palavras-chave ao fim do resumo a meio da linha. O oitavo é o `babel` bilingue, que o trabalho
+  exige. **Nenhum dos oito toca geometria, margens, tipo de letra ou espaçamento.**
+  **⚠️ E HÁ EXACTAMENTE UMA NÃO-CONFORMIDADE A SÉRIO, e é decisão do autor:** o **`openany`** não
+  consta das opções do modelo, cujo comportamento por omissão abre cada capítulo à direita. Foi
+  acrescentado na sessão 66 com justificação medida (17 versos em branco, o dobro de qualquer uma
+  das quatro aprovadas), **mas as quatro aprovadas mantêm todas o `openright`**. A porta **não
+  falha** por isso: imprime-o em cada corrida, para ser uma decisão e não um esquecimento.
+  **Controlo negativo corrido:** um comando não declarado acrescentado à classe fá-la sair a 1, e
+  restaurar deixa o ficheiro byte-igual.
+  **⚠️ (M) TRÊS DEFEITOS MEUS QUE AS PORTAS APANHARAM, e as regras de dois estavam escritas.**
+  (1) **A guarda de codificação, no verificador que eu tinha acabado de escrever:** morria com
+  `UnicodeEncodeError` ao imprimir o primeiro aviso numa consola `cp1252` — o defeito **exacto**
+  que a sessão 57 corrigiu no `check_all_gates` e a 68 no `check_prontidao_defesa`, com o
+  comentário já lá escrito: *uma porta que rebenta antes de verificar é pior do que não existir*.
+  Escrevi a porta e repeti o defeito na mesma passagem. (2) **O `check_materiais` acusou a minha
+  prosa** — três travessões nos frames do guia, onde a regra é zero e a sessão 58 removeu 189.
+  **Quinta vez que esta porta apanha texto meu.** (3) **O deck inglês imprimia `[88,98]`**, onde a
+  vírgula se lê como separador de milhares: o intervalo de Wilson saía como um número ambíguo num
+  documento inglês. A sessão 56 documentou esta assimetria exacta.
+  **⚠️ (N) E DUAS ARMADILHAS DE MÉTODO MINHAS, nenhuma delas de código.** (1) **Plantei valores
+  numa amostra e o `git checkout` não a podia restaurar**, porque `data/samples/dashboard_snapshot
+  .json` é **gitignored** — só a cópia que fiz antes de plantar a salvou. É exactamente a regra que
+  a sessão 65 pagou. (2) **O meu slide transbordava 24,5 pt e verifiquei que era meu antes de
+  mexer**, compilando o deck de `HEAD`: máximo **14,07 pt** lá. Encurtado dobrando os dois
+  intervalos de Wilson para o lado dos valores que qualificam; **a ressalva NÃO foi cortada**,
+  apesar de ser o texto mais longo — seria trocar um defeito de composição por um de honestidade.
+  **PORTAS: 1208 testes (eram 1201) · `ruff` limpo · `check_entrega` verde nos 22 verificadores com
+  a pendência humana declarada · as duas árvores a 0 erros e 0 `??` nos PDF · overfull máximo
+  8,61 pt e 5,68 pt, iguais ao registo anterior a QUALQUER edição desta sessão · dois decks a 23
+  slides e overfull de volta aos 14,07 e 12,15 pt de `HEAD` · guia 27 slides · EN 141 páginas, PT
+  144 · `check_materiais` limpo nas duas árvores.**
+  **⏭️ O QUE FICA, E É DECISÃO DO AUTOR.** (1) O **`openany`**: poupa páginas e afasta-se da
+  convenção das quatro aprovadas. (2) **Se está entre os três votantes** — o `AUTOR_ENTRE_VOTANTES`
+  está a `False` e só ele o pode fixar; a boa notícia é que com 91 votos até a pior resposta passou
+  a ter um número por trás (34 de 38, 89%). (3) O **filtro por tipo continua a ver só as mensagens
+  carregadas**, logo «Market open» aparece a zero por não ter sido carregada e não por não existir.
+  (4) A **leitura seguida**, os **nomes do júri**, a **declaração de IA** e a **licença** continuam
+  humanos.
 - **🆕 SESSÃO 68 — 5.ª parte (2026-09-11): A COMPARAÇÃO COM AS QUATRO APROVADAS MUDOU O ALVO, E
   TRÊS LEGENDAS DESCREVIAM UMA APLICAÇÃO QUE JÁ NÃO EXISTE.**
   O autor pediu quatro coisas numa passagem: rever a tese contra o **sistema vivo** («o aplicativo
