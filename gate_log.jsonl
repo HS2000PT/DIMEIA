@@ -175,18 +175,6 @@
 {"date": "2026-09-10", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-10", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-10", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-10", "ticker": "MSFT", "stage": "weak_precedent", "detail": "melhor sim 0.39 < 0.45"}
-{"date": "2026-09-10", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-10", "ticker": "TSLA", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-10", "ticker": "AMZN", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-10", "ticker": "GOOGL", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-10", "ticker": "META", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-10", "ticker": "JPM", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-10", "ticker": "AMD", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-10", "ticker": "NFLX", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-10", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-10", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
-{"date": "2026-09-10", "ticker": "AAPL", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-10", "ticker": "MSFT", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-10", "ticker": "NVDA", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-10", "ticker": "TSLA", "stage": "daily_budget", "detail": "budget 5/day spent"}
@@ -18990,6 +18978,18 @@
 {"date": "2026-09-12", "ticker": "NFLX", "stage": "duplicate_story", "detail": "same story, other words"}
 {"date": "2026-09-12", "ticker": "XOM", "stage": "daily_budget", "detail": "budget 5/day spent"}
 {"date": "2026-09-12", "ticker": "JNJ", "stage": "daily_budget", "detail": "budget 5/day spent"}
+{"date": "2026-09-12", "ticker": "AAPL", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
+{"date": "2026-09-12", "ticker": "MSFT", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
+{"date": "2026-09-12", "ticker": "NVDA", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
+{"date": "2026-09-12", "ticker": "TSLA", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
+{"date": "2026-09-12", "ticker": "AMZN", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
+{"date": "2026-09-12", "ticker": "GOOGL", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
+{"date": "2026-09-12", "ticker": "META", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
+{"date": "2026-09-12", "ticker": "JPM", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
+{"date": "2026-09-12", "ticker": "AMD", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
+{"date": "2026-09-12", "ticker": "NFLX", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
+{"date": "2026-09-12", "ticker": "XOM", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
+{"date": "2026-09-12", "ticker": "JNJ", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
 {"date": "2026-09-12", "ticker": "AAPL", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
 {"date": "2026-09-12", "ticker": "MSFT", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
 {"date": "2026-09-12", "ticker": "NVDA", "stage": "error", "detail": "ValueError: Embedding dim mismatch: query has 64 dims but the knowledge base stores 384. Query with the same embedder us"}
